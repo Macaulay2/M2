@@ -1887,6 +1887,7 @@ ComputationOrNull *gbA::set_hilbert_function(const RingElement *hf)
 const MatrixOrNull *gbA::get_gb()
 {
   minimalize_gb();
+  fprintf(stderr, "-- done with GB -- \n");
   return minimal_gb->get_gb();
 }
 

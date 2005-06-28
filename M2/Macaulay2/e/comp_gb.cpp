@@ -68,6 +68,15 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 			 use_max_degree,
 			 max_degree);
     break;
+  case 4:
+    result = GBinhom_comp::create(m, 
+				  collect_syz, 
+				  n_rows_to_keep,
+				  gb_weights,
+				  strategy,
+				  use_max_degree,
+				  max_degree);
+     break;
   default:
     result = gbA::create(m, 
 			 collect_syz, 

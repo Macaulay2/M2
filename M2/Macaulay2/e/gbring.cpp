@@ -757,6 +757,8 @@ void GBRing::gbvector_mult_by_term(const FreeModule *F,
   result_syz = mult_by_term(Fsyz,fsyz,a,m,0);
 }
 
+#if 0
+This is the version active until 6/27/2005
 void GBRing::gbvector_reduce_lead_term(const FreeModule *F,
 				       const FreeModule *Fsyz,
 				       gbvector * flead,
@@ -794,6 +796,62 @@ void GBRing::gbvector_reduce_lead_term(const FreeModule *F,
 	K->negate_to(v);
     }
   M->from_expvector(_EXP3, _MONOM1);
+  gbvector *result1 = mult_by_term(F,g, v,_MONOM1,comp);
+  gbvector_add_to(F,f,result1);
+  if (fsyz != 0 || gsyz != 0) 
+    {
+      gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,_MONOM1, comp);
+      gbvector_add_to(Fsyz,fsyz,result_syz1);
+    }
+}
+#endif
+
+void GBRing::gbvector_reduce_lead_term(const FreeModule *F,
+				       const FreeModule *Fsyz,
+				       gbvector * flead,
+				       gbvector * &f,
+				       gbvector * &fsyz,
+				       const gbvector *g,
+				       const gbvector *gsyz,
+				       bool use_denom,
+				       ring_elem &denom)
+{
+  int comp;
+  const ring_elem a = f->coeff;
+  const ring_elem b = g->coeff;
+  ring_elem u,v;
+  K->syzygy(a,b,u,v); // If possible, u==1, anyway, u>0
+  if (!K->is_equal(u,_one))
+    {
+      gbvector_mult_by_coeff_to(f,u); // modifies f
+      gbvector_mult_by_coeff_to(flead,u);
+      gbvector_mult_by_coeff_to(fsyz,u);
+      if (use_denom) K->mult_to(denom, u);
+    }
+
+  M->divide(f->monom, g->monom, _MONOM1);
+  
+  if (g->comp == 0)
+    {
+      comp = f->comp;
+      const SchreyerOrder *S;
+      if (_schreyer_encoded && (S = F->get_schreyer_order()) != 0)
+	S->schreyer_down(_MONOM1, comp-1, _MONOM1);
+    }
+  else
+    {
+      comp = 0;
+    }
+
+  if (is_skew_commutative())
+    {
+      gbvector_get_lead_exponents(F,f,_EXP1); // Removes the Schreyer part
+      gbvector_get_lead_exponents(F,g,_EXP2); // Removes the Schreyer part
+      divide_exponents(_EXP1,_EXP2,_EXP3);
+      if (_skew.mult_sign(_EXP3, _EXP2) < 0)
+	K->negate_to(v);
+    }
+  
   gbvector *result1 = mult_by_term(F,g, v,_MONOM1,comp);
   gbvector_add_to(F,f,result1);
   if (fsyz != 0 || gsyz != 0) 
