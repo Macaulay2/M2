@@ -9,6 +9,19 @@
 extern char system_interruptedFlag;
 extern int gbTrace;
 
+// is_min field of gb_elem:
+//  0 not a mingen (produced by an spair), not minimal gb elem
+//  1 a mingen (trimmed gen), but not minimal gb elem
+//  2 not mingen, but is a minimal gb element
+//  3 mingen and minimal gb elem
+
+static const int GBELEM_NONGEN_NONGB = 0; 
+static const int GBELEM_MINGEN_NONGB = 1;
+static const int GBELEM_NONGEN_MINGB = 2;
+static const int GBELEM_MINGEN_MINGB = 3;
+static const int MINGEN_MASK = 0x1;
+static const int MINGB_MASK = 0x2;
+
 void GBinhom_comp::set_up0(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights)
 {
   int i;
@@ -63,7 +76,6 @@ void GBinhom_comp::set_up(const Matrix *m,
   set_up0(m, csyz, nsyz, gb_weights);
 
   Fsyz = m->cols()->sub_space(n_comps_per_syz);  
-  //  syz = new Matrix(Fsyz);
   syz = MatrixConstructor(Fsyz, 0);
   n_syz = 0;
   add_gens(0, m->n_cols()-1, m);
@@ -91,31 +103,6 @@ void GBinhom_comp::add_gens(int lo, int hi, const Matrix *m)
       if (p != NULL)
 	spairs->insert(p);
       n_pairs++;
-    }
-}
-
-void GBinhom_comp::force(const Matrix *m, const Matrix *gb0, const Matrix *mchange,
-		    const Matrix *msyz)
-{
-  int csyz = (msyz->n_cols() > 0);
-  M2_arrayint do_we_need_something_non_null = 0;
-  set_up0(m, csyz, mchange->n_rows(), do_we_need_something_non_null);
-
-  Fsyz = mchange->rows();
-#warning "put back syzygy module!"
-  //  syz = const_cast<Matrix *>(msyz);
-
-  for (int i=0; i<gb0->n_cols(); i++)
-    {
-      if ((*gb0)[i] == NULL) continue;
-      ring_elem denom1, denom2, u, v;
-      gbvector *f = originalR->translate_gbvector_from_vec(F, (*gb0)[i], denom1);
-      gbvector *fsyz = originalR->translate_gbvector_from_vec(Fsyz, (*mchange)[i], denom2);
-      K->syzygy(denom1,denom2,u,v);
-      GR->gbvector_mult_by_coeff_to(f,u);
-      K->negate_to(v);
-      GR->gbvector_mult_by_coeff_to(fsyz,v);
-      gb_insert(f,fsyz,1);
     }
 }
 
@@ -148,12 +135,6 @@ GBinhom_comp::GBinhom_comp(const Matrix *m,
 			   int strat)
 {
   set_up(m, csyz, nsyz, gb_weights, strat);
-}
-
-GBinhom_comp::GBinhom_comp(const Matrix *m, const Matrix *gb0, const Matrix *mchange, 
-		 const Matrix *syz0)
-{
-  force(m, gb0, mchange, syz0);
 }
 
 void GBinhom_comp::remove_pair(s_pair *& p)
@@ -639,10 +620,11 @@ int GBinhom_comp::search(const int *exp, int comp, gb_elem *&result)
     }
   return 0;
 }
-void GBinhom_comp::gb_insert(gbvector * f, gbvector * fsyz, int forced)
+void GBinhom_comp::gb_insert(gbvector * f, gbvector * fsyz, int minlevel)
 {
   int *f_m = M->make_one();
-  gb_elem *p = new gb_elem(f, fsyz, 1);
+  minlevel = (minlevel == 0 ? MINGB_MASK : MINGEN_MASK | MINGB_MASK);
+  gb_elem *p = new gb_elem(f, fsyz, minlevel);
   p->me = last_gb_num++;
   p->lead_exp = newarray(int,M->n_vars());
 
@@ -653,13 +635,8 @@ void GBinhom_comp::gb_insert(gbvector * f, gbvector * fsyz, int forced)
   if (M->in_subring(1,f_m))
     n_subring++;
 
-#if 0
-  intarray vp;
-  M->to_varpower(p->f->monom, vp);
-  monideals[p->f->comp].insert(new Bag(p, vp));
-#endif
   // Next determine the new s pairs.  This also deletes unneeded pairs
-  if (!forced) find_pairs(p);
+  find_pairs(p);
 
   // Insert into the Groebner basis
   gb_elem *q = gbLarge;
@@ -676,13 +653,12 @@ void GBinhom_comp::gb_insert(gbvector * f, gbvector * fsyz, int forced)
 	  prevmin->next_min = p;
 	  break;
 	}
-      else if (q->next->is_min)
+      else if (q->next->is_min & MINGB_MASK)
 	prevmin = q->next;
       q = q->next;
     }
 
   M->remove(f_m);
-  if (forced) return;
 
   // At this point 'p' has been inserted.  Now we need to remove the 
   // non-minimal elements.
@@ -694,7 +670,7 @@ void GBinhom_comp::gb_insert(gbvector * f, gbvector * fsyz, int forced)
 	gb_elem *tmp = q->next_min;
 	q->next_min = tmp->next_min;
 	tmp->next_min = NULL;
-	tmp->is_min = 0;	// I.e. not in the minimal GB
+	tmp->is_min ^= MINGB_MASK;	// I.e. not in the minimal GB
 	n_gb--;
       }
     else
@@ -717,6 +693,7 @@ int GBinhom_comp::s_pair_step(s_pair *p)
       o << " ----" << newline;
       emit(o.str());
     }
+  int minlevel = (p->syz_type == SPAIR_GEN);
   int compute_pair = (p->compare_num >= 0); // MES: change field name
   if (compute_pair)
     {
@@ -742,7 +719,7 @@ int GBinhom_comp::s_pair_step(s_pair *p)
 
   if (!GR->gbvector_is_zero(f))
     {
-      gb_insert(f, fsyz,0);	// The 0 means 'normal insertion'.
+      gb_insert(f, fsyz, minlevel);
       if (gbTrace >= 8)
 	{
 	  buffer o;
@@ -985,8 +962,8 @@ void GBinhom_comp::text_out(buffer &o)
 const MatrixOrNull *GBinhom_comp::get_mingens()
 {
   MatrixConstructor mat(F, 0);
-  for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
-    if (q->is_min)
+  for (gb_elem *q = gb->next; q != NULL; q = q->next)
+    if (q->is_min & MINGEN_MASK)
       mat.append(originalR->translate_gbvector_to_vec(F,q->f));
   return mat.to_matrix();
 }

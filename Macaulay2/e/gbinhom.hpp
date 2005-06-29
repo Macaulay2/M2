@@ -58,8 +58,6 @@ private:
 private:
   void set_up0(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights);
   void set_up(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights, int strategy);
-  void force(const Matrix *m, const Matrix *gb, const Matrix *mchange, 
-	  const Matrix *syz);
 
   // S-pair control
   s_pair *new_var_pair(gb_elem *p, const int *lcm);
@@ -75,7 +73,7 @@ private:
   void compute_s_pair(s_pair *p);
   int gb_reduce(gbvector * &f, gbvector * &fsyz);
   int gb_geo_reduce(gbvector * &f, gbvector * &fsyz);
-  void gb_insert(gbvector *f, gbvector *fsyz, int ismin);
+  void gb_insert(gbvector *f, gbvector *fsyz, int minlevel);
   void inter_reduce(gb_elem *&gens);
 
   ComputationStatusCode computation_complete() const;
@@ -85,10 +83,6 @@ private:
   void resize(int nbits);
 
 public:
-  // Forcing a GB
-  GBinhom_comp(const Matrix *m, const Matrix *gb, const Matrix *mchange, 
-	  const Matrix *syz);
-
   // An honest GB computation
   GBinhom_comp(const Matrix *m, 
 	       int collect_syz, 

@@ -13,6 +13,8 @@ GBDeclared::GBDeclared(const Matrix *m0,
   set_status(COMP_DONE);
   const Ring *R = gb->get_ring();
   const PolynomialRing *P = R->cast_to_PolynomialRing();
+  GBRing *GR = P->get_gb_ring();
+  const Ring *K = GR->get_flattened_coefficients();
 
   const FreeModule *F = m0->rows();
   const FreeModule *Fsyz = change->rows();
@@ -24,13 +26,20 @@ GBDeclared::GBDeclared(const Matrix *m0,
   for (int i=0; i<gb->n_cols(); i++)
     {
       POLY g;
-      ring_elem result_denominator; // not used.
+      ring_elem denom1,denom2,u,v;
+
       g.f = P->translate_gbvector_from_vec(F, 
 					    gb->elem(i), 
-					    result_denominator);
+					    denom1);
       g.fsyz = P->translate_gbvector_from_vec(Fsyz, 
 					       change->elem(i), 
-					       result_denominator);
+					       denom2);
+
+      K->syzygy(denom1,denom2,u,v);
+      GR->gbvector_mult_by_coeff_to(g.f,u);
+      K->negate_to(v);
+      GR->gbvector_mult_by_coeff_to(g.fsyz,v);
+
       elems.push_back(g);
     }
   G->minimalize(elems);

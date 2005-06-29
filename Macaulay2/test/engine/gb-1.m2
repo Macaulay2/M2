@@ -62,3 +62,8 @@ R = ZZ/101[symbol x, symbol y, symbol z, MonomialOrder=>Lex]
 I = ideal(x*y-1, x^2-x, x^3-z-1)
 assert(gens gbi I == matrix{{z,y-1,x-1}})
 -------------------
+R = ZZ/101[symbol a .. symbol f]
+I = ideal((5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10-1)
+gbTrace = 3
+time gens gbi I;
+time gbi I;
