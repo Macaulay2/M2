@@ -24,6 +24,8 @@ isSubmodule = method(TypicalValue => Boolean)
 isSubmodule Thing := x -> false
 isSubmodule Module := M -> not M.?relations
 
+degreeLength Module := M -> degreeLength ring M
+
 isQuotientModule = method(TypicalValue => Boolean)
 isQuotientModule Thing := x -> false
 isQuotientModule Module := M -> not M.?generators
