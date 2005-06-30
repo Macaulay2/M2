@@ -286,6 +286,21 @@ public:
   ////////////////
   // Arithmetic //
   ////////////////
+  void find_reduction_coeffs(const FreeModule *F,
+			     const gbvector *f,
+			     const gbvector *g,
+			     ring_elem &u,
+			     ring_elem &v);
+  bool find_reduction_coeffs_ZZ(const FreeModule *F,
+				const gbvector *f,
+				const gbvector *g,
+				ring_elem &v);
+  void find_reduction_monomial(const FreeModule *F,
+			       const gbvector *f,
+			       const gbvector *g,
+			       int &comp,
+			       int *&monom); // there must be enough space here
+
   void gbvector_mult_by_term(const FreeModule *F,
 			     const FreeModule *Fsyz,
 			     ring_elem a, 

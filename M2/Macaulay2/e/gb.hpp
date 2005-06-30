@@ -107,7 +107,7 @@ private:
   RingElementOrNull *compute_hilbert_function() const;
   
   int next_degree();
-  int computation_is_complete() const;
+  ComputationStatusCode computation_is_complete() const;
 
   bool new_pairs_step();
   int s_pair_step();
@@ -116,8 +116,6 @@ private:
 
   GB_comp() {}
   virtual ~GB_comp();
-  // Performing the computation
-  int calc();
 
   // Adding generators
   void add_gens(int lo, int hi, const Matrix *m);

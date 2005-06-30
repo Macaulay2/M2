@@ -76,9 +76,14 @@ void GBinhom_comp::set_up(const Matrix *m,
   set_up0(m, csyz, nsyz, gb_weights);
 
   Fsyz = m->cols()->sub_space(n_comps_per_syz);  
+
+  minimal_gb = ReducedGB::create(originalR,F,Fsyz);
+  minimal_gb_valid = true;
+
   syz = MatrixConstructor(Fsyz, 0);
   n_syz = 0;
   add_gens(0, m->n_cols()-1, m);
+
 }
 
 void GBinhom_comp::inter_reduce(gb_elem *&/*gens*/)
@@ -552,7 +557,7 @@ int GBinhom_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 	  const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
 	  GR->reduce_lead_term_heap(F,Fsyz,
 				    lead, div_totalexp, // are these two needed
-				    result,fb,fsyzb,
+				    head.next,fb,fsyzb,
 				    g,0);
 	  count++;
 	}
@@ -561,7 +566,7 @@ int GBinhom_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 	  {
 	    GR->reduce_lead_term_heap(F,Fsyz,
 				      lead, div_totalexp,
-				      result,fb,fsyzb,
+				      head.next,fb,fsyzb,
 				      q->f,q->fsyz);
 	    count++;
 	  }
@@ -639,6 +644,7 @@ void GBinhom_comp::gb_insert(gbvector * f, gbvector * fsyz, int minlevel)
   find_pairs(p);
 
   // Insert into the Groebner basis
+  minimal_gb_valid = false;
   gb_elem *q = gbLarge;
   gb_elem *prevmin = gb;
   for (;;)
@@ -834,53 +840,32 @@ void GBinhom_comp::start_computation()
   set_status(is_done);
 }
 
-//--- Reduction --------------------------
-Matrix *GBinhom_comp::reduce(const Matrix *m, Matrix *&lift)
+/*******************************
+ ** Minimalization of the GB ***
+ *******************************/
+void GBinhom_comp::minimalize_gb()
 {
-  if (m->n_rows() != F->rank()) {
-       ERROR("expected matrices to have same number of rows");
-       return 0;
-  }
-  MatrixConstructor mat_red(m->rows(), m->cols(), 0);
-  MatrixConstructor mat_lift(Fsyz, 0);
-  for (int i=0; i<m->n_cols(); i++)
+  if (minimal_gb_valid) return;
+
+  std::vector<POLY, gc_allocator<POLY> > polys;
+
+  for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
     {
-      ring_elem denom;
-      gbvector * f = originalR->translate_gbvector_from_vec(F, (*m)[i], denom);
-      gbvector * fsyz = GR->gbvector_zero();
-
-      gb_reduce(f, fsyz);
-
-      vec fv = originalR->translate_gbvector_to_vec_denom(F, f, denom);
-      K->negate_to(denom);
-      vec fsyzv = originalR->translate_gbvector_to_vec_denom(Fsyz,fsyz, denom);
-      mat_red.set_column(i, fv);
-      mat_lift.append(fsyzv);
+      POLY g;
+      g.f = q->f;
+      g.fsyz = q->fsyz;
+      polys.push_back(g);
     }
-  lift = mat_lift.to_matrix();
-  return mat_red.to_matrix();
+
+  minimal_gb->minimalize(polys);
+  minimal_gb_valid = true;
 }
 
+//--- Reduction --------------------------
 const MatrixOrNull *GBinhom_comp::matrix_remainder(const Matrix *m)
 {
-  if (m->n_rows() != F->rank()) {
-       ERROR("expected matrices to have same number of rows");
-       return 0;
-  }
-  MatrixConstructor mat_red(m->rows(), m->cols(), 0);
-  for (int i=0; i<m->n_cols(); i++)
-    {
-      ring_elem denom;
-      gbvector * f = originalR->translate_gbvector_from_vec(F, (*m)[i], denom);
-      gbvector * fsyz = GR->gbvector_zero();
-
-      gb_reduce(f, fsyz);
-
-      vec fv = originalR->translate_gbvector_to_vec_denom(F, f, denom);
-      K->negate_to(denom);
-      mat_red.set_column(i, fv);
-    }
-  return mat_red.to_matrix();
+  minimalize_gb();
+  return minimal_gb->matrix_remainder(m);
 }
 
 void GBinhom_comp::matrix_lift(const Matrix *m,
@@ -888,54 +873,17 @@ void GBinhom_comp::matrix_lift(const Matrix *m,
 		 MatrixOrNull **result_quotient
 		 )
 {
-  if (m->n_rows() != F->rank()) {
-       ERROR("expected matrices to have same number of rows");
-       *result_remainder = 0;
-       *result_quotient = 0;
-       return;
-  }
-  MatrixConstructor mat_red(m->rows(), m->cols(), 0);
-  MatrixConstructor mat_lift(Fsyz, 0);
-  for (int i=0; i<m->n_cols(); i++)
-    {
-      ring_elem denom;
-      gbvector * f = originalR->translate_gbvector_from_vec(F, (*m)[i], denom);
-      gbvector * fsyz = GR->gbvector_zero();
-
-      gb_reduce(f, fsyz);
-
-      vec fv = originalR->translate_gbvector_to_vec_denom(F, f, denom);
-      K->negate_to(denom);
-      vec fsyzv = originalR->translate_gbvector_to_vec_denom(Fsyz,fsyz, denom);
-      mat_red.set_column(i, fv);
-      mat_lift.append(fsyzv);
-    }
-  *result_quotient = mat_lift.to_matrix();
-  *result_remainder = mat_red.to_matrix();
+  minimalize_gb();
+  return minimal_gb->matrix_lift(m, result_remainder, result_quotient);
 }
-
 
 int GBinhom_comp::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
   // does not reduce to zero.
 {
-  // Reduce each column of m one by one.
-  for (int i=0; i<m->n_cols(); i++)
-    {
-      ring_elem denom;
-      gbvector *f = originalR->translate_gbvector_from_vec(F,(*m)[i], denom);
-      K->remove(denom);
-      gbvector *fsyz = NULL;
-      gb_reduce(f, fsyz);
-      GR->gbvector_remove(fsyz);
-      if (f != NULL)
-	{
-	  GR->gbvector_remove(f);
-	  return i;
-	}
-    }
-  return -1;
+  minimalize_gb();
+  return minimal_gb->contains(m);
 }
 
 //--- Obtaining matrices as output -------
@@ -954,11 +902,6 @@ void GBinhom_comp::text_out(buffer &o)
   stats();
 }
 
-
-
-
-
-
 const MatrixOrNull *GBinhom_comp::get_mingens()
 {
   MatrixConstructor mat(F, 0);
@@ -968,32 +911,23 @@ const MatrixOrNull *GBinhom_comp::get_mingens()
   return mat.to_matrix();
 }
 
-const MatrixOrNull *GBinhom_comp::get_initial(int n)
+const MatrixOrNull *GBinhom_comp::get_initial(int nparts)
 {
-  MatrixConstructor mat(F, 0);
-  for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
-    {
-      gbvector *f = GR->gbvector_lead_term(n, F, q->f);
-      mat.append(originalR->translate_gbvector_to_vec(F,f));
-    }
-  return mat.to_matrix();
+  minimalize_gb();
+  return minimal_gb->get_initial(nparts);
 }
 
 const MatrixOrNull *GBinhom_comp::get_gb()
 {
-  fprintf(stderr, "-- done with GB -- ");
-  MatrixConstructor mat(F, 0);
-  for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
-    mat.append(originalR->translate_gbvector_to_vec(F,q->f));
-  return mat.to_matrix();
+  minimalize_gb();
+  fprintf(stderr, "-- done with GB -- \n");
+  return minimal_gb->get_gb();
 }
 
 const MatrixOrNull *GBinhom_comp::get_change()
 {
-  MatrixConstructor mat(Fsyz, 0);
-  for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
-    mat.append(originalR->translate_gbvector_to_vec(Fsyz,q->fsyz));
-  return mat.to_matrix();
+  minimalize_gb();
+  return minimal_gb->get_change();
 }
 
 const MatrixOrNull *GBinhom_comp::get_syzygies()

@@ -69,9 +69,10 @@ gbGetSuitable := (f,type) -> (
 
 gb = method( TypicalValue => GroebnerBasis, Options => gbDefaults )
 
-strategyCodes := new HashTable from {			    -- new: ok
-     Sort => 16,
-     LongPolynomial => 8
+strategyCodes := new HashTable from { -- must match values in e/engine.h
+     LongPolynomial => 1,
+     Sort => 2,
+     UseHilbertFunction => 4
      }
 
 processStrategy := (v) -> (
@@ -85,6 +86,7 @@ processAlgorithm := (a) -> (
      else if a === Inhomogeneous then 2
      else if a === LinearAlgebra or a === Faugere then 3
      else if a === Sugarless then 4
+     else if a === Homogeneous2 then 5
      else error ("unknown algorithm encountered"))
 
 gb Ideal := GroebnerBasis => options -> (I) -> gb ( module I, options )

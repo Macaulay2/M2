@@ -1,10 +1,16 @@
 -- Easy GB computations
 
+gbi = gb
+syzi = syz
+
 gbi = (m) -> gb(m, Algorithm=>Homogeneous)
 gbi = (m) -> gb(m, Algorithm=>Inhomogeneous)
 
 gbi = (m) -> gb(m, Algorithm=>Sugarless)
 syzi = (m) -> syz(m, Algorithm=>Sugarless)
+
+gbi = (m) -> gb(m, Algorithm=>Homogeneous2)
+syzi = (m) -> syz(m, Algorithm=>Homogeneous2)
 
 --gbi = (m) -> gb(m, Algorithm=>Faugere)
 
@@ -67,3 +73,16 @@ I = ideal((5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10-1)
 gbTrace = 3
 time gens gbi I;
 time gbi I;
+------------------
+R = QQ[symbol a .. symbol f]
+I = ideal((5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10-1)
+gbTrace = 3
+time gens gbi I;
+time gbi I;
+-----------------
+R = ZZ[symbol a .. symbol f]
+I = ideal((5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10-1)
+gbTrace = 3
+time gens gbi I;
+time gbi I;
+

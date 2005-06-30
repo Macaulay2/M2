@@ -418,7 +418,7 @@ void gb2_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 	  const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
 	  GR->reduce_lead_term_heap(F,Fsyz,
 				    lead, div_totalexp, // are these two needed
-				    result,fb,fsyzb,
+				    head.next,fb,fsyzb,
 				    g,0);
 	  count++;
 	}
@@ -428,7 +428,7 @@ void gb2_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 	    gb_elem *q = reinterpret_cast<gb_elem *>(b->basis_ptr());
 	    GR->reduce_lead_term_heap(F,Fsyz,
 				      lead, div_totalexp,
-				      result,fb,fsyzb,
+				      head.next,fb,fsyzb,
 				      q->f,q->fsyz);
 	  count++;
 	  }

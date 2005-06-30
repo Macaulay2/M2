@@ -43,6 +43,7 @@ exportMutable (
 	)
 
 export (
+     	symbol Homogeneous2,
         symbol Sugarless,
      	symbol Faugere,
         symbol LU,
