@@ -7,6 +7,7 @@
 #include "polyring.hpp"
 #include "comp.hpp"
 #include "comp_gb.hpp"
+#include "reducedgb.hpp"
 
 #include "spair.hpp"
 #include "matrixcon.hpp"
@@ -31,6 +32,9 @@ private:
 				// This is a list with a dummy head.
 
   gb_elem *gbLarge;
+
+  ReducedGB *minimal_gb;
+  bool minimal_gb_valid;
 
   array<MonomialIdeal *> monideals; // baggage for each is 'gb_elem *'
                               // This is the 'large' GB
@@ -82,6 +86,7 @@ private:
 
   void resize(int nbits);
 
+  void minimalize_gb();
 public:
   // An honest GB computation
   GBinhom_comp(const Matrix *m, 

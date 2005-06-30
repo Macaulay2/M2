@@ -112,33 +112,6 @@ void GB_comp::initialize(const Matrix *m,
     }
 }
 
-void GB_comp::initialize_forced(const Matrix *m, 
-				const Matrix *gb, 
-				const Matrix *mchange)
-{
-#warning "forced GB: need to set weightInfo_ for remainder?"
-  int csyz = false;
-  M2_arrayint do_we_need_something_non_null = 0;
-  initialize0(m, csyz, mchange->n_rows(), do_we_need_something_non_null);
-
-  _Fsyz = mchange->rows();
-
-  _state = GB_COMP_DONE;
-
-  for (int i=0; i<gb->n_cols(); i++)
-    {
-      if ((*gb)[i] == NULL) continue;
-      ring_elem denom1, denom2, u, v;
-      gbvector *f = originalR->translate_gbvector_from_vec(_F, (*gb)[i], denom1);
-      gbvector *fsyz = originalR->translate_gbvector_from_vec(_Fsyz, (*mchange)[i], denom2);
-      _K->syzygy(denom1,denom2,u,v);
-      _GR->gbvector_mult_by_coeff_to(f,u);
-      _K->negate_to(v);
-      _GR->gbvector_mult_by_coeff_to(fsyz,v);
-      gb_insert(f,fsyz,0);
-    }
-}
-
 GB_comp * GB_comp::create(const Matrix *m,
 			  M2_bool collect_syz,
 			  int n_rows_to_keep,
@@ -149,15 +122,6 @@ GB_comp * GB_comp::create(const Matrix *m,
 {
   GB_comp *result = new GB_comp;
   result->initialize(m, collect_syz, n_rows_to_keep, gb_weights, strategy);
-  return result;
-}
-
-GB_comp * GB_comp::create_forced(const Matrix *m, 
-				 const Matrix *gb, 
-				 const Matrix *mchange)
-{
-  GB_comp *result = new GB_comp;
-  result->initialize_forced(m, gb, mchange);
   return result;
 }
 
@@ -233,7 +197,6 @@ s_pair *GB_comp::new_gen(int i, gbvector *f, ring_elem denom)
     {
       if (!_GR->gbvector_is_zero(fsyz))
 	{
-	  //vec fsyzvec = _GR->gbvector_to_vec(_Fsyz,fsyz);
 	  _syz.append(fsyz);
 	  _n_syz++;
 	}
@@ -330,7 +293,6 @@ void GB_comp::find_pairs(gb_elem *p)
 
   // Add in syzygies arising from a base ring
 
-#warning "put back quotient ring stuff here"
   if (originalR->is_quotient_ring())
     {
       for (int i=0; i<originalR->n_quotients(); i++)
@@ -502,7 +464,6 @@ void GB_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
 }
 
 void GB_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
-  // BUG BUG: this assumes that every gb element is MONIC!!
 {
   gbvector head;
   gbvector *result = &head;
@@ -521,14 +482,13 @@ void GB_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
     {
       Bag *b;
       _GR->gbvector_get_lead_exponents(_F, lead, div_totalexp);
-#warning "put back quotient ring stuff"
       if (originalR->is_quotient_ring() 
 	  && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
 	{
 	  const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
 	  _GR->reduce_lead_term_heap(_F,_Fsyz,
 				    lead, div_totalexp, // are these two needed
-				    result,fb,fsyzb,
+				    head.next,fb,fsyzb,
 				    g,0);
 	  count++;
 	}
@@ -538,7 +498,7 @@ void GB_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 	  gb_elem *q = reinterpret_cast<gb_elem *>(b->basis_ptr());
 	  _GR->reduce_lead_term_heap(_F,_Fsyz,
 				    lead, div_totalexp,
-				    result,fb,fsyzb,
+				    head.next,fb,fsyzb,
 				    q->f,q->fsyz);
 	  count++;
 	}
@@ -768,7 +728,7 @@ bool GB_comp::new_pairs_step()
 
 //---- Completion testing -----------------------------
 
-int GB_comp::computation_is_complete() const
+ComputationStatusCode GB_comp::computation_is_complete() const
 {
   // This handles everything but _Stop.always, _Stop.degree_limit
   if (_state == GB_COMP_DONE)
@@ -793,40 +753,6 @@ int GB_comp::computation_is_complete() const
     }
   return COMP_COMPUTING;
 }
-
-#if 0
-int GB_comp::computation_complete(const int * /* stop_degree */,
-				  int stop_gb, 
-				  int stop_syz, 
-				  int stop_pairs,
-				  int /* stop_codim */,
-				  int stop_min_gens,
-				  int stop_subring)
-     // Test whether the current computation is done.
-     // Return COMP_DONE_DEGREE_LIMIT, COMP_DONE, COMP_DONE_GB_LIMIT, COMP_DONE_SYZ_LIMIT,
-     // COMP_DONE_PAIR_LIMIT, COMP_DONE_CODIM, COMP_DONE_MIN_GENS, or
-     // (if not done) COMP_COMPUTING.
-{
-  if (_state == GB_COMP_DONE) 
-    {
-#if 0
-      if (stop_degree != NULL && _n_pairs_computed != n_pairs)
-	{
-	  _state = GB_COMP_NEWDEGREE;
-	  return COMP_DONE_DEGREE_LIMIT;
-	}
-#endif
-      return COMP_DONE;
-    }
-  if (stop_gb > 0 && _n_gb >= stop_gb) return COMP_DONE_GB_LIMIT;
-  if (stop_syz > 0 && _syz->n_cols() >= stop_syz) return COMP_DONE_SYZ_LIMIT;
-  if (stop_pairs > 0 && _n_pairs_computed >= stop_pairs) return COMP_DONE_PAIR_LIMIT;
-  //if (stop_codim > 0 && ...) return COMP_DONE_CODIM;
-  if (stop_min_gens && _n_gens_left == 0) return COMP_DONE_MIN_GENS;
-  if (stop_subring > 0 && _n_subring >= stop_subring) return COMP_DONE_SUBRING_LIMIT;
-  return COMP_COMPUTING;
-}
-#endif
 
 int GB_comp::next_degree()
 {
@@ -861,24 +787,9 @@ RingElementOrNull * GB_comp::compute_hilbert_function() const
 
 //---- state machine (roughly) for the computation ----
 
-int GB_comp::calc()
+void GB_comp::start_computation()
 {
-#if 0
-  if (stop.length() != 7) 
-    {
-      ERROR("inappropriate stop conditions for GB computation");
-      return COMP_ERROR;
-    }
-  const int *stop_degree = deg;
-  int stop_gb = stop[0]; //ngb
-  int stop_syz = stop[1]; //nsyz
-  int stop_pairs = stop[2]; //npairs
-  int stop_codim = stop[3]; //cod
-  int stop_min_gens = stop[4]; //do_min
-  int stop_subring = stop[5]; //#elems in (first) subring
-#endif
-
-  int is_done = COMP_COMPUTING;
+  ComputationStatusCode is_done = COMP_COMPUTING;
   
   for (;;)
     {
@@ -1034,70 +945,11 @@ int GB_comp::calc()
       o << "Number of reductions        = " << _n_reductions << newline;
       emit(o.str());
     }
-  return is_done;
+  set_status(is_done);
 }
-
-void GB_comp::start_computation()
-{
-  calc();
-}
-//--- Reduction --------------------------
-#if 0
-bool GB_comp::is_equal(const gb_comp *q)
-{
-  if (kind() != q->kind()) return false;
-  GB_comp *that = (GB_comp *) q;
-  if (this->_F->rank() != that->_F->rank()) return false;
-
-  // Loop through every GB element: in each monideal[i]->mi_search
-  for (int i=0; i<_F->rank(); i++)
-    {
-      Index<MonomialIdeal> j1 = this->_monideals[i]->mi_search->first();
-      Index<MonomialIdeal> j2 = that->_monideals[i]->mi_search->first();
-      for (;j1.valid() && j2.valid();j1++, j2++)
-	{
-	  gb_elem *f1 = (gb_elem *) (*this->_monideals[i]->mi_search)[j1]->basis_ptr();
-	  gb_elem *f2 = (gb_elem *) (*that->_monideals[i]->mi_search)[j2]->basis_ptr();
-	  if (!_GR->gbvector_is_equal(f1->f,f2->f))
-	    return false;
-	}
-      if (j1.valid() || j2.valid())
-	return false;
-    }
-  return true;
-}
-#endif
-#if 0
-Vector *GB_comp::reduce(const Vector *v, Vector *&lift)
-{
-  if (!v->free_of()->is_equal(_F))
-    {
-      ERROR("reduce: vector is in incorrect free module");
-      return 0;
-    }
-  ring_elem denom;
-  gbvector *f = _GR->gbvector_from_vec(_F, v->get_value(), denom);
-  gbvector *fsyz = NULL;
-
-  gb_reduce(f, fsyz);
-
-  vec fv = _GR->gbvector_to_vec_denom(_F, f, denom);
-  _K->negate_to(denom);
-  vec fsyzv = _GR->gbvector_to_vec_denom(_Fsyz,fsyz, denom);
-
-  lift = Vector::make_raw(_Fsyz, fsyzv);
-  return Vector::make_raw(_F, fv);
-}
-#endif
 
 //--- Obtaining matrices as output -------
 
-#if 0
-Matrix *GB_comp::syz_matrix()
-{
-  return _syz;
-}
-#endif
 void GB_comp::debug_out(s_pair *q) const
 {
   if (q == NULL) return;
@@ -1132,11 +984,11 @@ ComputationOrNull *GB_comp::set_hilbert_function(const RingElement *hf)
 const MatrixOrNull *GB_comp::get_gb()
 {
   start_computation();
-  MatrixConstructor mat(_F, _gb.length());
+  MatrixConstructor mat(_F, 0);
   for (int i=0; i<_gb.length(); i++)
     {
       vec v = originalR->translate_gbvector_to_vec(_F,_gb[i]->f);
-      mat.set_column(i,v);
+      mat.append(v);
     }
   return mat.to_matrix();
   // TODO NOW sort it, and auto-reduce it
@@ -1155,29 +1007,29 @@ const MatrixOrNull *GB_comp::get_mingens()
 const MatrixOrNull *GB_comp::get_change()
 {
   start_computation();
-  MatrixConstructor mat(_Fsyz, _gb.length());
+  MatrixConstructor mat(_Fsyz, 0);
   for (int i=0; i<_gb.length(); i++)
-    mat.set_column(i,originalR->translate_gbvector_to_vec(_Fsyz,_gb[i]->fsyz));
+    mat.append(originalR->translate_gbvector_to_vec(_Fsyz,_gb[i]->fsyz));
   return mat.to_matrix();
 }
 
 const MatrixOrNull *GB_comp::get_syzygies()
 {
   start_computation();
-  MatrixConstructor mat(_Fsyz, _syz.length());
+  MatrixConstructor mat(_Fsyz, 0);
   for (int i=0; i<_syz.length(); i++)
-    mat.set_column(i,originalR->translate_gbvector_to_vec(_Fsyz,_syz[i]));
+    mat.append(originalR->translate_gbvector_to_vec(_Fsyz,_syz[i]));
   return mat.to_matrix();
  }
 
 const MatrixOrNull *GB_comp::get_initial(int nparts)
 {
   start_computation();
-  MatrixConstructor mat(_Fsyz, _gb.length());
+  MatrixConstructor mat(_Fsyz, 0);
   for (int i=0; i<_gb.length(); i++)
     {
       gbvector *f = _GR->gbvector_lead_term(nparts, _F, _gb[i]->f);
-      mat.set_column(i,originalR->translate_gbvector_to_vec(_F,f));
+      mat.append(originalR->translate_gbvector_to_vec(_F,f));
     }
   // TODO: sort this list.  This sort order will affect:
   //  get_matrix, get_change, and of course this one.

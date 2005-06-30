@@ -6,7 +6,7 @@ I = ideal( x_0*x_1*x_2, x_1*x_2*x_3, x_2*x_3*x_4, x_3*x_4*x_5, x_4*x_5*x_0 )
 S = R/I
 k = coker vars S
 m = product(numgens R, i -> R_i)
-Tor_2(k,k)				  -- this used to crash
+Tor_2(k,k) -- this used to crash
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test arrange.out"
 -- End:
