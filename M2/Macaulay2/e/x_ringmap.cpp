@@ -13,9 +13,9 @@ const M2_string IM2_RingMap_to_string(const RingMap *F)
   return o.to_string();
 }
 
-const unsigned long int IM2_RingMap_hash(const RingMap *F); /* TODO */
+unsigned long int IM2_RingMap_hash(const RingMap *F); /* TODO */
 
-const M2_bool IM2_RingMap_is_equal(const RingMap *f, const RingMap *g)
+M2_bool IM2_RingMap_is_equal(const RingMap *f, const RingMap *g)
 {
   return f->is_equal(g);
 }

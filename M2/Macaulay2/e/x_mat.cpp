@@ -41,7 +41,7 @@ const M2_string IM2_Matrix_to_string(const Matrix *M)
   return o.to_string();
 }
 
-int IM2_Matrix_hash(const Matrix *M)
+unsigned long IM2_Matrix_hash(const Matrix *M)
 {
   return M->get_hash_value();
 }
