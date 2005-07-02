@@ -629,7 +629,7 @@ extern "C" {
   IM2_FreeModule_to_string(
           const FreeModule *F); /* drg: connected */
 
-  const unsigned long int 
+  unsigned long int 
   IM2_FreeModule_hash(
           const FreeModule *F); /* TODO */ /* drg: waiting, returning 0 */
 
@@ -761,7 +761,7 @@ extern "C" {
 
   const M2_string IM2_Matrix_to_string(const Matrix *M); /* drg: connected */
 
-  int IM2_Matrix_hash(const Matrix *M); /* drg: connected to "hash", but it always returns 0, sigh */
+  unsigned long IM2_Matrix_hash(const Matrix *M); /* drg: connected to "hash", but it always returns 0, sigh */
 
   const RingElementOrNull * IM2_Matrix_get_entry(const Matrix *M, int r, int c); /* drg: connected rawMatrixEntry, OK*/
 
@@ -1085,9 +1085,9 @@ extern "C" {
 
   const M2_string IM2_RingMap_to_string(const RingMap *F); /* drg: connected */
 
-  const unsigned long int IM2_RingMap_hash(const RingMap *F); /* TODO */ /* drg: waiting, returning 0 */
+  unsigned long int IM2_RingMap_hash(const RingMap *F); /* TODO */ /* drg: waiting, returning 0 */
 
-  const M2_bool IM2_RingMap_is_equal(const RingMap*, const RingMap*); /* drg: connected === */
+  M2_bool IM2_RingMap_is_equal(const RingMap*, const RingMap*); /* drg: connected === */
 
   const RingMap * IM2_RingMap_make(const Matrix *M, const Ring *base); /* TODO */
 
@@ -1235,9 +1235,9 @@ extern "C" {
   /* Return the dot product of columns c1 and c2 of the matrix M.  If either c1 or c2 is
      out of range, 0 is returned. */
 
-  const M2_bool IM2_MutableMatrix_is_zero(const MutableMatrixXXX *M); /* drg: connected rawIsZero, OK */
+  M2_bool IM2_MutableMatrix_is_zero(const MutableMatrixXXX *M); /* drg: connected rawIsZero, OK */
 
-  const M2_bool IM2_MutableMatrix_is_equal(const MutableMatrixXXX *M, 
+  M2_bool IM2_MutableMatrix_is_equal(const MutableMatrixXXX *M, 
 					   const MutableMatrixXXX *N); /* drg: connected to rawIsEqual for use with ==, not connected to '===', OK */
   /* This checks that the entries of M,N are the same */
 
@@ -1500,7 +1500,7 @@ enum gbTraceValues
 
   const M2_string IM2_GB_to_string(Computation *C); /* drg: connected, in actors4.d */
 
-  int IM2_GB_hash(const Computation *C); /* drg: connected, in basic.d */
+  unsigned long IM2_GB_hash(const Computation *C); /* drg: connected, in basic.d */
 
   extern int gbTrace;
 

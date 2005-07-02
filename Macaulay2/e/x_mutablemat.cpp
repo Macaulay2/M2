@@ -346,12 +346,12 @@ const RingElement * IM2_Matrix_dot_product(const MutableMatrixXXX *M, int c1, in
   return RingElement::make_raw(M->get_ring(), a);
 }
 
-const M2_bool IM2_MutableMatrix_is_zero(const MutableMatrixXXX *M)
+M2_bool IM2_MutableMatrix_is_zero(const MutableMatrixXXX *M)
 {
   return M->is_zero();
 }
 
-const M2_bool IM2_MutableMatrix_is_equal(const MutableMatrixXXX *M, 
+M2_bool IM2_MutableMatrix_is_equal(const MutableMatrixXXX *M, 
 					 const MutableMatrixXXX *N)
 /* This checks that the entries of M,N are the same */
 {

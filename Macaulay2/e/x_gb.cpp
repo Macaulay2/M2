@@ -286,7 +286,7 @@ IM2_GB_to_string(Computation *C)
   return o.to_string();
 }
 
-int IM2_GB_hash(const Computation *C)
+unsigned long IM2_GB_hash(const Computation *C)
 {
   return C->get_hash_value();
 }
