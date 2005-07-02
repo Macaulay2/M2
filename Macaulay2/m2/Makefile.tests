@@ -5,10 +5,9 @@ include ../../../include/config.Makefile
 
 .PHONY : all
 
+ifeq "$(DUMPDATA)" "yes"
 ARGS := -q -e 'path=join(path,{"../","$(srcdir)/"})' -e 'errorDepth = 0' --silent
-
 all :: ../../$(DUMPDATAFILE)
-
 else
 ifeq "$(CC)" "cl"
 ## work around weirdness in the Microsoft runtime startup - it eliminates backslashes
@@ -20,7 +19,6 @@ ARGS := -q --silent \
 		-e 'errorDepth = 0'
 endif
 endif
-
 
 %.okay : %.m2
 	@ echo testing $<

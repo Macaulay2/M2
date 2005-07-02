@@ -23,7 +23,7 @@ ARGS += -e 'errorDepth=0'
 
 %.out : %.m2
 	@ echo testing $<
-	$(LIMIT); \
+	@ $(LIMIT); \
 		if (echo 'input "$<"'; echo exit 0) | \
 		   time $(DOTS)/bin/M2 $(ARGS) >$*.errors 2>&1 ; \
 		then mv $*.errors $@ ; \

@@ -1,5 +1,4 @@
 assert = x -> if not x then error "assertion failed "
-assert ( prefixDirectory =!= null )
 
 -- an error here would mean a symbol got stored in the wrong bucket
 scan(globalDictionaries, d -> scan(pairs d, (nam,sym) -> assert ( d#nam === sym ) ) )
