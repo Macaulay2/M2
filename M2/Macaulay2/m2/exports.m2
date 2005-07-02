@@ -43,6 +43,7 @@ exportMutable (
 	)
 
 export (
+     	symbol isConstant,
      	symbol Homogeneous2,
         symbol Sugarless,
      	symbol Faugere,

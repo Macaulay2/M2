@@ -102,11 +102,6 @@ endif
 
 $(htmldocdir) : ; install -d $@
 
-check:: test1
-test1 : test.m2 phase1
-	../bin/M2 -e 'errorDepth = 0' -q test.m2 -e '<< "--test succeeded" << endl' -e 'exit 0'
-	touch $@
-
 TMPDIR = tmp
 
 check:: $(TMPDIR) test2
@@ -122,7 +117,7 @@ test3:
 clean::; rm -f test3
 
 ifeq ($(OS),Linux)
-check:: test4
+# check:: test4
 test4: ../util/screen
 	echo 2+3 | ../util/screen ../bin/M2
 	touch $@

@@ -41,7 +41,14 @@ all justM2 ::; $(MAKE) -C c all
 ################################# e
 all check justM2 initialize ::; $(MAKE) -C e DEPENDS=no initialize
 justM2 ::; $(MAKE) -C e all
-all check ::; $(MAKE) -C e $@
+all ::; $(MAKE) -C e $@
+
+# check ::; $(MAKE) -C e $@
+check ::
+	@ echo "---###################################----"
+	@ echo "---#### disabled: make -C e check ####----"
+	@ echo "---###################################----"
+
 initialize distclean clean ::; $(MAKE) DEPENDS=no -C e $@
 ################################# dumpdata
 ifeq "$(DUMPDATA)" "yes"
