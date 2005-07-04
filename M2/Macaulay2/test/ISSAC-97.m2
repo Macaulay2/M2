@@ -24,7 +24,7 @@
  --
  --
 
-error "after re-implementation these computaitons consume a gigantic amount of memory!!!"
+error "after re-implementation these computations consume a gigantic amount of memory!!!"
 
 R = QQ[w,x,y,z,MonomialOrder => Lex]
 gbTrace = 3
