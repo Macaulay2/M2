@@ -70,16 +70,21 @@ optionSizes := hashTable {
      (GRevLex,16) => GRevLexSmall
      }
 fix := key -> if optionSizes#?(key,MonSize) then optionSizes#(key,MonSize) else key
-warn := key -> (
-     newkey := GroupRevLex;
-     stderr << "--warning: for rawMonomialOrdering, replacing monomial ordering " << key << " by " << newkey << endl;
-     newkey)
 optionInverses := hashTable {
      Lex => key -> GroupLex,
      RevLex => key -> GroupRevLex,
-     GRevLex => warn
+     GroupRevLex => key -> GroupRevLex,
+     GroupLex => key -> GroupLex
+--     GRevLex => key -> (
+--	  newkey := GroupRevLex;
+--	  stderr << "--warning: for rawMonomialOrdering, replacing monomial ordering " << key << " by " << newkey << endl;
+--	  newkey)
      }
-fix1 := key -> if invert and optionInverses#?key then optionInverses#key key else key
+fix1 := key -> (
+     if invert then (
+	  if not optionInverses#?key then error ("Inverses => true not compatible with ",toString key);
+	  optionInverses#key key)
+     else key)
 intOption := (key,n) -> (
      key = fix fix1 key;
      checkCount n;
@@ -87,7 +92,7 @@ intOption := (key,n) -> (
      key => n)
 ensurePositiveWeights := i -> if i <= 0 then 1 else i
 grevOption := (key,v) -> (
-     key = fix key;
+     key = fix fix1 key;
      if class v === ZZ then grevOption (key,ensurePositiveWeights \ getdegs(varcount, varcount+v-1))
      else if isListOfIntegers(v) then (
 	  scan(v, i -> if i <= 0 then error "expected positive weights");

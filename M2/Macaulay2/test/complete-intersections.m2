@@ -1,4 +1,4 @@
--- take from Avramov-Grayson chapter.
+-- taken from Avramov-Grayson chapter, and fixed to use more modern ordering.
 
 changeRing = H -> (
    S := ring H;
@@ -14,7 +14,7 @@ Ext(Module,Ring) := (M,k) -> (
    if ideal k != ideal vars B
    then error "expected the residue field of the module";
    changeRing Ext(M,coker vars B));
-T = ZZ[t,u,Inverses=>true];
+T = ZZ[t,u, MonomialOrder => RevLex, Inverses=>true];
 poincareSeries2 = M -> (
    B := ring M;
    k := B/ideal vars B;
@@ -35,9 +35,12 @@ k = B/(x,y,z);
 H = Ext(M,k);
 S = ring H;
 g = poincareSeries1 M
-inv = map(T,T,{t^-1,u^-1})
-expansion = (n,g) -> (inv value numerator g + t^-n)//(inv value denominator g)
+expansion = (n,g) -> (value numerator g + t^n)//(value denominator g)
+
 r = expansion(20,poincareSeries1 M)
+--                  2      3      4      5      6      7      8      9      10       11       12       13       14
+-- o18 = 3 + 2t + 4t  + 10t  + 15t  + 25t  + 32t  + 46t  + 55t  + 73t  + 84t   + 106t   + 119t   + 145t   + 160t
+
 m = 7
 rks1 = take (flatten entries last coefficients r, m)
 psi = map(K,B)
