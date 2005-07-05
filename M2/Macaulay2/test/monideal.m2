@@ -20,7 +20,7 @@ assert(borel1 == monomialIdeal matrix {{a^3, a^2*b, a*b^2, b^3, a^2*c, a*b*c, b^
 mi3 = borel monomialIdeal matrix {{d*e*f^2}}
 assert isBorel mi3
 assert(saturate(mi3, monomialIdeal matrix {{a,b,c,d,e}}) == monomialIdeal matrix {{a,b,c,d}})
-assert(minprimes mi2 == monomialIdeal matrix {{b*d*e, b*d*f, b*e*f, d*e*f}})
+assert(monomialIdeal independentSets mi2 == monomialIdeal matrix {{b*d*e, b*d*f, b*e*f, d*e*f}})
 
 assert(codim mi2 == 3)
 assert(poincare mi2 == 1 - T^2 - T^4 + T^6 - T^7 + T^9 + T^11 - T^13)
@@ -29,7 +29,6 @@ assert(poincare mi2 == poincare resolution cokernel generators mi2)
 -- primary decomposition of a monomial ideal.
 -- routines:
    -- topComponents I
-   -- minprimes I
    -- assprimes I
    -- primaryDecomposition I
 

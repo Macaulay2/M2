@@ -21,6 +21,11 @@ scan(q, l -> (
      -- << "h_(g*i+j,q*k+l)       = " << h_(g*i+j,q*k+l) << endl;
      assert( diff(m_(i,k),n_(j,l)) == h_(g*i+j,q*k+l) )
 )))))
+
+R = ZZ/101[x]
+m = matrix{{x}}
+source m
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test diff.out"
 -- End:

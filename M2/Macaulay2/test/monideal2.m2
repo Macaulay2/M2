@@ -54,7 +54,7 @@ J = dual(I, {3,4,1})
 assert ( J == monomialIdeal matrix {{x^3*y^2, x*y^4, x*z, y^2*z}} )
 K = dual J
 assert( K == monomialIdeal matrix {{x^3*y^3, x^3*z, x*y*z, y^3*z}} )
-dual dual J == J					    -- false
+dual dual J == J -- false
 
 -- example 4.3 in Miller's thesis
 R = QQ[a,b,c,d]
@@ -105,7 +105,7 @@ assert( setf {{1_R, {y}}, {x, {}}, {x*y, {}}} === setf S )
 R = QQ[a,b,c,d,e]
 K = monomialIdeal(b*c, a^3*d^2)
 S = standardPairs(K)
-assert( setf S == setf {{1_R, {a, b, e}}, {d, {a, b, e}}, {1_R, {c, d, e}}, 
+assert( setf S === setf {{1_R, {a, b, e}}, {d, {a, b, e}}, {1_R, {c, d, e}}, 
          {a, {c, d, e}}, {a^2, {c, d, e}}, {1_R, {b, d, e}}, 
          {a, {b, d, e}}, {a^2, {b, d, e}}, {1_R, {a, c, e}}, 
          {d, {a, c, e}}})

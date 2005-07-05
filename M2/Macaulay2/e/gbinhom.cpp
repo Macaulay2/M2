@@ -920,7 +920,7 @@ const MatrixOrNull *GBinhom_comp::get_initial(int nparts)
 const MatrixOrNull *GBinhom_comp::get_gb()
 {
   minimalize_gb();
-  fprintf(stderr, "-- done with GB -- \n");
+  //  fprintf(stderr, "-- done with GB -- \n");
   return minimal_gb->get_gb();
 }
 
