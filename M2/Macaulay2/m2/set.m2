@@ -38,6 +38,7 @@ toString Set := x -> (
 Set + Set := Set => (x,y) -> merge(x,y,(i,j)->i)
 Set ++ Set := Set => (x,y) -> applyKeys(x,i->(0,i)) + applyKeys(y,j->(1,j))
 Set ** Set := Set => (x,y) -> combine(x,y,identity,(i,j)->i,)
+Set == Set := Boolean => (x,y) -> x === y
 special := symbol special
 Set * Set := Set => (x,y) -> (
      if # x < # y 
