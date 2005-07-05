@@ -1876,10 +1876,16 @@ ComputationOrNull *gbA::set_hilbert_function(const RingElement *hf)
   //  -- if the computation has already been started, this will fail
   //     So probably an error should be given, and 0 returned in this case.
 
-  _hf_orig = hf;
-  _hf_diff = RingElement::make_raw(hf->get_ring(), ZERO_RINGELEM);
-  _use_hilb = true;
-  _hilb_new_elems = true;
+  // We may only use the Hilbert function if syzygies are not being collected
+  // since otherwise we will miss syzygies
+
+  if (!_collect_syz)
+    {
+      _hf_orig = hf;
+      _hf_diff = RingElement::make_raw(hf->get_ring(), ZERO_RINGELEM);
+      _use_hilb = true;
+      _hilb_new_elems = true;
+    }
 
   return this;
 }
