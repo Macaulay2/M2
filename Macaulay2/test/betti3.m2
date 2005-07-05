@@ -2,11 +2,13 @@ assert ( toString infinity === "infinity" )
 assert ( toString(-infinity) === "-infinity" )
 assert ( (min {} .. max {}) === () )
 assert ( (infinity .. infinity) === () )
-assert ( (-infinity .. -infinity) === () )n
+assert ( (-infinity .. -infinity) === () )
 if not (try ( -infinity .. infinity; false) else true) then error "oops"
 
 R = QQ[x]
 betti res R^0
+
+kk = QQ -- ??
 
 -- Date: Wed, 3 Mar 2004 21:28:06 -0800
 -- From: David Eisenbud <de@msri.org>
@@ -71,3 +73,7 @@ betti prune coker f
 --  Mathematical Sciences Research Institute    510-642-0143
 --  17 Gauss Way                                510-642-8609 FAX
 --  Berkeley CA 94720-5070                      
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test betti3.out"
+-- End:

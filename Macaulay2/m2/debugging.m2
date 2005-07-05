@@ -162,10 +162,6 @@ clearAll = Command (() -> (
 	  )
      )
 
-debug = x -> (
-     if debugLevel > 10 then error "debug x";
-     x)
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

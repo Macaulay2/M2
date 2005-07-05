@@ -26,7 +26,11 @@ f = x * (x^2 + 1)
 g = (x^3+1) * (x^2 + 1)
 assert(numerator (f/g) == x)
 
--- we should have canonical forms for fractions
+-- We should have canonical forms for fractions
+-- This is more a wish than a bug report
+-- It depends on having a coefficient ring where the orbits of the group of units acting on the ring
+--    have canonical representative.  E.g., if the coefficient ring is a field, we can make the coefficient
+--    of the leading term be 1.
 assert(numerator((-f)/(-g)) == numerator(f/g))
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test frac.out"
