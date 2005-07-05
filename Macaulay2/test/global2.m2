@@ -11,3 +11,8 @@ r = rank source basis(n, HF)
 s = rank source basis(n, HG)
 t = rank source basis(n, HFG)
 assert(r+s == t);
+
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test global2.out"
+-- End:

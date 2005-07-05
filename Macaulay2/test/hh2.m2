@@ -8,5 +8,5 @@ q = hilbertSeries H
 h = hilbertFunction(0,H)
 assert( h == 1 )
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test hh.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test hh2.out"
 -- End:
