@@ -355,6 +355,8 @@ length VisibleList := s -> #s
 
 match(String,String) := X -> 0 < length matches X
 
+Nothing == Nothing := Boolean => (x,y) -> x === y			    -- actually, x and y must both be "null"!
+
 -- installation of assignment methods
 installAssignmentMethod = method()
 installAssignmentMethod(Symbol,HashTable,HashTable,Option) := 
