@@ -15,6 +15,10 @@ assert( substitute ( c , {x => 0_R} ) == c )
 kk = GF(25)
 R = kk[x]
 c = promote(1/2,R)
+debug Macaulay2Core
+F = sub2(ring c,{x=>0})
+F c
+F c == c
 c0 = substitute(c, {x => 0})
 c1 = substitute(c, {x => 0_kk})
 c2 = substitute(c, {x => 0_R})
