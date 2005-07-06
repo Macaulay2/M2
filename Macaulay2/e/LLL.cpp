@@ -341,10 +341,11 @@ int LLLoperations::doLLL(MutableMatrixXXX *A,
   return COMP_INTERRUPTED;
 }
 
-bool LLLoperations::LLL(MutableMatrixXXX *A, const M2_Rational threshold)
+bool LLLoperations::LLL(MutableMatrixXXX *A, 
+			MutableMatrixXXX *Achange, // can be NULL
+			const M2_Rational threshold)
 {
   MutableMatrixXXX *LLLstate;
-  MutableMatrixXXX *Achange = 0;
   if (!initializeLLL(A,threshold,LLLstate))
     return false;
   int ret = doLLL(A,Achange,LLLstate);

@@ -15,7 +15,8 @@ extern ZZ ntl_ZZ_from_mpz(mpz_t a);
 void dntl_matZZ(const mat_ZZ *A);
 void dntl_ZZ(const ZZ *f);
 mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrixXXX *M);
-bool ntl_LLL(MutableMatrixXXX *M, long a, long b, int strategy);
+bool ntl_LLL(MutableMatrixXXX *M, MutableMatrixXXX *U, long a, long b, int strategy);
+  // U can be NULL.  If it is not, it will be set to the transform matrix
   // the threshold is a/b.  strategy is explained for rawLLL in engine.h
 #endif
 

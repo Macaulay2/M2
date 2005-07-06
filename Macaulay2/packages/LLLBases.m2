@@ -67,26 +67,38 @@ LLL Matrix := options -> (M) -> (
      -- First check that the base ring is ZZ
      -- Check that the threshold is in range
      m := mutableMatrix M;
-     if options.ChangeOfBasisMatrix then
-          setColumnChange(m, iden(ring m, numcols m));
+     mchange := if options.ChangeOfBasisMatrix then
+     	          iden(ring m, numcols m)
+                else
+		  null;
      strat := options.Strategy;
      thresh := if options.Threshold === null 
      then (if strat >= 3 then 99/100 else 3/4)
      else options.Threshold;
-     result := if strat =!= 1 then (
-	  rawLLL(m.RawMutableMatrix, thresh, strat);
-	  matrix map(ZZ,m.RawMutableMatrix)
-	  )
+     if mchange === null then (
+     	  result := if strat =!= 1 then (
+	       rawLLL(m.RawMutableMatrix, thresh, strat);
+	       matrix map(ZZ,m.RawMutableMatrix)
+	       )
+     	  else (
+	       C := newLLLComputation(m,null,thresh);
+	       doLLL(C, options.Limit);
+	       matrix C.A
+     	       );
+	  result)
      else (
-	  C := newLLLComputation(m,thresh);
-	  doLLL(C, options.Limit);
-	  matrix C.A
-     	  );
---     if options.ChangeOfBasisMatrix then
---         M.cache#{LLL,options.Threshold} = {result, matrix getColumnChange m}
---     else
---         M.cache#{LLL,options.Threshold} = result;
-     result	 
+	  mchange = iden(ring m, numcols m);
+     	  result := if strat =!= 1 then (
+	       rawLLL(m.RawMutableMatrix, mchange, thresh, strat);
+	       (matrix map(ZZ,m.RawMutableMatrix),
+		    matrix map(ZZ,mchange.RawMutableMatrix))
+	       )
+     	  else (
+	       C := newLLLComputation(m,mchange,thresh);
+	       doLLL(C, options.Limit);
+	       matrix C.A
+     	       );
+	  result)
      )
 
 --LLL MutableMatrix := options -> (M) -> (
@@ -104,7 +116,7 @@ if LLLComputation === symbol LLLComputation
 then LLLComputation = new Type of MutableHashTable
 
 
-newLLLComputation = (m, threshold) -> (
+newLLLComputation = (m, mchange,threshold) -> (
      -- struct {
      --   SparseMutableMatrix A;
      --   SparseMutableMatrix changeOfBasis;
@@ -118,7 +130,7 @@ newLLLComputation = (m, threshold) -> (
      result := new LLLComputation;
      result.Engine = false;
      result.A = m;
-     result.changeOfBasis = getColumnChange m;
+     result.changeOfBasis = mchange;
      n := numcols result.A;
      setLLLthreshold(result,threshold);
      result.k = 2;
@@ -132,6 +144,7 @@ newLLLComputation = (m, threshold) -> (
 
 doLLL = (C,count) -> (
      A := C.A;
+     Achange := C.changeOfBasis;
      n := numcols A;
      lambda := C.lambda;
      D := C.D;
@@ -140,12 +153,16 @@ doLLL = (C,count) -> (
      REDI := (k,ell) -> if abs(2*lambda#(k,ell)) > D#ell then (
 	  q := (2*lambda#(k,ell) + D#ell) // (2*D#ell);
      	  caxy(A,-q,ell-1,k-1);
+	  if Achange =!= null then 
+	    caxy(Achange,-q,ell-1,k-1);
 	  << "[" << k-1 << " " << -q << " " << ell-1 << "]\n";
 	  lambda#(k,ell) = lambda#(k,ell) - q*D#ell;
 	  scan(1..ell-1, i-> lambda#(k,i) = lambda#(k,i) - q*lambda#(ell,i));
 	  );
      SWAPI := (k) -> (
 	  cflip(A,k-1,k-2);
+	  if Achange =!= null then 
+	    cflip(Achange,k-1,k-2);
 	  << "[flip " << k-1 << " " << k-2 << "]\n";
 	  if k > 2 then (
 	       scan(1..k-2, j->(tmp := lambda#(k,j); 
