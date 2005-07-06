@@ -330,7 +330,8 @@ void Ring::mult_vec_to(vec &v, const ring_elem r, bool opposite_mult) const
     }
   vecterm head;
   head.next = v;
-  for (vec p = &head; p->next != 0; p=p->next)
+  vec p = &head;
+  while (p->next != 0)
     {
       //old version: this->mult_to(p->next->coeff, a);
       ring_elem c;
@@ -344,8 +345,9 @@ void Ring::mult_vec_to(vec &v, const ring_elem r, bool opposite_mult) const
 	  vec tmp = p->next;
 	  p->next = tmp->next;
 	  remove_vec_node(tmp);
-	  if (p->next == 0) break;
 	}
+      else
+	p = p->next;
     }
   v = head.next;
 }
