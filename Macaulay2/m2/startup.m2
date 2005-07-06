@@ -407,7 +407,10 @@ if not noinitfile then (
      )
 
 if sourceHomeDirectory  =!= null then path = join(path, {sourceHomeDirectory|"m2/",sourceHomeDirectory|"packages/"})
-if buildHomeDirectory   =!= sourceHomeDirectory and buildHomeDirectory =!= null then path = join(path, {buildHomeDirectory|"m2/", buildHomeDirectory|"tutorial/final/"})
+if buildHomeDirectory   =!= null then (
+     path = join(path, {buildHomeDirectory|"tutorial/final/"});
+     if buildHomeDirectory =!= sourceHomeDirectory then path = join(path, {buildHomeDirectory|"m2/"})
+     )
 if prefixDirectory      =!= null then (
      path = join(path, {prefixDirectory | LAYOUT#"m2", prefixDirectory | LAYOUT#"datam2"});
      )
