@@ -111,9 +111,9 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      F.degreeLength = 0;
      F.char = p;
      F.frac = F;
-     F.generators = {};
-     F.generatorSymbols = {};
-     F.generatorExpressions = {};
+     F.generators = apply(generators S, a -> promote(a,F));
+     F.generatorSymbols = S.generatorSymbols;
+     F.generatorExpressions = S.generatorExpressions;
      baseName F := y -> (
 	  if F_0 == y then var else error "expected a generator"
 	  );
