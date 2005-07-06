@@ -26,7 +26,23 @@ net SchurRing := R -> (
      if ReverseDictionary#?R then toString ReverseDictionary#R
      else net expression R)
 
+degreeLength SchurRing := (RM) -> degreeLength monoid RM
 coefficientRing SchurRing := Ring => R -> last R.baseRings
+
+ck := i -> if i < 0 then error "expected decreasing row lengths" else i
+
+schur2monom = (a,Mgens) -> (
+     if # a === 0 then 1_M
+     else product(# a, i -> (Mgens#i) ^ (
+	       ck if i+1 < # a 
+	       then a#i - a#(i+1)
+	       else a#i)))
+
+rawmonom2schur = (m) -> (
+     t := new MutableHashTable;
+     apply(rawSparseListFormMonomial m, (x,e) -> scan(0 .. x, i -> if t#?i then t#i = t#i + e else t#i = e)); 
+     values t
+     )
 
 newSchur := (R,M,p) -> (
      if not (M.?Engine and M.Engine) 
@@ -71,12 +87,16 @@ newSchur := (R,M,p) -> (
      expression SR := f -> (
 	  (coeffs,monoms) -> sum(
 	       coeffs,monoms,
-	       (a,m) -> new Subscript from {p, (
-		    t := new MutableHashTable;
-		    apply(rawSparseListFormMonomial m, (x,e) -> scan(0 .. x, i -> if t#?i then t#i = t#i + e else t#i = e)); 
-		    toSequence values t
+	       (a,m) -> expression (if a == 1 then 1 else new R from a) *
+	          new Subscript from {p, (
+		    t1 := toSequence rawmonom2schur m;
+		    if #t1 === 1 then t1#0 else t1
 		    )})
 	  ) rawPairs(raw R, raw f);
+     listForm SR := (f) -> (
+     	  n := numgens SR;
+     	  (cc,mm) := rawPairs(raw R, raw f);
+     	  toList apply(cc, mm, (c,m) -> (rawmonom2schur m, new R from c)));
      SR.generators = apply(M.generators, m -> SR#(toString m) = SR#0 + m);
      scan(keys R,k -> if class k === String then SR#k = promote(R#k,SR));
      SR.use = x -> (
@@ -100,8 +120,6 @@ newSchur := (R,M,p) -> (
      SR
      )
 
-ck := i -> if i < 0 then error "expected decreasing row lengths" else i
-
 schurRing = method ()
 schurRing(Symbol,ZZ) := SchurRing => (p,n) -> (
      R := ZZ;
@@ -114,14 +132,10 @@ schurRing(Symbol,ZZ) := SchurRing => (p,n) -> (
      dim S := s -> rawSchurDimension raw s;
      Mgens := M.generators;
      methodTable#p = (p,a) -> (
-	  m := (
-	       if # a === 0 then 1_M
-	       else product(# a, i -> (Mgens#i) ^ (
-			 ck if i+1 < # a 
-			 then a#i - a#(i+1)
-			 else a#i)));
+	  m := schur2monom(a,Mgens);
 	  new S from rawTerm(S.RawRing, raw 1, m.RawMonomial));
      S)
+
 
 beginDocumentation()
 

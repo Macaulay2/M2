@@ -1,6 +1,7 @@
 k=GF(5,2,Variable=>a)
 R1=k[s,t]
 R2 = k[x,y,z,w]
+sub2(R2,{x=>a})
 assert( substitute(a*x-1,{x=>a}) == a^2 - 1 )
 f = map(R1,R2,{s^4,s^3*t-a*t^2*s^2,s*t^3,t^4})
 ker f
