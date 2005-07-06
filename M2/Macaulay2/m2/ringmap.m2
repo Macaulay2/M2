@@ -47,7 +47,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  r := numgens source m;
 	  if r === n 
 	  then (
-	       if numgens A > 0 then m = vars A ** R | m;
+	       if numgens A > 0 then m = m | vars A ** R;
 	       )
 	  else if r < n
 	  then error ("encountered values for ", toString r, " variables");
@@ -237,13 +237,13 @@ substitute(Matrix,ZZ) := Matrix => (m,i) -> (
      else error "expected integer to be zero"
      )
 
-sub2 := (R,v) -> (
+sub2 = (R,v) -> (
      m := generators R;
      A := R;
      while (
 	  A = try coefficientRing A;
 	  A =!= null
-	  ) do m = join(generators A, m);
+	  ) do m = join(m, generators A);
      h := hashTable apply(#m, i -> m#i => i);
      m = new MutableList from m;
      scan(v, opt -> (
