@@ -88,26 +88,18 @@ LLL Matrix := options -> (M) -> (
 	  result)
      else (
 	  mchange = iden(ring m, numcols m);
-     	  result := if strat =!= 1 then (
+     	  result = if strat =!= 1 then (
 	       rawLLL(m.RawMutableMatrix, mchange, thresh, strat);
 	       (matrix map(ZZ,m.RawMutableMatrix),
 		    matrix map(ZZ,mchange.RawMutableMatrix))
 	       )
      	  else (
-	       C := newLLLComputation(m,mchange,thresh);
+	       C = newLLLComputation(m,mchange,thresh);
 	       doLLL(C, options.Limit);
 	       matrix C.A
      	       );
 	  result)
      )
-
---LLL MutableMatrix := options -> (M) -> (
---     m := mutableMatrix M;
---     if options.ChangeOfBasisMatrix then 
---     	 setColumnChange(m, mutableIdentity(ZZ, numcols m));
---     rawLLL(m.RawMutableMatrix, options.Threshold);
---     m
---     )
 
 ----------------------------------
 -- LLL computations at top level--
@@ -304,8 +296,7 @@ newLLLKernelComputation = (m) -> (
      result := new LLLKernelComputation;
      result.A = mutableMatrix m;
      n := numcols result.A;
-     result.H = iden(ring m, n);
-     setColumnChange(result.A, result.H);
+     result.changeOfBasis = iden(ring m, n);
      result.k = 2;
      result.kmax = 1;
      result.D = new MutableList from toList (n+1:0);
@@ -323,6 +314,7 @@ newLLLKernelComputation = (m) -> (
 
 doKernelLLL = (C,count) -> (
      A := C.A;
+     U := C.changeOfBasis;
      D := C.D;
      lambda := C.lambda;
      F := C.F;
@@ -332,11 +324,13 @@ doKernelLLL = (C,count) -> (
      REDI := (k,ell) -> if abs(2*lambda#(k,ell)) > D#ell then (
 	  q := (2*lambda#(k,ell) + D#ell) // (2*D#ell);
 	  caxy(A,-q,ell-1,k-1);
+	  caxy(U,-q,ell-1,k-1);
 	  lambda#(k,ell) = lambda#(k,ell) - q*D#ell;
 	  scan(1..ell-1, i-> lambda#(k,i) = lambda#(k,i) - q*lambda#(ell,i));
 	  );
      SWAPK := (k) -> (
 	  cflip(A,k-1,k-2);
+	  cflip(U,k-1,k-2);
 	  if k > 2 then (
 	       scan(1..k-2, j->(tmp := lambda#(k,j); 
 		                       lambda#(k,j) = lambda#(k-1,j); 
@@ -434,15 +428,12 @@ LLLKernelOptions := Options => {
 kernelLLL = method LLLKernelOptions
 
 kernelLLL Matrix := options -> (M) -> (
-     if not M.cache.?kernelLLL then (
-	  M.cache.kernelLLL = newLLLKernelComputation(M);
-	  );
-     doKernelLLL(M.cache.kernelLLL, options.Limit);
-     C := M.cache.kernelLLL;
+     C := newLLLKernelComputation M;
+     doKernelLLL(C, options.Limit);
      r := 1;
      n := numcols C.A;
      while r <= n and not C.F#r do r=r+1;
-     (matrix C.H)_{0..r-2}
+     (matrix C.changeOfBasis)_{0..r-2}
      )
 
 ----------------
@@ -472,10 +463,8 @@ newLLLHermiteComputation = (m, threshold, hasChangeOfBasis) -> (
      result := new LLLHermiteComputation;
      result.A = mutableMatrix m;
      n := numcols result.A;
-     if hasChangeOfBasis then (
-         result.changeOfBasis = iden(ring m, n);
-	 setColumnChange(result.A, result.changeOfBasis);
-	 );
+     result.changeOfBasis = if hasChangeOfBasis then
+         iden(ring m, n) else null;
      setLLLthreshold(result,threshold);
      result.k = 2;
      result.kmax = 1;
@@ -488,6 +477,7 @@ newLLLHermiteComputation = (m, threshold, hasChangeOfBasis) -> (
 
 doHermiteLLL = (C,count) -> (
      A := C.A;
+     U := C.changeOfBasis;
      m := numcols A;
      lambda := C.lambda;
      D := C.D;
@@ -521,7 +511,9 @@ doHermiteLLL = (C,count) -> (
 	    a1 = getEntry(A,row1,i-1);
 	    if a1 < 0 then (
 	      MINUS(i);
-	      cscale(A,-1,i-1)))
+	      cscale(A,-1,i-1);
+	      if U =!= null then cscale(U,-1,i-1);
+	      ))
           else 
 	    row1 = n+1;
 	  row2 = leadRow(A,k-1);
@@ -533,12 +525,14 @@ doHermiteLLL = (C,count) -> (
 	       else 0;
 	  if q =!= 0 then (
 	       caxy(A,-q,i-1,k-1);
+	       if U =!= null then caxy(U,-q,i-1,k-1);
 	       lambda#(k,i) = lambda#(k,i) - q * D#i;
 	       scan(1..i-1, j -> 
 		    lambda#(k,j) = lambda#(k,j) - q * lambda#(i,j)));
 	  );
      SWAP2 := (k) -> (
 	  cflip(A,k-1,k-2);
+	  if U =!= null then cflip(U,k-1,k-2);
 	  scan(1..k-2, j-> (
 	      tmp := lambda#(k,j);
 	      lambda#(k,j) = lambda#(k-1,j);
@@ -577,7 +571,7 @@ doHermiteLLL = (C,count) -> (
 
 HermiteLLLoptions := Options => {
      Threshold => 3/4,
-     ChangeOfBasisMatrix => true,
+     ChangeOfBasisMatrix => false,
      Limit => -1
      }
 
@@ -586,11 +580,12 @@ hermiteLLL = method HermiteLLLoptions
 hermiteLLL Matrix := options -> (M) -> (
      -- Possible options: Threshold=>QQ, ChangeOfBasisMatrix,
      -- and for the specific computation: 
-     if not M.cache.?hermiteLLL then (
-	  M.cache.hermiteLLL = newLLLHermiteComputation(M,options.Threshold, options.ChangeOfBasisMatrix);
-	  );
-     doHermiteLLL(M.cache.hermiteLLL, options.Limit);
-     M.cache.hermiteLLL.A
+     C := newLLLHermiteComputation(M,options.Threshold, options.ChangeOfBasisMatrix);
+     doHermiteLLL(C, options.Limit);     
+     if options.ChangeOfBasisMatrix then
+       (matrix C.A, matrix C.changeOfBasis)
+     else
+       matrix C.A
      )
 
 ------------
@@ -607,9 +602,8 @@ gcdLLL = method gcdLLLoptions
 gcdLLL Matrix := options -> (M) -> (
      -- Possible options: Threshold=>QQ, ChangeOfBasisMatrix,
      -- and for the specific computation: 
-     hermiteLLL(M,options,ChangeOfBasisMatrix=>true);
-     m := M.cache.hermiteLLL.A;
-     (getEntry(m,0,numcols m-1), matrix getColumnChange m)
+     (m,u) := hermiteLLL(M,options,ChangeOfBasisMatrix=>true);
+     (getEntry(m,0,numcols m-1), matrix u)
      )
 
 -- Input: list of positive integers 's' of length m.
@@ -626,10 +620,10 @@ agcdLLL := (s,thresh) -> (
      alphaNumerator := numerator thresh;
      alphaDenominator := denominator thresh;
      m := #s;
-     B = iden(ZZ,m);
-     D = new MutableList from toList(m+1:1);
-     a = new MutableList from prepend(0,s);
-     lambda = new MutableHashTable;
+     B := iden(ZZ,m);
+     D := new MutableList from toList(m+1:1);
+     a := new MutableList from prepend(0,s);
+     lambda := new MutableHashTable;
      scan(2..m, i -> scan(1..i-1, j-> lambda#(i,j) = 0));
      -- subroutines
      RED := (k,i) -> (
@@ -658,7 +652,7 @@ agcdLLL := (s,thresh) -> (
 	      lambda#(i,k) = t//D#(k-1)));
           D#(k-1) = (D#(k-2) * D#k + lambda#(k,k-1)^2)//D#(k-1);
 	  );
-     k = 2;
+     k := 2;
      while k <= m do (
 	  RED(k,k-1);
 	  if a#(k-1) =!= 0 or (a#(k-1) === 0 and a#k === 0 and
@@ -1232,7 +1226,9 @@ TEST ///
                       -- BUT: quality of output was very much better...
     assert not isLLL m1   -- NO
     time LLL m1  -- .76 sec 44.9 seconds (front-end implementation), Quality of output is higher still
-    time LLL(m1, Engine=>false) -- 2.43 sec
+    time LLL(m1, Strategy=>1) -- 2.43 sec
+    time LLL(m1, Strategy=>2) -- 
+    time LLL(m1, Strategy=>3) -- 
 
     --time LLL m -- 12.27 sec takes too long for the 'check' command
 ///
@@ -1246,48 +1242,41 @@ TEST ///
 
     time m1 = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
     a = hermiteLLL m1
-    b = hermiteLLL(m1,ChangeOfBasisMatrix=>true) -- comes out in a different format than 'gb'
+    (b,c) = hermiteLLL(m1,ChangeOfBasisMatrix=>true) -- comes out in a different format than 'gb'
     assert(a == b)
-    c = matrix getColumnChange b
-    b = matrix b
     assert(m1*c == b)
 
     -- A simple one:
     m = matrix{{1,1,1,1},{0,1,2,3}}  
     mh = hermiteLLL m
-    mz = matrix getColumnChange mh 
-    assert(m * mz == matrix mh)
+    (mh1,mz) = hermiteLLL(m,ChangeOfBasisMatrix=>true)
+    assert(m * mz == mh)
 
     -- Test from Havas et al paper 1998:
     m = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
-    time mh = hermiteLLL m
-    mz = matrix getColumnChange mh
-    assert(m * mz == matrix mh)
+    time (mh,mz) = hermiteLLL(m, ChangeOfBasisMatrix=>true)
+    assert(m * mz == mh)
 
     -- Random entries
     m = matrix randomMutableMatrix(10,15,.9,5)
-    time mh = hermiteLLL m
-    mz = matrix getColumnChange mh
-    assert(m * mz == matrix mh)
+    time (mh,mz) = hermiteLLL(m, ChangeOfBasisMatrix=>true)
+    assert(m * mz == mh)
 
     -- Random entries
     m = matrix randomMutableMatrix(20,35,.9,5)
-    time mh = hermiteLLL m
-    mz = matrix getColumnChange mh
-    assert(m * mz == matrix mh)
+    time (mh,mz) = hermiteLLL(m, ChangeOfBasisMatrix=>true)
+    assert(m * mz == mh)
 
     -- Random entries
     m = matrix randomMutableMatrix(20,35,.1,10)
-    time mh = hermiteLLL m
-    mz = matrix getColumnChange mh
-    assert(m * mz == matrix mh)
+    time (mh,mz) = hermiteLLL(m, ChangeOfBasisMatrix=>true)
+    assert(m * mz == mh)
     det mz
     
     -- One that caused an error in an earlier version:
     m = matrix {{0, 0, 0, 2, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {-4, 0, 0, 0, 0, 2, 0, -1, 0, 0, -1, 0, 0, 0, 0}, {-4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -5}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -2, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0}}
-    time mh = hermiteLLL m
-    mz = matrix getColumnChange mh
-    assert(m * mz == matrix mh)
+    time (mh,mz) = hermiteLLL(m, ChangeOfBasisMatrix=>true)
+    assert(m * mz == mh)
 
 ///
 
