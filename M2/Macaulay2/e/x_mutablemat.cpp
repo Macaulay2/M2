@@ -466,6 +466,21 @@ M2_bool IM2_LLL(MutableMatrixXXX *M, const M2_Rational threshold, int strategy)
   return ntl_LLL(M,0,a,b,strategy);
 }
 
+M2_bool rawLLL(MutableMatrixXXX *M, 
+		MutableMatrixXXXOrNull *U,
+		const M2_Rational threshold, 
+		int strategy)
+{
+  if (strategy == 0)
+    {
+      return LLLoperations::LLL(M,U,threshold);
+    }
+
+  long a = mpz_get_si(mpq_numref(threshold));
+  long b = mpz_get_si(mpq_denref(threshold));
+  return ntl_LLL(M,U,a,b,strategy);
+}
+
 M2_bool IM2_SmithNormalForm(MutableMatrixXXX *M)
 {
 #warning "implement smith"
