@@ -2939,12 +2939,16 @@ setupfun("rawFFLU",rawFFLU);
 export rawLLL(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMutableMatrix do
-     when s.1 is threshold:Rational do     
-     when s.2 is strategy:Integer do possibleEngineError(
-	  Ccode(bool, "(M2_bool)IM2_LLL(", "(MutableMatrixXXX *)", M, ",", "(M2_Rational)", threshold, ",", toInt(strategy), ")"))
-     else WrongArg(2,"an integer")     
-     else WrongArg(1,"a rational number")
-     else WrongArg(0,"a mutable raw matrix")
+     when s.2 is threshold:Rational do     
+     when s.3 is strategy:Integer do 
+     when s.1 is U:RawMutableMatrix do
+     possibleEngineError(Ccode(bool, "(M2_bool)rawLLL(", "(MutableMatrixXXX *)", M, ",", "(MutableMatrixXXXOrNull *)", U, ",", "(M2_Rational)", threshold, ",", toInt(strategy), ")"))
+     else if s.1 == nullE then
+     possibleEngineError(Ccode(bool, "(M2_bool)rawLLL(", "(MutableMatrixXXX *)", M, ",", "(MutableMatrixXXXOrNull *)   0   ,", "(M2_Rational)", threshold, ",", toInt(strategy), ")"))
+     else WrongArg(2,"a mutable raw matrix or null")
+     else WrongArg(4,"an integer")     
+     else WrongArg(3,"a rational number")
+     else WrongArg(1,"a mutable raw matrix")
      else WrongNumArgs(3));
 setupfun("rawLLL",rawLLL);
 

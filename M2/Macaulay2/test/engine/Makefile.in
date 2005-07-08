@@ -2,7 +2,7 @@
 include ../../../include/config.Makefile
 VPATH = @srcdir@
 RESULTS := $(notdir $(patsubst %.m2, %.okay, $(wildcard @srcdir@/*.m2))) $(notdir $(patsubst %.m2-input, %.okay, $(wildcard @srcdir@/*.m2-input)))
-all :: $(RESULTS)
+all check :: $(RESULTS)
 $(RESULTS) : ../../bin/M2
 ARGS := --silent --stop -q -e errorDepth=0
 ARGS += -e 'path = prepend("@srcdir@/",path)'
