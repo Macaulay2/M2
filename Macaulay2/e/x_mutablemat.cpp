@@ -454,18 +454,6 @@ M2_arrayint_OrNull IM2_FF_LU(MutableMatrixXXX *M)
   return FF_LUComputation::DO(M);
 }
 
-M2_bool IM2_LLL(MutableMatrixXXX *M, const M2_Rational threshold, int strategy)
-{
-  if (strategy == 0)
-    {
-      return LLLoperations::LLL(M,0,threshold);
-    }
-
-  long a = mpz_get_si(mpq_numref(threshold));
-  long b = mpz_get_si(mpq_denref(threshold));
-  return ntl_LLL(M,0,a,b,strategy);
-}
-
 M2_bool rawLLL(MutableMatrixXXX *M, 
 		MutableMatrixXXXOrNull *U,
 		const M2_Rational threshold, 

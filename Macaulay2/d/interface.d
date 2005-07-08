@@ -2937,7 +2937,7 @@ setupfun("rawFFLU",rawFFLU);
 -----------------------------------------------------------------------------
 
 export rawLLL(e:Expr):Expr := (
-     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
+     when e is s:Sequence do if length(s) != 4 then WrongNumArgs(4) else
      when s.0 is M:RawMutableMatrix do
      when s.2 is threshold:Rational do     
      when s.3 is strategy:Integer do 
@@ -2949,7 +2949,7 @@ export rawLLL(e:Expr):Expr := (
      else WrongArg(4,"an integer")     
      else WrongArg(3,"a rational number")
      else WrongArg(1,"a mutable raw matrix")
-     else WrongNumArgs(3));
+     else WrongNumArgs(4));
 setupfun("rawLLL",rawLLL);
 
 export rawSmithNormalForm(e:Expr):Expr := (
