@@ -244,9 +244,9 @@ M2_string s,t;
       }
     }
   }
-  if (ret != 0) return ret;
   if (slen > tlen) return 1;
   if (slen < tlen) return -1;
+  if (ret != 0) return ret;
   return 0;
 }
 
