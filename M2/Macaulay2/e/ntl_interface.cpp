@@ -57,15 +57,16 @@ MutableMatrixXXX *mutableMatrix_from_NTL_mat_ZZ(const mat_ZZ *A)
   return B;
 }
 
+static const int NTL = 2;
 static const int GS = 0;
 static const int Givens = 4;
 static const int useLLL = 0;
 static const int useBKZ = 8;
-static const int FP = 0;
-static const int QP1 = 16;
-static const int QP = 2*16;
-static const int XD = 3*16;
-static const int RR = 4*16;
+static const int FP = 16;
+static const int QP1 = 2*16;
+static const int QP = 3*16;
+static const int XD = 4*16;
+static const int RR = 5*16;
 
 bool ntl_LLL(MutableMatrixXXX *M, MutableMatrixXXX *U, long numer, long denom, int strategy)
 {
@@ -88,119 +89,122 @@ bool ntl_LLL(MutableMatrixXXX *M, MutableMatrixXXX *U, long numer, long denom, i
       rk = LLL(d,*A,*V,numer,denom);
     break;
 
-  case 3+GS+useLLL+FP:
+  case NTL+GS+useLLL+FP:
     if (V)
       rk = LLL_FP(*A,delta);
     else
       rk = LLL_FP(*A,*V,delta);
     break;
-  case 3+GS+useLLL+QP:
-  case 3+GS+useLLL+QP1:
+  case NTL+GS+useLLL+QP:
+  case NTL+GS+useLLL+QP1:
     if (V)
       rk = LLL_QP(*A,delta);
     else
       rk = LLL_QP(*A,*V,delta);
     break;
-  case 3+GS+useLLL+XD:
+  case NTL+GS+useLLL+XD:
     if (V)
       rk = LLL_XD(*A,delta);
     else
       rk = LLL_XD(*A,*V,delta);
     break;
-  case 3+GS+useLLL+RR:
+  case NTL+GS+useLLL+RR:
     if (V)
       rk = LLL_RR(*A,delta);
     else
       rk = LLL_RR(*A,*V,delta);
     break;
 
-  case 3+GS+useBKZ+FP:
+  case NTL+GS+useBKZ+FP:
     if (V)
       rk = BKZ_FP(*A,delta);
     else
       rk = BKZ_FP(*A,*V,delta);
     break;
-  case 3+GS+useBKZ+QP:
+  case NTL+GS+useBKZ+QP:
     if (V)
       rk = BKZ_QP(*A,delta);
     else
       rk = BKZ_QP(*A,*V,delta);
     break;
-  case 3+GS+useBKZ+QP1:
+  case NTL+GS+useBKZ+QP1:
     if (V)
       rk = BKZ_QP1(*A,delta);
     else
       rk = BKZ_QP1(*A,*V,delta);
     break;
-  case 3+GS+useBKZ+XD:
+  case NTL+GS+useBKZ+XD:
     if (V)
       rk = BKZ_XD(*A,delta);
     else
       rk = BKZ_XD(*A,*V,delta);
     break;
-  case 3+GS+useBKZ+RR:
+  case NTL+GS+useBKZ+RR:
     if (V)
       rk = BKZ_RR(*A,delta);
     else
       rk = BKZ_RR(*A,*V,delta);
     break;
 
-  case 3+Givens+useLLL+FP:
+  case NTL+Givens+useLLL+FP:
     if (V)
       rk = G_LLL_FP(*A,delta);
     else
       rk = G_LLL_FP(*A,*V,delta);
     break;
-  case 3+Givens+useLLL+QP:
-  case 3+Givens+useLLL+QP1:
+  case NTL+Givens+useLLL+QP:
+  case NTL+Givens+useLLL+QP1:
     if (V)
       rk = G_LLL_QP(*A,delta);
     else
       rk = G_LLL_QP(*A,*V,delta);
     break;
-  case 3+Givens+useLLL+XD:
+  case NTL+Givens+useLLL+XD:
     if (V)
       rk = G_LLL_XD(*A,delta);
     else
       rk = G_LLL_XD(*A,*V,delta);
     break;
-  case 3+Givens+useLLL+RR:
+  case NTL+Givens+useLLL+RR:
     if (V)
       rk = G_LLL_RR(*A,delta);
     else
       rk = G_LLL_RR(*A,*V,delta);
     break;
 
-  case 3+Givens+useBKZ+FP:
+  case NTL+Givens+useBKZ+FP:
     if (V)
       rk = G_BKZ_FP(*A,delta);
     else
       rk = G_BKZ_FP(*A,*V,delta);
     break;
-  case 3+Givens+useBKZ+QP:
+  case NTL+Givens+useBKZ+QP:
     if (V)
       rk = G_BKZ_QP(*A,delta);
     else
       rk = G_BKZ_QP(*A,*V,delta);
     break;
-  case 3+Givens+useBKZ+QP1:
+  case NTL+Givens+useBKZ+QP1:
     if (V)
       rk = G_BKZ_QP1(*A,delta);
     else
       rk = G_BKZ_QP1(*A,*V,delta);
     break;
-  case 3+Givens+useBKZ+XD:
+  case NTL+Givens+useBKZ+XD:
     if (V)
       rk = G_BKZ_XD(*A,delta);
     else
       rk = G_BKZ_XD(*A,*V,delta);
     break;
-  case 3+Givens+useBKZ+RR:
+  case NTL+Givens+useBKZ+RR:
     if (V)
       rk = G_BKZ_RR(*A,delta);
     else
       rk = G_BKZ_RR(*A,*V,delta);
     break;
+  default:
+    ERROR("Strategy option to LLL not understood");
+    return false;
   }
 
   /* Put this back into M */

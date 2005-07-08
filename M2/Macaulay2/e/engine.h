@@ -1631,28 +1631,6 @@ enum gbTraceValues
   /**** LLL bases ***********************************/
   /**************************************************/
   
-  M2_bool IM2_LLL(MutableMatrixXXX *M, const M2_Rational threshold, int strategy); /* disconnected from rawLLL */
-  /* Given a mutable matrix M over ZZ, and a rational number threshold, 1/4 < threshold <= 1,
-     modify M so that the columns form a Lenstra-Lenstra-Lovasz
-     basis of the image of (the original) M.  ASSUMPTION: (strategy=0 case)
-     the columns of M are already a a basis for the 
-     lattice.  The algorithm used is that in Cohen's book on computational algebraic number
-     theory, BUT: beware of the typos in the algorithm!
-     If there is any error (interupted, M or threshold not the correct kind), then false
-     is returned, and LLL is set to 0.
-     If M has a column change of basis matrix attached, it will be modified accordingly. 
-
-     strategy: 0 means use original Macaulay2 engine routine.
-               2 means use NTL LLL
-	       (strategy%3) == 3 means use one of the real number variants:
-	       GramSchmidt or Givens: 0 or 4 (respectively)
-	       LLL or BKZ: 0 or 8 (respectively)
-	       FP, QP1, QP, XD, RR (respectively: 0, 16, 2*16, 3*16, 4*16
-	       Thus: strategy 3+4+8+16 means use NTL's GBKZ_QP1.
-	       
-     For the RR variants, the suggested value of the threshold is 99/100
-  */
-
   M2_bool rawLLL(MutableMatrixXXX *M, 
 		 MutableMatrixXXXOrNull *U,
 		 const M2_Rational threshold, 
