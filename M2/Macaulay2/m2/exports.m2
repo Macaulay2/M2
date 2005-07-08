@@ -119,6 +119,7 @@ export (
 	symbol minimalPresentation,
 	"prune" => symbol minimalPresentation,
 	"minPres" => symbol minimalPresentation,
+	symbol "--",					    -- just so it gets into the master index of documented symbols
 	symbol !,
 	symbol !=,
 	symbol " ",
