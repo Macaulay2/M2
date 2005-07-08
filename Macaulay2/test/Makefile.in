@@ -10,8 +10,9 @@ endif
 
 PAT := ':[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):|^GC'
 
+all check ::
+	$(LIMIT); $(MAKE) -k -C engine $@
 all check :: $(RESULTS)
-all check :: ; $(MAKE) -C engine $@
 all check :: ; $(MAKE) -C slow $@
 
 $(RESULTS) : $(DOTS)/bin/M2

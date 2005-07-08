@@ -1631,7 +1631,7 @@ enum gbTraceValues
   /**** LLL bases ***********************************/
   /**************************************************/
   
-  M2_bool IM2_LLL(MutableMatrixXXX *M, const M2_Rational threshold, int strategy); /* connected to rawLLL */
+  M2_bool IM2_LLL(MutableMatrixXXX *M, const M2_Rational threshold, int strategy); /* disconnected from rawLLL */
   /* Given a mutable matrix M over ZZ, and a rational number threshold, 1/4 < threshold <= 1,
      modify M so that the columns form a Lenstra-Lenstra-Lovasz
      basis of the image of (the original) M.  ASSUMPTION: (strategy=0 case)
@@ -1656,7 +1656,7 @@ enum gbTraceValues
   M2_bool rawLLL(MutableMatrixXXX *M, 
 		 MutableMatrixXXXOrNull *U,
 		 const M2_Rational threshold, 
-		 int strategy); /* DAN: please connected to rawLLL, removing the previous one */
+		 int strategy); /* DAN: connected to rawLLL */
   /* Given a mutable matrix M over ZZ, and a rational number threshold, 1/4 < threshold <= 1,
      modify M so that the columns form a Lenstra-Lenstra-Lovasz
      basis of the image of (the original) M.  ASSUMPTION: (strategy=0 case)
