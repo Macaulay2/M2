@@ -172,10 +172,26 @@ compare(left:Expr,right:Expr):Expr := (
 	       )
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
+     is x:string do (
+	  when right
+	  is y:string do (
+	       c := strnumcmp(x,y);			    -- should use same method as for symbols below
+	       if c == 1 then GreaterE
+	       else if c == -1 then LessE
+     	       else EqualEqualE
+	       )
+	  is y:Net do (
+	       c := netcmp(x,y);
+	       if c == 1 then GreaterE
+	       else if c == -1 then LessE
+     	       else EqualEqualE
+	       )
+     	  is Error do right
+	  else binarymethod(left,right,QuestionS))
      is x:SymbolClosure do (
 	  when right
 	  is y:SymbolClosure do (
-	       c := strcmp(x.symbol.word.name,y.symbol.word.name);
+	       c := strnumcmp(x.symbol.word.name,y.symbol.word.name); -- should use same method as for strings above
 	       if c == 1 then GreaterE
 	       else if c == -1 then LessE
 	       else (
@@ -234,22 +250,6 @@ compare(left:Expr,right:Expr):Expr := (
 	  is y:RRR do (
 	       r := compare(toBigReal(x.v),y);
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
-	       )
-     	  is Error do right
-	  else binarymethod(left,right,QuestionS))
-     is x:string do (
-	  when right
-	  is y:string do (
-	       c := strnumcmp(x,y);
-	       if c == 1 then GreaterE
-	       else if c == -1 then LessE
-     	       else EqualEqualE
-	       )
-	  is y:Net do (
-	       c := netcmp(x,y);
-	       if c == 1 then GreaterE
-	       else if c == -1 then LessE
-     	       else EqualEqualE
 	       )
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
@@ -341,7 +341,7 @@ basicsort(s:Sequence,ww:Expr):Expr := (
      if length(s) <= 1 then return Expr(s);
      savesortlist := sortlist;
      savewhichway := whichway;
-     sortlist = s;
+     sortlist = new Sequence len length(s) do foreach x in s do provide x;
      whichway = ww;
      ret := subsort(0,length(s)-1);
      when ret is Error do nothing else ret = Expr(sortlist);

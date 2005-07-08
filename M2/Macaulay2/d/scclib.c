@@ -215,16 +215,17 @@ M2_string s;
      else return system_tostring(x);
      }
 
-
 int system_strcmp(s,t)
 M2_string s,t;
 {
   int slen = s->len, tlen = t->len, i;
   int ret = 0;
   int len = slen < tlen ? slen : tlen;
+  char *sarray = s->array;
+  char *tarray = t->array;
   for (i=0; i<len; i++) {
-    unsigned char c = s->array[i];
-    unsigned char d = t->array[i];
+    unsigned char c = sarray[i];
+    unsigned char d = tarray[i];
     if (isalnum(c)) {
       if (isalnum(d)) {
 	if (toupper(c) < toupper(d)) return -1;
@@ -246,55 +247,60 @@ M2_string s,t;
   }
   if (slen > tlen) return 1;
   if (slen < tlen) return -1;
-  if (ret != 0) return ret;
-  return 0;
+  return ret;
 }
 
 int system_strnumcmp(s,t)
 M2_string s,t;
 {
-  int slen = s->len, tlen = t->len, i;
-  int ret = 0;
-  int len = slen < tlen ? slen : tlen;
-  int innumber = FALSE;
-  for (i=0; i<len; i++) {
-    unsigned char c = s->array[i];
-    unsigned char d = t->array[i];
-    if (isdigit(c) && isdigit(d)) {
-      int sn = 0, tn = 0;
-      if (!innumber) {
-	int j;
-	j=i+1; while(j<slen && isdigit(s->array[j])) sn++, j++;
-	j=i+1; while(j<tlen && isdigit(t->array[j])) tn++, j++;
-	if (sn > tn) return  1;
-	if (sn < tn) return -1;
-	innumber = TRUE;
-      }
-      if (c > d) return  1;
-      if (c < d) return -1;
-    }
-    else if (isalnum(c) && isalnum(d)) {
-      unsigned char C = toupper(c), D = toupper(d);
-      innumber = FALSE;
-      if (C < D) return -1;
-      if (C > D) return 1;
-      if (ret == 0) {
-	if (c < d) ret = -1;
-	if (c > d) ret = 1;
-      }
-    }
-    else {
-      innumber = FALSE;
-      if (c < d) return -1;
-      if (c > d) return 1;
-    }
-  }
-  if (ret != 0) return ret;
-  if (slen > tlen) return 1;
-  if (slen < tlen) return -1;
-  return 0;
-}
+     int slen = s->len, tlen = t->len, i;
+     int ret = 0;
+     int len = slen < tlen ? slen : tlen;
+     int innumber = FALSE;
+     char *sarray = s->array;
+     char *tarray = t->array;
+     for (i=0; i<len; i++) {
+	  unsigned char c = sarray[i];
+	  unsigned char d = tarray[i];
 
+	  if (isdigit(c) && isdigit(d)) {
+		 if (!innumber) {
+		      int sn, tn;
+		      sn=i+1; while(sn<slen && isdigit(sarray[sn])) sn++;
+		      tn=i+1; while(tn<tlen && isdigit(tarray[tn])) tn++;
+		      if (sn > tn) return  1;
+		      if (sn < tn) return -1;
+		      innumber = TRUE;
+		 }
+	  }
+	  else innumber = FALSE;
+
+	  if (isalnum(c)) {
+	       if (isalnum(d)) {
+		    unsigned char C = toupper(c), D = toupper(d);
+		    innumber = FALSE;
+		    if (C < D) return -1;
+		    if (C > D) return 1;
+		    if (ret == 0) {
+			 if (c < d) ret = -1;
+			 if (c > d) ret = 1;
+		    }
+	       }
+	       else return 1;
+	  }
+	  else {
+	       if (isalnum(d)) return -1;
+	       else {
+		    innumber = FALSE;
+		    if (c < d) return -1;
+		    if (c > d) return 1;
+	       }
+	  }
+     }
+     if (slen > tlen) return 1;
+     if (slen < tlen) return -1;
+     return ret;
+}
 
 int system_wait(pid)
 int pid;
