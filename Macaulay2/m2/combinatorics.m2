@@ -13,9 +13,9 @@ subsets(ZZ,ZZ) := (n,j) -> (
 
 subsets(List,ZZ) := (s,j) -> apply(subsets(#s,j),v->apply(v,i->s#i))
 subsets(Sequence,ZZ) := (s,j) -> subsets(toList s,j)
-subsets(Set,ZZ) := (s,j) -> apply(subsets(toList s, j), set)
+subsets(Set,ZZ) := (s,j) -> set apply(subsets(toList s, j), set)
 
-subsets Set := x -> set subsets toList x
+subsets Set := x -> set apply(subsets toList x, set)
 subsets List := x -> (
      if #x === 0 then {x}
      else (

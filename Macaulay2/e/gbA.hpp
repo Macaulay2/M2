@@ -281,6 +281,8 @@ private:
   // i.e. the result g satisfies: g = c*f mod GB, where new(denom) = c * old(denom).
 
   void remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom);
+  void tail_remainder_ZZ(POLY &f, int degf); 
+    // Used when replacing GB element with one with smaller coeff
   void remainder_non_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom);
 public:
   //////////////////////////

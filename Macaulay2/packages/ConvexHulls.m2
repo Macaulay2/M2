@@ -159,7 +159,7 @@ primitive := (L) -> (
      
      -- finding greatest common divisor
      n := #L-1;
-     g := L#n;
+     g := abs(L#n);
      while (n > 0) do (
 	  n = n-1;
 	  g = gcd(g, L#n);

@@ -1070,7 +1070,10 @@ bool gbA::reduce(spair *p)
 		    emit_line(o.str());
 		  }
 		R->gbvector_replace_2by2_ZZ(_F, _Fsyz, p->f(), p->fsyz(), g->g.f, g->g.fsyz);
+		// Before continuing, do remainder of g->g
+		tail_remainder_ZZ(g->g, _this_degree);
 		lookupZZ->change_coefficient(t, MPZ_VAL(g->g.f->coeff));
+		auto_reduce_by(t->_val);
 		if (gbTrace >= 10)
 		  {
 		    buffer o;
@@ -1235,14 +1238,17 @@ int gbA::find_good_term_divisor_ZZ(
 
   /* Now find the minimal alpha value */
   if (n == 0) 
-    return -1;
-  int result = divisors[0]->_val;
+    {
+      result_alpha = 0;
+      return -1;
+    }
+  int result = divisors[n-1]->_val;
   gbelem *tg = gb[result];
   alpha = tg->alpha - ealpha;
   if (alpha <= 0) 
     alpha = 0;
   else
-    for (i=1; i<n; i++)
+    for (i=n-2; i>=0; i--)
       {
 	int new_val = divisors[i]->_val;
 	tg = gb[new_val];
@@ -1446,6 +1452,82 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
     }
 }
 
+void gbA::tail_remainder_ZZ(POLY &f, int degf)
+{
+  gbvector head;
+  gbvector *frem = &head;
+  int count = 0;
+  POLY h = f;
+
+  frem->next = h.f;
+  frem = frem->next;
+  h.f = h.f->next;
+  frem->next = 0;
+
+  while (!R->gbvector_is_zero(h.f))
+    {
+      int alpha;
+      R->gbvector_get_lead_exponents(_F, h.f, EXP_);
+      int x = h.f->comp;
+      int w = find_good_monomial_divisor_ZZ(MPZ_VAL(h.f->coeff),EXP_,x,degf,  alpha);
+        // replaced alpha, g.
+      if (w < 0 || alpha > 0)
+	{
+	  frem->next = h.f;
+	  frem = frem->next;
+	  h.f = h.f->next;
+	  frem->next = 0;
+	}
+      else
+	{
+	  POLY g = gb[w]->g;
+	  if (!R->gbvector_reduce_lead_term_ZZ(_F, _Fsyz,
+					       h.f, h.fsyz,
+					       g.f, g.fsyz))
+	    {
+	      // This term is still there, so we must move it to result.
+	      frem->next = h.f;
+	      frem = frem->next;
+	      h.f = h.f->next;
+	      frem->next = 0;
+	    }
+	  count++;
+	  //	  _stats_ntail++;
+	  if (gbTrace >= 10)
+	    {
+	      buffer o;
+	      o << "  tail reducing by ";
+	      R->gbvector_text_out(o,_F,g.f);
+	      o << "\n    giving ";
+	      R->gbvector_text_out(o,_F,h.f);
+	      emit_line(o.str());
+	    }
+	  
+	}
+    }
+  h.f = head.next;
+  // Negate these if needed
+  if (h.f != 0 && mpz_sgn(MPZ_VAL(h.f->coeff)) < 0)
+    {
+      R->gbvector_mult_by_coeff_to(h.f, globalZZ->minus_one());
+      R->gbvector_mult_by_coeff_to(h.fsyz, globalZZ->minus_one());
+    }
+  f.f = h.f;
+  f.fsyz = h.fsyz;
+  if ((gbTrace & PRINT_SPAIR_TRACKING) != 0)
+    {
+      buffer o;
+      o << "number of reduction steps was " << count;
+      emit_line(o.str());
+    }
+  else if (gbTrace >= 4)
+    {
+      buffer o;
+      o << "," << count;
+      emit_wrapped(o.str());
+    }
+}
+
 void gbA::remainder_non_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
   // find the remainder of f = [g,gsyz] wrt the GB,
   // i.e. replace f with h[h,hsyz], st
@@ -1541,8 +1623,9 @@ void gbA::auto_reduce_by(int id)
   /* Loop backwards while degree doesn't change */
   /* Don't change quotient ring elements */
   gbelem *me = gb[id];
-  for (int i=id-1; i>=_first_gb_element; i--)
+  for (int i=gb.size()-1; i>=_first_gb_element; i--)
     {
+      if (i == id) continue;
       gbelem *g = gb[i];
       if (g->deg < me->deg) return;
       if (gbTrace >= 10)

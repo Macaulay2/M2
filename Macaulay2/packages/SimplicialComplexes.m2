@@ -15,6 +15,8 @@ export(SimplicialComplex,
      bd,
      faces,maxfaces,nonfaces,support)
 
+debug Macaulay2Core; -- for rawKoszulMonomials
+
 SimplicialComplex = new Type of MutableHashTable
 
 simplicialComplex = method()
@@ -56,16 +58,18 @@ bd (ZZ,SimplicialComplex) := (r,D) -> (
      b1 := faces(r,D);
      b2 := faces(r-1,D);
      ones := map(ZZ,ring b1, toList(numgens ring b1:1));
-     sendgg(ggPush b2, ggPush b1, ggkoszul);
-     m := getMatrix ring b1;
+     m := map(ring b1, rawKoszulMonomials(raw b2,raw b1));
+     --sendgg(ggPush b2, ggPush b1, ggkoszul);
+     --m := getMatrix ring b1;
      ones m)
 
 bd (Ring,ZZ,SimplicialComplex) := (R,r,D) -> (
      b1 := faces(r,D);
      b2 := faces(r-1,D);
      ones := map(R,ring b1, toList(numgens ring b1:1_R));
-     sendgg(ggPush b2, ggPush b1, ggkoszul);
-     m := getMatrix ring b1;
+     m := map(ring b1, rawKoszulMonomials(raw b2,raw b1));
+     --sendgg(ggPush b2, ggPush b1, ggkoszul);
+     --m := getMatrix ring b1;
      ones m)
 
 bd SimplicialComplex := (D) -> (
