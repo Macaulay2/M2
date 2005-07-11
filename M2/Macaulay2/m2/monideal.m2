@@ -267,11 +267,10 @@ dual(MonomialIdeal, List) := (I,a) -> ( -- Alexander dual
 		    if b<c then
 		    error "exponent vector not large enough"
 		    ));
-	  ); 
-     S := R/(I + monomialIdeal apply(#X, i -> X#i^(a#i+1)));
-     monomialIdeal contract(
-	  lift(syz transpose vars S, R), 
-	  product(#X, i -> X#i^(a#i))))
+	  );
+     P := monomialIdeal apply(#X, i -> X#i^(a#i+1));
+     monomialIdeal( (generators (P:I)) % P )
+     )
 
 dual(MonomialIdeal,RingElement) := (I,r) -> dual(I,first exponents r)
 
@@ -280,6 +279,18 @@ dual MonomialIdeal := (I) -> dual(I, lcmOfGens(I))
 --  PRIMARY DECOMPOSITION  ---------------------------------
 
 primaryDecomposition MonomialIdeal := List => o -> (I) -> (
+     R := ring I;
+     aI := lcmOfGens I;
+     M := first entries generators dual I;
+     L := unique apply(#M, i -> first exponents M_i);
+     apply(L, i -> monomialIdeal apply(#i, j -> ( 
+		    if i#j === 0 then 0_R 
+		    else R_j^(aI#j+1-i#j)
+		    )))
+     )
+
+irreducibleDecomposition = method();
+irreducibleDecomposition MonomialIdeal := List => o -> (I) -> (
      R := ring I;
      aI := lcmOfGens I;
      M := first entries generators dual I;
