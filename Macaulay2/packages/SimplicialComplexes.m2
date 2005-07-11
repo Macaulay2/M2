@@ -12,46 +12,104 @@ newPackage(
 
 export(SimplicialComplex,
      simplicialComplex,
-     bd,
-     faces,maxfaces,nonfaces,support)
+     bd,dual2,
+     faces,maxfaces,facets,nonfaces,support)
+
+complement := local complement
+complement = (m) -> (
+     A := ring m;
+     F := matrix {{product(numgens A, i -> A_i)}};
+     contract(m,F))
 
 debug Macaulay2Core; -- for rawKoszulMonomials
 
-SimplicialComplex = new Type of MutableHashTable
+SimplicialComplex = new Type of HashTable
 
-simplicialComplex = method()
-simplicialComplex Ring := (R) -> (
-     S := new SimplicialComplex;
-     S.ring = ring presentation R;
-     S.facering = R;
-     n := numgens R;
-     S.qring = R/ideal map(R^1, n, (i,j) -> R_j^2);
-     S.faces = new MutableHashTable;
-     S)
+SimplicialComplex.synonym = "simplicial complex"
 
-simplicialComplex List := (faces) -> (
-     n := max apply(faces, m -> max m);
-     A := ZZ/101[Variables=>n+1];
-     I := matrix{apply(faces, m -> product(m, i -> A_i))};
-     J := dual1 dual2 dual1 I;  -- minimal non-faces
-     simplicialComplex ((ring J)/(ideal J)))
+SimplicialComplex.AfterPrint = Delta -> (
+     << endl;
+     << concatenate(interpreterDepth:"o") << lineNumber << " : Facets of the simplicial complex "
+     << endl;)
 
-dim SimplicialComplex := (D) -> dim D.facering - 1
+net SimplicialComplex := Delta -> Delta.facets
+
+simplicialComplex = method(TypicalValue => SimplicialComplex)
+
+newSimplicialComplex := (I,F) ->
+     new SimplicialComplex from {
+	  symbol ring => ring I,
+	  symbol faceIdeal => I,
+	  symbol facets => F,
+	  symbol cache => new CacheTable
+	  }
+     
+simplicialComplex MonomialIdeal := (I) -> (
+     if not isSquareFree I then
+         error "expected squarefree monomial ideal";
+     newSimplicialComplex(I, complement generators dual I)
+     )
+
+simplicialComplex List := SimplicialComplex => (faces) -> (
+     I := matrix {faces};
+     L := monomialIdeal complement I;
+     J := dual L;
+     newSimplicialComplex(J, complement generators L)
+     )
+
+dual SimplicialComplex := (D) -> (
+     newSimplicialComplex(monomialIdeal complement D.facets,
+	  complement generators D.faceIdeal)
+     )
+
+facets = method()
+facets SimplicialComplex := (D) -> D.facets
+
+ideal SimplicialComplex := (D) -> D.faceIdeal
+
+SimplicialComplex == SimplicialComplex := (D,E) -> D.faceIdeal === E.faceIdeal
+
+--simplicialComplex Ring := SimplicialComplex => (R) -> (
+--     S := new SimplicialComplex;
+--     S.ring = ring presentation R;
+--     S.facering = R;
+--     n := numgens R;
+--     S.qring = R/ideal map(R^1, n, (i,j) -> R_j^2);
+--     S.faces = new MutableHashTable;
+--     S)
+--simplicialComplex List := SimplicialComplex => (faces) -> (
+--     n := max apply(faces, m -> max m);
+--     A := ZZ/101[Variables=>n+1];
+--     I := matrix{apply(faces, m -> product(m, i -> A_i))};
+--     J := complement dual2 complement I;  -- minimal non-faces
+--     simplicialComplex ((ring J)/(ideal J)))
 
 support = (m) -> (
-     n := numgens ring m;
-     m = leadMonomial m;
-     m = new List from m;
-     m1 = select(m, k -> k#0 < n);
-     apply(m1, k -> k#0))
+     x := rawIndices raw m;
+     apply(x, i -> (ring m)_i))
+
+--support = (m) -> (
+--     n := numgens ring m;
+--     m = leadMonomial m;
+--     m = new List from m;
+--     m1 = select(m, k -> k#0 < n);
+--     apply(m1, k -> k#0))
+
+--dim SimplicialComplex := (D) -> dim D.faceideal - 1
+
+dim SimplicialComplex := (D) -> max apply(first entries D.facets, s -> # support(s)) - 1
 
 faces = method()
 faces (ZZ, SimplicialComplex) := (r,D) -> (
-     if not D.faces#?r then (
-         A := D.qring;
-	 B := ring presentation A;
-         D.faces#r = lift(matrix basis(r+1,A), B));
-     D.faces#r)
+     R := ring D;
+     if not D.cache.?faces then (
+         D.cache.faces = new MutableHashTable;
+	 D.cache.faces.qring = R/(D.faceIdeal + ideal apply(gens R, x -> x^2));
+	 );
+     if not D.cache.faces#?r then (
+         A := D.cache.faces.qring;
+         D.cache.faces#r = lift(matrix basis(r+1,A), R));
+     D.cache.faces#r)
 
 bd = method()
 bd (ZZ,SimplicialComplex) := (r,D) -> (
@@ -63,56 +121,46 @@ bd (ZZ,SimplicialComplex) := (r,D) -> (
      --m := getMatrix ring b1;
      ones m)
 
-bd (Ring,ZZ,SimplicialComplex) := (R,r,D) -> (
-     b1 := faces(r,D);
-     b2 := faces(r-1,D);
-     ones := map(R,ring b1, toList(numgens ring b1:1_R));
-     m := map(ring b1, rawKoszulMonomials(raw b2,raw b1));
-     --sendgg(ggPush b2, ggPush b1, ggkoszul);
-     --m := getMatrix ring b1;
-     ones m)
+--bd (Ring,ZZ,SimplicialComplex) := (R,r,D) -> (
+--     b1 := faces(r,D);
+--     b2 := faces(r-1,D);
+--     ones := map(R,ring b1, toList(numgens ring b1:1_R));
+--     m := map(ring b1, rawKoszulMonomials(raw b2,raw b1));
+--     --sendgg(ggPush b2, ggPush b1, ggkoszul);
+--     --m := getMatrix ring b1;
+--     ones m)
 
 bd SimplicialComplex := (D) -> (
      b := bd(dim D,D);
      ones := map(source b, ZZ^1, (i,j) -> 1);
      c := b * ones;
      x := positions(0..numgens target c-1, i -> c_(i,0) % 2 =!= 0);
-     d := dual1 dual2 dual1 (faces(dim D-1,D))_x;
+     d := complement dual2 complement (faces(dim D-1,D))_x;
      simplicialComplex ((ring d)/(ideal d)))
 
 chainComplex SimplicialComplex := (D) -> (
      d := dim D;
      chainComplex apply(0..d, r -> bd(r,D)))
 
-chainComplex (Ring,SimplicialComplex) := (R,D) -> (
-     d := dim D;
-     chainComplex apply(0..d, r -> bd(R,r,D)))
-    
-maxfaces = method()
-maxfaces SimplicialComplex := (D) -> dual2 nonfaces D
+--chainComplex (Ring,SimplicialComplex) := (R,D) -> (
+--     d := dim D;
+--     chainComplex apply(0..d, r -> bd(R,r,D)))
+
+-- NOT NEEDED:    
+--nonfaces = method()
+--nonfaces SimplicialComplex := (D) ->
+--     presentation D.facering
+
+
+--dual2 = (m) -> (
+--     A := ring m;
+--     I := ideal(m) + ideal map(A^1, numgens A, (i,j)->A_j^2);
+--     B := A/I;
+--     lift(syz transpose vars B, A))
+
      
-nonfaces = method()
-nonfaces SimplicialComplex := (D) ->
-     presentation D.facering
-
-dual1 = (m) -> (
-     A := ring m;
-     F := matrix {{product(numgens A, i -> A_i)}};
-     contract(m,F))
-
-dual2 = (m) -> (
-     A := ring m;
-     I := ideal(m) + ideal map(A^1, numgens A, (i,j)->A_j^2);
-     B := A/I;
-     lift(syz transpose vars B, A))
-
-dual SimplicialComplex := (D) -> (
-     -- MES: this needs to be redone, using dual1, dual2
-     -- MES: this is probably not right: what is the right formula?
-     simplicialComplex dual2 dual1 nonfaces D)
-     
-net SimplicialComplex := (D) -> 
-     net presentation D.facering
+--net SimplicialComplex := (D) -> 
+--     net presentation D.facering
 
 
 beginDocumentation()
@@ -160,6 +208,25 @@ document {
      }
      
 TEST ///
+restart
+loadPackage "SimplicialComplexes"
+
+R = ZZ/101[a..h]
+I = monomialIdeal(a*b*c*d,e*f*g*h)
+D = simplicialComplex I
+E = simplicialComplex{a*b*c*d, e*f*g*h}
+dual D
+dual E
+faces(2,D)
+faces(3,D)
+faces(4,D)
+faces(5,D)
+faces(6,D)
+faces(7,D)
+faces(-1,D)
+faces(-2,D)
+faces(0,D)
+
 R = ZZ/101[x_0 .. x_3]
 A = R/ideal(x_0 * x_1 * x_2, x_1 * x_2 * x_3)
 D = simplicialComplex A

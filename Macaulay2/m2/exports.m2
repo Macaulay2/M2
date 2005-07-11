@@ -43,6 +43,8 @@ exportMutable (
 	)
 
 export (
+        symbol irreducibleDecomposition,
+	symbol Faces,
      	symbol isConstant,
      	symbol Homogeneous2,
         symbol Sugarless,
