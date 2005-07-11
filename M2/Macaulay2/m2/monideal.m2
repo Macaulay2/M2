@@ -244,7 +244,11 @@ resolution MonomialIdeal := ChainComplex => options -> I -> resolution ideal I
 betti MonomialIdeal := I -> betti ideal I
 
 
-lcmOfGens := (I) -> if I.cache#?(local lcm) then I.cache#(local lcm) else I.cache#(local lcm) = (
+lcmgens := local lcmgens
+alexanderdual := local alexanderdual
+assprimes := local assprimes
+
+lcmOfGens := (I) -> if I.cache#?lcmgens then I.cache#lcmgens else I.cache#lcmgens = (
      max \ transpose apply(first entries generators I, i -> first exponents i)
      )
 
@@ -274,43 +278,59 @@ dual(MonomialIdeal, List) := (I,a) -> ( -- Alexander dual
 
 dual(MonomialIdeal,RingElement) := (I,r) -> dual(I,first exponents r)
 
-dual MonomialIdeal := (I) -> dual(I, lcmOfGens(I))    
+dual MonomialIdeal := (I) -> (
+  if I.cache#?alexanderdual
+    then I.cache#alexanderdual
+    else I.cache#alexanderdual = dual(I, lcmOfGens(I))
+    )
+
+--  ASSOCIATED PRIMES  -------------------------------------
+ass0 := (I) -> (
+     if I.cache#?assprimes
+     then I.cache#assprimes
+     else I.cache#assprimes = (
+     	  R := ring I;
+     	  J := dual I;
+     	  M := first entries generators J;
+	  H := new MutableHashTable;
+     	  scan(M, m -> (
+		    s := rawIndices raw m;
+		    if not H#?s then H#s = true));
+	  inds := sort apply(keys H, ind -> (#ind, ind));
+	  apply(inds, s -> s#1)
+     ))
+
+ass MonomialIdeal := List => o -> (I) -> (
+     inds := ass0 I;
+     R := ring I;
+     apply(inds, ind -> monomialIdeal apply(ind, v -> R_v)))
 
 --  PRIMARY DECOMPOSITION  ---------------------------------
+
+irreducibleDecomposition = method();
+irreducibleDecomposition MonomialIdeal := List => (I) -> (
+     R := ring I;
+     aI := lcmOfGens I;
+     M := first entries generators dual I;
+     apply(M, m -> (
+	       s := standardForm leadMonomial m;
+	       monomialIdeal apply(keys s, v -> R_v^(aI#v + 1 - s#v))))
+     )
 
 primaryDecomposition MonomialIdeal := List => o -> (I) -> (
      R := ring I;
      aI := lcmOfGens I;
-     M := first entries generators dual I;
-     L := unique apply(#M, i -> first exponents M_i);
-     apply(L, i -> monomialIdeal apply(#i, j -> ( 
-		    if i#j === 0 then 0_R 
-		    else R_j^(aI#j+1-i#j)
-		    )))
+     J := dual I;
+     M := first entries generators J;
+     H := new MutableHashTable;
+     scan(M, m -> (
+	       s := standardForm leadMonomial m;
+	       Q := monomialIdeal apply(keys s, v -> R_v^(aI#v + 1 - s#v));
+	       ind := sort keys s;
+	       if not H#?ind then H#ind = Q
+	       else H#ind = intersect(H#ind,Q)));
+     apply(ass0 I, ind -> H#ind)
      )
-
-irreducibleDecomposition = method();
-irreducibleDecomposition MonomialIdeal := List => o -> (I) -> (
-     R := ring I;
-     aI := lcmOfGens I;
-     M := first entries generators dual I;
-     L := unique apply(#M, i -> first exponents M_i);
-     apply(L, i -> monomialIdeal apply(#i, j -> ( 
-		    if i#j === 0 then 0_R 
-		    else R_j^(aI#j+1-i#j)
-		    )))
-     )
-
-
-
---  ASSOCIATED PRIMES  -------------------------------------
-ass MonomialIdeal := List => o -> (I) -> (
-     R := ring I;
-     a := lcmOfGens I + toList(numgens R:1);
-     L := first entries generators dual I;
-     L = apply(L, i -> a - first exponents i);
-     L = unique apply(L, i -> apply(#i, j -> if i#j === 0 or i#j === a#j then 0 else 1));
-     apply(L, i -> monomialIdeal flatten apply(#i, j -> if i#j === 0 then 0_R else R_j )))
 
 
 --  TESTING IF A THING IS A SQUARE FREE MONOMIAL IDEAL  ----
