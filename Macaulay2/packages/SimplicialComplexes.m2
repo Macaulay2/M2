@@ -3,7 +3,7 @@ newPackage(
 	"SimplicialComplexes",
     	Version => "1.0", 
     	Date => "May 4, 2005",
-    	Author => "Sorin Popescu",
+    	Author => "Sorin Popescu, Greg Smith, Mike Stillman",
 	Email => "sorin@math.sunysb.edu",
     	HomePage => "http://www.math.sunysb.edu/~sorin/",
     	Headline => "simplicial complexes",
@@ -12,7 +12,7 @@ newPackage(
 
 export(SimplicialComplex,
      simplicialComplex,
-     bd,fVector,
+     bd,fVector,isPure,label,
      faces,facets,support)
 
 complement := local complement
@@ -77,33 +77,14 @@ monomialIdeal SimplicialComplex := (D) -> D.faceIdeal
 
 SimplicialComplex == SimplicialComplex := (D,E) -> D.faceIdeal === E.faceIdeal
 
---simplicialComplex Ring := SimplicialComplex => (R) -> (
---     S := new SimplicialComplex;
---     S.ring = ring presentation R;
---     S.facering = R;
---     n := numgens R;
---     S.qring = R/ideal map(R^1, n, (i,j) -> R_j^2);
---     S.faces = new MutableHashTable;
---     S)
---simplicialComplex List := SimplicialComplex => (faces) -> (
---     n := max apply(faces, m -> max m);
---     A := ZZ/101[Variables=>n+1];
---     I := matrix{apply(faces, m -> product(m, i -> A_i))};
---     J := complement dual2 complement I;  -- minimal non-faces
---     simplicialComplex ((ring J)/(ideal J)))
+lcmMonomials = (L) -> (
+     R := ring L#0;
+     x := max \ transpose apply(L, i -> first exponents i);
+     R_x)
 
 support = (m) -> (
      x := rawIndices raw m;
      apply(x, i -> (ring m)_i))
-
---support = (m) -> (
---     n := numgens ring m;
---     m = leadMonomial m;
---     m = new List from m;
---     m1 = select(m, k -> k#0 < n);
---     apply(m1, k -> k#0))
-
---dim SimplicialComplex := (D) -> dim D.faceideal - 1
 
 dim SimplicialComplex := (D) -> max apply(first entries D.facets, s -> # support(s)) - 1
 
@@ -131,12 +112,60 @@ bd (ZZ,SimplicialComplex) := (r,D) -> (
      ones map(R, rawKoszulMonomials(raw b2,raw b1))
      )
 
+bd (ZZ,SimplicialComplex) := (r,D) -> (
+     R := ring D;
+     if D.cache.?labels then (
+     	  b1 := faces(r,D);
+     	  b2 := faces(r-1,D);
+	  F1 := source D.cache.labels#r;
+	  F2 := source D.cache.labels#(r-1);
+	  lab1 := first entries D.cache.labels#r;
+	  lab2 := first entries D.cache.labels#(r-1);
+	  S := ring lab1#0;
+     	  ones := map(S,R, toList(numgens R:1_S));
+     	  m := ones map(R, rawKoszulMonomials(raw b2,raw b1));
+	  -- Perhaps there should be an engine routine to handle this?
+     	  map(F2, F1, apply(#lab2, i -> (
+		    apply(#lab1, j -> (
+		       a := m_(i,j);
+		       if a == 0 then 0_S else
+		       a * lab1#j//lab2#i)))))
+	  )
+     else (
+     	  b1 = faces(r,D);
+     	  b2 = faces(r-1,D);
+     	  ones = map(coefficientRing R,R, toList(numgens R:1));
+     	  ones map(R, rawKoszulMonomials(raw b2,raw b1))
+     	  )
+     )
+
 chainComplex SimplicialComplex := (D) -> (
      d := dim D;
      C := if d < -1 then (ring D)^0[-1]
           else if d === -1 then (ring D)^1
           else chainComplex apply(0..d, r -> bd(r,D));
-     C[1]
+     if D.cache.?labels then C[0] else C[1]
+     )
+
+makeLabels = (D,L,i) -> (
+     -- D is a simplicial complex
+     -- L is a list of monomials 
+     -- i is an integer
+     F := first entries faces(i,D);
+     matrix {apply(F, m -> (s := rawIndices raw m;
+	       lcmMonomials apply(s, j -> L#j)))}
+     )
+
+label = method()
+label(SimplicialComplex, List) := (D,L) -> (
+     if #L === 0 then
+	  remove(D.cache,symbol labels)
+     else (
+	  D.cache.labels = new MutableHashTable;
+	  D.cache.labels#-1 = matrix{{1_(ring L#0)}};
+	  for i from 0 to dim D do
+	       D.cache.labels#i = makeLabels(D,L,i);
+	  )
      )
 
 homology(ZZ,SimplicialComplex,Ring) := Module => opts -> (i,Delta,R) -> (
@@ -153,51 +182,28 @@ homology(SimplicialComplex) := Chaincomplex => opts -> Delta -> (
 fVector = method(TypicalValue => List)
 fVector SimplicialComplex := List => D -> (
      N := poincare cokernel generators ideal D;
-     d := dim D + 1;
-     t := first gens ring N;
-     while 0 == substitute(N, t => 1) do N = N // (1-t);
-     h := apply(reverse toList(0..d), i -> coefficient(t^i,N));
-     f := j -> sum(0..j+1, i -> binomial(d-i, j+1-i)*h#(d-i));
-     apply(toList(0..d-1), j -> f(j)));
-
---bd (Ring,ZZ,SimplicialComplex) := (R,r,D) -> (
---     b1 := faces(r,D);
---     b2 := faces(r-1,D);
---     ones := map(R,ring b1, toList(numgens ring b1:1_R));
---     m := map(ring b1, rawKoszulMonomials(raw b2,raw b1));
---     --sendgg(ggPush b2, ggPush b1, ggkoszul);
---     --m := getMatrix ring b1;
---     ones m)
+     if N == 0 then (
+	  new HashTable from {-1 => 0}
+     ) else (
+     	  d := dim D + 1;
+     	  t := first gens ring N;
+     	  while 0 == substitute(N, t => 1) do N = N // (1-t);
+     	  h := apply(reverse toList(0..d), i -> coefficient(t^i,N));
+     	  f := j -> sum(0..j+1, i -> binomial(d-i, j+1-i)*h#(d-i));
+     	  new HashTable from prepend(-1=>1, apply(toList(0..d-1), j -> j => f(j)))
+     ))
 
 bd SimplicialComplex := (D) -> (
-     b := bd(dim D,D);
-     ones := map(source b, ZZ^1, (i,j) -> 1);
-     c := b * ones;
-     x := positions(0..numgens target c-1, i -> c_(i,0) % 2 =!= 0);
-     d := complement dual2 complement (faces(dim D-1,D))_x;
-     simplicialComplex ((ring d)/(ideal d)))
+     F := first entries facets D;
+     L := flatten apply(F, m -> apply(support m, x -> m//x));
+     simplicialComplex L)
 
-
---chainComplex (Ring,SimplicialComplex) := (R,D) -> (
---     d := dim D;
---     chainComplex apply(0..d, r -> bd(R,r,D)))
-
--- NOT NEEDED:    
---nonfaces = method()
---nonfaces SimplicialComplex := (D) ->
---     presentation D.facering
-
-
---dual2 = (m) -> (
---     A := ring m;
---     I := ideal(m) + ideal map(A^1, numgens A, (i,j)->A_j^2);
---     B := A/I;
---     lift(syz transpose vars B, A))
-
-     
---net SimplicialComplex := (D) -> 
---     net presentation D.facering
-
+isPure = method(TypicalValue => Boolean)
+isPure SimplicialComplex := Boolean => (D) -> (
+     F := first entries facets D;
+     L := unique apply(F, m -> # support m);
+     #L <= 1
+     )
 
 beginDocumentation()
 document {  Key => SimplicialComplex,
@@ -247,8 +253,11 @@ TEST ///
 restart
 loadPackage "SimplicialComplexes"
 
-R = ZZ[x]
+kk = ZZ
+R = kk[x]
+
 D3 = simplicialComplex monomialIdeal(1_R)
+assert isPure D3
 dim D3
 faces(0,D3)
 faces(-1,D3)
@@ -258,15 +267,16 @@ assert(HH_0(D3) == 0)
 assert(HH_-1(D3) == 0)
 fVector D3
 
-R = ZZ[x]
 D4 = simplicialComplex monomialIdeal gens R
-dim D4
-faces(0,D4)
-faces(-1,D4)
-dual D4
+assert isPure D4
+assert(dim D4 === -1)
+assert(faces(0,D4) == 0)
+assert(numgens source faces(-1,D4) === 1)
+assert(D4 == dual D4)
 C = chainComplex D4
 assert(HH_0(D4) == 0)
 assert(HH_-1(D4) == R^1)
+assert(fVector D4 === new HashTable from {-1=>1})
 
 D5 = simplicialComplex {1_R}
 D5 == D4
@@ -279,18 +289,30 @@ time A6 = dual D6
 time C = chainComplex A6;
 C
 time prune HH(C)
+fVector D6
 
 D7 = simplicialComplex monomialIdeal 1_R
 dual D7
-
+fVector D7
 -- examples
 -----------------------------------------
 -- Miller and Sturmfels, example 1.8 ----
 -----------------------------------------
+kk = ZZ
 R = kk[a..e]
 D = simplicialComplex monomialIdeal(a*d, a*e, b*c*d, d*e, c*e, b*e)
+assert not isPure D
 fVector D
-ideal dual D = monomialIdeal (a*b*c*d, a*b*e, a*c*e, d*e)
+ideal dual D == monomialIdeal (a*b*c*d, a*b*e, a*c*e, d*e)
+fVector bd D
+bd D
+S = ZZ/32003[u,v,w,x,y]
+label(D, {u,v,w,x,y})
+C = chainComplex D
+C.dd
+prune HH(C)
+label(D,{})
+
 -----------------------------------------
 -- torus  : Munkres page 15 example 3 ---
 -----------------------------------------
@@ -299,12 +321,15 @@ R = kk[a..j]
 D = simplicialComplex{a*b*i, a*e*i, i*b*j, j*c*b, j*c*a, j*a*e,
      e*i*f, i*h*f, i*h*j, j*e*d, j*g*d, j*h*g, g*h*f, f*e*d,
      d*f*a, f*b*a, f*g*c, f*b*c, g*c*a, g*d*a}
+assert isPure D
 C = chainComplex D
 prune HH(C)
 D' = dual D
 C' = chainComplex D'
 prune HH(C')
 fVector D
+bd D
+fVector bd D
 ----------------------------------------------
 -- Klein bottle : Munkres page 18 example 5 --
 ----------------------------------------------
@@ -313,6 +338,7 @@ R = kk[a..j]
 D = simplicialComplex {a*b*i, a*e*i, b*i*j, b*c*j, a*c*j, 
      a*d*j, e*f*i, f*h*i, h*i*j, d*e*j, e*g*j, g*h*j, 
      f*g*h, d*e*f, a*d*f, a*b*f, c*f*g, b*c*f, a*c*g, a*e*g}
+isPure D
 C = chainComplex D
 prune HH(C)
 fVector D
@@ -325,6 +351,8 @@ D = simplicialComplex monomialIdeal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f,b*c*d,b*d*e,b*
 C = chainComplex D
 prune HH(C)
 fVector D
+bd D
+fVector bd D
 ----------------------------------------
 -- Degenerations of Abelian surfaces ---
 -- Gross and Popescu, math.AG/9609001 --
@@ -347,6 +375,18 @@ prune HH(C)
 transpose gens ideal D     
 fVector D
 
+------------------------------
+-- Simplex with labelling ----
+------------------------------
+R = ZZ[a..e]
+D = simplicialComplex monomialIdeal product gens R
+D = dual simplicialComplex monomialIdeal gens R
+S = ZZ/32003[u,v,x,y,z]
+L = {x^2, x*y, x*z, y^2, y*z}
+label(D,L)
+C = chainComplex D
+C.dd
+------------------------------
 -- testing the chain complexes
 R = ZZ/101[a..e]
 D = simplicialComplex monomialIdeal product gens R
@@ -360,9 +400,12 @@ HH_3(C)
 HH_2(C)
 prune oo
 
-R = ZZ/101[a..h]
+kk = ZZ
+R = kk[a..h]
 I = monomialIdeal(a*b*c*d,e*f*g*h)
 D = simplicialComplex I
+fVector D
+chainComplex D
 E = simplicialComplex{a*b*c*d, e*f*g*h}
 dual D
 dual E
@@ -404,4 +447,15 @@ nonfaces D
 chainComplex D
 bd(2,D)
 
+R = ZZ[a..e]
+L = {a^2*b, a*b*c, a^2*c^2}
+lcmMonomials = (L) -> (
+     R := ring L#0;
+     x := max \ transpose apply(L, i -> first exponents i);
+     R_x)
+
+oo/first
+transpose oo
+oo/max
+R_oo
 ///
