@@ -1,49 +1,26 @@
 # @configure_input@
-DOTS = ..
-LIMIT = ulimit -t 30 -m 60000 -v 60000 2>/dev/null
-include $(DOTS)/../include/config.Makefile
+
 VPATH = @srcdir@
-RESULTS := $(notdir $(patsubst %.m2, %.out, $(wildcard @srcdir@/*.m2))) $(notdir $(patsubst %.m2-input, %.out, $(wildcard @srcdir@/*.m2-input)))
+
+# DOTS is the path to M2/Macaulay2 from this directory
+DOTS = ..
+include $(DOTS)/../include/config.Makefile
+
+all check clean distclean :: ; $(MAKE) -k -C engine $@
+
+SRCDIR = @srcdir@
+include @srcdir@/Makefile.test
+
 ifneq "$(DUMPDATA)" "no"
-RESULTS := $(RESULTS) dumpdata.out
+RESULTS += dumpdata.out
 endif
 
-PAT := ':[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):|^GC'
+all check clean distclean :: ; $(MAKE) -k -C slow $@
 
-all check ::
-	$(LIMIT); $(MAKE) -k -C engine $@
-all check :: $(RESULTS)
-all check :: ; $(MAKE) -C slow $@
-
-$(RESULTS) : $(DOTS)/bin/M2
-
-ARGS := --silent --stop -q -e 'path=join(path,{"@srcdir@/","@srcdir@/$(DOTS)/packages/"})'
-ARGS += --no-debug
-ARGS += -e 'errorDepth=0'
-# ARGS += -e 'gbTrace=5'
-
-%.out : %.m2
-	@ echo testing $<
-	@ $(LIMIT); \
-		if (echo 'input "$<"'; echo exit 0) | \
-		   time $(DOTS)/bin/M2 $(ARGS) >$*.errors 2>&1 ; \
-		then mv $*.errors $@ ; \
-		else a=$$?; egrep $(PAT) <$*.errors ; exit $$a ; \
-		fi
-%.out : %.m2-input
-	@ echo testing $<
-	@ $(LIMIT); \
-		if time $(DOTS)/bin/M2 $(ARGS) <$< >$*.errors 2>&1 ; \
-		then mv $*.errors $@ ; \
-		else a=$$?; egrep $(PAT) <$*.errors ; exit $$a ; \
-		fi
-
-clean::; rm -f *.okay *.out core
-distclean:: clean; rm -f Makefile
-clean distclean::; $(MAKE) -C engine $@
 docStructure.out : docStructure.m2
+
 Makefile : Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/test/Makefile
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/test "
+# compile-command: "make -k -C $M2BUILDDIR/Macaulay2/test "
 # End:
