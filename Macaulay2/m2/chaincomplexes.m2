@@ -480,11 +480,17 @@ homology(Nothing,ChainComplexMap) := homology(ChainComplexMap) := GradedModuleMa
      scan(spots f, i -> g#i = homology(i,f));
      g)
 
-chainComplex = method(SingleArgumentDispatch=>true)
+chainComplex = method(SingleArgumentDispatch=>true, TypicalValue => ChainComplex)
 
-chainComplex Matrix := ChainComplexMap => f -> chainComplex {f}
+chainComplex Ring := R -> (
+     C := new ChainComplex;
+     C.ring = R;
+     C)
 
-chainComplex Sequence := chainComplex List := ChainComplex => maps -> (
+chainComplex Matrix := f -> chainComplex {f}
+
+chainComplex Sequence := 
+chainComplex List := maps -> (
      if #maps === 0 then error "expected at least one differential map";
      C := new ChainComplex;
      R := C.ring = ring target maps#0;
