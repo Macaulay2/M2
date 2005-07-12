@@ -1,22 +1,11 @@
 # @configure_input@
-include ../../../include/config.Makefile
+DOTS = ../..
 VPATH = @srcdir@
-RESULTS := $(notdir $(patsubst %.m2, %.okay, $(wildcard @srcdir@/*.m2))) $(notdir $(patsubst %.m2-input, %.okay, $(wildcard @srcdir@/*.m2-input)))
-all check :: $(RESULTS)
-$(RESULTS) : ../../bin/M2
-ARGS := --silent --stop -q -e errorDepth=0
-ARGS += -e 'path = prepend("@srcdir@/",path)'
+include $(DOTS)/../include/config.Makefile
 
-# uncomment this for further debugging:
-# ARGS += -e 'errorDepth = 0'
+SRCDIR = @srcdir@
+include @srcdir@/../Makefile.test
 
-%.okay : %.m2
-	@ echo testing $<
-	ulimit -t 600 -m 60000 -v 60000; echo 'input "$<"' | ../../bin/M2 $(ARGS) 
-	@ touch $@
-
-clean::; rm -f *.okay core
-distclean: clean; rm -f Makefile
 Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/test/engine/Makefile
 
 LDLIBS = 
@@ -61,5 +50,5 @@ mapfile.demangled : mapfile
 	demangle <$< >$@
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine"
+# compile-command: "make -k -C $M2BUILDDIR/Macaulay2/test/engine "
 # End:
