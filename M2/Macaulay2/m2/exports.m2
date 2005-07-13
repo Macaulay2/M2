@@ -43,6 +43,8 @@ exportMutable (
 	)
 
 export (
+        symbol compositions,
+        symbol eagonNorthcott,
         symbol irreducibleDecomposition,
 	symbol Faces,
      	symbol isConstant,

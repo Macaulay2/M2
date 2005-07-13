@@ -138,6 +138,7 @@ schurRing(Symbol,ZZ) := SchurRing => (p,n) -> (
      S)
 
 
+
 beginDocumentation()
 
 document {
@@ -220,7 +221,7 @@ symmRing = (n) -> (
      	  p := global p;
      	  R := QQ[e_1..e_n,p_1..p_n,
 	       Degrees => toList(1..n,1..n)];
-     	  S := Schur n;
+     	  S := schurRing(symbol s, n);
      	  R.Schur = S;
      	  R.dim = n;
      	  R.mapToE = map(R,R,flatten splice {varlist(0,n-1,R),apply(n, i -> PtoE(i+1,R))});
@@ -415,13 +416,13 @@ bott = (QRreps) -> (
      (len, toList s - rho)
      )
 
-compositions = (r,n) -> (
+compositions1 = (r,n) -> (
      -- return a list of all of the n-compositions of r.
      if n === 1 then {{r}}
      else if r === 0 then {toList(n:0)}
      else (
 	  flatten for i from 0 to r list (
-	       w := compositions(r-i,n-1);
+	       w := compositions1(r-i,n-1);
 	       apply(w, w1 -> prepend(i,w1)))))
 
 
@@ -458,7 +459,7 @@ wedge(ZZ,List,List) := (r,L,ranks) -> (
      -- L is a list of pairs (f,g), f,g are in (possibly different) symm rings.
      -- returns wedge(r)(L), as a sum of irreducible representations of GL(m) x GL(n)
      n := #L;
-     p := compositions(r,n);
+     p := compositions1(r,n);
      p = select(p, x -> all(ranks-x, i -> i>=0));
      join apply(p, x -> wedge(x,L))
      )
@@ -756,7 +757,7 @@ weyman(8,L,{4,3,2})
 weyman(9,L,{4,3,2})
 	       
 --------------------
-#(compositions(9,3))
+#(compositions1(9,3))
 
 
 
