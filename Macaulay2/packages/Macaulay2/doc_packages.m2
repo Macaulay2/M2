@@ -343,8 +343,7 @@ document {
     Headline => "one line description",
     Version => 1.0,
     Date => "month  XX, 20XX",
-    Author => "author <email>",
-    HomePage => "url",
+    Authors => {{Name => "author", Email => "email", HomePage => "url"}},
     DebuggingMode => true
    )///,
 	SeeAlso => {"packages"}

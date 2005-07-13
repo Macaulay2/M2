@@ -17,7 +17,7 @@ PACKAGES += minimal
 PACKAGES += Points
 PACKAGES += PackageTemplate
 PACKAGES += SimplicialComplexes
-#PACKAGES += LLLBases
+PACKAGES += LLLBases
 
 # PACKAGES += SchurRings
 ##

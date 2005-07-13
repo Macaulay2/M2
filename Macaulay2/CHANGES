@@ -16,6 +16,10 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+'chainComplex' -- new form, for a ring R:
+    chainComplex R
+makes the zero chain complex over R
+
 PrintNames is a new hashtable that can be used to look up the name to
 be used for printing an object.  Thus we now use 
    PrintNames#X = "X"

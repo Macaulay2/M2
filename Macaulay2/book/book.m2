@@ -99,7 +99,7 @@ bookFile << ///
         \author[Stillman]{Michael E. Stillman}
         \address{Cornell University}
         \email{mike\char`\@math.cornell.edu}
-        \urladdr{\href{http://www.math.cornell.edu/~mike}{http://www.math.cornell.edu/\char`\~mike}}
+        \urladdr{\href{http://www.math.cornell.edu/~mike/}{http://www.math.cornell.edu/\char`\~mike/}}
         \date{/// << version#"compile time" << ///}
         \maketitle
 	\tableofcontents

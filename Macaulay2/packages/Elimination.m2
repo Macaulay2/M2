@@ -1,7 +1,7 @@
 newPackage("Elimination",
      Version => "1.0", 
      Date => "January 5, 2005",
-     Author => "Michael E. Stillman <mike@math.cornell.edu>",
+     Authors => {{Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},
      Headline => "a package for elimination of variables"
      )
 

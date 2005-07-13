@@ -105,7 +105,7 @@ export (
      	symbol reduceHilbert,
 	symbol Date,
 	symbol HomePage,
-	symbol Author,
+	symbol Authors,
 	symbol AbsoluteLinks,
         symbol Truncate,
         symbol ExampleTABLE,

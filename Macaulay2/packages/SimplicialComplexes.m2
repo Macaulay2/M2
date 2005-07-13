@@ -3,9 +3,11 @@ newPackage(
 	"SimplicialComplexes",
     	Version => "1.0", 
     	Date => "May 4, 2005",
-    	Author => "Sorin Popescu, Greg Smith, Mike Stillman",
-	Email => "sorin@math.sunysb.edu",
-    	HomePage => "http://www.math.sunysb.edu/~sorin/",
+    	Authors => {
+	     {Name => "Sorin Popescu", Email => "sorin@math.sunysb.edu", HomePage => "http://www.math.sunysb.edu/~sorin/"},
+	     {Name => "Greg Smith"},
+	     {Name => "Mike Stillman"}
+	     },
     	Headline => "simplicial complexes",
     	DebuggingMode => true
     	)
