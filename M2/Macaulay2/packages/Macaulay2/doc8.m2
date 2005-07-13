@@ -726,21 +726,7 @@ h = matrix {{1,0,0},{0,c,d}}
 M = subquotient(h,f)
 assert( mingens M == matrix (R, {{1},{0}}))
 "
-document {
-     Key => trim,
-     Headline => "simplify the presentation",
-     TT "trim M", " -- produce a module isomorphic to the module M obtained
-     by replacing its generators by a minimal set of generators, and doing
-     the same for the relations.",
-     PARA,
-     "Also works for rings and ideals.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x]",
-      	  "M = subquotient( matrix {{x,x^2,x^3}}, matrix {{x^3,x^4,x^5}})",
-      	  "trim M"
-	  }
-     }
+
 
 TEST "
 R = ZZ/101[a..d]

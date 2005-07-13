@@ -314,31 +314,6 @@ document {
      }
 
 document {
-     Key => radical, 
-     Headline => "compute the radical of an ideal",
-     TT "radical I", " -- the radical of the ideal I",
-     PARA,
-     "If I is an ideal in an affine ring (i.e. a quotient of a polynomial 
-     ring over a field), and if the characteristic of this field is
-     large enough (see below), then this routine yields the radical of
-     the ideal I.",
-     PARA,
-     "The method used is the Eisenbud-Huneke-Vasconcelos algorithm.
-     See their paper in Inventiones Mathematicae, 1993, for more details on the
-     algorithm.",
-     PARA,
-     "For an example, see ", TO "component example", ".",
-     PARA,
-     "The algorithms used generally require that the characteristic of the
-     ground field is larger than the degree of each primary component.  In 
-     practice, this means that if the characteristic is something like 32003,
-     rather than, for example, 5, the methods used will produce the radical of ", TT "I", ".  Of
-     course, you may do the computation over ", TO "QQ", ", but it will often run much
-     slower.  In general, this routine still needs to be tuned for speed.",
-     SeeAlso => {"topComponents", "removeLowestDimension", "saturate", "quotient"}
-     }
-
-document {
      Key => CompleteIntersection,
      Headline => "provide a hint when computing a radical",
      TT "CompleteIntersection => J", " -- an option to ", TO "radical", " 
@@ -362,24 +337,6 @@ document {
      PARA,
      "An ideal is said to be unmixed if all associated primes of R/I
      have the same dimension.  In this case the algorithm tends to be much faster."
-     }
-
-document {
-     Key => removeLowestDimension,
-     Headline => "remove components of lower dimension",
-     TT "removeLowestDimension I", " -- removes the components of ", TT "I", " of lower dimension",
-     PARA,
-     "Yields the intersection of the primary components of ", TT "I", ",
-     excepting those of lowest dimension (and thus returns the
-     ambient free module of ", TT "I", " (or unit ideal), if ", TT "I", "
-     is pure dimensional).",
-     PARA,
-     "For an example, see also ", TO "component example", ".",
-     PARA,
-     "Computes one free resolution, and some homology groups, but no
-     projections or determinants are used.  For a very brief description
-     of the method used, see ", TO "topComponents", ".",
-     SeeAlso => {"topComponents", "saturate", "quotient", "radical", "decompose"}
      }
 
 document {

@@ -530,7 +530,7 @@ documentOptions := new HashTable from {
 reservedNodeNames := set apply( {"Top", "Table of Contents", "Symbol Index"}, toLower )
 
 storeRawDocumentation := (nodename,opts) -> (
-     if currentPackage#rawKey#?nodename then stderr << "warning: documentation already provided for '" << nodename << "'" << endl;
+     if currentPackage#rawKey#?nodename then stderr << currentFileName << ":" << currentLineNumber() << ": warning: documentation already provided for '" << nodename << "'" << endl;
      currentPackage#rawKey#nodename = opts;
      )
 

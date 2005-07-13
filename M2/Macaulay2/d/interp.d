@@ -33,6 +33,7 @@ import dirname(s:string):string;
 
 fileExitHooks := setupvar("fileExitHooks", Expr(emptyList));
 currentFileName := setupvar("currentFileName", nullE);
+currentPosFile  := dummyPosFile;
 currentFileDirectory := setupvar("currentFileDirectory", Expr("./"));
 update(err:Error,prefix:string,f:Code):Expr := (
      if err.position == dummyPosition
@@ -146,12 +147,15 @@ readeval3(file:TokenFile,printout:bool,stopIfError:bool,dc:DictionaryClosure,ret
      saveLocalFrame := localFrame;
      localFrame = dc.frame;
       savecf := getGlobalVariable(currentFileName);
-       savecd := getGlobalVariable(currentFileDirectory);
+      savecd := getGlobalVariable(currentFileDirectory);
+      savepf := currentPosFile;
 	setGlobalVariable(currentFileName,Expr(file.posFile.file.filename));
 	setGlobalVariable(currentFileDirectory,Expr(dirname(file.posFile.file.filename)));
+        currentPosFile = file.posFile;
 	ret := readeval4(file,printout,stopIfError,dc.dictionary,returnLastvalue,stopIfBreakReturnContinue);
-       setGlobalVariable(currentFileDirectory,savecd);
+      setGlobalVariable(currentFileDirectory,savecd);
       setGlobalVariable(currentFileName,savecf);
+      currentPosFile = savepf;
      localFrame = saveLocalFrame;
      ret);
 readeval(file:TokenFile,returnLastvalue:bool):Expr := (
@@ -232,6 +236,13 @@ load(e:Expr):Expr := (
      is s:string do load(s)
      else buildErrorPacket("expected string as file name"));
 setupfun("simpleLoad",load);
+
+currentLineNumber(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) == 0 then Expr(toInteger(int(currentPosFile.pos.line)))
+     else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("currentLineNumber",currentLineNumber);
 
 input(e:Expr):Expr := (
      when e

@@ -114,6 +114,7 @@ export (o:file) << (p:(null or Position)):file := (
 export copy(p:Position):Position := Position(
      p.filename, p.line, p.column, uchar(loadDepth));
 export PosFile := {file:file, lastchar:int, pos:Position};
+export dummyPosFile := PosFile(dummyfile,0,dummyPosition);
 export fileError(f:PosFile):bool := fileError(f.file);
 export fileErrorMessage(f:PosFile):string := fileErrorMessage(f.file);
 export makePosFile(o:file):PosFile := PosFile(o, 0,

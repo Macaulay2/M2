@@ -388,13 +388,6 @@ assert(
 "
 
 document {
-     Key => intersect,
-     Headline => "compute an intersection",
-     TT "intersect(M,N,...)", " -- calculate the intersection of 
-     submodules of the same free module, or of monomial ideals in the same ring."
-     }
-
-document {
      Key => isBorel,
      Headline => "whether an ideal is fixed by upper triangular changes of coordinates"
      }
@@ -866,14 +859,6 @@ document {
 	  TO [quotient,MinimalGenerators],
 	  TO [saturate,MinimalGenerators],
 	  },
-     PARA,
-     "The default value is ", TT "true", "."
-     }
-
-document {
-     Key => [quotient,MinimalGenerators],
-     TT "MinimalGenerators => true", " -- an option for ", TO "quotient", "
-     which specifies whether to compute minimal generators for the result.",
      PARA,
      "The default value is ", TT "true", "."
      }

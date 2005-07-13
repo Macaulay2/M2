@@ -12,7 +12,6 @@ exportMutable (
 	symbol backupFileRegexp,
 	symbol buildHomeDirectory,
 	symbol compactMatrixForm,
-	symbol currentFileName,
 	symbol currentPackage,
 	symbol currentPrompts,
 	symbol debugError,
@@ -43,6 +42,8 @@ exportMutable (
 	)
 
 export (
+	symbol currentFileName,
+        symbol currentLineNumber,
         symbol compositions,
         symbol eagonNorthcott,
         symbol irreducibleDecomposition,

@@ -67,7 +67,7 @@ phase1 :: prep
 
 ifneq "$(DUMPDATA)" "no"
 phase1 :: ../cache/$(DUMPDATAFILE)
-../cache/$(DUMPDATAFILE) : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) ../bin/M2
+redump ../cache/$(DUMPDATAFILE) : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) ../bin/M2
 	rm -f ../cache/$(DUMPDATAFILE)
 	../bin/M2 -q --stop -e 'errorDepth = 0' --dumpdata
 endif

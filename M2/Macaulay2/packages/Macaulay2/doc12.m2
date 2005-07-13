@@ -1006,17 +1006,6 @@ document {
      SeeAlso => "ScriptedFunctor"
      }
 
-document {
-     Key => HH,
-     Headline => "general homology and cohomology functor",
-     TT "HH", " is a ", TO "ScriptedFunctor", " which serves as an interface
-     to the methods for ",  TO "homology", " and ", TO "cohomology", ", in
-     the sense that, ", TT "HH_i(M)", " is an abbreviation for ", TT "homology(i,M)", "
-     ", TT "HH^i(M)", " is an abbreviation for ", TT "cohomology(i,M)", ",
-     and ", TT "HH(M)", " is an abbreviation for ", TT "homology(,M)", ".
-     A second argument and optional arguments may be added."
-     }
-
 TEST ("
      R=ZZ/101[a..d]
      C=resolution cokernel vars R
@@ -1027,34 +1016,6 @@ TEST ("
      assert( degree HH_-1 D === 1 )
      assert( degree HH_-2 D === 1 )
      ")
-
-document {
-     Key => cohomology,
-     Headline => "general cohomology functor",
-     TT "cohomology", " -- a method name available for computing expressions
-     of the forms ", TT "HH^i(X)", " and ", TT "HH^i(M,N)", ".",
-     PARA,
-     "If it is intended that ", TT "i", " be of class ", TO "ZZ", ", ", TT "M", " be of
-     class ", TT "A", ", and ", TT "N", " be of 
-     class ", TT "B", ", then the method can be installed with ",
-     PRE "     cohomology(ZZ, A, B) := opts -> (i,M,N) -> ...",
-     SeeAlso => {"homology", "HH", "ScriptedFunctor"}
-     }
-
-document {
-     Key => homology,
-     Headline => "general homology functor",
-     TT "homology(f,g)", " -- computes the homology module ", TT "(kernel f)/(image g)", ".",
-     BR, NOINDENT,
-     TT "homology", " -- a method name available for computing expressions
-     of the forms ", TT "HH_i(X) and", " ", TT "HH_i(M,N).",
-     PARA,
-     "If it is intended that ", TT "i", " be of class ", TO "ZZ", ", 
-     ", TT "M", " be of class ", TT "A", ", and ", TT "N", " be of
-     class ", TT "B", ", then the method can be installed with ",
-     PRE "     homology(ZZ, A, B) := opts -> (i,M,N) -> ...",
-     SeeAlso => {"HH", "cohomology", "ScriptedFunctor"}
-     }
 
 document {
      Key => showHtml,
