@@ -66,9 +66,9 @@ prep :: $(DUMPEDM2FILES)
 phase1 :: prep
 
 ifneq "$(DUMPDATA)" "no"
-phase1 :: ../$(DUMPDATAFILE)
-../$(DUMPDATAFILE) : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) ../bin/M2
-	rm -f ../$(DUMPDATAFILE)
+phase1 :: ../cache/$(DUMPDATAFILE)
+../cache/$(DUMPDATAFILE) : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) ../bin/M2
+	rm -f ../cache/$(DUMPDATAFILE)
 	../bin/M2 -q --stop -e 'errorDepth = 0' --dumpdata
 endif
 
@@ -167,7 +167,7 @@ install ::
 	@ echo installing the Macaulay2Core package
 	@ set -x ; time ../bin/M2 $(M2OPTIONS)
 
-clean::; rm -rf ../$(DUMPDATAFILE) cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 version.m2 core
+clean::; rm -rf ../cache/$(DUMPDATAFILE) cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 version.m2 core
 distclean : clean; rm -f Makefile
 always:
 

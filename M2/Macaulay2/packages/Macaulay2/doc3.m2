@@ -93,7 +93,7 @@ document {
      basic type.",
      PARA,
      "Let's compute a list of all the basic types:",
-     EXAMPLE ///stack sort (toString \
+     EXAMPLE ///stack sort unique (toString \
      select(values Macaulay2Core.Dictionary, i -> parent value i === Thing)
      )///,
      SeeAlso => "basic types"

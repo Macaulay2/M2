@@ -93,14 +93,6 @@ install install-strip distclean clean ::; $(MAKE) -C bin $@
 ################################# man
 all install :: ; $(MAKE) -C man $@
 install-strip :: ; $(MAKE) -C man install
-################################# cache
-ifeq "$(DUMPDATA)" "yes"
-ifeq "$(ENCAP)" "no"
-install :: $(cachedir)/$(DUMPDATAFILE)
-$(cachedir)/$(DUMPDATAFILE) : $(DUMPDATAFILE)
-	$(INSTALL_DATA) $< "$@"
-endif
-endif
 ################################# Makefile
 Makefile : Makefile.in
 	cd ..; ./config.status Macaulay2/Makefile

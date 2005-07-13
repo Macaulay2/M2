@@ -262,7 +262,7 @@ ifeq "$(MEMDEBUG)" "yes"
 DEBUGFLAGS += -DMEMDEBUG
 endif
 
-DUMPDATAFILE := cache/Macaulay2-$(ARCH)-data
+DUMPDATAFILE := Macaulay2-$(ARCH)-data
 
 ifeq "$(DEBUG)" "yes"
 CPPFLAGS += -DGC_DEBUG

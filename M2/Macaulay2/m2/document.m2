@@ -947,7 +947,7 @@ documentationValue(Symbol,Type) := (s,X) -> (
      splice (
 	  if #b > 0 then ( DIV {"Types of ", if X.?synonym then X.synonym else toString X, " :"}, smenu b),
 	  if #a > 0 then ( DIV {"Functions and methods returning ", indefinite synonym X, " :"}, smenu a ),
-	  if #c > 0 then ( DIV {"Additional methods, which use ", indefinite synonym X, " :"}, smenu c),
+	  if #c > 0 then ( DIV {"Additional methods that use ", indefinite synonym X, " :"}, smenu c),
 	  if #e > 0 then ( DIV {"Fixed objects of class ", toString X, " :"}, smenu e)))
 documentationValue(Symbol,HashTable) := (s,x) -> splice (
      c := documentableMethods x;
