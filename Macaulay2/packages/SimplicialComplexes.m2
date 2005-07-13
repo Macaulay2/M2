@@ -2,11 +2,11 @@
 newPackage(
 	"SimplicialComplexes",
     	Version => "1.0", 
-    	Date => "May 4, 2005",
+    	Date => "July 13, 2005",
     	Authors => {
 	     {Name => "Sorin Popescu", Email => "sorin@math.sunysb.edu", HomePage => "http://www.math.sunysb.edu/~sorin/"},
-	     {Name => "Greg Smith"},
-	     {Name => "Mike Stillman"}
+	     {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"},
+	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	     },
     	Headline => "simplicial complexes",
     	DebuggingMode => true
@@ -70,6 +70,9 @@ dual SimplicialComplex := (D) -> (
      newSimplicialComplex(monomialIdeal complement D.facets,
 	  complement generators D.faceIdeal)
      )
+
+ring SimplicialComplex := (D) -> D.ring
+coefficientRing SimplicialComplex := (D) -> coefficientRing D.ring
 
 facets = method()
 facets SimplicialComplex := (D) -> D.facets
@@ -198,7 +201,11 @@ fVector SimplicialComplex := List => D -> (
 bd SimplicialComplex := (D) -> (
      F := first entries facets D;
      L := flatten apply(F, m -> apply(support m, x -> m//x));
-     simplicialComplex L)
+     if #L === 0 then 
+         simplicialComplex monomialIdeal (1_(ring D))
+     else
+     	 simplicialComplex L
+     )
 
 isPure = method(TypicalValue => Boolean)
 isPure SimplicialComplex := Boolean => (D) -> (
@@ -231,6 +238,7 @@ document { Key => SimplicialComplexes,
      UL {
 	  TO bd,
 	  TO (chainComplex,SimplicialComplex),
+	  TO (coefficientRing,SimplicialComplex),
 	  TO (dim,SimplicialComplex),
 	  TO (dual,SimplicialComplex),
 	  TO faces,
@@ -241,6 +249,7 @@ document { Key => SimplicialComplexes,
 	  TO isPure,
 	  TO label,
 	  TO (monomialIdeal,SimplicialComplex),
+	  TO (ring,SimplicialComplex),
 	  TO simplicialComplex,
 	  }
 --	  (TO "chainComplex", "(D) -- the chain complex of D"),
@@ -376,51 +385,87 @@ document {
 
 document { 
      Key => bd,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-          },
-     Outputs => {
-          },
-     Consequences => {
-          },     
-     "description",
-     EXAMPLE {
-          },
-     Caveat => {},
-     SeeAlso => {}
+     Headline => "boundary operator",
+     SeeAlso => {SimplicialComplexes}
      }
 document { 
      Key => (bd,ZZ,SimplicialComplex),
-     Headline => "",
-     Usage => "",
+     Headline => "the boundary map from i-faces to (i-1)-faces",
+     Usage => "M = bd(i,D)",
      Inputs => {
+	  "i" => "",
+	  "D" => ""
           },
      Outputs => {
+	  "M" => Matrix => {"the boundary map from ", TT "i", 
+	       "-faces to ", TT "(i-1)", "-faces of ", TT "D"}
           },
-     Consequences => {
-          },     
-     "description",
+     "The columns of the matrix ", TT "M", " are indexed by the ", TT "i", "-faces of
+     ", TT "D", ", and the rows are indexed by the ", TT "(i-1)", "-faces, in the order
+     given by ", TO faces, ".  ", TT "M", " is defined over the ", 
+     TO2((coefficientRing,SimplicialComplex),"coefficient ring"), " of ", TT "D", ".",
      EXAMPLE {
-          },
-     Caveat => {},
-     SeeAlso => {}
+	  ///loadPackage "SimplicialComplexes";///
+	  },
+     "The boundary maps for the standard 3-simplex, defined over ", TT "ZZ", ".",
+     EXAMPLE {
+	  "R = ZZ[a..d];",
+	  "D = simplicialComplex {a*b*c*d}",
+	  "bd(0,D)",
+	  "faces(0,D)",
+          "bd(1,D)",
+	  "faces(1,D)",
+	  "bd(2,D)",
+	  "faces(2,D)",
+	  "bd(3,D)",
+	  "faces(3,D)",
+	  "bd(4,D)"
+	  },
+     "The boundary maps depend on the ",
+     TO2((coefficientRing,SimplicialComplex),"coefficient ring"), 
+     " as the following examples illustrate.",
+     EXAMPLE {
+	  "R = QQ[a..f];",
+	  "D = simplicialComplex monomialIdeal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f,b*c*d,b*d*e,b*e*f,c*d*f,c*e*f);",
+	  "bd(1,D)",
+	  "R' = ZZ/2[a..f];",
+	  "D' = simplicialComplex monomialIdeal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f,b*c*d,b*d*e,b*e*f,c*d*f,c*e*f);",
+	  "bd(1,D')"
+	  },
+     SeeAlso => {SimplicialComplexes, (chainComplex,SimplicialComplex), faces}
      }
 document { 
      Key => (bd,SimplicialComplex),
-     Headline => "",
-     Usage => "",
+     Headline => "the boundary simplicial complex of D",
+     Usage => "bd D",
      Inputs => {
+	  "D" => ""
           },
      Outputs => {
+	  SimplicialComplex => {"the boundary simplicial complex, 
+	   i.e. the subcomplex of ", TT "D", 
+	   " consisting of all nonmaximal faces of ", TT "D"},
           },
-     Consequences => {
-          },     
-     "description",
      EXAMPLE {
-          },
-     Caveat => {},
-     SeeAlso => {}
+	  ///loadPackage "SimplicialComplexes";///
+	  },
+     "The boundary of the standard 3-simplex is the 2-sphere.",
+     EXAMPLE {
+          "R = ZZ[a..d];",
+          "simplex = simplicialComplex{a*b*c*d}",
+	  "sphere = bd simplex",
+	  "fVector sphere",
+	  "fVector simplex"  
+	  },
+     "Facets may be of different dimensions.",
+     EXAMPLE {
+          "R = ZZ[a..g];",
+          "D = simplicialComplex{a*b*c,a*d,d*f,g*c,e,f*g}",
+	  "E = bd D",
+	  "fVector D",
+	  "fVector E"
+	  },
+     SeeAlso => {SimplicialComplexes, fVector, isPure, facets}
      }
 
 document { 
@@ -481,41 +526,97 @@ document {
      }
 
 document { 
-     Key => isPure,
-     Headline => "",
-     Usage => "",
+     Key => {isPure,(isPure,SimplicialComplex)},
+     Headline => "whether the facets are equidimensional",
+     Usage => "isPure D",
      Inputs => {
+	  "D" => SimplicialComplex => ""
           },
      Outputs => {
+	  Boolean => {TO true, " if the facets of ", TT "D", " all have the same dimension, 
+	       and ", TO false, " otherwise"}
           },
-     Consequences => {
-          },     
-     "description",
      EXAMPLE {
+	  ///loadPackage "SimplicialComplexes";///
+	  },
+     EXAMPLE {
+          "R = ZZ[a..f];",
+	  "D = simplicialComplex {a*b*c, a*b*d, d*e*f} ",
+	  "isPure D"
+	  },
+     EXAMPLE {
+	  "E = simplicialComplex {a*b*c, b*d, d*e*f} ",
+	  "isPure E"
           },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {SimplicialComplexes, (dim,SimplicialComplex),facets}
      }
 document { 
-     Key => (isPure,SimplicialComplex),
-     Headline => "",
-     Usage => "",
+     Key => (ring,SimplicialComplex),
+     Usage => "R = ring D",
      Inputs => {
+	  "D" => ""
           },
      Outputs => {
+	  "R" => Ring => {"the polynomial ring used to define ", TT "D"}
           },
-     Consequences => {
-          },     
-     "description",
+     "The vertices of every simplicial complex are variables in the polynomial ring ", TT "R", ",
+     and subsets of vertices, such as faces, are represented as squarefree monomials in ", TT "R", ".",
      EXAMPLE {
+	  ///loadPackage "SimplicialComplexes";///
+	  },
+     EXAMPLE {
+          "R = QQ[a..d];",
+	  "D = simplicialComplex monomialIdeal(a*b*c*d);",
+	  "ring D",
+	  "coefficientRing D",
+          "S = ZZ[w..z];",
+	  "E = simplicialComplex monomialIdeal(w*x*y*z);",
+	  "ring E",
+	  "coefficientRing E"
           },
-     Caveat => {},
-     SeeAlso => {}
+     PARA,
+     "There is a bijection between simplicial complexes and squarefree
+     monomial ideals.  This package exploits this correspondence by
+     using commutative algebra routines to perform most of the necessary
+     computations.",
+     Caveat => {"Some operations depend on the choice of ring, or its coefficient ring"},
+     SeeAlso => {SimplicialComplexes, (coefficientRing, SimplicialComplex)}
      }
---- status: TODO
---- author(s): 
---- notes: 
-
+document { 
+     Key => (coefficientRing,SimplicialComplex),
+     Usage => "coefficientRing D",
+     Inputs => {
+	  "D" => ""
+          },
+     Outputs => {
+	  Ring => {"the coefficients of the defining ",
+	       TO2((ring,SimplicialComplex),"polynomial ring"),
+	       " of ", TT "D"}
+          },
+     EXAMPLE {
+	  ///loadPackage "SimplicialComplexes";///
+	  },
+     EXAMPLE {
+          "R = QQ[a..d];",
+	  "D = simplicialComplex monomialIdeal(a*b*c*d);",
+	  "ring D",
+	  "coefficientRing D",
+          "S = ZZ[w..z];",
+	  "E = simplicialComplex monomialIdeal(w*x*y*z);",
+	  "ring E",
+	  "coefficientRing E"
+          },
+     "Some computations depend on the choice of coefficient ring, for example,
+     the boundary maps and the chain complex of D.",
+     EXAMPLE {
+	  "chainComplex D",
+	  "chainComplex E"
+          },
+     SeeAlso => {SimplicialComplexes, 
+	  (ring,SimplicialComplex), 
+	  (chainComplex,SimplicialComplex), 
+	  bd}
+     }
 document { 
      Key => label,
      Headline => "",
@@ -548,7 +649,6 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
-
 document { 
      Key => {faces,(faces,ZZ,SimplicialComplex)},
      Headline => "the i-faces of a simplicial complex ",
@@ -739,30 +839,32 @@ loadPackage "SimplicialComplexes"
 kk = ZZ
 R = kk[x]
 
-D3 = simplicialComplex monomialIdeal(1_R)
-assert isPure D3
-assert(dim D3 == -infinity)
-assert(faces(0,D3) == 0)
-assert(faces(-1,D3) == 0)
-dual D3
-C = chainComplex D3
-assert(HH_0(D3) == 0)
-assert(HH_-1(D3) == 0)
-fVector D3
+void = simplicialComplex monomialIdeal(1_R)
+assert isPure void
+assert(dim void == -infinity)
+assert(faces(0,void) == 0)
+assert(faces(-1,void) == 0)
+dual void
+C = chainComplex void
+assert(HH_0(void) == 0)
+assert(HH_-1(void) == 0)
+fVector void
+assert(bd void  == void)
 
-D4 = simplicialComplex monomialIdeal gens R
-assert isPure D4
-assert(dim D4 === -1)
-assert(faces(0,D4) == 0)
-assert(numgens source faces(-1,D4) === 1)
-assert(D4 == dual D4)
-C = chainComplex D4
-assert(HH_0(D4) == 0)
-assert(HH_-1(D4) == R^1)
-assert(fVector D4 === new HashTable from {-1=>1})
+irrelevant = simplicialComplex monomialIdeal gens R
+assert isPure irrelevant
+assert(dim irrelevant === -1)
+assert(faces(0,irrelevant) == 0)
+assert(numgens source faces(-1,irrelevant) === 1)
+assert(irrelevant == dual irrelevant)
+C = chainComplex irrelevant
+assert(HH_0(irrelevant) == 0)
+assert(HH_-1(irrelevant) == R^1)
+assert(fVector irrelevant === new HashTable from {-1=>1})
+assert(bd irrelevant == void)
 
 D5 = simplicialComplex {1_R}
-D5 == D4
+D5 == irrelevant
 
 x = symbol x
 kk = ZZ
