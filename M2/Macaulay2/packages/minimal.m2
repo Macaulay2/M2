@@ -3,7 +3,9 @@
 newPackage("minimal",
      Version => "1.0", 
      Date => "December 14, 2004",
-     Author => "Daniel R. Grayson <dan@math.uiuc.edu>",
+     Authors => {
+	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu"}
+	  },
      HomePage => "http://www.math.uiuc.edu/~dan/Macaulay2/",
      Headline => "A minimal example of a Macaulay 2 package",
      DebuggingMode => false

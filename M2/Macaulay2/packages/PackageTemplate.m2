@@ -2,7 +2,9 @@ newPackage(
 	"PackageTemplate",
     	Version => "1.0", 
     	Date => "April 28, 2005",
-    	Author => "Jane Doe <doe@math.uiuc.edu>",
+    	Authors => {
+	     {Name => "Jane Doe", Email => "doe@math.uiuc.edu"}
+	     },
     	HomePage => "http://www.math.uiuc.edu/~doe/",
     	Headline => "an example Macaulay 2 package",
 	-- DebuggingMode should be true while developing a package, 

@@ -4,9 +4,10 @@ newPackage(
 	"SchurRings",
     	Version => "1.0", 
     	Date => "March 11, 2005",
-    	Author => "Michael Stillman and Hal Schenck",
-	Email => "mike@math.cornell.edu",
-    	HomePage => "http://www.math.cornell.edu/~mike/",
+    	Authors => {
+	     {Name => "Michael Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"},
+	     {Name => "Hal Schenck"}
+	     },
     	Headline => "representation rings of general linear groups and of symmetric groups",
     	DebuggingMode => true
     	)

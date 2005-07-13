@@ -1,5 +1,8 @@
 newPackage("Markov",
-     Author => "Luis Garcia and Mike Stillman",
+     Authors => {
+	  {Name => "Luis Garcia"},
+	  {Name => "Mike Stillman"}
+	  },
      DebuggingMode => false,
      Headline => "Markov ideals, arising from Bayesian networks in statistics",
      Version => "1.0"

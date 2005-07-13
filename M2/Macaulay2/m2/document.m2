@@ -953,6 +953,8 @@ documentationValue(Symbol,HashTable) := (s,x) -> splice (
      c := documentableMethods x;
      if #c > 0 then (DIV {"Functions installed in ", toString x, " :"}, smenu c))
 documentationValue(Symbol,Thing) := (s,x) -> ()
+
+authorDefaults := new HashTable from { Name => "Anonymous", Email => null, HomePage => null }
 documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2Core then (
      e := toSequence pkg#"exported symbols";
      a := select(e,x -> instance(value x,Function));	    -- functions
@@ -963,7 +965,23 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2Core then (
      c := select(e,x -> instance(value x,Symbol));	    -- symbols
      d := toList(set e - set a - set b - set c);	    -- other things
      fn := pkg#"title" | ".m2";
+     au := pkg.Options.Authors;
      (
+     	  if #au > 0 then (
+     	       SUBSECTION (if #au === 1 then "Author" else "Authors"), 
+	       fixup UL apply(au,
+		    au -> (
+			 if class au =!= List then error "expected author to be a list";
+			 (defs,args) := override (authorDefaults, toSequence au);
+			 if #args > 0 then error "expected Author to be a list of options";
+			 nam := defs.Name;
+			 if defs.HomePage =!= null then nam = HREF{defs.HomePage, nam};
+			 em := defs.Email;
+			 if em =!= null then em = SEQ{" <",HREF{concatenate("mailto:",em),em},">"};
+			 PARA1 {nam,em}
+			 )
+		    )
+	       ),
 	  SUBSECTION "Version", "This documentation describes version ", pkg.Options.Version, " of the package.",
 	  SUBSECTION "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, ".",
 	  if #e > 0 then (

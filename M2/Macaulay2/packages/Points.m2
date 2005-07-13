@@ -2,7 +2,9 @@ newPackage(
 	"Points",
     	Version => "0.1", 
     	Date => "Feb 23, 2005",
-    	Author => "Mike Stillman <mike@math.cornell.edu>",
+    	Authors => {
+	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu>"}
+	     },
     	HomePage => "http://www.math.uiuc.edu/Macaulay2/",
     	Headline => "A Macaulay2 package for computing with ideals of points",
     	DebuggingMode => true

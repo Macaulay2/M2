@@ -54,8 +54,7 @@ newPackage = method(
 	  DebuggingMode => false,
 	  InfoDirSection => "Macaulay 2 and its packages",
 	  Headline => null,
-	  Author => null,
-	  Email => null,
+	  Authors => {}, -- e.g., Authors => { {Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"} }
 	  HomePage => null,
 	  Date => null } )
 newPackage(String) := opts -> (title) -> (
@@ -188,9 +187,10 @@ addStartFunction( () -> if prefixDirectory =!= null then Macaulay2Core#"package 
 saveCurrentPackage := currentPackage
 
 newPackage("Macaulay2Core", 
-     Author => {"Daniel R. Grayson", "Michael E. Stillman"},
-     Email => {"dan@math.uiuc.edu", "mike@math.cornell.edu"},
-     HomePage => {"http://www.math.uiuc.edu/~dan/", "http://www.math.cornell.edu/People/Faculty/stillman.html"},
+     Authors => {
+	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}, 
+	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
+	  },
      DebuggingMode => debuggingMode, 
      Version => version#"VERSION", 
      Headline => "A computer algebra system designed to support algebraic geometry")
