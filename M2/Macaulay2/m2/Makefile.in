@@ -80,6 +80,7 @@ phase1 :: ../cache/Macaulay2-made
 justM2 all:: .gdbinit .gdb-files .gdb-run-it
 gdb: .gdbinit .gdb-files; gdb ../bin/M2$(EXE)
 .gdbinit: .gdbinit.$(USER); cp $< $@
+.gdbinit.$(USER):; touch $@
 clean::; rm -f .gdbinit
 .gdb-files: Makefile
 	echo 'echo -- loading .gdb-files\n' >$@
