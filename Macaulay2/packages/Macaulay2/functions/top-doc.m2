@@ -3,6 +3,7 @@
 --- notes: 
 
 document {
+     -- this is the old version, not completely merged into the new ?
      Key => "topComponents",
      "If M is a module in a polynomial ring R, then the implementations of 
      ", TO "topComponents", " and ", TO "removeLowestDimension", " are based on 

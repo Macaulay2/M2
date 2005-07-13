@@ -174,41 +174,6 @@ document {
      "For more information see ", TO "GaloisField", "."
      }
 
-
-document {
-     Key => "graded and multigraded polynomial rings",
-     "It is possible to set up a polynomial ring so that the degree of an
-     element is a vector of integers.  For this, the option
-     ", TO "Degrees", " is used, together with a list of degrees for the
-     variables in the ring.  Each degree is itself a list of integers.  The
-     degrees given must all be of the same length, and length zero is
-     allowed, to get an ungraded ring.",
-     EXAMPLE {
-	  "R = ZZ/101[a,b,c,Degrees=>{{1,2},{2,1},{1,0}}]",
-      	  "describe R",
-	  },
-     "At the moment there is a restriction on the degree vectors: the first
-     entry must be greater than zero.  This restriction will be removed soon.",
-     EXAMPLE {
-	  "degree a",
-      	  "degree b^2",
-      	  "degree 0_R",
-      	  "degree 1_R",
-	  },
-     "A random element of bi-degree ", TT "{m,n}", " can be obtained with
-     ", TO "random", ".",
-     EXAMPLE "random({15,15},R)",
-     "The function ", TO "degree", " applied to a polynomial will
-     return the least upper bound of the degrees of its monomials.",
-     EXAMPLE "degree (a+b)",
-     "We may recover the number of integers in each degree list for our ring
-     as follows.",
-     EXAMPLE {
-	  "degreeLength R",
-      	  "degreeLength ZZ"
-	  },
-     }
-
 document {
      Key => "quotient rings",
      -- R/I.  GB of I is needed for arithmetic.
@@ -708,11 +673,6 @@ document {
      }
 
 document {
-     Key => "graded modules",
-     -- Mike must have wanted a node with this name...
-     }
-
-document {
      Key => "matrices to and from modules",
      Headline => "including kernel, cokernel and image",
      
@@ -875,37 +835,9 @@ document {
      }
 
 document {
-     Key => "constructing maps between modules",
-	"Let's start with a free module.",
-	EXAMPLE {
-		"R = ZZ/5[x,y,z];",
-		"F = R^3"
-		},
-	"A list of indices can be used to produce homomorphisms corresponding to the corresponding basis vectors.",
-	EXAMPLE {
-		"F_{0,1,2}",
-		"F_{0,1}",
-		"F_{1,2}"
-		},
-	"Matrices are viewed as linear transformations.",
-	EXAMPLE {
-		"f = matrix{{x,y,z}}"
-		},
---     "The standard way to define a map from an R-module M to an 
---     R-module N is to give a matrix whose columns are the image vectors
---     of the generators of M.",
---     EXAMPLE {
---	  "R = QQ[x,y,z];",
---	  "m = cokernel vars R",
---	  "--F = map(m/m^2, R^1/m, {{x*y*z}})"
---	  }
-     }
-
-document {
      Key => "information about a map of modules",
      "usual information: source, target, ring.",
      }
-
 
 document {
      Key => "kernel, cokernel and image of a map of modules",
@@ -1005,23 +937,6 @@ document {
 -- GB nodes -------
 -------------------
 
-
-document {
-     Key => "monomial orderings v1.0",
-     "This section is only valid for Macaulay2, versions 1.0 and higher.",
-     PARA,
-     "Each ring in Macaulay2 comes equipped with an ordering on the
-monomials.  This ordering is used in the display and storing of polynomials.
-The choice of ordering can make a difference in the time taken in various
-computations.  Groebner bases performed on ideals and modules will use the
-chosen monomial ordering.",
-     PARA,
-     "The default is to use the graded lexicographic order.  This order is defined 
-     as follows: x^A > x^B "
-     }
-
-
-
 document {
      Key => "finding a Groebner basis",
      }
@@ -1066,31 +981,6 @@ Plan for the next node:
 --   remove linear equations, and the corresponding variable.
 --   computing up to a given degree
 ///
-document {
-     Key => "fine control of a Groebner basis computation",
-     "Sometimes a Groebner basis computation doesn't finish quickly enough.  If so
-     then this section might be of use. THIS PAGE IS UNDER CONSTRUCTION.",
-     
-	  SUBSECTION "Partially computed Groebner bases",
-	       "Suppose that you have computed part of a Groebner basis.  For
-	       example, you may have interrupted the computation using CTRL-C 
-	       (typing 'c' while holding the CTRL key down, in emacs, you have to 
-	       type CTRL-C twice), or you may have given options requesting only
-	       partial computation.",
-     	       EXAMPLE {
-		    "R = ZZ/32003[a..e];",
-	            "I = ideal(random(3,R),random(3,R),random(3,R))",
-	            "gens gb(I,PairLimit=>7);"},
-	       "Get the Groebner basis object:",
-	       EXAMPLE {
-		    "g = gb(I,StopBeforeComputation => true);",
-	       	    "leadTerm gens g"},
-	       "We can make a Groebner basis snapshot by using StopBeforeComputation:",
-	       EXAMPLE {
-		    "gbSnapshot = (I) -> gens gb(I,StopBeforeComputation => true);",
-	            "leadTerm gbSnapshot(I)"}
---	  SUBSECTION ""
-     }
 
 TEST ///
 -- document these routines DO THIS
