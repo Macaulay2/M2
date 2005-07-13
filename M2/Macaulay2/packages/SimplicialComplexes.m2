@@ -634,21 +634,71 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (label,SimplicialComplex,List),
-     Headline => "",
-     Usage => "",
+     Key => (dual,SimplicialComplex),
+     Headline => "the Alexander dual of a simplicial complex",
+     Usage => "dual D",
      Inputs => {
+	  "D" => ""
           },
      Outputs => {
+	  SimplicialComplex => {"the Alexander dual of ", TT "D"}
           },
-     Consequences => {
-          },     
-     "description",
+     "The Alexander dual of D is the simplicial complex
+     whose faces are the complements of the nonfaces of D.",
      EXAMPLE {
+	  ///loadPackage "SimplicialComplexes";///,
           },
-     Caveat => {},
-     SeeAlso => {}
+     "The Alexander dual of a square is the disjoint union of
+     two edges.",
+     EXAMPLE {
+	  "R = ZZ[a..d];",
+	  "D = simplicialComplex {a*b,b*c,c*d,d*a}",
+          "dual D"
+	  },
+     PARA,
+     "The Alexander dual is homotopic to the complement of D in the sphere generated
+     by all of the variables in the ",
+     TO2((ring,SimplicialComplex),"ring"),
+     " of D.  In particular, it depends on the number of variables.",
+     EXAMPLE {
+	  "R = ZZ[a..e]",
+	  "E = simplicialComplex {a*b,b*c,c*d,d*a}",
+          "dual E"
+          },
+     "The projective dimension of the face ring of D equals the
+     regularity of the face ideal of the Alexander dual of D
+     see e.g. Corollary 5.59 of Miller-Sturmfels, Combinatorial
+     Commutative Alebra.",
+     EXAMPLE {
+	  "R = QQ[a..f];",
+	  "D = simplicialComplex monomialIdeal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f,b*c*d,b*d*e,b*e*f,c*d*f,c*e*f)",
+	  "A = dual D",
+	  "pdim (R^1/(ideal D))",
+	  "regularity ideal A"
+	  },
+     PARA,
+     "Alexander duality interchanges extremal betti numbers of the face ideals.
+     Following example 3.2 in Bayer-Charalambous-Popescu, ", EM "Extremal betti
+     numbers and applications to monomial ideals", ", we have ",
+     EXAMPLE {
+	  "R = QQ[x0,x1,x2,x3,x4,x5,x6];",
+	  "D = simplicialComplex {x0*x1*x3, x1*x3*x4, x1*x2*x4, x2*x4*x5,
+	       x2*x3*x5, x3*x5*x6, x3*x4*x6, x0*x4*x6,
+	       x0*x4*x5, x0*x1*x5, x1*x5*x6, x1*x2*x6,
+	       x0*x2*x6, x0*x2*x3}",
+	  "I = ideal D",
+	  "J = ideal dual D",
+	  "betti res I",
+	  "betti res J"
+	  },
+     "Hochster gives a formula relating the homology of the Alexander dual 
+     to the betti numbers of the Stanley-Reisner ideal, see e.g. 
+     Corollary 5.12 in
+     Miller-Sturmfels, Combinatorial Commutative Algebra. For example,
+     consider the",
+     SeeAlso => {SimplicialComplexes, (dual,MonomialIdeal)}
      }
+
 document { 
      Key => {faces,(faces,ZZ,SimplicialComplex)},
      Headline => "the i-faces of a simplicial complex ",
