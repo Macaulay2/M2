@@ -914,6 +914,44 @@ minimalPresentation ChainComplexMap := ChainComplexMap => opts -> (f) -> (
      complete f;
      map(minimalPresentation target f, minimalPresentation source f, k -> minimalPresentation f#k)
      )
+----------------------------------------
+compositions = method(TypicalValue => List);
+compositions(ZZ,ZZ) := (n,k) -> (
+     compositionn := (n,k) -> (
+	  if n===0 or k < 0 then {}
+	  else if k===0 then {toList(n:0)}
+	  else join(
+	       apply(compositionn(n-1,k), s -> s | {0}),
+	       apply(compositionn(n,k-1), s -> s + (toList(n-1:0) | {1}))));
+     compositionn = memoize compositionn;
+     result := compositionn(n,k);
+     compositionn = null;
+     result);
+
+eagonNorthcott = method()
+eagonNorthcott = M -> (
+     -- code is by GREG SMITH, but is experimental, and 
+     -- should be replaced by engine code
+     R := ring M;
+     m := rank source M;
+     n := rank target M;
+     time B := hashTable apply(toList(1..m-n+1), 
+     	  i -> {i, flatten table(subsets(m,n+i-1), compositions(n,i-1), 
+	       	    (p,q) -> {p,q})});
+     d1 := map(R^1, R^{#B#1:-n}, matrix {apply(B#1, r -> det M_(r#0))});
+     d := {d1} | apply(toList(2..m-n+1), i -> time (
+	       map(R^{#B#(i-1):-n-i+2}, R^{#B#i:-n-i+1}, 
+	       matrix table(B#(i-1), B#i, 
+		    (p,q) -> if not isSubset(p#0,q#0) then 0_R
+		    else (
+			 vec := q#1 - p#1;
+			 if any(vec, e -> e < 0 or e > 1) then 0_R 
+			 else (
+			      s := first select(toList(0..#q#0-1), 
+				   l -> not member(q#0#l, p#0));
+      	       		      t := first select(toList(0..n-1), l -> vec#l == 1);
+	       		      (-1)^(s+1)*M_(t,q#0#s)))))));
+     chainComplex d);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
