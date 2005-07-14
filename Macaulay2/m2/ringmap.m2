@@ -81,8 +81,6 @@ map(Ring,Ring) := RingMap => options -> (S,R) -> (
 
 Ring#id = (R) -> map(R,R)
 
-map(Ring,Ring,List) := RingMap => options -> (R,S,m) -> map(R,S,matrix(R,{m}),options)
-
 RingMap.AfterPrint = RingMap.AfterNoPrint = f -> (
      << endl;				  -- double space
      << concatenate(interpreterDepth:"o") << lineNumber << " : " << class f;
@@ -237,7 +235,7 @@ substitute(Matrix,ZZ) := Matrix => (m,i) -> (
      else error "expected integer to be zero"
      )
 
-sub2 = (R,v) -> (
+sub2 = (S,R,v) -> (
      m := generators R;
      A := R;
      while (
@@ -253,21 +251,25 @@ sub2 = (R,v) -> (
 	       if not h#?x then error( "expected ", toString x, " to be a generator of ", toString R );
 	       m#(h#x) = y)
 	  );
-     f := matrix{toList m};
-     S := ring f;
-     map(S,R,f))
+     f := if S === null then matrix{toList m} else matrix(S,{toList m});
+     map(ring f,R,f))
 
-substitute(Matrix,List) := Matrix => (f,v) -> (sub2(ring f,v)) f
-substitute(Module,List) := Module => (M,v) -> (sub2(ring M,v)) M
-substitute(Ideal,List) := Ideal => (I,v) -> (sub2(ring I,v)) I
-substitute(Vector,List) := Vector => (f,v) -> (sub2(ring f,v)) f
-substitute(RingElement,List) := RingElement => (f,v) -> (sub2(ring f,v)) f
+map(Ring,Ring,List) := RingMap => options -> (R,S,m) -> (
+     if all(m, o -> class o === Option) then sub2(R,S,m)
+     else map(R,S,matrix(R,{m}),options)
+     )
 
-substitute(Matrix,Option) := (f,v) -> (sub2(ring f,{v})) f
-substitute(Module,Option) := (M,v) -> (sub2(ring M,{v})) M
-substitute(Ideal,Option) := (I,v) -> (sub2(ring I,{v})) I
-substitute(Vector,Option) := (f,v) -> (sub2(ring f,{v})) f
-substitute(RingElement,Option) := (f,v) -> (sub2(ring f,{v})) f
+substitute(Matrix,List) := Matrix => (f,v) -> (sub2(,ring f,v)) f
+substitute(Module,List) := Module => (M,v) -> (sub2(,ring M,v)) M
+substitute(Ideal,List) := Ideal => (I,v) -> (sub2(,ring I,v)) I
+substitute(Vector,List) := Vector => (f,v) -> (sub2(,ring f,v)) f
+substitute(RingElement,List) := RingElement => (f,v) -> (sub2(,ring f,v)) f
+
+substitute(Matrix,Option) := (f,v) -> (sub2(,ring f,{v})) f
+substitute(Module,Option) := (M,v) -> (sub2(,ring M,{v})) M
+substitute(Ideal,Option) := (I,v) -> (sub2(,ring I,{v})) I
+substitute(Vector,Option) := (f,v) -> (sub2(,ring f,{v})) f
+substitute(RingElement,Option) := (f,v) -> (sub2(,ring f,{v})) f
 
 RingElement Array := (r,v) -> substitute(r,matrix {toList v})
 
