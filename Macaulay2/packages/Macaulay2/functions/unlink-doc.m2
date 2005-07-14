@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => unlink,
+     Key => unlinkFile,
      Headline => "",
      Usage => "",
      Inputs => {
@@ -18,4 +18,4 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc5.m2:526:     Key => unlink,
+ -- doc5.m2:526:     Key => unlinkFile,

@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => symlink,
+     Key => symlinkFile,
      Headline => "",
      Usage => "",
      Inputs => {

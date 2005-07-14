@@ -1186,7 +1186,7 @@ unlinkfun(e:Expr):Expr := (
      when e is name:string do
      if -1 == unlink(name) then buildErrorPacket("failed to unlink file " + name + " : " + syserrmsg()) else nullE
      else WrongArgString());
-setupfun("unlink",unlinkfun);
+setupfun("unlinkFile",unlinkfun);
 
 linkfun(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
@@ -1196,7 +1196,7 @@ linkfun(e:Expr):Expr := (
      else WrongArgString(2)
      else WrongArgString(1)
      else WrongNumArgs(2));
-setupfun("link",linkfun);
+setupfun("linkFile",linkfun);
 
 symlinkfun(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
@@ -1206,7 +1206,7 @@ symlinkfun(e:Expr):Expr := (
      else WrongArgString(2)
      else WrongArgString(1)
      else WrongNumArgs(2));
-setupfun("symlink",symlinkfun);
+setupfun("symlinkFile",symlinkfun);
 
 fileTime(e:Expr):Expr := (
      when e is name:string do (

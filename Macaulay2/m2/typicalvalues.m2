@@ -149,7 +149,7 @@ separate String := List => separate
 separate(String,String) := List => separate
 lines(String,String) := List => lines
 lines String := List => lines
-link(String,String) := Nothing => link
+linkFile(String,String) := Nothing => linkFile
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
