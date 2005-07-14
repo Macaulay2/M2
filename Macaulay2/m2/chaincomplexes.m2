@@ -408,37 +408,42 @@ poincareN ChainComplex := (C) -> (
 		    (d,m) -> f = f + m * G_0^n * product(# d, j -> G_(j+1)^(d_j)))));
      f )
 
+ChainComplex ** Ring := ChainComplex => (C,S) -> (
+     complete C;
+     complete C.dd;
+     D := new ChainComplex;
+     D.cache = new CacheTable;
+     D.complete = true;
+     D.ring = S;
+     D.dd = new ChainComplexMap;
+     D.dd.degree = deg := C.dd.degree;
+     D.dd.source = D;
+     D.dd.target = D;
+     scan(spots C   , i -> D  #i = C#i ** S);
+     scan(spots C.dd, i -> D.dd#i = map(D#(i+deg),D#i,(cover C.dd#i) ** S));
+     D)
+
 ChainComplex ** Module := ChainComplex => (C,M) -> (
---      P := youngest(C,M);
---      key := (C,M,symbol **);
---      if P#?key then P#key
---      else C**M = 
-     (
-	  D := new ChainComplex;
-	  D.ring = ring C;
-	  complete C.dd;
-	  scan(keys C.dd,i -> if class i === ZZ then (
-		    f := D.dd#i = C.dd#i ** M;
-		    D#i = source f;
-		    D#(i-1) = target f;
-		    ));
-	  D))
+     D := new ChainComplex;
+     D.ring = ring C;
+     complete C.dd;
+     scan(keys C.dd,i -> if class i === ZZ then (
+	       f := D.dd#i = C.dd#i ** M;
+	       D#i = source f;
+	       D#(i-1) = target f;
+	       ));
+     D)
 
 Module ** ChainComplex := ChainComplex => (M,C) -> (
---      P := youngest(M,C);
---      key := (M,C,symbol **);
---      if P#?key then P#key
---      else M**C = 
-     (
-	  D := new ChainComplex;
-	  D.ring = ring C;
-	  complete C.dd;
-	  scan(keys C.dd,i -> if class i === ZZ then (
-		    f := D.dd#i = M ** C.dd#i;
-		    D#i = source f;
-		    D#(i-1) = target f;
-		    ));
-	  D))
+     D := new ChainComplex;
+     D.ring = ring C;
+     complete C.dd;
+     scan(keys C.dd,i -> if class i === ZZ then (
+	       f := D.dd#i = M ** C.dd#i;
+	       D#i = source f;
+	       D#(i-1) = target f;
+	       ));
+     D)
 
 Module ** ChainComplexMap := ChainComplexMap => (M,f) -> (
      map(M ** target f, M ** source f, i -> M ** f_i)
@@ -686,92 +691,50 @@ chainComplex GradedModule := ChainComplex => (M) -> (
 tens := (R,f,g) -> map(R, rawTensor( f.RawMatrix, g.RawMatrix ))
 
 ChainComplex ** ChainComplex := ChainComplex => (C,D) -> (
---      P := youngest(C,D);
---      key := (C,D,symbol **);
---      if P#?key then P#key
---      else C**D = 
-     (
-	  R := ring C;
-	  if ring D =!= R then error "expected chain complexes over the same ring";
-	  E := chainComplex (lookup(symbol **, GradedModule, GradedModule))(C,D);
-	  scan(spots E, i -> if E#?i and E#?(i-1) then E.dd#i = map(
-		    E#(i-1),
-		    E#i,
-		    concatBlocks(table(
-			      E#(i-1).cache.indices,
-			      E#i.cache.indices,
-			      (j,k) -> (
-				   if j#0 === k#0 and j#1 === k#1 - 1 
-				   then (-1)^(k#0) * tens(R, id_(cover C#(j#0)), matrix D.dd_(k#1))
-				   else if j#0 === k#0 - 1 and j#1 === k#1 
-				   then tens(R, matrix C.dd_(k#0), id_(cover D#(k#1)))
-				   else map(
-					E#(i-1).cache.components#(E#(i-1).cache.indexComponents#j),
-					E#i.cache.components#(E#i.cache.indexComponents#k),
-					0))))));
-	  E))
+     R := ring C;
+     if ring D =!= R then error "expected chain complexes over the same ring";
+     E := chainComplex (lookup(symbol **, GradedModule, GradedModule))(C,D);
+     scan(spots E, i -> if E#?i and E#?(i-1) then E.dd#i = map(
+	       E#(i-1),
+	       E#i,
+	       concatBlocks(table(
+			 E#(i-1).cache.indices,
+			 E#i.cache.indices,
+			 (j,k) -> (
+			      if j#0 === k#0 and j#1 === k#1 - 1 
+			      then (-1)^(k#0) * tens(R, id_(cover C#(j#0)), matrix D.dd_(k#1))
+			      else if j#0 === k#0 - 1 and j#1 === k#1 
+			      then tens(R, matrix C.dd_(k#0), id_(cover D#(k#1)))
+			      else map(
+				   E#(i-1).cache.components#(E#(i-1).cache.indexComponents#j),
+				   E#i.cache.components#(E#i.cache.indexComponents#k),
+				   0))))));
+     E)
 
-ChainComplex ** GradedModule := ChainComplex => (C,D) -> (
---      P := youngest(C,D);
---      key := (C,D,symbol **);
---      if P#?key then P#key
---      else C**D = 
-     (
-     	  C ** chainComplex D
-	  )
-     )
+ChainComplex ** GradedModule := ChainComplex => (C,D) -> C ** chainComplex D
 
-GradedModule ** ChainComplex := ChainComplex => (C,D) -> (
---      P := youngest(C,D);
---      key := (C,D,symbol **);
---      if P#?key then P#key
---      else C**D = 
-     (
-     	  chainComplex C ** D
-	  )
-     )
+GradedModule ** ChainComplex := ChainComplex => (C,D) -> chainComplex C ** D
 
 ChainComplexMap ** ChainComplexMap := ChainComplexMap => (f,g) -> (
---      P := youngest(f,g);
---      key := (f,g,symbol **);
---      if P#?key then P#key
---      else f**g = 
-     (
-	  h := new ChainComplexMap;
-	  E := h.source = source f ** source g;
-	  F := h.target = target f ** target g;
-	  deg := h.degree = f.degree + g.degree;
-	  scan(spots E, n -> if F#?(n+deg) then (
-		    E' := E#n;
-		    E'i := E'.cache.indexComponents;
-		    E'c := E'.cache.components;
-		    F' := F#(n+deg);
-		    F'i := F'.cache.indexComponents;
-		    h#n = map(F',E', matrix {
-			      apply(E'.cache.indices, (i,j) -> (
-					t := (i+f.degree, j+g.degree);
-					if F'i#?t then F'_[t] * ( ((-1)^(g.degree * i) * f_i ** g_j) )
-					else map(F',E'c#(E'i#(i,j)),0)))})));
-	  h))
+     h := new ChainComplexMap;
+     E := h.source = source f ** source g;
+     F := h.target = target f ** target g;
+     deg := h.degree = f.degree + g.degree;
+     scan(spots E, n -> if F#?(n+deg) then (
+	       E' := E#n;
+	       E'i := E'.cache.indexComponents;
+	       E'c := E'.cache.components;
+	       F' := F#(n+deg);
+	       F'i := F'.cache.indexComponents;
+	       h#n = map(F',E', matrix {
+			 apply(E'.cache.indices, (i,j) -> (
+				   t := (i+f.degree, j+g.degree);
+				   if F'i#?t then F'_[t] * ( ((-1)^(g.degree * i) * f_i ** g_j) )
+				   else map(F',E'c#(E'i#(i,j)),0)))})));
+     h)
 
-ChainComplexMap ** ChainComplex := ChainComplexMap => (f,C) -> (
---      P := youngest(f,C);
---      key := (f,C,symbol **);
---      if P#?key then P#key
---      else f**C = 
-     (
-     	  f ** id_C
-	  )
-     )
-ChainComplex ** ChainComplexMap := ChainComplexMap => (C,f) -> (
---      P := youngest(C,f);
---      key := (C,f,symbol **);
---      if P#?key then P#key
---      else C**f = 
-     (
-     	  id_C ** f
-	  )
-     )
+ChainComplexMap ** ChainComplex := ChainComplexMap => (f,C) -> f ** id_C
+ChainComplex ** ChainComplexMap := ChainComplexMap => (C,f) -> id_C ** f
 
 min ChainComplex := C -> min spots C
 max ChainComplex := C -> max spots C
