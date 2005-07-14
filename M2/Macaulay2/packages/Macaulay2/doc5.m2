@@ -476,8 +476,8 @@ document {
 	  
 document {
      Headline => "make a new link to a file",
-     Key => link,
-     Usage => "link(o,n)",
+     Key => linkFile,
+     Usage => "linkFile(o,n)",
      Inputs => {
 	  "o" => String => "the path to an existing file",
 	  "n" => String => "a new path to the file"
@@ -537,9 +537,9 @@ document {
      }
 
 document {
-     Key => unlink,
+     Key => unlinkFile,
      Headline => "unlink a file",
-     Usage => "unlink f",
+     Usage => "unlinkFile f",
      Inputs => { "f" => String => "" },
      Consequences => {{ "the file reachable by the path f is unlinked from its directory" }}}
 

@@ -1717,7 +1717,7 @@ document {
 	  ///f << "ho" << endl///,
 	  ///f << close///,
 	  ///get "testfile"///,
-	  ///unlink "testfile"///
+	  ///unlinkFile "testfile"///
 	  }
      }
 

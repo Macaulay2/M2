@@ -1036,7 +1036,7 @@ document {
      EXAMPLE {
 	  ///"junk" << "hi there" << close///,
       	  ///get "junk"///,
-	  ///unlink "junk"///,
+	  ///unlinkFile "junk"///,
      	  if version#"operating system" =!= "Windows-95-98-NT" then ///get "!date"///
 	  },
      SeeAlso =>{ "File", "read" }

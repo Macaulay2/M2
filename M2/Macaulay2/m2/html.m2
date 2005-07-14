@@ -631,7 +631,7 @@ installPackage Package := opts -> pkg -> (
 	  stderr << "--storing raw documentation in " << rawdbname << endl;
 	  makeDirectory docDir;
 	  docDir|".linkdir" << close;
-	  if fileExists rawdbnametmp then unlink rawdbnametmp;
+	  if fileExists rawdbnametmp then unlinkFile rawdbnametmp;
 	  if fileExists rawdbname then (
 	       tmp := openDatabase rawdbname;   -- just to make sure the database file isn't open for writing
 	       copyFile(rawdbname,rawdbnametmp);
@@ -755,7 +755,7 @@ installPackage Package := opts -> pkg -> (
 
 	  -- cache processed documentation in database
 	  dbnametmp := dbname | ".tmp";
-	  if fileExists dbnametmp then unlink dbnametmp;
+	  if fileExists dbnametmp then unlinkFile dbnametmp;
 	  if fileExists dbname then (
 	       tmp2 := openDatabase dbname;   -- just to make sure the database file isn't open for writing
 	       copyFile(dbname,dbnametmp);

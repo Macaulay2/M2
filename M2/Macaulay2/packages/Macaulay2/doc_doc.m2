@@ -43,7 +43,7 @@ document {
 		 },
 	"There can be explanatory prose here in the form of a hypertext list.",
      Caveat => {"warning"},
-     SeeAlso => {link},
+     SeeAlso => {linkFile},
      Subnodes => {hypertextlist},
      }///,
      PARA "Special documentation entries:",

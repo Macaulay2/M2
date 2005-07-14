@@ -196,8 +196,7 @@ document {
 	  "m2code"
 	  },
      "There can be explanatory prose here in the form of a hypertext list.",
-     Caveat => {"warning"},
-     SeeAlso => {link}
+     Caveat => {"warning"}
      }///,
      SeeAlso => {"writing documentation",
 	  "hypertext list format",
@@ -225,8 +224,7 @@ document {
 	  "m2code"
 	  },
      "There can be explanatory prose here in the form of a hypertext list.",
-     Caveat => {"warning"},
-     SeeAlso => {link}
+     Caveat => {"warning"}
      }///,
      SeeAlso => {"writing documentation",
 	  "hypertext list format",
@@ -244,8 +242,7 @@ document {
 	  "m2code"
 	  },
      "There can be explanatory prose here in the form of a hypertext list.",
-     Caveat => {"warning"},
-     SeeAlso => {link}
+     Caveat => {"warning"}
      }///,
      SeeAlso => {"writing documentation",
 	  "hypertext list format",
@@ -270,8 +267,7 @@ document {
 	  "m2code"
 	  },
      "There can be explanatory prose here in the form of a hypertext list.",
-     Caveat => {"warning"},
-     SeeAlso => {link}
+     Caveat => {"warning"}
      }///,
      SeeAlso => {"writing documentation",
 	  "hypertext list format",
@@ -289,8 +285,7 @@ document {
 	  "m2code"
 	  },
      "There can be explanatory prose here in the form of a hypertext list.",
-     Caveat => {"warning"},
-     SeeAlso => {link}
+     Caveat => {"warning"}
      }///,
      SeeAlso => {"writing documentation",
 	  "hypertext list format",
@@ -308,8 +303,7 @@ document {
 	  "m2code"
 	  },
      "There can be explanatory prose here in the form of a hypertext list.",
-     Caveat => {"warning"},
-     SeeAlso => {link},
+     Caveat => {"warning"}
      Subnodes => {
 	  TO functionName1,
 	  TO functionName2 -- and so on

@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => link,
+     Key => linkFile,
      Headline => "",
      Usage => "",
      Inputs => {
@@ -19,7 +19,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (link,String,String),
+     Key => (linkFile,String,String),
      Headline => "",
      Usage => "",
      Inputs => {
@@ -34,5 +34,5 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc5.m2:465:     Key => link,
- -- doc5.m2:526:     Key => unlink,
+ -- doc5.m2:465:     Key => linkFile,
+ -- doc5.m2:526:     Key => unlinkFile,
