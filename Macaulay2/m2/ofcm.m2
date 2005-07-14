@@ -92,6 +92,7 @@ monoidDefaults = (
 	  WeylAlgebra => {},
 	  Adjust => identity,
 	  Repair => identity,
+     	  Heft => null,
 	  DegreeRank => null
 	  }
      )
@@ -315,6 +316,7 @@ makeMonoid := (options) -> (
 
      if class options.Adjust =!= Function then error("expected 'Adjust' option to be a function");
      if class options.Repair =!= Function then error("expected 'Repair' option to be a function");
+     if options.Adjust =!= identity and options.Heft =!= null then error "encountered both Heft and Adjust options";
 
      options = new OptionTable from options;
      makeit1 options)
