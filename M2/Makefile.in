@@ -54,6 +54,8 @@ config.status : @srcdir@/configure
 	@exit 1
 reconfigure:
 	@ @srcdir@/config/config.command |sh -x
+configure-help:
+	@ @srcdir@/config/config.command --help |sh -x
 
 # announcement only:
 install all clean distclean install-strip ::
@@ -76,6 +78,24 @@ install :: $(DIRS)
 $(DIRS) :; $(INSTALL) -d $@
 distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile
 install install-strip all clean distclean::; @echo "-------- done making '$@' --------"
+
+help :
+	@ echo "usage: make [option...] [target...]"
+	@ echo ""
+	@ echo "Targets:"
+	@ echo "  all                         build/compile all files [the default target]"
+	@ echo "  install                     generate the documentation, install all files"
+	@ echo "  check                       run the tests"
+	@ echo "  clean                       remove all generated files except makefiles"
+	@ echo "  distclean                   remove all generated files"
+	@ echo "  help                        show this help"
+	@ echo "  status                      show options used with 'configure'"
+	@ echo "  configure-help              show help for 'configure'"
+	@ echo "  reconfigure                 re-run configure with same options"
+	@ echo ""
+	@ echo "Options:"
+	@ echo "   IgnoreExampleErrors=true             proceed even after encountering M2 errors in example code"
+	@ echo ""
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR"
