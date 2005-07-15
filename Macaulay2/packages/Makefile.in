@@ -25,27 +25,35 @@ PACKAGES += LLLBases
 REMAKE = false
 REMAKE = true
 
+IgnoreExampleErrors = false
+
+ifeq ($(ENCAP),yes)
+Encapsulate = true
+Override = , Encapsulate => false, MakeLinks => false
+else
+Encapsulate = false
+Override =
+endif
+
+ARGS = , IgnoreExampleErrors => $(IgnoreExampleErrors), Encapsulate => $(Encapsulate), RemakeAllDocumentation => $(REMAKE), MakeInfo => true, PackagePrefix => \"$(prefix)/\"
+
 install ::
 	@ for i in $(PACKAGES) ; \
 	  do ( \
 	      if [ "$$i" = Macaulay2 ] ; \
 	      then \
 		  set -x ; \
-		  ../bin/M2 \
-		    -q \
-		    --stop \
+		  ../bin/M2 -q --stop \
 		    --prefix $(encapdir) \
 		    -e errorDepth=0 \
-		    -e "installPackage(\"$$i\", Encapsulate => true, MakeLinks => false, RemakeAllDocumentation => $(REMAKE), MakeInfo => true, PackagePrefix => \"$(prefix)/\")" \
+		    -e "installPackage(\"$$i\" $(ARGS))" \
 		    -e "exit 0" ; \
 	      else \
 		  set -x ; \
-		  ../bin/M2 \
-		    -q \
-		    --stop \
+		  ../bin/M2 -q --stop \
 		    --prefix $(encapdir) \
 		    -e errorDepth=0 \
-		    -e "installPackage(\"$$i\", Encapsulate => false, RemakeAllDocumentation => $(REMAKE), MakeInfo => true, PackagePrefix => \"$(encapdir)/\")" \
+		    -e "installPackage(\"$$i\" $(ARGS) $(Override))" \
 		    -e "exit 0" ; \
 	      fi ; \
 	     ) || exit 1 ; \

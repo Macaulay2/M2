@@ -40,4 +40,4 @@ if [ "$ac_cv_env_CC_set" = set ]
 then CMD="CC=\"$ac_cv_env_CC_value\" $CMD"
 fi
 
-echo "env $CMD"
+echo "env $CMD" "$@"

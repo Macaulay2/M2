@@ -841,7 +841,7 @@ installPackage Package := opts -> pkg -> (
 	       fn := buildDirectory | htmlFilename tag;
 	       if fileExists fn and not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then return;
 	       if isSecondary tag then return;
-	       stderr << "--making html page for " << tag << endl;
+	       if debugLevel > 0 then stderr << "--making html page for " << tag << endl;
 	       fn
 	       << html HTML { 
 		    HEAD {
