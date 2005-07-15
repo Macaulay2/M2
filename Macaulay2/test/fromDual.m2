@@ -1,5 +1,3 @@
--- end
-
 --    Date: Thu, 12 Dec 2002 17:07:17 -0800
 --    From: David Eisenbud <de@msri.org>
 --    To: Mike Stillman <mike@polygon.math.cornell.edu>,
@@ -28,6 +26,7 @@ assert( 6 == (tally degrees source gens i)_{1} )
 F=(random(S^1,S^{-1}))^4 --power of a linear form.
 j=ideal fromDual F
 << "this is not    :  " << betti j << endl << endl
+
 -- assert( 6 == (tally degrees source gens j)_{1} )
 
 -- This is not a bug at all.  The problem is that David is submitting a matrix to "fromDual" that
