@@ -765,7 +765,7 @@ char *name;
 int system_acceptBlocking(int so) {
 #if HAVE_SOCKETS
   struct sockaddr_in addr;
-  int addrlen = sizeof addr;
+  unsigned int addrlen = sizeof addr;
   fcntl(so,F_SETFL,0);
   return accept(so,(struct sockaddr*)&addr,&addrlen);
 #else
@@ -776,7 +776,7 @@ int system_acceptBlocking(int so) {
 int system_acceptNonblocking(int so) {
 #if HAVE_SOCKETS
   struct sockaddr_in addr;
-  int addrlen = sizeof addr;
+  unsigned int addrlen = sizeof addr;
   int sd;
   fcntl(so,F_SETFL,O_NONBLOCK);
   sd = accept(so,(struct sockaddr*)&addr,&addrlen);
@@ -1038,9 +1038,11 @@ int system_strncmp(M2_string s,M2_string t,int n) {
 struct M2_string_struct noErrorMessage;
 M2_string system_noErrorMessage = &noErrorMessage;
 M2_string system_regexmatchErrorMessage = &noErrorMessage;
+
+static M2_string last_pattern = NULL;
+static regex_t regex;
+
 M2_arrayint system_regexmatch(M2_string pattern, M2_string text) {
-  static M2_string last_pattern = NULL;
-  static regex_t regex;
   static struct M2_arrayint_struct empty[1] = {{0}};
   int ret;
   system_regexmatchErrorMessage = &noErrorMessage;
@@ -1084,6 +1086,66 @@ M2_arrayint system_regexmatch(M2_string pattern, M2_string text) {
       }
       return m;
     }
+  }
+}
+
+void grow(int len, char **str, int newlen) {
+     int d = 2*len+1;
+     if (newlen < d) newlen = d;
+     char *p = getmem(newlen);
+     memcpy(p,*str,len);
+     GC_FREE(*str);
+     *str = p;
+}
+
+void cat(int xlen, int *xoff, char **x, int ylen, char *y) {
+     if (xoff + ylen > xlen) grow(xlen,x,xoff + ylen);
+     memcpy(*x+*xoff,y,ylen);
+     *xoff += ylen;
+}
+
+M2_string system_regexreplace(M2_string pattern, M2_string replacement, M2_string text, M2_string errorflag) {
+  int ret;
+  system_regexmatchErrorMessage = &noErrorMessage;
+  if (last_pattern != pattern) {
+    char *s_pattern;
+    if (last_pattern != NULL) regfree(&regex), last_pattern = NULL;
+    s_pattern = tocharstar(pattern);
+    ret = regcomp(&regex, s_pattern, REG_EXTENDED);
+    GC_FREE(s_pattern);
+    if (ret != 0) {
+	 if (ret != REG_NOMATCH) {
+	      char message[1024];
+	      regerror(ret,&regex,message,sizeof message);
+	      system_regexmatchErrorMessage = tostring(message);
+	      }
+	 regfree(&regex);
+	 return errorflag;
+    }
+    last_pattern = pattern;
+  }
+  {
+    int n = regex.re_nsub+1;
+    regmatch_t match[n];
+    int offset = 0;
+    int textlen = text->len;
+    char *s_text = tocharstar(text);
+    int buflen = text->len + pattern->len + 16;
+    int bufct = 0;
+    char *buf = getmem_atomic(buflen);
+    while (regexec(&regex, s_text + offset, n, match, 0) == 0) {
+	 /* copy the unmatched text up to the match */
+	 cat(buflen,&bufct,&buf, match[0].rm_so,s_text+offset);
+	 /* perform the replacement */
+	 /* implement \0, ..., \9 later */
+	 cat(buflen,&bufct,&buf, replacement->len,replacement->array);
+	 /* reset the offset after the matched part */
+	 offset += match[0].rm_eo;
+    }
+    /* copy the last part of the text */
+    cat(buflen,&bufct,&buf, textlen-offset, s_text+offset);
+    GC_FREE(s_text);
+    return system_tostringn(buf, bufct);
   }
 }
 

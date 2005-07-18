@@ -1359,19 +1359,24 @@ document {
      Inputs => {
 	  "R" => "the target ring",
 	  "S" => "the source ring",
-	  "m" => {"a list of n elements of ", TT "R", ", where n is the number of variables in the polynomial ring ", TT "S" }
+	  "m" => {"a list of n elements of ", TT "R", ", where n is the number of variables in the polynomial ring ", TT "S", ",
+	       or a list of pairs ", TT "x => r", ", where ", TT "x", " is a generator of ", TT "S", " and ", TT "r", " is an element of ", TT "R", ",
+	       specifying that ", TT "x", " is to be sent to ", TT "r", "." }
 	  },
      Outputs => {
 	  {
 	       "the ring homomorphism from ", TT "S", " to ", TT "R", " which sends the i-th variable
-	       of ", TT "S", " to the i-th entry in ", TT "m"
+	       of ", TT "S", " to the i-th entry in ", TT "m", ", or in the second case, performs the
+	       indicated substitutions."
 	       }
 	  },
      EXAMPLE {
 	  "R = ZZ[x,y];",
 	  "S = ZZ[a,b,c];",
 	  "f = map(R,S,{x^2,x*y,y^2})",
-	  "f(a+b+c^2)"
+	  "f(a+b+c^2)",
+	  "g = map(R,S,{a=>x^2,b=>x*y,c=>y^2})",
+	  "g(a+b+c^2)"
 	  },
      SeeAlso => {(map,Ring,Ring,Matrix)}
      }

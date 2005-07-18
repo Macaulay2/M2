@@ -1431,13 +1431,30 @@ regexmatch(e:Expr):Expr := (
      when a.1 is text:string do (
 	  r := regexmatch(regexp,text);
 	  if length(r) == 0 && regexmatchErrorMessage != noErrorMessage
-	  then buildErrorPacket("'matches' (regexec) : "+regexmatchErrorMessage)
+	  then buildErrorPacket("'matches': "+regexmatchErrorMessage)
 	  else toPairs(r))
      else WrongArgString(2)
      else WrongArgString(1)
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("matches",regexmatch);
+
+foo := "foo";
+replace(e:Expr):Expr := (
+     when e is a:Sequence do
+     if length(a) == 3 then
+     when a.0 is regexp:string do
+     when a.1 is replacement:string do
+     when a.2 is text:string do (
+	  r := regexreplace(regexp,replacement,text,foo);
+	  if r == foo then buildErrorPacket("replace': "+regexmatchErrorMessage)
+	  else Expr(r))
+     else WrongArgString(3)
+     else WrongArgString(2)
+     else WrongArgString(1)
+     else WrongNumArgs(3)
+     else WrongNumArgs(3));
+setupfun("replace",replace);
      
 listFrame(s:Sequence):Expr := Expr(List(mutableListClass, s, nextHash(), true));	  
 listFrame(f:Frame):Expr := if f.frameID == 0 then listFrame(emptySequence) else listFrame(f.values); -- refuse to defeat the protection of global variables

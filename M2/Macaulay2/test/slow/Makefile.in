@@ -5,7 +5,7 @@ VPATH = @srcdir@
 
 MLIMIT = 200000
 VLIMIT = 200000
-TLIMIT = 600
+TLIMIT = 300
 SRCDIR = @srcdir@
 include @srcdir@/../Makefile.test
 
