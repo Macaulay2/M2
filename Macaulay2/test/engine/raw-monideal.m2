@@ -54,7 +54,7 @@ I = monomialIdeal(a^3,b^2*c,a*c*d)
 assert(I === monomialIdeal matrix{{a^3,b^2*c, a*c*d}})
 assert(I === monomialIdeal matrix{{a^3,b^2*c, a^7, b^2*c, b^2*c^2, a*c*d}})
 assert(numgens I == 3)
-minprimes I
+independentSets I
 primaryDecomposition I
 saturate(I,a)
 I : a
@@ -66,6 +66,8 @@ poincare I
 poincare borel I
 res I
 intersect(I,monomialIdeal(a^3,b^3,c^3,d^3))
-<< "topPrimes I  -- should this be the name, instead of minprimes??" << endl
-minprimes I
+independentSets I
 
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw-monideal.out"
+-- End:

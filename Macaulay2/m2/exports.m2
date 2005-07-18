@@ -44,6 +44,7 @@ exportMutable (
 export (
 	symbol currentFileName,
         symbol currentLineNumber,
+	symbol replace,
         symbol compositions,
         symbol eagonNorthcott,
         symbol irreducibleDecomposition,
