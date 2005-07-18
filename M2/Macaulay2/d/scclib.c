@@ -1089,17 +1089,18 @@ M2_arrayint system_regexmatch(M2_string pattern, M2_string text) {
   }
 }
 
-void grow(int len, char **str, int newlen) {
-     int d = 2*len+1;
+void grow(int *len, int off, char **str, int newlen) {
+     int d = 2**len+1;
      if (newlen < d) newlen = d;
      char *p = getmem(newlen);
-     memcpy(p,*str,len);
+     memcpy(p,*str,off);
      GC_FREE(*str);
+     *len = newlen;
      *str = p;
 }
 
-void cat(int xlen, int *xoff, char **x, int ylen, char *y) {
-     if (xoff + ylen > xlen) grow(xlen,x,xoff + ylen);
+void cat(int *xlen, int *xoff, char **x, int ylen, char *y) {
+     if (*xoff + ylen > *xlen) grow(xlen,*xoff,x,*xoff + ylen);
      memcpy(*x+*xoff,y,ylen);
      *xoff += ylen;
 }
@@ -1130,20 +1131,26 @@ M2_string system_regexreplace(M2_string pattern, M2_string replacement, M2_strin
     int offset = 0;
     int textlen = text->len;
     char *s_text = tocharstar(text);
-    int buflen = text->len + pattern->len + 16;
+    int buflen = text->len + 3 * replacement->len + 16;
     int bufct = 0;
     char *buf = getmem_atomic(buflen);
     while (regexec(&regex, s_text + offset, n, match, 0) == 0) {
 	 /* copy the unmatched text up to the match */
-	 cat(buflen,&bufct,&buf, match[0].rm_so,s_text+offset);
+	 cat(&buflen,&bufct,&buf, match[0].rm_so,s_text+offset);
 	 /* perform the replacement */
 	 /* implement \0, ..., \9 later */
-	 cat(buflen,&bufct,&buf, replacement->len,replacement->array);
+	 cat(&buflen,&bufct,&buf, replacement->len,replacement->array);
 	 /* reset the offset after the matched part */
 	 offset += match[0].rm_eo;
+	 /* if the matched part was empty, move onward a bit */
+	 if (match[0].rm_eo == match[0].rm_so) {
+	      if (offset == textlen) break;
+	      cat(&buflen,&bufct,&buf, 1, s_text+offset);
+	      offset += 1;
+	 }
     }
     /* copy the last part of the text */
-    cat(buflen,&bufct,&buf, textlen-offset, s_text+offset);
+    cat(&buflen,&bufct,&buf, textlen-offset, s_text+offset);
     GC_FREE(s_text);
     return system_tostringn(buf, bufct);
   }
