@@ -94,7 +94,8 @@ help :
 	@ echo "  reconfigure                 re-run configure with same options"
 	@ echo ""
 	@ echo "Options:"
-	@ echo "   IgnoreExampleErrors=true             proceed even after encountering M2 errors in example code"
+	@ echo "   IgnoreExampleErrors=true       continue even after errors in example code"
+	@ echo "   RemakeAllDocumentation=true    remake all documentation"
 	@ echo ""
 
 # Local Variables:

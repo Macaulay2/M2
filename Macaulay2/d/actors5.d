@@ -1447,7 +1447,7 @@ replace(e:Expr):Expr := (
      when a.1 is replacement:string do
      when a.2 is text:string do (
 	  r := regexreplace(regexp,replacement,text,foo);
-	  if r == foo then buildErrorPacket("replace': "+regexmatchErrorMessage)
+	  if r == foo then buildErrorPacket("replace: "+regexmatchErrorMessage)
 	  else Expr(r))
      else WrongArgString(3)
      else WrongArgString(2)

@@ -225,7 +225,7 @@ toExternalString Symbol := s -> (
      n := simpleToString s;
      if isGlobalSymbol n and getGlobalSymbol n === s then (
 	  if value s === s then n
-	  else concatenate("symbol ",if n == " " then format n else n)
+	  else concatenate("symbol ",if n === " " or n === "--" then format n else n)
 	  )
      else error("can't convert local variable or shadowed or invisible global variable '",n,"' to external string"))
 

@@ -22,9 +22,7 @@ PACKAGES += LLLBases
 # PACKAGES += SchurRings
 ##
 
-REMAKE = false
-REMAKE = true
-
+RemakeAllDocumentation = false
 IgnoreExampleErrors = false
 
 ifeq ($(ENCAP),yes)
@@ -35,7 +33,7 @@ Encapsulate = false
 Override =
 endif
 
-ARGS = , IgnoreExampleErrors => $(IgnoreExampleErrors), Encapsulate => $(Encapsulate), RemakeAllDocumentation => $(REMAKE), MakeInfo => true, PackagePrefix => \"$(prefix)/\"
+ARGS = , IgnoreExampleErrors => $(IgnoreExampleErrors), Encapsulate => $(Encapsulate), RemakeAllDocumentation => $(RemakeAllDocumentation), MakeInfo => true, PackagePrefix => \"$(prefix)/\"
 
 install ::
 	@ for i in $(PACKAGES) ; \

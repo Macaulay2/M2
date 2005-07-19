@@ -318,8 +318,6 @@ tex ANCHOR := x -> (
 	  )
      )
 
-html TEX := x -> x#0
-
 commentize := s -> if s =!= null then concatenate(" -- ",s)
 
 addHeadlines := x -> apply(x, i -> if instance(i,TO) then SEQ{ i, commentize headline i#0 } else i)
@@ -419,7 +417,6 @@ html EmptyMarkUpType := html MarkUpType := X -> html X{}
 html ITALIC := t -> concatenate("<i>", apply(t,html), "</i>")
 html UNDERLINE := t -> concatenate("<u>", apply(t,html), "</u>")
 html BOLD := t -> concatenate("<b>", apply(t,html), "</b>")
-html TEX := x -> x#0	    -- should do something else!
 
 html Option := x -> toString x
 
