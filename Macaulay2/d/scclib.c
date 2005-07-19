@@ -1035,54 +1035,85 @@ int system_strncmp(M2_string s,M2_string t,int n) {
 
 #include <regex.h>
 
+static void init(void) __attribute__ ((constructor));
+static void init(void) {
+     re_set_syntax(RE_NO_BK_PARENS|RE_NO_BK_BRACES|RE_NO_BK_VBAR|RE_INTERVALS);
+}
+
 struct M2_string_struct noErrorMessage;
 M2_string system_noErrorMessage = &noErrorMessage;
 M2_string system_regexmatchErrorMessage = &noErrorMessage;
 
 static M2_string last_pattern = NULL;
-static regex_t regex;
+
+#define POSIX_REGEXP FALSE
+
+#if POSIX_REGEXP
+static regex_t regex_pattern;
+#else
+struct re_pattern_buffer regex_pattern;
+#endif
 
 M2_arrayint system_regexmatch(M2_string pattern, M2_string text) {
   static struct M2_arrayint_struct empty[1] = {{0}};
-  int ret;
+#if POSIX_REGEXP
+  int regcomp_return;
+#else
+  const char *regcomp_return;
+#endif
   system_regexmatchErrorMessage = &noErrorMessage;
   if (last_pattern != pattern) {
     char *s_pattern;
-    if (last_pattern != NULL) regfree(&regex), last_pattern = NULL;
+    if (last_pattern != NULL) regfree(&regex_pattern), last_pattern = NULL;
     s_pattern = tocharstar(pattern);
-    ret = regcomp(&regex, s_pattern, REG_EXTENDED);
+#if POSIX_REGEXP
+    regcomp_return = regcomp(&regex_pattern, s_pattern, REG_EXTENDED);
+#else
+    regcomp_return = re_compile_pattern(pattern->array,pattern->len,&regex_pattern);
+#endif
     GC_FREE(s_pattern);
-    if (ret != 0) {
-	 if (ret != REG_NOMATCH) {
-	      char message[1024];
-	      regerror(ret,&regex,message,sizeof message);
-	      system_regexmatchErrorMessage = tostring(message);
-	      }
-	 regfree(&regex);
+    if (regcomp_return != 0) {
+#if POSIX_REGEXP
+	 char message[1024];
+	 regerror(regcomp_return,&regex_pattern,message,sizeof message);
+	 system_regexmatchErrorMessage = tostring(message);
+#else
+	 system_regexmatchErrorMessage = tostring(regcomp_return);
+#endif
+	 regfree(&regex_pattern);
 	 return empty;
     }
     last_pattern = pattern;
   }
   {
-    int n = regex.re_nsub+1;
-    regmatch_t match[n];
+    int n = regex_pattern.re_nsub+1;
     char *s_text = tocharstar(text);
-    ret = regexec(&regex, s_text, n, match, 0);
+    int regexec_return;
+#if POSIX_REGEXP
+    regmatch_t match[n];
+    regexec_return = regexec(&regex_pattern, s_text, n, match, 0);
+#else
+    static struct re_registers match;
+    /* regex_pattern.regs_allocated = REGS_UNALLOCATED; */
+    regexec_return = re_match(&regex_pattern, text->array, text->len, 0, &match);
+#endif
     GC_FREE(s_text);
-    if (ret != 0) {
-	 if (ret != REG_NOMATCH) {
-	      char message[1024];
-	      regerror(ret,&regex,message,sizeof message);
-	      system_regexmatchErrorMessage = tostring(message);
-	      }
-	 return empty;
-	 }
+#if POSIX_REGEXP
+    if (regexec_return != 0) return empty;
+#else
+    if (regexec_return == -1) return empty;
+#endif
     else {
       M2_arrayint m = makearrayint(2*n);
       int i;
       for (i = 0; i<n; i++) {
+#if POSIX_REGEXP
 	m->array[2*i  ] = match[i].rm_so;
 	m->array[2*i+1] = match[i].rm_eo-match[i].rm_so;
+#else
+	m->array[2*i  ] = match.start[i];
+	m->array[2*i+1] = match.end[i] - match.start[i];
+#endif
       }
       return m;
     }
@@ -1106,27 +1137,37 @@ void cat(int *xlen, int *xoff, char **x, int ylen, char *y) {
 }
 
 M2_string system_regexreplace(M2_string pattern, M2_string replacement, M2_string text, M2_string errorflag) {
-  int ret;
+#if POSIX_REGEXP
+  int regcomp_return;
+#else
+  const char *regcomp_return;
+#endif
   system_regexmatchErrorMessage = &noErrorMessage;
   if (last_pattern != pattern) {
     char *s_pattern;
-    if (last_pattern != NULL) regfree(&regex), last_pattern = NULL;
+    if (last_pattern != NULL) regfree(&regex_pattern), last_pattern = NULL;
     s_pattern = tocharstar(pattern);
-    ret = regcomp(&regex, s_pattern, REG_EXTENDED);
+#if POSIX_REGEXP
+    regcomp_return = regcomp(&regex_pattern, s_pattern, REG_EXTENDED);
+#else
+    regcomp_return = re_compile_pattern(pattern->array,pattern->len,&regex_pattern);
+#endif
     GC_FREE(s_pattern);
-    if (ret != 0) {
-	 if (ret != REG_NOMATCH) {
-	      char message[1024];
-	      regerror(ret,&regex,message,sizeof message);
-	      system_regexmatchErrorMessage = tostring(message);
-	      }
-	 regfree(&regex);
+    if (regcomp_return != 0) {
+#if POSIX_REGEXP
+	 char message[1024];
+	 regerror(regcomp_return,&regex_pattern,message,sizeof message);
+	 system_regexmatchErrorMessage = tostring(message);
+#else
+	 system_regexmatchErrorMessage = tostring(regcomp_return);
+#endif
+	 regfree(&regex_pattern);
 	 return errorflag;
     }
     last_pattern = pattern;
   }
   {
-    int n = regex.re_nsub+1;
+    int n = regex_pattern.re_nsub+1;
     regmatch_t match[n];
     int offset = 0;
     int textlen = text->len;
@@ -1135,7 +1176,7 @@ M2_string system_regexreplace(M2_string pattern, M2_string replacement, M2_strin
     int bufct = 0;
     char *buf = getmem_atomic(buflen);
     int i;
-    while (regexec(&regex, s_text + offset, n, match, 0) == 0) {
+    while (regexec(&regex_pattern, s_text + offset, n, match, 0) == 0) {
 	 char *p;
 	 int plen;
 	 /* copy the unmatched text up to the match */
