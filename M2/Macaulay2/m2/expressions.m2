@@ -1052,17 +1052,8 @@ showTex = x -> (
      )
 
 -----------------------------------------------------------------------------
-showHtml = x -> (
-     fn := temporaryFileName () | ".html";
-     fn << "<title>Macaulay 2 Output</title>" << endl << html x << endl << close;
-     run ( "netscape -remote 'openFile(" | fn | ")'; rm " | fn );
-     )
-
------------------------------------------------------------------------------
 print = x -> (<< net x << endl;)
-
 -----------------------------------------------------------------------------
-
 texMath RR := toString
 texMath ZZ := toString
 texMath Thing := x -> texMath expression x

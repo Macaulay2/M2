@@ -80,6 +80,7 @@ packages.m2
 exports.m2
 document.m2
 hypertext.m2
+texhtml.m2
 html.m2
 varieties.m2
 obsolete.m2
