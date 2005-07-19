@@ -1134,12 +1134,32 @@ M2_string system_regexreplace(M2_string pattern, M2_string replacement, M2_strin
     int buflen = text->len + 3 * replacement->len + 16;
     int bufct = 0;
     char *buf = getmem_atomic(buflen);
+    int i;
     while (regexec(&regex, s_text + offset, n, match, 0) == 0) {
+	 char *p;
+	 int plen;
 	 /* copy the unmatched text up to the match */
 	 cat(&buflen,&bufct,&buf, match[0].rm_so,s_text+offset);
 	 /* perform the replacement */
-	 /* implement \0, ..., \9 later */
-	 cat(&buflen,&bufct,&buf, replacement->len,replacement->array);
+	 p = replacement->array;
+	 plen = replacement->len;
+	 while (TRUE) {
+	      char *q = p;
+	      while (TRUE) {
+		   q = memchr(q,'\\',plen-(q-p));
+		   if (q==NULL || isdigit(q[1])) break;
+		   q++;
+	      }
+	      if (q==NULL) break;
+	      cat(&buflen,&bufct,&buf,q-p,p);
+	      plen -= q-p;
+	      p = q;
+	      i = q[1] - '0';
+	      if (i < n) cat(&buflen,&bufct,&buf,match[i].rm_eo-match[i].rm_so,s_text+offset+match[i].rm_so);
+	      p += 2;
+	      plen -= 2;
+	 }
+	 cat(&buflen,&bufct,&buf,plen,p);
 	 /* reset the offset after the matched part */
 	 offset += match[0].rm_eo;
 	 /* if the matched part was empty, move onward a bit */
