@@ -1082,7 +1082,7 @@ URL = new Type of List
 show = method()
 show URL := x -> (
      url := x#0;
-     if runnable "firefox" then check run("firefox "|url) -- big problem: we can't predict whether firefox will exit immediately, so we have to run in the backgroun always, sigh
+     if runnable "firefox" then check run("firefox "|url|"&") -- big problem: we can't predict whether firefox will exit immediately, so we have to run in the backgroun always, sigh
      else if runnable "open" then check run("open \""|url|"\"") 
      else if runnable "netscape" then check run("netscape -remote \"openURL("|url|")\"") 
      else error "can't find firefox, open, or netscape"
@@ -1091,7 +1091,7 @@ show Hypertext := x -> (
      fn := temporaryFileName() | ".html";
      fn << "<title>Macaulay 2 Output</title>" << endl << html x << endl << close;
      show new URL from { "file://" | fn };
-     run ( "rm " | fn );
+     addEndFunction( () -> run ( "rm " | fn ) );
      )
 
 viewHelp = key -> (
