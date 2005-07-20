@@ -25,15 +25,19 @@ PACKAGES += LLLBases
 RemakeAllDocumentation = false
 IgnoreExampleErrors = false
 
+ARGS := , MakeLinks => false
+ARGS += , IgnoreExampleErrors => $(IgnoreExampleErrors)
+ARGS += , RemakeAllDocumentation => $(RemakeAllDocumentation)
+ARGS += , MakeInfo => true
+
 ifeq ($(ENCAP),yes)
-Encapsulate = true
-Override = , Encapsulate => false, MakeLinks => false
+ARGS += , Encapsulate => true
 else
-Encapsulate = false
-Override =
+ARGS += , Encapsulate => false
 endif
 
-ARGS = , IgnoreExampleErrors => $(IgnoreExampleErrors), Encapsulate => $(Encapsulate), RemakeAllDocumentation => $(RemakeAllDocumentation), MakeInfo => true, PackagePrefix => \"$(prefix)/\"
+ARGS1 := $(ARGS), PackagePrefix => \"$(prefix)/\"
+ARGS2 := $(ARGS), PackagePrefix => \"$(encapdir)/\"
 
 install ::
 	@ for i in $(PACKAGES) ; \
@@ -44,14 +48,14 @@ install ::
 		  ../bin/M2 -q --stop \
 		    --prefix $(encapdir) \
 		    -e errorDepth=0 \
-		    -e "installPackage(\"$$i\" $(ARGS))" \
+		    -e "installPackage(\"$$i\" $(ARGS1))" \
 		    -e "exit 0" ; \
 	      else \
 		  set -x ; \
 		  ../bin/M2 -q --stop \
 		    --prefix $(encapdir) \
 		    -e errorDepth=0 \
-		    -e "installPackage(\"$$i\" $(ARGS) $(Override))" \
+		    -e "installPackage(\"$$i\" $(ARGS2))" \
 		    -e "exit 0" ; \
 	      fi ; \
 	     ) || exit 1 ; \

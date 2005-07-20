@@ -57,16 +57,16 @@ S = KK [s,t,p_0..p_3,q_0..q_3]
 
 --$
 F = map(S,R,
-  s*matrix{{p_0..p_3}} +
-  t*matrix{{q_0..q_3}}
-    )
+       s*matrix{{p_0..p_3}} +
+       t*matrix{{q_0..q_3}}
+       )
 
 -- We now apply $F$ to the ideal of $X$
 FX = F X
 -- and the condition we want becomes the condition
 -- that {\tt FX} vanishes identically in $s,t$.
 -- The following line produces the coefficients:
-cFX = (coefficients({0,1},gens FX))_1
+cFX = last coefficients(gens FX, Variables => {s,t})
 
 -- The interface to the {\tt coefficients} routine is a bit
 -- baroque, and might change in the future.  For now,
