@@ -97,23 +97,9 @@ monoidDefaults = (
 	  }
      )
 
-tensorDefaults = (
-     new OptionTable from {
-	  VariableBaseName => null,
-	  Variables => null,
-	  Degrees => null,
-	  Weights => {},
-	  Inverses => false,
-	  MonomialOrder => null,
-	  MonomialSize => 32,				    -- we had this set to null, but some of the code needs a number here...
-	  SkewCommutative => false,
-	  VariableOrder => null,		  -- not implemented yet
-	  WeylAlgebra => {},
-	  Adjust => identity,
-	  Repair => identity,
-	  DegreeRank => null
-	  }
-     )
+tensorDefaults = merge(monoidDefaults, 
+     new OptionTable from {MonomialOrder => null},
+     (x,y) -> y)
 
 monoid = method(SingleArgumentDispatch => true)
 options PolynomialRing := options @@ monoid

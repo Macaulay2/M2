@@ -396,6 +396,7 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
      else (
 	  announcechange();
 	  stderr << "--making " << desc << " in file " << outf << endl;
+	  if fileExists outf then removeFile outf;
 	  ldpkg := "-e 'needsPackage \""|toString pkg|"\"'";
 	  args := "--silent --print-width 80 --stop --int -e errorDepth=0 -q" | " " | ldpkg;
 	  cmdname := commandLine#0;

@@ -31,13 +31,13 @@ ARGS += , RemakeAllDocumentation => $(RemakeAllDocumentation)
 ARGS += , MakeInfo => true
 
 ifeq ($(ENCAP),yes)
-ARGS += , Encapsulate => true
+Encapsulate = true
 else
-ARGS += , Encapsulate => false
+Encapsulate = false
 endif
 
-ARGS1 := $(ARGS), PackagePrefix => \"$(prefix)/\"
-ARGS2 := $(ARGS), PackagePrefix => \"$(encapdir)/\"
+ARGS1 := $(ARGS), PackagePrefix => \"$(prefix)/\", Encapsulate => $(Encapsulate)
+ARGS2 := $(ARGS), PackagePrefix => \"$(encapdir)/\", Encapsulate => false
 
 install ::
 	@ for i in $(PACKAGES) ; \

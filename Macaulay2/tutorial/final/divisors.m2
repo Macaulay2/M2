@@ -1,9 +1,8 @@
 -- Tutorial: Divisors
 --
--- \def\P{\bf P}
 -- In this tutorial we describe one way to represent
 -- divisors on a smooth projective subvariety 
--- $X$ of $\P^r$, and show methods for computing
+-- $X$ of ${\bf P}^r$, and show methods for computing
 -- the group operations, computing the vector space
 -- of sections, and determining whether two divisors are
 -- linearly equivalent.  We also construct the
@@ -375,8 +374,8 @@ L = globalSections D
 phi = map(SE, ZZ/31991[a..d], L#0)
 ker phi
 
--- The image in $\P^3$ is a complete intersection of two 
--- quadrics: the elliptic normal curve in $\P^3$.
+-- The image in ${\bf P}^3$ is a complete intersection of two 
+-- quadrics: the elliptic normal curve in ${\bf P}^3$.
 --
 -- For a less obvious example, consider
 -- the divisor $4P - R$, which is not effective.
@@ -520,7 +519,7 @@ SX = S/IC
 -- canonical class is given
 -- as $K_X = Ext^c(S_X, S(-r-1))$,
 -- where $c = codim X$, 
--- $X \subset \P^r$, and $S = k[x_0,\ldots,x_r]$
+-- $X \subset {\bf P}^r$, and $S = k[x_0,\ldots,x_r]$
 -- is the polynomial ring.
 
 KX = Ext^2(coker gens IC,S^{-4})

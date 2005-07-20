@@ -112,9 +112,9 @@ copyDirectory(String,String) := opts -> (src,dst) -> (
 		    )
 	       else (
      		    if not isRegularFile srcf 
-		    then stderr << "--  skipping: non regular file: " << srcf << endl
+		    then (if opts.Verbose then stderr << "--  skipping: non regular file: " << srcf << endl)
 		    else if match(backupFileRegexp,srcf)
-		    then stderr << "--  skipping: backup file: " << srcf << endl
+		    then (if opts.Verbose then stderr << "--  skipping: backup file: " << srcf << endl)
 		    else copyFile(srcf,tarf,opts)))));
 symlinkDirectory = method(Options => fileOptions)
 symlinkDirectory(String,String) := opts -> (src,dst) -> (
@@ -132,9 +132,9 @@ symlinkDirectory(String,String) := opts -> (src,dst) -> (
 		    )
 	       else (
      		    if not isRegularFile srcf 
-		    then stderr << "--  skipping: non regular file: " << srcf << endl
+		    then (if opts.Verbose then stderr << "--  skipping: non regular file: " << srcf << endl)
 		    else if match(backupFileRegexp,srcf)
-		    then stderr << "--  skipping: backup file: " << srcf << endl
+		    then (if opts.Verbose then stderr << "--  skipping: backup file: " << srcf << endl)
 		    else (
 			 tardir := concatenate between("/",drop(separate("/",tarf),-1)); -- directory part of file name
 			 relsrcf := relativizeFilename(tardir,srcf);
