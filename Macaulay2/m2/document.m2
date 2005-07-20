@@ -422,13 +422,12 @@ extractExamples := (docBody) -> (
      if #examples > 0 then currentPackage#"example inputs"#currentNodeName = examples;
      docBody)
 
-M2outputRE := "(\n?\n)i+[1-9][0-9]* : "
+M2outputRE := "(\n+)i+[1-9][0-9]* : "
 M2outputREindex := 1
 separateM2output = method()
 separateM2output String := r -> (
-     m := matches("(^|\n)(i1 : .*)",r);
-     n := 2;
-     if m#?n then r = substring(m#n#0,m#n#1,r);
+     m := matches("^i1 : ",r);
+     if m#?0 then r = substring(m#0#0,r);
      while r#?-1 and r#-1 == "\n" do r = substring(0,#r-1,r);
      separateRegexp(M2outputRE,M2outputREindex,r))
 
