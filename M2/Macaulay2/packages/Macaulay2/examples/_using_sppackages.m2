@@ -1,2 +1,0 @@
-loadPackage "FirstPackage"
-installPackage FirstPackage

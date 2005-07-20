@@ -29,7 +29,7 @@
 -- of ${\bf P}^2$ and the rational normal scrolls
 -- $S(1,3)$ and $S(2,2)$.  Can they be distinguished
 -- by their Fano varieties of lines?  
--- To find out, read section C !
+-- To find out, read section C!
 
 -----------------------------------------------
 -- A. Lines on the nonsingular cubic in ${\bf P}^3$
@@ -70,7 +70,7 @@ cFX = last coefficients(gens FX, Variables => {s,t})
 
 -- The interface to the {\tt coefficients} routine is a bit
 -- baroque, and might change in the future.  For now,
--- the $\{0,1\}$ says to find the coefficients of each column
+-- the $\{0,1\}$ says to find the coefficients of each column 
 -- of the matrix, with respect to the first two variables.
 -- The routine returns a list of two matrices, the
 -- second one being the one we need (index 1, since
@@ -213,7 +213,7 @@ Fano2(ZZ,Ideal,Ring) := (k,X,GR) -> (
   -- The following line produces the matrix of
   -- coefficients of the monomials in the 
   -- variables labelled 0..k:
-  cFX := (coefficients (toList(0..k),gens FX))_1;
+  cFX := last coefficients (gens FX, Variables => toList apply(0..k, i -> S_i));
   -- We can get rid of the variables t_i
   -- to ease the computation:
   cFX = substitute(cFX, S2);
