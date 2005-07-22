@@ -96,7 +96,7 @@ newPackage(String) := opts -> (title) -> (
 	  "source directory" => currentFileDirectory,
 	  "undocumented keys" => new MutableHashTable,
 	  "package prefix" => (
-	       m := matches("(/|^)" | LAYOUT#"packages" | "$", currentFileDirectory);
+	       m := regex("(/|^)" | LAYOUT#"packages" | "$", currentFileDirectory);
 	       if m#?1 
 	       then substring(currentFileDirectory,0,m#1#0 + m#1#1)
 	       else prefixDirectory

@@ -1040,7 +1040,7 @@ int system_strncmp(M2_string s,M2_string t,int n) {
 #if !POSIX_REGEX
 static void init(void) __attribute__ ((constructor));
 static void init(void) {
-     re_set_syntax(
+     re_syntax_options = (
 	  RE_NO_BK_PARENS|
 	  RE_NO_BK_BRACES|
 	  RE_NO_BK_VBAR|
@@ -1073,7 +1073,7 @@ struct re_pattern_buffer regex_pattern;
 #else
 #define match_start(i) match.start[i]
 #define match_end(i)   match.end[i]
-#define regexec_empty_return -1
+#define regexec_empty_return (-1)
 #endif
 #define match_length(i) (match_end(i) - match_start(i))
 

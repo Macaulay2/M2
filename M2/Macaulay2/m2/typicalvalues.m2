@@ -75,7 +75,7 @@ isOutputFile(File) := Boolean => isOutputFile
 isReady(File) := Boolean => isReady
 mutable(Thing) := Boolean => mutable
 instance(Thing,Type) := Boolean => instance
-matches(String,String) := List => match
+regex(String,String) := List => match
 characters String := List => characters
 concatenate List := String => concatenate
 deepSplice BasicList := BasicList => deepSplice

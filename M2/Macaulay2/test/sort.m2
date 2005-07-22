@@ -39,7 +39,7 @@ x  = {symbol generators, symbol size, symbol symmetricPower, symbol " ", symbol 
       symbol minus, symbol abs, symbol mingens, symbol dual, symbol loadPackage, symbol isQuotientModule, symbol remove, symbol exec, symbol Divide, symbol graphRing, symbol EM, symbol
       parent, symbol resolution, symbol SelfInitializingType, symbol isTable, StopBeforeComputation, symbol index, symbol exportMutable, symbol pairs, end, symbol GF, symbol Power, symbol
       currentDirectory, symbol "break", symbol HH, symbol power, symbol HR, symbol sheafExt, symbol fittingIdeal, symbol printString, symbol exit, symbol standardForm, symbol false, symbol
-      topics, symbol position, symbol matches, symbol Tor, symbol "=!=", symbol closeIn, symbol ProjectiveHilbertPolynomial, symbol degreesMonoid, symbol factor, symbol image, symbol class,
+      topics, symbol position, symbol regex, symbol Tor, symbol "=!=", symbol closeIn, symbol ProjectiveHilbertPolynomial, symbol degreesMonoid, symbol factor, symbol image, symbol class,
       symbol lookup, symbol acos, symbol terms, indexComponents, symbol CacheTable, symbol uncurry, symbol newline, symbol read, symbol File, symbol net, symbol "new", symbol all, symbol
       setEcho, symbol profile, symbol NOINDENT, symbol uniform, GroupRevLex, Sort, symbol MonoidElement, symbol NL, symbol match, symbol Holder, symbol ancestor, symbol "and", symbol OO,
       symbol ann, symbol leadTerm, symbol OrderedMonoid, symbol any, symbol genus, symbol isSquareFree, Lex, symbol modifyRing, symbol applyPairs, symbol unlinkFile, symbol exp, symbol QQ,

@@ -130,26 +130,7 @@ document {
 	  ///match ("asdf*", "--asdffff--")///,
 	  ///match ("asdf*", "--asffff--")///
 	  },
-     SeeAlso => "matches"
-     }
-
-document {
-     Key => matches, 
-     Headline => "regular expression matching",
-     TT "matches(p,s)", " -- matches the string ", TT "s", " against the 
-     GNU regular expression ", TT "p", ".",
-     PARA,
-     "The value returned is a list of pairs of integers corresponding to the
-     subexpressions successfully matched.  The list has length 0 if no match
-     was successful.  The first member of each pair is the offset within
-     ", TT "s", " of the substring matched, and the second is the length.",
-     EXAMPLE {
-	  ///matches ("asdf*", "--asdffff--")///,
-	  ///matches ("asd(f*)", "--asdffff--")///,
-	  ///matches ("asd((f)*)", "--asdffff--")///,
-	  ///matches ("asd((f)*)", "--asffff--")///
-	  },
-     SeeAlso => "match"
+     SeeAlso => "regex"
      }
 
 document {

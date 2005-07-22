@@ -12,7 +12,7 @@ assert(f === flatten f)
 try ( alarm 1 ; error "" ) else sleep 3
 
 -- test regexp
-assert( matches ( "^(.*[^ ])? *$", " abcdef " ) === {(0, 8), (0, 7)} )
-assert( matches ( "^ *(.*[^ ])? *$", " abcdef " ) === {(0, 8), (1, 6)} )
-assert( matches ( "^ *(.*)$", " abcdef " ) === {(0, 8), (1, 7)} )
-assert( matches ( ".?","" ) === {(0, 0)} )
+assert( regex ( "^(.*[^ ])? *$", " abcdef " ) === {(0, 8), (0, 7)} )
+assert( regex ( "^ *(.*[^ ])? *$", " abcdef " ) === {(0, 8), (1, 6)} )
+assert( regex ( "^ *(.*)$", " abcdef " ) === {(0, 8), (1, 7)} )
+assert( regex ( ".?","" ) === {(0, 0)} )

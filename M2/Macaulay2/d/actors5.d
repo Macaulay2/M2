@@ -1431,13 +1431,13 @@ regexmatch(e:Expr):Expr := (
      when a.1 is text:string do (
 	  r := regexmatch(regexp,text);
 	  if length(r) == 0 && regexmatchErrorMessage != noErrorMessage
-	  then buildErrorPacket("'matches': "+regexmatchErrorMessage)
+	  then buildErrorPacket("regex: "+regexmatchErrorMessage)
 	  else toPairs(r))
      else WrongArgString(2)
      else WrongArgString(1)
      else WrongNumArgs(2)
      else WrongNumArgs(2));
-setupfun("matches",regexmatch);
+setupfun("regex",regexmatch);
 
 foo := "foo";
 replace(e:Expr):Expr := (

@@ -5,14 +5,14 @@
 separateRegexp = method()
 separateRegexp(String,String) := (re,s) -> separateRegexp(re,0,s)
 separateRegexp(String,ZZ,String) := (re,n,s) -> (
-     m := matches(re,s);
+     m := regex(re,s);
      if m#?n then prepend(substring(s,0,m#n#0), separateRegexp(re,n,substring(m#n#0+m#n#1,s))) else {s}	-- this is slow on large things!
      )
 
 selectRegexp = method()
 selectRegexp(String,String) := (re,s) -> selectRegexp(re,0,s)
 selectRegexp(String,ZZ,String) := (re,n,s) -> (
-     m := matches(re,s);
+     m := regex(re,s);
      if m#?n then substring(m#n#0,m#n#1,s) else error "regular expression didn't match")
 
 -- nets

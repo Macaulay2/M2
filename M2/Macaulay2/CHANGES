@@ -404,7 +404,7 @@ examples files will not halt the make.
 The function 'match' has been changed completely, in a way not compatible
 with earlier uses.  It now implemements GNU regular expression matching.  The
 order of the two arguments has been reversed.  A new companion function
-'matches' is provided which returns a list of pairs of integers showing the
+'regex' is provided which returns a list of pairs of integers showing the
 locations of the matched substrings.  Example:
 
     i1 : select( {"a","aaa","aab","bbb"}, match_"a+b$")
