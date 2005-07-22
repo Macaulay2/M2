@@ -426,8 +426,8 @@ M2outputRE := "(\n+)i+[1-9][0-9]* : "
 M2outputREindex := 1
 separateM2output = method()
 separateM2output String := r -> (
-     m := matches("^i1 : ",r);
-     if m#?0 then r = substring(m#0#0,r);
+     m := matches("\n()i1 : ",r);
+     if m#?1 then r = substring(m#1#0,r);
      while r#?-1 and r#-1 == "\n" do r = substring(0,#r-1,r);
      separateRegexp(M2outputRE,M2outputREindex,r))
 
