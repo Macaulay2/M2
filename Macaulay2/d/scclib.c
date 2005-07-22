@@ -1035,6 +1035,9 @@ int system_strncmp(M2_string s,M2_string t,int n) {
 
 #include <regex.h>
 
+#define POSIX_REGEX TRUE
+
+#if !POSIX_REGEX
 static void init(void) __attribute__ ((constructor));
 static void init(void) {
      re_set_syntax(
@@ -1049,6 +1052,7 @@ static void init(void) {
 	  RE_CONTEXT_INDEP_ANCHORS
 	  );
 }
+#endif
 
 struct M2_string_struct noErrorMessage;
 M2_string system_noErrorMessage = &noErrorMessage;
@@ -1056,20 +1060,49 @@ M2_string system_regexmatchErrorMessage = &noErrorMessage;
 
 static M2_string last_pattern = NULL;
 
+#if POSIX_REGEX
+static regex_t regex_pattern;
+#else
 struct re_pattern_buffer regex_pattern;
+#endif
+
+#if POSIX_REGEX
+#define match_start(i) match[i].rm_so
+#define match_end(i)   match[i].rm_eo
+#define regexec_empty_return REG_NOMATCH
+#else
+#define match_start(i) match.start[i]
+#define match_end(i)   match.end[i]
+#define regexec_empty_return -1
+#endif
+#define match_length(i) (match_end(i) - match_start(i))
 
 M2_arrayint system_regexmatch(M2_string pattern, M2_string text) {
   static struct M2_arrayint_struct empty[1] = {{0}};
+#if POSIX_REGEX
+  int regcomp_return;
+#else
   const char *regcomp_return;
+#endif
   system_regexmatchErrorMessage = &noErrorMessage;
   if (last_pattern != pattern) {
-    char *s_pattern;
     if (last_pattern != NULL) regfree(&regex_pattern), last_pattern = NULL;
-    s_pattern = tocharstar(pattern);
-    regcomp_return = re_compile_pattern(pattern->array,pattern->len,&regex_pattern);
-    GC_FREE(s_pattern);
+#if POSIX_REGEX
+    {
+	char *s_pattern;
+	s_pattern = tocharstar(pattern);
+	regcomp_return = regcomp(&regex_pattern, s_pattern, REG_EXTENDED);
+	GC_FREE(s_pattern);
+    }
     if (regcomp_return != 0) {
+	 char message[1024];
+         regerror(regcomp_return,&regex_pattern,message,sizeof message);
+         system_regexmatchErrorMessage = tostring(message);
+#else
+    regcomp_return = re_compile_pattern(pattern->array,pattern->len,&regex_pattern);
+    if (regcomp_return != NULL) {
 	 system_regexmatchErrorMessage = tostring(regcomp_return);
+#endif
 	 regfree(&regex_pattern);
 	 return empty;
     }
@@ -1079,16 +1112,21 @@ M2_arrayint system_regexmatch(M2_string pattern, M2_string text) {
     int n = regex_pattern.re_nsub+1;
     char *s_text = tocharstar(text);
     int regexec_return;
+#if POSIX_REGEX
+    regmatch_t match[n];
+    regexec_return = regexec(&regex_pattern, s_text, n, match, 0);
+#else
     static struct re_registers match;
     regexec_return = re_search(&regex_pattern, text->array, text->len, 0, text->len, &match);
+#endif
     GC_FREE(s_text);
-    if (regexec_return == -1) return empty;
+    if (regexec_return == regexec_empty_return) return empty;
     else {
       M2_arrayint m = makearrayint(2*n);
       int i;
       for (i = 0; i<n; i++) {
-	m->array[2*i  ] = match.start[i];
-	m->array[2*i+1] = match.end[i] - match.start[i];
+	m->array[2*i  ] = match_start(i);
+	m->array[2*i+1] = match_length(i);
       }
       return m;
     }
@@ -1112,16 +1150,30 @@ void cat(int *xlen, int *xoff, char **x, int ylen, char *y) {
 }
 
 M2_string system_regexreplace(M2_string pattern, M2_string replacement, M2_string text, M2_string errorflag) {
+#if POSIX_REGEX
+  int regcomp_return;
+#else
   const char *regcomp_return;
+#endif
   system_regexmatchErrorMessage = &noErrorMessage;
   if (last_pattern != pattern) {
-    char *s_pattern;
     if (last_pattern != NULL) regfree(&regex_pattern), last_pattern = NULL;
-    s_pattern = tocharstar(pattern);
-    regcomp_return = re_compile_pattern(pattern->array,pattern->len,&regex_pattern);
-    GC_FREE(s_pattern);
+#if POSIX_REGEX
+    {
+      char *s_pattern;
+      s_pattern = tocharstar(pattern);
+      regcomp_return = regcomp(&regex_pattern, s_pattern, REG_EXTENDED);
+      GC_FREE(s_pattern);
+    }
     if (regcomp_return != 0) {
+	 char message[1024];
+         regerror(regcomp_return,&regex_pattern,message,sizeof message);
+         system_regexmatchErrorMessage = tostring(message);
+#else
+    regcomp_return = re_compile_pattern(pattern->array,pattern->len,&regex_pattern);
+    if (regcomp_return != NULL) {
 	 system_regexmatchErrorMessage = tostring(regcomp_return);
+#endif
 	 regfree(&regex_pattern);
 	 return errorflag;
     }
@@ -1129,19 +1181,27 @@ M2_string system_regexreplace(M2_string pattern, M2_string replacement, M2_strin
   }
   {
     int n = regex_pattern.re_nsub+1;
+#if POSIX_REGEX
+    regmatch_t match[n];
+#else
     static struct re_registers match;
+#endif
     int offset = 0;
     int textlen = text->len;
-    /* char *s_text = tocharstar(text); */
     int buflen = text->len + 3 * replacement->len + 16;
     int bufct = 0;
     char *buf = getmem_atomic(buflen);
     int i;
-    while (re_search(&regex_pattern, text->array + offset, textlen - offset, 0, textlen - offset, &match) != -1) {
+#if POSIX_REGEX
+    char *s_text = tocharstar(text);
+    while (regexec(&regex_pattern, s_text + offset, n, match, 0) != regexec_empty_return) {
+#else
+    while (re_search(&regex_pattern, text->array + offset, textlen - offset, 0, textlen - offset, &match) != regexec_empty_return) {
+#endif
 	 char *p;
 	 int plen;
 	 /* copy the unmatched text up to the match */
-	 cat(&buflen,&bufct,&buf, match.start[0],text->array+offset);
+	 cat(&buflen,&bufct,&buf, match_start(0),text->array+offset);
 	 /* perform the replacement */
 	 p = replacement->array;
 	 plen = replacement->len;
@@ -1157,16 +1217,15 @@ M2_string system_regexreplace(M2_string pattern, M2_string replacement, M2_strin
 	      plen -= q-p;
 	      p = q;
 	      i = q[1] - '0';
-	      if (i < n)
-		   cat(&buflen,&bufct,&buf,match.end[i]-match.start[i],text->array+offset+match.start[i]);
+	      if (i < n) cat(&buflen,&bufct,&buf,match_length(i),text->array+offset+match_start(i));
 	      p += 2;
 	      plen -= 2;
 	 }
 	 cat(&buflen,&bufct,&buf,plen,p);
 	 /* reset the offset after the matched part */
-	 offset += match.end[0];
+	 offset += match_end(0);
 	 /* if the matched part was empty, move onward a bit */
-	 if (match.end[0] == match.start[0]) {
+	 if (match_end(0) == match_start(0)) {
 	      if (offset == textlen) break;
 	      cat(&buflen,&bufct,&buf, 1, text->array+offset);
 	      offset += 1;
