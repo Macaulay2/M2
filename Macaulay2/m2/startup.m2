@@ -13,7 +13,7 @@ if gotarg "--stop" then stopIfError = true
 firstTime := class PackageDictionary === Symbol
 
 -- here we put local variables that might be used by the global definitions below
-match := X -> 0 < #(matches X);
+match := X -> 0 < #(regex X);
 
 if firstTime then (
      -- all global definitions go here, because after loaddata is run, we'll come through here again
@@ -170,9 +170,9 @@ packagePath = null
 encapDirectory = null	   -- encap directory, after installation, if present, e.g., "/usr/local/encap/Macaulay2-0.9.5/"
 
 fullCopyright := false
-matchpart := (regex,i,s) -> substring_((matches(regex, s))#i) s
+matchpart := (pat,i,s) -> substring_((regex(pat, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
-dir := s -> ( m := matches(".*/",s); if 0 == #m then "./" else substring_(m#0) s)
+dir := s -> ( m := regex(".*/",s); if 0 == #m then "./" else substring_(m#0) s)
 noloaddata := false
 nobanner := false;
 nosetup := false

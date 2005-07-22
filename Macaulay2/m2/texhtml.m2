@@ -150,10 +150,10 @@ html TEX := str -> (
 	       stderr << "html TEX: ///" << str << "/// matches ///" << p << "/// and becomes ///" << n << "///" << endl;
 	       );
 	  str = n);
+     f(///''///,///&rdquo;///);
+     f(///'///,///&rsquo;///); -- This is for text.  But an apostrophe in math mode should be a prime!
      f(///\$\$([^$]*)\$\$///,///<p align=center><i>\1</i></p>///);
      f(///\$([^$]*)\$///,///<i>\1</i>///);
-     f(///''///,///&rdquo;///);
-     f(///'///,///&rsquo;///); -- This is for text.  An apostrophe in math mode would be a prime, but we can't tell the difference, too bad.
      f(///``///,///&ldquo;///);
      f(///`///,///&lsquo;///);
      f(///\\\\///,///\backslash///);
@@ -171,10 +171,13 @@ html TEX := str -> (
 	  f(///\{ *\\cal +([^{}]*)\}///,///{<i>\1</i>}///);
 	  f(///\{ *\\mathcal +([^{}]*)\}///,///{<i>\1</i>}///);
 	  f(///\\url\{([^{}]*)\}///,///<a href="\1" target=blank>\1</a>///);
-	  f(///\\frac\{([^{}]*)\}\{([^{}]*)\}///,///(\1)/(\2)///);
+	  f(///\\frac\{([^{}]*)\}\{([^{}]*)\}///,///{(\1)/(\2)}///);
 	  f(///\{([^{}]*)\\over([^{}]*)\}///,///{(\1)/(\2)}///);
 	  f(///\^ *\{([^{}]*)\}///,///<sup>\1</sup>///);
 	  f(///_ *\{([^{}]*)\}///,///<sub>\1</sub>///);
+	  oldstr != str) do null;
+     while (
+	  oldstr = str;
      	  f(///\{([^{}]*)\}///,///\1///);
 	  oldstr != str) do null;
      f(///\^(\\[a-zA-Z]*)///,///<sup>\1</sup>///);

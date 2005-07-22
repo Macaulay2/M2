@@ -35,4 +35,4 @@ document {
      SeeAlso => {}
      }
  -- doc4.m2:119:     Key => match, 
- -- doc4.m2:137:     Key => matches, 
+ -- doc4.m2:137:     Key => regex, 

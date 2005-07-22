@@ -353,7 +353,7 @@ length Dictionary := s -> #s
 length String := s -> #s
 length VisibleList := s -> #s
 
-match(String,String) := X -> 0 < length matches X
+match(String,String) := X -> 0 < length regex X
 
 Nothing == Nothing := Boolean => (x,y) -> x === y			    -- actually, x and y must both be "null"!
 
