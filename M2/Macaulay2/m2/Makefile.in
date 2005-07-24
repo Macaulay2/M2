@@ -46,7 +46,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: loadsequence Makefile.in $(NONDOCM2FILES) @srcdir@/*.awk @srcdir@/../basictests/*.m2 @srcdir@/../test/*.m2 @srcdir@/../test/engine/*.m2 \
 		@srcdir@/../book/*.m2 @srcdir@/../packages/*.m2 ../emacs/makehlp.m2 ../emacs/makem2.m2 \
 		@srcdir@/../packages/*/*.m2 \
-		$(shell find @srcdir@/../packages -name examples -prune , -name "*.m2" | sort) \
+		$(shell find @srcdir@/../packages -name "*.m2" -o -name examples -prune | grep -v Macaulay2/examples | sort) \
 		@srcdir@/README.DOC @srcdir@/../*/COPYRIGHT ../emacs/makesyms.m2 @srcdir@/../tutorial/prelim/*.m2 \
 		@srcdir@/../tutorial/final/*.m2 Makefile.tests @srcdir@/../e/statuscodes \
 		../basictests/Makefile.in ../emacs/Makefile.in ../packages/Style/Makefile.in ../packages/Makefile.in ../tutorial/Makefile.in ../CHANGES
