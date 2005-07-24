@@ -961,7 +961,6 @@ export (
 	symbol seeParsing,
 	symbol select,
 	symbol selectInSubring,
-	symbol selectLargest,
 	symbol separate,
 	symbol seq,
 	symbol sequence,
