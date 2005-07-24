@@ -81,3 +81,7 @@ x = toString \ x
 y = sort x
 z = sort y
 assert ( z == y )
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test sort.out"
+-- End:

@@ -1037,20 +1037,16 @@ int system_strncmp(M2_string s,M2_string t,int n) {
 
 #define POSIX_REGEX TRUE
 
+#if POSIX_REGEX
+#define SYNTAX_FLAGS   (REG_EXTENDED | REG_NEWLINE)
+#else
+#define SYNTAX_OPTIONS (RE_SYNTAX_POSIX_EXTENDED & ~RE_DOT_NEWLINE | RE_HAT_LISTS_NOT_NEWLINE)
+#endif
+
 #if !POSIX_REGEX
 static void init(void) __attribute__ ((constructor));
 static void init(void) {
-     re_syntax_options = (
-	  RE_NO_BK_PARENS|
-	  RE_NO_BK_BRACES|
-	  RE_NO_BK_VBAR|
-	  RE_INTERVALS|
-	  RE_CONTEXT_INVALID_OPS|
-	  RE_CHAR_CLASSES|
-	  RE_BACKSLASH_ESCAPE_IN_LISTS|
-	  RE_NO_EMPTY_RANGES|
-	  RE_CONTEXT_INDEP_ANCHORS
-	  );
+     re_syntax_options = SYNTAX_OPTIONS;
 }
 #endif
 
@@ -1091,7 +1087,7 @@ M2_arrayint system_regexmatch(M2_string pattern, M2_string text) {
     {
 	char *s_pattern;
 	s_pattern = tocharstar(pattern);
-	regcomp_return = regcomp(&regex_pattern, s_pattern, REG_EXTENDED);
+	regcomp_return = regcomp(&regex_pattern, s_pattern, SYNTAX_FLAGS);
 	GC_FREE(s_pattern);
     }
     if (regcomp_return != 0) {
@@ -1162,7 +1158,7 @@ M2_string system_regexreplace(M2_string pattern, M2_string replacement, M2_strin
     {
       char *s_pattern;
       s_pattern = tocharstar(pattern);
-      regcomp_return = regcomp(&regex_pattern, s_pattern, REG_EXTENDED);
+      regcomp_return = regcomp(&regex_pattern, s_pattern, SYNTAX_FLAGS);
       GC_FREE(s_pattern);
     }
     if (regcomp_return != 0) {

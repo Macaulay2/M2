@@ -33,10 +33,6 @@ minPosition BasicList := ZZ => x -> (
 	  scan(1 .. # x-1, i -> if x#i>m then (m=x#i;pos=i));
 	  pos))
 
-selectLargest = method()
-selectLargest(List,Function) := (x,f) -> (
-     )
-
 number = x -> # select x
 
 all = method()
