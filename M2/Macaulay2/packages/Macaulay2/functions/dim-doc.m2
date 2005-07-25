@@ -150,9 +150,7 @@ document {
 	  "needsPackage \"SimplicialComplexes\"", 
 	  "R = QQ[a..d]",
 	  "D = simplicialComplex {{a,b,c},{a,b,d},{a,c,d},{b,c,d}}",
-	  "debug SimplicialComplexes",			    -- yucch!
-	  "I = monomialIdeal presentation D.facering",
-	  -- fix this to presentation faceRing(D)
+	  "I = monomialIdeal presentation faceRing D",
           "maxfaces D",
           "dim D",
 	  "dim I"
