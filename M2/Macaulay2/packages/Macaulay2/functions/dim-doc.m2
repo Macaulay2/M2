@@ -150,8 +150,8 @@ document {
 	  "needsPackage \"SimplicialComplexes\"", 
 	  "R = QQ[a..d]",
 	  "D = simplicialComplex {{a,b,c},{a,b,d},{a,c,d},{b,c,d}}",
-	  "I = monomialIdeal presentation faceRing D",
-          "maxfaces D",
+	  "I = monomialIdeal D",
+          "facets D",
           "dim D",
 	  "dim I"
 	  },

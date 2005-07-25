@@ -22,10 +22,12 @@ PACKAGES += LLLBases
 # PACKAGES += SchurRings
 ##
 
-RemakeAllDocumentation = false
-IgnoreExampleErrors = false
+RemakeAllDocumentation ?= false
+IgnoreExampleErrors ?= false
+RerunExamples ?= false
 
 ARGS := , MakeLinks => false
+ARGS += , RerunExamples => $(RerunExamples)
 ARGS += , IgnoreExampleErrors => $(IgnoreExampleErrors)
 ARGS += , RemakeAllDocumentation => $(RemakeAllDocumentation)
 ARGS += , MakeInfo => true

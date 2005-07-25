@@ -15,10 +15,7 @@ newPackage(
 export(SimplicialComplex,
      simplicialComplex,
      bd,fVector,isPure,label,
-     faces,facets,support,faceRing,
-     maxfaces, nonfaces)
-
-maxfaces = nonfaces = notImplemented
+     faces,facets,support)
 
 complement := local complement
 complement = (m) -> (
@@ -218,10 +215,8 @@ isPure SimplicialComplex := Boolean => (D) -> (
      #L <= 1
      )
 
-faceRing = method()
-faceRing SimplicialComplex  := D -> ring D / D.faceIdeal
-
 beginDocumentation()
+
 document { Key => SimplicialComplexes,
      Headline => "simplicial complexes",
      EM "SimplicialComplexes", " is a package for manipulating simplicial
@@ -1067,7 +1062,7 @@ R = ZZ/101[x_0 .. x_3]
 A = R/ideal(x_0 * x_1 * x_2, x_1 * x_2 * x_3)
 D = simplicialComplex A
 assert(A === ring D)
-maxfaces D
+facets D
 dual D
 faces(0,D)
 chainComplex D
@@ -1075,17 +1070,17 @@ dual D
 
 -- Example 1: boundary of a tetrahedron
 D = simplicialComplex {{0,1,2},{0,1,3},{0,2,3},{1,2,3}}
-maxfaces D
+facets D
 dim D
-nonfaces D
+ideal D
 chainComplex D
 bd(2,D)
 
 -- Example2: trivverts
 D = simplicialComplex {{0,1,2},{0,2,3},{0,3,4},{0,1,4}}
 dim D
-maxfaces D
-nonfaces D
+facets D
+ideal D
 chainComplex D
 bd(2,D)
 
