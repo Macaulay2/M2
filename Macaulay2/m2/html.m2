@@ -1090,17 +1090,18 @@ show URL := x -> (
      else if runnable "netscape" then check run("netscape -remote \"openURL("|url|")\"") 
      else error "can't find firefox, open, or netscape"
      )
+
+fix := fn -> "file://" | replace(" ","%20",fn) 		    -- might want to replace more characters
 show Hypertext := x -> (
      fn := temporaryFileName() | ".html";
      fn << "<title>Macaulay 2 Output</title>" << endl << html x << endl << close;
-     fn' := replace(" ","%20",fn);
-     show new URL from { "file://" | fn' };
+     show new URL from { fix fn };
      addEndFunction( () -> run ( "rm " | fn ) );
      )
 
 viewHelp = key -> (
      if prefixDirectory === null then error "can't run viewHelp from build tree";
-     show new URL from { "file://" | if key === () then applicationDirectory() | "index.html" else prefixDirectory | htmlFilename key }
+     show new URL from { fix if key === () then applicationDirectory() | "index.html" else prefixDirectory | htmlFilename key }
      )
 viewHelp = new Command from viewHelp
 
