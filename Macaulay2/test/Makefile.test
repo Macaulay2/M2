@@ -12,7 +12,7 @@ RESULTS := $(notdir $(patsubst %.m2, %.out, $(wildcard $(SRCDIR)/*.m2))) \
 	   $(notdir $(patsubst %.m2-input, %.out, $(wildcard $(SRCDIR)/*.m2-input)))
 
 PAT := ':[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):|^GC|^[0-9]+\.[0-9]+user'
-FILTER := egrep -v 'back trace' | egrep $(PAT)
+FILTER := egrep $(PAT)
 
 all check :: $(RESULTS)
 $(RESULTS) : $(DOTS)/bin/M2
@@ -23,24 +23,24 @@ ARGS += --no-debug
 # ARGS += -e 'gbTrace=5'
 
 %.out : %.m2
-	@ echo testing $<
+	@ echo testing: $<
 	@ $(LIMIT); \
 		if (echo 'input "$<"'; echo exit 0) | \
 		   time $(DOTS)/bin/M2 $(ARGS) >$*.errors 2>&1 ; \
 		then mv $*.errors $@ ; \
 		else a=$$?; \
+		     echo "$*.errors:0: error output left here; some errors follow" >&2 ; \
 		     <$*.errors $(FILTER) ; \
-		     echo "error: error output left in $*.errors" >&2 ; \
 		     exit $$a ; \
 		fi
 %.out : %.m2-input
-	@ echo testing $<
+	@ echo testing: $<
 	@ $(LIMIT); \
 		if time $(DOTS)/bin/M2 $(ARGS) <$< >$*.errors 2>&1 ; \
 		then mv $*.errors $@ ; \
 		else a=$$?; \
+		     echo "$*.errors:0: error output left here; some errors follow" >&2 ; \
 		     <$*.errors $(FILTER) ; \
-		     echo "error: error output left in $*.errors" >&2 ; \
 		     exit $$a ; \
 		fi
 

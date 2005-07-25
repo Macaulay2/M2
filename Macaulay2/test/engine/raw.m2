@@ -18,10 +18,11 @@ rawMonomialOrdering {GroupLex => 3, NCLex => 4, Weights => {3,4,5}}
 makeMonomialOrdering( null, false, 0, {1,2,3,4,5,6,7,8}, {}, {} )
 makeMonomialOrdering( null, false, 4, {1,2,3,4,5,6,7,8}, {}, {} )
 makeMonomialOrdering( null, false, 10, {1,2,3,4,5,6,7,8}, {}, {} )
-makeMonomialOrdering( null, true,  10, {1,2,3,4,5,6,7,8}, {}, {} )
-makeMonomialOrdering( null, true,  10, {1,2,3,4,5,6,7,8}, {}, {GRevLex} )
+-- we no longer can use Inverses with GRevLex:
+-- makeMonomialOrdering( null, true,  10, {1,2,3,4,5,6,7,8}, {}, {} )
+-- makeMonomialOrdering( null, true,  10, {1,2,3,4,5,6,7,8}, {}, {GRevLex} )
 makeMonomialOrdering( null, true,  10, {1,2,3,4,5,6,7,8}, {}, {Lex} )
-makeMonomialOrdering( null, true,  10, {1,2,3,4,5,6,7,8}, {}, {Lex=>3} )
+-- makeMonomialOrdering( null, true,  10, {1,2,3,4,5,6,7,8}, {}, {Lex=>3} )
 makeMonomialOrdering( null, false, 10, {1,2,3,4,5,6,7,8}, {}, {3,4} )
 makeMonomialOrdering( null, false, 0, {1,2,3,4,5,6,7,8}, {}, {Lex => 3, Weights => {3,4}, GroupLex => 2, NCLex => 2} )
 makeMonomialOrdering( null, false, 0, {1,2,3,4,5,6,7,8}, {}, {GRevLex => 3, 5, Weights => {3,4}, GRevLexTiny => 2} )
@@ -124,8 +125,8 @@ assert( not rawIsHomogeneous ( x^2 + y ))
 
 f = (x+1)^5
 
-assert( someTerms(3,f,2,2) == 10*x^3+10*x^2 )
-assert( someTerms(1,f,2,2) == 10*x^3+10*x^2 )
+assert( rawGetTerms(3,f,2,2) == 10*x^3+10*x^2 )
+assert( rawGetTerms(1,f,2,2) == 10*x^3+10*x^2 )
 
 assert( rawTermCount(3,f) == 6 )
 f' = (x+1)^5
