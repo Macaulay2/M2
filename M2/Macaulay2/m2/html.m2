@@ -66,7 +66,7 @@ htmlFilename FinalDocumentTag := tag -> (
 html IMG  := x -> concatenate("<img src=\"", rel x#0, "\" alt=\"", x#1, "\"/>")
 html LINK := x -> concatenate("<link href=\"", rel first x, "\"", concatenate drop(x,1), "/>",newline)
 html HREF := x -> concatenate("<a href=\"", rel first x, "\">", html last x, "</a>")
-tex  HREF := x -> concatenate("\special{html:<a href=\"", texLiteral rel first x, "\">}", tex last x, "\special{html:</a>}")
+tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral rel first x, "\">}", tex last x, "\\special{html:</a>}")
 html LABEL:= x -> concatenate("<label title=\"", x#0, "\">", html x#1, "</label>")
 html TO   := x -> concatenate(
      "<a href=\"",
@@ -385,6 +385,11 @@ utest := opt -> (
      )
 ulimit := null
 
+M2errorRegexp := "^[^:\n]+:[0-9]+:[0-9]+:\\([0-9]+\\): "
+aftermatch := (pat,str) -> (
+     m := regex(pat,str);
+     if #m == 0 then "" else substring(m#0#0,str))
+
 runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
      if fileExists outf and fileTime outf >= fileTime inf
      then (
@@ -415,6 +420,8 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
 	  else (
 	       stderr << "--error return code: (" << r//256 << "," << r%256 << ")" << endl;
 	       stderr << "--error output left in file: " << tmpf << endl;
+	       stderr << aftermatch(M2errorRegexp,get tmpf);
+	       error "debug me";
 	       if r == 131 then (
 		    stderr << "subprocess terminated abnormally, exiting" << endl;
 		    exit r;

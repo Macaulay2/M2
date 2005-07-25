@@ -10,3 +10,5 @@ assert match("(a)","a")
 assert match("a{2}","aa")
 assert match("a[2]","a2")
 assert match("a[^a]","a2")
+
+assert( replace("^a","x","a \na \naaa a") === "x \nx \nxaa a" )

@@ -1073,7 +1073,7 @@ struct re_pattern_buffer regex_pattern;
 #endif
 #define match_length(i) (match_end(i) - match_start(i))
 
-M2_arrayint system_regexmatch(M2_string pattern, M2_string text) {
+M2_arrayint system_regexmatch(M2_string pattern, int offset, M2_string text) {
   static struct M2_arrayint_struct empty[1] = {{0}};
 #if POSIX_REGEX
   int regcomp_return;
@@ -1106,16 +1106,20 @@ M2_arrayint system_regexmatch(M2_string pattern, M2_string text) {
   }
   {
     int n = regex_pattern.re_nsub+1;
-    char *s_text = tocharstar(text);
     int regexec_return;
 #if POSIX_REGEX
+    static M2_string prevtext;
+    static char *s_text;
+    if (prevtext != text) {
+	 if (s_text != NULL) GC_FREE(s_text);
+	 s_text = tocharstar(text), prevtext = text;
+    }
     regmatch_t match[n];
-    regexec_return = regexec(&regex_pattern, s_text, n, match, 0);
+    regexec_return = regexec(&regex_pattern, s_text + offset, n, match, offset != 0 ? REG_NOTBOL : 0);
 #else
     static struct re_registers match;
-    regexec_return = re_search(&regex_pattern, text->array, text->len, 0, text->len, &match);
+    regexec_return = re_search(&regex_pattern, text->array, text->len, offset, text->len - offset, &match);
 #endif
-    GC_FREE(s_text);
     if (regexec_return == regexec_empty_return) return empty;
     else {
       M2_arrayint m = makearrayint(2*n);
@@ -1189,10 +1193,15 @@ M2_string system_regexreplace(M2_string pattern, M2_string replacement, M2_strin
     char *buf = getmem_atomic(buflen);
     int i;
 #if POSIX_REGEX
-    char *s_text = tocharstar(text);
-    while (regexec(&regex_pattern, s_text + offset, n, match, 0) != regexec_empty_return) {
+    static M2_string prevtext;
+    static char *s_text;
+    if (prevtext != text) {
+	 if (s_text != NULL) GC_FREE(s_text);
+	 s_text = tocharstar(text), prevtext = text;
+    }
+    while (regexec(&regex_pattern, s_text + offset, n, match, offset != 0 ? REG_NOTBOL : 0) != regexec_empty_return) {
 #else
-    while (re_search(&regex_pattern, text->array + offset, textlen - offset, 0, textlen - offset, &match) != regexec_empty_return) {
+    while (re_search(&regex_pattern, text->array, textlen, offset, textlen-offset, &match) != regexec_empty_return) {
 #endif
 	 char *p;
 	 int plen;

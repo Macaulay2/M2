@@ -1,41 +1,28 @@
---- status: TODO
---- author(s): 
+--- status: done
+--- author(s): dan
 --- notes: 
 
-
-document {
-     -- this is the old version
+document { 
      Key => homology,
      Headline => "general homology functor",
-     TT "homology(f,g)", " -- computes the homology module ", TT "(kernel f)/(image g)", ".",
-     BR, NOINDENT,
-     TT "homology", " -- a method name available for computing expressions
-     of the forms ", TT "HH_i(X) and", " ", TT "HH_i(M,N).",
-     PARA,
-     "If it is intended that ", TT "i", " be of class ", TO "ZZ", ", 
+     "Most applications of this functor are dispatched through ", TT "HH", ".
+     If it is intended that ", TT "i", " be of class ", TO "ZZ", ", 
      ", TT "M", " be of class ", TT "A", ", and ", TT "N", " be of
-     class ", TT "B", ", then the method can be installed with ",
+     class ", TT "B", ", then the method for computing ", TT "HH_i(M,N)", " can be installed with 
+     code of the following form.",
      PRE "     homology(ZZ, A, B) := opts -> (i,M,N) -> ...",
-     SeeAlso => {"HH", "cohomology", "ScriptedFunctor"}
+     SeeAlso => {"cohomology", "HH", "ScriptedFunctor"}
      }
 
-document { 
-     -- this will be the newversion
-     Key => homology,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+document {
+     Key => (homology,ZZ,ChainComplexMap),
+     Headline => "homology of a chain complex map",
+     TT "HH_i f", " -- provides the map on the ", TT "i", "-th homology module
+     by a map ", TT "f", " of chain complexes.",
+     PARA,
+     SeeAlso => {"homology", "HH"}
      }
+
 document { 
      Key => (homology,ChainComplexMap),
      Headline => "",
@@ -84,38 +71,53 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
+
 document { 
      Key => (homology,ChainComplex),
-     Headline => "",
-     Usage => "",
+     Headline => "homology of a chain complex",
+     Usage => "HH C",
      Inputs => {
+	  "C" => null
 	  },
      Outputs => {
+	  {"the homology of ", TT "C"}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "R = QQ[x]/x^5;",
+	  "C = res coker vars R",
+	  "M = HH C",
+	  "prune M"
+	  }
      }
 document { 
      Key => (homology,ZZ,ChainComplex),
-     Headline => "",
-     Usage => "",
+     Headline => "homology of a chain complex",
+     Usage => "HH_i C",
      Inputs => {
+	  "i" => null,
+	  "C" => null
 	  },
      Outputs => {
+	  {"the homology at the i-th spot of the chain complex ", TT "C", "."}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "R = ZZ/101[x,y]",
+      	  "C = chainComplex(matrix{{x,y}},matrix{{x*y},{-x^2}})",
+      	  "M = HH_1 C",
+      	  "prune M",
+	  }
      }
+
+TEST "
+S = ZZ/101[x,y,z]
+M = cokernel vars S
+assert ( 0 == HH_-1 res M )
+assert ( M == HH_0 res M )
+assert ( 0 == HH_1 res M )
+assert ( 0 == HH_2 res M )
+assert ( 0 == HH_3 res M )
+assert ( 0 == HH_4 res M )
+"
 document { 
      Key => (homology,ZZ,Sequence),
      Headline => "",
@@ -134,19 +136,27 @@ document {
      }
 document { 
      Key => (homology,Matrix,Matrix),
-     Headline => "",
-     Usage => "",
+     Headline => "homology of a pair of maps",
+     Usage => "M = homology(f,g)",
      Inputs => {
+	  "f" => null,
+	  "g" => null
 	  },
      Outputs => {
+	  "M" => {"computes the homology module ", TT "(kernel f)/(image g)", "."}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Here ", TT "g", " and ", TT "f", " should be composable maps with ", TT "g*f", "
+     equal to zero.",
+     PARA {
+	  "In the following example, we ensure that the source of ", TT "f", " and the target of
+	  ", TT "f", " are exactly the same, taking even the degrees into account, and we ensure
+	  that ", TT "f", " is homogeneous."},
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "R = QQ[x]/x^5;",
+	  "f = map(R^1,R^1,{{x^3}}, Degree => 3)",
+	  "M = homology(f,f)",
+	  "prune M"
+	  }
      }
 document { 
      Key => (homology,Nothing,ChainComplex),

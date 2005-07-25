@@ -116,24 +116,6 @@ document {
      }
 
 document {
-     Key => match, 
-     Headline => "regular expression matching",
-     TT "match(p,s)", " -- matches the string ", TT "s", " against the 
-     GNU regular expression ", TT "p", ".",
-     PARA,
-     "The value returned is true or false, depending on whether a the regular
-     expression ", TT "s", " matches a substring of ", TT "p", ".",
-     PARA,
-     "Warning: in version 0.9.2 and earlier ", TO "match", " behaved differently, and 
-     the arguments were in the other order.",
-     EXAMPLE {
-	  ///match ("asdf*", "--asdffff--")///,
-	  ///match ("asdf*", "--asffff--")///
-	  },
-     SeeAlso => "regex"
-     }
-
-document {
      Key => pairs,
      Headline => "list the pairs in a hash table",
      TT "pairs x", " -- makes a list of all key/value pairs ", TT "(k,v)", " in
@@ -419,20 +401,6 @@ document {
      "Returns ", TO "null", " if none.",
      PARA,
      SeeAlso => "Database"
-     }
-
-document {
-     Key => addStartFunction,
-     Headline => "add a startup function",
-     TT "addStartFunction (() -> ...)", " -- record a function for later 
-     execution, when the program is restarted after loading dumped data."
-     }
-
-document {
-     Key => addEndFunction,
-     Headline => "add an ending function",
-     TT "addEndFunction (() -> ...)", " -- record a function for later 
-     execution, when the program is exited.",
      }
 
 document {

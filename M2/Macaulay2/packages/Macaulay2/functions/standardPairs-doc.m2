@@ -12,8 +12,8 @@ document {
      Outputs => {
 	  {"a ", TO List, " of standard pairs for ", TT "I"}
 	  },
-     "The standard monomials of a monomial ideal ", TT "I", " \(those monomials that are not 
-     in ", TT "I", "\) can be enumerated as follows.  Given a monomial ", 
+     "The standard monomials of a monomial ideal ", TT "I", " (those monomials that are not 
+     in ", TT "I", ") can be enumerated as follows.  Given a monomial ", 
      TT "m", " and a subset ", TT "F", " of the variables, the pair ", TT "(m,F)", " indexes
      the set of monomials of the form ", TT {"m", "m'"}, 
      " where the monomial ", TT "m'", " is supported on ", TT "F", ".  A ", TO List, " of pairs ", 

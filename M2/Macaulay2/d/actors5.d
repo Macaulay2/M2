@@ -1429,7 +1429,7 @@ regexmatch(e:Expr):Expr := (
      if length(a) == 2 then
      when a.0 is regexp:string do
      when a.1 is text:string do (
-	  r := regexmatch(regexp,text);
+	  r := regexmatch(regexp,0,text);
 	  if length(r) == 0 && regexmatchErrorMessage != noErrorMessage
 	  then buildErrorPacket("regex: "+regexmatchErrorMessage)
 	  else toPairs(r))

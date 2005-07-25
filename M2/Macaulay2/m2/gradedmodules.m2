@@ -17,8 +17,7 @@ GradedModule _ ZZ := Module => (M,i) -> if M#?i then M#i else (ring M)^0
 net GradedModule := C -> (
      s := sort spots C;
      if # s === 0 then "0"
-     else (
-	  horizontalJoin between("  ", apply(s, i -> stack (net C_i,"",net i)))))
+     else stack between("", apply(s, i -> horizontalJoin (net i," : ",net C_i))))
 length GradedModule := (M) -> (
      s := spots M;
      if #s === 0 then 0 else max s - min s)

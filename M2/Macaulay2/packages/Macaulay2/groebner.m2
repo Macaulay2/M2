@@ -219,14 +219,12 @@ document {
      }
 
 document {
-	Key => "Normal Forms",
-
-     "Let R = k[x_1, ..., x_n] be a polynomial ring over a field k,
-	and let I \\subset R be an ideal. Let \{g_1, ..., g_t\} be a Groebner
-	basis for I. For any f in R, there is a unique `remainder' r in R such
-	that no term of r is divisible by the leading term of any g_i and such
-	that f-r belongs to I. This polynomial r is sometimes called the normal
-	form of f.",
-
+     Key => "Normal Forms",
+     TEX ///Let R = k[x_1, ..., x_n] be a polynomial ring over a field k,
+	and let $I \subset R$ be an ideal. Let $\{g_1, ..., g_t\}$ be a Groebner
+	basis for $I$. For any $f \in R$, there is a unique `remainder' $r \in R$ such
+	that no term of $r$ is divisible by the leading term of any $g_i$ and such
+	that $f-r$ belongs to $I$. This polynomial $r$ is sometimes called the normal
+	form of $f$.///,
 	SeeAlso => {"Computing Groebner bases", (symbol %, RingElement, Ideal)},
 	}

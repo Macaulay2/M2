@@ -36,7 +36,10 @@ export parseDouble(s:string):double := (
 	  else x = 10 * x + (c - '0')
 	  );
      x);
+parseError := false;
+parseMessage := "";
 export parseString(s:string):string := (
+     parseError = false;
      v := newvarstring(length(s)-2);
      i := 1;
      while true do (
@@ -45,9 +48,11 @@ export parseString(s:string):string := (
 	       i = i+1;
 	       c := s.i;
 	       if c == 'n' then v << '\n'
+	       else if c == '"' then v << '"'
 	       else if c == 'r' then v << '\r'
 	       else if c == 't' then v << '\t'
 	       else if c == 'f' then v << '\f'
+	       else if c == '\\' then v << '\\'
 	       else if '0' <= c && c < '8' then (
 		    j := c - '0';
 		    c = s.(i+1);
@@ -62,39 +67,17 @@ export parseString(s:string):string := (
 			 );
 		    v << char(j)
 		    )
-	       else v << c
+	       else (
+		    parseError = true;
+		    parseMessage = "unknown escape sequence \\" + c;
+		    v << c
+		    )
 	       )
 	  else v << s.i;
 	  i = i+1;
 	  );
      tostring(v)
      );
-
-export parseChar(s:string):char := (
-     if s.1 == '\\' then (
-	  c := s.2;
-	  if c == 'n' then '\n'
-	  else if c == 'r' then '\r'
-	  else if c == 't' then '\t'
-	  else if c == 'f' then '\f'
-	  else if '0' <= c && c < '8' then (
-	       j := c - '0';
-	       c = s.3;
-	       if '0' <= c && c < '8' then (
-		    j = 8 * j +  (c - '0');
-		    c = s.4;
-		    if '0' <= c && c < '8' then (
-			 j = 8 * j +  (c - '0');
-			 );
-		    );
-	       char(j)
-	       )
-	  else c
-	  )
-     else s.1
-     );
-
-
 
 export thenW := dummyWord;		  -- filled in by binding.d
 export whenW := dummyWord;		  -- filled in by binding.d
@@ -369,27 +352,40 @@ export unaryfor(
 
 unstringToken(q:Token):Token := (
      if q.word.typecode == TCstring 
-     then Token(makeUniqueWord(parseString(q.word.name),q.word.parse),
-	  q.filename, q.line, q.column, q.loadDepth,	    -- q.position,
-	  q.dictionary,q.entry,q.followsNewline)
+     then (
+	  p := parseString(q.word.name);
+	  if parseError then (
+	       printErrorMessage(q,parseMessage);
+	       errorToken)
+	  else Token(
+	       makeUniqueWord(p,q.word.parse),
+	       q.filename, q.line, q.column, q.loadDepth,	    -- q.position,
+	       q.dictionary,q.entry,q.followsNewline)
+	  )
      else q);
 export unaryquote(
      quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
-     r := ParseTree(Quote(quotetoken,unstringToken(arg)));
+     u := unstringToken(arg);
+     if u == errorToken then return errorTree;
+     r := ParseTree(Quote(quotetoken,u));
      accumulate(r,file,prec,obeylines));
 export unaryglobal(
      quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
-     r := ParseTree(GlobalQuote(quotetoken,unstringToken(arg)));
+     u := unstringToken(arg);
+     if u == errorToken then return errorTree;
+     r := ParseTree(GlobalQuote(quotetoken,u));
      accumulate(r,file,prec,obeylines));
 export unarylocal(
      quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
-     r := ParseTree(LocalQuote(quotetoken,unstringToken(arg)));
+     u := unstringToken(arg);
+     if u == errorToken then return errorTree;
+     r := ParseTree(LocalQuote(quotetoken,u));
      accumulate(r,file,prec,obeylines));
 export unaryif(ifToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      predicate := parse(file,ifToken.word.parse.unaryStrength,false);
