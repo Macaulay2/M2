@@ -2,46 +2,28 @@
 --- author(s): Giulio 
 --- notes: 
 
-document {
-     -- this is the old version, not completely merged into the new ?
-     Key => "topComponents",
+document { 
+     Key => {"topComponents"},
+     Headline => "compute top dimensional component",
+     "The method used is that of Eisenbud-Huneke-Vasconcelos, in their 1993 Inventiones Mathematicae paper.",
+     PARA,
      "If M is a module in a polynomial ring R, then the implementations of 
      ", TO "topComponents", " and ", TO "removeLowestDimension", " are based on 
      the following observations:",
      UL {
-	  "codim Ext^d(M,R) >= d, for all d (if the module is non-zero)",
-	  "If P is an associated prime of M of codimension d := codim P > codim M,
-	  then codim Ext^d(M,R) = d and the annihilator of Ext^d(M,R) is contained
-	  in P",
-	  "If codim Ext^d(M,R) = d, then there really is an associated prime 
-	  of codimension d.",
-	  "If M is R/I, then topComponents(I) = ann Ext^c(R/I,R), where c = codim I"
-	  }
-     }
-
-document { 
-     Key => {"topComponents"},
-     Headline => "compute the top dimensional component of a module or of an ideal",
-     Usage => "topComponents M",
-     Inputs => {
-	  "M" => {"an ", TO Ideal, " or a ", TO Module}
+	  TEX ///$codim Ext^d(M,R) \ge d$ for all d///,
+	  TEX ///If $P$ is an associated prime of $M$ of codimension $d := codim P > codim M$,
+	  then $codim Ext^d(M,R) = d$ and the annihilator of $Ext^d(M,R)$ is contained
+	  in $P$///,
+	  TEX ///If $codim Ext^d(M,R) = d$, then there really is an associated prime 
+	  of codimension $d$.///,
+	  TEX ///If $M$ is $R/I$, then $topComponents(I) = ann Ext^c(R/I,R)$, where $c = codim I$///
 	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-      
-    "The method used is that of
-    Eisenbud-Huneke-Vasconcelos, in their 1993 Inventiones Mathematicae
-    paper.",PARA,
-    "For a brief description see: ",TO "topComponents",".",
-    
-    SeeAlso => {"topComponents Ideal", "topComponents Module","removeLowestDimension", "saturate", "quotient", "radical", "component example"},
+    SeeAlso => {"removeLowestDimension", "saturate", "quotient", "radical", "component example"},
     }
 
 document { 
      Key => (topComponents,Ideal),
-     Headline => "compute the top dimensional component of an ideal",
      Usage => "topComponents I",
      Inputs => {"I" => ""
 	  },
@@ -62,7 +44,6 @@ document {
 
 document { 
      Key => (topComponents,Module),
-     Headline => "compute the top dimensional component of a module",
      Usage => "topComponents M",
      Inputs => {
 	  "M" => ""

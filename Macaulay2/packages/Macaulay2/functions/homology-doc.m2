@@ -14,62 +14,29 @@ document {
      SeeAlso => {"cohomology", "HH", "ScriptedFunctor"}
      }
 
-document {
+document { 
      Key => (homology,ZZ,ChainComplexMap),
      Headline => "homology of a chain complex map",
-     TT "HH_i f", " -- provides the map on the ", TT "i", "-th homology module
-     by a map ", TT "f", " of chain complexes.",
-     PARA,
-     SeeAlso => {"homology", "HH"}
+     Usage => "HH_i f",
+     Inputs => {
+	  "i" => null,
+	  "f" => null
+	  },
+     Outputs => {
+	  {"the map on the ", TT "i", "-th homology module induced by the map ", TT "f", " of chain complexes" }
+	  }
      }
 
 document { 
      Key => (homology,ChainComplexMap),
-     Headline => "",
-     Usage => "",
+     Headline => "homology of a chain complex map",
+     Usage => "HH f",
      Inputs => {
+	  "i" => null
 	  },
      Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (homology,ZZ,ChainComplexMap),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (homology,Nothing,ChainComplexMap),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  {"the map on the homology induced by the map ", TT "f", " of chain complexes" }
+	  }
      }
 
 document { 
@@ -158,38 +125,7 @@ document {
 	  "prune M"
 	  }
      }
-document { 
-     Key => (homology,Nothing,ChainComplex),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (homology,Nothing,Sequence),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
+
  -- doc10.m2:731:     Key => (cohomology, ZZ, Module),
  -- doc10.m2:936:     Key => (cohomology, ZZ, SumOfTwists),
  -- doc10.m2:962:     Key => (cohomology, ZZ, CoherentSheaf),
