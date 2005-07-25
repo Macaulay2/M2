@@ -391,48 +391,37 @@ aftermatch := (pat,str) -> (
      if #m == 0 then "" else substring(m#0#0,str))
 
 runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
-     if fileExists outf and fileTime outf >= fileTime inf
-     then (
-	  if debugLevel > 0 then stderr << "--leaving " << desc << " in file " << outf << endl;
+     announcechange();
+     stderr << "--making " << desc << " in file " << outf << endl;
+     if fileExists outf then removeFile outf;
+     ldpkg := "-e 'needsPackage \""|toString pkg|"\"'";
+     args := "--silent --print-width 80 --stop --int -e errorDepth=0 -q" | " " | ldpkg;
+     cmdname := commandLine#0;
+     if ulimit === null then (
+	  ulimit = utest " -t 40" | utest " -m 90000"| utest " -v 90000";
+	  );
+     cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >" | format tmpf | " 2>&1";
+     stderr << cmd << endl;
+     r := run cmd;
+     if r == 0 then (
+	  moveFile(tmpf,outf);
 	  return true;
 	  )
---     else if fileExists tmpf and fileTime tmpf >= fileTime inf
---     then (
---	  stderr << "--skipping " << desc << " in file " << outf << " due to errors last time" << endl;
---	  )
      else (
-	  announcechange();
-	  stderr << "--making " << desc << " in file " << outf << endl;
-	  if fileExists outf then removeFile outf;
-	  ldpkg := "-e 'needsPackage \""|toString pkg|"\"'";
-	  args := "--silent --print-width 80 --stop --int -e errorDepth=0 -q" | " " | ldpkg;
-	  cmdname := commandLine#0;
-	  if ulimit === null then (
-	       ulimit = utest " -t 40" | utest " -m 90000"| utest " -v 90000";
+	  stderr << tmpf << ":0: error output left in this file, return code: (" << r//256 << "," << r%256 << ")" << endl;
+	  stderr << aftermatch(M2errorRegexp,get tmpf);
+	  if r == 131 then (
+	       stderr << "subprocess terminated abnormally, exiting" << endl;
+	       exit r;
 	       );
-	  cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >" | format tmpf | " 2>&1";
-	  stderr << cmd << endl;
-	  r := run cmd;
-	  if r == 0 then (
-	       moveFile(tmpf,outf);
-	       return true;
-	       )
-	  else (
-	       stderr << "--error return code: (" << r//256 << "," << r%256 << ")" << endl;
-	       stderr << "--error output left in file: " << tmpf << endl;
-	       stderr << aftermatch(M2errorRegexp,get tmpf);
-	       if r == 131 then (
-		    stderr << "subprocess terminated abnormally, exiting" << endl;
-		    exit r;
-		    );
-	       if r == 2 then (
-		    stderr << "subprocess interrupted with INT, exiting, too" << endl;
-		    exit r;
-		    );
-	       haderror = true;
-	       numerrors = numerrors + 1;
-	       return false;
-	       )))
+	  if r == 2 then (
+	       stderr << "subprocess interrupted with INT, exiting, too" << endl;
+	       exit r;
+	       );
+	  haderror = true;
+	  numerrors = numerrors + 1;
+	  return false;
+	  ))
 
 runString := (x,pkg,rundir) -> (
      inf := temporaryFileName();

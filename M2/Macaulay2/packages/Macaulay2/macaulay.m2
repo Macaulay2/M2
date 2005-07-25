@@ -346,10 +346,11 @@ document {
      " and ", TT "cols", ".  The resulting catalecticant matrix can 
      be obtained in
      Macaulay2 in the following way.",
-     EXAMPLE "R = QQ[a..h]",
-     EXAMPLE "rows = {0,1,2}",
-     EXAMPLE "cols = {0,3}",
-     EXAMPLE "result = map(R^3, 2, (i,j) -> R_(rows_i + cols_j))",
+     EXAMPLE {
+	  "R = QQ[a..h]",
+     	  "rows = {0,1,2}",
+     	  "cols = {0,3}",
+     	  "result = map(R^3, 2, (i,j) -> R_(rows_i + cols_j))"},
      --SeeAlso => (genericMatrix, genericSymmetricMatrix, genericSkewMatrix),
      
      HEADER3 "characteristic <ring> [result integer]",
@@ -369,21 +370,21 @@ document {
      "To obtain the matrices of monomials and their coefficients, use ", 
      TO "coefficients", ".  The following example obtains the coefficients 
      of the variable ", TT "a", " (which is variable number 0)",
-     EXAMPLE "R = ZZ/101[a..d];",
-     EXAMPLE "m = matrix{{a^2+a^2*c+a*b+3*d}}",
-     EXAMPLE "result = coefficients({0}, m)",
-     EXAMPLE "result_0",
-     EXAMPLE "result_1",
-     
+     EXAMPLE {
+	  "R = ZZ/101[a..d];",
+     	  "m = matrix{{a^2+a^2*c+a*b+3*d}}",
+     	  "result = coefficients(m, Variables => {a})",
+     	  "result_0",
+     	  "result_1"},
      HEADER3 "col_degree <matrix> <column> [result integer]",
      "To obtain the degree of the ", TT "i", "-th column of a matrix ", 
      TT "m", ", use ", TT "(degrees source m)_i", ".  See ", TO "degrees",
      ".  Note that in Macaulay2, one can use multi-degrees, so the result
      is a list of integers.  Also all indices in Macaulay2 start at 0.",
-     EXAMPLE "R = QQ[a,b,Degrees=>{{1,0},{1,-1}}];",
-     EXAMPLE "m = matrix{{a*b, b^2}}",
-     EXAMPLE "(degrees source m)_0",
-     
+     EXAMPLE {
+	  "R = QQ[a,b,Degrees=>{{1,0},{1,-1}}];",
+     	  "m = matrix{{a*b, b^2}}",
+     	  "(degrees source m)_0"},
      HEADER3 "col_degs <matrix> [column degrees]",
      "Compute the list of degrees of the columns of a matrix ", TT "m",
      " using ", TT "degrees source m", ".  The result is a list of degrees.
@@ -421,9 +422,10 @@ document {
      "Since matrices in Macaulay2 are immutable objects, this command is
      no longer necessary.  One can still make a copy of a matrix.  For
      example",
-     EXAMPLE "R = ZZ/101[a..d]",
-     EXAMPLE "m = matrix{{a,b},{c,d}}",
-     EXAMPLE "copym = map(target m, source m, entries m)",
+     EXAMPLE {
+	  "R = ZZ/101[a..d]",
+     	  "m = matrix{{a,b},{c,d}}",
+     	  "copym = map(target m, source m, entries m)"},
      
      HEADER3 "degree <standard basis> [integer codim] [integer degree]",
      "When computing the degree of an ideal or module ", TT "M", 
@@ -443,10 +445,11 @@ document {
      "To make a diagonal matrix whose diagonal entries are taken from
      a matrix ", TT "m", ", it is necessary to build the matrix directly, 
      as in the following example.",
-     EXAMPLE "R = ZZ[a..d];",
-     EXAMPLE "m = matrix{{a^2,b^3,c^4,d^5}}",
-     EXAMPLE "map(R^(numgens source m), source m, 
-                 (i,j) -> if i === j then m_(0,i) else 0)",
+     EXAMPLE {
+	  "R = ZZ[a..d];",
+      	  "m = matrix{{a^2,b^3,c^4,d^5}}",
+      	  "map(R^(numgens source m), source m, 
+                 (i,j) -> if i === j then m_(0,i) else 0)"},
      
      HEADER3 "diff <ideal> <ideal> <result matrix>",
      "To differentiate the matrix ", TT "n", " by the matrix ", TT "m", 
@@ -459,11 +462,12 @@ document {
      ", use ", TT "m ** (ring m)^{-d}", ".  See ", TO "**", ".  Note that this
      returns a matrix with the degrees shifted, and does not modify the 
      original matrix ", TT "m", ".  For example",
-     EXAMPLE "R = ZZ[a..d];",
-     EXAMPLE "m = matrix{{a,b^2},{c^2,d^3}}",
-     EXAMPLE "betti m",
-     EXAMPLE "n = m ** R^{-1}",
-     EXAMPLE "betti n",
+     EXAMPLE {
+	  "R = ZZ[a..d];",
+      	  "m = matrix{{a,b^2},{c^2,d^3}}",
+      	  "betti m",
+      	  "n = m ** R^{-1}",
+      	  "betti n"},
      
      HEADER3 "dsum <matrix> ... <matrix> <result>",
      "To form the direct sum of matrices ", TT "m1, m2, ..., mn", ", use ",
@@ -481,14 +485,16 @@ document {
      " having ", TT "n", " variables, and ", TT "f", " is a 1 by n matrix
      over some ring, then use ", TT "substitute(m,f)", " to perform the
      substitution.  For example,",
-     EXAMPLE "R = QQ[a..d]",
-     EXAMPLE "S = QQ[s,t]",
-     EXAMPLE "m = matrix{{a^2-d, b*c}}",
-     EXAMPLE "f = matrix{{s^4,s^3*t,s*t^3,t^4}}",
-     EXAMPLE "substitute(m,f)",
+     EXAMPLE {
+	  "R = QQ[a..d]",
+      	  "S = QQ[s,t]",
+      	  "m = matrix{{a^2-d, b*c}}",
+      	  "f = matrix{{s^4,s^3*t,s*t^3,t^4}}",
+      	  "substitute(m,f)"},
      "In Macaulay2, one may also create and apply ring maps",
-     EXAMPLE "F = map(R,R,{b,c,d,a})",
-     EXAMPLE "m + F m + F F m + F F F m",
+     EXAMPLE {
+	  "F = map(R,R,{b,c,d,a})",
+      	  "m + F m + F F m + F F F m"},
      "Or one may substitute for only some variables",
      EXAMPLE "substitute(m, {a=>1, b=>3})",
      
@@ -498,10 +504,11 @@ document {
      HEADER3 "fetch <matrix> <result matrix> [ones, default=zeros]",
      "In order to bring a matrix ", TT "m", " to a ring ", TT "S", " which
      has ring variables of the same name, use ", TT "substitute(m,S)", ".",
-     EXAMPLE "R = ZZ[s,t]",
-     EXAMPLE "m = s^2+t^2",
-     EXAMPLE "S = R[a..d]",
-     EXAMPLE "substitute(m,S)",
+     EXAMPLE {
+	  "R = ZZ[s,t]",
+      	  "m = s^2+t^2",
+      	  "S = R[a..d]",
+      	  "substitute(m,S)"},
      
      HEADER3 "flatten <matrix> <result ideal of entries>",
      "In order to form a one row matrix with the entries of a matrix ", 
@@ -528,14 +535,16 @@ document {
      
      HEADER3 "ideal <resulting matrix>",
      "To enter a one row matrix, use e.g.",
-     EXAMPLE "R = ZZ[a..d]",
-     EXAMPLE "f = matrix{{a^2-b*c,3*b*c^4-1}}",
+     EXAMPLE {
+	  "R = ZZ[a..d]",
+      	  "f = matrix{{a^2-b*c,3*b*c^4-1}}"},
      "Remember that ideals, modules, and matrices are all different in
      Macaulay2.  One can easily change between them, as in:",
-     EXAMPLE "J = ideal f",
-     EXAMPLE "generators J",
-     EXAMPLE "image f",
-     EXAMPLE "cokernel f",
+     EXAMPLE {
+	  "J = ideal f",
+      	  "generators J",
+      	  "image f",
+      	  "cokernel f"},
      
      HEADER3 "iden <size> <result>",
      "To make the identity map on a module ", TT "F", ", use ", 
@@ -563,12 +572,13 @@ document {
      "Warning: In Macaulay1, names of variables in rings, and user defined 
      variables are completely separate.  In Macaulay2, if you assign something
      to a ring variable, it will assume its new value. ",
-     EXAMPLE "R = ZZ/31991[a..d]",
-     EXAMPLE "a",
-     EXAMPLE "a = 43",
-     EXAMPLE "a",
-     EXAMPLE "use R",
-     EXAMPLE "a",
+     EXAMPLE {
+	  "R = ZZ/31991[a..d]",
+      	  "a",
+      	  "a = 43",
+      	  "a",
+      	  "use R",
+      	  "a"},
      
      HEADER3 "intersect <mat 1> ... <mat n> <result computation>",
      "To intersect ideals, or submodules ", TT "I1, I2, ..., In",
@@ -577,9 +587,10 @@ document {
      submodules.  A second difference is that the computation, if interrupted,
      must be restarted at the beginning.  See ", TO "intersect", 
      ".  For example,",
-     EXAMPLE "I = ideal(a^2-b,c-1,d^2-a*b)",
-     EXAMPLE "J = ideal(a*b-1, c*d-2)",
-     EXAMPLE "intersect(I,J)",
+     EXAMPLE {
+	  "I = ideal(a^2-b,c-1,d^2-a*b)",
+      	  "J = ideal(a*b-1, c*d-2)",
+      	  "intersect(I,J)"},
 
      HEADER3 "is_zero <poly> <result integer: 1 if zero, else 0>",
      "To decide whether a polynomial, matrix, ideal, etc., ", TT "f", 
@@ -642,13 +653,15 @@ m = matrix{{a,b,c,d,e}}
 n = diag m
 isHomogeneous n
 
-     EXAMPLE "R = QQ[a..h]",
-     EXAMPLE "I = ideal(a,b^5,c^7-d^7-a^7)",
-     EXAMPLE "G = gb(I,StopBeforeComputation=>true)",
-     EXAMPLE "gens G",
+     EXAMPLE {
+	  "R = QQ[a..h]",
+      	  "I = ideal(a,b^5,c^7-d^7-a^7)",
+      	  "G = gb(I,StopBeforeComputation=>true)",
+      	  "gens G"},
      "Note that no Groebner basis elements have been computed yet",
-     EXAMPLE "gb(I,PairLimit=>2)",
-     EXAMPLE "m = gens G",
+     EXAMPLE {
+	  "gb(I,PairLimit=>2)",
+      	  "m = gens G"},
      "To find the codimension of the monomial ideal of lead terms so far computed,
      we use:",
      EXAMPLE "codim cokernel leadTerm m"

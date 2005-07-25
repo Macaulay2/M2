@@ -158,15 +158,18 @@ document {
      ":",
      EXAMPLE "dim V",
      "The third symmetric power of V is obtained by",
-     EXAMPLE "W = R_{3}",
-     EXAMPLE "dim W",
+     EXAMPLE {
+	  "W = R_{3}",
+     	  "dim W"},
      "and the third exterior power of V can be obtained using",
-     EXAMPLE "U = R_{1,1,1}",
-     EXAMPLE "dim U",
+     EXAMPLE {
+	  "U = R_{1,1,1}",
+	  "dim U"},
      "Multiplication of elements corresponds to tensor product of representations.  The 
      value is computed using a variant of the Littlewood-Richardson rule.",
-     EXAMPLE "V * V",
-     EXAMPLE "V^3",
+     EXAMPLE {
+	  "V * V",
+	  "V^3"},
      "One cannot make quotients of this ring, and Groebner bases and related computations
      do not work, but I'm not sure what they would mean..."
      }

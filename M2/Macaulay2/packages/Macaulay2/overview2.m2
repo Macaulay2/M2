@@ -619,16 +619,16 @@ document {
      "Assume the code above is entered directly by the user into Macaulay 2.  Then
      the variable is still a local one and is not available to code previously loaded
      or to functions previously defined, but it will be available to code 
-     loaded subsequently.  We illustrate this below with the variable ", TT "jj", ".",
+     loaded subsequently.  We illustrate this below with the variable ", TT "j", ".",
      PARA,
      EXAMPLE {
-	  "hh = () -> jj",
-	  "hh()",
-	  "jj = 444",
-	  "hh()",
-	  "jj := 555",
-	  "hh()",
-	  "jj"
+	  "h = () -> j",
+	  "h()",
+	  "j = 444",
+	  "h()",
+	  "j := 555",
+	  "h()",
+	  "j"
 	  }
      }
 
