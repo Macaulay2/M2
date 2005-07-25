@@ -1400,15 +1400,6 @@ document {
      elements have been discovered."
      }
 document {
-     Key => (homology,Matrix,Matrix),
-     Headline => "kernel modulo image",
-     TT "homology(g,f)", " -- computes the homology module ", TT "ker g/im f", ".",
-     PARA,
-     "Here ", TT "g", " and ", TT "f", " should be composable maps with ", TT "g*f", "
-     equal to zero.",
-     SeeAlso => "homology"
-     }
-document {
      Key => (dual, Matrix),
      Headline => "dual of a map",
      TT "dual f", " -- the dual (transpose) of a homomorphism."

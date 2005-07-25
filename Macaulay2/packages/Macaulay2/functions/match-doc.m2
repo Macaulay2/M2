@@ -1,38 +1,28 @@
---- status: TODO
---- author(s): 
+--- status: 
+--- author(s): dan
 --- notes: 
 
-document { 
-     Key => match,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+document {
+     Key => match, 
+     Headline => "regular expression matching"
      }
+
 document { 
      Key => (match,String,String),
-     Headline => "",
-     Usage => "",
+     Usage => "match(p,s)",
      Inputs => {
+	  "p" => "a regular expression describing a pattern",
+	  "s" => "a subject string to be searched"
 	  },
      Outputs => {
+	  {"whether the pattern ", TT "p", " matches a substring of the string ", TT "s", "."}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     PARA {
+     	  "Warning: in version 0.9.2 and earlier ", TO "match", " behaved differently, and 
+     	  the arguments were in the other order."},
      EXAMPLE {
+	  ///match ("asd", "--asd--")///,
+	  ///match ("asd", "--as--")///
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {"regular expressions", "regex", "replace"}
      }
- -- doc4.m2:119:     Key => match, 
- -- doc4.m2:137:     Key => regex, 

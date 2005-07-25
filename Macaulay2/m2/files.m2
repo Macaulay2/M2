@@ -62,7 +62,7 @@ findFiles String := opts -> name -> (
      prepend(name,flatten apply(drop(readDirectory name,2), f -> findFiles(name|f,opts)))
      )
 
-backupFileRegexp = "\.~[0-9.]+~$"					    -- we don't copy backup files.
+backupFileRegexp = "\\.~[0-9.]+~$"					    -- we don't copy backup files.
 
 copyDirectory = method(Options => fileOptions)
 -- The unix 'cp' command is confusing when copying directories, because the

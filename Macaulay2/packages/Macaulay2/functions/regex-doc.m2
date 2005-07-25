@@ -8,7 +8,7 @@ document {
      }
 document { 
      Key => (regex,String,String),
-     Headline => "regular expression matching",
+     -- Headline => "regular expression matching",
      Usage => "z = regex(p,s)",
      Inputs => {
 	  "p" => "a regular expression describing a pattern",
@@ -18,18 +18,65 @@ document {
 	  "z" => {"a list of pairs of integers describing the first substring of ", TT "s", " found that matches the pattern"}
 	  },
      "The value returned is a list of pairs of integers corresponding to the
-     subexpressions successfully matched.  The list has length 0 if no matching substring
-     was found.  The first member of each pair is the offset within
+     parenthesized subexpressions successfully matched.  The list has length 0
+     if no matching substring was found.  The first member of each pair is the offset within
      ", TT "s", " of the substring matched, and the second is the length.",
+     SeeAlso => {"regular expression", "match", "replace"}
+     }
+
+document {
+     Key => "regular expression",
+     "A regular expression is a string that specifies a pattern that describes a
+     set of matching subject strings.  Regular expressions are constructed
+     inductively as follows.  Ordinary (non-special) characters match themselves.
+     A concatenation of regular expressions matches the concatenation of
+     corresponding matching subject strings.  The special characters are
+     those appearing in the following constructions.",
+     UL {
+	  {TT ".", " -- match any character except newline"},
+	  {TT "^", " -- match the beginning of the string or the beginning of a line"},
+	  {TT "$", " -- match the end of the string or the end of a line"},
+	  {TT "*", " -- match previous expression 0 or more times"},
+	  {TT "+", " -- match previous expression 1 or more times"},
+	  {TT "?", " -- match previous expression 1 or 0 times"},
+	  {TT "{m,n}", " -- match previous expression at least m and at most n times"},
+	  {TT "{,n}", " -- match previous expression at most n times"},
+	  {TT "{m,}", " -- match previous expression at least m times"},
+	  {TT "(...)", " -- subpattern grouping"},
+	  {TT "\\i", " -- match the same string that the i-th parenthesized subpattern matched"},
+	  {TT "[...]", " -- match listed character, range, or class"},
+	  {TT "[^...]", " -- match non-listed character, range, or class"},
+	  },
+     "There are the following character classes.",
+     UL {
+	  {TT "[:alnum:]", " -- letters and digits"},
+	  {TT "[:alpha:]", " -- letters"},
+	  {TT "[:blank:]", " -- a space or tab"},
+	  {TT "[:cntrl:]", " -- control characters"},
+	  {TT "[:digit:]", " -- digits"},
+	  {TT "[:graph:]", " -- same as [:print:] except omits space"},
+	  {TT "[:lower:]", " -- lowercase letters"},
+	  {TT "[:print:]", " -- printable characters"},
+	  {TT "[:punct:]", " -- neither control nor alphanumeric characters"},
+	  {TT "[:space:]", " -- space, carriage return, newline, vertical tab, and form feed"},
+	  {TT "[:upper:]", " -- uppercase letters"},
+	  {TT "[:xdigit:]", " -- hexadecimal digits"},
+	  },
+     "In order to match one of the special characters itself, precede it with a backslash.",
+     PARA {"We illustrate the use of regular expressions with ", TO (regex,String,String), "."},
      EXAMPLE {
-	  ///regex ("asdf*", "--asdffff--")///,
-	  ///regex ("asd(f*)", "--asdffff--")///,
-	  ///regex ("asd((f)*)", "--asdffff--")///,
-	  ///regex ("asd((f)*)", "--asffff--")///
+     	  ///regex("d", "1abcddddeF2")///,
+     	  ///regex("d*", "1abcddddeF2")///,
+     	  ///regex("d+", "1abcddddeF2")///,
+     	  ///regex("d+", "1abceF2")///,
+     	  ///regex("cdd+e", "1abcddddeF2")///,
+     	  ///regex("cd(d+)e", "1abcddddeF2")///,
+     	  ///regex("[a-z]+", "1abcddddeF2")///,
+     	  ///regex("[[:alpha:]]+", "Dog cat cat.")///,
+	  ///regex("([[:alpha:]]+) *\\1","Dog cat cat.")///,
 	  },
      "For complete documentation on regular expressions see the entry for ", TT "regex", " in
      section 7 of the unix man pages, or read the the GNU ", TT "regex", " manual.",
-     SeeAlso => {"match", "replace"}
      }
 
 -- doc4.m2:137:     Key => regex, 

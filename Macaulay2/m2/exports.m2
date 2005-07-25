@@ -2,6 +2,7 @@
 
 export (
 	symbol currentFileName,
+	symbol grep,
         symbol currentLineNumber,
 	symbol URL,
 	symbol show,

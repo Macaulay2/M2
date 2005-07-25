@@ -811,7 +811,7 @@ briefSynopsis := key -> (
 	  inp = apply(inp', T -> T => "");
 	  )
      else if #inp' =!= 0 then (
-     	  if #inp =!= #inp' then error ("mismatched number of outputs", toString key);
+     	  if #inp =!= #inp' then error ("mismatched number of inputs in documentation for ", toString key);
      	  inp = merget(key,inp,inp');
 	  );
      if class out === SEQ then out = toList out;
@@ -819,7 +819,7 @@ briefSynopsis := key -> (
 	  out = apply(out', T -> T => "");
 	  )
      else if #out' =!= 0 then (
-     	  if #out =!= #out' then error ("mismatched number of outputs", toString key);
+     	  if #out =!= #out' then error ("mismatched number of outputs in documentation for ", toString key);
      	  out = merget(key,out,out');
 	  );
      inp = alter \ inp;

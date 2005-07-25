@@ -4,13 +4,13 @@
 
 document { 
      Key => quotient,
-     Headline => "ideal or submodule quotient: I:J = {f | fJ\subset I}",
+     Headline => "ideal or submodule quotient",
      Usage => "quotient(I,J)",
      Inputs => {"I" => " an ideal or submodule", 
 	        "J" =>" an ideal, ring element, or submodule"
 	  },
      Outputs => {
-	  {"the ideal or submodule I:J = {f | fJ\subset I}"}
+	  {TEX "the ideal or submodule $I:J = {f | fJ\\subset I}$"}
 	  },
      Consequences => {
 	  },     

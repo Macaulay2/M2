@@ -162,7 +162,21 @@ getstring(o:PosFile):(null or Word) := (
 	       );
      	  tokenbuf << char(ch);
 	  if escaped 
-	  then escaped = false
+	  then (
+	       if char(ch) == '"' 				    -- "
+	       || char(ch) == 'r'
+	       || char(ch) == 'n'
+	       || char(ch) == 't'
+	       || char(ch) == 'f'
+	       || char(ch) == '\\'
+	       || int('0') <= ch && ch < int('8')
+	       then escaped = false
+	       else (
+		    empty(tokenbuf);
+		    printErrorMessage(o.pos.filename,line,column,"unknown escape sequence \\" + char(ch));
+		    return NULL;
+		    );
+	       )
 	  else if ch == delimiter then break
 	  else if ch == int('\\') then escaped = true;
 	  if isnewline(ch) && hadnewline && isatty(o) then (

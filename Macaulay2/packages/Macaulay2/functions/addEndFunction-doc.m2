@@ -1,21 +1,17 @@
---- status: TODO
---- author(s): 
+--- status: done
+--- author(s): dan
 --- notes: 
 
-document { 
+document {
      Key => addEndFunction,
-     Headline => "",
-     Usage => "",
+     Headline => "add an ending function",
+     Usage => "addEndFunction f",
      Inputs => {
-	  },
-     Outputs => {
+	  "f" => Function => null
 	  },
      Consequences => {
+	  {"When the program is about the exit, the function ", TT "f", " will be called, with no arguments."}
 	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {"addStartFunction"}
      }
- -- doc4.m2:451:     Key => addEndFunction,
+
