@@ -36,7 +36,7 @@ public:
   bool is_equal(const SchreyerOrder *G) const;
   SchreyerOrder *copy() const;
   SchreyerOrder *sub_space(int n) const;
-  SchreyerOrder *sub_space(const M2_arrayint a) const;
+  SchreyerOrder *sub_space(M2_arrayint a) const;
   void append_order(const SchreyerOrder *G);
   SchreyerOrder *direct_sum(const SchreyerOrder *G) const;
   SchreyerOrder *tensor(const SchreyerOrder *G) const;

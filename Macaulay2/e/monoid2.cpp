@@ -609,7 +609,7 @@ int Monoid::primary_degree(const_monomial m) const
   return degree_weights(m, primary_degree_of_vars());
 }
 
-int Monoid::degree_weights(const_monomial m, const M2_arrayint wts) const
+int Monoid::degree_weights(const_monomial m, M2_arrayint wts) const
 {
   if (nvars_ == 0) return 0;
   to_expvector(m, EXP1_);

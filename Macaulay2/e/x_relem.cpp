@@ -354,7 +354,7 @@ const Ring * IM2_RingElement_ring(const RingElement *a)
   return a->get_ring();
 }
 
-const M2_string IM2_RingElement_to_string(const RingElement *f)
+M2_string IM2_RingElement_to_string(const RingElement *f)
 {
   buffer o;
   f->text_out(o);
@@ -367,7 +367,7 @@ const RingElement *IM2_RingElement_from_int(const Ring *R, int d)
   return new RingElement(R, R->from_int(d));
 }
 #endif
-const RingElement *IM2_RingElement_from_Integer(const Ring *R, const M2_Integer d)
+const RingElement *IM2_RingElement_from_Integer(const Ring *R, M2_Integer d)
 {
   return RingElement::make_raw(R, R->from_int(d));
 }
@@ -387,12 +387,12 @@ const RingElement *IM2_RingElement_from_complex(const Ring *R, M2_CC z)
   return RingElement::make_raw(R, R->from_complex(z));
 }
 
-const RingElement *IM2_RingElement_from_BigReal(const Ring *R, const M2_RRR z)
+const RingElement *IM2_RingElement_from_BigReal(const Ring *R, M2_RRR z)
 {
   return RingElement::make_raw(R, R->from_BigReal(z));
 }
 
-const M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a)
+M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a)
   /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
      Otherwise, NULL is returned, and an error is given */
 {
@@ -412,7 +412,7 @@ const M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a)
   return 0;
 }
 
-const M2_RationalOrNull IM2_RingElement_to_rational(const RingElement *a)
+M2_RationalOrNull IM2_RingElement_to_rational(const RingElement *a)
 {
   if (!a->get_ring()->is_QQ())
     {
@@ -449,7 +449,7 @@ M2_CCOrNull IM2_RingElement_to_complex(const RingElement *a)
   return static_cast<M2_CC>(f);
 }
 
-const RingElementOrNull *rawRRRFromString(const M2_string s)
+const RingElementOrNull *rawRRRFromString(M2_string s)
 {
   ring_elem f;
   if (globalRRR->from_string(s,f))
@@ -535,7 +535,7 @@ const RingElement_pair *IM2_RingElement_divmod(const RingElement *a,
 }
 
 const RingElementOrNull *IM2_RingElement_power(const RingElement *a, 
-					       const M2_Integer n)
+					       M2_Integer n)
 {
   return a->power(n);
 }
@@ -584,7 +584,7 @@ M2_arrayint IM2_RingElement_multidegree(const RingElement *a)
 }
 
 M2_Integer_pair_OrNull *IM2_RingElement_degree(const RingElement *a, 
-					       const M2_arrayint wts)
+					       M2_arrayint wts)
   /* The first component of the degree is used, unless the degree monoid is trivial,
      in which case the degree of each variable is taken to be 1. 
      Returns lo,hi degree.  If the ring is not a graded ring or a polynomial ring
@@ -605,14 +605,14 @@ M2_Integer_pair_OrNull *IM2_RingElement_degree(const RingElement *a,
 const RingElementOrNull *IM2_RingElement_homogenize_to_degree(const RingElement *a,
 							      int v,
 							      int deg,
-							      const M2_arrayint wts)
+							      M2_arrayint wts)
 {
   return a->homogenize(v,deg,wts);
 }
 
 const RingElementOrNull *IM2_RingElement_homogenize(const RingElement *a,
 						    int v,
-						    const M2_arrayint wts)
+						    M2_arrayint wts)
 {
   return a->homogenize(v,wts);
 }
@@ -731,7 +731,7 @@ const RingElementOrNull *IM2_RingElement_fraction(const Ring *R,
   return a->fraction(R,b);
 }
 
-const M2_IntegerOrNull rawSchurDimension(const RingElement *f)
+M2_IntegerOrNull rawSchurDimension(const RingElement *f)
 {
   const SchurRing *S = f->get_ring()->cast_to_SchurRing();
   if (S == 0)

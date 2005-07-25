@@ -237,14 +237,14 @@ ring_elem Ring::divide_by_expvector(const int *exp, const ring_elem a) const
   return a;
 }
 
-ring_elem Ring::homogenize(const ring_elem f, int, int deg, const M2_arrayint) const
+ring_elem Ring::homogenize(const ring_elem f, int, int deg, M2_arrayint) const
 {
   if (deg != 0) 
     ERROR("homogenize: no homogenization exists");
   return f;
 }
 
-ring_elem Ring::homogenize(const ring_elem f, int, const M2_arrayint) const
+ring_elem Ring::homogenize(const ring_elem f, int, M2_arrayint) const
 {
   return f;
 }
@@ -266,7 +266,7 @@ bool Ring::multi_degree(const ring_elem f, int *d) const
   return true;
 }
 
-void Ring::degree_weights(const ring_elem, const M2_arrayint, int &lo, int &hi) const
+void Ring::degree_weights(const ring_elem, M2_arrayint, int &lo, int &hi) const
 {
   lo = hi = 0;
 }

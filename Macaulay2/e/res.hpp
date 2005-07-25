@@ -223,7 +223,7 @@ public:
   M2_arrayint betti_minimal() const;
   M2_arrayint betti_nmonoms() const;
 
-  const M2_arrayint get_betti(int type) const;
+  M2_arrayint get_betti(int type) const;
 
 //////////////////////////////////////////////
 //  Debugging ////////////////////////////////

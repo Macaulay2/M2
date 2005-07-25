@@ -434,7 +434,7 @@ void GF::degree(const ring_elem, int *d) const
 {
   degree_monoid()->one(d);
 }
-void GF::degree_weights(const ring_elem, const M2_arrayint, int &lo, int &hi) const
+void GF::degree_weights(const ring_elem, M2_arrayint, int &lo, int &hi) const
 {
   lo = hi = 0;
 }
@@ -443,14 +443,14 @@ int GF::primary_degree(const ring_elem) const
   return 0;
 }
 
-ring_elem GF::homogenize(const ring_elem f, int, int deg, const M2_arrayint) const
+ring_elem GF::homogenize(const ring_elem f, int, int deg, M2_arrayint) const
 {
   if (deg != 0) 
     ERROR("homogenize: no homogenization exists");
   return f;
 }
 
-ring_elem GF::homogenize(const ring_elem f, int, const M2_arrayint) const
+ring_elem GF::homogenize(const ring_elem f, int, M2_arrayint) const
 {
   return f;
 }

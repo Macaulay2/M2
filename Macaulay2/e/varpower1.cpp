@@ -46,7 +46,7 @@ void varpower::elem_text_out(buffer &o, const int *a)
 }
 
 void varpower::elem_text_out(buffer &o, const int *a, 
-			     const M2_stringarray varnames)
+			     M2_stringarray varnames)
 {
   int len = *a++ - 1;
   if (len == 0)

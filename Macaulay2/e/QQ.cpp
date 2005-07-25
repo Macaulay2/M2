@@ -378,7 +378,7 @@ ring_elem QQ::eval(const RingMap *map, const ring_elem a, int) const
   return S->from_rational(MPQ_VAL(a));
 #if 0
   const PolynomialRing *SP = S->cast_to_PolynomialRing();
-  const M2_Rational f = MPQ_VAL(a);
+  M2_Rational f = MPQ_VAL(a);
   if (S == globalQQ || (SP != 0 && SP->getCoefficients() == globalQQ))
     {
       return S->from_QQ(a);

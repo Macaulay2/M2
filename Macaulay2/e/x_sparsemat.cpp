@@ -23,7 +23,7 @@ const Matrix * IM2_MutableMatrix_to_matrix(const MutableMatrix *M)
   return M->toMatrix();
 }
 
-const M2_string IM2_MutableMatrix_to_string(const MutableMatrix *M)
+M2_string IM2_MutableMatrix_to_string(const MutableMatrix *M)
 {
   buffer o;
   M->text_out(o);

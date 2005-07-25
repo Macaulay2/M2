@@ -38,7 +38,7 @@ const Matrix * IM2_MutableMatrix_to_matrix(const MutableMatrixXXX *M)
   return M->to_matrix();
 }
 
-const M2_string IM2_MutableMatrix_to_string(const MutableMatrixXXX *M)
+M2_string IM2_MutableMatrix_to_string(const MutableMatrixXXX *M)
 {
   buffer o;
   M->text_out(o);
@@ -425,22 +425,22 @@ MutableMatrixXXXOrNull * IM2_MutableMatrix_scalar_mult(const RingElement *f,
 }
 
 MutableMatrixXXXOrNull * IM2_MutableMatrix_submatrix(const MutableMatrixXXX *M,
-						  const M2_arrayint rows,
-						  const M2_arrayint cols)
+						  M2_arrayint rows,
+						  M2_arrayint cols)
 {
   return M->submatrix(rows,cols);
 }
 
 bool IM2_MutableMatrix_set_submatrix(MutableMatrixXXX *M,
-				     const M2_arrayint rows,
-				     const M2_arrayint cols,
+				     M2_arrayint rows,
+				     M2_arrayint cols,
 				     const MutableMatrixXXX *N)
 {
   return M->set_submatrix(rows,cols,N);
 }
 
 MutableMatrixXXXOrNull * IM2_MutableMatrix_submatrix1(const MutableMatrixXXX *M,
-						   const M2_arrayint cols)
+						   M2_arrayint cols)
 {
   return M->submatrix(cols);
 }
@@ -456,7 +456,7 @@ M2_arrayint_OrNull IM2_FF_LU(MutableMatrixXXX *M)
 
 M2_bool rawLLL(MutableMatrixXXX *M, 
 		MutableMatrixXXXOrNull *U,
-		const M2_Rational threshold, 
+		M2_Rational threshold, 
 		int strategy)
 {
   if (strategy == 0)

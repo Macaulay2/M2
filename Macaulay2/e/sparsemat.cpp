@@ -319,22 +319,22 @@ bool SparseMutableMatrix::dot_product(int i, int j, ring_elem &result) const
   return result;
 }
 
-bool SparseMutableMatrix::row_permute(int start_row, const M2_arrayint perm)
+bool SparseMutableMatrix::row_permute(int start_row, M2_arrayint perm)
 {
 #warning "write this"
   ERROR("not implemented yet");
   return false;
 }
 
-bool SparseMutableMatrix::column_permute(int start_col, const M2_arrayint perm)
+bool SparseMutableMatrix::column_permute(int start_col, M2_arrayint perm)
 {
 #warning "write this"
   ERROR("not implemented yet");
   return false;
 }
 
-bool SparseMutableMatrix::set_submatrix(const M2_arrayint rows,
-					const M2_arrayint cols, 
+bool SparseMutableMatrix::set_submatrix(M2_arrayint rows,
+					M2_arrayint cols, 
 					const MutableMatrix *N)
   // returns false iff there is an error
 {
@@ -444,8 +444,8 @@ MutableMatrix * SparseMutableMatrix::negate() const
   return result;
 }
 
-MutableMatrix * SparseMutableMatrix::submatrix(const M2_arrayint rows, 
-					       const M2_arrayint cols) const
+MutableMatrix * SparseMutableMatrix::submatrix(M2_arrayint rows, 
+					       M2_arrayint cols) const
 {
   int *trans = newarray(int,n_rows());
 
@@ -474,7 +474,7 @@ MutableMatrix * SparseMutableMatrix::submatrix(const M2_arrayint rows,
   return result;
 }
 
-MutableMatrix * SparseMutableMatrix::submatrix(const M2_arrayint cols) const
+MutableMatrix * SparseMutableMatrix::submatrix(M2_arrayint cols) const
 {
   SparseMutableMatrix *result = zero_matrix(R,nrows_,cols->len);
   for (unsigned int i=0; i<cols->len; i++)

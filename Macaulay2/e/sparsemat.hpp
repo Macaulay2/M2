@@ -109,12 +109,12 @@ public:
 
   virtual bool dot_product(int i, int j, ring_elem &result) const; // DONE
 
-  virtual bool row_permute(int start_row, const M2_arrayint perm);
+  virtual bool row_permute(int start_row, M2_arrayint perm);
 
-  virtual bool column_permute(int start_col, const M2_arrayint perm);
+  virtual bool column_permute(int start_col, M2_arrayint perm);
 
-  virtual bool set_submatrix(const M2_arrayint rows,
-			     const M2_arrayint cols, 
+  virtual bool set_submatrix(M2_arrayint rows,
+			     M2_arrayint cols, 
 			     const MutableMatrix *N);
   // returns false iff there is an error
 
@@ -152,9 +152,9 @@ public:
 
   virtual MutableMatrix * negate() const;
 
-  virtual MutableMatrix * submatrix(const M2_arrayint rows, const M2_arrayint cols) const;
+  virtual MutableMatrix * submatrix(M2_arrayint rows, M2_arrayint cols) const;
 
-  virtual MutableMatrix * submatrix(const M2_arrayint cols) const;
+  virtual MutableMatrix * submatrix(M2_arrayint cols) const;
 
   /////////////////////////////////////////////////
   // Routines special to sparse mutable matrices //

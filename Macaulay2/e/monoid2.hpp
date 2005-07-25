@@ -92,12 +92,12 @@ public:
   static Monoid *get_trivial_monoid();
 
   const MonomialOrdering * getMonomialOrdering() const { return mo_; }
-  const M2_arrayint getNonTermOrderVariables() const { return local_vars; }
+  M2_arrayint getNonTermOrderVariables() const { return local_vars; }
   const PolynomialRing *get_degree_ring() const { return degree_ring_; }
   const Monoid *degree_monoid() const { return degree_monoid_; }
   const_monomial degree_of_var(int v) const { return degree_of_var_[v]; }
   int primary_degree_of_var(int v) const { return primary_degree_of_var_->array[v]; }
-  const M2_arrayint primary_degree_of_vars() const { return primary_degree_of_var_; }
+  M2_arrayint primary_degree_of_vars() const { return primary_degree_of_var_; }
 
   bool is_group() const { return n_invertible_vars_ == nvars_; }
 
@@ -154,7 +154,7 @@ public:
 
   void multi_degree(const_monomial m, monomial result) const;
   int primary_degree(const_monomial m) const;
-  int degree_weights(const_monomial m, const M2_arrayint wts) const;
+  int degree_weights(const_monomial m, M2_arrayint wts) const;
   void degree_of_varpower(const_varpower vp, monomial result) const;
 
 };

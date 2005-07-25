@@ -260,8 +260,8 @@ public:
   virtual ring_elem divide_by_expvector(const int *exp, const ring_elem a) const;
 
   virtual ring_elem homogenize(const ring_elem f, int v, int deg, 
-			       const M2_arrayint wts) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, const M2_arrayint wts) const;
+			       M2_arrayint wts) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, M2_arrayint wts) const;
 
   // Routines expecting a grading.  The default implementation
   // is that the only degree is 0.
@@ -270,7 +270,7 @@ public:
   virtual bool multi_degree(const ring_elem f, int *d) const;
     // returns true iff f is homogeneous
   virtual int primary_degree(const ring_elem f) const;
-  virtual void degree_weights(const ring_elem f, const M2_arrayint wts, int &lo, int &hi) const;
+  virtual void degree_weights(const ring_elem f, M2_arrayint wts, int &lo, int &hi) const;
 
   //////////////////////////////////////////
   /// vector operations ////////////////////
@@ -297,7 +297,7 @@ public:
   bool is_equal(const vecterm * a, const vecterm * b) const;
   bool get_entry(const vecterm * v, int r, ring_elem &result) const;
   ring_elem get_entry(vec v, int r) const;
-  vec sub_vector(const vecterm * v, const M2_arrayint r) const;
+  vec sub_vector(const vecterm * v, M2_arrayint r) const;
   int n_nonzero_terms(const vecterm * v) const;
   void vec_text_out(buffer &o, const vecterm * v) const;
   vec vec_eval(const RingMap *map, const FreeModule *F,	const vec v) const;
@@ -358,7 +358,7 @@ public:
   void vec_degree(const FreeModule *F, const vec f, int *d) const;
   void vec_degree_weights(const FreeModule *F, 
 			  const vec f, 
-			  const M2_arrayint wts, 
+			  M2_arrayint wts, 
 			  int &lo, 
 			  int &hi) const;
   //int vec_primary_degree (const FreeModule *F, const vec f) const;
@@ -367,11 +367,11 @@ public:
 		     const vec f, 
 		     int v, 
 		     int deg, 
-		     const M2_arrayint wts) const;
+		     M2_arrayint wts) const;
   vec vec_homogenize(const FreeModule *F, 
 		     const vec f, 
 		     int v, 
-		     const M2_arrayint wts) const;
+		     M2_arrayint wts) const;
 };
 
 #define ZERO_RINGELEM (ring_elem(reinterpret_cast<Nterm *>(0)))

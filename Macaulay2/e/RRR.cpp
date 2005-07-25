@@ -111,7 +111,7 @@ mpf_ptr RRR::get_epsilon()
   return epsilon;
 }
 
-bool RRR::from_string(const M2_string s, ring_elem &f) const
+bool RRR::from_string(M2_string s, ring_elem &f) const
   // returns false if an error has occurred.  f is initialized and set with value
   // only if true is returned.
 {

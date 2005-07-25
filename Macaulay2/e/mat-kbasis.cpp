@@ -59,8 +59,8 @@ private:
   KBasis(const Matrix *bottom, 
 	 const int * lo_degree,
 	 const int * hi_degree,
-	 const M2_arrayint wt, 
-	 const M2_arrayint vars,
+	 M2_arrayint wt, 
+	 M2_arrayint vars,
 	 bool do_truncation,
 	 int limit);
 
@@ -71,10 +71,10 @@ private:
   Matrix *value() { return mat.to_matrix(); }
 public:
   static Matrix *k_basis(const Matrix *bottom, 
-			 const M2_arrayint lo_degree,
-			 const M2_arrayint hi_degree,
-			 const M2_arrayint wt, 
-			 const M2_arrayint vars,
+			 M2_arrayint lo_degree,
+			 M2_arrayint hi_degree,
+			 M2_arrayint wt, 
+			 M2_arrayint vars,
 			 bool do_truncation,
 			 int limit);
 };
@@ -82,8 +82,8 @@ public:
 KBasis::KBasis(const Matrix *bottom, 
 	       const int * lo_degree0,
 	       const int * hi_degree0,
-	       const M2_arrayint wt, 
-	       const M2_arrayint vars0,
+	       M2_arrayint wt, 
+	       M2_arrayint vars0,
 	       bool do_truncation0,
 	       int limit0)
   : bottom_matrix(bottom),
@@ -265,10 +265,10 @@ void KBasis::compute()
 }
 
 MatrixOrNull *KBasis::k_basis(const Matrix *bottom, 
-			      const M2_arrayint lo_degree,
-			      const M2_arrayint hi_degree,
-			      const M2_arrayint wt, 
-			      const M2_arrayint vars,
+			      M2_arrayint lo_degree,
+			      M2_arrayint hi_degree,
+			      M2_arrayint wt, 
+			      M2_arrayint vars,
 			      bool do_truncation,
 			      int limit)
 {
@@ -327,10 +327,10 @@ MatrixOrNull *KBasis::k_basis(const Matrix *bottom,
   return KB.value();
 }
 
-const Matrix *Matrix::basis(const M2_arrayint lo_degree,
-			    const M2_arrayint hi_degree,
-			    const M2_arrayint wt, 
-			    const M2_arrayint vars,
+const Matrix *Matrix::basis(M2_arrayint lo_degree,
+			    M2_arrayint hi_degree,
+			    M2_arrayint wt, 
+			    M2_arrayint vars,
 			    bool do_truncation,
 			    int limit) const
 {

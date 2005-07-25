@@ -140,7 +140,7 @@ public:
   virtual int contains(int level,
 		       const Matrix *m) = 0;
 
-  virtual const M2_arrayint betti(int type) = 0;
+  virtual M2_arrayint betti(int type) = 0;
   /* 0: minimal betti numbers,
      1:
      2:

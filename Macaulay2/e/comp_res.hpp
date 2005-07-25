@@ -20,7 +20,7 @@ protected:
   void betti_init(int lo, int hi, int len, int *&bettis) const;
   M2_arrayint betti_make(int lo, int hi, int len, int *bettis) const;
 
-  void betti_display(buffer &o, const M2_arrayint a) const;
+  void betti_display(buffer &o, M2_arrayint a) const;
 public:
   virtual ResolutionComputation * cast_to_ResolutionComputation() { return this;} 
 
@@ -46,7 +46,7 @@ public:
 
   virtual const FreeModuleOrNull *get_free(int level) = 0;
 
-  virtual const M2_arrayint get_betti(int type) const = 0;
+  virtual M2_arrayint get_betti(int type) const = 0;
   // type is documented under rawResolutionBetti, in engine.h
 
   //////////////////////////////////////

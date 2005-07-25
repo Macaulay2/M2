@@ -200,7 +200,7 @@ FreeModule *FreeModule::sub_space(int n) const
   return result;
 }
 
-FreeModule *FreeModule::sub_space(const M2_arrayint a) const
+FreeModule *FreeModule::sub_space(M2_arrayint a) const
 {
   FreeModule *result = new_free();
   for (unsigned int i=0; i<a->len; i++)

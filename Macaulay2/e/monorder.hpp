@@ -34,27 +34,27 @@ protected:
   int **inv_order;
   int *inv_degs;
 
-  mon_order(mon_order_types ty, const M2_arrayint degs, const M2_arrayint wts);
+  mon_order(mon_order_types ty, M2_arrayint degs, M2_arrayint wts);
   void set_weights(const int *exp, int *m) const;
 public:
   virtual ~mon_order();
 
   static mon_order *trivial();
-  static mon_order *grlex(const M2_arrayint degs,const M2_arrayint wts);
-  static mon_order *rlex(const M2_arrayint degs,const M2_arrayint wts);
-  static mon_order *glex(const M2_arrayint degs,const M2_arrayint wts);
-  static mon_order *lex(const M2_arrayint degs,const M2_arrayint wts);
-  static mon_order *elim(const M2_arrayint degs, unsigned int i,const M2_arrayint wts);
-  static mon_order *product(const M2_arrayint degs, const M2_arrayint blocks,
-			    const M2_arrayint wts);
+  static mon_order *grlex(M2_arrayint degs,M2_arrayint wts);
+  static mon_order *rlex(M2_arrayint degs,M2_arrayint wts);
+  static mon_order *glex(M2_arrayint degs,M2_arrayint wts);
+  static mon_order *lex(M2_arrayint degs,M2_arrayint wts);
+  static mon_order *elim(M2_arrayint degs, unsigned int i,M2_arrayint wts);
+  static mon_order *product(M2_arrayint degs, M2_arrayint blocks,
+			    M2_arrayint wts);
 
   static mon_order *product(const mon_order *m1, const mon_order *m2);
   static mon_order *elim_product(const mon_order *m1, const mon_order *m2);
   static mon_order *graded_product(const mon_order *m1, const mon_order *m2);
-  static mon_order *general_order(const M2_arrayint degs, 
-				  const M2_arrayint order, 
-				  const M2_arrayint invorder,
-				  const M2_arrayint invdegs);
+  static mon_order *general_order(M2_arrayint degs, 
+				  M2_arrayint order, 
+				  M2_arrayint invorder,
+				  M2_arrayint invdegs);
 
   virtual void encode(const int *exp, int *m) const;
   virtual void decode(const int *m, int *exp) const;
@@ -70,7 +70,7 @@ public:
 class grlex_mon_order : public mon_order
 {
 public:
-  grlex_mon_order(const M2_arrayint degs, const M2_arrayint weights);
+  grlex_mon_order(M2_arrayint degs, M2_arrayint weights);
   ~grlex_mon_order();
 
   virtual void encode(const int *exp, int *m) const;
@@ -81,7 +81,7 @@ public:
 class grlex1_mon_order : public mon_order
 {
 public:
-  grlex1_mon_order(const M2_arrayint degs, const M2_arrayint weights);
+  grlex1_mon_order(M2_arrayint degs, M2_arrayint weights);
   ~grlex1_mon_order();
 
   virtual void encode(const int *exp, int *m) const;
@@ -93,8 +93,8 @@ class product_mon_order : public mon_order
   int nblocks;
   int *blocks;
 public:
-  product_mon_order(const M2_arrayint degs, const M2_arrayint blocks,
-		    const M2_arrayint weights);
+  product_mon_order(M2_arrayint degs, M2_arrayint blocks,
+		    M2_arrayint weights);
   ~product_mon_order();
 
   virtual void encode(const int *exp, int *m) const;
@@ -105,7 +105,7 @@ class elim_mon_order : public mon_order
 {
   int nelim;			// Number of variables to eliminate
 public:
-  elim_mon_order(const M2_arrayint degs, unsigned int n, const M2_arrayint weights);
+  elim_mon_order(M2_arrayint degs, unsigned int n, M2_arrayint weights);
   ~elim_mon_order();
 
   virtual void encode(const int *exp, int *m) const;

@@ -192,7 +192,7 @@ vec Ring::rightmult_vec(const vec w, const ring_elem f) const
   return head.next;
 }
 
-vec Ring::sub_vector(const vecterm * v, const M2_arrayint r) const
+vec Ring::sub_vector(const vecterm * v, M2_arrayint r) const
 {
   if (v == 0) return 0;
   // Largest component which occurs in v occurs first.
@@ -926,7 +926,7 @@ int Ring::vec_primary_degree(const FreeModule *F, const vec f) const
 
 void Ring::vec_degree_weights(const FreeModule *F,
 			      const vec f, 
-			      const M2_arrayint wts, 
+			      M2_arrayint wts, 
 			      int &lo, 
 			      int &hi) const
 {
@@ -954,7 +954,7 @@ vec Ring::vec_homogenize(const FreeModule *F,
 			 const vec f, 
 			 int v, 
 			 int d, 
-			 const M2_arrayint wts) const
+			 M2_arrayint wts) const
 // Any terms which can't be homogenized are silently set to 0
 {
   vecterm head;
@@ -979,7 +979,7 @@ vec Ring::vec_homogenize(const FreeModule *F,
 vec Ring::vec_homogenize(const FreeModule *F,
 			       const vec f, 
 			       int v, 
-			       const M2_arrayint wts) const
+			       M2_arrayint wts) const
 {
   vecterm *result = NULL;
   if (f == NULL) return result;

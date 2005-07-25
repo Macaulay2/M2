@@ -59,7 +59,7 @@ class SMat : public our_new_delete
     // v := v + a*w
   void vec_dot_product(sparsevec *v, sparsevec *w, elem &result) const;
   void vec_sort(sparsevec *&v) const;
-  void vec_permute(sparsevec *&v, long start_row, const M2_arrayint perm) const;
+  void vec_permute(sparsevec *&v, long start_row, M2_arrayint perm) const;
   void vec_insert_rows(sparsevec *&v, long i, long n_to_add) const;
   void vec_delete_rows(sparsevec *&v, long i, long j) const;
 public:
@@ -170,9 +170,9 @@ public:
 
   void dot_product(long i, long j, elem &result) const; 
 
-  bool row_permute(long start_row, const M2_arrayint perm);
+  bool row_permute(long start_row, M2_arrayint perm);
 
-  bool column_permute(long start_col, const M2_arrayint perm);
+  bool column_permute(long start_col, M2_arrayint perm);
 
   void insert_columns(long i, long n_to_add);
   /* Insert n_to_add columns directly BEFORE column i. */
@@ -190,9 +190,9 @@ public:
 		     M2_arrayint cols,
 		     const MutableMatrixXXX *M);
 
-  SMat<CoeffRing> *submatrix(const M2_arrayint rows, const M2_arrayint cols) const;
+  SMat<CoeffRing> *submatrix(M2_arrayint rows, M2_arrayint cols) const;
 
-  SMat<CoeffRing> *submatrix(const M2_arrayint cols) const;
+  SMat<CoeffRing> *submatrix(M2_arrayint cols) const;
 
   bool is_zero() const;
 

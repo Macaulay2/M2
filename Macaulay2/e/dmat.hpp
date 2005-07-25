@@ -144,9 +144,9 @@ public:
 
   void dot_product(long i, long j, elem &result) const; 
 
-  bool row_permute(long start_row, const M2_arrayint perm);
+  bool row_permute(long start_row, M2_arrayint perm);
 
-  bool column_permute(long start_col, const M2_arrayint perm);
+  bool column_permute(long start_col, M2_arrayint perm);
 
   void insert_columns(long i, long n_to_add);
   /* Insert n_to_add columns directly BEFORE column i. */
@@ -164,9 +164,9 @@ public:
 		     M2_arrayint cols,
 		     const MutableMatrixXXX *N);
 
-  DMat<CoeffRing> *submatrix(const M2_arrayint rows, const M2_arrayint cols) const;
+  DMat<CoeffRing> *submatrix(M2_arrayint rows, M2_arrayint cols) const;
 
-  DMat<CoeffRing> *submatrix(const M2_arrayint cols) const;
+  DMat<CoeffRing> *submatrix(M2_arrayint cols) const;
 
   bool is_zero() const;
 

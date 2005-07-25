@@ -318,7 +318,7 @@ public:
 
   const FreeModuleOrNull *get_free(int level) { return free_module(level); }
 
-  const M2_arrayint get_betti(int type) const;
+  M2_arrayint get_betti(int type) const;
   // type is documented under rawResolutionBetti, in engine.h
 
   //////////////////////////////////////

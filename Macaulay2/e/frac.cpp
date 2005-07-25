@@ -598,7 +598,7 @@ bool FractionField::multi_degree(const ring_elem a, int *d) const
   return tophom && bottomhom;
 }
 
-void FractionField::degree_weights(const ring_elem, const M2_arrayint, int &lo, int &hi) const
+void FractionField::degree_weights(const ring_elem, M2_arrayint, int &lo, int &hi) const
 {
   assert(0);
   // MES: what should this do?
@@ -612,7 +612,7 @@ int FractionField::primary_degree(const ring_elem a) const
 }
 
 ring_elem FractionField::homogenize(const ring_elem a, int v, int deg, 
-				    const M2_arrayint wts) const
+				    M2_arrayint wts) const
 {
   ring_elem top, bottom;
   frac_elem *result;
@@ -634,7 +634,7 @@ ring_elem FractionField::homogenize(const ring_elem a, int v, int deg,
   return FRAC_RINGELEM(result);
 }
 
-ring_elem FractionField::homogenize(const ring_elem a, int v, const M2_arrayint wts) const
+ring_elem FractionField::homogenize(const ring_elem a, int v, M2_arrayint wts) const
 {
   const frac_elem *f = FRAC_VAL(a);
   ring_elem top = R_->homogenize(f->numer, v, wts);
