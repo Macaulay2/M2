@@ -302,12 +302,12 @@ document {
      "Of course, if the list of selected terms is empty, the sum would turn out
      to be the zero integer, rather than the zero element of the ring ", TT "R", ".
      Fortunately, we have another way to select the elements of given degree
-     or multi-degree (see ", TO (symbol _, RingElement, ZZ), ").",
+     or multi-degree (see ", TO part, ").",
      EXAMPLE {
-	  "g_0",
-	  "g_1",
-	  "g_2",
-	  "g_3"
+	  "part(0,g)",
+	  "part(1,g)",
+	  "part(2,g)",
+	  "part(3,g)"
 	  },
      "A string representing the polynomial, suitable for entry into other programs,
      can be obtained with ", TO "toString", ".",
@@ -347,7 +347,7 @@ document {
      PARA,
      "The coefficient of a monomial in a polynomial can be obtained with ", TO "_", ".",
      EXAMPLE {
-	  "f_1",
+	  "part(1,f)",
       	  "f_a",
       	  "g_(a*b)",
 	  },
@@ -735,8 +735,9 @@ document {
 	       denominator ", TT "(1-t)^n", ", where ", TT "n", " is the number of variables
 	       in the polynomial ring.  The numerator of this rational function is called
 	       the poincare polynomial, and is obtained by the ", TO (poincare,Module), " function.",
-	       EXAMPLE "poincare M",
-	       EXAMPLE "hilbertSeries M",
+	       EXAMPLE {
+		    "poincare M",
+	            "hilbertSeries M"},
 	       "Notice that the variable is written as ", TT "$T", ".  This indicates that
 	       the variable cannot be typed in directly.",
 	       PARA,
