@@ -148,8 +148,9 @@ document {
       " A hollow tetrahedron:",
      EXAMPLE {
 	  "needsPackage \"SimplicialComplexes\"", 
-	  "D = simplicialComplex {{0,1,2},{0,1,3},{0,2,3},{1,2,3}}",
-	  "debug SimplicialComplexes",
+	  "R = QQ[a..d]",
+	  "D = simplicialComplex {{a,b,c},{a,b,d},{a,c,d},{b,c,d}}",
+	  "debug SimplicialComplexes",			    -- yucch!
 	  "I = monomialIdeal presentation D.facering",
 	  -- fix this to presentation faceRing(D)
           "maxfaces D",

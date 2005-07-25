@@ -50,22 +50,6 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (cohomology,ZZ,ChainComplexMap),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => (cohomology,ZZ,Module),
      Headline => "",
      Usage => "",

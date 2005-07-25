@@ -29,10 +29,11 @@ SimplicialComplex = new Type of HashTable
 
 SimplicialComplex.synonym = "simplicial complex"
 
-SimplicialComplex.AfterPrint = Delta -> (
-     << endl;
-     << concatenate(interpreterDepth:"o") << lineNumber << " : Facets of the simplicial complex "
-     << endl;)
+---- the output line should describe the class of the output [drg]
+-- SimplicialComplex.AfterPrint = Delta -> (
+--      << endl;
+--      << concatenate(interpreterDepth:"o") << lineNumber << " : Facets of the simplicial complex "
+--      << endl;)
 
 net SimplicialComplex := Delta -> Delta.facets
 
@@ -57,11 +58,11 @@ simplicialComplex MonomialIdeal := (I) -> (
 
 simplicialComplex List := SimplicialComplex => (faces) -> (
      if #faces === 0 then error "expected at least one facet";
-     R := ring faces#0;
+     R := ring faces#0#0;
      if not isPolynomialRing R or isQuotientRing R
      then error "expected a polynomial ring";
-     I := matrix {faces};
-     L := monomialIdeal complement I;
+     I := matrix faces;
+     L := monomialIdeal flatten complement I;
      J := dual L;
      newSimplicialComplex(J, complement generators L)
      )

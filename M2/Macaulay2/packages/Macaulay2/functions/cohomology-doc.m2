@@ -185,10 +185,12 @@ document {
      "Here is another example computing simplicial cohomology
      (for a hollow tetrahedron):",
      EXAMPLE {
-	  "needsPackage \"SimplicialComplexes\";",
-          "D = simplicialComplex {{0,1,2},{0,1,3},{0,2,3},{1,2,3}}",
-          -- "C = chainComplex D",  
-          -- "HH^2 C"
+	  "needsPackage \"SimplicialComplexes\"",
+	  "R = QQ[a..d]",
+          "D = simplicialComplex {{a,b,c},{a,b,d},{a,c,d},{b,c,d}}",
+          "C = chainComplex D",  
+          "HH^2 C",
+	  "prune oo"
 	  },
      SeeAlso => {"GradedModule", "HH"}
      }
@@ -251,12 +253,12 @@ document {
      PARA,
      TEX ///When $\lambda$ is a 5th root of unity the quintic V is singular. It has 125
      ordinary double points (nodes), namely the orbit of the point 
-     $(1:\lambda:\lambda:\lambda:\lambda)$ under a natural action of ${\bf Z}/5^3$. 
+     $(1:\lambda:\lambda:\lambda:\lambda)$ under a natural action of $\ZZ/5^3$. 
      Then $V$ has a projective small resolution $W$ which is a Calabi-Yau threefold 
-     (since the action of ${\bf Z}/5^3$ is transitive on the sets of nodes of $V$, or 
+     (since the action of $\ZZ/5^3$ is transitive on the sets of nodes of $V$, or 
      for instance, just by blowing up one of the $(1,5)$ polarized abelian surfaces 
      $V$ contains). Perhaps the most interesting such 3-fold is the one 
-     for the value $\lambda=1$, which is defined over ${\bf Q}$ and is modular 
+     for the value $\lambda=1$, which is defined over $\QQ$ and is modular 
      (see Schoen's work). To compute the  Hodge numbers of the small 
      resolution $W$ of $V$ we proceed as follows:///,
      EXAMPLE {	  

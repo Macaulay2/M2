@@ -1,18 +1,15 @@
 document {
      -- this is the old version
      Key => trim,
-     Headline => "simplify the presentation",
-     TT "trim M", " -- produce a module isomorphic to the module M obtained
-     by replacing its generators by a minimal set of generators, and doing
-     the same for the relations.",
-     PARA,
-     "Also works for rings and ideals.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x]",
-      	  "M = subquotient( matrix {{x,x^2,x^3}}, matrix {{x^3,x^4,x^5}})",
-      	  "trim M"
-	  }
+     Headline => "minimize generators and relations",
+     "There are two ways to present a module ", TT "M", " over a ring.  One way is to take
+     a free module F (whose generators are called the generators) and
+     form the quotient M = F/H by a submodule H of F (whose generators are called the relations).
+     Another way is take a free module F, a submodule G of F (whose generators are called 
+     the relations), a submodule H of F (whose generators are called the relations), and
+     form the subquotient module M = (G+H)/H, obtained also as the image of G in F/H.
+     The purpose of ", TT "trim", " is to minimize presentations of the latter type.
+     This applies also to rings and ideals.",
      }
 
 --- status: Draft
@@ -22,23 +19,6 @@ document {
 ---        R^1/I are the minimal generators for I.
 
 -- there seems to be no text in the nodes below ... [drg]
-
-document { 
-     Key => trim,
-     Headline => "minimize generators and relations",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
 
 document { 
      Key => (trim,Ideal),

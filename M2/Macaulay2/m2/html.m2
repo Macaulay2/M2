@@ -421,7 +421,6 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
 	       stderr << "--error return code: (" << r//256 << "," << r%256 << ")" << endl;
 	       stderr << "--error output left in file: " << tmpf << endl;
 	       stderr << aftermatch(M2errorRegexp,get tmpf);
-	       error "debug me";
 	       if r == 131 then (
 		    stderr << "subprocess terminated abnormally, exiting" << endl;
 		    exit r;
@@ -596,10 +595,10 @@ installPackage Package := opts -> pkg -> (
 		    val := concatenate apply(inputs, s -> s|"\n");
 		    if fileExists inf and get inf === val
 		    then (
-			 if debugLevel > 1 then stderr << "--leaving example input file for " << fkey << endl;
+			 if debugLevel > 0 then stderr << "--leaving example input file for " << fkey << endl;
 			 )
 		    else (
-			 if debugLevel > 1 then stderr << "--making example input file for " << fkey << endl;
+			 if debugLevel > 0 then stderr << "--making example input file for " << fkey << endl;
 			 inf << val << close;
 			 )));
 

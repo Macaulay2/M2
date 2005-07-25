@@ -8,7 +8,6 @@ document {
      }
 document { 
      Key => (regex,String,String),
-     -- Headline => "regular expression matching",
      Usage => "z = regex(p,s)",
      Inputs => {
 	  "p" => "a regular expression describing a pattern",
