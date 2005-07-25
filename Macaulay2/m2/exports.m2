@@ -2,7 +2,6 @@
 
 export (
 	symbol currentFileName,
-	symbol grep,
         symbol currentLineNumber,
 	symbol URL,
 	symbol show,
@@ -23,6 +22,7 @@ export (
         symbol Schubert,
 	symbol Grass,
         symbol Undocumented,
+	symbol RerunExamples,
      	symbol permanents,
      	symbol PrimaryTag,
         symbol applicationDirectory,

@@ -96,6 +96,7 @@ help :
 	@ echo "Options:"
 	@ echo "   IgnoreExampleErrors=true       continue even after errors in example code"
 	@ echo "   RemakeAllDocumentation=true    remake all documentation"
+	@ echo "   RerunExamples=true		  rerun example output files"
 	@ echo ""
 
 # Local Variables:

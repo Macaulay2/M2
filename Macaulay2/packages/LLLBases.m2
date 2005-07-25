@@ -1055,12 +1055,6 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
-
-document {
-	Key => hermiteLLL,
-	Headline => "compute a Hermite normal form using LLL bases",
-	"This function is provided by the package ", TO LLLBases, "."
-	}
 document { 
      Key => {hermiteLLL,(hermiteLLL,Matrix)},
      Headline => "compute the Hermite normal form and small multiplier matrix using LLL bases",

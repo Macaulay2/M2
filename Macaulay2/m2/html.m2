@@ -474,6 +474,7 @@ installPackage = method(Options => {
 	  MakeDocumentation => true,
 	  MakeInfo => false,
 	  RemakeAllDocumentation => false,
+	  RerunExamples => false,
 	  AbsoluteLinks => false,
 	  MakeLinks => true,
 	  RunDirectory => ".",
@@ -558,7 +559,7 @@ installPackage Package := opts -> pkg -> (
 	       stderr << "--copying auxiliary source files from " << dn << endl;
 	       makeDirectory (buildDirectory|srcDirectory);
 	       buildDirectory|srcDirectory|".linkdir" << close;
-	       copyDirectory(dn, buildDirectory|srcDirectory, Verbose => debugLevel > 0, Exclude => {"^CVS$"});
+	       copyDirectory(dn, buildDirectory|srcDirectory, UpdateOnly => true, Verbose => debugLevel > 0, Exclude => {"^CVS$"});
 	       );
      	  );
 
@@ -707,10 +708,10 @@ installPackage Package := opts -> pkg -> (
 		    tmpf := tmpfn fkey;
 		    desc := "example results for " | fkey;
 		    changefun := () -> remove(rawDocUnchanged,fkey);
-		    if fileExists outf and fileTime outf >= fileTime inf then (
+		    if not opts.RerunExamples and fileExists outf and fileTime outf >= fileTime inf then (
 			 -- do nothing
 			 )
-		    else if inf != inf' and fileExists inf' and fileExists outf' and fileTime outf' >= fileTime inf' and get inf == get inf'
+		    else if not opts.RerunExamples and inf != inf' and fileExists inf' and fileExists outf' and fileTime outf' >= fileTime inf' and get inf == get inf'
 		    then copyFile(outf',outf)
 		    else runFile(inf,outf,tmpf,desc,pkg,changefun,opts.RunDirectory);
 		    -- read, separate, and store example output

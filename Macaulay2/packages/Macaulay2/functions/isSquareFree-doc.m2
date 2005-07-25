@@ -33,7 +33,7 @@ document {
 	  "needsPackage \"SimplicialComplexes\"",
 	  "R = QQ[a..d]",
 	  "D = simplicialComplex {{a,b,c},{a,b,d},{a,c,d},{b,c,d}}",
-	  "I = monomialIdeal presentation faceRing D",
+	  "I = monomialIdeal D",
 	  "isSquareFree I"
 	  },
      PARA,
