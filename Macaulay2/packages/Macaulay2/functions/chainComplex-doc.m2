@@ -11,13 +11,6 @@ document {
      }
 
 document {
-     Key => (chainComplex, Matrix),
-     Headline => "make a small chain complex",
-     TT "chainComplex f", " -- create a chain complex ", TT "C", " with
-     the map ", TT "f", " serving as the differential ", TT "C.dd_1", "."
-     }
-
-document {
      Key => (chainComplex, Sequence),
      Headline => "make a chain complex",
      TT "chainComplex(f,g,h,...)", " -- create a chain complex ", TT "C", " whose
@@ -36,31 +29,6 @@ document {
      }
 
 
-document {
-     Key => (chainComplex,GradedModule),
-     Headline => "make a chain complex from a graded module",
-     TT "chainComplex M", " -- convert a graded module to a chain complex by
-     installing the zero map as differential.",
-     PARA,
-     SeeAlso => {"GradedModule", "ChainComplex"}
-     }
-
-document { 
-     Key => chainComplex,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
 document { 
      Key => (chainComplex,List),
      Headline => "",
@@ -77,37 +45,35 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
+
 document { 
      Key => (chainComplex,GradedModule),
-     Headline => "",
-     Usage => "",
+     Headline => "make a chain complex from a graded module",
+     Usage => "chainComplex M",
      Inputs => {
+	  "M" => null
 	  },
      Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  {"the chain complex made from ", TT "M", " by installing the zero map as differential" }
+	  }
      }
+
 document { 
      Key => (chainComplex,Matrix),
-     Headline => "",
-     Usage => "",
+     Headline => "make a small chain complex",
+     Usage => "chainComplex f",
      Inputs => {
+	  "f" => null
 	  },
      Outputs => {
+	  {"a chain complex with the map ", TT "f", " serving as the differential ", TT "C.dd_1"}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "R = QQ[x,y];",
+	  "f = vars R",
+	  "chainComplex f",
+	  "HH oo"
+	  }
      }
  -- doc9.m2:1608:     Key => chainComplex,
  -- doc9.m2:1614:     Key => (chainComplex, Matrix),

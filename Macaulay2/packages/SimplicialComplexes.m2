@@ -15,7 +15,10 @@ newPackage(
 export(SimplicialComplex,
      simplicialComplex,
      bd,fVector,isPure,label,
-     faces,facets,support)
+     faces,facets,support,faceRing,
+     maxfaces, nonfaces)
+
+maxfaces = nonfaces = notImplemented
 
 complement := local complement
 complement = (m) -> (
@@ -214,6 +217,9 @@ isPure SimplicialComplex := Boolean => (D) -> (
      L := unique apply(F, m -> # support m);
      #L <= 1
      )
+
+faceRing = method()
+faceRing SimplicialComplex  := D -> ring D / D.faceIdeal
 
 beginDocumentation()
 document { Key => SimplicialComplexes,
