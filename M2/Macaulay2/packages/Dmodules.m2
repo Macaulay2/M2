@@ -1,6 +1,9 @@
 newPackage("Dmodules", Version => "1.0",
      Headline => "functions for computations with D-modules",
-     Authors => {{Name => "Anton Leykin", Email => "leykin@math.uic.edu"}, {Name => "Harrison Tsai"}},
+     Authors => {
+	  {Name => "Anton Leykin", Email => "leykin@math.uic.edu"},
+	  {Name => "Harrison Tsai"}
+	  },
      )
 export (ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,bFunction,NonGeneric,TryGeneric,IntRing,
         globalB,globalBFunction,ViaAnnFs,ReducedB,factorBFunction,getIntRoots,Boperator,Bpolynomial,globalBoperator,

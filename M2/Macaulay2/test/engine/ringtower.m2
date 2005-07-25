@@ -18,7 +18,7 @@ presentation R                                              -- redesign
 -------------------------
 A = ZZ[s,t]
 B = A/(s^2+t^2-1)
-C = B[x,y,z]
+C = B[x,y, symbol z]
 describe C
 F = x*s*t+2*y^2*s-3
 G = s*t-3
