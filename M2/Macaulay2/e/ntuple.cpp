@@ -6,7 +6,7 @@
 void ntuple::elem_text_out(buffer &o, 
 			   unsigned int nvars,
 			   const int *a, 
-			   const M2_stringarray varnames)
+			   M2_stringarray varnames)
 {
   int len = 0;
   for (unsigned int v=0; v<nvars; v++)

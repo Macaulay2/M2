@@ -106,7 +106,7 @@ public:
   const Monoid *degree_monoid() const { return moninfo->degree_monoid; }
   const_monomial degree_of_var(int v) const { return moninfo->degree_of_var[v]; }
   int primary_degree_of_var(int v) const { return moninfo->primary_degree_of_var->array[v]; }
-  const M2_arrayint primary_degree_of_vars() const { return moninfo->primary_degree_of_var; }
+  M2_arrayint primary_degree_of_vars() const { return moninfo->primary_degree_of_var; }
 
   bool is_group() const { return moninfo->isgroup; }
 
@@ -165,7 +165,7 @@ public:
 
   void multi_degree(const_monomial m, monomial result) const;
   int primary_degree(const_monomial m) const;
-  int degree_weights(const_monomial m, const M2_arrayint wts) const;
+  int degree_weights(const_monomial m, M2_arrayint wts) const;
   void degree_of_varpower(const_varpower vp, monomial result) const;
 
 };

@@ -333,7 +333,7 @@ void DMat<CoeffRing>::copy_elems(long n_to_copy, elem *target, long target_strid
 }
 
 template<typename CoeffRing>
-bool DMat<CoeffRing>::row_permute(long start_row, const M2_arrayint perm)
+bool DMat<CoeffRing>::row_permute(long start_row, M2_arrayint perm)
 {
   // We copy one row to another location for each cycle in 'perm' of length > 1.
   long nrows_to_permute = perm->len;
@@ -387,7 +387,7 @@ bool DMat<CoeffRing>::row_permute(long start_row, const M2_arrayint perm)
 }
 
 template<typename CoeffRing>
-bool DMat<CoeffRing>::column_permute(long start_col, const M2_arrayint perm)
+bool DMat<CoeffRing>::column_permute(long start_col, M2_arrayint perm)
 {
   // We copy one column to another location for each cycle in 'perm' of length > 1.
   long ncols_to_permute = perm->len;
@@ -556,8 +556,8 @@ bool DMat<CoeffRing>::is_zero() const
 }
 
 template<typename CoeffRing>
-DMat<CoeffRing> * DMat<CoeffRing>::submatrix(const M2_arrayint rows, 
-					     const M2_arrayint cols) const
+DMat<CoeffRing> * DMat<CoeffRing>::submatrix(M2_arrayint rows, 
+					     M2_arrayint cols) const
 {
   DMat<CoeffRing> *result = new DMat<CoeffRing>(R,rows->len,cols->len);
   for (long r=0; r<rows->len; r++)
@@ -571,7 +571,7 @@ DMat<CoeffRing> * DMat<CoeffRing>::submatrix(const M2_arrayint rows,
 }
 
 template<typename CoeffRing>
-DMat<CoeffRing> * DMat<CoeffRing>::submatrix(const M2_arrayint cols) const
+DMat<CoeffRing> * DMat<CoeffRing>::submatrix(M2_arrayint cols) const
 {
   DMat<CoeffRing> *result = new DMat<CoeffRing>(R,nrows_,cols->len);
   for (long r=0; r<nrows_; r++)

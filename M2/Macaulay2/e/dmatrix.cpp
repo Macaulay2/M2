@@ -273,30 +273,30 @@ bool DMatrix<CoeffRing>::dot_product(int i, int j, ring_elem &result) const
 }
 
 template<typename CoeffRing>
-bool DMatrix<CoeffRing>::row_permute(int start_row, const M2_arrayint perm)
+bool DMatrix<CoeffRing>::row_permute(int start_row, M2_arrayint perm)
 {
   return mat->row_permute(start_row,perm);
 }
 
 template<typename CoeffRing>
-bool DMatrix<CoeffRing>::column_permute(int start_col, const M2_arrayint perm)
+bool DMatrix<CoeffRing>::column_permute(int start_col, M2_arrayint perm)
 {
   return mat->column_permute(start_col,perm);
 }
 
 template<typename CoeffRing>
-DMatrix<CoeffRing> * DMatrix<CoeffRing>::submatrix(const M2_arrayint rows, const M2_arrayint cols) const
+DMatrix<CoeffRing> * DMatrix<CoeffRing>::submatrix(M2_arrayint rows, M2_arrayint cols) const
 {
 }
 
 template<typename CoeffRing>
-DMatrix<CoeffRing> * DMatrix<CoeffRing>::submatrix(const M2_arrayint cols) const
+DMatrix<CoeffRing> * DMatrix<CoeffRing>::submatrix(M2_arrayint cols) const
 {
 }
 
 template<typename CoeffRing>
-bool DMatrix<CoeffRing>::set_submatrix(const M2_arrayint rows, 
-				       const M2_arrayint cols,
+bool DMatrix<CoeffRing>::set_submatrix(M2_arrayint rows, 
+				       M2_arrayint cols,
 				       const MutableMatrix *N)
 {
   // N should have the same ring as this.  If it is sparse, make it dense?

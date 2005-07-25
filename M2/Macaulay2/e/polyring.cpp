@@ -410,7 +410,7 @@ int PolyRing::primary_degree(const ring_elem f) const
   return M_->primary_degree(t->monom);
 }
 
-void PolyRing::degree_weights(const ring_elem f, const M2_arrayint wts, 
+void PolyRing::degree_weights(const ring_elem f, M2_arrayint wts, 
 				    int &lo, int &hi) const
 {
   Nterm *t = f;
@@ -430,7 +430,7 @@ void PolyRing::degree_weights(const ring_elem f, const M2_arrayint wts,
 }
 
 ring_elem PolyRing::homogenize(const ring_elem f, 
-			     int v, int d, const M2_arrayint wts) const
+			     int v, int d, M2_arrayint wts) const
 {
   // assert(wts[v] != 0);
   // If an error occurs, then return 0, and set gError.

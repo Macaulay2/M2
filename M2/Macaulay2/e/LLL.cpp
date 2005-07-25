@@ -25,7 +25,7 @@ bool LLLoperations::checkThreshold(ring_elem num, ring_elem den)
 }
 
 bool LLLoperations::initializeLLL(const MutableMatrixXXX *A,
-			    const M2_Rational threshold,
+			    M2_Rational threshold,
 			    MutableMatrixXXX *& LLLstate)
 {
   // First check m: should be a matrix over globalZZ.
@@ -343,7 +343,7 @@ int LLLoperations::doLLL(MutableMatrixXXX *A,
 
 bool LLLoperations::LLL(MutableMatrixXXX *A, 
 			MutableMatrixXXX *Achange, // can be NULL
-			const M2_Rational threshold)
+			M2_Rational threshold)
 {
   MutableMatrixXXX *LLLstate;
   if (!initializeLLL(A,threshold,LLLstate))

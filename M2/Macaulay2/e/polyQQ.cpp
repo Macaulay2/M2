@@ -386,14 +386,14 @@ int PolyQQ::primary_degree(const ring_elem f) const
   return numerR_->primary_degree(numerator(f));
 }
 
-void PolyQQ::degree_weights(const ring_elem f, const M2_arrayint wts, 
+void PolyQQ::degree_weights(const ring_elem f, M2_arrayint wts, 
 			    int &lo, int &hi) const 
 {
   return numerR_->degree_weights(numerator(f),wts,lo,hi);
 }
 
 ring_elem PolyQQ::homogenize(const ring_elem f, int v, int deg, 
-			     const M2_arrayint wts) const 
+			     M2_arrayint wts) const 
 {
   Nterm *h = numerR_->homogenize(numerator(f),v,deg,wts);
   elem *result = make_fraction(h,denom(f));
@@ -401,7 +401,7 @@ ring_elem PolyQQ::homogenize(const ring_elem f, int v, int deg,
   return FRAC_RINGELEM(result);
 }
 
-ring_elem PolyQQ::homogenize(const ring_elem f, int v, const M2_arrayint wts) const 
+ring_elem PolyQQ::homogenize(const ring_elem f, int v, M2_arrayint wts) const 
 {
   Nterm *h = numerR_->homogenize(numerator(f),v,wts);
   elem *result = make_fraction(h,denom(f));

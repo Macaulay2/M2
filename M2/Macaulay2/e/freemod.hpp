@@ -57,7 +57,7 @@ public:
   bool is_equal(const FreeModule *F) const;
 
   FreeModule * sub_space   (int n)                const;
-  FreeModule * sub_space   (const M2_arrayint a)  const;
+  FreeModule * sub_space   (M2_arrayint a)  const;
   FreeModule * transpose   ()                     const;
   FreeModule * direct_sum  (const FreeModule *G)  const;
   FreeModule * shift       (const int *d)         const;

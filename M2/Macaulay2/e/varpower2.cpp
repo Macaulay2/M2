@@ -162,7 +162,7 @@ void varpower::elem_text_out(buffer &o, const int *a)
 }
 
 void varpower::elem_text_out(buffer &o, const int *a, 
-			     const M2_stringarray varnames)
+			     M2_stringarray varnames)
 {
   index_varpower i = a;
   if (!i.valid())

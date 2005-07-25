@@ -25,7 +25,7 @@ public:
 
   static void elem_text_out(buffer &o, const int *a);
   static void elem_text_out(buffer &o, const int *a, 
-			    const M2_stringarray varnames);
+			    M2_stringarray varnames);
 
   static bool is_one(const int *a);
   static bool is_equal(const int *a, const int *b);

@@ -145,7 +145,7 @@ SchreyerOrder *SchreyerOrder::sub_space(int n) const
   return result;
 }
 
-SchreyerOrder *SchreyerOrder::sub_space(const M2_arrayint a) const
+SchreyerOrder *SchreyerOrder::sub_space(M2_arrayint a) const
 {
   // Since this is called only from FreeModule::sub_space,
   // the elements of 'a' are all in bounds, and do not need to be checked...

@@ -6,7 +6,7 @@ const Ring * IM2_RingMap_target(const RingMap *F)
   return F->get_ring();
 }
 
-const M2_string IM2_RingMap_to_string(const RingMap *F)
+M2_string IM2_RingMap_to_string(const RingMap *F)
 {
   buffer o;
   F->text_out(o);

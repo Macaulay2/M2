@@ -111,7 +111,7 @@ M2_arrayint ResolutionComputation::betti_make(int lo, int hi, int len, int *bett
   return result;
 }
 
-void ResolutionComputation::betti_display(buffer &o, const M2_arrayint ar) const
+void ResolutionComputation::betti_display(buffer &o, M2_arrayint ar) const
 {
   int *a = ar->array;
   int total_sum = 0;

@@ -73,7 +73,7 @@ const MatrixOrNull * Matrix::make(const FreeModule *target,
 }
 const MatrixOrNull * Matrix::make(const FreeModule *target,
 				  const FreeModule *source,
-				  const M2_arrayint deg,
+				  M2_arrayint deg,
 				  const RingElement_array *M)
 {
   const Ring *R = target->get_ring();
@@ -124,8 +124,8 @@ const MatrixOrNull * Matrix::make(const FreeModule *target,
 bool Matrix::make_sparse_vecs(MatrixConstructor &mat,
 			       const FreeModule *target,
 			       int ncols,
-			       const M2_arrayint rows,
-			       const M2_arrayint cols,
+			       M2_arrayint rows,
+			       M2_arrayint cols,
 			       const RingElement_array *entries)
   // returns false if an error, true otherwise.
   // Places the elements into 'mat'.
@@ -171,8 +171,8 @@ bool Matrix::make_sparse_vecs(MatrixConstructor &mat,
 
 const MatrixOrNull * Matrix::make_sparse(const FreeModule *target,
 					 int ncols,
-					 const M2_arrayint rows,
-					 const M2_arrayint cols,
+					 M2_arrayint rows,
+					 M2_arrayint cols,
 					 const RingElement_array *entries)
 {
   MatrixConstructor mat(target, ncols);
@@ -184,9 +184,9 @@ const MatrixOrNull * Matrix::make_sparse(const FreeModule *target,
 
 const MatrixOrNull * Matrix::make_sparse(const FreeModule *target,
 					 const FreeModule *source,
-					 const M2_arrayint deg,
-					 const M2_arrayint rows,
-					 const M2_arrayint cols,
+					 M2_arrayint deg,
+					 M2_arrayint rows,
+					 M2_arrayint cols,
 					 const RingElement_array *entries)
 {
 #warning "check that all rings are correct, give error otherwise"
@@ -202,7 +202,7 @@ const MatrixOrNull * Matrix::make_sparse(const FreeModule *target,
 
 const MatrixOrNull * Matrix::remake(const FreeModule *target,
 				    const FreeModule *source,
-				    const M2_arrayint deg) const
+				    M2_arrayint deg) const
 { 
   if (n_rows() != target->rank() || n_cols() != source->rank())
     {
@@ -350,7 +350,7 @@ int Matrix::is_homogeneous() const
   return 1;
 }
 
-Matrix *Matrix::homogenize(int v, const M2_arrayint wts) const
+Matrix *Matrix::homogenize(int v, M2_arrayint wts) const
 {
   MatrixConstructor mat(rows(), n_cols());
   for (int i=0; i<n_cols(); i++)
@@ -464,7 +464,7 @@ Matrix *Matrix::operator-() const
   return mat.to_matrix();
 }
 
-MatrixOrNull *Matrix::sub_matrix(const M2_arrayint r, const M2_arrayint c) const
+MatrixOrNull *Matrix::sub_matrix(M2_arrayint r, M2_arrayint c) const
 {
   const FreeModule *F = rows()->sub_space(r);
   const FreeModule *G = cols()->sub_space(c);
@@ -491,7 +491,7 @@ MatrixOrNull *Matrix::sub_matrix(const M2_arrayint r, const M2_arrayint c) const
   return mat.to_matrix();
 }
 
-MatrixOrNull *Matrix::sub_matrix(const M2_arrayint c) const
+MatrixOrNull *Matrix::sub_matrix(M2_arrayint c) const
 {
   const FreeModule *G = cols()->sub_space(c);
   if (G == NULL)

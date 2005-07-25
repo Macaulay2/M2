@@ -15,7 +15,7 @@ int IM2_FreeModule_rank(const FreeModule *F)
   return F->rank();
 }
 
-const M2_string IM2_FreeModule_to_string(const FreeModule *F)
+M2_string IM2_FreeModule_to_string(const FreeModule *F)
 {
   buffer o;
   F->text_out(o);
@@ -60,7 +60,7 @@ const FreeModuleOrNull *IM2_FreeModule_make_schreyer(const Matrix *m)
   return FreeModule::make_schreyer(m);
 }
 
-const M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F)
+M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F)
 {
   const Ring *R = F->get_ring();
   const Monoid *D = R->degree_monoid();
@@ -82,7 +82,7 @@ const Matrix * IM2_FreeModule_get_schreyer(const FreeModule *F)
   return F->get_induced_order();
 }
 
-const M2_bool IM2_FreeModule_is_equal(const FreeModule *F, 
+M2_bool IM2_FreeModule_is_equal(const FreeModule *F, 
 				      const FreeModule *G)
 /* Determines if F and G are the same graded module.  If one has a
    Schreyer order and one does not, but their ranks and degrees are the

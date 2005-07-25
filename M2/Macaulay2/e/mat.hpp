@@ -157,9 +157,9 @@ public:
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
 
-  bool row_permute(long start_row, const M2_arrayint perm) { return false; }
+  bool row_permute(long start_row, M2_arrayint perm) { return false; }
 
-  bool column_permute(long start_col, const M2_arrayint perm) { return false; }
+  bool column_permute(long start_col, M2_arrayint perm) { return false; }
 
   void insert_columns(long i, long n_to_add) {}
   /* Insert n_to_add columns directly BEFORE column i. */
@@ -184,10 +184,10 @@ public:
 		     M2_arrayint cols,
 		     const MutableMatrixXXX *N) { return false; }
 
-  Mat<CoeffRing> * submatrix(const M2_arrayint rows, const M2_arrayint cols) const
+  Mat<CoeffRing> * submatrix(M2_arrayint rows, M2_arrayint cols) const
   { return 0; }
 
-  Mat<CoeffRing> * submatrix(const M2_arrayint cols) const { return 0; }
+  Mat<CoeffRing> * submatrix(M2_arrayint cols) const { return 0; }
 
   bool is_zero() const { return false; }
 
@@ -368,9 +368,9 @@ public:
 
   virtual bool dot_product(long i, long j, ring_elem &result) const = 0;
 
-  virtual bool row_permute(long start_row, const M2_arrayint perm) = 0;
+  virtual bool row_permute(long start_row, M2_arrayint perm) = 0;
 
-  virtual bool column_permute(long start_col, const M2_arrayint perm) = 0;
+  virtual bool column_permute(long start_col, M2_arrayint perm) = 0;
 
   virtual bool insert_columns(long i, long n_to_add) = 0;
   /* Insert n_to_add columns directly BEFORE column i. */
@@ -388,9 +388,9 @@ public:
   // Matrix operations //////////
   ///////////////////////////////
 
-  virtual MutableMatrixXXX * submatrix(const M2_arrayint rows, const M2_arrayint cols) const = 0;
+  virtual MutableMatrixXXX * submatrix(M2_arrayint rows, M2_arrayint cols) const = 0;
 
-  virtual MutableMatrixXXX * submatrix(const M2_arrayint cols) const = 0;
+  virtual MutableMatrixXXX * submatrix(M2_arrayint cols) const = 0;
 
   virtual bool set_submatrix(M2_arrayint rows,
 			     M2_arrayint cols,
@@ -740,12 +740,12 @@ public:
     return true;
   }
 
-  virtual bool row_permute(long start_row, const M2_arrayint perm)
+  virtual bool row_permute(long start_row, M2_arrayint perm)
   {
     return mat.row_permute(start_row, perm);
   }
 
-  virtual bool column_permute(long start_col, const M2_arrayint perm)
+  virtual bool column_permute(long start_col, M2_arrayint perm)
   {
     return mat.column_permute(start_col, perm);
   }
@@ -801,14 +801,14 @@ public:
     return true;
   }
 
-  virtual MutableMatrixXXX * submatrix(const M2_arrayint rows, const M2_arrayint cols) const
+  virtual MutableMatrixXXX * submatrix(M2_arrayint rows, M2_arrayint cols) const
   {
     MutableMat *M = new MutableMat;
     M->mat.grab(mat.submatrix(rows,cols));
     return M;
   }
 
-  virtual MutableMatrixXXX * submatrix(const M2_arrayint cols) const
+  virtual MutableMatrixXXX * submatrix(M2_arrayint cols) const
   {
     MutableMat *M = new MutableMat;
     M->mat.grab(mat.submatrix(cols));

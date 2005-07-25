@@ -191,19 +191,19 @@ public:
     return numerR_->PolyRing::primary_degree(f);
   }
 
-  virtual void degree_weights(const ring_elem f, const M2_arrayint wts, 
+  virtual void degree_weights(const ring_elem f, M2_arrayint wts, 
 			      int &lo, int &hi) const {
     return numerR_->PolyRing::degree_weights(f,wts,lo,hi);
   }
 
   virtual ring_elem homogenize(const ring_elem f, int v, int deg, 
-			       const M2_arrayint wts) const {
+			       M2_arrayint wts) const {
     ring_elem result = numerR_->PolyRing::homogenize(f,v,deg,wts);
     normal_form(result);
     return result;
   }
 
-  virtual ring_elem homogenize(const ring_elem f, int v, const M2_arrayint wts) const {
+  virtual ring_elem homogenize(const ring_elem f, int v, M2_arrayint wts) const {
     ring_elem result = numerR_->PolyRing::homogenize(f,v,wts);
     normal_form(result);
     return result;

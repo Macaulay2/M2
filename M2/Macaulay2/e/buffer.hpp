@@ -56,7 +56,7 @@ public:
   // cerr << o.str();
 
   buffer &operator<<(const char *s) { put(s); return *this; }
-  buffer &operator<<(const M2_string s) { put(s->array, s->len); return *this; }
+  buffer &operator<<(M2_string s) { put(s->array, s->len); return *this; }
   buffer &operator<<(long n) { put(n); return *this; }
   buffer &operator<<(unsigned int n) { put(n); return *this; }
   buffer &operator<<(unsigned long n) { put(n); return *this; }

@@ -265,7 +265,7 @@ IM2_Resolution_status_level(Computation *C,
 #endif
 }
 
-const M2_arrayint_OrNull
+M2_arrayint_OrNull
 rawResolutionBetti(Computation *C,
 	     int type)
   /* see engine.h for description of what 'type' should be */
@@ -277,7 +277,7 @@ rawResolutionBetti(Computation *C,
   return 0;
 }
 
-const M2_string
+M2_string
 IM2_GB_to_string(Computation *C)
   /* TODO */
 {

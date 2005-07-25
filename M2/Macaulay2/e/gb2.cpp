@@ -423,7 +423,7 @@ M2_arrayint gbres_comp::betti_minimal() const
   return result;
 }
 
-const M2_arrayint gbres_comp::get_betti(int type) const
+M2_arrayint gbres_comp::get_betti(int type) const
 // Only type = 0 (minimal) is supported by this type.
 // Should we do the other types as well?
   // type is documented under rawResolutionBetti, in engine.h

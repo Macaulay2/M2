@@ -60,7 +60,7 @@ int res_comp::high_degree() const
   return hidegree;
 }
 
-const M2_arrayint res_comp::get_betti(int type) const
+M2_arrayint res_comp::get_betti(int type) const
 {
   int lo = low_degree();
   int hi = high_degree();

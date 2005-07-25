@@ -26,7 +26,7 @@ public:
 
   ~GBWeight() {}
 
-  const M2_arrayint get_weights() const { return wts_; }
+  M2_arrayint get_weights() const { return wts_; }
 
   // All of these routines expect components in the range 1..N,
   // or, if the component is 0, then it is in the ring, not in the 

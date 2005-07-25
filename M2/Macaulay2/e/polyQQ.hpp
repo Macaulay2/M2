@@ -112,13 +112,13 @@ public:
 
   virtual int primary_degree(const ring_elem f) const;
 
-  virtual void degree_weights(const ring_elem f, const M2_arrayint wts, 
+  virtual void degree_weights(const ring_elem f, M2_arrayint wts, 
 			      int &lo, int &hi) const;
 
   virtual ring_elem homogenize(const ring_elem f, int v, int deg, 
-			       const M2_arrayint wts) const;
+			       M2_arrayint wts) const;
 
-  virtual ring_elem homogenize(const ring_elem f, int v, const M2_arrayint wts) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, M2_arrayint wts) const;
 
   virtual ring_elem mult_by_term(const ring_elem f, 
 				 const ring_elem c, const int *m) const;

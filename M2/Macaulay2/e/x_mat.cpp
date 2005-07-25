@@ -29,12 +29,12 @@ int IM2_Matrix_n_cols(const Matrix *M)
   return M->n_cols();
 }
 
-const M2_arrayint IM2_Matrix_get_degree(const Matrix *M)
+M2_arrayint IM2_Matrix_get_degree(const Matrix *M)
 {
   return M->degree_monoid()->to_arrayint(M->degree_shift());
 }
 
-const M2_string IM2_Matrix_to_string(const Matrix *M)
+M2_string IM2_Matrix_to_string(const Matrix *M)
 {
   buffer o;
   M->text_out(o);
@@ -90,7 +90,7 @@ const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
 
 const MatrixOrNull * IM2_Matrix_make2(const FreeModule *target,
 				      const FreeModule *source,
-				      const M2_arrayint deg,
+				      M2_arrayint deg,
 				      const RingElement_array *M,
 				      int preference)
 {
@@ -100,8 +100,8 @@ const MatrixOrNull * IM2_Matrix_make2(const FreeModule *target,
 
 const MatrixOrNull * IM2_Matrix_make_sparse1(const FreeModule *target,
 					     int ncols,
-					     const M2_arrayint rows,
-					     const M2_arrayint cols,
+					     M2_arrayint rows,
+					     M2_arrayint cols,
 					     const RingElement_array *entries,
 					     int preference)
 {
@@ -111,9 +111,9 @@ const MatrixOrNull * IM2_Matrix_make_sparse1(const FreeModule *target,
   
 const MatrixOrNull * IM2_Matrix_make_sparse2(const FreeModule *target,
 					     const FreeModule *source,
-					     const M2_arrayint deg,
-					     const M2_arrayint rows,
-					     const M2_arrayint cols,
+					     M2_arrayint deg,
+					     M2_arrayint rows,
+					     M2_arrayint cols,
 					     const RingElement_array *entries,
 					     int preference)
 {
@@ -130,7 +130,7 @@ M2_bool IM2_Matrix_is_implemented_as_dense(const Matrix *M)
 
 const MatrixOrNull * IM2_Matrix_remake2(const FreeModule *target,
 					const FreeModule *source,
-					const M2_arrayint deg,
+					M2_arrayint deg,
 					const Matrix *M,
 					int preference)
   /* Create a new matrix (mutable or immutable), from M, with new target,
@@ -166,12 +166,12 @@ MatrixOrNull *IM2_Matrix_random(const Ring *R,
 }
 
 /////////////////////////////////////////////////////////////////////
-const M2_bool IM2_Matrix_is_zero(const Matrix *M)
+M2_bool IM2_Matrix_is_zero(const Matrix *M)
 {
   return M->is_zero();
 }
 
-const M2_bool IM2_Matrix_is_equal(const Matrix *M, 
+M2_bool IM2_Matrix_is_equal(const Matrix *M, 
 				  const Matrix *N)
 {
   /* This checks that the entries of M,N are the same, as well as
@@ -181,7 +181,7 @@ const M2_bool IM2_Matrix_is_equal(const Matrix *M,
   return M->is_equal(*N);
 }
 
-const M2_bool IM2_Matrix_is_graded(const Matrix *M)
+M2_bool IM2_Matrix_is_graded(const Matrix *M)
 {
   return M->is_homogeneous();
 }
@@ -323,14 +323,14 @@ const MatrixOrNull * rawWedgeProduct(int p,
 }
 
 const MatrixOrNull * IM2_Matrix_submatrix(const Matrix *M,
-					  const M2_arrayint rows,
-					  const M2_arrayint cols)
+					  M2_arrayint rows,
+					  M2_arrayint cols)
 {
   return M->sub_matrix(rows,cols);
 }
 
 const MatrixOrNull * IM2_Matrix_submatrix1(const Matrix *M,
-					   const M2_arrayint cols)
+					   M2_arrayint cols)
 {
   return M->sub_matrix(cols);
 }
@@ -362,7 +362,7 @@ const Matrix * IM2_Matrix_exterior(int p, const Matrix *M, int strategy)
   return M->exterior(p,strategy); 
 }
 
-const M2_arrayint_OrNull IM2_Matrix_sort_columns(const Matrix *M, 
+M2_arrayint_OrNull IM2_Matrix_sort_columns(const Matrix *M, 
 						 int deg_order, 
 						 int mon_order)
 {
@@ -421,7 +421,7 @@ const Matrix_pair_OrNull * IM2_Matrix_coeffs(const Matrix *M, M2_arrayint vars)
   return 0;
 }
 
-const MatrixOrNull * rawCoefficients(const M2_arrayint vars,
+const MatrixOrNull * rawCoefficients(M2_arrayint vars,
 				     const Matrix *monoms,
 				     const Matrix *M)
 {
@@ -439,7 +439,7 @@ const MatrixOrNull * rawBasis(const Matrix *M,
   return M->Matrix::basis(lo_degree,hi_degree,wt,vars,do_truncation,limit);
 }
 
-const MatrixOrNull * IM2_Matrix_monomials(const M2_arrayint vars, 
+const MatrixOrNull * IM2_Matrix_monomials(M2_arrayint vars, 
 					  const Matrix *M)
 {
   return M->monomials(vars);
@@ -450,12 +450,12 @@ const Matrix * IM2_Matrix_initial(int nparts, const Matrix *M)
   return M->lead_term(nparts);
 }
 
-const M2_arrayint IM2_Matrix_elim_vars(int nparts, const Matrix *M)
+M2_arrayint IM2_Matrix_elim_vars(int nparts, const Matrix *M)
 {
   return M->elim_vars(nparts);
 }
 
-const M2_arrayint IM2_Matrix_keep_vars(int nparts, const Matrix *M)
+M2_arrayint IM2_Matrix_keep_vars(int nparts, const Matrix *M)
 {
   return M->elim_keep(nparts);
 }

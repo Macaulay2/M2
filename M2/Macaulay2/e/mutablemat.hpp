@@ -156,16 +156,16 @@ normalizeColumn
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
 
-  virtual bool row_permute(int start_row, const M2_arrayint perm) = 0;
+  virtual bool row_permute(int start_row, M2_arrayint perm) = 0;
 
-  virtual bool column_permute(int start_col, const M2_arrayint perm) = 0;
+  virtual bool column_permute(int start_col, M2_arrayint perm) = 0;
 
-  virtual MutableMatrix * submatrix(const M2_arrayint rows, const M2_arrayint cols) const = 0;
+  virtual MutableMatrix * submatrix(M2_arrayint rows, M2_arrayint cols) const = 0;
 
-  virtual MutableMatrix * submatrix(const M2_arrayint cols) const = 0;
+  virtual MutableMatrix * submatrix(M2_arrayint cols) const = 0;
 
-  virtual bool set_submatrix(const M2_arrayint rows,
-			     const M2_arrayint cols, 
+  virtual bool set_submatrix(M2_arrayint rows,
+			     M2_arrayint cols, 
 			     const MutableMatrix *N) = 0;
   // returns false iff there is an error
 

@@ -85,7 +85,7 @@ M2_arrayint res2_comp::betti_nmonoms() const
   return result;
 }
 
-const M2_arrayint res2_comp::get_betti(int type) const
+M2_arrayint res2_comp::get_betti(int type) const
 {
   switch (type) {
   case 0:

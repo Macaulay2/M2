@@ -459,7 +459,7 @@ void SMat<CoeffRing>::vec_sort(sparsevec *&f) const
 }
 
 template<typename CoeffRing>
-void SMat<CoeffRing>::vec_permute(sparsevec *&v, long start_row, const M2_arrayint perm) const
+void SMat<CoeffRing>::vec_permute(sparsevec *&v, long start_row, M2_arrayint perm) const
 {
 }
 
@@ -701,7 +701,7 @@ void SMat<CoeffRing>::dot_product(long i, long j, elem &result) const
 }
 
 template<typename CoeffRing>
-bool SMat<CoeffRing>::row_permute(long start_row, const M2_arrayint perm)
+bool SMat<CoeffRing>::row_permute(long start_row, M2_arrayint perm)
 {
   // We copy one row to another location for each cycle in 'perm' of length > 1.
   long nrows_to_permute = perm->len;
@@ -725,7 +725,7 @@ bool SMat<CoeffRing>::row_permute(long start_row, const M2_arrayint perm)
 }
 
 template<typename CoeffRing>
-bool SMat<CoeffRing>::column_permute(long start_col, const M2_arrayint perm)
+bool SMat<CoeffRing>::column_permute(long start_col, M2_arrayint perm)
 {
   // We copy one column to another location for each cycle in 'perm' of length > 1.
   long ncols_to_permute = perm->len;
@@ -865,8 +865,8 @@ bool SMat<CoeffRing>::is_zero() const
 }
 
 template<typename CoeffRing>
-SMat<CoeffRing> * SMat<CoeffRing>::submatrix(const M2_arrayint rows, 
-					     const M2_arrayint cols) const
+SMat<CoeffRing> * SMat<CoeffRing>::submatrix(M2_arrayint rows, 
+					     M2_arrayint cols) const
 {
   SMat<CoeffRing> *result = new SMat<CoeffRing>(R,rows->len,cols->len);
   for (long r=0; r<rows->len; r++)
@@ -904,7 +904,7 @@ SMat<CoeffRing> * SMat<CoeffRing>::submatrix(const M2_arrayint rows,
 }
 
 template<typename CoeffRing>
-SMat<CoeffRing> * SMat<CoeffRing>::submatrix(const M2_arrayint cols) const
+SMat<CoeffRing> * SMat<CoeffRing>::submatrix(M2_arrayint cols) const
 {
   SMat<CoeffRing> *result = new SMat<CoeffRing>(R,nrows_,cols->len);
   for (long r=0; r<nrows_; r++)

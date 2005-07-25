@@ -10,7 +10,7 @@ const MonomialOrNull *rawVarMonomial(int v, int e)
   return Monomial::make(v,e);
 }
 
-const MonomialOrNull *rawMakeMonomial(const M2_arrayint m)
+const MonomialOrNull *rawMakeMonomial(M2_arrayint m)
 {
   return Monomial::make(m);
 }
@@ -89,14 +89,14 @@ const Monomial_pair *rawSyzygy(const Monomial *a, const Monomial *b)
   return &Monomial_pair_ret;
 }
 
-const M2_string IM2_Monomial_to_string(const Monomial *a)
+M2_string IM2_Monomial_to_string(const Monomial *a)
 {
   buffer o;
   a->text_out(o);
   return o.to_string();
 }
 
-const M2_arrayint rawSparseListFormMonomial(const Monomial *a)
+M2_arrayint rawSparseListFormMonomial(const Monomial *a)
 {
   return a->to_arrayint();
 }

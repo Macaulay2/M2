@@ -27,7 +27,7 @@ class LLLoperations
 		    MutableMatrixXXX *lambda);
 
   static bool initializeLLL(const MutableMatrixXXX *A,
-			    const M2_Rational threshold,
+			    M2_Rational threshold,
 			    MutableMatrixXXX *& LLLstate);
   // Returns false if there is an error, and sets gError.
 
@@ -45,7 +45,7 @@ public:
   // This routine return false if the computation is interrupted
   static bool LLL(MutableMatrixXXX *M, 
 		  MutableMatrixXXX *U,
-		  const M2_Rational threshold);
+		  M2_Rational threshold);
   // M is replaced with the LLL basis. false is returned if there was an 
   // error or an interrupt.
   // U is either NULL, or an m by m matrix over ZZ (m = numrows M), which will

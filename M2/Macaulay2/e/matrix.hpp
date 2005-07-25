@@ -28,8 +28,8 @@ private:
   static bool make_sparse_vecs(MatrixConstructor &mat,
 			       const FreeModule *target,
 			       int ncols,
-			       const M2_arrayint rows,
-			       const M2_arrayint cols,
+			       M2_arrayint rows,
+			       M2_arrayint cols,
 			       const RingElement_array *entries);
   // returns false if an error, true otherwise.
   // Places the elements into 'mat'.
@@ -47,25 +47,25 @@ public:
 
   static const MatrixOrNull * make(const FreeModule *target,
 				   const FreeModule *source,
-				   const M2_arrayint deg,
+				   M2_arrayint deg,
 				   const RingElement_array *M);
 
   static const MatrixOrNull * make_sparse(const FreeModule *target,
 					  int ncols,
-					  const M2_arrayint rows,
-					  const M2_arrayint cols,
+					  M2_arrayint rows,
+					  M2_arrayint cols,
 					  const RingElement_array *entries);
 
   static const MatrixOrNull * make_sparse(const FreeModule *target,
 					  const FreeModule *source,
-					  const M2_arrayint deg,
-					  const M2_arrayint rows,
-					  const M2_arrayint cols,
+					  M2_arrayint deg,
+					  M2_arrayint rows,
+					  M2_arrayint cols,
 					  const RingElement_array *entries);
 
   const MatrixOrNull * remake(const FreeModule *target,
 			      const FreeModule *source,
-			      const M2_arrayint deg) const;
+			      M2_arrayint deg) const;
 
   const MatrixOrNull * remake(const FreeModule *target) const;
 
@@ -96,8 +96,8 @@ public:
   MonomialIdeal * make_monideal(int n) const;
 
   // Matrix operations
-  MatrixOrNull *sub_matrix(const M2_arrayint r, const M2_arrayint c) const;
-  MatrixOrNull *sub_matrix(const M2_arrayint c) const;
+  MatrixOrNull *sub_matrix(M2_arrayint r, M2_arrayint c) const;
+  MatrixOrNull *sub_matrix(M2_arrayint c) const;
   Matrix *transpose() const;
   Matrix *operator+(const Matrix &m) const;
   Matrix *operator-() const;
@@ -155,7 +155,7 @@ public:
 
   // degrees
   int is_homogeneous() const;
-  Matrix *homogenize(int v, const M2_arrayint wts) const;
+  Matrix *homogenize(int v, M2_arrayint wts) const;
 
   // Simplification of column set
   Matrix *simplify(int n) const;

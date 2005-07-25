@@ -47,7 +47,7 @@ public:
   ring_elem absolute(const ring_elem f) const;
   ring_elem sqrt(const ring_elem f) const;
 
-  bool from_string(const M2_string s, ring_elem &f) const;
+  bool from_string(M2_string s, ring_elem &f) const;
   // returns false if an error has occurred.  f is initialized and set with value
   // only if true is returned.
 
