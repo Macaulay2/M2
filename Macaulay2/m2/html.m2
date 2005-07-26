@@ -350,6 +350,7 @@ separateExampleOutput = s -> (
 -----------------------------------------------------------------------------
 
 makeMasterIndex := keylist -> (
+     anchorPoint = 0;
      fn := buildDirectory | htmlDirectory | indexFileName;
      title := "Symbol Index";
      stderr << "--making  '" << title << "' in " << fn << endl;

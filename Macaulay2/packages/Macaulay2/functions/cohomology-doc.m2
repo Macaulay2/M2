@@ -268,7 +268,7 @@ document {
 	  "II'Z = sheaf module ideal Z"
 	  },
      PARA,
-     "The defect of W (that is is h^{1,1}(W)-1) can be computed from the 
+     TEX "The defect of W (that is, $h^{1,1}(W)-1$) can be computed from the 
      cohomology of the ideal sheaf of the singular locus Z of V twisted by 5 
      (see Werner's thesis):",
      EXAMPLE {          
@@ -276,14 +276,14 @@ document {
 	  "h11 = defect + 1"
 	  },
      PARA,
-     "h^{2,1}(W) (the dimension of the moduli space of W) can be computed (Clemens-Griffiths,Werner) 
-     as dim(HH^0(II_Z(5))/jacobian-ideal(V)_5):",
+     TEX "The number $h^{2,1}(W)$ (the dimension of the moduli space of W) can be computed (Clemens-Griffiths, Werner) 
+     as $dim H^0({\\bf I}_Z(5))/JacobianIdeal(V)_5$.",
      EXAMPLE {
 	  "quinticsJac = numgens source basis(5,ideal Z)", 
           "h21 = rank HH^0(II'Z(5)) - quinticsJac"
 	  },
      PARA,
-     "In other words W is rigid. W has topological Euler characteristic:",
+     "In other words W is rigid. It has the following topological Euler characteristic.",
      EXAMPLE {
 	  "chiW = euler(Quintic)+2*degree(Z)" 
 	  },
