@@ -116,10 +116,7 @@ lcm := args -> (
      n := 1;
      scan(args, i -> n = lcm2(n,i));
      n)
-commden := (f) -> (
-     lcm apply(
-	  first entries lift((coefficients f)#1, QQ),
-	  denominator))
+commden := (f) -> lcm apply( first \ entries lift((coefficients f)#1, QQ), denominator)
 
 indices := (M,vars) -> apply(vars, x -> if class x === ZZ then x else (
 	  x = baseName x;
@@ -246,25 +243,25 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    )
 	       ) rawPairs(raw R, raw f);
 	  toString RM := toExternalString RM := x -> toString expression x;
-	  fac := options -> f -> (
-	       facs := rawFactor raw f;
-	       new Product from apply(facs#0,facs#1,(p,n) -> new Power from {new RM from p,n})
-	       );
-	  factor RM := if R === QQ then (
-	       -- for factoring over QQ we find a commond denominator ourselves and reduce the problem to factoring over ZZ
-	       options -> f -> (
+	  factor RM := options -> f -> (
+	       c := 1;
+	       if R === QQ then (
 	       	    d := commden f;
+		    c = 1/d;
 		    f = d * f;
-		    s := (fac options) f;
-		    if d === 1 then s
-		    else (
-			 if degree first last s == {0}
-			 then s = append(drop(s,-1), new Power from { (1/d) * first last s, 1 })
-			 else s = append(s,          new Power from { (1/d) * 1_RM        , 1 })
-			 )
-		    )
-	       )
-	  else fac;
+		    );
+	       (facs,exps) := rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first now
+     	       assert(degree facs#0 === {0});
+	       assert(exps#0 == 1);
+     	       facs = apply(facs, p -> new RM from p);
+     	       c = c * facs#0;
+	       facs = drop(facs,1);
+	       exps = drop(exps,1);
+	       if c != 1 then (
+		    facs = append(facs,c);
+		    exps = append(exps,1);
+		    );
+	       new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
 	  isPrime RM := f -> (
 	       v := factor f;				    -- constant term last
 	       #v === 1 and last v#0 === 1 and not isConstant first v#0
