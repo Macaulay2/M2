@@ -81,6 +81,9 @@ facets SimplicialComplex := (D) -> D.facets
 ideal SimplicialComplex := (D) -> ideal D.faceIdeal
 monomialIdeal SimplicialComplex := (D) -> D.faceIdeal
 
+--link(SimplicialComplex, RingElement) := (D,f) -> (
+--     simplicialComplex monomialIdeal(ideal(f) + (ideal D) : f))
+
 SimplicialComplex == SimplicialComplex := (D,E) -> D.faceIdeal === E.faceIdeal
 
 lcmMonomials = (L) -> (
@@ -99,13 +102,17 @@ faces (ZZ, SimplicialComplex) := (r,D) -> (
      R := ring D;
      if not D.cache.?faces then (
          D.cache.faces = new MutableHashTable;
-	 D.cache.faces.qring = R/(D.faceIdeal + ideal apply(gens R, x -> x^2));
+	 B := (coefficientRing R) (monoid [gens R, SkewCommutative=>true]);
+	 D.cache.faces.ideal = substitute(D.faceIdeal,B);
+	 --D.cache.faces.qring = R/(D.faceIdeal + ideal apply(gens R, x -> x^2));
 	 );
      if r < -1 or r > dim D then matrix(R, {{}})
      else (
 	  if not D.cache.faces#?r then (
-               A := D.cache.faces.qring;
-               D.cache.faces#r = lift(matrix basis(r+1,A), R));
+--               A := D.cache.faces.qring;
+--               D.cache.faces#r = lift(matrix basis(r+1,A), R));
+               J := D.cache.faces.ideal;
+               D.cache.faces#r = substitute(matrix basis(r+1,coker gens J), vars R));
      	  D.cache.faces#r
      ))
 
@@ -693,13 +700,50 @@ document {
 	  "betti res I",
 	  "betti res J"
 	  },
-     "Hochster gives a formula relating the homology of the Alexander dual 
-     to the betti numbers of the Stanley-Reisner ideal, see e.g. 
-     Corollary 5.12 in
-     Miller-Sturmfels, Combinatorial Commutative Algebra. For example,
-     consider the",
      SeeAlso => {SimplicialComplexes, (dual,MonomialIdeal)}
      }
+
+///
+-- Greg and Mike were working on this when Greg had to go home
+-- 7/13/05  Good example though!
+     "Hochster gives a formula relating the homology of the Alexander dual 
+     to the betti numbers of the Stanley-Reisner ideal, see e.g. 
+     Corollary 1.40 in
+     Miller-Sturmfels, Combinatorial Commutative Algebra. ",
+     EXAMPLE {
+	  --R = QQ[a..f];
+	  R = QQ[a..f, Degrees => {
+	                  {1, 1, 0, 0, 0, 0, 0}, 
+			  {1, 0, 1, 0, 0, 0, 0}, 
+			  {1, 0, 0, 1, 0, 0, 0}, 
+			  {1, 0, 0, 0, 1, 0, 0}, 
+			  {1, 0, 0, 0, 0, 1, 0}, 
+			  {1, 0, 0, 0, 0, 0, 1}}]
+	  oct = simplicialComplex monomialIdeal(a*b,c*d,e*f)
+	  cube = dual oct
+	  lk = (D,m) -> simplicialComplex monomialIdeal(ideal support m + ((ideal D):m));
+	  F = lk(oct,a)
+	  rank HH_1(F)
+	  C = res ideal cube
+	  tally degrees C_3
+	  checkHochster = (D,face) -> (
+	       R := ring D;
+	       face' := (product gens R) // face;
+	       D' := dual D;
+	       h := apply(0..dim D', i -> (
+     	           rank HH_(i-1)(lk(D',face'))));
+	       C := res ideal D;
+	       b := apply(0..dim D', i -> (
+			 d := tally degrees C_(i+1);
+			 if d#?(degree face) then d#(degree face) else 0));
+	       (b,h))
+          checkHochster(cube,b*d*e*f)
+	  checkHochster(oct,a*c)
+	  checkHochster(oct,a*b)
+	  checkHochster(oct,c*d*e*f)
+	  checkHochster(cube,a*b*c*d*e)
+	  },
+///
 
 document { 
      Key => {faces,(faces,ZZ,SimplicialComplex)},
@@ -1068,6 +1112,19 @@ faces(0,D)
 chainComplex D
 dual D
 
+----------------------
+-- link of a face ----
+----------------------
+R = ZZ[a..e]
+D = simplicialComplex {b*c,c*a,a*e,a*d,c*d,d*e}
+I = ideal D
+I : a
+E = simplicialComplex monomialIdeal(I : a)
+(ideal facets D) : a
+ideal D
+
+D = simplicialComplex {b*c,c*a,a*e,a*d,c*d,d*e,a*c*d,a*d*e}
+(ideal facets D) : a
 -- Example 1: boundary of a tetrahedron
 D = simplicialComplex {{0,1,2},{0,1,3},{0,2,3},{1,2,3}}
 facets D
