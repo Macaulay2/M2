@@ -759,7 +759,7 @@ document {
 		    "C = resolution M",
 		    "C.dd_3"
 		    },
-	       "For more information about chain complexes and resolutions, see ", TO "free resolutions, chain complexes, and homological algebra",
+	       "For more information about chain complexes and resolutions, see ", TO "chain complexes",
 	       " and ", TO "computing resolutions", "."
 	       ,
 	  SUBSECTION "betti numbers",

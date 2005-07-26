@@ -1,3 +1,5 @@
+error "rawRemoveScalarMultiples was being used to test Eschreyer, fix this test file, Mike!"
+
 debug Macaulay2Core
 R = ZZ/101[a..d]
 m = matrix{{a^2, a*b, a*c}}

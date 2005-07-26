@@ -46,8 +46,10 @@ GF 25
 -- Test of SchurRing --------
 -----------------------------
 needs "raw-util.m2"
-R = Schur 4
-f = R_{1,1}
+needsPackage "SchurRings"
+x = symbol x
+R = schurRing(x,4)
+f = x_{1,1}
 dim f
 g = f*f
 assert(dim g == (dim f)^2)
@@ -57,7 +59,7 @@ listForm g -- INCORRECT
 rawPairs(rawZZ(),raw g)
 toString raw g
 rawSchurDimension
-S = ZZ[a..d]
+S = ZZ[symbol a .. symbol d]
 listForm(a^2+b^2+c^3)
 exponents(a^2+b^2+c^3)
 code(exponents,RingElement)

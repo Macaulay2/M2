@@ -32,7 +32,7 @@ R = raw (ZZ[symbol x])
 f = mat{{R_0}}
 F = rawFreeModule(R,1)
 G = rawFreeModule(R,1:-2)
-h = rawMatrixRemake2 (show "args to rawMatrixRemake2:") (F,G,1:3,f,0)
+h = rawMatrixRemake2(F,G,1:3,f,0)
 rawMultiDegree h
 --
 

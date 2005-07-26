@@ -1018,15 +1018,6 @@ TEST ("
      ")
 
 document {
-     Key => showHtml,
-     TT "showHtml x", "convert ", TT "x", " to html format, contact a
-     netscape process currently running on the same host, and have it 
-     display it.",
-     PARA,
-     "Try this example: ", TT ///showHtml documentation "loops"///, "."
-     }
-
-document {
      Key => sheafExt,
      Headline => "sheaf Ext of coherent sheaves"
      }

@@ -2,8 +2,6 @@
 
 assert = x -> if not x then error "assertion failed"
 
-show = (msg) -> x -> (stderr << msg << x << endl; x)
-
 if class oooo =!= Symbol then error "setup.m2 already loaded"
 
 if class RawMutableMatrix =!= Type then error "where is RawMutableMatrix?"

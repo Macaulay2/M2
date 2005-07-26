@@ -10,9 +10,9 @@
 --   rawMatrixRowScale, rawMatrixColumnScale
 needs "raw-util.m2"
 R = ZZ[vars(0..11)]
-id10 = rawMutableIdentity(raw R, 10, true); net id10
+id10 = rawMutableIdentity(raw R, 10, true); id10
 m = genericMatrix(R,a,3,4)
-p = rawMutableMatrix(raw m,true); net p
+p = rawMutableMatrix(raw m,true); p
 assert(rawColumnDotProduct(p, 1, 1) == raw(d^2+e^2+f^2))
 assert(rawColumnDotProduct(p, 1,2) == raw(d*g+e*h+f*i))
 assert(rawNumberOfColumns p == 4)
@@ -20,32 +20,32 @@ assert(rawNumberOfRows p == 3)
 assert(raw m === rawMatrix p)
 
 
-rawMatrixRowSwap(p,0,1); net p
+rawMatrixRowSwap(p,0,1); p
 assert(rawMatrix p - raw transpose matrix{{b,a,c},{e,d,f},{h,g,i},{k,j,l}} == 0)
-rawMatrixColumnSwap(p,1,2); net p
+rawMatrixColumnSwap(p,1,2); p
 assert(rawMatrix p == raw matrix{{b,h,e,k},{a,g,d,j},{c,i,f,l}})
-net p
-rawMatrixRowScale(p, raw (5_R), 2, false); net p
-rawMatrixColumnScale(p, raw (7_R), 1, false); net p
-rawMatrixRowChange(p, 0, raw c, 1, false); net p
-rawMatrixColumnChange(p, 1, raw d, 0, false); net p
+p
+rawMatrixRowScale(p, raw (5_R), 2, false); p
+rawMatrixColumnScale(p, raw (7_R), 1, false); p
+rawMatrixRowChange(p, 0, raw c, 1, false); p
+rawMatrixColumnChange(p, 1, raw d, 0, false); p
 
 rawMatrixColumnOperation2(p,1,2,raw e,raw f,raw g,raw h,false) -- WRONG!
-net p
+p
 
 
 
 p = rawMutableMatrix(raw R, 3,4,true)
 rawSetMatrixEntry(p, 1,3, raw(a+b))
-net toString p
+toString p
 p1 = rawMutableMatrix (raw m, true)
 raw m === rawMatrix p1
 p = rawMutableMatrix(raw ((transpose m) * m), true)
-net toString p
+toString p
 
-p = rawMutableMatrix(raw R, 10, 20, true); net p      
+p = rawMutableMatrix(raw R, 10, 20, true); p      
 scan(50, i -> (rawSetMatrixEntry(p,random 10, random 20, raw (random 100)_R)))
-net p
+p
 
 map(R, rawMatrix p)
 
@@ -60,11 +60,11 @@ rawMutableIdentity(raw R, 10, true)
 needs "raw-util.m2"
 p = rawMutableIdentity(raw RR, 10, true)
 rawSetMatrixEntry(p,3,5,rawFromNumber(raw RR, 3.5))
-net p
+p
 
-p = rawMutableMatrix(raw RR, 10, 20, true); net p      
+p = rawMutableMatrix(raw RR, 10, 20, true); p      
 scan(50, i -> (rawSetMatrixEntry(p,random 10, random 20, rawFromNumber(raw RR, random 1.0))))
-net p
+p
 map(RR,rawMatrix p)
 
 --------------------------------------------
@@ -73,45 +73,46 @@ map(RR,rawMatrix p)
 needs "raw-util.m2"
 R = ZZ[a..d]
 p = rawMutableIdentity(raw R, 10, false)
-net p
+p
 rawSetMatrixEntry(p,1,3,raw(a+b))
-net p
+p
 
 R = ZZ[vars(0..11)]
 m = genericMatrix(R,a,3,4)
-p = rawMutableMatrix(raw m,false); net p
+p = rawMutableMatrix(raw m,false); p
 assert(rawNumberOfColumns p == 4)
 assert(rawNumberOfRows p == 3)
 
 rawMatrixColumnOperation2(p,1,2,raw e,raw f,raw g,raw h,false) -- WRONG!
-net p
+p
 
+error "the rest of this test file is not working yet, Mike will fix it"
 
 det m
 assert(rawToInteger (2 * rawMatrixEntry(p,0,0)) == det m)
 
-rawMatrixColumnSwap(p,3,9); net p
-rawMatrixRowSwap(p,4,9); net p
-reduceRowsColsGcd(p,9,9); net p
-reduceRowsColsGcd(p,8,8); net p
+rawMatrixColumnSwap(p,3,9); p
+rawMatrixRowSwap(p,4,9); p
+reduceRowsColsGcd(p,9,9); p
+reduceRowsColsGcd(p,8,8); p
 
 reduceGCD(p,9,9,8)
-net p
+p
 reduceGCD(p,9,9,7)
-net p
-reduceRowsCols(p,8,8); net p
-net p
+p
+reduceRowsCols(p,8,8); p
+p
 
 gcdCoefficients(2001,1007)
 gcd(2001,1007)
 
 
 rawMatrixColumnChange(p,8,raw (-42_R),9,false)
-net p
+p
 m = map(R,p)
 toString m
 p = rawMutableMatrix(p, true)
-net p
+p
 rawMatrix
 rawMinors(5,p,0)
 rawMatrixEntry(oo,0,0)
@@ -229,9 +230,9 @@ r5 = rawIdentity(R^5,0) -- mutable r5
   A = rawMutableMatrix(m,true)
   b = rawMutableMatrix(b0,true)
   x = rawMutableMatrix(b0,true)
-  net p
+  p
   rawSolve(A,b,x)
-  net x
+  x
   x1 = rawMatrix b
   m*(rawMatrix x)
   rawMinors(4,m,0,-1,null,null)

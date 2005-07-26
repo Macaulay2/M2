@@ -310,30 +310,30 @@ document {
 	  "This documentation addresses version ", version#"VERSION", " of Macaulay 2. "
 	  },
      Subnodes => {
-	  TO "preface",
-	  TO "getting started",
-	  "Mathematical Overview",			    -- part 1 of the book
-	       -- "Mathematical objects",
-	       TO "combinatorial functions",		    -- where does this really go?
+	       TO "preface",
+	       TO "getting started",
+	  "Mathematical Objects",
 	       TO "rings",
 	       TO "ideals",
 	       TO "matrices and free modules",
 	       TO "substitution and maps between rings",
 	       TO "modules",
-	       TO "free resolutions, chain complexes, and homological algebra",
+	       TO "chain complexes",
 	       TO "varieties",
-	       TO "commutative algebra",
-	       TO "algebraic geometry",
-	       -- "Computational techniques",
 	       TO "Groebner bases",
-	       -- TO "first applications of Groebner bases"
-	       TO "Normal forms",
+	  -- "Important General Concepts",
+	  "Some Mathematical Computations",
+	       TO "normal forms",
 	       TO "Hilbert functions",
 	       TO "elimination of variables",
 	       TO "syzygies",
 	       TO "saturation",
 	       TO "fibers of a map between varieties",
 	       TO "solving systems of polynomial equations",
+     	       TO "integralClosure",
+     	       TO "primaryDecomposition",
+	       TO "Hom module",
+	       TO "Tor and Ext",
      	  "The Macaulay 2 Language",			    -- part 2, one liners, lists, sets, but not hash tables
 	       TO "syntax",				    -- simplify this node!!! syntax, keywords, syntax of identifiers,
 	       TO "variables and symbols",
@@ -342,6 +342,7 @@ document {
 	       TO "functions",
 	       TO "input and output",			    -- but sockets, etc, move later
 	       TO "operators",				    -- but with explanations
+	       TO "combinatorial functions",
 	  "Programming Overview",			    -- part 3, multiple line techniques, saved in a function in a file, writing packages
 	       TO "classes and types",
 	       TO "system",

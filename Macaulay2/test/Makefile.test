@@ -12,7 +12,7 @@ RESULTS := $(notdir $(patsubst %.m2, %.out, $(wildcard $(SRCDIR)/*.m2))) \
 	   $(notdir $(patsubst %.m2-input, %.out, $(wildcard $(SRCDIR)/*.m2-input)))
 
 PAT := ':[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):|^GC|^[0-9]+\.[0-9]+user'
-FILTER := egrep $(PAT)
+FILTER := egrep -a $(PAT)
 
 all check :: $(RESULTS)
 $(RESULTS) : $(DOTS)/bin/M2
