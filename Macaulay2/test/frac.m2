@@ -32,6 +32,15 @@ assert(numerator (f/g) == x)
 --    have canonical representative.  E.g., if the coefficient ring is a field, we can make the coefficient
 --    of the leading term be 1.
 assert(numerator((-f)/(-g)) == numerator(f/g))
+
+-----------------------------------------------------------------------------
+R = ZZ[x]
+F = frac R
+f = ((x^3*(x-1)*(1/2))/((x^5-1)))
+g = ((x^3*(x-1))/(2*(x^5-1)))
+assert( f === g )
+assert( numerator f === numerator g )
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test frac.out"
 -- End:
