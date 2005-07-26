@@ -683,7 +683,7 @@ title := s -> (
 type := S -> fixup (
      s := value S;
      if class s =!= Function then (
-	  DIV { SUBSECTION "For the programmer",  
+	  SEQ { SUBSECTION "For the programmer",  
 	       PARA deepSplice { "The object ", TO S, " is ", OFCLASS class s,
 		    if parent s =!= Nothing then (
 			 f := (T -> while T =!= Thing list parent T do T = parent T) s;

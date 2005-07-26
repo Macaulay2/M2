@@ -315,12 +315,13 @@ document {
      "In Macaulay 2, Groebner bases can be computed for ideals and submodules over many
      different rings.",
      Subnodes => {
-	  TO "over fields",
-          TO "over the ring of integers",
-          TO "over polynomial rings over a field",
-	  TO "over polynomial rings over the integers",
-	  TO "over Weyl algebras",
-	  TO "over local rings"
+	  -- we don't need all these subnodes!
+	  TO "Groebner bases over fields",
+          TO "Groebner bases over the ring of integers",
+          TO "Groebner bases over polynomial rings over a field",
+	  TO "Groebner bases over polynomial rings over the integers",
+	  TO "Groebner bases over Weyl algebras",
+	  TO "Groebner bases over local rings"
      	  }
     }
 
