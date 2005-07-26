@@ -96,7 +96,8 @@ help :
 	@ echo "Options:"
 	@ echo "   IgnoreExampleErrors=true       continue even after errors in example code"
 	@ echo "   RemakeAllDocumentation=true    remake all documentation"
-	@ echo "   RerunExamples=true		  rerun example output files"
+	@ echo "   RerunExamples=true             rerun example output files"
+	@ echo "   debugLevel=1                   turn on further M2 debugging output"
 	@ echo ""
 
 # Local Variables:
