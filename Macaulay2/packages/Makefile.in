@@ -25,6 +25,7 @@ PACKAGES += LLLBases
 RemakeAllDocumentation ?= false
 IgnoreExampleErrors ?= false
 RerunExamples ?= false
+debugLevel ?= 0
 
 ARGS := , MakeLinks => false
 ARGS += , RerunExamples => $(RerunExamples)
@@ -50,6 +51,7 @@ install ::
 		  ../bin/M2 -q --stop \
 		    --prefix $(encapdir) \
 		    -e errorDepth=0 \
+		    -e debugLevel=$(debugLevel) \
 		    -e "installPackage(\"$$i\" $(ARGS1))" \
 		    -e "exit 0" ; \
 	      else \
@@ -57,6 +59,7 @@ install ::
 		  ../bin/M2 -q --stop \
 		    --prefix $(encapdir) \
 		    -e errorDepth=0 \
+		    -e debugLevel=$(debugLevel) \
 		    -e "installPackage(\"$$i\" $(ARGS2))" \
 		    -e "exit 0" ; \
 	      fi ; \

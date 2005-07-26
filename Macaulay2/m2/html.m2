@@ -296,6 +296,12 @@ assembleTree := (pkg,nodes) -> (
 		    )
 	       ));
      CONT = getTrees();
+     if debugLevel > 0 then (
+	  n := net CONT;
+	  f := (ht,dp) -> (stack (ht + dp : "** "^-1)) ^ ht;
+	  n = f(height n, depth n) | n;
+	  stderr << "tree structure:" << endl << n << endl;
+	  );
      buildLinks CONT;
      )
 
