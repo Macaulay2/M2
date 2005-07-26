@@ -37,11 +37,13 @@ document {
      	     get the ideal.",
      	     EXAMPLE {
 	  	  "monomialCurveIdeal(R,{1,2,3})"
-	  	  }
-	     
-	
+	  	  },
+	SeeAlso => {
+	     ideal,
+	     monomialIdeal,
+	     monomialCurveIdeal
+	     }
    }
-
 
 document {
      Key => "ideals to and from matrices",
@@ -66,8 +68,6 @@ document {
 	  	    "generators I"
 	  	    },
      	       "The abbreviation ", TT "gens", " can be used for ", TT "generators", "." 
-     	       
-	  
      }
 
 
@@ -156,23 +156,21 @@ document {
 
 document {
      Key => "equality and containment",
-     "Equality and containment can sometimes be subtle in Macaulay 2.  For 
-     example, testing if an ideal is equal to 0 or 1 are special functions 
-     so we give an example here.  We try to illustrate the subtleties. ",
-     
+     "Equality and containment between two ideals in a polynomial ring (or quotient of
+     a polynomial ring) is checked by comparing their respective Groebner bases.",     
      	  SUBSECTION "equal and not equal",
-     	       "To test if two ideals in the same ring are equal use ", TO "==", ".",
+	       "Use ", TO (symbol==,Ideal,Ideal), " to test if two ideals in the same ring 
+	       are equal.",
      	       EXAMPLE {
 	  	    "R = QQ[a..d];",
 	  	    "I = ideal (a^2*b-c^2, a*b^2-d^3, c^5-d);",
 	  	    "J = ideal (a^2,b^2,c^2,d^2);",
 	  	    "I == J",
 	  	    "I != J",
-	  	    }
-	       ,
-	  SUBSECTION "reduction with respect to a Groebner basis and membership",
-     	       "The function ", TO "%", " reduces an element with 
-     	       respect to a Groebner basis of the ideal. ", 
+	  	    },
+	  SUBSECTION "normal form with respect to a Groebner basis and membership",
+     	       "The function ", TO (symbol%,RingElement,Ideal), " reduces an element with 
+     	       respect to a Groebner basis of the ideal.", 
      	       EXAMPLE {
 	  	    "(1+a+a^3+a^4) % J"
 	  	    },
@@ -181,8 +179,7 @@ document {
      	       EXAMPLE {
 	  	    "(1+a+a^3+a^4) % J == 0",
       	  	    "a^4 % J == 0",
-	  	    }
-	       ,
+	  	    },
      SUBSECTION "containment for two ideals",
 	  "Containment for two ideals is tested 
      	  using ", TO "isSubset", ".",
@@ -190,20 +187,24 @@ document {
 	       "isSubset(I,J)",
 	       "isSubset(I,I+J)",
 	       "isSubset(I+J,I)"
-	       }
-	  ,
+	       },
      SUBSECTION "ideal equal to 1 or 0",
-     	  "The function ", TT "I == 1", " checks to see if the 
-     	  ideal is equal to the ring.  The function ", TT "I == 0", " checks 
-     	  to if the ideal is identically zero in the given ring.",
+     	  "Use the expression ", TT "I == 1", " to see if the 
+     	  ideal is equal to the ring.  Use ", TT "I == 0", " 
+     	  to see if the ideal is identically zero in the given ring.",
      	  EXAMPLE {
-	       "I = ideal (a^2-1,a^3+2);",
+	       "I = ideal (a^2-1,a^3+3);",
 	       "I == 1",
 	       "S = R/I",
 	       "S == 0"
-	       }
-	  
-     
+	       },
+     SeeAlso => {
+	  (symbol==,Ideal,Ideal),
+	  (symbol==,Ideal,ZZ),
+	  symbol!=,
+	  (symbol%,RingElement,Ideal),
+	  (isSubset,Ideal,Ideal)
+	  }
 }
 
 document {
