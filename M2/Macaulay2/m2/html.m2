@@ -1095,6 +1095,8 @@ show Hypertext := x -> (
      addEndFunction( () -> run ( "rm " | fn ) );
      )
 
+show TEX := x -> show hypertext x
+
 viewHelp = key -> (
      if prefixDirectory === null then error "can't run viewHelp from build tree";
      show new URL from { fix if key === () then applicationDirectory() | "index.html" else prefixDirectory | htmlFilename key }

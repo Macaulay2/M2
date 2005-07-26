@@ -973,7 +973,6 @@ export (
 	symbol sheafExt,
 	symbol sheafHom,
 	symbol shield,
-	symbol showHtml,
 	symbol showStructure,
 	symbol showTex,
 	symbol showUserStructure,

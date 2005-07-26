@@ -62,5 +62,5 @@ document {
  -- doc9.m2:1581:     Key => (homology,ZZ,ChainComplexMap),
  -- doc9.m2:1590:     Key => (cohomology,ZZ,ChainComplexMap),
  -- doc9.m2:1599:     Key => (homology,ChainComplex),
- -- doc_doc.m2:92:          PRE ///Key => "free resolutions, chain complexes, and homological algebra",///,
- -- overviewA.m2:295:     Key => "free resolutions, chain complexes, and homological algebra",
+ -- doc_doc.m2:92:          PRE ///Key => "chain complexes",///,
+ -- overviewA.m2:295:     Key => "chain complexes",

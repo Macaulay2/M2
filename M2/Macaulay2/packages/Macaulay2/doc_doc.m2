@@ -17,7 +17,7 @@ document {
 	    "There are two basic types of documentation. The first type documents 
 	    a function or a method, as in ", TO (resolution,Module), ". The second type of 
 	    documentation is for overviews or functions with methods, as in ", 
-	    TO "free resolutions, chain complexes, and homological algebra", 
+	    TO "chain complexes", 
 	    " or ", TO resolution, " respectively. The headings ", TO "Usage", ", ", TO2 {"Function ", "Function"}, 
 	    ", ", TO "Inputs", ", ", TO "Outputs", ", and ", TO "Consequences", ", are useful only for documentation of the first type. 
 	    Here is a template for a typical documentation node.",
@@ -87,9 +87,9 @@ document {
 	TO {[resolution,SyzygyLimit]}, ".",
 	PRE ///Key => [resolution,SyzygyLimit],///,
 	"Finally, if one is documenting an overview of a group of functions or a package, as in ", 
-	TO "free resolutions, chain complexes, and homological algebra", 
+	TO "chain complexes", 
 	" then one would set up a document key of the form:",
-    	PRE ///Key => "free resolutions, chain complexes, and homological algebra",///,
+    	PRE ///Key => "chain complexes",///,
 	Caveat => {"No two documentation nodes may have the same key or even a key which is a synonym for a key 
 	     which is already used. However, sometimes there is a need for several documentation nodes to have the same  
 		key. This happens when a command that needs to be documented is a synonym for another already documented command. In this case the 

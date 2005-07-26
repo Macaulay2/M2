@@ -65,7 +65,7 @@ A1 = ambS/ideal(m1)
 presentation A1
 describe A1
 toString A1
-A2 = ZZ [a, b, c, x, y, z, Option {MonomialOrder, {3, 3}}]/(3*x-4,20*z^2-243*y,y*z-3,27*y^2+x*z-8*z,x*z^2-8*z^2+81*y,x^2*z+9*y^2-4*z,x^3+y^3-x^2-x)
+A2 = ZZ [a, b, c, x, y, z, MonomialOrder => {3, 3}]/(3*x-4,20*z^2-243*y,y*z-3,27*y^2+x*z-8*z,x*z^2-8*z^2+81*y,x^2*z+9*y^2-4*z,x^3+y^3-x^2-x)
   -- fails
 use A1
 n = ideal(a*x+b*y+c*z)

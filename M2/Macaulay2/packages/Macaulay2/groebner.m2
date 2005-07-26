@@ -7,7 +7,6 @@ document {
      Subnodes => {
 	  TO "What is a Groebner basis?",
 	  TO "Computing Groebner bases",
-	  TO "Normal Forms",
 	  --TO "finding a Groebner basis",
 	  --TO "rings that are available for Groebner basis computations",
 	  --TO "fine control of a Groebner basis computation"
@@ -62,7 +61,7 @@ document {
 	  "gens gb I"
 	  },
 	SeeAlso => {"monomial orderings", leadTerm, "Computing Groebner bases",
-	"Normal Forms"}
+	"normal forms"}
 	}
 
 document {
@@ -219,7 +218,7 @@ document {
      }
 
 document {
-     Key => "Normal Forms",
+     Key => "normal forms",
      TEX ///Let R = k[x_1, ..., x_n] be a polynomial ring over a field k,
 	and let $I \subset R$ be an ideal. Let $\{g_1, ..., g_t\}$ be a Groebner
 	basis for $I$. For any $f \in R$, there is a unique `remainder' $r \in R$ such

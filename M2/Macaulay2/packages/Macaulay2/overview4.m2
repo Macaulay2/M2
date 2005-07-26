@@ -582,7 +582,7 @@ document {
 	  "M = cokernel vars R",
 	  "C = res M",
 	  },
-     "See ", TO "free resolutions, chain complexes, and homological algebra", " for further details about how to handle
+     "See ", TO "chain complexes", " for further details about how to handle
      and examine the result.",
      PARA,
      "A reference to the result is stored within the module ", TT "M", ", so that

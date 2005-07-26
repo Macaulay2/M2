@@ -81,7 +81,8 @@ processStrategy := (v) -> (
 	       if not strategyCodes#?s then error("unknown strategy encountered");
 	       strategyCodes#s)))     
 
-processAlgorithm := (a) -> (
+processAlgorithm := (a,f) -> (
+     if a === Homogeneous or a === Homogeneous2 and not isHomogeneous f then error "gb: homogeneous algorithm specified with inhomogeneous matrrix";
      if a === Homogeneous then 1
      else if a === Inhomogeneous then 2
      else if a === LinearAlgebra or a === Faugere then 3
@@ -133,7 +134,7 @@ newGB := (f,type,opts) -> (
 	  checkListOfIntegers {},			    -- later: gb degree list
 	  opts.HardDegreeLimit =!= computationOptionDefaults.HardDegreeLimit,
 	  if opts.HardDegreeLimit =!= computationOptionDefaults.HardDegreeLimit then opts.HardDegreeLimit else 0,
-	  processAlgorithm opts.Algorithm,
+	  processAlgorithm(opts.Algorithm,f),
 	  processStrategy opts.Strategy
 	  );
      f.cache#type = G;			  -- do this last, in case of an interrupt

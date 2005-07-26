@@ -277,13 +277,13 @@ document {
 	  TO "adjoints of maps",
 	  },
      PARA,
-     "For more operations in homological algebra, see ", TO "free resolutions, chain complexes, and homological algebra", ".  For additional common operations and a comprehensive list of all routines
+     "For more operations in homological algebra, see ", TO "chain complexes", ".  For additional common operations and a comprehensive list of all routines
      in Macaulay 2 which return or use modules, see ", TO "Module", "."
      }
 
 
 document { -- this node is used as an example in the node: Key
-     Key => "free resolutions, chain complexes, and homological algebra",
+     Key => "chain complexes",
      "For additional common operations and a comprehensive list of all routines
      in Macaulay 2 which return or use chain complexes or maps between chain complexes, see ", 
      TO "ChainComplex", " and ", TO "ChainComplexMap", ".",
@@ -293,9 +293,6 @@ document { -- this node is used as an example in the node: Key
 	  TO "making chain complexes by hand",
 	  TO "manipulating chain complexes",
 	  TO "maps between chain complexes",
-	  "homological algebra",
-	  TO "Hom module",
-	  TO "Tor and Ext",
 	  },
      }
 
@@ -411,14 +408,10 @@ document {
 
 document {
      Key => "commutative algebra",
-     SUBSECTION "integralClosure",
-     SUBSECTION "primaryDecomposition",
-     SUBSECTION "symmetricAlgebra"
      }
 
 document {
      Key => "algebraic geometry",
-     SUBSECTION "cotangentSheaf",
      }
 
 -- Local Variables:

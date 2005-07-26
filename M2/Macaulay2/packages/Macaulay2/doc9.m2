@@ -474,7 +474,7 @@ document {
 document {
      Key => ChainComplex,
      Headline => "the class of all chain complexes",
-     SeeAlso => "free resolutions, chain complexes, and homological algebra"
+     SeeAlso => "chain complexes"
      }
 
 document {

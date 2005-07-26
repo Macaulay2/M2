@@ -94,7 +94,7 @@ Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
 rawStartComputation Gcomp
 m = rawGBGetMatrix Gcomp -- Groebner basis
 assert(m === G)
-assert(rawGBMatrixRemainder(Gcomp,mat{{x-1}}) === mat{{1_R1}})
+assert(rawGBMatrixRemainder(Gcomp,mat{{x-1}}) === mat{{-1_R1}})
 -----------------------------
 needs "raw-util.m2"
 algorithm = 0
@@ -306,7 +306,7 @@ assert(7*m === mat{{7*a^2+a+1}})
 needs "raw-util.m2"
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
 m = mat{{a^2,b^2,a*c}}
-F = rawFreeModule m
+F = rawSchreyerSource m
 m = rawMatrix1(F,1,(b,a,0_R),0)
 G = rawGB(m,false,0,{},false,0,0,0)
 rawStartComputation G 
