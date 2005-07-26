@@ -64,7 +64,6 @@ pointsMatOrig(Matrix,Ring) := (M,R) -> (
      P := mutableMatrix map(K^s, K^(s+1), 0);
      PC := mutableMatrix map(K^(s+1), K^(s+1), 0);
      for i from 0 to s-1 do PC_(i,i) = 1_K;
-     setColumnChange(P, PC);
      H := new MutableHashTable; -- used in the column reduction step
      Lhash := new MutableHashTable; -- used to determine which monomials come next
      L := 1_R;
@@ -83,7 +82,7 @@ pointsMatOrig(Matrix,Ring) := (M,R) -> (
           addNewMonomial(P,thiscol,monom,Fs);
 	  rawMatrixColumnScale(raw PC, raw(0_K), thiscol, false);
 	  PC_(thiscol,thiscol) = 1_K;
-          isLT := reduceColumn(P,H,thiscol);
+          isLT := reduceColumn(P,PC,H,thiscol);
 	  if isLT then (
 	       -- we add to G, inG
 	       inG = inG + ideal(monom);
@@ -144,7 +143,7 @@ pointsMat(Matrix,Ring) := (M,R) -> (
 	  L = L - monom;
 	  -- Now fix up the matrix P
           addNewMonomial(P,thiscol,monom,Fs);
-          isLT := reduceColumn(P,H,thiscol);
+          isLT := reduceColumn(P,null,H,thiscol);
 	  if isLT then (
 	       -- we add to G, inG
 	       inG = inG + ideal(monom);
@@ -187,7 +186,6 @@ points(Matrix,Ring) := (M,R) -> (
      P := mutableMatrix map(K^s, K^(s+1), 0);
      PC := mutableMatrix map(K^(s+1), K^(s+1), 0);
      for i from 0 to s-1 do PC_(i,i) = 1_K;
-     setColumnChange(P, PC);
      H := new MutableHashTable; -- used in the column reduction step
      Lhash := new MutableHashTable; -- used to determine which monomials come next
      L := 1_R;
@@ -207,7 +205,7 @@ points(Matrix,Ring) := (M,R) -> (
           addNewMonomial(P,thiscol,monom,Fs);
 	  rawMatrixColumnScale(raw PC, raw(0_K), thiscol, false);
 	  PC_(thiscol,thiscol) = 1_K;
-          isLT := reduceColumn(P,H,thiscol);
+          isLT := reduceColumn(P,PC,H,thiscol);
 	  if isLT then (
 	       -- we add to G, inG
 	       inG = inG + ideal(monom);
@@ -231,11 +229,13 @@ points(Matrix,Ring) := (M,R) -> (
      (Q,inG,G)
      )
 
-reduceColumn = (M,H,c) -> (
+reduceColumn = (M,Mchange,H,c) -> (
      -- M is a mutable matrix
+     -- Mchange is either null, or a matrix with same number of columns as M
      -- H is a hash table: H#r == c if column c has pivot for row r 
      -- returns true if the element reduces to 0
      M = raw M;
+     if Mchange =!= null then Mchange = raw Mchange;
      r := rawNumberOfRows M - 1;
      while r >= 0 do (
 	  a := M_(r,c);
@@ -244,12 +244,14 @@ reduceColumn = (M,H,c) -> (
 	       if not H#?r then (
 		    b := 1//a;
 		    rawMatrixColumnScale(M, b, c, false);
+		    if Mchange =!= null then rawMatrixColumnScale(Mchange, b, c, false);		    
 		    H#r = c;
 		    return false;
 		    )
 	       else (
 	       	    pivotc := H#r;
 	       	    rawMatrixColumnChange(M, c, -a, pivotc, false);
+		    if Mchange =!= null then rawMatrixColumnChange(Mchange, c, -a, pivotc, false);
 	       ));
      	  r = r-1;
 	  );
@@ -322,21 +324,21 @@ transpose oo
 
 P = mutableMatrix P 
 H = new MutableHashTable
-reduceColumn(P,H,0)
-reduceColumn(P,H,1)
+reduceColumn(P,null,H,0)
+reduceColumn(P,null,H,1)
 P
-reduceColumn(P,H,2)
-reduceColumn(P,H,3)
-reduceColumn(P,H,4)
-reduceColumn(P,H,5)
-reduceColumn(P,H,6)
-reduceColumn(P,H,7)
-reduceColumn(P,H,8)
-reduceColumn(P,H,9)
+reduceColumn(P,null,H,2)
+reduceColumn(P,null,H,3)
+reduceColumn(P,null,H,4)
+reduceColumn(P,null,H,5)
+reduceColumn(P,null,H,6)
+reduceColumn(P,null,H,7)
+reduceColumn(P,null,H,8)
+reduceColumn(P,null,H,9)
 P
-reduceColumn(P,H,10)
-reduceColumn(P,H,11)
-reduceColumn(P,H,12)
+reduceColumn(P,null,H,10)
+reduceColumn(P,null,H,11)
+reduceColumn(P,null,H,12)
 P
 
 M = matrix{{1,2,3,4}}
