@@ -77,6 +77,7 @@ public:
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;
 
   virtual ring_elem preferred_associate(ring_elem f) const;
+  virtual bool lower_associate_divisor(ring_elem &f, ring_elem g) const;
 
   int compare(const ring_elem a, const ring_elem b) const;
   int is_positive(const ring_elem a) const;

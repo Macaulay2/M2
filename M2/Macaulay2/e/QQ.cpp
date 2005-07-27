@@ -213,6 +213,23 @@ ring_elem QQ::preferred_associate(ring_elem f) const
   return QQ::from_int(-1);
 }
 
+bool QQ::lower_associate_divisor(ring_elem &f, const ring_elem g) const
+{
+  M2_Rational a = MPQ_VAL(f);
+  M2_Rational b = MPQ_VAL(g);
+  int sa = mpq_sgn(a);
+  int sb = mpq_sgn(b);
+  int s = (sa == 0 ? sb : sa);
+  M2_Rational result = QQ::new_elem();
+
+  mpz_gcd(mpq_numref(result), mpq_numref(a), mpq_numref(b));
+  mpz_lcm(mpq_denref(result), mpq_denref(a), mpq_denref(b));
+  if (s != mpq_sgn(result))
+    mpq_neg(result,result);
+  f = MPQ_RINGELEM(result);
+  return true; // the answer could become lower, if a newer g has a larger denom
+}
+
 void QQ::internal_negate_to(ring_elem &f) const
 {
   mpq_sub(MPQ_VAL(f), _zero_elem, MPQ_VAL(f));

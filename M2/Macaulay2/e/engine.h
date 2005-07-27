@@ -563,6 +563,16 @@ extern "C" {
   M2_arrayint IM2_RingElement_indices(const RingElement *f); /* drg: connected rawIndices */
   /* The list of indices of variables which occur in f is returned. */
 
+  const RingElementOrNull * rawAssociateDivisor(const RingElement *f);
+  /* A unit 'a' in the base coefficient ring, such that a*f is the preferred associate of f.
+     For example, if f = -9x+6 in QQ[x], then -3 is returned.
+     If the (ultimate) base ring of f is QQ, then a*f has no denominators.
+     If the base ring of f is frac(K[x]), K=ZZ,QQ, or another field, x is a set of vars
+     then a*f is in ZZ[x], or K[x].
+     If the base coefficient ring is the fraction ring of a quotient poly ring, then
+     an error is flagged, and NULL is returned.
+   */
+
   /**************************************************/
   /**** fraction field ring element routines ********/
   /**************************************************/

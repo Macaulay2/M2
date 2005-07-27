@@ -1067,6 +1067,15 @@ export rawCoefficient(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawCoefficient",rawCoefficient);
 
+export rawAssociateDivisor(e:Expr):Expr := (
+     when e
+     is x:RawRingElement do toExpr( 
+	  Ccode( RawRingElementOrNull, 
+	       "(engine_RawRingElementOrNull)rawAssociateDivisor(",
+	       "(RingElement*)",x, ")" ))
+     else WrongArg("a raw ring element"));
+setupfun("rawAssociateDivisor",rawAssociateDivisor);
+
 export rawNumerator(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( 
