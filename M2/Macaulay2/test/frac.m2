@@ -41,6 +41,31 @@ g = ((x^3*(x-1))/(2*(x^5-1)))
 assert( f === g )
 assert( numerator f === numerator g )
 
+debug Macaulay2Core
+h = rawGCD(raw numerator f, raw denominator f)
+(raw numerator f)//h
+(raw denominator f)//h
+use R
+f1 = x^3*(x-1)*(1/2)
+g1 = x^5-1
+gcd(f1,g1)
+assert(rawGCD(raw f1,raw g1) =!= raw(1/8*x-1/8))
+assert(rawGCD(raw f1,raw g1) === raw(x-1))
+-----------------------------------------------------------------------------
+R = ZZ[x]
+F = frac R
+f = ((x^3*(x-1)*(1/2))/((x^5-1)))
+g = ((x^3*(x-1))/(2*(x^5-1)))
+assert( f === g )
+assert( numerator f === numerator g )
+-----------------------------------------------------------------------------
+R = QQ[x,y]/(y)
+F = frac R
+f = ((x^3*(x-1)*(1/2))/((x^5-1)))
+g = ((x^3*(x-1))/(2*(x^5-1)))
+assert( f === g )
+assert( numerator f === numerator g )
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test frac.out"
 -- End:
