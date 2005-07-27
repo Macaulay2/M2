@@ -198,6 +198,22 @@ ring_elem RingZZ::preferred_associate(ring_elem f) const
   return from_int(-1);
 }
 
+bool RingZZ::lower_associate_divisor(ring_elem &f, const ring_elem g) const
+{
+  // if f is 0, do f=sign(g), else f=sign(f)
+  // return whether f is zero
+  M2_Integer result = RingZZ::new_elem();
+  mpz_ptr a = MPZ_VAL(f);
+  mpz_ptr b = MPZ_VAL(g);
+  int sa = mpz_sgn(a);
+  int sb = mpz_sgn(b);
+  int s = (sa == 0 ? sb : sa);
+
+  mpz_set_si(result,s);
+  f = MPZ_RINGELEM(result);
+  return !RingZZ::is_zero(f);
+}
+
 void RingZZ::internal_negate_to(ring_elem &f) const
 {
   mpz_sub(MPZ_VAL(f), _zero_elem, MPZ_VAL(f));

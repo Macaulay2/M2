@@ -47,12 +47,12 @@ assert( numerator f === numerator g )
 
 debug Macaulay2Core
 h = rawGCD(raw numerator f, raw denominator f)
-(raw numerator f)//h
-(raw denominator f)//h
-use R
+-----------------------------------------------------------------------------
+R = QQ[x]
 f1 = x^3*(x-1)*(1/2)
 g1 = x^5-1
 gcd(f1,g1)
+rawGCD(raw f1, raw g1)
 assert(rawGCD(raw f1,raw g1) =!= raw(1/8*x-1/8))
 assert(rawGCD(raw f1,raw g1) === raw(x-1))
 -----------------------------------------------------------------------------

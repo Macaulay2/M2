@@ -71,6 +71,15 @@ public:
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;
 
   virtual ring_elem preferred_associate(ring_elem f) const;
+  ring_elem preferred_associate_divisor(ring_elem ff) const;
+    // ff is an element of 'this'.
+    // result is in the coefficient ring
+    // If the coefficient ring of this is
+    //   ZZ -- gcd of all, same sign as lead coeff
+    //   QQ -- gcd(numerators)/lcm(denominators)
+    //   basic field -- lead coeff
+    //   frac(poly ring) -- gcd(numerators)/lcm(denominators)
+    //   frac(quotient of a poly ring) -- error
 
   virtual bool is_unit(const ring_elem f) const;
   virtual bool is_zero(const ring_elem f) const;

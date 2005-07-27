@@ -320,6 +320,27 @@ ring_elem PolyRing::preferred_associate(ring_elem ff) const
   return t;
 }
 
+ring_elem PolyRing::preferred_associate_divisor(ring_elem ff) const
+  // ff is an element of 'this'.
+  // result is in the coefficient ring
+  // If the coefficient ring of this is
+  //   ZZ -- gcd of all, same sign as lead coeff
+  //   QQ -- gcd(numerators)/lcm(denominators)
+  //   basic field -- lead coeff
+  //   frac(poly ring) -- gcd(numerators)/lcm(denominators)
+  //   frac(quotient of a poly ring) -- error
+{
+  ring_elem result = getCoefficients()->zero();
+  assert(getCoefficients()->has_associate_divisors());
+  for (Nterm *f = ff; f!=NULL; f=f->next)
+    {
+      if (!getCoefficients()->lower_associate_divisor(result, f->coeff))
+	// ie it cannot change, no matter what next coeff is
+	return result;
+    }
+  return result;
+}
+
 bool PolyRing::is_unit(const ring_elem ff) const
 {
   Nterm *f = ff;

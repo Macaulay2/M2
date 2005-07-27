@@ -205,6 +205,17 @@ ring_elem Ring::preferred_associate(ring_elem f) const
   return invert(f);
 }
 
+bool Ring::lower_associate_divisor(ring_elem &f, const ring_elem g) const
+  // Implementation for a basic ring
+{
+  if (is_zero(f))
+    {
+      f = g;
+      return !is_zero(f);
+    }
+  return true;
+}
+
 void Ring::monomial_divisor(const ring_elem a, int *exp) const
 {
   // Do nothing

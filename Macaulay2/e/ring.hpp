@@ -119,6 +119,10 @@ public:
   // What the ultimate coefficient type is.  ZZ, QQ, finite fields return these 
   // three values.  Fraction fields return their ultimate value, as do poly rings.
 
+  virtual bool has_associate_divisors() const { return true; }
+  // There are only a few rings which do not have such divisors: frac rings
+  //   over quotients of poly rings.
+
   ///////////////////////////////////
   // Casting up the ring hierarchy //
   ///////////////////////////////////
@@ -187,6 +191,13 @@ public:
   virtual ring_elem var(int v) const;
 
   virtual ring_elem preferred_associate(ring_elem f) const;
+  // Returns an invertible element c of the same ring such that c*f is the
+  // preferred associate of the element f.
+  // WARNING: The default implementation is for a field.
+
+  virtual bool lower_associate_divisor(ring_elem &f, ring_elem g) const;
+  // Replaces f with the unit c such that (fx+g)//c is the preferred associate
+  //   of fx+g, in the ring A[x], where A is 'this'.
   // Returns an invertible element c of the same ring such that c*f is the
   // preferred associate of the element f.
   // WARNING: The default implementation is for a field.

@@ -714,6 +714,22 @@ M2_arrayint IM2_RingElement_indices(const RingElement *f)
   return R->support(f->get_value());
 }
 
+const RingElementOrNull * rawAssociateDivisor(const RingElement *f)
+{
+  const PolyRing *P = f->get_ring()->cast_to_PolyRing();
+  if (P == 0)
+    {
+      ERROR("expected an element of a polynomial ring");
+      return 0;
+    }
+  if (!P->getCoefficients()->has_associate_divisors())
+    {
+      ERROR("cannot find preferred associates for this ring");
+      return 0;
+    }
+  return RingElement::make_raw(P->getCoefficients(), P->preferred_associate_divisor(f->get_value()));
+}
+
 const RingElementOrNull *IM2_RingElement_numerator(const RingElement *a)
 {
   return a->numerator();
