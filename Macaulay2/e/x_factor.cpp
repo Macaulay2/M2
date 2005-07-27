@@ -8,7 +8,7 @@
 
 #ifdef FACTORY
 #define Matrix MaTrIx
-#define NOSTREAMIO
+/* #define NOSTREAMIO */
 #include <factor.h>		// from Messollen's libfac
 #undef Matrix
 //#include <templates/ftmpl_list.cc>
@@ -293,8 +293,12 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
     enter_factory a;
     CanonicalForm p = convert(*f);
     CanonicalForm q = convert(*g);
-    //     cerr << "p = " << p << endl
-    //          << "q = " << q << endl;
+         std::cerr << "p = " << p << endl
+              << "q = " << q << endl;
+    p = p / icontent(p);
+    q = q / icontent(q);
+         std::cerr << "p = " << p << endl
+              << "q = " << q << endl;
     CanonicalForm h = gcd(p,q);
     ret = convert(P,h);
   }
@@ -324,7 +328,7 @@ const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const R
     }
   enter_factory here;
   CanonicalForm p = convert(*f), q = convert(*g), a, b;
-  //     cerr << "p = " << p << endl
+  //     std::cerr << "p = " << p << endl
   //          << "q = " << q << endl;
   CanonicalForm h = extgcd(p,q,a,b);
   ret = convert(P,h);
@@ -356,7 +360,7 @@ const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElem
   enter_factory a;
   CanonicalForm p = convert(*f);
   CanonicalForm q = convert(*g);
-  //     cerr << "p = " << p << endl
+  //     std::cerr << "p = " << p << endl
   //          << "q = " << q << endl;
   CanonicalForm h = Prem(p,q);
   const RingElement *r = convert(P,h);

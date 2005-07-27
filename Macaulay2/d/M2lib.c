@@ -1,6 +1,7 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
 #include <factoryconf.h>
+extern const char factoryVersion[]; /* extracted from factory's factory.h */
 extern int libfac_interruptflag; /* extracted from libfac's factor.h */
 #include <NTL/version.h>
 /* defining GDBM_STATIC makes the cygwin version work, and is irrelevant for the other versions */
@@ -391,7 +392,11 @@ char **argv;
      actors5_NODENAME = tostring(NODENAME);
      actors5_REL = tostring(REL);
 #ifdef FACTORY
-     actors5_FACTORYVERSION = tostring(FACTORYVERSION);
+     {
+	  char const * p = rindex(factoryVersion,' ');
+	  p = p ? p+1 : factoryVersion;
+	  actors5_FACTORYVERSION = tostring(p);
+     }
      actors5_LIBFACVERSION = tostring(get_libfac_version());
 #else
      actors5_FACTORYVERSION = tostring("'factory' not installed");
