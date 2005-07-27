@@ -250,13 +250,14 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    c = 1/d;
 		    f = d * f;
 		    );
-	       (facs,exps) := rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first now
-     	       assert(degree facs#0 === {0});
-	       assert(exps#0 == 1);
+	       (facs,exps) := rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
      	       facs = apply(facs, p -> new RM from p);
-     	       c = c * facs#0;
-	       facs = drop(facs,1);
-	       exps = drop(exps,1);
+	       if degree facs#0 === {0} then (
+	       	    assert(exps#0 == 1);
+		    c = c * facs#0;
+		    facs = drop(facs,1);
+		    exps = drop(exps,1);
+		    );
 	       if c != 1 then (
 		    facs = append(facs,c);
 		    exps = append(exps,1);
