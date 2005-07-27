@@ -192,8 +192,11 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       skews = (
 		    if skews === false then {}
 		    else if skews === true then toList (0 .. num - 1)
-		    else if class skews === List and all(skews, i -> class i === ZZ)
-		    then indices(M,skews)
+		    else if class skews === List and all(skews, i -> class i === ZZ or class i === Symbol or instance(i,RingElement))
+		    then (
+			 skews = skews / (i -> if instance(i,RingElement) then baseName i else i);
+			 indices(M,skews)
+			 )
 		    else error "expected SkewCommutative option to be true, false, or a list of variables or integers"
 		    );
 	       if R.?skews then skews = join(skews, apply(R.skews, i -> i + num));
