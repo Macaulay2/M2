@@ -34,10 +34,14 @@ assert(numerator (f/g) == x)
 assert(numerator((-f)/(-g)) == numerator(f/g))
 
 -----------------------------------------------------------------------------
+debug Macaulay2Core
 R = QQ[x]
-F = frac R
-f = ((x^3*(x-1)*(1/2))/((x^5-1)))
-g = ((x^3*(x-1))/(2*(x^5-1)))
+b = x^3*(x-1)*(1/2)
+c = x^5-1
+f = b/c
+g = (2*b)/(2*c)
+gcd(b,c)
+rawGCD(raw b, raw c)
 assert( f === g )
 assert( numerator f === numerator g )
 
