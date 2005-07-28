@@ -1038,18 +1038,10 @@ pager = x -> (
      then "!" | (if getenv "PAGER" == "" then "more" else getenv "PAGER") << x << close 
      else << x << endl ;)
 help = method(SingleArgumentDispatch => true)
-help List := v -> (
-     printWidth = printWidth - 2;
-     r := boxList apply(v, x -> net documentation x);
-     printWidth = printWidth + 2;
-     << endl;
-     pager r)
+help List := v -> Hypertext between(HR{},documentation \ v)
 help Thing := s -> (
      if s === () then s = "initial help";
-     r := documentation s;
-     if r === null then r = Hypertext { "No documentation found for '", formatDocumentTag s, "'"};
-     << endl;
-     pager net r)
+     documentation s)
 help = Command help
 
 infoHelp = key -> (

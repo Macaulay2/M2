@@ -324,7 +324,7 @@ addHeadlines := x -> apply(x, i -> if instance(i,TO) then SEQ{ i, commentize hea
 
 addHeadlines1 := x -> apply(x, i -> if instance(i,TO) then SEQ{ "help ", i, commentize headline i#0 } else i)
 
-info HR := net HR := x -> "-----------------------------------------------------------------------------"
+info HR := net HR := x -> concatenate(printWidth:"-")
 
 info Nothing := net
 
