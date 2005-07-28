@@ -343,11 +343,12 @@ document {
 document {
      Key => BasicList,
      Headline => "the class of all basic lists",
-     "A basic list is a sequence of expressions indexed by integers
-     ", TT "0", ", ", TT "1", ", ..., ", TT "N-1", ", where ", TT "N", " is the length of the list.",
+     "A basic list is a sequence of expressions indexed by a seequence of consecutive integers of the form
+     ", TT "0", ", ", TT "1", ", ..., ", TT "N-1", ".  The number ", TT "N", " is called the length of the list.",
      PARA,
      "There are various types of basic lists, depending on the application, and they are displayed in different ways.
-     The types first encountered are those of type ", TO "VisibleList", ", but new types are easy to introduce.",
+     The types first encountered are those of type ", TO "VisibleList", ", but new types are easy to introduce.
+     In the following example we introduce a new type of basic list called ", TT "L", ".",
      EXAMPLE {
 	  "L = new Type of BasicList",
 	  "x = new L from {a,b,c,d}",
