@@ -1,8 +1,3 @@
-loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : R = QQ[a..h]
 
@@ -40,7 +35,7 @@ o6 = | a2c+a2+ab+3d |
              1       1
 o6 : Matrix R  <--- R
 
-i7 : result = coefficients({0}, m)
+i7 : result = coefficients(m, Variables => {a})
 
 o7 = (| a2 a 1 |, {2} | c+1 |)
                   {1} | b   |

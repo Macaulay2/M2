@@ -1,13 +1,8 @@
-loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : subsets(set {a,b,c},2)
 
-o1 = {Set {b, c}, Set {b, a}, Set {c, a}}
+o1 = Set {Set {a, c}, Set {b, c}, Set {a, b}}
 
-o1 : List
+o1 : Set
 
 i2 : 

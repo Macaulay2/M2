@@ -1,7 +1,3 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : F = GF(81,Variable=>a)
 
@@ -198,7 +194,7 @@ i27 : T
 
 o27 = T
 
-o27 : A
+o27 : k
 
 i28 : promote(T,k)
 
@@ -210,14 +206,12 @@ i29 : lift(k_0, ring T)
 
 o29 = T
 
-o29 : A
+o29 : k
 
 i30 : lift(k_0, ambient ring T)
 
 o30 = T
 
-      ZZ
-o30 : -- [T]
-       2
+o30 : A
 
 i31 : 

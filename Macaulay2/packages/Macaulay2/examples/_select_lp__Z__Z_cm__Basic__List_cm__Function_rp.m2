@@ -1,1 +1,1 @@
-select(2,[1,2,3,4,5], odd)
+select(4,0..10,even)

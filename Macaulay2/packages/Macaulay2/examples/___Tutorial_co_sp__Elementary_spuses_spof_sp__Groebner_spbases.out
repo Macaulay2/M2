@@ -1,7 +1,3 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : KK = ZZ/31991
 
@@ -345,23 +341,23 @@ i42 : Tr^6 // I
 
 o42 = {3} | a3+6a2e+3bde+15ae2+22e3+3bfg+3cdh+6efh+6a2i+30aei+60e2i+3cgi+6fhi+15
       {3} | 18de2+18efg+18dei+18fgi                                             
-      {3} | 18aeg+18deh+54fgh+63agi+36egi+18dhi+135gi2                          
-      {3} | -27abe-63be2+27ceh-36bfh-72abi-162bei+90chi                         
-      {3} | -2a3+15a2e+21bde+6ae2+e3+9acg-6bfg-6cdh+36afh+24efh+60a2i+72bdi+30ae
-      {3} | 27abg+63beg+36bdh-36aeh+9e2h-9cgh+27fh2+171bgi-99ahi+18ehi+189hi2   
+      {3} | 18aeg+18deh+90fgh+63agi+36egi+18dhi+135gi2                          
+      {3} | -27abe-63be2+63ceh-72bfh-72abi-162bei+54chi                         
+      {3} | -2a3+15a2e+21bde+6ae2+e3+9acg-6bfg-42cdh+72afh+24efh+60a2i+72bdi+30a
+      {3} | 27abg+63beg+72bdh-72aeh+9e2h-45cgh+27fh2+171bgi-63ahi+54ehi+153hi2  
       {3} | -18bef-171bfi                                                       
       {3} | -9acd-18cde+18aef+18e2f-45cfg-27f2h-126cdi+171afi-72efi-54fi2       
-      {3} | -2a3-27abd-30a2e-78bde-30ae2-53e3-18ceg+3bfg+3cdh-54afh-75efh-75a2i-
+      {3} | -2a3-27abd-30a2e-78bde-30ae2-53e3-18ceg+3bfg+39cdh-90afh-75efh-75a2i
       --------------------------------------------------------------------------
-      ai2+60ei2+22i3                                  |
-                                                      |
-                                                      |
-                                                      |
-      i+6e2i+84cgi+195fhi-30ai2-75ei2-17i3            |
-                                                      |
-                                                      |
-                                                      |
-      90bdi-60aei-75e2i-69cgi-210fhi-84ai2-84ei2-89i3 |
+      ai2+60ei2+22i3                                   |
+                                                       |
+                                                       |
+                                                       |
+      ei+6e2i+84cgi+159fhi-30ai2-75ei2-17i3            |
+                                                       |
+                                                       |
+                                                       |
+      -90bdi-60aei-75e2i-69cgi-174fhi-84ai2-84ei2-89i3 |
 
               9       1
 o42 : Matrix R  <--- R

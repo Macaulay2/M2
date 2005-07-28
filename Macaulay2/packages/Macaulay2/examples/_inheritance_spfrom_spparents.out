@@ -1,8 +1,3 @@
-loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : X = new Type of BasicList
 
@@ -20,7 +15,7 @@ o2 : Type
 
 i3 : code(net,BasicList)
 
-o3 = -- ../../../Macaulay2/m2/nets.m2:167-170
+o3 = -- ../../../Macaulay2/m2/nets.m2:168-171
      net BasicList := x -> horizontalJoin deepSplice (
            net class x, 
            "{",

@@ -3,11 +3,11 @@ X = ideal(a^3+b^3+c^3+d^3)
 KK = coefficientRing R 
 S = KK [s,t,p_0..p_3,q_0..q_3]
 F = map(S,R,
-  s*matrix{{p_0..p_3}} +
-  t*matrix{{q_0..q_3}}
-    )
+       s*matrix{{p_0..p_3}} +
+       t*matrix{{q_0..q_3}}
+       )
 FX = F X
-cFX = (coefficients({0,1},gens FX))_1
+cFX = last coefficients(gens FX, Variables => {s,t})
 S1 = KK[p_0..p_3,q_0..q_3]
 cFX = substitute(cFX, S1)
 S1bar = S1/ideal cFX
@@ -79,7 +79,7 @@ Fano2(ZZ,Ideal,Ring) := (k,X,GR) -> (
   -- The following line produces the matrix of
   -- coefficients of the monomials in the 
   -- variables labelled 0..k:
-  cFX := (coefficients (toList(0..k),gens FX))_1;
+  cFX := last coefficients (gens FX, Variables => toList apply(0..k, i -> S_i));
   -- We can get rid of the variables t_i
   -- to ease the computation:
   cFX = substitute(cFX, S2);

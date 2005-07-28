@@ -19,19 +19,14 @@ icurves3 = intersect(i, ipoint3^2)
 Icurves3 = gens icurves3
 F3 = Icurves3 * random(source Icurves3, R^{-6})
 betti F3
-can1 = basis(3, intersect(
-                ipoint1,ipoint2,ipoint3)
-       )
+can1 = basis(3, intersect(ipoint1,ipoint2,ipoint3))
 target can1
 source can1
 can1 = can1 ** R
 can1 = super can1
 can2 = basis(3, ipoint1^2)
 can2 = super (can2 ** R)
-can3 = basis(3, intersect(
-                   ideal(a-b) + ipoint1^2,
-                   ipoint3)
-      )
+can3 = basis(3, intersect(ideal(a-b) + ipoint1^2, ipoint3))
 can3 = super (can3 ** R)
 betti  can1
 betti  can2

@@ -1,27 +1,33 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
-i1 : R = ZZ/101[x,y,z]
+i1 : R = ZZ[x,y,z];
 
-o1 = R
+i2 : M = matrix{{x,z,x*y},{x^2+z,y*z,1}}
 
-o1 : PolynomialRing
+o2 = | x    z  xy |
+     | x2+z yz 1  |
 
-i2 : p = matrix {{x^2,y^2},{x*y*z, x^3-y^3}}
-
-o2 = | x2  y2    |
-     | xyz x3-y3 |
-
-             2       2
+             2       3
 o2 : Matrix R  <--- R
 
-i3 : entries p
+i3 : entries M
 
-        2   2            3    3
-o3 = {{x , y }, {x*y*z, x  - y }}
+                     2
+o3 = {{x, z, x*y}, {x  + z, y*z, 1}}
 
 o3 : List
 
-i4 : 
+i4 : N = mutableMatrix{{x,z,x*y},{x^2+z,y*z,1}}
+
+o4 = | x    z  xy |
+     | x2+z yz 1  |
+
+o4 : MutableMatrix
+
+i5 : entries N
+
+                     2
+o5 = {{x, z, x*y}, {x  + z, y*z, 1}}
+
+o5 : List
+
+i6 : 

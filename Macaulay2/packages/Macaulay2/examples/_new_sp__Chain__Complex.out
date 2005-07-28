@@ -1,8 +1,3 @@
-loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : C = new ChainComplex;
 
@@ -13,9 +8,9 @@ i3 : C#2 = ZZ^1;
 i4 : C#3 = ZZ^2;
 
 i5 : C.dd#3 = matrix {{3,-11}};
+
               1        2
 o5 : Matrix ZZ  <--- ZZ
-
 
 i6 : C
 

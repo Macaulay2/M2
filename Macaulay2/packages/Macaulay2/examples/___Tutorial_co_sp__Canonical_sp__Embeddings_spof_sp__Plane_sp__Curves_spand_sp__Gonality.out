@@ -1,7 +1,3 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : R = ZZ/31991[a,b,c] -- the coordinate ring of P^2
 
@@ -142,9 +138,7 @@ o17 = total: 1 1
           4: . .
           5: . 1
 
-i18 : can1 = basis(3, intersect(
-                      ipoint1,ipoint2,ipoint3)
-             )
+i18 : can1 = basis(3, intersect(ipoint1,ipoint2,ipoint3))
 
 o18 = {2} | b c 0 0 0 0 0 |
       {2} | 0 0 a c 0 0 0 |
@@ -196,10 +190,7 @@ o24 = | a3 a2b a2c ab2 abc b3 b2c |
               1       7
 o24 : Matrix R  <--- R
 
-i25 : can3 = basis(3, intersect(
-                         ideal(a-b) + ipoint1^2,
-                         ipoint3)
-            )
+i25 : can3 = basis(3, intersect(ideal(a-b) + ipoint1^2, ipoint3))
 
 o25 = {2} | b c 0 0 0 0 0 |
       {2} | 0 0 a c 0 0 0 |

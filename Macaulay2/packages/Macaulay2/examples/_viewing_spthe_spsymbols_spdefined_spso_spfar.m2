@@ -1,4 +1,4 @@
-ff = 20:4; hh = true; kk
+ff = 20:4; h = true; kk
 listUserSymbols
 clearOutput
 listUserSymbols

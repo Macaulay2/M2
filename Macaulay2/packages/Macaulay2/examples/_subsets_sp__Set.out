@@ -1,11 +1,7 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : subsets set {a,b,c}
 
-o1 = Set {{b, c, a}, {b}, {c}, {b, a}, {b, c}, {c, a}, {}, {a}}
+o1 = Set {Set {a}, Set {a, c}, Set {b, c}, Set {b}, Set {a, b, c}, Set {a, b}, Set {}, Set {c}}
 
 o1 : Set
 

@@ -1,11 +1,7 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : code Thing.Print
 
-o1 = -- ../../../Macaulay2/m2/setup.m2:75-83
+o1 = -- ../../../Macaulay2/m2/setup.m2:77-85
      Thing.Print = x -> (
           z := robustNet x;
           wrapper := lookup(symbol Wrap,class x);

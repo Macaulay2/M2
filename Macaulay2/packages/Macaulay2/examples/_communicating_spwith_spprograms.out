@@ -1,17 +1,13 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : run "uname -a"
-Linux u123.math.uiuc.edu 2.4.22-1.2199.nptl #1 Wed Aug 4 12:21:48 EDT 2004 i686 i686 i386 GNU/Linux
+Linux rhodium 2.6.11 #3 SMP Tue Jun 28 07:39:29 CDT 2005 i686 unknown unknown GNU/Linux
 
 o1 = 0
 
 i2 : peek get "!uname -a"
 
-o2 = "Linux u123.math.uiuc.edu 2.4.22-1.2199.nptl #1 Wed Aug 4 12:21:48 EDT 2004
-     i686 i686 i386 GNU/Linux\n"
+o2 = "Linux rhodium 2.6.11 #3 SMP Tue Jun 28 07:39:29 CDT 2005 i686 unknown
+     unknown GNU/Linux\n"
 
 i3 : f = openInOut "!egrep '^in'"
 
@@ -53,7 +49,6 @@ o6 = interpreterDepth
      indeterminate
      in
      independentSets
-
 
 i7 : f = openIn "!sleep 5; echo -n the answer is 4"
 

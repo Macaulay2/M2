@@ -1,3 +1,5 @@
-R = ZZ/101[x,y,z]
-p = matrix {{x^2,y^2},{x*y*z, x^3-y^3}}
-entries p
+R = ZZ[x,y,z];
+M = matrix{{x,z,x*y},{x^2+z,y*z,1}}
+entries M
+N = mutableMatrix{{x,z,x*y},{x^2+z,y*z,1}}
+entries N

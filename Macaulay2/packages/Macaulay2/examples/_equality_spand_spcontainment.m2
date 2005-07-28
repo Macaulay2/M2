@@ -9,7 +9,7 @@ a^4 % J == 0
 isSubset(I,J)
 isSubset(I,I+J)
 isSubset(I+J,I)
-I = ideal (a^2-1,a^3+2);
+I = ideal (a^2-1,a^3+3);
 I == 1
 S = R/I
 S == 0

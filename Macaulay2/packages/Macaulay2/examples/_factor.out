@@ -1,7 +1,3 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : y = (2^15-4)/(2^15-5)
 
@@ -47,9 +43,7 @@ o6 : Product
 
 i7 : F = frac(ZZ/101[t])
 
-           ZZ
-o7 = frac(--- [t])
-          101
+o7 = F
 
 o7 : FractionField
 
@@ -65,7 +59,7 @@ o8 : Divide
 
 i9 : code(factor,F)
 
-o9 = -- ../../../Macaulay2/m2/enginering.m2:84
+o9 = -- ../../../Macaulay2/m2/enginering.m2:78
                factor F := options -> f -> factor numerator f / factor denominator f;
 
 i10 : 

@@ -1,13 +1,9 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : R = ZZ[w,x,y,z];
 
 i2 : I = ideal(z*w-2*x*y, 3*w^3-z^3,w*x^2-4*y*z^2,x);
-o2 : Ideal of R
 
+o2 : Ideal of R
 
 i3 : I_0
 
@@ -56,8 +52,8 @@ o9 : Ideal of R
 i10 : R = QQ[a..d];
 
 i11 : I = monomialCurveIdeal(R,{1,2,3});
-o11 : Ideal of R
 
+o11 : Ideal of R
 
 i12 : toString I
 

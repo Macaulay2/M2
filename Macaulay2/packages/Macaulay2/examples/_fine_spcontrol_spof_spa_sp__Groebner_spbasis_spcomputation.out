@@ -1,7 +1,3 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : R = ZZ/32003[a..e];
 
@@ -13,9 +9,9 @@ o2 = ideal (- 2136a  + 9349a b + 13529a*b  + 1414b  + 8735a c - 15802a*b*c - 332
 o2 : Ideal of R
 
 i3 : gens gb(I,PairLimit=>7);
+
              1       11
 o3 : Matrix R  <--- R
-
 
 i4 : g = gb(I,StopBeforeComputation => true);
 

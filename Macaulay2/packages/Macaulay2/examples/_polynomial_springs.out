@@ -1,7 +1,3 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : R = QQ[x,y,z];
 
@@ -167,22 +163,4 @@ o32 = false
 
 o32 : Boolean
 
-i33 : R = QQ[a..d];
-
-i34 : a^127
-
-       127
-o34 = a
-
-o34 : R
-
-i35 : S = QQ[a..d,MonomialSize=>16];
-
-i36 : a^32767
-
-       32767
-o36 = a
-
-o36 : S
-
-i37 : 
+i33 : 

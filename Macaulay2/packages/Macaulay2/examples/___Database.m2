@@ -5,4 +5,4 @@ x#"first"
 x#"second" = "ho there"
 scanKeys(x,print)
 close x
-unlink filename
+unlinkFile filename

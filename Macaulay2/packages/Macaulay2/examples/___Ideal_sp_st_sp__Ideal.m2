@@ -1,2 +1,2 @@
 R = QQ[t][a..d];
-ideal(a,t*c) * ideal(a^2,b^2)
+I = ideal(a,(t+1)*c) * ideal(a^2,b^2)

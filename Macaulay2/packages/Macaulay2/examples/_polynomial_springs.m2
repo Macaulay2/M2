@@ -28,7 +28,3 @@ ZZ[p_(0,0) .. p_(2,1),q_0..q_5]
 protect xx; protect yy; protect zz;
 ZZ[ee_[xx],ee_[yy],ee_[zz]]
 ZZ[a,b,c] === ZZ[a,b,c]
-R = QQ[a..d];
-a^127
-S = QQ[a..d,MonomialSize=>16];
-a^32767

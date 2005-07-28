@@ -2,6 +2,19 @@
 i1 : R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);
 
 i2 : ICmap R
+saturating with {}
+saturating with {}
+saturating with {}
+saturating with {}
+saturating with {}
+saturating with {}
+saturating with {}
+saturating with {}
+saturating with {}
+saturating with {}
+saturating with {}
+saturating with {}
+saturating with {}
 
          QQ [w , w , x, y, z, MonomialOrder => GRevLex => 5]
               7   6

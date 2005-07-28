@@ -1,7 +1,3 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : R = QQ[x..z];
 
@@ -40,7 +36,23 @@ i6 : (<< "-- computation started: " << endl;
           << "-- continuing the computation" << endl;
           ))
 -- computation started: 
-     -- used 2.96 seconds
+     -- used 2.97955 seconds
+-- computation interrupted
+        : total pairs
+  totals: 4 11 526 474 61
+       0: 4  .   .   .  .
+       1: .  .   .   .  .
+       2: .  5   2   .  .
+       3: .  6   8   1  .
+       4: .  .  11   3  .
+       5: .  .  20  10  .
+       6: .  .  33  16  .
+       7: .  .  62  54 15
+       8: .  . 138 138 46
+       9: .  . 252 252  .
+
+-- continuing the computation
+     -- used 2.96755 seconds
 -- computation interrupted
         : total pairs
   totals: 4 11 646 594 145
@@ -57,7 +69,7 @@ i6 : (<< "-- computation started: " << endl;
       10: .  . 120 120   .
 
 -- continuing the computation
-     -- used 2.99 seconds
+     -- used 2.98355 seconds
 -- computation interrupted
         : total pairs
   totals: 4 11 646 594 185
@@ -74,7 +86,7 @@ i6 : (<< "-- computation started: " << endl;
       10: .  . 120 120  40
 
 -- continuing the computation
-     -- used 0.03 seconds
+     -- used 1.72574 seconds
 -- computation complete
         : total pairs
   totals: 4 11 646 594 185

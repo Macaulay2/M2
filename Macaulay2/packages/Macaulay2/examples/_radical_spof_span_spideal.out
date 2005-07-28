@@ -1,7 +1,3 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : S = ZZ/101[x,y,z]
 
@@ -18,12 +14,14 @@ o2 : Ideal of S
 
 i3 : radical I
 
-                       3    2
-o3 = ideal (y*z, x*z, x  - y )
+                         2   2 2       2   3    2   2 2
+o3 = ideal (x*z, y*z, y*z , x z , x*y*z , x  - y , y z )
 
 o3 : Ideal of S
 
 i4 : intersect decompose I
+saturating with {}
+saturating with {}
 
                            3    2
 o4 = ideal (-y*z, -x*z, - x  + y )

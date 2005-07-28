@@ -1,4 +1,4 @@
 "junk" << "hi there" << close
 get "junk"
-unlink "junk"
+unlinkFile "junk"
 get "!date"

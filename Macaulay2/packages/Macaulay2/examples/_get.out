@@ -1,7 +1,3 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : "junk" << "hi there" << close
 
@@ -13,11 +9,10 @@ i2 : get "junk"
 
 o2 = hi there
 
-i3 : unlink "junk"
+i3 : unlinkFile "junk"
 
 i4 : get "!date"
 
-o4 = Fri Apr 15 21:42:15 CDT 2005
-
+o4 = Mon Jul 25 15:54:01 CDT 2005
 
 i5 : 

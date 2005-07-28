@@ -1,23 +1,19 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : version
 
-o1 = HashTable{architecture => i686                          }
-               compile node name => u123.math.uiuc.edu
-               compile time => Apr 15 2005 21:21:10
-               compiler => gcc 3.3.2
+o1 = HashTable{architecture => i686                }
+               compile node name => rhodium
+               compile time => Jul 25 2005 11:53:51
+               compiler => gcc 4.0.0
                dumpdata => true
                factory version => 2.0.5
-               gc version => 6.3
+               gc version => 6.5
                gmp version => 4.1.3
                libfac version => 2.0.4
                ntl version => 5.3.1
                operating system => Linux
-               operating system release => 2.4.22-1.2199.nptl
-               readline version => 4.3
+               operating system release => 2.6.11
+               readline version => 5.0
                VERSION => 0.9.5
 
 o1 : HashTable

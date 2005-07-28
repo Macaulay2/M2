@@ -490,16 +490,29 @@ document {
      }
 
 document {
+     Key => (html,TEX),
+     Headline => "conversion of TeX to html",
+     Usage => "html t",
+     Inputs => { "t" },
+     Outputs => { {"a string containing the result of converting ", TT "t", " to html"} },
+     "This method handles conversion to html, but only for a limited subset of TeX,
+     but nevertheless, it can be useful in documentation nodes.",
+     EXAMPLE {
+	  "TEX ///A formula: $a \\times \\ {b\\over c^3}$///",
+	  ///html oo///
+	  }
+     }
+
+document {
      Key => TEX,
+     Undocumented => {(tex,TEX),(texMath,TEX)},
      Headline => "hypertext TEX item",
-	Usage => "TEX x",
-	Inputs => {"x" => {}},
-	Outputs => {TEX => {}},
+     Usage => "TEX x",
+     Inputs => {"x" => {}},
+     Outputs => {TEX => {}},
      TT "TEX s", " includes the string ", TT "s", ", presumably
      containing TeX commands, in the TeX version of the documentation
-     containing this ", TO "hypertext", " item.",
-     PARA,
-     "Invisible in the text and html versions."
+     containing this ", TO "hypertext", " item."
      }
 
 document {

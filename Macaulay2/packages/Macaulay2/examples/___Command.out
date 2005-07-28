@@ -8,7 +8,7 @@ o2 = 1073741824
 i3 : (c = Command "date";)
 
 i4 : c
-Sat Apr 16 12:12:29 CDT 2005
+Mon Jul 25 15:53:45 CDT 2005
 
 o4 = 0
 

@@ -1,8 +1,3 @@
-loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : R = ZZ/32003[a..d];
 
@@ -22,8 +17,8 @@ o3 : Ideal of R
 
 i4 : I = intersect(I,J)
 
-             4    3      3    3      4      3         3      4   6      3 2    3 3      5   3 3    3 3   2 4    3 3    3 3    2   3   2   3    3 2     3 2     2   3     5    2 3       2 3    2 4     2 3    3   2    3   2      2 3   4 2    3 2    3 3    3   2
-o4 = ideal (b  - a d, a*b  - a c, b*c  - a*c d - b*c*d  + a*d , c  - b*c d  - c d  + b*d , b c  - a d , a c  - a d  + b d  - a c*d , a b*c  - a c d + b c d - a b*d , a*c  - b c d - a*c d  + b d , a*b c  - a c*d  + b c*d  - a*b d , a c  - a b d, a c  - a b*d )
+             4    3      3    3      4      3         3      4   3 3    3 3   2 4    3 3    3 3    2   3   6      3 2    3 3      5     2 3    3   2    3   2      2 3     5    2 3       2 3    2 4   2   3    3 2     3 2     2   3   4 2    3 2    3 3    3   2
+o4 = ideal (b  - a d, a*b  - a c, b*c  - a*c d - b*c*d  + a*d , b c  - a d , a c  - a d  + b d  - a c*d , c  - b*c d  - c d  + b*d , a*b c  - a c*d  + b c*d  - a*b d , a*c  - b c d - a*c d  + b d , a b*c  - a c d + b c d - a b*d , a c  - a b d, a c  - a b*d )
 
 o4 : Ideal of R
 
@@ -34,7 +29,7 @@ o5 = ideal (b*c - a*d, c  - b*d , b  - a c, a*c  - b d)
 
 o5 : Ideal of R
 
-i6 : top I
+i6 : topComponents I
 
                         3      2   3    2      2    2
 o6 = ideal (b*c - a*d, c  - b*d , b  - a c, a*c  - b d)
@@ -49,6 +44,11 @@ o7 = ideal (b*c - a*d, b  - a c, a*c  - b d, c  - c d  - b d  + b*d )
 o7 : Ideal of R
 
 i8 : decompose I
+                  2   3
+saturating with {c , c }
+saturating with {}
+saturating with {}
+saturating with {}
 
                              3      2       2    2    3    2            2      
 o8 = {ideal (- b*c + a*d, - c  + b*d , - a*c  + b d, b  - a c), ideal (c  + c*d

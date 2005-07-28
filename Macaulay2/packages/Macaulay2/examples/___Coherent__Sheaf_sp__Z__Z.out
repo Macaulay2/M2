@@ -1,24 +1,24 @@
 
 i1 : X = Proj(QQ[x,y,z])
 
-o1 = Proj(QQ [x, y, z])
+o1 = X
 
 o1 : ProjectiveVariety
 
 i2 : F = OO_X
 
-o2 = (OO)
-         Proj(QQ [x, y, z])
+o2 = OO
+       X
 
 o2 : SheafOfRings
 
 i3 : G = F(3)
 
-                           1
-o3 = (OO)                   (3)
-         Proj(QQ [x, y, z])
+        1
+o3 = OO  (3)
+       X
 
-o3 : coherent sheaf on Proj(QQ [x, y, z]), free
+o3 : coherent sheaf on X, free
 
 i4 : module G
 

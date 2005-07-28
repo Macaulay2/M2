@@ -1,14 +1,10 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : R = ZZ/101[a..d];
 
 i2 : m = matrix{{a,b,c,d}};
+
              1       4
 o2 : Matrix R  <--- R
-
 
 i3 : f = schreyerOrder m
 

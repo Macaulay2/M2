@@ -1,11 +1,7 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : benchmark "2^500"
 
-o1 = 1.05e-6
+o1 = 2.78731e-6
 
 o1 : RR
 

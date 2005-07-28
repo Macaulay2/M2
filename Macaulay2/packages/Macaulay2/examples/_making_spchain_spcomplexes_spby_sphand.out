@@ -1,19 +1,15 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : R = QQ[x,y,z];
 
 i2 : d1 = matrix {{x,y}};
+
              1       2
 o2 : Matrix R  <--- R
 
-
 i3 : d2 = map(source d1, ,{{y*z},{-x*z}});
+
              2       1
 o3 : Matrix R  <--- R
-
 
 i4 : d1 * d2 == 0
 
@@ -25,13 +21,13 @@ i5 : C = new ChainComplex; C.ring = R;
 
 i7 : C#0 = target d1; C#1 = source d1; C#2 = source d2;
 
-i10 : C.dd#1 = d1;
+i10 : C.dd#1 = d1; C.dd#2 = d2;
+
               1       2
 o10 : Matrix R  <--- R
- C.dd#2 = d2;
+
               2       1
 o11 : Matrix R  <--- R
-
 
 i12 : C
 
