@@ -1430,13 +1430,25 @@ regexmatch(e:Expr):Expr := (
      when a.0 is regexp:string do
      when a.1 is text:string do (
 	  r := regexmatch(regexp,0,text);
-	  if length(r) == 0 && regexmatchErrorMessage != noErrorMessage
-	  then buildErrorPacket("regex: "+regexmatchErrorMessage)
-	  else toPairs(r))
+	  if regexmatchErrorMessage != noErrorMessage then buildErrorPacket("regex: "+regexmatchErrorMessage)
+     	  else if length(r) != 0 then toPairs(r) 
+	  else nullE)
      else WrongArgString(2)
      else WrongArgString(1)
-     else WrongNumArgs(2)
-     else WrongNumArgs(2));
+     else if length(a) == 3 then
+     when a.0 is regexp:string do
+     when a.1 is offset:Integer do if !isInt(offset) then WrongArgSmallInteger(2) else
+     when a.2 is text:string do (
+	  r := regexmatch(regexp,toInt(offset),text);
+	  if length(r) != 0 then toPairs(r) 
+	  else if regexmatchErrorMessage == noErrorMessage
+	  then nullE
+	  else buildErrorPacket("regex: "+regexmatchErrorMessage))
+     else WrongArgString(3)
+     else WrongArgInteger(2)
+     else WrongArgString(1)
+     else WrongNumArgs(2,3)
+     else WrongNumArgs(2,3));
 setupfun("regex",regexmatch);
 
 foo := "foo";

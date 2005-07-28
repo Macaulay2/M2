@@ -79,8 +79,18 @@ select(a:Sequence,f:Expr):Expr := (
 	       ));
      new Sequence len found do (
 	  foreach p at i in b do if p then provide a.i));
+foo := array(string)();
+select(pat:string,rep:string,subj:string):Expr := (
+     r := regexselect(pat,rep,subj,foo);
+     if r == foo then return buildErrorPacket("select: "+regexmatchErrorMessage);
+     Expr(list(new Sequence len length(r) do foreach s in r do provide Expr(s))));
 select(e:Expr,f:Expr):Expr := (
      when e
+     is pat:string do (
+     	  when f is subj:string
+	  do select(pat,"\\0",subj) 
+     	  else WrongArgString(2)
+	  )
      is obj:HashTable do (
 	  if obj.mutable then return WrongArg(0+1,"an immutable hash table");
 	  u := newHashTable(obj.class,obj.parent);
@@ -104,7 +114,7 @@ select(e:Expr,f:Expr):Expr := (
 	  is v:Sequence do list(b.class,v)
 	  else e			  -- shouldn't happen
 	  )
-     else WrongArg(0+1,"a list"));
+     else WrongArg(0+1,"a list or a string"));
 select(n:int,a:Sequence,f:Expr):Expr := (
      b := new array(bool) len length(a) do provide false;
      found := 0;
@@ -120,7 +130,12 @@ select(n:int,a:Sequence,f:Expr):Expr := (
      new Sequence len found do (
 	  foreach p at i in b do if p then provide a.i));
 select(n:Expr,e:Expr,f:Expr):Expr := (
-     when n is nn:Integer do
+     when n is pat:string do
+     when e is rep:string do
+     when f is subj:string do select(pat,rep,subj)
+     else WrongArgString(3)
+     else WrongArgString(2)
+     is nn:Integer do
      if isInt(n) then
      when e
      is obj:HashTable do (
@@ -152,7 +167,7 @@ select(n:Expr,e:Expr,f:Expr):Expr := (
 	  else e			  -- shouldn't happen
 	  )
      else WrongArg(1+1,"a list")
-     else WrongArgSmallInteger(0+1)
+     else WrongArg(0+1,"an integer or string")
      else WrongArgInteger(0+1));
 select(e:Expr):Expr := (
      when e is a:Sequence do (

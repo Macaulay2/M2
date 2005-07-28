@@ -16,7 +16,7 @@ document {
 	  "s" => "a subject string to be searched"
 	  },
      Outputs => {
-	  {"the string obtained from s by replacing its substrings matching ", TT "p", " by
+	  {"the string obtained from ", TT "s", " by replacing its substrings matching ", TT "p", " by
 	       copies of ", TT "r", "."}
 	  },
      "If a backslash followed by a digit occurs in ", TT "r", ", then in the result they are replaced

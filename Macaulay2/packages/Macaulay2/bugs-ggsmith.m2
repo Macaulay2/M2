@@ -10,7 +10,7 @@
 (2) the function isAffineRing isn't eliminating enough rings.  Prehaps
 
 isAffineRing PolynomialRing := R -> (
-     not (options R).SkewCommutative and not (options R).Inverses and
+     not R.?SkewCommutative and not (options R).Inverses and
      isAffineRing coefficientRing R
      )
       

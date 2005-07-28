@@ -255,7 +255,7 @@ document {
 "In this section we learn how to use emacs to edit Macaulay 2 code.  Assuming you
 have set up your emacs init file as described in ", TO "running Macaulay 2 in emacs", "
  when you visit a file whose name ends with ", TT ".m2", " 
-you will see on the mode line the name ", TT "Macaulay 2", " in
+you will see on the mode line the name Macaulay 2 in
 parentheses, indicating that the file is being edited in Macaulay 2 mode.  (Make
 sure that the file ", TT "emacs/M2.el", " is on your ", TT "load-path", ".)",
 PARA,

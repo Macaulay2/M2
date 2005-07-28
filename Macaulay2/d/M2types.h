@@ -30,6 +30,11 @@ typedef struct M2_stringarray_struct {
      M2_string array[1];
      } *M2_stringarray;
 
+typedef struct M2_stringarrayarray_struct {
+     unsigned int len;
+     M2_stringarray array[1];
+     } *M2_stringarrayarray;
+
 typedef double M2_RR;
 typedef struct M2_CC_struct { double re, im; } *M2_CC; /* same as Complex (see tokens.d) */
 

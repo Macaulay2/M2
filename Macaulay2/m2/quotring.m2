@@ -186,7 +186,7 @@ codim PolynomialRing := R -> 0
 codim QuotientRing := (R) -> codim cokernel presentation R
 dim QuotientRing := (R) -> (
      if isField R then 0
-     else if (options R).SkewCommutative then dim coefficientRing R
+     else if R.?SkewCommutative then notImplemented()
      else dim ultimate(ambient,R) - codim R
      )
 

@@ -75,7 +75,8 @@ isOutputFile(File) := Boolean => isOutputFile
 isReady(File) := Boolean => isReady
 mutable(Thing) := Boolean => mutable
 instance(Thing,Type) := Boolean => instance
-regex(String,String) := List => match
+regex(String,String) := List => regex
+regex(String,ZZ,String) := List => regex
 characters String := List => characters
 concatenate List := String => concatenate
 deepSplice BasicList := BasicList => deepSplice
@@ -105,6 +106,8 @@ openListener String := File => openListener
 pack(BasicList,ZZ) := List => pack
 pack(ZZ,BasicList) := List => pack
 reverse BasicList := BasicList => reverse
+select(String,String) := List => select
+select(String,String,String) := List => select
 select(BasicList,Function) := BasicList => select
 select(HashTable,Function) := HashTable => select
 select(ZZ,BasicList,Function) := BasicList => select
