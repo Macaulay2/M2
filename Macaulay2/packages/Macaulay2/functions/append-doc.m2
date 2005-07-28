@@ -4,34 +4,20 @@
 
 document { 
      Key => append,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Headline => "append an element to a list",
      }
+
 document { 
      Key => (append,BasicList,Thing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     Usage => "append(v,x)",
+     Inputs => { "v", "x" },
+     Outputs => {{" yields the list obtained by appending ", TT "x", " to the list ", TT "v"}},
+     "The result will have the same class.",
      EXAMPLE {
+	  "append((a,b,c),z)",
+	  "append({a,b,c},z)",
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso =>{ "prepend", "join"}
      }
+
  -- doc.m2:725:     Key => append,

@@ -178,7 +178,7 @@ ring Matrix := f -> (
 source Matrix := f -> f.source
 target Matrix := f -> f.target
 
-Vector = new Type of List				    -- an instance v will have one entry, an n by 1 matrix m, with class v === target m
+Vector = new Type of BasicList				    -- an instance v will have one entry, an n by 1 matrix m, with class v === target m
 Vector.synonym = "vector"
 Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)
 net Vector := v -> net first v

@@ -698,26 +698,6 @@ document {
      }
 
 document {
-     Key => append,
-     Headline => "add to the end of a list",
-	Usage => "append(v,x)",
-     TT "append(v,x)", " yields the list obtained by appending ", TT "x", " to the 
-     list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
-     EXAMPLE "append( {a,b,c}, x )",
-     SeeAlso =>{ "prepend", "join"}
-     }
-
-document {
-     Key => prepend,
-     Headline => "add to the beginning of a list",
-	Usage => "prepend(x,v)",
-     TT "prepend(x,v)", " yields the list obtained by prepending" , TT "x", " to the 
-     list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
-     EXAMPLE "prepend( x, {a,b,c} )",
-     SeeAlso =>{append, join}
-     }
-
-document {
      Key => "--",
      Headline => "comment",
      Consequences => {"Macaulay 2 ignores commented text"},

@@ -1,37 +1,21 @@
---- status: TODO
---- author(s): 
+--- status: done
+--- author(s): dan
 --- notes: 
 
 document { 
      Key => prepend,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Headline => "add an element to the beginning of a list",
      }
+
 document { 
      Key => (prepend,Thing,BasicList),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     Usage => "prepend(x,v)",
+     Inputs => { "x", "v" },
+     Outputs => {{" yields the list obtained by prepending " , TT "x", " to the list ", TT "v"}},
+     "The result will have the same class.",
      EXAMPLE {
+	  "prepend(z,(a,b,c))",
+	  "prepend(z,{a,b,c})",
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {"append", "join"}
      }
- -- doc.m2:735:     Key => prepend,

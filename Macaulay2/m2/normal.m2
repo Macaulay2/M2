@@ -30,10 +30,9 @@ isNormal(Ring) := Boolean => (R) -> (
      m2:= dim R;         -- S2 first and prints "is S2".  Then checks
      Jac := minors(n,jacobian R);  -- R1 this way the user gets more info.
      S2 := apply (m-n-1, i-> codim Ext^(i+n+1)(M,ring M));
-     check := apply(m-n-1,i-> i+n+3);
-     if m2-dim Jac >= 2  then ( if S2 >= check then true else false)
-	  else (false)
-	  )
+     check := apply(m-n-1,i->i+n+3);
+     m2-dim Jac >= 2 and S2 >= check 
+     )
 
 -- As the engine code changes, comparisons of the time for 
 -- radical and radical0 must be checked.  16.5.01 radical0 
@@ -88,8 +87,8 @@ isSinglyGraded := (R) -> (
 -- the algorithm can begin again with that ideal and I:I:f is placed in 
 -- C#"storing".  Once the integral closure of R_i/I_i for some I_i is obtained, 
 -- then the defining ideal of theis integral closure is placed in C#"answer".
-if ICnode === symbol ICnode then
-    ICnode = new Type of MutableHashTable;
+
+ICnode = new Type of MutableHashTable;
 
 newICnode = (R) -> (
      I := ideal presentation R;

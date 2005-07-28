@@ -1082,7 +1082,7 @@ makePackageIndex List := packagePath -> (
 runnable := fn -> 0 < # select(1,apply(separate(":", getenv "PATH"),p -> p|"/"|fn),fileExists)
 check := ret -> if ret != 0 then error "--error: external command failed"
 
-URL = new Type of List
+URL = new Type of BasicList
 show = method()
 show URL := x -> (
      url := x#0;
