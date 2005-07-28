@@ -142,7 +142,7 @@ int main(int argc, char **argv)
       case TEX:
 	if (head)
 	  {
-	    fprintf(stdout, "TEX \"\n\\\\beginsection{");
+	    fprintf(stdout, "TEX \"\n\\\\par{");
 	    fprintf(stdout, "%s}\\\\par\n\",", present((unsigned char*)s));
 	  }
 	else

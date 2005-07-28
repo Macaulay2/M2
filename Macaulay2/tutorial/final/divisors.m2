@@ -285,7 +285,7 @@ D2 = 2P - 2R1
 -- If $D$ is the divisor $(I,J)$ and
 -- $f$ is any non-zero element of $I$, then
 -- $L(D)$ is the degree zero part of  
--- $${{sat((f*J) : I)} \over f}.$$
+-- $${sat((f*J) : I) \over f}.$$
 --
 --
 -- {\bf Proposition}. If $s = g/f$ is section of the divisor
@@ -305,7 +305,7 @@ f = z
 
 -- The degree 0 part in the proposition is the
 -- degree $d$ part of $sat((fJ) : I)$, divided by $f$,
--- where $d = \deg f$.
+-- where $d = deg f$.
 --
 -- We can use the command {\tt basis} to obtain a vector
 -- space basis of a module or ideal in a given degree
@@ -508,7 +508,7 @@ Q4a = addition(Q2,Q2)
 -- canonical class.
 -- For example, consider the 
 -- twisted cubic curve whose ideal is the
--- ideal of $2\times2$ minors of the ``catalecticant''
+-- ideal of $2\times 2$ minors of the ``catalecticant''
 -- matrix 
 S = ZZ/31991[a,b,c,d];
 catalect = map(S^2, 3, (i,j)->S_(i+j))
