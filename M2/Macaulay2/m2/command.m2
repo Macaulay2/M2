@@ -16,7 +16,7 @@ new Command from String   := Command => (command,cmdname) -> command {
 	  if x === ()
 	  then run cmdname
 	  else run (cmdname | " " | toString x))}
-Command.AfterEval = x -> x#0 ()
+Command.AfterEval = x -> Thing.AfterEval x#0 ()
 Command Thing := (x,y) -> x#0 y
 
 

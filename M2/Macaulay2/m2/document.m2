@@ -1,6 +1,6 @@
 --		Copyright 1994-2002 by Daniel R. Grayson
 
-maximumCodeWidth := 120
+maximumCodeWidth = 120
 
 -----------------------------------------------------------------------------
 -- normalizing document keys

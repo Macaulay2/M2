@@ -202,34 +202,6 @@ document {
      }
 
 document {
-     Key => net, 
-     Headline => "convert to net",
-     TT "net x", " -- format ", TT "x", " for printing.",
-     PARA,
-     "This function is the primary function called upon by ", TO "<<", " to
-     format expressions for printing.  The default method provided by the
-     system is to convert ", TT "x", " to an ", TO "Expression", " with 
-     ", TO "expression", " and then to convert that to a net.",
-     PARA,
-     "A new method for formatting expressions of class ", TT "X", " may be
-     installed by the user with code of the form ", TT "net X := x -> ...", ".
-     The function provided by the user should return a net or a string.",
-     PARA,
-     "A string is formatted by wrapping it in quotation marks and converting
-     nonprinting characters to escape sequences.  A net is formatted for printing
-     by enclosing it in a box.",
-     EXAMPLE {
-	  "\"a string\"",
-      	  "net \"a string\"",
-	  },
-     EXAMPLE {
-	  "ZZ[x];",
-      	  "x^2",
-      	  "net x^2",
-	  }
-     }
-
-document {
      Key => horizontalJoin,
      Headline => "join nets or strings horizontally",
      TT "horizontalJoin(m,n,...)", " -- joins nets or strings by concatenating

@@ -226,6 +226,42 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
+
+
+document { 
+     Key => diff',
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => (diff',Matrix,Matrix),
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+
+
  -- doc.m2:709:     Key => difference, 
  -- doc7.m2:158:     Key => (diff,RingElement,RingElement),
  -- doc7.m2:186:     Key => (diff,RingElement,Matrix),

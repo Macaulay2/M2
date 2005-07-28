@@ -369,11 +369,26 @@ tex TO := x -> (
      tag := x#0;
      tex SEQ {
      	  TT DocumentTag.FormattedKey tag,
-     	  " [", LITERAL { 
-	       "\ref{", 
-	       -- need something here
-	       "}" },
-	  "]"
+--     	  " [", LITERAL { 
+-- 	       "\\ref{", 
+-- 	       -- something here
+-- 	       "}" 
+--	       },
+--	  "]"
+	  }
+     )
+
+tex TO2 := x -> (
+     tag := x#0;
+     text := x#1;
+     tex SEQ {
+     	  TT text,
+--     	  " [", LITERAL { 
+-- 	       "\\ref{", 
+-- 	       -- need something here
+-- 	       "}"
+--	       },
+--	  "]"
 	  }
      )
 
@@ -420,46 +435,69 @@ html BOLD := t -> concatenate("<b>", apply(t,html), "</b>")
 
 html Option := x -> toString x
 
+--     \tiny		5
+--     \scriptsize	7
+--     \footnotesize	8
+--     \small		9
+--     \normalsize	10
+--     \large		12
+--     \Large		14
+--     \LARGE		18
+--     \huge		20
+--     \Huge		24
+
 tex HEADER1 := x -> concatenate (
-     ///\medskip\noindent\begingroup\font\headerFontOne=cmbx12 scaled \magstep 1\headerFontOne%
+     ///
+\par\medskip\noindent\begingroup\Large\bf
 ///,
      apply(toList x, tex),
-     ///\endgroup\par\smallskip%
+     ///\endgroup
+\par\smallskip%
 ///
      )
 tex HEADER2 := x -> concatenate (
-     ///\medskip\noindent\begingroup\font\headerFontTwo=cmbx12 scaled \magstep 1\headerFontTwo%
+     ///
+\par\medskip\noindent\begingroup\Large\bf
 ///,
      apply(toList x, tex),
-     ///\endgroup\par\smallskip%
+     ///\endgroup
+\par\smallskip%
 ///
      )
 tex HEADER3 := x -> concatenate (
-     ///\medskip\noindent\begingroup\font\headerFontThree=cmbx12\headerFontThree%
+     ///
+\par\medskip\noindent\begingroup\large\bf
 ///,
      apply(toList x, tex),
-     ///\endgroup\par\smallskip%
+     ///\endgroup
+\par\smallskip%
 ///
      )
 tex HEADER4 := x -> concatenate (
-     ///\medskip\noindent\begingroup\font\headerFontFour=cmbx12\headerFontFour%
+     ///
+\par\medskip\noindent\begingroup\large\bf
 ///,
      apply(toList x, tex),
-     ///\endgroup\par\smallskip%
+     ///\endgroup
+\par\smallskip%
 ///
      )
 tex HEADER5 := x -> concatenate (
-     ///\medskip\noindent\begingroup\font\headerFontFive=cmbx10\headerFontFive%
+     ///
+\par\medskip\noindent\begingroup\normal\bf
 ///,
      apply(toList x, tex),
-     ///\endgroup\par\smallskip%
+     ///\endgroup
+\par\smallskip%
 ///
      )
 tex HEADER6 := x -> concatenate (
-     ///\medskip\noindent\begingroup\font\headerFontSix=cmbx10\headerFontSix%
+     ///
+\par\medskip\noindent\begingroup\normal\bf
 ///,
      apply(toList x, tex),
-     ///\endgroup\par\smallskip%
+     ///\endgroup
+\par\smallskip%
 ///
      )
 
