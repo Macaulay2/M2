@@ -6,6 +6,7 @@ document {
      Key => regex,
      Headline => "regular expression matching",
      }
+
 document { 
      Key => (regex,String,String),
      Usage => "z = regex(p,s)",
@@ -14,17 +15,43 @@ document {
 	  "s" => "a subject string to be searched"
 	  },
      Outputs => {
-	  "z" => {"a list of pairs of integers describing the first substring of ", TT "s", " found that matches the pattern"}
+	  "z" => {"a list of pairs of integers describing the first substring of ", TT "s", " found that
+	       matches the pattern, or null if nothing matched"}
 	  },
      "The value returned is a list of pairs of integers corresponding to the
-     parenthesized subexpressions successfully matched.  The list has length 0
-     if no matching substring was found.  The first member of each pair is the offset within
+     parenthesized subexpressions successfully matched.  
+     If no matching substring was found, then ", TO "null", " is returned.
+     The first member of each pair is the offset within
      ", TT "s", " of the substring matched, and the second is the length.",
-     SeeAlso => {"regular expression", "match", "replace"}
+     SeeAlso => {(regex,String,ZZ,String), "regular expressions", "match", "replace"}
+     }
+
+document { 
+     Key => (regex,String,ZZ,String),
+     Usage => "z = regex(p,n,s)",
+     Inputs => {
+	  "p" => "a regular expression describing a pattern",
+	  "n" => {"the offset in ", TT "s", " at which to begin the search"},
+	  "s" => "a subject string to be searched"
+	  },
+     Outputs => {
+	  "z" => {"a list of pairs of integers describing the first substring of ", TT "s", " found that 
+	       matches the pattern, or null if nothing matched"}
+	  },
+     "The value returned is a list of pairs of integers corresponding to the
+     parenthesized subexpressions successfully matched.  
+     If no matching substring was found, then ", TO "null", " is returned.
+     The first member of each pair is the offset within
+     ", TT "s", " of the substring matched, and the second is the length.",
+     EXAMPLE {
+	  ///regex("a",0,"a b c a")///,
+	  ///regex("a",1,"a b c a")///,
+	  },
+     SeeAlso => {(regex,String,String), "regular expressions", "match", "replace"}
      }
 
 document {
-     Key => "regular expression",
+     Key => "regular expressions",
      "A regular expression is a string that specifies a pattern that describes a
      set of matching subject strings.  Regular expressions are constructed
      inductively as follows.  Ordinary (non-special) characters match themselves.

@@ -163,7 +163,7 @@ resolution Module := ChainComplex => o -> (M) -> (
      R := ring M;
      k := ultimate(coefficientRing, R);
      oR := options R;
-     if oR.?SkewCommutative and oR.SkewCommutative then (
+     if R.?SkewCommutative then (
 	  if isHomogeneous M then (
 	       (resolutionInEngine default(o,Strategy2))(M))
 	  else

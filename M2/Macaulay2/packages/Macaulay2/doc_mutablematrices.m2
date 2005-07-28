@@ -297,7 +297,7 @@ document {
      EXAMPLE {
 	  "n = map(ZZ^5,ZZ^6, (i,j) -> 100*i+j)",
 	  "m = mutableMatrix n",
-	  "--rowPermute(m,1,{2,0,1})"
+	  "rowPermute(m,1,{2,0,1})"
 	  },
      Caveat => {},
      SeeAlso => {}
@@ -319,7 +319,7 @@ document {
      EXAMPLE {
 	  "n = map(ZZ^5,ZZ^6, (i,j) -> 100*i+j)",
 	  "m = mutableMatrix n",
-	  "--columnPermute(m,1,{2,0,1})"
+	  "columnPermute(m,1,{2,0,1})"
 	  },
      Caveat => {},
      SeeAlso => {}

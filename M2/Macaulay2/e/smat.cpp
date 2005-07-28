@@ -731,7 +731,7 @@ bool SMat<CoeffRing>::column_permute(long start_col, M2_arrayint perm)
   long ncols_to_permute = perm->len;
   bool *done = newarray_atomic(bool,ncols_to_permute);
   for (long i=0; i<ncols_to_permute; i++)
-    done[i] = false;
+    done[i] = true;
   for (long i=0; i<ncols_to_permute; i++)
     {
       long j = perm->array[i];

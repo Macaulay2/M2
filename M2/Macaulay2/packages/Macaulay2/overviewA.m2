@@ -65,7 +65,9 @@ document {
      TO "modules", ".",
      PARA,
       "For additional common operations and a comprehensive list of all routines
-     in Macaulay 2 which return or use ideals, see ", TO "Ideal", "."
+     in Macaulay 2 which return or use ideals, see ", TO "Ideal", ".",
+     PARA,						    -- debug me!!
+     "The following link differs from the previous one in case only: ", TO "ideal", "."
      }
 
 ///

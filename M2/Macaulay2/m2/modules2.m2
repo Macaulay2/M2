@@ -365,7 +365,7 @@ minimalPresentation(Module) := Module => opts -> M -> (
 	       M.cache.pruningMap = id_M;
 	       M)
 	  else if (isAffineRing R and isHomogeneous M)
-	         or (oR.?SkewCommutative and oR.SkewCommutative and isHomogeneous M) then (
+	         or (oR.?SkewCommutative and R.?SkewCommutative and isHomogeneous M) then (
 	       f := presentation M;
 	       g := complement f;
 	       N := cokernel modulo(g, f);
@@ -576,7 +576,7 @@ basis(List,List,Module) := Matrix => opts -> (lo,hi,M) -> (
      if not (
 	  isAffineRing A 
 	  or
-	  isPolynomialRing A and isField coefficientRing A and (options A).SkewCommutative
+	  isPolynomialRing A and isField coefficientRing A and A.?SkewCommutative
 	  or
 	  isPolynomialRing A and ZZ === coefficientRing A
 	  or

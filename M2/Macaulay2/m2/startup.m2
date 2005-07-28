@@ -13,7 +13,7 @@ if gotarg "--stop" then stopIfError = true
 firstTime := class PackageDictionary === Symbol
 
 -- here we put local variables that might be used by the global definitions below
-match := X -> 0 < #(regex X);
+match := X -> null =!= regex X
 
 if firstTime then (
      -- all global definitions go here, because after loaddata is run, we'll come through here again

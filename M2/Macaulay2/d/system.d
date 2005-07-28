@@ -77,6 +77,7 @@ import noErrorMessage:string;
 import regexmatchErrorMessage:string;
 import regexmatch(pattern:string, offset:int, text:string):array(int);
 import regexreplace(pattern:string, replacement: string, text:string, errflag:string):string;
+import regexselect(pattern:string, replacement: string, text:string, errflag:array(string)):array(string);
 import readDirectory(name:string):(null or array(string));
 import strncmp(s:string,t:string,n:int):int;
 import history():array(string);

@@ -34,7 +34,7 @@ addStartFunction(
 
 if notify then stderr << "--loading setup.m2" << endl
 
-match := X -> 0 < #(regex X)				    -- defined as a method later
+match := X -> null =!= regex X -- defined as a method later
 
 somethingElse = () -> error "something else needs to be implemented here"
 

@@ -248,6 +248,7 @@ html TEX := str -> (
      f(///\\mid\> *///,///&nbsp;|&nbsp;///);
      f(///\\mod\> *///,///mod///);
      f(///\\mu\> *///,///&mu;///);
+     f(///\\neq\> *///,///&ne;///);
      f(///\\nu\> *///,///&nu;///);
      f(///\\omega\> *///,///&omega;///);
      f(///\\oplus\> *///,///&oplus;///);
@@ -267,6 +268,9 @@ html TEX := str -> (
      f(///\\sigma\> *///,///&sigma;///);
      f(///\\sin\> *///,///sin///);
      f(///\\subset\> *///,///&sub;///);
+     f(///\\subseteq\> *///,///&sube;///);
+     f(///\\supset\> *///,///&sup;///);
+     f(///\\supseteq\> *///,///&supe;///);
      f(///\\sum\> *///,///&sum;///);
      f(///\\tau\> *///,///&tau;///);
      f(///\\textrm\> *///,//////);
@@ -278,6 +282,7 @@ html TEX := str -> (
      f(///\\xi\> *///,///&xi;///);
      f(///\\zeta\> *///,///&zeta;///);
      f(///Macaulay2///,///<i>Macaulay2</i>///);
+     f(///Macaulay 2///,///<i>Macaulay 2</i>///);
      str)
 
 -- Local Variables:

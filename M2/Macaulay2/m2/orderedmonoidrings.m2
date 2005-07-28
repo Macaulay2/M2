@@ -181,13 +181,13 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    diffs1 = join(diffs1, apply(R.diffs1, i -> i + num));
 		    );
 	       scan(diffs0,diffs1,(x,dx) -> if not x<dx then error "expected differentiation variables to occur to the right of their variables");
-	       if R.?skews then error "coefficient ring has skew commuting variables";
+	       if R.?SkewCommutative then error "coefficient ring has skew commuting variables";
 	       RM = new PolynomialRing from quotfix rawWeylAlgebra(rawPolynomialRing(raw basering, raw flatmonoid),diffs0,diffs1,h);
 	       RM.diffs0 = diffs0;
 	       RM.diffs1 = diffs1;
      	       if h != -1 then RM.h = h;
 	       )
-	  else if skews =!= false or R.?skews then (
+	  else if skews =!= false or R.?SkewCommutative then (
 	       if R.?diffs0 then error "coefficient ring is a Weyl algebra";
 	       skews = (
 		    if skews === false then {}
@@ -199,9 +199,9 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 			 )
 		    else error "expected SkewCommutative option to be true, false, or a list of variables or integers"
 		    );
-	       if R.?skews then skews = join(skews, apply(R.skews, i -> i + num));
+	       if R.?SkewCommutative then skews = join(skews, apply(R.SkewCommutative, i -> i + num));
 	       RM = new PolynomialRing from quotfix rawSkewPolynomialRing(rawPolynomialRing(raw basering, raw flatmonoid),skews);
-	       RM.skews = skews;
+	       if #skews > 0 then RM.SkewCommutative = skews;
 	       )
 	  else (
 	       RM = new PolynomialRing from quotfix rawPolynomialRing(raw basering, raw flatmonoid);
@@ -213,7 +213,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.Adjust = (options M).Adjust;
 	  RM.Repair = (options M).Repair;
 	  RM.degreesRing = degRing;
-	  RM.isCommutative = not Weyl and M.Options.SkewCommutative === false;
+	  RM.isCommutative = not Weyl and not RM.?SkewCommutative;
      	  ONE := RM#1;
 	  if R.?char then RM.char = R.char;
 	  RM ? RM := (f,g) -> raw f ? raw g;
@@ -314,10 +314,7 @@ samering := (f,g) -> (
 Ring Array := PolynomialRing => (R,variables) -> use R monoid variables
 PolynomialRing _ List := (R,v) -> product ( #v , i -> R_i^(v#i) )
 Ring _ List := RingElement => (R,w) -> product(#w, i -> (R_i)^(w_i))
-dim PolynomialRing := R -> (
-     if (options R).SkewCommutative then dim coefficientRing R
-     else dim coefficientRing R + # generators R
-     )
+dim PolynomialRing := R -> dim coefficientRing R + # generators R - if R.?SkewCommutative then #R.SkewCommutative else 0
 char PolynomialRing := (R) -> char coefficientRing R
 numgens PolynomialRing := R -> numgens monoid R
 
