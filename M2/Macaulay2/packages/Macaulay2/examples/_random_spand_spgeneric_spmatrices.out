@@ -1,8 +1,3 @@
-loaddata: map has appeared or changed its location: 0x001cc000-0x0027c000 r-x 4013405781
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : R = GF(3^2,Variable => a);
 

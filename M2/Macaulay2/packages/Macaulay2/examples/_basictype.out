@@ -1,47 +1,25 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
-i1 : stack sort (toString \
+i1 : stack sort unique (toString \
           select(values Macaulay2Core.Dictionary, i -> parent value i === Thing)
           )
 
 o1 = BasicList
-     BasicList
-     Boolean
      Boolean
      CC
-     CC
-     CCC
      CCC
      Database
-     Database
-     Dictionary
      Dictionary
      File
-     File
-     Function
      Function
      HashTable
-     HashTable
-     Net
      Net
      Nothing
-     Nothing
-     Pseudocode
      Pseudocode
      QQ
-     QQ
-     RR
      RR
      RRR
-     RRR
-     Symbol
      Symbol
      Thing
-     Thing
-     ZZ
      ZZ
 
 i2 : 

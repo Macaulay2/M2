@@ -1,8 +1,3 @@
-loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : ZZ/101[x,y]/(x^2-y^2) ** ZZ/101[a,b]/(a^3+b^3)
 
@@ -26,6 +21,7 @@ i3 : options tensor
 o3 = OptionTable{Adjust => identity      }
                  DegreeRank => 
                  Degrees => 
+                 Heft => 
                  Inverses => false
                  MonomialOrder => 
                  MonomialSize => 32

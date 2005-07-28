@@ -128,8 +128,8 @@ vert := (op,post) -> x -> net new ParagraphList from post select(
 	  op,
 	  i -> horizontalJoin(op \ i)),
      n -> width n > 0)
-net SEQ := net PARA := net Hypertext := vert(net,x -> between("",x)) -- doublespacing
-info SEQ := info PARA := info Hypertext := vert(info,x -> between("",x))
+net DIV := net SEQ := net PARA := net Hypertext := vert(net,x -> between("\n",x)) -- doublespacing
+info DIV := info SEQ := info PARA := info Hypertext := vert(info,x -> between("",x))
 net PARA1 := vert(net,identity)				    -- singlespacing
 info PARA1 := vert(info,identity)
 

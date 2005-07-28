@@ -1,41 +1,72 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
-i1 : R = ZZ/101[a..c];
+i1 : R = ZZ/32003[a..d,MonomialOrder=>Lex];
 
-i2 : f = matrix{{1,a,a^2,b^2,b,c,c^2,a*b,b*c,a*c}}
+i2 : m = matrix{{a*d, b^2, b^100, b^50*d^50, c^2*d}}
 
-o2 = | 1 a a2 b2 b c c2 ab bc ac |
+o2 = | ad b2 b100 b50d50 c2d |
 
-             1       10
+             1       5
 o2 : Matrix R  <--- R
 
-i3 : s = sortColumns f
+i3 : p = sortColumns m
 
-o3 = {0, 5, 4, 1, 6, 8, 9, 3, 7, 2}
+o3 = {1, 0, 4, 3, 2}
 
 o3 : List
 
-i4 : f_s
+i4 : m_p
 
-o4 = | 1 c b a c2 bc ac b2 ab a2 |
+o4 = | b2 ad c2d b50d50 b100 |
 
-             1       10
+             1       5
 o4 : Matrix R  <--- R
 
-i5 : s = sortColumns(f,DegreeOrder => Descending)
+i5 : p = sortColumns(m, DegreeOrder=>null, MonomialOrder=>Descending)
 
-o5 = {6, 8, 9, 3, 7, 2, 5, 4, 1, 0}
+o5 = {0, 2, 3, 1, 4}
 
 o5 : List
 
-i6 : f_s
+i6 : m_p
 
-o6 = | c2 bc ac b2 ab a2 c b a 1 |
+o6 = | ad b100 b50d50 b2 c2d |
 
-             1       10
+             1       5
 o6 : Matrix R  <--- R
 
-i7 : 
+i7 : R = ZZ/101[a..c];
+
+i8 : f = matrix{{1,a,a^2,b^2,b,c,c^2,a*b,b*c,a*c}}
+
+o8 = | 1 a a2 b2 b c c2 ab bc ac |
+
+             1       10
+o8 : Matrix R  <--- R
+
+i9 : s = sortColumns f
+
+o9 = {0, 5, 4, 1, 6, 8, 9, 3, 7, 2}
+
+o9 : List
+
+i10 : f_s
+
+o10 = | 1 c b a c2 bc ac b2 ab a2 |
+
+              1       10
+o10 : Matrix R  <--- R
+
+i11 : s = sortColumns(f,DegreeOrder => Descending)
+
+o11 = {6, 8, 9, 3, 7, 2, 5, 4, 1, 0}
+
+o11 : List
+
+i12 : f_s
+
+o12 = | c2 bc ac b2 ab a2 c b a 1 |
+
+              1       10
+o12 : Matrix R  <--- R
+
+i13 : 

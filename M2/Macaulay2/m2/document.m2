@@ -333,13 +333,17 @@ flat Nothing := x -> ()
 fixflat := z -> splice apply(z, i -> flat fixup i)
 
 fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
-fixup MarkUpListParagraph := z -> splice apply(z,fixup)
-fixup PARA := z -> (
+fixup MarkUpListParagraph := z -> (
      z = splice apply(z,fixup);
-     if any(z,i -> class i === PARA) then error "can't have PARA inside PARA";
-     if any(z,i -> class i === EXAMPLE) then error "can't have EXAMPLE inside PARA";
+     -- b := select(1,z,i -> instance(i,MarkUpListParagraph));
+     -- if b#?0 then error ("can't have paragraphing markup list of class ",toString class b#0," inside paragraphing markup list of class ",toString class z);
      z)
-fixup MarkUpList := x -> (
+-- fixup PARA := z -> (
+--      z = splice apply(z,fixup);
+--      if any(z,i -> class i === PARA) then error "can't have PARA inside PARA";
+--      if any(z,i -> class i === EXAMPLE) then error "can't have EXAMPLE inside PARA";
+--      z)
+fixup MarkUpList := x -> (				    -- assemble items between paragraphs in a list into paragraphs (using DIV)
      x = splice apply(x, fixup);
      if any(toSequence x, i -> instance(i, MarkUpListParagraph))
      then DIV sublists( x, i -> instance(i,MarkUpListParagraph), identity, i -> DIV i)
@@ -368,12 +372,18 @@ fixup String     := s -> (				       -- remove clumsy newlines within strings
 
 fixup1 := method(SingleArgumentDispatch => true)
 fixup1 Thing := identity
-fixup1 Nothing := x -> ()
+fixup1 Nothing := x -> ()				    -- this, together with the deepSplice below, eliminates the null's
 fixup1 Hypertext := fixup1 SEQ := toSequence
 fixuptop := s -> Hypertext deepSplice apply(toList s, fixup1)
 
 new Hypertext from List := (h,x) -> splice apply(x, i -> flat i)
-hypertext = x -> Hypertext toList fixup x
+hypertext = x -> (
+     x = fixup x;
+     if class x === Hypertext then x
+     else if class x === List or class x === Sequence then new Hypertext from x
+     else if instance(x,MarkUpList) then new Hypertext from {x}
+     else error "'hypertext': no method"
+     )
 
 -----------------------------------------------------------------------------
 -- installing the documentation

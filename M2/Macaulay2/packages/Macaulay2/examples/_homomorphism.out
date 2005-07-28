@@ -1,8 +1,3 @@
-loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : R = QQ[x,y,z]/(y^2-x^3)
 
@@ -12,15 +7,15 @@ o1 : QuotientRing
 
 i2 : H = Hom(ideal(x,y), R^1)
 
-o2 = image {-1} | x y  |
-           {-1} | y x2 |
+o2 = image {-1} | x -y  |
+           {-1} | y -x2 |
 
                              2
 o2 : R-module, submodule of R
 
 i3 : g = homomorphism H_{1}
 
-o3 = | y x2 |
+o3 = | -y -x2 |
 
 o3 : Matrix
 

@@ -1,12 +1,7 @@
-loaddata: map has appeared or changed its location: 0x00120000-0x0014a000 r-x 967609826
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : code Thing.NoPrint
 
-o1 = -- ../../../Macaulay2/m2/setup.m2:189
+o1 = -- ../../../Macaulay2/m2/setup.m2:191
      Thing.NoPrint = x -> (
 
 i2 : 

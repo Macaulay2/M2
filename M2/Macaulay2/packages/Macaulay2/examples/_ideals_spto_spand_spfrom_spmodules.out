@@ -1,14 +1,9 @@
-loaddata: map has appeared or changed its location: 0x0014a000-0x00150000 r-x 908788983
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : R = ZZ/32003[x,y,z];
 
 i2 : I = ideal(x^2,y*z-x);
-o2 : Ideal of R
 
+o2 : Ideal of R
 
 i3 : module I
 
@@ -18,9 +13,9 @@ o3 = image | x2 yz-x |
 o3 : R-module, submodule of R
 
 i4 : A = matrix{{x*y-z,z^3}};
+
              1       2
 o4 : Matrix R  <--- R
-
 
 i5 : M = image A
 

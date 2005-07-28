@@ -1,7 +1,3 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : (hold 2)^5 * (hold 3)^3 * (hold 5) * (hold 11)^2
 

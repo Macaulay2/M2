@@ -1,16 +1,15 @@
-loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : R = ZZ/101[a..d];
 
 i2 : I = ideal(a*b-c*d, (a*c-b*d)^2);
+
 o2 : Ideal of R
 
-
 i3 : ass I
+saturating with {}
+saturating with {}
+saturating with {}
+saturating with {}
 
 o3 = {ideal (d, a), ideal (b + c, a + d), ideal (c, b), ideal (b - c, a - d)}
 

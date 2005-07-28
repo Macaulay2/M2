@@ -1,7 +1,3 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : book = new HashTable from {
           "Joe" => "344-5567",
@@ -78,9 +74,9 @@ o14 : MutableHashTable
 
 i15 : peek x
 
-o15 = MutableHashTable{3 => {a, b, c} }
+o15 = MutableHashTable{{1, 2} => 44   }
+                       3 => {a, b, c}
                        Joe => 344-5567
-                       {1, 2} => 44
 
 i16 : p=4;
 

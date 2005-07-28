@@ -1,8 +1,3 @@
-loaddata: map has appeared or changed its location: 0x001b7000-0x001d5000 r-x 4062413709
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : X = new Type of MutableHashTable
 
@@ -56,7 +51,7 @@ o8 : List
 
 i9 : code globalAssignFunction
 
-o9 = -- startup.m2:143-146
+o9 = -- startup.m2:149-152
           globalAssignFunction = (X,x) -> (
                if not ReverseDictionary#?x then ReverseDictionary#x = X;
                use x;

@@ -1,7 +1,3 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : R = ZZ/32003[a,b,c,d]
 
@@ -29,9 +25,9 @@ o4 = S
 o4 : PolynomialRing
 
 i5 : F = map(S,R,
-       s*matrix{{p_0..p_3}} +
-       t*matrix{{q_0..q_3}}
-         )
+            s*matrix{{p_0..p_3}} +
+            t*matrix{{q_0..q_3}}
+            )
 
 o5 = map(S,R,{s*p  + t*q , s*p  + t*q , s*p  + t*q , s*p  + t*q })
                  0      0     1      1     2      2     3      3
@@ -46,7 +42,7 @@ o6 = ideal(s p  + s p  + s p  + s p  + 3s t*p q  + 3s*t p *q  + t q  + 3s t*p q 
 
 o6 : Ideal of S
 
-i7 : cFX = (coefficients({0,1},gens FX))_1
+i7 : cFX = last coefficients(gens FX, Variables => {s,t})
 
 o7 = {3} | p_0^3+p_1^3+p_2^3+p_3^3                 |
      {3} | 3p_0^2q_0+3p_1^2q_1+3p_2^2q_2+3p_3^2q_3 |
@@ -191,7 +187,7 @@ i21 : Fano2(ZZ,Ideal,Ring) := (k,X,GR) -> (
         -- The following line produces the matrix of
         -- coefficients of the monomials in the 
         -- variables labelled 0..k:
-        cFX := (coefficients (toList(0..k),gens FX))_1;
+        cFX := last coefficients (gens FX, Variables => toList apply(0..k, i -> S_i));
         -- We can get rid of the variables t_i
         -- to ease the computation:
         cFX = substitute(cFX, S2);

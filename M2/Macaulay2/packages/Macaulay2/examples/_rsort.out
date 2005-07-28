@@ -1,18 +1,24 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
-i1 : rsort {g,d,w,s,c,a,r}
+i1 : rsort {4,2,3,1}
 
-o1 = {w, s, r, g, d, c, a}
+o1 = {4, 3, 2, 1}
 
 o1 : List
 
-i2 : rsort {4,2,3,1}
+i2 : R = QQ[a..d];
 
-o2 = {4, 3, 2, 1}
+i3 : m = matrix{{a*b, c*d, a*d^3, b^3*c, 1_R}}
 
-o2 : List
+o3 = | ab cd ad3 b3c 1 |
 
-i3 : 
+             1       5
+o3 : Matrix R  <--- R
+
+i4 : rsort(m, DegreeOrder=>Ascending)
+
+o4 = | b3c ad3 ab cd 1 |
+
+             1       5
+o4 : Matrix R  <--- R
+
+i5 : 

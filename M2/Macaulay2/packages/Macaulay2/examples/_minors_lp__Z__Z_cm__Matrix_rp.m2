@@ -1,4 +1,4 @@
-R = ZZ[vars(0..11)];
-M = genericMatrix(R,a,4,3)
-transpose generators minors(2,M)
-subsets(4,2)
+R = ZZ[a..f];
+M = matrix{{a,b,c},{d,e,f}}
+minors(2,M)
+minors(2,M,Limit=>1)

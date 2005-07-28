@@ -1,7 +1,3 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : R = ZZ[x,y];
 
@@ -50,14 +46,14 @@ o9 : S
 
 i10 : k = map(S,S,matrix {{c,b}})
 
-o10 = map(S,S,{a, c, b})
+o10 = map(S,S,{c, b, a})
 
 o10 : RingMap S <--- S
 
 i11 : k(a^7 + b^3 + c)
 
-       7        3
-o11 = b  + c + a
+       3        7
+o11 = c  + b + a
 
 o11 : S
 

@@ -1,8 +1,3 @@
-loaddata: map has appeared or changed its location: 0x00199000-0x001c3000 r-x 967609826
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : apply({1,2,3}, {100,200,300}, (i,j) -> i+j)
 

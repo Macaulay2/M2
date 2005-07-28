@@ -1,15 +1,24 @@
-loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
-i1 : S = QQ[x,y]/(1-(x-1)*(y-1));
+i1 : R = QQ[z]/(z^2+1);
 
-i2 : isUnit (x^2 - 2*x + 1)
+i2 : isUnit z
 
 o2 = true
 
 o2 : Boolean
 
-i3 : 
+i3 : S = QQ[x,y]/(1-(x-1)*(y-1));
+
+i4 : isUnit (x^2 - 2*x + 1)
+
+o4 = true
+
+o4 : Boolean
+
+i5 : isUnit x
+
+o5 = false
+
+o5 : Boolean
+
+i6 : 

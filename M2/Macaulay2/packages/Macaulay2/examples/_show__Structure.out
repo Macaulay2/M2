@@ -1,7 +1,3 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : showStructure
 
@@ -91,6 +87,7 @@ o1 = Thing : BasicList : Command
                          TreeNode
                          VisibleList : Array
                                        List : Partition
+                                              URL
                                               Vector
                                               VerticalList
                                        Sequence

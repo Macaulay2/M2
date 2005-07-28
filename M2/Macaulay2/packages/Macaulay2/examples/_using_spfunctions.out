@@ -1,7 +1,3 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : sin
 
@@ -60,7 +56,6 @@ o8 : Function
 
 Ways to use join
 ================
-
   * "join(BasicList,BasicList)" -- missing documentation
 
 i9 : join({a,b},{c,d},{e,f},{g,h,i})

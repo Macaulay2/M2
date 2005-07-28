@@ -1,20 +1,20 @@
-loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
-i1 : R = QQ[x,y]
+i1 : R = QQ[a..d];
 
-o1 = R
+i2 : terms(a+d^2-1+a*b*c)
 
-o1 : PolynomialRing
-
-i2 : terms (x+2*y-1)^2
-
-       2          2
-o2 = {x , 4x*y, 4y , -2x, -4y, 1}
+              2
+o2 = {a*b*c, d , a, -1}
 
 o2 : List
 
-i3 : 
+i3 : S = R[x,y];
+
+i4 : terms(a*x+b*x+c*x*y+c*x^3+1+a)
+
+         3
+o4 = {c*x , c*x*y, (a + b)x, a + 1}
+
+o4 : List
+
+i5 : 

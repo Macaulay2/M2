@@ -1,8 +1,3 @@
-loaddata: map has appeared or changed its location: 0x0012e000-0x0014c000 r-x 4062413709
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : R = ZZ/101[a..e];
 
@@ -22,8 +17,8 @@ o3 = ideal (a b - c , a b, a*b  - d , b*c*d, c  - d, c )
 o3 : Ideal of R
 
 i4 : I = ideal(a^2*b-c^2+c*d, a*b^2-b*d^3, c^5,d+e);
-o4 : Ideal of R
 
+o4 : Ideal of R
 
 i5 : generators I
 

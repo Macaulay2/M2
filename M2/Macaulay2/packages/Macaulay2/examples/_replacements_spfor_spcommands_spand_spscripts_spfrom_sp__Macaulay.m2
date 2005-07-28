@@ -4,7 +4,7 @@ cols = {0,3}
 result = map(R^3, 2, (i,j) -> R_(rows_i + cols_j))
 R = ZZ/101[a..d];
 m = matrix{{a^2+a^2*c+a*b+3*d}}
-result = coefficients({0}, m)
+result = coefficients(m, Variables => {a})
 result_0
 result_1
 R = QQ[a,b,Degrees=>{{1,0},{1,-1}}];

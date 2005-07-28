@@ -1,7 +1,3 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : "testfile" << 2^100 << endl << close
 
@@ -42,7 +38,6 @@ i7 : get "testfile"
 o7 = hi
      ho
 
-
-i8 : unlink "testfile"
+i8 : unlinkFile "testfile"
 
 i9 : 

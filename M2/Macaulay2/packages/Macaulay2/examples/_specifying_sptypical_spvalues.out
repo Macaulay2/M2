@@ -1,16 +1,12 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : code(prune, Matrix)
 
-o1 = -- ../../../Macaulay2/m2/modules2.m2:379-384
-     prune(Matrix) := Matrix => (m) -> (
+o1 = -- ../../../Macaulay2/m2/modules2.m2:383-388
+     minimalPresentation(Matrix) := Matrix => opts -> (m) -> (
           M := source m;
-          if not M.cache.?pruningMap then m = m * (prune M).cache.pruningMap;
+          if not M.cache.?pruningMap then m = m * (minimalPresentation M).cache.pruningMap;
           N := target m;
-          if not N.cache.?pruningMap then m = (prune N).cache.pruningMap^-1 * m;
+          if not N.cache.?pruningMap then m = (minimalPresentation N).cache.pruningMap^-1 * m;
           m)
 
 i2 : typicalValues#(prune,Matrix)

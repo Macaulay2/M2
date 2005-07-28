@@ -7,10 +7,10 @@ degree g
 terms g
 select(terms g, i -> degree i == {2})
 sum oo
-g_0
-g_1
-g_2
-g_3
+part(0,g)
+part(1,g)
+part(2,g)
+part(3,g)
 toString f
 toString g
 quot = f//g
@@ -19,7 +19,7 @@ f == quot * g + rem
 homogenize(f,b)
 ring f
 ring f === ring g
-f_1
+part(1,f)
 f_a
 g_(a*b)
 leadTerm g

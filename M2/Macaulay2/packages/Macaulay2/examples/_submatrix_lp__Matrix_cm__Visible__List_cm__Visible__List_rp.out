@@ -1,7 +1,3 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
 
 i1 : R = ZZ/101[a .. o];
 
@@ -47,10 +43,6 @@ o6 = | a d |
      | c f |
 
              3       2
-o6 : Matrix R  <--- R
-
-i7 : 
-        3       2
 o6 : Matrix R  <--- R
 
 i7 : 
