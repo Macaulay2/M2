@@ -1102,7 +1102,7 @@ show Hypertext := x -> (
      addEndFunction( () -> run ( "rm " | fn ) );
      )
 
-show TEX := x -> show hypertext x
+show TEX := x -> showTex x
 
 viewHelp = key -> (
      if prefixDirectory === null then error "can't run viewHelp from build tree";

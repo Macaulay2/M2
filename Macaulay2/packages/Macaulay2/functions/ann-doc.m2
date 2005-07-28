@@ -82,6 +82,41 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
+
+
+document { 
+     Key => ann',
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => (ann',Module),
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+
  -- doc11.m2:832:     Key => Grassmannian,
  -- doc8.m2:38:     Key => symbol ann,
  -- doc8.m2:44:     Key => symbol annihilator,

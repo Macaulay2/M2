@@ -805,7 +805,6 @@ export (
 	symbol matrix,
 	symbol max,
 	symbol maxPosition,
-	symbol maximumCodeWidth,
 	symbol member,
 	symbol memoize,
 	symbol merge,
