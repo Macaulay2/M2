@@ -257,7 +257,6 @@ export (
 	symbol ICfractions,
 	symbol ICfractionsLong,
 	symbol ICmap,
-	symbol ICnode,
 	symbol IMG,
 	symbol ITALIC,
 	symbol Ideal,

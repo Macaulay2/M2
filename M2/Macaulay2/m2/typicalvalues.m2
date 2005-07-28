@@ -112,7 +112,7 @@ select(BasicList,Function) := BasicList => select
 select(HashTable,Function) := HashTable => select
 select(ZZ,BasicList,Function) := BasicList => select
 select(ZZ,HashTable,Function) := HashTable => select
-set List := set Sequence := Set => set
+set BasicList := set Sequence := Set => set
 tally BasicList := Tally => tally
 splice BasicList := BasicList => splice
 typicalValues#stack = Net
