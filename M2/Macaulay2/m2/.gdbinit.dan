@@ -28,5 +28,4 @@ source .gdb-files
 # can only to this after the program starts:
 # b __gmp_set_memory_functions
 b main
-b system_regexmatch
 source .gdb-run-it

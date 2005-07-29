@@ -165,6 +165,8 @@ M2_string actors5_NTLVERSION;
 M2_string actors5_LIBFACVERSION;
 M2_string actors5_FACTORYVERSION;
 M2_string actors5_READLINEVERSION;
+M2_string actors5_M2SUFFIX;
+M2_string actors5_EXEEXT;
 M2_bool actors5_DUMPDATA;
 M2_bool actors5_FACTORY;
 M2_bool actors5_MP;
@@ -404,6 +406,8 @@ char **argv;
 #endif
      sprintf(READLINEVERSION,"%d.%d",(rl_readline_version>>8)&0xff,rl_readline_version&0xff);
      actors5_READLINEVERSION = tostring(READLINEVERSION);
+     actors5_M2SUFFIX = tostring(M2SUFFIX);
+     actors5_EXEEXT = tostring(EXEEXT);
      actors5_DATE = tostring(current_date);
      actors5_TIME = tostring(current_time);
      actors5_startupString1 = tostring(startupString1);

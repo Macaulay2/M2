@@ -1031,7 +1031,7 @@ documentation Sequence := key -> (						    -- method key
      if null === lookup key then error("expected ", toString key, " to be a method");
      Hypertext fixuptop ( title key, synopsis key, makeDocBody key, theExamples key, caveat key, seealso key, theMenu key ))
 
-documentation Thing := x -> if ReverseDictionary#?x then return documentation ReverseDictionary#x else SEQ{ " -- undocumented -- "}
+documentation Thing := x -> if ReverseDictionary#?x then return documentation ReverseDictionary#x else error "undocumented"
 
 pager = x -> (
      if height stdio > 0

@@ -449,13 +449,6 @@ document {
      }
 
 document {
-     Key => (generators, GroebnerBasis),
-     Headline => "the Groebner basis matrix",
-     TT "generators g", " -- returns a matrix whose columns are the
-     generators of the Groebner basis."
-     }
-
-document {
      Key => returnCode,
      TT "returnCode", " --  a key for a ", TO "GroebnerBasis", " under which is
      stored the return code from the engine for the computation."

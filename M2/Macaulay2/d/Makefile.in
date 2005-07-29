@@ -164,7 +164,7 @@ compat.c compat.h : configure ../../include/config.h
 
 M2types.o : M2types.h
 M2lib.o scclib.o : compat.h ../c/compat.h ../c/compat.c types.h memdebug.h
-gmp_int.o M2lib.o scclib.ogdbm_interface.o gc_cpp.o version.o M2inits.o debug.o : ../../include/config.h
+gmp_int.o M2lib.o scclib.o gdbm_interface.o gc_cpp.o version.o M2inits.o debug.o : ../../include/config.h
 memdebug.o scclib.o actors5.o : memdebug.h
 
 clean::; rm -f startup.c
@@ -226,14 +226,29 @@ else
 LIBRARYOPTIONS += -lfac
 endif
 
+# note: linking with libcfmem.a, which provides some replacements for operator new and delete,
+# leads to bugs when more recent code uses yet another flavor of operator new, such as
+#   operator new (unsigned, std::nothrow),
+# which is defined in 
+#		include <new>
+# So we've decided *not* to link with it.
+
+## rhodium% nm -o --demangle /capybara/lib/libcfmem.a | grep newdelete.o
+## /capybara/lib/libcfmem.a:newdelete.o:00000040 T operator delete[](void*)
+## /capybara/lib/libcfmem.a:newdelete.o:00000010 T operator delete(void*)
+## /capybara/lib/libcfmem.a:newdelete.o:00000030 T operator new[](unsigned int)
+## /capybara/lib/libcfmem.a:newdelete.o:00000000 T operator new(unsigned int)
+## /capybara/lib/libcfmem.a:newdelete.o:         U freeBlock
+## /capybara/lib/libcfmem.a:newdelete.o:         U getBlock
+
 ifeq "$(PROFILE)" "yes"
 ifeq "$(HAVE_LIBCF_PG)" "yes"
-LIBRARYOPTIONS += -lcf-pg -lcfmem-pg
+LIBRARYOPTIONS += -lcf-pg
 else
-LIBRARYOPTIONS += -lcf -lcfmem
+LIBRARYOPTIONS += -lcf
 endif
 else
-LIBRARYOPTIONS += -lcf -lcfmem
+LIBRARYOPTIONS += -lcf
 endif
 
 LIBRARYDEPS    += factory_setup.o

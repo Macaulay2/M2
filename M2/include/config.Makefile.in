@@ -57,7 +57,9 @@ LDLIBS = @LDLIBS@
 LAPACK = @LAPACK@
 LAPACKLIBS = @LAPACKLIBS@
 ENCAP = @ENCAP@
-EXE = @EXE@
+M2SUFFIX = @M2SUFFIX@
+EXEEXT = @EXEEXT@
+EXE = $(M2SUFFIX)$(EXEEXT)
 
 # See the autoconf documentation for a description of LIBS, which autoconf uses at configure time for checking for features
 # Hence we have to use it, too.
@@ -251,10 +253,6 @@ ifneq "$(CC)" "cl"
 LDFLAGS  += -s
 STRIPCMD := strip
 endif
-endif
-
-ifeq "$(OS)" "CYGWIN_NT-5.0"
-EXE += .exe
 endif
 
 ifeq "$(MEMDEBUG)" "yes"

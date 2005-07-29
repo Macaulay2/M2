@@ -13,35 +13,30 @@
 ;; M2 command interpreter
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
 (setq process-coding-system-alist (cons '("M2" . raw-text) process-coding-system-alist))
 
 (defun m2-mode() (M2-mode))		;setting file variables lowers the case
 
+(define-derived-mode M2-mode fundamental-mode "Macaulay 2"
+  "Major mode for editing Macaulay 2 source code.
+
+\\{M2-mode-map}"
+  ;; (kill-all-local-variables)
+  ;; (set-buffer-modified-p (buffer-modified-p))
+  (M2-common)
+  )
+
+(define-derived-mode M2-comint-mode comint-mode "Macaulay 2 Interaction"
+  "Major mode for interacting with a Macaulay 2 process.
+
+\\{M2-comint-mode-map}"
+  (M2-common)
+  (setq comint-prompt-regexp M2-comint-prompt-regexp)
+  (setq comint-dynamic-complete-functions '( M2-dynamic-complete-symbol comint-dynamic-complete-filename))
+  )
+
 (defun M2-common()
   "Set up features common to both Macaulay 2 major modes."
-  (local-set-key [ f12 ] 'M2)
-  (local-set-key [ (meta f12) ] 'M2-demo)
-  (local-set-key [ (control f11) ] 'M2-switch-to-demo-buffer)
-  (local-set-key [ f11 ] 'M2-send-to-program)
-  (local-set-key [ (meta f11) ] 'M2-set-demo-buffer)
-  (local-set-key "\^C\t" 'M2-dynamic-complete-symbol)
-  (local-set-key [ f10 ] 'M2-match-next-bracketed-input)
-  (local-set-key [ (meta f10) ] 'M2-match-previous-bracketed-input)
-  (modify-syntax-entry ?\\ "\\")
-  (modify-syntax-entry ?-  ". 12")
-  (modify-syntax-entry ?*  ".")
-  (modify-syntax-entry ?_  ".")
-  (modify-syntax-entry ?+  ".")
-  (modify-syntax-entry ?=  ".")
-  (modify-syntax-entry ?%  ".")
-  (modify-syntax-entry ?<  ".")
-  (modify-syntax-entry ?>  ".")
-  (modify-syntax-entry ?'  "w")
-  (modify-syntax-entry ?&  ".")
-  (modify-syntax-entry ?|  ".")
-  (modify-syntax-entry ?\n ">")
-  (modify-syntax-entry ?\^m ">")
   (set (make-local-variable 'comint-use-prompt-regexp-instead-of-fields) nil) ; we might want to start using "input fields", too!
   (set (make-local-variable 'comment-start) "-- ")
   (set (make-local-variable 'comment-end) "")
@@ -54,45 +49,67 @@
   (setq case-fold-search nil)
   )
 
-(define-derived-mode M2-mode fundamental-mode "Macaulay 2"
-  "Major mode for editing Macaulay 2 source code.
+;; key bindings
 
-\\{M2-mode-map}"
-  ;; (kill-all-local-variables)
-  ;; (set-buffer-modified-p (buffer-modified-p))
-  (M2-common)
-  (local-set-key "\177" 'backward-delete-char-untabify)
-  (local-set-key "\^M" 'M2-newline-and-indent)
-  (local-set-key "\t" 'M2-electric-tab)
-  (local-set-key "}" 'M2-electric-right-brace)
-  (local-set-key ";" 'M2-electric-semi)
-  (local-set-key "\^Cd" 'M2-find-documentation)
-  )
+(define-key M2-mode-map "\177" 'backward-delete-char-untabify)
+(define-key M2-mode-map "\^M" 'M2-newline-and-indent)
+(define-key M2-mode-map "\t" 'M2-electric-tab)
+(define-key M2-mode-map "}" 'M2-electric-right-brace)
+(define-key M2-mode-map ";" 'M2-electric-semi)
+(define-key M2-mode-map "\^Cd" 'M2-find-documentation)
 
-(define-derived-mode M2-comint-mode comint-mode "Macaulay 2 Interaction"
-  "Major mode for interacting with a Macaulay 2 process.
+(define-key M2-comint-mode-map "\t" 'comint-dynamic-complete)
+(define-key M2-comint-mode-map [ f2 ] 'M2-position-point)
+(define-key M2-comint-mode-map [ (control C) ?. ] 'M2-position-point)
+(define-key M2-comint-mode-map [ f3 ] 'M2-jog-left)
+(define-key M2-comint-mode-map [ (control C) < ] 'M2-jog-left)
+(define-key M2-comint-mode-map [ f4 ] 'M2-jog-right)
+(define-key M2-comint-mode-map [ (control C) > ] 'M2-jog-right)
+(define-key M2-comint-mode-map [ f5 ] 'M2-toggle-truncate-lines)
+(define-key M2-comint-mode-map [ (control C) ? ] 'M2-toggle-truncate-lines)
+(define-key M2-comint-mode-map [ f6 ] 'scroll-left)
+(define-key M2-comint-mode-map [ (control C) l ] 'scroll-left)
+(define-key M2-comint-mode-map [ f7 ] 'scroll-right)
+(define-key M2-comint-mode-map [ (control C) r ] 'scroll-right)
+(define-key M2-comint-mode-map [ f8 ] 'switch-to-completions)
+(define-key M2-comint-mode-map [ (control C) c ] 'switch-to-completions)
+(define-key M2-comint-mode-map [ (control C) d ] 'M2-find-documentation)
 
-\\{M2-comint-mode-map}"
-  (M2-common)
-  (setq comint-prompt-regexp M2-comint-prompt-regexp)
-  (local-set-key "\t" 'comint-dynamic-complete)
-  (local-set-key [ f2 ] 'M2-position-point)
-  (local-set-key [ (control C) ?. ] 'M2-position-point)
-  (local-set-key [ f3 ] 'M2-jog-left)
-  (local-set-key [ (control C) < ] 'M2-jog-left)
-  (local-set-key [ f4 ] 'M2-jog-right)
-  (local-set-key [ (control C) > ] 'M2-jog-right)
-  (local-set-key [ f5 ] 'M2-toggle-truncate-lines)
-  (local-set-key [ (control C) ? ] 'M2-toggle-truncate-lines)
-  (local-set-key [ f6 ] 'scroll-left)
-  (local-set-key [ (control C) l ] 'scroll-left)
-  (local-set-key [ f7 ] 'scroll-right)
-  (local-set-key [ (control C) r ] 'scroll-right)
-  (local-set-key [ f8 ] 'switch-to-completions)
-  (local-set-key [ (control C) c ] 'switch-to-completions)
-  (local-set-key [ (control C) d ] 'M2-find-documentation)
-  (setq comint-dynamic-complete-functions '( M2-dynamic-complete-symbol comint-dynamic-complete-filename))
-  )
+(mapcar
+ (function 
+  (lambda (mode-map)
+    (define-key mode-map [ f12 ] 'M2)
+    (define-key mode-map [ (meta f12) ] 'M2-demo)
+    (define-key mode-map [ (control f11) ] 'M2-switch-to-demo-buffer)
+    (define-key mode-map [ f11 ] 'M2-send-to-program)
+    (define-key mode-map [ (meta f11) ] 'M2-set-demo-buffer)
+    (define-key mode-map "\^C\t" 'M2-dynamic-complete-symbol)
+    (define-key mode-map [ f10 ] 'M2-match-next-bracketed-input)
+    (define-key mode-map [ (meta f10) ] 'M2-match-previous-bracketed-input)))
+ (list M2-mode-map M2-comint-mode-map))
+
+;; syntax
+
+(mapcar
+ (function
+  (lambda (syntax-table)
+    (modify-syntax-entry ?\\ "\\" syntax-table)
+    (modify-syntax-entry ?-  ". 12" syntax-table)
+    (modify-syntax-entry ?*  "." syntax-table)
+    (modify-syntax-entry ?_  "." syntax-table)
+    (modify-syntax-entry ?+  "." syntax-table)
+    (modify-syntax-entry ?=  "." syntax-table)
+    (modify-syntax-entry ?%  "." syntax-table)
+    (modify-syntax-entry ?<  "." syntax-table)
+    (modify-syntax-entry ?>  "." syntax-table)
+    (modify-syntax-entry ?'  "w" syntax-table)
+    (modify-syntax-entry ?&  "." syntax-table)
+    (modify-syntax-entry ?|  "." syntax-table)
+    (modify-syntax-entry ?\n ">" syntax-table)
+    (modify-syntax-entry ?\^m ">" syntax-table)))
+ (list M2-mode-syntax-table M2-comint-mode-syntax-table))
+
+;;
 
 (defvar M2-exe "M2" "*The default Macaulay2 executable name.")
 (defvar M2-command (concat M2-exe " --print-width " (number-to-string (- (screen-width) 1)) " ") "*The default Macaulay2 command line.")
@@ -121,12 +138,8 @@
   (M2-comint-mode)
   )
 
-(defun Macaulay2 ()
-  "Run Macaulay 2 in a buffer, non-interactive."
-  (M2 M2-command))
-
-(defvar M2-usual-jog 30 
-  "Usual distance scrolled by M2-jog-left and M2-jog-right")
+(defun Macaulay2 () "Run Macaulay 2 in a buffer, non-interactive." (M2 M2-command))
+(defvar M2-usual-jog 30 "Usual distance scrolled by M2-jog-left and M2-jog-right")
 (defvar M2-comint-prompt-regexp
   (concat "^"
 	  "[ \t]*"
@@ -439,7 +452,7 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer." )
 (add-hook 'M2-comint-mode-hook 'turn-on-font-lock)
 (add-hook 'M2-mode-hook 'turn-on-font-lock) 
 
-(provide 'M2)				;last thing to do
+(provide 'M2)
 
 ; Local Variables:
 ; compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs "

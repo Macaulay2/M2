@@ -16,6 +16,7 @@ class array
   int  max;
 
   void expand(int newtop);
+   
 public:
   array(int i_size = init_array_size) 
     : max(0)

@@ -195,29 +195,7 @@ document {
 	  },
      SeeAlso => {(symbol==, Ideal, Ideal)}
      }
-document {
-     Key => (generators, Ideal),
-     Usage => {"generators I", EM " or ", "gens I"},
-     Inputs => {"I" => null},
-     Outputs => {
-	  Matrix => {"the one row matrix whose entries are the given generators
-	  of ", TT "I"}
-	  },
-     "Each ideal in ", EM "Macaulay 2", " comes equipped with a one row
-     matrix with the generators of the ideal.
-     It is this matrix which is returned.",
-     EXAMPLE {
-	  "R = ZZ/101[a,b,c];",
-      	  "I = ideal(a^2,a*b-2,c^4,a*c-1,a*c-1)",
-      	  "generators I"
-	  },
-     "If you want to remove unnecessary generators, use ", TO trim, ".",
-     EXAMPLE {
-	  "I = trim I",
-	  "gens I"
-	  },
-     SeeAlso => {(symbol==, Ideal, Ideal)}
-     }
+
 document {
      Key => {(isSubset,Ideal,Ideal)
 	  },

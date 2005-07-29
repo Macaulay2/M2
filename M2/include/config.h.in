@@ -14,6 +14,9 @@
 /* whether to use dumpdata */
 #undef DUMPDATA
 
+/* suffix the compiler appends to executable filenames */
+#undef EXEEXT
+
 /* whether to use the 'factory' library */
 #undef FACTORY
 
@@ -78,6 +81,9 @@
 
 /* whether to use LAPACK */
 #undef LAPACK
+
+/* suffix to append to executable name M2 */
+#undef M2SUFFIX
 
 /* whether to use the new version of dumpdata */
 #undef NEWDUMPDATA
