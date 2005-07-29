@@ -38,13 +38,13 @@ texLiteralTable := new MutableHashTable
     texLiteralTable#"\t" = "\t"
     texLiteralTable#"`" = "{`}"     -- break ligatures ?` and !` in font \tt
 				   -- see page 381 of TeX Book
-texLiteral := s -> concatenate apply(characters s, c -> texLiteralTable#c)
+texLiteral = s -> concatenate apply(characters s, c -> texLiteralTable#c)
 
 HALFLINE := ///\vskip 4.75pt
 ///
 ENDLINE := ///\leavevmode\hss\endgraf
 ///
-VERBATIM := ///\begingroup\baselineskip=9.5pt\tt\parskip=0pt
+VERBATIM := ///\begingroup\tt\parskip=0pt
 ///
 ENDVERBATIM := ///\endgroup{}///
 
