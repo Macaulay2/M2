@@ -99,7 +99,8 @@ void PrintDigits(std::ostream& s, long d, long justify)
       s << buf[i];
    }
 }
-      
+
+#if 0      
 std::ostream& operator<<(std::ostream& s, const ZZ& a)
 {
    static ZZ b;
@@ -155,6 +156,7 @@ std::ostream& operator<<(std::ostream& l__s, const mat_ZZ& l__a)
    l__s << "]";
    return l__s;
 }
+#endif
 
 void dntl_matZZ(const mat_ZZ *A)
 {
