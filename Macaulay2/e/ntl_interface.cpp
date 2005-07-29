@@ -2,9 +2,7 @@
 
 #include "ntl_interface.hpp"
 #include "mat.hpp"
-//#include "sparsemat.hpp"
 
-class mat_ZZ;
 mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrixXXX *M)
 {
   // Creates the TRANSPOSE of M
@@ -54,7 +52,7 @@ MutableMatrixXXX *mutableMatrix_from_NTL_mat_ZZ(const mat_ZZ *A)
   return B;
 }
 
-static const int NTL = 2;
+static const int useNTL = 2;
 static const int GS = 0;
 static const int Givens = 4;
 static const int useLLL = 0;
@@ -63,7 +61,7 @@ static const int FP = 16;
 static const int QP1 = 2*16;
 static const int QP = 3*16;
 static const int XD = 4*16;
-static const int RR = 5*16;
+static const int useRR = 5*16;
 
 bool ntl_LLL(MutableMatrixXXX *M, MutableMatrixXXX *U, long numer, long denom, int strategy)
 {
@@ -86,114 +84,114 @@ bool ntl_LLL(MutableMatrixXXX *M, MutableMatrixXXX *U, long numer, long denom, i
       rk = LLL(d,*A,*V,numer,denom);
     break;
 
-  case NTL+GS+useLLL+FP:
+  case useNTL+GS+useLLL+FP:
     if (V)
       rk = LLL_FP(*A,delta);
     else
       rk = LLL_FP(*A,*V,delta);
     break;
-  case NTL+GS+useLLL+QP:
-  case NTL+GS+useLLL+QP1:
+  case useNTL+GS+useLLL+QP:
+  case useNTL+GS+useLLL+QP1:
     if (V)
       rk = LLL_QP(*A,delta);
     else
       rk = LLL_QP(*A,*V,delta);
     break;
-  case NTL+GS+useLLL+XD:
+  case useNTL+GS+useLLL+XD:
     if (V)
       rk = LLL_XD(*A,delta);
     else
       rk = LLL_XD(*A,*V,delta);
     break;
-  case NTL+GS+useLLL+RR:
+  case useNTL+GS+useLLL+useRR:
     if (V)
       rk = LLL_RR(*A,delta);
     else
       rk = LLL_RR(*A,*V,delta);
     break;
 
-  case NTL+GS+useBKZ+FP:
+  case useNTL+GS+useBKZ+FP:
     if (V)
       rk = BKZ_FP(*A,delta);
     else
       rk = BKZ_FP(*A,*V,delta);
     break;
-  case NTL+GS+useBKZ+QP:
+  case useNTL+GS+useBKZ+QP:
     if (V)
       rk = BKZ_QP(*A,delta);
     else
       rk = BKZ_QP(*A,*V,delta);
     break;
-  case NTL+GS+useBKZ+QP1:
+  case useNTL+GS+useBKZ+QP1:
     if (V)
       rk = BKZ_QP1(*A,delta);
     else
       rk = BKZ_QP1(*A,*V,delta);
     break;
-  case NTL+GS+useBKZ+XD:
+  case useNTL+GS+useBKZ+XD:
     if (V)
       rk = BKZ_XD(*A,delta);
     else
       rk = BKZ_XD(*A,*V,delta);
     break;
-  case NTL+GS+useBKZ+RR:
+  case useNTL+GS+useBKZ+useRR:
     if (V)
       rk = BKZ_RR(*A,delta);
     else
       rk = BKZ_RR(*A,*V,delta);
     break;
 
-  case NTL+Givens+useLLL+FP:
+  case useNTL+Givens+useLLL+FP:
     if (V)
       rk = G_LLL_FP(*A,delta);
     else
       rk = G_LLL_FP(*A,*V,delta);
     break;
-  case NTL+Givens+useLLL+QP:
-  case NTL+Givens+useLLL+QP1:
+  case useNTL+Givens+useLLL+QP:
+  case useNTL+Givens+useLLL+QP1:
     if (V)
       rk = G_LLL_QP(*A,delta);
     else
       rk = G_LLL_QP(*A,*V,delta);
     break;
-  case NTL+Givens+useLLL+XD:
+  case useNTL+Givens+useLLL+XD:
     if (V)
       rk = G_LLL_XD(*A,delta);
     else
       rk = G_LLL_XD(*A,*V,delta);
     break;
-  case NTL+Givens+useLLL+RR:
+  case useNTL+Givens+useLLL+useRR:
     if (V)
       rk = G_LLL_RR(*A,delta);
     else
       rk = G_LLL_RR(*A,*V,delta);
     break;
 
-  case NTL+Givens+useBKZ+FP:
+  case useNTL+Givens+useBKZ+FP:
     if (V)
       rk = G_BKZ_FP(*A,delta);
     else
       rk = G_BKZ_FP(*A,*V,delta);
     break;
-  case NTL+Givens+useBKZ+QP:
+  case useNTL+Givens+useBKZ+QP:
     if (V)
       rk = G_BKZ_QP(*A,delta);
     else
       rk = G_BKZ_QP(*A,*V,delta);
     break;
-  case NTL+Givens+useBKZ+QP1:
+  case useNTL+Givens+useBKZ+QP1:
     if (V)
       rk = G_BKZ_QP1(*A,delta);
     else
       rk = G_BKZ_QP1(*A,*V,delta);
     break;
-  case NTL+Givens+useBKZ+XD:
+  case useNTL+Givens+useBKZ+XD:
     if (V)
       rk = G_BKZ_XD(*A,delta);
     else
       rk = G_BKZ_XD(*A,*V,delta);
     break;
-  case NTL+Givens+useBKZ+RR:
+  case useNTL+Givens+useBKZ+useRR:
     if (V)
       rk = G_BKZ_RR(*A,delta);
     else
