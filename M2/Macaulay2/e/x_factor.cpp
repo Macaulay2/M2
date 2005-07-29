@@ -279,8 +279,8 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
 #warning "check that the rings of f and g both polynomial rings"
 #ifdef FACTORY
   const RingElement *ret;
-  const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
-  const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
+  const PolyRing *P = f->get_ring()->cast_to_PolyRing();
+  const PolyRing *P2 = g->get_ring()->cast_to_PolyRing();
   if (P == 0) {
       ERROR("expected polynomial ring");
       return 0;
@@ -293,16 +293,20 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
     enter_factory a;
     CanonicalForm p = convert(*f);
     CanonicalForm q = convert(*g);
-         std::cerr << "p = " << p << endl
-              << "q = " << q << endl;
+    //         std::cerr << "p = " << p << endl
+    //              << "q = " << q << endl;
     p = p / icontent(p);
     q = q / icontent(q);
-         std::cerr << "p = " << p << endl
-              << "q = " << q << endl;
+    //         std::cerr << "p = " << p << endl
+    //              << "q = " << q << endl;
     CanonicalForm h = gcd(p,q);
     ret = convert(P,h);
   }
-  return ret;
+  ring_elem a = P->preferred_associate_divisor(ret->get_value()); // an element in the coeff ring
+  ring_elem b = P->getCoefficients()->invert(a);
+  ring_elem r = ret->get_value();
+  P->mult_coeff_to(b, r);
+  return RingElement::make_raw(P,r);
 #else
   ERROR("'factory' library not installed");
   return NULL;

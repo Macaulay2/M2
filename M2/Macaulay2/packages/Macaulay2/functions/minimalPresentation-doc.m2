@@ -164,7 +164,7 @@ document {
      }
 document { 
      Key => (minimalPresentation,Matrix),
-     Headline => "minimize generators and relations for source and target",
+     Headline => "minimally present source and target of a matrix",
      Usage => "minimalPresentation f",
      Inputs => {
 	  "f" => ""
@@ -200,7 +200,7 @@ document {
      }
 document { 
      Key => (minimalPresentation,Module),
-     Headline => "minimize generators and relations",
+     Headline => "minimal presentation of a module",
      Usage => "N = minimalPresentation M",
      Inputs => {
 	  "M" => ""
@@ -211,7 +211,7 @@ document {
      Consequences => {
 	  {TT "minimalPresentation", " stores the isomorphism from ", TT "M", " to ", TT "N", 
 	       " as ", TT "g = N.cache.pruningMap", " unless ", 
-	       TT "M.cache.pruningMap", "already exists, in which case ", 
+	       TT "M.cache.pruningMap", " already exists, in which case ", 
 	       TT "N", " is the same as ", TT "M", " and the inverse 
 	       isomorphism is obtained by ", TT "g^-1"}
 	       },   	      
@@ -227,7 +227,7 @@ document {
 	  "g = N.cache.pruningMap",
 	  "g^-1"
 	  },
-     SeeAlso => {(minimalPresentation, Matrix), (trim, Module)}
+     SeeAlso => {(minimalPresentation, Matrix), (trim, Module), (mingens,Module)}
      }
 document { 
      Key => [minimalPresentation, Variable],

@@ -456,11 +456,6 @@ document {
      }
 
 document {
-     Key => (mingens, GroebnerBasis),
-     Headline => "a matrix whose columns are minimal generators of the submodule",
-     }
-
-document {
      Key => returnCode,
      TT "returnCode", " --  a key for a ", TO "GroebnerBasis", " under which is
      stored the return code from the engine for the computation."
@@ -708,32 +703,6 @@ T = (degreesRing S)_0
 assert( poincare cokernel j == 1-8*T^2+2*T^3+31*T^4-32*T^5-25*T^6+58*T^7-32*T^8+4*T^9+T^10 )
 v = apply(7, i -> numgens source generators gb(k,DegreeLimit => i) )
 assert (v  === {0, 0, 8, 20, 25, 26, 26} )
-"
-
-document {
-     Key => mingens,
-     Headline => "returns a minimal generatoring set of a graded module",
-     TT "mingens M", " -- returns a minimal generating set for the module ", TT "M", ",
-     represented as a matrix whose target is the ambient free module of ", TT "M", ".",
-     PARA,
-     SeeAlso => "GroebnerBasis"
-     }
-
-TEST "
-R = ZZ/101[a..d]
-f = matrix{{a,b},{c,d}}
-h = matrix {{1,0,0},{0,c,d}}
-M = subquotient(h,f)
-assert( mingens M == matrix (R, {{1},{0}}))
-"
-
-
-TEST "
-R = ZZ/101[a..d]
-f = matrix{{a,b},{c,d}}
-h = matrix {{1,0,0},{0,c,d}}
-M = subquotient(h,f)
-assert( generators trim M == matrix (R, {{1},{0}}))
 "
 
 document {

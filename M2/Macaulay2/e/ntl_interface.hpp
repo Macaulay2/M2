@@ -2,6 +2,11 @@
 #define _ntl_interface_hpp_
 
 #include <gmp.h>
+#include <NTL/ZZ.h>
+#include <NTL/mat_ZZ.h>
+#include <NTL/LLL.h>
+NTL_USE_NNS
+
 class ZZ;
 class mat_ZZ;
 class MutableMatrixXXX;

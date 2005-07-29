@@ -44,7 +44,7 @@ gcd(b,c)
 rawGCD(raw b, raw c)
 assert( f === g )
 assert( numerator f === numerator g )
-
+f
 debug Macaulay2Core
 h = rawGCD(raw numerator f, raw denominator f)
 -----------------------------------------------------------------------------
