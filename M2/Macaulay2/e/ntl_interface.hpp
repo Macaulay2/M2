@@ -7,8 +7,6 @@
 #include <NTL/LLL.h>
 NTL_USE_NNS
 
-class ZZ;
-class mat_ZZ;
 class MutableMatrixXXX;
 extern mat_ZZ *makeNTLMatrixZZ(int nrows, int ncols);
 void mat_ZZ_set_entry(mat_ZZ *A, long i, long j, mpz_t a);
