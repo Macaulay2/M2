@@ -973,6 +973,7 @@ export (
 	symbol shield,
 	symbol showStructure,
 	symbol showTex,
+	symbol showHtml,
 	symbol showUserStructure,
 	symbol silentRobustNetWithClass,
 	symbol silentRobustString,
