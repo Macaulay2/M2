@@ -620,9 +620,16 @@ document {
 	  TO (symbol /, Module, Module),
 	  TO (symbol ==, Module, Module),
 	  TO (symbol ++, Module, Module),
-	  TO (symbol **, Module, Module),
 	  TO (symbol ^, Module, List),
+	  TO (symbol **, Module, Module),
+	  TO (symbol ^**, Module, List),
 	  TO (symbol _, Module, List),
+	  },
+     "Minimalization:",
+     UL {
+	  TO (mingens,Module),
+	  TO (trim,Module),
+	  TO (minimalPresentation,Module)
 	  },
      "Numerical information about a module:",
      UL {
@@ -642,7 +649,6 @@ document {
 	  TO (symbol :, Module, Ideal),
 	  TO (annihilator, Module),
 	  TO (gb, Module),
-	  TO (prune, Module),
 	  TO (res, Module),
 	  TO (saturate, Module, Ideal),
 	  TO "Hom",

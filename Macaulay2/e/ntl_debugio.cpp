@@ -1,8 +1,7 @@
 // Copyright 2005, Michael Stillman
 
 #include <iostream>
-#include <NTL/tools.h>
-#include <NTL/mat_ZZ.h>
+#include "ntl_interface.hpp"
 
 #define NTL_MAX_INT 10000
 #define NTL_MIN_INT -10000

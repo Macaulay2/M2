@@ -5,7 +5,6 @@
 #include <cstdio>
 #include <gc.h>
 #include <gmp.h>
-#include <NTL/mat_ZZ.h>
 #include "ntl_interface.hpp"
 
 #define ALLOC(p) (((long *) (p))[0])

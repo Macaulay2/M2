@@ -99,6 +99,11 @@ void FractionField::simplify(frac_elem *f) const
       if (R_->is_equal(c->get_value(), R_->one())) return;
       f->numer = R_->divide(f->numer, c->get_value());
       f->denom = R_->divide(f->denom, c->get_value());
+      // If the coefficient ring is QQ (or another fraction ring, which
+      //   cannot happen currently), then we need to multiply/divide top and bottom
+      //   for the pair to be in normal form.
+      //   if a/b * numer(f) is monic, and c/d*denom(f) is monic, both over ZZ,
+      //   then take...
     }
   else
     {

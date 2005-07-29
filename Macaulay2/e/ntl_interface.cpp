@@ -3,9 +3,6 @@
 #include "ntl_interface.hpp"
 #include "mat.hpp"
 //#include "sparsemat.hpp"
-#include <NTL/ZZ.h>
-#include <NTL/mat_ZZ.h>
-#include <NTL/LLL.h>
 
 class mat_ZZ;
 mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrixXXX *M)
