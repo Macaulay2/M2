@@ -26,7 +26,7 @@ ARGS += --no-debug
 	@ echo testing: $<
 	@ $(LIMIT); \
 		if (echo 'input "$<"'; echo exit 0) | \
-		   time $(DOTS)/bin/M2 $(ARGS) >$*.errors 2>&1 ; \
+		   time $(DOTS)/bin/M2$(EXE) $(ARGS) >$*.errors 2>&1 ; \
 		then mv $*.errors $@ ; \
 		else a=$$?; \
 		     echo "$*.errors:0: error output left here; some errors follow" >&2 ; \
@@ -36,7 +36,7 @@ ARGS += --no-debug
 %.out : %.m2-input
 	@ echo testing: $<
 	@ $(LIMIT); \
-		if time $(DOTS)/bin/M2 $(ARGS) <$< >$*.errors 2>&1 ; \
+		if time $(DOTS)/bin/M2$(EXE) $(ARGS) <$< >$*.errors 2>&1 ; \
 		then mv $*.errors $@ ; \
 		else a=$$?; \
 		     echo "$*.errors:0: error output left here; some errors follow" >&2 ; \

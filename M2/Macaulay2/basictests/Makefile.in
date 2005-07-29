@@ -17,7 +17,7 @@ ARGS := --silent -q --stop --no-loaddata --no-setup -e 'srcdir = "@srcdir@/"' -e
 
 %.okay : %.m2
 	@ echo testing $<
-	@ env ../bin/M2 $(ARGS) $< -e 'exit 0'
+	@ env ../bin/M2$(EXE) $(ARGS) $< -e 'exit 0'
 	@ touch $@
 
 clean::	; rm -f *.okay
@@ -27,7 +27,7 @@ clean:: ; rm -f testgc
 Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/basictests/Makefile
 distclean ::; rm -f Makefile
 check :: check-return-code
-check-return-code :; if echo 'error "foo"' | ../bin/M2 $(ARGS) ; then false ; else true ; fi
+check-return-code :; if echo 'error "foo"' | ../bin/M2$(EXE) $(ARGS) ; then false ; else true ; fi
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/basictests "

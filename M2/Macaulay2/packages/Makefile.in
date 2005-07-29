@@ -48,7 +48,7 @@ install ::
 	      if [ "$$i" = Macaulay2 ] ; \
 	      then \
 		  set -x ; \
-		  ../bin/M2 -q --stop \
+		  ../bin/M2$(EXE) -q --stop \
 		    --prefix $(encapdir) \
 		    -e errorDepth=0 \
 		    -e debugLevel=$(debugLevel) \
@@ -56,7 +56,7 @@ install ::
 		    -e "exit 0" ; \
 	      else \
 		  set -x ; \
-		  ../bin/M2 -q --stop \
+		  ../bin/M2$(EXE) -q --stop \
 		    --prefix $(encapdir) \
 		    -e errorDepth=0 \
 		    -e debugLevel=$(debugLevel) \

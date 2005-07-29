@@ -435,6 +435,10 @@ html BOLD := t -> concatenate("<b>", apply(t,html), "</b>")
 
 html Option := x -> toString x
 
+--     \rm     Roman
+--     \sf     sans-serif
+--     \tt     typewriter
+
 --     \tiny		5
 --     \scriptsize	7
 --     \footnotesize	8

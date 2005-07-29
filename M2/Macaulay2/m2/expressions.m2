@@ -802,7 +802,7 @@ html Expression := v -> (
 
 texMath Minus := v -> (
      term := v#0;
-     if precedence term <= precedence v
+     if precedence term < precedence v
      then "{-(" | texMath term | ")}"
      else "{-" | texMath term | "}"
      )
@@ -811,7 +811,7 @@ mathML Minus := v -> concatenate( "<mo>-</mo>", mathML v#0)
 
 html Minus := v -> (
      term := v#0;
-     if precedence term <= precedence v
+     if precedence term < precedence v
      then "-(" | html term | ")"
      else "-" | html term
      )
@@ -1023,14 +1023,18 @@ texMath SparseMonomialVectorExpression := v -> (
 	  hold concatenate("<",toString i,">"))
      )
 
-texMath MatrixExpression := m -> concatenate(
-     "\\begin{pmatrix}",
-     apply(m,
-	  row->(
-	       between("&"|newline,apply(row,texMath)),
- 	       "\\\\"|newline)),
-     "\\end{pmatrix}"
-     )
+texMath MatrixExpression := m -> (
+     s := if m#?0 then (
+     	  ncols := #m#0;
+	  if ncols > 10 then ///\makeatletter\c@MaxMatrixCols=///,toString ncols,///\makeatother///);
+     concatenate(
+	  ///\bgroup///,
+	  s,
+     	  ///\begin{pmatrix}///,
+     	  apply(m, row -> (between("&"|newline,apply(row,texMath)), ///\\///|newline)),
+     	  ///\end{pmatrix}///,
+	  ///\egroup///,
+	  ))
 
 ctr := 0
 showTex = x -> (

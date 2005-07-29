@@ -94,6 +94,8 @@
   (setq comint-dynamic-complete-functions '( M2-dynamic-complete-symbol comint-dynamic-complete-filename))
   )
 
+(defvar M2-exe "M2" "*The default Macaulay2 executable name.")
+
 (defvar M2-command 
   (concat "M2  --print-width " 
 	  (number-to-string (- (screen-width) 1))

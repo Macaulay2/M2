@@ -194,6 +194,11 @@ LAPACK=yes
 AC_SUBST(LAPACK)
 AC_DEFINE(LAPACK,,whether to use LAPACK)
 
+AC_SUBST(EXE)
+AC_ARG_WITH(exesuffix,
+    AC_HELP_STRING(--with-exesuffix=...,suffix to append to executable name M2),
+    EXE="$withval")
+
 AC_SUBST(LAPACKLIBS)
 AC_ARG_WITH(lapacklibs,
     AC_HELP_STRING(--with-lapacklibs=...,lapack libraries (-llapack -lcblas -lf77blas -lg2c)),
@@ -255,20 +260,20 @@ AC_MSG_RESULT([yes])
 
 AC_MSG_CHECKING([whether ntl library is installed])
 LIBS="-lntl $SAVELIBS"
-AC_LANG(C)
+AC_LANG(C++)
 AC_TRY_LINK(
-    [#include <NTL/version.h>],
-    [double _ntl_GetTime(void); _ntl_GetTime();],
+    [#include <NTL/tools.h>],
+    [_ntl_GetTime();],
     AC_MSG_RESULT([yes]),
     AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: ntl (-lntl)]))
 
 AC_MSG_CHECKING([whether ntl library, profiling version, is installed (-lntl-pg)])
 AC_SUBST(HAVE_LIBNTL_PG)
 LIBS="-lntl-pg $SAVELIBS"
-AC_LANG(C)
+AC_LANG(C++)
 AC_TRY_LINK(
-    [#include <NTL/version.h>],
-    [double _ntl_GetTime(void); _ntl_GetTime();],
+    [#include <NTL/tools.h>],
+    [_ntl_GetTime();],
     HAVE_LIBNTL_PG=yes;AC_MSG_RESULT([yes]),
     HAVE_LIBNTL_PG=no;AC_MSG_RESULT([no]))
 
