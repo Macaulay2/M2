@@ -231,7 +231,7 @@ endif
 
 ifeq "$(GCC)" "yes"
 CFLAGS   += -pipe -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare
-CXXFLAGS += -pipe -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare -Wold-style-cast
+CXXFLAGS += -pipe -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare
 ifeq "$(OPTIMIZE)" "yes"
 CFLAGS   += -O3
 CXXFLAGS += -O3
