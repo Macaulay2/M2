@@ -33,3 +33,5 @@ load "doc_ideals.m2"
 load "doc_mutablematrices.m2"
 
 load "functions.m2"
+load "variables.m2"
+load "classes.m2"

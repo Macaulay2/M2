@@ -194,10 +194,13 @@ LAPACK=yes
 AC_SUBST(LAPACK)
 AC_DEFINE(LAPACK,,whether to use LAPACK)
 
-AC_SUBST(EXE)
-AC_ARG_WITH(exesuffix,
-    AC_HELP_STRING(--with-exesuffix=...,suffix to append to executable name M2),
-    EXE="$withval")
+AC_SUBST(M2SUFFIX)
+AC_ARG_WITH(M2suffix,
+    AC_HELP_STRING(--with-M2suffix=...,[suffix to append to executable name M2]),
+    M2SUFFIX="$withval")
+AC_DEFINE_UNQUOTED(M2SUFFIX,"$M2SUFFIX",[suffix to append to executable name M2])
+
+AC_DEFINE_UNQUOTED(EXEEXT,"$EXEEXT",[suffix the compiler appends to executable filenames])
 
 AC_SUBST(LAPACKLIBS)
 AC_ARG_WITH(lapacklibs,

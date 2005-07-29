@@ -7,7 +7,8 @@ document {
      Headline => "variables",
      }
 document { 
-     Key => {(vars,Ring), (vars,QuotientRing), (vars,GeneralOrderedMonoid)},
+     Key => {(vars,Ring)},
+     Undocumented => {(vars,QuotientRing)},
      Headline => "row matrix of the variables",     
      Usage => "vars R",
      Inputs => {
@@ -53,4 +54,4 @@ document {
 	  },
      SeeAlso => {".."}
      }
-end
+

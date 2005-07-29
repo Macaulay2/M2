@@ -19,23 +19,18 @@ document {
      a module or Groebner basis are provided as the columns in a matrix.  
      The matrix is stored in a module M under M.generators, unless the matrix
      is the identity matrix.",
+     PARA,
+     "The symbol ", TT "gens", " is a synonym for ", TT "generators", ".",     
      SeeAlso => {"Monoid", "GroebnerBasis", "Module", "relations", "subquotient"}
      }
+
 document { 
      Key => (generators,GroebnerBasis),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Headline => "the generators of a Groebner basis",
+     Usage => "m = generators g",
+     Inputs => { "g" },
+     Outputs => {"m" => {"whose columns are the generators of the Groebner basis ", TT "g"}},
+     SeeAlso => {"Computing Groebner bases"}
      }
 document {
      Key => (generators,Module),
@@ -78,21 +73,24 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
-document { 
-     Key => (generators,Ideal),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+document {
+     Key => (generators, Ideal),
+     Usage => {"generators I", EM " or ", "gens I"},
+     Inputs => {"I"},
+     Outputs => { Matrix => {"the one-row matrix whose entries are the generators of ", TT "I"} },
+     "Each ideal in ", EM "Macaulay 2", " comes equipped with a one-row
+     matrix with the generators of the ideal.
+     It is this matrix which is returned.",
      EXAMPLE {
+	  "R = ZZ/101[a,b,c];",
+      	  "I = ideal(a^2,a*b-2,c^4,a*c-1,a*c-1)",
+      	  "generators I"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     "If you want to remove unnecessary generators, use ", TO trim, ".",
+     EXAMPLE {
+	  "I = trim I",
+	  "gens I"
+	  }
      }
 document { 
      Key => (generators,MonomialIdeal),

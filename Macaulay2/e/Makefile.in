@@ -8,6 +8,16 @@ DEPENDS = yes
 	@ echo " ** compiling $<"
 	@ $(COMPILE.cc) $(OUTPUT_OPTION) $<
 
+%.s : %.cpp
+	@ echo '$(COMPILE.cc) $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** compiling $< to assembly code, making $@"
+	@ $(COMPILE.cc) -S $(OUTPUT_OPTION) $<
+
+%.E : %.cpp
+	@ echo '$(COMPILE.cc) $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** preprocessing $<, making $@"
+	@ $(COMPILE.cc) -E $(OUTPUT_OPTION) $<
+
 ntl_interface.o : ntl_interface.cpp
 	@ echo '$(COMPILE.cc) $(OUTPUT_OPTION) $<' >> LOGFILE
 	@ echo " ** compiling $<"
@@ -278,7 +288,7 @@ doxygen : ; cd @srcdir@ && doxygen
 distclean: clean; rm -f Makefile
 
 all:: check-global-new-delete
-check-global-new-delete : $(OBJFILES) ; nm -o --demangle $^ | egrep 'U operator (new|delete)' || true
+check-global-new-delete : $(OBJFILES) ; nm -o --demangle $^ | egrep '[WUT] operator (new|delete)' || true
 
 initialize :: statuscodes.h
 statuscodes.h : statuscodes

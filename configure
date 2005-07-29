@@ -310,7 +310,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CFLAGS LOADLIBES LDLIBS MAKE NODENAME REL ARCH OS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CXX RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA AWK LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT GCC CXXFLAGS ac_ct_CXX YACC ALLOCA CPP EGREP DUMPDATA PROFILE FACTORY STRIP DEBUG VERBOSE STATIC MEMDEBUG OPTIMIZE ENCAP XCODE ALTIVEC LAPACK EXE LAPACKLIBS HAVE_LIBGC_PG HAVE_LIBGMP_PG HAVE_LIBNTL_PG HAVE_LIBCF_PG HAVE_LIBFAC_PG CONFIGURED_FILES LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CFLAGS LOADLIBES LDLIBS MAKE NODENAME REL ARCH OS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CXX RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA AWK LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT GCC CXXFLAGS ac_ct_CXX YACC ALLOCA CPP EGREP DUMPDATA PROFILE FACTORY STRIP DEBUG VERBOSE STATIC MEMDEBUG OPTIMIZE ENCAP XCODE ALTIVEC LAPACK M2SUFFIX LAPACKLIBS HAVE_LIBGC_PG HAVE_LIBGMP_PG HAVE_LIBNTL_PG HAVE_LIBCF_PG HAVE_LIBFAC_PG CONFIGURED_FILES LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -884,7 +884,7 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-exesuffix=...    suffix to append to executable name M2
+  --with-M2suffix=...     suffix to append to executable name M2
   --with-lapacklibs=...   lapack libraries (-llapack -lcblas -lf77blas -lg2c)
   --with-veclib           replace lapack libraries by "-framework vecLib"
 
@@ -3836,11 +3836,22 @@ _ACEOF
 
 
 
-# Check whether --with-exesuffix or --without-exesuffix was given.
-if test "${with_exesuffix+set}" = set; then
-  withval="$with_exesuffix"
-  EXE="$withval"
+# Check whether --with-M2suffix or --without-M2suffix was given.
+if test "${with_M2suffix+set}" = set; then
+  withval="$with_M2suffix"
+  M2SUFFIX="$withval"
 fi;
+
+cat >>confdefs.h <<_ACEOF
+#define M2SUFFIX "$M2SUFFIX"
+_ACEOF
+
+
+
+cat >>confdefs.h <<_ACEOF
+#define EXEEXT "$EXEEXT"
+_ACEOF
+
 
 
 
@@ -6670,7 +6681,7 @@ s,@ENCAP@,$ENCAP,;t t
 s,@XCODE@,$XCODE,;t t
 s,@ALTIVEC@,$ALTIVEC,;t t
 s,@LAPACK@,$LAPACK,;t t
-s,@EXE@,$EXE,;t t
+s,@M2SUFFIX@,$M2SUFFIX,;t t
 s,@LAPACKLIBS@,$LAPACKLIBS,;t t
 s,@HAVE_LIBGC_PG@,$HAVE_LIBGC_PG,;t t
 s,@HAVE_LIBGMP_PG@,$HAVE_LIBGMP_PG,;t t

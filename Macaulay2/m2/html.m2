@@ -395,7 +395,7 @@ ulimit := null
 M2errorRegexp := "^[^:\n]+:[0-9]+:[0-9]+:\\([0-9]+\\): "
 aftermatch := (pat,str) -> (
      m := regex(pat,str);
-     if #m == 0 then "" else substring(m#0#0,str))
+     if m === null then "" else substring(m#0#0,str))
 
 runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
      announcechange();
@@ -415,14 +415,15 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
 	  return true;
 	  )
      else (
+	  if r == 2 then (
+	       stderr << "subprocess interrupted with INT, exiting, too" << endl;
+	       removeFile tmpf;
+	       exit r;
+	       );
 	  stderr << tmpf << ":0: error output left in this file, return code: (" << r//256 << "," << r%256 << ")" << endl;
 	  stderr << aftermatch(M2errorRegexp,get tmpf);
 	  if r == 131 then (
 	       stderr << "subprocess terminated abnormally, exiting" << endl;
-	       exit r;
-	       );
-	  if r == 2 then (
-	       stderr << "subprocess interrupted with INT, exiting, too" << endl;
 	       exit r;
 	       );
 	  haderror = true;
@@ -881,7 +882,7 @@ installPackage Package := opts -> pkg -> (
 	  << ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" "$i")/// << endl
 	  << ///done/// << endl;
 	  if version#"dumpdata" and pkg#"title" == "Macaulay2" then (
-	       f << endl << ///(set -x ; "$ENCAP_SOURCE"/"$ENCAP_PKGNAME"/bin/M2 -q --stop --dumpdata)/// << endl;
+	       f << endl << "(set -x ; \"$ENCAP_SOURCE\"/\"$ENCAP_PKGNAME\"/bin/" << M2name << " -q --stop --dumpdata)" << endl;
 	       );
 	  fileMode(f,octal "755");
 	  f << close;
