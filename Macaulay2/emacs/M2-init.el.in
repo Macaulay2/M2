@@ -1,5 +1,6 @@
 ;; -*- emacs-lisp -*-
 
+(defvar M2-exe "M2@EXE@" "*The default Macaulay2 executable name.")
 (autoload 'M2 "M2.el" "Run Macaulay 2 in a buffer." t)
 (autoload 'Macaulay2 "M2.el" "Run Macaulay 2 in a buffer, non-interactive." t)
 (autoload 'M2-mode "M2.el" "Macaulay 2 editing mode" t)

@@ -57,6 +57,7 @@ LDLIBS = @LDLIBS@
 LAPACK = @LAPACK@
 LAPACKLIBS = @LAPACKLIBS@
 ENCAP = @ENCAP@
+EXE = @EXE@
 
 # See the autoconf documentation for a description of LIBS, which autoconf uses at configure time for checking for features
 # Hence we have to use it, too.
@@ -253,9 +254,7 @@ endif
 endif
 
 ifeq "$(OS)" "CYGWIN_NT-5.0"
-EXE := .exe
-else
-EXE :=
+EXE += .exe
 endif
 
 ifeq "$(MEMDEBUG)" "yes"

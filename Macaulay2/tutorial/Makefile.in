@@ -30,9 +30,9 @@ tutbook.dvi : tutbook.tex ../book/macros.tex titlepage.tex
 	tex $<
 $(OUTPUTS) : translate
 tutbook.tex : tutbook.m2 translate $(OUTPUTS)
-	../bin/M2 -e 'errorDepth = 0' -e 'writeExamples=true' tutbook.m2 -e 'exit 0'
+	../bin/M2$(EXE) -e 'errorDepth = 0' -e 'writeExamples=true' tutbook.m2 -e 'exit 0'
 	$(MAKE) -k -C Examples -f ../../m2/Makefile.egs
-	../bin/M2 -e 'readExamples=true' tutbook.m2 -e 'exit 0'
+	../bin/M2$(EXE) -e 'readExamples=true' tutbook.m2 -e 'exit 0'
 
 #################################
 install:: $(m2dir)

@@ -5,44 +5,25 @@
 document {
      Key => peek,
      Headline => "examine contents of an object",
-     TT "peek s", " -- displays contents of ", TT "s", " to depth 1, bypassing
-     installed methods.",
-     PARA,
+     Usage => "peek s",
+     Inputs => { "s" },
+     Outputs => { { "a net or string that displays the contents of ", TT "s", " to depth 1, bypassing installed methods for displaying the object" } },
+     "This function is used during debugging Macaulay 2 programs to examine the internal structure of objects.",
      EXAMPLE {
-	  "t = set {1,2,3}",
-      	  "peek t",
+	  "set {1,2,3}",
+      	  "peek oo",
       	  "new MutableHashTable from {a=>3, b=>44}",
       	  "peek oo"
 	  },
      SeeAlso => "peek'"
      }
 
-document { 
-     Key => peek,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-
 
 document {
      Key => (peek',ZZ,Thing),
      Headline => "examine contents of an object",
-     Usage => {TT "peek'(n,s)", " or ", TT "peek'_n s"},
-     Inputs => {
-	  "n" => "",
-	  "s" => ""
-	  },
+     Usage => "peek'(n,s)",
+     Inputs => { "n", "s" },
      Outputs => {
 	  { "a net that displays the contents of ", TT "s", ", bypassing installed formatting and printing methods to depth ", TT "n" }
 	  },

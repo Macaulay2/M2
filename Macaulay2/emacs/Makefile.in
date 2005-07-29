@@ -4,11 +4,11 @@ VPATH = @srcdir@
 ARGS = -q --silent --stop -e errorDepth=0
 .PHONY : all clean distclean install check default
 all:: M2-symbols.el M2-symbols
-M2-symbols M2-symbols.el : makesyms.m2 ../bin/M2; ../bin/M2 $(ARGS) @srcdir@/makesyms.m2 -e 'exit 0' </dev/null
+M2-symbols M2-symbols.el : makesyms.m2 ../bin/M2$(EXE); ../bin/M2$(EXE) $(ARGS) @srcdir@/makesyms.m2 -e 'exit 0' </dev/null
 all:: emacs-hlp.txt
-emacs-hlp.txt: makehlp.m2 ../bin/M2; ../bin/M2 $(ARGS) @srcdir@/makehlp.m2 -e 'exit 0' </dev/null
+emacs-hlp.txt: makehlp.m2 ../bin/M2$(EXE); ../bin/M2$(EXE) $(ARGS) @srcdir@/makehlp.m2 -e 'exit 0' </dev/null
 all:: emacs.m2
-emacs.m2: makem2.m2 ../bin/M2; ../bin/M2 $(ARGS) @srcdir@/makem2.m2 -e 'exit 0' </dev/null
+emacs.m2: makem2.m2 ../bin/M2$(EXE); ../bin/M2$(EXE) $(ARGS) @srcdir@/makem2.m2 -e 'exit 0' </dev/null
 clean::; rm -f M2-symbols.el emacs-hlp.txt emacs.m2 M2-symbols
 distclean:: clean; rm -f Makefile
 $(emacsdocdir) $(emacsdir) :; $(INSTALL) -d "$@"
