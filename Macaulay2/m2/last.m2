@@ -4,8 +4,6 @@
 
 recursionLimit = 300
 
-M2name = "M2" | version#"M2 suffix"  | version#"executable extension" 
-
 addStartFunction(() -> path = unique apply( path, minimizeFilename))
 addEndFunction(() -> (
 	  scan(openFiles(), f -> if isOutputFile f then flush f);

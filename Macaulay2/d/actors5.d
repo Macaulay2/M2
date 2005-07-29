@@ -614,6 +614,7 @@ storeInHashTable(x,Expr("factory version"),Expr(FACTORYVERSION));
 storeInHashTable(x,Expr("readline version"),Expr(READLINEVERSION));
 storeInHashTable(x,Expr("M2 suffix"),Expr(M2SUFFIX));
 storeInHashTable(x,Expr("executable extension"),Expr(EXEEXT));
+storeInHashTable(x,Expr("M2 name"),Expr("M2" + M2SUFFIX + EXEEXT));
 sethash(x,false);
 setupconst("version", Expr(x));
 setupconst("startupString1", Expr(startupString1));
