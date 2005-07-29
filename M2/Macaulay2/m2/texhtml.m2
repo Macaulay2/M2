@@ -2,6 +2,8 @@
 
 html TEX := str -> (
      str = str#0;
+     origstr := str;
+     abbrev := () -> format if #origstr < 20 then origstr else substring(0,20,origstr) | "...";
      f := (p,r) -> (
 	  n := replace(p,r,str);
 	  if n != str and debugLevel > 0 then (
@@ -10,8 +12,9 @@ html TEX := str -> (
 	  str = n);
      f(///''///,///&rdquo;///);
      f(///'///,///&rsquo;///); -- This is for text.  But an apostrophe in math mode should be a prime!
-     f(///\$\$([^$]*)\$\$///,///<p align=center><i>\1</i></p>///);
-     f(///\$([^$]*)\$///,///<i>\1</i>///);
+     f(///(^|[^\$])\$\$([^$]*[^\$])?\$\$([^$]|$)///,///\1<p align=center><i>\2</i></p>\3///);
+     f(///(^|[^\$])\$([^$]*[^\$])\$([^$]|$)///,///\1<i>\2</i>\3///);
+     if match(///(^|[^\])\$///,str) then error("unmatched dollar signs in TeX string ",abbrev());
      f(///``///,///&ldquo;///);
      f(///`///,///&lsquo;///);
      f(///\\\\///,///\backslash ///);
@@ -34,14 +37,11 @@ html TEX := str -> (
 	  f(///\^ *\{([^{}]*)\}///,///<sup>\1</sup>///);
 	  f(///_ *\{([^{}]*)\}///,///<sub>\1</sub>///);
 	  oldstr != str) do null;
-     while (
-	  oldstr = str;
-     	  f(///\{([^{}]*)\}///,///\1///);
-	  oldstr != str) do null;
      f(///\^(\\[a-zA-Z]*)///,///<sup>\1</sup>///);
      f(///_(\\[a-zA-Z]*)///,///<sub>\1</sub>///);
      f(///\^ *(.)///,///<sup>\1</sup>///);
      f(///_ *(.)///,///<sub>\1</sub>///);
+     if match(///\\\\///,str) then error(///in conversion to html, unknown TeX control sequence \\ in string ///,abbrev());
      f(///\\frac *([0-9]) *([0-9])///,///{\1/\2}///);
      f(///\\"a///,///&auml;///);
      f(///\\"o///,///&ouml;///);
@@ -143,8 +143,12 @@ html TEX := str -> (
      f(///\\zeta\> *///,///&zeta;///);
      f(///Macaulay2///,///<i>Macaulay2</i>///);
      f(///Macaulay 2///,///<i>Macaulay 2</i>///);
-     r := select("\\\\(.|[a-zA-Z]+)?",str);
-     if #r > 0 then error("in conversion to html, unknown TeX control sequence(s): ",concatenate between(", ",r));
+     r := unique sort select("\\\\(.|[a-zA-Z]+)?",str);
+     if #r > 0 then error("in conversion to html, unknown TeX control sequence(s): ",concatenate between(", ",r)," in string ",abbrev());
+     while (
+	  oldstr = str;
+     	  f(///\{([^{}]*)\}///,///\1///);
+	  oldstr != str) do null;
      str)
 
 -- Local Variables:

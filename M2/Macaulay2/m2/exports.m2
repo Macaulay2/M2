@@ -3,7 +3,6 @@
 export (
 	symbol currentFileName,
         symbol currentLineNumber,
-	symbol M2name,
 	symbol URL,
 	symbol show,
 	symbol replace,
