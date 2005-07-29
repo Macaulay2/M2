@@ -1095,7 +1095,7 @@ show URL := x -> (
      )
 
 fix := fn -> "file://" | replace(" ","%20",fn) 		    -- might want to replace more characters
-show Hypertext := x -> (
+showHtml = show Hypertext := x -> (
      fn := temporaryFileName() | ".html";
      fn << "<title>Macaulay 2 Output</title>" << endl << html x << endl << close;
      show new URL from { fix fn };

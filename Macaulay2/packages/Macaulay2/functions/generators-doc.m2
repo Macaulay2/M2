@@ -2,53 +2,24 @@
 --- author(s): 
 --- notes: 
 
-document { 
+document {
      Key => generators,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (generators,EngineRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (generators,PolynomialRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Headline => "provide matrix or list of generators",
+     Undocumented => {(generators, EngineRing),(generators, PolynomialRing),(generators, QuotientRing)},
+     Usage => "generators x",
+     Inputs => { "x" },
+     Outputs => { {"provides the generators of ", TT "x", " in a convenient form, as a list of matrix, depending on the type"} },
+     PARA,
+     "Produces the generators of a Groebner basis, a polynomial ring,
+     a monoid ring, a free module, a free group, a submodule given by
+     means of generators (or for which generators have been computed),
+     or a free monoid.",
+     PARA,
+     "Usually the result is a list of generators, but the generators of
+     a module or Groebner basis are provided as the columns in a matrix.  
+     The matrix is stored in a module M under M.generators, unless the matrix
+     is the identity matrix.",
+     SeeAlso => {"Monoid", "GroebnerBasis", "Module", "relations", "subquotient"}
      }
 document { 
      Key => (generators,GroebnerBasis),
@@ -66,37 +37,30 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
-document { 
-     Key => (generators,QuotientRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
+document {
      Key => (generators,Module),
-     Headline => "",
-     Usage => "",
+     Usage => "generators M",
      Inputs => {
+	  "M" => null
 	  },
      Outputs => {
+	  {"the matrix of generators of ", TT "M", "."}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Every module in Macaulay2 has, at least implicitly, a generator matrix and a 
+     matrix of relations, both of which are matrices between free modules.  
+     This function returns the generator matrix.",
      EXAMPLE {
+	  "R = GF(8)",
+      	  "f = R_0 ++ R_0^2 ++ R_0^3 ++ R_0^4",
+      	  "generators image f",
+      	  "generators cokernel f"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     Caveat => {
+	  "This function returns a matrix with the given generators.  This 
+	  set of generators may not be minimal, or sorted in any particular 
+	  order. Use ", TO (trim,Module), " or ", TO (mingens,Module), " instead."
+	  },
+     SeeAlso => {(relations,Module)}
      }
 document { 
      Key => (generators,GeneralOrderedMonoid),

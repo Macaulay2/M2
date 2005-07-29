@@ -105,6 +105,7 @@ tex HashTable := x -> (
      else if x.?texMath then concatenate("$",x.texMath,"$")
      else tex expression x
      )
+html HashTable := x -> html expression x
 
 mathML Nothing := texMath Nothing := tex Nothing := html Nothing := x -> ""
 

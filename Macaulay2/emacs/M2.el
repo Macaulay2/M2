@@ -95,12 +95,7 @@
   )
 
 (defvar M2-exe "M2" "*The default Macaulay2 executable name.")
-
-(defvar M2-command 
-  (concat "M2  --print-width " 
-	  (number-to-string (- (screen-width) 1))
-	  " ")
-  "*The default Macaulay2 command line.")
+(defvar M2-command (concat M2-exe " --print-width " (number-to-string (- (screen-width) 1)) " ") "*The default Macaulay2 command line.")
 (defvar M2-history (list M2-command) "The history of recent Macaulay2 command lines.")
 
 (defun M2 (command)

@@ -665,47 +665,6 @@ document {
      "Use ", TO "homomorphism", " to convert an element of the module of
      homomorphisms to a matrix."
      }
-document {
-     Key => generators,
-     Headline => "matrix of generators",
-     TT "generators x", " -- produces the generators of x.",
-     PARA,
-     "Produces the generators of a Groebner basis, a polynomial ring,
-     a monoid ring, a free module, a free group, a submodule given by
-     means of generators (or for which generators have been computed),
-     or a free monoid.",
-     PARA,
-     "Usually the result is a list of generators, but the generators of
-     a module or Groebner basis are provided as the columns in a matrix.  
-     The matrix is stored in a module M under M.generators, unless the matrix
-     is the identity matrix.",
-     SeeAlso => {"Monoid", "GroebnerBasis", "Module", "relations", "subquotient"}
-     }
-document {
-     Key => (generators,Module),
-     Usage => "generators M",
-     Inputs => {
-	  "M" => null
-	  },
-     Outputs => {
-	  {"the matrix of generators of ", TT "M", "."}
-	  },
-     "Every module in Macaulay2 has, at least implicitly, a generator matrix and a 
-     matrix of relations, both of which are matrices between free modules.  
-     This function returns the generator matrix.",
-     EXAMPLE {
-	  "R = GF(8)",
-      	  "f = R_0 ++ R_0^2 ++ R_0^3 ++ R_0^4",
-      	  "generators image f",
-      	  "generators cokernel f"
-	  },
-     Caveat => {
-	  "This function returns a matrix with the given generators.  This 
-	  set of generators may not be minimal, or sorted in any particular 
-	  order. Use ", TO (trim,Module), " or ", TO (mingens,Module), " instead."
-	  },
-     SeeAlso => {(relations,Module)}
-     }
      
 document {
      Key => scanKeys,
