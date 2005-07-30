@@ -15,7 +15,7 @@ PAT := ':[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):|^GC|^[0-9]+\.[0-9]+user'
 FILTER := egrep -a $(PAT)
 
 all check :: $(RESULTS)
-$(RESULTS) : $(DOTS)/bin/M2
+$(RESULTS) : $(DOTS)/bin/M2$(EXE)
 
 ARGS := --silent --stop -q -e 'path=join(path,{"$(SRCDIR)/","$(SRCDIR)/$(DOTS)/packages/"})'
 ARGS += --no-debug
