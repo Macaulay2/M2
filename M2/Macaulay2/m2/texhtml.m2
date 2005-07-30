@@ -1,6 +1,7 @@
 -- tex to html conversion
 
 html TEX := str -> (
+     local oldstr;
      str = str#0;
      origstr := str;
      abbrev := () -> format if #origstr < 20 then origstr else substring(0,20,origstr) | "...";
@@ -12,16 +13,52 @@ html TEX := str -> (
 	  str = n);
      f(///''///,///&rdquo;///);
      f(///'///,///&rsquo;///); -- This is for text.  But an apostrophe in math mode should be a prime!
+     -- we could try replacing \$ by \dollar and then bring it back later...
+     -- but watch out for \\$ and \\\\$ ...
+     -- but replace \\\$ and \\\\\$ ...
      f(///(^|[^\$])\$\$([^$]*[^\$])?\$\$([^$]|$)///,///\1<p align=center><i>\2</i></p>\3///);
      f(///(^|[^\$])\$([^$]*[^\$])\$([^$]|$)///,///\1<i>\2</i>\3///);
      if match(///(^|[^\])\$///,str) then error("unmatched dollar signs in TeX string ",abbrev());
      f(///``///,///&ldquo;///);
      f(///`///,///&lsquo;///);
-     f(///\\\\///,///\backslash ///);
      f(///\\\{///,///\lbrace ///);
      f(///\\\}///,///\rbrace ///);
+
+     --	    \begin{pmatrix}	    <table><tr><td>
+     --				    bb
+     --	    &			    </td><td>
+     --				    bb
+     --	    &			    </td><td>
+     --				    bb
+     --	    &			    </td><td>
+     --				    bb
+     --	    \\			    </td></tr><tr><td>
+     --				    bb
+     --	    &			    </td><td>
+     --				    bb
+     --	    &			    </td><td>
+     --				    bb
+     --	    &			    </td><td>
+     --				    bb
+     --	    \\			    </td></tr><tr><td>
+     --				    bb
+     --	    &			    </td><td>
+     --				    bb
+     --	    &			    </td><td>
+     --				    bb
+     --	    &			    </td><td>
+     --				    bb
+     --	    \end{pmatrix}	    </td></tr></table>
      while (
-	  oldstr := str;
+	  -- this will not quite work if there are two matrices in the string!
+	  oldstr = str;
+     	  f(///(\\begin\{pmatrix\}.*)(&)(.*\\end\{pmatrix\})///,///\1</td><td>\3///);
+     	  f(///(\\begin\{pmatrix\}.*)(\\\\)(.*\\end\{pmatrix\})///,///\1</td></tr><tr><td>\3///);
+	  oldstr != str
+	  ) do null;
+     f(///\\begin\{pmatrix\}(.*)\\end\{pmatrix\}///,///<table border=1><tr><td><table><tr><td>\1</td></tr></table></td></tr></table>///);
+     while (
+	  oldstr = str;
 	  f(///\{ *\\bf +([^{}]*)\}///,///{<b>\1</b>}///);
 	  f(///\{ *\\mathbf +([^{}]*)\}///,///{<b>\1</b>}///);
 	  f(///\{ *\\mathbb +([^{}]*)\}///,///{<b>\1</b>}///);
