@@ -1,6 +1,6 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-subsets(ZZ,ZZ) := (n,j) -> (
+subsets(ZZ,ZZ) := List => (n,j) -> (
      subsetn := (n,j) -> (
 	  if n<j then {}
 	  else if n===j then {toList (0 .. n-1)}
@@ -11,12 +11,11 @@ subsets(ZZ,ZZ) := (n,j) -> (
      subsetn = null;
      result)
 
-subsets(List,ZZ) := (s,j) -> apply(subsets(#s,j),v->apply(v,i->s#i))
-subsets(Sequence,ZZ) := (s,j) -> subsets(toList s,j)
-subsets(Set,ZZ) := (s,j) -> set apply(subsets(toList s, j), set)
-
-subsets Set := x -> set apply(subsets toList x, set)
-subsets List := x -> (
+subsets(List,ZZ) := List => (s,j) -> apply(subsets(#s,j),v->apply(v,i->s#i))
+subsets(Sequence,ZZ) := List => (s,j) -> subsets(toList s,j)
+subsets(Set,ZZ) := List => (s,j) -> apply(subsets(toList s, j), set)
+subsets Set := List => x -> apply(subsets toList x, set)
+subsets List := List => x -> (
      if #x === 0 then {x}
      else (
 	  a := x#-1;
@@ -25,7 +24,7 @@ subsets List := x -> (
 	  join(s,apply(s,y->append(y,a)))))
 
 Partition = new Type of BasicList
-partitions(ZZ,ZZ) := memoize (
+partitions(ZZ,ZZ) := List => memoize (
      (n,k) -> (
      	  if k > n then k=n;
 	  if n < 0 then {}
@@ -35,9 +34,9 @@ partitions(ZZ,ZZ) := memoize (
      	  else join( 
 	       apply(partitions(n-k,k),i -> prepend(k,i)), 
 	       partitions(n,k-1))))
-partitions ZZ := (n) -> partitions(n,n)
+partitions ZZ := List => (n) -> partitions(n,n)
 
-conjugate Partition := (lambda) -> (
+conjugate Partition := Partition => (lambda) -> (
      if #lambda === 0 then {} else (
      	  slot := #lambda-1;
      	  new Partition from

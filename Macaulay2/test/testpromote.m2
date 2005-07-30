@@ -16,7 +16,7 @@ mylift(RingElement, EngineRing) :=
 mylift(RingElement, Ring) := (f,R) -> try rawLift(raw R, raw f) else error("cannot lift ", toString f, " to the ring ", toString R)
 
 mypromote(ZZ, EngineRing) := 
-mypromote(RingElement, EngineRing) := (f,R) -> try rawPromote(R,f) else error("cannot promote ", toString f, " to the ring ", toString R)
+mypromote(RingElement, EngineRing) := (f,R) -> try rawPromote(raw R,raw f) else error("cannot promote ", toString f, " to the ring ", toString R)
 
 
 -- Start with some simple tests
@@ -40,6 +40,7 @@ assert(mypromote(0_B,KB) == 0_KB)
 assert(mypromote(a^2-a-5, KB) == (KB_0)^2-(KB_0)-5)
 
 ab = KB_0
+a = raw B_"a"
 assert(mylift(ab, B) == a)
 assert(mylift(ab^2//(-1), B) == -a^2)
 assert(mylift(((ab-1)*(ab^2-3))//(ab-1), B) == a^2-3)
