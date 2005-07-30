@@ -50,11 +50,7 @@ monomials(m,Variables=>{a,b})
 monomials(m,Variables=>c)
 monomials(m,Variables=>1)
 monomials(m,Variables=>(a,b))
-monomials(m,Variables=>a^2)
 monomials m
-m = matrix{{a+b, a-b},{c+d, c^2-d^2}}
-coefficients m
-monomials m -- BUG!!
 
 S = R[x,y,z]
 m = matrix{{(a+1)*(x+y)^2}}

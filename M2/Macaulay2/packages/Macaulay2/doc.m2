@@ -266,13 +266,6 @@ document {
      }
 
 document {
-     Key => "commandLine",
-     Headline => "the command line arguments",
-     "A constant whose value is the list of arguments passed to the interpreter,
-     including argument 0, the name of the program."
-     }
-
-document {
      Key => "environment",
      Headline => "the environment variables",
      "A constant whose value is the list containing the

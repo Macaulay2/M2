@@ -54,7 +54,7 @@ minSatPPD2 = (I, facs) -> (
      {satI, product facs, G, factors G})
 
 TEST ///
-debug Macaulay2Core
+debug PrimaryDecomposition
 R = ZZ/32003[b,s,t,u,v,w,x,y,z]
 I = ideal(
     b*v+s*u,
@@ -157,7 +157,7 @@ flattener2 = (I,m) -> (
      F)
      
 TEST ///
-debug Macaulay2Core
+debug PrimaryDecomposition
 R = ZZ/32003[a..d]
 I = monomialCurveIdeal(R,{1,3,4})
 IS = independentSets I
@@ -303,7 +303,7 @@ extract = (I,P) -> (
      )
 
 TEST ///
-debug Macaulay2Core
+debug PrimaryDecomposition
 R = ZZ/32003[a..d]
 I = monomialCurveIdeal(R,{1,3,4})
 L = I^2
@@ -340,7 +340,7 @@ PPD = (I,PP) -> (
           {PPP, I'}))
 
 TEST ///
-debug Macaulay2Core
+debug PrimaryDecomposition
 R = ZZ/32003[a..d]
 I = ideal(a,b,c-1)
 J = ideal(c,d,a-1)
@@ -383,7 +383,7 @@ PPDSpecialCharSets = (I, PP) -> (
      )
 
 TEST ///
-debug Macaulay2Core
+debug PrimaryDecomposition
 R = ZZ/32003[a..d]
 I = ideal(a,b,c-1)
 J = ideal(c,d,a-1)

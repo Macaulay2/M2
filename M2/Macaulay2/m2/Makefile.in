@@ -10,10 +10,15 @@ emacs html: all; $(MAKE) -C ../$@
 ##############################
 .SUFFIXES: .m2
 .PHONY: clean all install html distclean check default initialize prep always tags install-tmp
-LOADSEQUENCE = $(shell cat @srcdir@/loadsequence)
 # there is a parallel list of tutorials in overview3.m2
 TUTORIALS = $(patsubst %, ../tutorial/final/%, Fano.out canEmbed.out divisors.out elementary.out)
-# M2 files made in the build directory are not mentioned in LOADSEQUENCE above
+DUMPEDM2FILES := setup.m2 startup.m2
+DUMPEDM2DOCFILES := \
+		@srcdir@/../packages/Macaulay2/*.m2 \
+		@srcdir@/../packages/Macaulay2/functions/*.m2 \
+		@srcdir@/../packages/Macaulay2/variables/*.m2 \
+		@srcdir@/../packages/Macaulay2.m2
+NONDOCM2FILES := sagbi.m2 startup.m2 setup.m2
 ############################## statuscodes.m2
 MADEM2FILES += statuscodes.m2
 initialize :: statuscodes.m2
@@ -24,11 +29,6 @@ statuscodes.m2 : ../e/statuscodes
 		echo '}' ; \
 	) <$< >$@
 clean::; rm -f statuscodes.m2
-############################## installedpackages.m2
-MADEM2FILES += installedpackages.m2
-initialize :: installedpackages.m2
-installedpackages.m2 : installedpackages Makefile
-	exec <$< >$@ ; echo 'Macaulay2Core#"pre-installed packages" = {'; read x ; echo \"$$x\"; while read x ; do echo , \"$$x\" ; done ; echo '}'
 ############################## mpcodes.m2
 ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed
@@ -37,27 +37,55 @@ all:: mpcodes.m2
 MADEM2FILES += mpcodes.m2
 endif
 ############################## loads.m2
+LOADSEQUENCE := $(shell cat @srcdir@/loadsequence)
+DUMPEDM2FILES += $(LOADSEQUENCE)
+NONDOCM2FILES += $(LOADSEQUENCE)
+# M2 files made in the build directory are not mentioned in LOADSEQUENCE
 MADEM2FILES += loads.m2
 loads.m2 : loads.awk loadsequence
 	@echo making $@
 	@awk -f $^ >$@
+############################## installedpackages.m2
+INSTALLEDPACKAGES := $(shell cat @srcdir@/installedpackages)
+MADEM2FILES += installedpackages.m2
+initialize :: installedpackages.m2
+installedpackages.m2 : installedpackages Makefile
+	exec <$< >$@ ; echo 'Macaulay2Core#"pre-installed packages" = {'; read x ; echo \"$$x\"; while read x ; do echo , \"$$x\" ; done ; echo '}'
+DUMPEDM2FILES += \
+	$(wildcard $(patsubst %, @srcdir@/../packages/%/*.m2, $(INSTALLEDPACKAGES))) \
+	$(wildcard $(patsubst %, @srcdir@/../packages/%.m2  , $(INSTALLEDPACKAGES)))
 ##############################
-DUMPEDM2FILES := $(LOADSEQUENCE) setup.m2 startup.m2 $(MADEM2FILES)
-DUMPEDM2DOCFILES := @srcdir@/../packages/Macaulay2/*.m2 @srcdir@/../packages/Macaulay2/*/*.m2 @srcdir@/../packages/Macaulay2.m2
-OTHERM2FILES = sagbi.m2
-NONDOCM2FILES = startup.m2 setup.m2 $(LOADSEQUENCE) $(OTHERM2FILES)
+DUMPEDM2FILES += $(MADEM2FILES)
 #################################
 default:: 
 all default justM2:: tags
 tags: Makefile @srcdir@/TAGS @srcdir@/TAGS.doc
 clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
-@srcdir@/TAGS: loadsequence Makefile.in $(NONDOCM2FILES) @srcdir@/*.awk @srcdir@/../basictests/*.m2 @srcdir@/../test/*.m2 @srcdir@/../test/engine/*.m2 \
-		@srcdir@/../book/*.m2 @srcdir@/../packages/*.m2 ../emacs/makehlp.m2 ../emacs/makem2.m2 \
-		@srcdir@/../packages/*/*.m2 \
+@srcdir@/TAGS: \
 		$(shell find @srcdir@/../packages -name "*.m2" -o -name examples -prune | grep -v Macaulay2/examples | sort) \
-		@srcdir@/README.DOC @srcdir@/../*/COPYRIGHT ../emacs/makesyms.m2 @srcdir@/../tutorial/prelim/*.m2 \
-		@srcdir@/../tutorial/final/*.m2 Makefile.tests @srcdir@/../e/statuscodes \
-		../basictests/Makefile.in ../emacs/Makefile.in ../packages/Style/Makefile.in ../packages/Makefile.in ../tutorial/Makefile.in ../CHANGES
+		../basictests/Makefile.in \
+		../e/statuscodes \
+		../emacs/Makefile.in \
+		../emacs/makehlp.m2 \
+		../emacs/makem2.m2 \
+		../emacs/makesyms.m2 \
+		../packages/Makefile.in \
+		../tutorial/Makefile.in \
+		loads.awk \
+		@srcdir@/../*/COPYRIGHT \
+		@srcdir@/../basictests/*.m2 \
+		@srcdir@/../book/*.m2 \
+		@srcdir@/../packages/*.m2 \
+		@srcdir@/../packages/*/*.m2 \
+		@srcdir@/../packages/*/Makefile.in \
+		@srcdir@/../test/*.m2 \
+		@srcdir@/../test/engine/*.m2 \
+		@srcdir@/../tutorial/final/*.m2 Makefile.tests \
+		@srcdir@/../tutorial/prelim/*.m2 \
+		@srcdir@/README.DOC \
+		Makefile.in $(NONDOCM2FILES) \
+		loadsequence \
+		../CHANGES
 	@echo making $@
 	@ set -e ; \
 	  cd @srcdir@ && \
@@ -77,7 +105,7 @@ phase1 :: prep
 
 ifneq "$(DUMPDATA)" "no"
 phase1 :: ../cache/$(DUMPDATAFILE)
-redump ../cache/$(DUMPDATAFILE) : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) ../bin/M2$(EXE)
+../cache/$(DUMPDATAFILE) redump : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) ../bin/M2$(EXE)
 	rm -f ../cache/$(DUMPDATAFILE)
 	../bin/M2$(EXE) -q --stop -e 'errorDepth = 0' --dumpdata
 endif
