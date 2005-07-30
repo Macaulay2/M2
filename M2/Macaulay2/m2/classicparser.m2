@@ -11,7 +11,7 @@ digit := set characters "0123456789"
 macaulayNumber = method()
 macaulayNumber String := macaulayNumber @@ characters
 macaulayNumber List := u -> first sublists( u, c -> not digit#?c,
-     c -> error("invalid character '",c,"'"),
+     c -> error("invalid character ",format c),
      v -> if #v==0 then 1 else value concatenate v)
 --macaulayNumber "234"
 --macaulayNumber "11"
@@ -33,7 +33,7 @@ macaulayList List := s -> (
      (s -> take(s,{1,#s-2})) splice sublists(s,
 	  c -> (
 	       if not inside
-	       then if c === "{" then inside = true else error "illegal character"
+	       then if c === "{" then inside = true else error("illegal character: ",format c)
 	       else if c === "," then true else if c === "}" then (inside = false; true) else false
 	       ),
 	  c -> (), macaulayPoly))
@@ -47,7 +47,7 @@ macaulayTable List := s -> (
 	       if inside == 0 then (
 		    if c == "{"
 		    then (inside = 1; true)
-		    else error "illegal character"
+		    else error("illegal character: ",format c)
 		    )
 	       else if inside == 1 then (
 	       	    if c == "," then true else if c == "}" then (inside = 0; true) else if c == "{" then (inside = 2; false) else false
@@ -63,10 +63,8 @@ ideal String := (s) -> ideal macaulayList ("{"|s|"}")
 matrix String := o -> (s) -> matrix macaulayTable("{"|s|"}")
 end
 
-restart
---load "ClassicParser.m2"
+debug Macaulay2Core
 S = ZZ[x,y,z,t]
-
 macaulayMonomial "x3y4zt"
 macaulayMonomial "322xyz"
 macaulayMonomial "xy"
@@ -86,3 +84,7 @@ matrix"{x,y2,z3-3,4},{x,y,z,t}"
 matrix"{x,y2,z3-3,4},{x,y,z,t}"
 
 -- WANT matrix"x,y2,z3-3,4;x,y,z,t" to work
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
+-- End:

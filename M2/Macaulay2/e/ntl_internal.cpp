@@ -56,13 +56,9 @@ void removeNTL_mat_ZZ(void *p, void *cd)
 
 mat_ZZ *makeNTLMatrixZZ(int nrows, int ncols)
 {
-  GC_finalization_proc notused1;
-  void *notused2;
   mat_ZZ *X = new mat_ZZ;	// this uses builtin new, so is probably a memory leak.
   X->SetDims(nrows,ncols);
-  GC_register_finalizer(X, removeNTL_mat_ZZ,
-			0,
-			&notused1, &notused2);
+  GC_register_finalizer(X, removeNTL_mat_ZZ, 0, 0, 0);
   return X;
 }
 
