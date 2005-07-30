@@ -1,6 +1,7 @@
 # -*- mode: Makefile -*-
 # this makefile is run from a subdirectory, hence various insertions of ..
 
+include ../../../../include/config.Makefile
 VPATH = $(srcdir)
 
 check: test.out.expected.trim test.out.trim
@@ -12,10 +13,12 @@ test.out.trim : test.out $(srcdir)/../patterns $(srcdir)/patterns
 test.out.expected.trim : test.out.expected $(srcdir)/../patterns $(srcdir)/patterns
 	sed -f $(srcdir)/../patterns -f $(srcdir)/patterns <$< >$@
 
-test.out : test.m2 ../../../libexec/Macaulay2 \
-		../../../cache/Macaulay2-doc ../../../cache/Macaulay2-made
-	ulimit -v 320000; \
-	time nice -18 ../../../bin/M2$(EXE) -x -s -q \
-		-e "path = join({\"$(srcdir)/\",\"$(srcdir)/../../\"},path)" \
-		<$(srcdir)/test.m2 >test.out.tmp && \
-	mv test.out.tmp test.out
+test.out : test.m2 ../../../bin/M2$(EXE)
+	@ set -xe ; ulimit -v 320000; ulimit -t 3000 ; time nice -18 ../../../bin/M2$(EXE) --stop -q -e 'input "$<"' -e "exit 0" >test.out.tmp; mv test.out.tmp test.out
+
+distclean::clean
+distclean::; rm -f Makefile
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/ComputationsBook "
+# End:

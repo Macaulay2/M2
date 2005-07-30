@@ -147,9 +147,9 @@
 (defvar M2-usual-jog 30 "Usual distance scrolled by M2-jog-left and M2-jog-right")
 (defvar M2-comint-prompt-regexp
   (concat "^"
-	  "[ \t]*"
 	  "\\("
-	  "[io][0-9]+ [:=] "
+	  "[ \t]*"
+	  "[io]*[1-9][0-9]* [:=] "
 	  "\\)"
 	  "?"
 	  )

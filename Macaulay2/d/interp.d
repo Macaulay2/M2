@@ -143,16 +143,29 @@ readeval4(file:TokenFile,printout:bool,stopIfError:bool,dictionary:Dictionary,re
 		    else if isatty(file) 
 		    then flush(file)
 		    else return buildErrorPacket("error while loading file")))));
+
+interpreterDepth := 0;
+interpreterDepthS := setupconst("interpreterDepth",toExpr(0));
+incrementInterpreterDepth():void := (
+     interpreterDepth = interpreterDepth + 1;
+     setGlobalVariable(interpreterDepthS,toExpr(interpreterDepth)));
+decrementInterpreterDepth():void := (
+     interpreterDepth = interpreterDepth - 1;
+     setGlobalVariable(interpreterDepthS,toExpr(interpreterDepth)));
+
+
 readeval3(file:TokenFile,printout:bool,stopIfError:bool,dc:DictionaryClosure,returnLastvalue:bool,stopIfBreakReturnContinue:bool):Expr := (
      saveLocalFrame := localFrame;
      localFrame = dc.frame;
       savecf := getGlobalVariable(currentFileName);
       savecd := getGlobalVariable(currentFileDirectory);
       savepf := currentPosFile;
+      incrementInterpreterDepth();
 	setGlobalVariable(currentFileName,Expr(file.posFile.file.filename));
 	setGlobalVariable(currentFileDirectory,Expr(dirname(file.posFile.file.filename)));
         currentPosFile = file.posFile;
 	ret := readeval4(file,printout,stopIfError,dc.dictionary,returnLastvalue,stopIfBreakReturnContinue);
+      decrementInterpreterDepth();
       setGlobalVariable(currentFileDirectory,savecd);
       setGlobalVariable(currentFileName,savecf);
       currentPosFile = savepf;
@@ -292,15 +305,6 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	       )),
 	  NULL));
 
-interpreterDepth := 0;
-interpreterDepthS := setupconst("interpreterDepth",toExpr(0));
-incrementInterpreterDepth():void := (
-     interpreterDepth = interpreterDepth + 1;
-     setGlobalVariable(interpreterDepthS,toExpr(interpreterDepth)));
-decrementInterpreterDepth():void := (
-     interpreterDepth = interpreterDepth - 1;
-     setGlobalVariable(interpreterDepthS,toExpr(interpreterDepth)));
-
 export topLevel():bool := (
      when loadprint("-",stopIfError,newStaticLocalDictionaryClosure()) 
      is err:Error do (
@@ -314,7 +318,7 @@ commandInterpreter(f:Frame):Expr := commandInterpreter(newStaticLocalDictionaryC
 commandInterpreter(e:Expr):Expr := (
      saveLoadDepth := loadDepth;
      setLoadDepth(loadDepth+1);
-     incrementInterpreterDepth();
+     -- incrementInterpreterDepth();
        ret := 
        when e is s:Sequence do (
 	    if length(s) == 0 then loadprint("-",stopIfError,newStaticLocalDictionaryClosure())
@@ -327,7 +331,7 @@ commandInterpreter(e:Expr):Expr := (
        is cfc:CompiledFunctionClosure do commandInterpreter(emptyFrame)	    -- some values are there, but no symbols
        is CompiledFunction do commandInterpreter(emptyFrame)		    -- no values or symbols are there
        else WrongArg("a function, symbol, dictionary, pseudocode, or ()");
-     decrementInterpreterDepth();
+     -- decrementInterpreterDepth();
      setLoadDepth(saveLoadDepth);
      ret);
 setupfun("commandInterpreter",commandInterpreter);
@@ -339,13 +343,13 @@ debugger(f:Frame,c:Code):Expr := (
      setDebuggingMode(false);
        oldDebuggerCode := getGlobalVariable(errorCodeS);
        setGlobalVariable(errorCodeS,Expr(CodeClosure(f,c)));
-	 incrementInterpreterDepth();
+	 -- incrementInterpreterDepth();
 	   if debuggerHook != nullE then (
 		r := applyES(debuggerHook,emptySequence);
 		when r is Error do return r else nothing;
 		);
 	   ret := loadprintstdin(stopIfError, newStaticLocalDictionaryClosure(localDictionaryClosure(f)),true);
-	 decrementInterpreterDepth();
+	 -- decrementInterpreterDepth();
        setGlobalVariable(errorCodeS,oldDebuggerCode);
      setDebuggingMode(true);
      recursionDepth = oldrecursionDepth;
