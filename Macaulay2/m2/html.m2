@@ -19,8 +19,6 @@ local masterIndex
 
 haderror := false
 numerrors := 0;
-errorSummary := () -> if haderror then error(toString numerrors, " error(s) occurred running example files");
-
 
 buildPackage := null					    -- name of the package currently being built
 topDocumentTag := null
@@ -447,7 +445,7 @@ runString := (x,pkg,rundir) -> (
 check = method()
 check Package := pkg -> (
      scan(values pkg#"test inputs", s -> runString(s,pkg,"."));
-     errorSummary();
+     if haderror then error(toString numerrors, " error(s) occurred running tests for package ", toString pkg);
      )
 
 setupNames := (opts,pkg) -> (
@@ -710,7 +708,7 @@ installPackage Package := opts -> pkg -> (
 			 if debugLevel > 1 then stderr << "--warning: missing file " << outf << endl;
 			 )
 		    ));
- 	  if not opts.IgnoreExampleErrors then errorSummary();
+ 	  if not opts.IgnoreExampleErrors then if haderror then error(toString numerrors, " error(s) occurred running example files");
 
      --      -- make test output files, or else copy them from the old package directory tree
      --      oldTestsDir := oldPackagePrefix|LAYOUT#"packagetests" pkg#"title";

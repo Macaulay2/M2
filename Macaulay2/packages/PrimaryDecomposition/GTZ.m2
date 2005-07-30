@@ -47,7 +47,7 @@ flatt = (I, m) -> (
      monset = new MutableHashTable;
      scan(flatten entries gens monsid, m -> monset#m = {});
      monslist = flatten entries substitute(mons,R);
-     p = positions(monslist, f -> monset#?f);
+     p := positions(monslist, f -> monset#?f);
      cs = transpose cs;
      scan(p, i -> monset#(monslist#i) = substitute(ideal(compress transpose (cs_{i})),R));
      monset)
@@ -127,8 +127,8 @@ getSeparablePart(RingElement,RingElement,RingElement) := (f,u,x) -> (
      product select(g, g1 -> degree(g1,x) > 0))
      
 
-radical0 = method()     
-radical0(Ideal,RingElement) := (I,u) -> (
+radical00 = method()     
+radical00(Ideal,RingElement) := (I,u) -> (
      -- For each variable not in u, compute the 
      -- squarefree part (separable part)
      v := select(gens ring I, x -> u % x != 0);
@@ -141,7 +141,7 @@ radical0(Ideal,RingElement) := (I,u) -> (
 	       f := getMinimalPoly(I,u,x);
 	       g := getSeparablePart(f,u,x);
 	       if f != g then newelems = append(newelems,g)));
-     error "in radical0";
+     error "in radical00";
      I + ideal newelems
      )
 
@@ -153,7 +153,7 @@ rad Ideal := (I) -> (
      while I != 1 do (
 	  u := independentSets(I,Limit=>1);
 	  u = if #u === 0 then 1_R else first u;
-	  J := radical0(I,u);
+	  J := radical00(I,u);
 	  h := flatt(J,u);
 	  h = (intersect values h)_0;
 	  radJ := saturate(J,h);

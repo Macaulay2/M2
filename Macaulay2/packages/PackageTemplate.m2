@@ -20,7 +20,7 @@ exportMutable()
 firstFunction = method(TypicalValue => String)
 firstFunction ZZ := String => n -> (
 	if n == 1
-	then "Hello World!"
+	then "Hello, World!"
 	else "D'oh!"	
 	)
    

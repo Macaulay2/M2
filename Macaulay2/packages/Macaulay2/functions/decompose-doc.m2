@@ -152,6 +152,6 @@ TEST "
 TEST "
 R = ZZ/31991[x,y]
 assert( (x^2-10748*y*x+y^2)*(y^2+x^2)*(x^2+10748*y*x+y^2) == x^6 + y^6 )
-assert ( # factor (x^6 + y^6) == 4 )
+assert ( # factor (x^6 + y^6) == 3 )
 "
 

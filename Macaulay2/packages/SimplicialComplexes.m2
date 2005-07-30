@@ -212,7 +212,7 @@ bd SimplicialComplex := (D) -> (
      if #L === 0 then 
          simplicialComplex monomialIdeal (1_(ring D))
      else
-     	 simplicialComplex L
+     	 simplicialComplex {L}
      )
 
 isPure = method(TypicalValue => Boolean)
@@ -929,8 +929,7 @@ document {
      }
      
 TEST ///
-restart
-loadPackage "SimplicialComplexes"
+needsPackage "SimplicialComplexes"
 
 kk = ZZ
 R = kk[x]
@@ -959,7 +958,7 @@ assert(HH_-1(irrelevant) == R^1)
 assert(fVector irrelevant === new HashTable from {-1=>1})
 assert(bd irrelevant == void)
 
-D5 = simplicialComplex {1_R}
+D5 = simplicialComplex monomialIdeal 1_R
 D5 == irrelevant
 
 x = symbol x
