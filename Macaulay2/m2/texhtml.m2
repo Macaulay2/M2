@@ -52,11 +52,13 @@ html TEX := str -> (
      while (
 	  -- this will not quite work if there are two matrices in the string!
 	  oldstr = str;
-     	  f(///(\\begin\{pmatrix\}.*)(&)(.*\\end\{pmatrix\})///,///\1</td><td>\3///);
-     	  f(///(\\begin\{pmatrix\}.*)(\\\\)(.*\\end\{pmatrix\})///,///\1</td></tr><tr><td>\3///);
+     	  f(///(\\begin\{pmatrix\}.*)(&)(.*\\end\{pmatrix\})///, ///\1</td><td>\3///);
+     	  f(///(\\begin\{pmatrix\}.*)(\\\\)(.*\\end\{pmatrix\})///, ///\1</td></tr><tr><td>\3///);
 	  oldstr != str
 	  ) do null;
-     f(///\\begin\{pmatrix\}(.*)\\end\{pmatrix\}///,///<table border=1><tr><td><table><tr><td>\1</td></tr></table></td></tr></table>///);
+     f(///\\begin\{pmatrix\}(.*)\\end\{pmatrix\}///, ///
+<table border=1><tr><td><table><tr><td>\1</td></tr></table></td></tr></table>
+///);
      while (
 	  oldstr = str;
 	  f(///\{ *\\bf +([^{}]*)\}///,///{<b>\1</b>}///);
