@@ -1,0 +1,8 @@
+
+i1 : M = monoid[x_1..x_10];
+
+i2 : numgens M
+
+o2 = 10
+
+i3 : 

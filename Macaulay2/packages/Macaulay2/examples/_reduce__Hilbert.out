@@ -1,0 +1,27 @@
+
+i1 : R = ZZ/101[x, Degrees => {2}];
+
+i2 : I = ideal x^2;
+
+o2 : Ideal of R
+
+i3 : s = hilbertSeries I
+
+           4
+      1 - T
+o3 = --------
+           2
+     (1 - T )
+
+o3 : Divide
+
+i4 : reduceHilbert s
+
+          2
+     1 + T
+o4 = ------
+        1
+
+o4 : Divide
+
+i5 : 

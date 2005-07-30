@@ -1,0 +1,20 @@
+
+i1 : R = QQ[a..d];
+
+i2 : I = ideal(a^2-b*c-1,a*c-1,b^3-1);
+
+o2 : Ideal of R
+
+i3 : isSubset(I^2,I)
+
+o3 = true
+
+o3 : Boolean
+
+i4 : isSubset(I,I^2)
+
+o4 = false
+
+o4 : Boolean
+
+i5 : 

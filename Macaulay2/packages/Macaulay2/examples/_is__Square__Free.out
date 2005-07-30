@@ -1,0 +1,64 @@
+
+i1 : QQ[x,y,z];
+
+i2 : J = monomialIdeal(x^3*y^5*z, y^5*z^4, y^3*z^5, 
+     	       x*y*z^5, x^2*z^5, x^4*z^3, x^4*y^2*z^2, 
+     	       x^4*y^4*z)
+
+                     4 4    3 5    4 2 2   4 3   5 4   2 5       5   3 5
+o2 = monomialIdeal (x y z, x y z, x y z , x z , y z , x z , x*y*z , y z )
+
+o2 : MonomialIdeal of QQ [x, y, z]
+
+i3 : isSquareFree J
+
+o3 = false
+
+o3 : Boolean
+
+i4 : radical J
+
+o4 = monomialIdeal (x*z, y*z)
+
+o4 : MonomialIdeal of QQ [x, y, z]
+
+i5 : isSquareFree radical J
+
+o5 = true
+
+o5 : Boolean
+
+i6 : needsPackage "SimplicialComplexes"
+--package "SimplicialComplexes" loaded
+
+o6 = SimplicialComplexes
+
+o6 : Package
+
+ -- simplicial complexes
+
+i7 : R = QQ[a..d]
+
+o7 = R
+
+o7 : PolynomialRing
+
+i8 : D = simplicialComplex {{a,b,c},{a,b,d},{a,c,d},{b,c,d}}
+
+o8 = | d c b a |
+
+o8 : SimplicialComplex
+
+i9 : I = monomialIdeal D
+
+o9 = monomialIdeal (a*b, a*c, b*c, a*d, b*d, c*d)
+
+o9 : MonomialIdeal of R
+
+i10 : isSquareFree I
+
+o10 = true
+
+o10 : Boolean
+
+i11 : 

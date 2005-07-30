@@ -1,0 +1,18 @@
+
+i1 : R = QQ[a..d];
+
+i2 : I = ideal(a^2,b);
+
+o2 : Ideal of R
+
+i3 : J = ideal(a,c);
+
+o3 : Ideal of R
+
+i4 : I + J == ideal(a,b,c)
+
+o4 = true
+
+o4 : Boolean
+
+i5 : 

@@ -1,0 +1,14 @@
+
+i1 : sort select("[[:alpha:]]+","Dog, cat, and deer.")
+
+o1 = {and, cat, deer, Dog}
+
+o1 : List
+
+i2 : select("^.*$","asdf\nqwer\nqewr")
+
+o2 = {asdf, qwer, qewr}
+
+o2 : List
+
+i3 : 

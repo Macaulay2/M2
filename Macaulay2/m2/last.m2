@@ -25,17 +25,13 @@ wr := (sep,x) -> wrap(printWidth - promptWidth(), sep, net x)
 RawMatrix.Wrap = Matrix.Wrap = RingElement.Wrap = List.Wrap = Sequence.Wrap = x -> wr("-",x)
 String.Wrap = x -> if height x + depth x === 1 then wr("",x) else x
 
--- make sure this is after all global symbols are defined or erased
 
+-- make sure this is after all global symbols are defined or erased
 closePackage "Macaulay2Core"
 
--- newPackage "Missing"
--- closePackage "Missing"
-
-installedPackages := {"PrimaryDecomposition", "Macaulay2"}
+load "installedpackages.m2"
+installedPackages := Macaulay2Core#"pre-installed packages"	-- initialized in the file installedpackages.m2, which is made from the file installedpackages
 scan(installedPackages, pkg -> loadPackage(pkg,DebuggingMode => not stopIfError))
-
--- currentPackage = null					    -- eliminate the phony package we used for collecting TEST inputs
 
 addStartFunction( 
      () -> (

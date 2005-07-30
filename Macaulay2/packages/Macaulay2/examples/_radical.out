@@ -1,0 +1,22 @@
+
+i1 : R=QQ[x,y]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : I=ideal((x^2+1)^2*y, y+1)
+
+             4      2
+o2 = ideal (x y + 2x y + y, y + 1)
+
+o2 : Ideal of R
+
+i3 : radical I
+
+               2       4      2
+o3 = ideal (- x  - 1, x y + 2x y + y, y + 1)
+
+o3 : Ideal of R
+
+i4 : 

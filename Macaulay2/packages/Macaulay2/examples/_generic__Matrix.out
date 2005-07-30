@@ -1,0 +1,38 @@
+
+i1 : R = ZZ[a..z];
+
+i2 : genericMatrix(R,a,2,4)
+
+o2 = | a c e g |
+     | b d f h |
+
+             2       4
+o2 : Matrix R  <--- R
+
+i3 : genericMatrix(R,i,3,2)
+
+o3 = | i l |
+     | j m |
+     | k n |
+
+             3       2
+o3 : Matrix R  <--- R
+
+i4 : genericMatrix(R,2,4)
+
+o4 = | a c e g |
+     | b d f h |
+
+             2       4
+o4 : Matrix R  <--- R
+
+i5 : genericMatrix(R,3,2)
+
+o5 = | a d |
+     | b e |
+     | c f |
+
+             3       2
+o5 : Matrix R  <--- R
+
+i6 : 

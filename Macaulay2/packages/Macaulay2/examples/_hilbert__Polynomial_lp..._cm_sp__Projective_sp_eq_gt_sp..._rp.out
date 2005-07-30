@@ -1,0 +1,19 @@
+
+i1 : R = ZZ/101[a..d];
+
+i2 : S = image map(R, R, {a^4, a^3*b, a*b^3, b^4});
+
+i3 : hilbertPolynomial S
+
+o3 = - 3*P  + 4*P
+          0      1
+
+o3 : ProjectiveHilbertPolynomial
+
+i4 : hilbertPolynomial(S, Projective=>false)
+
+o4 = 4i + 1
+
+o4 : QQ [i]
+
+i5 : 

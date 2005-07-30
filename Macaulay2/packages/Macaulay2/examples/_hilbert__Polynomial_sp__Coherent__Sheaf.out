@@ -1,0 +1,29 @@
+
+i1 : R = ZZ/101[x_0..x_2];
+
+i2 : V = Proj R;
+
+i3 : S = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})
+
+o3 = image | x_0^3+x_1^3+x_2^3 |
+
+                                         1
+o3 : coherent sheaf on V, subsheaf of OO
+                                        V
+
+i4 : h = hilbertPolynomial S
+
+o4 = 3*P  - 3*P  + P
+        0      1    2
+
+o4 : ProjectiveHilbertPolynomial
+
+i5 : hilbertPolynomial(S, Projective=>false)
+
+     1  2   3
+o5 = -*i  - -*i + 1
+     2      2
+
+o5 : QQ [i]
+
+i6 : 

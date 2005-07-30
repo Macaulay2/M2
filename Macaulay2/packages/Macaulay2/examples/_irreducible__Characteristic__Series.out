@@ -1,0 +1,27 @@
+
+i1 : R=QQ[w,x,y,z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : I=ideal(x^2-y*w,x^3-z*w^2)
+
+             2         3    2
+o2 = ideal (x  - w*y, x  - w z)
+
+o2 : Ideal of R
+
+i3 : L=irreducibleCharacteristicSeries I
+
+o3 = {{| -xy2+z3 -wy+z2 |, | z y |}, map(R,R,{y, z, w, x})}
+
+o3 : List
+
+i4 : apply(L_0, i-> L_1(i))
+
+o4 = {| x3-w2z x2-wy |, | x w |}
+
+o4 : List
+
+i5 : 

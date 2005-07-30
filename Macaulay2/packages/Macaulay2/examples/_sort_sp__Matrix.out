@@ -1,0 +1,32 @@
+
+i1 : R = ZZ/32003[a..d,MonomialOrder=>Lex];
+
+i2 : m = matrix{{a*d, b^2, b^100, b^50*d^50, c^2*d}}
+
+o2 = | ad b2 b100 b50d50 c2d |
+
+             1       5
+o2 : Matrix R  <--- R
+
+i3 : sort m
+
+o3 = | b2 ad c2d b50d50 b100 |
+
+             1       5
+o3 : Matrix R  <--- R
+
+i4 : options sort
+
+o4 = OptionTable{DegreeOrder => Ascending  }
+                 MonomialOrder => Ascending
+
+o4 : OptionTable
+
+i5 : sort(m, DegreeOrder=>null, MonomialOrder=>Descending)
+
+o5 = | ad b100 b50d50 b2 c2d |
+
+             1       5
+o5 : Matrix R  <--- R
+
+i6 : 

@@ -1,0 +1,28 @@
+
+i1 : R = QQ[x,y,z, Degrees=>{3:{1,1}}];
+
+i2 : hilbertFunction({3,3}, R)
+
+o2 = 10
+
+i3 : basis({3,3},R)
+
+o3 = | x3 x2y x2z xy2 xyz xz2 y3 y2z yz2 z3 |
+
+             1       10
+o3 : Matrix R  <--- R
+
+i4 : R = QQ[x,y,z];
+
+i5 : hilbertFunction(3, R)
+
+o5 = 10
+
+i6 : basis(3,R)
+
+o6 = | x3 x2y x2z xy2 xyz xz2 y3 y2z yz2 z3 |
+
+             1       10
+o6 : Matrix R  <--- R
+
+i7 : 

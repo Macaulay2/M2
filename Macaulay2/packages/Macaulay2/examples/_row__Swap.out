@@ -1,0 +1,18 @@
+
+i1 : m = mutableMatrix matrix{{1,2,3},{4,5,6}}
+
+o1 = | 1 2 3 |
+     | 4 5 6 |
+
+o1 : MutableMatrix
+
+i2 : rowSwap(m,0,1)
+
+i3 : m
+
+o3 = | 4 5 6 |
+     | 1 2 3 |
+
+o3 : MutableMatrix
+
+i4 : 

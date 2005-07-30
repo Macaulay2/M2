@@ -207,12 +207,14 @@ checkShadow = () -> (
      for i from 0 to n-1 do
      for j from i+1 to n-1 do
      scan(keys d#i, nam -> if d#j#?nam and d#i#nam =!= d#j#nam then (
-	       stderr << "--warning: symbol '" << nam << "' in " << d#j << " is shadowed by symbol in " << d#i << endl;
+	       stderr << "--warning: symbol '" << nam << "' in " << d#j << " is shadowed by a symbol in " << d#i << endl;
 	       sym := d#j#nam;
 	       w := findSynonyms sym;
 	       w = select(w, s -> s != nam);
 	       if #w > 0 then stderr << "--   synonym" << (if #w > 1 then "s") << " for " << nam << ": " << demark(", ",w) << endl
-	       else if member(User#"private dictionary",globalDictionaries) then for i from 0 do (
+	       else if class User === Package
+	       and User#?"private dictionary"
+	       and member(User#"private dictionary",globalDictionaries) then for i from 0 do (
 		    newsyn := nam | "$" | toString i;
 		    if not isGlobalSymbol newsyn then (
 			 User#"private dictionary"#newsyn = sym;
@@ -291,7 +293,8 @@ debug Package := pkg -> (
      d := pkg#"private dictionary";
      if not member(d,globalDictionaries) then (
 	  globalDictionaries = prepend(d,globalDictionaries);
-	  ))
+	  );
+     checkShadow())
 
 
 -- Local Variables:

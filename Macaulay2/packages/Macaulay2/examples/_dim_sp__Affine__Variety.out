@@ -1,0 +1,34 @@
+
+i1 : R = ZZ/101[x,y];
+
+i2 : point = ideal(x,y);
+
+o2 : Ideal of R
+
+i3 : line = ideal(2*x+3*y-1);
+
+o3 : Ideal of R
+
+i4 : V=Spec(R/intersect(point,line))
+
+o4 = V
+
+o4 : AffineVariety
+
+i5 : dim V
+
+o5 = 1
+
+i6 : Z=Spec(R/(point+line))
+
+o6 = Z
+
+o6 : AffineVariety
+
+i7 : dim Z
+
+o7 = -infinity
+
+o7 : InfiniteNumber
+
+i8 : 

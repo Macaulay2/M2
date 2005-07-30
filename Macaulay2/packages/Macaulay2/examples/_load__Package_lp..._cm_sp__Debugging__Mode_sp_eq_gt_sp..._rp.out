@@ -1,0 +1,9 @@
+
+i1 : loadPackage("Points", DebuggingMode=>true)
+--package "Points" loaded
+
+o1 = Points
+
+o1 : Package
+
+i2 : 

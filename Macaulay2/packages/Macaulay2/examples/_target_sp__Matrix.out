@@ -1,0 +1,19 @@
+
+i1 : R = ZZ[x,y,z];
+
+i2 : M = R^1/(x,y,z);
+
+i3 : N = R^1/(x^2,y^2,x*y*z,z^2);
+
+i4 : g = map(N,M,x*y);
+
+o4 : Matrix
+
+i5 : target g
+
+o5 = cokernel | x2 y2 xyz z2 |
+
+                            1
+o5 : R-module, quotient of R
+
+i6 : 

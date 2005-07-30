@@ -1,0 +1,19 @@
+
+i1 : S = ZZ/10007[x, y, z];
+
+i2 : R = ZZ/10007[t];
+
+i3 : f = map(R,S,{t^3,t^4,t^5})
+
+               3   4   5
+o3 = map(R,S,{t , t , t })
+
+o3 : RingMap R <--- S
+
+i4 : target f
+
+o4 = R
+
+o4 : PolynomialRing
+
+i5 : 

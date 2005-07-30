@@ -1,0 +1,30 @@
+
+i1 : gbTrace = 3;
+
+i2 : R = ZZ[x,y,z];
+
+i3 : f = matrix{{x^2-3, y^3-1, z^4-2}};
+
+             1       3
+o3 : Matrix R  <--- R
+
+i4 : g = forceGB f
+
+o4 = GroebnerBasis[status: done; S-pairs encountered up to degree 0]
+
+o4 : GroebnerBasis
+
+i5 : g === gb(f, StopBeforeComputation=>true)
+
+o5 = true
+
+o5 : Boolean
+
+i6 : gens gb f
+
+o6 = | x2-3 y3-1 z4-2 |
+
+             1       3
+o6 : Matrix R  <--- R
+
+i7 : 

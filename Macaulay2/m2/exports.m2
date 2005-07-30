@@ -2,6 +2,7 @@
 
 export (
 	symbol currentFileName,
+	symbol round,
         symbol currentLineNumber,
 	symbol URL,
 	symbol show,
