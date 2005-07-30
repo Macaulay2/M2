@@ -40,25 +40,25 @@ ZZ ntl_ZZ_from_mpz(mpz_t a)
     }
   long size = mpz_size(a);
   ZZ result(INIT_SIZE, size);
-  long *p = static_cast<long *>(result.rep);
+  long *p = static_cast<long *>(result.rep); // why cast?  rep is a NTL_verylong, #define NTL_verylong _ntl_verylong, and typedef long * _ntl_verylong;
   for (int i=0; i<size; i++)
     p[2+i] = a->_mp_d[i];
   p[1] = a->_mp_size;
-  return result;
+  return result;		// returning causes the result to be copied!
 }
 
 void removeNTL_mat_ZZ(void *p, void *cd)
 {
   mat_ZZ *A = static_cast<mat_ZZ *>(p);
   fprintf(stderr, "removing mat_ZZ\n");
-  delete A;
+  delete A;			// this uses builtin operator delete
 }
 
 mat_ZZ *makeNTLMatrixZZ(int nrows, int ncols)
 {
-  mat_ZZ *X = new mat_ZZ;	// this uses builtin new, so is probably a memory leak.
+  mat_ZZ *X = new mat_ZZ;	// this uses builtin operator new
   X->SetDims(nrows,ncols);
-  GC_register_finalizer(X, removeNTL_mat_ZZ, 0, 0, 0);
+  GC_register_finalizer(X, removeNTL_mat_ZZ, 0, 0, 0); // how can this work if X was not allocated by gc?
   return X;
 }
 

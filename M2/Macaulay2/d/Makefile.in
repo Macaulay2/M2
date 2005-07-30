@@ -54,6 +54,9 @@ M2_OBJECTS += $(CFILES:.c=.o)
 MADECFILES := tmp_init.c startup.c
 M2_OBJECTS += $(MADECFILES:.c=.o)
 
+# other *.o files
+M2_OBJECTS += ../regex/regex.o
+
 ## *.cc files
 
 CCFILES := version.cc gmp_init.cc
@@ -139,7 +142,7 @@ CFLAGS += -Wno-unused-label
 
 ifeq (gcc,$(CC))
 ifeq (yes,$(shell if gcc -Wl,-v 2>&1 | grep -q 'GNU ld' ; then echo yes ; else echo no ; fi))
-ifdef MAPFILE
+ifeq ($(MAPFILE),yes)
 ## - use this to get a memory map listing from the gnu linker
 M2_LDFLAGS  += -Wl,-Map,mapfile
 endif

@@ -27,5 +27,7 @@ source .gdb-files
 # b GC_default_warn_proc
 # can only to this after the program starts:
 # b __gmp_set_memory_functions
-b main
+# b main
+b row_op
+b IM2_MutableMatrix_row_operation
 source .gdb-run-it
