@@ -1,0 +1,27 @@
+# @configure_input@
+include ../../include/config.Makefile
+VPATH = @srcdir@
+DEPENDS = yes
+.PHONY : all clean distclean install tar check tags
+CFILES = regex.c
+%.s : %.c
+	@ echo '$(COMPILE.c) -S $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** compiling $< to assembly code, making $@"
+	@ $(COMPILE.c) -S $(OUTPUT_OPTION) $<
+%.E : %.c
+	@ echo '$(COMPILE.c) -E $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** preprocessing $<, making $@"
+	@ $(COMPILE.c) -E $(OUTPUT_OPTION) $<
+%.dep: %.c
+	@ echo "$(CC)  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
+	@ echo " ** creating $@ from $<"
+	@ $(CC)  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+all tags:: @srcdir@/TAGS
+@srcdir@/TAGS: $(CFILES); cd @srcdir@ && etags $(CFILES)
+ifeq "$(DEPENDS)" "yes"
+include $(CFILES:.c=.dep) $(CCFILES:.cpp=.dep)
+endif
+all :: $(CFILES:.c=.o)
+clean :: ; rm -f *.o *.dep
+Makefile : Makefile.in; cd ..; ./config.status Macaulay2/Makefile
+distclean::; rm -f Makefile
