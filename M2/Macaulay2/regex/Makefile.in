@@ -5,7 +5,19 @@ all :: $(CFILES:.c=.o)
 include ../../include/config.Makefile
 CPPFLAGS := -I@srcdir@ $(CPPFLAGS)
 .PHONY : all clean distclean install tar check tags
-
+CPPFLAGS += \
+	-Dre_compile_fastmap=M2_re_compile_fastmap \
+	-Dre_compile_pattern=M2_re_compile_pattern \
+	-Dre_match=M2_re_match \
+	-Dre_match_2=M2_re_match_2 \
+	-Dre_search=M2_re_search \
+	-Dre_search_2=M2_re_search_2 \
+	-Dre_set_registers=M2_re_set_registers \
+	-Dre_set_syntax=M2_re_set_syntax \
+	-Dregcomp=M2_regcomp \
+	-Dregerror=M2_regerror \
+	-Dregexec=M2_regexec \
+	-Dregfree=M2_regfree
 scCMD = $(COMPILE.c) -S $(OUTPUT_OPTION) $<
 %.s : %.c
 	@ echo '$(scCMD)' >> LOGFILE
