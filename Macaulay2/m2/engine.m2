@@ -5,6 +5,7 @@
 PrintNames#RawObject = "RawObject"
 RawObject.synonym = "raw object"
 raw RawObject := x -> error "'raw' received a raw object"
+net RawObject := o -> net toString o
 
 -- monomials
 
@@ -41,8 +42,6 @@ expression Eliminate := v -> (
      then new FunctionApplication from {Eliminate, v#0}
      else new FunctionApplication from {Eliminate, toList v})
 ProductOrder = new SelfInitializingType of BasicList
-
-net RawMonomialOrdering := o -> stack lines toString o
 
 isSmall := i -> class i === ZZ and i < 2^15 and i > -2^15
 isCount := i -> class i === ZZ and i >= 0 and i < 2^15
@@ -177,13 +176,11 @@ RawMonomialOrdering ** RawMonomialOrdering := RawMonomialOrdering => rawProductM
 
 PrintNames#RawMonoid = "RawMonoid"
 RawMonoid.synonym = "raw monoid"
-net RawMonoid := o -> stack lines toString o
 
 -- rings
 
 PrintNames#RawRing = "RawRing"
 RawRing.synonym = "raw ring"
-net RawRing := o -> stack lines toString o
 ZZ.RawRing = rawZZ()
 
 -- ring elements (polynomials)
@@ -275,8 +272,6 @@ RawMutableMatrix == RawMutableMatrix := RawMatrix == RawMatrix := rawIsEqual
 RawMatrix == ZZ := RawMutableMatrix == ZZ := (v,n) -> if n === 0 then rawIsZero v else error "comparison with nonzero integer"
 ZZ == RawMatrix := ZZ == RawMutableMatrix := (n,v) -> if n === 0 then rawIsZero v else error "comparison with nonzero integer"
 
-net RawMatrix := o -> stack lines toString o
-net RawMutableMatrix := o -> stack lines toString o
 target RawMatrix := o -> rawTarget o
 source RawMatrix := o -> rawSource o
 transposeSequence := t -> pack(#t, mingle t)
@@ -319,9 +314,7 @@ RawMatrix % RawComputation := (m,g) -> rawGBMatrixRemainder(g,m)
 
 PrintNames#RawRingMap = "RawRingMap"
 RawRingMap.synonym = "raw ring map"
-
 RawRingMap == RawRingMap := (v,w) -> v === w
-net RawRingMap := o -> stack lines toString o
 
 -- clean up
 

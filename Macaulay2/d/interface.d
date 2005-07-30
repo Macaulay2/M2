@@ -2522,9 +2522,7 @@ setupfun("rawMatrixColumnScale",rawMatrixColumnScale);
 -----------------------------------------------------------------------------
 
 export rawStartComputation(e:Expr):Expr := (
-     when e is c:RawComputation do (
-	  Ccode(void, "rawStartComputation(", "(Computation *)", c, ")");
-	  nullE)
+     when e is c:RawComputation do toExpr(Ccode(RawComputationOrNull, "(engine_RawComputationOrNull)rawStartComputation(", "(Computation *)", c, ")"))
      else WrongArg("a raw computation"));
 setupfun("rawStartComputation",rawStartComputation);
 

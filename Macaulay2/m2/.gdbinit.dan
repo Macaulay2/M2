@@ -17,17 +17,10 @@ directory /usr/tmp/gmp-build/4.1.3/gmp-4.1.3/mpf/
 directory /usr/tmp/gc-build/6.5/gc6.5/
 directory /usr/tmp/ntl-build/ntl/src/
 source .gdb-files
-# b random.cpp:24
-# b random.cpp:37
-# b random.cpp:44
-# b fatalarrayindex
-# b evaluate_eval
-# b evaluate.d:1179
-# d 1
+b fatalarrayindex
 # b GC_default_warn_proc
-# can only to this after the program starts:
+# can only do this after the program starts:
 # b __gmp_set_memory_functions
 # b main
-b row_op
-b IM2_MutableMatrix_row_operation
+# b ERROR
 source .gdb-run-it

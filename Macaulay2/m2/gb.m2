@@ -82,7 +82,7 @@ processStrategy := (v) -> (
 	       strategyCodes#s)))     
 
 processAlgorithm := (a,f) -> (
-     if a === Homogeneous or a === Homogeneous2 and not isHomogeneous f then error "gb: homogeneous algorithm specified with inhomogeneous matrrix";
+     if (a === Homogeneous or a === Homogeneous2) and not isHomogeneous f then error "gb: homogeneous algorithm specified with inhomogeneous matrrix";
      if a === Homogeneous then 1
      else if a === Inhomogeneous then 2
      else if a === LinearAlgebra or a === Faugere then 3

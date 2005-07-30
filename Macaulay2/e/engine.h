@@ -1499,7 +1499,7 @@ enum gbTraceValues
 
   /* Each of these routines can return NULL, because of errors */
 
-  void rawStartComputation(Computation *G);
+  ComputationOrNull *rawStartComputation(Computation *G);
   /* start or continue the computation */
 
   enum ComputationStatusCode rawStatus1(Computation *C);

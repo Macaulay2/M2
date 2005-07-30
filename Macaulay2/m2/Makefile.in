@@ -62,29 +62,31 @@ all default justM2:: tags
 tags: Makefile @srcdir@/TAGS @srcdir@/TAGS.doc
 clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: \
+		$(NONDOCM2FILES) \
 		$(shell find @srcdir@/../packages -name "*.m2" -o -name examples -prune | grep -v Macaulay2/examples | sort) \
-		../basictests/Makefile.in \
+		@srcdir@/../tutorial/final/*.m2 \
+		@srcdir@/../tutorial/prelim/*.m2 \
 		../e/statuscodes \
-		../emacs/Makefile.in \
 		../emacs/makehlp.m2 \
 		../emacs/makem2.m2 \
 		../emacs/makesyms.m2 \
-		../packages/Makefile.in \
-		../tutorial/Makefile.in \
 		loads.awk \
 		@srcdir@/../*/COPYRIGHT \
 		@srcdir@/../basictests/*.m2 \
 		@srcdir@/../book/*.m2 \
 		@srcdir@/../packages/*.m2 \
 		@srcdir@/../packages/*/*.m2 \
-		@srcdir@/../packages/*/Makefile.in \
 		@srcdir@/../test/*.m2 \
 		@srcdir@/../test/engine/*.m2 \
-		@srcdir@/../tutorial/final/*.m2 Makefile.tests \
-		@srcdir@/../tutorial/prelim/*.m2 \
-		@srcdir@/README.DOC \
-		Makefile.in $(NONDOCM2FILES) \
 		loadsequence \
+		Makefile.in \
+		Makefile.tests \
+		../emacs/Makefile.in \
+		../basictests/Makefile.in \
+		../packages/Makefile.in \
+		../tutorial/Makefile.in \
+		@srcdir@/../packages/*/Makefile.in \
+		@srcdir@/README.DOC \
 		../CHANGES
 	@echo making $@
 	@ set -e ; \
