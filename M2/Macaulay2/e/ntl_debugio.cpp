@@ -3,9 +3,6 @@
 #include <iostream>
 #include "ntl_interface.hpp"
 
-#define NTL_MAX_INT 10000
-#define NTL_MIN_INT -10000
-
 static long iodigits = 0;
 static long ioradix = 0;
 
