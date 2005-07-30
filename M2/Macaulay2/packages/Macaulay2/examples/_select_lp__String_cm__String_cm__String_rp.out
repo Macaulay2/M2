@@ -1,0 +1,8 @@
+
+i1 : select("([a-z]+);","\\1","dog; cat, deer;")
+
+o1 = {dog, deer}
+
+o1 : List
+
+i2 : 

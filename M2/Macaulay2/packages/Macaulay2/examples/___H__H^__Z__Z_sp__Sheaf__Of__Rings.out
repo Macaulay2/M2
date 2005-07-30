@@ -1,0 +1,15 @@
+
+i1 : Cubic = Proj(QQ[x_0..x_2]/ideal(x_0^3+x_1^3+x_2^3))
+
+o1 = Cubic
+
+o1 : ProjectiveVariety
+
+i2 : HH^1(OO_Cubic)
+
+       1
+o2 = QQ
+
+o2 : QQ-module, free
+
+i3 : 

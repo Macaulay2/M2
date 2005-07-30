@@ -1,0 +1,85 @@
+
+i1 : fn = temporaryFileName()
+
+o1 = /tmp/M2-12671-1
+
+i2 : fn << "z^6+3*x*z^4+6*y*z^4+3*x^2*z^2+12*x*y*z^2+12*y^2*z^2+x^3+6*x^2*y+12*x*y^2+8*y^3" << endl << close
+
+o2 = /tmp/M2-12671-1
+
+o2 : File
+
+i3 : get fn
+
+o3 = z^6+3*x*z^4+6*y*z^4+3*x^2*z^2+12*x*y*z^2+12*y^2*z^2+x^3+6*x^2*y+12*x*y^2+8*
+     y^3
+
+i4 : R = ZZ/101[x,y,z]
+
+o4 = R
+
+o4 : PolynomialRing
+
+i5 : f = value get fn
+
+      6       4       4     2 2          2      2 2    3     2         2     3
+o5 = z  + 3x*z  + 6y*z  + 3x z  + 12x*y*z  + 12y z  + x  + 6x y + 12x*y  + 8y
+
+o5 : R
+
+i6 : factor f
+
+          2          3
+o6 = (1)(z  + x + 2y)
+
+o6 : Product
+
+i7 : fn << "sample = 2^100
+     print sample
+     " << close
+
+o7 = /tmp/M2-12671-1
+
+o7 : File
+
+i8 : get fn
+
+o8 = sample = 2^100
+     print sample
+
+i9 : load fn
+1267650600228229401496703205376
+
+i10 : needs fn
+
+i11 : input fn
+
+i12 : sample = 2^100
+
+o12 = 1267650600228229401496703205376
+
+i13 : print sample
+1267650600228229401496703205376
+
+i14 : 
+
+i15 : peek get fn
+
+o15 = "sample = 2^100\nprint sample\n"
+
+i16 : lines get fn
+
+o16 = {sample = 2^100, print sample}
+
+o16 : List
+
+i17 : peek lines get fn
+
+o17 = {"sample = 2^100","print sample"}
+
+i18 : stack lines get fn
+
+o18 = sample = 2^100
+      print sample
+
+i19 : 

@@ -186,6 +186,7 @@ entries Vector := v -> entries ambient v#0 / first
 toExternalString Vector := 				    -- not quite right
 toString Vector := v -> concatenate ( "vector ", toString entries v )
 ring Vector := v -> ring class v
+module Vector := v -> target first v
 leadTerm Vector := v -> new class v from leadTerm v#0
 degree Vector := v -> (
      f := ambient v#0;

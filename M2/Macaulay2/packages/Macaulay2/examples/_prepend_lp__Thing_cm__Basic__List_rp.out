@@ -1,0 +1,14 @@
+
+i1 : prepend(z,(a,b,c))
+
+o1 = (z, a, b, c)
+
+o1 : Sequence
+
+i2 : prepend(z,{a,b,c})
+
+o2 = {z, a, b, c}
+
+o2 : List
+
+i3 : 

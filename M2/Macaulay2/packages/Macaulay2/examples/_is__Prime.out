@@ -1,0 +1,40 @@
+
+i1 : isPrime 91
+
+o1 = false
+
+o1 : Boolean
+
+i2 : isPrime 101
+
+o2 = true
+
+o2 : Boolean
+
+i3 : isPrime 31991
+
+o3 = true
+
+o3 : Boolean
+
+i4 : isPrime 32003
+
+o4 = true
+
+o4 : Boolean
+
+i5 : ZZ/2[t];
+
+i6 : isPrime(t^2+t+1)
+
+o6 = true
+
+o6 : Boolean
+
+i7 : isPrime(t^2+1)
+
+o7 = false
+
+o7 : Boolean
+
+i8 : 

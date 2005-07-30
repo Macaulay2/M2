@@ -1,0 +1,28 @@
+
+i1 : isRing QQ
+
+o1 = true
+
+o1 : Boolean
+
+i2 : R = QQ[x,y];
+
+i3 : isRing(R)
+
+o3 = true
+
+o3 : Boolean
+
+i4 : isRing(R^1)
+
+o4 = false
+
+o4 : Boolean
+
+i5 : isRing(GF(2,3)[x,dx, WeylAlgebra => {x => dx}])
+
+o5 = true
+
+o5 : Boolean
+
+i6 : 

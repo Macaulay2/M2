@@ -1,0 +1,68 @@
+
+i1 : R = ZZ/101[x, Degrees => {2}];
+
+i2 : M = module ideal x^2
+
+o2 = image | x2 |
+
+                             1
+o2 : R-module, submodule of R
+
+i3 : s = hilbertSeries M
+
+         4
+        T
+o3 = --------
+           2
+     (1 - T )
+
+o3 : Divide
+
+i4 : numerator s
+
+      4
+o4 = T
+
+o4 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+
+i5 : poincare M
+
+      4
+o5 = T
+
+o5 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+
+i6 : R=ZZ/101[x, Degrees => {{1,1}}];
+
+i7 : M = module ideal x^2;
+
+i8 : s = hilbertSeries M
+
+          2 2
+         T T
+          0 1
+o8 = -----------
+     (1 - T *T )
+           0  1
+
+o8 : Divide
+
+i9 : numerator s
+
+      2 2
+o9 = T T
+      0 1
+
+o9 : ZZ [T , T , MonomialOrder => RevLex, Inverses => true]
+          0   1
+
+i10 : poincare M
+
+       2 2
+o10 = T T
+       0 1
+
+o10 : ZZ [T , T , MonomialOrder => RevLex, Inverses => true]
+           0   1
+
+i11 : 

@@ -1,0 +1,32 @@
+
+i1 : R = ZZ/101[x,y];
+
+i2 : hilbertSeries(R/x^3)
+
+           3
+      1 - T
+o2 = --------
+            2
+     (1 - T)
+
+o2 : Divide
+
+i3 : hilbertSeries(R/x^3, Order =>5)
+
+                2     3     4
+o3 = 1 + 2T + 3T  + 3T  + 3T
+
+o3 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+
+i4 : R = ZZ/101[x,y, Degrees=>{{1,2},{2,3}}];
+
+i5 : hilbertSeries(R/x^3, Order =>5)
+
+             2    2 3    2 4    3 5    4 6    4 7
+o5 = 1 + T *T  + T T  + T T  + T T  + T T  + T T
+          0  1    0 1    0 1    0 1    0 1    0 1
+
+o5 : ZZ [T , T , MonomialOrder => RevLex, Inverses => true]
+          0   1
+
+i6 : 

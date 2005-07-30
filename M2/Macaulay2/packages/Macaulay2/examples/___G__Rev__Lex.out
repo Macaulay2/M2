@@ -1,0 +1,45 @@
+
+i1 : R = QQ[a..d];
+
+i2 : a^3 + b^2 + b*c
+
+      3    2
+o2 = a  + b  + b*c
+
+o2 : R
+
+i3 : S = QQ[a..d, MonomialOrder => GRevLex => {1,2,3,4}];
+
+i4 : a^3 + b^2 + b*c
+
+            2    3
+o4 = b*c + b  + a
+
+o4 : S
+
+i5 : B = QQ[a..d,MonomialOrder=>GRevLexSmall];
+
+i6 : a^(2^15-1)
+
+      32767
+o6 = a
+
+o6 : B
+
+i7 : C = QQ[a..d,MonomialOrder=>GRevLexTiny];
+
+i8 : try a^(2^15-1) else "failed"
+
+      255
+o8 = a
+
+o8 : C
+
+i9 : a^(2^7-1)
+
+      127
+o9 = a
+
+o9 : C
+
+i10 : 

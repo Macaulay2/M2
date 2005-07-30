@@ -1,0 +1,38 @@
+
+i1 : R=ZZ/101[x]/ideal(x^2);
+
+i2 : poincare R
+
+          2
+o2 = 1 - T
+
+o2 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+
+i3 : numerator hilbertSeries R
+
+          2
+o3 = 1 - T
+
+o3 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+
+i4 : R=ZZ/101[x, Degrees => {{1,1}}]/ideal(x^2);
+
+i5 : poincare R
+
+          2 2
+o5 = 1 - T T
+          0 1
+
+o5 : ZZ [T , T , MonomialOrder => RevLex, Inverses => true]
+          0   1
+
+i6 : numerator hilbertSeries R
+
+          2 2
+o6 = 1 - T T
+          0 1
+
+o6 : ZZ [T , T , MonomialOrder => RevLex, Inverses => true]
+          0   1
+
+i7 : 

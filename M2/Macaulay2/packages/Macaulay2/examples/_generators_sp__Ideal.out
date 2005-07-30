@@ -1,0 +1,32 @@
+
+i1 : R = ZZ/101[a,b,c];
+
+i2 : I = ideal(a^2,a*b-2,c^4,a*c-1,a*c-1)
+
+             2            4
+o2 = ideal (a , a*b - 2, c , a*c - 1, a*c - 1)
+
+o2 : Ideal of R
+
+i3 : generators I
+
+o3 = | a2 ab-2 c4 ac-1 ac-1 |
+
+             1       5
+o3 : Matrix R  <--- R
+
+i4 : I = trim I
+
+             2            4
+o4 = ideal (a , a*b - 2, c , a*c - 1, a*c - 1)
+
+o4 : Ideal of R
+
+i5 : gens I
+
+o5 = | a2 ab-2 c4 ac-1 ac-1 |
+
+             1       5
+o5 : Matrix R  <--- R
+
+i6 : 

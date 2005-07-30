@@ -1,0 +1,4 @@
+
+i1 : R = ZZ[a..e, MonomialOrder => ProductOrder {3,2}];
+
+i2 : 

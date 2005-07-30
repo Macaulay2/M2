@@ -1,0 +1,20 @@
+
+i1 : isCommutative(QQ[x,y])
+
+o1 = true
+
+o1 : Boolean
+
+i2 : isCommutative(QQ[x,y, SkewCommutative => true])
+
+o2 = false
+
+o2 : Boolean
+
+i3 : isCommutative(QQ[x,dx, WeylAlgebra => {x => dx}])
+
+o3 = false
+
+o3 : Boolean
+
+i4 : 

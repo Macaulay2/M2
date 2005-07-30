@@ -7,41 +7,49 @@ srcdir = $(shell cd @srcdir@; /bin/pwd)
 all:: initialize
 Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
 emacs html: all; $(MAKE) -C ../$@
-
 ##############################
 .SUFFIXES: .m2
 .PHONY: clean all install html distclean check default initialize prep always tags install-tmp
-
 LOADSEQUENCE = $(shell cat @srcdir@/loadsequence)
-
 # there is a parallel list of tutorials in overview3.m2
 TUTORIALS = $(patsubst %, ../tutorial/final/%, Fano.out canEmbed.out divisors.out elementary.out)
-
 # M2 files made in the build directory are not mentioned in LOADSEQUENCE above
-MADEM2FILES := loads.m2 statuscodes.m2
-
+############################## statuscodes.m2
+MADEM2FILES += statuscodes.m2
+initialize :: statuscodes.m2
+statuscodes.m2 : ../e/statuscodes
+	( \
+		echo 'RawStatusCodes = new HashTable from {' ; \
+		sed 's/\(.*\):\(.*\):\(.*\)/  \1 => \3,/' ; \
+		echo '}' ; \
+	) <$< >$@
+clean::; rm -f statuscodes.m2
+############################## installedpackages.m2
+MADEM2FILES += installedpackages.m2
+initialize :: installedpackages.m2
+installedpackages.m2 : installedpackages Makefile
+	exec <$< >$@ ; echo 'Macaulay2Core#"pre-installed packages" = {'; read x ; echo \"$$x\"; while read x ; do echo , \"$$x\" ; done ; echo '}'
+############################## mpcodes.m2
 ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed
 	sed -f mpcodes.sed $< > $@
 all:: mpcodes.m2
 MADEM2FILES += mpcodes.m2
 endif
-
+############################## loads.m2
+MADEM2FILES += loads.m2
+loads.m2 : loads.awk loadsequence
+	@echo making $@
+	@awk -f $^ >$@
+##############################
 DUMPEDM2FILES := $(LOADSEQUENCE) setup.m2 startup.m2 $(MADEM2FILES)
 DUMPEDM2DOCFILES := @srcdir@/../packages/Macaulay2/*.m2 @srcdir@/../packages/Macaulay2/*/*.m2 @srcdir@/../packages/Macaulay2.m2
 OTHERM2FILES = sagbi.m2
 NONDOCM2FILES = startup.m2 setup.m2 $(LOADSEQUENCE) $(OTHERM2FILES)
-
-loads.m2 : loads.awk loadsequence
-	@echo making $@
-	@awk -f $^ >$@
-
 #################################
-
 default:: 
-
 all default justM2:: tags
-tags: @srcdir@/TAGS @srcdir@/TAGS.doc
+tags: Makefile @srcdir@/TAGS @srcdir@/TAGS.doc
 clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: loadsequence Makefile.in $(NONDOCM2FILES) @srcdir@/*.awk @srcdir@/../basictests/*.m2 @srcdir@/../test/*.m2 @srcdir@/../test/engine/*.m2 \
 		@srcdir@/../book/*.m2 @srcdir@/../packages/*.m2 ../emacs/makehlp.m2 ../emacs/makem2.m2 \
@@ -61,7 +69,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 	@ set -e ; \
 	  cd @srcdir@ && \
 	  for i in $(patsubst @srcdir@/%, %, $^) ; \
-	  do [ -f $$i ] || (echo "file not found: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS.doc
+	  do [ -f $$i ] || (echo "file not found in @srcdir@: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS.doc
 clean::; rm -f TAGS.doc
 prep :: $(DUMPEDM2FILES)
 
@@ -141,14 +149,6 @@ else
 ENCAPVALUE = false
 endif
 
-initialize :: statuscodes.m2
-statuscodes.m2 : ../e/statuscodes
-	( \
-		echo 'RawStatusCodes = new HashTable from {' ; \
-		sed 's/\(.*\):\(.*\):\(.*\)/  \1 => \3,/' ; \
-		echo '}' ; \
-	) <$< >$@
-clean::; rm -f statuscodes.m2
 
 install:: all
 

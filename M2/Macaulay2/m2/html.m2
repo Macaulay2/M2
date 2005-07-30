@@ -441,9 +441,7 @@ runString := (x,pkg,rundir) -> (
      rmall := () -> rm \ {inf, tmpf, outf};
      inf << x << endl << close;
      ret := runFile(inf,outf,tmpf,"test results",pkg,t->t,rundir);
-     rm inf;
-     rm outf;
-     if ret then rm tmpf;
+     if ret then (rm inf; rm outf;);
      result)
 
 check = method()

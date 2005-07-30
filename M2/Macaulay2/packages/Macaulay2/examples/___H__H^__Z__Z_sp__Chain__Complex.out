@@ -1,0 +1,71 @@
+
+i1 : R = ZZ/101[x,y]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : C = chainComplex(matrix{{x,y}},matrix{{x*y},{-x^2}})
+
+      1      2      1
+o2 = R  <-- R  <-- R
+                    
+     0      1      2
+
+o2 : ChainComplex
+
+i3 : M = HH^1 C
+
+o3 = 0
+
+o3 : R-module
+
+i4 : prune M
+
+o4 = 0
+
+o4 : R-module
+
+i5 : needsPackage "SimplicialComplexes"
+--package "SimplicialComplexes" loaded
+
+o5 = SimplicialComplexes
+
+o5 : Package
+
+ -- simplicial complexes
+
+i6 : R = QQ[a..d]
+
+o6 = R
+
+o6 : PolynomialRing
+
+i7 : D = simplicialComplex {{a,b,c},{a,b,d},{a,c,d},{b,c,d}}
+
+o7 = | d c b a |
+
+o7 : SimplicialComplex
+
+i8 : C = chainComplex D
+
+       1       4
+o8 = QQ  <-- QQ
+              
+     -1      0
+
+o8 : ChainComplex
+
+i9 : HH^2 C
+
+o9 = 0
+
+o9 : QQ-module
+
+i10 : prune oo
+
+o10 = 0
+
+o10 : QQ-module
+
+i11 : 

@@ -19,6 +19,8 @@ Schubert(ZZ, ZZ, List) := Ideal => (kk,nn,sigma) ->
      k := kk+1;
      n := nn+1;
      L := subsets(n,k);
+     p := getGlobalSymbol "p";
+     if value p =!= p then error "Schubert: global symbol p already has a value";
      R := ZZ[apply(L, i -> p_i)];
      T := flatten table(L,L, (i,j) -> {i,j});
      nonStandard := select( 
@@ -66,3 +68,7 @@ Schubert(ZZ, ZZ, List) := Ideal => (kk,nn,sigma) ->
 	  ), t -> p_t);	  
      ideal (G|higher)
      )
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
+-- End:

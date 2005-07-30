@@ -1,0 +1,14 @@
+
+i1 : append((a,b,c),z)
+
+o1 = (a, b, c, z)
+
+o1 : Sequence
+
+i2 : append({a,b,c},z)
+
+o2 = {a, b, c, z}
+
+o2 : List
+
+i3 : 

@@ -1,0 +1,32 @@
+
+i1 : R = ZZ[a..f]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : n = genericMatrix(R,a,2,3)
+
+o2 = | a c e |
+     | b d f |
+
+             2       3
+o2 : Matrix R  <--- R
+
+i3 : m = mutableMatrix n
+
+o3 = | a c e |
+     | b d f |
+
+o3 : MutableMatrix
+
+i4 : columnAdd(m,0,c,1)
+
+i5 : m
+
+o5 = | c2+a c e |
+     | cd+b d f |
+
+o5 : MutableMatrix
+
+i6 : 

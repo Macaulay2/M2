@@ -1,0 +1,17 @@
+
+i1 : C = ZZ/101[x,y,z,u,w];
+
+i2 : I = ideal(x-x^2-y,z+x*y,w^2-u^2);
+
+o2 : Ideal of C
+
+i3 : minPres I
+
+            2    2
+o3 = ideal(u  - w )
+
+               ZZ
+o3 : Ideal of --- [x, u, w, MonomialOrder => GRevLex => 3]
+              101
+
+i4 : 

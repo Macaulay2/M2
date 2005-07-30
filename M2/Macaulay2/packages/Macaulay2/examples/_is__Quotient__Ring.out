@@ -1,0 +1,40 @@
+
+i1 : S = ZZ/3[x,y,z];
+
+i2 : isQuotientRing S
+
+o2 = false
+
+o2 : Boolean
+
+i3 : R = S/(x^2-y*z);
+
+i4 : isQuotientRing R
+
+o4 = true
+
+o4 : Boolean
+
+i5 : ambient R
+
+o5 = S
+
+o5 : PolynomialRing
+
+i6 : symAlg = symmetricAlgebra R^2;
+
+i7 : isQuotientRing symAlg
+
+o7 = true
+
+o7 : Boolean
+
+i8 : sing = singularLocus R;
+
+i9 : isQuotientRing sing
+
+o9 = true
+
+o9 : Boolean
+
+i10 : 

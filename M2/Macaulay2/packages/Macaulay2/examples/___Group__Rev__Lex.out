@@ -1,0 +1,15 @@
+
+i1 : R = QQ[a..d, MonomialOrder=> GroupRevLex=>2];
+
+i2 : a^-1
+
+      -1
+o2 = a
+
+o2 : R
+
+i3 : try c^(-1) else "failed"
+
+o3 = failed
+
+i4 : 

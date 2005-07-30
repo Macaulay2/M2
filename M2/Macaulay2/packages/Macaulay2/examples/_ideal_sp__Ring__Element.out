@@ -1,0 +1,19 @@
+
+i1 : ideal 7
+
+o1 = ideal 7
+
+o1 : Ideal of ZZ
+
+i2 : R = ZZ/2[x,y];
+
+i3 : f = x^2+y^2;
+
+i4 : ideal f
+
+            2    2
+o4 = ideal(x  + y )
+
+o4 : Ideal of R
+
+i5 : 
