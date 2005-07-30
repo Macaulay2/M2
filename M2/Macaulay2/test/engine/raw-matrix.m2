@@ -410,7 +410,7 @@ R = ZZ/101[symbol a .. symbol d]
 f = (a+b)^4*(c+d)^2
 m = rawMonomials((0,1),mat{{raw f}})
 m = matrix{{f}}
-coefficients((0,1),m)
+coefficients(m,Variables=>{a,b})
 ------------------
 A = ZZ[symbol a,symbol b]
 B = A[symbol x, symbol y]

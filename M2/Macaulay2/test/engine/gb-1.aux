@@ -26,6 +26,7 @@ assert(gens gbi I == matrix{{x*y-y^2, x^2, y^3}});
 y^3 // (gens I);
 first first entries((gens I) * (y^3 // (gens I))) == y^3;
 assert((x*y) % I == y^2);
+status gbi I
 assert(status gbi I == "status: done; S-pairs encountered up to degree 3");
 peek gbi I;
 ------------------- d

@@ -103,10 +103,12 @@ IM2_Computation_set_stop(Computation *G,
 				 length_limit);
 }
 
-void rawStartComputation(Computation *C)
+ComputationOrNull* 
+rawStartComputation(Computation *C)
   /* start or continue the computation */
 {
   C->start_computation();
+  return error() ? 0 : C;
 }
 
 enum ComputationStatusCode rawStatus1(Computation *C)

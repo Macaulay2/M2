@@ -371,7 +371,15 @@ installAssignmentMethod(Symbol,HashTable,Function) := (op,Y,f) -> installMethod(
 TEST = method()
 testnumber = 0
 TEST Function := TEST String := s -> (
-     currentPackage#"test inputs"#(testnumber,currentFileName) = s;
+     if currentFileName != "stdio" and class s === String then s = concatenate(
+	  "-- line ",
+	  toString currentLineNumber(),
+	  " in ",
+	  if not isAbsolutePath currentFileName then currentDirectory,
+	  currentFileName,
+	  newline,
+	  s);
+     currentPackage#"test inputs"#(testnumber,currentFileName,currentLineNumber()) = s;
      testnumber = testnumber + 1;
      )
 TEST List := y -> TEST \ y
