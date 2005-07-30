@@ -295,6 +295,8 @@ statuscodes.h : statuscodes
 	sed 's/\(.*\):\(.*\):\(.*\)/  \2 = \1,/' <$< >$@
 clean::; rm -f statuscodes.h
 
+all::; @ echo "LOGFILE: `wc -l LOGFILE` entries `wc -c LOGFILE` bytes."
+
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 # End:
