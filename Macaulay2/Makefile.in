@@ -69,7 +69,7 @@ distclean clean ::; $(MAKE) DEPENDS=no -C d $@
 check ::; $(MAKE) -C basictests -k
 distclean clean ::; $(MAKE) -C basictests $@
 ################################# tutorial
-	gg#### keep this before 'm2' so the final/*.out files get made
+#### keep this before 'm2' so the final/*.out files get made
 justM2::; $(MAKE) -C tutorial all
 install all distclean clean::; $(MAKE) -C tutorial $@
 ################################# m2

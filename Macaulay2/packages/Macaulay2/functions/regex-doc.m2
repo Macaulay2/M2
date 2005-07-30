@@ -72,6 +72,14 @@ document {
 	  {TT "\\i", " -- match the same string that the i-th parenthesized subpattern matched"},
 	  {TT "[...]", " -- match listed character, range, or class"},
 	  {TT "[^...]", " -- match non-listed character, range, or class"},
+	  {TT "\\b", " -- match word boundary"},
+	  {TT "\\B", " -- match within word"},
+	  {TT "\\<", " -- match beginning of word"},
+	  {TT "\\>", " -- match end of word"},
+	  {TT "\\w", " -- match word-constituent character"},
+	  {TT "\\W", " -- match non-word-constituent character"},
+	  {TT "\\`", " -- match beginning of string"},
+	  {TT "\\'", " -- match end of string"}
 	  },
      "There are the following character classes.",
      UL {
