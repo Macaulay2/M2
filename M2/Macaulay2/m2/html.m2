@@ -397,7 +397,7 @@ aftermatch := (pat,str) -> (
      m := regex(pat,str);
      if m === null then "" else substring(m#0#0,str))
 
-runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
+runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> ( -- return false if error
      announcechange();
      stderr << "--making " << desc << " in file " << outf << endl;
      if fileExists outf then removeFile outf;
@@ -407,7 +407,8 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
      if ulimit === null then (
 	  ulimit = utest " -t 40" | utest " -m 90000"| utest " -v 90000";
 	  );
-     cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >" | format tmpf | " 2>&1";
+     tmpf << "-- -*- M2-comint -*-" << endl << close;
+     cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >>" | format tmpf | " 2>&1";
      stderr << cmd << endl;
      r := run cmd;
      if r == 0 then (
@@ -432,23 +433,17 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
 	  ))
 
 runString := (x,pkg,rundir) -> (
-     inf := temporaryFileName();
-     tmpf := temporaryFileName();
-     outf := temporaryFileName();
+     tfn := temporaryFileName();
+     inf := tfn | ".m2";
+     tmpf := tfn | ".tmp";
+     outf := tfn | ".out";
      rm := fn -> if fileExists fn then removeFile fn;
      rmall := () -> rm \ {inf, tmpf, outf};
      inf << x << endl << close;
      ret := runFile(inf,outf,tmpf,"test results",pkg,t->t,rundir);
-     result := if fileExists outf then get outf else "-- no output file found --";
-     if ret then (
-	  stderr
-	  << "--test input : " << stack lines x << endl
-	  << "--test output: " << stack lines result << endl << endl;
-	  rm \ {inf, tmpf, outf}
-	  )
-     else (
-	  rm \ {inf, outf}				    -- leave error file behind
-	  );
+     rm inf;
+     rm outf;
+     if ret then rm tmpf;
      result)
 
 check = method()

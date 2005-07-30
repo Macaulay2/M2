@@ -15,7 +15,12 @@
 
 (setq process-coding-system-alist (cons '("M2" . raw-text) process-coding-system-alist))
 
-(defun m2-mode() (M2-mode))		;setting file variables lowers the case
+(defun m2-mode() 
+  "Macaulay 2 editing mode, name in lower case"
+  (M2-mode))
+(defun m2-comint-mode() 
+  "Macaulay 2 command interpreter mode, name in lower case"
+  (M2-comint-mode))
 
 (define-derived-mode M2-mode fundamental-mode "Macaulay 2"
   "Major mode for editing Macaulay 2 source code.

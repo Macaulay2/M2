@@ -78,9 +78,7 @@ install distclean clean check justM2 all ::; $(MAKE) -C m2 $@
 check ::; $(MAKE) -C test -k
 distclean clean ::; $(MAKE) -C test $@
 ################################# packages
-# from now on, all packages will be separate entities
-# all install check ::; $(MAKE) -C packages $@
-all install clean distclean ::; $(MAKE) -C packages $@
+all check install clean distclean ::; $(MAKE) -C packages $@
 ################################# probe
 clean distclean ::; $(MAKE) -C probe $@
 ################################# book
