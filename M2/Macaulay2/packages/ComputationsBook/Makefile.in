@@ -1,5 +1,6 @@
 # @configure_input@
 include ../../../include/config.Makefile
+VPATH = @srcdir@
 srcdir = $(shell cd @srcdir@; pwd)
 CHAPTERS = completeIntersections \
 	   constructions \
@@ -14,10 +15,6 @@ CHAPTERS = completeIntersections \
 	   toricHilbertScheme \
 	   varieties
 
-Makefile : @srcdir@/Makefile.in
-	cd ../../..; ./config.status Macaulay2/packages/ComputationsBook/Makefile
-distclean:; rm -f Makefile
-
 .PHONY: clean changes distclean all check
 
 ifneq "@srcdir@" "."
@@ -29,8 +26,8 @@ check :: $(patsubst %, %/Makefile, $(CHAPTERS))
 $(patsubst %, %/Makefile, $(CHAPTERS)): @srcdir@/Makefile.chapter; cp $< $@
 
 check ::
-	for d in $(CHAPTERS) ; \
-	   do $(MAKE) -C $$d srcdir=$(srcdir)/$$d || exit 1; \
+	set -x ; for d in $(CHAPTERS) ; \
+	   do $(MAKE) -C $$d srcdir=$(srcdir)/$$d $@ || exit 1; \
 	   done
 
 changes:
@@ -42,3 +39,10 @@ changes:
 clean::
 	rm -f */*.trim */Makefile */*.out programming/foo
 
+Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/packages/ComputationsBook/Makefile
+distclean::clean
+distclean::; rm -f Makefile
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/ComputationsBook "
+# End:
