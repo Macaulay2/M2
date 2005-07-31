@@ -134,7 +134,13 @@ endif
 	$(COMPILE.c) -Wno-unused -Wno-uninitialized $*.c $(OUTPUT_OPTION)
 	rm $*.c
 
-CPPFLAGS += -I../../include -I@srcdir@ -I. -I../util -I../e
+CPPFLAGS += -I../../include
+CPPFLAGS += -I@srcdir@
+CPPFLAGS += -I.
+CPPFLAGS += -I../util
+CPPFLAGS += -I../e
+CPPFLAGS += -I@srcdir@/../regex
+
 CFLAGS += $(DEBUGFLAGS)
 # CFLAGS += -Wall -Wshadow -Wcast-qual 
 CXXFLAGS += $(WARNINGS)

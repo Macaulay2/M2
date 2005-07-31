@@ -15,6 +15,10 @@ firstTime := class PackageDictionary === Symbol
 -- here we put local variables that might be used by the global definitions below
 match := X -> null =!= regex X
 
+if regex(".*/","/aa/bb") =!= {(0, 4)}
+or regex(".*/","aabb") =!= null
+then error "regex regular expression library not working"
+
 if firstTime then (
      -- all global definitions go here, because after loaddata is run, we'll come through here again
      -- with all these already done and global variables set to read-only
@@ -298,6 +302,7 @@ dump := () -> (
      runEndFunctions();
      collectGarbage();
      stderr << "--dumping to " << fn << endl;
+     interpreterDepth = 0;
      dumpdata fn;
      stderr << "--success" << endl;
      exit 0;
@@ -431,6 +436,7 @@ if not noinitfile then (
      );
 errorDepth = loadDepth+1				    -- anticipate loadDepth being 2 later
 processCommandLineOptions 3
+interpreterDepth = 0
 n := interpreter()					    -- loadDepth is incremented by commandInterpreter
 if class n === ZZ and 0 <= n and n < 128 then exit n
 if n === null then exit 0

@@ -725,7 +725,6 @@ export (
 	symbol instance,
 	symbol integralClosure,
 	symbol integrate,
-	symbol interpreterDepth,
 	symbol intersect,
 	symbol irreducibleCharacteristicSeries,
 	symbol isAbsoluteExecPath,
@@ -1130,6 +1129,7 @@ exportMutable (
 	symbol printingPrecision,
 	symbol recursionLimit,
 	symbol sourceHomeDirectory,
+	symbol interpreterDepth,
 	symbol stopIfError
 	)
 

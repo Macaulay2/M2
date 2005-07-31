@@ -1028,7 +1028,7 @@ int system_strncmp(M2_string s,M2_string t,int n) {
 #define regerror M2_regerror
 #define regexec M2_regexec
 #define regfree M2_regfree
-#include <regex.h>
+#include "regex.h"
 
 #define SYNTAX_FLAGS   (REG_EXTENDED | REG_NEWLINE)
 
