@@ -21,6 +21,7 @@ Macaulay2/man/M2-help.1
 Macaulay2/man/M2.1
 Macaulay2/man/Makefile
 Macaulay2/packages/ComputationsBook/Makefile
+Macaulay2/packages/ComputationsBook/completeIntersections/Makefile
 Macaulay2/packages/Makefile
 Macaulay2/probe/Makefile
 Macaulay2/regex/Makefile

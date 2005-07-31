@@ -1,17 +1,14 @@
 # -*- mode: Makefile -*-
-# this makefile is run from a subdirectory, hence various insertions of ..
-
+# this makefile is run from a subdirectory, hence an extra ../ in the paths
 include ../../../../include/config.Makefile
-VPATH = $(srcdir)
-
 check: test.out.expected.trim test.out.trim
 	diff -u $^
 
-test.out.trim : test.out $(srcdir)/../patterns $(srcdir)/patterns
-	sed -f $(srcdir)/../patterns -f $(srcdir)/patterns <$< >$@
+test.out.trim : test.out $(chapter_srcdir)/../patterns $(chapter_srcdir)/patterns
+	sed -f $(chapter_srcdir)/../patterns -f $(chapter_srcdir)/patterns <$< >$@
 
-test.out.expected.trim : test.out.expected $(srcdir)/../patterns $(srcdir)/patterns
-	sed -f $(srcdir)/../patterns -f $(srcdir)/patterns <$< >$@
+test.out.expected.trim : test.out.expected $(chapter_srcdir)/../patterns $(chapter_srcdir)/patterns
+	sed -f $(chapter_srcdir)/../patterns -f $(chapter_srcdir)/patterns <$< >$@
 
 test.out : test.m2 ../../../bin/M2$(EXE)
 	@ set -xe ; ulimit -v 320000; ulimit -t 3000 ; time nice -18 ../../../bin/M2$(EXE) --stop -q -e 'input "$<"' -e "exit 0" >test.out.tmp; mv test.out.tmp test.out
