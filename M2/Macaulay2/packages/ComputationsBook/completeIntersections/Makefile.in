@@ -1,0 +1,4 @@
+# @configure_input@
+VPATH = @srcdir@
+chapter_srcdir = @srcdir@
+include @srcdir@/../Makefile.chapter

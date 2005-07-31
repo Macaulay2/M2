@@ -1,7 +1,6 @@
 # @configure_input@
 include ../../../include/config.Makefile
 VPATH = @srcdir@
-srcdir = $(shell cd @srcdir@; pwd)
 CHAPTERS = completeIntersections \
 	   constructions \
 	   d-modules \
@@ -21,9 +20,6 @@ ifneq "@srcdir@" "."
 check :: $(CHAPTERS)
 $(CHAPTERS):; mkdir "$@"
 endif
-
-check :: $(patsubst %, %/Makefile, $(CHAPTERS))
-$(patsubst %, %/Makefile, $(CHAPTERS)): @srcdir@/Makefile.chapter; cp $< $@
 
 check ::
 	set -x ; for d in $(CHAPTERS) ; \
