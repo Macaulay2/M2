@@ -1,0 +1,5 @@
+# -*- awk -*- well, actually this file goes to sed...
+
+# The book explains that the answer on o32 is an accident with no explanation, and now, due to 
+# changes in the core algorithms, we no longer get the same answer.
+s/\(^o3[012] = \)\(true\|false\)$/\1true or false/

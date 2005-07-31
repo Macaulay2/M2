@@ -38,7 +38,7 @@ random QuotientRing := S -> (
      if S.baseRings === {ZZ} then (random char S)_S
      else notImplemented())
 
-expression QuotientRing := S -> (
+expression QuotientRing := S -> if ReverseDictionary#?S then hold toString ReverseDictionary#S else (
      new Divide from { 
 	  expression last S.baseRings,  
 	  expression pretty S.relations 
