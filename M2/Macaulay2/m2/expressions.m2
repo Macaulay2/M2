@@ -1112,8 +1112,7 @@ Holder.AfterPrint = x -> (
      )
 
 ZZ.AfterPrint = identity
--- Boolean.AfterPrint = identity
--- AfterPrint String := identity
+Boolean.AfterPrint = identity
 -----------------------------------
 expression Array :=
 expression List :=

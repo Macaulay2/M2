@@ -1,5 +1,7 @@
+# -*- awk -*- well, actually this file goes to sed...
+
 # eliminate the CTRL-A characters separating output lines
-s///
+s//\n/
 
 # wipe out execution timing results
 s/-- used [0-9.][0-9.]* seconds/-- used XXX seconds/g
