@@ -217,7 +217,7 @@ document {
      TEX ///We will make computations for quintics V in the family given by
      $$x_0^5+x_1^5+x_2^5+x_3^5+x_4^5-5\lambda x_0x_1x_2x_3x_4=0$$
      for various values of $\lambda$. If $\lambda$ is general
-     (that is, $\lambda$ not a 5-th root of unity, 0 or $\infinity$), then
+     (that is, $\lambda$ not a 5-th root of unity, 0 or $\infty$), then
      the quintic $V$ is smooth, so is a Calabi-Yau threefold, and in that case 
      the Hodge numbers are as follows.///,
      PARA,
