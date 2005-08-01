@@ -284,10 +284,11 @@ tryLoad := (ofn,fn) -> if fileExists fn then (
      true) else false
 
 loadSetup := () -> (
-     -- try to load setup.m2
-     if sourceHomeDirectory =!= null then tryLoad("setup.m2", minimizeFilename(sourceHomeDirectory | "/m2/setup.m2"))
-     else if prefixDirectory =!= null then tryLoad("setup.m2", minimizeFilename(prefixDirectory | LAYOUT#"m2" | "setup.m2"))
-     else error ("can't find file setup.m2; exe = ",exe,"; commandLine#0 = ",commandLine#0)
+     sourceHomeDirectory =!= null and tryLoad("setup.m2", minimizeFilename(sourceHomeDirectory | "/m2/setup.m2"))
+     or
+     prefixDirectory =!= null and tryLoad("setup.m2", minimizeFilename(prefixDirectory | LAYOUT#"m2" | "setup.m2"))
+     or
+     error ("can't find file setup.m2\n\trunning M2: ",exe,"\n\t$0 = ",commandLine#0)
      )
 
 dump := () -> (
