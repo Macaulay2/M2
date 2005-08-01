@@ -52,7 +52,7 @@ config.status : @srcdir@/configure
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1
-reconfigure:
+reconfigure: @srcdir@/configure
 	@ @srcdir@/config/config.command |sh -x
 configure-help:
 	@ @srcdir@/config/config.command --help |sh -x

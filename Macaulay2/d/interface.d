@@ -1570,7 +1570,7 @@ export rawSortColumns(e:Expr):Expr := (
      if !isInt(deg_order) then WrongArgSmallInteger(2) else
      when s.2 is mon_order:Integer do 
      if !isInt(mon_order) then WrongArgSmallInteger(3) else (
-	  toExpr(Ccode(RawArrayInt, "(engine_RawArrayInt)",
+	  toExprSeq(Ccode(RawArrayInt, "(engine_RawArrayInt)",
 		    "IM2_Matrix_sort_columns(",
 		    "(Matrix *)", M, ",",
 		    toInt(deg_order), ",",

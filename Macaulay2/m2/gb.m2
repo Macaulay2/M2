@@ -179,9 +179,14 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
      G)
 
 syz = method(Options => options gb)			    -- we seem to be ignoring these options!!
+
+rawsort := m -> rawExtractColumns(m,rawSortColumns(m,1,1))
+
 generators      GroebnerBasis := Matrix =>            (G) -> map(target unbag G.matrix,,rawGBGetMatrix G.RawComputation)
-mingens         GroebnerBasis := Matrix => options -> (G) -> map(target unbag G.matrix,,rawGBMinimalGenerators G.RawComputation)
-syz             GroebnerBasis := Matrix => options -> (G) -> map(ring G, rawGBSyzygies G.RawComputation)
+mingens         GroebnerBasis := Matrix => options -> (G) -> map(target unbag G.matrix,,rawsort rawGBMinimalGenerators G.RawComputation)
+                -- rawGBMinimalGenerators doesn't sort its columns, so we do that here
+syz             GroebnerBasis := Matrix => options -> (G) -> map(ring G, rawsort rawGBSyzygies G.RawComputation)
+                -- rawGBSyzygies doesn't sort its columns, so we do that here
 getChangeMatrix GroebnerBasis := Matrix =>            (G) -> map(ring G, rawGBChangeOfBasis G.RawComputation)
 
 forceGB = method(
