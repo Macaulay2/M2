@@ -18,7 +18,6 @@ export(
      NTL,
      CohenEngine,
      CohenTopLevel,
-     Gram,
      Givens,
      BKZ,
      RealFP,
@@ -52,34 +51,36 @@ getEntry = (m,i,j) -> m_(i,j)
 RR // ZZ := (a,b) -> a/b
 RR // RR := (a,b) -> a/b
 --------------------------------------------------
-LLLstrats := new HashTable from {
+LLLstrategies = new HashTable from {
      NTL => 2,
      CohenEngine => 0,
      CohenTopLevel => 1,
-     Gram => 0,
-     Givens => 4,
-     BKZ => 8,
-     RealFP => 16,
-     RealQP1 => 32,
-     RealQP => 48,
-     RealXD => 64,
-     RealRR => 80
+     RealFP => 2 + 16,
+     RealQP => 2 + 48,
+     RealXD => 2 + 64,
+     RealRR => 2 + 80,
+     {Givens,RealFP} => 6 + 16,
+     {Givens,RealQP} => 6 + 48,  
+     {Givens,RealXD} => 6 + 64,
+     {Givens,RealRR} => 6 + 80,
+     {BKZ,RealFP} => 10 + 16,
+     {BKZ,RealQP1} => 10 + 32,
+     {BKZ,RealQP} => 10 + 48,
+     {BKZ,RealXD} => 10 + 64,
+     {BKZ,RealRR} => 10 + 80,
+     {BKZ,Givens,RealFP} => 14 + 16,
+     {BKZ,Givens,RealQP} => 14 + 48,
+     {BKZ,Givens,RealQP1} => 14 + 32,
+     {BKZ,Givens,RealXD} => 14 + 64,
+     {BKZ,Givens,RealRR} => 14 + 80
      }
 --------------------------------------------------
 round := (a,b) -> (2*a + b) // (2*b)
 
 processLLLstrategy := (strat) -> (
-     if instance(strat,ZZ) then strat
-     else if LLLstrats#?strat then LLLstrats#strat
-     else (
-	  if not instance(strat,List) then
-	    error "expected List of strategy options";
-	  alg := 0;
-	  scan(strat, s -> if LLLstrats#?s then
-	       alg = alg + LLLstrats#s
-	       else error("unknown Strategy option: "|s));
-	  alg
-	  ))
+     if instance(strat,List) then strat = sort strat;
+     if LLLstrategies#?strat then LLLstrategies#strat
+     else error("unknown Strategy option: "|strat))
 
 setLLLthreshold := (result,alpha) -> (
      if class alpha =!= QQ then (
@@ -127,7 +128,7 @@ LLL Matrix := options -> (M) -> (
      else (
 	  mchange = iden(ring m, numcols m);
      	  result = if strat =!= 1 then (
-	       rawLLL(m.RawMutableMatrix, mchange, thresh, strat);
+	       rawLLL(m.RawMutableMatrix, mchange.RawMutableMatrix, thresh, strat);
 	       (matrix map(ZZ,m.RawMutableMatrix),
 		    matrix map(ZZ,mchange.RawMutableMatrix))
 	       )
@@ -144,7 +145,6 @@ LLL Matrix := options -> (M) -> (
 ----------------------------------
 if LLLComputation === symbol LLLComputation
 then LLLComputation = new Type of MutableHashTable
-
 
 newLLLComputation = (m, mchange,threshold) -> (
      -- struct {
@@ -185,7 +185,7 @@ doLLL = (C,count) -> (
      	  caxy(A,-q,ell-1,k-1);
 	  if Achange =!= null then 
 	    caxy(Achange,-q,ell-1,k-1);
-	  << "[" << k-1 << " " << -q << " " << ell-1 << "]\n";
+	  --<< "[" << k-1 << " " << -q << " " << ell-1 << "]\n";
 	  lambda#(k,ell) = lambda#(k,ell) - q*D#ell;
 	  scan(1..ell-1, i-> lambda#(k,i) = lambda#(k,i) - q*lambda#(ell,i));
 	  );
@@ -193,7 +193,7 @@ doLLL = (C,count) -> (
 	  cflip(A,k-1,k-2);
 	  if Achange =!= null then 
 	    cflip(Achange,k-1,k-2);
-	  << "[flip " << k-1 << " " << k-2 << "]\n";
+	  --<< "[flip " << k-1 << " " << k-2 << "]\n";
 	  if k > 2 then (
 	       scan(1..k-2, j->(tmp := lambda#(k,j); 
 		                       lambda#(k,j) = lambda#(k-1,j); 
@@ -780,7 +780,7 @@ document {
      "It is also possible to get the change of basis 
      matrix from the original basis to the LLL basis.  For example,",
      EXAMPLE {
-	  "(n,c) = LLL(m, Strategy => 1, ChangeOfBasisMatrix=>true)",
+	  "(n,c) = LLL(m, Strategy => NTL, ChangeOfBasisMatrix=>true)",
 	  "m * c == n"
 	  },
      Caveat => {"If the strategy given is not an NTL strategy, then the columns of the matrix m must be linearly independent.",
@@ -803,17 +803,27 @@ document {
      }
 document { 
      Key => [LLL, ChangeOfBasisMatrix],
-     Headline => "",
-     Usage => "",
+     Headline => "also find change of basis matrix",
+     Usage => "(B,U) = LLL(A,ChangeOfBasisMatrix=>true)",
      Inputs => {
+	  "A" => Matrix => "over the integers, of size d by n",
+	  },
+     Outputs => {
+	  "B" => Matrix => "the LLL matrix (also having d rows)",
+	  "U" => Matrix => "the n by n invertible transform matrix"
 	  },
      Consequences => {
+	  "The routine returns a pair of matrices, rather than just one"
 	  },     
-     "description",
+     "Constructs the change of basis matrix U from the basis A to the basis
+     B. This is an invertible matrix U such that", TEX "$AU = B$", ".",
      EXAMPLE {
+	  ///load "LLLBases.m2"///,
+	  "A = matrix randomMutableMatrix(10,10,.5,100000)",
+	  "(B,U) = LLL(A, ChangeOfBasisMatrix=>true)",
+	  "B == A*U",
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {LLLBases}
      }
 document { 
      Key => [LLL, Limit],
@@ -834,18 +844,168 @@ document {
      Headline => "choose among different algorithms",
      Usage => "LLL(...,Strategy=>n)",
      Inputs => {
+	  "The strategy n can be one of the symbols or lists
+	  given below."
 	  },
-     Consequences => {
+     "There are several variants of the LLL reduction algorithm
+     implemented.  There are three all integer versions: ", TT "NTL",
+     ", ", TT "CohenEngine", ", and ", TT "CohenTopLevel",".
+     The NTL version 
+     (NTL is an excellent package written by Victor shoup) is
+     generally the best, however, the top level version is written
+     in the Macaulay 2 language, and so is easily modifiable and
+     can be used to understand the algorithm better.  There are also
+     a number of approximate LLL variants implemented in NTL.  These
+     use real numbers instead of exact integer arithmetic, and so are
+     often much faster, but only provide approximate answers (i.e. the
+     result might not be an LLL basis, only close to one).  Much of the
+     information here about NTL's algorithms comes directly from the NTL 
+     documentation (translated to be relevant here).",
+     PARA,
+     "Here is the complete list of possible strategies:",
+     UL {
+	  "LLL(m, Strategy => NTL)",
+	  "LLL(m, Strategy => CohenEngine)",
+ 	  "LLL(m, Strategy => CohenTopLevel)",
+	  HR,
+	  "LLL(m, Strategy => RealFP)",
+	  "LLL(m, Strategy => RealQP)",	  
+	  "LLL(m, Strategy => RealXD)",
+	  "LLL(m, Strategy => RealRR)",
+	  HR,
+	  "LLL(m, Strategy => {Givens,RealFP})",
+	  "LLL(m, Strategy => {Givens,RealQP})",	  
+	  "LLL(m, Strategy => {Givens,RealXD})",
+	  "LLL(m, Strategy => {Givens,RealRR})",
+	  HR,
+	  "LLL(m, Strategy => {BKZ,RealFP})",
+	  "LLL(m, Strategy => {BKZ,RealQP})",
+	  "LLL(m, Strategy => {BKZ,RealQP1})",
+	  "LLL(m, Strategy => {BKZ,RealXD})",
+	  "LLL(m, Strategy => {BKZ,RealRR})",
+	  HR,
+	  "LLL(m, Strategy => {BKZ,Givens,RealFP})",
+	  "LLL(m, Strategy => {BKZ,Givens,RealQP})",
+	  "LLL(m, Strategy => {BKZ,Givens,RealQP1})",
+	  "LLL(m, Strategy => {BKZ,Givens,RealXD})",
+	  "LLL(m, Strategy => {BKZ,Givens,RealRR})",
 	  },     
-     "There are several variants of the LLL algorithm implemented.
-     They are: Engine, NTL, TopLevel.  Further, if NTL is given
-     then there are several variants, which are faster, but
-     are not 100% guaranteed to return an LLL basis.  However, they
-     often do, and for most applications it is not that important.",
-     EXAMPLE {
+     "The first three are similar all-integer algorithms, 
+     basically the one which 
+     appears in H. Cohen's book.  The rest of the algorithms are
+     approximate variants, provided by Victor Shoup's NTL package.
+     For these, there are three choices to be made: 
+     (1) the reduction condition, (2) the choice of orthogonalization
+     strategy, and (3) the choice of precision.",
+     SUBSECTION "Reduction condition",
+     UL {
+	  "default -- the classical LLL reduction condition",
+	  {"BKZ -- Block Korkin-Zolotarev reduction.",
+     	  "This is slower, but yields a higher-quality basis,
+     	  i.e., one with shorter vectors.
+     	  For a description, see 
+     [C. P. Schnorr and M. Euchner, Proc. Fundamentals of Computation Theory, 
+     LNCS 529, pp. 68-85, 1991].  
+     	  This basically generalizes the LLL reduction condition
+     	  from blocks of size 2 to blocks of larger size."}
+     },
+     SUBSECTION "Orthogonalization Strategy",
+     UL {
+  	  {"default -- Classical Gramm-Schmidt Orthogonalization, ",
+     "This choice uses classical methods for computing
+     the Gramm-Schmidt othogonalization.
+     It is fast but prone to stability problems.
+     This strategy was first proposed by Schnorr and Euchner in the paper
+     mentioned above.
+     The version implemented here is substantially different, improving
+     both stability and performance."},
+          {"Givens -- Givens Orthogonalization, ",
+     "This is a bit slower, but generally much more stable,
+     and is really the preferred orthogonalization strategy.
+     For a nice description of this, see Chapter 5 of  
+     [G. Golub and C. van Loan, Matrix Computations, 3rd edition,
+     Johns Hopkins Univ. Press, 1996]."}
+     },
+     SUBSECTION "Precision",
+     UL {
+  	  "RealFP -- double",
+  	  "RealQP -- quad_float (quasi quadruple precision)
+             useful when roundoff errors can cause problems",
+	  "RealQP1 -- only availabel in the BKZ variant, uses
+	     double precision for the search phase of the BKZ
+	     reduction, and quad_float for the orthogonalization",
+  	  "RealXD -- xdouble (extended exponent doubles)
+             useful when numbers get too big",
+  	  "RealRR -- RR (arbitrary precision floating point)
+             useful for large precision and magnitudes"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     "Generally speaking, the choice RealFP will be the fastest,
+     but may be prone to roundoff errors and/or overflow.",
+     SUBSECTION "Putting it all together",
+     "This subsection comes directly from Victor Shoup's LLL
+     documentation",
+     PARA,
+"I think it is safe to say that nobody really understands
+how the LLL algorithm works.  The theoretical analyses are a long way
+from describing what \"really\" happens in practice.  Choosing the best
+variant for a certain application ultimately is a matter of trial
+and error.",
+PARA,
+"The first thing to try is ", TT "Strategy => RealFP", ".
+It is the fastest of the routines, and is adequate for many applications.",
+PARA,
+"If there are precision problems, you will most likely get
+a warning message, something like \"warning--relaxing reduction\".
+If there are overflow problems, you should get an error message
+saying that the numbers are too big.",
+PARA,
+"If either of these happens, the next thing to try is 
+", TT "Strategy=>{Givens,RealFP}",
+", which uses the somewhat slower, but more stable, Givens rotations.
+This approach also has the nice property that the numbers remain
+smaller, so there is less chance of an overflow.",
+PARA,
+"If you are still having precision problems
+try ", TT "Strategy=>RealQP", " or ", TT "Strategy=>{Givens,RealQP}",
+", which use quadratic precision.",
+PARA,
+"If you are still having overflow problems,
+try ", TT "Strategy=>RealXD", " or ", TT "Strategy=>{Givens,RealXD}",
+PARA,
+"I haven't yet come across a case where one *really* needs the
+extra precision available in the RealRR variants.",
+PARA,
+"All of the above discussion applies to the ", TT "BKZ", " variants as well.
+In addition, if you have a matrix with really big entries, you might try 
+using ", TT "Strategy=>{Givens,RealFP}", " or ", TT "Strategy=>RealXD",
+" first to reduce the sizes of the numbers,
+before running one of the ", TT "BKZ", " variants.",
+PARA,
+"Also, one shouldn't rule out using the \"all integer\" LLL routines.
+For some highly structured matrices, this is not necessarily
+much worse than some of the floating point versions, and can
+under certain circumstances even be better.",
+SUBSECTION "Examples",
+EXAMPLE {
+  ///load "LLLBases.m2"///,
+	  "m1 = map(ZZ^50, ZZ^50, (j,i) -> (i+1)^8 * (j+1)^4 + i + j + 2);",
+	  "m = syz m1;",
+	  "time LLL m;",
+	  "time LLL(m, Strategy=>CohenEngine);",
+	  "time LLL(m, Strategy=>CohenTopLevel);",
+	  "time LLL(m, Strategy=>{Givens,RealFP});",
+	  "time LLL(m, Strategy=>{Givens,RealQP});",
+	  "time LLL(m, Strategy=>{Givens,RealXD});",
+	  "time LLL(m, Strategy=>{Givens,RealRR});",
+	  "time LLL(m, Strategy=>{BKZ,Givens,RealFP});",
+	  "time LLL(m, Strategy=>{BKZ,Givens,RealQP});",
+	  "time LLL(m, Strategy=>{BKZ,Givens,RealXD});",
+	  "time LLL(m, Strategy=>{BKZ,Givens,RealRR});"
+	  },
+     Caveat => {"For most of the options, the columns do not need to be 
+	  linearly independent.  The strategies CohenEngine and CohenTopLevel
+	  currently require the columns to be linearly independent."},
+     SeeAlso => {LLLBases}
      }
 
 document {
@@ -1260,12 +1420,14 @@ TEST ///
     time m1 = kernelLLL M -- time: 1.98 seconds (front-end implementation) 
                       -- BUT: quality of output was very much better...
     assert not isLLL m1   -- NO
-    time LLL m1  -- .76 sec 44.9 seconds (front-end implementation), Quality of output is higher still
-    time LLL(m1, Strategy=>1) -- 2.43 sec
-    time LLL(m1, Strategy=>2) -- 
-    time LLL(m1, Strategy=>3) -- 
-
-    --time LLL m -- 12.27 sec takes too long for the 'check' command
+    time LLL m1;  -- .76 sec 44.9 seconds (front-end implementation), Quality of output is higher still
+    time LLL(m1, Strategy=>CohenEngine); -- 
+    time LLL(m1, Strategy=>CohenTopLevel); -- 
+    time LLL(m1, Strategy=>{BKZ,RealFP}); -- 
+    
+    time LLL(m, Strategy=>{BKZ,RealFP}); -- 
+    time LLL(m, Strategy=>{BKZ,RealRR});
+    time LLL(m);    
 ///
 
 

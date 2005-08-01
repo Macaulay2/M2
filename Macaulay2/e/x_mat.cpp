@@ -340,8 +340,10 @@ const MatrixOrNull * IM2_Matrix_koszul(int p, const Matrix *M)
   return M->koszul(p);
 }
 
-const MatrixOrNull * IM2_Matrix_koszul_monoms(const Matrix *M,
-					      const Matrix *N)
+const MatrixOrNull * 
+rawKoszulMonomials(int first_skew_var,
+		     const Matrix *M,
+		     const Matrix *N)
 {
 #warning "check with 0.9.2 about what this should even do"
   if (M->get_ring() != N->get_ring())
@@ -349,7 +351,7 @@ const MatrixOrNull * IM2_Matrix_koszul_monoms(const Matrix *M,
       ERROR("expected same ring");
       return 0;
     }
-  return Matrix::koszul(M,N);
+  return Matrix::koszul_monomials(first_skew_var,M,N);
 }
 
 const MatrixOrNull * IM2_Matrix_symm(int p, const Matrix *M)
