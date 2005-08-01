@@ -256,16 +256,20 @@ RawMatrix.synonym = "raw matrix"
 PrintNames#RawMutableMatrix = "RawMutableMatrix"
 RawMutableMatrix.synonym = "raw mutable matrix"
 
-extract := method()
+rawExtract = method()
 
-extract(RawMatrix,ZZ,ZZ) := 
-extract(RawMutableMatrix,ZZ,ZZ) := (m,r,c) -> rawMatrixEntry(m,r,c)
+rawExtract(RawMatrix,ZZ,ZZ) := 
+rawExtract(RawMutableMatrix,ZZ,ZZ) := (m,r,c) -> rawMatrixEntry(m,r,c)
 
-extract(RawMatrix,Sequence,Sequence) := 
-extract(RawMutableMatrix,Sequence,Sequence) := (m,r,c) -> rawSubmatrix(m,splice r,splice c)
+rawExtract(RawMatrix,Sequence,Sequence) := 
+rawExtract(RawMutableMatrix,Sequence,Sequence) := (m,r,c) -> rawSubmatrix(m,splice r,splice c)
 
 RawMatrix _ Sequence := 
-RawMutableMatrix _ Sequence := (m,rc) -> ((r,c) -> extract(m,r,c)) rc
+RawMutableMatrix _ Sequence := (m,rc) -> ((r,c) -> rawExtract(m,r,c)) rc
+
+rawExtractColumns = method()
+rawExtractColumns(RawMatrix,Sequence) :=
+rawExtractColumns(RawMutableMatrix,Sequence) := (m,c) -> rawExtract(m, 0 .. rank target m - 1, c)
 
 RawMutableMatrix == RawMutableMatrix := RawMatrix == RawMatrix := rawIsEqual
 
