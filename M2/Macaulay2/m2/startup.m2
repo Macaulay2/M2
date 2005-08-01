@@ -119,7 +119,7 @@ if firstTime then (
      endl = new Manipulator from endl;
 
      Thing.Print = x ->  (
-	  << newline << "o" << lineNumber << " = ";
+	  << newline << concatenate(interpreterDepth:"o") << lineNumber << " = ";
 	  try << x;
 	  << newline << flush;
 	  );
