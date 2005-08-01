@@ -2016,13 +2016,15 @@ setupfun("rawKoszul",rawKoszul);
 
 export rawKoszulMonomials(e:Expr):Expr := (
      when e is s:Sequence do
-     when s.0 is F:RawMatrix do 
-     when s.1 is G:RawMatrix do 
+     when s.0 is n:Integer do
+     when s.1 is F:RawMatrix do 
+     when s.2 is G:RawMatrix do 
      toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)",
-	       "IM2_Matrix_koszul_monoms(", "(Matrix *)", F, ",", "(Matrix *)", G, ")" ))
+	       "rawKoszulMonomials(", toInt(n), ",", "(Matrix *)", F, ",", "(Matrix *)", G, ")" ))
+     else WrongArgMatrix(3)
      else WrongArgMatrix(2)
-     else WrongArgMatrix(1)
-     else WrongNumArgs(2));
+     else WrongArgInteger(1)
+     else WrongNumArgs(3));
 setupfun("rawKoszulMonomials",rawKoszulMonomials);
 
 export rawHilbert(e:Expr):Expr := (

@@ -15,7 +15,7 @@ newPackage(
 export(SimplicialComplex,
      simplicialComplex,
      bd,fVector,isPure,label,
-     faces,facets,support)
+     faces,facets,support,link)
 
 complement := local complement
 complement = (m) -> (
@@ -58,11 +58,11 @@ simplicialComplex MonomialIdeal := (I) -> (
 
 simplicialComplex List := SimplicialComplex => (faces) -> (
      if #faces === 0 then error "expected at least one facet";
-     R := ring faces#0#0;
+     R := ring faces#0;
      if not isPolynomialRing R or isQuotientRing R
      then error "expected a polynomial ring";
-     I := matrix faces;
-     L := monomialIdeal flatten complement I;
+     I := matrix {faces};
+     L := monomialIdeal complement I;
      J := dual L;
      newSimplicialComplex(J, complement generators L)
      )
@@ -81,8 +81,9 @@ facets SimplicialComplex := (D) -> D.facets
 ideal SimplicialComplex := (D) -> ideal D.faceIdeal
 monomialIdeal SimplicialComplex := (D) -> D.faceIdeal
 
---link(SimplicialComplex, RingElement) := (D,f) -> (
---     simplicialComplex monomialIdeal(ideal(f) + (ideal D) : f))
+link = method()
+link(SimplicialComplex, RingElement) := (D,f) -> (
+     simplicialComplex monomialIdeal((ideal support f) + ((ideal D) : f)))
 
 SimplicialComplex == SimplicialComplex := (D,E) -> D.faceIdeal === E.faceIdeal
 
@@ -122,7 +123,7 @@ bd (ZZ,SimplicialComplex) := (r,D) -> (
      b1 := faces(r,D);
      b2 := faces(r-1,D);
      ones := map(coefficientRing R,R, toList(numgens R:1));
-     ones map(R, rawKoszulMonomials(raw b2,raw b1))
+     ones map(R, rawKoszulMonomials(0,raw b2,raw b1))
      )
 
 bd (ZZ,SimplicialComplex) := (r,D) -> (
@@ -212,7 +213,7 @@ bd SimplicialComplex := (D) -> (
      if #L === 0 then 
          simplicialComplex monomialIdeal (1_(ring D))
      else
-     	 simplicialComplex {L}
+     	 simplicialComplex L
      )
 
 isPure = method(TypicalValue => Boolean)
@@ -643,6 +644,32 @@ document {
      SeeAlso => {}
      }
 document { 
+     Key => {link,(link,SimplicialComplex,RingElement)},
+     Headline => "link of a face in a simplicial complex",
+     Usage => "link(D,f)",
+     Inputs => {
+	  "D" => SimplicialComplex => "",
+	  "f" => RingElement => {"a monomial representing a face of the simplicial complex ", TT "D"}
+          },
+     Outputs => {
+	  SimplicialComplex => {"the link of ", TT "f", " in ", TT "D"}
+          },
+     TEX "The link of a face $f$ in $D$ is the simplicial complex whose faces 
+     are the subsets $g$ whose intersection
+     with $f$ is empty, where $f \\cup g$ is a face of $D$.",
+     EXAMPLE {
+	  "R = QQ[x0,x1,x2,x3,x4,x5,x6];",
+	  "D = simplicialComplex {x0*x1*x3, x1*x3*x4, x1*x2*x4, x2*x4*x5,
+	       x2*x3*x5, x3*x5*x6, x3*x4*x6, x0*x4*x6,
+	       x0*x4*x5, x0*x1*x5, x1*x5*x6, x1*x2*x6,
+	       x0*x2*x6, x0*x2*x3}",
+	  "link(D,x0)",
+	  "link(D,x0*x2)"
+	  },
+     SeeAlso => {SimplicialComplexes
+	  }
+     }
+document { 
      Key => (dual,SimplicialComplex),
      Headline => "the Alexander dual of a simplicial complex",
      Usage => "dual D",
@@ -713,16 +740,16 @@ document {
      EXAMPLE {
 	  --R = QQ[a..f];
 	  R = QQ[a..f, Degrees => {
-	                  {1, 1, 0, 0, 0, 0, 0}, 
-			  {1, 0, 1, 0, 0, 0, 0}, 
-			  {1, 0, 0, 1, 0, 0, 0}, 
+                          {1, 1, 0, 0, 0, 0, 0}, 
+                          {1, 0, 1, 0, 0, 0, 0}, 
+                          {1, 0, 0, 1, 0, 0, 0}, 
 			  {1, 0, 0, 0, 1, 0, 0}, 
 			  {1, 0, 0, 0, 0, 1, 0}, 
 			  {1, 0, 0, 0, 0, 0, 1}}]
 	  oct = simplicialComplex monomialIdeal(a*b,c*d,e*f)
 	  cube = dual oct
 	  lk = (D,m) -> simplicialComplex monomialIdeal(ideal support m + ((ideal D):m));
-	  F = lk(oct,a)
+	  F = link(oct,a)
 	  rank HH_1(F)
 	  C = res ideal cube
 	  tally degrees C_3
@@ -731,7 +758,7 @@ document {
 	       face' := (product gens R) // face;
 	       D' := dual D;
 	       h := apply(0..dim D', i -> (
-     	           rank HH_(i-1)(lk(D',face'))));
+     	           rank HH_(i-1)(link(D',face'))));
 	       C := res ideal D;
 	       b := apply(0..dim D', i -> (
 			 d := tally degrees C_(i+1);
@@ -958,7 +985,7 @@ assert(HH_-1(irrelevant) == R^1)
 assert(fVector irrelevant === new HashTable from {-1=>1})
 assert(bd irrelevant == void)
 
-D5 = simplicialComplex monomialIdeal 1_R
+D5 = simplicialComplex {1_R}
 D5 == irrelevant
 
 x = symbol x
@@ -1040,7 +1067,7 @@ fVector bd D
 -- n >= 13
 kk = QQ
 abelian = (n) -> (
-     R := kk[x_0..x_(n-1)];
+     R := kk[symbol x_0..symbol x_(n-1)];
      L1 = toList apply(0..n-1, i -> x_i * x_((i+3)%n) * x_((i+4)%n));
      L2 = toList apply(0..n-1, i -> x_i * x_((i+1)%n) * x_((i+4)%n));
     join(L1,L2))
@@ -1099,12 +1126,10 @@ faces(-1,D)
 faces(-2,D)
 faces(0,D)
 
-simplicialComplex {}
+assert try (simplicialComplex {};false) else true
 
-R = ZZ/101[x_0 .. x_3]
-A = R/ideal(x_0 * x_1 * x_2, x_1 * x_2 * x_3)
-D = simplicialComplex A
-assert(A === ring D)
+R = ZZ/101[symbol x_0 .. symbol x_3]
+D = simplicialComplex {x_0 * x_1 * x_2, x_1 * x_2 * x_3}
 facets D
 dual D
 faces(0,D)
@@ -1117,38 +1142,11 @@ dual D
 R = ZZ[a..e]
 D = simplicialComplex {b*c,c*a,a*e,a*d,c*d,d*e}
 I = ideal D
-I : a
-E = simplicialComplex monomialIdeal(I : a)
-(ideal facets D) : a
-ideal D
+assert(link(D,a) == simplicialComplex{c,d,e})
 
 D = simplicialComplex {b*c,c*a,a*e,a*d,c*d,d*e,a*c*d,a*d*e}
-(ideal facets D) : a
--- Example 1: boundary of a tetrahedron
-D = simplicialComplex {{0,1,2},{0,1,3},{0,2,3},{1,2,3}}
-facets D
-dim D
-ideal D
-chainComplex D
-bd(2,D)
+assert(link(D,a) == simplicialComplex{c*d,d*e})
+assert(link(D,a*d) == simplicialComplex{c,e})
+assert(link(D,c*d) == simplicialComplex{a})
 
--- Example2: trivverts
-D = simplicialComplex {{0,1,2},{0,2,3},{0,3,4},{0,1,4}}
-dim D
-facets D
-ideal D
-chainComplex D
-bd(2,D)
-
-R = ZZ[a..e]
-L = {a^2*b, a*b*c, a^2*c^2}
-lcmMonomials = (L) -> (
-     R := ring L#0;
-     x := max \ transpose apply(L, i -> first exponents i);
-     R_x)
-
-oo/first
-transpose oo
-oo/max
-R_oo
 ///

@@ -111,6 +111,7 @@ public:
 
   MatrixOrNull *koszul(int p) const;
   static MatrixOrNull *koszul(const Matrix *rows, const Matrix *cols);
+  static MatrixOrNull *koszul_monomials(int first_skew_var, const Matrix *rows, const Matrix *cols);
 
   MatrixOrNull *reshape(const FreeModule *G, const FreeModule *H) const;
   static MatrixOrNull *flip(const FreeModule *G, const FreeModule *H);

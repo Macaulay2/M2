@@ -78,121 +78,121 @@ bool ntl_LLL(MutableMatrixXXX *M, MutableMatrixXXX *U, long numer, long denom, i
     
   switch (strategy) {
   case 2:
-    if (V)
+    if (!V)
       rk = LLL(d,*A,numer,denom);
     else
       rk = LLL(d,*A,*V,numer,denom);
     break;
 
   case useNTL+GS+useLLL+FP:
-    if (V)
+    if (!V)
       rk = LLL_FP(*A,delta);
     else
       rk = LLL_FP(*A,*V,delta);
     break;
   case useNTL+GS+useLLL+QP:
   case useNTL+GS+useLLL+QP1:
-    if (V)
+    if (!V)
       rk = LLL_QP(*A,delta);
     else
       rk = LLL_QP(*A,*V,delta);
     break;
   case useNTL+GS+useLLL+XD:
-    if (V)
+    if (!V)
       rk = LLL_XD(*A,delta);
     else
       rk = LLL_XD(*A,*V,delta);
     break;
   case useNTL+GS+useLLL+useRR:
-    if (V)
+    if (!V)
       rk = LLL_RR(*A,delta);
     else
       rk = LLL_RR(*A,*V,delta);
     break;
 
   case useNTL+GS+useBKZ+FP:
-    if (V)
+    if (!V)
       rk = BKZ_FP(*A,delta);
     else
       rk = BKZ_FP(*A,*V,delta);
     break;
   case useNTL+GS+useBKZ+QP:
-    if (V)
+    if (!V)
       rk = BKZ_QP(*A,delta);
     else
       rk = BKZ_QP(*A,*V,delta);
     break;
   case useNTL+GS+useBKZ+QP1:
-    if (V)
+    if (!V)
       rk = BKZ_QP1(*A,delta);
     else
       rk = BKZ_QP1(*A,*V,delta);
     break;
   case useNTL+GS+useBKZ+XD:
-    if (V)
+    if (!V)
       rk = BKZ_XD(*A,delta);
     else
       rk = BKZ_XD(*A,*V,delta);
     break;
   case useNTL+GS+useBKZ+useRR:
-    if (V)
+    if (!V)
       rk = BKZ_RR(*A,delta);
     else
       rk = BKZ_RR(*A,*V,delta);
     break;
 
   case useNTL+Givens+useLLL+FP:
-    if (V)
+    if (!V)
       rk = G_LLL_FP(*A,delta);
     else
       rk = G_LLL_FP(*A,*V,delta);
     break;
   case useNTL+Givens+useLLL+QP:
   case useNTL+Givens+useLLL+QP1:
-    if (V)
+    if (!V)
       rk = G_LLL_QP(*A,delta);
     else
       rk = G_LLL_QP(*A,*V,delta);
     break;
   case useNTL+Givens+useLLL+XD:
-    if (V)
+    if (!V)
       rk = G_LLL_XD(*A,delta);
     else
       rk = G_LLL_XD(*A,*V,delta);
     break;
   case useNTL+Givens+useLLL+useRR:
-    if (V)
+    if (!V)
       rk = G_LLL_RR(*A,delta);
     else
       rk = G_LLL_RR(*A,*V,delta);
     break;
 
   case useNTL+Givens+useBKZ+FP:
-    if (V)
+    if (!V)
       rk = G_BKZ_FP(*A,delta);
     else
       rk = G_BKZ_FP(*A,*V,delta);
     break;
   case useNTL+Givens+useBKZ+QP:
-    if (V)
+    if (!V)
       rk = G_BKZ_QP(*A,delta);
     else
       rk = G_BKZ_QP(*A,*V,delta);
     break;
   case useNTL+Givens+useBKZ+QP1:
-    if (V)
+    if (!V)
       rk = G_BKZ_QP1(*A,delta);
     else
       rk = G_BKZ_QP1(*A,*V,delta);
     break;
   case useNTL+Givens+useBKZ+XD:
-    if (V)
+    if (!V)
       rk = G_BKZ_XD(*A,delta);
     else
       rk = G_BKZ_XD(*A,*V,delta);
     break;
   case useNTL+Givens+useBKZ+useRR:
-    if (V)
+    if (!V)
       rk = G_BKZ_RR(*A,delta);
     else
       rk = G_BKZ_RR(*A,*V,delta);
@@ -213,6 +213,17 @@ bool ntl_LLL(MutableMatrixXXX *M, MutableMatrixXXX *U, long numer, long denom, i
 	ring_elem b = globalZZ->from_int(a);
 	M->set_entry(i,j,b);
       }
+
+  if (U)
+    {
+      for (int j=0; j<ncols; j++)
+	for (int i=0; i<ncols; i++)
+	  {
+	    mat_ZZ_get_entry(V,j,i,a);
+	    ring_elem b = globalZZ->from_int(a);
+	    U->set_entry(i,j,b);
+	  }
+    }
   return true;
 }
 // Local Variables:

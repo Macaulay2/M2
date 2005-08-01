@@ -1063,6 +1063,32 @@ MatrixOrNull *Matrix::koszul(int p) const
   return mat.to_matrix();
 }
 
+//////////////////////////////////////////
+// koszul monomials //////////////////////
+//////////////////////////////////////////
+static MonomialIdeal *makemonideal(const Matrix *A)
+{
+  const PolynomialRing *P = A->get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  const Monoid *M = P->getMonoid();
+  queue <Bag *> new_elems;
+
+  for (int i=0; i<A->n_cols(); i++)
+    {
+      vec v = A->elem(i);
+      if (v == 0) continue;
+      Bag *b = new Bag(i);
+      M->to_varpower(P->lead_flat_monomial(v->coeff), b->monom());
+      new_elems.insert(b);
+    }
+
+  MonomialIdeal *result = new MonomialIdeal(P, new_elems);
+  return result;
+}
 static int signdivide(int n, const int *a, const int *b, int *exp)
 {
   int sign = 0;
@@ -1079,6 +1105,69 @@ static int signdivide(int n, const int *a, const int *b, int *exp)
   if (sign == 0) return 1;
   return -1;
 }
+MatrixOrNull *Matrix::koszul_monomials(int firstskewvar, const Matrix *r, const Matrix *c)
+{
+  // First check rings: r,c,'this' should be row vectors.
+  // and the ring should be a polynomial ring
+  const FreeModule *F = r->cols();
+
+  const PolynomialRing *P = F->get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  const MonomialIdeal *A = makemonideal(r);
+
+  const Ring *K = P->getCoefficients();
+  const Monoid *M = P->getMonoid();
+
+  MatrixConstructor mat(F, c->cols(), 0);
+  
+  int nvars = M->n_vars();
+  int nskew = nvars-firstskewvar;
+  int *skew_list = newarray(int,nskew);
+  for (int j=0; j<nskew; j++)
+    skew_list[j] = firstskewvar+j;
+  SkewMultiplication skew(nvars, nskew, skew_list);
+  int nrows = r->n_cols();
+  int ncols = c->n_cols();
+  const int *a; // a monomial
+
+  int *aexp = newarray(int,nvars);
+  int *bexp = newarray(int,nvars);
+  int *result_exp = newarray(int,nvars);
+  int *m = M->make_one();
+  array<Bag *> divisors;
+  for (int i=0; i<ncols; i++)
+    {
+      if (c->elem(i) == 0) continue;
+      a = P->lead_flat_monomial(c->elem(i)->coeff);
+      M->to_expvector(a, aexp);
+      divisors.shrink(0);
+      A->find_all_divisors(aexp, divisors);
+      for (int j=0; j<divisors.length(); j++)
+	{
+	  int rownum = divisors[j]->basis_elem();
+	  const int *b = P->lead_flat_monomial(r->elem(rownum)->coeff);
+	  M->to_expvector(b,bexp);
+	  ntuple::divide(nvars,aexp,bexp,result_exp);
+	  int sign = skew.mult_sign(result_exp,bexp);
+	  if (sign != 0)
+	    {
+	      M->from_expvector(result_exp, m);
+	      ring_elem s = (sign > 0 ? K->one() : K->minus_one());
+	      ring_elem f = P->make_flat_term(s,m);
+	      mat.set_entry(rownum,i,f);
+	    }
+	}
+    }
+  deletearray(aexp);
+  deletearray(bexp);
+  deletearray(result_exp);
+  return mat.to_matrix();
+}
+
 MatrixOrNull *Matrix::koszul(const Matrix *r, const Matrix *c)
 {
   // First check rings: r,c,'this' should be row vectors.
