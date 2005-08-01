@@ -1,6 +1,4 @@
 AC_INIT(Macaulay 2, 0.9.5, Macaulay2@math.uiuc.edu, Macaulay2)
-dnl -- check Makefile-configuration is present in srcdir?
-
 AC_REVISION($CVSHeader$)
 
 define(M2_UPPER,[translit($1, [a-z], [A-Z])])
