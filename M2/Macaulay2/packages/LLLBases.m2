@@ -780,7 +780,6 @@ document {
      "In this example, we compute the LLL basis of the nullspace of a matrix.  This is 
      an example of Havas et al.",
      EXAMPLE {
-	  ///load "LLLBases.m2"///,
 	  "m1 = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)",
 	  "m = syz m1",
 	  "LLL m"
@@ -826,7 +825,6 @@ document {
      "Constructs the change of basis matrix U from the basis A to the basis
      B. This is an invertible matrix U such that", TEX "$AU = B$", ".",
      EXAMPLE {
-	  ///load "LLLBases.m2"///,
 	  "A = matrix randomMutableMatrix(10,10,.5,100000)",
 	  "(B,U) = LLL(A, ChangeMatrix=>true)",
 	  "B == A*U",
@@ -995,7 +993,6 @@ much worse than some of the floating point versions, and can
 under certain circumstances even be better.",
 SUBSECTION "Examples",
 EXAMPLE {
-  ///load "LLLBases.m2"///,
 	  "m1 = map(ZZ^50, ZZ^50, (j,i) -> (i+1)^8 * (j+1)^4 + i + j + 2);",
 	  "m = syz m1;",
 	  "time LLL m;",
@@ -1005,7 +1002,8 @@ EXAMPLE {
 	  "time LLL(m, Strategy=>{Givens,RealQP});",
 	  "time LLL(m, Strategy=>{Givens,RealXD});",
 	  "time LLL(m, Strategy=>{Givens,RealRR});",
-	  "time LLL(m, Strategy=>{BKZ,Givens,RealFP});",
+     	  -- this one takes too long:
+	  -- "time LLL(m, Strategy=>{BKZ,Givens,RealFP});",
 	  "time LLL(m, Strategy=>{BKZ,Givens,RealQP});",
 	  "time LLL(m, Strategy=>{BKZ,Givens,RealXD});",
 	  "time LLL(m, Strategy=>{BKZ,Givens,RealRR});"
@@ -1033,7 +1031,6 @@ document {
      "If the matrix is not in LLL reduced form, then the offending conditions are
      displayed.  For example,",
      EXAMPLE {
-	  ///load "LLLBases.m2"///,
 	  "m = matrix {{1, 0}, {1, 1}, {1, 2}, {1, 3}}",
 	  "isLLL m",
 	  "n = LLL m",
@@ -1041,7 +1038,6 @@ document {
 	  },
      "If the optional argument Threshold is given, the conditions are checked using that value.",
      EXAMPLE {
-	  ///load "LLLBases.m2"///,
 	  "m = matrix {{1, 0}, {1, 1}, {1, 2}, {1, 3}}",
 	  "isLLL(m, Threshold=>1)",
           },
@@ -1094,7 +1090,6 @@ document {
      PARA,
      "For an example,",
      EXAMPLE {
-	  ///load "LLLBases.m2"///,
 	  "s = apply(5,i->372*(random 1000000))",
 	  "(g,z) = gcdLLL s",
 	  "matrix{s} * z"

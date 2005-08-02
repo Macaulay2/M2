@@ -1,5 +1,6 @@
 # -*- mode: Makefile -*-
 # this makefile is run from a subdirectory, hence an extra ../ in the paths
+VPATH = $(chapter_srcdir)
 include ../../../../include/config.Makefile
 check: test.out.expected.trim test.out.trim
 	diff -u $^
