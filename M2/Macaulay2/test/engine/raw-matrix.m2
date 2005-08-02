@@ -319,8 +319,9 @@ rawKoszulMonomials(4,m2,m3)
 rawKoszulMonomials(4,m1,m3)
 
 
-A = ZZ[symbol x .. symbol z]
-B = A[symbol a..symbol d]
+A = ZZ[symbol a..symbol d]
+B = A[symbol x .. symbol z]
+
 m1 = matrix{{a^2*x,a*b*y, b^2*z}}
 m2 = matrix{{a^2*b*x*y,a^2*b^2*x*z, a*b^2*y*z}}
 m3 = matrix{{a^2*b^2*x*y*z}}

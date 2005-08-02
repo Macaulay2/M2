@@ -1125,10 +1125,10 @@ MatrixOrNull *Matrix::koszul_monomials(int firstskewvar, const Matrix *r, const 
   MatrixConstructor mat(F, c->cols(), 0);
   
   int nvars = M->n_vars();
-  int nskew = nvars-firstskewvar;
+  int nskew = firstskewvar;
   int *skew_list = newarray(int,nskew);
   for (int j=0; j<nskew; j++)
-    skew_list[j] = firstskewvar+j;
+    skew_list[j] = j;
   SkewMultiplication skew(nvars, nskew, skew_list);
   int nrows = r->n_cols();
   int ncols = c->n_cols();
