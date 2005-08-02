@@ -14,8 +14,10 @@ newPackage(
 
 export(SimplicialComplex,
      simplicialComplex,
-     bd,fVector,isPure,label,
-     faces,facets,support,link)
+     boundary,fVector,isPure,label,
+     faces,facets,support,link,
+     simplicialChainComplex,
+     buchbergerComplex)
 
 complement := local complement
 complement = (m) -> (
@@ -92,6 +94,11 @@ lcmMonomials = (L) -> (
      x := max \ transpose apply(L, i -> first exponents i);
      R_x)
 
+lcmM = (L) -> (
+-- lcmM finds the lcm of a list of monomials; the quickest method Sorin knows
+    m := intersect toSequence (L/(i -> monomialIdeal(i)));
+    m_0)
+
 support = (m) -> (
      x := rawIndices raw m;
      apply(x, i -> (ring m)_i))
@@ -105,51 +112,33 @@ faces (ZZ, SimplicialComplex) := (r,D) -> (
          D.cache.faces = new MutableHashTable;
 	 B := (coefficientRing R) (monoid [gens R, SkewCommutative=>true]);
 	 D.cache.faces.ideal = substitute(D.faceIdeal,B);
-	 --D.cache.faces.qring = R/(D.faceIdeal + ideal apply(gens R, x -> x^2));
 	 );
      if r < -1 or r > dim D then matrix(R, {{}})
      else (
 	  if not D.cache.faces#?r then (
---               A := D.cache.faces.qring;
---               D.cache.faces#r = lift(matrix basis(r+1,A), R));
                J := D.cache.faces.ideal;
                D.cache.faces#r = substitute(matrix basis(r+1,coker gens J), vars R));
      	  D.cache.faces#r
      ))
 
-bd = method()
-bd (ZZ,SimplicialComplex) := (r,D) -> (
-     R := ring D;
-     b1 := faces(r,D);
-     b2 := faces(r-1,D);
-     ones := map(coefficientRing R,R, toList(numgens R:1));
-     ones map(R, rawKoszulMonomials(0,raw b2,raw b1))
-     )
-
-bd (ZZ,SimplicialComplex) := (r,D) -> (
+boundary = method()
+boundary (ZZ,SimplicialComplex) := (r,D) -> (
      R := ring D;
      if D.cache.?labels then (
-     	  b1 := faces(r,D);
-     	  b2 := faces(r-1,D);
-	  F1 := source D.cache.labels#r;
-	  F2 := source D.cache.labels#(r-1);
-	  lab1 := first entries D.cache.labels#r;
-	  lab2 := first entries D.cache.labels#(r-1);
-	  S := ring lab1#0;
-     	  ones := map(S,R, toList(numgens R:1_S));
-     	  m := ones map(R, rawKoszulMonomials(raw b2,raw b1));
-	  -- Perhaps there should be an engine routine to handle this?
-     	  map(F2, F1, apply(#lab2, i -> (
-		    apply(#lab1, j -> (
-		       a := m_(i,j);
-		       if a == 0 then 0_S else
-		       a * lab1#j//lab2#i)))))
+	  m1 := D.cache.labels#r;
+	  m2 := D.cache.labels#(r-1);
+	  Sext := D.cache.labels.ring;
+     	  ones := D.cache.labels.ones;
+	  bd := ones map(Sext, rawKoszulMonomials(numgens Sext, raw m2,raw m1));
+	  bd = map(D.cache.labels.free#(r-1),,bd);
+	  D.cache.labels.free#r = source bd;
+	  bd
 	  )
      else (
      	  b1 = faces(r,D);
      	  b2 = faces(r-1,D);
      	  ones = map(coefficientRing R,R, toList(numgens R:1));
-     	  ones map(R, rawKoszulMonomials(raw b2,raw b1))
+     	  ones map(R, rawKoszulMonomials(0,raw b2,raw b1))
      	  )
      )
 
@@ -157,17 +146,24 @@ chainComplex SimplicialComplex := (D) -> (
      d := dim D;
      C := if d < -1 then (ring D)^0[-1]
           else if d === -1 then (ring D)^1
-          else chainComplex apply(0..d, r -> bd(r,D));
+          else chainComplex apply(0..d, r -> boundary(r,D));
      if D.cache.?labels then C[0] else C[1]
      )
 
+-------- Labelled code ---------------------
 makeLabels = (D,L,i) -> (
      -- D is a simplicial complex
      -- L is a list of monomials 
      -- i is an integer
      F := first entries faces(i,D);
-     matrix {apply(F, m -> (s := rawIndices raw m;
-	       lcmMonomials apply(s, j -> L#j)))}
+     Sext := D.cache.labels.ring;
+     if #F == 0 
+     then matrix{{1_Sext}} 
+     else
+          matrix {apply(F, m -> (
+			 s := rawIndices raw m;
+	       		 lcmM L_s
+			 ))}
      )
 
 label = method()
@@ -176,10 +172,27 @@ label(SimplicialComplex, List) := (D,L) -> (
 	  remove(D.cache,symbol labels)
      else (
 	  D.cache.labels = new MutableHashTable;
-	  D.cache.labels#-1 = matrix{{1_(ring L#0)}};
+	  S := ring(L#0);
+	  Sext := S[Variables=>#L];
+	  D.cache.labels.ring = Sext;
+	  D.cache.labels.free = new MutableHashTable;
+	  D.cache.labels.free#-1 = S^1;
+     	  L = apply(#L, i -> L_i * Sext_i);
+	  D.cache.labels.L = L;
+	  D.cache.labels.ones = map(S, Sext, toList(#L:1_S));
+	  D.cache.labels#-1 = matrix{{1_Sext}};
 	  for i from 0 to dim D do
 	       D.cache.labels#i = makeLabels(D,L,i);
 	  )
+     )
+
+simplicialChainComplex = method()
+simplicialChainComplex (List,SimplicialComplex) := (L, D) -> (
+     label(D,L);
+     d := dim D;
+     C := chainComplex(apply(0..d, r -> boundary(r,L,D)));
+     -- label(D,{}) -- removes cached labels
+     C
      )
 
 homology(ZZ,SimplicialComplex,Ring) := Module => opts -> (i,Delta,R) -> (
@@ -207,7 +220,7 @@ fVector SimplicialComplex := List => D -> (
      	  new HashTable from prepend(-1=>1, apply(toList(0..d-1), j -> j => f(j)))
      ))
 
-bd SimplicialComplex := (D) -> (
+boundary SimplicialComplex := (D) -> (
      F := first entries facets D;
      L := flatten apply(F, m -> apply(support m, x -> m//x));
      if #L === 0 then 
@@ -221,6 +234,37 @@ isPure SimplicialComplex := Boolean => (D) -> (
      F := first entries facets D;
      L := unique apply(F, m -> # support m);
      #L <= 1
+     )
+
+--------------------------------------------
+-- Buchberger complex of a monomial ideal --
+--------------------------------------------
+lcmMRed = method()
+lcmMRed (List) := (L) -> (
+-- lcmM finds the reduced lcm of a list of monomials; the quickest method I know
+    m := intersect toSequence (L/(i -> monomialIdeal(i)));
+    m_0//(product support m_0))
+
+faceBuchberger = (m, L) -> (
+     -- true iff the monomial m (in #L vars) is in the Buchberger complex
+     x := rawIndices raw m;
+     m = lcmMRed(L_x);
+     all(L, n -> m//n == 0))
+
+buchbergerComplex = method()
+buchbergerComplex(List,Ring) := (L,R) -> (
+     P := ideal apply(gens R, x -> x^2);
+     nonfaces := {};
+     d := 1;
+     while (L1 = flatten entries basis(d,coker gens P); #L1 > 0) do (
+	  L1 = select(L1, m -> not faceBuchberger(m,L));
+	  << "new nonfaces in degree " << d << ": " << L1 << endl;	  
+	  nonfaces = join(nonfaces,L1);
+	  if #nonfaces > 0 then
+	      P = P + ideal nonfaces;
+	  d = d+1;
+          );
+     simplicialComplex monomialIdeal nonfaces
      )
 
 beginDocumentation()
@@ -246,7 +290,8 @@ document { Key => SimplicialComplexes,
      PARA,
      "This package includes the following functions:",
      UL {
-	  TO bd,
+	  TO boundary,
+	  TO buchbergerComplex,
 	  TO (chainComplex,SimplicialComplex),
 	  TO (coefficientRing,SimplicialComplex),
 	  TO (dim,SimplicialComplex),
@@ -261,11 +306,12 @@ document { Key => SimplicialComplexes,
 	  TO (monomialIdeal,SimplicialComplex),
 	  TO (ring,SimplicialComplex),
 	  TO simplicialComplex,
+	  TO simplicialChainComplex
 	  }
 --	  (TO "chainComplex", "(D) -- the chain complex of D"),
---	  (TO "bd", "(r,D) -- the boundary map from r faces to r-1 faces"),
+--	  (TO "boundary", "(r,D) -- the boundary map from r faces to r-1 faces"),
 --	  (TO "dim", "(D) -- the dimension of D"),
---	  (TO "bd", "(D) -- the boundary simplicial complex of D"),
+--	  (TO "boundary", "(D) -- the boundary simplicial complex of D"),
 --	  (TO "dual", "(D) -- the dual simplicial complex"),
 --	  (TO "faces", "(r,D) -- a matrix of squarefree monomials corresponding to 
 --	       the faces of dimension r of D"),
@@ -394,14 +440,14 @@ document {
      }
 
 document { 
-     Key => bd,
+     Key => boundary,
      Headline => "boundary operator",
      SeeAlso => {SimplicialComplexes}
      }
 document { 
-     Key => (bd,ZZ,SimplicialComplex),
+     Key => (boundary,ZZ,SimplicialComplex),
      Headline => "the boundary map from i-faces to (i-1)-faces",
-     Usage => "M = bd(i,D)",
+     Usage => "M = boundary(i,D)",
      Inputs => {
 	  "i" => "",
 	  "D" => ""
@@ -421,15 +467,15 @@ document {
      EXAMPLE {
 	  "R = ZZ[a..d];",
 	  "D = simplicialComplex {a*b*c*d}",
-	  "bd(0,D)",
+	  "boundary(0,D)",
 	  "faces(0,D)",
-          "bd(1,D)",
+          "boundary(1,D)",
 	  "faces(1,D)",
-	  "bd(2,D)",
+	  "boundary(2,D)",
 	  "faces(2,D)",
-	  "bd(3,D)",
+	  "boundary(3,D)",
 	  "faces(3,D)",
-	  "bd(4,D)"
+	  "boundary(4,D)"
 	  },
      "The boundary maps depend on the ",
      TO2((coefficientRing,SimplicialComplex),"coefficient ring"), 
@@ -437,17 +483,17 @@ document {
      EXAMPLE {
 	  "R = QQ[a..f];",
 	  "D = simplicialComplex monomialIdeal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f,b*c*d,b*d*e,b*e*f,c*d*f,c*e*f);",
-	  "bd(1,D)",
+	  "boundary(1,D)",
 	  "R' = ZZ/2[a..f];",
 	  "D' = simplicialComplex monomialIdeal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f,b*c*d,b*d*e,b*e*f,c*d*f,c*e*f);",
-	  "bd(1,D')"
+	  "boundary(1,D')"
 	  },
      SeeAlso => {SimplicialComplexes, (chainComplex,SimplicialComplex), faces}
      }
 document { 
-     Key => (bd,SimplicialComplex),
+     Key => (boundary,SimplicialComplex),
      Headline => "the boundary simplicial complex of D",
-     Usage => "bd D",
+     Usage => "boundary D",
      Inputs => {
 	  "D" => ""
           },
@@ -463,7 +509,7 @@ document {
      EXAMPLE {
           "R = ZZ[a..d];",
           "simplex = simplicialComplex{a*b*c*d}",
-	  "sphere = bd simplex",
+	  "sphere = boundary simplex",
 	  "fVector sphere",
 	  "fVector simplex"  
 	  },
@@ -471,7 +517,7 @@ document {
      EXAMPLE {
           "R = ZZ[a..g];",
           "D = simplicialComplex{a*b*c,a*d,d*f,g*c,e,f*g}",
-	  "E = bd D",
+	  "E = boundary D",
 	  "fVector D",
 	  "fVector E"
 	  },
@@ -625,7 +671,7 @@ document {
      SeeAlso => {SimplicialComplexes, 
 	  (ring,SimplicialComplex), 
 	  (chainComplex,SimplicialComplex), 
-	  bd}
+	  boundary}
      }
 document { 
      Key => label,
@@ -811,7 +857,7 @@ document {
      computed.",
      SeeAlso => {SimplicialComplexes,
 	  facets,
-	  bd,
+	  boundary,
 	  fVector
 	  }
      }
@@ -971,7 +1017,7 @@ C = chainComplex void
 assert(HH_0(void) == 0)
 assert(HH_-1(void) == 0)
 fVector void
-assert(bd void  == void)
+assert(boundary void  == void)
 
 irrelevant = simplicialComplex monomialIdeal gens R
 assert isPure irrelevant
@@ -983,7 +1029,7 @@ C = chainComplex irrelevant
 assert(HH_0(irrelevant) == 0)
 assert(HH_-1(irrelevant) == R^1)
 assert(fVector irrelevant === new HashTable from {-1=>1})
-assert(bd irrelevant == void)
+assert(boundary irrelevant == void)
 
 D5 = simplicialComplex {1_R}
 D5 == irrelevant
@@ -1011,8 +1057,8 @@ D = simplicialComplex monomialIdeal(a*d, a*e, b*c*d, d*e, c*e, b*e)
 assert not isPure D
 fVector D
 ideal dual D == monomialIdeal (a*b*c*d, a*b*e, a*c*e, d*e)
-fVector bd D
-bd D
+fVector boundary D
+boundary D
 S = ZZ/32003[u,v,w,x,y]
 label(D, {u,v,w,x,y})
 C = chainComplex D
@@ -1035,8 +1081,8 @@ D' = dual D
 C' = chainComplex D'
 prune HH(C')
 fVector D
-bd D
-fVector bd D
+boundary D
+fVector boundary D
 ----------------------------------------------
 -- Klein bottle : Munkres page 18 example 5 --
 ----------------------------------------------
@@ -1058,8 +1104,8 @@ D = simplicialComplex monomialIdeal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f,b*c*d,b*d*e,b*
 C = chainComplex D
 prune HH(C)
 fVector D
-bd D
-fVector bd D
+boundary D
+fVector boundary D
 ----------------------------------------
 -- Degenerations of Abelian surfaces ---
 -- Gross and Popescu, math.AG/9609001 --
@@ -1097,11 +1143,11 @@ C.dd
 -- testing the chain complexes
 R = ZZ/101[a..e]
 D = simplicialComplex monomialIdeal product gens R
-bd(0,D)
-bd(1,D)
-bd(2,D)
-bd(3,D)
-bd(4,D)
+boundary(0,D)
+boundary(1,D)
+boundary(2,D)
+boundary(3,D)
+boundary(4,D)
 C = chainComplex D
 HH_3(C)
 HH_2(C)
@@ -1149,4 +1195,21 @@ assert(link(D,a) == simplicialComplex{c*d,d*e})
 assert(link(D,a*d) == simplicialComplex{c,e})
 assert(link(D,c*d) == simplicialComplex{a})
 
+--------------------------------------------
+-- Buchberger complex of a monomial ideal --
+--------------------------------------------
+restart
+load "SimplicialComplexes.m2"
+debug SimplicialComplexes
+S=ZZ/32003[x,y,z]
+L={x^3,x*y,x*z,y^2,y*z,z^2}
+R = ZZ/32003[a..f]
+D = buchbergerComplex(L,R)
+label(D,L)
+peek D.cache.labels
+boundary(0,D)
+boundary(1,D)
+C = chainComplex D
+C.dd^2 == 0
+prune(HH C)
 ///
