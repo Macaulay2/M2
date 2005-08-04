@@ -1,0 +1,51 @@
+--- configure.in.orig	Fri Nov  8 17:24:34 2002
++++ configure.in	Sun Mar 30 03:00:33 2003
+@@ -138,8 +138,7 @@
+ dnl
+ dnl Checks for typedefs, structures, and compiler characteristics.
+ dnl
+-AC_C_CONST
+-AC_C_INLINE
++
+ 
+ dnl
+ dnl Last, but not least, customize CFLAGS
+@@ -152,31 +151,31 @@
+     else
+        CXXFLAGS="-O3 "
+     fi
+-# check whether CXX accepts --no-rtti
++# check whether CXX accepts -fno-rtti
+ AC_LANG_SAVE
+ AC_LANG_CPLUSPLUS
+-AC_MSG_CHECKING(whether gcc accepts --no-rtti)
++AC_MSG_CHECKING(whether gcc accepts -fno-rtti)
+ tmp_flags=${CXXFLAGS}
+-CXXFLAGS="${CXXFLAGS} --no-rtti"
++CXXFLAGS="${CXXFLAGS} -fno-rtti"
+ AC_CACHE_VAL(ac_cv_cxx_have_rtti,
+ AC_TRY_COMPILE(,,ac_cv_cxx_have_rtti=yes,ac_cv_cxx_have_rtti=no)
+ )
+ AC_MSG_RESULT(${ac_cv_cxx_have_rtti})
+ CXXFLAGS=$tmp_flags
+ if test "${ac_cv_cxx_have_rtti}" = yes; then
+-CXXFLAGS="$CXXFLAGS --no-rtti"
++CXXFLAGS="$CXXFLAGS -fno-rtti"
+ fi
+ 
+-AC_MSG_CHECKING(whether gcc accepts --no-exceptions)
++AC_MSG_CHECKING(whether gcc accepts -fno-exceptions)
+ tmp_flags=${CXXFLAGS}
+-CXXFLAGS="${CXXFLAGS} --no-exceptions"
++CXXFLAGS="${CXXFLAGS} -fno-exceptions"
+ AC_CACHE_VAL(ac_cv_cxx_have_exceptions,
+ AC_TRY_LINK(,,ac_cv_cxx_have_exceptions=yes,ac_cv_cxx_have_exceptions=no)
+ )
+ AC_MSG_RESULT(${ac_cv_cxx_have_exceptions})
+ CXXFLAGS=$tmp_flags
+ if test "${ac_cv_cxx_have_exceptions}" = yes; then
+-CXXFLAGS="$CXXFLAGS --no-exceptions"
++CXXFLAGS="$CXXFLAGS -fno-exceptions"
+ fi
+ 
+ 
