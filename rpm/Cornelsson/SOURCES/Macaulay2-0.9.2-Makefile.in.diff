@@ -1,0 +1,65 @@
+--- Macaulay2/c/Makefile.in.orig	Thu Aug 16 00:52:01 2001
++++ Macaulay2/c/Makefile.in	Fri Mar 28 06:30:42 2003
+@@ -13,6 +13,7 @@
+ .PHONY : clean all install
+ YFLAGS := -vdlt
+ LOADLIBES += -lm -lgc
++LDLIBS += $(LIBS)
+ CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c compat.c
+ HFILES := $(CNAMES:.c=.h) scc.h grammar.h
+ OFILES := $(CNAMES:.c=.o) grammar.o
+--- Macaulay2/d/Makefile.in.orig	Thu Jan 10 17:46:37 2002
++++ Macaulay2/d/Makefile.in	Fri Mar 28 06:32:36 2003
+@@ -228,9 +228,8 @@
+ endif
+ 
+ ifeq ($(OS),Linux)
+-# MISCO += readline.o
+-# LIBRARYOPTIONS += -ldl -lncurses
+-# LDFLAGS += -rdynamic
++MISCO += readline.o
++LIBRARYOPTIONS += -ldl -lncurses
+ endif
+ 
+ ALLOBJ += $(PROJECT:.d=.oo) 
+@@ -307,17 +306,9 @@
+ clean ::; rm -f addresses
+ ###################### libraries
+ 
+-ifneq ($(OS),Darwin)
+-ifeq "$(GCC) $(STATIC)" "yes no"
+-LIBRARYOPTIONS += -Wl,-Bstatic
+-endif
+-endif
+-
+-# statically linked libraries
+-LIBRARYOPTIONS += -lfac
+-LIBRARYOPTIONS += -lcf
+ LIBRARYOPTIONS += -lfac
+ LIBRARYOPTIONS += -lcf
++LIBRARYOPTIONS += -lcfmem
+ LIBRARYOPTIONS += -lgmp
+ LIBRARYOPTIONS += -lgc
+ LIBRARYOPTIONS += -lgdbm
+@@ -325,12 +316,6 @@
+ # we avoid successfully using streamio, but we need the personality function
+ LIBRARYOPTIONS += -lstdc++
+ 
+-ifneq ($(OS),Darwin)
+-ifeq "$(GCC) $(STATIC)" "yes no"
+-LIBRARYOPTIONS += -Wl,-Bdynamic
+-endif
+-endif
+-
+ # ftmpl_inst.o: $(prefix)/include/templates/ftmpl_inst.cc
+ # 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c $(OUTPUT_OPTION) $<
+ 
+@@ -347,6 +332,8 @@
+ ifneq "$(CC)" "cl"
+ LDLIBS += -lm
+ endif
++
++LDLIBS += $(LIBS)
+ 
+ ../libexec/Macaulay2$(EXE) : $(ALLOBJ) $(LIBRARYFILES)
+ 	rm -f $@

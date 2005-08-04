@@ -1,0 +1,49 @@
+--- configure.orig	Wed Jan  9 17:21:34 2002
++++ configure	Fri Mar 28 06:26:45 2003
+@@ -2634,7 +2634,7 @@
+ fi
+ 
+ OLIBS="$LIBS"
+-LIBS="$LIBS -lgmp -lgc -lgdbm -lcf -lfac"
++LIBS="-lgc $OLIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ #line 2639 "configure"
+ #include "confdefs.h"
+@@ -2667,6 +2667,7 @@
+ echo "$as_me: WARNING: missing library: libgc" >&2;}
+ fi
+ rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
++LIBS="-lgmp $OLIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ #line 2671 "configure"
+ #include "confdefs.h"
+@@ -2699,6 +2700,7 @@
+ echo "$as_me: WARNING: missing library: libgmp" >&2;}
+ fi
+ rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
++LIBS="-lgdbm $OLIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ #line 2703 "configure"
+ #include "confdefs.h"
+@@ -2731,6 +2733,7 @@
+ echo "$as_me: WARNING: missing library: libgdbm" >&2;}
+ fi
+ rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
++LIBS="-lcf -lcfmem -lgmp $OLIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ #line 2735 "configure"
+ #include "confdefs.h"
+@@ -2759,10 +2762,11 @@
+ else
+   echo "$as_me: failed program was:" >&5
+ cat conftest.$ac_ext >&5
+-{ echo "$as_me:2762: WARNING: missing library: libcf" >&5
+-echo "$as_me: WARNING: missing library: libcf" >&2;}
++{ echo "$as_me:2762: WARNING: missing library: libcf libcfmem" >&5
++echo "$as_me: WARNING: missing library: libcf libcfmem" >&2;}
+ fi
+ rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
++LIBS="-lfac -lcf -lcfmem -lgmp $OLIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ #line 2767 "configure"
+ #include "confdefs.h"
