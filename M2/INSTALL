@@ -52,18 +52,14 @@ the earlier ones.
       notes: on Solaris, gmp will use both cc and gcc; don't worry
 
     library: NTL
-    release: 5.3.1
+    release: 5.4
      author: Victor Shoup
   home page: http://www.shoup.net/
-     get at: ftp://www.mathematik.uni-kl.de/pub/Math/Singular/src/Singular-NTL-5.2.tar.gz
-	     Precompiled linux version available at http://www.math.uiuc.edu/Macaulay2/ftp-site/ntl-5.3.1.tar.gz
+     get at: http://shoup.net/ntl
       email: 
     license: GPL
-      notes: The version available through Singular, mentioned above, has had unneeded routines that
-	     use iostreams stripped out.
-	     This package uses calls to malloc() to allocate memory for such things as integers used
-	     by the gmp package above.  That's bad, because gmp allows the use of various memory managers,
-	     and we tell gmp that we are using the gc package as memory manager.
+      notes: 
+    install: configure with NTL_GMP_LIP=on NTL_STD_CXX=on NTL_NO_INIT_TRANS=on NTL_CXX_ONLY=on CC=c++
 
     library: Singular-factory (libcf libcfmem)
     release: factory-2.0.5
