@@ -578,6 +578,7 @@ setupfun("endl",endlfun).protected = false;
 
 import CCVERSION:string;
 import VERSION:string;
+import CONFIGARGS:string;
 import OS:string;
 import ARCH:string;
 import NODENAME:string;
@@ -603,6 +604,7 @@ storeInHashTable(x,Expr("architecture"),Expr(ARCH));
 storeInHashTable(x,Expr("operating system"),Expr(OS));
 storeInHashTable(x,Expr("operating system release"),Expr(REL));
 storeInHashTable(x,Expr("compiler"),Expr(CCVERSION));
+storeInHashTable(x,Expr("configure arguments"),Expr(CONFIGARGS));
 storeInHashTable(x,Expr("compile time"),Expr(DATE+" "+TIME));
 storeInHashTable(x,Expr("compile node name"),Expr(NODENAME));
 storeInHashTable(x,Expr("dumpdata"),Expr(if DUMPDATA then True else False));
