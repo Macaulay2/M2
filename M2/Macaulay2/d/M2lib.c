@@ -151,6 +151,7 @@ char *funname;
 
 M2_string actors5_CCVERSION;
 M2_string actors5_VERSION;
+M2_string actors5_CONFIGARGS;
 M2_string actors5_OS;
 M2_string actors5_ARCH;
 M2_string actors5_NODENAME;
@@ -389,6 +390,7 @@ char **argv;
      system_newline = tostring(newline);
      actors5_CCVERSION = tostring(get_cc_version());
      actors5_VERSION = tostring(PACKAGE_VERSION);
+     actors5_CONFIGARGS = tostring(CONFIG_ARGS);
      actors5_OS = tostring(OS);
      actors5_ARCH = tostring(ARCH);
      actors5_NODENAME = tostring(NODENAME);

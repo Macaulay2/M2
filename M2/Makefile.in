@@ -53,7 +53,8 @@ config.status : @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1
 reconfigure: @srcdir@/configure
-	@ @srcdir@/config/config.command |sh -x
+	./config.status --recheck
+	./config.status
 configure-help:
 	@ @srcdir@/config/config.command --help |sh -x
 
@@ -99,11 +100,15 @@ help :
 	@ echo "  reconfigure                 re-run configure with same options"
 	@ echo ""
 	@ echo "options:"
-	@ echo "   IgnoreExampleErrors=true       continue even after errors in example code"
-	@ echo "   RemakeAllDocumentation=true    remake all documentation"
-	@ echo "   RerunExamples=true             rerun example output files"
-	@ echo "   debugLevel=1                   turn on further M2 debugging output"
-	@ echo "   MAPFILE=yes                    create a mapfile when linking M2"
+	@ echo "      IgnoreExampleErrors=true       continue even after errors in example code"
+	@ echo "      RemakeAllDocumentation=true    remake all documentation"
+	@ echo "      RerunExamples=true             rerun example output files"
+	@ echo "      debugLevel=1                   turn on further M2 debugging output"
+	@ echo "      MAPFILE=yes                    create a mapfile when linking M2"
+	@ echo ""
+	@ echo "./config.status options:"
+	@ echo ""
+	@ echo "      --recheck                       re-run configure with same options"
 	@ echo ""
 
 # Local Variables:
