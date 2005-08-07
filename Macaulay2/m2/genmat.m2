@@ -46,15 +46,12 @@ randommat := (R,r,c) -> (
      map(R, rawMatrixRandom(R.RawRing, r, c, 1.0, 0, 0)))
 
 random(List,Ring) := RingElement => (deg,R) -> (
-     if #deg =!= degreeLength R
-     then error ("expected length of degree vector to be ", degreeLength R);
-     if deg === {} then random R
-     else (
-	  m := basis(deg, R);
-	  --p := char R;
-	  n := randommat(R,numgens source m,1);
-	  --n := matrix table(numgens source m,1, x -> promote(random p,R));
-	  (m*n)_(0,0)))
+     if #deg =!= degreeLength R then error ("expected length of degree vector to be ", degreeLength R);
+     if deg === {} then return random R;
+     k := coefficientRing R;
+     m := basis(deg, R);
+     n := matrix table(numgens source m,1, x -> promote(random k,R));
+     (m*n)_(0,0))
 
 random(ZZ,Ring) := RingElement => (n,R) -> random({n},R)
 

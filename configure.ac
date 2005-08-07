@@ -1,6 +1,8 @@
 AC_INIT(Macaulay 2, 0.9.5, Macaulay2@math.uiuc.edu, Macaulay2)
 AC_REVISION($CVSHeader$)
 
+dnl -- $Revision$
+
 define(M2_UPPER,[translit($1, [a-z], [A-Z])])
 
 AC_DEFUN(M2_IS_THERE,[
@@ -124,6 +126,9 @@ AC_FUNC_ALLOCA()
 CONFIG_ARGS="$ac_configure_args"
 AC_SUBST(CONFIG_ARGS)
 AC_DEFINE_UNQUOTED(CONFIG_ARGS,"$CONFIG_ARGS",arguments used for configure)
+
+CONFIG_ARG0="$0"
+AC_SUBST(CONFIG_ARG0)
 
 DUMPDATA=yes
 AC_SUBST(DUMPDATA)

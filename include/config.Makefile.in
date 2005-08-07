@@ -60,6 +60,8 @@ ENCAP = @ENCAP@
 M2SUFFIX = @M2SUFFIX@
 EXEEXT = @EXEEXT@
 EXE = $(M2SUFFIX)$(EXEEXT)
+CONFIG_ARG0 = @CONFIG_ARG0@
+CONFIG_ARGS = @CONFIG_ARGS@
 
 # See the autoconf documentation for a description of LIBS, which autoconf uses at configure time for checking for features
 # Hence we have to use it, too.
