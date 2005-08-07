@@ -913,14 +913,14 @@ extern "C" {
   const MatrixOrNull * IM2_Matrix_koszul(int p, const Matrix *M); /* drg: connected rawKoszul*/
 
   const MatrixOrNull * 
-  rawKoszulMonomials(int first_skew_var,
+  rawKoszulMonomials(int nskew,
 		     const Matrix *M,
 		     const Matrix *N);
   /* M and N should each have one row, and the base ring should be a
      polynomial ring.  The (i,j) th entry of the resulting matrix is
      1 or -1 times N_j/M_i (if M_i divides N_j). The sign is determined only from
-     variables >= first_skew_var.  The sign is the sign of M_i * (N_j/M_i) in
-     exterior algebra (on last set of variables).  The actual commutativity of the 
+     the first nskew variables.  The sign is the sign of M_i * (N_j/M_i) in
+     exterior algebra (on this set of variables).  The actual commutativity of the 
      common ring of M and N is ignored. */
 
   const MatrixOrNull * IM2_Matrix_symm(int p, const Matrix *M); /* drg: connected rawSymmetricPower*/

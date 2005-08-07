@@ -341,7 +341,7 @@ const MatrixOrNull * IM2_Matrix_koszul(int p, const Matrix *M)
 }
 
 const MatrixOrNull * 
-rawKoszulMonomials(int first_skew_var,
+rawKoszulMonomials(int nskew,
 		     const Matrix *M,
 		     const Matrix *N)
 {
@@ -351,7 +351,7 @@ rawKoszulMonomials(int first_skew_var,
       ERROR("expected same ring");
       return 0;
     }
-  return Matrix::koszul_monomials(first_skew_var,M,N);
+  return Matrix::koszul_monomials(nskew,M,N);
 }
 
 const MatrixOrNull * IM2_Matrix_symm(int p, const Matrix *M)

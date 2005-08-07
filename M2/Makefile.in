@@ -56,7 +56,7 @@ reconfigure: @srcdir@/configure
 	./config.status --recheck
 	./config.status
 configure-help:
-o	@ @srcdir@/configure --help
+	@ @srcdir@/configure --help
 
 # announcement only:
 install all clean distclean install-strip ::

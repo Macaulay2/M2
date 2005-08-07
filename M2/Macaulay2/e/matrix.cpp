@@ -1105,7 +1105,8 @@ static int signdivide(int n, const int *a, const int *b, int *exp)
   if (sign == 0) return 1;
   return -1;
 }
-MatrixOrNull *Matrix::koszul_monomials(int firstskewvar, const Matrix *r, const Matrix *c)
+MatrixOrNull *Matrix::koszul_monomials(int nskew, const Matrix *r, const Matrix *c)
+  // The first nskew variables are considered skew commuting for the purpose of computing signs.
 {
   // First check rings: r,c,'this' should be row vectors.
   // and the ring should be a polynomial ring
@@ -1125,7 +1126,6 @@ MatrixOrNull *Matrix::koszul_monomials(int firstskewvar, const Matrix *r, const 
   MatrixConstructor mat(F, c->cols(), 0);
   
   int nvars = M->n_vars();
-  int nskew = firstskewvar;
   int *skew_list = newarray(int,nskew);
   for (int j=0; j<nskew; j++)
     skew_list[j] = j;
