@@ -129,9 +129,10 @@ boundary (ZZ,SimplicialComplex) := (r,D) -> (
 	  m2 := D.cache.labels#(r-1);
 	  Sext := D.cache.labels.ring;
      	  ones := D.cache.labels.ones;
+	  S := target ones;
+	  F := source map(S^1,, ones m2);
 	  bd := ones map(Sext, rawKoszulMonomials(numgens Sext, raw m2,raw m1));
-	  bd = map(D.cache.labels.free#(r-1),,bd);
-	  D.cache.labels.free#r = source bd;
+	  bd = map(F,,bd);
 	  bd
 	  )
      else (
@@ -175,8 +176,6 @@ label(SimplicialComplex, List) := (D,L) -> (
 	  S := ring(L#0);
 	  Sext := S[Variables=>#L];
 	  D.cache.labels.ring = Sext;
-	  D.cache.labels.free = new MutableHashTable;
-	  D.cache.labels.free#-1 = S^1;
      	  L = apply(#L, i -> L_i * Sext_i);
 	  D.cache.labels.L = L;
 	  D.cache.labels.ones = map(S, Sext, toList(#L:1_S));
@@ -1210,6 +1209,10 @@ peek D.cache.labels
 boundary(0,D)
 boundary(1,D)
 C = chainComplex D
-C.dd^2 == 0
+assert(C.dd^2 == 0)
 prune(HH C)
+scan(0..dim D, i -> assert(HH_(i+1)(C) == 0))
+assert(HH_0(C) == S^1/(ideal L))
+assert isHomogeneous C
+C.dd
 ///
