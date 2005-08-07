@@ -1,12 +1,22 @@
-# -*- awk -*- well, actually this file goes to sed...
+# -*- sh -*- well, actually this file goes to sed...
 
 # The book explains that the answer on o32 is an accident with no explanation, and now, due to 
 # changes in the core algorithms, we no longer get the same answer.
 s/\(^o3[012] = \)\(true\|false\)$/\1 $$$/
 
-# the columns of the presentation matrices now produce by prune are sorted, so often come out different
-# /^o61 =/,/^o61 :/s/^\( *{-1, -1} | \).*/\1 $$$/
-# /^o66 =/,/^o66 :/s/^\( *{-1, -1} | \).*/\1 $$$/
+# When computing syzygies, minor changes to the algorithm give different columns, unless we
+# compute a Groebner basis of the result.  Then when computing second syzygies, we can get different
+# rows as well as columns.  So the precise presentations appearing in homology computations can vary.
+# We ignore results of that time here where the matrices appear to be related by permutations of the rows and columns.
+/^o61 =/,/^o61 :/s/^\( *{-1, -1}  *| \).*\( |\)/\1 $$$ \2/
+/^o66 =/,/^o66 :/s/^\(.*{-1, -1}  *| \).*\( |\)/\1 $$$ \2/
+/^o81 =/,/^o81 :/s/^\( *{0, 0}  *| \).*\( |\)/\1 $$$ \2/
+/^o92 =/,/^o92 :/s/^\(.* *{0, 6}  *| \).*\( |\)/\1 $$$ \2/
+/^o93 =/,/^o93 :/s/^\(.* *{-\?[1-9][0-9]*, -\?[1-9][0-9]*}  *| \).*/\1 $$$/
+/^o100 =/,/^o100 :/s/^\(.* *{-7}  *| \).*/\1 $$$/
+
+# The source code has changed:
+/^Ext(Module,Module)/,/homology(DeltaBar,DeltaBar)))$/d
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/ComputationsBook/completeIntersections check"

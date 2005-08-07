@@ -25,7 +25,7 @@ all :: include/config.h
 	@echo '#  exiting so you can run it again the same way you did before'
 	@echo '#  here is the way you ran it before:'
 	@echo '#'
-	@ @srcdir@/config/config.command
+	@echo '#     $(CONFIG_ARG0) $(CONFIG_ARGS)'
 	@echo '#'
 	@echo '#  type "make reconfigure" to run it that way again'
 	@echo '#'
@@ -35,7 +35,7 @@ status : @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
 	@echo '#  here is the way you ran $^ before:'
 	@echo '#'
-	@ @srcdir@/config/config.command
+	@echo '#     $(CONFIG_ARG0) $(CONFIG_ARGS)'
 	@echo '#'
 	@echo '#  type "make reconfigure" to run it that way again'
 	@echo '#'
@@ -46,7 +46,7 @@ config.status : @srcdir@/configure
 	@echo '#  exiting so you can run $^ the same way you did before'
 	@echo '#  here is the way you ran it before:'
 	@echo '#'
-	@ @srcdir@/config/config.command
+	@echo '#     $(CONFIG_ARG0) $(CONFIG_ARGS)'
 	@echo '#'
 	@echo '#  type "make reconfigure" to run it that way again'
 	@echo '#'
@@ -56,7 +56,7 @@ reconfigure: @srcdir@/configure
 	./config.status --recheck
 	./config.status
 configure-help:
-	@ @srcdir@/config/config.command --help |sh -x
+o	@ @srcdir@/configure --help
 
 # announcement only:
 install all clean distclean install-strip ::
