@@ -1,6 +1,7 @@
 --		Copyright 2004 by Daniel R. Grayson
 
 export (
+        symbol weightRange,
         symbol support,
 	symbol currentFileName,
 	symbol round,

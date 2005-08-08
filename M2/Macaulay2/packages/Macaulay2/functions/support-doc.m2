@@ -6,7 +6,7 @@ document {
 	  "f" => RingElement => "in a polynomial ring"
 	  },
      Outputs => {
-	  List => "of ", TO RingElement, ", of the variables occuring in the polynomial"
+	  List => {"of ", TO2 (RingElement, "ring elements"), ", the variables occuring in the polynomial"}
 	  },
      EXAMPLE {
 	  "R = QQ[a..g]",
@@ -22,8 +22,7 @@ document {
 	  "S = support f",
           "ring S_2 === ring f"
 	  },
-     "If you wish only the top level variables, here is one way to select the top
-     level variables:",
+     "Here is one way to select only the top level variables.",
      EXAMPLE {
 	  "select(S, x -> index x < numgens C)"
 	  },

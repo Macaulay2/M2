@@ -116,9 +116,9 @@ assert( rawRingVar(R,1) == y )
 
 degree y^10
 assert( try ( degree 0_R ; false ) else true )
-rawDegree (x^10+x^3, {4,5,6})
-rawDegree (x^2 + x + y^5 + z^10, {1,0,0})
-rawDegree (z^10, {4,5,6})
+rawWeightRange (x^10+x^3, {4,5,6})
+rawWeightRange (x^2 + x + y^5 + z^10, {1,0,0})
+rawWeightRange (z^10, {4,5,6})
 
 assert( rawIsHomogeneous ( x^2 + y^2 ))
 assert( not rawIsHomogeneous ( x^2 + y ))
@@ -150,7 +150,7 @@ assert( rawVarMonomial(0,5) === rawLeadMonomial(3, f) )
 assert( ((),()) == rawPairs(rawZZ(),0_R) )
 assert( try ( rawLeadCoefficient(rawZZ(), 0_R) ; false ) else true )
 assert( try ( rawLeadMonomial(3,0_R) ; false ) else true )
-assert( try ( rawDegree (0_R, {4,5,6}) ; false ) else true )
+assert( try ( rawWeightRange (0_R, {4,5,6}) ; false ) else true )
 
 hash f
 hash f'
