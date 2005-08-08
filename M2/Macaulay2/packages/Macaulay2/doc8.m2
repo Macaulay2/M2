@@ -883,36 +883,6 @@ assert ( so h1 == so matrix {{
 "
 
 document {
-     Key => index,
-     Headline => "yields the numeric index of a ring variable",
-    TT "index v", " -- yields the numeric index of the variable 'v' in its ring.
-    Variables are indexed starting at 0, and ending at n-1, where n is the number
-    of variables in the ring of 'v'.",
-    PARA,
-    EXAMPLE {
-	 "R = ZZ/101[a..d,t]",
-     	 "index a",
-     	 "index t",
-	 },
-    "If the ring element 'v' is not a variable, an error is generated.",
-    PARA,
-    "The symbol ", TT "index", " is also as a key used in 
-    ", TO {"GeneralOrderedMonoid", "s"}, " to store a table which is used to 
-    map generator names to the position of the generator in the list of generators."
-    }
-
-TEST "
-    R = ZZ/101[x_0 .. x_10]
-    scan(11, i -> assert(index x_i == i))
-    assert( try (index x_11;false) else true )
-    R = ZZ/101[w,z,t,e]
-    assert( index w == 0 )
-    assert( index z == 1 )
-    assert( index t == 2 )
-    assert( index e == 3 )
-"
-
-document {
      Key => homogenize,
      Headline => "homogenize with respect to a variable",
      TT "homogenize(m,v)", " -- homogenize the ring element, vector,
