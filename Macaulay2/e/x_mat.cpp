@@ -526,6 +526,48 @@ const MatrixOrNull *IM2_Matrix_remove_content(const Matrix *M) {
      return NULL;
 }
 
+const Matrix *IM2_Matrix_promote(const FreeModule *newTarget,
+				 const Matrix *f)
+{
+  ring_elem a;
+  const Ring *R = f->get_ring();
+  const Ring *S = newTarget->get_ring();
+  MatrixConstructor mat(newTarget,f->n_cols());
+  Matrix::iterator i(f);
+  for (int c=0; c<f->n_cols(); c++)
+    for (i.set(c); i.valid(); i.next())
+      if (R->promote(S,i.entry(),a))
+	mat.set_entry(i.row(), c, a);
+      else
+	{
+	  ERROR("cannot promote given matrix");
+	  return 0;
+	}
+  mat.compute_column_degrees();
+  return mat.to_matrix();
+}
+
+const Matrix *IM2_Matrix_lift(const FreeModule *newTarget, 
+			      const Matrix *f)
+{
+  ring_elem a;
+  const Ring *R = f->get_ring();
+  const Ring *S = newTarget->get_ring();
+  MatrixConstructor mat(newTarget,f->n_cols());
+  Matrix::iterator i(f);
+  for (int c=0; c<f->n_cols(); c++)
+    for (i.set(c); i.valid(); i.next())
+      if (R->lift(S,i.entry(),a))
+	mat.set_entry(i.row(), c, a);
+      else
+	{
+	  ERROR("cannot lift given matrix");
+	  return 0;
+	}
+  mat.compute_column_degrees();
+  return mat.to_matrix();
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:
