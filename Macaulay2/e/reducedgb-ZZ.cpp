@@ -79,8 +79,14 @@ void ReducedGB_ZZ::minimalize(const std::vector<POLY, gc_allocator<POLY> > &poly
 
 	      if (auto_reduced)
 		remainder(h,false,junk); // This auto-reduces h.
+
+	      if (h.f != 0 && mpz_sgn(MPZ_VAL(h.f->coeff)) < 0)
+		{
+		  R->gbvector_mult_by_coeff_to(h.f, globalZZ->minus_one());
+		  R->gbvector_mult_by_coeff_to(h.fsyz, globalZZ->minus_one());
+		}
 	      
-	      T->insert(MPZ_VAL(f->coeff), e, f->comp, polys.size());
+	      T->insert(MPZ_VAL(h.f->coeff), e, h.f->comp, polys.size());
 	      polys.push_back(h);
 	}
       else

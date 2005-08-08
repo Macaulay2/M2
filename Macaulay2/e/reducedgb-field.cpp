@@ -76,7 +76,9 @@ void ReducedGB_Field::minimalize(const std::vector<POLY, gc_allocator<POLY> > &p
 	  
 	  if (auto_reduced)
 	    remainder(h,false,junk); // This auto-reduces h.
-	  
+
+	  R->gbvector_remove_content(h.f,h.fsyz);
+
 	  T->insert(e, f->comp, polys.size());
 	  polys.push_back(h);
 	}
