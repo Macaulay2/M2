@@ -15,7 +15,7 @@ newPackage(
 export(SimplicialComplex,
      simplicialComplex,
      boundary,fVector,isPure,label,
-     faces,facets,support,link,
+     faces,facets,link,
      simplicialChainComplex,
      buchbergerComplex)
 
@@ -99,9 +99,6 @@ lcmM = (L) -> (
     m := intersect toSequence (L/(i -> monomialIdeal(i)));
     m_0)
 
-support = (m) -> (
-     x := rawIndices raw m;
-     apply(x, i -> (ring m)_i))
 
 dim SimplicialComplex := (D) -> max apply(first entries D.facets, s -> # support(s)) - 1
 

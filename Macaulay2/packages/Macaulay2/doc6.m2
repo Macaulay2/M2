@@ -1007,14 +1007,8 @@ document {
      to index the components of the direct sum.",
      PARA,
      SeeAlso => {"directSum", "components", "indices"}}
-document {
-     Key => indices,
-     Headline => "specify keys for components of a direct sum",
-     TT "indices", " -- a symbol used as a key in a direct sum
-     under which to store a list of the preferred keys used
-     to index the components of the direct sum.",
-     PARA,
-     SeeAlso => {"directSum", "components", "indexComponents"}}
+-- MES: "indices" moved to functions/indices-doc.m2
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

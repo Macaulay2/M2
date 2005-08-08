@@ -1,6 +1,7 @@
 --		Copyright 2004 by Daniel R. Grayson
 
 export (
+        symbol support,
 	symbol currentFileName,
 	symbol round,
         symbol currentLineNumber,

@@ -150,6 +150,13 @@ complement Matrix := Matrix => (m) -> (
 index = method()
 index RingElement := f -> rawIndexIfVariable raw f
 
+indices RingElement := (f) -> rawIndices raw f
+
+support = method()
+support RingElement := (f) -> (
+     x := rawIndices raw f;
+     apply(x, i -> (ring f)_i))
+
 --------------------
 -- homogenization --
 --------------------
