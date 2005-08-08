@@ -59,7 +59,8 @@ distclean clean ::; $(MAKE) DEPENDS=no -C dumpdata $@
 ################################# compat
 all clean distclean ::; $(MAKE) -C compat $@
 ################################# regex
-all clean distclean ::; $(MAKE) -C regex $@
+all ::; $(MAKE) -C regex $@
+clean distclean ::; $(MAKE) DEPENDS=no -C regex $@
 ################################# d
 initialize ::; $(MAKE) DEPENDS=no -C d compat.h
 ### util/restart and util/update cooperate here:

@@ -32,7 +32,7 @@ Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/e/linalgGB/Makefi
 clean ::; rm -f *.o
 distclean: clean; rm -f Makefile
 
-clean::; rm -f *.dep dep-*.tmp
+clean::; rm -f *.dep dep-*.tmp LOGFILE
 ifeq "$(DEPENDS)" "yes"
 include $(CFILES:=.dep) $(CCFILES:=.dep)
 endif

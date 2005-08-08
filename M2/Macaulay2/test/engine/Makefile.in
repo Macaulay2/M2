@@ -49,6 +49,9 @@ mapfile factor : factor.o factor-init.o factor-init1.o
 mapfile.demangled : mapfile
 	demangle <$< >$@
 
+clean::; rm -f *.o
+distclean::clean; rm -f Makefile
+
 # Local Variables:
 # compile-command: "make -k -C $M2BUILDDIR/Macaulay2/test/engine "
 # End:

@@ -84,9 +84,9 @@ Dmodules.installed :: @srcdir@/Dmodules/*.m2
 CacheFileName.installed : tmp
 tmp : ; mkdir tmp
 
+distclean::clean
 clean check distclean ::; $(MAKE) -C ComputationsBook $@
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
-distclean::clean
 distclean::; rm -f Makefile
 
 # Local Variables:

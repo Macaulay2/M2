@@ -51,6 +51,7 @@ MADEM2FILES += installedpackages.m2
 initialize :: installedpackages.m2
 installedpackages.m2 : installedpackages Makefile
 	exec <$< >$@ ; echo 'Macaulay2Core#"pre-installed packages" = {'; read x ; echo \"$$x\"; while read x ; do echo , \"$$x\" ; done ; echo '}'
+clean :: ; rm -f installedpackages.m2
 OTHERDUMPEDM2FILES += \
 	$(wildcard $(patsubst %, @srcdir@/../packages/%/*.m2, $(INSTALLEDPACKAGES))) \
 	$(wildcard $(patsubst %, @srcdir@/../packages/%.m2  , $(INSTALLEDPACKAGES)))
