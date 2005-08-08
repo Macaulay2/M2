@@ -20,7 +20,7 @@ Schubert(ZZ, ZZ, List) := Ideal => (kk,nn,sigma) ->
      n := nn+1;
      L := subsets(n,k);
      p := local p;
-     R := ZZ[apply(L, i -> p_i)];
+     R := ZZ[apply(L, i -> p_(toSequence i))];
      T := flatten table(L,L, (i,j) -> {i,j});
      nonStandard := select( 
 	  apply(T, t ->
@@ -53,7 +53,7 @@ Schubert(ZZ, ZZ, List) := Ideal => (kk,nn,sigma) ->
      G := apply(reorder, T ->(
      	       quadric := 0; 
      	       apply(T, t-> (
-	       	    	 temp := apply(t_{0,1}, s -> p_s) | t_{2};
+	       	    	 temp := apply(t_{0,1}, s -> p_(toSequence s)) | t_{2};
 	       	    	 quadric = quadric + temp#0 * temp#1 * temp#2;
 	       	    	 )
 	       	    );
@@ -64,7 +64,7 @@ Schubert(ZZ, ZZ, List) := Ideal => (kk,nn,sigma) ->
 	       j := position(toList(0..k-1), i-> s#i > sigma#i);
 	       not j === null
 	       )
-	  ), t -> p_t);
+	  ), t -> p_(toSequence t));
      g := forceGB matrix{(G|higher)};
      g = generators g;
      forceGB g;
