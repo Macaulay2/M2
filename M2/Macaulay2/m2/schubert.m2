@@ -64,8 +64,11 @@ Schubert(ZZ, ZZ, List) := Ideal => (kk,nn,sigma) ->
 	       j := position(toList(0..k-1), i-> s#i > sigma#i);
 	       not j === null
 	       )
-	  ), t -> p_t);	  
-     ideal (G|higher)
+	  ), t -> p_t);
+     g := forceGB matrix{(G|higher)};
+     g = generators g;
+     forceGB g;
+     ideal g
      )
 
 -- Local Variables:
