@@ -28,6 +28,7 @@ document {
 document {
      Key => (select,String,String,String),
      Headline => "select substrings matching a regular expression from a string",
+     Usage => "select(p,r,s)",
      Inputs => {
 	  "p" => "a regular expression describing a pattern",
 	  "r" => "a replacement string",
