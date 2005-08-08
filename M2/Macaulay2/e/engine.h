@@ -1131,6 +1131,10 @@ extern "C" {
        S, and maps it into 'this', while lift goes the other way.
     */
 
+  const Matrix *IM2_Matrix_promote(const FreeModule *newTarget, const Matrix *f); /* PLEASE CONNECT DAN: to rawPromote*/
+
+  const Matrix *IM2_Matrix_lift(const FreeModule *newTarget, const Matrix *f); /* PLEASE CONNECT DAN: to rawPromote*/
+
   /**************************************************/
   /**** MutableMatrix routines **********************/
   /**************************************************/
