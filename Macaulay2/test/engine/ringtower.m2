@@ -78,10 +78,10 @@ f^2
 -- assert(rawTermCount(3,f) === 3)
 -- assert(rawGetTerms(3,f,1,1) === (a+b+1)*x^2)
 -- assert((a+b+x+y)^2 === (a+b+x+y)*(a+b+x+y))
--- assert (rawDegree(f, {1,0,0}) == (0,2))
--- assert (rawDegree(f, {0,0,1}) == (0,5))
+-- assert (rawWeightRange(f, {1,0,0}) == (0,2))
+-- assert (rawWeightRange(f, {0,0,1}) == (0,5))
 -- 
--- assert try rawDegree(f, {1,0,0,3,4,5}) else true 
+-- assert try rawWeightRange(f, {1,0,0,3,4,5}) else true 
 -- assert (rawMultiDegree f == {6})
 -- 
 -- assert not rawIsHomogeneous f

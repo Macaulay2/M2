@@ -704,7 +704,8 @@ int Monoid::degree_weights(const_monomial m, M2_arrayint wts) const
 {
   if (nvars == 0) return 0;
   to_expvector(m, EXP1);
-  return ntuple::weight(nvars, EXP1, wts);
+  int sz = (wts->len < nvars ? wts->len : nvars);
+  return ntuple::weight(sz, EXP1_, wts);
 }
 
 bool Monoid::is_one(const_monomial m) const

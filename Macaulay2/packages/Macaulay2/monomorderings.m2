@@ -689,8 +689,6 @@ document {
 	  "R = ZZ/101[a,b,c,Degrees=>{{1,2},{2,1},{1,0}}]",
       	  "describe R",
 	  },
-     "STILL VALID??? At the moment there is a restriction on the degree vectors: the first
-     entry must be greater than zero.  This restriction will be removed soon.",
      EXAMPLE {
 	  "degree a",
       	  "degree b^2",
@@ -709,6 +707,23 @@ document {
 	  "degreeLength R",
       	  "degreeLength ZZ"
 	  },
+     SUBSECTION "The case when the first degree of some variable is not positive",
+     "The only restriction on degrees is that the entries be small integer values, possibly
+     zero or negative.  The notion of small depends on the size of exponents one wants: the degree
+     of each monomial occuring should fit in a 32 bit integer (or 64 bit integer, on 64 bit machines).",
+     PARA,
+     "Nonetheless, there are several routines (e.g. ", TO basis, ", ", TO random, ") which require that each multidegree
+     be finite dimensional, and therefore require a ",
+     EM "Heft", " vector.  This is a vector of (small) integers, ", TEX "$w = (w_0, \\ldots, w_{d-1})$", 
+     " of length the ", TO degreeLength, " of the ring, such that the dot product of w with the degree of
+     each variable is a positive integer.  Provide this vector when constructing the ring.",
+     EXAMPLE {
+	  "R = QQ[a,b,c,Degrees=>{{1,0},{-2,1},{-3,1}}, Heft=>{1,4}];",
+	  "random({1,1},R)",
+	  "basis({1,1},R)"
+	  },
+     "If the vector is not provided, many computations will work (e.g. Groebner bases), but operations requiring
+     finite bases for a multidegree (such as ", TT "basis", " and ", TT "random", ") will raise errors."
      }
 
 document {

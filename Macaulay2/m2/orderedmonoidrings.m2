@@ -318,6 +318,9 @@ dim PolynomialRing := R -> dim coefficientRing R + # generators R - if R.?SkewCo
 char PolynomialRing := (R) -> char coefficientRing R
 numgens PolynomialRing := R -> numgens monoid R
 
+weightRange = method()
+weightRange(List,RingElement) := (w,f) -> rawWeightRange(w,raw f)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

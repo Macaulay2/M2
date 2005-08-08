@@ -298,7 +298,6 @@ intarray RingElement::degree() const
 
 void RingElement::degree_weights(M2_arrayint wts, int &lo, int &hi) const
 {
-  // Check that wts has same length as nvars
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (is_zero())
     {
@@ -308,11 +307,6 @@ void RingElement::degree_weights(M2_arrayint wts, int &lo, int &hi) const
   if (P == 0)
     {
       ERROR("expected polynomial ring");
-      return;
-    }
-  if (wts->len != static_cast<unsigned int>(P->n_vars()))
-    {
-      ERROR("weight vector has incorrect length");
       return;
     }
   P->degree_weights(val, wts, lo, hi);

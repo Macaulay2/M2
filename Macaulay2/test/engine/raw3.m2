@@ -107,8 +107,8 @@ rawRing f === R1
 assert not rawIsHomogeneous(x+y-1)
 assert rawIsHomogeneous(x+y-z)
 rawMultiDegree(x*y-3)
-rawDegree(f, {1,0,0})
-rawDegree(f, {1,1,1})
+rawWeightRange(f, {1,0,0})
+rawWeightRange(f, {1,1,1})
 rawTermCount(3,f)
 pf = x^4-y*z-3*x-6
 assert(z^2 * rawHomogenize(f, 2, 4, {1,1,1}) 
@@ -146,7 +146,7 @@ assert(f === sum apply(#cs, i -> rawTerm(R1,cs#i, ms#i)))
 --  rawRing, rawToString, rawHash(?), rawIsZero, rawDivMod
 -- polynomial type routines: 
 --  rawIsHomogeneous
---  rawDegree(f, wts)
+--  rawWeightRange(f, wts)
 --  rawMultiDegree
 --  rawTermCount
 --  rawGetTerms

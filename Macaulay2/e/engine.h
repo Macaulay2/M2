@@ -494,8 +494,7 @@ extern "C" {
 
   M2_arrayint_OrNull IM2_RingElement_multidegree(const RingElement *a); /* drg: connected rawMultiDegree*/
 
-  M2_Integer_pair_OrNull *IM2_RingElement_degree(const RingElement *a, 
-						 M2_arrayint wts); /* drg: connected rawDegree*/
+  M2_Integer_pair_OrNull *rawWeightRange(M2_arrayint wts, const RingElement *a); /* drg: connected rawWeightRange*/
     /* The first component of the degree is used, unless the degree monoid is trivial,
        in which case the degree of each variable is taken to be 1. 
        Returns lo,hi degree.  If the ring is not a graded ring or a polynomial ring

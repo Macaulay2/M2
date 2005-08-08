@@ -754,23 +754,22 @@ export rawMultiDegree(e:Expr):Expr := (
      );
 setupfun("rawMultiDegree",rawMultiDegree);
 
-export rawDegree(e:Expr):Expr := (
+export rawWeightRange(e:Expr):Expr := (
      when e
-     -- is x:RawMonomial do Expr(toInteger(Ccode(int, "IM2_Monomial_degree((Monomial*)",x,")")))
      is s:Sequence do 
      if length(s) != 2 then buildErrorPacket("expected 1 or 2 arguments") else
-     when s.0 is x:RawRingElement do 
-     if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
+     when s.1 is x:RawRingElement do 
+     if !isSequenceOfSmallIntegers(s.0) then WrongArg(1,"a sequence of small integers") else
      toExpr(
-	  Ccode( IntegerPairOrNull, "(engine_IntegerPairOrNull)IM2_RingElement_degree(",
-	       "(RingElement*)",x, ",",
-	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.1),
+	  Ccode( IntegerPairOrNull, "(engine_IntegerPairOrNull)rawWeightRange(",
+	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.0),",",
+	       "(RingElement*)",x, 
 	       ")"
 	       ))
-     else WrongArg(1,"a raw ring element")
-     else WrongArg("a raw monomial or a pair: raw ring element, list of weights")
+     else WrongArg(2,"a raw ring element")
+     else WrongArg("list of weights, and raw ring element")
      );
-setupfun("rawDegree",rawDegree);
+setupfun("rawWeightRange",rawWeightRange);
 
 export rawTermCount(e:Expr):Expr := (
      when e
