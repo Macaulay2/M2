@@ -6,7 +6,9 @@ VPATH = @srcdir@
 DOTS = ..
 include $(DOTS)/../include/config.Makefile
 
-all check clean distclean :: ; $(MAKE) -k -C engine $@
+all check clean ::
+	$(MAKE) -k -C engine $@
+	$(MAKE) -k -C slow $@
 
 SRCDIR = @srcdir@
 include @srcdir@/Makefile.test
@@ -15,7 +17,9 @@ ifneq "$(DUMPDATA)" "no"
 RESULTS += dumpdata.out
 endif
 
-all check clean distclean :: ; $(MAKE) -k -C slow $@
+distclean ::
+	$(MAKE) -k -C engine $@
+	$(MAKE) -k -C slow $@
 
 docStructure.out : docStructure.m2
 

@@ -5,7 +5,7 @@ VPATH = @srcdir@
 .PHONY : all clean distclean
 
 all::
-clean ::; rm -rf bin
+
 $(bindir) :; $(INSTALL) -d "$@"
 install       :: $(bindir); $(INSTALL_PROGRAM)    M2$(EXE) $(bindir)/M2$(EXE)
 install-strip :: $(bindir); $(INSTALL_PROGRAM) -s M2$(EXE) $(bindir)/M2$(EXE)
@@ -19,8 +19,11 @@ $(bindir)/M2-emacs : M2-emacs ; $(INSTALL) $^ $@
 install       :: $(bindir)/M2-help
 $(bindir)/M2-help : M2-help ; $(INSTALL) $^ $@
 
-distclean : clean; rm -f Makefile
+clean::; rm -f M2$(EXE)
+distclean::; rm -f Makefile
+distclean:: clean
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/bin/Makefile
+
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/bin install"
 # End:

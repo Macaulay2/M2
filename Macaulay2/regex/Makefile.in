@@ -39,7 +39,7 @@ ifeq "$(DEPENDS)" "yes"
 include $(CFILES:.c=.dep) $(CCFILES:.cpp=.dep)
 endif
 all tags:: @srcdir@/TAGS
-clean :: ; rm -f *.o *.dep *.s *.E
+clean :: ; rm -f *.o *.dep *.s *.E LOGFILE
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/regex/Makefile
 distclean::; rm -f Makefile
 
