@@ -351,6 +351,18 @@ compress = method()
 
 compress Matrix := Matrix => (m) -> map(ring m, rawMatrixCompress m.RawMatrix)
 
+diagonalMatrix = method()
+diagonalMatrix Matrix := Matrix => (m) -> (
+     R := ring m;
+     nrows := numgens target m;
+     if nrows === 0 then
+       error "expected at least one row";
+     if nrows > 1 then m = flatten m;
+     a := numgens source m;
+     m1 := mutableZero(R,a,a);
+     for i from 0 to a-1 do m1_(i,i) = m_(0,i);
+     matrix m1)
+
 newCoordinateSystem = method()
 
 newCoordinateSystem(PolynomialRing, Matrix) := (S,x) -> (
