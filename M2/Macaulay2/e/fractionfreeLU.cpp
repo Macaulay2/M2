@@ -1,7 +1,9 @@
 // Copyright 2004 Michael E. Stillman
 
-#include "comp.hpp"
 #include "fractionfreeLU.hpp"
+
+extern char system_interruptedFlag;
+extern int gbTrace;
 
 ////////////////////////////////////////
 // Fraction free gaussian elimination //

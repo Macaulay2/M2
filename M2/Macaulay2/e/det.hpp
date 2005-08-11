@@ -3,7 +3,6 @@
 #ifndef _det_hh_
 #define _det_hh_
 
-#include "comp.hpp"
 #include "matrix.hpp"
 #include "comb.hpp"
 #include "matrixcon.hpp"
@@ -11,7 +10,7 @@
 const int DET_BAREISS = 0;
 const int DET_COFACTOR = 1;
 
-class DetComputation : public computation
+class DetComputation : public our_new_delete
 {
   const Ring *R;
   const Matrix *M;

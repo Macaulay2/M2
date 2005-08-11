@@ -3,7 +3,7 @@
 #ifndef _comp_gb_hpp_
 #define _comp_gb_hpp_
 
-#include "computation.hpp"
+#include "comp.hpp"
 class buffer;
 
 // The following are the return values from s_pair_step,

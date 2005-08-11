@@ -5,7 +5,6 @@
 #include "ring.hpp"
 #include "matrix.hpp"
 #include "comb.hpp"
-#include "det.hpp"
 #include "polyring.hpp"
 #include "termideal.hpp"
 #include "assprime.hpp"

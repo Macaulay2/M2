@@ -3,6 +3,7 @@
 #include "det.hpp"
 #include "text_io.hpp"
 
+extern char system_interruptedFlag;
 extern int gbTrace;
 
 DetComputation::DetComputation(const Matrix *M0, int p0,

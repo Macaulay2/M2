@@ -1,6 +1,6 @@
 // Copyright 2004 Michael E. Stillman
 
-#include "computation.hpp"
+#include "comp.hpp"
 #include "buffer.hpp"
 
 ComputationOrNull *
