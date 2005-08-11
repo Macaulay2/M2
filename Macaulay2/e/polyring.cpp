@@ -12,7 +12,6 @@
 #include "frac.hpp"
 #include "geopoly.hpp"
 
-#include "gb_comp.hpp"
 #include "../d/M2mem.h"
 
 #include "ZZ.hpp"
