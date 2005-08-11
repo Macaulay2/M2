@@ -162,7 +162,6 @@ COMMANDS = \
 	mat-sort \
 	ring-vecs \
         gbnod \
-        freemod2 \
 	engine \
 	factor \
 	x_monom \
