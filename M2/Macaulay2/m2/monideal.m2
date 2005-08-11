@@ -246,7 +246,6 @@ betti MonomialIdeal := I -> betti ideal I
 
 lcmgens := local lcmgens
 alexanderdual := local alexanderdual
-assprimes := local assprimes
 
 lcmOfGens := (I) -> if I.cache#?lcmgens then I.cache#lcmgens else I.cache#lcmgens = (
      max \ transpose apply(first entries generators I, i -> first exponents i)
@@ -286,9 +285,9 @@ dual MonomialIdeal := (I) -> (
 
 --  ASSOCIATED PRIMES  -------------------------------------
 ass0 := (I) -> (
-     if I.cache#?assprimes
-     then I.cache#assprimes
-     else I.cache#assprimes = (
+     if I.cache#?associatedPrimes
+     then I.cache#associatedPrimes
+     else I.cache#associatedPrimes = (
      	  R := ring I;
      	  J := dual I;
      	  M := first entries generators J;
@@ -300,7 +299,7 @@ ass0 := (I) -> (
 	  apply(inds, s -> s#1)
      ))
 
-ass MonomialIdeal := List => o -> (I) -> (
+associatedPrimes MonomialIdeal := List => o -> (I) -> (
      inds := ass0 I;
      R := ring I;
      apply(inds, ind -> monomialIdeal apply(ind, v -> R_v)))
@@ -369,7 +368,7 @@ standardPairs(MonomialIdeal, List) := (I,D) -> (
 Delta := (I) -> (
      X := generators ring I;
      d := #X - pdim cokernel generators I;
-     select( apply(ass I, J -> set X - set first entries generators J), Y -> #Y >= d ) / toList
+     select( apply(associatedPrimes I, J -> set X - set first entries generators J), Y -> #Y >= d ) / toList
      )
 
 standardPairs MonomialIdeal := (I) -> standardPairs(I,Delta I)

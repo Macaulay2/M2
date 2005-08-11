@@ -9,7 +9,7 @@ union ring_elem;
 // The only reason "RingType" is present is to more easily
 //   communicate with the rest of Macaulay2
 
-class MutableMatrixXXX;
+class MutableMatrix;
 
 template<typename CoeffRing>
 class DMat : public our_new_delete
@@ -162,7 +162,7 @@ public:
 
   bool set_submatrix(M2_arrayint rows,
 		     M2_arrayint cols,
-		     const MutableMatrixXXX *N);
+		     const MutableMatrix *N);
 
   DMat<CoeffRing> *submatrix(M2_arrayint rows, M2_arrayint cols) const;
 
@@ -170,16 +170,16 @@ public:
 
   bool is_zero() const;
 
-  bool is_equal(const MutableMatrixXXX *B) const;
+  bool is_equal(const MutableMatrix *B) const;
 
-  DMat * add(const MutableMatrixXXX *B) const;
+  DMat * add(const MutableMatrix *B) const;
 
-  DMat * subtract(const MutableMatrixXXX *B) const;
+  DMat * subtract(const MutableMatrix *B) const;
   // return this - B.  return NULL of sizes or types do not match.
   // note: can subtract a sparse + dense
   //       can subtract a matrix over RR and one over CC and/or one over ZZ.
 
-  DMat * mult(const MutableMatrixXXX *B) const;
+  DMat * mult(const MutableMatrix *B) const;
   // return this * B.  return NULL of sizes or types do not match.
   // note: can mult a sparse + dense
   //       can mult a matrix over RR and one over CC and/or one over ZZ.

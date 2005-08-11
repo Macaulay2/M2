@@ -8,7 +8,7 @@ class res_poly;
 class res2_poly;
 struct resterm;
 struct res2term;
-class MutableMatrixXXX;
+class MutableMatrix;
 class MonomialIdeal;
 
 #include "ringelem.hpp"
@@ -29,7 +29,7 @@ void drespoly(const res_poly *R, const resterm *f);
 
 void drespoly2(const res2_poly *R, const res2term *f);
 
-extern "C" void dmutablemat(MutableMatrixXXX *m);
+extern "C" void dmutablemat(MutableMatrix *m);
 
 extern "C" void dmonideal(MonomialIdeal *m);
 

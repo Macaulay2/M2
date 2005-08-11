@@ -985,7 +985,7 @@ template<typename CoeffRing>
 void LinAlgGB<CoeffRing>::show_matrix()
 {
   // Debugging routine
-  MutableMatrixXXX *q = M2Interface<CoeffRing>::to_M2_MutableMatrix(K,mat);
+  MutableMatrix *q = M2Interface<CoeffRing>::to_M2_MutableMatrix(K,mat);
   buffer o;
   q->text_out(o);
   emit(o.str());

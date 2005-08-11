@@ -45,7 +45,9 @@ primaryDecomposition Ideal := List => o -> (I) -> (
 	  );
      -- Now call the correct algorithm
      if opt === Monomial then (
-	  primaryDecomposition monomialIdeal I
+	  C := primaryDecomposition monomialIdeal I;
+	  I.cache.Assassinator = apply(C, I -> ideal radical I);
+	  C/ideal
 	  )
      else if opt === Binomial then (
 	  error "not implemented yet";
@@ -73,7 +75,9 @@ beginDocumentation()
 
 document {
      Key => PrimaryDecomposition,
-     "This package computes primary decompositions of ideals.",
+     "This package provides computations with components
+     of ideals, including minimal and associated primes, radicals, and
+     primary decompositions of ideals.",
      PARA,
      Subnodes => {
 	  TO (ass, Ideal),

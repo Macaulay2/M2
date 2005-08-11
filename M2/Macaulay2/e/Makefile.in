@@ -57,11 +57,7 @@ PRE.cc   = $(COMPILE.cc) -E
 ##################
 
 
-#	dmatrix \
 #	points \
-#	sparsemat \
-#	mutablemat \
-
 
 INTERFACE = \
 	dmat-LU \
@@ -148,11 +144,9 @@ INTERFACE = \
 STILLTOCOMPILE = \
 	sagbi \
 	newspair \
-	weylfree \
 	termideal \
 	gbZZ \
-	gbbinom \
-	lattice # lattice has been replaced with fractionfreeLU, one other?
+	gbbinom
 
 COMMANDS = \
 	mat-kbasis \
@@ -229,6 +223,7 @@ all tags:: @srcdir@/TAGS
 		 @srcdir@/check/src_test/*.c @srcdir@/check/src_test/*.h @srcdir@/check/src_test/*.cpp \
 		 @srcdir@/rings/*.hpp @srcdir@/rings/*.cpp \
 		 @srcdir@/linalgGB/*.h @srcdir@/linalgGB/*.c \
+		 @srcdir@/linalgGB/*.hpp @srcdir@/linalgGB/*.cpp \
 		 statuscodes
 	cd @srcdir@ && etags $(patsubst @srcdir@/%, %, $^)
 

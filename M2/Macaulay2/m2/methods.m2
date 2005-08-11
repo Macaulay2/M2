@@ -197,11 +197,13 @@ primaryDecomposition = method(
 	  PrintLevel => 0,
 	  Strategy => null})
 
-ass = method(
+associatedPrimes = method(
      TypicalValue => List,
      Options =>{
 	  PrintLevel => 0,
 	  Strategy => 2})
+
+ass = associatedPrimes
 
 quotient = method(
      Options => {

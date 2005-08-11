@@ -1,3 +1,79 @@
+document { 
+     Key => (primaryDecomposition,Ideal),
+     Headline => "irredundant primary decomposition of an ideal",
+     Usage => "primaryDecomposition I",
+     Inputs => {
+	  "I" => {"an ideal in a (quotient of a) polynomial ring ", TT "R", "."}
+	  },
+     Outputs => {
+	  List => {"of ", TO2(Ideal,"ideals"), ", a minimal list of primary ideals whose intersection is ", TT "I"}
+	  },
+     "This routine returns an irredundant primary decomposition
+     for the ideal ", TT "I", ".  The specific algorithm used varies
+     depending on the characteristics of the ideal, and can also be specified
+     using the optional argument ", TT "Strategy", ".",
+     PARA,
+     "Primary decompositions algorithms are very sensitive to their input.  Some
+     algorithms work very well on certain classes of ideals, but poorly on other classes.
+     If this function seems to be taking too long, try another algorithm (using ",
+     TO [primaryDecomposition,Strategy], ").",
+     EXAMPLE {
+	  "R = QQ[a..i];",
+	  "I = permanents(2,genericMatrix(R,a,3,3))",
+          "C = primaryDecomposition I;",
+	  "I == intersect C",
+	  "#C",
+	  },
+     PARA,
+     "Recall that ", TO (symbol/,List,Function), " applies a function to each element of a
+     list, returning the results as a list.  This is often useful with lists of ideals,
+     such as the list ", TT "C", " of primary components.",
+     EXAMPLE {
+	  "C/toString/print;",
+	  "C/codim",
+	  "C/degree"
+	  },
+     PARA,
+     "The corresponding list of associated prime ideals is cached at I.cache.ass,
+     and can be obtained by using ", TO (ass,Ideal), ".",
+     EXAMPLE {
+	  "(ass I)/print"
+	  },
+     Caveat => {"The ground ring must be a prime field."},
+     SeeAlso => {PrimaryDecomposition,(ass,Ideal), 
+	  radical, decompose, topComponents, 
+	  removeLowestDimension}
+     }
+document { 
+     Key => [primaryDecomposition, PrintLevel],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [primaryDecomposition, Strategy],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+
+
 document {
      Key => (ass, Ideal),
      Headline => "find the associated primes of an ideal",
@@ -214,41 +290,16 @@ document {
      }
 
 document {
-     Key => (primaryDecomposition, Ideal),
-     Headline => "find a primary decomposition of an ideal",
-     Usage => "primaryDecomposition I",
-     Inputs => {
-	  "I" => {"an ideal in a (quotient of a) polynomial ring ", TT "R", "."}
-	  },
-     Outputs => { {"a list of primary ideals whose intersection is ", TT "I"} },
-     "This routine returns an irredundant primary decomposition
-     for the ideal ", TT "I", ".  The specific algorithm used varies
-     depending on the characteristics of the ideal, and can also be specified
-     using the optional argument ", TT "Strategy", ".",
-     PARA,
-     "Give examples here.",
-     PARA,
-     "Give references to algorithms used here.",
-     Caveat => "put possible problems here, e.g., over QQ.",
-     BOLD "Authors:", " W. Decker, G. Smith, M. Stillman, C. Yackel.", BR,
-     BOLD "Maintainer:", " C. Yackel cyackel@math.indiana.edu.  ",
-     "Last modified June 2000.",
-     SeeAlso => {(ass,Ideal), 
-	  radical, decompose, topComponents, 
-	  removeLowestDimension}
-     }
-
-document {
      Key => [primaryDecomposition,Strategy],
      "The strategy option value should be one of the following.",
      UL {
-          SEQ ("Monomial", " -- uses Alexander duality of a monomial ideal"),
-	  SEQ ("Binomial", " -- finds a cellular resolution of a 
+          ("Monomial", " -- uses Alexander duality of a monomial ideal"),
+	  ("Binomial", " -- finds a cellular resolution of a 
 	                     binomial ideal"),
-	  SEQ ("EHV", " -- uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
-	  SEQ ("SY", " -- uses the algorithm of Shimoyama-Yokoyama"),
-	  SEQ ("Hybrid"," -- uses parts of the above two algorithms"),
-	  SEQ ("GTZ", " -- uses the algorithm of Gianni-Trager-Zacharias.  
+	  ("EHV", " -- uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
+	  ("SY", " -- uses the algorithm of Shimoyama-Yokoyama"),
+	  ("Hybrid"," -- uses parts of the above two algorithms"),
+	  ("GTZ", " -- uses the algorithm of Gianni-Trager-Zacharias.  
 	           NOT IMPLEMENTED YET.")
           },
      PARA,
@@ -269,6 +320,23 @@ document {
      "Description, example, reference", TO (localize,Ideal,Ideal)
      }
 
+TEST ///
+-- monomial ideal:
+R = QQ[a..g]
+I = ideal(a*b*c^3, a^3*d*f^2, a*b*c*d*e, b*c^4*d^3, e*f^5)
+C = primaryDecomposition I
+A = ass I
+scan(#C, i -> radical(monomialIdeal C_i) == monomialIdeal A_i)
+-- radical of a monomial ideal should immediately call the monomial ideal cdoe too
+radical C_1
+I = ideal(a^2,a*b,b^2)
+C = primaryDecomposition I
+irreducibleDecomposition monomialIdeal I
+
+I = intersect(ideal(a^2,a*b,b^2), ideal(b,c,d^10))
+C = primaryDecomposition I
+ass I
+///
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PrimaryDecomposition.installed "
 -- End:

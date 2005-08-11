@@ -6,6 +6,8 @@
 #include "frac.hpp"
 #include "text_io.hpp"
 
+extern char system_interruptedFlag;
+
 bool LLLoperations::checkThreshold(ring_elem num, ring_elem den)
 {
   // Makes sure that 1/4 < num/den <= 1
@@ -24,9 +26,9 @@ bool LLLoperations::checkThreshold(ring_elem num, ring_elem den)
   return true;
 }
 
-bool LLLoperations::initializeLLL(const MutableMatrixXXX *A,
+bool LLLoperations::initializeLLL(const MutableMatrix *A,
 			    M2_Rational threshold,
-			    MutableMatrixXXX *& LLLstate)
+			    MutableMatrix *& LLLstate)
 {
   // First check m: should be a matrix over globalZZ.
   if (A == 0 || A->get_ring() != globalZZ)
@@ -53,7 +55,7 @@ bool LLLoperations::initializeLLL(const MutableMatrixXXX *A,
   // The entries are: k, kmax, alphaTop, alphaBottom: all are ZZ values.
 
   int n = A->n_cols();
-  LLLstate = MutableMatrixXXX::zero_matrix(globalZZ,n,n+4,A->is_dense());
+  LLLstate = MutableMatrix::zero_matrix(globalZZ,n,n+4,A->is_dense());
   if (n > 0)
     {
       LLLstate->set_entry(0,n,globalZZ->from_int(1));  // k := 2
@@ -67,7 +69,7 @@ bool LLLoperations::initializeLLL(const MutableMatrixXXX *A,
   return true;
 }
 
-bool LLLoperations::Lovasz(MutableMatrixXXX *lambda,
+bool LLLoperations::Lovasz(MutableMatrix *lambda,
 			   int k,
 			   ring_elem alphaTop,
 			   ring_elem alphaBottom)
@@ -104,9 +106,9 @@ bool LLLoperations::Lovasz(MutableMatrixXXX *lambda,
 }
 
 void LLLoperations::REDI(int k, int ell,
-			 MutableMatrixXXX *A,
-			 MutableMatrixXXX *Achange, // can be NULL
-			 MutableMatrixXXX *lambda)
+			 MutableMatrix *A,
+			 MutableMatrix *Achange, // can be NULL
+			 MutableMatrix *lambda)
 {
   // set q = ...
   // negate q.
@@ -138,9 +140,9 @@ void LLLoperations::REDI(int k, int ell,
 }
 
 void LLLoperations::SWAPI(int k, int kmax,
-			  MutableMatrixXXX *A,
-			  MutableMatrixXXX *Achange, // can be NULL
-			  MutableMatrixXXX *lambda)
+			  MutableMatrix *A,
+			  MutableMatrix *Achange, // can be NULL
+			  MutableMatrix *lambda)
 {
   int i;
   mpz_t a,b,B,C1,C2,D,D1,lam;
@@ -233,9 +235,9 @@ void LLLoperations::SWAPI(int k, int kmax,
   mpz_clear(lam);
 }
 
-int LLLoperations::doLLL(MutableMatrixXXX *A,
-			 MutableMatrixXXX *Achange,
-			 MutableMatrixXXX *LLLstate,
+int LLLoperations::doLLL(MutableMatrix *A,
+			 MutableMatrix *Achange,
+			 MutableMatrix *LLLstate,
 			 int nsteps)
 {
   int n = A->n_cols();
@@ -341,11 +343,11 @@ int LLLoperations::doLLL(MutableMatrixXXX *A,
   return COMP_INTERRUPTED;
 }
 
-bool LLLoperations::LLL(MutableMatrixXXX *A, 
-			MutableMatrixXXX *Achange, // can be NULL
+bool LLLoperations::LLL(MutableMatrix *A, 
+			MutableMatrix *Achange, // can be NULL
 			M2_Rational threshold)
 {
-  MutableMatrixXXX *LLLstate;
+  MutableMatrix *LLLstate;
   if (!initializeLLL(A,threshold,LLLstate))
     return false;
   int ret = doLLL(A,Achange,LLLstate);

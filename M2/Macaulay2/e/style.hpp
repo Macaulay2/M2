@@ -9,12 +9,10 @@
 #include <assert.h>
 #include <limits.h>
 #include <string.h>
-
+#include <algorithm>
 #include <gmp.h>
 
-// 'swap' is defined here, perhaps in namespace std
-#include <algorithm>
-//using namespace std;
+#define VECTOR(T) std::vector< T, gc_allocator< T > >
 
 extern "C" char newline[];
 
@@ -26,16 +24,6 @@ typedef unsigned int unsigned_int;
 typedef int *ptr_to_int;
 typedef unsigned int *ptr_to_unsigned_int;
 
-#if 0
-template <class T>
-inline const T &min(const T &a, const T &b)
-{ return (a<b ? a : b); }
-
-template <class T>
-inline const T &max(const T &a, const T &b)
-{ return (a>b ? a : b); }
-#endif
-
 #if defined(_WIN32)
 template <class T> 
 inline void swap(T &t1, T &t2)
@@ -46,16 +34,12 @@ inline void swap(T &t1, T &t2)
 }
 #endif
 
-// Mike, the following typedef is wrong on some machines.
-// typedef unsigned long int uint32;
 #include "targettypes.h"
 
 const int LT = -1;
 const int EQ = 0;
 const int GT = 1;
 const int INCOMPARABLE = 2;
-
-typedef enum {FIRST, LAST} direction;
 
 // Used for all of the heap types: polynomial, vector, resolution vectors.
 #define GEOHEAP_SIZE 15

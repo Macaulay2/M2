@@ -12,7 +12,7 @@ class FF_LUComputation
   // over a domain, using fraction free Gaussian elimination.
   
   const Ring *R;		// R should be a domain.
-  MutableMatrixXXX *M;
+  MutableMatrix *M;
   int *col_perm;
   bool *need_div;
   int pivot_col;
@@ -20,7 +20,7 @@ class FF_LUComputation
   ring_elem pivot;	
 
 private:
-  FF_LUComputation(MutableMatrixXXX *M);
+  FF_LUComputation(MutableMatrix *M);
   ~FF_LUComputation();
 
   bool choose_pivot_column(int lo, int hi, int &result);
@@ -42,7 +42,7 @@ private:
 
   M2_arrayint get_column_permutation();
 public:
-  static M2_arrayint_OrNull DO(MutableMatrixXXX *M);
+  static M2_arrayint_OrNull DO(MutableMatrix *M);
   // Replace M with its column echelon form.  If M has
   // column recording going on, then one obtains the whole
   // LU decomposition.

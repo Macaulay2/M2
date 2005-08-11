@@ -833,11 +833,11 @@ void SMat<CoeffRing>::delete_rows(long i, long j)
 template<typename CoeffRing>
 bool SMat<CoeffRing>::set_submatrix(M2_arrayint rows,
 				    M2_arrayint cols,
-				    const MutableMatrixXXX *M)
+				    const MutableMatrix *M)
 {
 #warning "write set_submatrix"
   return false;
-  MutableMatrixXXX::iterator *i = M->begin();
+  MutableMatrix::iterator *i = M->begin();
 #if 0
   long ncols = M->n_cols();
   for (long c=0; c<ncols; c++)
@@ -918,14 +918,14 @@ SMat<CoeffRing> * SMat<CoeffRing>::submatrix(M2_arrayint cols) const
 }
 
 template <typename CoeffRing>
-bool SMat<CoeffRing>::is_equal(const MutableMatrixXXX *B) const
+bool SMat<CoeffRing>::is_equal(const MutableMatrix *B) const
 {
 #warning "to be written"
   return 0;
 }
 
 template <typename CoeffRing>
-SMat<CoeffRing> * SMat<CoeffRing>::add(const MutableMatrixXXX *B) const
+SMat<CoeffRing> * SMat<CoeffRing>::add(const MutableMatrix *B) const
   // return this + B.  return NULL of sizes or types do not match.
   // note: can add a sparse + dense
   //       can add a matrix over RR and one over CC and/or one over ZZ.
@@ -935,7 +935,7 @@ SMat<CoeffRing> * SMat<CoeffRing>::add(const MutableMatrixXXX *B) const
 }
 
 template <typename CoeffRing>
-SMat<CoeffRing> * SMat<CoeffRing>::subtract(const MutableMatrixXXX *B) const
+SMat<CoeffRing> * SMat<CoeffRing>::subtract(const MutableMatrix *B) const
   // return this - B.  return NULL of sizes or types do not match.
   // note: can subtract a sparse + dense
   //       can subtract a matrix over RR and one over CC and/or one over ZZ.
@@ -945,7 +945,7 @@ SMat<CoeffRing> * SMat<CoeffRing>::subtract(const MutableMatrixXXX *B) const
 }
 
 template <typename CoeffRing>
-SMat<CoeffRing> * SMat<CoeffRing>::mult(const MutableMatrixXXX *B) const
+SMat<CoeffRing> * SMat<CoeffRing>::mult(const MutableMatrix *B) const
   // return this * B.  return NULL of sizes or types do not match.
   // note: can mult a sparse + dense
   //       can mult a matrix over RR and one over CC and/or one over ZZ.

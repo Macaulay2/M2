@@ -117,8 +117,10 @@ getMinimalPoly(Ideal,RingElement,RingElement) := (I,u,x) -> (
      ux := u*x;
      elimvars := select(gens ring I, y -> ux % y != 0);
      J := eliminate(I,elimvars);
-     error "getminpoly";
-     J_0
+     d := min apply(numgens J, i -> degree(J_i, x));
+     --error "getminpoly";
+     fs := select(1, flatten entries gens J, f -> degree(f,x) === d);
+     fs#0
      )
 
 getSeparablePart = method()
@@ -141,8 +143,9 @@ radical00(Ideal,RingElement) := (I,u) -> (
 	       f := getMinimalPoly(I,u,x);
 	       g := getSeparablePart(f,u,x);
 	       if f != g then newelems = append(newelems,g)));
-     error "in radical00";
-     I + ideal newelems
+     --error "in radical00";
+     if #newelems > 0 then I = I + ideal newelems;
+     I
      )
 
 rad = method()
@@ -160,8 +163,9 @@ rad Ideal := (I) -> (
 	  radI = intersect(radI,radJ);
 	  h = flatt(I,u);
 	  h = (intersect values h)_0;
-	  h = product factors h;
-	  error "what h is being added?";
+	  if h != 1 then 
+	      h = product factors h;
+	  --error "what h is being added?";
 	  I = I + ideal(h);
 	  );
      radI

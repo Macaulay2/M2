@@ -93,7 +93,7 @@ void dhermite(HermiteComputation *G)
   emit(o.str());
 }
 
-void dmutablemat(MutableMatrixXXX *m)
+void dmutablemat(MutableMatrix *m)
 {
   buffer o;
   m->text_out(o);
