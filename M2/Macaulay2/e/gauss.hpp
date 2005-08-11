@@ -87,25 +87,6 @@ public:
   virtual void text_out(buffer &o);
   // This displays statistical information, and depends on the
   // gbTrace value.
-
-#if 0
-  // performing the computation
-
-  int calc(const int *deg, const intarray &stop);  // 'deg' is ignored here
-
-  // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
-  Matrix *min_gens_matrix();
-  Matrix *initial_matrix(int n);
-  Matrix *gb_matrix();
-  Matrix *change_matrix();
-  Matrix *syz_matrix();
-  void stats() const;
-
-  Matrix *reduce(const Matrix *m, Matrix *&lift);
-
-  virtual int contains(const Matrix *m);
-  virtual bool is_equal(const gb_comp *q);
-#endif
 };
 #endif
 

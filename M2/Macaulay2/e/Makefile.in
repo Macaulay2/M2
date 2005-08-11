@@ -115,7 +115,6 @@ INTERFACE = \
 	frac \
 	freemod \
 	gb \
-	gb_comp \
 	gbinhom \
 	gbring \
 	gb2 \
@@ -136,7 +135,6 @@ INTERFACE = \
 	relem \
 	ring \
 	ringmap \
-	sagbi \
 	schur \
 	skew \
 	skewpoly \
@@ -148,6 +146,7 @@ INTERFACE = \
 	z_mod_p
 
 STILLTOCOMPILE = \
+	sagbi \
 	newspair \
 	weylfree \
 	Eschreyer \
