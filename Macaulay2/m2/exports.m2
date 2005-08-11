@@ -492,6 +492,7 @@ export (
 	symbol ascii,
 	symbol asin,
 	symbol ass,
+        symbol associatedPrimes,
 	symbol assert,
 	symbol assign,
 	symbol atEndOfFile,

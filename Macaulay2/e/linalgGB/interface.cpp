@@ -242,7 +242,7 @@ void spair_testing(MonomialSet *H,
 #endif
 
 template<typename CoeffRing>
-MutableMatrixXXX * M2Interface<CoeffRing>::to_M2_MutableMatrix(  
+MutableMatrix * M2Interface<CoeffRing>::to_M2_MutableMatrix(  
     const RingType *K,
     coefficient_matrix<COEFF_TYPE> *mat)
 {

@@ -42,7 +42,7 @@ public:
 			      gb_array &polys, 
 			      const FreeModule *F);
 
-  static MutableMatrixXXX *to_M2_MutableMatrix(const RingType *K,
+  static MutableMatrix *to_M2_MutableMatrix(const RingType *K,
 					       coefficient_matrix<COEFF_TYPE> *mat);
 
   // This will change to SMat:

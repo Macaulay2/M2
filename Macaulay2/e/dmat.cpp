@@ -524,9 +524,9 @@ void DMat<CoeffRing>::delete_rows(long i, long j)
 template<typename CoeffRing>
 bool DMat<CoeffRing>::set_submatrix(M2_arrayint rows, 
 				    M2_arrayint cols, 
-				    const MutableMatrixXXX *M)
+				    const MutableMatrix *M)
 {
-  MutableMatrixXXX::iterator *i = M->begin();
+  MutableMatrix::iterator *i = M->begin();
 #warning "set_submatrix"
 #if 0
   elem *first = array_ + first_row + nrows_ * first_col;
@@ -585,12 +585,12 @@ DMat<CoeffRing> * DMat<CoeffRing>::submatrix(M2_arrayint cols) const
 }
 
 template <typename CoeffRing>
-bool DMat<CoeffRing>::is_equal(const MutableMatrixXXX *B) const
+bool DMat<CoeffRing>::is_equal(const MutableMatrix *B) const
 {
   if (B->get_ring() != get_ring()) return false;
   if (B->n_rows() != n_rows()) return false;
   if (B->n_cols() != n_cols()) return false;
-  MutableMatrixXXX::iterator *i = B->begin();
+  MutableMatrix::iterator *i = B->begin();
   iterator j(this);
 
   for (long c=0; c<n_cols(); c++)
@@ -621,7 +621,7 @@ bool DMat<CoeffRing>::is_equal(const MutableMatrixXXX *B) const
 }
 
 template <typename CoeffRing>
-DMat<CoeffRing> * DMat<CoeffRing>::add(const MutableMatrixXXX *B) const
+DMat<CoeffRing> * DMat<CoeffRing>::add(const MutableMatrix *B) const
   // return this + B.  return NULL of sizes or types do not match.
   // note: can add a sparse + dense
   //       can add a matrix over RR and one over CC and/or one over ZZ.
@@ -635,7 +635,7 @@ DMat<CoeffRing> * DMat<CoeffRing>::add(const MutableMatrixXXX *B) const
 }
 
 template <typename CoeffRing>
-DMat<CoeffRing> * DMat<CoeffRing>::subtract(const MutableMatrixXXX *B) const
+DMat<CoeffRing> * DMat<CoeffRing>::subtract(const MutableMatrix *B) const
   // return this - B.  return NULL of sizes or types do not match.
   // note: can subtract a sparse + dense
   //       can subtract a matrix over RR and one over CC and/or one over ZZ.
@@ -645,7 +645,7 @@ DMat<CoeffRing> * DMat<CoeffRing>::subtract(const MutableMatrixXXX *B) const
 }
 
 template <typename CoeffRing>
-DMat<CoeffRing> * DMat<CoeffRing>::mult(const MutableMatrixXXX *B) const
+DMat<CoeffRing> * DMat<CoeffRing>::mult(const MutableMatrix *B) const
   // return this * B.  return NULL of sizes or types do not match.
   // note: can mult a sparse + dense
   //       can mult a matrix over RR and one over CC and/or one over ZZ.

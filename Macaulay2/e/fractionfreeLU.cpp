@@ -7,7 +7,7 @@
 // Fraction free gaussian elimination //
 ////////////////////////////////////////
 
-FF_LUComputation::FF_LUComputation(MutableMatrixXXX *M0)
+FF_LUComputation::FF_LUComputation(MutableMatrix *M0)
   : R(M0->get_ring()),
     M(M0),
     col_perm(0),
@@ -119,7 +119,7 @@ M2_arrayint FF_LUComputation::get_column_permutation()
   return result;
 }
 
-M2_arrayint_OrNull FF_LUComputation::DO(MutableMatrixXXX *M)
+M2_arrayint_OrNull FF_LUComputation::DO(MutableMatrix *M)
 {
   FF_LUComputation F(M);
   if (!F.calc()) return NULL;

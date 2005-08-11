@@ -4,36 +4,34 @@
 #define _LLL_hpp_
 
 #include "mat.hpp"
-#include "comp.hpp"
-
 #include "relem.hpp"
 
 class LLLoperations
 {
   static bool checkThreshold(ring_elem num, ring_elem den);
 
-  static bool Lovasz(MutableMatrixXXX *lambda,
+  static bool Lovasz(MutableMatrix *lambda,
 		     int k,
 		     ring_elem alphaTop,
 		     ring_elem alphaBottom);
 
   static void REDI(int k, int ell,
-		   MutableMatrixXXX *A,
-		   MutableMatrixXXX *Achange, // if non-NULL, should have same ncols as A
-		   MutableMatrixXXX *lambda);
+		   MutableMatrix *A,
+		   MutableMatrix *Achange, // if non-NULL, should have same ncols as A
+		   MutableMatrix *lambda);
   static void SWAPI(int k, int kmax,
-		    MutableMatrixXXX *A,
-		    MutableMatrixXXX *Achange, // if non-NULL, should have same ncols as A
-		    MutableMatrixXXX *lambda);
+		    MutableMatrix *A,
+		    MutableMatrix *Achange, // if non-NULL, should have same ncols as A
+		    MutableMatrix *lambda);
 
-  static bool initializeLLL(const MutableMatrixXXX *A,
+  static bool initializeLLL(const MutableMatrix *A,
 			    M2_Rational threshold,
-			    MutableMatrixXXX *& LLLstate);
+			    MutableMatrix *& LLLstate);
   // Returns false if there is an error, and sets gError.
 
-  static int doLLL(MutableMatrixXXX *A,
-		   MutableMatrixXXX *Achange,
-		   MutableMatrixXXX *LLLstate,
+  static int doLLL(MutableMatrix *A,
+		   MutableMatrix *Achange,
+		   MutableMatrix *LLLstate,
 		   int nsteps=-1);
   // Return values: COMP_DONE, COMP_DONE_STEPS, COMP_INTERRUPTED
 public:
@@ -43,8 +41,8 @@ public:
   ///////////////////////////
   
   // This routine return false if the computation is interrupted
-  static bool LLL(MutableMatrixXXX *M, 
-		  MutableMatrixXXX *U,
+  static bool LLL(MutableMatrix *M, 
+		  MutableMatrix *U,
 		  M2_Rational threshold);
   // M is replaced with the LLL basis. false is returned if there was an 
   // error or an interrupt.

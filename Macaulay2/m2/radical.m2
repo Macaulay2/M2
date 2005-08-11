@@ -144,7 +144,9 @@ radical1 := (I) -> (
         else intersect(J, radical1 I1))
 
 radical Ideal := Ideal => options -> (I) -> (
-     if class options.CompleteIntersection === Ideal then
+     if isMonomialIdeal I then
+          radical monomialIdeal I
+     else if class options.CompleteIntersection === Ideal then
           unmixedradical2(I,options.CompleteIntersection)
      else if options.Unmixed then 
           unmixedradical I
