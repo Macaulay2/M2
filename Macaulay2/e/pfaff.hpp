@@ -3,14 +3,13 @@
 #ifndef _pfaff_hh_
 #define _pfaff_hh_
 
-#include "comp.hpp"
 #include "matrix.hpp"
 #include "comb.hpp"
 #include "matrixcon.hpp"
 
 class MatrixConstructor;
 
-class PfaffianComputation : public computation
+class PfaffianComputation : public our_new_delete
 {
   const Ring *R;
   const Matrix *M;

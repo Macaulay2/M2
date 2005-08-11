@@ -2,6 +2,9 @@
 
 #include "pfaff.hpp"
 
+extern char system_interruptedFlag;
+extern int gbTrace;
+
 PfaffianComputation::PfaffianComputation(const Matrix *M0, int p0)
   : R(M0->get_ring()),
     M(M0),

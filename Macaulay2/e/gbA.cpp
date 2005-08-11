@@ -1,6 +1,5 @@
 /* Copyright 2003, Michael E. Stillman */
 
-#include "comp.hpp"
 #include "gbA.hpp"
 #include "text_io.hpp"
 #include <functional>

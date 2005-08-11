@@ -88,7 +88,7 @@ INTERFACE = \
 	reducedgb-field-local \
 	reducedgb-ZZ \
 	matrixcon \
-	computation \
+	comp \
 	comp_gb \
 	comp_gb_proxy \
 	comp_gb_declared \
@@ -178,8 +178,7 @@ COMMANDS_REDO = \
 	x_gb \
 	x_borel \
 
-NAMES_H = comp \
-	ringelem \
+NAMES_H = ringelem \
 	style \
 	newdelete \
 	hash \

@@ -3,7 +3,7 @@
 #ifndef _comp_res_hpp_
 #define _comp_res_hpp_
 
-#include "computation.hpp"
+#include "comp.hpp"
 class buffer;
 
 class ResolutionComputation : public Computation

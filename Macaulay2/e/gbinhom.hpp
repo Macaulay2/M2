@@ -5,7 +5,6 @@
 #include "relem.hpp"
 #include "matrix.hpp"
 #include "polyring.hpp"
-#include "comp.hpp"
 #include "comp_gb.hpp"
 #include "reducedgb.hpp"
 

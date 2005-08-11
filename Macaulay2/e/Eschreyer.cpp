@@ -2,7 +2,6 @@
 
 #include "Eschreyer.hpp"
 #include "matrix.hpp"
-#include "comp.hpp"
 #include "text_io.hpp"
 #include "gbring.hpp"
 #include "matrixcon.hpp"

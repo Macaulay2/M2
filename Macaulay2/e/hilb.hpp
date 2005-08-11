@@ -5,7 +5,6 @@
 
 // Computation of Hilbert functions via Bigatti's (et al) algorithm.
 
-#include "comp.hpp"
 #include "monideal.hpp"
 #include "matrix.hpp"
 #include "polyring.hpp"
