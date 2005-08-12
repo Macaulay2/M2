@@ -124,7 +124,7 @@ newSchur := (R,M,p) -> (
 schurRing = method ()
 schurRing(Symbol,ZZ) := SchurRing => (p,n) -> (
      R := ZZ;
-     x := symbol x;
+     x := local x;
      prune := v -> drop(v, - # select(v,i -> i === 0));
      M := monoid[x_1 .. x_n];
      vec := apply(n, i -> apply(n, j -> if j<=i then 1 else 0));
@@ -132,12 +132,11 @@ schurRing(Symbol,ZZ) := SchurRing => (p,n) -> (
      S := newSchur(R,M,p);
      dim S := s -> rawSchurDimension raw s;
      Mgens := M.generators;
-     methodTable#p = (p,a) -> (
+     S.use = S -> methodTable#p = (p,a) -> (
 	  m := schur2monom(a,Mgens);
 	  new S from rawTerm(S.RawRing, raw 1, m.RawMonomial));
+     S.use S;
      S)
-
-
 
 beginDocumentation()
 

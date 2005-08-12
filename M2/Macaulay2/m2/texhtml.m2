@@ -2,7 +2,7 @@
 
 html TEX := str -> (
      local oldstr;
-     str = str#0;
+     str = concatenate str;
      origstr := str;
      abbrev := () -> format if #origstr < 20 then origstr else substring(0,20,origstr) | "...";
      f := (p,r) -> (

@@ -49,6 +49,8 @@ IndexedVariable .. IndexedVariable := Sequence => (v,w) -> (
      apply(v#1 .. w#1, s -> v#0_s))	  
 
 baseName IndexedVariable := identity
+baseName Subscript := x -> new IndexedVariable from { baseName x#0 , x#1 }
+baseName Holder := x -> baseName x#0
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

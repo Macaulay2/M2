@@ -14,11 +14,11 @@ document {
 	  },
      Consequences => {
 	  },     
-     "The determinant of a skew symmetric matrix ", TT "N", ", that is ", 
-     TT "transpose(N) + N == 0", " is always a perfect square whose 
-     squareroot is called the Pfaffian of ", TT "N.",
+     "The determinant of a skew-symmetric matrix ", TT "N", ", i.e., a matrix for which ", 
+     TT "transpose N + N == 0", ", is always a perfect square whose 
+     square root is called the Pfaffian of ", TT "N", ".",
      EXAMPLE {
-	  "R = QQ[a..d];",
+	  "R = QQ[a..f];",
       	  "M = genericSkewMatrix(R,a,4)",
       	  "pfaffians(2,M)",
       	  "pfaffians(4,M)"

@@ -97,7 +97,7 @@ document {
      evaluate ", TT "x", " and ", TT "y", " as long as ", TT "c", " is
      true, letting the variable ", TT "i", " be assigned the values
      ", TT "a", ", ", TT "a+1", ", ", TT "a+2", ", ..., ", TT "b", ",
-     returning a list of the values of ", TT "x", " encountered.",
+     returning a list of the values of ", TT "x", " encountered that are non-null.",
      PARA,
      "Each of the clauses ", TT "from a", ", ", TT "to b", ",
      ", TT "when c", ", ", TT "list x", ", and ", TT "do y", " is optional,
@@ -128,7 +128,7 @@ document {
      BR,NOINDENT,
      TT "while p list x", " repeatedly evaluates ", TT "x", " as long 
      as the value of ", TT "p", " remains ", TO "true", ", returning a
-     list of the values of ", TT "x", " encountered.",
+     list of the values of ", TT "x", " encountered that are non-null.",
      BR,NOINDENT,
      TT "while p list x do z", " repeatedly evaluates ", TT "x", " 
      and ", TT "z", " as long as the value of ", TT "p", " remains

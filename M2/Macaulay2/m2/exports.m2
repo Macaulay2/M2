@@ -1096,6 +1096,7 @@ export (
 )
 
 exportMutable (
+	symbol p,
         symbol i,
 	symbol S,
 	symbol T,

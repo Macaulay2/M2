@@ -6,13 +6,11 @@ positions(VisibleList,Function) := (v,f) -> (
      )
 
 position = method()
-position(VisibleList,Function) := (v,f) -> (
-     ret := null;
-     select(
-	  1, 
-	  apply(#v, i -> (i,v#i)), 
-	  (i,x) -> f(x) and (ret = i; true));
-     ret)
+position(VisibleList,Function) := (v,f) -> for i to #v-1 do if f v#i then return i
+position(VisibleList,VisibleList,Function) := (v,w,f) -> (
+     if #v != #w then error "expected lists of the same length";
+     for i to #v-1 do if f(v#i,w#i) then return i
+     )
 
 delete = (x,v) -> select(v, i -> i =!= x)
 
