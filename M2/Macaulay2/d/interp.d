@@ -100,7 +100,8 @@ readeval4(file:TokenFile,printout:bool,stopIfError:bool,dictionary:Dictionary,re
 			 lastvalue = eval(f);	  -- run it
 			 if lastvalue == endInput then return nullE;
 			 when lastvalue is err:Error do (
-			      if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage || err.message == throwMessage then (
+			      if err.message == returnMessage || err.message == continueMessage || err.message == continueMessageWithArg 
+			      || err.message == breakMessage || err.message == throwMessage then (
 				   if stopIfBreakReturnContinue then return lastvalue;
 				   printErrorMessage(err.position,"warning: unhandled " + err.message);
 				   );
@@ -222,7 +223,8 @@ loadprint(filename:string,stopIfError:bool,dc:DictionaryClosure):Expr := (
 		    )
 	       else close(file));
 	  when r is err:Error do (
-	       if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage then err.value else r
+	       if err.message == returnMessage || err.message == continueMessage || err.message == continueMessageWithArg
+	       || err.message == breakMessage then err.value else r
 	       )
 	  else (
 	       if t == ERROR
@@ -235,7 +237,8 @@ load(filename:string):Expr := (
 	  r := readeval(file,false);
 	  t := if !(filename==="-") then close(file) else 0;
 	  when r is err:Error do (
-	       if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage then err.value else r
+	       if err.message == returnMessage || err.message == continueMessage || err.message == continueMessageWithArg
+	       || err.message == breakMessage then err.value else r
 	       )
 	  else (
 	       if t == ERROR
@@ -364,7 +367,8 @@ value(e:Expr):Expr := (
 	  r := readeval(stringTokenFile("a string", s+newline),true);
 	  when r 
 	  is err:Error do (
-	       if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage then err.value 
+	       if err.message == returnMessage || err.message == continueMessage || err.message == continueMessageWithArg 
+	       || err.message == breakMessage then err.value 
 	       else r)
 	  else r)
      else WrongArg(1,"a string, a symbol, or pseudocode"));
@@ -395,7 +399,8 @@ capture(e:Expr):Expr := (
 	  previousLineNumber = -1;
 	  when r 
 	  is err:Error do (
-	       if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage then err.value 
+	       if err.message == returnMessage || err.message == continueMessage || err.message == continueMessageWithArg
+	       || err.message == breakMessage then err.value 
 	       else r)
 	  else Expr(out))
      else WrongArg(1,"a string"));

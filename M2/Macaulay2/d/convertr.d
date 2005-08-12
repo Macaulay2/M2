@@ -160,7 +160,7 @@ export convert(e:ParseTree):Code := (
 	  )
      is w:For do Code(
 	  forCode(
-	       convert(w.fromClause), convert(w.toClause),
+	       convert(w.inClause), convert(w.fromClause), convert(w.toClause),
 	       convert(w.whenClause), convert(w.listClause), 
 	       convert(w.doClause),
 	       w.dictionary.frameID,

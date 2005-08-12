@@ -24,12 +24,11 @@ Schubert(ZZ, ZZ, List) := Ideal => (kk,nn,sigma) -> (
      R := ZZ M;
      vr := s -> (new IndexedVariable from {p,toSequence s})_R;
      T := flatten table(L, L, (i,j) -> {i,j});
-     nonStandard := select( 
-	  apply(T, t ->
-    	       if t#0 < t#1 then (
-	  	    i := position(t#0,t#1,(a,b) -> a>b);
-          	    if i =!= null then {t#0, t#1, i} ) ),
-     	  j -> j =!= null);
+     nonStandard := for t in T list (
+	  if t#0 < t#1 then (
+	       i := position(t#0,t#1,(a,b) -> a>b);
+	       if i =!= null then {t#0, t#1, i} else continue)
+	  else continue);
      shuffles := apply(nonStandard, t-> (
      	       snake := t#1_{0..t#2}|t#0_{t#2..k-1};
      	       apply(subsets(snake,t#2+1), s1-> (

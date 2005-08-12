@@ -16,8 +16,15 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
-The 'list' option to the 'for' and 'while' control keywords have
-been changed so that only non-null values are collected into a list.
+New optional clause in "for ..." loops:
+  "for i in x list ... do ..." iterates the body of the loop once for
+  each element in the list or sequence x, returning a list
+
+The behaviour of "continue" in a "while ... list ..." or "for ... list
+..." has been changed.  If there is an argument, as in "continue x",
+then, as before, the value of x is added to the list.  But if there is
+no argument, then no value is added to the list.  In either case,
+execution continues with the next iteration of the loop.
 
 'chainComplex' -- new form, for a ring R:
     chainComplex R

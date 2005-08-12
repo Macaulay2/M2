@@ -86,6 +86,7 @@ export ofW := dummyWord;		  -- filled in by binding.d
 export doW := dummyWord;		  -- filled in by binding.d
 export listW := dummyWord;		  -- filled in by binding.d
 export fromW := dummyWord;		  -- filled in by binding.d
+export inW := dummyWord;		  -- filled in by binding.d
 export toW := dummyWord;		  -- filled in by binding.d
 export debug := false;
 export tracefile := dummyfile;
@@ -308,6 +309,7 @@ export unaryfor(
      forToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      var := parse(file,forToken.word.parse.unaryStrength,false);
      if var == errorTree then return errorTree;
+     inClause := dummyTree;
      fromClause := dummyTree;
      toClause := dummyTree;
      whenClause := dummyTree;
@@ -315,15 +317,22 @@ export unaryfor(
      doClause := dummyTree;
      token2 := gettoken(file,false);
      if token2 == errorToken then return errorTree;
-     if token2.word == fromW then (
-	  fromClause = parse(file,fromW.parse.unaryStrength,false);
-	  if fromClause == errorTree then return errorTree;
-     	  token2 = gettoken(file,false);
-	  );
-     if token2.word == toW then (
-	  toClause = parse(file,toW.parse.unaryStrength,false);
-	  if toClause == errorTree then return errorTree;
-     	  token2 = gettoken(file,false);
+     if token2.word == inW then (
+	  inClause = parse(file,inW.parse.unaryStrength,false);
+	  if inClause == errorTree then return errorTree;
+	  token2 = gettoken(file,false);
+	  )
+     else (
+	  if token2.word == fromW then (
+	       fromClause = parse(file,fromW.parse.unaryStrength,false);
+	       if fromClause == errorTree then return errorTree;
+	       token2 = gettoken(file,false);
+	       );
+	  if token2.word == toW then (
+	       toClause = parse(file,toW.parse.unaryStrength,false);
+	       if toClause == errorTree then return errorTree;
+	       token2 = gettoken(file,false);
+	       );
 	  );
      if token2.word == whenW then (
 	  whenClause = parse(file,whenW.parse.unaryStrength,false);
@@ -333,7 +342,7 @@ export unaryfor(
      if token2.word == doW then (
 	  doClause = parse(file,doW.parse.unaryStrength,obeylines);
 	  if doClause == errorTree then return errorTree;
-	  r := ParseTree(For( forToken, var, fromClause, toClause, whenClause, listClause,doClause, dummyDictionary ));
+	  r := ParseTree(For( forToken, var, inClause, fromClause, toClause, whenClause, listClause,doClause, dummyDictionary ));
 	  accumulate(r,file,prec,obeylines))
      else if token2.word == listW then (
 	  listClause = parse(file,listW.parse.unaryStrength,obeylines);
@@ -343,7 +352,7 @@ export unaryfor(
 	       doClause = parse(file,doW.parse.unaryStrength,obeylines);
 	       if doClause == errorTree then return errorTree;
 	       );
-	  r := ParseTree(For(forToken, var, fromClause, toClause,whenClause, listClause, doClause, dummyDictionary));
+	  r := ParseTree(For(forToken, var, inClause, fromClause, toClause,whenClause, listClause, doClause, dummyDictionary));
 	  accumulate(r,file,prec,obeylines))
      else (
 	  printErrorMessage(token2,"syntax error : expected 'do' or 'list'");

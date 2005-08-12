@@ -203,9 +203,14 @@ evalWhileListCode(c:whileListCode):Expr := (
 	  do return if err.message == breakMessage then err.value else p
 	  else if p == True then (
 	       b := eval(c.listClause);
+	       useb := true;
 	       when b is err:Error 
-	       do return if err.message == breakMessage then err.value else b 
-	       else if b != nullE then (
+	       do if err.message == continueMessage then useb = false
+	       else if err.message == continueMessageWithArg then b = err.value
+	       else if err.message == breakMessage then return err.value
+	       else return b
+	       else nothing;
+	       if useb then (
 		    if i == n then (
 			 n = 2*n;
 			 r = new Sequence len n do (
@@ -232,9 +237,14 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 	  when p is err:Error do return if err.message == breakMessage then err.value else p
 	  else if p == True then (
 	       b := eval(c.listClause);
+	       useb := true;
 	       when b is err:Error
-	       do return if err.message == breakMessage then err.value else b
-	       else if b != nullE then (
+	       do if err.message == continueMessage then useb = false
+	       else if err.message == continueMessageWithArg then b = err.value
+	       else if err.message == breakMessage then return err.value
+	       else return b
+	       else nothing;
+	       if useb then (
 		    if i == length(r) then (
 			 r = new Sequence len 2*length(r) do (
 			      foreach x in r do provide x;
@@ -260,24 +270,43 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 evalForCode(c:forCode):Expr := (
      r := if c.listClause == dummyCode then emptySequence else new Sequence len 1 do provide nullE;
      i := 0;				    -- index in r
-     j := 0;				    -- the value of the loop variable
+     j := 0;				    -- the value of the loop variable if it's an integer loop, else the index in the list if it's "for i in w ..."
+     w := emptySequence;				    -- the list x when it's "for i in w ..."
      n := 0;				    -- the upper bound on j, if there is a toClause.
-     if c.fromClause != dummyCode then (
-	  fromvalue := eval(c.fromClause);
-	  when fromvalue is f:Integer do (
-	       if isInt(f) then j = toInt(f)
-	       else return printErrorMessageE(c.fromClause,"expected a small integer"))
-	  else return printErrorMessageE(c.fromClause,"expected an integer"));
-     if c.toClause != dummyCode then (
-	  tovalue := eval(c.toClause);
-	  when tovalue is f:Integer do (
-	       if isInt(f) then n = toInt(f)
-	       else return printErrorMessageE(c.toClause,"expected a small integer"))
-	  else return printErrorMessageE(c.toClause,"expected an integer"));
+     listLoop := false;
+     toLimit := false;
+     if c.inClause != dummyCode then (
+     	  listLoop = true;
+	  invalue := eval(c.inClause);
+	  when invalue is Error do return invalue
+	  is ww:Sequence do w = ww
+	  is vv:List do w = vv.v
+	  else return printErrorMessageE(c.inClause,"expected a list or sequence");	  
+	  )
+     else (
+	  if c.fromClause != dummyCode then (
+	       fromvalue := eval(c.fromClause);
+	       when fromvalue 
+	       is Error do return fromvalue
+	       is f:Integer do (
+		    if isInt(f) then j = toInt(f)
+		    else return printErrorMessageE(c.fromClause,"expected a small integer"))
+	       else return printErrorMessageE(c.fromClause,"expected an integer"));
+	  if c.toClause != dummyCode then (
+	       toLimit = true;
+	       tovalue := eval(c.toClause);
+	       when tovalue 
+	       is Error do return tovalue
+	       is f:Integer do (
+		    if isInt(f) then n = toInt(f)
+		    else return printErrorMessageE(c.toClause,"expected a small integer"))
+	       else return printErrorMessageE(c.toClause,"expected an integer"));
+	  );
      localFrame = Frame(localFrame,c.frameID,c.framesize,false,new Sequence len c.framesize do provide nullE);
      while true do (
-	  if c.toClause != dummyCode && j > n then break;
-	  localFrame.values.0 = toInteger(j);		    -- should be the frame spot for the loop var!
+	  if toLimit && j > n then break;
+	  if listLoop && j >= length(w) then break;
+	  localFrame.values.0 = if listLoop then w.j else Expr(toInteger(j));		    -- should be the frame spot for the loop var
 	  j = j+1;
 	  if c.whenClause != dummyCode then (
 	       p := eval(c.whenClause);
@@ -290,12 +319,17 @@ evalForCode(c:forCode):Expr := (
 		    return printErrorMessageE(c.whenClause,"expected true or false")));
 	  if c.listClause != dummyCode then (
 	       b := eval(c.listClause);
-	       when b is err:Error do (
-		    if err.message == continueMessage then b = err.value
-		    else (
-			 localFrame = localFrame.outerFrame;
-			 return if err.message == breakMessage then err.value else b))
-	       else if b != nullE then (
+	       useb := true;
+	       when b is err:Error
+	       do if err.message == continueMessage then useb = false
+	       else if err.message == continueMessageWithArg then b = err.value
+	       else (
+		    if err.message == breakMessage then b = err.value;
+		    localFrame = localFrame.outerFrame;
+		    return b;
+		    )
+	       else nothing;
+	       if useb then (
 		    if i == length(r) then (
 			 r = new Sequence len 2*length(r) do (
 			      foreach x in r do provide x;
@@ -306,7 +340,7 @@ evalForCode(c:forCode):Expr := (
 	  if c.doClause != dummyCode then (
 	       b := eval(c.doClause);
 	       when b is err:Error do (
-		    if err.message != continueMessage then (
+		    if err.message != continueMessage && err.message != continueMessageWithArg then (
 			 localFrame = localFrame.outerFrame;
 			 return if err.message == breakMessage then err.value else b))
 	       else nothing));
@@ -1189,7 +1223,9 @@ export eval(c:Code):Expr := (
 	       else (
 		    SuppressErrors = oldSuppressErrors;
 		    when p is err:Error do (
-			 if err.message == breakMessage || err.message == returnMessage || err.message == continueMessage || err.message == unwindMessage || err.message == throwMessage
+			 if err.message == breakMessage || err.message == returnMessage || 
+			 err.message == continueMessage || err.message == continueMessageWithArg || 
+			 err.message == unwindMessage || err.message == throwMessage
 			 then p
 			 else eval(c.elseClause))
 		    else if c.thenClause == NullCode then p else eval(c.thenClause)))
@@ -1273,7 +1309,8 @@ export eval(c:Code):Expr := (
 	       ));
      when e is err:Error do (
 	  if SuppressErrors then return e;
-	  if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage || err.message == unwindMessage || err.message == throwMessage
+	  if err.message == returnMessage || err.message == continueMessage || err.message == continueMessageWithArg || 
+	  err.message == breakMessage || err.message == unwindMessage || err.message == throwMessage
 	  then (
 	       if err.position == dummyPosition then err.position = codePosition(c); -- there will be no way to enter the debugger to figure out an unhandled break
 	       return e;
@@ -1294,7 +1331,7 @@ export eval(c:Code):Expr := (
 			 when z is z:Error do (
 			      if z.message == breakMessage then return buildErrorPacket(unwindMessage);
 			      if z.message == returnMessage then return z.value;
-			      if z.message == continueMessage then (
+			      if z.message == continueMessageWithArg || z.message == continueMessage then (
 				   when z.value is step:Integer do (
 					if isInt(step) then (
 					     steppingFlag = true;
@@ -1345,7 +1382,9 @@ setupop(throwS,throwFun);
 
 continueFun(a:Code):Expr := (
      e := if a == dummyCode then nullE else eval(a);
-     when e is Error do e else Expr(Error(dummyPosition,continueMessage,e,false,dummyFrame)));
+     when e is Error do e else Expr(Error(dummyPosition,
+	       if a == dummyCode then continueMessage else continueMessageWithArg,
+	       e,false,dummyFrame)));
 setupop(continueS,continueFun);
 
 breakFun(a:Code):Expr := (

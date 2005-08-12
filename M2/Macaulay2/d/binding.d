@@ -179,6 +179,7 @@ bump();
      narrow := prec;
      whenW = token("when"); makeKeyword(whenW);
      ofW = token("of"); makeKeyword(ofW);
+     inW = token("in"); makeKeyword(inW);
      fromW = token("from"); makeKeyword(fromW);
      toW = token("to"); makeKeyword(toW);
 -- input/output:
@@ -210,7 +211,6 @@ bump();
      export QuestionS := makeKeyword(binaryright("?"));
      export NotEqualEqualEqualS := makeKeyword(binaryright("=!="));
      export NotEqualS := makeKeyword(binaryright("!="));
-     export inS := makeKeyword(binaryrightword("in"));
 -- operations on terms that yield terms:
 bump();
      export BarBarS := makeKeyword(binaryleft("||"));
@@ -464,7 +464,7 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      LongLongDoubleArrowS, LongBiDoubleArrowS, DeductionS,
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS,
      StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
-     AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS, inS);
+     AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS);
 export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, PlusS, LessLessS, notS, DeductionS,
      LessS, GreaterS, LessEqualS, GreaterEqualS		    -- surprising to find these here...
      );
@@ -703,6 +703,7 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
      is w:For do (
 	  newdict := newLocalDictionary(dictionary);
 	  bindSingleParm(w.variable,newdict);
+	  bind(w.inClause,dictionary);
 	  bind(w.fromClause,dictionary);
 	  bind(w.toClause,dictionary);
 	  bind(w.whenClause,newdict);

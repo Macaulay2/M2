@@ -76,7 +76,7 @@ export Token := {		-- a word, as encountered in the input
 -- ParseTree
 
 export Adjacent := {lhs:ParseTree, rhs:ParseTree};
-export For := { forToken:Token, variable:ParseTree, fromClause:ParseTree, toClause:ParseTree, whenClause:ParseTree, listClause:ParseTree, doClause:ParseTree, 
+export For := { forToken:Token, variable:ParseTree, inClause:ParseTree, fromClause:ParseTree, toClause:ParseTree, whenClause:ParseTree, listClause:ParseTree, doClause:ParseTree, 
      dictionary:Dictionary 					    -- filled in later
      };
 export WhileDo := { whileToken:Token, predicate:ParseTree, dotoken:Token, doClause:ParseTree};
@@ -191,7 +191,7 @@ export listCode     := {y:CodeSequence, position:Position};
 export arrayCode    := {z:CodeSequence, position:Position};
 export semiCode     := {w:CodeSequence, position:Position};
 export multaryCode := {f:multop, args:CodeSequence, position:Position};
-export forCode := {fromClause:Code,toClause:Code, whenClause:Code,listClause:Code,doClause:Code, frameID:int, framesize:int, position:Position} ;
+export forCode := {inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, position:Position} ;
 export unop := function(Code):Expr;
 export binop := function(Code,Code):Expr;
 export binopExpr := function(Expr,Expr):Expr;
@@ -483,6 +483,7 @@ export parseWORD    := newParseinfo();
 
 export returnMessage := "return command";
 export continueMessage := "continue command";
+export continueMessageWithArg := "continue command with argument";
 export breakMessage := "break command";
 export throwMessage := "throw command";
 export unwindMessage := "unwind command";

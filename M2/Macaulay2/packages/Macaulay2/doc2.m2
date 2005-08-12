@@ -94,10 +94,21 @@ document {
      Key => "for",
      Headline => "loop control",
      TT "for i from a to b when c list x do y", " repeatedly 
-     evaluate ", TT "x", " and ", TT "y", " as long as ", TT "c", " is
+     evaluates ", TT "x", " and ", TT "y", " as long as ", TT "c", " is
      true, letting the variable ", TT "i", " be assigned the values
      ", TT "a", ", ", TT "a+1", ", ", TT "a+2", ", ..., ", TT "b", ",
-     returning a list of the values of ", TT "x", " encountered that are non-null.",
+     returning a list of the values of ", TT "x", " encountered.  If
+     ", TO "continue", " is executed by ", TT "x", " then execution of ", TT "x", "
+     is interrupted, no value is added to the list, and iteration of the loop
+     continues.  If ", TO "continue w", " is executed by ", TT "x", " then execution
+     of ", TT "x", " is interrupted, the value of ", TT "w", " is added to the list, 
+     and iteration of the loop continues.",
+     PARA,
+     TT "for i in w when c list x do y", " is similar, except it repeatedly 
+     evaluates ", TT "x", " and ", TT "y", " as long as ", TT "c", " is
+     true, letting the variable ", TT "i", " be assigned, as value, consecutive entries
+     of the basic list or sequence ", TT "w", ", returning a list of the values
+     of ", TT "x", " encountered.",
      PARA,
      "Each of the clauses ", TT "from a", ", ", TT "to b", ",
      ", TT "when c", ", ", TT "list x", ", and ", TT "do y", " is optional,
@@ -128,7 +139,12 @@ document {
      BR,NOINDENT,
      TT "while p list x", " repeatedly evaluates ", TT "x", " as long 
      as the value of ", TT "p", " remains ", TO "true", ", returning a
-     list of the values of ", TT "x", " encountered that are non-null.",
+     list of the values of ", TT "x", " encountered.  If
+     ", TO "continue", " is executed by ", TT "x", " then execution of ", TT "x", "
+     is interrupted, no value is added to the list, and iteration of the loop
+     continues.  If ", TO "continue w", " is executed by ", TT "x", " then execution
+     of ", TT "x", " is interrupted, the value of ", TT "w", " is added to the list, 
+     and iteration of the loop continues.",
      BR,NOINDENT,
      TT "while p list x do z", " repeatedly evaluates ", TT "x", " 
      and ", TT "z", " as long as the value of ", TT "p", " remains
