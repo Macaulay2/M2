@@ -129,7 +129,7 @@ gbvector * GBKernelComputation::make_syz_term(ring_elem c, const int *m, int com
 
 void GBKernelComputation::strip_gb(const GBMatrix *m)
 {
-  const std::vector<gbvector *, gc_allocator<gbvector *> > &g = m->elems;
+  const VECTOR(gbvector *) &g = m->elems;
   int i;
   int *components = newarray(int,F->rank());
   for (i=0; i<F->rank(); i++)

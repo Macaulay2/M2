@@ -51,7 +51,7 @@ class Monoid : public mutable_object
 
   M2_arrayint local_vars; // These are the variables which are < 1 in the monomial order.
 
-  std::vector<int, gc_allocator<int> > nslots_;
+  VECTOR(int) nslots_;
   
   
   void set_degrees();

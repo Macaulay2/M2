@@ -17,10 +17,10 @@ class ReducedGB_Field_Local : public ReducedGB_Field
 protected:
   MonomialTable *T1; // elements added in
   const GBWeight *wt;
-  std::vector<int, gc_allocator<int> > alpha; // for GB array
-  std::vector<int, gc_allocator<int> > ring_alpha; // for quotient ring elements
-  std::vector<int, gc_allocator<int> > newpol_alpha;
-  std::vector<POLY, gc_allocator<POLY> > newpol;
+  VECTOR(int) alpha; // for GB array
+  VECTOR(int) ring_alpha; // for quotient ring elements
+  VECTOR(int) newpol_alpha;
+  VECTOR(POLY) newpol;
 
   bool find_good_divisor(exponents h_exp,
 			 int h_comp,
@@ -45,7 +45,7 @@ protected:
 public:
   virtual ~ReducedGB_Field_Local();
 
-  virtual void minimalize(const std::vector<POLY, gc_allocator<POLY> > &polys0,
+  virtual void minimalize(const VECTOR(POLY) &polys0,
 			  bool auto_reduced); // last argument is ignored
 
   virtual void remainder(POLY &f, bool use_denom, ring_elem &denom);

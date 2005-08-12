@@ -196,7 +196,7 @@ vec Ring::sub_vector(const vecterm * v, M2_arrayint r) const
 {
   if (v == 0) return 0;
   // Largest component which occurs in v occurs first.
-  std::vector<int, gc_allocator<int> > trans(v->comp+1);
+  VECTOR(int) trans(v->comp+1);
   for (int i=0; i<v->comp; i++)
     trans.push_back(-1);
 

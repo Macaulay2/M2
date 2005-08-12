@@ -518,16 +518,6 @@ document {
      SeeAlso => "degree"
      }
 document {
-     Key => coefficients,
-     Headline => "the coefficients",
-     TT "coefficients({i,j,...},p)", " -- yields the coefficients and
-     monomials of the polynomial or matrix p with respect to variables 
-     numbered i, j, ... .",
-     BR,NOINDENT,
-     TT "coefficients(p)", " -- yields the coefficients and monomials of
-     the polynomial or matrix p with respect to all of the variables."
-     }
-document {
      Key => isIsomorphism,
      Headline => "whether a map is an isomorphism",
      TT "isIsomorphism f", " -- whether the map f of modules is an isomorphism."

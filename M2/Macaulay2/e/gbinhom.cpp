@@ -847,7 +847,7 @@ void GBinhom_comp::minimalize_gb()
 {
   if (minimal_gb_valid) return;
 
-  std::vector<POLY, gc_allocator<POLY> > polys;
+  VECTOR(POLY) polys;
 
   for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
     {

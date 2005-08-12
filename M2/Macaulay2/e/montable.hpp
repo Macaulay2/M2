@@ -8,6 +8,7 @@
 #include <gmp.h>
 
 #include "newdelete.hpp"
+#include "style.hpp"
 
 /* "Tricks" used in this implementation */
 /* 
@@ -36,10 +37,10 @@ public:
   /* Create a zero element table */
 
   static MonomialTable *make_minimal(int nvars, 
-				     const std::vector<exponents, gc_allocator<exponents> > &exps,
-				     const std::vector<int, gc_allocator<int> > &comps,
-				     const std::vector<int, gc_allocator<int> > &vals,
-				     std::vector<int, gc_allocator<int> > &rejects);
+				     const VECTOR(exponents) &exps,
+				     const VECTOR(int) &comps,
+				     const VECTOR(int) &vals,
+				     VECTOR(int) &rejects);
 
   ~MonomialTable();
 
@@ -57,7 +58,7 @@ public:
   int find_divisors(int max,
 		    exponents exp, 
 		    int comp,
-		    std::vector<mon_term *, gc_allocator<mon_term *> > *result = 0) const;
+		    VECTOR(mon_term *) *result = 0) const;
   /* max: the max number of divisors to find. 
      exp: the monomial whose divisors we seek.
      result: an array of mon_term's.
@@ -68,10 +69,10 @@ public:
      All other fields should be considered read only */
 
   static void minimalize(int nvars,
-			 const std::vector<exponents, gc_allocator<exponents> > &exps, 
-			 const std::vector<int, gc_allocator<int> > &comps,
+			 const VECTOR(exponents) &exps, 
+			 const VECTOR(int) &comps,
 			 bool keep_duplicates, 
-			 std::vector<int, gc_allocator<int> > &result_positions
+			 VECTOR(int) &result_positions
 			 );
 
   /* Need a way of looping through the elements? */
@@ -81,7 +82,7 @@ public:
 private:
   int _nvars;
   int _count;
-  std::vector<mon_term *, gc_allocator<mon_term *> > _head; /* One per component */
+  VECTOR(mon_term *) _head; /* One per component */
 
   static mon_term *make_list_head();
 };

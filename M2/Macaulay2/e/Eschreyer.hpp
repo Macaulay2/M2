@@ -9,7 +9,7 @@
 
 struct GBMatrix : public our_new_delete {
   const FreeModule *F; // target
-  std::vector<gbvector *, gc_allocator<gbvector *> > elems;
+  VECTOR(gbvector *) elems;
 
   GBMatrix(const Matrix *m);
   GBMatrix(const FreeModule *F);
@@ -43,7 +43,7 @@ class GBKernelComputation : public object
   int total_reduce_count;
 
   void new_pairs(int i);
-  void strip_gb(const std::vector<gbvector *, gc_allocator<gbvector *> > &m);
+  void strip_gb(const VECTOR(gbvector *) &m);
   void strip_gb(const GBMatrix *m);
 
   gbvector * make_syz_term(ring_elem c, const int *monom, int comp) const;

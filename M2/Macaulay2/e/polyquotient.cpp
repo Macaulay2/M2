@@ -15,7 +15,7 @@ PolyRingQuotient::~PolyRingQuotient()
 
 #if 0
 PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R, 
-					   std::vector<Nterm *, gc_allocator<Nterm *> > &elems)
+					   VECTOR(Nterm *) &elems)
   // Grabs 'elems'.  Each element of 'elems' should be in the ring R.
   // They should also form a GB.
 {
@@ -55,7 +55,7 @@ PolyRingQuotient *PolyRingQuotient::create(const PolynomialRing *R,
       ERROR("quotient elements not in the expected polynomial ring");
       return 0;
     }
-  std::vector<Nterm *, gc_allocator<Nterm *> > elems;
+  VECTOR(Nterm *) elems;
   for (int i=0; i<R->n_quotients(); i++)
     elems.push_back(R->quotient_element(i));
   for (int i=0; i<M->n_cols(); i++)
@@ -71,7 +71,7 @@ PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R,
   //   i.e. R = A[x], B = A/I
   // return A[x]/I.
 {
-  std::vector<Nterm *, gc_allocator<Nterm *> > elems;
+  VECTOR(Nterm *) elems;
 
   for (int i=0; i<B->n_quotients(); i++)
     {

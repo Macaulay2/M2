@@ -26,7 +26,7 @@ private:
   const Ring *R;		// Ring of 'gens'.  Should be a field.
   const Matrix *gens;		// This is the input
   const FreeModule *Fsyz;
-  std::vector<vec, gc_allocator<vec> > syz_list;
+  VECTOR(vec) syz_list;
 
   int n_gb;
   int n_pairs, n_syz;

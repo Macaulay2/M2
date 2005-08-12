@@ -8,6 +8,7 @@
 #include <gmp.h>
 
 #include "newdelete.hpp"
+#include "style.hpp"
 
 /* "Tricks" used in this implementation */
 /* 
@@ -60,7 +61,7 @@ public:
 			 mpz_t coeff,
 			 exponents exp, 
 			 int comp,
-			 std::vector<mon_term *, gc_allocator<mon_term *> > *result = 0) const;
+			 VECTOR(mon_term *) *result = 0) const;
   /* max: the max number of divisors to find. 
      exp: the monomial whose divisors we seek.
      result: an array of mon_term's.
@@ -69,7 +70,7 @@ public:
   int find_monomial_divisors(int max,
 			     exponents exp, 
 			     int comp,
-			     std::vector<mon_term *, gc_allocator<mon_term *> > *result = 0) const;
+			     VECTOR(mon_term *) *result = 0) const;
 
   mon_term *find_exact(mpz_t coeff, exponents exp, int comp) const;
   /* If this returns non-NULL, it is valid to grab the 'val' field, and/or to assign to it.
@@ -84,16 +85,16 @@ public:
   void change_coefficient(mon_term *t, mpz_ptr new_coeff);
 
   static void find_weak_generators(int nvars, 
-				   const std::vector<mpz_ptr, gc_allocator<mpz_ptr> > &coeffs,
-				   const std::vector<exponents, gc_allocator<exponents> > &exps,
-				   const std::vector<int, gc_allocator<int> > &comps,
-				   std::vector<int, gc_allocator<int> > &result_positions);
+				   const VECTOR(mpz_ptr) &coeffs,
+				   const VECTOR(exponents) &exps,
+				   const VECTOR(int) &comps,
+				   VECTOR(int) &result_positions);
 
   static void find_strong_generators(int nvars, 
-				   const std::vector<mpz_ptr, gc_allocator<mpz_ptr> > &coeffs,
-				   const std::vector<exponents, gc_allocator<exponents> > &exps,
-				   const std::vector<int, gc_allocator<int> > &comps,
-				   std::vector<int, gc_allocator<int> > &result_positions);
+				   const VECTOR(mpz_ptr) &coeffs,
+				   const VECTOR(exponents) &exps,
+				   const VECTOR(int) &comps,
+				   VECTOR(int) &result_positions);
 
   void show_mon_term(FILE *fil, mon_term *t) const; /* Only for debugging */
   void show(FILE *fil) const; /* Only for debugging */
@@ -103,7 +104,7 @@ public:
 private:
   int _nvars;
   int _count;
-  std::vector<mon_term *, gc_allocator<mon_term *> > _head; /* One per component */
+  VECTOR(mon_term *) _head; /* One per component */
 
   static mon_term *make_list_head();
 };

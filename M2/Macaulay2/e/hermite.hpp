@@ -21,13 +21,13 @@ class HermiteComputation : public GBComputation
 {
 private:
   int row;
-  std::vector<hm_elem *, gc_allocator<hm_elem *> > initial;
+  VECTOR(hm_elem *) initial;
 
   const Matrix *gens;			// This is the input
 
   hm_elem *GB_list;
   const FreeModule *Fsyz;
-  std::vector<vec, gc_allocator<vec> > syz_list;
+  VECTOR(vec) syz_list;
 
   int n_gb;
   int collect_syz;	// 0 or 1

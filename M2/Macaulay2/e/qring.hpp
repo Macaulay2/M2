@@ -3,6 +3,7 @@
 #ifndef _qring_hpp_
 #define _qring_hpp_
 
+#include "style.hpp"
 #include "ringelem.hpp"
 #include <vector>
 
@@ -15,8 +16,8 @@ class gbvector;
 
 class QRingInfo : public our_new_delete
 {
-  std::vector<Nterm *, gc_allocator<Nterm *> > quotient_ideal;
-  std::vector<gbvector *, gc_allocator<gbvector *> > quotient_gbvectors;
+  VECTOR(Nterm *) quotient_ideal;
+  VECTOR(gbvector *) quotient_gbvectors;
 
 protected:
   const PolyRing *R;
@@ -57,7 +58,7 @@ protected:
   MonomialTable *ringtable;
 public:
   QRingInfo_field(const PolyRing *ambientR,
-		  const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients);
+		  const VECTOR(Nterm *) &quotients);
   ~QRingInfo_field();
 
   virtual const MonomialIdeal *  get_quotient_monomials() const { return Rideal; }
@@ -72,7 +73,7 @@ class QRingInfo_field_basic : public QRingInfo_field
   void reduce_lead_term_basic_field(Nterm * &f, const Nterm * g) const;
 public:
   QRingInfo_field_basic(const PolyRing *ambientR,
-			const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients);
+			const VECTOR(Nterm *) &quotients);
   ~QRingInfo_field_basic();
 
   void normal_form(ring_elem &f) const;
@@ -86,7 +87,7 @@ class QRingInfo_field_QQ : public QRingInfo_field
   void reduce_lead_term_QQ(Nterm * &f, const Nterm * g) const;
 public:
   QRingInfo_field_QQ(const PolyRing *ambientR,
-		     const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients);
+		     const VECTOR(Nterm *) &quotients);
   ~QRingInfo_field_QQ();
 
   void normal_form(ring_elem &f) const;
@@ -105,7 +106,7 @@ class QRingInfo_ZZ : public QRingInfo
   bool reduce_lead_term_ZZ(Nterm * &f, const Nterm * g) const;
 public:
   QRingInfo_ZZ(const PolyRing *ambientR,
-	       const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients);
+	       const VECTOR(Nterm *) &quotients);
   ~QRingInfo_ZZ();
 
   bool is_ZZ_quotient() const { return is_ZZ_quotient_; }

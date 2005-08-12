@@ -122,7 +122,7 @@ int MonomialTable::find_divisor(exponents exp,
 int MonomialTable::find_divisors(int max,
 				 exponents exp,
 				 int comp,
-				 std::vector< mon_term * , gc_allocator< mon_term * > > *result) const
+				 VECTOR(mon_term *) *result) const
 {
   assert(comp >= 1);
   if (comp >= static_cast<int>(_head.size())) return 0;
@@ -231,11 +231,11 @@ void MonomialTable::insert(exponents exp, int comp, int id)
 
 struct sorter : public std::binary_function<exponents,exponents,bool> {
   int nvars;
-  const std::vector<exponents, gc_allocator<exponents> > &exps;
-  const std::vector<int, gc_allocator<int> > &comps;
+  const VECTOR(exponents) &exps;
+  const VECTOR(int) &comps;
   sorter(int nvars0, 
-	 const std::vector<exponents, gc_allocator<exponents> > &exps0,
-	 const std::vector<int, gc_allocator<int> > &comps0) 
+	 const VECTOR(exponents) &exps0,
+	 const VECTOR(int) &comps0) 
     : nvars(nvars0), exps(exps0), comps(comps0) {}
   bool operator()(int x, int y) {
     exponents xx = exps[x];
@@ -250,10 +250,10 @@ struct sorter : public std::binary_function<exponents,exponents,bool> {
 };
 
 void MonomialTable::minimalize(int nvars, 
-			       const std::vector<exponents, gc_allocator<exponents> > &exps,
-			       const std::vector<int, gc_allocator<int> > &comps,
+			       const VECTOR(exponents) &exps,
+			       const VECTOR(int) &comps,
 			       bool keep_duplicates, 
-			       std::vector<int, gc_allocator<int> > &result_positions)
+			       VECTOR(int) &result_positions)
 {
   /* Step 1: Sort an intarray into ascending order.  
      In this order, if e divides f, then e should appear
@@ -273,7 +273,7 @@ void MonomialTable::minimalize(int nvars,
 
   MonomialTable *T;
 
-  std::vector<int, gc_allocator<int> > positions;
+  VECTOR(int) positions;
   positions.reserve(exps.size());
   for (unsigned int i=0; i<exps.size(); i++)
     positions.push_back(i);
@@ -284,12 +284,12 @@ void MonomialTable::minimalize(int nvars,
 
   T = MonomialTable::make(nvars);
 
-  std::vector<int, gc_allocator<int> >::iterator first, end;
+  VECTOR(int)::iterator first, end;
   first = positions.begin();
   end = positions.end();
   while (first != end)
     {
-      std::vector<int, gc_allocator<int> >::iterator next = first+1;
+      VECTOR(int)::iterator next = first+1;
       exponents this_exp = exps[*first];
       int comp = comps[*first];
       while (next != end)
@@ -316,14 +316,14 @@ void MonomialTable::minimalize(int nvars,
 }
 
 MonomialTable *MonomialTable::make_minimal(int nvars, 
-					   const std::vector<exponents, gc_allocator<exponents> > &exps,
-					   const std::vector<int, gc_allocator<int> > &comps,
-					   const std::vector<int, gc_allocator<int> > &vals,
-					   std::vector<int, gc_allocator<int> > &rejects)
+					   const VECTOR(exponents) &exps,
+					   const VECTOR(int) &comps,
+					   const VECTOR(int) &vals,
+					   VECTOR(int) &rejects)
 {
   MonomialTable *T;
 
-  std::vector<int, gc_allocator<int> > positions;
+  VECTOR(int) positions;
   positions.reserve(exps.size());
   for (unsigned int i=0; i<exps.size(); i++)
     positions.push_back(i);
@@ -334,13 +334,13 @@ MonomialTable *MonomialTable::make_minimal(int nvars,
 
   T = MonomialTable::make(nvars);
 
-  std::vector<int, gc_allocator<int> >::iterator first, end, last_minimal;
+  VECTOR(int)::iterator first, end, last_minimal;
   first = positions.begin();
   end = positions.end();
   last_minimal = first;
   while (first != end)
     {
-      std::vector<int, gc_allocator<int> >::iterator next = first+1;
+      VECTOR(int)::iterator next = first+1;
       exponents this_exp = exps[*first];
       int comp = comps[*first];
       while (next != end)

@@ -16,50 +16,7 @@ protected:
   virtual ~PolyRingQuotient();
   PolyRingQuotient() {}
 
-#if 0
-  static PolyRingQuotient *create(const PolyRing *R, 
-			   std::vector<Nterm *, gc_allocator<Nterm *> > &elems);
-  // Grabs 'elems'.  Each element of 'elems' should be in the ring R.
-  // They should also form a GB.
-#endif
 public:
-#if 0
-  static PolyRingQuotient *create(const PolynomialRing *R, const Matrix *M);
-
-  static PolyRingQuotient *create(const PolyRing *R, 
-				  const PolynomialRing *B);
-  // R should be an ambient poly ring
-  // B should have: ambient of B is the logical coeff ring of R
-  //   i.e. R = A[x], B = A/I
-  // return A[x]/I.
-
-  Matrix * getPresentation() const;
-#endif
-
-#if 0
-  virtual const Ring *getCoefficients() const { return numerR_->getCoefficients(); }
-  // The implementation coeff ring of 'this'.  This is either a basic ring (field, ZZ), or
-  // is another PolyRing.
-
-  virtual const Monoid *getMonoid() const { return numerR_->getMonoid(); }
-  // The implementation monoid of this ring.
-
-  virtual const PolyRing * getNumeratorRing() const { return numerR_; }
-
-  virtual const PolyRing * getAmbientRing() const { return numerR_->getAmbientRing(); }
-  // Yields the ambient PolyRing corresponding to this polynomial ring
-  // This ring has no quotients, no fractions (not even QQ), but may have
-  // skew, weyl, or solvable multiplication, or even (later) be an associative
-  // free algebra.
-
-  virtual const RingOrNull *getDenominatorRing() const { return 0; }
-  // If this ring has no denominators, NULL is returned.  Otherwise the ring which
-  // implements denominators is returned.  When one asks for a denominator for elements of
-  // 'this', the result value is its ring.
-
-  virtual GBRing *get_gb_ring() const { return numerR_->get_gb_ring(); }
-#endif
-
   virtual const PolyRingQuotient * cast_to_PolyRingQuotient()  const { return this; }
   virtual       PolyRingQuotient * cast_to_PolyRingQuotient()        { return this; }
 
