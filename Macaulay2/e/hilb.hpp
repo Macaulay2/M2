@@ -215,19 +215,19 @@ class HilbertComputation
 {
 public:
   HilbertComputation(const Ring *R, 
-		     vector<int, gc_allocator<int> > &comp,
+		     VECTOR(int) &comp,
 		     M2_arrayint wts);
 
   insert_generator(const int *m, int comp);
 
   RingElementOrNull * multDegreeHilbert(const FreeModule *F);
-  RingElementOrNull * hilbert(const vector<int, gc_allocator<int> > &comp);
+  RingElementOrNull * hilbert(VECTOR(int) &comp);
 
   // The following routines all use the singly graded degree ring.
   static RingElementOrNull * hilbert(const Ring *R, 
-				     vector<exponents, gc_allocator<exponents> > &exps,
-				     vector<int, gc_allocator<int> > &comps,
-				     vector<int, gc_allocator<int> > &comp_degs,
+				     VECTOR(exponents) &exps,
+				     VECTOR(int) &comps,
+				     VECTOR(int) &comp_degs,
 				     M2_arrayint wts);
     
   static int codimension(const RingElement *hf);
@@ -238,15 +238,15 @@ public:
   // returns the codimension, and places hf/(1-t)^codim into result_hf.
 
   static RingElementOrNull * multDegreeHilbert(const Ring *R, 
-					       vector<exponents, gc_allocator<exponents> > &exps,
-					       vector<int, gc_allocator<int> > &comps,
+					       VECTOR(exponents) &exps,
+					       VECTOR(int) &comps,
 					       const FreeModule *F);
 
   // The following routines all use the singly graded degree ring.
   static RingElementOrNull * hilbert(const Ring *R, 
-				     vector<exponents, gc_allocator<exponents> > &exps,
-				     vector<int, gc_allocator<int> > &comps,
-				     vector<int, gc_allocator<int> > &comp_degs,
+				     VECTOR(exponents) &exps,
+				     VECTOR(int) &comps,
+				     VECTOR(int) &comp_degs,
 				     M2_arrayint wts);
     
   static int codimension(const RingElement *hf);

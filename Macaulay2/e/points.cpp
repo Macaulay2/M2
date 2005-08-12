@@ -61,7 +61,7 @@ Matrix *PointsComputation<CoeffRing>::points(const PolynomialRing *R,
   DMat<CoeffRing> *P = new DMat<CoeffRing>(K, npoints, npoints+1);
   DMat<CoeffRing> *PLU = new DMat<CoeffRing>(K, npoints, npoints+1);
   MonomialIdeal *inG = new MonomialIdeal(R);
-  std::vector<monomial, gc_allocator<monomial> > stdG;
+  VECTOR(monomial) stdG;
   monom_int_list monoms_todo(R);
   
   int next_col = 0;

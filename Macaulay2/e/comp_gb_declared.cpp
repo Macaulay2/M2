@@ -22,7 +22,7 @@ GBDeclared::GBDeclared(const Matrix *m0,
   G = ReducedGB::create(P,F,Fsyz);
 
   // Now add in the elements
-  std::vector<POLY, gc_allocator<POLY> > elems;
+  VECTOR(POLY) elems;
   for (int i=0; i<gb->n_cols(); i++)
     {
       POLY g;

@@ -829,7 +829,7 @@ const MatrixOrNull *LinAlgGB<CoeffRing>::get_mingens()
 {
 #if 0
   MatrixConstructor mat(_F,0);
-  for (vector<gbelem *, gc_allocator<gbelem *> >::iterator i = gb.begin(); 
+  for (VECTOR(gbelem *)::iterator i = gb.begin(); 
        i != gb.end(); 
        i++)
     if ((*i)->minlevel == ELEM_POSSIBLE_MINGEN)
@@ -855,7 +855,7 @@ const MatrixOrNull *LinAlgGB<CoeffRing>::get_syzygies()
 #if 0
   // The (non-minimal) syzygy matrix
   MatrixConstructor mat(_Fsyz, 0);
-  for (vector<gbvector *, gc_allocator<gbvector *> >::iterator i = _syz.begin(); 
+  for (VECTOR(gbvector *)::iterator i = _syz.begin(); 
        i != _syz.end(); 
        i++)
     {

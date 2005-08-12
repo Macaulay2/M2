@@ -24,7 +24,7 @@ MonomialLookupTable::MonomialLookupTable(queue<tagged_monomial *> &elems, queue<
 {
   size_of_exp = 10;
   exp0 = newarray(int,size_of_exp);
-  std::vector< queue<tagged_monomial *> *, gc_allocator<queue<tagged_monomial *> *> > bins;
+  VECTOR( queue<tagged_monomial *> *) bins;
   tagged_monomial *b, *b1;
   while (elems.remove(b)) 
     {
@@ -56,7 +56,7 @@ MonomialLookupTable::MonomialLookupTable(queue<tagged_monomial *> &elems)
 {
   size_of_exp = 10;
   exp0 = newarray(int,size_of_exp);
-  std::vector< queue<tagged_monomial *> *, gc_allocator<queue<tagged_monomial *> *> > bins;
+  VECTOR( queue<tagged_monomial *> *) bins;
   tagged_monomial *b;
   while (elems.remove(b)) 
     {
@@ -126,7 +126,7 @@ int MonomialLookupTable::search_expvector(exponent_vector exp, tagged_monomial *
     }
 }
 
-void MonomialLookupTable::find_all_divisors(exponent_vector exp, std::vector<tagged_monomial *,gc_allocator<tagged_monomial *> > &b) const
+void MonomialLookupTable::find_all_divisors(exponent_vector exp, VECTOR(tagged_monomial *) &b) const
 {
   if (mi == NULL) return;
 

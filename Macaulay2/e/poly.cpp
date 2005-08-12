@@ -79,7 +79,7 @@ void PolynomialRing::initialize_PolynomialRing(
 }
 
 PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R, 
-						std::vector<Nterm *, gc_allocator<Nterm *> > &elems)
+						VECTOR(Nterm *) &elems)
   // Grabs 'elems'.  Each element of 'elems' should be in the ring R.
   // They should also form a GB.
 {
@@ -142,7 +142,7 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
       ERROR("quotient elements not in the expected polynomial ring");
       return 0;
     }
-  std::vector<Nterm *, gc_allocator<Nterm *> > elems;
+  VECTOR(Nterm *) elems;
   for (int i=0; i<R->n_quotients(); i++)
     elems.push_back(R->quotient_element(i));
 
@@ -162,7 +162,7 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
   //   i.e. R = A[x], B = A/I
   // return A[x]/I.
 {
-  std::vector<Nterm *, gc_allocator<Nterm *> > elems;
+  VECTOR(Nterm *) elems;
 
   for (int i=0; i<B->n_quotients(); i++)
     {

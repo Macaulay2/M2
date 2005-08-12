@@ -34,7 +34,7 @@ ReducedGB_Field_Local::ReducedGB_Field_Local(GBRing *R0,
     }
 }
 
-void ReducedGB_Field_Local::minimalize(const std::vector<POLY, gc_allocator<POLY> > &polys0,
+void ReducedGB_Field_Local::minimalize(const VECTOR(POLY) &polys0,
 				       bool auto_reduced)
 {
   // auto_reduced flag is ignored, since it can lead to infinite loops here
@@ -58,7 +58,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
 					      int & result_g_alpha)   // result value
 {
   int n;
-  std::vector<MonomialTable::mon_term *, gc_allocator<MonomialTable::mon_term *> > divisors;
+  VECTOR(MonomialTable::mon_term *) divisors;
 
   h_alpha = h_deg - wt->exponents_weight(h_exp,h_comp);
   int min_alpha = h_deg;

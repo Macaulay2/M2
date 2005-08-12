@@ -26,7 +26,7 @@ QRingInfo_field::~QRingInfo_field()
 }
 
 QRingInfo_field::QRingInfo_field(const PolyRing *ambientR,
-				 const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients)
+				 const VECTOR(Nterm *) &quotients)
   : QRingInfo(ambientR)
 // This constructs the quotient ideal, and sets the MonomialIdeal.
 // A subset of 'quotients' must be a minimal GB, and any non-minimal elements
@@ -72,7 +72,7 @@ QRingInfo_field::QRingInfo_field(const PolyRing *ambientR,
 
 QRingInfo_field_basic::QRingInfo_field_basic(
       const PolyRing *ambientR,
-      const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients)
+      const VECTOR(Nterm *) &quotients)
   : QRingInfo_field(ambientR, quotients)
 {
 }
@@ -160,7 +160,7 @@ void QRingInfo_field_basic::gbvector_normal_form(const FreeModule *F, gbvector *
 }
 
 QRingInfo_field_QQ::QRingInfo_field_QQ(const PolyRing *ambientR,
-		   const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients)
+		   const VECTOR(Nterm *) &quotients)
   : QRingInfo_field(ambientR,quotients)
 {
 }
@@ -255,7 +255,7 @@ QRingInfo_ZZ::~QRingInfo_ZZ()
 }
 
 QRingInfo_ZZ::QRingInfo_ZZ(const PolyRing *ambientR,
-			   const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients)
+			   const VECTOR(Nterm *) &quotients)
   : QRingInfo(ambientR)
 {
   ringtableZZ = MonomialTableZZ::make(R->n_vars());

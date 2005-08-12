@@ -20,17 +20,17 @@ ReducedGB_ZZ::ReducedGB_ZZ(GBRing *R0,
     ringtableZZ = originalR->get_quotient_MonomialTableZZ();
 }
 
-void ReducedGB_ZZ::set_gb(std::vector<POLY, gc_allocator<POLY> > &polys0)
+void ReducedGB_ZZ::set_gb(VECTOR(POLY) &polys0)
 {
 }
 
 struct ReducedGB_ZZ_sorter : public std::binary_function<int,int,bool> {
   GBRing *R;
   const FreeModule *F;
-  const std::vector<POLY, gc_allocator<POLY> > &gb;
+  const VECTOR(POLY) &gb;
   ReducedGB_ZZ_sorter(GBRing *R0,
 			 const FreeModule *F0,
-			 const std::vector<POLY, gc_allocator<POLY> > &gb0)
+			 const VECTOR(POLY) &gb0)
     : R(R0), F(F0), gb(gb0) {}
   bool operator()(int xx, int yy) {
     gbvector *x = gb[xx].f;
@@ -43,14 +43,14 @@ struct ReducedGB_ZZ_sorter : public std::binary_function<int,int,bool> {
   }
 };
 
-void ReducedGB_ZZ::minimalize(const std::vector<POLY, gc_allocator<POLY> > &polys0,
+void ReducedGB_ZZ::minimalize(const VECTOR(POLY) &polys0,
 			      bool auto_reduced)
 // I have to decide: does this ADD to the existing set?
 {
   // First sort these elements via increasing lex order (or monomial order?)
   // Next insert minimal elements into T, and polys
 
-  std::vector<int, gc_allocator<int> > positions;
+  VECTOR(int) positions;
   positions.reserve(polys0.size());
 
   for (int i=0; i<polys0.size(); i++)
@@ -61,7 +61,7 @@ void ReducedGB_ZZ::minimalize(const std::vector<POLY, gc_allocator<POLY> > &poly
   // Now loop through each element, and see if the lead monomial is in T.
   // If not, add it in , and place element into 'polys'.
 
-  for (std::vector<int, gc_allocator<int> >::iterator i = positions.begin(); i != positions.end(); i++)
+  for (VECTOR(int)::iterator i = positions.begin(); i != positions.end(); i++)
     {
       gbvector *f = polys0[*i].f;
       exponents e = R->exponents_make();

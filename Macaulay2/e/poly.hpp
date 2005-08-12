@@ -84,7 +84,7 @@ protected:
   PolynomialRing() : is_graded_(true), is_skew_(false), qinfo_(new QRingInfo) {}
 
   static PolynomialRing *create_quotient(const PolynomialRing *R, 
-					 std::vector<Nterm *, gc_allocator<Nterm *> > &elems);
+					 VECTOR(Nterm *) &elems);
   // Grabs 'elems'.  Each element of 'elems' should be in the ring R.
   // They should also form a GB.
 
