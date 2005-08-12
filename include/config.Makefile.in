@@ -234,7 +234,7 @@ DEBUGFLAGS += -DNDEBUG
 endif
 
 ifeq "$(GCC)" "yes"
-CFLAGS   += -pipe -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare
+CFLAGS   += -pipe -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare -Wno-strict-aliasing
 CXXFLAGS += -pipe -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare
 ifeq "$(OPTIMIZE)" "yes"
 CFLAGS   += -O3

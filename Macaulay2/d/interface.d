@@ -2350,8 +2350,7 @@ export rawMaximalIndependentSets(e:Expr):Expr := (
      when s.0 is m:RawMonomialIdeal do
      when s.1 is n:Integer do 
      if !isInt(n) then WrongArgSmallInteger(2) else 
-     toExpr(Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdeal)",
-	       "rawMaximalIndependentSets(", "(const MonomialIdeal *)", m, ",", toInt(n), ")" ) )
+     toExpr(Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)", "rawMaximalIndependentSets(", "(MonomialIdeal *)", m, ",", toInt(n), ")" ) )
      else WrongArgInteger(2)
      else WrongArg("a raw monomial ideal")
      else WrongNumArgs(2)
@@ -2927,7 +2926,7 @@ export rawLU(e:Expr):Expr := (
      when s.0 is A:RawMutableMatrix do 
      when s.1 is L:RawMutableMatrix do
      when s.2 is U:RawMutableMatrix do toExpr( 
-	  Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)rawLU(", "(const MutableMatrix *)", A, ",", "(MutableMatrix *)", L, ",", "(MutableMatrix *)", U, ")"))
+	  Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)rawLU(", "(MutableMatrix *)", A, ",", "(MutableMatrix *)", L, ",", "(MutableMatrix *)", U, ")"))
      else WrongArgMutableMatrix(3)
      else WrongArgMutableMatrix(2)
      else WrongArgMutableMatrix(1)

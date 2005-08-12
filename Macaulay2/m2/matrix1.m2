@@ -528,8 +528,6 @@ Ideal == Ring := (I,R) -> (
      then error "expected ideals in the same ring";
      1_R % I == 0)
 
-RingElement in Ideal := (f,I) -> f % I == 0
-
 Ring == Ideal := (R,I) -> I == R
 
 Ideal == Ideal := (I,J) -> (

@@ -62,7 +62,9 @@ export tostring(c:Code):string := (
      is x:binaryCode do concatenate(array(string)("(2-OP ",getBinopName(x.f)," ",tostring(x.lhs)," ",tostring(x.rhs),")"))
      is x:adjacentCode do concatenate(array(string)("(adjacent ",tostring(x.lhs)," ",tostring(x.rhs),")"))
      is x:forCode do concatenate(array(string)(
-	       "(for from: ",tostring(x.fromClause),
+	       "(for", 
+	       " in: ",tostring(x.inClause),
+	       " from: ",tostring(x.fromClause),
 	       " to: ",tostring(x.toClause),
 	       " when: ",tostring(x.whenClause),
 	       " list: ",tostring(x.listClause),
