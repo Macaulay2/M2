@@ -16,6 +16,9 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+The 'list' option to the 'for' and 'while' control keywords have
+been changed so that only non-null values are collected into a list.
+
 'chainComplex' -- new form, for a ring R:
     chainComplex R
 makes the zero chain complex over R

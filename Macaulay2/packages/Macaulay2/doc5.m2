@@ -146,15 +146,10 @@ document {
      TT "loadDepth = i", " -- sets the load depth to ", TT "i", ", which should be
      a small integer, returning the old value.",
      PARA,
-     "During the backtrace after an load message, a position in interpreted
+     "During the backtrace after an error message, a position in interpreted
      code is displayed only if the load depth was at least as large at the
      time the code was parsed as the error depth is now.  The load depth 
      is incremented each time ", TO "loaddata", " is run.",
-     PARA,
-     "The load depth also determines which command line arguments are
-     heeded.  If the load depth is ", TT "i", " then the arguments between
-     the ", TT "i", "-th and the ", TT "i+1", "-st occurrence of ", TT "--", "
-     are the ones heeded.",
      SeeAlso => { "errorDepth" }
      }
 

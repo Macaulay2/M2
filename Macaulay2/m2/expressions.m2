@@ -379,6 +379,12 @@ Expression ^ Holder     := (x,y) -> Power{x,y#0}
 Holder     ^ Holder     := (x,y) -> Power{x#0,y#0}
 Expression ^ Thing      := (x,y) -> x ^ (expression y)
      Thing ^ Expression := (x,y) -> (expression x) ^ y
+Expression _ Expression := (x,y) -> Subscript{x,y}
+Holder     _ Expression := (x,y) -> Subscript{x#0,y}
+Expression _ Holder     := (x,y) -> Subscript{x,y#0}
+Holder     _ Holder     := (x,y) -> Subscript{x#0,y#0}
+Expression _ Thing      := (x,y) -> x _ (expression y)
+     Thing _ Expression := (x,y) -> (expression x) _ y
 -----------------------------------------------------------------------------
 value Holder := x -> value x#0
 value OneExpression := v -> 1

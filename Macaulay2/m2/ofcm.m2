@@ -118,16 +118,22 @@ listForm(MonoidElement) := (m) -> (
 
 MonoidElement _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (baseName x)_M
 
-Symbol _ GeneralOrderedMonoid := 
-IndexedVariable _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (
+Symbol _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (
      if M.?generatorsTable and M.generatorsTable#?x then M.generatorsTable#x
      else error "symbol not found in monoid"
      )
+IndexedVariable _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (
+     if M.?generatorsTable and M.generatorsTable#?x then M.generatorsTable#x
+     else error "indexed variable not found in monoid"
+     )
 
-Symbol _ Ring := 
+Symbol _ Ring := RingElement => (x,M) -> (
+     if M.?generatorsTable and M.generatorsTable#?x then M.generatorsTable#x
+     else error "symbol not found in ring"
+     )
 IndexedVariable _ Ring := RingElement => (x,M) -> (
      if M.?generatorsTable and M.generatorsTable#?x then M.generatorsTable#x
-     else error "symbol not found in monoid"
+     else error "indexed variable not found in ring"
      )
 
 QQ _ Ring :=

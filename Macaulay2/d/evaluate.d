@@ -205,7 +205,7 @@ evalWhileListCode(c:whileListCode):Expr := (
 	       b := eval(c.listClause);
 	       when b is err:Error 
 	       do return if err.message == breakMessage then err.value else b 
-	       else (
+	       else if b != nullE then (
 		    if i == n then (
 			 n = 2*n;
 			 r = new Sequence len n do (
@@ -215,8 +215,7 @@ evalWhileListCode(c:whileListCode):Expr := (
 			 );
 		    r.i = b;
 		    i = i+1;
-		    );
-	       )
+		    ))
 	  else if p == False then break
 	  else return printErrorMessageE(c.predicate,"expected true or false"));
      Expr(
@@ -235,7 +234,7 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 	       b := eval(c.listClause);
 	       when b is err:Error
 	       do return if err.message == breakMessage then err.value else b
-	       else (
+	       else if b != nullE then (
 		    if i == length(r) then (
 			 r = new Sequence len 2*length(r) do (
 			      foreach x in r do provide x;
@@ -296,14 +295,14 @@ evalForCode(c:forCode):Expr := (
 		    else (
 			 localFrame = localFrame.outerFrame;
 			 return if err.message == breakMessage then err.value else b))
-	       else nothing;
-	       if i == length(r) then (
-		    r = new Sequence len 2*length(r) do (
-			 foreach x in r do provide x;
-			 while true do provide nullE));
-	       r.i = b;
-	       i = i+1;
-	       );
+	       else if b != nullE then (
+		    if i == length(r) then (
+			 r = new Sequence len 2*length(r) do (
+			      foreach x in r do provide x;
+			      while true do provide nullE));
+		    r.i = b;
+		    i = i+1;
+		    ));
 	  if c.doClause != dummyCode then (
 	       b := eval(c.doClause);
 	       when b is err:Error do (

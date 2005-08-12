@@ -521,6 +521,7 @@ hilbertSeries = method(Options => {
 hilbertSeries Ideal := options -> (I) -> hilbertSeries((ring I)^1/I,options)
 
 ring Ideal := (I) -> I.ring
+use Ideal := (I) -> use ring I
 
 Ideal == Ring := (I,R) -> (
      if ring I =!= R

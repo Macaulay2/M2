@@ -37,7 +37,9 @@ loadPackage = method(
 loadPackage String := opts -> pkgtitle -> (
      filename := pkgtitle | ".m2";
      substituteOptions#pkgtitle = opts;
+     if opts.DebuggingMode =!= true then loadDepth = loadDepth - 1;
      load filename;
+     if opts.DebuggingMode =!= true then loadDepth = loadDepth + 1;
      remove(substituteOptions,pkgtitle);
      if not PackageDictionary#?pkgtitle then error("the file ", filename, " did not define a package ", pkgtitle);
      value PackageDictionary#pkgtitle)

@@ -164,10 +164,14 @@ if false then assert false
 -- assert(i === 5)
 
 -- test while
-assert( {0,1,2,3,4} === ( i = 0 ; while i < 5 list i do i = i +1 ) )
+assert( {0,1,2,3,4} === ( i = 0 ; while i < 5 list i do i = i + 1 ) )
 assert( {} === while false list i do null )
 assert( {} === while false list i )
 assert( i = true ; {0} === while i list 0 do i = false )
 
 end						    -- should end the input file
 assert false
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/basictests A01.okay"
+-- End:
