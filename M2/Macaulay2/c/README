@@ -1,0 +1,5 @@
+The code generated for 
+
+     b := new Sequence len n do (
+
+does not check n to see whether it's nonnegative!
