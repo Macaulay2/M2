@@ -16,6 +16,9 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+"continue" and "continue x" now work in the body of "apply" just as 
+in "while" and "for"; see below.
+
 New optional clause in "for ..." loops:
   "for i in x list ... do ..." iterates the body of the loop once for
   each element in the list or sequence x, returning a list
