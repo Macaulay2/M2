@@ -89,9 +89,12 @@ int GBKernelComputation::calc()
     mm->append(GR->gbvector_copy(syzygies[p]));
   buffer o;
   Matrix *m = mm->to_matrix();
-  o << "skeleton = " << newline;
-  m->text_out(o);
-  emit(o.str());
+  if (gbTrace >= 5)
+    {
+      o << "skeleton = " << newline;
+      m->text_out(o);
+      emit(o.str());
+    }
 
   // Sort the skeleton now?
 

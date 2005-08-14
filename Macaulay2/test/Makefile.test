@@ -3,7 +3,7 @@
 # rules used by the Makefiles in various test directories
 
 DOTS ?= ..
-TLIMIT ?= 10
+TLIMIT ?= 20
 MLIMIT ?= 60000
 VLIMIT ?= 60000
 LIMIT  = ulimit -t $(TLIMIT) -m $(MLIMIT) -v $(VLIMIT) 2>/dev/null

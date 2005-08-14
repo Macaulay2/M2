@@ -72,8 +72,7 @@ void FF_LUComputation::do_pivots(int lo, int hi, int pivotCol)
 	  // Need to modify column i:
 	  // col(i) := pivot*M[i] - M[pivot_row,i] * M[pivotCol]
 	  R->negate_to(a);
-	  M->scale_column(pivot,i);
-	  // M->addColumnMultiple(pivotCol,a,i);
+	  M->scale_column(i,pivot);
 	  M->column_op(i,a,pivotCol);
 	}	  
 

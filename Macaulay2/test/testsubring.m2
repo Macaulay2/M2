@@ -147,7 +147,7 @@ testx1 = () -> (
     fg = newCoordinateSystem(S, matrix{{a+b}});
     Fto = fg#0;
     Fback = fg#1;
-    J1 = mingens image Fback divideByVariable(generators gb Fto generators I,S_3);
+    J1 = mingens image Fback (divideByVariable(generators gb Fto generators I,S_3))#0;
     assert(image J1 == image matrix{{b^2 - c^2, c^3 - d^3}});
     )
 

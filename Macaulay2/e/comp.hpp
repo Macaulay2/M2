@@ -77,14 +77,6 @@ public:
   virtual void text_out(buffer &o) const;
 };
 
-/* computations which cannot be continued if interrupted */
-class HilbertComputation; /* ?? */
-class LLLComputation;
-class FactorizationComputation;
-class FFGaussComputation;
-class SmithComputation;
-class MaximalIndepSetsComputation;
-
 #endif
 
 // Local Variables:

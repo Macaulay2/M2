@@ -64,7 +64,7 @@ testsame1(3,m1)
 testsame1(4,m1)
 
 R = QQ
-m = random(QQ^8,QQ^8)
+m = random(QQ^8,QQ^8)  -- crashses!
 testsame1(8,m)
 m = random(QQ^9,QQ^9)
 -- testsame1(8,m) time on my Mac PB G3: 0.58 sec (Bareiss), 148.44 sec (Cofactor).
@@ -162,7 +162,7 @@ F = R^4
 wedgeProduct(1,2,F)
 wedgeProduct(0,0,F)
 wedgeProduct(0,1,F)
-exteriorPower(0,F)  -- doesn't even accept this yet!
+exteriorPower(0,F)
 target exteriorPower(0,id_F)
 F == target exteriorPower(1,id_F)
 target exteriorPower(2,id_F)
