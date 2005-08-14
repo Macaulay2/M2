@@ -513,19 +513,6 @@ gbA::spairs::iterator gbA::choose_pair(gbA::spairs::iterator first,
 struct spair_sorter : public std::binary_function<gbA::spair *,gbA::spair *,bool> {
   int nvars;
   spair_sorter(int nv) : nvars(nv) {}
-#if 0
-  bool operator()(gbA::spair *a, gbA::spair *b)
-    {
-      /* Compare using degree, then type, then lcm */
-      int cmp = a->deg - b->deg;
-      if (cmp < 0) return true;
-      if (cmp > 0) return false;
-      cmp = a->type - b->type;
-      if (cmp < 0) return true;
-      if (cmp > 0) return false;
-      return !exponents_greater(nvars,a->lcm, b->lcm);
-    }
-#endif
   bool operator()(gbA::spair *a, gbA::spair *b)
     {
       /* Compare using degree, then type, then lcm */

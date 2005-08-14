@@ -75,6 +75,7 @@ m1
 det m
 det matrix m1
 
+debug Macaulay2Core
 R = ZZ
 m = matrix(R, {{1,2,3,4,5},
 	  {2,3,4,5,1},
@@ -82,6 +83,15 @@ m = matrix(R, {{1,2,3,4,5},
 	  {4,5,1,2,3},
 	  {5,1,2,3,4}})
 m1 = mutableMatrix(m, Dense=>false)
+rawFFLU raw m1
+m1
+det matrix m1
+det m
+factor det m
+
+R = ZZ[vars(0..8)]
+m = genericMatrix(R,a,3,3)
+m1 = mutableMatrix m
 rawFFLU raw m1
 m1
 ///
