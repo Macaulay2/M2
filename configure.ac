@@ -1,5 +1,5 @@
 AC_INIT(Macaulay 2, 0.9.5, Macaulay2@math.uiuc.edu, Macaulay2)
-AC_REVISION($CVSHeader: $)
+AC_REVISION($CVSHeader:  $)
 
 dnl -- $Revision$
 
