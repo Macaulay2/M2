@@ -10,7 +10,10 @@ newPackage(
     	DebuggingMode => true 
     	)
 
-export showPDF
+export (showPDF, poly)
+
+poly = method()
+poly String := (f) -> (ideal f)_0
 
 showPDF = x -> (
      f := temporaryFileName();
@@ -112,8 +115,6 @@ document {
      Key => "1.2.3",
      Headline => "leading data",
      EXAMPLE {
-	  "poly = method();",
-	  "poly String := (f) -> (ideal f)_0;",
 	  "A = QQ[x,y,z,MonomialOrder=>Lex];",
 	  ///f = poly "y4z3+2x2y2z2+3x5+4z4+5y2"///,
 	  "leadMonomial f",
@@ -244,11 +245,56 @@ document {
 document {
      Key => "1.5.10",
      Headline => "realization of rings",
+     "We define the rings of example 1.5.3, in the Singular book.",
+     EXAMPLE {
+	  "(n,m) = (2,3);",
+	  "A1 = QQ[x_1..x_n,y_1..y_m,MonomialOrder=>{n, RevLex=>m}];",
+	  "f = x_1*x_2^2 + 1 + y_1^10 + x_1*y_2^5 + y_3",
+	  "1_A1 > y_1^10",
+	  },
+     PARA,
+     "The second monomial order has the first block local, and the second block polynomial.",
+     EXAMPLE {
+	  "A2 = QQ[x_1..x_n,y_1..y_m,MonomialOrder=>{RevLex=>n, m}];",
+	  "substitute(f,A2)",
+	  "x_1*y_2^5 < 1_A2",
+	  },
+     PARA,
+     "The third example has three blocks of variables.",
+     EXAMPLE {
+	  "A3 = QQ[x_1..x_n,y_1..y_m,MonomialOrder=>{n, RevLex=>2, m-2}];",
+	  "substitute(f,A3)",
+	  },
      SeeAlso => {}
      }
 document {
      Key => "1.6.13",
      Headline => "normal form",
+     "Normal forms in Macaulay2 are done using the remainder operator ", TO symbol%, ".",
+     EXAMPLE {
+	  "R = QQ[x,y,z];",
+	  ///f = poly "x2yz+xy2z+y2z+z3+xy";///,
+	  "f1 = x*y+y^2-1",
+	  "f2 = x*y",
+	  "G = ideal(f1,f2)"
+	  },
+     "Macaulay2 computes a Groebner basis of G, and uses that to find the
+     normal form of f. 
+     In Macaulay2, all remainders are reduced normal forms (at least for non-local orders).",
+     EXAMPLE {
+	  "f % G"
+	  },
+     PARA,
+     "In order to reduce using a non Groebner basis, use ", TO forceGB,
+     EXAMPLE {
+	  "f % (forceGB gens G)"
+	  },
+     "This is a different answer from the SINGULAR book, since the choice of
+     divisor affects the answer.",
+     EXAMPLE {
+	  "f % (forceGB matrix{{f2,f1}})"
+	  },
+
      SeeAlso => {}
      }
 document {
