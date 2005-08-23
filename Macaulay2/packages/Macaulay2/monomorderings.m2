@@ -775,9 +775,13 @@ chosen monomial ordering.",
 document {
      Key => MonomialOrder,
      Headline => "monomial ordering",
-     TT "MonomialOrder", " -- an optional argument used with monoids and
-     polynomial rings to indicate a
-     monomial ordering other than the default (graded reverse lexicographic)",
+     TT "MonomialOrder", " -- an optional argument used with polynomial rings and monoids
+     to indicate a
+     monomial ordering other than the default (graded reverse lexicographic).",
+     PARA,
+     "In Macaulay 2, each polynomial ring (and also each monoid) is equipped with a monomial order,
+     which is used for display of polynomials (terms are listed in descending monomial order),
+     and also for Groebner basis computations.",
      PARA,
      "In the most general setting, a monomial ordering is given by a list of
      permissible elements, listed and described below.  Monomials are compared 
