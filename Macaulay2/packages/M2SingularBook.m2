@@ -80,7 +80,9 @@ document {
 	  "Some monomial orders should be easier to specify",
 	  "Local remainder is wrong",
 	  "Local GB can be improved: x13+x14y can be reduced??",
-	  "Highest corner use in local computations can speed things up..."
+	  "Highest corner use in local computations can speed things up...",
+	  "1.8.2: how are we doing local division?",
+	  "1.8.2: write this node",
 	  }
      },
 document {
@@ -363,6 +365,37 @@ document {
 document {
      Key => "1.8.1",
      Headline => "ideal membership",
+     EXAMPLE {
+	  "A = QQ[x,y];",
+	  "I = ideal(x^10+x^9*y^2, y^8-x^2*y^7);",
+	  "f = x^2*y^7+y^14;",
+	  "f % I"
+	  },
+     "So this f is not in the ideal I.",
+     EXAMPLE {
+	  "f = x*y^13+y^12;",
+	  "f % I"
+	  },
+     "This f is in the ideal I.",
+     PARA,
+     "Check inclusion and equality of ideals.",
+     EXAMPLE {
+	  "K = ideal(f,x^2*y^7+y^14);",
+	  "(gens K) % I"
+	  },
+     "In Macaulay2, inclusion of ideals can be tested using ", TO (isSubset,Ideal,Ideal),
+     " and equality can be checked using ", TO (symbol==,Ideal,Ideal), ".  In both cases
+     the necessary Groebner bases are computed, if they have not already been computed.",
+     EXAMPLE {
+	  "isSubset(K,I)",
+	  "K == I"
+	  },
+     EXAMPLE {
+	  "K = ideal(f,y^14+x*y^12);",
+	  "(gens K) % I",
+	  "isSubset(K,I)",
+	  "K == I"
+	  },
      SeeAlso => {}
      }
 document {
@@ -373,6 +406,35 @@ document {
 document {
      Key => "1.8.4",
      Headline => "elimination of variables",
+     "There are several methods to eliminate variables in Macaulay2.",
+     EXAMPLE {
+	  ///loadPackage "Elimination";///,
+	  "A = QQ[t,x,y,z];",
+	  ///I = ideal"t2+x2+y2+z2,t2+2x2-xy-z2,t+y3-z3";///,
+	  "eliminate(I,t)"
+	  },
+     PARA,
+     "Alternatively, one may do it by hand: the elements of the Groebner basis
+     under an elimination order not involving ", TT "t", " generate the elimination ideal.",
+     EXAMPLE {
+	  "A1 = QQ[t,x,y,z,MonomialOrder=>{1,3}];",
+	  "I = substitute(I,A1);",
+	  "transpose gens gb I"
+	  },
+     PARA,
+     "Here is another elimination ideal.  Weights not given are assumed to be zero.",
+     EXAMPLE {
+	  "A2 = QQ[t,x,y,z,MonomialOrder=>Weights=>{1}];",
+	  "I = substitute(I,A2);",
+	  "transpose gens gb I"
+	  },
+     PARA,
+     "The same order as the previous one:",
+     EXAMPLE {
+	  "A3 = QQ[t,x,y,z,MonomialOrder=>Eliminate 1];",
+	  "I = substitute(I,A3);",
+	  "transpose gens gb I"
+	  },
      SeeAlso => {}
      }
 document {
