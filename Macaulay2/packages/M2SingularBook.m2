@@ -42,6 +42,8 @@ document {
 	PARA,
 	"Each example is numbered as it is in Greuel and Pfister's book.  Links to 
 	Macaulay2 routines and concepts are also provided.",
+	PARA,
+	TO "Macaulay2 implementation bugs and problems",
 	Subnodes => {
 	     "Chapter 1",
 	     TO "1.1.8",
@@ -71,6 +73,16 @@ document {
 	     TO "1.8.20"
 	     }
 	}
+document {
+     Key => "Macaulay2 implementation bugs and problems",
+     UL {
+	  "poly should be allowed for short input of polynomials?",
+	  "Some monomial orders should be easier to specify",
+	  "Local remainder is wrong",
+	  "Local GB can be improved: x13+x14y can be reduced??",
+	  "Highest corner use in local computations can speed things up..."
+	  }
+     },
 document {
      Key => "1.1.8",
      Headline => "computation in fields",
@@ -294,17 +306,58 @@ document {
      EXAMPLE {
 	  "f % (forceGB matrix{{f2,f1}})"
 	  },
-
      SeeAlso => {}
      }
 document {
      Key => "1.7.10",
      Headline => "standard bases",
+     "We show the Groebner and standard bases of an ideal under several different
+     orders and localizations.  First, the default order is graded (degree) reverse
+     lexicographic.",
+     EXAMPLE {
+     	  "A = QQ[x,y];",
+     	  ///I = ideal "x10+x9y2,y8-x2y7";///,
+     	  "transpose gens gb I"
+	  },
+     PARA,
+     "Lexicographic order:",
+     EXAMPLE {
+	  "A1 = QQ[x,y,MonomialOrder=>Lex];",
+	  "I = substitute(I,A1)",
+	  "transpose gens gb I"
+	  },
+     PARA,
+     "Now we change to a local order",
+     EXAMPLE {
+	  "B = QQ[x,y,MonomialOrder=>{Weights=>{-1,-1},2}];",
+	  "I = substitute(I,B)",
+	  "transpose gens gb I"
+	  },
+     PARA,
+     "Another local order: negative lexicographic.",
+     EXAMPLE {
+	  "B = QQ[x,y,MonomialOrder=>{Weights=>{-1,0},Weights=>{0,-1}}];",
+	  "I = substitute(I,B)",
+	  "transpose gens gb I"
+	  },
+     PARA,
+     "One method to compute a standard basis is via homogenization.  The example
+     below does this, obtaining a standard basis which is not minimal.",
+     EXAMPLE {
+	  "M = matrix{{1,1,1},{0,-1,-1},{0,0,-1}}",
+	  "mo = apply(entries M, e -> Weights => e)",
+	  "C = QQ[t,x,y,MonomialOrder=>mo];",
+	  "I = homogenize(substitute(I,C),t)",
+          "transpose gens gb I",
+	  "substitute(transpose gens gb I, {t=>1})"
+	  },
+     "The first two elements form a standard basis.",
      SeeAlso => {}
      }
 document {
      Key => "1.7.12",
      Headline => "highest corner",
+     "This is not implemented in macaulay2 yet.",
      SeeAlso => {}
      }
 document {
