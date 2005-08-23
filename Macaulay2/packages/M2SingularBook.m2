@@ -83,6 +83,10 @@ document {
 	  "Highest corner use in local computations can speed things up...",
 	  "1.8.2: how are we doing local division?",
 	  "1.8.2: write this node",
+	  "1.8.7: solving equations is not quite implemented.  
+	    But it should not be that hard...",
+	  "1.8.15: implement sat, saturation which returns (Isat,ZZ).",
+	  "1.8.18, 1.8.19: write these",
 	  }
      },
 document {
@@ -93,6 +97,31 @@ document {
 document {
      Key => "1.1.9",
      Headline => "computation in polynomial rings",
+     "Create a polynomial ring using reasonably standard notation.",
+     EXAMPLE {
+	  "A = QQ[x,y,z];",
+	  "f = x^3+y^2+z^2",
+	  "f^2-f"
+	  },
+     "Here are several more examples.",
+     EXAMPLE {
+	  "B = ZZ/32003[x,y,z];",
+	  "C = GF(8)[x,y,z];",
+	  "D = ZZ[x,y,z];",
+	  "E = (frac(ZZ[a,b,c]))[x,y,z];"
+	  },
+     "In Macaulay2, there is no concept of current ring.  When you assign a ring to a variable,
+     the variables in the ring are made global variables.  To get the variables in a previous ring
+     to be available, use ", TO (use,Ring), ".",
+     EXAMPLE {
+	  "x",
+	  "use D",
+	  "x"
+	  },
+     "Now x is an element of the ring D.",
+     EXAMPLE {
+	  "describe D"
+	  },
      SeeAlso => {}
      }
 document {
@@ -440,36 +469,137 @@ document {
 document {
      Key => "1.8.6",
      Headline => "Zariski closure of the image",
+     "We compute an implicit equation for the surface defined parametrically by the map ", 
+     TEX "$f : A^2 \\rightarrow A^3, (u,v) \\mapsto (uv,uv^2,u^2)$", ".",
+     EXAMPLE {
+	  ///loadPackage "Elimination";///,
+	  ///A = QQ[u,v,x,y,z];///,
+	  ///I = ideal "x-uv,y-uv2,z-u2";///,
+          ///eliminate(I,{u,v})///
+	  },
+     TEX "This ideal defines the closure of the map $f$, the Whitney umbrella.",
      SeeAlso => {}
      }
 document {
      Key => "1.8.7",
      Headline => "solving equations",
+     EXAMPLE {
+	  "A = QQ[x,y,z,MonomialOrder=>Lex];",
+	  "I = ideal(x^2+y+z-1, x+y^2+z-1, x+y+z^2-1);",
+	  "transpose gens gb I"
+	  },
+     "Now we need to implement the solver!",
      SeeAlso => {}
      }
 document {
      Key => "1.8.9",
      Headline => "radical membership",
+     TEX "Recall that an element $f$ is in an ideal $I$ if
+     $1 \\in (I, tf-1) \\subset R[t]$.",
+     EXAMPLE {
+	  "A = QQ[x,y,z];",
+	  ///I = ideal"x5,xy3,y7,z3+xyz";///,
+	  "f = x+y+z;"
+	  },
+     EXAMPLE {
+	  "B = A[t];",
+	  "J = substitute(I,B) + ideal(f*t-1)",
+	  "1 % J "
+	  },
+     "The polynomial f is in the radical. Let's compute the radical to make sure.",
+     EXAMPLE {
+	  "radical I"
+	  },
      SeeAlso => {}
      }
 document {
      Key => "1.8.11",
      Headline => "intersection of ideals",
+     "Intersecting ideals using the Macaulay2 ", TO intersect, " function.",
+     EXAMPLE {
+	  "A = QQ[x,y,z];",
+	  "I1 = ideal(x,y);",
+	  "I2 = ideal(y^2,z);",
+	  "intersect(I1,I2)"
+	  },
+     "Now we use the method described in the Singular book in section 1.8.7.",
+     EXAMPLE {
+	  "B = QQ[t,x,y,z];",
+	  "I1 = substitute(I1,B);",
+	  "I2 = substitute(I2,B);",
+	  "J = t*I1 + (1-t)*I2",
+          ///loadPackage "Elimination";///,
+          "eliminate(J,t)"
+	  },
      SeeAlso => {}
      }
 document {
      Key => "1.8.13",
      Headline => "quotient of ideals",
+     EXAMPLE {
+	  "A = QQ[x,y,z];",
+	  "I1 = ideal(x,y);",
+	  "I2 = ideal(y^2,z);",
+	  "I1 : I2"
+	  },
+     "The quotient function is the same as the colon operator, except that
+     optional arguments may be given.",
+     EXAMPLE {
+	  "quotient(I1,I2)"
+	  },
+     "Now we use the method described in Lemma 1.8.12 in the Singular book.",
+     EXAMPLE {
+	  "J1 = intersect(I1,ideal(I2_0))",
+	  "J2 = intersect(I1,ideal(I2_1))",
+	  },
+     "Now divide each generator of J1 by x, and each generator of J2 by y.  Notice that
+     division uses two slashes.  Using only one slash gives the quotient in the fraction ring.",
+     EXAMPLE {
+	  "K1 = ideal(J1_0//I2_0)",
+	  "K2 = ideal(J2_0//I2_1, J2_1//I2_1)",
+	  "intersect(K1,K2)"
+	  },
      SeeAlso => {}
      }
 document {
      Key => "1.8.15",
      Headline => "saturation",
+     EXAMPLE {
+	  "A = QQ[x,y,z];",
+	  "I1 = ideal(x^5*z^3, x*y*z, y*z^4);",
+	  "saturate(I1,z)"
+	  },
+     "Now we compute the saturation using a loop.",
+     EXAMPLE {
+	  "J = I1:z",
+	  "k = 0;",
+	  "while not isSubset(J,I1) do (
+   k = k+1;
+   I1 = J;
+   J = I1 : z;
+   );",
+	  "J",
+	  "k"
+	  },
+     "We needed to use quotient four times.",
      SeeAlso => {}
      }
 document {
      Key => "1.8.18",
      Headline => "kernel of a ring map",
+     "First, we use Macaulay2's ", TO (kernel,RingMap), " function.",
+     EXAMPLE {
+	  "A = QQ[x,y,z];",
+	  "B = QQ[a,b];",
+	  "phi = map(B,A,{a^2,a*b,b^2})",
+	  "kernel phi"
+	  },
+     "Now use the elimination of variables method.",
+     EXAMPLE {
+	  "C = QQ[x,y,z,a,b]",
+	  "H = ideal(x-a^2, y-a*b, z-b^2);",
+          "eliminate(H, {a,b})"
+	  },
      SeeAlso => {}
      }
 document {
