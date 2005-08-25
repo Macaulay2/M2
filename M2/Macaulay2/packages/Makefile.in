@@ -13,6 +13,7 @@ PACKAGES += Elimination
 PACKAGES += FirstPackage
 PACKAGES += GenericInitialIdeal
 PACKAGES += Markov
+PACKAGES += M2SingularBook
 PACKAGES += minimal
 PACKAGES += Points
 PACKAGES += PackageTemplate
