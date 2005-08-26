@@ -197,6 +197,8 @@ makeit1 := (opts) -> (
      M.generatorsTable = hashTable apply(M.generatorSymbols,M.generators,(v,x) -> v => x);
      M.index = new MutableHashTable;
      scan(#varlist, i -> M.index#(varlist#i) = i);
+     M.internalDegrees = internalDegrees;
+     M.internalDegreeLength = internalDegreeLength := if internalDegrees#?0 then #internalDegrees#0 else 0;
      (MOopts,rawMO) := makeMonomialOrdering(
      	  opts.MonomialSize,
 	  opts.Inverses,
@@ -216,7 +218,7 @@ makeit1 := (opts) -> (
 	  else rawMonoid(
 	       M.RawMonomialOrdering,
 	       toSequence M.generators / toString,
-	       raw degreesRing degreeLength M,
+	       raw degreesRing internalDegreeLength,
 	       flatten internalDegrees));
      raw M := x -> x.RawMonomial;
      net M := x -> net expression x;
@@ -308,7 +310,15 @@ makeMonoid := (options) -> (
 
      if class options.Adjust =!= Function then error("expected 'Adjust' option to be a function");
      if class options.Repair =!= Function then error("expected 'Repair' option to be a function");
-     if options.Adjust =!= identity and options.Heft =!= null then error "encountered both Heft and Adjust options";
+     heft := options.Heft;
+     if heft =!= null then (
+     	  if options.Adjust =!= identity or options.Repair =!= identity then error "encountered both Heft and Adjust or Repair options";
+	  options.Adjust = x -> prepend(sum(heft,x,times),x); -- to internal degree
+	  options.Repair = x -> drop(x,1);		      -- to external degree
+	  scan(degs, d -> (
+		    if degrk =!= length heft then error ("expect Heft option to be a list of length ",toString degrk, " to match the degree rank");
+		    if not first options.Adjust d > 0 then error "Heft option doesn't yield a positive value for each variable";
+		    )));
 
      options = new OptionTable from options;
      makeit1 options)
