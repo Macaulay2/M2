@@ -610,20 +610,15 @@ void FractionField::degree_weights(const ring_elem, M2_arrayint, int &lo, int &h
   lo = hi = 0;
 }
 
-int FractionField::primary_degree(const ring_elem a) const
-{
-  const frac_elem *f = FRAC_VAL(a);
-  return R_->primary_degree(f->numer) - R_->primary_degree(f->denom);
-}
-
 ring_elem FractionField::homogenize(const ring_elem a, int v, int deg, 
 				    M2_arrayint wts) const
 {
+  int d1,d2,lo1,lo2;
   ring_elem top, bottom;
   frac_elem *result;
   const frac_elem *f = FRAC_VAL(a);
-  int d1 = R_->primary_degree(f->numer);
-  int d2 = R_->primary_degree(f->denom);
+  R_->degree_weights(f->numer,wts,lo1,d1);
+  R_->degree_weights(f->denom,wts,lo2,d2);
   if (deg >= d1-d2)
     {
       top = R_->homogenize(f->numer, v, deg + d2, wts);

@@ -913,17 +913,6 @@ bool Ring::vec_is_homogeneous(const FreeModule *F, const vec f) const
   return result;
 }
 
-#if 0
-// 8-9-04 maybe this one is not needed any longer?
-int Ring::vec_primary_degree(const FreeModule *F, const vec f) const
-{
-  if (f == NULL) return 0;
-  int deg = primary_degree(f->coeff);
-
-  return F->primary_degree(f->comp) + deg;
-}
-#endif
-
 void Ring::vec_degree_weights(const FreeModule *F,
 			      const vec f, 
 			      M2_arrayint wts, 

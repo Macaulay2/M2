@@ -12,11 +12,6 @@
 #include "../d/M2mem.h"
 #include "coeffrings.hpp"
 
-#if 0
-#define CCELEM_VAL(f) (M2_CC ((f).poly_val))
-#define CC_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
-#endif
-
 #define CCELEM_VAL(f) (reinterpret_cast<M2_CC>((f).poly_val))
 #define CC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
 
@@ -447,31 +442,6 @@ void CC::syzygy(const ring_elem a, const ring_elem b,
 ring_elem CC::eval(const RingMap *map, const ring_elem f, int) const
 {
   return map->get_ring()->from_complex(CCELEM_VAL(f));
-}
-
-void CC::degree(const ring_elem, int *d) const
-{
-  degree_monoid()->one(d);
-}
-void CC::degree_weights(const ring_elem, M2_arrayint, int &lo, int &hi) const
-{
-  lo = hi = 0;
-}
-int CC::primary_degree(const ring_elem) const
-{
-  return 0;
-}
-
-ring_elem CC::homogenize(const ring_elem f, int, int deg, M2_arrayint) const
-{
-  if (deg != 0) 
-    ERROR("homogenize: no homogenization exists");
-  return f;
-}
-
-ring_elem CC::homogenize(const ring_elem f, int, M2_arrayint) const
-{
-  return f;
 }
 
 // Local Variables:

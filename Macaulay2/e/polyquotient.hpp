@@ -160,10 +160,6 @@ public:
     return numerR_->PolyRing::multi_degree(f,d);
   }
 
-  virtual int primary_degree(const ring_elem f) const {
-    return numerR_->PolyRing::primary_degree(f);
-  }
-
   virtual void degree_weights(const ring_elem f, M2_arrayint wts, 
 			      int &lo, int &hi) const {
     return numerR_->PolyRing::degree_weights(f,wts,lo,hi);

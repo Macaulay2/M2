@@ -28,8 +28,8 @@ bool GF::initialize_GF(const RingElement *prim)
       return false;
     }
   ring_elem f = _originalR->quotient_element(0);
-
-  int n = _originalR->primary_degree(f);
+  Nterm *t = f;
+  int n = _originalR->getMonoid()->primary_degree(t->monom);
 
   Q_ = P;
   for (i=1; i<n; i++) Q_ *= P;
@@ -428,33 +428,6 @@ void GF::syzygy(const ring_elem a, const ring_elem b,
   y = GF::divide(a,b);
   GF::internal_negate_to(y);
 }
-
-
-void GF::degree(const ring_elem, int *d) const
-{
-  degree_monoid()->one(d);
-}
-void GF::degree_weights(const ring_elem, M2_arrayint, int &lo, int &hi) const
-{
-  lo = hi = 0;
-}
-int GF::primary_degree(const ring_elem) const
-{
-  return 0;
-}
-
-ring_elem GF::homogenize(const ring_elem f, int, int deg, M2_arrayint) const
-{
-  if (deg != 0) 
-    ERROR("homogenize: no homogenization exists");
-  return f;
-}
-
-ring_elem GF::homogenize(const ring_elem f, int, M2_arrayint) const
-{
-  return f;
-}
-
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
