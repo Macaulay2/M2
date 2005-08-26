@@ -212,14 +212,16 @@ newModule(Ring,RawFreeModule) := (R,rM) -> new Module of Vector from {
      symbol numgens => rawRank rM
      }
 
-degrees Module := M -> if M.?degrees then M.cache.degrees else M.cache.degrees = (
-     if not isFreeModule M then M = cover M;
-     rk := numgens M;
-     R := ring M;
-     nd := degreeLength R;
+degrees Module := N -> if N.?degrees then N.cache.degrees else N.cache.degrees = (
+     if not isFreeModule N then N = cover N;
+     rk := numgens N;
+     R := ring N;
+     M := monoid R;
+     nd := degreeLength M;
+     ind := M.internalDegreeLength;
      if nd == 0 then toList (rk : {})
      else (
-	  d := pack(nd,rawMultiDegree M.RawFreeModule);
+	  d := pack(ind,rawMultiDegree N.RawFreeModule);
 	  if R.?Repair then d = apply(d,R.Repair);
 	  d))
 
