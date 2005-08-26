@@ -6,7 +6,7 @@
 --binomial ZZ := n -> binomialRow n
 binomial(ZZ,ZZ) := ZZ => memoize (
      (n,i) -> (
-	  if i < 0 then error "expected nonnegative integer"
+	  if i < 0 then 0
 	  else if i === 0 then 1
      	  else if n > 0 then (
      	       if i > n then 0
