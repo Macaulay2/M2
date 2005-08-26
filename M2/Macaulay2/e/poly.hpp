@@ -244,7 +244,6 @@ public:
   virtual bool is_homogeneous(const ring_elem f) const = 0;
   virtual void degree(const ring_elem f, int *d) const = 0;
   virtual bool multi_degree(const ring_elem f, int *d) const = 0;
-  virtual int primary_degree(const ring_elem f) const = 0;
   virtual void degree_weights(const ring_elem f, M2_arrayint wts, 
 			      int &lo, int &hi) const = 0;
   virtual ring_elem homogenize(const ring_elem f, int v, int deg, 

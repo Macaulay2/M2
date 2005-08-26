@@ -381,11 +381,6 @@ bool PolyQQ::multi_degree(const ring_elem f, int *d) const
   return numerR_->multi_degree(numerator(f), d);
 }
 
-int PolyQQ::primary_degree(const ring_elem f) const 
-{
-  return numerR_->primary_degree(numerator(f));
-}
-
 void PolyQQ::degree_weights(const ring_elem f, M2_arrayint wts, 
 			    int &lo, int &hi) const 
 {

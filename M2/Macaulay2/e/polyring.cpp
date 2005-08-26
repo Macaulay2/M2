@@ -423,13 +423,6 @@ bool PolyRing::multi_degree(const ring_elem f, int *degf) const
   return result;
 }
 
-int PolyRing::primary_degree(const ring_elem f) const
-{
-  Nterm *t = f;
-  if (t == NULL) return 0;
-  return M_->primary_degree(t->monom);
-}
-
 void PolyRing::degree_weights(const ring_elem f, M2_arrayint wts, 
 				    int &lo, int &hi) const
 {

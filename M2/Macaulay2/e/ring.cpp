@@ -281,11 +281,6 @@ void Ring::degree_weights(const ring_elem, M2_arrayint, int &lo, int &hi) const
 {
   lo = hi = 0;
 }
-int Ring::primary_degree(const ring_elem) const
-{
-  return 0;
-}
-
 int Ring::index_of_var(const ring_elem a) const
 {
   return -1;

@@ -280,7 +280,6 @@ public:
   virtual void degree(const ring_elem f, int *d) const;
   virtual bool multi_degree(const ring_elem f, int *d) const;
     // returns true iff f is homogeneous
-  virtual int primary_degree(const ring_elem f) const;
   virtual void degree_weights(const ring_elem f, M2_arrayint wts, int &lo, int &hi) const;
 
   //////////////////////////////////////////
@@ -372,7 +371,6 @@ public:
 			  M2_arrayint wts, 
 			  int &lo, 
 			  int &hi) const;
-  //int vec_primary_degree (const FreeModule *F, const vec f) const;
   bool vec_is_homogeneous (const FreeModule *F, const vec f) const;
   vec vec_homogenize(const FreeModule *F, 
 		     const vec f, 

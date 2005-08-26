@@ -96,14 +96,6 @@ public:
   virtual void elem_text_out(buffer &o, const ring_elem f) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
-
-  // The following are all basically dummy routines, and should be in ring.hpp
-  virtual void degree(const ring_elem f, int *d) const;
-  virtual int primary_degree(const ring_elem f) const;
-  virtual void degree_weights(const ring_elem f, M2_arrayint wts, 
-			      int &lo, int &hi) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, int deg, M2_arrayint wts) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, M2_arrayint wts) const;
 };
 
 #endif
