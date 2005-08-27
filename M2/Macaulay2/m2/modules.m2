@@ -216,14 +216,14 @@ degrees Module := N -> if N.?degrees then N.cache.degrees else N.cache.degrees =
      if not isFreeModule N then N = cover N;
      rk := numgens N;
      R := ring N;
-     M := monoid R;
-     nd := degreeLength M;
-     ind := M.internalDegreeLength;
-     if nd == 0 then toList (rk : {})
+     nd := degreeLength R;
+     if nd === 0 then toList (rk : {})
      else (
-	  d := pack(ind,rawMultiDegree N.RawFreeModule);
-	  if R.?Repair then d = apply(d,R.Repair);
-	  d))
+       M := monoid R;
+       ind := M.internalDegreeLength;
+       d := pack(ind,rawMultiDegree N.RawFreeModule);
+       if R.?Repair then d = apply(d,R.Repair);
+       d))
 
 Module ^ ZZ := Module => (M,i) -> directSum (i:M)
 

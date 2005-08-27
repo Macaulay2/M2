@@ -1,6 +1,7 @@
 --		Copyright 2004 by Daniel R. Grayson
 
 export (
+        symbol poly,  -- used for classic M1 parsing
      	symbol diagonalMatrix,
         symbol weightRange,
         symbol support,
