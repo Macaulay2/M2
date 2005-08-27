@@ -217,7 +217,12 @@ degrees Module := N -> if N.?degrees then N.cache.degrees else N.cache.degrees =
      rk := numgens N;
      R := ring N;
      nd := degreeLength R;
-     if nd === 0 then toList (rk : {})
+     if R.?monoid then (
+     	  M := R.monoid;
+     	  ind := M.internalDegreeLength;
+	  )
+     else ind = nd;
+     if nd == 0 then toList (rk : {})
      else (
        M := monoid R;
        ind := M.internalDegreeLength;
