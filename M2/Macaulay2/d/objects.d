@@ -543,6 +543,7 @@ extract(v:varstringarray):array(string) := new array(string) len v.n do foreach 
 
 export completions(s:string):array(string) := (
      n := length(s);
+     if n == 0 then return array(string)();		    -- don't complete the null string
      v := newvarstringarray(6);
      d := globalDictionary;
      while (

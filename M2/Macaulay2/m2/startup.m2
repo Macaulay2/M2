@@ -252,6 +252,7 @@ usage := arg -> (
      << "    --int              don't handle interrupts" << newline -- handled by M2lib.c
      << "    --notify           notify when loading files during initialization" << newline
      << "    --no-prompts       print no input prompts" << newline;
+     << "    --no-readline      don't use readline" << newline;
      << "    --no-setup         don't try to load setup.m2" << newline
      << "    --prefix DIR       set prefixDirectory" << newline
      << "    --print-width n    set printWidth=n (the default is the window width)" << newline
@@ -324,6 +325,7 @@ action := hashTable {
      "--int" => arg -> arg,
      "--copyright" => arg -> if phase == 1 then fullCopyright = true,
      "--no-prompts" => arg -> if phase == 1 then noPrompts(),
+     "--no-readline" => arg -> arg,			    -- handled in d/stdio.d
      "--notify" => arg -> if phase <= 2 then notify = true,
      "-x" => arg -> examplePrompts(),
      "-s" => obsolete,

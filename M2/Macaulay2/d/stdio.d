@@ -87,7 +87,7 @@ export stdIO  := file(nextHash(),  "stdio",  0,
 
 init():void := (
      stdIO.readline = stdIO.infd == STDIN && stdIO.inisatty ;
-     foreach arg in args do if arg === "-x" then stdIO.readline = false;
+     foreach arg in args do if arg === "-x" || arg === "--no-readline" then stdIO.readline = false;
      -- strange but true: readline refuses to display CTRL-A when it occurs in a prompt
      );
 

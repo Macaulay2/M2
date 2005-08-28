@@ -58,21 +58,6 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
-document { 
-     Key => [primaryDecomposition, Strategy],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-
 
 document {
      Key => (ass, Ideal),

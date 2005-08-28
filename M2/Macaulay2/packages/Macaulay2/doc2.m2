@@ -104,11 +104,8 @@ document {
      of ", TT "x", " is interrupted, the value of ", TT "w", " is added to the list, 
      and iteration of the loop continues.",
      PARA,
-     TT "for i in w when c list x do y", " is similar, except it repeatedly 
-     evaluates ", TT "x", " and ", TT "y", " as long as ", TT "c", " is
-     true, letting the variable ", TT "i", " be assigned, as value, consecutive entries
-     of the basic list or sequence ", TT "w", ", returning a list of the values
-     of ", TT "x", " encountered.",
+     TT "for i in w when c list x do y", " is similar, except that consecutive entries
+     of the basic list or sequence ", TT "w", " are assigned as values of ", TT "i", ".",
      PARA,
      "Each of the clauses ", TT "from a", ", ", TT "to b", ",
      ", TT "when c", ", ", TT "list x", ", and ", TT "do y", " is optional,
@@ -126,6 +123,7 @@ document {
      EXAMPLE {
 	  "for i from 3 to 6 do print i",
 	  "for i when i^2 < 90 list i",
+	  "for i in {a,4,1/2} list class i"
 	  },
      SeeAlso => { "loops", "while", "return" }
      }     
