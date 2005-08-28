@@ -467,13 +467,6 @@ document {
      a list ", TT "z", " in which the i-th element ", TT "w_i", " is obtained
      by evaluating ", TT "f(v_i,w_i)", ".  If ", TT "v", " and ", TT "w", " are
      lists of the same class, then the result is also of that class.",
-     PARA {
-	  "If ", TO "continue", " is executed by ", TT "f", " then execution of ", TT "f", "
-     	  is interrupted, no value is added to the list, and iteration of the loop
-     	  continues.  If ", TO "continue w", " is executed by ", TT "f", " then execution
-     	  of ", TT "f", " is interrupted, the value of ", TT "w", " is added to the list, 
-     	  and iteration of the loop continues."
-	  },
      EXAMPLE "apply({1,2,3}, {100,200,300}, (i,j) -> i+j)"
      }
 
@@ -489,13 +482,6 @@ document {
 	  {"the list obtained by applying ", TT "f", " to each element of ", TT "v", "."}
 	  },
      "The result ", TT "r", " will have the same class as ", TT "v", ".",
-     PARA {
-	  "If ", TO "continue", " is executed by ", TT "f", " then execution of ", TT "f", "
-     	  is interrupted, no value is added to the list, and iteration of the loop
-     	  continues.  If ", TO "continue w", " is executed by ", TT "f", " then execution
-     	  of ", TT "f", " is interrupted, the value of ", TT "w", " is added to the list, 
-     	  and iteration of the loop continues."
-	  },
      EXAMPLE "apply([1,3,5,7], i->i^2)",
      SeeAlso => {(symbol /,VisibleList, Function), (symbol \, Function, VisibleList)}
      }

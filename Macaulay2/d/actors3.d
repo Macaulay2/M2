@@ -728,8 +728,8 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			 tmp := eval(body);
 			 when tmp is err:Error do (
 			      if err.message == returnMessage then provide err.value
-			      else if err.message == continueMessageWithArg then provide err.value
-			      else if err.message == continueMessage then newlen = newlen - 1
+			      -- else if err.message == continueMessageWithArg then provide err.value
+			      -- else if err.message == continueMessage then newlen = newlen - 1
 			      else (
 				   errret = tmp;
 				   while true do provide nullE;
@@ -742,12 +742,12 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			      )
 			 else for i from 1 to framesize - 1 do values.i = nullE;
 			 );
-		    while true do provide nullE;
+		    -- while true do provide nullE;
 		    );
 	       localFrame = saveLocalFrame;
 	       recursionDepth = recursionDepth - 1;
 	       if errret != nullE then return errret;
-	       if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
+	       -- if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
 	       Expr(ret)
 	       )
 	  else (				  -- (x,y) -> ...
@@ -763,8 +763,8 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			      tmp := eval(body);
 			      when tmp is err:Error do (
 				   if err.message == returnMessage then provide err.value
-				   else if err.message == continueMessageWithArg then provide err.value
-				   else if err.message == continueMessage then newlen = newlen - 1
+				   -- else if err.message == continueMessageWithArg then provide err.value
+				   -- else if err.message == continueMessage then newlen = newlen - 1
 				   else (
 					errret = tmp;
 					while true do provide nullE;
@@ -780,12 +780,12 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 				   for i from 2 to framesize - 1 do values.i = nullE;
 				   );
 			      );
-			 while true do provide nullE;
+			 -- while true do provide nullE;
 			 );
 		    localFrame = saveLocalFrame;
 		    recursionDepth = recursionDepth - 1;
 		    if errret != nullE then return errret;
-	       	    if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
+	       	    -- if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
 		    Expr(ret)
 		    )
 	       )
@@ -842,8 +842,8 @@ map(a:Sequence,f:Expr):Expr := (
 			 tmp := eval(body);
 			 when tmp is err:Error do (
 			      if err.message == returnMessage then provide err.value
-			      else if err.message == continueMessageWithArg then provide err.value
-			      else if err.message == continueMessage then newlen = newlen - 1
+			      -- else if err.message == continueMessageWithArg then provide err.value
+			      -- else if err.message == continueMessage then newlen = newlen - 1
 			      else (
 				   errret = tmp;
 				   while true do provide nullE;
@@ -856,12 +856,12 @@ map(a:Sequence,f:Expr):Expr := (
 			      )
 			 else for i from 1 to framesize - 1 do values.i = nullE;
 			 );
-		    while true do provide nullE;
+		    -- while true do provide nullE;
 		    );
 	       localFrame = saveLocalFrame;
 	       recursionDepth = recursionDepth - 1;
 	       if errret != nullE then return errret;
-	       if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
+	       -- if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
 	       Expr(ret)
 	       )
 	  else (				  -- (x,y) -> ...
@@ -883,8 +883,8 @@ map(a:Sequence,f:Expr):Expr := (
 				   tmp := eval(body);
 				   when tmp is err:Error do (
 					if err.message == returnMessage then provide err.value
-			      		else if err.message == continueMessageWithArg then provide err.value
-			      		else if err.message == continueMessage then newlen = newlen - 1
+			      		-- else if err.message == continueMessageWithArg then provide err.value
+			      		-- else if err.message == continueMessage then newlen = newlen - 1
 					else (
 					     errret = tmp;
 					     while true do provide nullE;
@@ -910,8 +910,8 @@ map(a:Sequence,f:Expr):Expr := (
 				   tmp := eval(body);
 				   when tmp is err:Error do (
 					if err.message == returnMessage then provide err.value
-			      		else if err.message == continueMessageWithArg then provide err.value
-			      		else if err.message == continueMessage then newlen = newlen - 1
+			      		-- else if err.message == continueMessageWithArg then provide err.value
+			      		-- else if err.message == continueMessage then newlen = newlen - 1
 					else (
 					     errret = tmp;
 					     while true do provide nullE;
@@ -925,12 +925,12 @@ map(a:Sequence,f:Expr):Expr := (
 				   else for i from 1 to framesize - 1 do values.i = nullE;
 				   )
 			      );
-			 while true do provide nullE;
+			 -- while true do provide nullE;
 			 );
 		    localFrame = saveLocalFrame;
 		    recursionDepth = recursionDepth - 1;
 		    if errret != nullE then return errret;
-	       	    if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
+	       	    -- if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
 		    Expr(ret)
 		    )
 	       else (
@@ -952,8 +952,8 @@ map(a:Sequence,f:Expr):Expr := (
 				   tmp := eval(body);
 				   when tmp is err:Error do (
 					if err.message == returnMessage then provide err.value
-			      		else if err.message == continueMessageWithArg then provide err.value
-			      		else if err.message == continueMessage then newlen = newlen - 1
+			      		-- else if err.message == continueMessageWithArg then provide err.value
+			      		-- else if err.message == continueMessage then newlen = newlen - 1
 					else (
 					     errret = tmp;
 					     while true do provide nullE;
@@ -961,12 +961,12 @@ map(a:Sequence,f:Expr):Expr := (
 					)
 				   else provide tmp;
 				   );
-			      while true do provide nullE;
+			      -- while true do provide nullE;
 			      );
 			 localFrame = saveLocalFrame;
 			 recursionDepth = recursionDepth - 1;
 			 if errret != nullE then return errret;
-	       	    	 if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
+	       	    	 -- if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
 			 Expr(ret)
 			 )
 		    else (	  -- framesize != 0
@@ -991,8 +991,8 @@ map(a:Sequence,f:Expr):Expr := (
 				   tmp := eval(body);
 				   when tmp is err:Error do (
 					if err.message == returnMessage then provide err.value
-			      		else if err.message == continueMessageWithArg then provide err.value
-			      		else if err.message == continueMessage then newlen = newlen - 1
+			      		-- else if err.message == continueMessageWithArg then provide err.value
+			      		-- else if err.message == continueMessage then newlen = newlen - 1
 					else (
 					     errret = tmp;
 					     while true do provide nullE;
@@ -1005,12 +1005,12 @@ map(a:Sequence,f:Expr):Expr := (
      	       	    	      	   	)
 				   else for i from numparms to framesize - 1 do values.i = nullE;
 				   );
-			      while true do provide nullE;
+			      -- while true do provide nullE;
 			      );
 			 localFrame = saveLocalFrame;
 			 recursionDepth = recursionDepth - 1;
     			 if errret != nullE then return errret;
-	       	    	 if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
+	       	    	 -- if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
 			 Expr(ret)))))
      is cf:CompiledFunction do (	  -- compiled code
 	  fn := cf.fn;
@@ -1072,8 +1072,8 @@ map(newlen:int,f:Expr):Expr := (
 			      tmp := eval(body);
 			      when tmp is err:Error do (
 				   if err.message == returnMessage then provide err.value
-				   else if err.message == continueMessageWithArg then provide err.value
-				   else if err.message == continueMessage then newlen = newlen - 1
+				   -- else if err.message == continueMessageWithArg then provide err.value
+				   -- else if err.message == continueMessage then newlen = newlen - 1
 				   else (
 					errret = tmp;
 					while true do provide nullE;
@@ -1092,8 +1092,8 @@ map(newlen:int,f:Expr):Expr := (
 			      tmp := eval(body);
 			      when tmp is err:Error do (
 				   if err.message == returnMessage then provide err.value
-				   else if err.message == continueMessageWithArg then provide err.value
-				   else if err.message == continueMessage then newlen = newlen - 1
+				   -- else if err.message == continueMessageWithArg then provide err.value
+				   -- else if err.message == continueMessage then newlen = newlen - 1
 				   else (
 					errret = tmp;
 					while true do provide nullE;
@@ -1134,7 +1134,7 @@ map(newlen:int,f:Expr):Expr := (
      when errret
      is err:Error do if err.message == breakMessage then err.value else errret
      else (
-	  if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
+	  -- if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
 	  list(ret)
 	  ));
 
