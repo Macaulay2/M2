@@ -121,6 +121,7 @@ setup := (args, symbols) -> (
      scan(symbols, n -> (
 	  if value n =!= n then error concatenate("symbol ",toString n," redefined");
 	  f := method args;
+	  globalAssignFunction(n,f);
 	  n <- f;
 	  )))
 
@@ -135,9 +136,11 @@ setup((), {
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, annihilator, assign, numgens, conjugate,
 	  autoload, minprimes, relations, cone, random, standardForm, inverse,
-	  det, presentation, use = symbol use, dismiss, degreesMonoid, submatrix,
+	  det, presentation, dismiss, degreesMonoid, submatrix,
 	  truncate, fraction, part, coefficient
 	  })
+
+use = method()
 use Thing := identity
 
 minimalPresentation = method(Options=>{Variable => null})
