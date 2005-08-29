@@ -371,6 +371,96 @@ M2_bool IM2_MutableMatrix_set_values(MutableMatrix *M,
   return M->set_values(rows,cols,values);
 }
 
+////////////////////////////
+//
+//void SparseMutableMatrix::perform_reduction(int r, int c, int nr, int nc,
+//					    int pivot_type)
+//  // Subroutine of reduce_pivots()
+//  // pivot_type: 1 means pivot is 1, -1 means pivot is -1, 0 means pivot is unit
+//{
+//  // Flip rows r, nr
+//  // Flip cols c, nc
+//  // Use (nr,nc) location to remove all terms in columns 0..nc-1
+//  //   and in row nr.
+//  // Replace column nc with all zeros, except 1 in nr row.
+//  interchange_columns(c,nc);
+//  interchange_rows(r,nr);
+//  ring_elem pivot = columns_[nc]->coeff;
+//  if (pivot_type == -1) // pivot is -1
+//    scale_column(pivot,nc,false);    
+//  else if (pivot_type == 0)
+//    divide_column(nc, pivot);
+//  for (int i=0; i<nc; i++)
+//    {
+//      vec p = columns_[i];
+//      if (p == 0) continue;
+//      if (p->comp == nr)
+//	{
+//	  // Do the reduction
+//	  ring_elem f = R->negate(p->coeff);
+//	  column_op(i, f, nc, false);
+//	}
+//    }
+//  R->remove_vec(columns_[nc]);
+//  columns_[nc] = R->e_sub_i(nr);
+//}
+//
+//void SparseMutableMatrix::reduce_pivots()
+//{
+//  int nr = n_rows()-1;
+//  int nc = n_cols()-1;
+//  if (nr < 0 || nc < 0) return;
+//  const Ring *K = get_ring();
+//  ring_elem one = K->one();
+//  ring_elem minus_one = K->minus_one();
+//
+//  // After using the pivot element, it is moved to [nrows-1,ncols-1]
+//  // and nrows and ncols are decremented.
+//
+//  for (int i=0; i<=nc; i++)
+//    {
+//      for (vec p = columns_[i]; p != 0; p = p->next) 
+//	{
+//	  int pivot_type = 0;
+//	  if (K->is_equal(one, p->coeff))
+//	    pivot_type = 1;
+//	  else if (K->is_equal(minus_one, p->coeff))
+//	    pivot_type = -1;
+//	  if (pivot_type != 0)
+//	    {
+//	      perform_reduction(p->comp, i, nr--, nc--, pivot_type);
+//	      if (nr < 0 || nc < 0) return;
+//	      // restart loop with the (new) column i
+//	      i = -1;
+//	      break;
+//	    }
+//	}
+//    }
+//
+//  // Now search for other possible pivots
+//  for (int i=0; i<=nc; i++)
+//    {
+//      for (vec p = columns_[i]; p != 0; p = p->next) 
+//	{
+//	  if (!K->is_unit(p->coeff)) continue;
+//	  int pivot_type = 0;
+//	  if (K->is_equal(one, p->coeff))
+//	    pivot_type = 1;
+//	  else if (K->is_equal(minus_one, p->coeff))
+//	    pivot_type = -1;
+//
+//	  perform_reduction(p->comp, i, nr--, nc--, pivot_type);
+//	  if (nr < 0 || nc < 0) return;
+//	  // restart loop with the (new) column i
+//	  i = -1;
+//	  break;
+//	}
+//    }
+//}
+
+
+
+
 M2_bool IM2_MutableMatrix_reduce_by_pivots(MutableMatrix *M)
 /* Using row and column operations, use unit pivots to reduce the matrix */
 {
