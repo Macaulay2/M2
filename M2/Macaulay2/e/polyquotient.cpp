@@ -8,6 +8,7 @@
 #include "montableZZ.hpp"
 #include "montable.hpp"
 #include "comp_gb.hpp"
+#include "relem.hpp"
 
 PolyRingQuotient::~PolyRingQuotient()
 {
@@ -148,15 +149,32 @@ ring_elem PolyRingQuotient::power(const ring_elem f, int n) const
 
 ring_elem PolyRingQuotient::invert(const ring_elem f) const
 {
-  return ZERO_RINGELEM;
+  if (nvars_ == 1 && n_quotients() == 1 && K_->is_field())
+    {
+      ring_elem g = quotient_element(0);
+
+      RingElement *f1 = RingElement::make_raw(getAmbientRing(),f);
+      RingElement *g1 = RingElement::make_raw(getAmbientRing(),g);
+      const RingElement *u1;
+      const RingElement *v1;
+      const RingElement *h = rawExtendedGCDRingElement(f1,g1,&u1,&v1);
+      // The gcd should be 1.
+      return u1->get_value();
+      
+    }
+  else
+    return ZERO_RINGELEM;
 }
 
 ring_elem PolyRingQuotient::divide(const ring_elem f, const ring_elem g) const
 {
-#warning "division should mean what for quotient rings?"
-  ring_elem a = numerR_->divide(f,g);
-  normal_form(a);
-  return a;
+  ring_elem rem, d;
+  rem = numerR_->remainderAndQuotient(f,g,d);
+  if (is_zero(rem)) return d; // This should be in normal form?
+  ring_elem ginv = invert(g);
+  ring_elem result = mult(f, ginv);
+  normal_form(result);
+  return result;
 }
 
 ring_elem PolyRingQuotient::gcd(const ring_elem f, const ring_elem g) const
@@ -177,7 +195,7 @@ ring_elem PolyRingQuotient::remainder(const ring_elem f, const ring_elem g) cons
 
 ring_elem PolyRingQuotient::quotient(const ring_elem f, const ring_elem g) const
 {
-  return ZERO_RINGELEM;
+  return divide(f,g);
 }
 
 ring_elem PolyRingQuotient::remainderAndQuotient(const ring_elem f, const ring_elem g, 
