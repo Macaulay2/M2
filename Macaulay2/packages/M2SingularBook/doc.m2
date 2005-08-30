@@ -75,6 +75,7 @@ document {
 	  "Local remainder is wrong",
 	  "Local GB can be improved: x13+x14y can be reduced??",
 	  "Highest corner use in local computations can speed things up...",
+	  "1.1.8: RRR and CCC: how to use them!?",
 	  "1.8.2: how are we doing local division?",
 	  "1.8.2: write this node",
 	  "1.8.7: solving equations is not quite implemented.  
@@ -87,6 +88,53 @@ document {
 document {
      Key => "1.1.8",
      Headline => "computation in fields",
+     SUBSECTION "Computation over ZZ and QQ",
+     "In Macaulay2, Integers are arbitary precision.  The ring of integers is denoted ZZ.",
+     EXAMPLE {
+	  "123456789^5",
+	  "matrix{{123456789^5}}",
+	  "gcd(3782621293644611237896400,85946734897630958700)"
+	  },
+     "The ring of rational numbers is denoted by QQ.",
+     EXAMPLE {
+	  "n = 12345/6789",
+	  "n^5",
+	  "toString(n^5)"
+	  },
+     SUBSECTION "Computation in finite fields",
+     EXAMPLE {
+	  "A = ZZ/32003;"
+	  },
+     "In order to do arithmetic in this ring, you must construct elements of this ring.
+     ", TT "n_A", " gives the image of the integer n in A.",
+     EXAMPLE {
+	  "123456789 * 1_A",
+	  "(123456789_A)^5"
+	  },
+     EXAMPLE {
+	  "A2 = GF(8,Variable=>a)",
+	  "ambient A2",
+	  "a^3+a+1"
+	  },
+     EXAMPLE {
+	  "A3 = ZZ/2[a]/(a^20+a^3+1);",
+	  "n = a+a^2",
+	  "n^5"
+  	  },
+     SUBSECTION "Computing with real and complex numbers",
+     EXAMPLE {
+	  "n = 123456789.0",
+	  "n = n * 1_RRR",
+	  "n^5",
+	  "n + ii"
+	  },
+     SUBSECTION "Computing with parameters",
+     EXAMPLE {
+	  "R3 = frac(ZZ[a,b,c])",
+	  "n = 12345*a + 12345/(78*b*c)",
+	  "n^2",
+	  "n/(9*c)"
+	  },
      SeeAlso => {}
      }
 document {
@@ -167,6 +215,46 @@ document {
 document {
      Key => "1.2.13",
      Headline => "monomial orderings",
+     "Monomial orderings are specified when defining a polynomial ring.",
+     SUBSECTION "global orderings",
+     "The default order is the graded (degree) reverse lexicographic order.",
+     EXAMPLE {
+	  "A2 = QQ[x,y,z];",
+	  "A2 = QQ[x,y,z,MonomialOrder=>GRevLex];",
+	  "f = x^3*y*z+y^5+z^4+x^3+x*y^2"
+	  },
+     "Lexicographic order.",
+     EXAMPLE {
+	  "A1 = QQ[x,y,z,MonomialOrder=>Lex];",
+	  "substitute(f,A1)"
+	  },
+     "Graded (degree) lexicographic order.",
+     EXAMPLE {
+	  "A3 = QQ[x,y,z,MonomialOrder=>{Weights=>{1,1,1},Lex}];",
+	  "substitute(f,A3)"
+	  },
+     "Graded (degree) lexicographic order, with nonstandard weights.",
+     EXAMPLE {
+	  "A4 = QQ[x,y,z,MonomialOrder=>{Weights=>{5,3,2},Lex}];",
+	  "substitute(f,A4)"
+	  },
+     "A product order, with each block being GRevLex.",
+     EXAMPLE {
+	  "A = QQ[x,y,z,MonomialOrder=>{1,2}];",
+	  "substitute(f,A)"
+	  },
+     SUBSECTION "local orderings",
+     "Negative lexicographic order.",
+     EXAMPLE {
+	  "A = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,0,0},Weights=>{0,-1,0},Weights=>{0,0,-1}}];",
+	  "substitute(f,A)"
+	  },
+     "Negative graded reverse lexicographic order.",
+     EXAMPLE {
+	  "A = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},GRevLex}];",
+	  "substitute(f,A)"
+	  },
+
      SeeAlso => {}
      }
 document {

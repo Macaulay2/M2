@@ -201,6 +201,11 @@ static coeff_type get_ring_type(const Ring *R)
      return FAC_BAD_RING;
 }
 
+static bool is_valid_factory_ring(const Ring *R)
+{
+  return get_ring_type(R) != FAC_BAD_RING;
+}
+
 static CanonicalForm convert(const RingElement &g) {
      const Ring *R = g.get_ring();
      const PolynomialRing *P = R->cast_to_PolynomialRing();
@@ -289,6 +294,12 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
       ERROR("encountered different rings");
       return 0;
     }
+  if (!is_valid_factory_ring(P))
+    {
+      // Error message has already been issued.
+      return 0;
+    }
+
   {
     enter_factory a;
     CanonicalForm p = convert(*f);
@@ -330,6 +341,13 @@ const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const R
       ERROR("encountered different rings");
       return 0;
     }
+
+  if (!is_valid_factory_ring(P))
+    {
+      // Error message has already been issued.
+      return 0;
+    }
+
   enter_factory here;
   CanonicalForm p = convert(*f), q = convert(*g), a, b;
   //     std::cerr << "p = " << p << endl
@@ -361,6 +379,13 @@ const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElem
       ERROR("encountered different rings");
       return 0;
     }
+
+  if (!is_valid_factory_ring(P))
+    {
+      // Error message has already been issued.
+      return 0;
+    }
+
   enter_factory a;
   CanonicalForm p = convert(*f);
   CanonicalForm q = convert(*g);
@@ -388,6 +413,13 @@ void rawFactor(const RingElement *g,
       *result_powers = 0;
       return;
     }
+
+  if (!is_valid_factory_ring(P))
+    {
+      // Error message has already been issued.
+      return 0;
+    }
+
   enter_factory a;
   factoryseed(23984729);
   CanonicalForm h = convert(*g);
