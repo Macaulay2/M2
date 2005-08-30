@@ -558,7 +558,7 @@ void PolyRing::internal_add_to(ring_elem &ff, ring_elem &gg) const
 	K_->add_to(tmf->coeff, tmg->coeff);
 	if (is_ZZ_quotient_)
 	  {
-	    ring_elem t = K_->remainder(tmf->coeff, ZZ_quotient_value_);
+	    ring_elem t = globalZZ->remainder(tmf->coeff, ZZ_quotient_value_);
 	    tmf->coeff = t;
 	  }
 	if (!K_->is_zero(tmf->coeff))
@@ -828,11 +828,26 @@ bool PolyRing::imp_attempt_to_cancel_lead_term(ring_elem &f,
 						     ring_elem &coeff, 
 						     int *monom) const
 {
+  bool result;
   Nterm *t = f;
   Nterm *s = g;
   if (t == NULL || s == NULL) return true;
-  ring_elem r = K_->remainderAndQuotient(t->coeff, s->coeff, coeff);
-  bool result = (K_->is_zero(r));  // true means lead term will be cancelled.
+  if (K_->is_field())
+    {
+      coeff = K_->divide(t->coeff,s->coeff);
+      result = true;
+    }
+  else if (K_ == globalZZ)
+    {
+      ring_elem r = globalZZ->remainderAndQuotient(t->coeff, s->coeff, coeff);
+      result = (globalZZ->is_zero(r));  // true means lead term will be cancelled.
+    }
+  else
+    {
+      coeff = K_->zero();
+      result = false;
+      // What do we do here??  Call divide, and hope for the best?
+    }
   if (!K_->is_zero(coeff))
     {
       if (is_skew_)
@@ -880,11 +895,6 @@ ring_elem PolyRing::gcd_extended(const ring_elem f, const ring_elem g,
 			       ring_elem &u, ring_elem &v) const
   // result == gcd(f,g) = u f + v g
 {
-  if (!has_gcd())
-    {
-      ERROR("cannot use gcd_extended in this ring");
-      return ZERO_RINGELEM;
-    }
   u = from_int(1);
   ring_elem result = copy(f);
 

@@ -100,9 +100,6 @@ public:
 
   virtual bool is_solvable_algebra() const { return false; }
 
-  virtual bool is_pid() const = 0;
-  virtual bool has_gcd() const = 0;
-
   virtual bool is_graded() const { return true; }
   // Is this ring graded, with the given grading?
   // ZZ, QQ, ZZ/p, GF, RR, ... are all graded.
@@ -228,6 +225,7 @@ public:
   virtual ring_elem invert(const ring_elem f) const = 0;
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const = 0;
 
+#if 0
   virtual ring_elem remainder(const ring_elem f, const ring_elem g) const = 0;
   virtual ring_elem quotient(const ring_elem f, const ring_elem g) const = 0;
   virtual ring_elem remainderAndQuotient(const ring_elem f, const ring_elem g, 
@@ -240,10 +238,7 @@ public:
   // (3) If g is invertible, then r = 0, and q = f * g^(-1).
   // (4) If the ring is ZZ, then the remainder is "balanced": -[g/2] < r <= [g/2]
   // remainderAndQuotient combines remainder and quotient into one routine.
-
-  virtual ring_elem gcd(const ring_elem f, const ring_elem g) const = 0;
-  virtual ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
-				  ring_elem &u, ring_elem &v) const = 0;
+#endif
 
   virtual void syzygy(const ring_elem a, const ring_elem b,
 		      ring_elem &x, ring_elem &y) const = 0;

@@ -109,9 +109,9 @@ public:
   virtual ring_elem power(const ring_elem f, int n) const;
   virtual ring_elem invert(const ring_elem f) const;
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem gcd(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
-				  ring_elem &u, ring_elem &v) const;
+  ring_elem gcd(const ring_elem f, const ring_elem g) const;
+  ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
+			 ring_elem &u, ring_elem &v) const;
 
 protected:
   void minimal_monomial(ring_elem f, int *&monom) const;
@@ -198,9 +198,6 @@ public:
   // Rideal, exterior_vars.
   // nbits
   // heap merge of elements...?
-
-  // Routines special to PID's
-  // these include: gcd, gcd_extended.
 
   // Routines special to fields (anything else?)
 protected:

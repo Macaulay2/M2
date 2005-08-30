@@ -40,9 +40,6 @@ public:
 // The following are all the routines required by 'ring'
   virtual bool is_CC() const         { return true; }
 
-  virtual bool is_pid() const       { return 1; }
-  virtual bool has_gcd() const      { return 1; }
-
   virtual void text_out(buffer &o) const;
 
   virtual ring_elem from_int(int n) const;
@@ -79,9 +76,6 @@ public:
   virtual ring_elem power(const ring_elem f, int n) const;
   virtual ring_elem invert(const ring_elem f) const;
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem gcd(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
-				  ring_elem &u, ring_elem &v) const;
 
   virtual ring_elem remainder(const ring_elem f, const ring_elem g) const;
   virtual ring_elem quotient(const ring_elem f, const ring_elem g) const;

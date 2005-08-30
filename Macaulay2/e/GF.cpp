@@ -376,20 +376,6 @@ ring_elem GF::divide(const ring_elem f, const ring_elem g) const
   return modulus_sub(f, g, Q1_);
 }
 
-ring_elem GF::gcd(const ring_elem f, const ring_elem g) const
-{
-  if (f == _ZERO || g == _ZERO) return _ZERO;
-  return _ONE;
-}
-
-ring_elem GF::gcd_extended(const ring_elem f, const ring_elem, 
-				ring_elem &u, ring_elem &v) const
-{
-  v = _ZERO;
-  u = invert(f);
-  return _ONE;
-}
-
 ring_elem GF::remainder(const ring_elem f, const ring_elem g) const
 {
   if (g == _ZERO) return f;

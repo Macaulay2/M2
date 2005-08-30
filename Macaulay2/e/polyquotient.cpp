@@ -177,17 +177,6 @@ ring_elem PolyRingQuotient::divide(const ring_elem f, const ring_elem g) const
   return result;
 }
 
-ring_elem PolyRingQuotient::gcd(const ring_elem f, const ring_elem g) const
-{
-  return ZERO_RINGELEM;
-}
-
-ring_elem PolyRingQuotient::gcd_extended(const ring_elem f, const ring_elem g, 
-					 ring_elem &u, ring_elem &v) const
-{
-  return ZERO_RINGELEM;
-}
-
 ring_elem PolyRingQuotient::remainder(const ring_elem f, const ring_elem g) const
 {
   return ZERO_RINGELEM;

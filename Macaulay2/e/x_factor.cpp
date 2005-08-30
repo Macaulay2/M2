@@ -417,7 +417,9 @@ void rawFactor(const RingElement *g,
   if (!is_valid_factory_ring(P))
     {
       // Error message has already been issued.
-      return 0;
+      *result_factors = 0;
+      *result_powers = 0;
+      return;
     }
 
   enter_factory a;

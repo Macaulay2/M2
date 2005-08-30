@@ -385,45 +385,6 @@ ring_elem CC::remainderAndQuotient(const ring_elem f, const ring_elem g,
     }
 }
 
-
-ring_elem CC::gcd(const ring_elem f, const ring_elem g) const
-{
-  if (CC::is_zero(g) && CC::is_zero(f))
-    return CC::from_double(0.0);
-  else
-    return CC::from_double(1.0);
-}
-
-/* TO DO */
-ring_elem CC::gcd_extended(const ring_elem f, const ring_elem g, 
-			    ring_elem &u, ring_elem &v) const
-{
-
-  return CC::from_double(0.0);
-  /*
-  double a1 = CC_VAL(f);
-  double b1 = CC_VAL(g);
-  if (!CC::is_zero_CC(b1))
-    {
-      u = CC::from_double(0.0);
-      v = CC::from_double(1/b1);
-      return CC::from_double(1.0);
-    }
-  else if (!CC::is_zero_CC(a1))
-    {
-      u = CC::from_double(1/a1);
-      v = CC::from_double(0.0);
-      return CC::from_double(1.0);
-    }
-  else
-    {
-      u = CC::from_double(0.0);
-      v = CC::from_double(0.0);
-      return CC::from_double(0.0);
-    }
-  */
-}
-
 void CC::syzygy(const ring_elem a, const ring_elem b,
 	       ring_elem &x, ring_elem &y) const
 {

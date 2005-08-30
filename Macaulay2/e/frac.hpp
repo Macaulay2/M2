@@ -42,8 +42,6 @@ public:
 // The following are all the routines required by 'ring'
   virtual bool is_fraction_field() const { return true; }
 
-  virtual bool is_pid() const       { return 1; }
-  virtual bool has_gcd() const      { return 1; }
   virtual bool is_graded() const    { return R_->is_graded(); }
 
   virtual CoefficientType coefficient_type() const;
@@ -90,9 +88,6 @@ public:
   virtual ring_elem power(const ring_elem f, int n) const;
   virtual ring_elem invert(const ring_elem f) const;
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem gcd(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
-				  ring_elem &u, ring_elem &v) const;
 
   virtual ring_elem remainder(const ring_elem f, const ring_elem g) const;
   virtual ring_elem quotient(const ring_elem f, const ring_elem g) const;

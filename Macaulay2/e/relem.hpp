@@ -37,12 +37,11 @@ public:
   RingElement *power(int n) const;
 
   RingElement *operator/(const RingElement &b) const;
+#if 0
   RingElement *operator%(const RingElement &b) const;
   RingElement *divide(const RingElement &b, 
 		      RingElement * &rem) const;
-  RingElement *gcd(const RingElement &b) const;
-  RingElement *gcd_extended(const RingElement &b, 
-			    RingElement * &u, RingElement * &v) const;
+#endif
   RingElement *invert() const;
 
   static RingElement *random(const Ring *R);

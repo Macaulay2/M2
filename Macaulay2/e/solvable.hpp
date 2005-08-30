@@ -24,9 +24,6 @@ public:
   static SolvableAlgebra *create(const PolynomialRing *R,
 				 const Matrix *Q);
 
-  virtual bool is_pid() const       { return false; }
-  virtual bool has_gcd() const      { return false; }
-
   virtual bool is_commutative_ring() const { return false; }
   virtual bool is_solvable_algebra() const { return true; }
 

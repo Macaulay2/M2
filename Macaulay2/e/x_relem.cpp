@@ -518,19 +518,56 @@ const RingElementOrNull *IM2_RingElement_div(const RingElement *a,
 const RingElementOrNull *IM2_RingElement_mod(const RingElement *a, 
 					     const RingElement *b)
 {
-  // What is this exactly??
-  return (*a) % (*b);
+  const Ring *R = a->get_ring();
+  if (R != b->get_ring())
+    {
+      ERROR("ring remainder requires both elements to have the same base ring");
+      return 0;
+    }
+  if (b->is_zero())
+    {
+      ERROR("ring division: attempt to divide by zero");
+      return 0;
+    }
+  const PolyRing *P = R->cast_to_PolyRing();
+  if (P == 0)
+    {
+      ERROR("expected a polynomial ring");
+      return 0;
+    }
+  ring_elem result = P->remainder(a->get_value(), b->get_value());
+  if (error()) return 0;
+  return RingElement::make_raw(R, result);
 }
 
 const RingElement_pair *IM2_RingElement_divmod(const RingElement *a, 
 					       const RingElement *b)
 {
-  RingElement *quot, *rem;
-  quot = a->divide(*b, rem);
-  if (error()) return 0;
+  const Ring *R = a->get_ring();
+  if (R != b->get_ring())
+    {
+      ERROR("ring remainder requires both elements to have the same base ring");
+      return 0;
+    }
+  if (b->is_zero())
+    {
+      ERROR("ring division: attempt to divide by zero");
+      return 0;
+    }
+  const PolyRing *P = R->cast_to_PolyRing();
+  if (P == 0)
+    {
+      ERROR("expected a polynomial ring");
+      return 0;
+    }
+
+  ring_elem fquot;
+  ring_elem frem = P->remainderAndQuotient(a->get_value(), b->get_value(), fquot);
+  if (error())  return 0;
+
   RingElement_pair *result = new RingElement_pair;
-  result->a = quot;
-  result->b = rem;
+  result->a = RingElement::make_raw(R, fquot);
+  result->b = RingElement::make_raw(R, frem);
   return result;
 }
 
