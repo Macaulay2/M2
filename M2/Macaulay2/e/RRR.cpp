@@ -402,41 +402,6 @@ ring_elem RRR::remainderAndQuotient(const ring_elem f, const ring_elem g,
   return result;
 }
 
-
-ring_elem RRR::gcd(const ring_elem f, const ring_elem g) const
-{
-  if (is_zero(g) && is_zero(f))
-    return from_int(0);
-  else
-    return from_int(1);
-}
-
-ring_elem RRR::gcd_extended(const ring_elem f, const ring_elem g, 
-			    ring_elem &u, ring_elem &v) const
-{
-  if (!is_zero(g))
-    {
-      u = from_int(0);
-      ring_elem one_elem = from_int(1);
-      v = divide(one_elem, g);
-      return one_elem;
-    }
-  else if (!is_zero(f))
-    {
-      ring_elem one_elem = from_int(1);
-      u = divide(one_elem, f);
-      v = from_int(0);
-      return one_elem;
-    }
-  else
-    {
-      u = from_int(0);
-      v = from_int(0);
-      return from_int(0);
-    }
-}
-
-
 void RRR::syzygy(const ring_elem a, const ring_elem b,
 	       ring_elem &x, ring_elem &y) const
 {

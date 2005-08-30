@@ -20,14 +20,6 @@ public:
   virtual const PolyRingQuotient * cast_to_PolyRingQuotient()  const { return this; }
   virtual       PolyRingQuotient * cast_to_PolyRingQuotient()        { return this; }
 
-#if 0
-  virtual bool is_pid() const {
-    return n_vars() == 1 && !getCoefficients()->is_ZZ() && n_quotients() == 1;
-  }
-
-  virtual bool has_gcd() const { return false; } // Is this correct??
-#endif
-
   virtual void text_out(buffer &o) const;
 
   ////////////////////////
@@ -113,11 +105,6 @@ public:
   virtual ring_elem invert(const ring_elem f) const;
 
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
-
-  virtual ring_elem gcd(const ring_elem f, const ring_elem g) const;
-
-  virtual ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
-				 ring_elem &u, ring_elem &v) const;
 
   virtual ring_elem remainder(const ring_elem f, const ring_elem g) const;
 

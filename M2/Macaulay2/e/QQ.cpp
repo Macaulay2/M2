@@ -360,27 +360,6 @@ ring_elem QQ::remainderAndQuotient(const ring_elem f, const ring_elem g,
   return QQ::from_int(0);
 }
 
-
-ring_elem QQ::gcd(const ring_elem f, const ring_elem g) const
-{
-  if (QQ::is_zero(f) && QQ::is_zero(g)) return QQ::from_int(0);
-  return QQ::from_int(1);
-}
-
-ring_elem QQ::gcd_extended(const ring_elem f, const ring_elem g, 
-			    ring_elem &u, ring_elem &v) const
-{
-  if (QQ::is_zero(f) && QQ::is_zero(g)) 
-    {
-      v = QQ::from_int(0);
-      u = QQ::from_int(0);
-      return QQ::from_int(0);
-    }
-  v = QQ::from_int(0);
-  u = QQ::invert(f);
-  return QQ::from_int(1);
-}
-
 void QQ::syzygy(const ring_elem a, const ring_elem b,
 	       ring_elem &x, ring_elem &y) const
 {

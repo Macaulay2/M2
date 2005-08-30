@@ -494,20 +494,6 @@ ring_elem FractionField::divide(const ring_elem a, const ring_elem b) const
   return FRAC_RINGELEM(make_elem(top, bottom));
 }
 
-ring_elem FractionField::gcd(const ring_elem a, const ring_elem b) const
-{
-  if (is_zero(a) || is_zero(b)) return from_int(0);
-  return from_int(1);
-}
-
-ring_elem FractionField::gcd_extended(const ring_elem f, const ring_elem, 
-				ring_elem &u, ring_elem &v) const
-{
-  v = from_int(0);
-  u = invert(f);
-  return from_int(1);
-}
-
 ring_elem FractionField::remainder(const ring_elem f, const ring_elem g) const
 {
   if (FractionField::is_zero(g)) return FractionField::copy(f);

@@ -278,26 +278,26 @@ ring_elem PolyQQ::divide(const ring_elem f, const ring_elem g) const
   return ZERO_RINGELEM;
 }
 
-ring_elem PolyQQ::gcd(const ring_elem f, const ring_elem g) const 
-{
-  const RingElement *f1 = RingElement::make_raw(this,f);
-  const RingElement *g1 = RingElement::make_raw(this,g);
-  const RingElement *h = rawGCDRingElement(f1,g1);
-  return h->get_value();
-}
-
-ring_elem PolyQQ::gcd_extended(const ring_elem f, const ring_elem g, 
-			       ring_elem &u, ring_elem &v) const 
-{
-  RingElement *f1 = RingElement::make_raw(this,f);
-  RingElement *g1 = RingElement::make_raw(this,g);
-  const RingElement *u1;
-  const RingElement *v1;
-  const RingElement *h = rawExtendedGCDRingElement(f1,g1,&u1,&v1);
-  u = u1->get_value();
-  v = v1->get_value();
-  return h->get_value();
-}
+//ring_elem PolyQQ::gcd(const ring_elem f, const ring_elem g) const 
+//{
+//  const RingElement *f1 = RingElement::make_raw(this,f);
+//  const RingElement *g1 = RingElement::make_raw(this,g);
+//  const RingElement *h = rawGCDRingElement(f1,g1);
+//  return h->get_value();
+//}
+//
+//ring_elem PolyQQ::gcd_extended(const ring_elem f, const ring_elem g, 
+//			       ring_elem &u, ring_elem &v) const 
+//{
+//  RingElement *f1 = RingElement::make_raw(this,f);
+//  RingElement *g1 = RingElement::make_raw(this,g);
+//  const RingElement *u1;
+//  const RingElement *v1;
+//  const RingElement *h = rawExtendedGCDRingElement(f1,g1,&u1,&v1);
+//  u = u1->get_value();
+//  v = v1->get_value();
+//  return h->get_value();
+//}
 
 ring_elem PolyQQ::remainder(const ring_elem f, const ring_elem g) const 
 {

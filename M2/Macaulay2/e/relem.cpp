@@ -102,86 +102,9 @@ RingElementOrNull *RingElement::operator/(const RingElement &b) const
       ERROR("ring division: attempt to divide by zero");
       return 0;
     }
-  ring_elem result = R->quotient(get_value(), b.get_value());
+  ring_elem result = R->divide(get_value(), b.get_value());
   if (error()) return 0;
   return new RingElement(R, result);
-}
-
-RingElementOrNull *RingElement::operator%(const RingElement &b) const
-{
-  if (R != b.get_ring())
-    {
-      ERROR("ring division requires both elements to have the same base ring");
-      return 0;
-    }
-  if (b.is_zero())
-    {
-      ERROR("ring division: attempt to divide by zero");
-      return 0;
-    }
-  ring_elem result = R->remainder(get_value(), b.get_value());
-  if (error()) return 0;
-  return new RingElement(R, result);
-}
-
-RingElementOrNull *RingElement::divide(const RingElement &b, 
-				       RingElementOrNull * &rem) const
-{
-  if (R != b.get_ring())
-    {
-      ERROR("ring division requires both elements to have the same base ring");
-      return 0;
-    }
-  if (b.is_zero())
-    {
-      ERROR("ring division: attempt to divide by zero");
-      return 0;
-    }
-  ring_elem fquot;
-  ring_elem frem = R->remainderAndQuotient(get_value(), b.get_value(), fquot);
-  if (error())
-    {
-      rem = 0;
-      return 0;
-    }
-  rem = new RingElement(R, frem);
-  return new RingElement(R, fquot);
-}
-
-RingElement *RingElement::gcd(const RingElement &b) const
-{
-  if (R != b.get_ring())
-    {
-      ERROR("gcd requires both elements to have the same base ring");
-      return 0;
-    }
-  ring_elem result = R->gcd(get_value(), b.get_value());
-  if (error()) return 0;
-  return new RingElement(R, result);
-}
-
-RingElementOrNull *RingElement::gcd_extended(const RingElement &b,
-					RingElementOrNull * &u,
-					RingElementOrNull * &v) const
-{
-  if (R != b.get_ring())
-    {
-      ERROR("gcd requires both elements to have the same base ring");
-      return 0;
-    }
-  // MES: check that gcd is well-defined for this ring
-  ring_elem u1,v1;
-  ring_elem g = R->gcd_extended(get_value(), b.get_value(),
-				u1,v1);
-  if (error())
-    {
-      u = 0;
-      v = 0;
-      return 0;
-    }
-  u = new RingElement(R,u1);
-  v = new RingElement(R,v1);
-  return new RingElement(R, g);
 }
 
 RingElementOrNull *RingElement::power(int n) const

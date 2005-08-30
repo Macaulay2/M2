@@ -73,9 +73,6 @@ public:
 			     M2_arrayint comms,
 			     int homog_var);
 
-  virtual bool is_pid() const       { return false; }
-  virtual bool has_gcd() const      { return false; }
-
   virtual bool is_commutative_ring() const { return false; }
   virtual bool is_weyl_algebra() const { return true; }
 

@@ -201,11 +201,6 @@ public:
   virtual const Monoid *getMonoid() const { return M_; }
   // The implementation monoid of this ring.
 
-  virtual bool is_pid() const       { return (nvars_ == 1 && K_->is_field())
-				       || (nvars_ == 0 && K_->is_pid()); }
-  virtual bool has_gcd() const      { return (nvars_ == 1 && K_->is_field())
-				       || (nvars_ == 0 && K_->has_gcd()); }
-
   virtual bool is_fraction_poly_ring() const { return getDenominatorRing() != 0; }
   // returns true if this ring has fractions.  This includes
   // polynomial rings over QQ, polynomial rings over fraction fields,

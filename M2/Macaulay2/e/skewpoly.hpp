@@ -21,7 +21,6 @@ public:
 
   void text_out(buffer &o) const;
 
-  virtual bool is_pid() const       { return false; }
   virtual bool has_gcd() const      { return false; }
   virtual bool is_skew_commutative_ring() const { return true; }
   virtual bool is_commutative_ring() const { return false; }

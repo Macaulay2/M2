@@ -38,10 +38,6 @@ public:
   virtual const Ring *get_ambient_ring() const { return globalZZ; }
   virtual const Ring *get_denominator_ring() const { return globalZZ; }
 
-
-  virtual bool is_pid() const       { return 1; }
-  virtual bool has_gcd() const      { return 1; }
-
   virtual CoefficientType coefficient_type() const { return COEFF_QQ; }
 
   virtual void text_out(buffer &o) const;
@@ -92,10 +88,6 @@ public:
   virtual ring_elem quotient(const ring_elem f, const ring_elem g) const;
   virtual ring_elem remainderAndQuotient(const ring_elem f, const ring_elem g, 
 					 ring_elem &quot) const;
-
-  virtual ring_elem gcd(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
-				  ring_elem &u, ring_elem &v) const;
 
   virtual void syzygy(const ring_elem a, const ring_elem b,
 		      ring_elem &x, ring_elem &y) const;
