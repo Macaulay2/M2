@@ -300,6 +300,10 @@ RingMap ** Module := Module => (f,M) -> (
 
 isInjective RingMap := (f) -> kernel f == 0
 
+preimage(RingMap,Ideal) := (f,J) -> (
+     R := ring J;
+     kernel ( map(R/J,R) * f ))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
