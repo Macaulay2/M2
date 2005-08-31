@@ -19,7 +19,7 @@ gcd(RingElement,RingElement) := RingElement => (r,s) -> new ring r from rawGCD(r
 gcdCoefficients(RingElement,RingElement) := (f,g) -> (	    -- ??
      R := ring f;
      if R =!= ring g then error "expected elements of the same ring";
-     new R from rawExtendedGCD(raw f, raw g))
+     apply(rawExtendedGCD(raw f, raw g), r -> new R from r))
 
 pseudoRemainder = method()
 pseudoRemainder(RingElement,RingElement) := RingElement => (f,g) -> (
