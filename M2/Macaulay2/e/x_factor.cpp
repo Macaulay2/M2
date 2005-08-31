@@ -29,14 +29,12 @@
 #ifdef FACTORY
 #define REVERSE_VARIABLES 1	// did we have a good reason for reversing the variables before?  probably so the ideal reordering of Messollen would work...
 
-#ifdef drg
 // debugging display routines to be called from gdb
 // needs factory to be configured without option --disable-streamio 
 void showvar(Variable &t) { cout << t << endl; }
 void showcf(CanonicalForm &t) { cout << t << endl; }
 void showcfl(CFList &t) { cout << t << endl; }
 void showcffl(CFFList &t) { cout << t << endl; }
-#endif
 
 extern "C" {
   extern void factory_setup_2();
