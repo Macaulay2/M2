@@ -27,8 +27,8 @@ QQ == RR := (r,x) -> x === r+0.
 isConstant RR := i -> true
 
 RRR.isBasic = true
-RRR#0 = 0.
-RRR#1 = 1.
+RRR#0 = toRRR 0						    -- deceptive, since the precision gets fixed!
+RRR#1 = toRRR 1
 RRR.char = 0
 RRR.InverseMethod = x -> 1/x
 RRR.degreeLength = 0
@@ -41,6 +41,7 @@ RRR.char = 0
 RRR.Engine = true
 degree RRR := i -> {}
 isConstant RRR := i -> true
+
 round = x -> floor(x + 0.5)
 
 promote(RR,RR) := (i,o) -> i
