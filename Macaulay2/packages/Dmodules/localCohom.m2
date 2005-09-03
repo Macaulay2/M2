@@ -46,8 +46,7 @@ localCohomUli = (l, I) -> (
      f := first entries gens I;
      r := #f;
      W := ring I;
-     iSet := set toList (0..(r-1));
-     subISets := toList ((subsets iSet) - set {{}});
+     subISets := select(subsets toList (0..r-1), s -> s =!= {});
                   
      -- Step1.
      -- Calculate J^/delta( (F_/theta)^s ) and b^/delta_(F_/theta)(s)   for all /theta
@@ -152,8 +151,7 @@ localCohomILOaku(List, Ideal, Module) := (l, I, M) -> (
      FT := theta -> product(theta, i->f#i);
      r := #f;
      W := ring I;
-     iSet := set toList (0..(r-1));
-     subISets := toList ((subsets iSet) - set {{}});
+     subISets := select(subsets toList (0..r-1), s -> s =!= {});
      
      L := new MutableHashTable;
      L#{} = new HashTable from {LocModule => M, Generator => 1_(ring M)}; 
@@ -245,8 +243,7 @@ localCohomILOTW(List, Ideal, Module) := (l, I, M) -> (
      FT := theta -> product(theta, i->f#i);
      r := #f;
      W := ring I;
-     iSet := set toList (0..(r-1));
-     subISets := toList ((subsets iSet) - set {{}});
+     subISets := select(subsets toList (0..r-1), s -> s =!= {});
      
      L := new MutableHashTable;
      L#{} = new HashTable from {LocModule => M, Generator => 1_(ring M)}; 
@@ -326,8 +323,7 @@ localCohomRegular(List,Ideal,Module) := (l, I, M) -> (
      FT := theta -> product(theta, i->f#i);
      r := #f;
      W := ring I;
-     iSet := set toList (0..(r-1));
-     subISets := toList ((subsets iSet) - set {{}});
+     subISets := select(subsets toList (0..r-1), s -> s =!= {});
                   
      L := new MutableHashTable;
      bF := new MutableHashTable;
