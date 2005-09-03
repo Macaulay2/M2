@@ -463,6 +463,7 @@ export filbuf(o:file):int := (
      if r == ERROR then (fileErrorMessage(o,"read");)
      else if r == 0 then (
 	  o.eof = true;
+	  o.bol = true;
 	  if o.promptq then (
 	       stdout << newline;
 	       flush(stdout);
