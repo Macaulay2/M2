@@ -37,9 +37,11 @@ loadPackage = method(
 loadPackage String := opts -> pkgtitle -> (
      filename := pkgtitle | ".m2";
      substituteOptions#pkgtitle = opts;
-     if opts.DebuggingMode =!= true then loadDepth = loadDepth - 1;
+     -- if opts.DebuggingMode =!= true then loadDepth = loadDepth - 1;
+     -- this was bad, because loadDepth might become negative, and then it gets converted to 255 in the pseudocode
+     -- another problem was that loading the file might have resulted in an error.
      load filename;
-     if opts.DebuggingMode =!= true then loadDepth = loadDepth + 1;
+     -- if opts.DebuggingMode =!= true then loadDepth = loadDepth + 1;
      remove(substituteOptions,pkgtitle);
      if not PackageDictionary#?pkgtitle then error("the file ", filename, " did not define a package ", pkgtitle);
      value PackageDictionary#pkgtitle)
