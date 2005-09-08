@@ -292,6 +292,16 @@ loadSetup := () -> (
      error ("can't find file setup.m2\n\trunning M2: ",exe,"\n\t$0 = ",commandLine#0)
      )
 
+showMaps = () -> (
+     if version#"operating system" === "SunOS" then (
+	  stack lines get ("!/usr/bin/pmap "|processID())
+	  )
+     else if version#"operating system" === "Linux" and fileExists("/proc/"|toString processID()|"/maps") then (
+	  stack lines get("/proc/"|toString processID()|"/maps")
+	  )
+     else error "memory maps not available"
+     )
+
 dump := () -> (
      if not version#"dumpdata" then error "not configured for dumping data with this version of Macaulay 2";
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
@@ -300,12 +310,15 @@ dump := () -> (
 	  if prefixDirectory =!= null then concatenate(prefixDirectory, LAYOUT#"cache", "Macaulay2-", arch, "-data")	  
 	  );
      if fn === null then error "can't find cache directory for dumpdata file";
-     stderr << "--preparing to dump to " << fn << endl;
+     fntmp := fn | ".tmp";
+     stderr << "--preparing to dump to " << fntmp << endl;
+     stderr << "--memory maps: " << showMaps() << endl;
      runEndFunctions();
      collectGarbage();
-     stderr << "--dumping to " << fn << endl;
+     stderr << "--dumping to " << fntmp << endl;
      interpreterDepth = 0;
-     dumpdata fn;
+     dumpdata fntmp;
+     moveFile(fntmp,fn,Verbose=>true);
      stderr << "--success" << endl;
      exit 0;
      )

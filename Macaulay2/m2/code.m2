@@ -2,7 +2,7 @@
 
 getSourceLines := method(SingleArgumentDispatch=>true) 
 getSourceLines Nothing := null -> null
-getSourceLines Sequence := (filename,start,startcol,stop,stopcol) -> if filename =!= "stdio" then (
+getSourceLines Sequence := (filename,start,startcol,stop,stopcol) -> if filename =!= "stdio" and filename =!= "a string" then (
      wp := set characters " \t);";
      file := (
 	  if filename === "layout.m2"

@@ -2,6 +2,7 @@
 
 export (
         symbol preimage,
+	symbol UserMode,
      	symbol diagonalMatrix,
         symbol weightRange,
         symbol support,
@@ -493,6 +494,7 @@ export (
 	symbol ascii,
 	symbol asin,
 	symbol ass,
+	"foo" => symbol bar,
         symbol associatedPrimes,
 	symbol assert,
 	symbol assign,
