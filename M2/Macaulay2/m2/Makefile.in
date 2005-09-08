@@ -190,7 +190,7 @@ M2OPTIONS += --no-debug
 endif
 M2OPTIONS += -e errorDepth=0
 M2OPTIONS += -e debugLevel=0
-M2OPTIONS += -e 'installPackage(Macaulay2Core, Encapsulate => false, PackagePrefix => "$(encapdir)/", MakeLinks => false, MakeDocumentation => false)'
+M2OPTIONS += -e 'installPackage(Macaulay2Core, Encapsulate => false, PackagePrefix => "$(encapdir)/", MakeLinks => false, MakeDocumentation => false, UserMode => false)'
 ifndef INTERACTIVE
 M2OPTIONS += -e 'exit 0 '
 endif

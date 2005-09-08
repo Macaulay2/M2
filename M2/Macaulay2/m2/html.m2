@@ -395,12 +395,12 @@ aftermatch := (pat,str) -> (
      m := regex(pat,str);
      if m === null then "" else substring(m#0#0,str))
 
-runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> ( -- return false if error
+runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> ( -- return false if error
      announcechange();
      stderr << "--making " << desc << " in file " << outf << endl;
      if fileExists outf then removeFile outf;
      ldpkg := "-e 'needsPackage \""|toString pkg|"\"'";
-     args := "--silent --print-width 80 --stop --int -e errorDepth=0 -q" | " " | ldpkg;
+     args := "--silent --print-width 80 --stop --int -e errorDepth=0" | (if usermode then "" else " -q") | " " | ldpkg;
      cmdname := commandLine#0;
      if ulimit === null then (
 	  ulimit = utest " -t 40" | utest " -m 90000"| utest " -v 90000";
@@ -430,7 +430,7 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> ( -- return false i
 	  return false;
 	  ))
 
-runString := (x,pkg,rundir) -> (
+runString := (x,pkg,rundir,usermode) -> (
      tfn := temporaryFileName();
      inf := tfn | ".m2";
      tmpf := tfn | ".tmp";
@@ -438,13 +438,14 @@ runString := (x,pkg,rundir) -> (
      rm := fn -> if fileExists fn then removeFile fn;
      rmall := () -> rm \ {inf, tmpf, outf};
      inf << x << endl << close;
-     ret := runFile(inf,outf,tmpf,"test results",pkg,t->t,rundir);
+     ret := runFile(inf,outf,tmpf,"test results",pkg,t->t,rundir,usermode);
      if ret then (rm inf; rm outf;);
      result)
 
 check = method()
 check Package := pkg -> (
-     scan(values pkg#"test inputs", s -> runString(s,pkg,"."));
+     usermode := false;					    -- fix this later as an option to "check" or something!
+     scan(values pkg#"test inputs", s -> runString(s,pkg,".",usermode));
      if haderror then error(toString numerrors, " error(s) occurred running tests for package ", toString pkg);
      )
 
@@ -457,6 +458,7 @@ setupNames := (opts,pkg) -> (
 installPackage = method(Options => { 
 	  PackagePrefix => () -> applicationDirectory() | "encap/",
           InstallPrefix => () -> applicationDirectory() | "local/",
+	  UserMode => true,
 	  Encapsulate => true,
 	  IgnoreExampleErrors => false,
 	  MakeDocumentation => true,
@@ -701,7 +703,7 @@ installPackage Package := opts -> pkg -> (
 			 )
 		    else if not opts.RerunExamples and inf != inf' and fileExists inf' and fileExists outf' and fileTime outf' >= fileTime inf' and get inf == get inf'
 		    then copyFile(outf',outf)
-		    else runFile(inf,outf,tmpf,desc,pkg,changefun,opts.RunDirectory);
+		    else runFile(inf,outf,tmpf,desc,pkg,changefun,opts.RunDirectory,opts.UserMode);
 		    -- read, separate, and store example output
 		    if fileExists outf then pkg#"example results"#fkey = drop(separateM2output get outf,-1)
 		    else (
@@ -873,7 +875,7 @@ installPackage Package := opts -> pkg -> (
 	  << ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" "$i")/// << endl
 	  << ///done/// << endl;
 	  if version#"dumpdata" and pkg#"title" == "Macaulay2" then (
-	       f << endl << "(set -x ; \"$ENCAP_SOURCE\"/\"$ENCAP_PKGNAME\"/bin/" << version#"M2 name" << " -q --stop --dumpdata)" << endl;
+	       f << endl << "(set -x ; \"$ENCAP_SOURCE\"/\"$ENCAP_PKGNAME\"/bin/" << version#"M2 name" << " --stop --dumpdata)" << endl;
 	       );
 	  fileMode(f,octal "755");
 	  f << close;

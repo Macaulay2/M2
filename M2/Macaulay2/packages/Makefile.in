@@ -33,6 +33,7 @@ ARGS += , RerunExamples => $(RerunExamples)
 ARGS += , IgnoreExampleErrors => $(IgnoreExampleErrors)
 ARGS += , RemakeAllDocumentation => $(RemakeAllDocumentation)
 ARGS += , MakeInfo => true
+ARGS += , UserMode => false
 
 ifeq ($(ENCAP),yes)
 Encapsulate = true
