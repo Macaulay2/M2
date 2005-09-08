@@ -65,6 +65,8 @@ isSubset(VisibleList,Set) := Boolean => (S,T) -> all(S, x -> T#?x)
 isSubset(VisibleList,VisibleList) := Boolean => (S,T) -> isSubset(S,set T)
 isSubset(Set,VisibleList) := Boolean => (S,T) -> isSubset(S,set T)
 
+member(Thing,Set) := Boolean => (a,s) -> s#?a
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
