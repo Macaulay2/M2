@@ -19,6 +19,8 @@
 #include "std.h"
 #include "maputil.h"
 
+extern bool notify;
+
 #define DRYRUN 0
 
 #if !defined(PAGESIZE)
@@ -156,14 +158,14 @@ int loaddata(char const *filename) {
 	char buf[100];
 	sprintmap(buf,&currmap[j]);
 	trim(buf);
-	warning("loaddata: map has appeared or changed its location: %s\n",buf);
+	if (notify) warning("loaddata: map has appeared or changed its location: %s\n",buf);
 	fclose(f);
 	return ERROR;
       }
     };
 
     if (!f_end && !dumpedmap.w && (uintP)dumpedmap.from < (uintP)currmap[j].from) {
-      warning("loaddata: map has disappeared or changed its location:\n  %s\n", fbuf);
+      if (notify) warning("loaddata: map has disappeared or changed its location:\n  %s\n", fbuf);
       fclose(f);
       return ERROR;
     }
@@ -173,7 +175,7 @@ int loaddata(char const *filename) {
 	char buf[100];
 	sprintmap(buf,&currmap[j]);
 	trim(buf);
-	warning("loaddata: map protection has changed.\n  from: %s\n    to: %s\n",fbuf,buf);
+	if (notify) warning("loaddata: map protection has changed.\n  from: %s\n    to: %s\n",fbuf,buf);
 	fclose(f);
 	return ERROR;
       }
@@ -182,7 +184,7 @@ int loaddata(char const *filename) {
 	char buf[100];
 	sprintmap(buf,&currmap[j]);
 	trim(buf);
-	warning("loaddata: map has changed its size.\n  from: %s\n    to: %s\n",fbuf,buf);
+	if (notify) warning("loaddata: map has changed its size.\n  from: %s\n    to: %s\n",fbuf,buf);
 	fclose(f);
 	return ERROR;
 #       endif
@@ -193,7 +195,7 @@ int loaddata(char const *filename) {
 	trim(buf);
 	/* warning("--loaddata: checksum has changed from %u to %u for map %s\n", dumpedmap.checksum, currmap[j].checksum, buf); */
 	/* warning("--loaddata: checksum has changed for map %s\n", buf); */
-	warning("--warning: checksum has changed for a map\n");
+	if (notify) warning("--warning: checksum has changed for a map\n");
 	if (getenv("LOADDATA_IGNORE_CHECKSUMS") == NULL) {
 	  fclose(f);
 	  return ERROR;

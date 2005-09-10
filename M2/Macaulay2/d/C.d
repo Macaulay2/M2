@@ -59,6 +59,7 @@ export Cstring := {Cstring:void} or null ;
 import tostring(s:Cstring):string;
 import gbTrace:int;
 import RandomSeed:int;
+export notify:bool := false;
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
