@@ -258,7 +258,7 @@ closePackage String := title -> (
      remove(pkg,"previous currentPackage");
      debuggingMode = pkg#"old debuggingMode"; remove(pkg,"old debuggingMode");
      testnumber = pkg#"old testnumber"; remove(pkg,"old testnumber");
-     stderr << "--package \"" << pkg << "\" loaded" << endl;
+     if notify then stderr << "--package \"" << pkg << "\" loaded" << endl;
      pkg)
 
 package = method ()
