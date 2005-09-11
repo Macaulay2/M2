@@ -1037,7 +1037,7 @@ makePackageIndex List := packagePath -> (
      key := "Macaulay 2";
      htmlDirectory = userMacaulay2Directory();		    -- links are relative to this directory
      fn := htmlDirectory | "index.html";
-     stderr << "--making index of installed packages in " << fn << endl;
+     if notify then stderr << "--making index of installed packages in " << fn << endl;
      fn << html HTML { 
 	  HEAD {
 	       TITLE {key, commentize headline key},

@@ -287,7 +287,7 @@ use Package := pkg -> if not member(pkg,packages) then (
 forceLoadDocumentation = false
 beginDocumentation = () -> (
      if not forceLoadDocumentation and currentPackage#?"processed documentation database" and isOpen currentPackage#"processed documentation database" then (
-	  stderr << "--beginDocumentation: using documentation database, skipping the rest of " << currentFileName << endl;
+	  if notify then stderr << "--beginDocumentation: using documentation database, skipping the rest of " << currentFileName << endl;
 	  return end;
 	  );
      )
