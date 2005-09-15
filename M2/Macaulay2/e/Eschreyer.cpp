@@ -428,7 +428,7 @@ void GBKernelComputation::reduce(gbvector * &f, gbvector * &fsyz)
 	  GR->gbvector_add_to(F,f,h);
 	  int n4 = GR->gbvector_n_terms(f);
 	  if (n4 > max_len) max_len = n4;
-	  nhits += (n2+n3-n4);
+	  nhits += (n2+n3-n4-2); // the -2 is to avoid counting the lead term cancellations.
 	  total_reduce_count++;
 	  count++;
 	}

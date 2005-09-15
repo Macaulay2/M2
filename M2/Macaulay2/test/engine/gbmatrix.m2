@@ -18,6 +18,28 @@ assert(m3 * m4 == 0)
 assert(m4 * m5 == 0)
 assert(m6 == 0)
 
+R = ZZ/101[a..g]
+m = gens gb matrix{{a^2, a*b-b^2, c^2, d^2}}
+m1 = map(R,rawKernelOfGB raw m)
+m2 = map(R,rawKernelOfGB raw m1)
+m3 = map(R,rawKernelOfGB raw m2)
+assert(m1 * m2 == 0)
+assert(m2 * m3 == 0)
+-- column 5 of m1 has a -1:
+n1 = mutableMatrix m1
+columnAdd(n1,6,d^2,5); n1
+columnAdd(n1,7,c^2,5); n1
+columnAdd(n1,8,a-b,5); n1
+m1 = matrix n1
+m1 * m2
+m2
+m1
+n2 = mutableMatrix m2
+n2_(5,2) = 0_R
+n2_(5,3) = 0_R
+n2
+m2 = matrix n2
+m1 * m2
 R = ZZ/101[vars(0..17)]
 m1 = genericMatrix(R,a,3,3)
 m2 = genericMatrix(R,j,3,3)
@@ -72,3 +94,4 @@ assert(s8 * s9 == 0)
 assert(s9 * s10 == 0)
 assert(s10 * s11 == 0)
 
+C = time res J

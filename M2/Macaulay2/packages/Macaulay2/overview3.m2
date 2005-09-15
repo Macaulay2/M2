@@ -295,6 +295,7 @@ load "Fano.out"
 load "canEmbed.out"
 load "divisors.out"
 load "elementary.out"
+load "elementary1.out"
 
 document {
      Key =>  "Developer's Corner",
