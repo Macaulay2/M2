@@ -554,9 +554,10 @@ basis(List,List,Module) := Matrix => opts -> (lo,hi,M) -> (
      if #lo != 0 and #lo =!= degreeLength R
      or #hi != 0 and #hi =!= degreeLength R then error "expected degree length to match that of ring";
      if lo =!= hi and #lo > 1 then error "encountered a range of multi-degrees";
-     -- heft := opts.Heft;
-     heft := null;					    -- we are handling Heft at top level now using Adjust/Repair
-     if heft === null and (options R).?Heft then heft = (options R).Heft;
+     heft := null;
+     -- we are handling Heft at top level now using Adjust/Repair
+     -- heft = opts.Heft;
+     -- if heft === null and (options R).?Heft then heft = (options R).Heft;
      var := opts.Variables;
      if var === null then var = 0 .. numgens R - 1
      else if class var === List then (
