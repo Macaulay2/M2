@@ -38,3 +38,41 @@ writing functions/remainder'-doc.m2
 -- (2) U^-1, for U a matrix over CC, is WRONG
 -- (3) printingPrecision should be used for matrices?
 --     Actually it seems to be incorrect for real numbers in any case.
+
+-- modules -- 10/1/05 -----------------
+R = ZZ[a,b]; 
+R^{10000:1,10000:2}  -- displays ALL of the degrees on one line!
+M = R^3; I = ideal(x); I*M_0 -- should be a submodule
+S = R[x,y]
+S*a
+
+Ring * RingElement := (R,f) -> (
+     if ring f === R then ideal(f)
+     else ideal(promote(f,R)))
+Ideal * Vector := (I,v) -> (
+     image((gens I) ** new Matrix from v)
+     )
+Ring * Vector := (R,v) -> (
+     if ring v =!= R then error "different rings encountered";
+     image new Matrix from v
+     )
+--Module + Vector := (M,v) -> M + (ring v) * v
+--Vector + Module := (v,M) -> (ring v) * v + M
+isHomogeneous Vector := (v) -> isHomogeneous new Matrix from v
+
+R = QQ[a,b]
+S = R[x,y]
+M = S^3
+I = ideal(x,y)
+I*M + S*M_0
+
+M_0; R*M_0 -- should also be allowed
+  -- then submodules are easy to do: I*M + R*M_0 + R*a*M_1
+  -- WANT: that if I, M, R are graded, then so is this submodule of M. 
+M = kernel vars R ++ cokernel vars R
+I * M_0
+I*M_0 + M_1 + (x-y)*M_2
+isHomogeneous oo
+M_1
+-- Question: given M_0, how do I do anything with it?
+
