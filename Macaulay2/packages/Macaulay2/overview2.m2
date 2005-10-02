@@ -28,42 +28,6 @@ document {
 ///
 
 document {
-     Key => "free modules",
-     "We use ", TO (symbol ^,Ring,ZZ), " to make a new free module.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z];",
-	  "M = R^4"
-	  },
-     "Such modules are often made as a side effect when creating matrices,
-     to serve as the source and target of the corresponding homomorphism.",
-     PARA,
-     "When the ring is graded, so are its free modules.  By default,
-     the degrees of the basis elements are taken to be 0.",
-     EXAMPLE {
-	  "degrees M",
-	  },
-     "We can use ", TO (symbol ^, Ring, List), " to specify other degrees,
-     or more precisely, their additive inverses.",
-     EXAMPLE {
-	  "F = R^{1,4:2,3,3:4}",
-      	  "degrees F",
-	  },
-     "Notice the use of ", TO ":", " above to indicate repetition.",
-     PARA,
-     "If the variables of the ring have multi-degrees represented by
-     lists (vectors) of integers, as described in
-     ", TO "multi-graded polynomial rings", ", then the degrees of a
-     free module must also be multi-degrees.",
-     EXAMPLE {
-	  "S = ZZ[a,b,c, Degrees=>{{1,2},{2,0},{3,3}}]",
-	  "N = S ^ {{-1,-1},{-4,4},{0,0}}",
-	  "degree N_0",
-	  "degree (a*b*N_1)",
-	  }
-     }
-
-document {
      Key => "making modules from matrices",
      "Let's make some matrices.",
      EXAMPLE {

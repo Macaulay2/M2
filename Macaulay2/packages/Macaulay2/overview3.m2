@@ -295,7 +295,29 @@ load "Fano.out"
 load "canEmbed.out"
 load "divisors.out"
 load "elementary.out"
+
+document {
+     Key => "basic commutative algebra",
+     "This section includes tutorials showing how to do
+     basic commutative algebra constructions in Macaulay2.
+     This section is being written by Mike Stillman, for use
+     with his Fall 2005 course: Math 634, Commutative algebra,
+     at Cornell University.  This course covers basic commutative
+     algebra, at the level of Atiyah-Macdonald, and Greuel-Pfister.",
+     PARA,
+     "Macaulay2 examples corresponding to the Singular examples in the
+     book by Greuel-Pfister may also be found here.",
+     Subnodes => {
+	  TO "Elementary uses of Groebner bases I.  Math 634 Fall 2005",
+	  TO "Modules in Macaulay2, Math 634, Fall 2005",
+	  TO "M2SingularBook"
+	  }
+     }
+
+     
 load "elementary1.out"
+load "modules.out"
+load "M2SingularBook/doc.m2"
 
 document {
      Key =>  "Developer's Corner",
@@ -356,6 +378,7 @@ document {
 		  TO "handling hypertext",
      	  "Appendix",
 	       TO "mathematical examples",
+	       TO "basic commutative algebra",
 	       TO "frequently encountered problems",
 	       TO "replacements for commands and scripts from Macaulay",
      	       TO "reference material",			    -- every symbol and methods
