@@ -6,7 +6,7 @@
 -- A. Making modules from matrices
 ----------------------------------
 
--- First, let's make a ring that we will use throughout.
+-- First, let's define a ring.
 R = QQ[a..f];
 m = matrix{{a,b,d,e},{b,c,e,f}}
 
@@ -154,52 +154,26 @@ cover N == source generators N
 -- generators of M to the generators of N.
 A = QQ[x,y]/(y^2-x^3)
 M = module ideal(x,y)
--- Before doing interesting homomorphisms, let's see how to write down
--- some canonical homomorphisms associated to M.
-
--- First, the identity on M:
-id_M
-
--- What about the includion map M --> A^1?
--- One way is to do it explicitly:
-j = map(A^1,M,{{x,y}})
--- A slicker way is to use the super function.
-i = super id_M
-i == j
-source i == M
-target i == A^1
-
--- Let's check that the kernel is 0.
-kernel i == 0
 
 -- One homomorphism F : M --> A is x-->y, y-->x^2 (multiplication by y/x)
 -- We write this as:
 F = map(A^1,M,matrix{{y,x^2}})
-source F
-target F
-F * M_{0}
--- Check that F is a well-defined homomorphism.
-isWellDefined F
+-- Notice that as is usual in Macaulay2, the target comes before the source.
+source F == M
+target F == A^1
+matrix F
+
 -- The image of F lies in the submodule M of A^1.  To obtain the map
 -- M --> M, we use //.  But first we need the inclusion map
 -- of M into A^1:
--- How to get this??
-M
-G = F // (super id_M)
+-- Later we explain this, but for now, we just write down this map:
+map(A^1,M)
+-- Now we use // to lift F : M --> A along M --> A^1, to get M --> M:
+G = F // map(A^1,M)
 source G
 target G
 -- G is now a map from M --> M.
 isWellDefined G
-
--- exercises:
--- 1. Given a module M, and a submodule N, form
---    (a) the map M --> M/N
---    (b) the map N --> M
--- 2. isomorphism theorems.  Given submodules M and N of a module P,
---    (a) find (M+N)/M
---    (b) find N/(M \cap N)
---    (c) find in Macaulay2, an isomorphism between them.
-
 
 ---------------------------------------------
 -- F. Canonical maps associated with modules
@@ -220,52 +194,43 @@ ambient(M/N)
 super M
 super N
 image generators M
--- If two modules M and N have the same ambient module, then map(M,N)
+--
+-- If two modules M and N have the same ambient module R^n, then map(M,N)
 -- makes the canonical map N --> M between them, if one exists.  If a map
 -- doesn't exist, the returned map might not be a homomorphism.
 map(M,M) == id_M
-map(super M,M) == map(super id_M) -- the map (P+Q)/Q --> R^n/Q
+map(super M,M) == map(super id_M) -- the map (P+Q)/Q --> R^n/Q, where M=(P+Q)/Q.
 map(M,super M) -- this one gives the 0 map.
-map(super M,ambient M)
-map(M,N)
-map(M/N,M)
-map(M/N,N)
+map(super M,ambient M) -- the quotient map R^n --> R^n/Q
+map(M,N) -- the inclusion map
+-- The projection map M --> M/N
+map(M/N,M) -- the projection map
+-- The projection map N --> M/N, which is the zero map
+map(M/N,N) -- the zero map
+-- Not all such maps can be defined.  Macaulay2 doesn't check to see if the
+-- result is a well-defined homomorphism, as that would take more 
+-- computation.  Instead, use the function isWellDefined is check.
 map(M,M/N)
 isWellDefined oo
 map(M/N,x*M)
 map(M/N,M) * map(M,x*M) == map(M/N,x*M)
 
--- Exercise 1. Define the inclusion map M --> R^n/Q.
-
--- Solution:
--- Recall that R^n/Q is obtained using 'super M'.  Applying super
--- to any map N --> M yields the map N --> R^n/Q.  Applying this
--- to the identity map, we obtain the solution to our problem.
-i = map(super M,M)
-source i == M
-target i == super M
-
--- Exercise 2. Define the projection map P --> M.
-
--- Solution:
-p = map(M,image generators M)
-source p == image generators M
-target p == M
+--
+-- 
+-- Before doing interesting homomorphisms, let's see how to write down
+-- some canonical homomorphisms associated to M.
 
 
--- Exercise 3. Define the inclusion homomorphism N --> M.
+-- exercises:
+-- 1. isomorphism theorems.  Given submodules M and N of a module P,
+--    (a) find (M+N)/M
+--    (b) find N/(M \cap N)
+--    (c) find in Macaulay2, an isomorphism between them.
+--
+-- 2. Given a homomorphism M --> A.  Suppose that
+--    the image lies in M (M is a submodule of A^1).
+--    Find the map M --> M.
 
--- Solution:
-i = map(M,N)
-source i == N
-target i == M
-
--- Exercise 4. Define the projection map M --> M/N.
--- Solution:
-p = map(M/N,M)
-target p == M/N
-source p == M
-ker p == N
 
 ---------------------------
 -- G. Homomorphisms and Hom
@@ -289,10 +254,19 @@ Hom(A^2,m)
 ---------------------
 -- H. Tensor products
 ---------------------
-R = QQ[x,y,z]
-
------------------
--- I. Ext and Tor 
------------------
-R = QQ[x,y,z]
+-- In Macaulay2, ** denotes the tensor product operator.
+m ** m
+(coker m) ** (coker m)
+-- Notice that tensor products of matrices and of modules are
+-- very different.
+M = coker m
+M2 = prune(M ** M)
+A = QQ[a,b,c]
+A ** A
+-- Oops!  Macaulay2 doesn't know what a should be!
+B = oo
+a == B_3
+a == B_0
+-- To remedy this, one can give the variables as an option to tensor.
+tensor(A,A,Variables=>{a,b,c,d,e,f})
 

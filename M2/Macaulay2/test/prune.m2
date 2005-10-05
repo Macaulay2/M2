@@ -17,13 +17,13 @@ F = OO_X(8)
 degrees F
 F' = prune F
 degrees F'				
-assert( first first degrees F' <= 0 )		    -- too much, but that's okay
+assert( first first degrees F' <= 0 ) -- too much, but that's okay
 
 F = OO_X(-8)
 degrees F
 F' = prune F
 degrees F'
-assert( module F' == S^{0} )					    -- on the nose, okay
+assert( module F' == S^{0} )  -- on the nose, okay
 -----------------------------------------------------------------------------
 
 S = QQ[x..z]
