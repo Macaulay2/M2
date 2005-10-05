@@ -1,5 +1,9 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
+Ideal * Vector := (I,v) -> (
+     image((generators I) ** v#0)
+     )
+
 Module + Module := Module => (M,N) -> (
      if ring M =!= ring N
      then error "expected modules over the same ring";

@@ -16,6 +16,10 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+MES: added methods for "Ring * RingElement", "Ring * Vector", "Ideal *
+Vector", and "isHomogeneous Vector" (Dan: Ring * RingElement is in
+modules.m2, probably not where it should be.  One of these is in modules2.m2).
+
 "continue" and "continue x" now work in the body of "apply" just as 
 in "while" and "for"; see below.
 

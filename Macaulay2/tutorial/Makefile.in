@@ -3,7 +3,7 @@ include ../../include/config.Makefile
 VPATH = @srcdir@
 FILES := Makefile tutbook.m2 titlepage.tex \
 	final/--INDEX final/*.m2 prelim/*.m2 translate.c
-TUTORIALS := final/Fano.m2 final/canEmbed.m2 final/divisors.m2 final/elementary.m2 final/elementary1.m2
+TUTORIALS := final/Fano.m2 final/canEmbed.m2 final/divisors.m2 final/elementary.m2 final/elementary1.m2 final/modules.m2
 OUTPUTS := $(TUTORIALS:.m2=.out)
 
 # Amazingly, under WINDOWS, whether the output from translate has nonzero length

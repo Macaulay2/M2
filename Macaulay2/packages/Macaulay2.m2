@@ -4,5 +4,5 @@ newPackage ("Macaulay2",
 beginDocumentation()
 
 load "Macaulay2/loads.m2"
-load "M2SingularBook/doc.m2"
+
 

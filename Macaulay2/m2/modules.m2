@@ -204,6 +204,15 @@ Vector + Vector := (v,w) -> (
      m := v#0 + w#0;
      new target m from {m})
 
+Ring * RingElement := (R,f) -> (
+     if ring f === R then ideal(f)
+     else ideal(promote(f,R)))
+Ring * Vector := (R,v) -> (
+     if ring v =!= R then error "different rings encountered";
+     image v#0
+     )
+isHomogeneous Vector := (v) -> isHomogeneous v#0
+
 newModule = method(TypicalValue => Module)
 newModule(Ring,RawFreeModule) := (R,rM) -> new Module of Vector from {
      symbol cache => new CacheTable,
