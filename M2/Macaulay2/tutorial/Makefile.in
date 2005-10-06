@@ -44,5 +44,8 @@ $(m2dir) :; $(INSTALL) -d "$@"
 clean :
 	rm -rf *.dvi *.log translate final/*.out *.exe *.obj *.ilk *.pdb final/cache
 
+################################# Makefile
+Makefile : Makefile.in
+	cd ../..; ./config.status Macaulay2/tutorial/Makefile
 distclean : clean
 	rm -f Makefile
