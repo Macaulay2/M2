@@ -29,6 +29,18 @@ void MonomialInfo::show() const
   for (int i=0; i<nvars; i++)
     fprintf(stderr, "    %ld\n",hashfcn[i]);
 }
+
+void MonomialInfo::show(monomial m) const
+{
+  fprintf(stderr, "[");
+  for (int v=1; v<monomial_size(m); v++)
+    {
+      if (v > 1) fprintf(stderr, " ");
+      fprintf(stderr, "%ld", m[v]);
+    }
+  fprintf(stderr, "]");
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/linalgGB "
 // End:

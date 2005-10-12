@@ -2,6 +2,9 @@
 #include <cstdlib>
 #include <ctime>
 
+typedef MonomialHashTable<MonomialInfo> MonomialHash;
+//typedef MonomialHashTable MonomialHash;
+
 long *readMatrix(char *fil, int &nvars, long &nlines)
 {
   FILE *f = fopen(fil, "r");
@@ -17,33 +20,31 @@ long *readMatrix(char *fil, int &nvars, long &nlines)
   return result;
 }
 
-MonomialHashTable *readMonomials(char *fil)
+long *makeProducts(int nvars, long nlines, long *exps, long &nproducts)
 {
-  FILE *f = fopen(fil, "r");
-  int nv;
-  long nlines;
-  long *result;
-  fscanf(f, "%d %ld", &nv, &nlines);
-  MonomialInfo *M = new MonomialInfo(nv);
-  M->show();
-  MonomialHashTable *H = new MonomialHashTable(M,16);
-  long *e = newarray(long,nv);
-  for (long j=0; j<nlines; j++)
+  nproducts = nlines * (nlines-1) / 2;
+  fprintf(stderr, "product array size = %ld\n", nproducts*nvars);
+  long *g = newarray(long,nproducts*nvars);
+  long *g0 = g;
+  long *e = exps;
+  for (long i=0; i<nlines; i++, e +=nvars)
     {
-      long *m = newarray(long,M->max_monomial_size());
-      for (int i=0; i<nv; i++)
-	fscanf(f, "%ld", e+i);
-      M->from_exponent_vector(e, 0, m);
-      H->find_or_insert(m,result);
+      long *f = e + nvars;
+      for (long j = i+1; j<nlines; j++, f += nvars)
+	{
+	  for (int p=0; p<nvars; p++)
+	    g0[p] = e[p] + f[p];
+	  g0 += nvars;
+	}
     }
-  return H;
+  return g;
 }
 
-MonomialHashTable *toHash(int nvars, long nlines, long *exps)
+MonomialHash *toHash(int nvars, long nlines, long *exps)
 {
   MonomialInfo *M = new MonomialInfo(nvars);
   M->show();
-  MonomialHashTable *H = new MonomialHashTable(M,17);
+  MonomialHash *H = new MonomialHash(M,18);
   long *e = exps;
   long *f;
   for (long j=0; j<nlines; j++, e+=nvars)
@@ -55,37 +56,73 @@ MonomialHashTable *toHash(int nvars, long nlines, long *exps)
   return H;
 }
 
+MonomialHash *productsToHashB(int nvars, long nlines, long *exps)
+{
+  MonomialInfo *M = new MonomialInfo(nvars);
+  M->show();
+  MonomialHash *H = new MonomialHash(M,17);
+  long *e = exps;
+  long *h;
+  for (long i = 0; i<nlines; i++, e += nvars)
+    {
+      long *f = e + nvars;
+      for (long j = i+1; j<nlines; j++, f += nvars)
+	{
+	  long *g = newarray(long,nvars);
+	  for (int p=0; p<nvars; p++)
+	    g[p] = e[p] + f[p];
+	  long *m = newarray(long,M->max_monomial_size());
+	  M->from_exponent_vector(g, 0, m);
+	  H->find_or_insert(m,h);
+	}
+    }
+  return H;
+}
+
+MonomialHash *productsToHash(int nvars, long nlines, long *exps)
+{
+  MonomialInfo *M = new MonomialInfo(nvars);
+  M->show();
+  MonomialHash *H = new MonomialHash(M,17);
+  long *h;
+  long nproducts;
+  long *g = makeProducts(nvars,nlines,exps,nproducts);
+  for (long i=0; i<nproducts; i++,g+=nvars)
+    {
+      long *m = newarray(long,M->max_monomial_size());
+      M->from_exponent_vector(g, 0, m);
+      H->find_or_insert(m,h);
+    }
+  return H;
+}
+
 int main(int argc, char **argv)
 {
-  clock_t s1,s2,s3;
+  clock_t s1,s2,s3,s4;
   int nvars;
-  long nlines;
+  long nlines, nproducts;
   if (argc != 2)
     {
       printf("usage: %s <filename>\n", argv[0]);
       exit(1);
     }
-  srand(time(0));
+  for (int i=0; i<473; i++)
+    rand();
+  //srand(time(0));
   s1 = clock();
   long *exps = readMatrix(argv[1],nvars,nlines);
   s2 = clock();
-  MonomialHashTable *H = toHash(nvars,nlines,exps);
+  long *exps2 = makeProducts(nvars,nlines,exps,nproducts);
   s3 = clock();
+  MonomialHash *H = toHash(nvars,nproducts,exps2);
+  s4 = clock();
   H->dump();
   //H->show();
-  printf("readtime %f makehash %f (seconds)\n", ((double)(s2-s1))/CLOCKS_PER_SEC,
-	 ((double)(s3-s2))/CLOCKS_PER_SEC);
+  printf("readtime %f products %f makehash %f (seconds)\n", ((double)(s2-s1))/CLOCKS_PER_SEC,
+	 ((double)(s3-s2))/CLOCKS_PER_SEC, ((double)(s4-s3))/CLOCKS_PER_SEC);
   return 0;
 }
-/*
-  nvars  = 6  nslots = 2  mask   = 268435456  hash values for each variable
-    865829753
-    651466599
-    1327496987
-    1034251826
-    937800764
-    1234955215
-*/
+
 /*
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/tests test_monhash && $M2BUILDDIR/Macaulay2/e/tests/test_monhash"

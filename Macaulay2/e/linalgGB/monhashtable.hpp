@@ -5,46 +5,54 @@
 
 #include "moninfo.hpp"
 
+// ValueType must implement the following:
+// values should have computed hash values stored with them
+//  typename ValueType::value
+//  long ValueType::hash_value(value m)
+//  bool ValueType::is_equal(value m, value n)
+//  void ValueType::show(value m) -- prints to stderr
+
+template <typename ValueType>
 class MonomialHashTable
 {
-  typedef long *monomial;
+  typedef typename ValueType::value value;
   
 private:
-  MonomialInfo *M;
-  monomial *hashtab;
+  ValueType *M;
+  value *hashtab;
 
-  long size;
-  long logsize;
+  unsigned long size;
+  unsigned int  logsize;
   unsigned long hashmask;
 
-  long threshold;
-  long count;
-  long nclashes;
-  long max_run_length;
+  unsigned long threshold;
+  unsigned long count;
+  unsigned long nclashes;
+  unsigned long max_run_length;
 
-  void insert(monomial m);
+  void insert(value m);
   void grow(); // Increase logsize by 1, remake hashtab.
   void initialize(int logsize0);
 public:
 
-  MonomialHashTable(MonomialInfo *M0, int logsize = 16);
+  MonomialHashTable(ValueType *M0, int logsize = 16);
   // The hash table size will be a power of 2, and this
   // is the initial power.
   
   ~MonomialHashTable();
   
-  bool find_or_insert(monomial m, monomial &result);
-  // return true if the monomial already exists in the table.
-  // otherwise, result is set to the new monomial.
+  bool find_or_insert(value m, value &result);
+  // return true if the value already exists in the table.
+  // otherwise, result is set to the new value.
 
   void dump() const;
   // displays on stderr some info about the hash table
-  // and number of monomials
+  // and number of values
 
   void show() const;
   // displays the hash table, first by dots and x'x: ...x...xxx....
-  // and then each monomial is displayed, with hash value.
-  // in form [loc, hash, monomial]
+  // and then each value is displayed, with hash value.
+  // in form [loc, hash, value]
   // Each blank line has a dot, with multiple dots per line.
 };
 #endif

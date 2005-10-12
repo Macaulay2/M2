@@ -5,7 +5,8 @@
 #define HASHVALUE(m) (M->hash_value(m))
 #define MONOMIAL_EQUAL(m,n) (M->is_equal(m,n))
 
-void MonomialHashTable::initialize(int logsize0)
+template <typename ValueType>
+void MonomialHashTable<ValueType>::initialize(int logsize0)
 {
   count = 0;
   nclashes = 0;
@@ -13,13 +14,14 @@ void MonomialHashTable::initialize(int logsize0)
   logsize = logsize0;
   size = (1<<logsize);
   threshold = 2*size/3;
-  hashtab = newarray(monomial, size);
+  hashtab = newarray(value, size);
   for (unsigned long i=0; i<size; i++)
     hashtab[i] = 0;
   hashmask = size-1;
 }
 
-void MonomialHashTable::insert(monomial m)
+template <typename ValueType>
+void MonomialHashTable<ValueType>::insert(value m)
 {
   long hashval = HASHVALUE(m) & hashmask;
   while (hashtab[hashval]) {
@@ -33,11 +35,12 @@ void MonomialHashTable::insert(monomial m)
   if (count > threshold) grow();
 }
 
-void MonomialHashTable::grow()
+template <typename ValueType>
+void MonomialHashTable<ValueType>::grow()
 {
   // Increase logsize, reset fields, and repopulate new hash table.
   dump();
-  monomial *oldtab = hashtab;
+  value *oldtab = hashtab;
   long oldsize = size;
   initialize(logsize+1);
   for (long i=0; i<oldsize; i++)
@@ -45,20 +48,23 @@ void MonomialHashTable::grow()
       insert(oldtab[i]);
 }
 
-MonomialHashTable::MonomialHashTable(MonomialInfo *M0, int logsize0)
+template <typename ValueType>
+MonomialHashTable<ValueType>::MonomialHashTable(ValueType *M0, int logsize0)
 {
   M = M0;
   initialize(logsize0);
 }
 
-MonomialHashTable::~MonomialHashTable()
+template <typename ValueType>
+MonomialHashTable<ValueType>::~MonomialHashTable()
 {
   deletearray(hashtab);
 }
 
-bool MonomialHashTable::find_or_insert(monomial m, monomial &result)
-  // return true if the monomial already exists in the table.
-  // otherwise, result is set to the new monomial.
+template <typename ValueType>
+bool MonomialHashTable<ValueType>::find_or_insert(value m, value &result)
+  // return true if the value already exists in the table.
+  // otherwise, result is set to the new value.
 {
   long hashval = HASHVALUE(m) & hashmask;
   if (!hashtab[hashval])
@@ -72,16 +78,16 @@ bool MonomialHashTable::find_or_insert(monomial m, monomial &result)
     }
   else
     {
-      // Something is there, so we need to find either this monomial,
+      // Something is there, so we need to find either this value,
       // or a free spot, whichever comes first.
       long mhash = HASHVALUE(m);
-      monomial *hashtop = hashtab + size;
-      for (monomial *i = hashtab + hashval; ; i++)
+      value *hashtop = hashtab + size;
+      for (value *i = hashtab + hashval; ; i++)
 	{
 	  if (i == hashtop) i = hashtab;
 	  if (!(*i)) 
 	    {
-	      // Spot is empty, so m is a new monomial
+	      // Spot is empty, so m is a new value
 	      *i = m;
 	      result = m;
 	      count++;
@@ -98,7 +104,8 @@ bool MonomialHashTable::find_or_insert(monomial m, monomial &result)
     }
 }
 
-void MonomialHashTable::dump() const
+template <typename ValueType>
+void MonomialHashTable<ValueType>::dump() const
 {
   fprintf(stderr, "size of hashtable   = %ld\n",size);
   fprintf(stderr, "  number of monoms  = %ld\n",count);
@@ -106,7 +113,8 @@ void MonomialHashTable::dump() const
   fprintf(stderr, "  max run length    = %ld\n",max_run_length);
 }
 
-void MonomialHashTable::show() const
+template <typename ValueType>
+void MonomialHashTable<ValueType>::show() const
 {
   long nzeros = 0;
   for (long i=0; i<size; i++)
@@ -115,21 +123,22 @@ void MonomialHashTable::show() const
 	nzeros++;
       else 
 	{
-	  long *m = hashtab[i];
+	  value m = hashtab[i];
 	  if (nzeros > 0)
 	    {
 	      fprintf(stderr, "-- %ld zero elements --\n", nzeros);
 	      nzeros = 0;
 	    }
-	  fprintf(stderr, "[%ld", m[0]);
-	  for (int v=1; v<M->monomial_size(m); v++)
-	    fprintf(stderr, " %ld", m[v]);
-	  fprintf(stderr, "]\n");
+	  fprintf(stderr, "hash %ld monomial ", M->hash_value(m));
+	  M->show(m);
+	  fprintf(stderr, "\n");
 	}
     }
   if (nzeros > 0)
     fprintf(stderr, "-- %ld zero elements --\n", nzeros);
 }
+
+template MonomialHashTable<MonomialInfo>;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/linalgGB "
