@@ -10,7 +10,7 @@
 
 class MonomialInfo
 {
-  typedef long *monomial;
+
 
   int nvars;
   int nslots;
@@ -21,6 +21,9 @@ class MonomialInfo
   //    [hashvalue, len, component, v1, v2, ..., vr] each vi is potentially packed too.
   //    [hashvalue, component, wt1, ..., wtr, pack1, ..., packr]
 public:
+  typedef long *monomial;
+  typedef monomial value;
+
   MonomialInfo(int nvars);
   // Default monomial order is reverse lexicographic
 
@@ -28,7 +31,7 @@ public:
 
   int max_monomial_size() const { return nslots; }
 
-  int monomial_size(monomial m) { return nslots; }
+  int monomial_size(monomial m) const { return nslots; }
 
   void show() const;
 
@@ -88,7 +91,7 @@ public:
   // This one requires tricks or unpacking the monomial
   // However, maybe this isn't done so much, so it doesn't matter...
 
-
+  void show(monomial m) const;
 };
 #endif
 
