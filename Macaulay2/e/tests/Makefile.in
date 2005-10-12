@@ -6,15 +6,20 @@ TESTS := test_monomial test_monordering test_monoid test_ring test_freemodule te
 	test_matrix test_sparsemat test_lapack
 
 CPPFLAGS += -I@srcdir@/..
-LIBRARYFILES += ../libgb.a
+#LIBRARYFILES += ../libgb.a
 LDFLAGS += -multiply_defined suppress
-LOADLIBES += $(LIBRARYFILES) -lfac -lcf -lgmp -lgc -lm -lc -lstdc++ \
-                   -llapack -lcblas -lf77blas -latlas -lg2c
+#LOADLIBES += $(LIBRARYFILES) -lfac -lcf -lgmp -lgc -lm -lc -lstdc++ \
+#                   -llapack -lcblas -lf77blas -latlas -lg2c
+LOADLIBES += -lstdc++
 
 CFLAGS += -g -ansi
 
 all :: $(TESTS)
 
+## the following tests are current ##
+test_monhash : test_monhash.o ../linalgGB/moninfo.o ../linalgGB/monhashtable.o
+
+## the following tests no longer run ##
 test_monomial : test_monomial.o util.o ../../d/M2types.o $(LIBRARYFILES)
 
 test_monordering : test_monordering.o util.o ../../d/M2types.o $(LIBRARYFILES)
