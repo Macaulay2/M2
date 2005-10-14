@@ -92,6 +92,20 @@ public:
   // However, maybe this isn't done so much, so it doesn't matter...
 
   void show(monomial m) const;
+
+  int compare_grevlex(monomial m, monomial n) const {
+    long *m1 = m+2;
+    long *n1 = n+2;
+    for (int i=nslots-2; i>=0; i--) {
+      int cmp = *m1++ - *n1++;
+      if (cmp < 0) return -1;
+      if (cmp > 0) return 1;
+    }
+    int cmp = m[1]-n[1];
+    if (cmp < 0) return 1;
+    if (cmp > 0) return -1;
+    return 0;
+  }
 };
 #endif
 
