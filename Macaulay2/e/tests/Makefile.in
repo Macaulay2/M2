@@ -2,8 +2,10 @@
 include ../../../include/config.Makefile
 VPATH = @srcdir@
 
-TESTS := test_monomial test_monordering test_monoid test_ring test_freemodule test_vector \
-	test_matrix test_sparsemat test_lapack
+#TESTS := test_monomial test_monordering test_monoid test_ring test_freemodule test_vector \
+#	test_matrix test_sparsemat test_lapack
+
+TESTS := test_monhash test_monsort
 
 CPPFLAGS += -I@srcdir@/..
 #LIBRARYFILES += ../libgb.a
@@ -18,6 +20,8 @@ all :: $(TESTS)
 
 ## the following tests are current ##
 test_monhash : test_monhash.o ../linalgGB/moninfo.o ../linalgGB/monhashtable.o
+
+test_monsort : test_monsort.o ../linalgGB/moninfo.o ../linalgGB/monsort.o
 
 ## the following tests no longer run ##
 test_monomial : test_monomial.o util.o ../../d/M2types.o $(LIBRARYFILES)

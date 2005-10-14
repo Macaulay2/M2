@@ -56,46 +56,6 @@ MonomialHash *toHash(int nvars, long nlines, long *exps)
   return H;
 }
 
-MonomialHash *productsToHashB(int nvars, long nlines, long *exps)
-{
-  MonomialInfo *M = new MonomialInfo(nvars);
-  M->show();
-  MonomialHash *H = new MonomialHash(M,17);
-  long *e = exps;
-  long *h;
-  for (long i = 0; i<nlines; i++, e += nvars)
-    {
-      long *f = e + nvars;
-      for (long j = i+1; j<nlines; j++, f += nvars)
-	{
-	  long *g = newarray(long,nvars);
-	  for (int p=0; p<nvars; p++)
-	    g[p] = e[p] + f[p];
-	  long *m = newarray(long,M->max_monomial_size());
-	  M->from_exponent_vector(g, 0, m);
-	  H->find_or_insert(m,h);
-	}
-    }
-  return H;
-}
-
-MonomialHash *productsToHash(int nvars, long nlines, long *exps)
-{
-  MonomialInfo *M = new MonomialInfo(nvars);
-  M->show();
-  MonomialHash *H = new MonomialHash(M,17);
-  long *h;
-  long nproducts;
-  long *g = makeProducts(nvars,nlines,exps,nproducts);
-  for (long i=0; i<nproducts; i++,g+=nvars)
-    {
-      long *m = newarray(long,M->max_monomial_size());
-      M->from_exponent_vector(g, 0, m);
-      H->find_or_insert(m,h);
-    }
-  return H;
-}
-
 int main(int argc, char **argv)
 {
   clock_t s1,s2,s3,s4;
@@ -117,7 +77,7 @@ int main(int argc, char **argv)
   MonomialHash *H = toHash(nvars,nproducts,exps2);
   s4 = clock();
   H->dump();
-  //H->show();
+  H->show();
   printf("readtime %f products %f makehash %f (seconds)\n", ((double)(s2-s1))/CLOCKS_PER_SEC,
 	 ((double)(s3-s2))/CLOCKS_PER_SEC, ((double)(s4-s3))/CLOCKS_PER_SEC);
   return 0;
