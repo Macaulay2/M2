@@ -1,19 +1,5 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 document {
-     Key => (ambient,Matrix),
-     Headline => "WRITE THIS ROUTINE",
-     Usage => "ambient f",
-     Inputs => {
-	  "f" => null
-	  },
-     Outputs => {
-	  {"WRITE THIS"}
-	  },
-     -- description here, with examples
-     SeeAlso => {},
-     Caveat => {}
-     }
-document {
      Key => (symbol _, Matrix, List),
      Headline => "select some columns from a matrix",
      Usage => "f_cols",
