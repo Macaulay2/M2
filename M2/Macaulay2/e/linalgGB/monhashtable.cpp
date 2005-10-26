@@ -138,7 +138,7 @@ void MonomialHashTable<ValueType>::show() const
     fprintf(stderr, "-- %ld zero elements --\n", nzeros);
 }
 
-template MonomialHashTable<MonomialInfo>;
+template class MonomialHashTable<MonomialInfo>;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/linalgGB "

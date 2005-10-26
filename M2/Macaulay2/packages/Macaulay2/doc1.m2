@@ -607,45 +607,6 @@ document {
      "If h is a ring element, it is interpreted as a one by one matrix."
      }
 document {
-     Key => ambient,
-     Headline => "ambient free module of a subquotient, or ambient ring",
-     TT "ambient M", " -- yields the ambient free module for the module ", TT "M", ".",
-     BR,
-     NOINDENT,
-     TT "ambient R", " -- yields the ambient ring of the quotient ring ", TT "R", ".
-     For a Galois field it yields the ring it was constructed from.",
-     PARA,
-     EXAMPLE "ambient(ZZ/101[a,b]/(a^3+b^3))",
-     SeeAlso => {"cover", "super"}
-     }
-document {
-     Key => (ambient,Module),
-     Usage => "ambient M",
-     Inputs => {
-	  "M" => null
-	  },
-     Outputs => {
-	  {"the ambient free module of ", TT "M", "."}
-	  },
-     PARA { "The ambient free module is the target of both the generator matrix of ",
-     	  TT "M", " and the relations matrix of ", TT "M", "."},
-     PARA { "If ", TT "M", " is the subquotient module ", TT "M = (image(g) + image(h)) / image(h)",
-     	  ", where ", TT "g : F <--- G", " and ", TT "h : F <--- H", " are matrices between
-     	  free modules, then the ambient module of ", TT "M", " is ", TT "F", "."},
-     EXAMPLE {
-	  "R = QQ[x_1 .. x_10];",
-      	  "N = coker vars R ++ coker vars R",
-      	  "f = N_{0} - N_{1}"
-	  },
-     "Here ", TT "f", " is  a matrix from a free module of rank 1 to ", TT "N", ".",
-     EXAMPLE {
-	  "M = image(f)",
-      	  "ambient M",
-      	  "ambient M == target generators M",
-      	  "ambient M == target relations M"},
-     SeeAlso => {(cover,Module), (super,Module), (generators,Module), (relations,Module)}
-     }     
-document {
      Key => Hom,
      Headline => "module of homomorphisms",
      TT "Hom(M,N)", " -- constructs the module of homomorphisms from M to N.",
