@@ -126,7 +126,6 @@ document {
 	  "n = 123456789.0",
 	  "n = n * 1_RRR",
 	  "n^5",
-	  "n + ii"
 	  },
      SUBSECTION "Computing with parameters",
      EXAMPLE {

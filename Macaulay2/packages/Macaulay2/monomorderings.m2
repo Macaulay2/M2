@@ -717,11 +717,11 @@ document {
      EM "Heft", " vector.  This is a vector of (small) integers, ", TEX "$w = (w_0, \\ldots, w_{d-1})$", 
      " of length the ", TO degreeLength, " of the ring, such that the dot product of w with the degree of
      each variable is a positive integer.  Provide this vector when constructing the ring.",
-     EXAMPLE {
-	  "R = QQ[a,b,c,Degrees=>{{1,0},{-2,1},{-3,1}}, Heft=>{1,4}];",
-	  "random({1,1},R)",
-	  "basis({1,1},R)"
-	  },
+--     EXAMPLE {
+--	  "R = QQ[a,b,c,Degrees=>{{1,0},{-2,1},{-3,1}}, Heft=>{1,4}];",
+--	  "random({1,1},R)",
+--	  "basis({1,1},R)"
+--	  },
      "If the vector is not provided, many computations will work (e.g. Groebner bases), but operations requiring
      finite bases for a multidegree (such as ", TT "basis", " and ", TT "random", ") will raise errors."
      }
