@@ -133,12 +133,11 @@ pointsMat(Matrix,Ring) := (M,R) -> (
      inGB := forceGB gens inG;
      Q := {}; -- the list of standard monomials
      --ntimes := 0;
-     while L != 0 do (
+     while (L = L % inGB) != 0 do (
 	  --ntimes = ntimes + 1;
 	  --if #Q === s then print "got a basis";
 	  --print("size of L = "| size(L));
 	  -- First step: get the monomial to consider
-	  L = L % inGB;
 	  monom = someTerms(L,-1,1);
 	  L = L - monom;
 	  -- Now fix up the matrix P

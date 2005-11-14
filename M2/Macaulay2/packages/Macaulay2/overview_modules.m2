@@ -16,7 +16,6 @@ document {
 	  TO (cokernel, Matrix),
 	  TO (image, Matrix),
 	  TO (kernel, Matrix),
-	  TO (homology, Matrix, Matrix)
 	  },
      "Common ways to get information about modules:",
      UL {
@@ -27,15 +26,25 @@ document {
 	  TO (relations, Module),
 	  TO "isFreeModule",
 	  TO (isHomogeneous, Module),
-	  TO "rank",
+	  },
+     "Numerical information about a module:",
+     UL {
+	  TO (codim, Module),
+	  TO (dim, Module),
+	  TO (rank, Module)
+	  },
+     "Submodules, quotients, and subquotient modules:",
+     UL {
 	  TO (ambient, Module),
 	  TO (cover, Module),
 	  TO (super, Module),
+	  TO (symbol /, Module, Module),
+     	  TO (subquotient, Matrix, Matrix),
+	  TO (isSubset, Module, Module),
 	  },
      "Common operations on modules:",
      UL {
 	  TO (symbol +, Module, Module),
-	  TO (symbol /, Module, Module),
 	  TO (symbol ==, Module, Module),
 	  TO (symbol ++, Module, Module),
 	  TO (symbol ^, Module, List),
@@ -49,35 +58,38 @@ document {
 	  TO (trim,Module),
 	  TO (minimalPresentation,Module)
 	  },
-     "Numerical information about a module:",
+     "Graded modules:",
      UL {
-	  TO (codim, Module),
+	  TO basis,
+	  TO truncate,
 	  TO (degree, Module),
-	  TO (dim, Module),
 	  TO (genera, Module),
 	  TO (hilbertSeries, Module),
 	  TO (hilbertFunction, ZZ, Module),
 	  TO (poincare, Module),
-	  TO (pdim, Module),
 	  TO (regularity, Module),
-	  TO (rank, Module)
 	  },
-     "Common computations on modules:",
+     "Annihilators, quotients and Groebner bases:",
      UL {
+	  TO (gb, Module),
 	  TO (symbol :, Module, Ideal),
 	  TO (annihilator, Module),
-	  TO (gb, Module),
-	  TO (res, Module),
 	  TO (saturate, Module, Ideal),
+	  },
+     "Common homological computations:",
+     UL {
+	  TO (res, Module),
+	  TO (pdim, Module),
 	  TO "Hom",
 	  TO (homomorphism,Matrix),
 	  TO (Ext,ZZ,Module,Module),
-	  TO (Tor,ZZ,Module,Module)
-	  },
-     "Common ways to use a module:",
-     UL {
+	  TO (Tor,ZZ,Module,Module),
+	  TO (cohomology,ZZ,Module),
+	  TO (homology, Matrix, Matrix),
 	  TO (fittingIdeal, ZZ, Module),
-	  TO (isSubset, Module, Module),
+	  },
+     "Multilinear algebra:",
+     UL {
 	  TO (exteriorPower,ZZ,Module),
 	  }}
 

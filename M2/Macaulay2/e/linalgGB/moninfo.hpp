@@ -10,8 +10,6 @@
 
 class MonomialInfo
 {
-
-
   int nvars;
   int nslots;
   long *hashfcn;
