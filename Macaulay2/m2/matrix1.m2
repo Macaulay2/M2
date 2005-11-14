@@ -475,6 +475,9 @@ isHomogeneous Ideal := (I) -> isHomogeneous generators I
 
 degrees Ideal := I -> degrees source generators I
 
+comodule Module := Module => M -> cokernel super map(M,M,1)
+comodule Ideal := Module => I -> cokernel generators I
+
 genera Ideal := (I) -> genera ((ring I)^1/I)
 genus Ideal := (I) -> genus ((ring I)^1/I)
 

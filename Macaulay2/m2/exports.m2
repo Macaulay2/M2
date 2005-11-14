@@ -1,6 +1,7 @@
 --		Copyright 2004 by Daniel R. Grayson
 
 export (
+        symbol comodule,
         symbol preimage,
 	symbol UserMode,
      	symbol diagonalMatrix,

@@ -16,6 +16,9 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+MES: added routine comodule: given an ideal I (or submodule of another
+module M), (ring I)^1/I, or M/I is returned.
+
 MES: added methods for "Ring * RingElement", "Ring * Vector", "Ideal *
 Vector", and "isHomogeneous Vector" (Dan: Ring * RingElement is in
 modules.m2, probably not where it should be.  One of these is in modules2.m2).

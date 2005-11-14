@@ -28,6 +28,7 @@ GBDeclared::GBDeclared(const Matrix *m0,
       POLY g;
       ring_elem denom1,denom2,u,v;
 
+      if (gb->elem(i) == 0) continue; // Do not even consider including 0 elements.
       g.f = P->translate_gbvector_from_vec(F, 
 					    gb->elem(i), 
 					    denom1);

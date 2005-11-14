@@ -575,29 +575,6 @@ document {
 	"Note that this is the matrix given by unnesting the list which was used to enter the matrix.",
      }
 document {
-     Key => symbol cokernel,
-     Headline => "cokernel of a map",
-     TT "cokernel f", " -- produces the cokernel of the module homomorphism f",
-     PARA,
-     "The result will be a quotient module of the target of f.  If f is
-     a ring element, it is interpreted as a one by one matrix.",
-     PARA,
-     "The generators of the cokernel are provided by the generators of the target
-     of ", TT "f", ".  In other words, ", TT "cover target f", " and ", TT "cover cokernel f", " are equal.",
-     PARA,
-     SeeAlso => {"kernel", "cover"}
-     }
-TEST ///
-    R = QQ[x,y,z]
-    modules = {
-	 image matrix {{x^2,x,y}},
-	 coker matrix {{x^2,y^2,0},{0,y,z}},
-	 R^{-1,-2,-3},
-	 image matrix {{x,y}} ++ coker matrix {{y,z}}
-	 }
-    scan(modules, M -> assert( cover cokernel M_{1} ==  cover M ) )
-///
-document {
      Key => image,
      Headline => "image of a map",
      TT "image h", " -- yields the image of the homomorphism ", TT "h", ".",
