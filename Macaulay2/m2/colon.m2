@@ -3,6 +3,7 @@
 ----------------
 -- quotients ---
 ----------------
+
 quotelem0 = (I,f) -> (
      -- I is an ideal, f is an element
      If := matrix{{f}} | (generators I);
@@ -188,8 +189,8 @@ Module : Module := Ideal => (M,N) -> quotient(M,N)
 saturate = method(
      Options => {
 	  DegreeLimit => {},
-	  --BasisElementLimit => infinity,
-	  --PairLimit => infinity,
+	  BasisElementLimit => infinity,
+	  PairLimit => infinity,
 	  MinimalGenerators => true,
 	  Strategy => null
 	  }

@@ -208,15 +208,6 @@ associatedPrimes = method(
 
 ass = associatedPrimes
 
-quotient = method(
-     Options => {
-	  --DegreeLimit => {},
-	  --BasisElementLimit => infinity,
-	  --PairLimit => infinity,
-	  MinimalGenerators => true,
-	  Strategy => null
-	  }
-     )
 
 simpleToString = toString
 toString = method(SingleArgumentDispatch => true, TypicalValue => String)

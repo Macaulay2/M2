@@ -411,3 +411,46 @@ document {
 --      be retained.  The computation can be continued by repeating the 
 --      ", TT "gb", " command with the same options."
 --      }
+
+TEST ///
+-- Test of various stopping conditions for GB's
+R = ZZ/32003[a..j]
+I = ideal random(R^1, R^{-2,-2,-2,-2,-2,-2,-2});
+gbTrace=3
+--time gens gb I;
+I = ideal flatten entries gens I;
+G = gb(I, StopBeforeComputation=>true); -- now works
+
+I = ideal flatten entries gens I;
+mingens I; -- works now
+
+I = ideal flatten entries gens I;
+trim I -- this fails...  It should stop after mingens are known to be computed.
+
+I = ideal flatten entries gens I;
+G = gb(I, DegreeLimit=>3); -- this one works
+G = gb(I, DegreeLimit=>4); -- this one works
+G = gb(I, DegreeLimit=>3); -- this one stops right away, as it should
+
+I = ideal flatten entries gens I;
+G = gb(I, BasisElementLimit=>3); -- does the first 3, as it should
+G = gb(I, BasisElementLimit=>7); -- does 4 more.
+
+I = ideal flatten entries gens I;
+G = gb(I, PairLimit=>3); -- this doesn't stop
+
+I = ideal flatten entries gens I;
+hf = poincare ideal apply(7, i -> R_i^2)
+G = gb(I, Hilbert=>hf); -- this works, it seems
+
+Rlex = ZZ/32003[a..j,MonomialOrder=>Lex]
+IL = substitute(I,Rlex);
+G = gb(IL, SubringLimit=>1, Hilbert=>hf, DegreeLimit=>2); -- SubringLimit seems to not work
+G = gb(IL, SubringLimit=>1, Hilbert=>hf, DegreeLimit=>4); 
+
+I = ideal flatten entries gens I;
+G = gb(I, DegreeLimit=>1); 
+G = gb(I, CodimensionLimit=>3); -- this isn't implemented yet, and is ignored...
+
+-- also, the final "minimalization" is VERY annoying...
+///

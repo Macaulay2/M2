@@ -76,3 +76,25 @@ isHomogeneous oo
 M_1
 -- Question: given M_0, how do I do anything with it?
 
+---------------------------------
+-- Problems arising 11/17/2005:
+---------------------------------
+mingens Ideal -- computes the entire GB.
+%, // require complete GB's
+need groebner (and grobner) routine
+
+-- the following all need some efficiency work...
+quotients
+saturation
+elimination
+
+gb: doesn't allow stopping conditions?
+decompose: doesn't quit
+aborting: lose all your variables
+
+gens gb: recomputes the min gens...
+
+-- This following 4 lines sent to Dan, 12/8/05
+S = QQ[a,b,Degrees=>{{0,-1},{1,1}},Heft=>{2,-1}]
+N = matrix{{1,2,3}}
+substitute(N,S)

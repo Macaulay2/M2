@@ -472,3 +472,13 @@ TEST "
   Q1 = quotient(image M_{},a*d-b*c)
   assert(Q1 == super M)  -- fails: bug in == ...
 "
+
+TEST ///
+-- Test of stopping conditions
+R = QQ[a..d]
+I = ideal(a^5,b^5,c^5,d^5)
+I : (a+b+c+d)
+quotient(I, a^2+b^2+c^2+d^2, DegreeLimit=>20)
+gbTrace=3
+quotient(I, a+b+c+d, BasisElementLimit=>5, MinimalGenerators=>false)
+///
