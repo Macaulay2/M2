@@ -811,7 +811,7 @@ void gbA::spair_set_defer(spair *&p)
   // The spair should have been reduced a number of times
   // already, so its type should be SPAIR_GEN or SPAIR_ELEM
 {
-  //  emit_wrapped("D");
+  emit_wrapped("D");
   //  spair_delete(p); // ONLY FOR TESTING!! THIS IS INCORRECT!!
   //  return;
   S.n_in_degree++;
@@ -1765,6 +1765,8 @@ bool gbA::s_pair_step()
   if (reduce(p)) /* i.e. if the reduction is not deferred */
     {
       gbelem_type minlevel = (p->type == SPAIR_GEN ? ELEM_POSSIBLE_MINGEN : ELEM_MIN_GB);
+      if (p->type == SPAIR_GEN)
+	_n_gens_left--;
       POLY f = p->x.f;
       spair_delete(p);
 
@@ -1776,15 +1778,15 @@ bool gbA::s_pair_step()
 enum ComputationStatusCode gbA::computation_is_complete()
 {
   // This handles everything but stop_.always, stop_.degree_limit
-  if (stop_.basis_element_limit > 0 && gb.size() > stop_.basis_element_limit) 
+  if (stop_.basis_element_limit > 0 && gb.size() >= stop_.basis_element_limit) 
     return COMP_DONE_GB_LIMIT;
-  if (stop_.syzygy_limit > 0 && _n_syz > stop_.syzygy_limit)
+  if (stop_.syzygy_limit > 0 && _n_syz >= stop_.syzygy_limit)
     return COMP_DONE_SYZ_LIMIT;
-  if (stop_.pair_limit > 0 && _n_pairs_computed > stop_.pair_limit)
+  if (stop_.pair_limit > 0 && _n_pairs_computed >= stop_.pair_limit)
     return COMP_DONE_PAIR_LIMIT;
   if (stop_.just_min_gens && _n_gens_left == 0)
     return COMP_DONE_MIN_GENS;
-  if (stop_.subring_limit > 0 && _n_subring > stop_.subring_limit)
+  if (stop_.subring_limit > 0 && _n_subring >= stop_.subring_limit)
     return COMP_DONE_SUBRING_LIMIT;
   if (stop_.use_codim_limit)
     {
@@ -1818,6 +1820,8 @@ void gbA::start_computation()
 {
   int npairs;
   enum ComputationStatusCode is_done = COMP_COMPUTING;
+
+  if (stop_.always_stop) return;
 
   if (stop_.stop_after_degree && _this_degree > stop_.degree_limit->array[0])
     {

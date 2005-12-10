@@ -1,5 +1,21 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+-- This definition is used in several places, so it doesn't have
+-- a natural home.  It used to be in methods.m2, but
+-- 'infinity' isn't defined yet when reading that file.
+
+assert( class infinity === InfiniteNumber )
+
+quotient = method(
+     Options => {
+	  DegreeLimit => {},
+	  BasisElementLimit => infinity,
+	  PairLimit => infinity,
+	  MinimalGenerators => true,
+	  Strategy => null
+	  }
+     )
+
 gcdCoefficients(ZZ,ZZ) := (a,b) -> (
      m := {a,1,0};
      n := {b,0,1};

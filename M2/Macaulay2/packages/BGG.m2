@@ -1,4 +1,4 @@
--- Code for Simplicial Complexes
+-- 
 newPackage(
 	"BGG",
     	Version => "1.0", 
@@ -105,7 +105,7 @@ document { Key => BGG,
      }
 
 ///
-
+load "BGG.m2"
 S=ZZ/32003[x_0..x_2];
 E=ZZ/32003[e_0..e_2,SkewCommutative=>true];
 M=coker matrix{{x_0^2, x_1^2}};
