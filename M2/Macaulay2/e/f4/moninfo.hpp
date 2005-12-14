@@ -92,7 +92,14 @@ public:
   // This one requires tricks or unpacking the monomial
   // However, maybe this isn't done so much, so it doesn't matter...
 
-  long monomial_weight(const monomial m, const M2_arrayint wts) const;
+  long monomial_weight(const monomial m, const M2_arrayint wts) const {
+    const long *m1 = m;
+    int top = wts->len;
+    int *n = wts->array;
+    long sum = 0;
+    for (int j=top; j>0; --j) sum += *m1++ + *n++;
+    return sum;
+  }
 
   void show(monomial m) const;
 

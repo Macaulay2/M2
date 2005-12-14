@@ -22,15 +22,15 @@ class F4Computation : public GBComputation
 
   typedef typename CoeffRing::elem COEFF_TYPE;
 
-  int typ;
-  F4<CoeffRing,MonInfo> *F4;
-
   const PolynomialRing *originalR;
   const FreeModule *F; // determines whether the monomial order is a 
 		       // Schreyer order.
                        // Also determines degrees of elements in F.
   const RingType *K;
+  const CoeffRing *coeffK;
+  MonInfo *MI;
 
+  F4<CoeffRing,MonInfo> *f4;
 public:
   F4Computation(const RingType *K,
 		const Matrix *m, 
@@ -80,6 +80,15 @@ public:
   // The computation is complete up through this degree.
   
 };
+
+GBComputation *createF4GB(const Matrix *m,
+			  M2_bool collect_syz,
+			  int n_rows_to_keep,
+			  M2_arrayint gb_weights,
+			  int strategy,
+			  M2_bool use_max_degree,
+			  int max_degree);
+
 #endif
 
 // Local Variables:

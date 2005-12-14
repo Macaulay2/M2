@@ -88,6 +88,7 @@ processAlgorithm := (a,f) -> (
      else if a === LinearAlgebra or a === Faugere then 3
      else if a === Sugarless then 4
      else if a === Homogeneous2 then 5
+     else if a === F4 then 6
      else error ("unknown algorithm encountered"))
 
 gb Ideal := GroebnerBasis => options -> (I) -> gb ( module I, options )

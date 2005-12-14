@@ -4,35 +4,38 @@
 #define _F4_h_
 
 #include "../newdelete.hpp"
+#include "F4types.hpp"
 
-template<typename CoeffRing, typename MonomialInfo>
+template<typename CoeffRing, typename MonInfo>
 class F4 : public our_new_delete
 {
   typedef typename CoeffRing::ring_type RingType;
   typedef typename CoeffRing::elem elem;
   typedef typename CoeffRing::elem COEFF_TYPE;
 
-  typedef typename MonomialInfo::monomial monomial;
+  typedef typename MonInfo::monomial packed_monomial;
+  typedef mypoly<COEFF_TYPE> poly;
+  typedef mygbelem<COEFF_TYPE> gbelem;
+  typedef gb_array<COEFF_TYPE> gb_array;
 
-  struct mypoly : public our_new_delete 
-  {
-    int len;
-    COEFF_TYPE *coeffs;
-    monomial *monoms;
-  };
-
-private:
-
+  gb_array gens; // unhandled generators.  Handled ones are replaced with 0 poly.
+  gb_array gb;
 public:
-  F4(const RingType *K,
-	   const Matrix *m, 
-	   M2_bool collect_syz, 
-	   int n_rows_to_keep,
-	   M2_arrayint gb_weights,
-	   int strategy, 
-	   M2_bool use_max_degree,
-	   int max_degree);
+  F4(const CoeffRing *K,
+     const MonInfo *MI,
+     M2_bool collect_syz, 
+     int n_rows_to_keep,
+     M2_arrayint gb_weights,
+     int strategy, 
+     M2_bool use_max_degree,
+     int max_degree);
 
+  void set_generators(gb_array &new_gens);
+  // This grabs these elements, possibly by doing a swap
+
+  const gb_array &get_generators() const { return gens; }
+  gb_array &get_generators() { return gens; }
+  
   virtual ~F4();
 };
 

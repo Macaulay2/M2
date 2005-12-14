@@ -18,9 +18,9 @@ static clock_t clock_sort_columns = 0;
 static clock_t clock_gauss = 0;
 static clock_t clock_make_matrix = 0;
 
-template<typename CoeffRing, typename MonomialInfo>
-F4<CoeffRing,MonomialInfo>::F4(const RingType *K0,
-			       const Matrix *m, 
+template<typename CoeffRing, typename MonInfo>
+F4<CoeffRing,MonInfo>::F4(const CoeffRing *K0,
+			       const MonInfo *MI,
 			       M2_bool collect_syz, 
 			       int n_rows_to_keep,
 			       M2_arrayint gb_weights,
@@ -29,6 +29,14 @@ F4<CoeffRing,MonomialInfo>::F4(const RingType *K0,
 			       int max_degree)
 {
 }
+
+template<typename CoeffRing, typename MonInfo>
+F4<CoeffRing,MonInfo>::~F4()
+{
+}
+
+#include "moninfo.hpp"
+template class F4<CoefficientRingZZp,MonomialInfo>;
 
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

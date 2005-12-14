@@ -8,8 +8,8 @@
 
 #include "F4toM2Interface.hpp"
 template<typename CoeffRing, typename MonInfo>
-void F4toM2Interface<CoeffRing,MonInfo>::from_M2_vec(CoeffRing *K,
-					       MonInfo *MI,
+void F4toM2Interface<CoeffRing,MonInfo>::from_M2_vec(const CoeffRing *K,
+					       const MonInfo *MI,
 					       const FreeModule *F, 
 					       vec v,
 					       poly &result)
@@ -48,8 +48,8 @@ void F4toM2Interface<CoeffRing,MonInfo>::from_M2_vec(CoeffRing *K,
 }
 
 template<typename CoeffRing, typename MonInfo>
-void F4toM2Interface<CoeffRing,MonInfo>::poly_set_degrees(CoeffRing *K,
-							  MonInfo *MI,
+void F4toM2Interface<CoeffRing,MonInfo>::poly_set_degrees(const CoeffRing *K,
+							  const MonInfo *MI,
 							  const M2_arrayint wts,
 							  const poly &f,
 							  int &deg, 
@@ -66,8 +66,8 @@ void F4toM2Interface<CoeffRing,MonInfo>::poly_set_degrees(CoeffRing *K,
 }
 
 template<typename CoeffRing, typename MonInfo>
-void F4toM2Interface<CoeffRing,MonInfo>::from_M2_matrix(CoeffRing *K,
-							MonInfo *MI,
+void F4toM2Interface<CoeffRing,MonInfo>::from_M2_matrix(const CoeffRing *K,
+							const MonInfo *MI,
 							const Matrix *m, 
 							M2_arrayint wts,
 							gb_array &result_polys)
@@ -84,42 +84,66 @@ void F4toM2Interface<CoeffRing,MonInfo>::from_M2_matrix(CoeffRing *K,
 }
 
 template<typename CoeffRing, typename MonInfo>
-vec F4toM2Interface<CoeffRing,MonInfo>::to_M2_vec(CoeffRing *K,
-						  MonInfo *MI,
+vec F4toM2Interface<CoeffRing,MonInfo>::to_M2_vec(const CoeffRing *K,
+						  const MonInfo *MI,
 						  const poly &f,
 						  const FreeModule *F)
 {
-#warning "only handles polynomials in one component, assumes polynomials are in order"
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
   const Monoid *M = R->getMonoid();
   
-  Nterm head;
-  Nterm *inresult = &head;
-
   int *m1 = M->make_one();
-  long comp;
-  ring_elem c;
+
+  Nterm **comps = newarray(Nterm *, F->rank());
+  Nterm **last = newarray(Nterm *, F->rank());
+  for (int i=0; i<F->rank(); i++)
+    {
+      comps[i] = 0;
+      last[i] = 0;
+    }
 
   int *exp = newarray(int, M->n_vars()+1);
   long *lexp = newarray(long, M->n_vars()+1);
 
   for (int i=0; i<f.len; i++)
     {
+      long comp;
+      ring_elem c;
       K->to_ring_elem(c, f.coeffs[i]);
       MI->to_exponent_vector(f.monoms[i], lexp, comp);
       for (int a=0; a<M->n_vars(); a++)
-	lexp[a] = exp[a];
+	exp[a] = lexp[a];
       M->from_expvector(exp, m1);
-      inresult->next = R->make_flat_term(c, m1);
-      inresult = inresult->next;
+      Nterm * g = R->make_flat_term(c, m1);
+      g->next = 0;
+      if (last[comp] == 0)
+	{
+	  comps[comp] = g;
+	  last[comp] = g;
+	}
+      else
+	{
+	  last[comp]->next = g;
+	  last[comp] = g;
+	}
     }
-  inresult->next = 0;
-  return R->make_vec(0, head.next);
+  vec result = 0;
+  for (int i=0; i<F->rank(); i++)
+    {
+      if (comps[i] != 0)
+	{
+	  vec v = R->make_vec(i,comps[i]);
+	  R->add_vec_to(result,v);
+	  comps[i] = 0;
+	  last[i] = 0;
+	}
+    }
+  return result;
 }
 
 template<typename CoeffRing, typename MonInfo>
-Matrix *F4toM2Interface<CoeffRing,MonInfo>::to_M2_matrix(CoeffRing *K,
-							 MonInfo *MI,
+Matrix *F4toM2Interface<CoeffRing,MonInfo>::to_M2_matrix(const CoeffRing *K,
+							 const MonInfo *MI,
 							 gb_array &polys, 
 							 const FreeModule *F)
 {
@@ -147,27 +171,6 @@ MutableMatrix * F4toM2Interface<CoeffRing,MonInfo>::to_M2_MutableMatrix(
 	  int c = row.comps[i];
 	  ////	  c = mat->columns[c].ord;
 	  M->set_entry(r,c,row.coeffs[i]);
-	}
-    }
-  return result;
-}
-
-template<typename CoeffRing, typename MonInfo>
-MATTYPE<CoeffRing> * F4toM2Interface<CoeffRing,MonInfo>::to_M2_Mat(  
-    const RingType *K,
-    coefficient_matrix<COEFF_TYPE> *mat)
-{
-  int nrows = mat->rows.size();
-  int ncols = mat->columns.size();
-  MATTYPE<CoeffRing> *result = new MATTYPE<CoeffRing>(K,nrows,ncols);
-  for (int r=0; r<nrows; r++)
-    {
-      typename coefficient_matrix<COEFF_TYPE>::row_elem &row = mat->rows[r];
-      for (int i=0; i<row.len; i++)
-	{
-	  int c = row.comps[i];
-	  ////c = mat->columns[c].ord;
-	  result->set_entry(r,c,row.coeffs[i]);
 	}
     }
   return result;

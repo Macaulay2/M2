@@ -1,6 +1,7 @@
 --		Copyright 2004 by Daniel R. Grayson
 
 export (
+        symbol F4,
         symbol comodule,
         symbol preimage,
 	symbol UserMode,

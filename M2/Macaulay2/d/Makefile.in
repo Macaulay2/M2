@@ -32,6 +32,7 @@ SRCFILES :=
 EFILES := ../e/*.o
 # EFILES += ../e/rings/*.o 
 EFILES += ../e/linalgGB/*.o
+EFILES += ../e/f4/*.o
 
 ## *.c files
 
