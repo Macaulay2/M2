@@ -16,10 +16,11 @@ include @srcdir@/../make.include
 
 .PHONY : all place_into_lib
 
-CCFILES := memblock MonomialOps Monomials MonomialSet MonomialTable interface lingb
-CFILES := monoms
+CCFILES := monhashtable moninfo monsort \
+	F4computation F4 F4types F4toM2interface
+
+CFILES := 
 LINALGGB_FILES := $(CCFILES) $(CFILES)
-# MonomialHeap 
 LINALGGB_OBJECT_FILES :=  $(addsuffix .o, $(LINALGGB_FILES))
 
 all :: $(LINALGGB_OBJECT_FILES)
@@ -28,7 +29,7 @@ check_it : $(LINALGGB_OBJECT_FILES) check_it.o
 
 %.s : %.c; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
 
-Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/e/linalgGB/Makefile
+Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/e/F4/Makefile
 clean ::; rm -f *.o
 distclean: clean; rm -f Makefile
 
@@ -38,6 +39,6 @@ include $(CFILES:=.dep) $(CCFILES:=.dep)
 endif
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/e/linalgGB "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 # End:
 

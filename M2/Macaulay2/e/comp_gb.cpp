@@ -10,6 +10,7 @@
 #include "gbweight.hpp"
 #include "comp_gb_proxy.hpp"
 #include "linalgGB/m2interface.hpp"
+#include "f4/F4computation.hpp"
 
 GBComputation::~GBComputation()
 {
@@ -86,6 +87,15 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 			     use_max_degree,
 			     max_degree);
      break;
+  case 6: 
+    result = createF4GB(m, 
+			collect_syz, 
+			n_rows_to_keep,
+			gb_weights,
+			strategy,
+			use_max_degree,
+			max_degree);
+    break;
   default:
     result = gbA::create(m, 
 			 collect_syz, 

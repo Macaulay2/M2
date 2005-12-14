@@ -4,6 +4,7 @@
 #define _moninfo_h_
 
 #include <cstdio>
+#include "../../d/M2types.h"
 
 //#define newarray(A,B) new A[B]
 //#define deletearray(A) delete[]A
@@ -27,6 +28,8 @@ public:
 
   virtual ~MonomialInfo();
 
+  int n_vars() const { return nvars; }
+  
   int max_monomial_size() const { return nslots; }
 
   int monomial_size(monomial m) const { return nslots; }
@@ -89,6 +92,8 @@ public:
   // This one requires tricks or unpacking the monomial
   // However, maybe this isn't done so much, so it doesn't matter...
 
+  long monomial_weight(const monomial m, const M2_arrayint wts) const;
+
   void show(monomial m) const;
 
   int compare_grevlex(monomial m, monomial n) const {
@@ -108,5 +113,5 @@ public:
 #endif
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/linalgGB "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:
