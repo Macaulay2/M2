@@ -4,20 +4,17 @@
 #define _montable_h_
 
 #include <vector>
-//#include <gc.h>
 
-//#include "../queue.hpp"
-#include "../index.hpp"
+#include "../style.hpp"
 
-#define VECTOR(t) std::vector< t >
-#define deleteitem(x) delete x
-#define newarray(typ,n) new typ[n]
-struct our_new_delete { };
+typedef long *packed_monomial;
+typedef int *exponent_vector;
+typedef long *varpower_monomial;
+typedef long *monomial;
 
-typedef int * monomial;
-typedef int * exponent_vector;
-
+class buffer;
 class MonomialLookupTable;
+
 struct tagged_monomial : public our_new_delete
 {
   monomial monom; // pointer to some space
@@ -41,7 +38,7 @@ protected:
     mi_node         * down;	// 'up' node, if this is a head of a list
     tagged_monomial  * bag;
   } val;
-
+public:
   mi_node(int v, int e, mi_node *d) 
     : var(v), exp(e), left(0), right(0), header(0), tag(node)
   { val.down = d; }
@@ -77,10 +74,11 @@ private:
   void update_exponent_vector(monomial m);
   void reset_exponent_vector(monomial m);
 
-  mi_node *first_node() const;
-  mi_node *last_node() const;
   mi_node *next(mi_node *p) const;
   mi_node *prev(mi_node *p) const;
+
+  mi_node *first_node() const { return next(mi); }
+  mi_node *last_node() const { return prev(mi); }
 
   void insert1(mi_node *&p, tagged_monomial *b);
   void remove1(mi_node *p);
@@ -88,15 +86,16 @@ private:
   void do_tree(mi_node *p, int depth, int indent, int disp) const;
   int debug_check(mi_node *p, mi_node *up) const;
 public:
+  typedef VECTOR(tagged_monomial *) vector_tagged_monomials;
+
   MonomialLookupTable() : mi(0), count(0) {}
   virtual ~MonomialLookupTable() { deleteitem(mi); }
 
-  MonomialLookupTable(VECTOR(tagged_monomial *) &elems);
-  MonomialLookupTable(VECTOR(tagged_monomial *) &elems, 
-                      VECTOR(tagged_monomial *) &rejects);
+  MonomialLookupTable(vector_tagged_monomials &elems);
+  MonomialLookupTable(vector_tagged_monomials &elems, 
+                      vector_tagged_monomials &rejects);
 
   MonomialLookupTable * copy() const;
-
   monomial first_elem() const; // returns varpower
   monomial second_elem() const; // returns varpower
 
@@ -106,16 +105,11 @@ public:
   //  void text_out(buffer &o) const;
 
   // Insertion of new monomials.  
-  void insert_minimal(tagged_monomial *b);
+  void insert_minimal(tagged_monomial *b) { insert(mi,b); count++; }
         // Insert baggage 'b'.  It is assumed
         // that 'b' is not already in the monomial ideal.
 
   int insert(tagged_monomial *b);
-
-  void insert_w_deletions(tagged_monomial *b, 
-                          VECTOR(tagged_monomial *) &deletions);
-        // Insert 'm', removing any monomials divisible by 'm', and
-	// returning their baggage in a list of moninfo *'s.
 
   int remove(tagged_monomial *&b);
         // Deletion.  Remove the lexicographically largest element, placing
@@ -131,59 +125,35 @@ public:
 	// found.  If so, return the baggage.  'm' is a varpower monomial.
 
   void find_all_divisors(exponent_vector exp, 
-                         VECTOR(tagged_monomial *) &b) const;
+                         vector_tagged_monomials &b) const;
   // Search. Return a list of all elements which divide 'exp'.
-
-  tagged_monomial *operator[](Index< MonomialLookupTable  > i) const;
-  Index< MonomialLookupTable  > first() const;
-  Index< MonomialLookupTable  > last () const;
-
-  void *next (void *p) const;
-  void *prev (void *p) const;
-  int   valid(void *p) const { return (p != 0); }
 
   void debug_out(int disp=1) const;
   void debug_check() const;
+  void text_out(buffer &o) const;
 
-  typedef Index<MonomialLookupTable> iterator;
+  class iterator;
+  friend class iterator;
+
+  class iterator {
+    mi_node *p;
+    const MonomialLookupTable *T;
+  public:
+    iterator(const MonomialLookupTable *T0) : p(T0->mi), T(T0) {}
+    iterator(const MonomialLookupTable *T0, mi_node *p0) : p(p0), T(T0) {}
+    void operator++() { T->next(p); }
+    void operator--() { T->prev(p); }
+    void operator++(int) { T->next(p); }
+    void operator--(int) { T->prev(p); }
+    bool valid() { return p != 0; }
+    tagged_monomial * operator*() { return p->baggage(); }
+  };
+
+  iterator first() const { return iterator(this, next(mi)); }
+  iterator last() const { return iterator(this, prev(mi)); }
+  
 };
 
-//-----------------------------------------------------------------
-
-inline void MonomialLookupTable::insert_minimal(tagged_monomial *b) 
-{
-  insert1(mi, b); 
-  count++; 
-}
-
-#if 0
-inline tagged_monomial * MonomialLookupTable::operator[](Index<MonomialLookupTable > i) const
-{
-  mi_node *p = reinterpret_cast<mi_node *>(i.val());
-  return p->baggage();
-}
-#endif
-
-inline mi_node *MonomialLookupTable::first_node() const
-{
-  return next(mi);
-}
-
-inline mi_node *MonomialLookupTable::last_node() const
-{
-  return prev(mi);
-}
-#if 0
-inline Index<MonomialLookupTable > MonomialLookupTable::first() const 
-{ 
-  return Index<MonomialLookupTable >(next(reinterpret_cast<void *>(mi)), this);
-}
-
-inline Index<MonomialLookupTable > MonomialLookupTable::last() const 
-{ 
-  return Index<MonomialLookupTable >(prev(reinterpret_cast<void *>(mi)), this);
-}
-#endif
 #endif
 
 

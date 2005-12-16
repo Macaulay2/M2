@@ -1,10 +1,10 @@
 // (c) 1994-2004 Michael E. Stillman
 
-//#include "../text_io.hpp"
+#include "../text_io.hpp"
 
 #include "montable.hpp"
-//#include "Monomials.hpp"
-//#include "monoms.h"
+#include "../linalgGB/Monomials.hpp"
+#include "../linalgGB/monoms.h"
 
 extern int gbTrace;
 
@@ -26,25 +26,27 @@ MonomialLookupTable::MonomialLookupTable(VECTOR(tagged_monomial *) &elems,
   size_of_exp = 10;
   exp0 = newarray(int,size_of_exp);
   VECTOR( VECTOR(tagged_monomial *) *) bins;
-  tagged_monomial *b, *b1;
-  while (elems.remove(b)) 
+  tagged_monomial *b1;
+  for (VECTOR(tagged_monomial *)::iterator j = elems.begin(); j != elems.end(); j++)
     {
+      tagged_monomial *b = *j;
       int d = monomial_simple_degree(b->monom);
       if (d >= bins.size())
 	for (int i=bins.size(); i<=d; i++)
 	  bins.push_back(NULL);
       if (bins[d] == NULL)
 	bins[d] = new VECTOR(tagged_monomial *);
-      bins[d]->insert(b);
+      bins[d]->push_back(b);
     }
   for (int i=0; i < bins.size(); i++)
     if (bins[i] != NULL)
       {
-	while (bins[i]->remove(b))
+	for (vector_tagged_monomials::iterator j = bins[i]->begin(); j != bins[i]->end(); j++)
 	  {
+	    tagged_monomial *b = *j;
 	    monomial mon = b->monom;
 	    if (search(mon, b1))
-	      rejects.insert(b);
+	      rejects.push_back(b);
 	    else
 	      insert_minimal(b);
 	  }
@@ -58,21 +60,25 @@ MonomialLookupTable::MonomialLookupTable(VECTOR(tagged_monomial *) &elems)
   size_of_exp = 10;
   exp0 = newarray(int,size_of_exp);
   VECTOR( VECTOR(tagged_monomial *) *) bins;
-  tagged_monomial *b;
-  while (elems.remove(b)) 
+  for (VECTOR(tagged_monomial *)::iterator j = elems.begin(); j != elems.end(); j++)
     {
+      tagged_monomial *b = *j;
       int d = monomial_simple_degree(b->monom);
       if (d >= bins.size())
 	for (int i=bins.size(); i<=d; i++)
 	  bins.push_back(NULL);
       if (bins[d] == NULL)
-	bins[d] = new queue<tagged_monomial *>;
-      bins[d]->insert(b);
+	bins[d] = new VECTOR(tagged_monomial *);
+      bins[d]->push_back(b);
     }
   for (int i=0; i < bins.size(); i++)
     if (bins[i] != NULL)
       {
-	while (bins[i]->remove(b)) insert(b);
+	for (vector_tagged_monomials::iterator j = bins[i]->begin(); j != bins[i]->end(); j++)
+	  {
+	    tagged_monomial *b = *j;
+	    insert(b);
+	  }
 	deleteitem(bins[i]);
       }
 }
@@ -90,8 +96,8 @@ monomial MonomialLookupTable::second_elem() const
 MonomialLookupTable * MonomialLookupTable::copy() const
 {
   MonomialLookupTable *result = new MonomialLookupTable();
-  for(Index<MonomialLookupTable> i = first(); i.valid(); i++)
-    result->insert_minimal(new tagged_monomial(*( operator[](i)  )));
+  for (iterator i = this; i.valid(); i++)
+    result->insert_minimal(new tagged_monomial(*i));
   return result;
 }
 
@@ -214,11 +220,6 @@ mi_node *MonomialLookupTable::next(mi_node *p) const
   return NULL;
 }
 
-void *MonomialLookupTable::next(void *p) const
-{
-  return reinterpret_cast<void *>(next(reinterpret_cast<mi_node *>(p)));
-}
-
 mi_node *MonomialLookupTable::prev(mi_node *p) const
 {
   while (p != NULL) 
@@ -232,17 +233,14 @@ mi_node *MonomialLookupTable::prev(mi_node *p) const
   return NULL;
 }
 
-void *MonomialLookupTable::prev(void *p) const
-{
-  return reinterpret_cast<void *>(prev(reinterpret_cast<mi_node *>(p)));
-}
-
 void MonomialLookupTable::insert1(mi_node *&top, tagged_monomial *b)
 {
+#if 0
+  // Commented out: need to fix index_varpower_monomial
   mi_node **p = &top, *up = NULL;
   int one_element = 1;
 
-  for (index_monomial i = b->monom; i.valid();)
+  for (index_varpower_monomial i = b->monom; i.valid();)
     {
       one_element = 0;
       int insert_var = i.var();
@@ -306,6 +304,7 @@ void MonomialLookupTable::insert1(mi_node *&top, tagged_monomial *b)
       top->header = leaf_node->header 
 	= leaf_node->left = leaf_node->right = top;
     }
+#endif
 }
 
 void MonomialLookupTable::remove1(mi_node *p)
@@ -388,7 +387,6 @@ int MonomialLookupTable::insert(tagged_monomial *b)
   return 1;
 }
 
-#if 0
 static int nlists = 0;
 static int nleaves = 0;
 static int nnodes = 0;
@@ -512,18 +510,18 @@ void MonomialLookupTable::text_out(buffer &o) const
   o << "MonomialLookupTable (";
   o << count << " entries)\n";
   int i = 0;
-  for (Index<MonomialLookupTable> j = last(); j.valid(); j--)
+  for (iterator j = this; j.valid(); j--)
     {
       if ((++i) % 15 == 0)
 	o << newline;
-      monomial n = operator[](j)->monom;
+      monomial n = (*j)->monom;
       monomial_text_out(o,n);
       if (gbTrace > 0)
-	o << '(' << reinterpret_cast<long>(operator[](j)->bag) << ")";
+	o << '(' << reinterpret_cast<long>((*j)->bag) << ")";
       o << ' ';
     }
 }
-#endif
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:
