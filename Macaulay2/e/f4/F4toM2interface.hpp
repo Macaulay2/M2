@@ -3,18 +3,12 @@
 
 #include "F4types.hpp"
 
+#define MATTYPE DMat
+
 template<typename CoeffRing, typename MonInfo>
 class F4toM2Interface
 {
-  typedef typename CoeffRing::ring_type RingType;
-  typedef typename CoeffRing::elem elem;
-  typedef typename CoeffRing::elem COEFF_TYPE;
-
-  typedef typename MonInfo::monomial packed_monomial;
-  typedef mypoly<COEFF_TYPE> poly;
-  typedef mygbelem<COEFF_TYPE> gbelem;
-  typedef gb_array<COEFF_TYPE> gb_array;
-
+  INCLUDE_F4_TYPES;
 public:
   static void poly_set_degrees(const CoeffRing *K,
 			       const MonInfo *MI,
@@ -46,7 +40,7 @@ public:
 			      const FreeModule *F);
 
   static MutableMatrix *to_M2_MutableMatrix(const RingType *K,
-					    coefficient_matrix<COEFF_TYPE> *mat);
+					    coefficient_matrix *mat);
 
 };
 

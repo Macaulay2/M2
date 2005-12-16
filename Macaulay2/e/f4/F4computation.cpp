@@ -95,7 +95,7 @@ F4Computation<CoeffRing,MonInfo>::set_hilbert_function(const RingElement *hf)
 template<typename CoeffRing, typename MonInfo>
 const MatrixOrNull *F4Computation<CoeffRing,MonInfo>::get_gb()
 {
-  const gb_array<COEFF_TYPE> &gens = f4->get_generators();
+  const gb_array &gens = f4->get_generators();
   MatrixConstructor result(F,0);
   for (int i=0; i<gens.size(); i++)
     {
