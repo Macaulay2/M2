@@ -9,14 +9,7 @@
 template<typename CoeffRing, typename MonInfo>
 class F4 : public our_new_delete
 {
-  typedef typename CoeffRing::ring_type RingType;
-  typedef typename CoeffRing::elem elem;
-  typedef typename CoeffRing::elem COEFF_TYPE;
-
-  typedef typename MonInfo::monomial packed_monomial;
-  typedef mypoly<COEFF_TYPE> poly;
-  typedef mygbelem<COEFF_TYPE> gbelem;
-  typedef gb_array<COEFF_TYPE> gb_array;
+  INCLUDE_F4_TYPES;
 
   gb_array gens; // unhandled generators.  Handled ones are replaced with 0 poly.
   gb_array gb;

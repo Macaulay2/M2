@@ -156,7 +156,7 @@ Matrix *F4toM2Interface<CoeffRing,MonInfo>::to_M2_matrix(const CoeffRing *K,
 template<typename CoeffRing, typename MonInfo>
 MutableMatrix * F4toM2Interface<CoeffRing,MonInfo>::to_M2_MutableMatrix(  
     const RingType *K,
-    coefficient_matrix<COEFF_TYPE> *mat)
+    coefficient_matrix *mat)
 {
   int nrows = mat->rows.size();
   int ncols = mat->columns.size();
@@ -165,7 +165,7 @@ MutableMatrix * F4toM2Interface<CoeffRing,MonInfo>::to_M2_MutableMatrix(
   MATTYPE<CoeffRing> *M = result->get_Mat();
   for (int r=0; r<nrows; r++)
     {
-      typename coefficient_matrix<COEFF_TYPE>::row_elem &row = mat->rows[r];
+      row_elem &row = mat->rows[r];
       for (int i=0; i<row.len; i++)
 	{
 	  int c = row.comps[i];

@@ -17,10 +17,7 @@ class F4Computation : public GBComputation
   // Handles: translation of polynomials to/from the correct form
   //          different possible template instantiations
 
-  typedef typename CoeffRing::ring_type RingType;
-  typedef typename CoeffRing::elem elem;
-
-  typedef typename CoeffRing::elem COEFF_TYPE;
+  INCLUDE_F4_TYPES;
 
   const PolynomialRing *originalR;
   const FreeModule *F; // determines whether the monomial order is a 
