@@ -10,6 +10,7 @@ extern int gbTrace;
 /* engine.h includes definitions of the stop conditions
    and of the status return values */
 #include "hash.hpp"
+#include "stop.hpp"
 
 class GBComputation;
 class ResolutionComputation;
@@ -20,20 +21,7 @@ class Computation : public mutable_object
 private:
   enum ComputationStatusCode computation_status;
 protected:
-  struct StopConditions
-  {
-    bool always_stop;
-    bool stop_after_degree;
-    M2_arrayint degree_limit; // Stop after completing this 'slanted' degree
-    unsigned int basis_element_limit; // Number of gb elements
-    unsigned int syzygy_limit;
-    unsigned int pair_limit;
-    bool use_codim_limit;
-    unsigned int codim_limit;
-    unsigned int subring_limit;
-    M2_bool just_min_gens;
-    M2_arrayint length_limit; // ignored for GB computations
-  } stop_;
+  StopConditions stop_;
 
   Computation();
 

@@ -50,7 +50,7 @@ void MonomialHashTable<ValueType>::grow()
 }
 
 template <typename ValueType>
-MonomialHashTable<ValueType>::MonomialHashTable(ValueType *M0, int logsize0)
+MonomialHashTable<ValueType>::MonomialHashTable(const ValueType *M0, int logsize0)
 {
   M = M0;
   initialize(logsize0);

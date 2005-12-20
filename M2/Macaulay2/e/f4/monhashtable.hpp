@@ -18,7 +18,7 @@ class MonomialHashTable
   typedef typename ValueType::value value;
   
 private:
-  ValueType *M;
+  const ValueType *M;
   value *hashtab;
 
   unsigned long size;
@@ -35,7 +35,7 @@ private:
   void initialize(int logsize0);
 public:
 
-  MonomialHashTable(ValueType *M0, int logsize = 16);
+  MonomialHashTable(const ValueType *M0, int logsize = 16);
   // The hash table size will be a power of 2, and this
   // is the initial power.
   

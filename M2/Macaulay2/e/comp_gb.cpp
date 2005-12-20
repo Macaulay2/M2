@@ -10,7 +10,14 @@
 #include "gbweight.hpp"
 #include "comp_gb_proxy.hpp"
 #include "linalgGB/m2interface.hpp"
-#include "f4/F4computation.hpp"
+
+GBComputation *createF4GB(const Matrix *m,
+			  M2_bool collect_syz,
+			  int n_rows_to_keep,
+			  M2_arrayint gb_weights,
+			  int strategy,
+			  M2_bool use_max_degree,
+			  int max_degree);
 
 GBComputation::~GBComputation()
 {
