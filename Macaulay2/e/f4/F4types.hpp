@@ -4,10 +4,31 @@
 #define _F4types_h_
 
 #include "../newdelete.hpp"
-#include "../../d/M2types.h"
+#include "../engine.h"
+#include "../stop.hpp"
 #include <vector>
 #define VECTOR(T) std::vector< T, gc_allocator< T > >
+extern char system_interruptedFlag;
+extern int gbTrace;
 
+  enum gbelem_type { 
+    ELEM_IN_RING,  // These are ring elements
+    ELEM_POSSIBLE_MINGEN,   // These are min GB elements which might 
+			    // also be min gens, in the graded case, 
+                            // they ARE minimal generators
+    ELEM_MIN_GB,    // These are elements which are minimal GB elements
+    ELEM_NON_MIN_GB // These are elements which are not minimal GB elements
+  };
+
+  enum spair_type {
+    F4_SPAIR_SPAIR,
+    F4_SPAIR_GCD_ZZ,
+    F4_SPAIR_RING,
+    F4_SPAIR_SKEW,
+    F4_SPAIR_GEN,
+    F4_SPAIR_ELEM
+  };
+  
 template <typename CoeffRing, typename MonInfo>
 class F4types
 {
@@ -24,15 +45,6 @@ public:
     long *monom_space;
   };
 
-  enum gbelem_type { 
-    ELEM_IN_RING,  // These are ring elements
-    ELEM_POSSIBLE_MINGEN,   // These are min GB elements which might 
-			    // also be min gens, in the graded case, 
-                            // they ARE minimal generators
-    ELEM_MIN_GB,    // These are elements which are minimal GB elements
-    ELEM_NON_MIN_GB // These are elements which are not minimal GB elements
-  };
-
   struct gbelem : public our_new_delete {
     poly f;
     int deg;
@@ -42,15 +54,6 @@ public:
   };
 
   class gb_array : public VECTOR(gbelem *) {};
-
-  enum spair_type {
-    SPAIR_SPAIR,
-    SPAIR_GCD_ZZ,
-    SPAIR_RING,
-    SPAIR_SKEW,
-    SPAIR_GEN,
-    SPAIR_ELEM
-  };
 
   struct spair : public our_new_delete {
     spair * next;
@@ -106,7 +109,6 @@ public:
 
 class MonomialLookupTable;
 template <typename MonInfo> class MonomialHashTable;
-class SPairSet;
 
 #define INCLUDE_F4_TYPES \
   typedef long * packed_monomial; \

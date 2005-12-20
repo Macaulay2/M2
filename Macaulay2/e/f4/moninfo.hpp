@@ -36,8 +36,17 @@ public:
 
   void show() const;
 
-  long hash_value(monomial m) { return *m; }
+  long hash_value(monomial m) const { return *m; }
   // This hash value is an ADDITIVE hash (trick due to A. Steel)
+
+  void copy(monomial src, monomial target) const {
+    for (int i=0; i<nslots; i++)
+      *target++ = *src++;
+  }
+
+  long last_exponent(monomial m) const {
+    return m[nslots-1];
+  }
 
   bool from_exponent_vector(long *e, long comp, monomial result) const {
     // Pack the vector e[0]..e[nvars-1],comp.  Create the hash value at the same time.

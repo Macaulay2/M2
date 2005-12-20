@@ -16,8 +16,7 @@ include @srcdir@/../make.include
 
 .PHONY : all place_into_lib
 
-CCFILES := monhashtable moninfo monsort \
-	F4computation F4 F4types F4toM2interface f4gb
+CCFILES := monhashtable moninfo monsort F4computation F4 F4types F4toM2interface
 
 #F4spairs montable
 
