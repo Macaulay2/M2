@@ -2,6 +2,7 @@
 
 export (
         symbol F4,
+        symbol separateRegexp,
         symbol comodule,
         symbol preimage,
 	symbol UserMode,
