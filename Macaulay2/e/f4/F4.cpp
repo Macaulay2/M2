@@ -82,7 +82,7 @@ int F4GB<CoeffRing,MonInfo>::mult_monomials(packed_monomial m, packed_monomial n
     return new_m[-1]; // monom exists, don't save monomial space
   m = next_monom;
   B.intern(M->monomial_size(m));
-  //MES MES MES  next_monom = B.reserve(M->max_monomial_size());
+  next_monom = B.reserve(M->max_monomial_size());
   return new_column(m);
 }
 
@@ -141,10 +141,10 @@ void F4GB<CoeffRing,MonInfo>::process_column(int c)
   if (found)
     {
       packed_monomial n = next_monom;
-      // MES MES MES M->monomial_quotient(ce.monom, gb[which]->f.monoms[0], n);
+      M->unchecked_divide(ce.monom, gb[which]->f.monoms[0], n);
       B.intern(M->monomial_size(n));
-      // MES MES MES next_monom = B.reserve(M->max_monomial_size());
-      // MES MES MES M->set_component(n, which);
+      next_monom = B.reserve(M->max_monomial_size());
+      M->set_component(which, n);
       ce.gb_divisor = mat->rows.size();
       ce.head = ce.gb_divisor;
       load_row(n,which);

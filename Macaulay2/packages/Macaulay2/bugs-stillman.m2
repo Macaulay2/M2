@@ -98,3 +98,16 @@ gens gb: recomputes the min gens...
 S = QQ[a,b,Degrees=>{{0,-1},{1,1}},Heft=>{2,-1}]
 N = matrix{{1,2,3}}
 substitute(N,S)
+
+-- 12/21/05
+R = ZZ/7[x1,x2,x3]
+toExternalString monomialIdeal(x1,x2)
+
+-- 12/22/05
+gb of a monomial ideal (over a poly ring or quotient by monomials)
+  should not recompute the GB.
+MonomialIdeal : RingElement now computes horrendous amount.  It
+  should call immediately the monomial ideal code.  If the ring element
+  is not a monomial, it should still call the monideal code, using the
+  monomial ideal of all terms of a polynomial.
+hilbert series of a monomial ideal should be using monideal code.
