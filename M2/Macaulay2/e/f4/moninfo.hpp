@@ -48,6 +48,10 @@ public:
     return m[nslots-1];
   }
 
+  void set_component(long component, monomial m) const { m[1] = component; }
+  
+  long get_component(monomial m) const { return m[1]; }
+
   bool from_exponent_vector(long *e, long comp, monomial result) const {
     // Pack the vector e[0]..e[nvars-1],comp.  Create the hash value at the same time.
     result[0] = 0;
