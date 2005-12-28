@@ -133,8 +133,6 @@ poincare MonomialIdeal := M -> (
      R := ring M;
      ZZn := degreesRing(R);
      if not M.cache.?poincare then
-     -- MES: as soon as Dan connects rawHilbert MonomialIdeal
-     -- remove the word 'generators' below.
          M.cache.poincare = new ZZn from rawHilbert rawMonomialIdealToMatrix M.RawMonomialIdeal; 
      M.cache.poincare
      )
