@@ -9,10 +9,13 @@
 #include "ring.hpp"
 #include "polyring.hpp"
 
+class MinimalPrimes;
+
 class Nmi_node : public our_new_delete // monomial ideal internal node ///
 {
   friend class MonomialIdeal;
   friend class AssociatedPrimes;
+  friend class MinimalPrimes;
 
 protected:
   int                 var;
@@ -58,6 +61,7 @@ class MonomialIdeal : public mutable_object
   int count;
 
   friend class AssociatedPrimes;
+  friend class MinimalPrimes;
 
 private:
   Nmi_node *first_node() const;

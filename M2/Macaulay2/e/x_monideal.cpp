@@ -6,6 +6,7 @@
 #include "engine.h"
 #include "hilb.hpp"
 #include "assprime.hpp"
+#include "monideal_minprimes.hpp"
 
 const MonomialIdeal *IM2_MonomialIdeal_make(const Matrix *m, int n)
 {
@@ -120,14 +121,16 @@ M2_bool IM2_MonomialIdeal_is_borel(const MonomialIdeal *I)
 
 int IM2_MonomialIdeal_codim(const MonomialIdeal *I)
 {
-  AssociatedPrimes ap(I);
+  MinimalPrimes ap(I);
   return ap.codimension();
 }
 
-const MonomialIdeal *IM2_MonomialIdeal_assprimes(const MonomialIdeal *I)
+const MonomialIdeal *rawMonomialMinimalPrimes(const MonomialIdeal *I,
+					      int codim_limit,
+					      int count)
 {
-  AssociatedPrimes ap(I);
-  return ap.associated_primes(-1);
+  MinimalPrimes ap(I);
+  return ap.min_primes(codim_limit, count);
 }
 
 const MonomialIdeal *rawMaximalIndependentSets(const MonomialIdeal *I,

@@ -1442,13 +1442,17 @@ extern "C" {
   int IM2_MonomialIdeal_codim(const MonomialIdeal *I); /* drg: connected rawCodimension*/
   /* Return the codimension of I IN THE AMBIENT POLYNOMIAL RING. */
 
-  const MonomialIdeal *IM2_MonomialIdeal_assprimes(const MonomialIdeal *I); /* drg: connected rawAssociatedPrimes*/
+  const MonomialIdeal *rawMonomialMinimalPrimes(const MonomialIdeal *I,
+						int codim_limit,
+						int count); /* drg: connected */
   /* RENAME THIS ROUTINE */
   /* Return a monomial ideal whose generators correspond to the 
-     minimal primes of I of maximal dimension.  If a minimal prime
+     minimal primes of I of codim <= codim_limit.  If a minimal prime
      of I has the form (x_i1, ..., x_ir), then the corresponding monomial
-     is x1 ... xn /(x_i1 ... x_ir), i.e. the complement of the support of
-     the monomial generates the monomial minimal prime. */
+     is x_i1 ... x_ir, i.e. the support of
+     the monomial generates the monomial minimal prime. 
+     If 'count' is positive, only collect this number.
+  */
 
   const MonomialIdeal *rawMaximalIndependentSets(const MonomialIdeal *I,
 						 int count); 
