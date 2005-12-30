@@ -39,6 +39,18 @@ public:
 
   int codimension();
   MonomialIdeal * associated_primes(int count);
+
+  MonomialIdeal * min_primes(int maxcodim, int count); 
+  // maxcodim == nvars means get all of them
+  // count == -1 means no limit
+  // return value: A monomial ideal where each 
+  //  monomial prime ideal is represented as a 
+  //  monomial: the product of the generators.
+  // NOTE: this is the complement of the gens from
+  //  max_indep_sets
+
+  MonomialIdeal * max_indep_sets(int count);
+  
 };
 
 #endif
