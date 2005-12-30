@@ -5,6 +5,7 @@
 #include "matrix.hpp"
 #include "engine.h"
 #include "hilb.hpp"
+#include "assprime.hpp"
 
 const MonomialIdeal *IM2_MonomialIdeal_make(const Matrix *m, int n)
 {
@@ -119,18 +120,21 @@ M2_bool IM2_MonomialIdeal_is_borel(const MonomialIdeal *I)
 
 int IM2_MonomialIdeal_codim(const MonomialIdeal *I)
 {
-  return I->codim();
+  AssociatedPrimes ap(I);
+  return ap.codimension();
 }
 
 const MonomialIdeal *IM2_MonomialIdeal_assprimes(const MonomialIdeal *I)
 {
-  return I->assprimes(-1);
+  AssociatedPrimes ap(I);
+  return ap.associated_primes(-1);
 }
 
 const MonomialIdeal *rawMaximalIndependentSets(const MonomialIdeal *I,
 					       int count)
 {
-  return I->assprimes(count);
+  AssociatedPrimes ap(I);
+  return ap.associated_primes(count);
 }
 
 const RingElementOrNull * IM2_MonomialIdeal_Hilbert(const MonomialIdeal *I)

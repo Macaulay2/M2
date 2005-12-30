@@ -714,21 +714,6 @@ int MonomialIdeal::is_borel() const
   return 1;
 }
 
-#include "assprime.hpp"
-
-MonomialIdeal * MonomialIdeal::assprimes(int n_to_take) const
-{
-  AssociatedPrimes ap(this);
-  return ap.associated_primes(n_to_take);
-}
-
-int MonomialIdeal::codim() const
-{
-  AssociatedPrimes ap(this);
-  return ap.codimension();
-}
-
-
 // Other routines to add:
 //   primary_decomposition(J)
 //   partition(J)
