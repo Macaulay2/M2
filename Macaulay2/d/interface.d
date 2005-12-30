@@ -2338,12 +2338,21 @@ export rawCodimension(e:Expr):Expr := (
      else WrongArg("a raw monomial ideal"));
 setupfun("rawCodimension",rawCodimension);
 
-export rawAssociatedPrimes(e:Expr):Expr := (
-     when e is I:RawMonomialIdeal do Expr(
-	  Ccode(RawMonomialIdeal,"(engine_RawMonomialIdeal)",
-	       "IM2_MonomialIdeal_assprimes(", "(MonomialIdeal *)", I, ")" ) )
-     else WrongArg("a raw monomial ideal"));
-setupfun("rawAssociatedPrimes",rawAssociatedPrimes);
+export rawMonomialMinimalPrimes(e:Expr):Expr := (
+     when e is s:Sequence do
+     when s.0 is m:RawMonomialIdeal do
+     when s.1 is n:Integer do 
+     when s.2 is count:Integer do
+     if !isInt(n) then WrongArgSmallInteger(2) else
+     if !isInt(count) then WrongArgSmallInteger(3) else
+     toExpr(Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)", "rawMonomialMinimalPrimes(", 
+	                  "(MonomialIdeal *)", m, ",", toInt(n), ",", toInt(count), ")" ) )
+     else WrongArgInteger(3)
+     else WrongArgInteger(2)
+     else WrongArg("a raw monomial ideal")
+     else WrongNumArgs(3)
+     );
+setupfun("rawMonomialMinimalPrimes",rawMonomialMinimalPrimes);
 
 export rawMaximalIndependentSets(e:Expr):Expr := (
      when e is s:Sequence do

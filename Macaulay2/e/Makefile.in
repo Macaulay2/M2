@@ -60,6 +60,7 @@ PRE.cc   = $(COMPILE.cc) -E
 #	points \
 
 INTERFACE = \
+	monideal_minprimes \
 	dmat-LU \
 	lapack \
 	LLL \
