@@ -505,17 +505,46 @@ void MonomialIdeal::text_out(buffer &o) const
   M->remove(m);
 }
 
+// Original intersect code, pre 1/2/2006.  We wish to speed this up
+//   for large monomial ideals.
+// MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const
+// {
+//   queue<Bag *> new_elems;
+//   for (Index<MonomialIdeal> i = first(); i.valid(); i++)
+//     for (Index<MonomialIdeal> j = J.first(); j.valid(); j++)
+//       {
+// 	Bag *b = new Bag(operator[](i)->basis_elem());
+// 	varpower::lcm(operator[](i)->monom().raw(), 
+// 		      J[j]->monom().raw(), b->monom());
+// 	new_elems.insert(b);
+//       }
+//   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
+//   return result;
+// }
+
 MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const
 {
+  // The idea: take the elements of 'this'
+  //   for each: if the element is in J, then keep it directly.
+  //      otherwie compute the lcm's.
   queue<Bag *> new_elems;
   for (Index<MonomialIdeal> i = first(); i.valid(); i++)
-    for (Index<MonomialIdeal> j = J.first(); j.valid(); j++)
-      {
-	Bag *b = new Bag(operator[](i)->basis_elem());
-	varpower::lcm(operator[](i)->monom().raw(), 
-		      J[j]->monom().raw(), b->monom());
-	new_elems.insert(b);
-      }
+    {
+      Bag *c;
+      if (J.search(operator[](i)->monom().raw(), c))
+	{
+	  Bag *b = new Bag(  operator[](i) );
+	  new_elems.insert(b);
+	}
+      else
+	for (Index<MonomialIdeal> j = J.first(); j.valid(); j++)
+	  {
+	    Bag *b = new Bag(operator[](i)->basis_elem());
+	    varpower::lcm(operator[](i)->monom().raw(), 
+			  J[j]->monom().raw(), b->monom());
+	    new_elems.insert(b);
+	  }
+    }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
   return result;
 }
