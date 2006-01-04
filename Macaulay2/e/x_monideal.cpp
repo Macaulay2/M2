@@ -130,7 +130,7 @@ const MonomialIdeal *rawMonomialMinimalPrimes(const MonomialIdeal *I,
 					      int count)
 {
   MinimalPrimes ap(I);
-  return ap.min_primes(codim_limit, count);
+  return ap.alg1_min_primes(codim_limit, count);
 }
 
 const MonomialIdeal *rawMaximalIndependentSets(const MonomialIdeal *I,

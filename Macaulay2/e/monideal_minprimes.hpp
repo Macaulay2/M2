@@ -22,6 +22,7 @@ class MinimalPrimes
 
   MonomialIdeal * mi;			// A radical monomial ideal
 
+  MonomialIdeal * primes;
   queue<Bag *> Q; // Each monomial corresponds to a potential prime monomial
                   // ideal: a monomial is the product of the gens of
                   // the prime ideal.
@@ -29,6 +30,14 @@ class MinimalPrimes
   int minprime_limit; // -1 means find all.  >= 1 means stop after that number
   int n_minprimes; // number found so far, during associated_primes computation
   int **exps;
+
+  int depth_limit; // -codim_limit-1
+  int *exp;
+  int *exp2;
+  int *monoms;
+
+  void alg1_grab_prime(int depth);
+  void alg1_min_prime_generator(int *which, int depth);
 
   void ass_prime_generator(Nmi_node *p, int codim);
 
@@ -40,6 +49,8 @@ public:
   int codimension();
 
   MonomialIdeal * associated_primes(int count);
+
+  MonomialIdeal * alg1_min_primes(int maxcodim, int count); 
 
   MonomialIdeal * min_primes(int maxcodim, int count); 
   // maxcodim == nvars means get all of them
