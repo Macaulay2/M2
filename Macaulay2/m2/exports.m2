@@ -1,6 +1,7 @@
 --		Copyright 2004 by Daniel R. Grayson
 
 export (
+        symbol minimalPrimes,
         symbol F4,
         symbol separateRegexp,
         symbol comodule,
