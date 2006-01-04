@@ -304,6 +304,21 @@ associatedPrimes MonomialIdeal := List => o -> (I) -> (
 
 --  PRIMARY DECOMPOSITION  ---------------------------------
 
+minimalPrimes = method()
+minimalPrimes MonomialIdeal := (I) -> (
+     J := radical I;
+     time Js := apply(numgens J, i -> J_i);
+     time Qs = apply(Js, i -> monomialIdeal support(i));
+     ans := Qs_0;
+     i := 1;
+     time while i < #Qs do (
+     	  time ans = intersect(ans,Qs_i);
+     	  --<< "i = " << i << "    " << betti ans << endl;
+     	  << "i = " << i << endl;
+     	  i = i+1;
+     	  );
+     ans)
+
 irreducibleDecomposition = method();
 irreducibleDecomposition MonomialIdeal := List => (I) -> (
      R := ring I;
