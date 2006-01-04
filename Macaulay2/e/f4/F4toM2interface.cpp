@@ -6,7 +6,7 @@
 #include "../matrix.hpp"
 #include "../mat.hpp"
 
-#include "F4toM2Interface.hpp"
+#include "F4toM2interface.hpp"
 template<typename CoeffRing, typename MonInfo>
 void F4toM2Interface<CoeffRing,MonInfo>::from_M2_vec(const CoeffRing *K,
 					       const MonInfo *MI,
