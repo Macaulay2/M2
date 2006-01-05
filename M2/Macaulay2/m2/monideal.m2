@@ -10,7 +10,7 @@ generators MonomialIdeal := (I) -> map(ring I, rawMonomialIdealToMatrix raw I)
 ideal MonomialIdeal := (I) -> ideal generators I
 isIdeal MonomialIdeal := I -> true
 
-newMonomialIdeal := (R,rawI) -> new MonomialIdeal from {
+newMonomialIdeal = (R,rawI) -> new MonomialIdeal from {
      symbol numgens => rawNumgens rawI,
      symbol RawMonomialIdeal => rawI,
      symbol cache => new CacheTable,
