@@ -27,7 +27,7 @@ class F4Computation : public GBComputation
   const CoeffRing *coeffK;
   MonInfo *MI;
 
-  //  F4GB<CoeffRing,MonInfo> *f4;
+  F4GB<CoeffRing,MonInfo> *f4;
 public:
   F4Computation(const RingType *K,
 		const Matrix *m, 

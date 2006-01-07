@@ -3,6 +3,17 @@
 #include "varpower.hpp"
 #include "text_io.hpp"
 
+struct varpower_monomial
+{
+  int len;
+  struct vp {
+    int var;
+    int exponent;
+  } pairs[1];
+
+  varpower_monomial() : len(0) {}
+};
+
 #define MAX_VAR 2147483647
 #define MIN_EXP -2147483647
 #define MAX_EXP 2147483647

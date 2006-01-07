@@ -6,27 +6,17 @@
 #include <vector>
 
 #include "../style.hpp"
-
-typedef long *packed_monomial;
-typedef int *exponent_vector;
-typedef long *varpower_monomial;
-typedef long *monomial;
+#include "varpower_monomial.hpp"
+#include "ntuple_monomial.hpp"
+#include "moninfo.hpp"
 
 class buffer;
-class MonomialLookupTable;
+template <typename Key> class MonomialLookupTable;
 
-struct tagged_monomial : public our_new_delete
-{
-  monomial monom; // pointer to some space
-  void * bag; // perhaps a template parameter?
-
-  tagged_monomial(monomial m, void *b) : monom(m), bag(b) {}
-};
-
-
+template <typename Key>
 class mi_node : public our_new_delete // monomial ideal internal node ///
 {
-  friend class MonomialLookupTable;
+  friend class MonomialLookupTable<Key>;
 protected:
   int                 var;
   int                 exp;		
@@ -36,22 +26,21 @@ protected:
   enum { node, leaf } tag;
   union {
     mi_node         * down;	// 'up' node, if this is a head of a list
-    tagged_monomial  * bag;
+    Key             key;
   } val;
 public:
   mi_node(int v, int e, mi_node *d) 
     : var(v), exp(e), left(0), right(0), header(0), tag(node)
   { val.down = d; }
 
-  mi_node(int v, int e, tagged_monomial *b) 
+  mi_node(int v, int e, Key k) 
     : var(v), exp(e), left(0), right(0), header(0), tag(leaf)
-  { val.bag = b; }
+  { val.key = k; }
 
   ~mi_node();
 
   mi_node *&down   () { return val.down; }
-  tagged_monomial     *&baggage() { return val.bag; }
-  monomial monom  () { return val.bag->monom; } // varpower
+  Key     &key() { return val.key; }
 
   void insert_to_left(mi_node *q)
     {
@@ -62,75 +51,63 @@ public:
     }
 };
 
+template <typename Key>
 class MonomialLookupTable : public our_new_delete
 {
  private:
+  typedef mi_node<Key> mi_node;
   mi_node *mi;
   int count;
 
   int size_of_exp; // in ints
-  int *exp0; // Always set to be all zeros, except during searches, inserts?
+  long *exp0; // Always set to be all zeros, except during searches, inserts?
 private:
-  void update_exponent_vector(monomial m);
-  void reset_exponent_vector(monomial m);
+  void update_exponent_vector(const_varpower_monomial m);
+  void reset_exponent_vector(const_varpower_monomial m);
 
   mi_node *next(mi_node *p) const;
   mi_node *prev(mi_node *p) const;
 
-  mi_node *first_node() const { return next(mi); }
-  mi_node *last_node() const { return prev(mi); }
-
-  void insert1(mi_node *&p, tagged_monomial *b);
+  void insert1(mi_node *&p, const_varpower_monomial m, Key k);
   void remove1(mi_node *p);
   void do_node(mi_node *p, int indent, int disp) const;
   void do_tree(mi_node *p, int depth, int indent, int disp) const;
   int debug_check(mi_node *p, mi_node *up) const;
 public:
-  typedef VECTOR(tagged_monomial *) vector_tagged_monomials;
-
-  MonomialLookupTable() : mi(0), count(0) {}
+  MonomialLookupTable();
   virtual ~MonomialLookupTable() { deleteitem(mi); }
-
-  MonomialLookupTable(vector_tagged_monomials &elems);
-  MonomialLookupTable(vector_tagged_monomials &elems, 
-                      vector_tagged_monomials &rejects);
-
-  MonomialLookupTable * copy() const;
-  monomial first_elem() const; // returns varpower
-  monomial second_elem() const; // returns varpower
 
   // Informational
   int length() const { return count; }
   int topvar() const { return (mi == 0 ? -1 : mi->var); }
-  //  void text_out(buffer &o) const;
+  void text_out(buffer &o) const;
 
   // Insertion of new monomials.  
-  void insert_minimal(tagged_monomial *b) { insert(mi,b); count++; }
+  void insert_minimal(const_varpower_monomial m, Key k) { insert1(mi,m,k); }
         // Insert baggage 'b'.  It is assumed
         // that 'b' is not already in the monomial ideal.
 
-  int insert(tagged_monomial *b);
+  int insert(const_varpower_monomial m, Key k);
 
-  int remove(tagged_monomial *&b);
+  int remove(Key &result_k);
         // Deletion.  Remove the lexicographically largest element, placing
         // it into b.  Return 1 if an element is removed.
 
-  int search_expvector(exponent_vector m, tagged_monomial *&b) const;
+  int search_expvector(ntuple_monomial m, Key &result_k) const;
         // Search.  Return whether a monomial which divides 'm' is
 	// found.  If so, return the baggage.  'm' is assumed to be an
 	// exponent vector of length larger than the top variable occuring
 	// in 'this'
-  int search(monomial m, tagged_monomial *&b) const;
+  int search(const_varpower_monomial m, Key &result_k) const;
         // Search.  Return whether a monomial which divides 'm' is
 	// found.  If so, return the baggage.  'm' is a varpower monomial.
 
-  void find_all_divisors(exponent_vector exp, 
-                         vector_tagged_monomials &b) const;
+  void find_all_divisors(ntuple_monomial exp, 
+                         VECTOR(Key) &b) const;
   // Search. Return a list of all elements which divide 'exp'.
 
   void debug_out(int disp=1) const;
   void debug_check() const;
-  void text_out(buffer &o) const;
 
   class iterator;
   friend class iterator;
@@ -146,7 +123,7 @@ public:
     void operator++(int) { T->next(p); }
     void operator--(int) { T->prev(p); }
     bool valid() { return p != 0; }
-    tagged_monomial * operator*() { return p->baggage(); }
+    Key operator*() { return p->key(); }
   };
 
   iterator first() const { return iterator(this, next(mi)); }

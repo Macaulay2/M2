@@ -70,23 +70,6 @@
 #include "memblock.hpp"
 
 /////////////////////////////////////////////////////////////////////////////
-class MonomialLookupTable : public our_new_delete
-{
-public:
-  typedef long * varpower_monomial;
-
-  void insert(varpower_monomial m, int key);
-
-  bool search(varpower_monomial m, int &key);
-  
-  struct tagged_monomial {
-    varpower_monomial vp;
-    int key;
-  };
-};
-
-
-/////////////////////////////////////////////////////////////////////////////
 template <typename CoeffRing, typename MonInfo>
 class SPairSet : public our_new_delete
 {

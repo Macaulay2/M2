@@ -7,6 +7,8 @@
 #include "../engine.h"
 #include "../stop.hpp"
 #include <vector>
+#include "montable.hpp"
+
 #define VECTOR(T) std::vector< T, gc_allocator< T > >
 extern char system_interruptedFlag;
 extern int gbTrace;
@@ -107,7 +109,6 @@ public:
 
 };
 
-class MonomialLookupTable;
 template <typename MonInfo> class MonomialHashTable;
 
 #define INCLUDE_F4_TYPES \
@@ -122,6 +123,7 @@ template <typename MonInfo> class MonomialHashTable;
   typedef typename F4types<CoeffRing,MonInfo>::row_elem row_elem; \
   typedef typename F4types<CoeffRing,MonInfo>::column_elem column_elem; \
   typedef typename F4types<CoeffRing,MonInfo>::coefficient_matrix coefficient_matrix; \
+  typedef MonomialLookupTable<packed_monomial> MonomialLookupTable; \
   
 
 #endif

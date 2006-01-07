@@ -6,17 +6,6 @@
 #include "intarray.hpp"
 #include "engine.h"
 
-struct varpower_monomial
-{
-  int len;
-  struct vp {
-    int var;
-    int exponent;
-  } pairs[1];
-
-  varpower_monomial() : len(0) {}
-};
-
 class varpower
 {
   friend class index_varpower;

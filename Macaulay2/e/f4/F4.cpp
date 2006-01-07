@@ -4,6 +4,7 @@
 
 #include "F4.hpp"
 #include "monsort.hpp"
+#include "../queue.hpp"
 
 static clock_t clock_sort_columns = 0;
 static clock_t clock_gauss = 0;
@@ -32,7 +33,7 @@ F4GB<CoeffRing,MonInfo>::F4GB(const CoeffRing *K0,
     mat(0),
     H(0)
 {
-  //  lookup = new MonomialLookupTable;
+  lookup = new MonomialLookupTable;
   // set status
 }
 
@@ -423,6 +424,10 @@ enum ComputationStatusCode F4GB<CoeffRing,MonInfo>::computation_is_complete(Stop
 template<typename CoeffRing, typename MonInfo>
 enum ComputationStatusCode F4GB<CoeffRing,MonInfo>::start_computation(StopConditions &stop_)
 {
+  queue<packed_monomial> Q;
+  //  lookup = MonomialLookupTable::create<MonInfo>(M,Q);
+  
+  return COMP_DONE;
   clock_sort_columns = 0;
   clock_gauss = 0;
   clock_make_matrix = 0;
