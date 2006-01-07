@@ -16,9 +16,11 @@ include @srcdir@/../make.include
 
 .PHONY : all place_into_lib
 
-CCFILES := monhashtable moninfo monsort F4computation F4 F4types F4toM2interface
+CCFILES := ntuple_monomial varpower_monomial moninfo \
+        montable monhashtable monsort \
+        F4computation F4 F4types F4toM2interface
 
-#F4spairs montable
+#F4spairs
 
 CFILES := 
 LINALGGB_FILES := $(CCFILES) $(CFILES)

@@ -23,7 +23,6 @@ GBComputation *createF4GB(const Matrix *m,
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
   const Ring *K = R->getCoefficients();
   GBComputation *G;
-#if 0
   const Z_mod *KZZp = K->cast_to_Z_mod();
   if (KZZp != 0)
     {
@@ -37,7 +36,6 @@ GBComputation *createF4GB(const Matrix *m,
 							     strategy);
       return G;
     }
-#endif
   ERROR("cannot use Strategy=>F4 with this type of coefficient ring");
   return 0;
 }
@@ -59,7 +57,6 @@ F4Computation<CoeffRing,MonInfo>::F4Computation(
   coeffK = K->get_CoeffRing();
   MI = new MonInfo(originalR->n_vars());
 
-#if 0
   f4 = new F4GB<CoeffRing,MonInfo>(coeffK,
 				   MI,
 				   collect_syz,
@@ -70,7 +67,6 @@ F4Computation<CoeffRing,MonInfo>::F4Computation(
 				   max_degree);
   
   F4toM2Interface<CoeffRing,MonInfo>::from_M2_matrix(coeffK,MI,m,gb_weights,f4->get_generators());
-#endif
 }
 
 template<typename CoeffRing, typename MonInfo>
@@ -86,6 +82,7 @@ F4Computation<CoeffRing,MonInfo>::~F4Computation()
 template<typename CoeffRing, typename MonInfo>
 void F4Computation<CoeffRing,MonInfo>::start_computation()
 {
+  f4->start_computation(stop_);
 }
 
 template<typename CoeffRing, typename MonInfo>
@@ -98,7 +95,6 @@ F4Computation<CoeffRing,MonInfo>::set_hilbert_function(const RingElement *hf)
 template<typename CoeffRing, typename MonInfo>
 const MatrixOrNull *F4Computation<CoeffRing,MonInfo>::get_gb()
 {
-#if 0
   const gb_array &gens = f4->get_generators();
   MatrixConstructor result(F,0);
   for (int i=0; i<gens.size(); i++)
@@ -107,8 +103,6 @@ const MatrixOrNull *F4Computation<CoeffRing,MonInfo>::get_gb()
       result.append(v);
     }
   return result.to_matrix();
-#endif
-  return 0;
 }
 
 template<typename CoeffRing, typename MonInfo>

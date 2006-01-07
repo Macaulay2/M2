@@ -6,8 +6,11 @@
 #include <cstdio>
 #include "../../d/M2types.h"
 
-//#define newarray(A,B) new A[B]
-//#define deletearray(A) delete[]A
+#include "varpower_monomial.hpp"
+#include "ntuple_monomial.hpp"
+
+typedef long *packed_monomial;
+typedef const long *const_packed_monomial;
 
 class MonomialInfo
 {
@@ -32,25 +35,25 @@ public:
   
   int max_monomial_size() const { return nslots; }
 
-  int monomial_size(monomial m) const { return nslots; }
+  int monomial_size(const_packed_monomial m) const { return nslots; }
 
   void show() const;
 
-  long hash_value(monomial m) const { return *m; }
+  long hash_value(const_packed_monomial m) const { return *m; }
   // This hash value is an ADDITIVE hash (trick due to A. Steel)
 
-  void copy(monomial src, monomial target) const {
+  void copy(const_packed_monomial src, packed_monomial target) const {
     for (int i=0; i<nslots; i++)
       *target++ = *src++;
   }
 
-  long last_exponent(monomial m) const {
+  long last_exponent(const_packed_monomial m) const {
     return m[nslots-1];
   }
 
-  void set_component(long component, monomial m) const { m[1] = component; }
+  void set_component(long component, packed_monomial m) const { m[1] = component; }
   
-  long get_component(monomial m) const { return m[1]; }
+  long get_component(const_packed_monomial m) const { return m[1]; }
 
   bool from_exponent_vector(long *e, long comp, monomial result) const {
     // Pack the vector e[0]..e[nvars-1],comp.  Create the hash value at the same time.
@@ -72,6 +75,18 @@ public:
     for (int i=0; i<nvars; i++)
       *result++ = *m++;
     return true;
+  }
+
+  void to_varpower_monomial(monomial m, varpower_monomial result) {
+    // 'result' must have enough space allocated for this
+    long *t = result+1;
+    for (int i=nvars+1; i>1; i--)
+      if (m[i] > 0) 
+	{
+	  *t++ = i;
+	  *t++ = m[i];
+	}
+    *result = t-result+1;
   }
 
   bool is_equal(monomial m, monomial n) const {
