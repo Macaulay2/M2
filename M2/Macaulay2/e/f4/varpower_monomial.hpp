@@ -47,8 +47,8 @@ class varpower_monomials {
 		     const_varpower_monomial m2,
 		     varpower_monomial result);
 
-  static void monomial_elem_text_out(FILE *fil, 
-				     const_varpower_monomial m);
+  static void elem_text_out(FILE *fil, 
+			    const_varpower_monomial m);
   
 };
 

@@ -51,7 +51,7 @@ enum spair_type {
   F4_SPAIR_ELEM
 };
   
-template <typename CoeffRing, typename MonInfo>
+template <typename CoeffRing>
 class F4types
 {
 public:
@@ -134,13 +134,13 @@ template <typename MonInfo> class MonomialHashTable;
   typedef typename CoeffRing::ring_type RingType; \
   typedef typename CoeffRing::elem elem; \
   typedef typename CoeffRing::elem COEFF_TYPE; \
-  typedef typename F4types<CoeffRing,MonInfo>::poly poly; \
-  typedef typename F4types<CoeffRing,MonInfo>::gbelem gbelem; \
-  typedef typename F4types<CoeffRing,MonInfo>::spair spair; \
-  typedef typename F4types<CoeffRing,MonInfo>::gb_array gb_array; \
-  typedef typename F4types<CoeffRing,MonInfo>::row_elem row_elem; \
-  typedef typename F4types<CoeffRing,MonInfo>::column_elem column_elem; \
-  typedef typename F4types<CoeffRing,MonInfo>::coefficient_matrix coefficient_matrix; \
+  typedef typename F4types<CoeffRing>::poly poly; \
+  typedef typename F4types<CoeffRing>::gbelem gbelem; \
+  typedef typename F4types<CoeffRing>::spair spair; \
+  typedef typename F4types<CoeffRing>::gb_array gb_array; \
+  typedef typename F4types<CoeffRing>::row_elem row_elem; \
+  typedef typename F4types<CoeffRing>::column_elem column_elem; \
+  typedef typename F4types<CoeffRing>::coefficient_matrix coefficient_matrix; \
   typedef MonomialLookupTable<packed_monomial> MonomialLookupTable; \
   
 
