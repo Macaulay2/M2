@@ -33,7 +33,7 @@ check_it : $(LINALGGB_OBJECT_FILES) check_it.o
 
 %.s : %.c; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
 
-Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/e/F4/Makefile
+Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/e/f4/Makefile
 clean ::; rm -f *.o
 distclean: clean; rm -f Makefile
 
