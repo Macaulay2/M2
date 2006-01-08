@@ -18,9 +18,10 @@ include @srcdir@/../make.include
 
 CCFILES := ntuple_monomial varpower_monomial moninfo \
         montable monhashtable monsort \
-        F4computation F4 F4types F4toM2interface
+        F4 F4types F4computation F4toM2interface
 
-#F4spairs
+# memblock.cpp is included in F4.cpp.
+# F4spairs 
 
 CFILES := 
 LINALGGB_FILES := $(CCFILES) $(CFILES)

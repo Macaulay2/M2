@@ -125,8 +125,8 @@ class F4GB : public our_new_delete
   int next_col_to_process;
   coefficient_matrix *mat;
   MonomialHashTable<MonInfo> *H;
-  MemoryBlock B;
-  long *next_monom; // valid while creating the matrix
+  MemoryBlock<monomial_word> B;
+  monomial_word *next_monom; // valid while creating the matrix
 
 private:
 

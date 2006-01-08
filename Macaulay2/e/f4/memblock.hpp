@@ -4,18 +4,17 @@
 
 #include "../newdelete.hpp"
 
-const int NSLAB = 4092;
-
+template<typename T, long int NSLAB = 4092>
 class MemoryBlock : public our_new_delete
 {
   struct slab : public our_new_delete {
     slab *next;
-    long block[NSLAB];
+    T block[NSLAB];
   };
 
   slab *first_slab;
   slab *last_slab;
-  long *next_free; /* points into last_slab */
+  T *next_free; /* points into last_slab */
   
  private:
   slab *new_slab();
@@ -24,7 +23,7 @@ class MemoryBlock : public our_new_delete
   MemoryBlock();
   ~MemoryBlock();
 
-  long * reserve(int len); // returns space for len ints
+  T * reserve(int len); // returns space for len ints
   void intern(int len); // increments 
 
   int n_slabs() const;

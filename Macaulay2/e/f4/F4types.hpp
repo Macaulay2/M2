@@ -13,23 +13,43 @@
 extern char system_interruptedFlag;
 extern int gbTrace;
 
-  enum gbelem_type { 
-    ELEM_IN_RING,  // These are ring elements
-    ELEM_POSSIBLE_MINGEN,   // These are min GB elements which might 
-			    // also be min gens, in the graded case, 
-                            // they ARE minimal generators
-    ELEM_MIN_GB,    // These are elements which are minimal GB elements
-    ELEM_NON_MIN_GB // These are elements which are not minimal GB elements
-  };
+// int8, int16, int32, int64, uint8, uint16, uint32, uint64
+// are all defined in "../../util/targettypes.h"
 
-  enum spair_type {
-    F4_SPAIR_SPAIR,
-    F4_SPAIR_GCD_ZZ,
-    F4_SPAIR_RING,
-    F4_SPAIR_SKEW,
-    F4_SPAIR_GEN,
-    F4_SPAIR_ELEM
-  };
+// The various kinds of monomials
+
+#include "varpower_monomial.hpp"
+#include "ntuple_monomial.hpp"
+#include "moninfo.hpp"
+
+// Coefficients.  The implementation of arrays of coeffs
+// is done as a private array.  Note that the length is
+// not encoded: keep that length separately.
+typedef void *CoefficientArray;
+
+// routines needed for coefficient arrays:
+// ring_elem_to_coeff_array(K, len, ringelemarray, CoefficientArray)
+// coeff_to_ringelem_array(K,  len, ringelemarray, CoefficientArray)
+// And then we will need in gauss() routine to do arithmetic
+// on them.  However, this can be handled on a ring by ring basis.
+
+enum gbelem_type { 
+  ELEM_IN_RING,  // These are ring elements
+  ELEM_POSSIBLE_MINGEN,   // These are min GB elements which might 
+                          // also be min gens, in the graded case, 
+                          // they ARE minimal generators
+  ELEM_MIN_GB,    // These are elements which are minimal GB elements
+  ELEM_NON_MIN_GB // These are elements which are not minimal GB elements
+};
+
+enum spair_type {
+  F4_SPAIR_SPAIR,
+  F4_SPAIR_GCD_ZZ,
+  F4_SPAIR_RING,
+  F4_SPAIR_SKEW,
+  F4_SPAIR_GEN,
+  F4_SPAIR_ELEM
+};
   
 template <typename CoeffRing, typename MonInfo>
 class F4types
@@ -38,13 +58,12 @@ public:
   typedef typename CoeffRing::elem COEFF_TYPE;
   
   // Main types
-  typedef long * packed_monomial;
 
   struct poly : public our_new_delete {
     int len;
     COEFF_TYPE *coeffs;
     packed_monomial *monoms;  // Component is in the monomial.  Where?
-    long *monom_space;
+    monomial_word *monom_space;
   };
 
   struct gbelem : public our_new_delete {
@@ -112,7 +131,6 @@ public:
 template <typename MonInfo> class MonomialHashTable;
 
 #define INCLUDE_F4_TYPES \
-  typedef long * packed_monomial; \
   typedef typename CoeffRing::ring_type RingType; \
   typedef typename CoeffRing::elem elem; \
   typedef typename CoeffRing::elem COEFF_TYPE; \

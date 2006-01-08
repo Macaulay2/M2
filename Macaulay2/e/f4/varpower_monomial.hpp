@@ -5,18 +5,25 @@
 
 #include <cstdio>
 #include "../../d/M2types.h"
+#include "targettypes.h"
 
-typedef long * varpower_monomial;
-typedef const long * const_varpower_monomial;
+typedef int64 varpower_word;
+typedef varpower_word * varpower_monomial;
+typedef const varpower_word * const_varpower_monomial;
+  // format: [length, v1, e1, ..., vr, er]
+  // and v1 > v2 > ... > vr >= 0, and all
+  // exponents ei > 0.
+  // and length is 2r+1.
+  // Operations are defined in VarpowerMonomials
 
 class varpower_monomials {
 
   static long length(const_varpower_monomial m) { return ((*(m))*2+1); }
 
-  static long simple_degree(const_varpower_monomial m);
+  static varpower_word simple_degree(const_varpower_monomial m);
 
-  static long weight(const_varpower_monomial m, 
-		     M2_arrayint wts);
+  static varpower_word weight(const_varpower_monomial m, 
+			      M2_arrayint wts);
 
   static int equal(const_varpower_monomial m1,
 		   const_varpower_monomial m2);
@@ -47,8 +54,8 @@ class varpower_monomials {
 
 class index_varpower_monomial
 {
-  const long *loc;
-  const long *hi;
+  const_varpower_monomial loc;
+  const_varpower_monomial hi;
 public:
   index_varpower_monomial() : loc(0), hi(0) {}
   index_varpower_monomial(const_varpower_monomial m) : loc(m+1), hi(m+(2*(*m))) {}
@@ -63,8 +70,8 @@ public:
 
   //  index_monomial &operator--() { loc -= 2; return *this; }
 
-  long var() { return *loc; }
-  long exponent() { return loc[1]; }
+  varpower_word var() { return *loc; }
+  varpower_word exponent() { return loc[1]; }
 };
 
 
