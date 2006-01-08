@@ -26,51 +26,51 @@ GBComputation *createF4GB(const Matrix *m,
   const Z_mod *KZZp = K->cast_to_Z_mod();
   if (KZZp != 0)
     {
-      G = new F4Computation<CoefficientRingZZp,MonomialInfo>(KZZp,
-							     m,
-							     collect_syz,
-							     n_rows_to_keep,
-							     gb_weights,
-							     use_max_degree,
-							     max_degree,
-							     strategy);
+      G = new F4Computation<CoefficientRingZZp>(KZZp,
+						m,
+						collect_syz,
+						n_rows_to_keep,
+						gb_weights,
+						use_max_degree,
+						max_degree,
+						strategy);
       return G;
     }
   ERROR("cannot use Strategy=>F4 with this type of coefficient ring");
   return 0;
 }
 
-template<typename CoeffRing, typename MonInfo>
-F4Computation<CoeffRing,MonInfo>::F4Computation(
-						const RingType *K0,
-						const Matrix *m, 
-						M2_bool collect_syz, 
-						int n_rows_to_keep,
-						M2_arrayint gb_weights,
-						int strategy, 
-						M2_bool use_max_degree,
-						int max_degree)
+template<typename CoeffRing>
+F4Computation<CoeffRing>::F4Computation(
+					const RingType *K0,
+					const Matrix *m, 
+					M2_bool collect_syz, 
+					int n_rows_to_keep,
+					M2_arrayint gb_weights,
+					int strategy, 
+					M2_bool use_max_degree,
+					int max_degree)
 {
   originalR = m->get_ring()->cast_to_PolynomialRing();
   F = m->rows();
   K = K0;
   coeffK = K->get_CoeffRing();
-  MI = new MonInfo(originalR->n_vars());
+  MI = new MonomialInfo(originalR->n_vars());
 
-  f4 = new F4GB<CoeffRing,MonInfo>(coeffK,
-				   MI,
-				   collect_syz,
-				   n_rows_to_keep,
-				   gb_weights,
-				   strategy,
-				   use_max_degree,
-				   max_degree);
+  f4 = new F4GB<CoeffRing>(coeffK,
+			   MI,
+			   collect_syz,
+			   n_rows_to_keep,
+			   gb_weights,
+			   strategy,
+			   use_max_degree,
+			   max_degree);
   
-  F4toM2Interface<CoeffRing,MonInfo>::from_M2_matrix(coeffK,MI,m,gb_weights,f4->get_generators());
+  F4toM2Interface<CoeffRing>::from_M2_matrix(coeffK,MI,m,gb_weights,f4->get_generators());
 }
 
-template<typename CoeffRing, typename MonInfo>
-F4Computation<CoeffRing,MonInfo>::~F4Computation()
+template<typename CoeffRing>
+F4Computation<CoeffRing>::~F4Computation()
 {
 }
 
@@ -79,34 +79,34 @@ F4Computation<CoeffRing,MonInfo>::~F4Computation()
  ** Top level interface **
  *************************/
 
-template<typename CoeffRing, typename MonInfo>
-void F4Computation<CoeffRing,MonInfo>::start_computation()
+template<typename CoeffRing>
+void F4Computation<CoeffRing>::start_computation()
 {
   f4->start_computation(stop_);
 }
 
-template<typename CoeffRing, typename MonInfo>
+template<typename CoeffRing>
 ComputationOrNull *
-F4Computation<CoeffRing,MonInfo>::set_hilbert_function(const RingElement *hf)
+F4Computation<CoeffRing>::set_hilbert_function(const RingElement *hf)
 {
   return 0;
 }
 
-template<typename CoeffRing, typename MonInfo>
-const MatrixOrNull *F4Computation<CoeffRing,MonInfo>::get_gb()
+template<typename CoeffRing>
+const MatrixOrNull *F4Computation<CoeffRing>::get_gb()
 {
   const gb_array &gens = f4->get_generators();
   MatrixConstructor result(F,0);
   for (int i=0; i<gens.size(); i++)
     {
-      vec v = F4toM2Interface<CoeffRing,MonInfo>::to_M2_vec(coeffK,MI,gens[i]->f, F);
+      vec v = F4toM2Interface<CoeffRing>::to_M2_vec(coeffK,MI,gens[i]->f, F);
       result.append(v);
     }
   return result.to_matrix();
 }
 
-template<typename CoeffRing, typename MonInfo>
-const MatrixOrNull *F4Computation<CoeffRing,MonInfo>::get_mingens()
+template<typename CoeffRing>
+const MatrixOrNull *F4Computation<CoeffRing>::get_mingens()
 {
 #if 0
   MatrixConstructor mat(_F,0);
@@ -120,40 +120,40 @@ const MatrixOrNull *F4Computation<CoeffRing,MonInfo>::get_mingens()
   return 0;
 }
 
-template<typename CoeffRing, typename MonInfo>
-const MatrixOrNull *F4Computation<CoeffRing,MonInfo>::get_change()
+template<typename CoeffRing>
+const MatrixOrNull *F4Computation<CoeffRing>::get_change()
 {
   return 0;
 }
 
-template<typename CoeffRing, typename MonInfo>
-const MatrixOrNull *F4Computation<CoeffRing,MonInfo>::get_syzygies()
+template<typename CoeffRing>
+const MatrixOrNull *F4Computation<CoeffRing>::get_syzygies()
 {
   return 0;
 }
 
-template<typename CoeffRing, typename MonInfo>
-const MatrixOrNull *F4Computation<CoeffRing,MonInfo>::get_initial(int nparts)
+template<typename CoeffRing>
+const MatrixOrNull *F4Computation<CoeffRing>::get_initial(int nparts)
 {
   return 0;
 }
 
-template<typename CoeffRing, typename MonInfo>
-const MatrixOrNull *F4Computation<CoeffRing,MonInfo>::matrix_remainder(const Matrix *m)
+template<typename CoeffRing>
+const MatrixOrNull *F4Computation<CoeffRing>::matrix_remainder(const Matrix *m)
 {
   return 0;
 }
 
-template<typename CoeffRing, typename MonInfo>
-void F4Computation<CoeffRing,MonInfo>::matrix_lift(const Matrix *m,
+template<typename CoeffRing>
+void F4Computation<CoeffRing>::matrix_lift(const Matrix *m,
 		 MatrixOrNull **result_remainder,
 		 MatrixOrNull **result_quotient
 		 )
 {
 }
 
-template<typename CoeffRing, typename MonInfo>
-int F4Computation<CoeffRing,MonInfo>::contains(const Matrix *m)
+template<typename CoeffRing>
+int F4Computation<CoeffRing>::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
   // does not reduce to zero.
@@ -161,22 +161,22 @@ int F4Computation<CoeffRing,MonInfo>::contains(const Matrix *m)
   return 0;
 }
 
-template<typename CoeffRing, typename MonInfo>
-int F4Computation<CoeffRing,MonInfo>::complete_thru_degree() const
+template<typename CoeffRing>
+int F4Computation<CoeffRing>::complete_thru_degree() const
   // The computation is complete up through this degree.
 {
   return 0;
 }
 
-template<typename CoeffRing, typename MonInfo>
-void F4Computation<CoeffRing,MonInfo>::text_out(buffer &o)
+template<typename CoeffRing>
+void F4Computation<CoeffRing>::text_out(buffer &o)
   /* This displays statistical information, and depends on the
      gbTrace value */
 {
 }
 
 
-template class F4Computation<CoefficientRingZZp,MonomialInfo>;
+template class F4Computation<CoefficientRingZZp>;
 
 
 

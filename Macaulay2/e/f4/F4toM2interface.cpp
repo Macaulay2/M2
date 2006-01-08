@@ -7,12 +7,21 @@
 #include "../mat.hpp"
 
 #include "F4toM2interface.hpp"
-template<typename CoeffRing, typename MonInfo>
-void F4toM2Interface<CoeffRing,MonInfo>::from_M2_vec(const CoeffRing *K,
-					       const MonInfo *MI,
-					       const FreeModule *F, 
-					       vec v,
-					       poly &result)
+
+CoefficientArray from_ringelems(const Ring *K, int len, ring_elem *elems)
+{
+}
+
+ring_elem *to_ring_elems(const Ring *K, int len, CoefficientArray C)
+{
+}
+
+template<typename CoeffRing>
+void F4toM2Interface<CoeffRing>::from_M2_vec(const CoeffRing *K,
+					     const MonomialInfo *MI,
+					     const FreeModule *F, 
+					     vec v,
+					     poly &result)
 {
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
   const Monoid *M = R->getMonoid();
@@ -47,9 +56,9 @@ void F4toM2Interface<CoeffRing,MonInfo>::from_M2_vec(const CoeffRing *K,
     }
 }
 
-template<typename CoeffRing, typename MonInfo>
-void F4toM2Interface<CoeffRing,MonInfo>::poly_set_degrees(const CoeffRing *K,
-							  const MonInfo *MI,
+template<typename CoeffRing>
+void F4toM2Interface<CoeffRing>::poly_set_degrees(const CoeffRing *K,
+							  const MonomialInfo *MI,
 							  const M2_arrayint wts,
 							  const poly &f,
 							  int &deg, 
@@ -65,9 +74,9 @@ void F4toM2Interface<CoeffRing,MonInfo>::poly_set_degrees(const CoeffRing *K,
   alpha = deg-leaddeg;
 }
 
-template<typename CoeffRing, typename MonInfo>
-void F4toM2Interface<CoeffRing,MonInfo>::from_M2_matrix(const CoeffRing *K,
-							const MonInfo *MI,
+template<typename CoeffRing>
+void F4toM2Interface<CoeffRing>::from_M2_matrix(const CoeffRing *K,
+							const MonomialInfo *MI,
 							const Matrix *m, 
 							M2_arrayint wts,
 							gb_array &result_polys)
@@ -83,9 +92,9 @@ void F4toM2Interface<CoeffRing,MonInfo>::from_M2_matrix(const CoeffRing *K,
     }
 }
 
-template<typename CoeffRing, typename MonInfo>
-vec F4toM2Interface<CoeffRing,MonInfo>::to_M2_vec(const CoeffRing *K,
-						  const MonInfo *MI,
+template<typename CoeffRing>
+vec F4toM2Interface<CoeffRing>::to_M2_vec(const CoeffRing *K,
+						  const MonomialInfo *MI,
 						  const poly &f,
 						  const FreeModule *F)
 {
@@ -141,9 +150,9 @@ vec F4toM2Interface<CoeffRing,MonInfo>::to_M2_vec(const CoeffRing *K,
   return result;
 }
 
-template<typename CoeffRing, typename MonInfo>
-Matrix *F4toM2Interface<CoeffRing,MonInfo>::to_M2_matrix(const CoeffRing *K,
-							 const MonInfo *MI,
+template<typename CoeffRing>
+Matrix *F4toM2Interface<CoeffRing>::to_M2_matrix(const CoeffRing *K,
+							 const MonomialInfo *MI,
 							 gb_array &polys, 
 							 const FreeModule *F)
 {
@@ -153,8 +162,8 @@ Matrix *F4toM2Interface<CoeffRing,MonInfo>::to_M2_matrix(const CoeffRing *K,
   return result.to_matrix();
 }
 
-template<typename CoeffRing, typename MonInfo>
-MutableMatrix * F4toM2Interface<CoeffRing,MonInfo>::to_M2_MutableMatrix(  
+template<typename CoeffRing>
+MutableMatrix * F4toM2Interface<CoeffRing>::to_M2_MutableMatrix(  
     const RingType *K,
     coefficient_matrix *mat)
 {
@@ -177,7 +186,7 @@ MutableMatrix * F4toM2Interface<CoeffRing,MonInfo>::to_M2_MutableMatrix(
 }
 
 #include "moninfo.hpp"
-template class F4toM2Interface<CoefficientRingZZp,MonomialInfo>;
+template class F4toM2Interface<CoefficientRingZZp>;
 
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

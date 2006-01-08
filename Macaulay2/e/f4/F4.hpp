@@ -70,7 +70,7 @@
 #include "memblock.hpp"
 
 /////////////////////////////////////////////////////////////////////////////
-template <typename CoeffRing, typename MonInfo>
+template <typename CoeffRing>
 class SPairSet : public our_new_delete
 {
   INCLUDE_F4_TYPES;
@@ -90,7 +90,7 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 
 
-template <typename CoeffRing, typename MonInfo>
+template <typename CoeffRing>
 class F4GB : public our_new_delete
 {
   INCLUDE_F4_TYPES;
@@ -98,7 +98,7 @@ class F4GB : public our_new_delete
 
   // Basic required information
   const CoeffRing *K;
-  const MonInfo *M;
+  const MonomialInfo *M;
   M2_arrayint weights; // The length of this is the number of variables, each entry is positive.
   M2_arrayint component_degrees; // Degree of each free module element.
   // Also need Schreyer order info sometimes
@@ -119,12 +119,12 @@ class F4GB : public our_new_delete
   gb_array gens;
   gb_array gb;
   MonomialLookupTable *lookup; // (monom,comp) --> index into gb
-  SPairSet<CoeffRing,MonInfo> *S;
+  SPairSet<CoeffRing> *S;
   
   // The matrix and its construction
   int next_col_to_process;
   coefficient_matrix *mat;
-  MonomialHashTable<MonInfo> *H;
+  MonomialHashTable<MonomialInfo> *H;
   MemoryBlock<monomial_word> B;
   monomial_word *next_monom; // valid while creating the matrix
 
@@ -154,7 +154,7 @@ private:
 
 public:
   F4GB(const CoeffRing *K0,
-       const MonInfo *MI,
+       const MonomialInfo *MI,
        M2_bool collect_syz, 
        int n_rows_to_keep,
        M2_arrayint gb_weights,

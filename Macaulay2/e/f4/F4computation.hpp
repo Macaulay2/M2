@@ -10,7 +10,7 @@ class PolynomialRing;
 class FreeModule;
 class RingType;
 
-template<typename CoeffRing, typename MonInfo>
+template<typename CoeffRing>
 class F4Computation : public GBComputation
 {
   // Interface to the F4 linear algebra GB computation
@@ -25,9 +25,9 @@ class F4Computation : public GBComputation
                        // Also determines degrees of elements in F.
   const RingType *K;
   const CoeffRing *coeffK;
-  MonInfo *MI;
+  MonomialInfo *MI;
 
-  F4GB<CoeffRing,MonInfo> *f4;
+  F4GB<CoeffRing> *f4;
 public:
   F4Computation(const RingType *K,
 		const Matrix *m, 
