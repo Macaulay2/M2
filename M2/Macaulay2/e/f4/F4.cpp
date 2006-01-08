@@ -321,10 +321,10 @@ void F4GB<CoeffRing,MonInfo>::insert_gb_element(row_elem &r)
   r.coeffs = result->f.coeffs;
   result->f.coeffs = tmp;
 
-  result->f.monom_space = newarray(long, nlongs);
+  result->f.monom_space = newarray(monomial_word, nlongs);
 
   // MES: set result->f.monoms too
-  long *nextmonom = result->f.monom_space;
+  monomial_word *nextmonom = result->f.monom_space;
   for (int i=0; i<r.len; i++)
     {
       M->copy(mat->columns[r.comps[i]].monom, nextmonom);
@@ -479,8 +479,10 @@ enum ComputationStatusCode F4GB<CoeffRing,MonInfo>::start_computation(StopCondit
 
 
 #include "moninfo.hpp"
+#include "memblock.cpp"
 #include "../coeffrings.hpp"
 template class F4GB<CoefficientRingZZp,MonomialInfo>;
+template class MemoryBlock<monomial_word,4092l>;
 
 
 // Local Variables:

@@ -25,7 +25,7 @@ MonomialLookupTable<Key>::MonomialLookupTable()
   : mi(0), count(0)
 {
   size_of_exp = 10;
-  exp0 = newarray(long,size_of_exp);
+  exp0 = newarray(ntuple_word,size_of_exp);
 }
 
 #if 0
@@ -96,7 +96,7 @@ MonomialLookupTable::MonomialLookupTable(VECTOR(tagged_monomial *) &elems)
 #endif
 
 template <typename Key>
-int MonomialLookupTable<Key>::search_expvector(ntuple_monomial exp, Key &result_k) const
+int MonomialLookupTable<Key>::search_expvector(const_ntuple_monomial exp, Key &result_k) const
 {
   if (mi == NULL) return 0;
 
@@ -175,7 +175,7 @@ void MonomialLookupTable<Key>::update_exponent_vector(const_varpower_monomial m)
       else
 	size_of_exp *= 2;
 
-      exp0 = newarray(long,size_of_exp);
+      exp0 = newarray(ntuple_word,size_of_exp);
       for (int i=0; i<size_of_exp; i++) exp0[i] = 0;
     }
 
@@ -520,7 +520,7 @@ void MonomialLookupTable<Key>::text_out(buffer &o) const
     }
 }
 
-template class MonomialLookupTable<long *>;
+template class MonomialLookupTable<packed_monomial>;
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

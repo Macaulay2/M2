@@ -4,7 +4,8 @@
 
 #include "memblock.hpp"
 
-MemoryBlock::MemoryBlock()
+template<typename T, long int NSLAB>
+MemoryBlock<T,NSLAB>::MemoryBlock()
   : first_slab(0),
     last_slab(0),
     next_free(0)
@@ -14,7 +15,8 @@ MemoryBlock::MemoryBlock()
   next_free = last_slab->block;
 }
 
-MemoryBlock::~MemoryBlock()
+template<typename T, long int NSLAB>
+MemoryBlock<T,NSLAB>::~MemoryBlock()
 {
   // Destroy the slabs one by one
   while (first_slab != 0)
@@ -25,14 +27,16 @@ MemoryBlock::~MemoryBlock()
     }
 }
 
-MemoryBlock::slab *MemoryBlock::new_slab()
+template<typename T, long int NSLAB>
+typename MemoryBlock<T,NSLAB>::slab *MemoryBlock<T,NSLAB>::new_slab()
 {
   slab *result = new slab;
   result->next = 0;
   return result;
 }
 
-long * MemoryBlock::reserve(int len)
+template<typename T, long int NSLAB>
+T * MemoryBlock<T,NSLAB>::reserve(int len)
 {
   if (next_free + len > last_slab->block + NSLAB)
     {
@@ -43,12 +47,14 @@ long * MemoryBlock::reserve(int len)
   return next_free;
 }
 
-void MemoryBlock::intern(int len)
+template<typename T, long int NSLAB>
+void MemoryBlock<T,NSLAB>::intern(int len)
 {
   next_free += len;
 }
 
-int MemoryBlock::n_slabs() const
+template<typename T, long int NSLAB>
+int MemoryBlock<T,NSLAB>::n_slabs() const
 {
   int result = 0;
   for (slab *p = first_slab; p != 0; p = p->next) result++;

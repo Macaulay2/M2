@@ -60,7 +60,7 @@ class MonomialLookupTable : public our_new_delete
   int count;
 
   int size_of_exp; // in ints
-  long *exp0; // Always set to be all zeros, except during searches, inserts?
+  ntuple_word *exp0; // Always set to be all zeros, except during searches, inserts?
 private:
   void update_exponent_vector(const_varpower_monomial m);
   void reset_exponent_vector(const_varpower_monomial m);
@@ -93,7 +93,7 @@ public:
         // Deletion.  Remove the lexicographically largest element, placing
         // it into b.  Return 1 if an element is removed.
 
-  int search_expvector(ntuple_monomial m, Key &result_k) const;
+  int search_expvector(const_ntuple_monomial m, Key &result_k) const;
         // Search.  Return whether a monomial which divides 'm' is
 	// found.  If so, return the baggage.  'm' is assumed to be an
 	// exponent vector of length larger than the top variable occuring

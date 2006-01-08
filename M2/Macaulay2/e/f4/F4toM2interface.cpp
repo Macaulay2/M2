@@ -23,14 +23,14 @@ void F4toM2Interface<CoeffRing,MonInfo>::from_M2_vec(const CoeffRing *K,
 	n++;
     }
   int *exp = newarray(int, M->n_vars()+1);
-  long *lexp = newarray(long, M->n_vars()+1);
+  ntuple_word *lexp = newarray(ntuple_word, M->n_vars()+1);
 
   result.len = n;
   result.coeffs = newarray(COEFF_TYPE, n);
   result.monoms = newarray(packed_monomial, n);
-  result.monom_space = newarray(long, n * MI->max_monomial_size());
+  result.monom_space = newarray(monomial_word, n * MI->max_monomial_size());
   n = 0;
-  long *nextmonom = result.monom_space;
+  monomial_word *nextmonom = result.monom_space;
   for (vec w = v; w != 0; w = w->next)
     {
       for (Nterm *t = w->coeff; t != 0; t = t->next)
@@ -41,7 +41,7 @@ void F4toM2Interface<CoeffRing,MonInfo>::from_M2_vec(const CoeffRing *K,
 	    lexp[a] = exp[a];
 	  result.monoms[n] = nextmonom;
 	  MI->from_exponent_vector(lexp, w->comp, nextmonom);
-	  nextmonom += MI->max_monomial_size();
+	  nextmonom += MI->monomial_size(nextmonom);
 	  n++;
 	}
     }
@@ -55,11 +55,11 @@ void F4toM2Interface<CoeffRing,MonInfo>::poly_set_degrees(const CoeffRing *K,
 							  int &deg, 
 							  int &alpha)
 {
-  int leaddeg = MI->monomial_weight(f.monoms[0], wts);
+  monomial_word leaddeg = MI->monomial_weight(f.monoms[0], wts);
   deg = leaddeg;
   for (int i=1; i<f.len; i++)
     {
-      int degi = MI->monomial_weight(f.monoms[i],wts);
+      monomial_word degi = MI->monomial_weight(f.monoms[i],wts);
       if (degi > deg) deg = degi;
     }
   alpha = deg-leaddeg;
@@ -103,7 +103,7 @@ vec F4toM2Interface<CoeffRing,MonInfo>::to_M2_vec(const CoeffRing *K,
     }
 
   int *exp = newarray(int, M->n_vars()+1);
-  long *lexp = newarray(long, M->n_vars()+1);
+  ntuple_word *lexp = newarray(ntuple_word, M->n_vars()+1);
 
   for (int i=0; i<f.len; i++)
     {

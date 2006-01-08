@@ -14,8 +14,9 @@
 
 // CAVEAT: NO overflow checking is done with this class.
 
-typedef long *ntuple_monomial;
-typedef const long *const_ntuple_monomial;
+typedef int64 ntuple_word;
+typedef ntuple_word * ntuple_monomial;
+typedef const ntuple_word * const_ntuple_monomial;
 
 class ntuple_monomials
 {
@@ -34,11 +35,6 @@ public:
 		   const_ntuple_monomial a, 
 		   const_ntuple_monomial b, 
 		   ntuple_monomial result);
-
-  static void power(int nvars, 
-		    const_ntuple_monomial a, 
-		    int n, 
-		    ntuple_monomial result);
 
   static void divide(int nvars, 
 		     const_ntuple_monomial a, 
@@ -79,11 +75,11 @@ public:
 			 const_ntuple_monomial a, 
 			 const_ntuple_monomial b);
 
-  static long weight(int nvars, 
+  static ntuple_word weight(int nvars, 
 		     const_ntuple_monomial a, 
 		     const M2_arrayint wt);
 
-  static long simple_degree(int nvars, 
+  static ntuple_word simple_degree(int nvars, 
 			   const_ntuple_monomial a);
 
   static void elem_text_out(buffer &o, 
@@ -114,26 +110,10 @@ void ntuple_monomials::mult(int nvars,
 {
   for (int i=0; i<nvars; i++)
     {
-      long x = *a++;
-      long y = *b++;
-      long z = x+y;
+      ntuple_word x = *a++;
+      ntuple_word y = *b++;
+      ntuple_word z = x+y;
       *result++ = z;
-    }
-}
-
-inline
-void ntuple_monomials::power(int nvars, 
-			     const_ntuple_monomial a, 
-			     int n, 
-			     ntuple_monomial result)
-{
-  for (int i=0; i<nvars; i++)
-    {
-      long e = *a++;
-      long long e1 = e;
-      e *= n;
-      e1 *= n;
-      *result++ = e1;
     }
 }
 
@@ -145,9 +125,9 @@ void ntuple_monomials::divide(int nvars,
 {
   for (int i=0; i<nvars; i++)
     {
-      long x = *a++;
-      long y = *b++;
-      long z = x-y;
+      ntuple_word x = *a++;
+      ntuple_word y = *b++;
+      ntuple_word z = x-y;
       *result++ = z;
     }
 }
@@ -160,9 +140,9 @@ void ntuple_monomials::quotient(int nvars,
 {
   for (int i=0; i<nvars; i++)
     {
-      long x = *a++;
-      long y = *b++;
-      long z;
+      ntuple_word x = *a++;
+      ntuple_word y = *b++;
+      ntuple_word z;
       if (x <= y) z = 0;
       else
 	{
@@ -180,8 +160,8 @@ void ntuple_monomials::lcm(int nvars,
 {
   for (int i=0; i<nvars; i++)
     {
-      long c = *a++;
-      long d = *b++;
+      ntuple_word c = *a++;
+      ntuple_word d = *b++;
       *result++ = (c > d ? c : d);
     }
 }
@@ -194,8 +174,8 @@ void ntuple_monomials::gcd(int nvars,
 {
   for (int i=0; i<nvars; i++)
     {
-      long c = *a++;
-      long d = *b++;
+      ntuple_word c = *a++;
+      ntuple_word d = *b++;
       *result++ = (c < d ? c : d);
     }
 }
@@ -242,14 +222,14 @@ void ntuple_monomials::copy(int nvars,
 			    const_ntuple_monomial a, 
 			    ntuple_monomial result)
 {
-  memcpy(result, a, nvars*sizeof(long));
+  memcpy(result, a, nvars*sizeof(ntuple_word));
 }
 
 
 inline
-long ntuple_monomials::weight(int nvars, const_ntuple_monomial a, M2_arrayint wt)
+ntuple_word ntuple_monomials::weight(int nvars, const_ntuple_monomial a, M2_arrayint wt)
 {
-  long sum = 0;
+  ntuple_word sum = 0;
   int top = wt->len;
   if (nvars < top) top = nvars;
   for (int i=0; i<top; i++)
@@ -258,10 +238,10 @@ long ntuple_monomials::weight(int nvars, const_ntuple_monomial a, M2_arrayint wt
 }
 
 inline
-long ntuple_monomials::simple_degree(int nvars, 
+ntuple_word ntuple_monomials::simple_degree(int nvars, 
 				    const_ntuple_monomial a)
 {
-  long sum = 0;
+  ntuple_word sum = 0;
   for (int i=0; i<nvars; i++)
     sum += a[i];
   return sum;
@@ -276,7 +256,7 @@ void ntuple_monomials::syz(int nvars,
 {
   for (int i=0; i<nvars; i++)
     {
-      long c = a[i] - b[i];
+      ntuple_word c = a[i] - b[i];
       if (c >= 0)
 	{
 	  a1[i] = 0;
