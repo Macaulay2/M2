@@ -407,7 +407,7 @@ void MonomialLookupTable<Key>::do_node(mi_node *p, int indent, int disp) const
   if (p->tag == mi_node::leaf)
     {
       nleaves++;
-      if (disp) o << ' ' << reinterpret_cast<long>(p->key());
+      if (disp) o << ' ' << p->key();
     }
   else if (p == p->header)
     nlists++;
@@ -516,11 +516,11 @@ void MonomialLookupTable<Key>::text_out(buffer &o) const
 	o << newline;
       //monomial n = (*j)->monom;
       //monomial_text_out(o,n);
-	o << reinterpret_cast<long>(*j) << "  ";
+	o << *j << "  ";
     }
 }
 
-template class MonomialLookupTable<packed_monomial>;
+template class MonomialLookupTable<int>;
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

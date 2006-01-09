@@ -50,7 +50,25 @@ enum spair_type {
   F4_SPAIR_GEN,
   F4_SPAIR_ELEM
 };
-  
+
+struct spair : public our_new_delete {
+  spair * next;
+  spair_type type;
+  int deg; /* sugar degree of this spair */
+  packed_monomial lcm;
+  union {
+    struct {
+      packed_monomial first_monom;
+      int first_gb_num;
+      packed_monomial second_monom;
+      int second_gb_num;
+    } spair;
+    struct {
+      int column; // original column
+    } poly;
+  } s;
+};
+
 template <typename CoeffRing>
 class F4types
 {
@@ -76,23 +94,6 @@ public:
 
   class gb_array : public VECTOR(gbelem *) {};
 
-  struct spair : public our_new_delete {
-    spair * next;
-    spair_type type;
-    int deg; /* sugar degree of this spair */
-    packed_monomial lcm;
-    union {
-      struct {
-	packed_monomial first_monom;
-	int first_gb_num;
-	packed_monomial second_monom;
-	int second_gb_num;
-      } spair;
-      struct {
-	int column; // original column
-      } poly;
-    } s;
-  };
 
   struct row_elem : public our_new_delete {
     // Header information
@@ -136,12 +137,11 @@ template <typename MonInfo> class MonomialHashTable;
   typedef typename CoeffRing::elem COEFF_TYPE; \
   typedef typename F4types<CoeffRing>::poly poly; \
   typedef typename F4types<CoeffRing>::gbelem gbelem; \
-  typedef typename F4types<CoeffRing>::spair spair; \
   typedef typename F4types<CoeffRing>::gb_array gb_array; \
   typedef typename F4types<CoeffRing>::row_elem row_elem; \
   typedef typename F4types<CoeffRing>::column_elem column_elem; \
   typedef typename F4types<CoeffRing>::coefficient_matrix coefficient_matrix; \
-  typedef MonomialLookupTable<packed_monomial> MonomialLookupTable; \
+  typedef MonomialLookupTable<int32> MonomialLookupTable; \
   
 
 #endif
