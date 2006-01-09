@@ -138,7 +138,7 @@ void F4GB<CoeffRing>::process_column(int c)
   if (ce.gb_divisor >= -1)
     return;
   int which;
-  bool found = false; // MES lookup->search(ce.monom, which);
+  bool found = lookup->search(ce.monom, which);
   if (found)
     {
       packed_monomial n = next_monom;
@@ -278,11 +278,11 @@ void F4GB<CoeffRing>::make_matrix()
 
   H = new MonomialHash(M,18);
   mat = new coefficient_matrix;
-  // MES spair *p;
-  // MES  while (p = S->get_next_pair())
-  // MES    {
-  // MES      process_s_pair(p);
-  // MES    }
+  spair *p;
+  while (p = S->get_next_pair())
+    {
+      process_s_pair(p);
+    }
 
   while (next_col_to_process < mat->columns.size())
     process_column(next_col_to_process++);
@@ -341,10 +341,10 @@ void F4GB<CoeffRing>::insert_gb_element(row_elem &r)
   gb.push_back(result);
 
   // now insert the lead monomial into the lookup table                                
-  // MES  lookup->insert(result->f.monom_space, which);
+  lookup->insert(result->f.monom_space, which);
 
   // now go forth and find those new pairs
-  // MES S->find_new_pairs(gb, true);
+  S->find_new_pairs(gb, true);
 }
 
 template<typename CoeffRing>
@@ -425,7 +425,7 @@ template<typename CoeffRing>
 enum ComputationStatusCode F4GB<CoeffRing>::start_computation(StopConditions &stop_)
 {
   queue<packed_monomial> Q;
-  //  lookup = MonomialLookupTable::create<MonInfo>(M,Q);
+  //  lookup = MonomialLookupTable::create<MonomialInfo>(M,Q);
   
   return COMP_DONE;
   clock_sort_columns = 0;
@@ -445,7 +445,7 @@ enum ComputationStatusCode F4GB<CoeffRing>::start_computation(StopConditions &st
       is_done = computation_is_complete(stop_);
       if (is_done != COMP_COMPUTING) break;
 
-      // MES      this_degree = S->prepare_next_degree(-1, npairs);
+      this_degree = S->prepare_next_degree(-1, npairs);
       
       if (npairs == 0)
 	{

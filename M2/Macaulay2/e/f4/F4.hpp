@@ -65,30 +65,10 @@
 
 #include "F4types.hpp"
 #include "monhashtable.hpp"
-
-/////////////////////////////////////////////////////////////////////////////
 #include "memblock.hpp"
-
+#include "monsort.hpp"
+#include "F4spairs.hpp"
 /////////////////////////////////////////////////////////////////////////////
-template <typename CoeffRing>
-class SPairSet : public our_new_delete
-{
-  INCLUDE_F4_TYPES;
-public:
-  spair *get_next_pair();
-  
-  int find_new_pairs(const gb_array &gb,
-		     bool remove_disjoints);
-  // returns the number of new pairs found, using the last element on this list
-
-  int prepare_next_degree(int max, int &result_number);
-  // Returns the (sugar) degree being done next, and collects all (or at
-  // most 'max', if max>0) spairs in this lowest degree.
-  // Returns the degree, sets result_number.
-  // These spairs are not sorted in any way.
-};
-/////////////////////////////////////////////////////////////////////////////
-
 
 template <typename CoeffRing>
 class F4GB : public our_new_delete
@@ -119,7 +99,7 @@ class F4GB : public our_new_delete
   gb_array gens;
   gb_array gb;
   MonomialLookupTable *lookup; // (monom,comp) --> index into gb
-  SPairSet<CoeffRing> *S;
+  F4SPairSet<CoeffRing> *S;
   
   // The matrix and its construction
   int next_col_to_process;

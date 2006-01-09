@@ -6,6 +6,25 @@
 #include "moninfo.hpp"
 #include "F4types.hpp"
 
+template <typename CoeffRing>
+class F4SPairSet : public our_new_delete
+{
+  INCLUDE_F4_TYPES;
+public:
+  spair *get_next_pair() { return 0; }
+  
+  int find_new_pairs(const gb_array &gb,
+		     bool remove_disjoints) { return 0; }
+  // returns the number of new pairs found, using the last element on this list
+
+  int prepare_next_degree(int max, int &result_number) { return 0; }
+  // Returns the (sugar) degree being done next, and collects all (or at
+  // most 'max', if max>0) spairs in this lowest degree.
+  // Returns the degree, sets result_number.
+  // These spairs are not sorted in any way.
+};
+
+#if 0
 template <typename MonInfo>
 class F4SPairs : public our_new_delete
 {
@@ -134,7 +153,7 @@ class SPairConstructor : public our_new_delete
 		  const gb_array &gb,
 		  bool remove_disjoints);
 };
-
+#endif
 #endif
 
 // Local Variables:
