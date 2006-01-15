@@ -49,7 +49,7 @@ map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
 
 degreeCheck := (d,R) -> (
      if class d === ZZ then d = {d};
-     if class d === List
+     if class d === List or class d === Sequence
      and all(d,i -> class i === ZZ) 
      and #d === degreeLength R
      then (
@@ -72,11 +72,8 @@ map(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
      else (
 	  R := ring M;
 	  N' := cover N ** R;
-	  deg := (
-	       if options.Degree === null
-	       then (degreeLength R : 0)
-	       else degreeCheck(options.Degree, R)
-	       );
+	  deg := if options.Degree === null then (degreeLength R : 0) else options.Degree;
+	  deg = degreeCheck(deg,R);
 	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw N', deg, raw f,0)))))
 
 -- combine the one above with the one below
@@ -103,7 +100,8 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	  rankN = numgens N;
 	  );
      if not instance(N,Module) and options.Degree =!= null then error "Degree option given with indeterminate source module";
-     deg := if options.Degree === null then (degreeLength R):0 else degreeCheck(options.Degree,R);
+     deg := if options.Degree === null then (degreeLength R):0 else options.Degree;
+     deg = degreeCheck(deg,R);
      p = splice p;
      if all(p, o -> (
 	       instance(o,Option)

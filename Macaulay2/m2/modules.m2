@@ -239,9 +239,8 @@ Ring ^ List := Module => (
      (R,degs) -> (
 	  degs = - splice degs;
 	  if R.?RawRing then (
+	       -- check the args
 	       ndegs := degreeLength R;
-	       if R.?Adjust then degs = apply(degs,R.Adjust);
-	       fdegs := flatten degs;
 	       if #degs === 0 then ()
 	       else if all(degs,i -> class i === ZZ) then (
 		    if ndegs =!= 1
@@ -256,6 +255,10 @@ Ring ^ List := Module => (
 			      if not all(v,i->class i === ZZ)
 			      then error "expected each multidegree to be a list of integers")))
 	       else error "expected a list of integers or a list of lists of integers";
+	       -- then adjust the args
+	       if R.?Adjust then degs = apply(degs,R.Adjust);
+	       fdegs := flatten degs;
+	       -- then do it
 	       if # fdegs === 0 
 	       then newModule(R,rawFreeModule(R.RawRing,#degs))
 	       else newModule(R,rawFreeModule(R.RawRing,toSequence fdegs))

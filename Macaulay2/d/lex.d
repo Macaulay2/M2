@@ -173,7 +173,7 @@ getstring(o:PosFile):(null or Word) := (
 	       then escaped = false
 	       else (
 		    empty(tokenbuf);
-		    printErrorMessage(o.pos.filename,line,column,"unknown escape sequence \\" + char(ch));
+		    printErrorMessage(o.pos.filename,line,column,"unknown escape sequence: \\" + char(ch));
 		    return NULL;
 		    );
 	       )
