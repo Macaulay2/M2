@@ -174,7 +174,7 @@ getstring(o:PosFile):(null or Word) := (
 	       else (
 		    empty(tokenbuf);
 		    printErrorMessage(o.pos.filename,line,column,"unknown escape sequence: \\" + char(ch));
-		    return NULL;
+		    while true do (ch2 := getc(o); if ch2 == EOF || ch2 == ERROR || ch2 == int('\n') then return NULL;);
 		    );
 	       )
 	  else if ch == delimiter then break
