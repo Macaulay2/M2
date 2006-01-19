@@ -302,7 +302,7 @@ compareop(lhs:Code,rhs:Code):Expr := (
 	  else compare(x,y)));
 setup(QuestionS,compareop);
 
-whichway := GreaterE;
+whichway := GreaterS;
 sortlist := emptySequence;
 subsort(l:int,r:int):Expr := (
      b := r+1-l;
@@ -321,11 +321,11 @@ subsort(l:int,r:int):Expr := (
 	  if (
 	       c := compare(sortlist.i,pivot);
 	       when c is Error do return c else nothing;
-	       c) != whichway then i = i+1
+	       !(c === whichway)) then i = i+1
 	  else if (
 	       c := compare(pivot, sortlist.j);
 	       when c is Error do return c else nothing;
-	       c) != whichway then j = j-1
+	       !(c === whichway)) then j = j-1
 	  else (
 	       tmp := sortlist.i;
 	       sortlist.i = sortlist.j;
@@ -337,7 +337,7 @@ subsort(l:int,r:int):Expr := (
      for k from l+1 to j do sortlist.(k-1) = sortlist.k;
      sortlist.j = pivot;
      nullE);
-basicsort(s:Sequence,ww:Expr):Expr := (
+basicsort(s:Sequence,ww:SymbolClosure):Expr := (
      if length(s) <= 1 then return Expr(s);
      savesortlist := sortlist;
      savewhichway := whichway;
@@ -348,7 +348,7 @@ basicsort(s:Sequence,ww:Expr):Expr := (
      whichway = savewhichway;
      sortlist = savesortlist;
      ret);
-basicsort2(e:Expr,ww:Expr):Expr := (
+basicsort2(e:Expr,ww:SymbolClosure):Expr := (
      save := RandomSeed;				    -- for backward compatibility with 0.9.2
      answer :=
      when e is s:Sequence do (
@@ -362,10 +362,13 @@ basicsort2(e:Expr,ww:Expr):Expr := (
      else WrongArg("a list or sequence");
      RandomSeed = save;
      answer);
-sortfun(e:Expr):Expr := basicsort2(e,GreaterE);
-rsortfun(e:Expr):Expr := basicsort2(e,LessE);
+sortfun(e:Expr):Expr := basicsort2(e,GreaterS);
+rsortfun(e:Expr):Expr := basicsort2(e,LessS);
 setupfun("internalsort",sortfun);
 setupfun("internalrsort",rsortfun);
+
+foo(e:Expr):Expr := if GreaterS === e then True else False;
+setupfun("foo",foo);
 
 lessfun1(rhs:Code):Expr := unarymethod(rhs,LessS);
 lessfun2(lhs:Code,rhs:Code):Expr := (
