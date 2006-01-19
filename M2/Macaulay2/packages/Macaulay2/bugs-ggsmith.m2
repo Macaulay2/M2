@@ -32,3 +32,12 @@ What about local rings?
     ideal(12,18) == ideal(6)
     
 (5) Should (ideal,Module) use isIdeal?
+
+BUG 1/13/2006
+R = QQ[a,b,c,d, Degrees=>{2:{1,0},2:{0,1}}]
+I = intersect(ideal(a,b),ideal(c,d))
+res I  -- crashses.  Too bad.
+
+-- another bug
+R = QQ[a,b,c,d, Degrees=>{2:{1,0},2:{0,1}},Heft=>{1,1}]
+I = intersect(ideal(a,b),ideal(c,d))

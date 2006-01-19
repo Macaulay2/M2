@@ -68,6 +68,8 @@
 #include "memblock.hpp"
 #include "monsort.hpp"
 #include "F4spairs.hpp"
+#include "gausser.hpp"
+
 /////////////////////////////////////////////////////////////////////////////
 
 template <typename CoeffRing>
@@ -77,7 +79,7 @@ class F4GB : public our_new_delete
   typedef MonomialHashTable<MonomialInfo> MonomialHash;
 
   // Basic required information
-  const CoeffRing *K;
+  const Gausser *KK;
   const MonomialInfo *M;
   M2_arrayint weights; // The length of this is the number of variables, each entry is positive.
   M2_arrayint component_degrees; // Degree of each free module element.
@@ -133,7 +135,7 @@ private:
     void insert_gb_element(row_elem &r);
 
 public:
-  F4GB(const CoeffRing *K0,
+  F4GB(const Gausser *KK0,
        const MonomialInfo *MI,
        M2_bool collect_syz, 
        int n_rows_to_keep,

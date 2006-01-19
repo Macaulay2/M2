@@ -5,6 +5,7 @@
 
 #include "../comp_gb.hpp"
 #include "F4.hpp"
+#include "gausser.hpp"
 
 class PolynomialRing;
 class FreeModule;
@@ -24,7 +25,7 @@ class F4Computation : public GBComputation
 		       // Schreyer order.
                        // Also determines degrees of elements in F.
   const RingType *K;
-  const CoeffRing *coeffK;
+  const Gausser *KK;
   MonomialInfo *MI;
 
   F4GB<CoeffRing> *f4;
