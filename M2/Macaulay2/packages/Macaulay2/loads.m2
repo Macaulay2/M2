@@ -33,6 +33,10 @@ load "doc_ideals.m2"
 load "overview_modules.m2"
 load "doc_mutablematrices.m2"
 
+load "ov_top.m2"
+load "ov_getting_started.m2"
+
+
 load "functions.m2"
 load "variables.m2"
 load "classes.m2"

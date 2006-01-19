@@ -66,12 +66,12 @@ M = S^3
 I = ideal(x,y)
 I*M + S*M_0
 
-M_0; R*M_0 -- should also be allowed
+M_0; S*M_0 -- should also be allowed
   -- then submodules are easy to do: I*M + R*M_0 + R*a*M_1
   -- WANT: that if I, M, R are graded, then so is this submodule of M. 
-M = kernel vars R ++ cokernel vars R
+M = kernel vars S ++ cokernel vars S
 I * M_0
-I*M_0 + M_1 + (x-y)*M_2
+I*M_0 + S*M_1 + S*(x-y)*M_0
 isHomogeneous oo
 M_1
 -- Question: given M_0, how do I do anything with it?
@@ -94,10 +94,14 @@ aborting: lose all your variables
 
 gens gb: recomputes the min gens...
 
--- This following 4 lines sent to Dan, 12/8/05
+-- This following 4 lines sent to Dan, 12/8/05 FIXED
 S = QQ[a,b,Degrees=>{{0,-1},{1,1}},Heft=>{2,-1}]
 N = matrix{{1,2,3}}
 substitute(N,S)
+
+-- Resolutions over such rings FIXED
+S = QQ[a,b,Degrees=>{{0,-1},{1,1}},Heft=>{2,-1}]
+res ideal vars S
 
 -- 12/21/05
 R = ZZ/7[x1,x2,x3]
@@ -111,3 +115,54 @@ MonomialIdeal : RingElement now computes horrendous amount.  It
   is not a monomial, it should still call the monideal code, using the
   monomial ideal of all terms of a polynomial.
 hilbert series of a monomial ideal should be using monideal code.
+
+-- 1/18/06
+R = QQ[a..d]
+I = ideal"ab,cd,a2c,abd2"
+primaryDecomposition I -- this gives answer as ideals.  That is what it should be.
+
+-- 1/18/06
+A = QQ[a]/(a^2+a+1)
+isField A
+toField A
+isField A
+B = A[x,y,z]
+I = ideal(a*x-2, a^2*y^2-x-1)
+gens gb I
+(1_A//a) * a -- this works
+(a+1)/a -- recursion limit of 300 exceeded.  Should / over a ring be same as // ?
+        -- perhaps: 'toField' should install a new "/" routine that calls // ?
+
+J = Grass(2,5)
+ZZ/101 ** (ring J) -- fails, why?
+coefficientRing (ZZ/101) -- because it is somehow using this
+ZZ/101 ** (gens J) -- should we allo this sort of thing?
+RJ = (ZZ/101) monoid ring J
+(gens J) ** RJ -- fails
+
+
+-- 1/18/06
+-- problems to fix
+  -- sort
+  -- toExternalString and toString
+  -- classic input
+  -- abort
+  -- monideal code (bit vague...)
+  -- finite extensions of QQ or ZZ/p as fields
+  -- gb stop conditions
+  -- in reduction: %, should not recompute GB.
+  -- resolutions: seem to recompute resolution 
+  --   are stop conditions for resolutions working?
+  -- display problems:
+  --   wrapping of lines would be better if it cut between polynomials if possible
+  --   R^{10000:1} (not wrapped)
+  --   monideals (not wrapped)
+  --   use 'show()', 'see()', 'put()' ?
+  --   polynomial rings also don't wrap
+  -- multi-graded things
+
+-- 1/18/06
+R = QQ[a..d]
+time basis(1000,R);
+-- <abort>
+-- in debugger (sort of), R not visible.

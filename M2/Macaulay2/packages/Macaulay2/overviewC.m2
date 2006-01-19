@@ -41,38 +41,34 @@ document {
 
 document {
 	Key => "integers modulo a prime",
-	"If ", TT, "p", " is a prime number, then we can create the ring of integers modulo ", TT "p", " as follows.",
-     EXAMPLE {
-	  "R = ZZ/101"
-	  },
-     "We can create elements of the ring as follows.",
-     EXAMPLE {
-	  "9_R",
-	  "103_R"
-	  },
-     "The usual arithmetic operations are available.",
-     EXAMPLE {
-	  "9_R * 11_R",
-	  "9_R ^ 11",
-	  "9_R * 11_R == -2_R"
-	  },
+	"Create the ring of integers modulo a prime number ", TT "p", " as follows.",
+     	EXAMPLE {
+	     "R = ZZ/101"
+	     },
+     	"We can create elements of the ring as follows.",
+     	EXAMPLE {
+	     "9_R",
+	     "103_R"
+	     },
+     	"The usual arithmetic operations are available.",
+     	EXAMPLE {
+	     "9_R * 11_R",
+	     "9_R ^ 11",
+	     "9_R * 11_R == -2_R"
+	     },
 	"Find the inverse of an integer modulo a prime as follows.",
 	EXAMPLE {
-	   "17_R^-1"
-	  },
+	     "17_R^-1"
+	     },
 	"To view this element as an element of ", TT "ZZ", "use the ", TO "lift", " command",
 	EXAMPLE {
-		"lift (17_R^-1, ZZ)"
-		},
+	     "lift (17_R^-1, ZZ)"
+	     },
 	"One way to view ", TT "R", " as a ", TT "ZZ", "-module is as follows.",
 	EXAMPLE {
-		"ZZ^1 / ideal(101)"
-		} 
+	     "ZZ^1 / ideal(101)"
+	     } 
 	}
-
-
-
-
 
 document {
      Key => "finite fields",
