@@ -25,7 +25,7 @@ extern int gbTrace;
 // Coefficients.  The implementation of arrays of coeffs
 // is done as a private array.  Note that the length is
 // not encoded: keep that length separately.
-typedef void *CoefficientArray;
+typedef void *F4CoefficientArray;
 
 // routines needed for coefficient arrays:
 // ring_elem_to_coeff_array(K, len, ringelemarray, CoefficientArray)
@@ -49,6 +49,12 @@ enum spair_type {
   F4_SPAIR_SKEW,
   F4_SPAIR_GEN,
   F4_SPAIR_ELEM
+};
+
+struct poly : public our_new_delete {
+  int len;
+  F4CoefficientArray coeffs;
+  monomial_word *monom_space; // This is all of the monomials written contiguously
 };
 
 struct spair : public our_new_delete {
@@ -77,12 +83,12 @@ public:
   
   // Main types
 
-  struct poly : public our_new_delete {
-    int len;
-    COEFF_TYPE *coeffs;
-    packed_monomial *monoms;  // Component is in the monomial.  Where?
-    monomial_word *monom_space;
-  };
+  //  struct poly : public our_new_delete {
+  //    int len;
+  //    COEFF_TYPE *coeffs;
+  //    packed_monomial *monoms;  // Component is in the monomial.  Where?
+  //    monomial_word *monom_space;
+  //  };
 
   struct gbelem : public our_new_delete {
     poly f;
@@ -102,7 +108,7 @@ public:
 
     // The polynomial itself
     int len;
-    COEFF_TYPE *coeffs;
+    F4CoefficientArray coeffs;
     int *comps;
   };
 
@@ -135,13 +141,14 @@ template <typename MonInfo> class MonomialHashTable;
   typedef typename CoeffRing::ring_type RingType; \
   typedef typename CoeffRing::elem elem; \
   typedef typename CoeffRing::elem COEFF_TYPE; \
-  typedef typename F4types<CoeffRing>::poly poly; \
   typedef typename F4types<CoeffRing>::gbelem gbelem; \
   typedef typename F4types<CoeffRing>::gb_array gb_array; \
   typedef typename F4types<CoeffRing>::row_elem row_elem; \
   typedef typename F4types<CoeffRing>::column_elem column_elem; \
   typedef typename F4types<CoeffRing>::coefficient_matrix coefficient_matrix; \
   typedef MonomialLookupTable<int32> MonomialLookupTable; \
+
+//  typedef typename F4types<CoeffRing>::poly poly; 
   
 
 #endif

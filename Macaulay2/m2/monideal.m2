@@ -278,8 +278,11 @@ dual(MonomialIdeal,RingElement) := (I,r) -> dual(I,first exponents r)
 dual MonomialIdeal := (I) -> (
   if I.cache#?alexanderdual
     then I.cache#alexanderdual
-    else I.cache#alexanderdual = dual(I, lcmOfGens(I))
-    )
+    else I.cache#alexanderdual = (
+	 d := lcmOfGens(I);
+	 if max d < 2 then minimalPrimes I
+	 else dual(I, lcmOfGens(I))
+    ))
 
 --  ASSOCIATED PRIMES  -------------------------------------
 ass0 := (I) -> (
@@ -377,7 +380,6 @@ standardPairs(MonomialIdeal, List) := (I,D) -> (
 		    S = join(S, apply(B, b -> {psi(b), L}));
 	       	    )));
      S)
-
 Delta := (I) -> (
      X := generators ring I;
      d := #X - pdim cokernel generators I;

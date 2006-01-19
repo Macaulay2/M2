@@ -11,15 +11,15 @@ static clock_t clock_gauss = 0;
 static clock_t clock_make_matrix = 0;
 
 template<typename CoeffRing>
-F4GB<CoeffRing>::F4GB(const CoeffRing *K0,
-			      const MonomialInfo *M0,
-			      M2_bool collect_syz, 
-			      int n_rows_to_keep,
-			      M2_arrayint weights0,
-			      int strategy, 
-			      M2_bool use_max_degree,
-			      int max_degree)
-  : K(K0),
+F4GB<CoeffRing>::F4GB(const Gausser *KK0,
+		      const MonomialInfo *M0,
+		      M2_bool collect_syz, 
+		      int n_rows_to_keep,
+		      M2_arrayint weights0,
+		      int strategy, 
+		      M2_bool use_max_degree,
+		      int max_degree)
+  : KK(KK0),
     M(M0),
     weights(weights0),
     component_degrees(0), // need to put this in
@@ -100,8 +100,12 @@ void F4GB<CoeffRing>::load_gen(int which)
   r.coeffs = 0; // coefficients are grabbed during gauss().
   r.comps = newarray(int, g.len);
 
+  monomial_word *w = g.monom_space;
   for (int i=0; i<g.len; i++)
-    r.comps[i] = find_or_append_column(g.monoms[i]);
+    {
+      r.comps[i] = find_or_append_column(w);
+      w += M->monomial_size(w);
+    }
 
   mat->rows.push_back(r);
 }
@@ -119,8 +123,12 @@ void F4GB<CoeffRing>::load_row(packed_monomial monom, int which)
   r.coeffs = 0; // coefficients are grabbed during gauss().
   r.comps = newarray(int, g.len);
 
+  monomial_word *w = g.monom_space;
   for (int i=0; i<g.len; i++)
-    r.comps[i] = mult_monomials(monom, g.monoms[i]);
+    {
+      r.comps[i] = mult_monomials(monom, w);
+      w += M->monomial_size(w);
+    }
 
   mat->rows.push_back(r);
 }
@@ -142,7 +150,7 @@ void F4GB<CoeffRing>::process_column(int c)
   if (found)
     {
       packed_monomial n = next_monom;
-      M->unchecked_divide(ce.monom, gb[which]->f.monoms[0], n);
+      M->unchecked_divide(ce.monom, gb[which]->f.monom_space, n);
       B.intern(M->monomial_size(n));
       next_monom = B.reserve(M->max_monomial_size());
       M->set_component(which, n);
@@ -317,7 +325,7 @@ void F4GB<CoeffRing>::insert_gb_element(row_elem &r)
   result->f.len = r.len;
 
   // grab coeffs from the row itself
-  COEFF_TYPE *tmp = r.coeffs;
+  F4CoefficientArray tmp = r.coeffs;
   r.coeffs = result->f.coeffs;
   result->f.coeffs = tmp;
 

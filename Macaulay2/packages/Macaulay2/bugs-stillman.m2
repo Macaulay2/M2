@@ -79,7 +79,7 @@ M_1
 ---------------------------------
 -- Problems arising 11/17/2005:
 ---------------------------------
-mingens Ideal -- computes the entire GB.
+mingens Ideal -- computes the entire GB. -- FIXED
 %, // require complete GB's
 need groebner (and grobner) routine
 

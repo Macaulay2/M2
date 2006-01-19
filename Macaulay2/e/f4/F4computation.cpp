@@ -53,11 +53,10 @@ F4Computation<CoeffRing>::F4Computation(
 {
   originalR = m->get_ring()->cast_to_PolynomialRing();
   F = m->rows();
-  K = K0;
-  coeffK = K->get_CoeffRing();
+  KK = new Gausser(K0);
   MI = new MonomialInfo(originalR->n_vars());
 
-  f4 = new F4GB<CoeffRing>(coeffK,
+  f4 = new F4GB<CoeffRing>(KK,
 			   MI,
 			   collect_syz,
 			   n_rows_to_keep,
@@ -66,7 +65,7 @@ F4Computation<CoeffRing>::F4Computation(
 			   use_max_degree,
 			   max_degree);
   
-  F4toM2Interface<CoeffRing>::from_M2_matrix(coeffK,MI,m,gb_weights,f4->get_generators());
+  F4toM2Interface<CoeffRing>::from_M2_matrix(KK,MI,m,gb_weights,f4->get_generators());
 }
 
 template<typename CoeffRing>
@@ -99,7 +98,7 @@ const MatrixOrNull *F4Computation<CoeffRing>::get_gb()
   MatrixConstructor result(F,0);
   for (int i=0; i<gens.size(); i++)
     {
-      vec v = F4toM2Interface<CoeffRing>::to_M2_vec(coeffK,MI,gens[i]->f, F);
+      vec v = F4toM2Interface<CoeffRing>::to_M2_vec(KK,MI,gens[i]->f, F);
       result.append(v);
     }
   return result.to_matrix();
