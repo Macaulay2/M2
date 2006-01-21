@@ -58,7 +58,9 @@ ring_elem QQ::random() const
 {
   M2_Rational result = QQ::new_elem();
   Random::random_integer(mpq_numref(result));
-  Random::random_integer(mpq_denref(result));
+  do {
+    Random::random_integer(mpq_denref(result));
+  } while (!mpz_cmp_si(mpq_denref(result),0));
   mpq_canonicalize(result);
   return MPQ_RINGELEM(result);
 }
