@@ -16,8 +16,8 @@ document {
 	  "After you or your system administrator has installed
 	  Macaulay2, use the information here to set up the emacs
 	  interface (the recommended way to run Macaulay2),
-	  bookmark the html documentation, and to first try 
-	  running Macaulay2.
+	  bookmark the html documentation, and to try to
+	  run Macaulay2.
 	  "
 	  },
      Subnodes => {
@@ -51,13 +51,13 @@ PRE///    indigo% M2
 	  "},
      PARA {"
 	  The ", TO viewHelp, " command in Macaulay2 starts up your web browser (if it is not
-	  already running) and places you at that page.  This is a good time to
-	  bookmark the page in your browser.
+	  already running) and places you at this ", TT "index.html", " page.
 	  "},
 PRE///    viewHelp///,
      PARA {"
 	  This web page includes links to the main Macaulay2 documentation, as well as
-	  documentation for any installed packages.
+	  documentation for any installed packages.   This is a good time to
+	  bookmark the page in your browser.
 	  "},
      PARA {"
 	  At this point you should try something simple in Macaulay2, such as
@@ -132,18 +132,181 @@ PRE///    ;; .emacs file in your home directory
 
 document {
      Key => "Using Macaulay2 with emacs",
+     PARA {"
+	  In this section, we show by example how to use the Macaulay2 emacs interface.
+	  We assume that you have already set up this interface, as described in 
+	  ", TO "Setting up the Macaulay2 emacs interface", ".  After creating or changing
+	  the .emacs file mentioned there, you need to exit and restart emacs.  For the rest
+	  of this section, we assume that you are running emacs."
+	  },
+     "The aspects of this interface that we describe include",
+     UL {
+	  "Starting Macaulay2 with the f12 key,  or with M-x M2",
+	  "Working with 2 buffers",
+	  "Sending lines or selected text to Macaulay2 using the f11 key",
+	  "Command completion with TAB",
+	  "Horizontal scrolling with f3,f4,f5,f6,f7"
+	  },
+     PARA {"Before starting, note that when we say to type M-x M2
+	  what we really mean is to hold down the meta key (on Macs this is either
+	       the option key or the apple key, depending on how your emacs is set up)
+	  pressing the x key, and then type M2, and press the return after that.  Similarly, C-c
+	  means hold down the control character and press the c key."},
+     PARA {"Use the keystrokes
+     	  ", TT "C-x 2", " to divide the buffer containing this file into two windows.
+     	  Then press the f12 key or type ", TT "M-x M2", " to start up Macaulay 2 in a buffer
+     	  named ", TT "*M2*", ".  (The command line used to start Macaulay 2 may
+	  be edited before being run if you use a prefix argument with the above
+	  command: press ", TT "C-u", " just before.)"
+          },
+     PARA {
+          "If f12 doesn't start up Macaulay 2, one reason may be that your function
+	  keys are not operable.  In that case press ", TT "C-C m", " instead. 
+       	  Another
+          reason may be that you have not installed Macaulay 2 properly - the startup
+	  script (", TT "M2", " or ", TT "M2.bat", ") should be on your path.
+	  A third reason may be that you are in Windows-98 and are using anti-virus 
+	  software such as ", TT "Dr. Solomon's", ", which can interfere with emacs 
+	  when it tries to run a subprocess."
+	  },
+     PARA {
+     	  "You may use ", TT "C-x o", " freely to switch from one window to the other.
+	  Verify that Macaulay 2 is running by entering a command such as ", TT "2+2", ".  
+	  Now create (using C-x C-f) a file, named something like foo.m2 (the final .m2 is
+	  important, as it informs emacs to use the Macaulay2 mode).
+	  Paste the following text into a buffer.  If you wish, save the file using C-x C-s."
+	  },
+     CODE ///    R = QQ[x,y,z]
+    f = symmetricPower(2,vars R)
+    M = cokernel f
+    C = resolution M
+    betti C///,
+     PARA {     
+     "Position the cursor on the first line of code, and press the ", TT "f11", " function 
+	  key repeatedly to present each line to Macaulay 2.  If you select several lines 
+	  using the mouse, then pressing f11 will present the entire selection to
+	  Macaulay2.  Try this on some of these lines."
+	  },
+     HR,
+"Now go to the very end of the ", TT "*M2*", " buffer with ", TT "M->", " and 
+experiment with keyword completion.  Type ", TT "reso", " and then press the 
+", TT "TAB", " key.  Notice how the word is completed to ", TT "resolution", "
+for you.  Delete the word with ", TT "M-DEL", ", type ", TT "res", "
+and then press the ", TT "TAB", " key.  The possible completions are displayed 
+in a window.  Switch to it with the ", TT "F8", " key, move to the desired 
+completion, select it with the ", TT "RETURN", " key, and then return to the 
+", TT "*M2*", " buffer with ", TT "C-X o", ".  Alternatively, if you have a
+mouse, use the middle button to select the desired completion. (On the mac, hold down the
+     option key while clicking the mouse)",
+HR,
+PARA,
+"Experiment with command line history in the ", TT "*M2*", " buffer.  Position 
+your cursor at the end of the buffer, and then use ", TT "M-p", " and ", TT "M-n", " 
+to move to the previous and next line of input remembered in the history.  When you 
+get to one you'd like to run again, simply press return to do so.  Or edit it
+slightly to change it before pressing return.",
+     HR,
+     PARA,
+     "Now let's see how we can handle wide and tall Macaulay 2 output.  Execute the
+     following line of code (put it in your foo.m2 buffer, and then press f11)",
+     PARA,
+     CODE ///printWidth=0\nrandom(R^20,R^{6:-2})///,
+     "Setting printWidth to zero removes line wrapping in the buffer, sometimes useful to 
+     view large matrices.",
+PARA,
+"Notice that the long lines in the Macaulay 2 window, instead of being wrapped
+around to the next line, simply disappear off the right side of the screen,
+as indicated by the dollar signs or little arrows in the rightmost column.  Switch to the
+other window and practice scrolling up and down with ", TT "M-v", " and ", TT "C-v", ", 
+and scrolling left and right with the function key ", TT "F3", " (or ", TT "C-C <", ") 
+and the function key ", TT "F4", " (or ", TT "C-C >", ").  In modern emacs implementations
+where mouse clicking works, click on the arrow to scroll in that direction.  In
+these versions of emacs, typing C-e, or C-a to get at the end or beginning of the line
+also horizontally scrolls the text to that position.  Older emacs tend to need
+a bit more:
+Notice how the use of
+", TT "C-e", " to go to the end of the line
+sends the cursor to the dollar sign at the right hand side of the screen;
+that's where the cursor will appear whenever you go to a position off the
+screen to the right.  Then use the ", TT "f2", " function key (or ", TT "C-c .", ") to 
+scroll the text so the cursor appears at the center of the screen.  Use ", TT "C-a", " to 
+move to the beginning of the line and then the ", TT "f2", " function key 
+(or ", TT "C-c .", ") to bring the left margin back into view.",
+PARA,
+"You may use the ", TT "f5", " function key or (or ", TT "C-c ?", ") to 
+toggle whether long lines are truncated or wrapped; initially they are truncated.",
+     SeeAlso => { "editing Macaulay 2 code with emacs" }
      }
 
 document {
      Key => "Finding documentation",
+     PARA {"The documentation for Macaulay 2 is available in several
+     	  formats: text format while in Macaulay2, 
+     	  in info format, and the most important, html format.
+     	  "},
+     "Functions for accessing the documentation:",
+     UL {
+	  TOH "apropos",
+	  TOH "examples",
+	  TOH "help", 
+	  TOH "topics",
+	  TOH "viewHelp"
+	  },
+     PARA {"
+	  Type help to get a summary of the most useful ways of obtaining
+	  help on a topic or function.
+     	  "},
+     PARA {"
+	  While in Macaulay2, type",
+	  PRE "    viewHelp",
+	  " to start the web browser (if necessary) and to point it at
+	  the page index.html in your .Macaulay2 directory.
+	  For help on a specific topic, e.g. the jacobian function, use ",
+	  PRE"viewHelp jacobian",
+          " or ",
+	  PRE///    viewHelp "jacobian"///,
+	  " or if you want the documentation for jacobian of an Ideal, use ",
+	  PRE ///    viewHelp (jacobian,Ideal)///
+     	  },
+     PARA {"
+          Using 'help' instead of 'viewHelp' results in the help text appearing 
+	  in your Macaulay2 session. ",
+	  EXAMPLE ///help "jacobian"///,
+	  "A useful tip: in emacs, if you place your cursor on one of the lines which starts with a '*',
+	  and press return, then you will get help on that topic.",
+	  EXAMPLE ///* "jacobian Ideal"///
+     	  },	  
+     PARA {"
+	  The function ", TO apropos, " is useful to find functions and other defined symbols 
+	  which match a search string.  For example, to find all symbols
+	  in Macaulay2 which contain the string 'deal', use",
+	  EXAMPLE ///apropos "deal"///
+     	  },
+     PARA {"
+          The documentation for most functions comes with example code.  You can 
+	  obtain the text of this example code using ", TO examples, ".",
+	  EXAMPLE ///examples "jacobian Ideal"///,
+     	  "which returns it as a string. To place these on their own lines, print the string.",
+	  EXAMPLE ///print examples "jacobian Ideal"///
+     	  },
      }
+
 
 document {
      Key => "Getting help or reporting bugs",
+     PARA {"
+	  An easy way to get help or to report a bug is to go to ", HREF "http://sourceforge.net/projects/macaulay2",
+	  " and choose the appropriate section in the 'Public areas' part of that webpage.  In order to
+	  submit a feature request, support request, bug report, etc, you might need to create a 
+	  sourceforge user id for yourself.  This is free and easy (Choose 'create account' near the top of
+     	  the top of the page).
+	  "},
+     PARA "These requests are automatically emailed to Dan Grayson and Mike Stillman, and they 
+     try to handle these requests quickly."
      }
 
 document {
-     Key => "What to read next?"
+     Key => "What to read next?",
      }
 
 
@@ -345,24 +508,6 @@ document {
      PARA,
      "We can use ", TO "betti", " to see the degrees involved in the Groebner basis.",
      EXAMPLE "betti gb j"
-     }
-
-document {
-     Key => "Invoking the program",
-     "On systems with a command line interface, the following commands
-     can be used to start the program.  When the program starts up,
-     the ", TO "initialization file", ", ", TT "init.m2", ", will be loaded.",
-     PARA, NOINDENT,
-     TT "M2", " -- starts the program.",
-     PARA, NOINDENT,
-     TT "M2 file1 file2 ... ", " -- starts the program, reading and 
-     executing the specified files.",
-     PARA,
-     "The options that can be provided on the command line may be displayed by running ", TT "M2 --help", ", as follows.",
-     EXAMPLE ///run "M2 --help";///,
-     PARA,
-     "To terminate the program, one may type ", TO "exit", ", ", TO "quit", ",
-     ", TO "end", ", or the end of file character."
      }
 
 document {

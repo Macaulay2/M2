@@ -166,3 +166,12 @@ R = QQ[a..d]
 time basis(1000,R);
 -- <abort>
 -- in debugger (sort of), R not visible.
+
+-- 1/19/06
+help -- displays very long lines
+listUserSymbols doc: says something about 'loaddata', why?
+in info mode: paragraphs should have a blank line?
+sourceHomeDirectory --> emacsPath
+environment
+path in doc is silly
+unexport 
