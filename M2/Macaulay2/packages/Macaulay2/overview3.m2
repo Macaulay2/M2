@@ -92,70 +92,6 @@ document {
      }
 
 document {
-     Key => "operators",
-     "Here is a list of unary and binary operators in the language.  Many
-     of them can have methods installed for handling arguments of specific
-     types.",
-     UL {
-          SEQ (TO " ", " -- function application"),
-          SEQ (TO ",", " -- separates elements of lists or sequences"),
-          SEQ (TO ";", " -- statement separator"),
-          SEQ (TO "=", " -- assignment"),
-          SEQ (TO "<-", " -- assignment with left hand side evaluated"),
-	  SEQ (TO "->"),
-          SEQ (TO ":=", " -- assignment of method or new local variable"),
-          SEQ (TO "==", " -- equal"),
-          SEQ (TO "!=", " -- not equal"),
-          SEQ (TO "===", " -- strictly equal"),
-          SEQ (TO "=!=", " -- strictly not equal"),
-          SEQ (TO "<", " -- less than"),
-          SEQ (TO "<=", " -- less than or equal"),
-          SEQ (TO "=>", " -- option"),
-          SEQ (TO ">", " -- greater than"),
-          SEQ (TO ">=", " -- greater than or equal"),
-          SEQ (TO "?", " -- comparison"),
-	  SEQ (TO "or", " -- or"),
-	  SEQ (TO "and", " -- and"),
-          SEQ (TO "not", " -- negation"),
-          SEQ (TO "..", " -- sequence builder"),
-          SEQ (TO "+", " -- addition"),
-          SEQ (TO "-", " -- subtraction"),
-          SEQ (TO "*", " -- multiplication"),
-          SEQ (TO "/", " -- division, or applying a function to elements of a list"),
-          SEQ (TO "//", " -- quotient"),
-          SEQ (TO "\\\\", " -- left quotient"),
-          SEQ (TO "%", " -- remainder"),
-          SEQ (TO "^", " -- power"),
-          SEQ (TO "^**", " -- tensor power"),
-          SEQ (TO "!", " -- factorial"),
-          SEQ (TO "++", " -- direct sum"),
-          SEQ (TO "**", " -- tensor product"),
-          SEQ (TO "<<", " -- file output, bit shifting"),
-          SEQ (TO ">>", " -- bit shifting and attaching optional inputs to functions"),
-          SEQ (TO "_", " -- subscripting"),
-          SEQ (TO ".", " -- hash table access or assignment"),
-          SEQ (TO ".?", " -- test for hash table access"),
-          SEQ (TO "#", " -- hash table access; length of a list, sequence or hash table"),
-          SEQ (TO "#?", " -- test for hash table access"),
-          SEQ (TO "|", " -- horizontal concatenation of strings or matrices"),
-          SEQ (TO "||", " -- vertical concatenation of strings or matrices"),
-          SEQ (TO "&", " -- bit-wise and"),
-          SEQ (TO ":", " -- ideal quotient, repetitions"),
-          SEQ (TO "\\", " -- applying a function to elements of a list"),
-          SEQ (TO "@@", " -- composing functions"),
-          SEQ (TO "@"),
-          SEQ (TO "^^"),
-          SEQ (TO "~", " -- making a coherent sheaf"),
-          SEQ (TO "in"),
-          SEQ (TO "|-"),
-          SEQ (TO "<==>"),
-          SEQ (TO "===>"),
-          SEQ (TO "==>"),
-          SEQ (TO "(*)"),
-     	  }
-     }
-
-document {
      Key => "Acknowledgements",
      "We thank the National Science Foundation for generous funding since
      1993 for this project, Gert-Martin Greuel and Ruediger Stobbe for the
@@ -349,52 +285,6 @@ document {
      Key => "Resources required",
      }
 
-document {
-     Key => "syntax",
-     "A newline ends a statement if it can, otherwise it acts like any
-     white space.",
-     EXAMPLE "2+\n3+\n4",
-     PARA,
-     "Parsing is determined by a triple of numbers attached to each token.
-     The following table (produced by the command ", TO "seeParsing", "), 
-     displays each of these numbers.",
-     EXAMPLE "seeParsing()",
-     "Here is the way these numbers work.  The parser maintains a number
-     which we will call the current parsing level, or simply, the level.
-     The parser builds up an expression until it encounters an input token
-     whose parsing precedence is less than or equal to the current level.
-     The tokens preceding the offending token are bundled into an expression
-     appropriately and incorporated into the containing expression.",
-     PARA,
-     "When an operator or token is encountered, its binding strength serves
-     as the level for parsing the subsequent expression, unless the current level
-     is higher, in which case it is used.",
-     PARA,
-     "Consider a binary operator such as ", TT "*", ".  The relationship between
-     its binary binding strength and its parsing precedence turns out to determine
-     whether ", TT "a*b*c", " is parsed as ", TT "(a*b)*c", " or as ", TT "a*(b*c)", ".
-     When the parser encounters the second ", TT "*", ", the current parsing level 
-     is equal to the binding strength of the first ", TT "*", ".  If the binding 
-     strength is less than the precedence, then the second ", TT "*", " becomes
-     part of the right hand operand of the first ", TT "*", ", and the
-     expression is parsed as ", TT "a*(b*c)", ".  Otherwise, the expression is
-     parsed as ", TT "(a*b)*c", ".",
-     PARA,
-     "For unary operators, the unary binding strength is used instead of the binary
-     binding strength to reset the current level.  The reason for having both numbers 
-     is that some operators can be either unary or binary, depending on the context.
-     A good example is ", TO "#", " which binds as tightly as ", TO ".", "
-     when used as an infix operator, and binds as loosely as adjacency or
-     function application when used as a prefix operator.",
-     PARA,
-     "To handle expressions like ", TT "b c d", ", where there are no tokens present
-     which can serve as a binary multiplication operator, after parsing ", TT "b", ",
-     the level will be set to 1 less than the precedence of an identifier,
-     so that ", TT "b c d", " will be parsed as ", TT "b (c d)", ".",
-     PARA,
-     "The comma and semicolon get special treatment; the empty expression can
-     occur to the right of the comma or semicolon or to the left of the comma."
-     }
 
 document {
      Key => "debugging",

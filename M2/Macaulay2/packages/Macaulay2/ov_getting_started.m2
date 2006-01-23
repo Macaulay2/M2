@@ -311,24 +311,6 @@ document {
 
 
 document {
-     Key => "Invoking the program",
-     "On systems with a command line interface, the following commands
-     can be used to start the program.  When the program starts up,
-     the ", TO "initialization file", ", ", TT "init.m2", ", will be loaded.",
-     PARA, NOINDENT,
-     TT "M2", " -- starts the program.",
-     PARA, NOINDENT,
-     TT "M2 file1 file2 ... ", " -- starts the program, reading and 
-     executing the specified files.",
-     PARA,
-     "The options that can be provided on the command line may be displayed by running ", TT "M2 --help", ", as follows.",
-     EXAMPLE ///run "M2 --help";///,
-     PARA,
-     "To terminate the program, one may type ", TO "exit", ", ", TO "quit", ",
-     ", TO "end", ", or the end of file character."
-     }
-
-document {
      Key => "Your first input prompt",
      PARA {
 	  "Your first input prompt will be ", TT "i1 : ", ".  In response to the prompt,
@@ -509,6 +491,124 @@ document {
      "We can use ", TO "betti", " to see the degrees involved in the Groebner basis.",
      EXAMPLE "betti gb j"
      }
+
+
+document {
+     Key => "editing Macaulay 2 code with emacs",
+-- don't indent
+"In this section we learn how to use emacs to edit Macaulay 2 code.  Assuming you
+have set up your emacs init file as described in ", TO "Setting up the Macaulay2 emacs interface", "
+ when you visit a file whose name ends with ", TT ".m2", " 
+you will see on the mode line the name Macaulay 2 in
+parentheses, indicating that the file is being edited in Macaulay 2 mode.  (Make
+sure that the file ", TT "emacs/M2.el", " is on your ", TT "load-path", ".)",
+PARA,
+"To see how electric parentheses, electric semicolons, and indentation work,
+move to a blank line of this file and type the following text.",
+PARA,
+CODE ///f = () -> (
+     a := 4;
+     b := {6,7};
+     a+b)///,
+PARA,
+"Observe carefully how matching left parentheses are indicated briefly when a
+right parenthesis is typed.",
+PARA,
+"Now position your cursor in between the 6 and 7.  Notice how
+pressing ", TT "M-C-u", " moves you up out of the list to its left.  Do it 
+again.  Experiment with ", TT "M-C-f", " and ", TT "M-C-b", " to move forward
+and back over complete parenthesized
+expressions.  (In the emacs manual a complete parenthesized expression is
+referred to as an sexp, which is an abbreviation for S-expression.)  Try out
+ ", TT "C-U 2 M-C-@", " as a way of marking the next two complete parenthesized
+expression, and see how to use ", TT "C-W", " to kill them and ", TT "C-Y", " to yank 
+them back.  Experiment with ", TT "M-C-K", " to kill the next complete parenthesized 
+expression.",
+PARA,
+"Position your cursor on the 4 and observe how ", TT "M-;", " will start a comment 
+for you with two hyphens, and position the cursor at the point where commentary
+may be entered.",
+PARA,
+"Type ", TT "res", " somewhere and then press ", TT "C-C TAB", " to bring up the
+possible completions of the word to documented Macaulay 2 symbols.",
+PARA,
+"Notice how ", TT "C-H m", " will display the keystrokes peculiar to 
+the mode in a help window.",
+PARA,
+"Assuming you have installed the ", TO "w3", " emacs web browser,
+you may explore the documentation by positioning the cursor near a documented
+word such as ", TT "List", " and pressing ", TT "C-C d", ".  Alternatively,
+when the prompt appears, you can type the key whose documentation should be
+found."
+}
+
+document {
+     Key => "emacs",
+     "The best way to edit Macaulay 2 code or to run Macaulay 2 is
+     with ", TO2{ "http://www.gnu.org/software/emacs/emacs.html", "GNU emacs"}, ", a versatile text 
+     editor written by Richard Stallman.",
+     PARA,
+     "There is a version of emacs for Windows NT and Windows 95 called ", TT "NTemacs", ".
+     See ", HREF "http://www.cs.washington.edu/homes/voelker/ntemacs.html", " for
+     details about how to get it, as well as information about how to swap your
+     caps lock and control keys.",
+     PARA,
+     Subnodes => {
+	  TO "running Macaulay 2 in emacs",
+	  TO "editing Macaulay 2 code with emacs",
+	  },
+     }
+
+
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
+-- End:
+
+end
+
+document {
+     Key => "Reading the documentation",
+     "The documentation for Macaulay 2 is available in several formats.
+     The directory ", TT (LAYOUT#"packagehtml" "Macaulay2"), " 
+     contains the documentation in html form, suitable for viewing with a web 
+     browser, and this is the best way to view it.  The command ", TT "M2-help", "
+     will start your favorite web browser and point direct it to the web 
+     pages there.  Each documentation page has a text box for entering a
+     search string.  This works by viewing the documentation at our web site.",
+     PARA,
+     "All the documentation can also be viewed within the program in
+     text form using ", TO "help", ".",
+     PARA,
+     NOINDENT,
+     "Functions for accessing the documentation:",
+     UL {
+	  TOH "apropos",
+	  TOH "examples",
+	  TOH "help", 
+	  TOH "topics"
+	  }
+     }
+
+
+document {
+     Key => "Invoking the program",
+     "On systems with a command line interface, the following commands
+     can be used to start the program.  When the program starts up,
+     the ", TO "initialization file", ", ", TT "init.m2", ", will be loaded.",
+     PARA, NOINDENT,
+     TT "M2", " -- starts the program.",
+     PARA, NOINDENT,
+     TT "M2 file1 file2 ... ", " -- starts the program, reading and 
+     executing the specified files.",
+     PARA,
+     "The options that can be provided on the command line may be displayed by running ", TT "M2 --help", ", as follows.",
+     EXAMPLE ///run "M2 --help";///,
+     PARA,
+     "To terminate the program, one may type ", TO "exit", ", ", TO "quit", ",
+     ", TO "end", ", or the end of file character."
+     }
+
 
 document {
      Key => "running Macaulay 2 in emacs",
@@ -716,55 +816,6 @@ found."
 }
 
 document {
-     Key => "editing Macaulay 2 code with emacs",
--- don't indent
-"In this section we learn how to use emacs to edit Macaulay 2 code.  Assuming you
-have set up your emacs init file as described in ", TO "running Macaulay 2 in emacs", "
- when you visit a file whose name ends with ", TT ".m2", " 
-you will see on the mode line the name Macaulay 2 in
-parentheses, indicating that the file is being edited in Macaulay 2 mode.  (Make
-sure that the file ", TT "emacs/M2.el", " is on your ", TT "load-path", ".)",
-PARA,
-"To see how electric parentheses, electric semicolons, and indentation work,
-move to a blank line of this file and type the following text.",
-PARA,
-CODE ///f = () -> (
-     a := 4;
-     b := {6,7};
-     a+b)///,
-PARA,
-"Observe carefully how matching left parentheses are indicated briefly when a
-right parenthesis is typed.",
-PARA,
-"Now position your cursor in between the 6 and 7.  Notice how
-pressing ", TT "M-C-u", " moves you up out of the list to its left.  Do it 
-again.  Experiment with ", TT "M-C-f", " and ", TT "M-C-b", " to move forward
-and back over complete parenthesized
-expressions.  (In the emacs manual a complete parenthesized expression is
-referred to as an sexp, which is an abbreviation for S-expression.)  Try out
- ", TT "C-U 2 M-C-@", " as a way of marking the next two complete parenthesized
-expression, and see how to use ", TT "C-W", " to kill them and ", TT "C-Y", " to yank 
-them back.  Experiment with ", TT "M-C-K", " to kill the next complete parenthesized 
-expression.",
-PARA,
-"Position your cursor on the 4 and observe how ", TT "M-;", " will start a comment 
-for you with two hyphens, and position the cursor at the point where commentary
-may be entered.",
-PARA,
-"Type ", TT "res", " somewhere and then press ", TT "C-C TAB", " to bring up the
-possible completions of the word to documented Macaulay 2 symbols.",
-PARA,
-"Notice how ", TT "C-H m", " will display the keystrokes peculiar to 
-the mode in a help window.",
-PARA,
-"Assuming you have installed the ", TO "w3", " emacs web browser,
-you may explore the documentation by positioning the cursor near a documented
-word such as ", TT "List", " and pressing ", TT "C-C d", ".  Alternatively,
-when the prompt appears, you can type the key whose documentation should be
-found."
-}
-
-document {
      Key => "How Macaulay 2 finds its files",
      "When you run Macaulay 2, it has to find and load a sequence of
      startup files containing code written in the Macaulay 2 language,
@@ -798,120 +849,4 @@ document {
 	  }
      }
 
-
-document {
-     Key => "Reading the documentation",
-     "The documentation for Macaulay 2 is available in several formats.
-     The directory ", TT (LAYOUT#"packagehtml" "Macaulay2"), " 
-     contains the documentation in html form, suitable for viewing with a web 
-     browser, and this is the best way to view it.  The command ", TT "M2-help", "
-     will start your favorite web browser and point direct it to the web 
-     pages there.  Each documentation page has a text box for entering a
-     search string.  This works by viewing the documentation at our web site.",
-     PARA,
-     "All the documentation can also be viewed within the program in
-     text form using ", TO "help", ".",
-     PARA,
-     NOINDENT,
-     "Functions for accessing the documentation:",
-     UL {
-	  TOH "apropos",
-	  TOH "examples",
-	  TOH "help", 
-	  TOH "topics"
-	  }
-     }
-
-document {
-     Key => "emacs",
-     "The best way to edit Macaulay 2 code or to run Macaulay 2 is
-     with ", TO2{ "http://www.gnu.org/software/emacs/emacs.html", "GNU emacs"}, ", a versatile text 
-     editor written by Richard Stallman.",
-     PARA,
-     "There is a version of emacs for Windows NT and Windows 95 called ", TT "NTemacs", ".
-     See ", HREF "http://www.cs.washington.edu/homes/voelker/ntemacs.html", " for
-     details about how to get it, as well as information about how to swap your
-     caps lock and control keys.",
-     PARA,
-     Subnodes => {
-	  TO "running Macaulay 2 in emacs",
-	  TO "editing Macaulay 2 code with emacs",
-	  },
-     }
-
-
-
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
--- End:
-
-end
-
-
-Setting up the Macaulay2 emacs interface
-----------------------------------------
-
-is a file called "dot-emacs".  You should place this into your ".emacs"
-file in your home directory.  If that file doesn't exist, then copy "dot-emacs"
-to the file ".emacs" (in your home directory).
-
-If you copied the "dot-emacs" file to the ".emacs" file in your home
-directory, then your emacs interface should be all setup.  If not,
-place the following lines into your .emacs file in your home
-directory.  If this file does not exist, create it.
-
-    ;; .emacs file in your home directory
-    (setq load-path 
-          (append
-           '( "/Applications/Macaulay2/share/emacs/site-lisp/" )
-           load-path
-           ))
-
-    (load "M2-init.el" t)
-
-    ; comment out the following line with an initial semicolon 
-    ; if you want to use your f12 key for something else
-    (global-set-key [ f12 ] 'M2)
-
-You should replace the path 
-  "/Applications/Macaulay2/share/emacs/site-lisp/"  
-with wherever Macaulay2 is stored on your machine.
-
-Using the Macaulay2 emacs interface
------------------------------------
-A very convenient way to run Macaulay2 is inside of the emacs text editor.
-We strongly recommend that you run Macaulay2 inside of emacs.  If you
-are using a version of emacs that allows you to use the mouse, and click
-on menu items, then emacs is quite straightforward to use.  If you are
-using a version of emacs which runs in a terminal window, then it is
-probably best to work through the emacs tutorial.
-
-
-Inside of emacs, start Macaulay2 by pressing either the f12 key, or
-typing M-x M2.  If Macaulay2 starts up, then you have set up your .emacs
-file correctly.  If not, check to make sure that your .emacs file is in 
-your home directory, and contains the correct path to the Macaulay2
-emacs files.
-
-Now create a new file in emacs whose name ends in .m2, e.g. foo.m2.  Inside
-this file, put in the following lines
-
-R = ZZ/101[x,y,z]
-f = symmetricPower(2,vars R)
-M = cokernel f
-C = resolution M
-betti C
-
-Position your cursor to the first line, and press the f11 function key.
-This line should appear in your Macaulay2 session (in a buffer named *M2*).
-Pressing f11 sends the current line, or, if you have selected some text,
-sends the current selection to be run by Macaulay2.
-
-
-
-Documentation
--------------
-
-Where to find help or report bugs
----------------------------------
 
