@@ -238,6 +238,41 @@ AC_ARG_WITH(veclib,
     LAPACKLIBS="-framework vecLib"
     )
 
+AC_SUBST(GMPLIB)
+AC_ARG_WITH(gmplib,
+    AC_HELP_STRING(--with-gmplib=...,gmp library (-lgmp)),
+    GMPLIB="$withval",
+    GMPLIB="-lgmp"
+    )
+
+AC_SUBST(GCLIB)
+AC_ARG_WITH(gclib,
+    AC_HELP_STRING(--with-gclib=...,gc library (-lgc)),
+    GCLIB="$withval",
+    GCLIB="-lgc"
+    )
+
+AC_SUBST(GDBMLIB)
+AC_ARG_WITH(gdbmlib,
+    AC_HELP_STRING(--with-gdbmlib=...,gdbm library (-lgdbm)),
+    GDBMLIB="$withval",
+    GDBMLIB="-lgdbm"
+    )
+
+AC_SUBST(READLINELIB)
+AC_ARG_WITH(readlinelib,
+    AC_HELP_STRING(--with-readlinelib=...,readline library (-lreadline)),
+    READLINELIB="$withval",
+    READLINELIB="-lreadline"
+    )
+
+AC_SUBST(HISTORYLIB)
+AC_ARG_WITH(historylib,
+    AC_HELP_STRING(--with-historylib=...,history library (-lhistory)),
+    HISTORYLIB="$withval",
+    HISTORYLIB="-lhistory"
+    )
+
 AC_CHECK_DECL(__finite,,AC_DEFINE(__finite,finite,whether __finite is missing),[#include <math.h>])
 AC_CHECK_DECL(__isnan,,AC_DEFINE(__isnan,isnan,whether __isnan is missing),[#include <math.h>])
 AC_CHECK_DECL(__isinf,,AC_DEFINE(__isinf,isinf,whether __isinf is missing),[#include <math.h>])

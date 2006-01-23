@@ -17,7 +17,7 @@ clean ::; rm -f gc_tested gc_test
 M2_LDFLAGS := $(LDFLAGS)
 M2_LOADLIBES := $(LOADLIBES)
 M2_LDLIBS := $(LDLIBS)
-LOADLIBES += -lgc
+LOADLIBES += $(GCLIB)
 
 ## files
 
@@ -289,30 +289,30 @@ ifeq "$(PROFILE)" "yes"
 ifeq "$(HAVE_LIBGMP_PG)" "yes"
 LIBRARYOPTIONS += -lgmp-pg
 else
-LIBRARYOPTIONS += -lgmp
+LIBRARYOPTIONS += $(GMPLIB)
 endif
 else
-LIBRARYOPTIONS += -lgmp
+LIBRARYOPTIONS += $(GMPLIB)
 endif
 
 ifeq "$(PROFILE)" "yes"
 ifeq "$(HAVE_LIBGC_PG)" "yes"
 LIBRARYOPTIONS += -lgc-pg
 else
-LIBRARYOPTIONS += -lgc
+LIBRARYOPTIONS += $(GCLIB)
 endif
 else
-LIBRARYOPTIONS += -lgc
+LIBRARYOPTIONS += $(GCLIB)
 endif
 
-LIBRARYOPTIONS += -lgdbm
+LIBRARYOPTIONS += $(GDBMLIB)
 
 # LIBRARYOPTIONS += $(M2_LDLIBS)
 
 ifeq ($(OS),Darwin)
-LIBRARYOPTIONS += -lreadline -lhistory
+LIBRARYOPTIONS += $(READLINELIB) $(HISTORYLIB)
 else
-LIBRARYOPTIONS += -lreadline -lhistory -lcurses
+LIBRARYOPTIONS +=  $(READLINELIB) $(HISTORYLIB) -lcurses
 endif
 
 ifeq "$(STATIC)" "yes"

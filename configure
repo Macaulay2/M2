@@ -311,7 +311,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CFLAGS LOADLIBES LDLIBS MAKE INSTALL_INFO NODENAME REL ARCH OS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CXX RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA AWK LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT GCC CXXFLAGS ac_ct_CXX YACC ALLOCA CPP EGREP CONFIG_ARGS CONFIG_ARG0 DUMPDATA PROFILE FACTORY STRIP DEBUG VERBOSE STATIC MEMDEBUG OPTIMIZE ENCAP XCODE ALTIVEC LAPACK M2SUFFIX LAPACKLIBS HAVE_LIBGC_PG HAVE_LIBGMP_PG HAVE_LIBNTL_PG HAVE_LIBCF_PG HAVE_LIBFAC_PG CONFIGURED_FILES LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CFLAGS LOADLIBES LDLIBS MAKE INSTALL_INFO NODENAME REL ARCH OS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CXX RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA AWK LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT GCC CXXFLAGS ac_ct_CXX YACC ALLOCA CPP EGREP CONFIG_ARGS CONFIG_ARG0 DUMPDATA PROFILE FACTORY STRIP DEBUG VERBOSE STATIC MEMDEBUG OPTIMIZE ENCAP XCODE ALTIVEC LAPACK M2SUFFIX LAPACKLIBS GMPLIB GCLIB GDBMLIB READLINELIB HISTORYLIB HAVE_LIBGC_PG HAVE_LIBGMP_PG HAVE_LIBNTL_PG HAVE_LIBCF_PG HAVE_LIBFAC_PG CONFIGURED_FILES LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -888,6 +888,11 @@ Optional Packages:
   --with-M2suffix=...     suffix to append to executable name M2
   --with-lapacklibs=...   lapack libraries (-llapack -lcblas -lf77blas -lg2c)
   --with-veclib           replace lapack libraries by "-framework vecLib"
+  --with-gmplib=...       gmp library (-lgmp)
+  --with-gclib=...        gc library (-lgc)
+  --with-gdbmlib=...      gdbm library (-lgdbm)
+  --with-readlinelib=...  readline library (-lreadline)
+  --with-historylib=...   history library (-lhistory)
 
 Some influential environment variables:
   CFLAGS      C compiler flags, default: -g -O2
@@ -3936,6 +3941,61 @@ if test "${with_veclib+set}" = set; then
 
 fi;
 
+
+
+# Check whether --with-gmplib or --without-gmplib was given.
+if test "${with_gmplib+set}" = set; then
+  withval="$with_gmplib"
+  GMPLIB="$withval"
+else
+  GMPLIB="-lgmp"
+
+fi;
+
+
+
+# Check whether --with-gclib or --without-gclib was given.
+if test "${with_gclib+set}" = set; then
+  withval="$with_gclib"
+  GCLIB="$withval"
+else
+  GCLIB="-lgc"
+
+fi;
+
+
+
+# Check whether --with-gdbmlib or --without-gdbmlib was given.
+if test "${with_gdbmlib+set}" = set; then
+  withval="$with_gdbmlib"
+  GDBMLIB="$withval"
+else
+  GDBMLIB="-lgdbm"
+
+fi;
+
+
+
+# Check whether --with-readlinelib or --without-readlinelib was given.
+if test "${with_readlinelib+set}" = set; then
+  withval="$with_readlinelib"
+  READLINELIB="$withval"
+else
+  READLINELIB="-lreadline"
+
+fi;
+
+
+
+# Check whether --with-historylib or --without-historylib was given.
+if test "${with_historylib+set}" = set; then
+  withval="$with_historylib"
+  HISTORYLIB="$withval"
+else
+  HISTORYLIB="-lhistory"
+
+fi;
+
 echo "$as_me:$LINENO: checking whether __finite is declared" >&5
 echo $ECHO_N "checking whether __finite is declared... $ECHO_C" >&6
 if test "${ac_cv_have_decl___finite+set}" = set; then
@@ -6754,6 +6814,11 @@ s,@ALTIVEC@,$ALTIVEC,;t t
 s,@LAPACK@,$LAPACK,;t t
 s,@M2SUFFIX@,$M2SUFFIX,;t t
 s,@LAPACKLIBS@,$LAPACKLIBS,;t t
+s,@GMPLIB@,$GMPLIB,;t t
+s,@GCLIB@,$GCLIB,;t t
+s,@GDBMLIB@,$GDBMLIB,;t t
+s,@READLINELIB@,$READLINELIB,;t t
+s,@HISTORYLIB@,$HISTORYLIB,;t t
 s,@HAVE_LIBGC_PG@,$HAVE_LIBGC_PG,;t t
 s,@HAVE_LIBGMP_PG@,$HAVE_LIBGMP_PG,;t t
 s,@HAVE_LIBNTL_PG@,$HAVE_LIBNTL_PG,;t t
