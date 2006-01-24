@@ -1401,14 +1401,14 @@ isGlobalSymbol(e:Expr):Expr := (
      else WrongArg("a string or a dictionary and a string"));
 setupfun("isGlobalSymbol",isGlobalSymbol);
 
-expandWord(e:Expr):Expr := (
-     when e is word:string do (
-	  when wordexp(word)
-	  is null do buildErrorPacket("failed to expand word")
-	  is r:array(string) do toExpr(r)
-	  )
-     else WrongArgString());
-setupfun("expandWord",expandWord);
+-- expandWord(e:Expr):Expr := (
+--      when e is word:string do (
+-- 	  when wordexp(word)
+-- 	  is null do buildErrorPacket("failed to expand word")
+-- 	  is r:array(string) do toExpr(r)
+-- 	  )
+--      else WrongArgString());
+-- setupfun("expandWord",expandWord);
 
 history(e:Expr):Expr := (
      when e

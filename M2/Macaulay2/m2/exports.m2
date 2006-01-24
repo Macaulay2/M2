@@ -625,7 +625,7 @@ export (
 	symbol exec,
 	symbol exit,
 	symbol exp,
-	symbol expandWord,
+	-- symbol expandWord,
 	symbol exponents,
 	symbol export,
 	symbol exportMutable,
