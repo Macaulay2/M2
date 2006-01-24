@@ -992,6 +992,7 @@ int M2lseek(int fd, long offset, int whence)
 
 #endif
 
+#if 0
 #if defined(HAVE_WORDEXP) && defined(HAVE_WORDEXP_H)
 #include <wordexp.h>		/* gnu c library word expansion */
 #endif
@@ -1012,6 +1013,7 @@ M2_stringarray system_wordexp(M2_string s) {
   return NULL;
 #endif
 }
+#endif
 
 int system_strncmp(M2_string s,M2_string t,int n) {
   return strncmp(s->array,t->array,n);
