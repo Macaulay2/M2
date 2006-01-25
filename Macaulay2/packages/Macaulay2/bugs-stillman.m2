@@ -175,3 +175,12 @@ sourceHomeDirectory --> emacsPath
 environment
 path in doc is silly
 unexport 
+
+-- 1/25/06 Questions and issues for Dan
+'local', 'global', 'symbol'.  Is 'global' different from 'symbol'?
+readme file for linux
+match up the 'getting started' page with the readme's?
+classic mode
+emacsPath?
+For me: remove missing node/extra node doc nodes.
+linking to doc pages in another package.

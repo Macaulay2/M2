@@ -340,7 +340,7 @@ Here are the configure line I have used that works:
 
     mkdir tmp-opt
     cd tmp-opt
-    CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --with-gmplib=/capybara/lib/libgmp.a --with-gclib=/capybara/lib/libgc.a --with-gdbmlib=/sw/lib/libgdbm.a --with-readlinelib=/sw/lib/libreadline.a --with-historylib="/sw/lib/libhistory.a /usr/lib/libncurses.dylib" --enable-altivec
+    CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --with-gmplib=/capybara/lib/libgmp.a --with-gclib=/capybara/lib/libgc.a --with-gdbmlib=/sw/lib/libgdbm.a --with-readlinelib=/sw/lib/libreadline.a --with-historylib="/sw/lib/libhistory.a /usr/lib/libncurses.5.dylib" --enable-altivec
 
     mkdir tmp-profile
     cd tmp-profile
