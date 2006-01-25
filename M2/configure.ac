@@ -1,4 +1,4 @@
-AC_INIT(Macaulay 2, 0.9.7, Macaulay2@math.uiuc.edu, Macaulay2)
+AC_INIT(Macaulay 2, 0.9.8, Macaulay2@math.uiuc.edu, Macaulay2)
 AC_REVISION($Revision$)
 
 define(M2_UPPER,[translit($1, [a-z], [A-Z])])

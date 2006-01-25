@@ -280,7 +280,7 @@ dual MonomialIdeal := (I) -> (
     then I.cache#alexanderdual
     else I.cache#alexanderdual = (
 	 d := lcmOfGens(I);
-	 if max d < 2 then minimalPrimes I
+	 if max d === 1 then minimalPrimes I
 	 else dual(I, lcmOfGens(I))
     ))
 
@@ -309,18 +309,30 @@ associatedPrimes MonomialIdeal := List => o -> (I) -> (
 
 minimalPrimes = method()
 minimalPrimes MonomialIdeal := (I) -> (
-     J := radical I;
-     time Js := apply(numgens J, i -> J_i);
-     time Qs = apply(Js, i -> monomialIdeal support(i));
-     ans := Qs_0;
-     i := 1;
-     time while i < #Qs do (
+     (J,Js,Qs,ans,i) := null;
+     J = radical I;
+     if gbTrace > 0 then (
+       time Js = apply(numgens J, i -> J_i);
+       time Qs = apply(Js, i -> monomialIdeal support(i));
+       ans = Qs_0;
+       i = 1;
+       time while i < #Qs do (
      	  time ans = intersect(ans,Qs_i);
-     	  --<< "i = " << i << "    " << betti ans << endl;
-     	  << "i = " << i << endl;
+     	  << "i = " << i << " numgens " << numgens ans << endl;
      	  i = i+1;
      	  );
-     ans)
+       ans)
+     else (
+       Js = apply(numgens J, i -> J_i);
+       Qs = apply(Js, i -> monomialIdeal support(i));
+       ans = Qs_0;
+       i = 1;
+       while i < #Qs do (
+     	  ans = intersect(ans,Qs_i);
+     	  i = i+1;
+     	  );
+       ans)
+     )
 
 irreducibleDecomposition = method();
 irreducibleDecomposition MonomialIdeal := List => (I) -> (
