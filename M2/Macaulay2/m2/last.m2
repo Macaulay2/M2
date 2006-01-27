@@ -35,8 +35,10 @@ scan(installedPackages, pkg -> loadPackage(pkg,DebuggingMode => not stopIfError)
 
 addStartFunction( 
      () -> (
-     	  dismiss "User";
-	  newPackage("User", DebuggingMode => true);
+	  if class value getGlobalSymbol "User" =!= Package then (
+     	       dismiss "User";
+	       newPackage("User", DebuggingMode => true);
+	       );
 	  needsPackage \ installedPackages;
 	  )
      )
