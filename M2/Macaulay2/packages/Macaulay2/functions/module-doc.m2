@@ -111,7 +111,7 @@ document {
  -- overview2.m2:152:     Key => "maps between modules",                        -- map
  -- overview2.m2:180:     Key => "bases of parts of modules",
  -- overview2.m2:206:     Key => "free resolutions of modules",
- -- overviewA.m2:195:     Key => "matrices and free modules",
+ -- overviewA.m2:195:     Key => "matrices",
  -- overviewA.m2:251:     Key => "modules",
  -- overviewA.m2:389:     Key => "Dmodules",
  -- overviewB.m2:75:     Key => "ideals to and from modules",

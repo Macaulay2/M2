@@ -10,7 +10,7 @@ document {
 	  "Mathematical Objects",
 	       TO "rings",
 	       TO "ideals",
-	       TO "matrices and free modules",
+	       TO "matrices",
 	       TO "substitution and maps between rings",
 	       TO "modules",
 	       TO "chain complexes",

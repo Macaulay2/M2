@@ -4,26 +4,6 @@
 
 --this is an old node, apparently
 
-document {
-     Key => "ideals and modules",
-     "In this section we present an overview of ideals and modules.
-     For details, see ", TO "Ideal", " and ", TO "Module", ".",
-     PARA,
-     "The most general module ", TT "M", " is represented as a submodule of a 
-     quotient module of a free module ", TT "F", ".  The quotient module is
-     presented internally by a matrix whose columns generate the relations, 
-     and the submodule is represented internally by a matrix whose columns
-     generate the submodule.  The two matrices the same number of rows, namely,
-     the rank of ", TT "F", ".",
-     Subnodes => {
-	  TO "ideals",
-	  TO "free modules",
-	  TO "making modules from matrices", -- coker, ker, image, etc.
-	  TO "manipulating modules",
-	  TO "maps between modules",
-	  TO "bases of parts of modules",
-	  }
-     }
 
 ///
 
@@ -114,8 +94,8 @@ document {
 
 document {
      Key => "maps between modules",			    -- map
-     "Maps between free modules are usual specified as matrices, as
-     described in the section on ", TO "matrices and free modules", ".  In this section 
+     "Maps between free modules are usually specified as matrices, as
+     described in the section on ", TO "matrices", ".  In this section 
      we cover a few other techniques.",
      PARA,
      "Let's set up a ring, a matrix, and a free module.",
