@@ -146,7 +146,11 @@ symlinkDirectory(String,String) := opts -> (src,dst) -> (
 					-- stderr << "--  skipping: link already exists" << endl;
 					null
 					)
-				   else stderr << "--  warning: file " << tarf << " already exists, not what we want" << endl;
+				   else if readlink tarf =!= null then (
+					unlinkFile tarf;    -- silently unlink a symbolic link
+					symlinkFile(relsrcf,tarf);
+					)
+				   else error("file ", tarf, " already exists, not what we want");
 				   )
 			      else symlinkFile(relsrcf,tarf))
 			 else (
