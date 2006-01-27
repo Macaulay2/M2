@@ -898,11 +898,13 @@ installPackage Package := opts -> pkg -> (
 	       k -> f << "linkdir " << (if class LAYOUT#k === Function then removeLastSlash LAYOUT#k "*" else removeLastSlash LAYOUT#k) << endl);
 	  f << close;
 	  -- INSTALL
-	  assert( class installFile === String );
-	  f = buildDirectory | "INSTALL"
-	  << installFile;
-	  fileMode(f,octal "644");
-	  f << close;
+	  if pkg#"title" == "Macaulay2" then (
+	       assert( class installFile === String );
+	       f = buildDirectory | "INSTALL"
+	       << installFile;
+	       fileMode(f,octal "644");
+	       f << close;
+	       );
 	  );
 
      -- make symbolic links
