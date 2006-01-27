@@ -184,3 +184,22 @@ classic mode
 emacsPath?
 For me: remove missing node/extra node doc nodes.
 linking to doc pages in another package.
+
+in order to statically link on macaulay.math.cornell.edu (linux), I need to add
+  in the -latlas.  Let's put this or something else in more globally...
+  -- use --with-lapacklibs=
+in capybara: get conflicts with packages on macaulay.math.cornell.edu
+same in M2 after doing 'installPackage "Macaulay2"'
+where do I upload files to have them on our website?
+I would like the Dmodule package in the dist, if possible?  is this easy?
+
+operators: which are active?  precedence?  which can have methods installed?
+also: under linux, example files can be built in short time, so make sure that
+  we redo them all.
+
+1/26/06
+bug:
+  R = ZZ[s,t]
+  S = ZZ[a..d]
+  F = map(R,S,{s^3,s^2*t,s*t^2,t^3})
+  kernel F -- not implemented yet
