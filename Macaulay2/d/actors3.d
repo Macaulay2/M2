@@ -367,9 +367,6 @@ rsortfun(e:Expr):Expr := basicsort2(e,LessS);
 setupfun("internalsort",sortfun);
 setupfun("internalrsort",rsortfun);
 
-foo(e:Expr):Expr := if GreaterS === e then True else False;
-setupfun("foo",foo);
-
 lessfun1(rhs:Code):Expr := unarymethod(rhs,LessS);
 lessfun2(lhs:Code,rhs:Code):Expr := (
      e := compareop(lhs,rhs);

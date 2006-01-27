@@ -867,7 +867,8 @@ installPackage Package := opts -> pkg -> (
      -- make postinstall and preremove files, if encap
      if opts.Encapsulate then (
 	  octal := s -> (n := 0 ; z := first ascii "0"; scan(ascii s, i -> n = 8*n + i - z); n);
-	  stderr << "--making postinstall, preremove, and encapinfo files in " << buildDirectory << endl;
+	  stderr << "--making INSTALL, postinstall, preremove, and encapinfo files in " << buildDirectory << endl;
+	  -- postinstall
 	  f := buildDirectory | "postinstall" 
 	  << ///#! /bin/sh -e/// << endl
 	  << ///cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info" || exit 0/// << endl
@@ -877,22 +878,30 @@ installPackage Package := opts -> pkg -> (
 	  if version#"dumpdata" and pkg#"title" == "Macaulay2" then (
 	       f << endl << "(set -x ; \"$ENCAP_SOURCE\"/\"$ENCAP_PKGNAME\"/bin/" << version#"M2 name" << " --stop --dumpdata)" << endl;
 	       );
-	  fileMode(f,octal "755");
+	  fileMode(f,octal "644");
 	  f << close;
+	  -- preremove
      	  f = buildDirectory | "preremove"
 	  << ///#! /bin/sh -x/// << endl
 	  << ///cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info" || exit 0/// << endl
 	  << ///for i in *.info/// << endl
 	  << ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" --delete "$i")/// << endl
 	  << ///done/// << endl;
-	  fileMode(f,octal "755");
+	  fileMode(f,octal "644");
  	  f << close;
+	  -- encapinfo
 	  f = buildDirectory | "encapinfo"
 	  << ///encap 2.0/// << endl
 	  << ///contact dan@math.uiuc.edu/// << endl;
 	  removeLastSlash := s -> if s#?0 and s#-1 === "/" then substring(s,0,#s-1) else s;
 	  scan(("libm2","packagedoc","packageexamples","packagehtml","packageimages","packagesrc","packagetests"),
 	       k -> f << "linkdir " << (if class LAYOUT#k === Function then removeLastSlash LAYOUT#k "*" else removeLastSlash LAYOUT#k) << endl);
+	  f << close;
+	  -- INSTALL
+	  assert( class installFile === String );
+	  f = buildDirectory | "INSTALL"
+	  << installFile;
+	  fileMode(f,octal "644");
 	  f << close;
 	  );
 

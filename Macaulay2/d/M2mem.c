@@ -10,7 +10,7 @@ char out_of_memory_jump_set = FALSE;
 void outofmem(void) {
      static int count = 0;
      if (!tokens_stopIfError && out_of_memory_jump_set && count++ < 5) {
-     	  fprintf(stderr,"out of memory, returning to top level");
+     	  fprintf(stderr,"out of memory, returning to top level\n");
      	  fflush(stderr);
      	  siglongjmp(out_of_memory_jump,1);
 	  }
