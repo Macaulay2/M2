@@ -487,11 +487,17 @@ export Floor(x:double):Integer := (
 	  n := (int(floor(log(x)/logtwo)) / 16) * 16;
      	  x = x >> n;
 	  r := toInteger(0);
-	  while x != 0. do (
-	       i := int(floor(x));	       x = x - i;	       r = r + i;
-	       x = x << 16;		       n = n - 16;	       r = r << 16;
+	  while (
+	       i := int(floor(x));
+	       x = x - i;
+	       r = r + i;
+	       n > 0
+	       )
+	  do (
+	       n = n - 16;
+	       x = x << 16;
+	       r = r << 16;
 	       );
-	  if n > 0 then r = r << n;
 	  if wasneg then r = -r;
 	  r));
 export Round(x:double):Integer := Floor(x + 0.5);
