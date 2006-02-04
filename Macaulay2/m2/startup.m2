@@ -272,7 +272,6 @@ usage := arg -> (
      << "    LOADDATA_IGNORE_CHECKSUMS	   (for debugging)" << newline
      ;exit 0)
 
-if class markLoaded === Symbol then
 markLoaded = (filename,origfilename,notify) -> ( 
      filename = minimizeFilename filename;
      filesLoaded#origfilename = filename; 
