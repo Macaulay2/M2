@@ -1220,15 +1220,18 @@ document {
      and y are non-mutable, then they are strictly equal if and only if
      all their contents are strictly equal.",
      EXAMPLE { "{1,2,3} === {1,2,3}", "{1,2,3} === {2,1,3}" },
-     "In the current implementation, matrices are mutable objects, so ", TT "===", "
-     will yield false more often than you might expect.  We hope to change this
-     in the future.",
+     "For some types, such as ring elements and matrices, 
+     strict equality is the same as mathematical equality.
+     This tends to be the case for objects for which computation is not required
+     to test equality.",
      EXAMPLE {
-	  "matrix {{2}} === matrix {{2}}",
-      	  "matrix {{2}} == matrix {{2}}",
-      	  "matrix {{2}} == matrix {{3}}"},
-     PARA,
-     SeeAlso =>{ "==",  "=!=" }
+	  "R = QQ[a..d];",
+	  "a^2+b === b+a^2",
+	  "ideal(a^2+b,c*d) === ideal(b+a^2,c*d+b+a^2)",
+     	  "matrix{{a,b,c}} === matrix{{a,b,c}}",
+       	  "matrix{{a,b,c}} === transpose matrix{{a},{b},{c}}"
+	  },
+     SeeAlso =>{ symbol==,  symbol=!=, "operators" }
      }
 
 document {
