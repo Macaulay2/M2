@@ -1335,6 +1335,7 @@ document {
      generators, and checking whether two sets of generators produce the same
      ideal involves a computation with Groebner bases.  The ideals must be defined
      in the same ring.",
+     HEADER3 "Ideals",
      EXAMPLE {
 	  "R = QQ[a,b,c];",
 	  "ideal(a^2-b,a^3) == ideal(b^2, a*b, a^2-b)"
@@ -1345,22 +1346,35 @@ document {
 	  "L == 1",
 	  "L == 0"
 	  },
-     PARA,  
+     HEADER3 "Matrices",
+     "Two ", TO "matrices", " are equal if their entries are equal, the source and target are
+     the same (including degrees), and the degree of the matrices are the same.  In this example,
+     m and n have different source free modules.",
+     EXAMPLE {
+	  "m = matrix{{a,b},{c,a}}",
+     	  "n = map(R^2,R^2,m)",
+	  "m == n",
+	  "source m == source n"
+	  },
+     "If you only want to know if they have the same entries, test the difference against zero.",
+     EXAMPLE {
+	  "m-n == 0"
+	  },
+     HEADER3 "Rings",     
      "Rings are handled in a different manner in Macaulay2.  Each time you create a 
      polynomial ring in Macaulay2, you are handed a new ring, which is not
-     equal to any other ring.  For example, the rings R and S below are not
+     equal to any other ring.  For example, the rings A and B below are not
      considered the same by Macaulay2.",
      EXAMPLE {
-     	  "R = QQ[a..d]; S = QQ[a..d]",
-     	  "R == S"
+     	  "A = QQ[x,y,z]; B = QQ[x,y,z];",
+     	  "A == B"
      	  },
-     PARA,
-     "Two modules are equal if they are isomorphic as subquotients of the
-     same ambient free module.  See ", TO "modules", " for more details.",
+     HEADER3 "Modules",
+     "Two ", TO "modules", " are equal if they are isomorphic as subquotients of the
+     same ambient free module.",
      EXAMPLE {
-	  "R = ZZ/101[x]",
-      	  "image matrix {{2,x},{1,5}} == R^2",
-      	  "image matrix {{2,x},{0,5}} == R^2"
+      	  "image matrix {{2,a},{1,5}} == R^2",
+      	  "image matrix {{2,a},{0,5}} == R^2"
 	  },
      PARA,
      "It may happen that for certain types of objects, there is no method installed
