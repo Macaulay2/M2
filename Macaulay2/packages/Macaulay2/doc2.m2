@@ -387,18 +387,12 @@ document {
      "The return value is ", TO "true", " or ", TO "false", "."
      }
 
+---------------------
+---- Operators ------
+---------------------
 document {
-     Key => symbol <<, Headline => "a binary operator" }
-document {
-     Key => symbol >>, Headline => "a binary operator" }
-document {
-     Key => (symbol >>, ZZ, ZZ),
-     Headline => "shift bits rightward",
-     Usage => "i >> j",
-     Inputs => { "i" => null, "j" => null },
-     Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation rightward ", TT "j", " places" }},
-     EXAMPLE "256 >> 5",
-     SeeAlso => {(symbol <<,ZZ, ZZ)}
+     Key => symbol <<, 
+     Headline => "a binary operator, usually file output, bit shifting",
      }
 document {
      Key => (symbol <<, ZZ, ZZ),
@@ -409,7 +403,6 @@ document {
      EXAMPLE "256 << 5",
      SeeAlso => {(symbol >>,ZZ, ZZ)}
      }
-
 document {
      Key => (symbol <<, String, Thing),
      Headline => "print to a file",
@@ -426,7 +419,6 @@ document {
 	  "unlinkFile \"foo\""
 	  }
      }
-
 document {
      Key => (symbol <<, Thing),
      Headline => "print to a file",
@@ -435,11 +427,25 @@ document {
      SeeAlso => {"<<"}
      }
 
+
 document {
-     Key => symbol ":",
-     Headline => "a binary operator",
+     Key => symbol >>, 
+     Headline => "a binary operator, uses include bit shifting, or attaching optional inputs to functions" 
+     }
+document {
+     Key => (symbol >>, ZZ, ZZ),
+     Headline => "shift bits rightward",
+     Usage => "i >> j",
+     Inputs => { "i" => null, "j" => null },
+     Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation rightward ", TT "j", " places" }},
+     EXAMPLE "256 >> 5",
+     SeeAlso => {(symbol <<,ZZ, ZZ)}
      }
 
+document {
+     Key => symbol ":",
+     Headline => "a binary operator, uses include repetition; ideal quotients",
+     }
 document {
      Key => (symbol :, ZZ, Thing),
      Headline => "repeat an item",
@@ -452,20 +458,23 @@ document {
      "Warning: such sequences do not get automatically spliced into lists
      containing them.",
      PARA,
-     EXAMPLE { "{5:a,10:b}", "splice {5:a,10:b}" }
+     EXAMPLE { "{5:a,10:b}", "splice {5:a,10:b}" },
+     SeeAlso => {splice, (symbol..,ZZ,ZZ), "lists of integers"}
      }
-
 document {
-     Key => getc,
-     Headline => "get a byte",
-     TT "getc f", " obtains one byte from the input file f and provides it as a 
-     string of length 1.  On end of file an empty string of is returned.",
-     PARA,
-     SeeAlso => { "File" },
-     PARA,
-     "Bug: the name is cryptic and should be changed."
+     Key => "comparison operators",
+     Usage => "",
+     UL {
+	  "x == y",
+	  "x != y",
+	  "x < y",
+	  "x <= y",
+	  "x > y",
+	  "x >= y",
+	  "x ? y",
+	  },
+     SeeAlso => {sort, sortColumns, "operators"}
      }
-
 document {
      Key => symbol "<",
      Headline => "less than",
@@ -474,7 +483,6 @@ document {
      PARA,
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
-
 document {
      Key => symbol "<=",
      Headline => "less than or equal",
@@ -483,7 +491,6 @@ document {
      PARA,
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
-
 document {
      Key => symbol ">",
      Headline => "greater than",
@@ -492,25 +499,16 @@ document {
      PARA,
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
-
 document {
      Key => symbol ">=",
      Headline => "greater than or equal",
-     TT "x >= y", " yields ", 
-     TO "true", " or ", 
-     TO "false", " depending on whether x >= y.",
-     PARA,
-     "Calls upon ", TO "?", " to perform the comparison, if necessary."
+     Usage => "x >= y",
+     Inputs => {"x", "y"},
+     Outputs => {
+	  Boolean => "depending on whether x >= y"
+	  },
+     "Calls upon ", TO "?", " to perform the comparison, if necessary.",
      }
-
-protect incomparable
-document {
-     Key => incomparable,
-     Headline => "a result indicating incomparability",
-     TT "incomparable", " a symbol which may be returned by ", TO "?", "
-     when the two things being compared are incomparable."
-     }
-
 document {
      Key => symbol "?",
      Headline => "comparison operator",
@@ -528,6 +526,29 @@ document {
       	  "3 ? 3.",
 	  }
      }
+
+
+document {
+     Key => getc,
+     Headline => "get a byte",
+     TT "getc f", " obtains one byte from the input file f and provides it as a 
+     string of length 1.  On end of file an empty string of is returned.",
+     PARA,
+     SeeAlso => { "File" },
+     PARA,
+     "Bug: the name is cryptic and should be changed."
+     }
+
+
+
+protect incomparable
+document {
+     Key => incomparable,
+     Headline => "a result indicating incomparability",
+     TT "incomparable", " a symbol which may be returned by ", TO "?", "
+     when the two things being compared are incomparable."
+     }
+
 
 document {
      Key => ";",
