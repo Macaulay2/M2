@@ -1003,11 +1003,11 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2Core then (
 		    if #d > 0 then PARA1 {"Other things", smenuCLASS d}})))
 
 documentation Symbol := S -> (
-     a := apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
-     b := documentableMethods S;
+     a := smenu apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
+     b := smenu documentableMethods S;
      Hypertext fixuptop ( title S, synopsis S, makeDocBody S, op S,
-	  if #a > 0 then (DIV {"Functions with optional argument named ", toExternalString S, " :"}, smenu a),
-	  if #b > 0 then (DIV {"Methods for ", toExternalString S, " :"}, smenu b),
+	  if #a > 0 then (DIV {"Functions with optional argument named ", toExternalString S, " :"}, a),
+	  if #b > 0 then (DIV {"Methods for ", toExternalString S, " :"}, b),
      	  documentationValue(S,value S),
 	  theExamples S, caveat S, seealso S, type S, theMenu S ))
 

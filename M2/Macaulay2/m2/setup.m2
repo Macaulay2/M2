@@ -128,7 +128,6 @@ commentGuard := n -> if class n === String then concatenate(commentGuard,n) else
      (stack((height n + depth n):commentGuardNet))^(height n) | n
      )
 scan(binaryOperators, op -> (
-	  if op === symbol "!=" then return;		    -- this one has an internal binary method
      	  opstring := if op === symbol " " then format toString op else toString op;
 	  ht := 8;
 	  preX := "            ";

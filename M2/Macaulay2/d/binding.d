@@ -460,7 +460,7 @@ bindParenParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):vo
      else makeErrorTree(e,"expected parenthesized argument list or symbol"));
 
 export opsWithBinaryMethod := array(SymbolClosure)(
-     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, LongDoubleArrowS, NotEqualS,
+     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, LongDoubleArrowS,
      LongLongDoubleArrowS, LongBiDoubleArrowS, DeductionS,
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS,
      StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
