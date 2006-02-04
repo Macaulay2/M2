@@ -867,28 +867,7 @@ document {
 
 document {
      Key => "operators",
-     "Here we list all of the unary and binary operators in the language.
-     Except for the builtin operators, each operator may be overloaded: i.e.
-     have methods
-     installed for handling arguments of specific types.  Here is an example.",
-     HEADER3 "built-in operators",
-     "These operators are builtin and cannot be overloaded.",
-     UL {
-	  TOH symbol=,
-	  TOH symbol:=,
-	  TOH symbol<-,
-	  TOH symbol===,
-	  TOH symbol=!=,
-	  TOH symbol->,
-	  TOH symbol=>,
-	  TOH symbol.,
-	  TOH symbol#,
-	  TOH symbol.?,
-	  TOH symbol#?,
-          SEQ (TO ",", " -- separates elements of lists or sequences"),
-          SEQ (TO ";", " -- statement separator"),
-          SEQ (TO "in"),
-	  },
+     "Here we list all of the unary and binary operators in the language.",
      HEADER3 "assignment",
      UL {
 	  TOH symbol=,
@@ -910,27 +889,6 @@ document {
 	  TOH symbol>=,
 	  TOH symbol?
 	  },
-     HEADER3 "arithmetic operators",
-     UL {
-          SEQ (TO "!", " -- factorial"),
-	  TOH symbol+,
-	  TOH symbol-,
-	  TOH symbol*,
-	  SEQ (TO "/", " -- division, or applying a function to elements of a list"),
-	  TOH symbol//,
-	  TOH symbol%,
-          SEQ (TO "\\\\", " -- left quotient"),
-	  TOH symbol^,
-	  TOH symbol\\,
-          SEQ (TO "&", " -- bit-wise and"),
-	  HR,
-	  TOH symbol++,
-	  TOH symbol**,
-          SEQ (TO "^**", " -- tensor power"),
-          SEQ (TO "~", " -- making a coherent sheaf"),
-	  TOH symbol(*),
-          SEQ (TO ":", " -- ideal quotient, repetitions"),
-     	  },
      HEADER3 "predicates",
      UL {
 	  TOH symbol and,
@@ -954,6 +912,27 @@ document {
           SEQ (TO "#", " -- hash table access; length of a list, sequence or hash table"),
           SEQ (TO "#?", " -- test for hash table access"),
 	  },
+     HEADER3 "arithmetic operators",
+     UL {
+          SEQ (TO "!", " -- factorial"),
+	  TOH symbol+,
+	  TOH symbol-,
+	  TOH symbol*,
+	  SEQ (TO "/", " -- division, or applying a function to elements of a list"),
+	  TOH symbol//,
+	  TOH symbol%,
+          SEQ (TO "\\\\", " -- left quotient"),
+	  TOH symbol^,
+	  TOH symbol\\,
+          SEQ (TO "&", " -- bit-wise and"),
+	  HR,
+	  TOH symbol++,
+	  TOH symbol**,
+          SEQ (TO "^**", " -- tensor power"),
+          SEQ (TO "~", " -- making a coherent sheaf"),
+	  TOH symbol(*),
+          SEQ (TO ":", " -- ideal quotient, repetitions"),
+     	  },
      HEADER3 "miscellaneous",
      UL {
           SEQ (TO "..", " -- sequence builder"),
@@ -967,7 +946,31 @@ document {
           SEQ (TO "<==>"),
           SEQ (TO "===>"),
           SEQ (TO "==>"),
-     	  }
+     	  },
+     HEADER3 "Overloadable unary prefix and postfix operators",
+     HEADER3 "Overloadable binary operators",
+     "Except for the builtin operators, each operator may be overloaded: i.e.
+     have methods
+     installed for handling arguments of specific types.  Here is an example.",
+     HEADER3 "built-in operators",
+     "These operators are builtin and cannot be overloaded.",
+     UL {
+	  TOH symbol=,
+	  TOH symbol:=,
+	  TOH symbol<-,
+	  TOH symbol===,
+	  TOH symbol=!=,
+	  TOH symbol->,
+	  TOH symbol=>,
+	  TOH symbol.,
+	  TOH symbol#,
+	  TOH symbol.?,
+	  TOH symbol#?,
+          SEQ (TO ",", " -- separates elements of lists or sequences"),
+          SEQ (TO ";", " -- statement separator"),
+          SEQ (TO "in"),
+	  },
+     
      }
 
 end
