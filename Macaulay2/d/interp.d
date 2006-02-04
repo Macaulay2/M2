@@ -417,8 +417,8 @@ Exit(err:Error):void := exit(
      );
 
 export process():void := (
-     previousLineNumber = -1;			  -- might have done dumpdata()
      localFrame = globalFrame;
+     previousLineNumber = -1;			  -- might have done dumpdata()
      stdin .inisatty  =   0 != isatty(0) ;
      stdin.echo       = !(0 != isatty(0));
      stdout.outisatty =   0 != isatty(1) ;
