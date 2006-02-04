@@ -272,6 +272,7 @@ usage := arg -> (
      << "    LOADDATA_IGNORE_CHECKSUMS	   (for debugging)" << newline
      ;exit 0)
 
+if class markLoaded === Symbol then
 markLoaded = (filename,origfilename,notify) -> ( 
      filename = minimizeFilename filename;
      filesLoaded#origfilename = filename; 
@@ -292,7 +293,7 @@ loadSetup := () -> (
      error ("can't find file setup.m2\n\trunning M2: ",exe,"\n\t$0 = ",commandLine#0)
      )
 
-showMaps = () -> (
+showMaps := () -> (
      if version#"operating system" === "SunOS" then (
 	  stack lines get ("!/usr/bin/pmap "|processID())
 	  )

@@ -65,12 +65,18 @@ static void alarm_handler(int sig)
 static sigjmp_buf loaddata_jump, abort_jump;
 static bool abort_jump_set = FALSE;
 
+#undef ABORT
+
 static void interrupt_handler(int sig)
 {
      if (system_interruptedFlag || system_interruptPending) {
 	  if (isatty(STDIN) && isatty(STDOUT)) while (TRUE) {
 	       char buf[10];
+#              ifdef ABORT
 	       printf("\nAbort (y/n)? ");
+#              else
+	       printf("\nExit (y/n)? ");
+#              endif
 	       fflush(stdout);
 	       if (NULL == fgets(buf,sizeof(buf),stdin)) {
 		    fprintf(stderr,"exiting\n");
@@ -80,6 +86,7 @@ static void interrupt_handler(int sig)
 #                   ifdef DEBUG
      		      trap();
 #                   endif
+#                   ifdef ABORT
 		    if (!tokens_stopIfError && abort_jump_set) {
 			 extern void evaluate_clearInterruptFlag(), evaluate_determineExceptionFlag(), evaluate_clearAlarmedFlag();
      	  		 fprintf(stderr,"returning to top level\n");
@@ -92,12 +99,15 @@ static void interrupt_handler(int sig)
 			 system_interruptShield = FALSE;
 			 evaluate_clearAlarmedFlag();
 			 evaluate_determineExceptionFlag();
-     	  		 siglongjmp(abort_jump,1);
+     	  		 siglongjmp(abort_jump,1); 
 			 }
 		    else {
+#                   endif
 			 fprintf(stderr,"exiting\n");
 		    	 exit(1);
+#                   ifdef ABORT
 			 }
+#                   endif
 		    }
 	       else if (buf[0]=='n' || buf[0]=='N') {
 		    break;
