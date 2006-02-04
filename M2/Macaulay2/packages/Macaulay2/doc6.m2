@@ -597,18 +597,6 @@ document {
      empty.",
      PARA,
      SeeAlso => {"generators","subquotient"}}
-document {
-     Key => (symbol ==, Module, Module),
-     TT "M == N", " -- test whether two modules are equal.",
-     PARA,
-     "Two modules are equal if they are isomorphic as subquotients of the
-     same ambient free module.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x]",
-      	  "image matrix {{2,x},{1,5}} == R^2",
-      	  "image matrix {{2,x},{0,5}} == R^2"
-	  }}
 TEST "
 R = ZZ/101[a,b,c]
 M = cokernel matrix {{a,b^2,c^3}}

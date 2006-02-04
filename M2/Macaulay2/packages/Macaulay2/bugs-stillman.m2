@@ -203,3 +203,11 @@ bug:
   S = ZZ[a..d]
   F = map(R,S,{s^3,s^2*t,s*t^2,t^3})
   kernel F -- not implemented yet
+
+1/19/06
+bug, emailed to Dan.
+  6.667 * 10^15
+  floor oo
+  -- gives 436928511999999934464
+
+toString matrix{{6.667 * 10^15}}

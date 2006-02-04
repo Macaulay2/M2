@@ -1241,29 +1241,136 @@ document {
      }
 
 document {
-     Key => symbol "==",
+     Key => symbol==,
+     Undocumented => {
+         (symbol==, RingElement, ZZ),
+         (symbol==, RingElement, Matrix),
+         (symbol==, Ideal, MonomialIdeal),
+         (symbol==, GradedModuleMap, ZZ),
+         (symbol==, InfiniteNumber, InfiniteNumber),
+         (symbol==, Holder, Holder),
+         (symbol==, Module, Module),
+         (symbol==, Equation, Expression),
+         (symbol==, ZZ, Ring),
+         (symbol==, ZZ, QQ),
+         (symbol==, ZZ, RR),
+         (symbol==, RR, ZZ),
+         (symbol==, ZZ, Matrix),
+         (symbol==, Matrix, ZZ),
+         (symbol==, RR, QQ),
+         (symbol==, ZZ, CC),
+         (symbol==, ZZ, ChainComplex),
+         (symbol==, ChainComplex, ZZ),
+         (symbol==, Matrix, Matrix),
+         (symbol==, RR, CC),
+         (symbol==, Thing, Thing),
+         (symbol==, MonomialIdeal, Ring),
+         (symbol==, Ring, MonomialIdeal),
+         (symbol==, MonomialIdeal, ZZ),
+         (symbol==, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
+         (symbol==, ChainComplex, ChainComplex),
+         (symbol==, Expression, Thing),
+         (symbol==, Thing, Expression),
+         (symbol==, Equation, Holder),
+         (symbol==, Holder, Equation),
+         (symbol==, ChainComplexMap, ZZ),
+         (symbol==, ZZ, MutableMatrix),
+         (symbol==, Expression, Expression),
+         (symbol==, RingElement, RingElement),
+         (symbol==, ZZ, InfiniteNumber),
+         (symbol==, Nothing, Nothing),
+         (symbol==, Equation, Equation),
+         (symbol==, GradedModuleMap, RingElement),
+         (symbol==, RingElement, GradedModuleMap),
+         (symbol==, String, Net),
+         (symbol==, Ideal, Ring),
+         (symbol==, ZZ, Ideal),
+         (symbol==, Ideal, ZZ),
+         (symbol==, ZZ, RingElement),
+         (symbol==, GradedModuleMap, GradedModuleMap),
+         (symbol==, Matrix, RingElement),
+         (symbol==, Set, Set),
+         (symbol==, MonomialIdeal, Ideal),
+         (symbol==, ZZ, GradedModuleMap),
+         (symbol==, GradedModule, GradedModule),
+         (symbol==, Expression, Equation),
+         (symbol==, Ring, Ring),
+         (symbol==, Module, ZZ),
+         (symbol==, ZZ, Module),
+         (symbol==, ChainComplexMap, RingElement),
+         (symbol==, RingElement, ChainComplexMap),
+         (symbol==, Ring, ZZ),
+         (symbol==, QQ, ZZ),
+         (symbol==, QQ, RR),
+         (symbol==, CC, ZZ),
+         (symbol==, CC, QQ),
+         (symbol==, QQ, CC),
+         (symbol==, CC, RR),
+         (symbol==, CC, CC),
+         (symbol==, ZZ, MonomialIdeal),
+         (symbol==, ZZ, ChainComplexMap),
+         (symbol==, MutableMatrix, ZZ),
+         (symbol==, MonoidElement, MonoidElement),
+         (symbol==, MonomialIdeal, MonomialIdeal),
+         (symbol==, Ideal, Ideal),
+         (symbol==, InfiniteNumber, ZZ),
+         (symbol==, ChainComplexMap, ChainComplexMap),
+         (symbol==, MutableMatrix, MutableMatrix),
+         (symbol==, Net, Net),
+         (symbol==, Net, String),
+         (symbol==, Module, Ideal),
+         (symbol==, Ideal, Module),
+         (symbol==, Ring, Ideal)
+	  },
      Headline => "equality",
-     TT "x == y", " -- a binary operator for testing mathematical equality.",
+     Usage => "x == y",
+     "Returns true or false, depending on whether 
+     the objects x and y are (mathematically) equal.  The objects x and y are
+     typically numbers, elements of rings, matrices, modules, ideals, 
+     chain complexes, and so on.",
      PARA,
      "A test for mathematical equality will typically involve doing a computation
      to see whether two representations of the same mathematical object are being
      compared.  For example, an ideal in a ring is represented by giving its
      generators, and checking whether two sets of generators produce the same
-     ideal involves a computation with Groebner bases.",
+     ideal involves a computation with Groebner bases.  The ideals must be defined
+     in the same ring.",
+     EXAMPLE {
+	  "R = QQ[a,b,c];",
+	  "ideal(a^2-b,a^3) == ideal(b^2, a*b, a^2-b)"
+	  },
+     "Often mathematical objects can be tested to see if they are 0 or 1.",
+     EXAMPLE {
+	  "L = ideal(a^2-a-1,a^3+a+3)",
+	  "L == 1",
+	  "L == 0"
+	  },
+     PARA,  
+     "Rings are handled in a different manner in Macaulay2.  Each time you create a 
+     polynomial ring in Macaulay2, you are handed a new ring, which is not
+     equal to any other ring.  For example, the rings R and S below are not
+     considered the same by Macaulay2.",
+     EXAMPLE {
+     	  "R = QQ[a..d]; S = QQ[a..d]",
+     	  "R == S"
+     	  },
+     PARA,
+     "Two modules are equal if they are isomorphic as subquotients of the
+     same ambient free module.  See ", TO "modules", " for more details.",
+     EXAMPLE {
+	  "R = ZZ/101[x]",
+      	  "image matrix {{2,x},{1,5}} == R^2",
+      	  "image matrix {{2,x},{0,5}} == R^2"
+	  },
      PARA,
      "It may happen that for certain types of objects, there is no method installed
-     for testing mathematical equality, in which strict equality will be tested with
+     for testing mathematical equality, in which case strict equality will be tested with
      the operator ", TO "===", ".  If a test for mathematical equality is installed
      later, your results may change.",
-     -- "It may happen that for certain types of objects, there is no method installed
-     -- for testing mathematical equality, in which case an error will be given.  If
-     -- you wanted to test strict equality, use the operator ", TO "===", " or 
-     -- ", TO "=!=", ".",
      PARA,
-     "Warning: whether this comparison operator returns true is not necessarily 
-     related to whether the comparison operator ", TO "?", " returns ", TT "symbol ==", ".",
-     PARA,
-     SeeAlso =>{ "!=" }
+     Caveat => {"Warning: whether this comparison operator returns true is not necessarily 
+     related to whether the comparison operator ", TO symbol?, " returns ", TT "symbol==", "."},
+     SeeAlso =>{ symbol!=, symbol===, symbol=!=, "operators" }
      }
 
 document {

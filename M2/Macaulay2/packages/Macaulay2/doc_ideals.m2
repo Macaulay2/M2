@@ -152,49 +152,6 @@ document {
 	  },
      SeeAlso => {"ideals"}
      }
-document {
-     Key => {(symbol ==,Ideal,Ideal),
-	  (symbol ==,Ideal,MonomialIdeal),
-	  (symbol ==,MonomialIdeal,Ideal)
-	  },
-     Headline => "equality of ideals",
-     Usage => "I == J",
-     Inputs => {
-	  "I" => null,
-	  "J" => {"in the same ring as ", TT "I"},
-	  },
-     Outputs => {
-	  Boolean => {"whether the two ideals are the same"}
-	  },
-     "If the ideals ", TT "I", " and ", TT "J", " are in a polynomial ring,
-     (or a quotient of a polynomial ring), then equality is checked by
-     comparing ", TO "Groebner bases", " of the two ideals.",
-     EXAMPLE {
-	  "R = QQ[a..d];",
-	  "I = ideal(a^2,b);",
-	  "J = ideal(a,c);",
-	  "I + J == ideal(a,b,c)"
-	  },
-     "To test whether an ideal is the zero ideal or the entire ring, use ",
-	  TO (symbol ==, Ideal, ZZ), ".",
-     SeeAlso => {"ideals"}
-     }
-document {
-     Key => (symbol ==, Ideal, ZZ),
-     Usage => {"I == n"},
-     Inputs => {"I" => null,"n" => "either 0, or 1."},
-     Outputs => {
-	  Boolean => {"If ", TT "n==1", ", then whether ", 
-	       TT "I", " is the unit ideal.
-     	       If ", TT "n==0", ", then whether ", TT "I", " is the zero ideal.  Any other value
-     	       for ", TT "n", " is an error."}},
-     EXAMPLE {
-	  "R = QQ[x];",
-      	  "ideal(x^2,x+1) == 1",
-      	  "ideal(0_R) == 0"
-	  },
-     SeeAlso => {(symbol==, Ideal, Ideal)}
-     }
 
 document {
      Key => {(isSubset,Ideal,Ideal)
