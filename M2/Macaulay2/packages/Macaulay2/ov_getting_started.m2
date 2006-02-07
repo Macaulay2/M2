@@ -560,13 +560,6 @@ document {
      }
 
 
-
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
--- End:
-
-end
-
 document {
      Key => "Reading the documentation",
      "The documentation for Macaulay 2 is available in several formats.
@@ -849,4 +842,6 @@ document {
 	  }
      }
 
-
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
+-- End:

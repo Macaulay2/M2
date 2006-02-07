@@ -40,13 +40,6 @@ document {
      }
 
 document {
-     Key => seeParsing,
-     Headline => "print syntax table",
-     TT "seeParsing()", " -- print the syntax table which governs parsing
-     precedence."
-     }
-
-document {
      Key => instance,
      Headline => "whether something has a certain type",
      TT "instance(x,X)", " -- tells whether ", TT "x", " is an instance
