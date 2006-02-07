@@ -984,7 +984,10 @@ document {
      "Parsing is determined by a triple of numbers attached to each token.
      The following table (produced by the command ", TO "seeParsing", "), 
      displays each of these numbers.",
-     EXAMPLE "seeParsing()",
+     EXAMPLE {
+	  "debug Macaulay2Core",
+	  "seeParsing()"
+	  },
      "Here is the way these numbers work.  The parser maintains a number
      which we will call the current parsing level, or simply, the level.
      The parser builds up an expression until it encounters an input token
