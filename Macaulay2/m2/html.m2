@@ -878,7 +878,7 @@ installPackage Package := opts -> pkg -> (
 	  if version#"dumpdata" and pkg#"title" == "Macaulay2" then (
 	       f << endl << "(set -x ; \"$ENCAP_SOURCE\"/\"$ENCAP_PKGNAME\"/bin/" << version#"M2 name" << " --stop --dumpdata)" << endl;
 	       );
-	  fileMode(f,octal "644");
+	  fileMode(f,octal "755");
 	  f << close;
 	  -- preremove
      	  f = buildDirectory | "preremove"
@@ -887,7 +887,7 @@ installPackage Package := opts -> pkg -> (
 	  << ///for i in *.info/// << endl
 	  << ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" --delete "$i")/// << endl
 	  << ///done/// << endl;
-	  fileMode(f,octal "644");
+	  fileMode(f,octal "755");
  	  f << close;
 	  -- encapinfo
 	  f = buildDirectory | "encapinfo"
@@ -896,6 +896,7 @@ installPackage Package := opts -> pkg -> (
 	  removeLastSlash := s -> if s#?0 and s#-1 === "/" then substring(s,0,#s-1) else s;
 	  scan(("libm2","packagedoc","packageexamples","packagehtml","packageimages","packagesrc","packagetests"),
 	       k -> f << "linkdir " << (if class LAYOUT#k === Function then removeLastSlash LAYOUT#k "*" else removeLastSlash LAYOUT#k) << endl);
+	  fileMode(f,octal "644");
 	  f << close;
 	  -- INSTALL
 	  if pkg#"title" == "Macaulay2" then (
