@@ -197,16 +197,7 @@ int system_randomint(void) {
 #endif
      }
 
-#ifdef __DJGPP__
-void system_stime(void){
-     extern double start_timer();
-     start_timer();
-     }
-double system_etime(void){
-     double return_elapsed_time(double);
-     return return_elapsed_time(0.);
-     }
-#elif !defined(CLOCKS_PER_SEC) || CLOCKS_PER_SEC > 10000
+#if !defined(CLOCKS_PER_SEC) || CLOCKS_PER_SEC > 10000
 static struct itimerval it;
 #define INITVAL 1000000		/* a million seconds is very long */
 void system_stime(void) {
@@ -282,12 +273,15 @@ char **argv;
      char READLINEVERSION[8];	/* big enough for "255.255" */
      char dummy;
      int returncode = 0;
-     char **x;
-     char **saveenvp = NULL;
      int envc = 0;
      static int old_collections = 0;
+#if defined(DUMPDATA)
+     char **saveenvp = NULL;
      char **saveargv;
-     int i;
+#else
+#define saveenvp __environ
+#define saveargv argv
+#endif
      void main_inits();
      static void *reserve = NULL;
      extern void actors4_setupargv();
@@ -326,58 +320,60 @@ char **argv;
      _setmode(STDERR,_O_BINARY);
 #endif
 
-#ifdef __DJGPP__
-     __file_handle_modes[STDIN ] = O_BINARY;
-     __file_handle_modes[STDOUT] = O_BINARY;
-     __file_handle_modes[STDERR] = O_BINARY;
-#endif
-
-     /* save arguments on stack in case they're on the heap */
-     saveargv = (char **)alloca((argc + 1)*sizeof(char *));
-     for (i=0; i<argc; i++) {
-	  saveargv[i] = alloca(strlen(argv[i]) + 1);
-	  strcpy(saveargv[i],argv[i]);
-     }
-     saveargv[i] = NULL;
-
 #if defined(DUMPDATA)
-     /* save environment on stack in case it's on the heap */
-     for (envc=0, x=__environ; *x; x++) envc++;
-     saveenvp = (char **)alloca((envc + 1)*sizeof(char *));
-     for (i=0; i<envc; i++) {
-	  saveenvp[i] = alloca(strlen(__environ[i]) + 1);
-	  strcpy(saveenvp[i],__environ[i]);
+     {
+	  int i;
+	  char **x;
+
+	  /* save arguments on stack in case they're on the heap */
+	  saveargv = (char **)alloca((argc + 1)*sizeof(char *));
+	  for (i=0; i<argc; i++) {
+	       saveargv[i] = alloca(strlen(argv[i]) + 1);
+	       strcpy(saveargv[i],argv[i]);
+	  }
+	  saveargv[i] = NULL;
+
+	  /* save environment on stack in case it's on the heap */
+	  for (envc=0, x=__environ; *x; x++) envc++;
+	  saveenvp = (char **)alloca((envc + 1)*sizeof(char *));
+	  for (i=0; i<envc; i++) {
+	       saveenvp[i] = alloca(strlen(__environ[i]) + 1);
+	       strcpy(saveenvp[i],__environ[i]);
+	  }
+	  saveenvp[i] = NULL;
      }
-     saveenvp[i] = NULL;
 #endif
 
      ONSTACK(envc);
      if (0 != sigsetjmp(loaddata_jump,TRUE)) {
-	  char **environ0;
      	  GC_free_space_divisor = 4;
 	  if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
 	  old_collections = GC_gc_no;
 #if defined(DUMPDATA)
-     	  __environ = saveenvp;	/* __environ is a static variable that points
-				   to the heap and has been overwritten by
-				   loaddata(), thereby pointing to a previous
-				   incarnation of the heap. */
-	  /* Make a copy of the environment on the heap for '__environ'. */
-	  /* In some systems, putenv() calls free() on the old item,
-	     so we are careful to use malloc here, and not GC_malloc. */
-	  environ0 = (char **)malloc((envc + 1)*sizeof(char *));
-	  /* amazing but true:
-	     On linux, malloc calls getenv to get values for tunable
-	     parameters, so don't trash __environ yet.
-	     */
-	  if (environ0 == NULL) fatal("out of memory");
-	  for (i=0; i<envc; i++) {
-	       environ0[i] = malloc(strlen(saveenvp[i]) + 1);
-	       if (environ0[i] == NULL) fatal("out of memory");
-	       strcpy(environ0[i],saveenvp[i]);
-	  }
-	  environ0[i] = NULL;
-	  __environ = environ0;
+          {
+	       char **environ0;
+	       int i;
+	       __environ = saveenvp;	/* __environ is a static variable that points
+					to the heap and has been overwritten by
+					loaddata(), thereby pointing to a previous
+					incarnation of the heap. */
+	       /* Make a copy of the environment on the heap for '__environ'. */
+	       /* In some systems, putenv() calls free() on the old item,
+		  so we are careful to use malloc here, and not GC_malloc. */
+	       environ0 = (char **)malloc((envc + 1)*sizeof(char *));
+	       /* amazing but true:
+		  On linux, malloc calls getenv to get values for tunable
+		  parameters, so don't trash __environ yet.
+		  */
+	       if (environ0 == NULL) fatal("out of memory");
+	       for (i=0; i<envc; i++) {
+		    environ0[i] = malloc(strlen(saveenvp[i]) + 1);
+		    if (environ0[i] == NULL) fatal("out of memory");
+		    strcpy(environ0[i],saveenvp[i]);
+	       }
+	       environ0[i] = NULL;
+	       __environ = environ0;
+               }
 #endif
 	  }
 
@@ -564,7 +560,7 @@ int actors4_isReady(int fd) {
 }
 
 int actors5_WindowWidth(int fd) {
-#if defined(__DJGPP__) || defined(__alpha) || defined(_WIN32)
+#if defined(__alpha) || defined(_WIN32)
      return 0;
 #else
      struct winsize x;
@@ -574,7 +570,7 @@ int actors5_WindowWidth(int fd) {
      }
 
 int actors5_WindowHeight(int fd) {
-#if defined(__DJGPP__) || defined(__alpha) || defined(_WIN32)
+#if defined(__alpha) || defined(_WIN32)
      return 0;
 #else
      struct winsize x;

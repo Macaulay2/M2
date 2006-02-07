@@ -4,7 +4,7 @@
 #include "M2types.h"
 #include "M2mem.h"
 
-#if defined(__DJGPP__) || defined(_WIN32)
+#if defined(_WIN32)
 #define NEWLINE "\r\n"
 #elif defined(__MWERKS__) && !defined(__BUILDING_MPW__)
 #define NEWLINE "\r"
