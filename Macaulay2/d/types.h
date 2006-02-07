@@ -13,7 +13,7 @@
 #define alloca _alloca
 #endif
 
-#if defined(__DJGPP__) || defined(_WIN32)
+#if defined(_WIN32)
 #define NEWLINE "\r\n"
 #elif defined(__MWERKS__) && !defined(__BUILDING_MPW__)
 #define NEWLINE "\r"
@@ -66,7 +66,7 @@ extern char *libfac_version;
 #include <netdb.h>     	    	/* needed for gethostbyname() */
 #include <netinet/in.h>	    	/* needed for struct sockaddr_in */
 #include <arpa/inet.h>	   	/* needed for inet_addr() */
-#elif defined(__DJGPP__) || defined(__MWERKS__) || defined(_WIN32) && !defined(__CYGWIN32__)
+#elif defined(__MWERKS__) || defined(_WIN32) && !defined(__CYGWIN32__)
 #define HAVE_SOCKETS FALSE
 #else
 #define HAVE_SOCKETS TRUE
@@ -77,11 +77,6 @@ extern char *libfac_version;
 #include <netdb.h>     	    	/* needed for gethostbyname() */
 #include <netinet/in.h>	    	/* needed for struct sockaddr_in */
 #include <arpa/inet.h>	   	/* needed for inet_addr() */
-#endif
-
-#ifdef __DJGPP__
-#include <fcntl.h>
-#include <libc/dosio.h>
 #endif
 
 #if defined(_WIN32) && !defined(__CYGWIN32__)
