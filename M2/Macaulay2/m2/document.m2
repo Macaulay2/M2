@@ -889,7 +889,10 @@ documentation String := key -> (
 	  documentation t)
      else (
 	  b := makeDocBody key;
-	  if b === null then b = ();
+	  if b === null then (
+	       error "undocumented";
+	       b = ();
+	       );
 	  Hypertext fixuptop (title key, b, theExamples key, caveat key, seealso key, theMenu key)))
 
 binary := set binaryOperators
