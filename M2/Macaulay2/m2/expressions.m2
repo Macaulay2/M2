@@ -239,6 +239,13 @@ Power = new HeaderType of Expression
 Power.synonym = "power expression"
 Power#operator = "^"
 value ZZ := identity
+value QQ := identity
+value RR := identity
+value CC := identity
+value RRR := identity
+value CCC := identity
+
+value RR := identity
 value Power := (x) -> (value x#0) ^ (value x#1)
 
 Subscript = new HeaderType of Expression

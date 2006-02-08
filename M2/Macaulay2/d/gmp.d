@@ -484,8 +484,8 @@ export Floor(x:double):Integer := (
      else (
 	  wasneg := x < 0.;
 	  if wasneg then x = -x;
-	  n := (int(floor(log(x)/logtwo)) / 16) * 16;
-     	  x = x >> n;
+	  n := 0;
+	  x = Ccode(double, "frexp(", x, ", &", n, ")");
 	  r := toInteger(0);
 	  while (
 	       i := int(floor(x));
@@ -493,12 +493,20 @@ export Floor(x:double):Integer := (
 	       r = r + i;
 	       n > 0
 	       )
-	  do (
+	  do if n > 16 then (
 	       n = n - 16;
 	       x = x << 16;
 	       r = r << 16;
+	       )
+	  else (
+	       x = x << n;
+	       r = r << n;
+	       n = 0;
 	       );
-	  if wasneg then r = -r;
+	  if wasneg then (
+	       r = -r;
+	       if x > 0. then r = r-1;
+	       );
 	  r));
 export Round(x:double):Integer := Floor(x + 0.5);
 

@@ -973,8 +973,6 @@ document {
      
      }
 
-end
-
 document {
      Key => "syntax",
      "A newline ends a statement if it can, otherwise it acts like any
