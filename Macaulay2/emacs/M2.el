@@ -37,6 +37,7 @@
 \\{M2-comint-mode-map}"
   (M2-common)
   (setq comint-prompt-regexp M2-comint-prompt-regexp)
+  (setq comint-use-prompt-regexp-instead-of-fields t)
   (setq comint-dynamic-complete-functions '( M2-dynamic-complete-symbol comint-dynamic-complete-filename))
   )
 
