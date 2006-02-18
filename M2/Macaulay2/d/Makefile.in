@@ -218,10 +218,11 @@ tmp_init.c : $(DFILES)
 
 ###################### libraries
 
-ifeq "$(FACTORY)" "yes"
-
 LIBRARYDEPS    += M2_setup.o
 LIBRARYOPTIONS += M2_setup.o
+
+ifeq "$(FACTORY)" "yes"
+
 LIBRARYDEPS    += factory_setup.o
 LIBRARYOPTIONS += factory_setup.o
 
