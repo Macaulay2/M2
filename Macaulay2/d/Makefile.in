@@ -222,6 +222,7 @@ ifeq "$(FACTORY)" "yes"
 
 LIBRARYDEPS    += M2_setup.o
 LIBRARYOPTIONS += M2_setup.o
+LIBRARYDEPS    += factory_setup.o
 LIBRARYOPTIONS += factory_setup.o
 
 # singular libraries: factory, libfac, ntl
@@ -260,10 +261,6 @@ endif
 else
 LIBRARYOPTIONS += -lcf
 endif
-
-LIBRARYDEPS    += factory_setup.o
-LIBRARYOPTIONS += factory_setup.o
-LIBRARYOPTIONS += M2_setup.o
 
 ifeq "$(PROFILE)" "yes"
 ifeq "$(HAVE_LIBNTL_PG)" "yes"
