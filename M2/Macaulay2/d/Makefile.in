@@ -263,6 +263,9 @@ else
 LIBRARYOPTIONS += -lcf
 endif
 
+LIBRARYOPTIONS += factory_setup.o
+LIBRARYOPTIONS += M2_setup.o
+
 ifeq "$(PROFILE)" "yes"
 ifeq "$(HAVE_LIBNTL_PG)" "yes"
 LIBRARYOPTIONS += -lntl-pg
