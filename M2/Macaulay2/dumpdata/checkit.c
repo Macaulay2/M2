@@ -7,6 +7,7 @@
 #include "dumpdata.h"
 #include "std.h"
 
+bool notify = TRUE;
 static char *x = "initial value";
 static char message[100];
 int main(int argc, char **argv) {
