@@ -173,7 +173,7 @@ hilbertSeries Module := options -> (M) -> (
 	  y := flatten apply(pairs denom, (i,e) -> Power {(1 - T_i),e});
 	  M.cache#"exact hilbertSeries" = Divide{num, Product y})
      else if class ord === ZZ then (
-	  s := if num == 0 or ord <= 0 then 0_T else (
+	  s := if num == 0 then 0_T else (
 	       m := min min(listForm num / first);
 	       n := ord;
 	       N := n - m;
