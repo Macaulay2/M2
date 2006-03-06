@@ -20,7 +20,7 @@ document {
 	  "regularity I"
 	  },
      PARA,
-     "The regularity is the label of the last row in the betti diagram of a chain complex",
+     "The regularity is the label of the last row in the betti diagram of a chain complex.",
      EXAMPLE {
 	  "J=ideal(a^3,a^2*b,a*b^6,a^2*c);",
 	  "C=resolution J",
