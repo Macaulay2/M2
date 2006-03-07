@@ -890,7 +890,7 @@ documentation String := key -> (
      else (
 	  b := makeDocBody key;
 	  if b === null then (
-	       error "undocumented";
+	       stderr << "warning: documentation node for '" << key << "' is empty" << endl;
 	       b = ();
 	       );
 	  Hypertext fixuptop (title key, b, theExamples key, caveat key, seealso key, theMenu key)))
