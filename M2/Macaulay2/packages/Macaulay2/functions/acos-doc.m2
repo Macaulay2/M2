@@ -1,53 +1,18 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): L. Gold
 --- notes: 
 
 document { 
-     Key => acos,
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Key => {acos,(acos,ZZ), (acos,RR)},
+     Headline => "compute the arccosine", 
+     Usage => "acos x",
+     Inputs => { 
+	  "x" => RR => ""
 	  },
-     Outputs => {
+     Outputs => { 
+	  RR => { "the arccosine of ", TT "x"} 
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (acos,ZZ),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (acos,RR),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc2.m2:668:     Key => acos,
+	  "acos .5"
+	  }
+     }     

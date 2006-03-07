@@ -1,70 +1,35 @@
---- status: TODO
---- author(s): 
---- notes: 
+--- status: DRAFT
+--- author(s): L. Gold
+--- notes: needs examples
 
 document { 
      Key => atan,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
+     Headline => "compute the arctangent"
+}
 document { 
      Key => (atan,RR,RR),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Headline => "compute the angle of a triangle determined by a point",
+     Usage => "atan(x,y)",
+     Inputs => { 
+	  "x" => RR => null, 
+	  "y" => RR => null
 	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Outputs => { 
+	 RR => { "the angle formed with the x-axis by the ray from the origin to the point ", TT "(x,y)" } 
+	  }
+--     EXAMPLE {
+--	  }
      }
 document { 
-     Key => (atan,ZZ),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Key => {(atan,RR),(atan,ZZ)},
+     Headline => "compute the arctangent of a number ",
+     Usage => "atan x",
+     Inputs => { 
+	  "x" => RR => null 
 	  },
      Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  RR => {"the arctangent of ", TT "x"} 
+	  }
+--     EXAMPLE {
+--	  }
      }
-document { 
-     Key => (atan,RR),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc2.m2:678:     Key => atan,
- -- doc2.m2:684:     Key => (atan,RR,RR),

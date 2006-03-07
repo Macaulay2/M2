@@ -638,7 +638,6 @@ document {
      as is typically the case, whereas the assignment of a value to a local
      variable is never globally known."
      }
-
 document {
      Key => abs,
      Headline => "absolute value function", 
@@ -654,88 +653,6 @@ document {
 		"abs(-pi)"
 		},
      }
-
-
--- the next three document nodes illustrate three possibilities for the first entry of the list:
--- string, function, and symbol.
-
-document {
-     Key => sin, -- this node is used as an example in the documentation node Inputs and Outputs.
-     Headline => "sine function",
-     Usage => "sin x",
-     Inputs => { "x" => RR => null },
-     Outputs => { { "the sine of ", TT "x", "" } },
-	EXAMPLE {
-		"sin (pi/2)"
-		}
-	 }
-document {
-     Key => cos, 
-     Headline => "cosine function",
-     Usage => "cos x",
-     Inputs => { "x" => RR => null },
-     Outputs => { { "the cosine of ", TT "x", "" } },
-	EXAMPLE {
-		"cos 2"
-		}
-	 }
-document {
-     Key => symbol tan,
-     Headline => "tangent function",
-     Usage => "tan x",
-     Inputs => { "x" => RR => null },
-     Outputs => { { "the tangent of ", TT "x" } },
-	EXAMPLE {
-		"tan 1"
-		}
-	 }
-document {
-     Key => asin,
-     Headline => "arcsine function", 
-     Usage => "asin x",
-     Inputs => { "x" => RR => null },
-     Outputs => { { "the arcsine of ", TT "x"} },
-	EXAMPLE {
-		"asin 1"
-		}
-	 }
-document {
-     Key => acos,
-     Headline => "arccosine function", 
-     Usage => "acos x",
-     Inputs => { "x" => RR => null },
-     Outputs => { { "the arccosine of ", TT "x"} },
-	EXAMPLE {
-		"acos .5"
-		}
-	 }
-document {
-     Key => atan,
-     Headline => "arctangent function",
-     Usage => "atan x",
-     Inputs => { "x" => RR => null },
-     Outputs => { { "the arctangent of ", TT "x"} } }
-document {
-     Key => (atan,RR,RR),
-     Usage => "atan(x,y)",
-     Inputs => { "x" => RR => null, "y" => RR => null },
-     Outputs => { { "the angle formed with the x-axis by the ray from the origin to the point ", TT "{x,y}" } } }
-document {
-     Key => sinh,
-     Headline => "hyperbolic sine function",
-     Usage => "sinh x",
-     Inputs => { "x" => RR => null },
-     Outputs => { { "the hyperbolic sine of ", TT "x" } } }
-document {
-     Key => cosh, Headline => "hyperbolic cosine function",
-     Usage => "cosh x",
-     Inputs => { "x" => RR => null },
-     Outputs => { { "the hyperbolic cosine of ", TT "x" } } }
-document {
-     Key => tanh, Headline => "hyperbolic tangent function",
-     Usage => "tanh x",
-     Inputs => { "x" => RR => null },
-     Outputs => { { "the hyperbolic tangent of ", TT "x" } } }
 document {
      Key => exp, Headline => "exponential function",
      Usage => "exp x",

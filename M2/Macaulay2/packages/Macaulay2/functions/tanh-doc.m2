@@ -1,53 +1,17 @@
---- status: TODO
---- author(s): 
---- notes: 
+--- status: DRAFT
+--- author(s): L. Gold
+--- notes: include example?
 
 document { 
-     Key => tanh,
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Key => {tanh, (tanh,ZZ),(tanh,RR)},
+     Headline => "compute the hyperbolic tangent",
+     Usage => "tanh x",
+     Inputs => { 
+	  "x" => RR => null 
 	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Outputs => { 
+	  RR => { "the hyperbolic tangent of ", TT "x" } 
+	  }
+--     EXAMPLE {
+--	  }
      }
-document { 
-     Key => (tanh,ZZ),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (tanh,RR),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc2.m2:700:     Key => tanh, Headline => "hyperbolic tangent function",
