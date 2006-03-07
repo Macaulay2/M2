@@ -1,55 +1,18 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): L. Gold
 --- notes: 
 
 document { 
-     Key => cos,
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Key => {cos, (cos,ZZ), (cos,RR)},
+     Headline => "compute the cosine",
+     Usage => "cos x",
+     Inputs => { 
+	  "x" => RR => null 
 	  },
-     Outputs => {
+     Outputs => { 
+	  RR => { "the cosine of ", TT "x", "" } 
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "cos 2"
+	  }
      }
-document { 
-     Key => (cos,ZZ),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (cos,RR),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc2.m2:638:     Key => cos, 
- -- doc2.m2:668:     Key => acos,
- -- doc2.m2:695:     Key => cosh, Headline => "hyperbolic cosine function",

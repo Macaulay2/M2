@@ -1,53 +1,19 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): L. Gold
 --- notes: 
 
 document { 
-     Key => asin,
-     Headline => "",
-     Usage => "",
+     Key => {asin,(asin,ZZ),(asin,RR)},
+     Headline => "compute the arcsine",
+     Usage => "asin x",
      Inputs => {
+	  "x" => RR => ""
 	  },
      Outputs => {
+	  RR => {"the arcsine of ", TT "x"}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "asin 1"
+	  }
      }
-document { 
-     Key => (asin,ZZ),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (asin,RR),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc2.m2:658:     Key => asin,
+

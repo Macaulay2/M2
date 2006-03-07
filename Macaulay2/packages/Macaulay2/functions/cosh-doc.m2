@@ -1,53 +1,17 @@
---- status: TODO
---- author(s): 
---- notes: 
+--- status: DRAFT
+--- author(s): L. Gold
+--- notes: include example?
 
 document { 
-     Key => cosh,
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Key => {cosh, (cosh,ZZ),(cosh,RR)},
+     Headline => "compute the hyperbolic cosine",
+     Usage => "cosh x",
+     Inputs => { 
+	  "x" => RR => null 
 	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Outputs => { 
+	  RR => { "the hyperbolic cosine of ", TT "x" } 
+	  }
+--    EXAMPLE {
+--	  }
      }
-document { 
-     Key => (cosh,ZZ),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (cosh,RR),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc2.m2:695:     Key => cosh, Headline => "hyperbolic cosine function",
