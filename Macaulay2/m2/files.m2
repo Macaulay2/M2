@@ -59,7 +59,8 @@ findFiles String := opts -> name -> (
      if not fileExists name then return {};
      if not isDirectory name then return {name};
      if not name#-1 === "/" then name = name | "/";
-     prepend(name,flatten apply(drop(readDirectory name,2), f -> findFiles(name|f,opts)))
+     prepend(name,flatten apply(readDirectory name, 
+	       f -> if f === "." or f === ".." then {} else findFiles(name|f,opts)))
      )
 
 backupFileRegexp = "\\.~[0-9.]+~$"					    -- we don't copy backup files.
