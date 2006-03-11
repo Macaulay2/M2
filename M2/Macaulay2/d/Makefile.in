@@ -310,14 +310,14 @@ LIBRARYOPTIONS += $(GDBMLIB)
 
 # LIBRARYOPTIONS += $(M2_LDLIBS)
 
+ifeq "$(STATIC)" "yes"
+LIBRARYOPTIONS += -Wl,-Bdynamic
+endif
+
 ifeq ($(OS),Darwin)
 LIBRARYOPTIONS += $(READLINELIB) $(HISTORYLIB)
 else
 LIBRARYOPTIONS +=  $(READLINELIB) $(HISTORYLIB) -lcurses
-endif
-
-ifeq "$(STATIC)" "yes"
-LIBRARYOPTIONS += -Wl,-Bdynamic
 endif
 
 # we successfully avoid using streamio, but we need the personality function in libstc++
