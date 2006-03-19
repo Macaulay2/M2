@@ -811,7 +811,7 @@ void gbA::spair_set_defer(spair *&p)
   // The spair should have been reduced a number of times
   // already, so its type should be SPAIR_GEN or SPAIR_ELEM
 {
-  emit_wrapped("D");
+  if (gbTrace >= 4) emit_wrapped("D");
   //  spair_delete(p); // ONLY FOR TESTING!! THIS IS INCORRECT!!
   //  return;
   S.n_in_degree++;

@@ -2130,6 +2130,8 @@ vec PolyRing::translate_gbvector_to_vec(const FreeModule *F, const gbvector *v) 
   GBRing *GR = get_gb_ring();
   vecHeap H(F);
 
+  if (gbTrace>=3)
+    emit_wrapped(".");
   for (const gbvector *t = v; t != 0; t=t->next)
     {
       Nterm *s = new_term();

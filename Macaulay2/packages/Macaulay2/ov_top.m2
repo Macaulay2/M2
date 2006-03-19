@@ -30,7 +30,10 @@ document {
 	       TO "Hom module",
 	       TO "Tor and Ext",
 	       TO "combinatorial functions",
+          "The Macaulay 2 Language",
+	       TO "The Macaulay2 language",
      	  "The Macaulay 2 Language",			    -- part 2, one liners, lists, sets, but not hash tables
+     	  
 	       TO "variables and symbols",
 	       TO "basic types",
 	       TO "control structures",			    -- control structures: scan, apply, for, while, if, return, break, continue
