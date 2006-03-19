@@ -320,7 +320,6 @@ document {
      are not intended for users.",
      UL {
 	  TO "buckets",
-	  TO "seeParsing"
 	  }
      }
 

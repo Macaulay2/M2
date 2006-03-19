@@ -1,6 +1,213 @@
 document {
      Key => "The Macaulay2 language",
-     "The Macaulay2 language is a simple yet powerful interpreted language."
+     "The Macaulay2 language is a simple yet powerful interpreted language.  Every 
+     object has a type, such as Type, ZZ (integer), String, HashTable, Ring, Matrix,
+     Function, etc.
+     User defined variables are not constrained to hold any one type.",
+     PARA,
+     "Expressions in Macaulay2 include function calls,
+     control structures (e.g. for and while loops), function definitions,
+     and operator expressions.
+     Every expression returns an object although null is often returned if the 
+     expression is only being used to produce some side effect.",
+     PARA,
+     "There is special syntax for creating and accessing strings, lists, sequences, and
+     hashtables.  These are the key data types underlying many new types.  The Macaulay2
+     engine implements low level ring, ring element and matrix types, and the types
+     Ring, RingElement, Matrix, Ideal, RingMap, Module, ChainComplex (and some others)
+     are based on these low-level internal data types and operations on them.",
+     PARA,
+     UL {
+	  TO "overview of the Macaulay2 language",
+	  TO "variables"
+	  },
+     HEADER3 "basic datatypes",
+     UL {
+	  TO "numeric types",
+	  TO "strings and nets",
+	  TO "lists and sequences",
+	  TO "hash tables"
+	  },
+     HEADER3 "expressions",
+     UL {
+	  TO "assignment statements",
+	  TO "function calls",
+	  TO "function definitions",
+	  TO "if statements",
+	  TO "while loops",
+	  TO "for loops",
+	  TO "try clauses",
+	  TO "catch and throw",
+	  TO "operators",
+	  },
+     HEADER3 "input and output",
+     UL {
+	  TO "printing to the screen",
+	  TO "reading files",
+	  TO "getting input from the user",
+	  TO "creating and writing files",
+	  TO "saving polynomials and matrices in files",
+	  TO "two dimensional formatting",
+	  },
+     HEADER3 "classes and types",
+     UL {
+	  TO "a sample user defined type: Quaternions",
+	  },
+     HEADER3 "packages",
+     UL {
+          TO "packages",
+	  TO "writing documentation",
+	  TO "a sample package: Quaternions",
+	  },
+     HEADER3 "other topics",
+     UL {
+	  TO "interacting with the system",
+	  TO "advanced input and output",
+	  TO "debugging",
+	  },
+     
+     PARA,
+     Subnodes => {
+	  TO "overview of the Macaulay2 language",
+	  TO "variables",
+	  "basic datatypes",
+	  TO "numeric types",
+	  TO "strings and nets",
+	  TO "lists and sequences",
+	  TO "hash tables",
+     	  "expressions",
+	  TO "assignment statements",
+	  TO "function calls",
+	  TO "function definitions",
+	  TO "if statements",
+	  TO "while loops",
+	  TO "for loops",
+	  TO "try clauses",
+	  TO "catch and throw",
+	  TO "operators",
+	  "input and output",
+	  TO "printing to the screen",
+	  TO "reading files",
+	  TO "getting input from the user",
+	  TO "creating and writing files",
+	  TO "saving polynomials and matrices in files",
+	  TO "two dimensional formatting",
+	  "classes and types",
+	  TO "a sample user defined type: Quaternions",
+     	  "packages",
+          TO "packages",
+	  TO "writing documentation",
+	  TO "a sample package: Quaternions",
+	  "other topics",
+	  TO "interacting with the system",
+	  TO "advanced input and output",
+	  TO "debugging",
+	  }
+     }
+------------------------------------------------------------------
+document {
+     Key => "variables",
+     "Valid names for symbols may be constructed using letters, digits, and
+     the apostrophe, and should not begin with a digit.",
+     EXAMPLE {
+	  "x",
+	  "q0r55",
+	  "f'"
+	  },
+     "Some symbols have preassigned meanings and values.  For example, symbols
+     consisting of the letter ", TT "o", " followed by a number are used 
+     to store output values.",
+     EXAMPLE {
+	  "o2",
+	  },
+     "Other symbols refer to functions built into Macaulay 2 that provide
+     much of its functionality.",
+     PARA,
+     "Sometimes, one wants the symbol, rather than the particular value it
+     happens to have at the moment.  For example after setting the value of
+     ", TT "x", " to 5, the value of the variable ", TT "x", " is no longer the 
+     symbol ", TT "x", ".
+     Use ", TO "symbol", " to recover the symbol itself.",
+     EXAMPLE {
+	  "x=5",
+	  "x",
+	  "symbol x"
+	  },
+     SeeAlso => {
+	  "symbol",
+	  "local",
+	  "global",
+	  listUserSymbols,
+	  clearOutput,
+	  clearAll,
+	  Symbol
+	  }
+     }
+document {
+     Key => "numeric types",
+     HEADER3 "Integers and rational numbers",
+     "In Macaulay2, integers and rational numbers have any number of digits
+     (up to memory limits at least).",
+     EXAMPLE {
+	  "21672378126371263123123",
+	  "3748568762746238746278/5876584978947",
+	  },
+     "Integers are elements of the ring ", TO ZZ, " of integers, and rational
+     numbers are elements of the ring ", TO QQ, " of rational numbers.",
+     PARA,
+     "One point to notice is that there are two kinds of division, ", TO symbol/,
+     " and ", TO symbol//, ".  The first
+     returns a rational number (element of ", TO QQ, 
+     "), while the second does division in ", TO ZZ, ".",
+     EXAMPLE {
+	  "6/3",
+	  "7//3"
+	  },
+     HEADER3 "Real and complex numbers",
+     "Real and complex numbers are approximate numbers, 
+     implemented using the machine's double
+     precision arithmetic.",
+     EXAMPLE {
+	  "1.372489274987",
+	  "1.3454353 * 10^20",
+	  "sqrt 4.5"
+	  },
+     EXAMPLE {
+	  "1/(1+ii)",
+	  },
+     "There are also arbitrary precision real and complex numbers.  See
+     ", TO "RRR", " or a", TO "CCC", " for more details.",
+     SeeAlso => {
+	  ZZ,
+	  QQ,
+	  RR,
+	  CC,
+	  RRR,
+	  CCC
+	  }
+     }
+
+
+
+------------------------------------------------------------------
+
+
+document {
+     Key => "expressions",
+     "All expressions in Macaulay2 return a value, including if, while and for statements.
+     This value may be ", TO null, ", which usually indicates that the expression is mainly 
+     being used for side effects.",
+     Subnodes => {
+	  TO "assignment statements",
+	  TO "function calls",
+	  TO "function definitions",
+	  TO "if statements",
+	  TO "while loops",
+	  TO "for loops",
+	  TO "try clauses",
+	  TO "catch and throw",
+	  TO "operators"
+	  }
      }
 
 document {
@@ -979,19 +1186,19 @@ document {
      white space.",
      EXAMPLE "2+\n3+\n4",
      PARA,
-     "Parsing is determined by a triple of numbers attached to each token.
-     The following table (produced by the command ", TO "seeParsing", "), 
-     displays each of these numbers.",
-     EXAMPLE {
-	  "debug Macaulay2Core",
-	  "seeParsing()"
-	  },
-     "Here is the way these numbers work.  The parser maintains a number
-     which we will call the current parsing level, or simply, the level.
-     The parser builds up an expression until it encounters an input token
-     whose parsing precedence is less than or equal to the current level.
-     The tokens preceding the offending token are bundled into an expression
-     appropriately and incorporated into the containing expression.",
+--     "Parsing is determined by a triple of numbers attached to each token.
+--     The following table (produced by the command ", TO "seeParsing", "), 
+--     displays each of these numbers.",
+--     EXAMPLE {
+--	  "debug Macaulay2Core",
+--	  "seeParsing()"
+--	  },
+--     "Here is the way these numbers work.  The parser maintains a number
+--     which we will call the current parsing level, or simply, the level.
+--     The parser builds up an expression until it encounters an input token
+--     whose parsing precedence is less than or equal to the current level.
+--     The tokens preceding the offending token are bundled into an expression
+--     appropriately and incorporated into the containing expression.",
      PARA,
      "When an operator or token is encountered, its binding strength serves
      as the level for parsing the subsequent expression, unless the current level

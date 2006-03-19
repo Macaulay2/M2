@@ -131,7 +131,7 @@ document {
 document {
      Key => "while",
      Headline => "loop control",
-     TT "while p do x", " repeatedly evaluates ", TT "x", " as long 
+     TT "while p do x", BR, " repeatedly evaluates ", TT "x", " as long 
      as the value of ", TT "p", " remains ", TO "true", ", returning 
      ", TO "null", ".",
      BR,NOINDENT,

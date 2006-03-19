@@ -205,9 +205,31 @@ bug:
   kernel F -- not implemented yet
 
 1/19/06
-bug, emailed to Dan.
+bug, emailed to Dan. FIXED
   6.667 * 10^15
   floor oo
   -- gives 436928511999999934464
 
 toString matrix{{6.667 * 10^15}}
+
+2/5/06
+bug, emailed to Dan. (subject: RR bug)
+
+There are 2 bugs here (1 bug, 1 missing feature). 
+ (1) Can't input real numbers of form: 1.23e14
+ (2) Want an outputPrecision value, or something similar.
+ 
+i1 : 1.234535 * 10^15
+
+o1 = 1.23453e15
+
+o1 : RR
+
+i2 : toString o1
+
+o2 = 1.23453e15
+
+i3 : toExternalString o1
+
+o3 = 1.23453e15
+
