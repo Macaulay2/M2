@@ -103,3 +103,9 @@ int getmaps(int nmaps, struct MAP maps[nmaps]) {
   }
   return OKAY;
 }
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/dumpdata "
+ End:
+*/

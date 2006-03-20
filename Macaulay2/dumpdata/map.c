@@ -11,3 +11,9 @@
 #else
 #include "map-notimplemented.c"
 #endif
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/dumpdata "
+ End:
+*/

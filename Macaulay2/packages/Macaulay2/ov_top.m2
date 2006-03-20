@@ -1,11 +1,17 @@
 document {
      Key => "Macaulay2",
      PARA IMG (LAYOUT#"packagesrc" "Style" | "9planets.gif", "image of nine planets"),
-     PARA {
-	  "This documentation addresses version ", version#"VERSION", " of Macaulay 2. "
-	  },
+     "Macaulay 2 is a software system devoted to supporting research in 
+     algebraic geometry and commutative algebra, developed with funding
+     from the National Science Foundation.  We are eager to help new users
+     get started with it.",
      Subnodes => {
-	       TO "preface",
+	  "Preface",
+	       TO "Copyright and license",
+	       TO "Acknowledgements",
+	       TO "The authors",
+	       TO "Other sources of information about Macaulay 2", -- node to be written, will point to our book, Hal's book, Mike's Arizona notes, Sage, etc
+	  "For the New User",
 	       TO "getting started",
 	  "Mathematical Objects",
 	       TO "rings",
@@ -16,7 +22,6 @@ document {
 	       TO "chain complexes",
 	       TO "varieties",
 	       TO "Groebner bases",
-	  -- "Important General Concepts",
 	  "Some Mathematical Computations",
 	       TO "normal forms",
 	       TO "Hilbert functions",
@@ -32,8 +37,7 @@ document {
 	       TO "combinatorial functions",
           "The Macaulay 2 Language",
 	       TO "The Macaulay2 language",
-     	  "The Macaulay 2 Language",			    -- part 2, one liners, lists, sets, but not hash tables
-     	  
+     	  "The Macaulay 2 Language (old version)",			    -- part 2, one liners, lists, sets, but not hash tables
 	       TO "variables and symbols",
 	       TO "basic types",
 	       TO "control structures",			    -- control structures: scan, apply, for, while, if, return, break, continue
@@ -47,15 +51,16 @@ document {
 	       TO "debugging",
 	       TO "executing other programs",
 	       TO "packages",
-		  TO "writing documentation",
-		  "Developer's Corner",
-		  TO "handling hypertext",
+	       TO "writing documentation",
+	  "Developer's Corner",
+	       TO "handling hypertext",
      	  "Appendix",
 	       TO "mathematical examples",
 	       TO "basic commutative algebra",
 	       TO "frequently encountered problems",
 	       TO "replacements for commands and scripts from Macaulay",
-     	       TO "reference material",			    -- every symbol and methods
+     	  "Reference material",
+	       TO "Type"
 	  }
      }
 

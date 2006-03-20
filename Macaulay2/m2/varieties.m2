@@ -115,7 +115,7 @@ module SheafOfRings  := Module => (F) -> (F.ring)^1
 Ideal * CoherentSheaf := (I,F) -> sheaf(F.variety, I * module F)
 CoherentSheaf ++ CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.variety, F.module ++ G.module)
 tensor(CoherentSheaf,CoherentSheaf) := CoherentSheaf => options -> (F,G) -> F**G
-CoherentSheaf ** CoherentSheaf := CoherentSheaf => (F,G) -> minimalPresentation sheaf(F.variety, F.module ** G.module)
+CoherentSheaf ** CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.variety, F.module ** G.module)
 CoherentSheaf ZZ := CoherentSheaf => (F,n) -> sheaf(variety F, F.module ** (ring F)^{n})
 SheafOfRings ZZ := CoherentSheaf => (O,n) -> O^1(n)
 CoherentSheaf ^ ZZ := CoherentSheaf => (F,n) -> sheaf(F.variety, F.module^n)
@@ -233,13 +233,13 @@ cotangentSheaf ProjectiveVariety := CoherentSheaf => (X) -> (
      else X.cache.cotangentSheaf = (
 	  R := ring X;
 	  F := presentation R;
-	  minimalPresentation sheaf(X, homology(vars ring F ** R,jacobian F ** R))
+	  sheaf(X, homology(vars ring F ** R,jacobian F ** R))
 	  )
      )
 cotangentSheaf(ZZ,ProjectiveVariety) := CoherentSheaf => (i,X) -> (
      if X#?(cotangentSheaf,i)
      then X#(cotangentSheaf,i) 
-     else X#(cotangentSheaf,i) = minimalPresentation exteriorPower(i,cotangentSheaf X))
+     else X#(cotangentSheaf,i) = exteriorPower(i,cotangentSheaf X))
 
 tangentSheaf = method()
 tangentSheaf ProjectiveVariety := CoherentSheaf => (X) -> dual cotangentSheaf X
@@ -315,7 +315,7 @@ Module        ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> (ring F)^1, dual)
 CoherentSheaf ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> OO_(F.variety), dual)
 
 sheafHom = method(TypicalValue => CoherentSheaf)
-sheafHom(CoherentSheaf,CoherentSheaf) := (F,G) -> minimalPresentation sheaf Hom(module F, module G)
+sheafHom(CoherentSheaf,CoherentSheaf) := (F,G) -> sheaf Hom(module F, module G)
 Hom(CoherentSheaf,CoherentSheaf) := Module => (F,G) -> HH^0 sheafHom(F,G)
 
 sheafExt = new ScriptedFunctor from {
@@ -330,7 +330,7 @@ sheafExt = new ScriptedFunctor from {
 	  )
      }
 sheafExt(ZZ,CoherentSheaf,CoherentSheaf) := CoherentSheaf => (
-     (n,F,G) -> minimalPresentation sheaf Ext^n(module F, module G)
+     (n,F,G) -> sheaf Ext^n(module F, module G)
      )
 
 sheafExt(ZZ,SheafOfRings,CoherentSheaf) := Module => (n,O,G) -> sheafExt^n(O^1,G)

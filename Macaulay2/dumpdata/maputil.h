@@ -7,3 +7,9 @@ extern int isStack(map m);
 extern int isDumpable(map m);
 extern void sprintmap(char *s, map m);
 extern void fdprintmap(int fd, map m);
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/dumpdata "
+ End:
+*/
