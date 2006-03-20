@@ -19,3 +19,9 @@ void warning(char *s,...) {
   va_end(ap);
 }
 
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/dumpdata "
+ End:
+*/

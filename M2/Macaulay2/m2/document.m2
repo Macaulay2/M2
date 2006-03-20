@@ -692,7 +692,7 @@ title := s -> (
 
 type := S -> fixup (
      s := value S;
-     if class s =!= Function then (
+     if class s =!= Function and class s =!= Package then (
 	  SEQ { SUBSECTION "For the programmer",  
 	       PARA deepSplice { "The object ", TO S, " is ", OFCLASS class s,
 		    if parent s =!= Nothing then (
@@ -994,8 +994,8 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2Core then (
 			 )
 		    )
 	       ),
-	  SUBSECTION "Version", "This documentation describes version ", pkg.Options.Version, " of the package.",
-	  SUBSECTION "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, ".",
+	  SUBSECTION "Version", "This documentation describes version ", pkg.Options.Version, " of ", pkg.Title, ".",
+	  if pkg =!= Macaulay2 then SUBSECTION "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, ".",
 	  if #e > 0 then (
 	       SUBSECTION "Exports",
 	       fixup UL {

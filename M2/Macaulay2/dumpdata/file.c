@@ -64,3 +64,9 @@ int linelen(char *p) {
   while (*p && *p != '\n') n++, p++;
   return n;
 }
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/dumpdata "
+ End:
+*/

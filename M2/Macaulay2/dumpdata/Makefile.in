@@ -23,8 +23,7 @@ $(EXTRAOBJS): /usr/lib/libc.a; $(AR) x $< $@
 libdump.a: libdump.a(file.o warning.o map.o dumpdata.o maputil.o printmaps.o $(EXTRAOBJS)); ranlib libdump.a
 all:: libdump.a
 check:: checkit
-	./checkit dump "hi there"
-	./checkit load "look!"
+	LD_DEBUG=all LOADDATA_DEBUG=true; export LD_DEBUG LOADDATA_DEBUG; set -x; ./checkit dump "hi there" && ./checkit load "look!"
 debug1:; gdb --args ./checkit dump "hi there"
 debug2:; gdb --args ./checkit load "look!"
 distclean : clean; rm -f Makefile
@@ -32,3 +31,7 @@ Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/dumpdata/Makefile
 check:: testprintmaps; ./$<
 testprintmaps:libdump.a
 clean::; rm -f testprintmaps
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/dumpdata "
+# End:

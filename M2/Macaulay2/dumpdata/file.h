@@ -6,3 +6,9 @@ int numlines(int len, unsigned char buf[len]);
 int fnumlines(const char *filename);
 void lines(int len, unsigned char buf[len], int nlines, char *line[nlines]);
 int linelen(char *p);
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/dumpdata "
+ End:
+*/

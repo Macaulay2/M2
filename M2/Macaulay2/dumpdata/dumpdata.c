@@ -93,6 +93,9 @@ int dumpdata(char const *dumpfilename) {
     if (ERROR == getmaps(nmaps,dumpmaps)) return ERROR;
     checkmaps(nmaps,dumpmaps);
     for (i=0; i<nmaps; i++) fdprintmap(fd,&dumpmaps[i]);
+    if (getenv("LOADDATA_DEBUG")) {
+	 for (i=0; i<nmaps; i++) fdprintmap(STDERR,&dumpmaps[i]);
+    }
     write(fd,"\n",1);
     pos = lseek(fd,0,SEEK_END);
     n = ((pos + PAGESIZE - 1)/PAGESIZE) * PAGESIZE - pos;
@@ -124,6 +127,9 @@ int loaddata(char const *filename) {
   FILE *f = fdopen(fd,"r");
   if (ERROR == getmaps(nmaps,currmap)) return ERROR;
   checkmaps(nmaps,currmap);
+  if (getenv("LOADDATA_DEBUG")) {
+       for (i=0; i<nmaps; i++) fdprintmap(STDERR,&currmap[i]);
+  }
   if (fd == ERROR || f == NULL) { warning("loaddata: can't open file '%s'\n", filename); return ERROR; }
   while (TRUE) {
     char fbuf[200];
@@ -165,7 +171,7 @@ int loaddata(char const *filename) {
     };
 
     if (!f_end && !dumpedmap.w && (uintP)dumpedmap.from < (uintP)currmap[j].from) {
-      if (notify) warning("loaddata: map has disappeared or changed its location:\n  %s\n", fbuf);
+      if (notify) warning("loaddata: map has disappeared or changed its location: %s\n", fbuf);
       fclose(f);
       return ERROR;
     }
@@ -241,3 +247,9 @@ int loaddata(char const *filename) {
   close(fd);
   return OKAY;
 }
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/dumpdata "
+ End:
+*/

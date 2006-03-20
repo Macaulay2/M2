@@ -1,5 +1,6 @@
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <sys/param.h>
 #include <sys/types.h>
@@ -30,6 +31,9 @@ int getmaps(int nmaps, struct MAP maps[nmaps]) {
     char *line[nmaps];
     int i;
     if (ERROR == getfile(mapfilename,mlen,buf)) return ERROR;
+    if (getenv("LOADDATA_DEBUG")) {
+	 write(STDERR,buf,mlen);
+    }
     lines(mlen,buf,nmaps,line);
     for (i=0; i<nmaps; i++) {
       int ret;
@@ -51,3 +55,9 @@ int getmaps(int nmaps, struct MAP maps[nmaps]) {
     return OKAY;
   }
 }
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/dumpdata "
+ End:
+*/

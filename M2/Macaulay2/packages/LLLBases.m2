@@ -1005,8 +1005,10 @@ EXAMPLE {
      	  -- this one takes too long:
 	  -- "time LLL(m, Strategy=>{BKZ,Givens,RealFP});",
 	  "time LLL(m, Strategy=>{BKZ,Givens,RealQP});",
-	  "time LLL(m, Strategy=>{BKZ,Givens,RealXD});",
-	  "time LLL(m, Strategy=>{BKZ,Givens,RealRR});"
+     	  -- this one takes too long:
+	  -- "time LLL(m, Strategy=>{BKZ,Givens,RealXD});",
+     	  -- maybe this one takes too long:
+	  -- "time LLL(m, Strategy=>{BKZ,Givens,RealRR});"
 	  },
      Caveat => {"For most of the options, the columns do not need to be 
 	  linearly independent.  The strategies CohenEngine and CohenTopLevel

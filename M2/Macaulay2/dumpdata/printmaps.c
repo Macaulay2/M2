@@ -12,3 +12,9 @@ int printmaps(int fd) {
   for (i=0; i<nmaps; i++) fdprintmap(fd,&dumpmaps[i]);
   return 0;
 }
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/dumpdata "
+ End:
+*/

@@ -16,57 +16,6 @@ document {
      engine implements low level ring, ring element and matrix types, and the types
      Ring, RingElement, Matrix, Ideal, RingMap, Module, ChainComplex (and some others)
      are based on these low-level internal data types and operations on them.",
-     PARA,
-     UL {
-	  TO "overview of the Macaulay2 language",
-	  TO "variables"
-	  },
-     HEADER3 "basic datatypes",
-     UL {
-	  TO "numeric types",
-	  TO "strings and nets",
-	  TO "lists and sequences",
-	  TO "hash tables"
-	  },
-     HEADER3 "expressions",
-     UL {
-	  TO "assignment statements",
-	  TO "function calls",
-	  TO "function definitions",
-	  TO "if statements",
-	  TO "while loops",
-	  TO "for loops",
-	  TO "try clauses",
-	  TO "catch and throw",
-	  TO "operators",
-	  },
-     HEADER3 "input and output",
-     UL {
-	  TO "printing to the screen",
-	  TO "reading files",
-	  TO "getting input from the user",
-	  TO "creating and writing files",
-	  TO "saving polynomials and matrices in files",
-	  TO "two dimensional formatting",
-	  },
-     HEADER3 "classes and types",
-     UL {
-	  TO "a sample user defined type: Quaternions",
-	  },
-     HEADER3 "packages",
-     UL {
-          TO "packages",
-	  TO "writing documentation",
-	  TO "a sample package: Quaternions",
-	  },
-     HEADER3 "other topics",
-     UL {
-	  TO "interacting with the system",
-	  TO "advanced input and output",
-	  TO "debugging",
-	  },
-     
-     PARA,
      Subnodes => {
 	  TO "overview of the Macaulay2 language",
 	  TO "variables",

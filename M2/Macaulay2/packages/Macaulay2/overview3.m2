@@ -106,15 +106,6 @@ document {
 
 document {
      Key => "preface",
-     "Macaulay 2 is a software system devoted to supporting research in 
-     algebraic geometry and commutative algebra, developed with funding
-     from the National Science Foundation.  We are eager to help new users
-     get started with it.",
-     Subnodes => {
-	  TOH "Copyright and license",
-	  TOH "Acknowledgements",
-	  TOH "The authors",
-	  }
      }
 
 document {

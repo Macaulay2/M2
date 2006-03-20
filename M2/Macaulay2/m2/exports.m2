@@ -1054,6 +1054,7 @@ export (
 	symbol toString,
 	symbol toUpper,
 	symbol topComponents,
+	"top" => symbol topComponents,
 	symbol topCoefficients,
 	symbol topLevelTexmacs,
 	symbol topicList,

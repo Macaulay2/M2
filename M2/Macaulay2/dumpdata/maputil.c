@@ -57,3 +57,9 @@ void fdprintmap(int fd, map m) {
   sprintmap(buf,m);
   write(fd,buf,strlen(buf));
 }
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/dumpdata "
+ End:
+*/
