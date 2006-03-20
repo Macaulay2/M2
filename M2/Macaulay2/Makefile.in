@@ -27,7 +27,7 @@ clean::; rm -f srcdir
 initialize :: cache
 cache :; mkdir $@
 distclean clean ::; rm -rf cache
-install :: $(cachedir)
+	install :: $(cachedir)
 $(cachedir):; $(INSTALL) -d "$@"
 ################################# util
 initialize::; $(MAKE) -C util all

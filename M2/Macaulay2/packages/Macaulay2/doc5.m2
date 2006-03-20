@@ -449,11 +449,11 @@ document {
      Usage => "truncateOutput w",
      Inputs => {"w" => ZZ => null},
      Outputs => {},
-     Consequences => {
+     Consequences => {{
 	  "The maximum output line width is set to ", TT "w", ", which should be an integer or ", TO "infinity", ".  
 	  This function works by assigning a value to ", TT "Thing.BeforePrint", ", which 
      	  may conflict with other ", TO "BeforePrint", " methods installed by the user, or those installed by the system that do line wrapping."
-	  }
+	  }}
      }
 
 

@@ -995,7 +995,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2Core then (
 		    )
 	       ),
 	  SUBSECTION "Version", "This documentation describes version ", pkg.Options.Version, " of ", pkg#"title", ".",
-	  if pkg =!= Macaulay2 then SUBSECTION "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, ".",
+	  if pkg#"title" =!= "Macaulay2" then SUBSECTION "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, ".",
 	  if #e > 0 then (
 	       SUBSECTION "Exports",
 	       fixup UL {
