@@ -110,7 +110,7 @@ poincare Module := M -> (
      n := degreeLength R;
      if n == 0 then error "expected nonzero degree length";
      M = cokernel presentation M;
-     if not isHomogeneous M then error "expected a homogeneous module";
+     -- if not isHomogeneous M then error "expected a homogeneous module";
      if M.cache.?poincare then M.cache.poincare else M.cache.poincare = (
      	  ZZn := degreesRing R;
 	  g := leadTerm gb presentation M;
