@@ -21,18 +21,18 @@ document {
 	  "
 	  },
      Subnodes => {
-	  TOH "Checking your Macaulay2 installation",
-	  TOH "Setting up the Macaulay2 emacs interface",
-	  TOH "Using Macaulay2 with emacs",
-	  TOH "A first Macaulay 2 session",
-	  TOH "Reading the documentation",
-	  TOH "Getting help or reporting bugs",
-	  TOH "What to read next?"
+	  TOH "checking your Macaulay2 installation",
+	  TOH "setting up the Macaulay2 emacs interface",
+	  TOH "using Macaulay2 with emacs",
+	  TOH "a first Macaulay 2 session",
+	  TOH "reading the documentation",
+	  TOH "getting help or reporting bugs",
+	  TOH "what to read next??"
 	  }
      }
 
 document {
-     Key => "Checking your Macaulay2 installation",
+     Key => "checking your Macaulay2 installation",
      Headline => "and bookmarking the Macaulay2 documentation",
      PARA {"At a command prompt in a terminal window, type ", TT "M2", 
 	  ".  If Macaulay2 has been installed correctly on your machine, 
@@ -80,7 +80,7 @@ PRE///    printWidth = 60
      }
 
 document {
-     Key => "Setting up the Macaulay2 emacs interface",
+     Key => "setting up the Macaulay2 emacs interface",
      PARA {"If you are a newcomer to emacs, you should spend a few minutes
 	  going through the emacs tutorial.  Start up emacs with the command 
 	  ", TT "emacs", " and then start up the emacs tutorial with the keystrokes 
@@ -131,11 +131,11 @@ PRE///    ;; .emacs file in your home directory
      }
 
 document {
-     Key => "Using Macaulay2 with emacs",
+     Key => "using Macaulay2 with emacs",
      PARA {"
 	  In this section, we show by example how to use the Macaulay2 emacs interface.
 	  We assume that you have already set up this interface, as described in 
-	  ", TO "Setting up the Macaulay2 emacs interface", ".  After creating or changing
+	  ", TO "setting up the Macaulay2 emacs interface", ".  After creating or changing
 	  the .emacs file mentioned there, you need to exit and restart emacs.  For the rest
 	  of this section, we assume that you are running emacs."
 	  },
@@ -239,7 +239,7 @@ toggle whether long lines are truncated or wrapped; initially they are truncated
      }
 
 document {
-     Key => "Reading the documentation",
+     Key => "reading the documentation",
      PARA {"The documentation for Macaulay 2 is available in several
      	  formats: text format while in Macaulay2, 
      	  in info format, and the most important, html format.
@@ -293,7 +293,7 @@ document {
 
 
 document {
-     Key => "Getting help or reporting bugs",
+     Key => "getting help or reporting bugs",
      PARA {"
 	  An easy way to get help or to report a bug is to go to ", HREF "http://sourceforge.net/projects/macaulay2",
 	  " and choose the appropriate section in the 'Public areas' part of that webpage.  In order to
@@ -306,12 +306,12 @@ document {
      }
 
 document {
-     Key => "What to read next?",
+     Key => "what to read next??",
      }
 
 
 document {
-     Key => "A first Macaulay 2 session",
+     Key => "a first Macaulay 2 session",
      PARA {
 	  "Your first input prompt will be ", TT "i1 : ", ".  In response to the prompt,
 	  type ", TT "2+2", " and press return.  The expression you entered will be
@@ -497,7 +497,7 @@ document {
      Key => "editing Macaulay 2 code with emacs",
 -- don't indent
 "In this section we learn how to use emacs to edit Macaulay 2 code.  Assuming you
-have set up your emacs init file as described in ", TO "Setting up the Macaulay2 emacs interface", "
+have set up your emacs init file as described in ", TO "setting up the Macaulay2 emacs interface", "
  when you visit a file whose name ends with ", TT ".m2", " 
 you will see on the mode line the name Macaulay 2 in
 parentheses, indicating that the file is being edited in Macaulay 2 mode.  (Make

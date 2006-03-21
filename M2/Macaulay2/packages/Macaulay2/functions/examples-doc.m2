@@ -17,7 +17,7 @@ document {
 	  "examples partitions",
 	  "print examples (ideal,Matrix)"
 	  },
-     SeeAlso => {"Reading the documentation", help}
+     SeeAlso => {"reading the documentation", help}
      }
 
 TEST ///

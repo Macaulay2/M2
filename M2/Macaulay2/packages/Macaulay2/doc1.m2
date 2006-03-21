@@ -40,9 +40,9 @@ document {
      UL {
      	  ("copyright", "                        -- the copyright"),
      	  ("help \"Macaulay 2\"", "                -- top node of the documentation."),
-     	  ("help \"Reading the documentation\"", " -- "),
+     	  ("help \"reading the documentation\"", " -- "),
      	  ("help \"getting started\"", "           -- "),
-     	  ("help \"A first Macaulay 2 session\"", "   -- "),
+     	  ("help \"a first Macaulay 2 session\"", "   -- "),
      	  ("help x", "                           -- display the documentation for ", TT "x"),
 	  ("printWidth = 80", "                  -- set the print width to 80 characters"),
      	  ("viewHelp x", "                       -- view documentation for ", TT "x", " in a browser"),
@@ -79,7 +79,7 @@ document {
 	  TT "help \"Groebner bases\"",
 	  TT "help \"multigraded polynomial rings\""
 	  },
-     SeeAlso => {viewHelp, infoHelp,  apropos, code, examples, "Reading the documentation"}
+     SeeAlso => {viewHelp, infoHelp,  apropos, code, examples, "reading the documentation"}
      }
 document {
      Key => viewHelp,
@@ -106,7 +106,7 @@ document {
      Caveat => {"The ", TO help, " command allows other possible arguments, such as ", 
 	  TT "help methods ideal", ", but for ", TT "viewHelp", " the argument ", TT "s",
 	  " must refer to ony one web page."},
-     SeeAlso => {apropos, examples, help, infoHelp, "Reading the documentation"}
+     SeeAlso => {apropos, examples, help, infoHelp, "reading the documentation"}
      }
 document {
      Key => infoHelp,
@@ -142,7 +142,7 @@ document {
      Caveat => {"The ", TO help, " command allows other possible arguments, such as ", 
 	  TT "help methods ideal", ", but ", TT "infoHelp", " requires that the argument ", TT "s",
 	  " refers to only one documentation page."},
-     SeeAlso => {apropos, examples, help, viewHelp, "Reading the documentation"}
+     SeeAlso => {apropos, examples, help, viewHelp, "reading the documentation"}
      }
 document {
      Key => uniform,

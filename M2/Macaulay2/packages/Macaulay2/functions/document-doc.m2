@@ -60,7 +60,7 @@ document {
  -- doc_doc.m2:74:  Usage => "document { Key => key, ... }",
  -- doc_doc.m2:104:     Usage => "document { Key => key, Headline => \"one line description\", ... }",
  -- macaulay.m2:626:     Key => "not documented yet", 
- -- overview3.m2:189:     Key => "Reading the documentation",
+ -- overview3.m2:189:     Key => "reading the documentation",
  -- overview3.m2:363:document { Key => "frequently encountered problems",
  -- overview4.m2:771:document { Key => "using the debugger",
  -- overviewA.m2:376:     Key => "how to get documentation on a library",

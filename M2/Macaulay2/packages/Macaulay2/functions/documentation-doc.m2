@@ -100,7 +100,7 @@ document {
      }
  -- doc1.m2:22:     Key => documentation,
  -- doc2.m2:628:     Key => sin, -- this node is used as an example in the documentation node Inputs and Outputs.
- -- overview3.m2:189:     Key => "Reading the documentation",
+ -- overview3.m2:189:     Key => "reading the documentation",
  -- overviewA.m2:376:     Key => "how to get documentation on a library",
  -- overview_doc.m2:2:     Key => "writing documentation",
  -- overview_doc.m2:168:     Key => "conventions for documentation",
