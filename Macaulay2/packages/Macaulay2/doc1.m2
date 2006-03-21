@@ -79,7 +79,7 @@ document {
 	  TT "help \"Groebner bases\"",
 	  TT "help \"multigraded polynomial rings\""
 	  },
-     SeeAlso => {viewHelp, infoHelp,  apropos, code, examples}
+     SeeAlso => {viewHelp, infoHelp,  apropos, code, examples, "Reading the documentation"}
      }
 document {
      Key => viewHelp,
@@ -106,7 +106,7 @@ document {
      Caveat => {"The ", TO help, " command allows other possible arguments, such as ", 
 	  TT "help methods ideal", ", but for ", TT "viewHelp", " the argument ", TT "s",
 	  " must refer to ony one web page."},
-     SeeAlso => {apropos, examples, help, infoHelp}
+     SeeAlso => {apropos, examples, help, infoHelp, "Reading the documentation"}
      }
 document {
      Key => infoHelp,
@@ -142,7 +142,7 @@ document {
      Caveat => {"The ", TO help, " command allows other possible arguments, such as ", 
 	  TT "help methods ideal", ", but ", TT "infoHelp", " requires that the argument ", TT "s",
 	  " refers to only one documentation page."},
-     SeeAlso => {apropos, examples, help, viewHelp}
+     SeeAlso => {apropos, examples, help, viewHelp, "Reading the documentation"}
      }
 document {
      Key => uniform,
