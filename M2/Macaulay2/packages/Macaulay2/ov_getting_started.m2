@@ -24,7 +24,7 @@ document {
 	  TOH "Checking your Macaulay2 installation",
 	  TOH "Setting up the Macaulay2 emacs interface",
 	  TOH "Using Macaulay2 with emacs",
-	  TOH "Your first input prompt",
+	  TOH "A first Macaulay 2 session",
 	  TOH "Finding documentation",
 	  TOH "Getting help or reporting bugs",
 	  TOH "What to read next?"
@@ -249,7 +249,6 @@ document {
 	  TOH "apropos",
 	  TOH "examples",
 	  TOH "help", 
-	  TOH "topics",
 	  TOH "viewHelp"
 	  },
      PARA {"
@@ -311,7 +310,7 @@ document {
 
 
 document {
-     Key => "Your first input prompt",
+     Key => "A first Macaulay 2 session",
      PARA {
 	  "Your first input prompt will be ", TT "i1 : ", ".  In response to the prompt,
 	  type ", TT "2+2", " and press return.  The expression you entered will be
