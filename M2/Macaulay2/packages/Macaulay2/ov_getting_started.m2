@@ -25,7 +25,7 @@ document {
 	  TOH "Setting up the Macaulay2 emacs interface",
 	  TOH "Using Macaulay2 with emacs",
 	  TOH "A first Macaulay 2 session",
-	  TOH "Finding documentation",
+	  TOH "Reading the documentation",
 	  TOH "Getting help or reporting bugs",
 	  TOH "What to read next?"
 	  }
@@ -239,12 +239,12 @@ toggle whether long lines are truncated or wrapped; initially they are truncated
      }
 
 document {
-     Key => "Finding documentation",
+     Key => "Reading the documentation",
      PARA {"The documentation for Macaulay 2 is available in several
      	  formats: text format while in Macaulay2, 
      	  in info format, and the most important, html format.
      	  "},
-     "Functions for accessing the documentation:",
+     "The following functions for available for accessing the documentation.",
      UL {
 	  TOH "apropos",
 	  TOH "examples",
@@ -253,12 +253,12 @@ document {
 	  TOH "infoHelp"
 	  },
      PARA {"
-	  Type help to get a summary of the most useful ways of obtaining
+	  While in Macaulay 2, type ", 
+	  PRE"help", 
+	  " to get a summary of the most useful ways of obtaining
 	  help on a topic or function.
-     	  "},
-     PARA {"
-	  While in Macaulay2, type",
-	  PRE "    viewHelp",
+	  Type",
+	  PRE "viewHelp",
 	  " to start the web browser (if necessary) and to point it at
 	  the page index.html in your .Macaulay2 directory.
 	  For help on a specific topic, e.g. the jacobian function, use ",
@@ -557,30 +557,6 @@ document {
 	  TO "running Macaulay 2 in emacs",
 	  TO "editing Macaulay 2 code with emacs",
 	  },
-     }
-
-
-document {
-     Key => "Reading the documentation",
-     "The documentation for Macaulay 2 is available in several formats.
-     The directory ", TT (LAYOUT#"packagehtml" "Macaulay2"), " 
-     contains the documentation in html form, suitable for viewing with a web 
-     browser, and this is the best way to view it.  The command ", TT "M2-help", "
-     will start your favorite web browser and point direct it to the web 
-     pages there.  Each documentation page has a text box for entering a
-     search string.  This works by viewing the documentation at our web site.",
-     PARA,
-     "All the documentation can also be viewed within the program in
-     text form using ", TO "help", ".",
-     PARA,
-     NOINDENT,
-     "Functions for accessing the documentation:",
-     UL {
-	  TOH "apropos",
-	  TOH "examples",
-	  TOH "help", 
-	  TOH "topics"
-	  }
      }
 
 

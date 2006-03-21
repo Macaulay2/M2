@@ -21,6 +21,6 @@ document {
      EXAMPLE {
 	  ///apropos "^[mM]at"///
 	  },
-     SeeAlso => {"regular expressions", help, examples, viewHelp, infoHelp}
+     SeeAlso => {help, examples, viewHelp, infoHelp, "Reading the documentation", "regular expressions"}
      }
 
