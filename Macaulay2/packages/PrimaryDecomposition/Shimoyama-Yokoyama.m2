@@ -146,14 +146,14 @@ flattener = (I, m) -> (
      mm = ones | coeffmat;
      F = generators gb syz(mm, SyzygyLimit=>1, SyzygyRows=>1);
      result := substitute(F_(0,0),R);
-     print factors result;
+     --print factors result;
      result
      )
 
 flattener2 = (I,m) -> (
      C := flatt(I,m);
      F := (intersect values C)_0;
-     print factors F;
+     --print factors F;
      F)
      
 TEST ///
@@ -464,7 +464,7 @@ PDdonode = (PDC) -> (
 		    PDC.W = {}));
 	  if not done then (
 		    -- check whether ret#1 is redundant
-		    if not time radicalContainment(node#3, ret#1)
+		    if not radicalContainment(node#3, ret#1)
 		    then (
 			 -- build a new vertex
 			 vertex := {ret#1, REMAIN, node#2 + 1, 

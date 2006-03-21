@@ -42,7 +42,7 @@ document {
      	  ("help \"Macaulay 2\"", "                -- top node of the documentation."),
      	  ("help \"Reading the documentation\"", " -- "),
      	  ("help \"getting started\"", "           -- "),
-     	  ("help \"Your first input prompt\"", "   -- "),
+     	  ("help \"A first Macaulay 2 session\"", "   -- "),
      	  ("help x", "                           -- display the documentation for ", TT "x"),
 	  ("printWidth = 80", "                  -- set the print width to 80 characters"),
      	  ("viewHelp x", "                       -- view documentation for ", TT "x", " in a browser"),
@@ -65,7 +65,21 @@ document {
 	  (TT "help methods (res, X)", " -- displays help messages about the methods usable with the function ", TT "res", " and a thing of class ", TT "X"),
 	  (TT "help methods (symbol **, X)", " -- displays help messages about the methods usable with the operator ", TT "**", " and a thing of class ", TT "X"),
 	  (TT "help methods (X, Y)", " -- displays help messages about the methods usable with a thing of class ", TT "X", " and a thing of class ", TT "Y")
-	  }
+	  },
+     "The ", TT "help", " command is used to display online documentation.  Use ", TO viewHelp, " to display the corresponding
+     documentation in your web browser.",
+     EXAMPLE {
+	  "help",
+	  "help ideal",
+	  "help (ideal,List)"
+	  },
+     "Some other potential help topics:",
+     UL {
+	  TT "help \"monomial orders\"",
+	  TT "help \"Groebner bases\"",
+	  TT "help \"multigraded polynomial rings\""
+	  },
+     SeeAlso => {viewHelp, infoHelp,  apropos, code, examples}
      }
 document {
      Key => topicList,

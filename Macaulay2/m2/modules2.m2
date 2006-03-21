@@ -114,7 +114,6 @@ poincare Module := M -> (
      if M.cache.?poincare then M.cache.poincare else M.cache.poincare = (
      	  ZZn := degreesRing R;
 	  g := leadTerm gb presentation M;
-	  GGGG = g;
 	  p := new ZZn from rawHilbert raw g;
 	  assert( raw ring p === rawRing raw p );	    -- fix this!
 	  if R.?Repair and R.Repair =!= identity then (

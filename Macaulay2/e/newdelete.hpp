@@ -4,10 +4,11 @@
 // get declarations of outofmem and getmem
 #include "../d/M2mem.h"
 
+
 // this replaces all uses of the construction "new T[n]":
-#define newarray(T,len) reinterpret_cast<T*>(GC_MALLOC((len) * sizeof(T)))
+#define newarray(T,len) reinterpret_cast<T*>(safe_gc_malloc((len) * sizeof(T)))
 // this replaces all uses of the construction "new T":
-#define newitem(T) reinterpret_cast<T*>(GC_MALLOC(sizeof(T)))
+#define newitem(T) reinterpret_cast<T*>(safe_gc_malloc(sizeof(T)))
 // this replaces all uses of the construction "delete [] x":
 #define deletearray(x) GC_FREE(x)
 // this replaces all uses of the construction "delete x":
@@ -26,6 +27,12 @@
 
 #include <gc.h>
 #include "../d/memdebug.h"
+
+static inline void *safe_gc_malloc(size_t len) {
+  void *p = GC_MALLOC(len);
+  if (p == 0) outofmem();
+  return p;
+}
 
 struct our_new_delete {
   static inline void* operator new    ( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem(); return p; }

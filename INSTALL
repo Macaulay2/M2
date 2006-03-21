@@ -287,7 +287,15 @@ There are two ways to compile Macaulay 2 under Windows 95 and NT.
 ----------------------
 Linux notes
 ----------------------
+-- If you use capybara, the following line can be used to compile an optimized version, with shared libs
+ mkdir tmp-opt
+ cd tmp-opt
+ ../configure --with-encapdir=/capybara/encap --prefix=/capybara/encap --disable-strip --enable-encap CPPFLAGS=-I/capybara/include LDFLAGS=-L/capybara/lib
 
+-- For profiling
+ mkdir tmp-profiling
+ cd tmp-profiling
+ ../configure --with-encapdir=/capybara/encap --prefix=/capybara/encap --disable-strip --enable-encap CPPFLAGS=-I/capybara/include LDFLAGS=-L/capybara/lib --enable-profile
 
 ----------------------
 MacOS X notes
