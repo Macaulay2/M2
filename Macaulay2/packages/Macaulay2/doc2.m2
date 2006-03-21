@@ -701,7 +701,39 @@ document {
 
 document {
      Key => value,
-     Headline => "evaluate"
+     Headline => "evaluate",
+     Undocumented => {
+	  (value, Minus),
+	  (value, NonAssociativeProduct),
+	  (value, Equation),
+	  (value, Nothing),
+	  (value, BinaryOperation),
+	  (value, SparseVectorExpression),
+	  (value, Divide),
+	  (value, FunctionApplication),
+	  (value, Power),
+	  (value, ZeroExpression),
+	  (value, Subscript),
+	  (value, SparseMonomialVectorExpression),
+	  (value, OneExpression),
+	  (value, Superscript),
+	  (value, Sum),
+	  (value, RingElement),
+	  (value, MatrixExpression),
+	  (value, Pseudocode),
+	  (value, IndexedVariable),
+	  (value, Table),
+	  (value, Sequence),
+	  (value, Product),
+	  (value, Adjacent),
+	  (value, Holder),
+	  (value, ZZ),
+	  (value, QQ),
+	  (value, RRR),
+	  (value, CCC),
+	  (value, RR),
+	  (value, CC)
+	  }
      }
 
 document {

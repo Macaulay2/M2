@@ -168,13 +168,59 @@ document {
 document {
      Key => CC,
      Headline => "the class of all complex numbers",
-     "The symbol ", TO "ii", " represents the square root of -1.",
+     Undocumented => {
+	  (symbol "-",ZZ,CC), 
+	  (symbol "+",ZZ,CC), 
+	  (symbol "-",RR,CC), 
+	  (symbol "*",ZZ,CC), 
+	  (symbol "+",RR,CC), 
+	  (symbol "/",ZZ,CC), 
+	  (symbol "*",RR,CC), 
+	  (symbol "/",RR,CC), 
+	  (symbol "-",CC), 
+	  (symbol "-",CC,ZZ), 
+	  (symbol "-",CC,QQ), 
+	  (symbol "-",QQ,CC), 
+	  (symbol "+",CC,ZZ), 
+	  (symbol "+",CC,QQ), 
+	  (symbol "+",QQ,CC), 
+	  (symbol "-",CC,RR), 
+	  (symbol "-",CC,CC), 
+	  (symbol "+",CC,RR), 
+	  (symbol "*",CC,ZZ), 
+	  (symbol "+",CC,CC), 
+	  (symbol "*",CC,QQ), 
+	  (symbol "*",QQ,CC), 
+	  (symbol "/",CC,ZZ), 
+	  (symbol "/",CC,QQ), 
+	  (symbol "/",QQ,CC), 
+	  (symbol "*",CC,RR), 
+	  (symbol "*",CC,CC), 
+	  (symbol "/",CC,RR), 
+	  (symbol "/",CC,CC), 
+	  (symbol "^",CC,ZZ)},
+     "In Macaulay 2, complex numbers are represented as floating point numbers, and so are 
+     only approximate.  The symbol ", TO "ii", " represents the square root of -1.",
      PARA, 
      EXAMPLE {
 	  "z = 3-4*ii",
       	  "z^5",
       	  "1/z",
-	  }}
+	  },
+     "Arithmetic involving ZZ, QQ, RR, and CC work as one might expect.",
+     EXAMPLE {
+	  "3 + ii",
+	  "4/5 + 12*ii",
+	  "3 == 3 + 0*ii",
+	  "(2-ii)^5",
+	  "(1+ii)/3"
+	  },
+     Caveat => {"Strictly speaking, ", TT "CC", " is not a ring, since floating point approximations
+     are used.  Consequently, functions which rely on Groebner bases are notoriously unreliable with
+     rings such as ", TT "RR", " or ", TT "CC", "."}
+     }
+
+     
 document {
      Key => ii,
      Headline => "square root of -1"}
