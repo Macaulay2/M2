@@ -1,0 +1,159 @@
+##################
+## Source code ###
+##################
+
+
+#	points \
+
+INTERFACE = \
+	monideal_minprimes \
+	dmat-LU \
+	lapack \
+	LLL \
+	fractionfreeLU \
+	ntl_debugio \
+	ntl_internal \
+	ntl_interface \
+	mat \
+	dmat \
+	smat \
+	coeffrings \
+	Eschreyer \
+	gbweight \
+	qring \
+	polyQQ \
+	polyquotient \
+	poly \
+	debug \
+	respoly2 \
+	res2 \
+	comp_res \
+	res \
+	respoly \
+	reducedgb \
+	reducedgb-field \
+	reducedgb-field-local \
+	reducedgb-ZZ \
+	matrixcon \
+	comp \
+	comp_gb \
+	comp_gb_proxy \
+	comp_gb_declared \
+	gbA \
+	montable \
+	montableZZ \
+	schorder \
+	monorder \
+	GF \
+	RR \
+	ZZ \
+	QQ \
+	RRR \
+	CCC \
+	CC \
+	assprime \
+	buffer \
+	comb \
+	det \
+	frac \
+	freemod \
+	gb \
+	gbinhom \
+	gbring \
+	gb2 \
+	gauss \
+	hermite \
+	hilb \
+	int_bag \
+	intarray \
+	matrix \
+	mem \
+	monideal \
+	monoid2 \
+	monomial \
+	ntuple \
+	polyring \
+	pfaff \
+	random \
+	relem \
+	ring \
+	ringmap \
+	schur \
+	skew \
+	skewpoly \
+	solvable \
+	spair \
+	text_io \
+	varpower2 \
+	weylalg \
+	z_mod_p
+
+STILLTOCOMPILE = \
+	sagbi \
+	newspair \
+	termideal \
+	gbZZ \
+	gbbinom
+
+COMMANDS = \
+	mat-kbasis \
+	mat-symm \
+	mat-sort \
+	ring-vecs \
+        gbnod \
+	engine \
+	factor \
+	x_monom \
+	x_monoid \
+	x_relem \
+	M2-factory \
+	x_factor \
+	x_free \
+	x_mat \
+	x_monideal \
+	x_gb \
+	x_ringmap \
+	x_mutablemat
+
+COMMANDS_REDO = \
+	x_monoid \
+	x_monom \
+	x_system \
+	x_free \
+	x_mat \
+	x_relem \
+	x_gb \
+	x_borel \
+
+NAMES_H = ringelem \
+	style \
+	newdelete \
+	hash \
+	index \
+	respair2 \
+	monoid1 \
+	monoid2
+
+C_FILES = error table exptable monordering imonorder
+
+##############################
+## end of source code files ##
+##############################
+
+#GENERATED_H = geovec geogbvec geores
+GENERATED_H = geogbvec geores
+
+CC_FILES := $(INTERFACE) $(COMMANDS)
+FILES := $(CC_FILES) $(C_FILES)
+LOFILES := $(addsuffix .lo,$(CC_FILES) $(C_FILES))
+ENGINE_CCFILES := $(addsuffix .cpp,$(CC_FILES))
+ENGINE_CFILES := $(addsuffix .c,$(C_FILES))
+ENGINE_OFILES := $(addsuffix .o,$(C_FILES) $(CC_FILES))
+
+ifeq "$(SHARED)" "yes"
+ENGINE_OBJFILES := $(LOFILES)
+else
+ENGINE_OBJFILES := $(ENGINE_OFILES)
+endif
+
+HHFILES := $(addsuffix .hpp, $(NAMES_H) $(NAMES) $(INTERFACE)) $(E_H)
