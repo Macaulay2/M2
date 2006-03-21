@@ -1,21 +1,26 @@
---- status: TODO
---- author(s): 
+--- status: DONE
+--- author(s): M. Stillman
 --- notes: 
 
 document { 
      Key => apropos,
-     Headline => "",
-     Usage => "",
+     Headline => "symbols matching a pattern",
+     Usage => "apropos pat",
      Inputs => {
+	  "pat" => String => "a regular expression pattern to match"
 	  },
      Outputs => {
+	  List => "of global symbols in Macaulay 2 matching the given pattern"
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "In the simplest case, the list of symbols containing the given string is returned.",
      EXAMPLE {
+	  "apropos \"atrix\""
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     TO2("regular expressions", "Regular expressions"), " allow for more complicated requests.  For example, to
+     find all functions which start with ", TT "mat", " or ", TT "Mat", ":",
+     EXAMPLE {
+	  ///apropos "^[mM]at"///
+	  },
+     SeeAlso => {"regular expressions", help, examples, viewHelp, infoHelp}
      }
- -- doc1.m2:91:     Key => apropos,
+

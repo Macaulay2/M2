@@ -1057,8 +1057,6 @@ export (
 	"top" => symbol topComponents,
 	symbol topCoefficients,
 	symbol topLevelTexmacs,
-	symbol topicList,
-	symbol topics,
 	symbol trace,
 	symbol transpose,
 	symbol trim,

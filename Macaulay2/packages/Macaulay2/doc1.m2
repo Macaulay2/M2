@@ -82,31 +82,67 @@ document {
      SeeAlso => {viewHelp, infoHelp,  apropos, code, examples}
      }
 document {
-     Key => topicList,
-     Headline => "list of help topics",
-     TT "topicList()", " -- provides a complete list of topics on which help 
-     is available.",
-     PARA,
-     "Intended to be used in programs.  Users will prefer 
-     to use ", TO "topics", ".",
-     PARA,
-     SeeAlso => "help"
-     }
-document {
-     Key => topics,
-     Headline => "display available help topics",
-     Usage => "topics",
-     Consequences => {
-	  "This command displays a list of topics on which help is available, in columnated form."
+     Key => viewHelp,
+     Headline => "view online doc with a web browser",
+     Usage => {TT "viewHelp", EM " or ", TT "viewHelp s"},
+     Inputs => {
+	  "s" => "a descriptor for a documentation node (see below for examples)"
 	  },
-     SeeAlso => {"help"}
+     Consequences => {
+	  {"The given documentation page is displayed in your default web browser.  If
+	  the browser is not running, it is started.  If no argument is given to ", TT "viewHelp", 
+	  "then the top page of your local html documentation is displayed."}},
+     "Some example uses:",
+     UL {
+	  (TT "viewHelp", " -- top of local copy of the documentation, including installed packages"),	  
+	  (TT "viewHelp \"Macaulay 2\"", " -- top of Macaulay2 doc"),
+	  (TT "viewHelp ideal", " -- online doc for the 'ideal' function"),
+	  (TT "viewHelp \"matrices\"", " -- overview of matrices in Macaulay 2"),
+	  (TT "viewHelp (ideal,List)", " -- online doc for ideal(List) method"),
+	  (TT "viewHelp (diff,Matrix,Matrix)", " -- online doc for the diff function taking two matrices as arguments"),
+	  (TT "viewHelp [gb,DegreeLimit]", " -- view doc for the optional argument DegreeLimit to gb function"),
+	  (TT "viewHelp (symbol**,Matrix,Matrix)", " -- view doc for Matrix**Matrix")
+	  },
+     Caveat => {"The ", TO help, " command allows other possible arguments, such as ", 
+	  TT "help methods ideal", ", but for ", TT "viewHelp", " the argument ", TT "s",
+	  " must refer to ony one web page."},
+     SeeAlso => {apropos, examples, help, infoHelp}
      }
 document {
-     Key => apropos,
-     Headline => "symbols matching a pattern",
-     TT "apropos s", " -- displays a list of global symbols which match
-     the regular expression specified by the string ", TT "s", ".",
-     EXAMPLE "apropos \"scan\""
+     Key => infoHelp,
+     Headline => "view online doc with info",
+     Usage => "infoHelp s",
+     Inputs => {
+	  "s" => "a descriptor for a documentation node (see below for examples)"
+	  },
+     Consequences => {
+	  "The given documentation page is displayed using info, if you are running
+	  Macaulay2 in a terminal window."},
+     "Some example uses:",
+     UL {
+	  (TT "infoHelp \"Macaulay 2\"", " -- top of Macaulay2 doc"),
+	  (TT "infoHelp ideal", " -- online doc for the 'ideal' function"),
+	  (TT "infoHelp \"matrices\"", " -- overview of matrices in Macaulay 2"),
+	  (TT "infoHelp (ideal,List)", " -- online doc for ideal(List) method"),
+	  (TT "infoHelp (diff,Matrix,Matrix)", " -- online doc for the diff function taking two matrices as arguments"),
+	  (TT "infoHelp [gb,DegreeLimit]", " -- view doc for the optional argument DegreeLimit to gb function"),
+	  (TT "infoHelp (symbol**,Matrix,Matrix)", " -- view doc for Matrix**Matrix")
+	  },
+     "While in the ", TT "info", " program, there are many ways to navigate and search.
+     Besides the arrow keys to move around on the page, here is a list of the most useful key strokes:",
+     UL {
+	  (TT "?", " -- display information about all of the possible keystrokes"),
+	  (TT "q", " -- quit info, return to Macaulay2"),
+	  (TT "n", " -- go to the next documentation node"),
+	  (TT "p", " -- go to the revious node"),
+	  (TT "m", " -- follow the menu link"),
+	  (TT "r", " -- follow a cross-reference"),
+	  (TT "l", " -- go to the last node visited"),
+	  },
+     Caveat => {"The ", TO help, " command allows other possible arguments, such as ", 
+	  TT "help methods ideal", ", but ", TT "infoHelp", " requires that the argument ", TT "s",
+	  " refers to only one documentation page."},
+     SeeAlso => {apropos, examples, help, viewHelp}
      }
 document {
      Key => uniform,
