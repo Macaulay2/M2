@@ -29,10 +29,12 @@ MADECFILES :=
 SRCFILES := 
 
 ## engine object files
-EFILES := ../e/*.o
-# EFILES += ../e/rings/*.o 
-EFILES += ../e/linalgGB/*.o
-EFILES += ../e/f4/*.o
+include @srcdir@/../e/Makefile.files
+include @srcdir@/../e/linalgGB/Makefile.files
+include @srcdir@/../e/f4/Makefile.files
+EFILES := $(ENGINE_OFILES:%=../e/%) 
+EFILES += $(F4_OBJECT_FILES:%=../e/f4/%) 
+EFILES += $(LINALGGB_OBJECT_FILES:%=../e/linalgGB/%) 
 
 ## *.c files
 
