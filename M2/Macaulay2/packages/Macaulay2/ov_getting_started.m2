@@ -249,7 +249,8 @@ document {
 	  TOH "apropos",
 	  TOH "examples",
 	  TOH "help", 
-	  TOH "viewHelp"
+	  TOH "viewHelp",
+	  TOH "infoHelp"
 	  },
      PARA {"
 	  Type help to get a summary of the most useful ways of obtaining
@@ -263,9 +264,9 @@ document {
 	  For help on a specific topic, e.g. the jacobian function, use ",
 	  PRE"viewHelp jacobian",
           " or ",
-	  PRE///    viewHelp "jacobian"///,
+	  PRE///viewHelp "jacobian"///,
 	  " or if you want the documentation for jacobian of an Ideal, use ",
-	  PRE ///    viewHelp (jacobian,Ideal)///
+	  PRE ///viewHelp (jacobian,Ideal)///
      	  },
      PARA {"
           Using 'help' instead of 'viewHelp' results in the help text appearing 

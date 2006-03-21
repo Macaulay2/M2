@@ -594,15 +594,12 @@ document List := args -> (
 -- getting help from the documentation
 -----------------------------------------------------------------------------
 
-topicList = () -> sort flatten apply(values PackageDictionary, p -> keys (value p)#rawKey)
-
 getExampleInputs := method(SingleArgumentDispatch => true)
 getExampleInputs Thing        := t -> {}
 getExampleInputs ExampleTABLE := t -> apply(toList t, first)
 getExampleInputs MarkUpList   := t -> join apply(toSequence t, getExampleInputs)
 
 examples = x -> stack getExampleInputs documentation x
-topics = Command (() -> pager columnate(if printWidth != 0 then printWidth else 80, format \ topicList()))
 apropos = (pattern) -> sort unique (toString \ getGlobalSymbol \ select(flatten \\ keys \ globalDictionaries, i -> match(toString pattern,i)))
 -----------------------------------------------------------------------------
 headline = method(SingleArgumentDispatch => true)
