@@ -16,20 +16,11 @@ include @srcdir@/../make.include
 
 .PHONY : all place_into_lib
 
-CCFILES := ntuple_monomial varpower_monomial moninfo \
-        montable monhashtable monsort \
-        F4 F4types F4computation F4toM2interface gausser
+include @srcdir@/Makefile.files
 
-# memblock.cpp is included in F4.cpp.
-# F4spairs 
-
-CFILES := 
-LINALGGB_FILES := $(CCFILES) $(CFILES)
-LINALGGB_OBJECT_FILES :=  $(addsuffix .o, $(LINALGGB_FILES))
-
-all :: $(LINALGGB_OBJECT_FILES)
-check_it : $(LINALGGB_OBJECT_FILES) check_it.o
-	gcc -o check_it check_it.o $(LINALGGB_OBJECT_FILES) -L/sw/lib -lgc
+all :: $(F4_OBJECT_FILES)
+check_it : $(F4_OBJECT_FILES) check_it.o
+	gcc -o check_it check_it.o $(F4_OBJECT_FILES) -L/sw/lib -lgc
 
 %.s : %.c; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
 
@@ -39,7 +30,7 @@ distclean: clean; rm -f Makefile
 
 clean::; rm -f *.dep dep-*.tmp LOGFILE
 ifeq "$(DEPENDS)" "yes"
-include $(CFILES:=.dep) $(CCFILES:=.dep)
+include $(F4_CFILES:=.dep) $(F4_CCFILES:=.dep)
 endif
 
 # Local Variables:

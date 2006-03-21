@@ -16,11 +16,7 @@ include @srcdir@/../make.include
 
 .PHONY : all place_into_lib
 
-CCFILES := memblock MonomialOps Monomials MonomialSet MonomialTable interface lingb
-CFILES := monoms
-LINALGGB_FILES := $(CCFILES) $(CFILES)
-# MonomialHeap 
-LINALGGB_OBJECT_FILES :=  $(addsuffix .o, $(LINALGGB_FILES))
+include @srcdir@/Makefile.files
 
 all :: $(LINALGGB_OBJECT_FILES)
 check_it : $(LINALGGB_OBJECT_FILES) check_it.o
@@ -34,7 +30,7 @@ distclean: clean; rm -f Makefile
 
 clean::; rm -f *.dep dep-*.tmp LOGFILE
 ifeq "$(DEPENDS)" "yes"
-include $(CFILES:=.dep) $(CCFILES:=.dep)
+include $(LINALGGB_CFILES:=.dep) $(LINALGGB_CCFILES:=.dep)
 endif
 
 # Local Variables:
