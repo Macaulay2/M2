@@ -243,7 +243,7 @@ document {
  -- overview2.m2:1725:     Key => "two dimensional formatting",
  -- overview2.m2:1942:     Key => "making a new method function",
  -- overview2.m2:2184:     Key => [method,Options],
- -- overview3.m2:189:     Key => "Reading the documentation",
+ -- overview3.m2:189:     Key => "reading the documentation",
  -- overview3.m2:425:     Key => "Daniel R. Grayson",
  -- overview3.m2:603:     Key => "initialization file",
  -- overview3.m2:623:     Key => "combinatorial functions",
