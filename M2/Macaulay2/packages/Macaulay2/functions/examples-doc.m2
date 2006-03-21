@@ -1,23 +1,26 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): M. Stillman
 --- notes: 
 
 document { 
      Key => examples,
-     Headline => "",
-     Usage => "",
+     Headline => "list the examples in documentation",
+     Usage => "examples s",
      Inputs => {
+	  "s" => "a descriptor for a documentation node (see below for examples)"
 	  },
      Outputs => {
+	  Net => {"containing examples of code provided in the documentation of ", TT "s"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "The output is returned as a ", TO Net, ".  Use ", TO print, " to place these on their own lines.",
      EXAMPLE {
+	  "examples partitions",
+	  "print examples (ideal,Matrix)"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {"Reading the documentation", help}
      }
- -- doc12.m2:349:     Key => examples,
- -- overview3.m2:279:     Key => "mathematical examples",
- -- overviewC.m2:318:     Key => "examples of specifying alternate monomial orders",
+
+TEST ///
+     assert( class examples MutableList === Net )
+///
+

@@ -346,20 +346,6 @@ document {
      }
 
 document {
-     Key => examples,
-     Headline => "list the examples in documentation",
-     -- this should come after the documentation for partitions, because of the example
-     TT "examples f", " returns a net containing examples
-     of code using the function ", TT "f", " provided in the documentation
-     of ", TT "f", ".",
-     SeeAlso => {"document"}
-     }
-
-TEST ///
-     assert( class examples MutableList === Net )
-///
-
-document {
      Key => (symbol -, List), Headline => "negation of a vector",
      Usage => "-v",
      Inputs => { "v" => "a list interpreted as a vector" },
