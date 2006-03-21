@@ -88,7 +88,7 @@ decompose Ideal := (I) -> if I.cache.?decompose then I.cache.decompose else I.ca
 	       chk = chk#1;  -- just keep the coefficients
 	       chk = first entries chk;
 	       iniCS := select(chk, i -> degree i =!= {0});
-	       << "saturating with " << iniCS << endl;
+	       if gbTrace >= 1 then << "saturating with " << iniCS << endl;
 	       CS = ideal CS;
 	       --<< "saturating " << CS << " with respect to " << iniCS << endl;
 	       -- warning: over ZZ saturate does unexpected things.

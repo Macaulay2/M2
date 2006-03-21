@@ -15,8 +15,9 @@
 
 gbvector * GBRing::new_raw_term()
 {
-  gbvector * result = reinterpret_cast<gbvector *>(GC_MALLOC(gbvector_size));
-  return result;
+  void *p = GC_MALLOC(gbvector_size);
+  if (p == 0) outofmem();
+  return(reinterpret_cast<gbvector *>(p));
 }
 
 /*************************
@@ -295,7 +296,7 @@ void GBRing::gbvector_remove(gbvector *f)
 gbvector * GBRing::gbvector_term(const FreeModule *F, ring_elem coeff, int comp)
   // Returns coeff*e_sub_i in F, the monomial is set to 1.
 {
-  gbvector *v = reinterpret_cast<gbvector *>(GC_MALLOC(gbvector_size));
+  gbvector *v = new_raw_term();
   v->coeff = coeff;
   v->comp = comp;
   v->next = 0;
@@ -314,7 +315,7 @@ gbvector * GBRing::gbvector_raw_term(ring_elem coeff,
   // Returns coeff*monom*e_sub_i in a free module.  If the order is a Schreyer
   // order, the 'monom' should already be encoded.
 {
-  gbvector *v = reinterpret_cast<gbvector *>(GC_MALLOC(gbvector_size));
+  gbvector *v = new_raw_term();
   v->coeff = coeff;
   v->comp = comp;
   v->next = 0;
@@ -347,7 +348,7 @@ gbvector * GBRing::gbvector_term_exponents(const FreeModule *F,
   // considered.
   // exp should be an exponent vector of length == n_vars()
 {
-  gbvector *v = reinterpret_cast<gbvector *>(GC_MALLOC(gbvector_size));
+  gbvector *v = new_raw_term();
   v->coeff = coeff;
   v->comp = comp;
   v->next = 0;
@@ -362,7 +363,7 @@ gbvector * GBRing::gbvector_term_exponents(const FreeModule *F,
 
 gbvector * GBRing::gbvector_copy_term(const gbvector *t)
 {
-  gbvector *v = reinterpret_cast<gbvector *>(GC_MALLOC(gbvector_size));
+  gbvector *v = new_raw_term();
   v->next = 0;
   v->coeff = t->coeff;
   v->comp = t->comp;

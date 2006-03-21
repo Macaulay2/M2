@@ -96,6 +96,17 @@ void FractionField::simplify(frac_elem *f) const
       const RingElement *a = RingElement::make_raw(R_,x);
       const RingElement *b = RingElement::make_raw(R_,y);
       const RingElement *c = rawGCDRingElement(a,b);
+
+      //      buffer o;
+      //      o << "a = ";
+      //      a->text_out(o);
+      //      o << "  b = ";
+      //      b->text_out(o);
+      //      o << " gcd = ";
+      //      c->text_out(o);
+      //      o << newline << newline;
+      //      emit(o.str());
+
       if (R_->is_equal(c->get_value(), R_->one())) return;
       f->numer = R_->divide(f->numer, c->get_value());
       f->denom = R_->divide(f->denom, c->get_value());
