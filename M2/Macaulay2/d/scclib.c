@@ -454,6 +454,7 @@ void init_readline_variables(void) {
   rl_readline_name = "M2";
   rl_attempted_completion_function = M2_completion;
   rl_basic_word_break_characters = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r";
+  using_history();
 }
 
 static int read_via_readline(char *buf,int len,char *prompt) {
@@ -492,7 +493,7 @@ M2_stringarray system_history(void) {
   M2_stringarray a;
   HIST_ENTRY **h = history_list();
   int i,n;
-  for (n=0; h[n]!=NULL; n++);
+  for (n=0; h != NULL && h[n] != NULL && h[n]->data != NULL; n++);
   a = (M2_stringarray) getmem (sizeofarray(a,n));
   a->len = n;
   for (i=0; i<n; i++) a->array[i] = tostring(h[i]->line);
