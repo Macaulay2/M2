@@ -1,36 +1,23 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): MES
 --- notes: 
 
 document { 
-     Key => check,
-     Headline => "",
-     Usage => "",
+     Key => {check,(check,Package)},
+     Headline => "perform tests of a package",
+     Usage => "check P",
      Inputs => {
-	  },
-     Outputs => {
+	  "P" => Package => "which has been previously installed"
 	  },
      Consequences => {
+	  "The tests in the package P are run (in separate Macaulay 2 processes), and 
+	  any errors are reported."
 	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     "For example, to run the tests for the LLLBases package (Lenstra-Lenstra-Lovasz bases)
+     do the following.",
+     PRE///installPackage "LLLBases"///,
+     PRE///check LLLBases///,
+     SeeAlso => {"packages", installPackage, loadPackage}
      }
-document { 
-     Key => (check,Package),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
+
+

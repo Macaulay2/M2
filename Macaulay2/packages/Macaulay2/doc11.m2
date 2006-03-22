@@ -841,7 +841,15 @@ document {
 document {
      Key => code,
      Headline => "display source code",
-     TT "code f", " -- prints out the source code of the function ", TT "f", ".",
+     Undocumented => {
+	  (code, List),
+	  (code, Sequence),
+	  (code, Function),
+	  (code, Symbol),
+	  (code, Command),
+	  (code, Pseudocode),
+	  (code, Nothing)},
+     TT "code f", " -- prints out the source code of the function or command", TT "f", ".",
      BR, NOINDENT,
      TT "code(f,X)", " -- prints out the source code of the particular 
      method that would be applied if ", TT "f", " were applied to an argument of 

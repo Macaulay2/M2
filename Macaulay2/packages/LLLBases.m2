@@ -1337,32 +1337,27 @@ TEST ///
 
     time m1 = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
     time m = syz m1
-    time mz = LLL(m)
+    time mz = LLL(m, Strategy=>CohenTopLevel)
     time assert(m1 * matrix mz == 0)
     time assert(isLLL matrix mz)
     
-    time mz2 = LLL(m, Threshold => 101/400)    
+    time mz2 = LLL(m, Strategy=>CohenEngine, Threshold => 101/400)    
     assert( not isLLL matrix mz2 )
     assert isLLL(matrix mz2, Threshold=>101/400)
 
-    time mz3 = LLL(m, Engine=>false)
+    time mz3 = LLL(m, Strategy=>CohenTopLevel)
     time assert(m1 * matrix mz3 == 0)
     time assert(isLLL matrix mz3)
     mz == mz3 -- not always true.  Why not?
 
     assert(hermiteLLL mz == hermiteLLL mz3)
     
-    time mz4 = LLL(m, Engine=>false, Threshold => 101/400)    
+    time mz4 = LLL(m, Strategy=>CohenTopLevel, Threshold => 101/400)    
     assert( not isLLL matrix mz4 )
     assert isLLL(matrix mz4, Threshold=>101/400)
     
-    m1 = m1 ** RR
-    -- LLL(m1,Engine=>false) FAILS
-
-    time mz = LLL(m, ChangeMatrix=>true)
-    m.cache#{LLL,3/4}#1 -- this is the change of basis matrix
-    time mz5 = LLL(m, Engine=>false, ChangeMatrix=>true)
-    m.cache#{LLL,3/4}#1 -- this is the change of basis matrix    
+    time (mz,ch) = LLL(m, ChangeMatrix=>true)
+    time (mz5,ch5) = LLL(m, Strategy=>CohenTopLevel, ChangeMatrix=>true)
 ///
 
 TEST ""

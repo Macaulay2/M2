@@ -23,7 +23,7 @@ document {
 	  "R = QQ[x,y]/(ideal(x,y) * ideal(x-1))",
           "codim R"
 	  },
-     "However the following may note be the expected result",
+     "However the following may not be the expected result.",
      EXAMPLE {
 	  "R = QQ[x,y]/(ideal(x,y) * ideal(x-1))",
           "codim R",
@@ -39,7 +39,7 @@ document {
 	  },
      Outputs => {ZZ => ""
 	  },
-     "Computes the codimension of the support of the module as given by ", TT "dim(R) - dim(M)",
+     "Computes the codimension of the support of the module as given by ", TT "dim(R) - dim(M)", ".",
      EXAMPLE {
 	  "R = ZZ/101[a..d];",
           "M = coker matrix{{a,b},{c,d}}",
@@ -60,7 +60,7 @@ document {
 	  },
      "Computes the codimension of the support of ", TT "F", " as given by ", TT "dim(R) - dim(M)",
      " where ", TT "M", " is the module representing ", TT "F", " over the homogeneous coordinate ring ",
-     TT "R", " of ", TT "X",
+     TT "R", " of ", TT "X", ".",
      EXAMPLE {
 	  "R = ZZ/31991[a,b,c,d];",
           "I = monomialCurveIdeal(R,{1,3,5})",
@@ -101,7 +101,7 @@ document {
 	  },
      Outputs => {ZZ => ""
 	  },
-     "Computes the codimension of the projective variety ", TT "V",
+     "Computes the codimension of the projective variety ", TT "V", ".",
      EXAMPLE {
 	  "R = ZZ/101[x_0..x_3];",
 	  "M = matrix{{x_0,x_1,x_2},{x_1,x_2,x_3}}",

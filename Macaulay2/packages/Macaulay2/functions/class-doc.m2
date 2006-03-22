@@ -1,26 +1,34 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): MES, taken from Dan's.
 --- notes: 
 
 document { 
      Key => class,
-     Headline => "",
-     Usage => "",
+     Headline => "class of an object",
+     Usage => "class x",
      Inputs => {
+	  "x" => Thing => "any Macaulay 2 object"
 	  },
      Outputs => {
+	  Type => {"the class of ", TT "x"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Every object in Macaulay 2 has a class, see ", TO "classes and types", 
+     " for more details.",
      EXAMPLE {
+	  "class {1,2,3}",
+	  "R = QQ[a..d]",
+     	  "class R"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     "Use strict equality ", TT "===", " to test the exact class
+     of an object.",
+     EXAMPLE {
+	  "class R === PolynomialRing",
+	  "class R === Ring"
+	  },
+     "However, each PolynomialRing is a Ring, by inheritance, so a more
+     useful test uses ", TO instance, ".",
+     EXAMPLE {
+	  "instance(R,Ring)"
+	  },
+     SeeAlso => {instance, "classes and types"}
      }
- -- doc3.m2:320:     Key => class,
- -- doc8.m2:1305:     Key => GaloisField, Headline => "the class of all Galois fields" }
- -- overview2.m2:515:     Key => "classes and types",
- -- overview2.m2:1911:     Key => "making new classes",
- -- overview2.m2:1962:     Key => "what a class is",
- -- overview2.m2:2222:     Key => "printing and formatting for new classes",
