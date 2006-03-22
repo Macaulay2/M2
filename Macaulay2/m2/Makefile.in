@@ -130,7 +130,7 @@ clean :: ; rm -f .gdb-files
 .gdb-run-it: Makefile
 	echo 'echo -- loading .gdb-run-it\n' >$@
 	echo 'echo \n' >>$@
-	echo 'run -q --no-loaddata' >>$@
+	echo 'run -q --no-loaddata --no-readline' >>$@
 clean :: ; rm -f .gdb-run-it
 profile : gmon.out
 	gprof ../bin/M2$(EXE) >profile
