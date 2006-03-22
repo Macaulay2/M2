@@ -24,6 +24,7 @@ subsets List := List => x -> (
 	  join(s,apply(s,y->append(y,a)))))
 
 Partition = new Type of BasicList
+Partition _ ZZ := (p,i) -> p#i
 partitions(ZZ,ZZ) := List => memoize (
      (n,k) -> (
      	  if k > n then k=n;

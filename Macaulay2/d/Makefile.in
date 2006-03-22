@@ -32,6 +32,9 @@ SRCFILES :=
 include @srcdir@/../e/Makefile.files
 include @srcdir@/../e/linalgGB/Makefile.files
 include @srcdir@/../e/f4/Makefile.files
+../bin/M2$(EXE) : @srcdir@/../e/Makefile.files
+../bin/M2$(EXE) : @srcdir@/../e/linalgGB/Makefile.files
+../bin/M2$(EXE) : @srcdir@/../e/f4/Makefile.files
 EFILES := $(ENGINE_OFILES:%=../e/%) 
 EFILES += $(F4_OBJECT_FILES:%=../e/f4/%) 
 EFILES += $(LINALGGB_OBJECT_FILES:%=../e/linalgGB/%) 
@@ -338,7 +341,7 @@ LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
 # M2_LDLIBS += -lc ../compat/compat.a
 
 clean::; rm -f ../bin/M2$(EXE)
-../bin/M2$(EXE) : $(M2_OBJECTS) main.o $(LIBRARYDEPS) $(EFILES)
+../bin/M2$(EXE) : $(M2_OBJECTS) main.o $(LIBRARYDEPS) $(EFILES) 
 	time $(CC) $(M2_LDFLAGS) $(M2_OBJECTS) main.o $(EFILES) $(M2_LOADLIBES) -o "$@".tmp
 	$(STRIPCMD) "$@".tmp
 	mv "$@".tmp "$@"

@@ -166,7 +166,7 @@ usage := () -> (
      << "     continue n             -- execute the code, stop after n microsteps" << endl
      << "     return                 -- bypass code, return 'null', and continue" << endl
      << "     return x               -- bypass code, return 'x', and continue" << endl
-     << "     disassemble errorCode  -- examine the code microsteps" << endl
+     -- << "     disassemble errorCode  -- examine the code microsteps" << endl
      << "     value errorCode        -- execute the code, returning its value" << endl
      )
 firstTime := true

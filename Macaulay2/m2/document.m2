@@ -735,7 +735,6 @@ types Function := x -> ({},{typicalValue x})
 types Sequence := x -> (
      if #x > 1 and instance(x#-1,Symbol) 
      then ({},{})					    -- it's an option ...
-     -- then types unSingleton drop(x,-1)
      else ( drop(toList x,1), { typicalValue x } ))
 
 isopt := x -> class x === Option and #x === 2
@@ -992,7 +991,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2Core then (
 		    )
 	       ),
 	  SUBSECTION "Version", "This documentation describes version ", pkg.Options.Version, " of ", pkg#"title", ".",
-	  if pkg#"title" =!= "Macaulay2" then SUBSECTION "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, ".",
+	  if pkg#"title" =!= "Macaulay2" then (SUBSECTION "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, "."),
 	  if #e > 0 then (
 	       SUBSECTION "Exports",
 	       fixup UL {

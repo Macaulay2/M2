@@ -14,6 +14,13 @@ Changes made, most recent ones first:
 
 -----------------------------------------------------------------------------
 
+New in 0.9.8:
+
+'disassemble' is no longer an exported symbol, as it is used mainly for
+internal debugging by Macaulay2 developers.
+
+-----------------------------------------------------------------------------
+
 New in 0.9.5:
 
 MES: added routine comodule: given an ideal I (or submodule of another
@@ -395,12 +402,7 @@ removed.  New basic types RawObject, RawMonomial, RawMonomialOrdering,
 RawMonoid, RawMonomialIdeal, RawRing, RawRingElement, RawRingMap,
 RawFreeModule, RawVector, RawMatrix, and RawMutableMatrix introduced to
 support internal engine types.
-
-Input prompts are now handled at top level, and can be customized by the user.
-Take a look at the functions normalPrompts, examplePrompts, and noPrompts in
-m2/startup.m2.  The each of those functions stores itself in the variable
-currentPrompts so you can alter the prompts and then restore them later.
-
+				       
 We've eliminated the need for a separate shell script called M2, whose job
 was to record the home directory of the Macaulay2 source files in the
 environment variable "M2HOME" and then execute Macaulay2 itself.  The shell

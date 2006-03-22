@@ -66,7 +66,7 @@ if firstTime then (
 	  lastprompt := "";
 	  ZZ.InputPrompt = lineno -> concatenate(newline, lastprompt = concatenate(interpreterDepth:"i", toString lineno, " : "), newline, #lastprompt);
 	  ZZ.InputContinuationPrompt = lineno -> #lastprompt; -- will print that many blanks, see interp.d
-	  symbol currentPrompts <- normalPrompts;	    -- this avoids the warning about redefining a function
+	  symbol currentPrompts <- returnPrompts;	    -- this avoids the warning about redefining a function
 	  );
      noPrompts = () -> (
 	  ZZ.InputPrompt = lineno -> "";

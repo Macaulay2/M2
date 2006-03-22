@@ -17,7 +17,6 @@ ann-doc.m2 -- already exists??
 contract'-doc.m2
 diff'-doc
 identity-doc.m2 -- already exists??
-file functions/normalPrompts-doc.m2 already exists -- not modifying it
 file functions/numeric-doc.m2 already exists -- not modifying it
 writing functions/peek'-doc.m2
 writing functions/quotient'-doc.m2
