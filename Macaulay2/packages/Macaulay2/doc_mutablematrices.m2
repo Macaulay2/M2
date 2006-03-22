@@ -14,20 +14,6 @@ document {
 	  TO columnMult,
 	  TO "columnDivide"
 	  },
-     PARA,
-     "It is possible to record these operations (except for the row and column
-     divide routines), as follows.",
-     EXAMPLE {
-	  -- setRowChange and getRowChange have been removed!
-	  "m = mutableMatrix{{1,2,3},{5,7,2},{12,1,0}}",
-	  -- "setRowChange(m, mutableIdentity(ZZ,3))",
-	  "rowAdd(m,1,-5,0)",
-	  "rowAdd(m,2,-12,0)",
-	  "rowAdd(m,2,-8,1)",
-	  "rowSwap(m,1,2)",
-	  "rowAdd(m,2,3,1)",
-	  -- "getRowChange m"
-	  }
      }
 
 document {
@@ -101,7 +87,7 @@ document {
 	  TO columnMult,
 	  TO "columnDivide"
 	  },
-     HEADER3 "matrix arithemtic",
+     HEADER3 "matrix arithmetic",
      "Many matrix arithmetic routines are only available for immutabie 
      matrices, not
      mutable matrices.  It is necessary to use ", TO matrix, " to make
@@ -116,8 +102,9 @@ document {
 
 document { 
      Key => {rowAdd,
+	  (rowAdd,MutableMatrix,ZZ,RingElement,ZZ)},
+     Undocumented => {
 	  (rowAdd,MutableMatrix,ZZ,QQ,ZZ),
-	  (rowAdd,MutableMatrix,ZZ,RingElement,ZZ),
 	  (rowAdd,MutableMatrix,ZZ,RR,ZZ),
 	  (rowAdd,MutableMatrix,ZZ,CC,ZZ),
 	  (rowAdd,MutableMatrix,ZZ,ZZ,ZZ)},
@@ -137,18 +124,18 @@ document {
           },     
      EXAMPLE {
 	  "R = ZZ[a..f];",
-	  "n = genericMatrix(R,a,2,3)",
-	  "m = mutableMatrix n",
+	  "m = mutableMatrix genericMatrix(R,a,2,3)",
 	  "rowAdd(m,0,c,1)",
 	  "m"
           },
-     SeeAlso => {"mutable matrices", columnAdd}
+     SeeAlso => {"mutable matrices", "row and column operations"}
      }
 
 document { 
      Key => {columnAdd,
+	  (columnAdd,MutableMatrix,ZZ,RingElement,ZZ)},
+     Undocumented => {
 	  (columnAdd,MutableMatrix,ZZ,QQ,ZZ),
-	  (columnAdd,MutableMatrix,ZZ,RingElement,ZZ),
 	  (columnAdd,MutableMatrix,ZZ,RR,ZZ),
 	  (columnAdd,MutableMatrix,ZZ,CC,ZZ),
 	  (columnAdd,MutableMatrix,ZZ,ZZ,ZZ)},
@@ -168,12 +155,11 @@ document {
           },     
      EXAMPLE {
 	  "R = ZZ[a..f];",
-	  "n = genericMatrix(R,a,2,3)",
-	  "m = mutableMatrix n",
+	  "m = mutableMatrix genericMatrix(R,a,2,3)",
 	  "columnAdd(m,0,c,1)",
 	  "m"
           },
-     SeeAlso => {"mutable matrices",rowAdd}
+     SeeAlso => {"mutable matrices", "row and column operations"}
      }
 
 document { 
@@ -195,7 +181,7 @@ document {
 	  "rowSwap(m,0,1)",
 	  "m"
           },
-     SeeAlso => {"mutable matrices",columnSwap}
+     SeeAlso => {"mutable matrices", "row and column operations"}
      }
 
 document { 
@@ -217,12 +203,13 @@ document {
 	  "columnSwap(m,0,1)",
 	  "m"
           },
-     SeeAlso => {"mutable matrices",rowSwap,columnAdd,columnMult}
+     SeeAlso => {"mutable matrices", "row and column operations"}
      }
 document { 
      Key => {rowMult,
+	  (rowMult,MutableMatrix,ZZ,RingElement)},
+     Undocumented => {
 	  (rowMult,MutableMatrix,ZZ,QQ),
-	  (rowMult,MutableMatrix,ZZ,RingElement),
 	  (rowMult,MutableMatrix,ZZ,RR),
 	  (rowMult,MutableMatrix,ZZ,CC),
 	  (rowMult,MutableMatrix,ZZ,ZZ)},
@@ -239,18 +226,18 @@ document {
           },     
      EXAMPLE {
 	  "R = ZZ[a..f];",
-	  "n = genericMatrix(R,a,2,3)",
-	  "m = mutableMatrix n",
+	  "m = mutableMatrix genericMatrix(R,a,2,3)",
 	  "rowMult(m,0,c)",
 	  "m"
           },
-     SeeAlso => {"mutable matrices",columnAdd}
+     SeeAlso => {"mutable matrices", "row and column operations"}
      }
 
 document { 
      Key => {columnMult,
+	  (columnMult,MutableMatrix,ZZ,RingElement)},
+     Undocumented => {
 	  (columnMult,MutableMatrix,ZZ,QQ),
-	  (columnMult,MutableMatrix,ZZ,RingElement),
 	  (columnMult,MutableMatrix,ZZ,RR),
 	  (columnMult,MutableMatrix,ZZ,CC),
 	  (columnMult,MutableMatrix,ZZ,ZZ)},
@@ -267,12 +254,11 @@ document {
           },     
      EXAMPLE {
 	  "R = ZZ[a..f]",
-	  "n = genericMatrix(R,a,2,3)",
-	  "m = mutableMatrix n",
+	  "m = mutableMatrix genericMatrix(R,a,2,3)",
 	  "columnMult(m,0,c)",
 	  "m"
           },
-     SeeAlso => {"mutable matrices", columnAdd, columnSwap, rowMult}
+     SeeAlso => {"mutable matrices", "row and column operations"}
      }
 document { 
      Key => {rowPermute,(rowPermute,MutableMatrix,ZZ,List)},
@@ -289,11 +275,10 @@ document {
 	  the i+j row becomes the i+pj row of the original matrix, for j=0..d"}
 	  },     
      EXAMPLE {
-	  "n = map(ZZ^5,ZZ^6, (i,j) -> 100*i+j)",
-	  "m = mutableMatrix n",
+	  "m = mutableMatrix map(ZZ^5,ZZ^6, (i,j) -> 100*i+j)",
 	  "rowPermute(m,1,{2,0,1})"
 	  },
-     SeeAlso => {"mutable matrices", columnPermute, rowAdd, rowMult, rowSwap}
+     SeeAlso => {"mutable matrices", "row and column operations"}
      }
 document { 
      Key => {columnPermute,(columnPermute,MutableMatrix,ZZ,List)},
@@ -310,11 +295,10 @@ document {
 	  the i+j column becomes the i+pj column of the original matrix, for j=0..d"}
 	  },     
      EXAMPLE {
-	  "n = map(ZZ^5,ZZ^6, (i,j) -> 100*i+j)",
-	  "m = mutableMatrix n",
+	  "m = mutableMatrix map(ZZ^5,ZZ^6, (i,j) -> 100*i+j)",
 	  "columnPermute(m,1,{2,0,1})"
 	  },
-     SeeAlso => {"mutable matrices",rowPermute,columnAdd,columnSwap,columnMult}
+     SeeAlso => {"mutable matrices", "row and column operations"} 
      }
 
 TEST ///
