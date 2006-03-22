@@ -274,14 +274,6 @@ document {
      }
 
 document {
-     Key => class,
-     Headline => "class of an object",
-     TT "class x", " -- yields the class of ", TT "x", ".",
-     PARA,
-     SeeAlso => "classes and types"
-     }
-
-document {
      Key => hash,
      Headline => "hash code of an object",
      TT "hash x", " -- returns the hash code of ", TT "x", ".",

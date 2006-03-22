@@ -887,18 +887,6 @@ document {
      }
 
 document {
-     Key => characters,
-     Headline => "get characters from a string",
-     TT "characters s", " produces a list of the characters in the string s.",
-     PARA,
-     "The characters are represented by strings of length 1.",
-     PARA,
-     EXAMPLE "characters \"asdf\"",
-     PARA,
-     SeeAlso => "String"
-     }
-
-document {
      Key => getenv,
      Headline => "get value of environment variable",
      TT "getenv s", " yields the value associated with the string s in the 

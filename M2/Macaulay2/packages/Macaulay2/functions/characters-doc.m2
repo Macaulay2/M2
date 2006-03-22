@@ -1,37 +1,21 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): from doc2, MES
 --- notes: 
 
 document { 
-     Key => characters,
-     Headline => "",
-     Usage => "",
+     Key => {characters,(characters,String)},
+     Headline => "get characters from a string",
+     Usage => "characters s",
      Inputs => {
+	  "s" => String => ""
 	  },
      Outputs => {
+	  List => {"of the characters in the string ", TT "s"}
 	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     "The characters are represented by strings of length 1.",
+     PARA,
+     EXAMPLE "characters \"asdf\"",
+     PARA,
+     SeeAlso => {String}
      }
-document { 
-     Key => (characters,String),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc2.m2:918:     Key => characters,
+

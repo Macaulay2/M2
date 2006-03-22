@@ -48,8 +48,8 @@ document {
      NOINDENT, TT "listUserSymbols X", " limits the list to those variables whose
      values are instances of ", TO "class", " ", TT "X", ".",
      PARA,
-     "This function is useful after using ", TO "loaddata", " to restore 
-     a previous session.",
+     "After using ", TO "loaddata", " to restore 
+     a previous session, this function is useful to determine what user defined variables are present.",
      SeeAlso => {"userSymbols"}
      }
 

@@ -4,8 +4,10 @@
 
 document { 
 	Key => {char, (char,Ring)},
-	--Undocumented => {(char,FractionField), (char,QuotientRing),
-	--(char,PolynomialRing)},
+	Undocumented => {
+	     (char,FractionField), 
+	     (char,QuotientRing),
+	     (char,PolynomialRing)},
      Headline => "computes the characteristic of a field or ring",
      Usage => "char F",
      Inputs => {
@@ -19,67 +21,3 @@ document {
 		"char R",
 	  },
      }
--- document { 
---      Key => ,
---      Headline => "",
---      Usage => "",
---      Inputs => {
--- 	  },
---      Outputs => {
--- 	  },
---      Consequences => {
--- 	  },     
---      "description",
---      EXAMPLE {
--- 	  },
---      Caveat => {},
---      SeeAlso => {}
---      }
--- document { 
---      Key => ,
---      Headline => "",
---      Usage => "",
---      Inputs => {
--- 	  },
---      Outputs => {
--- 	  },
---      Consequences => {
--- 	  },     
---      "description",
---      EXAMPLE {
--- 	  },
---      Caveat => {},
---      SeeAlso => {}
---      }
--- document { 
---      Key => ,
---      Headline => "",
---      Usage => "",
---      Inputs => {
--- 	  },
---      Outputs => {
--- 	  },
---      Consequences => {
--- 	  },     
---      "description",
---      EXAMPLE {
--- 	  },
---      Caveat => {},
---      SeeAlso => {}
---      }
--- document { 
---      Key => ,
---      Headline => "",
---      Usage => "",
---      Inputs => {
--- 	  },
---      Outputs => {
--- 	  },
---      Consequences => {
--- 	  },     
---      "description",
---      EXAMPLE {
--- 	  },
---      Caveat => {},
---      SeeAlso => {}
---      }
