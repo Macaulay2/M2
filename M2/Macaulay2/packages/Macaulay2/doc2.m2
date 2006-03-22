@@ -669,18 +669,6 @@ document {
      Inputs => { "x" => RR => null },
      Outputs => { { "the square root of ", TT "x"} } }
 document {
-     Key => floor,
-     Headline => "floor function",
-     Usage => "floor x",
-     Inputs => { "x" => RR => null },
-     Outputs => { { "the largest integer less than or equal to the number ", TT "x" } } }
-document {
-     Key => ceiling,
-     Headline => "ceiling function",
-     Usage => "ceiling x",
-     Inputs => { "x" => RR => null },
-     Outputs => { { "the largest integer greater than or equal to the number ", TT "x" } } }
-document {
      Key => run,
      Headline => "run an external command", 
      Usage => "run s",

@@ -474,7 +474,31 @@ document {
 document {
      Key => ChainComplex,
      Headline => "the class of all chain complexes",
-     SeeAlso => "chain complexes"
+     "For an overview of creating and using chain complexes in Macaulay 2, see ",
+     TO "chain complexes", ".",
+     PARA,
+     "Common ways to create a chain complex",
+     UL {
+	  TO chainComplex,
+	  TO (resolution,Module),
+	  },
+     "Information about a chain complex",
+     UL {
+	  TO (length,ChainComplex),
+	  TO (min,ChainComplex),
+	  TO (max,ChainComplex),
+	  TO (betti,ChainComplex),
+	  TO (ring,ChainComplex)
+	  },
+     "Operations on chain complexes",
+     UL {
+	  TO (dual,ChainComplex),
+	  TO (symbol++,ChainComplex,ChainComplex),
+	  TO (symbol**,ChainComplex,Module),
+	  TO (symbol**,ChainComplex,ChainComplex),
+	  TO (Hom,ChainComplex,Module),
+	  TO (symbol" ", ChainComplex, Array)
+	  },
      }
 
 document {
