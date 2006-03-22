@@ -79,7 +79,7 @@ document {
      }
 
 document {
-     Key => (ICmap,Ring),
+     Key => {ICmap, (ICmap,Ring)},
      Headline => "natural map from an affine domain into its integral closure.",
      Usage => "ICmap R",
      Inputs => {
@@ -97,7 +97,7 @@ document {
      }
 
 document {
-     Key => (ICfractions,Ring),
+     Key => {ICfractions, (ICfractions,Ring)},
      Headline => "Compute the fractions integral over a domain.",
      Usage => "ICfractions R",
      Inputs => {
@@ -119,7 +119,7 @@ document {
      }
 
 document {
-     Key => (conductor,RingMap),
+     Key => {conductor,(conductor,RingMap)},
      Headline => "compute the conductor of a finite ring map",
      Usage => "conductor F",
      Inputs => {
@@ -128,13 +128,20 @@ document {
      Outputs => {
 	  {"the conductor ideal of ", TT "S", " into ", TT "R", "."}
 	  },
+     "Suppose that the ring map F : R --> S is finite: i.e. S is a finitely 
+     generated R-module.  The conductor of F is defined to be {",
+     TEX "g \\in R \\mid g S \\subset f(R)", "}.  One way to think
+     about this is that the conductor is the set of universal denominators
+     of ", TT "S", " over ", TT "R", ", or as the largest ideal of ", TT "R", " 
+     which is also an ideal in ", TT "S", ".",
      EXAMPLE {
 	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
-	  "conductor(ICmap R)"
+	  "F = ICmap R",
+	  "conductor F"
 	  },
      PARA,
      "The command ", TT "conductor", " calls the 
-     command ", TT "pushForward", ".  Currently, the 
+     command ", TO pushForward, ".  Currently, the 
      command ", TT "pushForward", 
      " does not work if the source of the map ", TT "F", " is multgraded 
      or inhomogeneous.  If the source of the map ", TT "F", " is multigraded 
