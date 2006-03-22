@@ -136,14 +136,13 @@ document {
 	  row of ", TT "m"}
           },     
      EXAMPLE {
-	  "R = ZZ[a..f]",
+	  "R = ZZ[a..f];",
 	  "n = genericMatrix(R,a,2,3)",
 	  "m = mutableMatrix n",
 	  "rowAdd(m,0,c,1)",
 	  "m"
           },
-     Caveat => {},
-     SeeAlso => {columnAdd}
+     SeeAlso => {"mutable matrices", columnAdd}
      }
 
 document { 
@@ -168,14 +167,13 @@ document {
 	  column of ", TT "m"}
           },     
      EXAMPLE {
-	  "R = ZZ[a..f]",
+	  "R = ZZ[a..f];",
 	  "n = genericMatrix(R,a,2,3)",
 	  "m = mutableMatrix n",
 	  "columnAdd(m,0,c,1)",
 	  "m"
           },
-     Caveat => {},
-     SeeAlso => {rowAdd}
+     SeeAlso => {"mutable matrices",rowAdd}
      }
 
 document { 
@@ -197,8 +195,7 @@ document {
 	  "rowSwap(m,0,1)",
 	  "m"
           },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {"mutable matrices",columnSwap}
      }
 
 document { 
@@ -220,8 +217,7 @@ document {
 	  "columnSwap(m,0,1)",
 	  "m"
           },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {"mutable matrices",rowSwap,columnAdd,columnMult}
      }
 document { 
      Key => {rowMult,
@@ -242,14 +238,13 @@ document {
 	  " is modified by multiplying it by ", TT "a"}
           },     
      EXAMPLE {
-	  "R = ZZ[a..f]",
+	  "R = ZZ[a..f];",
 	  "n = genericMatrix(R,a,2,3)",
 	  "m = mutableMatrix n",
 	  "rowMult(m,0,c)",
 	  "m"
           },
-     Caveat => {},
-     SeeAlso => {columnAdd}
+     SeeAlso => {"mutable matrices",columnAdd}
      }
 
 document { 
@@ -277,8 +272,7 @@ document {
 	  "columnMult(m,0,c)",
 	  "m"
           },
-     Caveat => {},
-     SeeAlso => {columnAdd}
+     SeeAlso => {"mutable matrices", columnAdd, columnSwap, rowMult}
      }
 document { 
      Key => {rowPermute,(rowPermute,MutableMatrix,ZZ,List)},
@@ -299,8 +293,7 @@ document {
 	  "m = mutableMatrix n",
 	  "rowPermute(m,1,{2,0,1})"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {"mutable matrices", columnPermute, rowAdd, rowMult, rowSwap}
      }
 document { 
      Key => {columnPermute,(columnPermute,MutableMatrix,ZZ,List)},
@@ -321,8 +314,7 @@ document {
 	  "m = mutableMatrix n",
 	  "columnPermute(m,1,{2,0,1})"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {"mutable matrices",rowPermute,columnAdd,columnSwap,columnMult}
      }
 
 TEST ///

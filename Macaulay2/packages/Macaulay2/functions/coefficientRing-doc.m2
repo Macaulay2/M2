@@ -1,101 +1,31 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): taken from Dan's, MES
 --- notes: 
 
 document { 
-     Key => coefficientRing,
-     Headline => "",
-     Usage => "",
+     Key => {coefficientRing,(coefficientRing,Ring)},
+     Undocumented => {
+	  (coefficientRing,FractionField),
+	  (coefficientRing,QuotientRing),
+	  (coefficientRing,PolynomialRing),
+	  (coefficientRing,GaloisField)},
+     Headline => "get the coefficient ring",
+     Usage => "coefficientRing R",
      Inputs => {
+	  "R" => Ring => ""
 	  },
      Outputs => {
+	  Ring => {"the coefficient ring of ", TT "R"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "If ", TT "R", " is a polynomial ring, then the coefficient ring is
+     the base ring from which the coefficients are drawn.  If ", TT "R", " is
+     constructed from a polynomial ring as a quotient ring or a fraction ring
+     or a sequence of such operations, then the original coefficient ring
+     is returned.",
      EXAMPLE {
+	  "coefficientRing(ZZ/101[a][b])",
+      	  "ultimate(coefficientRing,ZZ/101[a][b])"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {ultimate, baseRings}
      }
-document { 
-     Key => (coefficientRing,FractionField),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (coefficientRing,QuotientRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (coefficientRing,PolynomialRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (coefficientRing,GaloisField),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (coefficientRing,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc6.m2:74:     Key => coefficientRing,
+

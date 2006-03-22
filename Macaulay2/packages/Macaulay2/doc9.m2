@@ -459,17 +459,6 @@ document {
      TT "gradedModuleMap", " -- a method for creating maps of graded modules."
      }
 
-document {
-     Key => coimage,
-     Headline => "coimage of a map",
-     TT "coimage f", " -- coimage of a map.",
-     PARA,
-     "The coimage of a map differs slightly from the image, in that the
-     coimage is a quotient module of the source of the map, but the image
-     is a submodule of the target of the map.  The image and the coimage
-     are isomorphic modules.",
-     SeeAlso => "GradedModule"
-     }
 
 document {
      Key => ChainComplex,

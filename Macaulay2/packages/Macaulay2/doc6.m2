@@ -37,20 +37,6 @@ document {
 
 
 document {
-     Key => coefficientRing,
-     Headline => "get the coefficient ring",
-     TT "coefficientRing R", " -- yields the coefficient ring of the ring ", TT "R", ".",
-     PARA,
-     "If ", TT "R", " is a polynomial ring, then the coefficient ring is
-     the base ring from which the coefficients are drawn.  If ", TT "R", " is
-     constructed from a polynomial ring as a quotient ring or a fraction ring
-     or a sequence of such operations, then the original coefficient ring
-     is returned.",
-     EXAMPLE {
-	  "coefficientRing(ZZ/101[a][b])",
-      	  "ultimate(coefficientRing,ZZ/101[a][b])"
-	  }}
-document {
      Key => baseRings,
      Headline => "store the list of base rings of a ring",
      TT "baseRings", " -- a symbol used as a key in a ring ", TT "R", " under which is
