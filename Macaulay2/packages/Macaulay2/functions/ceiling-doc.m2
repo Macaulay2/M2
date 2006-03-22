@@ -1,21 +1,15 @@
---- status: TODO
---- author(s): 
---- notes: 
+--- status: DRAFT
+--- author(s): M. Stillman
+--- notes: only added example
 
 document { 
-     Key => ceiling,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     Key => {ceiling},
+     Headline => "ceiling function",
+     Usage => "ceiling x",
+     Inputs => { "x" => RR => null },
+     Outputs => { { "the largest integer greater than or equal to the number ", TT "x" } },
      EXAMPLE {
+	  "ceiling(-3.4)"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {floor}
      }
- -- doc2.m2:726:     Key => ceiling,

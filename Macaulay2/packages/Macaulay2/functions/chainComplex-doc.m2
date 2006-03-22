@@ -1,8 +1,6 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): MES
 --- notes: 
-
-
 
 document {
      Key => chainComplex,
@@ -10,40 +8,36 @@ document {
      TT "chainComplex", " -- a method for creating chain complexes.",
      }
 
-document {
-     Key => (chainComplex, Sequence),
+document { 
+     Key => {(chainComplex,List),(chainComplex,Sequence)},
      Headline => "make a chain complex",
-     TT "chainComplex(f,g,h,...)", " -- create a chain complex ", TT "C", " whose
-     differentials are the maps ", TT "f", ", ", TT "g", ", ", TT "h", ".",
-     PARA,
-     "The map ", TT "f", " appears as ", TT "C.dd_1", ", the map ", TT "g", " appears
-     as ", TT "C.dd_2", ", and so on.",
+     Usage => {TT "C = chainComplex{f1,f2,f3,...} ", EM "or", TT " C = chainComplex(f1,f2,f3,...)"},
+     Inputs => {
+	  "f1,f2,f3,..." => "homomorphisms over the same ring, forming a complex",
+	  },
+     Outputs => {
+	  "C" => ChainComplex => "the given complex, where f1 == C.dd_1, f2 = CC.dd_2, etc."
+	  },
+     "The maps f1, f2, ... must be defined over the same base ring, and they must form
+     a complex: the target of f(i+1) is the source of fi.",
      PARA,
      "The following example illustrates how chainComplex adjusts the degrees of
      the modules involved to ensure that sources and targets of the differentials
      correspond exactly.",
      EXAMPLE {
 	  "R = ZZ/101[x,y]",
-      	  "C = chainComplex(matrix{{x,y}},matrix{{x*y},{-x^2}})",
-	  }
-     }
-
-
-document { 
-     Key => (chainComplex,List),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+      	  "C = chainComplex{matrix{{x,y}},matrix{{x*y},{-x^2}}}",
 	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     "We check that that this is a complex:",
      EXAMPLE {
+	  "C.dd^2 == 0"
+	  },
+     "The homology of this complex:",
+     EXAMPLE {
+	  "HH C"
 	  },
      Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {"chain complexes"}
      }
 
 document { 
@@ -55,7 +49,8 @@ document {
 	  },
      Outputs => {
 	  {"the chain complex made from ", TT "M", " by installing the zero map as differential" }
-	  }
+	  },
+     SeeAlso => {"chain complexes"}
      }
 
 document { 
@@ -73,9 +68,6 @@ document {
 	  "f = vars R",
 	  "chainComplex f",
 	  "HH oo"
-	  }
+	  },
+     SeeAlso => {"chain complexes"}
      }
- -- doc9.m2:1608:     Key => chainComplex,
- -- doc9.m2:1614:     Key => (chainComplex, Matrix),
- -- doc9.m2:1621:     Key => (chainComplex, Sequence),
- -- doc9.m2:1830:     Key => (chainComplex,GradedModule),
