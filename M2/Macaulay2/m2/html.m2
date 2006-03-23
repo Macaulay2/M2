@@ -505,8 +505,7 @@ installPackage String := opts -> pkg -> (
 
 installPackage Package := opts -> pkg -> (
      if pkg =!= Macaulay2Core then (
-	  if opts.MakeDocumentation and (not pkg#?"processed documentation database" or not isOpen pkg#"processed documentation database")
-     	  then pkg = loadPackageWithDoc(pkg#"title",opts);
+	  if opts.MakeDocumentation and #pkg#"raw documentation" == 0 then pkg = loadPackageWithDoc(pkg#"title",opts);
      	  rawDoc := pkg#"raw documentation";
      	  if #rawDoc == 0 then stderr << "--warning: package seems to have no documentation" << endl;
 	  );
