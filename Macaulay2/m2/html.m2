@@ -489,8 +489,8 @@ uninstallPackage Package := o -> pkg -> (
 	  );
      )
 
-reloadPackage := (pkg,opts) -> (
-     stderr << "--reloading package \"" << pkg << "\"" << endl;
+loadPackageWithDoc := (pkg,opts) -> (
+     stderr << "--loading package \"" << pkg << "\" with documentation" << endl;
      fl := forceLoadDocumentation;
      forceLoadDocumentation = true;
      dismiss pkg;
@@ -499,16 +499,14 @@ reloadPackage := (pkg,opts) -> (
      p)
 
 installPackage String := opts -> pkg -> (
-     if PackageDictionary#?pkg and class value PackageDictionary#pkg === Package then (
-	  PKG := value PackageDictionary#pkg;
-	  if not opts.MakeDocumentation or PKG#?"processed documentation database" and isOpen PKG#"processed documentation database"
-     	  then return installPackage(PKG, opts);
-	  );
-     installPackage(reloadPackage(pkg,opts), opts))
+     if PackageDictionary#?pkg and class value PackageDictionary#pkg === Package 
+     then installPackage(value PackageDictionary#pkg, opts)
+     else installPackage(loadPackageWithDoc(pkg,opts), opts))
 
 installPackage Package := opts -> pkg -> (
      if pkg =!= Macaulay2Core then (
-     	  pkg = reloadPackage(pkg#"title",opts);
+	  if opts.MakeDocumentation and (not pkg#?"processed documentation database" or not isOpen pkg#"processed documentation database")
+     	  then pkg = loadPackageWithDoc(pkg#"title",opts);
      	  rawDoc := pkg#"raw documentation";
      	  if #rawDoc == 0 then stderr << "--warning: package seems to have no documentation" << endl;
 	  );
