@@ -39,7 +39,7 @@ be fixed for the documentation of char.
 (This is an eternal bug; the time stamp doesn't count, hence no stamp.)
 
 ###### 5. 
-gb(..., DegreeLimit =>) doesn't seem to work. The following example is from the documentation of Macaulay2 > Groebner bases > Computing Groebner bases:
+gb(..., DegreeLimit =>) doesn't seem to work. The following example is from the documentation of Macaulay2 > Groebner bases > computing Groebner bases:
 
 AFTERTHOUGHT: I now think that the bug report is false, but I am leaving it
 here since Mike did say that there is some problem with DegreeLimit. I don't

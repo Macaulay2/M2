@@ -1,69 +1,28 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): MES
 --- notes: 
 
 document { 
-     Key => liftable,
-     Headline => "",
-     Usage => "",
+     Key => {liftable,
+	  (liftable,RingElement,Ring)},
+     Undocumented => {
+     	  (liftable,ZZ,Ring),
+	  (liftable,QQ,Ring)},
+     Headline => "whether a ring element can be lifted to another ring",
+     Usage => "liftable(f,R)",
      Inputs => {
+	  "f" => RingElement => "",
+	  "R" => Ring => ""
 	  },
      Outputs => {
+	  Boolean => "whether f can be lifted to the ring R"
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "The ring ", TT "R", " should be one of the base rings associated with the
+     ring of ", TT "f", ".",
      EXAMPLE {
+	  "R = ZZ[x]",
+	  "liftable ((x-1)*(x+1)-x^2, ZZ)",
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {lift, baseRings}
      }
-document { 
-     Key => (liftable,RingElement,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (liftable,ZZ,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (liftable,QQ,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc6.m2:116:     Key => liftable,
+

@@ -5,7 +5,7 @@
 document { 
      Key => gb,
      Headline => "compute a Groebner basis",
-	"See ", TO "Computing Groebner bases", " for examples.",
+	"See ", TO "computing Groebner bases", " for examples.",
      }
 document { 
      Key => (gb,Ideal),
@@ -18,7 +18,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "See ", TO "Computing Groebner bases", " for examples.",
+     "See ", TO "computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -35,7 +35,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "See ", TO "Computing Groebner bases", " for examples.",
+     "See ", TO "computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -52,7 +52,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "See ", TO "Computing Groebner bases", " for examples.",
+     "See ", TO "computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -103,7 +103,7 @@ document {
      EXAMPLE {
 	  },
      Caveat => {"This feature has not been implemented yet"},
-     SeeAlso => {"Computing Groebner bases"}
+     SeeAlso => {"computing Groebner bases"}
      }
 document { 
      Key => [gb, Strategy],
@@ -159,7 +159,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "See ", TO "Computing Groebner bases", " for examples.",
+     "See ", TO "computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -173,7 +173,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "See ", TO "Computing Groebner bases", " for examples.",
+     "See ", TO "computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -187,7 +187,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "See ", TO "Computing Groebner bases", " for examples.",
+     "See ", TO "computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -201,7 +201,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "See ", TO "Computing Groebner bases", " for examples.",
+     "See ", TO "computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -215,7 +215,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "See ", TO "Computing Groebner bases", " for examples.",
+     "See ", TO "computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -229,7 +229,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "See ", TO "Computing Groebner bases", " for examples.",
+     "See ", TO "computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -243,7 +243,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "See ", TO "Computing Groebner bases", " for examples.",
+     "See ", TO "computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -257,7 +257,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "See ", TO "Computing Groebner bases", " for examples.",
+     "See ", TO "computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -271,7 +271,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "See ", TO "Computing Groebner bases", " for examples.",
+     "See ", TO "computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -285,7 +285,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "See ", TO "Computing Groebner bases", " for examples.",
+     "See ", TO "computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
