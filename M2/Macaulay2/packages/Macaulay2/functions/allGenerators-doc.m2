@@ -1,68 +1,48 @@
---- status: TODO
---- author(s): 
---- notes: 
+--- status: DRAFT
+--- author(s): MES
+--- notes: BUG still (for quotient rings)
 
 document { 
-     Key => allGenerators,
-     Headline => "",
-     Usage => "",
+     Key => {allGenerators, (allGenerators,Ring)},
+     Headline => "list of all generators",
+     Undocumented => {
+	  (allGenerators, PolynomialRing),
+	  (allGenerators, FractionField)},
+     Usage => "allGenerators R",
      Inputs => {
+	  "R" => Ring => ""
 	  },
      Outputs => {
+	  List => {"of every generator of ", TT "R", " over the prime field or the integers"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Returns the list of all of the generators, as elements of R.",
      EXAMPLE {
+	  "A = GF(9,Variable=>a)",
+	  "B = A[r,s,t]",
+	  "generators B",
+	  "allGenerators B",
+	  "C = B[x,y,z]/(x^2-a*x-r)",
+	  "generators C",
+	  "allGenerators C"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (allGenerators,FractionField),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     "This same order is used when creating ", TO2(RingMap, "ring maps"), " from this ring.
+     The following ring map from C --> A[u,v] sends ",
+     TT "x|-->0, y|-->u, z|-->v, r|-->0, s-->av+1, t|-->1.",
      EXAMPLE {
+	  "D = A[u,v];",
+	  "F = map(D, C, {0, u, v,  0, a*v+1, 1})",
+	  "F (x+s*y)"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {generators, vars, "ring maps"}
      }
-document { 
-     Key => (allGenerators,PolynomialRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (allGenerators,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
+
+TEST ///
+A = GF(9,Variable=>a)
+B = A[r,s,t]
+generators B
+allGenerators B
+C = B[x,y,z]/(x^2-a*x-r)
+generators C
+v = allGenerators C
+assert (#v) == 7
+///

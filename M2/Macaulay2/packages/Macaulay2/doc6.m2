@@ -48,15 +48,6 @@ document {
      PARA,
      "The base rings are presented in chronological order."}
 document {
-     Key => lift,
-     Headline => "lift to another ring",
-     TT "lift(f,R)", " -- promotes a ring element ", TT "f", " to 
-     the ring ", TT "R", ".",
-     PARA,
-     "The ring ", TT "R", " should be one of the base rings associated with the
-     ring of ", TT "f", ".",
-     SeeAlso => "baseRings"}
-document {
      Key => liftable,
      Headline => "whether a ring element can be lifted to another ring",
      TT "liftable(f,R)", " -- tells whether a ring element ", TT "f", " can be
@@ -69,18 +60,7 @@ document {
 	  "liftable ((x-1)*(x+1)-x^2, ZZ)",
 	  },
      SeeAlso => {"lift"}}
-document {
-     Key => promote,
-     Headline => "promote to another ring",
-     TT "promote(f,R)", " -- promotes a ring element ", TT "f", " to 
-     the ring ", TT "R", ".",
-     PARA,
-     "The element ", TT "f", " should be an element of some base ring of ", TT "R", ".",
-     PARA,
-     "A special feature is that if ", TT "f", " is rational, and ", TT "R", " is not
-     an algebra over ", TO "QQ", ", then an element of ", TT "R", " is provided
-     by attempting the evident division.",
-     SeeAlso => "baseRings"}
+
 document {
      Key => RingElement,
      Headline => "the class of all ring elements handled by the engine",
@@ -118,24 +98,33 @@ assert ( 1 == numerator(b/b) )
 document {
      Key => FractionField,
      Headline => "the class of all fraction fields",
-     "Note: there is no way to reduce an element of an arbitrary
-     fraction field to a normal form.  In other words, fractions
-     may be equal without displaying the same numerator and denominator."}
+     "Macaulay 2 provides for fraction fields of integral domains.",
+     PARA,
+     "In some cases, normal forms of fractions makes sense, but in general
+     for fraction fieldss of quotient rings, there is no notion of
+     normal form for a fraction.
+     In other words, fractions
+     may be equal without displaying the same numerator and denominator.",
+     PARA,
+     "Computations over fraction fields, or polynomial rings over fraction fields,
+     especially Groebner basis computations, are much slower than over prime fields.
+     Still, an attempt is made to speed up these computations as much as possible, and
+     more is planned in the future.",
+     PARA,
+     "For an overview, see ", TO "fraction fields", " and  ", TO frac, ".",
+     HEADER4 "Useful functions for use with fractions and fraction fields include:",
+     UL {
+	  TO frac,
+	  TO numerator,
+	  TO denominator,
+	  TO liftable,
+	  TO lift
+	  }
+     }
 document {
      Key => ZZ,
      Headline => "the class of all integers" }
-document {
-     Key => numerator,
-     Headline => "numerator of a fraction",
-     TT "numerator x", " -- provides the numerator of a fraction.",
-     PARA,
-     EXAMPLE "numerator (4/6)"}
-document {
-     Key => denominator,
-     Headline => "denominator of a fraction",
-     TT "denominator x", " -- provides the denominator of a fraction.",
-     PARA,
-     EXAMPLE "denominator (4/6)"}
+
 document {
      Key => QQ,
      Headline => "the class of all rational numbers",

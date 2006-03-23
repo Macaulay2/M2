@@ -418,8 +418,9 @@ document {
      Usage => "setRandomSeed i",
      Inputs => {"i" => null},
      Consequences => {
-     	  "Sets the random number seed to the low-order 32 bits of the integer ", TT "i", ".
-     	  The sequence of future pseudo-random results is determined by the seed."},
+     	  {"Sets the random number seed to the low-order 32 bits of the integer ", TT "i", ".
+     	  The sequence of future pseudo-random results is determined by the seed."}
+	  },
      EXAMPLE {
 	  "setRandomSeed 123456",
 	  "for i to 10 list random 100",
@@ -433,9 +434,10 @@ document {
      Usage => ///setRandomSeed s///,
      Inputs => {"s" => null},
      Consequences => {
-	  "Sets the random number seed to an integer computed from ", TT "s", ".  Every character 
+	  {"Sets the random number seed to an integer computed from ", TT "s", ".  Every character 
 	  of the string contributes to the seed, but only 32 bits of data are used.
-	  The sequence of future pseudo-random results is determined by the seed."},
+	  The sequence of future pseudo-random results is determined by the seed."}
+	  },
      EXAMPLE {
 	  ///setRandomSeed "thrkwjsxz"///,
 	  ///for i to 10 list random 100///,
@@ -484,19 +486,23 @@ document {
      }
 
 document {
-     Key => debug,
-     Headline => "open private dictionary of a package"
-     }
-
-document {
-     Key => (debug,Package),
+     Key => {debug,(debug,Package)},
      Headline => "open private dictionary of a package",
      Usage => "debug p",
      Inputs => {
-	  "p" => "",
+	  "p" => Package => "",
 	  },
      Consequences => {
-	  {"the private dictionary of the package ", TT "p", " is added to ", TO "globalDictionaries", " so its non-exported symbols are visible" }
+	  {"the private dictionary of the package ", TT "p", " is added to ", TO "globalDictionaries", 
+	       " so its non-exported symbols are visible" }
+	  },
+     "For example, the private dictionary for Macaulay 2 may be opened using",
+     EXAMPLE"debug Macaulay2Core",
+     "This allows access to the low level (\"raw\") routines implemented by the Macaulay 2 engine,
+     although this is mainly useful for debugging Macaulay 2 itself.",
+     EXAMPLE {
+	  "R = QQ[a..d];",
+	  "raw R"
 	  }
      }
 

@@ -68,6 +68,12 @@ i8 : p = kernel f
 stdio:10:5:(2): not implemented yet
 
 
+r = QQ[a,b,c,d,x,y, MonomialOrder => Eliminate 4]
+f = map(frac(r),r,{y^2/(x^3+x*y), x^5/(x^2*y+y^2), y^3/(x^5+x^3*y),
+		  x*y/(x^2+y),x,y});
+
+p = kernel f
+
 ---------------------------------------------------------------------------------------
 
 R = ZZ/101[x,y]
@@ -138,6 +144,7 @@ than 2^16-1, and for LexTiny to be 2^7-1 rather than the current
 implement leadTerm(ZZ, ring element)
 
 ---------------------------------------------------------------
+
 i66 : R = ZZ/101[x,y];
 
 i67 : K = frac R;

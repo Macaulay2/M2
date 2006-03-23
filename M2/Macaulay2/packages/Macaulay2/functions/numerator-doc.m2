@@ -1,53 +1,35 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): MES
 --- notes: 
 
-document { 
-     Key => numerator,
-     Headline => "",
-     Usage => "",
+document {
+     Key => {numerator, (numerator,Divide)},
+     Undocumented => {
+	  (numerator,QQ)},
+     Headline => "numerator of a fraction",
+     Usage => "numerator x",
      Inputs => {
+	  "x" => "a fraction"
 	  },
      Outputs => {
+	  {"the numerator of ", TT "x"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     EXAMPLE "numerator (4/6)",
+     PARA,
      EXAMPLE {
+	  "R = frac(ZZ[x,y]);",
+	  "numerator((x+2*y-3)/(x-y))"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (numerator,Divide),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     PARA,
+     TT "numerator", " also works with Hilbert series.",
      EXAMPLE {
+	  "R = QQ[a..d]/(a^2,b^2,c^3);",
+	  "hf = hilbertSeries R",
+	  "numerator hf"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {
+	  denominator,
+	  "fraction fields",
+	  hilbertSeries
+	  }
      }
-document { 
-     Key => (numerator,QQ),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc6.m2:232:     Key => numerator,
