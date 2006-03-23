@@ -1,6 +1,6 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
-precedence = method(SingleArgumentDispatch=>true, TypicalValue=>ZZ)
+precedence = method(SingleArgumentDispatch=>true)
 
 -- local variables
 local PowerPrecedence
