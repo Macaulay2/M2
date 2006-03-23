@@ -47,19 +47,6 @@ document {
      to ", TT "R", " is implemented with ", TO "promote", ".",
      PARA,
      "The base rings are presented in chronological order."}
-document {
-     Key => liftable,
-     Headline => "whether a ring element can be lifted to another ring",
-     TT "liftable(f,R)", " -- tells whether a ring element ", TT "f", " can be
-     lifted to the ring ", TT "R", ".",
-     PARA,
-     "The ring ", TT "R", " should be one of the base rings associated with the
-     ring of ", TT "f", ".",
-     EXAMPLE {
-	  "R = ZZ[x]",
-	  "liftable ((x-1)*(x+1)-x^2, ZZ)",
-	  },
-     SeeAlso => {"lift"}}
 
 document {
      Key => RingElement,

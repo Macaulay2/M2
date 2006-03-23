@@ -6,7 +6,7 @@ document {
      Key => "Groebner bases",
      Subnodes => {
 	  TO "What is a Groebner basis?",
-	  TO "Computing Groebner bases",
+	  TO "computing Groebner bases",
 	  --TO "finding a Groebner basis",
 	  --TO "rings that are available for Groebner basis computations",
 	  --TO "fine control of a Groebner basis computation"
@@ -60,12 +60,12 @@ document {
     	  "I = ideal(x^3 - 2*x*y, x^2*y - 2*y^2 + x);",
 	  "gens gb I"
 	  },
-	SeeAlso => {"monomial orderings", leadTerm, "Computing Groebner bases",
+	SeeAlso => {"monomial orderings", leadTerm, "computing Groebner bases",
 	"normal forms"}
 	}
 
 document {
-     Key => "Computing Groebner bases",
+     Key => "computing Groebner bases",
 	"Groebner bases are computed with the ", TT "gb", " command; see ", 
 	TO "gb", ". It returns an object of class ", TT "GroebnerBasis", ".",
 	EXAMPLE {
@@ -225,5 +225,5 @@ document {
 	that no term of $r$ is divisible by the leading term of any $g_i$ and such
 	that $f-r$ belongs to $I$. This polynomial $r$ is sometimes called the normal
 	form of $f$.///,
-	SeeAlso => {"Computing Groebner bases", (symbol %, RingElement, Ideal)},
+	SeeAlso => {"computing Groebner bases", (symbol %, RingElement, Ideal)},
 	}

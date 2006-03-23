@@ -33,7 +33,7 @@ document {
 	  "F = map(D, C, {0, u, v,  0, a*v+1, 1})",
 	  "F (x+s*y)"
 	  },
-     SeeAlso => {generators, vars, "ring maps"}
+     SeeAlso => {generators, vars, "substitution and maps of rings"}
      }
 
 TEST ///

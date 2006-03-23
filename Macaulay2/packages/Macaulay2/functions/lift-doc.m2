@@ -15,7 +15,6 @@ document {
 	  (lift,ZZ,ZZ),
 	  (lift,QQ,ZZ),
 	  (lift,QQ,QQ),
-	  (lift,Matrix,Ring),
 	  (lift,Matrix,ZZ),
 	  (lift,RingElement,ZZ),
 	  (lift,RingElement,QQ)},

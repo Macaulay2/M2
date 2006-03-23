@@ -417,7 +417,7 @@ document {
      need to refer to these objects directly, as many operations on
      matrices and modules create them, and refer to them.  For more
      information, see ", TO "Groebner bases", " or
-     ", TO "Computing Groebner bases", "."
+     ", TO "computing Groebner bases", "."
      }
 
 document {
