@@ -137,6 +137,7 @@ newPackage(String) := opts -> (title) -> (
 		    db := newpkg#"raw documentation database" = openDatabase dbname;
 		    addEndFunction(() -> if isOpen db then close db))));
      pkgsym := getGlobalSymbol(PackageDictionary,title);
+     -- newpkg.Dictionary#title = pkgsym;
      -- newpkg#"private dictionary"#originalTitle = pkgsym;	    -- local synonym under original title, in case the package is loaded under a different title and tries to refer to itself
      global currentPackage <- newpkg;
      ReverseDictionary#newpkg = pkgsym;
