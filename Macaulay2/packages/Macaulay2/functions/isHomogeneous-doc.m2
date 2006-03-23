@@ -1,198 +1,90 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): MES
 --- notes: 
 
 document { 
-     Key => isHomogeneous,
-     Headline => "",
-     Usage => "",
+     Key => {isHomogeneous,
+	  (isHomogeneous,Ring),
+	  (isHomogeneous,ChainComplexMap),
+	  (isHomogeneous,Matrix),
+	  (isHomogeneous,RingElement),
+	  (isHomogeneous,Module),
+	  (isHomogeneous,ChainComplex),
+	  (isHomogeneous,RingMap),
+	  (isHomogeneous,Vector),
+	  (isHomogeneous,Ideal)},
+     Headline => "whether something is homogeneous (graded)",
+     Undocumented => {
+	  (isHomogeneous,FractionField),
+	  (isHomogeneous,PolynomialRing),
+	  (isHomogeneous,QuotientRing)},
+     Usage => "isHomogeneous x",
      Inputs => {
+	  "x" => {"a ", TO Ring, ", ",
+	       TO RingElement, ", ",
+	       TO Vector, ", ",
+	       TO Matrix, ", ",
+	       TO Ideal, ", ",
+	       TO Module, ", ",
+	       TO RingMap, ", ",
+	       TO ChainComplex, ", or ",
+	       TO ChainComplexMap}
 	  },
      Outputs => {
+	  Boolean => {"whether ", TT "x", " is homogeneous."}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
+	  "isHomogeneous(ZZ)",
+	  "isHomogeneous(ZZ[x])",
+	  "isHomogeneous(ZZ[x]/(x^3-x-3))"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isHomogeneous,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     PARA,
+     "Rings may be graded, with generators having degree 0.  For example,
+     in the ring B below, every element of A has degree 0.",
      EXAMPLE {
+	  "A = QQ[a,b,c];",
+	  "B = A[x,y];",
+	  "isHomogeneous B",
+	  "isHomogeneous ideal(a*x+y,y^3-b*x^2*y)"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isHomogeneous,FractionField),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     PARA,
+     "Quotients of multigraded rings are homogeneous, if the ideal is also multigraded.",
      EXAMPLE {
+          "R = QQ[a,b,c,Degrees=>{{1,1},{1,0},{0,1}}];",
+	  "I = ideal(a-b*c);",
+	  "isHomogeneous I",
+	  "isHomogeneous(R/I)",
+	  "isHomogeneous(R/(a-b))"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isHomogeneous,PolynomialRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     PARA,
+     "A matrix is homogeneous if each entry is homogeneous of such a degree
+     so that the matrix has a well-defined degree.",
      EXAMPLE {
+	  "S = QQ[a,b];",
+	  "F = S^{-1,2}",
+     	  "isHomogeneous F",
+	  "G = S^{1,2}",
+	  "phi = random(G,F)",
+	  "isHomogeneous phi",
+	  "degree phi"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isHomogeneous,ChainComplexMap),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     PARA,
+     "Modules are homogeneous if their generator and relation matrices are homogeneous.",
      EXAMPLE {
+	  "M = coker phi",
+	  "isHomogeneous(a*M)",
+     	  "isHomogeneous((a+1)*M)"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {degree, "graded and multigraded polynomial rings"}
      }
-document { 
-     Key => (isHomogeneous,Matrix),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isHomogeneous,RingElement),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isHomogeneous,QuotientRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isHomogeneous,Module),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isHomogeneous,ChainComplex),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isHomogeneous,RingMap),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isHomogeneous,Ideal),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc1.m2:550:     Key => isHomogeneous,
- -- doc1.m2:554:     Key => (isHomogeneous,Matrix),
+
+TEST ///
+isHomogeneous (ZZ/7)
+isHomogeneous (ZZ/7[x])
+isHomogeneous (ZZ/7[x]/(x^2-1))
+isHomogeneous ZZ
+A = QQ[a,b,c]
+B = A[x,y]
+isHomogeneous B
+isHomogeneous ideal(a*x+y,y^3-b*x^2*y)
+///

@@ -19,11 +19,16 @@ document {
      Subnodes => {
 	  TO "overview of the Macaulay2 language",
 	  TO "variables",
+
 	  "basic datatypes",
 	  TO "numeric types",
-	  TO "strings and nets",
-	  TO "lists and sequences",
+
+	  TO "strings",
+	  TO "nets",
+	  TO "lists",
+	  TO "sequences",
 	  TO "hash tables",
+
      	  "expressions",
 	  TO "assignment statements",
 	  TO "function calls",
@@ -125,7 +130,7 @@ document {
 	  "1/(1+ii)",
 	  },
      "There are also arbitrary precision real and complex numbers.  See
-     ", TO "RRR", " or a", TO "CCC", " for more details.",
+     ", TO "RRR", " or ", TO "CCC", " for more details.",
      SeeAlso => {
 	  ZZ,
 	  QQ,
@@ -150,7 +155,7 @@ document {
 	  TO "assignment statements",
 	  TO "function calls",
 	  TO "function definitions",
-	  TO "if statements",
+	  TO "conditional execution",
 	  TO "while loops",
 	  TO "for loops",
 	  TO "try clauses",
@@ -829,7 +834,7 @@ document {
      "We retrieve the length of a list with the operator ", TO "#", ".",
      EXAMPLE "#x",
      "We use it also to obtain a particular element.  The elements are 
-     nubered consecutively starting with 0.",
+     numbered consecutively starting with 0.",
      EXAMPLE "x#2",
      "The elements of a list are stored in consecutive memory locations,
      so the operation above is fast.",

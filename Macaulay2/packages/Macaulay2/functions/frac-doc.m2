@@ -66,8 +66,6 @@ document {
 	"f = map(K, A, {x^3/y^4, x^2/y^2, (x^2+y^2)/y^4});",
 	"kernel f",
 	 },
-     Consequences => {
-	  },     
      Caveat => {"The input ring should be an integral domain.",
 	PARA,
 	"Currently, for ", TT "S", " as above, one cannot define ",

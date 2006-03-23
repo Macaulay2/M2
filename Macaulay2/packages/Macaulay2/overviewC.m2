@@ -483,7 +483,15 @@ document {
       	  "liftable(f,R)",
       	  "lift(1/f,R)"
 	  },
-     "Note that computations, such as Groebner bases, over fraction fields can be quite slow."
+     "Note that computations, such as Groebner bases, over fraction fields can be quite slow.",
+     SeeAlso => {
+	  frac,
+	  numerator,
+	  denominator,
+	  liftable,
+	  lift,
+	  (kernel,RingMap)
+	  }
      }
 
 document {

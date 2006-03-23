@@ -5,6 +5,7 @@
 document { 
      Key => cohomology,
      Headline => "general cohomology functor",
+     Undocumented => {(cohomology,ZZ,Sequence)},
       TT "cohomology", " -- a method name available for computing expressions
      of the forms ", TT "HH^i(X)", " and ", TT "HH^i(M,N)", ".",
      PARA,
@@ -148,22 +149,6 @@ document {
      Caveat => {"The computation will fail if the module is not finitely generated. Also
      the version HH^i(F(*)) is not yet implemented."},
      SeeAlso => {"HH", (cohomology, ZZ, CoherentSheaf), (cohomology,ZZ,Module)}
-     }
-document { 
-     Key => (cohomology,ZZ,Sequence),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
      }
 document { 
      Key => (cohomology,ZZ,ChainComplex),

@@ -1,53 +1,36 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): MES
 --- notes: 
 
-document { 
-     Key => denominator,
-     Headline => "",
-     Usage => "",
+document {
+     Key => {denominator, (denominator,Divide)},
+     Undocumented => {
+	  (denominator,QQ)},
+     Headline => "denominator of a fraction",
+     Usage => "denominator x",
      Inputs => {
+	  "x" => "a fraction"
 	  },
      Outputs => {
+	  {"the denominator of ", TT "x"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     EXAMPLE "denominator (4/6)",
+     PARA,
      EXAMPLE {
+	  "R = frac(ZZ[x,y]);",
+	  "denominator((x+2*y-3)/(x-y))"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (denominator,Divide),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     PARA,
+     TT "denominator", " also works with Hilbert series.",
      EXAMPLE {
+	  "R = QQ[a..d]/(a^2,b^2,c^3);",
+	  "hf = hilbertSeries R",
+	  "denominator hf"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {
+	  numerator,
+	  "fraction fields",
+	  hilbertSeries
+	  }
      }
-document { 
-     Key => (denominator,QQ),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc6.m2:238:     Key => denominator,
+

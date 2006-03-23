@@ -1,405 +1,78 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): MES
 --- notes: 
 
 document { 
-     Key => promote,
-     Headline => "",
-     Usage => "",
+     Key => {promote,
+	  (promote, RingElement, Ring)},
+     Undocumented => {
+	  (promote, ZZ, RingElement),
+	  (promote, QQ, RingElement),
+	  (promote, ZZ, EngineRing),
+	  (promote, RR, EngineRing),
+	  (promote, ZZ, Ring),
+	  (promote, QQ, Ring),
+	  (promote, ZZ, ZZ),
+	  (promote, ZZ, QQ),
+	  (promote, QQ, QQ),
+	  (promote, RR, Ring),
+	  (promote, CC, Ring),
+	  (promote, ZZ, RR),
+	  (promote, ZZ, CC),
+	  (promote, QQ, RR),
+	  (promote, QQ, CC),
+	  (promote, Matrix, ZZ),
+	  (promote, Matrix, QQ),
+	  (promote, RR, RR),
+	  (promote, RR, CC),
+	  (promote, CC, CC)},
+     Headline => "promote to another ring",
+     Usage => "promote(f,R)",
      Inputs => {
+	  "f" => RingElement => {"in some base ring of R"},
+	  "R" => Ring => ""
 	  },
      Outputs => {
+	  RingElement => "an element of R",
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Promote the given element ", TT "f",
+     " to an element of ", TT "R", ", via the natural map to ", TT "R", ".",
      EXAMPLE {
+	  "R = QQ[a..d];",
+	  "f = a^2",
+	  "S = R/(a^2-b-1);",
+	  "promote(2/3,S)",
+	  "promote(f,S)"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,ZZ,EngineRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     PARA,
+     "If you wish to promote a matrix, or ideal, or module to another ring, use tensor products of matrices
+     or modules.",
      EXAMPLE {
+	  "gens ideal(f) ** S"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     "A special feature is that if ", TT "f", " is rational, and ", TT "R", " is not
+     an algebra over ", TO "QQ", ", then an element of ", TT "R", " is provided
+     by attempting the evident division.",
+     PARA,
+     "This function is used internally to make the use of several related rings as smooth as possible.",
+     SeeAlso => {baseRings,
+	  lift,
+	  liftable,
+	  (symbol**,RingElement,Ring)
+	  }
      }
-document { 
-     Key => (promote,RR,EngineRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,MonoidElement,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,ZZ,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,QQ,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,ZZ,ZZ),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,ZZ,QQ),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,QQ,QQ),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,RR,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,CC,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,ZZ,RR),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,ZZ,CC),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,QQ,RR),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,Matrix,ZZ),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,QQ,CC),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,Matrix,QQ),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,MonoidElement,RingElement),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,RingElement,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,RR,RR),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,ZZ,RingElement),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,RR,CC),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,QQ,RingElement),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,CC,CC),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (promote,RingElement,RingElement),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc6.m2:129:     Key => promote,
+
+--(promote, MonoidElement, Ring)
+--(promote, MonoidElement, RingElement)
+--(promote, RingElement, RingElement)
+
+TEST ///
+R = QQ[a..d]
+S = R/(a^2-b^2)
+T = S[x,y,z]
+promote(1/2,S)
+1/2 * 1_S
+I = ideal(a^3,c^3)
+(I_0) ** T
+(gens I) ** T
+///

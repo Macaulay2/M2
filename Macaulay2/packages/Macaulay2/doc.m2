@@ -451,6 +451,7 @@ document {
 document {
      Key => deepSplice,
      Headline => "remove subsequences",
+     Undocumented => {(deepSplice,BasicList)},
      TT "deepSplice v", " -- yields a new list v where any members of v 
      which are sequences are replaced by their elements, and so on.",
      PARA,

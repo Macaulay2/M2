@@ -662,7 +662,6 @@ document {
      "Functions which act on expressions:",
      UL {
 	  TO "value",
-	  TO "precedence"
 	  }
      }
 
