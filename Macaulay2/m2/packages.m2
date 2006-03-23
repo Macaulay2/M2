@@ -94,8 +94,8 @@ newPackage(String) := opts -> (title) -> (
 	  "raw documentation" => new MutableHashTable,	    -- deposited here by 'document'
 	  "processed documentation" => new MutableHashTable,-- the output from 'documentation', look here first
 	  "example inputs" => new MutableHashTable,
-	  "exported symbols" => new MutableList from {},
-	  "exported mutable symbols" => new MutableList from {},
+	  "exported symbols" => {},
+	  "exported mutable symbols" => {},
 	  "example results" => new MutableHashTable,
 	  "source directory" => currentFileDirectory,
 	  "undocumented keys" => new MutableHashTable,
@@ -137,8 +137,6 @@ newPackage(String) := opts -> (title) -> (
 		    db := newpkg#"raw documentation database" = openDatabase dbname;
 		    addEndFunction(() -> if isOpen db then close db))));
      pkgsym := getGlobalSymbol(PackageDictionary,title);
-     -- newpkg.Dictionary#title = pkgsym;
-     -- newpkg#"private dictionary"#originalTitle = pkgsym;	    -- local synonym under original title, in case the package is loaded under a different title and tries to refer to itself
      global currentPackage <- newpkg;
      ReverseDictionary#newpkg = pkgsym;
      pkgsym <- newpkg;
