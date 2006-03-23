@@ -213,7 +213,7 @@ Ring * Vector := (R,v) -> (
      )
 isHomogeneous Vector := (v) -> isHomogeneous v#0
 
-newModule = method(TypicalValue => Module)
+newModule = method()
 newModule(Ring,RawFreeModule) := (R,rM) -> new Module of Vector from {
      symbol cache => new CacheTable,
      symbol RawFreeModule => rM,
