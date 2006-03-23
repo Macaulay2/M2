@@ -491,14 +491,14 @@ document {
      SeeAlso => "HashTable"
      }
 
-document {
-     Key => precedence,
-     Headline => "parsing precedence",
-     TT "precedence x", " -- returns the parsing precedence of ", TT "x", " for use in
-     the printing routines.",
-     PARA,
-     SeeAlso => {"Expression", "net", "toString"}
-     }
+-- document {
+--      Key => precedence,
+--      Headline => "parsing precedence",
+--      TT "precedence x", " -- returns the parsing precedence of ", TT "x", " for use in
+--      the printing routines.",
+--      PARA,
+--      SeeAlso => {"Expression", "net", "toString"}
+--      }
 
 document {
      Key => hashTable,

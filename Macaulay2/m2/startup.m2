@@ -437,7 +437,7 @@ if prefixDirectory      =!= null then (
      )
 if sourceHomeDirectory  =!= null then path = join(path, {sourceHomeDirectory|"test/", sourceHomeDirectory|"test/engine/"})
 -- path = select(path, fileExists)
-normalPrompts()
+if firstTime then normalPrompts()
 
 if firstTime and not nosetup then (
      loadSetup();
