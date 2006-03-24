@@ -35,7 +35,7 @@ document {
 
 document {
      Key => "working with multiple rings",   -- DOUBLE CHECK BEING DONE WITH THIS ONE!
-     "Working with multiple rings is more subtle than simply 
+     "Working with multiple rings is more subtle than simply
      replacing values of the variables in a ring.  On the other 
      hand it is particularly easy in Macaulay2.  We define a 
      sequence of rings below and move between each to show both 

@@ -667,7 +667,6 @@ export (
 	symbol get,
 	symbol getChangeMatrix,
 	symbol getGlobalSymbol,
-	symbol getMatrix,
 	symbol getNonUnit,
 	symbol getParsing,
 	symbol getWWW,
