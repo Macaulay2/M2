@@ -820,13 +820,6 @@ document {
 	  TO (homology, Matrix, Matrix),
 	  }}
 document {
-     Key => getMatrix,
-     Headline => "get a matrix from the engine's stack",
-     TT "getMatrix R", " -- pops a matrix over ", TT "R", " from the top of 
-     the engine's stack and returns it.",
-     PARA,
-     "Intended for internal use only."}
-document {
      Key => (symbol _, Matrix, Sequence),
      Headline => "get an entry",
      TT "f_(i,j)", " -- provide the element in row ", TT "i", " and

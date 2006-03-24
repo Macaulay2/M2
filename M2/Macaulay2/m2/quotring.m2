@@ -226,6 +226,8 @@ generators QuotientRing := (S) -> (
 	  A := ultimate(ambient,S);
 	  S.generators = apply(generators A, m -> promote(m,S))))
 
+allGenerators QuotientRing := (S) -> apply(allGenerators ambient S, m -> promote(m,S))
+
 char QuotientRing := (S) -> (
      if S.?char then S.char
      else S.char = (
