@@ -363,38 +363,64 @@ document {
      }
 
 document {
-     Key => maxPosition,
-     Headline => "position of largest element",
-     }
-
-document {
-     Key => (maxPosition,BasicList),
+     Key => {maxPosition,(maxPosition,BasicList)},
      Usage => "maxPosition x",
+     Headline => "position of largest element",
      Inputs => {
-	  "x" => ""
+	  "x" => BasicList => ""
 	  },
      Outputs => {
 	  { "the position of the largest element in the list ", TT "x" }
 	  },
      "If the largest element occurs more than once, then the first occurrence
      is used.  If ", TT "x", " has length 0 an error results.",
-     SeeAlso => { (minPosition,BasicList) }
+     EXAMPLE {
+	  "maxPosition {1,6,4,2}"
+	  },
+     "Notice that the position of the maximal element is 1, as indexing in
+     Macaulay 2 always starts at 0.",
+     PARA,
+     "For elements in a polynomial ring, the order used is the ", 
+     TO2("monomial orderings","monomial order"),
+     " associated with the ring.",
+     EXAMPLE {
+	  "R = QQ[r,s,x,y,z];",
+	  "z^2 + x*y + s*z",
+	  "maxPosition {z^2, s*z, x*y}",
+	  "maxPosition(z^2, s*z, x*y)"	  
+	  },
+     
+     SeeAlso => { minPosition, max, min, sort, position }
      }
 
 document {
-     Key => minPosition, Headline => "position of smallest element" }
-document {
-     Key => (minPosition,BasicList),
+     Key => {minPosition,(minPosition,BasicList)},
      Usage => "minPosition x",
+     Headline => "position of smallest element",
      Inputs => {
-	  "x" => "",
+	  "x" => BasicList => ""
 	  },
      Outputs => {
-	  { "the position of the smallest element in the list ", TT "x", "." }
+	  { "the position of the smallest element in the list ", TT "x" }
 	  },
      "If the smallest element occurs more than once, then the first occurrence
      is used.  If ", TT "x", " has length 0 an error results.",
-     SeeAlso => { (maxPosition,BasicList) }
+     EXAMPLE {
+	  "minPosition {1,6,4,2}"
+	  },
+     "Notice that the position of the minimal element is 0, as indexing in
+     Macaulay 2 always starts at 0.",
+     PARA,
+     "For elements in a polynomial ring, the order used is the ", 
+     TO2("monomial orderings","monomial order"),
+     " associated with the ring.",
+     EXAMPLE {
+	  "R = QQ[r,s,x,y,z];",
+	  "z^2 + x*y + s*z",
+	  "minPosition {z^2, s*z, x*y}",
+	  "minPosition(z^2, s*z, x*y)"
+	  },
+     SeeAlso => { maxPosition, max, min, sort, position }
      }
 
 document {
