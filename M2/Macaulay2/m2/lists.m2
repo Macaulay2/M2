@@ -30,7 +30,7 @@ minPosition BasicList := ZZ => x -> (
      else (
      	  m := x#0; 
 	  pos := 0;
-	  scan(1 .. # x-1, i -> if x#i>m then (m=x#i;pos=i));
+	  scan(1 .. # x-1, i -> if x#i<m then (m=x#i;pos=i));
 	  pos))
 
 number = x -> # select x
