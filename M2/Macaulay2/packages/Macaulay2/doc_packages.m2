@@ -239,7 +239,7 @@ document {
      Headline => "load and install a package and its documentation ",
      Usage => "installPackage PACKAGENAME",
      Inputs => {
-	  "PACKAGENAME" => {"a ", TO String, ", or ", TO Package}
+	  "PACKAGENAME" => {"a ", TO String, " or ", TO Package}
 	  },
      Outputs => {
 	  },

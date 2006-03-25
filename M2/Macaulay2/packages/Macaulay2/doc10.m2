@@ -23,7 +23,9 @@ document {
      }
 
 document {  -- This node is used as an example in the node: Key
-     Key => resolution, Headline => "make a projective resolution" }
+     Key => resolution, 
+     Headline => "make a projective resolution"
+     }
 document {
      Key => [resolution,DegreeLimit],
      Headline => "compute only up to this degree",
