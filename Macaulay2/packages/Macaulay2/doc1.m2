@@ -1,15 +1,5 @@
 
 document {
-     Key => between,
-     Headline => "insert something between elements of a list",
-     TT "between(m,v)", " -- inserts ", TT "m", " between each pair of elements 
-     of the list or sequence ", TT "v", ", returning a list.",
-     PARA,
-     EXAMPLE {
-	  "between(55,{a,b,c,d})"
-	  }
-     }
-document {
      Key => briefDocumentation,
      Headline => "get brief documentation",
      TT "briefDocumentation s", " -- provides the first paragraph of the online
@@ -488,7 +478,7 @@ document {
 document {
      Key => method,
      Headline => "make a new method function",
-     TT "f = method()", " -- creates a method function",
+     Usage => "f = method()",
      PARA,
      "The code above creates a method function which takes up to three 
      arguments, looking up the appropriate method according to the classes of 

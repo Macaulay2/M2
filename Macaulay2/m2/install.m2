@@ -81,8 +81,9 @@ Second, on a command line, type 'M2' (without the quotes).  If
 Macaulay2 has been installed properly, then you should see a prompt
 such as this:
 
-	indigo% M2
+	% M2
 	Macaulay 2, version 0.9.8
+
 	i1 : 
 
 Now type
@@ -98,7 +99,6 @@ to get the html help on a topic, such as "ideals", use
 
 At this point you should try something simple in Macaulay2, such as
 
-	printWidth = 60
 	R = QQ[a..d]
 	(a+b+c+d)^4
 
@@ -106,14 +106,16 @@ To exit Macaulay2, type one of: exit, end, or quit.
 
 	exit
 
-The Macaulay2 support folder
+The Macaulay2 application directory
 
 If this is the first time that you have run a recent version of
-Macaulay2 from your user account, Macaulay2 creates a directory,
-".Macaulay2" in your home directory.  (Under Mac OS X, that directory
-is called "Library/Application Support/Macaulay2" instead.)
+Macaulay2 from your user account, Macaulay2 creates an "application
+directory" for Macaulay2 in your home directory.  Under unix, that
+directory is named ".Macaulay2", and under Mac OS X, it is
+called "Library/Application Support/Macaulay2".)
 
-This directory contains several useful files and directories:
+The application directory contains several useful files and
+directories:
 
 	init.m2		This file is run every time you start Macaulay2
 	code/		This directory is on your Macaulay2 path, 
@@ -123,13 +125,20 @@ This directory contains several useful files and directories:
 			documentation. It includes the Macaulay2 html
 			distribution, together with any html files from
 			installed Macaulay2 packages.
+        encap/	   	A directory containing one subdirectory for
+	     	        each installed package.  The subdirectory
+			houses the files for that package.
+        local/	   	A directory tree containing symbolic links
+	     	        to the files of each installed package.
+	local/info/	A directory with links to the info files
+	     	        for each installed package.  You may wish
+			to add this directory to the list of
+			directories in your environment variable
+			INFOPATH.
 
 After creating this directory, Macaulay2 never modifies init.m2 or the
 code directory.  The page index.html is rewritten each time M2 is
 started.
-
-The directories "encap" and "local" are used by Macaulay2 to manage
-installed packages: you should mostly ignore these directories.
 
 Finally, Enjoy!
 

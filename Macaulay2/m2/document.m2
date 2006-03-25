@@ -765,9 +765,9 @@ getOptionDefaultValues Thing := x -> emptyOptionTable
 getOptionDefaultValues Function := f -> (
      o := options f;
      if o =!= null then o else emptyOptionTable)
--- getOptionDefaultValues Sequence := s -> (
---      o := options s;
---      if o =!= null then o else if s#?0 and class s#0 === Function then getOptionDefaultValues s#0 else emptyOptionTable)
+getOptionDefaultValues Sequence := s -> (
+     o := options s;
+     if o =!= null then o else if s#?0 and class s#0 === Function then getOptionDefaultValues s#0 else emptyOptionTable)
 
 sortByName := v -> last \ sort \\ (i -> (toString i, i)) \ v
 
