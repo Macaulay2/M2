@@ -599,7 +599,7 @@ getExampleInputs Thing        := t -> {}
 getExampleInputs ExampleTABLE := t -> apply(toList t, first)
 getExampleInputs MarkUpList   := t -> join apply(toSequence t, getExampleInputs)
 
-examples = x -> stack getExampleInputs documentation x
+examples = x -> stack getExampleInputs help x
 apropos = method()
 apropos String := (pattern) -> sort select(flatten \\ keys \ globalDictionaries, i -> match(pattern,i) and not match("\\$",i))
 -----------------------------------------------------------------------------
@@ -878,12 +878,12 @@ briefDocumentation Thing := x -> (
 	       s := fmeth x;
 	       if s =!= null then << endl << s << endl;)))
 
-documentation = method(SingleArgumentDispatch => true)
-documentation String := key -> (
-     if unformatTag#?key then documentation unformatTag#key 
+help = method(SingleArgumentDispatch => true)
+help String := key -> (
+     if unformatTag#?key then help unformatTag#key 
      else if isGlobalSymbol key then (
 	  t := getGlobalSymbol key;
-	  documentation t)
+	  help t)
      else (
 	  b := makeDocBody key;
 	  if b === null then (
@@ -1002,7 +1002,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2Core then (
 		    if #c > 0 then PARA1 {"Symbols", smenu c},
 		    if #d > 0 then PARA1 {"Other things", smenuCLASS d}})))
 
-documentation Symbol := S -> (
+help Symbol := S -> (
      a := smenu apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
      b := smenu documentableMethods S;
      Hypertext fixuptop ( title S, synopsis S, makeDocBody S, op S,
@@ -1011,9 +1011,9 @@ documentation Symbol := S -> (
      	  documentationValue(S,value S),
 	  theExamples S, caveat S, seealso S, type S, theMenu S ))
 
-documentation DocumentTag := tag -> documentation DocumentTag.Key tag
+help DocumentTag := tag -> help DocumentTag.Key tag
 
-documentation Array := key -> (		    -- optional argument
+help Array := key -> (		    -- optional argument
      fn := key#0;
      opt := key#1;
      if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
@@ -1027,22 +1027,21 @@ documentation Array := key -> (		    -- optional argument
 	       	    }},
 	  theExamples key, caveat key, seealso key, theMenu key ))
 
-documentation Sequence := key -> (						    -- method key
+help Sequence := key -> (						    -- method key
+     if key === () then return help "initial help";
      if null === lookup key then error("expected ", toString key, " to be a method");
      Hypertext fixuptop ( title key, synopsis key, makeDocBody key, theExamples key, caveat key, seealso key, theMenu key ))
 
-documentation Thing := x -> if ReverseDictionary#?x then return documentation ReverseDictionary#x else error "undocumented"
+help List := v -> Hypertext between(HR{},help \ v)
+
+help Thing := x -> if ReverseDictionary#?x then return help ReverseDictionary#x else error "undocumented"
+
+help = Command help
 
 pager = x -> (
      if height stdio > 0
      then "!" | (if getenv "PAGER" == "" then "more" else getenv "PAGER") << x << close 
      else << x << endl ;)
-help = method(SingleArgumentDispatch => true)
-help List := v -> Hypertext between(HR{},documentation \ v)
-help Thing := s -> (
-     if s === () then s = "initial help";
-     documentation s)
-help = Command help
 
 infoHelp = key -> (
      tag := makeDocumentTag key;

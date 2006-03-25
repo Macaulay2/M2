@@ -4,18 +4,16 @@
 
 document { 
      Key => uniform,
-     Headline => "",
-     Usage => "",
+     Headline => "test whether elements of a list are of the same class",
+     Usage => "uniform x",
      Inputs => {
+	  "x" => List => null
 	  },
      Outputs => {
+	  Boolean => {"whether all elements of ", TT "x", " are of the same ", TO "class"}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "uniform {2,3,5}",
+	  "uniform {2,3,x}"
+	  }
      }
- -- doc1.m2:98:     Key => uniform,

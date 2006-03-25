@@ -73,7 +73,7 @@ menu(Function,Thing) := (x,back) -> (
 		    "frame#" | toString i | "[" | toString class (frame x)#i | "]",
 		    ((frame x)#i, (x,back))
 		    )));
-     if documentation x =!= null
+     if help x =!= null
      then items = append(items,("DOC",(RUNME{()-><< help x << endl},(x,back))));
      showit(items, (x,back), 0))
 

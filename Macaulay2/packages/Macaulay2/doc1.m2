@@ -1,22 +1,3 @@
-
-document {
-     Key => briefDocumentation,
-     Headline => "get brief documentation",
-     TT "briefDocumentation s", " -- provides the first paragraph of the online
-     documentation for the topic ", TT "s", ", in internal ", TO "hypertext", "
-     form, suitable for conversion to text with ", TO "net", " or to html 
-     with ", TO "html", ".",
-     SeeAlso => "documentation"
-     }
-document {
-     Key => documentation,
-     Headline => "get documentation, unformatted",
-     TT "documentation s", " -- provides the online documentation for the topic s, in
-     internal ", TO "hypertext", " form, suitable for conversion to
-     text with ", TO "net", " or to html with ", TO "html", ".",
-     PARA,
-     EXAMPLE "documentation partitions"
-     }
 document {
      Key => "initial help",				    -- display by the help command by default
      "Welcome to Macaulay 2",
@@ -133,11 +114,6 @@ document {
 	  TT "help methods ideal", ", but ", TT "infoHelp", " requires that the argument ", TT "s",
 	  " refers to only one documentation page."},
      SeeAlso => {apropos, examples, help, viewHelp, "reading the documentation"}
-     }
-document {
-     Key => uniform,
-     Headline => "test whether elements of a list are of the same class",
-     TT "uniform x", " -- whether all elements of the list x have the same class."
      }
 document {
      Key => newClass,

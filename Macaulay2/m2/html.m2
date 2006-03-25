@@ -738,7 +738,7 @@ installPackage Package := opts -> pkg -> (
 			 )
 		    else (
 			 if debugLevel > 0 then stderr << "--processing " << tag << endl;
-			 pkg#"processed documentation"#fkey = documentation tag;
+			 pkg#"processed documentation"#fkey = help tag;
 			 );
 		    ));
 
