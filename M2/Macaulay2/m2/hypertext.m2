@@ -270,7 +270,7 @@ tex PRE := x -> concatenate ( VERBATIM,
 ///
      )
 
-net TT := info TT := x -> format concatenate toSequence x   -- should just be strings here
+net TT := info TT := x -> concatenate toSequence x   -- should just be strings here
 
 htmlDefaults = new MutableHashTable from {
      -- "BODY" => "bgcolor='#e4e4ff'"
