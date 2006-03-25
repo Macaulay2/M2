@@ -29,20 +29,21 @@ dismiss Package := pkg -> (
      )
 dismiss String := title -> if PackageDictionary#?title and class value PackageDictionary#title === Package then dismiss value PackageDictionary#title
 
-substituteOptions := new MutableHashTable
 loadPackage = method(
      Options => {
-	  DebuggingMode => null
+	  DebuggingMode => null,
+	  MakeDocumentation => false
 	  } )
+packageLoadingOptions := new MutableHashTable
 loadPackage String := opts -> pkgtitle -> (
      filename := pkgtitle | ".m2";
-     substituteOptions#pkgtitle = opts;
+     packageLoadingOptions#pkgtitle = opts;
      -- if opts.DebuggingMode =!= true then loadDepth = loadDepth - 1;
      -- this was bad, because loadDepth might become negative, and then it gets converted to 255 in the pseudocode
      -- another problem was that loading the file might have resulted in an error.
      load filename;
      -- if opts.DebuggingMode =!= true then loadDepth = loadDepth + 1;
-     remove(substituteOptions,pkgtitle);
+     remove(packageLoadingOptions,pkgtitle);
      if not PackageDictionary#?pkgtitle then error("the file ", filename, " did not define a package ", pkgtitle);
      value PackageDictionary#pkgtitle)
 
@@ -150,7 +151,7 @@ newPackage(String) := opts -> (title) -> (
 	  );
      PrintNames#(newpkg.Dictionary) = title | ".Dictionary";
      PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
-     debuggingMode = if substituteOptions#?title and substituteOptions#title#DebuggingMode =!= null then substituteOptions#title#DebuggingMode else opts.DebuggingMode;
+     debuggingMode = if packageLoadingOptions#?title and packageLoadingOptions#title#DebuggingMode =!= null then packageLoadingOptions#title#DebuggingMode else opts.DebuggingMode;
      newpkg)
 
 export = method(SingleArgumentDispatch => true)
@@ -283,12 +284,16 @@ use Package := pkg -> if not member(pkg,packages) then (
      globalDictionaries = prepend(pkg.Dictionary,globalDictionaries);
      )
 
-forceLoadDocumentation = false
 beginDocumentation = () -> (
-     if not forceLoadDocumentation and currentPackage#?"processed documentation database" and isOpen currentPackage#"processed documentation database" then (
+     if not packageLoadingOptions#(currentPackage#"title").MakeDocumentation
+     and currentPackage#?"processed documentation database" and isOpen currentPackage#"processed documentation database" then (
 	  if notify then stderr << "--beginDocumentation: using documentation database, skipping the rest of " << currentFileName << endl;
+	  currentPackage#"documentation not loaded" = true;
 	  return end;
-	  );
+	  )
+     else (
+	  if notify then stderr << "--beginDocumentation: reading the rest of " << currentFileName << endl;
+	  )
      )
 
 debug = method()

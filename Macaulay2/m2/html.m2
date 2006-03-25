@@ -489,26 +489,17 @@ uninstallPackage Package := o -> pkg -> (
 	  );
      )
 
-loadPackageWithDoc := (pkg,opts) -> (
-     stderr << "--loading package \"" << pkg << "\" with documentation" << endl;
-     fl := forceLoadDocumentation;
-     forceLoadDocumentation = true;
-     dismiss pkg;
-     p := loadPackage(pkg, DebuggingMode => opts.DebuggingMode);
-     forceLoadDocumentation = fl;
-     p)
-
 installPackage String := opts -> pkg -> (
      if PackageDictionary#?pkg and class value PackageDictionary#pkg === Package 
      then installPackage(value PackageDictionary#pkg, opts)
-     else installPackage(loadPackageWithDoc(pkg,opts), opts))
+     else (
+	  pkg = loadPackage(pkg, DebuggingMode => opts.DebuggingMode, MakeDocumentation => opts.MakeDocumentation);
+	  installPackage(pkg, opts);
+	  ))
 
 installPackage Package := opts -> pkg -> (
-     if pkg =!= Macaulay2Core then (
-	  if opts.MakeDocumentation and #pkg#"raw documentation" == 0 then pkg = loadPackageWithDoc(pkg#"title",opts);
-     	  rawDoc := pkg#"raw documentation";
-     	  if #rawDoc == 0 then stderr << "--warning: package seems to have no documentation" << endl;
-	  );
+     if opts.MakeDocumentation and pkg#?"documentation not loaded"
+     then pkg = loadPackage(pkg#"title", DebuggingMode => opts.DebuggingMode, MakeDocumentation => true);
 
      absoluteLinks = opts.AbsoluteLinks;
      if class absoluteLinks =!= Boolean then error "expected true or false for option AbsoluteLinks"; 
@@ -634,6 +625,7 @@ installPackage Package := opts -> pkg -> (
 	       close tmp;
 	       );
 	  rawdocDatabase := openDatabaseOut rawdbnametmp;
+	  rawDoc := pkg#"raw documentation";
 	  scan(nodes, tag -> (
 		    fkey := DocumentTag.FormattedKey tag;
 		    if rawDoc#?fkey then (
@@ -650,6 +642,7 @@ installPackage Package := opts -> pkg -> (
 			 )
 		    else (
 			 if rawdocDatabase#?fkey then (
+			      error "debug me";
 			      stderr << "--warning: raw documentation for " << fkey << ", in database, is no longer present" << endl;
 			      )
 			 else (

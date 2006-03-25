@@ -600,7 +600,8 @@ getExampleInputs ExampleTABLE := t -> apply(toList t, first)
 getExampleInputs MarkUpList   := t -> join apply(toSequence t, getExampleInputs)
 
 examples = x -> stack getExampleInputs documentation x
-apropos = (pattern) -> sort unique (toString \ getGlobalSymbol \ select(flatten \\ keys \ globalDictionaries, i -> match(toString pattern,i)))
+apropos = method()
+apropos String := (pattern) -> sort select(flatten \\ keys \ globalDictionaries, i -> match(pattern,i) and not match("\\$",i))
 -----------------------------------------------------------------------------
 headline = method(SingleArgumentDispatch => true)
 headline Thing := key -> getOption(key,Headline)	    -- old method

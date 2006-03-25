@@ -110,7 +110,8 @@ The Macaulay2 support folder
 
 If this is the first time that you have run a recent version of
 Macaulay2 from your user account, Macaulay2 creates a directory,
-".Macaulay2" in your home directory.
+".Macaulay2" in your home directory.  (Under Mac OS X, that directory
+is called "Library/Application Support/Macaulay2" instead.)
 
 This directory contains several useful files and directories:
 
