@@ -1138,7 +1138,8 @@ export subvalueQ(left:Expr,right:Expr):Expr := (
 		    else True)
 	       else False)
 	  else False)
-     else False);
+     is Nothing do False				    -- we think of "null" as a universal gadget with no parts
+     else WrongArg(1,"null, a sequence, list, string, net, hashtable, database, or dictionary"));
 
 
 -- Local Variables:
