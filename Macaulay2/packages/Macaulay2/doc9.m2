@@ -108,7 +108,7 @@ document {
 	  "N" => null
 	  },
      Outputs => {
-	  { "the ", TT "Ext", " module of ", TT "M", " and ", TT "N" }
+	  { "the ", TT "i", "-th ", TT "Ext", " module of ", TT "M", " and ", TT "N" }
 	  },
      "If ", TT "M", " or ", TT "N", " is an ideal or ring, it is regarded as a module in the evident way."
      }
@@ -180,8 +180,14 @@ document {
      Key => (Tor,ZZ,Module,Module),
      Headline => "compute a Tor module",
      Usage => "Tor_i(M,N)",
-     "Compute the Tor module of two modules ", TT "M", " and ", TT "N", ".",
-     SeeAlso =>{"ScriptedFunctor"}
+     Inputs => {
+	  "i" => null,
+	  "M" => null,
+	  "N" => null
+	  },
+     Outputs => {
+	  { "the ", TT "i", "-th ", TT "Tor", " module of ", TT "M", " and ", TT "N" }
+	  }
      }
 
 document {
