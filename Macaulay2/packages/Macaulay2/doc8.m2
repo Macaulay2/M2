@@ -26,55 +26,6 @@ document {
      }
 
 document {
-     Key => symbol ann,
-     Headline => "the annihilator ideal",
-     "You may use ", TT "ann", " as a synonym for ", TO "annihilator", "."
-     }
-
-document {
-     Key => symbol annihilator,
-     Headline => "the annihilator ideal",
-     TT "annihilator M", " -- produce the annihilator ideal of a 
-     module, ideal, ring element, or coherent sheaf."
-     }
-
-document {
-     Key => (annihilator, Module),
-     Usage => "annihilator M",
-     Inputs => {
-	  "M" => "a module, or an ideal or ring element"
-	  },
-     Outputs => {
-	  { "the annihilator, ", TT "ann(M) = { f in R | fM = 0 }", " where ", TT "R", " is the ring of ", TT "M"}
-	  },
-     EXAMPLE {
-	  "R = QQ[a..d];",
-	  "J = monomialCurveIdeal(R,{1,3,4})",
-	  "M = Ext^2(R^1/J, R)",
-	  "annihilator M"
-	  },
-     "For another example, we compute the annihilator of an element
-     in a quotient ring",
-     EXAMPLE {
-	  "A = R/(a*b,a*c,a*d)",
-	  "ann(a)"
-	  },
-     "Macaulay 2 uses two algorithms to compute annihilators.  The default
-     version is to compute the annihilator of each generator of the module ",
-     TT "M", " and to intersect these two by two.  Each annihilator is
-     done using a submodule quotient.",
-     SeeAlso => {(quotient, Module, Module)}
-     }
-
-document {
-     Key => (symbol _,Module,ZZ),
-     Headline => "get a generator",
-     TT "M_i", " -- get the ", TT "i", "-th generator of a module ", TT "M", "",
-     PARA,
-     EXAMPLE "(ZZ^5)_2"
-     }
-
-document {
      Key => (symbol ^,Module,Array),
      Headline => "projection onto some factors of a direct sum module",
      TT "M^[i,j,k]", " -- projection onto some factors of a direct sum module.",

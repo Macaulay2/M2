@@ -103,7 +103,7 @@ document {
      "If you know that the columns of z already form a set of minimal
      generators, then one may use ", TO forceGB, " once again.",
      Caveat => {"If the columns of ", TT "z", " do not generate the 
-	  syzygy module of ,
+	  syzygy module of ", TT "f", ",
 	  nonsensical answers may result"},
      SeeAlso => {"Groebner bases"}
      }
