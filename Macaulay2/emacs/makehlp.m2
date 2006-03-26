@@ -8,7 +8,7 @@ printWidth = 79;
 << "                      -- do not edit -- " << endl
 << endl
 << endl
-<< documentation "running Macaulay 2 in emacs"
+<< help "running Macaulay 2 in emacs"
 << close
 )
 
