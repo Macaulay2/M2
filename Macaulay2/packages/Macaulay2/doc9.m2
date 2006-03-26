@@ -59,6 +59,7 @@ document {
 
 document {
      Key => (Ext,Module,Module),
+     Headline => "total Ext module",
      Usage => "Ext(M,N)",
      Inputs => {
 	  "M" => null,
@@ -100,6 +101,7 @@ document {
 document {
      Key => (Ext,ZZ,Module,Module),
      Usage => "Ext^i(M,N)",
+     Headline => "Ext module",
      Inputs => {
 	  "i" => null,
 	  "M" => null,
@@ -172,8 +174,13 @@ assert( toString Tor == \"Tor\" )
 
 document {
      Key => Tor,
+     Headline => "Tor module"
+     }
+document {
+     Key => (Tor,ZZ,Module,Module),
      Headline => "compute a Tor module",
-     TT "Tor_i(M,N)", " -- compute the Tor module of two modules M, N.",
+     Usage => "Tor_i(M,N)",
+     "Compute the Tor module of two modules ", TT "M", " and ", TT "N", ".",
      SeeAlso =>{"ScriptedFunctor"}
      }
 

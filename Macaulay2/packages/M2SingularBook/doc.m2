@@ -556,10 +556,17 @@ document {
      EXAMPLE {
 	  ///loadPackage "Elimination";///,
 	  ///A = QQ[u,v,x,y,z];///,
-	  ///I = ideal "x-uv,y-uv2,z-u2";///,
+	  ///I = ideal "x-uv,y-uv2,z-u2"///,
           ///eliminate(I,{u,v})///
 	  },
      TEX "This ideal defines the closure of the map $f$, the Whitney umbrella.",
+     PARA {
+	  "Alternatively, we could take the image of the ring homomorphism ", TT "g", " corresponding to ", TT "f", "."
+	  },
+     EXAMPLE {
+	  "g = map(QQ[u,v],QQ[x,y,z],{x => u*v, y => u*v^2, z => u^2})",
+	  "image g",
+	  },
      SeeAlso => {}
      }
 document {

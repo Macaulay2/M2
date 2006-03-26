@@ -40,6 +40,7 @@ isDocumentableMethod   Symbol := key -> isGlobalSymbol toString key and getGloba
 isDocumentableMethod     Type := 
 isDocumentableThing     Thing := key -> ReverseDictionary#?key
 isDocumentableMethod Function := fn -> ReverseDictionary#?fn
+isDocumentableMethod ScriptedFunctor := fn -> ReverseDictionary#?fn
 
 undocumented = key -> (
      if currentPackage === null then error "no package open";
@@ -874,7 +875,7 @@ briefDocumentation Thing := x -> (
      if r =!= null then << endl << r << endl
      else (
 	  if headline x =!= null then << endl << commentize headline x << endl;
-	  if class x === Function then (
+	  if class x === Function or class x === ScriptedFunctor then (
 	       s := fmeth x;
 	       if s =!= null then << endl << s << endl;)))
 
