@@ -920,6 +920,7 @@ document {
 
 document {
      Key => ScriptedFunctor,
+     Undocumented => {(toString, ScriptedFunctor)},
      Headline => "the class of all scripted functors",
      "A scripted functor accepts a subscript or a superscript:
      the primary example is ", TO "HH", ".",

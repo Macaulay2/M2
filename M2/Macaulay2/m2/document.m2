@@ -39,7 +39,7 @@ isDocumentableMethod    Thing := key -> false
 isDocumentableMethod   Symbol := key -> isGlobalSymbol toString key and getGlobalSymbol toString key === key
 isDocumentableMethod     Type := 
 isDocumentableThing     Thing := key -> ReverseDictionary#?key
-isDocumentableMethod Function := fn -> ReverseDictionary#?fn
+isDocumentableMethod Function := fn -> ReverseDictionary#?fn and dictionary ReverseDictionary#fn =!= null
 isDocumentableMethod ScriptedFunctor := fn -> ReverseDictionary#?fn
 
 undocumented = key -> (
@@ -957,11 +957,11 @@ documentationValue(Symbol,Type) := (s,X) -> (
      splice (
 	  if #b > 0 then ( DIV {"Types of ", if X.?synonym then X.synonym else toString X, " :"}, smenu b),
 	  if #a > 0 then ( DIV {"Functions and methods returning ", indefinite synonym X, " :"}, smenu a ),
-	  if #c > 0 then ( DIV {"Additional methods that use ", indefinite synonym X, " :"}, smenu c),
+	  if #c > 0 then ( DIV {"Methods that use ", indefinite synonym X, " :"}, smenu c),
 	  if #e > 0 then ( DIV {"Fixed objects of class ", toString X, " :"}, smenu e)))
 documentationValue(Symbol,HashTable) := (s,x) -> splice (
      c := documentableMethods x;
-     if #c > 0 then (DIV {"Functions installed in ", toString x, " :"}, smenu c))
+     if #c > 0 then SEQ { SUBSECTION {"Functions installed in ", TT toString x }, smenu c})
 documentationValue(Symbol,Thing) := (s,x) -> ()
 
 authorDefaults := new HashTable from { Name => "Anonymous", Email => null, HomePage => null }
