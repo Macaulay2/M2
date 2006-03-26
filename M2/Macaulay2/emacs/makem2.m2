@@ -7,6 +7,6 @@
 << "                      -- do not edit -- " << endl
 << endl
 << endl
-<< documentation "editing Macaulay 2 code with emacs"
+<< help "editing Macaulay 2 code with emacs"
 << close
 )
