@@ -62,24 +62,24 @@ resolutionBySyzygies := options -> (M) -> (
 	  );
      C)
 
-resolutionInEngine := options -> (M) -> (
+resolutionInEngine := opts -> (M) -> (
      local C;
      R := ring M;
      degreelimit := (
-	  if class options.DegreeLimit === ZZ then {options.DegreeLimit}
+	  if class opts.DegreeLimit === ZZ then {opts.DegreeLimit}
 	  else if degreelimit === null then degreelimit = {}
 	  else error "expected DegreeLimit to be an integer or null");
-     maxlevel := resolutionLength(R,options);
+     maxlevel := resolutionLength(R,opts);
      if not M.cache.?resolution 
      or M.cache.resolution.Resolution.length < maxlevel
      then M.cache.resolution = (
 	  g := presentation M;
-	  if options.Strategy === 0 then
+	  if opts.Strategy === 0 then
 	      g = generators gb g;  -- this is needed since the (current)
 			      -- default algorithm, 0, needs a GB 
 			      -- to be previously computed.
 	  harddegreelimit := (
-	       if class options.HardDegreeLimit === ZZ then {options.HardDegreeLimit}
+	       if class opts.HardDegreeLimit === ZZ then {opts.HardDegreeLimit}
 	       else if harddegreelimit === null then harddegreelimit = {}
 	       else error "expected HardDegreeLimit to be an integer or null");
 	  W := new Resolution;
@@ -92,8 +92,8 @@ resolutionInEngine := options -> (M) -> (
 	       maxlevel,				    -- how long a resolution to make
 	       false,					    -- useMaxSlantedDegree
 	       0,					    -- maxSlantedDegree (is this the same as harddegreelimit?)
-	       options.Strategy,			    -- algorithm
-	       options.SortStrategy			    -- strategy (is this the same as options.SortStrategy?)
+	       opts.Strategy,				    -- algorithm
+	       opts.SortStrategy			    -- strategy (is this the same as opts.SortStrategy?)
 	       );
 	  W.returnCode = rawStatus1 W.RawComputation;
 	  C = new ChainComplex;
@@ -109,22 +109,21 @@ resolutionInEngine := options -> (M) -> (
 	  or W.length < maxlevel
 	  or W.DegreeLimit < degreelimit
 	  then (
-	       if debugLevel > 0 then stderr << "--warning: about to recompute resolution, discarding data" << endl;
+	       -- clear info in C because W may change as we continue the computation:
 	       scan(keys C,i -> if class i === ZZ then remove(C,i));
 	       scan(keys C.dd,i -> if class i === ZZ then remove(C.dd,i));
-	       remove(C,complete);
+	       remove(C,symbol complete);
 	       resOptions := {
 		    maxlevel,
-		    inf options.SyzygyLimit,
-		    inf options.PairLimit,
-		    0, 0, 0};                   -- MES: these are three other options,
-						-- to be filled in yet.
-	       if not options.StopBeforeComputation then (
+		    inf opts.SyzygyLimit,
+		    inf opts.PairLimit,
+		    0, 0, 0};                   -- MES: these are three other opts, to be filled in yet.
+	       if not opts.StopBeforeComputation then (
                     rawGBSetStop(W.RawComputation,
 			 -- fill these in eventually:
-			 false,				    -- always_stop
+			 opts.StopBeforeComputation,	    -- always_stop
 			 false,				    -- stop_after_degree
-			 {},				    -- degree_limit
+			 {},				    -- degree_limit -- why does this take a list?
 			 0,				    -- basis_element_limit
 			 0,				    -- syzygy_limit
 			 0,				    -- pair_limit
