@@ -19,11 +19,22 @@ if regex(".*/","/aa/bb") =!= {(0, 4)}
 or regex(".*/","aabb") =!= null
 then error "regex regular expression library not working"
 
+if not firstTime then debug value PackageDictionary#"Macaulay2Core"
+
 if firstTime then (
      -- all global definitions go here, because after loaddata is run, we'll come through here again
      -- with all these already done and global variables set to read-only
      filesLoaded = new MutableHashTable;
      loadedFiles = new MutableHashTable;
+     notify = false;
+
+     markLoaded = (filename,origfilename,notify) -> ( 
+	  filename = minimizeFilename filename;
+	  filesLoaded#origfilename = filename; 
+	  loadedFiles##loadedFiles = filename; 
+	  if notify then stderr << "--loaded " << filename << endl;
+	  );
+
      ReverseDictionary = new MutableHashTable;
      PrintNames = new MutableHashTable;
      Thing.AfterEval = identity;
@@ -38,8 +49,6 @@ if firstTime then (
 		symbol Time, symbol Type, symbol VisibleList, symbol ZZ},
 	  s -> ReverseDictionary#(value s) = s		    -- get an early start for debugging
 	  );
-
-     notify = false;
 
      slimPrompts = () -> (
 	  lastprompt := "";
@@ -272,13 +281,6 @@ usage := arg -> (
      << "    LOADDATA_IGNORE_CHECKSUMS	   (for debugging)" << newline
      ;exit 0)
 
-markLoaded = (filename,origfilename,notify) -> ( 
-     filename = minimizeFilename filename;
-     filesLoaded#origfilename = filename; 
-     loadedFiles##loadedFiles = filename; 
-     if notify then stderr << "--loaded " << filename << endl;
-     )
-
 tryLoad := (ofn,fn) -> if fileExists fn then (
      simpleLoad fn;
      markLoaded(fn,ofn,notify);
@@ -442,6 +444,9 @@ if firstTime then normalPrompts()
 if firstTime and not nosetup then (
      loadSetup();
      )
+
+if not firstTime then globalDictionaries = delete(Macaulay2Core#"private dictionary", globalDictionaries)
+
 processCommandLineOptions 2
 runStartFunctions()
 errorDepth = loadDepth
