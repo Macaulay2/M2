@@ -402,13 +402,6 @@ path instead in the current directory to find the file.  This causes a
 problem for 'configure'.  Just edit its first line to use 'bash' instead.
 
 ----------------------
-Solaris notes
-----------------------
-
-Configure with the option
-	--without-dumpdata
-
-----------------------
 FreeBSD notes
 ----------------------
 
