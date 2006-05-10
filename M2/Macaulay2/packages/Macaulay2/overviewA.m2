@@ -41,23 +41,6 @@ document {
 ///
 
 
-document {
-     Key => "substitution and maps between rings",
-     HEADER2 "An overview",
-     Subnodes => {
-     	  "Substitution",
-	  TO "substituting values for variables",
-	  TO "working with multiple rings",
-	  "Ring maps",
-	  TO "basic construction, source and target of a ring map",
-	  TO "evaluation and composition of ring maps",
-	  TO "kernel and image of a ring map",
-	  TO "preimage of an ideal",
-	  },
-     PARA,
-      "For additional common operations and a comprehensive list of all routines
-     in Macaulay 2 which return or use ring maps, see ", TO "RingMap", "."
-     }
      
 document {
      Key => "modules",

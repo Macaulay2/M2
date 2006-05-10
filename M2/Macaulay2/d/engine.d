@@ -129,6 +129,8 @@ export (x:RawMutableMatrix) * (y:RawMutableMatrix) : RawMutableMatrixOrNull := (
 -- 
 export (x:RawMonomialIdeal) + (y:RawMonomialIdeal) : RawMonomialIdealOrNull := (
      Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)", "IM2_MonomialIdeal_add((MonomialIdeal *)", x, ",(MonomialIdeal *)", y, ")" ) );
+export (x:RawMonomialIdeal) - (y:RawMonomialIdeal) : RawMonomialIdealOrNull := (
+     Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)", "IM2_MonomialIdeal_setminus((MonomialIdeal *)", x, ",(MonomialIdeal *)", y, ")" ) );
 export (x:RawMonomialIdeal) * (y:RawMonomialIdeal) : RawMonomialIdealOrNull := (
      Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)", "IM2_MonomialIdeal_product((MonomialIdeal *)", x, ",(MonomialIdeal *)", y, ")" ) );
 

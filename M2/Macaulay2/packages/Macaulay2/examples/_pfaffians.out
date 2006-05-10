@@ -1,25 +1,26 @@
+-- -*- M2-comint -*-
 
-i1 : R = QQ[a..d];
+i1 : R = QQ[a..f];
 
 i2 : M = genericSkewMatrix(R,a,4)
 
-o2 = | 0  a  b c |
-     | -a 0  d 0 |
-     | -b -d 0 0 |
-     | -c 0  0 0 |
+o2 = | 0  a  b  c |
+     | -a 0  d  e |
+     | -b -d 0  f |
+     | -c -e -f 0 |
 
              4       4
 o2 : Matrix R  <--- R
 
 i3 : pfaffians(2,M)
 
-o3 = ideal (a, b, d, c)
+o3 = ideal (a, b, d, c, e, f)
 
 o3 : Ideal of R
 
 i4 : pfaffians(4,M)
 
-o4 = ideal(c*d)
+o4 = ideal(c*d - b*e + a*f)
 
 o4 : Ideal of R
 

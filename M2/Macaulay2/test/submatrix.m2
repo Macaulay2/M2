@@ -8,6 +8,7 @@ assert(rank source B == 1)
 assert(rank target B == 6)
 assert(B == B0)
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test submatrix.out"
 -- End:

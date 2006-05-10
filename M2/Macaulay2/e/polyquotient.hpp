@@ -16,6 +16,9 @@ protected:
   virtual ~PolyRingQuotient();
   PolyRingQuotient() {}
 
+  ring_elem ann(const ring_elem a, const ring_elem b) const;
+  // return an element h such that h*a is in (b).
+
 public:
   virtual const PolyRingQuotient * cast_to_PolyRingQuotient()  const { return this; }
   virtual       PolyRingQuotient * cast_to_PolyRingQuotient()        { return this; }

@@ -23,7 +23,7 @@ describe C
 F = x*s*t+2*y^2*s-3
 G = s*t-3
 lift(G,B)
-lift(F,B)
+try ( lift(F,B) ; error "oops, lift should fail" )
 
 D = C/ideal(x^2-s, y^3-t)
 describe D

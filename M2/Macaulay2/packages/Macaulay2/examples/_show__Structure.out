@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : showStructure
 
@@ -38,7 +39,6 @@ o1 = Thing : BasicList : Command
                                       EM
                                       HREF
                                       HTML
-                                      Hypertext
                                       IMG
                                       ITALIC
                                       LABEL
@@ -56,6 +56,7 @@ o1 = Thing : BasicList : Command
                                                             HEADER5
                                                             HEADER6
                                                             HR
+                                                            Hypertext
                                                             LISTING
                                                             MENU
                                                             NL
@@ -81,15 +82,16 @@ o1 = Thing : BasicList : Command
                          MutableList : Bag
                          Option
                          ParagraphList
+                         Partition
                          ProductOrder
                          PushforwardComputation
                          Time
                          TreeNode
+                         URL
+                         Vector
+                         VerticalList
                          VisibleList : Array
-                                       List : Partition
-                                              URL
-                                              Vector
-                                              VerticalList
+                                       List
                                        Sequence
              Boolean
              CC
@@ -108,7 +110,6 @@ o1 = Thing : BasicList : Command
                                             GradedModule : ChainComplex
                                             GradedModuleMap
                                             GroebnerBasis
-                                            ICnode
                                             Package
                                             Resolution
                                             ScriptedFunctor

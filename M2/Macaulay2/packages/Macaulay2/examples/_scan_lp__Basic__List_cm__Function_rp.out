@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : scan({a,4,"George",2^100}, print)
 a

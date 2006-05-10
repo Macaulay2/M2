@@ -89,7 +89,7 @@ resolutionInEngine := opts -> (M) -> (
 	  W.RawComputation = rawResolution(
 	       raw g,					    -- the matrix
 	       true,					    -- whether to resolve the cokernel of the matrix
-	       maxlevel,				    -- how long a resolution to make
+	       maxlevel,				    -- how long a resolution to make, (hard : cannot be increased by stop conditions below)
 	       false,					    -- useMaxSlantedDegree
 	       0,					    -- maxSlantedDegree (is this the same as harddegreelimit?)
 	       opts.Strategy,				    -- algorithm
@@ -113,24 +113,20 @@ resolutionInEngine := opts -> (M) -> (
 	       scan(keys C,i -> if class i === ZZ then remove(C,i));
 	       scan(keys C.dd,i -> if class i === ZZ then remove(C.dd,i));
 	       remove(C,symbol complete);
-	       resOptions := {
-		    maxlevel,
-		    inf opts.SyzygyLimit,
-		    inf opts.PairLimit,
-		    0, 0, 0};                   -- MES: these are three other opts, to be filled in yet.
 	       if not opts.StopBeforeComputation then (
                     rawGBSetStop(W.RawComputation,
 			 -- fill these in eventually:
 			 opts.StopBeforeComputation,	    -- always_stop
 			 false,				    -- stop_after_degree
-			 {},				    -- degree_limit -- why does this take a list?
-			 0,				    -- basis_element_limit
-			 0,				    -- syzygy_limit
-			 0,				    -- pair_limit
-			 0,				    -- codim_limit
-			 0,				    -- subring_limit
+			 degreelimit,			    -- degree_limit -- why does this take a list?
+			 0,				    -- basis_element_limit (not relevant for resolutions)
+			 inf opts.SyzygyLimit,		    -- syzygy_limit
+			 inf opts.PairLimit,		    -- pair_limit
+			 0,				    -- codim_limit (not relevant for resolutions)
+			 0,				    -- subring_limit (not relevant for resolutions)
 			 false,				    -- just_min_gens
-			 {}				    -- length_limit
+			 -- {maxlevel}			    -- length_limit -- error if present is: "cannot change length of resolution using this algorithm"
+			 {} 				    -- length_limit
 			 );
 		    rawStartComputation W.RawComputation;
 		    W.returnCode = rawStatus1 W.RawComputation;

@@ -10,6 +10,7 @@ f = map(ZZ/5,ZZ)
 assert(class f 4 === ZZ/5)
 assert(f 4 == -1)
 kernel f
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ringmap.out"
 -- End:

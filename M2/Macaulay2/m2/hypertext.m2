@@ -1,19 +1,6 @@
 --		Copyright 1993-2004 by Daniel R. Grayson
 
 -----------------------------------------------------------------------------
--- sublists, might be worthy making public
------------------------------------------------------------------------------
-sublists := (x,f,g,h) -> (
-     -- x is a list with elements i
-     -- apply g to those i for which f i is true
-     -- apply h to the sublists, possibly empty, including those at the beginning and end, of elements between the ones for which f i is true
-     -- return the results in the same order
-     p := positions(x, f);
-     mingle(
-	  apply( prepend(-1,p), append(p,#x), (i,j) -> h take(x,{i+1,j-1})),
-	  apply( p, i -> g x#i)))
-
------------------------------------------------------------------------------
 -- html output
 -----------------------------------------------------------------------------
 
@@ -428,7 +415,8 @@ info HREF := net HREF := x -> net last x
 
 scan( (net,html,tex), op -> op TOH := x -> op SEQ{ new TO from x, commentize headline x#0 } )
 
-tex LITERAL := html LITERAL := x -> concatenate x
+tex LITERAL := net LITERAL := x -> ""
+html LITERAL := x -> concatenate x
 html EmptyMarkUpType := html MarkUpType := X -> html X{}
 html ITALIC := t -> concatenate("<i>", apply(t,html), "</i>")
 html UNDERLINE := t -> concatenate("<u>", apply(t,html), "</u>")
@@ -559,7 +547,11 @@ redoMENU := r -> SEQ prepend(
      sublists(toList r, 
 	  x -> not ( class x === TO ),
 	  x -> HEADER4 {x},
-	  v -> UL apply(v, i -> TOH i#0 )))
+	  v -> UL apply(v, i -> (
+		    t := optTO i#0;
+		    if t === null then error("undocumented menu item ",toString i#0);
+		    last t
+		    ))))
 net MENU := x -> net redoMENU x
 html MENU := x -> html redoMENU x
 

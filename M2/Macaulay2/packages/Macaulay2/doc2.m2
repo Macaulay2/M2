@@ -237,6 +237,12 @@ document {
      recommended to use this function sparingly, if at all."
      }
 
+///
+R = QQ[vars(0..24)]
+f = () -> (alarm 4; try res coker vars R else "ran out of time")
+time f()
+///
+
 document {
      Key => openFiles,
      Headline => "list the open files",
@@ -416,7 +422,7 @@ document {
      EXAMPLE {
 	  "\"foo\" << 2^30 << endl << close",
       	  "get \"foo\"",
-	  "unlinkFile \"foo\""
+	  "removeFile \"foo\""
 	  }
      }
 document {
@@ -684,13 +690,16 @@ document {
      BR,NOINDENT,
      TT "wait s", " waits for at least one of the files in the list 
      ", TT "s", " of input files to be ready, and return the list of positions
-     corresponding to ready files."
+     corresponding to ready files.",
+     BR,NOINDENT,
+     TT "wait v", " checks whether the processes whose id's are in the list
+     ", TT "v", " of integers have terminated, and returns a list containing the 
+     status codes for those processes that have terminated.  A value of -1 in the 
+     list indicates an error for that process id, and a value of -2 in the list
+     indicates that the process is still running."
      }
 
-document {
-     Key => value,
-     Headline => "evaluate",
-     Undocumented => {
+undocumented {
 	  (value, Minus),
 	  (value, NonAssociativeProduct),
 	  (value, Equation),
@@ -722,6 +731,10 @@ document {
 	  (value, RR),
 	  (value, CC)
 	  }
+
+document {
+     Key => value,
+     Headline => "evaluate"
      }
 
 document {
@@ -1078,72 +1091,6 @@ document {
      TT "0_R", " provides the zero element of the ring ", TT "R", ".",
      BR, NOINDENT,
      TT "n_R", " promotes the integer ", TT "n", " to the ring ", TT "R", ".",
-     }
-
-document {
-     Key => applyPairs,
-     Headline => "apply a function to pairs in a hash table",
-     TT "applyPairs(x,f)", " applies ", TT "f", " to each pair ", TT "(k,v)", " in the 
-     hash table ", TT "x", " to produce a new hash table.",
-     PARA,
-     "It produces a new hash table ", TT "y", " from a hash table ", TT "x", " 
-     by applying the function ", TT "f", " to the pair ", TT "(k,v)", " for 
-     each key ", TT "k", ", where ", TT "v", " is the value stored in
-     ", TT "x", " as ", TT "x#k", ".  Thus ", TT "f", " should be a function of 
-     two variables which returns either a pair ", TT "(kk,vv)", " which is 
-     placed into ", TT "y", ", or it returns ", TO "null", ", which 
-     signifies that no action be performed.",
-     PARA,
-     "It is an error for the function ", TT "f", " to return two pairs with the 
-     same key.",
-     PARA,
-     "In this example, we show how to produce the hash table corresponding
-     to the inverse of a function.",
-     EXAMPLE {
-	  "x = new HashTable from {1 => a, 2 => b, 3 => c}",
-	  "y = applyPairs(x, (k,v) -> (v,k))",
-	  "x#2",
-	  "y#b",
-	  },
-     SeeAlso => { "applyValues", "applyKeys", "scanPairs"
-     }
-     }
-
-document {
-     Key => applyKeys,
-     Headline => "apply a function to each key in a hash table",
-     TT "applyKeys(x,f)", " applies ", TT "f", " to each key ", TT "k", " in the 
-     hash table ", TT "x", " to produce a new hash table.",
-     PARA,
-     "Thus ", TT "f", " should be a function of one variable ", TT "k", " which 
-     returns a new key ", TT "k'", " for the value ", TT "v", " in ", TT "y", ".",
-     PARA,
-     "It is an error for the function ", TT "f", " to return the same key twice.",
-     EXAMPLE {
-	  "x = new HashTable from {1 => a, 2 => b, 3 => c}",
-	  "applyKeys(x, k -> k + 100)",
-	  },
-     PARA,
-     SeeAlso => {"applyValues","applyPairs"
-     }
-     }
-
-document {
-     Key => applyValues,
-     Headline => "apply a function to each value",
-     TT "applyValues(x,f)", " applies ", TT "f", " to each value ", TT "v", " 
-     in the hash table ", TT "x", " to produce a new hash table.",
-     PARA,
-     "Thus ", TT "f", " should be a function of one variable ", TT "v", " which 
-     returns a new value ", TT "v'", " for the key ", TT "k", " in the resulting hash
-     table.",
-     EXAMPLE {
-	  "x = new HashTable from {a => 1, b => 2, c => 3}",
-	  "applyValues(x, v -> v + 100)",
-	  },
-     PARA,
-     SeeAlso => {"applyPairs","applyKeys"
-     }
      }
 
 document {

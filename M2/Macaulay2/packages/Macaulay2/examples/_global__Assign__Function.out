@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : X = new Type of MutableHashTable
 
@@ -51,7 +52,7 @@ o8 : List
 
 i9 : code globalAssignFunction
 
-o9 = -- startup.m2:149-152
+o9 = -- startup.m2:162-165
           globalAssignFunction = (X,x) -> (
                if not ReverseDictionary#?x then ReverseDictionary#x = X;
                use x;

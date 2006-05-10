@@ -12,11 +12,9 @@ m = matrix{{a,b,c,d}}
 F = R^{-1,-1,-1,-1}
 F2 = schreyerOrder m
 assert(not (F === F2))
-f = map(target m, schreyerOrder m, m)
+f = schreyerOrder m
 assert(schreyerOrder source f != 0)
 g = schreyerOrder f
-assert(source f === schreyerOrder schreyerOrder g)
-assert(F2 == source f)
 
 -- check that iterated schreyer orders are correct
 errorDepth = 0
@@ -26,12 +24,13 @@ m = matrix{{b^2-a*c, c^2-b*d, b*c-a*d}}
 m1 = syz m
 raw target m1
 raw source m1
-ms = map(target m, schreyerOrder m, m)
+ms = schreyerOrder m
 raw source ms
 ms2 = syz ms
 raw source ms2
-F2 = schreyerOrder ms2
-raw F2
+f2 = schreyerOrder ms2
+raw f2
+raw source f2
 
 -- initial terms in Schreyer orders
 leadTerm ms

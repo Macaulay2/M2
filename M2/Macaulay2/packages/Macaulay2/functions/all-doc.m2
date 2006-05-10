@@ -1,71 +1,48 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): L.Gold
 --- notes: 
 
 document { 
      Key => all,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Headline => "whether all elements satisfy a specified condition",
+     Usage => "all(V,f)",
+     SeeAlso => { "scan", "apply", "select", "any", "member" }
      }
 document { 
      Key => (all,BasicList,Function),
-     Headline => "",
-     Usage => "",
+     Headline => "whether all elements of a list satisfy a specified condition",
+     Usage => "all((L,f)",
      Inputs => {
+	  "L" => BasicList => "",
+	  "f" => Function => "which returns true or false"
 	  },
      Outputs => {
+	  Boolean => {TO "true", " if ", TT "f", " returns true when applied to every element of ", TT "L", 
+	       " and ", TO "false", " otherwise"}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
+	  "all({1,2,3,4}, even)",
+	  "all({2,4,6,8}, even)"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => { "scan", "apply", "select", "any", "member" }
      }
 document { 
      Key => (all,HashTable,Function),
-     Headline => "",
-     Usage => "",
+     Headline => "whether all key/value pairs in a hash table satisfy a specified condition",
+     Usage => "all(H,f)",
      Inputs => {
+	  "H" => HashTable => "",
+	  "f" => Function => ", which returns true or false"
 	  },
      Outputs => {
+	  Boolean => {TO "true", " if ", TT "f", "returns true when applied to all key/value pairs of ", TT "H",
+	       " and ", TO "false", " otherwise"}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
+	  "all(hashTable{1=>3, 2=>2, 3=>1}, (a,b) -> (a==b))",
+	  "all(hashTable{1=>1, 2=>2, 3=>3}, (a,b) -> (a==b))"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => { "scan", "apply", "select", "any", "member" }
      }
- -- doc.m2:364:     Key => minPosition, Headline => "position of smallest element" }
- -- doc1.m2:162:     Key => installMethod,
- -- doc12.m2:411:     Key => all,
- -- doc12.m2:492:     Key => (sum, Tally),
- -- doc12.m2:557:     Key => (product, Tally),
- -- doc5.m2:236:     Key => (symbol _, Tally, Thing),     
- -- doc5.m2:244:     Key => Tally,
- -- doc5.m2:250:     Key => (symbol **, Tally, Tally),
- -- doc5.m2:265:     Key => (symbol ?, Tally, Tally),
- -- doc5.m2:273:     Key => (symbol +, Tally, Tally),
- -- doc5.m2:288:     Key => (symbol -, Tally, Tally),
- -- doc5.m2:297:     Key => tally,
- -- doc5.m2:309:    Key => (tally, BasicList),
- -- doc8.m2:1305:     Key => GaloisField, Headline => "the class of all Galois fields" }
- -- doc_packages.m2:238:     Key => {installPackage,(installPackage,String),(installPackage,Package)},
- -- doc_packages.m2:280:     Key => [installPackage,MakeInfo],
- -- doc_packages.m2:297:     Key => [installPackage,RemakeAllDocumentation],
- -- doc_packages.m2:316:--     Key => [installPackage,IgnoreExampleErrors],
- -- overview2.m2:2070:     Key => "installing methods",
+
+

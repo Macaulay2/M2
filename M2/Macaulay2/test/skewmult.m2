@@ -6,6 +6,7 @@ B = matrix {{a}, {c}}
 A * B
 assert(A*B==0)
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test skewmult.out"
 -- End:

@@ -1,6 +1,6 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
-needs "D-modules.m2"
+needs "Dmodules.m2"
 
 ------------------------- TESTS for Drestriction ----------------------------
 
@@ -26,8 +26,8 @@ F2 = Dres(I, {-1,-2,-20,1,2,20});
 assert all(toList(0..length F1), i -> zeroize F1.dd#i == zeroize F2.dd#i);
 
 F3 = Dres(I, {-1,-2,-21,1,2,21}, Strategy => Vhomogenize);
-F4 = Dres(I, {-1,-2,-20,1,2,20}, Strategy => Vhomogenize);
-assert all(toList(0..length F3), i -> zeroize F4.dd#i == zeroize F4.dd#i);
+F4a = Dres(I, {-1,-2,-20,1,2,20}, Strategy => Vhomogenize);
+assert all(toList(0..length F3), i -> zeroize F3.dd#i == zeroize F4a.dd#i);
 
 F5 = Dres(I, {-3,-1,-3,3,1,3});
 assert(zeroize F5.dd#1 == zeroize gbw(gens I, {-3,-1,-3,3,1,3}));

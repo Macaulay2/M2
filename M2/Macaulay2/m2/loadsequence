@@ -48,7 +48,6 @@ genmat.m2
 modules2.m2
 gb.m2
 matrix2.m2
-classicparser.m2
 colon.m2
 galois.m2
 ringmap.m2
@@ -77,6 +76,7 @@ local.m2
 typicalvalues.m2
 texmacs.m2
 packages.m2
+parser.m2
 exports.m2
 document.m2
 hypertext.m2

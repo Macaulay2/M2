@@ -127,17 +127,13 @@ document {
      EXAMPLE "3.14159",
      PARA,
      SeeAlso => {"basictype"}}
-document {
-     Key => CC,
-     Headline => "the class of all complex numbers",
-     Undocumented => {
+
+undocumented {
 	  (symbol "-",ZZ,CC), 
 	  (symbol "+",ZZ,CC), 
 	  (symbol "-",RR,CC), 
-	  (symbol "*",ZZ,CC), 
 	  (symbol "+",RR,CC), 
 	  (symbol "/",ZZ,CC), 
-	  (symbol "*",RR,CC), 
 	  (symbol "/",RR,CC), 
 	  (symbol "-",CC), 
 	  (symbol "-",CC,ZZ), 
@@ -149,18 +145,16 @@ document {
 	  (symbol "-",CC,RR), 
 	  (symbol "-",CC,CC), 
 	  (symbol "+",CC,RR), 
-	  (symbol "*",CC,ZZ), 
 	  (symbol "+",CC,CC), 
-	  (symbol "*",CC,QQ), 
-	  (symbol "*",QQ,CC), 
 	  (symbol "/",CC,ZZ), 
 	  (symbol "/",CC,QQ), 
 	  (symbol "/",QQ,CC), 
-	  (symbol "*",CC,RR), 
-	  (symbol "*",CC,CC), 
 	  (symbol "/",CC,RR), 
 	  (symbol "/",CC,CC), 
-	  (symbol "^",CC,ZZ)},
+	  (symbol "^",CC,ZZ)}
+document {
+     Key => CC,
+     Headline => "the class of all complex numbers",
      "In Macaulay 2, complex numbers are represented as floating point numbers, and so are 
      only approximate.  The symbol ", TO "ii", " represents the square root of -1.",
      PARA, 
@@ -169,7 +163,7 @@ document {
       	  "z^5",
       	  "1/z",
 	  },
-     "Arithmetic involving ZZ, QQ, RR, and CC work as one might expect.",
+     "Arithmetic involving ZZ, QQ, RR, and CC works as one might expect.",
      EXAMPLE {
 	  "3 + ii",
 	  "4/5 + 12*ii",
@@ -189,20 +183,51 @@ document {
 document {
      Key => realPart,
      Headline => "real part",
-     TT "realPart z", " -- return the real part of a complex number z."}
+     Usage => "realPart z",
+     Inputs => {"z" => "an integer, rational, real or complex number"},
+     Outputs => {"the real part of the complex number z."},
+     EXAMPLE {
+	  "realPart(3/4)",
+	  "realPart(1.5+2*ii)"
+	  },
+     SeeAlso => {CC}
+     }
 document {
      Key => imaginaryPart,
      Headline => "imaginary part",
-     TT "imaginaryPart z", " -- return the imaginary part of a complex number z."}
+     Usage => "imaginaryPart z",
+     Inputs => {"z" => "an integer, rational, real or complex number"},
+     Outputs => {"the imaginary part of the complex number z."},
+     EXAMPLE {
+	  "imaginaryPart(3/4)",
+	  "imaginaryPart(1.5+2*ii)"
+	  },
+     SeeAlso => {CC}
+     }
+
+undocumented {
+     (conjugate, RR),
+     (conjugate, ZZ),
+     (conjugate, QQ)
+     }
 document {
      Key => conjugate,
      Headline => "complex conjugate",
      TT "conjugate z", " -- the complex conjugate of the complex number z."}
 document {
+     Key => (conjugate,CC),
+     Headline => "complex conjugate",
+     Usage => "conjugate z",
+     Inputs => {"z" => ""},
+     Outputs => {CC => {"the complex conjugate of ", TT "z"}},
+     EXAMPLE "conjugate(1+2.5*ii)"
+     }
+
+document {
      Key => gcdCoefficients,
      Headline => "gcd with coefficients",
-     TT "gcdCoefficients(a,b)", " -- returns ", TT "{r,s}", " so that
-     ", TT"a*r + b*s", " is the greatest common divisor of ", TT "a", "
+     TT "gcdCoefficients(a,b)", " -- returns ", TT "{d,r,s}", " so that
+     ", TT"a*r + b*s", " is the greatest common divisor ", TT "d", " of ", TT "a", "
      and ", TT "b", ".",
      PARA,
      "Works for integers or elements of polynomial rings.",
@@ -753,22 +778,55 @@ document {
      Headline => "the class of all maps between modules",
      "This class is experimental, designed to support graded modules.",
      SeeAlso => {"Matrix"}}
+
 document {
      Key => (symbol *, Matrix, Matrix),
      Headline => "matrix multiplication",
+     Usage => "f * g",
+     Inputs => {"f" => null,
+	  "g" => null},
+     Outputs => {
+	  Matrix => null
+	  },
      "Multiplication of matrices corresponds to composition of maps, and when
-     ", TT "f", " and ", TT "g", " are maps so that the target ", TT "Q", "
+     the target ", TT "Q", "
      of ", TT "g", " equals the source ", TT "P", " of ", TT "f", ", the
      product ", TT "f*g", " is defined, its source is the source of ", 
-     TT "g", ", and its target is the target of ", TT "f", ".  The degree of ",
+     TT "g", ", and its target is the target of ", TT "f", ".  ",
+     EXAMPLE {
+	  "R = QQ[a,b,c,x,y,z];",
+	  "f = matrix{{x},{y},{z}}",
+	  "g = matrix{{a,b,c}}",
+	  "f*g"
+	  },
+     PARA,
+     "The degree of ",
      TT "f*g", " is the sum of the degrees of ", TT "f", " and of ", TT "g",
-     ".  The product is also defined when ", TT "P", " != ", TT "Q", ",
+     ".",
+     PARA,
+     "The product is also defined when ", TT "P", " != ", TT "Q", ",
      provided only that ", TT "P", " and ", TT "Q", " are free modules of the
      same rank.  If the degrees of ", TT "P", " differ from the corresponding
      degrees of ", TT "Q", " by the same degree ", TT "d", ", then the degree
      of ", TT "f*g", " is adjusted by ", TT "d", " so it will have a good
      chance to be homogeneous, and the target and source of ", TT "f*g", "
-     are as before."}
+     are as before.",
+     EXAMPLE {
+	  "target (f*g) == target f",
+	  "source (f*g) == source g",
+	  "isHomogeneous (f*g)",
+	  "degree(f*g)",
+	  },
+     "Sometimes, it is useful to
+     make this a map of degree zero.  Use ", TO (map,Matrix), " for this purpose.",
+     EXAMPLE {
+	  "h = map(f*g,Degree=>0)",
+	  "degree h",
+	  "degrees source h"
+	  },
+     SeeAlso => {(degree,Matrix),degrees}
+     }
+
      
 document {
      Key => Matrix,
@@ -849,10 +907,16 @@ document {
      Headline => "the youngest member of a sequence",
      TT "youngest s", " -- return the youngest mutable hash table in the sequence
      ", TT "s", ", if any, else ", TO "null", "."}
+
+
 document {
-     Key => (symbol ++,Module,Module),
+     Key => {
+	  (symbol ++,Module,Module),
+	  (symbol "++",Module,GradedModule),
+	  (symbol "++",GradedModule,Module)
+	  },
      Headline => "direct sum of modules",
-     TT "M++N", " -- computes the direct sum of two modules.",
+     TT "M++N", " -- computes the direct sum of two modules (or coherent sheaves).",
      PARA,
      EXAMPLE {
 	  "R = ZZ/101[a..c];",
@@ -864,8 +928,22 @@ document {
 	  TO (symbol _,Module,Array)
 	  },
      SeeAlso => directSum}
+
+undocumented {
+     (symbol "++",RingElement,ZZ),
+     (symbol "++",ZZ,RingElement),
+     (symbol "++",Matrix,ZZ),
+     (symbol "++",ZZ,Matrix)
+     }
+
 document {
-     Key => (symbol ++,Matrix,Matrix),
+     Key => {
+	  (symbol ++,Matrix,Matrix),
+	  (symbol "++",GradedModuleMap,GradedModuleMap),
+	  (symbol "++",RingElement,Matrix),
+	  (symbol "++",Matrix,RingElement),
+	  (symbol "++",RingElement,RingElement)
+	  },
      Headline => "direct sum of maps",
      TT "f++g", " -- computes the direct sum of two maps between modules.",
      PARA,

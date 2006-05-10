@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : V = Proj(QQ[a,b,c]/ideal(b^2*c-a^2*(a+c)))
 

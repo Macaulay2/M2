@@ -403,7 +403,7 @@ hh = new ScriptedFunctor from {
 	  )
      }
 
-hh(Sequence,ProjectiveVariety) := (pq,X) -> if X.cache.?hh and X.cache.hh#?(p,q) then X.cache.hh#(p,q) else (
+hh(Sequence,ProjectiveVariety) := (pq,X) -> if X.cache.?hh and X.cache.hh#?pq then X.cache.hh#pq else (
      (p,q) := pq;
      if class p =!= ZZ or class q =!= ZZ then error "expected integer superscripts";
      d := dim X;

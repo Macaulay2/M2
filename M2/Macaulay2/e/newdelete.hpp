@@ -3,17 +3,26 @@
 
 // get declarations of outofmem and getmem
 #include "../d/M2mem.h"
-
+#include <gc.h>
+#include "../d/memdebug.h"
+#include "../d/debug.h"
 
 // this replaces all uses of the construction "new T[n]":
 #define newarray(T,len) reinterpret_cast<T*>(safe_gc_malloc((len) * sizeof(T)))
 // this replaces all uses of the construction "new T":
 #define newitem(T) reinterpret_cast<T*>(safe_gc_malloc(sizeof(T)))
 // this replaces all uses of the construction "delete [] x":
+#ifdef DEBUG
+#define deletearray(x) (trapchk(x), GC_FREE(x))
+#else
 #define deletearray(x) GC_FREE(x)
+#endif
 // this replaces all uses of the construction "delete x":
+#ifdef DEBUG
+#define deleteitem(x) (TRAPCHK(x), GC_FREE(x))
+#else
 #define deleteitem(x) GC_FREE(x)
-
+#endif
 
 // this replaces all uses of the construction "new T[n]", with T containing NO pointers
 #define newarray_atomic(T,len) reinterpret_cast<T*>(getmem_atomic((len) * sizeof(T)))
@@ -25,24 +34,22 @@
 #define GETMEM(T,size) reinterpret_cast<T>(getmem(size))
 #define GETMEM_ATOMIC(T,size) reinterpret_cast<T>(getmem_atomic(size))
 
-#include <gc.h>
-#include "../d/memdebug.h"
-
 static inline void *safe_gc_malloc(size_t len) {
   void *p = GC_MALLOC(len);
   if (p == 0) outofmem();
+  TRAPCHK(p);
   return p;
 }
 
 struct our_new_delete {
-  static inline void* operator new    ( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem(); return p; }
-  static inline void* operator new [] ( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem(); return p; }
+  static inline void* operator new    ( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem(); TRAPCHK(p); return p; }
+  static inline void* operator new [] ( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem(); TRAPCHK(p); return p; }
 
   static inline void* operator new    ( size_t size, void *existing_memory ) { return existing_memory; }
   static inline void* operator new [] ( size_t size, void *existing_memory ) { return existing_memory; }
 
-  static inline void operator delete    ( void* obj ) { if (obj != NULL) GC_FREE( obj ); }
-  static inline void operator delete [] ( void* obj ) { if (obj != NULL) GC_FREE( obj ); }
+  static inline void operator delete    ( void* obj ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
+  static inline void operator delete [] ( void* obj ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
 };
 
 #include <gc/gc_allocator.h>

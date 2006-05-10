@@ -92,7 +92,7 @@ document {
 	  {TT "[:lower:]", " -- lowercase letters"},
 	  {TT "[:print:]", " -- printable characters"},
 	  {TT "[:punct:]", " -- neither control nor alphanumeric characters"},
-	  {TT "[:space:]", " -- space, carriage return, newline, vertical tab, and form feed"},
+	  {TT "[:space:]", " -- space, tab, carriage return, newline, vertical tab, and form feed"},
 	  {TT "[:upper:]", " -- uppercase letters"},
 	  {TT "[:xdigit:]", " -- hexadecimal digits"},
 	  },

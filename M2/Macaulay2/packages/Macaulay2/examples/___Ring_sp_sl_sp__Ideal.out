@@ -1,9 +1,8 @@
+-- -*- M2-comint -*-
 
 i1 : ZZ/2 === ZZ/(4,6)
 
 o1 = true
-
-o1 : Boolean
 
 i2 : R = ZZ/101[t]
 
@@ -14,7 +13,5 @@ o2 : PolynomialRing
 i3 : R/t === R/t
 
 o3 = false
-
-o3 : Boolean
 
 i4 : 

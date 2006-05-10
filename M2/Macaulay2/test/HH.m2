@@ -12,6 +12,7 @@ assert(
      else true
      )
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test HH.out"
 -- End:

@@ -4,4 +4,4 @@ G = map(R^3,3,(i,j)->R_i^j)
 f = 3*s^2*v-t*u*v+s*t^2
 H = map(R^4,R^4,(i,j)->diff(R_j*R_i,f))
 id_(R^3)
-id_(coker M)
+id_(source M)

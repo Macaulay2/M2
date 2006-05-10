@@ -5,7 +5,7 @@ factors = (F) -> (
      facs = apply(#facs, i -> facs#i#0);
      select(facs, f -> degree f =!= {0}))
 
-variables = (f) -> apply(positions(exponents leadMonomial f, i -> i>0),j -> (ring f)_j)
+variables = (f) -> apply(positions(first exponents leadMonomial f, i -> i>0),j -> (ring f)_j)
 
 makeProductRing = (basevars) -> (
      -- basevars should be a product of variables

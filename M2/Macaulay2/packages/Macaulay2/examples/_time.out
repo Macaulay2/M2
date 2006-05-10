@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : time 3^30
      -- used 0. seconds

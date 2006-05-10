@@ -1,3 +1,13 @@
+-- General speedup
+
+  -- added gbvector stash: this made big difference
+  -- resterm stash added
+  -- stash: delete_elem, new_elem made inline
+  -- monideal: added stash for Nmi_node's: this seemed to slow resolutions down!
+  -- 
+
+  -- things to still do/try:
+    streamline monomial ops
 -- Mike's to do list, new version, started 3/29/04
 
 BUGS: 

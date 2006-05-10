@@ -23,7 +23,8 @@ table.examples {
      border-left-color: #a0ffff;     border-right-color: #50b0b0;
      border-width: 3px;
      border-spacing: 0px;
-     line-height: 14pt;
+     font-size: 75%;
+     line-height: 12pt;
 }
 table.examples td {
      border-style: solid;
@@ -35,6 +36,11 @@ table.examples td {
 table.examples pre {
      margin: 0pt;
      padding: 0pt;
+}
+
+div.waystouse {
+     font-size: 75%;
+     line-height: 12pt;
 }
 
 /*

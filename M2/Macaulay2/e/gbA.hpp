@@ -29,6 +29,8 @@ public:
     POLY g;
     int deg;
     int alpha; // the homogenizing degree
+    int size; // number of monomials, when the element is first inserted.  After 
+              // auto reduction, the number can change.  It is not yet clear if we should change this value...
     exponents lead; // -1..nvars-1, the -1 part is the component
     gbelem_type minlevel;
   };
@@ -98,7 +100,7 @@ private:
   const FreeModule *_Fsyz;
   int _nvars;
   Ring::CoefficientType _coeff_type;
-  int _n_fraction_vars;
+  int n_fraction_vars;
 
   VECTOR(gbelem *) gb; // Contains any quotient ring elements
 
@@ -120,39 +122,52 @@ private:
   VECTOR(gbvector *) _syz;
 
   int _strategy;
-  int _this_degree;
-  int _n_rows_per_syz;
+  int n_rows_per_syz;
   bool _collect_syz;
   bool _is_ideal;
-  int _first_gb_element; /* First index past the skew variable squares, quotient elements,
+  int first_gb_element; /* First index past the skew variable squares, quotient elements,
 			   in the array in G */
-  int _first_in_degree; /* for the current 'sugar' degree, this is the first GB element
+  int first_in_degree; /* for the current 'sugar' degree, this is the first GB element
 			   inserted for this degree */
-  int _complete_thru_this_degree; /* Used in reporting status to the user */
+  int complete_thru_this_degree; /* Used in reporting status to the user */
+
+  /* (new) state machine */
+  enum gbA_state {
+    STATE_NEWDEGREE,
+    STATE_NEWPAIRS,
+    STATE_HILB,
+    STATE_SPAIRS,
+    STATE_GENS,
+    STATE_AUTOREDUCE,
+    STATE_DONE
+  } state;
+  int this_degree;
+  int np_i;
+  int ar_i;
+  int ar_j;
+  int n_gb;
 
   /* stats */
-  int _stats_ngcd1;
-  int _stats_nreductions;
-  int _stats_ntail;
-  int _stats_ngb;
-  int _stats_npairs;
+  int stats_ngcd1;
+  int stats_nreductions;
+  int stats_ntail;
+  int stats_ngb;
+  int stats_npairs;
 
   /* for ending conditions */
-  int _n_syz;
-  int _n_pairs_computed;
-  int _n_gens_left;
-  int _n_subring;
+  int n_syz;
+  int n_pairs_computed;
+  int n_gens_left;
+  int n_subring;
 
   // Hilbert function information
-  bool _use_hilb;
-  bool _hilb_new_elems;	// True if any new elements since HF was last computed
-  int _hilb_n_in_degree; // The number of new elements that we expect to find
+  bool use_hilb;
+  bool hilb_new_elems;	// True if any new elements since HF was last computed
+  int hilb_n_in_degree; // The number of new elements that we expect to find
 			 // in this degree.
-  int _n_saved_hilb;
-  const RingElement *_hf_orig;	// The Hilbert function that we are given at the beginning
-  RingElement *_hf_diff;		// The difference between hf_orig and the computed hilb fcn
-  Matrix *_hilb_matrix; // non-null if Hilbert function is being used or if the codim us
-    // being used as a stop condition.
+  int n_saved_hilb;
+  const RingElement *hf_orig;	// The Hilbert function that we are given at the beginning
+  RingElement *hf_diff;		// The difference between hf_orig and the computed hilb fcn
 
   // Reduction count: used to defer spairs which are likely to reduce to 0
   long max_reduction_count;
@@ -174,6 +189,12 @@ private:
     // Probably better is to put it into spair structure.
     return gb[s->x.pair.i]->g.f->comp;
   }
+
+  /* new state machine routines */
+  void new_insert(POLY f, gbelem_type minlevel);
+  bool process_spair(spair *p);
+  void do_computation();
+
 
   gbelem *gbelem_ring_make(gbvector *f);
 

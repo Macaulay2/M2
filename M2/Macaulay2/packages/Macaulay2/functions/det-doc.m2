@@ -30,11 +30,8 @@ scan({det,minors,exteriorPower}, fn -> document {
 	  "s" => Symbol => {"either ", TT "Bareiss", " or ", TT "Cofactor"}	  
 	  },
      Consequences => {
-	  { "If ", TT "s", " is ", TO "Bareiss", 
-	       ", then the Bareiss fraction-free determinant algorithm is used; if ",
-	       TT "s", " is ", TO "Cofactor", 
-	       ", then cofactor expansion is used to compute determinants."}
-	  },     
+	  { "If ", TT "s", " is ", TO "Bareiss", ", then the Bareiss algorithm is used; if ",
+	       TT "s", " is ", TO "Cofactor", ", then cofactor expansion is used."}},     
      "The ", TO2("Ring","ring"), " of ", TT "M", " determines the default strategy.  If the ring is a ", 
      TO2("PolynomialRing","polynomial ring"), " or a field (as identified by ", TO "isField",  
      ") then the ", TO "Bareiss", " algorithm is used.  If the ring is a ", 

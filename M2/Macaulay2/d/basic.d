@@ -7,6 +7,7 @@ use engine;
 use binding;
 use strings;
 use nets;
+use varnets;
 use tokens;
 use err;
 use stdio;
@@ -34,10 +35,8 @@ export hash(e:Expr):int := (
      is x:string do hash(x)				    -- for strings, keep internal and external hash the same
      is x:Real do hash(x.v)
      is x:Complex do hash(x.re) + 7 * hash(x.im)
-     is n:Net do (
-	  h := n.height * 3457 + n.width * 7753;
-	  foreach s in n.body do h = h * 77 + hash(s);
-	  h)
+     is n:Net do hash(n)
+     is n:NetFile do hash(n)
      is x:file do x.hash
      is x:FunctionClosure do int(8820938+1299721*x.model.desc.frameID)
      is x:Error do (

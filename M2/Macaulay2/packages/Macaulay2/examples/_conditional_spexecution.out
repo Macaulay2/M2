@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : (-4 .. 4) / 
           (i -> if i < 0 then "neg" 

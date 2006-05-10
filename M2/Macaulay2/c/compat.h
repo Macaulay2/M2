@@ -99,7 +99,12 @@ int read(int, char *, int);
 int open(const char *, int, ...);
 #endif
 
-#ifdef __STDC__
+/* #ifdef __STDC__ */
+/* ifdef __STDC__ */
+/* the following doesn't compile on linux w/gcc-4.x, so 
+   maybe use some sun-specific define instead?  -- Rex
+*/
+#if 0
 int close(int);
 int fputs(const char *,FILE *); /* needed  for sunos 4.1 */
 int fprintf(FILE *,const char *,...); /* needed  for sunos 4.1 */

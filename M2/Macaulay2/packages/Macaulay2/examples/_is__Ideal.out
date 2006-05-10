@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : S = QQ[x,y,z];
 
@@ -12,8 +13,6 @@ i3 : isIdeal I
 
 o3 = true
 
-o3 : Boolean
-
 i4 : J = monomialIdeal I
 
                      2   2
@@ -24,8 +23,6 @@ o4 : MonomialIdeal of S
 i5 : isIdeal J
 
 o5 = true
-
-o5 : Boolean
 
 i6 : R = QQ[a..d]/(a*b*c*d);
 
@@ -40,8 +37,6 @@ i8 : isIdeal I
 
 o8 = true
 
-o8 : Boolean
-
 i9 : J = a^2 * R^2 + a*b * R^2
 
 o9 = image | a2 0  ab 0  |
@@ -53,7 +48,5 @@ o9 : R-module, submodule of R
 i10 : isIdeal J
 
 o10 = false
-
-o10 : Boolean
 
 i11 : 

@@ -30,6 +30,7 @@ I = ideal(a-1,b-11)
 J = ideal(b-3,c-4,e)
 K = cokernel generators intersect(I,J)
 time assert( I == ann Ext^2(K,S) )
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test inhom.out"
 -- End:

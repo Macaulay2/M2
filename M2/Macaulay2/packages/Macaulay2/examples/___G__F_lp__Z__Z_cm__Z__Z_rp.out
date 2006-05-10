@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : k = GF(2,3,Variable=>x)
 

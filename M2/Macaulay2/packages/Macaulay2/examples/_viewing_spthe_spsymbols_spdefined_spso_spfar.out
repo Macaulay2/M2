@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : ff = 20:4; h = true; kk
 

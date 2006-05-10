@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = QQ[a..l, MonomialOrder => {3,3,3,3}];
 

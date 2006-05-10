@@ -440,8 +440,9 @@ newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
 NewOfFromFun = newoffromfun;
 -----------------------------------------------------------------------------
 
-setupconst("stdio",Expr(stdIO));
-setupconst("stderr",Expr(stderr));
+export stdioS  := setupconst("stdio", Expr(stdIO));
+export stderrS := setupconst("stderr",Expr(stderr));
+
 openfilesfun(e:Expr):Expr := (
      n := 0;
      ff := openfiles;

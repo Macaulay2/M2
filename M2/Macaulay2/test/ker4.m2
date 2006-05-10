@@ -4,6 +4,7 @@ f = map(S,R,{x^2,x*y,y^2});
 ker f
 assert( degrees source gens ker f == {{2}} )
 assert( degrees target gens ker f == {{0}} )
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ker4.out"
 -- End:

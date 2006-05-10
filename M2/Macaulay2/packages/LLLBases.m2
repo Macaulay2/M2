@@ -642,10 +642,10 @@ gcdLLL = method gcdLLLoptions
 --     (getEntry(m,0,numcols m-1), matrix u)
 --     )
 
-bgcdLLL := (s,thresh) -> (
+bgcdLLL = (s,thresh) -> (
      M := matrix{s};
      (m,u) := hermiteLLL(M,Threshold=>thresh,ChangeMatrix=>true);
-     (getEntry(m,0,numcols m-1), matrix u)
+     (m_(0,numgens source m - 1), u)
      )
 
 -- Input: list of positive integers 's' of length m.
@@ -658,7 +658,7 @@ bgcdLLL := (s,thresh) -> (
 --   Extended GCD and Hermite Normal Form Algorithms via Lattice Basis Reduction,
 --   Experimental Mathematics 7:2 p. 125 (1998)
 
-agcdLLL := (s,thresh) -> (
+agcdLLL = (s,thresh) -> (
      alphaNumerator := numerator thresh;
      alphaDenominator := denominator thresh;
      m := #s;

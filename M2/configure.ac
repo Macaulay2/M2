@@ -1,5 +1,36 @@
 AC_INIT(Macaulay 2, 0.9.8, Macaulay2@math.uiuc.edu, Macaulay2)
-AC_REVISION($Revision$)
+
+case "$0" in
+  *" "*) CONFIG_ARG0="\"$0\"" ;;
+  *) CONFIG_ARG0="$0" ;;
+esac
+for i in "$@"
+do case "$i" in
+     "--no-create"|"--no-recursion") ;;
+     *" "*) 
+	  CONFIG_ARGS="$CONFIG_ARGS \"$i\"" 
+	  CONFIG_ARGS_C="$CONFIG_ARGS_C \"$i\"," 
+	  ;;
+     *) 
+	  CONFIG_ARGS="$CONFIG_ARGS $i" 
+	  CONFIG_ARGS_C="$CONFIG_ARGS_C \"$i\"," 
+	  ;;
+   esac
+done
+CONFIG_CMD="$CONFIG_ARG0 $CONFIG_ARGS"
+# test "$LOADLIBES" && CONFIG_ARGS="LOADLIBES=\"$LOADLIBES\" $CONFIG_ARGS"
+# test "$LDLIBS" && CONFIG_ARGS="LDLIBS=\"$LDLIBS\" $CONFIG_ARGS"
+# test "$LDFLAGS" && CONFIG_ARGS="LDFLAGS=\"$LDFLAGS\" $CONFIG_ARGS"
+# test "$CXXFLAGS" && CONFIG_ARGS="CXXFLAGS=\"$CXXFLAGS\" $CONFIG_ARGS"
+# test "$CXX" && CONFIG_ARGS="CXX=\"$CXX\" $CONFIG_ARGS"
+# test "$CPPFLAGS" && CONFIG_ARGS="CPPFLAGS=\"$CPPFLAGS\" $CONFIG_ARGS"
+# test "$CFLAGS" && CONFIG_ARGS="CFLAGS=\"$CFLAGS\" $CONFIG_ARGS"
+# test "$CC" && CONFIG_ARGS="CC=\"$CC\" $CONFIG_ARGS"
+echo "# invocation: $CONFIG_CMD" >&5
+AC_SUBST(CONFIG_ARG0)
+AC_SUBST(CONFIG_ARGS)
+AC_SUBST(CONFIG_CMD)
+AC_DEFINE_UNQUOTED(CONFIG_ARGS,$CONFIG_ARGS_C,arguments used for configure)
 
 define(M2_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -67,7 +98,7 @@ else echo "`basename $0`: $MAKE: GNU make is required" >&2
 fi
 
 AC_CHECK_PROG(INSTALL_INFO,install-info,yes)
-if ! test "$INSTALL_INFO"
+if test ! "$INSTALL_INFO"
 then echo "configure: error: program 'install-info' (from the 'texinfo' package) not found" >&2
      exit 1
 fi
@@ -121,13 +152,6 @@ AC_PROG_YACC()
 
 AC_FUNC_ALLOCA()
 
-CONFIG_ARGS="$ac_configure_args"
-AC_SUBST(CONFIG_ARGS)
-AC_DEFINE_UNQUOTED(CONFIG_ARGS,"$CONFIG_ARGS",arguments used for configure)
-
-CONFIG_ARG0="$0"
-AC_SUBST(CONFIG_ARG0)
-
 DUMPDATA=yes
 AC_SUBST(DUMPDATA)
 AC_ARG_ENABLE(dumpdata,
@@ -144,11 +168,14 @@ case "$DUMPDATA" in
    yes|old) AC_DEFINE(DUMPDATA,,whether to use dumpdata) ;;
 esac
 
-AC_SUBST(PROFILE)
+AC_SUBST(PROFILING)
 AC_ARG_ENABLE(profile,
     AC_HELP_STRING(--enable-profile,enable profiling (and disable stripping)),
-    PROFILE="$enableval",
-    PROFILE=no)
+    PROFILING="$enableval",
+    PROFILING=no)
+if test "$PROFILING" = yes
+then AC_DEFINE(PROFILING,,[whether profiling has been enabled])
+fi
 
 AC_SUBST(FACTORY)
 AC_ARG_ENABLE(factory,
@@ -164,12 +191,6 @@ AC_ARG_ENABLE(strip,
     AC_HELP_STRING(--disable-strip,do not strip the Macaulay 2 binary),
     STRIP="$enableval",
     STRIP=yes)
-
-AC_SUBST(DEBUG)
-AC_ARG_ENABLE(debug,
-    AC_HELP_STRING(--enable-debug,enable debugging (and disable stripping)),
-    DEBUG="$enableval",
-    DEBUG=no)
 
 AC_SUBST(VERBOSE)
 AC_ARG_ENABLE(verbose,
@@ -195,6 +216,12 @@ AC_ARG_ENABLE(optimize,
     OPTIMIZE="$enableval",
     OPTIMIZE=yes)
 
+AC_SUBST(DEBUG)
+AC_ARG_ENABLE(debug,
+    AC_HELP_STRING(--enable-debug,enable debugging (and disable stripping)),
+    DEBUG="$enableval",
+    DEBUG=no)
+
 AC_SUBST(ENCAP)
 AC_ARG_ENABLE(encap,
     AC_HELP_STRING(--enable-encap,create an encap package),
@@ -215,10 +242,6 @@ AC_ARG_ENABLE(altivec,
     ALTIVEC="no"
     )
 
-LAPACK=yes
-AC_SUBST(LAPACK)
-AC_DEFINE(LAPACK,,whether to use LAPACK)
-
 AC_SUBST(M2SUFFIX)
 AC_ARG_WITH(M2suffix,
     AC_HELP_STRING(--with-M2suffix=...,[suffix to append to executable name M2]),
@@ -228,29 +251,24 @@ AC_DEFINE_UNQUOTED(M2SUFFIX,"$M2SUFFIX",[suffix to append to executable name M2]
 AC_DEFINE_UNQUOTED(EXEEXT,"$EXEEXT",[suffix the compiler appends to executable filenames])
 
 AC_SUBST(LAPACKLIBS)
+# LAPACKLIBS="-llapack -lcblas -lf77blas -lg2c" was our former default
+# LAPACKLIBS="-llapack -lblas -lg2c" is our new default, because redhat provides lapack this way now
 AC_ARG_WITH(lapacklibs,
-    AC_HELP_STRING(--with-lapacklibs=...,lapack libraries (-llapack -lcblas -lf77blas -lg2c)),
+    AC_HELP_STRING([--with-lapacklibs=...],[lapack libraries (-llapack -lblas -lg2c)]),
     LAPACKLIBS="$withval",
-    LAPACKLIBS="-llapack -lcblas -lf77blas -lg2c"
-    )
+    LAPACKLIBS="-llapack -lblas -lg2c")
 AC_ARG_WITH(veclib,
     AC_HELP_STRING(--with-veclib,replace lapack libraries by "-framework vecLib"),
-    LAPACKLIBS="-framework vecLib"
-    )
+    LAPACKLIBS="-framework vecLib")
 
-AC_SUBST(GMPLIB)
-AC_ARG_WITH(gmplib,
-    AC_HELP_STRING(--with-gmplib=...,gmp library (-lgmp)),
-    GMPLIB="$withval",
-    GMPLIB="-lgmp"
-    )
-
-AC_SUBST(GCLIB)
-AC_ARG_WITH(gclib,
-    AC_HELP_STRING(--with-gclib=...,gc library (-lgc)),
-    GCLIB="$withval",
-    GCLIB="-lgc"
-    )
+AC_SUBST(LAPACK)
+AC_ARG_ENABLE(lapack,
+    AC_HELP_STRING(--disable-lapack,[disable linking with lapack]),
+    LAPACK="$enableval";LAPACKLIBS="",
+    LAPACK=yes)
+if test "$LAPACK" = yes
+then AC_DEFINE(LAPACK,,whether to link with lapack)
+fi
 
 AC_SUBST(GDBMLIB)
 AC_ARG_WITH(gdbmlib,
@@ -280,103 +298,109 @@ AC_CHECK_DECLS(sys_nerr)
 
 SAVELIBS="$LIBS"
 
-AC_MSG_CHECKING([whether gc library is installed])
-LIBS="-lgc -ldl $SAVELIBS"
-AC_TRY_LINK(
-    [#include <gc.h>],
-    [GC_malloc(1);],
-    ,AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: libgc]))
-AC_MSG_RESULT([yes])
+GCLIB=-lgc
+AC_SUBST(GCLIB)
+AC_ARG_WITH(gclib, AC_HELP_STRING(--with-gclib=...,gc library (-lgc)), GCLIB="$withval")
+AC_MSG_CHECKING([whether gc library is installed ($GCLIB)])
+LIBS="$GCLIB -lpthread -ldl $SAVELIBS"
+AC_TRY_LINK( [#include <gc.h>], [GC_malloc(1);], HAVE_LIBGC=yes;AC_MSG_RESULT([yes]), HAVE_LIBGC=no;AC_MSG_RESULT([no]))
 
-AC_MSG_CHECKING([whether gc library, profiling version, is installed (-lgc-pg)])
-AC_SUBST(HAVE_LIBGC_PG)
-LIBS="-lgc-pg -ldl $SAVELIBS"
-AC_TRY_LINK(
-    [#include <gc.h>],
-    [GC_malloc(1);],
-    HAVE_LIBGC_PG=yes;AC_MSG_RESULT([yes]),
-    HAVE_LIBGC_PG=no;AC_MSG_RESULT([no]))
+HAVE_LIBGC_PG=no
+if test "$PROFILING" = yes -a "$GCLIB" = "-lgc"
+then AC_MSG_CHECKING([whether gc library, profiling version, is installed (-lgc-pg)])
+     LIBS="-lgc-pg -lpthread -ldl $SAVELIBS"
+     AC_TRY_LINK( [#include <gc.h>], [GC_malloc(1);], HAVE_LIBGC_PG=yes;AC_MSG_RESULT([yes]), AC_MSG_RESULT([no]))
+fi
 
-AC_MSG_CHECKING([whether gmp library is installed])
-LIBS="-lgmp $SAVELIBS"
-AC_TRY_LINK(
-    [#include <gmp.h>],
-    [return *__gmp_version;],
-    ,AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: gmp]))
-AC_MSG_RESULT([yes])
+if   test "$PROFILING" = yes
+then test "$HAVE_LIBGC_PG" = no -a "$HAVE_LIBGC" = no && AC_MSG_ERROR([missing libraries: libgc (and libgc-pg)])
+     test "$HAVE_LIBGC_PG" = yes && GCLIB=-lgc-pg
+else test "$HAVE_LIBGC" = no && AC_MSG_ERROR([missing library: libgc])
+fi
 
-AC_MSG_CHECKING([whether gmp library, profiling version, is installed (-lgmp-pg)])
-AC_SUBST(HAVE_LIBGMP_PG)
-LIBS="-lgmp-pg $SAVELIBS"
-AC_TRY_LINK(
-    [#include <gmp.h>],
-    [return *__gmp_version;],
-    HAVE_LIBGMP_PG=yes;AC_MSG_RESULT([yes]),
-    HAVE_LIBGMP_PG=no;AC_MSG_RESULT([no]))
+GMPLIB="-lgmp"
+AC_SUBST(GMPLIB)
+AC_ARG_WITH(gmplib, AC_HELP_STRING(--with-gmplib=...,gmp library (-lgmp)), GMPLIB="$withval")
+AC_MSG_CHECKING([whether gmp library is installed ($GMPLIB)])
+LIBS="$GMPLIB $SAVELIBS"
+AC_TRY_LINK( [#include <gmp.h>], [return *__gmp_version;], AC_MSG_RESULT([yes]), AC_MSG_RESULT([no]))
+
+HAVE_LIBGMP_PG=no
+if test "$PROFILING" = yes -a "$GMPLIB" = "-lgmp"
+then AC_MSG_CHECKING([whether gmp library, profiling version, is installed (-lgmp-pg)])
+     LIBS="-lgmp-pg $SAVELIBS"
+     AC_TRY_LINK( [#include <gmp.h>], [return *__gmp_version;], HAVE_LIBGMP_PG=yes;AC_MSG_RESULT([yes]), AC_MSG_RESULT([no]))
+fi
+
+if   test "$PROFILING" = yes
+then test "$HAVE_LIBGMP_PG" = no -a "$HAVE_LIBGMP" = no && AC_MSG_ERROR([missing libraries: libgmp (and libgmp-pg)])
+     test "$HAVE_LIBGMP_PG" = yes && GMPLIB=-lgmp-pg
+else test "$HAVE_LIBGMP" = no && AC_MSG_ERROR([missing library: libgmp])
+fi
 
 AC_MSG_CHECKING([whether gdbm library is installed])
 LIBS="-lgdbm $SAVELIBS"
-AC_TRY_LINK([#include <gdbm.h>],
-    [gdbm_close(0);],
-    ,AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: gdbm]))
-AC_MSG_RESULT([yes])
+AC_TRY_LINK([#include <gdbm.h>], [gdbm_close(0);], AC_MSG_RESULT([yes]), AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: gdbm]))
 
+NTLLIB=-lntl
+AC_SUBST(NTLLIB)
+AC_ARG_WITH(ntllib, AC_HELP_STRING(--with-ntllib=...,ntl library (-lntl)), NTLLIB="$withval")
 AC_MSG_CHECKING([whether ntl library is installed])
-LIBS="-lntl $SAVELIBS"
+LIBS="$NTLLIB -lgmp $SAVELIBS"
 AC_LANG(C++)
-AC_TRY_LINK(
-    [#include <NTL/tools.h>],
-    [_ntl_GetTime();],
-    AC_MSG_RESULT([yes]),
-    AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: ntl (-lntl)]))
+AC_TRY_LINK( [#include <NTL/tools.h>], [_ntl_GetTime();], HAVE_LIBNTL=yes;AC_MSG_RESULT([yes]), HAVE_LIBNTL=no;AC_MSG_RESULT([no]))
 
-AC_MSG_CHECKING([whether ntl library, profiling version, is installed (-lntl-pg)])
-AC_SUBST(HAVE_LIBNTL_PG)
-LIBS="-lntl-pg $SAVELIBS"
-AC_LANG(C++)
-AC_TRY_LINK(
-    [#include <NTL/tools.h>],
-    [_ntl_GetTime();],
-    HAVE_LIBNTL_PG=yes;AC_MSG_RESULT([yes]),
-    HAVE_LIBNTL_PG=no;AC_MSG_RESULT([no]))
+HAVE_LIBNTL_PG=no
+if test "$PROFILING" = yes -a "$NTLLIB" = "-lntl"
+then AC_MSG_CHECKING([whether ntl library, profiling version, is installed (-lntl-pg)])
+     LIBS="-lntl-pg -lgmp $SAVELIBS"
+     AC_LANG(C++)
+     AC_TRY_LINK( [#include <NTL/tools.h>], [_ntl_GetTime();], HAVE_LIBNTL_PG=yes;AC_MSG_RESULT([yes]), AC_MSG_RESULT([no]))
+fi
 
+if   test "$PROFILING" = yes
+then test "$HAVE_LIBNTL_PG" = no -a "$HAVE_LIBNTL" = no && AC_MSG_ERROR([missing libraries: libntl (and libntl-pg)])
+     test "$HAVE_LIBNTL_PG" = yes && NTLLIB=-lntl-pg
+else test "$HAVE_LIBNTL" = no && AC_MSG_ERROR([missing library: libntl])
+fi
+
+LIBCF=-lcf
+AC_SUBST(LIBCF)
 AC_MSG_CHECKING([whether factory library is installed])
-LIBS="-lcf $SAVELIBS"
+LIBS="$LIBCF $SAVELIBS"
 AC_LANG(C++)
-AC_TRY_LINK(
-    [#include <factoryconf.h>],
-    [extern const char factoryVersion[]; return *factoryVersion;],
-    AC_MSG_RESULT([yes]),
-    AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: factory (-lcf)]))
+AC_TRY_LINK( [#include <factoryconf.h>], [extern const char factoryVersion[]; return *factoryVersion;], HAVE_LIBCF=yes;AC_MSG_RESULT([yes]), HAVE_LIBCF=no;AC_MSG_RESULT([no]))
 
 AC_MSG_CHECKING([whether factory library, profiling version, is installed (-lcf-pg)])
 AC_SUBST(HAVE_LIBCF_PG)
 LIBS="-lcf-pg $SAVELIBS"
 AC_LANG(C++)
-AC_TRY_LINK(
-    [#include <factoryconf.h>],
-    [extern const char factoryVersion[]; return *factoryVersion;],
-    HAVE_LIBCF_PG=yes;AC_MSG_RESULT([yes]),
-    HAVE_LIBCF_PG=no;AC_MSG_RESULT([no]))
+AC_TRY_LINK( [#include <factoryconf.h>], [extern const char factoryVersion[]; return *factoryVersion;], HAVE_LIBCF_PG=yes;AC_MSG_RESULT([yes]), HAVE_LIBCF_PG=no;AC_MSG_RESULT([no]))
 
-AC_MSG_CHECKING([whether libfac library is installed])
-LIBS="-lfac -lcf $SAVELIBS"
+if   test "$PROFILING" = yes
+then test "$HAVE_LIBCF_PG" = no -a "$HAVE_LIBCF" = no && AC_MSG_ERROR([missing libraries: libcf (and libcf-pg)])
+     test "$HAVE_LIBCF_PG" = yes && LIBCF=-lcf-pg
+else test "$HAVE_LIBCF" = no && AC_MSG_ERROR([missing library: libcf])
+fi
+
+LIBFAC=-lfac
+AC_SUBST(LIBFAC)
+AC_MSG_CHECKING([whether libfac library is installed ($LIBFAC)])
+LIBS="$LIBCF $LIBFAC $SAVELIBS"
 AC_LANG(C++)
-AC_TRY_LINK(
-    [extern const char * libfac_version;],
-    [return *libfac_version;],
-    AC_MSG_RESULT([yes]),
-    AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: libfac (-lfac)]))
+AC_TRY_LINK( [extern const char * libfac_version;], [return *libfac_version;], HAVE_LIBFAC=yes;AC_MSG_RESULT([yes]), HAVE_LIBFAC=no;AC_MSG_RESULT([no]))
 
 AC_MSG_CHECKING([whether libfac library, profiling version, is installed (-lfac-pg)])
-AC_SUBST(HAVE_LIBFAC_PG)
-LIBS="-lfac-pg -lcf $SAVELIBS"
+
+LIBS="-lfac-pg $LIBCF $SAVELIBS"
 AC_LANG(C++)
-AC_TRY_LINK(
-    [extern const char * libfac_version;],
-    [return *libfac_version;],
-    HAVE_LIBFAC_PG=yes;AC_MSG_RESULT([yes]),
-    HAVE_LIBFAC_PG=no;AC_MSG_RESULT([no]))
+AC_TRY_LINK( [extern const char * libfac_version;], [return *libfac_version;], HAVE_LIBFAC_PG=yes;AC_MSG_RESULT([yes]), HAVE_LIBFAC_PG=no;AC_MSG_RESULT([no]))
+
+if   test "$PROFILING" = yes
+then test "$HAVE_LIBFAC_PG" = no -a "$HAVE_LIBFAC" = no && AC_MSG_ERROR([missing libraries: libfac (and libfac-pg)])
+     test "$HAVE_LIBFAC_PG" = yes && LIBFAC=-lfac-pg
+else test "$HAVE_LIBFAC" = no && AC_MSG_ERROR([missing library: libfac])
+fi
 
 AC_MSG_CHECKING([whether readline library is installed])
 LIBS="-lreadline -lhistory -lncurses $SAVELIBS"
@@ -384,13 +408,28 @@ AC_LANG(C)
 AC_TRY_LINK(
     [extern char *readline(const char *);extern void add_history (const char *);],
     [readline;add_history;],
-    ,AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: readline]))
-AC_MSG_RESULT([yes])
+    AC_MSG_RESULT([yes]),
+    AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: readline]))
+
+if test "$LAPACK" = "yes"
+then AC_MSG_CHECKING([whether lapack library is installed])
+     LIBS="$LAPACKLIBS $SAVELIBS"
+     AC_LANG(C)
+     AC_TRY_LINK(
+	 [],
+	 [dgetrf_();],
+	 AC_MSG_RESULT([yes]),
+	 AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: lapack ($LAPACKLIBS)]))
+fi
 
 LIBS="$SAVELIBS"
 
 AC_CHECK_HEADERS(wordexp.h)
 AC_CHECK_FUNCS(wordexp)
+
+AC_CHECK_HEADERS(linux/personality.h)
+AC_CHECK_FUNCS(personality)
+AC_CHECK_DECLS(PER_LINUX,,,[#include <linux/personality.h>])
 
 dnl -- M2_SHOW_CONFDEFS()
 

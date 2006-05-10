@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : f = openInOut "!cat"
 
@@ -9,15 +10,11 @@ i2 : isReady f
 
 o2 = false
 
-o2 : Boolean
-
 i3 : f << "hi there" << flush;
 
 i4 : isReady f
 
 o4 = false
-
-o4 : Boolean
 
 i5 : read f
 
@@ -26,7 +23,5 @@ o5 = hi there
 i6 : isReady f
 
 o6 = false
-
-o6 : Boolean
 
 i7 : 

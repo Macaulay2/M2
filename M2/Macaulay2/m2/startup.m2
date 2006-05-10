@@ -28,11 +28,15 @@ if firstTime then (
      loadedFiles = new MutableHashTable;
      notify = false;
 
-     markLoaded = (filename,origfilename,notify) -> ( 
+     markLoaded = (filename,origfilename,notify,timetaken) -> ( 
 	  filename = minimizeFilename filename;
 	  filesLoaded#origfilename = filename; 
 	  loadedFiles##loadedFiles = filename; 
-	  if notify then stderr << "--loaded " << filename << endl;
+	  if notify then (
+	       stderr << "--loaded " << filename;
+	       if timetaken >= 0.5 then stderr << " (in " << timetaken << " seconds)";
+	       stderr << endl;
+	       );
 	  );
 
      ReverseDictionary = new MutableHashTable;
@@ -114,10 +118,11 @@ if firstTime then (
      Manipulator = new Type of BasicList;
      Manipulator.synonym = "manipulator";
      new Manipulator from Function := Manipulator => (Manipulator,f) -> new Manipulator from {f};
-     Manipulator Database := Manipulator File := (m,o) -> m#0 o;
+     Manipulator Database := Manipulator File := Manipulator NetFile := (m,o) -> m#0 o;
 
      Manipulator Nothing := (m,null) -> null;
      File << Manipulator := File => (o,m) -> m#0 o;
+     NetFile << Manipulator := File => (o,m) -> m#0 o;
      List << Manipulator := File => (o,m) -> (scan(o, o -> m#0 o); o);
      Nothing << Manipulator := (null,m) -> null;
 
@@ -149,6 +154,7 @@ if firstTime then (
 	  else "^/"
 	  );
      isAbsolutePath = filename -> match(isAbsolutePathRegexp, filename);
+     concatPath = (a,b) -> if isAbsolutePath b then b else a|b;
      copyright = (
 	  "Macaulay 2, version " | version#"VERSION" | newline
 	  | "--Copyright 1993-2004, D. R. Grayson and M. E. Stillman" | newline
@@ -223,9 +229,12 @@ if fileExists (bindir | "../c/scc1") then (
      buildHomeDirectory = minimizeFilename(bindir|"../");
      sourceHomeDirectory = (
 	  if fileExists (buildHomeDirectory|"m2/setup.m2") then buildHomeDirectory 
-	  else if fileExists(buildHomeDirectory|"srcdir") and fileExists(buildHomeDirectory|(first lines get (buildHomeDirectory|"srcdir")) | "/m2/setup.m2")
-	  then minimizeFilename(buildHomeDirectory|(first lines get (buildHomeDirectory|"srcdir"))|"/")
-	  else null);
+	  else (
+	       srcdirfile := buildHomeDirectory|"srcdir";
+	       if fileExists srcdirfile then (
+		    srcdir := minimizeFilename concatPath(buildHomeDirectory,first lines get srcdirfile)|"/";
+		    if fileExists(srcdir | "m2/setup.m2") then srcdir
+		    )));
      ) else setPrefixFromBindir bindir
 
 if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then (
@@ -260,9 +269,11 @@ usage := arg -> (
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
      << "    --int              don't handle interrupts" << newline -- handled by M2lib.c
      << "    --notify           notify when loading files during initialization" << newline
+     << "                       and when evaluating command line arguments" << newline
      << "    --no-prompts       print no input prompts" << newline;
      << "    --no-readline      don't use readline" << newline;
      << "    --no-setup         don't try to load setup.m2" << newline
+     << "    --no-personality   don't set the personality and re-exec M2 (linux only)" << newline
      << "    --prefix DIR       set prefixDirectory" << newline
      << "    --print-width n    set printWidth=n (the default is the window width)" << newline
      << "    --silent           no startup banner" << newline
@@ -282,8 +293,8 @@ usage := arg -> (
      ;exit 0)
 
 tryLoad := (ofn,fn) -> if fileExists fn then (
-     simpleLoad fn;
-     markLoaded(fn,ofn,notify);
+     r := timing simpleLoad fn;
+     markLoaded(fn,ofn,notify,r#0);
      true) else false
 
 loadSetup := () -> (
@@ -291,7 +302,22 @@ loadSetup := () -> (
      or
      prefixDirectory =!= null and tryLoad("setup.m2", minimizeFilename(prefixDirectory | LAYOUT#"m2" | "setup.m2"))
      or
-     error ("can't find file setup.m2\n\trunning M2: ",exe,"\n\t$0 = ",commandLine#0)
+     error splice ("can't find file setup.m2\n",
+	  "\trunning M2: ",exe,"\n",
+	  "\tbindir = ", toString bindir, "\n",
+     	  "\tbuildHomeDirectory = ", toString buildHomeDirectory, "\n",
+	  "\tsourceHomeDirectory = ", toString sourceHomeDirectory, "\n",
+	  "\tprefixDirectory = ", toString prefixDirectory, "\n",
+	  if buildHomeDirectory =!= null and fileExists(buildHomeDirectory|"srcdir")
+	  then ("\t",buildHomeDirectory|"srcdir", " contains ",first lines get (buildHomeDirectory|"srcdir"),"\n",
+	       (
+		    fn := buildHomeDirectory|(first lines get (buildHomeDirectory|"srcdir")) | "/m2/setup.m2";
+		    "\tfileExists(",fn,") = ",toString fileExists fn,"\n"
+		    )
+	       )
+	  else "",
+	  "\tcommandLine#0 = ",commandLine#0
+	  )
      )
 
 showMaps := () -> (
@@ -325,29 +351,32 @@ dump := () -> (
      exit 0;
      )
 
+argno := 1
+
 action := hashTable {
-     "--help" => usage,
      "-h" => usage,
-     "--" => obsolete,
      "-mpwprompt" => notyeterr,
+     "-n" => obsolete,
      "-q" => arg -> noinitfile = true,
-     "--silent" => arg -> nobanner = true,
-     "--no-debug" => arg -> debuggingMode = false,
-     "--dumpdata" => arg -> (noinitfile = noloaddata = true; if phase == 3 then dump()),
+     "-s" => obsolete,
      "-silent" => obsolete,
      "-tty" => notyet,
-     "-n" => obsolete,
-     "--int" => arg -> arg,
+     "-x" => arg -> examplePrompts(),
+     "--" => obsolete,
      "--copyright" => arg -> if phase == 1 then fullCopyright = true,
+     "--dumpdata" => arg -> (noinitfile = noloaddata = true; if phase == 3 then dump()),
+     "--help" => usage,
+     "--int" => arg -> arg,
+     "--no-backtrace" => arg -> if phase == 1 then backtrace = false,
+     "--no-debug" => arg -> debuggingMode = false,
+     "--no-loaddata" => arg -> if phase == 1 then noloaddata = true,
+     "--no-personality" => arg -> arg,
      "--no-prompts" => arg -> if phase == 1 then noPrompts(),
      "--no-readline" => arg -> arg,			    -- handled in d/stdio.d
-     "--notify" => arg -> if phase <= 2 then notify = true,
-     "-x" => arg -> examplePrompts(),
-     "-s" => obsolete,
-     "--no-backtrace" => arg -> if phase == 1 then backtrace = false,
-     "--stop" => arg -> (if phase == 1 then stopIfError = true; debuggingMode = false;), -- see also M2lib.c and tokens.d
-     "--no-loaddata" => arg -> if phase == 1 then noloaddata = true,
      "--no-setup" => arg -> if phase == 1 then nosetup = true,
+     "--notify" => arg -> if phase <= 2 then notify = true,
+     "--silent" => arg -> nobanner = true,
+     "--stop" => arg -> (if phase == 1 then stopIfError = true; debuggingMode = false;), -- see also M2lib.c and tokens.d
      "--texmacs" => arg -> if phase == 3 then (
 	  interpreter = topLevelTexmacs;
 	  << TeXmacsBegin << "verbatim:" << " Macaulay 2 starting up " << endl << TeXmacsEnd << flush;
@@ -355,9 +384,13 @@ action := hashTable {
      "--version" => arg -> ( << version#"VERSION" << newline; exit 0; )
      };
 
+valueNotify := arg -> (
+     if notify then stderr << "--evaluating command line argument " << argno << ": " << format arg << endl;
+     value arg)
+
 action2 := hashTable {
-     "-E" => arg -> if phase == 2 then value arg,
-     "-e" => arg -> if phase == 3 then value arg,
+     "-E" => arg -> if phase == 2 then valueNotify arg,
+     "-e" => arg -> if phase == 3 then valueNotify arg,
      "--print-width" => arg -> if phase == 3 then printWidth = value arg,
      "--prefix" => arg -> if phase == 1 then (
 	  if arg === "" or not match("/$",arg) then arg = arg | "/";
@@ -369,7 +402,7 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
      ld := loadDepth;
      loadDepth = loadDepth + 1;
      phase = phase0;
-     argno := 1;
+     argno = 1;
      while argno < #commandLine do (
 	  arg := commandLine#argno;
 	  if action#?arg then action#arg arg

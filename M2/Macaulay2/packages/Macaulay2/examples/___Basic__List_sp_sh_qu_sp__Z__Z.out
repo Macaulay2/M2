@@ -1,14 +1,11 @@
+-- -*- M2-comint -*-
 
 i1 : {a,b,c} #? 2
 
 o1 = true
 
-o1 : Boolean
-
 i2 : {a,b,c} #? 22
 
 o2 = false
-
-o2 : Boolean
 
 i3 : 

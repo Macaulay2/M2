@@ -23,6 +23,7 @@ R = QQ[x..z]
 m = ideal vars R
 M = m/m^2
 N = saturate 0_M					    -- low priority, dan will fix this later
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test saturate.out"
 -- End:

@@ -2,7 +2,7 @@
 justM2 all default :: initialize phase1
 quick-install : justM2 install
 include ../../include/config.Makefile
-VPATH = @srcdir@:../tutorial/final
+VPATH = @srcdir@
 srcdir = $(shell cd @srcdir@; /bin/pwd)
 all:: initialize
 Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
@@ -11,7 +11,6 @@ emacs html: all; $(MAKE) -C ../$@
 .SUFFIXES: .m2
 .PHONY: clean all install html distclean check default initialize prep always tags install-tmp
 # there is a parallel list of tutorials in overview3.m2
-TUTORIALS = $(patsubst %, ../tutorial/final/%, Fano.out canEmbed.out divisors.out elementary.out)
 DUMPEDM2FILES := setup.m2 startup.m2
 DUMPEDM2DOCFILES := \
 		@srcdir@/../packages/Macaulay2/*.m2 \
@@ -65,8 +64,6 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: \
 		$(NONDOCM2FILES) \
 		$(shell find @srcdir@/../packages -name "*.m2" -o -name examples -prune | grep -v Macaulay2/examples | sort) \
-		@srcdir@/../tutorial/final/*.m2 \
-		@srcdir@/../tutorial/prelim/*.m2 \
 		../e/statuscodes \
 		../emacs/makehlp.m2 \
 		../emacs/makem2.m2 \
@@ -85,7 +82,6 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		../emacs/Makefile.in \
 		../basictests/Makefile.in \
 		../packages/Makefile.in \
-		../tutorial/Makefile.in \
 		@srcdir@/../packages/*/Makefile.in \
 		@srcdir@/README.DOC \
 		../CHANGES
@@ -130,7 +126,7 @@ clean :: ; rm -f .gdb-files
 .gdb-run-it: Makefile
 	echo 'echo -- loading .gdb-run-it\n' >$@
 	echo 'echo \n' >>$@
-	echo 'run -q --no-loaddata --no-readline' >>$@
+	echo 'run -q --no-loaddata --no-readline --no-personality' >>$@
 clean :: ; rm -f .gdb-run-it
 profile : gmon.out
 	gprof ../bin/M2$(EXE) >profile
@@ -147,6 +143,7 @@ $(htmldocdir) : ; install -d $@
 TMPDIR = tmp
 
 check:: $(TMPDIR) test2
+$(TMPDIR) :; mkdir $@
 test2: phase1 ../bin/M2$(EXE)
 	$(MAKE) -k -C $(TMPDIR) -f $(srcdir)/Makefile.tests srcdir=$(srcdir)
 	touch $@
@@ -170,7 +167,7 @@ install:: $(datam2dir)
 $(datam2dir) :
 	$(INSTALL) -d $(datam2dir)
 
-install:: $(DUMPEDM2FILES) $(TUTORIALS)
+install:: $(DUMPEDM2FILES)
 	$(INSTALL) -d "$(m2dir)"
 	$(INSTALL_DATA) $^ "$(m2dir)"
 

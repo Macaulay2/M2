@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : X = Proj(QQ[x_0..x_2])
 
@@ -31,9 +32,9 @@ o4 : QQ [x , x , x ]-module, quotient of QQ [x , x , x ]
 
 i5 : TruncDual = HH^2(OO_X^1(>=-4))
 
-o5 = cokernel {-4} | x_2 0   x_1 0    0   x_0  0   0   |
+o5 = cokernel {-4} | 0   0   0   -x_2 x_1 -x_2 0   x_0 |
               {-4} | 0   x_2 0   x_1  0   0    x_0 0   |
-              {-4} | 0   0   0   -x_2 x_1 -x_2 0   x_0 |
+              {-4} | x_2 0   x_1 0    0   x_0  0   0   |
 
                                                         3
 o5 : QQ [x , x , x ]-module, quotient of QQ [x , x , x ]
@@ -41,11 +42,11 @@ o5 : QQ [x , x , x ]-module, quotient of QQ [x , x , x ]
 
 i6 : hilbertFunction(-4, TruncDual)
 
-o6 = 0
+o6 = 3
 
 i7 : hilbertFunction(-3, TruncDual)
 
-o7 = 0
+o7 = 1
 
 i8 : R = QQ[x_0..x_4];
 
@@ -140,18 +141,18 @@ i20 : HorrocksMumford = sheaf(coker D.dd_3);
 
 i21 : T = HH^1(HorrocksMumford(>=-1))
 
-o21 = cokernel {-1} | x_4 0   0   x_2  0    0   0   0    x_3 0    x_0  0    0   0   x_1 |
-               {-1} | 0   0   0   -x_3 x_2  0   x_1 0    0   0    0    x_0  x_4 0   0   |
-               {-1} | 0   x_3 0   0    0    0   0   x_1  0   -x_4 -x_2 0    x_0 0   0   |
-               {-1} | 0   0   x_3 0    -x_4 0   0   -x_2 x_1 0    0    0    0   x_0 0   |
-               {-1} | 0   0   x_4 0    0    x_2 0   0    0   x_1  0    -x_3 0   0   x_0 |
+o21 = cokernel {-1} | 0   0   x_1  0   0   x_4 0    0    x_2 x_0 0   0    0    -x_3 0   |
+               {-1} | 0   0   0    x_1 0   x_3 0    -x_4 0   0   0   -x_2 0    0    x_0 |
+               {-1} | 0   x_0 -x_4 0   x_3 0   0    0    0   0   0   x_1  -x_2 0    0   |
+               {-1} | 0   x_4 0    0   0   0   -x_3 x_2  0   0   x_1 0    0    x_0  0   |
+               {-1} | x_4 0   0    x_3 0   0   x_2  0    0   x_1 0   0    x_0  0    0   |
 
                              5
 o21 : R-module, quotient of R
 
 i22 : apply(-1..2, i-> hilbertFunction(i,T))
 
-o22 = (0, 10, 10, 2)
+o22 = (5, 10, 10, 2)
 
 o22 : Sequence
 

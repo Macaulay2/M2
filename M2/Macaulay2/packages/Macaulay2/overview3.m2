@@ -144,11 +144,6 @@ document {
 	  }
      }
 
-load "Fano.out"
-load "canEmbed.out"
-load "divisors.out"
-load "elementary.out"
-
 document {
      Key => "basic commutative algebra",
      "This section includes tutorials showing how to do
@@ -166,11 +161,6 @@ document {
 	  TO "M2SingularBook"
 	  }
      }
-
-     
-load "elementary1.out"
-load "modules.out"
-load "M2SingularBook/doc.m2"
 
 document {
      Key =>  "Developer's Corner",
@@ -270,6 +260,24 @@ document {
      syzygy programs as an undergraduate at the University of Illinois, and from
      1983 to 1992 with Dave Bayer he wrote Macaulay, a specialized computer
      algebra system for algebraic geometry and the predecessor of this program."
+     }
+
+document {
+     Key => "Other sources of information about Macaulay 2",
+     SUBSECTION "Web sites",
+     UL {
+	  (HREF "http://www.math.uiuc.edu/Macaulay2/", " -- the main Macaulay 2 web site: citations, binary distributions"),
+	  (HREF "http://sf.net/projects/macaulay2/", " -- the Sourceforge Macaulay 2 web site: source code, bug reporting")
+	  },
+     SUBSECTION "Books",
+     UL {
+	  "Computations in algebraic geometry with Macaulay 2, Algorithms and Computations in Mathematics, no. 8,
+	  edited by David Eisenbud, Daniel R. Grayson, Michael E. Stillman, and Bernd Sturmfels,
+	  Springer-Verlag, 2001, ISBN 3-540-42230-7.",
+	  "Computational Algebraic Geometry, London Mathematical Society Student Texts (No. 58), by Hal Schenck,
+	  ISBN-13: 9780521536509, ISBN-10: 0521536502, 2003, 208 pages.",
+	  }
+     
      }
 
 document {

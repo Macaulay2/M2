@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ/101[a..d]
 
@@ -13,7 +14,7 @@ o2 : PolynomialRing
 
 i3 : newCoordinateSystem(S,matrix{{a+2*b,3*c-d}})
 
-o3 = {map(S,R,{p, r, p + 2q, 3r - s}), map(R,S,{a, 50a - 50c, b, 3b - d})}
+o3 = {map(S,R,{r, p, p + 2q, 3r - s}), map(R,S,{b, 50b - 50c, a, 3a - d})}
 
 o3 : List
 

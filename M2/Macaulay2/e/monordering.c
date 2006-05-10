@@ -25,10 +25,12 @@ static struct mon_part_rec_ *mo_make(int type, int nvars, int *wts)
 static MonomialOrdering *make_mon_order(int n)
 {
   static unsigned long next_hash = 2300230023U;
-  MonomialOrdering *z = (MonomialOrdering *)getmem_atomic(sizeofarray(z,n));
+  MonomialOrdering *z = (MonomialOrdering *)getmem(sizeofarray(z,n));
   z->len = n;
   z->_hash = next_hash++;
-  return z; /* Note that getmem_atomic returns zeroed memory */
+  int i;
+  for (i=0; i<n; i++) z->array[i] = NULL;
+  return z;
 }
 
 int rawNumberOfVariables(const MonomialOrdering *mo)

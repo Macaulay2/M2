@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ/31991[a,b,c,d]
 
@@ -14,8 +15,8 @@ o2 : Ideal of R
 
 i3 : M = Ext^1(I,R)
 
-o3 = cokernel {-3} | c b a |
-              {-3} | d c b |
+o3 = cokernel {-3} | d c b |
+              {-3} | c b a |
 
                             2
 o3 : R-module, quotient of R

@@ -2,13 +2,14 @@
 --- author(s): MES
 --- notes: 
 
+undocumented {
+	  (coefficient, RingElement, RingElement),
+	  (coefficient, MonoidElement, RingElement)
+	  }
+
 document { 
      Key => coefficient,
      Headline => "coefficient of a monomial",
-     Undocumented => {
-	  (coefficient, RingElement, RingElement),
-	  (coefficient, MonoidElement, RingElement)
-	  },
      Usage => "coefficient(m,f)",
      Inputs => {
 	  "m" => RingElement => "a monomial",

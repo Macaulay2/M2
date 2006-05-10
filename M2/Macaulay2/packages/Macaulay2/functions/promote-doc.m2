@@ -2,10 +2,7 @@
 --- author(s): MES
 --- notes: 
 
-document { 
-     Key => {promote,
-	  (promote, RingElement, Ring)},
-     Undocumented => {
+undocumented {
 	  (promote, ZZ, RingElement),
 	  (promote, QQ, RingElement),
 	  (promote, ZZ, EngineRing),
@@ -28,7 +25,11 @@ document {
 	  (promote, CC, CC),
 	  (promote, MonoidElement, Ring),
 	  (promote, MonoidElement, RingElement),
-	  (promote, RingElement, RingElement)},
+	  (promote, RingElement, RingElement)}
+
+document { 
+     Key => {promote,
+	  (promote, RingElement, Ring)},
      Headline => "promote to another ring",
      Usage => "promote(f,R)",
      Inputs => {
@@ -78,7 +79,7 @@ T = S[x,y,z]
 promote(1/2,S)
 1/2 * 1_S
 I = ideal(a^3,c^3)
-(I_0) ** T
+-- (I_0) ** T -- doesn't make sense [dan]
 (gens I) ** T
 
 

@@ -5,7 +5,7 @@ debug Macaulay2Core
 reduceCompress = method()
 reduceCompress Matrix := (m) -> (
      R := ring m;
-     msparse := rawMutableMatrix raw m;
+     msparse := rawMutableMatrix(raw m);
      rawReduceByPivots msparse;
      mout := compress map(R,rawMatrix msparse);
      colCounter := numgens source mout - 1;

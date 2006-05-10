@@ -1,9 +1,12 @@
+-- -*- M2-comint -*-
 
 i1 : globalDictionaries
 
-o1 = {Macaulay2.Dictionary, PrimaryDecomposition.Dictionary, User#"private
+o1 = {Macaulay2.Dictionary, PrimaryDecomposition.Dictionary,
      ---------------------------------------------------------------------------
-     dictionary", Macaulay2Core.Dictionary, OutputDictionary, PackageDictionary}
+     Elimination.Dictionary, User#"private dictionary",
+     ---------------------------------------------------------------------------
+     Macaulay2Core.Dictionary, OutputDictionary, PackageDictionary}
 
 o1 : List
 

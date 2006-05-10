@@ -1039,7 +1039,7 @@ texMath SparseMonomialVectorExpression := v -> (
 texMath MatrixExpression := m -> (
      s := if m#?0 then (
      	  ncols := #m#0;
-	  if ncols > 10 then ///\makeatletter\c@MaxMatrixCols=///,toString ncols,///\makeatother///);
+	  if ncols > 10 then (///\makeatletter\c@MaxMatrixCols=///,toString ncols,///\makeatother///));
      concatenate(
 	  ///\bgroup///,
 	  s,
@@ -1050,7 +1050,13 @@ texMath MatrixExpression := m -> (
 	  ))
 
 ctr := 0
-showTex = x -> (
+showTex = method(
+     Options => { 
+	  Format => "dvi", -- or "pdf"
+	  }
+     )
+
+showTex Thing := o -> x -> (
      f := temporaryFileName();
      f | ".tex" 
      << ///\documentclass{article}
@@ -1105,23 +1111,19 @@ Thing.AfterPrint = x -> (
      << endl;				  -- double space
      << o() << lineNumber << " : " << class x;
      << endl;
+     )
+
+Function.AfterPrint = x -> (
+     Thing.AfterPrint x;
      briefDocumentation x;
      )
 
 Nothing.AfterPrint = identity
 
-Expression.AfterPrint = x -> (
-     << endl;				  -- double space
-     << o() << lineNumber << " : " << class x
-     << endl;
-     briefDocumentation x;
-     )
-
 Holder.AfterPrint = x -> (
      << endl;				  -- double space
      << o() << lineNumber << " : " << class x << " " << class x#0
      << endl;
-     briefDocumentation x;
      )
 
 ZZ.AfterPrint = identity

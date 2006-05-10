@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ/101[x_(0,0)..x_(2,2),y_(0,0)..y_(2,2)]
 
@@ -32,7 +33,6 @@ i5 : dim I
 o5 = 12
 
 i6 : needsPackage "SimplicialComplexes"
---package "SimplicialComplexes" loaded
 
 o6 = SimplicialComplexes
 
@@ -46,31 +46,31 @@ o7 = R
 
 o7 : PolynomialRing
 
-i8 : D = simplicialComplex {{a,b,c},{a,b,d},{a,c,d},{b,c,d}}
+i8 : D = simplicialComplex {a*b*c,a*b*d,a*c*d,b*c*d}
 
-o8 = | d c b a |
+o8 = | bcd acd abd abc |
 
 o8 : SimplicialComplex
 
 i9 : I = monomialIdeal D
 
-o9 = monomialIdeal (a*b, a*c, b*c, a*d, b*d, c*d)
+o9 = monomialIdeal(a*b*c*d)
 
 o9 : MonomialIdeal of R
 
 i10 : facets D
 
-o10 = | d c b a |
+o10 = | bcd acd abd abc |
 
               1       4
 o10 : Matrix R  <--- R
 
 i11 : dim D
 
-o11 = 0
+o11 = 2
 
 i12 : dim I
 
-o12 = 1
+o12 = 3
 
 i13 : 

@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : ff = matrix{{1,2,3},{4,5,6}}
 
@@ -80,13 +81,9 @@ i11 : ff == gg
 
 o11 = false
 
-o11 : Boolean
-
 i12 : ff == ff
 
 o12 = true
-
-o12 : Boolean
 
 i13 : M = R^{1,2,3}
 
@@ -124,19 +121,13 @@ i17 : ff - gg == 0
 
 o17 = true
 
-o17 : Boolean
-
 i18 : ff == gg
 
 o18 = false
 
-o18 : Boolean
-
 i19 : ff != gg
 
 o19 = true
-
-o19 : Boolean
 
 i20 : ff = matrix {{a,b,c},{d,e,f}}
 

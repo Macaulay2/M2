@@ -3,30 +3,31 @@
 # rules used by the Makefiles in various test directories
 
 DOTS ?= ..
-TLIMIT ?= 20
-MLIMIT ?= 60000
-VLIMIT ?= 60000
+TLIMIT ?= 40
+MLIMIT ?= 90000
+VLIMIT ?= 90000
 LIMIT  = ulimit -t $(TLIMIT) -m $(MLIMIT) -v $(VLIMIT) 2>/dev/null
 
 RESULTS := $(notdir $(patsubst %.m2, %.out, $(wildcard $(SRCDIR)/*.m2))) \
 	   $(notdir $(patsubst %.m2-input, %.out, $(wildcard $(SRCDIR)/*.m2-input)))
 
-PAT := ':[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):|^GC|^[0-9]+\.[0-9]+user'
+PAT := 'internal error|:[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):|^GC|^0x|^out of mem|non-zero status|^Command terminated|user.*system.*elapsed|^[0-9]+\.[0-9]+user'
 FILTER := egrep -a $(PAT)
 
 all check :: $(RESULTS)
 $(RESULTS) : $(DOTS)/bin/M2$(EXE)
 
 ARGS := --silent --stop -q -e 'path=join(path,{"$(SRCDIR)/","$(SRCDIR)/$(DOTS)/packages/"})'
-ARGS += --no-debug
+ARGS += --no-debug --print-width 140
 # ARGS += -e 'errorDepth=0'
 # ARGS += -e 'gbTrace=5'
 
 %.out : %.m2
 	@ echo testing: $<
 	@ $(LIMIT); \
-		if (echo 'input "$<"'; echo exit 0) | \
-		   time $(DOTS)/bin/M2$(EXE) $(ARGS) >$*.errors 2>&1 ; \
+		echo "--*- compilation -*-" >$*.errors; \
+		if (echo 'input "$<"'; echo 'collectGarbage()'; echo exit 0) | \
+		   time $(DOTS)/bin/M2$(EXE) $(ARGS) >>$*.errors 2>&1 ; \
 		then mv $*.errors $@ ; \
 		else a=$$?; \
 		     echo "$*.errors:0: error output left here; some errors follow" >&2 ; \
@@ -36,7 +37,8 @@ ARGS += --no-debug
 %.out : %.m2-input
 	@ echo testing: $<
 	@ $(LIMIT); \
-		if time $(DOTS)/bin/M2$(EXE) $(ARGS) <$< >$*.errors 2>&1 ; \
+		echo "--*- compilation -*-" >$*.errors; \
+		if time $(DOTS)/bin/M2$(EXE) $(ARGS) <$< >>$*.errors 2>&1 ; \
 		then mv $*.errors $@ ; \
 		else a=$$?; \
 		     echo "$*.errors:0: error output left here; some errors follow" >&2 ; \

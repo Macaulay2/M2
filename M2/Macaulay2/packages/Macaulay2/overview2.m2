@@ -112,11 +112,11 @@ document {
      	  "M_{2,3}",
 	  },
      PARA,
-     "Natural maps between modules can be obtained with ", TO "map", "; the
+     "Natural maps between modules can be obtained with ", TO "inducedMap", "; the
      first argument is the desired target, and the second is the source.",
      EXAMPLE {
-	  "map(source f, ker f)",
-	  "map(coker f, target f)",
+	  "inducedMap(source f, ker f)",
+	  "inducedMap(coker f, target f)",
 	  },
      }
 
@@ -165,7 +165,7 @@ document {
      from a free resolution of the source of ", TT "f", " to a free resolution of
      the target of ", TT "f", ".",
      EXAMPLE {
-	  "h = resolution map(M, m^2/m^4)"
+	  "h = resolution inducedMap(M, m^2/m^4)"
 	  }
      }
 
@@ -305,7 +305,7 @@ document {
 	  },
      "Let's construct the natural map from ", TT "N", " to ", TT "M", ".",
      EXAMPLE {
-	  "f = map(M,N)"
+	  "f = inducedMap(M,N)"
 	  },
      "Let's lift the map to a map of free resolutions.",
      EXAMPLE {
@@ -334,10 +334,10 @@ document {
 	  "id_C",
 	  "x * id_C",
 	  },
-     "We can use ", TO "map", " or ", TT "**", " to construct natural maps 
+     "We can use ", TO "inducedMap", " or ", TT "**", " to construct natural maps 
      between chain complexes.",
      EXAMPLE {
-	  "map(C ** R^1/x,C)",
+	  "inducedMap(C ** R^1/x,C)",
 	  "g ** R^1/x"
 	  },
      "There is a way to make a chain complex map by calling a function
@@ -809,7 +809,7 @@ document {
 	  ///f << "ho" << endl///,
 	  ///f << close///,
 	  ///get "testfile"///,
-	  ///unlinkFile "testfile"///
+	  ///removeFile "testfile"///
 	  }
      }
 

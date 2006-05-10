@@ -2123,26 +2123,92 @@ vec PolyRing::translate_gbvector_to_vec_QQ(const FreeModule *F,
   return H.value();
 }
 
+// Being rewritten:
+//vec PolyRing::translate_gbvector_to_vec(const FreeModule *F, const gbvector *v) const
+//{
+//  if (getCoefficients() == globalQQ)
+//    return translate_gbvector_to_vec_QQ(F,v,globalZZ->one());
+//  GBRing *GR = get_gb_ring();
+//  vecHeap H(F);
+//
+//  if (gbTrace>=3)
+//    emit_wrapped(".");
+//  for (const gbvector *t = v; t != 0; t=t->next)
+//    {
+//      Nterm *s = new_term();
+//      GR->gbvector_get_lead_monomial(F, t, s->monom);
+//      s->coeff = t->coeff; 
+//      s->next = 0;
+//      vec w = make_vec(t->comp-1, s);
+//      H.add(w);
+//    }
+//
+//  return H.value();
+//}
+
 vec PolyRing::translate_gbvector_to_vec(const FreeModule *F, const gbvector *v) const
 {
+  if (v == 0) return 0;
+
   if (getCoefficients() == globalQQ)
     return translate_gbvector_to_vec_QQ(F,v,globalZZ->one());
   GBRing *GR = get_gb_ring();
-  vecHeap H(F);
 
   if (gbTrace>=3)
     emit_wrapped(".");
+  int firstcomp = v->comp;
+  int lastcomp = firstcomp;
+  for (const gbvector *t = v->next; t != 0; t=t->next)
+    {
+      if (firstcomp > t->comp)
+	firstcomp = t->comp;
+      else if (lastcomp < t->comp)
+	lastcomp = t->comp;
+    }
+
+  Nterm **vec_comps = newarray(Nterm *, lastcomp-firstcomp+1);
+  Nterm **vec_last = newarray(Nterm *, lastcomp-firstcomp+1);
+  for (int i=0; i<lastcomp-firstcomp+1; i++)
+    {
+      vec_comps[i] = 0;
+      vec_last[i] = 0;
+    }
+
+  // Now make a list of Nterm's, copy gbvectors in (except comps)
   for (const gbvector *t = v; t != 0; t=t->next)
     {
       Nterm *s = new_term();
       GR->gbvector_get_lead_monomial(F, t, s->monom);
       s->coeff = t->coeff; 
       s->next = 0;
-      vec w = make_vec(t->comp-1, s);
-      H.add(w);
+      int x = t->comp - firstcomp;
+      if (!vec_comps[x])
+	{
+	  vec_comps[x] = s;
+	  vec_last[x] = s;
+	}
+      else
+	{
+	  vec_last[x]->next = s;
+	  vec_last[x] = s;
+	}
     }
 
-  return H.value();
+  // Now create the vecs
+  vec result = 0;
+  for (int x=0; x<lastcomp-firstcomp+1; x++)
+    if (vec_comps[x])
+      {
+	vec w = make_vec(x + firstcomp - 1, vec_comps[x]);
+	w->next = result;
+	result = w;
+      }
+
+  // Finally, free vec_last, vec_comps;
+  deletearray(vec_comps);
+  deletearray(vec_last);
+
+  return result;
 }
 
 vec PolyRing::translate_gbvector_to_vec_denom(const FreeModule *F, 

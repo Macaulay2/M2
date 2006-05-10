@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = QQ[x,y];
 
@@ -54,8 +55,6 @@ o7 : ChainComplex
 i8 : E_-4 == C_1
 
 o8 = true
-
-o8 : Boolean
 
 i9 : R^4[1]
 

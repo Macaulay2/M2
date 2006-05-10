@@ -3,8 +3,6 @@
 
 #ifdef DEBUG
 
-#warning : using debug.h debugging code
-
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -14,6 +12,7 @@ extern "C" {
   extern int trapcount;
   extern int trapset;
   extern void trapchk(void *);
+  extern int badBlock();
 
 #ifdef DEBUG
   static __attribute__ ((unused)) void debug_version() {}
@@ -32,6 +31,12 @@ extern "C" {
 #if defined(__cplusplus)
 }
 #endif
+
+#define TRAPCHK(p) trapchk(p)
+
+#else
+
+#define TRAPCHK(p)
 
 #endif
 

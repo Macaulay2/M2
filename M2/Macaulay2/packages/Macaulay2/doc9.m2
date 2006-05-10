@@ -1,62 +1,5 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-
-document {
-     Key => pushForward,
-     TT "pushForward(f,M)", " -- yields an R-presentation of the S-module ", TT "M", ", where
-     ", TT "f:R --> S", " is a ring map, and ", TT "M", " is considered as 
-     an ", TT "R", "-module via ", TT "f", ".",
-     PARA,
-     "If ", TT "M", " is not finitely generated over ", TT "R", ", then an error is raised.",
-     PARA,
-     "Currently, ", TT "R", " and ", TT "S", " must both be polynomial rings over the same base field."
-     }
-
-document {
-     Key => [pushForward,StopBeforeComputation],
-     TT "StopBeforeComputation => false", " -- an optional argument used with
-     ", TO "pushForward", ".",
-     PARA,
-     "Tells whether to start the computation, with the default value
-     being ", TT "true", "."
-     }
-
-document {
-     Key => [pushForward,StopWithMinimalGenerators],
-     TT "StopWithMinimalGenerators => true", " -- an option for ", TO "pushForward", "
-     that specifies that the computation should stop as soon as a
-     complete list of minimal generators for the submodule or ideal has been
-     determined.",
-     PARA,
-     "The value provided is simply passed on to ", TO "gb", ": see 
-     ", TO [gb,StopWithMinimalGenerators], " for details."
-     }
-
-document {
-     Key => [pushForward,Strategy],
-     TT "pushForward(f,M,Strategy => v)", " -- an option for ", TO pushForward, " 
-     which can be used to specify the strategy to be used in the computation.",
-     PARA,
-     "The strategy option value ", TT "v", " should be one of the following.",
-     UL {
-	  TO "NonLinear",
-     	  TO "Linear"
-	  }
-     }
-
-TEST "
-    R = ZZ/101[a,b]
-    S = ZZ/101[a,b,c]
-    M = cokernel matrix{{c^3}}
-    f = map(S,R)
-    assert( R^{0,-1,-2} == pushForward(f,M) )
-"
-
-document {
-     Key => UseHilbertFunction,
-     TT "UseHilbertFunction", " -- an option for ", TO "pushForward1", "."
-     }
-
 document {
      Key => (Ext,Module,Module),
      Headline => "total Ext module",
@@ -1221,7 +1164,7 @@ TEST ///
      ///
 
 document {
-     Key => (symbol ++,ChainComplex,ChainComplex),
+     Key => {(symbol ++,ChainComplex,ChainComplex),(symbol "++",GradedModule,GradedModule)},
      Headline => "direct sum",
      TT "C++D", " -- direct sum of chain complexes.",
      PARA,
@@ -1446,21 +1389,6 @@ document {
      SeeAlso => "ChainComplex"
      }
 
-document {
-     Key => (map,ChainComplex,ChainComplex,Function),
-     Headline => "make a map of chain complexes",
-     TT "map(C,D,f)", " -- construct a map from the chain complex ", TT "D", " to the chain
-     complex ", TT "C", " which in degree ", TT "k", " is the map provided
-     as the value of ", TT "f(k)", ".",
-     PARA,
-     "As a convenience, the value returned by f(k) is used as the third argument
-     in ", TT "map(C_k,D_k,f(k))", ".",
-     PARA,
-     "The function ", TT "f", " is called only for those indices which represent spots
-     occupied in both the source and target chain complexes.",
-     PARA,
-     SeeAlso => "ChainComplex"
-     }
 
 document {
      Key => (dual,ChainComplexMap),

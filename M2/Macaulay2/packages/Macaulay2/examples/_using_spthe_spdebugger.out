@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : load "demo1.m2"
 
@@ -45,7 +46,6 @@ i6 : g 2
      continue n             -- execute the code, stop after n microsteps
      return                 -- bypass code, return 'null', and continue
      return x               -- bypass code, return 'x', and continue
-     disassemble errorCode  -- examine the code microsteps
      value errorCode        -- execute the code, returning its value
 
  -- code just attempted: -- ../../../Macaulay2/m2/demo1.m2:8
@@ -85,7 +85,6 @@ ii9 : end
      continue n             -- execute the code, stop after n microsteps
      return                 -- bypass code, return 'null', and continue
      return x               -- bypass code, return 'x', and continue
-     disassemble errorCode  -- examine the code microsteps
      value errorCode        -- execute the code, returning its value
 
  -- code just attempted: -- ../../../Macaulay2/m2/demo1.m2:13

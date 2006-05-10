@@ -191,7 +191,7 @@ void LinAlgGB<CoeffRing>::process_column(int c)
   bool found = lookup->search(ce.monom, b);
   if (found)
     {
-      int which = reinterpret_cast<int>(b->bag);
+      int which = (reinterpret_cast<long>(b->bag));
       uninterned_monomial um = H.reserve(MONOMIAL_LENGTH(ce.monom));
       monomial m;
       monomial_quotient(ce.monom, gb[which]->f.monoms[0], um);

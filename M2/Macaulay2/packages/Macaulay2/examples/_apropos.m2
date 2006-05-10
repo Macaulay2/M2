@@ -1,1 +1,2 @@
-apropos "scan"
+apropos "atrix"
+apropos "^[mM]at"

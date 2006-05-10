@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ/32003[a..d];
 
@@ -17,44 +18,39 @@ o3 : Ideal of R
 
 i4 : I = intersect(I,J)
 
-             4    3      3    3      4      3         3      4   3 3    3 3   2 4    3 3    3 3    2   3   6      3 2    3 3      5     2 3    3   2    3   2      2 3     5    2 3       2 3    2 4   2   3    3 2     3 2     2   3   4 2    3 2    3 3    3   2
-o4 = ideal (b  - a d, a*b  - a c, b*c  - a*c d - b*c*d  + a*d , b c  - a d , a c  - a d  + b d  - a c*d , c  - b*c d  - c d  + b*d , a*b c  - a c*d  + b c*d  - a*b d , a*c  - b c d - a*c d  + b d , a b*c  - a c d + b c d - a b*d , a c  - a b d, a c  - a b*d )
+             4    3      3    3      4      3         3      4   6      3 2    3 3      5     5    2 3       2 3    2 4   2 4    3 3    3 3    2   3   3 3    3 3     2 3    3   2    3   2      2 3   2   3    3 2     3 2     2   3   3 3    3   2   4 2    3 2
+o4 = ideal (b  - a d, a*b  - a c, b*c  - a*c d - b*c*d  + a*d , c  - b*c d  - c d  + b*d , a*c  - b c d - a*c d  + b d , a c  - a d  + b d  - a c*d , b c  - a d , a*b c  - a c*d  + b c*d  - a*b d , a b*c  - a c d + b c d - a b*d , a c  - a b*d , a c  - a b d)
 
 o4 : Ideal of R
 
 i5 : removeLowestDimension I
 
-                        3      2   3    2      2    2
-o5 = ideal (b*c - a*d, c  - b*d , b  - a c, a*c  - b d)
+                        3      2     2    2    3    2
+o5 = ideal (b*c - a*d, c  - b*d , a*c  - b d, b  - a c)
 
 o5 : Ideal of R
 
 i6 : topComponents I
 
-                        3      2   3    2      2    2
-o6 = ideal (b*c - a*d, c  - b*d , b  - a c, a*c  - b d)
+                        3      2     2    2    3    2
+o6 = ideal (b*c - a*d, c  - b*d , a*c  - b d, b  - a c)
 
 o6 : Ideal of R
 
 i7 : radical I
 
-                        3    2      2    2    6    3 3    2 4      5
-o7 = ideal (b*c - a*d, b  - a c, a*c  - b d, c  - c d  - b d  + b*d )
+                          2    2    3    2    6    3 3    2 4      5
+o7 = ideal (b*c - a*d, a*c  - b d, b  - a c, c  - c d  - b d  + b*d )
 
 o7 : Ideal of R
 
 i8 : decompose I
-                  2   3
-saturating with {c , c }
-saturating with {}
-saturating with {}
-saturating with {}
 
-                             3      2       2    2    3    2            2      
-o8 = {ideal (- b*c + a*d, - c  + b*d , - a*c  + b d, b  - a c), ideal (c  + c*d
+                             3      2       2    2    3    2                   
+o8 = {ideal (- b*c + a*d, - c  + b*d , - a*c  + b d, b  - a c), ideal (- c + d,
      ---------------------------------------------------------------------------
-        2
-     + d , b, a), ideal (- c + d, b, a)}
+                    2          2
+     b, a), ideal (c  + c*d + d , b, a)}
 
 o8 : List
 

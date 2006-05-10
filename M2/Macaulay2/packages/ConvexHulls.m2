@@ -375,12 +375,12 @@ addColumns = (m) -> (
 	ones := map(R^n, R^1, (i,j) -> 1);
 	m * ones)
 	
-permutations = (n) -> (
-    if #n === 1 then {n}
-	else (
-	    flatten apply(#n, i -> (
-	        m := drop(n,{i,i});
-			apply(permutations m, p -> prepend(n#i,p))))))
+--permutations = (n) -> (
+--    if #n === 1 then {n}
+--	else (
+--	    flatten apply(#n, i -> (
+--	        m := drop(n,{i,i});
+--			apply(permutations m, p -> prepend(n#i,p))))))
 		
 cyclicPolytope = (d,n) -> map(ZZ^(d+1), ZZ^n, (i,j) -> j^i)
 

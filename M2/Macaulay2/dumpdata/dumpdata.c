@@ -151,7 +151,14 @@ int loaddata(char const *filename) {
     n++;
     ret = sscanf(fbuf, mapfmt, &dumpedmap.from, &dumpedmap.to, &r, &w, &x, &dumpedmap.checksum);
     if (6 != ret) {
-      warning("loaddata: in data file %s: invalid map: %s\n", filename, fbuf, n);
+      warning("loaddata: in data file %s: invalid map %d: %s\n", filename, n, fbuf);
+      warning("        : map format: \"%s\" matched %d item(s)\n", mapfmt,ret);
+      if (ret >= 1) warning("        : item 1 : %p\n", dumpedmap.from);
+      if (ret >= 2) warning("        : item 2 : %p\n", dumpedmap.to);
+      if (ret >= 3) warning("        : item 3 : %c\n", r);
+      if (ret >= 4) warning("        : item 4 : %c\n", w);
+      if (ret >= 5) warning("        : item 5 : %c\n", x);
+      if (ret >= 6) warning("        : item 6 : %u\n", dumpedmap.checksum);
       fclose(f);
       return ERROR;
     }

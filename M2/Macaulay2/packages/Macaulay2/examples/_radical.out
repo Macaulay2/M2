@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R=QQ[x,y]
 
@@ -14,8 +15,8 @@ o2 : Ideal of R
 
 i3 : radical I
 
-               2       4      2
-o3 = ideal (- x  - 1, x y + 2x y + y, y + 1)
+                    2
+o3 = ideal (y + 1, x  + 1)
 
 o3 : Ideal of R
 

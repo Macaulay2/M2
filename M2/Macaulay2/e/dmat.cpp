@@ -107,7 +107,7 @@ long DMat<CoeffRing>::lead_row(long col, elem &result) const
 {
   elem *last = array_ + nrows_ * col;
   elem *loc = last + nrows_ - 1;
-  for ( ; loc > last; loc--)
+  for ( ; loc >= last; loc--)
     {
       if (!coeffR->is_zero(*loc))
 	{

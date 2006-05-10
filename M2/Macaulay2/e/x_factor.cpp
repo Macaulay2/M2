@@ -3,6 +3,7 @@
 #include "config.h"
 #include <assert.h>
 #include <iostream>
+#include <cstdio>
 
 #include "../d/M2inits.h"
 
@@ -26,6 +27,8 @@
 #include "text_io.hpp"
 #include "buffer.hpp"
 
+#include <NTL/ZZ.h>
+
 #ifdef FACTORY
 #define REVERSE_VARIABLES 1	// did we have a good reason for reversing the variables before?  probably so the ideal reordering of Messollen would work...
 
@@ -40,23 +43,121 @@ extern "C" {
   extern void factory_setup_2();
 };
 
+enum factoryCoeffMode { modeError = 0, modeQQ, modeZZ, modeZn, modeUnknown };
+static enum factoryCoeffMode coeffMode(const PolynomialRing *P) {
+     const Ring *F = P->Ncoeffs();
+     if (F->cast_to_QQ()) return modeQQ;
+     if (F->cast_to_RingZZ()) return modeZZ;
+     if (F->cast_to_Z_mod()) return modeZn;
+     ERROR("expected coefficient ring of the form ZZ/n, ZZ, or QQ");
+     return modeError;
+}
+
+int debugging = 0;
+
+extern "C" {
+     extern void *GC_malloc_function(size_t);
+};
+
+static void advertise () {
+     static enum { none, withGC, withGCindirect, withFactory } lastMessage = none;
+     if (debugging == 0) return;
+     if (__gmp_allocate_func == (void *(*) (size_t))getmem) {
+	  if (lastMessage == withGCindirect) return;
+	  lastMessage = withGCindirect;
+	  printf("--gmp allocating with gc (indirectly)\n");
+     }
+     else if (__gmp_allocate_func == GC_malloc) {
+	  if (lastMessage == withGC) return;
+	  lastMessage = withGC;
+	  printf("--gmp allocating with gc\n");
+     }
+     else {
+	  if (lastMessage == withFactory) return;
+	  lastMessage = withFactory;
+	  printf("--gmp allocating with functions provided by factory\n");
+     }
+}
+
+static void init_seeds() {
+     SetSeed(ZZ::zero());	// NTL
+     factoryseed(0);		// factory (which uses NTL, as we've compiled it)
+}
+
 struct enter_factory { 
   void *(*save_gmp_allocate_func  )(size_t);
+  enum factoryCoeffMode mode;
+  int oldcharac;
+  int newcharac;
+  int oldRatlState;
+  int newRatlState;
+  const Z_mod *Zn;
   void *(*save_gmp_reallocate_func)(void *, size_t, size_t);
   void  (*save_gmp_free_func      )(void *, size_t);
   void enter() {
-    save_gmp_allocate_func = __gmp_allocate_func;
-    save_gmp_reallocate_func = __gmp_reallocate_func;
-    save_gmp_free_func = __gmp_free_func;
-    factory_setup_2();
+      if (debugging) advertise();
+      save_gmp_allocate_func = __gmp_allocate_func;
+      save_gmp_reallocate_func = __gmp_reallocate_func;
+      save_gmp_free_func = __gmp_free_func;
+      enterFactory();
+      if (debugging) advertise();
+      oldcharac = getCharacteristic();
+      oldRatlState = isOn(SW_RATIONAL);
+      switch (mode) {
+          case modeZZ:
+	       newRatlState = 0;
+	       Off( SW_RATIONAL );
+	       newcharac =0;
+	       setCharacteristic(0);
+	       break;
+	  case modeZn: 
+	       newRatlState = 0;
+	       Off( SW_RATIONAL );
+	       setCharacteristic(newcharac); 
+	       break;
+	  case modeQQ: 
+	       newRatlState = 1;
+	       On ( SW_RATIONAL );
+	       newcharac = 0;
+	       setCharacteristic(0);
+	       break;
+          default: 
+	       newRatlState = oldRatlState;
+	       newcharac = oldcharac;
+	       break;
+      }
+      if (debugging) {
+	   if (oldRatlState != newRatlState) printf(newRatlState ? "--setting factory rational mode on\n" : "--setting factory rational mode off\n");
+	   if (oldcharac != newcharac) printf("--changing factory characteristic from %d to %d\n",oldcharac,newcharac);
+      }
   }
   void exit() {
-    __gmp_allocate_func = save_gmp_allocate_func;
-    __gmp_reallocate_func = save_gmp_reallocate_func;
-    __gmp_free_func = save_gmp_free_func;
+       if (oldRatlState) On(SW_RATIONAL); else Off(SW_RATIONAL);
+       setCharacteristic(oldcharac);
+       if (debugging) advertise();
+       __gmp_allocate_func = save_gmp_allocate_func;
+       __gmp_reallocate_func = save_gmp_reallocate_func;
+       __gmp_free_func = save_gmp_free_func;
+       if (debugging) {
+	    advertise();
+	    if (oldcharac != newcharac) printf("--changing factory characteristic back from %d to %d\n",newcharac,oldcharac);
+	    if (oldRatlState != newRatlState) printf(oldRatlState ? "--setting factory rational mode back on\n" : "--setting factory rational mode back off\n");
+       }
   }
-  enter_factory:: enter_factory() { enter(); }
-  enter_factory::~enter_factory() { exit(); }
+
+  enter_factory() : 
+       mode(modeUnknown),
+       Zn(NULL)
+     { enter(); }
+
+  enter_factory(const PolynomialRing *P) :
+       mode(coeffMode(P)),
+       newcharac(mode == modeZn ? P->charac() : 0),
+       Zn(mode == modeZn ? P->Ncoeffs()->cast_to_Z_mod() : NULL)
+     { enter(); }
+
+  ~enter_factory() { exit(); }
+
 };
 
 struct enter_M2 { 
@@ -64,35 +165,49 @@ struct enter_M2 {
   void *(*save_gmp_reallocate_func)(void *, size_t, size_t);
   void  (*save_gmp_free_func      )(void *, size_t);
   void enter() {
+    if (debugging) advertise();
     save_gmp_allocate_func = __gmp_allocate_func;
     save_gmp_reallocate_func = __gmp_reallocate_func;
     save_gmp_free_func = __gmp_free_func;
-    M2_setup();
+    enterM2();
+    if (debugging) advertise();
   }
   void exit() {
+    if (debugging) advertise();
     __gmp_allocate_func = save_gmp_allocate_func;
     __gmp_reallocate_func = save_gmp_reallocate_func;
     __gmp_free_func = save_gmp_free_func;
+    if (debugging) advertise();
   }
-  enter_M2:: enter_M2() { enter(); }
-  enter_M2::~enter_M2() { exit(); }
+  enter_M2() { enter(); }
+  ~enter_M2() { exit(); }
 };
 
 static MP_INT toInteger(CanonicalForm h) {
-     // there has to be a faster way, since factory uses gmp inside
-     enter_M2 b;
+//// we don't have access to int_cf.h and int_int.h from factory, so the following commented-out code won't compile; but it might have worked.
+//     struct enter_factory foo;
+//     assert(h.inZ());
+//     InternalCF *value = h.getval();
+//     MP_INT y = value->MPI();
+//     struct enter_M2 bar;
+//     mpz_t x;
+//     mpz_init(x);
+//     mpz_set(x,y);
+//     return *x;
+     struct enter_M2 b;
      static const unsigned int base = 1 << 16;
      intarray v;
      int sign;
-     assert(h.inZ());
      {
-       enter_factory a;
+       struct enter_factory foo;
+       int RationalMode = isOn(SW_RATIONAL) ? (Off(SW_RATIONAL), 1) : 0;
        if (h < 0) { sign = -1; h = -h; } else sign = 1;
        while ( h != 0 ) {
 	    CanonicalForm k = h % base;
 	    v.append(k.intval());
-	    h /= base;
+	    h = h/base;
        }
+       if (RationalMode) On(SW_RATIONAL);
      }
      mpz_t x;
      mpz_init(x);
@@ -104,9 +219,9 @@ static MP_INT toInteger(CanonicalForm h) {
      return x[0];
 }
 
-static const RingElement * convert(const PolynomialRing *R, CanonicalForm h) {
+static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h) {
      // this seems not to handle polynomials with rational coefficients at all!!
-     enter_M2 b;
+     struct enter_M2 foo;
      const int n = R->n_vars();
      if (h.inCoeffDomain()) {
 	  if (h.inZ()) {
@@ -116,9 +231,9 @@ static const RingElement * convert(const PolynomialRing *R, CanonicalForm h) {
 	       return RingElement::make_raw(R, ret);
 	  }
 	  else if (h.inQ()) {
-	       enter_factory c;
+	       struct enter_factory c;
 	       CanonicalForm hnum = h.num(), hden = h.den();
-	       enter_M2 d;
+	       struct enter_M2 d;
 	       MP_RAT z = {toInteger(h.num()), toInteger(h.den())};
 	       RingElement *ret = RingElement::make_raw(R,R->from_rational(&z));
 	       mpq_clear(&z);
@@ -134,7 +249,7 @@ static const RingElement * convert(const PolynomialRing *R, CanonicalForm h) {
      }
      ring_elem result = R->from_int(0);
      for (int j = 0; j <= h.degree(); j++) {
-       const RingElement *r = convert(R, h[j]);
+       const RingElement *r = convertToM2(R, h[j]);
        ring_elem r1 = r->get_value();
        int var = 
 #                   if REVERSE_VARIABLES
@@ -149,15 +264,15 @@ static const RingElement * convert(const PolynomialRing *R, CanonicalForm h) {
      return RingElement::make_raw(R,result);
 }
 
-static enter_M2 b1;
-static enter_factory a1;
+static struct enter_M2 b1;
+static struct enter_factory foo1;
  static int base_set = 0;
  static CanonicalForm base;
-static enter_factory a2;
-static enter_M2 b2;
+static struct enter_factory foo2;
+static struct enter_M2 b2;
 
-static CanonicalForm convert(const mpz_ptr p) {
-     enter_factory a;
+static CanonicalForm convertToFactory(const mpz_ptr p) {
+     struct enter_factory foo;
      int size = p -> _mp_size;
      int sign = size < 0 ? -1 : 1;
      if (size < 0) size = -size;
@@ -185,26 +300,7 @@ static CanonicalForm convert(const mpz_ptr p) {
 //#define FRAC_VAL(f) ((frac_elem *) (f).poly_val)
 #define MPQ_VAL(f) (M2_Rational ((f).poly_val))
 
-enum coeff_type { FAC_ZZp, FAC_ZZ, FAC_QQ, FAC_BAD_RING };
-
-static coeff_type get_ring_type(const Ring *R)
-{
-     const PolynomialRing *P = R->cast_to_PolynomialRing();
-     if (P == 0) return FAC_BAD_RING;
-     const Ring *F = P->Ncoeffs();
-     if (F->cast_to_Z_mod() != 0) return FAC_ZZp;
-     if (F->cast_to_RingZZ() != 0) return FAC_ZZ;
-     if (F->cast_to_QQ() != 0) return FAC_QQ;
-     ERROR("expected coefficient ring of the form ZZ/n, ZZ, or QQ");
-     return FAC_BAD_RING;
-}
-
-static bool is_valid_factory_ring(const Ring *R)
-{
-  return get_ring_type(R) != FAC_BAD_RING;
-}
-
-static CanonicalForm convert(const RingElement &g) {
+static CanonicalForm convertToFactory(const RingElement &g) {
      const Ring *R = g.get_ring();
      const PolynomialRing *P = R->cast_to_PolynomialRing();
      if (P == 0)
@@ -213,41 +309,19 @@ static CanonicalForm convert(const RingElement &g) {
 	 return 0;
        }
      const int n = P->n_vars();
-     const Ring *F = P->Ncoeffs();
-     const Z_mod *Zn = F->cast_to_Z_mod();
-     const RingZZ *Z0 = F->cast_to_RingZZ();
-     const QQ *Q = F->cast_to_QQ();
-#if 0
-     const FractionField *Q = (
-			       NULL != F->cast_to_FractionField()
-			       &&
-			       NULL != F->cast_to_FractionField()->get_ring()->cast_to_ZZ()
-			       ?
-			       F->cast_to_FractionField()
-			       :
-			       (FractionField*) NULL
-			       );
-#endif
-     if (Zn == NULL && Z0 == NULL && Q == NULL) {
-	  ERROR("expected coefficient ring of the form ZZ/n, ZZ, or QQ");
-	  return 0;
-     }
      const Monoid *M = P->Nmonoms();
      intarray vp;
-     enter_factory a;
-     setCharacteristic(R->charac());
-     if (Q != NULL) On( SW_RATIONAL );
+     struct enter_factory foo(P);
+     if (foo.mode == modeError) return 0;
      CanonicalForm f = 0;
      for (Nterm *t = g.get_value(); t != NULL; t = t->next) {
        vp.shrink(0);
        M->to_varpower(t->monom,vp);
        CanonicalForm m = (
-			  Zn != NULL ? CanonicalForm(Zn->to_int(t->coeff)) :
-			  Z0 != NULL ? convert(MPZ_VAL(t->coeff)) :
-			  Q != NULL ? convert(mpq_numref(MPQ_VAL(t->coeff))) / convert(mpq_denref(MPQ_VAL(t->coeff)))
-#if 0
-			  convert(MPZ_VAL(FRAC_VAL(t->coeff)->numer)) / convert(MPZ_VAL(FRAC_VAL(t->coeff)->denom))
-#endif
+			  foo.mode == modeZn ? CanonicalForm(foo.Zn->to_int(t->coeff)) :
+			  foo.mode == modeZZ ? convertToFactory(MPZ_VAL(t->coeff)) :
+			  foo.mode == modeQQ ? convertToFactory(mpq_numref(MPQ_VAL(t->coeff))) / convertToFactory(mpq_denref(MPQ_VAL(t->coeff)))
+			  // old way : convertToFactory(MPZ_VAL(FRAC_VAL(t->coeff)->numer)) / convertToFactory(MPZ_VAL(FRAC_VAL(t->coeff)->denom))
 			  : CanonicalForm(0) // shouldn't happen
 			  );
        for (index_varpower l = vp.raw(); l.valid(); ++l)
@@ -264,24 +338,22 @@ static CanonicalForm convert(const RingElement &g) {
 	 }
        f += m;
      }
-     if (Q != NULL) Off( SW_RATIONAL );
      return f;
 }
 
 void displayCF(PolynomialRing *R, const CanonicalForm &h)
 {
   buffer o;
-  const RingElement *g = convert(R,h);
-  o << IM2_RingElement_to_string(g);
+  const RingElement *g = convertToM2(R,h);
+  o << IM2_RingElement_to_string(g) << "\n";
   emit(o.str());
 }
 #endif
 
 const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g)
 {
-#warning "check that the rings of f and g both polynomial rings"
 #ifdef FACTORY
-  const RingElement *ret;
+  const RingElement *ret = NULL;
   const PolyRing *P = f->get_ring()->cast_to_PolyRing();
   const PolyRing *P2 = g->get_ring()->cast_to_PolyRing();
   if (P == 0) {
@@ -292,24 +364,13 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
       ERROR("encountered different rings");
       return 0;
     }
-  if (!is_valid_factory_ring(P))
-    {
-      // Error message has already been issued.
-      return 0;
-    }
-
   {
-    enter_factory a;
-    CanonicalForm p = convert(*f);
-    CanonicalForm q = convert(*g);
-    //         std::cerr << "p = " << p << endl
-    //              << "q = " << q << endl;
-    p = p / icontent(p);
-    q = q / icontent(q);
-    //         std::cerr << "p = " << p << endl
-    //              << "q = " << q << endl;
+    struct enter_factory foo(P);
+    if (foo.mode == modeError) return 0;
+    CanonicalForm p = convertToFactory(*f);
+    CanonicalForm q = convertToFactory(*g);
     CanonicalForm h = gcd(p,q);
-    ret = convert(P,h);
+    ret = convertToM2(P,h);
   }
   ring_elem a = P->preferred_associate_divisor(ret->get_value()); // an element in the coeff ring
   ring_elem b = P->getCoefficients()->invert(a);
@@ -324,7 +385,6 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
 
 const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const RingElement *g, const RingElement **A, const RingElement **B)
 {
-#warning "check that the rings of f and g both polynomial rings"
 #ifdef FACTORY
   const RingElement *ret;
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
@@ -340,20 +400,15 @@ const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const R
       return 0;
     }
 
-  if (!is_valid_factory_ring(P))
-    {
-      // Error message has already been issued.
-      return 0;
-    }
-
-  enter_factory here;
-  CanonicalForm p = convert(*f), q = convert(*g), a, b;
-  //     std::cerr << "p = " << p << endl
-  //          << "q = " << q << endl;
+  struct enter_factory foo(P);
+  if (foo.mode == modeError) return 0;
+  CanonicalForm p = convertToFactory(*f);
+  CanonicalForm q = convertToFactory(*g);
+  CanonicalForm a, b;
   CanonicalForm h = extgcd(p,q,a,b);
-  ret = convert(P,h);
-  *A = convert(P,a);
-  *B = convert(P,b);
+  ret = convertToM2(P,h);
+  *A = convertToM2(P,a);
+  *B = convertToM2(P,b);
   return ret;
 #else
   ERROR("'factory' library not installed");
@@ -363,7 +418,6 @@ const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const R
 
 const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElement *g)
 {
-#warning "check that the rings of f and g both polynomial rings"
 #ifdef FACTORY
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
@@ -378,19 +432,12 @@ const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElem
       return 0;
     }
 
-  if (!is_valid_factory_ring(P))
-    {
-      // Error message has already been issued.
-      return 0;
-    }
-
-  enter_factory a;
-  CanonicalForm p = convert(*f);
-  CanonicalForm q = convert(*g);
-  //     std::cerr << "p = " << p << endl
-  //          << "q = " << q << endl;
+  struct enter_factory foo(P);
+  if (foo.mode == modeError) return 0;  
+  CanonicalForm p = convertToFactory(*f);
+  CanonicalForm q = convertToFactory(*g);
   CanonicalForm h = Prem(p,q);
-  const RingElement *r = convert(P,h);
+  const RingElement *r = convertToM2(P,h);
   return r;
 #else
   ERROR("'factory' library not installed");
@@ -404,27 +451,18 @@ void rawFactor(const RingElement *g,
 {
 #ifdef FACTORY
   const PolynomialRing *P = g->get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("expected polynomial ring");
-      *result_factors = 0;
-      *result_powers = 0;
-      return;
-    }
-
-  if (!is_valid_factory_ring(P))
-    {
-      // Error message has already been issued.
-      *result_factors = 0;
-      *result_powers = 0;
-      return;
-    }
-
-  enter_factory a;
-  factoryseed(23984729);
-  CanonicalForm h = convert(*g);
+  *result_factors = 0;
+  *result_powers = 0;
+  if (P == 0) {
+       ERROR("expected polynomial ring");
+       return;
+  }
+  struct enter_factory foo(P);
+  if (foo.mode == modeError) return;
+  CanonicalForm h = convertToFactory(*g);
   // displayCF(P,h);
   CFFList q;
+  init_seeds();
   if (P->charac() == 0) {
     q = factorize(h);		// suitable for k = QQ, comes from libcf (factory)
   }
@@ -440,7 +478,7 @@ void rawFactor(const RingElement *g,
 
   int next = 0;
   for (CFFListIterator i = q; i.hasItem(); i++) {
-    (*result_factors)->array[next] = convert(P,i.getItem().factor());
+    (*result_factors)->array[next] = convertToM2(P,i.getItem().factor());
     (*result_powers)->array[next++] = i.getItem().exp();
   }
 #else
@@ -451,27 +489,25 @@ void rawFactor(const RingElement *g,
 M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 {
 #ifdef FACTORY
+  init_seeds();
   const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
   if (P == 0)
     {
       ERROR("expected polynomial ring");
       return 0;
     }
-     factoryseed(23984729);
      const int N = P->n_vars();
-
-     if (get_ring_type(P) == FAC_BAD_RING) return 0; // error message already issued
 
      CFList I;
      int i;
      for (i = 0; i < M->n_rows(); i++) {
 	  for (int j=0; j < M->n_cols(); j++) {
 	    const RingElement *g = RingElement::make_raw(P, M->elem(i,j));
-	    I.append(convert(*g));
+	    I.append(convertToFactory(*g));
 	  }
      }
 
-     enter_factory a;
+     struct enter_factory foo(P);
 
      List<int> t = neworderint(I);
 
@@ -501,25 +537,22 @@ M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 {
 #ifdef FACTORY
-  const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("expected polynomial ring");
-      return 0;
-    }
-     factoryseed(23984729);
-
-     if (get_ring_type(P) == FAC_BAD_RING) return 0; // error message already issued
+     const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
+     if (P == 0) {
+	  ERROR("expected polynomial ring");
+	  return 0;
+     }
 
      CFList I;
      for (int i = 0; i < M->n_rows(); i++) {
 	  for (int j=0; j < M->n_cols(); j++) {
 	    const RingElement *g = RingElement::make_raw(P, M->elem(i,j));
-	    I.append(convert(*g));
+	    I.append(convertToFactory(*g));
 	  }
      }
 
-     enter_factory a;
+     struct enter_factory foo(P);
+     init_seeds();
 
      List<CFList> t = IrrCharSeries(I);
 
@@ -533,9 +566,9 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 	  result1->len = u.length();
 	  int next1 = 0;
 	  for (ListIterator<CanonicalForm> j = u; j.hasItem(); j++) {
-	    result1->array[next1++] = convert(P,j.getItem());
+	    result1->array[next1++] = convertToM2(P,j.getItem());
 	  }
-	  enter_M2 b;
+	  struct enter_M2 b;
 	  result->array[next++] = IM2_Matrix_make1(M->rows(), u.length(), result1, false);
      }
      

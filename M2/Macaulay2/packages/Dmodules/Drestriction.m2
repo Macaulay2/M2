@@ -646,12 +646,12 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	  if member(RestrictComplex, output) then (
 	       restrictComplex#n0 = resW^0;
 	       restrictComplex#n1 = resW^0;
-	       restrictComplex.dd#n0 = map(resW^0,resW^0);
-	       restrictComplex.dd#n1 = map(resW^0,resW^0);
+	       restrictComplex.dd#n0 = map(resW^0,resW^0,0);
+	       restrictComplex.dd#n1 = map(resW^0,resW^0,0);
 	       i = n0+1;
 	       while i < n1 do (
 	       	    restrictComplex#i = resW^0;
-	       	    restrictComplex.dd#i = map(resW^0,resW^0);
+	       	    restrictComplex.dd#i = map(resW^0,resW^0,0);
 	       	    i = i+1;
 	       	    );
 	       );
@@ -702,7 +702,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
      	  s := numgens target C.dd#(n0+1);
      	  targetDeg := degrees target C.dd#(n0+1);
      	  targetGens := {};
-     	  if explicitFlag then targetMat := map(W^0,W^0);
+     	  if explicitFlag then targetMat := map(W^0,W^0,0);
      	  i = 0;
      	  while i < s do (
 	       tempExps := findExps(posWeights, k0-targetDeg#i#0, k1-targetDeg#i#0);
@@ -726,7 +726,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
      	  r := numgens C#(n0+1);
      	  sourceDeg := degrees C#(n0+1);
      	  sourceGens := {};
-     	  if explicitFlag then sourceMat := map(W^0,W^0);
+     	  if explicitFlag then sourceMat := map(W^0,W^0,0);
      	  i = 0;
      	  while i < r do (
 	       -- Find generators of the current source
@@ -750,7 +750,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	  
 	  -- MAKE THE DIFFERENTIAL AS MATRIX OF D_m MODULES
      	  if sourceSize == 0 and targetSize == 0 then (
-	       oldDiff := map(resW^0,resW^0) )
+	       oldDiff := map(resW^0,resW^0,0) )
      	  else if sourceSize == 0 then ( oldDiff =
 	       compress matrix toList(targetSize:{0_resW}) )
      	  else if targetSize == 0 then ( oldDiff =
@@ -808,7 +808,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	  m = C.dd#currDeg;
 	  sourceDeg = degrees C#(currDeg);
 	  sourceGens = {};
-	  if explicitFlag then sourceMat = map(W^0,W^0);
+	  if explicitFlag then sourceMat = map(W^0,W^0,0);
 	  i = 0;
 	  while i < r do (
 	       -- Find generators of the current source
@@ -831,7 +831,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	  
 	  -- MAKE THE NEXT DIFFERENTIAL OF D_m MODULES	       
 	  if sourceSize == 0 and targetSize == 0 then (
-	       newDiff := map(resW^0,resW^0) )
+	       newDiff := map(resW^0,resW^0,0) )
 	  else if sourceSize == 0 then ( newDiff =
 	       compress matrix toList(targetSize:{0_resW}) )
 	  else if targetSize == 0 then ( newDiff =

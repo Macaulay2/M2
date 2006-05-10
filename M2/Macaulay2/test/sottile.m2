@@ -13,6 +13,7 @@ while i < 5 do (
         i=i+1)
 J = substitute(ideal I,S);
 dim J
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test sottile.out"
 -- End:

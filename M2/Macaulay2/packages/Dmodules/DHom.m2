@@ -139,8 +139,10 @@ PolySols(Module, List) := options -> (M, w) -> (
 		    dummyEqn := sum((entries vars S)#0);
 	       	    linEqns = (gens gb (linEqns, DegreeLimit 
 			      => 1)) | matrix{{dummyEqn}};
+--MES		    coeffs := substitute(
+--MES			 transpose (coefficients transpose linEqns)#1, QQ);
 		    coeffs := substitute(
-			 transpose (coefficients transpose linEqns)#1, QQ);
+			 transpose (coefficients linEqns)#1, QQ);
 		    kerCoeffs := kernel (coeffs^{0..(rank target coeffs - 2)});
 		    answer = (entries (monBasis*(gens kerCoeffs)))#0;
 		    );

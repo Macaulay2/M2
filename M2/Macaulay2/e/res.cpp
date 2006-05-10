@@ -24,6 +24,12 @@ void res_comp::initialize(const Matrix *mat,
   K = P->Ncoeffs();
   generator_matrix = mat;
 
+  // These next two lines may be added next (5/2/06)
+  //  res_degree_stash      = new stash("resDegree", sizeof(res_degree));
+  //  res_level_stash       = new stash("resLevel", sizeof(res_level));
+  res_pair_stash        = new stash("respair", sizeof(res_pair));
+  mi_stash = new stash("res minodes", sizeof(Nmi_node));
+
   for (i=0; i<=LengthLimit; i++)
     resn.append(new res_level);
 
@@ -52,7 +58,7 @@ void res_comp::initialize(const Matrix *mat,
   const SchreyerOrder *S = mat->rows()->get_schreyer_order();
   for (i=0; i<mat->n_rows(); i++)
     {
-      res_pair *p = new res_pair;
+      res_pair *p = new_res_pair();
 
       p->me = component_number++;
       next_me_number++;	// this and 'component_number' should still be equal here.
@@ -62,11 +68,11 @@ void res_comp::initialize(const Matrix *mat,
 	p->base_monom = M->make_one();
       else
 	p->base_monom = M->make_new(S->base_monom(i));
-      p->mi = new MonomialIdeal(P);
+      p->mi = new MonomialIdeal(P, mi_stash);
       p->syz_type = SYZ_MINIMAL;
       p->base_comp = p;
       base_components.append(p);
-      search_mi.append(new MonomialIdeal(P));
+      search_mi.append(new MonomialIdeal(P, mi_stash));
 
       int d = mat->rows()->primary_degree(i);
       res_degree *mypairs = make_degree_set(0, d);
@@ -122,7 +128,7 @@ void res_comp::remove_res_pair(res_pair *p)
   R->remove(p->syz);
   R->remove(p->stripped_syz);
   M->remove(p->base_monom);
-  deleteitem(p);
+  res_pair_stash->delete_elem(p);
 }
 
 void res_comp::remove_res_degree(res_degree *p)
@@ -207,22 +213,42 @@ res_degree *res_comp::get_degree_set(int level, int d) const
   return lev->bin[d];
 }
 
+res_pair *res_comp::new_res_pair()
+{
+  res_pair *result = reinterpret_cast<res_pair *>(res_pair_stash->new_elem());
+  result->me = 0;
+  result->compare_num = 0;
+  result->base_monom = NULL;
+  result->next = NULL;
+  result->first = NULL;
+  result->second = NULL;
+  result->base_comp = NULL;
+  result->syz_type = 0;
+  result->mi2 = NULL;
+  result->next_mi = NULL;
+  result->syz = NULL;
+  result->minimal_me = 0;
+  result->pivot_term = NULL;
+  result->stripped_syz = NULL;
+  return result;
+}
+
 res_pair *res_comp::new_res_pair(int syztype, res_pair *first, res_pair *second)
 {
-  res_pair *result = new res_pair;
+  res_pair *result = new_res_pair();
   result->me = component_number++;
   result->base_monom = M->make_one();
   result->first = first;
   result->second = second;
   result->base_comp = first->base_comp;
   result->syz_type = syztype;
-  result->mi = new MonomialIdeal(P);
+  result->mi = new MonomialIdeal(P, mi_stash);
   return result;
 }
 
 res_pair *res_comp::new_res_pair(int i)
 {
-  res_pair *p = new res_pair; // Fills in almost all fields
+  res_pair *p = new_res_pair(); // Fills in almost all fields
   p->syz_type = SYZ_GEN;
   p->me = component_number++;
   p->compare_num = i;
@@ -230,7 +256,7 @@ res_pair *res_comp::new_res_pair(int i)
   p->base_monom = M->make_new(p->syz->monom);
   p->base_comp = p->syz->comp;
   p->first = p->base_comp;
-  p->mi = new MonomialIdeal(P);
+  p->mi = new MonomialIdeal(P, mi_stash);
 
   return p;
 }
@@ -238,14 +264,14 @@ res_pair *res_comp::new_res_pair(int i)
 res_pair *res_comp::new_res_pair(int syztype, resterm *f)
 {
   // This is a level 1 pair.
-  res_pair *p = new res_pair; // Fills in almost all fields
+  res_pair *p = new_res_pair(); // Fills in almost all fields
   p->me = component_number++;
   p->syz_type = syztype;
   p->syz = f;
   p->base_monom = M->make_new(f->monom);
   p->base_comp = f->comp->base_comp;
   p->first = f->comp;
-  p->mi = new MonomialIdeal(P);
+  p->mi = new MonomialIdeal(P, mi_stash);
 
   return p;
 }
@@ -662,9 +688,9 @@ void res_comp::new_pairs(res_pair *p)
 
   queue<Bag *> rejects;
   Bag *b;
-  MonomialIdeal *mi = new MonomialIdeal(P, elems, rejects);
+  MonomialIdeal *mi = new MonomialIdeal(P, elems, rejects, mi_stash);
   while (rejects.remove(b))
-    deleteitem(b);
+    delete b;
 
   if (gbTrace>= 11) mi->debug_out(1);
 
@@ -677,6 +703,7 @@ void res_comp::new_pairs(res_pair *p)
       M->mult(q->base_monom, p->base_monom, q->base_monom);
       insert_res_pair(n_level, q);
     }
+  delete mi;
 }
 
 //////////////////////////////////////////////
@@ -1204,7 +1231,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
   Bag *b;
   MonomialIdeal *mi = new MonomialIdeal(P, elems, rejects);
   while (rejects.remove(b))
-    deleteitem(b);
+    delete b;
 
   if (gbTrace>= 11) mi->debug_out(1);
 
@@ -1218,6 +1245,8 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
       result->next = q;
       result = q;
     }
+
+  delete mi;
 }
 
 int res_comp::skeleton_maxdegree(const array<res_pair *> &reslevel)

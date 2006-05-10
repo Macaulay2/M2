@@ -22,12 +22,17 @@ map(Matrix) := Matrix => options -> (f) -> (
 map(Module,ZZ,Function) := Matrix => options -> (M,n,f) -> map(M,n,table(numgens M,n,f),options)
 
 makeRawTable := (R,p) -> (					    -- this is messy
-     if R === ZZ then applyTable(p,x -> rawFromNumber(rawZZ(), x))
+     if R === ZZ then (
+	  applyTable(p,
+	       x -> (
+		    if class x === ZZ then rawFromNumber(ZZ.RawRing, x)
+		    else error "expected an integer"
+		    )))
      else if R === QQ then (
 	  applyTable(p,x -> (
 		    if class x === ZZ then rawFromNumber(QQ.RawRing, x)
 		    else if class x === QQ then raw x
-		    else error "can't promote ring element to QQ")))
+		    else error "expected an integer or a rational number")))
      else applyTable(p,x -> raw promote(x,R)))
 
 map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
@@ -100,7 +105,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	  rankN = numgens N;
 	  );
      if not instance(N,Module) and options.Degree =!= null then error "Degree option given with indeterminate source module";
-     deg := if options.Degree === null then (degreeLength R):0 else options.Degree;
+     deg := if options.Degree === null then toList ((degreeLength R):0) else options.Degree;
      deg = degreeCheck(deg,R);
      p = splice p;
      if all(p, o -> (
@@ -441,7 +446,7 @@ image Matrix := Module => f -> (
      if f.cache.?image then f.cache.image else f.cache.image = subquotient(f,)
      )
 coimage Matrix := Module => f -> (
-     if f.cache.?coimage then f.cache.coimage else f.cache.coimage = cokernel map(source f, kernel f)
+     if f.cache.?coimage then f.cache.coimage else f.cache.coimage = cokernel inducedMap(source f, kernel f)
      )
 cokernel Matrix := Module => m -> (
      if m.cache.?cokernel then m.cache.cokernel else m.cache.cokernel = subquotient(,m)
@@ -501,6 +506,7 @@ Ideal * Module := Module => (I,M) -> subquotient (generators I ** generators M, 
 dim Ideal := I -> dim cokernel generators I
 codim Ideal := I -> codim cokernel generators I
 Ideal + Ideal := Ideal => (I,J) -> ideal (generators I | generators J)
+Ideal + RingElement := (I,r) -> I + ideal r
 degree Ideal := I -> degree cokernel generators I
 trim Ideal := Ideal => options -> (I) -> ideal trim(module I, options)
 Ideal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
@@ -522,7 +528,6 @@ hilbertSeries = method(Options => {
 hilbertSeries Ideal := options -> (I) -> hilbertSeries((ring I)^1/I,options)
 
 ring Ideal := (I) -> I.ring
-use Ideal := (I) -> use ring I
 
 Ideal == Ring := (I,R) -> (
      if ring I =!= R

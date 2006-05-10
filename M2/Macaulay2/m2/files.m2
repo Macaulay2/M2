@@ -37,9 +37,9 @@ moveFile = method(Options => fileOptions)
 moveFile(String,String) := opts -> (src,tar) -> (
      if opts.Verbose then stderr << "--moving: " << src << " -> " << tar << endl;
      if not fileExists src then error("file '",src,"' doesn't exist");
-     if fileExists tar then unlinkFile tar;
+     if fileExists tar then removeFile tar;
      linkFile(src,tar);
-     unlinkFile src;
+     removeFile src;
      )
 
 baseFilename = fn -> (
@@ -148,7 +148,7 @@ symlinkDirectory(String,String) := opts -> (src,dst) -> (
 					null
 					)
 				   else if readlink tarf =!= null then (
-					unlinkFile tarf;    -- silently unlink a symbolic link
+					removeFile tarf;    -- silently unlink a symbolic link
 					symlinkFile(relsrcf,tarf);
 					)
 				   else error("file ", tarf, " already exists, not what we want");

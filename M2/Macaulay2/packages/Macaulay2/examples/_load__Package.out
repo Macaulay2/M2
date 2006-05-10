@@ -1,6 +1,6 @@
+-- -*- M2-comint -*-
 
 i1 : loadPackage "FirstPackage"
---package "FirstPackage" loaded
 
 o1 = FirstPackage
 

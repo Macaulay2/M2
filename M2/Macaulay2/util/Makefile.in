@@ -14,7 +14,7 @@ endif
 all:: $(EXES) targettypes.h overlay.h
 targettypes.h : targettypes ; ./$^ >$@
 overlay.h : overlay targettypes.h ; ./$< >$@
-clean ::; rm -f overlay.h overlay
+clean ::; rm -f overlay.h overlay gmon.out
 update.o : restart.h
 clean ::; rm -f $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) targettypes.h
 ../bin/linkexec : linkexec ; cp -a $< $@

@@ -18,7 +18,7 @@ extern char *strnperm(const char *, unsigned);
 extern char *strperm(const char *);
 extern node newnode1(int, enum TAG);
 extern void fail (char *, int);
-extern volatile void myexit(int);
+extern void myexit(int);
 extern const struct POS empty_pos;
 extern char *intToString(int);
 extern int substr(char *, char *);

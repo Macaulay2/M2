@@ -21,7 +21,7 @@ debug SchurRings
 debug Macaulay2Core
 B = schurRing(s, 7)
 f = s_{3,3,2,1,0}
-s1 = rawmonom2schur raw leadMonomial f
+s1 = rawmonom2schur rawLeadMonomialR f
 m1 = schur2monom(s1, generators monoid B)
 assert(f == 1_ZZ * m1)
 g = f^3
@@ -48,6 +48,7 @@ dim h
 assert(s_(first exponents h) == h)
 someTerms(f^2,2,3)
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test schur.out"
 -- End:

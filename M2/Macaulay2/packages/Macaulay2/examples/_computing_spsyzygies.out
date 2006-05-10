@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = QQ[x..z];
 
@@ -28,8 +29,6 @@ i5 : L == source f
 
 o5 = true
 
-o5 : Boolean
-
 i6 : g = generators K
 
 o6 = {1} | 0  -z -y |
@@ -49,7 +48,5 @@ o7 : Matrix R  <--- R
 i8 : f*g == 0
 
 o8 = true
-
-o8 : Boolean
 
 i9 : 

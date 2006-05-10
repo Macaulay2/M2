@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = QQ[a..f];
 
@@ -29,7 +30,5 @@ o4 : R-module, free, degrees {1, 1}
 i5 : cover M == source generators M
 
 o5 = true
-
-o5 : Boolean
 
 i6 : 

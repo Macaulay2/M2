@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : toSequence {1,2,3}
 

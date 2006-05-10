@@ -22,6 +22,7 @@ assert( p(1/2 + x) == 1/2)
 QQ[s]
 substitute(s^2,{s => 4})
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ringmap3.out"
 -- End:

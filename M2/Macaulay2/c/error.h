@@ -11,14 +11,14 @@
 extern void fail(char *, int);
 extern void failpos(char *, int, node);
 extern int n_errors;
-volatile void fatal(char *s,...);
+void fatal(char *s,...);
 void error(char *s,...);
 void warning(char *s,...);
-volatile void fatalpos(node p, char *s,...);
+void fatalpos(node p, char *s,...);
 void errorpos(node p, char *s,...);
 void warningpos(node p, char *s,...);
 node typemismatch(node e);
 node badnumargs(node e,int n);
 node notimpl(node e);
-volatile void quit(void);
+void quit(void);
 void downpos(node n);

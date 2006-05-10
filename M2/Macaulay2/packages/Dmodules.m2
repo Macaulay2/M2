@@ -21,11 +21,13 @@ export (ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,bFunctio
 	RatAnn,WeylClosure,deRham,deRhamAll,TransferCycles,CohomologyGroups,PreCycles,OmegaRes,
 	diffOps,PolyGens,BasisElts,putWeylAlgebra,inw,gbw,pInfo,
 	Dprune,Dprune2,optGB,FourierInverse,	
-	reduceCompress
+	reduceCompress,zeroize
 	)
 
 
 load "Dmodules/Dloadfile.m2"
+
+beginDocumentation()
 load "Dmodules/DMODdoc.m2"
 
 -- Local Variables:

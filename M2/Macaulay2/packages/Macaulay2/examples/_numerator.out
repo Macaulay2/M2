@@ -1,6 +1,34 @@
+-- -*- M2-comint -*-
 
 i1 : numerator (4/6)
 
 o1 = 2
 
-i2 : 
+i2 : R = frac(ZZ[x,y]);
+
+i3 : numerator((x+2*y-3)/(x-y))
+
+o3 = x + 2y - 3
+
+o3 : ZZ [x, y]
+
+i4 : R = QQ[a..d]/(a^2,b^2,c^3);
+
+i5 : hf = hilbertSeries R
+
+           2    3    4     5    7
+     1 - 2T  - T  + T  + 2T  - T
+o5 = ----------------------------
+                      4
+               (1 - T)
+
+o5 : Divide
+
+i6 : numerator hf
+
+           2    3    4     5    7
+o6 = 1 - 2T  - T  + T  + 2T  - T
+
+o6 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+
+i7 : 

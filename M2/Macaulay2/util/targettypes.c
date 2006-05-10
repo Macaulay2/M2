@@ -28,6 +28,7 @@
 
 int main() {
   static char *int8, *int16, *int32, *int64;
+  int x = 1;
   try(short);
 #ifndef _WIN32
   try(long long);
@@ -45,5 +46,6 @@ int main() {
   case 4: printf("typedef int32 intp;\n"); break;
   case 8: printf("typedef int64 intp;\n"); break;
   }
+  printf("#define LittleEndFirst %d\n", *(char *)&x == 1);
   return 0;
 }

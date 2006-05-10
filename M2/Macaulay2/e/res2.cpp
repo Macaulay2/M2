@@ -17,11 +17,6 @@ static int n_others = 0;
 
 bool res2_comp::stop_conditions_ok()
 {
-  if (stop_.length_limit <= 0)
-    {
-      ERROR("length limit out of range");
-      return false;
-    }
 
   if (stop_.length_limit != 0 && stop_.length_limit->len > 0)
     {
@@ -1049,7 +1044,7 @@ void res2_comp::new_pairs(res2_pair *p)
   Bag *b;
   MonomialIdeal mi(P, elems, rejects);
   while (rejects.remove(b))
-    deleteitem(b);
+    delete b;
 
   if (gbTrace>= 11) mi.debug_out(1);
 

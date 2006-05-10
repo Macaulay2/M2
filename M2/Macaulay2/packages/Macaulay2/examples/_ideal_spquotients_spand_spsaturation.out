@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = QQ[a..d];
 
@@ -11,15 +12,15 @@ o3 : Ideal of R
 
 i4 : I:J
 
-             2     2     2    3   5
-o4 = ideal (a b - c , a*b  - d , c  - d)
+               2    3   2     2   5
+o4 = ideal (a*b  - d , a b - c , c  - d)
 
 o4 : Ideal of R
 
 i5 : P = quotient(I,J)
 
-             2     2     2    3   5
-o5 = ideal (a b - c , a*b  - d , c  - d)
+               2    3   2     2   5
+o5 = ideal (a*b  - d , a b - c , c  - d)
 
 o5 : Ideal of R
 
@@ -33,8 +34,6 @@ o6 : Ideal of R
 i7 : Q == P
 
 o7 = true
-
-o7 : Boolean
 
 i8 : R = ZZ/32003[a..d];
 
@@ -54,15 +53,15 @@ o10 : Ideal of R
 
 i11 : saturate(Ih,d)
 
-                         3      2   2     2    3      2
-o11 = ideal (a*b - c*d, b  - a*c , a c - b d, a  - b*d )
+                         2     2    3      2   3      2
+o11 = ideal (a*b - c*d, a c - b d, b  - a*c , a  - b*d )
 
 o11 : Ideal of R
 
 i12 : saturate(Ih,d,Strategy => Bayer)
 
-                         3      2   2     2    3      2
-o12 = ideal (a*b - c*d, b  - a*c , a c - b d, a  - b*d )
+                         2     2    3      2   3      2
+o12 = ideal (a*b - c*d, a c - b d, b  - a*c , a  - b*d )
 
 o12 : Ideal of R
 

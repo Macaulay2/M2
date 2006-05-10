@@ -60,9 +60,9 @@ const Monomial *monom(int len, ...)
 
 static MonomialOrdering_array make_mon_order_array(int n)
 {
-  MonomialOrdering_array z = (MonomialOrdering_array)getmem_atomic(sizeofarray(z,n));
+  MonomialOrdering_array z = (MonomialOrdering_array)getmem(sizeofarray(z,n));
   z->len = n;
-  return z; /* Note that getmem_atomic returns zeroed memory */
+  return z; /* Note that getmem returns zeroed memory */
 }
 
 MonomialOrdering * monorder(int len, ...)

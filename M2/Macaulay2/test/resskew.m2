@@ -41,6 +41,7 @@ bb1 = betti syz M1 -- wrong if return cmp;
 cc = betti (fnt.dd_3)
 assert ( bb == cc)
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test resskew.out"
 -- End:

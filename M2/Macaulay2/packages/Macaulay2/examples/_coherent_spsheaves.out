@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = QQ[a,b,c,d]/(a^4+b^4+c^4+d^4);
 
@@ -9,16 +10,14 @@ o2 : ProjectiveVariety
 
 i3 : Omega = cotangentSheaf X
 
-o3 = cokernel {2} | b  a  0  0  0  c3 -d3 0   |
-              {2} | -c 0  a  0  0  b3 0   -d3 |
-              {2} | d  0  0  a  0  0  b3  -c3 |
-              {2} | 0  -c -b 0  d3 a3 0   0   |
-              {2} | 0  d  0  -b c3 0  a3  0   |
-              {2} | 0  0  d  c  b3 0  0   a3  |
+o3 = subquotient ({1} | 0  0  0  -d -c -b a3 |, {1} | 4a3 |)
+                  {1} | 0  -d -c 0  0  a  b3 |  {1} | 4b3 |
+                  {1} | -d 0  b  0  a  0  c3 |  {1} | 4c3 |
+                  {1} | c  b  0  a  0  0  d3 |  {1} | 4d3 |
 
-                                         6
-o3 : coherent sheaf on X, quotient of OO  (-2)
-                                        X
+                                            4
+o3 : coherent sheaf on X, subquotient of OO  (-1)
+                                           X
 
 i4 : HH^1(Omega)
 

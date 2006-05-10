@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : book = new HashTable from {
           "Joe" => "344-5567",
@@ -18,8 +19,6 @@ i3 : book#?"Mary"
 
 o3 = false
 
-o3 : Boolean
-
 i4 : x = set {a,b,c,r,t}
 
 o4 = Set {a, b, c, r, t}
@@ -38,13 +37,9 @@ i6 : x#?a
 
 o6 = true
 
-o6 : Boolean
-
 i7 : x#?4
 
 o7 = false
-
-o7 : Boolean
 
 i8 : x = new MutableHashTable;
 
@@ -63,8 +58,6 @@ o12 : List
 i13 : x#?4
 
 o13 = false
-
-o13 : Boolean
 
 i14 : x
 
@@ -89,7 +82,5 @@ o18 = 444
 i19 : x#?4
 
 o19 = false
-
-o19 : Boolean
 
 i20 : 

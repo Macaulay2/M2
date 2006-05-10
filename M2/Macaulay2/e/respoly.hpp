@@ -25,7 +25,8 @@ enum
   SYZ_NOT_NEEDED		// S-pair computation for this pair cancelled
 };
 
-class res_pair : public our_new_delete
+class res_pair
+// Only do new and delete via res_comp::new_res_pair, res_comp::delete_res_pair
 {
 public:
   // The schreyer order part:
@@ -56,13 +57,6 @@ public:
 				// If syz_type is SYZ_NOT_MINIMAL: this is the
 				// stripped (possibly reduced) version.
 
-  res_pair() : me(0), compare_num(0), base_monom(NULL),
-               next(NULL), first(NULL), second(NULL), base_comp(NULL),
-               syz_type(0), mi2(NULL), next_mi(NULL), syz(NULL),
-               minimal_me(0),
-               pivot_term(NULL),
-               stripped_syz(NULL)
-     {}
 };
 
 struct resterm
@@ -79,6 +73,7 @@ class res_poly : public our_new_delete
   const Monoid *M;
   const Ring *K;		// Coefficient field of R.
   int element_size;
+  stash *resterm_stash;
 
   resterm *new_term() const;
 

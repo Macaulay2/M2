@@ -5,6 +5,7 @@ assert( f * g == 0 )
 assert( prune homology (f,g) == 0 )
 assert( source g == QQ^3 )
 assert( target g == QQ^6 )
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test linalg.out"
 -- End:

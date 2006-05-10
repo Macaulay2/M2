@@ -37,7 +37,7 @@ TFF=phi FF
 N=coker TFF.dd_1
 GG=res N
 betti GG
-f=extend(GG,TFF,map(GG_0,TFF_0))
+f=extend(GG,TFF,inducedMap(GG_0,TFF_0))
 prune coker f
 
 -- Of course whenever I use M2 I also find thing to improve.
@@ -74,6 +74,7 @@ betti prune coker f
 --  17 Gauss Way                                510-642-8609 FAX
 --  Berkeley CA 94720-5070                      
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test betti3.out"
 -- End:

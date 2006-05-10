@@ -8,12 +8,24 @@ extern int libfac_interruptflag; /* extracted from libfac's factor.h */
 #define GDBM_STATIC
 #include <gdbm.h>
 
+#include <alloca.h>
+
 #include "M2mem.h"
 #include "M2mem2.h"
 #include "M2inits.h"
 #include "../dumpdata/map.h"
 #include "types.h"
 #include "debug.h"
+
+char *config_args[] = { CONFIG_ARGS 0 };
+
+void trap(void) {}		/* we don't put it in debug.c, or it will get optimized away! */
+
+#if HAVE_DECL_PER_LINUX
+#include <linux/personality.h>
+#undef personality
+extern long personality(unsigned long persona);
+#endif
 
 const char *get_libfac_version();	/* in version.cc */
 static const char *get_cc_version(void) {
@@ -161,13 +173,11 @@ char *funname;
 
 M2_string actors5_CCVERSION;
 M2_string actors5_VERSION;
-M2_string actors5_CONFIGARGS;
 M2_string actors5_OS;
 M2_string actors5_ARCH;
 M2_string actors5_NODENAME;
 M2_string actors5_REL;
-M2_string actors5_DATE;
-M2_string actors5_TIME;
+M2_string actors5_timestamp;
 M2_string actors5_GCVERSION;
 M2_string actors5_GMPVERSION;
 M2_string actors5_startupString1;
@@ -185,6 +195,7 @@ M2_bool actors5_MP;
 M2_stringarray system_envp;
 M2_stringarray system_argv;
 M2_stringarray system_args;
+M2_stringarray actors5_configargs;
 int system_loadDepth;
 
 int system_randomint(void) {
@@ -228,16 +239,14 @@ double system_etime(void) {
 #define __environ _environ
 #elif defined(__FreeBSD__) || defined(__MACH__) && defined(__POWERPC__)
 #define __environ environ
+#endif
 
 extern char **__environ;
-#endif
 
 extern char timestamp[];
 static void clean_up();
 
-static void nop (p)		/* used below to keep variables out of registers */
-void *p;
-{}
+extern void nop(void *p);		/* used below to keep variables out of registers */
 
 #define NOTHING(p) nop((void *)p)
 #define ONSTACK(p) nop((void *)&p)
@@ -257,10 +266,7 @@ extern void init_readline_variables();
 extern char *GC_stackbottom;
 extern void arginits(int, char **);
 
-static bool gotArg(char *arg, char **argv) {
-  for (; *argv; argv++) if (0 == strcmp(arg,*argv)) return TRUE;
-  return FALSE;
-}
+extern bool gotArg(char *arg, char **argv);
 
 #include <readline/readline.h>
 
@@ -286,10 +292,14 @@ char **argv;
      extern void interp_process(), interp_process2();
      extern int interp_topLevel();
 
-     if (!M2inits_run) {
-       fprintf(stderr,"internal error: constructor M2inits() failed to run\n");
-       exit(1);
+#if HAVE_DECL_PER_LINUX
+#ifndef PROFILING
+     if (!gotArg("--no-personality", argv) && personality(-1) == PER_LINUX && personality(PER_LINUX32) == PER_LINUX && personality(-1) == PER_LINUX32) {
+	  /* this avoids redhat's randomized mmap() calls */
+	  return execvp(argv[0],argv);
      }
+#endif
+#endif
 
      ONSTACK(saveenvp);
 
@@ -322,6 +332,8 @@ char **argv;
      {
 	  int i;
 	  char **x;
+
+	  ONSTACK(saveargv);
 
 	  /* save arguments on stack in case they're on the heap */
 	  saveargv = (char **)alloca((argc + 1)*sizeof(char *));
@@ -377,7 +389,8 @@ char **argv;
 
      system_stime();
 
-     if (!gotArg("--int", saveargv)) {
+     if (!gotArg("--int", saveargv))
+     {
        signal(SIGINT,interrupt_handler);
 #      ifdef SIGPIPE
        signal(SIGPIPE, SIG_IGN);
@@ -394,14 +407,13 @@ char **argv;
      system_newline = tostring(newline);
      actors5_CCVERSION = tostring(get_cc_version());
      actors5_VERSION = tostring(PACKAGE_VERSION);
-     actors5_CONFIGARGS = tostring(CONFIG_ARGS);
      actors5_OS = tostring(OS);
      actors5_ARCH = tostring(ARCH);
      actors5_NODENAME = tostring(NODENAME);
      actors5_REL = tostring(REL);
 #ifdef FACTORY
      {
-	  char const * p = rindex(factoryVersion,' ');
+	  char const * p = strrchr(factoryVersion,' ');
 	  p = p ? p+1 : factoryVersion;
 	  actors5_FACTORYVERSION = tostring(p);
      }
@@ -414,8 +426,7 @@ char **argv;
      actors5_READLINEVERSION = tostring(READLINEVERSION);
      actors5_M2SUFFIX = tostring(M2SUFFIX);
      actors5_EXEEXT = tostring(EXEEXT);
-     actors5_DATE = tostring(current_date);
-     actors5_TIME = tostring(current_time);
+     actors5_timestamp = tostring(timestamp);
      actors5_startupString1 = tostring(startupString1);
      actors5_startupString2 = tostring(startupString2);
 #ifdef DUMPDATA
@@ -443,6 +454,7 @@ char **argv;
      system_envp = tostrings(envc,saveenvp);
      system_argv = tostrings(argc,saveargv);
      system_args = tostrings(argc == 0 ? 0 : argc - 1, saveargv + 1);
+     actors5_configargs = tostrings(sizeof(config_args)/sizeof(char *) - 1, config_args);
 
 #ifdef includeX11
      display = XOpenDisplay(NULL);

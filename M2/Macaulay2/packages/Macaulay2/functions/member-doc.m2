@@ -1,53 +1,24 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): from before, MES
 --- notes: 
 
 document { 
-     Key => member,
-     Headline => "",
-     Usage => "",
+     Key => {member,
+	  (member,Thing,Set),
+	  (member,Thing,VisibleList)},
+     Headline => "test membership in a list or set",
+     Usage => "member(e,x)",
      Inputs => {
+	  "e" => Thing => "",
+	  "x" => {OFCLASS List, ", ", OFCLASS Sequence, ", or ", OFCLASS Set}
 	  },
      Outputs => {
+	  Boolean => "whether e is in the list, sequence, or set x"
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
+      	  "member(c,{a,b,c,d,e})",
+      	  "member(f,(a,b,c,d,e))",
+	  "member(3,set{1,2,5,6})"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {positions, Set}
      }
-document { 
-     Key => (member,Thing,Set),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (member,Thing,VisibleList),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc12.m2:432:     Key => member,

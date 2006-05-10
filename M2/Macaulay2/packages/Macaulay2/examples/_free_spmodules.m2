@@ -1,5 +1,7 @@
 R = ZZ/101[x,y,z];
 M = R^4
+m = matrix{{x,y,z},{y,z,0}}
+target m == R^2
 degrees M
 F = R^{1,4:2,3,3:4}
 degrees F

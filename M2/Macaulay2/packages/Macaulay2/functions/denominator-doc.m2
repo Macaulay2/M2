@@ -2,10 +2,10 @@
 --- author(s): MES
 --- notes: 
 
+undocumented { (denominator,QQ) }
+
 document {
      Key => {denominator, (denominator,Divide)},
-     Undocumented => {
-	  (denominator,QQ)},
      Headline => "denominator of a fraction",
      Usage => "denominator x",
      Inputs => {

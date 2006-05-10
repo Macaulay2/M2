@@ -1,6 +1,6 @@
+-- -*- M2-comint -*-
 
 i1 : loadPackage("Points", DebuggingMode=>true)
---package "Points" loaded
 
 o1 = Points
 

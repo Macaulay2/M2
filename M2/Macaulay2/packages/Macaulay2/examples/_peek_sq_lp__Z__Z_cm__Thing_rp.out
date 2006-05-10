@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : s = factor 112
 
@@ -15,7 +16,7 @@ i3 : peek'_2 s
 
 o3 = Product{Power{2,4},Power{7,1}}
 
-i4 : wrap_80 peek documentation resolution
+i4 : wrap_80 peek help resolution
 
 o4 = Hypertext{Hypertext{HEADER1{"resolution"," -- ","make a projective
      resolution"},HEADER2{"Ways to use ",TT{"resolution"}},UL{SEQ{TOH{Macaulay2 ::

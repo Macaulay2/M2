@@ -470,7 +470,7 @@ computeLocalCohomOT = (I, M, n0, n1) -> (
 	       twistN = append( twistN, (t_i - Lm_(0,i))*(gens F)_j );
 	       j = j+1; );
 	  i = i+1; );
-     LN1 := transpose matrix apply(twistN, i -> components i);	  
+     LN1 := transpose matrix apply(twistN, i -> entries i);	  
      -- create the twistings that will be applied to N
      twistList := apply( toList(0..nLCW-1), 
 	  i -> LCW_i + sum(d, j -> (LCW_i * Lm_(0,j) - 

@@ -16,6 +16,7 @@ T = ZZ/101[x,dx,y,dy,WeylAlgebra => {x=>dx, y=>dy}]
 assert( dx * x == x*dx + 1 )
 
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test res5.out"
 -- End:

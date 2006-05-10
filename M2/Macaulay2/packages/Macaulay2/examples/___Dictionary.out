@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : Macaulay2Core.Dictionary # "sin"
 
@@ -7,14 +8,12 @@ o1 : Symbol
 
   * Usage: sin x
   * Inputs:
-      * x, a real number, 
+      * x, a real number
   * Outputs:
-      * the sine of x
+      * a real number, the sine of x
 
 i2 : Macaulay2Core.Dictionary #? "sin"
 
 o2 = true
-
-o2 : Boolean
 
 i3 : 

@@ -1,19 +1,20 @@
+-- -*- M2-comint -*-
 
 i1 : R = QQ[a,b];
 
 i2 : HH^2 (R^{-3})
 
-o2 = cokernel | b a  0 |
-              | 0 -b a |
+o2 = cokernel | 0 -b a |
+              | b a  0 |
 
                             2
 o2 : R-module, quotient of R
 
 i3 : HH^2 (R^{-4})
 
-o3 = cokernel | b a  0  0 |
+o3 = cokernel | 0 0  -b a |
               | 0 -b a  0 |
-              | 0 0  -b a |
+              | b a  0  0 |
 
                             3
 o3 : R-module, quotient of R

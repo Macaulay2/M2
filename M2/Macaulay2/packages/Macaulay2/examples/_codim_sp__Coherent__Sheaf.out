@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ/31991[a,b,c,d];
 
@@ -24,8 +25,8 @@ o4 : coherent sheaf on projplane, subsheaf of OO
 
 i5 : can = sheafExt^1(II,OO_projplane^1(-4))
 
-o5 = cokernel | c b a2 |
-              | d c b2 |
+o5 = cokernel | d c b2 |
+              | c b a2 |
 
                                                          2
 o5 : coherent sheaf on projplane, quotient of OO

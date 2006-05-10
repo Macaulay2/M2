@@ -6,6 +6,7 @@ use C;
 use system;
 use strings;
 use varstrin;
+use ctype;
 
 export Net := {
      height:int,			  -- number of strings above the baseline
@@ -234,6 +235,13 @@ blankcolumn(i:int, t:Net):bool := (
      true
      );
 
+splitcolumn(i:int, t:Net):bool := (			    -- can split to left of column i, worst case: i=0.
+     if i > 0 then foreach s in t.body do if length(s) > i && (
+	  a := isalnum(s.(i-1));     c := !a && s.(i-1) != ' ';
+	  b := isalnum(s.i);	     d := !b && s.i     != ' ';
+	  a && b || c && d ) then return false;
+     true);
+
 verticalTrim(t:Net):Net := (
      a := 0;
      b := length(t.body)-1;
@@ -261,27 +269,60 @@ export wrap(wid:int, sep:char, t:Net):Net := (
      leftbkpt := 0;
      nextleftbkpt := 0;
      rightbkpt := 0;
+     nextleftbkpt2 := 0;
+     rightbkpt2 := 0;
      while true do (
 	  breaks << leftbkpt;
 	  n := leftbkpt + wid;
+     	  -- find a good break point where there is a blank column
 	  nextleftbkpt = n;
 	  rightbkpt = n;
+	  found := false;
 	  if n >= t.width then (
+	       found = true;
 	       rightbkpt = t.width;
 	       nextleftbkpt = t.width;
 	       )
 	  else if blankcolumn(n,t)
 	  then (
+	       found = true;
 	       rightbkpt = n;
-	       nextleftbkpt = n;
+	       nextleftbkpt = n+1;
 	       )
 	  else for i from n to leftbkpt + minwid by -1 do (
 	       if blankcolumn(i-1,t) then (
-		    nextleftbkpt = i;
+	       	    found = true;
 		    rightbkpt = i-1;
+		    nextleftbkpt = i;
 		    break;
 		    ));
 	  while rightbkpt>leftbkpt && blankcolumn(rightbkpt-1,t) do rightbkpt = rightbkpt-1;
+     	  -- find a good break point where we don't split any identifiers or any operators
+	  nextleftbkpt2 = n;
+	  rightbkpt2 = n;
+	  found2 := false;
+	  if n >= t.width then (
+	       found2 = true;
+	       rightbkpt2 = t.width;
+	       nextleftbkpt2 = t.width;
+	       )
+	  else if splitcolumn(n,t)
+	  then (
+	       found2 = true;
+	       rightbkpt2 = n;
+	       nextleftbkpt2 = n;
+	       )
+	  else for i from n to leftbkpt + minwid by -1 do (
+	       if splitcolumn(i-1,t) then (
+	       	    found2 = true;
+		    rightbkpt2 = i-1;
+		    nextleftbkpt2 = i-1;
+		    break;
+		    ));
+	  while rightbkpt2>leftbkpt && blankcolumn(rightbkpt2-1,t) do rightbkpt2 = rightbkpt2-1;
+     	  -- choose the best one
+     	  if !found || found2 && nextleftbkpt < nextleftbkpt2 then ( rightbkpt = rightbkpt2; nextleftbkpt = nextleftbkpt2; );
+	  -- record the break point for future use
 	  breaks << rightbkpt;
 	  leftbkpt = nextleftbkpt;
 	  while leftbkpt < t.width && blankcolumn(leftbkpt,t) do leftbkpt = leftbkpt+1;
@@ -305,6 +346,11 @@ export wrap(wid:int, sep:char, t:Net):Net := (
 		    j = j+2;
 		    provide sepline;
 		    ))));
+
+export hash(n:Net):int := (
+     h := n.height * 3457 + n.width * 7753;
+     foreach s in n.body do h = h * 77 + hash(s);
+     h);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

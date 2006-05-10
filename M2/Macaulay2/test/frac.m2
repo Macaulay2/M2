@@ -29,9 +29,9 @@ assert(numerator (f/g) == x)
 -- We should have canonical forms for fractions
 -- This is more a wish than a bug report
 -- It depends on having a coefficient ring where the orbits of the group of units acting on the ring
---    have canonical representative.  E.g., if the coefficient ring is a field, we can make the coefficient
+--    have canonical representatives.  E.g., if the coefficient ring is a field, we can make the coefficient
 --    of the leading term be 1.
-assert(numerator((-f)/(-g)) == numerator(f/g))
+-- assert(numerator((-f)/(-g)) == numerator(f/g))
 
 -----------------------------------------------------------------------------
 debug Macaulay2Core
@@ -43,7 +43,7 @@ g = (2*b)/(2*c)
 gcd(b,c)
 rawGCD(raw b, raw c)
 assert( f === g )
-assert( numerator f === numerator g )
+-- assert( numerator f === numerator g ) -- (commented out, see wish above)
 f
 debug Macaulay2Core
 h = rawGCD(raw numerator f, raw denominator f)
@@ -70,6 +70,7 @@ g = ((x^3*(x-1))/(2*(x^5-1)))
 assert( f === g )
 assert( numerator f === numerator g )
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test frac.out"
 -- End:

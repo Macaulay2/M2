@@ -8,6 +8,7 @@ use stdio;
 use stdiop;
 use strings;
 use nets;
+use varnets;
 use gmp;
 use engine;
 
@@ -304,6 +305,7 @@ export Expr := (
      Integer or
      List or
      Net or
+     NetFile or
      Nothing or
      Rational or
      RawComputation or
@@ -542,6 +544,7 @@ export keywordClass := newtypeof(symbolClass);
 export codeClass := newbasictype();
 export errorClass := newbasictype();
 export netClass := newbasictype();
+export netFileClass := newbasictype();
 export stringClass := newtypeof(netClass);
 export booleanClass := newbasictype();
 export dictionaryClass := newbasictype();

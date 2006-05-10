@@ -12,6 +12,7 @@ R = QQ[x,MonomialOrder => RevLex]
 x^7							    -- monomial overflow
 
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test overflow.out"
 -- End:

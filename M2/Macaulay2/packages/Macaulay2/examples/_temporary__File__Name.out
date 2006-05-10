@@ -1,10 +1,11 @@
+-- -*- M2-comint -*-
 
 i1 : temporaryFileName () | ".tex"
 
-o1 = /tmp/M2-12574-1.tex
+o1 = /tmp/M2-6506-1.tex
 
 i2 : temporaryFileName () | ".html"
 
-o2 = /tmp/M2-12574-2.html
+o2 = /tmp/M2-6506-2.html
 
 i3 : 

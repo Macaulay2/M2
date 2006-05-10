@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : F = directSum(a=>ZZ^1, b=>ZZ^2, c=>ZZ^3)
 

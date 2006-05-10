@@ -53,7 +53,7 @@ class GBKernelComputation : public object
   int find_divisor(const MonomialIdeal * mi, const int *exponents, int &result);
   // Returns the index of the least element in the monomial order which divides.
 
-  void GBKernelComputation::wipe_unneeded_terms(gbvector * & f);
+  void wipe_unneeded_terms(gbvector * & f);
   // removes every term of f which is not a lead term of some element of gb.
 
   gbvector * s_pair(gbvector * syz);

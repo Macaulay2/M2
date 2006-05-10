@@ -10,7 +10,7 @@ document {
 	  "x" => RR => ""
 	  },
      Outputs => {
-	  RR => {"the arcsine of ", TT "x"}
+	  RR => {"the arcsine (in radians) of ", TT "x"}
 	  },
      EXAMPLE {
 	  "asin 1"

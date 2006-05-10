@@ -39,6 +39,7 @@ import strnumcmp(s:string,t:string):int;
 import gc:bool;
 import randomint():int;
 import wait(pid:int):int;
+import waitNoHang(pid:array(int)):array(int);
 import select(s:array(int)):array(int);
 import hash(x:double):int;
 import getcwd():string;

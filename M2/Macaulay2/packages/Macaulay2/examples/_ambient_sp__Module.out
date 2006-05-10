@@ -1,46 +1,61 @@
+-- -*- M2-comint -*-
 
-i1 : R = QQ[x_1 .. x_10];
+i1 : R = QQ[x_1 .. x_5]
 
-i2 : N = coker vars R ++ coker vars R
+o1 = R
 
-o2 = cokernel | x_1 x_2 x_3 x_4 x_5 x_6 x_7 x_8 x_9 x_10 0   0   0   0   0   0   0   0   0   0    |
-              | 0   0   0   0   0   0   0   0   0   0    x_1 x_2 x_3 x_4 x_5 x_6 x_7 x_8 x_9 x_10 |
+o1 : PolynomialRing
 
-                            2
-o2 : R-module, quotient of R
+i2 : N = image matrix{{x_1,x_2},{x_2,x_3}}
 
-i3 : f = N_{0} - N_{1}
+o2 = image | x_1 x_2 |
+           | x_2 x_3 |
 
-o3 = | 1  |
-     | -1 |
+                             2
+o2 : R-module, submodule of R
 
-o3 : Matrix
-
-i4 : M = image(f)
-
-o4 = subquotient (| 1  |, | x_1 x_2 x_3 x_4 x_5 x_6 x_7 x_8 x_9 x_10 0   0   0   0   0   0   0   0   0   0    |)
-                  | -1 |  | 0   0   0   0   0   0   0   0   0   0    x_1 x_2 x_3 x_4 x_5 x_6 x_7 x_8 x_9 x_10 |
-
-                               2
-o4 : R-module, subquotient of R
-
-i5 : ambient M
+i3 : ambient N
 
       2
+o3 = R
+
+o3 : R-module, free
+
+i4 : ambient cokernel vars R
+
+      1
+o4 = R
+
+o4 : R-module, free
+
+i5 : ambient kernel vars R
+
+      5
 o5 = R
 
-o5 : R-module, free
+o5 : R-module, free, degrees {1, 1, 1, 1, 1}
 
-i6 : ambient M == target generators M
+i6 : M = image vars R ++ cokernel vars R
 
-o6 = true
+o6 = subquotient (| x_1 x_2 x_3 x_4 x_5 0 |, | 0   0   0   0   0   |)
+                  | 0   0   0   0   0   1 |  | x_1 x_2 x_3 x_4 x_5 |
 
-o6 : Boolean
+                               2
+o6 : R-module, subquotient of R
 
-i7 : ambient M == target relations M
+i7 : ambient M
 
-o7 = true
+      2
+o7 = R
 
-o7 : Boolean
+o7 : R-module, free
 
-i8 : 
+i8 : ambient M == target generators M
+
+o8 = true
+
+i9 : ambient M == target relations M
+
+o9 = true
+
+i10 : 

@@ -3,6 +3,9 @@
 -- To: dan@math.uiuc.edu
 -- Subject: in27
 
+stderr << "this test is no longer relevant" << endl
+exit 0
+
 binaries = (n) -> (
      if n === 0 then {}
      else if n === 1 then {{0},{1}}
@@ -36,7 +39,8 @@ kk = ZZ/31
 R = kk[x,y,z,u,v,w,SkewCommutative => true]
 J = ideal(x*y,y*v+x*w+u*w,u*v+y*w)
 time hypers = makeHyperplanes J;
--- time scan(numgens source hypers, i -> doit i);
+--time scan(numgens source hypers, i -> doit i);
+
 n = 6
 collectGarbage()
 collectGarbage()

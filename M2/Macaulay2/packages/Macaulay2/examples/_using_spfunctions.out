@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : sin
 
@@ -7,9 +8,9 @@ o1 : Function
 
   * Usage: sin x
   * Inputs:
-      * x, a real number, 
+      * x, a real number
   * Outputs:
-      * the sine of x
+      * a real number, the sine of x
 
 i2 : sin 1.2
 
@@ -38,7 +39,12 @@ o6 = append
 
 o6 : Function
 
-  * Usage: append(v,x)
+ -- append an element to a list
+
+Ways to use append
+==================
+
+  * "append(BasicList,Thing)" -- append an element to a list
 
 i7 : append({a,b,c},d)
 
@@ -56,6 +62,7 @@ o8 : Function
 
 Ways to use join
 ================
+
   * "join(BasicList,BasicList)" -- missing documentation
 
 i9 : join({a,b},{c,d},{e,f},{g,h,i})

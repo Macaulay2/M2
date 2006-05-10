@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ/7[x,y];
 
@@ -13,12 +14,8 @@ i3 : isFreeModule M
 
 o3 = false
 
-o3 : Boolean
-
 i4 : isFreeModule prune M
 
 o4 = true
-
-o4 : Boolean
 
 i5 : 

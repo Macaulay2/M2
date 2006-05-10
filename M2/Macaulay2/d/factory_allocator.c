@@ -1,76 +1,130 @@
+#include <stdlib.h>
+#include <unistd.h>
 #include <gc.h>
 #include "memdebug.h"
+#include "debug.h"
+#include "M2mem.h"
 #include <string.h>
 
 /* this is code from factory's file memutil.c, slightly sped up */
 
-/* amazingly, GC_MALLOC is faster than malloc even for the few times getBlock needs to get brand new memory */
-#  define malloc GC_MALLOC
+/* we must use GC_MALLOC_UNCOLLECTABLE instead of GC_MALLOC, because
+   factory stores pointers to memory allocated here in memory areas
+   allocated by "operator new[]", for example, in the function initPT().
+*/
+
+#  define malloc GC_MALLOC_UNCOLLECTABLE
 #  define free GC_FREE
 #  define realloc GC_REALLOC
 
-typedef struct dummy_le { struct dummy_le* next; } listentry;
+typedef struct dummy_le { 
+     struct dummy_le* next; 
+} listentry;
+
 static listentry * blocklist[7] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+#ifdef DEBUG
+#define RECORD_COUNT(p) (*((int*)(p)+2) = trapcount)
+#define HEADER_WORDS 3
+#define GOOD_MAGIC 0xbeef
+#define DEAD_MAGIC 0xdead
+#define MARK_GOOD(p) (*((int*)(p)+1) = GOOD_MAGIC, trapchk(p), RECORD_COUNT(p))
+#define MARK_DEAD(p) (*((int*)(p)+1) = DEAD_MAGIC, trapchk(p))
+#define CHECK_GOOD(p) (*((int*)(p)+1) != GOOD_MAGIC ? badBlock() : 0, trapchk(p))
+#define CHECK_DEAD(p) (*((int*)(p)+1) != DEAD_MAGIC ? badBlock() : 0, trapchk(p))
+#else
+#define HEADER_WORDS 1
+#define MARK_GOOD(p)
+#define MARK_DEAD(p)
+#define CHECK_GOOD(p)
+#define CHECK_DEAD(p)
+#endif
+
+#define HEADER_BYTES (HEADER_WORDS * sizeof(int))
+
 
 #   define GETBLOCK( list, size ) { if ( blocklist[list] ) { \
 					  listentry* retval = blocklist[list]; \
 					  blocklist[list] = retval->next; \
+					  CHECK_DEAD((char *)retval-HEADER_BYTES); \
+					  MARK_GOOD((char *)retval-HEADER_BYTES); \
 					  return (void*)retval; \
 				      } else { \
-					  char* retval = (char*)malloc( size ); \
-					  *((int*)retval) = (size)-4; \
-					  return (void*)(retval+4); \
+					  char* dum = (char*)malloc( size+HEADER_BYTES ); \
+                                          if (dum == NULL) outofmem(); \
+					  *((int*)dum) = size; \
+					  MARK_GOOD(dum); \
+					  return (void*)(dum+HEADER_BYTES); \
 				      } }
 
 #   define FREEBLOCK( list, block ) { \
 					 listentry* dummy = (listentry*)(block); \
 					 dummy->next = blocklist[list]; \
+					 MARK_DEAD((char *)block-HEADER_BYTES); \
 					 blocklist[list] = dummy; \
 				     }
 
+#define SIZE0 (sizeof(void *))
+#define SIZE1 12
+#define SIZE2 20
+#define SIZE3 60
+#define SIZE4 124
+#define SIZE5 252
+#define SIZE6 508
+
 void* getBlock ( size_t size )
 {
-    if ( size <= 4 ) GETBLOCK( 0, 8 )
-    else if ( size <= 12 ) GETBLOCK( 1, 16 )
-    else if ( size <= 28 ) GETBLOCK( 2, 32 )
-    else if ( size <= 60 ) GETBLOCK( 3, 64 )
-    else if ( size <= 124 ) GETBLOCK( 4, 128 )
-    else if ( size <= 252 ) GETBLOCK( 5, 256 )
-    else if ( size <= 508 ) GETBLOCK( 6, 512 )
+    if      ( size <= SIZE0 ) GETBLOCK( 0, SIZE0 )
+    else if ( size <= SIZE1 ) GETBLOCK( 1, SIZE1 )
+    else if ( size <= SIZE2 ) GETBLOCK( 2, SIZE2 )
+    else if ( size <= SIZE3 ) GETBLOCK( 3, SIZE3 )
+    else if ( size <= SIZE4 ) GETBLOCK( 4, SIZE4 )
+    else if ( size <= SIZE5 ) GETBLOCK( 5, SIZE5 )
+    else if ( size <= SIZE6 ) GETBLOCK( 6, SIZE6 )
     else {
-	char* retval = (char*)malloc( size+4 );
-	*((int*)retval) = size;
-	retval += 4;
-	return retval;
+	char* dum = (char*)malloc( size+HEADER_BYTES );
+	if (dum == NULL) outofmem();
+	*((int*)dum) = size;
+	MARK_GOOD(dum);
+	return dum + HEADER_BYTES;
     }
 }
 
-void freeBlock ( void* block, size_t size )
+void freeBlockN ( void* block )	/* N means no size given */
 {
-    char* dum = (char*)block;
+    char* dum;
+    unsigned size;
     if ( block == NULL ) return;
-    dum -= 4;
+    dum = (char*)block - HEADER_BYTES;
     size = *((int*)dum);
-    if ( size == 4 ) FREEBLOCK( 0, block )
-    else if ( size == 12 ) FREEBLOCK( 1, block )
-    else if ( size == 28 ) FREEBLOCK( 2, block )
-    else if ( size == 60 ) FREEBLOCK( 3, block )
-    else if ( size == 124 ) FREEBLOCK( 4, block )
-    else if ( size == 252 ) FREEBLOCK( 5, block )
-    else if ( size == 508 ) FREEBLOCK( 6, block )
-    else free( dum );
+    CHECK_GOOD(dum);
+    MARK_DEAD(dum);
+    switch(size) {
+       case SIZE0 : FREEBLOCK( 0, block ); break;
+       case SIZE1 : FREEBLOCK( 1, block ); break;
+       case SIZE2 : FREEBLOCK( 2, block ); break;
+       case SIZE3 : FREEBLOCK( 3, block ); break;
+       case SIZE4 : FREEBLOCK( 4, block ); break;
+       case SIZE5 : FREEBLOCK( 5, block ); break;
+       case SIZE6 : FREEBLOCK( 6, block ); break;
+       default    : free( dum ); break;
+    }
+}
+
+void freeBlock ( void* block, size_t size ) { 
+     freeBlockN(block) ; 
 }
 
 void* reallocBlock ( void* block, size_t oldsize, size_t newsize )
 {
-  /* improvement here saves calls to getBlock and freeBlock 10% of the time by noticing we already have a block big enough ! */  
-  char* dum = (char*)block - 4;
+  char* dum = (char*)block - HEADER_BYTES;
   int size = *((int*)dum);
+  CHECK_GOOD(dum);
   if (newsize <= size) return block;
-  void* dummy = getBlock( newsize );
-  memcpy( dummy, block, newsize < oldsize ? newsize : oldsize );
+  void* retval = getBlock( newsize );
+  memcpy( retval, block, newsize < oldsize ? newsize : oldsize );
   freeBlock( block, oldsize );
-  return dummy;
+  return retval;
 }
 
 /*

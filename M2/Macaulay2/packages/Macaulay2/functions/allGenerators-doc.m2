@@ -2,12 +2,13 @@
 --- author(s): MES
 --- notes: BUG still (for quotient rings)
 
+undocumented {
+	  (allGenerators, PolynomialRing),
+	  (allGenerators, FractionField)}
+
 document { 
      Key => {allGenerators, (allGenerators,Ring)},
      Headline => "list of all generators",
-     Undocumented => {
-	  (allGenerators, PolynomialRing),
-	  (allGenerators, FractionField)},
      Usage => "allGenerators R",
      Inputs => {
 	  "R" => Ring => ""
@@ -44,5 +45,5 @@ allGenerators B
 C = B[x,y,z]/(x^2-a*x-r)
 generators C
 v = allGenerators C
-assert (#v) == 7
+assert (#v == 7)
 ///

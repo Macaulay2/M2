@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : Table {{a,b,c},{a,bb,ccc}}
 

@@ -2,10 +2,11 @@
 --- author(s): Sorin Popescu
 --- notes: 
 
+undocumented {(cohomology,ZZ,Sequence)}
+
 document { 
      Key => cohomology,
      Headline => "general cohomology functor",
-     Undocumented => {(cohomology,ZZ,Sequence)},
       TT "cohomology", " -- a method name available for computing expressions
      of the forms ", TT "HH^i(X)", " and ", TT "HH^i(M,N)", ".",
      PARA,
@@ -172,13 +173,22 @@ document {
      EXAMPLE {
 	  "needsPackage \"SimplicialComplexes\"",
 	  "R = QQ[a..d]",
-          "D = simplicialComplex {{a,b,c},{a,b,d},{a,c,d},{b,c,d}}",
+          "D = simplicialComplex {a*b*c,a*b*d,a*c*d,b*c*d}",
           "C = chainComplex D",  
-          "HH^2 C",
+          "HH_2 C",
 	  "prune oo"
 	  },
      SeeAlso => {"GradedModule", "HH"}
      }
+
+TEST ///
+needsPackage "SimplicialComplexes"
+R = QQ[a..d]
+D = simplicialComplex {a*b*c,a*b*d,a*c*d,b*c*d}
+C = chainComplex D
+assert ( rank HH_2 C == 1 )
+///
+
 document { 
      Key => {(cohomology,ZZ,CoherentSheaf)},
      Headline => "cohomology of a coherent sheaf on a projective variety",

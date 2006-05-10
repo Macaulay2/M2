@@ -16,7 +16,7 @@ class MonomialSet : public our_new_delete {
   };
   
  public:
-  MonomialSet::MonomialSet();
+  MonomialSet();
   
   static MonomialSet *make();
 

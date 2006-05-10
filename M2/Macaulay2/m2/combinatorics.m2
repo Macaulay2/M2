@@ -1,15 +1,12 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 subsets(ZZ,ZZ) := List => (n,j) -> (
-     subsetn := (n,j) -> (
-	  if n<j then {}
-	  else if n===j then {toList (0 .. n-1)}
-	  else if j===0 then {{}}
-	  else join(subsetn(n-1,j), apply(subsetn(n-1,j-1),s->append(s,n-1))));
-     subsetn = memoize subsetn;
-     result := subsetn(n,j);
-     subsetn = null;
-     result)
+     if j < 0 then return {};
+     if j == 0 then return {{}};
+     if j == 1 then return toList apply(0 .. n-1, i -> {i});
+     x := join apply(1 .. n-1, j -> apply(0 .. j-1, i -> (i,j)));
+     scan(j-2, i -> x = join apply(x, s -> apply(0 .. s#0 - 1, i -> prepend(i,s))));
+     toList apply(x,toList))
 
 subsets(List,ZZ) := List => (s,j) -> apply(subsets(#s,j),v->apply(v,i->s#i))
 subsets(Sequence,ZZ) := List => (s,j) -> subsets(toList s,j)
@@ -22,6 +19,7 @@ subsets List := List => x -> (
 	  x = drop(x,-1);
 	  s := subsets x;
 	  join(s,apply(s,y->append(y,a)))))
+subsets ZZ := List => n -> subsets toList (0 .. n-1)
 
 Partition = new Type of BasicList
 Partition _ ZZ := (p,i) -> p#i

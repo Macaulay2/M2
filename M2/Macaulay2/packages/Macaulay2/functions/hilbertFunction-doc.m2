@@ -2,9 +2,10 @@
 --- author(s): L. Gold
 --- notes: still need to write description on main node
 
+undocumented {(hilbertFunction,List,CoherentSheaf),(hilbertFunction,ZZ,CoherentSheaf)}
+
 document { 
      Key => hilbertFunction,
-     Undocumented => {(hilbertFunction,List,CoherentSheaf),(hilbertFunction,ZZ,CoherentSheaf)},
      Headline => "compute the Hilbert function",
      "The Hilbert function is a function gives the dimension of the
      given degree piece of an object. ",

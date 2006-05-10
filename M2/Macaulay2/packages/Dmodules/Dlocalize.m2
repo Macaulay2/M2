@@ -211,10 +211,9 @@ computeLocalization = (M, f, output, options) -> (
 	       	  i = i+1;
 	       	  );
 	     relationsMat := transpose matrix{relationsList};
-	     tempL := coefficients({nLW-2}, relationsMat);
-	     presMat := 
-	     -- transpose
-	     tempL#1;
+	     --tempL := oldCoefficients({nLW-2}, relationsMat);
+	     tempL := coefficients(transpose relationsMat, Variables=>{nLW-2});
+	     presMat := tempL#1;
 	     srcSize := numgens source presMat;
 	     targSize := numgens target presMat;
 	     genIndex := position((entries tempL#0)#0, e->(e==a^maxRoot));
@@ -321,11 +320,11 @@ AnnIFs2(Ideal, RingElement) := (I, f) -> (
      WS := (coefficientRing W)[(entries vars W)#0, s,
 	  WeylAlgebra => W.monoid.Options.WeylAlgebra];
      WTtoWS := g -> (
-	  e := exponents leadMonomial g;
+	  e := first exponents leadMonomial g;
 	  if e#0 > e#1 then g = dt^(e#0-e#1) * g
 	  else g = t^(e#1-e#0) * g;
 	  g' := 0_WS;
-	  while (d := exponents leadMonomial g; d#0 * d#1 != 0) do(
+	  while (d := first exponents leadMonomial g; d#0 * d#1 != 0) do(
 	       c := leadCoefficient g;
 	       g' = g' + c * (-s-1)^(d#1) * WS_(drop(d, 2) | {0}); -- >%-0	
 	       g = g - c * (t*dt)^(d#1) * WT_({0,0} | drop(d, 2));

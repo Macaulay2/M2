@@ -27,7 +27,7 @@ clean::; rm -f srcdir
 initialize :: cache
 cache :; mkdir $@
 distclean clean ::; rm -rf cache
-	install :: $(cachedir)
+install :: $(cachedir)
 $(cachedir):; $(INSTALL) -d "$@"
 ################################# util
 initialize::; $(MAKE) -C util all
@@ -69,10 +69,6 @@ distclean clean ::; $(MAKE) DEPENDS=no -C d $@
 ################################# basictests
 check ::; $(MAKE) -C basictests -k
 distclean clean ::; $(MAKE) -C basictests $@
-################################# tutorial
-#### keep this before 'm2' so the final/*.out files get made
-justM2::; $(MAKE) -C tutorial all
-install all distclean clean::; $(MAKE) -C tutorial $@
 ################################# m2
 install distclean clean check justM2 all ::; $(MAKE) -C m2 $@
 ################################# test
@@ -101,6 +97,8 @@ distclean::; rm -f Makefile
 ################################# final status messages
 justM2 all doc clean distclean::
 	@echo "-------- done making '$@' --------"
+#################################
+clean :: ; rm -f gmon.out
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2 "

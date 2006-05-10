@@ -112,7 +112,7 @@ newdecompose(Ideal) := List => (I) -> decompose I
 
 -- Make a list of the variables which occur in the lead 
 -- monomial of f.
-variables = (f) -> apply(positions(exponents leadMonomial f, i -> i>0),j -> (ring f)_j)
+variables = (f) -> apply(positions(first exponents leadMonomial f, i -> i>0),j -> (ring f)_j)
  
 -- Compute the flattener with respect to the 
 -- variables in a monomial

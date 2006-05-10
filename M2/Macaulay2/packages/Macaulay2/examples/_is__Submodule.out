@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ/5[a,b,c];
 
@@ -6,8 +7,6 @@ i2 : M = R^3;
 i3 : isSubmodule M
 
 o3 = true
-
-o3 : Boolean
 
 i4 : N = ideal(a,b) * M
 
@@ -22,8 +21,6 @@ i5 : isSubmodule N
 
 o5 = true
 
-o5 : Boolean
-
 i6 : N' = ideal(a,b) * (R^1 / ideal(a^2,b^2,c^2))
 
 o6 = subquotient (| a b |, | a2 b2 c2 |)
@@ -34,7 +31,5 @@ o6 : R-module, subquotient of R
 i7 : isSubmodule N'
 
 o7 = false
-
-o7 : Boolean
 
 i8 : 

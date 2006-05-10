@@ -109,7 +109,7 @@ createThetaRing(PolynomialRing) := W -> (
 	  * g;
 	  while g != 0 do(
 	       c = leadCoefficient g;
-      	       d := exponents leadMonomial g;
+      	       d := first exponents leadMonomial g;
 	       t = t + c * 	
 	       product(#(dpI#0), i -> 
 		    theta_i^(min(d#(dpI#0#i),d#(dpI#1#i))));	   

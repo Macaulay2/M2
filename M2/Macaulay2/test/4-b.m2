@@ -6,6 +6,7 @@ p = poincare cokernel f
 g = matrix{{x*y,x*z^2,y*z^2,x^2,y^2,z^4}}
 t = syz gb(g, Syzygies=>true, Hilbert => p)
 assert(rank source s == rank source t)
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test 4-b.out"
 -- End:

@@ -1,389 +1,65 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): MES
 --- notes: 
+
+undocumented {
+    (toExternalString, Manipulator),
+    (toExternalString, Module),
+    (toExternalString, Sequence),
+    (toExternalString, QuotientRing),
+    (toExternalString, GaloisField),
+    (toExternalString, Array),
+    (toExternalString, Matrix),
+    (toExternalString, GeneralOrderedMonoid),
+    (toExternalString, Thing),
+    (toExternalString, CC),
+    (toExternalString, HashTable),
+    (toExternalString, MutableHashTable),
+    (toExternalString, Type),
+    (toExternalString, BasicList),
+    (toExternalString, MutableList),
+    (toExternalString, Vector),
+    (toExternalString, Option),
+    (toExternalString, Symbol),
+    (toExternalString, Command),
+    (toExternalString, MarkUpList),
+    (toExternalString, Keyword),
+    (toExternalString, PolynomialRing),
+    (toExternalString, Net),
+    (toExternalString, String)
+    }     
 
 document { 
      Key => toExternalString,
-     Headline => "",
-     Usage => "",
+     Headline => "convert to a readable string",
+     Usage => "toExternalString x",
      Inputs => {
+	  "x" => "any Macaulay 2 object"
 	  },
      Outputs => {
+	  String => {"a string representation of ", TT "x", ", which can often
+	       be used to read the object back into the program later"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "See also ", TO "toString", " which simply converts ", TT "x", "
+     to a string which can be displayed meaningfully.",     
      EXAMPLE {
+	  "toString {1,4,a,f,212312,2.123243242}"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,Manipulator),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
+	  "R = QQ[x_1..x_5];",
+	  "toExternalString R",
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,Option),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     "Matrices and ring elements are linearized",
      EXAMPLE {
+	  "toExternalString (x_1^3-3/4*x_5*x_3)",
+	  "toExternalString vars R"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     Caveat => {
+	  "Not everything can be converted to a string in such a way that it
+     	  can be read back into the program later, because circular data structures
+     	  are common."
+	  },
+     SeeAlso => {toString, value}
      }
-document { 
-     Key => (toExternalString,GaloisField),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,Symbol),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,Keyword),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,Vector),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,PolynomialRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,Net),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,String),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,GeneralOrderedMonoid),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,MarkUpList),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,Array),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,Thing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,CC),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,HashTable),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,Matrix),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,MutableHashTable),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,Type),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,QuotientRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,Module),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,Command),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,BasicList),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (toExternalString,MutableList),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc12.m2:588:     Key => toExternalString,
+
+

@@ -27,7 +27,7 @@ gcdCoefficients(ZZ,ZZ) := (a,b) -> (
 	  n = n - apply(m,y -> t * y);
 	  (k=m;m=n;n=k);
 	  );
-     {n#1,n#2});
+     n);
 
 mod = (i,n) -> i * 1_(ZZ/n)
 

@@ -201,6 +201,15 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	       )
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
+     is x:RawMonomialIdeal do (
+	  when rhs
+	  is y:RawMonomialIdeal do (
+	       when x-y
+	       is t:RawMonomialIdeal do Expr(t)
+	       is null do buildErrorPacket(EngineError("monomial ideal difference failed"))
+	       )
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,PlusS))
      is Error do lhs
      else binarymethod(lhs,rhs,MinusS));
 minusfun2(lhs:Code,rhs:Code):Expr := (

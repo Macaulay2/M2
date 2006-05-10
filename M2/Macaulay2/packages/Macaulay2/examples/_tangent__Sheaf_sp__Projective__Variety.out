@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : P = Proj(QQ[a,b,c])
 
@@ -43,12 +44,13 @@ o6 : ProjectiveVariety
 
 i7 : TNode = tangentSheaf(Node)
 
-o7 = image {-1} | b  a2+ac |
-           {-1} | 2a 2bc   |
-           {0}  | 0  0     |
+o7 = image {-2} | 3a2+2ac 3abc+2bc2 |
+           {-2} | 2bc     2a2c+2ac2 |
+           {-2} | a2-b2   -a2b      |
+           {-3} | a2b     ab2c      |
 
-                                               2             1
-o7 : coherent sheaf on Node, subsheaf of OO     (1) ++ OO
+                                               3             1
+o7 : coherent sheaf on Node, subsheaf of OO     (2) ++ OO     (3)
                                            Node          Node
 
 i8 : HH^0(TNode)
@@ -67,12 +69,13 @@ o9 : QQ-module
 i10 : TCusp = tangentSheaf(Cusp)
 
 o10 = image {-2} | 3bc 3a2 |
-            {-1} | -2a -2b |
-            {1}  | 0   0   |
+            {-2} | 2ac 2bc |
+            {-2} | -ab -b2 |
+            {-3} | b2c a2b |
 
-                                                1             1             1
-o10 : coherent sheaf on Cusp, subsheaf of OO     (2) ++ OO     (1) ++ OO     (-1)
-                                            Cusp          Cusp          Cusp
+                                                3             1
+o10 : coherent sheaf on Cusp, subsheaf of OO     (2) ++ OO     (3)
+                                            Cusp          Cusp
 
 i11 : HH^0(TCusp)
 

@@ -2,6 +2,14 @@
 
 maximumCodeWidth = 120
 
+checkLoadDocumentation = () -> if not isGlobalSymbol "Macaulay2" or class value getGlobalSymbol "Macaulay2" =!= Package then (
+     -- the documentation for things in the package Macaulay2Core is in the package Macaulay2 !
+     oldnotify := notify;
+     notify = false;
+     loadPackage("Macaulay2",DebuggingMode => not stopIfError);
+     notify = oldnotify;
+     )
+
 -----------------------------------------------------------------------------
 -- normalizing document keys
 -----------------------------------------------------------------------------
@@ -34,18 +42,20 @@ isDocumentableThing   Nothing := key -> true
 errorMethod := key -> typicalValues#?key and typicalValues#key === Error
 
 isDocumentableMethod := method(SingleArgumentDispatch => true)
-isDocumentableMethod Sequence := key -> all(key,isDocumentableMethod) and not methodDispatchFunctions#?(lookup key) and not errorMethod key
+isDocumentableMethod Sequence := key -> (
+     all(key, i -> (
+     	       class i === Sequence 			    -- assignment methods look like ((symbol *, symbol =), X, Y, Z)
+     	       or isDocumentableMethod i)) 
+     and not methodDispatchFunctions#?(lookup key)
+     and not errorMethod key
+     and not isUndocumented makeDocumentTag key
+     )
 isDocumentableMethod    Thing := key -> false
 isDocumentableMethod   Symbol := key -> isGlobalSymbol toString key and getGlobalSymbol toString key === key
 isDocumentableMethod     Type := 
 isDocumentableThing     Thing := key -> ReverseDictionary#?key
 isDocumentableMethod Function := fn -> ReverseDictionary#?fn and dictionary ReverseDictionary#fn =!= null
 isDocumentableMethod ScriptedFunctor := fn -> ReverseDictionary#?fn
-
-undocumented = key -> (
-     if currentPackage === null then error "no package open";
-     currentPackage#"undocumented keys"#(normalizeDocumentKey key) = true;
-     )
 
 -----------------------------------------------------------------------------
 -- verifying the tags
@@ -111,8 +121,7 @@ DocumentTag.Title Thing := err
 DocumentTag ? DocumentTag := (x,y) -> x#1 ? y#1
 DocumentTag ? String := (x,y) -> x#1 ? y
 String ? DocumentTag := (x,y) -> x ? y#1
-net DocumentTag := x -> concatenate ( DocumentTag.Title x, " :: ", DocumentTag.FormattedKey x )
-toString DocumentTag := x -> error "who wants a string?"
+toString DocumentTag := net DocumentTag := x -> concatenate ( DocumentTag.Title x, " :: ", DocumentTag.FormattedKey x )
 package DocumentTag := DocumentTag.Package
 hasDocumentation := key -> isDocumentableThing key and (
      tag := makeDocumentTag key;
@@ -145,13 +154,20 @@ formattedKey FinalDocumentTag := tag -> FinalDocumentTag.FormattedKey tag
 
 local exampleBaseFilename
 local currentNodeName
+local currentHelpTag
 fixup := method(SingleArgumentDispatch => true)
 
 rawKey := "raw documentation"
 rawKeyDB := "raw documentation database"
 fetchRawDocumentation = method()
 fetchRawDocumentation(Symbol,String) := (pkg,fkey) -> (
-     error("package ", toString pkg, " not loaded, and its documentation is not available"))
+     if toString pkg === "Macaulay2" then (
+	  erase pkg;
+	  checkLoadDocumentation();
+	  pkg = value getGlobalSymbol "Macaulay2";
+	  assert(class pkg === Package);
+	  fetchRawDocumentation(pkg,fkey))
+     else error("package ", toString pkg, " not loaded, and its documentation is not available"))
 fetchRawDocumentation(Package,String) := (pkg,fkey) -> (		    -- returns null if none
      d := pkg#rawKey;
      if d#?fkey then d#fkey
@@ -168,6 +184,23 @@ fetchRawDocumentation DocumentTag := tag -> (
 fetchRawDocumentation FinalDocumentTag := tag -> (
      fetchRawDocumentation(FinalDocumentTag.Title tag, FinalDocumentTag.FormattedKey tag)
      )
+
+getPrimary = tag -> (
+     while (
+     	  d := fetchRawDocumentation tag;
+     	  d =!= null and d#?PrimaryTag
+	  )
+     do tag = d#PrimaryTag;
+     tag)
+
+fetchPrimaryRawDocumentation := tag -> (
+     while (
+     	  d := fetchRawDocumentation tag;
+     	  d =!= null and d#?PrimaryTag
+	  )
+     do tag = d#PrimaryTag;
+     d)
+
 fetchAnyRawDocumentation := (fkey) -> scan(value \ values PackageDictionary, 
      pkg -> if class pkg === Package then (
 	  r := fetchRawDocumentation(pkg,fkey);
@@ -182,19 +215,6 @@ fetchProcessedDocumentation := (pkg,fkey) -> (		    -- returns null if none
 	  if pkg#?proKeyDB then (
 	       d = pkg#proKeyDB;
 	       if isOpen d and d#?fkey then value d#fkey)))
-
------------------------------------------------------------------------------
--- sublists, might be worthy making public
------------------------------------------------------------------------------
-sublists := (x,f,g,h) -> (
-     -- x is a list with elements i
-     -- apply g to those i for which f i is true
-     -- apply h to the sublists, possibly empty, including those at the beginning and end, of elements between the ones for which f i is true
-     -- return the results in the same order
-     p := positions(toSequence x, f);
-     mingle(
-	  apply( prepend(-1,p), append(p,#x), (i,j) -> h take(x,{i+1,j-1})),
-	  apply( p, i -> g x#i)))
 
 -----------------------------------------------------------------------------
 -- unformatting document tags
@@ -469,7 +489,7 @@ processExample := x -> (
      then {x, CODE exampleResults#exampleCounter}
      else (
 	  if exampleResultsFound and #exampleResults === exampleCounter then (
-	       stderr << "--warning : example results terminate prematurely: " << currentExampleKey << endl;
+	       stderr << "--warning: example results terminate prematurely: " << currentExampleKey << endl;
 	       );
 	  {x, CODE concatenate("i", toString (exampleCounter+1), " : ",x)}
 	  );
@@ -498,10 +518,9 @@ fixupEntry Thing := fixup
 fixupEntry Option := z -> z#0 => fixupEntry z#1		       -- "x" => List => { "a number" }
 fixupList := x -> apply(nonNull x,fixupEntry)
 enlist := x -> if class x === List then x else {x}
-chkIsString := key -> val -> if class val === String then val else error("expected ",toString key," option to be a string")
+chkIsString := key -> val -> if class val === String then fixup val else error("expected ",toString key," option to be a string")
 fixupTable := new HashTable from {
      Key => identity,
-     Undocumented => identity,
      symbol DocumentTag => identity,
      Usage => val -> fixup val,
      Function => val -> fixup val,
@@ -534,8 +553,7 @@ documentOptions := new HashTable from {
      Headline => true,
      SeeAlso => true,
      Caveat => true,
-     Subnodes => true,
-     Undocumented => true
+     Subnodes => true
      }
 reservedNodeNames := set apply( {"Top", "Table of Contents", "Symbol Index"}, toLower )
 
@@ -570,14 +588,6 @@ document List := args -> (
 			 PrimaryTag => tag, 
 			 symbol DocumentTag => tag2
 			 })));
-     if opts.?Undocumented then (
-	  if class opts.Undocumented =!= List then error "expected Undocumented => a list";
-	  scan(opts.Undocumented, tag ->
-	       storeRawDocumentation(
-		    DocumentTag.FormattedKey makeDocumentTag tag,
-		    new HashTable from {
-			 symbol DocumentTag => makeDocumentTag tag,
-			 Undocumented => true})));
      if not opts.?Headline and class key === Sequence and key#?0 then (
 	  h := headline key#0;
 	  if h =!= null then opts.Headline = h;
@@ -590,6 +600,14 @@ document List := args -> (
      storeRawDocumentation(currentNodeName, new HashTable from apply(pairs opts,(key,val) -> (key,fixupTable#key val)));
      currentNodeName = null;
      )
+
+undocumented = method(SingleArgumentDispatch => true)
+undocumented List  := x -> scan(x, undocumented)
+undocumented Thing := key -> storeRawDocumentation(
+     DocumentTag.FormattedKey makeDocumentTag key,
+     new HashTable from {
+	  symbol DocumentTag => makeDocumentTag key,
+	  "undocumented" => true})
 
 -----------------------------------------------------------------------------
 -- getting help from the documentation
@@ -607,7 +625,7 @@ apropos String := (pattern) -> sort select(flatten \\ keys \ globalDictionaries,
 headline = method(SingleArgumentDispatch => true)
 headline Thing := key -> getOption(key,Headline)	    -- old method
 headline FinalDocumentTag := headline DocumentTag := tag -> (
-     d := fetchRawDocumentation tag;
+     d := fetchPrimaryRawDocumentation tag;
      if d === null then (
 	  -- if debugLevel > 0 and formattedKey tag == "Ring ^ ZZ" then error "debug me";
 	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
@@ -620,27 +638,25 @@ commentize = s -> if s =!= null then concatenate(" -- ",s)
 -----------------------------------------------------------------------------
 isUndocumented = tag -> (
      d := fetchRawDocumentation tag;
-     d =!= null and (d#?PrimaryTag or d#?Undocumented and d#Undocumented === true))
+     d =!= null and d#?"undocumented" and d#"undocumented" === true)
 isSecondary = tag -> (
      d := fetchRawDocumentation tag;
      d =!= null and d#?PrimaryTag)
-getPrimary = tag -> (
-     while (
-     	  d := fetchRawDocumentation tag;
-     	  d =!= null and d#?PrimaryTag
-	  )
-     do tag = d#PrimaryTag;
-     tag)
 -----------------------------------------------------------------------------
 -- these menus have to get sorted, so optTO and optTOCLASS return pairs:
 --   the first member of the pair is the string to use for sorting
 --   the second member is the corresponding hypertext entry in the UL list
-optTO := i -> (
+optTO = i -> (
      i = makeDocumentTag i;
      fkey := DocumentTag.FormattedKey i;
      if not isUndocumented i then 
      if isSecondary i 
-     then (fkey, fixup SEQ {fkey, ", see ", TOH{getPrimary i}})
+     then (
+	  primary := getPrimary i;
+	  if currentHelpTag === primary
+	  then (fkey, fixup SEQ {fkey})
+	  else (fkey, fixup SEQ {fkey, ", see ", TOH{primary}})
+	  )
      else (fkey, fixup SEQ TOH{i})				    -- need an alternative here for secondary tags such as (export,Symbol)
      )
 optTOCLASS := i -> (					    -- this isn't different yet, work on it!
@@ -692,7 +708,9 @@ title := s -> (
 type := S -> fixup (
      s := value S;
      if class s =!= Function and class s =!= Package then (
-	  SEQ { SUBSECTION "For the programmer",  
+	  SEQ { 
+	       LITERAL "<div class=\"waystouse\">\n",
+	       SUBSECTION "For the programmer",  
 	       PARA deepSplice { "The object ", TO S, " is ", OFCLASS class s,
 		    if parent s =!= Nothing then (
 			 f := (T -> while T =!= Thing list parent T do T = parent T) s;
@@ -701,25 +719,25 @@ type := S -> fixup (
 			      toSequence between(" < ", f / (T -> TO T)) 
 			      )
 			 ),
-		    "."}
-	       }))
+		    "."},
+	       LITERAL "</div>\n"}))
 
 istype := X -> parent X =!= Nothing
 alter1 := x -> (
      if class x === Option and #x === 2 then (
-	  if istype x#0 then SEQ { OFCLASS x#0, if x#1 =!= "" and x#1 =!= null then SEQ { ", ", x#1 } }
+	  if istype x#0 then SEQ { OFCLASS x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SEQ { ", ", x#1 } }
 	  else error "expected type to left of '=>'"
 	  )
      else x)
 alter := x -> (
      if class x === Option and #x === 2 then (
-	  if istype x#0 then SEQ { OFCLASS x#0, if x#1 =!= "" and x#1 =!= null then SEQ { ", ", x#1 } }
+	  if istype x#0 then SEQ { OFCLASS x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SEQ { ", ", x#1 } }
 	  else if class x#0 === String then (
 	       if class x#1 === Option and #x#1 === 2 then (
-		    if istype x#1#0 then SEQ { TT x#0, ", ", OFCLASS x#1#0, if x#1#1 =!= "" and x#1#1 =!= null then SEQ { ", ", x#1#1 } }
+		    if istype x#1#0 then SEQ { TT x#0, ", ", OFCLASS x#1#0, if x#1#1 =!= "" and x#1#1 =!= null and x#1#1 =!= () then SEQ { ", ", x#1#1 } }
 		    else error "expected type to left of '=>'"
 		    )
-	       else SEQ { TT x#0, if x#1 =!= "" and x#1 =!= null then SEQ { ", ", x#1 } }
+	       else SEQ { TT x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SEQ { ", ", x#1 } }
 	       )
 	  else error "expected string or type to left of '=>'"
 	  )
@@ -856,7 +874,7 @@ synopsis := key -> (
 
 documentableMethods := s -> select(methods s,isDocumentableMethod)
 
-fmeth := f -> (
+fmeth := f -> (						    -- compare with documentationValue(Symbol,Function) below
      b := documentableMethods f;
      if #b > 0 then (
 	  c := smenu b;
@@ -871,6 +889,7 @@ briefDocumentation VisibleList := x -> null
 
 briefDocumentation Thing := x -> (
      if noBriefDocThings#?x or not isDocumentableThing x then return null;
+     if package x === Macaulay2Core then checkLoadDocumentation();
      r := briefSynopsis normalizeDocumentKey x;
      if r =!= null then << endl << r << endl
      else (
@@ -881,6 +900,7 @@ briefDocumentation Thing := x -> (
 
 help = method(SingleArgumentDispatch => true)
 help String := key -> (
+     checkLoadDocumentation();
      if unformatTag#?key then help unformatTag#key 
      else if isGlobalSymbol key then (
 	  t := getGlobalSymbol key;
@@ -888,7 +908,7 @@ help String := key -> (
      else (
 	  b := makeDocBody key;
 	  if b === null then (
-	       stderr << "warning: documentation node for '" << key << "' is empty" << endl;
+	       stderr << "--warning: documentation node for '" << key << "' is empty" << endl;
 	       b = ();
 	       );
 	  Hypertext fixuptop (title key, b, theExamples key, caveat key, seealso key, theMenu key)))
@@ -944,10 +964,7 @@ seecode := x -> (
      )
 
 documentationValue := method()
-documentationValue(Symbol,Function) := (s,f) -> ( 
-     -- ret f, 
-     fmeth f
-     )
+
 documentationValue(Symbol,Type) := (s,X) -> (
      syms := unique flatten(values \ globalDictionaries);
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X and isDocumentableMethod key), (key,Y) -> key);
@@ -955,13 +972,31 @@ documentationValue(Symbol,Type) := (s,X) -> (
      c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
      e := toString \ select(syms, y -> not mutable y and class value y === X);
      splice (
-	  if #b > 0 then ( DIV {"Types of ", if X.?synonym then X.synonym else toString X, " :"}, smenu b),
-	  if #a > 0 then ( DIV {"Functions and methods returning ", indefinite synonym X, " :"}, smenu a ),
-	  if #c > 0 then ( DIV {"Methods that use ", indefinite synonym X, " :"}, smenu c),
-	  if #e > 0 then ( DIV {"Fixed objects of class ", toString X, " :"}, smenu e)))
-documentationValue(Symbol,HashTable) := (s,x) -> splice (
-     c := documentableMethods x;
-     if #c > 0 then SEQ { SUBSECTION {"Functions installed in ", TT toString x }, smenu c})
+	  LITERAL "<div class=\"waystouse\">\n",
+	  if #b > 0 then ( SUBSECTION {"Types of ", if X.?synonym then X.synonym else toString X, " :"}, smenu b),
+	  if #a > 0 then ( SUBSECTION {"Functions and methods returning ", indefinite synonym X, " :"}, smenu a ),
+	  if #c > 0 then ( SUBSECTION {"Methods that use ", indefinite synonym X, " :"}, smenu c),
+	  if #e > 0 then ( SUBSECTION {"Fixed objects of class ", toString X, " :"}, smenu e),
+	  LITERAL "</div>\n"))
+
+documentationValue(Symbol,Function) := (s,f) -> (	    -- compare with fmeth above
+     a := documentableMethods f;
+     splice (
+	  LITERAL "<div class=\"waystouse\">\n",
+     	  if #a > 0 then ( SUBSECTION {"Ways to use ", TT toString f, " :"}, smenu a),
+	  LITERAL "</div>\n"))
+
+documentationValue(Symbol,Keyword) := (s,k) -> (
+     a := documentableMethods k;
+     splice (
+	  LITERAL "<div class=\"waystouse\">\n",
+     	  if #a > 0 then ( SUBSECTION {"Ways to use ", TT toString k, " :"}, smenu a),
+	  LITERAL "</div>\n"))
+
+-- documentationValue(Symbol,HashTable) := (s,x) -> splice (
+--      c := documentableMethods x;
+--      if #c > 0 then SEQ { SUBSECTION {"Functions installed in ", TT toString x }, smenu c})
+
 documentationValue(Symbol,Thing) := (s,x) -> ()
 
 authorDefaults := new HashTable from { Name => "Anonymous", Email => null, HomePage => null }
@@ -1003,18 +1038,46 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2Core then (
 		    if #c > 0 then PARA1 {"Symbols", smenu c},
 		    if #d > 0 then PARA1 {"Other things", smenuCLASS d}})))
 
+theAugmentedMenu := S -> (
+     f := value S;
+     menu := theMenu S;
+     if menu === null then menu = MENU {};
+     methsInMenu := DocumentTag.Key \ first \ select(toList menu, item -> class item === TO);
+     otherMeths := documentableMethods f - set methsInMenu;
+     if #otherMeths > 0 then (
+	  menu = join(menu, {
+		    concatenate( if #menu > 0 then "Other ways to use " else "Ways to use ", TT toString f, ":" )
+		    },
+	       fixup apply(otherMeths, m -> TO m));
+	  );
+     if #menu > 0 then menu
+     )
+
 help Symbol := S -> (
+     -- s := value S;
+     if package S === Macaulay2Core then checkLoadDocumentation();
+     currentHelpTag = makeDocumentTag S;
      a := smenu apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
-     b := smenu documentableMethods S;
-     Hypertext fixuptop ( title S, synopsis S, makeDocBody S, op S,
-	  if #a > 0 then (DIV {"Functions with optional argument named ", toExternalString S, " :"}, a),
-	  if #b > 0 then (DIV {"Methods for ", toExternalString S, " :"}, b),
+     -- b := smenu documentableMethods s;
+     ret := Hypertext fixuptop ( title S, synopsis S, makeDocBody S, op S,
+	  if #a > 0 then (SUBSECTION {"Functions with optional argument named ", toExternalString S, " :"}, a),
+-- 	  if #b > 0 then (
+-- 	       LITERAL "<div class=\"waystouse\">\n",
+-- 	       SUBSECTION {"Ways to use ", toExternalString s, " :"}, 
+-- 	       b,
+-- 	       LITERAL "</div>\n"),
      	  documentationValue(S,value S),
-	  theExamples S, caveat S, seealso S, type S, theMenu S ))
+	  theExamples S, caveat S, seealso S, type S, 
+	  theMenu S
+	  -- if class value S === Function then theAugmentedMenu S else theMenu S
+	  );
+     currentHelpTag = null;
+     ret)
 
 help DocumentTag := tag -> help DocumentTag.Key tag
 
 help Array := key -> (		    -- optional argument
+     checkLoadDocumentation();
      fn := key#0;
      opt := key#1;
      if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
@@ -1029,9 +1092,13 @@ help Array := key -> (		    -- optional argument
 	  theExamples key, caveat key, seealso key, theMenu key ))
 
 help Sequence := key -> (						    -- method key
+     checkLoadDocumentation();
      if key === () then return help "initial help";
      if null === lookup key then error("expected ", toString key, " to be a method");
-     Hypertext fixuptop ( title key, synopsis key, makeDocBody key, theExamples key, caveat key, seealso key, theMenu key ))
+     currentHelpTag = makeDocumentTag key;
+     ret := Hypertext fixuptop ( title key, synopsis key, makeDocBody key, theExamples key, caveat key, seealso key, theMenu key );
+     currentHelpTag = null;
+     ret)
 
 help List := v -> Hypertext between(HR{},help \ v)
 
@@ -1048,6 +1115,48 @@ infoHelp = key -> (
      tag := makeDocumentTag key;
      t := infoTagConvert tag;
      run ("info "|format t);)
+
+
+-----------------------------------------------------------------------------
+
+mat := (pat,line) -> class line === String and match(pat,line)
+
+tutorial = x -> (
+     x = lines x;
+     x = select(x, line -> not mat("^[[:space:]]*$",line));
+     head := false;
+     x = apply(x, line -> (
+	       if mat("^---",line) then (head = not head;) 
+	       else if head then HEADER4 replace("^-- *","",line)
+	       else line));
+     p1 := reverse positions(x, line -> mat("^--\\^$",line));
+     p2 := reverse positions(x, line -> mat("^--\\$$",line));
+     if #p1 != #p2 then error "unmatched --^ --$ pairs";
+     scan(#p1, 
+	  i -> x = join(
+	       take(x,{0,p1#i-1}),
+	       {concatenate between_newline take(x,{p1#i+1,p2#i-1})},
+	       take(x,{p2#i+1,#x-1})));
+     p1 = reverse positions(x, line -> mat("^--PRE\\^$",line));
+     p2 = reverse positions(x, line -> mat("^--PRE\\$$",line));
+     if #p1 != #p2 then error "unmatched --PRE^ --PRE$ pairs";
+     scan(#p1, 
+	  i -> x = join(
+	       take(x,{0,p1#i-1}),
+	       {PRE concatenate between_newline apply(take(x,{p1#i+1,p2#i-1}),line -> replace("^--","",line))},
+	       take(x,{p2#i+1,#x-1})));
+     x = apply(x, line -> if mat("^--$",line) then PARA{} else line);
+     x = sublists(x,line -> class line =!= String or not match("^--",line), identity, sublist -> if #sublist > 0 then TEX concatenate between(newline,apply(sublist,line -> replace("^-- *","",line))));
+     x = select(x, line -> line =!= null);
+     x = sublists(x,line -> class line =!= String, identity, sublist -> if #sublist > 0 then EXAMPLE sublist);
+     x = select(x, line -> line =!= null);
+     x )
+
+showSymbolsWithoutDocumentation = () -> (
+     checkLoadDocumentation();
+     m2 := value getGlobalSymbol "Macaulay2";
+     assert( class m2 === Package );
+     sort select ( unique values Macaulay2Core.Dictionary , s -> fetchRawDocumentation(m2, toString s) === null ))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

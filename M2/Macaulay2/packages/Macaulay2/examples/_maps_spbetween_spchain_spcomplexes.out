@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = QQ[x,y];
 
@@ -41,8 +42,6 @@ o5 : ChainComplexMap
 i6 : g * (source g).dd == (target g).dd * g
 
 o6 = true
-
-o6 : Boolean
 
 i7 : F = cone g
 
@@ -173,7 +172,5 @@ o16 : ChainComplexMap
 i17 : C.dd * q == q * C.dd
 
 o17 = false
-
-o17 : Boolean
 
 i18 : 

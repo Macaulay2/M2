@@ -4,7 +4,7 @@
 #include "monideal.hpp"
 #include <functional>
 #include <algorithm>
-
+#include "text_io.hpp"
 ReducedGB_ZZ::~ReducedGB_ZZ()
 {
 }
@@ -198,6 +198,15 @@ void ReducedGB_ZZ::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
 	break;
       case DIVISOR_MODULE:
 	g = polys[w];
+	if (gbTrace >= 4)
+	  {
+	    buffer o;
+	    R->gbvector_text_out(o,F,h);
+	    o << newline << "  divisor " << w << " is " ;
+	    R->gbvector_text_out(o,F,g.f);
+	    o << newline;
+	    emit(o.str());
+	  }
 	if (R->gbvector_reduce_lead_term_ZZ(F, Fsyz,
 					    h, zero,
 					    g.f, zero))

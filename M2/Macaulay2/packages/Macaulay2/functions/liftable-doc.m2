@@ -2,12 +2,13 @@
 --- author(s): MES
 --- notes: 
 
+undocumented {
+     	  (liftable,ZZ,Ring),
+	  (liftable,QQ,Ring)}
+
 document { 
      Key => {liftable,
 	  (liftable,RingElement,Ring)},
-     Undocumented => {
-     	  (liftable,ZZ,Ring),
-	  (liftable,QQ,Ring)},
      Headline => "whether a ring element can be lifted to another ring",
      Usage => "liftable(f,R)",
      Inputs => {

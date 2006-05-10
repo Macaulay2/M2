@@ -100,14 +100,15 @@ document {
 --- author(s): MES
 --- notes: 
 
-document { 
-     Key => {rowAdd,
-	  (rowAdd,MutableMatrix,ZZ,RingElement,ZZ)},
-     Undocumented => {
+undocumented {
 	  (rowAdd,MutableMatrix,ZZ,QQ,ZZ),
 	  (rowAdd,MutableMatrix,ZZ,RR,ZZ),
 	  (rowAdd,MutableMatrix,ZZ,CC,ZZ),
-	  (rowAdd,MutableMatrix,ZZ,ZZ,ZZ)},
+	  (rowAdd,MutableMatrix,ZZ,ZZ,ZZ)}
+
+document { 
+     Key => {rowAdd,
+	  (rowAdd,MutableMatrix,ZZ,RingElement,ZZ)},
      Headline => "add a multiple of one row to another",
      Usage => "rowAdd(m,i,a,j)",
      Inputs => {
@@ -131,14 +132,15 @@ document {
      SeeAlso => {"mutable matrices", "row and column operations"}
      }
 
-document { 
-     Key => {columnAdd,
-	  (columnAdd,MutableMatrix,ZZ,RingElement,ZZ)},
-     Undocumented => {
+undocumented {
 	  (columnAdd,MutableMatrix,ZZ,QQ,ZZ),
 	  (columnAdd,MutableMatrix,ZZ,RR,ZZ),
 	  (columnAdd,MutableMatrix,ZZ,CC,ZZ),
-	  (columnAdd,MutableMatrix,ZZ,ZZ,ZZ)},
+	  (columnAdd,MutableMatrix,ZZ,ZZ,ZZ)}
+
+document { 
+     Key => {columnAdd,
+	  (columnAdd,MutableMatrix,ZZ,RingElement,ZZ)},
      Headline => "add a multiple of one column to another",
      Usage => "columnAdd(m,i,a,j)",
      Inputs => {
@@ -205,14 +207,16 @@ document {
           },
      SeeAlso => {"mutable matrices", "row and column operations"}
      }
-document { 
-     Key => {rowMult,
-	  (rowMult,MutableMatrix,ZZ,RingElement)},
-     Undocumented => {
+
+undocumented {
 	  (rowMult,MutableMatrix,ZZ,QQ),
 	  (rowMult,MutableMatrix,ZZ,RR),
 	  (rowMult,MutableMatrix,ZZ,CC),
-	  (rowMult,MutableMatrix,ZZ,ZZ)},
+	  (rowMult,MutableMatrix,ZZ,ZZ)}
+
+document { 
+     Key => {rowMult,
+	  (rowMult,MutableMatrix,ZZ,RingElement)},
      Headline => "multiply a row by a ring element",
      Usage => "rowMult(m,i,a)",
      Inputs => {
@@ -233,14 +237,15 @@ document {
      SeeAlso => {"mutable matrices", "row and column operations"}
      }
 
-document { 
-     Key => {columnMult,
-	  (columnMult,MutableMatrix,ZZ,RingElement)},
-     Undocumented => {
+undocumented {
 	  (columnMult,MutableMatrix,ZZ,QQ),
 	  (columnMult,MutableMatrix,ZZ,RR),
 	  (columnMult,MutableMatrix,ZZ,CC),
-	  (columnMult,MutableMatrix,ZZ,ZZ)},
+	  (columnMult,MutableMatrix,ZZ,ZZ)}
+
+document { 
+     Key => {columnMult,
+	  (columnMult,MutableMatrix,ZZ,RingElement)},
      Headline => "multiply a column by a ring element",
      Usage => "columnMult(m,i,a)",
      Inputs => {

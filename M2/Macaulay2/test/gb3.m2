@@ -7,6 +7,7 @@ I = ideal(a^2-1, a^3+2)
 T = S/I
 assert( T == 0 )
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test gb3.out"
 -- End:

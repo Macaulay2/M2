@@ -1,7 +1,8 @@
+-- -*- M2-comint -*-
 
 i1 : code methods use
 
-o1 = -- ../../../Macaulay2/m2/methods.m2:188-190
+o1 = -- ../../../Macaulay2/m2/methods.m2:191-193
      use HashTable := x -> (
           if x.?use then x.use x; 
           x)
@@ -12,7 +13,9 @@ o1 = -- ../../../Macaulay2/m2/methods.m2:188-190
           if R.?generators and R.?generatorSymbols then scan(R.generatorSymbols,R.generators,(sym,val) -> sym <- val);
           if R.?use then R.use R;
           R)
-     -- ../../../Macaulay2/m2/packages.m2:276-279
+     -- ../../../Macaulay2/m2/matrix1.m2:525
+     use Ideal := (I) -> use ring I
+     -- ../../../Macaulay2/m2/packages.m2:282-285
      use Package := pkg -> if not member(pkg,packages) then (
           packages = prepend(pkg,packages);
           globalDictionaries = prepend(pkg.Dictionary,globalDictionaries);

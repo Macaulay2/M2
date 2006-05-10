@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : KK = ZZ/31991
 
@@ -142,8 +143,6 @@ o19 : Divisor
 i20 : D == R2
 
 o20 = false
-
-o20 : Boolean
 
 i21 : Divisor + Divisor := (D,E) -> divisor(D#0 * E#0, D#1 * E#1);
 
@@ -357,8 +356,6 @@ i52 : linearlyEquivalent(P,R)
 
 o52 = false
 
-o52 : Boolean
-
 i53 : linearlyEquivalent(2P,2R)
 
       x
@@ -437,16 +434,16 @@ o65 : QuotientRing
 
 i66 : KX = Ext^2(coker gens IC,S^{-4})
 
-o66 = cokernel {1} | c  b  a  |
-               {1} | -d -c -b |
+o66 = cokernel {1} | -d -c -b |
+               {1} | c  b  a  |
 
                              2
 o66 : S-module, quotient of S
 
 i67 : canpres = substitute(presentation(KX), SX)
 
-o67 = {1} | c  b  a  |
-      {1} | -d -c -b |
+o67 = {1} | -d -c -b |
+      {1} | c  b  a  |
 
                2        3
 o67 : Matrix SX  <--- SX
@@ -458,7 +455,7 @@ o68 = total: 2 3
 
 i69 : I1 = transpose (syz transpose canpres)_{0}
 
-o69 = | d c |
+o69 = | c d |
 
                1        2
 o69 : Matrix SX  <--- SX
@@ -496,8 +493,8 @@ i71 : divisorFromModule = M -> (
 
 i72 : M = coker canpres
 
-o72 = cokernel {1} | c  b  a  |
-               {1} | -d -c -b |
+o72 = cokernel {1} | -d -c -b |
+               {1} | c  b  a  |
 
                                2
 o72 : SX-module, quotient of SX

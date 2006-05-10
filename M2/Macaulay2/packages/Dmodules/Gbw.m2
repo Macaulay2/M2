@@ -62,8 +62,10 @@ inw (Matrix, List) := (m, w) -> (
 	  h := symbol h;
 	  Wh := (coefficientRing W)[(entries vars W)#0, h,
 	       WeylAlgebra => append(W.monoid.Options.WeylAlgebra, h),
-	       Weights => {toList(numgens W + 1: 1), append(w,0)},
-	       MonomialOrder => GRevLex];
+	       MonomialOrder => {
+		    Weights => toList(numgens W + 1: 1), 
+		    Weights => append(w,0),
+		    GRevLex}];
 	  WtoWh := map(Wh, W, (vars Wh)_{0..numgens W - 1});
 	  WhtoW := map(W, Wh, (vars W)_{0..numgens W - 1} | matrix{{1_W}});
 	  wt := toList(numgens Wh:1);
@@ -144,8 +146,10 @@ gbw (Matrix, List) := (m, w) -> (
 	  h := symbol h;
 	  Wh := (coefficientRing W)[(entries vars W)#0, h,
 	       WeylAlgebra => append(W.monoid.Options.WeylAlgebra, h),
-	       Weights => {toList(numgens W + 1: 1), append(w,0)},
-	       MonomialOrder => GRevLex];
+	       MonomialOrder => {
+		    Weights => toList(numgens W + 1: 1), 
+		    Weights => append(w,0),
+		    GRevLex}];
 	  WtoWh := map(Wh, W, (vars Wh)_{0..numgens W - 1});
 	  WhtoW := map(W, Wh, (vars W)_{0..numgens W - 1} | matrix{{1_W}});
 	  wt := toList(numgens Wh:1);

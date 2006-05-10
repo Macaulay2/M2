@@ -26,6 +26,7 @@ assert( degree q == {0} )
 assert( degree f == {0} )
 
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test lift.out"
 -- End:

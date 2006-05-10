@@ -1,13 +1,14 @@
+-- -*- M2-comint -*-
 
 i1 : x = set {a,b,c}
 
-o1 = Set {c, a, b}
+o1 = Set {a, b, c}
 
 o1 : Set
 
 i2 : toList x
 
-o2 = {c, a, b}
+o2 = {a, b, c}
 
 o2 : List
 

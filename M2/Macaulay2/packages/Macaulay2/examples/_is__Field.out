@@ -1,27 +1,20 @@
+-- -*- M2-comint -*-
 
 i1 : isField QQ
 
 o1 = true
 
-o1 : Boolean
-
 i2 : isField CC
 
 o2 = true
-
-o2 : Boolean
 
 i3 : isField GF(2,3)
 
 o3 = true
 
-o3 : Boolean
-
 i4 : isField(frac(QQ[x,y]))
 
 o4 = true
-
-o4 : Boolean
 
 i5 : R = QQ[x]/(x^2+1)
 
@@ -33,13 +26,9 @@ i6 : isUnit x
 
 o6 = true
 
-o6 : Boolean
-
 i7 : isField R
 
 o7 = false
-
-o7 : Boolean
 
 i8 : F = toField R
 
@@ -50,7 +39,5 @@ o8 : QuotientRing
 i9 : isField F
 
 o9 = true
-
-o9 : Boolean
 
 i10 : 

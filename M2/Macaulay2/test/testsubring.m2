@@ -161,6 +161,7 @@ test7()
 test8()
 testx()
 testx1()
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testsubring.out"
 -- End:

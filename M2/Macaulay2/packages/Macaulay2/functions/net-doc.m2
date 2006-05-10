@@ -2,9 +2,7 @@
 --- author(s): 
 --- notes: 
 
-document {
-     Key => (net, String),
-     Undocumented => {(net, Function),
+undocumented {(net, Function),
 	  (net, ANCHOR),
 	  (net, Adjacent),
 	  (net, Array),
@@ -111,7 +109,10 @@ document {
 	  (net, Vector),
 	  (net, VerticalList),
 	  (net, ZZ)
-	  },
+	  }
+
+document {
+     Key => (net, String),
      Headline => "convert a string to a net",
      Usage => "net s",
      Inputs => { "s" },

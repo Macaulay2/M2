@@ -2,13 +2,14 @@
 --- author(s): taken from Dan's, MES
 --- notes: 
 
-document { 
-     Key => {coefficientRing,(coefficientRing,Ring)},
-     Undocumented => {
+undocumented {
 	  (coefficientRing,FractionField),
 	  (coefficientRing,QuotientRing),
 	  (coefficientRing,PolynomialRing),
-	  (coefficientRing,GaloisField)},
+	  (coefficientRing,GaloisField)}
+
+document { 
+     Key => {coefficientRing,(coefficientRing,Ring)},
      Headline => "get the coefficient ring",
      Usage => "coefficientRing R",
      Inputs => {

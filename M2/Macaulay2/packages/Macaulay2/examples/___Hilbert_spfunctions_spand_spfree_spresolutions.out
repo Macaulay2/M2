@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ/32003[vars(0..17)];
 
@@ -13,8 +14,6 @@ o2 : R-module, quotient of R
 i3 : isHomogeneous M
 
 o3 = true
-
-o3 : Boolean
 
 i4 : codim M
 

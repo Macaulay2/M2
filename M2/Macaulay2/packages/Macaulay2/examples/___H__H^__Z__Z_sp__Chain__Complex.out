@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ/101[x,y]
 
@@ -27,7 +28,6 @@ o4 = 0
 o4 : R-module
 
 i5 : needsPackage "SimplicialComplexes"
---package "SimplicialComplexes" loaded
 
 o5 = SimplicialComplexes
 
@@ -41,26 +41,27 @@ o6 = R
 
 o6 : PolynomialRing
 
-i7 : D = simplicialComplex {{a,b,c},{a,b,d},{a,c,d},{b,c,d}}
+i7 : D = simplicialComplex {a*b*c,a*b*d,a*c*d,b*c*d}
 
-o7 = | d c b a |
+o7 = | bcd acd abd abc |
 
 o7 : SimplicialComplex
 
 i8 : C = chainComplex D
 
-       1       4
-o8 = QQ  <-- QQ
-              
-     -1      0
+       1       4       6       4
+o8 = QQ  <-- QQ  <-- QQ  <-- QQ
+                              
+     -1      0       1       2
 
 o8 : ChainComplex
 
-i9 : HH^2 C
+i9 : HH_2 C
 
-o9 = 0
+o9 = image 0
 
-o9 : QQ-module
+                               4
+o9 : QQ-module, submodule of QQ
 
 i10 : prune oo
 

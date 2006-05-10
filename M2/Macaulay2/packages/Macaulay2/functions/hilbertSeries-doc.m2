@@ -2,9 +2,10 @@
 --- author(s): L.Gold
 --- note:
 
+undocumented {(hilbertSeries,CoherentSheaf)}
+
 document { 
      Key => hilbertSeries,
-     Undocumented => {(hilbertSeries,CoherentSheaf)},
      Headline => "compute the Hilbert series",
      "The Hilbert series is the formal power series in the variables of the
      degrees ring whose coefficients are the dimensions of the corresponding
@@ -16,9 +17,10 @@ document {
 	  "poincareN", "hilbertPolynomial", "hilbertFunction"}
      }
 
+undocumented {(hilbertSeries,QuotientRing), (hilbertSeries, PolynomialRing)}
+
 document { 
      Key => (hilbertSeries,Ring),
-     Undocumented => {(hilbertSeries,QuotientRing), (hilbertSeries, PolynomialRing)},
      Headline => "compute the Hilbert series of the ring",
      Usage => "hilbertSeries R",
      Inputs => {

@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : s = new MutableList from {a,b,c};
 

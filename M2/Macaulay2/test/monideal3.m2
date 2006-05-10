@@ -5,6 +5,7 @@ J' = ideal matrix entries gens I
 mingens J
 mingens J'
 assert ( mingens J == mingens J' )
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test monideal3.out"
 -- End:

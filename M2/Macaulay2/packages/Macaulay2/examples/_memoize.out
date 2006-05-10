@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : fib = n -> if n <= 1 then 1 else fib(n-1) + fib(n-2)
 
@@ -6,7 +7,7 @@ o1 = fib
 o1 : Function
 
 i2 : time fib 16
-     -- used 0.009999 seconds
+     -- used 0.009998 seconds
 
 o2 = 1597
 

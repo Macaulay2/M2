@@ -4,6 +4,8 @@ all:: scc1
 include ../../include/config.Makefile
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
+# we don't want to use M2's load libraries
+LDLIBS =
 ############################################
 %.c        : %.y
 	$(YACC) $(YFLAGS) $^
@@ -38,3 +40,7 @@ distclean : clean
 
 Makefile : Makefile.in
 	cd ../..; ./config.status Macaulay2/c/Makefile
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:

@@ -7,13 +7,13 @@ PACKAGES = Macaulay2
 PACKAGES += Style
 PACKAGES += PrimaryDecomposition
 PACKAGES += CacheFileName
-PACKAGES += ConvexHulls
-#PACKAGES += Dmodules
+#PACKAGES += ConvexHulls
+PACKAGES += FourierMotzkin
+PACKAGES += Dmodules
 PACKAGES += Elimination
 PACKAGES += FirstPackage
 PACKAGES += GenericInitialIdeal
 PACKAGES += Markov
-PACKAGES += M2SingularBook
 PACKAGES += minimal
 PACKAGES += Points
 PACKAGES += PackageTemplate
@@ -50,7 +50,7 @@ check ::
 	     set -x ; \
 		  ../bin/M2$(EXE) -q --stop \
 		    --prefix $(encapdir) \
-		    -e "needsPackage(\"$$i\"); check $$i; exit 0" ; \
+		    -e "needsPackage(\"$$i\",MakeDocumentation=>true); check $$i; exit 0" ; \
 	     ) ; \
 	  done
 
@@ -90,6 +90,10 @@ distclean::clean
 clean check distclean ::; $(MAKE) -C ComputationsBook $@
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
 distclean::; rm -f Makefile
+
+## here is the list of other files to install along with Macaulay2
+install :: $(packagesdir)/eliminate.m2
+$(packagesdir)/eliminate.m2 : eliminate.m2 ; cp $^ "$@"
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages "

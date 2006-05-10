@@ -37,6 +37,7 @@ degrees M'
 assert ( M' == F )
 
 -----------------------------------------------------------------------------
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test prune.out"
 -- End:

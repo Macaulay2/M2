@@ -4,7 +4,7 @@
 class SymmMatrix
 {
 public:
-  static MatrixOrNull * SymmMatrix::symmetricPower(const Matrix *m0, int p)
+  static MatrixOrNull * symmetricPower(const Matrix *m0, int p)
   {
     if (m0->n_rows() != 1)
       {

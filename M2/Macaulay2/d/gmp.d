@@ -19,14 +19,15 @@ isPositive(x:Integer):bool ::=  1 == Ccode(int, "mpz_sgn((__mpz_struct *)", x, "
 isZero    (x:Integer):bool ::=  0 == Ccode(int, "mpz_sgn((__mpz_struct *)", x, ")");
 isNegative(x:Integer):bool ::= -1 == Ccode(int, "mpz_sgn((__mpz_struct *)", x, ")");
 
-export hash(x:Integer):int := Ccode(int, 
-     "mpz_hash(",					    -- see gmp_aux.c for this function
-         "(__mpz_struct *)", x, 
-     ")"
-     );
-
 export isInt(x:Integer):bool := 0 != Ccode(int, "mpz_fits_sint_p((__mpz_struct *)", x, ")");
 export toInt(x:Integer):int  := Ccode(int, "mpz_get_si((__mpz_struct *)", x, ")");
+
+export hash(x:Integer):int := (
+     if isInt(x) then 0x7fffffff & toInt(x)
+     else Ccode(int, 
+     	  "mpz_hash(",					    -- see gmp_aux.c for this function
+          "(__mpz_struct *)", x, 
+     	  ")"));
 
 getstr(str:Cstring, base:int, x:Integer):Cstring ::= Ccode(Cstring,
      "(Cstring) mpz_get_str(",

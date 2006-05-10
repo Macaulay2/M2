@@ -2,6 +2,11 @@
 --- author(s): MES
 --- notes: 
 
+undocumented {
+	  (isHomogeneous,FractionField),
+	  (isHomogeneous,PolynomialRing),
+	  (isHomogeneous,QuotientRing)}
+
 document { 
      Key => {isHomogeneous,
 	  (isHomogeneous,Ring),
@@ -14,10 +19,6 @@ document {
 	  (isHomogeneous,Vector),
 	  (isHomogeneous,Ideal)},
      Headline => "whether something is homogeneous (graded)",
-     Undocumented => {
-	  (isHomogeneous,FractionField),
-	  (isHomogeneous,PolynomialRing),
-	  (isHomogeneous,QuotientRing)},
      Usage => "isHomogeneous x",
      Inputs => {
 	  "x" => {"a ", TO Ring, ", ",

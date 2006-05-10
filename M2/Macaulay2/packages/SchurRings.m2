@@ -68,10 +68,7 @@ newSchur := (R,M,p) -> (
 	  );
      if R.?char then SR.char = R.char;
      SR.monoid = M;
-     SR ? SR := (f,g) -> (
-	  if f == g then symbol ==
-	  else leadMonomial f ? leadMonomial g
-	  );
+     -- SR ? SR := (f,g) -> ( if f == g then symbol == else leadMonomial f ? leadMonomial g ); -- the engine should handle it.
      R * M := (r,m) -> new SR from rawTerm(SR.RawRing,raw r,m.RawMonomial);
      M * R := (m,r) -> new SR from rawTerm(SR.RawRing,raw r,m.RawMonomial);
      SR * M := (p,m) -> p * (R#1 * m);
@@ -148,21 +145,21 @@ document {
      monomials correspond to the irreducible representations of GL(n), and where 
      multiplication is given by the decomposition of the tensor product of representations",
      PARA,
-     "We create such a ring in Macaulay 2 using the ", TO "Schur", " function:",
-     EXAMPLE "R = Schur 4;",
+     "We create such a ring in Macaulay 2 using the ", TO schurRing, " function:",
+     EXAMPLE "R = schurRing(s,4);",
      "A monomial represents the irreducible representation with a given highest weight. 
      The standard 4 dimensional representation is",
-     EXAMPLE "V = R_{1}",
+     EXAMPLE "V = s_{1}",
      "We may see the dimension of the corresponding irreducible representation using ", TO "dim",
      ":",
      EXAMPLE "dim V",
      "The third symmetric power of V is obtained by",
      EXAMPLE {
-	  "W = R_{3}",
+	  "W = s_{3}",
      	  "dim W"},
      "and the third exterior power of V can be obtained using",
      EXAMPLE {
-	  "U = R_{1,1,1}",
+	  "U = s_{1,1,1}",
 	  "dim U"},
      "Multiplication of elements corresponds to tensor product of representations.  The 
      value is computed using a variant of the Littlewood-Richardson rule.",
@@ -176,7 +173,7 @@ document {
 document {
      Key => schurRing,
      Headline => "make a Schur ring",
-     TT "schurRing(x,n)", " -- creates a Schur ring of degree n with variables based on the symbol x",
+     TT "schurRing(s,n)", " -- creates a Schur ring of degree n with variables based on the symbol s",
      PARA,
      "This is the representation ring for the general linear group of n by n matrices.",
      PARA,
@@ -186,16 +183,16 @@ document {
      Key => SchurRing,
      Headline => "the class of all Schur rings",
      "A Schur ring is the representation ring for the general linear group of 
-     n by n matrices, and one can be constructed with ", TO "Schur", ".",
-     EXAMPLE "R = Schur 4",
+     n by n matrices, and one can be constructed with ", TO schurRing, ".",
+     EXAMPLE "R = schurRing(s, 4)",
      "The element corresponding to the Young diagram ", TT "{3,2,1}", " is
      obtained as follows.",
-     EXAMPLE "R_{3,2,1}",
+     EXAMPLE "s_{3,2,1}",
      "The dimension of the underlying virtual representation can be obtained
      with ", TO "dim", ".",
-     EXAMPLE "dim R_{3,2,1}",
+     EXAMPLE "dim s_{3,2,1}",
      "Multiplication in the ring comes from tensor product of representations.",
-     EXAMPLE "R_{3,2,1} * R_{1,1}",
+     EXAMPLE "s_{3,2,1} * s_{1,1}",
      SeeAlso => {schurRing}}
 
 -- document {
@@ -560,7 +557,7 @@ end
 -----------------------------------------------------------------------------
 
 restart
-load "schur.m2"
+loadPackage "SchurRings"
 R = symmRing 4
 describe R
 f = jacobiTrudiE({4,1},R)

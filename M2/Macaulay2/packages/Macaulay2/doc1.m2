@@ -536,7 +536,8 @@ document {
      Key => leadMonomial,
      Headline => "the leading monomial",
      TT "leadMonomial f", " -- return the leading monomial of the polynomial
-     or vector f.",
+     or vector f, as a ring element.  (Warning: in version 0.9.2, a
+     monoid element was returned.)",
      PARA,
      SeeAlso => {"leadTerm", "leadCoefficient", "leadCoefficient"}
      }
@@ -726,17 +727,7 @@ document {
      output file, but a lot of time may be wasted converting ", TT "x", " to
      a net."
      }
-document {
-     Key => mathML,
-     Headline => "convert to MathML format",
-     TT "mathML x", " -- converts ", TT "x", " to MathML form.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ[x,y];",
-	  "mathML matrix {{x,y},{x^2+2,0}}"
-	  },
-     SeeAlso => "hypertext"
-     }
+
 document {
      Key => symbol "#",
      Headline => "length, or access to elements",

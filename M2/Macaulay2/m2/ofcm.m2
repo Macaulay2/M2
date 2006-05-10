@@ -12,11 +12,14 @@ ZZ _ Monoid := MonoidElement => (i,M) -> (
      else error "expected integer to be 1"
      )
 
-leadMonomial RingElement := MonoidElement => (f) -> (
+rawLeadMonomialR = method()
+rawLeadMonomialR RingElement := RawMonomial => (f) -> rawLeadMonomial(numgens monoid ring f, f.RawRingElement)
+
+leadMonomial RingElement := RingElement => (f) -> (
      R := ring f;
-     M := monoid R;
-     n := numgens M;
-     leadMonomial R := f -> new M from rawLeadMonomial(n, f.RawRingElement); -- the default method for most engine rings, but not Schur rings
+     k := coefficientRing R;
+     n := numgens monoid R;
+     leadMonomial R := f -> new R from rawTerm(raw R, raw 1_k, rawLeadMonomial(n, f.RawRingElement)); -- quicker the second time
      leadMonomial f)
 
 makeSparse := (v) -> select(apply(#v, i -> (i,v#i)), (k,v) -> v != 0)
@@ -188,7 +191,7 @@ makeit1 := (opts) -> (
      M.standardForm = somethingElse;
      expression M := x -> new Product from apply( 
 	  rawSparseListFormMonomial x.RawMonomial,
-	  (k,v) -> Power{M.generatorExpressions#k, v} );
+	  (k,v) -> if v =!= 1 then Power{M.generatorExpressions#k, v} else M.generatorExpressions#k );
      w := reverse applyTable(order, minus);
      w = if # w === 0 then apply(n,i -> {}) else transpose w;
      w = apply(w, x -> apply(makeSparse x, (k,v) -> (k + n, v)));

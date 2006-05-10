@@ -52,7 +52,7 @@ MutableMatrix == MutableMatrix := (m,n) -> raw m == raw n
 MutableMatrix + MutableMatrix := (m,n) -> map(ring m, raw m + raw n)
 MutableMatrix - MutableMatrix := (m,n) -> map(ring m, raw m - raw n)
 MutableMatrix * MutableMatrix := (m,n) -> map(ring m, raw m * raw n)
-RingElement * MutableMatrix := (f,n) -> map(ring m, raw f * raw n)
+RingElement * MutableMatrix := (f,n) -> map(ring f, raw f * raw n)
 
 assgn := method()
 assgn(RawMutableMatrix,ZZ,ZZ,RingElement) := (m,r,c,x) -> rawSetMatrixEntry(m,r,c,raw x)

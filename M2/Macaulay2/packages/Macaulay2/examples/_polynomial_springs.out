@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = QQ[x,y,z];
 
@@ -83,9 +84,9 @@ o14 : Ring
 
 i15 : random(2,R)
 
-      5             8       2  2
-o15 = -*x*y + x*z - -*y*z - -*z
-      2             9       5
+        10  2   5         2   7       1  2
+o15 = - --*x  - -*x*y - 3y  + -*y*z + -*z
+         7      8             5       3
 
 o15 : R
 
@@ -160,7 +161,5 @@ o31 : PolynomialRing
 i32 : ZZ[a,b,c] === ZZ[a,b,c]
 
 o32 = false
-
-o32 : Boolean
 
 i33 : 

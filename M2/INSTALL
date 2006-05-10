@@ -78,6 +78,7 @@ the earlier ones.
 	     make
 	     make install
 		-- don't bother with 'make gftables'
+	     for good debugging: configure with option --enable-assertions and with environment CFLAGS='-O0 -g' CXXFLAGS='-g -O0 --no-rtti --no-exceptions'
 
     library: Singular-libfac
     release: libfac-2.0.5
@@ -352,10 +353,7 @@ Here are the configure line I have used that works:
 
     mkdir tmp-profile
     cd tmp-profile
-    CPPFLAGS=-I/sw/include CFLAGS="-g" LDFLAGS="-L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/sw --with-veclib  --with-libgmp=/sw/lib/libgmp.a --enable-altivec --enable-profile
-    CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --enable-debug --disable-optimize --with-veclib  --with-libgmp=/sw/lib/libgmp.a --enable-altivec --enable-profile
-    CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --with-libgmp=/sw/lib/libgmp.a --enable-altivec --enable-profile
-
+    LOADLIBES=-lgcc_s.10.5 CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib --with-libgmp=/sw/lib/libgmp.a --enable-altivec --enable-profile
 
 Further notes:
 
@@ -400,6 +398,13 @@ library compatible.
 Another strange problem: the . command in /bin/sh seems to look along the
 path instead in the current directory to find the file.  This causes a
 problem for 'configure'.  Just edit its first line to use 'bash' instead.
+
+----------------------
+Solaris notes
+----------------------
+
+Configure with the option
+	--without-dumpdata
 
 ----------------------
 FreeBSD notes

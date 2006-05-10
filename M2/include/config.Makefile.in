@@ -30,7 +30,7 @@ DESC    = @PACKAGE_VERSION@-@host_cpu@-@OS@-@REL@
 
 DUMPDATA = @DUMPDATA@
 NODENAME = @NODENAME@
-PROFILE = @PROFILE@
+PROFILING = @PROFILING@
 FACTORY = @FACTORY@
 STRIP = @STRIP@
 OPTIMIZE = @OPTIMIZE@
@@ -58,7 +58,10 @@ LAPACK = @LAPACK@
 LAPACKLIBS = @LAPACKLIBS@
 GMPLIB = @GMPLIB@
 GCLIB = @GCLIB@
+NTLLIB = @NTLLIB@
 GDBMLIB = @GDBMLIB@
+LIBCF = @LIBCF@
+LIBFAC = @LIBFAC@
 READLINELIB = @READLINELIB@
 HISTORYLIB = @HISTORYLIB@
 ENCAP = @ENCAP@
@@ -67,6 +70,7 @@ EXEEXT = @EXEEXT@
 EXE = $(M2SUFFIX)$(EXEEXT)
 CONFIG_ARG0 = @CONFIG_ARG0@
 CONFIG_ARGS = @CONFIG_ARGS@
+CONFIG_CMD = @CONFIG_CMD@
 
 # See the autoconf documentation for a description of LIBS, which autoconf uses at configure time for checking for features
 # Hence we have to use it, too.
@@ -215,8 +219,6 @@ ifeq "$(CC)" "cl"
 include config.Microsoft
 endif
 
-DEBUGFLAGS :=
-
 ifeq "$(MEMDEBUG)" "yes"
 DEBUG = yes
 endif
@@ -225,7 +227,7 @@ ifeq "$(DEBUG)" "yes"
 STRIP = no
 endif
 
-ifeq "$(PROFILE)" "yes"
+ifeq "$(PROFILING)" "yes"
 CFLAGS   += -pg
 CXXFLAGS += -pg
 LDFLAGS  += -pg
@@ -233,9 +235,9 @@ STRIP = no
 endif
 
 ifeq "$(DEBUG)" "yes"
-DEBUGFLAGS += -DDEBUG
+CPPFLAGS += -DDEBUG
 else
-DEBUGFLAGS += -DNDEBUG
+CPPFLAGS += -DNDEBUG
 endif
 
 ifeq "$(GCC)" "yes"
@@ -263,7 +265,7 @@ endif
 endif
 
 ifeq "$(MEMDEBUG)" "yes"
-DEBUGFLAGS += -DMEMDEBUG
+CPPFLAGS += -DMEMDEBUG
 endif
 
 DUMPDATAFILE := Macaulay2-$(ARCH)-data
@@ -278,7 +280,7 @@ ifeq "$(OS)" "Darwin"
 LDFLAGS += -bind_at_load
 
 # this one makes it find and use our readline.a first, even if there is a file readline.dylib in /usr/lib
-# the point is that the system's readline.dylib might be much older and conflict with our newere one
+# the point is that the system's readline.dylib might be much older and conflict with our newer one
 LDFLAGS += -Wl,-search_paths_first
 
 endif
