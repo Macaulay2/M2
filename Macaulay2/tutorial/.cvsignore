@@ -1,7 +1,0 @@
-allfiles
-translate
-*.ilk
-*.pdb
-*.obj
-*.exe
-Makefile

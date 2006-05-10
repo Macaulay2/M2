@@ -1,8 +1,0 @@
-
-i1 : prepend( x, {a,b,c} )
-
-o1 = {x, a, b, c}
-
-o1 : List
-
-i2 : 
