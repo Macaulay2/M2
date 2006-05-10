@@ -37,6 +37,7 @@ Macaulay2/packages/ComputationsBook/varieties/Makefile
 Macaulay2/packages/Makefile
 Macaulay2/probe/Makefile
 Macaulay2/regex/Makefile
+Macaulay2/srcdir
 Macaulay2/test/Makefile
 Macaulay2/test/engine/Makefile
 Macaulay2/test/slow/Makefile

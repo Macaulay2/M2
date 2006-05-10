@@ -20,8 +20,6 @@ $(docm2reldir)/CHANGES : CHANGES ; $(INSTALL_DATA) $< "$@"
 $(docm2reldir)/README  : README  ; $(INSTALL_DATA) $< "$@"
 $(docm2reldir)/LAYOUT  : LAYOUT  ; $(INSTALL_DATA) $< "$@"
 ################################# srcdir
-initialize :: srcdir
-srcdir :; echo "@srcdir@" >$@
 clean::; rm -f srcdir
 ################################# cache
 initialize :: cache
