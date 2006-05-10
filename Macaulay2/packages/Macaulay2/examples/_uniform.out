@@ -1,0 +1,11 @@
+-- -*- M2-comint -*-
+
+i1 : uniform {2,3,5}
+
+o1 = true
+
+i2 : uniform {2,3,x}
+
+o2 = false
+
+i3 : 

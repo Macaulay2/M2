@@ -1,0 +1,37 @@
+-- -*- M2-comint -*-
+
+i1 : class {1,2,3}
+
+o1 = List
+
+o1 : Type
+
+ -- the class of all lists -- {...}
+
+i2 : R = QQ[a..d]
+
+o2 = R
+
+o2 : PolynomialRing
+
+i3 : class R
+
+o3 = PolynomialRing
+
+o3 : Type
+
+ -- the class of all ordered monoid rings
+
+i4 : class R === PolynomialRing
+
+o4 = true
+
+i5 : class R === Ring
+
+o5 = false
+
+i6 : instance(R,Ring)
+
+o6 = true
+
+i7 : 

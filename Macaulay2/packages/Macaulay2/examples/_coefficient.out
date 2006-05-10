@@ -1,0 +1,26 @@
+-- -*- M2-comint -*-
+
+i1 : R = GF(25,Variable=>a)[x,y,z];
+
+i2 : f = ((a+1)*x+a*y+a^2*z)^2
+
+        2                    2                      2
+o2 = a*x  - 2x*y + (- a - 1)y  - 2a*x*z + 2y*z + a*z
+
+o2 : R
+
+i3 : coefficient(y^2,f)
+
+o3 = - a - 1
+
+o3 : GF 25
+
+i4 : S = R[r,s,t];
+
+i5 : coefficient(r,a*x*(r+a*s))
+
+o5 = a*x
+
+o5 : R
+
+i6 : 

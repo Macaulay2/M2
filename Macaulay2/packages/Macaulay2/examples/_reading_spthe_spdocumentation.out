@@ -1,0 +1,90 @@
+-- -*- M2-comint -*-
+
+i1 : help "jacobian"
+
+o1 = jacobian -- the Jacobian matrix of partial derivatives
+     ******************************************************
+
+     Ways to use jacobian
+     ====================
+
+       * "jacobian Ideal" -- the Jacobian matrix of the generators of an ideal
+       * "jacobian Matrix" -- the matrix of partial derivatives of polynomials
+         in a matrix
+       * "jacobian MonomialIdeal" -- missing documentation
+       * "jacobian Ring" -- the Jacobian matrix of the polynomials defining a
+         quotient ring
+
+     See also
+     ========
+
+       * "diff" -- differentiate or take difference
+       * "contract" -- contract one matrix by another
+
+o1 : Hypertext
+
+i2 : * "jacobian Ideal"
+
+o2 = jacobian Ideal -- the Jacobian matrix of the generators of an ideal
+     *******************************************************************
+
+     Synopsis
+     ========
+
+       * Usage: jacobian I
+       * Function: "jacobian"
+       * Inputs:
+           * I, an ideal,  in a polynomial ring
+       * Outputs:
+           * a matrix, the Jacobian matrix of partial derivatives of the
+             generators of I
+
+     Description
+     ===========
+
+     This is identical to jacobian generators I.  See "jacobian Matrix" for more
+     information.
+
+         +----------------------------------+
+         |i1 : R = QQ[x,y,z];               |
+         +----------------------------------+
+         |i2 : I = ideal(y^2-x*(x-1)*(x-13))|
+         +----------------------------------+
+         |i3 : jacobian I                   |
+         +----------------------------------+
+
+     If the ring of I is a polynomial ring over a polynomial ring, then
+     indeterminates in the coefficient ring are treated as constants.
+
+         +--------------------------------------+
+         |i4 : R = ZZ[a,b,c][x,y,z]             |
+         +--------------------------------------+
+         |i5 : jacobian ideal(a*y*z+b*x*z+c*x*y)|
+         +--------------------------------------+
+
+o2 : Hypertext
+
+i3 : apropos "deal"
+
+o3 = {fittingIdeal, graphIdeal, Ideal, ideal, isIdeal, isMonomialIdeal,
+     ---------------------------------------------------------------------------
+     monomialCurveIdeal, MonomialIdeal, monomialIdeal, monomialSubideal}
+
+o3 : List
+
+i4 : examples "jacobian Ideal"
+
+o4 = R = QQ[x,y,z];
+     I = ideal(y^2-x*(x-1)*(x-13))
+     jacobian I
+     R = ZZ[a,b,c][x,y,z]
+     jacobian ideal(a*y*z+b*x*z+c*x*y)
+
+i5 : print examples "jacobian Ideal"
+R = QQ[x,y,z];
+I = ideal(y^2-x*(x-1)*(x-13))
+jacobian I
+R = ZZ[a,b,c][x,y,z]
+jacobian ideal(a*y*z+b*x*z+c*x*y)
+
+i6 : 

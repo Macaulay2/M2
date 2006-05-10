@@ -1,0 +1,16 @@
+-- -*- M2-comint -*-
+
+i1 : R = QQ[a..d, MonomialOrder=>Lex];
+
+i2 : I = ideal(a^7-b-3, a*b-1, a*c^2-3, b*d-4);
+
+o2 : Ideal of R
+
+i3 : gens gb I
+
+o3 = | d8-49152d-65536 16384c2-3d7+147456 16384b-d7+49152 4a-d |
+
+             1       4
+o3 : Matrix R  <--- R
+
+i4 : 

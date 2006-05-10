@@ -1,0 +1,16 @@
+-- -*- M2-comint -*-
+
+i1 : R = QQ[a..d];
+
+i2 : I = ideal(a,b,c,d^3);
+
+o2 : Ideal of R
+
+i3 : comodule I
+
+o3 = cokernel | a b c d3 |
+
+                            1
+o3 : R-module, quotient of R
+
+i4 : 
