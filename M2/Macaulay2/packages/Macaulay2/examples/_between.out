@@ -1,8 +1,0 @@
-
-i1 : between(55,{a,b,c,d})
-
-o1 = {a, 55, b, 55, c, 55, d}
-
-o1 : List
-
-i2 : 
