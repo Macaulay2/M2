@@ -354,6 +354,9 @@ Here are the configure line I have used that works:
     mkdir tmp-profile
     cd tmp-profile
     LOADLIBES=-lgcc_s.10.5 CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib --with-libgmp=/sw/lib/libgmp.a --enable-altivec --enable-profile
+    CPPFLAGS=-I/sw/include CFLAGS="-g" LDFLAGS="-L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/sw --with-veclib  --with-libgmp=/sw/lib/libgmp.a --enable-altivec --enable-profile
+    CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --enable-debug --disable-optimize --with-veclib  --with-libgmp=/sw/lib/libgmp.a --enable-altivec --enable-profile
+    CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --with-libgmp=/sw/lib/libgmp.a --enable-altivec --enable-profile
 
 Further notes:
 
