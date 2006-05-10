@@ -1,0 +1,13 @@
+-- -*- M2-comint -*-
+
+i1 : TEX ///A formula: $a \times \ {b\over c^3}$///
+
+o1 = A formula: $a \times \ {b\over c^3}$
+
+o1 : TEX
+
+i2 : html oo
+
+o2 = A formula: <i>a &times;&nbsp;b/c<sup>3</sup></i>
+
+i3 : 

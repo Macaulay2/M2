@@ -1,0 +1,102 @@
+-- -*- M2-comint -*-
+
+i1 : R = QQ[x,y,z];
+
+i2 : M = R^3
+
+      3
+o2 = R
+
+o2 : R-module, free
+
+i3 : I = ideal(x^2,y^2-x*z)
+
+             2   2
+o3 = ideal (x , y  - x*z)
+
+o3 : Ideal of R
+
+i4 : I*M
+
+o4 = image | x2 0  0  y2-xz 0     0     |
+           | 0  x2 0  0     y2-xz 0     |
+           | 0  0  x2 0     0     y2-xz |
+
+                             3
+o4 : R-module, submodule of R
+
+i5 : R*M_0
+
+o5 = image | 1 |
+           | 0 |
+           | 0 |
+
+                             3
+o5 : R-module, submodule of R
+
+i6 : I*M_1
+
+o6 = image | 0  0     |
+           | x2 y2-xz |
+           | 0  0     |
+
+                             3
+o6 : R-module, submodule of R
+
+i7 : J = I*M_1 + R*y^5*M_1 + R*M_2
+
+o7 = image | 0  0     0  0 |
+           | x2 y2-xz y5 0 |
+           | 0  0     0  1 |
+
+                             3
+o7 : R-module, submodule of R
+
+i8 : isSubset(I*M,M)
+
+o8 = true
+
+i9 : isSubset((x^3-x)*M,x*M)
+
+o9 = true
+
+i10 : F = matrix{{x,y,z}}
+
+o10 = | x y z |
+
+              1       3
+o10 : Matrix R  <--- R
+
+i11 : image F
+
+o11 = image | x y z |
+
+                              1
+o11 : R-module, submodule of R
+
+i12 : kernel F
+
+o12 = image {1} | 0  -z -y |
+            {1} | -z 0  x  |
+            {1} | y  x  0  |
+
+                              3
+o12 : R-module, submodule of R
+
+i13 : F = R^3
+
+       3
+o13 = R
+
+o13 : R-module, free
+
+i14 : F/(x*F+y*F+R*F_2)
+
+o14 = cokernel | x 0 0 y 0 0 0 |
+               | 0 x 0 0 y 0 0 |
+               | 0 0 x 0 0 y 1 |
+
+                             3
+o14 : R-module, quotient of R
+
+i15 : 

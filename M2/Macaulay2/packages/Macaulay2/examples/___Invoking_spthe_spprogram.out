@@ -1,0 +1,6 @@
+-- -*- M2-comint -*-
+
+i1 : sh: line 1: M2: command not found
+run "M2 --help";
+
+i2 : 

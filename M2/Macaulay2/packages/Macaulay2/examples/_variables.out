@@ -1,0 +1,41 @@
+-- -*- M2-comint -*-
+
+i1 : x
+
+o1 = x
+
+o1 : Symbol
+
+i2 : q0r55
+
+o2 = q0r55
+
+o2 : Symbol
+
+i3 : f'
+
+o3 = f'
+
+o3 : Symbol
+
+i4 : o2
+
+o4 = q0r55
+
+o4 : Symbol
+
+i5 : x=5
+
+o5 = 5
+
+i6 : x
+
+o6 = 5
+
+i7 : symbol x
+
+o7 = x
+
+o7 : Symbol
+
+i8 : 

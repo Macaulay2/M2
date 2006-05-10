@@ -1,0 +1,18 @@
+-- -*- M2-comint -*-
+
+i1 : debug Macaulay2Core
+
+i2 : R = QQ[a..d];
+
+i3 : raw R
+
+o3 = QQ[a,b,c,d,
+       Degrees => {1, 1, 1, 1},
+       MonomialOrdering => {
+         GRevLex => {1,1,1,1}
+         }
+       ]
+
+o3 : RawRing
+
+i4 : 

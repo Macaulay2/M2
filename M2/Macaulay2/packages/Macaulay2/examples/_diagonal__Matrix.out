@@ -1,0 +1,25 @@
+-- -*- M2-comint -*-
+
+i1 : R = QQ[a..d];
+
+i2 : diagonalMatrix vars R
+
+o2 = | a 0 0 0 |
+     | 0 b 0 0 |
+     | 0 0 c 0 |
+     | 0 0 0 d |
+
+             4       4
+o2 : Matrix R  <--- R
+
+i3 : diagonalMatrix matrix{{0,2},{4,6}}
+
+o3 = | 0 0 0 0 |
+     | 0 4 0 0 |
+     | 0 0 2 0 |
+     | 0 0 0 6 |
+
+              4        4
+o3 : Matrix ZZ  <--- ZZ
+
+i4 : 

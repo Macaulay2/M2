@@ -1,17 +1,20 @@
 newPackage (
-     "benchmark",
+     "Benchmark",
      Headline => "a standard Macaulay 2 benchmark"
      )
-export benchmark
 
-benchmark = () -> (
+export runBenchmark
+
+exportMutable (a,Z)
+
+runBenchmark = () -> (
      << "-- beginning computation " << get "!date";
      << "-- " << first lines get "!uname -a" << endl;
      << "-- Macaulay2 " << version#"VERSION";
      << ", compiled with " << version#"compiler";
      << endl;
 
-     rr = ZZ/101[a..Z, MonomialSize => 16];;
+     rr = ZZ/101[a..Z, MonomialSize => 16];
      ti = first timing (re = res coker genericMatrix(rr,a,3,9));
 
      vv = apply(8,i->rank re_i);
@@ -28,7 +31,14 @@ benchmark = () -> (
      << "-- resG25: " <<  toString ti << " seconds" << endl;
      )
 
+end
+
 -- Results:
+-- beginning computation Tue Apr 11 20:14:38 EDT 2006
+-- Linux mathvader1.math.cornell.edu 2.6.9-34.ELsmp #1 SMP Fri Feb 24 16:56:28 EST 2006 x86_64 x86_64 x86_64 GNU/Linux
+-- Macaulay2 0.9.8, compiled with gcc 3.4.5
+-- res39: 0.260961 seconds
+-- resG25: 3.89541 seconds
 
 -- beginning computation Mon Dec 23 00:06:16 CST 2002
 -- Linux u126.math.uiuc.edu 2.4.18-18.7.xsmp #1 SMP Wed Nov 13 19:01:42 EST 2002 i686 unknown
@@ -57,6 +67,18 @@ benchmark = () -> (
 -- Macaulay2 0.9.5, compiled with gcc 3.3.0
 -- res39: 0.72 seconds
 -- resG25: 6.82 seconds
+
+-- beginning computation Fri May  5 14:27:51 CDT 2006
+-- Linux u123.math.uiuc.edu 2.4.22-1.2199.4.legacy.nptl #1 Sun Feb 20 18:21:21 EST 2005 i686 i686 i386 GNU/Linux
+-- Macaulay2 0.9.8, compiled with gcc 4.1.0
+-- res39: 0.5 seconds
+-- resG25: 6.99 seconds
+
+-- beginning computation Fri May  5 13:38:03 CDT 2006
+-- Linux u123.math.uiuc.edu 2.4.22-1.2199.4.legacy.nptl #1 Sun Feb 20 18:21:21 EST 2005 i686 i686 i386 GNU/Linux
+-- Macaulay2 0.9.8, compiled with gcc 3.3.2
+-- res39: 0.56 seconds
+-- resG25: 7.38 seconds
 
 -- beginning computation Thu Oct 17 00:26:02 CEST 2002
 -- Linux abuch.imf.au.dk 2.4.9-34smp #1 SMP Sat Jun 1 05:54:57 EDT 2002 i686 unknown
@@ -94,6 +116,12 @@ benchmark = () -> (
 -- Macaulay2 0.9, compiled with gcc 2.95
 -- res39: 0.802 seconds
 -- resG25: 10.936 seconds
+
+-- beginning computation Tue Apr 11 19:53:29 EDT 2006
+-- Linux rhodium 2.6.11 #3 SMP Tue Jun 28 07:39:29 CDT 2005 i686 unknown unknown GNU/Linux
+-- Macaulay2 0.9.8, compiled with gcc 4.0.0
+-- res39: 0.749886 seconds
+-- resG25: 11.1823 seconds
 
 -- Linux rhenium 2.2.16 #24 Sat Jun 10 15:07:27 CDT 2000 i686 unknown
 -- Macaulay2 0.8.61, compiled with gcc 2.95
