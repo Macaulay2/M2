@@ -3,16 +3,17 @@ include ../../include/config.Makefile
 VPATH = @srcdir@
 ARGS = -q --silent --stop -e errorDepth=0
 .PHONY : all clean distclean install check default
-install:: M2-symbols.el M2-symbols
+all install:: M2-symbols.el M2-symbols
 M2-symbols M2-symbols.el : makesyms.m2 ../bin/M2$(EXE); ../bin/M2$(EXE) $(ARGS) @srcdir@/makesyms.m2 -e 'exit 0' </dev/null
-install:: emacs-hlp.txt
+all install:: emacs-hlp.txt
 emacs-hlp.txt: makehlp.m2 ../bin/M2$(EXE); ../bin/M2$(EXE) $(ARGS) @srcdir@/makehlp.m2 -e 'exit 0' </dev/null
-install:: emacs.m2
+all install:: emacs.m2
 emacs.m2: makem2.m2 ../bin/M2$(EXE); ../bin/M2$(EXE) $(ARGS) @srcdir@/makem2.m2 -e 'exit 0' </dev/null
 clean::; rm -f M2-symbols.el emacs-hlp.txt emacs.m2 M2-symbols
 distclean:: clean; rm -f Makefile
 $(emacsdocdir) $(emacsdir) :; $(INSTALL) -d "$@"
 install:: $(emacsdir)
+all    :: M2-mode.el M2.el M2-symbols.el M2-init.el
 install:: M2-mode.el M2.el M2-symbols.el M2-init.el; $(INSTALL_DATA) $^ $(emacsdir)
 install:: $(emacsdocdir)
 install:: emacs-hlp.txt emacs.m2 README; $(INSTALL_DATA) $^ $(emacsdocdir)
