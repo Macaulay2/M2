@@ -4,7 +4,7 @@ VPATH = @srcdir@
 DEPENDS = yes
 ############################## main targets
 all :: tokens_stub.o
-#all :: gc_tested
+all :: gc_tested
 all :: tags
 all :: compat.h
 all :: ../bin/M2$(EXE)

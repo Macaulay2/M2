@@ -63,6 +63,7 @@ tags: Makefile @srcdir@/TAGS @srcdir@/TAGS.doc
 clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: \
 		$(NONDOCM2FILES) \
+		installedpackages \
 		$(shell find @srcdir@/../packages -name "*.m2" -o -name examples -prune | grep -v Macaulay2/examples | sort) \
 		../e/statuscodes \
 		../emacs/makehlp.m2 \
@@ -198,7 +199,7 @@ install ::
 	@ echo installing the Macaulay2Core package
 	@ set -x ; time ../bin/M2$(EXE) $(M2OPTIONS)
 
-clean::; rm -rf ../cache/$(DUMPDATAFILE) cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 version.m2 core
+clean::; rm -rf ../cache/$(DUMPDATAFILE) cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 version.m2 core gmon.out
 distclean : clean; rm -f Makefile
 always:
 
