@@ -37,8 +37,6 @@ class DetComputation : public our_new_delete
 
   ring_elem **D;		// size p by p, dense representation.
 
-  bool do_trivial_case();
-
   void get_minor(int *r, int *c, int p, ring_elem **D);
   // Sets D[0..p-1,0..p-1] with the given minor of M.
 

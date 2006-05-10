@@ -21,7 +21,9 @@ E = {
 	      ideal(t,w,y,x,z,s*u+r*v)
 	      }
 
-assert(set D === set E) -- this should work??
+-- It is not true that:  set D === set E
+-- since these do not need to be the same sets, 
+-- as they have different generatoring sets.
 
 Ds = set apply(D, I -> trim I)
 Es = set apply(E, I -> trim I)

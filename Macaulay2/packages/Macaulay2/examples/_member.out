@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : x = {a,b,c,d,e};
 
@@ -5,12 +6,8 @@ i2 : member(c,x)
 
 o2 = true
 
-o2 : Boolean
-
 i3 : member(f,x)
 
 o3 = false
-
-o3 : Boolean
 
 i4 : 

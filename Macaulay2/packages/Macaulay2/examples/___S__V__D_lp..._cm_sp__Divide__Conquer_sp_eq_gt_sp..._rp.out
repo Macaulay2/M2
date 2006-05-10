@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : M = random(RR^200, RR^200);
 
@@ -5,9 +6,9 @@ i1 : M = random(RR^200, RR^200);
 o1 : Matrix RR    <--- RR
 
 i2 : time SVD(M);
-     -- used 0.331949 seconds
+     -- used 0.33195 seconds
 
 i3 : time SVD(M, DivideConquer=>true);
-     -- used 0.214967 seconds
+     -- used 0.351946 seconds
 
 i4 : 

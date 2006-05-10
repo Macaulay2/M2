@@ -513,6 +513,28 @@ const RingElementOrNull *IM2_RingElement_div(const RingElement *a,
 {
   // What is this exactly??
   return (*a) / (*b);
+
+#warning "after Dan changes // in the front end to use GB's, comment out the previous line"
+  const Ring *R = a->get_ring();
+  if (R != b->get_ring())
+    {
+      ERROR("ring division requires both elements to have the same base ring");
+      return 0;
+    }
+  if (b->is_zero())
+    {
+      ERROR("ring division: attempt to divide by zero");
+      return 0;
+    }
+  const PolyRing *P = R->cast_to_PolyRing();
+  if (P == 0)
+    {
+      ERROR("expected a polynomial ring");
+      return 0;
+    }
+  ring_elem result = P->quotient(a->get_value(), b->get_value());
+  if (error()) return 0;
+  return RingElement::make_raw(R, result);
 }
 
 const RingElementOrNull *IM2_RingElement_mod(const RingElement *a, 

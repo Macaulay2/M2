@@ -26,6 +26,8 @@ MinimalPrimes::~MinimalPrimes()
 
 int MinimalPrimes::codimension()
 {
+  minprime_limit = -1;
+
   codim_limit = min_codim;
   exps[0] = newarray(int,nvars);
   for (int i=0; i<nvars; i++) exps[0][i] = 0;

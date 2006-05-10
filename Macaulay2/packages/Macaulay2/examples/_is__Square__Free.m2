@@ -7,6 +7,6 @@ radical J
 isSquareFree radical J
 needsPackage "SimplicialComplexes"
 R = QQ[a..d]
-D = simplicialComplex {{a,b,c},{a,b,d},{a,c,d},{b,c,d}}
+D = simplicialComplex {a*b*c,a*b*d,a*c*d,b*c*d}
 I = monomialIdeal D
 isSquareFree I

@@ -36,11 +36,31 @@ DetComputation::DetComputation(const Matrix *M0, int p0,
       result = MatrixConstructor(F,0);
     }
 
-  if (do_trivial_case())
+  // Handle trivial cases
+  if (p < 0)
     {
+      // In either case, want a zero matrix
       done = true;
       return;
     }
+  if (p == 0)
+    {
+      // We want a single element which is '1'
+      if (do_exterior)
+	result.set_entry(0,0,R->one());
+      else
+	result.append(R->make_vec(0,R->one()));
+      done = true;
+      return;
+    }
+  if (p > M->n_rows() || p > M->n_cols())
+    {
+      // Zero matrix in either case
+      done = true;
+      return;
+    }
+  done = false;
+
 
   row_set = newarray(int,p);
   col_set = newarray(int,p);
@@ -113,26 +133,6 @@ int DetComputation::step()
       for (int i=0; i<p; i++) row_set[i]=i;
     }
   return COMP_COMPUTING;
-}
-
-bool DetComputation::do_trivial_case()
-{
-  if (p < 0)
-    {
-      // In either case, want a zero matrix
-      return true;
-    }
-  else if (p == 0)
-    {
-      // I suppose we want a single element which is '1'?
-      return true;
-    }
-  else if (p > M->n_rows() || p > M->n_cols())
-    {
-      // Zero matrix in either case
-      return true;
-    }
-  return false;
 }
 
 void DetComputation::clear()

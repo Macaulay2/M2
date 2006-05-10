@@ -1,5 +1,21 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
+TEST /// input "Dmodules/TST/AnnFs.tst.m2" ///
+TEST /// input "Dmodules/TST/DHom.tst.m2" ///
+TEST /// input "Dmodules/TST/Dbasic.tst.m2" ///
+TEST /// input "Dmodules/TST/Ddual.tst.m2" ///
+TEST /// input "Dmodules/TST/DeRham.tst.m2" ///
+TEST /// input "Dmodules/TST/Dinputtst.m2" ///
+TEST /// input "Dmodules/TST/Dlocalize.tst.m2" ///
+TEST /// input "Dmodules/TST/Dresolution.tst.m2" ///
+TEST /// input "Dmodules/TST/Drestriction.tst.m2" ///
+TEST /// input "Dmodules/TST/WeylClosure.tst.m2" ///
+TEST /// input "Dmodules/TST/b-function.ideal.tst.m2" ///
+TEST /// input "Dmodules/TST/b-function.module.tst.m2" ///
+TEST /// input "Dmodules/TST/localCohom.tst.m2" ///
+TEST /// input "Dmodules/TST/makeCyclic.tst.m2" ///
+TEST /// input "Dmodules/TST/paramBpoly.tst.m2" ///
+
 INSERTUSAGE := l->{ --!!! until "Usage =>" doesn't work
      {BOLD "Usage: ", PARA, l, PARA} 
      }
@@ -2351,3 +2367,4 @@ document {
      Headline => "Inverse Fourier map (D-modules)",
      " see ", TO "Fourier" 
      }
+

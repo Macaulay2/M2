@@ -21,8 +21,10 @@ char *progname;
 void arginits(int argc, char **argv) { progname = argv[0]; }
 
 static void init_gc(void) {
-     GC_all_interior_pointers = TRUE; /* especially important if MEMDEBUG is on, call first */
+     GC_all_interior_pointers = TRUE; /* especially important if MEMDEBUG is on, call first; gc is compiled by default with this on */
+#if 0 /* commented out, because we haven't tested this value lately */
      GC_free_space_divisor = 2;
+#endif
      GC_INIT();
      if (getenv("GC_free_space_divisor")) {
 	  GC_free_space_divisor = atoi(getenv("GC_free_space_divisor"));
@@ -44,29 +46,33 @@ static void init_gc(void) {
 #endif
      }
 
+#if 0
+/* this is the same as getmem(), so use it instead */
 void *GC_malloc_function (size_t new) {
      void *p = GC_MALLOC(new);
      if (p == NULL) outofmem();
+#    ifdef DEBUG
+     trapchk(p);
+#    endif
      return p;
      }
+#endif
 
 void *GC_realloc_function (void *s, size_t old, size_t new) {
      void *p = GC_REALLOC(s,new);
      if (p == NULL) outofmem();
+#    ifdef DEBUG
+     trapchk(p);
+#    endif
      return p;
      }
 
 void GC_free_function (void *s, size_t old) {
+#    ifdef DEBUG
+     trapchk(s);
+#    endif
      GC_FREE(s);
 }
-
-static void M2_mp_set_memory_functions(void) {
-#    if defined(GC_DEBUG) 
-     mp_set_memory_functions(GC_malloc_function,GC_realloc_function,GC_free_function);
-#    else
-     mp_set_memory_functions( (void *(*) (size_t)) GC_malloc, GC_realloc_function, (void (*) (void *, size_t)) GC_free );
-#    endif
-     }
 
 extern int initializeGMP();
 
@@ -74,43 +80,39 @@ static void *(*save_gmp_allocate_func  )(size_t);
 static void *(*save_gmp_reallocate_func)(void *, size_t, size_t);
 static void  (*save_gmp_free_func      )(void *, size_t);
 
-#ifdef FACTORY
-static void factory_mp_get_memory_functions() {
-  save_gmp_allocate_func = __gmp_allocate_func;
-  save_gmp_reallocate_func = __gmp_reallocate_func;
-  save_gmp_free_func = __gmp_free_func;
-}
-static void factory_mp_set_memory_functions() {
-  __gmp_allocate_func = save_gmp_allocate_func;
-  __gmp_reallocate_func = save_gmp_reallocate_func;
-  __gmp_free_func = save_gmp_free_func;
-}
-#endif
-
-void factory_setup_2() {
+void enterFactory() {
 # ifdef FACTORY
-  factory_mp_set_memory_functions();
+  static int done = 0;
+  if (!done) {
+    done = 1;
+    initializeGMP_Cwrapper();
+    save_gmp_allocate_func   = __gmp_allocate_func;
+    save_gmp_reallocate_func = __gmp_reallocate_func;
+    save_gmp_free_func       = __gmp_free_func;
+    }
+  else {
+    __gmp_allocate_func   = save_gmp_allocate_func;
+    __gmp_reallocate_func = save_gmp_reallocate_func;
+    __gmp_free_func       = save_gmp_free_func;
+  }
 # endif
 }
 
-void M2_setup() { M2_mp_set_memory_functions(); }
-
-int M2inits_run = 0;
+void enterM2(void) {
+     mp_set_memory_functions( (void *(*) (size_t)) getmem, GC_realloc_function, GC_free_function);
+     }
 
 void M2inits(void) {
-  /* this routine gets called twice, once by M2inits1 and once by M2inits2 -- the other constructors are called in between */
-  if (M2inits_run) return;
-# ifdef DEBUG
-  trap();			/* we call trap() once so variables (such as trapset) can be set */
-# endif
-  init_gc();
-# ifdef FACTORY
-  factory_gmp_init(), factory_mp_get_memory_functions();
-# endif
-  M2_mp_set_memory_functions();
-  IM2_initialize();
-  M2inits_run = 1;
-  M2inits1(), M2inits2();	/* just to ensure that M2inits1.o and M2inits2.o were actually linked in! */
+  static int done = 0;
+  if (!done) {
+    done = 1;
+#   ifdef DEBUG
+    trap();			/* we call trap() once so variables (such as trapset) can be set */
+#   endif
+    init_gc();
+    enterM2();
+    IM2_initialize();
+  }
 }
 
 /*

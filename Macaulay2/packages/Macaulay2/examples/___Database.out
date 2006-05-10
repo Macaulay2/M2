@@ -1,11 +1,12 @@
+-- -*- M2-comint -*-
 
 i1 : filename = temporaryFileName () | ".dbm"
 
-o1 = /tmp/M2-11905-1.dbm
+o1 = /tmp/M2-5759-1.dbm
 
 i2 : x = openDatabaseOut filename
 
-o2 = /tmp/M2-11905-1.dbm
+o2 = /tmp/M2-5759-1.dbm
 
 o2 : Database
 

@@ -1,5 +1,6 @@
 #include "coeffrings.hpp"
 #include "lapack.hpp"
+#include "config.h"
 
 //typedef DMat<CoefficientRingRR> LMatrixRR;
 
@@ -7,6 +8,10 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
 			      LMatrixRR *L,
 			      LMatrixRR *U)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return NULL;
+#else
   int rows = A->n_rows();
   int cols = A->n_cols();
   int info;
@@ -26,6 +31,7 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
   int loc = 0;
   for (int j=0; j<cols; j++) {
     for (int i=0; i<rows; i++) {
+      assert(vals < L->get_array() + L->n_rows() * L->n_cols());
       if (i > j) {
 	*vals++ = copyA->get_array()[loc++];
       } else if (i == j) {
@@ -43,6 +49,7 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
   loc = 0;
   for (int j=0; j<cols; j++) {
     for (int i=0; i<rows; i++) {
+      assert(vals < U->get_array() + U->n_rows() * U->n_cols());
       if (i <= j) {
 	*vals++ = copyA->get_array()[loc++];
       } else {
@@ -73,12 +80,17 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
     }
 
   return result;
+#endif
 }
 
 bool Lapack::solve(const LMatrixRR *A, /* read only */
 		   const LMatrixRR *b, /* read only */
 		   LMatrixRR *x) /* output value */
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   int size = A->n_rows();
   int bsize, info;
   int *permutation = newarray_atomic(int, size);
@@ -119,10 +131,15 @@ bool Lapack::solve(const LMatrixRR *A, /* read only */
     }
 
   return true;
+#endif
 }
 
 bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   int size = A->n_rows();
   if (size != A->n_cols()) {
     ERROR("expected a square matrix");
@@ -165,12 +182,17 @@ bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
   }
 
   return eigvals;
+#endif
 }
 
 bool Lapack::eigenvectors(const LMatrixRR *A,
 			  LMatrixCC *eigvals,
 			  LMatrixCC *eigvecs)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   int size = A->n_rows();
   if (size != A->n_cols()) {
     ERROR("expected a square matrix");
@@ -229,11 +251,15 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
   }
 
   return true;
+#endif
 }
-
 
 bool Lapack::eigenvalues_symmetric(const LMatrixRR *A, LMatrixRR *eigvals)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   int size = A->n_rows();
   if (size != A->n_cols()) {
     ERROR("expected a square matrix");
@@ -267,12 +293,17 @@ bool Lapack::eigenvalues_symmetric(const LMatrixRR *A, LMatrixRR *eigvals)
     }
 
   return true;
+#endif
 }
 
 bool Lapack::eigenvectors_symmetric(const LMatrixRR *A,
 				    LMatrixRR *eigvals, 
 				    LMatrixRR *eigvecs)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   int size = A->n_rows();
   if (size != A->n_cols()) {
     ERROR("expected a square matrix");
@@ -306,10 +337,15 @@ bool Lapack::eigenvectors_symmetric(const LMatrixRR *A,
     }
 
   return true;
+#endif
 }
 
 bool Lapack::SVD(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
   int rows = A->n_rows();
   int cols = A->n_cols();
@@ -344,10 +380,15 @@ bool Lapack::SVD(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *
     }
   
   return true;
+#endif
 }
 
 bool Lapack::SVD_divide_conquer(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
   int rows = A->n_rows();
   int cols = A->n_cols();
@@ -383,10 +424,15 @@ bool Lapack::SVD_divide_conquer(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR 
     }
 
   return true;
+#endif
 }
 
 bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   LMatrixRR *copyA = A->copy();
   LMatrixRR *copyb = b->copy();
   char job = 'N';
@@ -445,10 +491,15 @@ bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
   }
 
   return true;
+#endif
 }
 
 bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   LMatrixRR *copyA = A->copy();
   LMatrixRR *copyb = b->copy();
   int rows = A->n_rows();
@@ -511,6 +562,7 @@ bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMa
   }
 
   return true;
+#endif
 }
 
 
@@ -518,6 +570,10 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
 			      LMatrixCC *L,
 			      LMatrixCC *U)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return NULL;
+#else
   int rows = A->n_rows();
   int cols = A->n_cols();
   int info;
@@ -588,10 +644,15 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
       return 0;
     }
   return result;
+#endif
 }
 
 bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   LMatrixCC *copyA = A->copy();
 
   int size = A->n_rows();
@@ -633,10 +694,15 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
     }
 
   return true;
+#endif
 }
 
 bool Lapack::eigenvalues(const LMatrixCC *A, LMatrixCC *eigvals)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   int size = A->n_rows();
   if (size != A->n_cols()) {
     ERROR("expected a square matrix");
@@ -674,10 +740,15 @@ bool Lapack::eigenvalues(const LMatrixCC *A, LMatrixCC *eigvals)
       return false;
     }
   return true;
+#endif
 }
 
 bool Lapack::eigenvectors(const LMatrixCC *A, LMatrixCC *eigvals, LMatrixCC *eigvecs)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   int size = A->n_rows();
   if (size !=A->n_cols()) {
     ERROR("expected a square matrix");
@@ -717,10 +788,15 @@ bool Lapack::eigenvectors(const LMatrixCC *A, LMatrixCC *eigvals, LMatrixCC *eig
     }
 
   return true;
+#endif
 }
 
 bool Lapack::eigenvalues_hermitian(const LMatrixCC *A, LMatrixRR *eigvals)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   int size = A->n_rows();
   if (size != A->n_cols()) {
     ERROR("expected a square matrix");
@@ -755,10 +831,15 @@ bool Lapack::eigenvalues_hermitian(const LMatrixCC *A, LMatrixRR *eigvals)
     }
 
   return true;
+#endif
 }
 
 bool Lapack::eigenvectors_hermitian(const LMatrixCC *A, LMatrixRR *eigvals, LMatrixCC *eigvecs)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   int size = A->n_rows();
   if (size != A->n_cols()) {
     ERROR("expected a square matrix");
@@ -793,10 +874,15 @@ bool Lapack::eigenvectors_hermitian(const LMatrixCC *A, LMatrixRR *eigvals, LMat
     }
 
   return true;
+#endif
 }
 
 bool Lapack::SVD(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
   int rows = A->n_rows();
   int cols = A->n_cols();
@@ -832,10 +918,15 @@ bool Lapack::SVD(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *
     }
   
   return true;
+#endif
 }
 
 bool Lapack::SVD_divide_conquer(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
   int rows = A->n_rows();
   int cols = A->n_cols();
@@ -873,10 +964,15 @@ bool Lapack::SVD_divide_conquer(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC 
     }
 
   return true;
+#endif
 }
 
 bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   LMatrixCC *copyA = A->copy();
   LMatrixCC *copyb = b->copy();
   char job = 'N';
@@ -940,10 +1036,15 @@ bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
     */
   }
   return true;
+#endif
 }
 
 bool Lapack::least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 {
+#ifndef LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
   LMatrixCC *copyA = A->copy();
   LMatrixCC *copyb = b->copy();
   int rows = A->n_rows();
@@ -1010,6 +1111,7 @@ bool Lapack::least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMa
     */
   }
   return true;
+#endif
 }
 
 // Local Variables:

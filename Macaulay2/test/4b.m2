@@ -33,6 +33,7 @@ assert( degtan I8 == 32 )
 K = ideal (x^3, x^2*y, x*y*z, x^2*z, x*z^2, x*y^3, y^3*z, y^2*z^2, y*z^3, z^4, y^5)
 assert( degree K == 16 )
 assert( degtan K == 88 )
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test 4b.out"
 -- End:

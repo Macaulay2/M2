@@ -66,20 +66,21 @@ html LINK := x -> concatenate("<link href=\"", rel first x, "\"", concatenate dr
 html HREF := x -> concatenate("<a href=\"", rel first x, "\">", html last x, "</a>")
 tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral rel first x, "\">}", tex last x, "\\special{html:</a>}")
 html LABEL:= x -> concatenate("<label title=\"", x#0, "\">", html x#1, "</label>")
-html TO   := x -> concatenate(
-     "<a href=\"",
-     rel htmlFilename x#0,
-     "\" title=\"",
-     headline x#0,
-     "\">",
-     htmlLiteral DocumentTag.FormattedKey x#0,
-     "</a>",
-     if x#?1 then x#1)
-html TO2  := x -> concatenate("<a href=\"", rel htmlFilename x#0, "\">", htmlLiteral x#1, "</a>")
+html TO   := x -> (
+     concatenate(
+	  "<a href=\"",
+	  rel htmlFilename getPrimary x#0,
+	  "\" title=\"",
+	  headline x#0,
+	  "\">",
+	  htmlLiteral DocumentTag.FormattedKey x#0,
+	  "</a>",
+	  if x#?1 then x#1))
+html TO2  := x -> concatenate("<a href=\"", rel htmlFilename getPrimary x#0, "\">", htmlLiteral x#1, "</a>")
 
-next := tag -> if NEXT#?tag then ( HREF { htmlFilename NEXT#tag, nextButton }, " | ")
-prev := tag -> if PREV#?tag then ( HREF { htmlFilename PREV#tag, prevButton }, " | ")
-up   := tag -> if   UP#?tag then ( HREF { htmlFilename   UP#tag,   upButton }, " | ")
+next := tag -> ( if NEXT#?tag then HREF { htmlFilename NEXT#tag, nextButton } else nextButton, " | ")
+prev := tag -> ( if PREV#?tag then HREF { htmlFilename PREV#tag, prevButton } else prevButton, " | ")
+up   := tag -> ( if   UP#?tag then HREF { htmlFilename   UP#tag,   upButton } else upButton  , " | ")
 
 FIRST := tag -> (while PREV#?tag do tag = PREV#tag; tag)
 LAST  := tag -> (while NEXT#?tag do tag = NEXT#tag; tag)
@@ -89,8 +90,8 @@ FORWARD   := tag -> if linkTable#?tag and length linkTable#tag > 0 then         
 BACKWARD0 := tag -> if linkTable#?tag and length linkTable#tag > 0 then BACKWARD0 last linkTable#tag else tag
 BACKWARD  := tag -> if PREV#?tag then BACKWARD0 PREV#tag else if UP#?tag then UP#tag
 
-forward  := tag -> ( f := FORWARD  tag; if f =!= null then ( HREF { htmlFilename f, forwardButton }, " | "))
-backward := tag -> ( b := BACKWARD tag; if b =!= null then ( HREF { htmlFilename b, backwardButton}, " | "))
+forward  := tag -> ( f := FORWARD  tag; ( if f =!= null then HREF { htmlFilename f, forwardButton } else forwardButton , " | "))
+backward := tag -> ( b := BACKWARD tag; ( if b =!= null then HREF { htmlFilename b, backwardButton} else backwardButton, " | "))
 
 linkTitle := s -> concatenate( " title=\"", s, "\"" )
 linkTitleTag := tag -> concatenate( " title=\"", DocumentTag.FormattedKey tag, commentize headline tag, "\"" )
@@ -157,7 +158,7 @@ buttonBar := (tag) -> ButtonTABLE {{
 	       next tag,
 	       prev tag,
 	       up tag,
-     	       if tag =!= topDocumentTag then (topNodeButton, " | "),
+     	       (if tag =!= topDocumentTag then topNodeButton else topNodeButton#-1, " | "),
      	       masterIndexButton, " | ",
      	       tocButton, " | ",
      	       homeButton
@@ -336,11 +337,16 @@ separateRegexp(String,String) := (re,s) -> separateRegexp(re,0,s)
 separateRegexp(String,ZZ,String) := (re,n,s) -> (
      m := regex(re,s);
      if m#?n then prepend(substring(s,0,m#n#0), separateRegexp(re,n,substring(m#n#0+m#n#1,s))) else {s})
-separateExampleOutput = s -> (
-     r := capture s;
+
+separateExampleOutput = r -> (
      while r#0 == "\n" do r = substring(1,r);
      while r#-1 == "\n" do r = substring(0,#r-1,r);
      separateRegexp("(\n\n)i+[1-9][0-9]* : ",1,r))
+
+capture = method()
+capture String := s -> (
+     (err,out) := internalCapture s;
+     (err,out,separateExampleOutput out))
 
 -----------------------------------------------------------------------------
 -- installing packages -- eventually to be merged with 
@@ -399,14 +405,15 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> ( -- retur
      announcechange();
      stderr << "--making " << desc << " in file " << outf << endl;
      if fileExists outf then removeFile outf;
-     ldpkg := "-e 'needsPackage \""|toString pkg|"\"'";
+     pkgname := toString pkg;
+     ldpkg := if pkgname != "Macaulay2" then "-e 'needsPackage \""|pkgname|"\"'" else "";
      args := "--silent --print-width 80 --stop --int -e errorDepth=0" | (if usermode then "" else " -q") | " " | ldpkg;
      cmdname := commandLine#0;
      if ulimit === null then (
 	  ulimit = utest " -t 40" | utest " -m 90000"| utest " -v 90000";
 	  );
      tmpf << "-- -*- M2-comint -*-" << endl << close;
-     cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >>" | format tmpf | " 2>&1";
+     cmd := ulimit | "cd " | rundir | "; time " | cmdname | " " | args | " <" | format inf | " >>" | format tmpf | " 2>&1";
      stderr << cmd << endl;
      r := run cmd;
      if r == 0 then (
@@ -445,7 +452,13 @@ runString := (x,pkg,rundir,usermode) -> (
 check = method()
 check Package := pkg -> (
      usermode := false;					    -- fix this later as an option to "check" or something!
-     scan(values pkg#"test inputs", s -> runString(s,pkg,".",usermode));
+     haderror = false;
+     numerrors = 0;
+     scan(pairs pkg#"test inputs", (key,s) -> (
+	       (seqno,filename,lineno) := key;
+	       stderr << "--testing input " << seqno << " on line " << lineno << " from file " << filename << endl;
+	       runString(s,pkg,".",usermode);
+	       ));
      if haderror then error(toString numerrors, " error(s) occurred running tests for package ", toString pkg);
      )
 
@@ -524,7 +537,7 @@ installPackage Package := opts -> pkg -> (
      bn := buildPackage | ".m2";
      fn := currentSourceDir|bn;
      if not fileExists fn then error("file ", fn, " not found");
-     copyFile(fn, buildDirectory|pkgDirectory|bn, Verbose => debugLevel > 0);
+     copyFile(fn, buildDirectory|pkgDirectory|bn, Verbose => debugLevel > 5);
 
      if pkg === Macaulay2Core then (
 	  ) else (
@@ -581,13 +594,18 @@ installPackage Package := opts -> pkg -> (
 			 inf << val << close;
 			 )));
 
-	  -- check for obsolete example input files and remove them
+	  -- check for obsolete example input and output files and remove them
 	  scan(readDirectory exampleDir, fn -> (
 		    fn = exampleDir | fn;
+		    if match("\\.out$",fn) and not exampleInputFiles#?(replace("\\.out$",".m2",fn)) then (
+			 stderr << "--warning: removing obsolete example output file: " <<  fn << endl;
+			 removeFile fn;
+			 );
 		    if match("\\.m2$",fn) and not exampleInputFiles#?fn then (
 			 stderr << "--warning: removing obsolete example input file: " <<  fn << endl;
 			 removeFile fn;
-			 )));
+			 );
+		    ));
 
      --     -- make test input files
      --     testsDir := buildDirectory|LAYOUT#"packagetests" pkg#"title";
@@ -618,7 +636,7 @@ installPackage Package := opts -> pkg -> (
 	  stderr << "--storing raw documentation in " << rawdbname << endl;
 	  makeDirectory docDir;
 	  docDir|".linkdir" << close;
-	  if fileExists rawdbnametmp then unlinkFile rawdbnametmp;
+	  if fileExists rawdbnametmp then removeFile rawdbnametmp;
 	  if fileExists rawdbname then (
 	       tmp := openDatabase rawdbname;   -- just to make sure the database file isn't open for writing
 	       copyFile(rawdbname,rawdbnametmp);
@@ -734,17 +752,21 @@ installPackage Package := opts -> pkg -> (
 	  scan(nodes, tag -> if not isUndocumented tag then (
 		    fkey := DocumentTag.FormattedKey tag;
 		    if not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then (
-			 if debugLevel > 0 then stderr << "--skipping   " << tag << endl;
+			 if debugLevel > 0 then stderr << "--skipping     " << tag << endl;
 			 )
 		    else (
-			 if debugLevel > 0 then stderr << "--processing " << tag << endl;
+			 if debugLevel > 0 then stderr << "--processing   " << tag << endl;
 			 pkg#"processed documentation"#fkey = help tag;
 			 );
-		    ));
+		    )
+	       else (
+		    if debugLevel > 0 then stderr << "--undocumented " << tag << endl;
+		    )
+	       );
 
 	  -- cache processed documentation in database
 	  dbnametmp := dbname | ".tmp";
-	  if fileExists dbnametmp then unlinkFile dbnametmp;
+	  if fileExists dbnametmp then removeFile dbnametmp;
 	  if fileExists dbname then (
 	       tmp2 := openDatabase dbname;   -- just to make sure the database file isn't open for writing
 	       copyFile(dbname,dbnametmp);
@@ -762,7 +784,7 @@ installPackage Package := opts -> pkg -> (
 
 	  -- make table of contents, including next, prev, and up links
 	  stderr << "--assembling table of contents" << endl;
-	  assembleTree(pkg,nodes);
+	  assembleTree(pkg,select(nodes,tag -> not isUndocumented tag));
 	  pkg#"table of contents" = new Bag from {CONT}; -- we bag it because it might be big!
 	  pkg#"links up" = UP;
 	  pkg#"links next" = NEXT;
@@ -824,7 +846,7 @@ installPackage Package := opts -> pkg -> (
 	  makeDirectory (buildDirectory|htmlDirectory);
 	  buildDirectory|htmlDirectory|".linkdir" << close;
 	  stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
-	  scan(nodes, tag -> (
+	  scan(nodes, tag -> if not isUndocumented tag then (
 	       -- key := DocumentTag.Key tag;
 	       fkey := DocumentTag.FormattedKey tag;
 	       fn := buildDirectory | htmlFilename tag;
@@ -847,7 +869,7 @@ installPackage Package := opts -> pkg -> (
 	       << endl << close));
 
 	  -- make master.html with master index of all the html files
-	  makeMasterIndex select(nodes,tag -> instance(DocumentTag.Key tag,Symbol));
+	  makeMasterIndex select(nodes,tag -> not isUndocumented tag and instance(DocumentTag.Key tag,Symbol));
 
 	  -- make table of contents
 	  makeTableOfContents();

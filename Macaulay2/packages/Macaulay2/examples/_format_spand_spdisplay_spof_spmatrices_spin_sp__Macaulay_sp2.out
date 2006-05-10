@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : QQ[x];
 
@@ -13,8 +14,6 @@ i3 : compactMatrixForm = false
 
 o3 = false
 
-o3 : Boolean
-
 i4 : matrix{{x^2 + 3, x^4 + 1},{x^13 - 5, x^7 - 1}}
 
      |   2       4     |
@@ -29,8 +28,6 @@ o4 : Matrix QQ [x]  <--- QQ [x]
 i5 : compactMatrixForm = true
 
 o5 = true
-
-o5 : Boolean
 
 i6 : matrix{{x^2 + 3, x^4 + 1},{x^13 - 5, x^7 - 1}}
 

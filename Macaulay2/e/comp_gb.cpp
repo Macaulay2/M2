@@ -10,6 +10,7 @@
 #include "gbweight.hpp"
 #include "comp_gb_proxy.hpp"
 #include "linalgGB/m2interface.hpp"
+#include "text_io.hpp"
 
 GBComputation *createF4GB(const Matrix *m,
 			  M2_bool collect_syz,

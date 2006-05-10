@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ[a..z];
 
@@ -13,8 +14,6 @@ o2 : Matrix R  <--- R
 i3 : transpose(M) - M == 0
 
 o3 = true
-
-o3 : Boolean
 
 i4 : genericSymmetricMatrix(R,d,5)
 

@@ -156,8 +156,7 @@ Dresolution (Module, List) := options -> (M, w) -> (
      	  -- Make the homogeneous Weyl algebra
      	  HW := (coefficientRing W)[(entries vars W)#0, homVar,
 	       WeylAlgebra => append(W.monoid.Options.WeylAlgebra, homVar),
-	       Weights => {Hwt, Vwt},
-	       MonomialOrder => GRevLex];
+	       MonomialOrder => {Weights=>Hwt, Weights=>Vwt, GRevLex}];
      	  WtoHW := map(HW, W, (vars HW)_{0..numgens W - 1});
      	  HWtoW := map(W, HW, (vars W)_{0..numgens W - 1} | matrix{{1_W}});
 	  -- Also make the homogenizing Weyl algebra for shifts

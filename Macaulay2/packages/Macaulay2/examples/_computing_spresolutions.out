@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = QQ[x..z];
 
@@ -36,7 +37,7 @@ i6 : (<< "-- computation started: " << endl;
           << "-- continuing the computation" << endl;
           ))
 -- computation started: 
-     -- used 2.97955 seconds
+     -- used 2.92555 seconds
 -- computation interrupted
         : total pairs
   totals: 4 11 526 474 61
@@ -52,7 +53,7 @@ i6 : (<< "-- computation started: " << endl;
        9: .  . 252 252  .
 
 -- continuing the computation
-     -- used 2.96755 seconds
+     -- used 2.70459 seconds
 -- computation interrupted
         : total pairs
   totals: 4 11 646 594 145
@@ -69,7 +70,7 @@ i6 : (<< "-- computation started: " << endl;
       10: .  . 120 120   .
 
 -- continuing the computation
-     -- used 2.98355 seconds
+     -- used 2.99355 seconds
 -- computation interrupted
         : total pairs
   totals: 4 11 646 594 185
@@ -86,7 +87,7 @@ i6 : (<< "-- computation started: " << endl;
       10: .  . 120 120  40
 
 -- continuing the computation
-     -- used 1.72574 seconds
+     -- used 2.38464 seconds
 -- computation complete
         : total pairs
   totals: 4 11 646 594 185

@@ -1,6 +1,6 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
-needs "D-modules.m2"
+needs "Dmodules.m2"
 Dtrace 1
 pInfo(1, "testing localCohom...")
 
@@ -35,14 +35,7 @@ W = QQ[x, dx, WeylAlgebra=>{x=>dx}]
 I = ideal {x, x^2, x^2+x, x^3, x^4+2*x}
 M = W^1 / ideal dx 
 time h = localCohom (I, M, Strategy=>Walther, LocStrategy=>Oaku)
-time hh = localCohom (ideal x)  
+time h' = localCohom (ideal x)  
 h = pruneLocalCohom h
-hh = pruneLocalCohom hh
-assert all(toList h, i-> not hh#?i or hh#i == h#i)
-
-
-
-
-
-
-
+h' = pruneLocalCohom h'
+assert all(toList h, i-> not h'#?i or h'#i == h#i)

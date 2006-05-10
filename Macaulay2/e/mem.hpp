@@ -68,10 +68,57 @@ private:
   int n_frees;
 
   static stash *stash_list;
+  static slab *slab_freelist;
 
   // private routines
   void chop_slab();
 };
+
+inline void *stash::new_elem()
+     // Allocate space for an object from this stash.
+{
+  n_allocs++;
+  n_inuse++;
+  if (n_inuse > highwater) highwater = n_inuse;
+  if (free_list == NULL) 
+    {
+      if (n_per_slab == 0) 
+	{
+	  void *result = newarray(char,element_size);
+	  //allocated_amount += element_size;
+	  return result;
+	}
+      chop_slab();
+    }
+  assert(free_list != NULL);	// chop_slab should not let this happen.
+  void *result = free_list;
+  free_list = *(reinterpret_cast<void **>(free_list));
+  return result;
+}
+
+inline void stash::delete_elem(void *p)
+     // Delete the object 'p', placing it on the free list for this stash.
+{
+  if (p == NULL) return;
+  //  if (trace_bad_deletes)
+  //    {
+  //      for (void *q = free_list; q != NULL; q = *(reinterpret_cast<void **>(q)))
+  //	if (q == p)
+  //	  assert(0);
+  //    }
+
+  n_inuse--;
+  n_frees++;
+  if (n_per_slab == 0)
+    {
+      //      deleted_amount += element_size;
+      char *q = reinterpret_cast<char *>(p);
+      deletearray(q);
+      return;
+    }
+  *(reinterpret_cast<void **>(p)) = free_list;
+  free_list = p;
+}
 
 class doubling_stash : public our_new_delete
 {

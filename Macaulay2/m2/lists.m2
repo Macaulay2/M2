@@ -88,6 +88,20 @@ rotate(VisibleList,ZZ) := (s,n) -> (
  sort List :=  sort Sequence := opts -> internalsort
 rsort List := rsort Sequence := opts -> internalrsort
 
+-----------------------------------------------------------------------------
+-- sublists
+-----------------------------------------------------------------------------
+sublists = (x,f,g,h) -> (
+     -- x is a list with elements i
+     -- apply g to those i for which f i is true
+     -- apply h to the sublists, possibly empty, including those at the beginning and end, of elements between the ones for which f i is true
+     -- return the results in the same order
+     p := positions(toSequence x, f);
+     mingle(
+	  apply( prepend(-1,p), append(p,#x), (i,j) -> h take(x,{i+1,j-1})),
+	  apply( p, i -> g x#i)))
+-----------------------------------------------------------------------------
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

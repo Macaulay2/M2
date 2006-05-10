@@ -1,5 +1,3 @@
-errorDepth = 0 ; error "this test not working yet, after re-implementation"
-
 -- Copyright 1995. Michael E. Stillman
 -- local variables in the variables added October 27, 1995 (David Eisenbud)
 
@@ -7,13 +5,14 @@ sat1 = m -> (
     -- this method is used to find (m : lastvar^*), if the monomial
     -- order is the reverse lex order
     R := ring m;
-    divideByVariable(generators gb m,R_(numgens R - 1)))
+    (msat,topv) = divideByVariable(generators gb m,R_(numgens R - 1));
+    msat)
 
-document {
-     Key => symbol sat1,
-     TT "sat1(m)", " -- returns (m : lastvar^*), if the monomial
-     order is the reverse lex order."
-     }
+--document {
+--     Key => symbol sat1,
+--     TT "sat1(m)", " -- returns (m : lastvar^*), if the monomial
+--     order is the reverse lex order."
+--     }
 
      -- for I : f^*, when f isn't last variable (check first)
      -- iterate I = I:f until equality
@@ -40,19 +39,19 @@ subrg = (f, I, S) -> (
   mingens image substitute((sat1 generators gb J),mapback)
   )
 
-document {
-     Key => symbol subrg,
-     TT "subrg(f,I,S)", " -- returns the image of V(I) in Proj S
-     under the rational map defined by f."
-     }
+--document {
+--     Key => symbol subrg,
+--     TT "subrg(f,I,S)", " -- returns the image of V(I) in Proj S
+--     under the rational map defined by f."
+--     }
  
-suber = (f, S) -> subrg(f, map(R^1, 0), S)
+suber = (f, S) -> subrg(f, map(R^1, R^0, 0), S)
 
-document {
-     Key => symbol suber,
-     "suber(f,S)", " -- returns the image of the projective space
-     under the rational map defined by f."
-     }
+--document {
+--     Key => symbol suber,
+--     "suber(f,S)", " -- returns the image of the projective space
+--     under the rational map defined by f."
+--     }
 
 eg1 = () -> (
   -- The first example: the rational quartic in P3
@@ -74,6 +73,7 @@ eg2 = () -> (
 assert ( image eg1() == image matrix {{b*c-a*d, b^3-a^2*c, c^3-b*d^2, a*c^2-b^2*d}})
 assert ( image eg2() == image matrix {{e^2-d*f, a*c-d*f, a*b-d*e, c*e-b*f, c*d-b*e, 
 	       c^2-a*f, a^2-b*e, b*c-a*e, b^2-a*d}})
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test subring.out"
 -- End:

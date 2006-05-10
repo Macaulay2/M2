@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : run "uname -a"
 Linux rhodium 2.6.11 #3 SMP Tue Jun 28 07:39:29 CDT 2005 i686 unknown unknown GNU/Linux
@@ -32,7 +33,6 @@ o6 = interpreterDepth
      installPackage
      installMethod
      integralClosure
-     infoTagConvert
      instance
      info
      intersect
@@ -60,8 +60,6 @@ i8 : isReady f
 
 o8 = false
 
-o8 : Boolean
-
 i9 : while not isReady f do (sleep 1; << "." << flush)
 .....
 i10 : read f
@@ -72,13 +70,9 @@ i11 : isReady f
 
 o11 = true
 
-o11 : Boolean
-
 i12 : atEndOfFile f
 
 o12 = true
-
-o12 : Boolean
 
 i13 : close f
 

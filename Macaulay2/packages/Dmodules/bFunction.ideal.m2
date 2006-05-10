@@ -227,7 +227,7 @@ factorBFunction(RingElement) := Product => f -> (
      f = factor f;
      pInfo(666, {"f =" , f});
      
-     f = select(f, u->first degree u#0 > 0);
+     f = select(f, u-> first degree u#0 > 0);
      
      result := apply(f, u->(
 	       if first degree u#0 != 1 then error "incorrect b-function";

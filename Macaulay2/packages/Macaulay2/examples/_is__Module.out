@@ -1,11 +1,10 @@
+-- -*- M2-comint -*-
 
 i1 : R = QQ[a..d]/(a*b*c*d);
 
 i2 : isModule R
 
 o2 = false
-
-o2 : Boolean
 
 i3 : M = a^2 * R^2 + a*b * R^2
 
@@ -18,7 +17,5 @@ o3 : R-module, submodule of R
 i4 : isModule M
 
 o4 = true
-
-o4 : Boolean
 
 i5 : 

@@ -260,7 +260,8 @@ search4ABigGuy := (V, I, pNODE) -> (
 	       toString ((V#tempN#grandpa)#children / (i->
 			 (i, isSubset((V#tempN#i)#tempI, I)))));
 	  temp := select(1, (V#tempN#grandpa)#children, 
-	       i-> (i < parentNODE) and isSubset((V#tempN#i)#tempI, I) ); 
+--	       i-> (i < parentNODE) and isSubset((V#tempN#i)#tempI, I) ); 
+	       i-> (i < pNODE) and isSubset((V#tempN#i)#tempI, I) ); 
 	  if #temp > 0 then temp#0
 	  else search4ABigGuy(V, I, grandpa)
 	  ) 
@@ -784,11 +785,11 @@ AnnFsParam := f -> (
      WS := (coefficientRing W)[(entries vars W)#0, s,
 	  WeylAlgebra => W.monoid.Options.WeylAlgebra];
      WTtoWS := g -> (
-	  e := exponents leadMonomial g;
+	  e := first exponents leadMonomial g;
 	  if e#0 > e#1 then g = dt^(e#0-e#1) * g
 	  else g = t^(e#1-e#0) * g;
 	  g' := 0_WS;
-	  while (d := exponents leadMonomial g; d#0 * d#1 != 0) do(
+	  while (d := first exponents leadMonomial g; d#0 * d#1 != 0) do(
 	       c := leadCoefficient g;
 	       g' = g' + c * (-s-1)^(d#1) * WS_(drop(d, 2) | {0}); -- >%-0	
 	       g = g - c * (t*dt)^(d#1) * WT_({0,0} | drop(d, 2));
@@ -973,13 +974,16 @@ paramGB = I -> (
     varP := first entries vars L;
     np := #varP;
     ord := R.monoid.Options.MonomialOrder;
-    newMonomialOrder := ord -> (
+    -- MES: I replaced the following by the one below it.
+    newMonomialOrderOLD := ord -> (
 	 if class ord === Nothing then ProductOrder {numgens R, np}
 	 else if class ord === Eliminate then 
 	 ProductOrder {ord#0, numgens R - ord#0, np}
 	 else if class ord === ProductOrder then
 	 ProductOrder ((toList ord) | {np}) 
 	 );
+    newMonomialOrder := ord -> (
+	 append(ord, GRevLex=>np));
     Rgens := R.generatorSymbols;
     Lgens := L.generatorSymbols;
     

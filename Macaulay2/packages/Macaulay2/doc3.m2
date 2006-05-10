@@ -103,6 +103,20 @@ document {
      }
 
 document {
+     Key => (symbol @@, Function, Function),
+     Headline => "composition of functions",
+     Usage => "f @@ g",
+     Inputs => { "f" =>  null, "g" => null },
+     Outputs => {{ "the composite function of ", TT "f", " and ", TT "g", "." }},
+     EXAMPLE {
+	  "f = i -> i+1",
+	  "g = i -> i^2",
+	  "apply(0 .. 10, f @@ g)",
+	  "apply(0 .. 10, g @@ f)"
+	  }
+     }
+
+document {
      Key => symbol "@",
      Headline => "a binary operator",
      "This operator is right associative."

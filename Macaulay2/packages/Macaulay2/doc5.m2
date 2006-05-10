@@ -324,54 +324,185 @@ document {
 
 document {
      Key => Set, 
-     Headline => "the class of all sets"
+     Headline => "the class of all sets",
+     "Elements of sets may be any immutable object, such as integers, ring elements
+     and lists of such.  Ideals may also be elements of sets.",
+     EXAMPLE {
+	  "A = set {1,2};",
+	  "R = QQ[a..d];",
+	  "B = set{a^2-b*c,b*d}"
+	  },
+     "Set operations, such as ", 
+     TO2((member,Thing,Set),"membership"), ", ",     
+     TO2((symbol+,Set,Set),"union"), ", ",
+     TO2((symbol*,Set,Set),"intersection"), ", ",
+     TO2((symbol-,Set,Set),"difference"), ", ",
+     TO2((symbol**,Set,Set),"Cartesian product"), ", ",
+     TO2((symbol^**,Set,ZZ),"Cartesian power"), ", and ",
+     TO2((isSubset,Set,Set),"subset"),
+     " are available. For example,",
+     EXAMPLE {
+	  "toList B",
+	  "member(1,A)",
+	  "member(-b*c+a^2,B)",
+     	  "A ** A",
+	  "A^**2",
+	  "set{1,3,2} - set{1}",
+	  "set{4,5} + set{5,6}",
+	  "set{4,5} * set{5,6}",
+	  "set{1,3,2} == set{1,2,3}"
+	  },
+     PARA,
+     TO2(Ideal,"Ideals"), " in Macaulay2 come equipped with a specific generating
+     set, so the following two ideals are considered different.",
+     EXAMPLE {
+     	  "I = ideal(a,b); J = ideal(b,a);",
+	  "I == J",
+	  "I === J",
+	  "C = set(ideal(a,b),ideal(b,a))"
+	  },
+     "However, if you ", TO trim, " the ideals, then the generating sets will be
+     the same, and so the set containing them will have one element.",
+     EXAMPLE {
+	  "C1 = set(trim ideal(a,b),trim ideal(b,a))"
+	  },
+     PARA,
+     "A set is implemented as a ", TO HashTable, ", whose keys are the elements of the
+     set, and whose values are all 1.  In particular, this means that two objects 
+     are considered the same exactly when the are equal under ", TO symbol===, "."
+     }
+
+undocumented {
+     (NewFromMethod, Set, List)
      }
 
 document {
+     Key => {set,
+	  (set,Sequence),
+	  (set,BasicList)},
+     Headline => "make a set",
+     Usage => {"set v, ", EM "or", " set(v1,v2,...)"},
+     Inputs => {"v" => List => ""},
+     Outputs => {Set => " the set whose elements are the members of the list v"},
+     EXAMPLE {
+	  "v = {1,2,3,2,1}",
+	  "S = set v",
+	  "T = set(a,b,c,a,b,d)"
+	  },
+     SeeAlso => { Set }
+     }
+
+document { 
      Key => (symbol #?, Set, Thing),
      Headline => "test set membership",
-     TT "x#?i", " -- tests whether ", TT "i", " is a member of the set ", TT "x", "."
+     Usage => "x#?e",
+     Inputs => {
+	  "x" => "",
+	  "e" => ""
+	  },
+     Outputs => {
+	  Boolean => {"whether e is in the set x"}
+	  },
+     "This is identical to ", TT "member(e,x)", ".",
+     EXAMPLE {
+	  "x = set{1,2,3}",
+	  "x#?2",
+	  "member(2,x)"
+	  },
+     SeeAlso => {Set}
      }
 
-document {
-     Key => (symbol -, Set, Set),
+document { 
+     Key => {(symbol -, Set, Set),
+	  (symbol -, Set, List),
+	  (symbol -, List, Set)},
      Headline => "set difference",
-     TT "x - y", " -- the difference of two sets.",
-     SeeAlso => {"Set", "-"}
+     Usage => "x - y",
+     Inputs => {
+	  "x" => {" or ", OFCLASS List},
+	  "y" => {" or ", OFCLASS List}
+	  },
+     Outputs => {
+	  Set => {"or ", OFCLASS List, ", consisting of those elements of x not in y"}
+	  },
+     "At least one of ", TT "x", ", ", TT "y", " must be a set, and the other 
+     may be a list.  If ", TT "x", " is a list, then
+     so is the result.",
+     EXAMPLE {
+	  "set{a,b,c} - set{a}",
+	  "set{a,b,c} - {a}",
+	  "{a,b,c} - set{a}"
+	  },
+     SeeAlso => {Set}
      }
 
-document {
-     Key => (symbol -, Set, List),
-     Headline => "set difference",
-     TT "x - y", " returns ", TT "x - set y", " -- the difference of a set x and a list y considered as a set.",
-     SeeAlso => {"Set", "List", "-"}
+document { 
+     Key => (symbol +, Set, Set),
+     Headline => "set union",
+     Usage => "x + y",
+     Inputs => {
+	  "x" => "",
+	  "y" => "",
+	  },
+     Outputs => {
+	  Set => {"the union of ", TT "x", " and ", TT "y"},
+	  },
+     EXAMPLE {
+	  "set{a,b,c} + set{a,d,f}",
+	  },
+     SeeAlso => {Set}
      }
 
-document {
-     Key => (symbol -, List, Set),
-     Headline => "set difference",
-     TT "x - y", " returns a sublist of x containg elements which are not in y.",
-     SeeAlso => {"Set", "List", "-"}
-     }
-
-document {
-     Key => (isSubset,Set,Set), TT "isSubset(X,Y)", " -- tells whether ", TT "X", " is a subset of ", TT "Y", "." }
-
-document {
-     Key => isSubset,
-     Headline => "whether something is a subset of another"
-     }
-
-document {
-     Key => (symbol ++, Set, Set),
-     Headline => "disjoint union of sets",
-     EXAMPLE "set {a,b,c} ++ set {b,c,d}"
+document { 
+     Key => {(isSubset, Set, Set),
+	  (isSubset, Set, List),
+	  (isSubset, List, Set),
+	  (isSubset, List, List)},
+     Headline => "whether something is a subset",
+     Usage => "isSubset(x,y)",
+     Inputs => {
+	  "x" => {OFCLASS Set, ", or ", OFCLASS List},
+	  "y" => {OFCLASS Set, ", or ", OFCLASS List}
+	  },
+     Outputs => {
+	  Boolean => {"whether every element of x is in y"},
+	  },
+     EXAMPLE {
+	  "isSubset(set{a},set{a,b,c})",
+	  "isSubset({a},set{a,b,c})",
+	  "isSubset({a,a},{a,b,c})"
+	  },
+     SeeAlso => {Set}
      }
 
 document {
      Key => (symbol *, Set, Set),
      Headline => "intersection of sets",
-     EXAMPLE "set {1,2,3} * set {2,3,4}"
+     Usage => "x * y",
+     Inputs => {
+	  "x" => "",
+	  "y" => ""
+	  },
+     Outputs => {
+	  {"the intersection of ", TT "x", " and ", TT "y"}
+	  },
+     EXAMPLE "set {1,2,3} * set {2,3,4}",
+     SeeAlso => {Set}
+     }
+
+document {
+     Key => (symbol ^**, Set, ZZ),
+     Headline => "Cartesian power",
+     Usage => "B = A^**n",
+     Inputs => {
+	  "A" => null,
+	  "n" => null},
+     Outputs => {"B" => { "the set of n-tuples of elements from A" }},
+     EXAMPLE {
+     	  "A = set{1,2}",
+	  "A^**3"	  
+	  },
+     SeeAlso => {Set, (symbol**,Set,Set)}
      }
 
 TEST "
@@ -389,6 +520,7 @@ assert ( x - y === set {2, 1} )
 assert ( x + y === set {1, 2, 3, 4, 5} )
 assert ( toString x === \"set {1, 2, 3}\" )
 "
+
 
 document {
      Key => (symbol ^**, Module, ZZ),
@@ -538,9 +670,9 @@ document {
      }
 
 document {
-     Key => unlinkFile,
+     Key => removeFile,
      Headline => "unlink a file",
-     Usage => "unlinkFile f",
+     Usage => "removeFile f",
      Inputs => { "f" => String => "" },
      Consequences => {{ "the file reachable by the path f is unlinked from its directory" }}}
 

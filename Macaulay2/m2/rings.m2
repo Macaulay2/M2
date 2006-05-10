@@ -5,6 +5,8 @@ Ring == ZZ := (R,i) -> (
      else error "comparison of ring with nonzero integer encountered"
      )
 
+use Ring := x -> ( if x.?use then x.use x; x)
+
 Ring == Ring := (R,S) -> R === S
 
 ZZ == Ring := (i,R) -> R == i

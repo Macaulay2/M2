@@ -17,6 +17,7 @@ IX' = (map(S',S)) IX
 inIX' = ideal leadTerm gens gb IX'
 assert( codim inIX' == 4 )
 assert( pdim coker gens inIX' == 4 )
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test 4d.out"
 -- End:

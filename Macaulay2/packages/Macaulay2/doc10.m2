@@ -266,13 +266,13 @@ n = matrix pack (3,toList (u_1 .. u_9))			  -- 3 by 3
 j = flatten (m * n - n * m)
 M = cokernel j
 C = res(M, LengthLimit => 2, DegreeLimit => 1)
--- assert( rank C_2 == 2 )
+assert( rank C_2 == 2 )
 C = res(M, LengthLimit => 2, DegreeLimit => 2)
--- assert( rank C_2 == 42 )
+assert( rank C_2 == 42 )
 C = res(M, LengthLimit => 2, DegreeLimit => 3)
--- assert( rank C_2 == 83 )
+assert( rank C_2 == 83 )
 C = res(M, LengthLimit => 2, DegreeLimit => 4)
---- assert( rank C_2 == 90 )
+assert( rank C_2 == 90 )
 "
 
 document {
@@ -340,6 +340,9 @@ document {
      "An ideal is said to be unmixed if all associated primes of R/I
      have the same dimension.  In this case the algorithm tends to be much faster."
      }
+
+undocumented { (factor,ZZ) }
+undocumented { (factor,QQ) }
 
 document {
      Key => factor,

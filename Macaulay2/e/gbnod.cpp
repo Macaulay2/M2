@@ -261,7 +261,7 @@ void gb2_comp::find_pairs(gb_elem *p)
     {
       s_pair *q = reinterpret_cast<s_pair *>(b->basis_ptr());
       remove_pair(q);
-      deleteitem(b);
+      delete b;
     }
 
   int is_ideal2 = (F->rank() == 1 && orig_syz == 0);
@@ -292,6 +292,7 @@ void gb2_comp::find_pairs(gb_elem *p)
 	spairs->insert(q);
     }
 
+  delete mi;
   // Remove the local variables
   M->remove(find_pairs_m);
   M->remove(f_m);

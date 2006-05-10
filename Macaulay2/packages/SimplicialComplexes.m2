@@ -9,7 +9,7 @@ newPackage(
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	     },
     	Headline => "simplicial complexes",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 export(SimplicialComplex,
@@ -60,9 +60,8 @@ simplicialComplex MonomialIdeal := (I) -> (
 
 simplicialComplex List := SimplicialComplex => (faces) -> (
      if #faces === 0 then error "expected at least one facet";
-     R := ring faces#0;
-     if not isPolynomialRing R or isQuotientRing R
-     then error "expected a polynomial ring";
+     R := class faces#0;
+     if not isPolynomialRing R or not all(faces, m -> class m === R) then error "expected elements of a polynomial ring";
      I := matrix {faces};
      L := monomialIdeal complement I;
      J := dual L;

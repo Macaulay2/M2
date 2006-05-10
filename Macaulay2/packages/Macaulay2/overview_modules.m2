@@ -285,7 +285,7 @@ document {
 	  },
      TEX "Macaulay2 represents each module (at least conceptually) as a subquotient module, that is, a submodule of 
      a quotient of an ambient free module.  A subquotient module is determined by two
-     matrices $f : R^m \\rightarrow R^n$ and $g : R^p \\rightarrow R^n$.
+     matrices $f : R^m \\rightarrow{} R^n$ and $g : R^p \\rightarrow{} R^n$.
      The {\\em subquotient module} with generators $f$ and relations $g$ is by definition the module
      $M = ((image f) + (image g))/(image g)$.",
      PARA,
@@ -423,7 +423,7 @@ document {
      more thoroughly in ", TO "canonical maps netween modules", ", 
      but for now we just write down the inclusion map.",
      EXAMPLE {
-	  "inc = map(R^1, M)"
+	  "inc = inducedMap(R^1, M)"
 	  },
      "Now we use // to lift ", TT "F : M --> R^1", " along ",
      TT "inc : M --> R^1", ", to obtain

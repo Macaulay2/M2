@@ -134,7 +134,12 @@ remainder(Matrix,Matrix) := Matrix % Matrix := Matrix => (n,m) -> (
 Matrix % Module := Matrix => (f,M) -> f % gb M
 
 RingElement % Matrix := (r,f) -> ((r * id_(target f)) % f)_(0,0)
-RingElement % Ideal := (r,I) -> r % gb I
+RingElement % Ideal := (r,I) -> (
+     if ring r =!= ring I then error "expected ring element and ideal for the same ring";
+     if isHomogeneous I
+     then r % gb(I, DegreeLimit => degree r)
+     else r % gb I
+     )
 ZZ % Ideal := (r,I) -> r_(ring I) % gb I
 
 Matrix % RingElement := (f,r) -> f % (r * id_(target f))
@@ -245,10 +250,9 @@ coefficient(MonoidElement,RingElement) := (m,f) -> (
      new R from rawCoefficient(raw R, raw f, raw m))
 coefficient(RingElement,RingElement) := (m,f) -> (
      if size m != 1 or leadCoefficient m != 1 then error "expected a monomial";
-     m = leadMonomial m;
      RM := ring f;
      R := coefficientRing RM;
-     new R from rawCoefficient(raw R, raw f, raw m))
+     new R from rawCoefficient(raw R, raw f, rawLeadMonomialR m))
 RingElement _ MonoidElement := RingElement => (f,m) -> coefficient(m,f)
 RingElement _ RingElement := RingElement => (f,m) -> coefficient(m,f)
 
@@ -408,7 +412,7 @@ permanents(ZZ,Matrix) := Ideal => (p,M) -> (
      D1:= minors(p,M1);
      R2:=ZZ[xxX_(1,1)..xxX_(r,c)];
      D1=substitute(D1,R2);
-     F = map(ring M, R2,flatten entries M);
+     F := map(ring M, R2,flatten entries M);
      F D1)
 
 -- promote(Matrix,Ring) := (f,S) -> (

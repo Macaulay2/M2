@@ -1,93 +1,69 @@
---- status: TODO
---- author(s): 
---- notes: 
+--- status: DRAFT
+--- author(s): L. Gold
+--- notes: should "mapping over lists" be in the see also spot?
+--- The apply(HashTable,Function) in the "ways to use" section doesn't seem
+--- to have disappeared in my documentation, even though it is obsolete.
 
 document { 
      Key => apply,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Headline => "apply a function to each element",
+     Usage => "apply(L,f) or apply(L1,L2,f)",
+     SeeAlso => {"applyKeys", "applyPairs", "applyValues", "applyTable", "mapping over lists"}
      }
 document { 
      Key => (apply,BasicList,Function),
-     Headline => "",
-     Usage => "",
+     Headline => "apply a function to each element of a list",
+     Usage => "apply(L,f)",
      Inputs => {
+	  "L" => BasicList => "",
+	  "f" => Function => "with one argument",
 	  },
      Outputs => {
+	  BasicList => 
+	       {"obtained by applying ", TT "f", " to each element of ", TT "L"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "The result will have the same class as ", TT "L", ".",
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (apply,HashTable,Function),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "apply({1,3,5,7}, i -> i^2)",
+	  "apply([1,3,5,7], i -> i^2)",
+	  "apply((1,3,5,7), i -> i^2)"
+     	  },
+     SeeAlso => {(symbol \, VisibleList, Function), (symbol \,Function,VisibleList)}
      }
 document { 
      Key => (apply,BasicList,BasicList,Function),
-     Headline => "",
-     Usage => "",
+     Headline => "apply a function to pairs of elements, one from each list",
+     Usage => "apply(L1,L2,f)",
      Inputs => {
+	  "L1" => BasicList => "",
+	  "L2" => BasicList => {"of the same length as ", TT "L1"},
+	  "f" => Function => "with two arguments",
 	  },
      Outputs => {
+	  BasicList => {
+	       "with the ith element obtained by evaluating ", TT "f(L1_i,L2_i)"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "The result will have the same class as the class of ", TT "L1", " and ", TT "L2", ".",
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     	  "apply({1,2,3}, {100,200,300}, (i,j) -> i+j)",
+     	  "apply([1,2,3], [100,200,300], (i,j) -> i+j)",
+	  "apply((1,2,3), (100,200,300), (i,j) -> i+j)"	  
+     	  },
      }
 document { 
      Key => (apply,ZZ,Function),
-     Headline => "",
-     Usage => "",
+     Headline => "apply a function to {0,..., n-1}",
+     Usage => "apply(n,f)",
      Inputs => {
+	  "n" => ZZ => "",
+	  "f" => Function => "with one argument",
 	  },
      Outputs => {
+	  List => {"obtained by applying ", TT "f", " to the list of integers {0,..., n-1}"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "The command ", TT " apply(n,f)", " is equivalent to ", TT "apply(toList(0 .. n-1),f)", ".",
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "apply(10, i -> i^2)"
+     	  },
      }
- -- doc.m2:443:     Key => (apply,BasicList,BasicList,Function),
- -- doc.m2:453:     Key => (apply,BasicList,Function),
- -- doc.m2:469:     Key => (apply,HashTable,Function),
- -- doc.m2:477:     Key => (apply,ZZ,Function),
- -- doc.m2:485:     Key => apply,
- -- doc2.m2:1124:     Key => applyPairs,
- -- doc2.m2:1153:     Key => applyKeys,
- -- doc2.m2:1172:     Key => applyValues,
- -- doc6.m2:818:     Key => applyTable,
+

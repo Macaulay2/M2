@@ -38,6 +38,10 @@
    */
 #undef HAVE_DECL_HERROR
 
+/* Define to 1 if you have the declaration of `PER_LINUX', and to 0 if you
+   don't. */
+#undef HAVE_DECL_PER_LINUX
+
 /* Define to 1 if you have the declaration of `sys_errlist', and to 0 if you
    don't. */
 #undef HAVE_DECL_SYS_ERRLIST
@@ -49,8 +53,14 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
+/* Define to 1 if you have the <linux/personality.h> header file. */
+#undef HAVE_LINUX_PERSONALITY_H
+
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the `personality' function. */
+#undef HAVE_PERSONALITY
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
@@ -82,7 +92,7 @@
 /* whether h_errlist is declared in errno.h or stdio.h */
 #undef H_ERRLIST_IS_DECLARED
 
-/* whether to use LAPACK */
+/* whether to link with lapack */
 #undef LAPACK
 
 /* suffix to append to executable name M2 */
@@ -121,15 +131,18 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
+/* whether profiling has been enabled */
+#undef PROFILING
+
 /* operating system release, obtained with uname -r */
 #undef REL
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
    automatically deduced at run-time.
-        STACK_DIRECTION > 0 => grows toward higher addresses
-        STACK_DIRECTION < 0 => grows toward lower addresses
-        STACK_DIRECTION = 0 => direction of growth unknown */
+	STACK_DIRECTION > 0 => grows toward higher addresses
+	STACK_DIRECTION < 0 => grows toward lower addresses
+	STACK_DIRECTION = 0 => direction of growth unknown */
 #undef STACK_DIRECTION
 
 /* Define to 1 if you have the ANSI C header files. */

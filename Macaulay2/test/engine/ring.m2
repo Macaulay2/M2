@@ -59,7 +59,7 @@ m = leadMonomial (x^2 * y)
 m' = raw m
 n = leadMonomial (x * y * z)
 n' = raw n
-rawCompareMonomial(M',m',n')
+rawCompareMonomial(M',m',n')				    -- this will fail now that leadMonomial returns a polynomial
 m ? n
 
 rawSparseListFormMonomial raw m

@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : opts = {Slope => 1, Intercept => 1}
 

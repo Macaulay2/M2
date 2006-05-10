@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : columnate(12, characters ascii (65 .. 90))
 

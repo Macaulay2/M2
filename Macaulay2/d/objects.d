@@ -6,6 +6,7 @@ use strings;
 use stdio;
 use gmp;
 use nets;
+use varnets;
 use engine;
 use err;
 use tokens;
@@ -254,6 +255,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  else False
 	  )
      is FunctionClosure do False
+     is NetFile do False
      is x:RawMonomialOrdering do False
      is x:RawMonoid do False
      is x:RawMonomial do (
@@ -441,6 +443,7 @@ export Class(e:Expr):HashTable := (
      is string do stringClass
      is FunctionClosure do functionClass
      is Net do netClass
+     is NetFile do netFileClass
      is Error do errorClass
      is Sequence do sequenceClass
      is CompiledFunction do functionClass
@@ -511,6 +514,7 @@ setupconst("Keyword",Expr(keywordClass));
 setupconst("Time",Expr(timeClass));
 setupconst("Option",Expr(optionClass));
 setupconst("Net",Expr(netClass));
+setupconst("NetFile",Expr(netFileClass));
 setupconst("true",True);
 setupconst("false",False);
 setupconst("null",nullE);

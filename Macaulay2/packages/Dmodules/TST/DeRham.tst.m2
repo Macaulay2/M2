@@ -1,6 +1,6 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
-needs "D-modules.m2";
+needs "Dmodules.m2";
 
 --Boundary cases
 x = symbol x; y = symbol y;
@@ -17,7 +17,7 @@ F2 = deRham(x^2-31*y^3)
 assert all (keys F1, i -> (F1#i == F2#i));
 
 --These lead to problems in factor at the moment
---F1 = deRham(x^2-y^10)
---F2 = deRham(2*x^2 - 3*y^10)
---assert all (keys F1, i -> (F1#i == F2#i));
+F1 = deRham(x^2-y^10)
+F2 = deRham(2*x^2 - 3*y^10)
+assert all (keys F1, i -> (F1#i == F2#i));
 

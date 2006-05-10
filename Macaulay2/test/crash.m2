@@ -6,6 +6,7 @@ C = resolution cokernel substitute(
      R/monomialCurveIdeal(R,{1,3,4})
      )
 try transpose C.dd_2 % C.dd_1
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test crash.out"
 -- End:

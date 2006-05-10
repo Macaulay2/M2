@@ -77,7 +77,7 @@ assert(m3*m4 == 0)
 F = rawSource m1
 F2 = rawTarget m2
 F3 = rawSource m2
-F4 = rawSource m3
+Ffour = rawSource m3
 F3b = rawTarget m3
 assert(F3 == F3b)
 ----------------------------------
@@ -131,7 +131,7 @@ F = rawSource m1
 F2 = rawTarget m2
 F3 = rawSource m2
 F3b = rawTarget m3
-F4 = rawSource m3
+Ffour = rawSource m3
 F5 = rawSource m4
 assert(F3 == F3b)
 ----------------------------------

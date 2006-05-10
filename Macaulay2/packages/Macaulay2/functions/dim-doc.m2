@@ -14,9 +14,10 @@ document {
      SeeAlso => {codim}
      }
 
+undocumented {(dim,FractionField),(dim,GaloisField),(dim,PolynomialRing),(dim,QuotientRing)}
+
 document { 
      Key => (dim,Ring),
-     Undocumented => {(dim,FractionField),(dim,GaloisField),(dim,PolynomialRing),(dim,QuotientRing)},
      Usage => "dim R",
      Inputs => {"R" => ""},
      Outputs => {ZZ => ""},
@@ -128,13 +129,10 @@ document {
 document { 
      Key => {(dim,Ideal),(dim,MonomialIdeal)},
      Usage => "dim I",
-     Inputs => {"I" => ""
-	  },
-     Outputs => {ZZ => ""
-	  },
-     "Computes the Krull dimension of the 
-      basering of ", TT "I", " mod", TT "I",
-      PARA,
+     Inputs => {"I" => ""},
+     Outputs => {ZZ => ""},
+     "Computes the Krull dimension of the base ring of ", TT "I", " mod ", TT "I", ".",
+     PARA,
      "The ideal of 3x3 commuting matrices:",
      EXAMPLE {
 	  "R = ZZ/101[x_(0,0)..x_(2,2),y_(0,0)..y_(2,2)]",
@@ -143,13 +141,13 @@ document {
 	  "I = ideal flatten(M*N-N*M);",
 	  "dim I" 
 	  },
-     "The dimension of a Stanley-Reisner monomial ideal
-      associated to a simplicial complex.", 
-      " A hollow tetrahedron:",
+     "The dimension of a Stanley-Reisner monomial ideal associated to a simplicial complex.", 
+     PARA,
+     "A hollow tetrahedron:",
      EXAMPLE {
 	  "needsPackage \"SimplicialComplexes\"", 
 	  "R = QQ[a..d]",
-	  "D = simplicialComplex {{a,b,c},{a,b,d},{a,c,d},{b,c,d}}",
+	  "D = simplicialComplex {a*b*c,a*b*d,a*c*d,b*c*d}",
 	  "I = monomialIdeal D",
           "facets D",
           "dim D",
@@ -157,4 +155,3 @@ document {
 	  },
      SeeAlso => {ideal, monomialIdeal, "SimplicialComplexes"}
      }
-

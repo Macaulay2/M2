@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ[a..f]
 
@@ -5,28 +6,25 @@ o1 = R
 
 o1 : PolynomialRing
 
-i2 : n = genericMatrix(R,a,2,3)
+i2 : m = mutableMatrix genericMatrix(R,a,2,3)
 
 o2 = | a c e |
      | b d f |
 
-             2       3
-o2 : Matrix R  <--- R
+o2 : MutableMatrix
 
-i3 : m = mutableMatrix n
+i3 : columnMult(m,0,c)
 
-o3 = | a c e |
-     | b d f |
+o3 = | ac c e |
+     | bc d f |
 
 o3 : MutableMatrix
 
-i4 : columnMult(m,0,c)
+i4 : m
 
-i5 : m
-
-o5 = | ac c e |
+o4 = | ac c e |
      | bc d f |
 
-o5 : MutableMatrix
+o4 : MutableMatrix
 
-i6 : 
+i5 : 

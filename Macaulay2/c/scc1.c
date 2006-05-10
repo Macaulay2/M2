@@ -27,7 +27,7 @@ char *getmem(unsigned n) {
 
 static char *progname;
 
-volatile void myexit(int i){
+void myexit(int i){
      exit(i);
      }
 

@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : x = {a,b,c,d,e}
 
@@ -62,8 +63,6 @@ o11 : List
 i12 : isTable z
 
 o12 = true
-
-o12 : Boolean
 
 i13 : MatrixExpression z
 

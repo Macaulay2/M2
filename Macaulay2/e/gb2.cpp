@@ -209,11 +209,6 @@ gbres_comp::~gbres_comp()
 
 bool gbres_comp::stop_conditions_ok()
 {
-  if (stop_.length_limit <= 0)
-    {
-      ERROR("length limit out of range");
-      return false;
-    }
 
   if (stop_.length_limit != 0 && stop_.length_limit->len > 0)
     {

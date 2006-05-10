@@ -18,30 +18,6 @@ checkremquot = (m,n) -> (
      assert(q == rq#1);
      )
     
-R = ZZ
-checkremquot(3,5)
-checkremquot(3,-5)
-checkremquot(-3,-5)
-checkremquot(-3,5)
-checkremquot(0,124321412421412)
-checkremquot(247412471271237214721847124714712741477,124321412421412)
-
-checkremquot(-2,-2)
-remquot(-2,-2)
-remquot(3,-5)
-R = ZZ/13
-checkremquot(1_R,3_R)
-checkremquot(0_R,1_R)
-assert(try checkremquot(1_R,0_R) else true)
-
-R = GF(27)
-checkremquot(R_0,R_0 + 1)
-remquot(R_0,R_0 + 1)
-
--- QQ stuff fails, since we cannot make a QQ.
-R = QQ
---checkremquot(3_R,7_R)
-
 -- Polynomials over the integers, one variable.
 R = ZZ[x]
 
@@ -119,14 +95,6 @@ checkremquot(f,f)
 checkremquot(f+1,f)
 checkremquot(f^2,f)
 
--- Fractions field
-R = frac(ZZ[x,y])
-checkremquot(x/y,y/(x+1))
-remquot(x/y,y/(x+1))
-checkremquot(x/y,(y^2+y+1)/(x+1))
-checkremquot(0_R,(x+y)/(x-y))
-checkremquot(1_R,(x+y)/(x-y))
-
 -- Polynomials in an algebraic extension
 -- Currently not implemented:
 R = QQ[x]/(x^2+1)[y]
@@ -191,6 +159,7 @@ checkremquot(x^2,y^2+2*z^2)
 
 -- NOT CONSIDERED YET (11/13/00 MES)
 -- rings of the form A[x,y,z].
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test engine-div.out"
 -- End:

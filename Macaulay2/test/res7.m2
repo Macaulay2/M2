@@ -15,6 +15,7 @@ p=q*JN
 F=res(coker p, LengthLimit=>2)
 G=res(coker p, LengthLimit=>3)
 assert( apply(4,i->rank G_i) == {2, 6, 12, 20} )
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test res7.out"
 -- End:

@@ -1,11 +1,12 @@
+-- -*- M2-comint -*-
 
-i1 : t = set {1,2,3}
+i1 : set {1,2,3}
 
 o1 = Set {1, 2, 3}
 
 o1 : Set
 
-i2 : peek t
+i2 : peek oo
 
 o2 = Set{1 => 1}
          2 => 1

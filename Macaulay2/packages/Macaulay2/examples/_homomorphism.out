@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = QQ[x,y,z]/(y^2-x^3)
 
@@ -7,15 +8,15 @@ o1 : QuotientRing
 
 i2 : H = Hom(ideal(x,y), R^1)
 
-o2 = image {-1} | x -y  |
-           {-1} | y -x2 |
+o2 = image {-1} | x y  |
+           {-1} | y x2 |
 
                              2
 o2 : R-module, submodule of R
 
 i3 : g = homomorphism H_{1}
 
-o3 = | -y -x2 |
+o3 = | y x2 |
 
 o3 : Matrix
 

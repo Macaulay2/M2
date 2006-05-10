@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : KK = ZZ/31991
 
@@ -365,8 +366,6 @@ o42 : Matrix R  <--- R
 i43 : Tr^6 == I * (Tr^6 // I) + (Tr^6 % I)
 
 o43 = true
-
-o43 : Boolean
 
 i44 : erase global x
 

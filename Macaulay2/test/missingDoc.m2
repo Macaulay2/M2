@@ -15,6 +15,7 @@ time scanKeys(docFile,
 		    linkFilename fkey;
 		    allDoc#fkey = doc))))
 close docFile
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test missingDoc.out"
 -- End:

@@ -333,7 +333,9 @@ Matrix _ ZZ := Vector => (m,i) -> (
 submatrix(Matrix,VisibleList,VisibleList) := Matrix => (m,rows,cols) -> map(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols))
 submatrix(Matrix,VisibleList            ) := Matrix => (m,cols     ) -> map(target m,,rawSubmatrix(raw m, listZ toList splice cols))
 submatrix(Matrix,Nothing    ,VisibleList) := Matrix => (m,rows,cols) -> submatrix(m,cols)
-submatrix(Matrix,VisibleList,Nothing    ) := Matrix => (m,rows,cols) -> map((ring m)^#rows,source m,rawSubmatrix(raw m, listZ toList splice rows, 0 .. numgens source m - 1))
+submatrix(Matrix,VisibleList,Nothing    ) := Matrix => (m,rows,cols) -> (
+     rows = splice rows; 
+     map((ring m)^#rows,source m,rawSubmatrix(raw m, listZ toList rows, 0 .. numgens source m - 1)))
 
 bothFree := (f,g) -> (
      if not isFreeModule source f or not isFreeModule target f
@@ -382,17 +384,6 @@ borel Matrix := Matrix => m -> generators borel monomialIdeal m
 ------------------------ matrix and map for modules ----------------------
 --------------------------------------------------------------------------
 map(Module) := Matrix => options -> (M) -> map(M,M,1)
-
-map(Module,Module) := Matrix => options -> (M,N) -> (
-     F := ambient N;
-     if F == ambient M
-     then map(M,N,
-	  if M.?generators 
-	  then map(M,N,generators N // generators M) -- sigh, should we check for zero remainder?
-	  else generators N,
-	  options)
-     else error "expected modules to have the same ambient free module"
-     )
 
 map(Module,Module,RingElement) := Matrix => options -> (M,N,r) -> (
      R := ring M;

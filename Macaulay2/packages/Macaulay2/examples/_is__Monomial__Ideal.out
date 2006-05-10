@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : QQ[w,x,y,z];
 
@@ -12,8 +13,6 @@ i3 : isMonomialIdeal I
 
 o3 = false
 
-o3 : Boolean
-
 i4 : J = ideal leadTerm I
 
              2        2
@@ -25,8 +24,6 @@ i5 : isMonomialIdeal J
 
 o5 = true
 
-o5 : Boolean
-
 i6 : K = monomialIdeal I
 
                      2        2
@@ -37,7 +34,5 @@ o6 : MonomialIdeal of QQ [w, x, y, z]
 i7 : isMonomialIdeal K
 
 o7 = true
-
-o7 : Boolean
 
 i8 : 

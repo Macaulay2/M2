@@ -10,6 +10,7 @@ assert( rank N_[a] == 2 )
 assert( rank N_[b] == 3 )
 assert( rank O_[a] == 3 )
 assert( rank O_[b] == 2 )
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test sums.out"
 -- End:

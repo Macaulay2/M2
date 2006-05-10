@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : for i from 3 to 6 do print i
 3
@@ -11,4 +12,10 @@ o2 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 
 o2 : List
 
-i3 : 
+i3 : for i in {a,4,1/2} list class i
+
+o3 = {Symbol, ZZ, QQ}
+
+o3 : List
+
+i4 : 

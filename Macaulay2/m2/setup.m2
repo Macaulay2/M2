@@ -200,9 +200,9 @@ tryload := (filename,loadfun,notify) -> (
      loaded := false;
      if class filename === String and (isAbsolutePath filename or isSpecial filename) then (
 	  if fileExists filename then (
-	       ret = loadfun filename;
-	       markLoaded(filename,filename,notify);
-	       return ret;)
+	       ret = timing loadfun filename;
+	       markLoaded(filename,filename,notify,ret#0);
+	       return ret#1)
 	  else error("file doesn't exist: \"", filename, "\""));
      scan(path, dir -> if class dir =!= String then error "member of 'path' not a string");
      if class filename =!= String then error "expected a string";
@@ -211,8 +211,8 @@ tryload := (filename,loadfun,notify) -> (
 		    if loaded then break;
 		    fullfilename := dir | filename;
 		    if fileExists fullfilename then (
-			 ret = loadfun fullfilename;
-			 markLoaded(fullfilename,filename,notify);
+			 ret = timing loadfun fullfilename;
+			 markLoaded(fullfilename,filename,notify,ret#0);
 			 loaded = true;
 			 break)));
      if loaded then ret else error("file not found on path: \"", toString filename, "\""))
@@ -222,7 +222,6 @@ input = (filename) -> tryload(filename,simpleInput,false)
 needs = s -> if not filesLoaded#?s then load s
 
 load "loads.m2"
-if notify then stderr << "--loaded " << currentFileName << endl
 
 protect Macaulay2Core.Dictionary
 

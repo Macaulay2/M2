@@ -7,6 +7,7 @@ S = R/I
 k = coker vars S
 m = product(numgens R, i -> R_i)
 Tor_2(k,k) -- this used to crash
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test arrange.out"
 -- End:

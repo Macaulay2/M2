@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = QQ[x,y,z];
 
@@ -14,8 +15,6 @@ o3 : Matrix R  <--- R
 i4 : d1 * d2 == 0
 
 o4 = true
-
-o4 : Boolean
 
 i5 : C = new ChainComplex; C.ring = R;
 

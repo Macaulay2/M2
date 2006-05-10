@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ/101[x,y,z]
 
@@ -50,9 +51,9 @@ o7 : R-module
 
 i8 : prune HH_1 C
 
-o8 = cokernel {1} | z 0 0 y 0 0 0 x 0 |
-              {1} | 0 z 0 0 y 0 x 0 0 |
-              {1} | 0 0 z 0 0 y 0 0 x |
+o8 = cokernel {1} | 0 0 z 0 0 y 0 0 x |
+              {1} | 0 z 0 0 y 0 0 x 0 |
+              {1} | z 0 0 y 0 0 x 0 0 |
 
                             3
 o8 : R-module, quotient of R

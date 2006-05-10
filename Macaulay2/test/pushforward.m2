@@ -11,6 +11,7 @@ try (
      stderr << "pushForward not implemented yet for inhomogeous maps" << endl;
      )
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test pushforward.out"
 -- End:

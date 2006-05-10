@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = QQ[a..d];
 
@@ -9,12 +10,8 @@ i3 : isSubset(I^2,I)
 
 o3 = true
 
-o3 : Boolean
-
 i4 : isSubset(I,I^2)
 
 o4 = false
-
-o4 : Boolean
 
 i5 : 

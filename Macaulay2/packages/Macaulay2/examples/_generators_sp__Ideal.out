@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ/101[a,b,c];
 
@@ -15,18 +16,24 @@ o3 = | a2 ab-2 c4 ac-1 ac-1 |
              1       5
 o3 : Matrix R  <--- R
 
-i4 : I = trim I
+i4 : first entries generators I
 
-             2            4
-o4 = ideal (a , a*b - 2, c , a*c - 1, a*c - 1)
+       2            4
+o4 = {a , a*b - 2, c , a*c - 1, a*c - 1}
 
-o4 : Ideal of R
+o4 : List
 
-i5 : gens I
+i5 : I = trim I
 
-o5 = | a2 ab-2 c4 ac-1 ac-1 |
+o5 = ideal 1
 
-             1       5
-o5 : Matrix R  <--- R
+o5 : Ideal of R
 
-i6 : 
+i6 : gens I
+
+o6 = | 1 |
+
+             1       1
+o6 : Matrix R  <--- R
+
+i7 : 

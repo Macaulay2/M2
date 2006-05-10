@@ -162,6 +162,16 @@ clearAll = Command (() -> (
 	  )
      )
 
+generateAssertions = method()
+generateAssertions String := s -> generateAssertions select(lines s, x -> not match("^[[:space:]]*(--.*)?$",x))
+generateAssertions List := y -> stack apply(y, 
+     lin -> ( 
+	  t := try value lin else oops;
+	  concatenate if t === oops
+	  then ("assert( (try ", lin, " else oops) === ", toString t, " )")
+	  else ("assert( ("    , lin,            ") === ", toString t, " )")
+	  ))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

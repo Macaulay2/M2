@@ -15,17 +15,24 @@ assert(0 == (permutationMatrix P) * (matrix L) * (matrix U) - M)
 
 time m = mutableMatrix(random(RR^7, RR^8), Dense=>true)
 time (P,L,U) = LU m;
+
+collectGarbage()
+
 assert(0 == (permutationMatrix P) * (matrix L) * (matrix U) - (matrix m) )
 
 time m = mutableMatrix(random(RR^40, RR^100), Dense=>true);
 time (P,L,U) = LU m;
+
+collectGarbage()
+
 (permutationMatrix P) * (matrix L) * (matrix U) - (matrix m) 
 
 time m = mutableMatrix(random(RR^600, RR^600), Dense=>true);
 time randomMutableMatrix
 time (P,L,U) = LU m;
-print "Dan, this error is for you, I think.  I commented out the offending line"
---numcols(P,L,U) -- should give error, but instead crashes!!
+stderr << "Dan, this error is for you, I think.  I commented out the offending line" << endl
+stderr << "Mike, why?  The function numcols takes one arg, not three." << endl
+numcols(P,L,U) -- should give error, but instead crashes!!
 
 -- Over ZZ/p
 K = ZZ/7

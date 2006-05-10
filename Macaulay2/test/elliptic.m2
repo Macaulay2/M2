@@ -16,6 +16,7 @@ B = A/I
 M = M ** B
 ideal syz gb(M, Syzygies=>true)
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test elliptic.out"
 -- End:

@@ -45,7 +45,7 @@ I = ideal ( a+b+c+d+e, a*b + b*c + c*d + d*e + e*a ,
      a*b*c*d + b*c*d*e + c*d*e*a + d*e*a*b + e*a*b*c,
      a*b*c*d*e - h^5
      )
-decompose I
+time decompose I
 assert ( 25 == # decompose I )
 
 A = ZZ/101[a..e,h]
@@ -54,7 +54,7 @@ I = ideal ( a+b+c+d+e, a*b + b*c + c*d + d*e + e*a ,
      a*b*c*d + b*c*d*e + c*d*e*a + d*e*a*b + e*a*b*c,
      a*b*c*d*e - h^5
      )
-decompose I
+time decompose I
 assert ( 75 == # decompose I )
 
 end
@@ -81,6 +81,7 @@ I = ideal ( a+b+c+d+e, a*b + b*c + c*d + d*e + e*a ,
      )
 time decompose I
 assert ( 25 == # decompose I )
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test decompose.out"
 -- End:

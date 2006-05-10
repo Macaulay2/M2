@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ[a..f]
 
@@ -7,12 +8,12 @@ o1 : PolynomialRing
 
 i2 : tex matrix {{a^2+2,b,c},{d,e,f^3-a}}
 
-o2 = $\begin{pmatrix}a^{2}+{2}&
+o2 = $\bgroup3\makeatother\begin{pmatrix}a^{2}+{2}&
      b&
      c\\
      d&
      e&
      f^{3}-a\\
-     \end{pmatrix}$
+     \end{pmatrix}\egroup$
 
 i3 : 

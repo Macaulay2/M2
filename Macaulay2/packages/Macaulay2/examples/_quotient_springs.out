@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ/11
 
@@ -74,7 +75,9 @@ o11 : U
 
 i12 : random(2,S)
 
-o12 = 0
+        10       5              7  2
+o12 = - --*x*y - -*x*z - 3y*z + -*z
+         7       8              5
 
 o12 : S
 
@@ -82,13 +85,9 @@ i13 : isQuotientRing ZZ
 
 o13 = false
 
-o13 : Boolean
-
 i14 : isQuotientRing S
 
 o14 = true
-
-o14 : Boolean
 
 i15 : ambient S
 
@@ -108,13 +107,9 @@ i17 : isHomogeneous S
 
 o17 = false
 
-o17 : Boolean
-
 i18 : isHomogeneous U
 
 o18 = true
-
-o18 : Boolean
 
 i19 : char (ZZ/11)
 

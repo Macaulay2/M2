@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : k = ZZ/101; T = k[v..z];
 
@@ -60,13 +61,9 @@ i11 : isHomogeneous f
 
 o11 = false
 
-o11 : Boolean
-
 i12 : isHomogeneous g
 
 o12 = true
-
-o12 : Boolean
 
 i13 : R = ZZ/32003[a..d]/(a^2+b^2+c^2+d^2);
 

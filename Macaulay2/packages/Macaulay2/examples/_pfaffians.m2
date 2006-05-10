@@ -1,4 +1,4 @@
-R = QQ[a..d];
+R = QQ[a..f];
 M = genericSkewMatrix(R,a,4)
 pfaffians(2,M)
 pfaffians(4,M)

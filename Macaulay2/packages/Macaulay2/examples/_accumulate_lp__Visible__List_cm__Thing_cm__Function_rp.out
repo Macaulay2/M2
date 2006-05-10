@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : accumulate({a,b,c,d}, e, identity)
 

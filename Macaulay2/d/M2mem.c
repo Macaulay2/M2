@@ -3,6 +3,7 @@
 #include "types.h"
 #include "M2mem.h"
 #include "M2mem2.h"
+#include "debug.h"
 
 sigjmp_buf out_of_memory_jump;
 char out_of_memory_jump_set = FALSE;
@@ -18,7 +19,7 @@ void outofmem(void) {
      else 
 #endif
      {
-	  char *msg = "out of memory, exiting\n";
+	  char *msg = "\n\n *** out of memory, exiting ***\n";
 	  write(STDERR,msg,strlen(msg));
 	  exit(1);
      }
@@ -29,6 +30,9 @@ char *getmem(unsigned int n)
   char *p;
   p = GC_MALLOC(n);
   if (p == NULL) outofmem();
+#ifdef DEBUG
+  trapchk(p);
+#endif
   return p;
 }
 
@@ -37,6 +41,9 @@ char *getmem_atomic(unsigned int n)
   char *p;
   p = GC_MALLOC_ATOMIC(n);
   if (p == NULL) outofmem();
+#ifdef DEBUG
+  trapchk(p);
+#endif
   return p;
 }
 
@@ -45,6 +52,9 @@ char *getmem_malloc(unsigned int n)
   char *p;
   p = malloc(n);
   if (p == NULL) outofmem();
+#ifdef DEBUG
+  trapchk(p);
+#endif
   return p;
 }
 

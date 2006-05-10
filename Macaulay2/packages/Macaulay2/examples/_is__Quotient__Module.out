@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ/101[a,b,c];
 
@@ -11,8 +12,6 @@ o2 : R-module, quotient of R
 i3 : isQuotientModule M
 
 o3 = true
-
-o3 : Boolean
 
 i4 : f = M_{0}
 
@@ -31,12 +30,8 @@ i6 : M == N
 
 o6 = true
 
-o6 : Boolean
-
 i7 : isQuotientModule N
 
 o7 = false
-
-o7 : Boolean
 
 i8 : 

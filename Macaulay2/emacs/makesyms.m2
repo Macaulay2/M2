@@ -1,4 +1,9 @@
-symbols := rsort select(join(pairs Macaulay2Core.Dictionary, pairs PackageDictionary), (nam,sym) -> not match("\\$",nam))
+symbols := rsort join apply(
+     toSequence pairs PackageDictionary,
+     (pkgnam,pkgsym) -> prepend(
+	  (pkgnam,pkgsym), 
+	  select(pairs (value pkgsym).Dictionary,(nam,sym) -> not match("\\$",nam) and #nam > 1)))
+
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 isKeyword := s -> not mutable s and s =!= symbol null and value s === null
 isAlpha := s -> alphabet#?((toString s)#0)

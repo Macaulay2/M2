@@ -25,9 +25,7 @@ document {
      "Implemented with a method of the same name."
      }
 
-document { 
-     Key => degree,
-     Undocumented => {
+undocumented {
 	  (degree, MonomialIdeal),
 	  (degree, CoherentSheaf),
 	  (degree, ZZ),
@@ -36,7 +34,10 @@ document {
 	  (degree, CCC),
 	  (degree, RR),
 	  (degree, CC)
-	  },
+	  }
+
+document { 
+     Key => degree,
      "Degree is a common name, meaning different things for different 
      kinds of mathematical objects.  In Macaulay 2, there are currently three
      related, yet different notions of degree: ",
@@ -66,7 +67,7 @@ document {
      Key => (degree,ProjectiveVariety),
      Usage => "degree X",
      Inputs => {
-	  "X" => ""
+	  "X" => null
 	  },
      Outputs => {
 	  ZZ => {"the degree of ", TT "X"}

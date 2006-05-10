@@ -2,7 +2,7 @@
 
 #include "scc.h"
 
-volatile void fatal(char *s,...)
+void fatal(char *s,...)
 {
      va_list ap;
 #ifdef VA_START_HAS_TWO_ARGS
@@ -59,7 +59,7 @@ void warning(char *s,...)
      if (warnings > WARNLIMIT) fatal("too many errors");
      }
 
-volatile void fatalpos(node p, char *s,...)
+void fatalpos(node p, char *s,...)
 {
      va_list ap;
      downpos(p);
@@ -125,7 +125,7 @@ node notimpl(node e){
      return bad_K;
      }
 
-volatile void quit(){
+void quit(){
      myexit(n_errors != 0);
      }
 

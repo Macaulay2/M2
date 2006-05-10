@@ -76,8 +76,7 @@ A2 = S/ideal(n2)
 
 -------------------
 -- Test: degrees in tower of rings
-load "raw-util.m2"
-A = ZZ[a,b]
+A = ZZ[symbol a,b]
 B = A[x,y]
 raw B
 C = ZZ[s,t][x,y]

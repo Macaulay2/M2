@@ -3,6 +3,7 @@ B = A/(x*y+z^3+z*t^2)
 f = matrix{{x}}
 assert( substitute(f,0) == 0 )
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test subst2.out"
 -- End:

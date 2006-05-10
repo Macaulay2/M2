@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = QQ[x,y];
 
@@ -27,13 +28,9 @@ i5 : isWellDefined f
 
 o5 = true
 
-o5 : Boolean
-
 i6 : isIsomorphism f
 
 o6 = true
-
-o6 : Boolean
 
 i7 : g = map(M,cover M,1)
 
@@ -46,13 +43,9 @@ i8 : isWellDefined g
 
 o8 = true
 
-o8 : Boolean
-
 i9 : isIsomorphism g
 
 o9 = false
-
-o9 : Boolean
 
 i10 : h = map(cover M,M,1)
 
@@ -64,7 +57,5 @@ o10 : Matrix
 i11 : isWellDefined h
 
 o11 = false
-
-o11 : Boolean
 
 i12 : 

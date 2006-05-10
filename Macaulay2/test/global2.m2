@@ -13,6 +13,7 @@ t = rank source basis(n, HFG)
 assert(r+s == t);
 
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test global2.out"
 -- End:

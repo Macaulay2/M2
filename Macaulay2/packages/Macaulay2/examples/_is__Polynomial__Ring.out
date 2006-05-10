@@ -1,32 +1,23 @@
+-- -*- M2-comint -*-
 
 i1 : isPolynomialRing CC
 
 o1 = false
 
-o1 : Boolean
-
 i2 : isPolynomialRing(ZZ/7[x,y])
 
 o2 = true
-
-o2 : Boolean
 
 i3 : isPolynomialRing(QQ[x,dx, WeylAlgebra => {x => dx}])
 
 o3 = true
 
-o3 : Boolean
-
 i4 : isPolynomialRing(GF(2)[x,y, SkewCommutative => true])
 
 o4 = true
 
-o4 : Boolean
-
 i5 : isPolynomialRing(ZZ/101[x,y,z]/(x^2-y*z))
 
 o5 = false
-
-o5 : Boolean
 
 i6 : 

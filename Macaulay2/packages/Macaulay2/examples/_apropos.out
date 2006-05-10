@@ -1,8 +1,21 @@
+-- -*- M2-comint -*-
 
-i1 : apropos "scan"
+i1 : apropos "atrix"
 
-o1 = {scan, scanKeys, scanPairs, scanValues}
+o1 = {ChangeMatrix, compactMatrixForm, diagonalMatrix, genericMatrix,
+     ---------------------------------------------------------------------------
+     genericSkewMatrix, genericSymmetricMatrix, getChangeMatrix, Matrix, matrix,
+     ---------------------------------------------------------------------------
+     MatrixExpression, MinimalMatrix, MutableMatrix, mutableMatrix,
+     ---------------------------------------------------------------------------
+     randomMutableMatrix, submatrix, sylvesterMatrix, SyzygyMatrix}
 
 o1 : List
 
-i2 : 
+i2 : apropos "^[mM]at"
+
+o2 = {match, mathML, Matrix, matrix, MatrixExpression}
+
+o2 : List
+
+i3 : 

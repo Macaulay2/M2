@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : sort {c,e,a,f,b,f}
 
@@ -15,8 +16,8 @@ i3 : R = ZZ[a..d,MonomialOrder=>Lex];
 
 i4 : sort{a*d, b^100, c^3*d}
 
-       100   3
-o4 = {b   , c d, a*d}
+       3    100
+o4 = {c d, b   , a*d}
 
 o4 : List
 

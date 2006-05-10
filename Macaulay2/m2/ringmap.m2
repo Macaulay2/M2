@@ -47,7 +47,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  r := numgens source m;
 	  if r === n 
 	  then (
-	       if numgens A > 0 then m = m | vars A ** R;
+	       if numgens A > 0 then m = m | vars A ** R;   -- questionable tensor product here
 	       )
 	  else if r < n
 	  then error ("encountered values for ", toString r, " variables");
@@ -71,12 +71,18 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 map(Ring,Matrix) := RingMap => options -> (S,m) -> map(ring m,S,m)
 
 map(Ring,Ring) := RingMap => options -> (S,R) -> (
-     A := R; v := {}; while (
-	  v = join(apply(generators A, x -> (
+     A := R; 
+     v := {};
+     while (
+	  v = join(
+	       apply(allGenerators A, 
+		    x -> (
 			 x = toString x;
 			 if S#?x then S#x else 0_S
-			 )), v);
-	  A.?ring) do A = A.ring;
+			 )),
+	       v);
+	  A.?ring )
+     do A = A.ring;
      map(S,R,matrix (S,{v})))
 
 Ring#id = (R) -> map(R,R)
@@ -184,7 +190,7 @@ kernel RingMap := Ideal => options -> (f) -> if f.cache.?kernel then f.cache.ker
      else error "not implemented yet"
      )
 
-image RingMap := coimage RingMap := QuotientRing => f -> f.source / kernel f
+coimage RingMap := QuotientRing => f -> f.source / kernel f
 
 RingMap * RingMap := RingMap => (g,f) -> (
      if source g =!= target f then error "ring maps not composable";
@@ -238,10 +244,8 @@ substitute(Matrix,ZZ) := Matrix => (m,i) -> (
 sub2 = (S,R,v) -> (
      m := generators R;
      A := R;
-     while (
-	  A = try coefficientRing A;
-	  A =!= null
-	  ) do m = join(m, generators A);
+     while try (A = coefficientRing A; true) else false
+     do m = join(m, generators A);
      h := hashTable apply(#m, i -> m#i => i);
      m = new MutableList from m;
      scan(v, opt -> (
@@ -254,9 +258,9 @@ sub2 = (S,R,v) -> (
      f := if S === null then matrix{toList m} else matrix(S,{toList m});
      map(ring f,R,f))
 
-map(Ring,Ring,List) := RingMap => options -> (R,S,m) -> (
-     if all(m, o -> class o === Option) then sub2(R,S,m)
-     else map(R,S,matrix(R,{m}),options)
+map(Ring,Ring,List) := RingMap => opts -> (S,R,m) -> (
+     if all(m, o -> class o === Option) then sub2(S,R,m)
+     else map(S,R,matrix(S,{m}),opts)
      )
 
 substitute(Matrix,List) := Matrix => (f,v) -> (sub2(,ring f,v)) f
@@ -303,6 +307,9 @@ isInjective RingMap := (f) -> kernel f == 0
 preimage(RingMap,Ideal) := (f,J) -> (
      R := ring J;
      kernel ( map(R/J,R) * f ))
+
+List / RingMap := List => (v,f) -> apply(v,x -> f x)
+RingMap \ List := List => (f,v) -> apply(v,x -> f x)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

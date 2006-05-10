@@ -26,16 +26,14 @@ ZZ.random = () -> random 21 - 10
 
 oldgcd := gcd
 erase symbol gcd
+
 gcd = method(Associative => true)
--- lcm = method(Associative => true)
-
 gcd List := x -> gcd toSequence x
--- lcm List := x -> lcm toSequence x
-
 gcd(ZZ,ZZ) := ZZ => (x,y) -> oldgcd(x,y)
--- lcm(ZZ,ZZ) := ZZ => (x,y) -> x*y//gcd(x,y)
-
--- powermod := (m,e,p) -> m^e % p;
+gcd(ZZ,QQ) := QQ => (x,y) -> gcd(x * denominator y, numerator y) / denominator y
+gcd(QQ,QQ) := QQ => (x,y) -> (
+     d := denominator x * (denominator y // gcd(denominator x, denominator y));
+     gcd(numerator (x * d), numerator (y * d)) / d)
 
 powermod := (m,e,p) -> lift((m + 0_(ZZ/p))^e,ZZ)
 

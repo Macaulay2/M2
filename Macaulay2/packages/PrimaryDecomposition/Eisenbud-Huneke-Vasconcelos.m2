@@ -5,14 +5,14 @@
 
 --
 --
--- This first section of the file defines the assasinator.
+-- This first section of the file defines the assassinator.
 -- There are two strategies defined first
 --
 --
 
 ass1 := (I,printlevel) -> (
      if I.cache.?Assassinator then I.cache.Assassinator else I.cache.Assassinator = (
-     assasinator := {};
+     assassinator := {};
      RI := ring I;
      polyRing := ring presentation RI;
      I1 := lift(I, polyRing);
@@ -31,20 +31,20 @@ ass1 := (I,printlevel) -> (
 	       scan(firstlist, P -> (if codim P == i then (
 			      if printlevel >= 1 then 
 			      << "    " << P  << endl << endl ;
-			      assasinator = 
-			      append(assasinator,P)))
+			      assassinator = 
+			      append(assassinator,P)))
 		    ) );
 	  i=i+1;);
-     assasinator = apply(
-	  assasinator, P -> (trim substitute(P, RI))
+     assassinator = apply(
+	  assassinator, P -> (trim substitute(P, RI))
 	  );
-     assasinator
+     assassinator
      ))
 
 
 ass2 := (I,printlevel) -> (
      if I.cache.?Assassinator then I.cache.Assassinator else I.cache.Assassinator = (
-     assasinator := {};
+     assassinator := {};
      local newcomponents;
      RI := ring I;
      polyRing := ring presentation RI;
@@ -56,32 +56,31 @@ ass2 := (I,printlevel) -> (
         newcomponents = flatten decompose topcurrentI;
 	if printlevel >=1 then (scan(newcomponents, P -> (
 		       << endl << "    " << P << endl)));
-	assasinator = append(assasinator, newcomponents);
+	assassinator = append(assassinator, newcomponents);
 	  currentI = currentI:topcurrentI;
 	  topcurrentI = topComponents currentI;
 	  );
      newcomponents = flatten decompose topcurrentI;
      if printlevel >=1 then (scan(newcomponents, P -> (
 		    << endl << "    " << P << endl)));
-     assasinator = append(assasinator, newcomponents);
-     assasinator = flatten assasinator;
-     assasinator = apply(
-	  assasinator, P -> (trim substitute(P,RI))
+     assassinator = append(assassinator, newcomponents);
+     assassinator = flatten assassinator;
+     assassinator = apply(
+	  assassinator, P -> (trim substitute(P,RI))
 	  );
-     assasinator 
+     assassinator 
      ))
 
 
 ass Ideal := List => o -> (I) -> (
      if I.cache.?Assassinator then I.cache.Assassinator else I.cache.Assassinator = (
      	  if o.Strategy === 1 then (
-	       if o.PrintLevel >= 1 then
-	       print "ass:  Using Strategy 1";
-	       ass1 (I,o.PrintLevel)) 
+	       if o.PrintLevel >= 1 then stderr << "associatedPrimes: using Strategy 1" << endl;
+	       ass1(I,o.PrintLevel)) 
      	  else (
-	       if o.PrintLevel >= 1 then
-	       print "ass:  Using Strategy 2";
-	       ass2 (I,o.PrintLevel)))
+	       stderr << "--warning: Strategy 2 has been known to fail with 'associatedPrimes'!" << endl;
+	       if o.PrintLevel >= 1 then stderr << "associatedPrimes: using Strategy 2" << endl;
+	       ass2(I,o.PrintLevel)))
 	  )
 
 
@@ -148,7 +147,7 @@ SYlocalize := (assroutine) -> (I,P,printlevel) ->(
      P1 := lift(P,polyRing);
      IntersectionOfPrimes := ideal (1_polyRing);
      if printlevel >= 1 then (<< endl << 
-	  "Finding the assasinator of " << I1 << endl);
+	  "Finding the assassinator of " << I1 << endl);
      Assasin := assroutine(I1,printlevel);
      if printlevel >= 2 then (<< endl << "It equals "
 	  << Assasin << endl);

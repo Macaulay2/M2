@@ -298,6 +298,26 @@ int pid;
 #endif
      }
 
+M2_arrayint system_waitNoHang(M2_arrayint pids)
+{
+#if defined(__MWERKS__)
+     return ERROR;
+#else
+     int n = pids->len;
+     int *pid = pids->array;
+     {
+	  int status[n], i;
+	  M2_arrayint z = (M2_arrayint)getmem_atomic(sizeofarray(z,n));
+	  z->len = n;
+	  for (i=0; i<n; i++) {
+	       int ret = wait4(pid[i],&status[i],WNOHANG,NULL);
+	       z->array[i] = ret == ERROR ? -1 : WIFEXITED(status[i]) ? status[i] >> 8 : -2;
+	  }
+	  return z;
+     }
+#endif
+}
+
 M2_arrayint system_select(M2_arrayint v) {
 #if defined(__MWERKS__)
   M2_arrayint z;
@@ -1270,6 +1290,15 @@ M2_stringarray system_regexselect(M2_string pattern, M2_string replacement, M2_s
     ret->len = retct;
     return ret;
   }
+}
+
+/* These are used in M2lib.c, but we put them here to prevent them from being optimized away. */
+
+void nop(void *p) {}		/* used below to keep variables out of registers */
+
+bool gotArg(char *arg, char **argv) {
+  for (; *argv; argv++) if (0 == strcmp(arg,*argv)) return TRUE;
+  return FALSE;
 }
 
 /*

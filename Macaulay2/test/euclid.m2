@@ -27,6 +27,7 @@ assert( try (
 	  x//(x-x); -- division by zero doesn't give error, medium priority
 	  false ) else true )
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test euclid.out"
 -- End:

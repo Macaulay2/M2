@@ -2,86 +2,453 @@
 --- author(s): 
 --- notes: 
 
-document { 
+-- deprecated:  (map,Module,RingElement)
+--              (map,Module,ZZ)
+--              (map,Module,Matrix),
+--              (map,Ideal,Ideal)
+--              (map,Ideal),
+
+undocumented {(map,Module,Module,ZZ)}
+
+document {
      Key => map,
-     Headline => "",
-     Usage => "",
+     Headline => "make a map",
+     Usage => "map(Y,X,d) or map(Y,X)",
      Inputs => {
+	  "Y" => "an object, such as a ring, module, or chain complex",
+	  "X" => {"another object of the same type"},
+	  "d" => "a specification, such as a function, list, or 
+	          matrix, or if omitted, understood to specify the identity map"
 	  },
      Outputs => {
+	  {"a map to ", TT "Y", " from ", TT "X", " defined by data ", TT "d", "."},
 	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     "The function ", TT "map", " provides a general mechanism for constructing a map
+     (homomorphism) between rings (", OFCLASS RingMap, "), modules (", OFCLASS Matrix,
+     "), chain complexes (", OFCLASS ChainComplexMap, "), 
+      or between objects in other categories.",
+     PARA,
+     "See also the function ", TO matrix, ", which focuses on creating new matrices from
+     rectangular arrays of ring elements or matrices.",
+     Subnodes => {
+	  "Creating a map between modules (a matrix)",
+	  TO (map,Module,Module,Function),
+	  TO (map,Module,Module,List), 
+	  TO (map,Module,Module,RingElement), 
+	  TO (map,Module,Module,Matrix), 
+     	  "Creating a map between modules, where the source module is computed",
+	  TO (map,Module,ZZ,Function), 
+	  TO (map,Module,Nothing,List),
+	  TO (map,Module,ZZ,List), 
+	  TO (map,Module,Nothing,Matrix), 
+	  "Creating a map with a different degree",
+	  TO (map,Matrix), 
+	  "Creating a map between rings",
+	  TO (map,Ring,Ring),
+	  TO (map,Ring,Ring,List),
+	  TO (map,Ring,Ring,Matrix),
+	  "Creating a map between chain complexes",
+	  TO (map,ChainComplex,ChainComplex,ChainComplexMap),
+	  TO (map,ChainComplex,ChainComplex,Function)
+	  }
      }
-document { 
-     Key => (map,Module,RingElement),
-     Headline => "",
-     Usage => "",
+document {
+     Key => (map,Module,Module,Function),
+     Headline => "create a matrix by specifying a function which gives each entry",
+     Usage => "map(M,N,f)",
      Inputs => {
+	  "M" => null,
+	  "N" => null,
+	  "f" => null
 	  },
      Outputs => {
+	  {"a map from the module ", TT "N", " to the module ", TT "M", " 
+	       whose matrix entry ", TT "h_(i,j)", " is obtained from the
+	       function ", TT "f", " by evaluating ", TT "f(i,j)", "."
+	       }
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Recall that all indices in Macaulay 2 start at 0, so the upper left-most entry 
+     of a matrix ", TT "f", " is ", TT "f_(0,0)", ".",
+     PARA,
+     "This function is often used when you already know the source and target modules, 
+     including their gradings.  If you wish Macaulay 2 to compute the column degrees for
+     you (so the resulting matrix will be homogeneous if possible), use ", 
+     TO (map,Module,ZZ,Function), ".",
      EXAMPLE {
+	  "R = ZZ[a..c];",
+	  "f = map(R^3,R^{0,-1,-2,-3},(i,j) -> R_i^j)",
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     "We specified the degrees of the source basis elements explicitly
+     to ensure the matrix would be homogeneous.",
+     EXAMPLE "isHomogeneous f",
+     SUBSECTION "Alternate approaches",
+     "We could have let Macaulay2 take care of that for us, by replacing
+     the source module by its desired rank.",
+     EXAMPLE {
+	  "g = map(R^3,4,(i,j) -> R_i^j)",
+	  "degrees g",
+	  "isHomogeneous g"
+	  },
+     PARA,
+     "Another way would be to let ", TO "matrix", " take care of that for
+     us.",
+     EXAMPLE {
+	  "h = matrix table(3,4,(i,j) -> R_i^j)",
+	  "degrees h",
+	  "isHomogeneous h"
+	  }
      }
-document { 
-     Key => (map,Module,Module),
-     Headline => "",
-     Usage => "",
+document {
+     Key => (map,Module,Module,List),
+     Headline => "create a matrix by giving a sparse or dense list of entries",
+     Usage => "map(M,N,v)",
      Inputs => {
+	  "M" => null,
+	  "N" => null,
+	  "v" => null
 	  },
      Outputs => {
+	  {"A matrix ", TT "M <-- N", " whose entries are obtained from ", TT "v"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "The list ", TT "v", " is either a doubly nested list of 
+     ring elements, or a list of elements ",
+     TT "(i,j) => f", ".  The first version provides all of the elements of the 
+     output matrix, row by row.  The second form provides only the 
+     non-zero elements of the 
+     output matrix ", TT "h: h_(i,j) = f", ", for every ", TT "(i,j) => f", 
+     " in the list ", TT "v", ".",
+     PARA,
+     "In each case, the modules ", TT "M", " and ", TT "N", " should have the 
+     same base ring
+     ", TT "R", ", and the ring elements appearing in ", TT "v", " should be over ", 
+     TT "R", ", or over a base
+     ring of ", TT "R", ".",
+     PARA,
+     "In the first form, each list in v gives a row of the matrix. ",
+     "The length of the list ", TT "v", " should be the number of generators of ", TT "M", 
+     ", and the length of each element of ", TT "v", " (which is itself a 
+     list of ring elements) should be the
+     number of generators of the source module ", TT "N", ".",
      EXAMPLE {
+	  "R = ZZ/101[x,y,z];",
+      	  "p = map(R^2,R^{-2,-2,0},{{x^2,0,3},{0,y^2,5}})",
+      	  "isHomogeneous p",
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     "In the second form, if an index (i,j) occurs more than once, 
+     only the last is taken.",
+     EXAMPLE {
+      	  "p = map(R^2,R^3,{(0,0) => x+y, (1,1) => x^2, (0,2) => x-1, (0,0) => x-y})"
+	  },
+     SeeAlso => {matrix, (map,Module,Nothing,List), "inputting a matrix"}
      }
-document { 
-     Key => (map,Ring,Ring,List),
-     Headline => "",
-     Usage => "",
+document {
+     Key => (map,Module,Module,Matrix),
+     Headline => "create the matrix induced on generators by a given matrix",
+     Usage => "map(M,N,p)",
      Inputs => {
+	  "M" => null,
+	  "N" => null,
+	  "p" => null
 	  },
      Outputs => {
+	  {"A matrix with the same entries as ", TT "p", ", but whose target 
+	  is ", TT "M", " and source is ", TT "N"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     TT "M", " and ", TT "N", " should be modules over the same ring, and have the same 
+     number of generators as ", TT "target p", " and ", TT "source p", ", respectively.",
      EXAMPLE {
+	  "R = QQ[x,y,z];",
+      	  "p = matrix {{x,y,z}}",
+      	  "q = map(R^1,R^3,p)",
+      	  "degrees source p",
+      	  "degrees source q",
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => inducedMap,
+     Caveat => {
+     	  "If ", TT "M", " or ", TT "N", " is not free,
+     	  then we don't check that the the result is a well defined homomorphism."
+	  }
      }
-document { 
+
+document {
+     Key => (map,Module,Module,RingElement),
+     Headline => "construct the map induced by multiplication by a ring element on the
+        generators",
+     Usage => "map(M,N,r)",
+     Inputs => {
+	  "M" => null,
+	  "N" => {"over the same ring ", TT "R", " as ", TT "M"},
+	  "r" => {"in the ring ", TT "R"}
+	  },
+     Outputs => {
+	  {"The map induced by multiplication by r on the generators"}
+	  },
+     "If ", TT "r", " is not zero, then 
+     either ", TT "M", " and ", TT "N", " should be equal, or they should 
+     have the same number of generators.  This gives the same map as
+     r * map(M,N,1).  map(M,N,1) is the map induced by the identity on the
+     generators of M and N.",
+     EXAMPLE {
+	  "R = QQ[x];",
+      	  "map(R^2,R^3,0)",
+      	  "f = map(R^2,R^2,x)",
+	  "f == x *map(R^2,R^2,1)"
+	  },
+     SeeAlso => inducedMap,
+     Caveat => {
+     	  "If ", TT "M", " or ", TT "N", " is not free,
+     	  then we don't check that the the result is a well defined homomorphism."
+	  }
+     }
+document {
+     Key => (map,Matrix),
+     Headline => "make a matrix with a different degree",
+     Usage => "map(f, Degree => d)",
+     Inputs => {
+	  "f" => Matrix => null,
+	  },
+     Outputs => {
+	  {"a map identical to ", TT "f", ", except that it has degree ", 
+	       TT "d", ", and the source
+	       module has been tensored by a graded free module of rank 1 of 
+	       the appropriate degree."},
+	  },
+      "The input ", TT "d", " should be ", OFCLASS ZZ, ", or a list of integers.",
+      PARA,
+      "This routine is often used to take a matrix which has a non-zero degree, 
+      and make the degree zero.",
+      PARA,
+      "For example, multiplication of a matrix by a scalar increases the 
+      degree, leaving the source and target fixed:",
+      EXAMPLE {
+	   "R = QQ[a,b];",
+	   "f1 = matrix{{a,b}}",
+	   "f = a * f1",
+	   "degree f",
+	   "source f == source f1",
+	   },
+      "One solution is to change the degree:",
+      EXAMPLE {
+	   "g = map(f, Degree => 0)",
+	   "degree g",
+	   "source g == (source f) ** R^{-1}"
+	   },
+      "An alternate solution would be to use tensor product with the scalar.",
+      EXAMPLE {
+     	  "g2 = a ** matrix{{a,b}}",
+	  "degree g2",
+	  "isHomogeneous g2"
+	  }
+     }
+document {
+     Key => (map,Module,Nothing,Matrix),
+     Headline => "recast a matrix to have a new target, and a free module as source",
+     Usage => "map(M,,f)",
+     Inputs => {
+	  "M" => null,
+	  "f" => {"whose target has the same number of generators as ", TT "M"}
+	  },
+     Outputs => {
+	  {"A map with a free source module, and target ", TT "M", ", whose entries are those of f."}
+	  },
+     EXAMPLE {
+	  "R = ZZ/101[x,y];",
+      	  "p = matrix{{x,y}}",
+      	  "q = map(R^{3},,p)",
+      	  "degrees target q",
+      	  "degrees source q",
+	  },
+     SeeAlso => {matrix}
+     }
+document {
      Key => (map,Module,ZZ,Function),
-     Headline => "",
-     Usage => "",
+     Headline => "create a matrix from a free module by specifying a function which gives each entry",
+     Usage => "map(M,n,f)",
      Inputs => {
+	  "M" => null,
+	  "n" => null,
+	  "f" => null
 	  },
      Outputs => {
+	  {"a map from a graded free module of rank ", TT "n", " to the module ", TT "M", " 
+	       whose matrix entry ", TT "h_(i,j)", " is obtained from the
+	       function ", TT "f", " by evaluating ", TT "f(i,j)", "."
+	       }
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "This is the same as calling map(M,R^n,f), except that the 
+     degrees of the basis elements of the source module are chosen
+     in an attempt to ensure that the resulting map is homogeneous of
+     degree zero.",
      EXAMPLE {
+	  "R = GF(9,Variable=>a)[x,y,z];",
+	  "f = map(R^1, 3, (i,j) -> (a^j * x - y)^(j+1))",
+	  "source f",
+	  "isHomogeneous f"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {(map,Module,Module,Function),(source,Matrix),(isHomogeneous,Matrix)}
      }
+document {
+     Key => (map,Module,ZZ,List),
+     Headline => "create a matrix by giving a sparse or dense list of entries",
+     Usage => "map(M,n,v)",
+     Inputs => {
+	  "M" => null,
+	  "n" => null,
+	  "v" => null
+	  },
+     Outputs => {
+	  {"A matrix ", TT "M <-- R^n", " whose entries are obtained from ", TT "v",
+	       ", where R  is the ring of M, and the source of the result is
+	       a graded free module chosen in an attempt to make the result 
+	       homogeneous of degree zero"}
+	  },
+     "The list ", TT "v", " is either a doubly nested list of 
+     ring elements, or a list of elements ",
+     TT "(i,j) => f", ".  The first version provides all of the elements of the 
+     output matrix, row by row.  The second form provides only the 
+     non-zero elements of the 
+     output matrix ", TT "h: h_(i,j) = f", ", for every ", TT "(i,j) => f", 
+     " in the list ", TT "v", ".",
+     PARA,
+     "The ring elements appearing in ", TT "v", " should be be in ", 
+     TT "R", ", or in a base
+     ring of ", TT "R", ".",
+     PARA,
+     "In the first form, each list in v gives a row of the matrix. ",
+     "The length of the list ", TT "v", " should be the number of generators of ", TT "M", 
+     ", and the length of each element of ", TT "v", " (which is itself a 
+     list of ring elements) should be the
+     number of generators of the source module ", TT "N", ".",
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z];",
+      	  "p = map(R^2,3,{{x^2,0,3},{0,y^2,5}})",
+      	  "isHomogeneous p",
+	  },
+     "In the second form, if an index (i,j) occurs more than once, 
+     only the last is taken.",
+     EXAMPLE {
+      	  "p = map(R^2,3,{(0,0) => x+y, (1,1) => x^2, (0,2) => x-1, (0,0) => x-y})"
+	  },
+     SeeAlso => {matrix, (map,Module,Nothing,List), "input a matrix"}
+     }
+document {
+     Key => (map,Module,Nothing,List),
+     Headline => "create a matrix by giving a doubly nested list of ring elements",
+     Usage => "map(M,v)",
+     Inputs => {
+	  "M" => null,
+	  "v" => null
+	  },
+     Outputs => {
+	  {"A matrix ", TT "M <-- R^n", " whose entries are obtained from ", TT "v",
+	       ", where R  is the ring of M, and the source of the result is
+	       a graded free module chosen in an attempt to make the result 
+	       homogeneous of degree zero"}
+	  },
+     "The list ", TT "v", " must be a doubly nested list of 
+     ring elements, which are used to fill the matrix, row by row.",
+     PARA,
+     "The ring elements appearing in ", TT "v", " should be be in ", 
+     TT "R", ", or in a base
+     ring of ", TT "R", ".",
+     PARA,
+     "Each list in v gives a row of the matrix. ",
+     "The length of the list ", TT "v", " should be the number of generators of ", TT "M", 
+     ", and the length of each element of ", TT "v", " (which is itself a 
+     list of ring elements) should be the
+     number of generators of the source module ", TT "N", ".",
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "p = map(R^2,,{{x^2,0,3},{0,y^2,5}})",
+      	  "isHomogeneous p",
+	  },
+     "Another way is to use the ", TO (matrix,List), " routine:",
+     EXAMPLE {
+      	  "p = matrix {{x^2,0,3},{0,y^2,5}}"
+	  },
+     PARA,
+     "The absence of the second argument indicates that the source of the map
+     is to be a free module constructed with an attempt made to assign degrees
+     to its basis elements so as to make the map homogeneous of degree zero.",
+     PARA,
+     EXAMPLE {
+	  "R = ZZ/101[x,y]",
+      	  "f = map(R^2,,{{x^2,y^2},{x*y,0}})",
+      	  "degrees source f",
+      	  "isHomogeneous f",
+	  },
+     SeeAlso => {matrix, (map,Module,Module,List), "input a matrix"}
+     }
+document {
+     Key => (map,Ring,Ring,Matrix),
+     Headline => "make a ring map",
+     Usage => "map(R,S,m)",
+     Inputs => {
+	  "R" => "the target ring",
+	  "S" => "the source ring",
+	  "m" => {"a 1 by n matrix over ", TT "R", ", where n is the
+     	       number of variables in the polynomial ring ", TT "S", ",
+	       or a matrix over the common coefficient ring of the 
+	       two rings."
+	       }
+	  },
+     Outputs => {
+	  {
+	       "the ring homomorphism from ", TT "S", " to ", TT "R", " which,
+	       in case m is a matrix over R, sends the i-th variable
+	       of ", TT "S", " to the i-th entry in ", TT "m", ",
+	       or, in case ", TT "m", " is a matrix over the common coefficient ring,
+	       is the linear change of coordinates corresponding to ", TT "m"
+	       }
+	  },
+     EXAMPLE {
+	  "R = ZZ[x,y];",
+	  "S = ZZ[a,b,c];",
+	  "f = map(R,S,matrix {{x^2,x*y,y^2}})",
+	  "f(a+b+c^2)",
+	  "g = map(R,S,matrix {{1,2,3},{4,5,6}})",
+	  "g(a+b)"
+	  },
+     "If the coefficient ring of ", TT "S", " is itself a polynomial ring, then
+     one may optionally include values to which its variables should be 
+     sent: they should appear first in the matrix ", TT "m", ".",
+     EXAMPLE {
+	  "S = ZZ[a][b,c];",
+	  "h = map(S,S,matrix {{b,c,a}})",
+	  "h(a^7 + b^3 + c)",
+	  "k = map(S,S,matrix {{c,b}})",
+	  "k(a^7 + b^3 + c)"
+	  }
+     }
+document {
+     Key => (map,Ring,Ring,List),
+     Headline => "make a ring map",
+     Usage => "map(R,S,m)",
+     Inputs => {
+	  "R" => "the target ring",
+	  "S" => "the source ring",
+	  "m" => {"a list of n elements of ", TT "R", ", where n is the number of variables in the polynomial ring ", TT "S", ",
+	       or a list of pairs ", TT "x => r", ", where ", TT "x", " is a generator of ", TT "S", " and ", TT "r", " is an element of ", TT "R", ",
+	       specifying that ", TT "x", " is to be sent to ", TT "r", "." }
+	  },
+     Outputs => {
+	  {
+	       "the ring homomorphism from ", TT "S", " to ", TT "R", " which sends the i-th variable
+	       of ", TT "S", " to the i-th entry in ", TT "m", ", or in the second case, performs the
+	       indicated substitutions."
+	       }
+	  },
+     EXAMPLE {
+	  "R = ZZ[x,y];",
+	  "S = ZZ[a,b,c];",
+	  "f = map(R,S,{x^2,x*y,y^2})",
+	  "f(a+b+c^2)",
+	  "g = map(R,S,{a=>x^2,b=>x*y,c=>y^2})",
+	  "g(a+b+c^2)"
+	  },
+     SeeAlso => {(map,Ring,Ring,Matrix)}
+     }
+
 document { 
      Key => (map,ChainComplex,ChainComplex,ChainComplexMap),
      Headline => "",
@@ -99,416 +466,149 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (map,Matrix),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (map,Module,Module,Function),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (map,Module,ZZ,List),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => (map,Module),
-     Headline => "",
-     Usage => "",
+     Headline => "identity map",
+     Usage => "map M",
      Inputs => {
+	  "M" => null
 	  },
      Outputs => {
+	  Matrix => {"the identity map on ", TT "M"}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
+	  "f = map ZZ^3",
+	  "g = id_(ZZ^3)",
+	  "f === g"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (map,Ring,Ring,Matrix),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (map,Module,Module,List),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (map,Module,Module,ZZ),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (map,ChainComplex,ChainComplex),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (map,Module,Nothing,List),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (map,Ideal,Ideal),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (map,GradedModule,GradedModule,Function),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (map,Ideal),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (map,Module,Module,Matrix),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (map,Module,Module,RingElement),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Caveat => {"may be removed"},
+     SeeAlso => {(id,Module)}
      }
 document { 
      Key => (map,Ring,Ring),
-     Headline => "",
-     Usage => "",
+     Headline => "map which associates variables, rest maps to zero",
+     Usage => "map(R,S)",
      Inputs => {
+	  "R" => null,
+	  "S" => null
 	  },
      Outputs => {
+	  RingMap => {"a map S --> R which maps any variable of S to a variable
+	  with the same name in R, if any, and zero otherwise"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "For example, consider the following rings.",
      EXAMPLE {
+	  "A = QQ[a..e];",
+	  "B = A[x,y];",
+	  "C = QQ[a..e,x,y];"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (map,Module,Module,Type of Type of Thing{...3...}{...20...}),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     "The natural inclusion and projection maps between A and B are",
      EXAMPLE {
+	  "map(B,A)",
+	  "map(A,B)"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (map,Module,Nothing,Matrix),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     "The isomorphisms betwee B and C:",
      EXAMPLE {
+	  "F = map(B,C)",
+	  "G = map(C,B)",
+	  "F*G, G*F"
 	  },
-     Caveat => {},
+     PARA,
+     "The ring maps which are created are not always mathematically well-defined.
+     For example, the map F below is the natural quotient map, but the
+     the map G is not mathematically well-defined, although we can use it in Macaulay2 to
+     lift elements of E to D.",
+     EXAMPLE {
+	  "D = QQ[x,y,z];",
+	  "E = D/(x^2-z-1,y);",
+	  "F = map(E,D)",
+	  "G = map(D,E)",
+	  "x^3",
+	  "G x^3"
+	  },
+     Caveat => {"The map is not always a mathematically well-defined ring map"},
      SeeAlso => {}
      }
 document { 
      Key => (map,Ring,Matrix),
-     Headline => "",
-     Usage => "",
+     Headline => "make a ring map",
+     Usage => "map(R,m)",
      Inputs => {
+	  "R" => null,
+	  "m" => "a one row matrix"
 	  },
      Outputs => {
+	  RingMap => {"A ring map ", TT "f : R --> (ring m)", ", where the
+	  entries of ", TT "m", " are the images of the variables of ", TT "R", "."}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "This is equivalent to ", TT "map(ring m, R, m)", ".",
      EXAMPLE {
+	  "R = QQ[a..d];",
+	  "S = QQ[s,t];",
+	  "F = map(R,matrix{{s^4,s^3*t,s*t^3,t^4}})",
+	  "kernel F"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {(map,Ring,Ring,Matrix),"substitution and maps between rings"}
      }
-document { 
-     Key => (map,ChainComplex,ChainComplex,Function),
-     Headline => "",
-     Usage => "",
+document {
+     Key => {(map,ChainComplex,ChainComplex,Function),
+	  (map,GradedModule,GradedModule,Function)},
+     Headline => "make a map of chain complexes",
+     Usage => "map(C,D,f) or map(C,D,f,Degree=>d)",
      Inputs => {
+	  "C" => null,
+	  "D" => null,
+	  "f" => {"a function such that ", TT "f(i)", " is a matrix ", 
+	       TT "D_i --> C_(i+d)"}
 	  },
      Outputs => {
+	  ChainComplexMap => {"a map of chain complexes ", TT "D --> C"}
 	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (map,Module,ZZ),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (map,Module,Nothing,Type of Type of Thing{...3...}{...20...}),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (map,Module,Matrix),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     "If the degree d is not given, then d=0 is assumed.",
+     PARA,
+     "The function ", TT "f", " is called only for those indices which represent spots
+     occupied in both the source and target chain complexes.",
+     Caveat => {"This function does not check that the maps ", TT "f(i)",
+	  " commute with the differential of the chain complexes."},
+     SeeAlso => {
+	  extend,
+	  "ChainComplex"
+	  }
      }
 document { 
      Key => [map, Degree],
-     Headline => "",
-     Usage => "",
+     Headline => "set the degree of a map",
+     Usage => "map(..., Degree=>d)",
      Inputs => {
 	  },
      Consequences => {
 	  },     
-     "description",
+     "",
      EXAMPLE {
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {(map,Matrix)}
      }
-document { 
-     Key => [map, DegreeMap],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+
+document {
+     Key => [map,DegreeMap],
+     "A name for an optional argument used with ", TT "map", " when
+     creating a ring map, to specify a function that transforms degrees
+     of elements in the source ring to degrees of elements in the
+     target ring.  The function will be used later when tensoring a
+     module along the ring map to determine the degrees of the
+     generators in the result, and to determine whether the map is
+     homogeneous.",
      EXAMPLE {
+	  "R = QQ[x,y,z];",
+	  "S = QQ[t,u];",
+	  "f = map(S,R,{t^2,t*u,u^2},DegreeMap => i -> 2*i)",
+	  "isHomogeneous f",
+	  "M = R^{1,2}",
+	  "f ** M"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     "The default degree map function is the identity function, but when the two
+     rings have different degree lengths, a function must be explicitly
+     provided that transforms the lengths of the degree vectors appropriately, 
+     or else the default function which maps every degree to {0,...,0} 
+     will be provided automatically."
      }
- -- doc7.m2:780:     Key => map,
- -- doc7.m2:823:     Key => (map,Module,Module,Function),
- -- doc7.m2:869:     Key => (map,Module,Module,List),
- -- doc7.m2:912:     Key => (map,Module,Module,Matrix),
- -- doc7.m2:940:     Key => (map,Module,Module,RingElement),
- -- doc7.m2:969:     Key => (map,Matrix),
- -- doc7.m2:1009:     Key => (map,Module,Nothing,Matrix),
- -- doc7.m2:1029:     Key => (map,Module,ZZ,Function),
- -- doc7.m2:1052:     Key => (map,Module,ZZ,List),
- -- doc7.m2:1096:     Key => (map,Module,Nothing,List),
- -- doc7.m2:1147:     Key => (map,Module,Module),
- -- doc7.m2:1159:     Key => (map,Module,Module,ZZ),
- -- doc7.m2:1178:     Key => (map,Module,RingElement),
- -- doc8.m2:1493:     Key => [map,DegreeMap],
- -- doc8.m2:1517:     Key => (map,Ring,Ring,Matrix),
- -- doc8.m2:1559:     Key => (map,Ring,Ring,List),
- -- doc9.m2:642:document { Key => extend, Headline => "extend a module map to a chain map, if possible" }
- -- doc9.m2:671:document { Key => cone, Headline => "mapping cone of a chain map" }
- -- doc9.m2:1932:     Key => (map,ChainComplex,ChainComplex,Function),
- -- normal_doc.m2:82:     Key => (ICmap,Ring),
- -- overview2.m2:152:     Key => "maps between modules",                        -- map
- -- overview2.m2:354:     Key => "maps between chain complexes",
- -- overview2.m2:1425:     Key => "mapping over lists",
- -- overview2.m2:1515:     Key => "mapping over hash tables",
- -- overviewA.m2:233:     Key => "substitution and maps between rings",
- -- overviewB.m2:683:     Key => "basic construction, source and target of a ring map",
- -- overviewB.m2:735:     Key => "evaluation and composition of ring maps",
- -- overviewB.m2:765:     Key => "kernel and image of a ring map",
- -- overviewC.m2:1220:     Key => "homomorphisms (maps) between modules",
- -- overviewC.m2:1275:     Key => "constructing maps between modules",
- -- overviewC.m2:1302:     Key => "information about a map of modules",
- -- overviewC.m2:1308:     Key => "kernel, cokernel and image of a map of modules",
- -- overviewC.m2:1382:     Key => "adjoints of maps",
- -- overviewC.m2:1480:     Key => "fibers of a map between varieties",
+

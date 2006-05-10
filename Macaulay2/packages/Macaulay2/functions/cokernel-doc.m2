@@ -7,8 +7,8 @@ document {
      Key => {cokernel,
 	  (cokernel, ChainComplexMap),
 	  (cokernel, Matrix),
-	  (cokernel, GradedModuleMap)},
-     Undocumented => {(cokernel, RingElement)},
+	  (cokernel, GradedModuleMap),
+	  (cokernel, RingElement)},
      Headline => "cokernel of a map of modules, graded modules, or chaincomplexes",
      Usage => "cokernel f",
      Inputs => {
@@ -16,6 +16,8 @@ document {
 	       TO2(Matrix, "matrix"),
 	       ", a ",
 	       TO2(ChainComplexMap, "chain complex map"),
+	       ", a ",
+	       TO2(RingElement, "ring element"),
 	       ", or a ",
 	       TO2(GradedModuleMap, "graded module map")}
 	  },

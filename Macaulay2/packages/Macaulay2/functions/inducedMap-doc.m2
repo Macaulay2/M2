@@ -126,6 +126,25 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
+
+document { 
+     Key => (inducedMap,ChainComplex,ChainComplex),
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+
+
  -- doc7.m2:583:     Key => (inducedMap, Module, Module),
  -- doc7.m2:615:     Key => (inducedMap, Module, Module, Matrix),
  -- doc7.m2:654:     Key => inducedMap,

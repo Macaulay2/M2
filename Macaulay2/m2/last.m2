@@ -23,7 +23,7 @@ promptWidth = () -> (
 
 wr := (sep,x) -> wrap(printWidth - promptWidth(), sep, net x)
 RawMatrix.Wrap = Matrix.Wrap = RingElement.Wrap = List.Wrap = Sequence.Wrap = x -> wr("-",x)
-String.Wrap = x -> if height x + depth x === 1 then wr("",x) else x
+String.Wrap = x -> wr("",x)
 
 
 -- make sure this is after all global symbols are defined or erased
@@ -32,6 +32,7 @@ closePackage "Macaulay2Core"
 load "installedpackages.m2"
 installedPackages := Macaulay2Core#"pre-installed packages"	-- initialized in the file installedpackages.m2, which is made from the file installedpackages
 scan(installedPackages, pkg -> loadPackage(pkg,DebuggingMode => not stopIfError))
+-- we used to load package "Macaulay2" automatically, but now we (will) load it lazily
 
 addStartFunction( 
      () -> (

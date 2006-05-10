@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ/101[x,y,z,w];
 
@@ -51,7 +52,5 @@ o6 : Matrix R  <--- R
 i7 : (options gb).Syzygies
 
 o7 = false
-
-o7 : Boolean
 
 i8 : 

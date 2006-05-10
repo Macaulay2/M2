@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = GF(3^2,Variable => a);
 
@@ -10,33 +11,44 @@ o2 = | a+1 a    a  0   |
              3       4
 o2 : Matrix R  <--- R
 
-i3 : S = R[p..z];
+i3 : T = R[x,y];
 
-i4 : genericMatrix(S,t,3,2)
+i4 : random(T^3,T^{4:-1})
 
-o4 = | t w |
+o4 = | (-a+1)x+ay -x+(a+1)y  0              -x-y  |
+     | (a-1)x     (-a-1)x-y  (a+1)x+(-a+1)y -x-ay |
+     | ay         (-a-1)x+ay (a+1)x+ay      ax-y  |
+
+             3       4
+o4 : Matrix T  <--- T
+
+i5 : S = R[p..z];
+
+i6 : genericMatrix(S,t,3,2)
+
+o6 = | t w |
      | u x |
      | v y |
 
              3       2
-o4 : Matrix S  <--- S
+o6 : Matrix S  <--- S
 
-i5 : genericSymmetricMatrix(S,s,3)
+i7 : genericSymmetricMatrix(S,s,3)
 
-o5 = | s t u |
+o7 = | s t u |
      | t v w |
      | u w x |
 
              3       3
-o5 : Matrix S  <--- S
+o7 : Matrix S  <--- S
 
-i6 : genericSymmetricMatrix(S,u,3)
+i8 : genericSymmetricMatrix(S,u,3)
 
-o6 = | u v w |
+o8 = | u v w |
      | v x y |
      | w y z |
 
              3       3
-o6 : Matrix S  <--- S
+o8 : Matrix S  <--- S
 
-i7 : 
+i9 : 

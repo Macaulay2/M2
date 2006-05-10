@@ -53,6 +53,17 @@ const MonomialIdeal *IM2_MonomialIdeal_add(const MonomialIdeal *I,
   return (*I) + (*J);
 }
 
+const MonomialIdeal *IM2_MonomialIdeal_setminus(const MonomialIdeal *I, 
+						const MonomialIdeal *J)
+{
+  if (I->get_ring() != J->get_ring())
+    {
+      ERROR("expected ideals in the same ring");
+      return 0;
+    }
+  return (*I) - (*J);
+}
+
 const MonomialIdeal *IM2_MonomialIdeal_product(const MonomialIdeal *I, 
 					       const MonomialIdeal *J)
 {

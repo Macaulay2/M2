@@ -21,10 +21,14 @@ check :: $(CHAPTERS)
 $(CHAPTERS):; mkdir "$@"
 endif
 
+ifeq (,$(findstring k,$(MAKEFLAGS)))
+EXIT = || exit 1
+else
+EXIT = 
+endif
+
 check ::
-	set -x ; for d in $(CHAPTERS) ; \
-	   do $(MAKE) -C $$d srcdir=$(srcdir)/$$d $@ || exit 1; \
-	   done
+	set -x ; for d in $(CHAPTERS) ; do $(MAKE) -C $$d $@ $(EXIT) ; done
 
 changes:
 	-for i in $(CHAPTERS); \

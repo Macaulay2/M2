@@ -80,9 +80,10 @@ document {
 	  }
      }
 
+undocumented {(poincare,MonomialIdeal)}
+
 document { 
      Key => (poincare,Ideal),
-     Undocumented =>  {(poincare,MonomialIdeal)},
      Headline => "assemble degrees of the quotient of the ambient ring by an ideal into a polynomial",
      Usage => "poincare I",
      Inputs => {

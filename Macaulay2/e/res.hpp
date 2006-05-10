@@ -68,6 +68,8 @@ class res_comp : public ResolutionComputation
   const Monoid *M;
   const Ring *K;
   const Matrix *generator_matrix;	// Input matrix of generators, possibly a GB, possibly not
+  stash *res_pair_stash;
+  stash *mi_stash;
 
   // The current state of the computation
   int n_level;			// Current level
@@ -135,6 +137,7 @@ class res_comp : public ResolutionComputation
 
   res_degree *make_degree_set(int level, int deg);
   res_degree *get_degree_set(int level, int d) const;
+  res_pair *new_res_pair();
   res_pair *new_res_pair(int i);
   res_pair *new_res_pair(int syztype, resterm *f);
   res_pair *new_res_pair(int syztype, res_pair *first, res_pair *second);

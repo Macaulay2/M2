@@ -45,6 +45,7 @@ S = QQ[a,b,Degrees => {{-2,10},{0,10}}, Repair => rep, Adjust => adj]
 poincare (S/a)
 poincare (S/b)
 poincare (S/(a^2))
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test repair.out"
 -- End:

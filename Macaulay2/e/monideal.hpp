@@ -11,7 +11,7 @@
 
 class MinimalPrimes;
 
-class Nmi_node : public our_new_delete // monomial ideal internal node ///
+class Nmi_node // monomial ideal internal node ///
 {
   friend class MonomialIdeal;
   friend class AssociatedPrimes;
@@ -29,15 +29,15 @@ protected:
     Bag             * bag;
   } val;
 
-  Nmi_node(int v, int e, Nmi_node *d) 
-    : var(v), exp(e), left(NULL), right(NULL), header(NULL), tag(node)
-  { val.down = d; }
-
-  Nmi_node(int v, int e, Bag *b) 
-    : var(v), exp(e), left(NULL), right(NULL), header(NULL), tag(leaf)
-  { val.bag = b; }
-
-  ~Nmi_node();
+  //  Nmi_node(int v, int e, Nmi_node *d) 
+  //    : var(v), exp(e), left(NULL), right(NULL), header(NULL), tag(node)
+  //  { val.down = d; }
+  //
+  //  Nmi_node(int v, int e, Bag *b) 
+  //    : var(v), exp(e), left(NULL), right(NULL), header(NULL), tag(leaf)
+  //  { val.bag = b; }
+  //
+  //  ~Nmi_node();
 
   Nmi_node *&down   () { return val.down; }
   Bag     *&baggage() { return val.bag; }
@@ -58,12 +58,17 @@ class MonomialIdeal : public mutable_object
 
   const PolynomialRing *R;
   Nmi_node *mi;
-  int count;
-
+  int count; // We hack this a bit: the low order bit (count%1==1) means that we own the stash
+             // count//2 is the actual number of nodes here.
+  stash *mi_stash;
   friend class AssociatedPrimes;
   friend class MinimalPrimes;
 
 private:
+  Nmi_node *new_mi_node(int v, int e, Nmi_node *d);
+  Nmi_node *new_mi_node(int v, int e, Bag *b);
+  void delete_mi_node(Nmi_node *p);
+
   Nmi_node *first_node() const;
   Nmi_node *last_node() const;
   Nmi_node *next(Nmi_node *p) const;
@@ -78,12 +83,12 @@ private:
   void k_basis1(int topvar) const;
 
 public:
-  MonomialIdeal(const PolynomialRing *RR) : mutable_object(), R(RR), mi(0), count(0) {}
-  virtual ~MonomialIdeal() { deleteitem(mi); }
-  int length_of() const { return count; }
+  MonomialIdeal(const PolynomialRing *RR, stash *mi_stash=0);
+  virtual ~MonomialIdeal() { delete_mi_node(mi); if ((count % 2) == 1) delete mi_stash; }
+  int length_of() const { return count/2; }
 
-  MonomialIdeal(const PolynomialRing *R, queue<Bag *> &elems);
-  MonomialIdeal(const PolynomialRing *R, queue<Bag *> &elems, queue<Bag *> &rejects);
+  MonomialIdeal(const PolynomialRing *R, queue<Bag *> &elems, stash *mi_stash=0);
+  MonomialIdeal(const PolynomialRing *R, queue<Bag *> &elems, queue<Bag *> &rejects, stash *mi_stash=0);
 
   MonomialIdeal * copy() const;
 
@@ -91,7 +96,7 @@ public:
   const int *second_elem() const; // returns varpower
 
   // Informational
-  int length() const { return count; }
+  int length() const { return count/2; }
   int topvar() const { return (mi == NULL ? -1 : mi->var); }
   void text_out(buffer &o) const;
 
@@ -172,7 +177,7 @@ struct monideal_pair : public our_new_delete
 inline void MonomialIdeal::insert_minimal(Bag *b) 
 {
   insert1(mi, b); 
-  count++; 
+  count += 2; 
 }
 
 inline Bag * MonomialIdeal::operator[](Index<MonomialIdeal > i) const

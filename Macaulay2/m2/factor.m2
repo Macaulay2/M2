@@ -19,7 +19,7 @@ gcd(RingElement,RingElement) := RingElement => (r,s) -> new ring r from rawGCD(r
 gcdCoefficients(RingElement,RingElement) := (f,g) -> (	    -- ??
      R := ring f;
      if R =!= ring g then error "expected elements of the same ring";
-     apply(rawExtendedGCD(raw f, raw g), r -> new R from r))
+     toList apply(rawExtendedGCD(raw f, raw g), r -> new R from r))
 
 pseudoRemainder = method()
 pseudoRemainder(RingElement,RingElement) := RingElement => (f,g) -> (
@@ -34,12 +34,12 @@ reorder := I -> (					    -- rawIdealReorder
      assert( #v == numgens R );
      v)
 
-lcm2 := (x,y) -> x*y//gcd(x,y)
-lcm := args -> (
-     n := 1;
-     scan(args, i -> n = lcm2(n,i));
-     n)
-commden := (f) -> lcm apply( last \ listForm f, denominator)
+-- lcm2 := (x,y) -> x*y//gcd(x,y)
+-- lcm := args -> (
+--      n := 1;
+--      scan(args, i -> n = lcm2(n,i));
+--      n)
+-- commden := (f) -> lcm apply( last \ listForm f, denominator)
 
 irreducibleCharacteristicSeries = method()
 irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
@@ -50,7 +50,7 @@ irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
      then error "expected ideal in a polynomial ring";
      k := coefficientRing R;
      if not isField k then error "factorization not implemented for coefficient rings that are not fields";
-     if k === QQ then f = matrix { first entries f / (r -> r * commden r) };
+     -- if k === QQ then f = matrix { first entries f / (r -> r * commden r) };
      re := reorder I;
      n := #re;
      f = substitute(f,apply(n,i -> R_(re#i) => R_i));

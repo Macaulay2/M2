@@ -42,7 +42,7 @@ assert(mypromote(a^2-a-5, KB) == (KB_0)^2-(KB_0)-5)
 ab = KB_0
 a = raw B_"a"
 assert(mylift(ab, B) == a)
-assert(mylift(ab^2//(-1), B) == -a^2)
+-- assert(mylift(ab^2//(-1), B) == -a^2) -- no normal form in fraction fields
 assert(mylift(((ab-1)*(ab^2-3))//(ab-1), B) == a^2-3)
 
 -- 3. ZZ/p[x]/f ---> GF(p,n)
@@ -51,9 +51,11 @@ L = last C.baseRings
 D = class lift(x,L)
 
 f = mypromote(D_0, C)
-assert(mylift(f, D) == D_0)
+assert( rawLift(raw D, f) == raw x )
+-- assert(mylift(f, D) == D_0)
 g = mylift(C_0, D)
-assert(mypromote(g,C) == C_0)
+assert( rawLift(raw C, f) == raw C_0 )
+-- assert(mypromote(g,C) == C_0)
 
 --B = ZZ/101[a,b,c]
 --C = B/(a^2+b^2+c^2)
@@ -62,6 +64,7 @@ assert(mypromote(g,C) == C_0)
 --F = GF(2,5)
 
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testpromote.out"
 -- End:

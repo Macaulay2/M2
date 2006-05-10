@@ -1400,6 +1400,9 @@ extern "C" {
   const MonomialIdealOrNull *IM2_MonomialIdeal_add(const MonomialIdeal *I, 
 						   const MonomialIdeal *J); /* drg: connected + */
 
+  const MonomialIdealOrNull *IM2_MonomialIdeal_setminus(const MonomialIdeal *I, 
+							const MonomialIdeal *J); /* mes: connected - */
+
   const MonomialIdealOrNull *IM2_MonomialIdeal_product(const MonomialIdeal *I, 
 						       const MonomialIdeal *J); /* drg: connected * */
 

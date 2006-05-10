@@ -55,6 +55,7 @@ g = substitute(g, T_0 => 1)
 print ((expression g) / (expression (1 - T_1) * (expression (1 - T_1^2))))
 
 assert( g == -T_1^2+4*T_1+5 )
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test groupcoh.out"
 -- End:

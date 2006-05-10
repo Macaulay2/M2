@@ -42,7 +42,7 @@ x  = {symbol generators, symbol size, symbol symmetricPower, symbol " ", symbol 
       topics, symbol position, symbol regex, symbol Tor, symbol "=!=", symbol closeIn, symbol ProjectiveHilbertPolynomial, symbol degreesMonoid, symbol factor, symbol image, symbol class,
       symbol lookup, symbol acos, symbol terms, indexComponents, symbol CacheTable, symbol uncurry, symbol newline, symbol read, symbol File, symbol net, symbol "new", symbol all, symbol
       setEcho, symbol profile, symbol NOINDENT, symbol uniform, GroupRevLex, Sort, symbol MonoidElement, symbol NL, symbol match, symbol Holder, symbol ancestor, symbol "and", symbol OO,
-      symbol ann, symbol leadTerm, symbol OrderedMonoid, symbol any, symbol genus, symbol isSquareFree, Lex, symbol modifyRing, symbol applyPairs, symbol unlinkFile, symbol exp, symbol QQ,
+      symbol ann, symbol leadTerm, symbol OrderedMonoid, symbol any, symbol genus, symbol isSquareFree, Lex, symbol modifyRing, symbol applyPairs, symbol removeFile, symbol exp, symbol QQ,
       symbol isBorel, symbol coverMap, Bayer, symbol infinity, symbol homogenize, symbol ring, symbol TITLE, symbol FunctionApplication, symbol RR, HardDegreeLimit, symbol topComponents,
       symbol pushForward, symbol alarm, symbol getWWW, symbol hilbertSeries, symbol characters, symbol quotient, symbol isIsomorphism, symbol TO, symbol PushforwardComputation, symbol TT,
       symbol run, symbol nextkey, LongPolynomial, symbol STRONG, symbol UL, symbol member, symbol needs, symbol koszul, symbol AssociativeExpression, symbol chainComplex, getMatrix, symbol
@@ -82,6 +82,7 @@ y = sort x
 z = sort y
 assert ( z == y )
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test sort.out"
 -- End:

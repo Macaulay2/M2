@@ -376,11 +376,17 @@ setupfun("value",value).protected = false;
 
 tmpbuf := new string len 100 do provide ' ' ;
 
-capture(e:Expr):Expr := (
+internalCapture(e:Expr):Expr := (
      when e
      is s:string do (
      	  flush(stdIO);
 	  oldfd := stdIO.outfd;
+	  oldDebuggingMode := debuggingMode;
+	  setDebuggingMode(false);
+	  oldStderrE := getGlobalVariable(stderrS);
+	  oldstderr := stderr;
+	  stderr = stdIO;
+	  setGlobalVariable(stderrS,getGlobalVariable(stdioS));
 	  stdIO.outfd = NOFD;
 	  oldbuf := stdIO.outbuffer;
 	  stdIO.outbuffer = tmpbuf;
@@ -395,16 +401,14 @@ capture(e:Expr):Expr := (
 	  stdIO.outfd = oldfd;
 	  stdIO.outbuffer = oldbuf;
 	  stdIO.outindex = 0;
+	  setGlobalVariable(stderrS,oldStderrE);
+	  stderr = oldstderr;
 	  setLineNumber(oldLineNumber);
+	  setDebuggingMode(oldDebuggingMode);
 	  previousLineNumber = -1;
-	  when r 
-	  is err:Error do (
-	       if err.message == returnMessage || err.message == continueMessage || err.message == continueMessageWithArg
-	       || err.message == breakMessage then err.value 
-	       else r)
-	  else Expr(out))
+	  Expr(Sequence( when r is err:Error do True else False, Expr(out) )))
      else WrongArg(1,"a string"));
-setupfun("capture",capture);
+setupfun("internalCapture",internalCapture);
 
 normalExit := 0;
 errorExit := 1;

@@ -6,6 +6,7 @@ assert( substitute(x*y,matrix {{y,x}}) == y*x )
 -- new to 0.9.5:
 E = ZZ/32003[x,y,z,a..f,SkewCommutative => {a,b,c,d,e,f}]
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test skew.out"
 -- End:

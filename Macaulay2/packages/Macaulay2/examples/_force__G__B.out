@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : gbTrace = 3;
 
@@ -18,10 +19,8 @@ i5 : g === gb(f, StopBeforeComputation=>true)
 
 o5 = true
 
-o5 : Boolean
-
 i6 : gens gb f
-
+...
 o6 = | x2-3 y3-1 z4-2 |
 
              1       3

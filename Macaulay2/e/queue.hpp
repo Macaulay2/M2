@@ -55,7 +55,7 @@ class queue : public our_new_delete
 	{
 	  queue_block<T> *temp = head;
 	  head = head->next;
-	  deleteitem(temp);
+	  delete temp;
 	}
     }
  public:
@@ -100,7 +100,7 @@ void queue<T>::copy(const queue<T> &q)
 	{
 	  queue_block<T> *tmp = head;
 	  head = head->next;
-	  deleteitem(tmp);
+	  delete tmp;
 	}
       head_i = tail_i = len = 0;
       tail = NULL;
@@ -142,7 +142,7 @@ bool queue<T>::remove(T &elem)
     {
       if (head_i == tail_i)
 	{
-	  deleteitem(head);
+	  delete head;
 	  head = NULL;
 	  len = head_i = tail_i = 0;
 	}
@@ -151,7 +151,7 @@ bool queue<T>::remove(T &elem)
     {
       queue_block<T> *temp = head;
       head = head->next;
-      deleteitem(temp);
+      delete temp;
       head_i = 0;
     }
 

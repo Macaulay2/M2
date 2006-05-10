@@ -112,3 +112,12 @@ M*C == P
 M*C == P
 
 ///
+
+///
+W = QQ [x, y, Dx, Dy, a, Da, WeylAlgebra=>{x=>Dx, y=>Dy, a=>Da}]
+M = matrix {{3*x*Dx+2*y*Dy+15}, {3*x*y^2*Dx+2*x^2*Dy+3*y^2}, {y^3*Dy-x^2*Dy+6*y^2}}
+coefficients(transpose M,Variables=>{x,y,Dx,Dy})
+coefficients(transpose M,Variables=>{0..3})
+
+coefficients({0,1,2,3},M)
+///

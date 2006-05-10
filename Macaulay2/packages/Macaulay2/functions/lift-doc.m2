@@ -2,13 +2,7 @@
 --- author(s): MES
 --- notes: BUG to fix
 
-document { 
-     Key => {lift,
-	  (lift,Ideal,Ring),
-	  (lift,Matrix,Ring),
-	  (lift,RingElement,Ring)},
-     Headline => "lift to another ring",
-     Undocumented => {
+undocumented {
 	  (lift,Ideal,ZZ),
 	  (lift,ZZ,Ring),
 	  (lift,QQ,Ring),
@@ -17,7 +11,14 @@ document {
 	  (lift,QQ,QQ),
 	  (lift,Matrix,ZZ),
 	  (lift,RingElement,ZZ),
-	  (lift,RingElement,QQ)},
+	  (lift,RingElement,QQ)}
+
+document { 
+     Key => {lift,
+	  (lift,Ideal,Ring),
+	  (lift,Matrix,Ring),
+	  (lift,RingElement,Ring)},
+     Headline => "lift to another ring",
      Usage => "lift(f,R)",
      Inputs => {
 	  "f" => {"a ", TO2(RingElement,"ring element"), ", ",

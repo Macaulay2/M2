@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : scan({a,b,c}, print)
 a
@@ -78,13 +79,9 @@ i14 : any({1,2,3,4,5,6,7,8,9,10}, even)
 
 o14 = true
 
-o14 : Boolean
-
 i15 : all({1,2,3,4,5,6,7,8,9,10}, even)
 
 o15 = false
-
-o15 : Boolean
 
 i16 : position({1,3,5,7,8,9,11,13,15,16},even)
 

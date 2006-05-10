@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R=QQ[w,x,y,z]
 

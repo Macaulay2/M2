@@ -16,6 +16,7 @@ assert( isHomogeneous f )
 E = cokernel f
 
 assert( HH_1 res E == 0 )
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ext.out"
 -- End:

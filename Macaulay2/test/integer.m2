@@ -72,6 +72,7 @@ y(1234567, 2^63)
 y(123, 2^15)
 y(123, 2^31)
 y(123, 2^63)
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test integer.out"
 -- End:

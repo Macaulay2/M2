@@ -1197,7 +1197,7 @@ map(e:Expr):Expr := (
 setupfun("apply",map);
 
 scan(n:int,f:Expr):Expr := (
-     if n <= 0 then return emptySequenceE;
+     if n <= 0 then return nullE;
      if recursionDepth > recursionLimit then (
      	  recursionDepth = recursionDepth - 1;
 	  RecursionLimit())

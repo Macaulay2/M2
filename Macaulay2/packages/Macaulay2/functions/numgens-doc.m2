@@ -52,7 +52,6 @@ document {
      }
 document { 
      Key => (numgens,Ideal),
-     --Undocumented => {(numgens,MonomialIdeal)},
      Headline => "number of generators of an ideal",
      Usage => "numgens I",
      Inputs => {
@@ -104,10 +103,6 @@ document {
      }
 document { 
      Key => (numgens,Ring),
---     Undocumented => {(numgens,QuotientRing),
---     	                (numgens,FractionField),
---			(numgens,EngineRing),
---			(numgens,PolynomialRing)},
      Headline => "number of generators of a polynomial ring",
      Usage => "numgens R",
      Inputs => {

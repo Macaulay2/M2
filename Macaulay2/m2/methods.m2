@@ -188,23 +188,23 @@ setup(TypicalValue => ZZ,
 setup(TypicalValue => List,
      {eulers, genera})
 
-use HashTable := x -> (
-     if x.?use then x.use x; 
-     x)
-
 radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null } )
 
 primaryDecomposition = method(
      TypicalValue => List,
      Options => {
 	  PrintLevel => 0,
-	  Strategy => null})
+	  Strategy => null
+	  }
+     )
 
 associatedPrimes = method(
      TypicalValue => List,
      Options =>{
 	  PrintLevel => 0,
-	  Strategy => 2})
+	  Strategy => 1
+	  }
+     )
 
 ass = associatedPrimes
 
@@ -364,21 +364,37 @@ installAssignmentMethod(Symbol,HashTable,Function) := (op,Y,f) -> installMethod(
 -- helper functions useable in documentation
 -----------------------------------------------------------------------------
 
+sourceFileStamp = () -> concatenate(
+     "-- line ",
+     toString currentLineNumber(),
+     " in ",
+     if not isAbsolutePath currentFileName and currentFileName != "stdio" then ("/",relativizeFilename ("/",concatenate(currentDirectory, currentFileName)))
+     else currentFileName
+     )
+
 TEST = method()
-testnumber = 0
-TEST Function := TEST String := s -> (
-     if currentFileName != "stdio" and class s === String then s = concatenate(
-	  "-- line ",
-	  toString currentLineNumber(),
-	  " in ",
-	  if not isAbsolutePath currentFileName then currentDirectory,
-	  currentFileName,
-	  newline,
-	  s);
-     currentPackage#"test inputs"#(testnumber,currentFileName,currentLineNumber()) = s;
-     testnumber = testnumber + 1;
+TEST String := s -> (
+     currentPackage#"test inputs"#(currentPackage#"test number",currentFileName,currentLineNumber()) = concatenate( sourceFileStamp(), newline, s);
+     currentPackage#"test number" = currentPackage#"test number" + 1;
      )
 TEST List := y -> TEST \ y
+
+-----------------------------------------------------------------------------
+-- hooks
+
+addHook = method()
+removeHook = method()
+runHooks = method()
+
+addHook   (MutableHashTable,Symbol,Function) := (X,S,f) -> if X#?S then X#S = append(X#S,f) else X#S = {f}
+removeHook(MutableHashTable,Symbol,Function) := (X,S,f) -> if X#?S then X#S = delete(X#S,f)
+runHooks  (MutableHashTable,Symbol,Thing   ) := (X,S,y) -> if X#?S then scan(X#S, f -> f y)
+
+-----------------------------------------------------------------------------
+-- stashing or caching computed values for future reference in functions that take a mutable hash table as input
+
+cacheValue = key -> f -> (x) -> (c := x.cache; if c#?key then c#key else c#key = f x)
+stashValue = key -> f -> (x) -> (              if x#?key then x#key else x#key = f x)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

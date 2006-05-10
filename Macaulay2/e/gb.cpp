@@ -334,7 +334,7 @@ void GB_comp::find_pairs(gb_elem *p)
     {
       s_pair *q = reinterpret_cast<s_pair *>(b->basis_ptr());
       remove_pair(q);
-      deleteitem(b);
+      delete b;
     }
   for (j = mi.first(); j.valid(); j++)
     {
@@ -945,6 +945,10 @@ void GB_comp::start_computation()
       o << "Number of reductions        = " << _n_reductions << newline;
       emit(o.str());
     }
+
+      buffer o;
+      _GR->memstats(o);
+      emit(o.str());
   set_status(is_done);
 }
 

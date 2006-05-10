@@ -41,6 +41,7 @@ extern char *libfac_version;
 #else
 #include <sys/time.h>
 #include <sys/wait.h>
+#include <sys/resource.h>
 #endif
 
 #include <stddef.h>

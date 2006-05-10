@@ -1,32 +1,26 @@
+-- -*- M2-comint -*-
 
-i1 : R = ZZ[a..f]
+i1 : R = ZZ[a..f];
 
-o1 = R
-
-o1 : PolynomialRing
-
-i2 : n = genericMatrix(R,a,2,3)
+i2 : m = mutableMatrix genericMatrix(R,a,2,3)
 
 o2 = | a c e |
      | b d f |
 
-             2       3
-o2 : Matrix R  <--- R
+o2 : MutableMatrix
 
-i3 : m = mutableMatrix n
+i3 : rowAdd(m,0,c,1)
 
-o3 = | a c e |
-     | b d f |
+o3 = | bc+a cd+c cf+e |
+     | b    d    f    |
 
 o3 : MutableMatrix
 
-i4 : rowAdd(m,0,c,1)
+i4 : m
 
-i5 : m
-
-o5 = | bc+a cd+c cf+e |
+o4 = | bc+a cd+c cf+e |
      | b    d    f    |
 
-o5 : MutableMatrix
+o4 : MutableMatrix
 
-i6 : 
+i5 : 

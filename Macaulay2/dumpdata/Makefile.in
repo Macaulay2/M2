@@ -19,11 +19,17 @@ clean::; rm -f *.o checkit core check-data *.a libdump.a
 EXTRAOBJS :=
 # EXTRAOBJS += mmap.o
 # EXTRAOBJS += write.o
+
+## use "all" for copious debugging output from ld.so
+# LD_DEBUG = all
+LD_DEBUG = 
+
 $(EXTRAOBJS): /usr/lib/libc.a; $(AR) x $< $@	
 libdump.a: libdump.a(file.o warning.o map.o dumpdata.o maputil.o printmaps.o $(EXTRAOBJS)); ranlib libdump.a
 all:: libdump.a
 check:: checkit
-	LD_DEBUG=all LOADDATA_DEBUG=true; export LD_DEBUG LOADDATA_DEBUG; set -x; ./checkit dump "hi there" && ./checkit load "look!"
+	./checkit dump "hi there" && ./checkit load "look!"
+#	LD_DEBUG=$(LD_DEBUG) LOADDATA_DEBUG=true; export LD_DEBUG LOADDATA_DEBUG; set -x; ./checkit dump "hi there" && ./checkit load "look!"
 debug1:; gdb --args ./checkit dump "hi there"
 debug2:; gdb --args ./checkit load "look!"
 distclean : clean; rm -f Makefile

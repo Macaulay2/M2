@@ -16,6 +16,7 @@ use R
 M = ideal(d*e*f,c*e*f,c*d*f,c*d*e,b*e*f,b*c*d,a*c*f,a*d*e)
 assert( regularity module M == 3 )
 assert( regularity module M^2 == 7 )
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test 4a.out"
 -- End:

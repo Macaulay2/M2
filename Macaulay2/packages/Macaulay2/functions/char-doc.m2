@@ -2,12 +2,13 @@
 --- author(s): kummini
 --- notes: 
 
-document { 
-	Key => {char, (char,Ring)},
-	Undocumented => {
+undocumented {
 	     (char,FractionField), 
 	     (char,QuotientRing),
-	     (char,PolynomialRing)},
+	     (char,PolynomialRing)}
+
+document { 
+     Key => {char, (char,Ring)},
      Headline => "computes the characteristic of a field or ring",
      Usage => "char F",
      Inputs => {

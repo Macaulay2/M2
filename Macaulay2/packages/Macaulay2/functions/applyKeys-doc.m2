@@ -1,37 +1,25 @@
---- status: TODO
---- author(s): 
---- notes: 
+--- status: DRAFT
+--- author(s): L.Gold
+--- notes:
 
 document { 
-     Key => applyKeys,
-     Headline => "",
-     Usage => "",
+     Key => {applyKeys,(applyKeys,HashTable,Function)},
+     Headline => "apply a function to each key in a hash table",
+     Usage => "applyKeys(H,f)",
      Inputs => {
-	  },
+  	  "H" => HashTable => "",
+  	  "f" => Function => "with one argument",
+  	  },
      Outputs => {
+  	  HashTable => {"obtained by applying ", TT "f", " to each key ", 
+	  TT "k", " in ", TT "H"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     Caveat => {"It is an error for the function ", TT "f", " to return two pairs with the same key."},
      EXAMPLE {
+	  "H = new HashTable from {1 => a, 2 => b, 3 => c}",
+	  "applyKeys(H, k -> k + 100)",
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {"applyPairs", "applyValues", "scanKeys"}
      }
-document { 
-     Key => (applyKeys,HashTable,Function),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc2.m2:1153:     Key => applyKeys,
+
+

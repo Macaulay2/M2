@@ -90,7 +90,6 @@ newPackage(String) := opts -> (title) -> (
 	  "previous dictionaries" => saveD,
 	  "previous packages" => saveP,
 	  "old debuggingMode" => debuggingMode,
-	  "old testnumber" => testnumber,
 	  "test inputs" => new MutableHashTable,
 	  "raw documentation" => new MutableHashTable,	    -- deposited here by 'document'
 	  "processed documentation" => new MutableHashTable,-- the output from 'documentation', look here first
@@ -107,7 +106,7 @@ newPackage(String) := opts -> (title) -> (
 	       else prefixDirectory
 	       ),
 	  };
-     testnumber = 0;
+     newpkg#"test number" = 0;
      if newpkg#"package prefix" =!= null then (
 	  -- these assignments might be premature, for any package which is loaded before dumpdata, as the "package prefix" might change:
 	  rawdbname := newpkg#"package prefix" | LAYOUT#"packagedoc" title | "rawdocumentation.db";
@@ -257,7 +256,6 @@ closePackage String := title -> (
      global currentPackage <- pkg#"previous currentPackage";
      remove(pkg,"previous currentPackage");
      debuggingMode = pkg#"old debuggingMode"; remove(pkg,"old debuggingMode");
-     testnumber = pkg#"old testnumber"; remove(pkg,"old testnumber");
      if notify then stderr << "--package \"" << pkg << "\" loaded" << endl;
      pkg)
 
@@ -285,8 +283,8 @@ use Package := pkg -> if not member(pkg,packages) then (
      )
 
 beginDocumentation = () -> (
-     if not packageLoadingOptions#(currentPackage#"title").MakeDocumentation
-     and currentPackage#?"processed documentation database" and isOpen currentPackage#"processed documentation database" then (
+     if packageLoadingOptions#?(currentPackage#"title") and not packageLoadingOptions#(currentPackage#"title").MakeDocumentation
+     and currentPackage#?"raw documentation database" and isOpen currentPackage#"raw documentation database" then (
 	  if notify then stderr << "--beginDocumentation: using documentation database, skipping the rest of " << currentFileName << endl;
 	  currentPackage#"documentation not loaded" = true;
 	  return end;

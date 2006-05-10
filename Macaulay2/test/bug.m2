@@ -32,6 +32,7 @@ plgb=gb pluecker
 MA=substitute(fA.dd_3,matrix{{y_0..y_3}})
 try MA % plgb						    -- this line crashed before
      	       	    	      	   	     	       	    -- now it just gives an error
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test bug.out"
 -- End:

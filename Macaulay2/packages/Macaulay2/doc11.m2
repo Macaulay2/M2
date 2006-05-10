@@ -505,7 +505,6 @@ document {
 
 document {
      Key => TEX,
-     Undocumented => {(tex,TEX),(texMath,TEX)},
      Headline => "hypertext TEX item",
      Usage => "TEX x",
      Inputs => {"x" => {}},
@@ -838,17 +837,18 @@ document {
 	SeeAlso => (Fano,ZZ,Ideal)
 	}
 
-document {
-     Key => code,
-     Headline => "display source code",
-     Undocumented => {
+undocumented {
 	  (code, List),
 	  (code, Sequence),
 	  (code, Function),
 	  (code, Symbol),
 	  (code, Command),
 	  (code, Pseudocode),
-	  (code, Nothing)},
+	  (code, Nothing)}
+
+document {
+     Key => code,
+     Headline => "display source code",
      TT "code f", " -- prints out the source code of the function or command", TT "f", ".",
      BR, NOINDENT,
      TT "code(f,X)", " -- prints out the source code of the particular 

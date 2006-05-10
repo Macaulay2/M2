@@ -11,6 +11,7 @@ use lex;
 use gmp;
 use engine;
 use nets;
+use varnets;
 use tokens;
 use util;
 use err;
@@ -51,6 +52,7 @@ setupfun("fork",forkfun);
 
 getpidfun(e:Expr):Expr := (
      when e
+     is o:file do Expr(toInteger(o.pid))
      is a:Sequence do (
 	  if length(a) == 0
 	  then Expr(toInteger(getpid()))
@@ -566,6 +568,12 @@ allInputFiles(s:Sequence):bool := (
      	  else return false;
 	  );
      true);
+allIntegers(s:Sequence):bool := (
+     foreach f in s do (
+     	  when f is g:Integer do ( if !isInt(g) || toInt(g) < 0 then return false; )
+     	  else return false;
+	  );
+     true);
 numberReadyOnes(s:Sequence):int := (
      n := 0;
      foreach f in s do (
@@ -585,7 +593,10 @@ fdlist(s:Sequence):array(int) := (
      when f is g:file do provide g.infd else nothing
      );
 wait(s:Sequence):Expr := (
-     if !allInputFiles(s) then WrongArg("an input file or list of input files")
+     if allIntegers(s) then (
+	  stats := waitNoHang(new array(int) len length(s) do foreach pid in s do provide toInt(pid));
+	  Expr(list(new Sequence len length(s) do foreach status in stats do provide Expr(toInteger(status)))))
+     else if !allInputFiles(s) then WrongArg("a list of input files or a list of small non-negative integers")
      else if numberReadyOnes(s) > 0 then list(toArrayExpr(readyOnes(s)))
      else list(toArrayExpr(select(fdlist(s))))
      );
@@ -596,6 +607,7 @@ wait(f:file):Expr := (
 wait(e:Expr):Expr := (
      when e
      is f:List do wait(f.v)
+     is v:Sequence do wait(v)
      is f:file do wait(f)
      is x:Integer do (
 	  if isInt(x) then (
@@ -793,7 +805,8 @@ tostringfun(e:Expr):Expr := (
      is CompiledFunction do Expr("<<a compiled function>>")
      is CompiledFunctionClosure do Expr("<<a compiled function closure>>")
      is FunctionClosure do Expr("<<a function closure>>")
-     is d:DictionaryClosure do Expr("<<a dictionary>>")
+     is DictionaryClosure do Expr("<<a dictionary>>")
+     is NetFile do Expr("<<a netfile>>")
      is x:RRR do Expr(tostring(x))
      is Error do Expr("<<an error message>>")
      is Sequence do Expr("<<a sequence>>")

@@ -16,8 +16,22 @@ Changes made, most recent ones first:
 
 New in 0.9.8:
 
+MonomialIdeal - MonomialIdeal: M-N returns a monomial ideal consisting
+of those generators of M which are not in N.
+
+'gcdCoefficients' now returns a list of 3 elements, instead of 2;  the
+new first element is the gcd itself.
+
 'disassemble' is no longer an exported symbol, as it is used mainly for
 internal debugging by Macaulay2 developers.
+
+The method 'map(Module,Module)' has been removed, and replaced by
+inducedMap(Module,Module)'.  The reason is that
+'map(Module,Module,Matrix)' assumes the matrix is a map between the
+covers of the modules, whereas 'inducedMap(Module,Module,Matrix)'
+assumes the matrix is a map between the ambient free modules of the
+modules.  The method 'map(Module,Module)', as implemented previously,
+was of the latter type.
 
 -----------------------------------------------------------------------------
 

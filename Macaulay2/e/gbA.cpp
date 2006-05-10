@@ -15,6 +15,8 @@
 #include "gbweight.hpp"
 #include "reducedgb.hpp"
 
+#define PrintingDegree 0x0001
+
 /*************************
  * Initialization ********
  *************************/
@@ -49,20 +51,20 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
 
   _nvars = R->get_flattened_monoid()->n_vars();
   _coeff_type = origR->coefficient_type();
-  _n_fraction_vars = origR->n_fraction_vars();
+  n_fraction_vars = origR->n_fraction_vars();
 
   if (nsyz < 0 || nsyz > m->n_cols())
     nsyz = m->n_cols();
-  _n_rows_per_syz = nsyz;
+  n_rows_per_syz = nsyz;
 
   _F = m->rows();
-  _Fsyz = m->cols()->sub_space(_n_rows_per_syz);  
+  _Fsyz = m->cols()->sub_space(n_rows_per_syz);  
 
-  _first_in_degree = 0;
-  _n_syz = 0;
-  _n_pairs_computed = 0;
-  _n_gens_left = 0;
-  _n_subring = 0;
+  first_in_degree = 0;
+  n_syz = 0;
+  n_pairs_computed = 0;
+  n_gens_left = 0;
+  n_subring = 0;
 
   _strategy = strat;
   _collect_syz = csyz;
@@ -70,24 +72,22 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
   if (R->is_weyl_algebra())
     _is_ideal = false;
 
-  _use_hilb = false;
-  _hilb_new_elems = false;
-  _hilb_n_in_degree = 0;
-  _n_saved_hilb = 0;
-  _hf_orig = 0;
-  _hf_diff = 0;
+  use_hilb = false;
+  hilb_new_elems = false;
+  hilb_n_in_degree = 0;
+  n_saved_hilb = 0;
+  hf_orig = 0;
+  hf_diff = 0;
 
-  // set local variables for certain time-critical routines
-
-  _this_degree = _F->lowest_primary_degree() - 1;
-  _complete_thru_this_degree = _this_degree;
+  this_degree = _F->lowest_primary_degree() - 1;
+  complete_thru_this_degree = this_degree;
   set_status(COMP_NOT_STARTED);
 
-  _stats_nreductions = 0;
-  _stats_ntail = 0;
-  _stats_npairs = 0;
-  _stats_ngb = 0;
-  _stats_ngcd1 = 0;
+  stats_nreductions = 0;
+  stats_ntail = 0;
+  stats_npairs = 0;
+  stats_ngb = 0;
+  stats_ngcd1 = 0;
 
   divisor_previous = -1;
   divisor_previous_comp = -1;
@@ -114,8 +114,8 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
       ringtable = originalR->get_quotient_MonomialTable();
       ringtableZZ = originalR->get_quotient_MonomialTableZZ();
 
-      _first_gb_element = originalR->n_quotients();
-      for (int i=0; i<_first_gb_element; i++)
+      first_gb_element = originalR->n_quotients();
+      for (int i=0; i<first_gb_element; i++)
 	{
 	  gbvector *f = const_cast<gbvector *>(originalR->quotient_gbvector(i));
 	  gbelem *g = gbelem_ring_make(f);
@@ -130,16 +130,22 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
       if (p != NULL)
 	{
 	  spair_set_insert(p);
-	  _n_gens_left++;
+	  n_gens_left++;
 	}
     }
+
+  state = STATE_NEWDEGREE; // will be changed if hilb fcn is used
+  np_i = first_gb_element;
+  ar_i = first_gb_element;
+  ar_j = ar_i+1;
+  n_gb = first_gb_element;
 }
 
 gbA::spair *gbA::new_gen(int i, gbvector *f, ring_elem denom)
 {
   gbvector *fsyz;
 
-  if (i < _n_rows_per_syz)
+  if (i < n_rows_per_syz)
     fsyz = R->gbvector_term(_Fsyz,denom,i+1);
   else
     fsyz = R->gbvector_zero();
@@ -239,6 +245,7 @@ gbA::gbelem *gbA::gbelem_ring_make(gbvector *f)
   R->gbvector_get_lead_exponents(_F, f, g->lead);
   g->deg = weightInfo_->gbvector_weight(f, f_leadweight);
   g->alpha = g->deg - f_leadweight;
+  g->size = R->gbvector_n_terms(f);
   g->minlevel = ELEM_IN_RING;
   return g;
 }
@@ -259,6 +266,7 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
   f_wt = weightInfo_->gbvector_weight(f, f_leadweight);
   //g->alpha = f_wt - f_leadweight; // DOESN"T PRODUCE CORRECT DEGREES
   g->alpha = deg - weightInfo_->gbvector_term_weight(f);
+  g->size = R->gbvector_n_terms(f);
   g->minlevel = minlevel;
   return g;
 }
@@ -457,6 +465,7 @@ bool gbA::pair_not_needed(spair *p, gbelem *m)
 void gbA::remove_unneeded_pairs(int id)
 {
   /* Removes all pairs from C->S that are not needed */
+  if (over_ZZ()) return; 
   spair head;
   spair *p = &head;
   gbelem *m = gb[id];
@@ -569,7 +578,7 @@ void gbA::minimalize_pairs_non_ZZ(spairs &new_set)
 	  spair *p = *t;
 	  if (_is_ideal && is_gcd_one_pair(p))
 	    {
-	      _stats_ngcd1++;
+	      stats_ngcd1++;
 	      if ((gbTrace & PRINT_SPAIR_TRACKING) != 0)
 		{
 		  buffer o;
@@ -637,12 +646,24 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
     {
       // Insert this spair, and also the corresponding gcd one.
       spair *p = new_set[*i];
+      if (gbTrace >= 4)
+	{
+	  buffer o;
+	  spair_text_out(o, p);
+	  emit_line(o.str());
+	}
       spair_set_insert(p);
       mpz_ptr u = coeffs[*i];
       mpz_ptr v = coeffs2[*i];
       if (p->type != SPAIR_SKEW && mpz_cmpabs_ui(u,1) && mpz_cmpabs_ui(v,1))
 	{
 	  spair *p2 = spair_make_gcd_ZZ(p->x.pair.i, p->x.pair.j);
+	  if (gbTrace >= 4)
+	    {
+	      buffer o;
+	      spair_text_out(o, p2);
+	      emit_line(o.str());
+	    }
 	  spair_set_insert(p2);
 	}
     }
@@ -678,14 +699,14 @@ void gbA::update_pairs(int id)
 	  }
     }
   /* Step 2b: pairs from ring elements, or 'in stone' elements */
-  for (int i=0; i<_first_gb_element; i++)
+  for (int i=0; i<first_gb_element; i++)
     {
       spair *s = spair_make_ring(id,i);
       new_set.push_back(s);
     }
   /* Step 2c. pairs from the vectors themselves */
   /* Loop through the minimal GB elements and form the s-pair */
-  for (int i=_first_gb_element; i<id; i++)
+  for (int i=first_gb_element; i<id; i++)
     {
       gbelem *g = gb[i];
       if (g->minlevel != ELEM_NON_MIN_GB && gbelem_COMPONENT(g) == x)
@@ -1010,12 +1031,12 @@ bool gbA::reduce(spair *p)
       	}
       if (gbTrace >= 5)
 	{
-	  if ((wt = weightInfo_->gbvector_weight(p->f(), tmf)) > _this_degree)
+	  if ((wt = weightInfo_->gbvector_weight(p->f(), tmf)) > this_degree)
 	    {
 	      buffer o;
 	      o << "ERROR: degree of polynomial is too high: deg " <<  wt 
 		<< " termwt " << tmf 
-		<< " expectedeg " << _this_degree
+		<< " expectedeg " << this_degree
 		<< newline;
 	      emit(o.str());
 	    }
@@ -1027,7 +1048,7 @@ bool gbA::reduce(spair *p)
       if (over_ZZ())
 	{
 	  mpz_ptr c = MPZ_VAL(p->f()->coeff);
-	  w = find_good_term_divisor_ZZ(c,EXP_,x,_this_degree,alpha);
+	  w = find_good_term_divisor_ZZ(c,EXP_,x,this_degree,alpha);
 
 	  // If w < 0, then no divisor was found.  Is there a GB element of
 	  // the same degree as this one, and with the same exponent vector?
@@ -1036,7 +1057,7 @@ bool gbA::reduce(spair *p)
 	  {
 	    MonomialTableZZ::mon_term *t = lookupZZ->find_exact_monomial(EXP_,
 									 x,
-									 _first_in_degree);
+									 first_in_degree);
 	    if (t != 0)
 	      {
 		// f <-- u*p+v*f (same with syz versions), need to change lookupZZ too?
@@ -1057,7 +1078,7 @@ bool gbA::reduce(spair *p)
 		  }
 		R->gbvector_replace_2by2_ZZ(_F, _Fsyz, p->f(), p->fsyz(), g->g.f, g->g.fsyz);
 		// Before continuing, do remainder of g->g
-		tail_remainder_ZZ(g->g, _this_degree);
+		tail_remainder_ZZ(g->g, this_degree);
 		lookupZZ->change_coefficient(t, MPZ_VAL(g->g.f->coeff));
 		auto_reduce_by(t->_val);
 		if (gbTrace >= 10)
@@ -1075,7 +1096,7 @@ bool gbA::reduce(spair *p)
 	}
       else
 	{
-	  w = find_good_divisor(EXP_,x,_this_degree, alpha); 
+	  w = find_good_divisor(EXP_,x,this_degree, alpha); 
 	}
 
 	
@@ -1086,7 +1107,7 @@ bool gbA::reduce(spair *p)
 	  POLY h;
 	  h.f = R->gbvector_copy(p->x.f.f);
 	  h.fsyz = R->gbvector_copy(p->x.f.fsyz);
-	  insert(h,ELEM_NON_MIN_GB);
+	  new_insert(h,ELEM_NON_MIN_GB);
 	  if (gbTrace >= 10)
 	    {
 	      buffer o;
@@ -1110,7 +1131,7 @@ bool gbA::reduce(spair *p)
 				       g.f, g.fsyz);
 	}
 
-      _stats_nreductions++;
+      stats_nreductions++;
       if (gbTrace >= 10)
 	{
 	  buffer o;
@@ -1253,6 +1274,7 @@ int gbA::find_good_term_divisor_ZZ(
   return result;
 }
 
+#if 0
 int gbA::find_good_divisor(exponents e,
 			   int x,
 			   int degf, 
@@ -1287,8 +1309,9 @@ int gbA::find_good_divisor(exponents e,
 
   if (gbTrace >= 4 && n >= 2)
     {
-      gbvector *f = gb[divisors[n-1]->_val]->g.f;
-      int sz = R->gbvector_n_terms(f);
+      gbelem *tg = gb[divisors[n-1]->_val];
+      gbvector *f = tg->g.f;
+      int sz = tg->size;
       if (sz >= 3)
 	{
 	  buffer o;
@@ -1324,6 +1347,114 @@ int gbA::find_good_divisor(exponents e,
 	  int new_val = divisors[i]->_val;
 	  tg = gb[new_val];
 	  int sz = R->gbvector_n_terms(tg->g.f);
+	  if (sz < minsz)
+	    {
+	      if (tg->alpha <= ealpha)
+		{
+		  minsz = sz;
+		  result = new_val;
+		}
+	    }
+	}
+    }
+  else
+    //    for (i=1; i<n; i++)
+    for (int i=n-2; i>=0; i--)
+      {
+	int new_val = divisors[i]->_val;
+	tg = gb[new_val];
+
+
+	newalpha = tg->alpha - ealpha;
+	if (newalpha <= 0) {
+	  alpha = 0;
+	  result = new_val;
+	  break;
+	} else if (newalpha < alpha) 
+	  {
+	    result = new_val;
+	    alpha = newalpha;
+	  }
+      }
+  divisor_previous = result;
+  divisor_previous_comp = x;
+  result_alpha = alpha;
+  return result;
+}
+#endif
+
+int gbA::find_good_divisor(exponents e,
+			   int x,
+			   int degf, 
+			   int &result_alpha)
+  // Returns an integer w.
+  // if w >=0: gb[w]'s lead term divides [e,x].
+  // if w<0: no gb[w] has lead term dividing [e,x].
+{
+  int alpha, newalpha, ealpha;
+  int n = 0;
+
+  VECTOR(MonomialTable::mon_term *) divisors;
+  ealpha = degf - weightInfo_->exponents_weight(e,x);
+
+#warning "previous divisor code might not work with alpha..."
+  if (divisor_previous >= 0 && x == divisor_previous_comp)
+    {
+      gbelem *tg = gb[divisor_previous];
+      alpha = tg->alpha - ealpha;
+      if (alpha <= 0 && exponents_divide(_nvars, tg->lead, e))
+	{
+	  result_alpha = 0;
+	  return divisor_previous;
+	}
+    }
+  /* First search for ring divisors */
+  if (ringtable)
+    n += ringtable->find_divisors(-1, e, 1, &divisors);
+
+  /* Next search for GB divisors */
+  n += lookup->find_divisors(-1, e, x, &divisors);
+
+  if (gbTrace >= 4 && n >= 2)
+    {
+      gbelem *tg = gb[divisors[n-1]->_val];
+      gbvector *f = tg->g.f;
+      int sz = tg->size;
+      if (sz >= 3)
+	{
+	  buffer o;
+	  o << "\nndivisors " << n;
+	  o << "\n  choices:";
+	  for (int j=0; j<n; j++)
+	    {
+	      f = gb[divisors[j]->_val]->g.f;
+	      o << "\n    size " << R->gbvector_n_terms(f);
+	      o << " lead ";
+	      f = R->gbvector_lead_term(-1,_F,f);
+	      R->gbvector_text_out(o,_F,f);
+	    }
+	  o << "\n";
+	  emit_wrapped(o.str());
+	}
+    }
+  /* Now find the minimal alpha value */
+  if (n == 0) 
+    {
+      result_alpha = 0;
+      return -1;
+    }
+  int result = divisors[n-1]->_val;
+  gbelem *tg = gb[result];
+  alpha = tg->alpha - ealpha;
+  if (alpha <= 0) 
+    {
+      alpha = 0;
+      int minsz = tg->size;
+      for (int i=n-2; i>=0; i--)
+	{
+	  int new_val = divisors[i]->_val;
+	  tg = gb[new_val];
+	  int sz = tg->size;
 	  if (sz < minsz)
 	    {
 	      if (tg->alpha <= ealpha)
@@ -1402,7 +1533,7 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
 	      frem->next = 0;
 	    }
 	  count++;
-	  //	  _stats_ntail++;
+	  //	  stats_ntail++;
 	  if (gbTrace >= 10)
 	    {
 	      buffer o;
@@ -1478,7 +1609,7 @@ void gbA::tail_remainder_ZZ(POLY &f, int degf)
 	      frem->next = 0;
 	    }
 	  count++;
-	  //	  _stats_ntail++;
+	  //	  stats_ntail++;
 	  if (gbTrace >= 10)
 	    {
 	      buffer o;
@@ -1568,7 +1699,7 @@ void gbA::remainder_non_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
 				       g.f, g.fsyz,
 				       use_denom, denom);
 	  count++;
-	  //	  _stats_ntail++;
+	  //	  stats_ntail++;
 	  if (gbTrace >= 10)
 	    {
 	      buffer o;
@@ -1609,7 +1740,7 @@ void gbA::auto_reduce_by(int id)
   /* Loop backwards while degree doesn't change */
   /* Don't change quotient ring elements */
   gbelem *me = gb[id];
-  for (int i=gb.size()-1; i>=_first_gb_element; i--)
+  for (int i=gb.size()-1; i>=first_gb_element; i--)
     {
       if (i == id) continue;
       gbelem *g = gb[i];
@@ -1645,20 +1776,20 @@ void gbA::insert(POLY f, gbelem_type minlevel)
   //  int fdeg = weightInfo_->gbvector_weight(f.f, fwt);
   //  fprintf(stderr, "inserting GB element %d, thisdeg %d deg %d alpha %d\n", 
   //	  gb.size(), 
-  //	  _this_degree,
+  //	  this_degree,
   //	  fdeg,
   //	  fdeg-fwt);
 
-  remainder(f,_this_degree,false,junk);
+  remainder(f,this_degree,false,junk);
 
   //  fdeg = weightInfo_->gbvector_weight(f.f, fwt);
   //  fprintf(stderr, "    after remainder deg %d alpha %d\n", 
   //	  fdeg,
   //	  fdeg-fwt);
 
-  _stats_ngb++;
+  stats_ngb++;
 
-  gbelem *g = gbelem_make(f.f, f.fsyz, minlevel, _this_degree);
+  gbelem *g = gbelem_make(f.f, f.fsyz, minlevel, this_degree);
   minimal_gb_valid = false;
   int me = gb.size();
   gb.push_back(g);
@@ -1697,10 +1828,10 @@ void gbA::insert(POLY f, gbelem_type minlevel)
   //	      fdeg-fwt);
   //    }
 
-  if (_use_hilb)
+  if (use_hilb)
     {
-      _hilb_new_elems = true;
-      if (--_hilb_n_in_degree == 0) flush_pairs();
+      hilb_new_elems = true;
+      if (--hilb_n_in_degree == 0) flush_pairs();
     }
   else
     {
@@ -1718,7 +1849,7 @@ void gbA::insert(POLY f, gbelem_type minlevel)
 void gbA::collect_syzygy(gbvector *f)
 {
   _syz.push_back(f);
-  _n_syz++;
+  n_syz++;
 
   if (gbTrace >= 10)
     {
@@ -1760,13 +1891,13 @@ bool gbA::s_pair_step()
   spair *p = spair_set_next();
   if (!p) return false;
 
-  _stats_npairs++;
+  stats_npairs++;
 
   if (reduce(p)) /* i.e. if the reduction is not deferred */
     {
       gbelem_type minlevel = (p->type == SPAIR_GEN ? ELEM_POSSIBLE_MINGEN : ELEM_MIN_GB);
       if (p->type == SPAIR_GEN)
-	_n_gens_left--;
+	n_gens_left--;
       POLY f = p->x.f;
       spair_delete(p);
 
@@ -1775,18 +1906,123 @@ bool gbA::s_pair_step()
   return true;
 }
 
+// new version
+
+void gbA::new_insert(POLY f, gbelem_type minlevel)
+{
+  /* Reduce this element as far as possible.  This either removes content, 
+     makes it monic, or at least negates it so the lead coeff is positive. */
+  ring_elem junk;
+
+  //DEBUG BLOCK  int fwt;
+  //  int fdeg = weightInfo_->gbvector_weight(f.f, fwt);
+  //  fprintf(stderr, "inserting GB element %d, thisdeg %d deg %d alpha %d\n", 
+  //	  gb.size(), 
+  //	  this_degree,
+  //	  fdeg,
+  //	  fdeg-fwt);
+
+  remainder(f,this_degree,false,junk);
+
+  //  fdeg = weightInfo_->gbvector_weight(f.f, fwt);
+  //  fprintf(stderr, "    after remainder deg %d alpha %d\n", 
+  //	  fdeg,
+  //	  fdeg-fwt);
+
+  stats_ngb++;
+
+  gbelem *g = gbelem_make(f.f, f.fsyz, minlevel, this_degree);
+  minimal_gb_valid = false;
+  int me = gb.size();
+  gb.push_back(g);
+  n_gb++;
+  int x = g->g.f->comp;
+
+  if (over_ZZ())
+    lookupZZ->insert(MPZ_VAL(g->g.f->coeff),g->lead,x,me);
+  else
+    lookup->insert(g->lead, x, me);
+
+  if (gbTrace >= 5)
+    {
+      char s[100];
+      buffer o;
+      sprintf(s, "inserting element %d (minimal %d): ",me,minlevel);
+      o << s;
+      R->gbvector_text_out(o,_F,g->g.f);
+      emit_line(o.str()); o.reset();
+      o << "                          syzygy : ";
+      R->gbvector_text_out(o,_Fsyz,g->g.fsyz);
+      emit_line(o.str());
+    }
+
+  auto_reduce_by(me);
+
+  if (use_hilb)
+    {
+      hilb_new_elems = true;
+      if (--hilb_n_in_degree == 0) flush_pairs();
+    }
+  else
+    {
+#warning "todo: codimension stop condition"
+      // codim test is set.  Compute the codimension now.
+    }
+
+  if (gbTrace >= 10)
+    {
+      //      lookupZZ->showmontable();
+      showgb();
+    }
+}
+
+bool gbA::process_spair(spair *p)
+{
+  stats_npairs++;
+
+  if (!reduce(p)) return true;
+
+  gbelem_type minlevel = (p->type == SPAIR_GEN ? ELEM_POSSIBLE_MINGEN : ELEM_MIN_GB);
+  if (p->type == SPAIR_GEN) n_gens_left--;
+  POLY f = p->x.f;
+  spair_delete(p);
+
+
+  if (!R->gbvector_is_zero(f.f))
+    {
+      new_insert(f,minlevel);
+      if (gbTrace == 3)	emit_wrapped("m");
+    }
+  else 
+    {
+      originalR->get_quotient_info()->gbvector_normal_form(_Fsyz, f.fsyz);
+      if (!R->gbvector_is_zero(f.fsyz))
+	{
+	  /* This is a syzygy */
+	  collect_syzygy(f.fsyz);
+	  if (gbTrace == 3) emit_wrapped("z");
+	}
+      else
+	{
+	  if (gbTrace == 3) emit_wrapped("o");
+	}
+    }
+
+  return true;
+}
+
 enum ComputationStatusCode gbA::computation_is_complete()
 {
   // This handles everything but stop_.always, stop_.degree_limit
   if (stop_.basis_element_limit > 0 && gb.size() >= stop_.basis_element_limit) 
     return COMP_DONE_GB_LIMIT;
-  if (stop_.syzygy_limit > 0 && _n_syz >= stop_.syzygy_limit)
+  if (stop_.syzygy_limit > 0 && n_syz >= stop_.syzygy_limit)
     return COMP_DONE_SYZ_LIMIT;
-  if (stop_.pair_limit > 0 && _n_pairs_computed >= stop_.pair_limit)
+  if (stop_.pair_limit > 0 && n_pairs_computed >= stop_.pair_limit)
     return COMP_DONE_PAIR_LIMIT;
-  if (stop_.just_min_gens && _n_gens_left == 0)
+  if (stop_.just_min_gens && n_gens_left == 0)
     return COMP_DONE_MIN_GENS;
-  if (stop_.subring_limit > 0 && _n_subring >= stop_.subring_limit)
+  if (stop_.subring_limit > 0 && n_subring >= stop_.subring_limit)
     return COMP_DONE_SUBRING_LIMIT;
   if (stop_.use_codim_limit)
     {
@@ -1803,7 +2039,7 @@ Matrix *gbA::make_lead_term_matrix()
 {
   MatrixConstructor result(_F, gb.size());
   ring_elem one = originalR->Ncoeffs()->one();
-  for (int i=_first_gb_element; i<gb.size(); i++)
+  for (int i=first_gb_element; i<gb.size(); i++)
     {
       gbelem *g = gb[i];
       if (g->minlevel != ELEM_NON_MIN_GB)
@@ -1816,14 +2052,187 @@ Matrix *gbA::make_lead_term_matrix()
   return result.to_matrix();
 }
 
+// new code
+void gbA::do_computation()
+{
+  int npairs;
+  spair *p;
+
+  // initial state is STATE_NEWDEGREE
+
+  if (stop_.always_stop) return; // set_status to what?
+
+  for (;;)
+    {
+      if (stop_.stop_after_degree && this_degree > stop_.degree_limit->array[0])
+	{
+	  // Break out now if we don't have anything else to compute in this degree.
+	  set_status(COMP_DONE_DEGREE_LIMIT);
+	  return;
+	}
+      if (gbTrace & PrintingDegree)
+	{
+	}
+
+      switch(state) {
+
+      case STATE_NEWPAIRS:
+	// Loop through all of the new GB elements, and
+	// compute spairs.  Start at np_i
+	// np_i is initialized at the beginning, and also here.
+	    while (np_i < n_gb)
+	      {
+		if (system_interruptedFlag)
+		  {
+		    set_status(COMP_INTERRUPTED);
+		    return;
+		  }
+		if (gb[np_i]->minlevel != ELEM_NON_MIN_GB)
+		  update_pairs(np_i);
+		np_i++;
+	      }
+	    state = STATE_HILB;
+	    
+      case STATE_HILB:
+	// If we are using hilbert function tracking:
+	// Recompute the Hilbert function if new GB elements have been added
+	
+	    if (hilb_new_elems)
+	      {
+		// Recompute h, hf_diff
+		Matrix *hf = make_lead_term_matrix();
+		RingElement *h = hilb_comp::hilbertNumerator(hf);
+		if (h == 0)
+		  {
+		    set_status(COMP_INTERRUPTED);
+		    return;
+		  }
+		hf_diff = (*h) - (*hf_orig);
+		hilb_new_elems = false;
+	      }
+	    state = STATE_NEWDEGREE;
+	    
+      case STATE_NEWDEGREE:
+	// Get the spairs and generators for the next degree
+	
+	    if (S.n_in_degree == 0)
+	      {
+		int old_degree = this_degree;
+		npairs = spair_set_prepare_next_degree(this_degree); // sets this_degree
+		if (old_degree < this_degree)
+		  first_in_degree = gb.size();
+		complete_thru_this_degree = this_degree-1;
+		if (npairs == 0)
+		  {
+		    state = STATE_DONE;
+		    set_status(COMP_DONE);
+		    return;
+		  }
+		if (stop_.stop_after_degree && this_degree > stop_.degree_limit->array[0])
+		  {
+		    set_status(COMP_DONE_DEGREE_LIMIT);
+		    return;
+		  }
+		if (use_hilb)
+		  {
+		    hilb_n_in_degree = hilb_comp::coeff_of(hf_diff, this_degree);
+		    if (hilb_n_in_degree == 0) flush_pairs();
+		  }
+	      }
+	    if (gbTrace >= 1)
+	      {
+		buffer o;
+		o << '{' << this_degree << '}';
+		o << '(';
+		if (use_hilb) 
+		  o << hilb_n_in_degree << ',';
+		o << npairs << ')';
+		emit_wrapped(o.str());
+	      }
+	    ar_i = n_gb;
+	    ar_j = ar_i+1;
+	    state = STATE_SPAIRS;
+	    
+      case STATE_SPAIRS:
+      case STATE_GENS:
+	// Compute the spairs for this degree
+	
+	    while ((p = spair_set_next()) != 0)
+	      {
+		process_spair(p);
+		
+		if (stop_.pair_limit > 0 && n_pairs_computed >= stop_.pair_limit)
+		  {
+		    set_status(COMP_DONE_PAIR_LIMIT);
+		    return;
+		  }
+		
+		if (system_interruptedFlag)
+		  {
+		    set_status(COMP_INTERRUPTED);
+		    return;
+		  }
+	      }
+	    state = STATE_AUTOREDUCE;
+	    // or state = STATE_NEWPAIRS
+	    
+      case STATE_AUTOREDUCE:
+	// This is still possibly best performed when inserting a new element
+	// Perform the necessary or desired auto-reductions
+
+	    while (ar_i < n_gb)
+	      {
+		while (ar_j < n_gb)
+		  {
+		    if (system_interruptedFlag)
+		      {
+			set_status(COMP_INTERRUPTED);
+			return;
+		      }
+		    if (over_ZZ())
+		      {
+			R->gbvector_auto_reduce_ZZ(_F, _Fsyz,
+						   gb[ar_i]->g.f, gb[ar_i]->g.fsyz, 
+						   gb[ar_j]->g.f, gb[ar_j]->g.fsyz);
+		      }
+		    else
+		      {
+			R->gbvector_auto_reduce(_F, _Fsyz,
+						gb[ar_i]->g.f, gb[ar_i]->g.fsyz, 
+						gb[ar_j]->g.f, gb[ar_j]->g.fsyz);
+		      }
+		    ar_j++;
+		  }
+		ar_i++;
+		ar_j = ar_i+1;
+	      }
+	    state = STATE_NEWPAIRS;
+	    break;
+	    
+      case STATE_DONE:
+	return;
+      }
+  }
+}
+
+
+
 void gbA::start_computation()
 {
+  do_computation();
+
+  // debugging
+  // buffer o;
+  // R->memstats(o);
+  // emit(o.str());
+
+  return;
   int npairs;
   enum ComputationStatusCode is_done = COMP_COMPUTING;
 
   if (stop_.always_stop) return;
 
-  if (stop_.stop_after_degree && _this_degree > stop_.degree_limit->array[0])
+  if (stop_.stop_after_degree && this_degree > stop_.degree_limit->array[0])
     {
       // Break out now if we don't have anything else to compute in this degree.
       set_status(COMP_DONE_DEGREE_LIMIT);
@@ -1844,9 +2253,9 @@ void gbA::start_computation()
       /* If we need to move to the next degree, do it. */
       if (S.n_in_degree  == 0)
 	{
-	  if (_hilb_new_elems)
+	  if (hilb_new_elems)
 	    {
-	      // Recompute h, _hf_diff
+	      // Recompute h, hf_diff
 	      Matrix *hf = make_lead_term_matrix();
 	      RingElement *h = hilb_comp::hilbertNumerator(hf);
 	      if (h == 0)
@@ -1854,39 +2263,39 @@ void gbA::start_computation()
 		  is_done = COMP_INTERRUPTED;
 		  break;
 		}
-	      _hf_diff = (*h) - (*_hf_orig);
-	      _hilb_new_elems = false;
+	      hf_diff = (*h) - (*hf_orig);
+	      hilb_new_elems = false;
 	    }
 
-	  int old_degree = _this_degree;
-	  npairs = spair_set_prepare_next_degree(_this_degree); // sets _this_degree
-	  if (old_degree < _this_degree)
-	    _first_in_degree = gb.size();
-	  _complete_thru_this_degree = _this_degree-1;
+	  int old_degree = this_degree;
+	  npairs = spair_set_prepare_next_degree(this_degree); // sets this_degree
+	  if (old_degree < this_degree)
+	    first_in_degree = gb.size();
+	  complete_thru_this_degree = this_degree-1;
 	  if (npairs == 0)
 	    {
 	      is_done = COMP_DONE;
 	      break;
 	    }
-	  if (stop_.stop_after_degree && _this_degree > stop_.degree_limit->array[0])
+	  if (stop_.stop_after_degree && this_degree > stop_.degree_limit->array[0])
 	    {
 	      is_done = COMP_DONE_DEGREE_LIMIT;
 	      break;
 	    }
 
-	  if (_use_hilb)
+	  if (use_hilb)
 	    {
-	      _hilb_n_in_degree = hilb_comp::coeff_of(_hf_diff, _this_degree);
-	      if (_hilb_n_in_degree == 0) flush_pairs();
+	      hilb_n_in_degree = hilb_comp::coeff_of(hf_diff, this_degree);
+	      if (hilb_n_in_degree == 0) flush_pairs();
 	    }
 
 	  if (gbTrace >= 1)
 	    {
 	      buffer o;
-	      o << '{' << _this_degree << '}';
+	      o << '{' << this_degree << '}';
 	      o << '(';
-	      if (_use_hilb) 
-		o << _hilb_n_in_degree << ',';
+	      if (use_hilb) 
+		o << hilb_n_in_degree << ',';
 	      o << npairs << ')';
 	      emit_wrapped(o.str());
 	    }
@@ -1894,7 +2303,7 @@ void gbA::start_computation()
 	  if (gbTrace >= 1)
 	    {
 	      char s[100];
-	      sprintf(s, "%sDEGREE %d (npairs %d)\n%s", wrapping_prefix, _this_degree, npairs,wrapping_prefix);
+	      sprintf(s, "%sDEGREE %d (npairs %d)\n%s", wrapping_prefix, this_degree, npairs,wrapping_prefix);
 	      emit(s);
 	    }
 #endif
@@ -1914,7 +2323,7 @@ void gbA::minimalize_gb()
   if (minimal_gb_valid) return;
 
   VECTOR(POLY) polys;
-  for (int i=_first_gb_element; i<gb.size(); i++)
+  for (int i=first_gb_element; i<gb.size(); i++)
     {
       if (gb[i]->minlevel != ELEM_NON_MIN_GB)
 	polys.push_back(gb[i]->g);
@@ -1933,7 +2342,7 @@ void gbA::flush_pairs()
   spair *p;
   while ((p = spair_set_next()) != 0)
     {
-      _n_saved_hilb++;
+      n_saved_hilb++;
       spair_delete(p);
     }
 }
@@ -1954,10 +2363,11 @@ ComputationOrNull *gbA::set_hilbert_function(const RingElement *hf)
 
   if (!_collect_syz)
     {
-      _hf_orig = hf;
-      _hf_diff = RingElement::make_raw(hf->get_ring(), ZERO_RINGELEM);
-      _use_hilb = true;
-      _hilb_new_elems = true;
+      hf_orig = hf;
+      hf_diff = RingElement::make_raw(hf->get_ring(), ZERO_RINGELEM);
+      use_hilb = true;
+      hilb_new_elems = true;
+      state = STATE_HILB;
     }
 
   return this;
@@ -2030,14 +2440,14 @@ int gbA::contains(const Matrix *m)
 int gbA::complete_thru_degree() const
   // The computation is complete up through this degree.
 {
-  return _complete_thru_this_degree;
+  return complete_thru_this_degree;
 }
 
 void gbA::text_out(buffer &o)
   /* This displays statistical information, and depends on the
      gbTrace value */
 {
-  o << "# pairs computed = " << _n_pairs_computed << newline;
+  o << "# pairs computed = " << n_pairs_computed << newline;
   if (gbTrace >= 5 && gbTrace % 2 == 1)
     for (unsigned int i=0; i<gb.size(); i++)
       {

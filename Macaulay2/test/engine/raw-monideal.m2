@@ -30,7 +30,7 @@ rawMonomialIdealToMatrix rawIntersect(I,J)
 rawMonomialIdealToMatrix rawSaturate(I,J)
 rawMonomialIdealToMatrix rawSaturate(I,m)
 rawMonomialIdealToMatrix rawStronglyStableClosure(I)
-rawMonomialIdealToMatrix rawAssociatedPrimes I
+rawMonomialIdealToMatrix rawMonomialMinimalPrimes(I,8,-1)
 rawMonomialIdealToMatrix rawMaximalIndependentSets(I,-1)
 rawMonomialIdealToMatrix rawMaximalIndependentSets(I,1)
 rawMonomialIdealToMatrix rawMaximalIndependentSets(I,2)
@@ -41,7 +41,7 @@ rawMonomialIdealToMatrix rawMaximalIndependentSets(I,5)
 assert(rawCodimension I === 2)
 L = rawSaturate(I,m)
 rawCodimension L -- is 8??
-rawMonomialIdealToMatrix rawAssociatedPrimes L
+rawMonomialIdealToMatrix rawMonomialMinimalPrimes (L,8,-1)
 B = rawStronglyStableClosure rawMonomialIdeal(rawMatrix1(R^1, 1, 1:(a*b^2*c),0), 0)
 rawMonomialIdealToMatrix B
 assert rawIsStronglyStable B

@@ -230,8 +230,7 @@ document {
      TT "delete(x,v)", " -- removes any occurrences of the expression ", TT "x", "
      from the list ", TT "v", ".",
      PARA,
-     "Equality is determined with ", TO "==", " which may do extensive
-     calculations in certain cases.",
+     "Equality is determined with ", TO "===", ", which is quick.",
      EXAMPLE {
 	  "delete(c,{a,b,c,d,e,a,b,c,d,e})",
 	  },
@@ -394,38 +393,10 @@ document {
      }
 
 document {
-     Key => all,
-     Headline => "whether all elements satisfy a condition",
-     TT "all(v,f)", " whether each element ", TT "x", " of a list or hash table
-     ", TT "v", " has ", TT "f(x)", " true.",
-     PARA,
-     "Returns the value true if all elements v#i of the list v yield 
-     the value true when the function f is applied, otherwise returns 
-     false.  For hash tables, the function is applied to all its key/value
-     pairs (k,v), just as with ", TO "any", ".",
-     PARA,
-     SeeAlso => { "scan", "apply", "select", "any", "member" }
-     }
-
-document {
      Key => same,
      Headline => "whether everything in a list is the same",
      TT "same v", " whether every element of the list ", TT "v", " is the same.
      The comparison is done with ", TO "==", "."
-     }
-
-document {
-     Key => member,
-     Headline => "test membership in a list",
-     TT "member(e,x)", " whether ", TT "e", " is an element of the list, set, or 
-     sequence ", TT "x", ".",
-     PARA,
-     EXAMPLE {
-	  "x = {a,b,c,d,e};",
-      	  "member(c,x)",
-      	  "member(f,x)"
-	  },
-     SeeAlso => {"positions"}
      }
 
 document {
@@ -559,29 +530,6 @@ document {
       	  "product a",
 	  },
      SeeAlso => "product"
-     }
-
-document {
-     Key => toString,
-     Headline => "convert to a string",
-     TT "toString x", " converts ", TT "x", " to a string.",
-     PARA,
-     "See also ", TO "toExternalString", " which will try to convert ", TT "x", "
-     to a string which can be read back into the program later."     
-     }
-
-document {
-     Key => toExternalString,
-     Headline => "convert to a readable string",
-     TT "toExternalString x", " converts ", TT "x", " to a string, in such a way
-     that it can be read back into the program later.",
-     PARA,
-     "See also ", TO "toString", " which simply converts ", TT "x", "
-     to a string which can be displayed meaningfully.",     
-     PARA,
-     "Not everything can be converted to a string in such a way that it
-     can be read back into the program later, because circular data structures
-     are common."
      }
 
 document {
@@ -807,44 +755,6 @@ document {
      }
 
 document {
-     Key => tex,
-     Headline => "convert to TeX",
-     TT "tex x", " converts ", TT "x", " to TeX format.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ[a..f]",
-      	  "tex matrix {{a^2+2,b,c},{d,e,f^3-a}}",
-	  },
-     SeeAlso => {"texMath"}
-     }
-
-document {
-     Key => texMath,
-     Headline => "convert to TeX math",
-     TT "texMath x", " converts ", TT "x", " to TeX format
-     for use in TeX math mode.",
-     PARA,
-     "The main difference between this and ", TO "tex", " is that the
-     surrouding dollar signs aren't there.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ[x]",
-      	  "texMath (x-1)^6",
-	  },
-     SeeAlso => {"tex"}
-     }
-
-document {
-     Key => showTex,
-     Headline => "convert to TeX and display on screen",
-     TT "showTex x", " converts ", TT "x", " to TeX format, and display it on the screen.",
-     PARA,
-     "The code for this function is Unix dependent at the moment.",
-     PARA,
-     SeeAlso => "tex"
-     }
-
-document {
      Key => print,
      Headline => "print something",
 	Usage => "print x",
@@ -920,7 +830,6 @@ document {
 
 document {
      Key => ScriptedFunctor,
-     Undocumented => {(toString, ScriptedFunctor)},
      Headline => "the class of all scripted functors",
      "A scripted functor accepts a subscript or a superscript:
      the primary example is ", TO "HH", ".",

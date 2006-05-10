@@ -4,6 +4,7 @@
 
 Monoid = new Type of Type
 Monoid.synonym = "monoid"
+use Monoid := x -> ( if x.?use then x.use x; x)
 
 options Monoid := x -> null
 
@@ -111,14 +112,7 @@ listForm RingElement := (f) -> (
 -- 	  flatten entries lift(cc, k),
 -- 	  identity))
 
-lcm2 := (x,y) -> x*y//gcd(x,y)
-lcm := args -> (
-     n := 1;
-     scan(args, i -> n = lcm2(n,i));
-     n)
-commden := (f) -> lcm apply( first \ entries lift((coefficients f)#1, QQ), denominator)
-
-indices := (M,vars) -> apply(vars, x -> if class x === ZZ then x else (
+monoidIndices := (M,vars) -> apply(vars, x -> if class x === ZZ then x else (
 	  x = baseName x;
 	  if M.index#?x then M.index#x
 	  else error "expected a variable of the ring or an integer"))
@@ -139,28 +133,25 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  Weyl := M.Options.WeylAlgebra =!= {};
 	  skews := M.Options.SkewCommutative;
 	  degRing := if degreeLength M != 0 then degreesRing degreeLength M else ZZ;
+	  coeffOptions := options R;
+	  coeffWeyl := coeffOptions =!= null and coeffOptions.WeylAlgebra =!= {};
+	  coeffSkew := coeffOptions =!= null and coeffOptions.SkewCommutative;
      	  local RM;
-	  if Weyl or R.?diffs0 then (
+	  if Weyl or coeffWeyl then (
+	       if Weyl and R.?SkewCommutative then error "coefficient ring has skew commuting variables";
 	       diffs := M.Options.WeylAlgebra;
-	       if class diffs === Option 
-	       then diffs = {diffs}
-	       else if class diffs =!= List 
-	       then error "expected list as WeylAlgebra option";
+	       if class diffs === Option then diffs = {diffs}
+	       else if class diffs =!= List then error "expected list as WeylAlgebra option";
 	       diffs = apply(diffs, x -> if class x === Option then toList x else x);
 	       h    := select(diffs, x -> class x =!= List);
 	       if #h > 1 then error "WeylAlgebra: expected at most one homogenizing variable";
-	       h = indices(M,h);
+	       h = monoidIndices(M,h);
 	       if #h === 1 then h = h#0 else h = -1;
-     	       if R.?h then (
-		    if h == -1
-		    then h = R.h + num
-		    else (
-		    	 if R.h + num =!= h then error "expected the same homogenizing variable";
-			 )
+     	       if R.?homogenize then (
+		    if h == -1 then h = R.homogenize + num
+		    else if R.homogenize + num =!= h then error "expected the same homogenizing variable";
 		    )
-	       else (
-		    if R.?diffs0 and h != -1 then error "coefficient Weyl algebra has no homogenizing variable";
-		    );
+	       else if coeffWeyl and h != -1 then error "coefficient Weyl algebra has no homogenizing variable";
 	       diffs = select(diffs, x -> class x === List);
 	       diffs = apply(diffs, x -> (
 			 if #x =!= 2 then error "WeylAlgebra: expected x=>dx, {x,dx}";
@@ -174,28 +165,28 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       diffs = flatten diffs;
 	       local diffs0; local diffs1;
 	       diffs = pack(2,diffs);
-	       diffs0 = indices(M,first\diffs);
-	       diffs1 = indices(M,last\diffs);
-	       if R.?diffs0 and R.?diffs1 then (
+	       diffs0 = monoidIndices(M,first\diffs);
+	       diffs1 = monoidIndices(M,last\diffs);
+	       if coeffWeyl then (
 		    diffs0 = join(diffs0, apply(R.diffs0, i -> i + num));
 		    diffs1 = join(diffs1, apply(R.diffs1, i -> i + num));
 		    );
 	       scan(diffs0,diffs1,(x,dx) -> if not x<dx then error "expected differentiation variables to occur to the right of their variables");
-	       if R.?SkewCommutative then error "coefficient ring has skew commuting variables";
 	       RM = new PolynomialRing from quotfix rawWeylAlgebra(rawPolynomialRing(raw basering, raw flatmonoid),diffs0,diffs1,h);
 	       RM.diffs0 = diffs0;
 	       RM.diffs1 = diffs1;
-     	       if h != -1 then RM.h = h;
+     	       addHook(RM, QuotientRingHook, S -> (S.diffs0 = diffs0; S.diffs1 = diffs1));
+     	       if h != -1 then RM.homogenize = h;
 	       )
 	  else if skews =!= false or R.?SkewCommutative then (
 	       if R.?diffs0 then error "coefficient ring is a Weyl algebra";
 	       skews = (
 		    if skews === false then {}
 		    else if skews === true then toList (0 .. num - 1)
-		    else if class skews === List and all(skews, i -> class i === ZZ or class i === Symbol or instance(i,RingElement))
+		    else if class skews === List and all(skews, i -> class i === ZZ or class i === Symbol or class i === IndexedVariable or instance(i,RingElement))
 		    then (
 			 skews = skews / (i -> if instance(i,RingElement) then baseName i else i);
-			 indices(M,skews)
+			 monoidIndices(M,skews)
 			 )
 		    else error "expected SkewCommutative option to be true, false, or a list of variables or integers"
 		    );
@@ -248,20 +239,17 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  toString RM := toExternalString RM := x -> toString expression x;
 	  factor RM := options -> f -> (
 	       c := 1;
-	       if R === QQ then (
-	       	    d := commden f;
-		    c = 1/d;
-		    f = d * f;
-		    );
 	       (facs,exps) := rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
      	       facs = apply(facs, p -> new RM from p);
 	       if degree facs#0 === {0} then (
 	       	    assert(exps#0 == 1);
-		    c = c * facs#0;
+		    c = facs#0;
 		    facs = drop(facs,1);
 		    exps = drop(exps,1);
 		    );
+	       if #facs != 0 then (facs,exps) = toSequence transpose sort transpose {toList facs, toList exps};
 	       if c != 1 then (
+		    -- c = lift(c,R); -- this is a bad idea, because code depends now on even the constant factor being in the poly ring
 		    facs = append(facs,c);
 		    exps = append(exps,1);
 		    );

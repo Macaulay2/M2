@@ -75,6 +75,7 @@ assert( h == M_[{1,1}] * f * M^[{1,1}] + M_[{1,2}] * g * M^[{1,2}] )
 -- 
 
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test direct.out"
 -- End:

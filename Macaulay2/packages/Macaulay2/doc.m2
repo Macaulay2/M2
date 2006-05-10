@@ -474,10 +474,10 @@ document {
      SeeAlso => "deepSplice"
      }
 
+undocumented (deepSplice,BasicList)
 document {
      Key => deepSplice,
      Headline => "remove subsequences",
-     Undocumented => {(deepSplice,BasicList)},
      TT "deepSplice v", " -- yields a new list v where any members of v 
      which are sequences are replaced by their elements, and so on.",
      PARA,
@@ -485,54 +485,6 @@ document {
      Copying the list v is always done when v is mutable.",
      EXAMPLE "deepSplice { (a,b,(c,d,(e,f))), g, h }",
      SeeAlso => "splice"
-     }
-
-document {
-     Key => (apply,BasicList,BasicList,Function),
-     Headline => "apply function to elements in pairs",
-     TT "apply(v,w,f)", " -- produces, from lists ", TT "v", " and ", TT "w", ",
-     a list ", TT "z", " in which the i-th element ", TT "w_i", " is obtained
-     by evaluating ", TT "f(v_i,w_i)", ".  If ", TT "v", " and ", TT "w", " are
-     lists of the same class, then the result is also of that class.",
-     EXAMPLE "apply({1,2,3}, {100,200,300}, (i,j) -> i+j)"
-     }
-
-document {
-     Key => (apply,BasicList,Function),
-     Headline => "apply function to each element",
-     Usage => "apply(v,f)",
-     Inputs => {
-	  "v" => "",
-	  "f" => "",
-	  },
-     Outputs => {
-	  {"the list obtained by applying ", TT "f", " to each element of ", TT "v", "."}
-	  },
-     "The result ", TT "r", " will have the same class as ", TT "v", ".",
-     EXAMPLE "apply([1,3,5,7], i->i^2)",
-     SeeAlso => {(symbol /,VisibleList, Function), (symbol \, Function, VisibleList)}
-     }
-
-document {
-     Key => (apply,HashTable,Function),
-     Headline => "apply function to each value",
-     TT "apply(x,f)", " -- produces a new hash table ", TT "y", " from
-     an hash table ", TT "x", " by applying the function
-     ", TT "f", " to each of the values of ", TT "x", ".  This means that
-     if ", TT "x#k === v", " then ", TT "y#k === f(v)", "."
-     }
-document {
-     Key => (apply,ZZ,Function),
-     Headline => "apply function to 0 .. n-1",
-     TT "apply(n,f)", " -- applies the function ", TT "f", " to each integer
-     in the range ", TT "0 .. n-1", " returning the sequence of results.
-     This is equivalent to ", TT "apply( toList(0 .. n-1),f)", ".",
-     EXAMPLE "apply(10, i -> i^2)"
-     }
-document {
-     Key => apply,
-     Headline => "apply a function to each element",
-     SeeAlso => { "mapping over lists"}
      }
 
 document {
@@ -587,19 +539,6 @@ document {
 --     If no result is non-null, then it returns null."
 --     }
 
-document {
-     Key => any,
-     Headline => "whether an element satisfies a condition",
-     TT "any(v,f)", " -- yields the value true or false depending on
-     whether any element ", TT "v#i", " of ", TT "v", " yields the value
-     ", TT "true", " when the predicate ", TT "f", " is applied.",
-     PARA,
-     "Works when v is a list, sequence, or hash table, but when v is an
-     hash table, f is applied to each pair (k,x) consisting of a key k
-     and a value x from v.",
-     PARA,
-     SeeAlso =>{ "scan", "apply", "select", "all", "member"}
-     }
 
 document {
      Key => describe,
@@ -772,11 +711,133 @@ document {
      TT "f x", " -- yields the result of applying the function ", TT "f", " to ", TT "x", ".",
      }
 
+undocumented {
+    (symbol*,  Expression, Product),
+    (symbol*,  Product, Expression),
+    (symbol*,  RingElement, ZZ),
+    (symbol*,  Holder, Expression),
+    (symbol*,  QQ, RingElement),
+    (symbol*,  RingElement, QQ),
+    (symbol*,  RingElement, RR),
+    (symbol*,  Minus, Expression),
+    (symbol*,  Product, Holder),
+    (symbol*,  Holder, Holder),
+    (symbol*,  RingElement, Vector),
+    (symbol*,  ZZ, CC),
+    (symbol*,  ZZ, Matrix),
+    (symbol*,  Matrix, ZZ),
+    (symbol*,  Matrix, QQ),
+    (symbol*,  RR, CC),
+    (symbol*,  Thing, Thing),
+    (symbol*,  Thing, Expression),
+    (symbol*,  Expression, Thing),
+    (symbol*,  ZeroExpression, Expression),
+    (symbol*,  Minus, Minus),
+    (symbol*,  ZZ, InfiniteNumber),
+    (symbol*,  InfiniteNumber, ZZ),
+    (symbol*,  Expression, Expression),
+    (symbol*,  Product, ZeroExpression),
+    (symbol*,  ZZ, Ideal),
+    (symbol*,  Product, OneExpression),
+    (symbol*,  ZeroExpression, Holder),
+    (symbol*,  Holder, ZeroExpression),
+    (symbol*,  Holder, OneExpression),
+    (symbol*,  ZZ, RingElement),
+    (symbol*,  Expression, Holder),
+    (symbol*,  RR, RingElement),
+    (symbol*,  ZZ, GradedModuleMap),
+    (symbol*,  InfiniteNumber, InfiniteNumber),
+    (symbol*,  Expression, Minus),
+    (symbol*,  Product, Product),
+    (symbol*,  Holder, Product),
+    (symbol*,  Thing),
+    (symbol*,  ZZ, Module),
+    (symbol*,  CC, ZZ),
+    (symbol*,  CC, QQ),
+    (symbol*,  QQ, CC),
+    (symbol*,  CC, RR),
+    (symbol*,  QQ, Matrix),
+    (symbol*,  CC, CC),
+    (symbol*,  ZZ, MonomialIdeal),
+    (symbol*,  String),
+    (symbol*,  ZZ, ChainComplexMap),
+    (symbol*,  Expression, ZeroExpression),
+    (symbol*,  Expression, OneExpression),
+    (symbol*,  OneExpression, Expression)
+    }
+
+     
 document {
-     Key => symbol "*",
+     Key => {symbol*,
+    (symbol*,  Ring, Ideal),
+    (symbol*,  MutableMatrix, MutableMatrix),
+    (symbol*,  Ideal, Module),
+    (symbol*,  Ring, RingElement),
+    (symbol*,  GradedModuleMap, GradedModuleMap),
+    (symbol*,  RingElement, Matrix),
+    (symbol*,  Ideal, CoherentSheaf),
+    (symbol*,  RingMap, RingMap),
+    (symbol*,  RingElement, MutableMatrix),
+    (symbol*,  Ring, MonomialIdeal),
+    (symbol*,  MonomialIdeal, Module),
+    (symbol*,  AffineVariety, AffineVariety),
+    (symbol*,  MonomialIdeal, MonomialIdeal),
+    (symbol*,  RingElement, Ideal),
+    (symbol*,  Matrix, Vector),
+    (symbol*,  MonomialIdeal, Ring),
+    (symbol*,  Ring, Vector),
+    (symbol*,  RingElement, ChainComplexMap),
+    (symbol*,  Ideal, Vector),
+    (symbol*,  RingElement, MonomialIdeal),
+    (symbol*,  Matrix, RingElement),
+    (symbol*,  RingElement, Module),
+    (symbol*,  RingElement, GradedModuleMap),
+    (symbol*,  Ideal, Ring),
+    (symbol*,  ChainComplexMap, ChainComplexMap),
+    (symbol*,  RingElement, RingElement),
+    (symbol*,  Thing, List),
+    (symbol*,  ZZ, ProjectiveHilbertPolynomial)
+	  },
      Headline => "a binary operator, usually used for multiplication",
-     TT "x * y", " -- usually yields the product of x and y.",
+     Usage => "x * y",
+     "The return type depends on the types of x and y.  If they have the
+     same type, then usually the return type is the common type of x and y.
+     Returns true or false, depending on whether 
+     the objects x and y are (mathematically) equal.  The objects x and y are
+     typically numbers, elements of rings, matrices, modules, ideals,
+     chain complexes, and so on.",
      PARA,
+     "Multiplication involving ring elements (including integers, rational numbers,
+     real and complex numbers), ideals, vectors, matrices, modules is 
+     generally the usual multiplication, or composition of functions.",
+     EXAMPLE {
+	  },
+     PARA,
+     "The intersection of sets is given by multiplication.  See ", TO (symbol*,Set,Set), ".",
+     EXAMPLE {
+	  "set{hi,you,there} * set{hi,us,here,you}"
+	  },
+     PARA,
+     "Multiplication involving a list attempts to multiply each element of the list.",
+     EXAMPLE {
+	  "R = QQ[a..d];",
+	  "a * {b,c,d}"
+	  },
+     PARA,
+     "Multiplication of matrices (", TO (symbol*,Matrix,Matrix),") or ring maps is the same as composition.",
+     EXAMPLE {
+	  "f = map(R,R,{b,c,a,d})",
+	  "g = map(R,R,{(a+b)^2,b^2,c^2,d^2})",
+	  "f*g",
+	  "(f*g)(a) == f(g(a))"
+	  },
+     PARA,
+     "Submodules of modules may be produced using multiplication and addition.",
+     EXAMPLE {
+	  "M = R^2; I = ideal(a+b,c);",
+	  "N = I*M + a*R^2",
+	  "isHomogeneous N"
+	  },
      SeeAlso =>{ "times", "product" }
      }
 
@@ -805,11 +866,6 @@ document {
      PARA,
      SeeAlso =>{ "plus", "sum" }
      }
-
-document {
-     Key => (symbol +, Set, Set),
-     Headline => "union",
-     TT "s + t", " -- union of two sets" }
 
 document {
      Key => symbol "-",
@@ -984,7 +1040,7 @@ document {
      EXAMPLE {
 	  ///"junk" << "hi there" << close///,
       	  ///get "junk"///,
-	  ///unlinkFile "junk"///,
+	  ///removeFile "junk"///,
      	  if version#"operating system" =!= "Windows-95-98-NT" then ///get "!date"///
 	  },
      SeeAlso =>{ "File", "read" }
@@ -1270,16 +1326,13 @@ document {
      "See ", TO "===", " for details."
      }
 
-document {
-     Key => symbol==,
-     Undocumented => {
+undocumented {
          (symbol==, RingElement, ZZ),
          (symbol==, RingElement, Matrix),
          (symbol==, Ideal, MonomialIdeal),
          (symbol==, GradedModuleMap, ZZ),
          (symbol==, InfiniteNumber, InfiniteNumber),
          (symbol==, Holder, Holder),
-         (symbol==, Module, Module),
          (symbol==, Equation, Expression),
          (symbol==, ZZ, Ring),
          (symbol==, ZZ, QQ),
@@ -1291,14 +1344,11 @@ document {
          (symbol==, ZZ, CC),
          (symbol==, ZZ, ChainComplex),
          (symbol==, ChainComplex, ZZ),
-         (symbol==, Matrix, Matrix),
          (symbol==, RR, CC),
          (symbol==, Thing, Thing),
          (symbol==, MonomialIdeal, Ring),
          (symbol==, Ring, MonomialIdeal),
          (symbol==, MonomialIdeal, ZZ),
-         (symbol==, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
-         (symbol==, ChainComplex, ChainComplex),
          (symbol==, Expression, Thing),
          (symbol==, Thing, Expression),
          (symbol==, Equation, Holder),
@@ -1306,7 +1356,6 @@ document {
          (symbol==, ChainComplexMap, ZZ),
          (symbol==, ZZ, MutableMatrix),
          (symbol==, Expression, Expression),
-         (symbol==, RingElement, RingElement),
          (symbol==, ZZ, InfiniteNumber),
          (symbol==, Nothing, Nothing),
          (symbol==, Equation, Equation),
@@ -1317,9 +1366,7 @@ document {
          (symbol==, ZZ, Ideal),
          (symbol==, Ideal, ZZ),
          (symbol==, ZZ, RingElement),
-         (symbol==, GradedModuleMap, GradedModuleMap),
          (symbol==, Matrix, RingElement),
-         (symbol==, Set, Set),
          (symbol==, MonomialIdeal, Ideal),
          (symbol==, ZZ, GradedModuleMap),
          (symbol==, GradedModule, GradedModule),
@@ -1342,15 +1389,26 @@ document {
          (symbol==, MutableMatrix, ZZ),
          (symbol==, MonoidElement, MonoidElement),
          (symbol==, MonomialIdeal, MonomialIdeal),
-         (symbol==, Ideal, Ideal),
          (symbol==, InfiniteNumber, ZZ),
          (symbol==, ChainComplexMap, ChainComplexMap),
-         (symbol==, MutableMatrix, MutableMatrix),
          (symbol==, Net, Net),
          (symbol==, Net, String),
          (symbol==, Module, Ideal),
          (symbol==, Ideal, Module),
          (symbol==, Ring, Ideal)
+	  }
+
+document {
+     Key => {symbol ==,
+	  (symbol==, Matrix, Matrix),
+         (symbol==, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
+         (symbol==, ChainComplex, ChainComplex),
+         (symbol==, RingElement, RingElement),
+         (symbol==, GradedModuleMap, GradedModuleMap),
+         (symbol==, Set, Set),
+         (symbol==, Ideal, Ideal),
+         (symbol==, MutableMatrix, MutableMatrix),
+         (symbol==, Module, Module)
 	  },
      Headline => "equality",
      Usage => "x == y",
@@ -1425,9 +1483,73 @@ document {
      SeeAlso =>{ "==" }
      }
 
+undocumented {
+    (symbol**, OneExpression, Holder),
+    (symbol**, Holder, Expression),
+    (symbol**, QQ, RingElement),
+    (symbol**, RingElement, QQ),
+    (symbol**, QuotientRing, PolynomialRing),
+    (symbol**, Expression, NonAssociativeProduct),
+    (symbol**, Holder, Holder),
+    (symbol**, QuotientRing, QuotientRing),
+    (symbol**, ZZ, Matrix),
+    (symbol**, Matrix, ZZ),
+    (symbol**, Matrix, QQ),
+    (symbol**, Thing, Expression),
+    (symbol**, Expression, Thing),
+    (symbol**, NonAssociativeProduct, NonAssociativeProduct),
+    (symbol**, Expression, Expression),
+    (symbol**, Holder, OneExpression),
+    (symbol**, ZZ, RingElement),
+    (symbol**, Expression, Holder),
+    (symbol**, PolynomialRing, PolynomialRing),
+    (symbol**, PolynomialRing, QuotientRing),
+    (symbol**, NonAssociativeProduct, Expression),
+    (symbol**, QQ, Matrix),
+    (symbol**, NonAssociativeProduct, Holder),
+    (symbol**, Holder, NonAssociativeProduct),
+    (symbol**, Expression, OneExpression),
+    (symbol**, OneExpression, Expression)
+     }
+
 document {
-     Key => symbol "**",
+     Key => {symbol**,
+    --(symbol**, ChainComplex, GradedModule),
+    --(symbol**, GradedModule, ChainComplex),
+    (symbol**, ProjectiveVariety, Ring),
+    (symbol**, RingElement, ZZ),
+    (symbol**, RingElement, Matrix),
+    (symbol**, GradedModule, GradedModule),
+    --(symbol**, RingMap, Module),
+    --(symbol**, Module, Module),
+    --(symbol**, Matrix, Ring),
+    (symbol**, Thing, Thing),
+    (symbol**, ChainComplex, Module),
+    --(symbol**, Matrix, Matrix),
+    (symbol**, ChainComplexMap, Module),
+    (symbol**, Module, ChainComplexMap),
+    --(symbol**, ChainComplex, ChainComplexMap),
+    --(symbol**, CoherentSheaf, CoherentSheaf),
+    (symbol**, GradedModule, Module),
+    (symbol**, RingElement, RingElement),
+    --(symbol**, Monoid, Monoid),
+    --(symbol**, ChainComplexMap, ChainComplexMap),
+    (symbol**, AffineVariety, Ring),
+    --(symbol**, Tally, Tally),
+    --(symbol**, Set, Set),
+    (symbol**, Matrix, RingElement),
+    --(symbol**, Ring, Ring),
+    --(symbol**, Module, Ring),
+    (symbol**, ChainComplex, Ring),
+    --(symbol**, Matrix, Module),
+    (symbol**, Module, Matrix),
+    (symbol**, Module, ChainComplex),
+    --(symbol**, ChainComplex, ChainComplex),
+    --(symbol**, ChainComplexMap, ChainComplex),
+    (symbol**, Module, GradedModule)
+	  },
      Headline => "a binary operator, usually used for tensor product",
+     "This here is tensor product land."
      }
 
 document {
@@ -1438,26 +1560,29 @@ document {
 document {
      Key => (symbol **, Set, Set),
      Headline => "Cartesian product",
-     TT "X ** Y", " -- form the Cartesian product of two sets.",
-     PARA,
-     "Its elements are the sequences (x,y), where x is an element
-     of X, and y is an element of Y.",
+     Usage =>  "x ** y", 
+     Inputs => {
+	  "x" => "",
+	  "y" => ""
+	  },
+     Outputs => {
+	  Set => "whose elements are the sequences (a,b), where a is an element
+     	  of x, and b is an element of y."
+	  },
      EXAMPLE "set {1,2} ** set {a,b,c}",
-     SeeAlso => { "**", "Set" }
-     }
-
-document {
-     Key => set,
-     Headline => "make a set",
-	Usage => "set v",
-	Inputs => {"v" => List => {}},
-	Outputs => {Set => {}},
-     TT "set v", " yields the set whose elements are the members of the list v.",
-	EXAMPLE {
-		"v = {1,2,3,2,1}",
-		"S = set v"
-		},
-     SeeAlso => { "Set" }
+     "Suppose we wish to form the set of
+     all triples with entries either in the set A below.",
+     EXAMPLE {
+	  "A = set{1,2}",
+	  "A ** A ** A"
+	  },
+     "To make this last a set of triples, ", TO splice, " each element together.  
+     Or, use ", TO (symbol^**,Set,ZZ), ".",
+     EXAMPLE {
+	  "(A ** A ** A)/splice",
+	  "A^**3"
+	  },
+     SeeAlso => { Set }
      }
 
 document {

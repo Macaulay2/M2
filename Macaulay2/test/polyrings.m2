@@ -14,7 +14,7 @@ A = ZZ[a,b]/(a^3-b^3)
 B = A[x,y]
 assert(B_2^3 == B_3^3)
 
-C = ZZ[x,dx,a,WeylAlgebra => x => dx]/(a^3-x^3)
+C = ZZ/3[x,dx,k,WeylAlgebra => x => dx]/(k^3-x^3)	    -- I made this ZZ/3 so x^3 would be in the center [dan]
 del(dx,x,1)
 
 D = C[t]

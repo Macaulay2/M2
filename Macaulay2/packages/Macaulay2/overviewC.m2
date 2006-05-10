@@ -392,12 +392,12 @@ document {
      exponents need to be provided.  The information can be extracted with ", TO "#", ".",
      EXAMPLE "S#(new HashTable from {0 => 2})",
      PARA,
-     "Monomials (monoid elements) have an accessible form that is implicitly used
-     above.",
-     EXAMPLE {
-	  "listForm leadMonomial g",
-      	  "standardForm leadMonomial g",
-	  },
+--      "Monomials (monoid elements) have an accessible form that is implicitly used
+--      above.",
+--      EXAMPLE {
+-- 	  "listForm leadMonomial g",
+--       	  "standardForm leadMonomial g",
+-- 	  },
      "Comparison of polynomials is possible, and proceeds by simply examining the
      lead monomials and comparing them.",
      EXAMPLE {

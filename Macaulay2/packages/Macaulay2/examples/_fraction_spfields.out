@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : frac ZZ
 
@@ -83,13 +84,9 @@ i13 : liftable(1/f,R)
 
 o13 = true
 
-o13 : Boolean
-
 i14 : liftable(f,R)
 
 o14 = false
-
-o14 : Boolean
 
 i15 : lift(1/f,R)
 

@@ -47,9 +47,10 @@ document {
 	  }
      }
 
+undocumented {(degreesRing, QuotientRing), (degreesRing,PolynomialRing)}
+
 document { 
      Key => (degreesRing,Ring),
-     Undocumented => {(degreesRing, QuotientRing), (degreesRing,PolynomialRing)},
      Headline => "the ring of degrees",
      Usage => "degreesRing R",
      Inputs => {

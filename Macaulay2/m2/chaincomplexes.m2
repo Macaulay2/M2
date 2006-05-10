@@ -816,12 +816,12 @@ map(ChainComplex,ChainComplex,Function) := ChainComplexMap => options -> (C,D,f)
 
 map(ChainComplex,ChainComplex,ChainComplexMap) := ChainComplexMap => options -> (C,D,f) -> map(C,D,k -> f_k)
 
-map(ChainComplex,ChainComplex) := ChainComplexMap => options -> (C,D) -> (
+inducedMap(ChainComplex,ChainComplex) := ChainComplexMap => options -> (C,D) -> (
      h := new ChainComplexMap;
      h.source = D;
      h.target = C;
      deg := h.degree = if options.Degree === null then 0 else options.Degree;
-     scan(spots D, k -> if C#?(k+deg) then h#k = map(C#(k+deg),D#k));
+     scan(spots D, k -> if C#?(k+deg) then h#k = inducedMap(C#(k+deg),D#k));
      h
      )
 
@@ -831,7 +831,7 @@ kernel ChainComplexMap := ChainComplex => options -> (f) -> (
      C.ring = ring f;
      complete D;
      scan(spots D, k -> C#k = kernel f_k);
-     scan(spots C, k -> if C#?(k-1) then C.dd#k = (D.dd_k * map(D_k,C_k)) // map(D_(k-1),C_(k-1)));
+     scan(spots C, k -> if C#?(k-1) then C.dd#k = (D.dd_k * inducedMap(D_k,C_k)) // map(D_(k-1),C_(k-1)));
      C)
 
 coimage ChainComplexMap := ChainComplex => (f) -> (

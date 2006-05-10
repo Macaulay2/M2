@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = QQ[a..d]/(a^3+b^3+c^3+d^3)
 
@@ -9,31 +10,27 @@ i2 : X = Proj R;
 
 i3 : T' = cotangentSheaf X
 
-o3 = cokernel {2} | b  a  0  0  0  c2 -d2 0   |
-              {2} | -c 0  a  0  0  b2 0   -d2 |
-              {2} | d  0  0  a  0  0  b2  -c2 |
-              {2} | 0  -c -b 0  d2 a2 0   0   |
-              {2} | 0  d  0  -b c2 0  a2  0   |
-              {2} | 0  0  d  c  b2 0  0   a2  |
+o3 = subquotient ({1} | 0  0  0  -d -c -b a2 |, {1} | 3a2 |)
+                  {1} | 0  -d -c 0  0  a  b2 |  {1} | 3b2 |
+                  {1} | -d 0  b  0  a  0  c2 |  {1} | 3c2 |
+                  {1} | c  b  0  a  0  0  d2 |  {1} | 3d2 |
 
-                                         6
-o3 : coherent sheaf on X, quotient of OO  (-2)
-                                        X
+                                            4
+o3 : coherent sheaf on X, subquotient of OO  (-1)
+                                           X
 
 i4 : numgens T'
 
-o4 = 6
+o4 = 7
 
 i5 : module T'
 
-o5 = cokernel {2} | b  a  0  0  0  c2 -d2 0   |
-              {2} | -c 0  a  0  0  b2 0   -d2 |
-              {2} | d  0  0  a  0  0  b2  -c2 |
-              {2} | 0  -c -b 0  d2 a2 0   0   |
-              {2} | 0  d  0  -b c2 0  a2  0   |
-              {2} | 0  0  d  c  b2 0  0   a2  |
+o5 = subquotient ({1} | 0  0  0  -d -c -b a2 |, {1} | 3a2 |)
+                  {1} | 0  -d -c 0  0  a  b2 |  {1} | 3b2 |
+                  {1} | -d 0  b  0  a  0  c2 |  {1} | 3c2 |
+                  {1} | c  b  0  a  0  0  d2 |  {1} | 3d2 |
 
-                            6
-o5 : R-module, quotient of R
+                               4
+o5 : R-module, subquotient of R
 
 i6 : 

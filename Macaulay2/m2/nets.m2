@@ -115,7 +115,7 @@ Net == String := (n,s) -> (
      )
 String == Net := (s,n) -> n == s
 
-net String := x -> stack lines x			    -- was horizontalJoin
+net String := x -> stack separate x			    -- was horizontalJoin
 net RR := net Boolean := net File := net ZZ := net Database := toString
 net000 := horizontalJoin ()
 net Nothing := null -> net000

@@ -2,13 +2,14 @@
 --- author(s): last edit: MES
 --- notes: 
 
+undocumented {
+	  (generators, EngineRing),
+	  (generators, PolynomialRing),
+	  (generators, QuotientRing)}
+
 document {
      Key => generators,
      Headline => "provide matrix or list of generators",
-     Undocumented => {
-	  (generators, EngineRing),
-	  (generators, PolynomialRing),
-	  (generators, QuotientRing)},
      Usage => "generators x",
      Inputs => { "x"  },
      Outputs => { {"provides the generators of ", TT "x", 

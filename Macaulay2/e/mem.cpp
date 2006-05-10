@@ -10,7 +10,9 @@ static int deleted_amount = 0;
 const int trace_bad_deletes = 0;
 
 int slab::n_slabs = 0;
+
 stash *stash::stash_list = NULL;
+slab *stash::slab_freelist = NULL;
 
 doubling_stash *doubles = NULL;
 
@@ -32,7 +34,8 @@ stash::~stash()
     {
       slab *p = slabs;
       slabs = slabs->next;
-      deleteitem(p);
+      p->next = slab_freelist;
+      slab_freelist = p;
     }
   assert(stash_list != NULL);
   if (stash_list == this)
@@ -50,57 +53,23 @@ stash::~stash()
     }
 }
 
-void *stash::new_elem()
-     // Allocate space for an object from this stash.
-{
-  n_allocs++;
-  n_inuse++;
-  if (n_inuse > highwater) highwater = n_inuse;
-  if (free_list == NULL) 
-    {
-      if (n_per_slab == 0) 
-	{
-	  void *result = newarray(char,element_size);
-	  allocated_amount += element_size;
-	  return result;
-	}
-      chop_slab();
-    }
-  assert(free_list != NULL);	// chop_slab should not let this happen.
-  void *result = free_list;
-  free_list = *(reinterpret_cast<void **>(free_list));
-  return result;
-}
-
-void stash::delete_elem(void *p)
-     // Delete the object 'p', placing it on the free list for this stash.
-{
-  if (p == NULL) return;
-  if (trace_bad_deletes)
-    {
-      for (void *q = free_list; q != NULL; q = *(reinterpret_cast<void **>(q)))
-	if (q == p)
-	  assert(0);
-    }
-
-  n_inuse--;
-  n_frees++;
-  if (n_per_slab == 0)
-    {
-      deleted_amount += element_size;
-      char *q = reinterpret_cast<char *>(p);
-      deletearray(q);
-      return;
-    }
-  *(reinterpret_cast<void **>(p)) = free_list;
-  free_list = p;
-}
 
 void stash::chop_slab()
 {
   // grab a new slab, and chop it into element_size pieces, placing them
   // onto the free list.
-  slab *new_slab = new slab;
+
+  slab *new_slab;
+  if (slab_freelist == NULL)
+    {
+      new_slab = new slab;
+    }
+  else
+    {
+      new_slab = slab_freelist;
+      slab_freelist = new_slab->next;
+    }
+  
   new_slab->next = slabs;
   slabs = new_slab;
 
@@ -203,12 +172,10 @@ void *doubling_stash::new_elem(size_t size)
 
 void doubling_stash::delete_elem(void *p)
 {
-  /*
   if (p == NULL) return;
   int *q = (int *) p;
   q--;
   doubles[*q]->delete_elem(q);
-  */
 }
 
 size_t doubling_stash::allocated_size(void *p)

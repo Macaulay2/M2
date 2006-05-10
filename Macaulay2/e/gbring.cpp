@@ -2,6 +2,7 @@
 #include "text_io.hpp"
 #include "ZZ.hpp"
 #include "QQ.hpp"
+#include "z_mod_p.hpp"
 #include "freemod.hpp"
 #include "geovec.hpp"
 #include "frac.hpp"
@@ -12,11 +13,17 @@
 
 #define sizeofgbvector(s,len) (sizeof(*s) - sizeof(s->monom) + (len)*sizeof(s->monom[0]))
 
+static void mult_monomials(int len, const_monomial m, const_monomial n, monomial result)
+{
+  for (int i=len; i>0; --i)
+    *result++ = *m++ + *n++;
+}
 
 gbvector * GBRing::new_raw_term()
 {
-  void *p = GC_MALLOC(gbvector_size);
-  if (p == 0) outofmem();
+  void *p = mem->new_elem();
+  //void *p = GC_MALLOC(gbvector_size);
+  //  if (p == 0) outofmem();
   return(reinterpret_cast<gbvector *>(p));
 }
 
@@ -60,6 +67,7 @@ GBRing::GBRing(const Ring *K0, const Monoid *M0)
     M(M0),
     K(K0),
     _coeffs_ZZ(false),  // set below
+    zzp(0),
     _nvars(M->n_vars()),
     _up_order(false),
     _is_skew(false),
@@ -85,6 +93,10 @@ GBRing::GBRing(const Ring *K0, const Monoid *M0)
 
   gbvector *used_to_determine_size = 0;
   gbvector_size = sizeofgbvector(used_to_determine_size,M->monomial_size());
+  mem = new stash("gbvector", gbvector_size);
+
+  const Z_mod *Kp = K->cast_to_Z_mod();
+  if (Kp != 0) zzp = Kp->get_CoeffRing();
 
   if (K == globalQQ)
     K = globalZZ;
@@ -114,6 +126,7 @@ gbvector *GBRingPoly::mult_by_term1(const FreeModule *F,
   // Remember: this multiplies w/o regard to any quotient elements
   gbvector head;
   gbvector *inresult = &head;
+  int monlen = M->monomial_size();
 
   for (const gbvector *s = f; s != NULL; s = s->next)
     {
@@ -121,7 +134,7 @@ gbvector *GBRingPoly::mult_by_term1(const FreeModule *F,
       t->next = 0;
       t->comp = s->comp + comp;
       t->coeff = K->mult(u, s->coeff);
-      M->mult(monom, s->monom, t->monom);
+      mult_monomials(monlen, monom, s->monom, t->monom);
       inresult->next = t;
       inresult = inresult->next;
     }
@@ -279,7 +292,8 @@ void GBRing::gbvector_remove_term(gbvector *f)
   // It is not clear whether we should try to free elements of K
   f->next = 0;
   f->coeff = ZERO_RINGELEM;
-  GC_FREE(reinterpret_cast<char *>(f));
+  mem->delete_elem(f);
+  //GC_FREE(reinterpret_cast<char *>(f));
 }
 
 void GBRing::gbvector_remove(gbvector *f)
@@ -588,11 +602,82 @@ gbvector * GBRing::gbvector_copy(const gbvector *f)
   return head.next;
 }
 
+void GBRing::gbvector_add_to_zzp(const FreeModule *F,
+				 gbvector * &f, gbvector * &g)
+{
+  if (g == NULL) return;
+  if (f == NULL) { f = g; g = NULL; return; }
+  gbvector head;
+  gbvector *result = &head;
+  while (1)
+    switch (gbvector_compare(F, f, g))
+      {
+      case LT:
+	result->next = g;
+	result = result->next;
+	g = g->next;
+	if (g == NULL) 
+	  {
+	    result->next = f; 
+	    f = head.next;
+	    return;
+	  }
+	break;
+      case GT:
+	result->next = f;
+	result = result->next;
+	f = f->next;
+	if (f == NULL) 
+	  {
+	    result->next = g; 
+	    f = head.next;
+	    g = NULL;
+	    return;
+	  }
+	break;
+      case EQ:
+	gbvector *tmf = f;
+	gbvector *tmg = g;
+	f = f->next;
+	g = g->next;
+	zzp->add(tmf->coeff.int_val,tmf->coeff.int_val,tmg->coeff.int_val);
+	if (zzp->is_zero(tmf->coeff.int_val))
+	  {
+	    gbvector_remove_term(tmf);
+	  }
+	else
+	  {
+	    result->next = tmf;
+	    result = result->next;
+	  }
+	gbvector_remove_term(tmg);
+	if (g == NULL) 
+	  {
+	    result->next = f; 
+	    f = head.next;
+	    return;
+	  }
+	if (f == NULL) 
+	  {
+	    result->next = g; 
+	    f = head.next;
+	    g = NULL;
+	    return;
+	  }
+	break;
+      }
+}
+
 void GBRing::gbvector_add_to(const FreeModule *F,
 			     gbvector * &f, gbvector * &g)
 {
   if (g == NULL) return;
   if (f == NULL) { f = g; g = NULL; return; }
+  if (zzp) 
+    {
+      gbvector_add_to_zzp(F,f,g);
+      return;
+    }
   gbvector head;
   gbvector *result = &head;
   while (1)

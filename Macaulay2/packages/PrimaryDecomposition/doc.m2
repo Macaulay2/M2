@@ -101,8 +101,8 @@ document {
      Key => [ass,Strategy],
      "The strategy option value should be one of the following.",
      UL{
-	  SEQ ("1", " -- The assasinator is found using Ext modules."),
-	  SEQ ("2", " -- The assasinator is found using ", TO(topComponents), " on a 
+	  SEQ ("1", " -- The assassinator is found using Ext modules."),
+	  SEQ ("2", " -- The assassinator is found using ", TO(topComponents), " on a 
 	       series of ideals.")
 	  },
      PARA,
@@ -182,21 +182,21 @@ document {
 	  PARA,
 	  "The default strategy is 1.",
 	  HEADER3 "Strategy => 0",
-	  "This strategy does not require the calculation of the assasinator, 
+	  "This strategy does not require the calculation of the assassinator, 
 	  but can require the computation of high powers of ideals. The 
 	  method appears in 
 	  Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992).",
           HEADER3 "Strategy => 1",
 	  "This strategy uses a separator polynomial - a polynomial in all of 
 	  the associated primes of ", TT "I", " but ", TT "P", " and those 
-	  contained in ", TT "P", ".  In this strategy, the assasinator of the 
+	  contained in ", TT "P", ".  In this strategy, the assassinator of the 
 	  ideal will be recalled, or recomputed using ", TO [ass,Strategy] ,
 	  " = 1, if unknown.  The separator 
 	  polynomial method is described in  
 	  Shimoyama-Yokoyama, J. Symbolic computation, 22(3) 247-277 (1996).",
 	  HEADER3 "Strategy => 2",
 	  "This is the same as ", TT "Strategy => 1", " except that, if 
-	  unknown, the assasinator is computer using ", TO ass => Strategy ,
+	  unknown, the assassinator is computer using ", TO ass => Strategy ,
 	  " = 2."
 	   }
 ///

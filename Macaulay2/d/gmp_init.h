@@ -2,7 +2,7 @@
 extern "C" {
 #endif
 
-void factory_gmp_init();
+extern void initializeGMP_Cwrapper();
 
 #ifdef __cplusplus
 }

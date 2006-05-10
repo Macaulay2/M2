@@ -6,12 +6,14 @@ VPATH = @srcdir@
 DOTS = ..
 include $(DOTS)/../include/config.Makefile
 
-all check clean ::
-	$(MAKE) -k -C engine $@
-	$(MAKE) -k -C slow $@
-
 SRCDIR = @srcdir@
 include @srcdir@/Makefile.test
+
+all check clean ::
+	$(MAKE) -k -C slow $@
+
+all check clean ::
+	$(MAKE) -k -C engine $@
 
 ifneq "$(DUMPDATA)" "no"
 RESULTS += dumpdata.out

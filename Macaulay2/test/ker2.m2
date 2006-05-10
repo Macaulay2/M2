@@ -11,6 +11,7 @@ A = R/j2
 use A
 phi = map(A,S,{x,y,s,t})
 ker phi
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ker2.out"
 -- End:

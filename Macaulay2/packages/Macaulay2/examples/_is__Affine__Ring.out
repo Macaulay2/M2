@@ -1,32 +1,23 @@
+-- -*- M2-comint -*-
 
 i1 : isAffineRing CC
 
 o1 = true
 
-o1 : Boolean
-
 i2 : isAffineRing (ZZ[a,b,c,d])
 
 o2 = false
-
-o2 : Boolean
 
 i3 : isAffineRing (ZZ/101[a,b,c,d])
 
 o3 = true
 
-o3 : Boolean
-
 i4 : isAffineRing (ZZ/2[x,y,z]/(x^2-y*z))
 
 o4 = true
 
-o4 : Boolean
-
 i5 : isAffineRing (QQ[x,dx, WeylAlgebra => {x => dx}])
 
 o5 = true
-
-o5 : Boolean
 
 i6 : 

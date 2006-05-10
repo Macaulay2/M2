@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R=ZZ/101[a,b,c]
 
@@ -16,8 +17,6 @@ i3 : b^2 > a*c
 
 o3 = true
 
-o3 : Boolean
-
 i4 : b^2 ? a*c
 
 o4 = >
@@ -26,8 +25,8 @@ o4 : Keyword
 
 i5 : sort {1_R, a, a^2, b, b^2, a*b, a^3, b^3}
 
-          3   2         3        2
-o5 = {1, a , b , b, a, b , a*b, a }
+                2        2   3   3
+o5 = {1, b, a, b , a*b, a , b , a }
 
 o5 : List
 

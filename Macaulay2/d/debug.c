@@ -1,15 +1,29 @@
+#include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <gc.h>
 #include "memdebug.h"
 #include "config.h"
 #include "debug.h"
 #include <gmp.h>
+#include <string.h>
 
 void *trapaddr = (void *)1;
-void trap(void) { }
 int trapcount = 0;
 int trapset = 0;
-void trapchk(void *p) { trapcount++; if (trapcount == trapset || p == trapaddr || (void *)((int)p+1) == trapaddr) trap(); }
+void *pointers[10];		/* during debugging we can put pointers here, visible to the garbage collector */
+void trapchk(void *p) { 
+     trapcount++;
+     if (trapcount == trapset || p == trapaddr || p == (void *)~(int)trapaddr) trap();
+}
+
+#define STDERR 2
+int badBlock() {
+     char buf[120];
+     sprintf(buf,"%s:%d: internal error: smashed block in memory block allocator\n",__FILE__,__LINE__);
+     write(STDERR,buf,strlen(buf));
+     abort();
+}
 
 #if GC_DEBUG
 extern unsigned int GC_debug_header_size;

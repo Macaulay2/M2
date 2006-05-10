@@ -114,7 +114,7 @@ struct ENV {
      node current_package;
      node signature;		/* kept in reverse order */
      };
-volatile void fatalpos(node, char *,...);
+void fatalpos(node, char *,...);
 node totype(node);
 void cprinttypevar(node, node);
 bool isarraytype(node);

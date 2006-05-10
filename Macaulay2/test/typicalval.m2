@@ -5,6 +5,7 @@ if #a > 0 then (
      assert(#a == 0)
      )
 
-     -- Local Variables:
+end
+-- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test typicalval.out"
 -- End:

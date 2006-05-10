@@ -10,9 +10,9 @@ document {
 	  "x" => RR => ""
 	  },
      Outputs => { 
-	  RR => { "the arccosine of ", TT "x"} 
+	  RR => { "the arccosine (in radians) of ", TT "x"} 
 	  },
      EXAMPLE {
-	  "acos .5"
+	  "acos 0.5"
 	  }
      }     

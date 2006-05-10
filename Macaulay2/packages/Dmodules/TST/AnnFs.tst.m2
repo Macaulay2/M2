@@ -1,7 +1,7 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
 -- AnnFs
-needs "D-modules.m2"
+needs "Dmodules.m2"
 Dtrace 1
 pInfo(1, "testing AnnFs...")
 

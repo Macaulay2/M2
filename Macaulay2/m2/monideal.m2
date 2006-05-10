@@ -63,6 +63,9 @@ MonomialIdeal + MonomialIdeal := MonomialIdeal => (I,J) -> (
 MonomialIdeal * MonomialIdeal := MonomialIdeal => (I,J) -> (
      if ring I =!= ring J then error "expected monomial ideals in the same ring";
      newMonomialIdeal(ring I, raw I * raw J))
+MonomialIdeal - MonomialIdeal := MonomialIdeal => (I,J) -> (
+     if ring I =!= ring J then error "expected monomial ideals in the same ring";
+     newMonomialIdeal(ring I, raw I - raw J))
 
 radical MonomialIdeal := MonomialIdeal => options -> (I) -> newMonomialIdeal(ring I, rawRadical raw I)
 
@@ -340,7 +343,7 @@ irreducibleDecomposition MonomialIdeal := List => (I) -> (
      aI := lcmOfGens I;
      M := first entries generators dual I;
      apply(M, m -> (
-	       s := standardForm leadMonomial m;
+	       s := first keys standardForm leadMonomial m;
 	       monomialIdeal apply(keys s, v -> R_v^(aI#v + 1 - s#v))))
      )
 
@@ -351,7 +354,7 @@ primaryDecomposition MonomialIdeal := List => o -> (I) -> (
      M := first entries generators J;
      H := new MutableHashTable;
      scan(M, m -> (
-	       s := standardForm leadMonomial m;
+	       s := first keys standardForm leadMonomial m;
 	       Q := monomialIdeal apply(keys s, v -> R_v^(aI#v + 1 - s#v));
 	       ind := sort keys s;
 	       if not H#?ind then H#ind = Q

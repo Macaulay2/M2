@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ/32003[x,y,z];
 
@@ -32,18 +33,12 @@ i6 : source h == N
 
 o6 = true
 
-o6 : Boolean
-
 i7 : target h == M
 
 o7 = true
 
-o7 : Boolean
-
 i8 : ambient M == ambient N
 
 o8 = true
-
-o8 : Boolean
 
 i9 : 

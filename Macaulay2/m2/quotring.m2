@@ -1,67 +1,36 @@
---		Copyright 1996-2002 by Daniel R. Grayson and Michael E. Stillman
-
+--		Copyright 1996-2006 by Daniel R. Grayson and Michael E. Stillman
 
 QuotientRing = new Type of EngineRing
 QuotientRing.synonym = "quotient ring"
-
 ideal QuotientRing := R -> R.ideal
-
 isQuotientRing = method(TypicalValue => Boolean)
 isQuotientRing Ring := R -> false
 isQuotientRing QuotientRing := R -> true
-coefficientRing QuotientRing := R -> coefficientRing last R.baseRings
-options QuotientRing := R -> options last R.baseRings
-
+coefficientRing QuotientRing := (cacheValue coefficientRing) (R -> coefficientRing ambient R)
+options QuotientRing := R -> options ambient R
 isQuotientOf = method(TypicalValue => Boolean)
 isQuotientOf(Ring,Ring) := (S,R) -> S === R
-isQuotientOf(QuotientRing,Ring) := (S,R) -> (
-     S === R or isQuotientOf(last S.baseRings,R)
-     )
-
-degreeLength QuotientRing := S -> degreeLength last S.baseRings
-vars QuotientRing := S -> (
-     if S.?vars 
-     then S.vars 
-     else S.vars = matrix table (1, numgens S, (i,j) -> S_j)
-     )
-numgens QuotientRing := S -> numgens last S.baseRings
-
+isQuotientOf(QuotientRing,Ring) := (S,R) -> S === R or isQuotientOf(ambient S,R)
+degreeLength QuotientRing := S -> degreeLength ambient S
+vars QuotientRing := (cacheValue vars) (S -> matrix table (1, numgens S, (i,j) -> S_j))
+numgens QuotientRing := (cacheValue numgens) (S -> numgens ambient S)
 pretty := relns -> (
      s := toSequence flatten entries relns;
      if #s === 1 then s = first s;
      s)
-
 toExternalString QuotientRing := S -> toString expression S
 toString QuotientRing := S -> toExternalString S
-
 random QuotientRing := S -> (
      if S.baseRings === {ZZ} then (random char S)_S
      else notImplemented())
-
-expression QuotientRing := S -> (
-     new Divide from { 
-	  expression last S.baseRings,  
-	  expression pretty S.relations 
-	  }
-     )
-
+expression QuotientRing := S -> new Divide from { expression ambient S, expression pretty S.relations }
 tex QuotientRing := S -> "$" | texMath S | "$"
 texMath QuotientRing := S -> texMath new Divide from { last S.baseRings, pretty S.relations }
-
 describe QuotientRing := R -> net expression R
 net QuotientRing := S -> if ReverseDictionary#?S then toString ReverseDictionary#S else net expression S
-
 ambient PolynomialRing := R -> R
-ambient QuotientRing := Ring => R -> last R.baseRings
-
-isHomogeneous QuotientRing := R -> (
-     if R.?isHomogeneous then R.isHomogeneous 
-     else R.isHomogeneous = (
-	  degreeLength R == 0
-	  or
-	  isHomogeneous ambient R and isHomogeneous R.relations
-	  )
-     )
+ambient QuotientRing := Ring => (cacheValue ambient) (R -> last R.baseRings)
+isHomogeneous QuotientRing := (cacheValue isHomogeneous) (R -> isHomogeneous ambient R and isHomogeneous R.relations)
 
 Ring / Module := QuotientRing => (R,I) -> (
      if ambient I != R^1 or I.?relations
@@ -84,6 +53,7 @@ ZZquotient := (R,I) -> (
 	  if n > 1 and not isPrime n
 	  then error "ZZ/n not implemented yet for composite n";
 	  S := new QuotientRing from rawZZp n;
+	  S.cache = new CacheTable;
 	  S.isBasic = true;
 	  S.ideal = I;
 	  S.baseRings = {R};
@@ -118,6 +88,7 @@ EngineRing / Ideal := (R,I) -> (
      gensI := generators I ** R;
      gensgbI := generators gb gensI;
      S := new QuotientRing from rawQuotientRing(raw R, raw gensgbI);
+     S.cache = new CacheTable;
      S.basering = R.basering;
      S.flatmonoid = R.flatmonoid;
      if R.?Adjust then S.Adjust = R.Adjust;
@@ -151,6 +122,7 @@ EngineRing / Ideal := (R,I) -> (
 		    ));
 	       );
 	  );
+     runHooks(R,QuotientRingHook,S);
      S)
 
 Ring / ZZ := (R,f) -> R / ideal f_R
@@ -191,56 +163,25 @@ dim QuotientRing := (R) -> (
      else dim ultimate(ambient,R) - codim R
      )
 
-hilbertSeries QuotientRing := options -> (S) -> (
-     hilbertSeries(cokernel presentation S,options)
-     )
+hilbertSeries QuotientRing := options -> (S) -> hilbertSeries(cokernel presentation S,options)
+monoid QuotientRing := (cacheValue monoid) (S -> monoid ambient S)
+degreesRing QuotientRing := (cacheValue degreesRing) (S -> degreesRing ambient S)
+QuotientRing_String := (S,s) -> if S#?s then S#s else (
+     R := ultimate(ambient, S);
+     S#s = promote(R_s, S))
 
-monoid QuotientRing := (S) -> (
-     if S.?monoid then S.monoid
-     else (
-	  R := ultimate(ambient,S);
-	  S.monoid = monoid R
-	  )
-     )
-
-degreesRing QuotientRing := (S) -> (
-     if S.?degreesRing then S.degreesRing 
-     else (
-	  R := ultimate(ambient,S);
-	  S.degreesRing = degreesRing R
-	  )
-     )
-
-QuotientRing_String := (S,s) -> (
-     if S#?s then S#s
-     else (
-	  R := ultimate(ambient, S);
-	  S#s = promote(R_s, S)
-	  )
-     )
-
-generators QuotientRing := (S) -> (
-     if S.?generators 
-     then S.generators
-     else S.generators = (
-	  A := ultimate(ambient,S);
-	  S.generators = apply(generators A, m -> promote(m,S))))
-
-allGenerators QuotientRing := (S) -> apply(allGenerators ambient S, m -> promote(m,S))
-
-char QuotientRing := (S) -> (
-     if S.?char then S.char
-     else S.char = (
-	  R := ultimate(ambient,S);
-	  -- eventually we'll have to compute it correctly
-	  char R))
-
+generators QuotientRing := (stashValue symbol generators) ((S) -> apply(generators ambient S, m -> promote(m,S)))
+allGenerators QuotientRing := (cacheValue allGenerators) ((S) -> apply(allGenerators ambient S, m -> promote(m,S)))
+char QuotientRing := (stashValue symbol char) ((S) -> (
+     p := char ambient S;
+     if p == 1 then return 1;
+     if isPrime p or member(QQ,S.baseRings) then return if S == 0 then 1 else 0;
+     notImplemented()))
 singularLocus(Ring) := QuotientRing => (R) -> (
      if not isAffineRing(R) then error "expected an affine ring";
      f := presentation R;
      A := ring f;
-     A / (ideal f + minors(codim R, jacobian presentation R))
-     )
+     A / (ideal f + minors(codim R, jacobian presentation R)))
 
 singularLocus(Ideal) := QuotientRing => (I) -> singularLocus(ring I / I)
 
@@ -253,11 +194,9 @@ toField = R -> (
 	  );
      R)
 
-getNonUnit = R -> (
-     if R.?nonUnit then R.nonUnit
-     else if R.?Engine and R.Engine then (
-	  r := rawGetNonUnit R;
-	  if r != 0 then new R from r))
+getNonUnit = R -> if R.?Engine and R.Engine then (
+     r := rawGetNonUnit R;
+     if r != 0 then new R from r)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

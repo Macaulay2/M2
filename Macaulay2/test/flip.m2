@@ -39,6 +39,7 @@ assert(target flip(R^{0,1},R^{0,5,10}) == R^{0,5,10} ** R^{0,1})
 assert(isHomogeneous flip(R^{0,1},R^{0,5,10,15}))
 assert(isHomogeneous flip(R^{0,1,2,3},R^{0,5,10}))
 assert(isHomogeneous flip(R^{0,1,2,3,4},R^{0,5,10}))
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test flip.out"
 -- End:

@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ/101[x,y,z];
 
@@ -8,48 +9,60 @@ o2 = R
 
 o2 : R-module, free
 
-i3 : degrees M
+i3 : m = matrix{{x,y,z},{y,z,0}}
 
-o3 = {{0}, {0}, {0}, {0}}
+o3 = | x y z |
+     | y z 0 |
 
-o3 : List
+             2       3
+o3 : Matrix R  <--- R
 
-i4 : F = R^{1,4:2,3,3:4}
+i4 : target m == R^2
 
-      9
-o4 = R
+o4 = true
 
-o4 : R-module, free, degrees {-1, -2, -2, -2, -2, -3, -4, -4, -4}
+i5 : degrees M
 
-i5 : degrees F
-
-o5 = {{-1}, {-2}, {-2}, {-2}, {-2}, {-3}, {-4}, {-4}, {-4}}
+o5 = {{0}, {0}, {0}, {0}}
 
 o5 : List
 
-i6 : S = ZZ[a,b,c, Degrees=>{{1,2},{2,0},{3,3}}]
+i6 : F = R^{1,4:2,3,3:4}
 
-o6 = S
+      9
+o6 = R
 
-o6 : PolynomialRing
+o6 : R-module, free, degrees {-1, -2, -2, -2, -2, -3, -4, -4, -4}
 
-i7 : N = S ^ {{-1,-1},{-4,4},{0,0}}
+i7 : degrees F
+
+o7 = {{-1}, {-2}, {-2}, {-2}, {-2}, {-3}, {-4}, {-4}, {-4}}
+
+o7 : List
+
+i8 : S = ZZ[a,b,c, Degrees=>{{1,2},{2,0},{3,3}}]
+
+o8 = S
+
+o8 : PolynomialRing
+
+i9 : N = S ^ {{-1,-1},{-4,4},{0,0}}
 
       3
-o7 = S
+o9 = S
 
-o7 : S-module, free, degrees {{1, 1}, {4, -4}, {0, 0}}
+o9 : S-module, free, degrees {{1, 1}, {4, -4}, {0, 0}}
 
-i8 : degree N_0
+i10 : degree N_0
 
-o8 = {1, 1}
+o10 = {1, 1}
 
-o8 : List
+o10 : List
 
-i9 : degree (a*b*N_1)
+i11 : degree (a*b*N_1)
 
-o9 = {7, -2}
+o11 = {7, -2}
 
-o9 : List
+o11 : List
 
-i10 : 
+i12 : 

@@ -62,7 +62,7 @@
 (define-key M2-mode-map "\t" 'M2-electric-tab)
 (define-key M2-mode-map "}" 'M2-electric-right-brace)
 (define-key M2-mode-map ";" 'M2-electric-semi)
-(define-key M2-mode-map "\^Cd" 'M2-find-documentation)
+;; (define-key M2-mode-map "\^Cd" 'M2-find-documentation)
 
 (define-key M2-comint-mode-map "\t" 'comint-dynamic-complete)
 (define-key M2-comint-mode-map [ f2 ] 'M2-position-point)
@@ -79,7 +79,7 @@
 (define-key M2-comint-mode-map [ (control C) r ] 'scroll-right)
 (define-key M2-comint-mode-map [ f8 ] 'switch-to-completions)
 (define-key M2-comint-mode-map [ (control C) c ] 'switch-to-completions)
-(define-key M2-comint-mode-map [ (control C) d ] 'M2-find-documentation)
+;; (define-key M2-comint-mode-map [ (control C) d ] 'M2-find-documentation)
 
 (mapcar
  (function 
@@ -120,6 +120,8 @@
 (defvar M2-exe "M2" "*The default Macaulay2 executable name.")
 (defvar M2-command (concat M2-exe " --no-readline --print-width " (number-to-string (- (screen-width) 1)) " ") "*The default Macaulay2 command line.")
 (defvar M2-history (list M2-command) "The history of recent Macaulay2 command lines.")
+(defvar M2-send-to-buffer "*M2*" "*The default buffer that \\[M2-send-to-program] sends input to.")
+(make-variable-buffer-local 'M2-send-to-buffer)
 
 (defun M2 (command)
   "Run Macaulay 2 in a buffer.  With a prefix argument, the command line that runs Macaulay 2
@@ -261,24 +263,23 @@ can be executed with \\[M2-send-to-program]."
      (match-end 0))))
 
 (defun M2-send-to-program() 
-     "Send the current line except for a possible prompt, or the region,
-     if the mark is active, to Macaulay 2 in its buffer, making its
-     window visible.  Afterwards, in the case where the mark is not
-     active, move the cursor to the next line.  Alternatively, if the
-     point is at a prompt or a blank line at the end of the buffer 
-     *M2*, get the next line of input from demo buffer set by 
-     M2-set-demo-buffer, or if it's at the end of the buffer
-     *M2* with a line of input already there, submit it."
+     "Send the current line except for a possible prompt, or the region, if the
+mark is active, to Macaulay 2 in its buffer, making its window visible.
+Afterwards, in the case where the mark is not active, move the cursor to
+the next line.  Alternatively, if the point is at a prompt or a blank line
+at the end of the buffer *M2*, get the next line of input from demo buffer
+set by M2-set-demo-buffer, or if it's at the end of the buffer *M2* with a
+line of input already there, submit it."
      (interactive)
-     (or (get-buffer-window "*M2*" 'visible)
-	 (pop-to-buffer (prog1 (current-buffer) (pop-to-buffer "*M2*"))))
+     (or (get-buffer-window M2-send-to-buffer 'visible)
+	 (pop-to-buffer (prog1 (current-buffer) (pop-to-buffer M2-send-to-buffer))))
      (select-window
       (prog1
 	  (selected-window)
 	  (let* ((send-it t)
 		 (cmd (if (and
 			  (equal (point) (point-max))
-			  (equal (current-buffer) (save-excursion (set-buffer "*M2*"))))
+			  (equal (current-buffer) (save-excursion (set-buffer M2-send-to-buffer))))
 			 (if (equal (point) 
 				    (save-excursion
 				      (M2-to-end-of-prompt)
@@ -310,11 +311,11 @@ can be executed with \\[M2-send-to-program]."
 			  (save-excursion (M2-to-end-of-prompt) (point))
 			  (save-excursion (end-of-line) (point)))))))
 	    (progn
-	      (select-window (get-buffer-window (set-buffer "*M2*") 'visible))
+	      (select-window (get-buffer-window (set-buffer M2-send-to-buffer) 'visible))
 	      (goto-char (point-max))
 	      (insert cmd)
 	      (goto-char (point-max))
-	      (set-window-point (get-buffer-window "*M2*" 'visible) (point))
+	      (set-window-point (get-buffer-window M2-send-to-buffer 'visible) (point))
 	      (if send-it (comint-send-input))
 	      ; (setq deactivate-mark t)
 	      ))))
@@ -322,7 +323,7 @@ can be executed with \\[M2-send-to-program]."
      (if (and (not (and (boundp 'mark-active) mark-active)) 
 	      (not (and
 		    (equal (point) (point-max))
-		    (equal (current-buffer) (save-excursion (set-buffer "*M2*")))
+		    (equal (current-buffer) (save-excursion (set-buffer M2-send-to-buffer)))
 		    )))
 	 (progn
 	   (end-of-line)
@@ -366,7 +367,10 @@ M2-send-to-prorgram can obtain lines from this buffer."
 	 )
     (modify-frame-parameters f '((left + 0) (top + 0)))
     (M2)
-    (setq comint-scroll-show-maximum-output t)))
+    (make-variable-buffer-local 'comint-scroll-show-maximum-output)
+    (save-excursion 
+      (set-buffer "*M2*")
+      (setq comint-scroll-show-maximum-output t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; M2-mode

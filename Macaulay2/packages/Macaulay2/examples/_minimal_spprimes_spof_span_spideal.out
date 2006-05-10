@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = QQ[w,x,y,z];
 
@@ -9,9 +10,6 @@ o2 = ideal (w*x  - 42y*z, x  + x z + 12w*y, - 47x z - 47x*z  + w )
 o2 : Ideal of R
 
 i3 : decompose I
-saturating with {}
-saturating with {}
-saturating with {}
 
               3
 o3 = {ideal (x  + z, w, y), ideal (x, w, y), ideal (x, z, w)}
@@ -25,8 +23,6 @@ i5 : I = ideal(w*x^2-42*y*z, x^6+12*w*y+x^3*z, w^2-47*x^4*z-47*x*z^2);
 o5 : Ideal of R
 
 i6 : decompose I
-saturating with {-42y}
-saturating with {}
 
                 2           4       2      2   2   2          2      3     2   2
 o6 = {ideal (w*x  - 42y*z, x z + x*z  - 43w , x y*z  - 12w*x*z  + 11w , 43w x*z 

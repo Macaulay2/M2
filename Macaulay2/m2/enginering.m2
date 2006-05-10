@@ -149,7 +149,13 @@ someTerms(RingElement,ZZ,ZZ) := RingElement => (f,i,n) -> new ring f from rawGet
 baseName RingElement := x -> (
      R := class x;
      i := rawIndexIfVariable raw x;
-     if i === null then error "expected a generator" else R.generatorSymbols#i
+     if i === null then error "expected a generator";
+     S := R;
+     while i >= length generators S do (
+	  i = i - length generators S;
+	  try S = coefficientRing S else error "internal error: raw index too large";
+	  );
+     S.generatorSymbols#i
      )
 
 leadCoefficient RingElement := RingElement => (f) -> (
@@ -343,6 +349,9 @@ RingElement == RingElement := (f,g) -> (
      f == g
      )
 
+QQ == RingElement := (r,x) -> promote(r,ring x) == x
+RingElement == QQ := (x,r) -> promote(r,ring x) == x
+
 QQ / RingElement := (f,g) -> (
      R := class g;
      QQ / R := (
@@ -400,10 +409,7 @@ liftChain := (R,A) -> (
 	  while S =!= A and class S === QuotientRing do S = ambient S;
 	  if S === A then 1 : S
 	  else (
-	       if class S === PolynomialRing 
-	       or class S === GaloisField
-	       or class S === FractionField
-	       then S = last S.baseRings;
+	       if S.?baseRings then S = last S.baseRings;
 	       if S === A then 1 : S
 	       else if R === S then error "no lifting possible for these rings"
 	       else prepend(S, liftChain(S, A)))))
@@ -460,8 +466,13 @@ promote(QQ, RingElement) := RingElement => (r,o) -> (
 	  promote(QQ,S) := (r,S) -> (
 	       a := promote(numerator r,S);
 	       b := promote(denominator r,S);
-	       if a % b == 0 then a // b
-	       else error "division not possible"
+	       if isField class S then (
+		    a/b
+		    )
+	       else (
+	       	    if a % b == 0 then a // b
+	       	    else error "division not possible"
+		    )
 	       );
 	  );
      promote(r,S))

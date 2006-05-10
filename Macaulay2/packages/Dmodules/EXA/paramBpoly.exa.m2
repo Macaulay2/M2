@@ -1,5 +1,5 @@
 restart
-load "D-modules.m2"
+load "Dmodules.m2"
 A =  (QQ [a,b,c,d]) [x, y, Dx, Dy, WeylAlgebra => {x=>Dx, y=>Dy}]
 
 Dtrace 1

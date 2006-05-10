@@ -21,6 +21,9 @@ export STDOUT := 1;
 export STDERR := 2;
 bufsize := 4 * 1024;
 
+export iseof      (c:int ):bool := c == EOF;
+export iserror    (c:int ):bool := c == ERROR;
+
 export file := {
         -- general stuff
      	hash:int,     	   	-- hash code

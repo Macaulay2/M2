@@ -22,6 +22,7 @@
 #include "ring.hpp"
 #include "skew.hpp"
 #include "ntuple.hpp"
+#include "coeffrings.hpp"
 
 struct gbvector {
   gbvector * next;
@@ -62,8 +63,10 @@ protected:
   const Ring *K; // flattened coefficients
 
   bool _coeffs_ZZ; // is K == globalZZ?
+  CoefficientRingZZp *zzp; // Only set to non-null if coeff ring is ZZ/p
 
   int gbvector_size;
+  stash *mem;
 
   int _nvars;
   
@@ -165,6 +168,8 @@ public:
   const Monoid * get_flattened_monoid() const { return M; }
   const Ring * get_flattened_coefficients() const { return K; }
   int n_vars() const { return _nvars; }
+
+  void memstats(buffer &o) { mem->stats(o); }
 
   //////////////////////
   // Ring information //
@@ -274,6 +279,10 @@ public:
 
   gbvector *gbvector_mult_by_coeff(const gbvector * f, ring_elem u);
   // We assume that u is non-zero, and that for each coeff c of f, u*c is non-zero
+
+  void gbvector_add_to_zzp(const FreeModule *F,
+			   gbvector * &f, 
+			   gbvector * &g);
 
   void gbvector_add_to(const FreeModule *F,
 		       gbvector * &f, gbvector * &g);

@@ -6,9 +6,11 @@ document {
      Key => vars,
      Headline => "variables",
      }
+
+undocumented {(vars,QuotientRing)}
+
 document { 
      Key => {(vars,Ring)},
-     Undocumented => {(vars,QuotientRing)},
      Headline => "row matrix of the variables",     
      Usage => "vars R",
      Inputs => {

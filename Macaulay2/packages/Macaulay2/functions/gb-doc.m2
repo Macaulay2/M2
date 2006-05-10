@@ -3,60 +3,36 @@
 --- notes: 
 
 document { 
-     Key => gb,
+     Key => {gb,
+	  (gb,Ideal),
+	  (gb,Matrix),
+	  (gb,Module)},
      Headline => "compute a Groebner basis",
-	"See ", TO "computing Groebner bases", " for examples.",
-     }
-document { 
-     Key => (gb,Ideal),
-     Headline => "",
      Usage => "gb I",
      Inputs => {
-		"I" => ""
+		"I" => "an ideal, module, or matrix"
 	  },
      Outputs => {
+	  GroebnerBasis => "a Groebner basis computation object"
 	  },
      Consequences => {
-	  },     
-     "See ", TO "computing Groebner bases", " for examples.",
+	  },
+     "See ", TO "computing Groebner bases", " for more 
+     information and examples.",
+     PARA,
+     "The returned value is not the Groebner basis itself.  The
+     matrix whose columns form a sorted, auto-reduced Groebner
+     basis are obtained by applying ", TO generators, " (synonym: ", TT "gens", ")
+     to the result of ", TT "gb", ".",
      EXAMPLE {
+	  "R = QQ[a..d]",
+	  "I = ideal(a^3-b^2*c, b*c^2-c*d^2, c^3),",
+	  "G = gens gb I"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (gb,Matrix),
-     Headline => "",
-     Usage => "gb f",
-     Inputs => {
-		"f" => ""
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "See ", TO "computing Groebner bases", " for examples.",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (gb,Module),
-     Headline => "",
-     Usage => "gb M",
-     Inputs => {
-		"M" => ""
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "See ", TO "computing Groebner bases", " for examples.",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {
+	  "computing Groebner bases",
+	  (generators,GroebnerBasis)
+	  }
      }
 
 document { 

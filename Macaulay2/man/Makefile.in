@@ -7,8 +7,8 @@ $(man1dir):; $(INSTALL) -d $@
 install :: $(man1dir)/M2.1 $(man1dir)/M2-help.1
 $(man1dir)/M2.1 : M2.1 ; $(INSTALL_DATA) $^ $@
 $(man1dir)/M2-help.1 : M2-help.1 ; $(INSTALL_DATA) $^ $@
-Makefile : Makefile.in; ../../config.status Macaulay2/man/Makefile
-
+Makefile : Makefile.in; (cd ../..; ./config.status Macaulay2/man/Makefile)
+clean :: ; rm -f M2.1 M2-help.1
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/man "
 # End:

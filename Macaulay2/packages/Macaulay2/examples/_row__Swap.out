@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : m = mutableMatrix matrix{{1,2,3},{4,5,6}}
 
@@ -7,6 +8,11 @@ o1 = | 1 2 3 |
 o1 : MutableMatrix
 
 i2 : rowSwap(m,0,1)
+
+o2 = | 4 5 6 |
+     | 1 2 3 |
+
+o2 : MutableMatrix
 
 i3 : m
 

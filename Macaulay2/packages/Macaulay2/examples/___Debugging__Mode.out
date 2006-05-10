@@ -1,6 +1,6 @@
+-- -*- M2-comint -*-
 
 i1 : loadPackage("FirstPackage", DebuggingMode=>true)
---package "FirstPackage" loaded
 
 o1 = FirstPackage
 
@@ -11,10 +11,6 @@ o1 : Package
 i2 : needsPackage("FirstPackage", DebuggingMode=>true)
 
 i3 : installPackage("FirstPackage", DebuggingMode=>true)
---reloading package "FirstPackage"
---package "FirstPackage" loaded
---reloading package "FirstPackage"
---package "FirstPackage" loaded
 --installing package FirstPackage in /home/dan/.Macaulay2/encap/FirstPackage-1.0/
 --using package sources found in ../../../Macaulay2/packages/
 --making example input files in /home/dan/.Macaulay2/encap/FirstPackage-1.0/share/doc/Macaulay2/FirstPackage/examples/
@@ -28,11 +24,8 @@ i3 : installPackage("FirstPackage", DebuggingMode=>true)
 --making html pages in /home/dan/.Macaulay2/encap/FirstPackage-1.0/share/doc/Macaulay2/FirstPackage/html/
 --making  'Symbol Index' in /home/dan/.Macaulay2/encap/FirstPackage-1.0/share/doc/Macaulay2/FirstPackage/html/master.html
 --making  'FirstPackage : Table of Contents' in /home/dan/.Macaulay2/encap/FirstPackage-1.0/share/doc/Macaulay2/FirstPackage/html/toc.html
---making postinstall, preremove, and encapinfo files in /home/dan/.Macaulay2/encap/FirstPackage-1.0/
+--making INSTALL, postinstall, preremove, and encapinfo files in /home/dan/.Macaulay2/encap/FirstPackage-1.0/
 --making symbolic links from "/home/dan/.Macaulay2/local/" to "/home/dan/.Macaulay2/encap/FirstPackage-1.0/"
---  warning: file /home/dan/.Macaulay2/local/postinstall already exists, not what we want
---  warning: file /home/dan/.Macaulay2/local/preremove already exists, not what we want
---  warning: file /home/dan/.Macaulay2/local/encapinfo already exists, not what we want
 --installed package FirstPackage in /home/dan/.Macaulay2/encap/FirstPackage-1.0/
 
 i4 : 

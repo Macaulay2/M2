@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : R = ZZ/32003[a..d];
 
@@ -17,8 +18,8 @@ o3 : Ideal of R
 
 i4 : saturate(Ih,d)
 
-                        3      2   2     2    3      2
-o4 = ideal (a*b - c*d, b  - a*c , a c - b d, a  - b*d )
+                        2     2    3      2   3      2
+o4 = ideal (a*b - c*d, a c - b d, b  - a*c , a  - b*d )
 
 o4 : Ideal of R
 

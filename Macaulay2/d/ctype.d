@@ -2,7 +2,6 @@
 use C;
 use system;
 use strings;
-use stdio;
 chartypes := new string len 256 do provide char(0);
 setchartype(c:char,t:int):void := chartypes.(int(uchar(c))) = char(t);
 LOWER := 1;
@@ -31,8 +30,6 @@ for c from 128 to 255	       	    	   do setchartype(char(c),ALPHA);
 chartype(c:int):int := if (c & ~255) == 0 then int(chartypes.c) else 0;
 chartype(c:char):int := int(chartypes.(int(uchar(c))));
 
-export iseof      (c:int ):bool := c == EOF;
-export iserror    (c:int ):bool := c == ERROR;
 
 export isdigit    (c:char):bool := (chartype(c) & DIGIT    ) != 0;
 export isalpha    (c:char):bool := (chartype(c) & ALPHA    ) != 0;

@@ -8,6 +8,7 @@
 #include "std.h"
 
 bool notify = TRUE;
+static int i;
 static char *x = "initial value";
 static char message[100];
 int main(int argc, char **argv) {
@@ -27,6 +28,10 @@ int main(int argc, char **argv) {
   }
   if (!setjmp(j)) {
     if (argc > 2) strcpy(message,argv[2]);
+    fprintf(stderr,"   x = %p (static string)\n", x);
+    fprintf(stderr,"  &x = %p (static, initialized)\n", &x);
+    fprintf(stderr,"  &i = %p (static, in bss)\n", &i);
+    fprintf(stderr,"  &j = %p (on stack)\n", &j);
     fprintf(stderr,"  p[] = {%p,%p,%p,%p,%p,%p}\n", p[0], p[1], p[2], p[3], p[4], p[5]);
     fprintf(stderr,"  x = %s\n", x);
     if (argc > 1 && 0 == strcmp(argv[1],"dump")) {

@@ -18,7 +18,7 @@ I = ideal (a*b,c*d)
 M = R^1/I
 J = ideal (a^2*b^2,c^2*d^2)
 N = R^1/J
-f = map(M,N)
+f = inducedMap(M,N)
 g = Ext^2(f,R)
 assert( g - a*b*c*d == 0 )
 
@@ -26,7 +26,7 @@ I = intersect(ideal(a,b), ideal(c,d))
 J = ideal apply(first entries gens I, r -> r^2)
 M = R^1/I
 N = R^1/J
-f = map(M,N)
+f = inducedMap(M,N)
 g = Ext^2(f,R)
 so = m -> m_(sortColumns m)
 print presentation target g
@@ -50,6 +50,7 @@ assert(
      so matrix g - so h3^{1,0} == 0 
      )
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test extmap.out"
 -- End:

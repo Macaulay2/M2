@@ -9,6 +9,7 @@ use evaluate;
 use common;
 use binding;
 use nets;
+use varnets;
 use parser;
 use lex;
 use gmp;
@@ -455,6 +456,33 @@ bitandfun(e:Expr):Expr := (
      else WrongNumArgs(2));
 installMethod(AmpersandS,integerClass,integerClass,bitandfun);
 
+newNetFile(e:Expr):Expr := (
+     when e is a:Sequence do (
+	  if length(a) == 0 then Expr(newNetFile())
+	  else WrongNumArgs(0))
+     else WrongNumArgs(0));
+setupfun("newNetFile",newNetFile);
+
+getNetFile(e:Expr):Expr := (
+     when e is n:NetFile do (
+	  v := tonets(n);
+	  Expr(new Sequence len length(v) do foreach n in v do provide Expr(n)))
+     else WrongArg("a net file"));
+setupfun("getNetFile",getNetFile);
+
+NetFileAppend(e:Expr):Expr := (
+     when e is a:Sequence do (
+	  if length(a) == 2 then (
+	       when a.0 is n:NetFile do (
+		    when a.1 is s:string do Expr(n << s)
+		    is x:Net do Expr(n << x)
+		    else WrongArg(2,"a string or a net"))
+	       else WrongArg(1,"a net file"))
+	  else WrongNumArgs(2))
+     else WrongNumArgs(2));
+installMethod(LessLessS,netFileClass,stringClass,NetFileAppend);
+installMethod(LessLessS,netFileClass,netClass,NetFileAppend);
+		   
 showFrames(f:Frame):void := (
      stdout << " frames bound :";
      while (
@@ -565,23 +593,21 @@ alarm(e:Expr):Expr := (
 setupfun("alarm",alarm);
 
 endlfun(e:Expr):Expr := (
-     when e is o:file do 
-     if o.output 
-     then Expr(o << endl)
-     else WrongArg("an output file")
-     else WrongArg("a file")
+     when e 
+     is o:file do if o.output then Expr(o << endl) else WrongArg("an output file")
+     is n:NetFile do Expr(endlnetfile(n))
+     else WrongArg("a file or a net file")
      );
 setupfun("endl",endlfun).protected = false;
 
 import CCVERSION:string;
 import VERSION:string;
-import CONFIGARGS:string;
+import configargs:array(string);
 import OS:string;
 import ARCH:string;
 import NODENAME:string;
 import REL:string;
-import DATE:string;
-import TIME:string;
+import timestamp:string;
 import LIBFACVERSION:string;
 import GCVERSION:string;
 import GMPVERSION:string;
@@ -601,8 +627,8 @@ storeInHashTable(x,Expr("architecture"),Expr(ARCH));
 storeInHashTable(x,Expr("operating system"),Expr(OS));
 storeInHashTable(x,Expr("operating system release"),Expr(REL));
 storeInHashTable(x,Expr("compiler"),Expr(CCVERSION));
-storeInHashTable(x,Expr("configure arguments"),Expr(CONFIGARGS));
-storeInHashTable(x,Expr("compile time"),Expr(DATE+" "+TIME));
+storeInHashTable(x,Expr("configure arguments"),Expr(toExpr(configargs)));
+storeInHashTable(x,Expr("compile time"),Expr(timestamp));
 storeInHashTable(x,Expr("compile node name"),Expr(NODENAME));
 storeInHashTable(x,Expr("dumpdata"),Expr(if DUMPDATA then True else False));
 storeInHashTable(x,Expr("gc version"),Expr(GCVERSION));
@@ -1083,12 +1109,18 @@ echoOff(e:Expr):Expr := (
 setupfun("echoOff",echoOff);
 kill(e:Expr):Expr := (
      when e 
+     is pid:Integer do if !isInt(pid) then WrongArgSmallInteger() else (
+	  id := toInt(pid);
+	  if kill(id,9) == ERROR then buildErrorPacket("can't kill process")
+	  else if wait(id) == ERROR then buildErrorPacket("process killed, but wait fails") 
+	  else nullE
+	  )
      is f:file do (
 	  if f.pid != 0 then (
-	       if kill(f.pid,9) == ERROR
-	       then buildErrorPacket("can't kill process")
+	       if kill(f.pid,9) == ERROR then buildErrorPacket("can't kill process")
+	       else if wait(f.pid) == ERROR  then buildErrorPacket("process killed, but wait fails")
 	       else (
-		    if ERROR != wait(f.pid) then f.pid = 0;
+		    f.pid = 0;
 		    nullE
 		    )
 	       )
@@ -1185,12 +1217,6 @@ isRegularFile(e:Expr):Expr := (
      else WrongArgString()
      );
 setupfun("isRegularFile",isRegularFile);
-
-unlinkfun(e:Expr):Expr := (
-     when e is name:string do
-     if -1 == unlink(name) then buildErrorPacket("failed to unlink file " + name + " : " + syserrmsg()) else nullE
-     else WrongArgString());
-setupfun("unlinkFile",unlinkfun);
 
 linkfun(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else

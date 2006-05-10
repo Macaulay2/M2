@@ -1,6 +1,6 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
-needs "D-modules.m2"
+needs "Dmodules.m2"
 
 x = symbol x; Dx = symbol Dx; 
 y = symbol y; Dy = symbol Dy; 

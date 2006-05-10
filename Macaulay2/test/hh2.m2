@@ -7,6 +7,7 @@ betti res (coker lift(presentation H,A) ** coker presentation R )
 q = hilbertSeries H
 h = hilbertFunction(0,H)
 assert( h == 1 )
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test hh2.out"
 -- End:

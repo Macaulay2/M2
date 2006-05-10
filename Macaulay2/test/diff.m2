@@ -26,6 +26,7 @@ R = ZZ/101[x]
 m = matrix{{x}}
 source m
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test diff.out"
 -- End:

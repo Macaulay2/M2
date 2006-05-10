@@ -8,9 +8,7 @@ testsame = (p,m) ->
      assert(minors(p,m) == ideal exteriorPower(p,m))
 
 testsame1 = (p,m) -> (
-     remove(m.cache, MinorsComputation{p});
      time answer1 := gens minors(p,m,Strategy=>Bareiss);
-     remove(m.cache, MinorsComputation{p});
      time answer2 := gens minors(p,m,Strategy=>Cofactor);
      assert(answer1 == answer2))
 
@@ -64,9 +62,8 @@ testsame1(3,m1)
 testsame1(4,m1)
 
 R = QQ
-m = random(QQ^8,QQ^8)  -- crashses!
+m = random(QQ^8,QQ^8)
 testsame1(8,m)
-m = random(QQ^9,QQ^9)
 -- testsame1(8,m) time on my Mac PB G3: 0.58 sec (Bareiss), 148.44 sec (Cofactor).
 -- 4/30/2001.
 
@@ -75,16 +72,37 @@ m = random(R^6, R^{6:-1})
 testsame1(6,m)
 
 R = ZZ/32003[x,y,z]
-m = random(R^18, R^{18:-1})
-time minors(18,m,Strategy=>Bareiss);
--- minors(18,m,Strategy=>Cofactor) -- doesn't end in reasonable time.
+m = random(R^12, R^{12:-1}) -- changed 18 to 12, so it would run somewhat faster...
+time minors(12,m,Strategy=>Bareiss);
 
 R = ZZ/101[vars(0..14)]
-m = genericMatrix(R,a,3,5)
-exteriorPower(3,m)
-m = genericMatrix(R,a,2,5)
-mm = transpose exteriorPower(2,m)
-transpose mm
+
+  /// generateAssertions
+  M = genericMatrix(R,a,3,5)
+  exteriorPower(3,M)
+  N = genericMatrix(R,a,2,5)
+  P = transpose exteriorPower(2,N)
+  transpose P
+  ///
+
+assert( (M = genericMatrix(R,a,3,5)) 
+     === map(R^{{0}, {0}, {0}}, R^{{-1}, {-1}, {-1}, {-1}, {-1}}, 
+	  {{a, d, g, j, m}, {b, e, h, k, n}, {c, f, i, l, o}}) )
+assert( exteriorPower(3,M) 
+     === map(R^{{0}}, R^{{-3}, {-3}, {-3}, {-3}, {-3}, {-3}, {-3}, {-3}, {-3}, {-3}}, 
+	  {{-c*e*g+b*f*g+c*d*h-a*f*h-b*d*i+a*e*i, -c*e*j+b*f*j+c*d*k-a*f*k-b*d*l+a*e*l, -c*h*j+b*i*j+c*g*k-a*i*k-b*g*l+a*h*l, 
+		    -f*h*j+e*i*j+f*g*k-d*i*k-e*g*l+d*h*l, -c*e*m+b*f*m+c*d*n-a*f*n-b*d*o+a*e*o, 
+		    -c*h*m+b*i*m+c*g*n-a*i*n-b*g*o+a*h*o, -f*h*m+e*i*m+f*g*n-d*i*n-e*g*o+d*h*o, 
+		    -c*k*m+b*l*m+c*j*n-a*l*n-b*j*o+a*k*o, -f*k*m+e*l*m+f*j*n-d*l*n-e*j*o+d*k*o, 
+		    -i*k*m+h*l*m+i*j*n-g*l*n-h*j*o+g*k*o}}) )
+assert( (N = genericMatrix(R,a,2,5)) 
+     === map(R^{{0}, {0}}, R^{{-1}, {-1}, {-1}, {-1}, {-1}}, 
+	  {{a, c, e, g, i}, {b, d, f, h, j}}) )
+assert( (P = transpose exteriorPower(2,N)) 
+     === map(R^{{2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}}, R^{{0}}, 
+	  {{-b*c+a*d}, {-b*e+a*f}, {-d*e+c*f}, {-b*g+a*h}, {-d*g+c*h}, {-f*g+e*h}, {-b*i+a*j}, {-d*i+c*j}, {-f*i+e*j}, {-h*i+g*j}}) )
+assert( transpose P === map(R^{{0}}, R^{{-2}, {-2}, {-2}, {-2}, {-2}, {-2}, {-2}, {-2}, {-2}, {-2}}, 
+	  {{-b*c+a*d, -b*e+a*f, -d*e+c*f, -b*g+a*h, -d*g+c*h, -f*g+e*h, -b*i+a*j, -d*i+c*j, -f*i+e*j, -h*i+g*j}}) )
 
 R = ZZ[vars(0..24)]
 m = genericMatrix(R,a,5,5)
@@ -120,29 +138,10 @@ testsame2(5,m);
 m2 = (transpose m) * m
 testsame2(1,m2);
 testsame2(2,m2);
-testsame2(3,m2);
-testsame2(4,m2);
-testsame2(5,m2);
+-- too long for testing: testsame2(3,m2);
+-- too long for testing: testsame2(4,m2);
+-- testsame2(5,m2);
 testsame2(6,m2);
-
-testsame1(1,m2);
-testsame1(2,m2);
-testsame1(3,m2);
-testsame1(4,m2);
-testsame1(5,m2);
-testsame1(6,m2);
-
-x = symbol x
-R = QQ[x_1 .. x_36]
-m = genericMatrix(R,x_1,6,6)
-time exteriorPower(3,m);
-time exteriorPower(4,m);
-time exteriorPower(5,m);
-time exteriorPower(6,m);
-testsame2(3,m) 
-testsame2(4,m)
-testsame2(5,m)
-testsame2(6,m)
 
 -- What about a non-domain
 R = ZZ/101[a..d]/(a^2)
@@ -155,7 +154,6 @@ x = symbol x
 R = ZZ[x_1 .. x_49]
 m = genericMatrix(R,x_1,7,7)
 time exteriorPower(3,m);
-time exteriorPower(4,m);
 
 R = ZZ/101
 F = R^4
@@ -171,13 +169,14 @@ target exteriorPower(2,id_F)
 R = ZZ[vars(0..35)]
 m = genericMatrix(R,a,6,6)
 m3 = minors(3,m,Limit=>10)
-m3 = minors(3,m,Limit=>10)
+m3 = minors(3,m,Limit=>10, First=>{{1,2,3},{1,2,3}})
 numgens m3
 
 minors(3,m,First=>{{2,3,4},{0,1,2}},Limit=>10)
 time minors(3,m);
 testsame1(3,m)
 testsame2(3,m)
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testdet.out"
 -- End:

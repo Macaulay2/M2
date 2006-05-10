@@ -52,7 +52,8 @@ assert( degree ((OO_X)^1/I) == 1 )
 L = dual I
 L^**2
 L^**3
-assert( module L^**3 == module OO_X(1) ) -- eventually remove the 'module's here
+M = prune L^**3
+assert( module M == module OO_X(1) ) -- eventually remove the 'module's here after we install the right algorithm for CoherentSheaf == CoherentSheaf !
 scan(1 .. 4, i -> HH^0 L^**i == QQ^i)
 scan(1 .. 4, i -> HH^0 I^**i == QQ^0)
 

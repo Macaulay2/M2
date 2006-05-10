@@ -139,7 +139,7 @@ Ext(Module,Module) := Module => (M,N) -> (
 	       j -> (append(alpha,j), append(beta,i-j))))));
     scan(4 .. length C + 1, 
       d -> if even d then (
-	scan( exponents \ leadMonomial \ first entries basis(d,R), 
+	scan( flatten \ exponents \ leadMonomial \ first entries basis(d,R), 
 	  gamma -> (
 	    s := - sum(factorizations gamma,
 	      (alpha,beta) -> (

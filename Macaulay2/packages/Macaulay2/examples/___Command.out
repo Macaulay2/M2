@@ -1,3 +1,4 @@
+-- -*- M2-comint -*-
 
 i1 : (f = Command ( () -> 2^30 );)
 
@@ -8,7 +9,7 @@ o2 = 1073741824
 i3 : (c = Command "date";)
 
 i4 : c
-Mon Jul 25 15:53:45 CDT 2005
+Wed Apr  5 13:08:26 CDT 2006
 
 o4 = 0
 
