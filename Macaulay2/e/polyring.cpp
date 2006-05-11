@@ -296,6 +296,12 @@ bool PolyRing::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
   // We assume that Rg is one of the coefficient rings of 'this'
 
   const PolynomialRing *Rg1 = Rg->cast_to_PolynomialRing();
+  Nterm *t = f;
+  if (t == 0)
+    {
+      result = Rg->zero();
+      return true;
+    }
   int nvars0 = n_vars();
   if (Rg1 != 0)
     nvars0 -= Rg1->n_vars();

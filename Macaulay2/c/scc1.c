@@ -172,11 +172,19 @@ void readsetup(env v){
 #endif
      }
 
+#if defined(__APPLE__) && defined(__MACH__) && defined(__i386__)
+extern char *get_end(), *get_etext();
+#endif
+
 int main(int argc, char **argv){
      int i;
      char *p;
+     void *unused_pointer;
      struct test {char a;double b;};
      i = assert(0 == GRAIN % (sizeof(struct test) - sizeof(double)));
+#if defined(__APPLE__) && defined(__MACH__) && defined(__i386__)
+     GC_add_roots(get_etext(),get_end());
+#endif
      progname = BaseName(argv[0]);
      yyinit();
      for (p=argv[0]; *p; p++) if (*p=='/') progname = p+1;

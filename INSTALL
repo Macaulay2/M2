@@ -346,10 +346,12 @@ Here are the configure line I have used that works:
     cd tmp
     CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/sw --enable-debug --disable-optimize --with-veclib  --with-libgmp=/sw/lib/libgmp.a --enable-altivec
     CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --enable-debug --disable-optimize --with-veclib  --with-libgmp=/sw/lib/libgmp.a --enable-altivec
+    CPPFLAGS="-I/capybara/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --enable-debug --disable-optimize --with-veclib --enable-altivec
 
     mkdir tmp-opt
     cd tmp-opt
     CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --with-gmplib=/capybara/lib/libgmp.a --with-gclib=/capybara/lib/libgc.a --with-gdbmlib=/sw/lib/libgdbm.a --with-readlinelib=/sw/lib/libreadline.a --with-historylib="/sw/lib/libhistory.a /usr/lib/libncurses.5.dylib" --enable-altivec
+    CPPFLAGS="-I/capybara/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib --enable-altivec
 
     mkdir tmp-profile
     cd tmp-profile
@@ -357,6 +359,7 @@ Here are the configure line I have used that works:
     CPPFLAGS=-I/sw/include CFLAGS="-g" LDFLAGS="-L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/sw --with-veclib  --with-libgmp=/sw/lib/libgmp.a --enable-altivec --enable-profile
     CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --enable-debug --disable-optimize --with-veclib  --with-libgmp=/sw/lib/libgmp.a --enable-altivec --enable-profile
     CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --with-libgmp=/sw/lib/libgmp.a --enable-altivec --enable-profile
+    CPPFLAGS="-I/capybara/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib --enable-altivec --enable-profile
 
 Further notes:
 

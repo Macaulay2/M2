@@ -21,6 +21,10 @@ char *progname;
 void arginits(int argc, char **argv) { progname = argv[0]; }
 
 static void init_gc(void) {
+#if defined(__APPLE__) && defined(__MACH__) && defined(__i386__)
+     extern char *get_etext(), *get_end();
+     GC_add_roots(get_etext(),get_end());
+#endif
      GC_all_interior_pointers = TRUE; /* especially important if MEMDEBUG is on, call first; gc is compiled by default with this on */
 #if 0 /* commented out, because we haven't tested this value lately */
      GC_free_space_divisor = 2;

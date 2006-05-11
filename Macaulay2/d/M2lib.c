@@ -235,6 +235,8 @@ double system_etime(void) {
      }
 #endif
 
+#define __environ environ
+
 #if defined(__sun__) || defined(_WIN32) || defined(__CYGWIN__)
 #define __environ _environ
 #elif defined(__FreeBSD__) || defined(__MACH__) && defined(__POWERPC__)
