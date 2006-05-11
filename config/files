@@ -1,3 +1,5 @@
+GNUmakefile
+include/config.Makefile
 Macaulay2/Makefile
 Macaulay2/basictests/Makefile
 Macaulay2/bin/Makefile
@@ -42,5 +44,3 @@ Macaulay2/test/Makefile
 Macaulay2/test/engine/Makefile
 Macaulay2/test/slow/Makefile
 Macaulay2/util/Makefile
-Makefile
-include/config.Makefile

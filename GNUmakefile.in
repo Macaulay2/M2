@@ -1,16 +1,10 @@
 # @configure_input@
-# Targets to use:
-ifdef XYZZY
-  If you get an error message on this line, it is because you are not using
-  the 'gnu' version of the 'make' program.  The source code for it is
-  available at ftp://ftp.gnu.org/pub/gnu/make.
-endif
 include include/config.Makefile
 VPATH = @srcdir@
 
 .PRECIOUS test-configuration install install-strip all clean distclean:: @srcdir@/configure config.status
 
-Makefile : Makefile.in; ./config.status Makefile
+GNUmakefile : GNUmakefile.in; ./config.status GNUmakefile
 
 include/config.Makefile: include/config.Makefile.in; ./config.status include/config.Makefile
 all :: include/config.Makefile
@@ -19,7 +13,7 @@ include/config.h: include/config.h.in; ./config.status include/config.h
 all :: include/config.h
 
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files
-	$(MAKE) -C @srcdir@ -f Makefile-configuration
+	$(MAKE) -C @srcdir@ -f Makefile
 	@echo '-----------------------------------------------------------------------------'
 	@echo '# $@ has just been remade'
 	@echo '#  exiting so you can run it again the same way you did before'
