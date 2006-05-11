@@ -104,7 +104,7 @@ static void interrupt_handler(int sig)
      	  		 fprintf(stderr,"returning to top level\n");
      	  		 fflush(stderr);
 			 evaluate_clearInterruptFlag();
-#                        ifdef FACTORY
+#                        if FACTORY
 			 libfac_interruptflag = FALSE;
 #                        endif
 			 system_interruptPending = FALSE;
@@ -142,7 +142,7 @@ static void interrupt_handler(int sig)
 		    exit(interruptExit);
 	       }
 	       evaluate_setInterruptFlag();
-#ifdef FACTORY
+#if FACTORY
 	       libfac_interruptflag = TRUE;
 #endif
 	       }
@@ -235,12 +235,12 @@ double system_etime(void) {
      }
 #endif
 
-#define __environ environ
-
-#if defined(__sun__) || defined(_WIN32) || defined(__CYGWIN__)
+#if !HAVE___ENVIRON
+#if HAVE__ENVIRON
 #define __environ _environ
-#elif defined(__FreeBSD__) || defined(__MACH__) && defined(__POWERPC__)
+#elif HAVE_ENVIRON
 #define __environ environ
+#endif
 #endif
 
 extern char **__environ;
@@ -281,7 +281,7 @@ char **argv;
      int returncode = 0;
      int envc = 0;
      static int old_collections = 0;
-#if defined(DUMPDATA)
+#if DUMPDATA
      char **saveenvp = NULL;
      char **saveargv;
 #else
@@ -295,7 +295,7 @@ char **argv;
      extern int interp_topLevel();
 
 #if HAVE_DECL_PER_LINUX
-#ifndef PROFILING
+#if !PROFILING
      if (!gotArg("--no-personality", argv) && personality(-1) == PER_LINUX && personality(PER_LINUX32) == PER_LINUX && personality(-1) == PER_LINUX32) {
 	  /* this avoids redhat's randomized mmap() calls */
 	  return execvp(argv[0],argv);
@@ -324,13 +324,13 @@ char **argv;
      out_of_memory_jump_set = FALSE;
      abort_jump_set = FALSE;
 
-#if defined(_WIN32) && !defined(__CYGWIN32__)
+#if HAVE__SETMODE
      _setmode(STDIN ,_O_BINARY);
      _setmode(STDOUT,_O_BINARY);
      _setmode(STDERR,_O_BINARY);
 #endif
 
-#if defined(DUMPDATA)
+#if DUMPDATA
      {
 	  int i;
 	  char **x;
@@ -361,7 +361,7 @@ char **argv;
      	  GC_free_space_divisor = 4;
 	  if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
 	  old_collections = GC_gc_no;
-#if defined(DUMPDATA)
+#if DUMPDATA
           {
 	       char **environ0;
 	       int i;
@@ -413,7 +413,7 @@ char **argv;
      actors5_ARCH = tostring(ARCH);
      actors5_NODENAME = tostring(NODENAME);
      actors5_REL = tostring(REL);
-#ifdef FACTORY
+#if FACTORY
      {
 	  char const * p = strrchr(factoryVersion,' ');
 	  p = p ? p+1 : factoryVersion;
@@ -431,7 +431,7 @@ char **argv;
      actors5_timestamp = tostring(timestamp);
      actors5_startupString1 = tostring(startupString1);
      actors5_startupString2 = tostring(startupString2);
-#ifdef DUMPDATA
+#if DUMPDATA
      actors5_DUMPDATA = TRUE;
      if (!haveDumpdata()) actors5_DUMPDATA = FALSE; /* even if dumpdata was enabled at configuration time, we may not have implemented it in the C code */
 #else
@@ -528,7 +528,7 @@ extern int etext, end;
 int system_dumpdata(M2_string datafilename)
 {
      /* this routine should keep its data on the stack */
-#ifndef DUMPDATA
+#if !DUMPDATA
      return ERROR;
 #else
      bool haderror = FALSE;
@@ -540,7 +540,7 @@ int system_dumpdata(M2_string datafilename)
      }
 
 int system_loaddata(M2_string datafilename){
-#ifndef DUMPDATA
+#if !DUMPDATA
      return ERROR;
 #else
      char *datafilename_s = tocharstar(datafilename);

@@ -7,7 +7,7 @@
 
 #include "../d/M2inits.h"
 
-#ifdef FACTORY
+#if FACTORY
 #define Matrix MaTrIx
 /* #define NOSTREAMIO */
 #include <factor.h>		// from Messollen's libfac
@@ -29,7 +29,7 @@
 
 #include <NTL/ZZ.h>
 
-#ifdef FACTORY
+#if FACTORY
 #define REVERSE_VARIABLES 1	// did we have a good reason for reversing the variables before?  probably so the ideal reordering of Messollen would work...
 
 // debugging display routines to be called from gdb
@@ -352,7 +352,7 @@ void displayCF(PolynomialRing *R, const CanonicalForm &h)
 
 const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g)
 {
-#ifdef FACTORY
+#if FACTORY
   const RingElement *ret = NULL;
   const PolyRing *P = f->get_ring()->cast_to_PolyRing();
   const PolyRing *P2 = g->get_ring()->cast_to_PolyRing();
@@ -385,7 +385,7 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
 
 const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const RingElement *g, const RingElement **A, const RingElement **B)
 {
-#ifdef FACTORY
+#if FACTORY
   const RingElement *ret;
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
@@ -418,7 +418,7 @@ const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const R
 
 const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElement *g)
 {
-#ifdef FACTORY
+#if FACTORY
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
   if (P == 0)
@@ -449,7 +449,7 @@ void rawFactor(const RingElement *g,
 	       RingElement_array_OrNull **result_factors, 
 	       M2_arrayint_OrNull *result_powers)
 {
-#ifdef FACTORY
+#if FACTORY
   const PolynomialRing *P = g->get_ring()->cast_to_PolynomialRing();
   *result_factors = 0;
   *result_powers = 0;
@@ -488,7 +488,7 @@ void rawFactor(const RingElement *g,
 
 M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 {
-#ifdef FACTORY
+#if FACTORY
   init_seeds();
   const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
   if (P == 0)
@@ -536,7 +536,7 @@ M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 
 Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 {
-#ifdef FACTORY
+#if FACTORY
      const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
      if (P == 0) {
 	  ERROR("expected polynomial ring");
