@@ -1,11 +1,10 @@
-all: configure include/config.h.in.stamp
+all: configure include/config.h.in
+
 configure : configure.ac config/files # aclocal.m4
 	autoconf
-# autoheader may also change include/config.h.in
-# we purposely date stamp so cvs will change the file in the repository
-include/config.h.in.stamp : configure.ac # aclocal.m4
+
+include/config.h.in : configure.ac # aclocal.m4
 	autoheader
-	date >$@
 
 # Local Variables:
 # mode: Makefile
