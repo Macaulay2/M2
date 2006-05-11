@@ -124,15 +124,6 @@ void *sbrk();		/* not really ansi standard, sigh */
 #include "compat.h"		/* same include files seen by *.c files produced from *.d files */
 #include "targettypes.h"
 
-
-
-#if defined(__NeXT__)
- /* on the NeXT Step i386 machine, brk always returns -1, and doesn't work. */
-#   define brk(p) (int)sbrk(p-sbrk(0))
-#elif !defined(__FreeBSD__) && !defined(__DARWIN__)
-int brk();		/* not really ansi standard, sigh */
-#endif
-
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
