@@ -1,1 +1,161 @@
-Wed May 10 19:51:51 CDT 2006
+/* include/config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* machine hardware type, obtained with uname -m */
+#undef ARCH
+
+/* arguments used for configure */
+#undef CONFIG_ARGS
+
+/* Define to one of `_getb67', `GETB67', `getb67' for Cray-2 and Cray-YMP
+   systems. This function is required for `alloca.c' support on those systems.
+   */
+#undef CRAY_STACKSEG_END
+
+/* Define to 1 if using `alloca.c'. */
+#undef C_ALLOCA
+
+/* whether to use dumpdata */
+#undef DUMPDATA
+
+/* suffix the compiler appends to executable filenames */
+#undef EXEEXT
+
+/* whether to use the 'factory' library */
+#undef FACTORY
+
+/* Define to 1 if you have `alloca', as a function or macro. */
+#undef HAVE_ALLOCA
+
+/* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
+   */
+#undef HAVE_ALLOCA_H
+
+/* Define to 1 if you have the declaration of `gnu_get_libc_version', and to 0
+   if you don't. */
+#undef HAVE_DECL_GNU_GET_LIBC_VERSION
+
+/* Define to 1 if you have the declaration of `herror', and to 0 if you don't.
+   */
+#undef HAVE_DECL_HERROR
+
+/* Define to 1 if you have the declaration of `PER_LINUX', and to 0 if you
+   don't. */
+#undef HAVE_DECL_PER_LINUX
+
+/* Define to 1 if you have the declaration of `sys_errlist', and to 0 if you
+   don't. */
+#undef HAVE_DECL_SYS_ERRLIST
+
+/* Define to 1 if you have the declaration of `sys_nerr', and to 0 if you
+   don't. */
+#undef HAVE_DECL_SYS_NERR
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the <linux/personality.h> header file. */
+#undef HAVE_LINUX_PERSONALITY_H
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the `personality' function. */
+#undef HAVE_PERSONALITY
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Define to 1 if you have the `wordexp' function. */
+#undef HAVE_WORDEXP
+
+/* Define to 1 if you have the <wordexp.h> header file. */
+#undef HAVE_WORDEXP_H
+
+/* whether h_errlist is declared in errno.h or stdio.h */
+#undef H_ERRLIST_IS_DECLARED
+
+/* whether to link with lapack */
+#undef LAPACK
+
+/* suffix to append to executable name M2 */
+#undef M2SUFFIX
+
+/* whether to use the new version of dumpdata */
+#undef NEWDUMPDATA
+
+/* hostname used for compilation */
+#undef NODENAME
+
+/* whether gnu_get_libc_version is missing */
+#undef NO_GNU_GET_LIBC_VERSION
+
+/* whether herror is missing */
+#undef NO_HERROR
+
+/* whether sys_errlist is missing */
+#undef NO_SYS_ERRLIST
+
+/* operating system name, obtained with uname -s */
+#undef OS
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* whether profiling has been enabled */
+#undef PROFILING
+
+/* operating system release, obtained with uname -r */
+#undef REL
+
+/* If using the C implementation of alloca, define if you know the
+   direction of stack growth for your system; otherwise it will be
+   automatically deduced at run-time.
+	STACK_DIRECTION > 0 => grows toward higher addresses
+	STACK_DIRECTION < 0 => grows toward lower addresses
+	STACK_DIRECTION = 0 => direction of growth unknown */
+#undef STACK_DIRECTION
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* whether sys_errlist is declared in errno.h or stdio.h */
+#undef SYS_ERRLIST_IS_DECLARED
+
+/* whether __finite is missing */
+#undef __finite
+
+/* whether __isinf is missing */
+#undef __isinf
+
+/* whether __isnan is missing */
+#undef __isnan
