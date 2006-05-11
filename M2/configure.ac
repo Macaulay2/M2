@@ -7,25 +7,11 @@ esac
 for i in "$@"
 do case "$i" in
      "--no-create"|"--no-recursion") ;;
-     *" "*) 
-	  CONFIG_ARGS="$CONFIG_ARGS \"$i\"" 
-	  CONFIG_ARGS_C="$CONFIG_ARGS_C \"$i\"," 
-	  ;;
-     *) 
-	  CONFIG_ARGS="$CONFIG_ARGS $i" 
-	  CONFIG_ARGS_C="$CONFIG_ARGS_C \"$i\"," 
-	  ;;
+     *" "*) CONFIG_ARGS="$CONFIG_ARGS \"$i\"" CONFIG_ARGS_C="$CONFIG_ARGS_C \"$i\"," ;;
+     *) CONFIG_ARGS="$CONFIG_ARGS $i" CONFIG_ARGS_C="$CONFIG_ARGS_C \"$i\"," ;;
    esac
 done
 CONFIG_CMD="$CONFIG_ARG0 $CONFIG_ARGS"
-# test "$LOADLIBES" && CONFIG_ARGS="LOADLIBES=\"$LOADLIBES\" $CONFIG_ARGS"
-# test "$LDLIBS" && CONFIG_ARGS="LDLIBS=\"$LDLIBS\" $CONFIG_ARGS"
-# test "$LDFLAGS" && CONFIG_ARGS="LDFLAGS=\"$LDFLAGS\" $CONFIG_ARGS"
-# test "$CXXFLAGS" && CONFIG_ARGS="CXXFLAGS=\"$CXXFLAGS\" $CONFIG_ARGS"
-# test "$CXX" && CONFIG_ARGS="CXX=\"$CXX\" $CONFIG_ARGS"
-# test "$CPPFLAGS" && CONFIG_ARGS="CPPFLAGS=\"$CPPFLAGS\" $CONFIG_ARGS"
-# test "$CFLAGS" && CONFIG_ARGS="CFLAGS=\"$CFLAGS\" $CONFIG_ARGS"
-# test "$CC" && CONFIG_ARGS="CC=\"$CC\" $CONFIG_ARGS"
 echo "# invocation: $CONFIG_CMD" >&5
 AC_SUBST(CONFIG_ARG0)
 AC_SUBST(CONFIG_ARGS)
@@ -37,8 +23,7 @@ define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 AC_DEFUN(IS_DECLARED,[
   AC_CACHE_CHECK(whether $2 is declared, m2_cv_$2_is_declared,
     AC_TRY_COMPILE($3, [$1 x = $2], [m2_cv_$2_is_declared=yes], [m2_cv_$2_is_declared=no]))
-  test $m2_cv_$2_is_declared = no
-  val=$?
+  test $m2_cv_$2_is_declared = no; val=$?
   AC_DEFINE_UNQUOTED(TO_UPPER($2_IS_DECLARED),$val,[whether $2 is declared in errno.h or stdio.h])
 ])
 
@@ -141,159 +126,84 @@ AC_PROG_YACC()
 
 AC_FUNC_ALLOCA()
 
-DUMPDATA=yes
 AC_SUBST(DUMPDATA)
-AC_ARG_ENABLE(dumpdata,AC_HELP_STRING([--disable-dumpdata],[do not cache data with dumpdata]),DUMPDATA="$enableval")
-case "$DUMPDATA" in
-   yes) val=1;;
-   no)  val=0;;
-   *) AC_MSG_ERROR([unrecognized value --enable-dumpdata="$enableval"]) ;;
-esac
+AC_ARG_ENABLE(dumpdata,AC_HELP_STRING([--disable-dumpdata],[do not cache data with dumpdata]),DUMPDATA="$enableval", DUMPDATA=yes)
+test "$DUMPDATA" = no; val=$?
 AC_DEFINE_UNQUOTED(DUMPDATA,$val,whether to use dumpdata)
 
 AC_SUBST(PROFILING)
-AC_ARG_ENABLE(profile,
-    AC_HELP_STRING(--enable-profile,enable profiling (and disable stripping)),
-    PROFILING="$enableval",
-    PROFILING=no)
-test "$PROFILING" = no
-val=$?
+AC_ARG_ENABLE(profile, AC_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING="$enableval", PROFILING=no)
+test "$PROFILING" = no; val=$?
 AC_DEFINE_UNQUOTED(PROFILING,$val,[whether profiling has been enabled])
 
 AC_SUBST(FACTORY)
-AC_ARG_ENABLE(factory,
-    AC_HELP_STRING(--disable-factory,disable the use of the 'factory' library),
-    FACTORY="$enableval",
-    FACTORY=yes)
-test "$FACTORY" = no
-val=$?
+AC_ARG_ENABLE(factory, AC_HELP_STRING(--disable-factory,disable the use of the 'factory' library), FACTORY="$enableval",FACTORY=yes)
+test "$FACTORY" = no; val=$?
 AC_DEFINE_UNQUOTED(FACTORY,$val,whether to use the 'factory' library)
 
 AC_SUBST(STRIP)
-AC_ARG_ENABLE(strip,
-    AC_HELP_STRING(--disable-strip,do not strip the Macaulay 2 binary),
-    STRIP="$enableval",
-    STRIP=yes)
+AC_ARG_ENABLE(strip, AC_HELP_STRING(--disable-strip,do not strip the Macaulay 2 binary), STRIP="$enableval", STRIP=yes)
 
 AC_SUBST(VERBOSE)
-AC_ARG_ENABLE(verbose,
-    AC_HELP_STRING(--enable-verbose,enable verbose memory allocation),
-    VERBOSE="$enableval",
-    VERBOSE=no)
+AC_ARG_ENABLE(verbose, AC_HELP_STRING(--enable-verbose,enable verbose memory allocation), VERBOSE="$enableval", VERBOSE=no)
 
 AC_SUBST(STATIC)
-AC_ARG_ENABLE(static,
-    AC_HELP_STRING(--enable-static,enable static linking),
-    STATIC="$enableval",
-    STATIC=no)
+AC_ARG_ENABLE(static, AC_HELP_STRING(--enable-static,enable static linking), STATIC="$enableval", STATIC=no)
 
 AC_SUBST(MEMDEBUG)
-AC_ARG_ENABLE(memdebug,
-    AC_HELP_STRING(--enable-memdebug,enable memory allocation debugging),
-    MEMDEBUG="$enableval",
-    MEMDEBUG=no)
+AC_ARG_ENABLE(memdebug, AC_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG="$enableval", MEMDEBUG=no)
 
 AC_SUBST(OPTIMIZE)
-AC_ARG_ENABLE(optimize,
-    AC_HELP_STRING(--disable-optimize,disable optimization),
-    OPTIMIZE="$enableval",
-    OPTIMIZE=yes)
+AC_ARG_ENABLE(optimize, AC_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE="$enableval", OPTIMIZE=yes)
 
 AC_SUBST(DEBUG)
-AC_ARG_ENABLE(debug,
-    AC_HELP_STRING(--enable-debug,enable debugging (and disable stripping)),
-    DEBUG="$enableval",
-    DEBUG=no)
+AC_ARG_ENABLE(debug, AC_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG="$enableval", DEBUG=no)
 
 AC_SUBST(ENCAP)
-AC_ARG_ENABLE(encap,
-    AC_HELP_STRING(--enable-encap,create an encap package),
-    ENCAP="$enableval",
-    ENCAP=no)
+AC_ARG_ENABLE(encap, AC_HELP_STRING(--enable-encap,create an encap package), ENCAP="$enableval", ENCAP=no)
 
 AC_SUBST(XCODE)
-AC_ARG_ENABLE(xcode,
-    AC_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode),
-    XCODE="$enableval",
-    XCODE="no"
-    )
+AC_ARG_ENABLE(xcode, AC_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE="$enableval", XCODE="no" )
 
 AC_SUBST(ALTIVEC)
-AC_ARG_ENABLE(altivec,
-    AC_HELP_STRING(--enable-altivec,compile with "-faltivec" option),
-    ALTIVEC="$enableval",
-    ALTIVEC="no"
-    )
+AC_ARG_ENABLE(altivec, AC_HELP_STRING(--enable-altivec,compile with "-faltivec" option), ALTIVEC="$enableval", ALTIVEC="no" )
 
 WITH_NEWLINE_CR=0
 WITH_NEWLINE_CRLF=0
-AC_ARG_WITH(newline,
-    AC_HELP_STRING([--with-newline=...], [crlf, cr, or lf (the default)]),
-    [
-     case "$withval" in
-       crlf) WITH_NEWLINE_CRLF=1 
-	     WITH_NEWLINE_CR=0
-	     ;;
-       cr)   WITH_NEWLINE_CR=1
-	     WITH_NEWLINE_CRLF=0
-	     ;;
-       lf)   WITH_NEWLINE_CR=0
-	     WITH_NEWLINE_CRLF=0
-	     ;;
-       *)    AC_MSG_ERROR([--with-newline expected crlf, cr, or lf]) ;;
-     esac
-    ])
+AC_ARG_WITH(newline, AC_HELP_STRING([--with-newline=...], [crlf, cr, or lf (the default)]),
+    [ case "$withval" in
+	  crlf) WITH_NEWLINE_CRLF=1 WITH_NEWLINE_CR=0 ;;
+	  cr)   WITH_NEWLINE_CR=1 WITH_NEWLINE_CRLF=0 ;;
+	  lf)   WITH_NEWLINE_CR=0 WITH_NEWLINE_CRLF=0 ;;
+	  *)    AC_MSG_ERROR([--with-newline expected crlf, cr, or lf]) ;;
+      esac ])
 AC_DEFINE_UNQUOTED(WITH_NEWLINE_CRLF,$WITH_NEWLINE_CRLF,[whether newline is cr lf])
 AC_DEFINE_UNQUOTED(WITH_NEWLINE_CR, $WITH_NEWLINE_CR,   [whether newline is cr])
 
 AC_SUBST(M2SUFFIX)
-AC_ARG_WITH(M2suffix,
-    AC_HELP_STRING(--with-M2suffix=...,[suffix to append to executable name M2]),
-    M2SUFFIX="$withval")
+AC_ARG_WITH(M2suffix, AC_HELP_STRING(--with-M2suffix=...,[suffix to append to executable name M2]), M2SUFFIX="$withval")
 AC_DEFINE_UNQUOTED(M2SUFFIX,"$M2SUFFIX",[suffix to append to executable name M2])
 
 AC_DEFINE_UNQUOTED(EXEEXT,"$EXEEXT",[suffix the compiler appends to executable filenames])
 
 AC_SUBST(LAPACKLIBS)
-# LAPACKLIBS="-llapack -lcblas -lf77blas -lg2c" was our former default
-# LAPACKLIBS="-llapack -lblas -lg2c" is our new default, because redhat provides lapack this way now
-AC_ARG_WITH(lapacklibs,
-    AC_HELP_STRING([--with-lapacklibs=...],[lapack libraries (-llapack -lblas -lg2c)]),
-    LAPACKLIBS="$withval",
-    LAPACKLIBS="-llapack -lblas -lg2c")
-AC_ARG_WITH(veclib,
-    AC_HELP_STRING(--with-veclib,replace lapack libraries by "-framework vecLib"),
-    LAPACKLIBS="-framework vecLib")
-
+dnl # LAPACKLIBS="-llapack -lcblas -lf77blas -lg2c" was our former default
+dnl # LAPACKLIBS="-llapack -lblas -lg2c" is our new default, because redhat provides lapack this way now
+AC_ARG_WITH(lapacklibs, AC_HELP_STRING([--with-lapacklibs=...],[lapack libraries (-llapack -lblas -lg2c)]), LAPACKLIBS="$withval", LAPACKLIBS="-llapack -lblas -lg2c")
+AC_ARG_WITH(veclib, AC_HELP_STRING(--with-veclib,replace lapack libraries by "-framework vecLib"), LAPACKLIBS="-framework vecLib")
 AC_SUBST(LAPACK)
-AC_ARG_ENABLE(lapack,
-    AC_HELP_STRING(--disable-lapack,[disable linking with lapack]),
-    LAPACK="$enableval";LAPACKLIBS="",
-    LAPACK=yes)
-test "$LAPACK" = no
-val=$?
+AC_ARG_ENABLE(lapack, AC_HELP_STRING(--disable-lapack,[disable linking with lapack]), LAPACK="$enableval";LAPACKLIBS="", LAPACK=yes)
+test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
 AC_SUBST(GDBMLIB)
-AC_ARG_WITH(gdbmlib,
-    AC_HELP_STRING(--with-gdbmlib=...,gdbm library (-lgdbm)),
-    GDBMLIB="$withval",
-    GDBMLIB="-lgdbm"
-    )
+AC_ARG_WITH(gdbmlib, AC_HELP_STRING(--with-gdbmlib=...,gdbm library (-lgdbm)), GDBMLIB="$withval", GDBMLIB="-lgdbm" )
 
 AC_SUBST(READLINELIB)
-AC_ARG_WITH(readlinelib,
-    AC_HELP_STRING(--with-readlinelib=...,readline library (-lreadline)),
-    READLINELIB="$withval",
-    READLINELIB="-lreadline"
-    )
+AC_ARG_WITH(readlinelib, AC_HELP_STRING(--with-readlinelib=...,readline library (-lreadline)), READLINELIB="$withval", READLINELIB="-lreadline" )
 
 AC_SUBST(HISTORYLIB)
-AC_ARG_WITH(historylib,
-    AC_HELP_STRING(--with-historylib=...,history library (-lhistory)),
-    HISTORYLIB="$withval",
-    HISTORYLIB="-lhistory"
-    )
+AC_ARG_WITH(historylib, AC_HELP_STRING(--with-historylib=...,history library (-lhistory)), HISTORYLIB="$withval", HISTORYLIB="-lhistory")
 
 SAVELIBS="$LIBS"
 
