@@ -95,9 +95,12 @@ extern char *libfac_version;
 
 #ifndef __DARWIN__
 #ifndef PAGESIZE
-#if !defined(__linux__) && !defined(__osf__) && !defined(__FreeBSD__) && !defined(__hpux__)
+
+#if 0
+/* some systems define getpagesize but don't declare it -- if we find one again, we'll have configure flag the problem for us */
 extern size_t getpagesize();
 #endif
+
 #define PAGESIZE getpagesize()
 #endif
 #endif /* __DARWIN__ */
