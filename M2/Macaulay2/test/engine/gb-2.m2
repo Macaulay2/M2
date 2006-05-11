@@ -90,6 +90,9 @@ ans = ideal(-b*c*d+a*d^2+2*b*c-2*a*d,
 assert(ans == ideal mingens I)
 transpose mingens I
 
+error "we commented out the rest because it takes too long"
+end
+
 J = I : (a-3);
 transpose mingens J
 transpose gens gb J
@@ -104,6 +107,5 @@ mingens ideal oo
 -----------------------
 R = ZZ/101 [X_0, X_1, X_2, X_3, X_4, X_5, Degrees => {{1}, {1}, {4}, {4}, {4}, {4}}, MonomialOrder => Eliminate{2}, MonomialSize => 16]
 J = matrix {{-X_0^4+X_2, -X_0^3*X_1+X_3, -X_0*X_1^3+X_4, -X_1^4+X_5}}
-gbTrace = 10
 gens gb J
 assert(numgens source gens gb J == 14)
