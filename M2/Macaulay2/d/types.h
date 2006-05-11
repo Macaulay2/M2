@@ -1,27 +1,25 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <limits.h>		/* to get PATH_MAX */
+#include "config.h"
 
-#ifdef SOCKS
-#include <socks.h>
+#include <stdio.h>
+
+#if HAVE_STDLIB_H
+#include <stdlib.h>
 #endif
+
+#include <limits.h>		/* to get PATH_MAX */
 
 #undef _POSIX_THREAD_SAFE_FUNCTIONS
 #undef _REENTRANT
 
-#if defined(_WIN32) && !defined(__CYGWIN32__)
-#define alloca _alloca
-#endif
-
-#if defined(_WIN32)
+#if WITH_NEWLINE_CRLF
 #define NEWLINE "\r\n"
-#elif defined(__MWERKS__) && !defined(__BUILDING_MPW__)
+#elif WITH_NEWLINE_CR
 #define NEWLINE "\r"
 #else
 #define NEWLINE "\n"
 #endif
 
-#ifdef FACTORY
+#if FACTORY
 extern char *libfac_version;
 #endif
 
@@ -31,16 +29,38 @@ extern char *libfac_version;
 #include <unistd.h>
 #endif
 
-#if !defined(__MWERKS__)
+#if HAVE_SYS_TYPES_H
 #include <sys/types.h>
+#endif
+
+#if HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
 
-#if defined(__MWERKS__)
-#elif defined(_WIN32) && !defined(__CYGWIN32__)
+#if HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
+#if HAVE_MEMORY_H
+#include <memory.h>
+#endif
+
+#if TIME_WITH_SYS_TIME
+# include <sys/time.h>
+# include <time.h>
 #else
-#include <sys/time.h>
+# if HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
+#endif
+
+#if HAVE_SYS_WAIT_H
 #include <sys/wait.h>
+#endif
+
+#if HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif
 
@@ -49,7 +69,13 @@ extern char *libfac_version;
 #include <time.h>
 #include <utime.h>
 #include <errno.h>
+
+#if HAVE_STRING_H
 #include <string.h>
+#elif HAVE_STRINGS_H
+#include <strings.h>
+#endif
+
 #include <math.h>
 
 #if HAVE_ALLOCA_H
@@ -58,29 +84,29 @@ extern char *libfac_version;
 
 #include <setjmp.h>
 
-#ifdef __CYGWIN32__
-#define HAVE_SOCKETS TRUE
+#if HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>		/* just for window width */
+#endif
+#if HAVE_TERMIOS_H
 #include <termios.h>		/* just for window width */
+#endif
+#if HAVE_SYS_MMAN_H
 #include <sys/mman.h>		/* needed for mmap() */
+#endif
+#if HAVE_SYS_SOCKET_H
 #include <sys/socket.h>		/* needed for args to socket(), bind() */
+#endif
+#if HAVE_NETDB_H
 #include <netdb.h>     	    	/* needed for gethostbyname() */
+#endif
+#if HAVE_NETINET_IN_H
 #include <netinet/in.h>	    	/* needed for struct sockaddr_in */
-#include <arpa/inet.h>	   	/* needed for inet_addr() */
-#elif defined(__MWERKS__) || defined(_WIN32) && !defined(__CYGWIN32__)
-#define HAVE_SOCKETS FALSE
-#else
-#define HAVE_SOCKETS TRUE
-#include <sys/ioctl.h>		/* just for window width */
-#include <termios.h>		/* just for window width */
-#include <sys/mman.h>		/* needed for mmap() */
-#include <sys/socket.h>		/* needed for args to socket(), bind() */
-#include <netdb.h>     	    	/* needed for gethostbyname() */
-#include <netinet/in.h>	    	/* needed for struct sockaddr_in */
+#endif
+#if HAVE_ARPA_INET_H
 #include <arpa/inet.h>	   	/* needed for inet_addr() */
 #endif
 
-#if defined(_WIN32) && !defined(__CYGWIN32__)
+#if HAVE_IO_H
 #include <io.h>
 #endif
 
@@ -88,23 +114,13 @@ extern char *libfac_version;
 #include <X11/Xlib.h>
 #endif
 
-
 #ifndef O_BINARY
 #define O_BINARY 0		/* for non msdos systems */
 #endif
 
-#ifndef __DARWIN__
 #ifndef PAGESIZE
-
-#if 0
-/* some systems define getpagesize but don't declare it -- if we find one again, we'll have configure flag the problem for us */
-extern size_t getpagesize();
-#endif
-
 #define PAGESIZE getpagesize()
 #endif
-#endif /* __DARWIN__ */
-
 #define RUP(x) ((((x) + PAGESIZE - 1) / PAGESIZE) * PAGESIZE)
 
 #if !defined(__FreeBSD__) && !defined(__DARWIN__)
@@ -120,7 +136,6 @@ void *sbrk();		/* not really ansi standard, sigh */
 
 #include "M2types.h"
 #include "../e/engine.h"
-#include "config.h"
 #include "compat.h"		/* same include files seen by *.c files produced from *.d files */
 #include "targettypes.h"
 
@@ -135,7 +150,7 @@ void *sbrk();		/* not really ansi standard, sigh */
 
 extern unsigned GC_version;		/* in libgc.a */
 
-#if defined(__STDC__) || defined(_WIN32) && !defined(__CYGWIN32__)
+#if defined(__STDC__)
 extern void fatal(char *s,...);
 #else
 extern void fatal( va_alist  );
@@ -153,13 +168,13 @@ extern char const *system_strerror();
 extern int system_errno();
 extern char *progname;
 
-#ifndef NO_GNU_GET_LIBC_VERSION
+#if HAVE_GNU_GET_LIBC_VERSION
 extern char *gnu_get_libc_version();
 #endif
 
 #include "../dumpdata/dumpdata.h"
 
-#ifdef FACTORY
+#if FACTORY
 extern int libfac_interruptflag;
 #endif
 

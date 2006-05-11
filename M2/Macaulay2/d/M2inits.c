@@ -85,7 +85,7 @@ static void *(*save_gmp_reallocate_func)(void *, size_t, size_t);
 static void  (*save_gmp_free_func      )(void *, size_t);
 
 void enterFactory() {
-# ifdef FACTORY
+# if FACTORY
   static int done = 0;
   if (!done) {
     done = 1;

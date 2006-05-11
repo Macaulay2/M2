@@ -8,7 +8,7 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
 			      LMatrixRR *L,
 			      LMatrixRR *U)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return NULL;
 #else
@@ -87,7 +87,7 @@ bool Lapack::solve(const LMatrixRR *A, /* read only */
 		   const LMatrixRR *b, /* read only */
 		   LMatrixRR *x) /* output value */
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -136,7 +136,7 @@ bool Lapack::solve(const LMatrixRR *A, /* read only */
 
 bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -189,7 +189,7 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
 			  LMatrixCC *eigvals,
 			  LMatrixCC *eigvecs)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -256,7 +256,7 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
 
 bool Lapack::eigenvalues_symmetric(const LMatrixRR *A, LMatrixRR *eigvals)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -300,7 +300,7 @@ bool Lapack::eigenvectors_symmetric(const LMatrixRR *A,
 				    LMatrixRR *eigvals, 
 				    LMatrixRR *eigvecs)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -342,7 +342,7 @@ bool Lapack::eigenvectors_symmetric(const LMatrixRR *A,
 
 bool Lapack::SVD(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -385,7 +385,7 @@ bool Lapack::SVD(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *
 
 bool Lapack::SVD_divide_conquer(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -429,7 +429,7 @@ bool Lapack::SVD_divide_conquer(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR 
 
 bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -496,7 +496,7 @@ bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
 
 bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -570,7 +570,7 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
 			      LMatrixCC *L,
 			      LMatrixCC *U)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return NULL;
 #else
@@ -649,7 +649,7 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
 
 bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -699,7 +699,7 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 
 bool Lapack::eigenvalues(const LMatrixCC *A, LMatrixCC *eigvals)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -745,7 +745,7 @@ bool Lapack::eigenvalues(const LMatrixCC *A, LMatrixCC *eigvals)
 
 bool Lapack::eigenvectors(const LMatrixCC *A, LMatrixCC *eigvals, LMatrixCC *eigvecs)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -793,7 +793,7 @@ bool Lapack::eigenvectors(const LMatrixCC *A, LMatrixCC *eigvals, LMatrixCC *eig
 
 bool Lapack::eigenvalues_hermitian(const LMatrixCC *A, LMatrixRR *eigvals)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -836,7 +836,7 @@ bool Lapack::eigenvalues_hermitian(const LMatrixCC *A, LMatrixRR *eigvals)
 
 bool Lapack::eigenvectors_hermitian(const LMatrixCC *A, LMatrixRR *eigvals, LMatrixCC *eigvecs)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -879,7 +879,7 @@ bool Lapack::eigenvectors_hermitian(const LMatrixCC *A, LMatrixRR *eigvals, LMat
 
 bool Lapack::SVD(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -923,7 +923,7 @@ bool Lapack::SVD(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *
 
 bool Lapack::SVD_divide_conquer(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -969,7 +969,7 @@ bool Lapack::SVD_divide_conquer(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC 
 
 bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -1041,7 +1041,7 @@ bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 
 bool Lapack::least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 {
-#ifndef LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else

@@ -32,42 +32,31 @@ AC_SUBST(CONFIG_ARGS)
 AC_SUBST(CONFIG_CMD)
 AC_DEFINE_UNQUOTED(CONFIG_ARGS,$CONFIG_ARGS_C,arguments used for configure)
 
-define(M2_UPPER,[translit($1, [a-z], [A-Z])])
+define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
-AC_DEFUN(M2_IS_THERE,[
-  AC_CHECK_FUNC($1,,AC_DEFINE(M2_UPPER(NO_$1),1,whether $1 is missing))
-])
-
-AC_DEFUN(M2_IS_DECLARED,[
+AC_DEFUN(IS_DECLARED,[
   AC_CACHE_CHECK(whether $2 is declared, m2_cv_$2_is_declared,
-    AC_TRY_COMPILE(
-      [
-      #include <stdio.h>
-      #include <errno.h>
-      ],
-      $1 x = $2,
-      m2_cv_$2_is_declared=yes,
-      m2_cv_$2_is_declared=no))
-  if test "$m2_cv_$2_is_declared" = yes
-  then AC_DEFINE(M2_UPPER($2_IS_DECLARED),,whether $2 is declared in errno.h or stdio.h)
-  fi
+    AC_TRY_COMPILE($3, [$1 x = $2], [m2_cv_$2_is_declared=yes], [m2_cv_$2_is_declared=no]))
+  test $m2_cv_$2_is_declared = no
+  val=$?
+  AC_DEFINE_UNQUOTED(TO_UPPER($2_IS_DECLARED),$val,[whether $2 is declared in errno.h or stdio.h])
 ])
 
-AC_DEFUN(M2_SHOW_CONFDEFS,[
+AC_DEFUN(SHOW_CONFDEFS,[
   echo contents of confdefs.h: >&6
   sed -e '/^$/d' -e 's/^/   /' confdefs.h >&6
   ])
 
-AC_DEFUN(M2_CONFIGURED_FILES,patsubst(m4_include(config/files),[
+AC_DEFUN(GET_CONFIGURED_FILES,patsubst(m4_include(config/files),[
 ],[ ]))
 
 echo "any environment variables set:"
 test "$CC"         && echo "   CC=$CC"
 test "$CXX"        && echo "   CXX=$CXX"
 test "$CPPFLAGS"   && echo "   CPPFLAGS=$CPPFLAGS"
-dnl -- autoconf default is: -g -O2
+dnl # autoconf default is: -g -O2
 test "$CFLAGS"     && echo "   CFLAGS=$CFLAGS"
-dnl -- autoconf default is: -g -O2
+dnl # autoconf default is: -g -O2
 test "$CXXFLAGS"   && echo "   CXXFLAGS=$CXXFLAGS"
 test "$LDFLAGS"    && echo "   LDFLAGS=$LDFLAGS"
 
@@ -154,37 +143,31 @@ AC_FUNC_ALLOCA()
 
 DUMPDATA=yes
 AC_SUBST(DUMPDATA)
-AC_ARG_ENABLE(dumpdata,
-[  --disable-dumpdata      do not cache data with dumpdata
-  --enable-dumpdata=old   cache data with the old version of dumpdata],
-DUMPDATA="$enableval")
+AC_ARG_ENABLE(dumpdata,AC_HELP_STRING([--disable-dumpdata],[do not cache data with dumpdata]),DUMPDATA="$enableval")
 case "$DUMPDATA" in
-   no) ;;
-   old) ;;
-   yes) AC_DEFINE(NEWDUMPDATA,,whether to use the new version of dumpdata) ;;
-   *) echo configure: error: unrecognized value --enable-dumpdata="$enableval" >&2; exit 1 ;;
+   yes) val=1;;
+   no)  val=0;;
+   *) AC_MSG_ERROR([unrecognized value --enable-dumpdata="$enableval"]) ;;
 esac
-case "$DUMPDATA" in
-   yes|old) AC_DEFINE(DUMPDATA,,whether to use dumpdata) ;;
-esac
+AC_DEFINE_UNQUOTED(DUMPDATA,$val,whether to use dumpdata)
 
 AC_SUBST(PROFILING)
 AC_ARG_ENABLE(profile,
     AC_HELP_STRING(--enable-profile,enable profiling (and disable stripping)),
     PROFILING="$enableval",
     PROFILING=no)
-if test "$PROFILING" = yes
-then AC_DEFINE(PROFILING,,[whether profiling has been enabled])
-fi
+test "$PROFILING" = no
+val=$?
+AC_DEFINE_UNQUOTED(PROFILING,$val,[whether profiling has been enabled])
 
 AC_SUBST(FACTORY)
 AC_ARG_ENABLE(factory,
     AC_HELP_STRING(--disable-factory,disable the use of the 'factory' library),
     FACTORY="$enableval",
     FACTORY=yes)
-if test "$FACTORY" = yes
-then AC_DEFINE(FACTORY,,whether to use the 'factory' library)
-fi
+test "$FACTORY" = no
+val=$?
+AC_DEFINE_UNQUOTED(FACTORY,$val,whether to use the 'factory' library)
 
 AC_SUBST(STRIP)
 AC_ARG_ENABLE(strip,
@@ -242,6 +225,27 @@ AC_ARG_ENABLE(altivec,
     ALTIVEC="no"
     )
 
+WITH_NEWLINE_CR=0
+WITH_NEWLINE_CRLF=0
+AC_ARG_WITH(newline,
+    AC_HELP_STRING([--with-newline=...], [crlf, cr, or lf (the default)]),
+    [
+     case "$withval" in
+       crlf) WITH_NEWLINE_CRLF=1 
+	     WITH_NEWLINE_CR=0
+	     ;;
+       cr)   WITH_NEWLINE_CR=1
+	     WITH_NEWLINE_CRLF=0
+	     ;;
+       lf)   WITH_NEWLINE_CR=0
+	     WITH_NEWLINE_CRLF=0
+	     ;;
+       *)    AC_MSG_ERROR([--with-newline expected crlf, cr, or lf]) ;;
+     esac
+    ])
+AC_DEFINE_UNQUOTED(WITH_NEWLINE_CRLF,$WITH_NEWLINE_CRLF,[whether newline is cr lf])
+AC_DEFINE_UNQUOTED(WITH_NEWLINE_CR, $WITH_NEWLINE_CR,   [whether newline is cr])
+
 AC_SUBST(M2SUFFIX)
 AC_ARG_WITH(M2suffix,
     AC_HELP_STRING(--with-M2suffix=...,[suffix to append to executable name M2]),
@@ -266,9 +270,9 @@ AC_ARG_ENABLE(lapack,
     AC_HELP_STRING(--disable-lapack,[disable linking with lapack]),
     LAPACK="$enableval";LAPACKLIBS="",
     LAPACK=yes)
-if test "$LAPACK" = yes
-then AC_DEFINE(LAPACK,,whether to link with lapack)
-fi
+test "$LAPACK" = no
+val=$?
+AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
 AC_SUBST(GDBMLIB)
 AC_ARG_WITH(gdbmlib,
@@ -290,11 +294,6 @@ AC_ARG_WITH(historylib,
     HISTORYLIB="$withval",
     HISTORYLIB="-lhistory"
     )
-
-AC_CHECK_DECL(__finite,,AC_DEFINE(__finite,finite,whether __finite is missing),[#include <math.h>])
-AC_CHECK_DECL(__isnan,,AC_DEFINE(__isnan,isnan,whether __isnan is missing),[#include <math.h>])
-AC_CHECK_DECL(__isinf,,AC_DEFINE(__isinf,isinf,whether __isinf is missing),[#include <math.h>])
-AC_CHECK_DECLS(sys_nerr)
 
 SAVELIBS="$LIBS"
 
@@ -424,31 +423,28 @@ fi
 
 LIBS="$SAVELIBS"
 
-AC_CHECK_HEADERS(wordexp.h)
-AC_CHECK_FUNCS(wordexp)
-
-AC_CHECK_HEADERS(linux/personality.h)
-AC_CHECK_FUNCS(personality)
+AC_HEADER_TIME() dnl # time.h sys/time.h
+AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h sys/wait.h sys/resource.h io.h linux/personality.h)
+AC_CHECK_FUNCS([personality sys_errlist herror error socket gnu_get_libc_version __environ _environ environ _setmode])
 AC_CHECK_DECLS(PER_LINUX,,,[#include <linux/personality.h>])
+AC_CHECK_DECLS([sys_errlist,sys_nerr,herror,gnu_get_libc_version])
 
-dnl -- M2_SHOW_CONFDEFS()
+dnl SHOW_CONFDEFS()
 
-# the next three are obsolete:
-M2_IS_THERE(sys_errlist)
-M2_IS_THERE(herror)
-M2_IS_THERE(gnu_get_libc_version)
-AC_CHECK_DECLS([sys_errlist])
-AC_CHECK_DECLS([herror])
-AC_CHECK_DECLS([gnu_get_libc_version])
-
-M2_IS_DECLARED(char **,sys_errlist)
-M2_IS_DECLARED(char **,h_errlist)
+IS_DECLARED(char **,sys_errlist, [
+      #include <stdio.h>
+      #include <errno.h>
+      ])
+IS_DECLARED(char **,h_errlist, [
+      #include <stdio.h>
+      #include <errno.h>
+      ])
 AC_CONFIG_HEADER(include/config.h)
-CONFIGURED_FILES="M2_CONFIGURED_FILES()"
+CONFIGURED_FILES="GET_CONFIGURED_FILES()"
 AC_SUBST(CONFIGURED_FILES)
-AC_OUTPUT(M2_CONFIGURED_FILES())
+AC_OUTPUT(GET_CONFIGURED_FILES())
 
-dnl -- Local Variables:
-dnl -- mode: sh
-dnl -- compile-command: "make -f Makefile-configuration"
-dnl -- End:
+dnl # Local Variables:
+dnl # mode: sh
+dnl # compile-command: "make -f Makefile"
+dnl # End:

@@ -30,6 +30,9 @@
    */
 #undef HAVE_ALLOCA_H
 
+/* Define to 1 if you have the <arpa/inet.h> header file. */
+#undef HAVE_ARPA_INET_H
+
 /* Define to 1 if you have the declaration of `gnu_get_libc_version', and to 0
    if you don't. */
 #undef HAVE_DECL_GNU_GET_LIBC_VERSION
@@ -50,8 +53,23 @@
    don't. */
 #undef HAVE_DECL_SYS_NERR
 
+/* Define to 1 if you have the `environ' function. */
+#undef HAVE_ENVIRON
+
+/* Define to 1 if you have the `error' function. */
+#undef HAVE_ERROR
+
+/* Define to 1 if you have the `gnu_get_libc_version' function. */
+#undef HAVE_GNU_GET_LIBC_VERSION
+
+/* Define to 1 if you have the `herror' function. */
+#undef HAVE_HERROR
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the <io.h> header file. */
+#undef HAVE_IO_H
 
 /* Define to 1 if you have the <linux/personality.h> header file. */
 #undef HAVE_LINUX_PERSONALITY_H
@@ -59,8 +77,17 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
+/* Define to 1 if you have the <netdb.h> header file. */
+#undef HAVE_NETDB_H
+
+/* Define to 1 if you have the <netinet/in.h> header file. */
+#undef HAVE_NETINET_IN_H
+
 /* Define to 1 if you have the `personality' function. */
 #undef HAVE_PERSONALITY
+
+/* Define to 1 if you have the `socket' function. */
+#undef HAVE_SOCKET
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
@@ -74,20 +101,47 @@
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
+/* Define to 1 if you have the `sys_errlist' function. */
+#undef HAVE_SYS_ERRLIST
+
+/* Define to 1 if you have the <sys/ioctl.h> header file. */
+#undef HAVE_SYS_IOCTL_H
+
+/* Define to 1 if you have the <sys/mman.h> header file. */
+#undef HAVE_SYS_MMAN_H
+
+/* Define to 1 if you have the <sys/resource.h> header file. */
+#undef HAVE_SYS_RESOURCE_H
+
+/* Define to 1 if you have the <sys/socket.h> header file. */
+#undef HAVE_SYS_SOCKET_H
+
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/time.h> header file. */
+#undef HAVE_SYS_TIME_H
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
+/* Define to 1 if you have the <sys/wait.h> header file. */
+#undef HAVE_SYS_WAIT_H
+
+/* Define to 1 if you have the <termios.h> header file. */
+#undef HAVE_TERMIOS_H
+
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if you have the `wordexp' function. */
-#undef HAVE_WORDEXP
+/* Define to 1 if you have the `_environ' function. */
+#undef HAVE__ENVIRON
 
-/* Define to 1 if you have the <wordexp.h> header file. */
-#undef HAVE_WORDEXP_H
+/* Define to 1 if you have the `_setmode' function. */
+#undef HAVE__SETMODE
+
+/* Define to 1 if you have the `__environ' function. */
+#undef HAVE___ENVIRON
 
 /* whether h_errlist is declared in errno.h or stdio.h */
 #undef H_ERRLIST_IS_DECLARED
@@ -98,20 +152,8 @@
 /* suffix to append to executable name M2 */
 #undef M2SUFFIX
 
-/* whether to use the new version of dumpdata */
-#undef NEWDUMPDATA
-
 /* hostname used for compilation */
 #undef NODENAME
-
-/* whether gnu_get_libc_version is missing */
-#undef NO_GNU_GET_LIBC_VERSION
-
-/* whether herror is missing */
-#undef NO_HERROR
-
-/* whether sys_errlist is missing */
-#undef NO_SYS_ERRLIST
 
 /* operating system name, obtained with uname -s */
 #undef OS
@@ -140,9 +182,9 @@
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
    automatically deduced at run-time.
-	STACK_DIRECTION > 0 => grows toward higher addresses
-	STACK_DIRECTION < 0 => grows toward lower addresses
-	STACK_DIRECTION = 0 => direction of growth unknown */
+        STACK_DIRECTION > 0 => grows toward higher addresses
+        STACK_DIRECTION < 0 => grows toward lower addresses
+        STACK_DIRECTION = 0 => direction of growth unknown */
 #undef STACK_DIRECTION
 
 /* Define to 1 if you have the ANSI C header files. */
@@ -151,11 +193,11 @@
 /* whether sys_errlist is declared in errno.h or stdio.h */
 #undef SYS_ERRLIST_IS_DECLARED
 
-/* whether __finite is missing */
-#undef __finite
+/* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
+#undef TIME_WITH_SYS_TIME
 
-/* whether __isinf is missing */
-#undef __isinf
+/* whether newline is cr */
+#undef WITH_NEWLINE_CR
 
-/* whether __isnan is missing */
-#undef __isnan
+/* whether newline is cr lf */
+#undef WITH_NEWLINE_CRLF

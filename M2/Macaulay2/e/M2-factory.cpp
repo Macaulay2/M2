@@ -1,23 +1,23 @@
 #include "config.h"
 
-#ifdef FACTORY
+#if FACTORY
 // #define NOSTREAMIO
 #include <factory.h>		// to get definition of factoryseed()
 #endif
 
 extern "C" void actors5_setFactorySeed(int s) { 
-#ifdef FACTORY
+#if FACTORY
   factoryseed(s);
 #endif
 }
 
 void factory_setup_1() {
-#ifdef FACTORY
+#if FACTORY
   On(SW_USE_NTL);		/* tell factory to use NTL */
 #endif
 }
 
-#ifdef FACTORY
+#if FACTORY
 #define Matrix MaTrIx
 // #define NOSTREAMIO
 #include <factor.h>		// from Messollen's libfac

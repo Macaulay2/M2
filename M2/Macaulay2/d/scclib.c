@@ -8,7 +8,7 @@
 #include "debug.h"
 
 void
-#if defined(__STDC__) || defined(_WIN32) && !defined(__CYGWIN32__)
+#if defined(__STDC__)
 fatal(char *s,...)   {
      va_list ap;
 #else
@@ -18,7 +18,7 @@ va_dcl
      va_list ap;
      char *s;
 #endif
-#if defined(__STDC__) || defined(_WIN32) && !defined(__CYGWIN32__)
+#if defined(__STDC__)
      va_start(ap,s);
 #else
      va_start(ap);
@@ -113,11 +113,7 @@ M2_string filename;
 #if defined(__BUILDING_MPW__)
      int fd = open(fname, O_WRONLY);
 #else
-     int fd = open(fname, O_BINARY | O_CREAT | O_WRONLY | O_TRUNC
-#ifndef __MWERKS__
-	  , 0644
-#endif
-	  );
+     int fd = open(fname, O_BINARY | O_CREAT | O_WRONLY | O_TRUNC, 0644);
 #endif
      GC_FREE(fname);
      return fd;
@@ -179,11 +175,7 @@ M2_string system_getcwd()
      char *p;
      for (p=x; *p; p++) if (*p == '\\') *p = '/';
 #endif
-#if defined(__MWERKS__) && !defined(__BUILDING_MPW__)
-     strcat(buf,":");
-#else
      if (0 != strcmp(buf,"/")) strcat(buf,"/");
-#endif
      if (x != NULL) return tostring(x);
      return tostring("");
      }
@@ -288,21 +280,14 @@ M2_string s,t;
 int system_wait(pid)
 int pid;
 {
-#if defined(__MWERKS__)
-     return ERROR;
-#else
      int status;
      int ret = waitpid(pid,&status,0);
      if (ret == ERROR) return ERROR;
      return status>>8;
-#endif
      }
 
 M2_arrayint system_waitNoHang(M2_arrayint pids)
 {
-#if defined(__MWERKS__)
-     return ERROR;
-#else
      int n = pids->len;
      int *pid = pids->array;
      {
@@ -315,17 +300,9 @@ M2_arrayint system_waitNoHang(M2_arrayint pids)
 	  }
 	  return z;
      }
-#endif
 }
 
 M2_arrayint system_select(M2_arrayint v) {
-#if defined(__MWERKS__)
-  M2_arrayint z;
-  z = (M2_arrayint)getmem_atomic(sizeofarray(z,0));
-  return z;
-#elif defined(_WIN32)
-  return ERROR;
-#else
   static fd_set r, w, e;
   int n = v->len;
   int *s = v->array;
@@ -339,7 +316,6 @@ M2_arrayint system_select(M2_arrayint v) {
   z->len = m;
   for (i=j=0; i<n && j<m; i++) if (FD_ISSET(s[i],&r)) { z->array[j++] = i; FD_CLR(s[i],&r); }
   return z;
-#endif
 }
 
 unsigned int system_hash(x)
@@ -723,7 +699,7 @@ int fd;
 int host_address(name)
 char *name;
 {
-#if HAVE_SOCKETS
+#if HAVE_SOCKET
      if ('0' <= name[0] && name[0] <= '9') {
      	  int s;
 	  s = inet_addr(name);
@@ -748,7 +724,7 @@ char *name;
 int serv_address(name)
 char *name;
 {
-#if HAVE_SOCKETS
+#if HAVE_SOCKET
      if ('0' <= name[0] && name[0] <= '9') {
 	  return htons(atoi(name));
 	  }
@@ -768,7 +744,7 @@ char *name;
      }
 
 int system_acceptBlocking(int so) {
-#if HAVE_SOCKETS
+#if HAVE_SOCKET
   struct sockaddr_in addr;
   unsigned int addrlen = sizeof addr;
   fcntl(so,F_SETFL,0);
@@ -779,7 +755,7 @@ int system_acceptBlocking(int so) {
 }
 
 int system_acceptNonblocking(int so) {
-#if HAVE_SOCKETS
+#if HAVE_SOCKET
   struct sockaddr_in addr;
   unsigned int addrlen = sizeof addr;
   int sd;
@@ -792,7 +768,7 @@ int system_acceptNonblocking(int so) {
 }
 
 int openlistener(char *serv) {
-#if HAVE_SOCKETS
+#if HAVE_SOCKET
   int sa = serv_address(serv);
   int so = socket(AF_INET,SOCK_STREAM,0);
   struct sockaddr_in addr;
@@ -812,7 +788,7 @@ int openlistener(char *serv) {
 }
 
 int opensocket(char *host, char *serv) {
-#if HAVE_SOCKETS
+#if HAVE_SOCKET
   int sd = socket(AF_INET,SOCK_STREAM,0);
   struct sockaddr_in addr;
   int sa = serv_address(serv);
@@ -853,24 +829,20 @@ extern int errno;
 extern int sys_nerr;
 #endif
 
-#ifdef __CYGWIN__
-#define NO_HERROR
-#endif
-
-#ifndef NO_HERROR
+#if HAVE_HERROR
 extern int h_nerr;
-#ifndef H_ERRLIST_IS_DECLARED
+#if !H_ERRLIST_IS_DECLARED
 extern const char * const h_errlist[];
 #endif
 #endif
 
-#ifndef HAVE_DECL_SYS_ERRLIST
+#if !SYS_ERRLIST_IS_DECLARED
 extern const char * const sys_errlist[];
 #endif
 
 int system_errno(void) {
   return 
-#ifndef NO_HERROR
+#if HAVE_HERROR
     h_errno > 0 ? h_errno : 
 #endif
     errno;
@@ -878,20 +850,12 @@ int system_errno(void) {
 
 char const *system_strerror(void) {
      char const *msg =
-#ifndef NO_HERROR
+#if HAVE_HERROR
      h_errno > 0 && h_errno < h_nerr ? h_errlist[h_errno] : 
 #endif
-#if !defined(__MWERKS__) && !defined(__CYGWIN__)
-#if 0
-       /* old way: sys_errlist is deprecated */
-     errno > 0 && errno < sys_nerr ? sys_errlist[errno] :
-#else
-       /* to be thread safe, use strerror_r instead */
      errno > 0 ? strerror(errno) :
-#endif
-#endif
      "no system error (scclib.c)";
-#ifndef NO_HERROR
+#if HAVE_HERROR
      h_errno = 0;
 #endif
      errno = 0;
@@ -900,11 +864,7 @@ char const *system_strerror(void) {
 
 M2_string system_syserrmsg()
 {
-#if defined(__MWERKS__)
-     return tostring("");
-#else
      return tostring(system_strerror());
-#endif
 }
 
 int system_run(M2_string command){
@@ -922,119 +882,6 @@ void system_atend(void (*f)()){
      this_final -> next = pre_final_list;
      pre_final_list = this_final;
      }
-
-#if defined(__MWERKS__) && defined(__BUILDING_MPW__)
-/* There appears to be a bug in the open/close routines when linking with MPW stuff.
-   So here we define these routines in a somewhat different way.
- */
-
-int M2open(char *name, int flags)
-{
-    FILE *fil;
-//    fprintf(stderr, "about to open file %s...", name);
-    if ((flags & O_RDONLY) != 0) {
-    	fil = fopen(name,"rb");
-    } else {
-    	fil = fopen(name, "wb");
-    }
-//    fprintf(stderr, "returned %d\n", (int)fil);
-    if (fil == NULL)
-        return -1; // ERROR, stdio_ERROR
-    return (int)fil;	
-}
-
-static int prev_putc = '\0';
-void M2putc(int c, FILE *fil)
-{
-  if (c == '\r') {
-    if (prev_putc != '\n') 
-      putc('\n',fil);
-  } else 
-    putc(c,fil);
-  prev_putc = c;
-}
-
-int M2read(int fd, char *buffer, int len)
-{
-    char * result;
-    switch (fd) {
-    case 0:
-    	result = fgets(buffer, len, stdin);
-    	return strlen(result);
-    case 1:
-    	return fread(buffer, 1, len, stdout);
-    case 2:
-    	return fread(buffer, 1, len, stderr);
-    default:
-        return fread(buffer, 1, len, (FILE *)fd);
-    }
-}
-int M2write(int fd, char *buffer, int len)
-{
-    int i, ret;
-    switch (fd) {
-    case 0:
-    	fprintf(stderr, "error: attempt to write to stdin\n");
-    	return fwrite(buffer, 1, len, stdin);
-    case 1:
-//    	return fprintf(stdout, buffer);
-	//for (i=0; i<len; i++) M2putc(buffer[i], stdout);
-	//return len;
-	for (i=0; i<len; i++) 
-	  if (buffer[i] == '\r') 
-	    buffer[i] = '\n';
-    	ret = fwrite(buffer, 1, len, stdout);
-    	return ret;
-    case 2:
-//  	return fprintf(stderr, buffer);
-	//for (i=0; i<len; i++) M2putc(buffer[i], stderr);
-	//return len;
-	for (i=0; i<len; i++) 
-	  if (buffer[i] == '\r') 
-	    buffer[i] = '\n'; 
-    	ret = fwrite(buffer, 1, len, stderr);
-    	return ret;
-    default:
-        return fwrite(buffer, 1, len, (FILE *)fd);
-    }
-}
-int M2close(int fd)
-{
-    if (fd >= 0 && fd <= 2) return 0;
-    return fclose((FILE *)fd);
-}
-
-int M2lseek(int fd, long offset, int whence)
-{
-    int ret = fseek((FILE *)fd, offset, whence);
-    if (ret == -1) return -1;
-    return ftell((FILE *)fd);
-}
-
-#endif
-
-#if 0
-#if defined(HAVE_WORDEXP) && defined(HAVE_WORDEXP_H)
-#include <wordexp.h>		/* gnu c library word expansion */
-#endif
-
-M2_stringarray system_wordexp(M2_string s) {
-#if defined(HAVE_WORDEXP) && defined(HAVE_WORDEXP_H)
-  wordexp_t buf;
-  M2_stringarray val ;
-  char *words = tocharstar(s);
-  int ret = wordexp(words,&buf,WRDE_SHOWERR); /* warning : can execute commands, but there is a flag to prevent it */
-  GC_FREE(words);
-  if (ret != 0) return NULL;
-  val = tostrings(buf.we_wordc,buf.we_wordv);
-  wordfree(&buf);
-  return val;
-#else
-  fprintf(stderr,"warning: wordexp() not installed on your system\n");
-  return NULL;
-#endif
-}
-#endif
 
 int system_strncmp(M2_string s,M2_string t,int n) {
   return strncmp(s->array,t->array,n);
