@@ -2,6 +2,12 @@
 include ../../include/config.Makefile
 VPATH = @srcdir@
 
+ifeq ($(DUMPDATA),yes)
+DUMPOPT = -DDUMPDATA=1
+DUMPDATALIB = ../dumpdata/libdump.a
+DUMPDATALIBOPT = -ldump
+endif
+
 all:: probe.out test-probe
 extra:: probe-gdb.out probe-compare
 ARGS = abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz b c d
@@ -25,8 +31,8 @@ probe-nash-gdb.out : probe probe.gdb
 ############################## probe memory for dumpdata experiments
 probe.o : probe.c probe.h
 	$(CC) -c -g -I../../include $< $(OUTPUT_OPTION)
-probe : probe.o ../dumpdata/libdump.a
-	$(CC) -g -L../dumpdata $< -ldump $(OUTPUT_OPTION)
+probe : probe.o $(DUMPDATALIB)
+	$(CC) $(DUMPOPT) -g -L../dumpdata $< $(DUMPDATALIBOPT) $(OUTPUT_OPTION)
 probe.h :
 	echo "/* insert temporary fixes here */" >$@
 test-probe : addresses

@@ -1,16 +1,3 @@
-#include "probe.h"
-#include "../dumpdata/printmaps.h"
-
-char *a_string = "this is a read-only string";
-int j;
-#if defined(__APPLE__) && defined(__MACH__) && defined(__POWERPC__)
-#else
-extern edata;
-extern etext;
-extern end;
-#endif
-extern __bss_start__, __bss_end__;
-extern __data_start__, __data_end__;
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -20,6 +7,26 @@ extern __data_start__, __data_end__;
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <string.h>
+
+#include "probe.h"
+#if DUMPDATA
+#include "../dumpdata/printmaps.h"
+#endif
+
+char *a_string = "this is a read-only string";
+int j;
+
+#define PFMT "%010p"
+
+#pragma weak __bss_end__
+#pragma weak __bss_start__
+#pragma weak __data_end__
+#pragma weak __data_start__
+#pragma weak edata
+#pragma weak end
+#pragma weak etext
+extern __bss_end__, __bss_start__, __data_end__, __data_start__, edata, end, etext;
 
 #define PAGESIZE (4*1024)
 
@@ -29,34 +36,6 @@ extern __data_start__, __data_end__;
 
 #ifndef FALSE
 #define FALSE 0
-#endif
-
-#ifdef __DJGPP__
-#include "../msdos/std.h"
-#endif
-
-int printf(const char *,...);
-
-#ifdef __MWERKS__
-#include <Processes.h>
-#include <Resources.h>
-#include <Memory.h>
-#include <LowMem.h>
-typedef struct {
-	unsigned long aboveA5;
-	unsigned long belowA5;
-	unsigned long JTSize;
-	unsigned long JTOffset;
-} *CodeZeroPtr, **CodeZeroHandle;
-#endif
-
-#if !defined(__MWERKS__)
-#define HAVE_SBRK 1
-#if defined(__APPLE__) && defined(__MACH__) && defined(__POWERPC__)
-/* sbrk is already defined in unistd.h */
-#else
-void *sbrk(int);
-#endif
 #endif
 
 static int sig = -1;
@@ -75,111 +54,66 @@ extern char **environ;
 int main(int argc, char **argv, char **envp){
      int i1;
      FILE *mapfile;
-     char mapfilename[100];
      char c1;
      int i;
      char **pp;
      char c, *p, readable=FALSE, writable=FALSE;
-#ifdef __MWERKS__
-     CodeZeroHandle c;
-#endif
-#ifdef HAVE_SBRK
      char *membrk;
-#endif
      char *x = malloc(PAGESIZE);
      char *y = malloc(PAGESIZE);
+#if 0
      void (*oldhandler)(int) = signal(SIGSEGV,handler);
 #ifdef SIGBUS
      void (*oldhandler2)(int) = signal(SIGBUS,handler2);
 #endif
+#endif
      char c2;
      int i2;
-#ifdef HAVE_SBRK
      membrk = sbrk(0);
-#endif
-#ifdef __MWERKS__
-     /* Metrowerks Code Warrior */
-     printf("%08p   SystemZone()\n",(int)SystemZone());
-     printf("%08p   SystemZone()->bkLim\n",(int)SystemZone()->bkLim);
-     printf("%08p   GetZone()\n",(int)GetZone());
-     printf("%08p   ApplicZone()\n",(int)ApplicZone());
-     printf("%08p   ApplicZone()->bkLim\n",(int)ApplicZone()->bkLim);
-     printf("%08p   LMGetCurStackBase()\n",(int)LMGetCurStackBase());
-     printf("%08p   LMGetMemTop()\n",(int)LMGetMemTop());
-     printf("%08p   LMGetCurrentA5()\n",(int)LMGetCurrentA5());
-     c = (CodeZeroHandle)GetResource('CODE', 0);
-     if (c != NULL) {
-     	  printf("%08p   data start = LMGetCurrentA5()-belowA5Size\n",
-	       (int)(LMGetCurrentA5()-belowA5Size));
-     	  ReleaseResource((Handle)c);
-	  }
-     printf("%08p   TopMem()\n",(int)TopMem());
-     printf("%08p   MFTopMem()\n",(int)MFTopMem());
-     printf("%08p   GetApplLimit()\n",(int)GetApplLimit());
-#endif
-     printf("%08p   function\n",(int)&main);
-     printf("%08p   string\n",(int)a_string);
-#if defined(__APPLE__) && defined(__MACH__) && defined(__POWERPC__)
-#else
-#if defined(__CYGWIN__)
-#else
-     printf("%08p   edata\n",(int)&edata);
-     printf("%08p   etext\n",(int)&etext);
-#endif
-     printf("%08p   end\n",(int)&end);
-#endif
-     printf("%08p   &malloc()\n",(int) &malloc);
-     printf("%08p   &write()\n",(int) &write);
-     printf("%08p   static variable, initialized\n",(int) &a_string);
-     printf("%08p   static memory, three pages, uninitialized\n",(int) &statmem);
-     printf("%08p   static variable, uninitialized\n",(int) &an_int);
-     printf("%08p   mallocated page 1\n",(int)x);
-     printf("%08p   mallocated page 2\n",(int)y);
-#ifdef HAVE_SBRK
-     printf("%08p   memory break\n",(int)membrk);
-#endif
-     printf("%08p   variable on stack (&c1)\n",(int)&c1);
-     printf("%08p   variable on stack (&c2)\n",(int)&c2);
-     printf("%08p   variable on stack (&i1)\n",(int)&i1);
-     printf("%08p   variable on stack (&i2)\n",(int)&i2);
-     printf("%08p   variable on stack (&argc)\n",(int)&argc);
-     printf("%08p   variable on stack (&argv)\n",(int)&argv);
-     printf("%08p   variable on stack (&envp)\n",(int)&envp);
-#ifdef __DJGPP__
-     {
-     extern char *__dos_argv0; 
-     extern char *__djgpp_stackbottom;
-     printf("%08p   bottom of stack (highest address)\n", (int)__djgpp_stackbottom);
-     printf("%08p   __dos_argv0\n",(int)__dos_argv0);
-     }
-#endif
-     printf("%08p   argv\n",(int)argv);
-     for (i=0,pp=argv; *pp; i++,pp++) printf("%08p   argv[%d] : %s\n",(int)*pp,i,*pp);
-     printf("%08p   null pointer at end of argv\n",(int)pp);
-#if !defined(__MWERKS__)
-     printf("%08p   envp\n",(int)envp);
-     printf("%08p   environ\n",(int)environ);
-     for (i=0,pp=envp; *pp; i++,pp++) printf("%08p   envp[%d] : %s\n",(int)*pp,i,*pp);
-     printf("%08p   null pointer at end of envp\n",(int)pp);
+     printf(PFMT "   function\n",&main);
+     printf(PFMT "   string\n",a_string);
+     printf(PFMT "   edata\n",&edata);
+     printf(PFMT "   etext\n",&etext);
+     printf(PFMT "   end\n",&end);
+     printf(PFMT "   &malloc()\n",&malloc);
+     printf(PFMT "   &write()\n",&write);
+     printf(PFMT "   static variable, initialized\n",&a_string);
+     printf(PFMT "   static memory, three pages, uninitialized\n",&statmem);
+     printf(PFMT "   static variable, uninitialized\n",&an_int);
+     printf(PFMT "   mallocated page 1\n",x);
+     printf(PFMT "   mallocated page 2\n",y);
+     printf(PFMT "   memory break\n",membrk);
+     printf(PFMT "   variable on stack (&c1)\n",&c1);
+     printf(PFMT "   variable on stack (&c2)\n",&c2);
+     printf(PFMT "   variable on stack (&i1)\n",&i1);
+     printf(PFMT "   variable on stack (&i2)\n",&i2);
+     printf(PFMT "   variable on stack (&argc)\n",&argc);
+     printf(PFMT "   variable on stack (&argv)\n",&argv);
+     printf(PFMT "   variable on stack (&envp)\n",&envp);
+     printf(PFMT "   argv\n",argv);
+     for (i=0,pp=argv; *pp; i++,pp++) printf(PFMT "   argv[%d] : %s\n",*pp,i,*pp);
+     printf(PFMT "   null pointer at end of argv\n",pp);
+     printf(PFMT "   envp\n",envp);
+     printf(PFMT "   environ\n",environ);
+     for (i=0,pp=envp; *pp; i++,pp++) printf(PFMT "   envp[%d] : %s\n",*pp,i,*pp);
+     printf(PFMT "   null pointer at end of envp\n",pp);
      if (envp[0] != 0) {
 	  int last;
 	  char *x;
 	  long b;
 	  int *y;
-     	  printf("%08p   envp[0]+strlen(envp[0])+1\n",(int)(envp[0]+strlen(envp[0]) + 1));
+     	  printf(PFMT "   envp[0]+strlen(envp[0])+1\n",(envp[0]+strlen(envp[0]) + 1));
      	  last = strarrlen(envp)-1;
 	  x = envp[last]+strlen(envp[last]) + 1;
-     	  printf("%08p   envp[%d]+strlen(envp[%d])+1 : %s\n",(int)x,last,last,x);
+     	  printf(PFMT "   envp[%d]+strlen(envp[%d])+1 : %s\n",x,last,last,x);
 	  b = (long)x + strlen(x) + 1;
 	  if (b % 8 == 0) {
 	    y = (int *)b;
-	    printf("%08p   %08p\n",(int)y,*y);
+	    printf(PFMT "   %p\n",y,*y);
 	  }
      }
-#endif
 
-     sprintf(mapfilename,"/proc/%d/maps",getpid());
-     mapfile = fopen(mapfilename,"r");
+     mapfile = fopen("/proc/self/maps","r");
      if (mapfile != NULL) {
        while (TRUE) {
 	 int c = getc(mapfile);
@@ -190,22 +124,11 @@ int main(int argc, char **argv, char **envp){
      }
 
      fflush(stdout);
-#if defined(__APPLE__) && defined(__MACH__) && defined(__POWERPC__)
-#else
+#if DUMPDATA
      printmaps(1);
 #endif
-
-#if 0
-     /* debugging maps */
-     { 
-       int fd = open("ld-2.2.5.so-map-1",O_CREAT|O_WRONLY,0755); 
-       write(fd,(void *)0x40000000,0x14000); 
-     }
-     /* -------------- */
-#endif
-
      fflush(stdout);
-#if !defined(__MWERKS__)
+#if 0
      for (p=0; p<membrk; p+=PAGESIZE) {
 	  int oldsig = sig, oldreadable = readable, oldwritable = writable;
      	  signal(SIGSEGV,handler);
@@ -231,18 +154,9 @@ int main(int argc, char **argv, char **envp){
 	       writable = readable = FALSE;
 	       }
 	  if (oldsig != sig || oldreadable != readable || oldwritable != writable) {
-	       printf("%08p . %s%s%s\n",
-	       	    (int)p,
-	       	    readable ? "r" : "-", 
-	       	    writable ? "w" : "-",
-	       	    sig == 1 ? "  SEGV" : sig == 2 ? "  BUS" : ""
-	       	    );
+	       printf(PFMT " . %s%s%s\n", p, readable ? "r" : "-", writable ? "w" : "-", sig == 1 ? "  SEGV" : sig == 2 ? "  BUS" : "" );
 	       }
 	  }
-#endif
-     signal(SIGSEGV,oldhandler);
-#ifdef SIGBUS
-     signal(SIGBUS,oldhandler2);
 #endif
      return 0;
      }
