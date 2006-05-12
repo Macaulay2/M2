@@ -11,7 +11,6 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <sys/signal.h>
 #include <sys/fault.h>
 #include <sys/syscall.h>
 #include <sys/procfs.h>
