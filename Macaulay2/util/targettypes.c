@@ -47,5 +47,6 @@ int main() {
   case 8: printf("typedef int64 intp;\n"); break;
   }
   printf("#define LittleEndFirst %d\n", *(char *)&x == 1);
+  printf("#define SIZEOF_POINTER %d\n", sizeof(char *));
   return 0;
 }
