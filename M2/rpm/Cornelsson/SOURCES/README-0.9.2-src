@@ -1,9 +1,0 @@
-You may get an error message about ignore_this_symbol being an undefined
-symbol when compiling version 0.9.2.  If so, replace the line
-
-#include <vector.h> // just to get swap(), which is included from algobase.h by vector.h, gcc 3.0
-
-in Macaulay2/e/style.hpp with these lines:
-
-#include <algorithm>
-using namespace std;
