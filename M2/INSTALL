@@ -1,3 +1,5 @@
+-*- text -*-
+
 			   Macaulay 2
 	    by Daniel R. Grayson <dan@math.uiuc.edu>
 	 and Michael E. Stillman <mike@math.cornell.edu>
@@ -427,3 +429,47 @@ DEC Alpha notes
 
 Use gcc 3.0 for best results.  If the compiler crashes on one of the files in
 Macaulay2/e, compile that one file without --fexpensive-optimizations -O3 .
+
+----------------------
+dumpdata/loaddata notes
+----------------------
+
+After the Macaulay 2 executable, "M2", starts running, it reads and interprets
+about 20000 lines of code in the Macaulay 2 language.  This can take several
+seconds, even on fast machines, so we have invented a simple system to speed it
+up.  The command line option "--dumpdata" tells M2 to dump exact copies of all
+of the writable memory areas, except for the stack, to disk, in a format so it
+can be read in again later, very quickly, by a function called "loaddata".
+That memory contains the result of reading and interpreting all the source
+code, saving time.
+
+On some systems, dumpdata will not work, and has not been compiled into "M2".
+For example, on MACH systems such as Mac OS X, discovering where the writable
+data areas of memory are and restoring them is hard.  Examine "version" in "M2"
+to see whether dumpdata is enabled.
+
+On some Linux systems produced by Red Hat, there is a security feature called
+Exec-Shield, one feature of which is to arrange that shared libraries are
+mapped into random areas of memory.  That defeats "loaddata", which expects to
+find memory areas in the same place as they were when "dumpdata" dumped them
+during a previous invocation of "M2".  A warning message is issued and "M2"
+proceeds to read and interpret the source code.
+
+We've inserted a special work-around into "M2": upon startup it checks the
+current personality setting, resetting it from 0 (PER_LINUX) to 8 (PER_LINUX32)
+if necessary, and then re-executing the program.  That hack can be defeated
+with the "--no-personality" option to "M2".  If that hack doesn't work, to work
+around Exec-Shield, instead of running "M2", you may try
+
+   setarch i386 M2
+
+or 
+
+   setarch -R M2
+
+Experiment to see which one will work for you, as the development of "setarch"
+seems to have proceeded in stages.  If one of them works, you may prefer to run
+"setarch" on your shell, your text-editor, or your command window program, as
+the personality is inherited by child processes, and you may save "M2" a little
+time at startup.
+
