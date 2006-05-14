@@ -73,7 +73,6 @@ extern "C" {
 #define sizeofarray(s,len) (sizeof(*s) - sizeof(s->array) + (len)*sizeof(s->array[0]))
 
 #include <gc.h>
-#include "memdebug.h"
 extern void dummy_GC_warn_proc(char *, GC_word);
 
 #endif

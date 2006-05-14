@@ -4,7 +4,6 @@
 // get declarations of outofmem and getmem
 #include "../d/M2mem.h"
 #include <gc.h>
-#include "../d/memdebug.h"
 #include "../d/debug.h"
 
 // this replaces all uses of the construction "new T[n]":
