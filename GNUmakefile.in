@@ -2,7 +2,10 @@
 include include/config.Makefile
 VPATH = @srcdir@
 
-.PRECIOUS test-configuration install install-strip all clean distclean:: @srcdir@/configure config.status
+.PRECIOUS: @srcdir@/configure config.status
+.PHONY: install install-strip all clean distclean reconfigure configure-help
+
+CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
 
 GNUmakefile : GNUmakefile.in; ./config.status GNUmakefile
 
@@ -46,10 +49,10 @@ config.status : @srcdir@/configure
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1
-reconfigure: @srcdir@/configure
+reconfigure: $(CONFIG_FILES)
 	./config.status --recheck
 	./config.status
-configure-help:
+configure-help: $(CONFIG_FILES)
 	@ @srcdir@/configure --help
 
 # announcement only:
