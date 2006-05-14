@@ -13,7 +13,7 @@ include/config.h.in.stamp : configure.ac # aclocal.m4
 	touch "$@"
 
 monitor:
-	[ -f include/config.h.in ] || rm -f include/config.h.in.stamp
+	@[ -f include/config.h.in ] || (set -x ; rm -f include/config.h.in.stamp)
 
 # Local Variables:
 # mode: Makefile
