@@ -54,9 +54,9 @@ fi
 
 AC_ARG_VAR(CFLAGS,[C compiler flags, default: -g -O2])
 
-AC_ARG_VAR(LOADLIBES,[first path for linker to search for libraries])
+AC_ARG_VAR(LOADLIBES,[first list of libraries to link against])
 test "$LOADLIBES"  && echo "   LOADLIBES=$LOADLIBES"
-AC_ARG_VAR(LDLIBS,[second path for linker to search for libraries])
+AC_ARG_VAR(LDLIBS,[second list of libraries to link against])
 test "$LDLIBS"     && echo "   LDLIBS=$LDLIBS"
 AC_ARG_VAR(LIBS,[path for linker to search for libraries during configuration])
 test "$LIBS"     && echo "   LIBS=$LIBS"
