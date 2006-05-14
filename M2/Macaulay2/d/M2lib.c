@@ -248,11 +248,6 @@ extern char **__environ;
 extern char timestamp[];
 static void clean_up();
 
-extern void nop(void *p);		/* used below to keep variables out of registers */
-
-#define NOTHING(p) nop((void *)p)
-#define ONSTACK(p) nop((void *)&p)
-
 void dummy_GC_warn_proc(char *msg, GC_word arg) { }
 
 #define stringify(x) #x
@@ -268,7 +263,7 @@ extern void init_readline_variables();
 extern char *GC_stackbottom;
 extern void arginits(int, char **);
 
-extern bool gotArg(char *arg, char **argv);
+extern bool gotArg(char *arg, char ** volatile argv);
 
 #include <readline/readline.h>
 
@@ -279,11 +274,11 @@ char **argv;
      char READLINEVERSION[8];	/* big enough for "255.255" */
      char dummy;
      int returncode = 0;
-     int envc = 0;
+     int volatile envc = 0;
      static int old_collections = 0;
 #if DUMPDATA
-     char **saveenvp = NULL;
-     char **saveargv;
+     char ** volatile saveenvp = NULL;
+     char ** volatile saveargv;
 #else
 #define saveenvp __environ
 #define saveargv argv
@@ -302,8 +297,6 @@ char **argv;
      }
 #endif
 #endif
-
-     ONSTACK(saveenvp);
 
 #if defined(_WIN32)
      if (argv[0][0]=='/' && argv[0][1]=='/' && argv[0][3]=='/') {
@@ -335,8 +328,6 @@ char **argv;
 	  int i;
 	  char **x;
 
-	  ONSTACK(saveargv);
-
 	  /* save arguments on stack in case they're on the heap */
 	  saveargv = (char **)alloca((argc + 1)*sizeof(char *));
 	  for (i=0; i<argc; i++) {
@@ -356,7 +347,6 @@ char **argv;
      }
 #endif
 
-     ONSTACK(envc);
      if (0 != sigsetjmp(loaddata_jump,TRUE)) {
      	  GC_free_space_divisor = 4;
 	  if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
