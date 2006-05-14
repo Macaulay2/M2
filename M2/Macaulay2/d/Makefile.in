@@ -50,7 +50,7 @@ M2_OBJECTS += debug.o
 endif
 
 OPTCFILES += M2inits1.cc M2inits2.cc factory_init1.cc factory_init2.cc
-CFILES += M2inits.c M2types.c M2mem.c scclib.c M2lib.c gmp_aux.c memdebug.c gdbm_interface.c gmp_memory.c
+CFILES += M2inits.c M2types.c M2mem.c scclib.c M2lib.c gmp_aux.c gdbm_interface.c gmp_memory.c
 CFILES += factory_allocator.c main.c
 SRCFILES += $(OPTCFILES) $(CFILES)
 M2_OBJECTS += $(CFILES:.c=.o)
@@ -72,7 +72,7 @@ SRCFILES += $(CCFILES)
 
 ## *.h files
 
-HFILES := M2types.h getpagesize.h memdebug.h types.h M2inits.h M2mem.h debug.h M2mem2.h
+HFILES := M2types.h getpagesize.h types.h M2inits.h M2mem.h debug.h M2mem2.h
 SRCFILES += $(HFILES)
 
 ## *.d files
@@ -198,9 +198,8 @@ compat.c compat.h : configure ../../include/config.h
 	FLAGS="$(M2_LDFLAGS) $(M2_LOADLIBES) $(M2_LDLIBS)" @srcdir@/configure
 
 M2types.o : M2types.h
-M2lib.o scclib.o : compat.h ../c/compat.h ../c/compat.c types.h memdebug.h
+M2lib.o scclib.o : compat.h ../c/compat.h ../c/compat.c types.h
 gmp_int.o M2lib.o scclib.o gdbm_interface.o gc_cpp.o version.o M2inits.o debug.o : ../../include/config.h
-memdebug.o scclib.o actors5.o : memdebug.h
 
 clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'

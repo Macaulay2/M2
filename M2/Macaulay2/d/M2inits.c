@@ -9,7 +9,6 @@
 #include "M2types.h"
 #include "M2inits.h"
 #include "M2mem.h"
-#include "memdebug.h"
 #include "debug.h"
 #include "gmp_init.h"
 #define TRUE 1
@@ -25,7 +24,7 @@ static void init_gc(void) {
      extern char *get_etext(), *get_end();
      GC_add_roots(get_etext(),get_end());
 #endif
-     GC_all_interior_pointers = TRUE; /* especially important if MEMDEBUG is on, call first; gc is compiled by default with this on */
+     GC_all_interior_pointers = TRUE; /* gc is now compiled by default with this on */
 #if 0 /* commented out, because we haven't tested this value lately */
      GC_free_space_divisor = 2;
 #endif

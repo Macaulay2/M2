@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <gc.h>
-#include "memdebug.h"
 #include "config.h"
 #include "debug.h"
 #include <gmp.h>
