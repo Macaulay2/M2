@@ -21,7 +21,8 @@ static void uniq(void *p, ...) {
 static void *x[100];
 
 int main() {
-  int i=0;
+  int i;
+
   msg = "%s:%d: error: gc library doesn't find all the active pointers in registers or on the stack!\n"
         "           Perhaps GC_push_regs was configured incorrectly.\n";
   uniq(
@@ -31,15 +32,14 @@ int main() {
        GC_malloc(12), GC_malloc(12), GC_malloc(12), (GC_gcollect(),GC_malloc(12)),
        GC_malloc(12), GC_malloc(12), GC_malloc(12), (GC_gcollect(),GC_malloc(12)),
        (void *)0);
+
   msg = "%s:%d: error: gc library doesn't find all the active pointers in static memory!\n"
         "           Perhaps GC_add_roots needs to be told about static memory.\n";
-  uniq(
-       x[i++] = GC_malloc(12), x[i++] = GC_malloc(12), x[i++] = GC_malloc(12), (GC_gcollect(),x[i++] = GC_malloc(12)),
-       x[i++] = GC_malloc(12), x[i++] = GC_malloc(12), x[i++] = GC_malloc(12), (GC_gcollect(),x[i++] = GC_malloc(12)),
-       x[i++] = GC_malloc(12), x[i++] = GC_malloc(12), x[i++] = GC_malloc(12), (GC_gcollect(),x[i++] = GC_malloc(12)),
-       x[i++] = GC_malloc(12), x[i++] = GC_malloc(12), x[i++] = GC_malloc(12), (GC_gcollect(),x[i++] = GC_malloc(12)),
-       x[i++] = GC_malloc(12), x[i++] = GC_malloc(12), x[i++] = GC_malloc(12), (GC_gcollect(),x[i++] = GC_malloc(12)),
-       (void *)0);
+  for (i=0; i<20; i++) {
+       if (i%4 == 3) GC_gcollect();
+       x[i] = GC_malloc(12);
+  }
+  uniq(x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17],x[18],x[19], (void *)0);
   return had_error;
 }
 
