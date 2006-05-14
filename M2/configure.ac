@@ -108,14 +108,8 @@ AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s])
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_HOST()
 AC_VALIDATE_CACHED_SYSTEM_TUPLE()
-
-# ARCH=$host_cpu
-# AC_SUBST(ARCH)
-# AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
-
 AC_ARG_VAR(CC,C compiler to use)
 AC_ARG_VAR(CXX,C++ compiler to use)
-
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_AWK()
@@ -145,49 +139,29 @@ then AC_MSG_RESULT(yes); rm -f unwindtest-*
 else AC_MSG_RESULT(no);  AC_MSG_ERROR([failure: linking C++ program with $CC, see file unwindtest-log.])
 fi
 
+AC_HEADER_TIME() dnl # time.h sys/time.h
+AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h sys/wait.h sys/resource.h io.h linux/personality.h)
+AC_CHECK_FUNCS([personality sys_errlist herror error socket gnu_get_libc_version __environ _environ environ _setmode])
+AC_CHECK_DECLS(PER_LINUX,,,[#include <linux/personality.h>])
+AC_CHECK_DECLS([sys_errlist,sys_nerr,herror,gnu_get_libc_version])
 AC_FUNC_ALLOCA()
 
-AC_SUBST(DUMPDATA)
-AC_ARG_ENABLE(dumpdata,AC_HELP_STRING([--disable-dumpdata],[do not cache data with dumpdata]),DUMPDATA="$enableval", DUMPDATA=yes)
-test "$DUMPDATA" = no; val=$?
-AC_DEFINE_UNQUOTED(DUMPDATA,$val,whether to use dumpdata)
+AC_SUBST(STRIP)     AC_ARG_ENABLE(strip, AC_HELP_STRING(--disable-strip,do not strip the Macaulay 2 binary), STRIP="$enableval", STRIP=yes)
+AC_SUBST(VERBOSE)   AC_ARG_ENABLE(verbose, AC_HELP_STRING(--enable-verbose,enable verbose memory allocation), VERBOSE="$enableval", VERBOSE=no)
+AC_SUBST(STATIC)    AC_ARG_ENABLE(static, AC_HELP_STRING(--enable-static,enable static linking), STATIC="$enableval", STATIC=no)
+AC_SUBST(MEMDEBUG)  AC_ARG_ENABLE(memdebug, AC_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG="$enableval", MEMDEBUG=no)
+AC_SUBST(OPTIMIZE)  AC_ARG_ENABLE(optimize, AC_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE="$enableval", OPTIMIZE=yes)
+AC_SUBST(DEBUG)     AC_ARG_ENABLE(debug, AC_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG="$enableval", DEBUG=no)
+AC_SUBST(ENCAP)     AC_ARG_ENABLE(encap, AC_HELP_STRING(--enable-encap,create an encap package), ENCAP="$enableval", ENCAP=no)
+AC_SUBST(XCODE)     AC_ARG_ENABLE(xcode, AC_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE="$enableval", XCODE="no" )
+AC_SUBST(ALTIVEC)   AC_ARG_ENABLE(altivec, AC_HELP_STRING(--enable-altivec,compile with "-faltivec" option), ALTIVEC="$enableval", ALTIVEC="no" )
+AC_SUBST(DUMPDATA)  AC_ARG_ENABLE(dumpdata,AC_HELP_STRING([--disable-dumpdata],[do not cache data with dumpdata]),DUMPDATA="$enableval", DUMPDATA=yes)
+AC_SUBST(PROFILING) AC_ARG_ENABLE(profile, AC_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING="$enableval", PROFILING=no)
+AC_SUBST(FACTORY)   AC_ARG_ENABLE(factory, AC_HELP_STRING(--disable-factory,disable the use of the 'factory' library), FACTORY="$enableval",FACTORY=yes)
 
-AC_SUBST(PROFILING)
-AC_ARG_ENABLE(profile, AC_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING="$enableval", PROFILING=no)
-test "$PROFILING" = no; val=$?
-AC_DEFINE_UNQUOTED(PROFILING,$val,[whether profiling has been enabled])
-
-AC_SUBST(FACTORY)
-AC_ARG_ENABLE(factory, AC_HELP_STRING(--disable-factory,disable the use of the 'factory' library), FACTORY="$enableval",FACTORY=yes)
-test "$FACTORY" = no; val=$?
-AC_DEFINE_UNQUOTED(FACTORY,$val,whether to use the 'factory' library)
-
-AC_SUBST(STRIP)
-AC_ARG_ENABLE(strip, AC_HELP_STRING(--disable-strip,do not strip the Macaulay 2 binary), STRIP="$enableval", STRIP=yes)
-
-AC_SUBST(VERBOSE)
-AC_ARG_ENABLE(verbose, AC_HELP_STRING(--enable-verbose,enable verbose memory allocation), VERBOSE="$enableval", VERBOSE=no)
-
-AC_SUBST(STATIC)
-AC_ARG_ENABLE(static, AC_HELP_STRING(--enable-static,enable static linking), STATIC="$enableval", STATIC=no)
-
-AC_SUBST(MEMDEBUG)
-AC_ARG_ENABLE(memdebug, AC_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG="$enableval", MEMDEBUG=no)
-
-AC_SUBST(OPTIMIZE)
-AC_ARG_ENABLE(optimize, AC_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE="$enableval", OPTIMIZE=yes)
-
-AC_SUBST(DEBUG)
-AC_ARG_ENABLE(debug, AC_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG="$enableval", DEBUG=no)
-
-AC_SUBST(ENCAP)
-AC_ARG_ENABLE(encap, AC_HELP_STRING(--enable-encap,create an encap package), ENCAP="$enableval", ENCAP=no)
-
-AC_SUBST(XCODE)
-AC_ARG_ENABLE(xcode, AC_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE="$enableval", XCODE="no" )
-
-AC_SUBST(ALTIVEC)
-AC_ARG_ENABLE(altivec, AC_HELP_STRING(--enable-altivec,compile with "-faltivec" option), ALTIVEC="$enableval", ALTIVEC="no" )
+test "$DUMPDATA" = no; val=$?;  AC_DEFINE_UNQUOTED(DUMPDATA, $val,[whether to use dumpdata])
+test "$PROFILING" = no; val=$?; AC_DEFINE_UNQUOTED(PROFILING,$val,[whether profiling has been enabled])
+test "$FACTORY" = no; val=$?;   AC_DEFINE_UNQUOTED(FACTORY,  $val,[whether to use the factory library])
 
 WITH_NEWLINE_CR=0
 WITH_NEWLINE_CRLF=0
@@ -353,12 +327,6 @@ then AC_MSG_CHECKING([whether lapack library is installed])
 fi
 
 LIBS="$SAVELIBS"
-
-AC_HEADER_TIME() dnl # time.h sys/time.h
-AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h sys/wait.h sys/resource.h io.h linux/personality.h)
-AC_CHECK_FUNCS([personality sys_errlist herror error socket gnu_get_libc_version __environ _environ environ _setmode])
-AC_CHECK_DECLS(PER_LINUX,,,[#include <linux/personality.h>])
-AC_CHECK_DECLS([sys_errlist,sys_nerr,herror,gnu_get_libc_version])
 
 dnl SHOW_CONFDEFS()
 
