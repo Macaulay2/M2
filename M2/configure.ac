@@ -13,6 +13,9 @@ do case "$i" in
 done
 CONFIG_CMD="$CONFIG_ARG0 $CONFIG_ARGS"
 echo "# invocation: $CONFIG_CMD" >&5
+
+AC_CONFIG_HEADERS(include/config.h)
+
 AC_SUBST(CONFIG_ARG0)
 AC_SUBST(CONFIG_ARGS)
 AC_SUBST(CONFIG_CMD)
@@ -32,8 +35,7 @@ AC_DEFUN(SHOW_CONFDEFS,[
   sed -e '/^$/d' -e 's/^/   /' confdefs.h >&6
   ])
 
-AC_DEFUN(GET_CONFIGURED_FILES,patsubst(m4_include(config/files),[
-],[ ]))
+AC_CONFIG_FILES(m4_include(config/files))
 
 echo "any environment variables set:"
 test "$CC"         && echo "   CC=$CC"
@@ -163,6 +165,13 @@ test "$DUMPDATA" = no; val=$?;  AC_DEFINE_UNQUOTED(DUMPDATA, $val,[whether to us
 test "$PROFILING" = no; val=$?; AC_DEFINE_UNQUOTED(PROFILING,$val,[whether profiling has been enabled])
 test "$FACTORY" = no; val=$?;   AC_DEFINE_UNQUOTED(FACTORY,  $val,[whether to use the factory library])
 
+AC_SUBST(GDBMLIB)     AC_ARG_WITH(gdbmlib, AC_HELP_STRING(--with-gdbmlib=...,gdbm library (-lgdbm)), GDBMLIB="$withval", GDBMLIB="-lgdbm" )
+AC_SUBST(READLINELIB) AC_ARG_WITH(readlinelib, AC_HELP_STRING(--with-readlinelib=...,readline library (-lreadline)), READLINELIB="$withval", READLINELIB="-lreadline" )
+AC_SUBST(HISTORYLIB)  AC_ARG_WITH(historylib, AC_HELP_STRING(--with-historylib=...,history library (-lhistory)), HISTORYLIB="$withval", HISTORYLIB="-lhistory")
+AC_SUBST(M2SUFFIX)    AC_ARG_WITH(M2suffix, AC_HELP_STRING(--with-M2suffix=...,[suffix to append to executable name M2]), M2SUFFIX="$withval")
+
+AC_DEFINE_UNQUOTED(M2SUFFIX,"$M2SUFFIX",[suffix to append to executable name M2])
+
 WITH_NEWLINE_CR=0
 WITH_NEWLINE_CRLF=0
 AC_ARG_WITH(newline, AC_HELP_STRING([--with-newline=...], [crlf, cr, or lf (the default)]),
@@ -175,10 +184,6 @@ AC_ARG_WITH(newline, AC_HELP_STRING([--with-newline=...], [crlf, cr, or lf (the 
 AC_DEFINE_UNQUOTED(WITH_NEWLINE_CRLF,$WITH_NEWLINE_CRLF,[whether newline is cr lf])
 AC_DEFINE_UNQUOTED(WITH_NEWLINE_CR, $WITH_NEWLINE_CR,   [whether newline is cr])
 
-AC_SUBST(M2SUFFIX)
-AC_ARG_WITH(M2suffix, AC_HELP_STRING(--with-M2suffix=...,[suffix to append to executable name M2]), M2SUFFIX="$withval")
-AC_DEFINE_UNQUOTED(M2SUFFIX,"$M2SUFFIX",[suffix to append to executable name M2])
-
 AC_DEFINE_UNQUOTED(EXEEXT,"$EXEEXT",[suffix the compiler appends to executable filenames])
 
 AC_SUBST(LAPACKLIBS)
@@ -190,15 +195,6 @@ AC_SUBST(LAPACK)
 AC_ARG_ENABLE(lapack, AC_HELP_STRING(--disable-lapack,[disable linking with lapack]), LAPACK="$enableval";LAPACKLIBS="", LAPACK=yes)
 test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
-
-AC_SUBST(GDBMLIB)
-AC_ARG_WITH(gdbmlib, AC_HELP_STRING(--with-gdbmlib=...,gdbm library (-lgdbm)), GDBMLIB="$withval", GDBMLIB="-lgdbm" )
-
-AC_SUBST(READLINELIB)
-AC_ARG_WITH(readlinelib, AC_HELP_STRING(--with-readlinelib=...,readline library (-lreadline)), READLINELIB="$withval", READLINELIB="-lreadline" )
-
-AC_SUBST(HISTORYLIB)
-AC_ARG_WITH(historylib, AC_HELP_STRING(--with-historylib=...,history library (-lhistory)), HISTORYLIB="$withval", HISTORYLIB="-lhistory")
 
 SAVELIBS="$LIBS"
 
@@ -339,10 +335,9 @@ IS_DECLARED(char **,h_errlist, [
       #include <errno.h>
       ])
 
-AC_CONFIG_HEADER(include/config.h)
-CONFIGURED_FILES="GET_CONFIGURED_FILES()"
+CONFIGURED_FILES="$ac_config_files"
 AC_SUBST(CONFIGURED_FILES)
-AC_OUTPUT(GET_CONFIGURED_FILES())
+AC_OUTPUT()
 
 dnl # Local Variables:
 dnl # mode: sh
