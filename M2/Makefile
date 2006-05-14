@@ -1,4 +1,4 @@
-.PHONY : all
+.PHONY : all monitor
 
 all: configure monitor include/config.h.in.stamp
 	@echo 'Makefile: now run "configure" from a temporary build directory and start "make" there'
