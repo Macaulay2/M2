@@ -40,12 +40,12 @@ AC_CONFIG_FILES(m4_include(config/files))
 echo "any environment variables set:"
 test "$CC"         && echo "   CC=$CC"
 test "$CXX"        && echo "   CXX=$CXX"
-test "$CPPFLAGS"   && echo "   CPPFLAGS=$CPPFLAGS"
-dnl # autoconf default is: -g -O2
-test "$CFLAGS"     && echo "   CFLAGS=$CFLAGS"
-dnl # autoconf default is: -g -O2
+test "$CPPFLAGS"   && echo "   CPPFLAGS=$CPPFLAGS"                 dnl # autoconf default is: -g -O2
+test "$CFLAGS"     && echo "   CFLAGS=$CFLAGS"                     dnl # autoconf default is: -g -O2
 test "$CXXFLAGS"   && echo "   CXXFLAGS=$CXXFLAGS"
 test "$LDFLAGS"    && echo "   LDFLAGS=$LDFLAGS"
+test "$LOADLIBES"  && echo "   LOADLIBES=$LOADLIBES"
+test "$LDLIBS"     && echo "   LDLIBS=$LDLIBS"
 
 if test "$CXX" = gcc
 then echo oops, CXX=gcc, should use CXX=g++ >&2
@@ -53,13 +53,9 @@ then echo oops, CXX=gcc, should use CXX=g++ >&2
 fi
 
 AC_ARG_VAR(CFLAGS,[C compiler flags, default: -g -O2])
-
 AC_ARG_VAR(LOADLIBES,[first list of libraries to link against])
-test "$LOADLIBES"  && echo "   LOADLIBES=$LOADLIBES"
 AC_ARG_VAR(LDLIBS,[second list of libraries to link against])
-test "$LDLIBS"     && echo "   LDLIBS=$LDLIBS"
-AC_ARG_VAR(LIBS,[path for linker to search for libraries during configuration])
-test "$LIBS"     && echo "   LIBS=$LIBS"
+LIBS="$LOADLIBES $LDLIBS"
 
 # 5 compiler messages saved in config.log
 # 6 checking for... messages and results
@@ -132,10 +128,10 @@ cat >unwindtest-monomials.cpp <<EOF
 #include "unwindtest-monomials.hpp"
 Monomials::Monomials() {}
 EOF
-if   ( set -ex
-	$CXX -O3 -c -o unwindtest-main.o unwindtest-main.cpp
-	$CXX -O3 -c -o unwindtest-monomials.o unwindtest-monomials.cpp
-	$CC unwindtest-main.o unwindtest-monomials.o -lstdc++ -o unwindtest-main
+if   (  set -x
+	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-main.o unwindtest-main.cpp &&
+	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-monomials.o unwindtest-monomials.cpp &&
+	$CC $LDFLAGS unwindtest-main.o unwindtest-monomials.o $LOADLIBES $LDLIBS -lstdc++ -o unwindtest-main
      ) >unwindtest-log 2>&1
 then AC_MSG_RESULT(yes); rm -f unwindtest-*
 else AC_MSG_RESULT(no);  AC_MSG_ERROR([failure: linking C++ program with $CC, see file unwindtest-log.])
