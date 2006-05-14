@@ -6,7 +6,7 @@
 
 #if defined(_WIN32)
 #define NEWLINE "\r\n"
-#elif defined(__MWERKS__) && !defined(__BUILDING_MPW__)
+#elif defined(__MACINTOSH__)	/* is this obsolete??? */
 #define NEWLINE "\r"
 #else
 #define NEWLINE "\n"

@@ -20,7 +20,7 @@
 /* suffix the compiler appends to executable filenames */
 #undef EXEEXT
 
-/* whether to use the 'factory' library */
+/* whether to use the factory library */
 #undef FACTORY
 
 /* Define to 1 if you have `alloca', as a function or macro. */
