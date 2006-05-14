@@ -20,55 +20,41 @@ extern char errfmtnc[];
 
 #define GRAIN 8
 
-#define HAS_UNISTD_H
-#define HAS_OPEN_MODE
-#define HAS_SYSTYPES_H
-#define VA_START_HAS_TWO_ARGS
-
 #if defined(__ppc__) && defined(__MACH__)
 /* This is how we identify MacOS X, and Darwin */
 #define __DARWIN__ 1
 #endif
 
-#if defined(_WIN32) && !defined(__CYGWIN32__)
-#define __WIN32__
-/* This is for Microsoft's Visual C/C++ compiler, version 4, /Za */
-#include <direct.h>
-#include <io.h>
-#define getcwd _getcwd
-#define read _read
-#define open _open
-#define close _close
-#undef HAS_UNISTD_H
-#define alloca _alloca
-#define  O_BINARY _O_BINARY
-#define	 O_CREAT _O_CREAT
-#define	 O_WRONLY _O_WRONLY
-#define	 O_TRUNC _O_TRUNC
-#endif
-
-#ifdef MPWC
-/* This is for MPW's C compiler on the Macintosh, with compile time
-   switch "-model far". */
-#undef HAS_UNISTD_H
-#undef HAS_OPEN_MODE
-#undef HAS_SYSTYPES_H
-#define HAS_TYPES_H
-#endif
-
-#ifdef HAS_UNISTD_H
+#if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
-#if !defined(__MWERKS__)
+#if HAVE_SYSTYPES_H
 #include <sys/types.h>
+#endif
+
+#if HAVE_TYPES_H
+#include <types.h>
+#endif
+
+#if HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
 
+#if HAVE_STDLIB_H
 #include <stdlib.h>
+#endif
+
+#if HAVE_STRING_H
 #include <string.h>
+#endif
+
 #include <ctype.h>
+
+#if HAVE_MEMORY_H
 #include <memory.h>
+#endif
+
 #include <stdio.h>
 #include <fcntl.h>
 
@@ -78,73 +64,7 @@ extern char errfmtnc[];
 #include <varargs.h>
 #endif
 
-#if 0
-#ifdef HAS_SYSTYPES_H
-#include <sys/types.h>
-#endif
-
-#ifdef HAS_TYPES_H
-#include <types.h>
-#endif
-#endif
-
-#include <fcntl.h>
-
-#if defined(_WIN32) && !defined(__CYGWIN__)
-int write(int, char *, int);
-#endif
-
-#if 0
-int read(int, char *, int);
-int open(const char *, int, ...);
-#endif
-
-/* #ifdef __STDC__ */
-/* ifdef __STDC__ */
-/* the following doesn't compile on linux w/gcc-4.x, so 
-   maybe use some sun-specific define instead?  -- Rex
-*/
-#if 0
-int close(int);
-int fputs(const char *,FILE *); /* needed  for sunos 4.1 */
-int fprintf(FILE *,const char *,...); /* needed  for sunos 4.1 */
-int puts(const char *);		
-int vfprintf(FILE *,const char *,va_list);/* needed  for sunos 4.1 */
-int fflush(FILE *);/* needed  for sunos 4.1 */
-#if !defined(__alpha) && !defined(_WIN32)
-int _flsbuf(unsigned int, FILE *);/* needed  for sunos 4.1 */
-#endif
-#ifndef printf
-int printf(const char *,...);
-#endif
-#endif
-
-#if 0
-int stat(const char *, struct stat *);
-char *index (char *, int);
-char *intToString(int);
-int vprintf(const char *,va_list);
-FILE *freopen(const char *,const char *, FILE *);
-int fscanf(FILE *, const char *,...);
-char *fgets(char *, int, FILE *);
-int fclose(FILE *);
-int sscanf(const char *, const char *, ...);
-void exit(int);
-#endif
-
-#if !defined(__DARWIN__)
-#define GaCo 1
-#else
-#define GaCo 0
-#endif
-
-#if GaCo
 #include <gc.h>
-#undef malloc
 #define malloc(n) GC_MALLOC(n)
-#define free(n) (void)0
-#endif
+#define free(n) GC_FREE(n)
 
-#ifndef O_RDONLY
-#define O_RDONLY 0
-#endif

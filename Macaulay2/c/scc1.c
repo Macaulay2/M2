@@ -179,7 +179,6 @@ extern char *get_end(), *get_etext();
 int main(int argc, char **argv){
      int i;
      char *p;
-     void *unused_pointer;
      struct test {char a;double b;};
      i = assert(0 == GRAIN % (sizeof(struct test) - sizeof(double)));
 #if defined(__APPLE__) && defined(__MACH__) && defined(__i386__)

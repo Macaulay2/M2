@@ -134,11 +134,7 @@ node nth(node x, unsigned int n){
 node list(int n,...){
      node l, e;
      va_list ap;
-#ifdef VA_START_HAS_TWO_ARGS
      va_start(ap,n);
-#else
-     va_start(ap);
-#endif
      if (n==0) return NULL;
      e = l = cons(va_arg(ap,node),NULL);
      n--;

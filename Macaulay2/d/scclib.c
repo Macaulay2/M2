@@ -110,11 +110,7 @@ int system_openout(filename)
 M2_string filename;
 {
      char *fname = tocharstar(filename);
-#if defined(__BUILDING_MPW__)
-     int fd = open(fname, O_WRONLY);
-#else
      int fd = open(fname, O_BINARY | O_CREAT | O_WRONLY | O_TRUNC, 0644);
-#endif
      GC_FREE(fname);
      return fd;
      }

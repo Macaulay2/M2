@@ -5,11 +5,7 @@
 void fatal(char *s,...)
 {
      va_list ap;
-#ifdef VA_START_HAS_TWO_ARGS
      va_start(ap,s);
-#else
-     va_start(ap);
-#endif
      if (cur.filename != NULL) {
      	  fprintf(stderr,errfmt,cur.filename,cur.lineno,cur.column+1,"");
      	  }
@@ -28,11 +24,7 @@ int warnings = 0;
 void error(char *s,...)
 {
      va_list ap;
-#ifdef VA_START_HAS_TWO_ARGS
      va_start(ap,s);
-#else
-     va_start(ap);
-#endif
      fprintf(stderr,errfmt,
 	  cur.filename!=NULL?cur.filename:"",cur.lineno,cur.column+1,"");
      vfprintf(stderr,s,ap);
@@ -46,11 +38,7 @@ void error(char *s,...)
 void warning(char *s,...)
 {
      va_list ap;
-#ifdef VA_START_HAS_TWO_ARGS
      va_start(ap,s);
-#else
-     va_start(ap);
-#endif
      vfprintf(stderr,s,ap);
      fprintf(stderr,"\n");
      fflush(stderr);
@@ -63,11 +51,7 @@ void fatalpos(node p, char *s,...)
 {
      va_list ap;
      downpos(p);
-#ifdef VA_START_HAS_TWO_ARGS
      va_start(ap,s);
-#else
-     va_start(ap);
-#endif
      vfprintf(stderr,s,ap);
      fprintf(stderr,"\n");
      fflush(stderr);
@@ -79,11 +63,7 @@ void errorpos(node p, char *s,...)
 {
      va_list ap;
      downpos(p);
-#ifdef VA_START_HAS_TWO_ARGS
      va_start(ap,s);
-#else
-     va_start(ap);
-#endif
      vfprintf(stderr,s,ap);
      fprintf(stderr,"\n");
      fflush(stderr);
@@ -97,11 +77,7 @@ void warningpos(node p, char *s,...)
      va_list ap;
      downpos(p);
      fprintf(stderr,"warning: ");
-#ifdef VA_START_HAS_TWO_ARGS
      va_start(ap,s);
-#else
-     va_start(ap);
-#endif
      vfprintf(stderr,s,ap);
      fprintf(stderr,"\n");
      fflush(stderr);
