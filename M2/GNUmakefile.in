@@ -58,9 +58,6 @@ install all clean distclean install-strip ::
 
 # first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
 install install-strip :: all
-
-install install-strip :: ; rm -f INSTALLDIR && ln -s $(prefix) INSTALLDIR
-clean   :: ; rm -f INSTALLDIR
 distclean::; rm -f config.cache config.log config.status configure.options
 distclean:: clean
 ifeq "$(CC)" "cl"
