@@ -124,6 +124,33 @@ AC_SUBST(GCC)
 AC_PROG_CXX()
 AC_PROG_YACC()
 
+AC_MSG_CHECKING([whether linking C++ programs with gcc works])
+cat >unwindtest-main.cpp <<EOF
+#include "unwindtest-monomials.hpp"
+int main(int argc, char **argv) {
+  Monomials *M = new Monomials();
+  return 1;
+}
+EOF
+cat >unwindtest-monomials.hpp <<EOF
+class Monomials { public: Monomials(); };
+EOF
+cat >unwindtest-monomials.cpp <<EOF
+#include "unwindtest-monomials.hpp"
+Monomials::Monomials() {}
+EOF
+if   (
+	set -ex
+	$CXX -O3 -c -o unwindtest-main.o unwindtest-main.cpp
+	$CXX -O3 -c -o unwindtest-monomials.o unwindtest-monomials.cpp
+	$CC unwindtest-main.o unwindtest-monomials.o -lstdc++ -o unwindtest-main
+     ) >unwindtest-log 2>&1
+then AC_MSG_RESULT(yes)
+     rm -f unwindtest-*
+else AC_MSG_RESULT(no)
+     AC_MSG_ERROR([failure: linking C++ program with $CC, see file unwindtest-log.])
+fi
+
 AC_FUNC_ALLOCA()
 
 AC_SUBST(DUMPDATA)
@@ -349,6 +376,7 @@ IS_DECLARED(char **,h_errlist, [
       #include <stdio.h>
       #include <errno.h>
       ])
+
 AC_CONFIG_HEADER(include/config.h)
 CONFIGURED_FILES="GET_CONFIGURED_FILES()"
 AC_SUBST(CONFIGURED_FILES)
