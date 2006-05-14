@@ -1,16 +1,21 @@
 .PHONY : all
 
-all: configure include/config.h.in
-	@echo 'Makefile: $^: up to date'
-	@echo 'Makefile: run "configure" from a build directory and start "make" there'
+all: configure monitor include/config.h.in.stamp
+	@echo 'Makefile: now run "configure" from a temporary build directory and start "make" there'
 
 configure : configure.ac config/files # aclocal.m4
 	autoconf
 
-include/config.h.in : configure.ac # aclocal.m4
+# autoheader's job is to make include/config.h, but if there are no changes, it doesn't touch it, 
+# which means "make" will keep trying
+include/config.h.in.stamp : configure.ac # aclocal.m4
 	autoheader
+	touch "$@"
+
+monitor:
+	[ -f include/config.h.in ] || rm -f include/config.h.in.stamp
 
 # Local Variables:
 # mode: Makefile
-# compile-command: "make "
+# compile-command: "make -f Makefile"
 # End:
