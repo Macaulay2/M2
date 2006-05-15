@@ -4,11 +4,13 @@ VPATH = @srcdir@
 
 .PHONY : all clean distclean
 
-all::
+all ::
+
+install :: $(bindir) $(bindir)/M2$(EXE)
 
 $(bindir) :; $(INSTALL) -d "$@"
-install       :: $(bindir); $(INSTALL_PROGRAM)    M2$(EXE) $(bindir)/M2$(EXE)
-install-strip :: $(bindir); $(INSTALL_PROGRAM) -s M2$(EXE) $(bindir)/M2$(EXE)
+
+$(bindir)/M2$(EXE) : M2$(EXE); $(INSTALL_PROGRAM) M2$(EXE) $(bindir)/M2$(EXE)
 
 install       :: $(bindir)/M2-load-libs
 $(bindir)/M2-load-libs : M2-load-libs ; $(INSTALL) $^ $@
@@ -18,6 +20,14 @@ $(bindir)/M2-emacs : M2-emacs ; $(INSTALL) $^ $@
 
 install       :: $(bindir)/M2-help
 $(bindir)/M2-help : M2-help ; $(INSTALL) $^ $@
+
+# shared library links 
+ifeq ($(ENCAP),yes)
+ifeq ($(OS),Linux)
+make-lib-links install :: $(libdir); @srcdir@/liblinks M2$(EXE) $(libdir)
+$(libdir):; $(INSTALL) -d "$@"
+endif
+endif
 
 clean::; rm -f M2$(EXE)
 distclean::; rm -f Makefile
