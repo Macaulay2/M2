@@ -150,10 +150,10 @@ AC_SUBST(STATIC)    AC_ARG_ENABLE(static, AC_HELP_STRING(--enable-static,enable 
 AC_SUBST(MEMDEBUG)  AC_ARG_ENABLE(memdebug, AC_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG="$enableval", MEMDEBUG=no)
 AC_SUBST(OPTIMIZE)  AC_ARG_ENABLE(optimize, AC_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE="$enableval", OPTIMIZE=yes)
 AC_SUBST(DEBUG)     AC_ARG_ENABLE(debug, AC_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG="$enableval", DEBUG=no)
-AC_SUBST(ENCAP)     AC_ARG_ENABLE(encap, AC_HELP_STRING(--enable-encap,create an encap package), ENCAP="$enableval", ENCAP=no)
+AC_SUBST(ENCAP)     AC_ARG_ENABLE(encap, AC_HELP_STRING(--disable-encap,do not encapsulate file in a subdirectory), ENCAP="$enableval", ENCAP=yes)
 AC_SUBST(XCODE)     AC_ARG_ENABLE(xcode, AC_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE="$enableval", XCODE="no" )
 AC_SUBST(ALTIVEC)   AC_ARG_ENABLE(altivec, AC_HELP_STRING(--enable-altivec,compile with "-faltivec" option), ALTIVEC="$enableval", ALTIVEC="no" )
-AC_SUBST(DUMPDATA)  AC_ARG_ENABLE(dumpdata,AC_HELP_STRING([--disable-dumpdata],[do not cache data with dumpdata]),DUMPDATA="$enableval", DUMPDATA=yes)
+AC_SUBST(DUMPDATA)  AC_ARG_ENABLE(dumpdata,AC_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA="$enableval", DUMPDATA=yes)
 AC_SUBST(PROFILING) AC_ARG_ENABLE(profile, AC_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING="$enableval", PROFILING=no)
 AC_SUBST(FACTORY)   AC_ARG_ENABLE(factory, AC_HELP_STRING(--disable-factory,disable the use of the 'factory' library), FACTORY="$enableval",FACTORY=yes)
 

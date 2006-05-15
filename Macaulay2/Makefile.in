@@ -84,10 +84,9 @@ distclean clean ::; $(MAKE) -C book $@
 all ::;  $(MAKE) -C emacs all
 install distclean clean ::; $(MAKE) -C emacs $@
 ################################# bin
-install install-strip distclean clean ::; $(MAKE) -C bin $@
+install distclean clean ::; $(MAKE) -C bin $@
 ################################# man
 all install :: ; $(MAKE) -C man $@
-install-strip :: ; $(MAKE) -C man install
 ################################# Makefile
 Makefile : Makefile.in
 	cd ..; ./config.status Macaulay2/Makefile
