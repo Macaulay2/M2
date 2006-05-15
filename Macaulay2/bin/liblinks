@@ -18,25 +18,26 @@ readlinks () {
     echo "$x"
 }
 
-ret=
-
 ldd "$EXE" | 
- egrep -v '^[[:space:]](linux-gate|/lib/ld-linux|libc|libm|libdl|libpthread)\.so' | 
+ egrep -v '^[[:space:]](linux-gate|/lib/ld-linux|libc|libm|libdl|libpthread)\.so' |
+  (
+  ret=
   while read x
   do nm=$(expr "$x" : "\(.*\) => ")
      fi=$(readlinks $(expr "$x" : ".* => \(.*\) ([0-9a-fx]*)$"))
      ta="$TARDIR"/"$nm"
      if test -h "$ta" && test $(readlink "$ta") = "$fi"
      then ls -l "$ta"
-     elif test -e "$ta" -o -h "$ta"
+     elif test -e "$ta" -a ! -h "$ta"
      then echo "error: file '$ta' is in the way" >&2
 	  ls -l "$ta" >&2
 	  ret=1
-     else (set -x ; ln -s "$fi" "$ta")
+     else ( test -h "$ta" && (set -x ; rm "$ta")
+	    set -x; ln -s "$fi" "$ta" )
      fi
   done
-
-exit $ret
+  exit $ret
+  )
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/bin make-lib-links"
