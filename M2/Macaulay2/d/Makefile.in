@@ -258,10 +258,6 @@ LIBRARYOPTIONS += $(GMPLIB)
 LIBRARYOPTIONS += $(GCLIB)
 LIBRARYOPTIONS += $(GDBMLIB)
 
-ifneq "$(STATIC)" "yes"
-# LIBRARYOPTIONS += $(UNSTATIC)
-endif
-
 ifeq ($(OS),Darwin)
 LIBRARYOPTIONS += $(READLINELIB) $(HISTORYLIB)
 else
@@ -287,7 +283,7 @@ clean::; rm -f ../bin/M2$(EXE)
 # we make tmp_init.o depend on everything, because compiling it produces our timestamp
 tmp_init.o : $(M2_OBJECTS) $(LIBRARYDEPS) $(EFILES) 
 ../bin/M2$(EXE) : tmp_init.o
-	time $(CC) $(M2_LDFLAGS) $(M2_OBJECTS) $^ $(EFILES) $(M2_LOADLIBES) -o "$@".tmp
+	time $(CC) $(M2_LDFLAGS) $(M2_OBJECTS) $^ $(EFILES) $(M2_LOADLIBES) $(UNSTATIC) -o "$@".tmp
 	$(STRIPCMD) "$@".tmp
 	mv "$@".tmp "$@"
 

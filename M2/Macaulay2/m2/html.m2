@@ -539,6 +539,8 @@ installPackage Package := opts -> pkg -> (
      if not fileExists fn then error("file ", fn, " not found");
      copyFile(fn, buildDirectory|pkgDirectory|bn, Verbose => debugLevel > 5);
 
+     excludes := Exclude => {"^CVS$", "^\\.svn$"};
+
      if pkg === Macaulay2Core then (
 	  ) else (
      	  
@@ -550,7 +552,7 @@ installPackage Package := opts -> pkg -> (
 	       stderr << "--copying auxiliary source files from " << dn << endl;
 	       makeDirectory (buildDirectory|srcDirectory);
 	       buildDirectory|srcDirectory|".linkdir" << close;
-	       copyDirectory(dn, buildDirectory|srcDirectory, UpdateOnly => true, Verbose => debugLevel > 0, Exclude => {"^CVS$"});
+	       copyDirectory(dn, buildDirectory|srcDirectory, UpdateOnly => true, Verbose => debugLevel > 0, excludes);
 	       );
      	  );
 
@@ -559,7 +561,7 @@ installPackage Package := opts -> pkg -> (
      en := realpath(currentSourceDir|buildPackage|"/examples/");
      if fileExists en then (
 	  stderr << "--copying example files from " << en << endl;
-	  copyDirectory(en, exampleDir, Verbose => debugLevel > 0, Exclude => {"^CVS$"}, UpdateOnly => true);
+	  copyDirectory(en, exampleDir, Verbose => debugLevel > 0, excludes, UpdateOnly => true);
 	  );
 
      if opts.MakeDocumentation then (
