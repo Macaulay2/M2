@@ -40,8 +40,8 @@ AC_CONFIG_FILES(m4_include(config/files))
 echo "any environment variables set:"
 test "$CC"         && echo "   CC=$CC"
 test "$CXX"        && echo "   CXX=$CXX"
-test "$CPPFLAGS"   && echo "   CPPFLAGS=$CPPFLAGS"                 dnl # autoconf default is: -g -O2
-test "$CFLAGS"     && echo "   CFLAGS=$CFLAGS"                     dnl # autoconf default is: -g -O2
+test "$CPPFLAGS"   && echo "   CPPFLAGS=$CPPFLAGS"                 # autoconf default is: -g -O2
+test "$CFLAGS"     && echo "   CFLAGS=$CFLAGS"                     # autoconf default is: -g -O2
 test "$CXXFLAGS"   && echo "   CXXFLAGS=$CXXFLAGS"
 test "$LDFLAGS"    && echo "   LDFLAGS=$LDFLAGS"
 test "$LOADLIBES"  && echo "   LOADLIBES=$LOADLIBES"
