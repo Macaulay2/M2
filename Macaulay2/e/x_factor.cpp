@@ -3,6 +3,8 @@
 #include "config.h"
 #include <assert.h>
 #include <iostream>
+using std::cout;
+using std::endl;
 #include <cstdio>
 
 #include "../d/M2inits.h"
