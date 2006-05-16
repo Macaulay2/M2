@@ -12,6 +12,7 @@ use nets;
 -- you can make a new empty varnet
 -- you can convert a varnet to a net
 -- you can push nets, strings, or characters onto the end of a varnet
+-- pushing N spaces is quick - our routine accepts an integer for that purpose
 
 export varnet := {
      height:int,			  -- number of strings above the baseline
@@ -52,6 +53,7 @@ export (x:varnet) << (y:Net) : varnet := (
 	  t << s);
      x.width = x.width + y.width;
      x);
+export (x:varnet) << (n:int) : varnet := (x.width = x.width + n; x);
 
 -- vaNet
 
@@ -77,9 +79,11 @@ export hash(v:vaNet):int := (
 export NetFile := { v:vaNet, x:varnet };
 export hash(n:NetFile):int := 0x7fffffff & (hash(n.v) + 43 * hash(n.x));
 export newNetFile():NetFile := NetFile(newvaNet(),newvarnet());
+export (n:NetFile) << (i:int) : NetFile := ( n.x << i; n );
 export (n:NetFile) << (s:string) : NetFile := ( n.x << s; n );
 export (n:NetFile) << (y:Net) : NetFile := ( n.x << y; n );
 export endlnetfile(n:NetFile):NetFile := ( n.v << toNet(n.x); n.x = newvarnet(); n);
+export popnet(n:NetFile):Net := ( r := toNet(n.x); n.x = newvarnet(); r);
 export tonets(n:NetFile):array(Net) := toarray(n.v);
 
 -- Local Variables:
