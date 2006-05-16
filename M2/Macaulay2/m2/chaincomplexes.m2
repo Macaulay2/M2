@@ -41,8 +41,6 @@ spots := C -> select(keys C, i -> class i === ZZ)
 union        := (x,y) -> keys(set x + set y)
 intersection := (x,y) -> keys(set x * set y)
 
-rank ChainComplex := C -> sum(spots C, i -> rank C_i)
-
 length ChainComplex := (C) -> (
      s := select(spots complete C, i -> C_i != 0);
      if #s === 0 then 0 else max s - min s
