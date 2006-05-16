@@ -1,63 +1,3 @@
-document { 
-     Key => (primaryDecomposition,Ideal),
-     Headline => "irredundant primary decomposition of an ideal",
-     Usage => "primaryDecomposition I",
-     Inputs => {
-	  "I" => {"an ideal in a (quotient of a) polynomial ring ", TT "R", "."}
-	  },
-     Outputs => {
-	  List => {"of ", TO2(Ideal,"ideals"), ", a minimal list of primary ideals whose intersection is ", TT "I"}
-	  },
-     "This routine returns an irredundant primary decomposition
-     for the ideal ", TT "I", ".  The specific algorithm used varies
-     depending on the characteristics of the ideal, and can also be specified
-     using the optional argument ", TT "Strategy", ".",
-     PARA,
-     "Primary decompositions algorithms are very sensitive to their input.  Some
-     algorithms work very well on certain classes of ideals, but poorly on other classes.
-     If this function seems to be taking too long, try another algorithm (using ",
-     TO [primaryDecomposition,Strategy], ").",
-     EXAMPLE {
-	  "R = QQ[a..i];",
-	  "I = permanents(2,genericMatrix(R,a,3,3))",
-          "C = primaryDecomposition I;",
-	  "I == intersect C",
-	  "#C",
-	  },
-     PARA,
-     "Recall that ", TO (symbol/,List,Function), " applies a function to each element of a
-     list, returning the results as a list.  This is often useful with lists of ideals,
-     such as the list ", TT "C", " of primary components.",
-     EXAMPLE {
-	  "C/toString/print;",
-	  "C/codim",
-	  "C/degree"
-	  },
-     PARA,
-     "The corresponding list of associated prime ideals is cached at I.cache.ass,
-     and can be obtained by using ", TO (ass,Ideal), ".",
-     EXAMPLE {
-	  "(ass I)/print"
-	  },
-     Caveat => {"The ground ring must be a prime field."},
-     SeeAlso => {PrimaryDecomposition,(ass,Ideal), 
-	  radical, decompose, topComponents, 
-	  removeLowestDimension}
-     }
-document { 
-     Key => [primaryDecomposition, PrintLevel],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
 
 document {
      Key => (ass, Ideal),
@@ -120,19 +60,16 @@ document {
 
 document {
      Key => [ass,PrintLevel],
-     "The PrintLevel should be one of the following.",
+     "The PrintLevel option governs the level of diagnostic printing during the computation, and the value should be one of the following.",
      UL {
-	  SEQ ("0", " -- (default) Returns the list of associated primes."),
-	  SEQ ("1", " -- Returns strategy number, associated primes as they are 
-	       found, and full list at the end."),
-	  SEQ ("2", " -- Returns the results of ", TT "PrintLevel=>1", " and signals 
-	       presence in loop.  With ", TT "Strategy => 1", ", the codimension 
-	       of the associated primes is the loop number.")
-	       },
+	  "0 -- no extra printing",
+	  "1 -- prints the strategy used and the associated primes as they are found",
+	  "2 -- also prints the loop index, which, for strategy 1, is the current codimension of the associate primes being found"
+	  },
      EXAMPLE {
 	  "R = ZZ/31991[x,y,z];",
 	  "I = ideal(x*y*z, x*y^2 , x^3*y)",
-	  "ass (I,PrintLevel=>2)"
+	  "ass(I,PrintLevel=>2)"
 	  }
      }     
 
