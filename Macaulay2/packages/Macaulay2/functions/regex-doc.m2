@@ -60,7 +60,8 @@ document {
      those appearing in the following constructions.  The special character ", TT "\\", "
      may be confusing, as inside a string delimited by quotation marks (", TT "\"", "), you type two of 
      them to get one, but inside a string delimited by triple slashes (", TT "///", "),
-     you type one to get one.",
+     you type one to get one.  Thus regular expressions delimited by triple slashes are more
+     readable.",
      UL {
 	  {TT ".", " -- match any character except newline"},
 	  {TT "^", " -- match the beginning of the string or the beginning of a line"},
