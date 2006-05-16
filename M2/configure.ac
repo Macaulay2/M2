@@ -194,8 +194,11 @@ AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
 SAVELIBS="$LIBS"
 
+LIBS=-ldl
 AC_MSG_CHECKING(whether libdl exists (-ldl))
 AC_TRY_LINK([],[],LIBDL=-ldl;AC_MSG_RESULT([yes]), LIBDL=; AC_MSG_RESULT([no]))
+
+LIBS=-lpthread
 AC_MSG_CHECKING(whether libpthread exists (-lpthread))
 AC_TRY_LINK([],[],LIBPTHREAD=-lpthread;AC_MSG_RESULT([yes]), LIBPTHREAD=; AC_MSG_RESULT([no]))
 
