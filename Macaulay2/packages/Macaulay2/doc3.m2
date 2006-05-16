@@ -411,7 +411,7 @@ document {
 
 document {
      Key => printString,
-     Headline => "lowlevel function to print a string",
+     Headline => "lowlevel function to print a string, net, or symbol",
      TT "printString(o,s)", " -- send the string ", TT "s", " to the output file ", TT "o", ".",
      PARA,
      "This function is intended for internal use only.",

@@ -795,35 +795,13 @@ document {
      TT "flip(F,G)", " -- yields the matrix representing the map F ** G --> G ** F."
      }
 document {
-     Key => (subquotient,Matrix,Matrix),
-     Headline => "make a subquotient module",
-     Usage => "subquotient(g,r)",
-     Inputs => {
-	  "g" => "the matrix of generators",
-	  "r" => {"the matrix of relations, with the same target as ", TT "g", ""}
-	  },
-     Outputs => {
-	  {"the image of ", TT "g", " in the cokernel of ", TT "r"}
-	  },
-     PARA {
-     	  "The general form in which modules are represented in Macaulay 2 is as subquotients,
-	  and subquotient modules are often returned as values of computations."},
-     EXAMPLE {
-	  "R = ZZ/101[a..d]",
-      	  "M = kernel vars R ++ cokernel vars R",
-      	  "generators M",
-      	  "relations M",
-      	  "prune M",
-	  },
-     SeeAlso => {"generators", "relations", "prune"}
-     }
-document {
      Key => (symbol **, Matrix, Matrix),
      Headline => "tensor product of matrices",
      TT "f ** g", " -- computes the tensor product of two matrices.",
      PARA,
      SeeAlso => "Matrix"
      }
+
 TEST "
 ZZ[t]
 assert (matrix {{t}} ** matrix {{t}} == matrix{{t^2}})
