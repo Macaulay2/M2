@@ -402,7 +402,7 @@ minimalPresentation GradedModule := GradedModule => opts -> (M) -> (
 minimalPresentation GradedModuleMap := GradedModuleMap => opts -> f -> map(minimalPresentation(f.target), minimalPresentation(f.source), k -> minimalPresentation f_k)
 
 complete GradedModule := (M) -> null
-rank GradedModule := (M) -> sum(spots M, i -> rank M#i)
+rank GradedModule := (M) -> sum(spots M, i -> (-1)^i * rank M#i)
 
 map(GradedModule,GradedModule,Function) := GradedModuleMap => options -> (C,D,f) -> (
      h := new GradedModuleMap;
