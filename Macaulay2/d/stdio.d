@@ -642,6 +642,7 @@ export getc(o:file):int := (
      	       e != '\n'
 	       )
 	  do nothing;
+	  flush(stdout);
 	  );
      if c == nl then (
 	  o.bol = true;
