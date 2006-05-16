@@ -194,17 +194,22 @@ AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
 SAVELIBS="$LIBS"
 
+AC_MSG_CHECKING(whether libdl exists (-ldl))
+AC_TRY_LINK([],[],LIBDL=-ldl;AC_MSG_RESULT([yes]), LIBDL=; AC_MSG_RESULT([no]))
+AC_MSG_CHECKING(whether libpthread exists (-lpthread))
+AC_TRY_LINK([],[],LIBPTHREAD=-lpthread;AC_MSG_RESULT([yes]), LIBPTHREAD=; AC_MSG_RESULT([no]))
+
 GCLIB=-lgc
 AC_SUBST(GCLIB)
 AC_ARG_WITH(gclib, AC_HELP_STRING(--with-gclib=...,gc library (-lgc)), GCLIB="$withval")
-AC_MSG_CHECKING([whether gc library is installed ($GCLIB)])
-LIBS="$GCLIB -lpthread -ldl $SAVELIBS"
+LIBS="$GCLIB $LIBPTHREAD $LIBDL $SAVELIBS"
+AC_MSG_CHECKING([whether gc library (-lgc) is installed (using $LIBS)])
 AC_TRY_LINK( [#include <gc.h>], [GC_malloc(1);], HAVE_LIBGC=yes;AC_MSG_RESULT([yes]), HAVE_LIBGC=no;AC_MSG_RESULT([no]))
 
 HAVE_LIBGC_PG=no
 if test "$PROFILING" = yes -a "$GCLIB" = "-lgc"
 then AC_MSG_CHECKING([whether gc library, profiling version, is installed (-lgc-pg)])
-     LIBS="-lgc-pg -lpthread -ldl $SAVELIBS"
+     LIBS="-lgc-pg $LIBPTHREAD $LIBDL $SAVELIBS"
      AC_TRY_LINK( [#include <gc.h>], [GC_malloc(1);], HAVE_LIBGC_PG=yes;AC_MSG_RESULT([yes]), AC_MSG_RESULT([no]))
 fi
 
