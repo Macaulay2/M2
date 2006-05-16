@@ -57,7 +57,10 @@ document {
      inductively as follows.  Ordinary (non-special) characters match themselves.
      A concatenation of regular expressions matches the concatenation of
      corresponding matching subject strings.  The special characters are
-     those appearing in the following constructions.",
+     those appearing in the following constructions.  The special character ", TT "\\", "
+     may be confusing, as inside a string delimited by quotation marks (", TT "\"", "), you type two of 
+     them to get one, but inside a string delimited by triple slashes (", TT "///", "),
+     you type one to get one.",
      UL {
 	  {TT ".", " -- match any character except newline"},
 	  {TT "^", " -- match the beginning of the string or the beginning of a line"},
