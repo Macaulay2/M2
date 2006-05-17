@@ -268,10 +268,6 @@ endif
 LIBRARYOPTIONS += -lstdc++
 
 LIBRARYOPTIONS += -lm
-LIBRARYOPTIONS += -ldl
-
-# I added this line to make static linking work under linux...
-LIBRARYOPTIONS += -lpthread
 
 M2_LOADLIBES := $(LIBRARYOPTIONS) $(M2_LOADLIBES)
 LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
