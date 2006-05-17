@@ -3,100 +3,27 @@
 --- notes: 
 
 document { 
-     Key => rank,
-     Headline => "",
-     Usage => "",
+     Key => {rank,(rank,CoherentSheaf),(rank,Matrix),(rank,Module),(rank,GradedModule)},
+     Headline => "compute the rank",
+     Usage => "rank M",
      Inputs => {
+	  "M" => { 
+	       OFCLASS Module, ", ", 
+	       OFCLASS CoherentSheaf, ", ", 
+	       OFCLASS GradedModule, ", ", 
+	       OFCLASS ChainComplex, ", or ", 
+	       OFCLASS Matrix
+	       }
 	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     Outputs => { { "the rank of ", TT "M" } },
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (rank,CoherentSheaf),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (rank,Matrix),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (rank,Module),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (rank,ChainComplex),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (rank,GradedModule),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "R = ZZ/101[x,y,z]",
+      	  "p = vars R;",
+      	  "rank kernel p",
+      	  "rank cokernel p",
+	  "C = res cokernel p",
+	  "rank C"
+	  }
      }
  -- doc10.m2:905:     Key => (rank, CoherentSheaf),
  -- doc6.m2:1156:     Key => rank,

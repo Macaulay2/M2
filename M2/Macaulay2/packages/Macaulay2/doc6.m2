@@ -723,17 +723,6 @@ document {
      "The new free module has basis elements of degree zero.  To specify the
      degrees explicitly, see ", TO (symbol ^,Ring,List), "." }
 document {
-     Key => rank,
-     Headline => "compute the rank",
-     TT "rank M", " -- computes the rank of the module M.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-      	  "p = vars R;",
-      	  "rank kernel p",
-      	  "rank cokernel p"
-	  }}
-document {
      Key => coverMap,
      Headline => "get the map to the module given by the generators of a module",
      Usage => "coverMap M",

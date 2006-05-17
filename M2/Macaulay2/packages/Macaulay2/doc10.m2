@@ -677,13 +677,6 @@ document {
      SeeAlso => "CoherentSheaf"
      }
 
-
-
-document {
-     Key => (rank, CoherentSheaf),
-     Headline => "the rank of a coherent sheaf",
-     }
-
 document {
      Key => (exteriorPower, ZZ, CoherentSheaf),
      TT "exteriorPower(i,F)", " -- calculate the ", TT "i", "-th exterior power of a coherent sheaf
