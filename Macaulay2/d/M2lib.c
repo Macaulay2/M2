@@ -21,10 +21,41 @@ char *config_args[] = { CONFIG_ARGS 0 };
 
 void trap(void) {}		/* we don't put it in debug.c, or it will get optimized away! */
 
-#if HAVE_DECL_PER_LINUX
+#if !defined(HAVE_PERSONALITY)
+#error HAVE_PERSONALITY not defined
+#endif
+
+#if !defined(PROFILING)
+#error PROFILING not defined
+#endif
+
+#if !defined(HAVE_LINUX_PERSONALITY_H)
+#error HAVE_LINUX_PERSONALITY_H not defined
+#endif
+
+#if !defined(HAVE_DECL_ADDR_NO_RANDOMIZE)
+#error HAVE_DECL_ADDR_NO_RANDOMIZE not defined
+#endif
+
+#if !defined(HAVE_DECL_PERSONALITY)
+#error HAVE_DECL_PERSONALITY not defined
+#endif
+
+#if HAVE_LINUX_PERSONALITY_H
 #include <linux/personality.h>
 #undef personality
+#endif
+
+#if HAVE_DECL_ADDR_NO_RANDOMIZE
+#else
+#define ADDR_NO_RANDOMIZE 0x0040000
+#endif
+
+#if HAVE_PERSONALITY
+#if HAVE_DECL_PERSONALITY
+#else
 extern long personality(unsigned long persona);
+#endif
 #endif
 
 const char *get_libfac_version();	/* in version.cc */
@@ -289,13 +320,14 @@ char **argv;
      extern void interp_process(), interp_process2();
      extern int interp_topLevel();
 
-#if HAVE_DECL_PER_LINUX
-#if !PROFILING
-     if (!gotArg("--no-personality", argv) && personality(-1) == PER_LINUX && personality(PER_LINUX32) == PER_LINUX && personality(-1) == PER_LINUX32) {
-	  /* this avoids redhat's randomized mmap() calls */
+#if HAVE_PERSONALITY && !PROFILING
+     if (!gotArg("--no-personality", argv)
+	 && (personality(-1) & ADDR_NO_RANDOMIZE) == 0
+	 &&  personality(ADDR_NO_RANDOMIZE | personality(-1)) != -1  /* this avoids mmap() calls resulting in address randomization */
+	 && (personality(-1) & ADDR_NO_RANDOMIZE) != 0
+	 ) {
 	  return execvp(argv[0],argv);
      }
-#endif
 #endif
 
 #if defined(_WIN32)
