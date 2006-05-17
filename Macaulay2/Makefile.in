@@ -51,7 +51,7 @@ initialize distclean clean ::; $(MAKE) DEPENDS=no -C e $@
 ################################# dumpdata
 ifeq "$(DUMPDATA)" "yes"
 justM2 ::; $(MAKE) -C dumpdata all
-all check ::; $(MAKE) -C dumpdata $@
+install all check ::; $(MAKE) -C dumpdata $@
 endif
 distclean clean ::; $(MAKE) DEPENDS=no -C dumpdata $@
 ################################# compat
