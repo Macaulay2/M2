@@ -1,20 +1,22 @@
-#! /bin/sh
+#! /bin/bash
 
 if ! type -p M2 >/dev/null
 then echo 'M2 not found on path' >&2
      exit 1
 fi
 
-NEWLIB="$(dirname $(dirname $(type -p M2)))/lib"
+BINDIR=$(dirname $(type -p M2))
+M2DIR=$(cd "$BINDIR"/..; /bin/pwd)
+LIBDIR=$M2DIR/lib
 
-if ! [ -d "$NEWLIB" ]
-then echo "directory $NEWLIB not found" >&2
+if ! [ -d "$LIBDIR" ]
+then echo "directory $LIBDIR not found" >&2
      exit 1
 fi
 
 if [ -f /etc/ld.so.conf ]
-then OLIBS=`cat /etc/ld.so.conf | xargs echo | sed 's/ /:/g'`
+then OLIBS=$(echo $(</etc/ld.so.conf) | sed 's/ /:/g')
 fi
 
-export LD_LIBRARY_PATH="/usr/lib:/lib:/usr/local/lib:$OLIBS:$NEWLIB" 
+export LD_LIBRARY_PATH="/usr/lib:/lib:/usr/local/lib:$OLIBS:$LIBDIR" 
 exec M2 "$@"
