@@ -705,22 +705,21 @@ title := s -> (
      h := headline s;
      HEADER1 { formatDocumentTag s, if h =!= null then " -- ", h })
 
-type := S -> fixup (
+type := S -> (
      s := value S;
      if class s =!= Function and class s =!= Package then (
-	  SEQ { 
-	       LITERAL "<div class=\"waystouse\">\n",
-	       SUBSECTION "For the programmer",  
-	       PARA deepSplice { "The object ", TO S, " is ", OFCLASS class s,
-		    if parent s =!= Nothing then (
-			 f := (T -> while T =!= Thing list parent T do T = parent T) s;
-			 (
-			      if #f>1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.", 
-			      toSequence between(" < ", f / (T -> TO T)) 
-			      )
-			 ),
-		    "."},
-	       LITERAL "</div>\n"}))
+	  LITERAL "<div class=\"waystouse\">\n",
+	  SUBSECTION "For the programmer",  
+	  fixup PARA deepSplice { "The object ", TO S, " is ", OFCLASS class s,
+	       if parent s =!= Nothing then (
+		    f := (T -> while T =!= Thing list parent T do T = parent T) s;
+		    (
+			 if #f>1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.", 
+			 toSequence between(" < ", f / (T -> TO T)) 
+			 )
+		    ),
+	       "."},
+	  LITERAL "</div>\n"))
 
 istype := X -> parent X =!= Nothing
 alter1 := x -> (
@@ -981,16 +980,16 @@ documentationValue(Symbol,Type) := (s,X) -> (
 
 documentationValue(Symbol,Function) := (s,f) -> (	    -- compare with fmeth above
      a := documentableMethods f;
-     splice (
+     if #a > 0 then (
 	  LITERAL "<div class=\"waystouse\">\n",
-     	  if #a > 0 then ( SUBSECTION {"Ways to use ", TT toString f, " :"}, smenu a),
+     	  SUBSECTION {"Ways to use ", TT toString f, " :"}, smenu a,
 	  LITERAL "</div>\n"))
 
 documentationValue(Symbol,Keyword) := (s,k) -> (
      a := documentableMethods k;
-     splice (
+     if #a > 0 then (
 	  LITERAL "<div class=\"waystouse\">\n",
-     	  if #a > 0 then ( SUBSECTION {"Ways to use ", TT toString k, " :"}, smenu a),
+     	  SUBSECTION {"Ways to use ", TT toString k, " :"}, smenu a,
 	  LITERAL "</div>\n"))
 
 -- documentationValue(Symbol,HashTable) := (s,x) -> splice (
