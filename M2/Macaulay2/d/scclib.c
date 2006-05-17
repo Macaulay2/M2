@@ -692,24 +692,39 @@ int fd;
      }
 }
 
+static const char *hostname_error_message;
+
+#if HAVE_GETADDRINFO
+static int set_addrinfo(struct addrinfo **addr, struct addrinfo *hints, char *hostname, char *service) {
+     int ret;
+     ret = getaddrinfo(hostname, service, NULL, addr);
+     hostname_error_message = ret != 0 ? gai_strerror(ret) : NULL;
+     return ret;
+}
+#endif
+
+#if !HAVE_GETADDRINFO
 int host_address(name)
 char *name;
 {
 #if HAVE_SOCKET
      if ('0' <= name[0] && name[0] <= '9') {
      	  int s;
-	  s = inet_addr(name);
-	  if (s == ERROR) return ERROR;
+	  s = inet_addr(name);	/* this function is obsolete, replaced by inet_aton() */
+	  if (s == ERROR) {
+	       hostname_error_message = "IP address translation failed";
+	       return ERROR;
+	  }
 	  return s;
 	  }
      else {
-	  struct hostent *t = gethostbyname(name);
+	  struct hostent *t = gethostbyname(name); /* this function is obsolete because it doesn't handle IPv6 */
 	  if (t == NULL) {
-	    /* errno = ENXIO; */
-	    return ERROR;
+	       hostname_error_message = hstrerror(h_errno);
+	       return ERROR;
 	  }
 	  else {
-	    return *(int *)t->h_addr;
+	       return *(int *)t->h_addr;
 	  }
      }
 #else
@@ -738,6 +753,7 @@ char *name;
      return ERROR;
 #endif
      }
+#endif
 
 int system_acceptBlocking(int so) {
 #if HAVE_SOCKET
@@ -763,9 +779,22 @@ int system_acceptNonblocking(int so) {
 #endif
 }
 
-int openlistener(char *serv) {
+#define INCOMING_QUEUE_LEN 10
+
+int openlistener(char *service) {
 #if HAVE_SOCKET
-  int sa = serv_address(serv);
+#if HAVE_GETADDRINFO
+  struct addrinfo *addr;
+  static struct addrinfo hints;
+  int so;
+  hints.ai_flags = AI_PASSIVE;
+  if (0 != set_addrinfo(&addr,&hints,NULL,service)) return ERROR;
+  so = socket(addr->ai_family,SOCK_STREAM,0);
+  if (ERROR == so) return ERROR;
+  if (ERROR == bind(so,addr->ai_addr,addr->ai_addrlen) || ERROR == listen(so, INCOMING_QUEUE_LEN)) { close(so); return ERROR; }
+  return so;
+#else
+  int sa = serv_address(service);
   int so = socket(AF_INET,SOCK_STREAM,0);
   struct sockaddr_in addr;
   addr.sin_family = PF_INET;
@@ -774,17 +803,25 @@ int openlistener(char *serv) {
   if (ERROR == so ||
       ERROR == sa ||
       ERROR == bind(so,(struct sockaddr*)&addr,sizeof addr) ||
-      ERROR == listen(so,
-		      10	/* length of queue of pending connections */
-		      )) { close(so); return ERROR; }
+      ERROR == listen(so, INCOMING_QUEUE_LEN)) { close(so); return ERROR; }
   return so;
+#endif
 #else
   return ERROR;
 #endif
 }
 
-int opensocket(char *host, char *serv) {
+int opensocket(char *host, char *service) {
 #if HAVE_SOCKET
+#if HAVE_GETADDRINFO
+  struct addrinfo *addr;
+  int so;
+  if (0 != set_addrinfo(&addr,NULL,host,service)) return ERROR;
+  so = socket(addr->ai_family,SOCK_STREAM,0);
+  if (ERROR == so) return ERROR;
+  if (ERROR == connect(so,addr->ai_addr,addr->ai_addrlen)) { close(so); return ERROR; }
+  return so;
+#else
   int sd = socket(AF_INET,SOCK_STREAM,0);
   struct sockaddr_in addr;
   int sa = serv_address(serv);
@@ -795,6 +832,7 @@ int opensocket(char *host, char *serv) {
       ERROR == sa ||
       ERROR == connect(sd,(struct sockaddr *)&addr,sizeof(addr))) { close(sd); return ERROR; }
   return sd;
+#endif
 #else
   return ERROR;
 #endif
@@ -845,17 +883,17 @@ int system_errno(void) {
 }
 
 char const *system_strerror(void) {
-     char const *msg =
-#if HAVE_HERROR
-     h_errno > 0 && h_errno < h_nerr ? h_errlist[h_errno] : 
-#endif
-     errno > 0 ? strerror(errno) :
-     "no system error (scclib.c)";
-#if HAVE_HERROR
-     h_errno = 0;
-#endif
-     errno = 0;
-     return msg;
+     if (hostname_error_message) {
+	  char const *msg = hostname_error_message;
+	  hostname_error_message = NULL;
+	  return msg;
+     }
+     if (errno > 0) {
+	  char const *msg = strerror(errno);
+	  errno = 0;
+	  return msg;
+     }
+     return "no system error indication found";
 }
 
 M2_string system_syserrmsg()

@@ -37,10 +37,6 @@ void trap(void) {}		/* we don't put it in debug.c, or it will get optimized away
 #error HAVE_DECL_ADDR_NO_RANDOMIZE not defined
 #endif
 
-#if !defined(HAVE_DECL_PERSONALITY)
-#error HAVE_DECL_PERSONALITY not defined
-#endif
-
 #if HAVE_LINUX_PERSONALITY_H
 #include <linux/personality.h>
 #undef personality
@@ -52,10 +48,7 @@ void trap(void) {}		/* we don't put it in debug.c, or it will get optimized away
 #endif
 
 #if HAVE_PERSONALITY
-#if HAVE_DECL_PERSONALITY
-#else
 extern long personality(unsigned long persona);
-#endif
 #endif
 
 const char *get_libfac_version();	/* in version.cc */
