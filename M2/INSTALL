@@ -235,57 +235,19 @@ CFLAGS, and its default value is "-g -O2".  That will be supplanted if
 you override it.
 
 -----------------------
-Windows 95, 98 and NT notes
+Microsoft Windows NT notes
 -----------------------
 
-There are two ways to compile Macaulay 2 under Windows 95 and NT.
+    ----------------------
+    Cygwin
+    ----------------------
 
-	-------------------------------
-	Microsoft Visual C/C++ compiler
-	-------------------------------
+    Notes:
 
-	We use Microsoft Visual C/C++ compiler version 5.0 with service pack
-	2.  First install the "gnuish" utilities in C:\WINNT\SYSTEM32:
-	awk.exe, cp.exe, gawk.exe, grep.exe, ls.exe, make.exe, mv.exe,
-	pwd.exe, rm.exe, sed.exe, and uname.exe.  Then open up the workspace,
-	M2.dsw, set it to build the Release version, and start it compiling.
+      - Some configure scripts, notably that of "libtool", assume ccp is in /lib
+        on every system.  Work around:
 
-	To set the PATH environment variable used by the Developer Studio
-	for custom build steps, edit the registry entry:
-		My Computer\HKEY_CURRENT_USER\Software\Microsoft\DevStudio
-			\5.0\Build System\Components\Platforms\Win32 (x86)
-			\Directories\Path Dirs
-
-	----------------------
-	The Cygnus port of GCC
-	----------------------
-
-	Download cdk.exe from http://www.cygnus.com/misc/gnu-win32/ and
-	type make.  It should all work!  (oops, does this require
-	distribution of a .dll file, too?)
-
-	You will also want to pick up emacs for Windows from
-	http://www.cs.washington.edu/homes/voelker/ntemacs.html .
-
-	Configure with the option
-		--without-dumpdata
-
-	Problems:
-	   general:
-		environment variables are all upper case!
-		read() isn't interruptable
-	   make:
-		'export' does not work in makefiles.
-		some targets in makefiles get run in parallel (?)
-	   c library:
-		abort() seems to be equivalent to exit(0)
-	   bash:
-		'cd ..' doesn't work from the initial directory
-		when bash is started by emacs
-	   ps:
-		reports WIN32-PID in octal instead of decimal
-	   kill:
-		doesn't ever kill any processes
+	   ln -s /usr/bin/cpp /lib
 
 ----------------------
 Linux notes
