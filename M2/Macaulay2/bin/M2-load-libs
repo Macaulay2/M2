@@ -1,11 +1,20 @@
 #! /bin/sh
-dir=`dirname $0`
-dir=`dirname $dir`
-if [ "$LD_LIBRARY_PATH" ]
-then echo "appending $dir/lib to environment variable LD_LIBRARY_PATH"
-     LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$dir/lib
-else echo "storing $dir/lib in environment variable LD_LIBRARY_PATH"
-     LD_LIBRARY_PATH=$dir/lib
+
+if ! type -p M2 >/dev/null
+then echo 'M2 not found on path' >&2
+     exit 1
 fi
-export LD_LIBRARY_PATH
-exec $dir/bin/M2 "$@"
+
+NEWLIB="$(dirname $(dirname $(type -p M2)))/lib"
+
+if ! [ -d "$NEWLIB" ]
+then echo "directory $NEWLIB not found" >&2
+     exit 1
+fi
+
+if [ -f /etc/ld.so.conf ]
+then OLIBS=`cat /etc/ld.so.conf | xargs echo | sed 's/ /:/g'`
+fi
+
+export LD_LIBRARY_PATH="/usr/lib:/lib:/usr/local/lib:$OLIBS:$NEWLIB" 
+exec M2 "$@"
