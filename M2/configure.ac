@@ -144,7 +144,7 @@ AC_CHECK_DECLS(PER_LINUX,,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([sys_errlist,sys_nerr,herror,gnu_get_libc_version])
 AC_FUNC_ALLOCA()
 
-AC_SUBST(STRIP)     AC_ARG_ENABLE(strip, AC_HELP_STRING(--disable-strip,do not strip the Macaulay 2 binary), STRIP="$enableval", STRIP=yes)
+AC_SUBST(STRIP)     AC_ARG_ENABLE(strip, AC_HELP_STRING(--enable-strip,strip the symbol table from the Macaulay 2 binary), STRIP="$enableval", STRIP=no)
 AC_SUBST(VERBOSE)   AC_ARG_ENABLE(verbose, AC_HELP_STRING(--enable-verbose,enable verbose memory allocation), VERBOSE="$enableval", VERBOSE=no)
 AC_SUBST(STATIC)    AC_ARG_ENABLE(static, AC_HELP_STRING(--enable-static,enable static linking), STATIC="$enableval", STATIC=no)
 AC_SUBST(MEMDEBUG)  AC_ARG_ENABLE(memdebug, AC_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG="$enableval", MEMDEBUG=no)
