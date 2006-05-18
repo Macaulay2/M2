@@ -21,20 +21,8 @@ char *config_args[] = { CONFIG_ARGS 0 };
 
 void trap(void) {}		/* we don't put it in debug.c, or it will get optimized away! */
 
-#if !defined(HAVE_PERSONALITY)
-#error HAVE_PERSONALITY not defined
-#endif
-
 #if !defined(PROFILING)
 #error PROFILING not defined
-#endif
-
-#if !defined(HAVE_LINUX_PERSONALITY_H)
-#error HAVE_LINUX_PERSONALITY_H not defined
-#endif
-
-#if !defined(HAVE_DECL_ADDR_NO_RANDOMIZE)
-#error HAVE_DECL_ADDR_NO_RANDOMIZE not defined
 #endif
 
 #if HAVE_LINUX_PERSONALITY_H
