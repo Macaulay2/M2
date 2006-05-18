@@ -824,7 +824,7 @@ int opensocket(char *host, char *service) {
 #else
   int sd = socket(AF_INET,SOCK_STREAM,0);
   struct sockaddr_in addr;
-  int sa = serv_address(serv);
+  int sa = serv_address(service);
   addr.sin_family = PF_INET;
   addr.sin_port = sa;
   addr.sin_addr.s_addr = host_address(host);
