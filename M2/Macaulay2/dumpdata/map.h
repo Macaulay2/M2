@@ -7,6 +7,7 @@ typedef struct MAP {
   char r, w, x;
   /* extra fields ignored by machine dependent code, filled in later */
   unsigned int checksum;
+  char isStack;
 } *map;
 
 extern int nummaps(), haveDumpdata();

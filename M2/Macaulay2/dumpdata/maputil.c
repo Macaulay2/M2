@@ -9,6 +9,10 @@ static unsigned int checksum(unsigned char *p, unsigned int len) {
   return c;
 }
 
+int isStack(map m) {
+     return m->isStack;
+}
+
 int isCheckable(map m) {
   return !m->w && m->r;
 }
@@ -18,18 +22,21 @@ static void checkmap(map m) {
 }
 
 void checkmaps(int nmaps, struct MAP m[nmaps]) {
-  int i;
+  void *p = &p;
+  int i, j;
+  for (i=0; i<nmaps; i++) m[i].isStack = 0;
+  for (i=0; i<nmaps; i++) checkmap(&m[i]);
   for (i=0; i<nmaps; i++) {
-    checkmap(&m[i]);
+       if (p - m[i].from >= 0 && m[i].to - p > 0) {
+	    m[i].isStack = 1;
+	    for (j = i-1; j >= 0    && m[j].to   == m[j+1].from && m[j].w; j--) m[j].isStack = 1;
+	    for (j = i+1; j < nmaps && m[j].from == m[j-1].to   && m[j].w; j++) m[j].isStack = 1;
+	    break;
+       }
   }
 }
 
-char mapfmt[] = "%p-%p %c%c%c %u\n";
-
-int isStack(map m) {
-  void *p = &p;
-  return p - m->from >= 0 && m->to - p > 0;
-}
+char mapfmt[] = "%p-%p %c%c%c %u %c\n";
 
 int isStatic(map m) {
   static char p0[] = "h";
@@ -46,7 +53,8 @@ void sprintmap(char *s, map m) {
   sprintf(s,mapfmt, 
 	  m->from, m->to,
 	  m->r ? 'r' : '-', m->w ? 'w' : '-', m->x ? 'x' : '-',
-	  m->checksum);
+	  m->checksum,
+	  m->isStack ? 'S' : 'M');
 }
 
 void fdprintmap(int fd, map m) {
