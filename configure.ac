@@ -144,33 +144,36 @@ AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([sys_errlist,sys_nerr,herror,gnu_get_libc_version])
 AC_FUNC_ALLOCA()
 
-AC_SUBST(STRIP)     AC_ARG_ENABLE(strip, AC_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), STRIP="$enableval", STRIP=yes)
-AC_SUBST(VERBOSE)   AC_ARG_ENABLE(verbose, AC_HELP_STRING(--enable-verbose,enable verbose memory allocation), VERBOSE="$enableval", VERBOSE=no)
-AC_SUBST(STATIC)    AC_ARG_ENABLE(static, AC_HELP_STRING(--enable-static,enable static linking), STATIC="$enableval", STATIC=no)
-AC_SUBST(MEMDEBUG)  AC_ARG_ENABLE(memdebug, AC_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG="$enableval", MEMDEBUG=no)
-AC_SUBST(OPTIMIZE)  AC_ARG_ENABLE(optimize, AC_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE="$enableval", OPTIMIZE=yes)
-AC_SUBST(DEBUG)     AC_ARG_ENABLE(debug, AC_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG="$enableval", DEBUG=no)
-AC_SUBST(ENCAP)     AC_ARG_ENABLE(encap, AC_HELP_STRING(--disable-encap,do not encapsulate file in a subdirectory), ENCAP="$enableval", ENCAP=yes)
-AC_SUBST(XCODE)     AC_ARG_ENABLE(xcode, AC_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE="$enableval", XCODE="no" )
-AC_SUBST(ALTIVEC)   AC_ARG_ENABLE(altivec, AC_HELP_STRING(--enable-altivec,compile with "-faltivec" option), ALTIVEC="$enableval", ALTIVEC="no" )
-AC_SUBST(DUMPDATA)  AC_ARG_ENABLE(dumpdata,AC_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA="$enableval", DUMPDATA=yes)
-AC_SUBST(PROFILING) AC_ARG_ENABLE(profile, AC_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING="$enableval", PROFILING=no)
-AC_SUBST(FACTORY)   AC_ARG_ENABLE(factory, AC_HELP_STRING(--disable-factory,disable the use of the 'factory' library), FACTORY="$enableval",FACTORY=yes)
+AC_SUBST(STRIP)     AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), STRIP="$enableval", STRIP=yes)
+AC_SUBST(VERBOSE)   AC_ARG_ENABLE(verbose, AS_HELP_STRING(--enable-verbose,enable verbose memory allocation), VERBOSE="$enableval", VERBOSE=no)
+AC_SUBST(STATIC)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC="$enableval", STATIC=no)
+AC_SUBST(MEMDEBUG)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG="$enableval", MEMDEBUG=no)
+AC_SUBST(OPTIMIZE)  AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE="$enableval", OPTIMIZE=yes)
+AC_SUBST(DEBUG)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG="$enableval", DEBUG=no)
+AC_SUBST(ENCAP)     AC_ARG_ENABLE(encap, AS_HELP_STRING(--disable-encap,do not encapsulate file in a subdirectory), ENCAP="$enableval", ENCAP=yes)
+AC_SUBST(XCODE)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE="$enableval", XCODE="no" )
+AC_SUBST(ALTIVEC)   AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" option), ALTIVEC="$enableval", ALTIVEC="no" )
+AC_SUBST(DUMPDATA)  AC_ARG_ENABLE(dumpdata,AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA="$enableval", DUMPDATA=yes)
+AC_SUBST(PROFILING) AC_ARG_ENABLE(profile, AS_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING="$enableval", PROFILING=no)
+
+AC_SUBST(M2SUFFIX)
+test "$program_suffix" != NONE && M2SUFFIX="$program_suffix"
+AC_ARG_ENABLE(dummy, AS_HELP_STRING(--program-suffix=...,suffix to append to executable name M2))
 
 test "$DUMPDATA" = no; val=$?;  AC_DEFINE_UNQUOTED(DUMPDATA, $val,[whether to use dumpdata])
 test "$PROFILING" = no; val=$?; AC_DEFINE_UNQUOTED(PROFILING,$val,[whether profiling has been enabled])
 test "$FACTORY" = no; val=$?;   AC_DEFINE_UNQUOTED(FACTORY,  $val,[whether to use the factory library])
 
-AC_SUBST(GDBMLIB)     AC_ARG_WITH(gdbmlib, AC_HELP_STRING(--with-gdbmlib=...,gdbm library (-lgdbm)), GDBMLIB="$withval", GDBMLIB="-lgdbm" )
-AC_SUBST(READLINELIB) AC_ARG_WITH(readlinelib, AC_HELP_STRING(--with-readlinelib=...,readline library (-lreadline)), READLINELIB="$withval", READLINELIB="-lreadline" )
-AC_SUBST(HISTORYLIB)  AC_ARG_WITH(historylib, AC_HELP_STRING(--with-historylib=...,history library (-lhistory)), HISTORYLIB="$withval", HISTORYLIB="-lhistory")
-AC_SUBST(M2SUFFIX)    AC_ARG_WITH(M2suffix, AC_HELP_STRING(--with-M2suffix=...,[suffix to append to executable name M2]), M2SUFFIX="$withval")
+AC_SUBST(GDBMLIB)     AC_ARG_WITH(gdbmlib, AS_HELP_STRING(--with-gdbmlib=...,gdbm library (-lgdbm)), GDBMLIB="$withval", GDBMLIB="-lgdbm" )
+AC_SUBST(READLINELIB) AC_ARG_WITH(readlinelib, AS_HELP_STRING(--with-readlinelib=...,readline library (-lreadline)), READLINELIB="$withval", READLINELIB="-lreadline" )
+AC_SUBST(HISTORYLIB)  AC_ARG_WITH(historylib, AS_HELP_STRING(--with-historylib=...,history library (-lhistory)), HISTORYLIB="$withval", HISTORYLIB="-lhistory")
+AC_SUBST(FACTORY)     AC_ARG_WITH(factory, AS_HELP_STRING(--without-factory,disable the use of the 'factory' library), FACTORY="$enableval",FACTORY=yes)
 
 AC_DEFINE_UNQUOTED(M2SUFFIX,"$M2SUFFIX",[suffix to append to executable name M2])
 
 WITH_NEWLINE_CR=0
 WITH_NEWLINE_CRLF=0
-AC_ARG_WITH(newline, AC_HELP_STRING([--with-newline=...], [crlf, cr, or lf (the default)]),
+AC_ARG_WITH(newline, AS_HELP_STRING([--with-newline=...], [crlf, cr, or lf (the default)]),
     [ case "$withval" in
 	  crlf) WITH_NEWLINE_CRLF=1 WITH_NEWLINE_CR=0 ;;
 	  cr)   WITH_NEWLINE_CR=1 WITH_NEWLINE_CRLF=0 ;;
@@ -185,10 +188,10 @@ AC_DEFINE_UNQUOTED(EXEEXT,"$EXEEXT",[suffix the compiler appends to executable f
 AC_SUBST(LAPACKLIBS)
 dnl # LAPACKLIBS="-llapack -lcblas -lf77blas -lg2c" was our former default
 dnl # LAPACKLIBS="-llapack -lblas -lg2c" is our new default, because redhat provides lapack this way now
-AC_ARG_WITH(lapacklibs, AC_HELP_STRING([--with-lapacklibs=...],[lapack libraries (-llapack -lblas -lg2c)]), LAPACKLIBS="$withval", LAPACKLIBS="-llapack -lblas -lg2c")
-AC_ARG_WITH(veclib, AC_HELP_STRING(--with-veclib,replace lapack libraries by "-framework vecLib"), LAPACKLIBS="-framework vecLib")
+AC_ARG_WITH(lapacklibs, AS_HELP_STRING([--with-lapacklibs=...],[lapack libraries (-llapack -lblas -lg2c)]), LAPACKLIBS="$withval", LAPACKLIBS="-llapack -lblas -lg2c")
+AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,replace lapack libraries by "-framework vecLib"), LAPACKLIBS="-framework vecLib")
 AC_SUBST(LAPACK)
-AC_ARG_ENABLE(lapack, AC_HELP_STRING(--disable-lapack,[disable linking with lapack]), LAPACK="$enableval";LAPACKLIBS="", LAPACK=yes)
+AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack]), LAPACK="$enableval";LAPACKLIBS="", LAPACK=yes)
 test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
@@ -204,7 +207,7 @@ AC_TRY_LINK([],[],LIBPTHREAD=-lpthread;AC_MSG_RESULT([yes]), LIBPTHREAD=; AC_MSG
 
 GCLIB="-lgc $LIBDL $LIBPTHREAD"
 AC_SUBST(GCLIB)
-AC_ARG_WITH(gclib, AC_HELP_STRING(--with-gclib=...,gc library (-lgc)), GCLIB="$withval")
+AC_ARG_WITH(gclib, AS_HELP_STRING(--with-gclib=...,gc library (-lgc)), GCLIB="$withval")
 LIBS="$GCLIB $SAVELIBS"
 AC_MSG_CHECKING([whether gc library (-lgc) is installed (using $LIBS)])
 AC_TRY_LINK( [#include <gc.h>], [GC_malloc(1);], HAVE_LIBGC=yes;AC_MSG_RESULT([yes]), HAVE_LIBGC=no;AC_MSG_RESULT([no]))
@@ -224,7 +227,7 @@ fi
 
 GMPLIB="-lgmp"
 AC_SUBST(GMPLIB)
-AC_ARG_WITH(gmplib, AC_HELP_STRING(--with-gmplib=...,gmp library (-lgmp)), GMPLIB="$withval")
+AC_ARG_WITH(gmplib, AS_HELP_STRING(--with-gmplib=...,gmp library (-lgmp)), GMPLIB="$withval")
 AC_MSG_CHECKING([whether gmp library is installed ($GMPLIB)])
 LIBS="$GMPLIB $SAVELIBS"
 AC_TRY_LINK( [#include <gmp.h>], [return *__gmp_version;], AC_MSG_RESULT([yes]), AC_MSG_RESULT([no]))
@@ -248,7 +251,7 @@ AC_TRY_LINK([#include <gdbm.h>], [gdbm_close(0);], AC_MSG_RESULT([yes]), AC_MSG_
 
 NTLLIB=-lntl
 AC_SUBST(NTLLIB)
-AC_ARG_WITH(ntllib, AC_HELP_STRING(--with-ntllib=...,ntl library (-lntl)), NTLLIB="$withval")
+AC_ARG_WITH(ntllib, AS_HELP_STRING(--with-ntllib=...,ntl library (-lntl)), NTLLIB="$withval")
 AC_MSG_CHECKING([whether ntl library is installed])
 LIBS="$NTLLIB -lgmp $SAVELIBS"
 AC_LANG(C++)
