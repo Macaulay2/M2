@@ -2,9 +2,9 @@
 
 int getfile(const char *filename, int buflen, char buf[buflen]);
 int filelen(char const *filename);
-int numlines(int len, unsigned char buf[len]);
+int numlines(int len, char buf[len]);
 int fnumlines(const char *filename);
-void lines(int len, unsigned char buf[len], int nlines, char *line[nlines]);
+void lines(int len, char buf[len], int nlines, char *line[nlines]);
 int linelen(char *p);
 
 /*

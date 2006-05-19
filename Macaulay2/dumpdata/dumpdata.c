@@ -134,7 +134,7 @@ int loaddata(char const *filename) {
   while (TRUE) {
     char fbuf[200];
     int n=0, f_end, ret;
-    char r, w, x;
+    char r, w, x, S;
     fbuf[0]=0;
     f_end = NULL == fgets(fbuf,sizeof fbuf,f) || fbuf[0]=='\n';
     if (!got_newbreak) {
@@ -149,8 +149,8 @@ int loaddata(char const *filename) {
     if (f_end) break;
     trim(fbuf);
     n++;
-    ret = sscanf(fbuf, mapfmt, &dumpedmap.from, &dumpedmap.to, &r, &w, &x, &dumpedmap.checksum);
-    if (6 != ret) {
+    ret = sscanf(fbuf, mapfmt, &dumpedmap.from, &dumpedmap.to, &r, &w, &x, &dumpedmap.checksum, &S);
+    if (7 != ret) {
       warning("loaddata: in data file %s: invalid map %d: %s\n", filename, n, fbuf);
       warning("        : map format: \"%s\" matched %d item(s)\n", mapfmt,ret);
       if (ret >= 1) warning("        : item 1 : %p\n", dumpedmap.from);
@@ -159,12 +159,14 @@ int loaddata(char const *filename) {
       if (ret >= 4) warning("        : item 4 : %c\n", w);
       if (ret >= 5) warning("        : item 5 : %c\n", x);
       if (ret >= 6) warning("        : item 6 : %u\n", dumpedmap.checksum);
+      if (ret >= 7) warning("        : item 7 : %c\n", S);
       fclose(f);
       return ERROR;
     }
     dumpedmap.r = r == 'r';
     dumpedmap.w = w == 'w';
     dumpedmap.x = x == 'x';
+    dumpedmap.isStack = S == 'S';
     for (; j<nmaps; j++) {
       if ((uintP)dumpedmap.from <= (uintP)currmap[j].from) break;
       if (isCheckable(&currmap[j])) {

@@ -35,7 +35,7 @@ int filelen(char const *filename) {
   }
 }
 
-int numlines(int len, unsigned char buf[len]) {
+int numlines(int len, char buf[len]) {
   int i, nlines = 0;
   for (i=0; i<len; i++) if (buf[i] == '\n') nlines++;
   return nlines;
@@ -51,10 +51,10 @@ int fnumlines(char const *filename) {
   }
 }
 
-void lines(int len, unsigned char buf[len], int nlines, char *line[nlines]) {
+void lines(int len, char buf[len], int nlines, char *line[nlines]) {
   int i, n;
   for (n=i=0; i<len && n<nlines; ) {
-    unsigned char *bol = &buf[i];
+    char *bol = &buf[i];
     for (; i<len; i++) if (buf[i] == '\n') { line[n++] = bol; i++; break; }
   }
 }
