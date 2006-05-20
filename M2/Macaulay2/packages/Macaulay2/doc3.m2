@@ -542,23 +542,88 @@ document {
 
 document {
      Key => cacheValue,
+     Headline => "cache values of functions in their arguments",
      Usage => "((cacheValue KEY) f) x",
      Inputs => {
 	  "KEY" => null,
 	  "f" => Function => null,
-	  "x" => {"an argument for ", TT "f", " which has ", OFCLASS CacheTable, " stored in it under ", TT "x.cache"}
+	  "x" => {"an argument for ", TT "f", " that has ", OFCLASS CacheTable, " stored in it under ", TT "x.cache"}
 	  },
      Outputs => {
-	  { TT "f x", " is returned, but the value is saved in ", TT "x.cache", " under ", TT "KEY", " and not recomputed again" }
+	  { TT "f x", " is returned, but the value is saved in ", TT "x.cache#KEY", " and not recomputed later" }
 	  },
      EXAMPLE {
-	  "x = hashTable { val => 1000, cache => new CacheTable }",
+	  "x = new HashTable from { val => 1000, cache => new CacheTable }",
 	  ///g = (t -> (print "hi there"; t.val^4))///,
 	  ///f = (cacheValue VALUE) g///,
 	  "f x",
 	  "f x",
 	  "peek'_2 x"
-	  }
+	  },
+     SourceCode => { cacheValue },
+     SeeAlso => { stashValue }
+     }
+
+document {
+     Key => stashValue,
+     Headline => "stash values of functions in their arguments",
+     Usage => "((stashValue KEY) f) x",
+     Inputs => {
+	  "KEY" => null,
+	  "f" => Function => null,
+	  "x" => MutableHashTable => { "an argument for ", TT "f" }
+	  },
+     Outputs => {
+	  { TT "f x", " is returned, but the value is saved in ", TT "x#KEY", " and not recomputed later" }
+	  },
+     EXAMPLE {
+	  "x = new MutableHashTable from { val => 1000 }",
+	  ///g = (t -> (print "hi there"; t.val^4))///,
+	  ///f = (stashValue VALUE) g///,
+	  "f x",
+	  "f x",
+	  "peek x"
+	  },
+     SourceCode => { stashValue },
+     SeeAlso => { cacheValue }
+     }
+
+undocumented (addHook,MutableHashTable,Thing,Function)
+document {
+     Key => { (addHook,HashTable,Thing,Function), addHook },
+     Headline => "add a hook function to an object for later processing",
+     Usage => "addHook(obj,key,hook)",
+     Inputs => { "obj", "key", "hook" },
+     Consequences => {
+	  { "the function ", TT "hook", " is added to the list (possibly absent) of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key" }
+	  },
+     SourceCode => {(addHook,HashTable,Thing,Function), (addHook,MutableHashTable,Thing,Function)},
+     SeeAlso => { runHooks, removeHook }
+     }
+undocumented (removeHook,MutableHashTable,Thing,Function)
+document {
+     Key => { (removeHook,HashTable,Thing,Function), removeHook },
+     Headline => "remove a hook function from an object",
+     Usage => "removeHook(obj,key,hook)",
+     Inputs => { "obj", "key", "hook" },
+     Consequences => {
+	  { "the function ", TT "hook", " is removed from the list of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key" }
+	  },
+     SourceCode => {(removeHook,HashTable,Thing,Function), (removeHook,MutableHashTable,Thing,Function)},
+     SeeAlso => { runHooks, removeHook }
+     }
+undocumented (runHooks,MutableHashTable,Thing,Thing)
+document {
+     Key => { (runHooks,HashTable,Thing,Thing), runHooks },
+     Headline => "run the hook functions stored in an object",
+     Usage => "runHooks(obj,key,arg)",
+     Inputs => { "obj", "key", "arg" },
+     Consequences => {
+	  { "each function ", TT "hook", " in list of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key", " is
+	       called with ", TT "arg", " as its argument or sequence of arguments" }
+	  },
+     SourceCode => { (runHooks,HashTable,Thing,Thing), (runHooks,MutableHashTable,Thing,Thing) },
+     SeeAlso => { addHook, removeHook }
      }
 
 -- Local Variables:

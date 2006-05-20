@@ -63,7 +63,7 @@ keys(e:Expr):Expr := (
 setupfun("keys",keys);
 toList(e:Expr):Expr := (
      when e
-     -- is o:HashTable do keys(o)
+     is o:HashTable do if ancestor(o.class,Set) then keys(o) else WrongArg("list, sequence, or set")
      -- is o:DictionaryClosure do keys(o.dictionary)
      is a:Sequence do list(a)
      is b:List do (
@@ -73,7 +73,7 @@ toList(e:Expr):Expr := (
 	       	    List(listClass, if b.mutable then copy(b.v) else b.v,
 		    	 0, false),
 	       	    false)))
-     else WrongArg("a hash table, list, net, dictionary, or sequence"));
+     else WrongArg("list, sequence, or set"));
 setupfun("toList",toList);
 values(e:Expr):Expr := (
      when e

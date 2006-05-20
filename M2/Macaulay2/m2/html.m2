@@ -724,6 +724,9 @@ installPackage Package := opts -> pkg -> (
 			 )
 		    ));
 
+ 	  if not opts.IgnoreExampleErrors 
+	  then if hadExampleError then error(toString numExampleErrors, " error(s) occurred running example files");
+
      --      -- make test output files, or else copy them from the old package directory tree
      --      oldTestsDir := oldPackagePrefix|LAYOUT#"packagetests" pkg#"title";
      --      infn2'  := n -> oldTestsDir|toString n|".m2";
@@ -828,9 +831,6 @@ installPackage Package := opts -> pkg -> (
 					);
 				   )))));
 
-     	  -- maybe stop if errors in running examples or in documentation
- 	  if not opts.IgnoreExampleErrors 
-	  then if hadExampleError then error(toString numExampleErrors, " error(s) occurred running example files");
      	  if not opts.IgnoreDocumentationErrors
 	  then if hadDocumentationError then error(toString numDocumentationErrors, " error(s) occurred in documentation for package ", toString pkg);
 

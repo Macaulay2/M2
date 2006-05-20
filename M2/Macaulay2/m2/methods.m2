@@ -376,9 +376,13 @@ addHook = method()
 removeHook = method()
 runHooks = method()
 
-addHook   (MutableHashTable,Symbol,Function) := (X,S,f) -> if X#?S then X#S = append(X#S,f) else X#S = {f}
-removeHook(MutableHashTable,Symbol,Function) := (X,S,f) -> if X#?S then X#S = delete(X#S,f)
-runHooks  (MutableHashTable,Symbol,Thing   ) := (X,S,y) -> if X#?S then scan(X#S, f -> f y)
+addHook   (MutableHashTable,Thing,Function) := (obj,key,hook) -> if obj#?key then obj#key = append(obj#key,hook) else obj#key = {hook}
+removeHook(MutableHashTable,Thing,Function) := (obj,key,hook) -> if obj#?key then obj#key = delete(obj#key,hook)
+runHooks  (MutableHashTable,Thing,Thing   ) := (obj,key,arg ) -> if obj#?key then scan(obj#key, hook -> hook arg)
+
+addHook   (HashTable,Thing,Function) := (obj,key,hook) -> (c := obj.cache; if c#?key then c#key = append(c#key,hook) else c#key = {hook})
+removeHook(HashTable,Thing,Function) := (obj,key,hook) -> (c := obj.cache; if c#?key then c#key = delete(c#key,hook))
+runHooks  (HashTable,Thing,Thing   ) := (obj,key,arg ) -> (c := obj.cache; if c#?key then scan(c#key, hook -> hook arg))
 
 -----------------------------------------------------------------------------
 -- stashing or caching computed values for future reference in functions that take a mutable hash table as input

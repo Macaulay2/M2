@@ -1,7 +1,5 @@
 --		Copyright 1994-2002 by Daniel R. Grayson
 
-maximumCodeWidth = 120
-
 checkLoadDocumentation = () -> if not isGlobalSymbol "Macaulay2" or class value getGlobalSymbol "Macaulay2" =!= Package then (
      -- the documentation for things in the package Macaulay2Core is in the package Macaulay2 !
      oldnotify := notify;
@@ -530,8 +528,22 @@ fixupTable := new HashTable from {
      Consequences => val -> fixupList val,
      Headline => chkIsString Headline,
      Description => val -> extractExamples hypertext val,
-     Caveat => v -> if v =!= null then fixup PARA1 { SUBSECTION "Caveat", SEQ v },
-     SeeAlso => v -> if v =!= {} and v =!= null then fixup PARA1 { SUBSECTION "See also", UL (TO \ enlist v) },
+     Caveat  => v -> if v =!= {} then fixup PARA1 { SUBSECTION "Caveat", SEQ v },
+     SeeAlso => v -> if v =!= {} then fixup PARA1 { SUBSECTION "See also", UL (TO \ enlist v) },
+     SourceCode => v -> if v =!= {} then (
+	  LITERAL "<div class=\"waystouse\">\n",
+	  fixup PARA1 {
+	       SUBSECTION "Code", 
+	       PRE demark(
+		    newline,
+		    unstack stack apply(enlist v,
+			 m -> (
+			      f := lookup m;
+			      if f === null then error("SourceCode: ", toString m, ": not a method");
+			      c := code f;
+			      if c === null then error("SourceCode: ", toString m, ": code for method not found");
+			      c)))},
+	  LITERAL "</div>\n"),
      Subnodes => v -> MENU apply(nonNull enlist v, x -> fixup (
 	       if class x === TO then x
 	       else if class x === TOH then TO {x#0}
@@ -540,6 +552,7 @@ fixupTable := new HashTable from {
      }
 caveat := key -> getOption(key,Caveat)
 seealso := key -> getOption(key,SeeAlso)
+sourcecode := key -> getOption(key,SourceCode)
 theMenu := key -> getOption(key,Subnodes)
 theExamples := key -> getOption(key,Examples)
 documentOptions := new HashTable from {
@@ -552,6 +565,7 @@ documentOptions := new HashTable from {
      Consequences => true,
      Headline => true,
      SeeAlso => true,
+     SourceCode => true,
      Caveat => true,
      Subnodes => true
      }
@@ -953,14 +967,6 @@ optionFor := s -> unique select( value \ flatten(values \ globalDictionaries), f
 --     t := typicalValue k;
 --     if t =!= Thing then fixup DIV {"Class of returned value: ", TO t, commentize headline t}
 --     )
-seecode := x -> (
-     f := lookup x;
-     n := code f;
-     if n =!= null 
-     -- and height n + depth n <= 10 
-     and width n <= maximumCodeWidth
-     then ( SUBSECTION "Code", PRE demark(newline,unstack n) )
-     )
 
 documentationValue := method()
 
@@ -1007,7 +1013,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2Core then (
      m := unique flatten apply(b, T -> select(keys value T, 
 	       i -> class i === Sequence and #i > 1 and ( instance(i#0, Symbol) and i#1 =!= symbol = or class i#0 === Function ) and isDocumentableMethod i)); -- methods
      c := select(e,x -> instance(value x,Symbol));	    -- symbols
-     d := toList(set e - set a - set b - set c);	    -- other things
+     d := toList(set e - set a - set b - set c); -- other things
      fn := pkg#"title" | ".m2";
      au := pkg.Options.Authors;
      (
@@ -1066,7 +1072,7 @@ help Symbol := S -> (
 -- 	       b,
 -- 	       LITERAL "</div>\n"),
      	  documentationValue(S,value S),
-	  theExamples S, caveat S, seealso S, type S, 
+	  theExamples S, caveat S, sourcecode S, seealso S, type S, 
 	  theMenu S
 	  -- if class value S === Function then theAugmentedMenu S else theMenu S
 	  );
@@ -1095,7 +1101,7 @@ help Sequence := key -> (						    -- method key
      if key === () then return help "initial help";
      if null === lookup key then error("expected ", toString key, " to be a method");
      currentHelpTag = makeDocumentTag key;
-     ret := Hypertext fixuptop ( title key, synopsis key, makeDocBody key, theExamples key, caveat key, seealso key, theMenu key );
+     ret := Hypertext fixuptop ( title key, synopsis key, makeDocBody key, theExamples key, caveat key, sourcecode key, seealso key, theMenu key );
      currentHelpTag = null;
      ret)
 
@@ -1150,12 +1156,6 @@ tutorial = x -> (
      x = sublists(x,line -> class line =!= String, identity, sublist -> if #sublist > 0 then EXAMPLE sublist);
      x = select(x, line -> line =!= null);
      x )
-
-showSymbolsWithoutDocumentation = () -> (
-     checkLoadDocumentation();
-     m2 := value getGlobalSymbol "Macaulay2";
-     assert( class m2 === Package );
-     sort select ( unique values Macaulay2Core.Dictionary , s -> fetchRawDocumentation(m2, toString s) === null ))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
