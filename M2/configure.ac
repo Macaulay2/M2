@@ -155,6 +155,12 @@ AC_SUBST(XCODE)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Ma
 AC_SUBST(ALTIVEC)   AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" option), ALTIVEC="$enableval", ALTIVEC="no" )
 AC_SUBST(DUMPDATA)  AC_ARG_ENABLE(dumpdata,AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA="$enableval", DUMPDATA=yes)
 AC_SUBST(PROFILING) AC_ARG_ENABLE(profile, AS_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING="$enableval", PROFILING=no)
+AC_SUBST(COMPRESS)  AC_ARG_ENABLE(compress, AS_HELP_STRING([--enable-compress=[gz|bz2]],compression method for tarball), COMPRESS="$enableval", COMPRESS=gz)
+
+test "$COMPRESS" != "gz" -a "$COMPRESS" != "bz2" && AC_MSG_ERROR(unrecognized option for enable-compress)
+
+AC_SUBST(CYGWIN)    AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin (disables encap and enables strip)), CYGWIN="$enableval", CYGWIN=no)
+if test "$CYGWIN" = yes ; then ENCAP=no ; STRIP=yes ; fi
 
 AC_SUBST(M2SUFFIX)
 test "$program_suffix" != NONE && M2SUFFIX="$program_suffix"

@@ -38,6 +38,7 @@ DEBUG = @DEBUG@
 MEMDEBUG = @MEMDEBUG@
 VERBOSE = @VERBOSE@
 STATIC = @STATIC@
+CYGWIN = @CYGWIN@
 
 CC = @CC@
 GCC = @GCC@
@@ -68,6 +69,7 @@ ENCAP = @ENCAP@
 M2SUFFIX = @M2SUFFIX@
 EXEEXT = @EXEEXT@
 EXE = $(M2SUFFIX)$(EXEEXT)
+COMPRESS = @COMPRESS@
 CONFIG_ARG0 = @CONFIG_ARG0@
 CONFIG_ARGS = @CONFIG_ARGS@
 CONFIG_CMD = @CONFIG_CMD@
@@ -123,8 +125,18 @@ prefix = @prefix@
 
 ifeq "$(ENCAP)" "yes"
 encapdir = $(prefix)/$(package)
+tarparent = $(prefix)
+tarsubdir = $(package)
+else
+ifeq "$(CYGWIN)" "yes"
+tarparent = $(prefix)/$(package)
+tarsubdir = usr
+encapdir = $(prefix)/$(package)/usr
 else
 encapdir = $(prefix)/.
+tarparent = NONE
+tarsubdir = NONE
+endif
 endif
 
 bindir = $(encapdir)/$(binRelDir)
@@ -195,21 +207,6 @@ RANLIB = @RANLIB@
 AR = ar
 
 MAKEFLAGS += -w
-
-ifdef CYGWIN32
-# CFLAGS += '-Dabort()=exit(1)'
-# CXXFLAGS += '-Dabort()=exit(1)'
-# this approach to fixing "abort" doesn't work because of a slight
-# bug in configure/makeconf - strings here get evaluated by the
-# shell a different number of times between now and
-#   (1) the evaluation of the test compilations in factory/configure
-#   (2) the evaluation of the compilations in factory/GNUmakefile
-# and thus it is impossible to shield the parentheses from the shell.
-# A fix is for all expressions in factory/configure like 
-#	eval $ac_compile
-# to be replaced by expressions like
-#	eval `eval "echo $ac_compile"`
-endif
 
 ifeq "$(OS) $(ARCH)" "Linux alpha"
 AS = gcc -c -x assembler-with-cpp
@@ -308,6 +305,42 @@ HAVE_LIBGC_PG = @HAVE_LIBGC_PG@
 
 # whether a profiling version of library libgmp is available with -lgmp-pg
 HAVE_LIBGMP_PG = @HAVE_LIBGMP_PG@
+
+showvars :
+	: PACKAGE_NAME = $(PACKAGE_NAME)
+	: PACKAGE_TARNAME = $(PACKAGE_TARNAME)
+	: PACKAGE_VERSION = $(PACKAGE_VERSION)
+	: package = $(package)
+	: ARCH = $(ARCH)
+	: OS = $(OS)
+	: REL = $(REL)
+	: DESC = $(DESC)
+	: CYGWIN = $(CYGWIN)
+	: prefix = $(prefix)
+	: encapdir = $(encapdir)
+	: tarparent = $(tarparent)
+	: tarsubdir = $(tarsubdir)
+	: bindir = $(bindir)
+	: libdir = $(libdir)
+	: infodir = $(infodir)
+	: datadir = $(datadir)
+	: mandir = $(mandir)
+	: man1dir = $(man1dir)
+	:  = $()
+	:  = $()
+	:  = $()
+	:  = $()
+	:  = $()
+	:  = $()
+	:  = $()
+	:  = $()
+	:  = $()
+	:  = $()
+	:  = $()
+	:  = $()
+	:  = $()
+	:  = $()
+	:  = $()
 
 # Local Variables:
 # compile-command: "make -f Makefile-configuration"

@@ -73,12 +73,12 @@ install :: $(DIRS)
 $(DIRS) :; $(INSTALL) -d $@
 distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile
 
-ifeq ($(ENCAP),yes)
-tarball : 
-	tar cfhz $(package)-$(ARCH)-$(OS).tgz --exclude="Macaulay2-*-data" -C $(prefix) $(package)
-else
-tarball :
-	@ echo 'making a tarball requires encap to be enabled' >&2 ; exit 1
+tarball: tarball.$(COMPRESS)
+tarballs: tarball.bz2 tarball.tgz
+tarball.bz2 :; tar cfh  -                            --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir) |bzip2 >$(package)-$(ARCH)-$(OS).bz2
+tarball.gz  :; tar cfhz $(package)-$(ARCH)-$(OS).tgz --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir)
+ifeq "$(CYGWIN)" "yes"
+install :: tarball
 endif
 
 install all clean distclean::; @echo "-------- done making '$@' --------"
