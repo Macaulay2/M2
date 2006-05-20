@@ -2,27 +2,28 @@ document {
      Key => "The Macaulay2 language",
      "The Macaulay2 language is a simple yet powerful interpreted language.  Every 
      object has a type, such as Type, ZZ (integer), String, HashTable, Ring, Matrix,
-     Function, etc.
-     User defined variables are not constrained to hold any one type.",
+     Function, etc.  User defined variables are hold values of any type.",
      PARA,
      "Expressions in Macaulay2 include function calls,
-     control structures (e.g. for and while loops), function definitions,
+     control structures (e.g., ", TO "for", " and ", TO "while", " loops), function definitions,
      and operator expressions.
-     Every expression returns an object although null is often returned if the 
+     Every expression returns an object, although ", TO "null", " is often returned if the 
      expression is only being used to produce some side effect.",
      PARA,
+
      "There is special syntax for creating and accessing strings, lists, sequences, and
      hashtables.  These are the key data types underlying many new types.  The Macaulay2
-     engine implements low level ring, ring element and matrix types, and the types
-     Ring, RingElement, Matrix, Ideal, RingMap, Module, ChainComplex (and some others)
-     are based on these low-level internal data types and operations on them.",
+     engine implements rings, ring elements, and matrices, as instances of low-level types, 
+     and various high-level types, visible to the user, are based on them.  Examples include
+     ", TO "Ring", ", ", TO "RingElement", ", ", TO "Matrix", ", ", TO "Ideal", ", ", TO "RingMap", ", ", TO "Module", ", and ", TO "ChainComplex", ".",
+
      Subnodes => {
 	  TO "overview of the Macaulay2 language",
 	  TO "variables",
 
-	  "basic datatypes",
-	  TO "numeric types",
+	  "basic data types",
 
+	  TO "numeric types",
 	  TO "strings",
 	  TO "nets",
 	  TO "lists",
@@ -30,6 +31,7 @@ document {
 	  TO "hash tables",
 
      	  "expressions",
+
 	  TO "assignment statements",
 	  TO "function calls",
 	  TO "function definitions",
@@ -39,6 +41,7 @@ document {
 	  TO "try clauses",
 	  TO "catch and throw",
 	  TO "operators",
+
 	  "input and output",
 	  TO "printing to the screen",
 	  TO "reading files",
@@ -197,14 +200,7 @@ document {
      essentially implemented internally.  It is not possible for
      the user to create new basic types.  For details, see
      ", TT "basictype", ".",
-     Subnodes => {
-     	  "Some common basic types:",
-	  TO "strings",
-	  TO "nets",
-	  TO "lists",
-	  TO "sequences",
-	  TO "hash tables",
-	  }
+     SeeAlso => { "strings", "nets", "lists", "sequences", "hash tables" }
      }
 
 document {

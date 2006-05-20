@@ -13,7 +13,7 @@ Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/index-" | version
 
 local prefix; local topNodeButton
 local nullButton; local masterIndexButton; local tocButton; local homeButton
-local NEXT; local PREV; local UP; local CONT; local linkTable
+local NEXT; local PREV; local UP; local tableOfContents; local linkTable
 local nextButton; local prevButton; local upButton
 local masterIndex
 
@@ -297,14 +297,8 @@ assembleTree := (pkg,nodes) -> (
 		    tag => {}
 		    )
 	       ));
-     CONT = getTrees();
-     if debugLevel > 0 then (
-	  n := net CONT;
-	  f := (ht,dp) -> (stack (ht + dp : "** "^-1)) ^ ht;
-	  n = f(height n, depth n) | n;
-	  stderr << "tree structure:" << endl << n << endl;
-	  );
-     buildLinks CONT;
+     tableOfContents = getTrees();
+     buildLinks tableOfContents;
      )
 
 -----------------------------------------------------------------------------
@@ -377,7 +371,7 @@ makeMasterIndex := keylist -> (
 	  } << endl << close
      )
 
-makeTableOfContents := () -> (
+maketableOfContents := () -> (
      fn := buildDirectory | htmlDirectory | tocFileName;
      title := DocumentTag.FormattedKey topDocumentTag | " : Table of Contents";
      stderr << "--making  '" << title << "' in " << fn << endl;
@@ -388,7 +382,7 @@ makeTableOfContents := () -> (
 	       DIV { topNodeButton, " | ", masterIndexButton, " | ", homeButton },
 	       HR{},
 	       HEADER1 title,
-	       toDoc CONT
+	       toDoc tableOfContents
 	       }
 	  } << endl << close
      )
@@ -794,8 +788,9 @@ installPackage Package := opts -> pkg -> (
 
 	  -- make table of contents, including next, prev, and up links
 	  stderr << "--assembling table of contents" << endl;
-	  assembleTree(pkg,select(nodes,tag -> not isUndocumented tag));
-	  pkg#"table of contents" = new Bag from {CONT}; -- we bag it because it might be big!
+	  assembleTree(pkg,select(nodes,tag -> not isUndocumented tag)); -- sets tableOfContents
+	  stderr << "table of contents, in tree form:" << endl << tableOfContents << endl;
+	  pkg#"table of contents" = new Bag from {tableOfContents}; -- we bag it because it might be big!
 	  pkg#"links up" = UP;
 	  pkg#"links next" = NEXT;
 	  pkg#"links prev" = PREV;
@@ -921,7 +916,7 @@ installPackage Package := opts -> pkg -> (
 	  makeMasterIndex select(nodes,tag -> not isUndocumented tag and instance(DocumentTag.Key tag,Symbol));
 
 	  -- make table of contents
-	  makeTableOfContents();
+	  maketableOfContents();
 
      	  );						    -- end if opts.MakeDocumentation
 
