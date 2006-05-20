@@ -38,6 +38,12 @@ isComposedFunction := f -> sameFunctionBody(f,composedFunction)
 isMemoizedFunction := f -> sameFunctionBody(f,memoizedFunction)
 
 codeFunction := (f,depth) -> (
+     -- this should be rewritten using "localDictionaries"!
+     -- ii26 : f = sin @@ cos;
+     -- 
+     -- ii27 : value \ values first localDictionaries f
+     -- 
+     -- oo27 = {sin, cos}
      if depth <= limit and locate f =!= null then stack(
 	  try getSourceLines locate f else concatenate("source code file '",first locate f,"' not available"),
 	  if isOptionedFunction f then (
