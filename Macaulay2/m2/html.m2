@@ -510,6 +510,10 @@ installPackage String := opts -> pkg -> (
 	  installPackage(pkg, opts);
 	  ))
 
+dispatcherMethod := m -> m#-1 === Sequence and (
+     f := lookup m;
+     any(dispatcherFunctions, g -> sameFunctionBody(f,g)))
+
 installPackage Package := opts -> pkg -> (
      if opts.MakeDocumentation and pkg#?"documentation not loaded"
      then pkg = loadPackage(pkg#"title", DebuggingMode => opts.DebuggingMode, MakeDocumentation => true);
@@ -802,7 +806,7 @@ installPackage Package := opts -> pkg -> (
 		    if class value s === Function 
 		    then scan(methods value s, m -> (
 			 tag := makeDocumentTag m;
-			 if not isUndocumented tag and not hasDocumentation m then (
+			 if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m then (
 			      stderr << "--error: exported method has no documentation: " << tag << endl;
 			      );
 			 ))));

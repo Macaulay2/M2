@@ -7,7 +7,7 @@
 -- 
 -- 
 -- There appears to a bug in the Assassinator code.
--- In particular, "ass P" doesn't return all the
+-- In particular, "associatedPrimes P" doesn't return all the
 -- associated primes in the following example.
 -- 
 S = QQ[a,b,c,d,e];
@@ -15,8 +15,8 @@ I1 = ideal(a,b,c);
 I2 = ideal(a,b,d);
 I3 = ideal(a,e);
 P = I1*I2*I3;
-L1 = ass P;
-L2 = apply(ass monomialIdeal P, J -> ideal J);
+L1 = associatedPrimes P;
+L2 = apply(associatedPrimes monomialIdeal P, J -> ideal J);
 assert( #L1 == #L2 )
 -- 
 -- Naturally, I'm happy to observe that the monomial

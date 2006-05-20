@@ -19,7 +19,7 @@ I3 = ideal(x_1, x_5)
 P = I1*I2*I3
 
 --Macaulay 2 says that P has associated primes I1, I2, I3, and I1+I2.
-ass P
+associatedPrimes P
 
 --A result of Conca and Herzog says that if the associated primes are as
 --listed above, the following should be a primary decomposition of P.
@@ -36,7 +36,7 @@ isSubset(test2, P)
 isSubset(P, test2)
 
 --We can also find elements of R = S/P that have annihilators that Macaulay 2
---does not list in the output from the command "ass P."
+--does not list in the output from the command "associatedPrimes P."
 R = S/P
 --x_1*x_3 has annihilator I2+I3
 annihilator (x_1*x_3)

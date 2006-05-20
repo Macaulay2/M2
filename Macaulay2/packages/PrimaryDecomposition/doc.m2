@@ -1,8 +1,8 @@
 
 document {
-     Key => (ass, Ideal),
+     Key => (associatedPrimes, Ideal),
      Headline => "find the associated primes of an ideal",
-     Usage => "ass(I)",
+     Usage => "associatedPrimes I",
      Inputs => {
 	  "I" => {"an ideal in a (quotient of a) polynomial ring ", TT "R"}
 	  },
@@ -14,12 +14,12 @@ document {
      EXAMPLE {
 	  "R = ZZ/101[a..d];",
 	  "I = intersect(ideal(a^2,b),ideal(a,b,c^5),ideal(b^4,c^4))",
-	  "ass I"
+	  "associatedPrimes I"
 	  },
      EXAMPLE {
 	  "R = ZZ/7[x,y,z]/(x^2,x*y);",
 	  "I=ideal(0_R);",
-	  "ass I"
+	  "associatedPrimes I"
 	  },
      PARA,
      "The associated primes are found using the Ext modules: The 
@@ -38,7 +38,7 @@ document {
      }
 
 document {
-     Key => [ass,Strategy],
+     Key => [associatedPrimes,Strategy],
      "The strategy option value should be one of the following.",
      UL{
 	  SEQ ("1", " -- The assassinator is found using Ext modules."),
@@ -57,21 +57,6 @@ document {
      minimal primes of", TO(topComponents), " of the ideal, ", TT "I", ", and replace ",
      TT "I", " by ", TT "I:(topComponents I)", "."
      }
-
-document {
-     Key => [ass,PrintLevel],
-     "The PrintLevel option governs the level of diagnostic printing during the computation, and the value should be one of the following.",
-     UL {
-	  "0 -- no extra printing",
-	  "1 -- prints the strategy used and the associated primes as they are found",
-	  "2 -- also prints the loop index, which, for strategy 1, is the current codimension of the associate primes being found"
-	  },
-     EXAMPLE {
-	  "R = ZZ/31991[x,y,z];",
-	  "I = ideal(x*y*z, x*y^2 , x^3*y)",
-	  "ass(I,PrintLevel=>2)"
-	  }
-     }     
 
 document {
      Key => (localize,Ideal,Ideal),
@@ -127,33 +112,16 @@ document {
 	  "This strategy uses a separator polynomial - a polynomial in all of 
 	  the associated primes of ", TT "I", " but ", TT "P", " and those 
 	  contained in ", TT "P", ".  In this strategy, the assassinator of the 
-	  ideal will be recalled, or recomputed using ", TO [ass,Strategy] ,
+	  ideal will be recalled, or recomputed using ", TO [associatedPrimes,Strategy] ,
 	  " = 1, if unknown.  The separator 
 	  polynomial method is described in  
 	  Shimoyama-Yokoyama, J. Symbolic computation, 22(3) 247-277 (1996).",
 	  HEADER3 "Strategy => 2",
 	  "This is the same as ", TT "Strategy => 1", " except that, if 
-	  unknown, the assassinator is computer using ", TO ass => Strategy ,
+	  unknown, the assassinator is computer using ", TO associatedPrimes => Strategy ,
 	  " = 2."
 	   }
 ///
-document {
-     Key => [localize,PrintLevel],
-	  "The PrintLevel option value should be one of the following.",
-	  UL{
-	       SEQ ("0", " -- default"),
-	       SEQ ("1" , " -- Informs the user of the current operation"),
-	       SEQ ("2" , " -- Prints the current operation and its result")},
-	  EXAMPLE{
-	       "R = ZZ/(101)[x,y];",
-	       "I = ideal (x^2,x*y);",
-	       "P1 = ideal (x);",
-	       "localize(I,P1,PrintLevel => 1)",
-	       "P2 = ideal (x,y);",
-	       "localize(I,P2,PrintLevel => 2)",
-	       }
-	  }
-
 
 document {
      Key => (primaryComponent, Ideal, Ideal),
@@ -175,7 +143,7 @@ document {
      PARA,
      BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
      Last modified June, 2000.",
-     SeeAlso => {(ass,Ideal), (primaryDecomposition,Ideal), radical, decompose, topComponents, removeLowestDimension}
+     SeeAlso => {(associatedPrimes,Ideal), (primaryDecomposition,Ideal), radical, decompose, topComponents, removeLowestDimension}
      }
 
 document {
@@ -197,18 +165,6 @@ document {
       The algoritm begins with ", TT "m = 1", ", and increases m by the 
       value of the ", TT "Increment", "option until ", TT "m", " is 
       sufficiently large.  The default value is 1." 
-     }
-
-document {
-     Key => [primaryComponent,PrintLevel],     
-      "The Strategy option value should be one of the following.",
-     UL{
-	  SEQ ("0", " -- default"),
-	  SEQ ("1", " -- informs user of the current power being checked."),
-	  SEQ ("2", " -- gives output of time-consuming processes.")
-     	  },
-     PARA,
-     "See ", TO (primaryComponent,Ideal,Ideal) , " for more information."
      }
 
 document {
@@ -247,7 +203,7 @@ TEST ///
 R = QQ[a..g]
 I = ideal(a*b*c^3, a^3*d*f^2, a*b*c*d*e, b*c^4*d^3, e*f^5)
 C = primaryDecomposition I
-A = ass I
+A = associatedPrimes I
 scan(#C, i -> radical(monomialIdeal C_i) == monomialIdeal A_i)
 -- radical of a monomial ideal should immediately call the monomial ideal cdoe too
 radical C_1
@@ -257,7 +213,7 @@ irreducibleDecomposition monomialIdeal I
 
 I = intersect(ideal(a^2,a*b,b^2), ideal(b,c,d^10))
 C = primaryDecomposition I
-ass I
+associatedPrimes I
 ///
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PrimaryDecomposition.installed "

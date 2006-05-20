@@ -457,7 +457,7 @@ document {
 
 document {
      Key => "associated primes of an ideal",
-       "The function ", TO "ass", " returns a list of the 
+       "The function ", TO "associatedPrimes", " returns a list of the 
        associated prime ideals for a given ideal ", "I", ".  The 
        associated prime ideals correspond to the irreducible 
        components of the variety associated to ", TT "I", ".  They are 
@@ -468,7 +468,7 @@ document {
        EXAMPLE {
 	    "R = ZZ/101[a..d];",
 	    "I = ideal(a*b-c*d, (a*c-b*d)^2);",
-	    "ass I"
+	    "associatedPrimes I"
 	    },
      "See ", TO "primary decomposition", " for more information 
      about finding primary decompositions.  To find just the 
@@ -501,8 +501,8 @@ document {
 	    },
        NOINDENT, "To obtain the associated prime ideals corresponding to the
        primary components returned by ", TT "primaryDecomposition", " use 
-       the function ", TO "ass", ".  The first entry 
-       in the list given by ", TT "ass", " is the radical of the first 
+       the function ", TO "associatedPrimes", ".  The first entry 
+       in the list given by ", TT "associatedPrimes", " is the radical of the first 
        entry in the list given by ", TT "primary decomposition", "."
        ,
      SUBSECTION "strategies",

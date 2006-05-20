@@ -39,19 +39,12 @@ document {
 	  "C/degree"
 	  },
      PARA,
-     "The corresponding list of associated prime ideals is cached in ", TT "I.cache.ass", ",
-     and can be obtained by using ", TO (ass,Ideal), ".",
+     "The corresponding list of associated prime ideals is cached in ", TT "I.cache.associatedPrimes", ",
+     and can be obtained by using ", TO (associatedPrimes,Ideal), ".",
      EXAMPLE {
-	  "ass I / print;"
+	  "associatedPrimes I / print;"
 	  },
      Caveat => {"The ground ring must be a prime field."},
-     SeeAlso => {PrimaryDecomposition,(ass,Ideal), radical, decompose, topComponents, removeLowestDimension}
+     SeeAlso => {PrimaryDecomposition,(associatedPrimes,Ideal), radical, decompose, topComponents, removeLowestDimension}
      }
 
-document { 
-     Key => [primaryDecomposition, PrintLevel],
-     PARA {
-	  "The value of this option is passed on to the ", TO "associatedPrimes", " routine, which is called during the computation."
-	  },
-     SeeAlso => { [associatedPrimes, PrintLevel] }
-     }

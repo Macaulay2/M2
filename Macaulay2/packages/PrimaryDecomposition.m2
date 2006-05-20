@@ -26,7 +26,7 @@ load "PrimaryDecomposition/GTZ.m2"
 load "PrimaryDecomposition/Shimoyama-Yokoyama.m2"
 load "PrimaryDecomposition/Eisenbud-Huneke-Vasconcelos.m2"
 
-binomialCD = (I) -> {}
+binomialCD = (I) -> error "Binomial strategy not implemented yet"
 
 Hybrid = new SelfInitializingType of BasicList
 
@@ -49,25 +49,14 @@ primaryDecomposition Ideal := List => o -> (I) -> (
 	  I.cache.Assassinator = apply(C, I -> ideal radical I);
 	  C/ideal
 	  )
-     else if opt === Binomial then (
-	  error "not implemented yet";
-	  binomialCD (I,o.PrintLevel)
-	  )
-     else if opt === EHV then (
-	  EHVprimaryDecomposition (I,o.PrintLevel)
-	  )
-     else if opt === SY then (
-	  SYprimaryDecomposition (I,o.PrintLevel)
-	  )
+     else if opt === Binomial then binomialCD I
+     else if opt === EHV then EHVprimaryDecomposition I
+     else if opt === SY then SYprimaryDecomposition I
      else if class opt === Hybrid then (
-	  if #opt =!= 2 then error "hybrid requires 2 arguments";
+	  if #opt =!= 2 then error "the Hybrid strategy requires 2 arguments";
 	  assStrategy := opt#0;
 	  localizeStrategy := opt#1;
-	  HprimaryDecomposition (
-	       I,
-	       assStrategy,
-	       localizeStrategy,
-	       o.PrintLevel)
+	  HprimaryDecomposition ( I, assStrategy, localizeStrategy )
 	  )
      )
 
@@ -80,16 +69,13 @@ document {
      primary decompositions of ideals.",
      PARA,
      Subnodes => {
-	  TO (ass, Ideal),
-	  TO [ass,Strategy],
-	  TO [ass,PrintLevel],
+	  TO (associatedPrimes, Ideal),
+	  TO [associatedPrimes,Strategy],
 	  TO (localize,Ideal,Ideal),
 	  TO [localize,Strategy],
-	  TO [localize,PrintLevel],
 	  TO (primaryComponent, Ideal, Ideal),
 	  TO [primaryComponent,Strategy],
 	  TO [primaryComponent,Increment],
-	  TO [primaryComponent,PrintLevel],
 	  TO (primaryDecomposition, Ideal),
 	  TO [primaryDecomposition,Strategy]
 	  }

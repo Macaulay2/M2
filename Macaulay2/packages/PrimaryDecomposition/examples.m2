@@ -11,8 +11,8 @@ needsPackage "PrimaryDecomposition"
 (I = clear I; time res coker gens I)           -- seconds
 (I = clear I; time primaryDecomposition I)     -- 
 (I = clear I; time decompose I)                -- 
-(I = clear I; time ass(I,Strategy=>1,PrintLevel=>2)) -- 
-(I = clear I; time ass(I,Strategy=>2,PrintLevel=>2)) -- 
+(I = clear I; time associatedPrimes(I,Strategy=>1)) -- 
+(I = clear I; time associatedPrimes(I,Strategy=>2)) -- 
 (I = clear I; time radical I)                  -- 
 (I = clear I; time topComponents I)                      -- 
 (I = clear I; time removeLowestDimension I)    -- 
@@ -68,7 +68,7 @@ I = ideal(
 (I = clear I; time removeLowestDimension I)    --  .46 [14.81]
 (I = clear I; time (I : ideal vars R))         --  .09 [0.57]
 (I = clear I; time saturate(I, ideal vars R))  --  .07 [0.53]
-(I = clear I; time ass I)                      -- 1.35
+(I = clear I; time associatedPrimes I)                      -- 1.35
 
 ///////////////////////////////////////////////////////
 //Sturmfels: 16 Komponenten

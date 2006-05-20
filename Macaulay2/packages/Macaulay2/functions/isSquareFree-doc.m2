@@ -38,5 +38,5 @@ document {
 	  },
      PARA,
      "Implemented by Greg Smith.",	       
-     SeeAlso => {radical, ass, "SimplicialComplexes"}
+     SeeAlso => {radical, associatedPrimes, "SimplicialComplexes"}
      }
