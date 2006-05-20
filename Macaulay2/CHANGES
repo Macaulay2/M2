@@ -16,8 +16,8 @@ Changes made, most recent ones first:
 
 New in 0.9.8:
 
-toList of a HashTable or of a Dictionary used to return the keys, but we
-   have disabled that in favor of using the function "keys".
+toList of a HashTable that is not a Set or of a Dictionary used to return the
+   keys, but we have disabled that in favor of using the function "keys".
 
 MonomialIdeal - MonomialIdeal: M-N returns a monomial ideal consisting
 of those generators of M which are not in N.
