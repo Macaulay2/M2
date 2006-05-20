@@ -74,9 +74,10 @@ robustNet := y -> (
 	       simpleToString y)))
 Thing.Print = x -> (
      oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
-     printWidth = printWidth - #oprompt;
+     save := printWidth;
+     if printWidth != 0 then printWidth = printWidth - #oprompt;
      z := robustNet x;
-     printWidth = printWidth + #oprompt;
+     printWidth = save;
      wrapper := lookup(symbol Wrap,class x);
      if wrapper =!= null then (
 	  fun := () -> z = wrapper z;

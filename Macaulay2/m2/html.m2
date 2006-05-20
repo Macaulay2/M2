@@ -646,6 +646,8 @@ installPackage Package := opts -> pkg -> (
 	       );
 	  rawdocDatabase := openDatabaseOut rawdbnametmp;
 	  rawDoc := pkg#"raw documentation";
+	  -- remove any keys from the processed database no longer used
+	  scan(keys rawdocDatabase - set keys rawDoc, key -> rawdocDatabase#key = null);
 	  scan(nodes, tag -> (
 		    fkey := DocumentTag.FormattedKey tag;
 		    if rawDoc#?fkey then (
@@ -662,7 +664,6 @@ installPackage Package := opts -> pkg -> (
 			 )
 		    else (
 			 if rawdocDatabase#?fkey then (
-			      error "debug me";
 			      stderr << "--warning: raw documentation for " << fkey << ", in database, is no longer present" << endl;
 			      )
 			 else (
@@ -791,6 +792,20 @@ installPackage Package := opts -> pkg -> (
 	  pkg#"links up" = UP;
 	  pkg#"links next" = NEXT;
 	  pkg#"links prev" = PREV;
+
+     	  -- check that everything is documented
+	  scan((if pkg#"title" == "Macaulay2" then Macaulay2Core else pkg)#"exported symbols", s -> (
+		    tag := makeDocumentTag s;
+		    if not isUndocumented tag and not hasDocumentation s then (
+			 stderr << "--error: exported symbol has no documentation: " << tag << endl;
+			 );
+		    if class value s === Function 
+		    then scan(methods value s, m -> (
+			 tag := makeDocumentTag m;
+			 if not isUndocumented tag and not hasDocumentation m then (
+			      stderr << "--error: exported method has no documentation: " << tag << endl;
+			      );
+			 ))));
 
 	  -- helper routine
 	  getPDoc := fkey -> (

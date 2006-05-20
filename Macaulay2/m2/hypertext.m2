@@ -180,15 +180,15 @@ html ButtonTABLE := x -> concatenate(
 	       "  </tr>", newline)),
      "</table>", newline )			 
 
-truncateString := s -> if printWidth == 0 or width s <= printWidth then s else concatenate(substring(s,0,printWidth-1),"$")
+truncWidth := 0
+truncateString := s -> if printWidth == 0 or width s <= printWidth then s else concatenate(substring(s,0,truncWidth-1),"$")
 truncateNet    := n -> if printWidth == 0 or width n <= printWidth then n else stack(apply(unstack n,truncateString))
 
 info ExampleTABLE := net ExampleTABLE := x -> (
      p := "    ";
-     if printWidth != 0 then printWidth = printWidth - #p -2;
-     r := p | boxList apply(toList x, y -> truncateNet net y#1);
-     if printWidth != 0 then printWidth = printWidth + #p + 2;
-     r)
+     trunc := if printWidth != 0 then truncateNet else identity;
+     truncWidth = printWidth - #p -2;
+     p | boxList apply(toList x, y -> trunc net y#1))
 info EXAMPLE := net EXAMPLE := x -> net ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
 
 tex TABLE := x -> concatenate applyTable(x,tex)

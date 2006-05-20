@@ -454,10 +454,11 @@ document {
      }
 
 document { 
-     Key => {(isSubset, Set, Set),
-	  (isSubset, Set, List),
-	  (isSubset, List, Set),
-	  (isSubset, List, List)},
+     Key => {
+	  (isSubset, Set, Set),
+	  (isSubset, Set, VisibleList),
+	  (isSubset, VisibleList, Set),
+	  (isSubset, VisibleList, VisibleList)},
      Headline => "whether something is a subset",
      Usage => "isSubset(x,y)",
      Inputs => {

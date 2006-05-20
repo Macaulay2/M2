@@ -33,7 +33,7 @@ normalizeDocumentKey    Thing := key -> (
      error("encountered unidentifiable document tag: ",key);
      )
 
-isDocumentableThing  := method(SingleArgumentDispatch => true)
+isDocumentableThing  = method(SingleArgumentDispatch => true)
 isDocumentableThing    String := key -> true
 isDocumentableThing    Symbol := key -> true
 isDocumentableThing  Sequence := key -> false 		    -- we're not looking for documentable methods here, just documentable objects
@@ -123,7 +123,7 @@ DocumentTag ? String := (x,y) -> x#1 ? y
 String ? DocumentTag := (x,y) -> x ? y#1
 toString DocumentTag := net DocumentTag := x -> concatenate ( DocumentTag.Title x, " :: ", DocumentTag.FormattedKey x )
 package DocumentTag := DocumentTag.Package
-hasDocumentation := key -> isDocumentableThing key and (
+hasDocumentation = key -> isDocumentableThing key and (
      tag := makeDocumentTag key;
      pkg := DocumentTag.Package tag;
      fkey := DocumentTag.FormattedKey tag;
@@ -699,7 +699,7 @@ makeDocBody Thing := key -> (
 	       docBody = processExamples(pkg, fkey, docBody);
 	       if class key === String 
 	       then DIV {docBody}
-	       else SEQ { SUBSECTION "Description", DIV {docBody} })))
+	       else PARA1 { SUBSECTION "Description", DIV {docBody} })))
 
 title := s -> (
      h := headline s;
@@ -1011,7 +1011,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2Core then (
      fn := pkg#"title" | ".m2";
      au := pkg.Options.Authors;
      (
-     	  if #au > 0 then (
+     	  if #au > 0 then PARA1 {
      	       SUBSECTION (if #au === 1 then "Author" else "Authors"), 
 	       fixup UL apply(au,
 		    au -> (
@@ -1025,17 +1025,17 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2Core then (
 			 PARA1 {nam,em}
 			 )
 		    )
-	       ),
-	  SUBSECTION "Version", "This documentation describes version ", pkg.Options.Version, " of ", pkg#"title", ".",
-	  if pkg#"title" =!= "Macaulay2" then (SUBSECTION "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, "."),
-	  if #e > 0 then (
+	       },
+	  PARA1 { SUBSECTION "Version", "This documentation describes version ", pkg.Options.Version, " of ", pkg#"title", "." },
+	  if pkg#"title" =!= "Macaulay2" then PARA1 {SUBSECTION "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, "."},
+	  if #e > 0 then PARA1 {
 	       SUBSECTION "Exports",
 	       fixup UL {
 		    if #b > 0 then PARA1 {"Types", smenu b},
 		    if #a > 0 then PARA1 {"Functions", smenu a},
 		    if #m > 0 then PARA1 {"Methods", smenu m},
 		    if #c > 0 then PARA1 {"Symbols", smenu c},
-		    if #d > 0 then PARA1 {"Other things", smenuCLASS d}})))
+		    if #d > 0 then PARA1 {"Other things", smenuCLASS d}}}))
 
 theAugmentedMenu := S -> (
      f := value S;
