@@ -540,6 +540,27 @@ document {
 	  }
      }
 
+document {
+     Key => cacheValue,
+     Usage => "((cacheValue KEY) f) x",
+     Inputs => {
+	  "KEY" => null,
+	  "f" => Function => null,
+	  "x" => {"an argument for ", TT "f", " which has ", OFCLASS CacheTable, " stored in it under ", TT "x.cache"}
+	  },
+     Outputs => {
+	  { TT "f x", " is returned, but the value is saved in ", TT "x.cache", " under ", TT "KEY", " and not recomputed again" }
+	  },
+     EXAMPLE {
+	  "x = hashTable { val => 1000, cache => new CacheTable }",
+	  ///g = (t -> (print "hi there"; t.val^4))///,
+	  ///f = (cacheValue VALUE) g///,
+	  "f x",
+	  "f x",
+	  "peek'_2 x"
+	  }
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
