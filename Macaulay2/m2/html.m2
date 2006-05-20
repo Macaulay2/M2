@@ -729,7 +729,6 @@ installPackage Package := opts -> pkg -> (
 			 if debugLevel > 1 then stderr << "--warning: missing file " << outf << endl;
 			 )
 		    ));
- 	  if not opts.IgnoreExampleErrors then if hadExampleError then error(toString numExampleErrors, " error(s) occurred running example files");
 
      --      -- make test output files, or else copy them from the old package directory tree
      --      oldTestsDir := oldPackagePrefix|LAYOUT#"packagetests" pkg#"title";
@@ -812,17 +811,33 @@ installPackage Package := opts -> pkg -> (
 		    tag := makeDocumentTag s;
 		    if not isUndocumented tag and not hasDocumentation s then (
 			 bump();
-			 stderr << "--error: exported symbol has no documentation: " << tag << endl;
+			 stderr << "--error: symbol has no documentation: " << tag << endl;
 			 );
-		    if class value s === Function 
-		    then scan(methods value s, m -> (
-			 tag := makeDocumentTag m;
-			 if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m then (
-			      bump();
-			      stderr << "--error: exported method has no documentation: " << tag << endl;
-			      );
-			 ))));
-     	  if hadDocumentationError then error(toString numDocumentationErrors, " error(s) occurred in documentation for package ", toString pkg);
+		    f := value s;
+		    if class f === Function then (
+			 scan(methods f, m -> (
+				   tag := makeDocumentTag m;
+				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m then (
+					bump();
+					stderr << "--error: method has no documentation: " << tag << endl;
+					);
+				   ));
+			 o := options f;
+			 if o =!= null 
+			 then scan(apply(keys o, op -> [f,op]), 
+			      m -> (
+				   tag := makeDocumentTag m;
+				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m then (
+					bump();
+					stderr << "--error: option has no documentation: " << tag << endl;
+					);
+				   )))));
+
+     	  -- maybe stop if errors in running examples or in documentation
+ 	  if not opts.IgnoreExampleErrors 
+	  then if hadExampleError then error(toString numExampleErrors, " error(s) occurred running example files");
+     	  if not opts.IgnoreDocumentationErrors
+	  then if hadDocumentationError then error(toString numDocumentationErrors, " error(s) occurred in documentation for package ", toString pkg);
 
 	  -- helper routine
 	  getPDoc := fkey -> (

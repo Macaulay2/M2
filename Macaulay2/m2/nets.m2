@@ -22,7 +22,8 @@ Net.AfterPrint = identity
 toString MutableHashTable := s -> (
      concatenate ( toString class s, if parent s =!= Nothing then (" of ", toString parent s), "{...", toString(#s), "...}"))
 toString Type := X -> (
-     if ReverseDictionary#?X then return toString ReverseDictionary#X;
+     if PrintNames#?X then PrintNames#X
+     else if ReverseDictionary#?X then return toString ReverseDictionary#X;
      concatenate(toString class X, " of ", toString parent X, "{...", toString(#X), "...}"))
 toString HashTable := s -> (
      concatenate (
