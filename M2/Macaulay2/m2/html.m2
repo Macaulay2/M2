@@ -17,8 +17,11 @@ local NEXT; local PREV; local UP; local CONT; local linkTable
 local nextButton; local prevButton; local upButton
 local masterIndex
 
-haderror := false
-numerrors := 0;
+hadExampleError := false
+numExampleErrors := 0;
+
+hadDocumentationError := false
+numDocumentationErrors := 0;
 
 buildPackage := null					    -- name of the package currently being built
 topDocumentTag := null
@@ -432,8 +435,8 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> ( -- retur
 	       stderr << "subprocess terminated abnormally, exiting" << endl;
 	       exit r;
 	       );
-	  haderror = true;
-	  numerrors = numerrors + 1;
+	  hadExampleError = true;
+	  numExampleErrors = numExampleErrors + 1;
 	  return false;
 	  ))
 
@@ -452,14 +455,14 @@ runString := (x,pkg,rundir,usermode) -> (
 check = method()
 check Package := pkg -> (
      usermode := false;					    -- fix this later as an option to "check" or something!
-     haderror = false;
-     numerrors = 0;
+     hadExampleError = false;
+     numExampleErrors = 0;
      scan(pairs pkg#"test inputs", (key,s) -> (
 	       (seqno,filename,lineno) := key;
 	       stderr << "--testing input " << seqno << " on line " << lineno << " from file " << filename << endl;
 	       runString(s,pkg,".",usermode);
 	       ));
-     if haderror then error(toString numerrors, " error(s) occurred running tests for package ", toString pkg);
+     if hadExampleError then error(toString numExampleErrors, " error(s) occurred running tests for package ", toString pkg);
      )
 
 setupNames := (opts,pkg) -> (
@@ -474,6 +477,7 @@ installPackage = method(Options => {
 	  UserMode => true,
 	  Encapsulate => true,
 	  IgnoreExampleErrors => false,
+	  IgnoreDocumentationErrors => false,
 	  MakeDocumentation => true,
 	  MakeInfo => false,
 	  RemakeAllDocumentation => false,
@@ -702,8 +706,8 @@ installPackage Package := opts -> pkg -> (
 	  infn' := fkey -> exampleDir'|toFilename fkey|".m2";
 	  outfn' := fkey -> exampleDir'|toFilename fkey|".out";
 	  stderr << "--making example result files in " << exampleDir << endl;
-	  haderror = false;
-	  numerrors = 0;
+	  hadExampleError = false;
+	  numExampleErrors = 0;
 	  scan(pairs pkg#"example inputs", (fkey,inputs) -> (
 		    -- args:
 		    inf := infn fkey;
@@ -725,14 +729,14 @@ installPackage Package := opts -> pkg -> (
 			 if debugLevel > 1 then stderr << "--warning: missing file " << outf << endl;
 			 )
 		    ));
- 	  if not opts.IgnoreExampleErrors then if haderror then error(toString numerrors, " error(s) occurred running example files");
+ 	  if not opts.IgnoreExampleErrors then if hadExampleError then error(toString numExampleErrors, " error(s) occurred running example files");
 
      --      -- make test output files, or else copy them from the old package directory tree
      --      oldTestsDir := oldPackagePrefix|LAYOUT#"packagetests" pkg#"title";
      --      infn2'  := n -> oldTestsDir|toString n|".m2";
      --      outfn2' := n -> oldTestsDir|toString n|".out";
      --      stderr << "--making test result files in " << testsDir << endl;
-     --      haderror = false;
+     --      hadExampleError = false;
      --      scan(pairs pkg#"test inputs", (key,inputs) -> (
      --      	       -- args:
      -- 	       (n,fn) := key;
@@ -752,7 +756,7 @@ installPackage Package := opts -> pkg -> (
      -- 		    runFile(inf,outf,tmpf,desc,pkg,identity,".");
      -- 		    );
      -- 	       ));
-     --      if haderror then error "error(s) occurred running test files";
+     --      if hadExampleError then error "error(s) occurred running test files";
 
 	  -- process documentation
 	  stderr << "--processing documentation nodes..." << endl;
@@ -798,18 +802,27 @@ installPackage Package := opts -> pkg -> (
 	  pkg#"links prev" = PREV;
 
      	  -- check that everything is documented
+     	  hadDocumentationError = false;
+	  numDocumentationErrors = 0;
+	  bump := () -> (
+	       hadDocumentationError = true;
+	       numDocumentationErrors = numDocumentationErrors + 1;
+	       );
 	  scan((if pkg#"title" == "Macaulay2" then Macaulay2Core else pkg)#"exported symbols", s -> (
 		    tag := makeDocumentTag s;
 		    if not isUndocumented tag and not hasDocumentation s then (
+			 bump();
 			 stderr << "--error: exported symbol has no documentation: " << tag << endl;
 			 );
 		    if class value s === Function 
 		    then scan(methods value s, m -> (
 			 tag := makeDocumentTag m;
 			 if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m then (
+			      bump();
 			      stderr << "--error: exported method has no documentation: " << tag << endl;
 			      );
 			 ))));
+     	  if hadDocumentationError then error(toString numDocumentationErrors, " error(s) occurred in documentation for package ", toString pkg);
 
 	  -- helper routine
 	  getPDoc := fkey -> (

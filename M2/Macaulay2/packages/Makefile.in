@@ -25,12 +25,14 @@ PACKAGES += LLLBases
 
 RemakeAllDocumentation ?= false
 IgnoreExampleErrors ?= false
+IgnoreDocumentationErrors ?= false
 RerunExamples ?= false
 debugLevel ?= 0
 
 ARGS := , MakeLinks => false
 ARGS += , RerunExamples => $(RerunExamples)
 ARGS += , IgnoreExampleErrors => $(IgnoreExampleErrors)
+ARGS += , IgnoreDocumentationErrors => $(IgnoreDocumentationErrors)
 ARGS += , RemakeAllDocumentation => $(RemakeAllDocumentation)
 ARGS += , MakeInfo => true
 ARGS += , UserMode => false

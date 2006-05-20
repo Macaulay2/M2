@@ -282,6 +282,7 @@ export (
 	symbol ITALIC,
 	symbol Ideal,
 	symbol IgnoreExampleErrors,
+	symbol IgnoreDocumentationErrors,
 	symbol ImmutableType,
 	symbol Increment,
 	symbol IndeterminateNumber,
