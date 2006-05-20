@@ -175,3 +175,19 @@ document {
      a ", TO "Groebner basis", " of ", TT "J", " and testing 
      whether every element of ", TT "I", " reduces to 0 modulo ", TT "I", "."
      }
+
+document {
+     Key => minimalPrimes,
+     Headline => "find the minimal primes of an ideal"
+     }
+
+-- I have no idea what this function does.  It ought to return a list, but it returns an ideal!
+-- document {
+--      Key => (minimalPrimes,MonomialIdeal),
+--      Usage => "minimalPrimes I",
+--      Inputs => {
+-- 	  "I" => null
+-- 	  },
+--      }
+-- 
+-- 

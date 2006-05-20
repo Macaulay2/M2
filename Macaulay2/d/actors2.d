@@ -63,8 +63,8 @@ keys(e:Expr):Expr := (
 setupfun("keys",keys);
 toList(e:Expr):Expr := (
      when e
-     is o:HashTable do keys(o)
-     is o:DictionaryClosure do keys(o.dictionary)
+     -- is o:HashTable do keys(o)
+     -- is o:DictionaryClosure do keys(o.dictionary)
      is a:Sequence do list(a)
      is b:List do (
 	  if b.class == listClass then e
