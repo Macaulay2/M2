@@ -73,9 +73,14 @@ HH = new ScriptedFunctor from {
 	  )
      }
 
+f :=
   homology(Nothing,Sequence) := 
   homology(ZZ,Sequence) := opts -> (i,X) -> homology prepend(i,X)
+
+g :=
 cohomology(ZZ,Sequence) := opts -> (i,X) -> cohomology(prepend(i,X), opts)
+
+dispatcherFunctions = join(dispatcherFunctions, {f,g})
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

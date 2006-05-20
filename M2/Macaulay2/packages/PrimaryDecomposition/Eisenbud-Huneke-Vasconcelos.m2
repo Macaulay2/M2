@@ -10,7 +10,7 @@
 --
 --
 
-ass1 := (I,printlevel) -> (
+ass1 := (I) -> (
      if I.cache.?Assassinator then I.cache.Assassinator else I.cache.Assassinator = (
      assassinator := {};
      RI := ring I;
@@ -23,26 +23,21 @@ ass1 := (I,printlevel) -> (
      --here we look at the associated primes of the i-th
      --ext and pick out the height i components ala EHV
      while i <= d do ( 
-	  if printlevel >= 2 then (<< "  ass loop " << i 
-	       << endl);
+	  if debugLevel >= 2 then (<< "  associatedPrimes loop " << i << endl);
 	  currentext = Ext^i(polyRing^1/I1,polyRing);
 	  if codim currentext == i then (
 	       firstlist := decompose ann currentext;
 	       scan(firstlist, P -> (if codim P == i then (
-			      if printlevel >= 1 then 
-			      << "    " << P  << endl << endl ;
-			      assassinator = 
-			      append(assassinator,P)))
+			      if debugLevel >= 1 then << "    " << P  << endl << endl ;
+			      assassinator = append(assassinator,P)))
 		    ) );
 	  i=i+1;);
-     assassinator = apply(
-	  assassinator, P -> (trim substitute(P, RI))
-	  );
+     assassinator = apply( assassinator, P -> (trim substitute(P, RI)) );
      assassinator
      ))
 
 
-ass2 := (I,printlevel) -> (
+ass2 := (I) -> (
      if I.cache.?Assassinator then I.cache.Assassinator else I.cache.Assassinator = (
      assassinator := {};
      local newcomponents;
@@ -51,18 +46,15 @@ ass2 := (I,printlevel) -> (
      currentI := lift(I,polyRing);
      topcurrentI := topComponents currentI;
      while not isSubset(topcurrentI, currentI) do(
-	if printlevel >= 2 then ( 
-	     print "  beginning new ass loop");
+	if debugLevel >= 2 then print "  beginning new associatedPrimes loop";
         newcomponents = flatten decompose topcurrentI;
-	if printlevel >=1 then (scan(newcomponents, P -> (
-		       << endl << "    " << P << endl)));
+	if debugLevel >=1 then (scan(newcomponents, P -> ( << endl << "    " << P << endl)));
 	assassinator = append(assassinator, newcomponents);
 	  currentI = currentI:topcurrentI;
 	  topcurrentI = topComponents currentI;
 	  );
      newcomponents = flatten decompose topcurrentI;
-     if printlevel >=1 then (scan(newcomponents, P -> (
-		    << endl << "    " << P << endl)));
+     if debugLevel >=1 then (scan(newcomponents, P -> ( << endl << "    " << P << endl)));
      assassinator = append(assassinator, newcomponents);
      assassinator = flatten assassinator;
      assassinator = apply(
@@ -72,16 +64,15 @@ ass2 := (I,printlevel) -> (
      ))
 
 
-ass Ideal := List => o -> (I) -> (
+associatedPrimes Ideal := List => o -> (I) -> (
      if I.cache.?Assassinator then I.cache.Assassinator else I.cache.Assassinator = (
      	  if o.Strategy === 1 then (
-	       if o.PrintLevel >= 1 then stderr << "associatedPrimes: using Strategy 1" << endl;
-	       ass1(I,o.PrintLevel)) 
+	       if debugLevel >= 1 then stderr << "associatedPrimes: using Strategy 1" << endl;
+	       ass1 I) 
      	  else (
 	       stderr << "--warning: Strategy 2 has been known to fail with 'associatedPrimes'!" << endl;
-	       if o.PrintLevel >= 1 then stderr << "associatedPrimes: using Strategy 2" << endl;
-	       ass2(I,o.PrintLevel)))
-	  )
+	       if debugLevel >= 1 then stderr << "associatedPrimes: using Strategy 2" << endl;
+	       ass2 I)))
 
 
 TEST ///
@@ -111,16 +102,16 @@ isSameList = (L1,L2) ->(
 
 R=ZZ/(101)[x,y,z];
 I=ideal (x^2,x*y);
-assoutcome = ass(I,Strategy=>1,PrintLevel=>2)
+assoutcome = associatedPrimes(I,Strategy=>1)
 trueass = {ideal(x),ideal(x,y)};
 assert(isSameList(assoutcome,trueass))
 
 I=ideal (x^2,x*y);
-assoutcome = ass(I,Strategy=>2,PrintLevel=>2)
+assoutcome = associatedPrimes(I,Strategy=>2)
 isSameList(assoutcome, trueass)
 S=R/I;
 J=ideal(0_S);	
-assoutcome = ass J
+assoutcome = associatedPrimes J
 trueass = {ideal(x),ideal(x,y)};
 assert(isSameList(assoutcome, trueass))
 
@@ -129,7 +120,7 @@ I1 = ideal(x^3,x*y,z^2);
 I2 = ideal(x,y+z);
 I3 = ideal(x^5*z,y^3*z^2);
 K=intersect(I1,I2,I3)
-assoutcome = ass K
+assoutcome = associatedPrimes K
 trueass = {ideal(z), ideal(y,x), ideal(z,x), ideal(y+z,x)}     
 assert(isSameList(assoutcome, trueass))
 ///
@@ -137,20 +128,18 @@ assert(isSameList(assoutcome, trueass))
 
 --In localize, P is an associated prime.
 --This routine computes the localization of I at P.
---For this version, we have to know ass I
+--For this version, we have to know associatedPrimes I
 
-SYlocalize := (assroutine) -> (I,P,printlevel) ->(
+SYlocalize := (assroutine) -> (I,P) ->(
      local ret;
      RI := ring I;
      polyRing := ring presentation RI;
      I1 := lift(I,polyRing);
      P1 := lift(P,polyRing);
      IntersectionOfPrimes := ideal (1_polyRing);
-     if printlevel >= 1 then (<< endl << 
-	  "Finding the assassinator of " << I1 << endl);
-     Assasin := assroutine(I1,printlevel);
-     if printlevel >= 2 then (<< endl << "It equals "
-	  << Assasin << endl);
+     if debugLevel >= 1 then (<< endl << "Finding the assassinator of " << I1 << endl);
+     Assasin := assroutine I1;
+     if debugLevel >= 2 then (<< endl << "It equals " << Assasin << endl);
      RP := polyRing/P1;
      scan(Assasin, Q -> if not isSubset(Q,P) 
 	  then (IntersectionOfPrimes = 
@@ -160,16 +149,11 @@ SYlocalize := (assroutine) -> (I,P,printlevel) ->(
      if IntersectionOfPrimes == ideal(1_RI) 
      then ret = I
      else (
-	  if printlevel >= 1 then (<< endl << 
-	       "Finding a separator polynomial" << endl);
-	  f := lift((flatten entries generators gb IOPrp)#0,
-	       polyRing);
-	  if printlevel >= 2 then (<< endl << "It equals "
-	       << f << endl);
+	  if debugLevel >= 1 then (<< endl << "Finding a separator polynomial" << endl);
+	  f := lift((flatten entries generators gb IOPrp)#0, polyRing);
+	  if debugLevel >= 2 then (<< endl << "It equals " << f << endl);
 	  f = substitute (f,RI);
-	  if printlevel >= 1 then (<< endl << 
-	       "Saturating with respect to the separator polynomial"
-	       << endl);
+	  if debugLevel >= 1 then (<< endl << "Saturating with respect to the separator polynomial" << endl);
 	  ret = saturate(I,f);
 	  );
      ret
@@ -179,53 +163,41 @@ SYlocalize := (assroutine) -> (I,P,printlevel) ->(
 -- this only works if it's homogeneous and equidimensional
 -- and radical. 
 
-EHVlocalize := (I,P,printlevel) ->(
+EHVlocalize := (I,P) ->(
      polyRing := ring presentation ring I;
      I0 := lift(I,polyRing);
      P0 := lift(P,polyRing);
      d := degree I0;
-     if printlevel >= 1 then (<< endl << "Finding the "
-     	  << d*(d+1) << " power of the prime ideal" << endl);
+     if debugLevel >= 1 then (<< endl << "Finding the " << d*(d+1) << " power of the prime ideal" << endl);
      P0Power := P0^(d*(d+1));
-     if printlevel >= 2 then << endl << "It equals " 
-          << P0Power << endl;
-     if printlevel >= 1 then (<< endl << "Finding the top of "
-	  << I0 + P0Power << endl);
+     if debugLevel >= 2 then << endl << "It equals " << P0Power << endl;
+     if debugLevel >= 1 then (<< endl << "Finding the top of " << I0 + P0Power << endl);
      I1 := topComponents (I0 + P0Power);
-     if printlevel >= 2 then(<< endl << "It equals " << endl 
-	  << I1 << endl);
+     if debugLevel >= 2 then(<< endl << "It equals " << endl << I1 << endl);
      gensI1 := flatten entries mingens I1;
      gensI1 = apply(gensI1, g -> 
 	  if degree g <= d then g else 0);
      I2 := ideal gensI1;
-     if printlevel >= 1 then (<< endl << 
-	  "Finding the final top" << endl);
+     if debugLevel >= 1 then (<< endl << "Finding the final top" << endl);
      I3 := topComponents I2;
-     if printlevel >= 2 then (<< endl << "It equals " <<endl
-	  << I3 << endl);
-     if printlevel >= 1 then (<< endl << 
-	  "Finding the radical" << endl);
+     if debugLevel >= 2 then (<< endl << "It equals " << endl << I3 << endl);
+     if debugLevel >= 1 then (<< endl << "Finding the radical" << endl);
      radical I3;
      trim substitute(I3,ring I)
      )
 
-localize = method(Options =>{
-	  PrintLevel => 0,
-	  Strategy => 1})
+localize = method(Options =>{ Strategy => 1})
 
 localize (Ideal,Ideal) := Ideal => o -> (I,P) -> (
      if o.Strategy === 0 then (
-	  if o.PrintLevel >=1 then
-	  print "localize:  Using Strategy 0";
-	  EHVlocalize(I,P,o.PrintLevel))
+	  if debugLevel >=1 then print "localize:  Using Strategy 0";
+	  EHVlocalize(I,P))
      else if o.Strategy === 1 then (
-	  if o.PrintLevel >=1 then
-	  print "localize:  Using Strategy 1";
-	  (SYlocalize ass1)(I,P,o.PrintLevel))
+	  if debugLevel >=1 then print "localize:  Using Strategy 1";
+	  (SYlocalize ass1)(I,P))
      else (
-	  if o.PrintLevel >=1 then
-	  print "localize:  Using Strategy 2";
-	  (SYlocalize ass2)(I,P,o.PrintLevel))
+	  if debugLevel >=1 then print "localize:  Using Strategy 2";
+	  (SYlocalize ass2)(I,P))
      )
 
 TEST ///
@@ -254,40 +226,33 @@ outcome == trueanswer
 --A BIG issue here is how to increment m.  this could make
 --a big speed difference.
 
--- Of course in this next thing, if we know ass, we can use
+-- Of course in this next thing, if we know associatedPrimes, we can use
 -- localize, but if we just know I and the prime, we might 
 -- rather use EHVlocalize.  It's hard to know.  
 primarycomponent := (localizeroutine) -> 
-     (I,P,printlevel,inc) -> (
-     polyRing := ring presentation ring I;
-     I0 := lift(I,polyRing);
-     P0 := lift(P,polyRing);
-     ret := null;
-     m := 1;
-     I0P0 := localizeroutine (I0,P0,printlevel);
-     ImportantColonIdeal := saturate (I0P0,P0);
-     while ret === null do (
-     	  if printlevel >= 1 then (<< endl << 
-	  "primaryComponent checking power " << m << endl);
-     	  if printlevel >= 2 then (<< endl << "Computing
-	       topComponents of " << I0 << "+ the power of " << P0 << 
-	       endl);
-	  Q := topComponents (I0 + P0^m);
-	  if printlevel >= 2 then (<< endl << "It equals " <<
-	       Q << endl); 
-     	  IIntersection := intersect(Q,ImportantColonIdeal);
-     	  if isSubset(IIntersection,I0P0) 
-     	  then ret = Q 
-     	  else m = m+inc;
-	  );
-     trim substitute(ideal mingens ret,ring I)
-     )
+     (I,P,inc) -> (
+	  polyRing := ring presentation ring I;
+	  I0 := lift(I,polyRing);
+	  P0 := lift(P,polyRing);
+	  ret := null;
+	  m := 1;
+	  I0P0 := localizeroutine (I0,P0);
+	  ImportantColonIdeal := saturate (I0P0,P0);
+	  while ret === null do (
+	       if debugLevel >= 1 then (<< endl << "primaryComponent checking power " << m << endl);
+	       if debugLevel >= 2 then (<< endl << "Computing topComponents of " << I0 << "+ the power of " << P0 << 
+		    endl);
+	       Q := topComponents (I0 + P0^m);
+	       if debugLevel >= 2 then (<< endl << "It equals " << Q << endl); 
+	       IIntersection := intersect(Q,ImportantColonIdeal);
+	       if isSubset(IIntersection,I0P0) 
+	       then ret = Q 
+	       else m = m+inc;
+	       );
+	  trim substitute(ideal mingens ret,ring I)
+	  )
 
-primaryComponent = method(
-     Options => {
-	  Strategy => 2,
-	  PrintLevel => 0,
-	  Increment =>1})
+primaryComponent = method( Options => { Strategy => 2, Increment =>1 })
 
 primaryComponent(Ideal,Ideal) := Ideal => o -> (I,P) -> (
      localizefcn := if o.Strategy === 1 then
@@ -295,8 +260,7 @@ primaryComponent(Ideal,Ideal) := Ideal => o -> (I,P) -> (
      else if o.Strategy === 2 then
 	  SYlocalize ass2
      else EHVlocalize;
-     (primarycomponent localizefcn)(I,P,o.PrintLevel,
-	  o.Increment))
+     (primarycomponent localizefcn)(I,P,o.Increment))
 
 TEST ///
 R = ZZ/(101)[x,y];
@@ -315,24 +279,21 @@ primaryComponent(I,P2)
 ///
 
 --This computes a primary decomposition of an ideal.
-EHVprimaryDecomposition = (I,printlevel) -> (
-    Assasin := ass(I,PrintLevel=>printlevel);
+EHVprimaryDecomposition = (I) -> (
+    Assasin := associatedPrimes I;
     nprimes := #Assasin;
     counter := 0;
     ListofPrimaries := {};
     while counter < nprimes do (
-	 newcomponent := primaryComponent(I,
-	      Assasin#counter,
-	      PrintLevel=>printlevel);
-	 ListofPrimaries = append(ListofPrimaries,
-	      newcomponent);
+	 newcomponent := primaryComponent(I, Assasin#counter);
+	 ListofPrimaries = append(ListofPrimaries, newcomponent);
     	 counter = counter + 1;
 	 );
      ListofPrimaries
      )
 
 --This computes a primary decomposition of an ideal.
-HprimaryDecomposition = (I,assstrategy,localizestrategy,printlevel) -> (
+HprimaryDecomposition = (I,assstrategy,localizestrategy) -> (
      assroutine := (
 	  if assstrategy === 1 then ass1
 	  else ass2);
@@ -340,16 +301,13 @@ HprimaryDecomposition = (I,assstrategy,localizestrategy,printlevel) -> (
 	  if localizestrategy === 1 then EHVlocalize
 	  else SYlocalize assroutine);
      primarycomponentroutine := primarycomponent(localizeroutine);
-     Assasin := assroutine(I,printlevel);
+     Assasin := assroutine I;
      nprimes := #Assasin;
      counter := 0;
      ListofPrimaries := {};
      while counter < nprimes do (
-	  newcomponent := primarycomponentroutine(I,
-	       Assasin#counter,
-	       printlevel,1);
-	  ListofPrimaries = append(ListofPrimaries,
-	       newcomponent);
+	  newcomponent := primarycomponentroutine(I, Assasin#counter, 1);
+	  ListofPrimaries = append(ListofPrimaries, newcomponent);
     	  counter = counter + 1;
 	  );
      ListofPrimaries
@@ -359,18 +317,18 @@ HprimaryDecomposition = (I,assstrategy,localizestrategy,printlevel) -> (
 TEST ///
 R=ZZ/(101)[x,y,z];
 I=ideal (x^2,x*y);
-ass(I,Strategy=>1,PrintLevel=>2)
-ass(I,Strategy=>2,PrintLevel=>2)
+associatedPrimes(I,Strategy=>1)
+associatedPrimes(I,Strategy=>2)
 S=R/I;
 J=ideal(0_S);
 primaryDecomposition(J,Strategy=>EHV)
-ass J
+associatedPrimes J
 P=ideal(x);
 
 R = ZZ/31991[x,y,z]
 J=ideal (x*y^2,x*z^2);
 P2=ideal(y,z);
-ass(J)
+associatedPrimes(J)
 localize (J,P2)
 primaryComponent(J,P2)
 primaryDecomposition(J,Strategy=>EHV)

@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => ass,
+     Key => associatedPrimes,
      Headline => "",
      Usage => "",
      Inputs => {
@@ -19,7 +19,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (ass,Ideal),
+     Key => (associatedPrimes,Ideal),
      Headline => "",
      Usage => "",
      Inputs => {
@@ -35,7 +35,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (ass,MonomialIdeal),
+     Key => (associatedPrimes,MonomialIdeal),
      Headline => "",
      Usage => "",
      Inputs => {
@@ -51,21 +51,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [ass, PrintLevel],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [ass, Strategy],
+     Key => [associatedPrimes, Strategy],
      Headline => "",
      Usage => "",
      Inputs => {

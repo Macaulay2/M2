@@ -1,5 +1,7 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+dispatcherFunctions = {}
+
 noapp := (f,x) -> error(
      "no method for applying item of class ", toString class f, 
      " to item of class ", toString class x
@@ -190,24 +192,8 @@ setup(TypicalValue => List,
 
 radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null } )
 
-primaryDecomposition = method(
-     TypicalValue => List,
-     Options => {
-	  PrintLevel => 0,
-	  Strategy => null
-	  }
-     )
-
-associatedPrimes = method(
-     TypicalValue => List,
-     Options =>{
-	  PrintLevel => 0,
-	  Strategy => 1
-	  }
-     )
-
-ass = associatedPrimes
-
+primaryDecomposition = method( TypicalValue => List, Options => { Strategy => null } )
+associatedPrimes = method( TypicalValue => List, Options =>{ Strategy => 1 } )
 
 simpleToString = toString
 toString = method(SingleArgumentDispatch => true, TypicalValue => String)
@@ -378,6 +364,10 @@ TEST String := s -> (
      currentPackage#"test number" = currentPackage#"test number" + 1;
      )
 TEST List := y -> TEST \ y
+
+-----------------------------------------------------------------------------
+
+dispatcherFunctions = join (dispatcherFunctions, {lookup(method(),Sequence), lookup(method(Options => {}),Sequence)})
 
 -----------------------------------------------------------------------------
 -- hooks

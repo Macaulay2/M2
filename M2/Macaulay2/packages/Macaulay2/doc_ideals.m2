@@ -53,7 +53,7 @@ document {
      UL {
 	  TO decompose,
 	  TO radical,
-	  TO ass,
+	  TO associatedPrimes,
 	  TO primaryDecomposition,
 	  TO topComponents,
 	  TO saturate,

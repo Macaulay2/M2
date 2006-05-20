@@ -407,14 +407,10 @@ REMAIN := symbol REMAIN
 if primdecComputation === symbol primdecComputation then
 primdecComputation = new Type of MutableHashTable
 
-PDinitialize = (I,printlevel) -> (
-     if I.cache#?"PDC" then (
-	  I.cache#"PDC".PrintLevel = printlevel;
-          I.cache#"PDC"
-	  )
+PDinitialize = (I) -> (
+     if I.cache#?"PDC" then I.cache#"PDC"
      else (
      	  PDC := new primdecComputation;
-	  PDC.PrintLevel = printlevel;
      	  R := ring I;
      	  PDC.ideal = I;
      	  PDC.depth = 0;
@@ -517,8 +513,8 @@ PDdonode = (PDC) -> (
      PDC.thisNode = null;
      )
 
-SYprimaryDecomposition = (I,printlevel) -> (		    -- called by a later file
-     C := PDinitialize(I,printlevel);
+SYprimaryDecomposition = (I) -> (		    -- called by a later file
+     C := PDinitialize I;
      while #C.W > 0 do (
 	  PDnext C;
 	  PDdonode C

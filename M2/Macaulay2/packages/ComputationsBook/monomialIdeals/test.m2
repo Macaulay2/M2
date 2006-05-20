@@ -216,7 +216,7 @@ all(4..11, i -> projection L#i == class3)
 all(L, I -> I == monomialIdeal distraction I)
 all(0..3, i -> projection gin distraction L#i == class3)
 hasChainProperty = I -> (
-     L := ass I;
+     L := associatedPrimes I;
      radI := radical I;
      all(L, P -> radI : (radI : P) == P or (
                gensP := first entries gens P;
