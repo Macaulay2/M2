@@ -817,7 +817,7 @@ installPackage Package := opts -> pkg -> (
 				   tag := makeDocumentTag m;
 				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m then (
 					bump();
-					stderr << "--error: method has no documentation: " << tag << endl;
+					stderr << "--error: method has no documentation: " << tag << " ::: " << DocumentTag.Key tag << endl;
 					);
 				   ));
 			 o := options f;
