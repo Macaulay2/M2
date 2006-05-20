@@ -98,6 +98,36 @@ document {
      }
 
 document {
+     Key => symbol "(*)",
+     Headline => ""
+     }
+
+document {
+     Key => symbol "<==>",
+     Headline => "a postfix operator, used for indicating a graded object"
+     }
+
+document {
+     Key => symbol ",",
+     Headline => "the comma, used for separating entries in a list or sequence"
+     }
+
+document {
+     Key => symbol "==>",
+     Headline => "a binary operator, available to the user as implication in logical expressions"
+     }
+
+document {
+     Key => symbol "|-",
+     Headline => "a binary operator, available to the user in logical expressions"
+     }
+
+document {
+     Key => symbol "===>",
+     Headline => "a binary operator, available to the user"
+     }
+
+document {
      Key => symbol "@@",
      Headline => "a binary operator"
      }
