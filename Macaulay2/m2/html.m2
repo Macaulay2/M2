@@ -882,15 +882,19 @@ installPackage Package := opts -> pkg -> (
      if opts.Encapsulate then (
 	  octal := s -> (n := 0 ; z := first ascii "0"; scan(ascii s, i -> n = 8*n + i - z); n);
 	  stderr << "--making INSTALL, postinstall, preremove, and encapinfo files in " << buildDirectory << endl;
+     	  fix := s -> (
+	       s = replace("info/", LAYOUT#"info", s);
+	       s = replace("bin/", LAYOUT#"bin", s);
+	       s);
 	  -- postinstall
 	  f := buildDirectory | "postinstall" 
 	  << ///#! /bin/sh -e/// << endl
-	  << ///cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info" || exit 0/// << endl
+	  << fix ///cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info/" || exit 0/// << endl
 	  << ///for i in *.info/// << endl
-	  << ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" "$i")/// << endl
+	  << fix ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" "$i")/// << endl
 	  << ///done/// << endl;
 	  if version#"dumpdata" and pkg#"title" == "Macaulay2" then (
-	       f << endl << "(set -x ; \"$ENCAP_SOURCE\"/\"$ENCAP_PKGNAME\"/bin/" << version#"M2 name" << " --stop --dumpdata)" << endl;
+	       f << endl << fix "(set -x ; \"$ENCAP_SOURCE\"/\"$ENCAP_PKGNAME\"/bin/" << version#"M2 name" << " --stop --dumpdata)" << endl;
 	       );
 	  fileMode(f,octal "755");
 	  f << close;
@@ -899,7 +903,7 @@ installPackage Package := opts -> pkg -> (
 	  << ///#! /bin/sh -x/// << endl
 	  << ///cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info" || exit 0/// << endl
 	  << ///for i in *.info/// << endl
-	  << ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" --delete "$i")/// << endl
+	  << fix ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" --delete "$i")/// << endl
 	  << ///done/// << endl;
 	  fileMode(f,octal "755");
  	  f << close;
