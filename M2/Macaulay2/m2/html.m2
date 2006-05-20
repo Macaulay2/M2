@@ -789,7 +789,7 @@ installPackage Package := opts -> pkg -> (
 	  -- make table of contents, including next, prev, and up links
 	  stderr << "--assembling table of contents" << endl;
 	  assembleTree(pkg,select(nodes,tag -> not isUndocumented tag)); -- sets tableOfContents
-	  stderr << "table of contents, in tree form:" << endl << tableOfContents << endl;
+	  stderr << "+++++" << endl << "table of contents, in tree form:" << endl << tableOfContents << endl << "+++++" << endl;
 	  pkg#"table of contents" = new Bag from {tableOfContents}; -- we bag it because it might be big!
 	  pkg#"links up" = UP;
 	  pkg#"links next" = NEXT;

@@ -123,7 +123,7 @@ DocumentTag ? String := (x,y) -> x#1 ? y
 String ? DocumentTag := (x,y) -> x ? y#1
 toString DocumentTag := net DocumentTag := x -> concatenate ( DocumentTag.Title x, " :: ", DocumentTag.FormattedKey x )
 package DocumentTag := DocumentTag.Package
-hasDocumentation = key -> isDocumentableThing key and (
+hasDocumentation = key -> (
      tag := makeDocumentTag key;
      pkg := DocumentTag.Package tag;
      fkey := DocumentTag.FormattedKey tag;
@@ -530,8 +530,8 @@ fixupTable := new HashTable from {
      Consequences => val -> fixupList val,
      Headline => chkIsString Headline,
      Description => val -> extractExamples hypertext val,
-     Caveat => v -> if v =!= null then fixup DIV { SUBSECTION "Caveat", SEQ v },
-     SeeAlso => v -> if v =!= {} and v =!= null then fixup PARA { SUBSECTION "See also", UL (TO \ enlist v) },
+     Caveat => v -> if v =!= null then fixup PARA1 { SUBSECTION "Caveat", SEQ v },
+     SeeAlso => v -> if v =!= {} and v =!= null then fixup PARA1 { SUBSECTION "See also", UL (TO \ enlist v) },
      Subnodes => v -> MENU apply(nonNull enlist v, x -> fixup (
 	       if class x === TO then x
 	       else if class x === TOH then TO {x#0}
@@ -869,7 +869,7 @@ briefSynopsis := key -> (
 
 synopsis := key -> (
      s := briefSynopsis key;
-     if s =!= null then SEQ { SUBSECTION "Synopsis", s })
+     if s =!= null then PARA1 { SUBSECTION "Synopsis", s })
 
 documentableMethods := s -> select(methods s,isDocumentableMethod)
 
@@ -877,7 +877,7 @@ fmeth := f -> (						    -- compare with documentationValue(Symbol,Function) bel
      b := documentableMethods f;
      if #b > 0 then (
 	  c := smenu b;
-	  if #c > 0 then SEQ { SUBSECTION { "Ways to use ", TT toString f }, c } 
+	  if #c > 0 then PARA1 { SUBSECTION { "Ways to use ", TT toString f }, c } 
 	  )
      )
 
@@ -1084,7 +1084,7 @@ help Array := key -> (		    -- optional argument
      Hypertext fixuptop ( title key, synopsis key, makeDocBody key,
 	  DIV { SUBSECTION "Further information", 
 	       fixup UL {
-	       	    SEQ{ "Default value: ", if hasDocumentation default then TO {default} else TT toString default },
+	       	    SEQ{ "Default value: ", if isDocumentableThing default and hasDocumentation default then TO {default} else TT toString default },
 	       	    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH {fn} },
 	       	    SEQ{ "Option name: ", TOH {opt} }
 	       	    }},
