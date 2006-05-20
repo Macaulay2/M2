@@ -387,8 +387,10 @@ runHooks  (HashTable,Thing,Thing   ) := (obj,key,arg ) -> (c := obj.cache; if c#
 -----------------------------------------------------------------------------
 -- stashing or caching computed values for future reference in functions that take a mutable hash table as input
 
-cacheValue = key -> f -> (x) -> (c := x.cache; if c#?key then c#key else c#key = f x)
-stashValue = key -> f -> (x) -> (              if x#?key then x#key else x#key = f x)
+cacheValue = key -> f -> x -> (
+     c := x.cache;
+     if c#?key then c#key else c#key = f x)
+stashValue = key -> f -> x -> if x#?key then x#key else x#key = f x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

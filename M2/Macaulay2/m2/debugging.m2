@@ -162,7 +162,7 @@ clearAll = Command (() -> (
 	  )
      )
 
-generateAssertions = method()
+generateAssertions = method(TypicalValue => Net)
 generateAssertions String := s -> generateAssertions select(lines s, x -> not match("^[[:space:]]*(--.*)?$",x))
 generateAssertions List := y -> stack apply(y, 
      lin -> ( 

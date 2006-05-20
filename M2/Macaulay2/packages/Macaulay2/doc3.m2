@@ -593,7 +593,7 @@ document {
      Key => { (addHook,HashTable,Thing,Function), addHook },
      Headline => "add a hook function to an object for later processing",
      Usage => "addHook(obj,key,hook)",
-     Inputs => { "obj", "key", "hook" },
+     Inputs => { "obj" => null, "key" => null, "hook" => null },
      Consequences => {
 	  { "the function ", TT "hook", " is added to the list (possibly absent) of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key" }
 	  },
@@ -605,7 +605,7 @@ document {
      Key => { (removeHook,HashTable,Thing,Function), removeHook },
      Headline => "remove a hook function from an object",
      Usage => "removeHook(obj,key,hook)",
-     Inputs => { "obj", "key", "hook" },
+     Inputs => { "obj" => null, "key" => null, "hook" => null },
      Consequences => {
 	  { "the function ", TT "hook", " is removed from the list of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key" }
 	  },
@@ -617,7 +617,7 @@ document {
      Key => { (runHooks,HashTable,Thing,Thing), runHooks },
      Headline => "run the hook functions stored in an object",
      Usage => "runHooks(obj,key,arg)",
-     Inputs => { "obj", "key", "arg" },
+     Inputs => { "obj" => null, "key" => null, "arg" => null },
      Consequences => {
 	  { "each function ", TT "hook", " in list of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key", " is
 	       called with ", TT "arg", " as its argument or sequence of arguments" }
@@ -625,7 +625,26 @@ document {
      SourceCode => { (runHooks,HashTable,Thing,Thing), (runHooks,MutableHashTable,Thing,Thing) },
      SeeAlso => { addHook, removeHook }
      }
-
+undocumented (generateAssertions, List)
+document { Key => {generateAssertions,(generateAssertions, String)},
+     Headline => "generate assert statements from experimental input",
+     Usage => "generateAssertions x",
+     Inputs => { "x" => { "a string whose non-comment non-blank lines are Macaulay 2 expressions to be evaluated" } },
+     Outputs => { { "a net whose lines are assert statements that assert that the expressions evaluate to the expected value, just computed" }},
+     EXAMPLE {
+	  "generateAssertions ///
+2+2
+2^20
+///",
+     	  ///value \ unstack oo///
+	  }
+     }
+document { Key => unSingleton,
+     Headline => "extract the single element from a sequence of length 1",
+     Usage => "unSingleton x",
+     Inputs => { "x" => Thing => null },
+     Outputs => { { TT "x#0", ", if ", TT "x", " is a sequence of length 1, otherwise ", TT "x", "" } },
+     EXAMPLE { "unSingleton (2:a)", "unSingleton (1:a)", "unSingleton (0:a)" }}
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
