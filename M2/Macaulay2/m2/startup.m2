@@ -39,8 +39,8 @@ if firstTime then (
 	       );
 	  );
 
-     ReverseDictionary = new MutableHashTable;
-     PrintNames = new MutableHashTable;
+     ReverseDictionary = new MutableHashTable;		    -- values are symbols
+     PrintNames = new MutableHashTable;			    -- values are strings
      Thing.AfterEval = identity;
      scan(
 	  {symbol Array, symbol BasicList, symbol RRR, symbol CCC,

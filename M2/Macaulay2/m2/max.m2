@@ -4,14 +4,15 @@ InfiniteNumber.synonym = "infinite number"
 infinity = new InfiniteNumber from {1}
 neginfinity := new InfiniteNumber from {-1}
 - InfiniteNumber := x -> if x === infinity then neginfinity else infinity
-PrintNames#infinity = "infinity"
+ReverseDictionary#infinity = symbol infinity
+PrintNames#( infinity) =  "infinity"
 PrintNames#(-infinity) = "-infinity"
 toString InfiniteNumber := net InfiniteNumber := x -> PrintNames#x
 
 IndeterminateNumber = new Type of BasicList
 IndeterminateNumber.synonym = "indeterminate number"
 indeterminate = new IndeterminateNumber from {}
-PrintNames#indeterminate = "indeterminate"
+ReverseDictionary#indeterminate = symbol indeterminate
 toString IndeterminateNumber := net IndeterminateNumber := x -> "indeterminate"
 
 InfiniteNumber ? InfiniteNumber := (x,y) -> x#0 ? y#0

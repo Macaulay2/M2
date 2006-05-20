@@ -345,7 +345,8 @@ document {
      Headline => "the class of all database files",
      "A database file is just like a hash table, except both the keys and
      values have to be strings.  In this example we create a database file, store
-     a few entries, and then remove the file with ", TO "removeFile", ".",
+     a few entries, remove one by assigning ", TO "null", " to it, close the file, 
+     and then remove the file.",
      EXAMPLE {
 	  ///filename = temporaryFileName () | ".dbm"///,
       	  ///x = openDatabaseOut filename///,
@@ -353,10 +354,12 @@ document {
       	  ///x#"first"///,
       	  ///x#"second" = "ho there"///,
       	  ///scanKeys(x,print)///,
+      	  ///x#"second" = null///,
+      	  ///scanKeys(x,print)///,
       	  ///close x///,
       	  ///removeFile filename///,
 	  },
-     SeeAlso => {"HashTable", "String"}
+     SeeAlso => {"HashTable", "String", "removeFile"}
      }
 
 document {

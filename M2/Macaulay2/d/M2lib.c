@@ -79,13 +79,15 @@ M2_bool system_alarmedFlag = FALSE;
 
 #if __GNUC__
 void segv_handler2(int sig) {
+     signal(SIGSEGV,SIG_DFL);
      fprintf(stderr,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
-     exit(1);
+     *(int *)0 = 1;
 }
 
 void segv_handler(int sig) {
      signal(SIGSEGV,segv_handler2);
      fprintf(stderr,"=============================================================================\n");
+     fprintf(stderr,"SIGSEGV -- back trace");
 #define D fprintf(stderr,"level %d -- return addr: 0x%08lx -- frame: 0x%08lx\n",i,(long)__builtin_return_address(i),(long)__builtin_frame_address(i))
 #define i 0
      D;
