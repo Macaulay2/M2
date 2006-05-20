@@ -77,6 +77,51 @@ M2_bool system_interruptPending = FALSE;
 M2_bool system_interruptShield = FALSE;
 M2_bool system_alarmedFlag = FALSE;
 
+#if __GNUC__
+void segv_handler2(int sig) {
+     fprintf(stderr,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+     exit(1);
+}
+
+void segv_handler(int sig) {
+     signal(SIGSEGV,segv_handler2);
+     fprintf(stderr,"=============================================================================\n");
+#define D fprintf(stderr,"level %d -- return addr: 0x%08lx -- frame: 0x%08lx\n",i,(long)__builtin_return_address(i),(long)__builtin_frame_address(i))
+#define i 0
+     D;
+#undef i
+#define i 1
+     D;
+#undef i
+#define i 2
+     D;
+#undef i
+#define i 3
+     D;
+#undef i
+#define i 4
+     D;
+#undef i
+#define i 5
+     D;
+#undef i
+#define i 6
+     D;
+#undef i
+#define i 7
+     D;
+#undef i
+#define i 8
+     D;
+#undef i
+#define i 9
+     D;
+#undef i
+     fprintf(stderr,"-----------------------------------------------------------------------------\n");
+     exit(1);
+}
+#endif
+
 static void alarm_handler(int sig)
 {
      extern void evaluate_setAlarmedFlag();
@@ -473,6 +518,10 @@ char **argv;
 	  }
      sigsetjmp(abort_jump,TRUE);
      abort_jump_set = TRUE;
+
+#if __GNUC__
+     signal(SIGSEGV, segv_handler);
+#endif
 
      if (sigsetjmp(out_of_memory_jump,TRUE)) {
 	  if (reserve != NULL) {
