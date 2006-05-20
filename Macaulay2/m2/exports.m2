@@ -8,7 +8,6 @@ export (
 	symbol addHook,
 	symbol removeHook,
 	symbol runHooks,
-	symbol sourceFileStamp,
 	symbol generateAssertions,
         symbol unSingleton,
         symbol F4,
