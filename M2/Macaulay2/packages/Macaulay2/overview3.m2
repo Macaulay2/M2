@@ -157,7 +157,7 @@ document {
      book by Greuel-Pfister may also be found here.",
      Subnodes => {
 	  TO "Elementary uses of Groebner bases I.  Math 634 Fall 2005",
-	  TO "Modules in Macaulay2, Math 634, Fall 2005",
+	  TO "modules in Macaulay2",
 	  TO "M2SingularBook"
 	  }
      }

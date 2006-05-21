@@ -51,7 +51,7 @@ load "M2-Singular-Book.m2"
 ld := fn -> tutorial get concatenate(currentFileDirectory,fn)
 
 document {
-     Key => "Modules in Macaulay2",
+     Key => "modules in Macaulay2",
      ld "tu_modules.m2"
      }
 document {

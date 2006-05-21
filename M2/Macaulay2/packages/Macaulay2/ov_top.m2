@@ -32,8 +32,6 @@ document {
 	       TO "solving systems of polynomial equations",
      	       TO "integralClosure",
      	       TO "primaryDecomposition",
-	       TO "Hom module",
-	       TO "Tor and Ext",
 	       TO "combinatorial functions",
           "The Macaulay 2 Language",
 	       TO "The Macaulay2 language",
