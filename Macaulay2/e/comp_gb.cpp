@@ -114,7 +114,7 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 			 max_degree);
     break;
   }
-  return new GBProxy(result);
+  return result != NULL ? new GBProxy(result) : NULL;
 
 
 #if 0
