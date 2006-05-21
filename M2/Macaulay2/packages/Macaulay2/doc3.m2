@@ -644,7 +644,8 @@ document { Key => unSingleton,
      Usage => "unSingleton x",
      Inputs => { "x" => Thing => null },
      Outputs => { { TT "x#0", ", if ", TT "x", " is a sequence of length 1, otherwise ", TT "x", "" } },
-     EXAMPLE { "unSingleton (2:a)", "unSingleton (1:a)", "unSingleton (0:a)" }}
+     EXAMPLE { "unSingleton (2:a)", "unSingleton (1:a)", "unSingleton (0:a)" },
+     SeeAlso => sequence}
 
 document { Key => {permutations, (permutations, ZZ), (permutations, VisibleList)},
      Headline => "produce all permutations of a list",
@@ -677,20 +678,13 @@ document { Key => tutorial, Headline => "convert documentation from tutorial for
      Outputs => {{ "documentation in hypertext format" }},
      PARA { "Some of the Macaulay2 documentation is written in this format." },
      EXAMPLE {
-	  "x = ///-- Given a variety $X$ in projective
--- $r$-space ${\\bf P}^r$, the Fano scheme
--- $Fano_k(X)$ is the natural parameter 
--- space for the linear $k$-planes
--- lying on $X$.
-
--- First make the homogeneous coordinate 
--- ring of the ambient projective $3$-space
-R = ZZ/32003[a,b,c,d]
-
--- and the ideal of a nonsingular cubic
-X = ideal(a^3+b^3+c^3+d^3)
+	  "///-- We can compute $(x+y)^3$ as follows.
+R = QQ[x,y]
+(x+y)^3
 ///",
-     	  "tutorial x"}}
+     	  "tutorial oo",
+	  "peek oo"
+	  }}
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

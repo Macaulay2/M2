@@ -82,15 +82,29 @@ document {
      SeeAlso => {"computing Groebner bases"}
      }
 document { 
-     Key => [gb, Strategy],
+     Key => {[gb, Strategy],F4,Homogeneous2,Sugarless,Faugere},
      Headline => "",
      Usage => "",
      Inputs => {
 	  },
      Consequences => {
 	  },     
-	"Can take values ", TT "Homogeneous", ", ",  TT "Inhomogeneous",  ", ", 
-	TT "LinearAlgebra", ".", "Default value is",  TT "Inhomogeneous", ".",
+     "See ", TO "computing Groebner bases", " for examples.",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [gb, Algorithm],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+	"Can take values ", TT "Homogeneous", ", ", TT "Faugere", ", ", TT "Homogeneous2", ", ",  TT "Inhomogeneous",  ", ", TT "F4", ", ", TT "Sugarless", ", or 
+	", TT "LinearAlgebra", ".  The default value is",  TT "Inhomogeneous", ".",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -143,20 +157,6 @@ document {
      }
 document { 
      Key => [gb, ChangeMatrix],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "See ", TO "computing Groebner bases", " for examples.",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [gb, Algorithm],
      Headline => "",
      Usage => "",
      Inputs => {
