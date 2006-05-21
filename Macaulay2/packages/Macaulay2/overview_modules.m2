@@ -2,7 +2,8 @@ document {
      Key => Module,
      Headline => "the class of all modules",
      PARA,
-     "See ", TO "modules1", " for an overview of modules in Macaulay2.",
+     "See ", TO "modules", " for an overview of modules in Macaulay2.  See
+     ", TO "modules in Macaulay2", " for a tutorial overview of modules.",
      PARA,
      "Modules in Macaulay2 are implemented as ", TO "subquotient modules", ".  
      Submodules and quotients of free modules are perhaps the most common and important
@@ -94,7 +95,7 @@ document {
 	  }}
 
 document {
-     Key => "modules1",
+     Key => "modules",
      "For more operations in homological algebra, see ", 
      TO "chain complexes", ".  For additional common operations and a 
      comprehensive list of all routines
@@ -108,13 +109,13 @@ document {
 
 	  "homomorphisms (maps) between modules",
 	  TO "module homomorphisms",
-	  TO "canonical maps",
+	  TO "canonical maps between modules",
 
 	  "operations on modules",
 	  TO "direct sums of modules",
 	  TO "tensor products of modules",
 	  TO "Hom modules and homomorphisms",
-	  TO "annihilators and quotients",
+	  TO "annihilators and submodule quotients",
 
 	  "graded modules",
 	  TO "Hilbert functions and free resolutions",
@@ -453,6 +454,59 @@ document {
      }
 
 document {
+     Key => "canonical maps between modules",
+     Headline => "empty"
+     }
+
+document {
+     -- old??
+     Key => "constructing maps between modules",
+	"Let's start with a free module.",
+	EXAMPLE {
+		"R = ZZ/5[x,y,z];",
+		"F = R^3"
+		},
+	"A list of indices can be used to produce homomorphisms corresponding to the corresponding basis vectors.",
+	EXAMPLE {
+		"F_{0,1,2}",
+		"F_{0,1}",
+		"F_{1,2}"
+		},
+	"Matrices are viewed as linear transformations.",
+	EXAMPLE {
+		"f = matrix{{x,y,z}}"
+		},
+--     "The standard way to define a map from an R-module M to an 
+--     R-module N is to give a matrix whose columns are the image vectors
+--     of the generators of M.",
+--     EXAMPLE {
+--	  "R = QQ[x,y,z];",
+--	  "m = cokernel vars R",
+--	  "--F = map(m/m^2, R^1/m, {{x*y*z}})"
+--	  }
+     }
+
+document {
+     Key => "direct sums of modules",
+     Headline => "empty",
+     }
+
+document {
+     Key => "tensor products of modules",
+     Headline => "empty",
+     }
+
+document {
+     Key => "Hom modules and homomorphisms",
+     Headline => "empty",
+     }
+
+document {
+     Key => "annihilators and submodule quotients",
+     Headline => "empty",
+     }
+
+document {
      Key => "Hilbert functions and free resolutions",
      Headline => "including degree and betti numbers",
      "In this section, we give examples of common operations
@@ -532,110 +586,28 @@ document {
      }
 
 document {
-     Key => "operations on modules",
-     Headline => "including direct sum, tensor products, and annihilators"
-     }
-
-document {
-     Key => "homomorphisms (maps) between modules",
-     Headline => "including elements of modules",
-          EXAMPLE {
-	  "R = QQ[x,y];",
-	  "M = image vars R",
-	  "N = coker presentation M",
-	  "f = map(M,N,1)",
-	  "isWellDefined f",
-	  "isIsomorphism f",
-	  "g = map(M,cover M,1)",
-	  "isWellDefined g",
-	  "isIsomorphism g",
-	  "h = map(cover M,M,1)",
-	  "isWellDefined h",
-	  }
-     }
-
-
-
-document {
-     Key => "extracting elements",
-     "If M is an R-module, the best way to think of an element v of M
-     in Macaulay 2 is as a map of the ring into M, mapping 1 to v."
-     }
-
-document {
-     Key => "equality and containment of modules",
-     "==, isSubset"
-     }
-
-document {
-     Key => "minimal presentations and generators",
-     "prune, trim"
-     }
-
-document {
-     Key => "annihilator of a module",
-     "The annihilator of a module M over a ring R, ann(M) = { f in R | fM = 0 }, is computed
-     using the ", TO "annihilator", " function.",
-     EXAMPLE {
-	  "R = QQ[a..i];",
-	  "M = cokernel genericMatrix(R,a,3,3)",
-	  "annihilator M"
-	  },
-     "You may also use the abbreviation ", TO "ann",
-     EXAMPLE {
-	  "ann (M/(a*M))"
-	  }
-     }
-
-document {
-     Key => "information about a map of modules",
-     "usual information: source, target, ring.",
-     }
-
-document {
-     Key => "kernel, cokernel and image of a map of modules",
+     Key => "degrees of elements and free modules",
+     Headline => "empty",
      }
 
 document {
      Key => "degree and multiplicity of a module",
+     Headline => "empty",
      }
 
 document {
      Key => "Hilbert functions and polynomials",
+     Headline => "empty",
      }
 
 document {
      Key => "homogenization",
+     Headline => "empty",
      }
 
 document {
      Key => "truncation and homogeneous components of a graded module",
-     }
-
-document {
-     Key => "what is a subquotient module?",
-     "There are two basic types of modules over a ring R: submodules of R^n
-     and quotients of R^n.  Macaulay 2's notion of a module includes both
-     of these.  Macaulay 2 represents every module as a quotient image(f)/image(g),
-     where f and g are both homomorphisms from free modules to F: f : F --> G and g : H --> G.
-     The columns of f represent the generators of ", TT "M", ", and the columns of g represent the relations of the module M.",
-     EXAMPLE {
-	  "R = ZZ/32003[a,b,c,d,e];",
-	  },
-     "Include here: generators, relations."
-     }
-
-document {
-     Key => "extracting parts of a subquotient module",
-     "Include: "
-     }
-
-document {
-     Key => "quotients of modules",
-     }
-
-document {
-     Key => "direct sums of modules",
+     Headline => "empty",
      }
 
 document {
@@ -664,24 +636,127 @@ document {
 
 document {
      Key => "Fitting ideals",
+     Headline => "empty",
      }
 
 document {
      Key => "adjoints of maps",
+     Headline => "empty",
      }
 
+document {
+     Key => "Ext and Tor",
+     Headline => "empty",
+     }
+
+document {
+     Key => "local cohomology",
+     Headline => "empty",
+     }
+
+document {
+     Key => "is a module Cohen-Macaulay?",
+     Headline => "empty",
+     }
+
+-- one link (in this file) to this node
+document {
+     Key => "homomorphisms (maps) between modules",
+     Headline => "including elements of modules",
+          EXAMPLE {
+	  "R = QQ[x,y];",
+	  "M = image vars R",
+	  "N = coker presentation M",
+	  "f = map(M,N,1)",
+	  "isWellDefined f",
+	  "isIsomorphism f",
+	  "g = map(M,cover M,1)",
+	  "isWellDefined g",
+	  "isIsomorphism g",
+	  "h = map(cover M,M,1)",
+	  "isWellDefined h",
+	  }
+     }
+
+
+-- no links to this node
+document {
+     Key => "extracting elements",
+     "If M is an R-module, the best way to think of an element v of M
+     in Macaulay 2 is as a map of the ring into M, mapping 1 to v."
+     }
+
+-- no links to this node
+document {
+     Key => "equality and containment of modules",
+     "==, isSubset"
+     }
+
+-- no links to this node
+document {
+     Key => "minimal presentations and generators",
+     "prune, trim"
+     }
+
+-- no links to this node
+document {
+     Key => "annihilator of a module",
+     "The annihilator of a module M over a ring R, ann(M) = { f in R | fM = 0 }, is computed
+     using the ", TO "annihilator", " function.",
+     EXAMPLE {
+	  "R = QQ[a..i];",
+	  "M = cokernel genericMatrix(R,a,3,3)",
+	  "annihilator M"
+	  },
+     "You may also use the abbreviation ", TO "ann",
+     EXAMPLE {
+	  "ann (M/(a*M))"
+	  }
+     }
+
+-- no links to this node
+document {
+     Key => "information about a map of modules",
+     "usual information: source, target, ring.",
+     }
+
+-- no links to this node
+document {
+     Key => "kernel, cokernel and image of a map of modules",
+     }
+
+-- no links to this node
+document {
+     Key => "what is a subquotient module?",
+     "There are two basic types of modules over a ring R: submodules of R^n
+     and quotients of R^n.  Macaulay 2's notion of a module includes both
+     of these.  Macaulay 2 represents every module as a quotient image(f)/image(g),
+     where f and g are both homomorphisms from free modules to F: f : F --> G and g : H --> G.
+     The columns of f represent the generators of ", TT "M", ", and the columns of g represent the relations of the module M.",
+     EXAMPLE {
+	  "R = ZZ/32003[a,b,c,d,e];",
+	  },
+     "Include here: generators, relations."
+     }
+
+-- no links to this node
+document {
+     Key => "extracting parts of a subquotient module",
+     "Include: "
+     }
+
+-- no links to this node
+document {
+     Key => "quotients of modules",
+     }
+
+-- no links to this node
 document {
      Key => "free resolutions",
      }
 
+-- no links to this node
 document {
      Key => "Hom module",
      }
 
-document {
-     Key => "tensor products of modules",
-     }
-
-document {
-     Key => "Tor and Ext",
-     }

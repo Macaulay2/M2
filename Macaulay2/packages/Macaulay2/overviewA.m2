@@ -35,48 +35,6 @@ document {
      }
 
 
-///
-
-
-///
-
-
-     
-document {
-     Key => "modules",
-     Subnodes => {
-	  "construction of modules",
-	  TO "free modules",
-	  TO "matrices to and from modules",
-	  -- TO "ideals to and from modules", -- already referred to in the section on ideals
-	  TO "Hilbert functions and free resolutions",
-	  TO "operations on modules",
-	  TO "homomorphisms (maps) between modules",
-	  TO "constructing maps between modules",
-	  TO "information about a map of modules",
-	  TO "kernel, cokernel and image of a map of modules",
-	  "graded modules",
-	  TO "degrees of elements and free modules",
-	  TO "degree and multiplicity of a module",
-	  TO "Hilbert functions and polynomials",
-	  TO "homogenization",
-	  TO "truncation and homogeneous components of a graded module",
-	  TO "subquotient modules",
-	  "Macaulay 2 has handed you a subquotient module.  What now?",
-	  TO "what is a subquotient module?",
-	  TO "extracting parts of a subquotient module",
-	  TO "quotients of modules",
-	  "multilinear algebra",
-	  TO "exterior power of a module",
-	  TO "Fitting ideals",
-	  TO "adjoints of maps",
-	  },
-     PARA,
-     "For more operations in homological algebra, see ", TO "chain complexes", ".  For additional common operations and a comprehensive list of all routines
-     in Macaulay 2 which return or use modules, see ", TO "Module", "."
-     }
-
-
 document { -- this node is used as an example in the node: Key
      Key => "chain complexes",
      "For additional common operations and a comprehensive list of all routines
