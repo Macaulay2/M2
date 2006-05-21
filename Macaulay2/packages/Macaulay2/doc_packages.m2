@@ -332,7 +332,7 @@ document {
 
 document {
      Key => {newPackage, (newPackage,String)}, 
-     Headline => "package item: preamble",
+     Headline => "start a new package",
      Usage => "newPackage ( \"package name\", ... )",
      Inputs => {
 	  },
