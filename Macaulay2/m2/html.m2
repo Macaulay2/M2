@@ -297,7 +297,7 @@ assembleTree := (pkg,nodes) -> (
 	       fkey := DocumentTag.FormattedKey tag;
 	       if pkg#"raw documentation"#?fkey then (
 		    doc := pkg#"raw documentation"#fkey;
-		    tag => first \ select(if doc.?Subnodes then toList doc.Subnodes else {}, x -> class x === TO))
+		    tag => getPrimary \ first \ select(if doc.?Subnodes then toList doc.Subnodes else {}, x -> class x === TO))
 	       else (
 		    tag => {}
 		    )
@@ -761,7 +761,14 @@ installPackage Package := opts -> pkg -> (
 
 	  -- process documentation
 	  stderr << "--processing documentation nodes..." << endl;
-	  scan(nodes, tag -> if not isUndocumented tag then (
+	  scan(nodes, 
+	       tag -> if isUndocumented tag then (
+		    if debugLevel > 0 then stderr << "--undocumented " << tag << endl;
+		    )
+	       else if isSecondary tag then (
+		    if debugLevel > 0 then stderr << "--is secondary " << tag << endl;
+		    )
+	       else (
 		    fkey := DocumentTag.FormattedKey tag;
 		    if not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then (
 			 if debugLevel > 0 then stderr << "--skipping     " << tag << endl;
@@ -770,9 +777,6 @@ installPackage Package := opts -> pkg -> (
 			 if debugLevel > 0 then stderr << "--processing   " << tag << endl;
 			 pkg#"processed documentation"#fkey = help tag;
 			 );
-		    )
-	       else (
-		    if debugLevel > 0 then stderr << "--undocumented " << tag << endl;
 		    )
 	       );
 
@@ -796,7 +800,7 @@ installPackage Package := opts -> pkg -> (
 
 	  -- make table of contents, including next, prev, and up links
 	  stderr << "--assembling table of contents" << endl;
-	  assembleTree(pkg,select(nodes,tag -> not isUndocumented tag)); -- sets tableOfContents
+	  assembleTree(pkg,getPrimary \ select(nodes,tag -> not isUndocumented tag)); -- sets tableOfContents
 	  stderr << "+++++" << endl << "table of contents, in tree form:" << endl << tableOfContents << endl << "+++++" << endl;
 	  pkg#"table of contents" = new Bag from {tableOfContents}; -- we bag it because it might be big!
 	  pkg#"links up" = UP;

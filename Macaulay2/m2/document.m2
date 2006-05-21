@@ -338,7 +338,10 @@ formatDocumentTagTO Array := s -> SEQ{ fixup TO s#0, "(..., ", fixup TO s#1, " =
 -----------------------------------------------------------------------------
 -- fixing up hypertext
 -----------------------------------------------------------------------------
+requirestrings := x -> ( scan(x, line -> if class line =!= String then error ("expected a string, but encountered ", toString line)); x)
+trimfront := x -> apply(x, line -> replace("^[[:space:]]+","",line))
 nonnull := x -> select(x, i -> i =!= null)
+nonempty := x -> select(x, i -> i =!= "")
 trimline0 := x -> selectRegexp ( "^((.*[^ \t])?)[ \t]*$",1, x)
 trimline  := x -> selectRegexp ( "^[ \t]*((.*[^ \t])?)[ \t]*$",1, x)
 trimline1 := x -> selectRegexp ( "^[ \t]*(.*)$",1, x)
@@ -371,13 +374,13 @@ fixup Nothing    := x -> ()				       -- so it will get removed by splice later
 fixup BR         := identity
 fixup PRE        := identity
 fixup CODE       := identity
-fixup EXAMPLE    := nonnull
+fixup EXAMPLE    := x -> nonempty trimfront requirestrings nonnull x
 fixup LITERAL    := identity
 fixup ANCHOR     := identity
 fixup List       := z -> fixup SEQ z
 fixup Sequence   := z -> fixup SEQ z
 -- fixup Option
-fixup UL         := z -> splice apply(nonnull z, i -> SEQ fixup if class i === TO then TOH {i#0} else i)
+fixup UL         := z -> apply(nonnull splice z, i -> SEQ fixup if class i === TO then TOH {i#0} else i)
 -- fixup TO         := x -> TO if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
 fixup TO         := x -> TO if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
 fixup TO2        := x -> TO2{ makeDocumentTag x#0, concatenate drop(toSequence x,1) }

@@ -840,22 +840,14 @@ document {
      SeeAlso => {"local", "global", "value" }
      }
 
-
 document {
      Key => gcd,
      Headline => "greatest common divisor",
-	Usage => "gcd(x,y,...)",
-	Inputs => {
-		"x" => ZZ => {}
-		},
-	Outputs => {
-		ZZ => {}
-		},
-     TT "gcd(x,y,...)", " yields the greatest common divisor of ", TT "x", ", ", TT "y", ", ... .",
-	EXAMPLE {
-		gcd(2,4,8)
-		},
-     SeeAlso => "gcdCoefficients"
+     Usage => "gcd(x,y,...)",
+     Inputs => { "x" => ZZ => "" },
+     Outputs => { ZZ => { "the greatest commond divisor of the arguments" } },
+     EXAMPLE "gcd(2,4,8)",
+     SeeAlso => gcdCoefficients
      }
 
 document {
