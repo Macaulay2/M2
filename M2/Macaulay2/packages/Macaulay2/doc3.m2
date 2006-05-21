@@ -671,7 +671,6 @@ document { Key => (separateRegexp, String, ZZ, String),
      Inputs => { "sep" => "a regular expression" , "n" => "", "str" => "a string to be separated" },
      Outputs => { { "a list of substrings consecutively extracted from ", TT "str", ", with separators recognized by the ", TT "n", "-th parenthesized subexpression of", TT "sep" } },
      EXAMPLE { ///separateRegexp("f(-)", 1, "asdf-qwer-dfadf")/// }}
-
 document { Key => tutorial, Headline => "convert documentation from tutorial format",
      Usage => "tutorial x",
      Inputs => { "x" => String => "documentation in tutorial format" },
@@ -685,6 +684,17 @@ R = QQ[x,y]
      	  "tutorial oo",
 	  "peek oo"
 	  }}
+document { Key => {preimage,(preimage, RingMap, Ideal)},
+     Usage => "preimage(f,I)",
+     Inputs => { "I" => { "an ideal in the target ring of ", TT "f" }, "f" => "" },
+     Outputs => { { "the preimage of ", TT "I", " under the map ", TT "f" } },
+     EXAMPLE lines /// 
+	  R = QQ[x,y,z]
+	  S = QQ[t,u]
+	  f = map(R,S,{x*y,y*z})
+	  preimage_f ideal(x^2,y^2)
+     	  ///
+     }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

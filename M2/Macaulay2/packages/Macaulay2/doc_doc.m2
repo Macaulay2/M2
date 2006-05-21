@@ -44,7 +44,7 @@ document {
 	"There can be explanatory prose here in the form of a hypertext list.",
      Caveat => {"warning"},
      SeeAlso => {linkFile},
-     Subnodes => {hypertextlist},
+     Subnodes => {listOfNodes},
      }///,
      PARA "Special documentation entries:",
      UL {
@@ -139,10 +139,10 @@ document {
 	Function => document,
 	"The entries should consist of items in one of the following forms.",
 	  UL {
-	      TT "hypertextlist",
-	      TT "class => hypertextlist (or null)",
-	      TT "symbolname => hypertextlist (or null)",
-	      TT "symbolname => class => hypertextlist (or null)",
+	      TT "hypertext",
+	      TT "class => hypertext (or null)",
+	      TT "symbolname => hypertext (or null)",
+	      TT "symbolname => class => hypertext (or null)",
 	  },
 	"As an example, here is the ", TT "Inputs", " entry of the method ", TO (resolution,Ideal), ":",
 	PRE ///Inputs => { "I" => { "an ideal in a ring ", TT "R", ", say" } },///,
@@ -157,10 +157,10 @@ document {
 	Function => document,
 	"The entries should consist of items in one of the following forms.",
 	  UL {
-	      TT "hypertextlist",
-	      TT "class => hypertextlist (or null)",
-	      TT "symbolname => hypertextlist (or null)",
-	      TT "symbolname => class => hypertextlist (or null)",
+	      TT "hypertext",
+	      TT "class => hypertext (or null)",
+	      TT "symbolname => hypertext (or null)",
+	      TT "symbolname => class => hypertext (or null)",
 	  },
      "As an example, here is the ", TT "Outputs", " entry of the method ", TO (resolution,Ideal), ":",
 	 PRE /// Outputs => { {"a resolution of ", TT "R/I", " by projective ", TT "R", "-modules" } },///,
@@ -208,7 +208,7 @@ document {
 document {
      Key => Subnodes,
      Headline => "a menu of documentation nodes",
-     Usage =>  "document { ... , Subnodes => { hypertextlist }, ... }",
+     Usage =>  "document { ... , Subnodes => { ... }, ... }",
 	Function => document,
    	"This option inserts into a documentation page a menu of subnodes. Here is a generic example:",
 	PRE ///Subnodes => {
