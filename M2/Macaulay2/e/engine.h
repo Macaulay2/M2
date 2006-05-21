@@ -477,7 +477,7 @@ extern "C" {
      -1 means that a < b
      0 means that a == b (not equal, but this order does not distinguish them)
      1 means that a > b
-     If the two rings are different, then 0 is silently reutrned.
+     If the two rings are different, then 0 is silently returned.
   */
 
   M2_string IM2_RingElement_to_string(const RingElement *a); /* drg: connected */
