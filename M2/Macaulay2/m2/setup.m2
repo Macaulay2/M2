@@ -1,6 +1,8 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 
-assert = x -> if not x then error "assertion failed"
+assert = x -> (
+     if class x =!= Boolean then error "'assert' expected true or false";
+     if not x then error "assertion failed")
 
 if class oooo =!= Symbol then error "setup.m2 already loaded"
 

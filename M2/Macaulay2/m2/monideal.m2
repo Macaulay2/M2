@@ -32,10 +32,6 @@ codim Module := M -> if M.cache.?codim then M.cache.codim else M.cache.codim = (
 	  c - codim R)
      )
 
-toString MonomialIdeal := m -> "monomialIdeal " | toString generators m
-
--- net MonomialIdeal := I -> if I == 0 then "0" else "monomialIdeal " | net toSequence first entries generators I
-
 MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> SimplePowerMethod(I,n)
 
 Ring / MonomialIdeal := (R,I) -> R / ideal I
@@ -166,17 +162,8 @@ independentSets Ideal := o -> (M) -> independentSets(monomialIdeal M,o)
 -----------------------------------------------------------------------------
 
 expression MonomialIdeal := (I) -> (
-     new FunctionApplication from {
-     	  monomialIdeal, (
-	       v := expression toSequence first( entries generators I);
-     	       if #v === 1 then v#0 else v
-	       )
-     	  }
-     )
-
-net MonomialIdeal := (I) -> (
-     if numgens I === 0 then "0"
-     else net expression I
+     if numgens I === 0 then hold "0" 
+     else new FunctionApplication from { monomialIdeal, unSingleton expression toSequence first( entries generators I) }
      )
 
 MonomialIdeal.AfterPrint = MonomialIdeal.AfterNoPrint = (I) -> (

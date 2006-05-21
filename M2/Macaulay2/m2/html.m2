@@ -513,7 +513,7 @@ installPackage String := opts -> pkg -> (
      if PackageDictionary#?pkg and class value PackageDictionary#pkg === Package 
      then installPackage(value PackageDictionary#pkg, opts)
      else (
-	  pkg = loadPackage(pkg, DebuggingMode => opts.DebuggingMode, MakeDocumentation => opts.MakeDocumentation);
+	  pkg = loadPackage(pkg, DebuggingMode => opts.DebuggingMode, LoadDocumentation => opts.MakeDocumentation);
 	  installPackage(pkg, opts);
 	  ))
 
@@ -523,7 +523,7 @@ dispatcherMethod := m -> m#-1 === Sequence and (
 
 installPackage Package := opts -> pkg -> (
      if opts.MakeDocumentation and pkg#?"documentation not loaded"
-     then pkg = loadPackage(pkg#"title", DebuggingMode => opts.DebuggingMode, MakeDocumentation => true);
+     then pkg = loadPackage(pkg#"title", DebuggingMode => opts.DebuggingMode, LoadDocumentation => true);
 
      absoluteLinks = opts.AbsoluteLinks;
      if class absoluteLinks =!= Boolean then error "expected true or false for option AbsoluteLinks"; 
@@ -1155,18 +1155,26 @@ makePackageIndex List := packagePath -> (
      )
 
 runnable := fn -> 0 < # select(1,apply(separate(":", getenv "PATH"),p -> p|"/"|fn),fileExists)
-check := ret -> if ret != 0 then error "--error: external command failed"
-
-URL = new Type of BasicList
+chk := ret -> if ret != 0 then error "external command failed"
+browserMethods := hashTable {
+     "firefox" => "firefox \"%s\"&",
+     "open" => "open \"%s\"",
+     "netscape" => "netscape -remote \"openURL(%s)\""
+     }
+URL = new SelfInitializingType of BasicList
+new URL from String := (URL,str) -> new URL from {str}
 show = method()
 show URL := x -> (
      url := x#0;
-     if runnable "firefox" then check run("firefox "|url|"&") -- big problem: we can't predict whether firefox will exit immediately, so we have to run in the backgroun always, sigh
-     else if runnable "open" then (
-	  check run("open \""|url|"\"")
-	  )
-     else if runnable "netscape" then check run("netscape -remote \"openURL("|url|")\"") 
-     else error "can't find firefox, open, or netscape"
+     browser := getenv "WWWBROWSER";
+     if browser === "" then (
+	  if runnable "firefox" then browser = "firefox"
+	  else if version#"operating system" === "Darwin" and runnable "open" then browser = "open"
+	  else if runnable "netscape" then browser = "netscape"
+	  else error "no browser found, and none specified in $WWWBROWSER"
+	  );
+     if browserMethods#?browser then browser = browserMethods#browser;
+     chk run if match("%s",browser) then replace("%s",url,browser) else browser | " " | url
      )
 
 fix := fn -> "file://" | replace(" ","%20",fn) 		    -- might want to replace more characters
