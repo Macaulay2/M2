@@ -1,7 +1,9 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 printpass := ID -> x -> (stderr << ID << ": " << x << endl; x)
-
+fold3 := (f,x,v) -> (scan(v, y -> x = f(x,y)); x)
+fold2 := (f,v) -> fold3(f,v#0,drop(v,1))
+mergeopts := x -> fold2((a,b) -> merge(a,b,last), x)
 makeDir := name -> if name != "" and (not fileExists name or not isDirectory (name | "/.")) then mkdir name
 
 length File := f -> #f
@@ -13,14 +15,7 @@ makeDirectory String := name -> (			    -- make the whole path, too
      if last parts === "" then parts = drop(parts,-1);
      makeDir fold((a,b) -> ( makeDir a; a|"/"|b ), parts))
 
-fileOptions := new OptionTable from { 
-     Exclude => {},
-     Verbose => false,
-     Undo => false,
-     UpdateOnly => false
-     }
-
-copyFile = method(Options => fileOptions)
+copyFile = method(Options => new OptionTable from { Verbose => false, UpdateOnly => false })
 copyFile(String,String) := opts -> (src,tar) -> (
      if opts.UpdateOnly and fileExists tar and fileTime src <= fileTime tar then (
      	  if opts.Verbose then stderr << "--skipping: " << src << " not newer than " << tar << endl;
@@ -33,7 +28,7 @@ copyFile(String,String) := opts -> (src,tar) -> (
 	  )
      )
 
-moveFile = method(Options => fileOptions)
+moveFile = method(Options => new OptionTable from { Verbose => false })
 moveFile(String,String) := opts -> (src,tar) -> (
      if opts.Verbose then stderr << "--moving: " << src << " -> " << tar << endl;
      if not fileExists src then error("file '",src,"' doesn't exist");
@@ -47,12 +42,12 @@ baseFilename = fn -> (
      while #fn > 0 and fn#-1 === "" do fn = drop(fn,-1);
      last fn)
 
-findFiles = method(Options => fileOptions)
+findFiles = method(Options => new OptionTable from { Exclude => {} })
 findFiles String := opts -> name -> (
      excludes := opts.Exclude;
      if class excludes =!= List then (
      	  excludes = {excludes};
-	  opts = merge(opts, new OptionTable from {Exclude => excludes}, last);
+	  opts = mergeopts(opts, new OptionTable from {Exclude => excludes});
 	  );
      bn := baseFilename name;
      if any(excludes, pattern -> match(pattern, bn)) then return {};
@@ -65,7 +60,6 @@ findFiles String := opts -> name -> (
 
 backupFileRegexp = "\\.~[0-9.]+~$"					    -- we don't copy backup files.
 
-copyDirectory = method(Options => fileOptions)
 -- The unix 'cp' command is confusing when copying directories, because the
 -- result depends on whether the destination exists:
 --    % ls
@@ -98,13 +92,14 @@ copyDirectory = method(Options => fileOptions)
 -- For safety, we insist the destination directory already exist.
 -- Normally the base names of the source and destination directories will be
 -- the same.
+copyDirectory = method(Options => mergeopts( options copyFile, options findFiles, new OptionTable from { Verbose => false }))
 copyDirectory(String,String) := opts -> (src,dst) -> (
      if not fileExists src then error("directory not found: ",src);
      if not isDirectory src then error("file not a directory: ",src);
      if not src#-1 === "/" then src = src | "/";
      if not dst#-1 === "/" then dst = dst | "/";
      transform := fn -> dst | substring(fn,#src);
-     scan(findFiles(src,opts), 
+     scan(findFiles(src,applyPairs(options findFiles, (k,v) -> (k,opts#k))),
 	  srcf -> (
 	       tarf := transform srcf;
 	       if tarf#-1 === "/" 
@@ -116,15 +111,15 @@ copyDirectory(String,String) := opts -> (src,dst) -> (
 		    then (if opts.Verbose then stderr << "--  skipping: non regular file: " << srcf << endl)
 		    else if match(backupFileRegexp,srcf)
 		    then (if opts.Verbose then stderr << "--  skipping: backup file: " << srcf << endl)
-		    else copyFile(srcf,tarf,opts)))));
-symlinkDirectory = method(Options => fileOptions)
+		    else copyFile(srcf,tarf,applyPairs(options copyFile, (k,v) -> (k,opts#k)))))));
+symlinkDirectory = method( Options => mergeopts(options findFiles, new OptionTable from { Verbose => false, Undo => false }))
 symlinkDirectory(String,String) := opts -> (src,dst) -> (
      if not fileExists src then error("directory not found: ",src);
      if not isDirectory src then error("file not a directory: ",src);
      if not src#-1 === "/" then src = src | "/";
      if not dst#-1 === "/" then dst = dst | "/";
      transform := fn -> dst | substring(fn,#src);
-     scan(findFiles(src,opts), 
+     scan(findFiles(src,applyPairs(options findFiles, (k,v) -> (k,opts#k))), 
 	  srcf -> (
 	       tarf := transform srcf;
 	       if tarf#-1 === "/" 
@@ -144,7 +139,7 @@ symlinkDirectory(String,String) := opts -> (src,dst) -> (
 			      if fileExists tarf then (
 				   if readlink tarf === relsrcf
 				   then (
-					-- stderr << "--  skipping: link already exists" << endl;
+					if opts.Verbose then stderr << "--  skipping: link already exists" << endl;
 					null
 					)
 				   else if readlink tarf =!= null then (

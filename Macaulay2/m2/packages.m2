@@ -11,6 +11,7 @@ Package = new Type of MutableHashTable
 Package.synonym = "package"
 net Package := toString Package := p -> if p#?"title" then p#"title" else "--package--"
 packages = {}
+options Package := p -> p.Options
 
 toString Dictionary := d -> (
      if ReverseDictionary#?d then return toString ReverseDictionary#d;
@@ -32,7 +33,7 @@ dismiss String := title -> if PackageDictionary#?title and class value PackageDi
 loadPackage = method(
      Options => {
 	  DebuggingMode => null,
-	  MakeDocumentation => false
+	  LoadDocumentation => false
 	  } )
 packageLoadingOptions := new MutableHashTable
 loadPackage String := opts -> pkgtitle -> (
@@ -283,7 +284,7 @@ use Package := pkg -> if not member(pkg,packages) then (
      )
 
 beginDocumentation = () -> (
-     if packageLoadingOptions#?(currentPackage#"title") and not packageLoadingOptions#(currentPackage#"title").MakeDocumentation
+     if packageLoadingOptions#?(currentPackage#"title") and not packageLoadingOptions#(currentPackage#"title").LoadDocumentation
      and currentPackage#?"raw documentation database" and isOpen currentPackage#"raw documentation database" then (
 	  if notify then stderr << "--beginDocumentation: using documentation database, skipping the rest of " << currentFileName << endl;
 	  currentPackage#"documentation not loaded" = true;
