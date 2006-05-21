@@ -645,6 +645,53 @@ document { Key => unSingleton,
      Inputs => { "x" => Thing => null },
      Outputs => { { TT "x#0", ", if ", TT "x", " is a sequence of length 1, otherwise ", TT "x", "" } },
      EXAMPLE { "unSingleton (2:a)", "unSingleton (1:a)", "unSingleton (0:a)" }}
+
+document { Key => {permutations, (permutations, ZZ), (permutations, VisibleList)},
+     Headline => "produce all permutations of a list",
+     Usage => "permutations x",
+     Inputs => { "x" => { OFCLASS VisibleList, " or ", OFCLASS ZZ } },
+     Outputs => { { "a list of all the permutations of the visible list ", TT "x", ", or, if ", TT "x", " is an integer, of the list of
+	       integers from 0 through ", TT "n-1" 
+	       } },
+     EXAMPLE {
+	  "permutations {a,b,c,d}",
+	  "permutations 3"
+	  }
+     }
+
+document { Key => separateRegexp, Headline => "separate a string into pieces, with separators determined by a regular expression" }
+document { Key => (separateRegexp, String, String),
+     Usage => "separateRegexp(sep,str)",
+     Inputs => { "sep" => "a regular expression" , "str" => "a string to be separated" },
+     Outputs => { { "a list of substrings consecutively extracted from ", TT "str", ", with separators recognized by ", TT "sep" } },
+     EXAMPLE { ///separateRegexp("-", "asdf-qwer-dfadf")/// }}
+document { Key => (separateRegexp, String, ZZ, String),
+     Usage => "separateRegexp(sep,n,str)",
+     Inputs => { "sep" => "a regular expression" , "n" => "", "str" => "a string to be separated" },
+     Outputs => { { "a list of substrings consecutively extracted from ", TT "str", ", with separators recognized by the ", TT "n", "-th parenthesized subexpression of", TT "sep" } },
+     EXAMPLE { ///separateRegexp("f(-)", 1, "asdf-qwer-dfadf")/// }}
+
+document { Key => tutorial, Headline => "convert documentation from tutorial format",
+     Usage => "tutorial x",
+     Inputs => { "x" => String => "documentation in tutorial format" },
+     Outputs => {{ "documentation in hypertext format" }},
+     PARA { "Some of the Macaulay2 documentation is written in this format." },
+     EXAMPLE {
+	  "x = ///-- Given a variety $X$ in projective
+-- $r$-space ${\\bf P}^r$, the Fano scheme
+-- $Fano_k(X)$ is the natural parameter 
+-- space for the linear $k$-planes
+-- lying on $X$.
+
+-- First make the homogeneous coordinate 
+-- ring of the ambient projective $3$-space
+R = ZZ/32003[a,b,c,d]
+
+-- and the ideal of a nonsingular cubic
+X = ideal(a^3+b^3+c^3+d^3)
+///",
+     	  "tutorial x"}}
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

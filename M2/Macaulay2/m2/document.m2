@@ -46,7 +46,7 @@ isDocumentableMethod Sequence := key -> (
      	       or isDocumentableMethod i)) 
      and not methodDispatchFunctions#?(lookup key)
      and not errorMethod key
-     and not isUndocumented makeDocumentTag key
+     -- and not isUndocumented makeDocumentTag key
      )
 isDocumentableMethod    Thing := key -> false
 isDocumentableMethod   Symbol := key -> isGlobalSymbol toString key and getGlobalSymbol toString key === key
@@ -583,7 +583,7 @@ document List := args -> (
      opts := new MutableHashTable;
      scan(args, arg -> if class arg === Option then (
 	       key := arg#0;
-	       if not documentOptions#?key then error("unknown documentation option '", key, "'");
+	       if not documentOptions#?key then error("unknown documentation option '", key, "'") ;
 	       if opts#?key then error("option ",key," encountered twice");
 	       opts#key = arg#1));
      args = select(args, arg -> class arg =!= Option);
@@ -636,6 +636,7 @@ examples = x -> stack getExampleInputs help x
 apropos = method()
 apropos String := (pattern) -> sort select(flatten \\ keys \ globalDictionaries, i -> match(pattern,i) and not match("\\$",i))
 -----------------------------------------------------------------------------
+seenit := new MutableHashTable
 headline = method(SingleArgumentDispatch => true)
 headline Thing := key -> getOption(key,Headline)	    -- old method
 headline FinalDocumentTag := headline DocumentTag := tag -> (
@@ -643,8 +644,14 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
      if d === null then (
 	  -- if debugLevel > 0 and formattedKey tag == "Ring ^ ZZ" then error "debug me";
 	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
-	  if d === null then return "missing documentation";
-	  );
+	  if d === null then (
+	       signalDocError();
+	       if not seenit#?tag then (
+	       	    stderr << "--error: tag has no documentation: " << tag << endl;
+		    seenit#tag = true;
+		    );
+	       return "missing documentation";
+	       ));
      if d#?Headline then d#Headline
      else headline DocumentTag.Key tag			    -- revert to old method, eliminate?
      )

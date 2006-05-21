@@ -23,6 +23,11 @@ numExampleErrors := 0;
 hadDocumentationError := false
 numDocumentationErrors := 0;
 
+signalDocError = () -> (				    -- also called from document.m2, temporarily
+     hadDocumentationError = true;
+     numDocumentationErrors = numDocumentationErrors + 1;
+     )
+
 buildPackage := null					    -- name of the package currently being built
 topDocumentTag := null
 topFileName := "index.html"				    -- top node's file name, constant
@@ -801,14 +806,10 @@ installPackage Package := opts -> pkg -> (
      	  -- check that everything is documented
      	  hadDocumentationError = false;
 	  numDocumentationErrors = 0;
-	  bump := () -> (
-	       hadDocumentationError = true;
-	       numDocumentationErrors = numDocumentationErrors + 1;
-	       );
 	  scan((if pkg#"title" == "Macaulay2" then Macaulay2Core else pkg)#"exported symbols", s -> (
 		    tag := makeDocumentTag s;
 		    if not isUndocumented tag and not hasDocumentation s then (
-			 bump();
+			 signalDocError();
 			 stderr << "--error: symbol has no documentation: " << tag << endl;
 			 );
 		    f := value s;
@@ -816,7 +817,7 @@ installPackage Package := opts -> pkg -> (
 			 scan(methods f, m -> (
 				   tag := makeDocumentTag m;
 				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m then (
-					bump();
+					signalDocError();
 					stderr << "--error: method has no documentation: " << tag << " ::: " << DocumentTag.Key tag << endl;
 					);
 				   ));
@@ -826,7 +827,7 @@ installPackage Package := opts -> pkg -> (
 			      m -> (
 				   tag := makeDocumentTag m;
 				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m then (
-					bump();
+					signalDocError();
 					stderr << "--error: option has no documentation: " << tag << endl;
 					);
 				   )))));
