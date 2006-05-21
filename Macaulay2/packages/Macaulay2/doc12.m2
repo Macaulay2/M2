@@ -331,20 +331,6 @@ assert( partitions(5,3) === {{3,2},{3,1,1},{2,2,1},{2,1,1,1},{1,1,1,1,1}} / (x -
 "
 
 document {
-     Key => partitions,
-     Headline => "list the partitions of an integer",
-     TT "partitions n", " returns a list of the partitions of the integer n.",
-     BR, NOINDENT,
-     TT "partitions(n,k)", " returns a list of the partitions of the integer n
-     into terms each of which does not exceed k.",
-     PARA,
-     EXAMPLE {
-	  "partitions 4",
-      	  "partitions(4,2)",
-	  },
-     }
-
-document {
      Key => (symbol -, List), Headline => "negation of a vector",
      Usage => "-v",
      Inputs => { "v" => "a list interpreted as a vector" },
