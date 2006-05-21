@@ -64,7 +64,7 @@ install ::
 		  set -x ; \
 		  ../bin/M2$(EXE) -q --stop \
 		    --prefix $(encapdir) \
-		    -e errorDepth=0 \
+		    -e errorDepth=1 \
 		    -e debugLevel=$(debugLevel) \
 		    -e "installPackage(\"$$i\" $(ARGS1))" \
 		    -e "exit 0" ; \
@@ -72,7 +72,7 @@ install ::
 		  set -x ; \
 		  ../bin/M2$(EXE) -q --stop \
 		    --prefix $(encapdir) \
-		    -e errorDepth=0 \
+		    -e errorDepth=1 \
 		    -e debugLevel=$(debugLevel) \
 		    -e "installPackage(\"$$i\" $(ARGS2))" \
 		    -e "exit 0" ; \
