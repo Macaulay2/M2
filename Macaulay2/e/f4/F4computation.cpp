@@ -20,6 +20,7 @@ GBComputation *createF4GB(const Matrix *m,
 			  M2_bool use_max_degree,
 			  int max_degree)
 {
+#if EXPERIMENT
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
   const Ring *K = R->getCoefficients();
   GBComputation *G;
@@ -37,7 +38,11 @@ GBComputation *createF4GB(const Matrix *m,
       return G;
     }
   ERROR("cannot use Strategy=>F4 with this type of coefficient ring");
-  return 0;
+  return NULL;
+#else
+  ERROR("not implemented yet: Strategy => F4");
+  return NULL;
+#endif
 }
 
 template<typename CoeffRing>
