@@ -276,7 +276,7 @@ document { Key => {[newPackage,Version],Version},
 document { Key => currentTime,
      Headline => "get the current time",
      Usage => "currentTime()",
-     Outputs => {{ ZZ => "the current time, in seconds from the beginning of the epoch" }},
+     Outputs => {ZZ => "the current time, in seconds from the beginning of the epoch" },
      EXAMPLE "currentTime()" }
 document { Key => {[installPackage, MakeDocumentation],MakeDocumentation},
      Headline => "specify whether the package documentation should be made",
