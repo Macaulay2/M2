@@ -179,7 +179,14 @@ if firstTime then (
 	  else error "expected a type";
 	  );
      globalAssignment {Type,Function};
-     applicationDirectory = () -> homeDirectory | packageSuffix;
+     applicationDirectorySuffix = () -> (
+	  if version#"operating system" === "Darwin" then "Library/Application Support/Macaulay2/" else ".Macaulay2/"
+	  );
+     applicationDirectory = () -> (
+	  if class applicationDirectorySuffix === Function
+	  then homeDirectory | applicationDirectorySuffix()
+	  else homeDirectory | applicationDirectorySuffix
+	  );
      )
 
 sourceHomeDirectory = null				    -- home directory of Macaulay 2
@@ -443,8 +450,6 @@ if firstTime and not noloaddata and version#"dumpdata" then (
 	  if notify then stderr << "--warning: can not load data from " << datafile << newline << flush;
 	  )
      )
-
-packageSuffix = if version#"operating system" === "Darwin" then "Library/Application Support/Macaulay2/" else ".Macaulay2/"
 
 path = {}
 scan(commandLine, arg -> if arg === "-q" or arg === "--dumpdata" then noinitfile = true)

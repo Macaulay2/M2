@@ -486,8 +486,12 @@ installPackage = method(Options => {
 	  RunDirectory => ".",
 	  DebuggingMode => false
 	  })
-
-uninstallPackage = method(Options => options installPackage)
+uninstallPackage = method(Options => { 
+	  PackagePrefix => () -> applicationDirectory() | "encap/",
+          InstallPrefix => () -> applicationDirectory() | "local/",
+	  Encapsulate => true,
+	  MakeLinks => true
+	  })
 uninstallPackage String := opts -> pkg -> (
      if isGlobalSymbol pkg and class value getGlobalSymbol pkg === Package then return uninstallPackage(value getGlobalSymbol pkg, opts);
      needsPackage pkg;
@@ -822,7 +826,7 @@ installPackage Package := opts -> pkg -> (
 				   tag := makeDocumentTag m;
 				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m then (
 					signalDocError();
-					stderr << "--error: method has no documentation: " << tag << " ::: " << DocumentTag.Key tag << endl;
+					stderr << "--error: method has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;
 					);
 				   ));
 			 o := options f;
@@ -832,7 +836,7 @@ installPackage Package := opts -> pkg -> (
 				   tag := makeDocumentTag m;
 				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m then (
 					signalDocError();
-					stderr << "--error: option has no documentation: " << tag << endl;
+					stderr << "--error: option has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;
 					);
 				   )))));
 

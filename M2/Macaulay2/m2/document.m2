@@ -731,19 +731,16 @@ title := s -> (
 
 type := S -> (
      s := value S;
-     if class s =!= Function and class s =!= Package then (
+     if class s =!= Function and class s =!= Package then PARA1 {
 	  LITERAL "<div class=\"waystouse\">\n",
 	  SUBSECTION "For the programmer",  
 	  fixup PARA deepSplice { "The object ", TO S, " is ", OFCLASS class s,
 	       if parent s =!= Nothing then (
 		    f := (T -> while T =!= Thing list parent T do T = parent T) s;
-		    (
-			 if #f>1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.", 
-			 toSequence between(" < ", f / (T -> TO T)) 
-			 )
-		    ),
+		    if #f>1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.", 
+		    toSequence between(" < ", f / (T -> TO T))),
 	       "."},
-	  LITERAL "</div>\n"))
+	  LITERAL "</div>\n"})
 
 istype := X -> parent X =!= Nothing
 alter1 := x -> (
@@ -1075,7 +1072,7 @@ help Symbol := S -> (
      a := smenu apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
      -- b := smenu documentableMethods s;
      ret := Hypertext fixuptop ( title S, synopsis S, makeDocBody S, op S,
-	  if #a > 0 then (SUBSECTION {"Functions with optional argument named ", toExternalString S, " :"}, a),
+	  if #a > 0 then PARA1 { SUBSECTION {"Functions with optional argument named ", toExternalString S, " :"}, a},
 -- 	  if #b > 0 then (
 -- 	       LITERAL "<div class=\"waystouse\">\n",
 -- 	       SUBSECTION {"Ways to use ", toExternalString s, " :"}, 
