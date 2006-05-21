@@ -246,7 +246,7 @@ document { Key => {(irreducibleDecomposition,MonomialIdeal),irreducibleDecomposi
 	w = irreducibleDecomposition I
 	assert( I == intersect w )
      ///,
-     Outputs => {{ "a list of irreducible monomial ideals whos intersection is ", TT "I" }}}
+     Outputs => {{ "a list of irreducible monomial ideals whose intersection is ", TT "I" }}}
 undocumented {(isConstant, ZZ),(isConstant, QQ),(isConstant, RRR),(isConstant, RR),(isConstant, CC)}
 document { Key => {isConstant,(isConstant, RingElement)},
      Headline => "whether a ring element is constant",
@@ -276,8 +276,15 @@ document { Key => {[newPackage,Version],Version},
 document { Key => currentTime,
      Headline => "get the current time",
      Usage => "currentTime()",
-     Outputs => {ZZ => "the current time, in seconds from the beginning of the epoch" },
-     EXAMPLE "currentTime()" }
+     Outputs => {ZZ => "the current time, in seconds since 00:00:00 1970-01-01 UTC, the beginning of the epoch" },
+     EXAMPLE "currentTime()",
+     PARA { "We can compute, roughly, how many years ago the epoch began as follows." },
+     EXAMPLE "currentTime() /( (365 + 97./400) * 24 * 60 * 60 )",
+     PARA { "We can also compute how many months account for the fractional part of that number." },
+     EXAMPLE "12 * (oo - floor oo)",
+     PARA { "Compare that to the current date, available from a standard Unix command." },
+     EXAMPLE ///run "date"///
+     }
 document { Key => {[installPackage, MakeDocumentation],MakeDocumentation},
      Headline => "specify whether the package documentation should be made",
      Usage => "installPackage(..., MakeDocumentation => false)",
