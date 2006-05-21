@@ -130,16 +130,19 @@ document {
 document {
      Key => sequence,
      Headline => "make a sequence",
-     TT "sequence v", " -- returns ", TT "v", " if ", TT "v", " is a sequence, otherwise makes
-     a sequence of length one containing ", TT "v", ".",
-     PARA,
+     Usage => "sequence v",
+     Inputs => { "v" => Thing => "" },
+     Outputs => { Sequence => {TT "v", " if ", TT "v", " is a sequence, otherwise a sequence of length 1 containing ", TT "v"}},
+     PARA { "Such a function is needed occasionally to restore uniformity, because a nonempty parenthesized expression with no commas is not parsed as a sequence." },
      EXAMPLE {
-	  "sequence 4",
-      	  "sequence {4,5}",
-      	  "sequence (4,5)",
+	  "sequence()",
+	  "sequence(4)",
+      	  "sequence(4,5)",
+	  "identity()",
+	  "identity(4)",
+      	  "identity(4,5)",
 	  },
-     PARA,
-     SeeAlso => { "sequences" }
+     SeeAlso => { unSingleton }
      }
 
 document {
