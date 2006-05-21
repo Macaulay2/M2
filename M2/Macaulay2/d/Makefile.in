@@ -267,7 +267,6 @@ endif
 # we successfully avoid using streamio, but we need the personality function in libstc++
 LIBRARYOPTIONS += -lstdc++
 
-LIBRARYOPTIONS += -lgcc_s.10.5
 LIBRARYOPTIONS += -lm
 
 M2_LOADLIBES := $(LIBRARYOPTIONS) $(M2_LOADLIBES)
