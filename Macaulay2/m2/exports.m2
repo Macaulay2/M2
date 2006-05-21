@@ -1093,7 +1093,7 @@ exportMutable (
 	symbol T,
      	symbol homeDirectory,
         symbol GF$a,
-        symbol packageSuffix,
+        symbol applicationDirectorySuffix,
         symbol packagePath,
 	symbol backtrace,
 	symbol backupFileRegexp,

@@ -685,6 +685,7 @@ R = QQ[x,y]
 	  "peek oo"
 	  }}
 document { Key => {preimage,(preimage, RingMap, Ideal)},
+     Headline => "preimage of an ideal under a ring map",   -- hopefully more general later
      Usage => "preimage(f,I)",
      Inputs => { "I" => { "an ideal in the target ring of ", TT "f" }, "f" => "" },
      Outputs => { { "the preimage of ", TT "I", " under the map ", TT "f" } },
@@ -695,6 +696,37 @@ document { Key => {preimage,(preimage, RingMap, Ideal)},
 	  preimage_f ideal(x^2,y^2)
      	  ///
      }
+document { Key => {[installPackage, UserMode], UserMode},
+     Headline => "user mode option for installPackage",
+     Usage => "installPackage(..., UserMode => false)",
+     Consequences => { { "the installation will ignore packages installed in the user's application directory
+	       (see ", TO "applicationDirectory", ") and will ignore the user's init.m2 files when running
+	       examples" }}}
+document { Key => symbol applicationDirectorySuffix,
+     Headline => "suffix that determines the user's application directory",
+     Usage => "applicationDirectorySuffix = s",
+     Inputs => { "s" => String => { "a relative path, which will be appended to the user's home directory to determine the user's application directory" } },
+     SeeAlso => applicationDirectory,
+     PARA {
+	  "The value of ", TT "applicationDirectorySuffix", " may also be a function of no arguments, in which case its value is used as the path.
+	  The initial value of ", TT "applicationDirectorySuffix", " is a function whose value depends on the operating system and its conventions."
+	  },
+     EXAMPLE lines ///
+     	  applicationDirectorySuffix()
+	  applicationDirectory()
+	  applicationDirectorySuffix = "local/Mac2"
+	  applicationDirectory()
+     	  ///,	  
+     SourceCode => applicationDirectorySuffix,
+     Consequences => { { "the value of the function ", TT "applicationDirectory", " will use the new value of ", TT "applicationDirectorySuffix" }}}
+document { Key => applicationDirectory,
+     Headline => "the path to the user's application directory",
+     Usage => "applicationDirectory()",
+     Outputs => { String => "the path to the user's application directory" },
+     SourceCode => applicationDirectory,
+     PARA { "The function ", TO "applicationDirectorySuffix", " determines the value of ", TT "applicationDirectory", ", and can be modified by the user." },
+     EXAMPLE "applicationDirectory()",
+     SeeAlso => applicationDirectorySuffix}
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
