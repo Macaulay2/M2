@@ -54,6 +54,16 @@ needsPackage String := opts -> pkg -> (
      else loadPackage(pkg, opts)
      )
 
+officialAuthorTags := set {Name, Email, HomePage}
+checkAuthorOption := authors -> (
+     if class authors =!= List then error "expected Authors => a list";
+     scan(authors, author -> (
+     	       if class author =!= List then error "expected Authors => a list of lists";
+     	       scan(author, o -> (
+	       		 if class o =!= Option or length o =!= 2 then error "expected Authors => a list of lists of options";
+	       		 if not officialAuthorTags#?(first o) then error("unexpected author tag: ", toString first o);
+			 if class last o =!= String then error("expected author tag value to be a string: ", toString last o))))))
+
 newPackage = method( 
      Options => { 
 	  Version => "0.0", 

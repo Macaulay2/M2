@@ -1010,17 +1010,9 @@ lengthFun(rhs:Code):Expr := (
      is x:Sequence do Expr(toInteger(length(x)))
      is dc:DictionaryClosure do Expr(toInteger(dc.dictionary.symboltable.numEntries))
      is x:List do Expr(toInteger(length(x.v)))
-     is f:file do (
-	  if f.input || f.output then (
-	       r := fileLength(f);
-	       if r == ERROR then buildErrorPacket("couldn't determine length of file")
-	       else Expr(toInteger(r))
-	       )
-	  else buildErrorPacket("file not open")
-	  )
      is s:string do Expr(toInteger(length(s)))
      is n:Net do Expr(toInteger(length(n.body)))
-     else buildErrorPacket("expected a list, sequence, hash table, file, or string"));
+     else buildErrorPacket("expected a list, sequence, hash table, or string"));
 setup(SharpS,lengthFun,subvalue);
 subvalueQ(lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);

@@ -29,7 +29,7 @@ document {
      slower.  In general, this routine still needs to be tuned for speed.",
      PARA,
      "Computes the radical of ", TT "I", " using the Eisenbud-Huneke-Vasconcelos algorithm.
-     If ", TT "I", " is  ", OFCLASS MonomialIdeal, ", a faster \"combinatorial\" algorithm is used.",
+     If ", TT "I", " is  ", ofClass MonomialIdeal, ", a faster \"combinatorial\" algorithm is used.",
      EXAMPLE {
 	  "R=QQ[x,y]",
 	  "I=ideal((x^2+1)^2*y, y+1)",
@@ -39,6 +39,6 @@ document {
      "For another example, see ", TO "component example", ".",
      Caveat => {"The current implementation requires that the
 	  characteristic of the ground field is either zero
-	  or a \"large\" prime (unless ", TT "I", " is  ", OFCLASS MonomialIdeal, ")."},
+	  or a \"large\" prime (unless ", TT "I", " is  ", ofClass MonomialIdeal, ")."},
      SeeAlso => {decompose, topComponents, removeLowestDimension, saturate, quotient}
      }

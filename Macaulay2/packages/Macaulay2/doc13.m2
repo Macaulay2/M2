@@ -7,7 +7,7 @@ document {
      Inputs => {
 	  "KEY" => null,
 	  "f" => Function => null,
-	  "x" => {"an argument for ", TT "f", " that has ", OFCLASS CacheTable, " stored in it under ", TT "x.cache"}
+	  "x" => {"an argument for ", TT "f", " that has ", ofClass CacheTable, " stored in it under ", TT "x.cache"}
 	  },
      Outputs => {
 	  { TT "f x", " is returned, but the value is saved in ", TT "x.cache#KEY", " and not recomputed later" }
@@ -110,7 +110,7 @@ document { Key => unSingleton,
 document { Key => {permutations, (permutations, ZZ), (permutations, VisibleList)},
      Headline => "produce all permutations of a list",
      Usage => "permutations x",
-     Inputs => { "x" => { OFCLASS VisibleList, " or ", OFCLASS ZZ } },
+     Inputs => { "x" => { ofClass VisibleList, " or ", ofClass ZZ } },
      Outputs => { { "a list of all the permutations of the visible list ", TT "x", ", or, if ", TT "x", " is an integer, of the list of
 	       integers from 0 through ", TT "n-1" 
 	       } },
@@ -341,17 +341,19 @@ document { Key => [needsPackage, LoadDocumentation],
      Usage => "needsPackage(..., LoadDocumentation => ...)",
      SeeAlso => beginDocumentation,
      Consequences => {{ "when the package is loaded, the documentation is loaded, too" }}}
-document { Key => OFCLASS, 
+document { Key => ofClass, 
      Headline => "English phrases for types",
-     Usage => "OFCLASS T",
+     Usage => "ofClass T",
      Inputs => { "T" => Type => "" },
      Outputs => {{ "an English phrase, using a synonym for an instance of the type, together with an appropriate indefinite article" }},
+     PARA { "When viewed in html, the phrase is a hot link to the documentation node for the class." },
      EXAMPLE lines ///
-     	  OFCLASS class 3
-     	  OFCLASS Ring
-     	  OFCLASS HashTable
-     	  OFCLASS ProjectiveVariety
-	  document { Key => foo, "We may need ", OFCLASS ZZ, " and ", OFCLASS HashTable, "." }
+     	  ofClass class 3
+	  peek oo
+     	  ofClass Ring
+     	  ofClass HashTable
+     	  ofClass ProjectiveVariety
+	  document { Key => foo, "We may need ", ofClass ZZ, " and ", ofClass HashTable, "." }
 	  help foo
      ///}
 document { Key => inverse, Headline => "compute the inverse" }
@@ -360,6 +362,54 @@ document { Key => (inverse, Matrix),
      Inputs => { "f" => "" },
      Outputs => {{ "the inverse of ", TT "f" }},
      SourceCode => (inverse, Matrix)}
+document { Key => functionBody,
+     Headline => "get the body of a function",
+     Usage => "functionBody f",
+     Inputs => { "f" => Function => "" },
+     Outputs => { FunctionBody => { "the body of the function ", TT "f" }},
+     PARA { "The body of ", TT "f", " is essentially just the source code of ", TT "f", ", with no frames providing bindings for
+	  the local variables in scopes enclosing the scope of ", TT "f", ".  Function bodies cannot act as functions, but they can be tested for
+	  equality (", TO "===", "), and they can be used as keys in hash tables."
+	  },
+     EXAMPLE lines ///
+     	  f = a -> b -> a+b+a*b
+	  functionBody f 1
+	  f 1 === f 2
+	  functionBody f 1 === functionBody f 2
+     ///,
+     SeeAlso => FunctionBody }
+document { Key => FunctionBody,
+     Headline => "the class of function bodies",
+     SeeAlso => functionBody }
+document { Key => {[newPackage, Authors], Authors},
+     Usage => "newPackage(..., Authors => au)",
+     Headline => "provide contact information for the authors of a package",
+     Inputs => { "au" => List => { "a list of lists, each of which describes one of the authors" } },
+     Consequences => { { "the authors will be stored in the newly created package" } },
+     PARA { "Each elemnt of ", TT "au", " should be a list of options of the form ", TT "key => val", ",
+	  where ", TT "key", " is ", TT "Name", ", ", TT "Email", ", or ", TT "HomePage", ", and
+	  ", TT "val", " is a string containing the corresponding information."
+	  },
+     EXAMPLE "Macaulay2Core.Options.Authors"
+     }
+document { Key => fileLength,
+     Headline => "the length of a file",
+     Usage => "fileLength f",
+     Inputs => { "f" => { ofClass String, " or ", ofClass File }},
+     Outputs => { ZZ => { "the length of the file ", TT "f", " or the file whose name is ", TT "f" }},
+     PARA { "The length of an open output file is determined from the internal count of the number of bytes written so far." },
+     SeeAlso => {fileTime},
+     EXAMPLE ///
+     	  f = temporaryFileName() << "hi there"
+	  fileLength f
+	  close f
+	  filename = toString f
+	  fileLength filename
+	  get filename
+	  length oo
+     ///
+     }
+     
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

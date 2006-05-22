@@ -24,8 +24,8 @@ document {
 	  {"a map to ", TT "Y", " from ", TT "X", " defined by data ", TT "d", "."},
 	  },
      "The function ", TT "map", " provides a general mechanism for constructing a map
-     (homomorphism) between rings (", OFCLASS RingMap, "), modules (", OFCLASS Matrix,
-     "), chain complexes (", OFCLASS ChainComplexMap, "), 
+     (homomorphism) between rings (", ofClass RingMap, "), modules (", ofClass Matrix,
+     "), chain complexes (", ofClass ChainComplexMap, "), 
       or between objects in other categories.",
      PARA,
      "See also the function ", TO matrix, ", which focuses on creating new matrices from
@@ -213,7 +213,7 @@ document {
 	       module has been tensored by a graded free module of rank 1 of 
 	       the appropriate degree."},
 	  },
-      "The input ", TT "d", " should be ", OFCLASS ZZ, ", or a list of integers.",
+      "The input ", TT "d", " should be ", ofClass ZZ, ", or a list of integers.",
       PARA,
       "This routine is often used to take a matrix which has a non-zero degree, 
       and make the degree zero.",

@@ -419,11 +419,11 @@ document {
      Headline => "set difference",
      Usage => "x - y",
      Inputs => {
-	  "x" => {" or ", OFCLASS List},
-	  "y" => {" or ", OFCLASS List}
+	  "x" => {" or ", ofClass List},
+	  "y" => {" or ", ofClass List}
 	  },
      Outputs => {
-	  Set => {"or ", OFCLASS List, ", consisting of those elements of x not in y"}
+	  Set => {"or ", ofClass List, ", consisting of those elements of x not in y"}
 	  },
      "At least one of ", TT "x", ", ", TT "y", " must be a set, and the other 
      may be a list.  If ", TT "x", " is a list, then
@@ -462,8 +462,8 @@ document {
      Headline => "whether something is a subset",
      Usage => "isSubset(x,y)",
      Inputs => {
-	  "x" => {OFCLASS Set, ", or ", OFCLASS List},
-	  "y" => {OFCLASS Set, ", or ", OFCLASS List}
+	  "x" => {ofClass Set, ", or ", ofClass List},
+	  "y" => {ofClass Set, ", or ", ofClass List}
 	  },
      Outputs => {
 	  Boolean => {"whether every element of x is in y"},

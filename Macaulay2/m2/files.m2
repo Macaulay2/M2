@@ -6,8 +6,6 @@ fold2 := (f,v) -> fold3(f,v#0,drop(v,1))
 mergeopts := x -> fold2((a,b) -> merge(a,b,last), x)
 makeDir := name -> if name != "" and (not fileExists name or not isDirectory (name | "/.")) then mkdir name
 
-length File := f -> #f
-
 makeDirectory = method()
 makeDirectory String := name -> (			    -- make the whole path, too
      name = minimizeFilename name;

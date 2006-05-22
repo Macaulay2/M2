@@ -1772,8 +1772,19 @@ setupfun("recursionDepth",recursionDepthFun);
 
 fileLength(e:Expr):Expr := (
      when e
-     is f:file do Expr(toInteger(fileLength(f)))
-     is filename:string do Expr(toInteger(fileLength(filename)))
+     is f:file do (
+	  if f.input && f.infd != -1 then (
+	       ret := fileLength(f.infd);
+	       if ret == ERROR
+	       then Expr(buildErrorPacket(syscallErrorMessage("getting the length of a file")))
+	       else Expr(toInteger(ret)))
+	  else if f.output then Expr(toInteger(f.bytesWritten + f.outindex))
+     	  else buildErrorPacket("file not open"))
+     is filename:string do (
+	  ret := fileLength(filename);
+	  if ret == ERROR
+	  then Expr(buildErrorPacket(syscallErrorMessage("length of a file: \"" + present(filename) + "\"")))
+     	  else Expr(toInteger(ret)))
      else WrongArg("a string or a file"));     
 setupfun("fileLength",fileLength);
 
