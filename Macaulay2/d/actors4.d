@@ -802,6 +802,7 @@ tostringfun(e:Expr):Expr := (
      is f:Database do Expr(f.filename)
      is Net do Expr("<<net>>")
      is CodeClosure do Expr("<<pseudocode>>")
+     is functionCode do Expr("<<a function body>>")
      is CompiledFunction do Expr("<<a compiled function>>")
      is CompiledFunctionClosure do Expr("<<a compiled function closure>>")
      is FunctionClosure do Expr("<<a function closure>>")

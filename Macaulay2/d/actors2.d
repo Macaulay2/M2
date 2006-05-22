@@ -668,6 +668,7 @@ setupfun("sameFunctionBody", sameFunctionBody);
 disassemble(e:Expr):Expr := (
      when e
      is f:FunctionClosure do Expr(tostring(Code(f.model)))
+     is f:functionCode do Expr(tostring(Code(f)))
      is c:CodeClosure do Expr(tostring(c.code))
      else WrongArg("a function derived from Macaulay 2 code")
      );

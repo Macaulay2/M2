@@ -311,6 +311,55 @@ document { Key => (partitions, ZZ),
      PARA { "Each partition is a basic list of type ", TO "Partition", "." },
      SeeAlso => {Partition,(partitions, ZZ, ZZ)},
      EXAMPLE "partitions 4"}
+document { Key => UpdateOnly, Headline => "only copies of newer files should replace files" }
+document { Key => [copyDirectory, UpdateOnly],
+     Usage => "copyDirectory(..., UpdateOnly => true)",
+     Consequences => {{ "during the indicated copy operation, newer files will not be replaced by copies of older ones" }}}
+document { Key => [copyFile, UpdateOnly],
+     Usage => "copyFile(..., UpdateOnly => true)",
+     Consequences => {{ "during the indicated copy operation, newer files will not be replaced by copies of older ones" }}}
+document { Key => Verbose, Headline => "request verbose feedback" }
+document { Key => [symlinkDirectory, Verbose],
+     Usage => "symlinkDirectory(..., Verbose => ...)",
+     Consequences => {{ "during the file operation, details of the operations performed will be displayed" }}}
+document { Key => [copyDirectory, Verbose],
+     Usage => "copyDirectory(..., Verbose => ...)",
+     Consequences => {{ "during the file operation, details of the operations performed will be displayed" }}}
+document { Key => [copyFile, Verbose],
+     Usage => "copyFile(..., Verbose => ...)",
+     Consequences => {{ "during the file operation, details of the operations performed will be displayed" }}}
+document { Key => [moveFile, Verbose],
+     Usage => "moveFile(..., Verbose => ...)",
+     Consequences => {{ "during the file operation, details of the operations performed will be displayed" }}}
+document { Key => PrimaryTag, Headline => "for internal use only: a symbol used in storing documentation" }
+document { Key => LoadDocumentation, Headline => "when loading a package, load the documentation, too" }
+document { Key => [loadPackage, LoadDocumentation],
+     Usage => "loadPackage(..., LoadDocumentation => ...)",
+     SeeAlso => beginDocumentation,
+     Consequences => {{ "when the package is loaded, the documentation is loaded, too" }}}
+document { Key => [needsPackage, LoadDocumentation],
+     Usage => "needsPackage(..., LoadDocumentation => ...)",
+     SeeAlso => beginDocumentation,
+     Consequences => {{ "when the package is loaded, the documentation is loaded, too" }}}
+document { Key => OFCLASS, 
+     Headline => "English phrases for types",
+     Usage => "OFCLASS T",
+     Inputs => { "T" => Type => "" },
+     Outputs => {{ "an English phrase, using a synonym for an instance of the type, together with an appropriate indefinite article" }},
+     EXAMPLE lines ///
+     	  OFCLASS class 3
+     	  OFCLASS Ring
+     	  OFCLASS HashTable
+     	  OFCLASS ProjectiveVariety
+	  document { Key => foo, "We may need ", OFCLASS ZZ, " and ", OFCLASS HashTable, "." }
+	  help foo
+     ///}
+document { Key => inverse, Headline => "compute the inverse" }
+document { Key => (inverse, Matrix),
+     Usage => "inverse f",
+     Inputs => { "f" => "" },
+     Outputs => {{ "the inverse of ", TT "f" }},
+     SourceCode => (inverse, Matrix)}
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

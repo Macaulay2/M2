@@ -305,6 +305,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       )
 	  else False
 	  )
+     is f:functionCode do False
      is x:RawRingMap do (
 	  when rhs
 	  is y:RawRingMap do toExpr(Ccode(bool, "IM2_RingMap_is_equal((RingMap *)",x,",(RingMap *)",y,")"))
@@ -435,6 +436,7 @@ export Class(e:Expr):HashTable := (
      is x:List do x.class
      is Integer do integerClass
      is CodeClosure do codeClass
+     is functionCode do functionBodyClass
      is Rational do rationalClass
      is Real do doubleClass
      is Complex do complexClass
@@ -482,6 +484,7 @@ setupconst("Thing",Expr(thingClass));
 setupconst("HashTable",Expr(hashTableClass));
 setupconst("Dictionary",Expr(dictionaryClass));
 setupconst("Pseudocode",Expr(codeClass));
+setupconst("FunctionBody",Expr(functionBodyClass));
 setupconst("MutableHashTable",Expr(mutableHashTableClass));
 setupconst("CacheTable",Expr(cacheTableClass));
 setupconst("BasicList",Expr(basicListClass));

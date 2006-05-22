@@ -61,6 +61,8 @@ export (
         symbol Partition,
 	symbol OFCLASS,
         symbol inverse,
+	symbol functionBody,
+	symbol FunctionBody,
         symbol LinearAlgebra,
         symbol indexHtml,
      	symbol Email,

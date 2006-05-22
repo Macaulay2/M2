@@ -66,7 +66,7 @@ greedySat(Ideal,RingElement) := (I,F) -> (
      satI := I; -- will be the saturation
      i := 0;
      while i < #facs do (
-	  g = facs_i;
+	  g := facs_i;
 	  newI := satI : g;
 	  if satI != newI then (
 	       G = g * G;

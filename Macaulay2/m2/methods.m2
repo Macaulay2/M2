@@ -83,9 +83,8 @@ MultipleArgsWithOptions := opts -> (
 	  if f === null then noMethod(methodFunction,arg) else (f options) arg
 	  );
      methodOptions#methodFunction = opts;
-     self := methodFunction(Sequence) := 
-     options ->
-        args -> (
+     self := 
+     methodFunction(Sequence) := options -> args -> (
 	  -- Common code for every method with options, multiple arguments
 	  -- Dispatches on type of arguments ('args' is a sequence).
 	  f := lookup prepend(methodFunction,apply(args,class));
@@ -364,6 +363,14 @@ TEST String := s -> (
      currentPackage#"test number" = currentPackage#"test number" + 1;
      )
 TEST List := y -> TEST \ y
+
+foo := method(Options => {})
+foodict := first localDictionaries foo
+codeHelper#(functionBody value foodict#"f") = g -> {
+     ("-- method functions:", code methods value (first localDictionaries g)#"methodFunction")
+     -- ("-- option table opts:", value (first localDictionaries g)#"opts")
+     }
+bar := lookup(foo,Sequence)
 
 -----------------------------------------------------------------------------
 
