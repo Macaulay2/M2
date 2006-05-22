@@ -489,6 +489,8 @@ document {
 document {
      Key => "direct sums of modules",
      Headline => "empty",
+     "
+     "
      }
 
 document {
@@ -499,7 +501,21 @@ document {
 document {
      Key => "Hom modules and homomorphisms",
      Headline => "empty",
-     }
+///
+     R = QQ[a..e]
+     C = res coker vars R
+     M = coker C.dd_3 ++ R^{-4}
+     N = coker C.dd_4
+     H = Hom(N,M);
+     B = basis(0,H);
+     F  = B * random(source B, R^1) 
+     f = homomorphism F
+     source f
+target f     
+     syz transpose matrix f
+     ///
+}
+
 
 document {
      Key => "annihilators and submodule quotients",
