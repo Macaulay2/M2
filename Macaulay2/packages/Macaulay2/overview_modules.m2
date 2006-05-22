@@ -547,12 +547,14 @@ document {
 	       the poincare polynomial, and is obtained by the ", TO (poincare,Module), " function.",
 	       EXAMPLE {
 		    "poincare M",
-	            "hilbertSeries M"},
-	       "Notice that the variable is written as ", TT "$T", ".  This indicates that
-	       the variable cannot be typed in directly.",
+	            "hf = hilbertSeries M"
+		    },
 	       PARA,
 	       "It is often useful to divide the poincare polynomial by ", TT "(1-t)", " as many
-	       times as possible.  This can be done by the following function:",
+	       times as possible.  This can be done by using ", TO reduceHilbert, ":",
+	       EXAMPLE {
+		    "reduceHilbert hf"
+		    },
 	       EXAMPLE {
 		    "poincare' = (M) -> (
 	H := poincare M;
