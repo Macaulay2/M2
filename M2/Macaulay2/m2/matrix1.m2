@@ -633,13 +633,10 @@ dual(Matrix) := Matrix => f -> (
      Hom(f,R^1)
      )
 
-inverse Matrix := 
-Matrix.InverseMethod = m -> if m.cache#?-1 then m.cache#-1 else m.cache#-1 = (
-     i := id_(target m);
-     -- i%m gives an error message if the module is not free, but i//m doesn't, so we can't check this way
+     -- i%m gives an error message if the module is not free, but i//m doesn't, so we can't use this code in inverse Matrix to check invertibility:
      -- if i % m != 0 then error "matrix not invertible";
-     i // m
-     )
+Matrix.InverseMethod =
+inverse Matrix := (cacheValue symbol inverse) ( m -> id_(target m) // m )
 
 Matrix _ Array := Matrix => (f,v) -> f * (source f)_v
 Matrix ^ Array := Matrix => (f,v) -> (target f)^v * f

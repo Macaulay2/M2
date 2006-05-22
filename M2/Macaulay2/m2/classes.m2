@@ -7,6 +7,7 @@ Boolean.synonym = "Boolean value"
 MutableHashTable.synonym = "mutable hash table"
 CacheTable.synonym = "cache table"
 Function.synonym = "function"
+FunctionBody.synonym = "function body"
 Sequence.synonym = "sequence"
 VisibleList.synonym = "visible list"
 Database.synonym = "database"
@@ -51,9 +52,19 @@ VisibleList /  Function := VisibleList => (v,f) -> apply(v,f)
 
 -- miscellaneous stuff:
 
+codeHelper = new MutableHashTable
+
 Function @@ Function := Function => (f,g) -> x -> f g x
+codeHelper#(functionBody(identity @@ identity)) = h -> { 
+     ("-- function f:", value (first localDictionaries h)#"f"),
+     ("-- function g:", value (first localDictionaries h)#"g")
+     }
 
 Function _ Thing := Function => (f,x) -> y -> f splice (x,y)
+codeHelper#(functionBody(identity _ null)) = h -> { 
+     ("-- function f:", value (first localDictionaries h)#"f"),
+     ("-- value of x:", value (first localDictionaries h)#"x")
+     }
 
 -----------------------------------------------------------------------------
 

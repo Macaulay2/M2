@@ -30,34 +30,19 @@ getSourceLines Sequence := (filename,start,startcol,stop,stopcol) -> if filename
      )
 
 limit := 4
-optionedFunction := {} >> sin
-composedFunction := sin @@ sin
-memoizedFunction := memoize sin
-isOptionedFunction := f -> sameFunctionBody(f,optionedFunction)
-isComposedFunction := f -> sameFunctionBody(f,composedFunction)
-isMemoizedFunction := f -> sameFunctionBody(f,memoizedFunction)
-
+indent := n -> stack apply(unstack n, line -> "| " | line)
 codeFunction := (f,depth) -> (
-     -- this should be rewritten using "localDictionaries"!
-     -- ii26 : f = sin @@ cos;
-     -- 
-     -- ii27 : value \ values first localDictionaries f
-     -- 
-     -- oo27 = {sin, cos}
-     if depth <= limit and locate f =!= null then stack(
-	  try getSourceLines locate f else concatenate("source code file '",first locate f,"' not available"),
-	  if isOptionedFunction f then (
-	       "-- original function f:", codeFunction(last frame f,depth+1)
-	       )
-	  else if isComposedFunction f then (
-	       "-- left hand function f:" , codeFunction((frame f)#0,depth+1),
-	       "-- right hand function g:", codeFunction((frame f)#1,depth+1)
-	       )
-	  else if isMemoizedFunction f then (
-	       "-- original function f:", codeFunction(first frame f,depth+1)
-	       )
-	  )
-     )
+     if depth <= limit then (
+	  if locate f === null then concatenate("function '", toString f, "': source code not available")
+	  else stack(
+	       try getSourceLines locate f else concatenate("source code file '",first locate f,"' not available"),
+	       if codeHelper#?(functionBody f) 
+	       then toSequence apply(
+		    codeHelper#(functionBody f) f, 
+		    (comment,val) -> indent stack (
+			      comment, 
+			      if class val === Function then codeFunction(val,depth+1) else net val
+			      )))))
 code = method(SingleArgumentDispatch=>true)
 code Nothing := null -> null
 code Symbol := code Pseudocode := s -> getSourceLines locate s

@@ -522,18 +522,32 @@ examine(e:Expr):Expr := (
 	  model := fc.model;
 	  desc := model.desc;
 	  stdout
+     	  << "function closure :" << endl
+     	  << " body hash : " << model.hash << endl
 	  << " restargs : " << desc.restargs << endl
 	  << " frameID : " << desc.frameID << endl
 	  << " framesize : " << desc.framesize << endl
 	  << " numparms : " << desc.numparms << endl;
      	  showFrames(f);
 	  nullE)
+     is model:functionCode do (
+	  desc := model.desc;
+	  stdout
+     	  << "function closure :" << endl
+     	  << " hash : " << model.hash << endl
+	  << " restargs : " << desc.restargs << endl
+	  << " frameID : " << desc.frameID << endl
+	  << " framesize : " << desc.framesize << endl
+	  << " numparms : " << desc.numparms << endl;
+	  nullE)
      is fn:CompiledFunction do (
 	  stdout
+	  << "compiled function:" << endl
 	  << " hash : " << fn.hash << endl;
 	  nullE)
      is fnc:CompiledFunctionClosure do (
 	  stdout
+	  << "compiled function closure:" << endl
 	  << " hash : " << fnc.hash << endl
 	  << " env : [" << length(fnc.env) << "]" << endl;
 	  nullE)
@@ -541,6 +555,7 @@ examine(e:Expr):Expr := (
 	  f := dc.frame;
 	  d := dc.dictionary;
 	  stdout
+	  << "dictionary closure:" <<endl
 	  << " hash : " << d.hash << endl
 	  << " frameID : " << d.frameID << endl
 	  << " framesize : " << d.framesize << endl
@@ -1761,6 +1776,13 @@ fileLength(e:Expr):Expr := (
      is filename:string do Expr(toInteger(fileLength(filename)))
      else WrongArg("a string or a file"));     
 setupfun("fileLength",fileLength);
+
+functionBody(e:Expr):Expr := (
+     when e is f:FunctionClosure do Expr(f.model)
+     else WrongArg("a function closure")
+     );
+setupfun("functionBody",functionBody);
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

@@ -9,6 +9,9 @@ memoize Function := f -> (
 	  if not values#?x then values#x = f(x) else values#x
 	  )
      )
+codeHelper#(functionBody(memoize identity)) = g -> { 
+     ("-- function f:", value (first localDictionaries g)#"f")
+     }
 
 memoize(Function,List) := (f,initialValues) -> (
      values := new MutableHashTable from initialValues;
@@ -17,6 +20,10 @@ memoize(Function,List) := (f,initialValues) -> (
 	  if not values#?x then values#x = f(x) else values#x
 	  )
      )
+codeHelper#(functionBody(memoize(identity,{}))) = g -> {
+     ("-- function f:", value (first localDictionaries g)#"f") ,
+     ("-- initialValues:", value (first localDictionaries g)#"initialValues") 
+     }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

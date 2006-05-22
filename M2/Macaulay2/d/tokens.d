@@ -214,7 +214,8 @@ export dummyDesc := functionDescription(-1,0,0,false);
 export functionCode := { 
      arrow:Token,			  -- just for display purposes
      body:Code, 
-     desc:functionDescription
+     desc:functionDescription,
+     hash:int
      };
 export Code := (
      nullCode or realCode or stringCode or integerCode or globalMemoryReferenceCode or localMemoryReferenceCode or globalAssignmentCode
@@ -300,6 +301,7 @@ export Expr := (
      Database or
      DictionaryClosure or 
      Error or
+     functionCode or
      FunctionClosure or
      HashTable or
      Integer or
@@ -542,6 +544,7 @@ export functionClass := newbasictype();
 export symbolClass := newbasictype();
 export keywordClass := newtypeof(symbolClass);
 export codeClass := newbasictype();
+export functionBodyClass := newbasictype();
 export errorClass := newbasictype();
 export netClass := newbasictype();
 export netFileClass := newbasictype();
