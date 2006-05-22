@@ -8,11 +8,11 @@ document {
      Usage => "rank M",
      Inputs => {
 	  "M" => { 
-	       OFCLASS Module, ", ", 
-	       OFCLASS CoherentSheaf, ", ", 
-	       OFCLASS GradedModule, ", ", 
-	       OFCLASS ChainComplex, ", or ", 
-	       OFCLASS Matrix
+	       ofClass Module, ", ", 
+	       ofClass CoherentSheaf, ", ", 
+	       ofClass GradedModule, ", ", 
+	       ofClass ChainComplex, ", or ", 
+	       ofClass Matrix
 	       }
 	  },
      Outputs => { { "the rank of ", TT "M" } },

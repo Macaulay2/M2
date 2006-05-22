@@ -35,22 +35,6 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (length,File),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => (length,GradedModule),
      Headline => "",
      Usage => "",

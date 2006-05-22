@@ -763,11 +763,6 @@ document {
      TT "#x", " -- provides the length of a string.",
      }
 document {
-     Key => (symbol #, File),
-     Headline => "length",
-     TT "#x", " -- provides the length of a file.",
-     }
-document {
      Key => (symbol #, HashTable, Thing),
      Headline => "get value from hash table",
      TT "x#i", " -- provides the value associated to the key ", TT "i", " in the hash table

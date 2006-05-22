@@ -16,6 +16,10 @@ Changes made, most recent ones first:
 
 New in 0.9.8:
 
+'length' no longer takes the length of a file -- use 'fileLength' instead.
+Reason: if the argument is a string, 'fileLength' will interpret it as the name
+of the file, but 'length' will measure the string itself.  Same for '#'.
+
 toList of a HashTable that is not a Set or of a Dictionary used to return the
    keys, but we have disabled that in favor of using the function "keys".
 

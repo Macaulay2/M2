@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => OFCLASS,
+     Key => ofClass,
      Headline => "",
      Usage => "",
      Inputs => {

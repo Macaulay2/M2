@@ -22,14 +22,6 @@ document {
      }
 
 document {
-     Key => (length, File),
-     Headline => "length of an open file",
-     Usage => "n = length f",
-     Inputs => { "f" => "" },
-     Outputs => { "n" => { "the length of the file ", TT "f", ", in bytes" } }
-     }
-
-document {
      Key => (length, String),
      Headline => "length of a string",
      Usage => "n = length s",

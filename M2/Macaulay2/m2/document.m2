@@ -686,7 +686,7 @@ optTO = i -> (
 optTOCLASS := i -> (					    -- this isn't different yet, work on it!
      -- we might want a new type of TO so that in info mode this would look like this:
      --      * alpha (a StateTable) -- recognizing alphabetic letters  (*note: alpha::.)
-     -- fixup SEQ { TO i, " (", OFCLASS class value i, ")", commentize headline i }
+     -- fixup SEQ { TO i, " (", ofClass class value i, ")", commentize headline i }
      r := fixup TOH{i};
      (DocumentTag.FormattedKey first r, SEQ r))
 
@@ -706,7 +706,7 @@ synonymAndClass := X -> fixup (
 
 justClass := X -> fixup SEQ {"an instance of class ", TO X}
 
-OFCLASS = X -> fixup (
+ofClass = X -> fixup (
      if parent X === Nothing then error "expected a class";
      if X.?synonym then SEQ {indefiniteArticle X.synonym, TO2 {X, X.synonym}}
      else SEQ {"an object of class ", TO X}
@@ -734,7 +734,7 @@ type := S -> (
      if class s =!= Function and class s =!= Package then PARA1 {
 	  LITERAL "<div class=\"waystouse\">\n",
 	  SUBSECTION "For the programmer",  
-	  fixup PARA deepSplice { "The object ", TO S, " is ", OFCLASS class s,
+	  fixup PARA deepSplice { "The object ", TO S, " is ", ofClass class s,
 	       if parent s =!= Nothing then (
 		    f := (T -> while T =!= Thing list parent T do T = parent T) s;
 		    if #f>1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.", 
@@ -745,16 +745,16 @@ type := S -> (
 istype := X -> parent X =!= Nothing
 alter1 := x -> (
      if class x === Option and #x === 2 then (
-	  if istype x#0 then SEQ { OFCLASS x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SEQ { ", ", x#1 } }
+	  if istype x#0 then SEQ { ofClass x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SEQ { ", ", x#1 } }
 	  else error "expected type to left of '=>'"
 	  )
      else x)
 alter := x -> (
      if class x === Option and #x === 2 then (
-	  if istype x#0 then SEQ { OFCLASS x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SEQ { ", ", x#1 } }
+	  if istype x#0 then SEQ { ofClass x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SEQ { ", ", x#1 } }
 	  else if class x#0 === String then (
 	       if class x#1 === Option and #x#1 === 2 then (
-		    if istype x#1#0 then SEQ { TT x#0, ", ", OFCLASS x#1#0, if x#1#1 =!= "" and x#1#1 =!= null and x#1#1 =!= () then SEQ { ", ", x#1#1 } }
+		    if istype x#1#0 then SEQ { TT x#0, ", ", ofClass x#1#0, if x#1#1 =!= "" and x#1#1 =!= null and x#1#1 =!= () then SEQ { ", ", x#1#1 } }
 		    else error "expected type to left of '=>'"
 		    )
 	       else SEQ { TT x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SEQ { ", ", x#1 } }

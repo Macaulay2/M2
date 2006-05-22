@@ -30,7 +30,7 @@ document {
      Key => Time,
      Headline => "the class of all timing results",
      TT "Time", " is the class of all timing results.  Each timing result
-     is ", OFCLASS BasicList, " of the form ", TT "{t,v}", ", where ", TT "t", " 
+     is ", ofClass BasicList, " of the form ", TT "{t,v}", ", where ", TT "t", " 
      is the number of seconds of cpu time used, and ", TT "v", " is the value 
      of the the expression."
      }

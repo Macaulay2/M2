@@ -8,7 +8,7 @@ document {
      Headline => "irredundant primary decomposition of an ideal",
      Usage => "primaryDecomposition I",
      Inputs => {
-	  "I" => { OFCLASS Ideal, " or ", OFCLASS MonomialIdeal, " in a (quotient of a) polynomial ring ", TT "R", "."}
+	  "I" => { ofClass Ideal, " or ", ofClass MonomialIdeal, " in a (quotient of a) polynomial ring ", TT "R", "."}
 	  },
      Outputs => {
 	  List => {"of ", TO2(Ideal,"ideals"), ", a minimal list of primary ideals whose intersection is ", TT "I"}
