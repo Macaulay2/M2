@@ -77,7 +77,7 @@ document {
      ", TT "rows", ", and c is the length of the list of integers ", TT "cols", ".  
      The ", TT "(i,j)", "-th entry of the result is ", TT "f_(rows_i, cols_j)", ".",
      PARA,
-     "The lists of integers may contain ", TO "ranges and repetitions", ", as in ", 
+     "Each ", TO "list of integers", " may contain ranges and repetitions, as in ", 
      TT "{3, 5..7, 3:0}",
      PARA,
      "If ", TT "rows", " or ", TT "cols", " is omitted, all the corresponding indices are used.",
@@ -118,7 +118,7 @@ document {
      c is the length of the list of integers ", TT "cols", ".  
      The ", TT "(i,j)", "-th entry of the result is ", TT "f_(i, cols_j)", ".",
      PARA,
-     "The list ", TT "cols", " may contain ", TO "ranges and repetitions", ", as in ", 
+     "The ", TO "list of integers", ", ", TT "cols", " may contain ranges and repetitions, as in ", 
      TT "{3, 5..7, 3:0}",
      PARA,
      "If the list of column indices is a permutation of 0 .. n-1, where n is
@@ -576,7 +576,7 @@ document {
      Outputs => {
 	  {"the homomorphism ", TT "M <-- N", " induced by the identity."}
 	  },
-     "The modules ", TT "M", " and ", TT "N", " must both be ", TO "subquotients", " of 
+     "The modules ", TT "M", " and ", TT "N", " must both be ", TO "subquotient modules", " of 
      the same ambient free module ", TT "F", ".
      If ", TT "M = M1/M2", " and ", TT "N = N1/N2", ", where ", TT "M1", ", 
      ", TT "M2", ", ", TT "N1", ", ", TT "N2", " are all submodules of ", TT "F", ", then
@@ -609,7 +609,7 @@ document {
      Outputs => {
 	  {"the homomorphism ", TT "M <-- N", " induced by ", TT "f", "."}
 	  },
-     "The modules ", TT "M", " and ", TT "N", " must both be ", TO "subquotients", " where
+     "The modules ", TT "M", " and ", TT "N", " must both be ", TO "subquotient modules", " where
      M and P have the same ambient module, and N and Q have the same ambient module.
      If the optional argument ", TT "Verify", 
      " is given, check that the result defines a well defined homomorphism.",

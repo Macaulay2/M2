@@ -189,7 +189,7 @@ document {
      	       injection of R3 into R4 (the same can be done for the canonical 
 	       	    projection from R2 to R3 above - we do the example here).   For 
      	       more on ring maps, 
-     	       see ", TO "basic construction source and target of a ring map", ".  
+     	       see ", TO "basic, construction source and target of a ring map", ".  
      	       Again to move elements 
       	       from ", TT "R4", " back to ", TT "R3", " an alternate method must 
 	       be used.  Also, 

@@ -1,3 +1,22 @@
+-- old structure
+--          "The Macaulay 2 Language",
+--	       TO "The Macaulay2 language",
+--     	  "The Macaulay 2 Language (old version)",			    -- part 2, one liners, lists, sets, but not hash tables
+--	       TO "variables and symbols",
+--	       TO "basic types",
+--	       TO "control structures",			    -- control structures: scan, apply, for, while, if, return, break, continue
+--	       TO "functions",
+--	       TO "input and output",			    -- but sockets, etc, move later
+--	       TO "operators",				    -- but with explanations
+--	  "Programming Overview",			    -- part 3, multiple line techniques, saved in a function in a file, writing packages
+--	       TO "classes and types",
+--	       TO "system",
+--	       TO "advanced input and output",
+--	       TO "debugging",
+--	       TO "executing other programs",
+--	       TO "packages",
+--	       TO "writing documentation",
+
 document {
      Key => "The Macaulay2 language",
      "The Macaulay2 language is a simple yet powerful interpreted language.  Every 
@@ -57,6 +76,10 @@ document {
 	  }
      }
 ------------------------------------------------------------------
+document { 
+     Key => "overview of the Macaulay2 language"
+     }
+
 document {
      Key => "variables",
      "Valid names for symbols may be constructed using letters, digits, and
@@ -143,7 +166,7 @@ document {
 
 ------------------------------------------------------------------
 
-
+-- not active
 document {
      Key => "expressions",
      "All expressions in Macaulay2 return a value, including if, while and for statements.
@@ -189,6 +212,7 @@ document {
 	  }
      }
 
+-- old, not too useful
 document {
      Key => "basic types",
      "The basic type of an object is the way the object is
@@ -818,6 +842,10 @@ document {
 
 document {
      Key => "lists",
+     HEADER2 "An overview",     
+      "For additional common operations and a comprehensive list of all routines
+     in Macaulay 2 which return or use lists, see ", TO List, ".",
+     PARA,
      "A list is a handy way to store a series of things.  We create one
      by separating the elements of the series by commas and surrounding 
      the series with braces.",
@@ -858,30 +886,36 @@ document {
 	  "isTable z",
       	  "MatrixExpression z",
 	  },
-     "Various other functions for manipulating lists include ",
-     TO (symbol |, List, List), ", ",
-     TO "append", ", ",
-     TO "between", ", ",
-     TO "delete", ", ",
-     TO "drop", ", ",
-     TO "join", ", ",
-     TO "mingle", ", ",
-     TO "pack", ", ",
-     TO "prepend", ", ",
-     TO "reverse", ", ",
-     TO "rsort", ", ",
-     TO "sort", ", ",
-     TO "take", ", and ",
-     TO "unique", ".",
-     PARA,
-     Subnodes => {
-	  TOH "List",
-	  TOH "VisibleList",
-	  TOH "BasicList",
-	  TOH "Array"
-	  }
+     "See ", TO List, " for various other functions manipulating lists."
      }
 
+document {
+     Key => "lists of integers",
+     Headline => "ranges and repetitions",
+     "Lists of integers are extremely useful throughout Macaulay2. The simplest way to make one
+     is to explicitly give each value.",
+     EXAMPLE "{1,2,3,2,1,1,2,3}",
+     "Ranges of integers are made using ", TO symbol.., ".",
+     EXAMPLE "1..5",
+     "Repeating a single item is done using ", TO symbol:, ".",
+     EXAMPLE "5:3",
+     "Putting this together, we get:",
+     EXAMPLE "{1..5,4:0,3:-1}",
+     "Notice how this is not what we wanted!  The problem is that ranges
+     and repetitions are not syntactic constructs, and they return sequences, 
+     not lists.  There is an easy way
+     to fix this.  The ", TO splice, " routine strips out the (outermost)
+     parentheses:",
+     EXAMPLE "splice{1..5,4:0,3:-1}",
+     EXAMPLE "toList(1..6)",
+     PARA,
+     "Indexing lists or matrices by a list of integers takes the elements or columns in that order.",
+     EXAMPLE lines ///
+       M = random(ZZ^3, ZZ^5)
+       M_{1,2,3,4,5:0}
+     ///
+     }
+     
 document {
      Key => "sequences",
      "A sequence is like a list, except that parentheses are used

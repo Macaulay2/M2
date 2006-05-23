@@ -901,7 +901,7 @@ document {
      "H is a subquotient module.  In Macaulay2, the most general form of a
      module is as a subquotient: a submodule of a cokernel module.  For more about
      subquotient modules, see ", TO "modules", ".  For more about Hom and their
-     corresponding homorphisms, see ", TO "Hom and homomorphismd", ".",
+     corresponding homorphisms, see ", TO "Hom and homomorphisms", ".",
      EXAMPLE {
 	  "f = homomorphism H_{0}",
           "target f === N",
@@ -909,7 +909,7 @@ document {
 	  "matrix f"
 	  },
      "Macaulay2 has a ", TT "modulo", " command (it was initially introduced in the original Macaulay, 
-     in the late 1980's), but it is not needed very often.  However, it is used to implement
+     in the late 1980's), but it is not needed very often.  It is used internally in Macaulay2 to implement
      kernels of module homomorphisms.",
      SeeAlso => {}
      }
