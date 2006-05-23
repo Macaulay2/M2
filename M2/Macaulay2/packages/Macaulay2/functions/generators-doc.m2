@@ -42,7 +42,7 @@ document {
 	  "I = ideal(a^7-b-3, a*b-1, a*c^2-3, b*d-4);",
 	  "gens gb I"
 	  },
-     SeeAlso => {"computing Groebner bases"}
+     SeeAlso => {"Groebner bases"}
      }
 document {
      Key => (generators,Module),

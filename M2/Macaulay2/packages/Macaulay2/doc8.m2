@@ -367,8 +367,7 @@ document {
      computation, and several associated matrices. Normally you don't
      need to refer to these objects directly, as many operations on
      matrices and modules create them, and refer to them.  For more
-     information, see ", TO "Groebner bases", " or
-     ", TO "computing Groebner bases", "."
+     information, see ", TO "Groebner bases", "."
      }
 
 document {
@@ -392,7 +391,7 @@ document {
 	  "u       - an S-pair reduced to zero, but the syzygy need not be recorded.",
 	  "o       - an S-pair or generator reduced to zero, but no new syzygy occurred.",
 	  "r       - an S-pair has been removed.",
-	  "{2}     - beginning to reduce the S-pairs of multi-degree {2}.",
+	  "{2}     - beginning to reduce the S-pairs of degree 2.",
 	  "(7)     - 7 more S-pairs need to be reduced.",
 	  "(8,9)   - there are 8 S-pairs to do in this degree, and 9 more in higher degrees.",
 	  ".       - a minor has been computed, or something has happened while computing a resolution.",
@@ -424,7 +423,7 @@ document {
      ", TO "gb", ", ", TO "pushForward", ", ", TO "pushForward1", ", 
      and ", TO "syz", ", which can be used to specify that the computation should
      stop after a certain number of Groebner basis elements have been discovered.",
-     SeeAlso => "computing Groebner bases"
+     SeeAlso => "Groebner bases"
      }
 
 document {

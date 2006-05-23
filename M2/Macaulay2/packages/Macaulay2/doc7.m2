@@ -850,7 +850,7 @@ document {
      TT "SubringLimit", " -- an option for  ", TO "kernel", " and ", TO "gb", "
      which can stop the computation after a certain number of basis elements in
      a subring have been found.",
-     SeeAlso => "computing Groebner bases"
+     SeeAlso => "Groebner bases"
      }
 document {
      Key => [kernel,SubringLimit],
