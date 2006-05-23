@@ -669,15 +669,6 @@ document {
 -------------------
 
 document {
-     Key => "finding a Groebner basis",
-     }
-
-document {
-     Key => "elimination of variables",
-     "some random text"
-     }
-
-document {
      Key => "Hilbert functions",
      }
 

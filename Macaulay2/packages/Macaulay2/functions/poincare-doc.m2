@@ -22,7 +22,7 @@ document {
 --      TT "(cokernel f).cache.poincare = p", " -- inform the system that
 --      the Poincare polynomial of the cokernel of ", TT "f", " is ", TT "p",
 --      ".  This can speed the computation of a Groebner basis of ",
---      TT "f", ".  For details, see ", TO "computing Groebner bases",
+--      TT "f", ".  For details, see ", TO "Groebner bases",
 --      ".",
      SeeAlso => {"poincareN", "degreesRing", "hilbertFunction",
 	  "hilbertSeries", "hilbertPolynomial", "reduceHilbert"}

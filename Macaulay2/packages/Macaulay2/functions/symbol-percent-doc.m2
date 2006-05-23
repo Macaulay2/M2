@@ -17,5 +17,5 @@ document {
 	  "(x^3 - 2*x) % I",
 	  "(x^3) % I"
      },
-	SeeAlso => "computing Groebner bases",
+	SeeAlso => "Groebner bases",
 	}
