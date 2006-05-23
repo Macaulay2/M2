@@ -321,7 +321,9 @@ export wrap(wid:int, sep:char, t:Net):Net := (
 		    ));
 	  while rightbkpt2>leftbkpt && blankcolumn(rightbkpt2-1,t) do rightbkpt2 = rightbkpt2-1;
      	  -- choose the best one
-     	  if !found || found2 && nextleftbkpt < nextleftbkpt2 then ( rightbkpt = rightbkpt2; nextleftbkpt = nextleftbkpt2; );
+     	  if !found
+	  -- || found2 && nextleftbkpt < nextleftbkpt2
+	  then ( rightbkpt = rightbkpt2; nextleftbkpt = nextleftbkpt2; );
 	  -- record the break point for future use
 	  breaks << rightbkpt;
 	  leftbkpt = nextleftbkpt;
