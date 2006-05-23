@@ -421,7 +421,7 @@ document {
      TO (symbol//,Matrix,Matrix), ".
      In order to do this, we need the inclusion map of ", TT "M", 
      " into ", TT "R^1", ".  We explain these canonical maps
-     more thoroughly in ", TO "canonical maps netween modules", ", 
+     more thoroughly in ", TO "canonical maps between modules", ", 
      but for now we just write down the inclusion map.",
      EXAMPLE {
 	  "inc = inducedMap(R^1, M)"
