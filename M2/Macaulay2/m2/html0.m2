@@ -22,8 +22,10 @@ MarkUpListParagraph.synonym = "mark-up list paragraph"
      MarkUpType = new Type of Type
 MarkUpType.synonym = "mark-up type"
 
-DistributedMarkUpType = new Type of MarkUpType
-DistributedMarkUpType.synonym = "distributed mark-up type"
+options MarkUpType := X -> X.Options
+
+MarkUpTypeWithOptions = new Type of MarkUpType
+MarkUpTypeWithOptions.synonym = "mark-up type with options"
 
 EmptyMarkUpType = new Type of MarkUpType
 EmptyMarkUpType.synonym = "empty mark-up type"
@@ -32,7 +34,6 @@ EmptyMarkUpType.synonym = "empty mark-up type"
 EmptyMarkUpType List := (h,y) -> if #y === 0 then new h from y else error "expected empty list"
      MarkUpType Thing := (h,y) -> new h from {y}
      MarkUpType\List := (h,y) -> (i -> h i) \ y
-DistributedMarkUpType MarkUpListParagraph := (h,y) -> apply(y, i -> h i)
      List/MarkUpType := (y,h) -> y / (i -> h i)
 EmptyMarkUpType Thing := (h,y) -> error "expected empty list"
 
@@ -50,26 +51,56 @@ toLower = s -> concatenate apply(characters s, c -> if tolower#?c then tolower#c
 toUpper = s -> concatenate apply(characters s, c -> if toupper#?c then toupper#c else c)
 
 htmlMarkUpType := s -> (
-     s = toLower s;
      on := "<" | s | ">";
      off := "</" | s | ">";
      t -> concatenate(on, apply(t,html), off))
 
+htmlMarkUpTypeWithOptions := opts -> s -> (
+     off := "</" | s | ">";
+     t -> (
+	  o := "";
+	  (opts',u) := override(opts, toSequence t);
+	  scanPairs(opts', (k,v) -> if v =!= null then o = concatenate(o, " ", k, "=", format v));
+	  concatenate("<", s, o, ">", apply(sequence u,html), off)
+	  ))
+
 MarkUpType.GlobalAssignHook = (X,x) -> (
+     if not x.?qname then x.qname = toLower toString X;
      if not ReverseDictionary#?x then (
 	  ReverseDictionary#x = X;
-     	  html x := htmlMarkUpType toString X;
+     	  html x := htmlMarkUpType x.qname;
 	  );
      )
+
+MarkUpTypeWithOptions.GlobalAssignHook = (X,x) -> (
+     if not x.?qname then x.qname = toLower toString X;
+     if not ReverseDictionary#?x then (
+	  ReverseDictionary#x = X;
+     	  html x := (htmlMarkUpTypeWithOptions options x) x.qname;
+	  );
+     )
+
+withOptions := (v,x) -> (x.Options = new OptionTable from apply(v,val -> if class val === Option then val else val=>null); x)
+withQname   := (q,x) -> (x.qname = q; x)
 
 new MarkUpType := x -> error "obsolete 'new' method called"
 
 BR         = new EmptyMarkUpType of MarkUpListParagraph
+br         = BR{}
+
 NOINDENT   = new EmptyMarkUpType of MarkUpList
+
 HR         = new EmptyMarkUpType of MarkUpListParagraph
-PARA       = new MarkUpType of MarkUpListParagraph	    -- double spacing inside
-PARA1      = new MarkUpType of MarkUpListParagraph	    -- single spacing inside, mostly for info mode
+hr         = HR{}
+
+PARA       = withQname_"P" new MarkUpType of MarkUpListParagraph	    -- double spacing inside
+
+requirestrings := x -> ( scan(x, line -> if class line =!= String then error ("expected a string, but encountered ", toString line)); x)
+trimfront := x -> apply(x, line -> replace("^[[:space:]]+","",line))
+nonempty := x -> select(x, i -> i =!= "")
 EXAMPLE    = new MarkUpType of MarkUpListParagraph
+new EXAMPLE from List := (EXAMPLE,x) -> nonempty trimfront requirestrings nonnull x
+
 TABLE      = new MarkUpType of MarkUpListParagraph
 ExampleTABLE = new MarkUpType of MarkUpListParagraph
 ButtonTABLE  = new MarkUpType of MarkUpListParagraph
@@ -79,13 +110,13 @@ HEAD       = new MarkUpType of MarkUpListParagraph
 BODY       = new MarkUpType of MarkUpListParagraph
 IMG	   = new MarkUpType of MarkUpList
 HTML       = new MarkUpType of MarkUpList
-HEADER1    = new MarkUpType of MarkUpListParagraph
-HEADER2    = new MarkUpType of MarkUpListParagraph
-HEADER3    = new MarkUpType of MarkUpListParagraph
+HEADER1    = withQname_"h1" new MarkUpType of MarkUpListParagraph
+HEADER2    = withQname_"h2" new MarkUpType of MarkUpListParagraph
+HEADER3    = withQname_"h3" new MarkUpType of MarkUpListParagraph
+HEADER4    = withQname_"h4" new MarkUpType of MarkUpListParagraph
+HEADER5    = withQname_"h5" new MarkUpType of MarkUpListParagraph
+HEADER6    = withQname_"h6" new MarkUpType of MarkUpListParagraph
 SUBSECTION = HEADER2
-HEADER4    = new MarkUpType of MarkUpListParagraph
-HEADER5    = new MarkUpType of MarkUpListParagraph
-HEADER6    = new MarkUpType of MarkUpListParagraph
 LISTING    = new MarkUpType of MarkUpListParagraph
 LITERAL    = new MarkUpType of MarkUpList
 BLOCKQUOTE = new MarkUpType of MarkUpList
@@ -93,7 +124,7 @@ STRONG     = new MarkUpType of MarkUpList
 SMALL      = new MarkUpType of MarkUpList
 SUB        = new MarkUpType of MarkUpList
 SUP        = new MarkUpType of MarkUpList
-ITALIC     = new MarkUpType of MarkUpList
+ITALIC     = withQname_"i" new MarkUpType of MarkUpList
 UNDERLINE  = new MarkUpType of MarkUpList
 TEX	   = new MarkUpType of MarkUpList
 SEQ	   = new MarkUpType of MarkUpList
@@ -101,12 +132,11 @@ TT         = new MarkUpType of MarkUpList
 LI         = new MarkUpType of MarkUpList
 EM         = new MarkUpType of MarkUpList
 LABEL      = new MarkUpType of MarkUpList
-BOLD       = new MarkUpType of MarkUpList
+BOLD       = withQname_"b" new MarkUpType of MarkUpList
 CODE       = new MarkUpType of MarkUpList
 HREF       = new MarkUpType of MarkUpList
-EMAIL      = new MarkUpType of MarkUpList
 LINK       = new MarkUpType of MarkUpList
-ANCHOR     = new MarkUpType of MarkUpList
+ANCHOR     = withQname_"a" new MarkUpType of MarkUpList
 Hypertext  = new MarkUpType of MarkUpListParagraph -- top level, to be returned to user by "help" and "hypertext", includes text that has been already fixed up
 
 UL         = new MarkUpType of MarkUpListParagraph
@@ -118,7 +148,8 @@ new UL from List := (UL,x) -> (
 	       else if class e === LI then e
 	       else LI e)))
 
-DIV        = new MarkUpType of MarkUpListParagraph
+DIV        = withOptions_{"class"          }                 new MarkUpTypeWithOptions of MarkUpListParagraph
+DIV1       = withOptions_{"class"=>"single"} withQname_"div" new MarkUpTypeWithOptions of MarkUpListParagraph
 
 TO2        = new MarkUpType of MarkUpList
 new TO2 from Sequence := 

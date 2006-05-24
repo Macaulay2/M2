@@ -975,7 +975,7 @@ document {
 	  TOH symbol^,
 	  TOH symbol\\,
           SEQ (TO "&", " -- bit-wise and"),
-	  HR{},
+	  hr,
 	  TOH symbol++,
 	  TOH symbol**,
           SEQ (TO "^**", " -- tensor power"),

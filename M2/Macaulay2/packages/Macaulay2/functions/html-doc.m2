@@ -403,7 +403,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (html,PARA1),
+     Key => (html,DIV1),
      Headline => "",
      Usage => "",
      Inputs => {

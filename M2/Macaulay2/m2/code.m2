@@ -31,11 +31,13 @@ getSourceLines Sequence := (filename,start,startcol,stop,stopcol) -> if filename
 
 limit := 4
 indent := n -> stack apply(unstack n, line -> "| " | line)
+
 codeFunction := (f,depth) -> (
      if depth <= limit then (
 	  if locate f === null then concatenate("function '", toString f, "': source code not available")
 	  else stack(
 	       try getSourceLines locate f else concatenate("source code file '",first locate f,"' not available"),
+	       indent listSymbols (flatten \\ sortByHash \ values \ drop(localDictionaries f,-1)),
 	       if codeHelper#?(functionBody f) 
 	       then toSequence apply(
 		    codeHelper#(functionBody f) f, 

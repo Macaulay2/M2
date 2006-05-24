@@ -203,7 +203,7 @@ document {
      TT "new A", " -- makes a new instance ", TT "n", " 
      of class ", TT "A", ".", BR{},
      PARA{},
-     HR{},
+     hr,
      NOINDENT{},
      TT "new A of b from c", " -- make a hash table ", TT "n", " of
      Here ", TT "A", " and ", TT "b", " are hash tables, and ", TT "c", " is
@@ -221,7 +221,7 @@ document {
      PARA{},
      "The class ", TT "A", " should be a type of type, which means that
      ", TT "Type", " is an ancestor of ", TT "A", " and of the class of ", TT "A", ".",
-     HR{},
+     hr,
      NOINDENT{},
      TT "new A of b", " -- make a hash table of class ", TT "A", "
      and parent ", TT "b", ".",
@@ -232,7 +232,7 @@ document {
      PARA{},
      "The class ", TT "A", " should be a type of type, which means that
      ", TT "Type", " is an ancestor of ", TT "A", " and of the class of ", TT "A", ".",
-     HR{},
+     hr,
      NOINDENT{},
      TT "new A from c", " -- make a hash table or list ", TT "n", " of 
      class ", TT "A", " initialized from ", TT "c", ".",
@@ -247,7 +247,7 @@ document {
      PARA{},
      "The class ", TT "A", " should be a type, which means that
      ", TT "Type", " is an ancestor of the class of ", TT "A", ".",
-     HR{},
+     hr,
      NOINDENT{},
      TT "new A", " -- make a new instance ", TT "n", " of 
      class ", TT "A", ".",
@@ -261,7 +261,7 @@ document {
      PARA{},
      "The class ", TT "A", " should be a type, which means that
      ", TT "Type", " is an ancestor of the class of ", TT "A", ".",
-     HR{},
+     hr,
      "Note that if the ", TT "of", " option is not used, then the class ", TT "A", "
      need not consist of hash tables or lists.  We are using this feature by
      installing a method so that ", TT "new ZZ", " returns an integer popped
