@@ -19,17 +19,17 @@ Inlspecial = set { "img", "map", "applet" }
 IMG.qname = "img"
 
 -- <!ENTITY % Anchor.class "| %a.qname;" >
-Anchor = set { "a" }
+AnchorClass = set { "a" }
 ANCHOR.qname = "a"
 
 -- <!ENTITY % I18n.class "| %bdo.qname;" >
-I18n = set { "bdo" }
+I18nClass = set { "bdo" }
 
 -- <!ENTITY % Inlpres.class "| %tt.qname; | %i.qname; | %b.qname; | %big.qname; | %small.qname; | %sub.qname; | %sup.qname;" >
 Inlpres = set { "tt", "i", "b", "big", "small", "sub", "sup" }
 TT.qname = "tt"
 ITALIC.qname = "i"
-BOLD.qname = "bold"
+BOLD.qname = "b"
 SMALL.qname = "small"
 SUB.qname = "sub"
 SUP.qname = "sup"
@@ -45,10 +45,10 @@ Inlstruct = set { "br", "span" }
 BR.qname = "br"
 
 -- <!ENTITY % Inline-noA.class "%Inlstruct.class; %Inlphras.class; %Inlpres.class; %I18n.class; %Inlspecial.class; %Inlform.class; %Ruby.class; %Inline.extra;">
-InlineNoAClass = Inlstruct + Inlphras + Inlpres + I18n +          Inlspecial + Inlform + Ruby + InlineExtra
+InlineNoAClass = Inlstruct + Inlphras + Inlpres + I18nClass +          Inlspecial + Inlform + Ruby + InlineExtra
 
 -- <!ENTITY % Inline.class "%Inlstruct.class; %Inlphras.class; %Inlpres.class; %I18n.class; %Anchor.class; %Inlspecial.class; %Inlform.class; %Ruby.class; %Inline.extra;" >
-InlineClass    = Inlstruct + Inlphras + Inlpres + I18n + Anchor + Inlspecial + Inlform + Ruby + InlineExtra
+InlineClass    = Inlstruct + Inlphras + Inlpres + I18nClass + AnchorClass + Inlspecial + Inlform + Ruby + InlineExtra
 
 -- <!ENTITY % Block.extra "" >
 BlockExtra = set {}
@@ -113,11 +113,13 @@ BlockMix = HeadingClass + ListClass + BlockClass + MiscClass
 
 Content = new MutableHashTable
 
+-----------------------------------------------------------------------------
+-- <!ENTITY % li.content "( #PCDATA | %Flow.mix; )*" >
+Content#"li" = 
 -- <!ENTITY % div.content "( #PCDATA | %Flow.mix; )*" >
 Content#"div" = PCDATA + FlowMix
+-----------------------------------------------------------------------------
 
--- <!ENTITY % p.content "( #PCDATA | %Inline.mix; )*" >
-Content#"p" = PCDATA + InlineMix
 
 -- <!ENTITY % body.content "( %Block.mix; )+" >
 Content#"body" = BlockMix
@@ -137,29 +139,55 @@ Content#"h1" = Content#"h2" = Content#"h3" = Content#"h4" = Content#"h5" = Conte
 -- <!ENTITY % label.content "( #PCDATA | %input.qname; | %select.qname; | %textarea.qname; | %button.qname; | %Inlstruct.class;
 --       %Inlphras.class; %I18n.class; %Inlpres.class; %Anchor.class; %Inlspecial.class; %Inline.extra; %Misc.class; )*" >
 -- <!ELEMENT %label.qname;  %label.content; >
-Content#"label" = PCDATA + set { "input", "select", "textarea", "button", "Inlstruct" } + Inlphras + Inlpres + Anchor + InlineExtra + MiscClass
-
--- still to do:
-
--- <!ENTITY % img.content  "EMPTY" >
-Content#"img" = set {}
+Content#"label" = PCDATA + set { "input", "select", "textarea", "button", "Inlstruct" } + Inlphras + Inlpres + AnchorClass + InlineExtra + MiscClass
 
 -- <!ENTITY % a.content "( #PCDATA | %Inline-noA.mix; )*" >
 Content#"a" = InlineNoAClass
-
-Content#"tt" = set {}
-Content#"i" = set {}
-Content#"bold" = set {}
-Content#"small" = set {}
-Content#"sub" = set {}
-Content#"sup" = set {}
-Content#"em" = set {}
-Content#"strong" = set {}
-Content#"code" = set {}
+-----------------------------------------------------------------------------
+---- these are all empty:
+-- <!ENTITY % hr.content  "EMPTY" >
+Content#"hr" =
+-- <!ENTITY % img.content  "EMPTY" >
+Content#"img" =
+-- <!ENTITY % br.content  "EMPTY" >
 Content#"br" = set {}
-Content#"table" = set {}
-Content#"hr" = set {}
-Content#"pre" = set {}
-Content#"ul" = set {}
+-----------------------------------------------------------------------------
+---- these are all the same:
+-- <!ENTITY % p.content "( #PCDATA | %Inline.mix; )*" >
+Content#"p" =
+-- <!ENTITY % strong.content "( #PCDATA | %Inline.mix; )*" >
+Content#"strong" =
+-- <!ENTITY % code.content "( #PCDATA | %Inline.mix; )*" >
+Content#"code" =
+-- <!ENTITY % em.content "( #PCDATA | %Inline.mix; )*" >
+Content#"em" =
+-- <!ENTITY % tt.content "( #PCDATA | %Inline.mix; )*" >
+Content#"tt" = 
+-- <!ENTITY % i.content "( #PCDATA | %Inline.mix; )*" >
+Content#"i" = 
+-- <!ENTITY % b.content "( #PCDATA | %Inline.mix; )*" >
+Content#"b" = 
+-- <!ENTITY % small.content "( #PCDATA | %Inline.mix; )*" >
+Content#"small" = 
+-- <!ENTITY % sup.content "( #PCDATA | %Inline.mix; )*" >
+Content#"sup" = 
+-- <!ENTITY % sub.content "( #PCDATA | %Inline.mix; )*" >
+Content#"sub" = PCDATA + InlineMix
+-----------------------------------------------------------------------------
 
-peek Content
+-- <!ENTITY % pre.content "( #PCDATA | %Inlstruct.class; %Inlphras.class; | %tt.qname; | %i.qname; | %b.qname;
+--       %I18n.class; %Anchor.class; | %script.qname; | %map.qname; %Inline.extra; )*" >
+Content#"pre" = PCDATA + Inlstruct + Inlphras + set { "tt", "i", "b" } + I18nClass + AnchorClass + set {"script","map"} + InlineExtra
+
+
+-- <!ENTITY % table.content "( %caption.qname;?, ( %col.qname;* | %colgroup.qname;* ), (( %thead.qname;?, %tfoot.qname;?, %tbody.qname;+ ) | ( %tr.qname;+ )))" >
+-- the regular expression is more complicated, but we don't implement those other tags, anyway!  Or should we?
+Content#"table" = set { "caption", "col", "colgroup", "thead", "tfoot", "tbody", "tr" }
+
+-- <!ENTITY % ul.content  "( %li.qname; )+" >
+Content#"ul" = set { "li" }
+
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
+-- End:
