@@ -21,8 +21,8 @@ the matrix F.",
      written by D. Eisenbud.  We (HT,MES) hope to improve the performance
      this week! The second routine computes a sagbi basis degree by degree,
      for a graded subalgebra.",
-     EXAMPLE ///
-     ///,
+     -- EXAMPLE ///
+     -- ///,
      Caveat => "If F : R <-- S, then R and S should be polynomial
      rings, and not quotient rings.",
      PARA,

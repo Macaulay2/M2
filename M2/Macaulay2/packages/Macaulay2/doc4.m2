@@ -525,20 +525,6 @@ document {
      }
 
 document {
-     Key => (toList, HashTable),
-     Headline => "convert to list",
-     TT "toList x", " -- provides a list of keys in the hash table ", TT "x", ".",
-     PARA,
-     "For a set, which is implemented as a hash table where only the keys are
-     important, this is a reasonable operation.  See also, ", TO "keys", ",
-     which does the same thing.",
-     EXAMPLE {
-	  "x = hashTable { a=>1, b=>2}",
-	  "toList x"
-	  }
-     }
-
-document {
      Key => (toList, BasicList),
      Headline => "list of elements",
      TT "toList x", " -- provides a list of elements in the basic list ", TT "x", ".",

@@ -574,9 +574,11 @@ documentOptions := new HashTable from {
      }
 reservedNodeNames := set apply( {"Top", "Table of Contents", "Symbol Index"}, toLower )
 
-storeRawDocumentation := (nodename,opts) -> (
-     if currentPackage#rawKey#?nodename then stderr << currentFileName << ":" << currentLineNumber() << ": warning: documentation already provided for '" << nodename << "'" << endl;
-     currentPackage#rawKey#nodename = opts;
+storeRawDocumentation := (tag,opts) -> (
+     key := DocumentTag.FormattedKey tag;
+     if currentPackage#rawKey#?key and signalDocError tag
+     then stderr << currentFileName << ":" << currentLineNumber() << ": error: documentation already provided for '" << tag << "'" << endl;
+     currentPackage#rawKey#key = opts;
      )
 
 document = method()
@@ -600,11 +602,7 @@ document List := args -> (
      opts.DocumentTag = tag := makeDocumentTag(key, Package => currentPackage, FormattedKey => if opts.?FormattedKey then opts.FormattedKey);
      scan(rest, secondary -> (
 	       tag2 := makeDocumentTag secondary;
-	       storeRawDocumentation(DocumentTag.FormattedKey tag2,
-		    new HashTable from {
-			 PrimaryTag => tag, 
-			 symbol DocumentTag => tag2
-			 })));
+	       storeRawDocumentation(tag2, new HashTable from { PrimaryTag => tag, symbol DocumentTag => tag2 })));
      if not opts.?Headline and class key === Sequence and key#?0 then (
 	  h := headline key#0;
 	  if h =!= null then opts.Headline = h;
@@ -614,17 +612,15 @@ document List := args -> (
      pkg := DocumentTag.Package tag;
      opts.Description = toList args;
      exampleBaseFilename = makeFileName(currentNodeName,currentPackage);
-     storeRawDocumentation(currentNodeName, new HashTable from apply(pairs opts,(key,val) -> (key,fixupTable#key val)));
+     storeRawDocumentation(tag, new HashTable from apply(pairs opts,(key,val) -> (key,fixupTable#key val)));
      currentNodeName = null;
      )
 
 undocumented = method(SingleArgumentDispatch => true)
 undocumented List  := x -> scan(x, undocumented)
-undocumented Thing := key -> storeRawDocumentation(
-     DocumentTag.FormattedKey makeDocumentTag key,
-     new HashTable from {
-	  symbol DocumentTag => makeDocumentTag key,
-	  "undocumented" => true})
+undocumented Thing := key -> (
+     tag := makeDocumentTag key;
+     storeRawDocumentation(tag, new HashTable from { symbol DocumentTag => tag, "undocumented" => true}))
 
 -----------------------------------------------------------------------------
 -- getting help from the documentation

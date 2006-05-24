@@ -400,7 +400,7 @@ document { Key => fileLength,
      Outputs => { ZZ => { "the length of the file ", TT "f", " or the file whose name is ", TT "f" }},
      PARA { "The length of an open output file is determined from the internal count of the number of bytes written so far." },
      SeeAlso => {fileTime},
-     EXAMPLE ///
+     EXAMPLE lines ///
      	  f = temporaryFileName() << "hi there"
 	  fileLength f
 	  close f
