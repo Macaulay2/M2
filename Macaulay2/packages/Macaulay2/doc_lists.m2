@@ -18,13 +18,10 @@ document {
      EXAMPLE "x = {a,b,c,d,e}",
      "We retrieve the length of a list with the operator ", TO "#", " or with the function ", TT "length", ".",
      EXAMPLE {"#x","length x"},
-     "We use the expression ", TT "x#n", " to obtain the n-th element of ", TT "x", ".  The elements are numbered consecutively starting with 0.",
-     EXAMPLE "x#2",
-     "The elements of a list are stored in consecutive memory locations,
-     so the operation above is fast.",
-     PARA,
-     "The functions ", TO "first", " and ", TO "last", " retrieve the
-     first and last elements of a list.",
+     "We use the expression ", TT "x#n", " to obtain the n-th element of ", TT "x", ".  The elements are numbered consecutively starting with ", TT "0", ".
+     Alternatively, they are numbered consecutively ending with ", TT "-1", ".",
+     EXAMPLE {"x#2","x#-2"},
+     "The functions ", TO "first", " and ", TO "last", " retrieve the first and last elements of a list.",
      EXAMPLE lines ///
           first x
 	  last x
@@ -147,8 +144,8 @@ document {
      ///,     
      SUBSECTION "summary",
      "We can see the hierarchy of types mentioned above using ", TO "showStructure", ".",
-     EXAMPLE ///
-        showStructure(List,Sequence,Array,Container,MutableList,Bag)
+     EXAMPLE lines ///
+        showStructure(List,Sequence,Array,Container,MutableList,Bag,BasicList)
      ///,
      Subnodes => {
 	  TO "ranges and repetitions",
@@ -182,18 +179,18 @@ document {
 	  TO sort,
 	  TO take,
 	  TO unique,
-     	  "Common ways to apply functions to elements of lists",
+     	  "applying functions to elements of lists",
 	  TO (apply,BasicList,Function),
 	  TO (scan,BasicList,Function),
-     	  "Common ways to test elements of lists",
+     	  "testing elements of lists",
 	  TO (all,BasicList,Function),
 	  TO (any,BasicList,Function),
-     	  "Common ways to find things in lists",
+     	  "finding things in lists",
 	  TO (position,VisibleList,Function),
 	  TO (positions,VisibleList,Function),
 	  TO (select,BasicList,Function),
 	  TO (select,ZZ,BasicList,Function),
-	  "More information about types of lists",
+	  "more information",
 	  TO VisibleList,
 	  TO BasicList
 	  }
@@ -227,7 +224,7 @@ document {
      EXAMPLE "splice z",
      "The difference between ", TO "splice", " and ", TO "flatten", " is, essentially, that
      ", TO "flatten", " removes inner pairs of braces and ", TO "splice", " removes inner pairs of parentheses.",
-     EXAMPLE ///
+     EXAMPLE lines ///
          flatten {a,{b,c}}
          flatten {a,(b,c)}
          splice {a,{b,c}}
@@ -238,7 +235,7 @@ document {
          splice (a,(b,c))
      ///,
      "The function ", TT "toList", " converts sequences to lists.",
-     EXAMPLE ///
+     EXAMPLE lines ///
           splice {1..6}
           toList(1..6)
      ///,

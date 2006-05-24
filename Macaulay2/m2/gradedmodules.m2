@@ -293,7 +293,7 @@ GradedModule ** GradedModule := GradedModule => (C,D) -> (
 			 p := if not pairs#?k then pairs#k = new MutableHashTable else pairs#k;
 			 p#(i,j) = 1;
 			 )));
-	  scan(keys pairs, k -> pairs#k = sort toList pairs#k);
+	  scan(keys pairs, k -> pairs#k = sort keys pairs#k);
 	  E := new GradedModule;
 	  E.ring = R;
 	  scan(keys pairs, k -> (

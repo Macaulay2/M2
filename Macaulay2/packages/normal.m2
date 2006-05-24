@@ -41,7 +41,7 @@ document {
   the input ideal J is homogeneous, then S is quasi-homogeneous.",
   PARA,
   "An example: ",
-  EXAMPLE ///
+  EXAMPLE lines ///
   R = ZZ/101[x,y,z]/(y^2*z-x^3);
   I = ideal(x,y);
   L = time idealizer I
