@@ -16,7 +16,7 @@ document {
      UL {
 	  {"occurrences of ", TT "null", ", such as those that might have been produced by the insertion of an extra comma, are removed"},
 	  {TO2 {Sequence,"sequences"}, ", such as those produced by extra sets of parentheses, are ", TO2{ "splice","spliced"}, " into the lists containing them"},
-	  {TO2 {List,"lists"}, " are converted into mark-up lists of type ", TT "SEQ"},
+	  {TO2 {List,"lists and sequences"}, " are converted into mark-up lists of type ", TT "SEQ"},
 	  {"mark-up lists of type ", TO "TO", " occurring a mark-up list of type ", TO "UL", " are converted to lists of type ", TO "TOH", ", so the headlines of 
 	       the items will appear in the resulting menu"},
 	  {"the targets of the links in mark-up lists of type TO, TOH, and TO2, are converted into ", TO2 {"DocumentTag", "document tags"}},

@@ -599,7 +599,7 @@ document {
 	  "n" => ZZ => "the width to use for wrapping printed output"
 	  },
      Consequences => {
-	  "The function ", TT "wrap", " will use ", TT "n", " as the window width when wrapping
+	  "The function ", TO "wrap", " will use ", TT "n", " as the window width when wrapping
 	  certain types of output."
 	  }
      }

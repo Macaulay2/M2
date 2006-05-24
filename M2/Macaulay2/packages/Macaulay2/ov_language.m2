@@ -43,8 +43,7 @@ document {
 	      TO "numeric types",
 	      TO "strings",
 	      TO "nets",
-	      TO "lists",
-	      TO "sequences",
+	      TO "lists and sequences",
 	      TO "hash tables",
      	  "expressions",
 	      TO "assignment statements",
@@ -219,7 +218,7 @@ document {
      essentially implemented internally.  It is not possible for
      the user to create new basic types.  For details, see
      ", TT "basictype", ".",
-     SeeAlso => { "strings", "nets", "lists", "sequences", "hash tables" }
+     SeeAlso => { "strings", "nets", "lists and sequences", "hash tables" }
      }
 
 document {
@@ -841,141 +840,6 @@ document {
      }
 
 document {
-     Key => "lists",
-     HEADER2 "An overview",     
-      "For additional common operations and a comprehensive list of all routines
-     in Macaulay 2 which return or use lists, see ", TO List, ".",
-     PARA,
-     "A list is a handy way to store a series of things.  We create one
-     by separating the elements of the series by commas and surrounding 
-     the series with braces.",
-     EXAMPLE "x = {a,b,c,d,e}",
-     "We retrieve the length of a list with the operator ", TO "#", ".",
-     EXAMPLE "#x",
-     "We use it also to obtain a particular element.  The elements are 
-     numbered consecutively starting with 0.",
-     EXAMPLE "x#2",
-     "The elements of a list are stored in consecutive memory locations,
-     so the operation above is fast.",
-     PARA,
-     "The functions ", TO "first", " and ", TO "last", " retrieve the
-     first and last elements of a list.",
-     EXAMPLE "first x, last x",
-     "Omitting an element of a list causes the symbol ", TO "null", " to 
-     be inserted in its place.",
-     EXAMPLE {
-	  "g = {3,4,,5}",
-	  "peek g",
-	  },
-     "Lists can be used as vectors, provided their elements are the sorts of
-     things that can be added and mutliplied.",
-     EXAMPLE "10000*{3,4,5} + {1,2,3}",     
-     "If the elements of a list are themselves lists, we say that we have
-     a nested list.",
-     EXAMPLE {
-	  "y = {{a,b,c},{d,{e,f}}}",
-	  "#y"
-	  },
-     "One level of nesting may be eliminated with ", TO "flatten", ".",
-     EXAMPLE "flatten y",
-     "A table is a list whose elements are lists all of the same length.  
-     The inner lists are regarded as rows when the table is displayed as a
-     two-dimensional array with ", TO "MatrixExpression", ".",
-     EXAMPLE {
-	  "z = {{a,1},{b,2},{c,3}}",
-	  "isTable z",
-      	  "MatrixExpression z",
-	  },
-     "See ", TO List, " for various other functions manipulating lists."
-     }
-
-document {
-     Key => "lists of integers",
-     Headline => "ranges and repetitions",
-     "Lists of integers are extremely useful throughout Macaulay2. The simplest way to make one
-     is to explicitly give each value.",
-     EXAMPLE "{1,2,3,2,1,1,2,3}",
-     "Ranges of integers are made using ", TO symbol.., ".",
-     EXAMPLE "1..5",
-     "Repeating a single item is done using ", TO symbol:, ".",
-     EXAMPLE "5:3",
-     "Putting this together, we get:",
-     EXAMPLE "{1..5,4:0,3:-1}",
-     "Notice how this is not what we wanted!  The problem is that ranges
-     and repetitions are not syntactic constructs, and they return sequences, 
-     not lists.  There is an easy way
-     to fix this.  The ", TO splice, " routine strips out the (outermost)
-     parentheses:",
-     EXAMPLE "splice{1..5,4:0,3:-1}",
-     EXAMPLE "toList(1..6)",
-     PARA,
-     "Indexing lists or matrices by a list of integers takes the elements or columns in that order.",
-     EXAMPLE lines ///
-       M = random(ZZ^3, ZZ^5)
-       M_{1,2,3,4,5:0}
-     ///
-     }
-     
-document {
-     Key => "sequences",
-     "A sequence is like a list, except that parentheses are used
-     instead of braces to create them and to print them.  Sequences
-     are implemented in a more efficient way than lists, since a sequence is 
-     created every time a function is called with more than one argument.  
-     Another difference is that new types of list can be created by the user, 
-     but not new types of sequence.",
-     EXAMPLE "x = (a,b,c,d,e)",
-     "It is a bit harder to create a sequence of length 1, since no comma
-     would be involved, and parentheses are also used for simple grouping
-     of algebraic expressions.",
-     EXAMPLE "(a)",
-     "Most of the functions that apply to lists also work with sequences.  We
-     give just one example.",
-     EXAMPLE "append(x,f)",
-     "The operator ", TO "..", " can be used to create sequences of numbers,
-     sequences of subscripted variables, or sequences of those particular 
-     symbols that are known to ", TO "vars", ", and so on.",
-     EXAMPLE {
-	  "-3 .. 3",
-	  "y_1 .. y_10",
-	  "a .. p",
-	  "(1,1) .. (2,3)",
-	  "{a,1} .. {c,2}",
-	  },
-     "The operator ", TO (symbol :, ZZ, Thing), " can be used to create sequences
-     by replicating something a certain number of times.",
-     EXAMPLE "12:a",
-     "Replicating something once results in a sequence that cannot be represented
-     in the usual way with commas.",
-     EXAMPLE "1:a",
-     "Notice what happens when we try to construct a list using ", TO "..", " 
-     or ", TO ":", ".",
-     EXAMPLE {
-	  "z = {3 .. 6, 9, 3:12}",
-	  },
-     "The result above is a list of length 3 some of whose elements are sequences.
-     This may be a problem if the user intended to produce the list 
-     ", TT "{3, 4, 5, 6, 9, 12, 12, 12}", ".  The function ", TO "splice", " can
-     be used to flatten out one level of nesting - think of it as removing those
-     pairs of parentheses that are one level in.",
-     EXAMPLE "splice z",
-     "The difference between ", TO "splice", " and ", TO "flatten", " is that
-     ", TO "flatten", " removes pairs of braces.",
-     PARA,
-     "The functions ", TO "toList", " and ", TO "toSequence", " are provided
-     for converting between lists to sequences.",
-     EXAMPLE {
-	  "toList x",
-	  "toSequence oo",
-	  },
-     "Other functions for dealing especially with sequences
-     include ", TO "sequence", " and ", TO "deepSplice", ".",
-     Subnodes => {
-	  TOH "Sequence"
-	  }
-     }
-
-document {
      Key => "hash tables",
      "A hash table is a data structure that can implement a function
      whose domain is a finite set.  An element of the domain is called
@@ -1208,3 +1072,7 @@ document {
      "The comma and semicolon get special treatment; the empty expression can
      occur to the right of the comma or semicolon or to the left of the comma."
      }
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
+-- End:

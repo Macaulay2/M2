@@ -22,7 +22,7 @@ promptWidth = () -> (
 	  lastWI = max \\ width \ lines ZZ.InputPrompt lineNumber))
 
 wr := (sep,x) -> wrap(printWidth - promptWidth(), sep, net x)
-RawMatrix.Wrap = Matrix.Wrap = RingElement.Wrap = List.Wrap = Sequence.Wrap = x -> wr("-",x)
+Tally.Wrap = RawMatrix.Wrap = Matrix.Wrap = Ideal.Wrap = RingElement.Wrap = VisibleList.Wrap = Sequence.Wrap = x -> wr("-",x)
 String.Wrap = x -> wr("",x)
 
 

@@ -36,6 +36,7 @@ ARGS += , IgnoreDocumentationErrors => $(IgnoreDocumentationErrors)
 ARGS += , RemakeAllDocumentation => $(RemakeAllDocumentation)
 ARGS += , MakeInfo => true
 ARGS += , UserMode => false
+ARGS += , DebuggingMode => false
 
 ifeq ($(ENCAP),yes)
 Encapsulate = true

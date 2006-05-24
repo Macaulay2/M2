@@ -3,6 +3,7 @@
 PCDATA = set {"#PCDATA"}
 String.qname = "#PCDATA"
 
+
 -- <!ENTITY % Inline.extra "" >
 InlineExtra = set {}
 
@@ -43,8 +44,11 @@ CODE.qname = "code"
 Inlstruct = set { "br", "span" }
 BR.qname = "br"
 
+-- <!ENTITY % Inline-noA.class "%Inlstruct.class; %Inlphras.class; %Inlpres.class; %I18n.class; %Inlspecial.class; %Inlform.class; %Ruby.class; %Inline.extra;">
+InlineNoAClass = Inlstruct + Inlphras + Inlpres + I18n +          Inlspecial + Inlform + Ruby + InlineExtra
+
 -- <!ENTITY % Inline.class "%Inlstruct.class; %Inlphras.class; %Inlpres.class; %I18n.class; %Anchor.class; %Inlspecial.class; %Inlform.class; %Ruby.class; %Inline.extra;" >
-InlineClass = Inlstruct + Inlphras + Inlpres + I18n + Anchor + Inlspecial + Inlform + Ruby + InlineExtra
+InlineClass    = Inlstruct + Inlphras + Inlpres + I18n + Anchor + Inlspecial + Inlform + Ruby + InlineExtra
 
 -- <!ENTITY % Block.extra "" >
 BlockExtra = set {}
@@ -137,8 +141,12 @@ Content#"label" = PCDATA + set { "input", "select", "textarea", "button", "Inlst
 
 -- still to do:
 
+-- <!ENTITY % img.content  "EMPTY" >
 Content#"img" = set {}
-Content#"a" = set {}
+
+-- <!ENTITY % a.content "( #PCDATA | %Inline-noA.mix; )*" >
+Content#"a" = InlineNoAClass
+
 Content#"tt" = set {}
 Content#"i" = set {}
 Content#"bold" = set {}

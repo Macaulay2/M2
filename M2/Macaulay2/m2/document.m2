@@ -639,7 +639,6 @@ examples = x -> stack getExampleInputs help x
 apropos = method()
 apropos String := (pattern) -> sort select(flatten \\ keys \ globalDictionaries, i -> match(pattern,i) and not match("\\$",i))
 -----------------------------------------------------------------------------
-seenit := new MutableHashTable
 headline = method(SingleArgumentDispatch => true)
 headline Thing := key -> getOption(key,Headline)	    -- old method
 headline FinalDocumentTag := headline DocumentTag := tag -> (
@@ -648,11 +647,7 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
 	  -- if debugLevel > 0 and formattedKey tag == "Ring ^ ZZ" then error "debug me";
 	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
 	  if d === null then (
-	       signalDocError();
-	       if not seenit#?tag then (
-	       	    stderr << "--error: tag has no documentation: " << tag << endl;
-		    seenit#tag = true;
-		    );
+	       if signalDocError tag then stderr << "--error: tag has no documentation: " << tag << endl;
 	       return "missing documentation";
 	       ));
      if d#?Headline then d#Headline
@@ -918,6 +913,8 @@ briefDocumentation Thing := x -> (
 	       s := fmeth x;
 	       if s =!= null then << endl << s << endl;)))
 
+ignoreDocumentationErrors = true
+
 help = method(SingleArgumentDispatch => true)
 help String := key -> (
      checkLoadDocumentation();
@@ -928,7 +925,9 @@ help String := key -> (
      else (
 	  b := makeDocBody key;
 	  if b === null then (
-	       stderr << "--warning: documentation node for '" << key << "' is empty" << endl;
+	       if ignoreDocumentationErrors
+	       then stderr << "--error: there is no documentation for '" << key << "'" << endl
+	       else error("there is no documentation for '"|key|"'");
 	       b = ();
 	       );
 	  Hypertext fixuptop (title key, b, theExamples key, caveat key, seealso key, theMenu key)))
@@ -1078,8 +1077,9 @@ help Symbol := S -> (
 -- 	       SUBSECTION {"Ways to use ", toExternalString s, " :"}, 
 -- 	       b,
 -- 	       LITERAL "</div>\n"),
+          theExamples S, caveat S, seealso S,
      	  documentationValue(S,value S),
-	  theExamples S, caveat S, sourcecode S, seealso S, type S, 
+	  sourcecode S, type S, 
 	  theMenu S
 	  -- if class value S === Function then theAugmentedMenu S else theMenu S
 	  );
@@ -1114,7 +1114,7 @@ help Sequence := key -> (						    -- method key
 
 help List := v -> Hypertext between(HR{},help \ v)
 
-help Thing := x -> if ReverseDictionary#?x then return help ReverseDictionary#x else error "undocumented"
+help Thing := x -> if ReverseDictionary#?x then return help ReverseDictionary#x else error "no documentation found"
 
 help = Command help
 

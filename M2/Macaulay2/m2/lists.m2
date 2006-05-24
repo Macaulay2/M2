@@ -1,10 +1,15 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
-Sequence _ ZZ := List _ ZZ := (s,i) -> s#i
+List#"major documentation node" = true
+
+VisibleList _ ZZ := (s,i) -> s#i
 String _ ZZ := String => (s,i) -> s#i
 String _ Sequence := String => (s,i) -> ((j,k) -> substring(j,k,s)) i
 
 List | List  := List => join
+Array | Array  := Array => join
+Sequence | Sequence := Sequence => join
+
 List + List  := List => (v,w) -> apply(v,w,plus)
      - List  := List => v -> apply(v,minus)
 List - List  := List => (v,w) -> apply(v,w,difference)

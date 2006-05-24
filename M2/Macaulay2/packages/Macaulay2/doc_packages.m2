@@ -1,153 +1,70 @@
 document {
      Key => Package,
      Headline => "the class of all packages",
-     "See ", TO "packages", " for an overview about using and writing
-     packages.",
-     PARA,
-     "The directory containing the packages is ", HREF { LAYOUT#"packages",LAYOUT#"packages" }, "."
+     "See ", TO "packages", " for an overview about using and writing packages.",
+     PARA { "The directory containing the packages is ", HREF { LAYOUT#"packages",LAYOUT#"packages" }, "." }
      }
 
 document {
      Key => {loadPackage,(loadPackage,String)},
      Headline => "load a package",     
      Usage => "loadPackage PACKAGENAME",
-     Inputs => {
-	  "PACKAGENAME" => String => "the name of the package"
-	  },
-     Outputs => {
-	  Package => "the package just loaded.  This output value is typically ignored."
-	  },
-     Consequences => {
-	  {"Loads the package 'PACKAGENAME' which is in the file 'PACKAGENAME.m2'"}
-	  },
-    "The file ", TT "PACKAGENAME.m2", " should be on the load ", TO "path", 
-    " and should contain a package named ", TT "PACKAGENAME", ".",
-    PARA,
-    "For example, to load the sample package ", TT "FirstPackage", ":",
+     Inputs => { "PACKAGENAME" => String => "the name of the package" },
+     Outputs => { Package => "the package just loaded." },
+     Consequences => { {"Loads the package 'PACKAGENAME' which is in the file 'PACKAGENAME.m2'"} },
+     PARA { "The file ", TT "PACKAGENAME.m2", " should be on the load ", TO "path", "
+    	   and should contain a package named ", TT "PACKAGENAME", "." },
      EXAMPLE {
 	  ///loadPackage "FirstPackage"///
 	  },
-     SeeAlso => {"packages", 
-	  "an example of a package", 
-	  needsPackage,
-	  load
-	  }
+     SeeAlso => {"packages", "an example of a package", needsPackage, load }
      }
 
 document {
-     Key => [loadPackage,DebuggingMode],
+     Headline => "whether to enter the debugger upon error",
+     Key => {DebuggingMode,[loadPackage,DebuggingMode],[needsPackage,DebuggingMode],[installPackage,DebuggingMode]},
      Usage => "loadPackage(...,DebuggingMode=>b)",
-     Inputs => {
-	  "b" => Boolean => "default value is false"
-	  },
-     Consequences => {
-	  {"if the value ", TT "b", " is true, then the debugger is 
-	  entered if an error occurs"}
-     },
+     Inputs => { "b" => Boolean => "" },
+     Consequences => { {"if the value ", TT "b", " is ", TT "true", ", then, while loading the package, the debugger is entered if an error occurs"} },
+     PARA { "This option has the same effect when used with the functions ", TO "needsPackage", " and ", TO "installPackage", "." },
      EXAMPLE {
 	  ///loadPackage("Points", DebuggingMode=>true)///
 	  },
-     SeeAlso => {
-	  debug,
-	  "using the debugger"
-	  }
+     SeeAlso => { debug, "using the debugger" }
      }
-document {
-     Key => DebuggingMode,
-     Headline => "whether to enter the debugger upon error",
-     Usage => "loadPackage(...,DebuggingMode=>b)",
-     Inputs => {
-	  "b" => Boolean => "default value is false"
-	  },
-     Consequences => {
-	  {"if the value ", TT "b", " is true, then the debugger is 
-	  entered if an error occurs while loading the package"}
-     },
-     EXAMPLE {
-	  ///loadPackage("FirstPackage", DebuggingMode=>true)///,
-	  ///needsPackage("FirstPackage", DebuggingMode=>true)///,
-	  ///installPackage("FirstPackage", DebuggingMode=>true)///
-	  },
-     SeeAlso => {
-	  debug,
-	  "using the debugger"
-	  },
-     PARA,     
-     TT "DebuggingMode", " -- keyword for an optional argument
-     which specifies whether to enter the debugger upon an error
-     while loading a file."
-     }
-
 document {
      Key => {needsPackage,(needsPackage,String)},
      Headline => "load a package if not already loaded",
      Usage => "needsPackage PACKAGENAME",
-     Inputs => {
-	  "PACKAGENAME" => "the name of the package"
-	  },
-     Outputs => {
-	  {
-	  "either the ", TO Package, " just loaded, or ", TO null, " if the package 
-	  has already been loaded."}
-	  },
-     Consequences => {
-	  {"Loads the package ", TT "PACKAGENAME", " in the file ", TT "PACKAGENAME.m2"}
-         },
-    "The file ", TT "PACKAGENAME.m2", " should be on the load ", TO "path", 
-    " and should contain a package named ", TT "PACKAGENAME", ".",
-    PARA,
-    "For example, to load the sample package ", TT "FirstPackage", ":",
+     Inputs => { "PACKAGENAME" => "the name of the package" },
+     Outputs => { { "either the ", TO Package, " just loaded, or ", TO null, " if the package has already been loaded."} },
+     Consequences => { {"Loads the package ", TT "PACKAGENAME", " in the file ", TT "PACKAGENAME.m2"} },
+     PARA { "The file ", TT "PACKAGENAME.m2", " should be on the load ", TO "path", " and should contain a package named ", TT "PACKAGENAME", "." },
+     PARA { "For example, to load the sample package ", TT "FirstPackage", ":"},
      EXAMPLE {
 	  ///needsPackage "FirstPackage"///,
 	  ///needsPackage "FirstPackage"///	  
 	  },
-     "The second time the package was not reloaded",
-     SeeAlso => {"packages", 
-	  "an example of a package", 
-	  loadPackage
-	  }
+     "The second time the package was not reloaded.",
+     SeeAlso => {"packages", "an example of a package", loadPackage }
      }
 document {
-     Key => [needsPackage,DebuggingMode],
-     Usage => "needsPackage(...,DebuggingMode=>b)",
-     Inputs => {
-	  "b" => Boolean => "default value is false"
-	  },
-     Consequences => {
-	  {"if the value ", TT "b", " is true, then the debugger is 
-	  entered if an error occurs"}
-     },
+     Key => makePackageIndex,
+     Headline => "",
+     Usage => "makePackageIndex()",
+     Consequences => {"Creates a file 'index.html' in your Macaulay2 directory,
+     containing links to the documentation for Macaulay2 and
+     all installed packages."},
+     "This command may need to be run after installing a package via ", TO installPackage, ".",
+     PARA {
+	 "This command is run each time the program is started, therefore 
+	 overwriting this file.  Thus, one can simply restart Macaulay2 to
+	 obtain the same consequence."},
      EXAMPLE {
-	  ///needsPackage("Points", DebuggingMode=>true)///
+	  "makePackageIndex()"
 	  },
-     SeeAlso => {
-	  debug,
-	  "using the debugger"
-	  }
+     SeeAlso => {"packages"}
      }
-
---document {
---     Key => makePackageIndex,
---     Headline => "",
---     Usage => "makePackageIndex()",
---     Inputs => {
---	  },
---     Outputs => {
---	  },
---     Consequences => {"Creates a file 'index.html' in your Macaulay2 directory,
---     containing links to the documentation for Macaulay2 and
---     all installed packages."},
---     "This command needs to be run after installing a package via ",
---     TO installPackage, ".",
---     PARA,
---     "This command is run each time the program is started, therefore 
---     overwriting this file.  Thus, one can simply restart Macaulay2 to
---     obtain the same consequence",
---     EXAMPLE {
---	  "makePackageIndex()"
---	  },
---     SeeAlso => {"packages"}
---     }
 
 document {
      Key => {export, (export,Sequence), (export,Symbol)},
@@ -175,9 +92,7 @@ document {
      Key => {exportMutable, (exportMutable,Sequence), (exportMutable,Symbol)},
      Headline => "package item: export writable variables",
      Usage => "exportMutable(symbol1,symbol2,...)",
-     Inputs => {
-	  "(symbol1,symbol2,...)" => Sequence => " of symbols"
-	  },
+     Inputs => { "(symbol1,symbol2,...)" => Sequence => " of symbols" },
      Consequences => {
 	  {"the symbols in the sequence, which should refer
 	       to variables defined in the package,
@@ -194,22 +109,15 @@ document {
      Key => beginDocumentation,
      Headline => "package item: start documentation section",
      Usage => "beginDocumentation()",
-     Consequences => {
-	  "Initiates the documentation section of a package"
-	  },
-     "Documentation for a package, and tests for the package, are 
-     placed after this point in a package file.  This way, documentation can
-     be loaded separately, Macaulay 2 examples in the documentation can
-     be run, and the whole documentation can be stored in a database.",
-     PARA,
-     "For an example, see ", TO "an example of a package",
-     SeeAlso => {
-	  installPackage,
-	  check,
-	  "writing documentation"
-          }
+     Consequences => { "Initiates the documentation section of a package" },
+     PARA {
+	  "Documentation for a package, and tests for the package, are 
+	  placed after this point in a package file.  This way, documentation can
+	  be loaded separately, Macaulay 2 examples in the documentation can
+	  be run, and the whole documentation can be stored in a database."},
+     PARA { "For an example, see ", TO "an example of a package" },
+     SeeAlso => { installPackage, check, "writing documentation" }
      }
-
 document {
      Key => {TEST, (TEST,String)},
      Headline => "package item: register a test of the package",
@@ -277,7 +185,7 @@ document {
      SeeAlso => {"packages"}
      }
 document {
-     Key => [installPackage,MakeInfo],
+     Key => {[installPackage,MakeInfo],MakeInfo},
      Headline => "compute the info pages",
      Usage => "installPackage(...,MakeInfo=>b)",
      Inputs => {
@@ -294,7 +202,7 @@ document {
      ///
      }
 document {
-     Key => [installPackage,RemakeAllDocumentation],
+     Key => {[installPackage,RemakeAllDocumentation],RemakeAllDocumentation},
      Headline => "remake all of the documentation pages",
      Usage => "installPackage(...,RemakeAllDocumentation=>true)",
      Consequences => {
@@ -312,23 +220,25 @@ document {
      PRE///installPackage(PACKAGENAME, RemakeAllDocumentation=>true)///
      }
 
---document {
---     Key => [installPackage,IgnoreExampleErrors],
---     Headline => "regenerate previously failed examples",
---     Usage => "installPackage(...,IgnoreExampleErrors=>b)",
---     Inputs => {
---	  "b" => Boolean => "default is true"
---	  },
---     Consequences => {
---	  {"If ", TT "b", " is false, then rerun documentation 
---	       examples which previously had had errors."}
---	  },
---     "If a new version of ", EM "Macaulay 2", " is used, it may be
---     necessary to rerun the examples in the documentation.  This is done
---     by using for example":,
---     PRE///installPackage("GenericInitialIdeals", IgnoreExampleErrors=>false)
---     ///
---     }
+document { Key => {[installPackage, MakeDocumentation],MakeDocumentation},
+     Headline => "specify whether the package documentation should be made",
+     Usage => "installPackage(..., MakeDocumentation => false)",
+     Consequences => {{ "the documentation will not be made" }},
+     PARA { "Normally, when installing a package, the package's documentation is made.  This involves running the
+	  example inputs through Macaulay 2, checking for errors, and producing the documentation in various forms,
+	  such as html and for the info reader.  This option specifies whether to do that, and the default is ", TT "true", "." }}
+
+document {
+     Key => {[installPackage,IgnoreExampleErrors],IgnoreExampleErrors},
+     Headline => "regenerate previously failed examples",
+     Usage => "installPackage(...,IgnoreExampleErrors=>b)",
+     Inputs => { "b" => Boolean => "default is true" },
+     Consequences => { {"If ", TT "b", " is false, then rerun documentation examples which previously had had errors."} },
+     PARA { "If a new version of ", EM "Macaulay 2", " is used, it may be
+     	  necessary to rerun the examples in the documentation.  This is done
+     	  by using, for example, the following code."},
+     PRE ///installPackage("GenericInitialIdeals", IgnoreExampleErrors=>false)///
+     }
 
 document {
      Key => {newPackage, (newPackage,String)}, 
@@ -337,50 +247,36 @@ document {
      Inputs => {
 	  },
      Consequences => {"a package is created"},
-     "Here is a template for a typical ", TT "newPackage", " entry in a package.",
-     PRE ///newPackage(
-    "package name",
+     PARA { "Here is a template for a typical ", TT "newPackage", " entry in a package."},
+     PRE ///newPackage("package name",
     Headline => "one line description",
     Version => 1.0,
-    Date => "month  XX, 20XX",
+    Date => "month XX, 20XX",
     Authors => {{Name => "author", Email => "email", HomePage => "url"}},
     DebuggingMode => true
-   )///,
+    )///,
 	SeeAlso => {"packages"}
   }
 
-end
--- writing documentation:
--- (a) document command
---    all parts of that
--- (b) hypertext markup
---    one for each of these
--- (c) templates for different kinds of doc
--- (d) stylistic conventions
-
-
----------------------------------
-document {
-     Key => ,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => "",
-     SeeAlso => {}
-     }
-
--- markup commands that are useful
--- menus
--- 
-     
+--error: option has no documentation: Macaulay2 :: installPackage(..., PackagePrefix => ...), key: [installPackage, PackagePrefix]
+--error: option has no documentation: Macaulay2 :: installPackage(..., Encapsulate => ...), key: [installPackage, Encapsulate]
+--error: option has no documentation: Macaulay2 :: installPackage(..., InstallPrefix => ...), key: [installPackage, InstallPrefix]
+--error: option has no documentation: Macaulay2 :: installPackage(..., IgnoreDocumentationErrors => ...), key: [installPackage, IgnoreDocumentationErrors]
+--error: option has no documentation: Macaulay2 :: installPackage(..., AbsoluteLinks => ...), key: [installPackage, AbsoluteLinks]
+--error: option has no documentation: Macaulay2 :: installPackage(..., MakeLinks => ...), key: [installPackage, MakeLinks]
+--error: option has no documentation: Macaulay2 :: installPackage(..., RunDirectory => ...), key: [installPackage, RunDirectory]
+--error: symbol has no documentation: Macaulay2 :: uninstallPackage
+--error: method has no documentation: Macaulay2 :: uninstallPackage Package, key: (uninstallPackage, Package)
+--error: method has no documentation: Macaulay2 :: uninstallPackage String, key: (uninstallPackage, String)
+--error: option has no documentation: Macaulay2 :: uninstallPackage(..., PackagePrefix => ...), key: [uninstallPackage, PackagePrefix]
+--error: option has no documentation: Macaulay2 :: uninstallPackage(..., Encapsulate => ...), key: [uninstallPackage, Encapsulate]
+--error: option has no documentation: Macaulay2 :: uninstallPackage(..., InstallPrefix => ...), key: [uninstallPackage, InstallPrefix]
+--error: option has no documentation: Macaulay2 :: uninstallPackage(..., MakeLinks => ...), key: [uninstallPackage, MakeLinks]
+--error: option has no documentation: Macaulay2 :: newPackage(..., InfoDirSection => ...), key: [newPackage, InfoDirSection]
+--error: option has no documentation: Macaulay2 :: newPackage(..., Headline => ...), key: [newPackage, Headline]
+--error: option has no documentation: Macaulay2 :: newPackage(..., HomePage => ...), key: [newPackage, HomePage]
+--error: option has no documentation: Macaulay2 :: newPackage(..., Date => ...), key: [newPackage, Date]
+--error: option has no documentation: Macaulay2 :: newPackage(..., DebuggingMode => ...), key: [newPackage, DebuggingMode]
      
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
