@@ -82,6 +82,9 @@ MarkUpTypeWithOptions.GlobalAssignHook = (X,x) -> (
 
 withOptions := (v,x) -> (x.Options = new OptionTable from apply(v,val -> if class val === Option then val else val=>null); x)
 withQname   := (q,x) -> (x.qname = q; x)
+requirestrings := x -> ( scan(x, line -> if class line =!= String then error ("expected a string, but encountered ", toString line)); x)
+trimfront := x -> apply(x, line -> replace("^[[:space:]]+","",line))
+nonempty := x -> select(x, i -> i =!= "")
 
 new MarkUpType := x -> error "obsolete 'new' method called"
 
@@ -93,16 +96,15 @@ NOINDENT   = new EmptyMarkUpType of MarkUpList
 HR         = new EmptyMarkUpType of MarkUpListParagraph
 hr         = HR{}
 
-PARA       = withQname_"P" new MarkUpType of MarkUpListParagraph	    -- double spacing inside
+PARA       = withQname_"p" new MarkUpType of MarkUpListParagraph	    -- double spacing inside
+-- experimental testing
+-- new PARA from List := (PARA,x) -> validate(PARA,validContent#(PARA.qname),nonnull x)
 
-requirestrings := x -> ( scan(x, line -> if class line =!= String then error ("expected a string, but encountered ", toString line)); x)
-trimfront := x -> apply(x, line -> replace("^[[:space:]]+","",line))
-nonempty := x -> select(x, i -> i =!= "")
 EXAMPLE    = new MarkUpType of MarkUpListParagraph
 new EXAMPLE from List := (EXAMPLE,x) -> nonempty trimfront requirestrings nonnull x
 
 TABLE      = new MarkUpType of MarkUpListParagraph
-ExampleTABLE = new MarkUpType of MarkUpListParagraph
+ExampleTABLE = withQname_"table" new MarkUpType of MarkUpListParagraph
 ButtonTABLE  = new MarkUpType of MarkUpListParagraph
 PRE        = new MarkUpType of MarkUpListParagraph
 TITLE      = new MarkUpType of MarkUpListParagraph
@@ -126,7 +128,7 @@ SUB        = new MarkUpType of MarkUpList
 SUP        = new MarkUpType of MarkUpList
 ITALIC     = withQname_"i" new MarkUpType of MarkUpList
 UNDERLINE  = new MarkUpType of MarkUpList
-TEX	   = new MarkUpType of MarkUpList
+TEX	   = withQname_"#PCDATA" new MarkUpType of MarkUpList -- TEX really needs to be processed further so its output can be checked, too!
 SEQ	   = new MarkUpType of MarkUpList
 TT         = new MarkUpType of MarkUpList
 LI         = new MarkUpType of MarkUpList
@@ -134,7 +136,7 @@ EM         = new MarkUpType of MarkUpList
 LABEL      = new MarkUpType of MarkUpList
 BOLD       = withQname_"b" new MarkUpType of MarkUpList
 CODE       = new MarkUpType of MarkUpList
-HREF       = new MarkUpType of MarkUpList
+HREF       = withQname_"a" new MarkUpType of MarkUpList
 LINK       = new MarkUpType of MarkUpList
 ANCHOR     = withQname_"a" new MarkUpType of MarkUpList
 Hypertext  = new MarkUpType of MarkUpListParagraph -- top level, to be returned to user by "help" and "hypertext", includes text that has been already fixed up
@@ -151,11 +153,11 @@ new UL from List := (UL,x) -> (
 DIV        = withOptions_{"class"          }                 new MarkUpTypeWithOptions of MarkUpListParagraph
 DIV1       = withOptions_{"class"=>"single"} withQname_"div" new MarkUpTypeWithOptions of MarkUpListParagraph
 
-TO2        = new MarkUpType of MarkUpList
+TO2        = withQname_"a" new MarkUpType of MarkUpList
 new TO2 from Sequence := 
 new TO2 from List := (TO2,x) -> { makeDocumentTag x#0, concatenate drop(toSequence x,1) }
 
-TO         = new MarkUpType of MarkUpList
+TO         = withQname_"a" new MarkUpType of MarkUpList
 new TO from List := (TO,x) -> if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
 
 TOH        = new MarkUpType of MarkUpList
@@ -165,8 +167,9 @@ new TO from Sequence := new TOH from Sequence := (TO,x) -> new TO from {x} -- do
 
 MENU       = new MarkUpType of MarkUpListParagraph	            -- like "* Menu:" of "info"
 
-MarkUpList ^ MarkUpList := (x,y) -> SEQ{x,SUP y}
-MarkUpList _ MarkUpList := (x,y) -> SEQ{x,SUB y}
+---- I bet we aren't using this:
+-- MarkUpList ^ MarkUpList := (x,y) -> SEQ{x,SUP y}
+-- MarkUpList _ MarkUpList := (x,y) -> SEQ{x,SUB y}
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
