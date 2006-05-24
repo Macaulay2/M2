@@ -17,7 +17,7 @@ TEST /// input "Dmodules/TST/makeCyclic.tst.m2" ///
 TEST /// input "Dmodules/TST/paramBpoly.tst.m2" ///
 
 INSERTUSAGE := l->{ --!!! until "Usage =>" doesn't work
-     {BOLD "Usage: ", PARA, l, PARA} 
+     {BOLD "Usage: ", PARA l} 
      }
 needs "Dmodules/Dloadfile.m2";
 document {
@@ -28,12 +28,10 @@ document {
 	  TT ///needsPackage "Dmodules"///, 
 	  "."
 	  },
-     PARA,
      HEADER3 "How to make Weyl algebras:",
      UL{TO {"WeylAlgebra", " -- 
 	       The class of Weyl algebras"}},
      
-     PARA,
      HEADER3 "Basic commands:",
      UL{
 	  TO {"gbw", " -- Groebner bases with respect to weight vectors"},
@@ -44,21 +42,16 @@ document {
 	  TO {"makeWeylAlgebra", 
 	       " -- Weyl algebra associated to a polynomial ring"}
 	  },
-     
-     PARA,
      HEADER3 "Some examples of D-modules:",
      UL{TO {"gkz", " -- Gelfand-Kapranov-Zelevinsky hypergeometric system"},
 	  TO {"AppellF1", " -- Appell F1 system"},
 	  TO {"PolyAnn", " -- annihilator of a polynomial"},
 	  TO {"RatAnn", " -- annihilator of a rational function"}},
-     PARA,
      HEADER3 "Basic invariants of D-modules:",
      UL{TO {"Ddim", " -- dimension"}, 
 	  TO {"Drank"," -- holonomic rank"}, 
 	  TO {"charIdeal", " -- characteristic ideal"},
 	  TO {"singLocus", " -- singular locus"}},
-
-     PARA,
      HEADER3 "B-functions:",
      UL {
 	  TO {"bFunction", " -- b-function"}, 
@@ -73,7 +66,6 @@ document {
 	  TO {"AnnIFs", " -- annihilator ideal  of ", EM "f", SUP "s", 
 	       " for an arbitrary D-module"}
 	  },
-     PARA,
      HEADER3 "Resolutions and Functors:",
      UL{TO {"Dresolution", " -- resolutions"}, 
 	  TO {"Dlocalize", " -- localization"}, 
@@ -88,7 +80,6 @@ document {
 	  TO {"RatExt", 
 	       " -- rational Ext"}
 	  },     
-     PARA,
      HEADER3 "Applications:",
      UL{
 	  TO {"localCohom", "-- local cohomology"},
@@ -97,12 +88,10 @@ document {
 	  TO {"RatSols", " -- rational solutions of finite rank systems"},
 	  TO {"diffOps", " -- differential operators on affine varieties"}
 	  },
-     PARA,
      HEADER3 "Programming aids:",
      UL{TO {"createDpairs", " -- tags coordinate and derivation variables"},
 	  TO {"Dtrace", " -- toggles verbose comments"},
-	  TO {"setHomSwitch", " -- toggles use of homogeneous Weyl algebra"}},
-     PARA
+	  TO {"setHomSwitch", " -- toggles use of homogeneous Weyl algebra"}}
      }
 -----------------------------------------------
 document {
@@ -208,16 +197,16 @@ document {
 	  },
      "Use ", TO "setHomSwitch", "(true) to force all the subroutines 
      to use homogenized ", TO "WeylAlgebra",
-     PARA,  
-     BOLD "Definition. ", "The b-function ", EM "b(s)", 
-     " is defined as the monic generator  
-     of the intersection of ", 
-     EM {"in", SUB "(-w,w)", "(I)"}, " and ", 
-     EM "K[s]",
-     ", where ", 
-     EM {"s = [w", SUB "1", "t", SUB "1", " + ... + w", 
-	  SUB "n", "t", SUB "n", "]"}, 
-     " (here ", EM {"t", SUB "i", " = x", SUB "i", "D", SUB "i"}, ").", 
+     PARA {  
+	  BOLD "Definition. ", "The b-function ", EM "b(s)", 
+	  " is defined as the monic generator  
+	  of the intersection of ", 
+	  EM {"in", SUB "(-w,w)", "(I)"}, " and ", 
+	  EM "K[s]",
+	  ", where ", 
+	  EM {"s = [w", SUB "1", "t", SUB "1", " + ... + w", 
+	       SUB "n", "t", SUB "n", "]"}, 
+	  " (here ", EM {"t", SUB "i", " = x", SUB "i", "D", SUB "i"}, ")."}, 
      EXAMPLE {
 	  "R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]",
      	  "I = ideal(x_1, D_2-1)",
@@ -253,7 +242,6 @@ document {
 	       	EM "M", " with respect to ", EM "w", 
 	       	" and ", EM "m"}
 	  },
-     PARA,
      "The algorithm represents ", EM "M", " as ", EM "F/N", 
      " where ", EM "F", " is free and ", 
      EM "N", " is a submodule of ", EM "F", ". 
@@ -261,7 +249,6 @@ document {
      " for ", EM {"N \\cap F", SUB "i"}, " (i-th component of ", EM "F", 
      ") and outputs ",
      EM {"lcm{ b", SUB "i", "(s-m", SUB "i",") }"},
-     PARA,
      EXAMPLE{
 	  "R = QQ[x, dx, WeylAlgebra => {x=>dx}]",
 	  "M = cokernel matrix {{x^2, 0, 0}, {0, dx^3, 0}, {0, 0, x^3}}",
@@ -319,22 +306,22 @@ document {
      Outputs => {
 	  "b" => {"the b-function ", EM "b(s)",  " in ", EM "Q[s]"}
 	  },
-     PARA,
-     BOLD "Definition. ", "Let ", 
-     EM "D = A_{2n}(K) = K<x_1,...,x_n,d_1,...,d_n>", 
-     " be a Weyl algebra. 
-     The Bernstein-Sato polynomial of a polynomial f is defined 
-     to be the monic generator of the ideal of all polynomials ", 
-     EM "b(s)", " in ", EM "K[s]", " such that
-     ", EM " b(s) f^s = Q(s,x,d) f^{s+1}", " where ", EM "Q", 
-     " lives in ", EM "D[s].",
-     PARA,
-     BOLD "Algorithm. ", 
-     "Let ", 
-     EM "I_f = D<t,dt>*<t-f, d_1+df/dx_1*dt, ..., d_n+df/dx_n*dt> ",
-     "Let ", EM "B(s) = bFunction(I, {1, 0, ..., 0})", 
-     " where 1 in the weight that corresponds to ", EM "dt. ", 
-     "Then the global b-function is ", EM "b_f = B(-s-1)",
+     PARA {
+	  BOLD "Definition. ", "Let ", 
+	  EM "D = A_{2n}(K) = K<x_1,...,x_n,d_1,...,d_n>", 
+	  " be a Weyl algebra. 
+	  The Bernstein-Sato polynomial of a polynomial f is defined 
+	  to be the monic generator of the ideal of all polynomials ", 
+	  EM "b(s)", " in ", EM "K[s]", " such that
+	  ", EM " b(s) f^s = Q(s,x,d) f^{s+1}", " where ", EM "Q", 
+	  " lives in ", EM "D[s]."},
+     PARA {
+	  BOLD "Algorithm. ", 
+	  "Let ", 
+	  EM "I_f = D<t,dt>*<t-f, d_1+df/dx_1*dt, ..., d_n+df/dx_n*dt> ",
+	  "Let ", EM "B(s) = bFunction(I, {1, 0, ..., 0})", 
+	  " where 1 in the weight that corresponds to ", EM "dt. ", 
+	  "Then the global b-function is ", EM "b_f = B(-s-1)"},
      EXAMPLE {
 	  "R = QQ[x, dx, WeylAlgebra => {x=>dx}]",
      	  "f = x^10",
@@ -361,7 +348,6 @@ document {
      Outputs => {
 	  "f" => {"the factorization of ", TT "b"}
 	  },
-     PARA,
      BOLD "Fact. ", "The roots of any b-function are rational.",
      EXAMPLE {
 	"R = QQ[x, dx, WeylAlgebra => {x=>dx}]",
@@ -402,7 +388,6 @@ document {
 	  "H" => {"a hashtable containing the fields ",  
 	       TT "Bpolynomial", " and ", TT "Boperator"}
 	  },
-     PARA,
      "The algorithm used here is a modification of the original
      algorithm of Oaku for computing Bernstein-Sato polynomials",
      EXAMPLE {
@@ -834,7 +819,7 @@ document {
      INSERTUSAGE {
      TT "DHom (M, N)", " -- computes a basis of
      D-homomorphisms between holonomic D-modules M and N.",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "DHom (I, J)", " -- computes a basis of
      D-homomorphisms between D/I and D/J."
      },
@@ -847,21 +832,19 @@ document {
      the generators of ", EM "M", " are determined from its presentation
      by generators and relations.",
 
-     PARA,
-     "The algorithm used appears in the paper 'Computing homomorphisms
-     between holonomic D-modules' by Tsai-Walther(2000).
-     The method is to combine isomorphisms of Bjork and Kashiwara with
-     the restriction algorithm.",
-
-     PARA,
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x, D, WeylAlgebra=>{x=>D}]",
-     	"M = W^1/ideal(D-1)",
-     	"N = W^1/ideal((D-1)^2)",
-     	"DHom(M,N)"
-	},
-     PARA,
+     PARA {
+	  "The algorithm used appears in the paper 'Computing homomorphisms
+	  between holonomic D-modules' by Tsai-Walther(2000).
+	  The method is to combine isomorphisms of Bjork and Kashiwara with
+	  the restriction algorithm."},
+     PARA {
+	  "A simple example:",
+	  EXAMPLE {
+	     "W = QQ[x, D, WeylAlgebra=>{x=>D}]",
+	     "M = W^1/ideal(D-1)",
+	     "N = W^1/ideal((D-1)^2)",
+	     "DHom(M,N)"
+	     }},
      Caveat => {"Input modules ", EM "M", ", ", EM "N", ", ", 
 	  EM "D/I", " and ", EM "D/J",
 	  " should be holonomic."},
@@ -903,7 +886,7 @@ document {
      TT "DExt (M, N)", " -- 
      computes the dimensions of the Ext groups between
      holonomic M and holonomic N.",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "DExt (I, J)", " -- 
      computes the dimensions of the Ext groups between
      holonomic D/I and holonomic D/J."
@@ -912,20 +895,19 @@ document {
      "The ", TT "Ext", " groups between D-modules ", EM "M"," and ",EM "N",
      " are the derived functors of ", TT "Hom", ", and are finite-dimensional
      vector spaces over the ground field when", EM "M", " and N are holonomic.",
-     PARA,
-     "The algorithm used appears in the paper 'Polynomial and
-     rational solutions of holonomic systems' by Oaku-Takayama-Tsai (2000).
-     The method is to combine isomorphisms of Bjork and Kashiwara with
-     the restriction algorithm.",
-     PARA,
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x, D, WeylAlgebra=>{x=>D}]",
-     	"M = W^1/ideal(x*(D-1))",
-     	"N = W^1/ideal((D-1)^2)",
-     	"DExt(M,N)"
-	},
-     PARA,
+     PARA {
+	  "The algorithm used appears in the paper 'Polynomial and
+	  rational solutions of holonomic systems' by Oaku-Takayama-Tsai (2000).
+	  The method is to combine isomorphisms of Bjork and Kashiwara with
+	  the restriction algorithm."},
+     PARA {
+	  "A simple example:",
+	  EXAMPLE {
+	     "W = QQ[x, D, WeylAlgebra=>{x=>D}]",
+	     "M = W^1/ideal(x*(D-1))",
+	     "N = W^1/ideal((D-1)^2)",
+	     "DExt(M,N)"
+	     }},
      Caveat =>{"Input modules M, N, D/I, or D/J should be holonomic.",
 	  "Does not yet compute explicit reprentations of Ext groups
 	  such as Yoneda representation."},
@@ -959,13 +941,13 @@ document {
      INSERTUSAGE {
      TT "PolySols I", " -- computes a basis of the polynomial solutions
      of a holonomic ideal I",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "PolySols M", " -- computes a basis of D-homomorphisms
      between a holonomic module M and the polynomial ring",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "PolySols (I, w)", " -- computes a basis of polynomial solutions
      of I using the weight vector w for Groebner deformations",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "PolySols (M, w)", " -- computes a basis of D-homomorhpisms between
      M and the polynomial ring using w for Groebner deformations"
      },
@@ -979,15 +961,13 @@ document {
      Oaku-Takayama-Tsai (2000).  The second algorithm is based
      on homological algebra -- see the paper 'Computing
      homomorphims between holonomic D-modules' by Tsai-Walther (2000).",
-
-     PARA,
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x, D, WeylAlgebra=>{x=>D}]",
-     	"I = ideal(D^2, (x-1)*D-1)",
-     	"PolySols I"
-	},
-     PARA,
+     PARA {
+	  "A simple example:",
+	  EXAMPLE {
+	     "W = QQ[x, D, WeylAlgebra=>{x=>D}]",
+	     "I = ideal(D^2, (x-1)*D-1)",
+	     "PolySols I"
+	     }},
      SeeAlso => {"RatSols", "Dintegration"}
      },
 
@@ -1004,7 +984,7 @@ document {
      TT "PolyExt M", " -- 
      computes the dimensions of the Ext groups between
      holonomic M and the polynomial ring.",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "PolyExt I", " -- 
      computes the dimensions of the Ext groups between
      holonomic D/I and the polynomial ring."
@@ -1014,18 +994,17 @@ document {
      " and the polynomial ring are the derived functors of ", TT "Hom", 
      ", and are finite-dimensional vector spaces over the ground field when ",
      EM "M", " is holonomic.",
-     PARA,
-     "The algorithm used appears in the paper 'Polynomial and
-     rational solutions of holonomic systems' by Oaku-Takayama-Tsai (2000).
-     The method is to combine isomorphisms of Bjork and Kashiwara with
-     the restriction algorithm.",
-     PARA,
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x, D, WeylAlgebra=>{x=>D}]",
-     	"M = W^1/ideal(x^2*D^2)",
-     	"PolyExt(M)"},
-     PARA,
+     PARA {
+	  "The algorithm used appears in the paper 'Polynomial and
+	  rational solutions of holonomic systems' by Oaku-Takayama-Tsai (2000).
+	  The method is to combine isomorphisms of Bjork and Kashiwara with
+	  the restriction algorithm."},
+     PARA {
+	  "A simple example:",
+	  EXAMPLE {
+	     "W = QQ[x, D, WeylAlgebra=>{x=>D}]",
+	     "M = W^1/ideal(x^2*D^2)",
+	     "PolyExt(M)"}},
      Caveat =>{"Does not yet compute explicit representations of
 	  Ext groups such as Yoneda representation."},
      SeeAlso => {"PolySols", "RatExt", "DExt", "Dintegration"}
@@ -1037,14 +1016,14 @@ document {
      INSERTUSAGE {
      TT "RatSols I", " -- computes a basis of the rational solutions
      of a holonomic ideal I",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "RatSols (I, f)", " -- computes a basis of rational solutions to I
      with poles along f",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "RatSols (I, f, w)", " -- computes a basis of rational solutions
      to I with poles along f
      using the weight vector w for Groebner deformations",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "PolySols (I, ff, w)", " -- computes a basis of rational sollutions
      with poles along the polynomials in the list ff 
      using w for Groebner deformations"
@@ -1060,14 +1039,13 @@ document {
      and rational solutions of a holonomic system' by 
      Oaku-Takayama-Tsai (2000).",
      
-     PARA,
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x, D, WeylAlgebra=>{x=>D}]",
-     	"I = ideal((x+1)*D+5)",
-     	"RatSols I"
-	},
-     PARA,
+     PARA {
+	  "A simple example:",
+	  EXAMPLE {
+	     "W = QQ[x, D, WeylAlgebra=>{x=>D}]",
+	     "I = ideal((x+1)*D+5)",
+	     "RatSols I"
+	     }},
      Caveat =>{"The most efficient method to find rational solutions is
 	  to find the singular locus, then try to find its irreducible
 	  factors.  With these, call RatSols(I, ff, w), where w
@@ -1091,16 +1069,16 @@ document {
      computes the dimensions of the Ext groups between
      holonomic M and the polynomial ring localized at 
      the singular locus of M.",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "RatExt I", "-- 
      computes the dimensions of the Ext groups between
      D/I and the polynomial ring localized at 
      the singular locus of D/I.",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "RatExt (M, f)", "-- 
      computes the dimensions of the Ext groups between
      M and the polynomial ring localized at f.",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "RatExt (I, f)", "-- 
      computes the dimensions of the Ext groups between
      D/I and the polynomial ring localized at f."
@@ -1109,20 +1087,18 @@ document {
      "The Ext groups between M and N
      are the derived functors of Hom, and are finite-dimensional
      vector spaces over the ground field when M and N are holonomic.",
-     PARA,
-     "The algorithm used appears in the paper 'Polynomial and
-     rational solutions of holonomic systems' by Oaku-Takayama-Tsai (2000).
-     The method is to combine isomorphisms of Bjork and Kashiwara with
-     the restriction algorithm.",
-     PARA,
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x, D, WeylAlgebra=>{x=>D}]",
-     	"M = W^1/ideal(x*D+5)",
-     	"RatExt(M)"},
-     PARA,
+     PARA {
+	  "The algorithm used appears in the paper 'Polynomial and
+	  rational solutions of holonomic systems' by Oaku-Takayama-Tsai (2000).
+	  The method is to combine isomorphisms of Bjork and Kashiwara with
+	  the restriction algorithm."},
+     PARA {
+	  "A simple example:",
+	  EXAMPLE {
+	     "W = QQ[x, D, WeylAlgebra=>{x=>D}]",
+	     "M = W^1/ideal(x*D+5)",
+	     "RatExt(M)"}},
      Caveat =>{"Input modules M or D/I should be holonomic."},
-
      SeeAlso => {"Dresolution", "Dintegration"}
      }
 
@@ -1133,19 +1109,19 @@ document {
 --     specifies that a PolynomialRing created from it will
 --     be a Weyl Algebra.",
 --
---     PARA,
+--     PARA{},
 --     "The n-th Weyl algebra is the associative ring on 2n variables,
 --     e.g. K<x_1..x_n, D_1..D_n>, where all the variables commute except
 --     for (D_i x_i = x_i D_i + 1).  It can be viewed as the ring
 --     of algebraic differential operators on affine space K^n.",
 --
---     PARA,
+--     PARA{},
 --     "A simple example:",
 --     EXAMPLE {
 --	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
 --     	"x*Dx", 
 --     	"Dx*x"},     
---     PARA,
+--     PARA{},
 --     "Caveats and known problems:",
 --     UL{"The variables can be called by any name, but for each
 --	  pair such as x => Dx, the commutative variable (in this case x)
@@ -1168,15 +1144,14 @@ document {
      of the central variables.  The second key 'dpairInds' also contains 3 lists
      of the corresponding indices to 'dpairVars'.",
 
-     PARA,
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
-     	"createDpairs W", 
-     	"W.dpairVars",
-     	"W.dpairInds"
-	},
-     PARA,
+     PARA {
+	  "A simple example:",
+	  EXAMPLE {
+	     "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
+	     "createDpairs W", 
+	     "W.dpairVars",
+	     "W.dpairInds"
+	     }},
      SeeAlso => {"WeylAlgebra"}
      },
 
@@ -1196,22 +1171,22 @@ document {
      Headline => "Fourier transform for Weyl algebra",
      INSERTUSAGE {
      TT "Fourier L", " -- computes the Fourier transform of a ring element L",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "Fourier I", " -- computes the Fourier transform of an ideal I",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "Fourier M", " -- computes the Fourier transform of a matrix M"
      },
 
      "The Fourier transform is the automorphism of the Weyl algebra
      which sends ", EM {"x",SUB "i"}, " to ", EM {"D", SUB "i"}, " 
      and ", EM  {"D", SUB "i"}, " to ", EM {"-x",SUB "i"}, ".",
-     PARA,
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
-     	"L = x^2*Dy + y*Dy^2 + 3*Dx^5*Dy",       
-     	"Fourier L"
-	},
+     PARA {
+	  "A simple example:",
+	  EXAMPLE {
+	     "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
+	     "L = x^2*Dy + y*Dy^2 + 3*Dx^5*Dy",       
+	     "Fourier L"
+	     }},
      SeeAlso => {"WeylAlgebra"}
      },
 
@@ -1220,11 +1195,11 @@ document {
      Headline => "standard transposition for Weyl algebra",
      INSERTUSAGE {
      TT "Dtransposition L", " -- computes the standard transposition of a ring element L",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "Dtransposition I", " -- computes the standard transposition of an ideal I", 
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "Dtransposition m", " -- computes the standard transposition of a matrix L",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "Dtransposition C", " -- computes the standard transposition of a chain complex C"
      },
 
@@ -1233,14 +1208,13 @@ document {
      EM {"(-d)", SUP "b", "x", SUP "a"}, ".
      It provides the equivalence in the Weyl algebra between left
      and right D-modules.",
-     PARA,
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
-     	"L = x^2*Dy + y*Dy^2 + 3*Dx^5*Dy",       
-     	"Dtransposition L"
-	},
-     PARA,
+     PARA {
+	  "A simple example:",
+	  EXAMPLE {
+	     "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
+	     "L = x^2*Dy + y*Dy^2 + 3*Dx^5*Dy",       
+	     "Dtransposition L"
+	     }},
      Caveat =>{"The standard transposition of a left ideal should be a right
 	  ideal, however M2 currently doesn't support right modules.
 	  Thus the output is left ideal generated by the transposition
@@ -1254,7 +1228,7 @@ document {
      INSERTUSAGE {
      TT "singLocus M", " -- 
      computes the singular locus of a D-module M",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "singLocus M", " -- 
      computes the singular locus of the quotient module D/I"
      },
@@ -1265,19 +1239,18 @@ document {
      " equals the projection
      of the characteristic variety of ", EM "M", " minus the zero section
      of the cotangent bundle to the base affine space ", BOLD "C", SUP EM "n", ".",
-     PARA,
-     "For details of the algorithm for computing singular locus 
-     see the book 'Groebner deformations
-     of hypergeometric differential equations' by 
-     Saito-Sturmfels-Takayama (1999).",
-     PARA,
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
-     	"I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
-     	"singLocus I"
-	},
-     PARA,
+     PARA {
+	  "For details of the algorithm for computing singular locus 
+	  see the book 'Groebner deformations
+	  of hypergeometric differential equations' by 
+	  Saito-Sturmfels-Takayama (1999)."},
+     PARA {
+	  "A simple example:",
+	  EXAMPLE {
+	     "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
+	     "I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
+	     "singLocus I"
+	     }},
      SeeAlso => {"charIdeal", "Drank", "Ddim"}
      },
 
@@ -1287,7 +1260,7 @@ document {
      INSERTUSAGE {
      TT "charIdeal M", " -- 
      computes the characteristic ideal of a D-module M",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "charIdeal I", " -- 
      computes the characteristic ideal of the quotiet module D/I"
      },
@@ -1306,20 +1279,19 @@ document {
      The zero locus of the characteristic
      ideal is equal to the characteristic variety of ", EM "D/I", ", which
      is an invariant of a D-module.",
-     PARA,
-     "The algorithm to compute the characteristic ideal consists of computing
-     the initial ideal of I with respect to the weight vector
-     (0,...,0,1...,1).  See the book 'Groebner deformations
-     of hypergeometric differential equations' by 
-     Saito-Sturmfels-Takayama (1999) for more details.",
-     PARA,
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
-     	"I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
-     	"charIdeal I"
-	},
-
+     PARA {
+	  "The algorithm to compute the characteristic ideal consists of computing
+	  the initial ideal of I with respect to the weight vector
+	  (0,...,0,1...,1).  See the book 'Groebner deformations
+	  of hypergeometric differential equations' by 
+	  Saito-Sturmfels-Takayama (1999) for more details."},
+     PARA {
+	  "A simple example:",
+	  EXAMPLE {
+	     "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
+	     "I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
+	     "charIdeal I"
+	     }},
      SeeAlso => {"Ddim", "singLocus", "Drank"}
      },
 
@@ -1328,7 +1300,7 @@ document {
      Headline => "rank of a D-module",
      INSERTUSAGE {
      TT "Drank M", "-- calculates the rank of a D-module M",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "Drank I", "-- calculates the rank of the quotient module D/I"
      },
 
@@ -1336,26 +1308,25 @@ document {
      about the system of PDE's given by ", EM "N", ". In particular, a theorem of 
      Cauchy states that the dimension of holomorphic solutions to ", EM "N", " in a
      neighborhood of a nonsinugular point is equal to the rank.",
-     PARA,
-     "The rank of a D-module is defined algebraically as follows. 
-     Let ", EM "D", " denote the Weyl algebra ", 
-     BOLD "C", TT "<", EM "x_1,....,x_n,d_1,...,d_n", TT ">",
-     " and let ", EM "R", " denote the ring of differential operators ",
-     BOLD "C", TT "(", EM "x_1,...,x_n", TT ")",TT "<", EM "d_1,...,d_n", TT ">",
-     " with rational function coefficients.
-     Then the rank of ", EM "M = D^r/N", " is equal to the dimension of ", 
-     EM "R^r/RN"," as a vector space over ", BOLD "C", "(", EM "x_1,...,x_n", ").",
-     PARA,
-     "See the book 'Groebner deformations of hypergeometric differential equations' by 
-     Saito-Sturmfels-Takayama (1999) for more details of the algorithm.",
-     PARA,
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
-     	"I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
-     	"Drank I"
-	},
-     PARA,
+     PARA {
+	  "The rank of a D-module is defined algebraically as follows. 
+	  Let ", EM "D", " denote the Weyl algebra ", 
+	  BOLD "C", TT "<", EM "x_1,....,x_n,d_1,...,d_n", TT ">",
+	  " and let ", EM "R", " denote the ring of differential operators ",
+	  BOLD "C", TT "(", EM "x_1,...,x_n", TT ")",TT "<", EM "d_1,...,d_n", TT ">",
+	  " with rational function coefficients.
+	  Then the rank of ", EM "M = D^r/N", " is equal to the dimension of ", 
+	  EM "R^r/RN"," as a vector space over ", BOLD "C", "(", EM "x_1,...,x_n", ")."},
+     PARA {
+	  "See the book 'Groebner deformations of hypergeometric differential equations' by 
+	  Saito-Sturmfels-Takayama (1999) for more details of the algorithm."},
+     PARA {
+	  "A simple example:",
+	  EXAMPLE {
+	     "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
+	     "I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
+	     "Drank I"
+	     }},
      SeeAlso => {"charIdeal", "singLocus", "Ddim"}
      },
 
@@ -1364,23 +1335,23 @@ document {
      Headline => "dimension of a D-module", 
      INSERTUSAGE {
      TT "Ddim M", " -- calculate the dimension of a D-module M ",
-     BR, NOINDENT, 
+     BR{}, NOINDENT{}, 
      TT "Ddim I", " -- calculate the dimension of the quotient D/I"
      },
-     PARA,
-     "The dimension of ", EM "M", " is equal to the dimension of
-     the associated graded module with respect to the Bernstein 
-     filtration. A module is holonomic if it has dimension n
-     where ", EM "D = ", 
-     BOLD "C", "<", EM {"x", SUB "1",",...,x", SUB "n",
-	  ",d", SUB "1", ",...,d", SUB "n"}, ">",
-     PARA,
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
-     	"I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
-     	"Ddim I"
-	},
+     PARA {
+	  "The dimension of ", EM "M", " is equal to the dimension of
+	  the associated graded module with respect to the Bernstein 
+	  filtration. A module is holonomic if it has dimension n
+	  where ", EM "D = ", 
+	  BOLD "C", "<", EM {"x", SUB "1",",...,x", SUB "n",
+	       ",d", SUB "1", ",...,d", SUB "n"}, ">"},
+     PARA {
+	  "A simple example:",
+	  EXAMPLE {
+	     "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
+	     "I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
+	     "Ddim I"
+	     }},
      SeeAlso => {"charIdeal", "Drank", "singLocus"}
      },
 
@@ -1395,13 +1366,12 @@ document {
      "Given a polynomial ring ", EM "R", " with variables ", EM "x_1,..,x_n", 
      ", this routine returns a Weyl algebra with variables ", EM "x_1,..,x_n",
      " and ", EM "dx_1,..,dx_n", ".", 
-     PARA,
-     "A simple example:",
-     EXAMPLE {
-	"R = QQ[x,y,z]",
-     	"W = makeWeylAlgebra R"
-	},
-     PARA,
+     PARA {
+	  "A simple example:",
+	  EXAMPLE {
+	     "R = QQ[x,y,z]",
+	     "W = makeWeylAlgebra R"
+	     }},
      "Abbreviations :",
      UL{"makeWA"},
      Caveat =>{"The polynomial ring R must be commutative."},
@@ -1414,7 +1384,7 @@ document {
      INSERTUSAGE {
      TT "Ddual M", " -- 
      computes the holonomic dual of a D-module M",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "Ddual I", " -- 
      computes the holonomic dual of the quotient module D/I"
      },
@@ -1427,13 +1397,12 @@ document {
      ".  The dual is obtained by
      computing a free resolution of ", EM "M", ", dualizing, and applying
      the standard transposition to the ", EM "n", "-th homology.",
-     PARA,
-     "A simple example:",
-     EXAMPLE {
-	"I = AppellF1({1,0,-3,2})",
-     	"Ddual I"
-	},
-     PARA,
+     PARA {
+	  "A simple example:",
+	  EXAMPLE {
+	     "I = AppellF1({1,0,-3,2})",
+	     "Ddual I"
+	     }},
      Caveat =>{"The input module ", EM "M", " should be holonomic.  The user should
 	  check this manually with the script ", TT "Ddim", "."},
      SeeAlso => {"Ddim", "Dtransposition"}
@@ -1465,21 +1434,21 @@ document {
      TT "Dlocalize (M, f)", " -- 
      compute the localization of the D-module M with respect to the
      polynomial f",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "Dlocalize (I, f)", " -- 
      compute the localization of the quotient module D/I with respect to the
      polynomial f",
-     PARA,
+     PARA{},
      TT "DlocalizeMap (M, f)", " -- 
      compute the localization map M --> M[1/f]",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "DlocalizeMap (M, f)", " -- 
      compute the localization map (D/I) --> (D/I)[1/f]",
-     PARA,
+     PARA{},
      TT "DlocalizeAll (M, f)", " -- 
      compute the localization of M with respect to f and
      some auxilary information",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "DlocalizeAll (M, f)", " -- 
      compute the localization of D/I with respect to f and some
      auxilary information"
@@ -1490,7 +1459,7 @@ document {
      with respect to ", EM "f", " is also finitely generated.  For instance,
      this is true for all holonomic D-modules.",
      
-     PARA,
+     PARA{},
      "There are two different algorithms for localization implemented.  
      The first appears in the
      paper 'A localization algorithm for D-modules' by Oaku-Takayama-Walther
@@ -1498,7 +1467,7 @@ document {
      'Algorithmic computation of local cohomology modules and the
      cohomological dimension of algebraic varieties' by Walther(1999)",
 
-     PARA,
+     PARA{},
      "A simple example:",
      EXAMPLE {
 	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
@@ -1506,7 +1475,7 @@ document {
      	"f = x^2-y^3",
      	"Mf = Dlocalize(M, f)"
 	},
-     PARA,
+     PARA{},
      "Other names :",
      UL{"Dlocalization"},
      
@@ -1587,14 +1556,14 @@ document {
      Headline => "resolution of a D-module",
      INSERTUSAGE {TT "Dresolution M", " -- 
      computes a Schreyer resolution of the D-module M",
-     BR, NOINDENT, TT "Dresolution (I, w)", " -- 
+     BR{}, NOINDENT{}, TT "Dresolution (I, w)", " -- 
      computes a Schreyer resolution of the quotient module D/I",
 
-     PARA,
+     PARA{},
      TT "Dresolution (M, w)", "-- 
      computes a resolution of M adapted to a weight vector w
      of the form (-u,u)",
-     BR, NOINDENT, TT "Dresolution (I, w)", "-- 
+     BR{}, NOINDENT{}, TT "Dresolution (I, w)", "-- 
      computes a resolution of D/I adapted to a weight vector w
      of the form (-u,u)"
      },
@@ -1611,7 +1580,7 @@ document {
      Note that the notion of a minimal resolution is well-defined only in case 
      of homogenized Weyl algebra.",
 
-     PARA,
+     PARA{},
      "There are two strategies for constructing
      w-adapted resolutions.   The first strategy is to construct
      a Schreyer resolution in the homogenized Weyl algebra
@@ -1621,14 +1590,13 @@ document {
      'Algorithims for D-modules'
      by Oaku-Takayama(1999).",
 
-     PARA,
-     "A simple example:",
-     EXAMPLE {
-	"R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]",
-     	"I = ideal(x_1*D_1+3*x_2*D_2-1, D_1^3-D_2)", 
-     	"Dresolution(I,{-1,-1,1,1})"
-	},
-     PARA,
+     PARA {
+	  "A simple example:",
+	  EXAMPLE {
+	     "R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]",
+	     "I = ideal(x_1*D_1+3*x_2*D_2-1, D_1^3-D_2)", 
+	     "Dresolution(I,{-1,-1,1,1})"
+	     }},
      "Abbreviations :",
      UL{"Dres"},
 
@@ -1651,47 +1619,47 @@ document {
      INSERTUSAGE {TT "Drestriction (M, w)", " -- 
      computes derived restriction modules of M with respect
      to the weight vector w",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "Drestriction (I, w)", " -- 
      computes derived restriction modules of D/I with respect
      to the weight vector w",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "Drestriction (i, M, w)", " -- 
      computes i-th derived restriction module of M with respect
      to the weight vector w",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "Drestriction (i, I, w)", " -- 
      computes i-th derived restriction module of D/I with respect
      to the weight vector w",
-     PARA,
+     PARA{},
      TT "DrestrictionClasses (M, w)", " -- 
      computes explicit cohomology classes of a
      derived restriction complex of M",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "DrestrictionClasses (I, w)", " -- 
      computes explicit cohomology classes of a
      derived restriction complex of D/I",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "DrestrictionClasses (i, M, w)", " -- 
      computes i-th explicit cohomology classes of
      a derived restriction complex of M",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "DrestrictionClasses (i, I, w)", " -- 
      computes i-th explicit cohomology classes of
      a derived restriction complex of D/I",
-     PARA,
+     PARA{},
      TT "DrestrictionComplex (M, w)", " -- 
      computes derived restriction complex of M with respect
      to the weight vector w",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "DrestrictionComplex (D/I, w)", " -- 
      computes derived restriction complex of D/I with respect
      to the weight vector w",
-     PARA,
+     PARA{},
      TT "DrestrictionAll (M, w)", " -- 
      computes derived restriction of M and outputs various
      information",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "DrestrictionAll (I, w)", " -- 
      computes derived restriction of D/I and outputs various
      information"
@@ -1708,29 +1676,26 @@ document {
      The input weight vector should be a list of ", EM "n", " numbers
      to induce the weight ", EM "(-w,w)", " on ", EM "D", ".",
 
-     PARA,
-     "The algorithm used appears in the paper 'Algorithims for D-modules'
-     by Oaku-Takayama(1999).  The method is to compute an adapted resolution
-     with respect to the weight vector w and use the b-function with respect
-     to w to truncate the resolution.",
+     PARA {
+	  "The algorithm used appears in the paper 'Algorithims for D-modules'
+	  by Oaku-Takayama(1999).  The method is to compute an adapted resolution
+	  with respect to the weight vector w and use the b-function with respect
+	  to w to truncate the resolution."},
 
-     PARA,
-     "A simple example:",
-     EXAMPLE {
-	"R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]",
-     	"I = ideal(x_1, D_2-1)", 
-     	"Drestriction(I,{1,0})"
-	},
-     PARA,
+     PARA {
+	  "A simple example:",
+	  EXAMPLE {
+	     "R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]",
+	     "I = ideal(x_1, D_2-1)", 
+	     "Drestriction(I,{1,0})"
+	     }},
      Caveat =>{"The module ", EM "M", " should be specializable to the subspace.
 	  This is true for holonomic modules.",
 	  "The weight vector ", EM "w", " should be a list of ", EM "n",
 	  " numbers if ", EM "M", 
 	  " is a module over the ", EM "n", "-th Weyl algebra."},
-     PARA,
-     "Abbreviations :",
+     PARA "Abbreviations :",
      UL{"Drestrict"},
-     
      SeeAlso => {"Dresolution", "Dintegration"}
      }
 document {
@@ -1825,47 +1790,47 @@ document {
      TT "Dintegration (M, w)", " -- 
      computes derived integration modules of M with respect
      to the weight vector w",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "Dintegration (I, w)", " -- 
      computes derived integration modules of D/I with respect
      to the weight vector w",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "Dintegration (i, M, w)", " -- 
      computes i-th derived integration module of M with respect
      to the weight vector w",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "Dintegration (i, I, w)", " -- 
      computes i-th derived integration module of D/I with respect
      to the weight vector w",
-     PARA,
+     PARA "",
      TT "DintegrationClasses (M, w)", " -- 
      computes explicit cohomology classes of a
      derived integration complex of M",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "DintegrationClasses (I, w)", " -- 
      computes explicit cohomology classes of a
      derived integration complex of D/I",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "DintegrationClasses (i, M, w)", " -- 
      computes i-th explicit cohomology classes of
      a derived integration complex of M",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "DintegrationClasses (i, I, w)", " -- 
      computes i-th explicit cohomology classes of
      a derived integration complex of D/I",
-     PARA,
+     PARA "",
      TT "DintegrationComplex (M, w)", " -- 
      computes derived integration complex of M with respect
      to the weight vector w",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "DintegrationComplex (D/I, w)", " -- 
      computes derived integration complex of D/I with respect
      to the weight vector w",
-     PARA,
+     PARA "",
      TT "DintegrationAll (M, w)", " -- 
      computes derived integration of M and outputs various
      information",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "DintegrationAll (I, w)", " -- 
      computes derived integration of D/I and outputs various
      information"
@@ -1881,25 +1846,25 @@ document {
      The input weight vector should be a list of ", EM "n", " numbers	    
      to induce the weight ", EM "(-w,w)", " on ", EM "D", ".",
 
-     PARA,
+     PARA "",
      "The algorithm used appears in the paper 'Algorithims for D-modules'
      by Oaku-Takayama(1999).  The method is to take the Fourier transform
      of M, then compute the derived restriction, then inverse
      Fourier transform back.",
 
-     PARA,
+     PARA "",
      "A simple example:",
      EXAMPLE {
 	"R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]",
     	"I = ideal(x_1, D_2-1)", 
      	"Dintegration(I,{1,0})"
 	},
-     PARA,
+     PARA "",
      Caveat =>{"The module M should be specializable to the subspace.
 	  This is true for holonomic modules.",
 	  "The weight vector w should be a list of n numbers if M
 	  is a module over the nth Weyl algebra."},
-     PARA,
+     PARA "",
      "Abbreviations :",
      UL{"Dintegrate"},
      
@@ -1962,7 +1927,7 @@ document {
      TT "gkz (A,b)", " -- 
      computes the Gel'fand-Kapranov-Zelevinsky hypergeometric ideal
      associated to the matrix A and parameter b",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "gkz A", " -- 
      computes parametric Gel'fand-Kapranov-Zelevinsky hypergeometric ideal
      associated to the matrix A"
@@ -1976,7 +1941,7 @@ document {
      See the book 'Groebner deformations of hypergeometric differential 
      equations' by Saito-Sturmfels-Takayama (1999) for more details.",
 
-     PARA,
+     PARA "",
      "A simple example:",
      EXAMPLE {
 	"A = matrix{{1,1,1},{0,1,2}}",
@@ -2004,7 +1969,7 @@ document {
 	"w = {1,4/5,-2,3/2}",
      	"I = AppellF1(w)"
 	},
-     PARA,
+     PARA "",
      Caveat =>{"AppellF1 always returns a different ring and will
 	  use variables x and y. Input should be a List of 4
 	  numbers."},
@@ -2026,7 +1991,7 @@ document {
      	"f = x^2-y^3",
      	"I = PolyAnn f"
 	},
-     PARA,
+     PARA "",
      Caveat =>{"The input f should be an element of a Weyl algebra,
 	  and not an element of a commutative polynomial ring.
 	  However, f should only involve commutative variables."},
@@ -2041,7 +2006,7 @@ document {
      TT "RatAnn f", " -- 
      compute the annihilator ideal in the Weyl algebra of the rational
      function 1/f",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "RatAnn (g,f)", " -- 
      compute the annihilator ideal in the Weyl algebra of the rational
      function g/f"
@@ -2054,7 +2019,7 @@ document {
      	"g = 2*x*y",
      	"I = RatAnn (g,f)"
 	},
-     PARA,
+     PARA "",
      Caveat =>{"The inputs f and g should be elements of a Weyl algebra,
 	  and not elements of a commutative polynomial ring.
 	  However, f and g should only use the commutative variables."},
@@ -2067,7 +2032,7 @@ document {
      INSERTUSAGE {
      TT "WeylClosure I", " -- computes the Weyl closure of a finite rank
      ideal I",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "WeylClosure (I, f)", " -- 
      compute the partial Weyl closure of a finite rank ideal I with
      respect to f"
@@ -2080,23 +2045,23 @@ document {
      holomorphic solutions of I, and is thus analogous to the radical
      operation on a commutative ideal.",
      
-     PARA,
+     PARA "",
      "The partial Weyl closure of I with respect to a polynomial f
      is the intersection of the extended ideal D[f^{-1}]I with D.",
 
-     PARA,
+     PARA "",
      "The Weyl closure is computed by localizing D/I with respect to
      a polynomial f vanishing on the singular locus, and computing
      the kernel of the map D --> D/I --> (D/I)[f^{-1}].",
      
-     PARA,
+     PARA "",
      "A simple example:",
      EXAMPLE {
 	"W = QQ[x,Dx, WeylAlgebra => {x=>Dx}]",
      	"I = ideal(x*Dx-2)",
      	"WeylClosure I"
 	},
-     PARA,
+     PARA "",
      Caveat =>{"The ideal I should be finite rank, which can be tested
 	  manually by Drank.", "The Weyl closure of non-finite rank
 	  ideals or arbitrary submodules has not been implemented."},
@@ -2115,17 +2080,17 @@ document {
      TT "deRham f", "-- 
      computes the deRham cohomology groups of the complement of the
      hypersurface {f = 0} ",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "deRham (i, f)", "-- 
      computes i-th deRham cohomology group of the complement of the
      hypersurface {f = 0} ",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "deRhamAll f", "-- 
      returns explicit cohomology classes in the deRham complex and
      supplementary information"
      },
 	  
-     PARA,
+     PARA "",
      "The algorithm used appears in the paper 'An algorithm for deRham 
      cohomology groups of the complement of an affine variety via D-module
      computation' by Oaku-Takayama(1999).  
@@ -2135,7 +2100,7 @@ document {
      as in the paper 'The cup product structure for complements
      of affine varities' by Walther(2000).",
 
-     PARA,
+     PARA "",
      "A simple example:",
      EXAMPLE {
 	"R = QQ[x,y]",
@@ -2177,7 +2142,7 @@ document {
      TT "diffOps (I, k)", " -- 
      compute differential operators of order less than or equal to k 
      of the quotient ring R/I",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "diffOps (f, k)", " -- 
      compute differential operators of order less than or equal to k 
      of the quotient ring R/(f)"
@@ -2188,7 +2153,7 @@ document {
      less than or equal to k forms a finitely generated module over R/I.  
      This routine returns a generating set.",
      
-     PARA,
+     PARA "",
      "The output is in the form of a hash table.
      The key 'BasisElts' is a row vector of basic differential operators.
      The key 'PolyGens' is a matrix over R whose column vectors represent 
@@ -2198,14 +2163,14 @@ document {
      the set of these operators generates the differential operators of
      R/I of order k or less as an (R/I)-module.",
 
-     PARA,
+     PARA "",
      "A simple example:",
      EXAMPLE {
 	"R = QQ[x,y,z]",
      	"I = ideal(x^2-y*z)", 
      	"diffOps(I, 3)"
 	},
-     PARA,
+     PARA "",
      SeeAlso => {"putWeylAlgebra"}
 
      },
@@ -2230,13 +2195,13 @@ document {
      the differential operators as elements of a Weyl algebra."
      },
 
-     PARA,
+     PARA "",
      "If I is an ideal of the polynomial ring R and m is the output of 
      diffOps(I, k), then this routine returns elements of the Weyl
      algebra W corresponding to R whose images in W/IW are an
      R/I-generating set for the order k or less differential operators.",
 
-     PARA,
+     PARA "",
      "A simple example:",
      EXAMPLE {
 	"R = QQ[x,y,z]",
@@ -2244,7 +2209,7 @@ document {
      	"m = diffOps(I, 3)",
      	"putWeylAlgebra m"
 	},
-     PARA,
+     PARA "",
      SeeAlso => {"diffOps"}
 
      }
@@ -2256,11 +2221,11 @@ document {
      TT "inw (L, w)", " -- 
      computes the initial form of an element L
      with respect to a weight vector w.",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "inw (I, w)", " -- 
      computes the initial ideal of an ideal I
      with respect to a weight vector w.",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "inw (m, w)", " -- 
      computes the initial matrix of a matrix m
      with respect to a weight vector w."
@@ -2280,7 +2245,7 @@ document {
      to homogenize with respect to the weight vector ", EM "w", 
      ".",
 
-     PARA,
+     PARA "",
      "A simple example:",
      EXAMPLE {
 	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
@@ -2288,7 +2253,7 @@ document {
      	"inw(I, {1,3,3,-1})",
      	"inw(I, {-1,-3,1,3})"
 	},
-     PARA,
+     PARA "",
      Caveat =>{"The weight vector ", EM "w = (u,v)", " must have ", 
 	  EM "u+v>=0", "."},
      SeeAlso => {"gbw", "setHomSwitch"}
@@ -2301,7 +2266,7 @@ document {
      TT "gbw (I, w)", " -- 
      computes a Groebner basis of an ideal with respect
      to a weight vector w.",
-     BR, NOINDENT, 
+     BR{}, NOINDENT{}, 
      TT "gbw (m, w)", " -- 
      computes a Groebner basis of a matrix with respect
      to a weight vector w."
@@ -2318,7 +2283,7 @@ document {
      One is to homogenize
      to an ideal of the homogeneous Weyl algebra.  The other is
      to homogenize with respect to the weight vector ", EM "w", ".",
-     PARA,
+     PARA "",
      "A simple example:",
      EXAMPLE {
 	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
@@ -2326,7 +2291,7 @@ document {
      	"gbw(I, {1,3,3,-1})",
      	"gbw(I, {-1,-3,1,3})"
 	},
-     PARA,
+     PARA "",
      Caveat =>{"The weight vector ", EM "w = (u,v)", " must have ", 
 	  EM "u+v>=0", "."},
      SeeAlso => {"inw", "setHomSwitch"}

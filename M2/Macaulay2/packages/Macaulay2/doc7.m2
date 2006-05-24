@@ -76,12 +76,12 @@ document {
      "Yields an r by c matrix, where r is the length of the list of integers
      ", TT "rows", ", and c is the length of the list of integers ", TT "cols", ".  
      The ", TT "(i,j)", "-th entry of the result is ", TT "f_(rows_i, cols_j)", ".",
-     PARA,
+     PARA{},
      "Each ", TO "list of integers", " may contain ranges and repetitions, as in ", 
      TT "{3, 5..7, 3:0}",
-     PARA,
+     PARA{},
      "If ", TT "rows", " or ", TT "cols", " is omitted, all the corresponding indices are used.",
-     PARA,
+     PARA{},
      "Both ", TT "rows", " and/or ", TT "cols", " may contain duplicate values, 
      in which case the result will contain
      duplicate rows and/or columns.",
@@ -90,7 +90,7 @@ document {
       	  "f = genericMatrix(R, a, 3, 5)",
       	  "submatrix(f, {1,2,0}, {0..2, 4})",
 	  },
-     PARA,
+     PARA{},
      EXAMPLE {"submatrix(f, {1,2}, )"},
      TT "submatrix(f,,cols)", " can be written as ", TT "submatrix(f,cols)", ", or ",
      TT "f_cols", ".",
@@ -117,10 +117,10 @@ document {
      "Yields an r by c matrix, where r is the number of rows of ", TT "f", ", and 
      c is the length of the list of integers ", TT "cols", ".  
      The ", TT "(i,j)", "-th entry of the result is ", TT "f_(i, cols_j)", ".",
-     PARA,
+     PARA{},
      "The ", TO "list of integers", ", ", TT "cols", " may contain ranges and repetitions, as in ", 
      TT "{3, 5..7, 3:0}",
-     PARA,
+     PARA{},
      "If the list of column indices is a permutation of 0 .. n-1, where n is
      the number of columns, then the result is the corresponding permutation
      of the columns of f.",
@@ -273,7 +273,7 @@ document {
      Usage => "diff(f,g) or diff(P) or diff(P,i)",
      "This function has two different uses.  The most common use is for differentiation:
      differentiate the second input by the first.",
-     PARA,
+     PARA{},
      "The second use, less common but sometimes useful, is to compute the difference
      polynomial of a Hilbert polynomial.",
      SeeAlso => {
@@ -313,11 +313,11 @@ document {
 	       whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
 	       is the result of contracting ", TT { "n", SUB "j,l" }, ",
 		    by ", TT {"m", SUB "i,k", "."}}},
-     PARA,
+     PARA{},
      "This function is identical to ", TO (diff,Matrix,Matrix), ", except that 
      the multiplication by integers that occurs during differentiation is
      omitted.",
-     PARA,
+     PARA{},
      SeeAlso => "diff and contract"
      }
 TEST "
@@ -348,7 +348,7 @@ document {
      then the resulting matrix of partial derivatives has dimensions ",TT "n"," by ",TT "m",", 
      and the ", TT "(i,j)", " entry is the partial derivative of the ", TT "j", "-th entry of
      ", TT "f", " by the ", TT "i", "-th indeterminate of the ring.",
-     PARA,
+     PARA{},
      "If the ring of ", TT "f", " is a quotient polynomial ring ", TT "S/J", ",
      	  then only the derivatives of the given entries of ", TT "f", " are
      	  computed and NOT the derivatives of elements of ", TT "J", ".",
@@ -490,7 +490,7 @@ document {
      first ", TT "n", " parts of
      the monomial order in the ring of ", TT "f", ". ",
      "See ", TO "parts of monomial orders", " for an explanation.",
-     PARA,
+     PARA{},
      "In the following example, the lead terms using the first part refers to all the
      monomials which have the lead monomial in the indeterminates a and b.  This has a
      similar effect as selecting leadTerm in the ring QQ[c,d][a,b].",
@@ -542,10 +542,10 @@ document {
      Headline => "get the greatest term",
      "Every polynomial ring in Macaulay 2 comes equipped with a monomial ordering.
      For ring elements and matrices, this function returns the greatest term in this order.",
-     PARA,
+     PARA{},
      "For an ideal, a Groebner basis is first computed, and the ideal of lead terms is
      returned.",
-     PARA,
+     PARA{},
      "If an initial integer ", TT "n", " is specified, then the returned value contains the sum
      of all of the terms with the greatest value on the first ", TT "n", " ",
      TO2 ("parts of a monomial order", "parts of the monomial order"), "."
@@ -554,11 +554,11 @@ document {
      Key => borel,
      Headline => "make a Borel fixed submodule",
      TT "borel m", " -- make a Borel fixed submodule",
-     PARA,
+     PARA{},
      "Yields the matrix with the same target as the matrix ", TT "m", ", whose columns
      generate the smallest Borel fixed submodule containing the lead monomials
      of the columns of ", TT "m", ".",
-     PARA,
+     PARA{},
      "For example, if R = ZZ/101[a..f], then",
      EXAMPLE {
 	  "R = ZZ/101[a..e]",
@@ -582,7 +582,7 @@ document {
      ", TT "M2", ", ", TT "N1", ", ", TT "N2", " are all submodules of ", TT "F", ", then
      return the map induced by ", TT "F --> F", ". If the optional argument ", TT "Verify", 
      " is given, check that the result defines a well defined homomorphism.",
-     PARA,
+     PARA{},
      "In this example, we make the inclusion map between two submodules of ", TT "R^3", 
      ".  M is defined by two elements and N is generated by one element in M",
      EXAMPLE {
@@ -613,7 +613,7 @@ document {
      M and P have the same ambient module, and N and Q have the same ambient module.
      If the optional argument ", TT "Verify", 
      " is given, check that the result defines a well defined homomorphism.",
-     PARA,
+     PARA{},
      "In this example, the module K2 is mapped via g into K1, and we construct the
      induced map from K2 to K1.",
      EXAMPLE {
@@ -652,7 +652,7 @@ document {
      Headline => "verify that a map is well-defined",
      TT "Verify", " -- an option that can be used to request verification
      that a map is well defined.",
-     PARA,
+     PARA{},
      UL {
 	  TO [inducedMap,Verify]
 	  }
@@ -674,11 +674,11 @@ document {
      Key => Degree,
      TT "Degree => d", " -- an optional argument to ", TO "matrix", " that
      specifies that the degree of the map created should be ", TT "d", ".",
-     PARA,
+     PARA{},
      "The degree may be an integer or a list of integers (multidegree).  The
      length of the list should be the same as the length of a degree for the
      ring, see ", TO "degreeLength", ".",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ/101[x]",
       	  "p = map(R^1, R^1, {{x^4}})",
@@ -741,13 +741,13 @@ document {
      TT "H", ".  Recall that ", 
      TT "**", " refers to the tensor product of modules, and that ", TT "dual G", " is 
      a free module with the same rank as ", TT "G", ".",
-     PARA,
+     PARA{},
      "No computation is required.  The resulting matrix has the same entries as ", 
      TT "f", ", but in a different layout.",
-     PARA,
+     PARA{},
      "If ", TT "f", " is homogeneous, and ", TT "target f == G ** H", ",including 
      the grading, then the resulting matrix will be homogeneous.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = QQ[x_1 .. x_12];",
 	  "f = genericMatrix(R,6,2)",
@@ -773,14 +773,14 @@ document {
      TT "G", ".  Recall that ", 
      TT "**", " refers to the tensor product of modules, and that ", TT "dual G", " is 
      a free module with the same rank as ", TT "G", ".",
-     PARA,
+     PARA{},
      "No computation is required.  The resulting matrix has the same entries as ", 
      TT "f", ", but in a different layout.",
-     PARA,
+     PARA{},
      "If ", TT "f", " is homogeneous, and ", TT "source f == F ** G", 
      ", including the grading, then 
      the resulting matrix will be homogeneous.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = QQ[x_1 .. x_12];",
 	  "f = genericMatrix(R,2,6)",
@@ -798,7 +798,7 @@ document {
      Key => (symbol **, Matrix, Matrix),
      Headline => "tensor product of matrices",
      TT "f ** g", " -- computes the tensor product of two matrices.",
-     PARA,
+     PARA{},
      SeeAlso => "Matrix"
      }
 
@@ -813,7 +813,7 @@ document {
 	Consequences => {"changes the display of matrices"},
      TT "compactMatrixForm", " is a global flag which specifies whether to display
      matrices in compact form.",
-     PARA,
+     PARA{},
      "The default value is ", TT "true", ".  The compact form is the form used by
      ", ITALIC "Macaulay", ", in which the multiplication and exponentiation operators
      are suppressed from the notation.",
@@ -840,7 +840,7 @@ document {
      Key => kernel,
      Headline => "kernel of a map",
      TT "kernel f", " -- produces the kernel of a matrix or ring homomorphism.",
-     PARA,
+     PARA{},
      "If ", TT "f", " is a ring element, it will be interpreted as a one by one
      matrix."
      }
@@ -868,7 +868,7 @@ document {
      Headline => "singular locus",
      TT "singularLocus R", " -- produce the singular locus of a ring,
      which is assumed to be integral and defined by a homogeneous ideal.",
-     PARA,
+     PARA{},
      "Can also be applied to an ideal, in which case the singular locus of
      the quotient ring is returned."
      }
@@ -884,11 +884,11 @@ document {
      Key => (symbol ^,Matrix,Array),
      Headline => "select some rows of blocks",
      TT "f^[i,j,k]", " -- extract some rows of blocks from a matrix ", TT "f", ".",
-     PARA,
+     PARA{},
      "The target of ", TT "f", " should be a direct sum, and the result is obtained by
      composition with the projection onto the sum of the components numbered
      ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "f = map(ZZ^2 ++ ZZ^2, ZZ^2, {{1,2},{3,4},{5,6},{7,8}})",
       	  "f^[0]",
@@ -901,11 +901,11 @@ document {
      Key => (symbol _, Matrix, Array),
      Headline => "select some columns of blocks",
      TT "f_[i,j,k]", " -- extract some columns of blocks from a matrix ", TT "f", ".",
-     PARA,
+     PARA{},
      "The source of ", TT "f", " should be a direct sum, and the result is obtained by
      composition with the inclusion into the sum of the components numbered
      ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "f = map(ZZ^2 ++ ZZ^2, ZZ^2, {{1,2},{3,4},{5,6},{7,8}})",
       	  "f^[0]",
@@ -935,7 +935,7 @@ document {
      Key => content,
      Headline => "the content of a polynomial",
      TT "content f", " -- returns the content of a matrix or polynomial.",
-     PARA,
+     PARA{},
      "The content is the ideal of the base ring generated by the 
      coefficients."
      }
@@ -986,13 +986,13 @@ document {
      by automatically running ", TT "use R", ", unless ", TT "R", " has a name,
      or one of the rings ", TT "R", " is a quotient ring of has a name.
      See: ", TO "use", ".",
-     PARA,
+     PARA{},
      "Warning: quotient rings are bulky objects, because they contain 
      a Groebner basis for their ideals, so only quotients of ", TO "ZZ", " 
      are remembered forever.  Typically the ring created by ", TT "R/I", " 
      will be a brand new ring, and its elements will be incompatible with 
      the elements of previously created quotient rings for the same ideal.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "ZZ/2 === ZZ/(4,6)",
       	  "R = ZZ/101[t]",
@@ -1101,7 +1101,7 @@ document {
      TT "wedgeProduct(p,q,M)", " -- returns the matrix which represents the
      multiplication map from ", TT "exteriorPower(p,M) ** exteriorPower(q,M)", "
      to ", TT "exteriorPower(p+q,M)", ".",
-     PARA,
+     PARA{},
      "Here ", TT "M", " is free module."
      }
 document {
@@ -1123,7 +1123,7 @@ document {
      Key => trace,
      Headline => "trace of a matrix",
      TT "trace f", " -- returns the trace of the matrix f.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ/101[a..d]",
       	  "p = matrix {{a,b},{c,d}}",
@@ -1141,7 +1141,7 @@ document {
      Key => fittingIdeal,
      Headline => "Fitting ideal of a module",
      TT "fittingIdeal(i,M)", " -- the i-th Fitting ideal of the module M",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ/101[x];",
       	  "k = coker vars R",
@@ -1170,14 +1170,14 @@ document {
      Key => (symbol +, Module, Module),
      Headline => "sum of submodules",
      TT "M + N", " -- the sum of two submodules.",
-     PARA,
+     PARA{},
      "The two modules should be submodules of the same module."
      }
 document {
      Key => (symbol **, Module, Module),
      Headline => "tensor product of modules",
      TT "M ** N", " -- produce the tensor product of two modules.",
-     PARA,
+     PARA{},
      "Since M and N may be provided as submodules or subquotient modules, it
      may be necessary to replace them by quotient modules in the course of the
      computation, but the generators provided in the resulting tensor product 
@@ -1200,9 +1200,9 @@ document {
      Key => (symbol **, Matrix, Module),
      Headline => "tensor product",
      TT "f ** N", " -- tensor product of a matrix ", TT "f", " and a module ", TT "N", ".",
-     PARA,
+     PARA{},
      "This is the same as tensoring ", TT "f", " with the identity map of ", TT "N", ".",
-     PARA,
+     PARA{},
      "When ", TT "N", " is a free module of rank 1 the net effect of the
      operation is to shift the degrees of ", TT "f", ".",
      EXAMPLE {
@@ -1217,7 +1217,7 @@ document {
      Key => (symbol **, Module, Ring),
      Headline => "tensor product",
      TT "M ** R", " -- form the tensor product of a module ", TT "M", " with a ring ", TT "R", ".",
-     PARA,
+     PARA{},
      "The ring of ", TT "M", " should be a base ring of ", TT "R", ".",
      EXAMPLE {
 	  "R = ZZ/101[x,y];",
@@ -1230,7 +1230,7 @@ document {
      Headline => "tensor product",
      TT "f ** R", " -- form the tensor product of a module map ", TT "f", " with 
      a ring ", TT "R", ".",
-     PARA,
+     PARA{},
      "The ring of ", TT "f", " should be a base ring of ", TT "R", ".  The degree 
      of the map is preserved.",
      EXAMPLE {
@@ -1257,7 +1257,7 @@ document {
      Headline => "the class of all Hilbert polynomials",
      "For convenience, these polynomials are expressed in terms of the Hilbert 
      polynomials of projective space.",
-     PARA,
+     PARA{},
      "The functions ", TO "degree", " and ", TO "dim", " are designed so they
      correspond the degree and dimension of the algebraic variety that may have
      been used to produce the Hilbert polynomial.",
@@ -1271,7 +1271,7 @@ document {
      Headline => "value of polynomial",
      TT "P i", " -- the value of a projective Hilbert polynomial ", TT "P", " at 
      an integer ", TT "i", ".",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "P = projectiveHilbertPolynomial 2",
       	  "apply(0 .. 12, i -> P i)",
@@ -1283,11 +1283,11 @@ document {
      Headline => "Hilbert polynomial of projective space",
      TT "projectiveHilbertPolynomial n", " -- produces the projective
      Hilbert polynomial corresponding to projective space of dimension n.",
-     BR,NOINDENT,
+     BR{},NOINDENT{},
      TT "projectiveHilbertPolynomial(n,d)", " -- produces the projective
      Hilbert polynomial corresponding to the graded ring of projective space
      of dimension n, but with its generator in degree -d.",
-     PARA,
+     PARA{},
      SeeAlso => "ProjectiveHilbertPolynomial"
      }
 TEST "
@@ -1299,22 +1299,22 @@ document {
      Key => presentation,
      Headline => "presentation of a module or ring",
      TT "presentation M", " -- produce a presentation of the module ", TT "M", ".",
-     BR,NOINDENT,
+     BR{},NOINDENT{},
      TT "presentation R", " -- produce a presentation of the quotient ring ", TT "R", ".",
-     BR,NOINDENT,
+     BR{},NOINDENT{},
      TT "presentation(R,S)", " -- produce a presentation of the quotient ring ", TT "S", " over ", TT "R", ".",
-     PARA,
+     PARA{},
      "A presentation of ", TT "M", " is a map ", TT "p", " so that ", TT "coker p", " is 
      isomorphic to ", TT "M", ".  The presentation obtained is expressed in 
      terms of the given generators, i.e., the modules ", TT "cover M", " and 
      ", TT "target p", " are identical.
      The isomorphism can be obtained as ", TT "map(M,coker p,1)", ".",
-     PARA,
+     PARA{},
      "Since a module M may be described as a submodule or a subquotient 
      module of a free module, some computation may be required to produce 
      a presentation.  See also ", TO "prune", " which does a bit more work to try to
      eliminate redundant generators.",
-     PARA,
+     PARA{},
      "For a quotient ring R, the result is a matrix over the ultimate
      ambient polynomial ring, whose image is the ideal defining ", TT "R", ".",
      SeeAlso => {"cover"}
@@ -1333,7 +1333,7 @@ document {
      Key => dual,
      Headline => "dual module or map",
      TT "dual M", " -- the dual.",
-     PARA,
+     PARA{},
      "For details, see one of the following.",
      UL {
 	  TO (dual,ChainComplex),

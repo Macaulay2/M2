@@ -19,7 +19,7 @@ document {
      name, a function call (that is, a function name, together with
      specific types of its arguments), an optional argument to a function, or
      a package",
-     PARA,
+     PARA{},
      "The easiest way to
      write documentation for an entry is to start with one of the following examples 
      or templates, and then modify it.",
@@ -83,7 +83,7 @@ document {
      and hypertext items. A single text string, even though it is not a list, is 
      generally accepted as a hypertext list. Math support is currently
      rudimentary.  Macaulay 2 examples may be included in the list",
-     PARA,
+     PARA{},
      "Each element of the list may be a text string, or one of the elements
      below.",
      "The following items are used by themselves",
@@ -117,7 +117,7 @@ document {
        "For example, the hypertext list",
 
        PRE///{ 
-  HR,
+  HR{},
   "When referring to a ", 
   EM "Macaulay 2", 
   " identifier such as ",
@@ -130,15 +130,15 @@ document {
   TO (installPackage,String), 
   ") as illustrated here.",
   EXAMPLE "matrix{{1,2},{3,4}}",
-  HR  
+  HR{}
  }///,
 
-  PARA,
+  PARA{},
   
-  "when used in a ", TO "document", " node, produces",PARA,
+  "when used in a ", TO "document", " node, produces",PARA{},
 
 { 
-  HR,
+  HR{},
   "When referring to a ", 
   EM "Macaulay 2", 
   " identifier such as ",
@@ -151,7 +151,7 @@ document {
   TO (installPackage,String), 
   ") as illustrated here.",
   EXAMPLE "matrix{{1,2},{3,4}}",
-  HR  
+  HR{}
 },
 
 SeeAlso => {

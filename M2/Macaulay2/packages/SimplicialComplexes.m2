@@ -268,7 +268,7 @@ document { Key => SimplicialComplexes,
      Headline => "simplicial complexes",
      EM "SimplicialComplexes", " is a package for manipulating simplicial
      complexes.",
-     PARA,
+     PARA{},
      "A simplicial complex on a set of vertices 
      is a collection of subsets 
      ", TT "D", " of
@@ -277,12 +277,12 @@ document { Key => SimplicialComplexes,
      In Macaulay 2, the vertices are variables in a polynomial ring,
      and each subset is represented as a product of the
      corresponding variables.",
-     PARA,
+     PARA{},
      "There is a bijection between simplicial complexes and squarefree
      monomial ideals.  This package exploits this correspondence by
      using commutative algebra routines to perform most of the necessary
      computations.",
-     PARA,
+     PARA{},
      "This package includes the following functions:",
      UL {
 	  TO boundary,
@@ -317,7 +317,7 @@ document { Key => SimplicialComplexes,
      
 document {  Key => SimplicialComplex,
      TT "SimplicialComplex", " -- the class of simplical complexes",
-     PARA,
+     PARA{},
      "Some support routines",
      UL {
 	  (TO "support", "(m) -- the support of the monomial m, as a list of integers")
@@ -376,7 +376,7 @@ document {
      In Macaulay 2, the vertices are variables in a polynomial ring,
      and each subset is represented as a product of the
      corresponding variables.",
-     PARA,
+     PARA{},
      "A simplicial complex is determined by either the minimal nonfaces or the facets.  To define the
       octahedron by the Stanley Reisner ideal:",
      EXAMPLE {
@@ -566,7 +566,7 @@ document {
           "D = simplicialComplex I;",
 	  "fVector D"
 	  },
-     PARA,
+     PARA{},
      "The f-vector is computed using the Hilbert series
      of the Stanley-Reisner ideal.  For example, see 
      Hosten and Smith's
@@ -625,7 +625,7 @@ document {
 	  "ring E",
 	  "coefficientRing E"
           },
-     PARA,
+     PARA{},
      "There is a bijection between simplicial complexes and squarefree
      monomial ideals.  This package exploits this correspondence by
      using commutative algebra routines to perform most of the necessary
@@ -732,7 +732,7 @@ document {
 	  "D = simplicialComplex {a*b,b*c,c*d,d*a}",
           "dual D"
 	  },
-     PARA,
+     PARA{},
      "The Alexander dual is homotopic to the complement of D in the sphere generated
      by all of the variables in the ",
      TO2((ring,SimplicialComplex),"ring"),
@@ -753,7 +753,7 @@ document {
 	  "pdim (R^1/(ideal D))",
 	  "regularity ideal A"
 	  },
-     PARA,
+     PARA{},
      "Alexander duality interchanges extremal betti numbers of the face ideals.
      Following example 3.2 in Bayer-Charalambous-Popescu, ", EM "Extremal betti
      numbers and applications to monomial ideals", ", we have ",
@@ -844,7 +844,7 @@ document {
 	  "faces(2,D)",
 	  "fVector D"
           },
-     PARA,
+     PARA{},
      "To avoid repeated computation, 
      the matrix of ", TT "i", "-faces is cached at ", 
      TT "D.cache.faces#i", ".
@@ -892,10 +892,10 @@ document {
 	  "ideal D"
 	  },
      "There are six minimal nonfaces of ", TT "D", ".",
-     PARA,
+     PARA{},
      "This routine is identical to ", TO (monomialIdeal,SimplicialComplex),
      ", except for the ", TO2(Type,"type"), " of the output.",
-     PARA,
+     PARA{},
      "Note that no computatation is performed by this routine; all the
      computation was done while constructing the simplicial complex.",
      SeeAlso => {SimplicialComplexes, 
@@ -938,10 +938,10 @@ document {
 	  "monomialIdeal D"
 	  },
      "There are six minimal nonfaces of ", TT "D", ".",
-     PARA,
+     PARA{},
      "This routine is identical to ", TO (ideal,SimplicialComplex),
      ", except for the ", TO2(Type,"type"), " of the output.",
-     PARA,
+     PARA{},
      "Note that no computatation is performed by this routine; all the
      computation was done while constructing the simplicial complex.",
      SeeAlso => {SimplicialComplexes, 
@@ -984,10 +984,10 @@ document {
 	  "facets D"
 	  },
      "There are four facets of ", TT "D", ".",
-     PARA,
+     PARA{},
      "Note that no computatation is performed by this routine; all the
      computation was done while constructing the simplicial complex.",
-     PARA,
+     PARA{},
      "A simplicial complex is displayed by listing its facets, and so this
      function is frequently unnecessary.",
      SeeAlso => {SimplicialComplexes, 

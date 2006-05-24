@@ -37,7 +37,7 @@ scan({det,minors,exteriorPower}, fn -> document {
      ") then the ", TO "Bareiss", " algorithm is used.  If the ring is a ", 
      TO2("QuotientRing", "quotient ring"), " (which has not been declared a field by ", TO "toField", 
      "), then the ", TO "Cofactor", " algorithm is used.",
-     PARA,     
+     PARA{},     
      Caveat => {
 	  {"The ", TO "Bareiss", " algorithm returns a ring element which may differ from the actual 
 	       determinant by a zero divisor in the ring.  Thus, an ", EM "incorrect", 

@@ -78,6 +78,7 @@ texmacs.m2
 packages.m2
 parser.m2
 document.m2
+content.m2
 hypertext.m2
 texhtml.m2
 install.m2

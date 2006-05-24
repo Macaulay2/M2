@@ -5,7 +5,7 @@ document {
      Key => "COPYING",
      Headline => "the Macaulay 2 license agreement",
      "This is the text of the license agreement under which Macaulay 2 is distributed.",
-     PARA,
+     PARA{},
      if sourceHomeDirectory =!= null then PRE separate("\f",get(sourceHomeDirectory | "COPYING"))
      else if prefixDirectory =!= null then PRE separate("\f",get(prefixDirectory | LAYOUT#"docm2rel" | "COPYING"))
      else (
@@ -36,7 +36,7 @@ document {
      written by Hans-J. Boehm and Alan J. Demers and generously licensed
      to the public.  It is available at
      ", HREF "http://www.hpl.hp.com/personal/Hans_Boehm/gc/", ".",
-     PARA,
+     PARA{},
      SeeAlso => {"collectGarbage" }
      }
 
@@ -51,7 +51,7 @@ document {
      ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory"," and at 
      ", HREF "http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/SOURCES", ".  It
      is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
-     PARA,
+     PARA{},
      "The following important routines call upon it:",
      UL {
 	  TOH "factor",
@@ -72,7 +72,7 @@ document {
      ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac"," and at 
      ", HREF "http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/SOURCES", ".  It
      is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
-     PARA,
+     PARA{},
      "The following important routines call upon it:",
      UL {
 	  TOH "factor",
@@ -152,7 +152,7 @@ document {
      with his Fall 2005 course: Math 634, Commutative algebra,
      at Cornell University.  This course covers basic commutative
      algebra, at the level of Atiyah-Macdonald, and Greuel-Pfister.",
-     PARA,
+     PARA{},
      "Macaulay2 examples corresponding to the Singular examples in the
      book by Greuel-Pfister may also be found here.",
      Subnodes => {
@@ -171,8 +171,6 @@ document {
 
 
 document { Key => "frequently encountered problems",
-     Subnodes => {
-	  }
      }
 
 document {
@@ -183,7 +181,7 @@ document {
      value, and this is specified when creating the method function with the
      option ", TO "TypicalValue", " as follows.",
      PRE ///isModule = method(TypicalValue => Boolean)///,
-     PARA,
+     PARA{},
      "Other functions, such as ", TO "prune", ", return values of various types,
      depending on the type of the arguments provided.  To install a
      function ", TT "f", " as the handler for ", TT "prune", " applied to a matrix,
@@ -197,7 +195,7 @@ document {
      "The information is stored in the hash table ", TO "typicalValues", ", and can
      be recovered like this.",
      EXAMPLE "typicalValues#(prune,Matrix)",
-     PARA,
+     PARA{},
      "Warning: don't imagine that a definition of the form ",
      PRE "f = t -> (...)",
      "can be replaced with a declaration of the following form.",
@@ -211,7 +209,7 @@ document {
 
 document {
      Key => "The authors",
-     PARA,
+     PARA{},
      "To communicate with the authors about the program, use this email address:
      ", HREF {"mailto:Macaulay2@math.uiuc.edu", "<Macaulay2@math.uiuc.edu>"}, ".",
      Subnodes => {
@@ -227,7 +225,7 @@ document {
      Key => "David Eisenbud",
      HREF {"http://www.msri.org/people/staff/de/", "David Eisenbud "}, " ",
      HREF {"mailto:de@msri.org", "<de@msri.org>"}, ".",
-     PARA,
+     PARA{},
      "In this spot will go a brief biography of David Eisenbud."
      }
 
@@ -235,7 +233,7 @@ document {
      Key => "Daniel R. Grayson",
      HREF {"http://www.math.uiuc.edu/~dan/", "Daniel R. Grayson"}, " ",
      HREF {"mailto:dan@math.uiuc.edu", "<dan@math.uiuc.edu>"}, ".",
-     PARA,
+     PARA{},
      "Daniel Grayson received his PhD in Mathematics from MIT in 1976, taught
      at Columbia from 1976 to 1981, and came to the University of Illinois at
      Urbana-Champaign in 1981, where he is a Professor.  His mathematical
@@ -244,7 +242,7 @@ document {
      co-authors to write ", ITALIC "Mathematica", " which in the years since
      its introduction in 1988 has become the pre-eminent system for
      mathematics on the computer.",
-     PARA,
+     PARA{},
      IMG { "../../Images/Grayson2.jpg", "picture of Grayson" }
      }
 
@@ -252,7 +250,7 @@ document {
      Key => "Michael E. Stillman",
      HREF { "http://www.math.cornell.edu/~mike/", "Michael E. Stillman"}, " ",
      HREF {"mailto:mike@math.cornell.edu", "<mike@math.cornell.edu>"}, ".",
-     PARA,
+     PARA{},
      "Michael E. Stillman received his PhD in Mathematics from Harvard in 1983,
      taught at University of Chicago 1983-85, was at Brandeis and then MIT 1985-87,
      and then came to Cornell University.  His mathematical research concerns
@@ -384,14 +382,14 @@ document {
      Key => "initialization file",
      "The file ", TT "init.m2", " is loaded automatically when the
      program is started, if it exists.",
-     PARA,
+     PARA{},
      "On most systems the file is sought in the directory ", TT "$HOME/.Macaulay2/", ",
      where ", TT "$HOME", " is replaced by the path to the user's home
      directory.",
-     PARA,
+     PARA{},
      "Under Mac OS X, the file is sought instead in the
      directory ", TT "$HOME/Library/Application Support/Macaulay2/", ".",
-     PARA,
+     PARA{},
      "If the user wants a file called, say, ", TT "start.m2", " in the current
      directory to be loaded automatically when the program is started, then the
      following line of code can be placed in the file ", TT "init.m2", ".",
@@ -432,13 +430,13 @@ document {
      Key => "executing other programs",
      "The ", TO "run", " command can be used to execute another program,
      after which control will return to Macaulay 2.",
-     PARA,
+     PARA{},
      "To pass the contents of a string as input to a program or
      command, open an output file with ", TO "openOut", " whose name is
      the character '!' followed by the command, write the data to the 
      resulting file, and then close the file.  The output is displayed 
      on the screen.",
-     PARA,
+     PARA{},
      "If you want to collect the output from a command in a string, use 
      ", TO "get", " with a file name consisting of the character '!' 
      followed by the command."

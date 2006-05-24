@@ -18,7 +18,7 @@ document {
 	  Matrix => {"with the same shape as ", TT "m", " whose columns
 	  are sorted in increasing order"}
 	  },
-     PARA,
+     PARA{},
      "The default monomial order is to sort the columns in ascending degree first,
      and within each degree, sort in ascending monomial order in the target free
      module.",
@@ -27,13 +27,13 @@ document {
 	  "m = matrix{{a*d, b^2, b^100, b^50*d^50, c^2*d}}",
 	  "sort m"
 	  },
-     PARA,
+     PARA{},
      "The two optional arguments can modify this default order.
      The value of ", TO DegreeOrder, " is considered first (Ascending,
 	  Descending, or null), and after that the monomial order
      is used to break ties, either ascending or descending, depending on the
      value of ", TO MonomialOrder, ".",
-     PARA,
+     PARA{},
      "To sort the columns of ", TT "m", " in descending monomial order:",
      EXAMPLE {
 	  "options sort",
@@ -61,14 +61,14 @@ document {
      "Note: we have modified the sort order for strings so that symbols come
      before alphanumeric characters, and upper and lower case characters are
      sorted together.",
-     PARA,
+     PARA{},
      "If the elements of the list are polynomials, then the monomial order
      is used to sort the elements according to their lead terms.",
      EXAMPLE {
 	  "R = ZZ[a..d,MonomialOrder=>Lex];",
 	  "sort{a*d, b^100, c^3*d}"
 	  },
-     PARA,
+     PARA{},
      "The optional arguments are not used in this version of sort.",
      Caveat => {
 	  "If a list contains elements of different types, the sorting still

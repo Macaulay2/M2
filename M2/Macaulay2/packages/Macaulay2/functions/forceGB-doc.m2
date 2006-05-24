@@ -15,7 +15,7 @@ document {
      "Declares that the columns of the matrix ", TT "f", "
      constitute a Groebner basis, and returns a Groebner basis object
      encapsulating that assertion.",
-     PARA,
+     PARA{},
      "Sometimes one knows that a set of polynomials (or columns of such)
      form a Groebner basis, but ", EM "Macaulay 2", " doesn't.  This is the
      way to inform the system of this fact.",

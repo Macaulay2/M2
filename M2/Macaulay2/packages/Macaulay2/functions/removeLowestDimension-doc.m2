@@ -15,8 +15,8 @@ document {
        "This function yields the intersection of the primary components of ", TT "M", ", 
        except those of lowest dimension (and thus returns the
        ambient free module of ", TT "M", " (or unit ideal), if ", TT "M", "
-       is pure dimensional).", PARA,
-       "For a very brief description of the method used, see ", TO "topComponents", ".",PARA,
+       is pure dimensional).", PARA{},
+       "For a very brief description of the method used, see ", TO "topComponents", ".",PARA{},
        "As an example we remove the lowest dimensional component of an ideal I",
      
      EXAMPLE {
@@ -36,14 +36,14 @@ document {
 --     Key => removeLowestDimension,
 --     Headline => "remove components of lower dimension",
 --     TT "removeLowestDimension I", " -- removes the components of ", TT "I", " of lower dimension",
---     PARA,
+--     PARA{},
 --     "Yields the intersection of the primary components of ", TT "I", ",
 --     excepting those of lowest dimension (and thus returns the
 --     ambient free module of ", TT "I", " (or unit ideal), if ", TT "I", "
 --     is pure dimensional).",
---     PARA,
+--     PARA{},
 --     "For an example, see also ", TO "component example", ".",
---     PARA,
+--     PARA{},
 --     "Computes one free resolution, and some homology groups, but no
 --     projections or determinants are used.  For a very brief description
 --     of the method used, see ", TO "topComponents", ".",

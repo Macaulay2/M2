@@ -14,17 +14,17 @@ document {
      Inputs => { "x"  },
      Outputs => { {"provides the generators of ", TT "x", 
 	       " in a convenient form, as a list or a matrix, depending on the type"} },
-     PARA,
+     PARA{},
      "Produces the generators of a Groebner basis, a polynomial ring, an ideal,
      a free module, a free group, a submodule given by
      means of generators (or for which generators have been computed),
      or a free monoid.",
-     PARA,
+     PARA{},
      "Usually the result is a list of generators, but the generators of
      a module or Groebner basis are provided as the columns in a matrix.  
      The matrix is stored in a module M under M.generators, unless the matrix
      is the identity matrix.",
-     PARA,
+     PARA{},
      "The symbol ", TT "gens", " is a synonym for ", TT "generators", ".",     
      SeeAlso => {numgens, Monoid, GroebnerBasis, Module, relations, subquotient}
      }

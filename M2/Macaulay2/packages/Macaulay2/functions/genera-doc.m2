@@ -58,7 +58,7 @@ document {
      where the i-th entry in the list is the arithmetic genus of the i-th
      succesive generic hyperplane section of the zero-locus of ", TT "I", " ",  
      "(= (-1)^dim-lin-section * (chi(OO_lin-section) - 1)).",
-     PARA,
+     PARA{},
      "A complete intersection of type (2,3) in projective fourspace;
      its hyperplane section is a canonical curve of genus 4:",
      EXAMPLE {
@@ -81,7 +81,7 @@ document {
      where the i-th entry in the list is the arithmetic genus of the i-th
      succesive generic hyperplane section of ", TT "V", " ", 
      "(= (-1)^dim-lin-section * (chi(OO_lin-section) - 1)).",
-     PARA,
+     PARA{},
      "A complete intersection of type (2,3) in projective fourspace;
      its hyperplane section is a canonical curve of genus 4:",
      EXAMPLE {

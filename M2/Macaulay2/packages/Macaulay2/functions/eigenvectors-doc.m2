@@ -18,7 +18,7 @@ document {
 	  },
      "The resulting matrix is over CC, and contains the eigenvectors of ", TT "M", ".  The lapack
      library is used to compute eigenvectors of real and complex matrices.",
-     PARA,
+     PARA{},
      "Recall that if ", TT "v", " is a non-zero vector such that ",, TT "Mv = av", 
      ", for a scalar a, then
      ", TT "v", " is called an eigenvector corresponding to the eigenvalue ", TT "a", ".",

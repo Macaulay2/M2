@@ -67,7 +67,6 @@ document {
      "This package provides computations with components
      of ideals, including minimal and associated primes, radicals, and
      primary decompositions of ideals.",
-     PARA,
      Subnodes => {
 	  TO (associatedPrimes, Ideal),
 	  TO [associatedPrimes,Strategy],

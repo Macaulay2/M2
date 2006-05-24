@@ -13,12 +13,12 @@ document {
      " in it for each basis element of ", TT "C_i", " with multi-degree",
      TT "{d_0,...,d_(n-1)}", ". When the multi-degree has a single
      component, the term is", TT "(-1)^i T^(d_0).",
-     PARA,
+     PARA{},
      "This polynomial is an element of the ", 
      TO2(degreesRing, "degrees ring"), ". Notice that the monomial
      ordering used in the degrees ring is ", TT "RevLex", ", so the
      polynomials in it will be displayed with the smallest exponents first.",
---      PARA,
+--      PARA{},
 --      TT "(cokernel f).cache.poincare = p", " -- inform the system that
 --      the Poincare polynomial of the cokernel of ", TT "f", " is ", TT "p",
 --      ".  This can speed the computation of a Groebner basis of ",

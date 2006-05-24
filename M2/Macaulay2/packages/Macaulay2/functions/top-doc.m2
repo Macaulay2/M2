@@ -6,7 +6,7 @@ document {
      Key => {"topComponents"},
      Headline => "compute top dimensional component",
      "The method used is that of Eisenbud-Huneke-Vasconcelos, in their 1993 Inventiones Mathematicae paper.",
-     PARA,
+     PARA{},
      "If M is a module in a polynomial ring R, then the implementations of 
      ", TO "topComponents", " and ", TO "removeLowestDimension", " are based on 
      the following observations:",

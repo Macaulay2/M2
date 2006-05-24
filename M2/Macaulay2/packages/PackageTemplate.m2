@@ -89,7 +89,7 @@ document {
      Key => MyOption,
      Headline => "optional argument specifying a level",
      TT "MyOption", " -- an optional argument used to specify a level",
-     PARA,
+     PARA{},
      "This symbol is provided by the package ", TO PackageTemplate, "."
      }
 document {

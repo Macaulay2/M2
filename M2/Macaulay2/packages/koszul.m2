@@ -223,24 +223,24 @@ document {
      Key => KK,
      Headline => "scripted functor for the Koszul complex.",
      TT "KK x", " -- the Koszul complex of the matrix or ideal ", TT "x", ".",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "KK_i (x)", " -- the ", TT "i", "-th differential of this complex.",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "KK (x,M)", " -- ", TT "KK(x) ** M", " where ", TT "M", " is a module
      over the ring of ", TT "x", ".",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "KK_i (x,M)", " -- the ", TT "i", "-th differential of this complex.",
-     BR,NOINDENT,
+     BR{},NOINDENT{},
      TT "KK^\"*\" (x)", " -- ", TT "Hom(KK(x),R)", ", where ", TT "R", " is the
      ring of ", TT "x", ".",
-     BR,NOINDENT,
+     BR{},NOINDENT{},
      TT "KK^i (x)", " -- the ", TT "i", "-th differential of this complex.",
-     BR,NOINDENT,
+     BR{},NOINDENT{},
      TT "KK^\"*\" (x,M)", " -- ", TT "Hom(KK(x), M)", " where ", TT "M", " is
      a module over the ring of ", TT "x", ".",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "KK^i (x,M)", " -- the ", TT "i", "-th differential of this complex.",
-     PARA, TT "KK", " is a scripted functor which calls one of four functions:
+     PARA{}, TT "KK", " is a scripted functor which calls one of four functions:
      ", TT "KK_i(..)", " calls ", TO "koszul", ",
      ", TT "KK^i(..)", " calls ", TO "cokoszul", ",
      ", TT "KK(..)", " calls ", TO "koszulComplex", ", and
@@ -257,7 +257,7 @@ document {
      Key => cokoszul,
      Headline => "a differential in the \"co-Koszul\" complex",
      TT "cokoszul(i,x)", " or ", TT "cokoszul(i,x,M)", ".",
-     PARA, TT "cokoszul(i,x,M)", " is equal to ", 
+     PARA{}, TT "cokoszul(i,x,M)", " is equal to ", 
      TT "Hom(koszul(i,x) ** M)", ".
      ", TT "cokoszul(i,x)", " is shorthand for ",
      TT "cokoszul(i,x,(ring x)^1)", "."}
@@ -267,7 +267,7 @@ document {
      -- this node has to be replace by three
      Headline => "the Koszul complex",
      -- Usage => {TT "koszulComplex x", " or ", TT "koszulComplex(x,M)"},
-     PARA, "Here, ", TT "x", " may be either an ideal or a ", TT "1", " by
+     PARA{}, "Here, ", TT "x", " may be either an ideal or a ", TT "1", " by
      ", TT "n", "matrix.  ", TT "M", " is a module over the ring 
      of ", TT "x", "."
      }
@@ -277,7 +277,7 @@ document {
      -- this node has to be replace by three
      Headline => "the \"co-Koszul\" complex",
      -- Usage => {TT "cokoszulComplex x", " or ", TT "cokoszulComplex(x,M)"},
-     PARA, TT "cokoszulComplex(x,M)", " is the complex ", TT "Hom(KK x, M)",
+     PARA{}, TT "cokoszulComplex(x,M)", " is the complex ", TT "Hom(KK x, M)",
      ".
        ", TT "cokoszulComplex x", " is the same as ",
      TT "cokoszulComplex(x,(ring x)^1)", "."}
@@ -286,21 +286,21 @@ document {
      Key => HK,
      Headline => "scripted functor for Koszul (co)homology",
      TT "HK x", " -- the Koszul homology of the matrix or ideal ", TT "x", ".",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "HK_i (x)", " -- the ", TT "i", "-th piece of this graded module.",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "HK (x,M)", " -- ", TT "HH KK(x,M)", ".",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "HK_i (x,M)", " -- the ", TT "i", "-th piece of this graded module.",
-     BR,NOINDENT,
+     BR{},NOINDENT{},
      TT "HK^\"*\" (x)", " -- ", TT "HH KK(x,ring x)", ".",
-     BR,NOINDENT,
+     BR{},NOINDENT{},
      TT "HK^i (x)", " -- the ", TT "i", "-th piece of this graded module.",
-     BR,NOINDENT,
+     BR{},NOINDENT{},
      TT "HK^\"*\" (x,M)", " -- ", TT "HH KK(x,M)", ".",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "HK^i (x,M)", " -- the ", TT "i", "-th piece of this graded module.",
-     PARA, TT "HK", " is a scripted functor which calls one of two functions:
+     PARA{}, TT "HK", " is a scripted functor which calls one of two functions:
      ", TT "HK_i(..)", " and ", TT "HK(..)", " call ", TO "koszulHomology",
      ", 
      while ", TT "HK^i(..)", " and ", TT "HK^\"*\"(..)", " call ",
@@ -324,7 +324,7 @@ document {
 document {
      Key => (depth,Module),
      Headline => "the depth of a module",
-     PARA, "Over a ring whose coefficient ring is a field, find the 
+     PARA{}, "Over a ring whose coefficient ring is a field, find the 
      depth of the module with respect to the graded-maximal ideal."
      }
 

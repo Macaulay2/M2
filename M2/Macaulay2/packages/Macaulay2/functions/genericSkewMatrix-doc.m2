@@ -24,7 +24,7 @@ document {
 	  "transpose(M) + M == 0",
 	  "genericSkewMatrix(R,d,5)"
 	  },
-     PARA,
+     PARA{},
      "Omitting the input ", TT "r", " is the same as having ", TT "r", 
      " be the first variable in ", TT "R", ".",
      EXAMPLE{

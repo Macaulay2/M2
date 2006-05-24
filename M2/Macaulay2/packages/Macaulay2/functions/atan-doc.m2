@@ -20,8 +20,8 @@ document {
 	  },
      EXAMPLE {
 	  "atan(sqrt(3.0)/2,1/2)",
-	  "-- Notice this is not quite pi/6, but it is within a reasonable epsilon.",
-	  "epsilon = 1.0*(10)^(-15);",	  
+	  "-- Notice this is not quite pi/6, but it is within a reasonable epsilon.
+epsilon = 10.^-15;",	  
 	  "abs(atan(sqrt(3.0)/2,1.0/2) - pi/6) < epsilon"
 	  }
      }
@@ -36,7 +36,7 @@ document {
 	  RR => {"the arctangent (in radians) of ", TT "x"} 
 	  },
      EXAMPLE {
-     	  "atan(1)",
-	  "abs(atan(1)) ==  pi/4"
+     	  "atan 1",
+	  "abs atan 1 == pi/4"
 	  }
      }

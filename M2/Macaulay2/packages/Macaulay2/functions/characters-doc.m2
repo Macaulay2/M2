@@ -13,9 +13,9 @@ document {
 	  List => {"of the characters in the string ", TT "s"}
 	  },
      "The characters are represented by strings of length 1.",
-     PARA,
+     PARA{},
      EXAMPLE "characters \"asdf\"",
-     PARA,
+     PARA{},
      SeeAlso => {String}
      }
 

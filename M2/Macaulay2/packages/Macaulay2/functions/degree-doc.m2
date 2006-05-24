@@ -7,11 +7,11 @@ document {
      Headline => "the degree",
      TT "degree X", " -- returns the degree of a polynomial, vector, 
      matrix, monomial, or module.",
-     PARA,
+     PARA{},
      "The degree may be an integer, or a vector of integers.  The length
      of that vector is referred to as the 'number of degrees', and is
      provided by ", TO "degreeLength", ".",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ/101[x,y,z]",
       	  "degree (x^2+y^2)^5",
@@ -21,7 +21,7 @@ document {
 	  },
      "The degree of a module of finite length is the same as its length.",
      EXAMPLE "degree cokernel symmetricPower ( 2, vars R )",
-     PARA,
+     PARA{},
      "Implemented with a method of the same name."
      }
 
@@ -155,7 +155,7 @@ document {
      "We assume that ", TT "M", " is a graded module over a singly graded 
      polynomal ring or a quotient of a polynomial ring, 
      over a field ", TT "k", ".",
-     PARA,
+     PARA{},
      "If ", TT "M", " is finite dimensional over ", TT "k", ", the degree of ", TT "M", " is its dimension over ", TT "k", ".  Otherwise, 
      the degree of ", TT "M", " is the integer ", TT "d", " such that the hilbert polynomial of ", TT "M", "
      has the form ", TT "z |--> d z^e/e! + lower terms in z.",

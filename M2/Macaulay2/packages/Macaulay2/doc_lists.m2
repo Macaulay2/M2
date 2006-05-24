@@ -73,7 +73,7 @@ document {
      "Most of the functions that apply to lists also work with sequences.  We
      give just one example.",
      EXAMPLE "append(x,f)",
-     PARA,
+     PARA{},
      "The functions ", TO "toList", " and ", TO "toSequence", " are provided
      for converting between lists to sequences.",
      EXAMPLE {
@@ -252,7 +252,7 @@ document {
      PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},
      "A basic list is a sequence of expressions indexed by a seequence of consecutive integers of the form
      ", TT "0", ", ", TT "1", ", ..., ", TT "N-1", ".  The number ", TT "N", " is called the length of the list.",
-     PARA,
+     PARA{},
      "There are various types of basic lists, depending on the application, and they are displayed in different ways.
      The types first encountered are those of type ", TO "VisibleList", ", but new types are easy to introduce.
      In the following example we introduce a new type of basic list called ", TT "L", ".",
@@ -292,10 +292,10 @@ document {
      EXAMPLE "#L, length L",
      "The first entry of the list has index 0.  Indexing is performed using ", TO symbol#, ".",
      EXAMPLE "L#2",
-     PARA,
+     PARA{},
      "Lists in Macaulay2 are immutable. See ", TO MutableList, " for making and using 
      lists that you may modify.",
-     PARA,
+     PARA{},
      "In Macaulay2, there are several kinds of lists, the main difference being their notation.  These
      include ", TO Array, " and ", TO Sequence, ". See ", TO VisibleList, ".", 
      }
@@ -325,14 +325,14 @@ document {
      Key => (symbol :, ZZ, Thing),
      Headline => "repeat an item",
      TT "n : x", " repetition ", TT "n", " times of ", TT "x", " in a sequence",
-     PARA,
+     PARA{},
      "If ", TT "n", " is an integer and ", TT "x", " is anything, return a
      sequence consisting of ", TT "x", " repeated ", TT "n", " times.  A negative 
      value for ", TT "n", " will silently be treated as zero.",
-     PARA,
+     PARA{},
      "Warning: such sequences do not get automatically spliced into lists
      containing them.",
-     PARA,
+     PARA{},
      EXAMPLE { "{5:a,10:b}", "splice {5:a,10:b}" },
      SeeAlso => {splice, (symbol..,ZZ,ZZ), "ranges and repetitions"}
      }
@@ -341,9 +341,9 @@ document {
      Key => toSequence,
      Headline => "convert to sequence",
      TT "toSequence x", " -- yields the elements of a list ", TT "x", " as a sequence.",
-     PARA,
+     PARA{},
      "If ", TT "x", " is a sequence, then ", TT "x", " is returned.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "toSequence {1,2,3}"
 	  },
@@ -355,7 +355,7 @@ document {
      Headline => "remove subsequences",
      TT "deepSplice v", " -- yields a new list v where any members of v 
      which are sequences are replaced by their elements, and so on.",
-     PARA,
+     PARA{},
      "Works also for sequences, and leaves other expressions unchanged.
      Copying the list v is always done when v is mutable.",
      EXAMPLE "deepSplice { (a,b,(c,d,(e,f))), g, h }",
@@ -367,7 +367,7 @@ document {
      Headline => "remove subsequences",
      TT "splice v", " -- yields a new list v where any members of v which are sequences
      are replaced by their elements.",
-     PARA,
+     PARA{},
      "Works also for sequences, and leaves other expressions unchanged.
      Copying the list v is always done when v is mutable.
      Certain functions always splice their arguments or their argument
@@ -383,7 +383,7 @@ document {
      Key => MutableList,
      Headline => "the class of all mutable lists",
      PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},
-     PARA,
+     PARA{},
      "Normally the entries in a mutable list are not printed, to prevent
      infinite loops in the printing routines.  To print them out, use 
      ", TO "peek", ".",

@@ -195,22 +195,6 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (html,NL),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => (html,TO2),
      Headline => "",
      Usage => "",

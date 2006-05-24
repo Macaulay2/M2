@@ -255,7 +255,7 @@ document {
 	  },
      {"This is similar to ", TT "prune", ", except that the number of 
 	  generators and relations is not minimized.  However, the 
-	  form obtained is more convenient for certain purposes.", PARA,
+	  form obtained is more convenient for certain purposes.", PARA{},
 	  "The isomorphism from ", TT "N", " to ", TT "M", "can be obtained
 	  with ", TT "g = N.cache.prePruningMap", ".  This is intentionally similar
 	  in form to the case with ", TT "prune", " and ", TT "pruningMap",
@@ -270,7 +270,7 @@ document {
      Headline => "store the isomorphism obtained by 'prePruning'",
      TT "prePruningMap", " -- the key under which is stored the isomorphism to
      a module ", TT "M", " from the module ", TT "prePrune M", ".",
-     PARA,
+     PARA{},
      "This map exists only after ", TT "N = prePrune M", " has been executed
      at least once, and then the map can be obtained with ", TT "N.cache.prePruningMap", ".",
      SeeAlso => {(prePrune, Module), "pruningMap"}
@@ -287,7 +287,7 @@ document {
           "h" => {"the corresponding map ", TT "R^1 --> Hom(M,N)", ", 
 	       where ", TT "R", " is the ring of ", TT "f", "."}
 	  },
-     PARA, "This is designed to be the inverse of the function ",
+     PARA{}, "This is designed to be the inverse of the function ",
      TO "homomorphism", ".",
      SeeAlso => "homomorphism"
      }
@@ -308,7 +308,7 @@ document {
 	  },
      Outputs => {
           "g" => {"the adjoint ", TT "L --> Hom(M,N)",
-	       " of ", TT "f", ".", PARA,
+	       " of ", TT "f", ".", PARA{},
 	       "In terms of 'elements': ",
 	       TT "g(l)(m) = f(l ** m)", "."}
           },
@@ -326,7 +326,7 @@ document {
 	  },
      Outputs => {
           "g" => {TT "Hom(L ** M,N) --> Hom(L,Hom(M,N))",
-	       PARA, "In terms of 'elements': ",
+	       PARA{}, "In terms of 'elements': ",
 	       TT "g(f)(l)(m) = f(l ** m)", "."}
           },
      SeeAlso => {(homTensorAdjoint,Module,Module,Module)}
@@ -347,7 +347,7 @@ document {
 	  },
      Outputs => {
           "g" => {"the adjoint ", TT "L ** M --> N", " of ",
-	       TT "f", ".", PARA, "In terms of 'elements': ",
+	       TT "f", ".", PARA{}, "In terms of 'elements': ",
 	       TT "g(l ** m) = f(l)(m)", "."}
 	  },
      SeeAlso => (tensorHomAdjoint,Matrix,Module,Module)
@@ -363,7 +363,7 @@ document {
           "N" => null
 	  },
      Outputs => {
-          "g" => {TT "Hom(L,Hom(M,N)) --> Hom(L ** M, N)", PARA,
+          "g" => {TT "Hom(L,Hom(M,N)) --> Hom(L ** M, N)", PARA{},
 	       "In terms of 'elements': ",
 	       TT "g(f)(l ** m) = f(l)(m)", "."}
           },
@@ -384,7 +384,7 @@ document {
           "N" => null
 	  },
      Outputs => {
-          "h" => {TT "L ** Hom(M,N) --> Hom(Hom(L,M),N)", ".", PARA,
+          "h" => {TT "L ** Hom(M,N) --> Hom(Hom(L,M),N)", ".", PARA{},
 	       "In terms of 'elements': ",
 	       TT "h(l ** g)(f) = f(g(l))", "."}
           },
@@ -405,7 +405,7 @@ document {
           "L" => null, "M" => null, "N" => null
 	  },
      Outputs => {
-          "h" => {TT "Hom(L,M) ** N --> Hom(L, M ** N)", ".", PARA,
+          "h" => {TT "Hom(L,M) ** N --> Hom(L, M ** N)", ".", PARA{},
 	       "In terms of 'elements': ",
 	       TT "h(f ** n)(l) = f(l) ** n", "."}
           },
@@ -423,7 +423,7 @@ document {
 	  },
      Outputs => {
           "h" => {TT "M --> Hom(Hom(M,R^1),R^1)", ", where ", TT "R",
-	       " is the ring of ", TT "M", ".", PARA, 
+	       " is the ring of ", TT "M", ".", PARA{}, 
                "In terms of 'elements': ", 
 	       TT "h(m)(f) = f(m)", "."}
           },

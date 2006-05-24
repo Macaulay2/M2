@@ -2,6 +2,7 @@
 
 export (
         symbol minimalPrimes,
+	symbol validate,
         symbol poly,
 	symbol cacheValue,
 	symbol stashValue,
@@ -335,9 +336,7 @@ export (
 	symbol MutableHashTable,
 	symbol MutableList,
 	symbol NCLex,
-	symbol NL,
 	symbol NOINDENT,
-	symbol NOTCHECKED,
 	symbol Name,
 	symbol Net,
 	symbol NetFile,
@@ -452,6 +451,7 @@ export (
 	symbol Type,
 	symbol TypicalValue,
 	symbol UL,
+	symbol LI,
 	symbol UNDERLINE,
 	symbol Unmixed,
 	symbol Up,

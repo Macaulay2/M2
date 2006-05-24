@@ -4,10 +4,10 @@ document {
      Key => exit,
      Headline => "exit the program",
      TT "exit n", " -- terminates the program and returns ", TT "n", " as return code.",
-     BR,
-     NOINDENT, 
+     BR{},
+     NOINDENT{}, 
      TT "exit", " -- terminates the program and returns 0 as return code.",
-     PARA,
+     PARA{},
      "Files are flushed and closed.  Functions registered with ", TO "addStartFunction", "
      are called, unless a nonzero return value has been provided.  Another
      way to exit is to type the end of file character, which is typically
@@ -19,7 +19,7 @@ document {
      Key => quit,
      Headline => "quit the program",
      TT "quit", " -- terminates the program and returns 0 as return code.",
-     PARA,
+     PARA{},
      "Files are flushed and closed.  Another way to exit is to type the end of
      file character, which is typically set to Control-D in unix systems, and is
      Control-Z under MS-DOS.",
@@ -51,7 +51,7 @@ document {
      Headline => "dump state of the system to a file",
      TT "dumpdata s", " -- dump all data segments for the current process to 
      the file whose name is stored in the string ", TT "s", ".",
-     PARA,
+     PARA{},
      "This effectively saves the entire state of the system, except that the
      input buffer for the file ", TO "stdio", " appears to have been emptied,
      and care is taken so that the environment and the command line arguments
@@ -65,7 +65,7 @@ document {
      TT "loaddata s", " -- load all data segments for the current process from 
      the file whose name is stored in the string ", TT "s", ".  The file must have been
      created with ", TO "dumpdata", " and the same version of Macaulay 2.",
-     PARA,
+     PARA{},
      "The file should have been created with ", TO "dumpdata", ".  Everything will
      be returned to its former state except:",
      UL {
@@ -82,7 +82,7 @@ document {
      Headline => "list the buckets in a hash table",
      TT "buckets x", " -- returns a list of the buckets used internally in an 
      hash table ", TT "x", ".",
-     PARA,
+     PARA{},
      "Each bucket is represented as a list of key/value pairs."
      }
 
@@ -90,7 +90,7 @@ document {
      Key => identity,
      Headline => "the identity function",
      TT "identity x", " -- returns x.",
-     PARA,
+     PARA{},
      "This is the identity function."
      }
 
@@ -120,7 +120,7 @@ document {
      Headline => "list the pairs in a hash table",
      TT "pairs x", " -- makes a list of all key/value pairs ", TT "(k,v)", " in
      a hash table ", TT "x", ".",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "x = new HashTable from {a => 1, b => 2, c => 3}",
 	  "pairs x",
@@ -150,7 +150,7 @@ document {
      Headline => "logical exclusive-or",
      TT "xor(i,j)", " -- produces the bitwise logical exclusive-or of
      the integers ", TT "i", " and ", TT "j", ".",
-     PARA,
+     PARA{},
      EXAMPLE "xor(10,12)"
      }
 
@@ -160,9 +160,9 @@ document {
      TT "mingle {v,w,...}", " -- produces a new list from the lists or
      sequences v,w,... by taking the first element from each, then the second, 
      and so on.",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "mingle (v,w,...)", " -- does the same.",
-     PARA,
+     PARA{},
      "After one of the lists is exhausted, it is silently ignored.",
      EXAMPLE {
 	  "mingle({1,2,3,4},{a},{F,F,F,F,F,F,F,F,F,F})",
@@ -180,13 +180,13 @@ document {
      Headline => "the class of all self initializing types",
      "A self initializing type ", TT "X", " will produce an instance of X from
      initial data ", TT "v", " with the expression ", TT "X v", ".",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "X = new SelfInitializingType of BasicList",
       	  "x = X {1,2,3}",
       	  "class x",
 	  },
-     PARA,
+     PARA{},
      TO "Command", " is an example of a self initializing type.",
      SeeAlso => {"HeaderType", "WrapperType"}
      }
@@ -203,24 +203,24 @@ document {
      Key => close,
      Headline => "close a file",
      TT "f << close", " -- closes the file ", TT "f", ".",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "close f", " -- closes the file ", TT "f", ".",
-     PARA,
+     PARA{},
      "In the case of an output file, any buffered output is first
      written to the file, and the return value is an integer,
      normally 0, or -1 on error, or the return status of the child
      process in case the the file was a pipe.",
-     PARA,
+     PARA{},
      "If the file was open for both input and output, both directions
      are closed.",
-     PARA,
+     PARA{},
      "If the file is a pipe to another process, i.e., the filename
      began with the character ", TT "!", ", we will wait for the
      process to terminate.  If you don't want to wait for the process
      to terminate, open the file with ", TO "openInOut", ", and if
      necessary, use ", TO "closeIn", " to close it, to indicate that
      it has received all its input.",
-     PARA,
+     PARA{},
      "If the file is ", TT "stdio", " then it is left open, and
      no error is signaled."
      }
@@ -235,12 +235,12 @@ document {
      Key => closeIn,
      Headline => "close an input file",
      TT "f << closeIn", " -- closes the input file ", TT "f", ".",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "closeIn f", " -- closes the input file ", TT "f", ".",
-     PARA,
+     PARA{},
      "If the file was open only for input, then ", TO "close", " is
      easier to use and has the same effect.",
-     PARA,
+     PARA{},
      "If the file was open for both input and output, it remains
      open for output."
      }
@@ -249,17 +249,17 @@ document {
      Key => closeOut,
      Headline => "close an output file",
      TT "f << closeOut", " -- closes the output file ", TT "f", ".",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "closeOut f", " -- closes the output file ", TT "f", ".",
-     PARA,
+     PARA{},
      "Any buffered output is first written to the file,
      and the return value is an integer, normally 0, or -1
      on error, or the return status of the child process
      in case the the file was a pipe.",
-     PARA,
+     PARA{},
      "If the file was open only for output, then ", TO "close", " is
      easier to use and has the same effect.",
-     PARA,
+     PARA{},
      "If the file was open for both input and output, it remains
      open for input."
      }
@@ -275,7 +275,7 @@ document {
      Headline => "end an output line",
      TT "f << endl", " -- ends the line currently being put out to the
      file ", TT "f", ".",
-     PARA,
+     PARA{},
      "It is an essential portable programming practice to use ", TT "endl", "
      always, for writing newline characters (see ", TO "newline", ") to a
      file will not terminate a line containing nets properly,
@@ -290,12 +290,12 @@ document {
      you should use ", TO "endl", " instead, because there is more to 
      ending an output line than emitting the characters in ", TT "newline", ",
      especially when nets are being used.",
-     PARA,
+     PARA{},
      "This string depends on what your operating system is: on Unix systems
      it is the ascii character 10; on Macintoshes it is the ascii character
      13, and under MS-DOS and Windows 95 it is a string of length 2 containing
      ascii characters 13 and 10.",
-     PARA,
+     PARA{},
      "Try to avoid confusing the newline string described here with the
      ASCII character called ", TT "newline", ".  That character can be
      incorporated into a string with the escape sequence ", TT "\\n", ",
@@ -308,18 +308,18 @@ document {
      Key => collectGarbage,
      Headline => "collect the garbage in memory",
      TT "collectGarbage()", " -- attempt a garbage collection.",
-     PARA,
+     PARA{},
      SeeAlso => "GC garbage collector"
      }
 
 --document { gcDump,
 --     Headline => "the status of the memory allocator",
 --     TT "gcDump()", " -- produces a dump of the status of the garbage collector.",
---     PARA,
+--     PARA{},
 --     "Users will normally not want to use this function.  It calls the 
 --     function ", TT "GC_dump", " in the garbage collector, and the output can
 --     be used to debug problems with memory allocation.",
---     PARA,
+--     PARA{},
 --     SeeAlso => "GC garbage collector"
 --     }
 
@@ -369,7 +369,7 @@ document {
      Key => reorganize,
      Headline => "reorganize a database file",
      TT "reorganize x", " -- reorganize the database ", TT "file", " x, compactifying it.",
-     PARA,
+     PARA{},
      SeeAlso => "Database"
      }
 
@@ -392,9 +392,9 @@ document {
      Headline => "get the first key",
      TT "firstkey f", " -- return the first key available in the database
      file ", TT "f", ".",
-     PARA,
+     PARA{},
      "Returns ", TO "null", " if none.",
-     PARA,
+     PARA{},
      SeeAlso => "Database"
      }
 
@@ -403,9 +403,9 @@ document {
      Headline => "the next key in a database",
      TT "nextkey f", " -- return the next key available in the database
      file ", TT "f", ".",
-     PARA,
+     PARA{},
      "Returns ", TO "null", " if none.",
-     PARA,
+     PARA{},
      SeeAlso => "Database"
      }
 
@@ -438,7 +438,7 @@ document {
      Headline => "compute reciprocals",
      TT "InverseMethod", " -- a key used under which is stored a method
      for computing multiplicative inverses.",
-     PARA,
+     PARA{},
      "Internal routines for computing powers call upon that method when
      the exponent is negative."
      }
@@ -448,7 +448,7 @@ document {
      Headline => "disjunction",
      TT "t or u", " -- returns true if ", TT "t", " is true or ", TT "u", "
      is true.",
-     PARA,
+     PARA{},
      "If ", TT "t", " is true, then the code in ", TT "u", " is not evaluated.",
      SeeAlso =>{ "and", "not" }
      }
@@ -458,7 +458,7 @@ document {
      Headline => "conjunction",
      TT "t and u", " -- returns true if ", TT "t", " is true and ", TT "u", "
      is true.",
-     PARA,
+     PARA{},
      "If ", TT "t", " is false, then the code in ", TT "u", " is not evaluated.",
      SeeAlso =>{ "or", "not" }
      }
@@ -472,19 +472,19 @@ document {
      is ", TT "n", " and the code is occupies line ", TT "i", " column ", TT "c", " 
      through line ", TT "j", " column ", TT "d", ". If the ", TT "f", " is compiled, 
      then the location is not available, and ", TO "null", " is returned.",
-     PARA,
+     PARA{},
      "If ", TT "f", " is a sequence, then ", TO "lookup", " is applied
      first, and then the location of the resulting function is provided.",
-     PARA,
+     PARA{},
      "If ", TT "f", " is ", TO "null", ", then ", TO "null", " is returned."
      }
 
 document {
      Key => MutableHashTable,
      Headline => "the class of all mutable hash tables",
-     PARA,
+     PARA{},
      "A mutable hash table is a type of hash table whose entries can be changed.",
-     PARA,
+     PARA{},
      "Normally the entries in a mutable hash table are not printed, to prevent
      infinite loops in the printing routines.  To print them out, use 
      ", TO "peek", ".",
@@ -502,7 +502,7 @@ document {
 --      Headline => "parsing precedence",
 --      TT "precedence x", " -- returns the parsing precedence of ", TT "x", " for use in
 --      the printing routines.",
---      PARA,
+--      PARA{},
 --      SeeAlso => {"Expression", "net", "toString"}
 --      }
 
@@ -511,13 +511,13 @@ document {
      Headline => "make a hash table",
      TT "hashTable v", " -- produce a hash table from a list ", TT "v", " of key-value
      pairs.",
-     PARA,
+     PARA{},
      "The pairs may be of the form ", TT "a=>b", ", ", TT "{a,b}", ",
      or ", TT "(a,b)", ".",
-     PARA,
+     PARA{},
      "Missing entries in the list, represented by ", TO "null", ", will be silently
      ignored.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "x = hashTable {a=>b, c=>d, }",
       	  "x#a"
@@ -528,7 +528,7 @@ document {
      Key => (toList, BasicList),
      Headline => "list of elements",
      TT "toList x", " -- provides a list of elements in the basic list ", TT "x", ".",
-     PARA,
+     PARA{},
      "This is a good way to convert a list of some other type to a list of type
      ", TO "List", ".",
      EXAMPLE {
@@ -558,12 +558,12 @@ document {
      of I with respect to ", TT "J", ".  If ", TT "J", " is not given, the 
      ideal ", TT "J", " is taken to be the ideal generated by the variables of 
      the ring ", TT "R", " of ", TT "I", ".",
-     PARA,
+     PARA{},
      "If I is either an ideal or a submodule of a module M,
      the saturation (I : J^*) is defined to be the set of elements
      f in the ring (first case) or in M (second case) such that
      J^N * f is contained in I, for some N large enough.",
-     PARA,
+     PARA{},
      "For example, one way to homogenize an ideal is to
      homogenize the generators and then saturate with respect to
      the homogenizing variable.",
@@ -580,7 +580,7 @@ document {
 	  "M = R^1 / (a * m^2)",
 	  "M / saturate 0_M",
 	  },
-     PARA,
+     PARA{},
      "The computation is currently not stored anywhere: this means
      that the computation cannot be continued after an interrupt.
      This will be changed in a later version."
@@ -592,21 +592,21 @@ document {
      SUBSECTION "Iterate",
          TT "saturate(I,J,Strategy => Iterate)", " -- indicates that successive ideal
 	 or module quotients should be used.",
-	 PARA,
+	 PARA{},
 	 "This value is the default.",
      SUBSECTION "Linear",
          TT "saturate(I,J,Strategy => Linear)", 
 	 TT "Strategy => Linear", " -- indicates that the reverse lex order should
 	 be used to compute the saturation.",
-	 PARA,
+	 PARA{},
 	 "This presumes that ", TT "J", " is a single, linear polynomial, and that ", TT "I", " 
 	 is homogeneous.",
-	 PARA,
+	 PARA{},
 	 "This is also an option value for ", TO "pushForward1", ".",
      SUBSECTION "Bayer",
      	 TT "saturate(I,f,Strategy => Bayer)", " -- indicates that the method of Bayer's 
 	 thesis should be used.",
-	 PARA,
+	 PARA{},
 	 "The method is to compute ", TT "(I:f)", " for ", TT "I", " and ", TT "f", " homogeneous,
 	 add a new variable ", TT "z", ", compute a Groebner basis of ", TT "(I,f-z)", " in reverse 
 	 lex order, divide by ", TT "z", ", and finally replace ", TT "z", " by ", TT "f", ".",
@@ -627,7 +627,7 @@ document {
      Key => profile,
      Headline => "profile a function",
      TT "f = profile f", " -- replace a global function ", TT "f", " by a profiled version.",
-     PARA,
+     PARA{},
      "The new function is the same as the old one, except that when
      the new function is run, it will record the number of times it
      is called and the total execution time.  Use ", TO "profileSummary", "
@@ -650,11 +650,11 @@ document {
      the name of the global variable as their name.  The companion function
      ", TO "globalReleaseFunction", " is used to release the name when the
      global variable gets reassigned.",
-     PARA,
+     PARA{},
      "Another thing done by this function is to apply ", TO use, " to the thing.
      This is used for polynomial rings to assign values to the symbols representing
      the variables (indeterminates) in the ring.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "X = new Type of MutableHashTable",
       	  "x = new X",
@@ -677,7 +677,7 @@ document {
      have acquired as their name the name of a global variable to which they have
      been assigned, will lose that name when a different value is assigned to
      the variable.",
-     PARA,
+     PARA{},
      SeeAlso => "globalAssignFunction"
      }
 
@@ -686,7 +686,7 @@ document {
      Headline => "list the rows of a net",
      TT "unstack x", " -- produces a list of strings, each containing the
      characters in one row of the ", TT "Net", " ", TT "x", ".",
-     PARA,
+     PARA{},
      "The orginal net, adjusted so its height is 1, may be recovered
      with ", TO "stack", ". The individual strings will have 
      all trailing spaces removed, unless this would make all of them 
@@ -698,11 +698,11 @@ document {
      Key => uncurry,
      Headline => "uncurry a function",
      TT "uncurry(f, (a,b))", "     -- computes ", TT "((f a) b)", ".",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "uncurry(f, (a,b,c))", "   -- computes ", TT "(((f a) b) c)", ".",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "uncurry(f, (a,b,c,d))", " -- computes ", TT "((((f a) b) c) d)", ".",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      "... and so on.",
      EXAMPLE {
 	  "f = a -> b -> c -> [a,b,c]",

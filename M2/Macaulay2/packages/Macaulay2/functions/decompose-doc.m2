@@ -13,7 +13,7 @@ document {
      "This function computes the minimal associated primes
      of the ideal ", TT "I"," using characteristic sets. Geometrically, 
      it decomposes the algebraic set defined by ", TT "I.",
-     PARA,
+     PARA{},
      "Example. The homogenized equations
       of the affine twisted cubic curve define the union of the
       projective twisted cubic curve and a line at infinity:",

@@ -8,7 +8,7 @@
 --      TT "coefficients({i,j,...},p)", " -- yields the coefficients and
 --      monomials of the polynomial or matrix p with respect to variables 
 --      numbered i, j, ... .",
---      BR,NOINDENT,
+--      BR{},NOINDENT{},
 --      TT "coefficients(p)", " -- yields the coefficients and monomials of
 --      the polynomial or matrix p with respect to all of the variables."
 --      }
@@ -30,7 +30,7 @@ document {
 	  },
      "If the optional argument ", TT "Variables=>v", " is given, then the monomials will only
      involve these variables, and the coefficients will involve only the other variables.",
-     PARA,
+     PARA{},
      "If the optional argument ", TT "Monomials=>m", " is not given, then the set of monomials 
      appearing in ", TT "f", " is calculated using ", TO monomials, ".",
      EXAMPLE {
@@ -42,7 +42,7 @@ document {
      EXAMPLE {
 	  "M*C == matrix{{F}}"
 	  },
-     PARA,
+     PARA{},
      "The Sylvester matrix of two generic quadratic forms.",
      EXAMPLE {
 	  "G = d*x^2+e*x*y+f*y^2",

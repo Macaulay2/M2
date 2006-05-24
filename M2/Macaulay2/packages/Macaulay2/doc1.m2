@@ -1,12 +1,12 @@
 document {
      Key => "initial help",				    -- display by the help command by default
      "Welcome to Macaulay 2",
-     PARA,
+     PARA{},
      "Try entering '2+2' at your next input prompt, which begins with ", TT "i", ".
      The two output prompts begin with ", TT "o", ".  The first one, with the
      equal sign, '=', gives the value computed from your input, and the second one, with
      the colon, ':', tells what type of thing the value is.",
-     PARA,
+     PARA{},
      "Type one of these commands to get started reading the documentation:",
      UL {
      	  SEQ (///copyright///, ///                         -- the copyright///),
@@ -118,93 +118,93 @@ document {
 document {
      Key => newClass,
      Headline => "copy an object, changing the class",
-     TT "newClass(N,m)", " -- makes a copy of m with N as the new class", BR, NOINDENT,
+     TT "newClass(N,m)", " -- makes a copy of m with N as the new class", BR{}, NOINDENT{},
      TT "newClass(N,M,m)", " -- makes a copy of m with N as class and M as parent",
-     PARA,
+     PARA{},
      "If m is a list, then BasicList should be an ancestor of N.  If m is 
      a hash table, then ", TT "HashTable", " should be an ancestor of N.",
-     PARA,
+     PARA{},
      "If m is mutable, and instances of class N are also mutable, then
      copying is not required, and is not done.",
-     PARA,
+     PARA{},
      SeeAlso => { "copy", "toList" }
      }
 document {
      Key => lookup,
      Headline => "look up methods",
-     NOINDENT,
+     NOINDENT{},
      TT "lookup(M,A)", " -- provides the binary method named ", TT "M", " for class ", TT "A", ".
      The first place to look is ", TT "A#M", ".  The search proceeds with
      the parent of ", TT "A", ", and so on.",
-     PARA,
-     NOINDENT, TT "lookup(M,A,B)", " -- provides the binary method named ", TT "M", " for ", TT "(A,B)", ".
+     PARA{},
+     NOINDENT{}, TT "lookup(M,A,B)", " -- provides the binary method named ", TT "M", " for ", TT "(A,B)", ".
      The first place to look is ", TT "Y#(M,A,B)", " where ", TT "Y", " is the younger
      of ", TT "A", " and ", TT "B", ".  The search proceeds next with the parent of ", TT "B", ", 
      and so on. ",
-     PARA,
-     NOINDENT, TT "lookup(M,A,B,C)", " -- provides the ternary method named ", TT "M", " for
+     PARA{},
+     NOINDENT{}, TT "lookup(M,A,B,C)", " -- provides the ternary method named ", TT "M", " for
      ", TT "(A,B,C)", ".  The first place to look is ", TT "Y#(M,A,B,C)", " where ", TT "Y", " 
      is the youngest of ", TT "A", ", ", TT "B", ", and ", TT "C", ".  The search proceeds with 
      the parent of ", TT "C", ", and so on.",
-     PARA,
-     NOINDENT, TT "lookup(M,A,B,C,D)", " -- provides the quaternary method named ", TT "M", " for
+     PARA{},
+     NOINDENT{}, TT "lookup(M,A,B,C,D)", " -- provides the quaternary method named ", TT "M", " for
      ", TT "(A,B,C,D)", ".  The first place to look is ", TT "Y#(M,A,B,C,D)", " where ", TT "Y", " 
      is the youngest of ", TT "A", ", ", TT "B", ", ", TT "C", ", and ", TT "D", ".  The search proceeds with 
      the parent of ", TT "D", ", and so on.",
-     PARA,
-     NOINDENT, TT "lookup x", " -- where ", TT "x", " is a symbol or function, returns ", TT "x", ".",
-     PARA,
+     PARA{},
+     NOINDENT{}, TT "lookup x", " -- where ", TT "x", " is a symbol or function, returns ", TT "x", ".",
+     PARA{},
      "If no method is found, then ", TO "null", " is returned.",
-     PARA,
+     PARA{},
      SeeAlso => {"#", "classes and types", "installMethod", "youngest"}
      }
 document {
      Key => installMethod,
      Headline => "install methods",
-     PARA,
+     PARA{},
      "Most users will use a different way of installing methods.",
-     PARA,
-     NOINDENT,
+     PARA{},
+     NOINDENT{},
      TT "installMethod(M,A,f)", "     -- installs a function ", TT "f", " as a unary method for
      the class ", TT "A", " under the name ", TT "M", ".  This is the same as ", "M A := f", " 
      if ", TT "M", " is a function.  As currently implemented, this is also the same 
      as ", TT "A#M = f", ".",
-     PARA,
-     NOINDENT,
+     PARA{},
+     NOINDENT{},
      TT "installMethod(M,A,B,f)", "   -- installs a function ", TT "f", " as a binary method for
      classes ", TT "A", " and ", TT "B", " under the name ", TT "M", ".  This is the same as 
      ", TT "M(A,B) := f", " if ", TT "M", " is a
      function, or the same as ", TT "A M B := f", " if ", TT "M", " is a binary operator. As currently
      implemented, this is also the same as ", TT "Y#(M,A,B) = f", ", where ", TT "Y", " is 
      the younger of ", TT "A", " and ", TT "B", ".",
-     PARA,
-     NOINDENT,
+     PARA{},
+     NOINDENT{},
      TT "installMethod(M,A,B,C,f)", " -- installs a function ", TT "f", " as a ternary method 
      for classes ", TT "A", ", ", TT "B", ", and ", TT "C", " under the name ", TT "M", ".  
      This is the same as ", TT "M(A,B,C) := f", " if ", TT "f", "
      is a function.  As currently implemented, this is also the same as
      ", TT "Y#(M,A,B,C) = f", ", where ", TT "Y", " is the youngest of ", TT "A", ", ", TT "B", ", 
      and ", TT "C", ".",
-     PARA,
+     PARA{},
      SeeAlso =>{"#", "lookup",  "new", "classes and types"}
      }
 document {
      Key => "new",
      Headline => "new objects of various types",
      TT "new A of b from c", " -- make a hash table of class ", TT "A", " and 
-     parent ", TT "b", " initialized from ", TT "c", ".", BR,
-     NOINDENT,
+     parent ", TT "b", " initialized from ", TT "c", ".", BR{},
+     NOINDENT{},
      TT "new A of b", " -- make a hash table of class ", TT "A", " 
-     and parent ", TT "b", ".", BR,
-     NOINDENT,
+     and parent ", TT "b", ".", BR{},
+     NOINDENT{},
      TT "new A from c", " -- make a new instance of class ", TT "A", " 
-     initialized from ", TT "c", ".", BR,
-     NOINDENT,
+     initialized from ", TT "c", ".", BR{},
+     NOINDENT{},
      TT "new A", " -- makes a new instance ", TT "n", " 
-     of class ", TT "A", ".", BR,
-     PARA,
-     HR,
-     NOINDENT,
+     of class ", TT "A", ".", BR{},
+     PARA{},
+     HR{},
+     NOINDENT{},
      TT "new A of b from c", " -- make a hash table ", TT "n", " of
      Here ", TT "A", " and ", TT "b", " are hash tables, and ", TT "c", " is
      any expression.  Let ", TT "b", " be an instance of ", TT "B", ", ", TT "c", "
@@ -215,58 +215,58 @@ document {
      value it returns will be converted so its class is ", TT "A", " and its
      parent is ", TT "b", "; this will involve copying unless the returned value 
      is mutable and objects of class ", TT "A", " are mutable.",
-     PARA,
+     PARA{},
      "If no installation routine has been installed, then ", TT "c", " should be
      a hash table or a list, and it will be converted directly.",
-     PARA,
+     PARA{},
      "The class ", TT "A", " should be a type of type, which means that
      ", TT "Type", " is an ancestor of ", TT "A", " and of the class of ", TT "A", ".",
-     HR,
-     NOINDENT,
+     HR{},
+     NOINDENT{},
      TT "new A of b", " -- make a hash table of class ", TT "A", "
      and parent ", TT "b", ".",
-     PARA,
+     PARA{},
      "Same as above, except ", TT "c", " is missing.  Use ",
      PRE "          new AA of B := (A,b) -> ... ",
      "to install the initialization routine.",
-     PARA,
+     PARA{},
      "The class ", TT "A", " should be a type of type, which means that
      ", TT "Type", " is an ancestor of ", TT "A", " and of the class of ", TT "A", ".",
-     HR,
-     NOINDENT,
+     HR{},
+     NOINDENT{},
      TT "new A from c", " -- make a hash table or list ", TT "n", " of 
      class ", TT "A", " initialized from ", TT "c", ".",
-     PARA,
+     PARA{},
      "The same as above except ", TT "b", " is missing.  Use ",
      PRE "          new AA from C := (A,c) -> ... ",
      "to install the corresponding initialization routine.",
-     PARA,
+     PARA{},
      "Since no parent ", TT "b", " has been provided, the value returned by the
      initialization routine will not have its parent reset.  If there
      is no initialization routine the parent will be set to Nothing.",
-     PARA,
+     PARA{},
      "The class ", TT "A", " should be a type, which means that
      ", TT "Type", " is an ancestor of the class of ", TT "A", ".",
-     HR,
-     NOINDENT,
+     HR{},
+     NOINDENT{},
      TT "new A", " -- make a new instance ", TT "n", " of 
      class ", TT "A", ".",
-     PARA,
+     PARA{},
      "Same as above, except ", TT "b", " and ", TT "c", " are missing.
      Use ", TT "new AA := A -> ... ", " to install the initialization routine.",
-     PARA,
+     PARA{},
      "Since no parent ", TT "b", " has been provided, the value returned by the
      initialization routine will not have its parent reset.  If there
      is no initialization routine the parent will be set to Nothing.",
-     PARA,
+     PARA{},
      "The class ", TT "A", " should be a type, which means that
      ", TT "Type", " is an ancestor of the class of ", TT "A", ".",
-     HR,
+     HR{},
      "Note that if the ", TT "of", " option is not used, then the class ", TT "A", "
      need not consist of hash tables or lists.  We are using this feature by
      installing a method so that ", TT "new ZZ", " returns an integer popped
      from the top of the engine's stack.",
-     PARA,
+     PARA{},
      "The symbols ", TO "NewMethod", ", ", TO "NewOfMethod", ", ", 
      TO "NewFromMethod", ", and ", TO "NewOfFromMethod", " are used internally
      for installation of the initialization routines.",
@@ -281,28 +281,28 @@ document {
      Key => NewMethod,
      TT "NewMethod", " -- a symbol used as a method name in conjunction with
      the ", TO "new", " operator.",
-     PARA,
+     PARA{},
      "Intended for internal use only."
      }
 document {
      Key => NewOfMethod,
      TT "NewOfMethod", " -- a symbol used as a method name in conjunction with
      the ", TO "new", " operator.",
-     PARA,
+     PARA{},
      "Intended for internal use only."
      }
 document {
      Key => NewFromMethod,
      TT "NewFromMethod", " -- a symbol used as a method name in conjunction with
      the ", TO "new", " operator.",
-     PARA,
+     PARA{},
      "Intended for internal use only."
      }
 document {
      Key => NewOfFromMethod,
      TT "NewOfFromMethod", " -- a symbol used as a method name in conjunction with
      the ", TO "new", " operator.",
-     PARA,
+     PARA{},
      "Intended for internal use only."
      }
 document {
@@ -324,20 +324,20 @@ document {
 document {
      Key => Option,
      Headline => "the class of all pairs x => y",
-     PARA,
+     PARA{},
      "Such pairs are used as optional arguments for functions.  There
      is also a way to make new hash tables with ", TO "new", " by
      providing a list of option pairs.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "a => 5",
       	  "peek (a => 5)",
 	  "new HashTable from {a => 5, b => 7}",
 	  },
-     PARA,
+     PARA{},
      "These pairs are implemented as lists, so that if ", TT "z", " is ", TT "x => y", ", then 
      ", TT "x", " is ", TT "z#0", " and ", TT "y", " is ", TT "z#1", ".",
-     PARA,
+     PARA{},
      SeeAlso => {"classes and types", "=>"}
      }
 document {
@@ -345,7 +345,7 @@ document {
      Headline => "make a hash table from a list",
      TT "new HashTable from x", " -- produce a new hash table from a
      list ", TT "x", ".",
-     PARA,
+     PARA{},
      "Elements of ", TT "x", " which are options, ", TT "k => v", " cause
      the value ", TT "v", " to be stored in ", TT "x", " under the key ", TT "k", ".",
      SeeAlso => "hashTable"
@@ -419,7 +419,7 @@ document {
      Headline => "types of values returned by functions",
      "A hash table used to store information about the type of values
      typically returned by functions and methods.",
-     PARA,
+     PARA{},
      "This information is used only to build documentation automatically.",
      EXAMPLE "typicalValues#isRing",
      SeeAlso => { "specifying typical values" }
@@ -430,7 +430,7 @@ document {
      TT "TypicalValue => X", " -- an option to ", TO "method", "
      which specifies that values returned by the method function will
      typically be of type ", TT "X", ".",
-     PARA,
+     PARA{},
      "This information is used only to build documentation automatically, and
      is stored in the hash table ", TO "typicalValues", ".",
      SeeAlso => { "specifying typical values" }
@@ -439,7 +439,7 @@ document {
      Key => method,
      Headline => "make a new method function",
      Usage => "f = method()",
-     PARA,
+     PARA{},
      "The code above creates a method function which takes up to three 
      arguments, looking up the appropriate method according to the classes of 
      the arguments, with inheritance.  To install a method for two arguments,
@@ -451,17 +451,17 @@ document {
      PRE "     f X := (x) -> ...",
      "the effect of which happens to be the same as that of",
      PRE "     X#f := (x) -> ...",
-     PARA,
+     PARA{},
      SeeAlso => {"methods" }
      }
 document {
      Key => [method,Associative],
      Headline => "allows associative methods to be created",
-     NOINDENT,
+     NOINDENT{},
      TT "f = method(Associative=>true)", " -- creates an associative
      method which will call upon the appropriate binary methods for its arguments 
      two at a time.",
-     PARA,
+     PARA{},
      "In the following example we install a method which isn't associative
      to illustrate the order of evaluation.",
      EXAMPLE {
@@ -475,9 +475,9 @@ document {
      Headline => "the size of an object",
      TT "size x", " -- returns the size of ", TT "x", " which usually gives
      a rough indication of memory space required to store the object ", TT "x", ".",
-     PARA,
+     PARA{},
      "For a polynomial, the size is the number of terms.",
-     PARA,
+     PARA{},
      "This function should be replaced by something more generally useful."
      }
 document {
@@ -490,7 +490,7 @@ document {
      Key => degreeLength,
      Headline => "the number of degrees",
      TT "degreeLength x", " -- returns the number of degrees of x.",
-     PARA,
+     PARA{},
      "Here x may be a ring, in which case it returns the number of degrees
      (the length of the degree vector) used in grading the ring.",
      SeeAlso => "degree"
@@ -505,7 +505,7 @@ document {
      Headline => "the leading coefficient",
      TT "leadCoefficient f", " -- return the leading coefficient of the polynomial
      or vector ", TT "f", ".",
-     PARA,
+     PARA{},
      SeeAlso => {"leadTerm", "leadMonomial", "leadComponent"}
      }
 document {
@@ -513,7 +513,7 @@ document {
      Headline => "the leading component of a vector",
      TT "leadComponent f", " -- return the leading component of the vector f,
      i.e., the integer i so that f_i is the first nonzero component of f.",
-     PARA,
+     PARA{},
      SeeAlso => {"leadTerm", "leadCoefficient", "leadMonomial"}
      }
 document {
@@ -522,7 +522,7 @@ document {
      TT "leadMonomial f", " -- return the leading monomial of the polynomial
      or vector f, as a ring element.  (Warning: in version 0.9.2, a
      monoid element was returned.)",
-     PARA,
+     PARA{},
      SeeAlso => {"leadTerm", "leadCoefficient", "leadCoefficient"}
      }
 document {
@@ -532,7 +532,7 @@ document {
      effectively removing the braces surrounding the elements
      of any elements of m which happen to be lists.  Also works
      for matrices.",
-     PARA,
+     PARA{},
      EXAMPLE "flatten {{2,3,4},{{5}},6}"
      }
 document {
@@ -557,18 +557,18 @@ document {
      Key => image,
      Headline => "image of a map",
      TT "image h", " -- yields the image of the homomorphism ", TT "h", ".",
-     PARA,
+     PARA{},
      "The result will be a submodule of the target of h",
-     PARA,
+     PARA{},
      "If h is a ring element, it is interpreted as a one by one matrix."
      }
 document {
      Key => Hom,
      Headline => "module of homomorphisms",
      TT "Hom(M,N)", " -- constructs the module of homomorphisms from M to N.",
-     PARA,
+     PARA{},
      "Implemented with a method of the same name.",
-     PARA,
+     PARA{},
      "Use ", TO "homomorphism", " to convert an element of the module of
      homomorphisms to a matrix."
      }
@@ -578,7 +578,7 @@ document {
      Headline => "apply a function to each key in a hash table or database",
      TT "scanKeys(x,f)", " -- apply the function ", TT "f", " to each key used in the
      hash table or database ", TT "x", ".",
-     PARA,
+     PARA{},
      "This function requires an immutable hash table.  To scan the keys in
      a mutable hash table, use ", TT "scan(keys x, f)", "."
      }
@@ -587,7 +587,7 @@ document {
      Headline => "apply a function to each value in a hash table",
      TT "scanValues(x,f)", " -- apply the function ", TT "f", " to each value
      appearing in the hash table ", TT "x", ".",
-     PARA,
+     PARA{},
      "This function requires an immutable hash table.  To scan the values in
      a mutable hash table, use ", TT "scan(values x, f)", "."
      }
@@ -618,13 +618,13 @@ document {
      Key => GlobalReleaseHook,
      TT "GlobalReleaseHook", " -- a method name which is consulted when an
      assignment to a global variable is about to occur.",
-     PARA,
+     PARA{},
      "The method should be a function of two variables: the symbol to which
      a value is being assigned, and the old value about to be overwritten.  
      The method should be stored under the name ", TT "GlobalReleaseHook", " in the
      class of the old value.  It is executed before the assignment occurs,
      and before the execution of ", TO "GlobalAssignHook", ".",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  ///RR.GlobalReleaseHook = (sym,val) -> << concatenate (
      "assigning ", toString val, " to ", toString sym
@@ -639,7 +639,7 @@ document {
      TT "complete C", " -- completely fills out the chain complex C by
      calling upon the engine to provide the maps and modules computed
      by ", TO "resolution", ".",
-     PARA,
+     PARA{},
      "This is mainly intended for developers of new routines for chain
      complexes which have to make use of their internal structure.
      Before running this routine, it is not possible to determine which
@@ -706,7 +706,7 @@ document {
      Key => (symbol <<, Nothing, Thing),
      Headline => "dummy file output",
      "null << x", " -- does nothing and returns ", TO "null", ".",
-     PARA,
+     PARA{},
      "The intention here is that you can use ", TO "null", " as a dummy
      output file, but a lot of time may be wasted converting ", TT "x", " to
      a net."
@@ -751,7 +751,7 @@ document {
      Headline => "get value from hash table",
      TT "x#i", " -- provides the value associated to the key ", TT "i", " in the hash table
      ", TT "x", ".",
-     PARA,
+     PARA{},
      "Assignment to ", TT "x#i", " can change the value if ", TT "x", " is mutable.",
      EXAMPLE {
 	  "x = new MutableHashTable",
@@ -772,7 +772,7 @@ document {
      Headline => "get character from string",
      TT "x#i", " -- provides the ", TT "i", "-th character of the string ", TT "x", ",
      as a string of length 1, if there is one.",
-     PARA,
+     PARA{},
      "If ", TT "i", " is out of range, a string of length 0 is returned.
      If  ", TT "i", " is negative, then the ", TT "i", "-th character
      from the end is provided.",
@@ -782,17 +782,17 @@ document {
      Key => (symbol #, BasicList, ZZ),
      Headline => "get element from list",
      TT "x#i", " -- provides the ", TT "i", "-th element of the list ", TT "x", ".",
-     PARA,
+     PARA{},
      "If ", TT "i", " is out of range, an error is signaled. If  ", TT "i", " 
      is negative, then the ", TT "i", "-th entry counting from the end is provided.",
-     PARA,
+     PARA{},
      "Assignment to ", TT "x#i", " can change the value if ", TT "x", " is mutable."
      }
 document {
      Key => (symbol #, Sequence, ZZ),
      Headline => "get element from sequence",
      TT "x#i", " -- provides the ", TT "i", "-th element of the sequence ", TT "x", ".",
-     PARA,
+     PARA{},
      "If ", TT "i", " is out of range, an error is signaled. If  ", TT "i", " 
      is negative, then the ", TT "i", "-th entry counting from the end is provided."
      }
@@ -853,16 +853,16 @@ document {
      Key => (symbol _, List, ZZ),
      Headline => "get element from list",
      TT "x_i", " -- provides the ", TT "i", "-th element of the list ", TT "x", ".",
-     PARA,
+     PARA{},
      "This is merely a convenient synonym for ", TT "x#i", ".",
-     PARA,
+     PARA{},
      SeeAlso => {(symbol #, BasicList, ZZ)}
      }
 document {
      Key => (symbol _, Sequence, ZZ),
      Headline => "get element from list",
      TT "x_i", " -- provides the ", TT "i", "-th element of the sequence ", TT "x", ".",
-     PARA,
+     PARA{},
      "This is merely a convenient synonym for ", TT "x#i", ".",
      SeeAlso => {(symbol #, BasicList, ZZ)}
      }
@@ -872,9 +872,9 @@ document {
      TT "x.k", " -- the same as ", TT "x#(global k)", ", i.e., treat ", TT "k", " as
      a global symbol and provide the value stored in the hash table ", TT "x", " 
      under the key ", TT "k", ".",
-     PARA,
+     PARA{},
      "May also be used in an assignment.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "x = new MutableHashTable;",
       	  "x.k = 444",
@@ -888,7 +888,7 @@ document {
      Headline => "check for presence of elements whose key is a symbol",
      TT "x.?k", " -- the same as ", TT "x#?(global k)", ", tells whether a value is
      available with ", TT "x.k", ".",
-     PARA,
+     PARA{},
      SeeAlso =>{ ".", "#?" }
      }
 document {

@@ -92,13 +92,18 @@ document {
 
 document {
      Key => resultant,
-     TT "resultant(f:RingElement,g:RingElement,x:RingElement) --> RingElement",
-     BR,NOINDENT, "  -- yields the Sylvester resultant of f and g with respect to the variable x.",
-     PARA,
-"The elements ", TT "f", " and ", TT "g", " should be polynomials in the same ring, and ", TT "x", " should be
-a variable in that ring.  The result is the determinant of the Sylvester matrix, 
-", TT "sylvesterMatrix(f,g,x)", ".  The resultant of f and its derivative with respect to x is the
-discriminant, ", TT "discriminant(f,x).",
+     Usage => "resultant(f:RingElement,g:RingElement,x:RingElement) --> RingElement",
+     Inputs => { 
+	  "f" => RingElement => "",
+	  "g" => RingElement => "",
+	  "x" => RingElement => ""
+	  },
+     Outputs => { RingElement => { "the Sylvester resultant of ", TT "f", " and ", TT "g", " with respect to the variable ", TT "x" }},
+     PARA {
+	  "The elements ", TT "f", " and ", TT "g", " should be polynomials in the same ring, and ", TT "x", " should be
+	  a variable in that ring.  The result is the determinant of the Sylvester matrix, 
+	  ", TT "sylvesterMatrix(f,g,x)", ".  The resultant of ", TT "f", " and its derivative with respect to ", TT "x", " is the
+	  discriminant, ", TT "discriminant(f,x)", "."},
      EXAMPLE {
 	  "R = ZZ[x,a,b,c,d];",
 	  "f = x^2+a*x+b",

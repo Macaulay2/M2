@@ -58,7 +58,6 @@ undocumented {(net, Function),
 	  (net, MutableHashTable),
 	  (net, MutableList),
 	  (net, MutableMatrix),
-	  (net, NL),
 	  (net, Net),
 	  (net, NonAssociativeProduct),
 	  (net, Nothing),
@@ -142,16 +141,16 @@ document {
      Usage => "net x",
      Inputs => { "x" },
      Outputs => { { "a net obtained by formatting ", TT "x", " for printing" } },
-     PARA,
+     PARA{},
      "This function is the primary function called upon by ", TO "<<", " to
      format expressions for printing.  The default method provided by the
      system is to convert ", TT "x", " to an ", TO "Expression", " with 
      ", TO "expression", " and then to convert that to a net.",
-     PARA,
+     PARA{},
      "A new method for formatting expressions of class ", TT "X", " may be
      installed by the user with code of the form ", TT "net X := x -> ...", ".
      The function provided by the user should return a net or a string.",
-     PARA,
+     PARA{},
      "There are various such methods for formatting, but we don't document
      them separately."
      }

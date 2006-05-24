@@ -27,7 +27,7 @@ document {
      (homomorphism) between rings (", ofClass RingMap, "), modules (", ofClass Matrix,
      "), chain complexes (", ofClass ChainComplexMap, "), 
       or between objects in other categories.",
-     PARA,
+     PARA{},
      "See also the function ", TO matrix, ", which focuses on creating new matrices from
      rectangular arrays of ring elements or matrices.",
      Subnodes => {
@@ -69,7 +69,7 @@ document {
 	  },
      "Recall that all indices in Macaulay 2 start at 0, so the upper left-most entry 
      of a matrix ", TT "f", " is ", TT "f_(0,0)", ".",
-     PARA,
+     PARA{},
      "This function is often used when you already know the source and target modules, 
      including their gradings.  If you wish Macaulay 2 to compute the column degrees for
      you (so the resulting matrix will be homogeneous if possible), use ", 
@@ -89,7 +89,7 @@ document {
 	  "degrees g",
 	  "isHomogeneous g"
 	  },
-     PARA,
+     PARA{},
      "Another way would be to let ", TO "matrix", " take care of that for
      us.",
      EXAMPLE {
@@ -117,13 +117,13 @@ document {
      non-zero elements of the 
      output matrix ", TT "h: h_(i,j) = f", ", for every ", TT "(i,j) => f", 
      " in the list ", TT "v", ".",
-     PARA,
+     PARA{},
      "In each case, the modules ", TT "M", " and ", TT "N", " should have the 
      same base ring
      ", TT "R", ", and the ring elements appearing in ", TT "v", " should be over ", 
      TT "R", ", or over a base
      ring of ", TT "R", ".",
-     PARA,
+     PARA{},
      "In the first form, each list in v gives a row of the matrix. ",
      "The length of the list ", TT "v", " should be the number of generators of ", TT "M", 
      ", and the length of each element of ", TT "v", " (which is itself a 
@@ -214,10 +214,10 @@ document {
 	       the appropriate degree."},
 	  },
       "The input ", TT "d", " should be ", ofClass ZZ, ", or a list of integers.",
-      PARA,
+      PARA{},
       "This routine is often used to take a matrix which has a non-zero degree, 
       and make the degree zero.",
-      PARA,
+      PARA{},
       "For example, multiplication of a matrix by a scalar increases the 
       degree, leaving the source and target fixed:",
       EXAMPLE {
@@ -309,11 +309,11 @@ document {
      non-zero elements of the 
      output matrix ", TT "h: h_(i,j) = f", ", for every ", TT "(i,j) => f", 
      " in the list ", TT "v", ".",
-     PARA,
+     PARA{},
      "The ring elements appearing in ", TT "v", " should be be in ", 
      TT "R", ", or in a base
      ring of ", TT "R", ".",
-     PARA,
+     PARA{},
      "In the first form, each list in v gives a row of the matrix. ",
      "The length of the list ", TT "v", " should be the number of generators of ", TT "M", 
      ", and the length of each element of ", TT "v", " (which is itself a 
@@ -347,11 +347,11 @@ document {
 	  },
      "The list ", TT "v", " must be a doubly nested list of 
      ring elements, which are used to fill the matrix, row by row.",
-     PARA,
+     PARA{},
      "The ring elements appearing in ", TT "v", " should be be in ", 
      TT "R", ", or in a base
      ring of ", TT "R", ".",
-     PARA,
+     PARA{},
      "Each list in v gives a row of the matrix. ",
      "The length of the list ", TT "v", " should be the number of generators of ", TT "M", 
      ", and the length of each element of ", TT "v", " (which is itself a 
@@ -366,11 +366,11 @@ document {
      EXAMPLE {
       	  "p = matrix {{x^2,0,3},{0,y^2,5}}"
 	  },
-     PARA,
+     PARA{},
      "The absence of the second argument indicates that the source of the map
      is to be a free module constructed with an attempt made to assign degrees
      to its basis elements so as to make the map homogeneous of degree zero.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ/101[x,y]",
       	  "f = map(R^2,,{{x^2,y^2},{x*y,0}})",
@@ -512,7 +512,7 @@ document {
 	  "G = map(C,B)",
 	  "F*G, G*F"
 	  },
-     PARA,
+     PARA{},
      "The ring maps which are created are not always mathematically well-defined.
      For example, the map F below is the natural quotient map, but the
      the map G is not mathematically well-defined, although we can use it in Macaulay2 to
@@ -564,7 +564,7 @@ document {
 	  ChainComplexMap => {"a map of chain complexes ", TT "D --> C"}
 	  },
      "If the degree d is not given, then d=0 is assumed.",
-     PARA,
+     PARA{},
      "The function ", TT "f", " is called only for those indices which represent spots
      occupied in both the source and target chain complexes.",
      Caveat => {"This function does not check that the maps ", TT "f(i)",

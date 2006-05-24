@@ -3,10 +3,10 @@ document {
     	Headline => "Macaulay2 examples for the Singular book",
     	EM "M2SingularBook", " consists of Macaulay2 translations of the examples in the book ",
 	      EM "A Singular introduction to commutative algebra",
-	PARA,
+	PARA{},
 	"Each example is numbered as it is in Greuel and Pfister's book.  Links to 
 	Macaulay2 routines and concepts are also provided. ",
-	PARA,
+	PARA{},
 	TO "Macaulay2 implementation bugs and problems",
 	Subnodes => {
 	     "Chapter 1",
@@ -178,7 +178,7 @@ document {
 	  },
      "Notice that ring maps are defined by first giving the target ring,
      then the source ring, and finally the data.",
-     PARA,
+     PARA{},
      "Parentheses for functions with one parameter are optional.",
      EXAMPLE {
 	  "g = F f",
@@ -347,18 +347,18 @@ document {
      EXAMPLE {
 	  "dim J",
 	  },
-     PARA,
+     PARA{},
      TEX "The following is WRONG.  In this local ring, $y$ is in the ideal $J$.",
      EXAMPLE {
      	  "y % J",
 	  },
-     PARA,     
+     PARA{},     
      TEX "Translate the origin to $(1,0,0)$.  The plane $x-1 = 0$ goes through this new origin.",
      EXAMPLE {
 	  "J = substitute(J, {x=>x+1})",
 	  "dim J",
 	  },
-     PARA,
+     PARA{},
      "Compute the global dimension after translation.",
      EXAMPLE {
      	  "use ring I",
@@ -378,14 +378,14 @@ document {
 	  "f = x_1*x_2^2 + 1 + y_1^10 + x_1*y_2^5 + y_3",
 	  "1_A1 > y_1^10",
 	  },
-     PARA,
+     PARA{},
      "The second monomial order has the first block local, and the second block polynomial.",
      EXAMPLE {
 	  "A2 = QQ[x_1..x_n,y_1..y_m,MonomialOrder=>{RevLex=>n, m}];",
 	  "substitute(f,A2)",
 	  "x_1*y_2^5 < 1_A2",
 	  },
-     PARA,
+     PARA{},
      "The third example has three blocks of variables.",
      EXAMPLE {
 	  "A3 = QQ[x_1..x_n,y_1..y_m,MonomialOrder=>{n, RevLex=>2, m-2}];",
@@ -410,7 +410,7 @@ document {
      EXAMPLE {
 	  "f % G"
 	  },
-     PARA,
+     PARA{},
      "In order to reduce using a non Groebner basis, use ", TO forceGB,
      EXAMPLE {
 	  "f % (forceGB gens G)"
@@ -433,28 +433,28 @@ document {
      	  ///I = ideal "x10+x9y2,y8-x2y7";///,
      	  "transpose gens gb I"
 	  },
-     PARA,
+     PARA{},
      "Lexicographic order:",
      EXAMPLE {
 	  "A1 = QQ[x,y,MonomialOrder=>Lex];",
 	  "I = substitute(I,A1)",
 	  "transpose gens gb I"
 	  },
-     PARA,
+     PARA{},
      "Now we change to a local order",
      EXAMPLE {
 	  "B = QQ[x,y,MonomialOrder=>{Weights=>{-1,-1},2}];",
 	  "I = substitute(I,B)",
 	  "transpose gens gb I"
 	  },
-     PARA,
+     PARA{},
      "Another local order: negative lexicographic.",
      EXAMPLE {
 	  "B = QQ[x,y,MonomialOrder=>{Weights=>{-1,0},Weights=>{0,-1}}];",
 	  "I = substitute(I,B)",
 	  "transpose gens gb I"
 	  },
-     PARA,
+     PARA{},
      "One method to compute a standard basis is via homogenization.  The example
      below does this, obtaining a standard basis which is not minimal.",
      EXAMPLE {
@@ -489,7 +489,7 @@ document {
 	  "f % I"
 	  },
      "This f is in the ideal I.",
-     PARA,
+     PARA{},
      "Check inclusion and equality of ideals.",
      EXAMPLE {
 	  "K = ideal(f,x^2*y^7+y^14);",
@@ -525,7 +525,7 @@ document {
 	  ///I = ideal"t2+x2+y2+z2,t2+2x2-xy-z2,t+y3-z3";///,
 	  "eliminate(I,t)"
 	  },
-     PARA,
+     PARA{},
      "Alternatively, one may do it by hand: the elements of the Groebner basis
      under an elimination order not involving ", TT "t", " generate the elimination ideal.",
      EXAMPLE {
@@ -533,14 +533,14 @@ document {
 	  "I = substitute(I,A1);",
 	  "transpose gens gb I"
 	  },
-     PARA,
+     PARA{},
      "Here is another elimination ideal.  Weights not given are assumed to be zero.",
      EXAMPLE {
 	  "A2 = QQ[t,x,y,z,MonomialOrder=>Weights=>{1}];",
 	  "I = substitute(I,A2);",
 	  "transpose gens gb I"
 	  },
-     PARA,
+     PARA{},
      "The same order as the previous one:",
      EXAMPLE {
 	  "A3 = QQ[t,x,y,z,MonomialOrder=>Eliminate 1];",
@@ -768,7 +768,7 @@ document {
 	  },
      "Notice that the basis that Macaulay2 uses for Hom(A^3,A^2) is different than the basis
      used by Singular.",
-     PARA,
+     PARA{},
      "The function contraHom of the Singular book in example 2.1.7 could be coded in 
      the following way.",
      EXAMPLE {
@@ -838,7 +838,7 @@ document {
      "Notice that, in Macaulay2, each module comes equipped with a 
      list of generators, and operations such as sum do not try to
      simplify the list of generators.",
-     PARA,
+     PARA{},
      "Intersection, quotients, annihilators are found using standard notation:",
      EXAMPLE {
 	  "intersect(M,N)",
@@ -881,7 +881,7 @@ document {
 	  },
      "Notice that the presentation of N requires no computation, whereas the presentation of 
      M requires a syzygy computation.",
-     PARA,
+     PARA{},
      TO (kernel,Matrix), " gives a submodule, while ", TO (syz,Matrix), " returns the matrix.",
      EXAMPLE {
 	  "syz f",

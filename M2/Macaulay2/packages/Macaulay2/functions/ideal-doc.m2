@@ -45,7 +45,7 @@ document {
 	  "g = matrix{{x^2-w*y, x*y-w*z, x*z-y^2},{y^2-x*z,x^2*y-z^2,x^3-y*z}}",
 	  "ideal g"
 	  },
-     PARA,     
+     PARA{},     
      "The functions ", TO "minors", ", ", TO "pfaffians", " and ", 
      TO2("fittingIdeal", "fitting ideal"),  " are typically more useful methods of creating an ", 
      TO2("Ideal","ideal"), " from a matrix.",
@@ -108,7 +108,7 @@ document {
 	  "I = monomialIdeal(x*y^2, x^2*z, y^2*z)",
      	  "ideal I"
 	  },
-     PARA,
+     PARA{},
      "Most operations between ", TO2("Ideal","ideals"), " and ", TO2("MonomialIdeal","monomial ideals"), 
      " automatically perform the necessary conversions, so one rarely needs to apply the function ", 
      TT "ideal", " to a ", TO2("MonomialIdeal","monomial ideal"), ".",

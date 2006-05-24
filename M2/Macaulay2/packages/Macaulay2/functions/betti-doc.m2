@@ -71,7 +71,7 @@ document {
      "The diagram can be used to determine the degrees of the entries in the matrices
      of the differentials in the chain complex, provided they are homogeneous maps
      of degree 0.",
-     PARA,
+     PARA{},
      "Here is a sample diagram.",
      EXAMPLE {
 	  "R = ZZ/101[a..h]",
@@ -86,7 +86,7 @@ document {
 	of basis elements of degree ", TT "i+j", " in the free module", TT " C_j",
 	". When the chain complex is the resolution of a module the entries are
 	the total and the graded Betti numbers of the module.",
-     PARA,
+     PARA{},
      "If these numbers are needed in a program, one way to get them is
      with ", TO "tally", ".",
      EXAMPLE {

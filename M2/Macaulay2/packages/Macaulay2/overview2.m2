@@ -64,7 +64,7 @@ document {
 	  },
      "It's a 2 by 2 matrix because ", TT "M", " and ", TT "N", " are
      both represented as modules with two generators.",
-     PARA,
+     PARA{},
      "Functions for finding related modules:",
      UL {
 	  TO "ambient",
@@ -97,7 +97,7 @@ document {
      "Maps between free modules are usually specified as matrices, as
      described in the section on ", TO "matrices", ".  In this section 
      we cover a few other techniques.",
-     PARA,
+     PARA{},
      "Let's set up a ring, a matrix, and a free module.",
      EXAMPLE {
 	  "R = ZZ/101[x,y,z];",
@@ -111,7 +111,7 @@ document {
      	  "M^{0,1}",
      	  "M_{2,3}",
 	  },
-     PARA,
+     PARA{},
      "Natural maps between modules can be obtained with ", TO "inducedMap", "; the
      first argument is the desired target, and the second is the source.",
      EXAMPLE {
@@ -160,7 +160,7 @@ document {
      the number of the stage at which they appear.  See the
      documentation of ", TO "resolution", " for details on
      the options which can be used to control the computation.",
-     PARA,
+     PARA{},
      "The same function, applied to a map ", TT "f", ", will produce a map
      from a free resolution of the source of ", TT "f", " to a free resolution of
      the target of ", TT "f", ".",
@@ -357,7 +357,7 @@ document {
      "The main reason to implement algebraic varieties is support the
      computation of sheaf cohomology of coherent sheaves, which doesn't
      have an immediate description in terms of graded modules.",
-     PARA,
+     PARA{},
      "In this example, we use ", TO "cotangentSheaf", " to produce
      the cotangent sheaf on a K3 surface and compute its sheaf
      cohomology.",
@@ -415,7 +415,7 @@ document {
      corresponding value.  Here are the details, together with a
      discussion of how we designed the hash table system seen in
      Macaulay 2.",
-     PARA,
+     PARA{},
      "The keys and values are stored in the hash table.  The hash table consists
      of a certain number of ", ITALIC "buckets", ", each of which can hold an
      arbitrary number of key-value pairs.  The number of buckets is chosen
@@ -425,26 +425,26 @@ document {
      is applied to the key to produce, in a deterministic way, an integer called
      the hash code, and the remainder of the hash code upon division by the
      number of buckets tells which bucket will be used.",
-     PARA,
+     PARA{},
      "It is essential that the
      hash code of a key never change, for otherwise the next 
      attempt to find the key in the hash table will have an unpredictable 
      result - the new hash code of the key may or may not lead to 
      the same bucket, and the value may or may not be located.",
-     PARA,
+     PARA{},
      "Some hash tables and lists are ", TO "mutable", ", i.e., their 
      contents can be altered by assignment statements.  As explained
      above, the hash code of a mutable thing is not permitted to
      change when the contents of the thing change.  Hence, the 
      algorithm for computing the hash code may not refer to the
      contents of a mutable thing.",
-     PARA,
+     PARA{},
      "The strong comparison operator ", TO "===", " is provided to 
      parrot the equality testing that occurs implicitly when 
      accessing a key in a hash table.  The fundamental requirement for this
      strong comparison operator is that things with different hash codes must also
      turn out to be different when tested with this comparison operator.",
-     PARA,
+     PARA{},
      "Here we come to a question of design.  As discussed above, we must assign
      hash codes to mutable things in such a way that the hash codes don't depend
      on their contents.  We can do this in various ways.",
@@ -481,7 +481,7 @@ document {
 	       so that access to this hashtable would be fast."
 	       }
 	  },
-     PARA,
+     PARA{},
      "In Macaulay 2, we chose the second approach listed above; we expect to
      have many mutable things appearing as keys in hash tables, and we need
      the speed.  A counter with initial value 1000000 is incremented each time 
@@ -490,7 +490,7 @@ document {
      the contents of mutable things, and thus such things appear to be 
      containers with opaque walls.  For mutable things, the test for equality 
      must be the same as equality of the hash codes.",
-     PARA,
+     PARA{},
      "It is essential to have some hash tables for which equality amounts
      to equality of the contents.  This cannot be achieved for mutable
      hash tables, but we do achieve it for non-mutable hash tables -- the
@@ -501,7 +501,7 @@ document {
      values can be the coefficients.  The notion of monomial can be
      implemented as a hash table where the keys are the variables and the
      values are the corresponding exponents.",
-     PARA,
+     PARA{},
      "One further comforting remark: the routines that compute hash 
      codes or strong equality do not get into infinite loops, despite 
      the existence of circular structures: any circular structure 
@@ -520,7 +520,7 @@ document {
      list are common, so we offer various ways to apply functions to
      each of the elements of a list, along with various ways to treat the
      returned values.",
-     PARA,
+     PARA{},
      "The most basic operation is provided by ", TO "scan", ", which applies
      a function consecutively to each element of a list, discarding the
      values returned.",
@@ -653,11 +653,11 @@ document {
      "When an error occurs in your program, an error message will appear that
      gives the name of the file, the line number, and the column number of
      the code that provoked the error.",
-     PARA,
+     PARA{},
      "You may use the function ", TO "error", " in your programs to signal
      errors.  Your error message will appear on the screen and execution
      will be stopped.",
-     PARA,
+     PARA{},
      "The function ", TO "try", " can be used to catch an error before
      execution is stopped and to continue or to try something else."
      }
@@ -695,7 +695,7 @@ document {
      encountered.  This may be useful in displaying some tiny indication
      of computational progress to the user.",
      EXAMPLE ///scan(0 .. 20, i -> << "." << flush)///,
-     PARA,
+     PARA{},
      "If long lines get displayed too slowly, such as in emacs, then the user may choose
      to put a line such as ", TT "truncateOutput 100", " into an ", TO "initialization file", ".
      Time is still spent creating the wide output which is eventually truncated.",
@@ -716,7 +716,7 @@ document {
      another program.  The function ", TO "get", " can be used to obtain 
      the entire contents of a file as a single string.  We illustrate this
      here with a file whose name is ", TT "expression", ".",
-     PARA,
+     PARA{},
      "First we create the file by writing the desired text to it.",
      EXAMPLE {
 	  "fn = temporaryFileName()",
@@ -821,12 +821,12 @@ document {
      this idea into practice.  Nets are used extensively in Macaulay 2
      for formatting, for example, for formatting of polynomials and
      matrices.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ/101[x,y,z];",
 	  "f = random(R^1,R^{5:-3})",
 	  },
-     PARA,
+     PARA{},
      "Output of routines such as ", TO "betti", " and ", TO "net", " that
      return nets can be easily incorporated into more complex displays 
      using standard operations on nets (see ", TO "Net", ").",
@@ -858,7 +858,7 @@ document {
 	  },
      "In the last example above, ", TT "1 + 2", " was evaluated first, so it
      yielded ", TT "3", " but after that the contagion set in.",
-     PARA,
+     PARA{},
      "The function ", TO "expression", " can be used to prepare things such
      as polynomials for formatting using the mechanism introduced above.",
      EXAMPLE {
@@ -890,7 +890,7 @@ document {
      Key => atEndOfFile,
      Headline => "test for end of file",
      TT "atEndOfFile f", " -- tells whether an input file ", TT "f", " is at the end.",
-     PARA,
+     PARA{},
      SeeAlso => {"File"}
      }
 
@@ -932,7 +932,7 @@ document {
      than 4096 bytes.  In general, one should be careful to arrange things
      so that the two programs take turns using the communication channel, so
      that when one is writing data, the other is reading it.",
-     PARA,
+     PARA{},
      "A useful function in this connection is ", TO "isReady", ", which will
      tell you whether an input file has any input available for reading, or
      whether it has arrived at the end.  We illustrate it in the following
@@ -953,7 +953,7 @@ document {
      "We also allow for bidirectional communication
      through sockets over the internet.  See ", TO "openInOut", "
      and ", TO "openListener", ", or the next section.",
-     PARA,
+     PARA{},
      "Another useful function is ", TO "wait", ", which can be used
      to wait for input to be available from any of a list of input
      files."
@@ -967,7 +967,7 @@ document {
      ", TT "service", " is the port number or name to use.  If ", TT "service", "
      is omitted, then port 2500 is used.  If ", TT "host", " is omitted, then
      an incoming connection will be listened for.",
-     PARA,
+     PARA{},
      "For the demonstration, we use ", TO "fork", " to create a
      separate process which will listen for a connection on port
      7500 and then send us a message.",
@@ -995,7 +995,7 @@ document {
      then PRE "<< example doesn't work under Windows >>"
      else
      EXAMPLE "wait pid",
-     PARA,
+     PARA{},
      SeeAlso => { "openInOut", "openListener" }
      }
 
@@ -1007,7 +1007,7 @@ document {
      base it on a subclass of ", TO "BasicList", " or a subclass of 
      ", TO "HashTable", ", if you find a class that has some
      of the methods you need already implemented.",
-     PARA,
+     PARA{},
      "As an example, we may wish to implement quaternions as lists
      of four real numbers.  We know that lists already have a method
      for addition which treats them as vectors, and we could use
@@ -1063,7 +1063,7 @@ document {
      integer.  The function ", TO "class", " provides the class of an object, and
      the function ", TO "instance", " tells whether a given object is an
      instance of a given class, or a subclass of it, and so on.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "class 33",
 	  "instance(33,ZZ)",
@@ -1071,7 +1071,7 @@ document {
 	  },
      "The corresponding mathematical idea is that ", TO "ZZ", " is the set of
      all integers.",
-     PARA,
+     PARA{},
      "The class of all classes or types is called ", TO "Type", ".",
      EXAMPLE {
 	  "instance(ZZ,Type)",
@@ -1093,7 +1093,7 @@ document {
      bits of code that are needed in various situations; the keys for the
      hash table are constructed in a certain way from the function and the
      types of its arguments whose details the user doesn't need to know.",
-     PARA,
+     PARA{},
      Subnodes => {
 	  TO "class",
 	  TO "parent",
@@ -1114,7 +1114,7 @@ document {
      the method, we refer to these methods as binary methods.  Each binary
      method is a function of two variables, and is stored either in the class
      of ", TT "x", " or in the class of ", TT "y", ".",
-     PARA,
+     PARA{},
      "Let's assume that ", TT "X", " is the class (or type) of ", TT "x", ", 
      and that ", TT "Y", " is the class of ", TT "y", ".  The way to install a 
      method for the addition of an instance ", TT "x", " of class ", TT "X", " to 
@@ -1122,7 +1122,7 @@ document {
      PRE "X + Y := (x,y) -> ( ... )",
      "where ", TT "( ... )", " represents the body of the function, consisting of suitable
      code for the operation at hand.",
-     PARA,
+     PARA{},
      "The method installed by the code above is automatically inherited by 
      subclasses of ", TT "X", " and ", TT "Y", ".  Here is a brief
      description of the way this works.  Suppose ", TT "X", " is the 
@@ -1136,13 +1136,13 @@ document {
      is applied.  In general this search for a binary method continues all
      the way up the chain of parents to the topmost ancestor of everything,
      which is called ", TO "Thing", ".  (See also ", TO "lookup", ".)",
-     PARA,
+     PARA{},
      "As an extreme example of inheritance, the code ", 
      PRE "Thing + Thing := (x,y) -> ( ... )",
      "will install a binary method for adding any two things, which will take
      effect as a last resort whenever more a specifically defined method
      isn't found.",
-     PARA,
+     PARA{},
      "The ", TO "new", " function also uses a ternary lookup table to
      find the initialization function for the new thing, and should
      be thought of as a ternary operator.  The initialization function
@@ -1168,14 +1168,14 @@ document {
      For some built-in methods the method name is a symbol, but for
      methods created with ", TO "method", ", the method name is the same
      as the function used for calling it up.",
-     PARA,
+     PARA{},
      "Let's assume that ", TT "X", " is the class of ", TT "x", ".  The way to install a method
      for the negation of an instance ", TT "x", " of ", TT "X", " is with a statement of the 
      following form.",
      PRE "- X := x ->( ... )",
      "Here ", TT "( ... )", " represents the body of the function, consisting of
      suitable code for the operation at hand.",
-     PARA,
+     PARA{},
      "The method installed by the code above is automatically inherited by
      subclasses of X.  Here is a brief description of the way 
      this works.  Suppose ", TT "X", " is the ", TO "parent", " of ", TT "P", ".  When an expression
@@ -1183,28 +1183,28 @@ document {
      ", TT "-P", " is applied, unless there isn't one, in which case the method for
      ", TT "-X", " is applied, and so on, all the way up the chain of parents to the
      topmost ancestor of everything, which is called ", TO "Thing", ".",
-     PARA,
+     PARA{},
      "As an extreme example of inheritance, code like", 
      PRE "- Thing := x -> ...",
      "will install a method for negating anything, which will take
      effect as a last resort whenever a more specifically defined method
      isn't found.  It probably isn't a good idea to install such a method,
      for usually all it can do is to print an error message.",
-     PARA,
+     PARA{},
      "The user may introduce new methods as well as new method names.  So it
      is important to understand how methods are installed and consulted.",
-     PARA,
+     PARA{},
      "Applying a method named ", TT "C", " to a thing ", TT "x", " whose class is ", TT "X", " means that",
      PRE "(lookup(C,X)) x",
      "is evaluated.  In other words, ", TT "C", " is used as a key
      to obtain a function from ", TT "X", " (or its parent, grandparent,
      and so on), and the function is applied to ", TT "x", ".  See ", TO "lookup", ".",
-     PARA,
+     PARA{},
      "Installing a method named ", TT "C", " for the class ", TT "X", " is done with code such
      as ",
      PRE "C X := (x) -> ( ... )",
      "where ", TT "( ... )", " represents suitable code for the operation at hand.",
-     PARA,
+     PARA{},
      "The routine for making new methods is ", TO "method", ".",
      SeeAlso =>{"binary methods"}
      }
@@ -1214,7 +1214,7 @@ document {
      "Each class has a parent class which can be used as a container
      for bits of code that apply to a more general class of objects.
      In this section we show how this mechanism works in detail.",
-     PARA,
+     PARA{},
      "We begin by creating a new type of basic list.",
      EXAMPLE {
 	  "X = new Type of BasicList",
@@ -1267,7 +1267,7 @@ document {
      and so on.  (After enough unsuccessful iterations of this, the 
      second type is reset to ", TT "Z", ", the first type is replaced 
      by its parent, and the search continues.)",
-     PARA,
+     PARA{},
      "The same search order applies to method functions defined with
      ", TO "method", "."
      }
@@ -1286,7 +1286,7 @@ document {
 	  "f" => "a method function that accepts optional arguments"
 	  },
      "The list of options could be replaced by the corresponding ", TT "OptionTable", ".",
-     PARA,
+     PARA{},
      "The methods installed for this method function should be written in
      the form ", TT "opts -> args -> (...)", ".  The argument ", TT "args", "
      will be assigned a hash table of type ", TO "OptionTable", " containing 
@@ -1297,7 +1297,7 @@ document {
      not to change the value of ", TT "b", ", or the code will stop working; it
      would be a good idea to protect it.  The default option table for ", TT "f", " 
      can be recovered with the function ", TO "options", ".",
-     PARA,
+     PARA{},
      "In this example we make a linear function of a single real variable whose 
      coefficients are provided as optional arguments.",
      EXAMPLE {

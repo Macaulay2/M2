@@ -16,7 +16,7 @@ document {
      "This function checks if the module ", TT "M", " is equal to its ", TO "ambient", 
      " free module by examining its matrix of ", TO2("generators Module","generators"), 
      " and its matrix of ", TO2("relations Module","relations"), ".",
-     PARA, 
+     PARA{}, 
      "To determine whether ", TT "M", " is isomorphic to a free module, use ", 
      TO "prune", " ", TT "M", ".",
      EXAMPLE {

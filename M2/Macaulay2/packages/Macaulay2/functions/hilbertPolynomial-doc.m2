@@ -41,7 +41,7 @@ document {
      see this by noticing that there is a deformation of the rational
      quartic to the union of 4 lines, or 'sticks', which intersect in
      three successive points.",
-     PARA,
+     PARA{},
      "These Hilbert polynomials can serve as ", 
      TO2 (hilbertFunction,"Hilbert functions"), 
      " too since the values of the Hilbert polynomial eventually are
@@ -70,7 +70,7 @@ document {
 	  "h = hilbertPolynomial M",
      	  "hilbertPolynomial(M, Projective=>false)"
 	  	  },
-     PARA,
+     PARA{},
 --     "These Hilbert polynomials can serve as ", 
 --      TO2 (hilbertFunction,"Hilbert functions"), 
 --      " too since the values of the Hilbert polynomial eventually are
@@ -122,7 +122,7 @@ document {
 	  "hilbertPolynomial (R/I)",
 	  "hilbertPolynomial(I, Projective=>false)"
 	  },
-     PARA,
+     PARA{},
      "These Hilbert polynomials can serve as ", 
      TO2 (hilbertFunction,"Hilbert functions"), 
      " too since the values of the Hilbert polynomial eventually are
@@ -159,7 +159,7 @@ document {
 	  "h = hilbertPolynomial V",
      	  "hilbertPolynomial(V, Projective=>false)"
 	  },
-     PARA,
+     PARA{},
      "These Hilbert polynomials can serve as ", 
      TO2 (hilbertFunction,"Hilbert functions"), 
      " too since the values of the Hilbert polynomial eventually are
@@ -181,11 +181,11 @@ document {
      " which specifies that the Hilbert polynomial produced should be
      expressed in terms of the Hilbert polynomials of projective
      spaces. This is the default.",
-     PARA,
+     PARA{},
      TT "Projective => false", " is an option to ", TO "hilbertPolynomial",
      " which specifies that the Hilbert polynomial produced should be
      expressed as a polynomial in the variable ", TT "i", ".",
-     PARA,
+     PARA{},
      "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"), 
      " of a coordinate ring of the  rational quartic curve in ", 
      TT "P^3.",

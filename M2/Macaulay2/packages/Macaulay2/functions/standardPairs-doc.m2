@@ -30,13 +30,13 @@ document {
 	  "I = monomialIdeal(x*y^3*z, x*y^2*z^2, y^3*z^2, y^2*z^3)",
 	  "standardPairs I"
 	  },     
-     PARA,
+     PARA{},
      "The standard pairs are computed with Algorithm 3.2.5 in
      Groebner Deformations of Hypergeometric Differential 
      Equations, by Mutsumi Saito, Bernd Sturmfels and Nobuki Takayama;
      Algorithms and Computation in Mathematics 6, Springer-Verlag, 2000.  
      Implemented by Gregory G. Smith.",
-     PARA,
+     PARA{},
      "For more information, see the ", EM "Monomial ideals", " chapter in Computations 
      in algebraic geometry with Macaulay 2, edited by David Eisenbud, Daniel R. Grayson, 
      Michael E. Stillman, and Bernd Sturmfels, Algorithms and Computations in Mathematics 8, 

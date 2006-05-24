@@ -13,7 +13,7 @@ document {
 	       elements in the list or in the sequence."} 
 	  },
      "This function calculates the intersection of ",  
-     "submodules of the same free module, or of ideals in the same ring.",PARA,
+     "submodules of the same free module, or of ideals in the same ring.",PARA{},
      "The following example computes the intersection of a sequence of ideals.",
      EXAMPLE {
 	  "R=ZZ/101[a..d];",

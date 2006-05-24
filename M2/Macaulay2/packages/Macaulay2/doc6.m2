@@ -3,13 +3,13 @@ document {
      Key => odd,
      Headline => "tell whether an integer is odd",
      TT "odd x", " -- returns true or false, tells whether x is an odd integer.",
-     PARA,
+     PARA{},
      "See also ", TO "even", "."}
 document {
      Key => even,
      Headline => "tell whether an integer is even",
      TT "even x", " -- returns true or false, tells whether x is an even integer.",
-     PARA,
+     PARA{},
      "See also ", TO "odd", "."}
 document {
      Key => numeric,
@@ -17,9 +17,9 @@ document {
      TT "numeric x", " -- yields the expression obtained from x by converting the 
      integers and rational numbers within to double precision floating 
      point numbers.",
-     PARA,
+     PARA{},
      EXAMPLE "numeric {1,2,3}",
-     PARA,
+     PARA{},
      "See also ", TO "RR", "."}
 document {
      Key => "pi",
@@ -41,11 +41,11 @@ document {
      Headline => "store the list of base rings of a ring",
      TT "baseRings", " -- a symbol used as a key in a ring ", TT "R", " under which is
      stored a list of base rings for ", TT "R", ".",
-     PARA,
+     PARA{},
      "A base ring ", TT "A", " of ", TT "R", " is one of the rings involved in the
      construction of ", TT "R", ".  The natural ring homomorphism from ", TT "A", "
      to ", TT "R", " is implemented with ", TO "promote", ".",
-     PARA,
+     PARA{},
      "The base rings are presented in chronological order."}
 
 document {
@@ -57,7 +57,7 @@ document {
      Headline => "the class of rings handled by the engine",
      "The ", TO "engine", " handles most of the types of rings in the
      system.",
-     PARA,
+     PARA{},
      "The command ", TT "new Engine from x", " is not meant for general 
      users, and provides the developers with a way to create top-level 
      rings corresponding to rings implemented in the engine.  Here ", TT "x", "
@@ -86,18 +86,18 @@ document {
      Key => FractionField,
      Headline => "the class of all fraction fields",
      "Macaulay 2 provides for fraction fields of integral domains.",
-     PARA,
+     PARA{},
      "In some cases, normal forms of fractions makes sense, but in general
      for fraction fieldss of quotient rings, there is no notion of
      normal form for a fraction.
      In other words, fractions
      may be equal without displaying the same numerator and denominator.",
-     PARA,
+     PARA{},
      "Computations over fraction fields, or polynomial rings over fraction fields,
      especially Groebner basis computations, are much slower than over prime fields.
      Still, an attempt is made to speed up these computations as much as possible, and
      more is planned in the future.",
-     PARA,
+     PARA{},
      "For an overview, see ", TO "fraction fields", " and  ", TO frac, ".",
      HEADER4 "Useful functions for use with fractions and fraction fields include:",
      UL {
@@ -125,7 +125,7 @@ document {
      Headline => "the class of all real numbers",
      "A real number is entered as a sequence of decimal digits with a point.",
      EXAMPLE "3.14159",
-     PARA,
+     PARA{},
      SeeAlso => {"basictype"}}
 
 undocumented {
@@ -157,7 +157,7 @@ document {
      Headline => "the class of all complex numbers",
      "In Macaulay 2, complex numbers are represented as floating point numbers, and so are 
      only approximate.  The symbol ", TO "ii", " represents the square root of -1.",
-     PARA, 
+     PARA{}, 
      EXAMPLE {
 	  "z = 3-4*ii",
       	  "z^5",
@@ -229,14 +229,14 @@ document {
      TT "gcdCoefficients(a,b)", " -- returns ", TT "{d,r,s}", " so that
      ", TT"a*r + b*s", " is the greatest common divisor ", TT "d", " of ", TT "a", "
      and ", TT "b", ".",
-     PARA,
+     PARA{},
      "Works for integers or elements of polynomial rings.",
      SeeAlso => "gcd"}
 document {
      Key => mod,
      Headline => "reduce modulo an integer",
      TT "mod(i,n)", " -- reduce the integer ", TT "i", " modulo ", TT "n", ".",
-     PARA,
+     PARA{},
      "The result is an element of ", TT "ZZ/n", "."}
 document {
      Key => OrderedMonoid,
@@ -245,13 +245,13 @@ document {
      its elements.  The ordering is required to be compatible with the 
      multiplication in the sense that if x < y then x z < y z.  The class
      of all ordered monomials is ", TO "OrderedMonoid", ".",
-     PARA,
+     PARA{},
      "The reason for making a separate class for ordered monoids is that monoid
      rings can be implemented more efficiently for them - an element of the 
      monoid ring can be stored as a sorted list, each element of which is
      a pair consisting of an element of the monoid and a coefficient.
      See ", TO "PolynomialRing", ".",
-     PARA,
+     PARA{},
      "A free commutative ordered monoid can be created with ", TO "monoid", ".",
      SeeAlso =>  {"Monoid"}}
 document {
@@ -264,10 +264,10 @@ document {
      Headline => "list the exponents in a polynomial",
      TT "exponents m", " -- for a monomial ", TT "m", " provides the list
      of exponents.",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "exponents f", " -- for a polynomial ", TT "f", " provides a list
      whose elements are the lists of exponents of the terms of ", TT "f", ".",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ/101[x,y,z];",
       	  "exponents (f = x^2 - 7 + x*y*z^11 + y)",
@@ -279,11 +279,11 @@ document {
      Headline => "convert to standard form",
      TT "standardForm f", " -- converts a polynomial or monomial to a
      form involving hash tables.",
-     PARA,
+     PARA{},
      "A polynomial is represented by hash tables in which the keys are
      hash tables representing the monomials and the values are the 
      coefficients.",
-     PARA,
+     PARA{},
      "The monomials themselves are represented by hash tables 
      in which the keys are the variables and the values are the 
      corresponding exponents.",
@@ -296,9 +296,9 @@ document {
      Headline => "convert to list form",
      TT "listForm f", " -- converts a polynomial or monomial to a form
      represented by nested lists.",
-     PARA,
+     PARA{},
      "A monomial is represented by the list of its exponents.",
-     PARA,
+     PARA{},
      "A polynomial is represented by lists of pairs (m,c), one for each
      term, where m is a list of exponents for monomial, and c is the
      coefficient.",
@@ -311,10 +311,10 @@ document {
      Headline => "make a Weyl algebra",
      TT "WeylAlgebra", " -- an option used when creating a polynomial ring
      to specify that a Weyl algebra is to be produced.",
-     PARA,
+     PARA{},
      "A Weyl algebra is an algebra in which some of the variables behave
      as derivatives with respect to the other variables.",
-     PARA,
+     PARA{},
      EXAMPLE "R = ZZ/101[x,dx,y,dy,WeylAlgebra => {x=>dx, y=>dy}];",
      "The list ", TT "{x=>dx, y=>dy}", " indicates that the variable ", TT "dx", "
      is to play the role of the derivative with respect to ", TT "x", ", and
@@ -329,7 +329,7 @@ document {
      Key => (symbol _, RingElement, RingElement),
      Headline => "get a coefficient",
      TT "f_m", " -- provide the coefficient of the monomial m in the polynomial f.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "ZZ[y];",
       	  "((1+y)^5) _ (y^2)",
@@ -340,21 +340,21 @@ document {
      Headline => "get a variable by name",
      TT "R_\"x\"", " -- produce the variable of the polynomial ring R 
      whose name is ", TT "x", ".",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ[x,y,z];",
       	  ///R_"x"///,
 	  },
-     PARA,
+     PARA{},
      "Eventually we will implement this for monoids, too."}
 document {
      Key => (symbol _, Ring, ZZ),
      Headline => "get a variable by number",
      TT "R_i", " -- produce the ", TT "i", "-th generator of a ring ", TT "R", ".",
-     PARA,
+     PARA{},
      "The indexing of generators is based on 0, so ", TT "R_0", " would be
      the first one, and so on.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ[a..d]",
       	  "R_2"
@@ -364,7 +364,7 @@ document {
      Headline => "make a monomial from a list of exponents",
      TT "R_w", " -- produce the monomial of the ring ", TT "R", " by using the 
      integers in the list ", TT "w", " as exponents of the variables.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ[a..d]",
       	  "R_{1,2,3,4}"
@@ -380,15 +380,15 @@ document {
      Key => assign,
      Headline => "assign a value",
      TT "assign(x,v)", " -- assigns v as the value of x.",
-     PARA,
+     PARA{},
      "If the value of x is a symbol or indexed variable, then it
      can be assigned the value v with ",
      PRE "          assign(x,v)",
      "When the value of x is an indexed variable y_i then what happens
      is that the i-th element of the list y is replaced by v.",
-     PARA,
+     PARA{},
      "Differs from x=v in that here x is evaluated.",
-     PARA,
+     PARA{},
      "Note: it would be better if we could arrange for ",
      PRE "          x <- v",
      "to work with indexed variables.  See ", TO "<-", "."}
@@ -416,17 +416,17 @@ document {
      Key => Degrees,
      Headline => "specify the degrees",
      TT "Degrees", " -- an option which specifies the degrees of the generators.",
-     PARA,
+     PARA{},
      "Used as an option to ", TO "monoid", ", or when a polynomial ring
      is created.",
-     PARA,
+     PARA{},
      "See ", TO "monoid", " for details."}
 document {
      Key => SkewCommutative,
      Headline => "make a skewcommutative (alternating) ring",
      TT "SkewCommutative", " -- name for an optional argument for monoids
      that specifies that monoid rings created from them will be skewcommutative.",
-     PARA,
+     PARA{},
      "The default value is false.",
      EXAMPLE {
 	  "R = ZZ[x,y,SkewCommutative=>true]",
@@ -438,13 +438,13 @@ document {
      Headline => "specify maximum exponent size",
      TT "MonomialSize => n", " -- an option which determines the maximum 
      exponent size.",
-     PARA,
+     PARA{},
      "Used as an option to ", TO "monoid", ", or when a polynomial ring
      is created.  Setting 'MonomialSize=>n' specifies that monomial exponents 
      may be as large as 2^(n-1) - 1.  
      The default value is 8, allowing for exponents up to 127.  Currently
      the maximum value is 16, allowing for exponents up to 32767.",
-     PARA,
+     PARA{},
      "See ", TO "monoid", " for details."}
 document {
      Key => Inverses,
@@ -459,21 +459,21 @@ document {
      "This is the class of free monoids that can be handled by 
      the ", TO "engine", ".  Elements of such monoids are implemented
      as instances of ", TO "MonoidElement", ".",
-     PARA,
+     PARA{},
      SeeAlso => { "monoid" }
      }     
 document {
      Key => (symbol _, Monoid, ZZ),
      Headline => "get a generator of a monoid",
      TT "M_i", " -- produces the i-th generator of a monoid ", TT "M", ".",
-     PARA,
+     PARA{},
      SeeAlso => { "Monoid", "_" }}
 document {
      Key => degreesMonoid,
      Headline => "get the monoid of degrees",
      TT "degreesMonoid n", " -- returns the monoid whose elements correspond
      to the multi-degrees of monomials in another monoid.",
-     PARA,
+     PARA{},
      "Also used as a key under which to store the result."}
 document {
      Key => VariableBaseName,
@@ -486,7 +486,7 @@ document {
      Headline => "specify the variable names",
      TT "Variables", " -- a key used with monoids to indicate the list of 
      variable names, or the number of variables.",
-     PARA,
+     PARA{},
      "This option is useful for those situations when one doesn't care about the
      names of the variables in a ring or monoid, or when one is creating a 
      tensor product ring, symmetric algebra, or other ring, and one wants control
@@ -494,14 +494,14 @@ document {
 document {
      Key => VariableOrder,
      TT "VariableOrder", " -- an option used when creating a monoid.",
-     PARA,
+     PARA{},
      "Not implemented yet.",
      SeeAlso => "monoid"}
 document {
      Key => (monoid, Array),
      Headline => "make a polynomial ring or monoid ring",
      TT "monoid [a,b,c,...]", " -- makes a free ordered commutative monoid on the variables listed.",
-     PARA,
+     PARA{},
      "Optional arguments (placed between the brackets):",
      UL (TO \ keys value Macaulay2Core#"private dictionary"#"monoidDefaults"),
      SeeAlso => {(symbol " ", Ring, Array)}}
@@ -510,9 +510,9 @@ document {
      Headline => "the standard way to make a polynomial ring",
      TT "R[...]", " -- produces the monoid ring from a ring ", TT "R", " and the
      ordered monoid specified by ", TT "[...]", ".",
-     PARA,
+     PARA{},
      "This is the customary way to make a polynomial ring.",
-     PARA,
+     PARA{},
      "Optional arguments (placed inside the array):",
      UL (TO \ keys value Macaulay2Core#"private dictionary"#"monoidDefaults"),
      SeeAlso => "polynomial rings"}
@@ -536,41 +536,41 @@ document {
      Headline => "make a monoid",
      TT "monoid [a,b,c,Degrees=>{2,3,4}]", " -- makes a free ordered commutative monoid on the
 	     variables listed, with degrees 2, 3, and 4, respectively.",
-     PARA,
-     NOINDENT,
+     PARA{},
+     NOINDENT{},
      TT "monoid [a,b,c,Degrees=>{{1,2},{3,-3},{0,4}}]", " -- makes a free ordered
      commutative monoid on the variables listed, with multi-degrees as listed.",
-     PARA,
-     NOINDENT,
+     PARA{},
+     NOINDENT{},
      TT "monoid [a,b,c,Degrees=>{{},{},{}}]", " -- makes a free ordered commutative monoid on the
 	     variables listed, ungraded.",
-     PARA,
+     PARA{},
      "The variables listed may be symbols or indexed variables.
      The values assigned to these variables (with ", TO "assign", ") are
      the corresponding monoid generators.  The function ", TO "baseName", "
      may be used to recover the original symbol or indexed variable.",
-     PARA,
+     PARA{},
      "The class of all monoids created this way is ", TO "GeneralOrderedMonoid", ".",
-     PARA,
+     PARA{},
      SeeAlso => {"OrderedMonoid","IndexedVariable","Symbol"}}
 document {
      Key => (symbol **, Monoid, Monoid),
      Headline => "tensor product of monoids",
      TT "M ** N", " -- tensor product of monoids.",
-     PARA,
+     PARA{},
      "For complete documentation, see ", TO "tensor", "."}
 document {
      Key => tensor,
      Headline => "tensor product",
      TT "tensor(M,N)", " -- tensor product of rings or monoids.",
-     PARA,
+     PARA{},
      "This method allows all of the options available for monoids, see
      ", TO "monoid", " for details.  This routine essentially combines the 
      variables of M and N into one monoid.",
-     PARA,
+     PARA{},
      "For rings, the rings should be quotient rings of polynomial rings over the same
      base ring.",
-     PARA,
+     PARA{},
      "Here is an example with monoids.",
      EXAMPLE {
 	  "M = monoid[a..d, MonomialOrder => Eliminate 1]",
@@ -587,28 +587,28 @@ document {
      Key => table,
      Headline => "make a table (nested list)",
      TT "table(u,v,f)", " -- yields a table m in which m_i_j is f(u_i,v_j).",
-     PARA,
+     PARA{},
      "A table is a list of lists, all of the same length.  The entry m_i_j is 
      computed as f(u_i,v_j).",
-     PARA,
+     PARA{},
      "table(m,n,f) -- yields, when m and n are integers, a table of size m by n
      whose entries are obtained by evaluating f() repeatedly.",
-     PARA,
+     PARA{},
      "See also ", TO "isTable", ", and ", TO "subtable", "."}
 document {
      Key => applyTable,
      Headline => "apply a function to elements of a table",
      TT "applyTable(m,f)", " -- applies the function f to each element of the table m.",
-     PARA,
+     PARA{},
      "It yields a table of the same shape as m containing the resulting values.",
-     PARA,
+     PARA{},
      "See also ", TO "table", "."}
 document {
      Key => subtable,
      Headline => "extract a subtable from a table",
      TT "subtable(u,v,m)", " -- yields the subtable of the table m obtained from the
      list u of row numbers and the list v of column numbers.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "m = table(5,5,identity)",
       	  "subtable({1,3,4},toList(2..4), m)"
@@ -617,18 +617,18 @@ document {
      Key => vector,
      Headline => "make a vector",
      TT "vector {a,b,c,...}", " -- produces an element of a free module from a list.",
-     PARA,
+     PARA{},
      "The elements a,b,c,... must be elements of the same ring, or be
      convertible to elements of the same ring."}
 document {
      Key => relations,
      Headline => "the defining relations",
      TT "relations M", " -- produce the relations defining a module M.",
-     PARA,
+     PARA{},
      "The relations are represented as a matrix, and if not stored
      in the module under M.relations, the matrix is understood to be
      empty.",
-     PARA,
+     PARA{},
      SeeAlso => {"generators","subquotient"}}
 TEST "
 R = ZZ/101[a,b,c]
@@ -641,13 +641,13 @@ document {
      Headline => "the class of all elements of free modules which are handled by the engine",
      "If ", TT "R", " is a ring handled by the engine, and ", TT "M", " is a free
      module over ", TT "R", ", then M is a subclass of Vector.",
-     PARA,
+     PARA{},
      SeeAlso => {"engine", "Module"}}
 document {
      Key => (symbol _, Vector, ZZ),
      Headline => "get a component",
      TT "v_i", " -- produce the i-th entry of a vector or module element v.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ/101[a..f]",
       	  "v = vector {a,b,c}",
@@ -703,7 +703,7 @@ document {
      Headline => "list the components of a direct sum",
      TT "components x", " -- produces a list of the components of an element of a 
      free module.",
-     BR,NOINDENT,
+     BR{},NOINDENT{},
      TT "components M", " -- the list of components for a module ", TT "M", " which was
      formed as a direct sum, or ", TT "{M}", " if ", TT "M", " was not formed as a 
      direct sum.  Works also for homomorphism, chain complexes, and graded modules.",
@@ -753,10 +753,10 @@ document {
      Key => super,
      Headline => "get the ambient module",
      TT "super M", " -- yields the module which the module ", TT "M", " is a submodule of.",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "super f", " -- if ", TT "f", " is a map whose target is a submodule 
      of ", TT "M", ", yields the composite of ", TT "f", " with the inclusion into ", TT "M", ".",
-     PARA,
+     PARA{},
      SeeAlso => { "cover", "ambient" }}
 document {
      Key => End,
@@ -788,11 +788,11 @@ document {
 	  "g = matrix{{a,b,c}}",
 	  "f*g"
 	  },
-     PARA,
+     PARA{},
      "The degree of ",
      TT "f*g", " is the sum of the degrees of ", TT "f", " and of ", TT "g",
      ".",
-     PARA,
+     PARA{},
      "The product is also defined when ", TT "P", " != ", TT "Q", ",
      provided only that ", TT "P", " and ", TT "Q", " are free modules of the
      same rank.  If the degrees of ", TT "P", " differ from the corresponding
@@ -828,10 +828,10 @@ document {
      interpreted as a linear transformation in terms of the generators
      of the modules.",
      SeeAlso => "matrices",
-     PARA,
+     PARA{},
      "A matrix ", TT "f", " is an immutable object, so if you want to 
      cache information about it, put it in the hash table ", TT "f.cache", ".",
-     PARA,
+     PARA{},
      "Common ways to make a matrix:",
      UL {
 	  TO "map",
@@ -876,7 +876,7 @@ document {
      Key => (symbol _, Matrix, ZZ),
      Headline => "get a column from a matrix",
      TT "f_i", " -- provide the ", TT "i", "-th column of a matrix ", TT "f", " as a vector.",
-     PARA,
+     PARA{},
      "Vectors are disparaged, so we may do away with this function in the future.",
      SeeAlso => "_"}
 document {
@@ -906,7 +906,7 @@ document {
 	  },
      Headline => "direct sum of modules",
      TT "M++N", " -- computes the direct sum of two modules (or coherent sheaves).",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ/101[a..c];",
       	  "image vars R ++ kernel vars R",
@@ -935,7 +935,7 @@ document {
 	  },
      Headline => "direct sum of maps",
      TT "f++g", " -- computes the direct sum of two maps between modules.",
-     PARA,
+     PARA{},
      "If an argument is a ring element or integer, it is promoted
      to a one by one matrix.",
      EXAMPLE {
@@ -954,9 +954,9 @@ document {
      Key => directSum,
      Headline => "direct sum of modules or maps",
      TT "directSum(M,N,...)", " -- forms the direct sum of matrices or modules.",
-     PARA,
+     PARA{},
      "The components can be recovered later with ", TO "components", ".",
-     PARA,
+     PARA{},
      "Projection and inclusion maps for direct sums:",
      UL {
 	  TO (symbol ^,Module,Array),
@@ -964,7 +964,7 @@ document {
 	  TO (symbol ^,Matrix,List),
 	  TO (symbol _,Matrix,List)
 	  },
-     PARA,
+     PARA{},
      "It sometimes happens that the user has indices for the components of
      a direct sum preferable to the usual consecutive small integers.  In 
      this case the preferred indices can be specified with code
@@ -986,7 +986,7 @@ document {
      TT "indexComponents", " -- a symbol used as a key in a direct sum
      under which to store a hash table in which to register preferred keys used
      to index the components of the direct sum.",
-     PARA,
+     PARA{},
      SeeAlso => {"directSum", "components", "indices"}}
 -- MES: "indices" moved to functions/indices-doc.m2
 

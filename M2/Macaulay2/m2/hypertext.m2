@@ -308,10 +308,6 @@ tex ANCHOR := x -> (
 
 commentize := s -> if s =!= null then concatenate(" -- ",s)
 
-addHeadlines := x -> apply(x, i -> if instance(i,TO) then SEQ{ i, commentize headline i#0 } else i)
-
-addHeadlines1 := x -> apply(x, i -> if instance(i,TO) then SEQ{ "help ", i, commentize headline i#0 } else i)
-
 info HR := net HR := x -> concatenate(printWidth:"-")
 
 info Nothing := net
@@ -327,22 +323,8 @@ net UL := ULop net
 
 * String := x -> help x					    -- so the user can cut paste the menu line to get help!
 
-NLop := op -> x -> stack apply(#x, i -> toString (i+1) | " : " | wrap(printWidth - 10, op x#i))
-net NL := NLop net
-info NL := NLop info
-
-tex UL := x -> concatenate(
-     ///\begin{itemize}///, newline,
-     apply(addHeadlines x, x -> if x =!= null then ( ///\item ///, tex x, newline)),
-     ///\end{itemize}///, newline)
-
-html UL := x -> concatenate (
-     newline,
-     "<ul>", newline,
-     apply(addHeadlines x, s -> if s =!= null then ("<li>", html s, "</li>", newline)),
-     "</ul>", newline)
-
-html NL   := x -> concatenate( "<nl>", newline, apply(x,s -> ("<li>", html s, "</li>", newline)), "</nl>", newline)
+tex UL := x -> concatenate( ///\begin{itemize}///, newline, apply(x, x -> ( ///\item ///, tex x, newline)), ///\end{itemize}///, newline)
+html UL := x -> if #x != 0 then concatenate ( newline, "<ul>", newline, apply(x, html), "</ul>", newline) else ""
 
 texMath SUP := x -> concatenate( "^{", apply(x, tex), "}" )
 texMath SUB := x -> concatenate( "_{", apply(x, tex), "}" )
@@ -544,10 +526,10 @@ html HEADER6 := x -> concatenate (
 
 redoMENU := r -> SEQ prepend(
      HEADER3 "Menu",
-     sublists(toList r, 
+     nonnull sublists(toList r, 
 	  x -> not ( class x === TO ),
 	  x -> HEADER4 {x},
-	  v -> UL apply(v, i -> (
+	  v -> if #v != 0 then UL apply(v, i -> (
 		    t := optTO i#0;
 		    if t === null then error("undocumented menu item ",toString i#0);
 		    last t

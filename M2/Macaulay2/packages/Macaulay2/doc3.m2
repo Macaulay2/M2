@@ -11,7 +11,7 @@ document {
      Key => symbol lineNumber,
      Headline => "current line number",
      TT "lineNumber", " -- the current line number.",
-     BR, NOINDENT,
+     BR{}, NOINDENT{},
      TT "lineNumber = n", " -- sets the line number to ", TT "n", ".",
      }
 
@@ -20,7 +20,7 @@ document {
      Headline => "the class of all file positions",
      TT "FilePosition", " -- a type of list designed to represent a position
      in a file.",
-     PARA,
+     PARA{},
      "It's implemented as a list whose three elements are the file name,
      the line number, and the column number."
      }
@@ -37,10 +37,10 @@ document {
      Headline => "whether something has a certain type",
      TT "instance(x,X)", " -- tells whether ", TT "x", " is an instance
      of the type ", TT "X", ".",
-     PARA,
+     PARA{},
      "We say that x is an instance of X if X is the class of x, or a parent
      of the class of x, or a grandparent, and so on.",
-     PARA,
+     PARA{},
      SeeAlso => { "classes and types", "class", "parent" }
      }
 
@@ -56,10 +56,10 @@ document {
 	  },
      "If ", TT "n", " is zero, then no alarm is scheduled, and any previously scheduled alarm is cancelled.
      Any pending alarm will be cancelled when any other error occurs, or when the top level loop offers an input prompt to the user.",
-     PARA,
+     PARA{},
      "The value returned is the number of seconds remaining until any previously scheduled alarm was due to be delivered, or
      zero if there was no previously scheduled alarm.",
-     PARA,
+     PARA{},
      "This command may interfere with ", TO "time", " or ", TO "sleep", " on some systems."
      }
 
@@ -72,12 +72,12 @@ document {
      Outputs => { { "class representing the basic type of ", TT "x" } },
      "Every thing has basic type which tells what sort of thing it
      really is, internally.",
-     PARA,
+     PARA{},
      "The parent of a basic type is ", TO "Thing", ", and this property
      characterizes the basic types.  The basic type of an object ", TT "x", "
      is defined to be the ancestor of the class of ", TT "x", " that is a
      basic type.",
-     PARA,
+     PARA{},
      "Let's compute a list of all the basic types:",
      EXAMPLE ///stack sort unique (toString \
      select(values Macaulay2Core.Dictionary, i -> parent value i === Thing)
@@ -156,7 +156,7 @@ document {
      TT "w / f", " -- apply the function ", TT "f", " to each member of the 
      list or sequence ", TT "w"," returning a list or sequence containing the 
      results.  The same as ", TT "apply(w,f)", ".",
-     PARA,
+     PARA{},
      "This operator is left associative, which means that ", TT "w / f / g", "
      is interpreted as meaning ", TT "(w / f) / g", ".",
      EXAMPLE "{1,2,3} / (i -> i+1) / (j -> j^2)",
@@ -169,7 +169,7 @@ document {
      TT ///f \ w///, " -- apply the function ", TT "f", " to each member of the 
      list or sequence ", TT "w"," returning a list or sequence containing the 
      results.  The same as ", TT "apply(w,f)", ".",
-     PARA,
+     PARA{},
      "This operator is right associative, which means that ", TT ///g \ f \ w///, "
      is interpreted as meaning ", TT ///g \ (f \ w)///, ".",
      EXAMPLE ///(j -> j^2) \ (i -> i+1) \ {1,2,3}///,
@@ -188,12 +188,12 @@ document {
      "A string is thing which contains a sequence of characters (bytes).
      A string is normally entered as a sequence of characters surrounded 
      by quotation marks.",
-     PARA,
+     PARA{},
      EXAMPLE "\"abcd\"",
-     PARA,
+     PARA{},
      "For an alternate method of entering strings which does not involve
      any escape sequences, see ", TO "///", ".",	    -- ///
-     PARA,
+     PARA{},
      "A net is a two-dimensional array of characters, and strings are regarded
      as a type of net.  See ", TO "Net", ".",
      }
@@ -217,15 +217,15 @@ document {
      "A net is a generalization of a string which is designed to facilitate
      two-dimensional printing on ascii terminals.  It consists of a rectangular
      array of characters subdivided horizontally by an imaginary baseline.",
-     PARA,
+     PARA{},
      "Operations on nets also accept strings by interpreting a string as a rectangle
      of height one with the baseline just below it.  In fact, the parent of
      ", TO "String", " is ", TO "Net", ".",
-     PARA,
+     PARA{},
      "Multiple nets per line can be sent to an output file with ", TO "<<", "
      but care must be taken to use ", TO "endl", " to end lines, for nets with
      new line characters embedded in them will be displayed in an unexpected way.",
-     PARA,
+     PARA{},
      "Warning: if so many characters are written to a file that an internal buffer
      is filled before the line ends or first net is seen, then the buffer will be 
      flushed, and writing a net subsequently will produce an unexpected result."
@@ -237,12 +237,12 @@ document {
      TT "horizontalJoin(m,n,...)", " -- joins nets or strings by concatenating
      them horizontally.  The baselines in each of the nets are aligned
      appropriately.",
-     PARA,
+     PARA{},
      "Nested sequences among the arguments are first spliced together.",
-     PARA,
+     PARA{},
      "If there are no arguments, then the net returned has zero height and
      zero depth.  This might be unexpected.",
-     PARA,
+     PARA{},
      "Null arguments are allowed and ignored.",
      SeeAlso => {"Net", (symbol |, String, String)}
      }
@@ -253,15 +253,15 @@ document {
      TT "stack(m,n,...)", " -- joins nets or strings by concatenating
      them vertically.  The baseline of the result is the baseline of the
      first argument.",
-     PARA,
+     PARA{},
      "Nested sequences among the arguments are first spliced together.",
-     PARA,
+     PARA{},
      "If there are no arguments, then the net returned has zero height and
      zero depth.  This might be unexpected.",
-     PARA,
+     PARA{},
      "Tab characters in any of the strings are first expanded into spaces,
      assuming tab stops at every eighth column.",
-     PARA,
+     PARA{},
      "Null arguments are allowed and ignored.",
      SeeAlso => { (symbol ||, Net, Net)}
      }
@@ -271,10 +271,10 @@ document {
      Headline => "raise a net",
      TT "n^i", " -- elevates a net or string ", TT "n", " by raising its
      characters by ", TT "i", " rows.",
-     PARA,
+     PARA{},
      "The number ", TT "i", " may be negative, in which case the net is
      lowered.",
-     PARA,
+     PARA{},
      "If ", TT "n", " is a string, then ", TT "n^0", " is an easy way to convert
      it to a net."
      }
@@ -283,7 +283,7 @@ document {
      Key => width,
      Headline => "width of a file or net",
      TT "width f", " -- determines the width of the terminal associated to an
-     output file ", TT "f", ", if any.", BR,NOINDENT, 
+     output file ", TT "f", ", if any.", BR{},NOINDENT{}, 
      TT "width n", " -- the width of a net ", TT "n", ".",
      SeeAlso => {"Net", "File"}
      }
@@ -292,7 +292,7 @@ document {
      Key => height,
      Headline => "height of a net",
      TT "height n", " -- the height of a net ", TT "n", ".",
-     PARA,
+     PARA{},
      "The height of a net is the number of rows of characters it has above
      the baseline.  It may be a negative number, but the depth plus the 
      height is always the total number of rows, which is not negative.",
@@ -303,7 +303,7 @@ document {
      Key => depth,
      Headline => "depth of a net",
      TT "depth n", " -- the depth of a net ", TT "n", ".",
-     PARA,
+     PARA{},
      "The depth of a net is the number of rows of characters it has below
      the baseline.  It may be a negative number, but the depth plus the 
      height is always the total number of rows, which is not negative.",
@@ -314,7 +314,7 @@ document {
      Key => hash,
      Headline => "hash code of an object",
      TT "hash x", " -- returns the hash code of ", TT "x", ".",
-     PARA,
+     PARA{},
      "The hash code of ", TT "x", " is an integer produced in a deterministic way
      from ", TT "x", ", and perhaps from the hash codes of the contents of ", TT "x", ".
      See ", TO "hashing", " for a discussion of the requirements that
@@ -326,7 +326,7 @@ document {
      Headline => "remove an entry from a hash table",
      TT "remove(x,k)", " -- removes the entry stored in the hash table ", TT "x", "
      under the key ", TT "k", ".",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "x = new MutableHashTable from {a => 1, b => 2}",
 	  "remove(x,a)",
@@ -339,7 +339,7 @@ document {
      Headline => "the class of Boolean values",
      "Predicate functions return these as values, and the logical connectives 
      expect to receive them as arguments.",
-     PARA,
+     PARA{},
      "Special operators dealing with truth values.",
      UL {
 	  TO "not",
@@ -356,7 +356,7 @@ document {
      sequence of alphanumeric characters; case is significant.
      The single symbol character ' is regarded as alphabetic, so that
      symbols such as ", TT "x'", " may be used.",
-     PARA,
+     PARA{},
      "Symbols are used as names for values to be preserved, as indeterminates
      in polynomial rings, and as keys in hash tables.  They may have
      global scope, meaning they are visible from every line of code,
@@ -408,15 +408,15 @@ document {
      Key => printString,
      Headline => "lowlevel function to print a string, net, or symbol",
      TT "printString(o,s)", " -- send the string ", TT "s", " to the output file ", TT "o", ".",
-     PARA,
+     PARA{},
      "This function is intended for internal use only.",
-     PARA,
+     PARA{},
      "The argument ", TT "s", " may also be a sequence or list, in which case
      its elements are printed.  If an integer is encountered, then
      it specifies a number of spaces to be printed.  If a symbol
      or indeterminate is encountered, its name is printed.  If ", TO "null", "
      is encountered, nothing is printed.",
-     PARA,
+     PARA{},
      EXAMPLE ///printString(stdio, (a,10,"b",20,c))///
      }
 
@@ -424,15 +424,15 @@ document {
      Key => mutable,
      Headline => "whether something may be modified",
      TT "mutable x", " -- returns true or false, depending on whether x is mutable.",
-     PARA,
+     PARA{},
      "If ", TT "x", " is a hash table, list, or database, then it's mutable if its contents
      can be destructively altered.",
-     PARA,
+     PARA{},
      "If ", TT "x", " is a symbol, then it's mutable if a value can be assigned to
      it. (See ", TO "protect", ".)",
-     PARA,
+     PARA{},
      "If ", TT "x", " is anything else, then it isn't mutable.",
-     PARA,
+     PARA{},
      "The contents of a mutable hash table do not participate in strong comparison
      with ", TO "===", " or in ", TO "hashing", ".",
      SeeAlso => {"MutableList", "MutableHashTable"}
@@ -468,18 +468,18 @@ document {
      such an optional input is indicated by writing ", TT "NAME => ...", ", where ", TT "NAME", " is the
      name of the optional input, and the dots indicate the place where the user will provide the
      value of the optional input.",
-     PARA,
+     PARA{},
      "Optional inputs can be provided between parentheses along with the
      other inputs (or arguments) of the function.  For example, if the function is normally used with two
      required inputs, then instead of typing ", TT "f(x,y)", ", you may type 
      ", TT "f(x,y,FOO => t, BAR => u)", ", where ", TT "t", " is the value to be provided to ", TT "f", " as
      the value of the optional input named ", TT "FOO", " and ", TT "u", " is the value to be
      provided to ", TT "f", " as the value of the optional input named ", TT "BAR", ".",
-     PARA,
+     PARA{},
      "The optional inputs can be inserted
      in any order, and may even occur before the required inputs.  If more than one optional input with the same
      option name are given, then the value accompanying the right-most one is the value provided to the function.",
-     PARA,
+     PARA{},
      "Use ", TO2{ (options,Function), "options" }, " to discover the optional arguments accepted by a function.",
      SUBSECTION "Examples",
      EXAMPLE {

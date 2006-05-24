@@ -58,7 +58,7 @@ document {
   	  },
      "The last command ", TO "numgens", " ", TO "source", " counts the
      number of columns in this matrix.",
-     PARA,
+     PARA{},
      "In the case where the ring is singly graded, then instead of having the 
      input be a list of length 1 containing the degree, it is sufficient to
      write an integer.",

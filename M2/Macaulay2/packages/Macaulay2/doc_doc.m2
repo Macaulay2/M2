@@ -199,7 +199,7 @@ document {
 	Function => document,
     	"This option inserts into a documentation page a sentence
      instructing the reader to see some other topics.",
-     PARA,
+     PARA{},
      "The entries may have the special forms used with ", TO "TO", ". As an example, here is the code for the ", TT "SeeAlso", 
 	" part of this documentation node.",
 	PRE ///SeeAlso => {document, TO},///,

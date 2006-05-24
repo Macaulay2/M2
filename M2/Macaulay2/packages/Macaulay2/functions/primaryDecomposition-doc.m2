@@ -17,7 +17,7 @@ document {
      for the ideal ", TT "I", ".  The specific algorithm used varies
      depending on the characteristics of the ideal, and can also be specified
      using the optional argument ", TT "Strategy", ".",
-     PARA,
+     PARA{},
      "Primary decompositions algorithms are very sensitive to their input.  Some
      algorithms work very well on certain classes of ideals, but poorly on other classes.
      If this function seems to be taking too long, try another algorithm (using ",
@@ -29,7 +29,7 @@ document {
 	  "I == intersect C",
 	  "#C",
 	  },
-     PARA,
+     PARA{},
      "Recall that ", TO (symbol/,List,Function), " applies a function to each element of a
      list, returning the results as a list.  This is often useful with lists of ideals,
      such as the list ", TT "C", " of primary components.",
@@ -38,7 +38,7 @@ document {
 	  "C/codim",
 	  "C/degree"
 	  },
-     PARA,
+     PARA{},
      "The corresponding list of associated prime ideals is cached in ", TT "I.cache.associatedPrimes", ",
      and can be obtained by using ", TO (associatedPrimes,Ideal), ".",
      EXAMPLE {

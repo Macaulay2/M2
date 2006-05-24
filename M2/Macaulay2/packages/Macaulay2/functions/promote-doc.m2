@@ -51,7 +51,7 @@ document {
 	  "promote(f,S)",
 	  "G = map(S,R); G(f)"
 	  },
-     PARA,
+     PARA{},
      "If you wish to promote a matrix, or ideal, or module to another ring, either
      use the natural ring map, or use tensor product of matrices or modules.",
      EXAMPLE {

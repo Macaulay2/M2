@@ -18,10 +18,10 @@ document {
      elsewhere, then M = U Sigma Vt.  This is the singular value decomposition 
      of M.  Note that the entries of S are (up to roundoff error) the eigenvalues
      of the Hermitian matrix M * (conjugate transpose M)",
-     PARA,
+     PARA{},
      "M may also be a ", TO MutableMatrix, " in which case the returned values
      S, U, Vt are also ", TO2(MutableMatrix, "mutable matrices"), ".",
-     PARA,
+     PARA{},
      "If M is over CC, then U and Vt are unitary matrices over CC.  If M is over RR, 
      U and Vt are orthogonal over RR.",
      EXAMPLE {

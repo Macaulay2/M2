@@ -10,7 +10,7 @@ document {
      "The Hilbert series is the formal power series in the variables of the
      degrees ring whose coefficients are the dimensions of the corresponding
      graded component.", 
-     PARA, 
+     PARA{}, 
      "Note that the series is provided as a type of expression called
      a ", TO "Divide", ".",
      SeeAlso => {"degreesRing", "reduceHilbert", "poincare",
