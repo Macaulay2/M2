@@ -167,6 +167,7 @@ transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
 	       if parent != nothingClass
 	       then buildErrorPacket("expected Nothing as parent for list")
 	       else if o.class == class then e
+	       else if class == sequenceClass then Expr(o.v)
 	       else (
 	       	    mutable := ancestor(class,mutableListClass);
 		    Expr(
@@ -182,6 +183,7 @@ transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
      	  if basicType == basicListClass then (
 	       if parent != nothingClass
 	       then buildErrorPacket("expected Nothing as parent for list")
+	       else if class == sequenceClass then Expr(v)
 	       else (
 	       	    mutable := ancestor(class,mutableListClass);
 		    Expr(
@@ -237,6 +239,7 @@ transform(e:Expr,class:HashTable,returned:bool):Expr := (
      	  basicType := basictype(class);
      	  if basicType == basicListClass then (
 	       if o.class == class then e
+	       else if class == sequenceClass then Expr(o.v)
 	       else (
 	       	    mutable := ancestor(class,mutableListClass);
 		    Expr(
@@ -251,8 +254,10 @@ transform(e:Expr,class:HashTable,returned:bool):Expr := (
      is v:Sequence do (
      	  basicType := basictype(class);
      	  if basicType == basicListClass then (
-	       mutable := ancestor(class,mutableListClass);
-	       Expr( sethash( List(class, if mutable then copy(v) else v, 0,false), mutable)))
+	       if class == sequenceClass then Expr(v)
+	       else (
+	       	    mutable := ancestor(class,mutableListClass);
+	       	    Expr( sethash( List(class, if mutable then copy(v) else v, 0,false), mutable))))
 	  else if basicType == complexClass then (
 	       if length(v) != 2 then WrongNumArgs(2)
 	       else (
@@ -313,6 +318,8 @@ makenew(class:HashTable,parent:HashTable):Expr := (
      else if basicType == basicListClass then (
 	  if parent != nothingClass
 	  then buildErrorPacket("expected Nothing as parent for list")
+	  else if class == sequenceClass
+	  then Expr(emptySequence)
 	  else Expr(
 	       sethash(
 		    List(class,emptySequence,0,false),
