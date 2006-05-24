@@ -111,7 +111,7 @@ document {
      ///,
      "We can make a basic list with the ", TO "new", " operator.",
      EXAMPLE "new BasicList from {a,b,c}",
-     "Similarly, we can make a new type of basic list, called ", TT "X", ", say.",
+     "Similarly, we can make a new type of basic list, called ", TT "Container", ", say.",
      EXAMPLE "Container = new Type of BasicList",
      "We can make a new list of type Container.",
      EXAMPLE "t = new Container from {a,b}",
