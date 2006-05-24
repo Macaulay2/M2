@@ -453,21 +453,6 @@ document {
      Headline => "a binary operator, uses include repetition; ideal quotients",
      }
 document {
-     Key => (symbol :, ZZ, Thing),
-     Headline => "repeat an item",
-     TT "n : x", " repetition ", TT "n", " times of ", TT "x", " in a sequence",
-     PARA,
-     "If ", TT "n", " is an integer and ", TT "x", " is anything, return a
-     sequence consisting of ", TT "x", " repeated ", TT "n", " times.  A negative 
-     value for ", TT "n", " will silently be treated as zero.",
-     PARA,
-     "Warning: such sequences do not get automatically spliced into lists
-     containing them.",
-     PARA,
-     EXAMPLE { "{5:a,10:b}", "splice {5:a,10:b}" },
-     SeeAlso => {splice, (symbol..,ZZ,ZZ), "lists of integers"}
-     }
-document {
      Key => "comparison operators",
      Usage => "",
      UL {

@@ -69,9 +69,11 @@ symbol debugError <- identity				    -- use '<-' to bypass global assignment met
 robustNet := y -> (
      fun := () -> net y;
      try timelimit(printingTimeLimit, fun) else (
+	  alarm 0;
 	  global debugError <- fun;
 	  stderr << endl << "--error or time limit reached in conversion of output to net: type 'debugError()' to run it again; will try conversion to string" << endl ;
 	  try timelimit(errorPrintingTimeLimit, () -> toString y) else (
+	       alarm 0;
 	       stderr << endl << "--error in conversion of output to string" << endl;
 	       simpleToString y)))
 Thing.Print = x -> (
@@ -84,6 +86,7 @@ Thing.Print = x -> (
      if wrapper =!= null then (
 	  fun := () -> z = wrapper z;
 	  try timelimit(printingTimeLimit, fun) else (
+	       alarm 0;
 	       global debugError <- fun;
 	       stderr << "--error or time limit reached in applying Wrap method to output; type 'debugError()' to see it" << endl << endl));
      << endl << oprompt << z << endl;
@@ -108,8 +111,9 @@ silentRobustNet = (wid,ht,sec,y) -> (
 	  try timelimit (sec, () -> checkNet if lookup(symbol Format,class y) =!= null then (lookup(symbol Format,class y)) y else net y)
 	  else 
 	  try timelimit (sec, () -> checkString toExternalString y)
-	  else
-	  simpleToString y))
+	  else (
+	       alarm 0;
+	       simpleToString y)))
 silentRobustNetWithClass = (wid,ht,sec,y) -> (			    -- we know wid is at least 80
      part2 := horizontalJoin(" (of class ", silentRobustNet(wid//2,           ht,sec,class y), ")");
      part1 :=                               silentRobustNet(wid - width part2,ht,sec,      y);
@@ -117,7 +121,9 @@ silentRobustNetWithClass = (wid,ht,sec,y) -> (			    -- we know wid is at least 
 silentRobustString = (wid,sec,y) -> (
      truncString(wid,
 	  try timelimit (sec, () -> checkString toExternalString y)
-	  else simpleToString y))
+	  else (
+	       alarm 0;
+	       simpleToString y)))
 silentRobustStringWithClass = (wid,sec,y) -> (
      part2 := concatenate(" (of class ", silentRobustString(wid//2,           sec,class y), ")");
      part1 :=                            silentRobustString(wid - width part2,sec,      y);

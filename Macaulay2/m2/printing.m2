@@ -51,9 +51,14 @@ net ParagraphList := x -> (
 
 -- not printing:
 Bag = new SelfInitializingType of MutableList
+Bag.synonym = "bag"
 unbag = method()
-unbag Bag := first
-net Bag := toString Bag := x -> "--a bagged " | synonym class first x | "--"
+unbag Bag := x -> unSingleton toSequence x
+net Bag := toString Bag := x -> (
+     if #x===0 then "--an empty bag--" 
+     else if #x===1 then "--a bagged " | synonym class first x | "--" 
+     else "--a bagged sequence of length " | toString(#x) | "--" 
+     )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

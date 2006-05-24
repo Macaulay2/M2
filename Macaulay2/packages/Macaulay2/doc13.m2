@@ -285,14 +285,6 @@ document { Key => currentTime,
      PARA { "Compare that to the current date, available from a standard Unix command." },
      EXAMPLE ///run "date"///
      }
-document { Key => {[installPackage, MakeDocumentation],MakeDocumentation},
-     Headline => "specify whether the package documentation should be made",
-     Usage => "installPackage(..., MakeDocumentation => false)",
-     Consequences => {{ "the documentation will not be made" }},
-     PARA { "Normally, when installing a package, the package's documentation is made.  This involves running the
-	  example inputs through Macaulay 2, checking for errors, and producing the documentation in various forms,
-	  such as html and for the info reader.  This option specifies whether to do that, and the default is ", TT "true", "."
-	  }}
 document { Key => Partition, 
      Headline => "a type of list representing a partition of a natural number",
      SeeAlso => { partitions, (conjugate,Partition) } }
@@ -392,6 +384,15 @@ document { Key => {[newPackage, Authors], Authors},
 	  },
      EXAMPLE "Macaulay2Core.Options.Authors"
      }
+document { Key => Name,
+     "This symbol is used as a key when providing information about the authors of a package to the ", TO "newPackage", " command.
+     See ", TO [newPackage, Authors], "." }
+document { Key => Email,
+     "This symbol is used as a key when providing information about the authors of a package to the ", TO "newPackage", " command.
+     See ", TO [newPackage, Authors], "." }
+document { Key => HomePage,
+     "This symbol is used as a key when providing information about the authors of a package to the ", TO "newPackage", " command.
+     See ", TO [newPackage, Authors], "." }
 document { Key => fileLength,
      Headline => "the length of a file",
      Usage => "fileLength f",
@@ -409,7 +410,13 @@ document { Key => fileLength,
 	  length oo
      ///
      }
-     
+document { Key => "loadedFiles",
+     SeeAlso => {"load", "filesLoaded"},
+     PARA { "After each source file is successfully loaded, the full path to the file is stored in the hash table ", TO "loadedFiles", ".  It is stored as the
+	  value, with the corresponding key being a small integer, consecutively assigned, starting at 0."
+	  },
+     EXAMPLE "peek loadedFiles"}
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

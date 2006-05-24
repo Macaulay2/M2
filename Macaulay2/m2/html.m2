@@ -23,10 +23,14 @@ numExampleErrors := 0;
 hadDocumentationError := false
 numDocumentationErrors := 0;
 
-signalDocError = () -> (				    -- also called from document.m2, temporarily
-     hadDocumentationError = true;
-     numDocumentationErrors = numDocumentationErrors + 1;
-     )
+seenit := new MutableHashTable
+signalDocError = tag -> (				    -- also called from document.m2, temporarily
+     if seenit#?tag then false
+     else (
+	  seenit#tag = true;
+	  hadDocumentationError = true;
+	  numDocumentationErrors = numDocumentationErrors + 1;
+	  true))
 
 buildPackage := null					    -- name of the package currently being built
 topDocumentTag := null
@@ -522,6 +526,8 @@ dispatcherMethod := m -> m#-1 === Sequence and (
      any(dispatcherFunctions, g -> sameFunctionBody(f,g)))
 
 installPackage Package := opts -> pkg -> (
+     ignoreDocumentationErrors = opts.IgnoreDocumentationErrors;
+
      if opts.MakeDocumentation and pkg#?"documentation not loaded"
      then pkg = loadPackage(pkg#"title", DebuggingMode => opts.DebuggingMode, LoadDocumentation => true);
 
@@ -812,32 +818,26 @@ installPackage Package := opts -> pkg -> (
 	  pkg#"links prev" = PREV;
 
      	  -- check that everything is documented
+     	  seenit = new MutableHashTable;
      	  hadDocumentationError = false;
 	  numDocumentationErrors = 0;
 	  scan((if pkg#"title" == "Macaulay2" then Macaulay2Core else pkg)#"exported symbols", s -> (
 		    tag := makeDocumentTag s;
-		    if not isUndocumented tag and not hasDocumentation s then (
-			 signalDocError();
-			 stderr << "--error: symbol has no documentation: " << tag << endl;
-			 );
+		    if not isUndocumented tag and not hasDocumentation s and signalDocError tag then stderr << "--error: symbol has no documentation: " << tag << endl;
 		    f := value s;
 		    if class f === Function then (
 			 scan(methods f, m -> (
 				   tag := makeDocumentTag m;
-				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m then (
-					signalDocError();
-					stderr << "--error: method has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;
-					);
+				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m and signalDocError tag
+				   then stderr << "--error: method has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;
 				   ));
 			 o := options f;
 			 if o =!= null 
 			 then scan(apply(keys o, op -> [f,op]), 
 			      m -> (
 				   tag := makeDocumentTag m;
-				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m then (
-					signalDocError();
-					stderr << "--error: option has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;
-					);
+				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m and signalDocError tag
+				   then stderr << "--error: option has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;
 				   )))));
 
      	  if not opts.IgnoreDocumentationErrors
@@ -987,6 +987,7 @@ installPackage Package := opts -> pkg -> (
      stderr << "--installed package " << pkg << " in " << buildDirectory << endl;
      currentPackage = oldpkg;
      if prefixDirectory =!= null then makePackageIndex();
+     ignoreDocumentationErrors = true;
      )
 
 userMacaulay2Directory := () -> (

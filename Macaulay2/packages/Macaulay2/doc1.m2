@@ -9,15 +9,15 @@ document {
      PARA,
      "Type one of these commands to get started reading the documentation:",
      UL {
-     	  ("copyright", "                        -- the copyright"),
-     	  ("help \"Macaulay 2\"", "                -- top node of the documentation."),
-     	  ("help \"reading the documentation\"", " -- "),
-     	  ("help \"getting started\"", "           -- "),
-     	  ("help \"a first Macaulay 2 session\"", "   -- "),
-     	  ("help x", "                           -- display the documentation for ", TT "x"),
-	  ("printWidth = 80", "                  -- set the print width to 80 characters"),
-     	  ("viewHelp x", "                       -- view documentation for ", TT "x", " in a browser"),
-     	  ("viewHelp", "                         -- view all documentation in a browser"),
+     	  SEQ (///copyright///, ///                         -- the copyright///),
+     	  SEQ (///help "Macaulay 2"///, ///                 -- top node of the documentation.///),
+     	  SEQ (///help "reading the documentation"///, ///  -- ///),
+     	  SEQ (///help "getting started"///, ///            -- ///),
+     	  SEQ (///help "a first Macaulay 2 session"///, /// -- ///),
+     	  SEQ (///help x///, ///                            -- display the documentation for ///, TT ///x///),
+	  SEQ (///printWidth = 80///, ///                   -- set print width to 80 characters///),
+     	  SEQ (///viewHelp///, ///                          -- view documentation in a browser///),
+     	  SEQ (///viewHelp x///, ///                        -- view documentation on ///, TT ///x///, /// in browser///),
 	  },
      "To read the documentation in info form, in case you happen to be running Macaulay 2 in a 
      terminal window, replace ", TO "help", " by ", TO "infoHelp", " in any of the commands 
@@ -128,22 +128,6 @@ document {
      copying is not required, and is not done.",
      PARA,
      SeeAlso => { "copy", "toList" }
-     }
-document {
-     Key => MutableList,
-     Headline => "the class of all mutable lists",
-     PARA,
-     "Normally the entries in a mutable list are not printed, to prevent
-     infinite loops in the printing routines.  To print them out, use 
-     ", TO "peek", ".",
-     PARA,
-     EXAMPLE {
-	  "s = new MutableList from {a,b,c};",
-      	  "s#2 = 1234;",
-	  "s",
-      	  "peek s",
-	  },
-     SeeAlso => {"BasicList"}
      }
 document {
      Key => lookup,

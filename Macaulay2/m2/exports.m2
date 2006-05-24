@@ -77,7 +77,6 @@ export (
 	symbol randomMutableMatrix,
 	symbol mutableZero,
 	symbol mutableIdentity,
-        symbol simpleLoad,
         symbol loadedFiles,
         symbol viewHelp,
         symbol RemakeAllDocumentation,

@@ -1,6 +1,11 @@
-/* -*- c -*- */
+/*-*- c -*-*/
 
-body { color: black; background-image: url("recbg.jpg"); margin : 1.5em; }
+body {
+     color: black; 
+     /* background-image: url("recbg.jpg"); */
+     background-color: #f0ffff;
+     margin : 1.5em; 
+}
 
 h1   { text-align: center; font-size : 125%; }
 h2   { font-size : 110%; }
@@ -17,10 +22,13 @@ table.buttons td { text-align: center; }
 
 table.examples { 
      margin-left: 2em;
-     background-color: #80ffff;
+     width: 25%;
+     background-color: #c0ffff;
      border-style: solid;
-     border-top-color: #c0ffff;     border-bottom-color: #50b0b0;
-     border-left-color: #a0ffff;     border-right-color: #50b0b0;
+     border-top-color: #c0ffff;
+     border-bottom-color: #50b0b0;
+     border-left-color: #a0ffff;
+     border-right-color: #50b0b0;
      border-width: 3px;
      border-spacing: 0px;
      font-size: 75%;
@@ -28,8 +36,10 @@ table.examples {
 }
 table.examples td {
      border-style: solid;
-     border-top-color: #50b0b0;     border-bottom-color: #c0ffff;
-     border-left-color: #50b0b0;    border-right-color: #a0ffff;
+     border-top-color: #50b0b0;
+     border-bottom-color: #c0ffff;
+     border-left-color: #50b0b0;
+     border-right-color: #a0ffff;
      padding: 1ex;
      border-width: 1px;
 }
