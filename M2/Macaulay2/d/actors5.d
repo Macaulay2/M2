@@ -570,7 +570,14 @@ examine(e:Expr):Expr := (
      	       showFrames(localFrame);
 	       nullE)
 	  else WrongNumArgs(1))
-     else WrongArg("(), a function, or a symbol"));
+     is s:List do (
+	  stdout
+	  << "basic list:" << endl
+	  << " length: " << length(s.v) << endl
+	  << " hash: " << s.hash << endl
+	  << " mutable: " << s.mutable << endl;
+	  nullE)
+     else WrongArg("(), a function, a symbol, or a basic list"));
 setupfun("examine",examine);
 
 netWidth(e:Expr):Expr := (
