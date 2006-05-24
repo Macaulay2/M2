@@ -3,6 +3,7 @@
 PCDATA = set {"#PCDATA"}
 String.qname = "#PCDATA"
 
+LI.qname = "li"
 
 -- <!ENTITY % Inline.extra "" >
 InlineExtra = set {}
@@ -69,6 +70,8 @@ PRE.qname = "pre"
 Blkstruct = set {"p", "div" }
 PARA.qname = "p"
 DIV.qname = "div"
+PARA1.qname = "div"
+SEQ.qname = "div"
 
 -- <!ENTITY % Block.class "%Blkstruct.class; %Blkphras.class; %Blkpres.class; %Blkspecial.class; %Block.extra;">
 BlockClass = Blkstruct + Blkphras + Blkpres + Blkspecial + BlockExtra
@@ -111,82 +114,101 @@ BlockMix = HeadingClass + ListClass + BlockClass + MiscClass
 -- content
 -----------------------------------------------------------------------------
 
-Content = new MutableHashTable
+validContent = new MutableHashTable
 
 -----------------------------------------------------------------------------
 -- <!ENTITY % li.content "( #PCDATA | %Flow.mix; )*" >
-Content#"li" = 
+validContent#"li" = 
 -- <!ENTITY % div.content "( #PCDATA | %Flow.mix; )*" >
-Content#"div" = PCDATA + FlowMix
+validContent#"div" = PCDATA + FlowMix
 -----------------------------------------------------------------------------
 
 
 -- <!ENTITY % body.content "( %Block.mix; )+" >
-Content#"body" = BlockMix
+validContent#"body" = BlockMix
 BODY.qname = "body"
 
 -- <!ENTITY % Heading.content  "( #PCDATA | %Inline.mix; )*" >
 HeadingContent = PCDATA + InlineMix
-
 -- <!ELEMENT %h1.qname;  %Heading.content; >
 -- <!ELEMENT %h2.qname;  %Heading.content; >
 -- <!ELEMENT %h3.qname;  %Heading.content; >
 -- <!ELEMENT %h4.qname;  %Heading.content; >
 -- <!ELEMENT %h5.qname;  %Heading.content; >
 -- <!ELEMENT %h6.qname;  %Heading.content; >
-Content#"h1" = Content#"h2" = Content#"h3" = Content#"h4" = Content#"h5" = Content#"h6" = HeadingContent
+validContent#"h1" =
+validContent#"h2" =
+validContent#"h3" =
+validContent#"h4" =
+validContent#"h5" =
+validContent#"h6" = HeadingContent
 
 -- <!ENTITY % label.content "( #PCDATA | %input.qname; | %select.qname; | %textarea.qname; | %button.qname; | %Inlstruct.class;
 --       %Inlphras.class; %I18n.class; %Inlpres.class; %Anchor.class; %Inlspecial.class; %Inline.extra; %Misc.class; )*" >
 -- <!ELEMENT %label.qname;  %label.content; >
-Content#"label" = PCDATA + set { "input", "select", "textarea", "button", "Inlstruct" } + Inlphras + Inlpres + AnchorClass + InlineExtra + MiscClass
+validContent#"label" = PCDATA + set { "input", "select", "textarea", "button", "Inlstruct" } + Inlphras + Inlpres + AnchorClass + InlineExtra + MiscClass
 
 -- <!ENTITY % a.content "( #PCDATA | %Inline-noA.mix; )*" >
-Content#"a" = InlineNoAClass
+validContent#"a" = InlineNoAClass
 -----------------------------------------------------------------------------
 ---- these are all empty:
 -- <!ENTITY % hr.content  "EMPTY" >
-Content#"hr" =
+validContent#"hr" =
 -- <!ENTITY % img.content  "EMPTY" >
-Content#"img" =
+validContent#"img" =
 -- <!ENTITY % br.content  "EMPTY" >
-Content#"br" = set {}
+validContent#"br" = set {}
 -----------------------------------------------------------------------------
 ---- these are all the same:
 -- <!ENTITY % p.content "( #PCDATA | %Inline.mix; )*" >
-Content#"p" =
+validContent#"p" =
 -- <!ENTITY % strong.content "( #PCDATA | %Inline.mix; )*" >
-Content#"strong" =
+validContent#"strong" =
 -- <!ENTITY % code.content "( #PCDATA | %Inline.mix; )*" >
-Content#"code" =
+validContent#"code" =
 -- <!ENTITY % em.content "( #PCDATA | %Inline.mix; )*" >
-Content#"em" =
+validContent#"em" =
 -- <!ENTITY % tt.content "( #PCDATA | %Inline.mix; )*" >
-Content#"tt" = 
+validContent#"tt" = 
 -- <!ENTITY % i.content "( #PCDATA | %Inline.mix; )*" >
-Content#"i" = 
+validContent#"i" = 
 -- <!ENTITY % b.content "( #PCDATA | %Inline.mix; )*" >
-Content#"b" = 
+validContent#"b" = 
 -- <!ENTITY % small.content "( #PCDATA | %Inline.mix; )*" >
-Content#"small" = 
+validContent#"small" = 
 -- <!ENTITY % sup.content "( #PCDATA | %Inline.mix; )*" >
-Content#"sup" = 
+validContent#"sup" = 
 -- <!ENTITY % sub.content "( #PCDATA | %Inline.mix; )*" >
-Content#"sub" = PCDATA + InlineMix
+validContent#"sub" = PCDATA + InlineMix
 -----------------------------------------------------------------------------
 
 -- <!ENTITY % pre.content "( #PCDATA | %Inlstruct.class; %Inlphras.class; | %tt.qname; | %i.qname; | %b.qname;
 --       %I18n.class; %Anchor.class; | %script.qname; | %map.qname; %Inline.extra; )*" >
-Content#"pre" = PCDATA + Inlstruct + Inlphras + set { "tt", "i", "b" } + I18nClass + AnchorClass + set {"script","map"} + InlineExtra
+validContent#"pre" = PCDATA + Inlstruct + Inlphras + set { "tt", "i", "b" } + I18nClass + AnchorClass + set {"script","map"} + InlineExtra
 
 
 -- <!ENTITY % table.content "( %caption.qname;?, ( %col.qname;* | %colgroup.qname;* ), (( %thead.qname;?, %tfoot.qname;?, %tbody.qname;+ ) | ( %tr.qname;+ )))" >
 -- the regular expression is more complicated, but we don't implement those other tags, anyway!  Or should we?
-Content#"table" = set { "caption", "col", "colgroup", "thead", "tfoot", "tbody", "tr" }
+validContent#"table" = set { "caption", "col", "colgroup", "thead", "tfoot", "tbody", "tr" }
 
 -- <!ENTITY % ul.content  "( %li.qname; )+" >
-Content#"ul" = set { "li" }
+validContent#"ul" = set { "li" }
 
+
+validate = method()
+validate Hypertext := x -> scan(x, validate)
+validate String := x -> null
+validate MarkUpList := x -> (
+     p := class x;
+     if p.?qname then (
+	  n := p.qname;
+	  if not validContent#?n then error("internal error: valid content for element ", format n, " not recorded yet");
+	  valid := validContent#n;
+	  scan(x, e -> (
+		    c := class e;
+		    if not c.?qname or not valid#?(c.qname) then error("element of type ", format toString p, " can't contain an element of type ", format toString c);
+		    validate e)))
+     else error(format toString p, " isn't an html type (has no qname)"))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

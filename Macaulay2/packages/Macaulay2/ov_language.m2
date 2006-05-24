@@ -22,13 +22,13 @@ document {
      "The Macaulay2 language is a simple yet powerful interpreted language.  Every 
      object has a type, such as Type, ZZ (integer), String, HashTable, Ring, Matrix,
      Function, etc.  User defined variables are hold values of any type.",
-     PARA,
+     PARA{},
      "Expressions in Macaulay2 include function calls,
      control structures (e.g., ", TO "for", " and ", TO "while", " loops), function definitions,
      and operator expressions.
      Every expression returns an object, although ", TO "null", " is often returned if the 
      expression is only being used to produce some side effect.",
-     PARA,
+     PARA{},
 
      "There is special syntax for creating and accessing strings, lists, sequences, and
      hashtables.  These are the key data types underlying many new types.  The Macaulay2
@@ -96,7 +96,7 @@ document {
 	  },
      "Other symbols refer to functions built into Macaulay 2 that provide
      much of its functionality.",
-     PARA,
+     PARA{},
      "Sometimes, one wants the symbol, rather than the particular value it
      happens to have at the moment.  For example after setting the value of
      ", TT "x", " to 5, the value of the variable ", TT "x", " is no longer the 
@@ -128,7 +128,7 @@ document {
 	  },
      "Integers are elements of the ring ", TO ZZ, " of integers, and rational
      numbers are elements of the ring ", TO QQ, " of rational numbers.",
-     PARA,
+     PARA{},
      "One point to notice is that there are two kinds of division, ", TO symbol/,
      " and ", TO symbol//, ".  The first
      returns a rational number (element of ", TO QQ, 
@@ -199,7 +199,7 @@ document {
 document {
      Key => "functions",
      "In this section we present an overview of functions.",
-     PARA,
+     PARA{},
      Subnodes => {
 	  TO "using functions",
 	  TO "using functions with optional inputs",
@@ -266,7 +266,7 @@ document {
 	  },
      "Other symbols refer to functions built into Macaulay 2 that provide
      much of its functionality, as we will learn.",
-     PARA,
+     PARA{},
      "The class of all symbols is ", TO "Symbol", "."
      }
 
@@ -282,7 +282,7 @@ document {
      The variable created is global, in the sense that any code placed
      elsewhere that contains a reference to a variable called ", TT "x", "
      will refer to the one we just set.",
-     PARA,
+     PARA{},
      "It is important to distinguish between a symbol and its value.  The
      initial value of a global symbol is the symbol itself, and the initial
      value of a local variable is ", TO "null", ".  One possibility for
@@ -322,7 +322,7 @@ document {
      for example, when creating a polynomial ring the prospective
      variables are given new values which are the generators of the 
      polynomial ring.",
-     PARA,
+     PARA{},
      SeeAlso => { "GlobalAssignHook", "GlobalReleaseHook" }
      }
 
@@ -338,12 +338,12 @@ document {
 	  },
      "The variable above is a local one.  Its value is not available to code
      in other files.",
-     PARA,
+     PARA{},
      "Assume the code above is entered directly by the user into Macaulay 2.  Then
      the variable is still a local one and is not available to code previously loaded
      or to functions previously defined, but it will be available to code 
      loaded subsequently.  We illustrate this below with the variable ", TT "j", ".",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "h = () -> j",
 	  "h()",
@@ -362,7 +362,7 @@ document {
      in output variables.  You may wish to free the memory space occupied
      by that data, or you may simply wish to remind yourself where you
      stored a previously computed value.",
-     PARA,
+     PARA{},
      "We may use the command ", TO "listUserSymbols", " to obtain a list of the user's
      symbols encountered so far.",
      EXAMPLE {
@@ -371,7 +371,7 @@ document {
 	  },
      "The symbols are listed in chronological order, and the type of value stored
      under it is displayed.",
-     PARA,
+     PARA{},
      "We can clear the output symbols with ", TO "clearOutput", ".",
      EXAMPLE {
      	  "clearOutput",
@@ -479,7 +479,7 @@ document {
      temporarily as the value of the parameter ", TT "i", ".  In the example
      above, ", TT "i", " was assigned the value ", TT "10", ", and then the 
      body of the function was evaluated, yielding ", TT "100", ".",
-     PARA,
+     PARA{},
      "Here is how we make a function with more than one argument.",
      EXAMPLE {
 	  "tm = (i,j) -> i*j",
@@ -516,7 +516,7 @@ document {
      as they are needed.  Indeed, the body of both functions is
      ", TT "x -> f(g(x))", ", and the only difference between them is the
      values assigned to the parameters ", TT "f", " and ", TT "g", ".",
-     PARA,
+     PARA{},
      "The class of all functions is ", TO "Function", "."
      }
 
@@ -578,7 +578,7 @@ document {
      are the corresponding current values, obtained either from the default values 
      specified in the definition of ", TT "f", ", or from the options specified at 
      the time ", TT "f", " is called.",
-     PARA,
+     PARA{},
      "In the example above, the inner function has just one argument, ", TT "x", ",
      but handling multiple arguments is just as easy.  Here is an example with two
      arguments.",
@@ -637,7 +637,7 @@ document {
      "In the example above, ", TT "X", " is the predicate ", TT "i < 20", " and ", TT "Y", " is
      the code ", TT ///(<< " " << i; i = i + 1)///, ".  Notice the use of the
      semicolon within ", TT "Y", " to separate two expressions.",
-     PARA,
+     PARA{},
      "The semicolon can also be used within the predicate ", TT "X", " to do other 
      things before the test is performed.  This works because the value of an expression
      of the form ", TT "(A;B;C;D;E)", " is obtained by evaluating each of the
@@ -676,7 +676,7 @@ document {
      "Note: a for-loop starts a new lexical scope for local variables,
      and hence the value of ", TT "k", " is not known outside the 
      loop; see ", TO ":=", ".",
-     PARA,
+     PARA{},
      "The keyword ", TO "when", " can be used with ", TO "for", " to
      specify a predicate which must remain true for execution to
      continue, and the keyword ", TO "list", " can be used to
@@ -703,7 +703,7 @@ document {
      forever, needlessly occupying valuable memory space.  For recursive
      functions especially, it is important to use local variables so that
      one invocation of the function doesn't interfere with another.",
-     PARA,
+     PARA{},
      "The simplest way to create a local variable in a function is with
      the assignment operator ", TO ":=", ".  The expression ", TT "X := Y", "
      means that the value of ", TT "Y", " will be assigned to a newly created local
@@ -718,7 +718,7 @@ document {
      "In the example above, we see that the function ", TT "f", " does 
      its work with a local variable ", TT "i", " that is unrelated to the global 
      variable ", TT "i", " introduced on the first line.",
-     PARA,
+     PARA{},
      "In the next example, we show that the local variables in two
      invocations of a function don't interfere with each other.  We
      write a function ", TT "f", " that returns a newly created counting function.  
@@ -795,7 +795,7 @@ document {
      "A net is a rectangular two-dimensional array of characters, together
      with an imaginary horizontal baseline that allows nets to be assembled
      easily into lines of text.  A string is regarded as a net with one row.",
-     PARA,
+     PARA{},
      "Nets are used extensively for such things as formatting polynomials for
      display on ascii terminals.  Use ", TO "net", " to obtain such nets directly.",
      EXAMPLE {
@@ -846,16 +846,16 @@ document {
      a key.  The hash table stores the key-value pairs in such a way
      that when presented with a key, the corresponding value can be
      quickly recovered.",
-     PARA,
+     PARA{},
      "A dictionary could be implemented as a hash table: the keys would
      be the words in the language, and the values could be the definitions
      of the words.",
-     PARA,
+     PARA{},
      "A phone book could also be implemented as a hash table: the keys would
      be the names of the subscribers, and the values could be the corresponding
      phone numbers.  (We exclude the possibility of two subscribers with
      the same name.)",
-     PARA,
+     PARA{},
      "As an example we implement a phone book.",
      EXAMPLE {
 	  ///book = new HashTable from {
@@ -909,7 +909,7 @@ document {
      TO "pairs", ", ",
      TO "remove", ", and ",
      TO "values", ".",
-     PARA,
+     PARA{},
      "For details of the mechanism underlying hash tables, see ", TO "hashing", ".
      The class of all hash tables is ", TO "HashTable", ", and the class of all
      mutable hash tables is ", TO "MutableHashTable", ".",
@@ -975,7 +975,7 @@ document {
 	  TOH symbol^,
 	  TOH symbol\\,
           SEQ (TO "&", " -- bit-wise and"),
-	  HR,
+	  HR{},
 	  TOH symbol++,
 	  TOH symbol**,
           SEQ (TO "^**", " -- tensor power"),
@@ -1028,7 +1028,7 @@ document {
      "A newline ends a statement if it can, otherwise it acts like any
      white space.",
      EXAMPLE "2+\n3+\n4",
-     PARA,
+     PARA{},
 --     "Parsing is determined by a triple of numbers attached to each token.
 --     The following table (produced by the command ", TO "seeParsing", "), 
 --     displays each of these numbers.",
@@ -1042,11 +1042,11 @@ document {
 --     whose parsing precedence is less than or equal to the current level.
 --     The tokens preceding the offending token are bundled into an expression
 --     appropriately and incorporated into the containing expression.",
-     PARA,
+     PARA{},
      "When an operator or token is encountered, its binding strength serves
      as the level for parsing the subsequent expression, unless the current level
      is higher, in which case it is used.",
-     PARA,
+     PARA{},
      "Consider a binary operator such as ", TT "*", ".  The relationship between
      its binary binding strength and its parsing precedence turns out to determine
      whether ", TT "a*b*c", " is parsed as ", TT "(a*b)*c", " or as ", TT "a*(b*c)", ".
@@ -1056,19 +1056,19 @@ document {
      part of the right hand operand of the first ", TT "*", ", and the
      expression is parsed as ", TT "a*(b*c)", ".  Otherwise, the expression is
      parsed as ", TT "(a*b)*c", ".",
-     PARA,
+     PARA{},
      "For unary operators, the unary binding strength is used instead of the binary
      binding strength to reset the current level.  The reason for having both numbers 
      is that some operators can be either unary or binary, depending on the context.
      A good example is ", TO "#", " which binds as tightly as ", TO ".", "
      when used as an infix operator, and binds as loosely as adjacency or
      function application when used as a prefix operator.",
-     PARA,
+     PARA{},
      "To handle expressions like ", TT "b c d", ", where there are no tokens present
      which can serve as a binary multiplication operator, after parsing ", TT "b", ",
      the level will be set to 1 less than the precedence of an identifier,
      so that ", TT "b c d", " will be parsed as ", TT "b (c d)", ".",
-     PARA,
+     PARA{},
      "The comma and semicolon get special treatment; the empty expression can
      occur to the right of the comma or semicolon or to the left of the comma."
      }

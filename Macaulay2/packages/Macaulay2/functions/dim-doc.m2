@@ -7,7 +7,7 @@ document {
      Headline => "compute the Krull dimension",
      Caveat => {"To compute the dimension of a vector space, 
 	one should use ", TO rank, ".",
-	PARA,
+	PARA{},
 	"Over the integers, the computation effectively 
 	 tensors first with the rational numbers, yielding the wrong 
 	 answer in some cases."},
@@ -22,7 +22,7 @@ document {
      Inputs => {"R" => ""},
      Outputs => {ZZ => ""},
      "Computes the Krull dimension of the given ring.",
-     PARA,
+     PARA{},
      "The singular locus of a cuspidal plane curve", 
      EXAMPLE {
 	  "R = QQ[x,y,z]",
@@ -132,7 +132,7 @@ document {
      Inputs => {"I" => ""},
      Outputs => {ZZ => ""},
      "Computes the Krull dimension of the base ring of ", TT "I", " mod ", TT "I", ".",
-     PARA,
+     PARA{},
      "The ideal of 3x3 commuting matrices:",
      EXAMPLE {
 	  "R = ZZ/101[x_(0,0)..x_(2,2),y_(0,0)..y_(2,2)]",
@@ -142,7 +142,7 @@ document {
 	  "dim I" 
 	  },
      "The dimension of a Stanley-Reisner monomial ideal associated to a simplicial complex.", 
-     PARA,
+     PARA{},
      "A hollow tetrahedron:",
      EXAMPLE {
 	  "needsPackage \"SimplicialComplexes\"", 

@@ -68,7 +68,7 @@ document {
 	  "I = ideal(a^2-b*d, a^2-b*d, c^2, d^2);",
 	  "numgens I"
 	  },
-     PARA,
+     PARA{},
      "In order to find a more efficient set of of generators, use ",
      TO mingens, " or ", TO trim, ".",
      EXAMPLE {

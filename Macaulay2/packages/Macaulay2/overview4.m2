@@ -40,7 +40,7 @@ document {
      "The engine is the part of the program that is dedicated to
      performing the computation of Groebner bases with Buchberger's
      algorithm.  It is coded directly in C++ for speed.",
-     PARA,
+     PARA{},
      "The Macaulay 2 engine provides fast polynomial and matrix operations,
      and Groebner bases, syzygies, Hilbert functions, resolutions and
      other operations that we feel need to be implemented directly for
@@ -164,7 +164,7 @@ document {
      "Remark: the operation ", TT "diff", " is useful, but it's not a 
      natural one: it's not invariant under linear coordinate changes;
      in effect, we've identified the a free module with its dual.",
-     PARA,
+     PARA{},
      "The second argument can be a matrix, in which case each of
      its entries gets differentiated.",
      EXAMPLE {
@@ -180,21 +180,21 @@ document {
 	  "diff(matrix {{x,x^2,x^3,x^4}}, m)",
 	  "diff(matrix {{x,x^2},{x^3,x^4}}, m)",
 	  },
-     PARA,
+     PARA{},
      "Perhaps the most common usage of ", TO "diff", " is when one argument
      has a single column and the other column has a single row.  For example,
      the Jacobian matrix can be computed as follows.",
      EXAMPLE {
 	  "diff(matrix {{x},{y}}, matrix {{x^2, x*y, y^2}})",
 	  },
-     HR,
+     HR{},
      "We can also compute the Hessian matrix of a quadratic form using ", TO "diff", ",
      as follows.",
      EXAMPLE {
 	  "v = matrix {{x,y}}",
 	  "diff(v ** transpose v, 3*x^2 + 5*x*y + 11*y^2)"
 	  },
-     HR,
+     HR{},
      "As another example, we show how to compute the Wronskian of a
      polynomial ", TT "f", ".",
      EXAMPLE {
@@ -202,7 +202,7 @@ document {
       	  "v = matrix {{x,y,z}}",
       	  "det diff(transpose v * v, f)",
 	  },
-     HR,
+     HR{},
      "The function ", TO "contract", " is the same as ", TO "diff", ",
      except the multiplication by integers that occurs during
      differentiation is omitted.",
@@ -218,7 +218,7 @@ document {
 	  "v3 = symmetricPower(3,matrix{{x,y,z}})",
 	  "contract(v3, f)",
 	  },
-     HR,
+     HR{},
      "As an example, the Sylvester resultant between homogeneous polynomials
      ", TT "f(x,y)", " and ", TT "g(x,y)", " can be found in the following way.",
      EXAMPLE {
@@ -241,7 +241,7 @@ document {
           --       ideal(- a  - a b  - a b - a b  + 2a*b  - b  + a  - 3a b + 3a*b  - b )
           --   
 	  },
-     HR,
+     HR{},
      "The function ", TO "diff'", " is the same as ", TO "diff", ",
      except that the first argument is differentiated by the second;
      the shape of the first argument still plays the major role.",
@@ -256,7 +256,7 @@ document {
 	  "contract'(m, matrix {{x,x^2,x^3,x^4}})",
 	  "contract'(m, matrix {{x,x^2},{x^3,x^4}})",
 	  },
-     HR,
+     HR{},
      "All four of these operators are engineered so that the result is
      a homogeneous matrix if the arguments are.  The operations ", TO "diff", "
      and ", TO "contract", " are essentially partially defined division operations,
@@ -313,11 +313,11 @@ document {
 	  },
      "See ", TO "chain complexes", " for further details about how to handle
      and examine the result.",
-     PARA,
+     PARA{},
      "A reference to the result is stored within the module ", TT "M", ", so that
      requesting a computation of ", TT "res M", " a second time yields the formerly
      computed result immediately.",
-     PARA,
+     PARA{},
      "If the computation is interrupted or discontinued after the skeleton 
      has been successfully computed, then the partially completed
      resolution is available as ", TT "M.cache.resolution", ", and can be
@@ -325,7 +325,7 @@ document {
      with ", TT "res M", ".  Here is an example, with an alarm interrupting
      the computation several times before it's complete.  (On my machine, 
      the computation takes a total of 14 seconds.)",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ/2[a..d];",
 	  "M = coker random(R^4, R^{5:-3,6:-4});",
@@ -347,7 +347,7 @@ document {
      "If the user has a chain complex in hand which is known to be a
      projective resolution of ", TT "M", ", then it can be installed
      with ", TT "M.cache.resolution = C", ".",
-     PARA,
+     PARA{},
      "There are various optional arguments associated with ", TO "res", "
      which allow detailed control over the progress of the computation."
      }
@@ -363,7 +363,7 @@ document { Key => "using the debugger",
      EXAMPLE "code g",
      "We see that the function g calls a function ", TT "f", ", but ", TT "f", " is not visible to us
      (because ", TT "f", " is a local variable).",
-     PARA,
+     PARA{},
      "The first few times we use ", TT "g", " seem to work.",
      EXAMPLE {"g 4", "g 3"},
      "The following attempt results in an error, and the debugger starts up automatically.",

@@ -5,7 +5,7 @@ document {
      Headline => "override default values for optional arguments",
      TT "override(defaults,args)", " overrides default values for
      optional arguments present in the argument sequence ", TT "args", ".",
-     PARA,
+     PARA{},
      "The argument ", TT "defaults", " should be an immutable hash table (
      usually of type ", TO "OptionTable", "), and ", TT "args", " should be
      a sequence of arguments, some of which are optional arguments of
@@ -13,7 +13,7 @@ document {
      is removed from ", TT "args", ", and the value in ", TT "defaults", "
      corresponding to the key ", TT "x", " is replaced by ", TT "v", ".
      The value returned is the modified pair ", TT "(defaults, args)", ".",
-     PARA,
+     PARA{},
      "This function is intended for internal use only, and is used in the processing
      of optional arguments for method functions which accept them.",
      EXAMPLE {
@@ -29,10 +29,10 @@ document {
 	Outputs => {List => {" a list of symbols"}},
      TT "userSymbols ()", " provides a list of symbols defined by
      the user.",
-     BR,
-     NOINDENT, TT "userSymbols X", " limits the list to those symbols whose
+     BR{},
+     NOINDENT{}, TT "userSymbols X", " limits the list to those symbols whose
      values are instances of the ", TO "class", " ", TT "X", ".",
-     PARA,
+     PARA{},
      "Protected symbols are excluded from the list.",
      SeeAlso => "listUserSymbols"
      }
@@ -44,10 +44,10 @@ document {
 	Usage => "listUserSymbols",
      TT "listUserSymbols", " is a command which returns a display of the variables 
      defined by the user, along with their types.",
-     BR,
-     NOINDENT, TT "listUserSymbols X", " limits the list to those variables whose
+     BR{},
+     NOINDENT{}, TT "listUserSymbols X", " limits the list to those variables whose
      values are instances of ", TO "class", " ", TT "X", ".",
-     PARA,
+     PARA{},
      "After using ", TO "loaddata", " to restore 
      a previous session, this function is useful to determine what user defined variables are present.",
      SeeAlso => {"userSymbols"}
@@ -87,7 +87,7 @@ document {
      Headline => "restart Macaulay 2",
 	Usage => "restart",
      TT "restart", " restarts Macaulay 2 from the beginning.",
-     PARA,
+     PARA{},
      "Functions previously registered with ", TO "addEndFunction", " will
      be called first."
      }
@@ -98,10 +98,10 @@ document {
      TT "f = on f", " -- replaces the function ", TT "f", " by a version which 
      will print out its arguments and return value each time it's called,
      together with a sequence number so the two reports can be connected.",
-     PARA,
+     PARA{},
      "This function is of only limited utility because it cannot be used
      with write-protected system functions.",
-     PARA,
+     PARA{},
      "The reason we write ", TT "f = on f", " and not something like
      ", TT "f = on(x -> ...)", " is so the function handed to ", TO "on", "
      will know its name.  The name will appear in the display."
@@ -127,15 +127,15 @@ document {
      Headline => "set the error printing depth",
      TT "errorDepth i", " -- sets the error depth to ", TT "i", ", which should be
      a small integer, returning the old value.",
-     BR,
+     BR{},
      TT "errorDepth()", " -- returns the current error depth.",
-     PARA,
+     PARA{},
      "During the backtrace after an error message, a position in interpreted
      code is displayed only if the load depth was at least as large at the
      time the code was parsed as the error depth is now.  Typically, the
      error depth is set so that messages from code pre-interpreted and
      reloaded with ", TO "loaddata", " will not appear in the backtrace.",
-     PARA,
+     PARA{},
      "To increase the size of the stack trace, reduce the ", TT "errorDepth", ".",
      SeeAlso => { "loadDepth" }
      }
@@ -145,7 +145,7 @@ document {
      Headline => "the load depth",
      TT "loadDepth = i", " -- sets the load depth to ", TT "i", ", which should be
      a small integer, returning the old value.",
-     PARA,
+     PARA{},
      "During the backtrace after an error message, a position in interpreted
      code is displayed only if the load depth was at least as large at the
      time the code was parsed as the error depth is now.  The load depth 
@@ -178,7 +178,7 @@ document {
      TT "memoize f", " -- produces, from a function ", TT "f", ", a new function which
      behaves the same as ", TT "f", ", but remembers previous answers to be provided
      the next time the same arguments are presented.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "fib = n -> if n <= 1 then 1 else fib(n-1) + fib(n-2)",
       	  "time fib 16",
@@ -186,18 +186,18 @@ document {
       	  "time fib 16",
       	  "time fib 16",
 	  },
-     PARA,
+     PARA{},
      "The function ", TT "memoize", " operates by constructing 
      a ", TO "MutableHashTable", " in which the argument sequences are used
      as keys for accessing the return value of the function.",
-     PARA,
+     PARA{},
      "An optional second argument to memoize provides a list of initial values,
      each of the form ", TT "x => v", ", where ", TT "v", " is the value to
      be provided for the argument ", TT "x", ".",
-     PARA,
+     PARA{},
      "Warning: when the value returned by ", TT "f", " is ", TO "null", ", it will always be 
      recomputed, even if the same arguments are presented.",
-     PARA,
+     PARA{},
      "Warning: the new function created by ", TT "memoize", " will save
      references to all arguments and values it encounters, and this will
      often prevent those arguments and values from being garbage-collected
@@ -245,9 +245,9 @@ document {
      Key => (symbol **, Tally, Tally),
      Headline => "Cartesian product of tallies",
      TT "x ** y", " -- produces the Cartesian product of two tallies.",
-     PARA,
+     PARA{},
      "One of the arguments may be a ", TO "Set", ".",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "x = tally {a,a,b}",
       	  "y = tally {1,2,2,2}",
@@ -268,9 +268,9 @@ document {
      Key => (symbol +, Tally, Tally),
      Headline => "union of tallies",
      TT "x + y", " -- produces the union of two tallies.",
-     PARA,
+     PARA{},
      "One of the arguments may be a ", TO "Set", ".",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "x = tally {a,a,a,b,b,c}",
       	  "y = tally {b,c,c,d,d,d}",
@@ -283,7 +283,7 @@ document {
      Key => (symbol -, Tally, Tally),
      Headline => "difference of tallies",
      TT "x - y", " -- produces the difference of two tallies.",
-     PARA,
+     PARA{},
      EXAMPLE "tally {a,a,b,c} - tally {c,d,d}",
      SeeAlso => "Tally"
      }
@@ -352,7 +352,7 @@ document {
 	  "set{4,5} * set{5,6}",
 	  "set{1,3,2} == set{1,2,3}"
 	  },
-     PARA,
+     PARA{},
      TO2(Ideal,"Ideals"), " in Macaulay2 come equipped with a specific generating
      set, so the following two ideals are considered different.",
      EXAMPLE {
@@ -366,7 +366,7 @@ document {
      EXAMPLE {
 	  "C1 = set(trim ideal(a,b),trim ideal(b,a))"
 	  },
-     PARA,
+     PARA{},
      "A set is implemented as a ", TO HashTable, ", whose keys are the elements of the
      set, and whose values are all 1.  In particular, this means that two objects 
      are considered the same exactly when the are equal under ", TO symbol===, "."

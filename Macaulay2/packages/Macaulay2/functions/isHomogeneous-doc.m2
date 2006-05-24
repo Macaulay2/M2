@@ -39,7 +39,7 @@ document {
 	  "isHomogeneous(ZZ[x])",
 	  "isHomogeneous(ZZ[x]/(x^3-x-3))"
 	  },
-     PARA,
+     PARA{},
      "Rings may be graded, with generators having degree 0.  For example,
      in the ring B below, every element of A has degree 0.",
      EXAMPLE {
@@ -48,7 +48,7 @@ document {
 	  "isHomogeneous B",
 	  "isHomogeneous ideal(a*x+y,y^3-b*x^2*y)"
 	  },
-     PARA,
+     PARA{},
      "Quotients of multigraded rings are homogeneous, if the ideal is also multigraded.",
      EXAMPLE {
           "R = QQ[a,b,c,Degrees=>{{1,1},{1,0},{0,1}}];",
@@ -57,7 +57,7 @@ document {
 	  "isHomogeneous(R/I)",
 	  "isHomogeneous(R/(a-b))"
 	  },
-     PARA,
+     PARA{},
      "A matrix is homogeneous if each entry is homogeneous of such a degree
      so that the matrix has a well-defined degree.",
      EXAMPLE {
@@ -69,7 +69,7 @@ document {
 	  "isHomogeneous phi",
 	  "degree phi"
 	  },
-     PARA,
+     PARA{},
      "Modules are homogeneous if their generator and relation matrices are homogeneous.",
      EXAMPLE {
 	  "M = coker phi",

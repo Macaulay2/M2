@@ -25,7 +25,7 @@ document {
 	  TO "format and display of matrices in Macaulay 2",
 	  TO "importing and exporting matrices",
 	  },
-     PARA,
+     PARA{},
      "For an overview of matrices as homomorphisms between modules, 
      see ", TO "homomorphisms of modules", ".  
      For additional common operations and a comprehensive list of all routines

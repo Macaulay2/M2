@@ -46,7 +46,7 @@ document {
 	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
       	  "S = integralClosure (R)"
 	  },
-     PARA,
+     PARA{},
      "The code for this function was written 
      so that certain information can be retrieved if desired.  
      The information of largest interest is the fractions that 
@@ -139,7 +139,7 @@ document {
 	  "F = ICmap R",
 	  "conductor F"
 	  },
-     PARA,
+     PARA{},
      "The command ", TT "conductor", " calls the 
      command ", TO pushForward, ".  Currently, the 
      command ", TT "pushForward", 

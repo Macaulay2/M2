@@ -2,9 +2,9 @@ document { Key => "packages",
      "A package is a body of Macaulay2 source code devoted to a 
      particular topic.  Many packages are distributed with Macaulay 2,
      and others are available from various users on the internet.",
-     PARA, "For more detailed information about packages, see ", 
+     PARA{}, "For more detailed information about packages, see ", 
      TO Package, ".",
-     PARA,
+     PARA{},
      "Some packages which are distributed with Macaulay2 include",
      UL {
 	  TO "convex hulls and polar cones",
@@ -67,7 +67,7 @@ document { Key => "creating a package",
 	exported to global variables, a section containing 
 	the actual coding that constitutes the package, and a 
 	section containing documentation and tests for the new package.",
-	PARA,
+	PARA{},
 	"A basic template for new packages:",
 	PRE///newPackage( ... )
 	
@@ -108,7 +108,7 @@ document {
      "It is important to provide tests to insure that your package
      is functioning properly.  One provides tests using  ", TO TEST,
      " in the ", TO beginDocumentation, " section.",
-     PARA,
+     PARA{},
      "All of the tests provided for a package 'YourPackage' may be run by 
      using ", TO check,
      PRE///check YourPackage///

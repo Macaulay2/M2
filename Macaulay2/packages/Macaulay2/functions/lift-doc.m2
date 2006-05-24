@@ -35,7 +35,7 @@ document {
      "The ring ", TT "R", " should be one of the base rings 
      associated with the ring of ", TT "f",".  An error is raised if
      ", TT "f", " cannot be lifted to ", TT "R", ".",
-     PARA,
+     PARA{},
      "The first example is lifting from the fraction field of R to R.",
      EXAMPLE {
 	  "lift(4/2,ZZ)",
@@ -43,7 +43,7 @@ document {
 	  "f = ((x+1)^3*(x+4))/((x+4)*(x+1))",
      	  "lift(f,R)"
 	  },
-     PARA,
+     PARA{},
      "Another use of lift is to take polynomials in a quotient ring
      and lift them to the polynomial ring.",
      EXAMPLE {
@@ -54,7 +54,7 @@ document {
 	  "jf = jacobian ideal f",
 	  "lift(jf,A)"
 	  },
-     PARA,
+     PARA{},
      "Elements may be lifted to any base ring, if such a lift exists.
      For example,",
      EXAMPLE {

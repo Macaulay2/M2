@@ -144,7 +144,7 @@ document {
      we may define a polynomial ring over ", TO "ZZ", " in ", TT "n", " variables, whose
      monomials correspond to the irreducible representations of GL(n), and where 
      multiplication is given by the decomposition of the tensor product of representations",
-     PARA,
+     PARA{},
      "We create such a ring in Macaulay 2 using the ", TO schurRing, " function:",
      EXAMPLE "R = schurRing(s,4);",
      "A monomial represents the irreducible representation with a given highest weight. 
@@ -174,9 +174,9 @@ document {
      Key => schurRing,
      Headline => "make a Schur ring",
      TT "schurRing(s,n)", " -- creates a Schur ring of degree n with variables based on the symbol s",
-     PARA,
+     PARA{},
      "This is the representation ring for the general linear group of n by n matrices.",
-     PARA,
+     PARA{},
      SeeAlso => {"SchurRing"}}
 
 document {
@@ -200,7 +200,7 @@ document {
 --      Headline => "make an element of a Schur ring",
 --      TT "S_v", " -- produce the element of the Schur ring ", TT "S", " corresponding
 --      to the Young diagram whose rows have lengths as in the list ", TT "v", ".",
---      PARA,
+--      PARA{},
 --      "The row lengths should be in decreasing order.",
 --      SeeAlso => "SchurRing"}
 

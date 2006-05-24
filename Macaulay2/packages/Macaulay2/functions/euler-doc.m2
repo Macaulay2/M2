@@ -21,7 +21,7 @@ document {
      "The command returns ", TT "P(0)", " the constant term of P. 
       This is also the Euler characteristic of the sheaf of rings of a projective 
       variety with Hilbert polynomial ", TT "P", ".",
-      PARA,
+      PARA{},
       EXAMPLE {	   
 	   "R = QQ[x_0..x_3]",
 	   "C = Proj(R/monomialCurveIdeal(R, {1,3,4}));",
@@ -42,13 +42,13 @@ document {
      "The command computes the topological Euler characteristic of the (smooth) projective 
      variety V as an alternated sum of its Hodge numbers. The Hodge numbers can be computed 
      directly using the command ", TO "hh", ".",
-     PARA,
+     PARA{},
      "A smooth plane quartic curve has genus 3 and topological Euler characteristic -4:",  
      EXAMPLE {
 	  "Quartic = Proj(QQ[x_0..x_2]/ideal(x_0^4+x_1^4+x_2^4))",
 	  "euler(Quartic)"
 	  },
-     PARA,
+     PARA{},
      "The topological Euler characteristic of a smooth quintic hypersurface in
      projective fourspace is -200:",     
      EXAMPLE {
@@ -68,7 +68,7 @@ document {
      Outputs => {ZZ =>" the Euler characteristic of the cohomology of the sheaf"},
      "The command returns ", TT "chi(F)", " the Euler characteristic of the sheaf ",
       TT "F", " i.e. the alternated sum of the dimensions of its cohomology groups",
-     PARA,
+     PARA{},
       
      SeeAlso => {(eulers,CoherentSheaf),genus}
      }
@@ -107,7 +107,7 @@ document {
      "Computes a list of the successive sectional Euler characteristics of a coherent sheaf,
      the i-th entry on the list being the Euler characteristic of the i-th
      generic hyperplane restriction of ", TT "E",
-     PARA,
+     PARA{},
      "The Horrocks-Mumford bundle on the projective fourspace:",
      EXAMPLE {
 	  "R = QQ[x_0..x_4];",

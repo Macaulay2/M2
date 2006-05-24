@@ -6,10 +6,10 @@ document {
      other differences.  One major difference is the introduction of the
      notion of module, whereas in Macaulay, the pervasive concept was
      the matrix.",
-     PARA,
+     PARA{},
      "Here is a list of old Macaulay functions, together with pointers to
      functions in Macaulay 2 that might be used to replace them.",
-     PARA,
+     PARA{},
      UL {
 	  SEQ ("Macaulay commands:",
 	  UL {
@@ -35,7 +35,7 @@ document {
 	       SEQ ("degree -- ", TO "degree"),
 	       SEQ ("determinants -- ", TO "minors"),
 	       SEQ ("diag -- ", "The command ", TT "diag m n", " is equivalent to the Macaulay2
-		    expression ", BR, TT "n = map((ring m)^(numgens source m), source m,(i,j) -> if i === j then m_(0,i) else 0)"),
+		    expression ", BR{}, TT "n = map((ring m)^(numgens source m), source m,(i,j) -> if i === j then m_(0,i) else 0)"),
 	       SEQ ("diag -- ", TO "not documented yet"),
 	       SEQ ("diff -- ", TO "diff"),
 	       SEQ ("dshift -- ", TO "not documented yet"),

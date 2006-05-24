@@ -20,7 +20,7 @@ document {
 	  },
      "The maps f1, f2, ... must be defined over the same base ring, and they must form
      a complex: the target of f(i+1) is the source of fi.",
-     PARA,
+     PARA{},
      "The following example illustrates how chainComplex adjusts the degrees of
      the modules involved to ensure that sources and targets of the differentials
      correspond exactly.",

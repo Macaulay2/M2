@@ -86,7 +86,7 @@ document {
      a string ", TT "s", " provides the string obtained by concatenating
      the elements of ", TT "x", " with a copy of ", TT "x", " inserted
      between each successive pair.",
-     PARA,
+     PARA{},
      EXAMPLE "demark(\"+\",{\"a\",\"b\",\"c\"})"
      }
 
@@ -138,7 +138,7 @@ document {
      Headline => "pack elements of a list into shorter ones",
      TT "pack(n,v)", " -- packs the elements of the list or sequence
      ", TT "v", " into a table ", TT "n", " at a time.",
-     PARA,
+     PARA{},
      "It produces, from a list ", TT "v", ", a list of lists formed 
      by packing the elements of ", TT "v", " into lists ", TT "n", " 
      at a time.  The last of the lists produced may have fewer 
@@ -151,11 +151,11 @@ document {
      Headline => "join lists",
      TT "join(u,v,...)", " -- joins the elements of the lists or
      sequences u, v, ... into a single list.",
-     PARA,
+     PARA{},
      "The class of the result is the same as the class of the first argument.
      If there is just one argument, and it's mutable, a copy is returned.",
      EXAMPLE "join({1,2,3},{a,b,c},{7,8,9})",
-     PARA,
+     PARA{},
      "The operator ", TO (symbol |, List, List), " can be used as a synonym."
      }
 
@@ -191,7 +191,7 @@ document {
      Key => first,
      Headline => "first element of a list",
      TT "first v", " -- yields the first element of the list v.",
-     PARA,
+     PARA{},
      "See also ", TO "last", "."
      }
 
@@ -199,7 +199,7 @@ document {
      Key => last,
      Headline => "last element of a list",
      TT "last v", " -- yields the last element of the list v.",
-     PARA,
+     PARA{},
      "See also ", TO "first", "."
      }
 
@@ -229,7 +229,7 @@ document {
      Headline => "delete elements of a list",
      TT "delete(x,v)", " -- removes any occurrences of the expression ", TT "x", "
      from the list ", TT "v", ".",
-     PARA,
+     PARA{},
      "Equality is determined with ", TO "===", ", which is quick.",
      EXAMPLE {
 	  "delete(c,{a,b,c,d,e,a,b,c,d,e})",
@@ -248,10 +248,10 @@ document {
      Headline => "ultimate value for an iteration",
      TT "ultimate(f,x)", " -- yields the value ultimately obtained by
      applying the function ", TT "f", " to ", TT "x", ".",
-     PARA,
+     PARA{},
      "Iteration ceases when an error occurs during application of the
      function, or the result is the same.  Errors are not reported.",
-     PARA,
+     PARA{},
      "It's a bad idea to use this function, because unexpected errors will
      produce unexpected results silently."
      }
@@ -268,7 +268,7 @@ document {
 	  ///temporaryFileName () | ".tex"///,
      	  ///temporaryFileName () | ".html"///,
 	  },
-     PARA,
+     PARA{},
      "This function will work under Unix, and also under Windows
      if you have a directory on the same drive called ", TT "/tmp", "."
      }
@@ -298,7 +298,7 @@ document {
      Key => (subsets,Set,ZZ),
      TT "subsets(s,j)", " -- yields a list of those subsets of the list or 
      set ", TT "s", " which have ", TT "j", " elements.",
-     PARA,
+     PARA{},
      EXAMPLE "subsets(set {a,b,c},2)",
      SeeAlso => "subsets"
      }
@@ -306,7 +306,7 @@ document {
 document {
      Key => (subsets,List),
      TT "subsets s", " -- yields a list of the subsets of the list ", TT "s", ".",
-     PARA,
+     PARA{},
      "The subsets are returned as lists whose elements are in the same order.",
      EXAMPLE "subsets {1,2,3}",
      SeeAlso => "subsets"
@@ -315,7 +315,7 @@ document {
 document {
      Key => (subsets,Set),
      TT "subsets s", " yields a list of the subsets of the set ", TT "s", ".",
-     PARA,
+     PARA{},
      EXAMPLE "subsets set {a,b,c}",
      SeeAlso => "subsets"
      }
@@ -374,7 +374,7 @@ document {
      Headline => "count how many elements of a list satisfy a condition",
      TT "number(x,f)", " the number of elements ", TT "e", " of the list ", TT "x", " 
      for which ", TT "f(e)", " is true.",
-     PARA,
+     PARA{},
      SeeAlso => { "positions", "select" }
      }
 
@@ -396,7 +396,7 @@ document {
      Key => (sum, List),
      Headline => "sum the elements of a list",
      TT "sum v", " yields the sum of the elements in the list ", TT "v", ".",
-     PARA,
+     PARA{},
      EXAMPLE "sum {1,2,3,4,5}",
      SeeAlso => "sum"
      }
@@ -407,7 +407,7 @@ document {
      applying ", TT "f", " to each of the pairs ", TT "(i,j)", " of elements from 
      the lists or sequences ", TT "v", " and ", TT "w", ", which should be of 
      the same length.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ[x,y,z];",
       	  "sum({2,3,4},{x,y,z},(i,j)->j^i)",
@@ -419,7 +419,7 @@ document {
      Headline => "sum results of applying a function",
      TT "sum(v,f)", " yields the sum of the expressions obtained by
      applying ", TT "f", " to each of the elements of the list or sequence ", TT "v", ".",
-     PARA,
+     PARA{},
      EXAMPLE "sum(1 .. 10, i -> i^2)",
      SeeAlso => "sum"
      }
@@ -427,7 +427,7 @@ document {
      Key => (sum, ZZ, Function),
      Headline => "sum consecutive values of a function",
      TT "sum(n,f)", " computes the sum ", TT "f(0) + f(1) + ... + f(n-1)", ".",
-     PARA,
+     PARA{},
      EXAMPLE "sum(10, i -> i^2)",
      SeeAlso => "sum"
      }
@@ -435,7 +435,7 @@ document {
      Key => (sum, Tally),
      Headline => "sum of elements",
      TT "sum v", " yields the sum of the elements in the tally ", TT "v", ".",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "a = tally{1,1,1,1,1,10,10,10,100,100}",
       	  "sum a",
@@ -446,7 +446,7 @@ document {
      Key => (sum, Set),
      Headline => "sum of elements",
      TT "sum v", " yields the sum of the elements in the set ", TT "v", ".",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "a = set{1,100,10000}",
       	  "sum a",
@@ -463,7 +463,7 @@ document {
      Key => (product, List),
      Headline => "product of elements",
      TT "product v", " yields the product of the elements in the list v.",
-     PARA,
+     PARA{},
      EXAMPLE "product {1,2,3,4,5}"
      }
 document {
@@ -472,7 +472,7 @@ document {
      TT "product(v,w,f)", " yields the product of the results obtained by
      applying ", TT "f", " to each of the pairs ", TT "(i,j)", " of elements from 
      the lists ", TT "v", " and ", TT "w", ", which should be of the same length.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "M = monoid [x,y,z];",
       	  "product({2,3,4},{x,y,z},(i,j)->j^i)",
@@ -484,7 +484,7 @@ document {
      Headline => "product of values of a function",
      TT "product(v,f)", " yields the product of the expressions obtained by
      applying ", TT "f", " to each of the elements of the list or sequence ", TT "v", ".",
-     PARA,
+     PARA{},
      EXAMPLE "product(1 .. 5, i -> i^2)",
      SeeAlso => "product"
      }
@@ -492,7 +492,7 @@ document {
      Key => (product, ZZ, Function),
      Headline => "product of consecutive values of a function",
      TT "product(n,f)", " compute the product ", TT "f(0) * f(1) * ... * f(n-1)", ".",
-     PARA,
+     PARA{},
      EXAMPLE "product(5, i -> 2*i+1)",
      SeeAlso => "product"
      }
@@ -500,7 +500,7 @@ document {
      Key => (product, Tally),
      Headline => "product of elements",
      TT "product v", " yields the product of the elements in the tally ", TT "v", ".",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "a = tally{2,2,2,2,2,3,3,3,5,5}",
       	  "product a",
@@ -524,7 +524,7 @@ document {
      "These are the types ", TT "X", " of lists which can be constructed
      by expressions of the form ", TT "X {a,b,c,...}", ".  They also
      act on sequences.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "X = new HeaderType of BasicList",
 	  "X {a,b,c}"
@@ -539,7 +539,7 @@ document {
      by expressions of the form ", TT "X {a,b,c,...}", ", or, for lists of
      length one, by an expression of the form ", TT "X a", ".  They also act
      on sequences.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "X = new WrapperType of BasicList",
 	  "X {a,b,c}",
@@ -557,7 +557,7 @@ document {
      Key => Holder,
      Headline => "the class of all holder expressions",
      TT "Holder", " a type of ", TO "Expression", ".",
-     PARA,
+     PARA{},
      "This type of expresssion is a container for a single, arbitrary, thing which
      is basic enough that the correct method for printing does not depend
      on its neighbors in the containing expression.  A negative number would
@@ -587,12 +587,12 @@ document {
      producing them is ", TO "expression", ".  The usual algebraic
      operations are available for them, but most simplifications do not
      occur.",
-     PARA,
+     PARA{},
      "The parts of expressions are not always expressions.  For example,
      ", TO "factor", " returns such an expression.",
-     PARA,
+     PARA{},
      EXAMPLE "(expression 2)^5 * (expression 3)^3 / ((expression 5) * (expression 11)^2)^6",
-     PARA,
+     PARA{},
      "Functions which act on expressions:",
      UL {
 	  TO "value",
@@ -616,7 +616,7 @@ document {
      Headline => "the class of all table expressions",
      TT "Table", " -- a type of ", TO "Expression", " representing
      a table, i.e., a list of lists of the same length.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  ///Table {{a,b,c},{a,bb,ccc}}///,
 	  ///value oo///,
@@ -629,7 +629,7 @@ document {
      Headline => "the class of all matrix expressions",
      TT "MatrixExpression", " is a type of ", TO "Expression", " representing
      a matrix.",
-     PARA,
+     PARA{},
      EXAMPLE ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
      SeeAlso => {"Table"}
      }
@@ -645,7 +645,7 @@ document {
      Key => Minus,
      Headline => "the class of all minus expressions",
      TT "Minus", " is a type of ", TO "Expression", " representing negation.",
-     PARA,
+     PARA{},
      "This is a unary operator."
      }
 
@@ -660,7 +660,7 @@ document {
      Key => Power,
      Headline => "the class of all power expressions",
      TT "Power", " is a type of ", TO "Expression", " representing a power.",
-     PARA,
+     PARA{},
      "Normally power expressions with an exponent equal to 1 will not be
      produced.  But it is desirable for ", TO "factor", " to return 
      a product of powers, and some of them will have 1 as exponent.  The
@@ -687,7 +687,7 @@ document {
      Headline => "the class of all sparse monomial vector expressions",
      TT "SparseMonomialVectorExpression", " is a type of ", TO "Expression", "
      representing a sparse monomial vector.",
-     PARA,
+     PARA{},
      "The difference between this and ", TO "SparseVectorExpression", " is that
      the basis vectors are treated like variables for printing purposes."
      }
@@ -756,12 +756,12 @@ document {
      Key => (symbol <<, File, Thing),
      Headline => "print something to a file",
      TT "f << x", " -- prints the expression x on the output file f.",
-     PARA,
+     PARA{},
      "Returns f as its value.  Parsing associates leftward, so that 
      several expressions may be displayed with something like ", TT "f<<x<<y<<z", ".
      If ", TT "f", " is a string, then a new file with name ", TT "f", " is created,
      the expression ", TT "x", " is printed into ", TT "f", ", and the file ", TT "f", " is closed.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "x = 5",
       	  ///<< "the value of x is " << x << endl///,
@@ -773,13 +773,13 @@ document {
      Key => hold,
      Headline => "hold something in a holder expression",
      TT "hold x", " -- embeds it argument ", TT "x", " in a list of class ", TO "Holder", ".",
-     PARA,
+     PARA{},
      "It might be useful for displaying an integer in factored form,
      for example, because the usual algebraic operations are available
      for ", TO "Expression", "s, but no simplification occurs.",
-     PARA,
+     PARA{},
      EXAMPLE "(hold 2)^5 * (hold 3)^3 * (hold 5) * (hold 11)^2",
-     PARA,
+     PARA{},
      "Here is example of a little function that expresses small rational numbers
      as Egyptian fractions using ", TT "hold", ".",
      EXAMPLE {
@@ -796,8 +796,8 @@ document {
      Headline => "pad a string with spaces",
      TT "pad(s,n)", " -- pads the string ", TT "s", " to length ", TT "n", " with
      spaces on the right.",
-     BR,
-     NOINDENT, 
+     BR{},
+     NOINDENT{}, 
      TT "pad(n,s)", " -- pads the string ", TT "s", " to length ", TT "n", " with
      spaces on the left."
      }
@@ -808,7 +808,7 @@ document {
      TT "columnate(w,s)", " -- arranges the strings in the list ", TT "s", " in
      columns, returning a ", TO "Net", " suitable for output to a terminal 
      with a linewidth of ", TT "w", ".",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "columnate(12, characters ascii (65 .. 90))",
 	  }

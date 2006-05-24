@@ -26,7 +26,7 @@ document {
       	  "truncate(2, ideal(a,b,c^3)/ideal(a^2,b^2,c^4))",
 	  "truncate(2,ideal(a,b*c,c^7))"
 	  },
-     PARA,
+     PARA{},
      "The base may be ZZ, or another polynomial ring.  In this case, the generators may not
      be minimal.",
      EXAMPLE {
@@ -47,7 +47,7 @@ document {
 	  },
      Caveat => {
 	  "Bug: The answer is not correct in the example over a polynomial ring!",
-	  PARA,
+	  PARA{},
 	  "If the degrees of the variables are not all one, then there is
      	  currently a bug in the routine: some generators of higher degree
 	  than ", TT "i", " may be duplicated in the generator list."

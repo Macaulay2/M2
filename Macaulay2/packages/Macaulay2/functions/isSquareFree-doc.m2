@@ -36,7 +36,7 @@ document {
 	  "I = monomialIdeal D",
 	  "isSquareFree I"
 	  },
-     PARA,
+     PARA{},
      "Implemented by Greg Smith.",	       
      SeeAlso => {radical, associatedPrimes, "SimplicialComplexes"}
      }

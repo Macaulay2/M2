@@ -32,13 +32,13 @@ document {
 	  },
      "All of the vectors, ring elements, or matrices must be defined over the ring ", 
      TT "R", ", or a base ring of ", TT "R", ".",
-     PARA,
+     PARA{},
      "If a doubly nested list of matrices is given, then ring elements can be used for
      1 by 1 blocks, and 0 represents a zero block.",
-     PARA,
+     PARA{},
      "This is essentially the same as ", TO (matrix,List), " together with
      the specification of the ring.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = QQ[a..d];",
 	  "f = matrix{{a,b},{c,0}}",
@@ -62,11 +62,11 @@ document { -- This node is used as an example in the node: Usage
      a common ring.  If the entries are ring elements, they are used as
      the entries of the matrix, and if the entries are matrices, then
      they are used to provide blocks of entries in the resulting matrix.",
-     PARA,
+     PARA{},
      "An attempt is made to set up the degrees of the generators of the
      free module serving as source so that the map will be homogeneous and of
      degree zero.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ/101[x,y,z]",
       	  "p = matrix {{x,y,z}}",
@@ -140,7 +140,7 @@ document {
      of polynomials, ideals, and matrices.  Only ring variables which are
      single letters, or single letters indexed by a sequence of numbers can
      be handled with this parser.",
-     PARA,
+     PARA{},
      "The rules for creating polynomials using the classic parser include:",
      UL {
 	  "Spaces and newline characters are completely ignored.",

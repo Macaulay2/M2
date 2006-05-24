@@ -3,7 +3,7 @@ document {
      Key => (symbol /, Module, Module),
      Headline => "quotient module",
      TT "M/N", " -- computes the quotient module ", TT "M/N", ".",
-     PARA,
+     PARA{},
      "The modules should be submodules of the same module."
      }
 
@@ -12,7 +12,7 @@ document {
      Headline => "quotient module by an ideal",
      TT "M/I", " -- computes the quotient module ", TT "M/IM", ",
      where ", TT "M", " is a module and ", TT "I", " is an ideal.",
-     PARA,
+     PARA{},
      "The module and ideal should belong to the same ring."
      }
 
@@ -21,7 +21,7 @@ document {
      Headline => "quotient module",
      TT "I/J", " -- produces the quotient module ", TT "(I+J)/J", ", where
      ", TT "I", " and ", TT "J", " are ideals in a ring.",
-     PARA,
+     PARA{},
      SeeAlso => "Module"
      }
 
@@ -29,11 +29,11 @@ document {
      Key => (symbol ^,Module,Array),
      Headline => "projection onto some factors of a direct sum module",
      TT "M^[i,j,k]", " -- projection onto some factors of a direct sum module.",
-     PARA,
+     PARA{},
      "The module ", TT "M", " should be a direct sum, and the result is the matrix
      obtained by projection onto the sum of the components numbered
      ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "M = ZZ^2 ++ ZZ^3",
       	  "M^[0]",
@@ -47,11 +47,11 @@ document {
      Key => (symbol _,Module,Array),
      Headline => "get inclusion map into direct sum",
      TT "M_[i,j,k]", " -- get inclusion map of blocks from a module ", TT "M", ".",
-     PARA,
+     PARA{},
      "The module ", TT "M", " should be a direct sum, and the result is the matrix
      obtained by inclusion from the sum of the components numbered
      ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "M = ZZ^2 ++ ZZ^3",
       	  "M_[0]",
@@ -66,7 +66,7 @@ document {
      TT "M^{i,j,k,...}", " -- provides the projection map from a free module
      ", TT "M", " to the free module corresponding to the basis vectors whose
      index numbers are listed.",
-     PARA,
+     PARA{},
      EXAMPLE "(ZZ^5)^{2,3}",
      SeeAlso => {"_", Module, List}
      }
@@ -77,7 +77,7 @@ document {
      TT "M_{i,j,k,...}", " -- provides a map from a free module to the module
      ", TT "M", " which sends the basis vectors to the generators of ", TT "M", "
      whose index numbers are listed.",
-     PARA,
+     PARA{},
      EXAMPLE "(ZZ^5)^{2,3}",
      SeeAlso => {"^", Module, List}
      }
@@ -181,21 +181,21 @@ document {
      are the elements m*F_i, where m is a monomial of the ring R.
      In Macaulay 2, orders on the monomials of F are used for computing Groebner bases and
      syzygies, and also to determine the initial, or lead term of elements of F.",
-     PARA,
+     PARA{},
      "The ring R comes equipped with a total order on the monomials of R.
      A total order on the monomials of F is called ", EM "compatible", " (with the order
      on R), if m*F_i > n*F_i (in F) whenever m > n (in R). There are many types of
      compatible orders, but several stand out: term over position up, term over position down,
      position up over term, position down over term, and Schreyer orders.",
-     PARA,
+     PARA{},
      "term over position up:   m*F_i > n*F_j iff m>n or m==n and i>j",
-     PARA,
+     PARA{},
      "term over position down: m*F_i > n*F_j iff m>n or m==n and i<j",
-     PARA,
+     PARA{},
      "position up over term:   m*F_i > n*F_j iff i>j or i==j and m>n",
-     PARA,
+     PARA{},
      "position down over term: m*F_i > n*F_j iff i>j or i==j and m>n",
-     PARA,
+     PARA{},
      "Induced monomial orders are another class of important orders on F.",
      "Given a free module G and a set of monomials phi_0, ..., phi_(s-1) of G,
      and a monomial order on the monomials of G, the induced order, or, Schreyer
@@ -203,7 +203,7 @@ document {
      m*F_i > n*F_j (in F) iff m*phi_i > n*phi_j (in G), or m*phi_i and n*phi_j
      are scalar multiples of each other, and i>j.
      ",
-     PARA,
+     PARA{},
      "In Macaulay 2, free modules come equipped with a compatible order.  The default
      order is: m*F_i > n*F_j if m > n (in R), or m == n, and i > j. 
      This is called Position=>Up.  In the following example, the lead term is a*F_1,
@@ -260,16 +260,16 @@ document {
      Frank Olaf-Schreyer, who used them to give an algorithm for syzygies, and who also 
      recognized many of their beneficial properties.  See Schreyer.... for more 
      information.",
-     PARA,
+     PARA{},
      "Let F be a free module, with basis e_0, e_1, ..., e_r (unit column vectors),
      and suppose that a e_i, and b e_j are monomials in F (that is, a and b are monomials in
      the base ring, and e_i and e_j are elements of the basis of F).  Suppose also that 
      m0, m1, ..., mr are monomials of a free module G (which is itself endowed with a monomial
      order).",
-     PARA,
+     PARA{},
      "Then, a e_i > b e_j if a mi > b mj, in the order on G, or, if a mi and b mj are 
      scalar multiples of each other, if i > j.",
-     PARA,
+     PARA{},
      "In Macaulay 2, free modules with a Schreyer order on them can be created using ", 
      TO (schreyerOrder,Matrix), ".",
      EXAMPLE {
@@ -291,9 +291,9 @@ document {
 	  },
      "Over quotient rings, the multiplication a mi and b mj are over the ambient polynomial
      ring, not the quotient.",
-     PARA,
+     PARA{},
      "It is fine for the free module G above to be endowed with a Schreyer order too.",
-     PARA,
+     PARA{},
      "The only places that Schreyer orders are considered is in computation of Groebner bases,
      syzygies, and free resolutions, and with the ", TO leadTerm, " routine.",
      SeeAlso => {
@@ -325,7 +325,7 @@ document {
      e_i and e_j are unit column vectors of F, then a e_i > b e_j iff
      either leadterm(m)(a e_i) > leadterm(m)(b e_j) or they are k-multiples of
      the same monomial in G, and i > j.",
-     PARA,
+     PARA{},
      "If the base ring is a quotient ring, we think of leadterm(m) as a matrix
      over the ambient polynomial ring",
      "Given a matrix m with define a monomial order ",
@@ -382,7 +382,7 @@ document {
      TT "gbTrace = n", " -- set the tracing level for the ", TO "engine", " to
      level ", TT "n", ".  Meaningful values for the user ", TT "n", " are
      0, 1, 2, and 3.",
-     PARA,
+     PARA{},
      "The notations used in tracing are :",
      UL {
 	  "g       - a generator reduced to something nonzero and has been added to the basis.",
@@ -453,9 +453,9 @@ document {
      the codimension of the zero set of the ideal (or submodule) generated
      by the leading terms of the Groebner basis elements found so far reaches 
      a certain limit.",
-     PARA,
+     PARA{},
      "This option has not been implemented yet.",
-     PARA,
+     PARA{},
      "Eventually the codimension of the ideal of leading terms is the
      codimension of the original ideal.",
      UL {
@@ -472,7 +472,7 @@ document {
      functions to specify that the computation should stop as soon as a
      complete list of minimal generators for the submodule or ideal has been
      determined.",
-     PARA,
+     PARA{},
      UL {
 	  TO [gb,StopWithMinimalGenerators],
 	  TO [pushForward,StopWithMinimalGenerators],
@@ -493,7 +493,7 @@ document {
 document {
      Key => Sort,
      TT "Sort", " -- a strategy used with the keyword ", TO "Strategy", ".",
-     PARA,
+     PARA{},
      "Indicates that the Groebner basis should be sorted by lead term; usually
      this is a bad idea.  Normally the basis is sorted only by degree. The
      running time can change either for the good or bad."
@@ -502,7 +502,7 @@ document {
 document {
      Key => Primary,
      TT "Primary", " -- a strategy used with the keyword ", TO "Strategy", ".",
-     PARA,
+     PARA{},
      "This is a new Groebner basis algorithm, that works in the homogeneous and
      inhomogeneous cases, and is often faster than the default algorithms.  This 
      feature is currently under development."
@@ -511,7 +511,7 @@ document {
 document {
      Key => Homogeneous,
      TT "Homogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
-     PARA,
+     PARA{},
      "This is an alternate Groebner basis algorithm which can be used if the submodule
      is homogeneous, and the ring is a (quotient of) a polynomial ring over a field."
      }
@@ -519,7 +519,7 @@ document {
 document {
      Key => Inhomogeneous,
      TT "Inhomogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
-     PARA,
+     PARA{},
      "This is the default Groebner basis algorithm used if the submodule is
      inhomogeneous, and the ring is a (quotient of) a polynomial ring over a field."
      }
@@ -527,7 +527,7 @@ document {
 document {
      Key => LongPolynomial,
      TT "LongPolynomial", " -- a strategy used with the keyword ", TO "Strategy", ".",
-     PARA,
+     PARA{},
      "Indicates that during computation of a Groebner basis, the reduction
      routine will be replaced by one which will handle long polynomials more
      efficiently using \"geobuckets\", which accomodate the terms in buckets
@@ -541,7 +541,7 @@ document {
      TT "Syzygies", " -- keyword for an optional argument used with
      ", TO "gb", " which indicates whether the syzygies should be
      computed.",
-     PARA,
+     PARA{},
      "It's also an option for ", TO "syz", ", but ", TO "syz", " overrides 
      any value provided by the user with the value ", TT "true", "."
      }
@@ -560,7 +560,7 @@ document {
      TT "SyzygyRows", " -- keyword for an optional argument used with
      ", TO "gb", " and ", TO "syz", ", which specifies how many rows of 
      the syzygy matrix to retain.",
-     PARA,
+     PARA{},
      "This option is for internal use only."
      }
 
@@ -570,7 +570,7 @@ document {
      TT "getChangeMatrix G", " -- for a Groebner basis G, return the change of
      basis matrix from the Groebner basis to another generating set, 
      usually a minimal, or original, generating set.",
-     PARA,
+     PARA{},
      "The option ", TO "ChangeMatrix", " can be used with ", TO "gb", " 
      to enable the computation of the change of basis matrix."
      }
@@ -625,7 +625,7 @@ document {
      with ", TO "syz", " that specifies that the computation should stop as soon as a
      complete list of minimal generators for the submodule or ideal has been
      determined.",
-     PARA,
+     PARA{},
      "The value provided is simply passed on to ", TO "gb", ": see 
      ", TO [gb,StopWithMinimalGenerators], " for details."
      }
@@ -635,7 +635,7 @@ document {
      Headline => "specify the strategy used to compute the Groebner basis",
      TT "syz(f,Strategy => v)", " -- an option for ", TO "syz", " which can
      be used to specify the strategy to be used in the computation.",
-     PARA,
+     PARA{},
      "The value of the option is simply passed to ", TO "gb", ", so see the
      documentation there for details."
      }
@@ -648,9 +648,9 @@ document {
      the codimension of the zero set of the ideal (or submodule) generated
      by the leading terms of the Groebner basis elements found so far reaches 
      a certain limit.",
-     PARA,
+     PARA{},
      "This option has not been implemented yet.",
-     PARA,
+     PARA{},
      "Eventually the codimension of the ideal of leading terms is the
      codimension of the original ideal.",
      }
@@ -691,7 +691,7 @@ document {
      Key => [syz,StopBeforeComputation],
      Headline => "whether to stop the computation immediately",
      TT "StopBeforeComputation => true", " -- an optional argument used with ", TO "gb", ".",
-     PARA,
+     PARA{},
      "Tells whether not to start the computation, with the default value
      being ", TT "false", ".  This can be useful when you want to obtain
      the partially computed Groebner basis contained in an interrupted
@@ -712,7 +712,7 @@ document {
      modules with the same target, produces a homomorphism of free modules whose 
      target is the source of ", TT "f", ", and whose image is the pre-image (under
      ", TT "f", ") of the image of ", TT "g", ".",
-     PARA,
+     PARA{},
      "If ", TT "f", " is null, then it's taken to be the identity.  If ", TT "g", " is null, it's
      taken to be zero."
      }
@@ -722,7 +722,7 @@ document {
      TT "f//g", " -- yields a matrix ", TT "h", " from matrices ", TT "f", " and ", TT "g", " 
      such that ", TT "f - g*h", " is the reduction of ", TT "f", " modulo a Groebner basis 
      for the image of ", TT "g", ".",
-     PARA,
+     PARA{},
      "If the remainder ", TT "f - g*h", " is zero, then the quotient ", TT "f//g", "
      satisfies the equation ", TT "f = g * (f//g)", ".",
      SeeAlso => {(symbol %, Matrix, Matrix)}
@@ -771,7 +771,7 @@ document {
      Headline => "find the minimal generators for cokernel of a matrix (low level form)",
      TT "complement f", " -- for a matrix ", TT "f", ", return a map ", TT "g", " with the same
      target whose columns are minimal generators for the cokernel of ", TT "f", ".",
-     PARA,
+     PARA{},
      "The map ", TT "f", " must be homogeneous."
      }
 
@@ -807,21 +807,21 @@ document {
      Headline => "homogenize with respect to a variable",
      TT "homogenize(m,v)", " -- homogenize the ring element, vector,
      matrix, or module ", TT "m", " using the variable ", TT "v", " in the ring of ", TT "m", ".",
-     BR,
-     NOINDENT,     
+     BR{},
+     NOINDENT{},     
      TT "homogenize(m,v,w)", " -- homogenize ", TT "m", " using the variable ", TT "v", ",
      so that the result is homogeneous with respect to the given list ", TT "w", " of
      integers provided as weights for the variables.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ/101[x,y,z,Degrees => {1,2,3}]",
       	  "f = 1 + y + z^2",
       	  "homogenize(f,x)",
       	  "homogenize(f,x,{1,0,-1})",
 	  },
-     PARA,
+     PARA{},
      "The weights that may be used are limited (roughly) to the range -2^30 .. 2^30.",
-     PARA,
+     PARA{},
      Caveat => {
 	  "If the homogenization overflows the monomial, this is not
      	  reported as an error."
@@ -877,13 +877,13 @@ document {
      TT "selectInSubring(i,m)", " -- Form the submatrix of the matrix 'm' consisting of those
      columns which lie in the subring generated by all but the first 'i' parts of the
      monomial order.",
-     PARA,
+     PARA{},
      "We say that a monomial ordering has n 'parts' if the variables are partitioned
      into n subsets in such a way that for each j, any monomial smaller than a
      monomial that involves variables only from the last j parts, also involves
      variables only from the last j parts.  Such monomial orderings include
      product orderings, lexicographic orderings, and elimination orderings.",
-     PARA,
+     PARA{},
      "For example, consider the lexicographic ordering of four variables, where
      the parts are the singletons ", TT "{a}, {b}, {c}, {d}", ".",
      EXAMPLE {
@@ -893,7 +893,7 @@ document {
       	  "selectInSubring(2,m)",
       	  "selectInSubring(3,m)",
 	  },
-     PARA,
+     PARA{},
      Caveat => {
 	  "This routine doesn't do what one would expect for graded orders
      	  such as ", TT "GLex", ".  There, the first part of the monomial 
@@ -908,10 +908,10 @@ document {
      Headline => "divide all columns by a (power of a) variable",
      TT "divideByVariable(m,v)", " -- divide each column of the matrix 'm' by 
      as high a power of the variable 'v' as possible.",
-     BR,NOINDENT,
+     BR{},NOINDENT{},
      TT "divideByVariable(m,v,d)", " -- divide each column of the matrix 'm' by 
      as high a power of the variable 'v' as possible, but divide by no more than v^d.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ/101[a..d]",
       	  "m = matrix{{a*b, a^2*c}, {a*b^2, a^4*d}}",
@@ -921,7 +921,7 @@ document {
      Caveat => "You can only divide by a variable, not a monomial,
      and you have little control on what power will be divided.  This routine is mostly
      used by the saturation commands as a fast internal way of dividing.",
-     PARA,
+     PARA{},
      "We may eliminate this routine."
      }
 
@@ -934,7 +934,7 @@ document {
      of coordinates from ", TT "R", " to ", TT "S", " which sends the last variables 
      of ", TT"R", " to the forms in ", TT "m", ", and ", TT "g", " is the inverse 
      of ", TT "f", ".",
-     PARA,
+     PARA{},
      "The ring ", TT "S", " should have the same number of variables as 
      ", TT "S", ".",
      EXAMPLE {
@@ -948,7 +948,7 @@ document {
      Key => PrimitiveElement,
      Headline => "specify a primitive element",
      TT "PrimitiveElement => g", " -- an option used with ", TO "GF", ".",
-     PARA,
+     PARA{},
      "The value can be a ring element providing a primitive element, or the
      symbol ", TO "FindOne", " (the default) which specifies that
      ", TO "GF", " should search for a primitive element."
@@ -1024,7 +1024,7 @@ document {
      Headline => "a key used internally ",
      TT "order", " -- used as a key inside finite fields under which is
      stored the number of elements in the field.  Intended for internal use only",
-     PARA,
+     PARA{},
      SeeAlso => "GaloisField"
      }
 document {
@@ -1041,7 +1041,7 @@ document {
      and, in case the ring is a ring handled by the engine, informing the
      engine.  Polynomial rings over rings declared to be fields support
      Groebner basis operations.",
-     PARA,
+     PARA{},
      "If the engine eventually discovers that some nonzero element of ", TT "R", "
      is not a unit, an error will be signalled.  The user may then use
      ", TO "getNonUnit", " to obtain a non-invertible element of ", TT "R", ".
@@ -1072,7 +1072,7 @@ document {
      Headline => "make a copy of a ring, with some features changed",
      TT "modifyRing(R,options)", " -- yields a ring similar to R, with 
      certain features changed.",
-     PARA,
+     PARA{},
      "Bug: doesn't work yet."
      }
 

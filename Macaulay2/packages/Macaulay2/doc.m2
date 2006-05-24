@@ -57,11 +57,11 @@ document {
      in ", TT "X", " itself are sought in ", TT "P", ", and its parent, and so on.
      Thus the mathematical notion of a set ", TT "P", " and a subset ", TT "X", " 
      can modeled in this way.",
-     PARA,
+     PARA{},
      "Things which don't have instances have the empty class, called
      ", TO "Nothing", " as their parent.  The parent of ", TO "Thing", "
      is ", TO "Thing", " itself (because every thing is a thing).",
-     PARA,
+     PARA{},
      "The entire structure of types and their parents can be displayed
      with ", TO "showStructure", ".",
      SeeAlso => "classes and types"
@@ -73,7 +73,7 @@ document {
      "Everything in the system is classified, and the class that a thing
      belongs to is a type.  A type is implemented as a hash table containing
      method functions for its instances.",
-     PARA,
+     PARA{},
      "The list of types known to the system is displayed below."
      }
 
@@ -209,7 +209,7 @@ document {
      TT "x -> e", " -- denotes a function.  When the function is called, the initial 
      	      value of the variable x is the argument if there is just one, or
 	      else is the sequence of arguments.",
-     BR,NOINDENT,
+     BR{},NOINDENT{},
      TT "(x) -> e", " -- denotes a function of one argument.  When the function is 
      applied to an expression w three things may happen:",
      UL {
@@ -219,11 +219,11 @@ document {
      	  "if w is a sequence of length other than one, then it
      	  is an error."
 	  },
-     BR,NOINDENT,
+     BR{},NOINDENT{},
      TT "(x,y) -> e", " -- denotes a function of two arguments.",
-     PARA,
+     PARA{},
      "Similarly for more arguments.",
-     PARA,
+     PARA{},
      "These operations create what is usually called a ", ITALIC "closure", ",
      which signifies that the function remembers the values of local
      variables in effect at the time of its creation, can change
@@ -259,14 +259,14 @@ document {
      The access functions below accept a key and return the
      corresponding value.  For details of the mechanism
      underlying this, see ", TO "hashing", ".",
-     PARA,
+     PARA{},
      "One important feature of hash tables that when the keys
      are consecutive integers starting at 0, the keys are scanned
      in the natural order.",
-     PARA,
+     PARA{},
      "There is a subclass of HashTable called ", TO "MutableHashTable", "
      which consists of those hash tables whose entries can be changed.",
-     PARA,
+     PARA{},
      "Access functions:",
      UL {
  	  TO "#",
@@ -296,7 +296,7 @@ document {
 	  },
      "Notice that the position of the maximal element is 1, as indexing in
      Macaulay 2 always starts at 0.",
-     PARA,
+     PARA{},
      "For elements in a polynomial ring, the order used is the ", 
      TO2("monomial orderings","monomial order"),
      " associated with the ring.",
@@ -327,7 +327,7 @@ document {
 	  },
      "Notice that the position of the minimal element is 0, as indexing in
      Macaulay 2 always starts at 0.",
-     PARA,
+     PARA{},
      "For elements in a polynomial ring, the order used is the ", 
      TO2("monomial orderings","monomial order"),
      " associated with the ring.",
@@ -393,7 +393,7 @@ document {
      Headline => "apply a function to 0 .. n-1",
      TT "scan(n,f)", " -- applies the function ", TT "f", " to each integer
      in the range ", TT "0 .. n-1", " discarding the results.",
-     PARA,
+     PARA{},
      "This is equivalent to ", TT "scan(0 .. n-1, f)", ".",
      EXAMPLE {
 	  "scan(3,print)",
@@ -413,10 +413,10 @@ document {
      pair ", TT "(k,v)", " where ", TT "k", " is a key in the hash 
      table ", TT "x", " and ", TT "v", " is the corresponding 
      value ", TT "x#k", ".",
-     PARA,
+     PARA{},
      "This function requires an immutable hash table.  To scan the pairs in
      a mutable hash table, use ", TT "scan(pairs x, f)", ".",
-     PARA,
+     PARA{},
      SeeAlso => "scan"
      }
 
@@ -434,18 +434,18 @@ document {
      real description of ", TT "x", ", bypassing the feature which causes
      certain types of things to acquire the names of global variables to which
      they are assigned.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ/101[a,b,c_1,c_2];",
       	  "R",
       	  "describe R",
 	  "toString describe R",
 	  },
-     PARA,
+     PARA{},
      "Currently, this function works by temporarily removing the value
      stored under ", TT "name", " from the hash table ", TT "x", ",
      which therefore must be mutable.",
-     PARA,
+     PARA{},
      SeeAlso => "toString"
      }
 
@@ -455,17 +455,17 @@ document {
      TT "input \"f\"", " -- reads and executes the commands found in the 
      file named ", TT "f", ", echoing the input, printing the values, and incrementing
      the line number.",
-     PARA,
+     PARA{},
      "The file is sought in the directory containing the file currently being
      loaded, if any, and then along the ", TO "path", ", unless the name of
      the file begins with a slash (/).",
-     PARA,
+     PARA{},
      "If one of the top level expressions in the file evaluates to the symbol ", TO "end", "
      the reading of the file is stopped at that point.",
-     PARA,
+     PARA{},
      "If an error occurs while evaluating the expressions in the file,
      reading is stopped.",
-     PARA,
+     PARA{},
      SeeAlso =>{ "path", "needs", "load"}
      }
 
@@ -481,12 +481,12 @@ document {
      Headline => "read Macaulay 2 commands",
      TT "load \"f\"", " -- reads and executes Macaulay 2 expressions found
      in the file named ", TT "f", ".",
-     PARA,
+     PARA{},
      "The file is sought in the directory containing the file currently being
      loaded, if any, and then along the ", TO "path", ", unless the name of
      the file begins with a slash (/). The file is read without echoing the
      input, printing the values, or incrementing the line number.",
-     PARA,
+     PARA{},
      "If one of the top level expressions in the file evaluates to the symbol ", TO "end", "
      the reading of the file is stopped at that point.",
      SeeAlso =>{ "path", "needs", "input"}
@@ -497,7 +497,7 @@ document {
      Headline => "read Macaulay 2 commands if necessary",
      TT "needs \"f\"", " -- loads the file named ", TT "f", " if it hasn't 
      been loaded yet.",
-     PARA,
+     PARA{},
      SeeAlso => "load"
      }
 
@@ -505,7 +505,7 @@ document {
      Key => plus,
      Headline => "addition",
      TT "plus(x,y,...)", " -- yields the sum of its arguments.",
-     PARA,
+     PARA{},
      "If the arguments are strings, they are concatenated.  If there
      are no arguments, the answer is the integer 0."
      }
@@ -523,7 +523,7 @@ document {
      Headline => "power",
 	Usage => "(x,n)",
      TT "power(x,n)", " yields the ", TT "n", "-th power of ", TT "x", ".",
-     PARA,
+     PARA{},
      SeeAlso => "^"
      }
 
@@ -539,7 +539,7 @@ document {
      Headline => "additive inverse",
 	Usage => "minus(x)",
      TT "minus(x)", " yields ", TT "-x", ".",
-     PARA,
+     PARA{},
      TT "minus(x,y)", " yields ", TT"x-y", " but see also ", TO "difference", "."
      }
 
@@ -549,7 +549,7 @@ document {
      Consequences => {"Macaulay 2 ignores commented text"},
      "Use a double hyphen ", TT "--", " to introduce a comment in the text
      of a program.  The comment runs from to the end of the line.",
-     PARA,
+     PARA{},
      "Emacs does a good job displaying the comments in a different color
      for visibility.",
      EXAMPLE {
@@ -693,24 +693,24 @@ document {
      the objects x and y are (mathematically) equal.  The objects x and y are
      typically numbers, elements of rings, matrices, modules, ideals,
      chain complexes, and so on.",
-     PARA,
+     PARA{},
      "Multiplication involving ring elements (including integers, rational numbers,
      real and complex numbers), ideals, vectors, matrices, modules is 
      generally the usual multiplication, or composition of functions.",
      EXAMPLE {
 	  },
-     PARA,
+     PARA{},
      "The intersection of sets is given by multiplication.  See ", TO (symbol*,Set,Set), ".",
      EXAMPLE {
 	  "set{hi,you,there} * set{hi,us,here,you}"
 	  },
-     PARA,
+     PARA{},
      "Multiplication involving a list attempts to multiply each element of the list.",
      EXAMPLE {
 	  "R = QQ[a..d];",
 	  "a * {b,c,d}"
 	  },
-     PARA,
+     PARA{},
      "Multiplication of matrices (", TO (symbol*,Matrix,Matrix),") or ring maps is the same as composition.",
      EXAMPLE {
 	  "f = map(R,R,{b,c,a,d})",
@@ -718,7 +718,7 @@ document {
 	  "f*g",
 	  "(f*g)(a) == f(g(a))"
 	  },
-     PARA,
+     PARA{},
      "Submodules of modules may be produced using multiplication and addition.",
      EXAMPLE {
 	  "M = R^2; I = ideal(a+b,c);",
@@ -750,7 +750,7 @@ document {
      Headline => "a binary operator",
      TT "x + y", " -- a binary operator used for addition in many situations
      and for union of sets.",
-     PARA,
+     PARA{},
      SeeAlso =>{ "plus", "sum" }
      }
 
@@ -759,9 +759,9 @@ document {
      Headline => "a unary or binary operator, usually used for negation or subtraction",
      TT "x - y", " -- a binary operator used for subtraction in many situations
      and set difference.",
-     BR,NOINDENT,
+     BR{},NOINDENT{},
      TT "- y", "   -- a unary operator usually used for negation.",
-     PARA,
+     PARA{},
      SeeAlso =>{ "difference", "minus" }
      }
 
@@ -770,7 +770,7 @@ document {
      Headline => "a binary operator, usually used for division",
      TT "x / y", " -- a binary operator usually used for division, yielding a
      fraction, or for quotients (ring by ideal, etc.).",
-     PARA,
+     PARA{},
      SeeAlso => { "//" }
      }
 
@@ -784,7 +784,7 @@ document {
      Headline => "a binary operator, usually used for quotient",
      TT "x // y", " -- a binary operator used for quotients in the same
      ring (with a possible remainder).",
-     PARA,
+     PARA{},
      SeeAlso => { "/" }
      }
 
@@ -797,7 +797,7 @@ document {
      Key => symbol "^",
      Headline => "a binary operator, usually used for exponents",
      TT "x ^ y", " -- a binary operator used for powers and raising nets.",
-     NOINDENT, "In addition, if n is 0, then the unit element 
+     NOINDENT{}, "In addition, if n is 0, then the unit element 
      ", TT "(class x)#1", " is returned.  If n is negative, then the method
      named ", TO "InverseMethod", " will be called."
      }
@@ -811,7 +811,7 @@ document {
 --      Key => (symbol /^, Thing, ZZ),
 --      Headline => "divided power",
 --      TT "x /^ n", " -- computes the n-th divided power of x.",
---      PARA,
+--      PARA{},
 --      "This is implemented naively as ", TT "x^n/n!", ".",
 --      EXAMPLE {
 -- 	  "ZZ/101[x];",
@@ -824,16 +824,16 @@ document {
      Headline => "extract part of a string",
      TT "substring(i,n,s)", " -- yields the substring of the string ", TT "s", " starting at 
      position ", TT "i", " with length ", TT "n", ".",
-     PARA,
+     PARA{},
      "substring(i,s)   -- yields the substring of ", TT "s", " starting at position ", TT "i", " and
      continuing to the end of ", TT "s", ".",
-     PARA,
+     PARA{},
      "Positions are numbered starting at 0.",
-     PARA,
+     PARA{},
      "If the starting position ", TT "i", " is negative, it means to start from the end of the string.",
-     PARA,
+     PARA{},
      "Requests for character positions out of bounds are silently ignored.",
-     PARA,
+     PARA{},
      "In an older version of the program the string argument was placed first;
      the old way will still work."
      }
@@ -907,12 +907,12 @@ document {
      Headline => "get an entire file",
      TT "get \"f\"", " -- yields a string containing the contents of the file whose name
      is f.",
-     PARA,
-     NOINDENT,
+     PARA{},
+     NOINDENT{},
      TT "get \"!f\"", " -- yields a string containing the output from the shell
      command \"f\".",
-     PARA,
-     NOINDENT,
+     PARA{},
+     NOINDENT{},
      TT "get \"$hostname:service\"", " -- yields a string containing the
      input from the socket obtained by connecting to the specified host at
      the port appropriate for the specified service.  Warning: if the process
@@ -920,8 +920,8 @@ document {
      command will hang.  This feature is not available on Sun computers,
      because Sun doesn't provide static versions of crucial libraries dealing
      with network communications.",
-     PARA,
-     NOINDENT,
+     PARA{},
+     NOINDENT{},
      TT "get f", " -- yields a string containing the rest of the input from the 
      file ", TT "f", ", closing the file.",
      EXAMPLE {
@@ -938,7 +938,7 @@ document {
      Headline => "split a string into pieces",
      TT "separate(d,s)", " -- split the string ", TT "s", " into pieces 
      delimited by the string ", TT "d", ".",
-     PARA,
+     PARA{},
      "The value is a list of the pieces, the number of which is one
      more than the number of occurrences of d in s, so that the pieces
      may be reassembled with ", TO "between", ".",
@@ -954,16 +954,16 @@ document {
      Headline => "split a string into lines",
      TT "lines s", " -- yields an array of strings obtained from the
      string ", TT "s", " by breaking it at newline or return characters.",
-     BR,NOINDENT,
+     BR{},NOINDENT{},
      TT "lines(nl,s)", " -- yields an array of strings obtained from the 
      string ", TT "s", " by breaking it at the newline characters
      specified by the string ", TT "nl", ".",
-     PARA,
+     PARA{},
      "The form ", TT "lines s", " is designed to break lines correctly
      when the file follows the Unix, MS-DOS, or Macintosh convention and
      contains no extraneous isolated newline or return characters.  In
      other words, it will break a line at \"\\r\\n\", \"\\n\", or \"\\r\".",
-     PARA,
+     PARA{},
      "The string ", TT "nl", " should be a string of length 1 or 2.",
      SeeAlso => "newline"
      }
@@ -990,7 +990,7 @@ document {
      Key => (symbol |, List, List),
      Headline => "join lists",
      TT "v|w", " -- join two lists.", 
-     PARA,
+     PARA{},
      EXAMPLE "{1,2,3}|{4,5,6}"
      }
 
@@ -998,7 +998,7 @@ document {
      Key => (symbol |, Net, Net),
      Headline => "join strings or nets",
      TT "s|t", " -- concatenates strings or nets horizontally.", 
-     PARA,
+     PARA{},
      "The result is a string if the arguments are all strings, otherwise it
      is a net.  The baselines of the nets are aligned.",
      EXAMPLE {
@@ -1015,7 +1015,7 @@ document {
      Headline => "logical or",
      TT "m|n", " -- produce an integer obtained from the bits of the 
      integers ", TT "m", " and ", TT "n", " by logical 'or'.",
-     PARA,
+     PARA{},
      EXAMPLE "5 | 12"
      }
 
@@ -1096,7 +1096,7 @@ document {
      TT "m||n", " -- joins nets or strings by concatenating
      them vertically.  The baseline of the result is the baseline of the
      first one.",
-     PARA,
+     PARA{},
      "In this example, we build a large net with arrows to indicate
      the location of the baseline.",
      EXAMPLE {
@@ -1178,11 +1178,11 @@ document {
      Headline => "strict equality",
      TT "x === y", " -- returns true or false depending on whether the 
      expressions x and y are strictly equal.",
-     PARA,
+     PARA{},
      "Strictly equal expressions have the same type, so ", TT "0===0.", " and
      ", TT "0===0/1", " are false; the three types involved here are ", 
      TO "ZZ", ", ", TO "RR", ", and ", TO "QQ", ".",
-     PARA,
+     PARA{},
      "If x and y are ", TO "mutable", " then they are strictly equal only
      if they are identical (i.e., at the same address in memory).  For
      details about why strict equality cannot depend on the contents of
@@ -1209,7 +1209,7 @@ document {
      Headline => "strict inequality",
      TT "x =!= y", " -- returns true or false depending on whether the expressions
      x and y are strictly unequal.",
-     PARA,
+     PARA{},
      "See ", TO "===", " for details."
      }
 
@@ -1303,7 +1303,7 @@ document {
      the objects x and y are (mathematically) equal.  The objects x and y are
      typically numbers, elements of rings, matrices, modules, ideals, 
      chain complexes, and so on.",
-     PARA,
+     PARA{},
      "A test for mathematical equality will typically involve doing a computation
      to see whether two representations of the same mathematical object are being
      compared.  For example, an ideal in a ring is represented by giving its
@@ -1351,12 +1351,12 @@ document {
       	  "image matrix {{2,a},{1,5}} == R^2",
       	  "image matrix {{2,a},{0,5}} == R^2"
 	  },
-     PARA,
+     PARA{},
      "It may happen that for certain types of objects, there is no method installed
      for testing mathematical equality, in which case strict equality will be tested with
      the operator ", TO "===", ".  If a test for mathematical equality is installed
      later, your results may change.",
-     PARA,
+     PARA{},
      Caveat => {"Warning: whether this comparison operator returns true is not necessarily 
      related to whether the comparison operator ", TO symbol?, " returns ", TT "symbol==", "."},
      SeeAlso =>{ symbol!=, symbol===, symbol=!=, "operators" }
@@ -1366,7 +1366,7 @@ document {
      Key => symbol "!=",
      Headline => "inequality",
      TT "x != y", " -- the negation of ", TT "x == y", ".",
-     PARA,
+     PARA{},
      SeeAlso =>{ "==" }
      }
 

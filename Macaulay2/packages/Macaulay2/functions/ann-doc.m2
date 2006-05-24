@@ -24,7 +24,7 @@ document {
 	       TT "R", " is the ring of ", TT "M"}
 	  },
      "You may use ", TT "ann", " as a synonym for ", TT "annihilator", ".",
-     PARA,
+     PARA{},
      "As an example, we compute the annihilator of the canonical module of the 
      rational quartic curve.",
      EXAMPLE {

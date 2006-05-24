@@ -23,7 +23,7 @@ document {
 	  "genericMatrix(R,a,2,4)",
 	  "genericMatrix(R,i,3,2)"
 	  },
-     PARA,
+     PARA{},
      "Omitting the input ", TT "r", " is the same as having ", TT "r", 
      " be the first variable in ", TT "R", ".",     
      EXAMPLE{

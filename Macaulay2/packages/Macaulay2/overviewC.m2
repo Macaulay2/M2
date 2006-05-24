@@ -14,7 +14,7 @@ document {
 	  },
      "The names of some of these rings are double letters so the corresponding symbols
      with single letters are preserved for use as variables.",
-     PARA,
+     PARA{},
      "Numbers in these rings are constructed as follows.",
      EXAMPLE {
 	  "1234",
@@ -103,7 +103,7 @@ document {
 	  "apply({20,40,80}, i -> lift(a^i, ambient F))",
 	  },
      "(for more details on lift, see , ", TO "working with multiple rings", ").",
-     PARA,
+     PARA{},
      "Finite fields can be used as base rings for polynomial rings.",
      EXAMPLE {
 	  "R = F[x,y,z]",
@@ -111,7 +111,7 @@ document {
 	  "f = (leadCoefficient f)^(-1) * f"
 	  },
      "Groebner bases, and all related computations work in these rings.",
-     PARA,
+     PARA{},
 	"The prime finite fields can be made easily as quotient rings of ", TO "ZZ", ".",
 	EXAMPLE "ZZ/101",
      "In general, to make a finite field with ", TT "q", " elements, we use
@@ -280,11 +280,11 @@ document {
 	  "degree f", 
       	  "degree g",
 	  },
-     NOINDENT,
+     NOINDENT{},
      "(Notice that the degree is a list containing one integer, rather than
      an integer.  The degree is actually a vector of integers, represented as
      a list, with one component by default.)",
-     PARA,
+     PARA{},
      "The list of terms of a polynomial is obtained with ", TO "terms", ".",
      EXAMPLE "terms g",
      "We may combine that with ", TO "select", " to select terms satisfying 
@@ -311,7 +311,7 @@ document {
 	  "toString f",
       	  "toString g",
 	  },
-     PARA,
+     PARA{},
      "The usual algebraic operations on polynomials are available, but there
      are some special remarks to make about division.  The result of division
      depends on the ordering of monomials chosen when the ring is created, for
@@ -325,14 +325,14 @@ document {
       	  "rem = f%g",
       	  "f == quot * g + rem",
 	  },
-     NOINDENT,
+     NOINDENT{},
      "Notice that as in the example above, comparison of polynomials is done
      with the operator ", TO "==", ".",
-     PARA,
+     PARA{},
      "Polynomials can be homogenized with respect to one of the variables in the
      ring with ", TO "homogenize", ".",
      EXAMPLE "homogenize(f,b)",
-     PARA,
+     PARA{},
      "The ring containing a ring element can be obtained with ", TO "ring", ".",
      EXAMPLE "ring f",
      "You can use this in a program to check whether two ring elements 
@@ -340,23 +340,23 @@ document {
      EXAMPLE "ring f === ring g",
      "Notice that in the comparison above, the strict equality operator ", TO "===", "
      is used.",     
-     PARA,
+     PARA{},
      "The coefficient of a monomial in a polynomial can be obtained with ", TO "_", ".",
      EXAMPLE {
 	  "part(1,f)",
       	  "f_a",
       	  "g_(a*b)",
 	  },
-     NOINDENT,
+     NOINDENT{},
      "(Notice that the coefficients are elements of the coefficient ring.)",
-     PARA,
+     PARA{},
      "We may get parts of the leading term of a polynomial as follows.",
      EXAMPLE {
 	  "leadTerm g",
       	  "leadCoefficient g",
       	  "leadMonomial g",
 	  },
-     NOINDENT,
+     NOINDENT{},
      "Notice that the lead monomial is an element of a monoid whose name is
      ", TT "[a,b]", ".  Its exponents can be extracted with ", TO "exponents", ".",
      EXAMPLE "exponents leadMonomial g",
@@ -391,7 +391,7 @@ document {
      "The hash tables above present the same information, except that only nonzero
      exponents need to be provided.  The information can be extracted with ", TO "#", ".",
      EXAMPLE "S#(new HashTable from {0 => 2})",
-     PARA,
+     PARA{},
 --      "Monomials (monoid elements) have an accessible form that is implicitly used
 --      above.",
 --      EXAMPLE {
@@ -428,7 +428,7 @@ document {
 	  "S = factor f",
       	  "T = factor g",
 	  },
-     PARA,
+     PARA{},
      "The results have been packaged for easy viewing.  The number of
      factors is obtained using",
      EXAMPLE "#T",
@@ -515,7 +515,7 @@ document {
      "In Macaulay 2, deg(x) is the degree of x, or the first degree of x, in case 
      a multi-graded ring is being used.  The default degree for each variable is 1, so
      in this case, y*x = -x*y, if x and y are variables in the ring.",
-     PARA,
+     PARA{},
      "Create an exterior algebra with explicit generators by creating a polynomial
      ring with the option ", TO "SkewCommutative", ".",
      EXAMPLE {
@@ -605,11 +605,11 @@ document {
      the operator ", TT "dx", " that differentiates with respect to that 
      variable.  The evident commutation relation takes the form 
      ", TT "dx*x == x*dx + 1", ".",
-     PARA,
+     PARA{},
      "We can give any names we like to the variables in a Weyl algebra, provided
      we specify the correspondence between the variables and the derivatives,
      with the ", TO "WeylAlgebra", " option, as follows.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = QQ[x,y,dx,dy,t,WeylAlgebra => {x=>dx, y=>dy}]",
 	  "dx*dy*x*y",

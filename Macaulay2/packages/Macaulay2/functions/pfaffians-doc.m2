@@ -43,7 +43,7 @@ document {
      Caveat => {"The algorithm used is a modified Gaussian reduction/Bareiss algorithm, 
 	  which uses division and therefore we must assume that the ring of ", TT "M", "
 	  is an integral domain.",
-	  PARA,
+	  PARA{},
           "The skew symmetry of ", TT "M", " is not checked, but the algorithm 
 	  proceeds as if it were, with somewhat unpredictable results!"
 	  },

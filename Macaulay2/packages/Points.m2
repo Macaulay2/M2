@@ -262,7 +262,7 @@ beginDocumentation()
 document {
      Key => Points,
      "A package to compute with points in affine and projective spaces",
-     PARA,
+     PARA{},
      Subnodes => {
 	  TO (points,Matrix,Ring)
 	  }

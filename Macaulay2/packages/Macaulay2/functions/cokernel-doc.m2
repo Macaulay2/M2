@@ -24,12 +24,12 @@ document {
      Outputs => {
 	  {"The object ", TT "B/(image f)"}
 	  },
-     PARA,
+     PARA{},
      TT "coker", " is a synonym for ", TT "cokernel", ".",
-     PARA,
+     PARA{},
      "The generators of the cokernel are provided by the generators of the target
      of ", TT "f", ".  In other words, ", TT "cover target f", " and ", TT "cover cokernel f", " are equal.",
-     PARA,
+     PARA{},
      "An argument f which is a ", TO RingElement, " is interpreted as a one by one matrix.",
      EXAMPLE {
 	  "R = ZZ[a..d];",

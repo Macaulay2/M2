@@ -81,7 +81,7 @@ document {
      of which should be made visible to the user. ", TT "export",
      " allows one to specify which are not private symbols or functions.
      For an example see ", TO "an example of a package", ".",
-     PARA,
+     PARA{},
      "Use ", 
      TO exportMutable,
      " to export variables which the user can modify.", 
@@ -134,7 +134,7 @@ document {
      "This function should only occur in the documentation section 
      of a package.  Use ", TO check, " to run all of the tests
      associated to a package.",
-     PARA,
+     PARA{},
      "For an example, see ", TO "an example of a package",
      Caveat => "When creating tests, try to insure that they run relatively quickly.",
      SeeAlso => {
@@ -159,11 +159,11 @@ document {
 	  },
      "The main action of this routine is to generate the documentation
      of the given package and install the Macaulay2 package and documentation. ",
-     PARA,
+     PARA{},
     "The actual file loaded is ", TT "PACKAGENAME.m2", 
     ", which should be on the load ", TO "path", 
     " and should contain a package named ", TT "PACKAGENAME", ".",
-     PARA,
+     PARA{},
      "In order to accomplish this, several steps are performed, or
      bypassed, depending on the optional parameters.",
      UL {

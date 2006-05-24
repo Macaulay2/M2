@@ -4,6 +4,8 @@
 -- html input
 -----------------------------------------------------------------------------
 
+nonnull = x -> select(x, i -> i =!= null)
+
 html = method(SingleArgumentDispatch=>true, TypicalValue => String)
 -- text used to be one of the conversion functions, but now we just use "net"
 tex = method(SingleArgumentDispatch=>true, TypicalValue => String)
@@ -96,6 +98,7 @@ UNDERLINE  = new MarkUpType of MarkUpList
 TEX	   = new MarkUpType of MarkUpList
 SEQ	   = new MarkUpType of MarkUpList
 TT         = new MarkUpType of MarkUpList
+LI         = new MarkUpType of MarkUpList
 EM         = new MarkUpType of MarkUpList
 LABEL      = new MarkUpType of MarkUpList
 BOLD       = new MarkUpType of MarkUpList
@@ -105,13 +108,30 @@ EMAIL      = new MarkUpType of MarkUpList
 LINK       = new MarkUpType of MarkUpList
 ANCHOR     = new MarkUpType of MarkUpList
 Hypertext  = new MarkUpType of MarkUpListParagraph -- top level, to be returned to user by "help" and "hypertext", includes text that has been already fixed up
+
 UL         = new MarkUpType of MarkUpListParagraph
+new UL from List := (UL,x) -> (
+     x = nonnull splice x;
+     if #x == 0 then error("empty element of type ", format toString UL, " encountered");
+     apply(x, e -> (
+	       if class e === TO then LI{TOH{e#0}}
+	       else if class e === LI then e
+	       else LI e)))
+
 DIV        = new MarkUpType of MarkUpListParagraph
-NL         = new MarkUpType of MarkUpListParagraph
+
 TO2        = new MarkUpType of MarkUpList
+new TO2 from Sequence := 
+new TO2 from List := (TO2,x) -> { makeDocumentTag x#0, concatenate drop(toSequence x,1) }
+
 TO         = new MarkUpType of MarkUpList
+new TO from List := (TO,x) -> if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
+
 TOH        = new MarkUpType of MarkUpList
+new TOH from List := (TOH,x) -> { makeDocumentTag x#0 }
+
 new TO from Sequence := new TOH from Sequence := (TO,x) -> new TO from {x} -- document tags can be sequences, so keep them intact
+
 MENU       = new MarkUpType of MarkUpListParagraph	            -- like "* Menu:" of "info"
 
 MarkUpList ^ MarkUpList := (x,y) -> SEQ{x,SUP y}

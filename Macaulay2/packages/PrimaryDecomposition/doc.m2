@@ -21,7 +21,6 @@ document {
 	  "I=ideal(0_R);",
 	  "associatedPrimes I"
 	  },
-     PARA,
      "The associated primes are found using the Ext modules: The 
      associated primes of codimension ", TT "i", " of ", TT "I", " and ",
      TT "Ext^i(R^1/I,R)", " are identical, as shown in 
@@ -29,9 +28,9 @@ document {
      Caveat => ("This function uses ", TT "decompose", 
 	  ", which currently only works
           over finite ground fields, not the rationals or integers."),
-     PARA,
-     BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
-     Last modified June 2000.",
+     PARA {
+	 BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
+	 Last modified June 2000."},
      SeeAlso => {(primaryDecomposition,Ideal), 
      	       radical, decompose, topComponents, 
 	       removeLowestDimension}
@@ -45,7 +44,6 @@ document {
 	  SEQ ("2", " -- The assassinator is found using ", TO(topComponents), " on a 
 	       series of ideals.")
 	  },
-     PARA,
      "The default strategy is 2.",
      HEADER3 "Strategy => 1",
      "The associated primes are found using the Ext modules: The 
@@ -101,7 +99,6 @@ document {
 	       SEQ ("0" , " -- Uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
 	       SEQ ("1" , " -- Uses a separator to find the localization")
 	       },
-	  PARA,
 	  "The default strategy is 1.",
 	  HEADER3 "Strategy => 0",
 	  "This strategy does not require the calculation of the assassinator, 
@@ -135,14 +132,13 @@ document {
      Outputs => {
 	  "Q" => {"a ", TT "P", "-primary ideal of ", TT "I", "."}
 	  },
-     PARA,
      "Q is topComponents(I + P^m), for sufficiently large m.  The criterion that Q
      is primary is given in 
      Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992).",
      "However, we use", TO (localize,Ideal,Ideal), ".",
-     PARA,
-     BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
-     Last modified June, 2000.",
+     PARA {
+	 BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
+	 Last modified June, 2000."},
      SeeAlso => {(associatedPrimes,Ideal), (primaryDecomposition,Ideal), radical, decompose, topComponents, removeLowestDimension}
      }
 
@@ -180,11 +176,9 @@ document {
 	  ("GTZ", " -- uses the algorithm of Gianni-Trager-Zacharias.  
 	           NOT IMPLEMENTED YET.")
           },
-     PARA,
      "The default strategy depends on the ideal.  If the ideal is generated
      by monomials, then ", TT "Strategy => Monomial", " is implied.  
      In all other cases, the default is ", TT "Strategy => SY", ".",
-     PARA,
      HEADER3 "Strategy => Monomial",
      "Description, reference if possible, and then an example.  Also warn
      that ideal must be monomial.",

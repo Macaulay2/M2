@@ -13,7 +13,7 @@ document {
 	  List => {"of integers, representing the order
 	       which places the columns in order"}
 	  },
-     PARA,
+     PARA{},
      "See ", TO (sort,Matrix), " for the ordering used.  The meanings of the
      optional parameters is also the same.",
      EXAMPLE {

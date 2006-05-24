@@ -22,7 +22,7 @@ Ideal \ Ring := (I,A) -> substitute(I,A)
 document {
      Key => isNormal,
      TT "isNormal", "(R:Ring) >>> Boolean -- is R normal, i.e. integrally closed?",
-     PARA,
+     PARA{},
 "If R is an affine ring, determines whether R is integrally closed.
 The method used is ..."
 }
@@ -36,10 +36,10 @@ affine ring R"
 document {
      Key => idealizer,
   TT "idealizer", "(J:Ideal)>>>Ideal -- ring structure on Hom(J,J)",
-  PARA,
+  PARA{},
   "Yields an ideal L in a ring S such that Hom(J,J) = S/L. If
   the input ideal J is homogeneous, then S is quasi-homogeneous.",
-  PARA,
+  PARA{},
   "An example: ",
   EXAMPLE lines ///
   R = ZZ/101[x,y,z]/(y^2*z-x^3);

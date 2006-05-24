@@ -22,7 +22,7 @@ document {
 	  {"The object ", TT "A/(kernel f)"}
 	  },
      "In each of these cases, the coimage is isomorphic to the image.",
-     PARA,
+     PARA{},
      "This isomorphism is not always obvious.  For example,",
      EXAMPLE {
 	  "R = QQ[a..d];",

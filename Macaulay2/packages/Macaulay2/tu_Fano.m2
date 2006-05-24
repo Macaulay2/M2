@@ -134,7 +134,7 @@ document {
      Key => Fano2, 
         TT "Fano2(k,X,GR) or  Fano2(k,X)", " -- computes 
         the ideal of a Fano scheme in the Grassmannian.",
-        PARA,
+        PARA{},
         "Given an ideal X representing a projective variety 
         in P^r, a positive integer k<r, and optionally a 
         ring GR with (exactly) r+1 choose k+1 variables, 

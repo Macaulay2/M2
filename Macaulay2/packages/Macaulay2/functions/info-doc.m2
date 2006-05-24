@@ -243,22 +243,6 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (info,NL),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => (info,IMG),
      Headline => "",
      Usage => "",

@@ -19,7 +19,7 @@ document {
 	  },
      "See ", TO "Groebner bases", " for more 
      information and examples.",
-     PARA,
+     PARA{},
      "The returned value is not the Groebner basis itself.  The
      matrix whose columns form a sorted, auto-reduced Groebner
      basis are obtained by applying ", TO generators, " (synonym: ", TT "gens", ")
@@ -286,7 +286,7 @@ document {
 --      TT "ChangeMatrix => true", " -- an optional argument for ", TO "gb", " which
 --      specifies whether to compute the change of basis matrix from the basis to
 --      the original generators.",
---      PARA,
+--      PARA{},
 --      "Intended for internal use only."
 --      }
 -- document {
@@ -294,7 +294,7 @@ document {
 --      Headline => "specify the strategy used to compute Groebner bases",
 --      TT "gb(f,Strategy => v)", " -- an option for ", TO "gb", " which can
 --      be used to specify the strategy to be used in the computation.",
---      PARA,
+--      PARA{},
 --      "The strategy option value ", TT "v", " should be one of the following.",
 --      UL {
 -- 	  TO "Primary",
@@ -313,11 +313,11 @@ document {
 --      soon as a complete list of minimal generators for the submodule
 --      or ideal has been determined, even if the entire Groebner basis
 --      has not yet been determined.",
---      PARA,
+--      PARA{},
 --      "Currently this option is implemented by stopping the computation
 --      as soon as the S-polynomials and generators of the same 
 --      degree as the generator of highest degree have been processed.",
---      PARA,
+--      PARA{},
 --      "This option is for internal use only.  Use ", TO "mingens", "
 --      instead."
 --      }
@@ -329,9 +329,9 @@ document {
 --      the codimension of the zero set of the ideal (or submodule) generated
 --      by the leading terms of the Groebner basis elements found so far reaches 
 --      a certain limit.",
---      PARA,
+--      PARA{},
 --      "This option has not been implemented yet.",
---      PARA,
+--      PARA{},
 --      "Eventually the codimension of the ideal of leading terms is the
 --      codimension of the original ideal."
 --      }
@@ -357,9 +357,9 @@ document {
 --      TT "DegreeLimit => n", " -- keyword for an optional argument used with
 --      ", TO "gb", " which specifies that the computation should halt after 
 --      dealing S-polynomials up to degree ", TT "n", ".",
---      PARA,
+--      PARA{},
 --      "This option is relevant only for homogeneous matrices.",
---      PARA,
+--      PARA{},
 --      "For an example, see ", TO "Groebner bases", "."
 --      }
 -- 
@@ -367,7 +367,7 @@ document {
 --      Key => [gb,StopBeforeComputation],
 --      Headline => "whether to stop the computation immediately",
 --      TT "StopBeforeComputation => true", " -- an optional argument used with ", TO "gb", ".",
---      PARA,
+--      PARA{},
 --      "Tells whether not to start the computation, with the default value
 --      being ", TT "false", ".  This can be useful when you want to obtain
 --      the partially computed Groebner basis contained in an interrupted
@@ -379,7 +379,7 @@ document {
 --      Key => gb,
 --      Headline => "compute a Groebner basis",
 --      TT "gb f", " -- compute the Groebner basis for the image of a ", TO "Matrix", " ", TT "f", ".",
---      PARA,
+--      PARA{},
 --      "If the computation is interrupted, then the partially completed
 --      Groebner basis is available as ", TT "f#{t,i}", ", where ", TT "t", " is true or
 --      false depending on whether syzygies or the change of basis matrix are 

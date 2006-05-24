@@ -3,7 +3,7 @@ document {
      Headline => "the class of all ring maps",
      "For an overview of ring maps, substitution of variables, and finding implicit
      equations of a set of polynomial or rational functions, see ", TO "substitution and maps between maps", ".",
-     PARA,     
+     PARA{},     
      TEX "A ring map $F : R \\rightarrow{} S$, where $R$ is a polynomial ring, is specified
      by giving the images in $S$ of the variables of $R$.  For a simple example, 
      consider the following map.  Notice that, as is usual in Macaulay2, the target
@@ -16,7 +16,7 @@ document {
 	  "F.matrix"
 	  },
      "There are other ways to define ring maps.  See below.", 
-     PARA,
+     PARA{},
      "Apply matrices to ring elements, vectors, matrices, and ideals
       using usual function notation.",
       EXAMPLE {
@@ -32,7 +32,7 @@ document {
 	  "isSubset(F J, ideal(s-3))"
 	  },
      "Geometrically, the inverse image of this line is a conic.",
-     PARA,
+     PARA{},
      "Consider the Cremona transform, and its square:",
      EXAMPLE {
 	  "G = map(R,R,{a=>b*c,b=>a*c,c=>a*b})",
@@ -44,7 +44,7 @@ document {
 	  "isInjective G",
 	  "coimage G",
 	  },
-     PARA,
+     PARA{},
      BOLD "Common ways to make a ring map:",
      UL {
 	  TO (map,Ring,Ring),
@@ -92,7 +92,7 @@ document {
 	  TO "kernel and image of a ring map",
 	  TO "preimage of an ideal",
 	  },
-     PARA,
+     PARA{},
       "For additional common operations and a comprehensive list of all routines
      in Macaulay 2 which return or use ring maps, see ", TO "RingMap", "."
      }

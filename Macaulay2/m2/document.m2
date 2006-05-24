@@ -380,12 +380,12 @@ fixup ANCHOR     := identity
 fixup List       := z -> fixup SEQ z
 fixup Sequence   := z -> fixup SEQ z
 -- fixup Option
-fixup UL         := z -> apply(nonnull splice z, i -> SEQ fixup if class i === TO then TOH {i#0} else i)
--- fixup TO         := x -> TO if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
-fixup TO         := x -> TO if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
-fixup TO2        := x -> TO2{ makeDocumentTag x#0, concatenate drop(toSequence x,1) }
-fixup TOH        := x -> TOH{ makeDocumentTag x#0 }
-fixup MarkUpType := z -> z{}				       -- convert PARA to PARA{}
+fixup UL         := identity
+fixup TO         := identity
+fixup TO2        := identity
+fixup TOH        := identity
+-- phase this out -- each PARA has to have a scope
+-- fixup MarkUpType := z -> z{}				       -- convert PARA to PARA{}
 fixup Function   := z -> z				       -- allow Function => f 
 fixup String     := s -> (				       -- remove clumsy newlines within strings
      ln := lines s;
@@ -547,11 +547,14 @@ fixupTable := new HashTable from {
 			      if c === null then error("SourceCode: ", toString m, ": code for method not found");
 			      c)))},
 	  LITERAL "</div>\n"),
-     Subnodes => v -> MENU apply(nonNull enlist v, x -> fixup (
-	       if class x === TO then x
-	       else if class x === TOH then TO {x#0}
-	       else if class x === String then x
-	       else error ("unrecognizable Subnode list item: ",x)))
+     Subnodes => v -> (
+	  v = nonNull enlist v;
+	  if #v == 0 then error "encountered empty Subnodes list"
+	  else MENU apply(v, x -> fixup (
+		    if class x === TO then x
+		    else if class x === TOH then TO {x#0}
+		    else if class x === String then x
+		    else error ("unrecognizable Subnode list item: ",x))))
      }
 caveat := key -> getOption(key,Caveat)
 seealso := key -> getOption(key,SeeAlso)
@@ -681,9 +684,10 @@ optTOCLASS := i -> (					    -- this isn't different yet, work on it!
      r := fixup TOH{i};
      (DocumentTag.FormattedKey first r, SEQ r))
 
-menu       := s -> UL (last \         nonnull \\ optTO      \ s)
-smenu      := s -> UL (last \ sort \\ nonnull \\ optTO      \ s)
-smenuCLASS := s -> UL (last \ sort \\ nonnull \\ optTOCLASS \ s)
+ul := t -> if #t =!= 0 then UL t else t
+menu       := s -> ul (last \         nonnull \\ optTO      \ s)
+smenu      := s -> ul (last \ sort \\ nonnull \\ optTO      \ s)
+smenuCLASS := s -> ul (last \ sort \\ nonnull \\ optTOCLASS \ s)
 
 vowels := set characters "aeiouAEIOU"
 indefiniteArticle := s -> if vowels#?(s#0) and not match("^one ",s) then "an " else "a "
@@ -974,30 +978,30 @@ documentationValue := method()
 
 documentationValue(Symbol,Type) := (s,X) -> (
      syms := unique flatten(values \ globalDictionaries);
-     a := apply(select(pairs typicalValues, (key,Y) -> Y===X and isDocumentableMethod key), (key,Y) -> key);
-     b := toString \ select(syms, y -> instance(value y, Type) and parent value y === X);
-     c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
-     e := toString \ select(syms, y -> not mutable y and class value y === X);
+     a := smenu apply(select(pairs typicalValues, (key,Y) -> Y===X and isDocumentableMethod key), (key,Y) -> key);
+     b := smenu(toString \ select(syms, y -> instance(value y, Type) and parent value y === X));
+     c := smenu select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
+     e := smenu(toString \ select(syms, y -> not mutable y and class value y === X));
      splice (
 	  LITERAL "<div class=\"waystouse\">\n",
-	  if #b > 0 then ( SUBSECTION {"Types of ", if X.?synonym then X.synonym else toString X, " :"}, smenu b),
-	  if #a > 0 then ( SUBSECTION {"Functions and methods returning ", indefinite synonym X, " :"}, smenu a ),
-	  if #c > 0 then ( SUBSECTION {"Methods that use ", indefinite synonym X, " :"}, smenu c),
-	  if #e > 0 then ( SUBSECTION {"Fixed objects of class ", toString X, " :"}, smenu e),
+	  if #b > 0 then ( SUBSECTION {"Types of ", if X.?synonym then X.synonym else toString X, " :"}, b),
+	  if #a > 0 then ( SUBSECTION {"Functions and methods returning ", indefinite synonym X, " :"}, a ),
+	  if #c > 0 then ( SUBSECTION {"Methods that use ", indefinite synonym X, " :"}, c),
+	  if #e > 0 then ( SUBSECTION {"Fixed objects of class ", toString X, " :"}, e),
 	  LITERAL "</div>\n"))
 
 documentationValue(Symbol,Function) := (s,f) -> (	    -- compare with fmeth above
-     a := documentableMethods f;
+     a := smenu documentableMethods f;
      if #a > 0 then (
 	  LITERAL "<div class=\"waystouse\">\n",
-     	  SUBSECTION {"Ways to use ", TT toString f, " :"}, smenu a,
+     	  SUBSECTION {"Ways to use ", TT toString f, " :"}, a,
 	  LITERAL "</div>\n"))
 
 documentationValue(Symbol,Keyword) := (s,k) -> (
-     a := documentableMethods k;
+     a := smenu documentableMethods k;
      if #a > 0 then (
 	  LITERAL "<div class=\"waystouse\">\n",
-     	  SUBSECTION {"Ways to use ", TT toString k, " :"}, smenu a,
+     	  SUBSECTION {"Ways to use ", TT toString k, " :"}, a,
 	  LITERAL "</div>\n"))
 
 -- documentationValue(Symbol,HashTable) := (s,x) -> splice (
@@ -1052,9 +1056,9 @@ theAugmentedMenu := S -> (
      methsInMenu := DocumentTag.Key \ first \ select(toList menu, item -> class item === TO);
      otherMeths := documentableMethods f - set methsInMenu;
      if #otherMeths > 0 then (
-	  menu = join(menu, {
-		    concatenate( if #menu > 0 then "Other ways to use " else "Ways to use ", TT toString f, ":" )
-		    },
+	  menu = join(
+	       menu,
+	       { concatenate( if #menu > 0 then "Other ways to use " else "Ways to use ", TT toString f, ":" ) },
 	       fixup apply(otherMeths, m -> TO m));
 	  );
      if #menu > 0 then menu

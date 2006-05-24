@@ -39,9 +39,9 @@ document {
 	  "numcols n",
 	  "ring n"
 	  },
-     PARA,
+     PARA{},
      TO "row and column operations",
-     PARA,
+     PARA{},
      "Some other methods for creating mutable matrices.",
      EXAMPLE {
 	  "mutableIdentity(RR,5)",
@@ -55,14 +55,14 @@ document {
      Headline => "the class of all mutable matrices",
      "A mutable matrix in Macaulay2 is a rectangular array of elements
      of a specific ring, whose entries can be modified.",
-     PARA,
+     PARA{},
      "A mutable matrix is different from a ", TO Matrix, " in that
      a matrix contains degree information for the target and source of
      the matrix, while a mutable matrix has no such information.  Also,
      more operations are provided for matrices.",
-     PARA,
+     PARA{},
      "For an overview of mutable matrices, see ", TO "mutable matrices", ".",
-     PARA,
+     PARA{},
      "Mutable matrices can either be encoded in a sparse manner (the matrix
      only encodes the non-zero elements), or in a dense manner (all elements
      are stored -- even zeros).  The distinction is an option to several of
@@ -92,7 +92,6 @@ document {
      matrices, not
      mutable matrices.  It is necessary to use ", TO matrix, " to make
      an immutable matrix first.",
-     PARA
      }
 
 

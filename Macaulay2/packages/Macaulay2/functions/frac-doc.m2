@@ -67,7 +67,7 @@ document {
 	"kernel f",
 	 },
      Caveat => {"The input ring should be an integral domain.",
-	PARA,
+	PARA{},
 	"Currently, for ", TT "S", " as above, one cannot define ",
 	TT "frac S", " or fractions ", TT "u/v", 
 	".  One can get around that by defining ",

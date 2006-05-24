@@ -12,7 +12,7 @@ document {
      ring of rational numbers (", TO "QQ", "), and the most 
      important rings in Macaulay 2, polynomial rings.",
 
-     PARA,
+     PARA{},
      "The sections below describe the types of rings available and how to use them.",
      Subnodes => {
 	  "Rings",
@@ -36,7 +36,7 @@ document {
 	  -- TO "Schur rings", 
 	  TO "associative algebras",
        	  },
-     PARA,
+     PARA{},
      "For additional common operations and a comprehensive list of all routines
      in Macaulay 2 which return or use rings, see ", TO "Ring", "."
      }

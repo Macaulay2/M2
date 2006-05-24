@@ -28,7 +28,7 @@ document { Key => "f",
      Usage => "f()",
      Inputs => { },
      Outputs => { },
-     PARA,
+     PARA{},
      "This function will print a message.",
      EXAMPLE {
 	  "f()"

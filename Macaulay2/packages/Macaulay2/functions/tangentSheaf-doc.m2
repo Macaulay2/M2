@@ -15,7 +15,7 @@ document {
      Outputs => {CoherentSheaf => ""
 	  },
      "Computes the tangent sheaf of the projective variety ", TT "X",
-     PARA,
+     PARA{},
      "Tangent sheaf of the projective plane:",
      EXAMPLE {
 	  "P = Proj(QQ[a,b,c])",

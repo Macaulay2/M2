@@ -15,12 +15,12 @@ document {
 	  {"the numerator of ", TT "x"}
 	  },
      EXAMPLE "numerator (4/6)",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = frac(ZZ[x,y]);",
 	  "numerator((x+2*y-3)/(x-y))"
 	  },
-     PARA,
+     PARA{},
      TT "numerator", " also works with Hilbert series.",
      EXAMPLE {
 	  "R = QQ[a..d]/(a^2,b^2,c^3);",

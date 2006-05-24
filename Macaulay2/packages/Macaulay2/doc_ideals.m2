@@ -4,7 +4,7 @@ document {
      SeeAlso => "ideals",
      "For basic information about ideals in ", EM "Macaulay 2", ", see ",
      TO "ideals", ".",
-     PARA,
+     PARA{},
      "Common ways to make an ideal:",
      UL {
 	  TO "ideal",
@@ -72,10 +72,9 @@ document {
      UL {
 	  TO (symbol /, Ring, Ideal),
 	  },
-     PARA,
+     PARA{},
      "An ideal ", TT "I", " is an immutable object, so if you want to 
-     cache information about it, put it in the hash table ", TT "I.cache", ".",
-     PARA
+     cache information about it, put it in the hash table ", TT "I.cache", "."
      }
 document {
      Key => {(symbol *,Ideal,Ideal),

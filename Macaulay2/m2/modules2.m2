@@ -184,7 +184,6 @@ hilbertSeries Module := options -> (M) -> (
 	  M.cache#"approximate hilbertSeries" = (ord,s);
 	  s))
 
-nonnull := x -> select(x, i -> i =!= null)
 reduceHilbert = method()
 reduceHilbert Divide := ser -> (
      num := numerator ser;				    -- an element of the degrees ring

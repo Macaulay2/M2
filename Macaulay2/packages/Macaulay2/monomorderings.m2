@@ -90,7 +90,7 @@ document {
 	  "protect xx; protect yy; protect zz;",
       	  "ZZ[ee_[xx],ee_[yy],ee_[zz]]",
 	  },
-     PARA,NOINDENT,
+     PARA{},NOINDENT{},
      "Some things to watch out for when using polynomial rings:",
      UL {
 	  SEQ ("Defining a ring twice gives different rings, as far as
@@ -117,12 +117,12 @@ document {
      the monomials.  See below for the definitions of all implemented
      orderings.  The default ordering is GRevLex, the graded reverse
      lexicographic order.",
-     PARA,
+     PARA{},
      "Polynomials are displayed by ordering the monomials in decreasing order.
      The choice of monomial order can make a difference in the
      time and space required for various computations,
      especially Groebner basis computations.",
-     PARA,
+     PARA{},
      Subnodes => {
 	  TO "examples of specifying alternate monomial orders",
 	  TO "monomial orders for free modules",
@@ -225,7 +225,7 @@ document {
      "Sometimes for efficiency reasons, it is important to pack exponent vectors 
      several exponents per machine word.  Polynomials take less space, and monomial 
      operations such as comparison and multiplication become faster.",
-     PARA,
+     PARA{},
      "The monomial order keys ", TO "Lex", " and ", TO "GRevLex", " have alternate
      versions, which allow the packing of monomials 2 per machine word (LexSmall and
 	  GRevLexSmall), and 4 per machine word (LexTiny and GRevLexTiny).",
@@ -259,7 +259,7 @@ document {
      "The graded reverse lexicographic order is defined by: x^A > x^B if either
      the degree(x^A) > degree(x^B) or degree(x^A) = degree(x^B) and
      the LAST non-zero entry of the vector of integers A-B is NEGATIVE.",
-     PARA,
+     PARA{},
      "This is the default order in Macaulay 2, in large part because it is often
      the most efficient order for use with Groebner bases.  By giving GRevLex
      a list of integers, one may change the definition of the order: deg(x^A) is
@@ -323,7 +323,7 @@ document {
      TT "GLex", " -- a symbol used as an optional argument of
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the graded lexicographic order.",
-     PARA,
+     PARA{},
      Caveat => "If the number of degree vectors is greater than one, this
      is currently only graded using the first degree vector.  This will 
      eventually change."  -- MES
@@ -335,7 +335,7 @@ document {
      "Given a list L of n integers, the weight order on a polynomial ring
      in n variables is defined by: x^A > x^B if A_1 L_1 + ... + A_n L_n
      > B_1 L_1 + ... + B_n L_n.",
-     PARA,
+     PARA{},
      "The leading component of a polynomial
      under a weight order need not be a monomial.  When two monomials
      have the same weight, by default they are further distinguished
@@ -368,7 +368,7 @@ document {
 	  },
      TT "leadTerm(3, ideal(f))", " uses both the specified weights and the ",
      TT "GRevLex", " order to calculate the leading component.",
-     PARA,
+     PARA{},
      "When the number of weights is smaller than the number of variables,
      the remaining variables are given weight 0.
      In the following example, ", TT "c", " and ", TT "d",
@@ -429,7 +429,7 @@ document {
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the product of r graded reverse lex
      orders, each with n1, n2, ..., nr variables.",
-     PARA,
+     PARA{},
      "This syntax is left here for compatibility with previous
      Macaulay2 versions.",
      EXAMPLE {
@@ -459,7 +459,7 @@ document {
 	  },
      "We may replace ", TT "MonomialOrder => {3,3,3,3}",
      " with the shorter ", TT "MonomialOrder => {4:3}",
-     PARA,
+     PARA{},
      "The default ", TT "GRevLex", " order on any block may be
      changed to other orders, as follows.",
      EXAMPLE {
@@ -500,7 +500,7 @@ document {
 	  },
      Caveat => {"The element ", TT "a/b", " is in the fraction ring,
         while ", TT "a*b^(-1)", " belongs to ", TT "R", ".",
-	PARA,
+	PARA{},
 	"Currently, on cannot compute Groebner bases in this ring."}
      }
 
@@ -594,9 +594,9 @@ document {
      monomials used in storing and displaying the polynomials.  The
      choice of ordering can make a difference in the time taken in
      various computations.",
-     PARA,
+     PARA{},
      "The material in this section will be completely redone soon.",
-     PARA,
+     PARA{},
      "The default is to use the graded reverse lexicographic ordering 
      of monomials.
      This means that terms of higher total degree come first;
@@ -627,7 +627,7 @@ document {
      "We currently get a monomial overflow if we try to compute anything
      in this ring, sigh.",
      -- EXAMPLE "(x+y+z+1)^2",
-     PARA,
+     PARA{},
      "The next ring uses graded lexicographic ordering.  This means that
      terms of higher total degree come first; for two terms of the
      same degree, the term with the higher power of the first variable comes
@@ -637,10 +637,10 @@ document {
 	  "R=ZZ/101[a,b,c,MonomialOrder=>GLex];",
       	  "(a+b+c+1)^2",
 	  },
-     NOINDENT,
+     NOINDENT{},
      "(Notice how similar the result above is to the one obtained when
      graded reverse lexicographic ordering is used.)",
-     PARA,
+     PARA{},
      "The next ring uses lexicographic ordering.  This means that 
      terms with the highest power of the first variable come
      first: for two terms with the same power of the first variable the
@@ -673,7 +673,7 @@ document {
 	  "R=ZZ/101[a,b,c,MonomialOrder=>ProductOrder{1,2}];",
       	  "(a+b+c+1)^2"
 	  },
-     PARA,
+     PARA{},
      "See ", TO "MonomialOrder", " for further details."
      }
 
@@ -711,7 +711,7 @@ document {
      "The only restriction on degrees is that the entries be small integer values, possibly
      zero or negative.  The notion of small depends on the size of exponents one wants: the degree
      of each monomial occuring should fit in a 32 bit integer (or 64 bit integer, on 64 bit machines).",
-     PARA,
+     PARA{},
      "Nonetheless, there are several routines (e.g. ", TO basis, ", ", TO random, ") which require that each multidegree
      be finite dimensional, and therefore require a ",
      EM "Heft", " vector.  This is a vector of (small) integers, ", TEX "$w = (w_0, \\ldots, w_{d-1})$", 
@@ -734,13 +734,13 @@ document {
 document {
      Key => "monomial orderings v1.0",
      "This section is only valid for Macaulay2, versions 1.0 and higher.",
-     PARA,
+     PARA{},
      "Each ring in Macaulay2 comes equipped with an ordering on the
 monomials.  This ordering is used in the display and storing of polynomials.
 The choice of ordering can make a difference in the time taken in various
 computations.  Groebner bases performed on ideals and modules will use the
 chosen monomial ordering.",
-     PARA,
+     PARA{},
      "The default is to use the graded lexicographic order.  This order is defined 
      as follows: x^A > x^B "
      }
@@ -751,18 +751,18 @@ document {
      TT "MonomialOrder", " -- an optional argument used with polynomial rings and monoids
      to indicate a
      monomial ordering other than the default (graded reverse lexicographic).",
-     PARA,
+     PARA{},
      "In Macaulay 2, each polynomial ring (and also each monoid) is equipped with a monomial order,
      which is used for display of polynomials (terms are listed in descending monomial order),
      and also for Groebner basis computations.",
-     PARA,
+     PARA{},
      "In the most general setting, a monomial ordering is given by a list of
      permissible elements, listed and described below.  Monomials are compared 
      using the first element of the list.  If they are indistinguishable using this
      first element, they are compared using the second element, and so on.  At the
      end, if necessary, the graded reverse lexicographic order is used to compare the
      monomials.  For examples, see below, or see ", TO "monomial orderings", ".",
-     PARA,
+     PARA{},
      "Permissible elements:",
      UL {
 	  (TO "GRevLex", " => n -- A graded reverse lexicographic block of variables"),
@@ -777,7 +777,7 @@ document {
      	  (TO "GroupLex", " => n"),
 	  (TO "GroupRevLex", " => n")
           },
-     PARA,
+     PARA{},
      "Some examples of monomial orders.  Note that if only one item is in the list, 
      we can dispense with the list.",
      UL {

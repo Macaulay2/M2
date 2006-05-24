@@ -35,7 +35,7 @@ document {
 	  "index(r*1_C)",
 	  "index(b*1_C)"
 	  },
-     PARA,
+     PARA{},
     "The symbol ", TT "index", " is also as a key used in 
     ", TO {"GeneralOrderedMonoid", "s"}, " to store a table which is used to 
     map generator names to the position of the generator in the list of generators.",

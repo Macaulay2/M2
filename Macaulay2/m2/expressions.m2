@@ -564,7 +564,6 @@ padto := (s,n) -> (
 --      on, recursively, in which case the lengths of the various elements
 --      are summed.  Additionally, an integer may be used to represent a
 --      number of spaces.",
---      PARA,
 --      SeeAlso => {"String", "concatenate", "#" }
 --      }
 

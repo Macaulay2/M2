@@ -8,15 +8,15 @@ document {
      "We describe the differences between the routines ",
      TO (mingens, Module), ", ", TO(trim,Module), ", and ", TO(minimalPresentation,Module),
      ".",
-     PARA,
+     PARA{},
      "Every module in Macaulay2 is a ",  TO "subquotient module", ".  A module
      M is a submodule of a quotient of an ambient free module F.  If M is graded,
      or the ring R of M is local, then the notion of minimal generators and minimal
      presentation make sense.",
-     PARA,
+     PARA{},
      TO (mingens,Module), " returns a matrix whose target is F, and whose columns 
      minimally generate M.",
-     PARA,
+     PARA{},
      TO (trim,Module), " returns a different presentation of the same module, still
      having ambient free module F, but whose generator and relation matrices have
      been made minimal.",
@@ -24,7 +24,7 @@ document {
      module M: M is isomorphic to the cokernel of this matrix, but the new matrix
      potentially has a different ambient free module. In this situation, the
      isomorphism is stored in M.cache.PruningMap",
-     PARA,
+     PARA{},
      "
      EXAMPLE {
 	  kk = frac(QQ[a])
@@ -91,7 +91,7 @@ document {
 	  "I == J",
 	  "trim I"
 	  },
-     PARA,
+     PARA{},
      "If the base ring is a polynomial ring (or quotient of one), then a Groebner
      basis computation is started, and continued until all generators have been 
      considered.",
@@ -112,7 +112,7 @@ document {
      original ideal or module is homogeneous, then the columns of this matrix form a
      minimal set of generators.  In the inhomogeneous case, the columns generate, and an attempt 
      is made to keep the size of the generating set small.",
-     PARA,
+     PARA{},
      "If the Groebner basis is only partially constructed,
      the returned result will be a partial answer.  In the graded case this set can be 
      extended to a minimal set of generators for the ideal or module.",

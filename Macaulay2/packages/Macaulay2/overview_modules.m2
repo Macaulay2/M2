@@ -1,15 +1,15 @@
 document {
      Key => Module,
      Headline => "the class of all modules",
-     PARA,
+     PARA{},
      "See ", TO "modules", " for an overview of modules in Macaulay2.  See
      ", TO "modules in Macaulay2", " for a tutorial overview of modules.",
-     PARA,
+     PARA{},
      "Modules in Macaulay2 are implemented as ", TO "subquotient modules", ".  
      Submodules and quotients of free modules are perhaps the most common and important
      modules, and subquotients form the smallest class
      of modules which naturally includes these cases.",
-     PARA,
+     PARA{},
      "Common ways to make a module:",
      UL {
 	  TO (symbol ^, Ring, ZZ),
@@ -144,7 +144,7 @@ document {
 document {
      Key => "free modules",
      "We use ", TO (symbol ^,Ring,ZZ), " to make a new free module.",
-     PARA,
+     PARA{},
      EXAMPLE {
 	  "R = ZZ/101[x,y,z];",
 	  "M = R^4"
@@ -154,7 +154,7 @@ document {
 	  "m = matrix{{x,y,z},{y,z,0}}",
 	  "target m == R^2"
 	  },
-     PARA,
+     PARA{},
      "When a ring is graded, so are its free modules.  By default,
      the degrees of the basis elements are taken to be 0.",
      EXAMPLE {
@@ -167,7 +167,7 @@ document {
       	  "degrees F",
 	  },
      "Notice the use of ", TO ":", " above to indicate repetition.",
-     PARA,
+     PARA{},
      "If the variables of the ring have multi-degrees represented by
      lists (vectors) of integers, as described in
      ", TO "multi-graded polynomial rings", ", then the degrees of a
@@ -217,7 +217,7 @@ document {
 	  "generators M",
 	  "relations M",
 	  },
-     PARA,
+     PARA{},
      "Every finitely generated module has a presentation matrix.
      In Macaulay2,  
      if the module is not a quotient of a free module, then a syzygy
@@ -289,11 +289,11 @@ document {
      matrices $f : R^m \\rightarrow{} R^n$ and $g : R^p \\rightarrow{} R^n$.
      The {\\em subquotient module} with generators $f$ and relations $g$ is by definition the module
      $M = ((image f) + (image g))/(image g)$.",
-     PARA,
+     PARA{},
      TEX "If $f$ is the identity map, $M = coker g$, and if $g = 0$, then $M = image f$.  
      The class of subquotient modules is the smallest class containing free modules, which is closed
      under taking submodules and quotients.",
-     PARA,
+     PARA{},
      "One may create a subquotient module directly from matrices f and g having the same target free module.",
      EXAMPLE {
 	  "f = matrix{{x,y}}",
@@ -311,21 +311,21 @@ document {
      difference however.  Modules in Macaulay2 always come with an ordered set of generators,
      and N1 has 4 more generators (all zero in the module!) than N.  The 
      modules M and N though are identical.",
-     PARA,
+     PARA{},
      "The two matrices f and g mentioned above are recovered using the
      routines ", TO (generators,Module), " and ", TO (relations,Module), ".",
      EXAMPLE {
 	  "generators M",
 	  "relations M"
 	  },
-     PARA,
+     PARA{},
      "Submodules and quotients of free modules work as one would imagine.",
      EXAMPLE {
 	  "N2 = R*M_0 + I*M",
 	  "M/N2",
 	  "prune(M/N2)"
 	  },
-     PARA,
+     PARA{},
      "Given a subquotient module M, there are several useful modules associated to M.",
      "The free module of which M is a subquotient is obtained using ", TO (ambient,Module), ".",
      EXAMPLE {
@@ -394,7 +394,7 @@ document {
 	  "F = map(R^1,M,matrix{{y,x^2}})"
 	  },
      "Notice that as is usual in Macaulay2, the target comes before the source.",
-     PARA,
+     PARA{},
      "Macaulay2 doesn't display the source and target, unless they are both free
      modules.  Use ", TO target, " and ", TO source, " to get them.  The ",
      TO matrix, " routine recovers the matrix of free modules between the
@@ -416,7 +416,7 @@ document {
      "The image of ", TT "F", " lies in the submodule ", TT "M", 
      " of ", TT "R^1", ".  Suppose we wish to 
      define this new map ", TT "G : M --> M", ".  How does one do this?",
-     PARA,
+     PARA{},
      "To obtain the map ", TT "M --> M", ", we use ", 
      TO (symbol//,Matrix,Matrix), ".
      In order to do this, we need the inclusion map of ", TT "M", 
@@ -565,7 +565,7 @@ document {
 		    "poincare M",
 	            "hf = hilbertSeries M"
 		    },
-	       PARA,
+	       PARA{},
 	       "It is often useful to divide the poincare polynomial by ", TT "(1-t)", " as many
 	       times as possible.  This can be done by using ", TO reduceHilbert, ":",
 	       EXAMPLE {
