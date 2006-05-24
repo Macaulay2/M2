@@ -1,5 +1,7 @@
 -- from xhtml-math11.dtd:
 
+Hypertext.qname = "body"				    -- to keep it general (?)
+
 PCDATA = set {"#PCDATA"}
 String.qname = "#PCDATA"
 
@@ -166,24 +168,28 @@ validContent#"table" = set { "caption", "col", "colgroup", "thead", "tfoot", "tb
 -- <!ENTITY % ul.content  "( %li.qname; )+" >
 validContent#"ul" = set { "li" }
 
-
 validate = method()
-validate Hypertext := x -> scan(x, validate)
 validate Option :=
+validate TO :=
+validate TOH :=
 validate String := x -> null
-validate MarkUpList := x -> (
-     p := class x;
+validate ExampleTABLE := x -> scan(x,item -> validate item#1)
+validate TO2 := x -> scan(drop(x,1),validate)
+validate MarkUpList := x -> validate(class x, x)
+validate(Type, BasicList) := (p,x) -> (			    -- regard p as the class of x
      if p.?qname then (
 	  n := p.qname;
-	  if not validContent#?n then error("internal error: valid content for element ", format n, " not recorded yet", endl) ;
-	  valid := validContent#n;
-	  scan(x, e -> (
-		    c := class e;
-		    if (not c.?qname or not valid#?(c.qname)) and c =!= Option 
-		    then stderr << "element of type " << format toString p << " can't contain an element of type " << format toString c << endl;
-		    validate e));
-	  )
-     else stderr << format toString p << " isn't an html type (has no qname)" << endl)
+	  if validContent#?n then validate(p,validContent#n,x)
+	  else stderr << "--internal error: valid content for qname " << format n << " not recorded yet" << endl;
+	  scan(x,validate))
+     else stderr << "--error: " << format toString p << " isn't an html type (has no qname)" << endl;
+     x)
+validate(Type, Set, BasicList) := (p, valid,x) -> (	    -- top level only
+     scan(x, e -> (
+	       c := class e;
+	       if (not c.?qname or not valid#?(c.qname)) and c =!= Option 
+	       then stderr << "--error: element of type " << format toString p << " can't contain an element of type " << format toString c << endl));
+     x)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

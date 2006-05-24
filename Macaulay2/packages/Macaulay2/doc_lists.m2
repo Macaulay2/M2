@@ -28,11 +28,12 @@ document {
      ///,
      PARA {
 	  "Omitting an element of a list causes the symbol ", TO "null", " to 
-	  be inserted in its place.",
-	  EXAMPLE lines ///
-	       g = {3,4,,5}
-	       peek g
-	  ///},
+	  be inserted in its place."
+	  },
+     EXAMPLE lines (///
+      	  g = {3,4,,5}
+       	  peek g
+     ///),
      PARA {
 	  "Lists can be used as vectors, provided their elements are the sorts of
 	  things that can be added and mutliplied.",
@@ -73,7 +74,6 @@ document {
      "Most of the functions that apply to lists also work with sequences.  We
      give just one example.",
      EXAMPLE "append(x,f)",
-     PARA{},
      "The functions ", TO "toList", " and ", TO "toSequence", " are provided
      for converting between lists to sequences.",
      EXAMPLE {
@@ -95,20 +95,20 @@ document {
      SUBSECTION "visible lists",
      "Lists, sequences, and arrays are the three examples of what we call visible lists, which constitute the class ", TO "VisibleList", ".  Many functions
      are defined to act uniformly on visible lists.",
-     EXAMPLE lines ///
-     {a,b,c}
-     class oo
-     parent oo
-     ///,
+     EXAMPLE lines ( ///
+     	  {a,b,c}
+     	  class oo
+     	  parent oo
+     /// ),
      SUBSECTION "basic lists",
      "There is a type of list more general than a visible list, which we call a basic list.  Basic lists can be used for representing new datatypes
      in a more secure way, since the many functions that act on lists and sequences do not act on basic lists.",
-     EXAMPLE lines ///
-     {a,b,c}
-     class oo
-     parent oo
-     parent oo
-     ///,
+     EXAMPLE lines ( ///
+     	  {a,b,c}
+     	  class oo
+     	  parent oo
+     	  parent oo
+     /// ),
      "We can make a basic list with the ", TO "new", " operator.",
      EXAMPLE "new BasicList from {a,b,c}",
      "Similarly, we can make a new type of basic list, called ", TT "Container", ", say.",

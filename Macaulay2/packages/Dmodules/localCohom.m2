@@ -405,7 +405,7 @@ preimage (Module, ModuleMap) := (M, f) -> (
 ---------------------------------------------------------------------------
 pruneLocalCohom = method()
 pruneLocalCohom(HashTable) := HashTable => h -> (
-     new HashTable from apply(toList h, i->(
+     new HashTable from apply(keys h, i->(
      	       i => Dprune relations prune h#i
      	       ))
      )

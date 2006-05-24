@@ -346,55 +346,49 @@ trimline1 := x -> selectRegexp ( "^[ \t]*(.*)$",1, x)
 addspaces0:= x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else concatenate(x," ")
 addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
 
-flat := method()
-flat Thing := identity
-flat SEQ := x -> toSequence x
-flat Nothing := x -> ()
-fixflat := z -> splice apply(z, i -> flat fixup i)
-
 fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
-fixup MarkUpListParagraph := z -> (
-     z = splice apply(z,fixup);
-     -- b := select(1,z,i -> instance(i,MarkUpListParagraph));
-     -- if b#?0 then error ("can't have paragraphing markup list of class ",toString class b#0," inside paragraphing markup list of class ",toString class z);
-     z)
--- fixup PARA := z -> (
---      z = splice apply(z,fixup);
---      if any(z,i -> class i === PARA) then error "can't have PARA inside PARA";
---      if any(z,i -> class i === EXAMPLE) then error "can't have EXAMPLE inside PARA";
---      z)
-fixup MarkUpList := x -> (				    -- assemble items between paragraphs in a list into paragraphs (using DIV)
+fixup MarkUpListParagraph := z -> splice apply(z,fixup)
+handlePara := x -> (				    -- assemble items between paragraphs in a list into paragraphs (using DIV)
      x = splice apply(x, fixup);
      if any(toSequence x, i -> instance(i, MarkUpListParagraph))
-     then DIV sublists( x, i -> instance(i,MarkUpListParagraph), identity, i -> DIV i)
-     else fixflat x)
-fixup Nothing    := x -> ()				       -- so it will get removed by splice later
+     then new class x from splice sublists( x, i -> instance(i,MarkUpListParagraph), identity, i -> if #i===0 then () else DIV i)
+     else x)
+fixup MarkUpList := handlePara
+fixup Option     := identity
+fixup Nothing    := x -> ()	      -- so it will get removed by splice later
 fixup BR         := identity
 fixup PRE        := identity
 fixup CODE       := identity
 fixup EXAMPLE    := identity
+fixup ExampleTABLE := identity
 fixup LITERAL    := identity
 fixup ANCHOR     := identity
-fixup List       := z -> fixup SEQ z
-fixup Sequence   := z -> fixup SEQ z
+fixup List       := handlePara @@ toSequence
+fixup Sequence   := handlePara
+fixup SEQ        := handlePara @@ toSequence
 fixup TO         := identity
 fixup TO2        := identity
 fixup TOH        := identity
 -- phase this out -- each PARA has to have a scope
--- fixup MarkUpType := z -> z{}				       -- convert PARA to PARA{}
+deprecated := z -> (
+     stderr << "--warning: using '" << z << "' alone in documentation is deprecated, use '" << z << "{}' instead" << endl;
+     if z === PARA then stderr << "--        please group PARA{...} around entire paragraphs" << endl;
+     )
+fixup EmptyMarkUpType := z -> (deprecated z; z{})
+fixup MarkUpType := z -> (
+     if z === PARA
+     then (
+	  deprecated z;
+	  z{})
+     else error("isolated mark up type encountered: ",toString z)
+     ) -- convert PARA to PARA{}
 fixup Function   := z -> z				       -- allow Function => f 
 fixup String     := s -> (				       -- remove clumsy newlines within strings
      ln := lines s;
      if not ln#?1 then return s;
      concatenate ({addspaces0 trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
 
-fixup1 := method(SingleArgumentDispatch => true)
-fixup1 Thing := identity
-fixup1 Nothing := x -> ()				    -- this, together with the deepSplice below, eliminates the nulls
-fixup1 Hypertext := fixup1 SEQ := toSequence
-fixuptop := s -> Hypertext deepSplice apply(toList s, fixup1)
-
-new Hypertext from List := (h,x) -> splice apply(x, i -> flat i)
+new Hypertext from List := (h,x) -> fixup x
 hypertext = x -> (
      x = fixup x;
      if class x === Hypertext then x
@@ -443,9 +437,10 @@ getBody := key -> getOption(key,Description)		    -- get rid of this
 extractExamplesLoop            := method(SingleArgumentDispatch => true)
 extractExamplesLoop Thing      := x -> {}
 extractExamplesLoop EXAMPLE    := toList
+extractExamplesLoop Sequence := 
 extractExamplesLoop MarkUpList := x -> join apply(toSequence x, extractExamplesLoop)
 
-extractExamples := (docBody) -> (
+extractExamples := docBody -> (
      examples := extractExamplesLoop docBody;
      if #examples > 0 then currentPackage#"example inputs"#currentNodeName = examples;
      docBody)
@@ -526,7 +521,7 @@ fixupTable := new HashTable from {
      Outputs => val -> fixupList val,
      Consequences => val -> fixupList val,
      Headline => chkIsString Headline,
-     Description => val -> extractExamples hypertext val,
+     Description => val -> extractExamples fixup val,
      Caveat  => v -> if v =!= {} then fixup DIV1 { SUBSECTION "Caveat", SEQ v },
      SeeAlso => v -> if v =!= {} then fixup DIV1 { SUBSECTION "See also", UL (TO \ enlist v) },
      SourceCode => v -> if v =!= {} then DIV { 
@@ -880,7 +875,8 @@ briefSynopsis := key -> (
 
 synopsis := key -> (
      s := briefSynopsis key;
-     if s =!= null then DIV1 { SUBSECTION "Synopsis", s })
+     if s =!= null then DIV1 { SUBSECTION "Synopsis", s }
+     )
 
 documentableMethods := s -> select(methods s,isDocumentableMethod)
 
@@ -925,7 +921,7 @@ help String := key -> (
 	       else error("there is no documentation for '"|key|"'");
 	       b = ();
 	       );
-	  Hypertext fixuptop (title key, b, theExamples key, caveat key, seealso key, theMenu key)))
+	  Hypertext fixup (title key, b, theExamples key, caveat key, seealso key, theMenu key)))
 
 binary := set binaryOperators
 prefix := set prefixOperators
@@ -977,27 +973,20 @@ documentationValue(Symbol,Type) := (s,X) -> (
      b := smenu(toString \ select(syms, y -> instance(value y, Type) and parent value y === X));
      c := smenu select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
      e := smenu(toString \ select(syms, y -> not mutable y and class value y === X));
-     splice (
-	  LITERAL "<div class=\"waystouse\">\n",
+     DIV splice (
+	  "class" => "waystouse",
 	  if #b > 0 then ( SUBSECTION {"Types of ", if X.?synonym then X.synonym else toString X, " :"}, b),
 	  if #a > 0 then ( SUBSECTION {"Functions and methods returning ", indefinite synonym X, " :"}, a ),
 	  if #c > 0 then ( SUBSECTION {"Methods that use ", indefinite synonym X, " :"}, c),
-	  if #e > 0 then ( SUBSECTION {"Fixed objects of class ", toString X, " :"}, e),
-	  LITERAL "</div>\n"))
+	  if #e > 0 then ( SUBSECTION {"Fixed objects of class ", toString X, " :"}, e)))
 
 documentationValue(Symbol,Function) := (s,f) -> (	    -- compare with fmeth above
      a := smenu documentableMethods f;
-     if #a > 0 then (
-	  LITERAL "<div class=\"waystouse\">\n",
-     	  SUBSECTION {"Ways to use ", TT toString f, " :"}, a,
-	  LITERAL "</div>\n"))
+     if #a > 0 then DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", TT toString f, " :"}, a))
 
 documentationValue(Symbol,Keyword) := (s,k) -> (
      a := smenu documentableMethods k;
-     if #a > 0 then (
-	  LITERAL "<div class=\"waystouse\">\n",
-     	  SUBSECTION {"Ways to use ", TT toString k, " :"}, a,
-	  LITERAL "</div>\n"))
+     if #a > 0 then DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", TT toString k, " :"}, a))
 
 -- documentationValue(Symbol,HashTable) := (s,x) -> splice (
 --      c := documentableMethods x;
@@ -1065,13 +1054,9 @@ help Symbol := S -> (
      currentHelpTag = makeDocumentTag S;
      a := smenu apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
      -- b := smenu documentableMethods s;
-     ret := Hypertext fixuptop ( title S, synopsis S, makeDocBody S, op S,
+     ret := Hypertext fixup ( title S, synopsis S, makeDocBody S, op S,
 	  if #a > 0 then DIV1 { SUBSECTION {"Functions with optional argument named ", toExternalString S, " :"}, a},
--- 	  if #b > 0 then (
--- 	       LITERAL "<div class=\"waystouse\">\n",
--- 	       SUBSECTION {"Ways to use ", toExternalString s, " :"}, 
--- 	       b,
--- 	       LITERAL "</div>\n"),
+-- 	  if #b > 0 then DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", toExternalString s, " :"}, b),
           theExamples S, caveat S, seealso S,
      	  documentationValue(S,value S),
 	  sourcecode S, type S, 
@@ -1089,7 +1074,7 @@ help Array := key -> (		    -- optional argument
      opt := key#1;
      if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
      default := (options fn)#opt;
-     Hypertext fixuptop ( title key, synopsis key, makeDocBody key,
+     Hypertext fixup ( title key, synopsis key, makeDocBody key,
 	  DIV { SUBSECTION "Further information", 
 	       fixup UL {
 	       	    SEQ{ "Default value: ", if isDocumentableThing default and hasDocumentation default then TO {default} else TT toString default },
@@ -1103,7 +1088,7 @@ help Sequence := key -> (						    -- method key
      if key === () then return help "initial help";
      if null === lookup key then error("expected ", toString key, " to be a method");
      currentHelpTag = makeDocumentTag key;
-     ret := Hypertext fixuptop ( title key, synopsis key, makeDocBody key, theExamples key, caveat key, sourcecode key, seealso key, theMenu key );
+     ret := Hypertext fixup ( title key, synopsis key, makeDocBody key, theExamples key, caveat key, sourcecode key, seealso key, theMenu key );
      currentHelpTag = null;
      ret)
 
