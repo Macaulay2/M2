@@ -321,27 +321,25 @@ formatDocumentTag Sequence := record(
 								else toString) s)
 formatDocumentTag Array := s -> concatenate( toString s#0, "(..., ", toString s#1, " => ...)" )
 
-fSeqTO := fSeqInitialize(i -> fixup TO i, i -> fixup TO i)
-formatDocumentTagTO := method(SingleArgumentDispatch => true)
-formatDocumentTagTO Thing := x -> TT formatDocumentTag x
-formatDocumentTagTO Sequence := (
-     s -> SEQ toList (
-	  if #s == 0                                              then (s -> error("unknown document tag: ", toString s))
-	  else if             fSeqTO#?(#s,s#0)                    then fSeqTO#(#s,s#0)
-	  else if #s >= 1 and fSeqTO#?(#s,s#0,s#1)                then fSeqTO#(#s,s#0,s#1)
-	  else if #s >= 1 and fSeqTO#?(#s, class, class s#0, s#1) then fSeqTO#(#s, class, class s#0, s#1)
-	  else if             fSeqTO#?(#s, class, class s#0)      then fSeqTO#(#s, class, class s#0)
-	  else if             fSeqTO#?#s                          then fSeqTO#(#s)
-	                                                          else (s -> error("unknown document tag: ", toString s))) s)
-formatDocumentTagTO Array := s -> SEQ{ fixup TO s#0, "(..., ", fixup TO s#1, " => ...)" }
+---- this doesn't seem to be used!
+-- fSeqTO := fSeqInitialize(i -> fixup TO i, i -> fixup TO i)
+-- formatDocumentTagTO := method(SingleArgumentDispatch => true)
+-- formatDocumentTagTO Thing := x -> TT formatDocumentTag x
+-- formatDocumentTagTO Sequence := (
+--      s -> SEQ toList (
+-- 	  if #s == 0                                              then (s -> error("unknown document tag: ", toString s))
+-- 	  else if             fSeqTO#?(#s,s#0)                    then fSeqTO#(#s,s#0)
+-- 	  else if #s >= 1 and fSeqTO#?(#s,s#0,s#1)                then fSeqTO#(#s,s#0,s#1)
+-- 	  else if #s >= 1 and fSeqTO#?(#s, class, class s#0, s#1) then fSeqTO#(#s, class, class s#0, s#1)
+-- 	  else if             fSeqTO#?(#s, class, class s#0)      then fSeqTO#(#s, class, class s#0)
+-- 	  else if             fSeqTO#?#s                          then fSeqTO#(#s)
+-- 	                                                          else (s -> error("unknown document tag: ", toString s))) s)
+-- formatDocumentTagTO Array := s -> SEQ{ fixup TO s#0, "(..., ", fixup TO s#1, " => ...)" }
 
 -----------------------------------------------------------------------------
 -- fixing up hypertext
 -----------------------------------------------------------------------------
-requirestrings := x -> ( scan(x, line -> if class line =!= String then error ("expected a string, but encountered ", toString line)); x)
-trimfront := x -> apply(x, line -> replace("^[[:space:]]+","",line))
 nonnull := x -> select(x, i -> i =!= null)
-nonempty := x -> select(x, i -> i =!= "")
 trimline0 := x -> selectRegexp ( "^((.*[^ \t])?)[ \t]*$",1, x)
 trimline  := x -> selectRegexp ( "^[ \t]*((.*[^ \t])?)[ \t]*$",1, x)
 trimline1 := x -> selectRegexp ( "^[ \t]*(.*)$",1, x)
@@ -374,13 +372,11 @@ fixup Nothing    := x -> ()				       -- so it will get removed by splice later
 fixup BR         := identity
 fixup PRE        := identity
 fixup CODE       := identity
-fixup EXAMPLE    := x -> nonempty trimfront requirestrings nonnull x
+fixup EXAMPLE    := identity
 fixup LITERAL    := identity
 fixup ANCHOR     := identity
 fixup List       := z -> fixup SEQ z
 fixup Sequence   := z -> fixup SEQ z
--- fixup Option
-fixup UL         := identity
 fixup TO         := identity
 fixup TO2        := identity
 fixup TOH        := identity
@@ -394,7 +390,7 @@ fixup String     := s -> (				       -- remove clumsy newlines within strings
 
 fixup1 := method(SingleArgumentDispatch => true)
 fixup1 Thing := identity
-fixup1 Nothing := x -> ()				    -- this, together with the deepSplice below, eliminates the null's
+fixup1 Nothing := x -> ()				    -- this, together with the deepSplice below, eliminates the nulls
 fixup1 Hypertext := fixup1 SEQ := toSequence
 fixuptop := s -> Hypertext deepSplice apply(toList s, fixup1)
 
@@ -531,11 +527,11 @@ fixupTable := new HashTable from {
      Consequences => val -> fixupList val,
      Headline => chkIsString Headline,
      Description => val -> extractExamples hypertext val,
-     Caveat  => v -> if v =!= {} then fixup PARA1 { SUBSECTION "Caveat", SEQ v },
-     SeeAlso => v -> if v =!= {} then fixup PARA1 { SUBSECTION "See also", UL (TO \ enlist v) },
-     SourceCode => v -> if v =!= {} then (
-	  LITERAL "<div class=\"waystouse\">\n",
-	  fixup PARA1 {
+     Caveat  => v -> if v =!= {} then fixup DIV1 { SUBSECTION "Caveat", SEQ v },
+     SeeAlso => v -> if v =!= {} then fixup DIV1 { SUBSECTION "See also", UL (TO \ enlist v) },
+     SourceCode => v -> if v =!= {} then DIV { 
+	  "class" => "waystouse",
+	  fixup DIV1 {
 	       SUBSECTION "Code", 
 	       PRE demark(
 		    newline,
@@ -545,8 +541,7 @@ fixupTable := new HashTable from {
 			      if f === null then error("SourceCode: ", toString m, ": not a method");
 			      c := code f;
 			      if c === null then error("SourceCode: ", toString m, ": code for method not found");
-			      c)))},
-	  LITERAL "</div>\n"),
+			      c)))}},
      Subnodes => v -> (
 	  v = nonNull enlist v;
 	  if #v == 0 then error "encountered empty Subnodes list"
@@ -718,7 +713,7 @@ makeDocBody Thing := key -> (
 	       docBody = processExamples(pkg, fkey, docBody);
 	       if class key === String 
 	       then DIV {docBody}
-	       else PARA1 { SUBSECTION "Description", DIV {docBody} })))
+	       else DIV1 { SUBSECTION "Description", DIV {docBody} })))
 
 title := s -> (
      h := headline s;
@@ -726,8 +721,8 @@ title := s -> (
 
 type := S -> (
      s := value S;
-     if class s =!= Function and class s =!= Package then PARA1 {
-	  LITERAL "<div class=\"waystouse\">\n",
+     if class s =!= Function and class s =!= Package then DIV1 {
+	  "class" => "waystouse",
 	  SUBSECTION "For the programmer",  
 	  fixup PARA deepSplice { "The object ", TO S, " is ", ofClass class s,
 	       if parent s =!= Nothing then (
@@ -735,7 +730,7 @@ type := S -> (
 		    if #f>1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.", 
 		    toSequence between(" < ", f / (T -> TO T))),
 	       "."},
-	  LITERAL "</div>\n"})
+	  })
 
 istype := X -> parent X =!= Nothing
 alter1 := x -> (
@@ -875,17 +870,17 @@ briefSynopsis := key -> (
 			 then SEQ { "Function: ", TO key#0 }
 			 else SEQ { "Operator: ", TO key#0 }
 			 ),
-		    if inp#?0 then PARA1 { "Inputs:", UL inp },
-		    if out#?0 then PARA1 { "Outputs:", UL out },
-		    if res#?0 then PARA1 { "Consequences:", UL res },
-		    if ino#?0 then PARA1 { TO2{ "using functions with optional inputs", "Optional inputs"}, ":", UL ino }
+		    if inp#?0 then DIV1 { "Inputs:", UL inp },
+		    if out#?0 then DIV1 { "Outputs:", UL out },
+		    if res#?0 then DIV1 { "Consequences:", UL res },
+		    if ino#?0 then DIV1 { TO2{ "using functions with optional inputs", "Optional inputs"}, ":", UL ino }
 		    }
 	       }
 	  ))
 
 synopsis := key -> (
      s := briefSynopsis key;
-     if s =!= null then PARA1 { SUBSECTION "Synopsis", s })
+     if s =!= null then DIV1 { SUBSECTION "Synopsis", s })
 
 documentableMethods := s -> select(methods s,isDocumentableMethod)
 
@@ -893,7 +888,7 @@ fmeth := f -> (						    -- compare with documentationValue(Symbol,Function) bel
      b := documentableMethods f;
      if #b > 0 then (
 	  c := smenu b;
-	  if #c > 0 then PARA1 { SUBSECTION { "Ways to use ", TT toString f }, c } 
+	  if #c > 0 then DIV1 { SUBSECTION { "Ways to use ", TT toString f }, c } 
 	  )
      )
 
@@ -1023,7 +1018,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2Core then (
      fn := pkg#"title" | ".m2";
      au := pkg.Options.Authors;
      (
-     	  if #au > 0 then PARA1 {
+     	  if #au > 0 then DIV1 {
      	       SUBSECTION (if #au === 1 then "Author" else "Authors"), 
 	       fixup UL apply(au,
 		    au -> (
@@ -1034,20 +1029,20 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2Core then (
 			 if defs.HomePage =!= null then nam = HREF{defs.HomePage, nam};
 			 em := defs.Email;
 			 if em =!= null then em = SEQ{" <",HREF{concatenate("mailto:",em),em},">"};
-			 PARA1 {nam,em}
+			 DIV1 {nam,em}
 			 )
 		    )
 	       },
-	  PARA1 { SUBSECTION "Version", "This documentation describes version ", pkg.Options.Version, " of ", pkg#"title", "." },
-	  if pkg#"title" =!= "Macaulay2" then PARA1 {SUBSECTION "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, "."},
-	  if #e > 0 then PARA1 {
+	  DIV1 { SUBSECTION "Version", "This documentation describes version ", pkg.Options.Version, " of ", pkg#"title", "." },
+	  if pkg#"title" =!= "Macaulay2" then DIV1 {SUBSECTION "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, "."},
+	  if #e > 0 then DIV1 {
 	       SUBSECTION "Exports",
 	       fixup UL {
-		    if #b > 0 then PARA1 {"Types", smenu b},
-		    if #a > 0 then PARA1 {"Functions", smenu a},
-		    if #m > 0 then PARA1 {"Methods", smenu m},
-		    if #c > 0 then PARA1 {"Symbols", smenu c},
-		    if #d > 0 then PARA1 {"Other things", smenuCLASS d}}}))
+		    if #b > 0 then DIV1 {"Types", smenu b},
+		    if #a > 0 then DIV1 {"Functions", smenu a},
+		    if #m > 0 then DIV1 {"Methods", smenu m},
+		    if #c > 0 then DIV1 {"Symbols", smenu c},
+		    if #d > 0 then DIV1 {"Other things", smenuCLASS d}}}))
 
 theAugmentedMenu := S -> (
      f := value S;
@@ -1071,7 +1066,7 @@ help Symbol := S -> (
      a := smenu apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
      -- b := smenu documentableMethods s;
      ret := Hypertext fixuptop ( title S, synopsis S, makeDocBody S, op S,
-	  if #a > 0 then PARA1 { SUBSECTION {"Functions with optional argument named ", toExternalString S, " :"}, a},
+	  if #a > 0 then DIV1 { SUBSECTION {"Functions with optional argument named ", toExternalString S, " :"}, a},
 -- 	  if #b > 0 then (
 -- 	       LITERAL "<div class=\"waystouse\">\n",
 -- 	       SUBSECTION {"Ways to use ", toExternalString s, " :"}, 
@@ -1112,7 +1107,7 @@ help Sequence := key -> (						    -- method key
      currentHelpTag = null;
      ret)
 
-help List := v -> Hypertext between(HR{},help \ v)
+help List := v -> Hypertext between(hr,help \ v)
 
 help Thing := x -> if ReverseDictionary#?x then return help ReverseDictionary#x else error "no documentation found"
 

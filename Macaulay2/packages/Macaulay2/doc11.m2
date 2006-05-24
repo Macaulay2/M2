@@ -30,10 +30,10 @@ document {
 --     }
 
 document {
-     Key => PARA1,
+     Key => DIV1,
      Headline => "a single-spaced paragraph separator",
-	Usage => "PARA1 x",
-     TT "PARA1 x", " makes a ", TO "hypertext", " single-spaced paragraph break. This is mostly for the documentation formated in info mode.",
+	Usage => "DIV1 x",
+     TT "DIV1 x", " makes a ", TO "hypertext", " single-spaced paragraph break. This is mostly for the documentation formated in info mode.",
 	SeeAlso => "PARA"
      }
 
@@ -42,17 +42,17 @@ document {
 
 
 document {
-     Key => BR,
+     Key => br,
      Headline => "line break",
-	Usage => "BR",
-     TT "BR{}", " is a ", TO "hypertext", " line break."
+     Usage => "br",
+     TT "br", " is a ", TO "hypertext", " line break."
      }
 
 document {
-     Key => HR,
+     Key => hr,
      Headline => "horizontal rule",
-	Usage => "HR",
-     TT "HR{}", " a ", TO "hypertext", " horizontal rule."
+     Usage => "hr",
+     TT "hr", " a ", TO "hypertext", " horizontal rule."
      }
 
 document {

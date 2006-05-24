@@ -11,18 +11,18 @@ peek'(ZZ,BasicList) := (depth,s) -> (
      if depth === 0 then net s
      else horizontalJoin(
 	  net class s,
-	  "{", horizontalJoin between (",", apply(toList s, value -> peek'(depth-1,value))), "}" ) )
+	  "{", horizontalJoin between (", ", apply(toList s, value -> peek'(depth-1,value))), "}" ) )
 
 peek'(ZZ,MarkUpListParagraph) := peek'(ZZ,MarkUpList) := (depth,s) -> (
      if depth === 0 then net s
      else horizontalJoin(
 	  net class s,
-	  "{", horizontalJoin between (",", apply(toList s, value -> peek'(if instance(value,MarkUpList) or instance(value,String) then depth else depth-1, value))), "}" ) )
+	  "{", horizontalJoin between (", ", apply(toList s, value -> peek'(if instance(value,MarkUpList) or instance(value,String) then depth else depth-1, value))), "}" ) )
 
 peek'(ZZ,List) := (depth,s) -> (
      if depth === 0 then net s
      else horizontalJoin(
-	  "{", horizontalJoin between (",", apply(s, value -> peek'(depth,value))), "}" ) )
+	  "{", horizontalJoin between (", ", apply(s, value -> peek'(depth,value))), "}" ) )
 peek'(ZZ, String) := (depth,s) -> if depth === 0 then s else format s
 
 vbar := (ht,dp) -> (stack (ht + dp : "|"^-1)) ^ ht;
@@ -57,7 +57,7 @@ peek'(ZZ,Sequence) := (depth,s) -> (
 	  then "()"
 	  else if #s === 1 
 	  then ("1 : (", peek'(depth,s#0), ")")
-	  else ("(", horizontalJoin between (",", apply(s, value -> peek'(depth,value))), ")" )))
+	  else ("(", horizontalJoin between (", ", apply(s, value -> peek'(depth,value))), ")" )))
 
 precOption := precedence ( 1 => 2 )
 

@@ -109,6 +109,8 @@ html Symbol := html Boolean := toString
 
 texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
 
+noopts := x -> select(x,e -> class e =!= Option)
+
 vert := (op,post) -> x -> net new ParagraphList from post select(
      sublists(
 	  toList x,
@@ -116,10 +118,12 @@ vert := (op,post) -> x -> net new ParagraphList from post select(
 	  op,
 	  i -> horizontalJoin(op \ i)),
      n -> width n > 0)
-net DIV := net SEQ := net PARA := net Hypertext := vert(net,x -> between("\n",x)) -- doublespacing
-info DIV := info SEQ := info PARA := info Hypertext := vert(info,x -> between("",x))
-net PARA1 := vert(net,identity)				    -- singlespacing
-info PARA1 := vert(info,identity)
+net DIV := (vert(net,x -> between("\n",x))) @@ noopts -- doublespacing
+info DIV := (vert(info,x -> between("",x))) @@ noopts
+net SEQ := net PARA := net Hypertext := vert(net,x -> between("\n",x)) -- doublespacing
+info SEQ := info PARA := info Hypertext := vert(info,x -> between("",x))
+net DIV1 := (vert(net,identity)) @@ noopts				    -- singlespacing
+info DIV1 := (vert(info,identity)) @@ noopts
 
 html BR := x -> ///
 <br>
@@ -144,7 +148,6 @@ tex  HR := x -> ///
 
 html Hypertext := x -> concatenate(apply(x,html))	    -- used to have "<p>" in here
 
-html PARA1 := x -> concatenate("\n", apply(x,html),"\n")
 html PARA := x -> (
      if #x === 0 then "\n<p/>\n"
      else concatenate("\n<p>\n", apply(x,html),"\n</p>\n")
@@ -397,14 +400,14 @@ info HREF := net HREF := x -> net last x
 
 scan( (net,html,tex), op -> op TOH := x -> op SEQ{ new TO from x, commentize headline x#0 } )
 
-tex LITERAL := net LITERAL := x -> ""
+info LITERAL := tex LITERAL := net LITERAL := x -> ""
 html LITERAL := x -> concatenate x
 html EmptyMarkUpType := html MarkUpType := X -> html X{}
 html ITALIC := t -> concatenate("<i>", apply(t,html), "</i>")
 html UNDERLINE := t -> concatenate("<u>", apply(t,html), "</u>")
 html BOLD := t -> concatenate("<b>", apply(t,html), "</b>")
 
-html Option := x -> toString x
+html Option := x -> error("attempted to convert option '", toString x, "' to html")
 
 --     \rm     Roman
 --     \sf     sans-serif

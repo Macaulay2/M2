@@ -512,13 +512,14 @@ document {
 
 document {
      Key => "obtaining the monomial order of a ring",
-     "The monomial order of a ring is stored as an option in the monoid of the ring.",
-     EXAMPLE {
-	  "R = QQ[x_1 .. x_10, MonomialOrder=>{4,6}];",
-	  "(monoid R).Options.MonomialOrder",
-	  "S = QQ[a..d]",
-	  "(monoid R).Options.MonomialOrder"
-	  }
+     "The monomial order of a ring is stored as an option.",
+     EXAMPLE lines ///
+	  R = QQ[x_1 .. x_10, MonomialOrder=>{4,6}];
+	  options R
+	  (options R).MonomialOrder
+	  S = QQ[a..d];
+	  (options S).MonomialOrder
+     ///
      }
 
 

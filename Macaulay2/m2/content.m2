@@ -3,8 +3,6 @@
 PCDATA = set {"#PCDATA"}
 String.qname = "#PCDATA"
 
-LI.qname = "li"
-
 -- <!ENTITY % Inline.extra "" >
 InlineExtra = set {}
 
@@ -13,37 +11,24 @@ Ruby = set { "ruby" }
 
 -- <!ENTITY % Inlform.class "| %input.qname; | %select.qname; | %textarea.qname; | %label.qname; | %button.qname;" >
 Inlform = set { "input", "select", "textarea", "label", "button" }
-LABEL.qname = "label"
 
 -- <!ENTITY % Inlspecial.class "| %img.qname; | %map.qname; | %applet.qname;" >
 Inlspecial = set { "img", "map", "applet" }
-IMG.qname = "img"
 
 -- <!ENTITY % Anchor.class "| %a.qname;" >
 AnchorClass = set { "a" }
-ANCHOR.qname = "a"
 
 -- <!ENTITY % I18n.class "| %bdo.qname;" >
 I18nClass = set { "bdo" }
 
 -- <!ENTITY % Inlpres.class "| %tt.qname; | %i.qname; | %b.qname; | %big.qname; | %small.qname; | %sub.qname; | %sup.qname;" >
 Inlpres = set { "tt", "i", "b", "big", "small", "sub", "sup" }
-TT.qname = "tt"
-ITALIC.qname = "i"
-BOLD.qname = "b"
-SMALL.qname = "small"
-SUB.qname = "sub"
-SUP.qname = "sup"
 
 -- <!ENTITY % Inlphras.class "| %em.qname; | %strong.qname; | %dfn.qname; | %code.qname; | %samp.qname; | %kbd.qname; | %var.qname; | %cite.qname; | %abbr.qname; | %acronym.qname; | %q.qname;" >
 Inlphras = set { "em", "strong", "dfn", "code", "samp", "kbd", "var", "cite", "abbr", "acronym", "q" }
-EM.qname = "em"
-STRONG.qname = "strong"
-CODE.qname = "code"
 
 -- <!ENTITY % Inlstruct.class "%br.qname; | %span.qname;" >
 Inlstruct = set { "br", "span" }
-BR.qname = "br"
 
 -- <!ENTITY % Inline-noA.class "%Inlstruct.class; %Inlphras.class; %Inlpres.class; %I18n.class; %Inlspecial.class; %Inlform.class; %Ruby.class; %Inline.extra;">
 InlineNoAClass = Inlstruct + Inlphras + Inlpres + I18nClass +          Inlspecial + Inlform + Ruby + InlineExtra
@@ -56,38 +41,25 @@ BlockExtra = set {}
 
 -- <!ENTITY % Blkspecial.class "| %table.qname; | %form.qname; | %fieldset.qname;" >
 Blkspecial = set { "table", "form", "fieldset" }
-TABLE.qname = "table"
 
 -- <!ENTITY % Blkpres.class "| %hr.qname;" >
 Blkpres = set {"hr"}
-HR.qname = "hr"
 
 -- <!ENTITY % Blkphras.class "| %pre.qname; | %blockquote.qname; | %address.qname;" >
 Blkphras = set {"pre", "blockquote", "address" }
-PRE.qname = "pre"
 
 -- <!ENTITY % Blkstruct.class "%p.qname; | %div.qname;" >
 Blkstruct = set {"p", "div" }
-PARA.qname = "p"
-DIV.qname = "div"
-PARA1.qname = "div"
-SEQ.qname = "div"
+-- SEQ.qname = "div"					    -- try to phase this one out!!!
 
 -- <!ENTITY % Block.class "%Blkstruct.class; %Blkphras.class; %Blkpres.class; %Blkspecial.class; %Block.extra;">
 BlockClass = Blkstruct + Blkphras + Blkpres + Blkspecial + BlockExtra
 
 -- <!ENTITY % List.class "%ul.qname; | %ol.qname; | %dl.qname;" >
 ListClass = set {"ul", "ol", "dl" }
-UL.qname = "ul"
 
 -- <!ENTITY % Heading.class "%h1.qname; | %h2.qname; | %h3.qname; | %h4.qname; | %h5.qname; | %h6.qname;" >
 HeadingClass = set {"h1", "h2", "h3", "h4", "h5", "h6"}
-HEADER1.qname = "h1"
-HEADER2.qname = "h2"
-HEADER3.qname = "h3"
-HEADER4.qname = "h4"
-HEADER5.qname = "h5"
-HEADER6.qname = "h6"
 
 -- <!ENTITY % Misc.extra "" >
 MiscExtra = set {}
@@ -123,10 +95,8 @@ validContent#"li" =
 validContent#"div" = PCDATA + FlowMix
 -----------------------------------------------------------------------------
 
-
 -- <!ENTITY % body.content "( %Block.mix; )+" >
 validContent#"body" = BlockMix
-BODY.qname = "body"
 
 -- <!ENTITY % Heading.content  "( #PCDATA | %Inline.mix; )*" >
 HeadingContent = PCDATA + InlineMix
@@ -152,6 +122,8 @@ validContent#"label" = PCDATA + set { "input", "select", "textarea", "button", "
 validContent#"a" = InlineNoAClass
 -----------------------------------------------------------------------------
 ---- these are all empty:
+-- <!ENTITY % link.content  "EMPTY" >
+validContent#"link" =
 -- <!ENTITY % hr.content  "EMPTY" >
 validContent#"hr" =
 -- <!ENTITY % img.content  "EMPTY" >
@@ -197,18 +169,21 @@ validContent#"ul" = set { "li" }
 
 validate = method()
 validate Hypertext := x -> scan(x, validate)
+validate Option :=
 validate String := x -> null
 validate MarkUpList := x -> (
      p := class x;
      if p.?qname then (
 	  n := p.qname;
-	  if not validContent#?n then error("internal error: valid content for element ", format n, " not recorded yet");
+	  if not validContent#?n then error("internal error: valid content for element ", format n, " not recorded yet", endl) ;
 	  valid := validContent#n;
 	  scan(x, e -> (
 		    c := class e;
-		    if not c.?qname or not valid#?(c.qname) then error("element of type ", format toString p, " can't contain an element of type ", format toString c);
-		    validate e)))
-     else error(format toString p, " isn't an html type (has no qname)"))
+		    if (not c.?qname or not valid#?(c.qname)) and c =!= Option 
+		    then stderr << "element of type " << format toString p << " can't contain an element of type " << format toString c << endl;
+		    validate e));
+	  )
+     else stderr << format toString p << " isn't an html type (has no qname)" << endl)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -51,7 +51,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (info,PARA1),
+     Key => (info,DIV1),
      Headline => "",
      Usage => "",
      Inputs => {

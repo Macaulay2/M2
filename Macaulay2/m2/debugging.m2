@@ -93,7 +93,7 @@ symbolLocation = s -> (
      if t =!= null then t#0 | ":" | toString t#1| ":" | toString t#2 | "-" | toString t#3| ":" | toString t#4
      else "")
 
-sortByHash := v -> last \ sort \\ (i -> (hash i, i)) \ v
+sortByHash = v -> last \ sort \\ (i -> (hash i, i)) \ v
 
 select2 := (type,syms) -> apply(
      sort apply(
@@ -131,8 +131,9 @@ netTable := x -> (
      if #x == 0 or #x#0 == 0 then return stack();
      colwids := max \ transpose applyTable(x,width);
      x = joinRow \ apply(x, row -> apply(colwids,row,upWidth));
-     (stack mingle(x,#x-1:""))^(height x#0 -1))
-robust := y -> silentRobustNet(25,4,3,y)
+     ( stack x -- stack mingle(x,#x-1:"") -- try it without the blank lines
+	  )^(height x#0 -1))
+robust := y -> silentRobustNet(55,4,3,y)
 abbreviate := x -> (
      if class x === Function and match("^--Function.*--$", toString x) then "..."
      else robust x)
@@ -140,7 +141,7 @@ listSymbols = method()
 listSymbols Dictionary := d -> listSymbols values d
 listSymbols List := x -> (
      netTable prepend(
-	  {"symbol"||"------","", "class"||"-----","", "value"||"-----", "location"||"--------"},
+	  {"symbol"||"------","", "class"||"-----","", "value"||"-----", "location of symbol"||"------------------"},
 	  apply (x, s -> {toString s,":", robust class value s, "--", abbreviate value s, symbolLocation s})))
 
 listLocalSymbols = Command(f -> listSymbols localSymbols f)
