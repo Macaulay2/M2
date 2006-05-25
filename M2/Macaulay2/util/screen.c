@@ -62,7 +62,7 @@ typedef struct {
 #endif
 int argc;
 char **argv;
-volatile void error(char *);
+void error(char *);
 static struct select {
      fd_set readfds, writefds, exceptfds;
      } Selection, SelectionResult;
@@ -132,7 +132,7 @@ setttystate(int fd,terminal *t)
 #endif
      }
 
-volatile void
+void
 terminate(int s){
      static int firsttime = TRUE;
      if (firsttime) {
@@ -148,8 +148,7 @@ terminate(int s){
      exit(s);
      }
 
-volatile void
-error(char *s)
+void error(char *s)
 {
      warning(s);
      terminate(1);
@@ -198,7 +197,7 @@ void PassSignalToChild(int sig)
      if (ChildPID != 0) kill(-ChildPID,sig);
      }
 
-volatile void runchild()
+void runchild()
 {
      int slave;
      {
@@ -357,7 +356,7 @@ void examine(fd_set *fds)
 	  }
      }
 
-volatile void
+void
 EventManager()
 {
      while (1) {
@@ -444,7 +443,7 @@ clrecho(int fd){
      setttystate(fd,&t);
      }
 
-volatile void runparent()
+void runparent()
 {
      heed(STDIN,hFromKeyboard);
      heed(masterfd,hmasterfd);
@@ -460,7 +459,7 @@ volatile void runparent()
      EventManager();
      }
 
-volatile void show()
+void show()
 {
      /* if (!isatty(STDIN) || !isatty(STDOUT)) error("not a tty"); */
      getpty(&masterfd,&slavename);
