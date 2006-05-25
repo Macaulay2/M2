@@ -33,8 +33,6 @@ o5 = SimplicialComplexes
 
 o5 : Package
 
- -- simplicial complexes
-
 i6 : R = QQ[a..d]
 
 o6 = R

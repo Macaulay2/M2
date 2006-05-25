@@ -7,6 +7,4 @@ o1 = stdio
 
 o1 : File
 
- -- the standard input output file
-
 i2 : 

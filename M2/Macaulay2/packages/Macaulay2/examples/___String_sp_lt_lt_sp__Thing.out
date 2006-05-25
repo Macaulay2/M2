@@ -10,6 +10,7 @@ i2 : get "foo"
 
 o2 = 1073741824
 
-i3 : unlinkFile "foo"
+
+i3 : removeFile "foo"
 
 i4 : 

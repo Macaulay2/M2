@@ -27,7 +27,9 @@ o3 : QQ
 
 i4 : peek'(100,x)
 
-o4 = Divide{Product{Power{2,2},Power{8191,1}},Product{Power{3,1},Power{67,1},Power{163,1}}}
+o4 = Divide{Product{Power{2, 2}, Power{8191, 1}}, Product{Power{3, 1}, Power{67,
+     ---------------------------------------------------------------------------
+     1}, Power{163, 1}}}
 
 i5 : R = ZZ/101[u]
 
@@ -37,8 +39,8 @@ o5 : PolynomialRing
 
 i6 : factor (u^3-1)
 
-       2
-o6 = (u  + u + 1)(u - 1)
+              2
+o6 = (u - 1)(u  + u + 1)
 
 o6 : Product
 
@@ -50,17 +52,27 @@ o7 : FractionField
 
 i8 : factor ((t^3-1)/(t^3+1))
 
-       2
-     (t  + t + 1)(t - 1)
+              2
+     (t - 1)(t  + t + 1)
 o8 = -------------------
-       2
-     (t  - t + 1)(t + 1)
+              2
+     (t + 1)(t  - t + 1)
 
 o8 : Divide
 
 i9 : code(factor,F)
 
-o9 = -- ../../../Macaulay2/m2/enginering.m2:78
+o9 = -- ../../../../Macaulay2/m2/enginering.m2:78
                factor F := options -> f -> factor numerator f / factor denominator f;
+     | symbol   class             value                                          location of symbol                                
+     | ------   -----             -----                                          ------------------
+     |                             ZZ                                            
+     | R      : PolynomialRing -- --- [t]                                        ../../../../Macaulay2/m2/enginering.m2:69:19-69:19
+     |                            101
+     | o      : OptionTable    -- OptionTable{Adjust => identity               } ../../../../Macaulay2/m2/enginering.m2:72:10-72:10
+     |                                        DegreeRank => 1
+     |                                        Degrees => {{1}}
+     |                            $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+     | F      : FractionField  -- F                                              ../../../../Macaulay2/m2/enginering.m2:76:19-76:19
 
 i10 : 

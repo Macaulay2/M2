@@ -167,11 +167,11 @@ i27 : leadMonomial g
        3
 o27 = a
 
-o27 : [a, b]
+o27 : R
 
 i28 : exponents leadMonomial g
 
-o28 = {3, 0}
+o28 = {{3, 0}}
 
 o28 : List
 
@@ -227,9 +227,9 @@ o34 = {({3, 0}, 8), ({2, 1}, 12), ({1, 2}, 6), ({0, 3}, 1), ({2, 0}, 12), ({1,
       1}, 12), ({0, 2}, 3), ({1, 0}, 6), ({0, 1}, 3), ({0, 0}, 1)}
 
 o34 : List
-                ({3, 0}, 8)
-i35 : S / print;
 
+i35 : S / print;
+({3, 0}, 8)
 ({2, 1}, 12)
 ({1, 2}, 6)
 ({0, 3}, 1)
@@ -276,33 +276,21 @@ o38 = 216
 o38 : -----
       10007
 
-i39 : listForm leadMonomial g
+i39 : f < g
 
-o39 = {3, 0}
+o39 = false
 
-o39 : List
-
-i40 : standardForm leadMonomial g
-
-o40 = HashTable{0 => 3}
-
-o40 : HashTable
-
-i41 : f < g
-
-o41 = false
-
-i42 : sort {b^2-1,a*b,a+1,a,b}
+i40 : sort {b^2-1,a*b,a+1,a,b}
 
                      2
-o42 = {b, a + 1, a, b  - 1, a*b}
+o40 = {b, a + 1, a, b  - 1, a*b}
 
-o42 : List
+o40 : List
 
-i43 : f ? g
+i41 : f ? g
 
-o43 = >
+o41 = >
 
-o43 : Keyword
+o41 : Keyword
 
-i44 : 
+i42 : 

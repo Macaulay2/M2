@@ -34,7 +34,7 @@ o5 = | 0 0 |
              4       2
 o5 : Matrix R  <--- R
 
-i6 : map(source f, ker f)
+i6 : inducedMap(source f, ker f)
 
 o6 = {1} | 0  -z -y |
      {1} | -z 0  x  |
@@ -42,7 +42,7 @@ o6 = {1} | 0  -z -y |
 
 o6 : Matrix
 
-i7 : map(coker f, target f)
+i7 : inducedMap(coker f, target f)
 
 o7 = | 1 |
 

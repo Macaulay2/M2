@@ -6,12 +6,6 @@ o1 = sin
 
 o1 : Symbol
 
-  * Usage: sin x
-  * Inputs:
-      * x, a real number
-  * Outputs:
-      * a real number, the sine of x
-
 i2 : Macaulay2Core.Dictionary #? "sin"
 
 o2 = true

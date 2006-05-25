@@ -6,7 +6,7 @@ i2 : I = ideal(a*b-c*d, (a*c-b*d)^2);
 
 o2 : Ideal of R
 
-i3 : ass I
+i3 : associatedPrimes I
 
 o3 = {ideal (d, a), ideal (b + c, a + d), ideal (c, b), ideal (b - c, a - d)}
 

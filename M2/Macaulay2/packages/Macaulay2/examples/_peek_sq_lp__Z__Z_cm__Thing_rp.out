@@ -10,17 +10,18 @@ o1 : Product
 i2 : peek s
 
               4
-o2 = Product{2 ,7}
+o2 = Product{2 , 7}
 
 i3 : peek'_2 s
 
-o3 = Product{Power{2,4},Power{7,1}}
+o3 = Product{Power{2, 4}, Power{7, 1}}
 
 i4 : wrap_80 peek help resolution
 
-o4 = Hypertext{Hypertext{HEADER1{"resolution"," -- ","make a projective
-     resolution"},HEADER2{"Ways to use ",TT{"resolution"}},UL{SEQ{TOH{Macaulay2 ::
-     resolution Ideal}},SEQ{TOH{Macaulay2 :: resolution Matrix}},SEQ{TOH{Macaulay2 ::
-     resolution Module}},SEQ{TOH{User :: resolution MonomialIdeal}}}}}
+o4 = Hypertext{HEADER1{"resolution", " -- ", "make a projective resolution"},
+     DIV{class => waystouse, HEADER2{"Ways to use ", TT{"resolution"}, " :"},
+     UL{LI{TOH{Macaulay2 :: resolution Ideal}}, LI{TOH{Macaulay2 :: resolution
+     Matrix}}, LI{TOH{Macaulay2 :: resolution Module}}, LI{TOH{User :: resolution
+     MonomialIdeal}}}}}
 
 i5 : 

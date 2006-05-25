@@ -1,0 +1,35 @@
+-- -*- M2-comint -*-
+
+i1 : R = ZZ/32003[x,y,z];
+
+i2 : Q = R/(x^2+y^2-z^5, z-x-y^2)
+
+o2 = Q
+
+o2 : QuotientRing
+
+i3 : f = z^2+y^2
+
+      2
+o3 = z  - x + z
+
+o3 : Q
+
+i4 : g = z^2+2*x-2*z-3*z^5+3*x^2+6*y^2
+
+      2
+o4 = z  - x + z
+
+o4 : Q
+
+i5 : f == g
+
+o5 = true
+
+i6 : ann f
+
+o6 = 0
+
+o6 : Ideal of Q
+
+i7 : 

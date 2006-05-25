@@ -1,0 +1,21 @@
+-- -*- M2-comint -*-
+
+i1 : R = ZZ/32003[a..d,x_1..x_4];
+
+i2 : N = matrix"a,b,c,d;x[1],x[2],x[3],x[4]"
+
+o2 = | a   b   c   d   |
+     | x_1 x_2 x_3 x_4 |
+
+             2       4
+o2 : Matrix R  <--- R
+
+i3 : M = matrix"ad-2c3,(a-b)2+1,ab;,abc-1,"
+
+o3 = | -2c3+ad a2-2ab+b2+1 ab |
+     | 0       abc-1       0  |
+
+             2       3
+o3 : Matrix R  <--- R
+
+i4 : 

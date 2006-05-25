@@ -36,7 +36,7 @@ o7 = 3 - 6T + 15T  - 18T  + 6T
 
 o7 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
 
-i8 : hilbertSeries M
+i8 : hf = hilbertSeries M
 
                  4      5     6
      3 - 6T + 15T  - 18T  + 6T
@@ -46,35 +46,45 @@ o8 = --------------------------
 
 o8 : Divide
 
-i9 : poincare' = (M) -> (
-     	H := poincare M;
-     	t := (ring H)_0;  -- The variable t above
-     	while H % (1-t) == 0 do H = H // (1-t);
-     	H)
+i9 : reduceHilbert hf
 
-o9 = poincare'
+                2
+     3 + 6T + 6T
+o9 = ------------
+              14
+       (1 - T)
 
-o9 : Function
+o9 : Divide
 
-i10 : poincare' M
+i10 : poincare' = (M) -> (
+      H := poincare M;
+      t := (ring H)_0;  -- The variable t above
+      while H % (1-t) == 0 do H = H // (1-t);
+      H)
+
+o10 = poincare'
+
+o10 : Function
+
+i11 : poincare' M
 
                  2
-o10 = 3 + 6T + 6T
+o11 = 3 + 6T + 6T
 
-o10 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o11 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
 
-i11 : C = resolution M
+i12 : C = resolution M
 
        3      6      15      18      6
-o11 = R  <-- R  <-- R   <-- R   <-- R  <-- 0
+o12 = R  <-- R  <-- R   <-- R   <-- R  <-- 0
                                             
       0      1      2       3       4      5
 
-o11 : ChainComplex
+o12 : ChainComplex
 
-i12 : C.dd_3
+i13 : C.dd_3
 
-o12 = {4} | m  -n o  p  -q r  0  0  0  0  0  0  0  0  0  0  0  0  |
+o13 = {4} | m  -n o  p  -q r  0  0  0  0  0  0  0  0  0  0  0  0  |
       {4} | -j k  -l 0  0  0  p  0  0  0  -q r  0  0  0  0  0  0  |
       {4} | g  -h i  0  0  0  0  p  0  0  0  0  -q 0  0  r  0  0  |
       {4} | -d e  -f 0  0  0  0  0  p  0  0  0  0  -q 0  0  r  0  |
@@ -91,13 +101,13 @@ o12 = {4} | m  -n o  p  -q r  0  0  0  0  0  0  0  0  0  0  0  0  |
       {4} | 0  0  0  0  0  0  0  0  a  d  0  0  0  -b -e 0  c  f  |
 
               15       18
-o12 : Matrix R   <--- R
+o13 : Matrix R   <--- R
 
-i13 : betti C
+i14 : betti C
 
-o13 = total: 3 6 15 18 6
+o14 = total: 3 6 15 18 6
           0: 3 6  .  . .
           1: . .  .  . .
           2: . . 15 18 6
 
-i14 : 
+i15 : 

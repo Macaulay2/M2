@@ -1,3 +1,3 @@
-x = {a,b,c,d,e};
-member(c,x)
-member(f,x)
+member(c,{a,b,c,d,e})
+member(f,(a,b,c,d,e))
+member(3,set{1,2,5,6})

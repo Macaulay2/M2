@@ -1,14 +1,10 @@
 -- -*- M2-comint -*-
 
-i1 : R = ZZ[a..f]
-
-o1 = R
-
-o1 : PolynomialRing
+i1 : R = ZZ[a..f];
 
 i2 : tex matrix {{a^2+2,b,c},{d,e,f^3-a}}
 
-o2 = $\bgroup3\makeatother\begin{pmatrix}a^{2}+{2}&
+o2 = $\bgroup\begin{pmatrix}a^{2}+{2}&
      b&
      c\\
      d&

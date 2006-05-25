@@ -2,7 +2,7 @@
 
 i1 : R = ZZ/32003[a..d];
 
-i2 : f = map(coker matrix {{a,1,b},{c,3,b+d}},R^2)
+i2 : f = inducedMap(coker matrix {{a,1,b},{c,3,b+d}},R^2)
 
 o2 = | 0  0 |
      | -3 1 |

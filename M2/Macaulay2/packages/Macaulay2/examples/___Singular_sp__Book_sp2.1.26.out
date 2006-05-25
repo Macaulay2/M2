@@ -1,0 +1,57 @@
+-- -*- M2-comint -*-
+
+i1 : A = QQ[x,y,z];
+
+i2 : M = cokernel matrix(A, {{1,2,3},{4,5,6},{7,8,9}})
+
+o2 = cokernel | 1 2 3 |
+              | 4 5 6 |
+              | 7 8 9 |
+
+                            3
+o2 : A-module, quotient of A
+
+i3 : N = cokernel matrix{{x,y},{z,0}}
+
+o3 = cokernel | x y |
+              | z 0 |
+
+                            2
+o3 : A-module, quotient of A
+
+i4 : H = Hom(M,N)
+
+o4 = subquotient (| 1  0  |, | 0 0 x 0 0 y |)
+                  | 0  1  |  | 0 0 z 0 0 0 |
+                  | -2 0  |  | 0 x 0 0 y 0 |
+                  | 0  -2 |  | 0 z 0 0 0 0 |
+                  | 1  0  |  | x 0 0 y 0 0 |
+                  | 0  1  |  | z 0 0 0 0 0 |
+
+                               6
+o4 : A-module, subquotient of A
+
+i5 : f = homomorphism H_{0}
+
+o5 = | 1 -2 1 |
+     | 0 0  0 |
+
+o5 : Matrix
+
+i6 : target f === N
+
+o6 = true
+
+i7 : source f === M
+
+o7 = true
+
+i8 : matrix f
+
+o8 = | 1 -2 1 |
+     | 0 0  0 |
+
+             2       3
+o8 : Matrix A  <--- A
+
+i9 : 

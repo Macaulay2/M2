@@ -1,0 +1,1 @@
+Macaulay2Core.Options.Authors

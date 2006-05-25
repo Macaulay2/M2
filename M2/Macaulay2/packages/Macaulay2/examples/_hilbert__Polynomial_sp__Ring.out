@@ -2,7 +2,7 @@
 
 i1 : R = ZZ/101[a..d];
 
-i2 : S = image map(R, R, {a^4, a^3*b, a*b^3, b^4});
+i2 : S = coimage map(R, R, {a^4, a^3*b, a*b^3, b^4});
 
 i3 : presentation S
 

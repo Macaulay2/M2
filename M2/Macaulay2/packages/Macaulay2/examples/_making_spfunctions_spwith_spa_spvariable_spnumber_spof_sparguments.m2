@@ -4,8 +4,8 @@ f(3)
 f(3,4)
 f(3,4,5)
 f = x -> (
-     x = sequence x;
-     {class x, #x});
+x = sequence x;
+{class x, #x});
 f()
 f(3)
 f(3,4)

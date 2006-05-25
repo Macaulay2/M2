@@ -1,0 +1,9 @@
+-- -*- M2-comint -*-
+
+i1 : separateRegexp("-", "asdf-qwer-dfadf")
+
+o1 = {asdf, qwer, dfadf}
+
+o1 : List
+
+i2 : 

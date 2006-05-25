@@ -1,0 +1,23 @@
+-- -*- M2-comint -*-
+
+i1 : f = a -> b -> a+b+a*b
+
+o1 = f
+
+o1 : Function
+
+i2 : functionBody f 1
+
+o2 = <<a function body>>
+
+o2 : FunctionBody
+
+i3 : f 1 === f 2
+
+o3 = false
+
+i4 : functionBody f 1 === functionBody f 2
+
+o4 = true
+
+i5 : 

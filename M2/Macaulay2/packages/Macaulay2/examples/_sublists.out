@@ -1,0 +1,15 @@
+-- -*- M2-comint -*-
+
+i1 : sublists({0,0,1,2,0,3,0},i -> i == 0, identity, identity)
+
+o1 = {{}, 0, {}, 0, {1, 2}, 0, {3}, 0, {}}
+
+o1 : List
+
+i2 : sublists({0,0,1,2,0,3,0},i -> i != 0, identity, identity)
+
+o2 = {{0, 0}, 1, {}, 2, {0}, 3, {0}}
+
+o2 : List
+
+i3 : 

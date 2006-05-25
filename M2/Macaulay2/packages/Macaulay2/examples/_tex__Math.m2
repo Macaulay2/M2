@@ -1,2 +1,2 @@
-R = ZZ[x]
+R = ZZ[x];
 texMath (x-1)^6

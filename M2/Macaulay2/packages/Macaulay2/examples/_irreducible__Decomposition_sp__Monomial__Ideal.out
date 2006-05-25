@@ -1,0 +1,21 @@
+-- -*- M2-comint -*-
+
+i1 : QQ[x..z];
+
+i2 : I = monomialIdeal (x*y^3, x*y^2*z)
+
+                       3     2
+o2 = monomialIdeal (x*y , x*y z)
+
+o2 : MonomialIdeal of QQ [x, y, z]
+
+i3 : w = irreducibleDecomposition I
+
+                                       2                   3
+o3 = {monomialIdeal(x), monomialIdeal(y ), monomialIdeal (y , z)}
+
+o3 : List
+
+i4 : assert( I == intersect w )
+
+i5 : 

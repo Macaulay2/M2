@@ -2,11 +2,11 @@
 
 i1 : filename = temporaryFileName () | ".dbm"
 
-o1 = /tmp/M2-5759-1.dbm
+o1 = /tmp/M2-6519-1.dbm
 
 i2 : x = openDatabaseOut filename
 
-o2 = /tmp/M2-5759-1.dbm
+o2 = /tmp/M2-6519-1.dbm
 
 o2 : Database
 
@@ -26,10 +26,15 @@ i6 : scanKeys(x,print)
 first
 second
 
-i7 : close x
+i7 : x#"second" = null
 
-o7 = 0
+i8 : scanKeys(x,print)
+first
 
-i8 : unlinkFile filename
+i9 : close x
 
-i9 : 
+o9 = 0
+
+i10 : removeFile filename
+
+i11 : 

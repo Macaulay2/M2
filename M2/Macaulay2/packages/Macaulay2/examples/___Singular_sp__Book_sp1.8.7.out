@@ -1,0 +1,19 @@
+-- -*- M2-comint -*-
+
+i1 : A = QQ[x,y,z,MonomialOrder=>Lex];
+
+i2 : I = ideal(x^2+y+z-1, x+y^2+z-1, x+y+z^2-1);
+
+o2 : Ideal of A
+
+i3 : transpose gens gb I
+
+o3 = {-6} | z6-4z4+4z3-z2 |
+     {-4} | 2yz2+z4-z2    |
+     {-2} | y2-y-z2+z     |
+     {-2} | x+y+z2-1      |
+
+             4       1
+o3 : Matrix A  <--- A
+
+i4 : 

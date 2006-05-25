@@ -13,10 +13,10 @@ o2 = {1, -2, 0, 4}
 o2 : Qu
 
 i3 : expression Qu := z -> (
-     	       expression z#0 +
-     	       expression z#1 * expression "I" +
-     	       expression z#2 * expression "J" +
-     	       expression z#3 * expression "K");
+     expression z#0 +
+     expression z#1 * expression "I" +
+     expression z#2 * expression "J" +
+     expression z#3 * expression "K");
 
 i4 : net Qu := z -> net expression z;
 
@@ -70,6 +70,6 @@ o15 : Qu
 
 i16 : peek oo
 
-o16 = {0,2,5,0}
+o16 = {0, 2, 5, 0}
 
 i17 : 

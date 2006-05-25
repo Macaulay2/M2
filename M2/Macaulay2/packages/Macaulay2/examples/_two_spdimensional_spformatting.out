@@ -105,13 +105,13 @@ o14 : Sum
 
 i15 : peek e
 
-           2       2
-o15 = Sum{x ,2x*y,y }
+           2         2
+o15 = Sum{x , 2x*y, y }
 
 i16 : peek'(2,e)
 
-                   2                          2
-o16 = Sum{Product{x },Product{2,x,y},Product{y }}
+                   2                              2
+o16 = Sum{Product{x }, Product{2, x, y}, Product{y }}
 
 i17 : Table{{1,2,3},{a,bb,ccc}}
 
@@ -130,7 +130,7 @@ o18 = | 1   2   3  |
 o18 : MatrixExpression
 
 i19 : Table{{"Example 1","Example 2"},
-            {Table{{1,2},{3,4}},Table{{11,22},{3,444}}}}
+      {Table{{1,2},{3,4}},Table{{11,22},{3,444}}}}
 
 o19 =  Example 1  Example 2 
 

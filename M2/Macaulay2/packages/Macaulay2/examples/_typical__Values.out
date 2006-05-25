@@ -6,6 +6,4 @@ o1 = Boolean
 
 o1 : Type
 
- -- the class of Boolean values
-
 i2 : 

@@ -24,7 +24,7 @@ o4 = R  <-- R  <-- R  <-- 0
 
 o4 : ChainComplex
 
-i5 : h = resolution map(M, m^2/m^4)
+i5 : h = resolution inducedMap(M, m^2/m^4)
 
           2                     3
 o5 = 0 : R  <----------------- R  : 0

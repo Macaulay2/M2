@@ -1,0 +1,7 @@
+-- -*- M2-comint -*-
+
+i1 : currentFileName
+
+o1 = stdio
+
+i2 : 

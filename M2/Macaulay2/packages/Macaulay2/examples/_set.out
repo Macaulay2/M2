@@ -12,4 +12,10 @@ o2 = Set {1, 2, 3}
 
 o2 : Set
 
-i3 : 
+i3 : T = set(a,b,c,a,b,d)
+
+o3 = Set {c, d, a, b}
+
+o3 : Set
+
+i4 : 

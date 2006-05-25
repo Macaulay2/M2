@@ -1,0 +1,35 @@
+-- -*- M2-comint -*-
+
+i1 : f = temporaryFileName() << "hi there"
+
+o1 = /tmp/M2-6519-1
+
+o1 : File
+
+i2 : fileLength f
+
+o2 = 8
+
+i3 : close f
+
+o3 = /tmp/M2-6519-1
+
+o3 : File
+
+i4 : filename = toString f
+
+o4 = /tmp/M2-6519-1
+
+i5 : fileLength filename
+
+o5 = 8
+
+i6 : get filename
+
+o6 = hi there
+
+i7 : length oo
+
+o7 = 8
+
+i8 : 

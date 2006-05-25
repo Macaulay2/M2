@@ -1,0 +1,17 @@
+-- -*- M2-comint -*-
+
+i1 : isConstant 3
+
+o1 = true
+
+i2 : QQ[a,b][x,y];
+
+i3 : isConstant (x+a-x)
+
+o3 = true
+
+i4 : isConstant x
+
+o4 = false
+
+i5 : 

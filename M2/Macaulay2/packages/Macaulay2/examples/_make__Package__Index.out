@@ -1,0 +1,6 @@
+-- -*- M2-comint -*-
+
+i1 : makePackageIndex()
+warning: can't make package index
+
+i2 : 

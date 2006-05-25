@@ -1,0 +1,28 @@
+-- -*- M2-comint -*-
+
+i1 : R = QQ[x,y,z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : S = QQ[t,u]
+
+o2 = S
+
+o2 : PolynomialRing
+
+i3 : f = map(R,S,{x*y,y*z})
+
+o3 = map(R,S,{x*y, y*z})
+
+o3 : RingMap R <--- S
+
+i4 : preimage_f ideal(x^2,y^2)
+
+             2        2
+o4 = ideal (u , t*u, t )
+
+o4 : Ideal of S
+
+i5 : 
