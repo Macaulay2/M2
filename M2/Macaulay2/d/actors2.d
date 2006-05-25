@@ -150,6 +150,7 @@ transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
 	  if basicType == hashTableClass then (
 	       if o.class == class && o.parent == parent
 	       then e
+	       else if parent == sequenceClass then buildErrorPacket("can't make subclass of Sequence")
 	       else (
 	       	    mutable := ancestor(class,mutableHashTableClass);
 		    x := HashTable(
@@ -296,7 +297,9 @@ setupfun("newClass",newclassfun);
 
 makenew(class:HashTable,parent:HashTable):Expr := (
      basicType := basictype(class);
-     if basicType == hashTableClass then (
+     if basicType == hashTableClass 
+     then if parent == sequenceClass then buildErrorPacket("can't make subclass of Sequence")
+     else (
 	  o := newHashTable(class,parent);
 	  p := class;
 	  while true do (
