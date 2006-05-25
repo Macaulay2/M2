@@ -54,6 +54,13 @@ do case $i in
    esac
 done
 
+for i in $CXXFLAGS
+do case $i in
+   -I*) echo "error: preprocessor flag $i found in CXXFLAGS instead of in CPPFLAGS" >&2 ; exit 1 ; break ;;
+   -L*) echo "error: link flag $i found in CXXFLAGS instead of in LDFLAGS" >&2 ; exit 1 ; break ;;
+   esac
+done
+
 for i in $CPPFLAGS
 do case $i in
    -L*) echo "error: link flag $i found in CPPFLAGS instead of in LDFLAGS" >&2 ; exit 1 ; break ;;
