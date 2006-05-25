@@ -131,22 +131,6 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (info,ExampleTABLE),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => (info,String),
      Headline => "",
      Usage => "",

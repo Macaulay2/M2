@@ -41,7 +41,9 @@ joinRow := x -> horizontalJoin mingle(#x+1:vbar(max\\height\x,max\\depth\x),x)
 boxTable = method(SingleArgumentDispatch => true)
 boxTable List :=
 boxTable Sequence := x -> (
-     if not isTable x then error "expected a table";
+     if not all(x, row -> class row === List) then error "expected a list or sequence of lists";
+     n := max(length \ x);
+     x = apply(x, row -> if #row == n then row else join(row, n-#row : ""));
      if #x == 0 or #x#0 == 0 then return boxList x;
      x = applyTable(x,net);
      colwids := max \ transpose applyTable(x,width);

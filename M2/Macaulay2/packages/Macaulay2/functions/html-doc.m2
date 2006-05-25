@@ -451,22 +451,6 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (html,ExampleTABLE),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => (html,PRE),
      Headline => "",
      Usage => "",

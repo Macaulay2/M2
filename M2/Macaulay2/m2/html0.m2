@@ -51,17 +51,17 @@ toLower = s -> concatenate apply(characters s, c -> if tolower#?c then tolower#c
 toUpper = s -> concatenate apply(characters s, c -> if toupper#?c then toupper#c else c)
 
 htmlMarkUpType := s -> (
-     on := "<" | s | ">";
-     off := "</" | s | ">";
+     on := "\n<" | s | ">";
+     off := "</" | s | ">\n";
      t -> concatenate(on, apply(t,html), off))
 
 htmlMarkUpTypeWithOptions := opts -> s -> (
-     off := "</" | s | ">";
+     off := "</" | s | ">\n";
      t -> (
 	  o := "";
 	  (opts',u) := override(opts, toSequence t);
 	  scanPairs(opts', (k,v) -> if v =!= null then o = concatenate(o, " ", k, "=", format v));
-	  concatenate("<", s, o, ">", apply(sequence u,html), off)
+	  concatenate("\n<", s, o, ">", apply(sequence u,html), off)
 	  ))
 
 MarkUpType.GlobalAssignHook = (X,x) -> (
@@ -97,15 +97,15 @@ HR         = new EmptyMarkUpType of MarkUpListParagraph
 hr         = HR{}
 
 PARA       = withQname_"p" new MarkUpType of MarkUpListParagraph	    -- double spacing inside
--- experimental testing
+
+-- experimental:
 -- new PARA from List := (PARA,x) -> validate(PARA,validContent#(PARA.qname),nonnull x)
 
-EXAMPLE    = new MarkUpType of MarkUpListParagraph
-new EXAMPLE from List := (EXAMPLE,x) -> nonempty trimfront requirestrings nonnull x
+ExampleItem = withQname_"code" new MarkUpType of MarkUpList
+EXAMPLE = method(SingleArgumentDispatch => true)
+EXAMPLE VisibleList := x -> TABLE splice { "class" => "examples", apply(nonempty trimfront requirestrings nonnull toSequence x, item -> TR TD ExampleItem item) }
+EXAMPLE String := x -> EXAMPLE {x}
 
-TABLE      = new MarkUpType of MarkUpListParagraph
-ExampleTABLE = withQname_"table" new MarkUpType of MarkUpListParagraph
-ButtonTABLE  = new MarkUpType of MarkUpListParagraph
 PRE        = new MarkUpType of MarkUpListParagraph
 TITLE      = new MarkUpType of MarkUpListParagraph
 HEAD       = new MarkUpType of MarkUpListParagraph
@@ -136,7 +136,13 @@ EM         = new MarkUpType of MarkUpList
 LABEL      = new MarkUpType of MarkUpList
 BOLD       = withQname_"b" new MarkUpType of MarkUpList
 CODE       = new MarkUpType of MarkUpList
+
 HREF       = withQname_"a" new MarkUpType of MarkUpList
+new HREF from List := (HREF,x) -> (
+     if #x > 2 or #x == 0 then error "HREF list should have length 1 or 2";
+     if class x#0 =!= String then error "HREF expected URL to be a string";
+     x)
+
 LINK       = new MarkUpType of MarkUpList
 ANCHOR     = withQname_"a" new MarkUpType of MarkUpList
 Hypertext  = new MarkUpType of MarkUpListParagraph -- top level, to be returned to user by "help" and "hypertext", includes text that has been already fixed up
@@ -150,8 +156,13 @@ new UL from List := (UL,x) -> (
 	       else if class e === LI then e
 	       else LI e)))
 
-DIV        = withOptions_{"class"          }                 new MarkUpTypeWithOptions of MarkUpListParagraph
+DIV        = withOptions_{"class"} new MarkUpTypeWithOptions of MarkUpListParagraph
 DIV1       = withOptions_{"class"=>"single"} withQname_"div" new MarkUpTypeWithOptions of MarkUpListParagraph
+
+TABLE      = withOptions_{"class"} new MarkUpTypeWithOptions of MarkUpListParagraph
+TR         = new MarkUpType of MarkUpList
+TD         = new MarkUpType of MarkUpList
+ButtonTABLE  = new MarkUpType of MarkUpListParagraph
 
 TO2        = withQname_"a" new MarkUpType of MarkUpList
 new TO2 from Sequence := 
