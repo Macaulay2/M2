@@ -134,6 +134,8 @@ validContent#"img" =
 validContent#"br" = set {}
 -----------------------------------------------------------------------------
 ---- these are all the same:
+-- <!ENTITY % span.content "( #PCDATA | %Inline.mix; )*" >
+validContent#"span" =
 -- <!ENTITY % p.content "( #PCDATA | %Inline.mix; )*" >
 validContent#"p" =
 -- <!ENTITY % strong.content "( #PCDATA | %Inline.mix; )*" >
@@ -173,6 +175,18 @@ validContent#"table" = set { "caption", "col", "colgroup", "thead", "tfoot", "tb
 -- <!ENTITY % ul.content  "( %li.qname; )+" >
 validContent#"ul" = set { "li" }
 
+noqname := p -> (
+     if ancestor(p,IntermediateMarkUpType)
+     then stderr << "--error: " << format toString p << " is an intermediate mark-up type with no qname" << endl
+     else stderr << "--error: " << format toString p << " is a type with no qname" << endl;
+     )
+
+chk := (valid,p,c) -> (
+     if not c.?qname then noqname c
+     else if not valid#?(c.qname)
+     then stderr << "--error: element of type " << format toString p << " can't contain an element of type " << format toString c << endl
+     )
+
 validate = method()
 validate Option :=					    -- could check each part is a string!
 validate TO :=
@@ -186,14 +200,10 @@ validate(Type, BasicList) := (p,x) -> (			    -- regard p as the class of x
 	  if validContent#?n then validate(p,validContent#n,x)
 	  else stderr << "--internal error: valid content for qname " << format n << " not recorded yet" << endl;
 	  scan(x,validate))
-     else stderr << "--error: " << format toString p << " isn't an html type (has no qname)" << endl;
-     x)
-validate(Type, Set, BasicList) := (p, valid,x) -> (	    -- top level only
-     scan(x, e -> (
-	       c := class e;
-	       if (not c.?qname or not valid#?(c.qname)) and c =!= Option 
-	       then stderr << "--error: element of type " << format toString p << " can't contain an element of type " << format toString c << endl));
-     x)
+     else noqname p;
+     null)
+validate(Type, Set, BasicList) := (p,valid,x) -> ( scan(x, e -> chk(valid,p,class e)); null )
+validate(MarkUpTypeWithOptions, Set, BasicList) := (p,valid,x) -> ( scan(x, e -> if class e =!= Option then chk(valid,p,class e)); null )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

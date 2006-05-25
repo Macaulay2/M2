@@ -36,8 +36,8 @@ document {
      ///),
      PARA {
 	  "Lists can be used as vectors, provided their elements are the sorts of
-	  things that can be added and mutliplied.",
-	  EXAMPLE "10000*{3,4,5} + {1,2,3}"},
+	  things that can be added and mutliplied."},
+     EXAMPLE "10000*{3,4,5} + {1,2,3}",
      "If the elements of a list are themselves lists, we say that we have
      a nested list.",
      EXAMPLE {

@@ -13,13 +13,7 @@ document {
      Key => MarkUpType,
      Headline => "the class of mark-up types used with hypertext", 
      PARA{},
-     "Intended for internal use only.",
-     SeeAlso => "EmptyMarkUpType"
-     }
-
-document {
-     Key => EmptyMarkUpType,
-     Headline => "the class of empty mark-up types used with hypertext"
+     "Intended for internal use only."
      }
 
 --document {
@@ -36,10 +30,6 @@ document {
      TT "DIV1 x", " makes a ", TO "hypertext", " single-spaced paragraph break. This is mostly for the documentation formated in info mode.",
 	SeeAlso => "PARA"
      }
-
-
-
-
 
 document {
      Key => br,
@@ -351,7 +341,7 @@ document {
      Headline => "hypertext EXAMPLE item",
 	Usage => "EXAMPLE x",
 	Inputs => {"x" => {}},
-	Outputs => {EXAMPLE => {}},
+	Outputs => {TABLE => {}},
      TT "EXAMPLE x", " evaluates the string or list of strings
      ", TT "x", " as Macaulay 2 code, inserting the results in
      hypertext preformatted ", TO "PRE", " items.",
@@ -467,24 +457,6 @@ document {
      "Here is an example.",
      PARA{},
      ITALIC "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
-     PARA{},
-     SeeAlso => "hypertext"
-     }
-
-document {
-     Key => UNDERLINE,
-     Headline => "hypertext underlining",
-	Usage => "UNDERLINE x",
-	Inputs => {"x" => {}},
-	Outputs => {UNDERLINE => {}},
-     TT "UNDERLINE x", " encloses ", TT "x", " in a hypertext UNDERLINE item.",
-     PARA{},
-     "The argument ", TT "x", " should be a string, or a list or sequence of
-     strings or hypertext items.",
-     PARA{},
-     "Here is an example.",
-     PARA{},
-     UNDERLINE "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA{},
      SeeAlso => "hypertext"
      }
