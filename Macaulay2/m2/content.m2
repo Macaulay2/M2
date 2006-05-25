@@ -160,20 +160,24 @@ validContent#"sub" = PCDATA + InlineMix
 --       %I18n.class; %Anchor.class; | %script.qname; | %map.qname; %Inline.extra; )*" >
 validContent#"pre" = PCDATA + Inlstruct + Inlphras + set { "tt", "i", "b" } + I18nClass + AnchorClass + set {"script","map"} + InlineExtra
 
-
+-----------------------------------------------------------------------------
+-- <!ENTITY % td.content "( #PCDATA | %Flow.mix; )*" >
+validContent#"td" = PCDATA + FlowMix
+-- <!ENTITY % tr.content  "( %th.qname; | %td.qname; )+" >
+validContent#"tr" = set { "th", "td" }
 -- <!ENTITY % table.content "( %caption.qname;?, ( %col.qname;* | %colgroup.qname;* ), (( %thead.qname;?, %tfoot.qname;?, %tbody.qname;+ ) | ( %tr.qname;+ )))" >
 -- the regular expression is more complicated, but we don't implement those other tags, anyway!  Or should we?
 validContent#"table" = set { "caption", "col", "colgroup", "thead", "tfoot", "tbody", "tr" }
+-----------------------------------------------------------------------------
 
 -- <!ENTITY % ul.content  "( %li.qname; )+" >
 validContent#"ul" = set { "li" }
 
 validate = method()
-validate Option :=
+validate Option :=					    -- could check each part is a string!
 validate TO :=
 validate TOH :=
 validate String := x -> null
-validate ExampleTABLE := x -> scan(x,item -> validate item#1)
 validate TO2 := x -> scan(drop(x,1),validate)
 validate MarkUpList := x -> validate(class x, x)
 validate(Type, BasicList) := (p,x) -> (			    -- regard p as the class of x

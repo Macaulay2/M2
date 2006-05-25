@@ -40,7 +40,6 @@ undocumented {
      (tex, HREF),
      (tex, ChainComplex),
      (tex, TABLE),
-     (tex, ExampleTABLE),
      (tex, ANCHOR),
      (tex, PRE),
      (tex, Nothing),

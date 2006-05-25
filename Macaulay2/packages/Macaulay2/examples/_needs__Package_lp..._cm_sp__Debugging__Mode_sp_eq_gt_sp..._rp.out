@@ -1,9 +1,0 @@
--- -*- M2-comint -*-
-
-i1 : needsPackage("Points", DebuggingMode=>true)
-
-o1 = Points
-
-o1 : Package
-
-i2 : 

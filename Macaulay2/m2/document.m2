@@ -359,8 +359,7 @@ fixup Nothing    := x -> ()	      -- so it will get removed by splice later
 fixup BR         := identity
 fixup PRE        := identity
 fixup CODE       := identity
-fixup EXAMPLE    := identity
-fixup ExampleTABLE := identity
+fixup ExampleItem := identity
 fixup LITERAL    := identity
 fixup ANCHOR     := identity
 fixup List       := handlePara @@ toSequence
@@ -369,6 +368,7 @@ fixup SEQ        := handlePara @@ toSequence
 fixup TO         := identity
 fixup TO2        := identity
 fixup TOH        := identity
+fixup HREF       := x -> if #x == 2 then HREF{x#0, fixup x#1} else x
 -- phase this out -- each PARA has to have a scope
 deprecated := z -> (
      stderr << "--warning: using '" << z << "' alone in documentation is deprecated, use '" << z << "{}' instead" << endl;
@@ -435,14 +435,14 @@ getBody := key -> getOption(key,Description)		    -- get rid of this
 -----------------------------------------------------------------------------
 
 extractExamplesLoop            := method(SingleArgumentDispatch => true)
-extractExamplesLoop Thing      := x -> {}
-extractExamplesLoop EXAMPLE    := toList
+extractExamplesLoop Thing       := x -> {}
+extractExamplesLoop ExampleItem := toList
 extractExamplesLoop Sequence := 
 extractExamplesLoop MarkUpList := x -> join apply(toSequence x, extractExamplesLoop)
 
 extractExamples := docBody -> (
-     examples := extractExamplesLoop docBody;
-     if #examples > 0 then currentPackage#"example inputs"#currentNodeName = examples;
+     ex := extractExamplesLoop docBody;
+     if #ex > 0 then currentPackage#"example inputs"#currentNodeName = ex;
      docBody)
 
 M2outputRE := "(\n+)i+[1-9][0-9]* : "
@@ -459,46 +459,47 @@ makeFileName := (fkey,pkg) -> (			 -- may return 'null'
      then pkg#"package prefix" | LAYOUT#"packageexamples" pkg#"title" | toFilename fkey
      )
 
-exampleResultsFound := false
 exampleResults := {}
 exampleCounter := 0
 checkForExampleOutputFile := (node,pkg) -> (
      exampleCounter = 0;
      exampleResults = {};
-     exampleResultsFound = false;
      if pkg#"example results"#?node then (
 	  exampleResults = pkg#"example results"#node;
-	  exampleResultsFound = true)
+	  true)
      else if exampleBaseFilename =!= null and fileExists (exampleBaseFilename | ".out") then (
      	  if debugLevel > 1 then stderr << "--reading example results from " << (exampleBaseFilename | ".out") << endl;
 	  exampleResults = pkg#"example results"#node = drop(separateM2output get (exampleBaseFilename | ".out"),-1);
- 	  exampleResultsFound = true))
+ 	  true)
+     else false)
 
 currentExampleKey := ""
-processExample := x -> (
-     a :=
-     if exampleResultsFound and exampleResults#?exampleCounter
-     then {x, CODE exampleResults#exampleCounter}
-     else (
-	  if exampleResultsFound and #exampleResults === exampleCounter then (
-	       stderr << "--warning: example results terminate prematurely: " << currentExampleKey << endl;
-	       );
-	  {x, CODE concatenate("i", toString (exampleCounter+1), " : ",x)}
-	  );
+processExamplesLoop = method(SingleArgumentDispatch => true)
+processExamplesLoop TO :=
+processExamplesLoop TO2 :=
+processExamplesLoop TOH :=
+processExamplesLoop Option :=
+processExamplesLoop String := x -> {}
+processExamplesLoop Sequence := 
+processExamplesLoop MarkUpList := x -> apply(x,processExamplesLoop)
+processExamplesLoop ExampleItem := x -> (
+     ret := (
+	  if exampleResults#?exampleCounter
+	  then CODE exampleResults#exampleCounter
+	  else (
+	       if #exampleResults === exampleCounter then stderr << "--warning: example results terminate prematurely: " << currentExampleKey << endl;
+	       CODE concatenate("i", toString (exampleCounter+1), " : ",x)
+	       ));
      exampleCounter = exampleCounter + 1;
-     a)
-processExamplesLoop := s -> (
-     if class s === EXAMPLE then ExampleTABLE apply(select(toList s, i -> i =!= null), processExample)
-     else if class s === Sequence or instance(s,MarkUpList)
-     then apply(s,processExamplesLoop)
-     else s)
+     ret)
 processExamples := (pkg,fkey,docBody) -> (
      exampleBaseFilename = makeFileName(fkey,pkg);
-     checkForExampleOutputFile(fkey,pkg);
-     currentExampleKey = fkey;
-     r := processExamplesLoop docBody;
-     currentExampleKey = "";
-     r)
+     if checkForExampleOutputFile(fkey,pkg) then (
+     	  currentExampleKey = fkey;
+     	  docBody = processExamplesLoop docBody;
+     	  currentExampleKey = "";
+	  );
+     docBody)
 
 -----------------------------------------------------------------------------
 -- 'document' function
@@ -621,7 +622,6 @@ undocumented Thing := key -> (
 
 getExampleInputs := method(SingleArgumentDispatch => true)
 getExampleInputs Thing        := t -> {}
-getExampleInputs ExampleTABLE := t -> apply(toList t, first)
 getExampleInputs MarkUpList   := t -> join apply(toSequence t, getExampleInputs)
 
 examples = x -> stack getExampleInputs help x
@@ -731,7 +731,7 @@ istype := X -> parent X =!= Nothing
 alter1 := x -> (
      if class x === Option and #x === 2 then (
 	  if istype x#0 then SEQ { ofClass x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SEQ { ", ", x#1 } }
-	  else error "expected type to left of '=>'"
+	  else error("expected string or type to left of '=>', but got: ",toString x#0)
 	  )
      else x)
 alter := x -> (
@@ -740,11 +740,11 @@ alter := x -> (
 	  else if class x#0 === String then (
 	       if class x#1 === Option and #x#1 === 2 then (
 		    if istype x#1#0 then SEQ { TT x#0, ", ", ofClass x#1#0, if x#1#1 =!= "" and x#1#1 =!= null and x#1#1 =!= () then SEQ { ", ", x#1#1 } }
-		    else error "expected type to left of '=>'"
+		    else error("expected type to left of '=>', but got: ",toString x#1#0)
 		    )
 	       else SEQ { TT x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SEQ { ", ", x#1 } }
 	       )
-	  else error "expected string or type to left of '=>'"
+	  else error("expected string or type to left of '=>', but got: ",toString x#0)
 	  )
      else SEQ x)
 

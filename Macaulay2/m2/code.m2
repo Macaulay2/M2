@@ -36,8 +36,9 @@ codeFunction := (f,depth) -> (
      if depth <= limit then (
 	  if locate f === null then concatenate("function '", toString f, "': source code not available")
 	  else stack(
+	       syms := flatten \\ sortByHash \ values \ drop(localDictionaries f,-1);
 	       try getSourceLines locate f else concatenate("source code file '",first locate f,"' not available"),
-	       indent listSymbols (flatten \\ sortByHash \ values \ drop(localDictionaries f,-1)),
+	       if #syms > 0 then indent listSymbols syms,
 	       if codeHelper#?(functionBody f) 
 	       then toSequence apply(
 		    codeHelper#(functionBody f) f, 

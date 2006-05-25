@@ -24,7 +24,7 @@ promptWidth = () -> (
 wr := (sep,x) -> wrap(printWidth - promptWidth(), sep, net x)
 Tally.Wrap = RawMatrix.Wrap = Matrix.Wrap = Ideal.Wrap = RingElement.Wrap = VisibleList.Wrap = Sequence.Wrap = x -> wr("-",x)
 String.Wrap = x -> wr("",x)
-
+Net.Wrap = x -> if height x + depth x <= 3 then wr("-",x) else x
 
 -- make sure this is after all global symbols are defined or erased
 closePackage "Macaulay2Core"

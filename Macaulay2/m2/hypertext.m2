@@ -158,19 +158,6 @@ tex PARA := x -> concatenate(///
 ///,
      apply(x,tex))
 
-html ExampleTABLE := x -> concatenate(
-     newline,
-     "<table class=\"examples\">", newline,
-     apply(x, 
-	  item -> (
-	       " <tr>", newline,
-	       "  <td>", html item#1, newline,
-	       "  </td>", newline,
-	       " </tr>", newline
-	       )
-	  ),
-     "</table>", newline)			 
-html EXAMPLE := x -> concatenate html ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
 html ButtonTABLE := x -> concatenate(
      newline,
      "<table class=\"buttons\">", newline,
@@ -186,13 +173,6 @@ html ButtonTABLE := x -> concatenate(
 truncWidth := 0
 truncateString := s -> if printWidth == 0 or width s <= printWidth then s else concatenate(substring(s,0,truncWidth-1),"$")
 truncateNet    := n -> if printWidth == 0 or width n <= printWidth then n else stack(apply(unstack n,truncateString))
-
-info ExampleTABLE := net ExampleTABLE := x -> (
-     p := "    ";
-     trunc := if printWidth != 0 then truncateNet else identity;
-     truncWidth = printWidth - #p -2;
-     p | boxList apply(toList x, y -> trunc net y#1))
-info EXAMPLE := net EXAMPLE := x -> net ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
 
 tex TABLE := x -> concatenate applyTable(x,tex)
 texMath TABLE := x -> concatenate (
@@ -210,21 +190,19 @@ texMath TABLE := x -> concatenate (
 ///
      )
 
-tex ExampleTABLE := x -> concatenate apply(x,y -> tex y#1)
-
-info TABLE := x -> boxTable applyTable(toList x,info)
-net TABLE := x -> boxTable applyTable(toList x,net)
-html TABLE := x -> concatenate(
-     newline,
-     "<table>", newline,
-     apply(x, row -> ( 
-	       "  <tr>", newline,
-	       apply(row, item -> (
-			 "    <td>", html item, newline,
-			 "    </td>",newline
-			 )),
-	       "  </tr>", newline)),
-     "</table>", newline )			 
+info TABLE := x -> boxTable applyTable(toList \ noopts \\ toList x,info)
+net  TABLE := x -> boxTable applyTable(toList \ noopts \\ toList x,net)
+-- html TABLE := x -> concatenate(
+--      newline,
+--      "<table>", newline,
+--      apply(x, row -> ( 
+-- 	       "  <tr>", newline,
+-- 	       apply(row, item -> (
+-- 			 "    <td>", html item, newline,
+-- 			 "    </td>",newline
+-- 			 )),
+-- 	       "  </tr>", newline)),
+--      "</table>", newline )
 
 info PRE := net PRE := x -> net concatenate x
 html PRE   := x -> concatenate( 

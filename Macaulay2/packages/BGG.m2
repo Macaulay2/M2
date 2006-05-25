@@ -5,7 +5,7 @@ newPackage(
     	Date => "October 4, 2005",
     	Authors => {
 	     {Name => "David Eisenbud", Email => "sorin@math.sunysb.edu", HomePage => "http://www.math.sunysb.edu/~sorin/"},
-	     {Name => "Wolfram Decker", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"},
+	     {Name => "Wolfram Decker", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"},	-- oops -- who's the author???
 	     {Name => "Frank Schreyer", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	     },
     	Headline => "Bernstein-Gelfand-Gelfand correspondence",

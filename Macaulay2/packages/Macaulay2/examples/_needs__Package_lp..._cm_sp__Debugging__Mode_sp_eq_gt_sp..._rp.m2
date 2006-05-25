@@ -1,1 +1,0 @@
-needsPackage("Points", DebuggingMode=>true)
