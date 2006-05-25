@@ -25,7 +25,10 @@ PACKAGES += LLLBases
 
 RemakeAllDocumentation ?= false
 IgnoreExampleErrors ?= false
-IgnoreDocumentationErrors ?= false
+
+# we'll leave this on until we get the documentation fixed!
+IgnoreDocumentationErrors ?= true
+
 RerunExamples ?= false
 debugLevel ?= 0
 

@@ -47,6 +47,25 @@ test "$LDFLAGS"    && echo "   LDFLAGS=$LDFLAGS"
 test "$LOADLIBES"  && echo "   LOADLIBES=$LOADLIBES"
 test "$LDLIBS"     && echo "   LDLIBS=$LDLIBS"
 
+for i in $CFLAGS
+do case $i in
+   -I*) echo "error: preprocessor flag $i found in CFLAGS instead of in CPPFLAGS" >&2 ; exit 1 ; break ;;
+   -L*) echo "error: link flag $i found in CFLAGS instead of in LDFLAGS" >&2 ; exit 1 ; break ;;
+   esac
+done
+
+for i in $CPPFLAGS
+do case $i in
+   -L*) echo "error: link flag $i found in CPPFLAGS instead of in LDFLAGS" >&2 ; exit 1 ; break ;;
+   esac
+done
+
+for i in $LDFLAGS
+do case $i in
+   -I*) echo "error: preprocessor flag $i found in LDFLAGS instead of in CPPFLAGS" >&2 ; exit 1 ; break ;;
+   esac
+done
+
 if test "$CXX" = gcc
 then echo oops, CXX=gcc, should use CXX=g++ >&2
      exit 1
@@ -177,6 +196,8 @@ AC_SUBST(READLINELIB) AC_ARG_WITH(readlinelib, AS_HELP_STRING(--with-readlinelib
 AC_SUBST(HISTORYLIB)  AC_ARG_WITH(historylib, AS_HELP_STRING(--with-historylib=...,history library (-lhistory)), HISTORYLIB="$withval", HISTORYLIB="-lhistory")
 AC_SUBST(FACTORY)     AC_ARG_WITH(factory, AS_HELP_STRING(--without-factory,disable the use of the 'factory' library), FACTORY="$enableval",FACTORY=yes)
 
+AC_DEFINE(M2_CONFIG_H,1,a macro definition to ensure our config.h was the one loaded)
+
 AC_DEFINE_UNQUOTED(M2SUFFIX,"$M2SUFFIX",[suffix to append to executable name M2])
 
 WITH_NEWLINE_CR=0
@@ -298,22 +319,34 @@ then test "$HAVE_LIBCF_PG" = no -a "$HAVE_LIBCF" = no && AC_MSG_ERROR([missing l
 else test "$HAVE_LIBCF" = no && AC_MSG_ERROR([missing library: libcf])
 fi
 
-LIBFAC=-lfac
+AC_MSG_CHECKING([whether (and where) the libfac library is installed (-lfac or -lsingfac)])
 AC_SUBST(LIBFAC)
-AC_MSG_CHECKING([whether libfac library is installed ($LIBFAC)])
-LIBS="$LIBCF $LIBFAC $SAVELIBS"
 AC_LANG(C++)
-AC_TRY_LINK( [extern const char * libfac_version;], [return *libfac_version;], HAVE_LIBFAC=yes;AC_MSG_RESULT([yes]), HAVE_LIBFAC=no;AC_MSG_RESULT([no]))
+LIBFAC=-lfac
+LIBS="$LIBCF $LIBFAC $SAVELIBS"
+AC_TRY_LINK(
+ [extern const char * libfac_version;],
+ [return *libfac_version;],
+ HAVE_LIBFAC=yes;AC_MSG_RESULT([yes ($LIBFAC)]),
+ LIBFAC=-lsingfac
+ LIBS="$LIBCF $LIBFAC $SAVELIBS"
+ AC_TRY_LINK(
+  [extern const char * libfac_version;],
+  [return *libfac_version;],
+  HAVE_LIBFAC=yes;AC_MSG_RESULT([yes ($LIBFAC)]),
+  HAVE_LIBFAC=no;AC_MSG_RESULT([no])
+ )
+)
 
-AC_MSG_CHECKING([whether libfac library, profiling version, is installed (-lfac-pg)])
+AC_MSG_CHECKING([whether libfac library, profiling version, is installed ($LIBFAC-pg)])
 
-LIBS="-lfac-pg $LIBCF $SAVELIBS"
+LIBS="$LIBFAC-pg $LIBCF $SAVELIBS"
 AC_LANG(C++)
 AC_TRY_LINK( [extern const char * libfac_version;], [return *libfac_version;], HAVE_LIBFAC_PG=yes;AC_MSG_RESULT([yes]), HAVE_LIBFAC_PG=no;AC_MSG_RESULT([no]))
 
 if   test "$PROFILING" = yes
 then test "$HAVE_LIBFAC_PG" = no -a "$HAVE_LIBFAC" = no && AC_MSG_ERROR([missing libraries: libfac (and libfac-pg)])
-     test "$HAVE_LIBFAC_PG" = yes && LIBFAC=-lfac-pg
+     test "$HAVE_LIBFAC_PG" = yes && LIBFAC=$LIBFAC-pg
 else test "$HAVE_LIBFAC" = no && AC_MSG_ERROR([missing library: libfac])
 fi
 

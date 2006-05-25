@@ -158,12 +158,15 @@ endif
 	$(COMPILE.c) -Wno-unused -Wno-uninitialized $*.c $(OUTPUT_OPTION)
 	rm $*.c
 
-CPPFLAGS += -I../../include
-CPPFLAGS += -I@srcdir@
-CPPFLAGS += -I.
-CPPFLAGS += -I../util
-CPPFLAGS += -I../e
-CPPFLAGS += -I@srcdir@/../regex
+M2INCLUDES  = -I../../include
+M2INCLUDES += -I@srcdir@
+M2INCLUDES += -I.
+M2INCLUDES += -I../util
+M2INCLUDES += -I../e
+M2INCLUDES += -I@srcdir@/../regex
+
+# it's important that *our* directories get searched first:
+CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS)
 
 CFLAGS += $(DEBUGFLAGS)
 CXXFLAGS += $(DEBUGFLAGS)
