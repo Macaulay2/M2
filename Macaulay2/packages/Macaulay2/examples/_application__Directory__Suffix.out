@@ -1,0 +1,20 @@
+-- -*- M2-comint -*-
+
+i1 : applicationDirectorySuffix()
+
+o1 = .Macaulay2/
+
+i2 : applicationDirectory()
+
+o2 = /home/dan/.Macaulay2/
+
+i3 : applicationDirectorySuffix = "local/Mac2"
+--warning: applicationDirectorySuffix redefined
+
+o3 = local/Mac2
+
+i4 : applicationDirectory()
+
+o4 = /home/dan/local/Mac2
+
+i5 : 

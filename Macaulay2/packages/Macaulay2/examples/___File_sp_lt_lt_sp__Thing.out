@@ -11,6 +11,4 @@ o2 = stdio
 
 o2 : File
 
- -- the standard input output file
-
 i3 : 

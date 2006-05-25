@@ -1,0 +1,7 @@
+-- -*- M2-comint -*-
+
+i1 : (options Macaulay2Core).Version
+
+o1 = 0.9.8
+
+i2 : 

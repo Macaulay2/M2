@@ -15,8 +15,8 @@ o3 = monomialIdeal (a*c, b*c, b*d)
 o3 : MonomialIdeal of QQ [a, b, c, d]
 
 i4 : intersect(monomialIdeal(a,b), 
-     	       monomialIdeal(b,c),
-     	       monomialIdeal(c,d))
+     monomialIdeal(b,c),
+     monomialIdeal(c,d))
 
 o4 = monomialIdeal (a*c, b*c, b*d)
 
@@ -45,8 +45,8 @@ o8 = monomialIdeal (x y , x z )
 o8 : MonomialIdeal of QQ [x, y, z]
 
 i9 : intersect( monomialIdeal(x^2),
-     	       monomialIdeal(x^4, y^4),
-     	       monomialIdeal(y^4, z^3))
+     monomialIdeal(x^4, y^4),
+     monomialIdeal(y^4, z^3))
 
                      2 4   4 3
 o9 = monomialIdeal (x y , x z )

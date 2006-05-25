@@ -1,0 +1,21 @@
+-- -*- M2-comint -*-
+
+i1 : set{a,b,c} - set{a}
+
+o1 = Set {c, b}
+
+o1 : Set
+
+i2 : set{a,b,c} - {a}
+
+o2 = Set {c, b}
+
+o2 : Set
+
+i3 : {a,b,c} - set{a}
+
+o3 = {b, c}
+
+o3 : List
+
+i4 : 

@@ -52,7 +52,7 @@ o8 : List
 
 i9 : code globalAssignFunction
 
-o9 = -- startup.m2:162-165
+o9 = -- startup.m2:168-171
           globalAssignFunction = (X,x) -> (
                if not ReverseDictionary#?x then ReverseDictionary#x = X;
                use x;

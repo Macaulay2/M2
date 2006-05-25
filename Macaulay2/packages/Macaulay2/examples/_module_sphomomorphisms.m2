@@ -6,7 +6,7 @@ target F == R^1
 matrix F
 isWellDefined F
 isIsomorphism F
-inc = map(R^1, M)
+inc = inducedMap(R^1, M)
 G = F // inc
 target G == M and source G == M
 inc * G == F

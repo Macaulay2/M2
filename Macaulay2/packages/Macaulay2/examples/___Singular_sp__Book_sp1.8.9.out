@@ -1,0 +1,32 @@
+-- -*- M2-comint -*-
+
+i1 : A = QQ[x,y,z];
+
+i2 : I = ideal"x5,xy3,y7,z3+xyz";
+
+o2 : Ideal of A
+
+i3 : f = x+y+z;
+
+i4 : B = A[t];
+
+i5 : J = substitute(I,B) + ideal(f*t-1)
+
+             5     3   7           3
+o5 = ideal (x , x*y , y , x*y*z + z , (x + y + z)t - 1)
+
+o5 : Ideal of B
+
+i6 : 1 % J 
+
+o6 = 0
+
+o6 : B
+
+i7 : radical I
+
+o7 = ideal (z, y, x)
+
+o7 : Ideal of A
+
+i8 : 

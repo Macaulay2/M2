@@ -1,0 +1,13 @@
+-- -*- M2-comint -*-
+
+i1 : R = ZZ/32003[a..d,x_1..x_4];
+
+i2 : I = ideal"a+b2-1,(a+b)(c+d),x[1]-x[2]3"
+
+             2                                    3
+o2 = ideal (b  + a - 1, a*c + b*c + a*d + b*d, - x  + x )
+                                                  2    1
+
+o2 : Ideal of R
+
+i3 : 

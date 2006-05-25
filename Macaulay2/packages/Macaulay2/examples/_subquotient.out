@@ -1,0 +1,59 @@
+-- -*- M2-comint -*-
+
+i1 : R = ZZ/101[a..d]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : M = kernel vars R ++ cokernel vars R
+
+o2 = subquotient ({1} | 0  0  0  -d -c -b 0 |, {1} | 0 0 0 0 |)
+                  {1} | 0  -d -c 0  0  a  0 |  {1} | 0 0 0 0 |
+                  {1} | -d 0  b  0  a  0  0 |  {1} | 0 0 0 0 |
+                  {1} | c  b  0  a  0  0  0 |  {1} | 0 0 0 0 |
+                  {0} | 0  0  0  0  0  0  1 |  {0} | a b c d |
+
+                               5
+o2 : R-module, subquotient of R
+
+i3 : generators M
+
+o3 = {1} | 0  0  0  -d -c -b 0 |
+     {1} | 0  -d -c 0  0  a  0 |
+     {1} | -d 0  b  0  a  0  0 |
+     {1} | c  b  0  a  0  0  0 |
+     {0} | 0  0  0  0  0  0  1 |
+
+             5       7
+o3 : Matrix R  <--- R
+
+i4 : relations M
+
+o4 = {1} | 0 0 0 0 |
+     {1} | 0 0 0 0 |
+     {1} | 0 0 0 0 |
+     {1} | 0 0 0 0 |
+     {0} | a b c d |
+
+             5       4
+o4 : Matrix R  <--- R
+
+i5 : M === subquotient(generators M, relations M)
+
+o5 = true
+
+i6 : prune M
+
+o6 = cokernel {2} | 0 0 0 0 0  0  d  c  |
+              {2} | 0 0 0 0 0  d  0  -b |
+              {2} | 0 0 0 0 0  -c -b 0  |
+              {2} | 0 0 0 0 d  0  0  a  |
+              {2} | 0 0 0 0 -c 0  a  0  |
+              {2} | 0 0 0 0 b  a  0  0  |
+              {0} | d c b a 0  0  0  0  |
+
+                            7
+o6 : R-module, quotient of R
+
+i7 : 

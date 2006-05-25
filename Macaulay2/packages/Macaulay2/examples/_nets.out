@@ -65,7 +65,7 @@ o10 : List
 
 i11 : peek oo
 
-o11 = {"a","bb","ccc"}
+o11 = {"a", "bb", "ccc"}
 
 i12 : stack v
 

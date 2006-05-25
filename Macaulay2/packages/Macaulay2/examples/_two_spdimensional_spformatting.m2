@@ -17,4 +17,4 @@ peek'(2,e)
 Table{{1,2,3},{a,bb,ccc}}
 MatrixExpression{{1,2,3},{a,bb,ccc}}
 Table{{"Example 1","Example 2"},
-      {Table{{1,2},{3,4}},Table{{11,22},{3,444}}}}
+{Table{{1,2},{3,4}},Table{{11,22},{3,444}}}}

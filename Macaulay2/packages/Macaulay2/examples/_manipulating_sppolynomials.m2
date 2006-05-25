@@ -36,8 +36,6 @@ S / print;
 S = standardForm f
 standardForm g
 S#(new HashTable from {0 => 2})
-listForm leadMonomial g
-standardForm leadMonomial g
 f < g
 sort {b^2-1,a*b,a+1,a,b}
 f ? g

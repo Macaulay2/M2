@@ -1,0 +1,28 @@
+-- -*- M2-comint -*-
+
+i1 : R = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},RevLex}]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : M = cokernel matrix{{0,y},{x*y-1,x*z},{x*y+1,x*z}}
+
+o2 = cokernel | 0     y  |
+              | -1+xy xz |
+              | 1+xy  xz |
+
+                            3
+o2 : R-module, quotient of R
+
+i3 : prune M -- INCORRECT
+creating GB with local order
+
+o3 = cokernel | y  0     |
+              | xz 1-xy  |
+              | xz -1-xy |
+
+                            3
+o3 : R-module, quotient of R
+
+i4 : 

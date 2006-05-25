@@ -1,0 +1,19 @@
+-- -*- M2-comint -*-
+
+i1 : H = new HashTable from {1 => a, 2 => b, 3 => c}
+
+o1 = HashTable{1 => a}
+               2 => b
+               3 => c
+
+o1 : HashTable
+
+i2 : applyKeys(H, k -> k + 100)
+
+o2 = HashTable{101 => a}
+               102 => b
+               103 => c
+
+o2 : HashTable
+
+i3 : 

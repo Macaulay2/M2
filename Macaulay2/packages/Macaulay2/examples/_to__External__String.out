@@ -1,0 +1,21 @@
+-- -*- M2-comint -*-
+
+i1 : toString {1,4,a,f,212312,2.123243242}
+
+o1 = {1, 4, a, f, 212312, 2.12324}
+
+i2 : R = QQ[x_1..x_5];
+
+i3 : toExternalString R
+
+o3 = QQ [x_1, x_2, x_3, x_4, x_5]
+
+i4 : toExternalString (x_1^3-3/4*x_5*x_3)
+
+o4 = x_1^3-3/4*x_3*x_5
+
+i5 : toExternalString vars R
+
+o5 = map(R^{{0}}, R^{{-1}, {-1}, {-1}, {-1}, {-1}}, {{x_1, x_2, x_3, x_4, x_5}})
+
+i6 : 

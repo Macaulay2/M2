@@ -5,12 +5,13 @@ codim M
 degree M
 genera M
 poincare M
-hilbertSeries M
+hf = hilbertSeries M
+reduceHilbert hf
 poincare' = (M) -> (
-	H := poincare M;
-	t := (ring H)_0;  -- The variable t above
-	while H % (1-t) == 0 do H = H // (1-t);
-	H)
+H := poincare M;
+t := (ring H)_0;  -- The variable t above
+while H % (1-t) == 0 do H = H // (1-t);
+H)
 poincare' M
 C = resolution M
 C.dd_3

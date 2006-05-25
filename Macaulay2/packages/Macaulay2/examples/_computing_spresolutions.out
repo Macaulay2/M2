@@ -23,54 +23,21 @@ i4 : R = ZZ/2[a..d];
 i5 : M = coker random(R^4, R^{5:-3,6:-4});
 
 i6 : (<< "-- computation started: " << endl;
-      while true do try (
-          alarm 3;
-          time res M;
-          alarm 0;
-          << "-- computation complete" << endl;
-          status M.cache.resolution;
-          << res M << endl << endl;
-          break;
-          ) else (
-          << "-- computation interrupted" << endl;
-          status M.cache.resolution;
-          << "-- continuing the computation" << endl;
-          ))
+     while true do try (
+     alarm 3;
+     time res M;
+     alarm 0;
+     << "-- computation complete" << endl;
+     status M.cache.resolution;
+     << res M << endl << endl;
+     break;
+     ) else (
+     << "-- computation interrupted" << endl;
+     status M.cache.resolution;
+     << "-- continuing the computation" << endl;
+     ))
 -- computation started: 
-     -- used 2.92555 seconds
--- computation interrupted
-        : total pairs
-  totals: 4 11 526 474 61
-       0: 4  .   .   .  .
-       1: .  .   .   .  .
-       2: .  5   2   .  .
-       3: .  6   8   1  .
-       4: .  .  11   3  .
-       5: .  .  20  10  .
-       6: .  .  33  16  .
-       7: .  .  62  54 15
-       8: .  . 138 138 46
-       9: .  . 252 252  .
-
--- continuing the computation
-     -- used 2.70459 seconds
--- computation interrupted
-        : total pairs
-  totals: 4 11 646 594 145
-       0: 4  .   .   .   .
-       1: .  .   .   .   .
-       2: .  5   2   .   .
-       3: .  6   8   1   .
-       4: .  .  11   3   .
-       5: .  .  20  10   .
-       6: .  .  33  16   .
-       7: .  .  62  54  15
-       8: .  . 138 138  46
-       9: .  . 252 252  84
-      10: .  . 120 120   .
-
--- continuing the computation
-     -- used 2.99355 seconds
+     -- used 2.88818 seconds
 -- computation interrupted
         : total pairs
   totals: 4 11 646 594 185
@@ -87,7 +54,7 @@ i6 : (<< "-- computation started: " << endl;
       10: .  . 120 120  40
 
 -- continuing the computation
-     -- used 2.38464 seconds
+     -- used 1.5601 seconds
 -- computation complete
         : total pairs
   totals: 4 11 646 594 185

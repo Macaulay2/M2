@@ -5,4 +5,4 @@ f << "hi" << endl
 f << "ho" << endl
 f << close
 get "testfile"
-unlinkFile "testfile"
+removeFile "testfile"

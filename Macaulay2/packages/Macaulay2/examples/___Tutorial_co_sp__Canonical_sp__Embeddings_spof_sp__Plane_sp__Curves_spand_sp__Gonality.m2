@@ -4,10 +4,10 @@ ipoint1 = ideal(a,b)
 ipoint2 = ideal(a,c)
 ipoint3 = ideal(b,c)
 icurves1 = intersect(
-               ipoint1^2,
-               ipoint2^2,
-               ipoint3^2
-           )
+ipoint1^2,
+ipoint2^2,
+ipoint3^2
+)
 Icurves1 = gens icurves1
 F1 = Icurves1 * random(source Icurves1, R^{-6})
 betti F1

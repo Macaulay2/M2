@@ -1,0 +1,11 @@
+-- -*- M2-comint -*-
+
+i1 : any({1,2,3,4}, even)
+
+o1 = true
+
+i2 : any({1,3,5,7}, even)
+
+o2 = false
+
+i3 : 

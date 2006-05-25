@@ -53,9 +53,7 @@ J = selectInSubring(1,gens gb I1)
 S1 = KK[y_1..y_3]
 J1 = substitute(J, S1)
 Rbar = R/(ideal I)
-f = map(Rbar, S1, 
-        matrix(Rbar,{{x_0+x_3, x_1,x_2}})
-    )
+f = map(Rbar, S1, matrix(Rbar,{{x_0+x_3, x_1,x_2}}))
 J1 = ker f
 R = KK[a,b,c,d]
 I1 = ideal(d*b-a^2, d^2*c-a^3)

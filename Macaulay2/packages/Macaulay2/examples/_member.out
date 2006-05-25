@@ -1,12 +1,14 @@
 -- -*- M2-comint -*-
 
-i1 : x = {a,b,c,d,e};
+i1 : member(c,{a,b,c,d,e})
 
-i2 : member(c,x)
+o1 = true
 
-o2 = true
+i2 : member(f,(a,b,c,d,e))
 
-i3 : member(f,x)
+o2 = false
+
+i3 : member(3,set{1,2,5,6})
 
 o3 = false
 

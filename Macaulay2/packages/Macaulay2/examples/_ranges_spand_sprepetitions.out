@@ -1,0 +1,131 @@
+-- -*- M2-comint -*-
+
+i1 : -3 .. 3
+
+o1 = (-3, -2, -1, 0, 1, 2, 3)
+
+o1 : Sequence
+
+i2 : y_1 .. y_10
+
+o2 = (y , y , y , y , y , y , y , y , y , y  )
+       1   2   3   4   5   6   7   8   9   10
+
+o2 : Sequence
+
+i3 : a .. p
+
+o3 = (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p)
+
+o3 : Sequence
+
+i4 : (1,1) .. (2,3)
+
+o4 = ((1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (2, 3))
+
+o4 : Sequence
+
+i5 : {a,1} .. {c,2}
+
+o5 = ({a, 1}, {a, 2}, {b, 1}, {b, 2}, {c, 1}, {c, 2})
+
+o5 : Sequence
+
+i6 : 12:a
+
+o6 = (a, a, a, a, a, a, a, a, a, a, a, a)
+
+o6 : Sequence
+
+i7 : 1:a
+
+o7 = 1 : (a)
+
+o7 : Sequence
+
+i8 : (a)
+
+o8 = a
+
+o8 : Symbol
+
+i9 : z = {3 .. 6, 9, 3:12}
+
+o9 = {(3, 4, 5, 6), 9, (12, 12, 12)}
+
+o9 : List
+
+i10 : splice z
+
+o10 = {3, 4, 5, 6, 9, 12, 12, 12}
+
+o10 : List
+
+i11 : flatten {a,{b,c}}
+
+o11 = {a, b, c}
+
+o11 : List
+
+i12 : flatten {a,(b,c)}
+
+o12 = {a, (b, c)}
+
+o12 : List
+
+i13 : splice {a,{b,c}}
+
+o13 = {a, {b, c}}
+
+o13 : List
+
+i14 : splice {a,(b,c)}
+
+o14 = {a, b, c}
+
+o14 : List
+
+i15 : flatten (a,{b,c})
+
+o15 = (a, b, c)
+
+o15 : Sequence
+
+i16 : flatten (a,(b,c))
+
+o16 = (a, (b, c))
+
+o16 : Sequence
+
+i17 : splice (a,{b,c})
+
+o17 = (a, {b, c})
+
+o17 : Sequence
+
+i18 : splice (a,(b,c))
+
+o18 = (a, b, c)
+
+o18 : Sequence
+
+i19 : splice {1..6}
+
+o19 = {1, 2, 3, 4, 5, 6}
+
+o19 : List
+
+i20 : toList(1..6)
+
+o20 = {1, 2, 3, 4, 5, 6}
+
+o20 : List
+
+i21 : QQ[a..c,x_1..x_4]
+
+o21 = QQ [a, b, c, x , x , x , x ]
+                    1   2   3   4
+
+o21 : PolynomialRing
+
+i22 : 

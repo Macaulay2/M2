@@ -101,8 +101,6 @@ o16 = QQ
 
 o16 : Ring
 
- -- the class of all rational numbers
-
 i17 : isHomogeneous S
 
 o17 = false
@@ -121,7 +119,7 @@ o20 = 0
 
 i21 : char U
 
-o21 = 101
+o21 = 0
 
 i22 : presentation S
 

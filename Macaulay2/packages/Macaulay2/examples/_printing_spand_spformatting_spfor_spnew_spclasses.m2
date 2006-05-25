@@ -1,10 +1,10 @@
 Qu = new Type of List
 w = new Qu from {1,-2,0,4}
 expression Qu := z -> (
-	       expression z#0 +
-	       expression z#1 * expression "I" +
-	       expression z#2 * expression "J" +
-	       expression z#3 * expression "K");
+expression z#0 +
+expression z#1 * expression "I" +
+expression z#2 * expression "J" +
+expression z#3 * expression "K");
 net Qu := z -> net expression z;
 toString Qu := z -> toString expression z;
 tex Qu := z -> tex expression z;

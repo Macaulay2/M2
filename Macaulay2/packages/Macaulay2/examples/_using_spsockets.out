@@ -1,9 +1,9 @@
 -- -*- M2-comint -*-
 
 i1 : if (pid = fork()) == 0 then (
-          try "$:7500" << "hi there" << close;
-          exit 0;
-          )
+     try "$:7500" << "hi there" << close;
+     exit 0;
+     )
 
 i2 : sleep 2
 

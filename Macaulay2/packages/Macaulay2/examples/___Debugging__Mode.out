@@ -1,31 +1,9 @@
 -- -*- M2-comint -*-
 
-i1 : loadPackage("FirstPackage", DebuggingMode=>true)
+i1 : loadPackage("Points", DebuggingMode=>true)
 
-o1 = FirstPackage
+o1 = Points
 
 o1 : Package
 
- -- an example Macaulay 2 package
-
-i2 : needsPackage("FirstPackage", DebuggingMode=>true)
-
-i3 : installPackage("FirstPackage", DebuggingMode=>true)
---installing package FirstPackage in /home/dan/.Macaulay2/encap/FirstPackage-1.0/
---using package sources found in ../../../Macaulay2/packages/
---making example input files in /home/dan/.Macaulay2/encap/FirstPackage-1.0/share/doc/Macaulay2/FirstPackage/examples/
---storing raw documentation in /home/dan/.Macaulay2/encap/FirstPackage-1.0/share/doc/Macaulay2/FirstPackage/rawdocumentation.db
---running tests that are functions /home/dan/.Macaulay2/encap/FirstPackage-1.0/share/doc/Macaulay2/FirstPackage/examples/
---making example result files in /home/dan/.Macaulay2/encap/FirstPackage-1.0/share/doc/Macaulay2/FirstPackage/examples/
---processing documentation nodes...
---storing processed documentation in /home/dan/.Macaulay2/encap/FirstPackage-1.0/share/doc/Macaulay2/FirstPackage/documentation.db
---assembling table of contents
---not making info file
---making html pages in /home/dan/.Macaulay2/encap/FirstPackage-1.0/share/doc/Macaulay2/FirstPackage/html/
---making  'Symbol Index' in /home/dan/.Macaulay2/encap/FirstPackage-1.0/share/doc/Macaulay2/FirstPackage/html/master.html
---making  'FirstPackage : Table of Contents' in /home/dan/.Macaulay2/encap/FirstPackage-1.0/share/doc/Macaulay2/FirstPackage/html/toc.html
---making INSTALL, postinstall, preremove, and encapinfo files in /home/dan/.Macaulay2/encap/FirstPackage-1.0/
---making symbolic links from "/home/dan/.Macaulay2/local/" to "/home/dan/.Macaulay2/encap/FirstPackage-1.0/"
---installed package FirstPackage in /home/dan/.Macaulay2/encap/FirstPackage-1.0/
-
-i4 : 
+i2 : 

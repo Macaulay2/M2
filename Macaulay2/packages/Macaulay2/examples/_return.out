@@ -1,9 +1,9 @@
 -- -*- M2-comint -*-
 
 i1 : f = x -> (
-          if x == 3 then return;
-          if x > 3 then return x^2;
-          5);
+     if x == 3 then return;
+     if x > 3 then return x^2;
+     5);
 
 i2 : f 2
 

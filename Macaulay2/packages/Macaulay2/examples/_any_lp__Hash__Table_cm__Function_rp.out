@@ -1,0 +1,11 @@
+-- -*- M2-comint -*-
+
+i1 : any(hashTable{1=>5, 2=>4, 3=>3, 4=>2, 5=>1}, (a,b) -> (a==b))
+
+o1 = true
+
+i2 : any(hashTable{1=>4, 2=>3, 3=>2, 4=>1}, (a,b) -> (a==b))
+
+o2 = false
+
+i3 : 

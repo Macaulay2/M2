@@ -39,6 +39,7 @@ i7 : get "testfile"
 o7 = hi
      ho
 
-i8 : unlinkFile "testfile"
+
+i8 : removeFile "testfile"
 
 i9 : 

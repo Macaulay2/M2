@@ -21,11 +21,11 @@ i4 : f(5, Slope => 100)
 o4 = 501
 
 i5 : f(5, Slope => 100, Intercept => 1000)
---warning: f redefined
 
 o5 = 1500
 
 i6 : f = {a => 1000} >> o -> (x,y) -> x * o.a + y;
+--warning: f redefined
 
 i7 : f(3,7)
 

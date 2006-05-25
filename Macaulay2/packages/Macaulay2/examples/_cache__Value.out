@@ -1,0 +1,36 @@
+-- -*- M2-comint -*-
+
+i1 : x = new HashTable from { val => 1000, cache => new CacheTable }
+
+o1 = HashTable{cache => CacheTable{}}
+               val => 1000
+
+o1 : HashTable
+
+i2 : g = (t -> (print "hi there"; t.val^4))
+
+o2 = g
+
+o2 : Function
+
+i3 : f = (cacheValue VALUE) g
+
+o3 = f
+
+o3 : Function
+
+i4 : f x
+hi there
+
+o4 = 1000000000000
+
+i5 : f x
+
+o5 = 1000000000000
+
+i6 : peek'_2 x
+
+o6 = HashTable{cache => CacheTable{VALUE => 1000000000000}}
+               val => 1000
+
+i7 : 

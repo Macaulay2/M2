@@ -1,0 +1,64 @@
+-- -*- M2-comint -*-
+
+i1 : A = QQ[x,y];
+
+i2 : I = ideal(x^10+x^9*y^2, y^8-x^2*y^7);
+
+o2 : Ideal of A
+
+i3 : f = x^2*y^7+y^14;
+
+i4 : f % I
+
+          12    8
+o4 = - x*y   + y
+
+o4 : A
+
+i5 : f = x*y^13+y^12;
+
+i6 : f % I
+
+o6 = 0
+
+o6 : A
+
+i7 : K = ideal(f,x^2*y^7+y^14);
+
+o7 : Ideal of A
+
+i8 : (gens K) % I
+
+o8 = | 0 -xy12+y8 |
+
+             1       2
+o8 : Matrix A  <--- A
+
+i9 : isSubset(K,I)
+
+o9 = false
+
+i10 : K == I
+
+o10 = false
+
+i11 : K = ideal(f,y^14+x*y^12);
+
+o11 : Ideal of A
+
+i12 : (gens K) % I
+
+o12 = 0
+
+              1       2
+o12 : Matrix A  <--- A
+
+i13 : isSubset(K,I)
+
+o13 = true
+
+i14 : K == I
+
+o14 = false
+
+i15 : 

@@ -26,9 +26,9 @@ o4 = S
 o4 : PolynomialRing
 
 i5 : F = map(S,R,
-            s*matrix{{p_0..p_3}} +
-            t*matrix{{q_0..q_3}}
-            )
+     s*matrix{{p_0..p_3}} +
+     t*matrix{{q_0..q_3}}
+     )
 
 o5 = map(S,R,{s*p  + t*q , s*p  + t*q , s*p  + t*q , s*p  + t*q })
                  0      0     1      1     2      2     3      3
@@ -37,9 +37,17 @@ o5 : RingMap S <--- R
 
 i6 : FX = F X
 
-            3 3    3 3    3 3    3 3     2   2         2    2    3 3     2   2         2    2    3 3     2   2         2    2    3 3     2   2         2    2    3 3
-o6 = ideal(s p  + s p  + s p  + s p  + 3s t*p q  + 3s*t p *q  + t q  + 3s t*p q  + 3s*t p *q  + t q  + 3s t*p q  + 3s*t p *q  + t q  + 3s t*p q  + 3s*t p *q  + t q )
-              0      1      2      3         0 0         0  0      0         1 1         1  1      1         2 2         2  2      2         3 3         3  3      3
+            3 3    3 3    3 3    3 3     2   2         2   2    3 3     2   2  
+o6 = ideal(s p  + s p  + s p  + s p  + 3s t*p q  + 3s*t p q  + t q  + 3s t*p q 
+              0      1      2      3         0 0         0 0      0         1 1
+     ---------------------------------------------------------------------------
+           2   2    3 3     2   2         2   2    3 3     2   2         2   2  
+     + 3s*t p q  + t q  + 3s t*p q  + 3s*t p q  + t q  + 3s t*p q  + 3s*t p q  +
+             1 1      1         2 2         2 2      2         3 3         3 3  
+     ---------------------------------------------------------------------------
+      3 3
+     t q )
+        3
 
 o6 : Ideal of S
 
@@ -82,8 +90,8 @@ o11 = GR
 o11 : PolynomialRing
 
 i12 : M = substitute(
-          exteriorPower(2, matrix{{p_0..p_3},{q_0..q_3}}),
-          S1bar)
+      exteriorPower(2, matrix{{p_0..p_3},{q_0..q_3}}),
+      S1bar)
 
 o12 = | -p_1q_0+p_0q_1 -p_2q_0+p_0q_2 -p_2q_1+p_1q_2 -p_3q_0+p_0q_3
       --------------------------------------------------------------------------
@@ -94,16 +102,28 @@ o12 : Matrix S1bar  <--- S1bar
 
 i13 : gr = map (S1bar, GR, M)
 
-o13 = map(S1bar,GR,{- p *q  + p *q , - p *q  + p *q , - p *q  + p *q , - p *q  + p *q , - p *q  + p *q , - p *q  + p *q })
-                       1  0    0  1     2  0    0  2     2  1    1  2     3  0    0  3     3  1    1  3     3  2    2  3
+o13 = map(S1bar,GR,{- p q  + p q , - p q  + p q , - p q  + p q , - p q  + p q , - p q  + p q , - p q  + p q })
+                       1 0    0 1     2 0    0 2     2 1    1 2     3 0    0 3     3 1    1 3     3 2    2 3
 
 o13 : RingMap S1bar <--- GR
 
 i14 : fano = trim ker gr
 
-                                                            2       2             2      2     3    3    3      2       2      2       2   2      2               2      2        2       2      2       2   2      2     2      2     3    3    3      2       2   2      2     3    3    3
-o14 = ideal (x *x  - x *x  + x *x , x *x *x , x *x *x , x *x  + x *x , x *x *x , x x  + x x , x  + x  + x , x *x  + x *x , x *x  - x *x , x x  + x x , x *x *x , x x  + x x , x *x  + x *x , x *x  + x *x , x x  + x x , x x  - x x , x  + x  - x , x *x  - x *x , x x  - x x , x  - x  - x )
-              2  3    1  4    0  5   3  4  5   1  2  5   0  4    1  5   0  2  4   0 4    1 5   3    4    5   1  3    2  4   0  3    2  5   1 3    2 4   0  1  3   0 3    2 5   1  2    3  4   0  2    3  5   1 2    3 4   0 2    3 5   1    2    5   0  1    4  5   0 1    4 5   0    2    4
+                                                    2      2           2    
+o14 = ideal (x x  - x x  + x x , x x x , x x x , x x  + x x , x x x , x x  +
+              2 3    1 4    0 5   3 4 5   1 2 5   0 4    1 5   0 2 4   0 4  
+      --------------------------------------------------------------------------
+       2     3    3    3     2      2     2      2   2      2             2    
+      x x , x  + x  + x , x x  + x x , x x  - x x , x x  + x x , x x x , x x  +
+       1 5   3    4    5   1 3    2 4   0 3    2 5   1 3    2 4   0 1 3   0 3  
+      --------------------------------------------------------------------------
+       2       2      2     2      2   2      2     2      2     3    3    3 
+      x x , x x  + x x , x x  + x x , x x  + x x , x x  - x x , x  + x  - x ,
+       2 5   1 2    3 4   0 2    3 5   1 2    3 4   0 2    3 5   1    2    5 
+      --------------------------------------------------------------------------
+         2      2   2      2     3    3    3
+      x x  - x x , x x  - x x , x  - x  - x )
+       0 1    4 5   0 1    4 5   0    2    4
 
 o14 : Ideal of GR
 
@@ -123,33 +143,33 @@ o17 = generators: total: 1 20
                       2: . 19
 
 i18 : document {
-           Key => Fano2, 
-              TT "Fano2(k,X,GR) or  Fano2(k,X)", " -- computes 
-              the ideal of a Fano scheme in the Grassmannian.",
-              PARA,
-              "Given an ideal X representing a projective variety 
-              in P^r, a positive integer k<r, and optionally a 
-              ring GR with (exactly) r+1 choose k+1 variables, 
-              representing the ambient space of the Grassmannian of 
-              k-planes in P^r, this routine returns the ideal in
-              GR of the Fano scheme that parametrizes the k-planes 
-              lying on X. If the optional third argument is not 
-              present, the routine fabricates its own local ring, 
-              and returns an ideal over it."
-              }
+      Key => Fano2, 
+      TT "Fano2(k,X,GR) or  Fano2(k,X)", " -- computes 
+      the ideal of a Fano scheme in the Grassmannian.",
+      PARA{},
+      "Given an ideal X representing a projective variety 
+      in P^r, a positive integer k<r, and optionally a 
+      ring GR with (exactly) r+1 choose k+1 variables, 
+      representing the ambient space of the Grassmannian of 
+      k-planes in P^r, this routine returns the ideal in
+      GR of the Fano scheme that parametrizes the k-planes 
+      lying on X. If the optional third argument is not 
+      present, the routine fabricates its own local ring, 
+      and returns an ideal over it."
+      }
 
 i19 : document {
-           Key => symbol Grassmannian2, 
-          TT "Grassmannian2(k,r,R) or 
-              Grassmannian2(k,r)",
-             "-- Given natural numbers k <= r,
-              and optionally a ring R with at least binomial(r+1,k+1)
-              variables, the routine defines the ideal of the 
-              Grassmannian of projective k-planes in P^r, using 
-              the first binomial(r+1,k+1) variables of R. 
-              If R is not given, the routine makes and uses
-              ZZ/31991[vars(0..binomial(r+1,k+1)-1]."
-              }
+      Key => symbol Grassmannian2, 
+      TT "Grassmannian2(k,r,R) or 
+      Grassmannian2(k,r)",
+      "-- Given natural numbers k <= r,
+      and optionally a ring R with at least binomial(r+1,k+1)
+      variables, the routine defines the ideal of the 
+      Grassmannian of projective k-planes in P^r, using 
+      the first binomial(r+1,k+1) variables of R. 
+      If R is not given, the routine makes and uses
+      ZZ/31991[vars(0..binomial(r+1,k+1)-1]."
+      }
 
 i20 : Fano2 = method()
 
@@ -158,71 +178,71 @@ o20 = Fano2
 o20 : Function
 
 i21 : Fano2(ZZ,Ideal,Ring) := (k,X,GR) -> (
-        -- Get info about the base ring of X:
-        -- The coefficient ring (to make new rings of
-        -- the same characteristic, for example)
-        -- and the number of variables
-        KK:=coefficientRing ring X;
-        r := (numgens ring X) - 1;
-        -- Next make private variables for our 
-        -- intermediate rings, to avoid interfering
-        -- with something outside:
-        t:=symbol t;
-        p:=symbol p;
-        -- And rings
-        S1 := KK[t_0..t_k];
-        S2 := KK[p_0..p_(k*r+k+r)];
-        S := tensor(S1,S2);
-        -- Over S we have a generic point of a generic
-        -- line, represented by a row vector, which
-        -- we use to define a map from the base ring
-        -- of X
-        F := map(S,ring X,
-                genericMatrix(S,S_0,1,k+1)*
-                genericMatrix(S,S_(k+1),k+1,r+1)
-                );
-        -- We now apply F to the ideal of X
-        FX := F X;
-        -- and the condition we want becomes the condition
-        -- that FX vanishes identically in the t_i.
-        -- The following line produces the matrix of
-        -- coefficients of the monomials in the 
-        -- variables labelled 0..k:
-        cFX := last coefficients (gens FX, Variables => toList apply(0..k, i -> S_i));
-        -- We can get rid of the variables t_i
-        -- to ease the computation:
-        cFX = substitute(cFX, S2);
-        -- The ring we want is the quotient
-        S2bar := S2/ideal cFX;
-        -- Now we want to move to the Grassmannian,
-        -- represented by the ring GR
-        -- We define a map sending the variables of GR
-        -- to the minors of the generic matrix in the
-        -- p_i regarded as elements of S1bar
-        gr := map(S2bar,GR,
-                  exteriorPower(k+1, 
-                  genericMatrix(S2bar,S2bar_0,k+1,r+1)
-                  )
-                 );
-        -- and the defining ideal of the Fano variety is
-        ker gr
+      -- Get info about the base ring of X:
+      -- The coefficient ring (to make new rings of
+      -- the same characteristic, for example)
+      -- and the number of variables
+      KK:=coefficientRing ring X;
+      r := (numgens ring X) - 1;
+      -- Next make private variables for our 
+      -- intermediate rings, to avoid interfering
+      -- with something outside:
+      t:=symbol t;
+      p:=symbol p;
+      -- And rings
+      S1 := KK[t_0..t_k];
+      S2 := KK[p_0..p_(k*r+k+r)];
+      S := tensor(S1,S2);
+      -- Over S we have a generic point of a generic
+      -- line, represented by a row vector, which
+      -- we use to define a map from the base ring
+      -- of X
+      F := map(S,ring X,
+      genericMatrix(S,S_0,1,k+1)*
+      genericMatrix(S,S_(k+1),k+1,r+1)
+      );
+      -- We now apply F to the ideal of X
+      FX := F X;
+      -- and the condition we want becomes the condition
+      -- that FX vanishes identically in the t_i.
+      -- The following line produces the matrix of
+      -- coefficients of the monomials in the 
+      -- variables labelled 0..k:
+      cFX := last coefficients (gens FX, Variables => toList apply(0..k, i -> S_i));
+      -- We can get rid of the variables t_i
+      -- to ease the computation:
+      cFX = substitute(cFX, S2);
+      -- The ring we want is the quotient
+      S2bar := S2/ideal cFX;
+      -- Now we want to move to the Grassmannian,
+      -- represented by the ring GR
+      -- We define a map sending the variables of GR
+      -- to the minors of the generic matrix in the
+      -- p_i regarded as elements of S1bar
+      gr := map(S2bar,GR,
+      exteriorPower(k+1, 
+      genericMatrix(S2bar,S2bar_0,k+1,r+1)
+      )
+      );
+      -- and the defining ideal of the Fano variety is
+      ker gr
       )
 
-o21 = --Function[stdio:51:33-99:6]--
+o21 = --Function[stdio:51:33-99:4]--
 
 o21 : Function
 
 i22 : Fano2(ZZ, Ideal) := (k,X) -> (
-        KK:=coefficientRing ring X;
-        r := (numgens ring X) - 1;
-        -- We can specify a private ring with binomial(r+1,k+1)
-        -- variables as follows
-        GR := KK[Variables => binomial(r+1,k+1)];
-        -- the work is done by
-        Fano2(k,X,GR)
+      KK:=coefficientRing ring X;
+      r := (numgens ring X) - 1;
+      -- We can specify a private ring with binomial(r+1,k+1)
+      -- variables as follows
+      GR := KK[Variables => binomial(r+1,k+1)];
+      -- the work is done by
+      Fano2(k,X,GR)
       )
 
-o22 = --Function[stdio:101:26-108:12]--
+o22 = --Function[stdio:101:26-108:10]--
 
 o22 : Function
 
@@ -233,24 +253,24 @@ o23 = Grassmannian2
 o23 : Function
 
 i24 : Grassmannian2(ZZ,ZZ,Ring) := (k,r,R) ->( 
-              KK := coefficientRing R;
-              RPr := KK[Variables => r+1];
-              Pr := ideal(0_RPr);
-              Fano2(k,Pr)
-           )
+      KK := coefficientRing R;
+      RPr := KK[Variables => r+1];
+      Pr := ideal(0_RPr);
+      Fano2(k,Pr)
+      )
 
-o24 = --Function[stdio:111:37-115:16]--
+o24 = --Function[stdio:111:37-115:8]--
 
 o24 : Function
 
 i25 : Grassmannian2(ZZ,ZZ) := (r,k) -> (
-              R := ZZ/31991[
-                     vars(0..(binomial(r+1,k+1)-1))
-                          ];
-              Grassmannian2(k,r,R)
-                           )
+      R := ZZ/31991[
+      vars(0..(binomial(r+1,k+1)-1))
+      ];
+      Grassmannian2(k,r,R)
+      )
 
-o25 = --Function[stdio:117:30-121:26]--
+o25 = --Function[stdio:117:30-121:18]--
 
 o25 : Function
 
@@ -274,9 +294,17 @@ o28 : Ideal of R
 
 i29 : I = Fano2(1,X)
 
-                                                               2                                                     2                                                                               2     2
-o29 = ideal ($x *$x , $x *$x , $x *$x  + 15995$x *$x  - 15995$x , $x *$x  + $x *$x , $x *$x  - 15995$x *$x  - 15995$x , $x *$x , $x *$x  - $x *$x , $x *$x , $x *$x  - $x *$x , $x *$x  + $x *$x , $x  - $x )
-               3   4    2   4    1   4          0   5          5    0   4     4   5    2   3          0   5          5    1   3    0   3     3   5    1   2    0   2     2   5    0   1     1   5    0     5
+                                                           2                  
+o29 = ideal ($x $x , $x $x , $x $x  + 15995$x $x  - 15995$x , $x $x  + $x $x ,
+               3  4    2  4    1  4          0  5          5    0  4     4  5 
+      --------------------------------------------------------------------------
+                                    2                                           
+      $x $x  - 15995$x $x  - 15995$x , $x $x , $x $x  - $x $x , $x $x , $x $x  -
+        2  3          0  5          5    1  3    0  3     3  5    1  2    0  2  
+      --------------------------------------------------------------------------
+                                 2     2
+      $x $x , $x $x  + $x $x , $x  - $x )
+        2  5    0  1     1  5    0     5
 
                  ZZ
 o29 : Ideal of ----- [$x , $x , $x , $x , $x , $x ]
@@ -313,13 +341,16 @@ o34 : Matrix P5  <--- P5
 
 i35 : Vero = minors(2,MVero)
 
-                2                                                  2                                                  2
-o35 = ideal (- b  + a*d, - b*c + a*e, - c*d + b*e, - b*c + a*e, - c  + a*f, - c*e + b*f, - c*d + b*e, - c*e + b*f, - e  + d*f)
+                2                                                  2         
+o35 = ideal (- b  + a*d, - b*c + a*e, - c*d + b*e, - b*c + a*e, - c  + a*f, -
+      --------------------------------------------------------------------------
+                                              2
+      c*e + b*f, - c*d + b*e, - c*e + b*f, - e  + d*f)
 
 o35 : Ideal of P5
 
 i36 : catalecticant = (R,v,m,n) -> 
-              map(R^m,n,(i,j)-> R_(i+j+v))
+      map(R^m,n,(i,j)-> R_(i+j+v))
 
 o36 = catalecticant
 
@@ -334,7 +365,7 @@ o37 = | b c d e |
 o37 : Matrix P5  <--- P5
 
 i38 : M13 = catalecticant(P5,0,2,1) |
-                 catalecticant(P5,2,2,3)
+      catalecticant(P5,2,2,3)
 
 o38 = | a c d e |
       | b d e f |
@@ -344,13 +375,15 @@ o38 : Matrix P5  <--- P5
 
 i39 : S13 = minors(2,M13)
 
-                                          2                                     2
-o39 = ideal (- b*c + a*d, - b*d + a*e, - d  + c*e, - b*e + a*f, - d*e + c*f, - e  + d*f)
+                                          2                                   
+o39 = ideal (- b*c + a*d, - b*d + a*e, - d  + c*e, - b*e + a*f, - d*e + c*f, -
+      --------------------------------------------------------------------------
+       2
+      e  + d*f)
 
 o39 : Ideal of P5
 
-i40 : M22 = catalecticant(P5,0,2,2) |
-                           catalecticant(P5,3,2,2)
+i40 : M22 = catalecticant(P5,0,2,2) | catalecticant(P5,3,2,2)
 
 o40 = | a b d e |
       | b c e f |
@@ -360,8 +393,11 @@ o40 : Matrix P5  <--- P5
 
 i41 : S22 = minors(2, M22)
 
-                2                                                               2
-o41 = ideal (- b  + a*c, - b*d + a*e, - c*d + b*e, - b*e + a*f, - c*e + b*f, - e  + d*f)
+                2                                                             
+o41 = ideal (- b  + a*c, - b*d + a*e, - c*d + b*e, - b*e + a*f, - c*e + b*f, -
+      --------------------------------------------------------------------------
+       2
+      e  + d*f)
 
 o41 : Ideal of P5
 
@@ -412,9 +448,65 @@ o47 = total: 1 6 8 3
 
 i48 : FVero = Fano2(1, Vero)
 
-               2                                                                                                                                                     2                                                                                                                                          2                                                                                                                               2                                                                                                                    2                                                                                                         2                                                                                     2                                                                            2                                                                   2                                                          2                                                 2                                        2                               2                      2             2
-o48 = ideal ($x  , $x  *$x  , $x  *$x  , $x  *$x  , $x  *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x  , $x  *$x  , $x  *$x  , $x  *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x  , $x  *$x  , $x  *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x  , $x  *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x , $x *$x , $x *$x , $x *$x , $x *$x , $x , $x *$x , $x *$x , $x *$x , $x , $x *$x , $x *$x , $x , $x *$x , $x )
-               14    13   14    12   14    11   14    10   14    9   14    8   14    7   14    6   14    5   14    4   14    3   14    2   14    1   14    0   14    13    12   13    11   13    10   13    9   13    8   13    7   13    6   13    5   13    4   13    3   13    2   13    1   13    0   13    12    11   12    10   12    9   12    8   12    7   12    6   12    5   12    4   12    3   12    2   12    1   12    0   12    11    10   11    9   11    8   11    7   11    6   11    5   11    4   11    3   11    2   11    1   11    0   11    10    9   10    8   10    7   10    6   10    5   10    4   10    3   10    2   10    1   10    0   10    9    8   9    7   9    6   9    5   9    4   9    3   9    2   9    1   9    0   9    8    7   8    6   8    5   8    4   8    3   8    2   8    1   8    0   8    7    6   7    5   7    4   7    3   7    2   7    1   7    0   7    6    5   6    4   6    3   6    2   6    1   6    0   6    5    4   5    3   5    2   5    1   5    0   5    4    3   4    2   4    1   4    0   4    3    2   3    1   3    0   3    2    1   2    0   2    1    0   1    0
+               2                                                            
+o48 = ideal ($x  , $x  $x  , $x  $x  , $x  $x  , $x  $x  , $x $x  , $x $x  ,
+               14    13  14    12  14    11  14    10  14    9  14    8  14 
+      --------------------------------------------------------------------------
+                                                                             
+      $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  ,
+        7  14    6  14    5  14    4  14    3  14    2  14    1  14    0  14 
+      --------------------------------------------------------------------------
+        2                                                                    
+      $x  , $x  $x  , $x  $x  , $x  $x  , $x $x  , $x $x  , $x $x  , $x $x  ,
+        13    12  13    11  13    10  13    9  13    8  13    7  13    6  13 
+      --------------------------------------------------------------------------
+                                                              2            
+      $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x  , $x  $x  ,
+        5  13    4  13    3  13    2  13    1  13    0  13    12    11  12 
+      --------------------------------------------------------------------------
+                                                                              
+      $x  $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  ,
+        10  12    9  12    8  12    7  12    6  12    5  12    4  12    3  12 
+      --------------------------------------------------------------------------
+                                   2                                       
+      $x $x  , $x $x  , $x $x  , $x  , $x  $x  , $x $x  , $x $x  , $x $x  ,
+        2  12    1  12    0  12    11    10  11    9  11    8  11    7  11 
+      --------------------------------------------------------------------------
+                                                                       2  
+      $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x  ,
+        6  11    5  11    4  11    3  11    2  11    1  11    0  11    10 
+      --------------------------------------------------------------------------
+                                                                             
+      $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  ,
+        9  10    8  10    7  10    6  10    5  10    4  10    3  10    2  10 
+      --------------------------------------------------------------------------
+                          2                                                 
+      $x $x  , $x $x  , $x , $x $x , $x $x , $x $x , $x $x , $x $x , $x $x ,
+        1  10    0  10    9    8  9    7  9    6  9    5  9    4  9    3  9 
+      --------------------------------------------------------------------------
+                                2                                         
+      $x $x , $x $x , $x $x , $x , $x $x , $x $x , $x $x , $x $x , $x $x ,
+        2  9    1  9    0  9    8    7  8    6  8    5  8    4  8    3  8 
+      --------------------------------------------------------------------------
+                                2                                         
+      $x $x , $x $x , $x $x , $x , $x $x , $x $x , $x $x , $x $x , $x $x ,
+        2  8    1  8    0  8    7    6  7    5  7    4  7    3  7    2  7 
+      --------------------------------------------------------------------------
+                        2                                                    2 
+      $x $x , $x $x , $x , $x $x , $x $x , $x $x , $x $x , $x $x , $x $x , $x ,
+        1  7    0  7    6    5  6    4  6    3  6    2  6    1  6    0  6    5 
+      --------------------------------------------------------------------------
+                                                2                         
+      $x $x , $x $x , $x $x , $x $x , $x $x , $x , $x $x , $x $x , $x $x ,
+        4  5    3  5    2  5    1  5    0  5    4    3  4    2  4    1  4 
+      --------------------------------------------------------------------------
+                2                            2                    2         
+      $x $x , $x , $x $x , $x $x , $x $x , $x , $x $x , $x $x , $x , $x $x ,
+        0  4    3    2  3    1  3    0  3    2    1  2    0  2    1    0  1 
+      --------------------------------------------------------------------------
+        2
+      $x )
+        0
 
                  ZZ
 o48 : Ideal of ----- [$x , $x , $x , $x , $x , $x , $x , $x , $x , $x , $x  , $x  , $x  , $x  , $x  ]
@@ -428,9 +520,72 @@ o49 = total: 1 120
 
 i50 : FS13 = Fano2(1, S13)
 
-               2                                                                                                                                                     2                                                                                                                                          2                                                                                                                                                                                                                                       2                                                                                                                                                                 2                                                                                     2                                                                            2                                                                                                                                     2                                                                                             2                                                 2                                                                                   2                                          2
-o50 = ideal ($x  , $x  *$x  , $x  *$x  , $x  *$x  , $x  *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x  , $x  *$x  , $x  *$x  , $x  *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x  , $x  *$x  , $x  *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x   - $x  *$x  , $x *$x  , $x *$x   - $x *$x  , $x *$x   - $x *$x  , $x *$x  , $x   - $x *$x  , $x *$x  , $x *$x  , $x *$x   - $x *$x  , $x *$x   - $x *$x  , $x *$x  , $x *$x   - $x *$x  , $x *$x   - $x *$x  , $x *$x   - $x *$x  , $x *$x  , $x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x  - $x *$x  , $x *$x  - $x *$x  , $x *$x , $x *$x  - $x *$x  , $x *$x  - $x *$x  , $x *$x  - $x *$x  , $x *$x  - $x *$x  , $x *$x , $x  - $x *$x  , $x *$x , $x *$x  - $x *$x  , $x *$x  - $x *$x  , $x *$x  - $x *$x  , $x *$x , $x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x  - $x *$x  , $x *$x  - $x *$x  , $x *$x  - $x *$x  , $x *$x  - $x *$x , $x *$x , $x  - $x *$x , $x *$x  - $x *$x , $x *$x , $x  - $x *$x , $x *$x  - $x *$x , $x *$x , $x *$x )
-               14    13   14    12   14    11   14    10   14    9   14    8   14    7   14    6   14    5   14    4   14    3   14    2   14    1   14    0   14    13    12   13    11   13    10   13    9   13    8   13    7   13    6   13    5   13    4   13    3   13    2   13    1   13    0   13    12    11   12    10   12    9   12    8   12    7   12    6   12    5   12    4   12    3   12    2   12    1   12    0   12    9   11    8   11    7   11     10   11    5   11    4   11     6   11    2   11     3   11    0   11    10     6   11    9   10    8   10    7   10     6   11    6   10     3   11    5   10    4   10     3   11    3   10     1   11    2   10     1   11    0   10    9    8   9    7   9    6   9    5   9    4   9    3   9    2   9    1   9    0   9    8    7   8    6   8    5   8    4   8    3   8    2   8    1   8    0   8    7     6   11    6   7     3   11    5   7    4   7     3   11    3   7     1   11    2   7     1   11    1   7     1   10    0   7    6     1   11    5   6    4   6     1   11    3   6     1   10    2   6     1   10    0   6    5    4   5    3   5    2   5    1   5    0   5    4     1   11    3   4     1   10    2   4     1   10    1   4     1   6    0   4    3     1   6    2   3     1   6    0   3    2     1   6    1   2     1   3    0   2    0   1
+               2                                                            
+o50 = ideal ($x  , $x  $x  , $x  $x  , $x  $x  , $x  $x  , $x $x  , $x $x  ,
+               14    13  14    12  14    11  14    10  14    9  14    8  14 
+      --------------------------------------------------------------------------
+                                                                             
+      $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  ,
+        7  14    6  14    5  14    4  14    3  14    2  14    1  14    0  14 
+      --------------------------------------------------------------------------
+        2                                                                    
+      $x  , $x  $x  , $x  $x  , $x  $x  , $x $x  , $x $x  , $x $x  , $x $x  ,
+        13    12  13    11  13    10  13    9  13    8  13    7  13    6  13 
+      --------------------------------------------------------------------------
+                                                              2            
+      $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x  , $x  $x  ,
+        5  13    4  13    3  13    2  13    1  13    0  13    12    11  12 
+      --------------------------------------------------------------------------
+                                                                              
+      $x  $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  ,
+        10  12    9  12    8  12    7  12    6  12    5  12    4  12    3  12 
+      --------------------------------------------------------------------------
+                                                                               
+      $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x   - $x  $x  , $x $x  ,
+        2  12    1  12    0  12    9  11    8  11    7  11     10  11    5  11 
+      --------------------------------------------------------------------------
+                                                       2                     
+      $x $x   - $x $x  , $x $x   - $x $x  , $x $x  , $x   - $x $x  , $x $x  ,
+        4  11     6  11    2  11     3  11    0  11    10     6  11    9  10 
+      --------------------------------------------------------------------------
+                                                                                
+      $x $x  , $x $x   - $x $x  , $x $x   - $x $x  , $x $x  , $x $x   - $x $x  ,
+        8  10    7  10     6  11    6  10     3  11    5  10    4  10     3  11 
+      --------------------------------------------------------------------------
+                                                       2                 
+      $x $x   - $x $x  , $x $x   - $x $x  , $x $x  , $x , $x $x , $x $x ,
+        3  10     1  11    2  10     1  11    0  10    9    8  9    7  9 
+      --------------------------------------------------------------------------
+                                                                2         
+      $x $x , $x $x , $x $x , $x $x , $x $x , $x $x , $x $x , $x , $x $x ,
+        6  9    5  9    4  9    3  9    2  9    1  9    0  9    8    7  8 
+      --------------------------------------------------------------------------
+                                                                2           
+      $x $x , $x $x , $x $x , $x $x , $x $x , $x $x , $x $x , $x  - $x $x  ,
+        6  8    5  8    4  8    3  8    2  8    1  8    0  8    7     6  11 
+      --------------------------------------------------------------------------
+                                                                            
+      $x $x  - $x $x  , $x $x , $x $x  - $x $x  , $x $x  - $x $x  , $x $x  -
+        6  7     3  11    5  7    4  7     3  11    3  7     1  11    2  7  
+      --------------------------------------------------------------------------
+                                           2                            
+      $x $x  , $x $x  - $x $x  , $x $x , $x  - $x $x  , $x $x , $x $x  -
+        1  11    1  7     1  10    0  7    6     1  11    5  6    4  6  
+      --------------------------------------------------------------------------
+                                                             2                 
+      $x $x  , $x $x  - $x $x  , $x $x  - $x $x  , $x $x , $x , $x $x , $x $x ,
+        1  11    3  6     1  10    2  6     1  10    0  6    5    4  5    3  5 
+      --------------------------------------------------------------------------
+                                2                                               
+      $x $x , $x $x , $x $x , $x  - $x $x  , $x $x  - $x $x  , $x $x  - $x $x  ,
+        2  5    1  5    0  5    4     1  11    3  4     1  10    2  4     1  10 
+      --------------------------------------------------------------------------
+                                 2                                      2
+      $x $x  - $x $x , $x $x , $x  - $x $x , $x $x  - $x $x , $x $x , $x  -
+        1  4     1  6    0  4    3     1  6    2  3     1  6    0  3    2  
+      --------------------------------------------------------------------------
+      $x $x , $x $x  - $x $x , $x $x , $x $x )
+        1  6    1  2     1  3    0  2    0  1
 
                  ZZ
 o50 : Ideal of ----- [$x , $x , $x , $x , $x , $x , $x , $x , $x , $x , $x  , $x  , $x  , $x  , $x  ]
@@ -445,9 +600,77 @@ o51 : ProjectiveHilbertPolynomial
 
 i52 : FS22 = Fano2(1, S22)
 
-               2                                                                                                                                                     2                                                                                                                                                                                                                                                                         2                                                                                                                                                                                         2                                                                                                                                                                 2                                                                                     2                                                                                                                                               2                                                                                                                          2                                                                                  2                                                                                  2                                                                                        2                      2             2
-o52 = ideal ($x  , $x  *$x  , $x  *$x  , $x  *$x  , $x  *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x  , $x  *$x  , $x  *$x  , $x  *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x *$x   - $x  *$x  , $x *$x   - $x  *$x  , $x *$x   - $x  *$x  , $x *$x   - $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x   - $x  *$x  , $x  *$x   - $x *$x  , $x *$x  , $x *$x   - $x  *$x  , $x *$x   - $x *$x  , $x *$x   - $x *$x  , $x *$x   - $x *$x  , $x *$x   - $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x   - $x *$x  , $x *$x  , $x *$x   - $x *$x  , $x *$x   - $x *$x  , $x *$x   - $x *$x  , $x *$x   - $x *$x  , $x *$x   - $x *$x  , $x *$x  , $x *$x  , $x *$x  , $x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x  - $x  *$x  , $x *$x  - $x *$x  , $x *$x  - $x *$x  , $x *$x  - $x *$x  , $x *$x  - $x *$x  , $x *$x  - $x *$x  , $x *$x , $x *$x , $x *$x , $x  - $x *$x  , $x *$x  - $x *$x  , $x *$x  - $x *$x  , $x *$x  - $x *$x  , $x *$x  - $x *$x  , $x *$x , $x *$x , $x *$x , $x  - $x *$x  , $x *$x  - $x *$x  , $x *$x  - $x *$x  , $x *$x , $x *$x , $x *$x , $x  - $x *$x  , $x *$x  - $x *$x  , $x *$x  - $x *$x  , $x *$x , $x *$x , $x *$x , $x  - $x *$x  , $x *$x  - $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x *$x , $x , $x *$x , $x *$x , $x , $x *$x , $x )
-               14    13   14    12   14    11   14    10   14    9   14    8   14    7   14    6   14    5   14    4   14    3   14    2   14    1   14    0   14    13    12   13    11   13    10   13    9   13    8   13    7   13    6   13    5   13    4   13    3   13    2   13    1   13    0   13    9   12    8   12     11   12    7   12     10   12    5   12     10   12    4   12     6   12    2   12    1   12    0   12    11     10   12    10   11     6   12    9   11    8   11     10   12    7   11     6   12    6   11     3   12    5   11     6   12    4   11     3   12    2   11    1   11    0   11    10     3   12    9   10    8   10     6   12    7   10     3   12    6   10     3   11    5   10     3   12    4   10     3   11    2   10    1   10    0   10    9    8   9    7   9    6   9    5   9    4   9    3   9    2   9    1   9    0   9    8     10   12    7   8     6   12    6   8     3   12    5   8     6   12    4   8     3   12    3   8     3   11    2   8    1   8    0   8    7     3   12    6   7     3   11    5   7     3   12    4   7     3   11    3   7     3   10    2   7    1   7    0   7    6     3   10    5   6     3   11    4   6     3   10    2   6    1   6    0   6    5     3   12    4   5     3   11    3   5     3   10    2   5    1   5    0   5    4     3   10    3   4     3   6    2   4    1   4    0   4    2   3    1   3    0   3    2    1   2    0   2    1    0   1    0
+               2                                                            
+o52 = ideal ($x  , $x  $x  , $x  $x  , $x  $x  , $x  $x  , $x $x  , $x $x  ,
+               14    13  14    12  14    11  14    10  14    9  14    8  14 
+      --------------------------------------------------------------------------
+                                                                             
+      $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  ,
+        7  14    6  14    5  14    4  14    3  14    2  14    1  14    0  14 
+      --------------------------------------------------------------------------
+        2                                                                    
+      $x  , $x  $x  , $x  $x  , $x  $x  , $x $x  , $x $x  , $x $x  , $x $x  ,
+        13    12  13    11  13    10  13    9  13    8  13    7  13    6  13 
+      --------------------------------------------------------------------------
+                                                                              
+      $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x  , $x $x   -
+        5  13    4  13    3  13    2  13    1  13    0  13    9  12    8  12  
+      --------------------------------------------------------------------------
+                                                                          
+      $x  $x  , $x $x   - $x  $x  , $x $x   - $x  $x  , $x $x   - $x $x  ,
+        11  12    7  12     10  12    5  12     10  12    4  12     6  12 
+      --------------------------------------------------------------------------
+                                   2                                          
+      $x $x  , $x $x  , $x $x  , $x   - $x  $x  , $x  $x   - $x $x  , $x $x  ,
+        2  12    1  12    0  12    11     10  12    10  11     6  12    9  11 
+      --------------------------------------------------------------------------
+                                                                         
+      $x $x   - $x  $x  , $x $x   - $x $x  , $x $x   - $x $x  , $x $x   -
+        8  11     10  12    7  11     6  12    6  11     3  12    5  11  
+      --------------------------------------------------------------------------
+                                                               2            
+      $x $x  , $x $x   - $x $x  , $x $x  , $x $x  , $x $x  , $x   - $x $x  ,
+        6  12    4  11     3  12    2  11    1  11    0  11    10     3  12 
+      --------------------------------------------------------------------------
+                                                                               
+      $x $x  , $x $x   - $x $x  , $x $x   - $x $x  , $x $x   - $x $x  , $x $x  
+        9  10    8  10     6  12    7  10     3  12    6  10     3  11    5  10
+      --------------------------------------------------------------------------
+                                                                 2         
+      - $x $x  , $x $x   - $x $x  , $x $x  , $x $x  , $x $x  , $x , $x $x ,
+          3  12    4  10     3  11    2  10    1  10    0  10    9    8  9 
+      --------------------------------------------------------------------------
+                                                                        2  
+      $x $x , $x $x , $x $x , $x $x , $x $x , $x $x , $x $x , $x $x , $x  -
+        7  9    6  9    5  9    4  9    3  9    2  9    1  9    0  9    8  
+      --------------------------------------------------------------------------
+                                                                              
+      $x  $x  , $x $x  - $x $x  , $x $x  - $x $x  , $x $x  - $x $x  , $x $x  -
+        10  12    7  8     6  12    6  8     3  12    5  8     6  12    4  8  
+      --------------------------------------------------------------------------
+                                                           2                    
+      $x $x  , $x $x  - $x $x  , $x $x , $x $x , $x $x , $x  - $x $x  , $x $x  -
+        3  12    3  8     3  11    2  8    1  8    0  8    7     3  12    6  7  
+      --------------------------------------------------------------------------
+                                                                            
+      $x $x  , $x $x  - $x $x  , $x $x  - $x $x  , $x $x  - $x $x  , $x $x ,
+        3  11    5  7     3  12    4  7     3  11    3  7     3  10    2  7 
+      --------------------------------------------------------------------------
+                        2                                                       
+      $x $x , $x $x , $x  - $x $x  , $x $x  - $x $x  , $x $x  - $x $x  , $x $x ,
+        1  7    0  7    6     3  10    5  6     3  11    4  6     3  10    2  6 
+      --------------------------------------------------------------------------
+                        2                                                       
+      $x $x , $x $x , $x  - $x $x  , $x $x  - $x $x  , $x $x  - $x $x  , $x $x ,
+        1  6    0  6    5     3  12    4  5     3  11    3  5     3  10    2  5 
+      --------------------------------------------------------------------------
+                        2                                                    
+      $x $x , $x $x , $x  - $x $x  , $x $x  - $x $x , $x $x , $x $x , $x $x ,
+        1  5    0  5    4     3  10    3  4     3  6    2  4    1  4    0  4 
+      --------------------------------------------------------------------------
+                                2                    2            2
+      $x $x , $x $x , $x $x , $x , $x $x , $x $x , $x , $x $x , $x )
+        2  3    1  3    0  3    2    1  2    0  2    1    0  1    0
 
                  ZZ
 o52 : Ideal of ----- [$x , $x , $x , $x , $x , $x , $x , $x , $x , $x , $x  , $x  , $x  , $x  , $x  ]

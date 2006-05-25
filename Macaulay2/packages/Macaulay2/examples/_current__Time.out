@@ -1,0 +1,24 @@
+-- -*- M2-comint -*-
+
+i1 : currentTime()
+
+o1 = 1148517539
+
+i2 : currentTime() /( (365 + 97./400) * 24 * 60 * 60 )
+
+o2 = 36.3951
+
+o2 : RR
+
+i3 : 12 * (oo - floor oo)
+
+o3 = 4.74086
+
+o3 : RR
+
+i4 : run "date"
+Wed May 24 19:38:59 CDT 2006
+
+o4 = 0
+
+i5 : 

@@ -1,0 +1,34 @@
+-- -*- M2-comint -*-
+
+i1 : R = QQ[x,y,z];
+
+i2 : radical ideal(z^4+2*z^2+1)
+
+            2
+o2 = ideal(z  + 1)
+
+o2 : Ideal of R
+
+i3 : I = ideal"xyz,x2,y4+y5"
+
+                    2   5    4
+o3 = ideal (x*y*z, x , y  + y )
+
+o3 : Ideal of R
+
+i4 : radical I
+
+                   2
+o4 = ideal (-x, - y  - y)
+
+o4 : Ideal of R
+
+i5 : k = 0;
+
+i6 : while (y^2+y)^k % I != 0 do k = k+1;
+
+i7 : k
+
+o7 = 4
+
+i8 : 

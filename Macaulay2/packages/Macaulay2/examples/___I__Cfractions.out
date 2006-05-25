@@ -14,9 +14,9 @@ i3 : integralClosure(R,Variable => a)
      QQ [w , w , x, y, z, MonomialOrder => GRevLex => 5]
           7   6
 o3 = ---------------------------------------------------
-        2                       2          2    2    2
-      (x  - w *z, w *x - w *z, w  - w *x, w  - y  - z )
-             6     6      7     6    7     7
+          2                    2         2    2    2
+        (x  - w z, w x - w z, w  - w x, w  - y  - z )
+               6    6     7    6    7    7
 
 o3 : QuotientRing
 

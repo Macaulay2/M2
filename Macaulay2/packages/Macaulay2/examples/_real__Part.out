@@ -1,0 +1,17 @@
+-- -*- M2-comint -*-
+
+i1 : realPart(3/4)
+
+     3
+o1 = -
+     4
+
+o1 : QQ
+
+i2 : realPart(1.5+2*ii)
+
+o2 = 1.5
+
+o2 : RR
+
+i3 : 

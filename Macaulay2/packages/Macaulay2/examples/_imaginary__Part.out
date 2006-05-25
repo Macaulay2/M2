@@ -1,0 +1,15 @@
+-- -*- M2-comint -*-
+
+i1 : imaginaryPart(3/4)
+
+o1 = 0
+
+o1 : QQ
+
+i2 : imaginaryPart(1.5+2*ii)
+
+o2 = 2.
+
+o2 : RR
+
+i3 : 

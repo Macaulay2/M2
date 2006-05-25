@@ -1,0 +1,17 @@
+-- -*- M2-comint -*-
+
+i1 : x = set{1,2,3}
+
+o1 = Set {1, 2, 3}
+
+o1 : Set
+
+i2 : x#?2
+
+o2 = true
+
+i3 : member(2,x)
+
+o3 = true
+
+i4 : 

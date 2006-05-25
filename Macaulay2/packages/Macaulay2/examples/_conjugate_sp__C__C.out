@@ -1,0 +1,9 @@
+-- -*- M2-comint -*-
+
+i1 : conjugate(1+2.5*ii)
+
+o1 = 1. - 2.5ii
+
+o1 : CC
+
+i2 : 

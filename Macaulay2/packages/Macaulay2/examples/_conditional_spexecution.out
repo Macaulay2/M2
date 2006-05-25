@@ -1,17 +1,17 @@
 -- -*- M2-comint -*-
 
 i1 : (-4 .. 4) / 
-          (i -> if i < 0 then "neg" 
-               else if i == 0 then "zer" 
-               else "pos")
+     (i -> if i < 0 then "neg" 
+     else if i == 0 then "zer" 
+     else "pos")
 
 o1 = (neg, neg, neg, neg, zer, pos, pos, pos, pos)
 
 o1 : Sequence
 
 i2 : (-4 .. 4) / 
-          (i -> if i < 0 then "neg" 
-     	  else if i == 0 then "zer")
+     (i -> if i < 0 then "neg" 
+     else if i == 0 then "zer")
 
 o2 = (neg, neg, neg, neg, zer, , , , )
 

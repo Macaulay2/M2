@@ -1,8 +1,8 @@
 -- -*- M2-comint -*-
 
 i1 : stack sort unique (toString \
-          select(values Macaulay2Core.Dictionary, i -> parent value i === Thing)
-          )
+     select(values Macaulay2Core.Dictionary, i -> parent value i === Thing)
+     )
 
 o1 = BasicList
      Boolean
@@ -12,8 +12,10 @@ o1 = BasicList
      Dictionary
      File
      Function
+     FunctionBody
      HashTable
      Net
+     NetFile
      Nothing
      Pseudocode
      QQ

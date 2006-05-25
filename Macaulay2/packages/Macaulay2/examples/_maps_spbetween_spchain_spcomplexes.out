@@ -16,7 +16,7 @@ o3 = cokernel | x |
                             1
 o3 : R-module, quotient of R
 
-i4 : f = map(M,N)
+i4 : f = inducedMap(M,N)
 
 o4 = | 1 |
 
@@ -121,7 +121,7 @@ o13 = 0 : R  <--------- R  : 0
 
 o13 : ChainComplexMap
 
-i14 : map(C ** R^1/x,C)
+i14 : inducedMap(C ** R^1/x,C)
 
                                      1
 o14 = 0 : cokernel | x | <--------- R  : 0

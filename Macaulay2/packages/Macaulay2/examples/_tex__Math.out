@@ -1,10 +1,6 @@
 -- -*- M2-comint -*-
 
-i1 : R = ZZ[x]
-
-o1 = R
-
-o1 : PolynomialRing
+i1 : R = ZZ[x];
 
 i2 : texMath (x-1)^6
 

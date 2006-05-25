@@ -1,0 +1,9 @@
+-- -*- M2-comint -*-
+
+i1 : set{a,b,c} + set{a,d,f}
+
+o1 = Set {a, b, c, d, f}
+
+o1 : Set
+
+i2 : 

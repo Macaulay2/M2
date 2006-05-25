@@ -1,6 +1,6 @@
 -- -*- M2-comint -*-
 
-i1 : x = new HashTable from {a => 1, b => 2, c => 3}
+i1 : H = new HashTable from {a => 1, b => 2, c => 3}
 
 o1 = HashTable{a => 1}
                b => 2
@@ -8,7 +8,7 @@ o1 = HashTable{a => 1}
 
 o1 : HashTable
 
-i2 : applyValues(x, v -> v + 100)
+i2 : applyValues(H, v -> v + 100)
 
 o2 = HashTable{a => 101}
                b => 102

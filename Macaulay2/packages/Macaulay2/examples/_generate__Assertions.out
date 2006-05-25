@@ -1,0 +1,17 @@
+-- -*- M2-comint -*-
+
+i1 : generateAssertions ///
+     2+2
+     2^20
+     ///
+
+o1 = assert( (2+2) === 4 )
+     assert( (2^20) === 1048576 )
+
+i2 : value \ unstack oo
+
+o2 = {, }
+
+o2 : List
+
+i3 : 

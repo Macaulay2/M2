@@ -41,7 +41,7 @@ i8 : isIsomorphism F
 
 o8 = false
 
-i9 : inc = map(R^1, M)
+i9 : inc = inducedMap(R^1, M)
 
 o9 = | x y |
 
