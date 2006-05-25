@@ -374,9 +374,8 @@ deprecated := z -> (
      stderr << "--warning: using '" << z << "' alone in documentation is deprecated, use '" << z << "{}' instead" << endl;
      if z === PARA then stderr << "--        please group PARA{...} around entire paragraphs" << endl;
      )
-fixup EmptyMarkUpType := z -> (deprecated z; z{})
 fixup MarkUpType := z -> (
-     if z === PARA
+     if z === PARA or z === BR or z === HR or z === NOINDENT
      then (
 	  deprecated z;
 	  z{})
@@ -479,7 +478,7 @@ processExamplesLoop TO :=
 processExamplesLoop TO2 :=
 processExamplesLoop TOH :=
 processExamplesLoop Option :=
-processExamplesLoop String := x -> {}
+processExamplesLoop String := identity
 processExamplesLoop Sequence := 
 processExamplesLoop MarkUpList := x -> apply(x,processExamplesLoop)
 processExamplesLoop ExampleItem := x -> (
@@ -693,8 +692,8 @@ justClass := X -> fixup SEQ {"an instance of class ", TO X}
 
 ofClass = X -> fixup (
      if parent X === Nothing then error "expected a class";
-     if X.?synonym then SEQ {indefiniteArticle X.synonym, TO2 {X, X.synonym}}
-     else SEQ {"an object of class ", TO X}
+     if X.?synonym then SPAN {indefiniteArticle X.synonym, TO2 {X, X.synonym}}
+     else SPAN {"an object of class ", TO X}
      )
 
 makeDocBody := method(SingleArgumentDispatch => true)

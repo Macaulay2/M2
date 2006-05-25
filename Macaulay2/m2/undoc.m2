@@ -73,8 +73,6 @@ undocumented {
     (html, SUP),
     (html, MarkUpType),
     (html, ITALIC),
-    (html, UNDERLINE),
-    (html, EmptyMarkUpType),
     (html, SEQ),
     (html, TT),
     (html, EM),

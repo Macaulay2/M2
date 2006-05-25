@@ -380,9 +380,7 @@ scan( (net,html,tex), op -> op TOH := x -> op SEQ{ new TO from x, commentize hea
 
 info LITERAL := tex LITERAL := net LITERAL := x -> ""
 html LITERAL := x -> concatenate x
-html EmptyMarkUpType := html MarkUpType := X -> html X{}
 html ITALIC := t -> concatenate("<i>", apply(t,html), "</i>")
-html UNDERLINE := t -> concatenate("<u>", apply(t,html), "</u>")
 html BOLD := t -> concatenate("<b>", apply(t,html), "</b>")
 
 html Option := x -> error("attempted to convert option '", toString x, "' to html")
