@@ -39,9 +39,11 @@ ntl_interface.o : ntl_interface.cpp
 	@ $(CC)  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
 
 
-CPPFLAGS += -I../../include
-CPPFLAGS += -I../util
-CPPFLAGS += -I.
+
+M2CPPFLAGS  = -I../../include
+M2CPPFLAGS += -I../util
+M2CPPFLAGS += -I.
+CPPFLAGS := $(M2CPPFLAGS) $(CPPFLAGS)
 
 CXXFLAGS += $(DEBUGFLAGS)
 CFLAGS   += $(DEBUGFLAGS)
