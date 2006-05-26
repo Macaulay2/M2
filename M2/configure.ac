@@ -95,23 +95,23 @@ else echo "`basename $0`: $MAKE: GNU make is required" >&2
      exit 1
 fi
 
-AC_CHECK_PROG(INSTALL_INFO,install-info,yes)
-if test ! "$INSTALL_INFO"
-then echo "configure: error: program 'install-info' (from the 'texinfo' package) not found" >&2
-     exit 1
-fi
-install-info --version |
-  egrep '^install-info' |
-[  sed -e 's/^.* \([1-9][0-9]*\)\.\([1-9][0-9]*\)/\1 \2/' -e 's/^i.*//' |]
-  if read major minor
-  then min=4
-       if test "$major" -lt "$min"
-       then echo "Macaulay2 requires 'install-info' (from the 'texinfo' package) at least version $min" >&2
-	    false
-       fi
-  else echo "configure: error: program 'install-info' version number not recognized" >&2
-       false
-  fi || exit 1
+# AC_CHECK_PROG(INSTALL_INFO,install-info,yes)
+# if test ! "$INSTALL_INFO"
+# then echo "configure: error: program 'install-info' (from the 'texinfo' package) not found" >&2
+#      exit 1
+# fi
+# install-info --version |
+#   egrep '^install-info' |
+# [  sed -e 's/^.* \([1-9][0-9]*\)\.\([1-9][0-9]*\)/\1 \2/' -e 's/^i.*//' |]
+#   if read major minor
+#   then min=4
+#        if test "$major" -lt "$min"
+#        then echo "Macaulay2 requires 'install-info' (from the 'texinfo' package) at least version $min" >&2
+# 	    false
+#        fi
+#   else echo "configure: error: program 'install-info' version number not recognized" >&2
+#        false
+#   fi || exit 1
 
 NODENAME="`uname -n`"
 AC_SUBST(NODENAME)
