@@ -102,7 +102,10 @@ document {
      is interrupted, no value is added to the list, and iteration of the loop
      continues.  If ", TO "continue w", " is executed by ", TT "x", " then execution
      of ", TT "x", " is interrupted, the value of ", TT "w", " is added to the list, 
-     and iteration of the loop continues.",
+     and iteration of the loop continues.  If ", TT "break v", " is executed
+     by ", TT "x", ", then the loop is stopped and ", TT "v", " is returned as its value.  If
+     ", TT "break", " is executed by ", TT "x", ", then the loop is stopped and the list accumulated
+     so far is returned as the value.",
      PARA{},
      TT "for i in w when c list x do y", " is similar, except that consecutive entries
      of the basic list or sequence ", TT "w", " are assigned as values of ", TT "i", ".",
@@ -125,7 +128,7 @@ document {
 	  "for i when i^2 < 90 list i",
 	  "for i in {a,4,1/2} list class i"
 	  },
-     SeeAlso => { "loops", "while", "return" }
+     SeeAlso => { "loops", "while", "return", "break", "continue" }
      }     
 
 document {
@@ -142,14 +145,17 @@ document {
      is interrupted, no value is added to the list, and iteration of the loop
      continues.  If ", TO "continue w", " is executed by ", TT "x", " then execution
      of ", TT "x", " is interrupted, the value of ", TT "w", " is added to the list, 
-     and iteration of the loop continues.",
+     and iteration of the loop continues.  If ", TT "break v", " is executed
+     by ", TT "x", ", then the loop is stopped and ", TT "v", " is returned as its value.  If
+     ", TT "break", " is executed by ", TT "x", ", then the loop is stopped and the list accumulated
+     so far is returned as the value.",
      BR{},NOINDENT{},
      TT "while p list x do z", " repeatedly evaluates ", TT "x", " 
      and ", TT "z", " as long as the value of ", TT "p", " remains
      ", TO "true", ", returning a list of the values of ", TT "x", " 
      encountered.",BR{},
      PARA{},
-     SeeAlso => { "loops", "break", "for" }
+     SeeAlso => { "loops", "break", "continue", "for" }
      }
 
 document {
@@ -164,7 +170,7 @@ document {
      PARA{},
      "Warning: trying to break from a loop controlled by ", TO "table", " will
      probably not do what you expect, since ", TO "table", " is implemented by two nested
-     loops controlled to ", TT "apply", ", and only the inner one will stop.",
+     loops controlled by ", TO "apply", ", and only the inner one will stop.",
      SeeAlso => { "scan", "while", "for" }
      }
 

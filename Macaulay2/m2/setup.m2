@@ -226,8 +226,8 @@ tryload := (filename,loadfun,notify) -> (
 			 break)));
      if loaded then ret else error("file not found on path: \"", toString filename, "\""))
 
-load = (filename) -> tryload(filename,simpleLoad,notify)
-input = (filename) -> tryload(filename,simpleInput,false)
+load = (filename) -> (tryload(filename,simpleLoad,notify);)
+input = (filename) -> (tryload(filename,simpleInput,false);)
 needs = s -> if not filesLoaded#?s then load s
 
 load "loads.m2"

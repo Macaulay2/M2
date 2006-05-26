@@ -16,6 +16,10 @@ Changes made, most recent ones first:
 
 New in 0.9.8:
 
+'for ... list ... do ... break ; ...' will now return the list that's been
+accumulated so far, rather than returning 'null', so as not to waste the work.
+To recover the former behavior, write 'for ... list ... do ... break null ; ...'
+
 'length' no longer takes the length of a file -- use 'fileLength' instead.
 Reason: if the argument is a string, 'fileLength' will interpret it as the name
 of the file, but 'length' will measure the string itself.  Same for '#'.
