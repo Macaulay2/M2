@@ -182,11 +182,11 @@ evalWhileDoCode(c:whileDoCode):Expr := (
      while true do (
 	  p := eval(c.predicate);
 	  when p is err:Error 
-	  do return if err.message == breakMessage then err.value else p
+	  do return if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else p
 	  else if p == True then (
 	       b := eval(c.doClause);
 	       when b is err:Error 
-	       do return if err.message == breakMessage then err.value else b 
+	       do return if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else b 
 	       else nothing;
 	       )
 	  else if p == False then break
@@ -200,14 +200,20 @@ evalWhileListCode(c:whileListCode):Expr := (
      while true do (
 	  p := eval(c.predicate);
 	  when p is err:Error
-	  do return if err.message == breakMessage then err.value else p
+	  do return if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else p
 	  else if p == True then (
 	       b := eval(c.listClause);
 	       useb := true;
 	       when b is err:Error 
 	       do if err.message == continueMessage then useb = false
 	       else if err.message == continueMessageWithArg then b = err.value
-	       else if err.message == breakMessage then return err.value
+	       else if err.message == breakMessage then return (
+		    if err.value == dummyExpr then Expr(
+			 list(
+			      if i == 0 then emptySequence
+			      else if i == length(r) then r
+			      else new Sequence len i do foreach x in r do provide x))
+		    else err.value)
 	       else return b
 	       else nothing;
 	       if useb then (
@@ -234,14 +240,28 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
      i := 0;
      while true do (
 	  p := eval(c.predicate);
-	  when p is err:Error do return if err.message == breakMessage then err.value else p
+	  when p is err:Error do (
+	       return if err.message == breakMessage then (
+		    if err.value == dummyExpr then Expr(
+			 list(
+			      if i == 0 then emptySequence
+			      else if i == length(r) then r
+			      else new Sequence len i do foreach x in r do provide x))
+		    else err.value)
+	       else p)
 	  else if p == True then (
 	       b := eval(c.listClause);
 	       useb := true;
 	       when b is err:Error
 	       do if err.message == continueMessage then useb = false
 	       else if err.message == continueMessageWithArg then b = err.value
-	       else if err.message == breakMessage then return err.value
+	       else if err.message == breakMessage then return (
+		    if err.value == dummyExpr then Expr(
+			 list(
+			      if i == 0 then emptySequence
+			      else if i == length(r) then r
+			      else new Sequence len i do foreach x in r do provide x))
+		    else err.value)
 	       else return b
 	       else nothing;
 	       if useb then (
@@ -256,7 +276,14 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 		    );
 	       d := eval(c.doClause);
 	       when d is err:Error
-	       do return if err.message == breakMessage then err.value else d
+	       do return if err.message == breakMessage then (
+		    if err.value == dummyExpr then Expr(
+			 list(
+			      if i == 0 then emptySequence
+			      else if i == length(r) then r
+			      else new Sequence len i do foreach x in r do provide x))
+		    else err.value)
+	       else d
 	       else nothing;
 	       )
 	  else if p == False then break
@@ -312,7 +339,16 @@ evalForCode(c:forCode):Expr := (
 	       p := eval(c.whenClause);
 	       when p is err:Error do (
 		    localFrame = localFrame.outerFrame;
-		    return if err.message == breakMessage then err.value else p)
+		    return if err.message == breakMessage then (
+			 if err.value == dummyExpr then (
+			      if c.listClause == dummyCode then nullE
+			      else Expr(
+				   list(
+					if i == 0 then emptySequence
+					else if i == length(r) then r
+					else new Sequence len i do foreach x in r do provide x)))
+			 else err.value)
+		    else p)
 	       else if p == False then break
 	       else if p != True then (
 		    localFrame = localFrame.outerFrame;
@@ -324,7 +360,14 @@ evalForCode(c:forCode):Expr := (
 	       do if err.message == continueMessage then useb = false
 	       else if err.message == continueMessageWithArg then b = err.value
 	       else (
-		    if err.message == breakMessage then b = err.value;
+		    if err.message == breakMessage then b = (
+			 if err.value == dummyExpr 
+			 then Expr(
+			      list(
+				   if i == 0 then emptySequence
+				   else if i == length(r) then r
+				   else new Sequence len i do foreach x in r do provide x))
+			 else err.value);
 		    localFrame = localFrame.outerFrame;
 		    return b;
 		    )
@@ -342,7 +385,17 @@ evalForCode(c:forCode):Expr := (
 	       when b is err:Error do (
 		    if err.message != continueMessage && err.message != continueMessageWithArg then (
 			 localFrame = localFrame.outerFrame;
-			 return if err.message == breakMessage then err.value else b))
+			 return
+			 if err.message == breakMessage then (
+			      if err.value == dummyExpr then (
+				   if c.listClause == dummyCode then nullE
+				   else Expr(
+					list(
+					     if i == 0 then emptySequence
+					     else if i == length(r) then r
+					     else new Sequence len i do foreach x in r do provide x)))
+			      else err.value)
+		    	 else b))
 	       else nothing));
      localFrame = localFrame.outerFrame;
      if c.listClause == dummyCode then nullE
@@ -1388,7 +1441,7 @@ continueFun(a:Code):Expr := (
 setupop(continueS,continueFun);
 
 breakFun(a:Code):Expr := (
-     e := if a == dummyCode then nullE else eval(a);
+     e := if a == dummyCode then dummyExpr else eval(a);
      when e is Error do e else Expr(Error(dummyPosition,breakMessage,e,false,dummyFrame)));
 setupop(breakS,breakFun);
 

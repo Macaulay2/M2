@@ -275,7 +275,7 @@ export printErrorMessageE(c:Token,message:string):Expr := ( -- for use when we h
      printErrorMessageE(position(c),message));
 
 export returnFromFunction(z:Expr):Expr := when z is err:Error do if err.message == returnMessage then err.value else z else z;
-export returnFromLoop(z:Expr):Expr     := when z is err:Error do if err.message == breakMessage  then err.value else z else z;
+export returnFromLoop(z:Expr):Expr     := when z is err:Error do if err.message == breakMessage  then if err.value == dummyExpr then nullE else err.value else z else z;
 
 export WrongNumArgs(c:Code,wanted:int,got:int):Expr := (
      printErrorMessageE(c, "expected " + tostring(wanted) + " argument"
