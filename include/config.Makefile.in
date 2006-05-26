@@ -239,7 +239,7 @@ endif
 
 ifeq "$(GCC)" "yes"
 CFLAGS   += -pipe -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare -Werror-implicit-function-declaration -Wno-strict-aliasing
-CXXFLAGS += -pipe -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare -Werror-implicit-function-declaration
+CXXFLAGS += -pipe -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare
 # -Werror-implicit-function-declaration is important, because if we include the wrong include file and a function that
 # returns a 64-bit pointer is not declared as such, then only 32 bits of the return value will be used.
 ifeq "$(OPTIMIZE)" "yes"
