@@ -224,7 +224,7 @@ loadprint(filename:string,stopIfError:bool,dc:DictionaryClosure):Expr := (
 	       else close(file));
 	  when r is err:Error do (
 	       if err.message == returnMessage || err.message == continueMessage || err.message == continueMessageWithArg
-	       || err.message == breakMessage then err.value else r
+	       || err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else r
 	       )
 	  else (
 	       if t == ERROR
@@ -238,7 +238,7 @@ load(filename:string):Expr := (
 	  t := if !(filename==="-") then close(file) else 0;
 	  when r is err:Error do (
 	       if err.message == returnMessage || err.message == continueMessage || err.message == continueMessageWithArg
-	       || err.message == breakMessage then err.value else r
+	       || err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else r
 	       )
 	  else (
 	       if t == ERROR
@@ -368,7 +368,7 @@ value(e:Expr):Expr := (
 	  when r 
 	  is err:Error do (
 	       if err.message == returnMessage || err.message == continueMessage || err.message == continueMessageWithArg 
-	       || err.message == breakMessage then err.value 
+	       || err.message == breakMessage then if err.value == dummyExpr then nullE else err.value 
 	       else r)
 	  else r)
      else WrongArg(1,"a string, a symbol, or pseudocode"));
