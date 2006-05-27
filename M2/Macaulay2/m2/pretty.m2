@@ -4,7 +4,14 @@ pretty = method(SingleArgumentDispatch => true)
 pretty Thing := x -> stack pretty2 x
 
 pretty2 = method(SingleArgumentDispatch => true)
-pretty2 String := s -> 1 : format s
+-- pretty2 String := s -> (
+--      r := wrap(printWidth - 2, format s);
+--      if depth r > 0 then r = boxList {r};
+--      1:r)
+pretty2 String := s -> (
+     r := wrap(printWidth - 2, format s);
+     if class r === Net then toSequence unstack r else 1:r)
+
 pretty2 Thing := x -> (
      r := net x;
      if width r <= printWidth then return 1:r;
@@ -24,14 +31,14 @@ pretty2 MarkUpList := x -> pretty3(net class x|"{","   ",","," ","}",toSequence 
 pretty3 = (l,i,m,m',r,s) -> (
      if #s == 0 then l|r;
      sav := printWidth;
-     printWidth = printWidth - max(#l,#i) - max(#m,#r) - 2;
+     printWidth = printWidth - max(#l,#i) - max(#m,#r);
      s = apply(s,pretty2);
      printWidth = sav;
      w := j := 0;
      rowstart := true;
      endrow := false;
      processRow := x -> (
-	  if #x#-1 == 1 then horizontalJoin x
+	  if #x#-1 == 1 then (r :=horizontalJoin x; r )
 	  else (
 	       a := horizontalJoin apply(drop(x,-1),unSingleton);
 	       b := concatenate(width a : " ");
@@ -45,7 +52,7 @@ pretty3 = (l,i,m,m',r,s) -> (
 	  x = append( drop(x,-1), last x | r);
 	  x = prepend(l | first x, apply(drop(x,1), t -> l'|t));
 	  n := max(width\x);
-	  if w+n <= printWidth + 10 then ( w = w + n; rowstart = false; j = j + 1; x)
+	  if w+n <= printWidth then ( w = w + n; rowstart = false; j = j + 1; x)
 	  else ( if rowstart then error "pretty: internal error"; w = 0; break));
      splice toSequence while true list (
 	  if j == #s then break;
