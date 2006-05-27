@@ -95,13 +95,6 @@ document {
      }
 
 document {
-     Key => format,
-     Headline => "format a string",
-     TT "format s", " -- prepare a string ", TT "s", " for output by converting nonprintable
-     characters to printable ones, or to escape sequences."
-     }
-
-document {
      Key => generatorSymbols,
      Headline => "store the symbols for the generators",
      TT "generatorSymbols", " -- a key used in a ", TO "Monoid", " under

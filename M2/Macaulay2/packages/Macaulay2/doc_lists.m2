@@ -177,6 +177,8 @@ document {
 	  TO reverse,
 	  TO rsort,
 	  TO sort,
+	  TO subtable,
+	  TO table,
 	  TO take,
 	  TO unique,
      	  "applying functions to elements of lists",

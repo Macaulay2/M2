@@ -22,14 +22,6 @@ document {
      }
 
 document {
-     Key => (length, String),
-     Headline => "length of a string",
-     Usage => "n = length s",
-     Inputs => { "s" => "" },
-     Outputs => { "n" => { "the length of the string ", TT "s" } }
-     }
-
-document {
      Key => (length, GradedModule),
      Headline => "length of a graded module",
      "The length of a graded module is the difference between the largest and
@@ -931,41 +923,6 @@ document {
      	  if version#"operating system" =!= "Windows-95-98-NT" then ///get "!date"///
 	  },
      SeeAlso =>{ "File", "read" }
-     }
-
-document {
-     Key => separate,
-     Headline => "split a string into pieces",
-     TT "separate(d,s)", " -- split the string ", TT "s", " into pieces 
-     delimited by the string ", TT "d", ".",
-     PARA{},
-     "The value is a list of the pieces, the number of which is one
-     more than the number of occurrences of d in s, so that the pieces
-     may be reassembled with ", TO "between", ".",
-     EXAMPLE {
-	  ///separate( ".", "a.b.c.d" )///,
-	  ///peek separate( ".", "a.b.c.d" )///,
-	  ///demark("=",ooo)///
-	  }
-     }
-
-document {
-     Key => lines,
-     Headline => "split a string into lines",
-     TT "lines s", " -- yields an array of strings obtained from the
-     string ", TT "s", " by breaking it at newline or return characters.",
-     BR{},NOINDENT{},
-     TT "lines(nl,s)", " -- yields an array of strings obtained from the 
-     string ", TT "s", " by breaking it at the newline characters
-     specified by the string ", TT "nl", ".",
-     PARA{},
-     "The form ", TT "lines s", " is designed to break lines correctly
-     when the file follows the Unix, MS-DOS, or Macintosh convention and
-     contains no extraneous isolated newline or return characters.  In
-     other words, it will break a line at \"\\r\\n\", \"\\n\", or \"\\r\".",
-     PARA{},
-     "The string ", TT "nl", " should be a string of length 1 or 2.",
-     SeeAlso => "newline"
      }
 
 document {

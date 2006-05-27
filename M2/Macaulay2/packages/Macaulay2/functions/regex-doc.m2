@@ -5,6 +5,10 @@
 document { 
      Key => regex,
      Headline => "regular expression matching",
+     Subnodes => {
+	  TO (regex,String,String),
+	  TO (regex,String,ZZ,String)
+	  }
      }
 
 document { 
@@ -115,6 +119,12 @@ document {
 	  },
      "For complete documentation on regular expressions see the entry for ", TT "regex", " in
      section 7 of the unix man pages, or read the the GNU ", TT "regex", " manual.",
+     Subnodes => {
+	  "functions that accept regular expressions",
+	  TO "match",
+	  TO "regex",
+	  TO "replace"
+	  }
      }
 
 -- doc4.m2:137:     Key => regex, 
