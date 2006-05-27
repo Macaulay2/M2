@@ -9,7 +9,7 @@ pretty2 = method(SingleArgumentDispatch => true)
 --      if depth r > 0 then r = boxList {r};
 --      1:r)
 pretty2 String := s -> (
-     r := wrap(printWidth - 2, format s);
+     r := wrap format s;
      if class r === Net then toSequence unstack r else 1:r)
 
 pretty2 Thing := x -> (
@@ -20,19 +20,30 @@ pretty2 Thing := x -> (
 	  r = f r;
      	  if width r <= printWidth then return 1:r; -- get the last bit separate!
 	  );
-     1: wrap(printWidth,"-",r)				    -- get the last bit separate!
+     1: wrap("-",r)				    -- get the last bit separate!
      )
 
 pretty2 List      := x -> pretty3("{", " ", ",", " ", "}", toSequence x)
 pretty2 Array     := x -> pretty3("[", " ", ",", " ", "]", toSequence x)
 pretty2 Sequence  := x -> pretty3("(", " ", ",", " ", ")", x)
 pretty2 MarkUpList := x -> pretty3(net class x|"{","   ",","," ","}",toSequence x)
+pretty2 IntermediateMarkUpType := x -> (
+     r := wrap net x;
+     if class r === Net then toSequence unstack r else 1:r)
+pretty2 Option := o -> (
+     sav := printWidth;
+     printWidth = (printWidth-4)//2;
+     if printWidth <= 0 then error "internal error: printWidth too small";
+     o = pretty o#0 | " => " | pretty o#1;
+     printWidth = sav;
+     1:o)     
 
 pretty3 = (l,i,m,m',r,s) -> (
-     if #s == 0 then l|r;
+     if #s == 0 then return 1:l|r;
      sav := printWidth;
      printWidth = printWidth - max(#l,#i) - max(#m,#r);
-     s = apply(s,pretty2);
+     if printWidth <= 0 then error "internal error: printWidth too small";
+     s' := apply(s,pretty2);
      printWidth = sav;
      w := j := 0;
      rowstart := true;
@@ -55,15 +66,15 @@ pretty3 = (l,i,m,m',r,s) -> (
 	  if w+n <= printWidth then ( w = w + n; rowstart = false; j = j + 1; x)
 	  else ( if rowstart then error "pretty: internal error"; w = 0; break));
      splice toSequence while true list (
-	  if j == #s then break;
+	  if j == #s' then break;
 	  endrow = false;
 	  rowstart = true;
 	  w = 0;
 	  processRow while true list (
 	       if endrow then break;
-	       if j == 0 then item(l,s#0,if #s == 1 then r else m)
-	       else if j<#s-1 then if rowstart then item(i,s#j,m) else item(m',s#j,m) 
-	       else if s#?j then if rowstart then item(i,s#j,r) else item(m',s#j,r)
+	       if j == 0 then item(l,s'#0,if #s' == 1 then r else m)
+	       else if j<#s'-1 then if rowstart then item(i,s'#j,m) else item(m',s'#j,m) 
+	       else if s'#?j then if rowstart then item(i,s'#j,r) else item(m',s'#j,r)
 	       else break)))
 
 -- Local Variables:
