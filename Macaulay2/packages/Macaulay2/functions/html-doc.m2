@@ -131,22 +131,6 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (html,Hypertext),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => (html,List),
      Headline => "",
      Usage => "",
@@ -916,22 +900,6 @@ document {
      }
 document { 
      Key => (html,TEX),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (html,SEQ),
      Headline => "",
      Usage => "",
      Inputs => {

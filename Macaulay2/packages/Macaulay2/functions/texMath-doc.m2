@@ -34,7 +34,6 @@ undocumented {
 	(texMath, TEX),
 	(texMath, Sequence),
 	(texMath, Array),
-	(texMath, SEQ),
 	(texMath, TT),
 	(texMath, Product),
 	(texMath, ZZ),

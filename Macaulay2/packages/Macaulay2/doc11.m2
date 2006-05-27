@@ -133,17 +133,15 @@ document {
      }
 
 document {
-     Key => SEQ,
-     Headline => "hypertext sequence",
-	Usage => "SEQ x",
-	Inputs => {"x" => {}},
-	Outputs => {SEQ => {}},
-     TT "SEQ x", " encloses ", TT "x", " in a hypertext SEQ item.",
-     PARA{},
+     Key => SPAN,
+     Headline => "hypertext span",
+     Usage => "SPAN x",
+     Inputs => {"x" => {}},
+     Outputs => {SPAN => {}},
+     TT "SPAN x", " encloses ", TT "x", " in a hypertext SPAN item.",
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.  The result is that the entries in the
      list or sequence are displayed sequentially.",
-     PARA{},
      SeeAlso => "hypertext"
      }
 

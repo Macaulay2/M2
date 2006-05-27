@@ -4,12 +4,12 @@ document {
      Key => "lists and sequences",
      "In this section we give an overview of the use of lists of all types, including:",
      UL {
-	  SEQ {"basic lists (of class ", TO "BasicList", ")," },
-	  SEQ {"visible lists (of class ", TO "VisibleList", ")," },
-	  SEQ {"lists (of class ", TO "List", ")," },
-	  SEQ {"sequences (of class ", TO "Sequence", "), and" },
-	  SEQ {"arrays (of class ", TO "Array", ")." },
-	  SEQ {"mutable lists (of class ", TO "MutableList", ")." },
+	  SPAN {"basic lists (of class ", TO "BasicList", ")," },
+	  SPAN {"visible lists (of class ", TO "VisibleList", ")," },
+	  SPAN {"lists (of class ", TO "List", ")," },
+	  SPAN {"sequences (of class ", TO "Sequence", "), and" },
+	  SPAN {"arrays (of class ", TO "Array", ")." },
+	  SPAN {"mutable lists (of class ", TO "MutableList", ")." },
 	  },
      SUBSECTION "lists",
      "A list is a handy way to store a series of things.  We create one

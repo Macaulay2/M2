@@ -29,7 +29,6 @@ undocumented {
      (tex, TEX),
      (tex, Sequence),
      (tex, Array),
-     (tex, SEQ),
      (tex, BR),
      (tex, TT),
      (tex, NOINDENT),

@@ -230,10 +230,10 @@ document { Key => {URL,(NewFromMethod, URL, String)},
      PARA {
 	  "The function ", TO "show", " knows how display entities of various types, including URLs."
 	  }}
-document { Key => {show,(show, Hypertext), (show, TEX), (show, URL)},
+document { Key => {show, (show, TEX), (show, URL)},
      Headline => "display various TeX, hypertext, or a URL, in an external application",
      Usage => "show x",
-     Inputs => { "x" => { "an object of type ", TT "Hypertext", ", ", TT "TEX", ", or ", TT "URL" }},
+     Inputs => { "x" => { "an object of type ", TT "TEX", ", or ", TT "URL" }},
      Consequences => {{ "an external viewer, such as a web browser, is started to view the object ", TT "x" }},
      SeeAlso => { showTex, showHtml }}
 document { Key => {(irreducibleDecomposition,MonomialIdeal),irreducibleDecomposition},

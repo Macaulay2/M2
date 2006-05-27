@@ -179,22 +179,6 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (info,Hypertext),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => (info,TITLE),
      Headline => "",
      Usage => "",
@@ -404,22 +388,6 @@ document {
      }
 document { 
      Key => (info,SUP),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (info,SEQ),
      Headline => "",
      Usage => "",
      Inputs => {

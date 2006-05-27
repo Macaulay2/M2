@@ -16,6 +16,10 @@ Changes made, most recent ones first:
 
 New in 0.9.8:
 
+The method for Tally-Tally has been changed to eliminate negative numbers from
+the answer.  This makes results compatible with the fact that sets are a
+special type of tally.
+
 'for ... list ... do ... break ; ...' will now return the list that's been
 accumulated so far, rather than returning 'null', so as not to waste the work.
 To recover the former behavior, write 'for ... list ... do ... break null ; ...'

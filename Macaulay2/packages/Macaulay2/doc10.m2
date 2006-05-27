@@ -133,14 +133,14 @@ document {
      which algorithm to use.  Strategies are specified by number and the
      algorithms available are",
      UL {
-	  SEQ (TT "Strategy => 0", " -- Compute syzygies on the Groebner bases of each syzygy
+	  SPAN (TT "Strategy => 0", " -- Compute syzygies on the Groebner bases of each syzygy
 	       module.  The algorithm uses important speedups due to R. La Scala.
 	       This algorithm appears to be on the average the fastest."),
-	  SEQ (TT "Strategy => 1", " -- An older version of algorithm 0, which doesn't allow as 
+	  SPAN (TT "Strategy => 1", " -- An older version of algorithm 0, which doesn't allow as 
 	       much experimentation, but can sometimes be marginally faster."),
-	  SEQ (TT "Strategy => 2", " -- Compute syzygies on the minimal generators of each 
+	  SPAN (TT "Strategy => 2", " -- Compute syzygies on the minimal generators of each 
 	       matrix in the resolution.  Over quotient rings, it's preferred."),
-	  SEQ (TT "Strategy => 3", " -- Same as algorithm 2, but compute those Hilbert functions 
+	  SPAN (TT "Strategy => 3", " -- Same as algorithm 2, but compute those Hilbert functions 
 	       which allow removal of S-pairs (a la Robbiano, et al.). Sometimes this
 	       improvement can be very dramatic.")
 	  },
@@ -212,9 +212,9 @@ document {   -- This node is used as an example for the documentation node: Key,
 	  },
      "For an overview of resolutions, in order of increasing detail, see",
      UL {
-	  SEQ (TO "Hilbert functions and free resolutions"),
+	  SPAN (TO "Hilbert functions and free resolutions"),
 	  TO "free resolutions of modules",
-	  SEQ (TO "computing resolutions", " -- most detailed")
+	  SPAN (TO "computing resolutions", " -- most detailed")
 	  },
      "Some useful related functions",
      UL {

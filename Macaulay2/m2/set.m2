@@ -32,7 +32,7 @@ Tally ? Tally := (x,y) -> (
 Set ? Set := (x,y) -> (new Tally from x) ? (new Tally from y)
 
 Tally + Tally := Tally => (x,y) -> merge(x,y,plus)
-Tally - Tally := Tally => (x,y) -> select(merge(x,applyValues(y,minus),plus),i -> i =!= 0)
+Tally - Tally := Tally => (x,y) -> select(merge(x,applyValues(y,minus),plus),i -> i > 0)
      
 sum(Tally) := (w) -> sum(pairs w, (k,v) -> v * k)
 product(Tally) := (w) -> product(pairs w, (k,v) -> k^v)
