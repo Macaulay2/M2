@@ -120,8 +120,8 @@ vert := (op,post) -> x -> net new ParagraphList from post select(
      n -> width n > 0)
 net DIV := (vert(net,x -> between("\n",x))) @@ noopts -- doublespacing
 info DIV := (vert(info,x -> between("",x))) @@ noopts
-net SEQ := net PARA := net Hypertext := vert(net,x -> between("\n",x)) -- doublespacing
-info SEQ := info PARA := info Hypertext := vert(info,x -> between("",x))
+net PARA := vert(net,x -> between("\n",x)) -- doublespacing
+info PARA := vert(info,x -> between("",x))
 net DIV1 := (vert(net,identity)) @@ noopts				    -- singlespacing
 info DIV1 := (vert(info,identity)) @@ noopts
 
@@ -145,8 +145,6 @@ tex  HR := x -> ///
 \hfill\break
 \hbox to\hsize{\leaders\hrule\hfill}
 ///
-
-html Hypertext := x -> concatenate(apply(x,html))	    -- used to have "<p>" in here
 
 html PARA := x -> (
      if #x === 0 then "\n<p/>\n"
@@ -239,29 +237,11 @@ tex PRE := x -> concatenate ( VERBATIM,
      )
 
 net TT := info TT := x -> concatenate toSequence x   -- should just be strings here
-
-htmlDefaults = new MutableHashTable from {
-     -- "BODY" => "bgcolor='#e4e4ff'"
-     "BODY" => ""
-     }
-
-html BODY := x -> concatenate(
-     "<body ", htmlDefaults#"BODY", ">", newline,
-     apply(x, html), newline,
-     "</body>", newline
-     )
-
 html LISTING := t -> "<listing>" | concatenate toSequence t | "</listing>";
-
 texMath STRONG := tex STRONG := x -> concatenate("{\\bf ",apply(x,tex),"}")
-
 texMath ITALIC := tex ITALIC := x -> concatenate("{\\sl ",apply(x,tex),"}")
 html ITALIC := x -> concatenate("<i>",apply(x,html),"</i>")
-
 texMath TEX := tex TEX := x -> concatenate toList x
-
-texMath SEQ := tex SEQ := x -> concatenate(apply(toList x, tex))
-html SEQ := x -> concatenate(apply(toList x, html))
 
 -- these seem questionable:
 tex Sequence := tex List := tex Array := x -> concatenate("$",texMath x,"$")
@@ -318,7 +298,7 @@ info SUB := opSU(info,-1)
 
 tex TO := x -> (
      tag := x#0;
-     tex SEQ {
+     tex SPAN {
      	  TT DocumentTag.FormattedKey tag,
 --     	  " [", LITERAL { 
 -- 	       "\\ref{", 
@@ -332,7 +312,7 @@ tex TO := x -> (
 tex TO2 := x -> (
      tag := x#0;
      text := x#1;
-     tex SEQ {
+     tex SPAN {
      	  TT text,
 --     	  " [", LITERAL { 
 -- 	       "\\ref{", 
@@ -376,7 +356,7 @@ info TOH := x -> concatenate(DocumentTag.FormattedKey x#0, if x#?1 then x#1, com
 info IMG := net IMG := tex IMG  := x -> ""
 info HREF := net HREF := x -> net last x
 
-scan( (net,html,tex), op -> op TOH := x -> op SEQ{ new TO from x, commentize headline x#0 } )
+scan( (net,html,tex), op -> op TOH := x -> op SPAN{ new TO from x, commentize headline x#0 } )
 
 info LITERAL := tex LITERAL := net LITERAL := x -> ""
 html LITERAL := x -> concatenate x
@@ -503,7 +483,7 @@ html HEADER6 := x -> concatenate (
 ///
      )
 
-redoMENU := r -> SEQ prepend(
+redoMENU := r -> DIV prepend(
      HEADER3 "Menu",
      nonnull sublists(toList r, 
 	  x -> not ( class x === TO ),

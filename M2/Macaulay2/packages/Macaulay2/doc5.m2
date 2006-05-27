@@ -282,8 +282,11 @@ document {
 document {
      Key => (symbol -, Tally, Tally),
      Headline => "difference of tallies",
-     TT "x - y", " -- produces the difference of two tallies.",
-     PARA{},
+     Usage => "x - y",
+     Inputs => { "x" => "", "y" => "" },
+     Outputs => { { "produces the difference of two tallies" } },
+     "The count associated to an item ", TT "i", " in the result is the difference of the counts in
+     ", TT "x", " and in ", TT "y", " if it's positive, otherwise, zero.",
      EXAMPLE "tally {a,a,b,c} - tally {c,d,d}",
      SeeAlso => "Tally"
      }

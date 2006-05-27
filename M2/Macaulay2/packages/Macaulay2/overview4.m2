@@ -9,14 +9,14 @@ document {
 	  "x" => List => {"a list of strings and hypertext mark-up lists"}
 	  },
      Outputs => {
-	  Hypertext => {"a new list of mark-up lists obtained from the old by making the format more suitable for
+	  MarkUpList => {"a new list of mark-up lists obtained from the old by making the format more suitable for
 	       ultimate display"}
 	  },
      "Here is a list of some of the transformations that are performed.",
      UL {
 	  {"occurrences of ", TT "null", ", such as those that might have been produced by the insertion of an extra comma, are removed"},
 	  {TO2 {Sequence,"sequences"}, ", such as those produced by extra sets of parentheses, are ", TO2{ "splice","spliced"}, " into the lists containing them"},
-	  {TO2 {List,"lists and sequences"}, " are converted into mark-up lists of type ", TT "SEQ"},
+	  {"the contents of lists and sequences are merged into the mark-up lists containing them" },
 	  {"mark-up lists of type ", TO "TO", " occurring a mark-up list of type ", TO "UL", " are converted to lists of type ", TO "TOH", ", so the headlines of 
 	       the items will appear in the resulting menu"},
 	  {"the targets of the links in mark-up lists of type TO, TOH, and TO2, are converted into ", TO2 {"DocumentTag", "document tags"}},

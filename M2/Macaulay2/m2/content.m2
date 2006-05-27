@@ -1,7 +1,5 @@
 -- from xhtml-math11.dtd:
 
-Hypertext.qname = "body"				    -- to keep it general (?)
-
 PCDATA = set {"#PCDATA"}
 String.qname = "#PCDATA"
 
@@ -52,7 +50,6 @@ Blkphras = set {"pre", "blockquote", "address" }
 
 -- <!ENTITY % Blkstruct.class "%p.qname; | %div.qname;" >
 Blkstruct = set {"p", "div" }
--- SEQ.qname = "div"					    -- try to phase this one out!!!
 
 -- <!ENTITY % Block.class "%Blkstruct.class; %Blkphras.class; %Blkpres.class; %Blkspecial.class; %Block.extra;">
 BlockClass = Blkstruct + Blkphras + Blkpres + Blkspecial + BlockExtra
@@ -124,6 +121,8 @@ validContent#"label" = PCDATA + set { "input", "select", "textarea", "button", "
 validContent#"a" = InlineNoAClass
 -----------------------------------------------------------------------------
 ---- these are all empty:
+-- <!ENTITY % base.content  "EMPTY" >
+validContent#"base" =
 -- <!ENTITY % link.content  "EMPTY" >
 validContent#"link" =
 -- <!ENTITY % hr.content  "EMPTY" >
@@ -157,11 +156,19 @@ validContent#"sup" =
 -- <!ENTITY % sub.content "( #PCDATA | %Inline.mix; )*" >
 validContent#"sub" = PCDATA + InlineMix
 -----------------------------------------------------------------------------
-
+-- <!ENTITY % html.content  "( %head.qname;, %body.qname; )" >
+validContent#"html" = set {"head", "body"}
+-----------------------------------------------------------------------------
 -- <!ENTITY % pre.content "( #PCDATA | %Inlstruct.class; %Inlphras.class; | %tt.qname; | %i.qname; | %b.qname;
 --       %I18n.class; %Anchor.class; | %script.qname; | %map.qname; %Inline.extra; )*" >
 validContent#"pre" = PCDATA + Inlstruct + Inlphras + set { "tt", "i", "b" } + I18nClass + AnchorClass + set {"script","map"} + InlineExtra
-
+-----------------------------------------------------------------------------
+-- <!ENTITY % Head-opts.mix "( %script.qname; | %style.qname; | %meta.qname; | %link.qname; )*" >
+-- <!ENTITY % head.content
+--     "( %Head-opts.mix;,
+--        ( ( %title.qname;, %Head-opts.mix;, ( %base.qname;, %Head-opts.mix; )? )
+--        | ( %base.qname;, %Head-opts.mix;, ( %title.qname;, %Head-opts.mix; ))))" >
+validContent#"head" = set {"title", "base", "script", "style", "meta", "link" }
 -----------------------------------------------------------------------------
 -- <!ENTITY % td.content "( #PCDATA | %Flow.mix; )*" >
 validContent#"td" = PCDATA + FlowMix
@@ -171,20 +178,30 @@ validContent#"tr" = set { "th", "td" }
 -- the regular expression is more complicated, but we don't implement those other tags, anyway!  Or should we?
 validContent#"table" = set { "caption", "col", "colgroup", "thead", "tfoot", "tbody", "tr" }
 -----------------------------------------------------------------------------
+-- <!ENTITY % title.content  "( #PCDATA )" >
+validContent#"title" = PCDATA
+-----------------------------------------------------------------------------
 
 -- <!ENTITY % ul.content  "( %li.qname; )+" >
 validContent#"ul" = set { "li" }
 
 noqname := p -> (
-     if ancestor(p,IntermediateMarkUpType)
+     if instance(p,IntermediateMarkUpType)
      then stderr << "--error: " << format toString p << " is an intermediate mark-up type with no qname" << endl
      else stderr << "--error: " << format toString p << " is a type with no qname" << endl;
      )
 
-chk := (valid,p,c) -> (
-     if not c.?qname then noqname c
-     else if not valid#?(c.qname)
-     then stderr << "--error: element of type " << format toString p << " can't contain an element of type " << format toString c << endl
+validate2 = method()					    -- check extra requirements, such as having at least one element, and the order of the elements
+validate2 MarkUpList := x -> null
+validate2 HTML := x -> (
+     if not x#?0 or not class x#0 === HEAD then stderr << "--error: first element of HTML must be HEAD" << endl;
+     if not x#?1 or not class x#1 === BODY then stderr << "--error: second element of HTML must be BODY" << endl;
+     if #x != 2 then stderr << "--error: HTML should have 2 elements" << endl);
+validate2 HEAD := x -> (
+     c := tally (class \ toList x);
+     if c_TITLE == 0 then stderr << "--error: HEAD should have a TITLE element" << endl;
+     if c_TITLE > 1 then stderr << "--error: HEAD should have at most one TITLE element" << endl;
+     if c_BASE > 1 then stderr << "--error: HEAD should have at most one BASE element" << endl;
      )
 
 validate = method()
@@ -193,15 +210,21 @@ validate TO :=
 validate TOH :=
 validate String := x -> null
 validate TO2 := x -> scan(drop(x,1),validate)
-validate MarkUpList := x -> validate(class x, x)
-validate(Type, BasicList) := (p,x) -> (			    -- regard p as the class of x
+validate MarkUpList := x -> (
+     p := class x;
      if p.?qname then (
 	  n := p.qname;
 	  if validContent#?n then validate(p,validContent#n,x)
 	  else stderr << "--internal error: valid content for qname " << format n << " not recorded yet" << endl;
 	  scan(x,validate))
      else noqname p;
-     null)
+     validate2 x;
+     )
+chk := (valid,p,c) -> (
+     if not c.?qname then noqname c
+     else if not valid#?(c.qname)
+     then stderr << "--error: element of type " << format toString p << " can't contain an element of type " << format toString c << endl
+     )
 validate(Type, Set, BasicList) := (p,valid,x) -> ( scan(x, e -> chk(valid,p,class e)); null )
 validate(MarkUpTypeWithOptions, Set, BasicList) := (p,valid,x) -> ( scan(x, e -> if class e =!= Option then chk(valid,p,class e)); null )
 

@@ -110,25 +110,25 @@ linkTitleTag := tag -> concatenate( " title=\"", DocumentTag.FormattedKey tag, c
 links := tag -> (
      f := FORWARD tag;
      b := BACKWARD tag;
-     SEQ {
+     splice (
 	  if topDocumentTag =!= null then LINK { htmlDirectory|topFileName,   " rel=\"Top\"", linkTitleTag topDocumentTag},
 	  LINK { htmlDirectory|indexFileName, " rel=\"Index\""},
 	  LINK { htmlDirectory|tocFileName,   " rel=\"Table-of-Contents\""},
 	  LINK { Macaulay2HomePage (), " rel=\"Macaulay-2-Home-Page\""},
 	  if f =!= null then LINK { htmlFilename f, " rel=\"Next\"", linkTitleTag f},
 	  if b =!= null then LINK { htmlFilename b, " rel=\"Previous\"", linkTitleTag b},
-	  if NEXT#?tag then SEQ {
+	  if NEXT#?tag then (
 	       LINK { htmlFilename NEXT#tag, " rel=\"Forward\"", linkTitleTag NEXT#tag},
 	       LINK { htmlFilename LAST tag, " rel=\"Last\"", linkTitleTag LAST tag}
-	       },
-	  if PREV#?tag then SEQ {
+	       ),
+	  if PREV#?tag then (
 	       LINK { htmlFilename PREV#tag, " rel=\"Backward\"", linkTitleTag PREV#tag},
 	       LINK { htmlFilename FIRST tag, " rel=\"First\"", linkTitleTag FIRST tag},
-	       },
+	       ),
 	  if UP#?tag then LINK { htmlFilename UP#tag, " rel=\"Up\"", linkTitleTag UP#tag},
 	  LINK { LAYOUT #"packagesrc" "Style" | "doc.css", " rel=\"stylesheet\" type=\"text/css\"" },
 	  LINK { LAYOUT #"packagesrc" "Style" | "doc-no-buttons.css", " rel=\"alternate stylesheet\" title=\"no buttons\" type=\"text/css\"" }
-	  }
+	  )
      )
 
 BUTTON := (s,alt) -> (
@@ -193,7 +193,7 @@ anchor := entry -> (
      if alpha#?anchorPoint and entry >= alpha#anchorPoint then (
      	  s := select(drop(alpha,anchorPoint), c -> entry >= c);
      	  anchorPoint = anchorPoint + #s;
-     	  SEQ apply(s, c -> ANCHOR {c, ""})
+     	  toSequence apply(s, c -> ANCHOR {c, ""})
      	  ))
 
 packageTagList := (pkg,topDocumentTag) -> checkIsTag \ unique join(
@@ -230,7 +230,7 @@ net TreeNode := x -> (
 
 toDoc := method()
 toDoc ForestNode := x -> if #x>0 then UL apply(toList x, y -> toDoc y)
-toDoc TreeNode := x -> SEQ { TOH checkIsTag x#0, toDoc x#1 }
+toDoc TreeNode := x -> SPAN { TOH checkIsTag x#0, toDoc x#1 }
 
 local visitCount
 local duplicateReferences
@@ -366,15 +366,15 @@ makeMasterIndex := keylist -> (
      stderr << "--making  '" << title << "' in " << fn << endl;
      fn
      << html HTML {
-	  HEAD { TITLE title, links() },
+	  HEAD splice { TITLE title, links() },
 	  BODY {
 	       DIV { topNodeButton, " | ", tocButton, " | ", homeButton },
 	       HR{},
 	       HEADER1 title,
 	       DIV between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), 
-	       UL apply(sort keylist, (tag) -> (
+	       UL splice apply(sort keylist, (tag) -> (
 			 checkIsTag tag;
-			 SEQ { anchor tag, TOH tag }
+			 (anchor tag, TOH tag)
 			 )),
 	       }
 	  } << endl << close
@@ -386,7 +386,7 @@ maketableOfContents := () -> (
      stderr << "--making  '" << title << "' in " << fn << endl;
      fn
      << html HTML {
-	  HEAD { TITLE title, links() },
+	  HEAD splice { TITLE title, links() },
 	  BODY {
 	       DIV { topNodeButton, " | ", masterIndexButton, " | ", homeButton },
 	       HR{},
@@ -908,7 +908,7 @@ installPackage Package := opts -> pkg -> (
 	       if debugLevel > 0 then stderr << "--making html page for " << tag << endl;
 	       fn
 	       << html HTML { 
-		    HEAD {
+		    HEAD splice {
 			 TITLE {fkey, commentize headline fkey}, -- I hope this works...
 			 links tag
 			 },
@@ -1121,7 +1121,7 @@ makePackageIndex List := packagePath -> (
      fn := htmlDirectory | "index.html";
      if notify then stderr << "--making index of installed packages in " << fn << endl;
      fn << html HTML { 
-	  HEAD {
+	  HEAD splice {
 	       TITLE {key, commentize headline key},
 	       links()
 	       },
@@ -1142,7 +1142,7 @@ makePackageIndex List := packagePath -> (
 					);
 				   r = select(r, pkg -> fileExists (prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html"));
 				   r = sort r;
-				   SEQ {
+				   DIV {
 					HEADER3 {"Packages in ", prefixDirectory},
 					UL apply(r, pkg -> HREF { prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html", pkg }) 
 					}
@@ -1179,9 +1179,15 @@ show URL := x -> (
      )
 
 fix := fn -> "file://" | replace(" ","%20",fn) 		    -- might want to replace more characters
-showHtml = show Hypertext := x -> (
+showHtml = show MarkUpList := x -> (
      fn := temporaryFileName() | ".html";
-     fn << "<title>Macaulay 2 Output</title>" << endl << html x << endl << close;
+     fn << html HTML {
+	  HEAD {
+	       TITLE "Macaulay 2 Output"
+	       },
+     	  BODY {
+	       x
+	       }} << endl << close;
      show new URL from { fix fn };
      addEndFunction( () -> run ( "rm " | fn ) );
      )

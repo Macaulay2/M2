@@ -321,21 +321,6 @@ formatDocumentTag Sequence := record(
 								else toString) s)
 formatDocumentTag Array := s -> concatenate( toString s#0, "(..., ", toString s#1, " => ...)" )
 
----- this doesn't seem to be used!
--- fSeqTO := fSeqInitialize(i -> fixup TO i, i -> fixup TO i)
--- formatDocumentTagTO := method(SingleArgumentDispatch => true)
--- formatDocumentTagTO Thing := x -> TT formatDocumentTag x
--- formatDocumentTagTO Sequence := (
---      s -> SEQ toList (
--- 	  if #s == 0                                              then (s -> error("unknown document tag: ", toString s))
--- 	  else if             fSeqTO#?(#s,s#0)                    then fSeqTO#(#s,s#0)
--- 	  else if #s >= 1 and fSeqTO#?(#s,s#0,s#1)                then fSeqTO#(#s,s#0,s#1)
--- 	  else if #s >= 1 and fSeqTO#?(#s, class, class s#0, s#1) then fSeqTO#(#s, class, class s#0, s#1)
--- 	  else if             fSeqTO#?(#s, class, class s#0)      then fSeqTO#(#s, class, class s#0)
--- 	  else if             fSeqTO#?#s                          then fSeqTO#(#s)
--- 	                                                          else (s -> error("unknown document tag: ", toString s))) s)
--- formatDocumentTagTO Array := s -> SEQ{ fixup TO s#0, "(..., ", fixup TO s#1, " => ...)" }
-
 -----------------------------------------------------------------------------
 -- fixing up hypertext
 -----------------------------------------------------------------------------
@@ -364,7 +349,6 @@ fixup LITERAL    := identity
 fixup ANCHOR     := identity
 fixup List       := handlePara @@ toSequence
 fixup Sequence   := handlePara
-fixup SEQ        := handlePara @@ toSequence
 fixup TO         := identity
 fixup TO2        := identity
 fixup TOH        := identity
@@ -387,14 +371,10 @@ fixup String     := s -> (				       -- remove clumsy newlines within strings
      if not ln#?1 then return s;
      concatenate ({addspaces0 trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
 
-new Hypertext from List := (h,x) -> fixup x
-hypertext = x -> (
-     x = fixup x;
-     if class x === Hypertext then x
-     else if class x === List or class x === Sequence then new Hypertext from x
-     else if instance(x,MarkUpList) then new Hypertext from {x}
-     else error "'hypertext': no method"
-     )
+
+hypertext = method(SingleArgumentDispatch => true)
+hypertext MarkUpList := fixup
+hypertext Sequence := hypertext List := x -> fixup DIV x
 
 -----------------------------------------------------------------------------
 -- installing the documentation
@@ -522,7 +502,7 @@ fixupTable := new HashTable from {
      Consequences => val -> fixupList val,
      Headline => chkIsString Headline,
      Description => val -> extractExamples fixup val,
-     Caveat  => v -> if v =!= {} then fixup DIV1 { SUBSECTION "Caveat", SEQ v },
+     Caveat  => v -> if v =!= {} then fixup DIV1 { SUBSECTION "Caveat", DIV v },
      SeeAlso => v -> if v =!= {} then fixup DIV1 { SUBSECTION "See also", UL (TO \ enlist v) },
      SourceCode => v -> if v =!= {} then DIV { 
 	  "class" => "waystouse",
@@ -661,17 +641,14 @@ optTO = i -> (
      then (
 	  primary := getPrimary i;
 	  if currentHelpTag === primary
-	  then (fkey, fixup SEQ {fkey})
-	  else (fkey, fixup SEQ {fkey, ", see ", TOH{primary}})
+	  then (fkey, fixup fkey)
+	  else (fkey, fixup SPAN {fkey, ", see ", TOH{primary}})
 	  )
-     else (fkey, fixup SEQ TOH{i})				    -- need an alternative here for secondary tags such as (export,Symbol)
+     else (fkey, fixup TOH{i})				    -- need an alternative here for secondary tags such as (export,Symbol)
      )
 optTOCLASS := i -> (					    -- this isn't different yet, work on it!
-     -- we might want a new type of TO so that in info mode this would look like this:
-     --      * alpha (a StateTable) -- recognizing alphabetic letters  (*note: alpha::.)
-     -- fixup SEQ { TO i, " (", ofClass class value i, ")", commentize headline i }
      r := fixup TOH{i};
-     (DocumentTag.FormattedKey first r, SEQ r))
+     (DocumentTag.FormattedKey first r, r))
 
 ul := t -> if #t =!= 0 then UL t else t
 menu       := s -> ul (last \         nonnull \\ optTO      \ s)
@@ -684,11 +661,11 @@ indefinite := s -> concatenate(indefiniteArticle s, s)
 synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
 
 synonymAndClass := X -> fixup (
-     if X.?synonym then SEQ {indefinite X.synonym, " (of class ", TO X, ")"}
-     else SEQ {"an object of class ", TO X}
+     if X.?synonym then SPAN {indefinite X.synonym, " (of class ", TO X, ")"}
+     else SPAN {"an object of class ", TO X}
      )     
 
-justClass := X -> fixup SEQ {"an instance of class ", TO X}
+justClass := X -> fixup SPAN {"an instance of class ", TO X}
 
 ofClass = X -> fixup (
      if parent X === Nothing then error "expected a class";
@@ -729,23 +706,23 @@ type := S -> (
 istype := X -> parent X =!= Nothing
 alter1 := x -> (
      if class x === Option and #x === 2 then (
-	  if istype x#0 then SEQ { ofClass x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SEQ { ", ", x#1 } }
+	  if istype x#0 then SPAN { ofClass x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SPAN { ", ", x#1 } }
 	  else error("expected string or type to left of '=>', but got: ",toString x#0)
 	  )
      else x)
 alter := x -> (
      if class x === Option and #x === 2 then (
-	  if istype x#0 then SEQ { ofClass x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SEQ { ", ", x#1 } }
+	  if istype x#0 then SPAN { ofClass x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SPAN { ", ", x#1 } }
 	  else if class x#0 === String then (
 	       if class x#1 === Option and #x#1 === 2 then (
-		    if istype x#1#0 then SEQ { TT x#0, ", ", ofClass x#1#0, if x#1#1 =!= "" and x#1#1 =!= null and x#1#1 =!= () then SEQ { ", ", x#1#1 } }
+		    if istype x#1#0 then SPAN { TT x#0, ", ", ofClass x#1#0, if x#1#1 =!= "" and x#1#1 =!= null and x#1#1 =!= () then SPAN { ", ", x#1#1 } }
 		    else error("expected type to left of '=>', but got: ",toString x#1#0)
 		    )
-	       else SEQ { TT x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SEQ { ", ", x#1 } }
+	       else SPAN { TT x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SPAN { ", ", x#1 } }
 	       )
 	  else error("expected string or type to left of '=>', but got: ",toString x#0)
 	  )
-     else SEQ x)
+     else SPAN x)
 
 typicalValue := k -> (
      if typicalValues#?k then typicalValues#k 
@@ -821,17 +798,17 @@ briefSynopsis := key -> (
 	  optionName -> (
 	       fn := if class key === Sequence then key#0 else value key;
 	       hd := headline [fn,optionName];
-	       if hd =!= null then hd = SEQ{ ", ", hd };
+	       if hd =!= null then hd = SPAN{ ", ", hd };
 	       fixup (
 		    if opt#?optionName
 	       	    then (
 			 defaultValue := opt#optionName;
 			 -- ino#optionName used to give the name of the variable used as value
-			 SEQ { TO2{ [fn,optionName], concatenate(toString optionName," => ...") }, hd }
+			 SPAN { TO2{ [fn,optionName], concatenate(toString optionName," => ...") }, hd }
 			 )
 	       	    else (
 			 stderr << "--warning: " << optionName << " not an option for documentation key " << key << endl;
-			 SEQ { TO2{ [fn,optionName], concatenate(toString optionName," => ...") }, hd }
+			 SPAN { TO2{ [fn,optionName], concatenate(toString optionName," => ...") }, hd }
 			 ))));
      (inp',out') := types key;
      inp' = select(inp', T -> T =!= Nothing);
@@ -844,7 +821,6 @@ briefSynopsis := key -> (
      	  if #inp =!= #inp' then error ("mismatched number of inputs in documentation for ", toString key);
      	  inp = merget(key,inp,inp');
 	  );
-     if class out === SEQ then out = toList out;
      if #out === 0 then (
 	  out = apply(out', T -> T => "");
 	  )
@@ -855,14 +831,14 @@ briefSynopsis := key -> (
      inp = alter \ inp;
      out = alter \ out;
      if usa =!= null or #inp > 0 or #out > 0 then (
-	  fixup SEQ {				  -- to be implemented
+	  fixup DIV {				  -- to be implemented
 	       UL {
-     	       	    if usa =!= null then SEQ { "Usage: ", if class usa === String then TT usa else usa},
-		    if fun =!= null then SEQ { "Function: ", TO fun }
+     	       	    if usa =!= null then SPAN { "Usage: ", if class usa === String then TT usa else usa},
+		    if fun =!= null then SPAN { "Function: ", TO fun }
 		    else if class key === Sequence and key#?0 then (
 	       		 if class key#0 === Function 
-			 then SEQ { "Function: ", TO key#0 }
-			 else SEQ { "Operator: ", TO key#0 }
+			 then SPAN { "Function: ", TO key#0 }
+			 else SPAN { "Operator: ", TO key#0 }
 			 ),
 		    if inp#?0 then DIV1 { "Inputs:", UL inp },
 		    if out#?0 then DIV1 { "Outputs:", UL out },
@@ -920,7 +896,7 @@ help String := key -> (
 	       else error("there is no documentation for '"|key|"'");
 	       b = ();
 	       );
-	  Hypertext fixup (title key, b, theExamples key, caveat key, seealso key, theMenu key)))
+	  fixup DIV {title key, b, theExamples key, caveat key, seealso key, theMenu key}))
 
 binary := set binaryOperators
 prefix := set prefixOperators
@@ -929,7 +905,7 @@ operator := set join(binaryOperators, prefixOperators, postfixOperators)
 
 op := s -> if operator#?s then (
      ss := toString s;
-     fixup SEQ {
+     fixup DIV {
 	  if binary#?s then DIV {
 	       "This operator may be used as a binary operator in an expression \n",
 	       "like ", TT ("x"|ss|"y"), ".  The user may install ", TO "binary methods", " \n",
@@ -987,10 +963,6 @@ documentationValue(Symbol,Keyword) := (s,k) -> (
      a := smenu documentableMethods k;
      if #a > 0 then DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", TT toString k, " :"}, a))
 
--- documentationValue(Symbol,HashTable) := (s,x) -> splice (
---      c := documentableMethods x;
---      if #c > 0 then SEQ { SUBSECTION {"Functions installed in ", TT toString x }, smenu c})
-
 documentationValue(Symbol,Thing) := (s,x) -> ()
 
 authorDefaults := new HashTable from { Name => "Anonymous", Email => null, HomePage => null }
@@ -1016,7 +988,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2Core then (
 			 nam := defs.Name;
 			 if defs.HomePage =!= null then nam = HREF{defs.HomePage, nam};
 			 em := defs.Email;
-			 if em =!= null then em = SEQ{" <",HREF{concatenate("mailto:",em),em},">"};
+			 if em =!= null then em = SPAN{" <",HREF{concatenate("mailto:",em),em},">"};
 			 DIV1 {nam,em}
 			 )
 		    )
@@ -1053,7 +1025,7 @@ help Symbol := S -> (
      currentHelpTag = makeDocumentTag S;
      a := smenu apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
      -- b := smenu documentableMethods s;
-     ret := Hypertext fixup ( title S, synopsis S, makeDocBody S, op S,
+     ret := fixup DIV { title S, synopsis S, makeDocBody S, op S,
 	  if #a > 0 then DIV1 { SUBSECTION {"Functions with optional argument named ", toExternalString S, " :"}, a},
 -- 	  if #b > 0 then DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", toExternalString s, " :"}, b),
           theExamples S, caveat S, seealso S,
@@ -1061,7 +1033,7 @@ help Symbol := S -> (
 	  sourcecode S, type S, 
 	  theMenu S
 	  -- if class value S === Function then theAugmentedMenu S else theMenu S
-	  );
+	  };
      currentHelpTag = null;
      ret)
 
@@ -1073,25 +1045,26 @@ help Array := key -> (		    -- optional argument
      opt := key#1;
      if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
      default := (options fn)#opt;
-     Hypertext fixup ( title key, synopsis key, makeDocBody key,
-	  DIV { SUBSECTION "Further information", 
-	       fixup UL {
-	       	    SEQ{ "Default value: ", if isDocumentableThing default and hasDocumentation default then TO {default} else TT toString default },
-	       	    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH {fn} },
-	       	    SEQ{ "Option name: ", TOH {opt} }
-	       	    }},
-	  theExamples key, caveat key, seealso key, theMenu key ))
+     fixup DIV {
+	  title key, synopsis key, makeDocBody key,
+	  SUBSECTION "Further information", 
+	  UL {
+	       SPAN{ "Default value: ", if isDocumentableThing default and hasDocumentation default then TO {default} else TT toString default },
+	       SPAN{ if class fn === Sequence then "Method: " else "Function: ", TOH {fn} },
+	       SPAN{ "Option name: ", TOH {opt} }
+	       },
+	  theExamples key, caveat key, seealso key, theMenu key })
 
 help Sequence := key -> (						    -- method key
      checkLoadDocumentation();
      if key === () then return help "initial help";
      if null === lookup key then error("expected ", toString key, " to be a method");
      currentHelpTag = makeDocumentTag key;
-     ret := Hypertext fixup ( title key, synopsis key, makeDocBody key, theExamples key, caveat key, sourcecode key, seealso key, theMenu key );
+     ret := fixup DIV { title key, synopsis key, makeDocBody key, theExamples key, caveat key, sourcecode key, seealso key, theMenu key };
      currentHelpTag = null;
      ret)
 
-help List := v -> Hypertext between(hr,help \ v)
+help List := v -> DIV between(hr,help \ v)
 
 help Thing := x -> if ReverseDictionary#?x then return help ReverseDictionary#x else error "no documentation found"
 

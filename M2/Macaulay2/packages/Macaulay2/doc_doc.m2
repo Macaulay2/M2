@@ -60,7 +60,7 @@ document {
 	  TOH SeeAlso,
           TOH Subnodes
 	  },
-     PARA "Hypertext markup items that you may use",
+     PARA "Hypertext markup items that you may use:",
      UL {
 	  TOH "hypertext format"
 	  },

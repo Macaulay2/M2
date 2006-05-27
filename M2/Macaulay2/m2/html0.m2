@@ -130,7 +130,6 @@ SUB        = new MarkUpType of MarkUpList
 SUP        = new MarkUpType of MarkUpList
 ITALIC     = withQname_"i" new MarkUpType of MarkUpList
 TEX	   = withQname_"#PCDATA" new MarkUpType of MarkUpList -- TEX really needs to be processed further so its output can be checked, too!
-SEQ	   = new IntermediateMarkUpType of MarkUpList
 SPAN       = new MarkUpType of MarkUpList
 TT         = new MarkUpType of MarkUpList
 LI         = new MarkUpType of MarkUpList
@@ -147,7 +146,6 @@ new HREF from List := (HREF,x) -> (
 
 LINK       = new MarkUpType of MarkUpList
 ANCHOR     = withQname_"a" new MarkUpType of MarkUpList
-Hypertext  = new MarkUpType of MarkUpListParagraph -- top level, to be returned to user by "help" and "hypertext", includes text that has been already fixed up
 
 UL         = new MarkUpType of MarkUpListParagraph
 new UL from List := (UL,x) -> (
@@ -173,16 +171,12 @@ new TO2 from List := (TO2,x) -> { makeDocumentTag x#0, concatenate drop(toSequen
 TO         = withQname_"a" new IntermediateMarkUpType of MarkUpList
 new TO from List := (TO,x) -> if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
 
-TOH        = new IntermediateMarkUpType of MarkUpList
+TOH        = withQname_"span" new IntermediateMarkUpType of MarkUpList
 new TOH from List := (TOH,x) -> { makeDocumentTag x#0 }
 
 new TO from Sequence := new TOH from Sequence := (TO,x) -> new TO from {x} -- document tags can be sequences, so keep them intact
 
-MENU       = new IntermediateMarkUpType of MarkUpListParagraph	            -- like "* Menu:" of "info"
-
----- I bet we aren't using this:
--- MarkUpList ^ MarkUpList := (x,y) -> SEQ{x,SUP y}
--- MarkUpList _ MarkUpList := (x,y) -> SEQ{x,SUB y}
+MENU       = withQname_"div" new IntermediateMarkUpType of MarkUpListParagraph	            -- like "* Menu:" of "info"
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

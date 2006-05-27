@@ -40,8 +40,8 @@ document {
      Key => [associatedPrimes,Strategy],
      "The strategy option value should be one of the following.",
      UL{
-	  SEQ ("1", " -- The assassinator is found using Ext modules."),
-	  SEQ ("2", " -- The assassinator is found using ", TO(topComponents), " on a 
+	  LI ("1", " -- The assassinator is found using Ext modules."),
+	  LI ("2", " -- The assassinator is found using ", TO(topComponents), " on a 
 	       series of ideals.")
 	  },
      "The default strategy is 2.",
@@ -96,8 +96,8 @@ document {
      Key => [localize,Strategy],
 	  "The strategy option value should be one of the following.",
 	  UL{
-	       SEQ ("0" , " -- Uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
-	       SEQ ("1" , " -- Uses a separator to find the localization")
+	       LI ("0" , " -- Uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
+	       LI ("1" , " -- Uses a separator to find the localization")
 	       },
 	  "The default strategy is 1.",
 	  HEADER3 "Strategy => 0",
@@ -147,9 +147,9 @@ document {
      "The Strategy option value sets the localize strategy 
      option, and should be one of the following.",
      UL{
-	  SEQ ("0", " -- Uses ", TT "localize", " Strategy 0"),
-	  SEQ ("1", " -- Uses ", TT "localize", " Strategy 1"),
-	  SEQ ("2", " -- Uses ", TT "localize", " Strategy 2")}
+	  LI ("0", " -- Uses ", TT "localize", " Strategy 0"),
+	  LI ("1", " -- Uses ", TT "localize", " Strategy 1"),
+	  LI ("2", " -- Uses ", TT "localize", " Strategy 2")}
      }
 
 document {

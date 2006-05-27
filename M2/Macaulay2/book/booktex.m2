@@ -188,7 +188,7 @@ booktex UL := x -> concatenate(
 	       ///\hangindent///, toString menuLevel, ///\parindent
 ///,
 	       -- ///\textindent{$\bullet$}///,
-	       booktex if instance(x,TO) then SEQ{ x, headline x#0 } else x,
+	       booktex if instance(x,TO) then SPAN{ x, headline x#0 } else x,
 	       (menuLevel = menuLevel - 1;),
 	       ///%
 \par
