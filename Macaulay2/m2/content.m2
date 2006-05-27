@@ -208,7 +208,9 @@ validate = method()
 validate Option :=					    -- could check each part is a string!
 validate TO :=
 validate TOH :=
-validate String := x -> null
+validate String := x -> (
+     if match("<",x) then stderr << "--error: String contains tag starte character '<' : \"" << x << "\"" << endl;
+     )
 validate TO2 := x -> scan(drop(x,1),validate)
 validate MarkUpList := x -> (
      p := class x;

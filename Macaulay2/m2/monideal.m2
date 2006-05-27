@@ -163,7 +163,7 @@ independentSets Ideal := o -> (M) -> independentSets(monomialIdeal M,o)
 
 expression MonomialIdeal := (I) -> (
      if numgens I === 0 then hold "0" 
-     else new FunctionApplication from { monomialIdeal, unSingleton expression toSequence first( entries generators I) }
+     else new FunctionApplication from { monomialIdeal, unsequence expression toSequence first( entries generators I) }
      )
 
 MonomialIdeal.AfterPrint = MonomialIdeal.AfterNoPrint = (I) -> (

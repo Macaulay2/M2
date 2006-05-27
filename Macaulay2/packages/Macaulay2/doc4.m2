@@ -142,7 +142,7 @@ document {
 	  "identity(4)",
       	  "identity(4,5)",
 	  },
-     SeeAlso => { unSingleton }
+     SeeAlso => { unsequence }
      }
 
 document {

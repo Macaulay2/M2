@@ -53,7 +53,7 @@ net ParagraphList := x -> (
 Bag = new SelfInitializingType of MutableList
 Bag.synonym = "bag"
 unbag = method()
-unbag Bag := x -> unSingleton toSequence x
+unbag Bag := x -> unsequence toSequence x
 net Bag := toString Bag := x -> (
      if #x===0 then "--an empty bag--" 
      else if #x===1 then "--a bagged " | synonym class first x | "--" 
