@@ -1797,7 +1797,9 @@ setupfun("fileLength",fileLength);
 
 functionBody(e:Expr):Expr := (
      when e is f:FunctionClosure do Expr(f.model)
-     else WrongArg("a function closure")
+     is f:CompiledFunction do e
+     is f:CompiledFunctionClosure do e
+     else WrongArg("a function")
      );
 setupfun("functionBody",functionBody);
 
