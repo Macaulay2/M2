@@ -653,7 +653,7 @@ unSingleton(e:Expr):Expr := (
      when e
      is v:Sequence do if length(v) == 1 then v.0 else e
      else e);
-setupfun("unSingleton",unSingleton);
+setupfun("unsequence",unSingleton);
 
 sameFunctionBody(e:Expr):Expr := (
      when e is v:Sequence do

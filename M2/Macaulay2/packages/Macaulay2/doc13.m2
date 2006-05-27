@@ -99,12 +99,12 @@ document { Key => {generateAssertions,(generateAssertions, String)},
      	  ///value \ unstack oo///
 	  }
      }
-document { Key => unSingleton,
+document { Key => unsequence,
      Headline => "extract the single element from a sequence of length 1",
-     Usage => "unSingleton x",
+     Usage => "unsequence x",
      Inputs => { "x" => Thing => null },
      Outputs => { { TT "x#0", ", if ", TT "x", " is a sequence of length 1, otherwise ", TT "x", "" } },
-     EXAMPLE { "unSingleton (2:a)", "unSingleton (1:a)", "unSingleton (0:a)" },
+     EXAMPLE { "unsequence (2:a)", "unsequence (1:a)", "unsequence (0:a)" },
      SeeAlso => sequence}
 
 document { Key => {permutations, (permutations, ZZ), (permutations, VisibleList)},

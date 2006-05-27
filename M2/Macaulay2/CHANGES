@@ -16,6 +16,8 @@ Changes made, most recent ones first:
 
 New in 0.9.8:
 
+'unSingleton' changed to 'unsequence', to corresponsd with 'sequence'
+
 The method for Tally-Tally has been changed to eliminate negative numbers from
 the answer.  This makes results compatible with the fact that sets are a
 special type of tally.

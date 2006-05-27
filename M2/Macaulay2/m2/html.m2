@@ -135,8 +135,7 @@ BUTTON := (s,alt) -> (
      s = rel s;
      if alt === null
      then error "required attribute: ALT"
-     else LITERAL concatenate("<img src=\"",s,"\" alt=\"[", alt, "]\"/>\n")
-     )
+     else IMG("src" => s, "alt" => concatenate("[",alt,"]")))
 
 html HTML := t -> concatenate(
      "<?xml version=\"1.0\" encoding=\"us-ascii\"?>", newline,
@@ -144,26 +143,9 @@ html HTML := t -> concatenate(
      "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">", apply(t,html), "</html>",newline
      )
 
--- validate := LITERAL ///
--- <a href="http://validator.w3.org/check/referer">Validate</a> the html on this page, or <a href="http://jigsaw.w3.org/css-validator/check/referer">validate</a> the css on this page.
--- ///
-
 -- produce html form of documentation, for Macaulay 2 and for packages
 
 buttonBar := (tag) -> ButtonTABLE {{ 
---	  LITERAL concatenate (
---	       "<form action=\"",
---	       if getenv "SEARCHENGINE" === "" then "http://rhenium.math.uiuc.edu:7003/" else getenv "SEARCHENGINE",
---	       "\">
---     	         <div>Search:
---		   <input type=\"text\"   name=\"words\"  />
---		   <input type=\"hidden\" name=\"method\" value=\"boolean\" />
---		   <input type=\"hidden\" name=\"format\" value=\"builtin-short\" />
---		   <input type=\"hidden\" name=\"sort\"   value=\"score\" />
---		   <input type=\"hidden\" name=\"config\" value=\"htdig-M2\" />
---     	         </div>
---	       </form>
---	       "),
 	  DIV splice {
      	       forward tag,
 	       backward tag,

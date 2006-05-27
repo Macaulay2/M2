@@ -161,7 +161,7 @@ document {
 	  TO toList,
 	  TO toSequence,
 	  TO sequence,
-	  TO unSingleton,
+	  TO unsequence,
      	  "manipulating lists and sequences",
 	  TO append,
 	  TO between,

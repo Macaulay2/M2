@@ -75,7 +75,7 @@ ratNumberP = (munge ((num,sl,den) -> num/den)) andP(integerP,constP "/",natNumbe
 listP = comma -> parser -> (munge splice) andP(parser, repP (munge last) andP(constP comma, parser))
 variableP = (munge value) symbolP
 intP = orP(natNumberP,variableP)
-subscriptP = (munge ((lb,x,rb) -> x)) andP( constP "[", (munge unSingleton) (listP ",") intP, constP "]" )
+subscriptP = (munge ((lb,x,rb) -> x)) andP( constP "[", (munge unsequence) (listP ",") intP, constP "]" )
 ringVariableP = (munge ((x,n) -> if n === nil then value x else x_n)) andP(symbolP, optP subscriptP)
 numberP = orP(integerP,ratNumberP)
 powerP = (munge ((x,n) -> if n === nil then x else x^n)) andP(orP(futureP parenExprP,ringVariableP), optP natNumberP)

@@ -11,7 +11,7 @@ export (
 	symbol removeHook,
 	symbol runHooks,
 	symbol generateAssertions,
-        symbol unSingleton,
+        symbol unsequence,
         symbol F4,
 	symbol permutations,
 	symbol sublists,

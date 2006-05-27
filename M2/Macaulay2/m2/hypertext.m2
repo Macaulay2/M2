@@ -296,32 +296,12 @@ info SUP := opSU(info,1)
 net SUB := opSU(net,-1)
 info SUB := opSU(info,-1)
 
-tex TO := x -> (
-     tag := x#0;
-     tex SPAN {
-     	  TT DocumentTag.FormattedKey tag,
---     	  " [", LITERAL { 
--- 	       "\\ref{", 
--- 	       -- something here
--- 	       "}" 
---	       },
---	  "]"
-	  }
-     )
+tex TO := x -> tex TT DocumentTag.FormattedKey x#0
 
 tex TO2 := x -> (
      tag := x#0;
      text := x#1;
-     tex SPAN {
-     	  TT text,
---     	  " [", LITERAL { 
--- 	       "\\ref{", 
--- 	       -- need something here
--- 	       "}"
---	       },
---	  "]"
-	  }
-     )
+     tex TT text )
 
 net TO  := x -> (
      if class x#0 === DocumentTag 
