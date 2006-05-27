@@ -8,22 +8,25 @@ error = args -> olderror (
      )
 protect symbol error
 
+callCount := new MutableHashTable
+
 on = { CallLimit => 100000, Name => null } >> opts -> f -> (
+     fb := functionBody f;
      depth := 0;
      totaltime := 0.;
-     callCount := 0;
+     if not callCount#?fb then callCount#fb = 0;
      limit := opts.CallLimit;
      if class f =!= Function then error("expected a function");
      fn := if opts.Name =!= null then opts.Name else try toString f else "--function--";
      x -> (
-	  saveCallCount := callCount = callCount+1;
+	  saveCallCount := callCount#fb = callCount#fb+1;
      	  << fn << " (" << saveCallCount << ")";
 	  if depth > 0 then << " [" << depth << "]";
 	  << " called with ";
 	  try << class x << " ";
 	  try << x else "SOMETHING";
 	  << endl;
-	  if callCount > limit then error "call limit exceeded";
+	  if callCount#fb > limit then error "call limit exceeded";
 	  depth = depth + 1;
      	  r := timing f x;
 	  timeused := r#0;
