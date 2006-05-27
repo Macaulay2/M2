@@ -41,8 +41,7 @@ document {
 	  TO "variables",
 	  "basic data types",
 	      TO "numeric types",
-	      TO "strings",
-	      TO "nets",
+	      TO "strings and nets",
 	      TO "lists and sequences",
 	      TO "hash tables",
      	  "expressions",
@@ -733,109 +732,6 @@ document {
 	  "p = f()",
 	  "q = f()",
 	  "p(),p(),p(),p(),q(),p(),p(),q(),p(),p()"
-	  }
-     }
-
-document {
-     Key => "strings",
-     "A string is a sequence of characters.  Strings can
-     be manipulated in various ways to produce printed output.
-     One enters a string by surrounding a sequence of characters with
-     quotation marks.",
-     EXAMPLE {
-	  ///"abcdefghij"///,
-	  },
-     "Strings may contain newline characters.",
-     EXAMPLE ///"abcde
-fghij"///,
-     "Strings, like anything else, can be assigned to variables.",
-     EXAMPLE ///x = "abcdefghij"///,
-     "There are escape sequences that make it possible to
-     enter special characters:",
-     PRE "      \\n             newline
-      \\f             form feed
-      \\r             return
-      \\\\             \\ 
-      \\\"             \"
-      \\t             tab
-      \\xxx           ascii character with octal value xxx",
-     EXAMPLE ///y = "abc\101\102\n\tstu"///,
-     "We can use ", TO "peek", " to see what characters are in the string.",
-     EXAMPLE "peek y",
-     "Another way to enter special characters into strings is to use ", TO "///", -- ///
-										  "
-     as the string delimiter.",
-     EXAMPLE ("///" | ///a \ n = "c"/// | "///"),
-     "The function ", TO "ascii", " converts strings to lists of
-     ascii character code, and back again.",
-     EXAMPLE {
-      	  "ascii y",
-      	  "ascii oo",
-	  },
-     "We may use the operator ", TO "|", " to concatenate strings.",
-     EXAMPLE "x|x|x",
-     "The operator ", TO "#", " computes the length of a string.",
-     EXAMPLE "#x",
-     "We may also use the operator ", TO "#", " to extract single characters from
-     a string.  Warning: we number the characters starting with 0.",
-     EXAMPLE "x#5",
-     "The function ", TO "substring", " will extract portions of a string
-     for us.",
-     EXAMPLE {
-	  "substring(5,x)",
-	  "substring(5,2,x)",
-	  },
-     Subnodes => {
-     	  TO "String"
-	  }
-     }
-
-document {
-     Key => "nets",
-     "A net is a rectangular two-dimensional array of characters, together
-     with an imaginary horizontal baseline that allows nets to be assembled
-     easily into lines of text.  A string is regarded as a net with one row.",
-     PARA{},
-     "Nets are used extensively for such things as formatting polynomials for
-     display on ascii terminals.  Use ", TO "net", " to obtain such nets directly.",
-     EXAMPLE {
-	  "R = ZZ[x,y];",
-	  "(x+y)^2",
-	  "n = net oo",
-	  },
-     "The net ", TT "n", " above looks exactly the same as the original polynomial -
-     that's because a polynomial is printed by printing its net.  But the net 
-     ", TT "n", " is no longer usable as a polynomial; it's just an 
-     array of characters.  We may use ", TO "peek", " to clarify the extent of 
-     a net.",
-     EXAMPLE "peek n",
-     "One way to create nets directly is with the operator ", TT "||", ", 
-     which concatenates strings or nets vertically.",
-     EXAMPLE ///x = "a" || "bb" || "ccc"///,
-     "We may use the operator ", TO "^", " to raise or lower a net with 
-     respect to its baseline.  Look carefully to see how the baseline has
-     moved - it is aligned with the equal sign.",
-     EXAMPLE "x^2",
-     "Nets may appear in lists, and elsewhere.",
-     EXAMPLE {
-	  "{x,x^1,x^2}",
-	  },
-     "Nets and strings can be concatenated horizontally with the operator ", TO "|", ".",
-     EXAMPLE ///x^2 | "-------" | x///,
-     "Each net has a width, a depth, and a height.  The width is the number
-     of characters in each row.  The depth is the number of rows below
-     the baseline, and the height is the number of rows above the baseline.
-     The depth and the height can be negative.",
-     EXAMPLE "width x, height x, depth x",
-     "We may extract the rows of a net as strings with ", TO "unstack", " and put
-     them back together again with ", TO "stack", ".",
-     EXAMPLE {
-	  "v = unstack x",
-	  "peek oo",
-	  "stack v"
-	  },
-     Subnodes => {
-	  TO "Net"
 	  }
      }
 

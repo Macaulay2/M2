@@ -4,7 +4,8 @@
 
 document {
      Key => match, 
-     Headline => "regular expression matching"
+     Headline => "regular expression matching",
+     Subnodes => {TO (match,String,String)}
      }
 
 document { 

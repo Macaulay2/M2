@@ -4,7 +4,8 @@
 
 document {
      Key => replace, 
-     Headline => "regular expression replacement"
+     Headline => "regular expression replacement",
+     Subnodes => {TO (replace,String,String,String)}
      }
 
 document { 

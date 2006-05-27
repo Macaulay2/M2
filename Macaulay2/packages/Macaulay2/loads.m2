@@ -44,6 +44,7 @@ load "ov_language.m2"
 load "ov_files.m2"
 
 load "doc_lists.m2"
+load "doc_strings.m2"
 load "functions.m2"
 load "variables.m2"
 load "classes.m2"
