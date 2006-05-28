@@ -16,7 +16,7 @@ on = { CallLimit => 100000, Name => null } >> opts -> f -> (
      totaltime := 0.;
      if not callCount#?fb then callCount#fb = 0;
      limit := opts.CallLimit;
-     if class f =!= Function then error("expected a function");
+     if not instance(f, Function) then error("expected a function");
      fn := if opts.Name =!= null then opts.Name else try toString f else "--function--";
      x -> (
 	  saveCallCount := callCount#fb = callCount#fb+1;
@@ -138,7 +138,7 @@ netTable := x -> (
 	  )^(height x#0 -1))
 robust := y -> silentRobustNet(55,4,3,y)
 abbreviate := x -> (
-     if class x === Function and match("^--Function.*--$", toString x) then "..."
+     if instance(x, Function) and match("^--Function.*--$", toString x) then "..."
      else robust x)
 listSymbols = method()
 listSymbols Dictionary := d -> listSymbols values d

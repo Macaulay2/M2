@@ -311,8 +311,8 @@ makeMonoid := (options) -> (
      options.Degrees = degs;
      options.DegreeRank = degrk;
 
-     if class options.Adjust =!= Function then error("expected 'Adjust' option to be a function");
-     if class options.Repair =!= Function then error("expected 'Repair' option to be a function");
+     if not instance(options.Adjust, Function) then error("expected 'Adjust' option to be a function");
+     if not instance(options.Repair, Function) then error("expected 'Repair' option to be a function");
      heft := options.Heft;
      if heft =!= null then (
      	  if options.Adjust =!= identity or options.Repair =!= identity then error "encountered both Heft and Adjust or Repair options";

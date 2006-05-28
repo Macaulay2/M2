@@ -62,7 +62,7 @@ isDocumentableMethod ScriptedFunctor := fn -> ReverseDictionary#?fn
 verifyKey := method(SingleArgumentDispatch => true)
 verifyKey Thing    := s -> null
 verifyKey Sequence := s -> (				    -- e.g., (res,Module) or (symbol **, Module, Module)
-     if class lookup s =!= Function then error("documentation key for '", formatDocumentTag s, "' encountered, but no method installed"))
+     if not instance(lookup s, Function) then error("documentation key for '", formatDocumentTag s, "' encountered, but no method installed"))
 verifyKey Array   := s -> (				    -- e.g., [res, Strategy]
      fn := s#0;
      opt := s#1;
@@ -692,7 +692,7 @@ title := s -> (
 
 type := S -> (
      s := value S;
-     if class s =!= Function and class s =!= Package then DIV1 {
+     if not instance(s, Function) and class s =!= Package then DIV1 {
 	  "class" => "waystouse",
 	  SUBSECTION "For the programmer",  
 	  fixup PARA deepSplice { "The object ", TO S, " is ", ofClass class s,
@@ -767,7 +767,7 @@ getOptionDefaultValues Function := f -> (
      if o =!= null then o else emptyOptionTable)
 getOptionDefaultValues Sequence := s -> (
      o := options s;
-     if o =!= null then o else if s#?0 and class s#0 === Function then getOptionDefaultValues s#0 else emptyOptionTable)
+     if o =!= null then o else if s#?0 and instance(s#0, Function) then getOptionDefaultValues s#0 else emptyOptionTable)
 
 sortByName := v -> last \ sort \\ (i -> (toString i, i)) \ v
 
@@ -836,7 +836,7 @@ briefSynopsis := key -> (
      	       	    if usa =!= null then SPAN { "Usage: ", if class usa === String then TT usa else usa},
 		    if fun =!= null then SPAN { "Function: ", TO fun }
 		    else if class key === Sequence and key#?0 then (
-	       		 if class key#0 === Function 
+	       		 if instance(key#0, Function) 
 			 then SPAN { "Function: ", TO key#0 }
 			 else SPAN { "Operator: ", TO key#0 }
 			 ),
@@ -875,7 +875,7 @@ briefDocumentation Thing := x -> (
      if r =!= null then << endl << r << endl
      else (
 	  if headline x =!= null then << endl << commentize headline x << endl;
-	  if class x === Function or class x === ScriptedFunctor then (
+	  if instance(x, Function) or class x === ScriptedFunctor then (
 	       s := fmeth x;
 	       if s =!= null then << endl << s << endl;)))
 
@@ -933,7 +933,7 @@ op := s -> if operator#?s then (
 	  }
      )
 
-optionFor := s -> unique select( value \ flatten(values \ globalDictionaries), f -> class f === Function and (options f)#?s) -- this is slow!
+optionFor := s -> unique select( value \ flatten(values \ globalDictionaries), f -> instance(f, Function) and (options f)#?s) -- this is slow!
 
 --ret := k -> (
 --     t := typicalValue k;
@@ -972,7 +972,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2Core then (
      b := select(e,x -> instance(value x,Type));	    -- types
      -- this doesn't get the methods of the form f T := ... :
      m := unique flatten apply(b, T -> select(keys value T, 
-	       i -> class i === Sequence and #i > 1 and ( instance(i#0, Symbol) and i#1 =!= symbol = or class i#0 === Function ) and isDocumentableMethod i)); -- methods
+	       i -> class i === Sequence and #i > 1 and ( instance(i#0, Symbol) and i#1 =!= symbol = or instance(i#0, Function) ) and isDocumentableMethod i)); -- methods
      c := select(e,x -> instance(value x,Symbol));	    -- symbols
      d := toList(set e - set a - set b - set c); -- other things
      fn := pkg#"title" | ".m2";
@@ -1032,7 +1032,7 @@ help Symbol := S -> (
      	  documentationValue(S,value S),
 	  sourcecode S, type S, 
 	  theMenu S
-	  -- if class value S === Function then theAugmentedMenu S else theMenu S
+	  -- if instance(value S, Function) then theAugmentedMenu S else theMenu S
 	  };
      currentHelpTag = null;
      ret)

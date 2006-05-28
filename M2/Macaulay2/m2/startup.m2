@@ -46,6 +46,7 @@ if firstTime then (
 	  {symbol Array, symbol BasicList, symbol RRR, symbol CCC,
 		symbol Boolean, symbol CacheTable, symbol Pseudocode, symbol Database,
 		symbol Dictionary, symbol File, symbol Function, symbol HashTable,
+		symbol FunctionClosure, symbol CompiledFunction, symbol CompiledFunctionClosure,
 		symbol List, symbol MutableHashTable, symbol MutableList, symbol Net,
 		symbol Nothing, symbol Option, symbol QQ, symbol RR, symbol RR, symbol CC,
 		symbol Ring, symbol Sequence, symbol String, symbol Symbol, symbol Thing,
@@ -183,7 +184,7 @@ if firstTime then (
 	  if version#"operating system" === "Darwin" then "Library/Application Support/Macaulay2/" else ".Macaulay2/"
 	  );
      applicationDirectory = () -> (
-	  if class applicationDirectorySuffix === Function
+	  if instance(applicationDirectorySuffix, Function)
 	  then homeDirectory | applicationDirectorySuffix()
 	  else homeDirectory | applicationDirectorySuffix
 	  );
@@ -424,7 +425,7 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 	       usage();
 	       exit 1;
 	       )
-	  else if phase == 3 then if class load === Function then load arg else simpleLoad arg;
+	  else if phase == 3 then if instance(load, Function) then load arg else simpleLoad arg;
 	  argno = argno+1;
 	  );
      loadDepth = ld;
