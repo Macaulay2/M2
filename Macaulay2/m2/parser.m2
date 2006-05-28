@@ -19,7 +19,7 @@ doneP = val -> c -> if c === null then val
 nullP = doneP nil
 orP = x -> (
      assert( x =!= null );
-     if class x === Function then return x;
+     if instance(x, Function) then return x;
      if #x == 0 then return deadP;
      c -> (
 	  if c === null then return for p in x do if (t := p null) =!= null then return t;
@@ -27,7 +27,7 @@ orP = x -> (
 	  if #y > 0 then orP y))
 andP = x -> (
      assert( x =!= null );
-     if class x === Function then return x;
+     if instance(x, Function) then return x;
      if #x == 0 then return nullP;
      f := (past,current,future) -> c -> (
 	  if c === null then (

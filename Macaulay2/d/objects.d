@@ -443,13 +443,13 @@ export Class(e:Expr):HashTable := (
      is file do fileClass
      is DictionaryClosure do dictionaryClass
      is string do stringClass
-     is FunctionClosure do functionClass
+     is FunctionClosure do functionClosureClass
      is Net do netClass
      is NetFile do netFileClass
      is Error do errorClass
      is Sequence do sequenceClass
-     is CompiledFunction do functionClass
-     is CompiledFunctionClosure do functionClass
+     is CompiledFunction do compiledFunctionClass
+     is CompiledFunctionClosure do compiledFunctionClosureClass
      is s:SymbolClosure do if s.symbol.word.parse == parseWORD then symbolClass else keywordClass
      is RRR do bigRealClass
      is CCC do bigComplexClass
@@ -511,6 +511,9 @@ setupconst("RawMonomialIdeal",Expr(rawMonomialIdealClass));
 setupconst("File",Expr(fileClass));
 setupconst("String",Expr(stringClass));
 setupconst("Function",Expr(functionClass));
+setupconst("FunctionClosure",Expr(functionClosureClass));
+setupconst("CompiledFunction",Expr(compiledFunctionClass));
+setupconst("CompiledFunctionClosure",Expr(compiledFunctionClosureClass));
 setupconst("Symbol",Expr(symbolClass));
 setupconst("Keyword",Expr(keywordClass));
 -- setupconst("Error",Expr(errorClass));

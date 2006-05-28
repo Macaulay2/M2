@@ -44,7 +44,7 @@ codeFunction := (f,depth) -> (
 		    codeHelper#(functionBody f) f, 
 		    (comment,val) -> indent stack (
 			      comment, 
-			      if class val === Function then codeFunction(val,depth+1) else net val
+			      if instance(val, Function) then codeFunction(val,depth+1) else net val
 			      )))))
 code = method(SingleArgumentDispatch=>true)
 code Nothing := null -> null
@@ -91,9 +91,9 @@ methods Type := F -> (
      found := new MutableHashTable;
      seen#F = true;
      scan(pairs F, (key,meth) -> (
-	       if class meth === Function then (
+	       if instance(meth, Function) then (
 		    if class key === Sequence and member(F,key) then found#key = true
-	       	    else if class key === Function then found#(key,F) = true
+	       	    else if instance(key, Function) then found#(key,F) = true
 		    else if instance(key, Symbol) and instance(key,Keyword) then found#(key,F) = true
 		    )
 	       )
@@ -104,7 +104,7 @@ methods Type := F -> (
 	       if instance(x,Type) and not seen#?x then (
 		    seen#x = true;
 		    scan(pairs x, (key,meth) -> (
-			      if class meth === Function then
+			      if instance(meth, Function) then
 			      if key === F then found#(F,x) = true
 			      else if class key === Sequence and member(F,key)
 			      then found#key = true)))));
@@ -121,7 +121,7 @@ methods Sequence := F -> (
 	       if instance(x,Type) and not seen#?x then (
 		    seen#x = true;
 		    scan(pairs x, (key,meth) -> (
-			      if class meth === Function 
+			      if instance(meth, Function) 
 			      and class key === Sequence and tallyF <= tally key
 			      then found#key = true)))));
      -- sort -- too slow
@@ -137,7 +137,7 @@ methods Thing := F -> (
 	       if instance(x,Type) and not seen#?x then (
 		    seen#x = true;
 		    scan(pairs x, (key,meth) -> (
-			      if class meth === Function then
+			      if instance(meth, Function) then
 			      if key === F or class key === Sequence and #key === 2 and (key#0 === F or F === symbol =) and key#1 === symbol =
 			      then found#(key,x) = true
 			      else if class key === Sequence and (

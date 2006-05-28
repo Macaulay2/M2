@@ -44,21 +44,21 @@ R = ZZ/5
 S = ZZ/5
 assert(R === S)
 
-assert(class rawGaloisField === Function)
-assert(class rawSchurRing === Function)
-assert(class rawQuotientRing === Function)
-assert(class rawLocalRing === Function)
-assert(class rawFractionRing === Function)
-assert(class rawSolvableAlgebra === Function)
-assert(class rawWeylAlgebra === Function)
-assert(class rawSkewPolynomialRing === Function)
-assert(class rawPolynomialRing === Function)
+assert(instance(rawGaloisField, Function))
+assert(instance(rawSchurRing, Function))
+assert(instance(rawQuotientRing, Function))
+assert(instance(rawLocalRing, Function))
+assert(instance(rawFractionRing, Function))
+assert(instance(rawSolvableAlgebra, Function))
+assert(instance(rawWeylAlgebra, Function))
+assert(instance(rawSkewPolynomialRing, Function))
+assert(instance(rawPolynomialRing, Function))
 
-assert(class rawIsField === Function)
-assert(class rawDeclareField === Function)
-assert(class rawGetNonUnit === Function)
-assert(class rawAmbientRing === Function)
-assert(class rawDenominatorRing === Function)
+assert(instance(rawIsField, Function))
+assert(instance(rawDeclareField, Function))
+assert(instance(rawGetNonUnit, Function))
+assert(instance(rawAmbientRing, Function))
+assert(instance(rawDenominatorRing, Function))
 
 
 ----------------------------------

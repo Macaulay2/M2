@@ -41,7 +41,7 @@ buildDirectory := "/tmp/"				    -- the root of the relative paths:
 htmlDirectory := ""					    -- relative path to the html directory, depends on the package
 installDirectory := ""					    -- absolute path to the install directory
 
-runfun := o -> if class o === Function then o() else o
+runfun := o -> if instance(o, Function) then o() else o
 initInstallDirectory := o -> installDirectory = minimizeFilename(runfun o.InstallPrefix | "/")
 
 -----------------------------------------------------------------------------
@@ -677,7 +677,7 @@ installPackage Package := opts -> pkg -> (
 
 	  -- run tests that are functions
 	  stderr << "--running tests that are functions " << exampleDir << endl;
-	  scan(pairs pkg#"test inputs", (key,str) -> if class str === Function then (
+	  scan(pairs pkg#"test inputs", (key,str) -> if instance(str, Function) then (
 		    stderr << "--  running test " << key << ", function " << str << endl;
 		    str();
 		    ));
@@ -807,7 +807,7 @@ installPackage Package := opts -> pkg -> (
 		    tag := makeDocumentTag s;
 		    if not isUndocumented tag and not hasDocumentation s and signalDocError tag then stderr << "--error: symbol has no documentation: " << tag << endl;
 		    f := value s;
-		    if class f === Function then (
+		    if instance(f, Function) then (
 			 scan(methods f, m -> (
 				   tag := makeDocumentTag m;
 				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m and signalDocError tag
@@ -946,7 +946,7 @@ installPackage Package := opts -> pkg -> (
 	  << ///contact dan@math.uiuc.edu/// << endl;
 	  removeLastSlash := s -> if s#?0 and s#-1 === "/" then substring(s,0,#s-1) else s;
 	  scan(("libm2","packagedoc","packageexamples","packagehtml","packageimages","packagesrc","packagetests"),
-	       k -> f << "linkdir " << (if class LAYOUT#k === Function then removeLastSlash LAYOUT#k "*" else removeLastSlash LAYOUT#k) << endl);
+	       k -> f << "linkdir " << (if instance(LAYOUT#k, Function) then removeLastSlash LAYOUT#k "*" else removeLastSlash LAYOUT#k) << endl);
 	  fileMode(f,octal "644");
 	  f << close;
 	  -- INSTALL

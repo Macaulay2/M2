@@ -123,14 +123,14 @@ assert( x# (symbol |, String, String) === concatenate )
 -- test method installation and lookup
 assert( class symbol | === Keyword )
 assert( class symbol x === Symbol )
-assert( class concatenate === Function )
+assert( instance(concatenate, Function) )
 assert( class String === Type )
    -- first do it manually
   String # (symbol |, String, String) = concatenate
   assert( String #? (symbol |, String, String) )
   assert( String # (symbol |, String, String) === concatenate )
   assert( lookup(symbol |, String, String ) =!= null )
-  assert( class lookup(symbol |, String, String ) === Function )
+  assert( instance(lookup(symbol |, String, String ), Function) )
   assert( lookup(symbol |, String, String ) === concatenate )
   assert( "asdf" | "adsf" === "asdfadsf" )
    -- then do it the right way, with a different operator
@@ -138,7 +138,7 @@ assert( class String === Type )
   assert( String #? (symbol ||, String, String) )
   assert( String # (symbol ||, String, String) === concatenate )
   assert( lookup(symbol ||, String, String ) =!= null )
-  assert( class lookup(symbol ||, String, String ) === Function )
+  assert( instance(lookup(symbol ||, String, String ), Function) )
   assert( lookup(symbol ||, String, String ) === concatenate )
   assert( "asdf" || "adsf" === "asdfadsf" )
 
