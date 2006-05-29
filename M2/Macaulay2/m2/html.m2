@@ -398,7 +398,7 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> ( -- retur
      args := "--silent --print-width 80 --stop --int -e errorDepth=0" | (if usermode then "" else " -q") | " " | ldpkg;
      cmdname := commandLine#0;
      if ulimit === null then (
-	  ulimit = utest " -t 40" | utest " -m 150000"| utest " -v 150000";
+	  ulimit = utest " -t 40" | utest " -m 200000"| utest " -v 200000";
 	  );
      tmpf << "-- -*- M2-comint -*-" << endl << close;
      cmd := ulimit | "cd " | rundir | "; time " | cmdname | " " | args | " <" | format inf | " >>" | format tmpf | " 2>&1";
