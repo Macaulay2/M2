@@ -413,6 +413,7 @@ char **argv;
 #endif
 
      if (0 != sigsetjmp(loaddata_jump,TRUE)) {
+	  if (gotArg("--notify", saveargv)) fprintf(stderr,"--loaded cached memory data\n");
 	  extern char *GC_get_stack_base();
      	  GC_free_space_divisor = 4;
 #if 1

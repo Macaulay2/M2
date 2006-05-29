@@ -154,7 +154,7 @@ int loaddata(char const *filename) {
     n++;
     ret = sscanf(fbuf, mapfmt, &dumpedmap.from, &dumpedmap.to, &r, &w, &x, &dumpedmap.checksum, &S);
     if (7 != ret) {
-      warning("--warning: loaddata: in data file %s: invalid map %d: %s\n", filename, n, fbuf);
+      warning("--warning: loaddata: in data file %s: invalid map: %s\n", filename, fbuf);
       warning("         : map format \"%s\" matched only %d item(s)\n", mapfmt,ret);
       if (ret >= 1) warning("         : from : %p\n", dumpedmap.from);
       if (ret >= 2) warning("         : to   : %p\n", dumpedmap.to);
@@ -178,38 +178,42 @@ int loaddata(char const *filename) {
 	char buf[100];
 	sprintmap(buf,sizeof(buf),&currmap[j]);
 	trim(buf);
-	if (debug) warning("--warning: loaddata: map %d has appeared or changed its location: %s\n",j,buf);
+	if (debug) warning("--error: loaddata: map has appeared or changed its location: %s\n",buf);
 	haderror = TRUE;
       }
-      if (getenv("LOADDATA_DEBUG")) fprintf(stderr,"--loaddata: current map: "), fdprintmap(STDERR,&currmap[j]);
+      if (debug) fprintf(stderr,"--loaddata: current map: "), fdprintmap(STDERR,&currmap[j]);
       if (currmap[j].isStack) currentTopOfStack = currmap[j].to;
     };
 
-    if (getenv("LOADDATA_DEBUG")) fprintf(stderr,"--loaddata:  dumped map: "), fdprintmap(STDERR,&dumpedmap);
+    if (debug) fprintf(stderr,"--loaddata:  dumped map: "), fdprintmap(STDERR,&dumpedmap);
 
     if ((uintP)dumpedmap.from < (uintP)currmap[j].from) {
-      if (getenv("LOADDATA_DEBUG")) fprintf(stderr,"--loaddata: current map: "), fdprintmap(STDERR,&currmap[j]);
+      if (debug) fprintf(stderr,"--loaddata: current map: "), fdprintmap(STDERR,&currmap[j]);
       if (currmap[j].isStack) currentTopOfStack = currmap[j].to;
-      if (debug) warning("--warning: loaddata: map has disappeared or changed its location: %s\n",fbuf);
       if (dumpedmap.isStack) {
-	   if (debug) warning("--       : loaddata: map is part of stack, ignoring change: %s\n",fbuf);
+	   if (debug) warning("--warning: loaddata: map (part of stack) has disappeared or changed its location: %s\n",fbuf);
       }
-      else haderror = TRUE;
+      else {
+	   if (debug) warning("--error: loaddata: map has disappeared or changed its location: %s\n",fbuf);
+	   haderror = TRUE;
+      }
     }
 
     if (dumpedmap.from == currmap[j].from) {
-      if (getenv("LOADDATA_DEBUG")) fprintf(stderr,"--loaddata: current map: "), fdprintmap(STDERR,&currmap[j]), fprintf(stderr,"\n");
+      if (debug) fprintf(stderr,"--loaddata: current map: "), fdprintmap(STDERR,&currmap[j]);
       if (currmap[j].isStack) currentTopOfStack = currmap[j].to;
 
       if (dumpedmap.r != currmap[j].r || dumpedmap.w != currmap[j].w || dumpedmap.x != currmap[j].x) {
 	char buf[100];
 	sprintmap(buf,sizeof(buf),&currmap[j]);
 	trim(buf);
-	if (debug) warning("--warning: loaddata: map %d protection has changed.\n--   from: %s\n--     to: %s\n",j,fbuf,buf);
 	if (dumpedmap.r == currmap[j].r && dumpedmap.w == currmap[j].w) {
-	     if (debug) warning("--       : loaddata: ignoring map protection executability change\n",j,fbuf,buf);
+	     if (debug) warning("--warning: loaddata: map protection (executability only) has changed, from '%s' to '%s'\n",fbuf,buf);
 	}
-	else haderror = TRUE;
+	else {
+	     if (debug) warning("--error: loaddata: map protection has changed, from '%s' to '%s'\n",fbuf,buf);
+	     haderror = TRUE;
+	}
       }
 
       /* at least one map seems to change its size */
@@ -219,7 +223,7 @@ int loaddata(char const *filename) {
 	char buf[100];
 	sprintmap(buf,sizeof(buf),&currmap[j]);
 	trim(buf);
-	if (debug) warning("--warning: loaddata: map %d has changed its size.\n--   from: %s\n--     to: %s\n",j,fbuf,buf);
+	if (debug) warning("--warning: loaddata: map has changed its size, from '%s' to '%s'\n",fbuf,buf);
 	fclose(f);
 	close(fd);
 	return ERROR;
@@ -230,11 +234,13 @@ int loaddata(char const *filename) {
 	char buf[100];
 	sprintmap(buf,sizeof(buf),&currmap[j]);
 	trim(buf);
-	if (debug) warning("--warning: map %d checksum has changed\n",j);
 	if (getenv("LOADDATA_IGNORE_CHECKSUMS") == NULL) {
-	  haderror = TRUE;
+	     warning("--error: map checksum has changed, file %s\n", currmap[j].filename != NULL ? currmap[j].filename : "--unknown--" );
+	     haderror = TRUE;
 	}
-	else if (debug) warning("--warning: ... ignoring checksum change\n");
+	else {
+	     if (debug) warning("--warning: map checksum has changed, file %s\n", currmap[j].filename != NULL ? currmap[j].filename : "--unknown--" );
+	}
       }
       j++;
     }
@@ -250,24 +256,19 @@ int loaddata(char const *filename) {
   }
 
   for (;j<nmaps;j++) {
-       if (getenv("LOADDATA_DEBUG")) fprintf(stderr,"--loaddata: current map: "), fdprintmap(STDERR,&currmap[j]);
+       if (debug) fprintf(stderr,"--loaddata: current map: "), fdprintmap(STDERR,&currmap[j]);
        if (currmap[j].isStack) currentTopOfStack = currmap[j].to;
   }
 
   if (currentTopOfStack != previousTopOfStack) {
        if (debug) warning("--warning: loaddata: top of stack has changed from %p to %p\n",previousTopOfStack,currentTopOfStack);
-#if 0
-       haderror = TRUE;
-#else
        /* we make do by having gc recompute the stack base after loading data */
-       if (debug) warning("--       : loaddata: ignoring stack address change\n",previousTopOfStack,currentTopOfStack);
-#endif
   }
 
   if (haderror) {
        fclose(f);
        close(fd);
-       if (notify) fprintf(stderr,"--memory maps have changed, can'n load cached data\n");
+       fprintf(stderr,"--warning: memory maps have changed, can't load cached data: %s\n",filename);
        return ERROR;
   }
 
