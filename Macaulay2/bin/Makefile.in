@@ -24,8 +24,10 @@ $(bindir)/M2-help : M2-help ; $(INSTALL) $^ $@
 # shared library links 
 ifeq ($(ENCAP),yes)
 ifeq ($(OS),Linux)
+ifeq ($(TARLIBS),yes)
 make-lib-links install :: $(libdir); @srcdir@/liblinks M2$(EXE) $(libdir)
 $(libdir):; $(INSTALL) -d "$@"
+endif
 endif
 endif
 
