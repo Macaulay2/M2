@@ -39,6 +39,7 @@ MEMDEBUG = @MEMDEBUG@
 VERBOSE = @VERBOSE@
 STATIC = @STATIC@
 CYGWIN = @CYGWIN@
+TARLIBS = @TARLIBS@
 
 CC = @CC@
 GCC = @GCC@
@@ -343,7 +344,3 @@ showvars :
 	:  = $()
 	:  = $()
 	:  = $()
-
-# Local Variables:
-# compile-command: "make -f Makefile-configuration"
-# End:
