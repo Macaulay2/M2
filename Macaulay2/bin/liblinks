@@ -24,16 +24,18 @@ ldd "$EXE" |
   ret=
   while read x
   do nm=$(expr "$x" : "\(.*\) => ")
-     fi=$(readlinks $(expr "$x" : ".* => \(.*\) ([0-9a-fx]*)$"))
-     ta="$TARDIR"/"$nm"
-     if test -h "$ta" && test $(readlink "$ta") = "$fi"
-     then ls -l "$ta"
-     elif test -e "$ta" -a ! -h "$ta"
-     then echo "error: file '$ta' is in the way" >&2
-	  ls -l "$ta" >&2
-	  ret=1
-     else ( test -h "$ta" && (set -x ; rm "$ta")
-	    set -x; ln -s "$fi" "$ta" )
+     if test "$nm"
+     then fi=$(readlinks $(expr "$x" : ".* => \(.*\) ([0-9a-fx]*)$"))
+	  ta="$TARDIR"/"$nm"
+	  if test -h "$ta" && test $(readlink "$ta") = "$fi"
+	  then ls -l "$ta"
+	  elif test -e "$ta" -a ! -h "$ta"
+	  then echo "error: file '$ta' is in the way" >&2
+	       ls -l "$ta" >&2
+	       ret=1
+	  else ( test -h "$ta" && (set -x ; rm "$ta")
+		 set -x; ln -s "$fi" "$ta" )
+	  fi
      fi
   done
   exit $ret
