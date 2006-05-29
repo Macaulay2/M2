@@ -96,6 +96,7 @@ int getmaps(int nmaps, struct MAP maps[nmaps]) {
 	maps[i].w = (info.protection & VM_PROT_WRITE) != 0;
 	maps[i].x = (info.protection & VM_PROT_EXECUTE) != 0;
 	maps[i].checksum = 0;
+	maps[i].filename = NULL;
 	i++;
       }
       address += size;

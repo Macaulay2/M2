@@ -5,6 +5,7 @@ typedef struct MAP {
   /* these fields filled in by machine dependent code */
   void *from, *to;
   char r, w, x;
+  char *filename;		/* optional, NULL if missing */
   /* extra fields ignored by machine dependent code, filled in later */
   unsigned int checksum;
   char isStack;

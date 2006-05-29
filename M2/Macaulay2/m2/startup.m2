@@ -446,7 +446,7 @@ if firstTime and not noloaddata and version#"dumpdata" then (
      if fileExists datafile then (
 	  if notify then stderr << "--loading cached memory data from " << datafile << newline << flush;
      	  try loaddata datafile;
-	  stderr << "--warning: can not load data from " << datafile << newline << flush;
+	  -- stderr << "--warning: can not load data from " << datafile << newline << flush;
 	  )
      )
 

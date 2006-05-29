@@ -46,6 +46,7 @@ int getmaps(int nmaps, struct MAP map[nmaps]) {
       map[i].w = w == 'w';
       map[i].x = x == 'x';
       map[i].checksum = 0;
+      map[i].filename = NULL;
     }
     return OKAY;
   }
