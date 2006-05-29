@@ -349,12 +349,17 @@ char **argv;
      extern int interp_topLevel();
 
 #if HAVE_PERSONALITY && !PROFILING
-     if (!gotArg("--no-personality", argv)
-	 && (personality(-1) & ADDR_NO_RANDOMIZE) == 0
-	 &&  personality(ADDR_NO_RANDOMIZE | personality(-1)) != -1  /* this avoids mmap() calls resulting in address randomization */
-	 && (personality(-1) & ADDR_NO_RANDOMIZE) != 0
-	 ) {
-	  return execvp(argv[0],argv);
+     if (!gotArg("--no-personality", argv)) {
+	  /* this avoids mmap() calls resulting in address randomization */
+	  int oldpersonality = personality(-1);
+	  if ((oldpersonality & ADDR_NO_RANDOMIZE) == 0) {
+	       int newpersonality;
+	       personality(oldpersonality | ADDR_NO_RANDOMIZE);
+	       newpersonality = personality(-1);
+	       personality(oldpersonality | ADDR_NO_RANDOMIZE);	/* just in case the previous line sets the personality to -1, which can happen */
+	       if ((newpersonality & ADDR_NO_RANDOMIZE) != 0) return execvp(argv[0],argv);
+	  }
+	  else personality(oldpersonality);
      }
 #endif
 
@@ -408,8 +413,13 @@ char **argv;
 #endif
 
      if (0 != sigsetjmp(loaddata_jump,TRUE)) {
+	  extern char *GC_get_stack_base();
      	  GC_free_space_divisor = 4;
+#if 1
+	  GC_stackbottom = GC_get_stack_base();	/* the stack may have moved!!! */
+#else
 	  if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
+#endif
 	  old_collections = GC_gc_no;
 #if DUMPDATA
           {
