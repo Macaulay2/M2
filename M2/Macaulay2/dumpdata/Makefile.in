@@ -39,7 +39,8 @@ testprintmaps:libdump.a
 clean::; rm -f testprintmaps
 
 all:: personality
-install:: personality ; $(INSTALL_PROGRAM) $< $(bindir)
+install:: personality $(bindir)  ; $(INSTALL_PROGRAM) $< $(bindir)/personality
+$(bindir) :; $(INSTALL) -d "$@"
 PERDIR = $(packagesdir)/personality
 $(PERDIR):; $(INSTALL) -d "$@"
 install:: personality.c $(PERDIR) ; $(INSTALL_DATA) $^

@@ -240,7 +240,7 @@ if fileExists (bindir | "../c/scc1") then (
 	  else (
 	       srcdirfile := buildHomeDirectory|"srcdir";
 	       if fileExists srcdirfile then (
-		    srcdir := minimizeFilename concatPath(buildHomeDirectory,first lines get srcdirfile)|"/";
+		    srcdir := minimizeFilename (concatPath(buildHomeDirectory,first lines get srcdirfile)|"/");
 		    if fileExists(srcdir | "m2/setup.m2") then srcdir
 		    )));
      ) else setPrefixFromBindir bindir
@@ -465,8 +465,11 @@ if packagePath === null then if prefixDirectory =!= null then packagePath = { pr
 if not noinitfile then (
      packagePath = prepend(applicationDirectory() | "local/", packagePath);
      )
-
-if sourceHomeDirectory  =!= null then path = join(path, {sourceHomeDirectory|"m2/",sourceHomeDirectory|"packages/"})
+if sourceHomeDirectory  =!= null
+then {
+     path = join(path, {sourceHomeDirectory|"m2/",sourceHomeDirectory|"packages/"});
+     packagePath = join(packagePath, {sourceHomeDirectory|"packages/"});
+     }
 if buildHomeDirectory   =!= null then (
      path = join(path, {buildHomeDirectory|"tutorial/final/"});
      if buildHomeDirectory =!= sourceHomeDirectory then path = join(path, {buildHomeDirectory|"m2/"})
