@@ -327,7 +327,7 @@ then test "$HAVE_LIBCF_PG" = no -a "$HAVE_LIBCF" = no && AC_MSG_ERROR([missing l
 else test "$HAVE_LIBCF" = no && AC_MSG_ERROR([missing library: libcf])
 fi
 
-AC_MSG_CHECKING([whether (and where) the libfac library is installed (-lfac or -lsingfac)])
+AC_MSG_CHECKING([whether (and where) the libfac library is installed (-lfac)])
 AC_SUBST(LIBFAC)
 AC_LANG(C++)
 LIBFAC=-lfac
@@ -336,14 +336,7 @@ AC_TRY_LINK(
  [extern const char * libfac_version;],
  [return *libfac_version;],
  HAVE_LIBFAC=yes;AC_MSG_RESULT([yes ($LIBFAC)]),
- LIBFAC=-lsingfac
- LIBS="$LIBCF $LIBFAC $SAVELIBS"
- AC_TRY_LINK(
-  [extern const char * libfac_version;],
-  [return *libfac_version;],
-  HAVE_LIBFAC=yes;AC_MSG_RESULT([yes ($LIBFAC)]),
-  HAVE_LIBFAC=no;AC_MSG_RESULT([no])
- )
+ HAVE_LIBFAC=no;AC_MSG_RESULT([no])
 )
 
 AC_MSG_CHECKING([whether libfac library, profiling version, is installed ($LIBFAC-pg)])
