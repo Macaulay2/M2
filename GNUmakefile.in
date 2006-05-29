@@ -9,10 +9,12 @@ CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/con
 
 GNUmakefile : GNUmakefile.in; ./config.status GNUmakefile
 
-include/config.Makefile: include/config.Makefile.in; ./config.status include/config.Makefile
+include/config.Makefile: include/config.Makefile.in ; ./config.status include/config.Makefile
+# include/config.Makefile depends on ./config.status, too, but we are including it
+# it's enought that include/config.h depends on ./config.status
 all :: include/config.Makefile
 
-include/config.h: include/config.h.in; ./config.status include/config.h
+include/config.h: include/config.h.in ./config.status ; ./config.status include/config.h
 all :: include/config.h
 
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files

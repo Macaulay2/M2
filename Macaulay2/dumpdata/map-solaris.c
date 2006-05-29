@@ -24,7 +24,7 @@ int haveDumpdata() {
 
 static int openproc() {
   char buf[30];
-  sprintf(buf,"/proc/%d",(int)getpid());
+  snprintf(buf,sizeof(buf),"/proc/%d",(int)getpid());
   return open(buf,O_RDONLY);
 }
 

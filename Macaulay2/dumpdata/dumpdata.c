@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -40,7 +41,7 @@ static void trim(char *s) {
 
 static int extend_memory(void *newbreak) {
   if (ERROR == (int)brk(newbreak)) {
-    warning("loaddata: out of memory (extending break to %p)\n", newbreak);
+    warning("--warning: loaddata: out of memory (extending break to %p)\n", newbreak);
     return ERROR;
   }
   else return OKAY;
@@ -72,7 +73,7 @@ static char brkfmt[] = "sbrk(0)=%p\n";
 
 static int fdprintbrk(int fd) {
   char buf[80];
-  sprintf(buf,brkfmt,sbrk(0));
+  snprintf(buf,sizeof(buf),brkfmt,sbrk(0));
   return write(fd,buf,strlen(buf));
 }
 
@@ -83,7 +84,7 @@ int dumpdata(char const *dumpfilename) {
   if (!haveDumpdata()) return ERROR;
   fd = open(dumpfilename,O_WRONLY|O_CREAT|O_TRUNC,0666);
   if (fd == ERROR) {
-    warning("can't open dump data file '%s'\n", dumpfilename);
+    warning("--warning: can't open dump data file '%s'\n", dumpfilename);
     return ERROR;
   }
   if (ERROR == fdprintbrk(fd)) return ERROR;
@@ -120,17 +121,18 @@ int loaddata(char const *filename) {
   void *newbreak;
   int got_newbreak = 0;
   int nmaps = nummaps();
+  int debug = NULL != getenv("LOADDATA_DEBUG");
+  int haderror = FALSE;
   struct MAP dumpedmap, currmap[nmaps], dumpmaps[80];
   int i, ndumps=0, j=0;
   int fd = open(filename,O_RDONLY);
   int installed_one = FALSE;
-  FILE *f = fdopen(fd,"r");
+  void *previousTopOfStack, *currentTopOfStack;	/* we assume stacks grow downward, not always correct */
+  int fd2 = dup(fd);
+  FILE *f = fdopen(fd2,"r");
   if (ERROR == getmaps(nmaps,currmap)) return ERROR;
   checkmaps(nmaps,currmap);
-  if (getenv("LOADDATA_DEBUG")) {
-       for (i=0; i<nmaps; i++) fdprintmap(STDERR,&currmap[i]);
-  }
-  if (fd == ERROR || f == NULL) { warning("loaddata: can't open file '%s'\n", filename); return ERROR; }
+  if (fd == ERROR || f == NULL) { warning("--warning: loaddata: can't open file '%s'\n", filename); return ERROR; }
   while (TRUE) {
     char fbuf[200];
     int n=0, f_end, ret;
@@ -139,8 +141,9 @@ int loaddata(char const *filename) {
     f_end = NULL == fgets(fbuf,sizeof fbuf,f) || fbuf[0]=='\n';
     if (!got_newbreak) {
       if (0 == sscanf(fbuf,brkfmt,&newbreak)) {
-	warning("loaddata: in data file %s: expected sbrk(0) line: \n", filename, fbuf);
+	warning("--warning: loaddata: in data file %s: expected sbrk(0) line: \n", filename, fbuf);
 	fclose(f);
+	close(fd);
 	return ERROR;
       }
       got_newbreak = TRUE;
@@ -151,102 +154,141 @@ int loaddata(char const *filename) {
     n++;
     ret = sscanf(fbuf, mapfmt, &dumpedmap.from, &dumpedmap.to, &r, &w, &x, &dumpedmap.checksum, &S);
     if (7 != ret) {
-      warning("loaddata: in data file %s: invalid map %d: %s\n", filename, n, fbuf);
-      warning("        : map format: \"%s\" matched only %d item(s)\n", mapfmt,ret);
-      if (ret >= 1) warning("        : from : %p\n", dumpedmap.from);
-      if (ret >= 2) warning("        : to   : %p\n", dumpedmap.to);
-      if (ret >= 3) warning("        : r    : %c\n", r);
-      if (ret >= 4) warning("        : w    : %c\n", w);
-      if (ret >= 5) warning("        : x    : %c\n", x);
-      if (ret >= 6) warning("        : chk  : %u\n", dumpedmap.checksum);
-      if (ret >= 7) warning("        : stk  : %c\n", S);
+      warning("--warning: loaddata: in data file %s: invalid map %d: %s\n", filename, n, fbuf);
+      warning("         : map format \"%s\" matched only %d item(s)\n", mapfmt,ret);
+      if (ret >= 1) warning("         : from : %p\n", dumpedmap.from);
+      if (ret >= 2) warning("         : to   : %p\n", dumpedmap.to);
+      if (ret >= 3) warning("         : r    : %c\n", r);
+      if (ret >= 4) warning("         : w    : %c\n", w);
+      if (ret >= 5) warning("         : x    : %c\n", x);
+      if (ret >= 6) warning("         : chk  : %u\n", dumpedmap.checksum);
+      if (ret >= 7) warning("         : stk  : %c\n", S);
       fclose(f);
+      close(fd);
       return ERROR;
     }
     dumpedmap.r = r == 'r';
     dumpedmap.w = w == 'w';
     dumpedmap.x = x == 'x';
     dumpedmap.isStack = S == 'S';
+    if (dumpedmap.isStack) previousTopOfStack = dumpedmap.to;
     for (; j<nmaps; j++) {
       if ((uintP)dumpedmap.from <= (uintP)currmap[j].from) break;
       if (isCheckable(&currmap[j])) {
 	char buf[100];
-	sprintmap(buf,&currmap[j]);
+	sprintmap(buf,sizeof(buf),&currmap[j]);
 	trim(buf);
-	if (notify) warning("loaddata: map has appeared or changed its location: %s\n",buf);
-	fclose(f);
-	return ERROR;
+	if (debug) warning("--warning: loaddata: map %d has appeared or changed its location: %s\n",j,buf);
+	haderror = TRUE;
       }
+      if (getenv("LOADDATA_DEBUG")) fprintf(stderr,"--loaddata: current map: "), fdprintmap(STDERR,&currmap[j]);
+      if (currmap[j].isStack) currentTopOfStack = currmap[j].to;
     };
 
-    if (!f_end && !dumpedmap.w && (uintP)dumpedmap.from < (uintP)currmap[j].from) {
-      if (notify) warning("loaddata: map has disappeared or changed its location: %s\n", fbuf);
-      fclose(f);
-      return ERROR;
+    if (getenv("LOADDATA_DEBUG")) fprintf(stderr,"--loaddata:  dumped map: "), fdprintmap(STDERR,&dumpedmap);
+
+    if ((uintP)dumpedmap.from < (uintP)currmap[j].from) {
+      if (getenv("LOADDATA_DEBUG")) fprintf(stderr,"--loaddata: current map: "), fdprintmap(STDERR,&currmap[j]);
+      if (currmap[j].isStack) currentTopOfStack = currmap[j].to;
+      if (debug) warning("--warning: loaddata: map has disappeared or changed its location: %s\n",fbuf);
+      if (dumpedmap.isStack) {
+	   if (debug) warning("--       : loaddata: map is part of stack, ignoring change: %s\n",fbuf);
+      }
+      else haderror = TRUE;
     }
 
-    if (!f_end && dumpedmap.from == currmap[j].from) {
+    if (dumpedmap.from == currmap[j].from) {
+      if (getenv("LOADDATA_DEBUG")) fprintf(stderr,"--loaddata: current map: "), fdprintmap(STDERR,&currmap[j]), fprintf(stderr,"\n");
+      if (currmap[j].isStack) currentTopOfStack = currmap[j].to;
+
       if (dumpedmap.r != currmap[j].r || dumpedmap.w != currmap[j].w || dumpedmap.x != currmap[j].x) {
 	char buf[100];
-	sprintmap(buf,&currmap[j]);
+	sprintmap(buf,sizeof(buf),&currmap[j]);
 	trim(buf);
-	if (notify) warning("loaddata: map protection has changed.\n  from: %s\n    to: %s\n",fbuf,buf);
-	fclose(f);
-	return ERROR;
+	if (debug) warning("--warning: loaddata: map %d protection has changed.\n--   from: %s\n--     to: %s\n",j,fbuf,buf);
+	if (dumpedmap.r == currmap[j].r && dumpedmap.w == currmap[j].w) {
+	     if (debug) warning("--       : loaddata: ignoring map protection executability change\n",j,fbuf,buf);
+	}
+	else haderror = TRUE;
       }
+
+      /* at least one map seems to change its size */
+      /* when we reload, we'll just put it to its former size, usually *larger* */
       if (dumpedmap.to != currmap[j].to && !isStatic(&dumpedmap)) {
 #       if 0
 	char buf[100];
-	sprintmap(buf,&currmap[j]);
+	sprintmap(buf,sizeof(buf),&currmap[j]);
 	trim(buf);
-	if (notify) warning("loaddata: map has changed its size.\n  from: %s\n    to: %s\n",fbuf,buf);
+	if (debug) warning("--warning: loaddata: map %d has changed its size.\n--   from: %s\n--     to: %s\n",j,fbuf,buf);
 	fclose(f);
+	close(fd);
 	return ERROR;
 #       endif
       }
+
       if (dumpedmap.checksum != currmap[j].checksum) {
 	char buf[100];
-	sprintmap(buf,&currmap[j]);
+	sprintmap(buf,sizeof(buf),&currmap[j]);
 	trim(buf);
-	/* warning("--loaddata: checksum has changed from %u to %u for map %s\n", dumpedmap.checksum, currmap[j].checksum, buf); */
-	/* warning("--loaddata: checksum has changed for map %s\n", buf); */
-	if (notify) warning("--warning: checksum has changed for a map\n");
+	if (debug) warning("--warning: map %d checksum has changed\n",j);
 	if (getenv("LOADDATA_IGNORE_CHECKSUMS") == NULL) {
-	  fclose(f);
-	  return ERROR;
+	  haderror = TRUE;
 	}
+	else if (debug) warning("--warning: ... ignoring checksum change\n");
       }
       j++;
     }
 
     if (!isDumpable(&dumpedmap)) continue;
     if (ndumps == numberof(dumpmaps)) {
-      warning("too many maps dumped, recompile\n");
+      warning("--warning: too many maps dumped, recompile\n");
       fclose(f);
+      close(fd);
       return ERROR;
     }
     else dumpmaps[ndumps++] = dumpedmap;
   }
-#if 0
-  for (i=0; i<ndumps; i++) {
-    fdprintmap(STDOUT,&dumpmaps[i]);
+
+  for (;j<nmaps;j++) {
+       if (getenv("LOADDATA_DEBUG")) fprintf(stderr,"--loaddata: current map: "), fdprintmap(STDERR,&currmap[j]);
+       if (currmap[j].isStack) currentTopOfStack = currmap[j].to;
   }
+
+  if (currentTopOfStack != previousTopOfStack) {
+       if (debug) warning("--warning: loaddata: top of stack has changed from %p to %p\n",previousTopOfStack,currentTopOfStack);
+#if 0
+       haderror = TRUE;
+#else
+       /* we make do by having gc recompute the stack base after loading data */
+       if (debug) warning("--       : loaddata: ignoring stack address change\n",previousTopOfStack,currentTopOfStack);
 #endif
+  }
+
+  if (haderror) {
+       fclose(f);
+       close(fd);
+       if (notify) fprintf(stderr,"--memory maps have changed, can'n load cached data\n");
+       return ERROR;
+  }
+
   {
     long pos = ftell(f);
+    fclose(f);
     /* now we must stop using static memory and the heap! */
     pos = ((pos + PAGESIZE - 1)/PAGESIZE) * PAGESIZE;
     if (ERROR == extend_memory(newbreak)) return ERROR;
     for (i=0; i<ndumps; i++) {
       if (ERROR == install(fd,&dumpmaps[i],&pos)) {
         if (installed_one) {
-          char x[] = "--loaddata: failed to map memory completely\n";
+          char x[] = "--error: loaddata: failed to map memory completely\n";
           write(STDERR,x,strlen(x));
           _exit(1);
         }
         else {
-          char x[] = "--loaddata: failed to map any memory\n";
-          write(STDERR,x,strlen(x));
+	  char buf[100];
+	  sprintmap(buf,sizeof(buf),&currmap[i]);
+	  trim(buf);
+	  fprintf(stderr,"--error: loaddata: failed to map any memory: %s: %s\n",buf,strerror(errno));
           return ERROR;
         }
       }

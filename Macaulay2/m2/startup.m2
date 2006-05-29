@@ -443,12 +443,10 @@ if firstTime and not noloaddata and version#"dumpdata" then (
 	  else if prefixDirectory =!= null then concatenate(prefixDirectory, LAYOUT#"cache", "Macaulay2-", arch, "-data")
 	  else concatenate("Macaulay2-", arch, "-data")
 	  );
-     if fileExists datafile then
-     try (
+     if fileExists datafile then (
 	  if notify then stderr << "--loading cached memory data from " << datafile << newline << flush;
-	  loaddata datafile
-	  ) else (
-	  if notify then stderr << "--warning: can not load data from " << datafile << newline << flush;
+     	  try loaddata datafile;
+	  stderr << "--warning: can not load data from " << datafile << newline << flush;
 	  )
      )
 

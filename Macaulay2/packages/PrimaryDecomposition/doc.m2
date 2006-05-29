@@ -40,9 +40,8 @@ document {
      Key => [associatedPrimes,Strategy],
      "The strategy option value should be one of the following.",
      UL{
-	  LI ("1", " -- The assassinator is found using Ext modules."),
-	  LI ("2", " -- The assassinator is found using ", TO(topComponents), " on a 
-	       series of ideals.")
+	  LI ("1", " -- The assassinator is found using ", TT "Ext", " modules"),
+	  LI ("2", " -- The assassinator is found using ", TO topComponents, " on a sequence of ideals.")
 	  },
      "The default strategy is 2.",
      HEADER3 "Strategy => 1",
@@ -61,9 +60,8 @@ document {
      Headline => "localize an ideal at a prime ideal",
      Usage => "localize(I,P)",
      Inputs => {
-	  "I" => {"an ideal in a (quotient of a) polynomial ring ", 
-	          TT "R", "."},
-	  "P" => {"a prime ideal in the same ring."}
+	  "I" => {"an ideal in a (quotient of a) polynomial ring ", TT "R"},
+	  "P" => {"a prime ideal in the same ring"}
 	  },
      Outputs => { {"the extension contraction ideal I R_P intersect R."} },
      "The result is the ideal obtained by first extending to

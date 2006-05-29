@@ -8,7 +8,7 @@
 
 static void warning1(char *s, va_list ap) {
   char buf[1000];
-  vsprintf(buf,s,ap);
+  vsnprintf(buf,sizeof(buf),s,ap);
   write(STDERR,buf,strlen(buf));
 }
 

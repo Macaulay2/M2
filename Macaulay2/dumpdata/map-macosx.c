@@ -52,7 +52,7 @@ int printmaps() {
   }
   {
     char buf[100];
-    sprintf(buf,"vmmap %d",getpid());
+    snprintf(buf,sizeof(buf),"vmmap %d",getpid());
     system(buf);
   }
   return OKAY;

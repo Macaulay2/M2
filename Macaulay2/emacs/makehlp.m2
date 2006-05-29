@@ -9,6 +9,7 @@ printWidth = 79;
 << endl
 << endl
 << help "running Macaulay 2 in emacs"
+<< endl
 << close
 )
 
