@@ -172,7 +172,7 @@ void readsetup(env v){
 #endif
      }
 
-#if defined(__APPLE__) && defined(__MACH__) && defined(__i386__)
+#if defined(__APPLE__) && defined(__MACH__)
 extern char *get_end(), *get_etext();
 #endif
 
@@ -181,7 +181,7 @@ int main(int argc, char **argv){
      char *p;
      struct test {char a;double b;};
      i = assert(0 == GRAIN % (sizeof(struct test) - sizeof(double)));
-#if defined(__APPLE__) && defined(__MACH__) && defined(__i386__)
+#if defined(__APPLE__) && defined(__MACH__) 
      GC_add_roots(get_etext(),get_end());
 #endif
      progname = BaseName(argv[0]);
