@@ -241,9 +241,9 @@ LIBS=-lpthread
 AC_MSG_CHECKING(whether libpthread exists (-lpthread))
 AC_TRY_LINK([],[],LIBPTHREAD=-lpthread;AC_MSG_RESULT([yes]), LIBPTHREAD=; AC_MSG_RESULT([no]))
 
-GCLIB="-lgc $LIBDL $LIBPTHREAD"
+GCLIB="-lgc"
 AC_SUBST(GCLIB)
-AC_ARG_WITH(gclib, AS_HELP_STRING(--with-gclib=...,gc library (-lgc)), GCLIB="$withval")
+AC_ARG_WITH(gclib, AS_HELP_STRING(--with-gclib=...,gc library ($GCLIB)), GCLIB="$withval")
 LIBS="$GCLIB $SAVELIBS"
 AC_MSG_CHECKING([whether gc library (-lgc) is installed (using $LIBS)])
 AC_TRY_LINK( [#include <gc.h>], [GC_malloc(1);], HAVE_LIBGC=yes;AC_MSG_RESULT([yes]), HAVE_LIBGC=no;AC_MSG_RESULT([no]))
