@@ -461,7 +461,10 @@ if not noinitfile then (
 	  path);
      )
 
-if packagePath === null then if prefixDirectory =!= null then packagePath = { prefixDirectory } else packagePath = { }
+packagePath = { }
+
+if prefixDirectory =!= null then packagePath = prepend(prefixDirectory | LAYOUT#"packages", packagePath)
+
 if not noinitfile then (
      packagePath = prepend(applicationDirectory() | "local/", packagePath);
      )
