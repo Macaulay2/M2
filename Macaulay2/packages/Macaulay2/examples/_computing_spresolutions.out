@@ -23,24 +23,24 @@ i4 : R = ZZ/2[a..d];
 i5 : M = coker random(R^4, R^{5:-3,6:-4});
 
 i6 : (<< "-- computation started: " << endl;
-     while true do try (
-     alarm 3;
-     time res M;
-     alarm 0;
-     << "-- computation complete" << endl;
-     status M.cache.resolution;
-     << res M << endl << endl;
-     break;
-     ) else (
-     << "-- computation interrupted" << endl;
-     status M.cache.resolution;
-     << "-- continuing the computation" << endl;
-     ))
+      while true do try (
+          alarm 3;
+          time res M;
+          alarm 0;
+          << "-- computation complete" << endl;
+          status M.cache.resolution;
+          << res M << endl << endl;
+          break;
+          ) else (
+          << "-- computation interrupted" << endl;
+          status M.cache.resolution;
+          << "-- continuing the computation" << endl;
+          ))
 -- computation started: 
-     -- used 2.88818 seconds
+     -- used 2.19214 seconds
 -- computation interrupted
         : total pairs
-  totals: 4 11 646 594 185
+  totals: 4 11 646 594 145
        0: 4  .   .   .   .
        1: .  .   .   .   .
        2: .  5   2   .   .
@@ -51,10 +51,10 @@ i6 : (<< "-- computation started: " << endl;
        7: .  .  62  54  15
        8: .  . 138 138  46
        9: .  . 252 252  84
-      10: .  . 120 120  40
+      10: .  . 120 120   .
 
 -- continuing the computation
-     -- used 1.5601 seconds
+     -- used 2.55616 seconds
 -- computation complete
         : total pairs
   totals: 4 11 646 594 185

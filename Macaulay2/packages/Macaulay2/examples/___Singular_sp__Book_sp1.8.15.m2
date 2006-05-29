@@ -4,9 +4,9 @@ saturate(I1,z)
 J = I1:z
 k = 0;
 while not isSubset(J,I1) do (
-k = k+1;
-I1 = J;
-J = I1 : z;
-);
+   k = k+1;
+   I1 = J;
+   J = I1 : z;
+   );
 J
 k

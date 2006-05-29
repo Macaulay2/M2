@@ -107,7 +107,7 @@ o17 = | a2 b3 c4 d5 |
 o17 : Matrix R  <--- R
 
 i18 : map(R^(numgens source m), source m, 
-      (i,j) -> if i === j then m_(0,i) else 0)
+                       (i,j) -> if i === j then m_(0,i) else 0)
 
 o18 = | a2 0  0  0  |
       | 0  b3 0  0  |

@@ -16,7 +16,7 @@ copym = map(target m, source m, entries m)
 R = ZZ[a..d];
 m = matrix{{a^2,b^3,c^4,d^5}}
 map(R^(numgens source m), source m, 
-(i,j) -> if i === j then m_(0,i) else 0)
+                 (i,j) -> if i === j then m_(0,i) else 0)
 R = ZZ[a..d];
 m = matrix{{a,b^2},{c^2,d^3}}
 betti m

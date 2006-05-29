@@ -109,7 +109,8 @@ o18 = (a, b, c)
 
 o18 : Sequence
 
-i19 : splice {1..6}
+i19 : 
+      splice {1..6}
 
 o19 = {1, 2, 3, 4, 5, 6}
 
@@ -121,7 +122,8 @@ o20 = {1, 2, 3, 4, 5, 6}
 
 o20 : List
 
-i21 : QQ[a..c,x_1..x_4]
+i21 : 
+      QQ[a..c,x_1..x_4]
 
 o21 = QQ [a, b, c, x , x , x , x ]
                     1   2   3   4
@@ -129,3 +131,4 @@ o21 = QQ [a, b, c, x , x , x , x ]
 o21 : PolynomialRing
 
 i22 : 
+      

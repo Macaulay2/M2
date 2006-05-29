@@ -1,12 +1,12 @@
 -- -*- M2-comint -*-
 
 i1 : RR.GlobalReleaseHook = (sym,val) -> << concatenate (
-     "assigning ", toString val, " to ", toString sym
-     ) << endl
+          "assigning ", toString val, " to ", toString sym
+          ) << endl
 
-o1 = --Function[stdio:1:33-3:5]--
+o1 = --Function[stdio:1:33-3:10]--
 
-o1 : Function
+o1 : FunctionClosure
 
 i2 : a=4.5
 

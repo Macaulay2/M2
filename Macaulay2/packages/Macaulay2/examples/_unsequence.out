@@ -1,0 +1,21 @@
+-- -*- M2-comint -*-
+
+i1 : unsequence (2:a)
+
+o1 = (a, a)
+
+o1 : Sequence
+
+i2 : unsequence (1:a)
+
+o2 = a
+
+o2 : Symbol
+
+i3 : unsequence (0:a)
+
+o3 = ()
+
+o3 : Sequence
+
+i4 : 

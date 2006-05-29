@@ -23,10 +23,10 @@ o4 : Ideal of A
 i5 : k = 0;
 
 i6 : while not isSubset(J,I1) do (
-     k = k+1;
-     I1 = J;
-     J = I1 : z;
-     );
+        k = k+1;
+        I1 = J;
+        J = I1 : z;
+        );
 
 i7 : J
 

@@ -1,7 +1,7 @@
 book = new HashTable from {
-"Joe" => "344-5567",
-"Sarah" => "567-4223",
-"John" => "322-1456"}
+     "Joe" => "344-5567",
+     "Sarah" => "567-4223",
+     "John" => "322-1456"}
 book#"Sarah"
 book#?"Mary"
 x = set {a,b,c,r,t}

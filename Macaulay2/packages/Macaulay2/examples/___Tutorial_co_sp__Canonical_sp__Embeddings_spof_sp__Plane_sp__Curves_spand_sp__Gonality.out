@@ -31,10 +31,10 @@ o5 = ideal (b, c)
 o5 : Ideal of R
 
 i6 : icurves1 = intersect(
-     ipoint1^2,
-     ipoint2^2,
-     ipoint3^2
-     )
+                    ipoint1^2,
+                    ipoint2^2,
+                    ipoint3^2
+                )
 
                     2 2   2 2   2 2
 o6 = ideal (a*b*c, b c , a c , a b )

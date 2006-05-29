@@ -3,7 +3,7 @@
 i1 : A = QQ[x,y,z];
 
 i2 : M = matrix{{1, x+y, z^2},
-     {x, 0,   x*y*z}}
+                {x, 0,   x*y*z}}
 
 o2 = | 1 x+y z2  |
      | x 0   xyz |
