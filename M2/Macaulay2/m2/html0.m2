@@ -84,7 +84,9 @@ MarkUpTypeWithOptions.GlobalAssignHook = (X,x) -> (
 withOptions := (v,x) -> (x.Options = new OptionTable from apply(v,val -> if class val === Option then val else val=>null); x)
 withQname   := (q,x) -> (x.qname = q; x)
 requirestrings := x -> ( scan(x, line -> if class line =!= String then error ("expected a string, but encountered ", toString line)); x)
-trimfront := x -> apply(x, line -> replace("^[[:space:]]+","",line))
+trimfront := x -> apply(x, line -> (
+	  s := lines line;
+	  concatenate between(newline, prepend(replace("^[[:space:]]+","",s#0), drop(s,1)))))
 nonempty := x -> select(x, i -> i =!= "")
 
 new MarkUpType := x -> error "obsolete 'new' method called"
@@ -105,7 +107,7 @@ PARA       = withQname_"p" new MarkUpType of MarkUpListParagraph	    -- double s
 
 ExampleItem = withQname_"code" new MarkUpType of MarkUpList
 EXAMPLE = method(SingleArgumentDispatch => true)
-EXAMPLE VisibleList := x -> TABLE splice { "class" => "examples", apply(nonempty trimfront requirestrings nonnull toSequence x, item -> TR TD ExampleItem item) }
+EXAMPLE VisibleList := x -> TABLE splice { "class" => "examples", apply(trimfront nonempty requirestrings nonnull toSequence x, item -> TR TD ExampleItem item) }
 EXAMPLE String := x -> EXAMPLE {x}
 
 PRE        = new MarkUpType of MarkUpListParagraph
