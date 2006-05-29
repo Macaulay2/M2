@@ -4,7 +4,7 @@ i1 : f = a -> b -> a+b+a*b
 
 o1 = f
 
-o1 : Function
+o1 : FunctionClosure
 
 i2 : functionBody f 1
 
@@ -21,3 +21,4 @@ i4 : functionBody f 1 === functionBody f 2
 o4 = true
 
 i5 : 
+     

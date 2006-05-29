@@ -5,3 +5,4 @@ ofClass HashTable
 ofClass ProjectiveVariety
 document { Key => foo, "We may need ", ofClass ZZ, " and ", ofClass HashTable, "." }
 help foo
+

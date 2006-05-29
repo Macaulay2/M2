@@ -5,3 +5,4 @@ filename = toString f
 fileLength filename
 get filename
 length oo
+

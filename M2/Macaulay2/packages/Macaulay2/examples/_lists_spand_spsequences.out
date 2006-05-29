@@ -38,7 +38,8 @@ o7 = e
 
 o7 : Symbol
 
-i8 : g = {3,4,,5}
+i8 : 
+     g = {3,4,,5}
 
 o8 = {3, 4, , 5}
 
@@ -48,7 +49,8 @@ i9 : peek g
 
 o9 = {3, 4, null, 5}
 
-i10 : 10000*{3,4,5} + {1,2,3}
+i10 : 
+      10000*{3,4,5} + {1,2,3}
 
 o10 = {30001, 40002, 50003}
 
@@ -90,7 +92,8 @@ o16 = | a  1 |
 
 o16 : MatrixExpression
 
-i17 : x = (a,b,c,d,e)
+i17 : 
+      x = (a,b,c,d,e)
 
 o17 = (a, b, c, d, e)
 
@@ -106,7 +109,8 @@ o19 = c
 
 o19 : Symbol
 
-i20 : ()
+i20 : 
+      ()
 
 o20 = ()
 
@@ -124,7 +128,8 @@ o22 = (a, b)
 
 o22 : Sequence
 
-i23 : append(x,f)
+i23 : 
+      append(x,f)
 
 o23 = (a, b, c, d, e, f)
 
@@ -178,7 +183,8 @@ o31 = VisibleList
 
 o31 : Type
 
-i32 : {a,b,c}
+i32 : 
+      {a,b,c}
 
 o32 = {a, b, c}
 
@@ -202,7 +208,8 @@ o35 = BasicList
 
 o35 : Type
 
-i36 : new BasicList from {a,b,c}
+i36 : 
+      new BasicList from {a,b,c}
 
 o36 = BasicList{a, b, c}
 
@@ -234,7 +241,8 @@ o41 = Container{a, b, a, b}
 
 o41 : Container
 
-i42 : s = new MutableList from {a,b,c}
+i42 : 
+      s = new MutableList from {a,b,c}
 
 o42 = MutableList{...3...}
 
@@ -256,7 +264,8 @@ i46 : peek s
 
 o46 = MutableList{a, b, 1234}
 
-i47 : Bag {100!}
+i47 : 
+      Bag {100!}
 
 o47 = --a bagged integer--
 
@@ -270,7 +279,8 @@ o48 = Bag{9332621544394415268169923885626670049071596826438162146859296389521759
       --------------------------------------------------------------------------
       00000000000000}
 
-i49 : showStructure(List,Sequence,Array,Container,MutableList,Bag,BasicList)
+i49 : 
+      showStructure(List,Sequence,Array,Container,MutableList,Bag,BasicList)
 
 o49 = Thing : BasicList : Container
                           MutableList : Bag
@@ -279,3 +289,4 @@ o49 = Thing : BasicList : Container
                                         Sequence
 
 i50 : 
+      

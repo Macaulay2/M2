@@ -1,9 +1,9 @@
 -- -*- M2-comint -*-
 
 i1 : book = new HashTable from {
-     "Joe" => "344-5567",
-     "Sarah" => "567-4223",
-     "John" => "322-1456"}
+          "Joe" => "344-5567",
+          "Sarah" => "567-4223",
+          "John" => "322-1456"}
 
 o1 = HashTable{Joe => 344-5567  }
                John => 322-1456
@@ -21,7 +21,7 @@ o3 = false
 
 i4 : x = set {a,b,c,r,t}
 
-o4 = Set {a, b, c, r, t}
+o4 = Set {t, a, b, c, r}
 
 o4 : Set
 

@@ -18,3 +18,4 @@ i4 : applicationDirectory()
 o4 = /home/dan/local/Mac2
 
 i5 : 
+     

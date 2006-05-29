@@ -16,6 +16,9 @@ flatten (a,{b,c})
 flatten (a,(b,c))
 splice (a,{b,c})
 splice (a,(b,c))
+
 splice {1..6}
 toList(1..6)
+
 QQ[a..c,x_1..x_4]
+

@@ -1,6 +1,6 @@
 A = QQ[x,y,z];
 M = matrix{{1, x+y, z^2},
-{x, 0,   x*y*z}}
+           {x, 0,   x*y*z}}
 N = matrix(A, {{1,2,3},{4,5,6},{7,8,9}})
 M+M
 x*N

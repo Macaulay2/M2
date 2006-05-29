@@ -130,7 +130,7 @@ o18 = | 1   2   3  |
 o18 : MatrixExpression
 
 i19 : Table{{"Example 1","Example 2"},
-      {Table{{1,2},{3,4}},Table{{11,22},{3,444}}}}
+            {Table{{1,2},{3,4}},Table{{11,22},{3,444}}}}
 
 o19 =  Example 1  Example 2 
 

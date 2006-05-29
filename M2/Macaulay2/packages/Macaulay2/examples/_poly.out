@@ -39,9 +39,9 @@ o6 = - 8000a b - 3a*b - 1
 o6 : R
 
 i7 : poly"a5+5a4b+10a3b2+10a2b3+5ab4+b5
-     -10a4c-40a3bc-60a2b2c-40ab3c-10b4c
-     +40a3c2+120a2bc2+120ab2c2+40b3c2
-     -80a2c3-160abc3-80b2c3+80ac4+80bc4-32c5"
+                     -10a4c-40a3bc-60a2b2c-40ab3c-10b4c
+                     +40a3c2+120a2bc2+120ab2c2+40b3c2
+                     -80a2c3-160abc3-80b2c3+80ac4+80bc4-32c5"
 
       5     4       3 2      2 3       4    5      4       3         2 2   
 o7 = a  + 5a b + 10a b  + 10a b  + 5a*b  + b  - 10a c - 40a b*c - 60a b c -

@@ -40,18 +40,18 @@ o4 = | 1 2 3 0 0 0 |
 o4 : Matrix A  <--- A
 
 i5 : contraHom = (M, s) -> (
-     (n,m) := (numgens target M, numgens source M);
-     R := mutableZero(ring M, s*n, s*m);
-     for b from 0 to m-1 do
-     for a from 0 to s-1 do
-     for c from 0 to n-1 do
-     R_(a*n+c,a*m+b) = M_(b,c);
-     matrix R
-     )
+         (n,m) := (numgens target M, numgens source M);
+         R := mutableZero(ring M, s*n, s*m);
+         for b from 0 to m-1 do
+           for a from 0 to s-1 do
+             for c from 0 to n-1 do
+               R_(a*n+c,a*m+b) = M_(b,c);
+         matrix R
+         )
 
 o5 = contraHom
 
-o5 : Function
+o5 : FunctionClosure
 
 i6 : contraHom(M,2)
 

@@ -57,14 +57,14 @@ o9 = ------------
 o9 : Divide
 
 i10 : poincare' = (M) -> (
-      H := poincare M;
-      t := (ring H)_0;  -- The variable t above
-      while H % (1-t) == 0 do H = H // (1-t);
-      H)
+              H := poincare M;
+              t := (ring H)_0;  -- The variable t above
+              while H % (1-t) == 0 do H = H // (1-t);
+              H)
 
 o10 = poincare'
 
-o10 : Function
+o10 : FunctionClosure
 
 i11 : poincare' M
 

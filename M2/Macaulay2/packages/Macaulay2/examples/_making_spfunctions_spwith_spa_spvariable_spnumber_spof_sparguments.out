@@ -27,8 +27,8 @@ o5 = {Sequence, 3}
 o5 : List
 
 i6 : f = x -> (
-     x = sequence x;
-     {class x, #x});
+          x = sequence x;
+          {class x, #x});
 --warning: f redefined
 
 i7 : f()

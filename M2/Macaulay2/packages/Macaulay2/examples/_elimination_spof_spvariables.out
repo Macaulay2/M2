@@ -10,7 +10,7 @@ o2 = ideal (- s  - s*t + x - 1, - t  - 3t  - t + y, - s*t  + z)
 o2 : Ideal of R
 
 i3 : time leadTerm gens gb I
-     -- used 1.97212 seconds
+     -- used 2.03213 seconds
 
 o3 = | x3y9 5148txy3 108729sxy2z2 sy4z 46644741sxy3z 143sy5 6sxy4
      ---------------------------------------------------------------------------
@@ -48,7 +48,8 @@ o4 = | x3y9-3x2y9-6x2y8z-3x2y6z3+3xy9-x2y7z+12xy8z+7xy7z2-324x2y5z3+6xy6z3-y7z3-
              1       1
 o4 : Matrix R  <--- R
 
-i5 : R = QQ[x,y,z,s,t];
+i5 : 
+     R = QQ[x,y,z,s,t];
 
 i6 : I = ideal(x-s^3-s*t-1, y-t^3-3*t^2-t, z-s*t^3)
 
@@ -58,7 +59,7 @@ o6 = ideal (- s  - s*t + x - 1, - t  - 3t  + y - t, - s*t  + z)
 o6 : Ideal of R
 
 i7 : time eliminate(I,{s,t})
-     -- used 7.44847 seconds
+     -- used 7.79649 seconds
 
             3 9     2 9     2 8      2 6 3       9    2 7         8        7 2  
 o7 = ideal(x y  - 3x y  - 6x y z - 3x y z  + 3x*y  - x y z + 12x*y z + 7x*y z  -
@@ -89,14 +90,15 @@ o7 = ideal(x y  - 3x y  - 6x y z - 3x y z  + 3x*y  - x y z + 12x*y z + 7x*y z  -
 
 o7 : Ideal of R
 
-i8 : R1 = QQ[x,y,z,s,t, Degrees=>{3,3,4,1,1}];
+i8 : 
+     R1 = QQ[x,y,z,s,t, Degrees=>{3,3,4,1,1}];
 
 i9 : I1 = substitute(I,R1);
 
 o9 : Ideal of R1
 
 i10 : time eliminate(I1,{s,t})
-     -- used 1.90412 seconds
+     -- used 1.95212 seconds
 
              3 9     2 6 3       3 6    9     2 8         5 4      2 7     2 9  
 o10 = ideal(x y  - 3x y z  + 3x*y z  - z  - 6x y z - 15x*y z  + 21y z  - 3x y  -
@@ -127,7 +129,8 @@ o10 = ideal(x y  - 3x y z  + 3x*y z  - z  - 6x y z - 15x*y z  + 21y z  - 3x y  -
 
 o10 : Ideal of R1
 
-i11 : A = QQ[s,t]
+i11 : 
+      A = QQ[s,t]
 
 o11 = A
 
@@ -147,7 +150,7 @@ o13 = map(A,B,{s  + s*t + 1, t  + 3t  + t, s*t })
 o13 : RingMap A <--- B
 
 i14 : time kernel F
-     -- used 0.736046 seconds
+     -- used 0.772049 seconds
 
              3 9     2 9     2 8      2 6 3       9    2 7         8        7 2
 o14 = ideal(x y  - 3x y  - 6x y z - 3x y z  + 3x*y  - x y z + 12x*y z + 7x*y z 
@@ -178,14 +181,15 @@ o14 = ideal(x y  - 3x y  - 6x y z - 3x y z  + 3x*y  - x y z + 12x*y z + 7x*y z
 
 o14 : Ideal of B
 
-i15 : use ring I
+i15 : 
+      use ring I
 
 o15 = R
 
 o15 : PolynomialRing
 
 i16 : time f1 = resultant(I_0,I_2,s)
-     -- used 0.008 seconds
+     -- used 0.012001 seconds
 
            9    9      7    3
 o16 = - x*t  + t  + z*t  + z
@@ -193,7 +197,7 @@ o16 = - x*t  + t  + z*t  + z
 o16 : R
 
 i17 : time f2 = resultant(I_1,f1,t)
-     -- used 0.108006 seconds
+     -- used 0.112007 seconds
 
          3 9     2 9     2 8      2 6 3       9    2 7         8        7 2  
 o17 = - x y  + 3x y  + 6x y z + 3x y z  - 3x*y  + x y z - 12x*y z - 7x*y z  +
@@ -225,3 +229,4 @@ o17 = - x y  + 3x y  + 6x y z + 3x y z  - 3x*y  + x y z - 12x*y z - 7x*y z  +
 o17 : R
 
 i18 : 
+      

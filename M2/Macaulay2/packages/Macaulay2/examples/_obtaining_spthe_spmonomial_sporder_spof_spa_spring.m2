@@ -3,3 +3,4 @@ options R
 (options R).MonomialOrder
 S = QQ[a..d];
 (options S).MonomialOrder
+

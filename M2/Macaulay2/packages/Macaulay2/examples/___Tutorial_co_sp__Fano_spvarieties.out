@@ -26,9 +26,9 @@ o4 = S
 o4 : PolynomialRing
 
 i5 : F = map(S,R,
-     s*matrix{{p_0..p_3}} +
-     t*matrix{{q_0..q_3}}
-     )
+            s*matrix{{p_0..p_3}} +
+            t*matrix{{q_0..q_3}}
+            )
 
 o5 = map(S,R,{s*p  + t*q , s*p  + t*q , s*p  + t*q , s*p  + t*q })
                  0      0     1      1     2      2     3      3
@@ -90,8 +90,8 @@ o11 = GR
 o11 : PolynomialRing
 
 i12 : M = substitute(
-      exteriorPower(2, matrix{{p_0..p_3},{q_0..q_3}}),
-      S1bar)
+          exteriorPower(2, matrix{{p_0..p_3},{q_0..q_3}}),
+          S1bar)
 
 o12 = | -p_1q_0+p_0q_1 -p_2q_0+p_0q_2 -p_2q_1+p_1q_2 -p_3q_0+p_0q_3
       --------------------------------------------------------------------------
@@ -143,136 +143,136 @@ o17 = generators: total: 1 20
                       2: . 19
 
 i18 : document {
-      Key => Fano2, 
-      TT "Fano2(k,X,GR) or  Fano2(k,X)", " -- computes 
-      the ideal of a Fano scheme in the Grassmannian.",
-      PARA{},
-      "Given an ideal X representing a projective variety 
-      in P^r, a positive integer k<r, and optionally a 
-      ring GR with (exactly) r+1 choose k+1 variables, 
-      representing the ambient space of the Grassmannian of 
-      k-planes in P^r, this routine returns the ideal in
-      GR of the Fano scheme that parametrizes the k-planes 
-      lying on X. If the optional third argument is not 
-      present, the routine fabricates its own local ring, 
-      and returns an ideal over it."
-      }
+           Key => Fano2, 
+              TT "Fano2(k,X,GR) or  Fano2(k,X)", " -- computes 
+              the ideal of a Fano scheme in the Grassmannian.",
+              PARA{},
+              "Given an ideal X representing a projective variety 
+              in P^r, a positive integer k<r, and optionally a 
+              ring GR with (exactly) r+1 choose k+1 variables, 
+              representing the ambient space of the Grassmannian of 
+              k-planes in P^r, this routine returns the ideal in
+              GR of the Fano scheme that parametrizes the k-planes 
+              lying on X. If the optional third argument is not 
+              present, the routine fabricates its own local ring, 
+              and returns an ideal over it."
+              }
 
 i19 : document {
-      Key => symbol Grassmannian2, 
-      TT "Grassmannian2(k,r,R) or 
-      Grassmannian2(k,r)",
-      "-- Given natural numbers k <= r,
-      and optionally a ring R with at least binomial(r+1,k+1)
-      variables, the routine defines the ideal of the 
-      Grassmannian of projective k-planes in P^r, using 
-      the first binomial(r+1,k+1) variables of R. 
-      If R is not given, the routine makes and uses
-      ZZ/31991[vars(0..binomial(r+1,k+1)-1]."
-      }
+           Key => symbol Grassmannian2, 
+          TT "Grassmannian2(k,r,R) or 
+              Grassmannian2(k,r)",
+             "-- Given natural numbers k <= r,
+              and optionally a ring R with at least binomial(r+1,k+1)
+              variables, the routine defines the ideal of the 
+              Grassmannian of projective k-planes in P^r, using 
+              the first binomial(r+1,k+1) variables of R. 
+              If R is not given, the routine makes and uses
+              ZZ/31991[vars(0..binomial(r+1,k+1)-1]."
+              }
 
 i20 : Fano2 = method()
 
 o20 = Fano2
 
-o20 : Function
+o20 : CompiledFunctionClosure
 
 i21 : Fano2(ZZ,Ideal,Ring) := (k,X,GR) -> (
-      -- Get info about the base ring of X:
-      -- The coefficient ring (to make new rings of
-      -- the same characteristic, for example)
-      -- and the number of variables
-      KK:=coefficientRing ring X;
-      r := (numgens ring X) - 1;
-      -- Next make private variables for our 
-      -- intermediate rings, to avoid interfering
-      -- with something outside:
-      t:=symbol t;
-      p:=symbol p;
-      -- And rings
-      S1 := KK[t_0..t_k];
-      S2 := KK[p_0..p_(k*r+k+r)];
-      S := tensor(S1,S2);
-      -- Over S we have a generic point of a generic
-      -- line, represented by a row vector, which
-      -- we use to define a map from the base ring
-      -- of X
-      F := map(S,ring X,
-      genericMatrix(S,S_0,1,k+1)*
-      genericMatrix(S,S_(k+1),k+1,r+1)
-      );
-      -- We now apply F to the ideal of X
-      FX := F X;
-      -- and the condition we want becomes the condition
-      -- that FX vanishes identically in the t_i.
-      -- The following line produces the matrix of
-      -- coefficients of the monomials in the 
-      -- variables labelled 0..k:
-      cFX := last coefficients (gens FX, Variables => toList apply(0..k, i -> S_i));
-      -- We can get rid of the variables t_i
-      -- to ease the computation:
-      cFX = substitute(cFX, S2);
-      -- The ring we want is the quotient
-      S2bar := S2/ideal cFX;
-      -- Now we want to move to the Grassmannian,
-      -- represented by the ring GR
-      -- We define a map sending the variables of GR
-      -- to the minors of the generic matrix in the
-      -- p_i regarded as elements of S1bar
-      gr := map(S2bar,GR,
-      exteriorPower(k+1, 
-      genericMatrix(S2bar,S2bar_0,k+1,r+1)
-      )
-      );
-      -- and the defining ideal of the Fano variety is
-      ker gr
+        -- Get info about the base ring of X:
+        -- The coefficient ring (to make new rings of
+        -- the same characteristic, for example)
+        -- and the number of variables
+        KK:=coefficientRing ring X;
+        r := (numgens ring X) - 1;
+        -- Next make private variables for our 
+        -- intermediate rings, to avoid interfering
+        -- with something outside:
+        t:=symbol t;
+        p:=symbol p;
+        -- And rings
+        S1 := KK[t_0..t_k];
+        S2 := KK[p_0..p_(k*r+k+r)];
+        S := tensor(S1,S2);
+        -- Over S we have a generic point of a generic
+        -- line, represented by a row vector, which
+        -- we use to define a map from the base ring
+        -- of X
+        F := map(S,ring X,
+                genericMatrix(S,S_0,1,k+1)*
+                genericMatrix(S,S_(k+1),k+1,r+1)
+                );
+        -- We now apply F to the ideal of X
+        FX := F X;
+        -- and the condition we want becomes the condition
+        -- that FX vanishes identically in the t_i.
+        -- The following line produces the matrix of
+        -- coefficients of the monomials in the 
+        -- variables labelled 0..k:
+        cFX := last coefficients (gens FX, Variables => toList apply(0..k, i -> S_i));
+        -- We can get rid of the variables t_i
+        -- to ease the computation:
+        cFX = substitute(cFX, S2);
+        -- The ring we want is the quotient
+        S2bar := S2/ideal cFX;
+        -- Now we want to move to the Grassmannian,
+        -- represented by the ring GR
+        -- We define a map sending the variables of GR
+        -- to the minors of the generic matrix in the
+        -- p_i regarded as elements of S1bar
+        gr := map(S2bar,GR,
+                  exteriorPower(k+1, 
+                  genericMatrix(S2bar,S2bar_0,k+1,r+1)
+                  )
+                 );
+        -- and the defining ideal of the Fano variety is
+        ker gr
       )
 
-o21 = --Function[stdio:51:33-99:4]--
+o21 = --Function[stdio:51:33-99:6]--
 
-o21 : Function
+o21 : FunctionClosure
 
 i22 : Fano2(ZZ, Ideal) := (k,X) -> (
-      KK:=coefficientRing ring X;
-      r := (numgens ring X) - 1;
-      -- We can specify a private ring with binomial(r+1,k+1)
-      -- variables as follows
-      GR := KK[Variables => binomial(r+1,k+1)];
-      -- the work is done by
-      Fano2(k,X,GR)
+        KK:=coefficientRing ring X;
+        r := (numgens ring X) - 1;
+        -- We can specify a private ring with binomial(r+1,k+1)
+        -- variables as follows
+        GR := KK[Variables => binomial(r+1,k+1)];
+        -- the work is done by
+        Fano2(k,X,GR)
       )
 
-o22 = --Function[stdio:101:26-108:10]--
+o22 = --Function[stdio:101:26-108:12]--
 
-o22 : Function
+o22 : FunctionClosure
 
 i23 : Grassmannian2 = method()
 
 o23 = Grassmannian2
 
-o23 : Function
+o23 : CompiledFunctionClosure
 
 i24 : Grassmannian2(ZZ,ZZ,Ring) := (k,r,R) ->( 
-      KK := coefficientRing R;
-      RPr := KK[Variables => r+1];
-      Pr := ideal(0_RPr);
-      Fano2(k,Pr)
-      )
+              KK := coefficientRing R;
+              RPr := KK[Variables => r+1];
+              Pr := ideal(0_RPr);
+              Fano2(k,Pr)
+           )
 
-o24 = --Function[stdio:111:37-115:8]--
+o24 = --Function[stdio:111:37-115:16]--
 
-o24 : Function
+o24 : FunctionClosure
 
 i25 : Grassmannian2(ZZ,ZZ) := (r,k) -> (
-      R := ZZ/31991[
-      vars(0..(binomial(r+1,k+1)-1))
-      ];
-      Grassmannian2(k,r,R)
-      )
+              R := ZZ/31991[
+                     vars(0..(binomial(r+1,k+1)-1))
+                          ];
+              Grassmannian2(k,r,R)
+                           )
 
-o25 = --Function[stdio:117:30-121:18]--
+o25 = --Function[stdio:117:30-121:26]--
 
-o25 : Function
+o25 : FunctionClosure
 
 i26 : KK = ZZ/31991
 
@@ -350,11 +350,11 @@ o35 = ideal (- b  + a*d, - b*c + a*e, - c*d + b*e, - b*c + a*e, - c  + a*f, -
 o35 : Ideal of P5
 
 i36 : catalecticant = (R,v,m,n) -> 
-      map(R^m,n,(i,j)-> R_(i+j+v))
+              map(R^m,n,(i,j)-> R_(i+j+v))
 
 o36 = catalecticant
 
-o36 : Function
+o36 : FunctionClosure
 
 i37 : catalecticant(P5,1,2,4)
 
@@ -365,7 +365,7 @@ o37 = | b c d e |
 o37 : Matrix P5  <--- P5
 
 i38 : M13 = catalecticant(P5,0,2,1) |
-      catalecticant(P5,2,2,3)
+                 catalecticant(P5,2,2,3)
 
 o38 = | a c d e |
       | b d e f |

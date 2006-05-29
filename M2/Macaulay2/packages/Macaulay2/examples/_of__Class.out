@@ -2,31 +2,31 @@
 
 i1 : ofClass class 3
 
-o1 = (an , integer)
+o1 = an integer
 
-o1 : Sequence
+o1 : SPAN
 
 i2 : peek oo
 
-o2 = ("an ", TO2{User :: ZZ, "integer"})
+o2 = SPAN{"an ", TO2{User :: ZZ, "integer"}}
 
 i3 : ofClass Ring
 
-o3 = (a , ring)
+o3 = a ring
 
-o3 : Sequence
+o3 : SPAN
 
 i4 : ofClass HashTable
 
-o4 = (a , hash table)
+o4 = a hash table
 
-o4 : Sequence
+o4 : SPAN
 
 i5 : ofClass ProjectiveVariety
 
-o5 = (a , projective variety)
+o5 = a projective variety
 
-o5 : Sequence
+o5 : SPAN
 
 i6 : document { Key => foo, "We may need ", ofClass ZZ, " and ", ofClass HashTable, "." }
 
@@ -45,6 +45,7 @@ o7 = foo
      ==================
      The object "foo" is a symbol.
 
-o7 : Hypertext
+o7 : DIV
 
 i8 : 
+     
