@@ -4,6 +4,7 @@
 #include "debug.h"
 #include "M2mem.h"
 #include <string.h>
+#include "factory_allocator.h"
 
 /* this is code from factory's file memutil.c, slightly sped up */
 
@@ -89,6 +90,13 @@ void* getBlock ( size_t size )
     }
 }
 
+void* getBlockClear ( size_t numb, size_t size ) {
+     size_t n = numb*size;
+     void *p = getBlock(n);
+     memset(p,0,n);
+     return p;
+}
+
 void freeBlockN ( void* block )	/* N means no size given */
 {
     char* dum;
@@ -112,6 +120,18 @@ void freeBlockN ( void* block )	/* N means no size given */
 
 void freeBlock ( void* block, size_t size ) { 
      freeBlockN(block) ; 
+}
+
+void* reallocBlockN ( void* block, size_t newsize )
+{
+  char* dum = (char*)block - HEADER_BYTES;
+  int size = *((int*)dum);
+  CHECK_GOOD(dum);
+  if (newsize <= size) return block;
+  void* retval = getBlock( newsize );
+  memcpy( retval, block, newsize < size ? newsize : size );
+  freeBlock( block, size );
+  return retval;
 }
 
 void* reallocBlock ( void* block, size_t oldsize, size_t newsize )

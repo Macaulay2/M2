@@ -49,8 +49,8 @@ int isDumpable(map m) {
   return m->w && m->r && !isStack(m);
 }
 
-void sprintmap(char *s, map m) {
-  sprintf(s,mapfmt, 
+void sprintmap(char *s, unsigned size, map m) {
+  snprintf(s,size,mapfmt, 
 	  m->from, m->to,
 	  m->r ? 'r' : '-', m->w ? 'w' : '-', m->x ? 'x' : '-',
 	  m->checksum,
@@ -59,7 +59,7 @@ void sprintmap(char *s, map m) {
 
 void fdprintmap(int fd, map m) {
   char buf[200];
-  sprintmap(buf,m);
+  sprintmap(buf,sizeof(buf),m);
   write(fd,buf,strlen(buf));
 }
 
