@@ -76,8 +76,8 @@ CONFIG_ARGS = @CONFIG_ARGS@
 CONFIG_CMD = @CONFIG_CMD@
 
 # See the autoconf documentation for a description of LIBS, which autoconf uses at configure time for checking for features
-# Hence we have to use it, too.
-LDLIBS += @LIBS@
+# But I don't want to use it that way.
+# LDLIBS += @LIBS@
 
 # See the autoconf documentation for a description of DEFS; we use incldue/config.h instead, to keep command lines short
 DEFS = @DEFS@
