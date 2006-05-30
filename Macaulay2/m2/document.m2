@@ -615,7 +615,7 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
 	  -- if debugLevel > 0 and formattedKey tag == "Ring ^ ZZ" then error "debug me";
 	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
 	  if d === null then (
-	       if signalDocError tag then stderr << "--error: tag has no documentation: " << tag << endl;
+	       if signalDocError tag then stderr << "--warning: tag has no documentation: " << tag << endl;
 	       return "missing documentation";
 	       ));
      if d#?Headline then d#Headline
@@ -892,7 +892,7 @@ help String := key -> (
 	  b := makeDocBody key;
 	  if b === null then (
 	       if ignoreDocumentationErrors
-	       then stderr << "--error: there is no documentation for '" << key << "'" << endl
+	       then stderr << "--warning: there is no documentation for '" << key << "'" << endl
 	       else error("there is no documentation for '"|key|"'");
 	       b = ();
 	       );
