@@ -1150,9 +1150,9 @@ show = method()
 show URL := x -> (
      url := x#0;
      browser := getenv "WWWBROWSER";
+     if version#"operating system" === "Darwin" and runnable "open" then browser = "open"; -- should ignore WWWBROWSER, according to Mike
      if browser === "" then (
 	  if runnable "firefox" then browser = "firefox"
-	  else if version#"operating system" === "Darwin" and runnable "open" then browser = "open"
 	  else if runnable "netscape" then browser = "netscape"
 	  else error "no browser found, and none specified in $WWWBROWSER"
 	  );
