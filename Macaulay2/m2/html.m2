@@ -228,7 +228,7 @@ makeTree := x -> (
      	  then (
 	       if not repeatedReferences#?x then (
 		    repeatedReferences#x = true;
-		    stderr << "--error: repeated reference(s) to documentation as subnode: " << x << endl;
+		    stderr << "--warning: repeated reference(s) to documentation as subnode: " << x << endl;
 		    );
 	       new TreeNode from { x , new ForestNode}	    -- repeated reference
 	       )
@@ -236,7 +236,7 @@ makeTree := x -> (
      else (
 	  if not missingReferences#?x then (
 	       missingReferences#x = true;
-	       stderr << "--error: missing reference to documentation as subnode: " << x << endl;
+	       stderr << "--warning: missing reference to documentation as subnode: " << x << endl;
 	       );
 	  new TreeNode from { x , new ForestNode}	    -- missing reference
 	  ))
@@ -805,13 +805,13 @@ installPackage Package := opts -> pkg -> (
 	  numDocumentationErrors = 0;
 	  scan((if pkg#"title" == "Macaulay2" then Macaulay2Core else pkg)#"exported symbols", s -> (
 		    tag := makeDocumentTag s;
-		    if not isUndocumented tag and not hasDocumentation s and signalDocError tag then stderr << "--error: symbol has no documentation: " << tag << endl;
+		    if not isUndocumented tag and not hasDocumentation s and signalDocError tag then stderr << "--warning: symbol has no documentation: " << tag << endl;
 		    f := value s;
 		    if instance(f, Function) then (
 			 scan(methods f, m -> (
 				   tag := makeDocumentTag m;
 				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m and signalDocError tag
-				   then stderr << "--error: method has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;
+				   then stderr << "--warning: method has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;
 				   ));
 			 o := options f;
 			 if o =!= null 
@@ -819,7 +819,7 @@ installPackage Package := opts -> pkg -> (
 			      m -> (
 				   tag := makeDocumentTag m;
 				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m and signalDocError tag
-				   then stderr << "--error: option has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;
+				   then stderr << "--warning: option has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;
 				   )))));
 
      	  if not opts.IgnoreDocumentationErrors
