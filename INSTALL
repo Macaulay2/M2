@@ -153,13 +153,29 @@ Other common libraries that we assume are on your system already:
 	GNU readline (provides libreadline.so and libhistory.so)
 	GNU ncurses (provides libcurses.so)
 
+----------------------
+Getting the source code
+----------------------
+
+The best way to get the source code is to download a tar file from our web site
+that contains the source code corresponding to a major release.
+
+To get the very latest source code (which may not always work):
+
+	svn export svn://u123.math.uiuc.edu/macaulay2/trunk/M2
+	cd M2
+	make
+
+The "make" command above runs the commands "autoconf" and "autoheader", which
+create the "configure" script and the "include/config.h.in" file.
+
 -----------------------
 Compiling
 -----------------------
 
 Quick and easy:
 
-	./configure
+	./configure --disable-encap
 	make
 	make check			# optional
 	make install
@@ -187,7 +203,7 @@ To make an encapsulated directory tree or distribution tarball
 suitable for use with the program epkg (see
 http://encap.cites.uiuc.edu/), replace the configuration command with:
 
-	./configure --enable-encap
+	./configure
 
 The effect is to insert one more component into the path names used at
 installation time, so that in response to 
