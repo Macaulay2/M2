@@ -38,12 +38,14 @@ check:: testprintmaps; ./$<
 testprintmaps:libdump.a
 clean::; rm -f testprintmaps
 
+ifeq "@HAVE_PERSONALITY@" "yes"
 all:: personality
 install:: personality $(bindir)  ; $(INSTALL_PROGRAM) $< $(bindir)/personality
 $(bindir) :; $(INSTALL) -d "$@"
 PERDIR = $(packagesdir)/personality
 $(PERDIR):; $(INSTALL) -d "$@"
 install:: personality.c $(PERDIR) ; $(INSTALL_DATA) $^
+endif
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/dumpdata "
