@@ -39,6 +39,7 @@ static void trim(char *s) {
   if (s[0] == '\n') s[0] = 0;
 }
 
+#if BRK
 static int extend_memory(void *newbreak) {
   if (ERROR == (int)brk(newbreak)) {
     warning("--warning: loaddata: out of memory (extending break to %p)\n", newbreak);
@@ -46,6 +47,7 @@ static int extend_memory(void *newbreak) {
   }
   else return OKAY;
 }
+#endif
 
 static int install(int fd, map m, long *pos) {
   void *start = m->from, *finish = m->to;
@@ -69,6 +71,7 @@ static int dumpmap(int fd, map m) {
   return write(fd, m->from, m->to-m->from);
 }
 
+#if BRK
 static char brkfmt[] = "sbrk(0)=%p\n";
 
 static int fdprintbrk(int fd) {
@@ -76,6 +79,7 @@ static int fdprintbrk(int fd) {
   snprintf(buf,sizeof(buf),brkfmt,sbrk(0));
   return write(fd,buf,strlen(buf));
 }
+#endif
 
 int dumpdata(char const *dumpfilename) {
   long pos, n;
@@ -87,7 +91,9 @@ int dumpdata(char const *dumpfilename) {
     warning("--warning: can't open dump data file '%s'\n", dumpfilename);
     return ERROR;
   }
+#if BRK
   if (ERROR == fdprintbrk(fd)) return ERROR;
+#endif
   {
     int nmaps = nummaps();
     struct MAP dumpmaps[nmaps];
@@ -118,8 +124,10 @@ int dumpdata(char const *dumpfilename) {
 }
 
 int loaddata(char const *filename) {
+#if BRK
   void *newbreak;
   int got_newbreak = 0;
+#endif
   int nmaps = nummaps();
   int debug = NULL != getenv("LOADDATA_DEBUG");
   int haderror = FALSE;
@@ -139,6 +147,7 @@ int loaddata(char const *filename) {
     char r, w, x, S;
     fbuf[0]=0;
     f_end = NULL == fgets(fbuf,sizeof fbuf,f) || fbuf[0]=='\n';
+#if BRK
     if (!got_newbreak) {
       if (0 == sscanf(fbuf,brkfmt,&newbreak)) {
 	warning("--warning: loaddata: in data file %s: expected sbrk(0) line: \n", filename, fbuf);
@@ -149,6 +158,7 @@ int loaddata(char const *filename) {
       got_newbreak = TRUE;
       continue;
     }
+#endif
     if (f_end) break;
     trim(fbuf);
     n++;
@@ -277,7 +287,9 @@ int loaddata(char const *filename) {
     fclose(f);
     /* now we must stop using static memory and the heap! */
     pos = ((pos + PAGESIZE - 1)/PAGESIZE) * PAGESIZE;
+#if BRK
     if (ERROR == extend_memory(newbreak)) return ERROR;
+#endif
     for (i=0; i<ndumps; i++) {
       if (ERROR == install(fd,&dumpmaps[i],&pos)) {
         if (installed_one) {
