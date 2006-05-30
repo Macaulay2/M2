@@ -170,10 +170,12 @@ fi
 
 AC_HEADER_TIME() dnl # time.h sys/time.h
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h sys/wait.h sys/resource.h io.h linux/personality.h)
-AC_CHECK_FUNCS([personality sys_errlist herror error socket gnu_get_libc_version __environ _environ environ _setmode getaddrinfo])
+AC_CHECK_FUNCS([personality somesillyfunction sys_errlist herror error socket gnu_get_libc_version __environ _environ environ _setmode getaddrinfo])
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([sys_errlist,sys_nerr,herror,gnu_get_libc_version])
 AC_FUNC_ALLOCA()
+
+AC_SUBST(HAVE_PERSONALITY)  HAVE_PERSONALITY=$ac_cv_func_personality
 
 AC_SUBST(STRIP)      AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), STRIP="$enableval", STRIP=yes)
 AC_SUBST(VERBOSE)    AC_ARG_ENABLE(verbose, AS_HELP_STRING(--enable-verbose,enable verbose memory allocation), VERBOSE="$enableval", VERBOSE=no)
