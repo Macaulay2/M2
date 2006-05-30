@@ -347,17 +347,15 @@ dump := () -> (
 	  );
      if fn === null then error "can't find cache directory for dumpdata file";
      fntmp := fn | ".tmp";
-     stderr << "--preparing to dump to " << fntmp << endl;
      fnmaps := fn | ".maps";
      fnmaps << showMaps() << endl << close;
-     stderr << "--current memory maps recorded in " << fnmaps << endl;
      runEndFunctions();
      collectGarbage();
-     stderr << "--dumping to " << fntmp << endl;
      interpreterDepth = 0;
+     stderr << "--dumping to " << fntmp << endl;
      dumpdata fntmp;
-     moveFile(fntmp,fn,Verbose=>true);
      stderr << "--success" << endl;
+     moveFile(fntmp,fn,Verbose=>true);
      exit 0;
      )
 
