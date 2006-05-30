@@ -1,0 +1,18 @@
+# populate the directory
+export VERSION=0.9.9
+mkdir tmp
+cd tmp
+cp ../ReadMe-MacOSX.rtf .
+cp -a /capybara/encap/Macaulay2-$VERSION Macaulay2
+cp ../ReadMe-MacOSX.rtf Macaulay2/
+cp ../setup Macaulay2/
+rm Macaulay2/bin/M2-emacs
+rm Macaulay2/bin/M2-load-libs
+rm Macaulay2/bin/M2-help
+strip Macaulay2/bin/M2
+cd .. # to original directory
+echo "about to do hdiutil"
+# comment one of these out
+hdiutil create -srcfolder tmp -volname Macaulay2-$VERSION Macaulay2-$VERSION-MacOSX-ppc.dmg
+hdiutil create -srcfolder tmp -volname Macaulay2-$VERSION Macaulay2-$VERSION-MacOSX-i386.dmg
+

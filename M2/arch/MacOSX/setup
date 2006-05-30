@@ -1,0 +1,26 @@
+#! /bin/bash
+M2PATH=`pwd`
+cat >>~/.profile <<STUFF
+### Macaulay2 ###
+  export PATH=$M2PATH/bin:\$PATH
+  export MANPATH=$M2PATH/share/man:$M2PATH/man:\$MANPATH
+  export INFOPATH=$M2PATH/share/info:$M2PATH/info:\$INFOPATH
+### end Macaulay2 ###
+STUFF
+
+cat >>~/.emacs <<STUFF
+;;; Macaulay2 ;;;
+	(setq load-path 
+	    (append
+	       '( "$M2PATH/share/emacs/site-lisp/" )
+	       load-path
+	    ))
+
+	(load "M2-init.el" t)
+
+	; comment out the following line with an initial 
+	; semicolon if you want to use your f12 key for 
+	; something else
+	(global-set-key [ f12 ] 'M2)
+;;; end Macaulay2 ;;;
+STUFF
