@@ -1740,11 +1740,14 @@ void gbA::auto_reduce_by(int id)
   /* Loop backwards while degree doesn't change */
   /* Don't change quotient ring elements */
   gbelem *me = gb[id];
+  int a = me->alpha;  // Only auto reduce those that are of the same degree
+                      // and not a higher alpha level
   for (int i=gb.size()-1; i>=first_gb_element; i--)
     {
       if (i == id) continue;
       gbelem *g = gb[i];
       if (g->deg < me->deg) return;
+      if (g->alpha < a) continue;
       if (gbTrace >= 10)
 	{
 	  buffer o;

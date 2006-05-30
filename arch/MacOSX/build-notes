@@ -1,0 +1,28 @@
+# this one works nicely, using only standard dynamic libraries
+../configure  --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib --enable-altivec CFLAGS=-g CPPFLAGS=-I/capybara/include LDFLAGS=-L/capybara/lib LOADLIBES="-lgcc_s.10.5 -lncurses" --with-gdbmlib=/capybara/lib/libgdbm.a --with-readlinelib=/capybara/lib/libreadline.a --with-historylib=/capybara/lib/libhistory.a --with-gclib=/capybara/lib/libgc.a
+
+
+# debug version
+env LOADLIBES="-lgcc_s.10.5" CPPFLAGS="-I/capybara/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --enable-debug --disable-optimize --with-veclib --enable-altivec
+
+#optimized version, for binary distribution
+env LOADLIBES="-lgcc_s.10.5 -lncurses" CPPFLAGS="-I/capybara/include" CFLAGS="-g" CXX="g++" LDFLAGS="-L/capybara/lib" ../configure --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --enable-altivec --with-gdbmlib=/capybara/lib/libgdbm.a --with-readlinelib=/capybara/lib/libreadline.a --with-historylib=/capybara/lib/libhistory.a
+
+#optimized version, for binary distribution
+# this one links correctly
+../configure  --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib --enable-altivec CFLAGS=-g CPPFLAGS=-I/capybara/include LDFLAGS=-L/capybara/lib LOADLIBES=-lgcc_s.10.5 
+
+
+# this one gives lazy symbol error
+env LOADLIBES="-lgcc_s.10.5" CPPFLAGS="-I/capybara/include" CFLAGS="-g" CXX="g++" LDFLAGS="-L/capybara/lib" ../configure --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --enable-altivec
+
+env CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" CXX="g++" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --enable-altivec --enable-profile
+
+
+
+
+env CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --enable-debug --disable-optimize --with-veclib --enable-altivec
+
+env CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" CXX="g++" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --enable-altivec
+
+env CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" CXX="g++" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --enable-altivec --enable-profile

@@ -28,6 +28,8 @@ document {
 	  TO "Groebner basis examples and applications",
 	  "fine control of Groebner basis computations",
 	  TO "computing Groebner bases",
+	  TO "partial computation of a Groebner basis",
+	  TO "Hilbert driven Groebner basis",
 	  --TO "finding a Groebner basis",
 	  --TO "rings that are available for Groebner basis computations",
 	  --TO "fine control of a Groebner basis computation"
@@ -41,6 +43,7 @@ document {
 	  TO "Groebner bases in local rings",
 	  TO "normal forms",
 	  TO "elimination of variables",
+	  TO "saturation"
 	  }
      }
 
@@ -146,7 +149,8 @@ document {
        R = QQ[s,t,x,y,z, MonomialOrder=>Eliminate 2];
        I = ideal(x-s^3-s*t-1, y-t^3-3*t^2-t, z-s*t^3)
        time leadTerm gens gb I
-       selectInSubring(1,gens gb I)
+       G = selectInSubring(1,gens gb I)
+       ans1 = G_(0,0)
        ///,
        PARA{},
        "This method (with some optimizations incorporated) is provided
@@ -154,15 +158,17 @@ document {
      EXAMPLE lines ///
        R = QQ[x,y,z,s,t];
        I = ideal(x-s^3-s*t-1, y-t^3-3*t^2-t, z-s*t^3)
-       time eliminate(I,{s,t})
+       time G = eliminate(I,{s,t})
+       ans2 = G_0
        ///,
      "Sometimes giving the variables different degrees will speed up the 
-     comptations.  Here, we set the degrees of x, y, and z to be the total
+     computations.  Here, we set the degrees of x, y, and z to be the total
      degrees.",
      EXAMPLE lines ///
        R1 = QQ[x,y,z,s,t, Degrees=>{3,3,4,1,1}];
        I1 = substitute(I,R1);
-       time eliminate(I1,{s,t})
+       time G = eliminate(I1,{s,t})
+       ans3 = G_0
        ///,
      PARA{},
      TEX "Another approach is to create the ring map $F : k[x,y,z] \\rightarrow{} k[s,t]$,
@@ -171,7 +177,8 @@ document {
        A = QQ[s,t]
        B = QQ[x,y,z]
        F = map(A,B,{s^3+s*t+1, t^3+3*t^2+t, s*t^3})
-       time kernel F
+       time G = kernel F
+       ans4 = G_0
        ///,
      "This appears to be much faster than the first two methods.",
      PARA{},
@@ -181,13 +188,27 @@ document {
        use ring I
        time f1 = resultant(I_0,I_2,s)
        time f2 = resultant(I_1,f1,t)
+       ans5 = -f2
        ///,
      "This is the fastest method in this case.",
+     PARA{},
+     "These answers should all be the same (with the possible exception of the last),
+     but are they?  They live in different rings, so we cannot compare them 
+     directly.  Instead, let's move them to the ring B, and then remove duplicates.",
+     EXAMPLE lines ///
+          L = {ans1,ans2,ans3,ans4,ans5};
+	  L = apply(L, f -> substitute(f,B));
+	  length unique L
+	  ///,
+     "They are all the same!",
      SeeAlso => {
 	  selectInSubring,
 	  RingMap,
 	  "eliminate",
-	  "resultant"
+	  "resultant",
+	  apply,
+	  unique,
+	  length
 	  }
      }
 document {
