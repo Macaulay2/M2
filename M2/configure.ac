@@ -25,7 +25,12 @@ define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
 AC_DEFUN(IS_DECLARED,[
   AC_CACHE_CHECK(whether $2 is declared, m2_cv_$2_is_declared,
-    AC_TRY_COMPILE($3, [$1 x = $2], [m2_cv_$2_is_declared=yes], [m2_cv_$2_is_declared=no]))
+        AC_LANG(C)
+	AC_COMPILE_IFELSE([
+	    $3
+	    int main () { $1 x = $2 ; } ],
+	m2_cv_$2_is_declared=yes,
+	m2_cv_$2_is_declared=no))
   test $m2_cv_$2_is_declared = no; val=$?
   AC_DEFINE_UNQUOTED(TO_UPPER($2_IS_DECLARED),$val,[whether $2 is declared in errno.h or stdio.h])
 ])
@@ -234,26 +239,28 @@ AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
 SAVELIBS="$LIBS"
 
-LIBS=-ldl
-AC_MSG_CHECKING(whether libdl exists (-ldl))
-AC_TRY_LINK([],[],LIBDL=-ldl;AC_MSG_RESULT([yes]), LIBDL=; AC_MSG_RESULT([no]))
+dnl LIBS=-ldl
+dnl AC_MSG_CHECKING(whether libdl exists (-ldl))
+dnl AC_LINK_IFELSE([int main() {}],LIBDL=-ldl;AC_MSG_RESULT(yes), LIBDL=; AC_MSG_RESULT(no))
 
-LIBS=-lpthread
-AC_MSG_CHECKING(whether libpthread exists (-lpthread))
-AC_TRY_LINK([],[],LIBPTHREAD=-lpthread;AC_MSG_RESULT([yes]), LIBPTHREAD=; AC_MSG_RESULT([no]))
+dnl LIBS=-lpthread
+dnl AC_MSG_CHECKING(whether libpthread exists (-lpthread))
+dnl AC_LINK_IFELSE([int main() {}],LIBPTHREAD=-lpthread;AC_MSG_RESULT(yes), LIBPTHREAD=; AC_MSG_RESULT(no))
 
 GCLIB="-lgc"
 AC_SUBST(GCLIB)
 AC_ARG_WITH(gclib, AS_HELP_STRING(--with-gclib=...,gc library ($GCLIB)), GCLIB="$withval")
 LIBS="$GCLIB $SAVELIBS"
 AC_MSG_CHECKING([whether gc library (-lgc) is installed (using $LIBS)])
-AC_TRY_LINK( [#include <gc.h>], [GC_malloc(1);], HAVE_LIBGC=yes;AC_MSG_RESULT([yes]), HAVE_LIBGC=no;AC_MSG_RESULT([no]))
+AC_LANG(C)
+AC_LINK_IFELSE( [int main () { GC_malloc(1); }], HAVE_LIBGC=yes;AC_MSG_RESULT(yes), HAVE_LIBGC=no;AC_MSG_RESULT(no))
 
 HAVE_LIBGC_PG=no
 if test "$PROFILING" = yes -a "$GCLIB" = "-lgc"
 then AC_MSG_CHECKING([whether gc library, profiling version, is installed (-lgc-pg)])
-     LIBS="-lgc-pg $LIBPTHREAD $LIBDL $SAVELIBS"
-     AC_TRY_LINK( [#include <gc.h>], [GC_malloc(1);], HAVE_LIBGC_PG=yes;AC_MSG_RESULT([yes]), AC_MSG_RESULT([no]))
+     LIBS="-lgc-pg $SAVELIBS"
+     AC_LANG(C)
+     AC_LINK_IFELSE( [int main () { GC_malloc(1);}], HAVE_LIBGC_PG=yes;AC_MSG_RESULT(yes), AC_MSG_RESULT(no))
 fi
 
 if   test "$PROFILING" = yes
@@ -267,13 +274,25 @@ AC_SUBST(GMPLIB)
 AC_ARG_WITH(gmplib, AS_HELP_STRING(--with-gmplib=...,gmp library (-lgmp)), GMPLIB="$withval")
 AC_MSG_CHECKING([whether gmp library is installed ($GMPLIB)])
 LIBS="$GMPLIB $SAVELIBS"
-AC_TRY_LINK( [#include <gmp.h>], [return *__gmp_version;], AC_MSG_RESULT([yes]), AC_MSG_RESULT([no]))
+AC_LANG(C)
+AC_LINK_IFELSE( [
+	#include <gmp.h>
+	int main () { return *__gmp_version;}
+	],
+    AC_MSG_RESULT(yes),
+    AC_MSG_RESULT(no))
 
 HAVE_LIBGMP_PG=no
 if test "$PROFILING" = yes -a "$GMPLIB" = "-lgmp"
 then AC_MSG_CHECKING([whether gmp library, profiling version, is installed (-lgmp-pg)])
      LIBS="-lgmp-pg $SAVELIBS"
-     AC_TRY_LINK( [#include <gmp.h>], [return *__gmp_version;], HAVE_LIBGMP_PG=yes;AC_MSG_RESULT([yes]), AC_MSG_RESULT([no]))
+     AC_LANG(C)
+     AC_LINK_IFELSE( [
+	#include <gmp.h>
+	int main () { return *__gmp_version; }
+	],
+     HAVE_LIBGMP_PG=yes;AC_MSG_RESULT(yes),
+     AC_MSG_RESULT(no))
 fi
 
 if   test "$PROFILING" = yes
@@ -284,7 +303,13 @@ fi
 
 AC_MSG_CHECKING([whether gdbm library is installed])
 LIBS="-lgdbm $SAVELIBS"
-AC_TRY_LINK([#include <gdbm.h>], [gdbm_close(0);], AC_MSG_RESULT([yes]), AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: gdbm]))
+AC_LANG(C)
+AC_LINK_IFELSE([
+    #include <gdbm.h>
+    int main () { gdbm_close(0); }
+    ],
+    AC_MSG_RESULT(yes),
+    AC_MSG_RESULT(no);AC_MSG_ERROR([missing library: gdbm]))
 
 NTLLIB=-lntl
 AC_SUBST(NTLLIB)
@@ -292,14 +317,24 @@ AC_ARG_WITH(ntllib, AS_HELP_STRING(--with-ntllib=...,ntl library (-lntl)), NTLLI
 AC_MSG_CHECKING([whether ntl library is installed])
 LIBS="$NTLLIB -lgmp $SAVELIBS"
 AC_LANG(C++)
-AC_TRY_LINK( [#include <NTL/tools.h>], [_ntl_GetTime();], HAVE_LIBNTL=yes;AC_MSG_RESULT([yes]), HAVE_LIBNTL=no;AC_MSG_RESULT([no]))
+AC_LINK_IFELSE( [
+    #include <NTL/tools.h>
+    int main () { _ntl_GetTime(); }
+    ],
+    HAVE_LIBNTL=yes;AC_MSG_RESULT(yes),
+    HAVE_LIBNTL=no;AC_MSG_RESULT(no))
 
 HAVE_LIBNTL_PG=no
 if test "$PROFILING" = yes -a "$NTLLIB" = "-lntl"
 then AC_MSG_CHECKING([whether ntl library, profiling version, is installed (-lntl-pg)])
      LIBS="-lntl-pg -lgmp $SAVELIBS"
      AC_LANG(C++)
-     AC_TRY_LINK( [#include <NTL/tools.h>], [_ntl_GetTime();], HAVE_LIBNTL_PG=yes;AC_MSG_RESULT([yes]), AC_MSG_RESULT([no]))
+     AC_LINK_IFELSE( [
+        #include <NTL/tools.h>
+	int main () { _ntl_GetTime(); }
+	],
+     HAVE_LIBNTL_PG=yes;AC_MSG_RESULT(yes),
+     AC_MSG_RESULT(no))
 fi
 
 if   test "$PROFILING" = yes
@@ -313,13 +348,23 @@ AC_SUBST(LIBCF)
 AC_MSG_CHECKING([whether factory library is installed])
 LIBS="$LIBCF $SAVELIBS"
 AC_LANG(C++)
-AC_TRY_LINK( [#include <factoryconf.h>], [extern const char factoryVersion[]; return *factoryVersion;], HAVE_LIBCF=yes;AC_MSG_RESULT([yes]), HAVE_LIBCF=no;AC_MSG_RESULT([no]))
+AC_LINK_IFELSE( [[
+        #include <factoryconf.h>
+	int main () { extern const char factoryVersion[]; return *factoryVersion; }
+	]],
+     HAVE_LIBCF=yes;AC_MSG_RESULT(yes),
+     HAVE_LIBCF=no;AC_MSG_RESULT(no))
 
 AC_MSG_CHECKING([whether factory library, profiling version, is installed (-lcf-pg)])
 AC_SUBST(HAVE_LIBCF_PG)
 LIBS="-lcf-pg $SAVELIBS"
 AC_LANG(C++)
-AC_TRY_LINK( [#include <factoryconf.h>], [extern const char factoryVersion[]; return *factoryVersion;], HAVE_LIBCF_PG=yes;AC_MSG_RESULT([yes]), HAVE_LIBCF_PG=no;AC_MSG_RESULT([no]))
+AC_LINK_IFELSE( [[
+        #include <factoryconf.h>
+	int main () { extern const char factoryVersion[]; return *factoryVersion; }
+     ]],
+    HAVE_LIBCF_PG=yes;AC_MSG_RESULT(yes),
+    HAVE_LIBCF_PG=no;AC_MSG_RESULT(no))
 
 if   test "$PROFILING" = yes
 then test "$HAVE_LIBCF_PG" = no -a "$HAVE_LIBCF" = no && AC_MSG_ERROR([missing libraries: libcf (and libcf-pg)])
@@ -327,23 +372,24 @@ then test "$HAVE_LIBCF_PG" = no -a "$HAVE_LIBCF" = no && AC_MSG_ERROR([missing l
 else test "$HAVE_LIBCF" = no && AC_MSG_ERROR([missing library: libcf])
 fi
 
-AC_MSG_CHECKING([whether (and where) the libfac library is installed (-lfac)])
+LIBFAC=-lfac
+AC_MSG_CHECKING([whether (and where) the libfac library is installed ($LIBFAC)])
 AC_SUBST(LIBFAC)
 AC_LANG(C++)
-LIBFAC=-lfac
 LIBS="$LIBCF $LIBFAC $SAVELIBS"
-AC_TRY_LINK(
- [extern const char * libfac_version;],
- [return *libfac_version;],
- HAVE_LIBFAC=yes;AC_MSG_RESULT([yes ($LIBFAC)]),
- HAVE_LIBFAC=no;AC_MSG_RESULT([no])
-)
+AC_LINK_IFELSE(
+ [extern const char * libfac_version; int main() { return *libfac_version; }],
+ HAVE_LIBFAC=yes;AC_MSG_RESULT(yes),
+ HAVE_LIBFAC=no;AC_MSG_RESULT(no))
 
 AC_MSG_CHECKING([whether libfac library, profiling version, is installed ($LIBFAC-pg)])
 
 LIBS="$LIBFAC-pg $LIBCF $SAVELIBS"
 AC_LANG(C++)
-AC_TRY_LINK( [extern const char * libfac_version;], [return *libfac_version;], HAVE_LIBFAC_PG=yes;AC_MSG_RESULT([yes]), HAVE_LIBFAC_PG=no;AC_MSG_RESULT([no]))
+AC_LINK_IFELSE(
+    [extern const char * libfac_version; int main() { return *libfac_version; }],
+    HAVE_LIBFAC_PG=yes;AC_MSG_RESULT(yes),
+    HAVE_LIBFAC_PG=no;AC_MSG_RESULT(no))
 
 if   test "$PROFILING" = yes
 then test "$HAVE_LIBFAC_PG" = no -a "$HAVE_LIBFAC" = no && AC_MSG_ERROR([missing libraries: libfac (and libfac-pg)])
@@ -351,24 +397,32 @@ then test "$HAVE_LIBFAC_PG" = no -a "$HAVE_LIBFAC" = no && AC_MSG_ERROR([missing
 else test "$HAVE_LIBFAC" = no && AC_MSG_ERROR([missing library: libfac])
 fi
 
-AC_MSG_CHECKING([whether readline library is installed])
+AC_MSG_CHECKING(whether readline library is installed)
 LIBS="-lreadline -lhistory -lncurses $SAVELIBS"
 AC_LANG(C)
-AC_TRY_LINK(
-    [extern char *readline(const char *);extern void add_history (const char *);],
-    [readline;add_history;],
-    AC_MSG_RESULT([yes]),
-    AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: readline]))
+AC_LINK_IFELSE(
+    [int main () { extern char *readline(const char *);extern void add_history (const char *); readline; add_history; } ],
+    AC_MSG_RESULT(yes),
+    AC_MSG_RESULT(no);AC_MSG_ERROR([missing library: readline]))
+
+TESTFLAG=-Wno-strict-aliasing
+AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
+AC_SUBST(HAVE_NO_STRICT_ALIASING)
+SAVE="$CFLAGS"
+CFLAGS="$TESTFLAG $CFLAGS"
+AC_LANG(C)
+AC_COMPILE_IFELSE([int main() {}], HAVE_NO_STRICT_ALIASING=yes, HAVE_NO_STRICT_ALIASING=no)
+CFLAGS="$SAVE"
+AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
 
 if test "$LAPACK" = "yes"
 then AC_MSG_CHECKING([whether lapack library is installed])
      LIBS="$LAPACKLIBS $SAVELIBS"
      AC_LANG(C)
-     AC_TRY_LINK(
-	 [],
-	 [dgetrf_();],
-	 AC_MSG_RESULT([yes]),
-	 AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: lapack ($LAPACKLIBS)]))
+     AC_LINK_IFELSE(
+	 [int main() {dgetrf_();}],
+	 AC_MSG_RESULT(yes),
+	 AC_MSG_RESULT(no);AC_MSG_ERROR([missing library: lapack ($LAPACKLIBS)]))
 fi
 
 LIBS="$SAVELIBS"
