@@ -312,13 +312,8 @@ document {
      Key => (depth,Ideal,Module),
      Headline => "the I-depth of M",
      Usage => 	  "d = depth(I,M)",
-     Inputs => {
-	  "I" => null,
-	  "M" => null
-	  },
-     Outputs => {
-	  "d" => null
-	  }
+     Inputs => { "I", "M" },
+     Outputs => { "d" }
      }
 
 document {

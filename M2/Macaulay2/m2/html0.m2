@@ -4,15 +4,6 @@
 -- html input
 -----------------------------------------------------------------------------
 
-nonnull = x -> select(x, i -> i =!= null)
-
-html = method(SingleArgumentDispatch=>true, TypicalValue => String)
--- text used to be one of the conversion functions, but now we just use "net"
-tex = method(SingleArgumentDispatch=>true, TypicalValue => String)
-texMath = method(SingleArgumentDispatch=>true, TypicalValue => String)
-mathML = method(SingleArgumentDispatch=>true, TypicalValue => String)
-info = method(SingleArgumentDispatch=>true, TypicalValue => String)
-
 MarkUpList = new Type of BasicList
 MarkUpList.synonym = "mark-up list"
 
@@ -49,18 +40,23 @@ toupper := new HashTable from apply(characters lower,characters upper,identity)
 toLower = s -> concatenate apply(characters s, c -> if tolower#?c then tolower#c else c)
 toUpper = s -> concatenate apply(characters s, c -> if toupper#?c then toupper#c else c)
 
+setboth := set { "li" } + BlockMix - set { "ins" }
+
 htmlMarkUpType := s -> (
-     on := "\n<" | s | ">";
-     off := "</" | s | ">\n";
+     on := "<" | s | ">";
+     off := "</" | s | ">";
+     if setboth#?s then ( on = "\n"|on; off = off|"\n" );
      t -> concatenate(on, apply(t,html), off))
 
 htmlMarkUpTypeWithOptions := opts -> s -> (
-     off := "</" | s | ">\n";
+     off := "</" | s | ">";
+     lt := "<";
+     if setboth#?s then ( lt = "\n"|lt; off = off|"\n" );
      t -> (
 	  o := "";
 	  (opts',u) := override(opts, toSequence t);
 	  scanPairs(opts', (k,v) -> if v =!= null then o = concatenate(o, " ", k, "=", format v));
-	  concatenate("\n<", s, o, ">", apply(sequence u,html), off)
+	  concatenate(lt, s, o, ">", apply(sequence u,html), off)
 	  ))
 
 MarkUpType.GlobalAssignHook = (X,x) -> (
@@ -86,8 +82,9 @@ withQname   := (q,x) -> (x.qname = q; x)
 requirestrings := x -> ( scan(x, line -> if class line =!= String then error ("expected a string, but encountered ", toString line)); x)
 trimfront := x -> apply(x, line -> (
 	  s := lines line;
-	  concatenate between(newline, prepend(replace("^[[:space:]]+","",s#0), drop(s,1)))))
-nonempty := x -> select(x, i -> i =!= "")
+	  if s#?0 
+	  then concatenate between(newline, prepend(replace("^[[:space:]]+","",s#0), drop(s,1)))
+	  else line))
 
 new MarkUpType := x -> error "obsolete 'new' method called"
 
@@ -107,7 +104,7 @@ PARA       = withQname_"p" new MarkUpType of MarkUpListParagraph	    -- double s
 
 ExampleItem = withQname_"code" new MarkUpType of MarkUpList
 EXAMPLE = method(SingleArgumentDispatch => true)
-EXAMPLE VisibleList := x -> TABLE splice { "class" => "examples", apply(trimfront nonempty requirestrings nonnull toSequence x, item -> TR TD ExampleItem item) }
+EXAMPLE VisibleList := x -> TABLE splice { "class" => "examples", apply(nonempty trimfront requirestrings nonnull toSequence x, item -> TR TD ExampleItem item) }
 EXAMPLE String := x -> EXAMPLE {x}
 
 PRE        = new MarkUpType of MarkUpListParagraph

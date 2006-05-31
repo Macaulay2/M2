@@ -34,7 +34,7 @@ document {
      Usage => "promote(f,R)",
      Inputs => {
 	  "f" => RingElement => {"in some base ring of R"},
-	  "R" => Ring => ""
+	  "R" => Ring
 	  },
      Outputs => {
 	  RingElement => "an element of R",

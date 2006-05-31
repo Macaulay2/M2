@@ -247,7 +247,7 @@ document {
      Key => (prePrune, Module),
      Usage => "N = prePrune M",
      Inputs => {
-	  "M" => null
+	  "M"
 	  },
      Outputs => {
 	  "N" => {"a module isomorphic to ", TT "M", "
@@ -303,8 +303,8 @@ document {
      Usage => "g = tensorHomAdjoint(f,L,M)",
      Inputs => {
           "f" => TT "L ** M --> N",
-          "L" => null,
-	  "M" => null
+          "L",
+	  "M"
 	  },
      Outputs => {
           "g" => {"the adjoint ", TT "L --> Hom(M,N)",
@@ -320,9 +320,9 @@ document {
      Headline => "** - Hom adjunction functor.",
      Usage => "g = tensorHomAdjoint(L,M,N)",
      Inputs => {
-          "L" => null,
-          "M" => null,
-          "N" => null
+          "L",
+          "M",
+          "N"
 	  },
      Outputs => {
           "g" => {TT "Hom(L ** M,N) --> Hom(L,Hom(M,N))",
@@ -343,7 +343,7 @@ document {
      Usage => "g = homTensorAdjoint(f,L,M)",
      Inputs => {
           "f" => TT "L --> Hom(M,N)",
-          "L" => null, "M" => null
+          "L", "M"
 	  },
      Outputs => {
           "g" => {"the adjoint ", TT "L ** M --> N", " of ",
@@ -358,9 +358,9 @@ document {
      Headline => "Hom - ** adjunction functor",
      Usage => "g = homTensorAdjoint(L,M,N)",
      Inputs => {
-          "L" => null,
-          "M" => null,
-          "N" => null
+          "L",
+          "M",
+          "N"
 	  },
      Outputs => {
           "g" => {TT "Hom(L,Hom(M,N)) --> Hom(L ** M, N)", PARA{},
@@ -379,9 +379,9 @@ document {
      Key => (homEvaluation,Module,Module,Module),
      Usage => "h = homEvaluation(L,M,N)",
      Inputs => {
-          "L" => null,
-          "M" => null,
-          "N" => null
+          "L",
+          "M",
+          "N"
 	  },
      Outputs => {
           "h" => {TT "L ** Hom(M,N) --> Hom(Hom(L,M),N)", ".", PARA{},
@@ -402,7 +402,7 @@ document {
      Key => (tensorEvaluation,Module,Module,Module),
      Usage => "h = tensorEvaluation(L,M,N)",
      Inputs => {
-          "L" => null, "M" => null, "N" => null
+          "L", "M", "N"
 	  },
      Outputs => {
           "h" => {TT "Hom(L,M) ** N --> Hom(L, M ** N)", ".", PARA{},
@@ -419,7 +419,7 @@ document {
      Headline => "map from a module to its bi-dual",
      Usage => "h = bidualMap M",
      Inputs => {
-          "M" => null
+          "M"
 	  },
      Outputs => {
           "h" => {TT "M --> Hom(Hom(M,R^1),R^1)", ", where ", TT "R",

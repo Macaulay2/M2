@@ -10,7 +10,7 @@ document {
 document { 
      Key => (genera,Ring),
      Usage => "genera R",
-     Inputs => {"R" => ""
+     Inputs => {"R"
 	  },
      Outputs => {List =>{"of the successive linear sectional
      arithmetic genera of projective scheme ", TT "V"," with homogeneous coordinate
@@ -30,7 +30,7 @@ document {
 document { 
      Key => {(genera,CoherentSheaf), (genera,Module)},
      Usage => "genera M",
-     Inputs => {"M" => ""
+     Inputs => {"M"
 	  },
      Outputs => {List =>{"of the successive linear sectional
      arithmetic genera of the succesive generic hyperplane restrictions 
@@ -49,7 +49,7 @@ document {
 document { 
      Key => (genera,Ideal),
      Usage => "genera I",
-     Inputs => {"I" => ""
+     Inputs => {"I"
 	  },
      Outputs => {List =>{"of the successive linear sectional
      arithmetic genera of ", TT "I"}
@@ -72,7 +72,7 @@ document {
 document { 
      Key => {(genera,ProjectiveVariety)},
      Usage => "genera V",
-     Inputs => {"V" => ""
+     Inputs => {"V"
 	  },
      Outputs => {List => {"of the successive linear sectional
      arithmetic genera of ", TT "V"}

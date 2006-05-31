@@ -10,37 +10,29 @@ document {
      Headline => "compute a minimal presentation",
      SeeAlso => {trim}
      }
+
 document { 
      Key => (minimalPresentation,Ring),
      Headline => "compute a minimal presentation of a quotient ring",
-     Usage => "Q/J = mininimalPresentation R",
-     Inputs => {
-	  "R" => {TT "S/I"}
-	  },
-    Outputs => {
-	  "Q/J" => QuotientRing => {"isomorphic to ", TT "R"}
-	  },
+     Usage => "S = minimalPresentation R",
+     Inputs => { "R" => { "a quotient ring" } },
+     Outputs => { "S" => { "a quotient ring, minimally presented if ", TT "R", " is homogeneous, isomorphic to ", TT "R" } },
      Consequences => {
-	  {TT "minimalPresentation", " stores the isomorphism from ", 
-	       TT "R = S/I", " to ", TT "Q/J", " as ", TT "R.minimalPresentationMap", 
-	       " and the inverse of this map as ", TT "R.minimalPresentationMapInv"}
+	  { "the isomorphism from ", TT "R", " to ", TT "S", " is stored as ", TT "R.minimalPresentationMap", 
+	       " and the inverse of this map is stored as ", TT "R.minimalPresentationMapInv"}
 	  },
-     "If the ring ", TT "S/I", " is graded, then the quotient ring ", 
-     TT "Q/J", " is a minimal presentation 
-     of ", TT "R = S/I", ". This is accomplished through considering the 
-     generators of ", TT "I", ". If 
-     a variable occurs as a term of a generator of ", TT "I", " and in no 
+     "The computation is accomplished by considering the relations of ", TT "R", ". If 
+     a variable occurs as a term of a relation of ", TT "R", " and in no 
      other terms of the same polynomial, then  the variable is replaced 
-     by the remaining terms and removed from the ring. A minimal generating 
-     set for the resulting defining ideal is then computed; this is ", 
-     TT "J", " and ", TT "Q/J", "the new quotient ring is returned. If ", 
-     TT "S/I", " is not graded, then an attempt is made to improve the
-      presentation of ", TT "S/I", ". An example follows.",
-    EXAMPLE {
+     by the remaining terms and removed from the ring.  A minimal generating 
+     set for the resulting defining ideal is then computed and the new quotient ring is returned.
+     If ", TT "R", " is not homogeneous, then an attempt is made to improve the
+     presentation.",
+     EXAMPLE {
 	  "R = ZZ/101[x,y,z,u,w]/ideal(x-x^2-y,z+x*y,w^2-u^2);",
 	  "minimalPresentation(R)",
---	  "R.minimalPresentationMap",
---	  "R.minimalPresentationMapInv"
+	  "R.minimalPresentationMap",
+	  "R.minimalPresentationMapInv"
 	  },
      SeeAlso => {(minimalPresentation, Ideal), (trim, Ring), (trim, QuotientRing)}     
      }
@@ -52,10 +44,7 @@ document {
      Inputs => {
 	  "I" => {"in a ring ", TT "S"}
 	  },
-     Outputs => {
-	  "J" => Ideal => {" in a new ring ", TT "Q", " with ", TT "S/I", " 
-	       isomorphic to ", TT "Q/J"}
-	  },
+     Outputs => { "J" => Ideal => {" in a new ring ", TT "Q", " with ", TT "S/I", " isomorphic to ", TT "Q/J"} },
      Consequences => {
      	  {TT "minimalPresentation", " stores the isomorphism  from ", TT "S/I", " to ", 
 	       TT "Q/J", " as ", TT "I.cache.minimalPresentationMap", " , where ", 
@@ -77,100 +66,102 @@ document {
 	  "C = ZZ/101[x,y,z,u,w];",
 	  "I = ideal(x-x^2-y,z+x*y,w^2-u^2);",
 	  "minPres I",
---	  "I.cache.minimalPresentationMap",
---	  "I.cache.minimalPresentationMapInv"
+	  "I.cache.minimalPresentationMap",
+	  "I.cache.minimalPresentationMapInv"
 	  },
      SeeAlso => {(minimalPresentation,Ring), (trim, Ideal)}
      }
-document { 
-     Key => (minimalPresentation,ChainComplex),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (minimalPresentation,CoherentSheaf),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (minimalPresentation,GradedModuleMap),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (minimalPresentation,GradedModule),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (minimalPresentation,ChainComplexMap),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
+
+-- document { 
+--      Key => (minimalPresentation,ChainComplex),
+--      Headline => "",
+--      Usage => "",
+--      Inputs => {
+-- 	  },
+--      Outputs => {
+-- 	  },
+--      Consequences => {
+-- 	  },     
+--      "description",
+--      EXAMPLE {
+-- 	  },
+--      Caveat => {},
+--      SeeAlso => {}
+--      }
+-- document { 
+--      Key => (minimalPresentation,CoherentSheaf),
+--      Headline => "",
+--      Usage => "",
+--      Inputs => {
+-- 	  },
+--      Outputs => {
+-- 	  },
+--      Consequences => {
+-- 	  },     
+--      "description",
+--      EXAMPLE {
+-- 	  },
+--      Caveat => {},
+--      SeeAlso => {}
+--      }
+-- document { 
+--      Key => (minimalPresentation,GradedModuleMap),
+--      Headline => "",
+--      Usage => "",
+--      Inputs => {
+-- 	  },
+--      Outputs => {
+-- 	  },
+--      Consequences => {
+-- 	  },     
+--      "description",
+--      EXAMPLE {
+-- 	  },
+--      Caveat => {},
+--      SeeAlso => {}
+--      }
+-- document { 
+--      Key => (minimalPresentation,GradedModule),
+--      Headline => "",
+--      Usage => "",
+--      Inputs => {
+-- 	  },
+--      Outputs => {
+-- 	  },
+--      Consequences => {
+-- 	  },     
+--      "description",
+--      EXAMPLE {
+-- 	  },
+--      Caveat => {},
+--      SeeAlso => {}
+--      }
+-- document { 
+--      Key => (minimalPresentation,ChainComplexMap),
+--      Headline => "",
+--      Usage => "",
+--      Inputs => {
+-- 	  },
+--      Outputs => {
+-- 	  },
+--      Consequences => {
+-- 	  },     
+--      "description",
+--      EXAMPLE {
+-- 	  },
+--      Caveat => {},
+--      SeeAlso => {}
+--      }
+
 document { 
      Key => (minimalPresentation,Matrix),
      Headline => "minimally present source and target of a matrix",
      Usage => "minimalPresentation f",
      Inputs => {
-	  "f" => ""
+	  "f"
 	  },
      Outputs => {
-	  "g" => Matrix => ""
+	  "g" => Matrix
 	  },
      "If the source and target of ", TT "f", " are graded, then minimal 
      presentations of the source and target modules for ", TT "f", " are 
@@ -203,7 +194,7 @@ document {
      Headline => "minimal presentation of a module",
      Usage => "N = minimalPresentation M",
      Inputs => {
-	  "M" => ""
+	  "M"
 	  },
      Outputs => {
 	  "N" => Module => {"isomorphic to ", TT "M"}
@@ -234,7 +225,7 @@ document {
      Headline => "specify the variable for the new isomorphic ring",
      Usage => "minimalPresentation(..., Variable => u)",
      Inputs => {
-	  "u" => Symbol => ""
+	  "u" => Symbol
 	  },
      Consequences => {
 	  {"variables in the resulting ring are ", TT "u_0, u_1, ..."}

@@ -7,7 +7,7 @@ document {
      Headline => "whether a ring is commutative",
      Usage => "isCommutative R",
      Inputs => {
-	  "R" => Ring => ""
+	  "R" => Ring
 	  },
      Outputs => {
 	  Boolean => {TO "true", " if the ", TO2("Ring", "ring"), " ", TT "R", " is commutative and ", 

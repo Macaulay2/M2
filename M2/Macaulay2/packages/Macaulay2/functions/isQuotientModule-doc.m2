@@ -7,7 +7,7 @@ document {
      Headline => "whether something is evidently a quotient of a free module",
      Usage => "isQuotientModule M",
      Inputs => {
-	  "M" => Thing => ""
+	  "M" => Thing
 	  },
      Outputs => {
 	  Boolean => {TO "true", " if the given representation of ", TT "M", " a quotient of a free module."}

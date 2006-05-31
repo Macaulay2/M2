@@ -7,7 +7,7 @@ document {
      Headline => "whether something is a free module",
      Usage => "isFreeModule M",
      Inputs => {
-	  "M" => Thing => ""
+	  "M" => Thing
 	  },
      Outputs => {
 	  Boolean => {TO "true", " if the given representation of ", TT "M", 

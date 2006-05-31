@@ -236,7 +236,7 @@ document {
      Key => (length, String),
      Headline => "length of a string",
      Usage => "n = length s",
-     Inputs => { "s" => "" },
+     Inputs => { "s" },
      Outputs => { "n" => { "the length of the string ", TT "s" } }
      }
 

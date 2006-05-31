@@ -1,5 +1,8 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 
+nonnull = x -> select(x, i -> i =!= null)
+nonempty = x -> select(x, i -> i =!= "")
+
 assert = x -> (
      if class x =!= Boolean then error "'assert' expected true or false";
      if not x then error "assertion failed")

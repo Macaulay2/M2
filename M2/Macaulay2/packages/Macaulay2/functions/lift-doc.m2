@@ -24,7 +24,7 @@ document {
 	  "f" => {"a ", TO2(RingElement,"ring element"), ", ",
 	       TO2(Ideal, "ideal"), ", or ", 
 	       TO2(Matrix, "matrix")},
-	  "R" => Ring => ""
+	  "R" => Ring
 	  },
      Outputs => {
 	  {"a ", TO2(RingElement,"ring element"), ", ",

@@ -15,7 +15,7 @@ document {
      Key => (euler,ProjectiveHilbertPolynomial),
      Headline => "constant term of the Hilbert polynomial",
      Usage => "euler P",
-     Inputs => {"P" => ""
+     Inputs => {"P"
 	  },
      Outputs => {ZZ =>" the constant term of the Hilbert polynomial"},
      "The command returns ", TT "P(0)", " the constant term of P. 
@@ -35,7 +35,7 @@ document {
      Key => (euler,ProjectiveVariety),
      Headline => "topological Euler characteristic of a (smooth) projective variety",
      Usage => "euler V",
-     Inputs => {"V" => ""
+     Inputs => {"V"
 	  },
      Outputs => {ZZ =>"the topological Euler characteristics of the variety V"
 	  },    
@@ -63,7 +63,7 @@ document {
      Key => (euler,CoherentSheaf),
      Headline => "Euler characteristic of coherent sheaf",
      Usage => "euler F",
-     Inputs => {"F" => ""
+     Inputs => {"F"
 	  },
      Outputs => {ZZ =>" the Euler characteristic of the cohomology of the sheaf"},
      "The command returns ", TT "chi(F)", " the Euler characteristic of the sheaf ",
@@ -100,7 +100,7 @@ document {
 document { 
      Key => {(eulers, CoherentSheaf),(eulers,Module)},
      Usage => "eulers E",
-     Inputs => {"E" => ""
+     Inputs => {"E"
 	  },
      Outputs => {List =>"the successive sectional Euler characteristics of a coherent sheaf, or a module."
 	  },
@@ -132,7 +132,7 @@ document {
 document { 
      Key => (eulers,Ideal),
      Usage => "eulers I",
-     Inputs => {"I" => ""
+     Inputs => {"I"
 	  },
      Outputs => {List =>"the successive sectional Euler 
 	  characteristics of an ideal (sheaf)."
@@ -151,7 +151,7 @@ document {
 document { 
      Key => (eulers,Ring),
      Usage => "eulers R",
-     Inputs => {"R" => ""
+     Inputs => {"R"
 	  },
      Outputs => {List =>"the successive sectional Euler 
 	       characteristics of a (sheaf of) ring(s)."

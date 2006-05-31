@@ -7,9 +7,9 @@ document {
      Headline => "make a generic skew symmetric matrix of variables",
      Usage => "genericSkewMatrix(R,r,n)",
      Inputs => {
-	  "R" => Ring => "",
+	  "R" => Ring,
 	  "r" => RingElement => {"which is a variable in the ring ", TT "R", " (this input is optional)"},
-	  "n" => ZZ => ""
+	  "n" => ZZ
 	  },
      Outputs => {
 	  {"a skew symmetric ", TO2("Matrix","matrix"), " with ", TT "n", 

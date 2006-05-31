@@ -26,7 +26,7 @@ scan({det,minors,exteriorPower}, fn -> document {
      Headline => "choose between Bareiss and Cofactor algorithms",     
      Usage => toString fn | "(M, Strategy => s)",     
      Inputs => {
-	  "M" => Matrix => "",
+	  "M" => Matrix,
 	  "s" => Symbol => {"either ", TT "Bareiss", " or ", TT "Cofactor"}	  
 	  },
      Consequences => {

@@ -180,7 +180,7 @@ document {   -- This node is used as an example for the documentation node: Key,
      Headline => "compute a projective resolution of a module",
      Usage => {TT "resolution M", " or ", TT "res M"},
      Inputs => {
-	  "M" => "",
+	  "M",
 	  },
      Outputs => {
 	  {"a free resolution of ", TT "M"}
@@ -692,14 +692,14 @@ document {
 document {
      Key => (symbol >=, ZZ),
      Usage => "(>= d)",
-     Inputs => { "d" => null },
+     Inputs => { "d" },
      Outputs => { { "a special object of class ", TT "LowerBound", " used to represent the set of natural numbers at least as large as ", TT "d" } }
      }
 
 document {
      Key => (symbol >, ZZ),
      Usage => "(> d)",
-     Inputs => { "d" => null },
+     Inputs => { "d" },
      Outputs => { { "a special object of class ", TT "LowerBound", " used to represent the set of natural numbers larger than ", TT "d" } }
      }
 
@@ -716,10 +716,7 @@ document {
 document {
      Key => (symbol _, RingElement, ZZ),
      Usage => "f_d",
-     Inputs => {
-	  "f" => "a polynomial",
-	  "d" => null
-	  },
+     Inputs => { "f" => "a polynomial", "d" },
      Outputs => { { "the sum of those terms of ", TT "f", " whose total degree is ", TT "d" } },
      SeeAlso => (symbol _, RingElement, List)
      }

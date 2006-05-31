@@ -7,7 +7,7 @@ document {
      Headline => "whether a ring element is a unit",
      Usage => "isUnit r",
      Inputs => {
-	  "r" => RingElement => ""
+	  "r" => RingElement
 	  },
      Outputs => {
 	  Boolean => {TO "true", " if the ", TO2("RingElement","ring element"), " ", TT "r", 

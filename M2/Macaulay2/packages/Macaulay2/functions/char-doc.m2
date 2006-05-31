@@ -12,7 +12,7 @@ document {
      Headline => "computes the characteristic of a field or ring",
      Usage => "char F",
      Inputs => {
-	   	"F" => Ring => ""
+	   	"F" => Ring
 	  },
      Outputs => {
 		"the characteristic of the ring"

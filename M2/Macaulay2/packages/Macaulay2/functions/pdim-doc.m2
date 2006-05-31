@@ -15,7 +15,7 @@ document {
      Headline => "calculate the projective dimension of a module",
      Usage => "pdim M",
      Inputs => {
-	  "M" => Module => ""
+	  "M" => Module
 	  },
      Outputs => {
 	ZZ => "the projective dimension" 
@@ -38,7 +38,7 @@ document {
      Headline => "calculate the projective dimension",
      Usage => "pdim S",
      Inputs => {
-	  "S" => CoherentSheaf => ""
+	  "S" => CoherentSheaf
 	  },
      Outputs => {
 	ZZ => "the projective dimension" 

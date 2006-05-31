@@ -13,9 +13,9 @@ document {
 document { 
      Key => {(codim,QuotientRing),(codim, PolynomialRing)},
      Usage => "codim R",
-     Inputs => {"R" => ""
+     Inputs => {"R"
 	  },
-     Outputs => {ZZ => ""
+     Outputs => {ZZ
 	  },
      "Computes the codimension of the presentation ideal of ", TT "R",
      " over its ambient polynomial ring.",
@@ -37,7 +37,7 @@ document {
      Usage => "codim M",
      Inputs => {"M" => {"a module over a ring ", TT "R"}
 	  },
-     Outputs => {ZZ => ""
+     Outputs => {ZZ
 	  },
      "Computes the codimension of the support of the module as given by ", TT "dim(R) - dim(M)", ".",
      EXAMPLE {
@@ -56,7 +56,7 @@ document {
      Usage => "codim F",
      Inputs => {"F" => {"a coherent sheaf over a ", TO "ProjectiveVariety", TT " X"}
 	  },
-     Outputs => {ZZ => ""
+     Outputs => {ZZ
 	  },
      "Computes the codimension of the support of ", TT "F", " as given by ", TT "dim(R) - dim(M)",
      " where ", TT "M", " is the module representing ", TT "F", " over the homogeneous coordinate ring ",
@@ -76,9 +76,9 @@ document {
 document { 
      Key => {(codim,Ideal),(codim,MonomialIdeal)},
      Usage => "codim I",
-     Inputs => {"I" => ""
+     Inputs => {"I"
 	  },
-     Outputs => {ZZ => ""
+     Outputs => {ZZ
 	  },
      "Computes the codimension of the ideal ", TT "I", ".",
      EXAMPLE {
@@ -97,9 +97,9 @@ document {
      Key => (codim,ProjectiveVariety),
      Headline => "codimension of the projective variety",
      Usage => "codim V",
-     Inputs => {"V" => ""
+     Inputs => {"V"
 	  },
-     Outputs => {ZZ => ""
+     Outputs => {ZZ
 	  },
      "Computes the codimension of the projective variety ", TT "V", ".",
      EXAMPLE {

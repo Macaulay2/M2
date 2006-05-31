@@ -6,7 +6,7 @@ document {
      Key => {decompose,(decompose,Ideal)},
      Headline => "minimal associated primes of an ideal",
      Usage => "decompose I",
-     Inputs => {"I" => Ideal => ""
+     Inputs => {"I" => Ideal
 	  },
      Outputs => {List => {"whose entries are the minimal associated primes of ", TT "I", " ."}
 	  },

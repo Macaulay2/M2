@@ -13,7 +13,7 @@ document {
      Headline => "whether all elements of a list satisfy a specified condition",
      Usage => "all((L,f)",
      Inputs => {
-	  "L" => BasicList => "",
+	  "L" => BasicList,
 	  "f" => Function => "which returns true or false"
 	  },
      Outputs => {
@@ -31,7 +31,7 @@ document {
      Headline => "whether all key/value pairs in a hash table satisfy a specified condition",
      Usage => "all(H,f)",
      Inputs => {
-	  "H" => HashTable => "",
+	  "H" => HashTable,
 	  "f" => Function => ", which returns true or false"
 	  },
      Outputs => {

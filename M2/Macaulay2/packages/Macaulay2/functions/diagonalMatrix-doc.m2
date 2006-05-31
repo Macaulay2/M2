@@ -7,7 +7,7 @@ document {
      Headline => "make a diagonal matrix",
      Usage => "diagonalMatrix m",
      Inputs => {
-	  "m" => Matrix => ""
+	  "m" => Matrix
 	  },
      Outputs => {
 	  Matrix => {"a diagonal matrix whose diagonal entries are the entries of ",  "m"}

@@ -102,7 +102,7 @@ document {
      Headline => "(partially constructed) minimal generator matrix",
      Usage => "mingens G",
      Inputs => {
-	  "G" => ""
+	  "G"
 	  },
      Outputs => {
 	  Matrix => "whose columns form a (partially computed) minimal generating set"

@@ -87,8 +87,8 @@ document {
      Headline => "map from free module to some generators",
      Usage => "I_{i,j,k,...}",
      Inputs => {
-	  "I" => null,
-	  "{i,j,k,...}" => "a list of integers"
+	  "I",
+	  { TT "{i,j,k,...}", ", a list of integers" }
 	  },
      Outputs => {
 	  "f" => { "a map from a free module to the module ", TT "module I", "

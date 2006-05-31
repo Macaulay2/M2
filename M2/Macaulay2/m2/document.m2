@@ -324,7 +324,6 @@ formatDocumentTag Array := s -> concatenate( toString s#0, "(..., ", toString s#
 -----------------------------------------------------------------------------
 -- fixing up hypertext
 -----------------------------------------------------------------------------
-nonnull := x -> select(x, i -> i =!= null)
 trimline0 := x -> selectRegexp ( "^((.*[^ \t])?)[ \t]*$",1, x)
 trimline  := x -> selectRegexp ( "^[ \t]*((.*[^ \t])?)[ \t]*$",1, x)
 trimline1 := x -> selectRegexp ( "^[ \t]*(.*)$",1, x)
@@ -367,10 +366,9 @@ fixup MarkUpType := z -> (
      ) -- convert PARA to PARA{}
 fixup Function   := z -> z				       -- allow Function => f 
 fixup String     := s -> (				       -- remove clumsy newlines within strings
+     if not match("\n",s) then return s;
      ln := lines s;
-     if not ln#?1 then return s;
      concatenate ({addspaces0 trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
-
 
 hypertext = method(SingleArgumentDispatch => true)
 hypertext MarkUpList := fixup
@@ -483,12 +481,20 @@ processExamples := (pkg,fkey,docBody) -> (
 -----------------------------------------------------------------------------
 -- 'document' function
 -----------------------------------------------------------------------------
-
-nonNull := x -> select(x,t->t=!=null)
 fixupEntry := method(SingleArgumentDispatch => true)
+	-- "x" => List => { "a list of numbers" }
+	-- "x" => List => "a list of numbers"
+	-- "x" => List
+	-- "x" => { "a list of numbers" }
+	-- List => { "a list of numbers" }
+	-- { "a list of numbers" }
+	-- "a list of numbers"
+	-- List
+	-- "x"
 fixupEntry Thing := fixup
-fixupEntry Option := z -> z#0 => fixupEntry z#1		       -- "x" => List => { "a number" }
-fixupList := x -> apply(nonNull x,fixupEntry)
+fixupEntry Type := identity
+fixupEntry Option := z -> z#0 => fixupEntry z#1
+fixupList := x -> apply(nonnull x,fixupEntry)
 enlist := x -> if class x === List then x else {x}
 chkIsString := key -> val -> if class val === String then fixup val else error("expected ",toString key," option to be a string")
 fixupTable := new HashTable from {
@@ -518,7 +524,7 @@ fixupTable := new HashTable from {
 			      if c === null then error("SourceCode: ", toString m, ": code for method not found");
 			      c)))}},
      Subnodes => v -> (
-	  v = nonNull enlist v;
+	  v = nonnull enlist v;
 	  if #v == 0 then error "encountered empty Subnodes list"
 	  else MENU apply(v, x -> fixup (
 		    if class x === TO then x
@@ -552,41 +558,6 @@ storeRawDocumentation := (tag,opts) -> (
      if currentPackage#rawKey#?key and signalDocError tag
      then stderr << currentFileName << ":" << currentLineNumber() << ": error: documentation already provided for '" << tag << "'" << endl;
      currentPackage#rawKey#key = opts;
-     )
-
-document = method()
-document List := args -> (
-     args = toSequence args;
-     if currentPackage === null then error "encountered 'document' command, but no package is open";
-     opts := new MutableHashTable;
-     scan(args, arg -> if class arg === Option then (
-	       key := arg#0;
-	       if not documentOptions#?key then error("unknown documentation option '", key, "'") ;
-	       if opts#?key then error("option ",key," encountered twice");
-	       opts#key = arg#1));
-     args = select(args, arg -> class arg =!= Option);
-     if not opts.?Key then error "missing Key";
-     key := opts.Key;
-     rest := {};
-     if class key === List then (
-	  rest = drop(key,1);
-	  opts.Key = key = first key;
-	  );
-     opts.DocumentTag = tag := makeDocumentTag(key, Package => currentPackage, FormattedKey => if opts.?FormattedKey then opts.FormattedKey);
-     scan(rest, secondary -> (
-	       tag2 := makeDocumentTag secondary;
-	       storeRawDocumentation(tag2, new HashTable from { PrimaryTag => tag, symbol DocumentTag => tag2 })));
-     if not opts.?Headline and class key === Sequence and key#?0 then (
-	  h := headline key#0;
-	  if h =!= null then opts.Headline = h;
-	  );
-     currentNodeName = DocumentTag.FormattedKey tag;
-     if reservedNodeNames#?(toLower currentNodeName) then error("'document' encountered a reserved node name '",currentNodeName,"'");
-     pkg := DocumentTag.Package tag;
-     opts.Description = toList args;
-     exampleBaseFilename = makeFileName(currentNodeName,currentPackage);
-     storeRawDocumentation(tag, new HashTable from apply(pairs opts,(key,val) -> (key,fixupTable#key val)));
-     currentNodeName = null;
      )
 
 undocumented = method(SingleArgumentDispatch => true)
@@ -703,27 +674,6 @@ type := S -> (
 	       "."},
 	  })
 
-istype := X -> parent X =!= Nothing
-alter1 := x -> (
-     if class x === Option and #x === 2 then (
-	  if istype x#0 then SPAN { ofClass x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SPAN { ", ", x#1 } }
-	  else error("expected string or type to left of '=>', but got: ",toString x#0)
-	  )
-     else x)
-alter := x -> (
-     if class x === Option and #x === 2 then (
-	  if istype x#0 then SPAN { ofClass x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SPAN { ", ", x#1 } }
-	  else if class x#0 === String then (
-	       if class x#1 === Option and #x#1 === 2 then (
-		    if istype x#1#0 then SPAN { TT x#0, ", ", ofClass x#1#0, if x#1#1 =!= "" and x#1#1 =!= null and x#1#1 =!= () then SPAN { ", ", x#1#1 } }
-		    else error("expected type to left of '=>', but got: ",toString x#1#0)
-		    )
-	       else SPAN { TT x#0, if x#1 =!= "" and x#1 =!= null and x#1 =!= () then SPAN { ", ", x#1 } }
-	       )
-	  else error("expected string or type to left of '=>', but got: ",toString x#0)
-	  )
-     else SPAN x)
-
 typicalValue := k -> (
      if typicalValues#?k then typicalValues#k 
      else if class k === Sequence and typicalValues#?(k#0) then typicalValues#(k#0)
@@ -738,26 +688,6 @@ types Sequence := x -> (
      then ({},{})					    -- it's an option ...
      else ( drop(toList x,1), { typicalValue x } ))
 
-isopt := x -> class x === Option and #x === 2
-
-merget := (key,v,v') -> apply(v,v',(a,t) -> (
-	  if t =!= Thing then (
-	       if isopt a then (
-		    if isopt a#1 then (
-			 if a#1#0 =!= t then error("type mismatch in documentation node ",toString key,": ", toString a#1#0, " =!= ", toString t)
-			 else a
-			 )
-		    else (
-			 if istype a#0 then (
-			      if a#0 =!= t then error("type mismatch in documentation node ",toString key,": ", toString a#0, " =!= ", toString t)
-			      else a
-			      )
-			 else a#0 => t => a#1			      
-			 )
-		    )
-	       else t => a)
-	  else a))
-
 emptyOptionTable := new OptionTable from {}
 getOptionDefaultValues := method(SingleArgumentDispatch => true)
 getOptionDefaultValues Symbol := x -> if value x =!= x then getOptionDefaultValues value x else emptyOptionTable
@@ -769,7 +699,111 @@ getOptionDefaultValues Sequence := s -> (
      o := options s;
      if o =!= null then o else if s#?0 and instance(s#0, Function) then getOptionDefaultValues s#0 else emptyOptionTable)
 
+istype := X -> parent X =!= Nothing
+isId := x -> instance(x,String) and match(///\`[[:alnum:]']+\'///,x)
+mapo := f -> g := x -> if instance(x, Option) then ( f x#0 ; g x#1 ) else f x
+processInputOutputItems := (key,fn) -> x -> (
+     optsymb := null;
+     idname := null;
+     type := null;
+     text := null;
+     (mapo (y -> 
+	       if optsymb === null and instance(y,Symbol) then optsymb = y
+	       else if idname === null and isId y then idname = y
+     	       else if istype y then (
+		    if type === null 
+		    or y === Nothing -- putting type Nothing in the doc's input list means don't display the type deduced from the description of the method
+		    then type = y
+		    else if type =!= y then error("type mismatch: ",toString type, " =!= ", toString y, " in documentation for ", toString key)
+		    )
+	       else if text === null then text = y
+	       else error("can't parse input/output item in documentation for ",toString key)
+	       )
+	  ) x;
+     r := SPAN splice between_", " nonnull nonempty { 
+	  if idname =!= null then TT idname, 
+	  if type =!= null and type =!= Nothing then ofClass type, -- type Nothing, treated as above
+	  text
+	  };
+     if optsymb =!= null then r = (
+	  if #r === 0
+	  then SPAN between(", ", nonnull ( TO2{ [fn,optsymb], concatenate(toString optsymb," => ...") }, headline [fn,optsymb] ))
+	  else SPAN (toString optsymb, " => ", r));
+     r)
+
 sortByName := v -> last \ sort \\ (i -> (toString i, i)) \ v
+
+document = method()
+document List := args -> (
+     args = toSequence args;
+     if currentPackage === null then error "encountered 'document' command, but no package is open";
+     o := new MutableHashTable;
+     scan(args, arg -> if class arg === Option then (
+	       key := arg#0;
+	       if not documentOptions#?key then error("unknown documentation option '", key, "'") ;
+	       if o#?key then error("option ",key," encountered twice");
+	       o#key = arg#1));
+     args = select(args, arg -> class arg =!= Option);
+     if not o.?Key then error "missing Key";
+     key := o.Key;
+     rest := {};
+     if class key === List then (
+	  rest = drop(key,1);
+	  o.Key = key = first key;
+	  );
+     o.DocumentTag = tag := makeDocumentTag(key, Package => currentPackage, FormattedKey => if o.?FormattedKey then o.FormattedKey);
+     scan(rest, secondary -> (
+	       tag2 := makeDocumentTag secondary;
+	       storeRawDocumentation(tag2, new HashTable from { PrimaryTag => tag, symbol DocumentTag => tag2 })));
+     if not o.?Headline and class key === Sequence and key#?0 then (
+	  h := headline key#0;
+	  if h =!= null then o.Headline = h;
+	  );
+     currentNodeName = DocumentTag.FormattedKey tag;
+     if reservedNodeNames#?(toLower currentNodeName) then error("'document' encountered a reserved node name '",currentNodeName,"'");
+     pkg := DocumentTag.Package tag;
+     o.Description = toList args;
+     exampleBaseFilename = makeFileName(currentNodeName,currentPackage);
+     scan(keys o, key -> o#key = fixupTable#key o#key);
+     if o.?Headline and o.Headline === "" then remove(o,Headline);
+     if o.?Usage and o.Usage === "" then remove(o,Usage);
+     -- pre-processing of inputs and outputs
+     inp := if o.?Inputs then o.Inputs else {};
+     out := if o.?Outputs then o.Outputs else {};
+     iso := x -> instance(x,Option) and #x==2 and instance(x#0,Symbol);
+     ino := select(inp, x -> iso x);
+     inoh:= new HashTable from ino;
+     inp = select(inp, x -> not iso x);
+     opt := getOptionDefaultValues key;
+     fn := if instance(key, Sequence) then key#0 else if instance(key,Symbol) then value key else key;
+     if not isSubset(keys inoh, keys opt) then error concatenate("not among the options for ", toString fn, ": ", between_", " keys (set keys inoh - set keys opt));
+     ino = join(ino, sortByName (keys opt - set keys inoh));
+     (inp',out') := types key;
+     inp' = select(inp', T -> T =!= Nothing);
+     out' = select(out', T -> T =!= Nothing);
+     if out' === {Thing} then out' = {};		    -- not informative enough
+     if #inp === 0 then inp = inp';
+     if #out === 0 then out = out';
+     if #inp' =!= 0 then (
+     	  if #inp =!= #inp' then error ("mismatched number of inputs in documentation for ", toString key);
+     	  inp = apply(inp',inp,(T,v) -> T => v);
+	  );
+     if #out' =!= 0 then (
+     	  if #out =!= #out' then error ("mismatched number of outputs in documentation for ", toString key);
+     	  outp = apply(out',out,(T,v) -> T => v);
+	  );
+     proc := processInputOutputItems(key,fn);
+     inp = proc \ inp;
+     out = proc \ out;
+     ino = proc \ ino;
+     if #inp>0 then o.Inputs = inp else remove(o,Inputs);
+     if #out>0 then o.Outputs = out else remove(o,Outputs);
+     if #ino>0 then o.OptionalInputs = ino else remove(o,OptionalInputs);
+     -- end of pre-processing
+     o = new HashTable from o;
+     storeRawDocumentation(tag, o);
+     currentNodeName = null;
+     )
 
 synopsisOpts := new OptionTable from {			    -- old
      Usage => null,
@@ -784,69 +818,23 @@ briefSynopsis := key -> (
      --	       moreGeneral s
      -- back somewhere....
      o := getDoc key;
-     if o === null then o = synopsisOpts;
-     inp := if o.?Inputs then o.Inputs else {};
-     out := if o.?Outputs then o.Outputs else {};
-     res := if o.?Consequences then o.Consequences else {};
-     usa := if o.?Usage then o.Usage;
-     fun := if o#?Function then o#Function;
-     iso := x -> instance(x,Option) and #x==2 and instance(x#0,Symbol);	-- oops
-     ino := new HashTable from select(inp, x -> iso x);
-     inp = select(inp, x -> not iso x);
-     opt := getOptionDefaultValues key;
-     ino = apply(sortByName unique join(keys opt,keys ino),
-	  optionName -> (
-	       fn := if class key === Sequence then key#0 else value key;
-	       hd := headline [fn,optionName];
-	       if hd =!= null then hd = SPAN{ ", ", hd };
-	       fixup (
-		    if opt#?optionName
-	       	    then (
-			 defaultValue := opt#optionName;
-			 -- ino#optionName used to give the name of the variable used as value
-			 SPAN { TO2{ [fn,optionName], concatenate(toString optionName," => ...") }, hd }
-			 )
-	       	    else (
-			 stderr << "--warning: " << optionName << " not an option for documentation key " << key << endl;
-			 SPAN { TO2{ [fn,optionName], concatenate(toString optionName," => ...") }, hd }
-			 ))));
-     (inp',out') := types key;
-     inp' = select(inp', T -> T =!= Nothing);
-     out' = select(out', T -> T =!= Nothing);
-     if out' === {Thing} then out' = {};		    -- not informative enough
-     if #inp === 0 then (
-	  inp = apply(inp', T -> T => "");
-	  )
-     else if #inp' =!= 0 then (
-     	  if #inp =!= #inp' then error ("mismatched number of inputs in documentation for ", toString key);
-     	  inp = merget(key,inp,inp');
-	  );
-     if #out === 0 then (
-	  out = apply(out', T -> T => "");
-	  )
-     else if #out' =!= 0 then (
-     	  if #out =!= #out' then error ("mismatched number of outputs in documentation for ", toString key);
-     	  out = merget(key,out,out');
-	  );
-     inp = alter \ inp;
-     out = alter \ out;
-     if usa =!= null or #inp > 0 or #out > 0 then (
-	  fixup DIV {				  -- to be implemented
-	       UL {
-     	       	    if usa =!= null then SPAN { "Usage: ", if class usa === String then TT usa else usa},
-		    if fun =!= null then SPAN { "Function: ", TO fun }
-		    else if class key === Sequence and key#?0 then (
-	       		 if instance(key#0, Function) 
-			 then SPAN { "Function: ", TO key#0 }
-			 else SPAN { "Operator: ", TO key#0 }
-			 ),
-		    if inp#?0 then DIV1 { "Inputs:", UL inp },
-		    if out#?0 then DIV1 { "Outputs:", UL out },
-		    if res#?0 then DIV1 { "Consequences:", UL res },
-		    if ino#?0 then DIV1 { TO2{ "using functions with optional inputs", "Optional inputs"}, ":", UL ino }
-		    }
-	       }
-	  ))
+     if o === null then return null;
+     r := nonnull {
+	  if o.?Usage then (
+     	       usa := o.Usage;
+	       SPAN { "Usage: ", if class usa === String then TT usa else usa}),
+	  if o#?Function then SPAN { "Function: ", TO o#Function }
+	  else if instance(key, Sequence) and key#?0 then (
+	       if instance(key#0, Function) 
+	       then SPAN { "Function: ", TO key#0 }
+	       else SPAN { "Operator: ", TO key#0 }
+	       ),
+	  if o.?Inputs then DIV1 { "Inputs:", UL o.Inputs },
+	  if o.?Outputs then DIV1 { "Outputs:", UL o.Outputs },
+	  if o.?OptionalInputs then DIV1 { TO2{ "using functions with optional inputs", "Optional inputs"}, ":", UL o.OptionalInputs },
+	  if o.?Consequences and #o.Consequences > 0 then DIV1 { "Consequences:", UL o.Consequences }
+	  };
+     if #r > 0 then fixup DIV { UL r })
 
 synopsis := key -> (
      s := briefSynopsis key;

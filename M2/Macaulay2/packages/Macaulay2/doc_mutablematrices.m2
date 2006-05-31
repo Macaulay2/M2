@@ -111,10 +111,10 @@ document {
      Headline => "add a multiple of one row to another",
      Usage => "rowAdd(m,i,a,j)",
      Inputs => {
-	  "m" => MutableMatrix => "",
-	  "i" => ZZ => "",
+	  "m" => MutableMatrix,
+	  "i" => ZZ,
 	  "a" => RingElement => {"in the same ring as ", TT "m"},
-	  "j" => ZZ => ""
+	  "j" => ZZ
           },
      Consequences => {
 	  {"The ", TT "i", " th row of ", TT "m", 
@@ -143,10 +143,10 @@ document {
      Headline => "add a multiple of one column to another",
      Usage => "columnAdd(m,i,a,j)",
      Inputs => {
-	  "m" => MutableMatrix => "",
-	  "i" => ZZ => "",
+	  "m" => MutableMatrix,
+	  "i" => ZZ,
 	  "a" => RingElement => {"in the same ring as ", TT "m"},
-	  "j" => ZZ => ""
+	  "j" => ZZ
           },
      Consequences => {
 	  {"The ", TT "i", " th column of ", TT "m", 
@@ -169,9 +169,9 @@ document {
      Headline => "interchange rows",
      Usage => "rowSwap(m,i,j)",
      Inputs => {
-	  "m" => MutableMatrix => "",
-	  "i" => ZZ => "",
-	  "j" => ZZ => ""
+	  "m" => MutableMatrix,
+	  "i" => ZZ,
+	  "j" => ZZ
           },
      Consequences => {
 	  {"Interchanges the ", TT "i", " th and ", TT "j", 
@@ -191,9 +191,9 @@ document {
      Headline => "interchange columns",
      Usage => "columnSwap(m,i,j)",
      Inputs => {
-	  "m" => MutableMatrix => "",
-	  "i" => ZZ => "",
-	  "j" => ZZ => ""
+	  "m" => MutableMatrix,
+	  "i" => ZZ,
+	  "j" => ZZ
           },
      Consequences => {
 	  {"Interchanges the ", TT "i", " th and ", TT "j", 
@@ -219,8 +219,8 @@ document {
      Headline => "multiply a row by a ring element",
      Usage => "rowMult(m,i,a)",
      Inputs => {
-	  "m" => MutableMatrix => "",
-	  "i" => ZZ => "",
+	  "m" => MutableMatrix,
+	  "i" => ZZ,
 	  "a" => RingElement => {"in the same ring as ", TT "m"},
           },
      Consequences => {
@@ -248,8 +248,8 @@ document {
      Headline => "multiply a column by a ring element",
      Usage => "columnMult(m,i,a)",
      Inputs => {
-	  "m" => MutableMatrix => "",
-	  "i" => ZZ => "",
+	  "m" => MutableMatrix,
+	  "i" => ZZ,
 	  "a" => RingElement => {"in the same ring as ", TT "m"},
           },
      Consequences => {
@@ -269,14 +269,13 @@ document {
      Headline => "permute some rows",
      Usage => "rowPermute(m,i,{...})",
      Inputs => {
-	  "m" => MutableMatrix => "",
+	  "m" => MutableMatrix,
 	  "i" => ZZ => "starting row",
-	  "{...}" => List => "of integers, denoting a permutation of 0,...,d, for
-	  some number d"
+	  Nothing => { "a list of integers, denoting a permutation of ", TT "0..d", ", for some number ", TT "d" }
 	  },
      Consequences => {
-	  {"If the permutation is {p0,p1,...,pd}, then m is modified so that
-	  the i+j row becomes the i+pj row of the original matrix, for j=0..d"}
+	  {"If the permutation is ", TT "{p0,p1,...,pd}", ", then ", TT "m", " is modified so that
+	  the ", TT "i+j", " row becomes the ", TT "i+pj", " row of the original matrix, for ", TT "j=0..d"}
 	  },     
      EXAMPLE {
 	  "m = mutableMatrix map(ZZ^5,ZZ^6, (i,j) -> 100*i+j)",
@@ -289,14 +288,13 @@ document {
      Headline => "permute some columns",
      Usage => "columnPermute(m,i,{...})",
      Inputs => {
-	  "m" => MutableMatrix => "",
+	  "m" => MutableMatrix,
 	  "i" => ZZ => "starting column",
-	  "{...}" => List => "of integers, denoting a permutation of 0,...,d, for
-	  some number d"
+	  Nothing => { "a list of integers, denoting a permutation of ", TT "0..d", ", for some number ", TT "d" }
 	  },
      Consequences => {
-	  {"If the permutation is {p0,p1,...,pd}, then m is modified so that
-	  the i+j column becomes the i+pj column of the original matrix, for j=0..d"}
+	  {"If the permutation is ", TT "{p0,p1,...,pd}", ", then ", TT "m", " is modified so that
+	  the ", TT "i+j", " column becomes the ", TT "i+pj", " column of the original matrix, for ", TT "j=0..d"}
 	  },     
      EXAMPLE {
 	  "m = mutableMatrix map(ZZ^5,ZZ^6, (i,j) -> 100*i+j)",

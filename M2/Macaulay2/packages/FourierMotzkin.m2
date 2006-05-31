@@ -294,22 +294,17 @@ document {
 	}
 
 document {     
-     Key => {fourierMotzkin, (fourierMotzkin,Matrix),
-     (fourierMotzkin,Matrix,Matrix)},
+     Key => {fourierMotzkin, (fourierMotzkin,Matrix), (fourierMotzkin,Matrix,Matrix)},
      Headline => "interchange inequality/generator representation of a
      polyhedral cone",
      Usage => "(A',B') = fourierMotzkin(A,B)",
      Inputs => {
-	  "A" => {"a ", TO Matrix, " with entries in ", 
-	       TO ZZ, " or ", TO QQ},
-	  "B" => {"a ", TO Matrix, " with entries in ",
-	       TO ZZ, " or ", TO QQ, "(this input is optional)"}
+	  "A" => {"a ", TO Matrix, " with entries in ", TO ZZ, " or ", TO QQ},
+	  "B" => {"a ", TO Matrix, " with entries in ", TO ZZ, " or ", TO QQ, "(this input is optional)"}
 	  },
      Outputs => {
-	  "A'" => {"a ", TO Matrix, " with entries in ", 
-	       TO ZZ, " or ", TO QQ},
-	  "B'" => {"a ", TO "Matrix", " with entries in ", 
-	       TO ZZ, " or ", TO QQ}
+	  "A'" => {"a ", TO Matrix, " with entries in ", TO ZZ, " or ", TO QQ},
+	  "B'" => {"a ", TO "Matrix", " with entries in ", TO ZZ, " or ", TO QQ}
 	  },
      
      PARA{}, "The input pair ", TT "(A,B)", " describes a rational

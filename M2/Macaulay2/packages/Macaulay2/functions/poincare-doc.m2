@@ -33,7 +33,7 @@ document {
      Headline => "assemble degrees of an ring into a polynomial",
      Usage => "poincare R",
      Inputs => {
-	  "R" => Ring => ""
+	  "R" => Ring
 	  },
      Outputs => {
 	  RingElement => "in the Laurent polynomial ring whose variables correspond to the degrees of the ring"
@@ -58,7 +58,7 @@ document {
      Headline => "assemble degrees of an module into a polynomial",
      Usage => "poincare M",
      Inputs => {
-     	  "M" => Module => ""     
+     	  "M" => Module     
 	  },
      Outputs => {
 	  RingElement => "in the Laurent polynomial ring whose variables correspond to the degrees of the ambient ring"
@@ -87,7 +87,7 @@ document {
      Headline => "assemble degrees of the quotient of the ambient ring by an ideal into a polynomial",
      Usage => "poincare I",
      Inputs => {
-	  "I" => Ideal => ""
+	  "I" => Ideal
 	       }, 
     Outputs => {
 	  RingElement => "in the Laurent polynomial ring whose variables correspond to the degrees of the ambient ring"
@@ -120,7 +120,7 @@ document {
      Headline => "assemble degrees of a chain complex into a polynomial",
      Usage => "poincare C",
      Inputs => {
-     	  "C" => ChainComplex => ""
+     	  "C" => ChainComplex
 	  },
      Outputs => {
 	  RingElement => "in the Laurent polynomial ring whose

@@ -7,7 +7,7 @@ document {
      Headline => "apply a function to each key in a hash table",
      Usage => "applyKeys(H,f)",
      Inputs => {
-  	  "H" => HashTable => "",
+  	  "H" => HashTable,
   	  "f" => Function => "with one argument",
   	  },
      Outputs => {

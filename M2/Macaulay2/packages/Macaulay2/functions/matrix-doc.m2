@@ -21,10 +21,7 @@ document {
      Key => (matrix,Ring,List),
      Headline => "create a matrix from a doubly nested list of ring elements or matrices",
      Usage => "matrix(R, v)",
-     Inputs => {
-	  "R" => null,
-	  "v" => "a list of vectors; or a doubly nested list of ring elements 
-	         and/or matrices",
+     Inputs => { "R", "v" => "a list of vectors; or a doubly nested list of ring elements and/or matrices",
 	  },
      Outputs => {
 	  {"A matrix over ", TT "R", ", whose source and target are both 
@@ -131,10 +128,10 @@ document {
      Headline => "make a polynomial using classic Macaulay-like syntax",
      Usage => "poly s",
      Inputs => {
-	  "s" => String => ""
+	  "s" => String
 	  },
      Outputs => {
-	  RingElement => ""
+	  RingElement
 	  },
      "The classic Macaulay polynomial format is useful for fast entry
      of polynomials, ideals, and matrices.  Only ring variables which are
@@ -191,7 +188,7 @@ document {
 	  "s" => "in the form: \"f1,f2,...,fr\""
 	  },
      Outputs => {
-	  Ideal => ""
+	  Ideal
 	  },
      "Creates an ideal using an abbreviated format.
      Each polynomial has the form described in ", TO (poly,String), 
@@ -215,7 +212,7 @@ document {
 	  "s" => "in the form: \"f1,f2,...,fr;g1,...,gr;...;h1,...,hr\""
 	  },
      Outputs => {
-	  Matrix => ""
+	  Matrix
 	  },
      "Creates a matrix using an abbreviated format.
      Each polynomial has the form described in ", TO (poly,String), 
@@ -239,7 +236,7 @@ document {
      Headline => "make a matrix from a mutable one",
      Usage => "matrix m",
      Inputs => {
-	  "m" => ""
+	  "m"
 	  },
      Outputs => {
 	  Matrix => "the same matrix as m, but not mutable."

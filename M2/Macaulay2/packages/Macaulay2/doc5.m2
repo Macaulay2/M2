@@ -283,7 +283,7 @@ document {
      Key => (symbol -, Tally, Tally),
      Headline => "difference of tallies",
      Usage => "x - y",
-     Inputs => { "x" => "", "y" => "" },
+     Inputs => { "x", "y" },
      Outputs => { { "produces the difference of two tallies" } },
      "The count associated to an item ", TT "i", " in the result is the difference of the counts in
      ", TT "x", " and in ", TT "y", " if it's positive, otherwise, zero.",
@@ -385,7 +385,7 @@ document {
 	  (set,BasicList)},
      Headline => "make a set",
      Usage => {"set v, ", EM "or", " set(v1,v2,...)"},
-     Inputs => {"v" => List => ""},
+     Inputs => {"v" => List},
      Outputs => {Set => " the set whose elements are the members of the list v"},
      EXAMPLE {
 	  "v = {1,2,3,2,1}",
@@ -400,8 +400,8 @@ document {
      Headline => "test set membership",
      Usage => "x#?e",
      Inputs => {
-	  "x" => "",
-	  "e" => ""
+	  "x",
+	  "e"
 	  },
      Outputs => {
 	  Boolean => {"whether e is in the set x"}
@@ -444,8 +444,8 @@ document {
      Headline => "set union",
      Usage => "x + y",
      Inputs => {
-	  "x" => "",
-	  "y" => "",
+	  "x",
+	  "y",
 	  },
      Outputs => {
 	  Set => {"the union of ", TT "x", " and ", TT "y"},
@@ -484,8 +484,8 @@ document {
      Headline => "intersection of sets",
      Usage => "x * y",
      Inputs => {
-	  "x" => "",
-	  "y" => ""
+	  "x",
+	  "y"
 	  },
      Outputs => {
 	  {"the intersection of ", TT "x", " and ", TT "y"}
@@ -498,9 +498,7 @@ document {
      Key => (symbol ^**, Set, ZZ),
      Headline => "Cartesian power",
      Usage => "B = A^**n",
-     Inputs => {
-	  "A" => null,
-	  "n" => null},
+     Inputs => { "A", "n" },
      Outputs => {"B" => { "the set of n-tuples of elements from A" }},
      EXAMPLE {
      	  "A = set{1,2}",
@@ -530,9 +528,7 @@ document {
      Key => (symbol ^**, Module, ZZ),
      Headline => "tensor power",
      Usage => "N = M^**i",
-     Inputs => {
-	  "M" => null,
-	  "i" => null},
+     Inputs => { "M", "i" },
      Outputs => {"N" => { "the i-th tensor power of M" }}
      }
 
@@ -540,7 +536,7 @@ document {
      Key => (symbol ^**, CoherentSheaf, ZZ),
      Headline => "tensor power",
      Usage => "N = M^**i",
-     Inputs => {"M" => null, "i" => null,},
+     Inputs => {"M" , "i" },
      Outputs => {"N" => { "the i-th tensor power of M" }}
      }    
 
@@ -552,7 +548,7 @@ document {
 document {
      Key => (setRandomSeed, ZZ),
      Usage => "setRandomSeed i",
-     Inputs => {"i" => null},
+     Inputs => {"i"},
      Consequences => {
      	  {"Sets the random number seed to the low-order 32 bits of the integer ", TT "i", ".
      	  The sequence of future pseudo-random results is determined by the seed."}
@@ -568,7 +564,7 @@ document {
 document {
      Key => (setRandomSeed, String),
      Usage => ///setRandomSeed s///,
-     Inputs => {"s" => null},
+     Inputs => {"s"},
      Consequences => {
 	  {"Sets the random number seed to an integer computed from ", TT "s", ".  Every character 
 	  of the string contributes to the seed, but only 32 bits of data are used.
@@ -585,7 +581,7 @@ document {
 document {
      Key => truncateOutput,
      Usage => "truncateOutput w",
-     Inputs => {"w" => ZZ => null},
+     Inputs => {"w" => ZZ },
      Outputs => {},
      Consequences => {{
 	  "The maximum output line width is set to ", TT "w", ", which should be an integer or ", TO "infinity", ".  
@@ -626,7 +622,7 @@ document {
      Headline => "open private dictionary of a package",
      Usage => "debug p",
      Inputs => {
-	  "p" => Package => "",
+	  "p" => Package,
 	  },
      Consequences => {
 	  {"the private dictionary of the package ", TT "p", " is added to ", TO "globalDictionaries", 
@@ -665,7 +661,7 @@ document {
      Headline => "determine the dictionary to which a symbol belongs",
      Usage => "dictionary x",
      Inputs => {
-	  "x" => Thing => ""
+	  "x" => Thing
 	  },
      Outputs => {
 	  { "the dictionary to which the symbol ", TT "x", " belongs"}
@@ -677,16 +673,16 @@ document {
      Key => removeFile,
      Headline => "unlink a file",
      Usage => "removeFile f",
-     Inputs => { "f" => String => "" },
+     Inputs => { "f" => String },
      Consequences => {{ "the file reachable by the path f is unlinked from its directory" }}}
 
 document {
      Key => wrap,
      Usage => "wrap(wid,sep,s)",
      Inputs => {
-	  "wid" => ZZ => "",
-	  "sep" => String => "",
-	  "s" => String => ""
+	  "wid" => ZZ,
+	  "sep" => String,
+	  "s" => String
 	  },
      Outputs => {
 	  { "a string obtained by wrapping the string ", TT "s", ", in case it is wider than the number ", TT "wid", ", so that it occupies multiple lines,

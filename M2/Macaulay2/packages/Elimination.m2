@@ -94,9 +94,9 @@ document {
      Key => resultant,
      Usage => "resultant(f:RingElement,g:RingElement,x:RingElement) --> RingElement",
      Inputs => { 
-	  "f" => RingElement => "",
-	  "g" => RingElement => "",
-	  "x" => RingElement => ""
+	  "f" => RingElement,
+	  "g" => RingElement,
+	  "x" => RingElement
 	  },
      Outputs => { RingElement => { "the Sylvester resultant of ", TT "f", " and ", TT "g", " with respect to the variable ", TT "x" }},
      PARA {

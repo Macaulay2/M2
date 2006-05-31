@@ -3,6 +3,10 @@
 export (
         symbol minimalPrimes,
 	symbol validate,
+	symbol minimalPresentationMap,
+	symbol minimalPresentationMapInv,
+	symbol OptionalInputs,
+	symbol FollowLinks,
         symbol poly,
 	symbol cacheValue,
 	symbol stashValue,

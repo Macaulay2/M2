@@ -7,7 +7,7 @@ document {
      Headline => "apply a function to each value",
      Usage => "applyValues(H,f)",
      Inputs => {
-	  "H" => HashTable => "",
+	  "H" => HashTable,
 	  "f" => Function => "with one argument"
 	  },
      Outputs => {

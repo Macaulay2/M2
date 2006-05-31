@@ -6,7 +6,7 @@ document {
      Key => {irreducibleCharacteristicSeries,(irreducibleCharacteristicSeries,Ideal)},
      Headline => "irreducible characteristic series of an ideal",
      Usage => "irreducibleCharacteristicSeries I",
-     Inputs => {"I" => Ideal => ""
+     Inputs => {"I" => Ideal
 	  },
      Outputs => {List => {"whose first entry, a list of matrices, represents
 	                   an irreducible characteristic series for ", TT "I", " . 

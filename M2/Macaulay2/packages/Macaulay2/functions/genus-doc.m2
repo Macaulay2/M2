@@ -10,9 +10,9 @@ document {
 document { 
      Key => {(genus,CoherentSheaf),(genus,Module)},
      Usage => "genus F",
-     Inputs => {"F" => ""
+     Inputs => {"F"
 	  },
-     Outputs => {ZZ => ""
+     Outputs => {ZZ
 	  },
      "Computes the arithmetic genus of the coherent sheaf ", TT "F",
      " that is (-1)^dim-support * (chi(F) - 1)).",
@@ -25,9 +25,9 @@ document {
 document { 
      Key => (genus,ProjectiveVariety),
      Usage => "genus V",
-     Inputs => {"V" => ""
+     Inputs => {"V"
 	  },
-     Outputs => {ZZ => ""
+     Outputs => {ZZ
 	  },
      "Computes the arithmetic genus of the projective scheme ", TT "V",
      "A nodal plane cubic curve has arithmetic genus 1:",
@@ -48,9 +48,9 @@ document {
 document { 
      Key => (genus,Ring),
      Usage => "genus R",
-     Inputs => {"R" => ""
+     Inputs => {"R"
 	  },
-     Outputs => {ZZ => ""
+     Outputs => {ZZ
 	  },
      "Computes the arithmetic genus of the projective scheme ", TT "V",
      " with homogeneous coordinate ring ", TT "R",

@@ -191,13 +191,13 @@ export Sequence := v -> (
 	       d#syn = d#nam = sym;
 	       ));
      currentPackage#"exported symbols" = join(currentPackage#"exported symbols",select(v,s -> instance(s,Symbol)));
-     v)
+     )
 exportMutable = method(SingleArgumentDispatch => true)
 exportMutable Symbol := x -> exportMutable (1:x)
 exportMutable Sequence := v -> (
      export v;
      currentPackage#"exported mutable symbols" = join(currentPackage#"exported mutable symbols",select(v,s -> instance(s,Symbol)));
-     v)
+     )
 
 addStartFunction( () -> if prefixDirectory =!= null then Macaulay2Core#"package prefix" = prefixDirectory )
 

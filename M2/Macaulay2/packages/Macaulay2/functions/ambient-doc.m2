@@ -58,7 +58,7 @@ document {
      Headline => "ambient free module",
      Usage => "ambient M",
      Inputs => {
-	  "M" => ""
+	  "M"
 	  },
      Outputs => {
 	  Module => "a free module"

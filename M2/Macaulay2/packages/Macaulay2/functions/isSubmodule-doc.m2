@@ -7,7 +7,7 @@ document {
      Headline =>  "whether a module is evidently a submodule of a free module",
      Usage => "isSubmodule M",
      Inputs => {
-	  "M" => Thing => ""
+	  "M" => Thing
 	  },
      Outputs => {
 	  {TO "true", " if ", TT "M", " is evidently a submodule of a free module and ",

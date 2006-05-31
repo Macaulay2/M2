@@ -7,7 +7,7 @@ document {
      Headline => "assemble degrees into polynomial",
      Usage => "poincareN C",
      Inputs => {
-     	  "C" => ChainComplex => ""
+     	  "C" => ChainComplex
 	  },
      Outputs => {
 	  RingElement => "in the Laurent polynomial ring whose

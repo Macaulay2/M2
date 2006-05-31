@@ -9,7 +9,7 @@ document {
      Key => (length, Dictionary),
      Headline => "length of a dictionary",
      Usage => "n = length d",
-     Inputs => { "d" => "" },
+     Inputs => { "d" },
      Outputs => { "n" => { "the number of entries in ", TT "d" } }
      }
 
@@ -17,7 +17,7 @@ document {
      Key => (length, VisibleList),
      Headline => "length of a visible list",
      Usage => "n = length x",
-     Inputs => { "x" => "" },
+     Inputs => { "x" },
      Outputs => { "n" => { "the number of entries in ", TT "x" } }
      }
 
@@ -40,7 +40,7 @@ document {
      Headline => "parent type of an object",
      Usage => "X = parent x",
      Inputs => {
-	  "x" => ""
+	  "x"
 	  },
      Outputs => {
 	  "X" => { "the parent class of ", TT "x" }
@@ -74,7 +74,7 @@ document {
      Headline => "top level method for printing results",
      Usage => "X.Print = f",
      Inputs => {
-	  "X" => Type => "",
+	  "X" => Type,
 	  "f" => Function => { " that can print something of type ", TT "X"}
 	  },
      Consequences => {
@@ -90,7 +90,7 @@ document {
      Headline => "top level method for non-printing results",
      Usage => "X.NoPrint = f",
      Inputs => {
-	  "X" => Type => "",
+	  "X" => Type,
 	  "f" => Function => { " that can accept something of type ", TT "X"}
 	  },
      Consequences => {
@@ -167,7 +167,7 @@ document {
      Key => "recursionLimit",
      Headline => "set the limit on recursion",
      Usage => "recursionLimit = n",
-     Inputs => { "n" => ZZ => "" },
+     Inputs => { "n" => ZZ },
      Consequences => { {"The recursion depth limit for the interpreter is set to ", TT "n", "."} },
      "Each time a function is called, the recursion depth is incremented by
      1, and each time a function returns, the recursion depth is decremented.
@@ -276,7 +276,7 @@ document {
      Usage => "maxPosition x",
      Headline => "position of largest element",
      Inputs => {
-	  "x" => BasicList => ""
+	  "x" => BasicList
 	  },
      Outputs => {
 	  { "the position of the largest element in the list ", TT "x" }
@@ -307,7 +307,7 @@ document {
      Usage => "minPosition x",
      Headline => "position of smallest element",
      Inputs => {
-	  "x" => BasicList => ""
+	  "x" => BasicList
 	  },
      Outputs => {
 	  { "the position of the smallest element in the list ", TT "x" }
@@ -338,7 +338,7 @@ document {
      Key => (keys,HashTable),
      Usage => "keys t",
      Inputs => {
-	  "t" => ""
+	  "t"
 	  },
      Outputs => {
 	  {"a list of the keys occurring in the hash table ", TT "t"}
@@ -355,7 +355,7 @@ document {
      Key => (values,HashTable),
      Usage => "values t",
      Inputs => {
-	  "t" => ""
+	  "t"
 	  },
      Outputs => {
 	  {"a list of the values occurring in the hash table ", TT "t", "."}
@@ -569,7 +569,7 @@ document {
      Key => (ascii, String),
      Usage => "ascii s",
      Inputs => {
-	  "s" => "",
+	  "s",
 	  },
      Outputs => {
 	  {"the list of (small integer) ASCII codes of the characters of ", TT "s"}
@@ -844,7 +844,7 @@ document {
      Key => (read,Sequence),
      Usage => "read()",
      Inputs => {
-	  "()" => null
+	  "()"
 	  },
      Outputs => {
 	  { "a string obtained by reading a line from the standard input file, ", TO "stdio", "." }
@@ -1007,7 +1007,7 @@ document {
      Headline => "join an integer multiple of an identity matrix to a matrix horizontally",
      Usage => "f = n | g",
 	Inputs => {
-		"n" => null,
+		"n",
 		"g" => {"a ", TT "r", " by ", TT "s", " matrix."}
 		},
 	Outputs => {
@@ -1029,7 +1029,7 @@ document {
      Usage => "f = g | n",
 	Inputs => {
     		"g" => {"a ", TT "r", " by ", TT "s", " matrix."},
-    		"n" => null
+    		"n"
 		},
 	Outputs => {
 		"f" => {"a ", TT "r", " by ", TT "r+s", " matrix."}
@@ -1095,7 +1095,7 @@ document {
      Headline => "join an integer multiple of an identity matrix to a matrix vertically",
      Usage => "f = n || g",
 	Inputs => {
-		"n" => null,
+		"n",
 		"g" => {"a ", TT "r", " by ", TT "s", " matrix."}
 		},
 	Outputs => {
@@ -1116,7 +1116,7 @@ document {
      Usage => "f =  g || n",
 	Inputs => {
 		"g" => {"a ", TT "r", " by ", TT "s", " matrix."},
-		"n" => null
+		"n"
 		},
 	Outputs => {
 		"f" => {"a ", TT "r+s", " by ", TT "s", " matrix."}
@@ -1406,8 +1406,8 @@ document {
      Headline => "Cartesian product",
      Usage =>  "x ** y", 
      Inputs => {
-	  "x" => "",
-	  "y" => ""
+	  "x",
+	  "y"
 	  },
      Outputs => {
 	  Set => "whose elements are the sequences (a,b), where a is an element
@@ -1466,7 +1466,7 @@ document {
      Headline => "random element of a ring",
      Usage => "random R",
      Inputs => {
-	  "R" => null
+	  "R"
 	  },
      Outputs => {
 	  { "a random element of the ring ", TT "R" }
@@ -1498,10 +1498,7 @@ document {
      Key => (random, ZZ, Ring),
      Headline => "a random ring element of a given degree",
      Usage => "r = random(n,R)",
-     Inputs => {
-	  "n" => null,
-	  "R" => null
-	  },
+     Inputs => { "n", "R" },
      Outputs => {
 	  {"a random homogeneous element in the ring ", TT "R", " of degree ", TT "n"}
 	  },
@@ -1516,10 +1513,7 @@ document {
      Key => (random, List, Ring),
      Headline => "a random ring element of a given degree",
      Usage => "r = random(n,R)",
-     Inputs => {
-	  "n" => "a list of integers",
-	  "R" => null
-	  },
+     Inputs => { "n" => "a list of integers", "R" },
      Outputs => {
 	  {"a random homogeneous element in the ring ", TT "R", " of multi-degree ", TT "n"}
 	  },

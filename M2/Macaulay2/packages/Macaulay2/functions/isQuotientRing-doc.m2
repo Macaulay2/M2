@@ -7,7 +7,7 @@ document {
      Headline => "whether something is a quotient ring",
      Usage => "isQuotientRing R",
      Inputs => {
-	  "R" => Ring => ""
+	  "R" => Ring
 	  },
      Outputs => {
 	  Boolean => {TO "true", " if ", TT "R", " is a ", 

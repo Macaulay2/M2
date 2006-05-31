@@ -7,7 +7,7 @@ document {
      Headline => "get characters from a string",
      Usage => "characters s",
      Inputs => {
-	  "s" => String => ""
+	  "s" => String
 	  },
      Outputs => {
 	  List => {"of the characters in the string ", TT "s"}

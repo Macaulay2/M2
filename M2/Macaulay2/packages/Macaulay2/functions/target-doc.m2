@@ -13,7 +13,7 @@ document {
      Headline => " find the target of a map of chain complexes",
      Usage => "target f",
      Inputs => {
-		"f" => ChainComplexMap => ""
+		"f" => ChainComplexMap
 	  },
      Outputs => {
 		{"the target chain complex of ", TT "f"}
@@ -36,7 +36,7 @@ document {
      Headline => "find target of a Groebner basis",
      Usage => "target g",
      Inputs => {
-		"g" => GroebnerBasis => ""
+		"g" => GroebnerBasis
 	  },
      Outputs => {
 		"the target of the matrix given by the generators of the Groebner
@@ -53,7 +53,7 @@ document {
      Headline => "find the target module of matrix",
      Usage => "target f",
      Inputs => {
-		"f" => Matrix => ""
+		"f" => Matrix
 	  },
      Outputs => {
 		{"the target module of ", TT "f"}
@@ -71,7 +71,7 @@ document {
      Headline => "find the target of a map of graded modules",
      Usage => "target f",
      Inputs => {
-		"f" => ""
+		"f"
 	  },
      }
 document { 
@@ -79,7 +79,7 @@ document {
      Headline => "find the target ring for a map of rings",
      Usage => "target f",
      Inputs => {
-		"f" => ""
+		"f"
 	  },
      Outputs => {
 		"the target ring of the map"

@@ -6,7 +6,7 @@ document {
      Key => (symbol %, RingElement, Ideal),
 	Headline => "calculate the normal form.",
      Usage => "f % I",
-     Inputs => { "f" => "" , "I" => ""},
+     Inputs => { "f" , "I"},
 	Outputs => {  },
 	"To reduce f with respect to I, a Groebner basis of I is computed, unless
 	it has already been done. Then the element is reduced using the division

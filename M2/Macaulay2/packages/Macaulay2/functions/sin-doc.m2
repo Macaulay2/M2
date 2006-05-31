@@ -8,7 +8,7 @@ document {
      Headline => "compute the sine",
      Usage => "sin x",
      Inputs => { 
-	  "x" => RR => ""
+	  "x" => RR
 	  },
      Outputs => { 
 	  RR =>  {"the sine of ", TT "x", "" }

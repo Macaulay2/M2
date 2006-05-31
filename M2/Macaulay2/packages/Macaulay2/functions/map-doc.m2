@@ -56,11 +56,7 @@ document {
      Key => (map,Module,Module,Function),
      Headline => "create a matrix by specifying a function which gives each entry",
      Usage => "map(M,N,f)",
-     Inputs => {
-	  "M" => null,
-	  "N" => null,
-	  "f" => null
-	  },
+     Inputs => { "M", "N", "f" },
      Outputs => {
 	  {"a map from the module ", TT "N", " to the module ", TT "M", " 
 	       whose matrix entry ", TT "h_(i,j)", " is obtained from the
@@ -102,11 +98,7 @@ document {
      Key => (map,Module,Module,List),
      Headline => "create a matrix by giving a sparse or dense list of entries",
      Usage => "map(M,N,v)",
-     Inputs => {
-	  "M" => null,
-	  "N" => null,
-	  "v" => null
-	  },
+     Inputs => { "M", "N", "v" },
      Outputs => {
 	  {"A matrix ", TT "M <-- N", " whose entries are obtained from ", TT "v"}
 	  },
@@ -145,11 +137,7 @@ document {
      Key => (map,Module,Module,Matrix),
      Headline => "create the matrix induced on generators by a given matrix",
      Usage => "map(M,N,p)",
-     Inputs => {
-	  "M" => null,
-	  "N" => null,
-	  "p" => null
-	  },
+     Inputs => { "M", "N", "p" },
      Outputs => {
 	  {"A matrix with the same entries as ", TT "p", ", but whose target 
 	  is ", TT "M", " and source is ", TT "N"}
@@ -175,11 +163,7 @@ document {
      Headline => "construct the map induced by multiplication by a ring element on the
         generators",
      Usage => "map(M,N,r)",
-     Inputs => {
-	  "M" => null,
-	  "N" => {"over the same ring ", TT "R", " as ", TT "M"},
-	  "r" => {"in the ring ", TT "R"}
-	  },
+     Inputs => { "M", "N" => {"over the same ring ", TT "R", " as ", TT "M"}, "r" => {"in the ring ", TT "R"} },
      Outputs => {
 	  {"The map induced by multiplication by r on the generators"}
 	  },
@@ -204,9 +188,7 @@ document {
      Key => (map,Matrix),
      Headline => "make a matrix with a different degree",
      Usage => "map(f, Degree => d)",
-     Inputs => {
-	  "f" => Matrix => null,
-	  },
+     Inputs => { "f" => Matrix },
      Outputs => {
 	  {"a map identical to ", TT "f", ", except that it has degree ", 
 	       TT "d", ", and the source
@@ -245,7 +227,7 @@ document {
      Headline => "recast a matrix to have a new target, and a free module as source",
      Usage => "map(M,,f)",
      Inputs => {
-	  "M" => null,
+	  "M",
 	  "f" => {"whose target has the same number of generators as ", TT "M"}
 	  },
      Outputs => {
@@ -264,11 +246,7 @@ document {
      Key => (map,Module,ZZ,Function),
      Headline => "create a matrix from a free module by specifying a function which gives each entry",
      Usage => "map(M,n,f)",
-     Inputs => {
-	  "M" => null,
-	  "n" => null,
-	  "f" => null
-	  },
+     Inputs => { "M", "n", "f" },
      Outputs => {
 	  {"a map from a graded free module of rank ", TT "n", " to the module ", TT "M", " 
 	       whose matrix entry ", TT "h_(i,j)", " is obtained from the
@@ -291,10 +269,7 @@ document {
      Key => (map,Module,ZZ,List),
      Headline => "create a matrix by giving a sparse or dense list of entries",
      Usage => "map(M,n,v)",
-     Inputs => {
-	  "M" => null,
-	  "n" => null,
-	  "v" => null
+     Inputs => { "M", "n", "v"
 	  },
      Outputs => {
 	  {"A matrix ", TT "M <-- R^n", " whose entries are obtained from ", TT "v",
@@ -335,10 +310,7 @@ document {
      Key => (map,Module,Nothing,List),
      Headline => "create a matrix by giving a doubly nested list of ring elements",
      Usage => "map(M,v)",
-     Inputs => {
-	  "M" => null,
-	  "v" => null
-	  },
+     Inputs => { "M", "v" },
      Outputs => {
 	  {"A matrix ", TT "M <-- R^n", " whose entries are obtained from ", TT "v",
 	       ", where R  is the ring of M, and the source of the result is
@@ -469,9 +441,7 @@ document {
      Key => (map,Module),
      Headline => "identity map",
      Usage => "map M",
-     Inputs => {
-	  "M" => null
-	  },
+     Inputs => { "M" },
      Outputs => {
 	  Matrix => {"the identity map on ", TT "M"}
 	  },
@@ -487,10 +457,7 @@ document {
      Key => (map,Ring,Ring),
      Headline => "map which associates variables, rest maps to zero",
      Usage => "map(R,S)",
-     Inputs => {
-	  "R" => null,
-	  "S" => null
-	  },
+     Inputs => { "R", "S" },
      Outputs => {
 	  RingMap => {"a map S --> R which maps any variable of S to a variable
 	  with the same name in R, if any, and zero otherwise"}
@@ -532,10 +499,7 @@ document {
      Key => (map,Ring,Matrix),
      Headline => "make a ring map",
      Usage => "map(R,m)",
-     Inputs => {
-	  "R" => null,
-	  "m" => "a one row matrix"
-	  },
+     Inputs => { "R", "m" => "a one row matrix" },
      Outputs => {
 	  RingMap => {"A ring map ", TT "f : R --> (ring m)", ", where the
 	  entries of ", TT "m", " are the images of the variables of ", TT "R", "."}
@@ -554,11 +518,7 @@ document {
 	  (map,GradedModule,GradedModule,Function)},
      Headline => "make a map of chain complexes",
      Usage => "map(C,D,f) or map(C,D,f,Degree=>d)",
-     Inputs => {
-	  "C" => null,
-	  "D" => null,
-	  "f" => {"a function such that ", TT "f(i)", " is a matrix ", 
-	       TT "D_i --> C_(i+d)"}
+     Inputs => { "C", "D", "f" => {"a function such that ", TT "f(i)", " is a matrix ", TT "D_i --> C_(i+d)"}
 	  },
      Outputs => {
 	  ChainComplexMap => {"a map of chain complexes ", TT "D --> C"}

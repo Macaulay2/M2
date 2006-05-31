@@ -7,7 +7,7 @@ document {
      Headline => "whether something is an affine ring",
      Usage => "isAffineRing R",
      Inputs => {
-	  "R" => Ring => ""
+	  "R" => Ring
 	  },
      Outputs => {
 	  Boolean => 

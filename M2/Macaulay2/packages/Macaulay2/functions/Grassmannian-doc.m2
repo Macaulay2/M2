@@ -7,7 +7,7 @@ document {
        	  },
      Headline => "find the Pluecker ideal of a Grassmannian",
      Usage => {"Grass(k,n)"},
-     Inputs => {"k" => ZZ => "","n" => ZZ => ""  
+     Inputs => {"k" => ZZ,"n" => ZZ  
 	  },
      Outputs => {Ideal => "the ideal of the Grassmannian"
 	  },
@@ -45,7 +45,7 @@ document {
      Key => {(Schubert,ZZ,ZZ,List), Schubert},
      Headline => "find the Pluecker ideal of a Schubert variety",
      Usage => "Schubert(k,n,sigma)",
-     Inputs => { "k" => "", "n" => "", "sigma" => {"a subset of ", TT "0..n", " of size ", TT "k+1", " that indexes the Schubert variety"} },
+     Inputs => { "k", "n", "sigma" => {"a subset of ", TT "0..n", " of size ", TT "k+1", " that indexes the Schubert variety"} },
      Outputs => {Ideal => "the ideal of the Schubert variety indexed by sigma" },
      TEX ///Given natural numbers $k \le{} n$, this routine finds the
      ideal of the Schubert variety indexed by sigma in the Grassmannian of projective 

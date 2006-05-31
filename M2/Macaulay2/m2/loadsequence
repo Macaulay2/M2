@@ -2,7 +2,6 @@ command.m2
 classes.m2
 option.m2
 methods.m2
-html0.m2
 profile.m2
 underscore.m2
 autoload.m2
@@ -19,6 +18,9 @@ structure.m2
 combinatorics.m2
 lists.m2
 nets.m2
+content.m2
+html0.m2
+validate.m2
 expressions.m2
 peek.m2
 printing.m2
@@ -78,7 +80,6 @@ texmacs.m2
 packages.m2
 parser.m2
 document.m2
-content.m2
 hypertext.m2
 texhtml.m2
 install.m2

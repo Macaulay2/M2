@@ -6,12 +6,8 @@ document {
      Key => {forceGB, (forceGB,Matrix)},
      Headline => "declare that the columns of a matrix are a Groebner basis",
      Usage => "forceGB f",
-     Inputs => {
-	  "f" => Matrix => null
-	  },
-     Outputs => {
-	  GroebnerBasis => null
-	  },
+     Inputs => { "f" => Matrix },
+     Outputs => { GroebnerBasis },
      "Declares that the columns of the matrix ", TT "f", "
      constitute a Groebner basis, and returns a Groebner basis object
      encapsulating that assertion.",
@@ -42,9 +38,7 @@ document {
      Key => [forceGB, ChangeMatrix],
      Headline => "inform Macaulay2 about the change of basis matrix from GB to generators",
      Usage => "forceGB(...,ChangeMatrix=>m)",
-     Inputs => {
-	  "m" => Matrix => null
-	  },
+     Inputs => { "m" => Matrix },
      Consequences => {
 	  "Set the change of basis matrix from the Groebner basis
 	  to the original generators"
@@ -80,9 +74,7 @@ document {
      Key => [forceGB, SyzygyMatrix],
      Headline => "inform Macaulay2 about the syzygy matrix",
      Usage => "forceGB(f,SyzygyMatrix=>z,...)",
-     Inputs => {
-	  "z" => Matrix => null
-	  },
+     Inputs => { "z" => Matrix },
      Consequences => {
 	  {"A request for the syzygy matrix of ", 
 	  TT "f", " will return ", TT "z"}

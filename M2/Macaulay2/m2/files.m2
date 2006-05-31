@@ -40,7 +40,7 @@ baseFilename = fn -> (
      while #fn > 0 and fn#-1 === "" do fn = drop(fn,-1);
      last fn)
 
-findFiles = method(Options => new OptionTable from { Exclude => {} })
+findFiles = method(Options => new OptionTable from { Exclude => {}, FollowLinks => false })
 findFiles String := opts -> name -> (
      excludes := opts.Exclude;
      if class excludes =!= List then (
@@ -50,7 +50,7 @@ findFiles String := opts -> name -> (
      bn := baseFilename name;
      if any(excludes, pattern -> match(pattern, bn)) then return {};
      if not fileExists name then return {};
-     if not isDirectory name then return {name};
+     if not (isDirectory name or opts.FollowLinks and isDirectory realpath name) then return {name};
      if not name#-1 === "/" then name = name | "/";
      prepend(name,flatten apply(readDirectory name, 
 	       f -> if f === "." or f === ".." then {} else findFiles(name|f,opts)))
