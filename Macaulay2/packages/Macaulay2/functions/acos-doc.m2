@@ -7,7 +7,7 @@ document {
      Headline => "compute the arccosine", 
      Usage => "acos x",
      Inputs => { 
-	  "x" => RR => ""
+	  "x" => RR
 	  },
      Outputs => { 
 	  RR => { "the arccosine (in radians) of ", TT "x"} 

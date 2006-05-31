@@ -12,8 +12,8 @@ document {
      Headline => "whether a ring element can be lifted to another ring",
      Usage => "liftable(f,R)",
      Inputs => {
-	  "f" => RingElement => "",
-	  "R" => Ring => ""
+	  "f" => RingElement,
+	  "R" => Ring
 	  },
      Outputs => {
 	  Boolean => "whether f can be lifted to the ring R"

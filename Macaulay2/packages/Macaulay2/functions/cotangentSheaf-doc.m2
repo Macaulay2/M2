@@ -10,7 +10,7 @@ document {
 document { 
      Key => (cotangentSheaf,ProjectiveVariety),
      Usage => "cotangentSheaf X",
-     Inputs => {"X" => ""
+     Inputs => {"X"
 	  },
      Outputs => {CoherentSheaf => "the cotangent sheaf of the projective variety"
 	  },
@@ -30,7 +30,7 @@ document {
      Key => (cotangentSheaf,ZZ,ProjectiveVariety),
      Headline => "exterior powers of the cotangent sheaf of a projective variety",
      Usage => "cotangentSheaf(p,X)",
-     Inputs => {"p" => "", "X" => ""
+     Inputs => {"p", "X"
 	  },
      Outputs => {CoherentSheaf => {"the ", TT "p", "-th exterior power of
      the cotangent sheaf"}

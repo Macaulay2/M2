@@ -399,8 +399,8 @@ document {
 	  TO "inheritance from parents",
 	  TO "printing and formatting for new classes",
 	  TO "making a new method function",
-	  TO [method, SingleArgumentDispatch], -- this is an actual key!
-	  TO [method, Options],		     -- this is an actual key!
+	  TO [method, SingleArgumentDispatch],
+	  TO [method, Options],
 	  }
      }
 
@@ -1276,15 +1276,9 @@ document {
      Key => [method,Options],
      Headline => "method functions with optional arguments",
      Usage => "f = method(Options => {a=>x, b=>y, ...})",
-     Inputs => {
-	  "{a=>x, b=>y, ...}" => {
-	       "a list of names ", TT "a", ", ", TT "b", ", ..., for optional
-	       arguments with default values ", TT "x", ", ", TT "y", ", ... ."
-	       }
-	  },
-     Outputs => {
-	  "f" => "a method function that accepts optional arguments"
-	  },
+     Inputs => { { TT "{a=>x, b=>y, ...}", ", a list of names ", TT "a", ", ", TT "b", ", ..., for optional
+	       arguments with default values ", TT "x", ", ", TT "y", ", ... ." } },
+     Outputs => { "f" => "a method function that accepts optional arguments" },
      "The list of options could be replaced by the corresponding ", TT "OptionTable", ".",
      PARA{},
      "The methods installed for this method function should be written in

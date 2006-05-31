@@ -21,7 +21,7 @@ document {
      Headline => "compute the Hilbert polynomial of the ring",
      Usage => "hilbertPolynomial R",
      Inputs => { 
-	  "R" => Ring => ""
+	  "R" => Ring
 	  },
      Outputs => {
 	  ProjectiveHilbertPolynomial => "unless the option Projective is false" 
@@ -57,7 +57,7 @@ document {
      Headline => "compute the Hilbert polynomial of the module",
      Usage => "hilbertPolynomial M",
      Inputs => {
-	  "M" => Module => ""
+	  "M" => Module
 	  },
      Outputs => {
 	  ProjectiveHilbertPolynomial => "unless the option Projective is false" 
@@ -86,7 +86,7 @@ document {
      Headline => "compute the Hilbert polynomial of the coherent sheaf",
      Usage => "hilbertPolynomial S",
      Inputs => {
-	  "S" => ""
+	  "S"
 	  },
      Outputs => {
 	  ProjectiveHilbertPolynomial => "unless the option Projective is false" 
@@ -108,7 +108,7 @@ document {
      the ambient ring by the ideal",
      Usage => "hilbertPolynomial I",
      Inputs => {
-	  "I" => Ideal => ""
+	  "I" => Ideal
 	  },
      Outputs => {
 	  ProjectiveHilbertPolynomial => "unless the option Projective is false" 
@@ -143,7 +143,7 @@ document {
      Headline => "compute the Hilbert polynomial of the projective variety",
      Usage => "hilbertPolynomial V",
      Inputs => {
-	  "V" => ProjectiveVariety => ""
+	  "V" => ProjectiveVariety
 	  },
      Outputs => {
 	  ProjectiveHilbertPolynomial => "unless the option Projective is false" 

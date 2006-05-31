@@ -40,7 +40,7 @@ document {
      Headline => "transpose a matrix",
      Usage => "transpose f",
      Inputs => {
-		"f" => Matrix => ""
+		"f" => Matrix
 	  },
      Outputs => {
 	  },
@@ -67,7 +67,7 @@ document {
      Headline => "transpose a map of chain complexes",
      Usage => "transpose f",
      Inputs => {
-		"f" => ChainComplexMap => ""
+		"f" => ChainComplexMap
 	  },
      Outputs => {
 	  },

@@ -51,7 +51,7 @@ pretty3 = (l,i,m,m',r,s) -> (
      processRow := x -> (
 	  if #x#-1 == 1 then (r :=horizontalJoin x; r )
 	  else (
-	       a := horizontalJoin apply(drop(x,-1),unSingleton);
+	       a := horizontalJoin apply(drop(x,-1),unsequence);
 	       b := concatenate(width a : " ");
 	       c := stack drop(x#-1,-1);
 	       (horizontalJoin(a,c), horizontalJoin(b,x#-1#-1))

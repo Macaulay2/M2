@@ -13,7 +13,7 @@ document {
      Headline => "get the coefficient ring",
      Usage => "coefficientRing R",
      Inputs => {
-	  "R" => Ring => ""
+	  "R" => Ring
 	  },
      Outputs => {
 	  Ring => {"the coefficient ring of ", TT "R"}

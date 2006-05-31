@@ -5,8 +5,8 @@ document {
      Headline => "cache values of functions in their arguments",
      Usage => "((cacheValue KEY) f) x",
      Inputs => {
-	  "KEY" => null,
-	  "f" => Function => null,
+	  "KEY",
+	  "f" => Function,
 	  "x" => {"an argument for ", TT "f", " that has ", ofClass CacheTable, " stored in it under ", TT "x.cache"}
 	  },
      Outputs => {
@@ -29,8 +29,8 @@ document {
      Headline => "stash values of functions in their arguments",
      Usage => "((stashValue KEY) f) x",
      Inputs => {
-	  "KEY" => null,
-	  "f" => Function => null,
+	  "KEY",
+	  "f" => Function,
 	  "x" => MutableHashTable => { "an argument for ", TT "f" }
 	  },
      Outputs => {
@@ -53,7 +53,7 @@ document {
      Key => { (addHook,HashTable,Thing,Function), addHook },
      Headline => "add a hook function to an object for later processing",
      Usage => "addHook(obj,key,hook)",
-     Inputs => { "obj" => null, "key" => null, "hook" => null },
+     Inputs => { "obj", "key", "hook" },
      Consequences => {
 	  { "the function ", TT "hook", " is added to the list (possibly absent) of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key" }
 	  },
@@ -65,7 +65,7 @@ document {
      Key => { (removeHook,HashTable,Thing,Function), removeHook },
      Headline => "remove a hook function from an object",
      Usage => "removeHook(obj,key,hook)",
-     Inputs => { "obj" => null, "key" => null, "hook" => null },
+     Inputs => { "obj", "key", "hook" },
      Consequences => {
 	  { "the function ", TT "hook", " is removed from the list of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key" }
 	  },
@@ -77,7 +77,7 @@ document {
      Key => { (runHooks,HashTable,Thing,Thing), runHooks },
      Headline => "run the hook functions stored in an object",
      Usage => "runHooks(obj,key,arg)",
-     Inputs => { "obj" => null, "key" => null, "arg" => null },
+     Inputs => { "obj", "key", "arg" },
      Consequences => {
 	  { "each function ", TT "hook", " in list of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key", " is
 	       called with ", TT "arg", " as its argument or sequence of arguments" }
@@ -102,7 +102,7 @@ document { Key => {generateAssertions,(generateAssertions, String)},
 document { Key => unsequence,
      Headline => "extract the single element from a sequence of length 1",
      Usage => "unsequence x",
-     Inputs => { "x" => Thing => null },
+     Inputs => { "x" => Thing },
      Outputs => { { TT "x#0", ", if ", TT "x", " is a sequence of length 1, otherwise ", TT "x", "" } },
      EXAMPLE { "unsequence (2:a)", "unsequence (1:a)", "unsequence (0:a)" },
      SeeAlso => sequence}
@@ -128,7 +128,7 @@ document { Key => (separateRegexp, String, String),
      EXAMPLE { ///separateRegexp("-", "asdf-qwer-dfadf")/// }}
 document { Key => (separateRegexp, String, ZZ, String),
      Usage => "separateRegexp(sep,n,str)",
-     Inputs => { "sep" => "a regular expression" , "n" => "", "str" => "a string to be separated" },
+     Inputs => { "sep" => "a regular expression" , "n", "str" => "a string to be separated" },
      Outputs => { { "a list of substrings consecutively extracted from ", TT "str", ", with separators recognized by the ", TT "n", "-th parenthesized subexpression of", TT "sep" } },
      EXAMPLE { ///separateRegexp("f(-)", 1, "asdf-qwer-dfadf")/// }}
 document { Key => tutorial, Headline => "convert documentation from tutorial format",
@@ -147,7 +147,7 @@ R = QQ[x,y]
 document { Key => {preimage,(preimage, RingMap, Ideal)},
      Headline => "preimage of an ideal under a ring map",   -- hopefully more general later
      Usage => "preimage(f,I)",
-     Inputs => { "I" => { "an ideal in the target ring of ", TT "f" }, "f" => "" },
+     Inputs => { "I" => { "an ideal in the target ring of ", TT "f" }, "f" },
      Outputs => { { "the preimage of ", TT "I", " under the map ", TT "f" } },
      EXAMPLE lines /// 
 	  R = QQ[x,y,z]
@@ -239,7 +239,7 @@ document { Key => {show, (show, TEX), (show, URL)},
 document { Key => {(irreducibleDecomposition,MonomialIdeal),irreducibleDecomposition},
      Headline => "express a monomial ideal as an intersection of irreducible monomial ideals",
      Usage => "irreducibleDecomposition I",
-     Inputs => { "I" => "" },
+     Inputs => { "I" },
      EXAMPLE lines ///
         QQ[x..z];
         I = monomialIdeal (x*y^3, x*y^2*z)
@@ -291,14 +291,14 @@ document { Key => Partition,
 document { Key => partitions, Headline => "list the partitions of an integer" }
 document { Key => (partitions, ZZ, ZZ),
      Usage => "partitions(n,k)",
-     Inputs => { "n" => "", "k" => "" },
+     Inputs => { "n", "k" },
      Outputs => {{"a list of the partitions of the integer ", TT "n", " as a sum of terms each of which does not exceed ", TT "k"}},
      PARA { "Each partition is a basic list of type ", TO "Partition", "." },
      SeeAlso => {Partition, (partitions, ZZ)},
      EXAMPLE "partitions(4,2)"}
 document { Key => (partitions, ZZ),
      Usage => "partitions n",
-     Inputs => { "n" => "" },
+     Inputs => { "n" },
      Outputs => {{"a list of the partitions of the integer ", TT "n"}},
      PARA { "Each partition is a basic list of type ", TO "Partition", "." },
      SeeAlso => {Partition,(partitions, ZZ, ZZ)},
@@ -336,7 +336,7 @@ document { Key => [needsPackage, LoadDocumentation],
 document { Key => ofClass, 
      Headline => "English phrases for types",
      Usage => "ofClass T",
-     Inputs => { "T" => Type => "" },
+     Inputs => { "T" => Type },
      Outputs => {{ "an English phrase, using a synonym for an instance of the type, together with an appropriate indefinite article" }},
      PARA { "When viewed in html, the phrase is a hot link to the documentation node for the class." },
      EXAMPLE lines ///
@@ -351,13 +351,13 @@ document { Key => ofClass,
 document { Key => inverse, Headline => "compute the inverse" }
 document { Key => (inverse, Matrix),
      Usage => "inverse f",
-     Inputs => { "f" => "" },
+     Inputs => { "f" },
      Outputs => {{ "the inverse of ", TT "f" }},
      SourceCode => (inverse, Matrix)}
 document { Key => functionBody,
      Headline => "get the body of a function",
      Usage => "functionBody f",
-     Inputs => { "f" => Function => "" },
+     Inputs => { "f" => Function },
      Outputs => { FunctionBody => { "the body of the function ", TT "f" }},
      PARA { "The body of ", TT "f", " is essentially just the source code of ", TT "f", ", with no frames providing bindings for
 	  the local variables in scopes enclosing the scope of ", TT "f", ".  Function bodies cannot act as functions, but they can be tested for

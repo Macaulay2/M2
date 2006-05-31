@@ -13,7 +13,7 @@ document {
      Headline => "find the source ring for a map of rings",
      Usage => "source f",
      Inputs => {
-		"f" => ""
+		"f"
 	  },
      Outputs => {
 		"the source ring of the map"
@@ -30,7 +30,7 @@ document {
      Headline => " find the source of a map of chain complexes",
      Usage => "source f",
      Inputs => {
-		"f" => ChainComplexMap => ""
+		"f" => ChainComplexMap
 	  },
      Outputs => {
 		{"the source chain complex of ", TT "f"}
@@ -54,7 +54,7 @@ document {
      Headline => "find the source module of matrix",
      Usage => "source f",
      Inputs => {
-		"f" => Matrix => ""
+		"f" => Matrix
 	  },
      Outputs => {
 		{"the source module of ", TT "f"}
@@ -73,6 +73,6 @@ document {
      Headline => "find the source of a map of graded modules",
      Usage => "source f",
      Inputs => {
-		"f" => ""
+		"f"
 	  },
      }

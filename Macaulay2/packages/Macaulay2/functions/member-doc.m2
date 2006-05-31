@@ -9,7 +9,7 @@ document {
      Headline => "test membership in a list or set",
      Usage => "member(e,x)",
      Inputs => {
-	  "e" => Thing => "",
+	  "e" => Thing,
 	  "x" => {ofClass List, ", ", ofClass Sequence, ", or ", ofClass Set}
 	  },
      Outputs => {

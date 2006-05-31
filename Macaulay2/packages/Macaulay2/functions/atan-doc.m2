@@ -11,10 +11,7 @@ document {
      Key => (atan,RR,RR),
      Headline => "compute an angle of a certain triangle",
      Usage => "atan(x,y)",
-     Inputs => { 
-	  "x" => RR => null, 
-	  "y" => RR => null
-	  },
+     Inputs => { "x" => RR, "y" => RR },
      Outputs => { 
 	 RR => { "the angle (in radians) formed with the x-axis by the ray from the origin to the point ", TT "(x,y)" } 
 	  },
@@ -29,9 +26,7 @@ document {
      Key => {(atan,RR),(atan,ZZ)},
      Headline => "compute the arctangent of a number ",
      Usage => "atan x",
-     Inputs => { 
-	  "x" => RR => null 
-	  },
+     Inputs => { "x" => RR },
      Outputs => {
 	  RR => {"the arctangent (in radians) of ", TT "x"} 
 	  },

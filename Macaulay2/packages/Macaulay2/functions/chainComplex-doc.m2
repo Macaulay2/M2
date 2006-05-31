@@ -13,7 +13,7 @@ document {
      Headline => "make a chain complex",
      Usage => {TT "C = chainComplex{f1,f2,f3,...} ", EM "or", TT " C = chainComplex(f1,f2,f3,...)"},
      Inputs => {
-	  "f1,f2,f3,..." => "homomorphisms over the same ring, forming a complex",
+	  Nothing => { TT "f1,f2,f3,...", ", homomorphisms over the same ring, forming a complex" },
 	  },
      Outputs => {
 	  "C" => ChainComplex => "the given complex, where f1 == C.dd_1, f2 = CC.dd_2, etc."
@@ -44,9 +44,7 @@ document {
      Key => (chainComplex,GradedModule),
      Headline => "make a chain complex from a graded module",
      Usage => "chainComplex M",
-     Inputs => {
-	  "M" => null
-	  },
+     Inputs => { "M" },
      Outputs => {
 	  {"the chain complex made from ", TT "M", " by installing the zero map as differential" }
 	  },
@@ -57,9 +55,7 @@ document {
      Key => (chainComplex,Matrix),
      Headline => "make a small chain complex",
      Usage => "chainComplex f",
-     Inputs => {
-	  "f" => null
-	  },
+     Inputs => { "f" },
      Outputs => {
 	  {"a chain complex with the map ", TT "f", " serving as the differential ", TT "C.dd_1"}
 	  },

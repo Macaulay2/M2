@@ -13,7 +13,7 @@ document {
      Headline => "whether any elements of a list satisfy a specified condition",
      Usage => "any(L,f)",
      Inputs => {
-	  "L" => BasicList => "",
+	  "L" => BasicList,
 	  "f" => Function => "which returns true or false"
 	  },
      Outputs => {
@@ -31,7 +31,7 @@ document {
      Headline => "whether all key/value pairs in a hash table satisfy a specified condition",
      Usage => "any(H,f)",
      Inputs => {
-	  "L" => HashTable => "",
+	  "L" => HashTable,
 	  "f" => Function => "which returns true or false"
 	  },
      Outputs => {

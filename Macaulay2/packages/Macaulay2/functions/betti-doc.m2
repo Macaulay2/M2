@@ -12,7 +12,7 @@ document {
      Key => (betti,GroebnerBasis),
      Headline => "diagram of the degrees of a groebner basis",
      Usage => "betti G",
-     Inputs => { "G" => GroebnerBasis => "" },
+     Inputs => { "G" => GroebnerBasis },
 	Outputs => { { "a diagram showing the degrees of the generators of the
 	source and target modules of the matrix of generators of ", TT "G" } },
 	"Here is an example:",
@@ -28,7 +28,7 @@ document {
      Key => (betti,Matrix),
      Headline => "display of the degrees of a map",
      Usage => "betti f",
-     Inputs => { "f" => Matrix => "" },
+     Inputs => { "f" => Matrix },
 	Outputs => { { "a diagram showing the degrees of the generators of the source and target modules of ", TT "f" } },
      EXAMPLE {
 		   "S = ZZ/10007[x,y];",
@@ -65,7 +65,7 @@ document {
      Key => (betti, ChainComplex),
      Headline => "display of degrees in a chain complex",
      Usage => "betti C",
-     Inputs => { "C" => ChainComplex => "" },
+     Inputs => { "C" => ChainComplex },
 	Outputs => { { "a diagram showing the degrees of the generators of the
 	modules in ", TT "C"} },
      "The diagram can be used to determine the degrees of the entries in the matrices
@@ -102,7 +102,7 @@ document {
      Key => {(betti,Ideal),(betti,MonomialIdeal)},
      Headline => "gives the degrees of generators.",
      Usage => "betti I",
-     Inputs => { "I" => Ideal => "" },
+     Inputs => { "I" => Ideal },
      Outputs => { { "a diagram showing the degrees of the generators of the modules in ", TT "C" } },
 	"The output is the degrees of generators and relations of the quotient of
 	the ambient ring by the ideal.", 

@@ -3,50 +3,34 @@
 --- notes: 
 
 document { 
-     Key => dismiss,
-     Headline => "",
-     Usage => "",
+     Key => {dismiss,(dismiss,String),(dismiss,Package)},
+     Headline => "dismiss a package",
+     Usage => "dismiss P",
      Inputs => {
-	  },
-     Outputs => {
+	  "P" => Package 
 	  },
      Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
+	  {"the dictionary of the package ", TT "P", " is removed from ", TO "globalDictionaries", ", so the symbols
+	       exported by ", TT "P", " are no longer available for use"  }
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     PARA {
+	  "The package itself is still accessible under its name in the ", TO "PackageDictionary", ", and its exported
+	  symbols can be made available again with ", TO "use", "."
+	  },
+     EXAMPLE lines ///
+     	  newPackage "P"
+	  export x
+	  x=3
+	  closePackage "P"
+	  globalDictionaries
+	  x
+	  dismiss P
+	  globalDictionaries
+	  x
+	  values PackageDictionary
+     	  use P
+	  x
+     ///,
+     SeeAlso => { "globalDictionaries", "PackageDictionary", "use" }
      }
-document { 
-     Key => (dismiss,String),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (dismiss,Package),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
+

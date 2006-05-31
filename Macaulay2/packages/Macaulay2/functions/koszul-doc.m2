@@ -7,7 +7,7 @@ document {
      Headline => "a differential in a Koszul complex",
      Usage => "g = koszul(i,f)",
      Inputs => {
-             "i" => "",
+             "i",
              "f" => {"a ", TT "1", " by ", TT "n", " matrix"},
      },
      Outputs => {

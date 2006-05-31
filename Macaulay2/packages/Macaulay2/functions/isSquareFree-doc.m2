@@ -7,7 +7,7 @@ document {
      Headline => "whether something is square free monomial ideal",
      Usage => "isSquareFree I",
      Inputs => {
-	  "I" => MonomialIdeal => ""
+	  "I" => MonomialIdeal
 	  },
      Outputs => {
 	  Boolean => {TO "true", " if ", TT "I", " is a square free ", 

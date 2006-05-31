@@ -7,7 +7,7 @@ document {
      Headline => "whether something is a ring",
      Usage => "isRing R",
      Inputs => {
-	  "R" => Thing => ""
+	  "R" => Thing
 	  },
      Outputs => {
 	  Boolean => {TO "true", " if ", TT "R", " is a ", TO2("Ring", "ring"), " and ", 

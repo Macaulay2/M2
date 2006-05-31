@@ -410,7 +410,7 @@ document {
      Key => (symbol <<, ZZ, ZZ),
      Headline => "shift bits rightward",
      Usage => "i << j",
-     Inputs => { "i" => null, "j" => null },
+     Inputs => { "i", "j" },
      Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation leftward ", TT "j", " places" }},
      EXAMPLE "256 << 5",
      SeeAlso => {(symbol >>,ZZ, ZZ)}
@@ -448,7 +448,7 @@ document {
      Key => (symbol >>, ZZ, ZZ),
      Headline => "shift bits rightward",
      Usage => "i >> j",
-     Inputs => { "i" => null, "j" => null },
+     Inputs => { "i", "j" },
      Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation rightward ", TT "j", " places" }},
      EXAMPLE "256 >> 5",
      SeeAlso => {(symbol <<,ZZ, ZZ)}
@@ -653,17 +653,17 @@ document {
 document {
      Key => exp, Headline => "exponential function",
      Usage => "exp x",
-     Inputs => { "x" => RR => null },
+     Inputs => { "x" => RR },
      Outputs => { { "the exponential of ", TT "x" } } }
 document {
      Key => log, Headline => "logarithm function",
      Usage => "log x",
-     Inputs => { "x" => RR => null },
+     Inputs => { "x" => RR },
      Outputs => { { "the logarithm of ", TT "x"} } }
 document {
      Key => sqrt, Headline => "square root function",
      Usage => "sqrt x",
-     Inputs => { "x" => RR => null },
+     Inputs => { "x" => RR },
      Outputs => { { "the square root of ", TT "x"} } }
 document {
      Key => run,
@@ -732,7 +732,7 @@ document {
      Key => (value,Symbol),
      Headline => "retrieve the value of a symbol",
      Usage => "value s",
-     Inputs => { "s" => null },
+     Inputs => { "s" },
      Outputs => { {"the value of ", TT "s" } },
      EXAMPLE {
 	  "x = s",
@@ -746,7 +746,7 @@ document {
      Key => (value,String),
      Headline => "evaluate a string",
      Usage => "value s",
-     Inputs => { "s" => null },
+     Inputs => { "s" },
      Outputs => { {"the value obtained by evaluating the code in ", TT "s" } },
      "The contents of ", TT "s", " are treated as code in the
      Macaulay 2 language, parsed it in its own scope (the same way a file is)
@@ -767,7 +767,7 @@ document {
      Key => (value,Expression),
      Headline => "evaluate an expression",
      Usage => "value s",
-     Inputs => { "s" => null },
+     Inputs => { "s" },
      Outputs => { "x" => {"the value of ", TT "s" } },
      EXAMPLE {
 	  "p = (expression 2)^3 * (expression 3)^2",
@@ -835,7 +835,7 @@ document {
      Key => gcd,
      Headline => "greatest common divisor",
      Usage => "gcd(x,y,...)",
-     Inputs => { "x" => ZZ => "" },
+     Inputs => { "x" => ZZ },
      Outputs => { ZZ => { "the greatest commond divisor of the arguments" } },
      EXAMPLE "gcd(2,4,8)",
      SeeAlso => gcdCoefficients
@@ -1012,7 +1012,7 @@ document {
      Key => ancestor,
      Headline => "whether one type is an ancestor of another",
      Usage => "ancestor(x,y)",
-     Inputs => { "x" => Type => null, "y" => Type => null },
+     Inputs => { "x" => Type, "y" => Type },
      Outputs => { {"whether ", TT "y", " is an ancestor of ", TT "x"} },
      "The ancestors of ", TT "x", " are ", TT "x", ", ", TT "parent x", ", ", TT "parent parent x", ", and so on.",
      SeeAlso => "classes and types"
@@ -1110,9 +1110,7 @@ document {
      Key => (symbol " ", RingElement, Array),
      Headline => "substitution of variables",
      Usage => "f[a,b,c]",
-     Inputs => {
-	  "f" => null,
-	  "[a,b,c]" => { "an array of ring elements" } },
+     Inputs => { "f", Nothing => { TT "[a,b,c]", ", an array of ring elements" } },
      Outputs => {
 	  "r" => { "the result of replacing the variables in ", TT "f", " by the ring elements provided in brackets." } } ,
      EXAMPLE {
@@ -1126,9 +1124,7 @@ document {
      Key => (symbol _, Symbol, Ring),
      Headline => "generator of a ring with a given name",
      Usage => "x_R",
-     Inputs => {
-	  "x" => null,
-	  "R" => null },
+     Inputs => { "x", "R" },
      Outputs => { { "the generator of the ring ", TT "R", " whose name is ", TT "x" } }
      }
      
@@ -1136,9 +1132,7 @@ document {
      Key => (symbol _, RingElement, Ring),
      Headline => "generator of a ring with a given name",
      Usage => "x_R",
-     Inputs => {
-	  "x" => null,
-	  "R" => null },
+     Inputs => { "x", "R" },
      Outputs => { { "the generator of the ring ", TT "R", " whose name is the same as that of ", TT "x" } }
      }
 

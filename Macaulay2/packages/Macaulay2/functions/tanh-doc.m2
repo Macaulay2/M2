@@ -7,7 +7,7 @@ document {
      Headline => "compute the hyperbolic tangent",
      Usage => "tanh x",
      Inputs => { 
-	  "x" => RR => null 
+	  "x" => RR 
 	  },
      Outputs => { 
 	  RR => { "the hyperbolic tangent of ", TT "x" } 

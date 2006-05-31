@@ -813,14 +813,16 @@ installPackage Package := opts -> pkg -> (
 				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m and signalDocError tag
 				   then stderr << "--warning: method has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;
 				   ));
-			 o := options f;
-			 if o =!= null 
-			 then scan(apply(keys o, op -> [f,op]), 
-			      m -> (
-				   tag := makeDocumentTag m;
-				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m and signalDocError tag
-				   then stderr << "--warning: option has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;
-				   )))));
+---- we are no longer insisting on separate documentatio nodes for each option -- see documentation of findFiles for a first example
+-- 			 o := options f;
+-- 			 if o =!= null 
+-- 			 then scan(apply(keys o, op -> [f,op]), 
+-- 			      m -> (
+-- 				   tag := makeDocumentTag m;
+-- 				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m and signalDocError tag
+-- 				   then stderr << "--warning: option has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;
+-- 				   ));
+			 )));
 
      	  if not opts.IgnoreDocumentationErrors
 	  then if hadDocumentationError then error(toString numDocumentationErrors, " error(s) occurred in documentation for package ", toString pkg);

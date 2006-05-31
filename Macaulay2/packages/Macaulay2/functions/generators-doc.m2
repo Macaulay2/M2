@@ -48,9 +48,7 @@ document {
      Key => (generators,Module),
      Headline => "the generator matrix of a module",     
      Usage => "generators M",
-     Inputs => {
-	  "M" => null
-	  },
+     Inputs => { "M" },
      Outputs => {
 	  {"the matrix of generators of ", TT "M", "."}
 	  },
@@ -117,7 +115,7 @@ document {
      Headline => "the list of generators of a ring",
      Usage => "generators R",
      Inputs => {
-	  "R" => ""
+	  "R"
 	  },
      Outputs => {
 	  List => "of generators"

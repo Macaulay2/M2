@@ -86,6 +86,7 @@ edit = Command editMethod
 
 -----------------------------------------------------------------------------
 methods = method(SingleArgumentDispatch => true)
+methods Command := c -> methods c#0
 methods Type := F -> (
      seen := new MutableHashTable;
      found := new MutableHashTable;

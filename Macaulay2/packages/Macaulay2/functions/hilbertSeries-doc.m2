@@ -24,7 +24,7 @@ document {
      Headline => "compute the Hilbert series of the ring",
      Usage => "hilbertSeries R",
      Inputs => {
-	  "R" => ""
+	  "R"
 	  },
      Outputs => {
 	  Divide => "the Hilbert series" },
@@ -50,7 +50,7 @@ document {
      Headline => "compute the Hilbert series of the module",
      Usage => "hilbertSeries M",
      Inputs => {
-	  "M" => ""
+	  "M"
 	  },
      Outputs => {
 	  Divide => "the Hilbert series" 
@@ -81,7 +81,7 @@ document {
 --      Headline => "compute the Hilbert series of a coherent sheaf",
 --      Usage => "hilbertSeries M",
 --      Inputs => {
--- 	  "M" => ""
+-- 	  "M"
 -- 	  },
 --      Outputs => {
 -- 	  Divide => "the Hilbert series" },
@@ -100,7 +100,7 @@ document {
      Headline => "compute the Hilbert series of the quotient of the ambient ring by the ideal",
      Usage => "hilbertSeries I",
      Inputs => {
-	  "I" => Ideal => ""
+	  "I" => Ideal
 	  },
      Outputs => {
 	  Divide =>  "the Hilbert series" },
@@ -138,7 +138,7 @@ document {
      Headline => "compute the Hilbert series of a projective Hilbert polynomial",
      Usage => "hilbertSeries P",
      Inputs => {
-	  "P" => ProjectiveHilbertPolynomial => ""
+	  "P" => ProjectiveHilbertPolynomial
 	  },
      Outputs => {
 	  Divide =>  "the Hilbert series" },
@@ -170,7 +170,7 @@ document {
      Headline => "compute the Hilbert series of a projective variety",
      Usage => "hilbertSeries V",
      Inputs => {
-	  "V" =>  ProjectiveVariety => ""
+	  "V" =>  ProjectiveVariety
 	  },
      Outputs => {
 	  Divide =>   "the Hilbert series" },
@@ -189,7 +189,7 @@ document {
      Headline => "display the truncated power series expansion",
      Usage => "hilbertSeries(..., Order => n)",
      Inputs => {
-	  "n" => ZZ => ""},
+	  "n" => ZZ},
      Consequences => {
 	  {"The output is no longer of type ", TO "Divide", ". It is a
 	  polynomial in the ", TO2 (degreesRing,"degrees ring"), "."}

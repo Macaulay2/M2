@@ -111,7 +111,7 @@ texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
 
 noopts := x -> select(x,e -> class e =!= Option)
 
-vert := (op,post) -> x -> net new ParagraphList from post select(
+vert := (op,post) -> x -> net new ParagraphList from post select( -- wrapping gets done by the "net" on this line
      sublists(
 	  toList x,
 	  i -> instance(i,MarkUpListParagraph),
@@ -122,8 +122,8 @@ net DIV := (vert(net,x -> between("\n",x))) @@ noopts -- doublespacing
 info DIV := (vert(info,x -> between("",x))) @@ noopts
 net PARA := vert(net,x -> between("\n",x)) -- doublespacing
 info PARA := vert(info,x -> between("",x))
-net DIV1 := (vert(net,identity)) @@ noopts				    -- singlespacing
-info DIV1 := (vert(info,identity)) @@ noopts
+info DIV1 := net DIV1 := (vert(net,identity)) @@ noopts				    -- singlespacing
+info LI := net LI := (vert(net,identity)) @@ noopts				    -- singlespacing
 
 html BR := x -> ///
 <br>
@@ -285,7 +285,6 @@ net UL := ULop net
 * String := x -> help x					    -- so the user can cut paste the menu line to get help!
 
 tex UL := x -> concatenate( ///\begin{itemize}///, newline, apply(x, x -> ( ///\item ///, tex x, newline)), ///\end{itemize}///, newline)
-html UL := x -> if #x != 0 then concatenate ( newline, "<ul>", newline, apply(x, html), "</ul>", newline) else ""
 
 texMath SUP := x -> concatenate( "^{", apply(x, tex), "}" )
 texMath SUB := x -> concatenate( "_{", apply(x, tex), "}" )

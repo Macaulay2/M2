@@ -14,7 +14,7 @@ document {
      Headline => "row matrix of the variables",     
      Usage => "vars R",
      Inputs => {
-	  "R" => ""
+	  "R"
 	  },
      Outputs => {
 	  Matrix =>  { "a matrix with one row whose entries are the variables of the ring ", TT "R"}

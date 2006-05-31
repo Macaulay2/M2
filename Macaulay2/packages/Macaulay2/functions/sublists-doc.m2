@@ -3,10 +3,10 @@ document {
      Headline => "process interspersed sublists of a list",
      Usage => "sublist(x,f,g,h)",
      Inputs => {
-	  "x" => List => "",
-	  "f" => Function => "",
-	  "g" => Function => "",
-	  "h" => Function => ""
+	  "x" => List,
+	  "f" => Function,
+	  "g" => Function,
+	  "h" => Function
 	  },
      Outputs => {
 	  { "a list of results obtained by applying ", TT "g", " to each of the elements ", TT "i", " of ", TT "x", " for which ", TT "f i", " is true,

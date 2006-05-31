@@ -12,7 +12,7 @@ document {
      Headline => "number of generators of a module",
      Usage => "numgens M",
      Inputs => {
-	  "M" => "",
+	  "M",
 	  },
      Outputs => {
 	  ZZ => "number of generators of M"
@@ -38,7 +38,7 @@ document {
      Headline => "number of generators of a monoid",
      Usage => "numgens M",
      Inputs => {
-	  "M" => ""
+	  "M"
 	  },
      Outputs => {
 	  ZZ => "number of generators of M"
@@ -55,7 +55,7 @@ document {
      Headline => "number of generators of an ideal",
      Usage => "numgens I",
      Inputs => {
-	  "I" => ""
+	  "I"
 	  },
      Outputs => {
 	  ZZ => "number of generators of I"
@@ -82,7 +82,7 @@ document {
      Headline => "the number of generators of the underlying module",
      Usage => "numgens F",
      Inputs => {
-	  "F" => ""
+	  "F"
 	  },
      Outputs => {
 	  ZZ => {"number of generators of the underlying module ", TT "M", " of ", TT "F"}

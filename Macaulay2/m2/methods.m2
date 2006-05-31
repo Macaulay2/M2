@@ -399,6 +399,15 @@ cacheValue = key -> f -> x -> (
      if c#?key then c#key else c#key = f x)
 stashValue = key -> f -> x -> if x#?key then x#key else x#key = f x
 
+-----------------------------------------------------------------------------
+-- hypertext conversion
+
+html = method(SingleArgumentDispatch=>true, TypicalValue => String)
+tex = method(SingleArgumentDispatch=>true, TypicalValue => String)
+texMath = method(SingleArgumentDispatch=>true, TypicalValue => String)
+mathML = method(SingleArgumentDispatch=>true, TypicalValue => String)
+info = method(SingleArgumentDispatch=>true, TypicalValue => String)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

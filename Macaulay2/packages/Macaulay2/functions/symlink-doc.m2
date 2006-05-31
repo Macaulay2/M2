@@ -7,8 +7,8 @@ document {
      Headline => "",
      Usage => "symlinkFile(source,target)",
      Inputs => {
-	  "source" => String => "",
-	  "target" => String => ""
+	  "source" => String,
+	  "target" => String
 	  },
      Consequences => {
 	  {"Returns null if successful.  

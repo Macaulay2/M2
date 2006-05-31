@@ -66,9 +66,7 @@ document {
 document { 
      Key => (degree,ProjectiveVariety),
      Usage => "degree X",
-     Inputs => {
-	  "X" => null
-	  },
+     Inputs => { "X" },
      Outputs => {
 	  ZZ => {"the degree of ", TT "X"}
 	  },

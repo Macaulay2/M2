@@ -7,7 +7,7 @@ document {
      Headline => "compute the hyperbolic sine",
      Usage => "sinh x",
      Inputs => {
-	  "x" => RR => null 
+	  "x" => RR 
 	  },
      Outputs => {
 	  RR => { "the hyperbolic sine of ", TT "x" } 

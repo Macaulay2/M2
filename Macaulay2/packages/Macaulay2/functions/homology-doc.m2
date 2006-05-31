@@ -18,34 +18,23 @@ document {
      Key => (homology,ZZ,ChainComplexMap),
      Headline => "homology of a chain complex map",
      Usage => "HH_i f",
-     Inputs => {
-	  "i" => null,
-	  "f" => null
-	  },
-     Outputs => {
-	  {"the map on the ", TT "i", "-th homology module induced by the map ", TT "f", " of chain complexes" }
-	  }
+     Inputs => { "i", "f" },
+     Outputs => { {"the map on the ", TT "i", "-th homology module induced by the map ", TT "f", " of chain complexes" } }
      }
 
 document { 
      Key => (homology,ChainComplexMap),
      Headline => "homology of a chain complex map",
      Usage => "HH f",
-     Inputs => {
-	  "i" => null
-	  },
-     Outputs => {
-	  {"the map on the homology induced by the map ", TT "f", " of chain complexes" }
-	  }
+     Inputs => { "i" },
+     Outputs => { {"the map on the homology induced by the map ", TT "f", " of chain complexes" } }
      }
 
 document { 
      Key => (homology,ChainComplex),
      Headline => "homology of a chain complex",
      Usage => "HH C",
-     Inputs => {
-	  "C" => null
-	  },
+     Inputs => { "C" },
      Outputs => {
 	  {"the homology of ", TT "C"}
 	  },
@@ -60,10 +49,7 @@ document {
      Key => (homology,ZZ,ChainComplex),
      Headline => "homology of a chain complex",
      Usage => "HH_i C",
-     Inputs => {
-	  "i" => null,
-	  "C" => null
-	  },
+     Inputs => { "i", "C" },
      Outputs => {
 	  {"the homology at the i-th spot of the chain complex ", TT "C", "."}
 	  },
@@ -105,10 +91,7 @@ document {
      Key => (homology,Matrix,Matrix),
      Headline => "homology of a pair of maps",
      Usage => "M = homology(f,g)",
-     Inputs => {
-	  "f" => null,
-	  "g" => null
-	  },
+     Inputs => { "f", "g" },
      Outputs => {
 	  "M" => {"computes the homology module ", TT "(kernel f)/(image g)", "."}
 	  },

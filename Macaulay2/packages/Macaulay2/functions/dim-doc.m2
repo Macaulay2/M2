@@ -19,8 +19,8 @@ undocumented {(dim,FractionField),(dim,GaloisField),(dim,PolynomialRing),(dim,Qu
 document { 
      Key => (dim,Ring),
      Usage => "dim R",
-     Inputs => {"R" => ""},
-     Outputs => {ZZ => ""},
+     Inputs => {"R"},
+     Outputs => {ZZ},
      "Computes the Krull dimension of the given ring.",
      PARA{},
      "The singular locus of a cuspidal plane curve", 
@@ -53,9 +53,9 @@ document {
      Key => (dim,AffineVariety),
      Headline => "dimension of the affine variety",
      Usage => "dim V",
-     Inputs => {"V" => ""
+     Inputs => {"V"
 	  },
-     Outputs => {ZZ => ""
+     Outputs => {ZZ
 	  },
      "Computes the dimension of the affine algebraic set ", TT "V"," as the Krull dimension
       of its affine coordinate ring.",
@@ -74,9 +74,9 @@ document {
      Key => (dim,ProjectiveVariety),
      Headline => "dimension of the projective variety",
      Usage => "dim V",
-     Inputs => {"V" => ""
+     Inputs => {"V"
 	  },
-     Outputs => {ZZ => ""
+     Outputs => {ZZ
 	  },
      "Computes the dimension of the projective algebraic set from 
       the Krull dimension of its homogeneous coordinate ring.",
@@ -93,9 +93,9 @@ document {
 document { 
      Key => (dim,Module),
      Usage => "dim M",
-     Inputs => {"M" => ""
+     Inputs => {"M"
 	  },
-     Outputs => {ZZ => ""
+     Outputs => {ZZ
 	  },
      "Computes the Krull dimension of the module ", TT "M",
      EXAMPLE {
@@ -112,7 +112,7 @@ document {
      Key => (dim,ProjectiveHilbertPolynomial),
      Headline => "the degree of the Hilbert polynomial",
      Usage => "dim P",
-     Inputs => {"P" => ""
+     Inputs => {"P"
 	  },
      Outputs => {"ZZ"
 	  },
@@ -129,8 +129,8 @@ document {
 document { 
      Key => {(dim,Ideal),(dim,MonomialIdeal)},
      Usage => "dim I",
-     Inputs => {"I" => ""},
-     Outputs => {ZZ => ""},
+     Inputs => {"I"},
+     Outputs => {ZZ},
      "Computes the Krull dimension of the base ring of ", TT "I", " mod ", TT "I", ".",
      PARA{},
      "The ideal of 3x3 commuting matrices:",

@@ -7,10 +7,10 @@ document {
      Headline => "make a generic symmetric matrix",
      Usage => "genericSymmetricMatrix(R,r,n)",
      Inputs => {
-	  "R" => Ring => "",
+	  "R" => Ring,
 	  "r" => RingElement => {"which is a variable in the ring ", TT "R", 
 	       " (this input is optional)"},
-	  "n" => ZZ => ""
+	  "n" => ZZ
 	  },
      Outputs => {
 	  {"a symmetric ", TO2("Matrix", "matrix"), " with ", TT "n",

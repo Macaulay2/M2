@@ -7,7 +7,7 @@ document {
      Headline => "extract nonzero columns from a matrix",
      Usage => "compress m",
      Inputs => {
-	  "m" => Matrix => ""
+	  "m" => Matrix
 	  },
      Outputs => {
 	  Matrix => {"the matrix consisting of nonzero columns of ", TT "m"}

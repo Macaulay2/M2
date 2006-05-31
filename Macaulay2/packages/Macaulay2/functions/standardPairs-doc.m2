@@ -7,7 +7,7 @@ document {
      Headline => "find the standard pairs of a monomial ideal",
      Usage => "standardPairs I",
      Inputs => {
-	  "I" => MonomialIdeal => ""
+	  "I" => MonomialIdeal
 	  },
      Outputs => {
 	  {"a ", TO List, " of standard pairs for ", TT "I"}

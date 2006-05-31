@@ -8,7 +8,7 @@ document {
      Headline => "whether something is a field",
      Usage => "isField R",
      Inputs => {
-	  "R" => Ring => ""
+	  "R" => Ring
 	  },
      Outputs => {
 	  Boolean => {TO "true", " if ", TT "R", 

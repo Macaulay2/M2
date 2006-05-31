@@ -24,7 +24,7 @@ document {
      Headline => "whether to enter the debugger upon error",
      Key => {DebuggingMode,[loadPackage,DebuggingMode],[needsPackage,DebuggingMode],[installPackage,DebuggingMode]},
      Usage => "loadPackage(...,DebuggingMode=>b)",
-     Inputs => { "b" => Boolean => "" },
+     Inputs => { "b" => Boolean },
      Consequences => { {"if the value ", TT "b", " is ", TT "true", ", then, while loading the package, the debugger is entered if an error occurs"} },
      PARA { "This option has the same effect when used with the functions ", TO "needsPackage", " and ", TO "installPackage", "." },
      EXAMPLE {
@@ -70,21 +70,15 @@ document {
      Key => {export, (export,Sequence), (export,Symbol)},
      Headline => "package item: export functions",
      Usage => "export(symbol1,symbol2,...)",
-     Inputs => {
-	  "(symbol1,symbol2,...)" => Sequence => " of symbols"
-	  },
-     Consequences => {"the symbols in the sequence, which should refer
-	  to functions or other symbols defined in the package,
-	   are made available 
-	  to the user of the package"},
+     Inputs => { { TT "(symbol1,symbol2,...)", ", a sequence of symbols" } },
+     Consequences => {"The symbols in the sequence, which should refer
+	  to functions or other symbols defined in the package, are made available 
+	  to the user of the package, and are marked non-mutable."},
      "A package can contain the code for many functions, only some 
-     of which should be made visible to the user. ", TT "export",
-     " allows one to specify which are not private symbols or functions.
+     of which should be made visible to the user.  The function ", TT "export", " 
+     allows one to specify which symbols are to be made visible.
      For an example see ", TO "an example of a package", ".",
-     PARA{},
-     "Use ", 
-     TO exportMutable,
-     " to export variables which the user can modify.", 
+     PARA{ "Use ", TO exportMutable, " to export symbols whose values the user is permitted to modify." },
      SeeAlso => {debug}
      }
 
@@ -92,17 +86,13 @@ document {
      Key => {exportMutable, (exportMutable,Sequence), (exportMutable,Symbol)},
      Headline => "package item: export writable variables",
      Usage => "exportMutable(symbol1,symbol2,...)",
-     Inputs => { "(symbol1,symbol2,...)" => Sequence => " of symbols" },
+     Inputs => { Nothing => { TT "(symbol1,symbol2,...)", ", a sequence of symbols"  } },
      Consequences => {
-	  {"the symbols in the sequence, which should refer
-	       to variables defined in the package,
-	       are made available 
-	       to the user of the package, in such a way that their values
-	       may be modified by the user"}
+	  {"the symbols in the sequence, which should refer to variables defined in the package,
+	       are made available to the user of the package, in such a way that their values may be modified by the user"}
 	 },
-     "This package item is needed much less frequently than ", TO export, 
-     ".  For an example, see ", TO "an example of a package",
-     SeeAlso => {debug}
+     "This function is needed much less frequently than ", TO export, ".  For an example, see ", TO "an example of a package",
+     SeeAlso => {export, debug}
      }
 
 document {

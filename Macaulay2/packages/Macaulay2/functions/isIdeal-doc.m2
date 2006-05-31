@@ -7,7 +7,7 @@ document {
      Headline => "whether something is an ideal",
      Usage => "isIdeal I",
      Inputs => {
-	  "I" => Thing => ""
+	  "I" => Thing
 	  },
      Outputs => {
 	  Boolean => {TO "true", " if ", TT "I", " is either an ", TO2("Ideal", "ideal"), 

@@ -25,7 +25,7 @@ document {
      Headline => "the ring of degrees",
      Usage => "degreesRing n",
      Inputs => {
-	  "n" => ZZ => ""
+	  "n" => ZZ
 	  },
      Outputs => {
 	  PolynomialRing => "actually a Laurent polynomial ring"
@@ -54,7 +54,7 @@ document {
      Headline => "the ring of degrees",
      Usage => "degreesRing R",
      Inputs => {
-	  "R" => ""
+	  "R"
 	  },
      Outputs => {
 	  PolynomialRing => "actually Laurent polynomial ring"
@@ -77,10 +77,10 @@ document {
 --      Headline => "the ring of degrees",
 --      Usage => "degreesRing M",
 --      Inputs => {
--- 	  "M" => Module => ""
+-- 	  "M" => Module
 -- 	  },
 --      Outputs => {
--- 	  PolynomialRing => ""
+-- 	  PolynomialRing
 -- 	  },
 --      "For an R-module this function produces the ring in n variables
 --      whose monomials are the degrees of elements of the ring R.",
@@ -99,10 +99,10 @@ document {
 --      Headline => "the ring of degrees",
 --      Usage => "degreesRing S",
 --      Inputs => {
--- 	  "S" => CoherentSheaf => ""
+-- 	  "S" => CoherentSheaf
 -- 	  },
 --      Outputs => {
--- 	  PolynomialRing => ""
+-- 	  PolynomialRing
 -- 	  },
 --      EXAMPLE {
 -- 	  "V = Proj(ZZ/101[x_0..x_2]);",

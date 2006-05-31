@@ -83,9 +83,7 @@ document {
 	  },
      Headline => "product of ideals",
      Usage => "I * J",
-     Inputs => {
-	  "I" => null,
-	  "J" => {"in the same ring as ", TT "I"},
+     Inputs => { "I", "J" => {"in the same ring as ", TT "I"},
 	  },
      Outputs => {
 	  {"the product of the two ideals ", TT "I", " and ", TT "J", ""}
@@ -106,10 +104,7 @@ document {
 	  },
      Headline => "sum of ideals",
      Usage => "I + J",
-     Inputs => {
-	  "I" => null,
-	  "J" => {"in the same ring as ", TT "I"},
-	  },
+     Inputs => { "I", "J" => {"in the same ring as ", TT "I"}, },
      Outputs => {
 	  {"the sum of the two ideals ", TT "I", " and ", TT "J", ""}
 	  },
@@ -131,13 +126,8 @@ document {
 	  },
      Headline => "power of an ideal",
      Usage => "I^n",
-     Inputs => {
-	  "I" => null,
-	  "n" => {"at least zero"},
-	  },
-     Outputs => {
-	  {"the ideal ", TT "I^n"}
-	  },
+     Inputs => { "I", "n" => {"at least zero"}, },
+     Outputs => { {"the ideal ", TT "I^n"} },
      EXAMPLE {
 	  "R = QQ[a..d];",
 	  "I = ideal(a^2, b^2-c*d);",
@@ -157,10 +147,7 @@ document {
 	  },
      Headline => "membership predicate",
      Usage => "isSubset(I,J)",
-     Inputs => {
-	  "I" => null,
-	  "J" => {"in the same ring as ", TT "I"},
-	  },
+     Inputs => { "I", "J" => {"in the same ring as ", TT "I"}, },
      Outputs => {
 	  Boolean => {"true if ", TT "I", " is contained in ", TT "J"}
 	  },
@@ -179,14 +166,3 @@ document {
      Key => minimalPrimes,
      Headline => "find the minimal primes of an ideal"
      }
-
--- I have no idea what this function does.  It ought to return a list, but it returns an ideal!
--- document {
---      Key => (minimalPrimes,MonomialIdeal),
---      Usage => "minimalPrimes I",
---      Inputs => {
--- 	  "I" => null
--- 	  },
---      }
--- 
--- 

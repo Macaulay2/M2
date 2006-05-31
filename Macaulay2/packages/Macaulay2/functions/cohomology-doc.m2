@@ -20,7 +20,7 @@ document {
      Key => (cohomology,ZZ,SheafOfRings),
      Headline => "cohomology of a sheaf of rings on a projective variety",
      Usage => "HH^d(R)",
-     Inputs => {"i"=> ZZ=>"", "R" => SheafOfRings =>{"on a projective variety ", TT "X"}
+     Inputs => {"i"=> ZZ, "R" => SheafOfRings =>{"on a projective variety ", TT "X"}
 	  },
      Outputs => {Module=>{"the ", TT "i", "-th cohomology group of ", TT "R", " as a vector space 
 	       over the coefficient field of ", TT "X"}
@@ -39,7 +39,7 @@ document {
      Key => (cohomology,ZZ,ChainComplexMap),
      Headline => "cohomology of a chain complex map",
      Usage => "HH^i f",
-     Inputs => {"i" => "","f" => ""
+     Inputs => {"i","f"
 	  },
      Outputs => {Matrix=>{"the ", TT "i", 
 	       "-th cohomology map induced by the chain complex map ", TT "f"}
@@ -58,7 +58,7 @@ document {
      Inputs => {"i" => " which is non negative", 
 	       "M" => " which is graded over its base polynomial ring"
 	  },
-     Outputs => {Module =>""
+     Outputs => {Module
 	  },
      "The command computes the local cohomology of the graded 
      module ", TT "M", " with respect to the maximal irrelevant ideal 
@@ -92,8 +92,8 @@ document {
      Headline => "coherent sheaf cohomology module",
      Usage => "HH^i(F(>=d))",
      Inputs => {
-	  "i" => "",
-          "F(>=d)" => { "notation representing the sum of the twists ", TT "F(n)", " for
+	  "i",
+          { TT "F(>=d)", ", notation representing the sum of the twists ", TT "F(n)", " for
                all ", TT "n", " greater than or equal to ", TT "d", ", where ", TT "F", " is
                a coherent sheaf on a projective variety ", TT "X", "." }
 	  },
@@ -155,7 +155,7 @@ document {
      Key => (cohomology,ZZ,ChainComplex),
      Headline => "cohomology of a chain complex",
      Usage => "HH^i C",
-     Inputs => {"i"=> ZZ => "", "C" => ChainComplex => ""
+     Inputs => {"i"=> ZZ, "C" => ChainComplex
 	  	  },
      Outputs => {Module => {"HH^i C", " -- homology at the i-th spot of the chain complex ", TT "C", "."}
 	  },
@@ -193,7 +193,7 @@ document {
      Key => {(cohomology,ZZ,CoherentSheaf)},
      Headline => "cohomology of a coherent sheaf on a projective variety",
      Usage => {"HH^i(F) or cohomology(i,F)"},
-     Inputs => {"i"=> ZZ=>"", "F" => CoherentSheaf =>{"on a projective variety ", TT "X"}
+     Inputs => {"i"=> ZZ, "F" => CoherentSheaf =>{"on a projective variety ", TT "X"}
 	  },
      Outputs => {Module=>{"the ", TT "i", "-th cohomology group of ", TT "F", " as a vector space 
 	       over the coefficient field of ", TT "X"} 
@@ -289,8 +289,8 @@ document {
      Key => {hh,(hh,Sequence,ProjectiveVariety)},
      Headline => "Hodge numbers of a smooth projective variety",
      Usage =>"hh^(p,q)(X)",
-     Inputs => {"(p,q)" => Sequence => "of non negative integers","X" => ProjectiveVariety => ""},
-     Outputs => {ZZ=>""},
+     Inputs => { Nothing => { "a pair ", TT "(p,q)", " of non negative integers" }, "X" => ProjectiveVariety },
+     Outputs => {ZZ},
      "The command computes the Hodge numbers h^{p,q} of the smooth
      projective variety X. They are calculated as ",
      TT "HH^q(cotangentSheaf(p,X))",

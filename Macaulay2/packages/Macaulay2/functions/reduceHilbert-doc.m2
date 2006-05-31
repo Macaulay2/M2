@@ -8,7 +8,7 @@ document {
      Headline => "reduce a Hilbert series expression",
      Usage => "reduceHilbert H",
      Inputs => {
-	  "H" => Divide => ""
+	  "H" => Divide
 	  },
      Outputs => {
 	  Divide => {"the Hilbert series reduced by removing common factors"}

@@ -7,7 +7,7 @@ document {
 	Headline => "binomial coefficient",
 	Usage => "binomial(n,k)",
 	Inputs => {
-		"n" => ZZ => "",
+		"n" => ZZ,
 		"k" => ZZ => ", must be non-negative"
 		},
 	Outputs => {{"the binomial coefficient, the coefficient of ", TT "x^k", " in ", TT "(1+x)^n"}

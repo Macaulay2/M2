@@ -7,7 +7,7 @@ document {
      Headline => "numeric index of a ring variable",
      Usage => "index v",
      Inputs => {
-	  "v" => RingElement => ""
+	  "v" => RingElement
 	  },
      Outputs => {
 	  ZZ => {"the integer index, starting at 0, of v, if it is a variable.

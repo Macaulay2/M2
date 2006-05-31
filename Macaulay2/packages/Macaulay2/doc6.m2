@@ -218,7 +218,7 @@ document {
      Key => (conjugate,CC),
      Headline => "complex conjugate",
      Usage => "conjugate z",
-     Inputs => {"z" => ""},
+     Inputs => {"z"},
      Outputs => {CC => {"the complex conjugate of ", TT "z"}},
      EXAMPLE "conjugate(1+2.5*ii)"
      }
@@ -658,19 +658,19 @@ document { Key => degrees, Headline => "degrees of generators" }
 document {
      Key => (degrees, Ideal),
      Usage => "degrees I",
-     Inputs => {"I" => null},
+     Inputs => {"I"},
      Outputs => {{ "the list of multi-degrees for the generators of the module ", TT "I" }}}
 document {
      Key => (degrees, Matrix),
      Usage => "degrees f",
-     Inputs => {"f" => null},
+     Inputs => {"f"},
      Outputs => {{ "a list ", TT "{x,y}", " where ", TT "x", " is the list
 	       of degrees of the target of ", TT "f", " and ", TT "y", " is the
 	       list of degrees of the source of ", TT "f", "." }}}
 document {
      Key => (degrees, Module),
      Usage => "degrees M",
-     Inputs => {"M" => null},
+     Inputs => {"M"},
      Outputs => {{ "the list of multi-degrees for the generators of the module ", TT "M" }},
      EXAMPLE {
 	  "R = ZZ/101[x,y,z]",
@@ -681,7 +681,7 @@ document {
 document {
      Key => (degrees, Ring),
      Usage => "degrees R",
-     Inputs => {"R" => null},
+     Inputs => {"R"},
      Outputs => {},
      Consequences => {{ "the list of multi-degrees for the generators (variables) of the ring ", TT "R"}},
      EXAMPLE {
@@ -693,7 +693,7 @@ document {
      Key => (symbol ^, Ring, List),
      Headline => "make a free module",
      Usage => "M = R^{i,j,k,...}",
-     Inputs => {"R" => null,"{i,j,k, ...}" => {"a list of integers or a list of lists of integers"}},
+     Inputs => {"R", Nothing => { TT "{i,j,k, ...}",  ", a list of integers or a list of lists of integers"}},
      Outputs => {{"a free module over ", TT "R", " whose generators have degrees ", TT "-i", ", ", TT "-j", ", ", TT "-k", ", ..."}},
      "If ", TT "i", ", ", TT "j", ", ... are lists of integers, then
      they represent multi-degrees, as in ", TO "multi-graded polynomial rings", ".",
@@ -712,13 +712,13 @@ document {
      Key => (symbol ^,Module,ZZ),
      Headline => "make a direct sum of several copies of a module",
      Usage => "M^n",
-     Inputs => {"M" => {"a module"}, "n" => null},
+     Inputs => {"M" => {"a module"}, "n"},
      Outputs => {{"the direct sum of ", TT "n", " copies of ", TT "M"}}}
 document {
      Key => (symbol ^,Ring,ZZ),
      Headline => "make a free module",
      Usage => "R^n",
-     Inputs => {"R" => {"a ring"}, "n" => null},
+     Inputs => {"R" => {"a ring"}, "n"},
      Outputs => {{"a new free ", TT "R", "-module of rank ", TT "n", "." }},
      "The new free module has basis elements of degree zero.  To specify the
      degrees explicitly, see ", TO (symbol ^,Ring,List), "." }
@@ -726,7 +726,7 @@ document {
      Key => coverMap,
      Headline => "get the map to the module given by the generators of a module",
      Usage => "coverMap M",
-     Inputs => {"M" => null},
+     Inputs => {"M"},
      Outputs => {{ "the map from a free module to ", TT "M", " given by the generators of ", TT "M"}},
      SeeAlso => { "cover" }}
 document {
@@ -738,7 +738,7 @@ document {
 document {
      Key => (cover,Module),
      Usage => "F = cover M",
-     Inputs => {"M" => null},
+     Inputs => {"M"},
      Outputs => {"F" => {"the free module whose basis elements correspond to the generators of ", TT "M", "."}},
      "The free module ", TT "F", " is the source of the generator matrix 
      of ", TT "M", ".",
@@ -772,11 +772,8 @@ document {
      Key => (symbol *, Matrix, Matrix),
      Headline => "matrix multiplication",
      Usage => "f * g",
-     Inputs => {"f" => null,
-	  "g" => null},
-     Outputs => {
-	  Matrix => null
-	  },
+     Inputs => {"f", "g"},
+     Outputs => { Matrix },
      "Multiplication of matrices corresponds to composition of maps, and when
      the target ", TT "Q", "
      of ", TT "g", " equals the source ", TT "P", " of ", TT "f", ", the

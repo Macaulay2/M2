@@ -7,7 +7,7 @@ document {
      Headline => "compute the tangent",
      Usage => "tan x",
      Inputs => { 
-	  "x" => RR => null 
+	  "x" => RR 
 	  },
      Outputs => { 
 	  RR => { "the tangent of ", TT "x" } 

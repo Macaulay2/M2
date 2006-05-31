@@ -7,11 +7,11 @@ document {
      Headline => "make a generic matrix of variables",
      Usage => "genericMatrix(R,r,m,n)",
      Inputs => {
-	  "R" => Ring => "",
+	  "R" => Ring,
 	  "r" => RingElement => {"which is a variable in the ring ", TT "R",
 	       " (this input is optional)"},
-	  "m" => ZZ => "",
-	  "n" => ZZ => ""
+	  "m" => ZZ,
+	  "n" => ZZ
 	  },
      Outputs => {
 	  Matrix => {"with ", TT "m", " rows and ", TT "n", 

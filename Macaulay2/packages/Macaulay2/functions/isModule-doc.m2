@@ -7,7 +7,7 @@ document {
      Headline => "whether something is a module",
      Usage => "isModule M",
      Inputs => {
-	  "M" => Thing => ""
+	  "M" => Thing
 	  },
      Outputs => {
 	  Boolean => {TO "true", " if ", TT "M", " is a ", TO2("Module", "module"), " and ", 

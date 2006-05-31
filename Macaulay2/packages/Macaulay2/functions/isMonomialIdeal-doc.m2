@@ -7,7 +7,7 @@ document {
      Headline => "whether something is a monomial ideal",
      Usage => "isMonomialIdeal I",
      Inputs => {
-	  "I" => Thing => ""
+	  "I" => Thing
 	  },
      Outputs => {
 	  Boolean => {TO "true", " if ", TT "I", " is either a ", TO2("MonomialIdeal", "monomial ideal"), 

@@ -7,7 +7,7 @@ document {
      Headline => "compute the arcsine",
      Usage => "asin x",
      Inputs => {
-	  "x" => RR => ""
+	  "x" => RR
 	  },
      Outputs => {
 	  RR => {"the arcsine (in radians) of ", TT "x"}

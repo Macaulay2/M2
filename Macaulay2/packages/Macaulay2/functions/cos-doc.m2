@@ -6,9 +6,7 @@ document {
      Key => {cos, (cos,ZZ), (cos,RR)},
      Headline => "compute the cosine",
      Usage => "cos x",
-     Inputs => { 
-	  "x" => RR => null 
-	  },
+     Inputs => { "x" => RR },
      Outputs => { 
 	  RR => { "the cosine of ", TT "x", "" } 
 	  },

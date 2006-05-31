@@ -7,7 +7,7 @@ document {
      Headline => "whether someting is a polynomial ring",
      Usage => "isPolynomialRing R",
      Inputs => {
-	  "R" => Thing => ""
+	  "R" => Thing
 	  },
      Outputs => {
 	  Boolean => {TO "true", " if ", TT "R", " is a ", TO2("PolynomialRing","polynomial ring"), 

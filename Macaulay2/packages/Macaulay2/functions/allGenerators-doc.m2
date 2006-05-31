@@ -11,7 +11,7 @@ document {
      Headline => "list of all generators",
      Usage => "allGenerators R",
      Inputs => {
-	  "R" => Ring => ""
+	  "R" => Ring
 	  },
      Outputs => {
 	  List => {"of every generator of ", TT "R", " over the prime field or the integers"}

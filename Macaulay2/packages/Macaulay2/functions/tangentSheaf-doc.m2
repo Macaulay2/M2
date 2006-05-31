@@ -10,9 +10,9 @@ document {
 document { 
      Key => (tangentSheaf,ProjectiveVariety),
      Usage => "tangentSheaf X",
-     Inputs => {"X" => ""
+     Inputs => {"X"
 	  },
-     Outputs => {CoherentSheaf => ""
+     Outputs => {CoherentSheaf
 	  },
      "Computes the tangent sheaf of the projective variety ", TT "X",
      PARA{},

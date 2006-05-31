@@ -25,7 +25,7 @@ document {
 document { 
      Key => (topComponents,Ideal),
      Usage => "topComponents I",
-     Inputs => {"I" => ""
+     Inputs => {"I"
 	  },
      Outputs => {
 	  "I" => Ideal => {"which is the intersection of the primary components of " 
@@ -46,7 +46,7 @@ document {
      Key => (topComponents,Module),
      Usage => "topComponents M",
      Inputs => {
-	  "M" => ""
+	  "M"
 	  },
      Outputs => {
 	  "N" => Module => {" which is the intersection of the 

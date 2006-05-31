@@ -49,7 +49,7 @@ document {
      Headline => "set an alarm",
      Usage => "alarm n",
      Inputs => {
-	  "n" => ZZ => "",
+	  "n" => ZZ,
 	  },
      Consequences => {
 	  { "the alarm will be sounded after ", TT "n", " seconds; it can be intercepted with ", TO "try" }
@@ -129,7 +129,7 @@ document {
      Key => (symbol @@, Function, Function),
      Headline => "composition of functions",
      Usage => "f @@ g",
-     Inputs => { "f" =>  null, "g" => null },
+     Inputs => { "f", "g" },
      Outputs => {{ "the composite function of ", TT "f", " and ", TT "g", "." }},
      EXAMPLE {
 	  "f = i -> i+1",

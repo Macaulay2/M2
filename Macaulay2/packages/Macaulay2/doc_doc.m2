@@ -140,14 +140,17 @@ document {
 	"The entries should consist of items in one of the following forms.",
 	  UL {
 	      TT "hypertext",
-	      TT "class => hypertext (or null)",
-	      TT "symbolname => hypertext (or null)",
-	      TT "symbolname => class => hypertext (or null)",
+	      TT "class",
+	      TT "symbolname",
+	      TT "class => hypertext",
+	      TT "symbolname => class",
+	      TT "symbolname => hypertext",
+	      TT "symbolname => class => hypertext",
 	  },
 	"As an example, here is the ", TT "Inputs", " entry of the method ", TO (resolution,Ideal), ":",
 	PRE ///Inputs => { "I" => { "an ideal in a ring ", TT "R", ", say" } },///,
 	"Here is an example of the ", TT "Inputs", " entry of the function ", TO sin, ":",
-	PRE ///Inputs => { "x" => RR => null },///,
+	PRE ///Inputs => { "x" => RR },///,
 	SeeAlso => {document, Outputs, Usage}
 	}
 document {

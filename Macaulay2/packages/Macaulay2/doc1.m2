@@ -596,7 +596,7 @@ document {
      Headline => "hook for assignment to global variables",
      Usage => "X.GlobalAssignHook = f",
      Inputs => {
-	  "X" => Type => "",
+	  "X" => Type,
 	  "f" => Function => " of two variables: the symbol to which a value is about to be assigned, and the value being assigned",
 	  },
      Consequences => {
@@ -648,21 +648,17 @@ document {
 document {
      Key => (drop, BasicList, List),
      Usage => "drop(v,{m,n})",
-     Inputs => {
-	  "v" => null,
-	  "{m,n}" => "a pair of natural numbers"
-	  },
-     Outputs => {
-	  { "the list by omitting those elements of the list ", TT "v", " in positions ", TT "m", " through ", TT "n", "." }
-	  },
+     Inputs => { "v", Nothing => { TT "{m,n}", ", a pair of natural numbers" } },
+     Outputs => { { "the list obtained by omitting those elements of the list ", TT "v", " in positions ", TT "m", " through ", TT "n" } },
+     SeeAlso => {(take, BasicList, List)},
      EXAMPLE "drop({a,b,c,d,e},{2,4})"
      }
 document {
      Key => (drop, BasicList, ZZ),
      Usage => "w = drop(v,n)",
      Inputs => {
-	  "v" => null,
-	  "n" => null
+	  "v",
+	  "n"
 	  },
      Outputs => {
 	  {"the list obtained by omitting the first ", TT "n", " elements of the list ", TT "v", " if ", TT "n", " is positive, or
@@ -670,16 +666,13 @@ document {
 	  },
      EXAMPLE { "drop({a,b,c,d,e},2)", "drop({a,b,c,d,e},-2)" }
      }
-document {
-     Key => drop,
-     Headline => "drop some elements", 
-     SeeAlso => "take" }
+document { Key => drop, Headline => "drop some elements from a list or sequence", SeeAlso => "take" }
 document {
      Key => (options, Function),
      Headline => "get optional arguments and default values for a function which accepts them",
      Usage => "options f",
      Inputs => {
-	  "f" => ""
+	  "f"
 	  },
      Outputs => {
 	  { "a hash table whose keys are the names of the optional arguments accepted by the function ", TT "f", " and whose values are the corresponding default values" }

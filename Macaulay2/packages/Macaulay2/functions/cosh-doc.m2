@@ -6,9 +6,7 @@ document {
      Key => {cosh, (cosh,ZZ),(cosh,RR)},
      Headline => "compute the hyperbolic cosine",
      Usage => "cosh x",
-     Inputs => { 
-	  "x" => RR => null 
-	  },
+     Inputs => { "x" => RR },
      Outputs => { 
 	  RR => { "the hyperbolic cosine of ", TT "x" } 
 	  }

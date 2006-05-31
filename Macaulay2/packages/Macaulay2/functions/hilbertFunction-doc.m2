@@ -19,7 +19,7 @@ document {
      Usage => "hilbertFunction(d,R)",
      Inputs => {
 	  "d" => List => {" which is a multidegree, or if R is singly graded, then one may write just ", TO "ZZ"},
-	  "R" => ""
+	  "R"
 	  },
      Outputs => {
 	  ZZ => "the value of the Hilbert function of the ring" },
@@ -44,7 +44,7 @@ document {
      Usage => "hilbertFunction(d,M)",
      Inputs => {
 	  "d" => List => {" a multidegree, or if M is singly graded, then one may write just ", TO "ZZ"},
-	  "M" => ""
+	  "M"
 	  },
      Outputs => {
 	  ZZ => "the value of the Hilbert function of the module" 
@@ -80,7 +80,7 @@ document {
      Usage => "hilbertFunction(d,I)",
      Inputs => {
 	  "d" => List => {" a multidegree, or if I is singly graded, then one may write just ", TO "ZZ"},
-	  "I" => ""
+	  "I"
 	  },
      Outputs => {
 	  ZZ => "the value of the Hilbert function of the quotient of the ambient ring by the ideal"
@@ -116,7 +116,7 @@ document {
 --     Usage => "hilbertFunction(d,S)",
 --     Inputs => {
 --	  "d" => List => {" a multidegree, or if S is singly graded, then one may write just ", TO "ZZ"},
---	  "S" => ""
+--	  "S"
 --	  },
 --     Outputs => {
 -- 	  ZZ => "the value of the Hilbert function of the coherent sheaf" 
@@ -145,7 +145,7 @@ document {
      Inputs => {
 	  "d" => List => {" a multidegree, or if V is singly graded,
 	       then one may write just ", TO "ZZ"},
-	  "V" => ""
+	  "V"
 	  },
      Outputs => {
 	  ZZ => "the value of the Hilbert function of the projective variety" 

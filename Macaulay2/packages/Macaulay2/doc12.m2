@@ -162,10 +162,7 @@ document {
 document {
      Key => (take,BasicList,ZZ),
      Usage => "take(v,n)",
-     Inputs => {
-	  "v" => null,
-	  "n" => null
-	  },
+     Inputs => { "v", "n" },
      Outputs => {
 	  {"a list containing the first ", TT "n", " elements of the list ", TT "v", " if ", TT "n", " is positive, or
 	       the last ", TT "-n", " elements if ", TT "n", " is negative."}
@@ -176,7 +173,7 @@ document {
 document {
      Key => (take,BasicList,List),
      Usage => "take(v,{m,n})",
-     Inputs => { "v" => null, "{m,n}" => "a pair of natural numbers" },
+     Inputs => { "v", Nothing => { TT "{m,n}", ", a pair of natural numbers" } },
      Outputs => { {"a list containing those elements of the list ", TT "v", " in positions ", TT "m", " through ", TT "n" } },
      EXAMPLE "take({a,b,c,d,e,f},{2,4})"
      }
@@ -284,8 +281,8 @@ document {
      Key => (subsets,ZZ,ZZ),
      Usage => "subsets(n,j)",
      Inputs => {
-	  "n" => "",
-	  "j" => ""
+	  "n",
+	  "j"
 	  },
      Outputs => {
 	  {"a list of the subsets of ", TT "{0, ..., n-1}", " that have ", TT "j", " elements; each
@@ -354,18 +351,16 @@ document {
      Usage => "w_{i,j,...}",
      Inputs => {
 	  "w" => "a list",
-	  "{i,j,...}" => "the list of subscripts"
+	  Nothing => { TT "{i,j,...}", ", a list of integers to serve as indices" }
 	  },
      Outputs => {{ "the list of entries ", TT "{w_i, w_j, ...}" }},
      EXAMPLE {
 	  "w = {a,b,c,d,e,f,g,h};",
       	  "w_{1,3,4}",
 	  },
-     "We can use this operation to compute composition of permutations
-     represented as lists.",
+     "We can use this operation to compute composition of permutations represented as lists.",
      EXAMPLE "{4,2,3,1,0} _ {2,1,3,4,0}",
-     "Remark: any subscripts which are sequences will have their elements
-     spliced into the rest of the list.",
+     "Remark: any subscripts which are sequences will have their elements spliced into the rest of the list.",
      EXAMPLE "{a,b,c,d,e}_{2..4}"
      }
 
@@ -867,7 +862,7 @@ document {
 document {
      Key => (sheafExt,ZZ,CoherentSheaf,CoherentSheaf),
      Usage => "E = sheafExt^n(F,G)",
-     Inputs => { "n" => null, "F" => null, "G" => null },
+     Inputs => { "n", "F", "G" },
      Outputs => { { "the n-th sheaf Ext of ", TT "F", " and ", TT "G" } }
      }
 

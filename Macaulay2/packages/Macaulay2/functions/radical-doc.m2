@@ -6,9 +6,7 @@ document {
      Key => {radical, (radical,Ideal),  (radical,MonomialIdeal)},
      Headline => "the radical of an ideal",
      Usage => "radical I",
-     Inputs => {
-	  "I" => Ideal => null
-	  },
+     Inputs => { "I" => Ideal },
      Outputs => {
 	  Ideal => {"the radical of ", TT "I", " ."}
 	  },

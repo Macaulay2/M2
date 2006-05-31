@@ -124,7 +124,7 @@ document {
      Key => sequence,
      Headline => "make a sequence",
      Usage => "sequence v",
-     Inputs => { "v" => Thing => "" },
+     Inputs => { "v" => Thing },
      Outputs => { Sequence => {TT "v", " if ", TT "v", " is a sequence, otherwise a sequence of length 1 containing ", TT "v"}},
      PARA { "Such a function is needed occasionally to restore uniformity, because a nonempty parenthesized expression with no commas is not parsed as a sequence." },
      EXAMPLE {

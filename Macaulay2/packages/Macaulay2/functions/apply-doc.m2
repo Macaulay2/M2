@@ -15,7 +15,7 @@ document {
      Headline => "apply a function to each element of a list",
      Usage => "apply(L,f)",
      Inputs => {
-	  "L" => BasicList => "",
+	  "L" => BasicList,
 	  "f" => Function => "with one argument",
 	  },
      Outputs => {
@@ -35,7 +35,7 @@ document {
      Headline => "apply a function to pairs of elements, one from each list",
      Usage => "apply(L1,L2,f)",
      Inputs => {
-	  "L1" => BasicList => "",
+	  "L1" => BasicList,
 	  "L2" => BasicList => {"of the same length as ", TT "L1"},
 	  "f" => Function => "with two arguments",
 	  },
@@ -55,7 +55,7 @@ document {
      Headline => "apply a function to {0,..., n-1}",
      Usage => "apply(n,f)",
      Inputs => {
-	  "n" => ZZ => "",
+	  "n" => ZZ,
 	  "f" => Function => "with one argument",
 	  },
      Outputs => {

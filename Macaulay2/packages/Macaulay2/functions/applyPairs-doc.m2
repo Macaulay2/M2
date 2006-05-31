@@ -7,11 +7,11 @@ document {
      Headline => "apply a function to each pair in a hash table",
      Usage => "applyPairs(H,f)",
      Inputs => {
-  	  "H" => HashTable => "",
+  	  "H" => HashTable,
   	  "f" => Function => {"with two arguments, returning a pair or ", TO "null"},
 	  },
      Outputs => {
-  	  HashTable => ""
+  	  HashTable
 	  },
      Caveat => {
 	  "It is an error for the function ", TT "f", " to return two pairs with the same key."
