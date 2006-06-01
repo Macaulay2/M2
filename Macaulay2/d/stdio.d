@@ -531,7 +531,7 @@ export present(x:string):string := (
 	       );
 	  );
      if needsfixing then (
-	  v := newvarstring(12);
+	  v := newvarstring(length(x)+12);
 	  foreach cc in x do (
 	       c := cc;
 	       -- warning : c is a signed char
@@ -725,11 +725,6 @@ export (o:file) << (m:Manipulator) : file := (
      );
 export endl := Manipulator(endlfun);
 export Flush := Manipulator(flush);
-
-export fileLength(o:file):int := (
-     if o.input then fileLength(o.infd)
-     else if o.output then o.bytesWritten + o.outindex
-     else -1);
 
 export fchmod(o:file,mode:int):int := (
      if o.input && o.infd != -1 then if -1 == fchmod(o.infd,mode) then return -1;
