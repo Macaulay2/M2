@@ -353,9 +353,11 @@ fixup TO2        := identity
 fixup TOH        := identity
 fixup HREF       := x -> if #x == 2 then HREF{x#0, fixup x#1} else x
 -- phase this out -- each PARA has to have a scope
-deprecated := z -> (
+doneit := false;
+deprecated := z -> if not doneit then (
+     doneit = true;
      stderr << "--warning: using '" << z << "' alone in documentation is deprecated, use '" << z << "{}' instead" << endl;
-     if z === PARA then stderr << "--        please group PARA{...} around entire paragraphs" << endl;
+     if z === PARA then stderr << "--        andgroup PARA{...} around entire paragraphs" << endl;
      )
 fixup MarkUpType := z -> (
      if z === PARA or z === BR or z === HR or z === NOINDENT
@@ -586,7 +588,7 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
 	  -- if debugLevel > 0 and formattedKey tag == "Ring ^ ZZ" then error "debug me";
 	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
 	  if d === null then (
-	       if signalDocError tag then stderr << "--warning: tag has no documentation: " << tag << endl;
+	       if signalDocError tag then stderr << "--warning: tag has no documentation: " << tag << ", key " << toExternalString DocumentTag.Key tag << endl;
 	       return "missing documentation";
 	       ));
      if d#?Headline then d#Headline
@@ -728,7 +730,7 @@ processInputOutputItems := (key,fn) -> x -> (
      if optsymb =!= null then r = (
 	  if #r === 0
 	  then SPAN between(", ", nonnull ( TO2{ [fn,optsymb], concatenate(toString optsymb," => ...") }, headline [fn,optsymb] ))
-	  else SPAN (toString optsymb, " => ", r));
+	  else SPAN (TT ( toString optsymb, " => " ), r));
      r)
 
 sortByName := v -> last \ sort \\ (i -> (toString i, i)) \ v
@@ -798,7 +800,7 @@ document List := args -> (
      ino = proc \ ino;
      if #inp>0 then o.Inputs = inp else remove(o,Inputs);
      if #out>0 then o.Outputs = out else remove(o,Outputs);
-     if #ino>0 then o.OptionalInputs = ino else remove(o,OptionalInputs);
+     if #ino>0 then o#"optional inputs" = ino else remove(o,"optional inputs");
      -- end of pre-processing
      o = new HashTable from o;
      storeRawDocumentation(tag, o);
@@ -831,7 +833,7 @@ briefSynopsis := key -> (
 	       ),
 	  if o.?Inputs then DIV1 { "Inputs:", UL o.Inputs },
 	  if o.?Outputs then DIV1 { "Outputs:", UL o.Outputs },
-	  if o.?OptionalInputs then DIV1 { TO2{ "using functions with optional inputs", "Optional inputs"}, ":", UL o.OptionalInputs },
+	  if o#?"optional inputs" then DIV1 { TO2{ "using functions with optional inputs", "Optional inputs"}, ":", UL o#"optional inputs" },
 	  if o.?Consequences and #o.Consequences > 0 then DIV1 { "Consequences:", UL o.Consequences }
 	  };
      if #r > 0 then fixup DIV { UL r })

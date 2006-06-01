@@ -156,12 +156,6 @@ document { Key => {preimage,(preimage, RingMap, Ideal)},
 	  preimage_f ideal(x^2,y^2)
      	  ///
      }
-document { Key => {[installPackage, UserMode], UserMode},
-     Headline => "user mode option for installPackage",
-     Usage => "installPackage(..., UserMode => false)",
-     Consequences => { { "the installation will ignore packages installed in the user's application directory
-	       (see ", TO "applicationDirectory", ") and will ignore the user's init.m2 files when running
-	       examples" }}}
 document { Key => symbol applicationDirectorySuffix,
      Headline => "suffix that determines the user's application directory",
      Usage => "applicationDirectorySuffix = s",
@@ -179,7 +173,7 @@ document { Key => symbol applicationDirectorySuffix,
      	  ///,	  
      SourceCode => applicationDirectorySuffix,
      Consequences => { { "the value of the function ", TT "applicationDirectory", " will use the new value of ", TT "applicationDirectorySuffix" }}}
-document { Key => applicationDirectory,
+document { Key => {applicationDirectory, "application directory"},
      Headline => "the path to the user's application directory",
      Usage => "applicationDirectory()",
      Outputs => { String => "the path to the user's application directory" },
@@ -262,11 +256,6 @@ document { Key => {isConstant,(isConstant, RingElement)},
      SeeAlso => coefficientRing,
      SourceCode => (isConstant,RingElement)
      }
-document { Key => {[installPackage,RerunExamples],RerunExamples},
-     Headline => "when installing a package, rerun all the examples",
-     Usage => "installPackage(..., RerunExamples => true)",
-     Consequences => {{ "all the examples are rerun" }},
-     SeeAlso => installPackage }
 document { Key => {[newPackage,Version],Version},
      Headline => "specify the version number when creating a new package",
      Usage => "newPackage(..., Version => num)",
@@ -408,6 +397,7 @@ document { Key => fileLength,
 	  fileLength filename
 	  get filename
 	  length oo
+	  removeFile filename
      ///
      }
 document { Key => "loadedFiles",
@@ -417,6 +407,183 @@ document { Key => "loadedFiles",
 	  },
      EXAMPLE "peek loadedFiles"}
 
+
+undocumented {
+     (validate, TO),(validate, String),(validate, MarkUpTypeWithOptions, Set, BasicList),(validate, Type, Set, BasicList),(validate, TOH),(validate, Option),(validate, TO2)
+     }
+document { Key => {(validate, MarkUpList),validate},
+     Usage => "validate x",
+     Inputs => { "x" => { TO "hypertext" } },
+     Consequences => { { "The hypertext is checked for validity, to ensure that the HTML code returned by ", TT "html x", " is valid." }},
+     PARA {
+	  "This function is somewhat provisional.  In particular, it is hard to check everything, because our hypertext format includes
+	  some entities of class ", TO "IntermediateMarkUpType", " that don't correspond directly to HTML.  Either those will have to be
+	  eliminated, or a more-final type of hypertext, convertible immediately to HTML, will have to be developed."
+	  }
+     }
+
+document { Key => IntermediateMarkUpType,
+     Headline => "the class of intermediate mark-up types",
+     "An intermediate mark-up type is one that needs further processing to put it into final form.  A good example of one is ", TO "TOH", ", which
+     represents a link to a documentation node, together with the headline of that node, which may not have been created yet at the time
+     the ", TT "TOH", " link is encountered.  Another good example is ", TO "HREF", ", which creates a link using the HTML ", TT "A", " element:
+     when the link is created, the relative path to the target page depends on the path to the page incorporating the link!"
+     }
+
+document { Key => VerticalList,
+     Headline => "a type of visible self-initializing list that prints vertically",
+     Usage => "VerticalList x",
+     Inputs => { "x" => List },
+     EXAMPLE lines ///
+         apropos "res"
+	 stack o1
+	 v = VerticalList o1
+	 ///
+    }
+
+document { Key => ForestNode,
+     Headline => "a type of basic list used to represent a forest, i.e., a list of rooted trees",
+     "This type is sort of experimental, and is used mainly internally in assembling the table of contents for the documentation of a package.",
+     SeeAlso => {TreeNode}
+     }
+document { Key => TreeNode,
+     Headline => "a type of basic list used to represent a rooted tree",
+     "This type is sort of experimental, and is used mainly internally in assembling the table of contents for the documentation of a package.",
+     SeeAlso => {ForestNode}
+     }
+
+document { Key => FunctionClosure,
+     Headline => "the class of all function closures",
+     "Functions created by the operator ", TO "->", " are function closures.",
+     EXAMPLE "class (x->x)"
+     }
+document { Key => CompiledFunction,
+     Headline => "the class of all compiled functions",
+     "Compiled functions in Macaulay2 are written in a special purpose language, translated to C during compilation and not available to general users.",
+     EXAMPLE "class sin"
+     }
+document { Key => CompiledFunctionClosure,
+     Headline => "the class of all compiled function closures",
+     "Some compiled functions return compiled function closures as values.",
+     EXAMPLE lines ///
+	  class depth
+	  f = method()
+	  class f
+     ///
+     }
+TEST ///
+assert ( class (x->x) === FunctionClosure )
+assert ( class sin === CompiledFunction )
+assert ( class depth === CompiledFunctionClosure )
+///
+
+document { Key => Heft, 
+     "A symbol used as an option with some functions.  It denotes a way of internally adjusting the multi-degrees of elements of polynomials
+     by attaching a prefix to each multi-degree that is computed as the dot product with a fixed vector of integers.",
+     SeeAlso => { Adjust, Repair }
+     }
+
+scan((
+	  FollowLinks,Hilbert,UserMode,RerunExamples,MakeDocumentation,IgnoreExampleErrors,IgnoreDocumentationErrors,MakeInfo,Options,Position,
+	  LexSmall,LexTiny,GRevLexSmall,GRevLexTiny,InstallPrefix,PackagePrefix
+	  ),
+     s -> document { Key => s, "A symbol used as an option with some functions." })
+
+document { Key => LowerBound,
+     Headline => "the class of lower bound objects",
+     "This is a type of list that represents a lower bound.  The single element of the list is an integer, and the object represents the condititon
+     that some other integer, such as the index in a direct sum, should be at least as large.",
+     EXAMPLE {
+	  "LowerBound {4}",
+	  ">= 4",
+	  "> 4"
+	  }}
+
+document { Key => {NetFile,(symbol <<, NetFile, String),(symbol <<, NetFile, Net),(symbol " ",Manipulator,NetFile),(symbol <<,Manipulator,NetFile)},
+     Headline => "the class of all net files",
+     "This class is experimental.  Net files are intended to supplant output files eventually.  Whereas a file is a stream of bytes,
+     or in some non-unix operating systems, a sequence of lines each of which is a sequence of bytes, a net file is a sequence of lines, each of which is
+     a net.  Each output line is assembled by joining nets one by one.",
+     EXAMPLE lines ///
+     	  f = newNetFile()
+     	  f << "aabbcc" << endl
+	  f << "aa" << "bb"^1 << "cc"^-1 << endl
+	  f << "aa" << "bb"^1 << "cc"^-1 << endl
+     	  getNetFile f
+	  peek oo
+     	  class \ ooo
+     ///
+     }
+document { Key => getNetFile,
+     Headline => "get the sequence of completed lines (nets) from a net file",
+     Usage => "getNetFile n",
+     Inputs => { "n" => NetFile },
+     "This function is experimental."
+     }
+document { Key => newNetFile,
+     Headline => "create a new net file",
+     Usage => "newNetFile()",
+     Outputs => { NetFile },
+     "This function is experimental."
+     }
+document { Key => OutputDictionary,
+     Headline => "the dictionary for output values",
+     "The symbols ", TT "o1", ", ", TT "o2", ", ", TT "o3", ", etc., are used to store the output values arising from interaction with the user,
+     one line at a time.  The dictionary ", TT "OutputDictionary", " is the dictionary in which those symbols reside.",
+     EXAMPLE lines ///
+     	  2+2
+	  "asdf" | "qwer"
+	  value \ values OutputDictionary
+	  globalDictionaries
+	  peek OutputDictionary
+     ///,
+     SeeAlso => { "globalDictionaries" }
+     }
+document { Key => PackageDictionary,
+     Headline => "the dictionary for names of packages",
+     SeeAlso => { "globalDictionaries" },
+     "This dictionary is used just for names of packages.",
+     EXAMPLE lines ///
+         globalDictionaries
+	 values PackageDictionary
+     ///
+     }
+document { Key => Pseudocode,
+     Headline => "the class of pseudocodes",
+     "The Macaulay 2 interpreter compiles its language into pseudocode, which is evaluated later, step by step.  At each
+     step, the evaluator is considering a pseudocode item.  These pseudocode items are normally not available to the user, but
+     the interanl function ", TO "disassemble", " can display their contents, the function ", TO "pseudocode", " can convert
+     a function closure to pseudocode, the function ", TO "value", " can evaluate it (bindings of values to local symbols
+     are enclosed with the pseudocode), the operator ", TO "===", " can be used for equality testing, 
+     and when the debugger is activated after an error, the variable ", TO "errorCode", " contains the pseudocde step whose execution produced the error.",
+     }
+document { Key => pseudocode,
+     Headline => "produce the pseudocode for a function",
+     Usage => "pseudocode f",
+     Inputs => { "f" => FunctionClosure },
+     Outputs => { Pseudocode => { "the pseudocode of the function ", TT "f"} },
+     SeeAlso => { disassemble },
+     EXAMPLE ///
+     	  pseudocode resolution
+          disassemble oo
+     ///
+     }
+document { Key => disassemble,
+     Headline => "disassemble pseudocode or a function",
+     Usage => "disassemble c",
+     Inputs => { "c" => Pseudocode },
+     Outputs => { String => "the disassembled form of ", TT "c" },
+     SeeAlso => { pseudocode },
+     EXAMPLE ///
+     	  pseudocode resolution
+          disassemble oo
+     ///
+     }
+document { Key => "errorCode",
+     Headline => "the pseudocode that produced an error",
+     Usage => "errorCode",
+     Outputs => { Pseudocode => { "the pseudocode that produced an error, or ", TO "null", ", if none" } }
+     }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

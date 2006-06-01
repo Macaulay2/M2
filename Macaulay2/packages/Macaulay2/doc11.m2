@@ -8,13 +8,26 @@ document {
      PARA{},
      "Intended for internal use only."
      }
-
+document {
+     Key => MarkUpListParagraph,
+     Headline => "the class of mark-up lists that constitute separate paragraphs",
+     PARA "Intended for internal use only."
+     }
 document {
      Key => MarkUpType,
      Headline => "the class of mark-up types used with hypertext", 
-     PARA{},
-     "Intended for internal use only."
+     PARA "Intended for internal use only."
      }
+document { Key => MarkUpTypeWithOptions,
+     Headline => "the class of mark-up types used with hypertext, with option handling",
+     "Some mark-up types allow options (attributes) to be inserted in their html tags.",
+     EXAMPLE {
+	  ///DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", TT "resolution", ":"},
+    "There are many ways to use ", TO "resolution", "."
+    )///,
+     	  "html oo"
+         }
+    }
 
 --document {
 --     Key => PARA,
@@ -29,6 +42,13 @@ document {
 	Usage => "DIV1 x",
      TT "DIV1 x", " makes a ", TO "hypertext", " single-spaced paragraph break. This is mostly for the documentation formated in info mode.",
 	SeeAlso => "PARA"
+     }
+
+document {
+     Key => DIV,
+     Headline => "a hypertext division",
+     Usage => "DIV x",
+     "This corresponds directly to an HTML DIV element.  It is sort of a general-purpose container for top-level blocks, such as paragraphs, lists, and tables."
      }
 
 document {
@@ -438,6 +458,42 @@ document {
      strings or hypertext items.",
      PARA{},
      SeeAlso => "hypertext"
+     }
+
+document {
+     Key => LI,
+     Headline => "hypertext list item",
+     Usage => "LI x",
+     Inputs => {"x"},
+     Outputs => {LI},
+     PARA {
+	  "Entries in a ", TO "UL", " list should be of type ", TO "LI", ", but conversion to type ", TO "LI", " is done automatically for the user."
+	  },
+     SeeAlso => "hypertext"
+     }
+
+document {
+     Key => LABEL,
+     Headline => "hypertext label item",
+     Usage => "LABEL x",
+     Inputs => {"x"},
+     Outputs => {LABEL},
+     EXAMPLE lines ///
+         html LABEL { "b" }
+	 LABEL { "title" => "a", "b" }
+     ///
+     }
+
+document { Key => MENU,
+     Headline => "hypertext menu item",
+     "This hyeprtext item is intended to be used at most once per page, at the end.  When converted by ", TO "info", ", it produces
+     the Menu at the end of the page.",
+     EXAMPLE {
+	  ///DIV { PARA "Hi there.",
+    MENU { "some topics", TO "topic a", TO "topic b", "more topics", TO "topic c" } }///,
+	  "info oo",
+	  "html ooo"
+	  }
      }
 
 document {

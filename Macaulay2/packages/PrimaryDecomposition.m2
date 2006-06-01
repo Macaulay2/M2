@@ -4,6 +4,9 @@ newPackage(
      )
 export (
      EHV,					    -- cryptic
+     Hybrid,
+     GTZ,
+     SY,
      binomialCD,
      extract,
      findNonMember,

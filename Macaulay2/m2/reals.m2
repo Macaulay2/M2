@@ -13,7 +13,6 @@ RR.baseRings = {}
 RR.dim = 0
 RR.char = 0
 RR.Engine = true
--- new RR := RR -> RR.pop()
 degree RR := i -> {}
 
 new RR from RawRingElement := (RR,x) -> rawToReal x

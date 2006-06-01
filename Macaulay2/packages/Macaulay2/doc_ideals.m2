@@ -143,26 +143,6 @@ document {
      }
 
 document {
-     Key => {(isSubset,Ideal,Ideal)
-	  },
-     Headline => "membership predicate",
-     Usage => "isSubset(I,J)",
-     Inputs => { "I", "J" => {"in the same ring as ", TT "I"}, },
-     Outputs => {
-	  Boolean => {"true if ", TT "I", " is contained in ", TT "J"}
-	  },
-     EXAMPLE {
-	  "R = QQ[a..d];",
-	  "I = ideal(a^2-b*c-1,a*c-1,b^3-1);",
-	  "isSubset(I^2,I)",
-	  "isSubset(I,I^2)"
-	  },
-     "In polynomial rings, this is accomplished by computing
-     a ", TO "Groebner basis", " of ", TT "J", " and testing 
-     whether every element of ", TT "I", " reduces to 0 modulo ", TT "I", "."
-     }
-
-document {
      Key => minimalPrimes,
      Headline => "find the minimal primes of an ideal"
      }

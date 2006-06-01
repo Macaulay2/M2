@@ -42,13 +42,6 @@ truncateOutput ZZ := maxwidth -> (
      )
 truncateOutput InfiniteNumber := maxwidth -> Thing.BeforePrint = identity
 
-ParagraphList = new Type of BasicList
-net ParagraphList := x -> (
-     x = toList x;
-     x = net \ x;					    -- convert each to net
-     x = apply(x,p -> wrap net p);
-     stack x)
-
 -- not printing:
 Bag = new SelfInitializingType of MutableList
 Bag.synonym = "bag"

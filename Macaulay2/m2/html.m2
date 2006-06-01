@@ -24,13 +24,13 @@ hadDocumentationError := false
 numDocumentationErrors := 0;
 
 seenit := new MutableHashTable
+
+chkdoc := true
 signalDocError = tag -> (				    -- also called from document.m2, temporarily
-     if seenit#?tag then false
-     else (
-	  seenit#tag = true;
-	  hadDocumentationError = true;
-	  numDocumentationErrors = numDocumentationErrors + 1;
-	  true))
+     not seenit#?tag
+     and chkdoc
+     and (numDocumentationErrors = numDocumentationErrors + 1;
+	  seenit#tag = hadDocumentationError = true))
 
 buildPackage := null					    -- name of the package currently being built
 topDocumentTag := null
@@ -77,7 +77,6 @@ html IMG  := x -> concatenate("<img src=\"", rel x#0, "\" alt=\"", x#1, "\"/>")
 html LINK := x -> concatenate("<link href=\"", rel first x, "\"", concatenate drop(x,1), "/>",newline)
 html HREF := x -> concatenate("<a href=\"", rel first x, "\">", html last x, "</a>")
 tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral rel first x, "\">}", tex last x, "\\special{html:</a>}")
-html LABEL:= x -> concatenate("<label title=\"", x#0, "\">", html x#1, "</label>")
 html TO   := x -> (
      concatenate(
 	  "<a href=\"",
@@ -228,17 +227,17 @@ makeTree := x -> (
      	  then (
 	       if not repeatedReferences#?x then (
 		    repeatedReferences#x = true;
-		    stderr << "--warning: repeated reference(s) to documentation as subnode: " << x << endl;
+		    if chkdoc then stderr << "--warning: repeated reference(s) to documentation as subnode: " << x << endl;
 		    );
-	       new TreeNode from { x , new ForestNode}	    -- repeated reference
+	       new TreeNode from { x , new ForestNode}
 	       )
      	  else new TreeNode from { x, new ForestNode from apply(linkTable#x,makeTree)})
      else (
 	  if not missingReferences#?x then (
 	       missingReferences#x = true;
-	       stderr << "--warning: missing reference to documentation as subnode: " << x << endl;
+	       if chkdoc then stderr << "--warning: missing reference to documentation as subnode: " << x << endl;
 	       );
-	  new TreeNode from { x , new ForestNode}	    -- missing reference
+	  new TreeNode from { x , new ForestNode}
 	  ))
 makeForest := x -> new ForestNode from makeTree \ x
 
@@ -295,18 +294,6 @@ assembleTree := (pkg,nodes) -> (
 -----------------------------------------------------------------------------
 -- making the html pages
 -----------------------------------------------------------------------------
-
--- setupButtons := () -> (
---      gifpath := LAYOUT#"images";
---      topNodeButton = LABEL { "top node", HREF { htmlDirectory|topFileName, BUTTON (gifpath|"top.gif","top") } };
---      tocButton = LABEL { "table of contents", HREF { htmlDirectory|tocFileName, BUTTON (gifpath|"toc.gif","toc") } };
---      homeButton = LABEL { "table of contents", HREF { Macaulay2HomePage, BUTTON (gifpath|"home.gif","home") } };
---      nullButton = BUTTON(gifpath|"null.gif","null");
---      masterIndexButton = LABEL { "index", HREF { htmlDirectory|indexFileName, BUTTON(gifpath|"index.gif","index") } };
---      nextButton = BUTTON(gifpath|"next.gif","next");
---      prevButton = BUTTON(gifpath|"previous.gif","previous");
---      upButton = BUTTON(gifpath|"up.gif","up");
---      )
 setupButtons := () -> (
      topNodeButton = HREF {htmlDirectory|topFileName, "top" };
      tocButton = HREF {htmlDirectory|tocFileName, "toc"};
@@ -459,17 +446,17 @@ setupNames := (opts,pkg) -> (
 installPackage = method(Options => { 
 	  PackagePrefix => () -> applicationDirectory() | "encap/",
           InstallPrefix => () -> applicationDirectory() | "local/",
-	  UserMode => true,
+	  UserMode => false,
 	  Encapsulate => true,
 	  IgnoreExampleErrors => false,
 	  IgnoreDocumentationErrors => false,
+	  CheckDocumentation => true,
 	  MakeDocumentation => true,
 	  MakeInfo => false,
 	  RemakeAllDocumentation => false,
 	  RerunExamples => false,
 	  AbsoluteLinks => false,
 	  MakeLinks => true,
-	  RunDirectory => ".",
 	  DebuggingMode => false
 	  })
 uninstallPackage = method(Options => { 
@@ -509,6 +496,7 @@ dispatcherMethod := m -> m#-1 === Sequence and (
 
 installPackage Package := opts -> pkg -> (
      ignoreDocumentationErrors = opts.IgnoreDocumentationErrors;
+     chkdoc = opts.CheckDocumentation;			    -- oops, this will have a lingering effect...
 
      if opts.MakeDocumentation and pkg#?"documentation not loaded"
      then pkg = loadPackage(pkg#"title", DebuggingMode => opts.DebuggingMode, LoadDocumentation => true);
@@ -596,6 +584,7 @@ installPackage Package := opts -> pkg -> (
 			 )));
 
 	  -- check for obsolete example input and output files and remove them
+	  if opts.CheckDocumentation then
 	  scan(readDirectory exampleDir, fn -> (
 		    fn = exampleDir | fn;
 		    if match("\\.out$",fn) and not exampleInputFiles#?(replace("\\.out$",".m2",fn)) then (
@@ -713,7 +702,7 @@ installPackage Package := opts -> pkg -> (
 			 )
 		    else if not opts.RerunExamples and inf != inf' and fileExists inf' and fileExists outf' and fileTime outf' >= fileTime inf' and get inf == get inf'
 		    then copyFile(outf',outf)
-		    else runFile(inf,outf,tmpf,desc,pkg,changefun,opts.RunDirectory,opts.UserMode);
+		    else runFile(inf,outf,tmpf,desc,pkg,changefun,".",opts.UserMode);
 		    -- read, separate, and store example output
 		    if fileExists outf then pkg#"example results"#fkey = drop(separateM2output get outf,-1)
 		    else (
@@ -793,36 +782,28 @@ installPackage Package := opts -> pkg -> (
 	  -- make table of contents, including next, prev, and up links
 	  stderr << "--assembling table of contents" << endl;
 	  assembleTree(pkg,getPrimary \ select(nodes,tag -> not isUndocumented tag)); -- sets tableOfContents
-	  stderr << "+++++" << endl << "table of contents, in tree form:" << endl << tableOfContents << endl << "+++++" << endl;
+	  if chkdoc then stderr << "+++++" << endl << "table of contents, in tree form:" << endl << tableOfContents << endl << "+++++" << endl;
 	  pkg#"table of contents" = new Bag from {tableOfContents}; -- we bag it because it might be big!
 	  pkg#"links up" = UP;
 	  pkg#"links next" = NEXT;
 	  pkg#"links prev" = PREV;
 
      	  -- check that everything is documented
-     	  seenit = new MutableHashTable;
-     	  hadDocumentationError = false;
-	  numDocumentationErrors = 0;
-	  scan((if pkg#"title" == "Macaulay2" then Macaulay2Core else pkg)#"exported symbols", s -> (
-		    tag := makeDocumentTag s;
-		    if not isUndocumented tag and not hasDocumentation s and signalDocError tag then stderr << "--warning: symbol has no documentation: " << tag << endl;
-		    f := value s;
-		    if instance(f, Function) then (
-			 scan(methods f, m -> (
-				   tag := makeDocumentTag m;
-				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m and signalDocError tag
-				   then stderr << "--warning: method has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;
-				   ));
----- we are no longer insisting on separate documentatio nodes for each option -- see documentation of findFiles for a first example
--- 			 o := options f;
--- 			 if o =!= null 
--- 			 then scan(apply(keys o, op -> [f,op]), 
--- 			      m -> (
--- 				   tag := makeDocumentTag m;
--- 				   if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m and signalDocError tag
--- 				   then stderr << "--warning: option has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;
--- 				   ));
-			 )));
+	  if opts.CheckDocumentation then (
+	       seenit = new MutableHashTable;
+	       hadDocumentationError = false;
+	       numDocumentationErrors = 0;
+	       scan((if pkg#"title" == "Macaulay2" then Macaulay2Core else pkg)#"exported symbols", s -> (
+			 tag := makeDocumentTag s;
+			 if not isUndocumented tag and not hasDocumentation s and signalDocError tag then stderr << "--warning: symbol has no documentation: " << tag << endl;
+			 f := value s;
+			 if instance(f, Function) then (
+			      scan(methods f, m -> (
+					tag := makeDocumentTag m;
+					if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m and signalDocError tag
+					then stderr << "--warning: method has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;
+					));
+			      ))));
 
      	  if not opts.IgnoreDocumentationErrors
 	  then if hadDocumentationError then error(toString numDocumentationErrors, " error(s) occurred in documentation for package ", toString pkg);

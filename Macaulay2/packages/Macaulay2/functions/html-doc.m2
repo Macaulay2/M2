@@ -227,22 +227,6 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (html,MENU),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => (html,ZeroExpression),
      Headline => "",
      Usage => "",
@@ -964,22 +948,6 @@ document {
      }
 document { 
      Key => (html,EM),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (html,LABEL),
      Headline => "",
      Usage => "",
      Inputs => {

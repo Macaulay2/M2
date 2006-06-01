@@ -287,7 +287,7 @@ document {
      Key => "debugging",
      "Macaulay 2 has a debugger.",
 	UL{
-	TO "using the debugger",
+	TO "the debugger",
 	},
 	"Here are some other debugging tools.",
      UL {

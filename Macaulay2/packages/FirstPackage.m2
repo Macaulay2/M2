@@ -23,7 +23,7 @@ document {
 	EM "FirstPackage", " is a basic package to be used as an example."
 	}
 document {
-	Key => firstFunction,
+	Key => {firstFunction,(firstFunction,ZZ)},
 	Headline => "a silly first function",
 	Usage => "firstFunction n",
 	Inputs => {

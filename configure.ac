@@ -186,11 +186,19 @@ AC_SUBST(DEBUG)      AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable d
 AC_SUBST(ENCAP)      AC_ARG_ENABLE(encap, AS_HELP_STRING(--disable-encap,do not encapsulate file in a subdirectory), ENCAP="$enableval", ENCAP=yes)
 AC_SUBST(XCODE)      AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE="$enableval", XCODE="no" )
 AC_SUBST(ALTIVEC)    AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" option), ALTIVEC="$enableval", ALTIVEC="no" )
-AC_SUBST(DUMPDATA)   AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA="$enableval", DUMPDATA=yes)
 AC_SUBST(PROFILING)  AC_ARG_ENABLE(profile, AS_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING="$enableval", PROFILING=no)
 AC_SUBST(COMPRESS)   AC_ARG_ENABLE(compress, AS_HELP_STRING([--enable-compress=[gz|bz2]],compression method for tarball), COMPRESS="$enableval", COMPRESS=gz)
 AC_SUBST(EXPERIMENT) AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-experimental-code,enable experimental code), EXPERIMENT="$enableval", EXPERIMENT=no)
 AC_SUBST(TARLIBS)    AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS="$enableval", TARLIBS=no)
+
+AC_SUBST(DUMPDATA)   AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA="$enableval")
+if ! test "$DUMPDATA"
+then case "$OS" in
+	 Linux|SunOS) DUMPDATA=yes;;
+	 *) DUMPDATA=no;;
+     esac
+     AC_MSG_NOTICE([default dumpdata option for $OS operating system used: $DUMPDATA])
+fi
 
 test "$COMPRESS" != "gz" -a "$COMPRESS" != "bz2" && AC_MSG_ERROR(unrecognized option for enable-compress)
 
@@ -302,6 +310,13 @@ then test "$HAVE_LIBGMP_PG" = no -a "$HAVE_LIBGMP" = no && AC_MSG_ERROR([missing
      test "$HAVE_LIBGMP_PG" = yes && GMPLIB=-lgmp-pg
 else test "$HAVE_LIBGMP" = no && AC_MSG_ERROR([missing library: libgmp])
 fi
+
+AC_MSG_CHECKING(whether nm accepts the demangle option)
+if nm --help 2>&1 | grep demangle >/dev/null
+   then NM_DEMANGLES=yes
+   else NM_DEMANGLES=no
+fi
+AC_SUBST(NM_DEMANGLES)
 
 AC_MSG_CHECKING([whether gdbm library is installed])
 LIBS="-lgdbm $SAVELIBS"

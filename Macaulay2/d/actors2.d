@@ -680,14 +680,14 @@ disassemble(e:Expr):Expr := (
      is f:FunctionClosure do Expr(tostring(Code(f.model)))
      is f:functionCode do Expr(tostring(Code(f)))
      is c:CodeClosure do Expr(tostring(c.code))
-     else WrongArg("a function derived from Macaulay 2 code")
+     else WrongArg("pseudocode or a function closure derived from Macaulay 2 code")
      );
 setupfun("disassemble", disassemble);
 
 pseudocode(e:Expr):Expr := (
      when e
      is f:FunctionClosure do Expr(CodeClosure(f.frame, Code(f.model)))
-     else WrongArg("a function derived from Macaulay 2 code")
+     else WrongArg("a function closure derived from Macaulay 2 code")
      );
 setupfun("pseudocode", pseudocode);
 timefun(a:Code):Expr := (

@@ -27,7 +27,7 @@ document { Key => "packages",
 --     "Writing documentation for packages",
 --	  TO document,
 --     "Debugging your package",
---	  TO "using the debugger",
+--	  TO "the debugger",
 --	  TO (debug,Package),
 --	  TO (check,Package)
 --	  }

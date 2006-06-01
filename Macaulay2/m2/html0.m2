@@ -133,7 +133,6 @@ SPAN       = new MarkUpType of MarkUpList
 TT         = new MarkUpType of MarkUpList
 LI         = new MarkUpType of MarkUpList
 EM         = new MarkUpType of MarkUpList
-LABEL      = new MarkUpType of MarkUpList
 BOLD       = withQname_"b" new MarkUpType of MarkUpList
 CODE       = new MarkUpType of MarkUpList
 
@@ -148,7 +147,7 @@ ANCHOR     = withQname_"a" new MarkUpType of MarkUpList
 
 UL         = new MarkUpType of MarkUpListParagraph
 new UL from List := (UL,x) -> (
-     x = nonnull splice x;
+     x = nonnull x;
      if #x == 0 then error("empty element of type ", format toString UL, " encountered");
      apply(x, e -> (
 	       if class e === TO then LI{TOH{e#0}}
@@ -157,6 +156,8 @@ new UL from List := (UL,x) -> (
 
 DIV        = withOptions_{"class"} new MarkUpTypeWithOptions of MarkUpListParagraph
 DIV1       = withOptions_{"class"=>"single"} withQname_"div" new MarkUpTypeWithOptions of MarkUpListParagraph
+
+LABEL      = withOptions_{"title"} new MarkUpTypeWithOptions of MarkUpList
 
 TABLE      = withOptions_{"class"} new MarkUpTypeWithOptions of MarkUpListParagraph
 TR         = new MarkUpType of MarkUpList

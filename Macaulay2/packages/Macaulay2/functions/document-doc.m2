@@ -62,7 +62,7 @@ document {
  -- macaulay.m2:626:     Key => "not documented yet", 
  -- overview3.m2:189:     Key => "reading the documentation",
  -- overview3.m2:363:document { Key => "frequently encountered problems",
- -- overview4.m2:771:document { Key => "using the debugger",
+ -- overview4.m2:771:document { Key => "the debugger",
  -- overviewA.m2:376:     Key => "how to get documentation on a library",
  -- overview_doc.m2:2:     Key => "writing documentation",
  -- overview_doc.m2:168:     Key => "conventions for documentation",
