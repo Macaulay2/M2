@@ -324,6 +324,11 @@ extern void arginits(int, char **);
 
 extern bool gotArg(char *arg, char ** volatile argv);
 
+int pid;			/* initialized below */
+int system_getpid(void) {
+     return pid;
+}
+
 #include <readline/readline.h>
 
 int Macaulay2_main(argc,argv)
@@ -338,6 +343,7 @@ char **argv;
 #if DUMPDATA
      char ** volatile saveenvp = NULL;
      char ** volatile saveargv;
+     int volatile savepid = 0;
 #else
 #define saveenvp __environ
 #define saveargv argv
@@ -412,7 +418,12 @@ char **argv;
      }
 #endif
 
+     pid = savepid = getpid();		/* glibc getpid() caches the result in memory and performs the system call only once, so we can't use it after dumpdata */
+
      if (0 != sigsetjmp(loaddata_jump,TRUE)) {
+
+	  pid = savepid;
+
 	  if (gotArg("--notify", saveargv)) fprintf(stderr,"--loaded cached memory data\n");
 	  extern char *GC_get_stack_base();
      	  GC_free_space_divisor = 4;

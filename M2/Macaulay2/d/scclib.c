@@ -88,10 +88,6 @@ int system_write(int fd, M2_string buffer, int len){
      return write(fd,buffer->array,len);
      }
 
-int system_getpid(void) {
-  return getpid();
-}
-
 int system_sleep(int t) {
   return sleep(t);
 }
