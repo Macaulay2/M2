@@ -109,6 +109,7 @@ help :
 	@ echo "      IgnoreExampleErrors=true       continue even after errors in example code"
 	@ echo "      IgnoreDocumentationErrors=true continue even after errors in documentation"
 	@ echo "      RemakeAllDocumentation=true    remake all documentation"
+	@ echo "      CheckDocumentation=false       don't check documentation for completeness"
 	@ echo "      RerunExamples=true             rerun example output files"
 	@ echo "      debugLevel=1                   turn on further M2 debugging output"
 	@ echo "      MAPFILE=yes                    create a mapfile when linking M2"

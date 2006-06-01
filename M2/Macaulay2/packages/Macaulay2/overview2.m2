@@ -762,7 +762,9 @@ document {
      EXAMPLE ///peek lines get fn///,
      "We could even use ", TO "stack", " to assemble the lines of the
      file into a net.",
-     EXAMPLE ///stack lines get fn///
+     EXAMPLE ///stack lines get fn///,
+     "Now let's remove that file.",
+     EXAMPLE ///removeFile fn///
      }
 
 document {
@@ -884,14 +886,31 @@ document {
      }
 
 document {
-     Key => isReady, Headline => "whether a file has data available for reading" }
+     Key => {(isReady, File),isReady}, 
+     Headline => "whether a file has data available for reading",
+     Usage => "isReady f",
+     Outputs => { Boolean => { "whether the input file ", TT "f", " has data available for reading" } },
+     EXAMPLE lines ///
+         f = openInOut "!cat"
+     	 isReady f
+     	 f << "hi there" << flush;
+     	 isReady f
+     ///
+     }
 
 document {
-     Key => atEndOfFile,
+     Key => {(atEndOfFile, File),atEndOfFile},
      Headline => "test for end of file",
-     TT "atEndOfFile f", " -- tells whether an input file ", TT "f", " is at the end.",
-     PARA{},
-     SeeAlso => {"File"}
+     Usage => "atEndOfFile f",
+     Inputs => { "f" },
+     Outputs => { Boolean => { "whether the input file ", TT "f", " is at the end" } },
+     EXAMPLE lines ///
+         f = openInOut "!cat"
+     	 f << "hi there" << closeOut;
+     	 atEndOfFile f
+	 peek read f
+     	 atEndOfFile f
+     ///
      }
 
 document {

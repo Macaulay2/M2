@@ -4,17 +4,13 @@
 
 document { 
      Key => readlink,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Headline => "readlink fn",
+     Usage => "read the contents of a symbolic link",
+     Inputs => { "fn" => String => "a filename or path to a file" },
+     Outputs => { Boolean => { "whether ", TT "fn", " is the path to a symbolic link" }},
+     EXAMPLE lines ///
+     	  p = temporaryFileName ()
+	  symlinkFile ("foo", p)
+	  readlink p
+     ///
      }

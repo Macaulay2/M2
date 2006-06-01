@@ -118,8 +118,12 @@ include $(ENGINE_CFILES:.c=.dep) $(ENGINE_CCFILES:.cpp=.dep)
 endif
 
 # this requires gnu sort and gnu uniq commands
+NMFLAGS = -o
+ifeq (@NM_DEMANGLES@,yes)
+NMFLAGS += --demangle
+endif
 dups-tmp: $(ENGINE_OBJFILES)
-	- nm -o --demangle $(ENGINE_OBJFILES) |grep ' T ' |sort +2 |uniq -2 -d |tee dups-tmp
+	- nm $(NMFLAGS) $(ENGINE_OBJFILES) |grep ' T ' |sort +2 |uniq -2 -d |tee dups-tmp
 dups-okay: dups-tmp
 	@if [ -s $< ]; then echo "Multiple definitions found:"; cat $<; exit 1; \
 	 else touch $@; fi
@@ -127,8 +131,10 @@ clean check::; $(MAKE) -C check $@
 doxygen : ; cd @srcdir@ && doxygen
 distclean: clean; rm -f Makefile
 
+ifeq (@NM_DEMANGLES@,yes)
 all:: check-global-new-delete
 check-global-new-delete : $(ENGINE_OBJFILES) ; nm -o --demangle $^ | egrep '[WUT] operator (new|delete)' || true
+endif
 
 initialize :: statuscodes.h
 statuscodes.h : statuscodes

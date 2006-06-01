@@ -18,15 +18,20 @@ validate2 HEAD := x -> (
      if c_TITLE > 1 then stderr << "--error: HEAD should have at most one TITLE element" << endl;
      if c_BASE > 1 then stderr << "--error: HEAD should have at most one BASE element" << endl;
      )
+validate2 TR := 
+validate2 UL := 
+validate2 BLOCKQUOTE := x -> if #x === 0 then stderr << "--error: " << class x << " should contain at least one element" << endl
 
 validate = method()
+validate String := x -> (
+     if match("<",x) then stderr << "--error: string contains tag start character '<' : \"" << x << "\"" << endl;
+     )
+
 validate Option :=					    -- could check each part is a string!
 validate TO :=
 validate TOH :=
-validate String := x -> (
-     if match("<",x) then stderr << "--error: String contains tag starte character '<' : \"" << x << "\"" << endl;
-     )
 validate TO2 := x -> scan(drop(x,1),validate)
+
 validate MarkUpList := x -> (
      p := class x;
      if p.?qname then (

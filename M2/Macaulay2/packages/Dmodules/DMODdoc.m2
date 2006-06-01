@@ -436,14 +436,14 @@ document {
      representation of the localization of ", 
      EM {"k[x", SUB "1", ",...,x", SUB "n", "]"}, " at ", EM "f", ".",
      EXAMPLE {
-     	  "R = QQ[x_1..x_4, z, d_1..d_4, Dz, ", 
-	  "       WeylAlgebra => (toList(1..4)/(i -> (x_i=>d_i)) | {z=>Dz})]",
+     	  "R = QQ[x_1..x_4, z, d_1..d_4, Dz, 
+     WeylAlgebra => toList(1..4)/(i -> x_i => d_i) | {z=>Dz}]",
      	  "f = x_1 + x_2 * z + x_3 * z^2 + x_4 * z^3",
      	  "AnnFs f"
      	  },
      Caveat => {"
-	  The ring of f should not have any parameters, 
-     	  i.e. it should be a pure Weyl algebra. 
+	  The ring of ", TT "f", " should not have any parameters, 
+     	  i.e., it should be a pure Weyl algebra. 
 	  Also this ring should not be a homogeneous Weyl algebra."},
      SeeAlso => {"AnnIFs", "WeylAlgebra"}
      }  

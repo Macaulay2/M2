@@ -37,4 +37,4 @@ document {
  -- doc5.m2:478:     Key => debug,
  -- doc5.m2:483:     Key => (debug,Package),
  -- overview3.m2:507:     Key => "debugging",
- -- overview4.m2:771:document { Key => "using the debugger",
+ -- overview4.m2:771:document { Key => "the debugger",

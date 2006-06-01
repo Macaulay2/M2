@@ -111,7 +111,13 @@ texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
 
 noopts := x -> select(x,e -> class e =!= Option)
 
-vert := (op,post) -> x -> net new ParagraphList from post select( -- wrapping gets done by the "net" on this line
+wrapAndStack := x -> (
+     x = toList x;
+     x = net \ x;					    -- convert each to net
+     x = apply(x,p -> wrap net p);
+     stack x)
+
+vert := (op,post) -> x -> wrapAndStack post select( -- wrapping gets done by the "net" on this line
      sublists(
 	  toList x,
 	  i -> instance(i,MarkUpListParagraph),

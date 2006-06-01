@@ -69,46 +69,25 @@ document {
      Key => [gb, StopBeforeComputation],
      Headline => "do not actually compute a Groebner basis",
      Usage => "gb(..., StopBeforeComputation => true)",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-	TT "StopBeforeComputation => true", " initialises the Groebner basis
-	engine and returns a ", TT "GroebnerBasis", " object without actually
-	computing the basis.",
-     EXAMPLE {
-	  },
+     TT "StopBeforeComputation => true", " initialises the Groebner basis
+     engine and returns a ", TT "GroebnerBasis", " object without actually
+     computing the basis.",
      Caveat => {"This feature has not been implemented yet"},
      SeeAlso => {"Groebner bases"}
      }
 document { 
-     Key => {[gb, Strategy],F4,Homogeneous2,Sugarless,Faugere},
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "See ", TO "Groebner bases", " for examples.",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Key => {[gb, Strategy]},
+     Headline => "set the Groebner basis strategy",
+     Usage => "gb(...,Strategy => s)",
+     Inputs => { "s" => Symbol => { "one of the symbols ", TT "LongPolynomial", ", ", TT "Sort", ", or ", TT "UseHilbertFunction" } },
+     "See ", TO "Groebner bases", " for examples."
      }
 document { 
-     Key => [gb, Algorithm],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-	"Can take values ", TT "Homogeneous", ", ", TT "Faugere", ", ", TT "Homogeneous2", ", ",  TT "Inhomogeneous",  ", ", TT "F4", ", ", TT "Sugarless", ", or 
-	", TT "LinearAlgebra", ".  The default value is",  TT "Inhomogeneous", ".",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Key => {[gb, Algorithm],F4,Faugere,Homogeneous2,LinearAlgebra,Sugarless}, -- also: Homogeneous,Inhomogeneous
+     Headline => "set the Groebner basis algorithm",
+     Usage => "gb(...,Algorithm => s)",
+     Inputs => { "s" => Symbol => { "one of the symbols ", TT "F4", ", ", TT "Faugere", ", ", TT "Homogeneous", ", ", TT "Homogeneous2", ", ",
+	       TT "Inhomogeneous", ", ", TT "LinearAlgebra", ", or ", TT "Sugarless" }}
      }
 document { 
      Key => [gb, Syzygies],

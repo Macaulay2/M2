@@ -456,29 +456,6 @@ document {
      SeeAlso => {Set}
      }
 
-document { 
-     Key => {
-	  (isSubset, Set, Set),
-	  (isSubset, Set, VisibleList),
-	  (isSubset, VisibleList, Set),
-	  (isSubset, VisibleList, VisibleList)},
-     Headline => "whether something is a subset",
-     Usage => "isSubset(x,y)",
-     Inputs => {
-	  "x" => {ofClass Set, ", or ", ofClass List},
-	  "y" => {ofClass Set, ", or ", ofClass List}
-	  },
-     Outputs => {
-	  Boolean => {"whether every element of x is in y"},
-	  },
-     EXAMPLE {
-	  "isSubset(set{a},set{a,b,c})",
-	  "isSubset({a},set{a,b,c})",
-	  "isSubset({a,a},{a,b,c})"
-	  },
-     SeeAlso => {Set}
-     }
-
 document {
      Key => (symbol *, Set, Set),
      Headline => "intersection of sets",

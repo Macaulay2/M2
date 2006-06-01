@@ -162,7 +162,7 @@ document {
      }
 
 document {
-     Key => [primaryDecomposition,Strategy],
+     Key => {[primaryDecomposition,Strategy],Monomial,Binomial,EHV,SY,Hybrid,GTZ},
      "The strategy option value should be one of the following.",
      UL {
           ("Monomial", " -- uses Alexander duality of a monomial ideal"),

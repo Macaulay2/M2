@@ -323,22 +323,6 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (info,MENU),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => (info,Nothing),
      Headline => "",
      Usage => "",

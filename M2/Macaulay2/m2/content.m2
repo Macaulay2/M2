@@ -94,6 +94,8 @@ validContent#"li" =
 validContent#"div" = PCDATA + FlowMix
 -----------------------------------------------------------------------------
 
+-- <!ENTITY % blockquote.content "( %Block.mix; )+" >
+validContent#"blockquote" = 
 -- <!ENTITY % body.content "( %Block.mix; )+" >
 validContent#"body" = BlockMix
 

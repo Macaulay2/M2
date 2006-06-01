@@ -50,7 +50,6 @@ if firstTime then (
 		symbol List, symbol MutableHashTable, symbol MutableList, symbol Net,
 		symbol Nothing, symbol Option, symbol QQ, symbol RR, symbol RR, symbol CC,
 		symbol Ring, symbol Sequence, symbol String, symbol Symbol, symbol Thing,
-		symbol Error, symbol MissingMethod,
 		symbol Time, symbol Type, symbol VisibleList, symbol ZZ},
 	  s -> ReverseDictionary#(value s) = s		    -- get an early start for debugging
 	  );
@@ -335,7 +334,7 @@ showMaps := () -> (
      else if version#"operating system" === "Linux" and fileExists("/proc/"|toString processID()|"/maps") then (
 	  stack lines get("/proc/"|toString processID()|"/maps")
 	  )
-     else error "memory maps not available"
+     else "memory maps not available"
      )
 
 dump := () -> (

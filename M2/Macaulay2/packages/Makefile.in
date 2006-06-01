@@ -25,6 +25,7 @@ PACKAGES += LLLBases
 
 RemakeAllDocumentation ?= false
 IgnoreExampleErrors ?= false
+CheckDocumentation ?= true
 
 # we'll leave this on until we get the documentation fixed!
 IgnoreDocumentationErrors ?= true
@@ -37,6 +38,7 @@ ARGS += , RerunExamples => $(RerunExamples)
 ARGS += , IgnoreExampleErrors => $(IgnoreExampleErrors)
 ARGS += , IgnoreDocumentationErrors => $(IgnoreDocumentationErrors)
 ARGS += , RemakeAllDocumentation => $(RemakeAllDocumentation)
+ARGS += , CheckDocumentation => $(CheckDocumentation)
 ARGS += , MakeInfo => true
 ARGS += , UserMode => false
 ARGS += , DebuggingMode => false

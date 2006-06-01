@@ -425,6 +425,10 @@ document {
      SeeAlso => { "specifying typical values" }
      }
 document {
+     Key => TypicalValue,
+     "A symbol used as a name for optional arguments to some functions."
+     }
+document {
      Key => [method,TypicalValue],
      Headline => "specify return value type",
      TT "TypicalValue => X", " -- an option to ", TO "method", "

@@ -747,6 +747,7 @@ document {
      "The return value is ", TO "null", "."
      }
 
+undocumented {}
 document {
      Key => (symbol <<, File, Thing),
      Headline => "print something to a file",

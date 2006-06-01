@@ -53,7 +53,6 @@ degreesRing ZZ := PolynomialRing => memoize(
 	  local Zn;
 	  if n == 0 then (
 	       ZZn = new PolynomialRing from rawPolynomialRing();
-	       PrintNames#ZZn = "ZZ[]";
 	       ZZn.basering = ZZ;
 	       ZZn.flatmonoid = ZZn.monoid = monoid[];
 	       ZZn.baseRings = {ZZ};
@@ -62,7 +61,6 @@ degreesRing ZZ := PolynomialRing => memoize(
 	       Zn = degreesMonoid n;
 	       ZZn = ZZ Zn;
 	       ZZn.baseRings = {ZZ};
-	       PrintNames#ZZn = "ZZ[" | PrintNames#Zn | "]";
 	       ZZn)))
 
 degreesRing PolynomialRing := PolynomialRing => R -> (
