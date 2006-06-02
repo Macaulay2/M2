@@ -150,9 +150,9 @@ document {
      Subnodes => {
 	  TO "ranges and repetitions",
      	  "basic access methods",
-	  TO (symbol #, List),
-	  TO (symbol #, List, ZZ),
-	  TO (symbol #?, List, ZZ),
+	  TO (symbol #, BasicList),
+	  TO (symbol #, BasicList, ZZ),
+	  TO (symbol #?, BasicList, ZZ),
 	  TO (symbol _, VisibleList, ZZ),
 	  TO (symbol _, VisibleList, List),
 	  TO first,

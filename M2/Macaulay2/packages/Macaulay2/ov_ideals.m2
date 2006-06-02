@@ -507,8 +507,8 @@ document {
        ,
      SUBSECTION "strategies",
        "The algorithms available for computing primary decompositions are 
-       Shimoyama-Yokoyama, ", TT "SY", ",  
-       Eisenbud-Huneke-Vasconcelos, ", TT "EHV", ", a 
+       Shimoyama-Yokoyama, ", TO "SY", ",  
+       Eisenbud-Huneke-Vasconcelos, ", TO "EHV", ", a 
        hybrid of these two algorithms (SY and EHV), ", TT "Hybrid", ", 
        and Gianni-Trager-Zacharias, ", TT "GTZ", ".  The 
        default algorithm in Macaulay 2 is Shimoyama-Yokoyama.  Two 

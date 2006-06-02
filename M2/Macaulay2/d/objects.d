@@ -430,6 +430,9 @@ setupfun("buckets",bucketsfun);
 export Parent(e:Expr):HashTable := when e is obj:HashTable do obj.parent else nothingClass;
 export parentfun(e:Expr):Expr := Expr(Parent(e));
 setupfun("parent",parentfun);
+
+export isglobaldict(d:Dictionary):bool := !d.transient && d.frameID == 0;
+
 export Class(e:Expr):HashTable := (
      when e 
      is obj:HashTable do obj.class
@@ -441,7 +444,7 @@ export Class(e:Expr):HashTable := (
      is Real do doubleClass
      is Complex do complexClass
      is file do fileClass
-     is DictionaryClosure do dictionaryClass
+     is dc:DictionaryClosure do if isglobaldict(dc.dictionary) then globalDictionaryClass else localDictionaryClass
      is string do stringClass
      is FunctionClosure do functionClosureClass
      is Net do netClass
@@ -483,6 +486,8 @@ setupconst("Type",Expr(typeClass));
 setupconst("Thing",Expr(thingClass));
 setupconst("HashTable",Expr(hashTableClass));
 setupconst("Dictionary",Expr(dictionaryClass));
+setupconst("LocalDictionary",Expr(localDictionaryClass));
+setupconst("GlobalDictionary",Expr(globalDictionaryClass));
 setupconst("Pseudocode",Expr(codeClass));
 setupconst("FunctionBody",Expr(functionBodyClass));
 setupconst("MutableHashTable",Expr(mutableHashTableClass));

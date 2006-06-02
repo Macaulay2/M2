@@ -538,7 +538,6 @@ caveat := key -> getOption(key,Caveat)
 seealso := key -> getOption(key,SeeAlso)
 sourcecode := key -> getOption(key,SourceCode)
 theMenu := key -> getOption(key,Subnodes)
-theExamples := key -> getOption(key,Examples)
 documentOptions := new HashTable from {
      Key => true,
      Usage => true,
@@ -688,7 +687,11 @@ types Function := x -> ({},{typicalValue x})
 types Sequence := x -> (
      if #x > 1 and instance(x#-1,Symbol) 
      then ({},{})					    -- it's an option ...
-     else ( drop(toList x,1), { typicalValue x } ))
+     else (
+	  if instance(x#0,Sequence) and #x#0 === 2 and x#0#1 === symbol =
+          then ( drop(toList x,1) | { Thing }, { typicalValue x } ) -- it's an assignment method
+	  else ( drop(toList x,1)            , { typicalValue x } )
+	  ))
 
 emptyOptionTable := new OptionTable from {}
 getOptionDefaultValues := method(SingleArgumentDispatch => true)
@@ -716,7 +719,7 @@ processInputOutputItems := (key,fn) -> x -> (
 		    if type === null 
 		    or y === Nothing -- putting type Nothing in the doc's input list means don't display the type deduced from the description of the method
 		    then type = y
-		    else if type =!= y then error("type mismatch: ",toString type, " =!= ", toString y, " in documentation for ", toString key)
+		    else if type =!= y then error("type mismatch: ",toString type, " =!= ", toString y, " in documentation for ", toExternalString key)
 		    )
 	       else if text === null then text = y
 	       else error("can't parse input/output item in documentation for ",toString key)
@@ -787,11 +790,11 @@ document List := args -> (
      if #inp === 0 then inp = inp';
      if #out === 0 then out = out';
      if #inp' =!= 0 then (
-     	  if #inp =!= #inp' then error ("mismatched number of inputs in documentation for ", toString key);
+     	  if #inp =!= #inp' then error ("mismatched number of inputs in documentation for ", toExternalString key);
      	  inp = apply(inp',inp,(T,v) -> T => v);
 	  );
      if #out' =!= 0 then (
-     	  if #out =!= #out' then error ("mismatched number of outputs in documentation for ", toString key);
+     	  if #out =!= #out' then error ("mismatched number of outputs in documentation for ", toExternalString key);
      	  outp = apply(out',out,(T,v) -> T => v);
 	  );
      proc := processInputOutputItems(key,fn);
@@ -827,9 +830,10 @@ briefSynopsis := key -> (
 	       SPAN { "Usage: ", if class usa === String then TT usa else usa}),
 	  if o#?Function then SPAN { "Function: ", TO o#Function }
 	  else if instance(key, Sequence) and key#?0 then (
-	       if instance(key#0, Function) 
-	       then SPAN { "Function: ", TO key#0 }
-	       else SPAN { "Operator: ", TO key#0 }
+	       if instance(key#0, Function) then SPAN { "Function: ", TO key#0 }
+	       else if instance(key#0, Keyword) then SPAN { "Operator: ", TO key#0 }
+	       else if instance(key#0,Sequence) and #key#0 === 2 and key#0#1 === symbol "="
+	       then SPAN { "Operator: ", TO key#0#0 }	    -- assignment operator for this operator
 	       ),
 	  if o.?Inputs then DIV1 { "Inputs:", UL o.Inputs },
 	  if o.?Outputs then DIV1 { "Outputs:", UL o.Outputs },
@@ -886,7 +890,7 @@ help String := key -> (
 	       else error("there is no documentation for '"|key|"'");
 	       b = ();
 	       );
-	  fixup DIV {title key, b, theExamples key, caveat key, seealso key, theMenu key}))
+	  fixup DIV {title key, b, caveat key, seealso key, theMenu key}))
 
 binary := set binaryOperators
 prefix := set prefixOperators
@@ -1018,7 +1022,7 @@ help Symbol := S -> (
      ret := fixup DIV { title S, synopsis S, makeDocBody S, op S,
 	  if #a > 0 then DIV1 { SUBSECTION {"Functions with optional argument named ", toExternalString S, " :"}, a},
 -- 	  if #b > 0 then DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", toExternalString s, " :"}, b),
-          theExamples S, caveat S, seealso S,
+          caveat S, seealso S,
      	  documentationValue(S,value S),
 	  sourcecode S, type S, 
 	  theMenu S
@@ -1043,14 +1047,14 @@ help Array := key -> (		    -- optional argument
 	       SPAN{ if class fn === Sequence then "Method: " else "Function: ", TOH {fn} },
 	       SPAN{ "Option name: ", TOH {opt} }
 	       },
-	  theExamples key, caveat key, seealso key, theMenu key })
+	  caveat key, seealso key, theMenu key })
 
 help Sequence := key -> (						    -- method key
      checkLoadDocumentation();
      if key === () then return help "initial help";
      if null === lookup key then error("expected ", toString key, " to be a method");
      currentHelpTag = makeDocumentTag key;
-     ret := fixup DIV { title key, synopsis key, makeDocBody key, theExamples key, caveat key, sourcecode key, seealso key, theMenu key };
+     ret := fixup DIV { title key, synopsis key, makeDocBody key, caveat key, sourcecode key, seealso key, theMenu key };
      currentHelpTag = null;
      ret)
 

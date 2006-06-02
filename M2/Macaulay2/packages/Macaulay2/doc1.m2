@@ -778,20 +778,48 @@ document {
 document {
      Key => (symbol #, BasicList, ZZ),
      Headline => "get element from list",
-     TT "x#i", " -- provides the ", TT "i", "-th element of the list ", TT "x", ".",
-     PARA{},
-     "If ", TT "i", " is out of range, an error is signaled. If  ", TT "i", " 
-     is negative, then the ", TT "i", "-th entry counting from the end is provided.",
-     PARA{},
-     "Assignment to ", TT "x#i", " can change the value if ", TT "x", " is mutable."
+     Usage => "x#i",
+     Inputs => { "x", "i" },
+     Outputs => { { "the ", TT "i", "-th element of the list ", TT "x" }},
+     SeeAlso => {(symbol _, VisibleList, ZZ)},
+     PARA{
+     	  "The entries of the list are numbered starting with 0.  If  ", TT "i", " 
+          is negative, then the ", TT "i", "-th entry counting from the end is provided.
+          If ", TT "i", " is out of range, an error is signaled." },
+     PARA{
+	  "Assignment to ", TT "x#i", " can change the value if ", TT "x", " is
+          mutable, i.e., an instance of the class ", TO "MutableList", "." },
+     EXAMPLE lines ///
+          x = a .. z
+	  x#12
+	  y = new MutableList from x
+	  y#12 = foo
+	  toSequence y
+     ///
      }
 document {
-     Key => (symbol #, Sequence, ZZ),
-     Headline => "get element from sequence",
-     TT "x#i", " -- provides the ", TT "i", "-th element of the sequence ", TT "x", ".",
-     PARA{},
-     "If ", TT "i", " is out of range, an error is signaled. If  ", TT "i", " 
-     is negative, then the ", TT "i", "-th entry counting from the end is provided."
+     Key => (symbol _, VisibleList, ZZ),
+     Headline => "get element from list",
+     Usage => "x_i",
+     Inputs => { "x", "i" },
+     Outputs => { { "the ", TT "i", "-th element of the list ", TT "x" }},
+     SeeAlso => {(symbol #, BasicList, ZZ), installAssignmentMethod},
+     PARA{
+     	  "The entries of the list are numbered starting with 0.  If  ", TT "i", " 
+          is negative, then the ", TT "i", "-th entry counting from the end is provided.
+          If ", TT "i", " is out of range, an error is signaled.  Methods for assignment
+	  to ", TT "x_i", " can be provided, but the syntax is not pleasant (yet)." },
+     EXAMPLE lines ///
+          x = a .. z
+	  x_12
+	  M = new Type of MutableList
+	  installAssignmentMethod(symbol "_", M, ZZ, (x,i,v) -> x#i = v);
+	  y = new M from x
+	  y_12 = foo
+	  peek y
+	  net M := m -> peek m
+	  y
+     ///
      }
 document {
      Key => (symbol #?, HashTable, Thing),

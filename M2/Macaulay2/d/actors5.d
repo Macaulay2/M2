@@ -1396,7 +1396,6 @@ fillnodes(n:LexNode):void := (
 fillnodes(baseLexNode);
 setupconst("operatorNames",Expr(operatorNames));
 
-isglobalsym(s:string):Expr := when globalLookup(makeUniqueWord(s,parseWORD)) is x:Symbol do True is null do False;
 issym(d:Dictionary,s:string):Expr := when lookup(makeUniqueWord(s,parseWORD),d) is x:Symbol do True is null do False;
 
 getglobalsym(d:Dictionary,s:string):Expr := (
@@ -1423,7 +1422,7 @@ getGlobalSymbol(e:Expr):Expr := (
 	  when z.0
 	  is dc:DictionaryClosure do (
 	       d := dc.dictionary;
-	       if d.transient || d.frameID != 0 then WrongArg(1,"a global dictionary") else
+	       if !isglobaldict(d) then WrongArg(1,"a global dictionary") else
 	       when z.1
 	       is s:string do getglobalsym(d,s)
 	       else WrongArgString(2)
@@ -1433,30 +1432,10 @@ getGlobalSymbol(e:Expr):Expr := (
      else WrongArg("a string or a dictionary and a string"));
 setupfun("getGlobalSymbol",getGlobalSymbol);
 
-isGlobalSymbol(e:Expr):Expr := (
-     when e is s:string do isglobalsym(s)
-     is z:Sequence do if length(z) != 2 then WrongNumArgs(2) else (
-	  when z.0
-	  is dc:DictionaryClosure do (
-	       d := dc.dictionary;
-	       if d.transient || d.frameID != 0 then WrongArg(1,"a global dictionary") else
-	       when z.1
-	       is s:string do issym(d,s)
-	       else WrongArgString(2)
-	       )
-	  else WrongArg(1,"a dictionary")
-	  )
-     else WrongArg("a string or a dictionary and a string"));
-setupfun("isGlobalSymbol",isGlobalSymbol);
+isglobalsym(s:string):Expr := when globalLookup(makeUniqueWord(s,parseWORD)) is x:Symbol do True is null do False;
 
--- expandWord(e:Expr):Expr := (
---      when e is word:string do (
--- 	  when wordexp(word)
--- 	  is null do buildErrorPacket("failed to expand word")
--- 	  is r:array(string) do toExpr(r)
--- 	  )
---      else WrongArgString());
--- setupfun("expandWord",expandWord);
+isGlobalSymbol(e:Expr):Expr := when e is s:string do isglobalsym(s) else WrongArgString();
+setupfun("isGlobalSymbol",isGlobalSymbol);
 
 history(e:Expr):Expr := (
      when e

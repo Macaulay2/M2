@@ -296,18 +296,12 @@ document { Key => UpdateOnly, Headline => "only copies of newer files should rep
 document { Key => [copyDirectory, UpdateOnly],
      Usage => "copyDirectory(..., UpdateOnly => true)",
      Consequences => {{ "during the indicated copy operation, newer files will not be replaced by copies of older ones" }}}
-document { Key => [copyFile, UpdateOnly],
-     Usage => "copyFile(..., UpdateOnly => true)",
-     Consequences => {{ "during the indicated copy operation, newer files will not be replaced by copies of older ones" }}}
 document { Key => Verbose, Headline => "request verbose feedback" }
 document { Key => [symlinkDirectory, Verbose],
      Usage => "symlinkDirectory(..., Verbose => ...)",
      Consequences => {{ "during the file operation, details of the operations performed will be displayed" }}}
 document { Key => [copyDirectory, Verbose],
      Usage => "copyDirectory(..., Verbose => ...)",
-     Consequences => {{ "during the file operation, details of the operations performed will be displayed" }}}
-document { Key => [copyFile, Verbose],
-     Usage => "copyFile(..., Verbose => ...)",
      Consequences => {{ "during the file operation, details of the operations performed will be displayed" }}}
 document { Key => [moveFile, Verbose],
      Usage => "moveFile(..., Verbose => ...)",
@@ -484,8 +478,7 @@ document { Key => Heft,
      }
 
 scan((
-	  FollowLinks,Hilbert,UserMode,RerunExamples,MakeDocumentation,IgnoreExampleErrors,IgnoreDocumentationErrors,MakeInfo,Options,Position,
-	  LexSmall,LexTiny,GRevLexSmall,GRevLexTiny,InstallPrefix,PackagePrefix
+	  FollowLinks,Hilbert,UserMode,RerunExamples,MakeDocumentation,IgnoreExampleErrors,IgnoreDocumentationErrors,MakeInfo,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate
 	  ),
      s -> document { Key => s, "A symbol used as an option with some functions." })
 
@@ -555,7 +548,7 @@ document { Key => Pseudocode,
      the interanl function ", TO "disassemble", " can display their contents, the function ", TO "pseudocode", " can convert
      a function closure to pseudocode, the function ", TO "value", " can evaluate it (bindings of values to local symbols
      are enclosed with the pseudocode), the operator ", TO "===", " can be used for equality testing, 
-     and when the debugger is activated after an error, the variable ", TO "errorCode", " contains the pseudocde step whose execution produced the error.",
+     and when the debugger is activated after an error, the variable ", TO "errorCode", " contains the pseudcode step whose execution produced the error.",
      }
 document { Key => pseudocode,
      Headline => "produce the pseudocode for a function",
@@ -563,7 +556,7 @@ document { Key => pseudocode,
      Inputs => { "f" => FunctionClosure },
      Outputs => { Pseudocode => { "the pseudocode of the function ", TT "f"} },
      SeeAlso => { disassemble },
-     EXAMPLE ///
+     EXAMPLE lines ///
      	  pseudocode resolution
           disassemble oo
      ///
@@ -572,9 +565,9 @@ document { Key => disassemble,
      Headline => "disassemble pseudocode or a function",
      Usage => "disassemble c",
      Inputs => { "c" => Pseudocode },
-     Outputs => { String => "the disassembled form of ", TT "c" },
+     Outputs => { String => {"the disassembled form of ", TT "c"} },
      SeeAlso => { pseudocode },
-     EXAMPLE ///
+     EXAMPLE lines ///
      	  pseudocode resolution
           disassemble oo
      ///
@@ -582,8 +575,140 @@ document { Key => disassemble,
 document { Key => "errorCode",
      Headline => "the pseudocode that produced an error",
      Usage => "errorCode",
-     Outputs => { Pseudocode => { "the pseudocode that produced an error, or ", TO "null", ", if none" } }
+     Outputs => { Pseudocode => { "the pseudocode that produced an error, or ", TO "null", ", if none" } },
+     "Use ", TO "value", " to evaluate the code again, for debugging purposes."
      }
+document { Key => (value, Pseudocode),
+     Headline => "execute pseudocode",
+     Usage => "value p",
+     Inputs => { "p" },
+     Outputs => {{ "the value returned by evaluation of ", TT "p" }},
+     SeeAlso => { "errorCode", pseudocode }
+     }
+document { Key => PrintNames,
+     Headline => "table of printed forms of objects",
+     "This table is intended mainly for internal use.  Whether the table gets consulted upon conversion to a net or string depends
+     on the type of thing being converted, and is a little haphazard.  Nevertheless, it is a useful mechanism for arranging for
+     things to print in an understandable form.  We may eliminate it in a future version.",
+     EXAMPLE "hashTable apply(pairs PrintNames, (k,v) -> (v,class k))",
+     SeeAlso => { ReverseDictionary }
+     }
+document { Key => ReverseDictionary,
+     SeeAlso => { PrintNames, globalAssignment },
+     Headline => "table of symbols where various types of objects are stored",
+     "If a type of object has been registered with ", TO "globalAssignment", ", and then an object of that type is assigned to a global
+     symbol, then the symbol is stored in the hash table ReverseDictionary using the object as the key.  This allows the object to print
+     out with the same name as the symbol.",
+     EXAMPLE lines ///
+     	  ZZ[x..y]
+	  o1
+	  R = o1
+	  o1
+	  o1^6
+	  ReverseDictionary#o1
+     ///,
+     SourceCode => { (GlobalAssignHook,PolynomialRing), (net, PolynomialRing) }
+     }
+document { Key => SheafOfRings,
+     SeeAlso => { Variety, OO },
+     Headline => "the class of sheaves of rings",
+     EXAMPLE lines ///
+     	  X = Proj(QQ[x..z])
+	  OO_X
+	  OO_X^6
+     ///
+     }
+document { Key => (module, SheafOfRings),
+     SeeAlso => { Variety, OO },
+     Usage => "module F",
+     Inputs => { "F" },
+     Outputs => { { "the module corresponding to ", TT "F" }},
+     EXAMPLE lines ///
+     	  R = QQ[x..z]
+     	  X = Proj R
+	  OO_X^6
+	  module oo
+     ///
+     }
+document { Key => "when",
+     Headline => "a keyword",
+     "A keyword used in ", TO "for", " loops."
+     }
+document { Key => zero,
+     Headline => "whether something is zero",
+     SourceCode => zero,
+     Usage => "zero x",
+     Inputs => { "x" },
+     Outputs => { { "whether ", TT "x", " is equal to 0" }}}
+document { Key => homeDirectory,
+     Headline => "the home directory of the user",
+     Usage => "homeDirectory",
+     Outputs => { String => "the home directory of the user" },
+     EXAMPLE "homeDirectory"
+     }
+document { Key => "packagePath",
+     Headline => "the path along which to search when loading a package",
+     SeeAlso => { loadPackage, needsPackage, installPackage },
+     EXAMPLE "package"
+     }
+document { Key => "backtrace",
+     Headline => "whether a backtrace is displayed following an error message",
+     Usage => "backtrace = false",
+     Consequences => { "a backtrace will not displayed following an error message" }
+     }
+document { Key => "backupFileRegexp",
+     Headline => "a regular expression for recognizing names of backup files",
+     "This regular expression is used by ", TO "copyDirectory", " and ", TO "symlinkDirectory", ": they will ignore backup files when copying all the files in
+     a directory, and just copy the other ones.",
+     Caveat => "Perhaps, instead of this being a global variable, there should be a way
+     to change the default values for optional arguments to functions.  We may change this."
+     }
+document { Key => "buildHomeDirectory",
+     SeeAlso => { "sourceHomeDirectory", "prefixDirectory" },
+     Headline => "the directory where the Macaulay 2 program is being built",
+     "When Macaulay 2 is built, i.e., is compiled, the directory tree containing the compiled (object) files may be different from the directory
+     tree containing the source code.  The build home directory is the directory in that tree named ", TT "Macaulay2", " and containing subdirectories called
+     ", TT "c", ", ", TT "d", ", ", TT "e", ", and ", TT "dumpdata", ".  Knowing that directory allows Macaulay2 to construct a suitable initial value for
+     the ", TO "path", " that allows all the source code files to be found at startup time.  If building is not in progress, the value of this variable
+     will be ", TO "null", "."
+     }
+document { Key => "sourceHomeDirectory",
+     SeeAlso => { "buildHomeDirectory", "prefixDirectory" },
+     Headline => "the directory where the source code is while Macaulay 2 is being built",
+     "When Macaulay 2 is built, i.e., is compiled, the directory tree containing the compiled (object) files may be different from the directory
+     tree containing the source code.  The source home directory is the directory in that tree named ", TT "Macaulay2", " and containing subdirectories called
+     ", TT "c", ", ", TT "d", ", ", TT "e", ", and ", TT "dumpdata", ".  Knowing that directory allows Macaulay2 to construct a suitable initial value for
+     the ", TO "path", " that allows all the source code files to be found at startup time.  If building is not in progress, the value of this variable
+     will be ", TO "null", "."
+     }
+document { Key => "prefixDirectory",
+     Headline => "the prefix directory",
+     SeeAlso => { "sourceHomeDirectory", "buildHomeDirectory" },
+     PARA {
+	 "When Macaulay 2 is successfully installed, its files are installed in a directory tree whose layout, relative to the root, is determined
+	 by the hash table ", TO "LAYOUT", ".  When M2 starts up, it detects whether it is running in such a layout, and sets ", TO "prefixDirectory", "
+	 to the root of that directory tree."
+	 },
+     PARA {
+	  "The prefix directory can be set at an early stage when ", TT "M2", " starts up with the ", TT "--prefix", " command line option."
+	  }
+     }
+document { Key => getGlobalSymbol,
+     Headline => "create a global symbol in a global dictionary",
+     Usage => "getGlobalSymbol(dict,nam)",
+     Inputs => { "dict" => GlobalDictionary, "nam" => String },
+     Outputs => { { "a new global symbol whose name is the string ", TT "nam" }},
+     Consequences => {{ "the new symbol is stored under the name ", TT "nam", " in the dictionary ", TT "dict" }},
+     EXAMPLE lines ///
+     	  d = new Dictionary
+	  sym = getGlobalSymbol(d,"foo")
+	  d
+	  peek d
+	  d#"foo" === sym
+	  d#"asfd" = sym
+	  peek d
+     ///
+     }     
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

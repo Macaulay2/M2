@@ -18,11 +18,12 @@ options MarkUpType := X -> X.Options
 MarkUpTypeWithOptions = new Type of MarkUpType
 MarkUpTypeWithOptions.synonym = "mark-up type with options"
 
-     MarkUpType Sequence := 
-     MarkUpType List := (h,y) -> new h from y
-     MarkUpType Thing := (h,y) -> new h from {y}
-     MarkUpType\List := (h,y) -> (i -> h i) \ y
-     List/MarkUpType := (y,h) -> y / (i -> h i)
+MarkUpType Thing := (M,x) -> new M from x
+MarkUpType Net := (M,x) -> new M from {toString x}
+MarkUpType String :=
+MarkUpType MarkUpList := (M,x) -> new M from {x}
+MarkUpType\List := (M,x) -> (i -> M i) \ x
+List/MarkUpType := (x,M) -> x / (i -> M i)
 
 IntermediateMarkUpType = new Type of MarkUpType	    -- this is for things like MENU, which do not correspond to an html entity, but have a recipe for translation into html
 IntermediateMarkUpType.synonym = "intermediate mark-up type"
@@ -45,8 +46,9 @@ setboth := set { "li" } + BlockMix - set { "ins" }
 htmlMarkUpType := s -> (
      on := "<" | s | ">";
      off := "</" | s | ">";
+     onoff := "<" | s | "/>";
      if setboth#?s then ( on = "\n"|on; off = off|"\n" );
-     t -> concatenate(on, apply(t,html), off))
+     t -> if #t === 0 then onoff else concatenate(on, apply(t,html), off))
 
 htmlMarkUpTypeWithOptions := opts -> s -> (
      off := "</" | s | ">";
@@ -174,7 +176,10 @@ new TO from List := (TO,x) -> if x#?1 then { makeDocumentTag x#0, concatenate dr
 TOH        = withQname_"span" new IntermediateMarkUpType of MarkUpList
 new TOH from List := (TOH,x) -> { makeDocumentTag x#0 }
 
-new TO from Sequence := new TOH from Sequence := (TO,x) -> new TO from {x} -- document tags can be sequences, so keep them intact
+new TO from MarkUpList := 
+new TOH from MarkUpList := x -> error("TO of mark up list '", toString x, "'")
+
+new TO from Thing := new TOH from Thing := (TO,x) -> new TO from {x} -- document tags can be sequences or arrays, so keep them intact
 
 MENU       = withQname_"div" new IntermediateMarkUpType of MarkUpListParagraph	            -- like "* Menu:" of "info"
 

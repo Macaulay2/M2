@@ -93,12 +93,11 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 	  for i in $(patsubst @srcdir@/%, "%", $^) ; \
 	  do [ -f $$i ] || (echo "file not found: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS
 
-@srcdir@/TAGS.doc: Makefile.in @srcdir@/../packages/Macaulay2/*.m2
-	@echo making $@
+@srcdir@/TAGS.doc: Makefile.in $(shell find @srcdir@/../packages/Macaulay2 -not \( -name .svn -prune \) -type d)
+	@echo making $@ : $^
 	@ set -e ; \
 	  cd @srcdir@ && \
-	  for i in $(patsubst @srcdir@/%, %, $^) ; \
-	  do [ -f $$i ] || (echo "file not found in @srcdir@: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS.doc
+	  find ../packages/Macaulay2 -name '*.m2' | while read i ; do echo  ; echo $$i,0 ; done >TAGS.doc
 clean::; rm -f TAGS.doc
 prep :: $(DUMPEDM2FILES)
 

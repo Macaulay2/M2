@@ -301,7 +301,7 @@ new RawMatrix from RawRingElement := (RawMatrix,f) -> rawMatrix1(rawFreeModule(r
 new RawMatrix from RawMutableMatrix := rawMatrix
 new RawMutableMatrix from RawMatrix := rawMutableMatrix
 
-installAssignmentMethod(symbol "_",RawMutableMatrix,Sequence, (M,ij,val) -> ((i,j) -> rawSetMatrixEntry(M,i,j,val)) ij)
+installAssignmentMethod(symbol "_",RawMutableMatrix,Sequence, (M,ij,val) -> ((i,j) -> (rawSetMatrixEntry(M,i,j,val); val)) ij)
 
 -- computations
 

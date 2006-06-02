@@ -708,7 +708,6 @@ undocumented {
 	  (value, Sum),
 	  (value, RingElement),
 	  (value, MatrixExpression),
-	  (value, Pseudocode),
 	  (value, IndexedVariable),
 	  (value, Table),
 	  (value, Sequence),

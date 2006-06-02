@@ -24,8 +24,8 @@ toString IndexedVariable := v -> toString expression v
 IndexedVariable ? IndexedVariable := (x,y) -> toSequence x ? toSequence y
 Symbol ? IndexedVariable := (x,y) -> if x === (y#0) then symbol > else x ? (y#0)
 
-valueTables := new MutableHashTable
-valueTable := x -> if valueTables#?x then valueTables#x else valueTables#x = new MutableHashTable
+valueTables = new MutableHashTable
+valueTable = x -> if valueTables#?x then valueTables#x else valueTables#x = new MutableHashTable
 methodTable = new MutableHashTable
 Symbol _ Thing := (x,i) -> ( 
      t := valueTable x; 

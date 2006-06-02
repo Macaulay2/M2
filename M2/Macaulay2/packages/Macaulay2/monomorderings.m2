@@ -254,7 +254,7 @@ document {
      }
 
 document {
-     Key => GRevLex,
+     Key => {GRevLex,GRevLexSmall,GRevLexTiny},
      Headline => "graded reverse lexicographical monomial order.",
      "The graded reverse lexicographic order is defined by: x^A > x^B if either
      the degree(x^A) > degree(x^B) or degree(x^A) = degree(x^B) and
@@ -286,7 +286,7 @@ document {
      }
 
 document {
-     Key => Lex,
+     Key => {Lex,LexSmall,LexTiny},
      Headline => "lexicographical monomial order.",
      "The lexicographic order is defined by: x^A > x^B if the FIRST
      non-zero entry of the vector of integers A-B is POSITIVE.",
@@ -747,7 +747,7 @@ chosen monomial ordering.",
      }
 
 document {
-     Key => MonomialOrder,
+     Key => {MonomialOrder,Position,Up,Down},
      Headline => "monomial ordering",
      TT "MonomialOrder", " -- an optional argument used with polynomial rings and monoids
      to indicate a

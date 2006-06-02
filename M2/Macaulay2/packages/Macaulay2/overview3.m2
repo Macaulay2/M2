@@ -125,7 +125,38 @@ document {
      PARA {
 	  "Let's apply the functions above to the name of a fictional package named \"", TT "FOO", "\" to see what paths are returned."
      	  },
-     EXAMPLE ///applyValues (LAYOUT, f -> if instance(f,Function) then f "FOO" else f)///
+     EXAMPLE ///applyValues (LAYOUT, f -> if instance(f,Function) then f "FOO" else f)///,
+     "Here are the meanings of the keys used in ", TO "LAYOUT", ".  Some of these entries may not be in use.",
+     UL {
+	  LI { TT format "bin", " : executable files (M2)" },
+	  LI { TT format "cache", " : cached data files (used by dumpdata and loaddata)" },
+	  LI { TT format "data", " : machine independent data files, not just for Macaulay 2" },
+	  LI { TT format "datam2", " : Macaulay 2 source files (*.m2) for Macaulay 2; this directory appears on the ", TO "path" },
+	  LI { TT format "doc", " : documentation, not just for Macaulay 2" },
+	  LI { TT format "docm2", " : documentation for Macaulay 2 and its packages" },
+	  LI { TT format "docm2rel", " : documentation for Macaulay 2 itself (the Macaulay2Core package)" },
+	  LI { TT format "docpackages", " : documentation for Macaulay 2 packages" },
+	  LI { TT format "emacs", " : emacs source files (*.el, *.elc)" },
+	  LI { TT format "emacsdoc", " : documentation for using Macaulay 2 itself with emacs" },
+	  LI { TT format "images", " : images for Macaulay 2 itself" },
+	  LI { TT format "info", " : documentation in info form, not just for Macaulay 2" },
+	  LI { TT format "lib", " : machine dependent data and executable files, not just for Macaulay 2" },
+	  LI { TT format "libm2", " : machine dependent data and executable files for Macaulay 2 itself" },
+	  LI { TT format "m2", " : source files for Macaulay 2 itself (the Macaulay2Core package: *.m2)" },
+	  LI { TT format "man", " : man pages" },
+	  LI { TT format "man1", " : man pages, section 1" },
+	  LI { TT format "man3", " : man pages, section 3" },
+	  LI { TT format "packagecache", " : cached data files for the Macaulay 2 package FOO" },
+	  LI { TT format "packagedoc", " : documentation for the Macaulay 2 package FOO" },
+	  LI { TT format "packageexamples", " : example input and output files for the Macaulay 2 package FOO" },
+	  LI { TT format "packagehtml", " : html documentation for the Macaulay 2 package FOO (*.html)" },
+	  LI { TT format "packageimages", " : images for the Macaulay 2 package FOO (*.jpg)" },
+	  LI { TT format "packages", " : source files for Macaulay 2 packages; this directory appears on ", TO "packagePath" },
+	  LI { TT format "packagesrc", " : additional source files for the Macaulay 2 package FOO" },
+	  LI { TT format "packagetests", " : test files  for the Macaulay 2 package FOO" },
+	  LI { TT format "share", " : machine independent files for Macaulay 2 itself" },
+	  LI { TT format "style", " : style files for Macaulay 2 itself" }
+	  }
      }
 
 document {
