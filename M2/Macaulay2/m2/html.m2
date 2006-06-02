@@ -174,7 +174,7 @@ anchor := entry -> (
      if alpha#?anchorPoint and entry >= alpha#anchorPoint then (
      	  s := select(drop(alpha,anchorPoint), c -> entry >= c);
      	  anchorPoint = anchorPoint + #s;
-     	  toSequence apply(s, c -> ANCHOR {c, ""})
+     	  toSequence apply(s, c -> ANCHOR{ "id" => c, ""})
      	  ))
 
 packageTagList := (pkg,topDocumentTag) -> checkIsTag \ unique join(

@@ -42,6 +42,9 @@ texExtraLiteral := s -> demark(ENDLINE,
      )
 -----------------------------------------------------------------------------
 -- the default case
+
+noopts := x -> select(x,e -> class e =!= Option)
+
 scan((
 	  (info,horizontalJoin),
 	  (net,horizontalJoin),
@@ -50,7 +53,7 @@ scan((
 	  (texMath,concatenate),
 	  (mathML,concatenate)
 	  ),
-     (op,joiner) -> op MarkUpList := x -> joiner apply(x,op))
+     (op,joiner) -> op MarkUpList := x -> joiner apply(noopts x,op))
 
 -- defop := (joiner,op) -> x -> joiner apply(x,op)
 -- info MarkUpList := defop(horizontalJoin,info)
@@ -86,13 +89,13 @@ texMath List := x -> concatenate("\\{", between(",", apply(x,texMath)), "\\}")
 texMath Array := x -> concatenate("[", between(",", apply(x,texMath)), "]")
 texMath Sequence := x -> concatenate("(", between(",", apply(x,texMath)), ")")
 
-texMath HashTable := x -> if x.?texMath then x.texMath else texMath expression x
-tex HashTable := x -> (
-     if x.?tex then x.tex 
-     else if x.?texMath then concatenate("$",x.texMath,"$")
-     else tex expression x
-     )
-html HashTable := x -> html expression x
+-- texMath HashTable := x -> if x.?texMath then x.texMath else texMath expression x
+-- tex HashTable := x -> (
+--      if x.?tex then x.tex 
+--      else if x.?texMath then concatenate("$",x.texMath,"$")
+--      else tex expression x
+--      )
+-- html HashTable := x -> html expression x
 
 mathML Nothing := texMath Nothing := tex Nothing := html Nothing := x -> ""
 
@@ -102,14 +105,7 @@ specials := new HashTable from {
 
 mathML Symbol := x -> concatenate("<mi>",if specials#?x then specials#x else toString x,"</mi>")
 
-tex Function := x -> "--Function--"
-
-tex Boolean := tex Symbol := 
-html Symbol := html Boolean := toString
-
 texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
-
-noopts := x -> select(x,e -> class e =!= Option)
 
 wrapAndStack := x -> (
      x = toList x;
@@ -137,19 +133,10 @@ tex  NOINDENT := x -> ///
 \noindent\ignorespaces
 ///
 
-html HEAD  := x -> concatenate( "<head>", newline, apply(x, html), newline, "</head>", newline )
-html TITLE := x -> concatenate( "<title>", apply(x, html), "</title>", newline )
-
-html HR := x -> "\n<hr/>\n"
 tex  HR := x -> ///
 \hfill\break
 \hbox to\hsize{\leaders\hrule\hfill}
 ///
-
-html PARA := x -> (
-     if #x === 0 then "\n<p/>\n"
-     else concatenate("\n<p>\n", apply(x,html),"\n</p>\n")
-     )
 
 tex PARA := x -> concatenate(///
 \par
@@ -202,14 +189,6 @@ net  TABLE := x -> boxTable applyTable(toList \ noopts \\ toList x,net)
 -- 	       "  </tr>", newline)),
 --      "</table>", newline )
 
-info PRE := net PRE := x -> net concatenate x
-html PRE   := x -> concatenate( 
-     "<pre>", 
-     html demark(newline,
-	  apply(lines concatenate x, s -> concatenate("     ",s))),
-     "</pre>"
-     )
-
 shorten := s -> (
      while #s > 0 and s#-1 == "" do s = drop(s,-1);
      while #s > 0 and s#0 == "" do s = drop(s,1);
@@ -237,35 +216,27 @@ tex PRE := x -> concatenate ( VERBATIM,
      )
 
 net TT := info TT := x -> concatenate toSequence x   -- should just be strings here
-html LISTING := t -> "<listing>" | concatenate toSequence t | "</listing>";
 texMath STRONG := tex STRONG := x -> concatenate("{\\bf ",apply(x,tex),"}")
 texMath ITALIC := tex ITALIC := x -> concatenate("{\\sl ",apply(x,tex),"}")
-html ITALIC := x -> concatenate("<i>",apply(x,html),"</i>")
 texMath TEX := tex TEX := x -> concatenate toList x
 
--- these seem questionable:
-tex Sequence := tex List := tex Array := x -> concatenate("$",texMath x,"$")
-html Sequence := x -> concatenate("(", between(",", apply(x,html)), ")")
-html List := x -> concatenate("{", between(",", apply(x,html)), "}")
+info PRE := net PRE := x -> net concatenate x
+html PRE   := x -> concatenate( 
+     "<pre>", 
+     demark(newline, apply(lines concatenate x, htmlExtraLiteral)),
+     "</pre>\n"
+     )
 
 info CODE := net CODE := x -> stack lines concatenate x
-html CODE   := x -> concatenate( 
-     "<pre>", 
-     demark(newline, apply(lines concatenate x, htmlExtraLiteral) ),
-     "</pre>"
-     )
 
-html ANCHOR := x -> (
-     "\n<a id=\"" | x#0 | "\">" | html x#-1 | "</a>"
-     )
-info ANCHOR := net ANCHOR := x -> net last x
-tex ANCHOR := x -> (
-     concatenate(
-	  ///\special{html:<a id="///, texLiteral x#0, ///">}///,
-	  tex x#-1,
-	  ///\special{html:</a>}///
-	  )
-     )
+-- this is wrong now
+-- tex ANCHOR := x -> (
+--      concatenate(
+-- 	  ///\special{html:<a id="///, texLiteral x#0, ///">}///,
+-- 	  tex x#-1,
+-- 	  ///\special{html:</a>}///
+-- 	  )
+--      )
 
 commentize := s -> if s =!= null then concatenate(" -- ",s)
 
@@ -411,54 +382,6 @@ tex HEADER6 := x -> concatenate (
      apply(toList x, tex),
      ///\endgroup
 \par\smallskip%
-///
-     )
-
-html HEADER1 := x -> concatenate (
-     ///
-<h1>///,
-     apply(toList x, html),
-     ///</h1>
-///
-     )
-
-html HEADER2 := x -> concatenate (
-     ///
-<h2>///,
-     apply(toList x, html),
-     ///</h2>
-///
-     )
-
-html HEADER3 := x -> concatenate (
-     ///
-<h3>///,
-     apply(toList x, html),
-     ///</h3>
-///
-     )
-
-html HEADER4 := x -> concatenate (
-     ///
-<h4>///,
-     apply(toList x, html),
-     ///</h4>
-///
-     )
-
-html HEADER5 := x -> concatenate (
-     ///
-<h5>///,
-     apply(toList x, html),
-     ///</h5>
-///
-     )
-
-html HEADER6 := x -> concatenate (
-     ///
-<h6>///,
-     apply(toList x, html),
-     ///</h6>
 ///
      )
 
