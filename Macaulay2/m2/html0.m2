@@ -22,6 +22,7 @@ MarkUpType Thing := (M,x) -> new M from x
 MarkUpType Net := (M,x) -> new M from {toString x}
 MarkUpType String :=
 MarkUpType MarkUpList := (M,x) -> new M from {x}
+
 MarkUpType\List := (M,x) -> (i -> M i) \ x
 List/MarkUpType := (x,M) -> x / (i -> M i)
 
@@ -41,19 +42,19 @@ toupper := new HashTable from apply(characters lower,characters upper,identity)
 toLower = s -> concatenate apply(characters s, c -> if tolower#?c then tolower#c else c)
 toUpper = s -> concatenate apply(characters s, c -> if toupper#?c then toupper#c else c)
 
-setboth := set { "li" } + BlockMix - set { "ins" }
+block := BlockMix - set { "ins" } + set { "body", "tr", "li" } 
 
 htmlMarkUpType := s -> (
      on := "<" | s | ">";
      off := "</" | s | ">";
      onoff := "<" | s | "/>";
-     if setboth#?s then ( on = "\n"|on; off = off|"\n" );
+     if block#?s then (off = off|"\n";onoff = onoff|"\n");
      t -> if #t === 0 then onoff else concatenate(on, apply(t,html), off))
 
 htmlMarkUpTypeWithOptions := opts -> s -> (
      off := "</" | s | ">";
      lt := "<";
-     if setboth#?s then ( lt = "\n"|lt; off = off|"\n" );
+     if block#?s then off = off|"\n";
      t -> (
 	  o := "";
 	  (opts',u) := override(opts, toSequence t);
@@ -145,7 +146,7 @@ new HREF from List := (HREF,x) -> (
      x)
 
 LINK       = new MarkUpType of MarkUpList
-ANCHOR     = withQname_"a" new MarkUpType of MarkUpList
+ANCHOR     = withOptions_{"id"} withQname_"a" new MarkUpTypeWithOptions of MarkUpList
 
 UL         = new MarkUpType of MarkUpListParagraph
 new UL from List := (UL,x) -> (

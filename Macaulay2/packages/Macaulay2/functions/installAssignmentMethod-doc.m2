@@ -54,7 +54,7 @@ document {
 	  x_c
      ///,
      "The source code explains how it works, behind the scences.",
-     PRE code ((symbol "_",symbol "="),Symbol,Thing),
+     PRE ("    " | code {(symbol "_",Symbol,Thing),((symbol "_",symbol "="),Symbol,Thing)}),
      "The package Macaulay2Core doesn't export the symbol valueTable, so we use ", TO "debug", " to examine it.",
      SeeAlso => { IndexedVariable },
      EXAMPLE lines ///

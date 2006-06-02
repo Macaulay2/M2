@@ -695,14 +695,6 @@ net Minus := x -> (
      then ("-", "(", net term, ")")
      else (if class term === Divide then "- " else "-", net term))
 
-dashes1 := n -> concatenate (n:"-")
-dashes2 := memoize dashes1
-dashes  := n -> if n <= 0 then "" else if n < 80 then dashes2 n else dashes1 n
-
-spaces1 := n -> concatenate n
-spaces2 := memoize spaces1
-spaces  := n -> if n <= 0 then "" else if n < 80 then spaces2 n else spaces1 n
-
 net Divide := x -> (
      top := net x#0;
      bot := net x#1;
@@ -735,13 +727,6 @@ net SparseMonomialVectorExpression := v -> (
 	       hold concatenate("<",toString i,">"))
 	  )
      )
-
-centerString = (wid,s) -> (
-     n := width s;
-     if n === wid then s
-     else (
-     	  w := (wid-n+1)//2;
-     	  horizontalJoin(spaces w,s,spaces(wid-w-n))))
 
 net Table := x -> (
      x = applyTable(toList x, net);

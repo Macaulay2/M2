@@ -2,6 +2,15 @@
 
 nonnull = x -> select(x, i -> i =!= null)
 nonempty = x -> select(x, i -> i =!= "")
+dashes  = n -> concatenate (n:"-")
+spaces  = n -> concatenate n
+
+centerString = (wid,s) -> (
+     n := width s;
+     if n === wid then s
+     else (
+     	  w := (wid-n+1)//2;
+     	  horizontalJoin(spaces w,s,spaces(wid-w-n))))
 
 assert = x -> (
      if class x =!= Boolean then error "'assert' expected true or false";

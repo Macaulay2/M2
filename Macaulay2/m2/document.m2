@@ -464,10 +464,10 @@ processExamplesLoop MarkUpList := x -> apply(x,processExamplesLoop)
 processExamplesLoop ExampleItem := x -> (
      ret := (
 	  if exampleResults#?exampleCounter
-	  then CODE exampleResults#exampleCounter
+	  then PRE exampleResults#exampleCounter
 	  else (
 	       if #exampleResults === exampleCounter then stderr << "--warning: example results terminate prematurely: " << currentExampleKey << endl;
-	       CODE concatenate("i", toString (exampleCounter+1), " : ",x)
+	       PRE concatenate("i", toString (exampleCounter+1), " : ",x)
 	       ));
      exampleCounter = exampleCounter + 1;
      ret)
@@ -658,7 +658,7 @@ makeDocBody Thing := key -> (
 	       then DIV {docBody}
 	       else DIV1 { SUBSECTION "Description", DIV {docBody} })))
 
-title := s -> (
+topheader := s -> (
      h := headline s;
      HEADER1 { formatDocumentTag s, if h =!= null then " -- ", h })
 
@@ -875,6 +875,8 @@ briefDocumentation Thing := x -> (
 
 ignoreDocumentationErrors = true
 
+page = (title,body) -> HTML { HEAD { TITLE title }, BODY body }
+
 help = method(SingleArgumentDispatch => true)
 help String := key -> (
      checkLoadDocumentation();
@@ -890,7 +892,7 @@ help String := key -> (
 	       else error("there is no documentation for '"|key|"'");
 	       b = ();
 	       );
-	  fixup DIV {title key, b, caveat key, seealso key, theMenu key}))
+	  fixup page(formatDocumentTag key, {topheader key, b, caveat key, seealso key, theMenu key})))
 
 binary := set binaryOperators
 prefix := set prefixOperators
@@ -1019,7 +1021,7 @@ help Symbol := S -> (
      currentHelpTag = makeDocumentTag S;
      a := smenu apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
      -- b := smenu documentableMethods s;
-     ret := fixup DIV { title S, synopsis S, makeDocBody S, op S,
+     ret := fixup DIV { topheader S, synopsis S, makeDocBody S, op S,
 	  if #a > 0 then DIV1 { SUBSECTION {"Functions with optional argument named ", toExternalString S, " :"}, a},
 -- 	  if #b > 0 then DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", toExternalString s, " :"}, b),
           caveat S, seealso S,
@@ -1040,7 +1042,7 @@ help Array := key -> (		    -- optional argument
      if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
      default := (options fn)#opt;
      fixup DIV {
-	  title key, synopsis key, makeDocBody key,
+	  topheader key, synopsis key, makeDocBody key,
 	  SUBSECTION "Further information", 
 	  UL {
 	       SPAN{ "Default value: ", if isDocumentableThing default and hasDocumentation default then TO {default} else TT toString default },
@@ -1054,7 +1056,7 @@ help Sequence := key -> (						    -- method key
      if key === () then return help "initial help";
      if null === lookup key then error("expected ", toString key, " to be a method");
      currentHelpTag = makeDocumentTag key;
-     ret := fixup DIV { title key, synopsis key, makeDocBody key, caveat key, sourcecode key, seealso key, theMenu key };
+     ret := fixup DIV { topheader key, synopsis key, makeDocBody key, caveat key, sourcecode key, seealso key, theMenu key };
      currentHelpTag = null;
      ret)
 

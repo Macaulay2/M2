@@ -630,14 +630,12 @@ document {
 document {
      Key => ANCHOR,
      Headline => "hypertext anchor",
-	Usage => "ANCHOR{u,p}",
-	Inputs => {
-		"u" => {"the name of the anchor"},
-		"p" => {"a phrase"}
-		},
-     TT "ANCHOR{u,p}", " encloses the phrase ", TT "p", " in a hypertext anchor
-     named ", TT "u", ".",
-     PARA{},
+     Usage => ///ANCHOR{"id"=>u,p}///,
+     Inputs => {
+	  "u" => {"the name of the anchor"},
+	  "p" => {"some hypertext"}
+	  },
+     Consequences => { { "When converted to ", TO "html", ", the phrase ", TT "p", " will be enclosed in a hypertext anchor named ", TT "u", "." } },
      SeeAlso => "hypertext"
      }
 
