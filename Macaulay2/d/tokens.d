@@ -554,6 +554,8 @@ export netFileClass := newbasictype();
 export stringClass := newtypeof(netClass);
 export booleanClass := newbasictype();
 export dictionaryClass := newbasictype();
+export localDictionaryClass := newtypeof(dictionaryClass);
+export globalDictionaryClass := newtypeof(dictionaryClass);
 export dbClass := newbasictype();
 
 export visibleListClass := newtypeof(basicListClass);

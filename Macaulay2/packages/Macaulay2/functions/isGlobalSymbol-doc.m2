@@ -4,17 +4,14 @@
 
 document { 
      Key => isGlobalSymbol,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Headline => "whether a global symbol with a given name exists",
+     Usage => "isGlobalSymbol s",
+     Inputs => { "s" => String },
+     Outputs => { Boolean => "whether a global symbol with the name contained in the string ", TT "s", " has been defined" },
+     "The search for the symbol runs through the dictionaries in the list ", TO "globalDictionaries", ".",
+     EXAMPLE lines ///
+	  isGlobalSymbol "res"
+	  isGlobalSymbol "resres"
+     ///,
+     SeeAlso => { "globalDictionaries", getGlobalSymbol }
      }

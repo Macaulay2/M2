@@ -30,8 +30,6 @@ mutableMatrix MutableMatrix := o -> (m) -> map(ring m, rawMutableMatrix(raw m, o
 
 matrix MutableMatrix := o -> m -> map(ring m, rawMatrix raw m)
 
-installAssignmentMethod(symbol "_",MutableMatrix, Sequence, (M,ij,val) -> (raw M)_ij = raw val)
-
 mutableZero = method(Options => {Dense => true})
 mutableZero(Ring,ZZ,ZZ) := o -> (R,nrows,ncols) -> 
   map(R,rawMutableMatrix(raw R,nrows,ncols,o.Dense))
@@ -54,13 +52,7 @@ MutableMatrix - MutableMatrix := (m,n) -> map(ring m, raw m - raw n)
 MutableMatrix * MutableMatrix := (m,n) -> map(ring m, raw m * raw n)
 RingElement * MutableMatrix := (f,n) -> map(ring f, raw f * raw n)
 
-assgn := method()
-assgn(RawMutableMatrix,ZZ,ZZ,RingElement) := (m,r,c,x) -> rawSetMatrixEntry(m,r,c,raw x)
-assgn(RawMutableMatrix,ZZ,ZZ,ZZ) := (m,r,c,x) -> rawSetMatrixEntry(m,r,c,raw x)
-assgn(RawMutableMatrix,ZZ,ZZ,QQ) := (m,r,c,x) -> rawSetMatrixEntry(m,r,c,raw x)
-assgn(RawMutableMatrix,ZZ,ZZ,RR) := (m,r,c,x) -> rawSetMatrixEntry(m,r,c,raw x)
-assgn(RawMutableMatrix,ZZ,ZZ,CC) := (m,r,c,x) -> rawSetMatrixEntry(m,r,c,raw x)
-installAssignmentMethod(symbol _, MutableMatrix, Sequence, (m,rc,x) -> ((r,c) -> assgn(raw m,r,c,x)) rc)
+installAssignmentMethod(symbol "_", MutableMatrix, Sequence, (M,ij,val) -> ((raw M)_ij = raw val; val))
 
 numRows = method()
 numRows(RawMutableMatrix) := (m) -> rawNumberOfRows m

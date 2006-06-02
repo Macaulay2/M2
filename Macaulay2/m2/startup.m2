@@ -144,7 +144,7 @@ if firstTime then (
 	  l := separate x;
 	  if l#-1 === "" then drop(l,-1) else l);
 
-     isAbsoluteExecPath = filename -> (
+     isFixedExecPath = filename -> (
 	  -- this is the way execvp(3) decides whether to search the path for an executable
 	  match("/", filename)
 	  );
@@ -211,7 +211,7 @@ getRealPath := fn -> (					    -- use this later if realpath doesn't work
      fn)
 
 pathsearch := e -> (
-     if not isAbsoluteExecPath e then (
+     if not isFixedExecPath e then (
 	  -- we search the path, but we don't do it the same way execvp does, too bad.
 	  PATH := separate(":",if "" =!= getenv "PATH" then getenv "PATH" else ".:/bin:/usr/bin");
 	  PATH = apply(PATH, x -> if x === "" then "." else x);

@@ -613,23 +613,6 @@ document {
      }
 
 document {
-     Key => (variety, CoherentSheaf),
-     Headline => "get the variety under a sheaf",
-     TT "variety F", " -- produce the variety over which a coherent sheaf is defined.",
-     PARA{},
-     EXAMPLE {
-	  "X = Proj(QQ[x,y,z])",
-	  "OO_X(3)",
-	  "variety oo"
-	  }
-     }
-
-document {
-     Key => variety,
-     Headline => "get the variety"
-     }
-
-document {
      Key => (module, CoherentSheaf),
      Headline => "get the module defining a coherent sheaf",
      TT "module F", " -- produce the module from which the coherent sheaf ", TT "F", " was defined.",

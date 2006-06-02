@@ -16,7 +16,7 @@ options Package := p -> p.Options
 toString Dictionary := d -> (
      if ReverseDictionary#?d then return toString ReverseDictionary#d;
      if PrintNames#?d then return PrintNames#d;
-     if length d == 0 then "Dictionary{}" else "Dictionary{..." | toString length d | "...}"
+     toString class d | if length d == 0 then "{}" else "{..." | toString length d | "...}"
      )
 
 installMethod(GlobalAssignHook,Package,globalAssignFunction)

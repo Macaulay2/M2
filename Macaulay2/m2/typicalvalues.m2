@@ -19,19 +19,16 @@ installMethod(symbol #?, HashTable, Thing, Boolean => dummy)
 installMethod(symbol #?, Set, Thing, Boolean => dummy)
 installMethod(symbol #?, Database, String, Boolean => dummy)
 installMethod(symbol #?, BasicList, ZZ, Boolean => dummy)
-installMethod(symbol #?, Sequence, ZZ, Boolean => dummy)
 installMethod(symbol #?, String, ZZ, Boolean => dummy)
 installMethod(symbol #, HashTable, Thing, Thing => dummy)
 installMethod(symbol #, Database, String, String => dummy)
 installMethod(symbol #, String, ZZ, Thing => dummy)
 installMethod(symbol #, BasicList, ZZ, Thing => dummy)
-installMethod(symbol #, Sequence, ZZ, Thing => dummy)
 
 installMethod(symbol #, File, ZZ => dummy)
 installMethod(symbol #, Set, ZZ => dummy)
 installMethod(symbol #, HashTable, ZZ => dummy)
 installMethod(symbol #, BasicList, ZZ => dummy)
-installMethod(symbol #, Sequence, ZZ => dummy)
 installMethod(symbol #, String, ZZ => dummy)
 
 installMethod(symbol <, Thing, Thing, Boolean => dummy)
@@ -111,7 +108,7 @@ select(BasicList,Function) := BasicList => select
 select(HashTable,Function) := HashTable => select
 select(ZZ,BasicList,Function) := BasicList => select
 select(ZZ,HashTable,Function) := HashTable => select
-set BasicList := set Sequence := Set => set
+set BasicList := Set => set
 tally BasicList := Tally => tally
 splice BasicList := BasicList => splice
 typicalValues#stack = Net
@@ -121,7 +118,7 @@ substring(String,ZZ,ZZ) := String => substring
 substring(ZZ,String) := String => substring
 substring(ZZ,ZZ,String) := String => substring
 toList HashTable := toList Set := toList BasicList := List => toList
-toSequence BasicList := toList List := Sequence => toSequence
+toSequence BasicList := Sequence => toSequence
 xor(ZZ,ZZ) := ZZ => xor
 ascii String := List => ascii
 ascii List := String => ascii

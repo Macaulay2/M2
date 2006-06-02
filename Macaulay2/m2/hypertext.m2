@@ -124,16 +124,10 @@ vert := (op,post) -> x -> wrapAndStack post select( -- wrapping gets done by the
 	  op,
 	  i -> horizontalJoin(op \ i)),
      n -> width n > 0)
-net DIV := (vert(net,x -> between("\n",x))) @@ noopts -- doublespacing
-info DIV := (vert(info,x -> between("",x))) @@ noopts
-net PARA := vert(net,x -> between("\n",x)) -- doublespacing
-info PARA := vert(info,x -> between("",x))
-info DIV1 := net DIV1 := (vert(net,identity)) @@ noopts				    -- singlespacing
-info LI := net LI := (vert(net,identity)) @@ noopts				    -- singlespacing
+net PARA := net DIV := (vert(net,x -> between("",x))) @@ noopts -- doublespacing
+info PARA := info DIV := (vert(info,x -> x)) @@ noopts
+info LI := net LI := info DIV1 := net DIV1 := (vert(net,identity)) @@ noopts				    -- singlespacing
 
-html BR := x -> ///
-<br>
-///
 tex  BR := x -> ///
 \hfil\break
 ///
@@ -341,7 +335,7 @@ info TOH := x -> concatenate(DocumentTag.FormattedKey x#0, if x#?1 then x#1, com
 info IMG := net IMG := tex IMG  := x -> ""
 info HREF := net HREF := x -> net last x
 
-scan( (net,html,tex), op -> op TOH := x -> op SPAN{ new TO from x, commentize headline x#0 } )
+scan( (net,html,tex), op -> op TOH := x -> op SPAN{ new TO from toList x, commentize headline x#0 } )
 
 info LITERAL := tex LITERAL := net LITERAL := x -> ""
 html LITERAL := x -> concatenate x
