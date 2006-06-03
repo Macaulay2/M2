@@ -6,7 +6,6 @@ export (
 	symbol minimalPresentationMap,
 	symbol minimalPresentationMapInv,
 	symbol FollowLinks,
-        symbol poly,
 	symbol cacheValue,
 	symbol stashValue,
 	symbol addHook,
