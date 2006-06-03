@@ -732,10 +732,10 @@ export fchmod(o:file,mode:int):int := (
      0);
 
 lastCharWritten(o:file):int := if o.outindex > 0 then int(o.outbuffer.(o.outindex-1)) else o.lastCharOut;
-atEndOfLine(o:file):bool := ( c := lastCharWritten(o); c == int('\n') || c == -1);
+export atEndOfLine(o:file):bool := ( c := lastCharWritten(o); c == int('\n') || c == -1);
 export endLine(o:file):void := (
      if !atEndOfLine(o) || !atEndOfLine(stdout) then o << '\n';
-     -- usually o == stderr == stdout
+     -- usually o == stderr != stdout
      -- we might put a needless one out in the case where o.outfd == stdout.outfd, oh well.
      );
 
