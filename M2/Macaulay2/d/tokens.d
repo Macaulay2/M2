@@ -283,7 +283,10 @@ export Database := {
      isopen:bool,
      mutable:bool
      };
-
+export SpecialExpr := {					    -- this allows specialization of arbitrary types, like functions
+     class:HashTable,	       	    	      	   	    -- the declared class of e, a specialization of the "real" class of e
+     e:Expr
+     };
 export Boolean := {v:bool};
 export Nothing := {nothing:void};
 export Real := {v:double};
@@ -323,6 +326,7 @@ export Expr := (
      RawRingMap or
      Real or
      Sequence or
+     SpecialExpr or
      SymbolClosure or
      file or
      string

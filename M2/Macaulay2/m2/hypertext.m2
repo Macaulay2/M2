@@ -4,17 +4,12 @@
 -- html output
 -----------------------------------------------------------------------------
 
-htmlLiteralTable := new MutableHashTable
-scan(characters ascii(0 .. 255), c -> htmlLiteralTable#c = c)
-htmlLiteralTable#"\"" = "&quot;"
-htmlLiteralTable#"<" = "&lt;"
-htmlLiteralTable#"&" = "&amp;"
-htmlLiteralTable#">" = "&gt;"
-htmlLiteral = s -> concatenate apply(characters s, c -> htmlLiteralTable#c)
+htmlLiteral = s -> if not match("<|&|]]>",s) then s else (
+     s = replace("&","&amp;",s);			    -- do this one first
+     s = replace("<","&lt;",s);
+     s = replace("]]>","]]&gt;",s);
+     s )
 
-htmlExtraLiteralTable := copy htmlLiteralTable
-htmlExtraLiteralTable#" " = "&nbsp;"
-htmlExtraLiteral = s -> concatenate apply(characters s, c -> htmlExtraLiteralTable#c)
 -----------------------------------------------------------------------------
 texLiteralTable := new MutableHashTable
     scan(0 .. 255, c -> texLiteralTable#(ascii{c}) = concatenate(///{\char ///, toString c, "}"))
@@ -223,7 +218,7 @@ texMath TEX := tex TEX := x -> concatenate toList x
 info PRE := net PRE := x -> net concatenate x
 html PRE   := x -> concatenate( 
      "<pre>", 
-     demark(newline, apply(lines concatenate x, htmlExtraLiteral)),
+     demark(newline, apply(lines concatenate x, htmlLiteral)),
      "</pre>\n"
      )
 
@@ -417,6 +412,9 @@ info MENU := r -> (
 		    t)));
      printWidth = printWidth + #pre;
      stack join({"* Menu:",""}, ret))
+
+html COMMENT := x -> concatenate("<!--",x,"-->")
+html CDATA := x -> concatenate("<![CDATA[",x,"]]>")
 
 -- the main idea of these comparisons is so sorting will sort by the way things will print:
 TO ? TO := TO ? TOH := TOH ? TO := TOH ? TOH := (x,y) -> x#0 ? y#0

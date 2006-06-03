@@ -42,7 +42,7 @@ toupper := new HashTable from apply(characters lower,characters upper,identity)
 toLower = s -> concatenate apply(characters s, c -> if tolower#?c then tolower#c else c)
 toUpper = s -> concatenate apply(characters s, c -> if toupper#?c then toupper#c else c)
 
-block := BlockMix - set { "ins" } + set { "body", "tr", "li" } 
+block := BlockMix - set { "ins" } + set { "body", "tr", "li", "head", "html", "title" } 
 
 htmlMarkUpType := s -> (
      on := "<" | s | ">";
@@ -138,6 +138,8 @@ LI         = new MarkUpType of MarkUpList
 EM         = new MarkUpType of MarkUpList
 BOLD       = withQname_"b" new MarkUpType of MarkUpList
 CODE       = new MarkUpType of MarkUpList
+COMMENT    = new MarkUpType of MarkUpList
+CDATA      = new MarkUpType of MarkUpList
 
 HREF       = withQname_"a" new IntermediateMarkUpType of MarkUpList
 new HREF from List := (HREF,x) -> (

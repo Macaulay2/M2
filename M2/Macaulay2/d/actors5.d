@@ -577,6 +577,11 @@ examine(e:Expr):Expr := (
 	  << " hash: " << s.hash << endl
 	  << " mutable: " << s.mutable << endl;
 	  nullE)
+     is s:SpecialExpr do (
+	  stdout
+	  << "special expr:" << endl;
+	  examine(s.e);
+	  nullE)
      else WrongArg("(), a function, a symbol, or a basic list"));
 setupfun("examine",examine);
 
@@ -1528,6 +1533,7 @@ frames(e:Expr):Expr := (
      is fc:FunctionClosure do Expr(listFrames(fc.frame))
      is cfc:CompiledFunctionClosure do Expr(list(listFrame(cfc.env)))
      is CompiledFunction do Expr(list(listFrame(emptySequence)))
+     is s:SpecialExpr do frames(s.e)
      else WrongArg("a function, a symbol, or ()"));
 setupfun("frames", frames);
 
@@ -1542,6 +1548,7 @@ localDictionaries(e:Expr):Expr := (
      is x:FunctionClosure do localDictionaries(x.frame)
      is CompiledFunctionClosure do localDictionaries(emptyFrame)	    -- some values are there, but no symbols
      is CompiledFunction do localDictionaries(emptyFrame)			    -- no values or symbols are there
+     is s:SpecialExpr do localDictionaries(s.e)
      else WrongArg("a function, a symbol, or ()"));
 setupfun("localDictionaries", localDictionaries);
 
@@ -1778,6 +1785,7 @@ functionBody(e:Expr):Expr := (
      when e is f:FunctionClosure do Expr(f.model)
      is f:CompiledFunction do e
      is f:CompiledFunctionClosure do e
+     is s:SpecialExpr do functionBody(s.e)
      else WrongArg("a function")
      );
 setupfun("functionBody",functionBody);

@@ -220,11 +220,11 @@ transform(e:Expr,class:HashTable,returned:bool):Expr := (
      when e
      is Error do e
      is o:HashTable do (
-     	  basicType := basictype(class);
+	  basicType := basictype(class);
 	  if basicType == hashTableClass then (
 	       if o.class == class then e
 	       else (
-	       	    mutable := ancestor(class,mutableHashTableClass);
+		    mutable := ancestor(class,mutableHashTableClass);
 		    x := HashTable(
 			 if mutable || o.mutable then copy(o.table) else o.table,
 			 class, o.parent, o.numEntries, 0, mutable);
@@ -237,28 +237,28 @@ transform(e:Expr,class:HashTable,returned:bool):Expr := (
 	  else if basicType == basicListClass then expected("a list",returned)
 	  else wrongTarget())
      is o:List do (
-     	  basicType := basictype(class);
-     	  if basicType == basicListClass then (
+	  basicType := basictype(class);
+	  if basicType == basicListClass then (
 	       if o.class == class then e
 	       else if class == sequenceClass then Expr(o.v)
 	       else (
-	       	    mutable := ancestor(class,mutableListClass);
+		    mutable := ancestor(class,mutableListClass);
 		    Expr(
 			 sethash(
 			      List(class,
-			      	   if mutable || o.mutable then copy(o.v) else o.v,
-			      	   0,false),
+				   if mutable || o.mutable then copy(o.v) else o.v,
+				   0,false),
 			      mutable))))
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
      is v:Sequence do (
-     	  basicType := basictype(class);
-     	  if basicType == basicListClass then (
+	  basicType := basictype(class);
+	  if basicType == basicListClass then (
 	       if class == sequenceClass then Expr(v)
 	       else (
-	       	    mutable := ancestor(class,mutableListClass);
-	       	    Expr( sethash( List(class, if mutable then copy(v) else v, 0,false), mutable))))
+		    mutable := ancestor(class,mutableListClass);
+		    Expr( sethash( List(class, if mutable then copy(v) else v, 0,false), mutable))))
 	  else if basicType == complexClass then (
 	       if length(v) != 2 then WrongNumArgs(2)
 	       else (
@@ -269,14 +269,21 @@ transform(e:Expr,class:HashTable,returned:bool):Expr := (
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
-     else if Class(e) == class then e
+     is s:SpecialExpr do if s.class == class then e else transform(s.e,class,returned)
      else (
-	  basicType := basictype(class);
-	  expected(
-	       if basicType == basicListClass then "a list"
-	       else if basicType == hashTableClass then "a hash table"
-	       else "a list or hash table",
-	       returned)));
+	  c := Class(e);
+	  if c == class then e
+	  else if !ancestor(class,c) 
+	  then buildErrorPacket("expected new class to be a specialization of the old one")
+	  else Expr(SpecialExpr(class,e)))
+-- 	  (
+-- 	  basicType := basictype(class);
+-- 	  expected(
+-- 	       if basicType == basicListClass then "a list"
+-- 	       else if basicType == hashTableClass then "a hash table"
+-- 	       else "a list or hash table",
+-- 	       returned))
+     );
 newclassfun(e:Expr):Expr := (
      when e
      is a:Sequence do
@@ -680,6 +687,7 @@ disassemble(e:Expr):Expr := (
      is f:FunctionClosure do Expr(tostring(Code(f.model)))
      is f:functionCode do Expr(tostring(Code(f)))
      is c:CodeClosure do Expr(tostring(c.code))
+     is s:SpecialExpr do disassemble(s.e)
      else WrongArg("pseudocode or a function closure derived from Macaulay 2 code")
      );
 setupfun("disassemble", disassemble);
@@ -687,6 +695,7 @@ setupfun("disassemble", disassemble);
 pseudocode(e:Expr):Expr := (
      when e
      is f:FunctionClosure do Expr(CodeClosure(f.frame, Code(f.model)))
+     is s:SpecialExpr do pseudocode(s.e)
      else WrongArg("a function closure derived from Macaulay 2 code")
      );
 setupfun("pseudocode", pseudocode);

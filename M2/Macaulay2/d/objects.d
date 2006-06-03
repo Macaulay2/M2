@@ -306,6 +306,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  else False
 	  )
      is f:functionCode do False
+     is s:SpecialExpr do when rhs is t:SpecialExpr do if s.class == t.class && equal(s.e,t.e) == True then True else False else False
      is x:RawRingMap do (
 	  when rhs
 	  is y:RawRingMap do toExpr(Ccode(bool, "IM2_RingMap_is_equal((RingMap *)",x,",(RingMap *)",y,")"))
@@ -427,7 +428,11 @@ bucketsfun(e:Expr):Expr := (
 		    provide list(s))))
      else WrongArg("a hash table"));
 setupfun("buckets",bucketsfun);
-export Parent(e:Expr):HashTable := when e is obj:HashTable do obj.parent else nothingClass;
+export Parent(e:Expr):HashTable := (
+     when e
+     is obj:HashTable do obj.parent
+     is s:SpecialExpr do Parent(s.e)
+     else nothingClass);
 export parentfun(e:Expr):Expr := Expr(Parent(e));
 setupfun("parent",parentfun);
 
@@ -459,6 +464,7 @@ export Class(e:Expr):HashTable := (
      is RawComputation do rawComputationClass
      is Nothing do nothingClass
      is Database do dbClass
+     is e:SpecialExpr do e.class
      is Boolean do booleanClass
      is RawMonomial do rawMonomialClass
      is RawMonomialOrdering do rawMonomialOrderingClass

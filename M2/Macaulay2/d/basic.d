@@ -62,6 +62,7 @@ export hash(e:Expr):int := (
 	  )
      is x:RawRingElement do 12345
      is x:RawMonomialIdeal do 12346
+     is s:SpecialExpr do s.class.hash + 221 * hash(s.e)
      is x:CompiledFunction do x.hash
      is x:CompiledFunctionClosure do x.hash
      );

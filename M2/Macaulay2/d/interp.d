@@ -333,6 +333,7 @@ commandInterpreter(e:Expr):Expr := (
        is x:FunctionClosure do commandInterpreter(x.frame)
        is cfc:CompiledFunctionClosure do commandInterpreter(emptyFrame)	    -- some values are there, but no symbols
        is CompiledFunction do commandInterpreter(emptyFrame)		    -- no values or symbols are there
+       is s:SpecialExpr do commandInterpreter(s.e)
        else WrongArg("a function, symbol, dictionary, pseudocode, or ()");
      decrementInterpreterDepth();
      setLoadDepth(saveLoadDepth);
