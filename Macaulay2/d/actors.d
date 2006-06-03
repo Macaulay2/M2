@@ -845,17 +845,17 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 	       else buildErrorPacket("expected right hand parameter to be a hash table or sequence"))
 	  else buildErrorPacket("expected adjacency operator ' ' on left"))
      else buildErrorPacket("expected operator to be a symbol"));
-installMethodFun(args:CodeSequence):Expr := (
-     a := eval(args.1);
-     when a 
-     is Error do a
-     is CompiledFunction do installFun2(a,args)
-     is CompiledFunctionClosure do installFun2(a,args)
-     is FunctionClosure do installFun2(a,args)
+installMethodFun2(arg1:Expr,args:CodeSequence):Expr := (
+     when arg1 
+     is Error do arg1
+     is CompiledFunction do installFun2(arg1,args)
+     is CompiledFunctionClosure do installFun2(arg1,args)
+     is FunctionClosure do installFun2(arg1,args)
+     is s:SpecialExpr do installMethodFun2(s.e,args)
      is aa:HashTable do (
 	  if aa.parent == nothingClass
 	  then (
-	       installFun2(a,args)	  -- handle, e.g., Ext(ZZ, Module, Module) := (i,M,N) -> ...
+	       installFun2(arg1,args)	  -- handle, e.g., Ext(ZZ, Module, Module) := (i,M,N) -> ...
 	       )
 	  else (
 	       b := eval(args.2);
@@ -864,12 +864,12 @@ installMethodFun(args:CodeSequence):Expr := (
 		    opr := eval(args.0);
 		    when opr is Error do opr
 		    else installMethod(opr,aa,bb,eval(args.3)))
-	       else buildErrorPacket("expected right hand parameter to be a hash table")))
-     else buildErrorPacket("expected left hand parameter to be a function, type, or a hash table"));
+	       else buildErrorPacket("expected right hand parameter to be arg1 hash table")))
+     else buildErrorPacket("expected left hand parameter to be arg1 function, type, or arg1 hash table"));
+installMethodFun(args:CodeSequence):Expr := installMethodFun2(eval(args.1),args);
 InstallMethodFun = installMethodFun;
 
 mess1 := "objects on left hand side of assignment are not types (use ':=' instead?)";
-
 
 -- this new version just looks up a method for user code, which *could* do the same thing
 installValueFun(args:CodeSequence):Expr := (

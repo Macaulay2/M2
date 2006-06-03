@@ -600,6 +600,7 @@ installIt(h:HashTable,key:Expr,value:Expr):Expr := (
      is FunctionClosure do storeInHashTable(h,key,value)
      is CompiledFunction do storeInHashTable(h,key,value)
      is CompiledFunctionClosure do storeInHashTable(h,key,value)
+     is s:SpecialExpr do if ancestor(s.class,functionClass) then storeInHashTable(h,key,value) else buildErrorPacket(messx)
      is x:List do (
 	  if x.class == optionClass && length(x.v) == 2 then (
 	       storeInHashTable(typicalValues,key,x.v.0);
@@ -623,6 +624,7 @@ export installMethod(meth:Expr,value:Expr):Expr := (
      is FunctionClosure do storeInHashTable(NullaryMethods,Expr(Sequence(meth)),value)
      is CompiledFunction do storeInHashTable(NullaryMethods,Expr(Sequence(meth)),value)
      is CompiledFunctionClosure do storeInHashTable(NullaryMethods,Expr(Sequence(meth)),value)
+     is s:SpecialExpr do if ancestor(s.class,functionClass) then storeInHashTable(NullaryMethods,Expr(Sequence(meth)),value) else buildErrorPacket(messx)
      is x:List do (
 	  if x.class == optionClass && length(x.v) == 2 then (
 	       storeInHashTable(typicalValues,Expr(Sequence(meth)),x.v.0);
@@ -637,6 +639,7 @@ export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (
      is FunctionClosure do storeInHashTable(s,meth,value)
      is CompiledFunction do storeInHashTable(s,meth,value)
      is CompiledFunctionClosure do storeInHashTable(s,meth,value)
+     is spec:SpecialExpr do if ancestor(s.class,functionClass) then storeInHashTable(s,meth,spec.e) else buildErrorPacket(messx)
      is x:List do (
 	  if x.class == optionClass && length(x.v) == 2 then (
 	       storeInHashTable(typicalValues,Expr(Sequence(meth,Expr(s))),x.v.0);
@@ -918,10 +921,13 @@ export lookupfun(e:Expr):Expr := (
      else nullE
      else nullE
      else nullE
-     is SymbolClosure do e		      -- why do we want this??
-     is CompiledFunctionClosure do e	      -- why do we want this??
-     is FunctionClosure do e		      -- why do we want this??
-     is CompiledFunction do e		      -- why do we want this??
+     -- these next ones are sort of the 0-argument case of lookup
+     is CompiledFunctionClosure do e
+     is FunctionClosure do e
+     is CompiledFunction do e
+     is s:SpecialExpr do if ancestor(s.class,functionClass) then e else nullE
+     -- but let's see if we can do without this one, since there aren't any nullary operators
+     -- is SymbolClosure do e
      else nullE);
 setupfun("lookup",lookupfun);	  
 

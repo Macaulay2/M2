@@ -368,13 +368,16 @@ The symbol 'end' entered into the command interpreter, will end the
 current input stream or input file.  It can also be used to exit the
 debugger.
 
-There is a new hash table called 'globalAssignmentHooks' which is
-consulted just before an assignment to a global variable is about to
-take place.  The key used is the global symbol, and the value should
-be a function or a list of functions, each of which takes two
-arguments (SYM,VAL), where SYM is the symbol and VAL is the new value
-about to be assigned.  The value of the function is ignored: only the
-side effects are useful.
+There is a new hash table called 'globalAssignmentHooks' which is consulted
+just before an assignment to a global variable is about to take place.  The key
+used is the global symbol, and the value should be a function or a list of
+functions, each of which takes two arguments (SYM,VAL), where SYM is the symbol
+and VAL is the new value about to be assigned.  The value of the function is
+ignored: only the side effects are useful.  It is initially populated with
+internal hooks for these variables: backtrace, debuggerHook, debuggingMode,
+debugLevel engineDebugLevel, errorDepth, gbTrace, globalDictionaries,
+lineNumber, loadDepth notify, printingPrecision, printWidth, recursionLimit,
+stopIfError.
 
 The function 'loadDepth' has been replaced by a writable variable of
 the same name.  Just set it to change it, and the new value will be

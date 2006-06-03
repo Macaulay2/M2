@@ -662,26 +662,6 @@ unSingleton(e:Expr):Expr := (
      else e);
 setupfun("unsequence",unSingleton);
 
-sameFunctionBody(e:Expr):Expr := (
-     when e is v:Sequence do
-     if length(v) == 2 then
-     when v.0 
-     is f:FunctionClosure do (
-	  when v.1
-	  is g:FunctionClosure do toExpr(f.model == g.model)
-	  else False
-	  )
-     is f:CompiledFunctionClosure do (
-	  when v.1
-	  is g:CompiledFunctionClosure do toExpr(f.fn == g.fn)
-	  else False
-	  )
-     is f:CompiledFunction do toExpr(v.0 == v.1)
-     else False
-     else WrongNumArgs(2)
-     else WrongNumArgs(2));
-setupfun("sameFunctionBody", sameFunctionBody);
-
 disassemble(e:Expr):Expr := (
      when e
      is f:FunctionClosure do Expr(tostring(Code(f.model)))
