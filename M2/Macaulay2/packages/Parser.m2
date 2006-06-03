@@ -6,7 +6,7 @@ newPackage ( "Parser",
      Version => "0.9",
      Headline => "a framework for creating recursive descent parsers",
      DebuggingMode => true
-     }
+     )
 
 -- a parser, p, is a type of function 
 -- the input stream is divided into tokens, t
