@@ -19,7 +19,7 @@ parse = (parser,string) -> (
 deadP = Parser (c -> null)
 doneP = val -> new Parser from (c -> if c === null then val)
 nullP = doneP nil
-orP = x -> (
+Parser | Parser := orP = x -> (
      assert( x =!= null );
      if instance(x, Function) then return x;
      if #x == 0 then return deadP;
@@ -27,8 +27,7 @@ orP = x -> (
 	  if c === null then return for p in x do if (t := p null) =!= null then return t;
 	  y := select(apply(x, p -> p c), p -> p =!= null);
 	  if #y > 0 then orP y)))
-Parser | Parser := orP
-andP = x -> (
+Parser * Parser := andP = x -> (
      assert( x =!= null );
      if instance(x, Function) then return x;
      if #x == 0 then return nullP;
@@ -45,8 +44,7 @@ andP = x -> (
 	       if val === null then return;
 	       if #future > 0 then (f(append(past,val), future#0, drop(future,1))) c)));
      f((),x#0,drop(x,1)))
-Parser * Parser := andP
-repP = p -> (
+* Parser := p -> (
      assert( p =!= null );
      local g;
      f := (past,current) -> new Parser from (c -> (
@@ -61,7 +59,6 @@ repP = p -> (
 	       	    if q =!= null then return f(past,q);
 	       	    if (val = current null) =!= null then (f(append(past,val),)) c))));
      f((),))
-+ Parser := repP
 munge = fun -> f := parser -> new Parser from (c -> ( p -> if p =!= null then (if c === null then fun else f) p ) parser c)
 futureP = parserSymbol -> Parser (c -> (value parserSymbol) c)
 alpha := set characters "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
@@ -73,19 +70,19 @@ natNumberP = Parser ( f := n -> new Parser from (c -> if c === null then n else 
 constP = s -> ( f := n -> new Parser from (c -> if c === null then if n === #s then s else null else if s#?n and c === s#n then f(n+1) else null)) 0
 optP = parser -> parser | nullP
 ifNone = default -> parser -> parser | doneP default
-repParser1 = parser -> parser * +parser
++ Parser := parser -> parser * *parser
 optSignP = Parser(c -> if c === null then 1 else if c === "-" then doneP(-1) else if c === "+" then doneP 1)
 integerP = (munge times) (optSignP * natNumberP)
 ratNumberP = (munge ((num,sl,den) -> num/den)) andP(integerP,constP "/",natNumberP)
-listP = comma -> parser -> (munge splice) (parser * repP (munge last) (constP comma * parser))
+listP = comma -> parser -> (munge splice) (parser * * (munge last) (constP comma * parser))
 variableP = (munge value) symbolP
 intP = natNumberP | variableP
 subscriptP = (munge ((lb,x,rb) -> x)) andP( constP "[", (munge unsequence) (listP ",") intP, constP "]" )
 ringVariableP = (munge ((x,n) -> if n === nil then value x else x_n)) (symbolP * optP subscriptP)
-numberP = orP(integerP,ratNumberP)
-powerP = (munge ((x,n) -> if n === nil then x else x^n)) (orP(futureP parenExprP,ringVariableP) * optP natNumberP)
-monomialP = (munge (times @@ deepSplice)) (optSignP * (numberP * repP powerP | repParser1 powerP ))
-polyP = (munge (plus @@ deepSplice)) repParser1 monomialP | doneP 0
+numberP = integerP | ratNumberP
+powerP = (munge ((x,n) -> if n === nil then x else x^n)) ((futureP parenExprP | ringVariableP) * optP natNumberP)
+monomialP = (munge (times @@ deepSplice)) (optSignP * (numberP * *powerP | +powerP ))
+polyP = (munge (plus @@ deepSplice)) (+monomialP) | doneP 0
 parenExprP = (munge ((lp,x,rp) -> x)) andP(constP "(", futureP parenExprP | polyP, constP ")")
 listPolyP = (munge toList) (listP ",") polyP
 arrayPolyP = (munge toList) (listP ";") listPolyP
