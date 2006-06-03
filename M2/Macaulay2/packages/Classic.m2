@@ -10,6 +10,8 @@ newPackage ( "Classic",
 
 needsPackage "Parsing"
 
+export ClassicFunction ; ClassicFunction = type of FunctionClosure ; package ClassicFunction := f -> Classic
+
 symbolP = (munge (x -> ( if not isGlobalSymbol x then error("symbol ",x," undefined"); getGlobalSymbol x ))) letterParser
 constP = s -> ( f := n -> new Parser from (c -> if c === null then if n === #s then s else null else if s#?n and c === s#n then f(n+1) else null)) 0
 optP = parser -> parser | nullParser
@@ -29,7 +31,7 @@ polyP = (munge (plus @@ deepSplice)) (+monomialP) | terminalParser 0
 parenExprP = (munge ((lp,x,rp) -> x)) andP(constP "(", futureParser parenExprP | polyP, constP ")")
 listPolyP = (munge toList) (listP ",") polyP
 arrayPolyP = (munge toList) (listP ";") listPolyP
-export poly ; poly = method()
+export poly ; poly = new ClassicFunction from method()
 poly String :=  polyP ++ Analyzer#"non-space characters"
 Ideal.Classic = listPolyP ++ Analyzer#"non-space characters"
 ideal String := ideal @@ Ideal.Classic

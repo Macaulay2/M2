@@ -936,11 +936,13 @@ newmethod123c(e:Expr):Expr := (
 	       is CompiledFunction do nothing
 	       is CompiledFunctionClosure do nothing
 	       is FunctionClosure do nothing
+	       is s:SpecialExpr do if ancestor(s.class,functionClass) then nothing else return WrongArg(1,"a function")
 	       else return WrongArg(1,"a function");
 	       when env.1
 	       is CompiledFunction do nothing
 	       is CompiledFunctionClosure do nothing
 	       is FunctionClosure do nothing
+	       is s:SpecialExpr do if ancestor(s.class,functionClass) then nothing else return WrongArg(2,"a function")
 	       else return WrongArg(2,"a function");
 	       when env.2 is u:List do (
 		    useClass := u.v;
@@ -1515,6 +1517,7 @@ frame(e:Expr):Expr := (
      is fc:FunctionClosure do Expr(listFrame(fc.frame))
      is cfc:CompiledFunctionClosure do Expr(listFrame(cfc.env))
      is CompiledFunction do Expr(listFrame(emptySequence))
+     is s:SpecialExpr do frame(s.e)
      else WrongNumArgs(1,2));
 setupfun("frame", frame);
 
@@ -1667,21 +1670,15 @@ export setstopIfError(b:bool):void := (
      stopIfError = b;
      setGlobalVariable(stopIfErrorS,toExpr(b));
      );
-msg := "global assignment hook encountered unknown symbol/value combination";
+msg := "internal assignment hook encountered unknown symbol/value combination";
 store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
      when e
      is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
 	  sym := s.0;
-	  when s.1
-	  is CompiledFunction do (
+	  if ancestor(Class(s.1),functionClass) then (
 	       if sym === debuggerHookS then (debuggerHook = s.1; e)
 	       else buildErrorPacket(msg))
-	  is CompiledFunctionClosure do (
-	       if sym === debuggerHookS then (debuggerHook = s.1; e)
-	       else buildErrorPacket(msg))
-	  is FunctionClosure do (
-	       if sym === debuggerHookS then (debuggerHook = s.1; e)
-	       else buildErrorPacket(msg))
+	  else when s.1
 	  is Nothing do (
 	       if sym === debuggerHookS then (debuggerHook = s.1; e)
 	       else buildErrorPacket(msg))
@@ -1692,8 +1689,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	       else if sym === backtraceS then (backtrace = n; e)
 	       else if sym === notifyS then (notify = n; e)
 	       else buildErrorPacket(msg))
-	  is i:Integer do 
-	  if !isInt(i) then buildErrorPacket(msg)
+	  is i:Integer do if !isInt(i) then buildErrorPacket(msg)
 	  else (
 	       n := toInt(i);
 	       if sym === loadDepthS then (loadDepth = n; e)

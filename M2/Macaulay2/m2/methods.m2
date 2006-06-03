@@ -287,13 +287,8 @@ options     Ring := x -> null
 options Sequence := s -> if lookup s =!= null then options lookup s
   optionFunction := {} >> () -> ()
 
--- new function 'sameFunctionBody', tells whether two functions are perhaps different
--- closures of the same function body.
-
 -- this works for any function created with ">>", not just with "method"!
-options Function := OptionTable => function -> (
-     if sameFunctionBody(function, optionFunction) then first frame function
-     else null)
+options Function := OptionTable => function -> if functionBody function === functionBody optionFunction then first frame function
 
 computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
      if not M#?Name or not goodEnough(M#Name#0,options) 

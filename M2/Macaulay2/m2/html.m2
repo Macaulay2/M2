@@ -494,7 +494,7 @@ installPackage String := opts -> pkg -> (
 
 dispatcherMethod := m -> m#-1 === Sequence and (
      f := lookup m;
-     any(dispatcherFunctions, g -> sameFunctionBody(f,g)))
+     any(dispatcherFunctions, g -> functionBody f === functionBody g))
 
 installPackage Package := opts -> pkg -> (
      ignoreDocumentationErrors = opts.IgnoreDocumentationErrors;
