@@ -813,6 +813,7 @@ tostringfun(e:Expr):Expr := (
      is Sequence do Expr("<<a sequence>>")
      is HashTable do Expr("<<a hash table>>")
      is List do Expr("<<a list>>")
+     is s:SpecialExpr do tostringfun(s.e)
      is x:RawMonomial do Expr(Ccode(string, "(string)IM2_Monomial_to_string((Monomial*)",x,")" ))
      is x:RawFreeModule do Expr(Ccode(string, "(string)IM2_FreeModule_to_string((FreeModule*)",x,")" ))
      is x:RawMatrix do Expr(Ccode(string, "(string)IM2_Matrix_to_string((Matrix*)",x,")" ))
@@ -1122,6 +1123,7 @@ locate(e:Expr):Expr := (
 	  locate0();
 	  locate(c.code);
 	  locate1())
+     is s:SpecialExpr do locate(s.e)
      is f:FunctionClosure do (
 	  locate0();
 	  locate(f.model.arrow);

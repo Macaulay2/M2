@@ -36,6 +36,7 @@ export recursionLimit := 300;
 ----------------------------------------------------------------------------------------
 -- a forward reference: we have many mutually recursive functions in this file, too bad!
 export eval(c:Code):Expr;
+export applyEE(f:Expr,e:Expr):Expr;
 export evalAllButTail(c:Code):Code := while true do c = (
      when c
      is i:ifCode do (
@@ -668,6 +669,14 @@ export applyFCC(fc:FunctionClosure,ec:Code):Expr := (
 				   else (
 					ret = ff.fn(z,ff.env);
 					break))
+			      is s:SpecialExpr do (
+				   z := eval(b.rhs);
+				   when z is Error do (
+					ret = z;
+					break)
+				   else (
+					ret = applyEE(s.e,z);
+					break))
 			      is Error do (
 				   ret = left;
 				   break)
@@ -855,6 +864,7 @@ export applyES(f:Expr,v:Sequence):Expr := (
      is ff:CompiledFunction do ff.fn(Expr(v))
      is ff:CompiledFunctionClosure do ff.fn(Expr(v),ff.env)
      is c:FunctionClosure do applyFCS(c,v)
+     is s:SpecialExpr do applyES(s.e,v)
      else buildErrorPacket("expected a function"));
 export applyEE(f:Expr,e:Expr):Expr := (
      when f
@@ -865,6 +875,7 @@ export applyEE(f:Expr,e:Expr):Expr := (
 	  is v:Sequence do applyFCS(c,v)
 	  else applyFCE(c,e)
 	  )
+     is s:SpecialExpr do applyEE(s.e,e)
      else buildErrorPacket("expected a function"));
 --------
 -- could optimize later
@@ -873,6 +884,7 @@ export applyEEE(g:Expr,e0:Expr,e1:Expr):Expr := (
      when g
      is ff:CompiledFunction do ff.fn(Expr(Sequence(e0,e1)))
      is ff:CompiledFunctionClosure do ff.fn(Expr(Sequence(e0,e1)),ff.env)
+     is s:SpecialExpr do applyEEE(s.e,e0,e1)
      is c:FunctionClosure do (
 	  model := c.model;
 	  desc := model.desc;
@@ -944,6 +956,7 @@ export applyEEE(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
      when g
      is ff:CompiledFunction do ff.fn(Expr(Sequence(e0,e1,e2)))
      is ff:CompiledFunctionClosure do ff.fn(Expr(Sequence(e0,e1,e2)),ff.env)
+     is s:SpecialExpr do applyEEE(s.e,e0,e1,e2)
      is c:FunctionClosure do (
 	  model := c.model;
 	  desc := model.desc;
@@ -1061,6 +1074,7 @@ globalAssignmentHook(t:Symbol,oldvalue:Expr,newvalue:Expr):Expr := (
 	  is f:CompiledFunction do applyEEE(g,sym,newvalue)
 	  is f:CompiledFunctionClosure do applyEEE(g,sym,newvalue)
 	  is f:FunctionClosure do applyEEE(g,sym,newvalue)
+	  is f:SpecialExpr do applyEEE(f.e,sym,newvalue)
 	  else buildErrorPacket("expected global assignment hook for " + t.word.name + " to be a function or list of functions");
 	  when y is Error do return y else nothing;
 	  );
@@ -1245,6 +1259,10 @@ export eval(c:Code):Expr := (
 		    z := eval(b.rhs);
 		    when z is Error do z
 		    else ff.fn(z,ff.env))
+	       is s:SpecialExpr do (
+		    z := eval(b.rhs);
+		    when z is Error do z
+		    else applyEE(s.e,z))
 	       is Error do left
 	       else binarymethod(left,b.rhs,AdjacentS))
 	  is m:functionCode do return Expr(FunctionClosure(noRecycle(localFrame),m))

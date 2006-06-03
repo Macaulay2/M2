@@ -56,16 +56,21 @@ document {
 
 document {
      Key => "regular expressions",
-     "A regular expression is a string that specifies a pattern that describes a
-     set of matching subject strings.  Regular expressions are constructed
-     inductively as follows.  Ordinary (non-special) characters match themselves.
-     A concatenation of regular expressions matches the concatenation of
-     corresponding matching subject strings.  The special characters are
-     those appearing in the following constructions.  The special character ", TT "\\", "
-     may be confusing, as inside a string delimited by quotation marks (", TT "\"", "), you type two of 
-     them to get one, but inside a string delimited by triple slashes (", TT "///", "),
-     you type one to get one.  Thus regular expressions delimited by triple slashes are more
-     readable.",
+     PARA {
+	  "A regular expression is a string that specifies a pattern that describes a
+	  set of matching subject strings.  Regular expressions are constructed
+	  inductively as follows.  Ordinary (non-special) characters match themselves.
+	  A concatenation of regular expressions matches the concatenation of
+	  corresponding matching subject strings.  Regular expressions separated by the
+	  character ", TT "|", " match strings matched by any.  Parentheses can be used
+	  for grouping, and results about which substrings of the target string matched
+	  which parenthesized subexpression of the regular expression can be returned."},
+     PARA {
+	  "The special characters are those appearing in the following constructions.  The special character ", TT "\\", "
+	  may be confusing, as inside a string delimited by quotation marks (", TT "\"", "), you type two of 
+	  them to get one, but inside a string delimited by triple slashes (", TT "///", "),
+	  you type one to get one.  Thus regular expressions delimited by triple slashes are more
+	  readable."},
      UL {
 	  {TT ".", " -- match any character except newline"},
 	  {TT "^", " -- match the beginning of the string or the beginning of a line"},

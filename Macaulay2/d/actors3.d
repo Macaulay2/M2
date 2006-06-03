@@ -802,6 +802,7 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	  recursionDepth = recursionDepth - 1;
 	  if errret != nullE then errret else Expr(ret)
 	  )
+     is s:SpecialExpr do map(a1,a2,s.e)
      else WrongArg(2,"a function")
      );
 map(a:Sequence,f:Expr):Expr := (
@@ -1026,6 +1027,7 @@ map(a:Sequence,f:Expr):Expr := (
 	  recursionDepth = recursionDepth - 1;
 	  if errret != nullE then errret else Expr(ret)
 	  )
+     is s:SpecialExpr do map(a,s.e)
      else WrongArg(2,"a function")
      );
 map(newlen:int,f:Expr):Expr := (
@@ -1109,6 +1111,14 @@ map(newlen:int,f:Expr):Expr := (
 	       env := cf.env;
 	       for i from 0 to newlen-1 do (
 		    tmp := fn(Expr(toInteger(i)),env);
+		    when tmp is Error do (
+			 errret = tmp;
+			 while true do provide nullE; )
+		    else provide tmp;))
+	  is s:SpecialExpr do (
+	       fn := s.e;
+	       for i from 0 to newlen-1 do (
+		    tmp := applyEE(fn,Expr(toInteger(i)));
 		    when tmp is Error do (
 			 errret = tmp;
 			 while true do provide nullE; )
@@ -1293,6 +1303,7 @@ scan(n:int,f:Expr):Expr := (
 	  localFrame = saveLocalFrame;
 	  recursionDepth = recursionDepth - 1;
 	  nullE)
+     is s:SpecialExpr do scan(n,s.e)
      else WrongArg(2,"a function"));
 
 scan(a:Sequence,f:Expr):Expr := (
@@ -1471,6 +1482,16 @@ scan(a:Sequence,f:Expr):Expr := (
 		    return tmp;
 		    )
 	       else nothing; ))
+     is s:SpecialExpr do (
+	  fn := s.e;
+	  foreach arg in a do (
+	       tmp := applyEE(fn,arg);
+	       when tmp is Error do (
+		    recursionDepth = recursionDepth - 1;
+		    localFrame = saveLocalFrame;
+		    return tmp;
+		    )
+	       else nothing; ))
      else (
 	  recursionDepth = recursionDepth - 1;
 	  localFrame = saveLocalFrame;
@@ -1585,6 +1606,7 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	       );
 	  recursionDepth = recursionDepth - 1;
 	  nullE)
+     is s:SpecialExpr do scan(a1,a2,s.e)
      else WrongArg(2,"a function")
      );
 scan(e1:Expr,e2:Expr,f:Expr):Expr := (

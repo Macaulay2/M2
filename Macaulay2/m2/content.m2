@@ -187,6 +187,9 @@ validContent#"title" = PCDATA
 -- <!ENTITY % ul.content  "( %li.qname; )+" >
 validContent#"ul" = set { "li" }
 
+validContent#"comment" = PCDATA
+validContent#"cdata" = PCDATA
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

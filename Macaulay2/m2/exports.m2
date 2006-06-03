@@ -153,6 +153,8 @@ export (
 	symbol @,
 	symbol @@,
 	symbol ANCHOR,
+	symbol COMMENT,
+	symbol CDATA,
 	symbol Adjacent,
 	symbol Adjust,
 	symbol AffineVariety,

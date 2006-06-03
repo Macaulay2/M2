@@ -139,7 +139,9 @@ BUTTON := (s,alt) -> (
 html HTML := t -> concatenate(
      "<?xml version=\"1.0\" encoding=\"us-ascii\"?>", newline,
      "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN\" \"http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd\" >", newline,
-     "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">", apply(t,html), "</html>",newline
+     "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">", newline,
+     apply(t,html), 
+     "</html>",newline
      )
 
 -- produce html form of documentation, for Macaulay 2 and for packages

@@ -169,17 +169,12 @@ document {
      Key => HTML,
      Headline => "hypertext item",
      Usage => "HTML x",
-	Function => html,
-	Inputs => {"x" => {}},
-	Outputs => {HTML =>{}},
-	TT "HTML x", " -- encloses ", TT "x", " in a hypertext HTML item.",
-     PARA{},
-     "The argument ", TT "x", " should be a string, or a list or sequence of
-     strings or hypertext items. Here is an example of the command ", TO "html", " being applied to ", TT "HTML x", ".",
-     EXAMPLE {
-		"html HTML x"
-		},
-	"This is invisible in non-html versions of the documentation",
+     Inputs => {"x"},
+     Outputs => {HTML => { TT "x", " enclosed in an HTML item" }},
+     EXAMPLE lines ///
+	  HTML { HEAD { TITLE "foo" }, BODY { "Hi there" } }
+	  html oo
+     ///,
      SeeAlso => "hypertext"
      }
 
