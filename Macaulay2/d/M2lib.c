@@ -418,22 +418,17 @@ char **argv;
      }
 #endif
 
-     pid = savepid = getpid();		/* glibc getpid() caches the result in memory and performs the system call only once, so we can't use it after dumpdata */
+     pid = getpid();
 
+#if DUMPDATA
+     savepid = pid;		/* glibc getpid() caches the result in memory and performs the system call only once, so we can't use it after dumpdata */
      if (0 != sigsetjmp(loaddata_jump,TRUE)) {
-
 	  pid = savepid;
-
 	  if (gotArg("--notify", saveargv)) fprintf(stderr,"--loaded cached memory data\n");
 	  extern char *GC_get_stack_base();
      	  GC_free_space_divisor = 4;
-#if 1
 	  GC_stackbottom = GC_get_stack_base();	/* the stack may have moved!!! */
-#else
-	  if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
-#endif
 	  old_collections = GC_gc_no;
-#if DUMPDATA
           {
 	       char **environ0;
 	       int i;
@@ -458,8 +453,8 @@ char **argv;
 	       environ0[i] = NULL;
 	       __environ = environ0;
                }
-#endif
 	  }
+#endif
 
      system_stime();
 
