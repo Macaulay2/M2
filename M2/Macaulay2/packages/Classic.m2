@@ -1,4 +1,4 @@
-newPackage ( "Classic",
+thisPackage := newPackage ( "Classic",
      Authors => {
 	  { Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/" }
 	  },
@@ -10,32 +10,23 @@ newPackage ( "Classic",
 
 needsPackage "Parsing"
 
-export ClassicFunction ; ClassicFunction = type of FunctionClosure ; package ClassicFunction := f -> Classic
-
-symbolP = (munge (x -> ( if not isGlobalSymbol x then error("symbol ",x," undefined"); getGlobalSymbol x ))) letterParser
-constP = s -> ( f := n -> new Parser from (c -> if c === null then if n === #s then s else null else if s#?n and c === s#n then f(n+1) else null)) 0
-optP = parser -> parser | nullParser
-ifNone = default -> parser -> parser | terminalParser default
-optSignP = Parser(c -> if c === null then 1 else if c === "-" then terminalParser(-1) else if c === "+" then terminalParser 1)
-integerP = (munge times) (optSignP * natNumberP)
-ratNumberP = (munge ((num,sl,den) -> num/den)) andP(integerP,constP "/",natNumberP)
-listP = comma -> parser -> (munge splice) (parser * * (munge last) (constP comma * parser))
-variableP = (munge value) symbolP
+symbolP = (transform (x -> ( if not isGlobalSymbol x then error("symbol ",x," undefined"); getGlobalSymbol x ))) letterParser
+listP = comma -> parser -> (transform splice) (parser @ * (transform last) (fixedStringParser comma @ parser))
+variableP = (transform value) symbolP
 intP = natNumberP | variableP
-subscriptP = (munge ((lb,x,rb) -> x)) andP( constP "[", (munge unsequence) (listP ",") intP, constP "]" )
-ringVariableP = (munge ((x,n) -> if n === nil then value x else x_n)) (symbolP * optP subscriptP)
-numberP = integerP | ratNumberP
-powerP = (munge ((x,n) -> if n === nil then x else x^n)) ((futureParser parenExprP | ringVariableP) * optP natNumberP)
-monomialP = (munge (times @@ deepSplice)) (optSignP * (numberP * *powerP | +powerP ))
-polyP = (munge (plus @@ deepSplice)) (+monomialP) | terminalParser 0
-parenExprP = (munge ((lp,x,rp) -> x)) andP(constP "(", futureParser parenExprP | polyP, constP ")")
-listPolyP = (munge toList) (listP ",") polyP
-arrayPolyP = (munge toList) (listP ";") listPolyP
-export poly ; poly = new ClassicFunction from method()
-poly String :=  polyP ++ Analyzer#"non-space characters"
-Ideal.Classic = listPolyP ++ Analyzer#"non-space characters"
-ideal String := ideal @@ Ideal.Classic
-matrix String := opts -> s -> matrix((arrayPolyP ++ Analyzer#"non-space characters") s, opts)
+subscriptP = (transform ((lb,x,rb) -> x)) andP( fixedStringParser "[", (transform unsequence) (listP ",") intP, fixedStringParser "]" )
+ringVariableP = (transform ((x,n) -> if n === nil then value x else x_n)) (symbolP @ optP subscriptP)
+numberP = ZZParser | QQParser
+powerP = (transform ((x,n) -> if n === nil then x else x^n)) ((futureParser parenExprP | ringVariableP) @ optP natNumberP)
+monomialP = (transform (times @@ deepSplice)) (optionalSignParser @ (numberP @ *powerP | +powerP ))
+polyP = (transform (plus @@ deepSplice)) (+monomialP) | terminalParser 0
+parenExprP = (transform ((lp,x,rp) -> x)) andP(fixedStringParser "(", futureParser parenExprP | polyP, fixedStringParser ")")
+listPolyP = (transform toList) (listP ",") polyP
+arrayPolyP = (transform toList) (listP ";") listPolyP
+export poly ; poly = method()
+poly String :=  polyP ++ nonspaceAnalyzer
+ideal String := ideal @@ (listPolyP ++ nonspaceAnalyzer)
+matrix String := opts -> s -> matrix((arrayPolyP ++ nonspaceAnalyzer) s, opts)
 
 beginDocumentation()
 
