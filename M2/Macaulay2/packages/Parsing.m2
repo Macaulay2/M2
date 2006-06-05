@@ -35,7 +35,7 @@ nonspaceAnalyzer = Analyzer(
 	  i := 0;
 	  () -> while string#?i do (c := string#i; i = i+1; if not space#?c then return (i-1,c))) )
 -- machine makers
-Parser ++ Analyzer := (p0,a0) -> s -> (
+Parser : Analyzer := (p0,a0) -> s -> (
      p := p0;
      a := a0 s;
      while null =!= ((pos,t) := a())
@@ -50,7 +50,6 @@ export deadParser     ; deadParser = Parser (c -> null)
 export terminalParser ; terminalParser = val -> new Parser from (c -> if c === null then val)
 export nullParser     ; nullParser = terminalParser nil
 export letterParser   ; letterParser = Parser (c -> if alpha#?c then b -> if b === null then c)
-export spaceParser    ; spaceParser = Parser (c -> if c === null then nil else if space#?c then spaceParser)
 export futureParser   ; futureParser = parserSymbol -> new Parser from (c -> (value parserSymbol) c)
 
 -- parser makers
@@ -113,21 +112,20 @@ Parser @ Parser := (p,q) -> new Parser from (
 	  ))
 
 *Parser := p -> (
-     assert( p =!= null );
-     local g;
-     f := (past,current) -> new Parser from (c -> (
-	  if c === null then (
-	       if current === null then past
-	       else if (val := current null) =!= null then append(past,val)
-	       )
-	  else (
-	       if current === null then (f(past,p)) c
+     f := (vals,current) -> new Parser from (c -> (
+	       if c === null then (
+		    if current === null then vals
+		    else if (val := current null) =!= null then append(vals,val)
+		    )
 	       else (
-	       	    q := current c;
-	       	    if q =!= null then return f(past,q);
-	       	    if (val = current null) =!= null then (f(append(past,val),)) c))));
-     f((),))
-+ Parser := parser -> parser @ *parser
+		    if current === null then (f(vals,p)) c
+		    else (
+			 q := current c;
+			 if q =!= null then return f(vals,q);
+			 if (val = current null) =!= null then (f(append(vals,val),)) c))))
+     ) ((),)
+	  
++Parser := p -> (transform prepend) (p @ *p)
 
 -- some simple parsers that accept one character at time
 
@@ -156,7 +154,7 @@ document { Key => Parsing,
      PARA {
           TO "Parsing", " is a package the provides a framework for building parsers.  It introduces ", TO "Parser", ", a type of
           function that parses a sequence of tokens, and ", TO "Analyzer", ", a type of function that accepts input for the parser in
-          its original form and separates it into a stream of tokens.  A parser can be combined with an analyzer (see ", TO "(symbol ++, Parser, Analyzer)", ",
+          its original form and separates it into a stream of tokens.  A parser can be combined with an analyzer (see ", TO "(symbol :, Parser, Analyzer)", ",
 	  to produce a complete system for accepting input and parsing it."
      	  }
      }
@@ -194,20 +192,20 @@ document { Key => charAnalyzer,
 	  peek a()
 	  peek a()
 	  peek a()
-	  (fixedStringParser "abc" ++ charAnalyzer) "abc"
+	  (fixedStringParser "abc" : charAnalyzer) "abc"
      ///
      }
 
-document { Key => (symbol ++, Parser, Analyzer),
+document { Key => (symbol :, Parser, Analyzer),
      Headline => "combine a parser with a lexical analyzer to make a complete system",
-     Usage => "m = p ++ a",
+     Usage => "m = p : a",
      Inputs => { "p", "a" },
      Outputs => { "m" => Function => { "a function that will provide its argument to ", TT "a", " for lexical analysis and will
 	       send the resulting stream of tokens through ", TT "p", " for parsing.  Appropriate error messages are printed as necessary."
 	       }},
      EXAMPLE lines ///
-	 (ZZParser ++ charAnalyzer) "123456789"
-	 (fixedStringParser "abc" ++ charAnalyzer) "abc"
+	 (ZZParser : charAnalyzer) "123456789"
+	 (fixedStringParser "abc" : charAnalyzer) "abc"
      ///
      }
 
@@ -219,16 +217,18 @@ document { Key => nonspaceAnalyzer,
 	 peek a()
 	 peek a()
 	 peek a()
-	 (fixedStringParser "abc" ++ nonspaceAnalyzer) " a b c "
+	 (fixedStringParser "abc" : nonspaceAnalyzer) " a b c "
      ///
      }
 
 document { Key => nil,
      Headline => "a symbol a parser to return to indicate acceptance of the empty string of tokens",
+     SeeAlso => { nullParser }
      }
 
 document { Key => deadParser,
      Headline => "a parser which accepts no tokens and is not in a terminal state",
+     SourceCode => deadParser,
      EXAMPLE lines ///
      	  peek deadParser "a"
      	  peek deadParser null
@@ -238,6 +238,7 @@ document { Key => deadParser,
 document { Key => terminalParser,
      Headline => "produce a parser in a terminal state",
      Usage => "terminalParser v",
+     SourceCode => terminalParser,
      Inputs => { "v" },
      Outputs => { { "a parser in a terminal state with parsed value ", TT "v" }},
      EXAMPLE lines ///
@@ -248,39 +249,105 @@ document { Key => terminalParser,
      }
 
 document { Key => nullParser,
-     Headline => "",
+     Headline => "a terminal parser that returns the value nil",
+     SourceCode => nullParser,
+     SeeAlso => { nil }
      }
 
 document { Key => letterParser,
-     Headline => "",
-     }
-
-document { Key => spaceParser,
-     Headline => "",
+     Headline => "a parser that accepts a single letter and returns it",
+     SourceCode => letterParser,
+     EXAMPLE lines ///
+     	  p = letterParser "a"
+	  p "b"
+	  p null
+     ///
      }
 
 document { Key => futureParser,
-     Headline => "",
+     Headline => "forward reference to a parser not defined yet",
+     Usage => "futureParser p",
+     Inputs => { "p" => Symbol },
+     Outputs => { Parser => { "a parser that will pass its input to the value of the symbol ", TT "p", " at that time" }},
+     SourceCode => futureParser,
+     EXAMPLE lines ///
+     	  p = futureParser q
+	  q = fixedStringParser "abc"
+	  (q : charAnalyzer) "abc"
+     ///
      }
 
-document { Key => {orP, (symbol |, Parser, Parser)},
-     Headline => "",
+document { Key => {orP, a},
+     Headline => "parsing alternatives",
+     Usage => "r = orP(p,q,...)",
+     Inputs => { { TT "(p,q,...)", ", a sequence of parsers (of type ", TO "Parser", ")" }},
+     Outputs => { "r" => Parser => { "a parser that accepts any sequence of tokens acceptable to one of the parsers ", TT "p,q,..."}},
+     SourceCode => {(symbol |, Parser, Parser)},
+     PARA {
+	  "An abbreviation for ", TT "orP(p,q)", " is ", TT "p|q", "."
+	  },
+     PARA {
+	  "In case of ambiguity, the value returned by the left-most accepting parser is provided."
+	  },
+     PARA {
+	  "In an efficient grammar, the first token presented to ", TT "r", " will be acceptable to at most one of the input parsers,
+	  and then the parser returned by ", TT "r", " will be the parser returned by the single accepting input parser."
+	  },
+     EXAMPLE lines ///
+     	  (fixedStringParser "abc" | fixedStringParser "def" : charAnalyzer) "abc"
+     	  (fixedStringParser "abc" | fixedStringParser "def" : charAnalyzer) "def"
+     ///
      }
 
 document { Key => {andP, (symbol @, Parser, Parser)},
-     Headline => "",
+     Headline => "parser conjunction",
+     Usage => "r = andP(p,q,...)",
+     Inputs => { { TT "(p,q,...)", ", a sequence of parsers (of type ", TO "Parser", ")" }},
+     Outputs => { "r" => Parser => { "a parser that accepts as many tokens as ", TT "p", " will accept, then as many as ", TT "q", " will
+	       accept, and so on.  The return value is the sequence of values returned by each of the input parsers."}},
+     SourceCode => {(symbol @, Parser, Parser)},
+     PARA {
+	  "An abbreviation for ", TT "andP(p,q)", " is ", TT "p@q", "."
+	  },
+     EXAMPLE lines ///
+     	  (fixedStringParser "abc" @ fixedStringParser "def" : charAnalyzer) "abcdef"
+     ///
      }
 
 document { Key => transform,
-     Headline => "",
+     Headline => "transform the value returned by a parser",
+     Usage => "(transform f) p",
+     Inputs => { "f" => Function, "p" => Parser },
+     Outputs => { Parser => { "a parser that feeds its tokens to ", TT "p", " and filters the value returned by ", TT "p", " through ", TT "f" }},
+     SourceCode => transform,
+     EXAMPLE lines ///
+     ///
      }
 
 document { Key => (symbol *, Parser),
-     Headline => "",
+     Headline => "repetition of a parser",
+     Usage => "*p",
+     Inputs => { "p" => Parser },
+     Outputs => { Parser => { "a parser that will feed its tokens through ", TT "p", ", and then when further tokens are not accepted, it will
+	       start over with a fresh copy of ", TT "p", ".  The value returned is the sequence of values returned by each instance of ", TT "p", "."
+	       }},
+     SourceCode => {(symbol *, Parser)},
+     EXAMPLE lines ///
+     	  (* fixedStringParser "abc" : charAnalyzer) "abcabcabc"
+     ///
      }
 
 document { Key => (symbol +, Parser),
-     Headline => "",
+     Headline => "repetition of a parser",
+     Usage => "+p",
+     Inputs => { "p" => Parser },
+     Outputs => { Parser => { "a parser that will feed its tokens through ", TT "p", ", and then when further tokens are not accepted, it will
+	       start over with a fresh copy of ", TT "p", ".  The value returned is the sequence of values returned by each instance of ", TT "p", "."
+	       }},
+     SourceCode => {(symbol +, Parser)},
+     EXAMPLE lines ///
+     	  (+ fixedStringParser "abc" : charAnalyzer) "abcabcabc"
+     ///
      }
 
 document { Key => fixedStringParser,
