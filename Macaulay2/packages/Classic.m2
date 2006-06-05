@@ -24,9 +24,9 @@ parenExprP = (transform ((lp,x,rp) -> x)) andP(fixedStringParser "(", futurePars
 listPolyP = (transform toList) (listP ",") polyP
 arrayPolyP = (transform toList) (listP ";") listPolyP
 export poly ; poly = method()
-poly String :=  polyP ++ nonspaceAnalyzer
-ideal String := ideal @@ (listPolyP ++ nonspaceAnalyzer)
-matrix String := opts -> s -> matrix((arrayPolyP ++ nonspaceAnalyzer) s, opts)
+poly String :=  polyP : nonspaceAnalyzer
+ideal String := ideal @@ (listPolyP : nonspaceAnalyzer)
+matrix String := opts -> s -> matrix((arrayPolyP : nonspaceAnalyzer) s, opts)
 
 beginDocumentation()
 
