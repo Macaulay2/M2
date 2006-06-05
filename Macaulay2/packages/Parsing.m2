@@ -351,19 +351,51 @@ document { Key => (symbol +, Parser),
      }
 
 document { Key => fixedStringParser,
-     Headline => "",
+     Headline => "produce a parser that accepts a fixed string, one character at a time",
+     Usage => "fixedStringParser s",
+     Inputs => { "s" => String },
+     Outputs => { Parser => { "a parser that accepts (and returns) the string s, one character at a time" } },
+     EXAMPLE lines ///
+     	  fixedStringParser "abc"
+	  oo "a"
+	  oo "a"
+	  ooo "b"
+	  oo "c"
+	  oo null
+	  (fixedStringParser "abc" : charAnalyzer) "abc"
+     ///
      }
 
 document { Key => optionalSignParser,
-     Headline => "",
+     Headline => "a parser that accepts an optional plus sign or minus sign",
+     PARA {
+	  "The return value is either ", TT "1", " or ", TT "-1", ", depending on the indicated sign."
+	  },
+     SourceCode => optionalSignParser,
+     EXAMPLE lines ///
+     	  (optionalSignParser @ fixedStringParser "abc" : charAnalyzer) "abc"
+     	  (optionalSignParser @ fixedStringParser "abc" : charAnalyzer) "+abc"
+     	  (optionalSignParser @ fixedStringParser "abc" : charAnalyzer) "-abc"
+     ///
      }
 
 document { Key => ZZParser,
-     Headline => "",
+     Headline => "a parser that accepts (and returns) an integer, one character at a time",
+     SourceCode => ZZParser,
+     EXAMPLE lines ///
+     	  (ZZParser : charAnalyzer) "123456789"
+     	  (ZZParser : charAnalyzer) "-123456789"
+	  class oo
+     ///
      }
 
 document { Key => QQParser,
-     Headline => "",
+     Headline => "a parser that accepts (and returns) a rational number, one character at a time",
+     SourceCode => QQParser,
+     PARA "The denominator must be present.",
+     EXAMPLE lines ///
+     	  (QQParser : charAnalyzer) "-123456789/54321"
+     ///
      }
 
 -- Local Variables:
