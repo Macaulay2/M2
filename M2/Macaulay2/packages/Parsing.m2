@@ -334,7 +334,8 @@ document { Key => {orP, (symbol |, Parser, Parser)},
      EXAMPLE lines ///
      	  (fixedStringParser "abc" | fixedStringParser "def" : charAnalyzer) "abc"
      	  (fixedStringParser "abc" | fixedStringParser "def" : charAnalyzer) "def"
-     ///
+     ///,
+     SeeAlso => {fixedStringParser, charAnalyzer, (symbol :, Parser, Analyzer)}
      }
 
 document { Key => {andP, (symbol @, Parser, Parser)},
@@ -349,7 +350,8 @@ document { Key => {andP, (symbol @, Parser, Parser)},
 	  },
      EXAMPLE lines ///
      	  (fixedStringParser "abc" @ fixedStringParser "def" : charAnalyzer) "abcdef"
-     ///
+     ///,
+     SeeAlso => {fixedStringParser,(symbol :, Parser, Analyzer)}
      }
 
 document { Key => transform,
@@ -363,7 +365,8 @@ document { Key => transform,
 	  ((transform concatenate) (* fixedStringParser "abc") : charAnalyzer) "abcabcabc"
      	  (fixedStringParser "abc" : charAnalyzer) "abc"
      	  ((transform (s -> concatenate("[",s,"]"))) fixedStringParser "abc" : charAnalyzer) "abc"
-     ///
+     ///,
+     SeeAlso => {fixedStringParser, charAnalyzer, (symbol :, Parser, Analyzer)}
      }
 
 document { Key => (symbol *, Parser),
@@ -376,11 +379,12 @@ document { Key => (symbol *, Parser),
      SourceCode => {(symbol *, Parser)},
      EXAMPLE lines ///
      	  (* fixedStringParser "abc" : charAnalyzer) "abcabcabc"
-     ///
+     ///,
+     SeeAlso => {fixedStringParser, charAnalyzer, (symbol :, Parser, Analyzer)}
      }
 
 document { Key => (symbol +, Parser),
-     Headline => "repetition of a parser",
+     Headline => "repetition of a parser at least once",
      Usage => "+p",
      Inputs => { "p" => Parser },
      Outputs => { Parser => { "a parser that will feed its tokens through ", TT "p", ", and then when further tokens are not accepted, it will
@@ -389,7 +393,8 @@ document { Key => (symbol +, Parser),
      SourceCode => {(symbol +, Parser)},
      EXAMPLE lines ///
      	  (+ fixedStringParser "abc" : charAnalyzer) "abcabcabc"
-     ///
+     ///,
+     SeeAlso => {fixedStringParser, charAnalyzer, (symbol :, Parser, Analyzer)}
      }
 
 document { Key => fixedStringParser,
@@ -405,7 +410,8 @@ document { Key => fixedStringParser,
 	  oo "c"
 	  oo null
 	  (fixedStringParser "abc" : charAnalyzer) "abc"
-     ///
+     ///,
+     SeeAlso => {(symbol :, Parser, Analyzer)}
      }
 
 document { Key => optionalSignParser,
@@ -418,7 +424,8 @@ document { Key => optionalSignParser,
      	  (optionalSignParser @ fixedStringParser "abc" : charAnalyzer) "abc"
      	  (optionalSignParser @ fixedStringParser "abc" : charAnalyzer) "+abc"
      	  (optionalSignParser @ fixedStringParser "abc" : charAnalyzer) "-abc"
-     ///
+     ///,
+     SeeAlso => {(symbol @,Parser,Parser),fixedStringParser,charAnalyzer,(symbol :, Parser, Analyzer)}
      }
 
 document { Key => NNParser,
@@ -433,7 +440,8 @@ document { Key => NNParser,
 	  oo null
      	  (NNParser : charAnalyzer) "123456789123456789123456789"
 	  class oo
-     ///
+     ///,
+     SeeAlso => {charAnalyzer,(symbol :, Parser, Analyzer)}
      }
 
 document { Key => ZZParser,
@@ -443,7 +451,8 @@ document { Key => ZZParser,
      	  (ZZParser : charAnalyzer) "123456789"
      	  (ZZParser : charAnalyzer) "-123456789"
 	  class oo
-     ///
+     ///,
+     SeeAlso => {charAnalyzer,(symbol :, Parser, Analyzer)}
      }
 
 document { Key => QQParser,
@@ -452,7 +461,8 @@ document { Key => QQParser,
      PARA "The denominator must be present.",
      EXAMPLE lines ///
      	  (QQParser : charAnalyzer) "-123456789/54321"
-     ///
+     ///,
+     SeeAlso => {charAnalyzer,(symbol :, Parser, Analyzer)}
      }
 	  
 document { Key => optP,
@@ -465,7 +475,8 @@ document { Key => optP,
      EXAMPLE lines ///
      	  (optP fixedStringParser "abc" : charAnalyzer) "abc"
      	  (optP fixedStringParser "abc" : charAnalyzer) ""
-     ///
+     ///,
+     SeeAlso => {fixedStringParser, charAnalyzer, (symbol :, Parser, Analyzer)}
      }
 	  
 
