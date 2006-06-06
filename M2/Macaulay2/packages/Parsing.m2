@@ -309,8 +309,9 @@ document { Key => futureParser,
      SourceCode => futureParser,
      EXAMPLE lines ///
      	  p = futureParser q
+	  m = p : charAnalyzer
 	  q = fixedStringParser "abc"
-	  (q : charAnalyzer) "abc"
+	  m "abc"
      ///
      }
 
