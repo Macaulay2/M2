@@ -6,6 +6,7 @@ VPATH = @srcdir@
 PACKAGES = Macaulay2
 PACKAGES += Style
 PACKAGES += Parsing
+PACKAGES += Classic
 PACKAGES += PrimaryDecomposition
 PACKAGES += CacheFileName
 #PACKAGES += ConvexHulls
