@@ -67,8 +67,8 @@ document {
 	  which parenthesized subexpression of the regular expression can be returned."},
      PARA {
 	  "The special characters are those appearing in the following constructions.  The special character ", TT "\\", "
-	  may be confusing, as inside a string delimited by quotation marks (", TT "\"", "), you type two of 
-	  them to get one, but inside a string delimited by triple slashes (", TT "///", "),
+	  may be confusing, as inside a string delimited by quotation marks (", TT "\"...\"", "), you type two of 
+	  them to get one, whereas inside a string delimited by triple slashes (", TT "///...///", "),
 	  you type one to get one.  Thus regular expressions delimited by triple slashes are more
 	  readable."},
      UL {

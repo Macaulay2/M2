@@ -8,7 +8,7 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export(polarCone, convexHull)
+export {polarCone, convexHull}
 
 ------------------------------------------------------------
 -- PURPOSE:    compute the polar dual of a rational convex 

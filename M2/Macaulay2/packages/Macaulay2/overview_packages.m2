@@ -71,8 +71,8 @@ document { Key => "creating a package",
 	"A basic template for new packages:",
 	PRE///newPackage( ... )
 	
-	export( ... )
-	exportMutable( ... )
+	export{ ... }
+	exportMutable{ ... }
 	
 	-- Macaulay 2 code goes here
 	
@@ -136,7 +136,7 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export(firstFunction)
+export {firstFunction}
 
 firstFunction = method(TypicalValue => String)
 firstFunction ZZ := String => n -> (

@@ -6,7 +6,7 @@ newPackage("LLLBases",
      DebuggingMode => true
      )
 
-export(
+export{
      LLL,
      isLLL, 
      kernelLLL,
@@ -24,7 +24,7 @@ export(
      RealQP,
      RealXD,
      RealRR
-     )
+     }
 
 debug Macaulay2Core
 

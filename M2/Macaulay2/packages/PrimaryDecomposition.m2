@@ -2,7 +2,7 @@ newPackage(
      "PrimaryDecomposition",
      Headline => "functions for primary decomposition (pre-loaded)"
      )
-export (
+export {
      EHV,					    -- cryptic
      Hybrid,
      GTZ,
@@ -16,7 +16,8 @@ export (
      primaryComponent,
      quotMin,
      radicalContainment
-     )
+     }
+
 
 --     EHVprimaryDecomposition,			    -- cryptic
 --     HprimaryDecomposition,

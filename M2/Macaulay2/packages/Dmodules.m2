@@ -5,7 +5,7 @@ newPackage("Dmodules", Version => "1.0",
 	  {Name => "Harrison Tsai"}
 	  }
      )
-export (ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,bFunction,NonGeneric,TryGeneric,IntRing,
+export {ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,bFunction,NonGeneric,TryGeneric,IntRing,
         globalB,globalBFunction,ViaAnnFs,ReducedB,factorBFunction,getIntRoots,Boperator,Bpolynomial,globalBoperator,
 	AnnFs,AnnIFs,Dtrace,getDtrace,setHomSwitch,getHomSwitch,localCohom,Walther,OaTa,LocStrategy,
 	OaTaWa,pruneLocalCohom,paramBpoly,GroundField,makeCyclic,Generator,AnnG,isHolonomic,DHom,DExt,Special,
@@ -22,7 +22,8 @@ export (ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,bFunctio
 	diffOps,PolyGens,BasisElts,putWeylAlgebra,inw,gbw,pInfo,
 	Dprune,Dprune2,optGB,FourierInverse,	
 	reduceCompress,zeroize
-	)
+	}
+   
 
 
 load "Dmodules/Dloadfile.m2"

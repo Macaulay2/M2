@@ -10,7 +10,7 @@ newPackage("minimal",
      Headline => "A minimal example of a Macaulay 2 package",
      DebuggingMode => false
      )
-export (f, "g" => f)
+export {f, "g" => f}
 
 f = x -> print "hi there!"
 

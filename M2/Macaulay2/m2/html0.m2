@@ -151,7 +151,7 @@ LINK       = new MarkUpType of MarkUpList
 ANCHOR     = withOptions_{"id"} withQname_"a" new MarkUpTypeWithOptions of MarkUpList
 
 UL         = new MarkUpType of MarkUpListParagraph
-new UL from List := (UL,x) -> (
+new UL from VisibleList := (UL,x) -> (
      x = nonnull x;
      if #x == 0 then error("empty element of type ", format toString UL, " encountered");
      apply(x, e -> (

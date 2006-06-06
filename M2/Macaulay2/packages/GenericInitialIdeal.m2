@@ -4,7 +4,7 @@ newPackage("GenericInitialIdeal",
      DebuggingMode => true
      )
 
-export (gin, lexgin, AttemptCount, example)
+export {gin, lexgin, AttemptCount, example}
 
 document {
      Key => "GenericInitialIdeal",

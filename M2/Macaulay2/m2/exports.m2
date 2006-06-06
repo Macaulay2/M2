@@ -1,6 +1,6 @@
 --		Copyright 2004 by Daniel R. Grayson
 
-export (
+export {
         symbol minimalPrimes,
 	symbol validate,
 	symbol minimalPresentationMap,
@@ -1089,9 +1089,9 @@ export (
 	symbol |-,
 	symbol ||,
 	symbol ~
-)
+}
 
-exportMutable (
+exportMutable {
 	symbol p,
         symbol i,
 	symbol S,
@@ -1130,7 +1130,8 @@ exportMutable (
 	symbol sourceHomeDirectory,
 	symbol interpreterDepth,
 	symbol stopIfError
-	)
+	}
+   
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

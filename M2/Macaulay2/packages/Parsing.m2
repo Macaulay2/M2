@@ -159,7 +159,7 @@ document { Key => Parsing,
      PARA {
           TO "Parsing", " is a package the provides a framework for building parsers.  It introduces ", TO "Parser", ", a type of
           function that parses a sequence of tokens, and ", TO "Analyzer", ", a type of function that accepts input for the parser in
-          its original form and separates it into a stream of tokens.  A parser can be combined with an analyzer (see ", TO "(symbol :, Parser, Analyzer)", ",
+          its original form and separates it into a stream of tokens.  A parser can be combined with an analyzer (see ", TO (symbol :, Parser, Analyzer), ",
 	  to produce a complete system for accepting input and parsing it."
      	  },
      Subnodes => {

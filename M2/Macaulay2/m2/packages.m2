@@ -168,8 +168,8 @@ newPackage(String) := opts -> (title) -> (
      newpkg)
 
 export = method(SingleArgumentDispatch => true)
-export Symbol := x -> export (1:x)
-export Sequence := v -> (
+export Symbol := x -> export {x}
+export List := v -> (
      if currentPackage === null then error "no current package";
      pd := currentPackage#"private dictionary";
      d := currentPackage.Dictionary;
@@ -193,8 +193,8 @@ export Sequence := v -> (
      currentPackage#"exported symbols" = join(currentPackage#"exported symbols",select(v,s -> instance(s,Symbol)));
      )
 exportMutable = method(SingleArgumentDispatch => true)
-exportMutable Symbol := x -> exportMutable (1:x)
-exportMutable Sequence := v -> (
+exportMutable Symbol := x -> exportMutable {x}
+exportMutable List := v -> (
      export v;
      currentPackage#"exported mutable symbols" = join(currentPackage#"exported mutable symbols",select(v,s -> instance(s,Symbol)));
      )

@@ -7,7 +7,7 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export(firstFunction)
+export firstFunction
 
 firstFunction = method(TypicalValue => String)
 firstFunction ZZ := String => n -> (

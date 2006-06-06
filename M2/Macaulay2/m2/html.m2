@@ -486,7 +486,9 @@ uninstallPackage Package := o -> pkg -> (
 
 installPackage String := opts -> pkg -> (
      if PackageDictionary#?pkg and class value PackageDictionary#pkg === Package 
-     then installPackage(value PackageDictionary#pkg, opts)
+     then (
+	  installPackage(value PackageDictionary#pkg, opts)
+	  )
      else (
 	  pkg = loadPackage(pkg, DebuggingMode => opts.DebuggingMode, LoadDocumentation => opts.MakeDocumentation);
 	  installPackage(pkg, opts);
@@ -497,6 +499,7 @@ dispatcherMethod := m -> m#-1 === Sequence and (
      any(dispatcherFunctions, g -> functionBody f === functionBody g))
 
 installPackage Package := opts -> pkg -> (
+     use pkg;
      ignoreDocumentationErrors = opts.IgnoreDocumentationErrors;
      chkdoc = opts.CheckDocumentation;			    -- oops, this will have a lingering effect...
 
@@ -808,7 +811,7 @@ installPackage Package := opts -> pkg -> (
 			      ))));
 
      	  if not opts.IgnoreDocumentationErrors
-	  then if hadDocumentationError then error(toString numDocumentationErrors, " error(s) occurred in documentation for package ", toString pkg);
+	  then if hadDocumentationError then error(toString numDocumentationErrors, " warning(s) occurred in documentation for package ", toString pkg);
 
 	  -- helper routine
 	  getPDoc := fkey -> (
