@@ -53,7 +53,7 @@ terminalParser = val -> new Parser from (c -> if c === null then val)
 export nullParser
 nullParser = terminalParser nil
 export letterParser
-letterParser = Parser (c -> if alpha#?c then b -> if b === null then c)
+letterParser = Parser (c -> if alpha#?c then new Parser from (b -> if b === null then c))
 export futureParser
 futureParser = parserSymbol -> new Parser from (c -> (value parserSymbol) c)
 
@@ -61,7 +61,9 @@ futureParser = parserSymbol -> new Parser from (c -> (value parserSymbol) c)
 export orP
 orP = x -> (
      if instance(x, Function) then return x;
+     if instance(x, String) then return constParser x;
      if #x == 0 then return deadParser;
+     x = apply(x, s -> if instance(s,String) then constParser s else s);
      Parser (c -> (
 	  if c === null then (
 	       for p in x do if (t := p null) =!= null then break t
@@ -70,6 +72,8 @@ orP = x -> (
 	       y := select(apply(x, p -> p c), p -> p =!= null);
 	       if #y > 0 then orP y))))
 
+Parser | String := (p,s) -> p | constParser s
+String | Parser := (s,p) -> constParser s | p
 Parser | Parser := (p,q) -> new Parser from (
      c -> (
 	  p' := p c;
@@ -81,16 +85,14 @@ Parser | Parser := (p,q) -> new Parser from (
 export optP
 optP = parser -> parser | nullParser
 
-export transform
-transform = fun -> f := p -> new Parser from ( c -> (
-	  p' := p c;
-	  if p' =!= null then if c === null then fun p' else f p'
-	  ))
+Function % Parser := (fun,p) -> new Parser from ( c -> if (p' := p c) =!= null then if c === null then fun p' else fun % p' )
 
 export andP
 andP = x -> (						    -- we don't do backtracking: the first parser absorbs as much as it can, and then the second one takes over, etc.
-     if instance(x, Function) then return x;
+     if instance(x, Parser) then return x;
+     if instance(x, String) then return constParser x;
      if #x == 0 then return nullParser;
+     x = apply(x, s -> if instance(s,String) then constParser s else s);
      f := (past,current,future) -> new Parser from (c -> (
 	  if c === null then (
 	       val := current null;
@@ -106,12 +108,15 @@ andP = x -> (						    -- we don't do backtracking: the first parser absorbs as 
 	       if #future > 0 then (f(append(past,val), future#0, drop(future,1))) c)));
      f((),x#0,drop(x,1)))
 
+
+String @ Parser := (s,p) -> constParser s @ p
+Parser @ String := (p,s) -> p @ constParser s
 Parser @ Parser := (p,q) -> new Parser from (
      c -> (
 	  if c =!= null then (
 	       if (p' := p c) =!= null 
 	       then p' @ q 
-	       else if (val1 := p null) =!= null then if (q' := q c) =!= null then (transform (val2 -> (val1,val2))) q'
+	       else if (val1 := p null) =!= null then if (q' := q c) =!= null then (val2 -> (val1,val2)) % q'
 	       )
 	  else if (val1 = p null) =!= null and (val2 := q null) =!= null then (val1,val2)
 	  ))
@@ -130,12 +135,12 @@ Parser @ Parser := (p,q) -> new Parser from (
 			 if (val = current null) =!= null then (f(append(vals,val),)) c))))
      ) ((),)
 	  
-+Parser := p -> (transform prepend) (p @ *p)
++Parser := p -> prepend % p @ *p
 
 -- some simple parsers that accept one character at time
 
-export fixedStringParser 
-fixedStringParser = s -> ( f := n -> new Parser from (c -> if c === null then if n === #s then s else null else if s#?n and c === s#n then f(n+1) else null)) 0
+export constParser 
+constParser = s -> ( f := n -> new Parser from (c -> if c === null then if n === #s then s else null else if s#?n and c === s#n then f(n+1) else null)) 0
 
 export NNParser
 NNParser = (() -> (
@@ -147,10 +152,10 @@ export optionalSignParser
 optionalSignParser = Parser(c -> if c === null then 1 else if c === "-" then terminalParser(-1) else if c === "+" then terminalParser 1)
 
 export ZZParser
-ZZParser = (transform times) (optionalSignParser @ NNParser)
+ZZParser = times % optionalSignParser @ NNParser
 
 export QQParser
-QQParser = (transform ((num,sl,den) -> num/den)) andP(ZZParser,fixedStringParser "/",NNParser)
+QQParser = ((num,sl,den) -> num/den) % andP(ZZParser,constParser "/",NNParser)
 
 beginDocumentation()
 
@@ -159,9 +164,12 @@ document { Key => Parsing,
      PARA {
           TO "Parsing", " is a package the provides a framework for building parsers.  It introduces ", TO "Parser", ", a type of
           function that parses a sequence of tokens, and ", TO "Analyzer", ", a type of function that accepts input for the parser in
-          its original form and separates it into a stream of tokens.  A parser can be combined with an analyzer (see ", TO (symbol :, Parser, Analyzer), ",
+          its original form and separates it into a stream of tokens.  A parser can be combined with an analyzer: see ", TO (symbol :, Parser, Analyzer), ",
 	  to produce a complete system for accepting input and parsing it."
      	  },
+     PARA {
+	  "See the package ", TO "Classic::Classic", " for a good example of  the use of this framework."
+	  },
      Subnodes => {
 	  TO Analyzer,
 	  TO Parser,
@@ -188,7 +196,7 @@ document { Key => Parser,
 	  TO nullParser,
 	  TO futureParser,
 	  TO letterParser,
-	  TO fixedStringParser,
+	  TO constParser,
 	  TO optionalSignParser,
 	  TO NNParser,
 	  TO ZZParser,
@@ -199,7 +207,7 @@ document { Key => Parser,
 	  TO andP,
 	  TO (symbol *, Parser),
 	  TO (symbol +, Parser),
-	  TO transform
+	  TO (symbol %, Function, Parser)
 	  }
      }
 
@@ -226,9 +234,9 @@ document { Key => charAnalyzer,
 	  peek a()
 	  peek a()
 	  peek a()
-	  (fixedStringParser "abc" : charAnalyzer) "abc"
+	  (constParser "abc" : charAnalyzer) "abc"
      ///,
-     SeeAlso => {fixedStringParser, (symbol :, Parser, Analyzer)}
+     SeeAlso => {constParser, (symbol :, Parser, Analyzer)}
      }
 
 document { Key => (symbol :, Parser, Analyzer),
@@ -240,9 +248,9 @@ document { Key => (symbol :, Parser, Analyzer),
 	       }},
      EXAMPLE lines ///
 	 (ZZParser : charAnalyzer) "123456789"
-	 (fixedStringParser "abc" : charAnalyzer) "abc"
+	 (constParser "abc" : charAnalyzer) "abc"
      ///,
-     SeeAlso => {ZZParser, fixedStringParser, charAnalyzer, (symbol :, Parser, Analyzer)}
+     SeeAlso => {ZZParser, constParser, charAnalyzer, (symbol :, Parser, Analyzer)}
      }
 
 document { Key => nonspaceAnalyzer,
@@ -253,9 +261,9 @@ document { Key => nonspaceAnalyzer,
 	 peek a()
 	 peek a()
 	 peek a()
-	 (fixedStringParser "abc" : nonspaceAnalyzer) " a b c "
+	 (constParser "abc" : nonspaceAnalyzer) " a b c "
      ///,
-     SeeAlso => {fixedStringParser, (symbol :, Parser, Analyzer)}
+     SeeAlso => {constParser, (symbol :, Parser, Analyzer)}
      }
 
 document { Key => nil,
@@ -311,12 +319,12 @@ document { Key => futureParser,
      EXAMPLE lines ///
      	  p = futureParser q
 	  m = p : charAnalyzer
-	  q = fixedStringParser "abc"
+	  q = constParser "abc"
 	  m "abc"
      ///
      }
 
-document { Key => {orP, (symbol |, Parser, Parser)},
+document { Key => {orP, (symbol |, Parser, Parser), (symbol |, Parser, String), (symbol |, String, Parser)},
      Headline => "parsing alternatives",
      Usage => "r = orP(p,q,...)",
      Inputs => { { TT "(p,q,...)", ", a sequence of parsers (of type ", TO "Parser", ")" }},
@@ -329,17 +337,21 @@ document { Key => {orP, (symbol |, Parser, Parser)},
 	  "In case of ambiguity, the value returned by the left-most accepting parser is provided."
 	  },
      PARA {
+	  "If one of the arguments is ", ofClass String, " then ", TO "constParser", " is used to convert it into a parser."
+	  },
+     PARA {
 	  "In an efficient grammar, the first token presented to ", TT "r", " will be acceptable to at most one of the input parsers,
 	  and then the parser returned by ", TT "r", " will be the parser returned by the single accepting input parser."
 	  },
      EXAMPLE lines ///
-     	  (fixedStringParser "abc" | fixedStringParser "def" : charAnalyzer) "abc"
-     	  (fixedStringParser "abc" | fixedStringParser "def" : charAnalyzer) "def"
+     	  (constParser "abc" | constParser "def" : charAnalyzer) "abc"
+     	  (constParser "abc" | constParser "def" : charAnalyzer) "def"
+     	  (constParser "abc" | "def" : charAnalyzer) "def"
      ///,
-     SeeAlso => {fixedStringParser, charAnalyzer, (symbol :, Parser, Analyzer)}
+     SeeAlso => {constParser, charAnalyzer, (symbol :, Parser, Analyzer)}
      }
 
-document { Key => {andP, (symbol @, Parser, Parser)},
+document { Key => {andP, (symbol @, Parser, Parser), (symbol @, String, Parser), (symbol @, Parser, String)},
      Headline => "parser conjunction",
      Usage => "r = andP(p,q,...)",
      Inputs => { { TT "(p,q,...)", ", a sequence of parsers (of type ", TO "Parser", ")" }},
@@ -349,25 +361,28 @@ document { Key => {andP, (symbol @, Parser, Parser)},
      PARA {
 	  "An abbreviation for ", TT "andP(p,q)", " is ", TT "p@q", "."
 	  },
+     PARA {
+	  "If one of the arguments is ", ofClass String, " then ", TO "constParser", " is used to convert it into a parser."
+	  },
      EXAMPLE lines ///
-     	  (fixedStringParser "abc" @ fixedStringParser "def" : charAnalyzer) "abcdef"
+     	  (constParser "abc" @ constParser "def" : charAnalyzer) "abcdef"
      ///,
-     SeeAlso => {fixedStringParser,(symbol :, Parser, Analyzer)}
+     SeeAlso => {constParser,(symbol :, Parser, Analyzer)}
      }
 
-document { Key => transform,
+document { Key => (symbol %, Function, Parser),
      Headline => "transform the value returned by a parser",
-     Usage => "(transform f) p",
+     Usage => "f % p",
      Inputs => { "f" => Function, "p" => Parser },
      Outputs => { Parser => { "a parser that feeds its tokens to ", TT "p", " and filters the value returned by ", TT "p", " through ", TT "f" }},
-     SourceCode => transform,
+     SourceCode => {(symbol %, Function, Parser)},
      EXAMPLE lines ///
-	  (* fixedStringParser "abc" : charAnalyzer) "abcabcabc"
-	  ((transform concatenate) (* fixedStringParser "abc") : charAnalyzer) "abcabcabc"
-     	  (fixedStringParser "abc" : charAnalyzer) "abc"
-     	  ((transform (s -> concatenate("[",s,"]"))) fixedStringParser "abc" : charAnalyzer) "abc"
+	  (* constParser "abc" : charAnalyzer) "abcabcabc"
+	  (concatenate % * constParser "abc" : charAnalyzer) "abcabcabc"
+     	  (constParser "abc" : charAnalyzer) "abc"
+     	  ((s -> concatenate("[",s,"]")) % constParser "abc" : charAnalyzer) "abc"
      ///,
-     SeeAlso => {fixedStringParser, charAnalyzer, (symbol :, Parser, Analyzer)}
+     SeeAlso => {constParser, charAnalyzer, (symbol :, Parser, Analyzer)}
      }
 
 document { Key => (symbol *, Parser),
@@ -379,9 +394,9 @@ document { Key => (symbol *, Parser),
 	       }},
      SourceCode => {(symbol *, Parser)},
      EXAMPLE lines ///
-     	  (* fixedStringParser "abc" : charAnalyzer) "abcabcabc"
+     	  (* constParser "abc" : charAnalyzer) "abcabcabc"
      ///,
-     SeeAlso => {fixedStringParser, charAnalyzer, (symbol :, Parser, Analyzer)}
+     SeeAlso => {constParser, charAnalyzer, (symbol :, Parser, Analyzer)}
      }
 
 document { Key => (symbol +, Parser),
@@ -393,24 +408,24 @@ document { Key => (symbol +, Parser),
 	       }},
      SourceCode => {(symbol +, Parser)},
      EXAMPLE lines ///
-     	  (+ fixedStringParser "abc" : charAnalyzer) "abcabcabc"
+     	  (+ constParser "abc" : charAnalyzer) "abcabcabc"
      ///,
-     SeeAlso => {fixedStringParser, charAnalyzer, (symbol :, Parser, Analyzer)}
+     SeeAlso => {constParser, charAnalyzer, (symbol :, Parser, Analyzer)}
      }
 
-document { Key => fixedStringParser,
+document { Key => constParser,
      Headline => "produce a parser that accepts a fixed string, one character at a time",
-     Usage => "fixedStringParser s",
+     Usage => "constParser s",
      Inputs => { "s" => String },
      Outputs => { Parser => { "a parser that accepts (and returns) the string s, one character at a time" } },
      EXAMPLE lines ///
-     	  fixedStringParser "abc"
+     	  constParser "abc"
 	  oo "a"
 	  oo "a"
 	  ooo "b"
 	  oo "c"
 	  oo null
-	  (fixedStringParser "abc" : charAnalyzer) "abc"
+	  (constParser "abc" : charAnalyzer) "abc"
      ///,
      SeeAlso => {(symbol :, Parser, Analyzer)}
      }
@@ -422,11 +437,11 @@ document { Key => optionalSignParser,
 	  },
      SourceCode => optionalSignParser,
      EXAMPLE lines ///
-     	  (optionalSignParser @ fixedStringParser "abc" : charAnalyzer) "abc"
-     	  (optionalSignParser @ fixedStringParser "abc" : charAnalyzer) "+abc"
-     	  (optionalSignParser @ fixedStringParser "abc" : charAnalyzer) "-abc"
+     	  (optionalSignParser @ constParser "abc" : charAnalyzer) "abc"
+     	  (optionalSignParser @ constParser "abc" : charAnalyzer) "+abc"
+     	  (optionalSignParser @ constParser "abc" : charAnalyzer) "-abc"
      ///,
-     SeeAlso => {(symbol @,Parser,Parser),fixedStringParser,charAnalyzer,(symbol :, Parser, Analyzer)}
+     SeeAlso => {(symbol @,Parser,Parser),constParser,charAnalyzer,(symbol :, Parser, Analyzer)}
      }
 
 document { Key => NNParser,
@@ -474,10 +489,10 @@ document { Key => optP,
 	  the symbol ", TT "nil", ".  It prefers to do the former."}},
      PARA { "After the first token, the parser is no slower than ", TT "p", " would have been." },
      EXAMPLE lines ///
-     	  (optP fixedStringParser "abc" : charAnalyzer) "abc"
-     	  (optP fixedStringParser "abc" : charAnalyzer) ""
+     	  (optP constParser "abc" : charAnalyzer) "abc"
+     	  (optP constParser "abc" : charAnalyzer) ""
      ///,
-     SeeAlso => {fixedStringParser, charAnalyzer, (symbol :, Parser, Analyzer)}
+     SeeAlso => {constParser, charAnalyzer, (symbol :, Parser, Analyzer)}
      }
 	  
 

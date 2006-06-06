@@ -89,6 +89,7 @@ new DocumentTag from List := (DocumentTag,x) -> (
 pkgTitle = method()
 pkgTitle Package := pkg -> pkg#"title"
 pkgTitle Symbol  := toString
+pkgTitle String  := identity
 pkgTitle Nothing := x -> ""
 
 makeDocumentTag = method(SingleArgumentDispatch => true, Options => {
@@ -96,12 +97,22 @@ makeDocumentTag = method(SingleArgumentDispatch => true, Options => {
 	  Package => null
 	  })
 makeDocumentTag DocumentTag := opts -> tag -> tag
-makeDocumentTag Thing := opts -> key -> (
+mdt := makeDocumentTag Thing := opts -> key -> (
      nkey := normalizeDocumentKey key;
      verifyKey nkey;
      fkey := if opts#FormattedKey =!= null then opts#FormattedKey else formatDocumentTag nkey;
      pkg := if opts#Package =!= null then opts#Package else packageKey fkey;
      new DocumentTag from {nkey,fkey,pkg,pkgTitle pkg})
+makeDocumentTag String := opts -> key -> (
+     m := regex("[[:space:]]*::[[:space:]]*",key);
+     if m === null then (mdt opts) key
+     else (
+	  (i,n) := m#0;
+	  pkg := substring(0,i,key);
+	  key = substring(i+n,key);
+	  makeDocumentTag(key,opts,Package => pkg)
+	  )
+     )
 -- a bit of experimentation...
 DocumentTag.Key = method(SingleArgumentDispatch => true)
 DocumentTag.Key DocumentTag := x -> x#0
@@ -174,7 +185,9 @@ fetchRawDocumentation(Package,String) := (pkg,fkey) -> (		    -- returns null if
 	       d = pkg#rawKeyDB;
 	       if isOpen d and d#?fkey then value d#fkey)))
 fetchRawDocumentation(String,String) := (pkgtitle,fkey) -> (
-     notImplemented()
+     needsPackage pkgtitle;				    -- maybe later we should dismiss this package if it wasn't already open!
+     if PackageDictionary#?pkgtitle and instance(pkg := value PackageDictionary#pkgtitle, Package) then fetchRawDocumentation(pkg,fkey)
+     else (stderr << "--warning: no package named " << pkgtitle << endl;)
      )
 fetchRawDocumentation DocumentTag := tag -> (
      fetchRawDocumentation(DocumentTag.Package tag, DocumentTag.FormattedKey tag)

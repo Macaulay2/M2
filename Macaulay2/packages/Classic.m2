@@ -10,98 +10,90 @@ thisPackage := newPackage ( "Classic",
 
 needsPackage "Parsing"
 
---
-start := currentLineNumber()
---
-symbolP = (transform (x -> ( if not isGlobalSymbol x then error("symbol ",x," undefined"); getGlobalSymbol x ))) letterParser
-listP = comma -> parser -> (transform splice) (parser @ * (transform last) (fixedStringParser comma @ parser))
-variableP = (transform value) symbolP
+-- start --
+symbolP = (x -> ( if not isGlobalSymbol x then error("symbol ",x," undefined"); getGlobalSymbol x )) % letterParser
+seqP = (comma, parser) -> prepend % parser @ * (last % comma @ parser)
+variableP = value % symbolP
 intP = NNParser | variableP
-subscriptP = (transform ((lb,x,rb) -> x)) andP( fixedStringParser "[", (transform unsequence) (listP ",") intP, fixedStringParser "]" )
-ringVariableP = (transform ((x,n) -> if n === nil then value x else x_n)) (symbolP @ optP subscriptP)
+subscriptP = ((lb,x,rb) -> x) % andP( "[", unsequence % seqP_"," intP, "]" )
+ringVariableP = ((x,n) -> if n === nil then value x else x_n) % symbolP @ optP subscriptP
 numberP = ZZParser | QQParser
-powerP = (transform ((x,n) -> if n === nil then x else x^n)) ((futureParser parenExprP | ringVariableP) @ optP NNParser)
-monomialP = (transform (times @@ deepSplice)) (optionalSignParser @ (numberP @ *powerP | +powerP ))
-polyP = (transform (plus @@ deepSplice)) (+monomialP) | terminalParser 0
-parenExprP = (transform ((lp,x,rp) -> x)) andP(fixedStringParser "(", futureParser parenExprP | polyP, fixedStringParser ")")
-listPolyP = (transform toList) (listP ",") polyP
-arrayPolyP = (transform toList) (listP ";") listPolyP
+powerP = ((x,n) -> if n === nil then x else x^n) % (futureParser parenExprP | ringVariableP) @ optP NNParser
+monomialP = times @@ deepSplice % optionalSignParser @ (numberP @ *powerP | +powerP )
+polyP = plus @@ deepSplice % +monomialP | terminalParser 0
+parenExprP = ((lp,x,rp) -> x) % andP("(", futureParser parenExprP | polyP, ")")
+listPolyP = toList % seqP_"," polyP
+arrayPolyP = toList % seqP_";" listPolyP
 export poly ; poly = method()
 poly String :=  polyP : nonspaceAnalyzer
-ideal String := ideal @@ (listPolyP : nonspaceAnalyzer)
-matrix String := opts -> s -> matrix((arrayPolyP : nonspaceAnalyzer) s, opts)
---
-stop := currentLineNumber()
---
-sourcecode = stack take(lines get currentFileName, {start,stop-4})
+ideal String := ideal % listPolyP : nonspaceAnalyzer
+matrix String := opts -> matrix_opts % arrayPolyP : nonspaceAnalyzer
+-- end --
 
 beginDocumentation()
 
+sourcecode = (() -> (
+	  l := lines get currentFileName;
+	  i := position(l, match_"^-- start --");
+	  j := position(l, match_"^-- end --");
+	  stack take(l, {i+1,j-1})
+	  )) ()
+
 document {
      Key => Classic,
+     Headline => "a parser for classic Macaulay syntax",
+     PARA "This package provides a parser for polynomials in the classic Macaulay format.  Some users prefer it, for ease and speed of typing
+	  polynomials, ideals, and matrices.",
+     PARA "Only ring variables that are single letters, or single letters indexed by a sequence of numbers can be handled with this parser.",
+     PARA "The rules for creating polynomials using the classic parser include:",
+     UL {
+	  LI "Spaces, tabs, and newline characters are completely ignored.",
+	  LI "A variable is either (1) a single letter, (2) a subscripted variable, or (3) a polynomial enclosed in parentheses.",
+	  LI { "Subscripted variables, e.g., ", TT "y_(1,1)", ", are written using brackets, as in ", TT "y[1,1]", ".  
+	       Instead of explicit numbers for subscripted variables, Macaulay2 user variables which have an integer value may be used."},
+	  LI { "Coefficients are either integers or rational numbers, starting with a + or - (which may be omitted for the first monomial).  Over finite
+	       fields, the division is performed in that field."},
+	  LI { "A monomial is written without symbols for multiplication or exponentiation,
+	       where the (optional) coefficient comes first."},
+	  LI "A polynomial is a collection of monomials one after the other.",
+ 	  LI "Parenthesized subexpressions are allowed.",
+	  LI "Except for indices for subscripted variables, integers must be explicitly given.",
+     	  LI {"All of the variables used must already belong to a specific ring.  If in doubt, 
+     	       first type ", TT "use R", " to ensure that all the symbols of ", TT "R", " are in use."}
+	  },
+     PARA { "The source code for this parser is relatively short, since it is based on the package ", TO "Parsing", ".  Here it is." },
+     TABLE { "class" => "examples",  TR TD PRE sourcecode },
+     Subnodes => {
+	  TO (poly,String),
+	  TO (ideal,String),
+	  TO (matrix,String)
+	  }
      }
 
-
+undocumented {(poly,Sequence)}
 document { 
-     Key => {poly,(poly,String)},
-     Headline => "make a polynomial using classic Macaulay-like syntax",
+     Key => {(poly,String),poly},
+     Headline => "make a polynomial using classic Macaulay syntax",
      Usage => "poly s",
-     Inputs => {
-	  "s" => String
-	  },
-     Outputs => {
-	  RingElement
-	  },
-     "The classic Macaulay polynomial format is useful for fast entry
-     of polynomials, ideals, and matrices.  Only ring variables which are
-     single letters, or single letters indexed by a sequence of numbers can
-     be handled with this parser.",
-     PARA{},
-     "The rules for creating polynomials using the classic parser include:",
-     UL {
-	  "Spaces and newline characters are completely ignored.",
-
-	  "A variable is either (1) a single letter, (2) a subscripted variable, or
-	  (3) a polynomial enclosed in parentheses.",
-
-	  "Subscripted variables, e.g. y_(1,1) are written using brackets, as in
-	  y[1,1].  Instead of explicit numbers for subscripted variables, Macaulay2
-	  user variables which have an integer value may be used.",
-
-	  "Coefficients are either integers or rational numbers, starting with
-	  a + or - (which may be omitted for the first monomial).  Over finite
-	  fields, the division is performed in that field.",
-
-	  "A monomial is written without symbols for multiplication or exponentiation,
-	  where the (optional) coefficient comes first.",
-
-	  "A polynomial is a collection of monomials one after the other.",
-	  },
-     "Except for indices for subscripted variables, integers must be explicitly given.
-     All of the variables used must already belong to a specific ring.  If in doubt, 
-     first do ", TO (use,Ring), ".",
-     EXAMPLE {
-	  ///R = ZZ/32003[a..d,x_1..x_4,y_(1,1)..y_(2,2)];///,
-	  ///poly"a2b-3ab-1"///,
-	  ///poly"a2y[1,1]3-3ab-1"///,
-	  ///poly"(a+b)(a+2c)"///,
-	  ///poly"(a+b+c)3-1"///,
-	  ///poly"3/4a2b-3ab-1"///,
-	  ///poly"a5+5a4b+10a3b2+10a2b3+5ab4+b5
-	        -10a4c-40a3bc-60a2b2c-40ab3c-10b4c
-		+40a3c2+120a2bc2+120ab2c2+40b3c2
-		-80a2c3-160abc3-80b2c3+80ac4+80bc4-32c5"///,
-	  ///poly"(a+(c+y[1,1])2)2-1"///
-	  },
-     Caveat => {"Ring variables which are not single characters, or are not
-	  indexed by a sequence of integers, cannot be input using this function."
-	  },
+     Inputs => { "s" },
+     Outputs => { RingElement => { "created from ", TT "s", " using classic Macaulay syntax, as described in ", TO "Classic" } },
+     EXAMPLE lines ///
+	  R = ZZ/32003[a..d,x_1..x_4,y_(1,1)..y_(2,2)];
+	  poly "a2b-3ab-1"
+	  poly "a2y[1,1]3-3ab-1"
+	  poly "(a+b)(a+2c)"
+	  poly "(a+b+c)3-1"
+	  poly "3/4a2b-3ab-1"
+	  poly "a5+5a4b+10a3b2+10a2b3+5ab4+b5-10a4c-40a3bc-60a2b2c-40ab3c-10b4c
+		+40a3c2+120a2bc2+120ab2c2+40b3c2-80a2c3-160abc3-80b2c3+80ac4+80bc4-32c5"
+	  poly "(a+(c+y[1,1])2)2-1"
+     ///,
      SeeAlso => {(ideal,String),(matrix,String)}
      }
 
 document { 
      Key => (ideal,String),
-     Headline => "make an ideal using classic Macaulay-like syntax",
+     Headline => "make an ideal using classic Macaulay syntax",
      Usage => "ideal s",
      Inputs => {
 	  "s" => "in the form: \"f1,f2,...,fr\""
@@ -109,45 +101,30 @@ document {
      Outputs => {
 	  Ideal
 	  },
-     "Creates an ideal using an abbreviated format.
-     Each polynomial has the form described in ", TO (poly,String), 
-     ".  The polynomials are separated by commas.
-     Spaces and newline characters are ignored. ",
-     EXAMPLE {
-	  "R = ZZ/32003[a..d,x_1..x_4];",
-	  ///I = ideal"a+b2-1,(a+b)(c+d),x[1]-x[2]3"///
+     PARA {
+	  "Creates an ideal using an abbreviated format. Each polynomial has the form described in ", TO Classic, ".  The polynomials are separated by commas.
+     	  Spaces and newline characters are ignored. "
 	  },
-     Caveat => {"Ring variables which are not single characters, or are not
-	  indexed by a sequence of integers, cannot be input using this function."
-	  },
+     EXAMPLE lines ///
+	  R = ZZ/32003[a..d,x_1..x_4];
+	  I = ideal "a+b2-1,(a+b)(c+d),x[1]-x[2]3"
+     ///,
      SeeAlso => {(poly,String), (matrix,String)}
      }
 
 document { 
      Key => (matrix,String),
-     Headline => "make a matrix using classic Macaulay-like syntax",
+     Headline => "make a matrix using classic Macaulay syntax",
      Usage => "matrix s",
-     Inputs => {
-	  "s" => "in the form: \"f1,f2,...,fr;g1,...,gr;...;h1,...,hr\""
-	  },
-     Outputs => {
-	  Matrix
-	  },
-     "Creates a matrix using an abbreviated format.
-     Each polynomial has the form described in ", TO (poly,String), 
-     ".  The rows of the matrix are separated by semicolons, and
-     within each row, the polynomials are separated by commas.  Any
-     entry which is missing is assumed to be 0.
-     Spaces and newline
-     characters are ignored. ",
-     EXAMPLE {
-	  "R = ZZ/32003[a..d,x_1..x_4];",
-	  ///N = matrix"a,b,c,d;x[1],x[2],x[3],x[4]"///,
-	  ///M = matrix"ad-2c3,(a-b)2+1,ab;,abc-1,"///,
-	  },
-     Caveat => {"Ring variables which are not single characters, or are not
-	  indexed by a sequence of integers, cannot be input using this function."
-	  },
+     Inputs => { "s" => { "in the form: ", TT "\"f1,f2,...,fr;g1,...,gr;...;h1,...,hr\"" } },
+     Outputs => { Matrix },
+     "Creates a matrix using an abbreviated format. Each polynomial has the form described in ", TO Classic, ".  The rows of the matrix are separated by semicolons, and
+     within each row, the polynomials are separated by commas.  Any entry which is missing is assumed to be 0. Spaces and newline characters are ignored. ",
+     EXAMPLE lines ///
+	  R = ZZ/32003[a..d,x_1..x_4];
+	  N = matrix "a,b,c,d;x[1],x[2],x[3],x[4]"
+	  M = matrix "ad-2c3,(a-b)2+1,ab;,abc-1,"
+     ///,
      SeeAlso => {(poly,String), (ideal,String)}
      }
 
