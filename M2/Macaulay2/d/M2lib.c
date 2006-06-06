@@ -665,5 +665,6 @@ int actors5_WindowHeight(int fd) {
 /*
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+// tags-file-name: "TAGS"
 // End:
 */

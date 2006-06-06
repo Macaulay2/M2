@@ -128,7 +128,9 @@ document {
 	  "functions that accept regular expressions",
 	  TO "match",
 	  TO "regex",
-	  TO "replace"
+	  TO "replace",
+	  TO (select, String, String),
+	  TO (select, String, String, String)
 	  }
      }
 

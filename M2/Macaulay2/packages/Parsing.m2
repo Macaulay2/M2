@@ -307,6 +307,7 @@ document { Key => futureParser,
      Inputs => { "p" => Symbol },
      Outputs => { Parser => { "a parser that will pass its input to the value of the symbol ", TT "p", " at that time" }},
      SourceCode => futureParser,
+     PARA "This function makes recursive parsers possible.",
      EXAMPLE lines ///
      	  p = futureParser q
 	  m = p : charAnalyzer

@@ -400,7 +400,7 @@ action2 := hashTable {
      "-e" => arg -> if phase == 3 then valueNotify arg,
      "--print-width" => arg -> if phase == 3 then printWidth = value arg,
      "--prefix" => arg -> if phase == 1 then (
-	  if arg === "" or not match("/$",arg) then arg = arg | "/";
+	  if not match("/$",arg) then arg = arg | "/";
 	  prefixDirectory = arg;
 	  )
      }
