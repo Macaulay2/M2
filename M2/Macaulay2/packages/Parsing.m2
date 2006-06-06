@@ -46,11 +46,16 @@ Parser : Analyzer := (p0,a0) -> s -> (
 -- result symbols
 export nil						    -- something useless for a parser to return to indicate acceptance
 -- parsers
-export deadParser     ; deadParser = Parser (c -> null)
-export terminalParser ; terminalParser = val -> new Parser from (c -> if c === null then val)
-export nullParser     ; nullParser = terminalParser nil
-export letterParser   ; letterParser = Parser (c -> if alpha#?c then b -> if b === null then c)
-export futureParser   ; futureParser = parserSymbol -> new Parser from (c -> (value parserSymbol) c)
+export deadParser
+deadParser = Parser (c -> null)
+export terminalParser
+terminalParser = val -> new Parser from (c -> if c === null then val)
+export nullParser
+nullParser = terminalParser nil
+export letterParser
+letterParser = Parser (c -> if alpha#?c then b -> if b === null then c)
+export futureParser
+futureParser = parserSymbol -> new Parser from (c -> (value parserSymbol) c)
 
 -- parser makers
 export orP
@@ -76,7 +81,7 @@ Parser | Parser := (p,q) -> new Parser from (
 export optP
 optP = parser -> parser | nullParser
 
-export transform; 
+export transform
 transform = fun -> f := p -> new Parser from ( c -> (
 	  p' := p c;
 	  if p' =!= null then if c === null then fun p' else f p'
@@ -132,8 +137,8 @@ Parser @ Parser := (p,q) -> new Parser from (
 export fixedStringParser 
 fixedStringParser = s -> ( f := n -> new Parser from (c -> if c === null then if n === #s then s else null else if s#?n and c === s#n then f(n+1) else null)) 0
 
-export natNumberP
-natNumberP = (() -> (
+export NNParser
+NNParser = (() -> (
      	  f := n -> new Parser from (c -> if c === null then n else if digit#?c then f (10*n + digit#c)); 
      	  new Parser from (c -> if digit#?c then f digit#c)
      	  )) ()
@@ -142,10 +147,10 @@ export optionalSignParser
 optionalSignParser = Parser(c -> if c === null then 1 else if c === "-" then terminalParser(-1) else if c === "+" then terminalParser 1)
 
 export ZZParser
-ZZParser = (transform times) (optionalSignParser @ natNumberP)
+ZZParser = (transform times) (optionalSignParser @ NNParser)
 
 export QQParser
-QQParser = (transform ((num,sl,den) -> num/den)) andP(ZZParser,fixedStringParser "/",natNumberP)
+QQParser = (transform ((num,sl,den) -> num/den)) andP(ZZParser,fixedStringParser "/",NNParser)
 
 beginDocumentation()
 
@@ -156,7 +161,12 @@ document { Key => Parsing,
           function that parses a sequence of tokens, and ", TO "Analyzer", ", a type of function that accepts input for the parser in
           its original form and separates it into a stream of tokens.  A parser can be combined with an analyzer (see ", TO "(symbol :, Parser, Analyzer)", ",
 	  to produce a complete system for accepting input and parsing it."
-     	  }
+     	  },
+     Subnodes => {
+	  TO Analyzer,
+	  TO Parser,
+	  TO (symbol :, Parser, Analyzer)
+	  }
      }
 document { Key => Parser,
      Headline => "the class of all parsers",
@@ -170,6 +180,26 @@ document { Key => Parser,
      PARA {
 	  "When the input stream is exhausted, we call ", TT "p", " one more time like this: ", TT "p null", ".  The return value is ", TO "null", "
 	  if the parser is not in a terminal state.  Otherwise the return value is the parsed (and possibly evaluated) result."
+	  },
+     Subnodes => {
+	  "simple parsers",
+	  TO deadParser,
+	  TO terminalParser,
+	  TO nullParser,
+	  TO futureParser,
+	  TO letterParser,
+	  TO fixedStringParser,
+	  TO optionalSignParser,
+	  TO NNParser,
+	  TO ZZParser,
+	  TO QQParser,
+	  "making new parsers from old ones",
+	  TO optP,
+	  TO orP,
+	  TO andP,
+	  TO (symbol *, Parser),
+	  TO (symbol +, Parser),
+	  TO transform
 	  }
      }
 
@@ -181,6 +211,10 @@ document { Key => Analyzer,
 	  that keeps returning tokens each time it is called until none are left.
 	  Actually, the analyzer is to return a pair: ", TT "(pos,token)", ", where ", TT "pos", " is a string indicating the position where ", TT "token", " was found in the input.
 	  A position will be a sort of thing which can be converted to string with ", TO "toString", " (for printing error messages) and can be sorted."
+	  },
+     Subnodes => {
+	  TO charAnalyzer,
+	  TO nonspaceAnalyzer
 	  }
      }
 
@@ -193,7 +227,8 @@ document { Key => charAnalyzer,
 	  peek a()
 	  peek a()
 	  (fixedStringParser "abc" : charAnalyzer) "abc"
-     ///
+     ///,
+     SeeAlso => {fixedStringParser, (symbol :, Parser, Analyzer)}
      }
 
 document { Key => (symbol :, Parser, Analyzer),
@@ -206,7 +241,8 @@ document { Key => (symbol :, Parser, Analyzer),
      EXAMPLE lines ///
 	 (ZZParser : charAnalyzer) "123456789"
 	 (fixedStringParser "abc" : charAnalyzer) "abc"
-     ///
+     ///,
+     SeeAlso => {ZZParser, fixedStringParser, charAnalyzer, (symbol :, Parser, Analyzer)}
      }
 
 document { Key => nonspaceAnalyzer,
@@ -218,11 +254,12 @@ document { Key => nonspaceAnalyzer,
 	 peek a()
 	 peek a()
 	 (fixedStringParser "abc" : nonspaceAnalyzer) " a b c "
-     ///
+     ///,
+     SeeAlso => {fixedStringParser, (symbol :, Parser, Analyzer)}
      }
 
 document { Key => nil,
-     Headline => "a symbol a parser to return to indicate acceptance of the empty string of tokens",
+     Headline => "a symbol a parser may return to indicate acceptance of the empty string of tokens",
      SeeAlso => { nullParser }
      }
 
@@ -277,7 +314,7 @@ document { Key => futureParser,
      ///
      }
 
-document { Key => {orP, a},
+document { Key => {orP, (symbol |, Parser, Parser)},
      Headline => "parsing alternatives",
      Usage => "r = orP(p,q,...)",
      Inputs => { { TT "(p,q,...)", ", a sequence of parsers (of type ", TO "Parser", ")" }},
@@ -321,6 +358,10 @@ document { Key => transform,
      Outputs => { Parser => { "a parser that feeds its tokens to ", TT "p", " and filters the value returned by ", TT "p", " through ", TT "f" }},
      SourceCode => transform,
      EXAMPLE lines ///
+	  (* fixedStringParser "abc" : charAnalyzer) "abcabcabc"
+	  ((transform concatenate) (* fixedStringParser "abc") : charAnalyzer) "abcabcabc"
+     	  (fixedStringParser "abc" : charAnalyzer) "abc"
+     	  ((transform (s -> concatenate("[",s,"]"))) fixedStringParser "abc" : charAnalyzer) "abc"
      ///
      }
 
@@ -379,6 +420,21 @@ document { Key => optionalSignParser,
      ///
      }
 
+document { Key => NNParser,
+     Headline => "a parser that accepts (and returns) a natural number, one character at a time",
+     SourceCode => NNParser,
+     EXAMPLE lines ///
+     	  NNParser "1"
+	  oo null
+     	  ooo "2"
+	  oo null
+     	  ooo "3"
+	  oo null
+     	  (NNParser : charAnalyzer) "123456789123456789123456789"
+	  class oo
+     ///
+     }
+
 document { Key => ZZParser,
      Headline => "a parser that accepts (and returns) an integer, one character at a time",
      SourceCode => ZZParser,
@@ -397,6 +453,20 @@ document { Key => QQParser,
      	  (QQParser : charAnalyzer) "-123456789/54321"
      ///
      }
+	  
+document { Key => optP,
+     Headline => "making a parser optional",
+     Usage => "optP p",
+     Inputs => { "p" => Parser },
+     Outputs => { Parser => {"a parser that accepts tokens accepted by p and returns the value returned by p, or accepts the empty sequence of tokens and returns
+	  the symbol ", TT "nil", ".  It prefers to do the former."}},
+     PARA { "After the first token, the parser is no slower than ", TT "p", " would have been." },
+     EXAMPLE lines ///
+     	  (optP fixedStringParser "abc" : charAnalyzer) "abc"
+     	  (optP fixedStringParser "abc" : charAnalyzer) ""
+     ///
+     }
+	  
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

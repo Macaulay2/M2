@@ -10,14 +10,17 @@ thisPackage := newPackage ( "Classic",
 
 needsPackage "Parsing"
 
+--
+start := currentLineNumber()
+--
 symbolP = (transform (x -> ( if not isGlobalSymbol x then error("symbol ",x," undefined"); getGlobalSymbol x ))) letterParser
 listP = comma -> parser -> (transform splice) (parser @ * (transform last) (fixedStringParser comma @ parser))
 variableP = (transform value) symbolP
-intP = natNumberP | variableP
+intP = NNParser | variableP
 subscriptP = (transform ((lb,x,rb) -> x)) andP( fixedStringParser "[", (transform unsequence) (listP ",") intP, fixedStringParser "]" )
 ringVariableP = (transform ((x,n) -> if n === nil then value x else x_n)) (symbolP @ optP subscriptP)
 numberP = ZZParser | QQParser
-powerP = (transform ((x,n) -> if n === nil then x else x^n)) ((futureParser parenExprP | ringVariableP) @ optP natNumberP)
+powerP = (transform ((x,n) -> if n === nil then x else x^n)) ((futureParser parenExprP | ringVariableP) @ optP NNParser)
 monomialP = (transform (times @@ deepSplice)) (optionalSignParser @ (numberP @ *powerP | +powerP ))
 polyP = (transform (plus @@ deepSplice)) (+monomialP) | terminalParser 0
 parenExprP = (transform ((lp,x,rp) -> x)) andP(fixedStringParser "(", futureParser parenExprP | polyP, fixedStringParser ")")
@@ -27,8 +30,17 @@ export poly ; poly = method()
 poly String :=  polyP : nonspaceAnalyzer
 ideal String := ideal @@ (listPolyP : nonspaceAnalyzer)
 matrix String := opts -> s -> matrix((arrayPolyP : nonspaceAnalyzer) s, opts)
+--
+stop := currentLineNumber()
+--
+sourcecode = stack take(lines get currentFileName, {start,stop-4})
 
 beginDocumentation()
+
+document {
+     Key => Classic,
+     }
+
 
 document { 
      Key => {poly,(poly,String)},
