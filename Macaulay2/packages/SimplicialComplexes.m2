@@ -12,12 +12,13 @@ newPackage(
     	DebuggingMode => false
     	)
 
-export(SimplicialComplex,
+export {SimplicialComplex,
      simplicialComplex,
      boundary,fVector,isPure,label,
      faces,facets,link,
      simplicialChainComplex,
-     buchbergerComplex)
+     buchbergerComplex}
+
 
 complement := local complement
 complement = (m) -> (

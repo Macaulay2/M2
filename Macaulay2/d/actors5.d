@@ -748,7 +748,7 @@ erase(e:Expr):Expr := (
 		    )
 	       is null do nothing;
 	       d != d.outerDictionary ) do d = d.outerDictionary;
-	  buildErrorPacket("symbol has already been erased"))
+	  buildErrorPacket("symbol has already been erased: "+s.word.name))
      else WrongArg("a symbol")
      );
 setupfun("erase", erase);

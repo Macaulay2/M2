@@ -66,11 +66,11 @@ document {
      }
 
 document {
-     Key => {export, (export,Sequence), (export,Symbol)},
+     Key => {export, (export,List), (export,Symbol)},
      Headline => "package item: export functions",
-     Usage => "export(symbol1,symbol2,...)",
-     Inputs => { { TT "(symbol1,symbol2,...)", ", a sequence of symbols" } },
-     Consequences => {"The symbols in the sequence, which should refer
+     Usage => "export {symbol1,symbol2,...}",
+     Inputs => { { TT "{symbol1,symbol2,...}", ", a list of symbols" } },
+     Consequences => {"The symbols in the list, which should refer
 	  to functions or other symbols defined in the package, are made available 
 	  to the user of the package, and are marked non-mutable."},
      "A package can contain the code for many functions, only some 
@@ -82,7 +82,7 @@ document {
      }
 
 document {
-     Key => {exportMutable, (exportMutable,Sequence), (exportMutable,Symbol)},
+     Key => {exportMutable, (exportMutable,List), (exportMutable,Symbol)},
      Headline => "package item: export writable variables",
      Usage => "exportMutable(symbol1,symbol2,...)",
      Inputs => { Nothing => { TT "(symbol1,symbol2,...)", ", a sequence of symbols"  } },

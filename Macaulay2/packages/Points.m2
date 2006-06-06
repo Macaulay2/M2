@@ -10,13 +10,14 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export (
+export {
      pointsMat,
      points,
      pointsByIntersection,
      reduceColumn,
      makeRingMaps
-     )
+     }
+
 
 debug Macaulay2Core
 points = method()

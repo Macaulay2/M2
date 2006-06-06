@@ -115,9 +115,12 @@ vert := (op,post) -> x -> wrapAndStack post select( -- wrapping gets done by the
 	  op,
 	  i -> horizontalJoin(op \ i)),
      n -> width n > 0)
-net PARA := net DIV := (vert(net,x -> between("",x))) @@ noopts -- doublespacing
-info PARA := info DIV := (vert(info,x -> x)) @@ noopts
-info LI := net LI := info DIV1 := net DIV1 := (vert(net,identity)) @@ noopts				    -- singlespacing
+
+net BODY := net DIV := (vert(net,x -> between("",x))) @@ noopts -- doublespacing
+info BODY := info DIV := (vert(info,x -> between("",x))) @@ noopts -- doublespacing
+
+net LI := net DIV1 := (vert(net,identity)) @@ noopts				    -- singlespacing
+info LI := info DIV1 := (vert(info,identity)) @@ noopts				    -- singlespacing
 
 tex  BR := x -> ///
 \hfil\break

@@ -36,10 +36,10 @@ newPackage("Markov",
 
 
 
-export(makeGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
+export {makeGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
        markovRing, marginMap, markovMatrices, markovIdeal, writeDotFile, removeRedundants, bayesBall, prob,
-       hideMap)
-exportMutable(dotBinary,jpgViewer)
+       hideMap}
+exportMutable {dotBinary,jpgViewer}
 
 -------------------------
 -- Graph visualization --

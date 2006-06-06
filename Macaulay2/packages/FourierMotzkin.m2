@@ -16,7 +16,7 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export(fourierMotzkin)
+export fourierMotzkin
 
 
 -- PURPOSE : transposition along the antidiagonal?

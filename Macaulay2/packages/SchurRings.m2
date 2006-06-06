@@ -12,7 +12,7 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export (schurRing, SchurRing, symmRing, plethysmMap, jacobiTrudiE, plethysm, cauchy, bott)
+export {schurRing, SchurRing, symmRing, plethysmMap, jacobiTrudiE, plethysm, cauchy, bott}
 
 debug Macaulay2Core
 

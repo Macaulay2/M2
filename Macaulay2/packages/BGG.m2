@@ -12,7 +12,7 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export(symExt,bgg,tateResolution,sheafCohomology,sortedBasis,beilinson1,beilinson,U)
+export {symExt,bgg,tateResolution,sheafCohomology,sortedBasis,beilinson1,beilinson,U}
 
 symExt = (m,E) ->(
      ev := map(E,ring m,vars E);
