@@ -5,13 +5,8 @@
 recursionLimit = 300
 
 addStartFunction(() -> path = unique apply( path, minimizeFilename))
-addEndFunction(() -> (
-	  scan(openFiles(), f -> if isOutputFile f then flush f);
-	  path = {};
-	  )
-     )
-
-addStartFunction(() -> printWidth = width stdio)
+addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))
+addEndFunction(() -> path = {})
 
 lastLN := 0
 lastWI := 0
@@ -41,6 +36,7 @@ addStartFunction(
 	       newPackage("User", DebuggingMode => true);
 	       );
 	  needsPackage \ installedPackages;
+	  << "with packages: " << wrap concatenate between_", " sort installedPackages << endl;
 	  )
      )
 

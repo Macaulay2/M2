@@ -398,7 +398,7 @@ valueNotify := arg -> (
 action2 := hashTable {
      "-E" => arg -> if phase == 2 then valueNotify arg,
      "-e" => arg -> if phase == 3 then valueNotify arg,
-     "--print-width" => arg -> if phase == 3 then printWidth = value arg,
+     "--print-width" => arg -> if phase == 2 then printWidth = value arg,
      "--prefix" => arg -> if phase == 1 then (
 	  if not match("/$",arg) then arg = arg | "/";
 	  prefixDirectory = arg;
@@ -489,6 +489,7 @@ if firstTime and not nosetup then (
 
 if not firstTime then globalDictionaries = delete(Macaulay2Core#"private dictionary", globalDictionaries)
 
+printWidth = width stdio
 processCommandLineOptions 2
 runStartFunctions()
 errorDepth = loadDepth
