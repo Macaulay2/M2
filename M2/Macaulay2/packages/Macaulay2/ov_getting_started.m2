@@ -785,7 +785,7 @@ found."
 }
 
 document {
-     Key => "How Macaulay 2 finds its files",
+     Key => "how Macaulay 2 finds its files",
      "When you run Macaulay 2, it has to find and load a sequence of
      startup files containing code written in the Macaulay 2 language,
      or it has to find a data file containing a memory dump from a
@@ -810,11 +810,11 @@ document {
      where \"*\" is replaced by the value of the environment
      variable name M2ARCH if present, or else is a value computed at compile time and
      stored in the hash table called ", TO "version", " and accessible as ", TT "version#\"architecture\"", ".",
-     UL {
-	  TOH "LAYOUT",
-     	  TOH "prefixDirectory",
-	  TOH "buildHomeDirectory",
-	  TOH "sourceHomeDirectory"
+     Subnodes => {
+	  TO "LAYOUT",
+     	  TO "prefixDirectory",
+	  TO "buildHomeDirectory",
+	  TO "sourceHomeDirectory"
 	  }
      }
 

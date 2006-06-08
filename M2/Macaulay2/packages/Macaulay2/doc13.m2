@@ -640,7 +640,7 @@ document { Key => zero,
      Usage => "zero x",
      Inputs => { "x" },
      Outputs => { { "whether ", TT "x", " is equal to 0" }}}
-document { Key => homeDirectory,
+document { Key => "homeDirectory",
      Headline => "the home directory of the user",
      Usage => "homeDirectory",
      Outputs => { String => "the home directory of the user" },

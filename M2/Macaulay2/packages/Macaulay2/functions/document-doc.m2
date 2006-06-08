@@ -63,7 +63,6 @@ document {
  -- overview3.m2:189:     Key => "reading the documentation",
  -- overview3.m2:363:document { Key => "frequently encountered problems",
  -- overview4.m2:771:document { Key => "the debugger",
- -- overviewA.m2:376:     Key => "how to get documentation on a library",
  -- overview_doc.m2:2:     Key => "writing documentation",
  -- overview_doc.m2:168:     Key => "conventions for documentation",
  -- overview_doc.m2:178:     Key => "function name documentation template",
@@ -72,5 +71,4 @@ document {
  -- overview_doc.m2:255:     Key => "optional argument documentation template",
  -- overview_doc.m2:281:     Key => "overview documentation template",
  -- overview_doc.m2:300:     Key => "package documentation template",
- -- overview_packages.m2:1:document { Key => "packages",
  -- overview_packages.m2:63:document { Key => "creating a package",

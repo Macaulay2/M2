@@ -61,5 +61,4 @@ document {
  -- doc8.m2:1399:     Key => getNonUnit, Headline => "retrieve a previously discovered non-unit",
  -- overview2.m2:1677:     Key => "getting input from the user",
  -- overview3.m2:651:     Key => "getting started",
- -- overviewA.m2:376:     Key => "how to get documentation on a library",
  -- overviewB.m2:683:     Key => "basic construction, source and target of a ring map",

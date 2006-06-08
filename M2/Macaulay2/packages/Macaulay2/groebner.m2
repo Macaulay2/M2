@@ -41,9 +41,9 @@ document {
      Subnodes => {
 	  TO "simple Groebner basis computations over various rings",
 	  TO "Groebner bases in local rings",
-	  TO "normal forms",
-	  TO "elimination of variables",
-	  TO "saturation"
+	  -- TO "normal forms",
+	  -- TO "elimination of variables",
+	  -- TO "saturation"
 	  }
      }
 

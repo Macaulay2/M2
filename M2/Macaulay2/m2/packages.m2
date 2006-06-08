@@ -10,7 +10,7 @@ addStartFunction(
 Package = new Type of MutableHashTable
 Package.synonym = "package"
 net Package := toString Package := p -> if p#?"title" then p#"title" else "--package--"
-packages = {}
+loadedPackages = {}
 options Package := p -> p.Options
 
 toString Dictionary := d -> (
@@ -23,7 +23,7 @@ installMethod(GlobalAssignHook,Package,globalAssignFunction)
 installMethod(GlobalReleaseHook,Package,globalReleaseFunction)
 
 dismiss Package := pkg -> (
-     packages = delete(pkg,packages);
+     loadedPackages = delete(pkg,loadedPackages);
      globalDictionaries = delete(pkg.Dictionary,globalDictionaries);
      globalDictionaries = delete(pkg#"private dictionary",globalDictionaries);
      -- stderr << "--previous definitions removed for package " << pkg << endl;
@@ -82,13 +82,13 @@ newPackage(String) := opts -> (title) -> (
      -- stderr << "--package \"" << title << "\" loading" << endl;
      dismiss title;
      saveD := globalDictionaries;
-     saveP := packages;
+     saveP := loadedPackages;
      local hook;
      if title =!= "Macaulay2Core" then (
      	  hook = (
 	       haderror -> if haderror then (
 	       	    globalDictionaries = saveD;
-	       	    packages = saveP;
+	       	    loadedPackages = saveP;
 		    )
 	       else closePackage title
 	       );
@@ -154,7 +154,7 @@ newPackage(String) := opts -> (title) -> (
      global currentPackage <- newpkg;
      ReverseDictionary#newpkg = pkgsym;
      pkgsym <- newpkg;
-     packages = join(
+     loadedPackages = join(
 	  if title === "Macaulay2Core" then {} else {newpkg},
 	  {Macaulay2Core}
 	  );
@@ -254,11 +254,11 @@ closePackage String := title -> (
 	  protect exportDict;
 	  );
      if pkg#"title" === "Macaulay2Core" then (
-	  packages = {pkg};
+	  loadedPackages = {pkg};
 	  globalDictionaries = {Macaulay2Core.Dictionary, OutputDictionary, PackageDictionary};
 	  )
      else (
-	  packages = prepend(pkg,pkg#"previous packages");
+	  loadedPackages = prepend(pkg,pkg#"previous packages");
 	  globalDictionaries = prepend(exportDict,pkg#"previous dictionaries");
 	  );
      checkShadow();
@@ -291,8 +291,8 @@ package HashTable := package Function := x -> if ReverseDictionary#?x then packa
 
 Package.GlobalAssignHook = (X,x) -> if not ReverseDictionary#?x then ReverseDictionary#x = X;     -- not 'use x';
 Package.GlobalReleaseHook = globalReleaseFunction
-use Package := pkg -> if not member(pkg,packages) then (
-     packages = prepend(pkg,packages);
+use Package := pkg -> if not member(pkg,loadedPackages) then (
+     loadedPackages = prepend(pkg,loadedPackages);
      globalDictionaries = prepend(pkg.Dictionary,globalDictionaries);
      )
 

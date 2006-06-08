@@ -535,7 +535,7 @@ getfun(e:Expr):Expr := (
 	  is e:errmsg do buildErrorPacket(e.message)
 	  is s:string do Expr(s))
      else WrongArg("a string as filename"));
-setupfun("get",getfun);
+setupfun("simpleGet",getfun);
 
 readprompt := "";
 readpromptfun():string := readprompt;

@@ -1,6 +1,6 @@
 -- this is a minimal example of a package
 
-newPackage("minimal",
+newPackage("Minimal",
      Version => "1.0", 
      Date => "December 14, 2004",
      Authors => {
@@ -18,7 +18,7 @@ beginDocumentation()
 
 TEST "assert( f() === null )"
 
-document { Key => "minimal",
+document { Key => "Minimal",
      Headline => "a minimal example of a Macaulay 2 package",
      "This package is just a minimal example of a package."
      }

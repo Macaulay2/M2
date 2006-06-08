@@ -1125,7 +1125,7 @@ exportMutable {
 	symbol oo,
 	symbol ooo,
 	symbol oooo,
-	symbol packages,
+	symbol loadedPackages,
 	symbol path,
 	symbol prefixDirectory,
 	symbol printWidth,

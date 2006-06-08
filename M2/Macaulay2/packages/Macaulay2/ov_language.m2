@@ -1,22 +1,3 @@
--- old structure
---          "The Macaulay 2 Language",
---	       TO "The Macaulay2 language",
---     	  "The Macaulay 2 Language (old version)",			    -- part 2, one liners, lists, sets, but not hash tables
---	       TO "variables and symbols",
---	       TO "basic types",
---	       TO "control structures",			    -- control structures: scan, apply, for, while, if, return, break, continue
---	       TO "functions",
---	       TO "input and output",			    -- but sockets, etc, move later
---	       TO "operators",				    -- but with explanations
---	  "Programming Overview",			    -- part 3, multiple line techniques, saved in a function in a file, writing packages
---	       TO "classes and types",
---	       TO "system",
---	       TO "advanced input and output",
---	       TO "debugging",
---	       TO "executing other programs",
---	       TO "packages",
---	       TO "writing documentation",
-
 document {
      Key => "The Macaulay2 language",
      "The Macaulay2 language is a simple yet powerful interpreted language.  Every 
@@ -37,23 +18,37 @@ document {
      ", TO "Ring", ", ", TO "RingElement", ", ", TO "Matrix", ", ", TO "Ideal", ", ", TO "RingMap", ", ", TO "Module", ", and ", TO "ChainComplex", ".",
 
      Subnodes => {
-	  TO "overview of the Macaulay2 language",
-	  TO "variables",
+	      TO "variables",
 	  "basic data types",
 	      TO "numeric types",
 	      TO "strings and nets",
 	      TO "lists and sequences",
 	      TO "hash tables",
      	  "expressions",
-	      TO "assignment statements",
-	      TO "function calls",
-	      TO "function definitions",
-	      TO "if statements",
-	      TO "while loops",
-	      TO "for loops",
-	      TO "try clauses",
-	      TO "catch and throw",
 	      TO "operators",
+	      TO "assignment",
+	      TO "conditional execution",
+	      TO "while",
+	      TO "for",
+	      TO "mapping over lists",
+	      TO "mapping over hash tables",
+	      TO "error handling",
+	      TO "catch and throw",
+	  "functions",
+	      TO "using functions",
+	      TO "using functions with optional inputs",
+	      TO "making functions",
+	      TO "local variables in a function",
+	      TO "making functions with a variable number of arguments",
+	      TO "making new functions with optional arguments",
+	  "classes and types",
+	      TO "what a class is",
+	      TO "installing methods",
+	      TO "binary methods",
+	      TO "making new classes",
+	      TO "inheritance from parents",
+	      TO "printing and formatting for new classes",
+	      TO "making a new method function",
 	  "input and output",
 	      TO "printing to the screen",
 	      TO "reading files",
@@ -61,23 +56,36 @@ document {
 	      TO "creating and writing files",
 	      TO "saving polynomials and matrices in files",
 	      TO "two dimensional formatting",
-	  "classes and types",
-	      TO "a sample user defined type: Quaternions",
+	      TO "file manipulation",
      	  "packages",
 	      TO "packages",
-	      TO "writing documentation",
 	      TO "a sample package: Quaternions",
 	  "other topics",
+	      TO "setting an alarm",
 	      TO "interacting with the system",
-	      TO "advanced input and output",
-	      TO "debugging",
+	      TO "communicating with programs",
+	      TO "using sockets",
 	  }
      }
 ------------------------------------------------------------------
-document { 
-     Key => "overview of the Macaulay2 language"
+document {
+     Key => "saving polynomials and matrices in files",
+     "Use the function ", TO "toString", " to convert polynomials, matrices, and other mathematical
+     objects to a linear format that can be saved in a file.",
+     EXAMPLE lines ///
+          R = QQ[x..z]
+	  p = (x-y-1)^3
+	  m = matrix {{x^2, x^2-y^2, x*y*z^7 }}
+	  M = image m
+	  f = temporaryFileName()
+	  f << toString (p,m,M) << close
+	  get f
+	  (p',m',M') = value get f
+	  p == p'
+	  m == m'
+	  M == M'
+     ///
      }
-
 document {
      Key => "variables",
      "Valid names for symbols may be constructed using letters, digits, and
@@ -114,6 +122,14 @@ document {
 	  clearOutput,
 	  clearAll,
 	  Symbol
+	  },
+     Subnodes => {
+	  TO "valid names",
+	  TO "assigning values",
+	  TO "local variables in a file",
+	  TO "viewing the symbols defined so far",
+	  TO "subscripted variables",
+	  TO "numbered variables",
 	  }
      }
 document {
@@ -164,53 +180,6 @@ document {
 
 ------------------------------------------------------------------
 
--- not active
-document {
-     Key => "expressions",
-     "All expressions in Macaulay2 return a value, including if, while and for statements.
-     This value may be ", TO null, ", which usually indicates that the expression is mainly 
-     being used for side effects.",
-     Subnodes => {
-	  TO "assignment statements",
-	  TO "function calls",
-	  TO "function definitions",
-	  TO "conditional execution",
-	  TO "while loops",
-	  TO "for loops",
-	  TO "try clauses",
-	  TO "catch and throw",
-	  TO "operators"
-	  }
-     }
-
-document {
-     Key => "variables and symbols",
-     Subnodes => {
-	  TO "valid names",
-	  TO "assigning values",
-	  TO "local variables in a file",
-	  TO "viewing the symbols defined so far",
-	  TO "subscripted variables",
-	  TO "numbered variables",
-	  }
-     }
-
-document {
-     Key => "functions",
-     "In this section we present an overview of functions.",
-     PARA{},
-     Subnodes => {
-	  TO "using functions",
-	  TO "using functions with optional inputs",
-	  TO "making functions",
-	  TO "local variables in a function",
-	  TO "making functions with a variable number of arguments",
-	  TO "making new functions with optional arguments",
-	  TO "Function"					    -- should become a cross-reference
-	  }
-     }
-
--- old, not too useful
 document {
      Key => "basic types",
      "The basic type of an object is the way the object is
@@ -219,34 +188,6 @@ document {
      ", TT "basictype", ".",
      SeeAlso => { "strings", "nets", "lists and sequences", "hash tables" }
      }
-
-document {
-     Key => "control structures",
-     Subnodes => {
-	  TO "assignment",
-	  TO "loops",
-	  TO "mapping over lists",
-	  TO "mapping over hash tables",
-	  TO "conditional execution",
-	  TO "setting an alarm",
-	  TO "error handling",
-	  }
-     }
-
-document {
-     Key => "input and output",
-     Subnodes => {
-	  TO "printing to the screen",
-	  TO "reading files",
-	  TO "getting input from the user",
-	  TO "creating and writing files",
-	  TO "saving polynomials and matrices in files",
-	  TO "two dimensional formatting",
-	  }
-     }
-
-
-
 
 document {
      Key => "valid names",
@@ -620,76 +561,125 @@ document {
      }
 
 document {
-     Key => "loops",
-     Headline => "for and while loops",
-     "One good way to perform an operation several times is with the
-     keyword ", TO "while", ".  An expression of the form
-     ", TT "while X do Y", " operates by evaluating
-     ", TT "X", " repeatedly.  Each time the value of ", TT "X", " is true, 
-     ", TT "Y", " is evaluated and its value is discarded.  When finally
-     the value of ", TT "X", " is false the special value ", TO "null", " is 
-     returned as the value of the ", TT "while", " expression.",
-     EXAMPLE {
-	  "i = 0;",
-	  ///while i < 20 do (<< " " << i; i = i + 1)///
-	  },
-     "In the example above, ", TT "X", " is the predicate ", TT "i < 20", " and ", TT "Y", " is
-     the code ", TT ///(<< " " << i; i = i + 1)///, ".  Notice the use of the
-     semicolon within ", TT "Y", " to separate two expressions.",
+     Key => "break",
+     Headline => "break from a loop",
+     TT "break x", " interrupts execution of a loop controlled by ",
+     TO "for", ", ", TO "while", ", ", TO "apply", ", or ", TO "scan", ", returning ",
+     TT "x", " as the value of the loop currently being
+     evaluated.",BR{},
+     TT "break", " interrupts execution of a loop, returning
+     ", TO "null", " as the value of the function currently being evaluated.",
      PARA{},
-     "The semicolon can also be used within the predicate ", TT "X", " to do other 
-     things before the test is performed.  This works because the value of an expression
-     of the form ", TT "(A;B;C;D;E)", " is obtained by evaluating each of the
-     parts, and providing the value of the last part (in this case, ", TT "E", "),
-     as the value of the whole expression.  Thus, if the value of ", TT "E", " is always
-     true or false, the expression ", TT "(A;B;C;D;E)", " can be used as
-     the predicate ", TT "X", ".  We illustrate this in the following example.",
-     EXAMPLE {
-	  "i = 0;",
-	  ///while (<< " " << i; i < 20) do i = i+1///
+     "Warning: trying to break from a loop controlled by ", TO "table", " will
+     probably not do what you expect, since ", TO "table", " is implemented by two nested
+     loops controlled by ", TO "apply", ", and only the inner one will stop.",
+     SeeAlso => { "scan", "while", "for" }
+     }
+
+document {
+     Key => "while",
+     Headline => "while loops",
+     Usage => "while p list x do z",
+     Consequences => {
+	  { "The expression ", TT "p", " is repeatedly evaluated.  As long as the result is true, ", TT "x", " is evaluated and its value is saved, and
+	       ", TT "z", " is evaluated and its value is discarded.  When the value of ", TT "p", " is false, then the loop terminates, and the list
+	       of values of ", TT "x", " is returned as the value of the entire expression."
+	       }},
+     EXAMPLE lines ///
+         i = 0 ; while i < 10 list i^2 do i = i+1
+     ///,
+     PARA { "The ", TT "list x", " clause may be omitted, in which case no list is accumulated, and ", TO "null", " is returned as the
+	  value of the expression." },
+     EXAMPLE lines ///
+         i = 0 ; while i < 4 do (print i; i = i+1)
+     ///,
+     PARA { "Alternatively, the ", TT "do z", " clause may be omitted." },
+     EXAMPLE lines ///
+         i = 0 ; while i < 10 list (i = i+1; i^2)
+     ///,
+     PARA {
+	  "Observe the use of the semicolon (see ", TT ";", ") in the expression above."
 	  },
-     "If we use the form ", TT "while X list Y", " then the final value
-     of the expression is a list of all the values of ", TT "Y", " encountered.",
-     EXAMPLE {
-	  ///i = 1; while (i = 2*i; i < 100) list i///
+     PARA { "If ", TO "continue", " is executed by ", TT "x", " then execution of ", TT "x", " is interrupted, no value is added to the list, and iteration of the loop
+     	  continues." 
 	  },
-     "The two keywords can be combined in an expression of the form
-     ", TT "while X list Y do Z", ", in which case Y and Z are both evaluated
-     each time, and the final value is a list of all the values 
-     of ", TT "Y", " encountered.",
-     EXAMPLE {
-	  ///i = 1; while i < 100 list i do i = 2*i///,
-	  ///i = List; while i =!= Thing list i do i = parent i///
+     EXAMPLE lines ///
+         i = 0 ; while i < 10 list (i = i+1; if odd i then continue; i^2)
+     ///,
+     PARA { "If ", TT "continue w", " is executed by ", TT "x", " then execution of ", TT "x", " is interrupted, the value of ", TT "w", " is added to the list, 
+     	  and iteration of the loop continues."
 	  },
-     "The keyword ", TO "break", " can be used to terminate a loop early,
-     and optionally to specify a return value for the while-expression.",
-     EXAMPLE {
-	  "i = 0; while true do (j = i!; if j > 1000000 then break j else i = i+1)"
+     EXAMPLE lines ///
+         i = 0 ; while i < 10 list (i = i+1; if odd i then continue x; i^2)
+     ///,
+     PARA { "  If ", TT "break v", " is executed by ", TT "x", ", then the loop is stopped and ", TT "v", " is returned as its value." },
+     EXAMPLE lines ///
+         i = 0 ; while i < 10 list (i = i+1; if i == 5 then break i; i^2)
+     ///,
+     PARA { "If ", TO "break", " is executed by ", TT "x", ", then the loop is stopped and the list accumulated so far is returned as the value." },
+     EXAMPLE lines ///
+         i = 0 ; while i < 10 list (i = i+1; if i == 5 then break; i^2)
+     ///,
+     }
+
+document { Key => "for",
+     Headline => "for loops",
+     Usage => "for i from m to n when p list x do z", 
+     Consequences => { 
+	  {"The variable i is initialized to m.  As long as i is less than n, evaluation of the loop continues.  First p is evaluated.  
+	       As long as the value of p is true, evaluation of the loop continues.  Next x is evaluated and its value is saved, and
+	       z is evaluated and its value is discarded.  Then i is incremented by 1, and the loop repeats.  When the value of p is false,
+	       then the loop terminates, and the list of values of x is returned as the value of the entire expression."
+	       }},
+     EXAMPLE lines ///
+     	  for i from 1 to 5 when i < 15 list i^2 do print i
+     	  for i from 1 to 5 when i^2 < 15 list i^2 do print i
+     ///,
+     PARA { "The ", TT "do z", " clause may be omitted." },
+     EXAMPLE lines ///
+     	  for i from 1 to 5 when i < 15 list i^2
+     ///,
+     PARA { "The ", TT "from m", " clause may be omitted, in which case ", TT "i", " starts with ", TT "0", "." },
+     EXAMPLE lines ///
+     	  for i to 5 when i < 15 list i^2
+     ///,
+     PARA { "The ", TT "when p", " clause may be omitted." },
+     EXAMPLE lines ///
+     	  for i to 5 list i^2
+     ///,
+     PARA { "The ", TT "to n", " clause may be omitted." },
+     EXAMPLE lines ///
+     	  for i when i < 15 list i^2
+     ///,
+     PARA { "The ", TT "list x", " clause may be omitted." },
+     EXAMPLE lines ///
+     	  for i when i^2 < 15 do print i
+     ///,
+     PARA { "If ", TO "continue", " is executed by ", TT "x", " then execution of ", TT "x", " is interrupted, no value is added to the list, and iteration of the loop
+     	  continues." 
 	  },
-     "Another good way to perform an operation several times is with
-     the keyword ", TO "for", ", especially when we are looping over
-     consecutive integers, as with the variable ", TT "i", " in the
-     previous example.  Here is the same computation, implemented
-     with ", TO "for", ".",
-     EXAMPLE "for i do (k := i!; if k > 1000000 then break k)",
-     "Note: a for-loop starts a new lexical scope for local variables,
-     and hence the value of ", TT "k", " is not known outside the 
-     loop; see ", TO ":=", ".",
-     PARA{},
-     "The keyword ", TO "when", " can be used with ", TO "for", " to
-     specify a predicate which must remain true for execution to
-     continue, and the keyword ", TO "list", " can be used to
-     specify values which should be accumulated into a list and
-     return as the value of the for-loop.  The keywords ", TO "from", " and 
-     ", TO "to", " can be used to specify numerical limits for the loop
-     variable.  Here is an example that illustrate all of these keywords
-     at once.",
-     EXAMPLE {
-	  "for i from 10 to 30 when i<15 list 100*i do print i"
+     EXAMPLE lines ///
+         for i from 0 when i < 10 list (if odd i then continue; i^2)
+     ///,
+     PARA { "If ", TT "continue w", " is executed by ", TT "x", " then execution of ", TT "x", " is interrupted, the value of ", TT "w", " is added to the list, 
+     	  and iteration of the loop continues."
 	  },
-     UL {
-	  TOH "while",
-	  TOH "for"
+     EXAMPLE lines ///
+         for i from 0 when i < 10 list (if odd i then continue x; i^2)
+     ///,
+     PARA { "  If ", TT "break v", " is executed by ", TT "x", ", then the loop is stopped and ", TT "v", " is returned as its value." },
+     EXAMPLE lines ///
+         for i from 0 when i < 10 list (if i== 5 then break i; i^2)
+     ///,
+     PARA { "If ", TO "break", " is executed by ", TT "x", ", then the loop is stopped and the list accumulated so far is returned as the value." },
+     EXAMPLE lines ///
+         for i from 0 when i < 10 list (if i== 5 then break; i^2)
+     ///,
+     Caveat => {
+	  },
+     PARA{
+     	  "The variable ", TT "i", " is a new local variable whose scope includes only the expressions ", TT "c", ", ", TT "x", ",
+	  and ", TT "y", ".  The numbers ", TT "a", " and ", TT "b", " must be small integers that fit into a single word."
 	  }
      }
 
@@ -815,103 +805,71 @@ document {
 
 document {
      Key => "operators",
-     "Here we list all of the unary and binary operators in the language.",
-     HEADER3 "assignment",
-     UL {
-	  TOH symbol=,
-	  TOH symbol:=,
-	  TOH symbol<-
-	  },
-     HEADER3 "equality testing",
-     UL {
-	  TOH symbol==,
-	  TOH symbol!=,
-	  TOH symbol===,
-	  TOH symbol=!=
-	  },
-     HEADER3 "comparison of objects",
-     UL {
-	  TOH symbol<,
-	  TOH symbol<=,
-	  TOH symbol>,
-	  TOH symbol>=,
-	  TOH symbol?
-	  },
-     HEADER3 "predicates",
-     UL {
-	  TOH symbol and,
-	  TOH symbol or,
-	  TOH symbol not
-	  },
-     HEADER3 "functions",
-     UL {
-          LI TOH " ",
-	  TOH symbol->,
-	  TOH symbol=>,
-          LI TOH "@@",
-          LI TOH "\\",
-          LI TOH ">>"
-	  },
-     HEADER3 "subscripting and object access",
-     UL {
-          LI TOH "_",
-          LI TOH ".",
-          LI TOH ".?",
-          LI TOH "#",
-          LI TOH "#?"
-	  },
-     HEADER3 "arithmetic operators",
-     UL {
-          LI TOH "!",
-	  LI TOH symbol+,
-	  LI TOH symbol-,
-	  LI TOH symbol*,
-	  LI TOH "/",
-	  LI TOH symbol//,
-	  LI TOH symbol%,
-          LI TOH "\\\\",
-	  LI TOH symbol^,
-	  LI TOH symbol\\,
-          LI TOH "&",
-	  LI TOH symbol++,
-	  LI TOH symbol**,
-          LI TOH "^**",
-          LI TOH "~",
-	  LI TOH symbol "(*)",
-          LI TOH ":"
-     	  },
-     HEADER3 "miscellaneous",
-     UL {
-          LI TOH "..",
-          LI TOH "<<",
-          LI TOH ">>",
-          LI TOH "|",
-          LI TOH "||",
-          LI TOH "@",
-          LI TOH "^^",
-          LI TOH "|-",
-          LI TOH "<==>",
-          LI TOH "===>",
-          LI TOH "==>"
-     	  },
-     "Except for the builtin operators, each operator above may be overloaded: i.e.,
-     it may have methods installed for handling arguments of specific types.",
-     HEADER3 "built-in operators",
-     "These operators are built in and cannot be overloaded.",
-     UL {
-	  LI TOH symbol=,
-	  LI TOH symbol:=,
-	  LI TOH symbol<-,
-	  LI TOH symbol===,
-	  LI TOH symbol=!=,
-	  LI TOH symbol->,
-	  LI TOH symbol=>,
-	  LI TOH symbol.,
-	  LI TOH symbol#,
-	  LI TOH symbol.?,
-	  LI TOH symbol#?,
-          LI TOH ",",
-          LI TOH ";"
+     "We present all of the unary and binary operators in the language.",
+     Subnodes => {
+     "assignment",
+	  TO symbol = ,
+	  TO symbol := ,
+	  TO symbol <- ,
+     "equality testing",
+	  TO symbol == ,
+	  TO symbol != ,
+	  TO symbol === ,
+	  TO symbol =!= ,
+     "comparison of objects",
+	  TO symbol < ,
+	  TO symbol <= ,
+	  TO symbol > ,
+	  TO symbol >= ,
+	  TO symbol ? ,
+     "predicates",
+	  TO symbol and ,
+	  TO symbol or ,
+	  TO symbol not ,
+     "functions",
+          TO " ",
+	  TO symbol -> ,
+          TO symbol @@ ,
+          TO symbol \\ ,
+	  TO symbol \ ,
+     "subscripting and object access",
+          TO symbol _ ,
+          TO symbol . ,
+          TO symbol .? ,
+          TO symbol # ,
+          TO symbol #? ,
+     "arithmetic operators",
+          TO symbol ! ,
+	  TO symbol + ,
+	  TO symbol - ,
+	  TO symbol * ,
+	  TO symbol / ,
+	  TO symbol // ,
+	  TO symbol % ,
+	  TO symbol ^ ,
+          TO symbol & ,
+	  TO symbol ++ ,
+	  TO symbol ** ,
+          TO symbol ^** ,
+          TO symbol ~ ,
+	  TO symbol (*) ,
+          TO symbol : ,
+     "miscellaneous operators",
+          TO symbol .. ,
+          TO symbol << ,
+          TO symbol >> ,
+          TO symbol | ,
+          TO symbol || ,
+          TO symbol @ ,
+          TO symbol ^^ ,
+          TO symbol |- ,
+          TO symbol <==> ,
+          TO symbol ===> ,
+          TO symbol ==> ,
+     "built in operators" ,
+	  TO symbol => ,
+          TO symbol , ,
+          TO symbol ;
 	  }     
      }
 
