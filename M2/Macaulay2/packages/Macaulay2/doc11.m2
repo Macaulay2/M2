@@ -55,7 +55,14 @@ document {
      Key => br,
      Headline => "line break",
      Usage => "br",
-     TT "br", " is a ", TO "hypertext", " line break."
+     "This is a ", TO "hypertext", " line break."
+     }
+
+
+document {
+     Key => BR,
+     Headline => "line break",
+     Usage => "BR{}",
      }
 
 document {

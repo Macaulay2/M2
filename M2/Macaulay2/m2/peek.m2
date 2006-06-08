@@ -98,9 +98,9 @@ typicalValues#peek = Net
 seeParsing = args -> (
      x := new MutableHashTable;
      t := (p,s) -> if x#?p then x#p = append(x#p,s) else x#p = {s};
-     q := getParsing symbol seeParsing;
+     q := getParsing symbol apply;
      scan(keys set values Macaulay2Core.Dictionary, s -> if getParsing s =!= q and s =!= symbol " " then t(getParsing s,s));
-     t(getParsing symbol args, "<SYMBOLS>"  );
+     t(getParsing symbol apply, "<SYMBOLS>"  );
      t(getParsing symbol " ", "<ADJACENCY>");
      new Table from prepend(
 	  { "parsing\nprecedence", "binary\nbinding\nstrength","unary\nbinding\nstrength", "\noperators" },
