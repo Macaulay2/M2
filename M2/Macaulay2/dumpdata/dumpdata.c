@@ -188,7 +188,7 @@ int loaddata(char const *filename) {
 	char buf[100];
 	sprintmap(buf,sizeof(buf),&currmap[j]);
 	trim(buf);
-	if (debug) warning("--error: loaddata: map has appeared or changed its location: %s\n",buf);
+	if (debug) warning("--warning: loaddata: map has appeared or changed its location: %s\n",buf);
 	haderror = TRUE;
       }
       if (debug) fprintf(stderr,"--loaddata: current map: "), fdprintmap(STDERR,&currmap[j]);
@@ -204,7 +204,7 @@ int loaddata(char const *filename) {
 	   if (debug) warning("--warning: loaddata: map (part of stack) has disappeared or changed its location: %s\n",fbuf);
       }
       else {
-	   if (debug) warning("--error: loaddata: map has disappeared or changed its location: %s\n",fbuf);
+	   if (debug) warning("--warning: loaddata: map has disappeared or changed its location: %s\n",fbuf);
 	   haderror = TRUE;
       }
     }
@@ -221,7 +221,7 @@ int loaddata(char const *filename) {
 	     if (debug) warning("--warning: loaddata: map protection (executability only) has changed, from '%s' to '%s'\n",fbuf,buf);
 	}
 	else {
-	     if (debug) warning("--error: loaddata: map protection has changed, from '%s' to '%s'\n",fbuf,buf);
+	     if (debug) warning("--warning: loaddata: map protection has changed, from '%s' to '%s'\n",fbuf,buf);
 	     haderror = TRUE;
 	}
       }
@@ -245,7 +245,7 @@ int loaddata(char const *filename) {
 	sprintmap(buf,sizeof(buf),&currmap[j]);
 	trim(buf);
 	if (getenv("LOADDATA_IGNORE_CHECKSUMS") == NULL) {
-	     warning("--error: map checksum has changed, file %s\n", currmap[j].filename != NULL ? currmap[j].filename : "--unknown--" );
+	     warning("--warning: map checksum has changed, file %s\n", currmap[j].filename != NULL ? currmap[j].filename : "--unknown--" );
 	     haderror = TRUE;
 	}
 	else {
