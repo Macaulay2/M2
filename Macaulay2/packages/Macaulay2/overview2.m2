@@ -382,33 +382,6 @@ document {
 
 
 document {
-     Key => "advanced input and output",
-     Subnodes => {
-	  TO "communicating with programs",
-	  TO "using sockets",
-	  }
-     }
-
-document {
-     Key => "classes and types",
-     Subnodes => {
-	  TO "what a class is",
-	  TO "installing methods",
-	  TO "binary methods",
-	  TO "making new classes",
-	  TO "inheritance from parents",
-	  TO "printing and formatting for new classes",
-	  TO "making a new method function",
-	  TO [method, SingleArgumentDispatch],
-	  TO [method, Options],
-	  }
-     }
-
-
-
-
-
-document {
      Key => "hashing",
      "A hash table contains a set of key-value pairs.  The access
      functions for hash tables accept a key and retrieve the
@@ -659,7 +632,11 @@ document {
      will be stopped.",
      PARA{},
      "The function ", TO "try", " can be used to catch an error before
-     execution is stopped and to continue or to try something else."
+     execution is stopped and to continue or to try something else.",
+     Subnodes => {
+	  TO "error",
+	  TO "try"
+	  }
      }
 
 document {

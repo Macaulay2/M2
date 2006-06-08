@@ -216,31 +216,30 @@ Thing.NoPrint = x -> (
 
 isSpecial := filename -> match( "^(\\$|!)", filename )
 
-tryload := (filename,loadfun,notify) -> (
+pathdo := (loadfun,path,filename,reportfun) -> (
      ret := null;
-     loaded := false;
-     if class filename === String and (isAbsolutePath filename or isSpecial filename) then (
-	  if fileExists filename then (
-	       ret = timing loadfun filename;
-	       markLoaded(filename,filename,notify,ret#0);
-	       return ret#1)
-	  else error("file doesn't exist: \"", filename, "\""));
-     scan(path, dir -> if class dir =!= String then error "member of 'path' not a string");
      if class filename =!= String then error "expected a string";
-     epath := if currentFileDirectory == "--startupString--/" then path else prepend(currentFileDirectory, path);
-     scan(epath, dir -> (
-		    if loaded then break;
-		    fullfilename := dir | filename;
-		    if fileExists fullfilename then (
-			 ret = timing loadfun fullfilename;
-			 markLoaded(fullfilename,filename,notify,ret#0);
-			 loaded = true;
-			 break)));
-     if loaded then ret else error("file not found on path: \"", toString filename, "\""))
+     if null === scan(
+	  if isAbsolutePath filename or isSpecial filename then {""}
+	  else if currentFileDirectory == "--startupString--/" then path
+	  else prepend(currentFileDirectory, path),
+	  dir -> (
+	       if class dir =!= String then error "member of 'path' not a string";
+	       fullfilename := dir | filename;
+	       if fileExists fullfilename then (
+		    ret = loadfun fullfilename;
+		    reportfun fullfilename;
+		    break true)))
+     then error("file not found on path: \"", toString filename, "\"");
+     ret)
 
+tryload := (filename,loadfun,notify) -> pathdo(loadfun,path,filename, fullfilename -> markLoaded(filename,filename,notify))
 load = (filename) -> (tryload(filename,simpleLoad,notify);)
 input = (filename) -> (tryload(filename,simpleInput,false);)
 needs = s -> if not filesLoaded#?s then load s
+     
+-- get = (filename) -> pathdo(simpleGet, prepend("",path), filename, fullfilename -> null )     
+get = (filename) -> simpleGet filename
 
 load "loads.m2"
 

@@ -20,8 +20,10 @@ local masterIndex
 hadExampleError := false
 numExampleErrors := 0;
 
+hadDocumentationWarning := false
+numDocumentationWarnings := 0;
+
 hadDocumentationError := false
-numDocumentationErrors := 0;
 
 seenit := new MutableHashTable
 
@@ -29,8 +31,8 @@ chkdoc := true
 signalDocError = tag -> (				    -- also called from document.m2, temporarily
      not seenit#?tag
      and chkdoc
-     and (numDocumentationErrors = numDocumentationErrors + 1;
-	  seenit#tag = hadDocumentationError = true))
+     and (numDocumentationWarnings = numDocumentationWarnings + 1;
+	  seenit#tag = hadDocumentationWarning = true))
 
 buildPackage := null					    -- name of the package currently being built
 topDocumentTag := null
@@ -229,7 +231,9 @@ makeTree := x -> (
      	  then (
 	       if not repeatedReferences#?x then (
 		    repeatedReferences#x = true;
-		    if chkdoc then stderr << "--warning: repeated reference(s) to documentation as subnode: " << x << endl;
+		    stderr << "--error: repeated reference(s) to documentation as subnode: " << x << endl;
+		    -- this kind of structural problem is bad because it can make circular structures in the NEXT and PREV links
+		    hadDocumentationError = true
 		    );
 	       new TreeNode from { x , new ForestNode}
 	       )
@@ -290,6 +294,7 @@ assembleTree := (pkg,nodes) -> (
 		    )
 	       ));
      tableOfContents = getTrees();
+     if hadDocumentationError then error ("documentation errors occurred");
      buildLinks tableOfContents;
      )
 
@@ -796,8 +801,8 @@ installPackage Package := opts -> pkg -> (
      	  -- check that everything is documented
 	  if opts.CheckDocumentation then (
 	       seenit = new MutableHashTable;
-	       hadDocumentationError = false;
-	       numDocumentationErrors = 0;
+	       hadDocumentationWarning = false;
+	       numDocumentationWarnings = 0;
 	       scan((if pkg#"title" == "Macaulay2" then Macaulay2Core else pkg)#"exported symbols", s -> (
 			 tag := makeDocumentTag s;
 			 if not isUndocumented tag and not hasDocumentation s and signalDocError tag then stderr << "--warning: symbol has no documentation: " << tag << endl;
@@ -811,7 +816,7 @@ installPackage Package := opts -> pkg -> (
 			      ))));
 
      	  if not opts.IgnoreDocumentationErrors
-	  then if hadDocumentationError then error(toString numDocumentationErrors, " warning(s) occurred in documentation for package ", toString pkg);
+	  then if hadDocumentationWarning then error(toString numDocumentationWarnings, " warning(s) occurred in documentation for package ", toString pkg);
 
 	  -- helper routine
 	  getPDoc := fkey -> (

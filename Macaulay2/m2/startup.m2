@@ -28,15 +28,11 @@ if firstTime then (
      loadedFiles = new MutableHashTable;
      notify = false;
 
-     markLoaded = (filename,origfilename,notify,timetaken) -> ( 
+     markLoaded = (filename,origfilename,notify) -> ( 
 	  filename = minimizeFilename filename;
 	  filesLoaded#origfilename = filename; 
 	  loadedFiles##loadedFiles = filename; 
-	  if notify then (
-	       stderr << "--loaded " << filename;
-	       if timetaken >= 0.5 then stderr << " (in " << timetaken << " seconds)";
-	       stderr << endl;
-	       );
+	  if notify then stderr << "--loaded " << filename << endl;
 	  );
 
      ReverseDictionary = new MutableHashTable;		    -- values are symbols
@@ -239,7 +235,7 @@ if fileExists (bindir | "../c/scc1") then (
 	  else (
 	       srcdirfile := buildHomeDirectory|"srcdir";
 	       if fileExists srcdirfile then (
-		    srcdir := minimizeFilename (concatPath(buildHomeDirectory,first lines get srcdirfile)|"/");
+		    srcdir := minimizeFilename (concatPath(buildHomeDirectory,first lines simpleGet srcdirfile)|"/");
 		    if fileExists(srcdir | "m2/setup.m2") then srcdir
 		    )));
      ) else setPrefixFromBindir bindir
@@ -300,8 +296,8 @@ usage := arg -> (
      ;exit 0)
 
 tryLoad := (ofn,fn) -> if fileExists fn then (
-     r := timing simpleLoad fn;
-     markLoaded(fn,ofn,notify,r#0);
+     r := simpleLoad fn;
+     markLoaded(fn,ofn,notify);
      true) else false
 
 loadSetup := () -> (

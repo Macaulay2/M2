@@ -35,21 +35,12 @@ document {
 	       TO "combinatorial functions",
           "The Macaulay 2 Language",
 	       TO "The Macaulay2 language",
-     	  "The Macaulay 2 Language (old version)",			    -- part 2, one liners, lists, sets, but not hash tables
-	       TO "variables and symbols",
-	       TO "basic types",
-	       TO "control structures",			    -- control structures: scan, apply, for, while, if, return, break, continue
-	       TO "functions",
-	       TO "input and output",			    -- but sockets, etc, move later
-	       TO "operators",				    -- but with explanations
 	  "Programming Overview",			    -- part 3, multiple line techniques, saved in a function in a file, writing packages
 	       TO "classes and types",
 	       TO "system",
 	       TO "advanced input and output",
 	       TO "debugging",
 	       TO "executing other programs",
-	       TO "packages",
-	       TO "writing documentation",
 	  "Developer's Corner",
 	       TO "handling hypertext",
      	  "Appendix",
@@ -57,8 +48,10 @@ document {
 	       TO "basic commutative algebra",
 	       TO "frequently encountered problems",
 	       TO "replacements for commands and scripts from Macaulay",
+	       TO "how Macaulay 2 finds its files",
      	  "Reference material",
-	       TO "Type"
+	       TO "Type",
+	       TO "Function"
 	  }
      }
 

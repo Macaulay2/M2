@@ -1,27 +1,36 @@
+packagelist := (
+     if sourceHomeDirectory =!= null
+     then lines get (sourceHomeDirectory|"packages/packagelist")
+     else if prefixDirectory =!= null
+     then lines get (prefixDirectory|LAYOUT#"packages"|"packagelist")
+     else error ("can't find file ", format "packagelist"))
+
+packagelist = select(packagelist, pkg -> pkg =!= "Macaulay2")
+
 document { Key => "packages",
      "A package is a body of Macaulay2 source code devoted to a 
-     particular topic.  Many packages are distributed with Macaulay 2,
+     particular topic.  Many packages are distributed with Macaulay 2, 
      and others are available from various users on the internet.",
      PARA{}, "For more detailed information about packages, see ", 
      TO Package, ".",
      PARA{},
-     "Some packages which are distributed with Macaulay2 include",
-     UL {
-	  TO "convex hulls and polar cones",
-          TO "Dmodules",
-	  TO "elimination theory",
-	  TO "PrimaryDecomposition"
-	  },
+     "The packages that are distributed with Macaulay2 are:",
+     UL apply(sort packagelist, pkg -> LI TO (pkg|"::"|pkg)),
      Subnodes => {
      "Using existing packages",
 	  TO needsPackage,
 	  TO loadPackage,
 	  TO installPackage,
+	  TO "loadedPackages",
      "Creating new packages",
      	  TO "creating a package"
 	  }
      }
 
+document { Key => "loadedPackages",
+     "The value of the variable ", TT "loadedPackages", " is a list of the packages that have been loaded.",
+     EXAMPLE "loadedPackages"
+     }
      
      
 --     "Writing documentation for packages",

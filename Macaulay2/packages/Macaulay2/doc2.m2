@@ -91,90 +91,6 @@ document {
      }
 
 document {
-     Key => "for",
-     Headline => "loop control",
-     TT "for i from a to b when c list x do y", " repeatedly 
-     evaluates ", TT "x", " and ", TT "y", " as long as ", TT "c", " is
-     true, letting the variable ", TT "i", " be assigned the values
-     ", TT "a", ", ", TT "a+1", ", ", TT "a+2", ", ..., ", TT "b", ",
-     returning a list of the values of ", TT "x", " encountered.  If
-     ", TO "continue", " is executed by ", TT "x", " then execution of ", TT "x", "
-     is interrupted, no value is added to the list, and iteration of the loop
-     continues.  If ", TO "continue w", " is executed by ", TT "x", " then execution
-     of ", TT "x", " is interrupted, the value of ", TT "w", " is added to the list, 
-     and iteration of the loop continues.  If ", TT "break v", " is executed
-     by ", TT "x", ", then the loop is stopped and ", TT "v", " is returned as its value.  If
-     ", TT "break", " is executed by ", TT "x", ", then the loop is stopped and the list accumulated
-     so far is returned as the value.",
-     PARA{},
-     TT "for i in w when c list x do y", " is similar, except that consecutive entries
-     of the basic list or sequence ", TT "w", " are assigned as values of ", TT "i", ".",
-     PARA{},
-     "Each of the clauses ", TT "from a", ", ", TT "to b", ",
-     ", TT "when c", ", ", TT "list x", ", and ", TT "do y", " is optional,
-     provided either the ", TT "list x", " or the ", TT "do y", " clause is 
-     present.  If the clause ", TT "from a", " is missing, then ", TT "from 0", "
-     is assumed.  If the clause ", TT "to b", " is missing, then no upper limit
-     is imposed on the value of ", TT "i", ".  If the clause
-     ", TT "list x", " is absent, then ", TO "null", " is returned.",
-     PARA{},
-     "The numbers ", TT "a", " and ", TT "b", " must be small integers that fit
-     into a single word.",
-     PARA{},
-     "The variable ", TT "i", " is a new local variable whose scope includes 
-     only the expressions ", TT "c", ", ", TT "x", ", and ", TT "y", ".",
-     EXAMPLE {
-	  "for i from 3 to 6 do print i",
-	  "for i when i^2 < 90 list i",
-	  "for i in {a,4,1/2} list class i"
-	  },
-     SeeAlso => { "loops", "while", "return", "break", "continue" }
-     }     
-
-document {
-     Key => "while",
-     Headline => "loop control",
-     TT "while p do x", BR{}, " repeatedly evaluates ", TT "x", " as long 
-     as the value of ", TT "p", " remains ", TO "true", ", returning 
-     ", TO "null", ".",
-     BR{},NOINDENT{},
-     TT "while p list x", " repeatedly evaluates ", TT "x", " as long 
-     as the value of ", TT "p", " remains ", TO "true", ", returning a
-     list of the values of ", TT "x", " encountered.  If
-     ", TO "continue", " is executed by ", TT "x", " then execution of ", TT "x", "
-     is interrupted, no value is added to the list, and iteration of the loop
-     continues.  If ", TO "continue w", " is executed by ", TT "x", " then execution
-     of ", TT "x", " is interrupted, the value of ", TT "w", " is added to the list, 
-     and iteration of the loop continues.  If ", TT "break v", " is executed
-     by ", TT "x", ", then the loop is stopped and ", TT "v", " is returned as its value.  If
-     ", TT "break", " is executed by ", TT "x", ", then the loop is stopped and the list accumulated
-     so far is returned as the value.",
-     BR{},NOINDENT{},
-     TT "while p list x do z", " repeatedly evaluates ", TT "x", " 
-     and ", TT "z", " as long as the value of ", TT "p", " remains
-     ", TO "true", ", returning a list of the values of ", TT "x", " 
-     encountered.",BR{},
-     PARA{},
-     SeeAlso => { "loops", "break", "continue", "for" }
-     }
-
-document {
-     Key => "break",
-     Headline => "break from a loop",
-     TT "break x", " interrupts execution of a loop controlled by ",
-     TO "for", ", ", TO "while", ", ", TO "apply", ", or ", TO "scan", ", returning ",
-     TT "x", " as the value of the loop currently being
-     evaluated.",BR{},
-     TT "break", " interrupts execution of a loop, returning
-     ", TO "null", " as the value of the function currently being evaluated.",
-     PARA{},
-     "Warning: trying to break from a loop controlled by ", TO "table", " will
-     probably not do what you expect, since ", TO "table", " is implemented by two nested
-     loops controlled by ", TO "apply", ", and only the inner one will stop.",
-     SeeAlso => { "scan", "while", "for" }
-     }
-
-document {
      Key => "return",
      Headline => "return from a function",
      TT "return x", " returns ", TT "x", " as the value of the function currently
@@ -408,7 +324,7 @@ document {
      }
 document {
      Key => (symbol <<, ZZ, ZZ),
-     Headline => "shift bits rightward",
+     Headline => "shift bits leftward",
      Usage => "i << j",
      Inputs => { "i", "j" },
      Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation leftward ", TT "j", " places" }},

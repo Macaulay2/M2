@@ -247,7 +247,7 @@ packageKey = method(SingleArgumentDispatch => true)	    -- assume the input key 
 --packageKey DocumentTag := DocumentTag.Package
 --packageKey   Symbol := key -> package key
 packageKey   String := fkey -> (
-     r := scan(packages, pkg -> if fetchRawDocumentation(pkg,fkey) =!= null then break pkg);
+     r := scan(loadedPackages, pkg -> if fetchRawDocumentation(pkg,fkey) =!= null then break pkg);
      if r === null then (
 	  -- if debugLevel > 0 then error "debug me";
 	  -- value PackageDictionary#"Missing"
@@ -570,7 +570,10 @@ reservedNodeNames := set apply( {"Top", "Table of Contents", "Symbol Index"}, to
 storeRawDocumentation := (tag,opts) -> (
      key := DocumentTag.FormattedKey tag;
      if currentPackage#rawKey#?key and signalDocError tag
-     then stderr << currentFileName << ":" << currentLineNumber() << ": error: documentation already provided for '" << tag << "'" << endl;
+     then (
+	  stderr << currentFileName << ":" << currentLineNumber() << ": warning: documentation already provided for '" << tag << "'" << endl;
+     	  error "debug me";
+	  );
      currentPackage#rawKey#key = opts;
      )
 
