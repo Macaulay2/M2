@@ -1,19 +1,47 @@
 --		Copyright 1997-2002 by Daniel R. Grayson
 
 scan({autoReduce,ConvertJoin,ConvertRepeat,ConvertApply},
-     s -> s <- X -> error ("'", s, "' has been removed"))
+     s -> (
+	  undocumented s;
+	  s <- X -> error ("'", s, "' has been removed");
+	  ))
+
+undocumented unlist
 unlist = X -> error "'unlist' has been replaced by toSequence"
+
+undocumented elements
 elements = X -> error "'elements' has been replace by toList"
+
+undocumented evaluate
 evaluate = X -> error "'evaluate' has been replaced by 'value'"
+
+undocumented seq
 seq = X -> error "'seq x' has been replaced by 'singleton x', which has been replaced by '1:x'"
+
+undocumented verticalJoin
 verticalJoin = X -> error "'verticalJoin' has been replaced by 'stack'"
+
+undocumented netRows
 netRows = X -> error "'netRows' has been replaced by 'unstack'"
+
 -- name = X -> error "'name' has been replaced by 'toString'"
+
+undocumented quote
 quote = X -> error "'quote' has been replaced by 'symbol'"
+
+undocumented Numeric
 Numeric = X -> error "'Numeric' has been replaced by 'numeric'"
+
+undocumented submodule
 submodule = X -> error "'submodule' has been removed"
+
+undocumented monomialCurve
 monomialCurve = X -> error "'monomialCurve' has been replaced by 'monomialCurveIdeal'"
+
+undocumented assign
 assign = X -> error "'assign' has been replaced by '<-'"
+
+undocumented minprimes
 minprimes = X -> error "'minprimes' has been replaced by 'independentSets'"
 
 --map(Module) := Matrix => options -> (M) -> error "method for 'map(Module)' has been removed: use 'map(M,M,1)' instead"
@@ -33,6 +61,8 @@ undocumented(map,Module,RingElement)
 
 RingElement _ ZZ := x -> error "method for 'RingElement _ ZZ' has been replaced: use 'part(n,f)' instead"
 RingElement _ List := x -> error "method for 'RingElement _ List' has been replaced: use 'part(d,f)' instead"
+undocumented(symbol _,RingElement,ZZ)
+undocumented(symbol _,RingElement,List)
 
 diff(RingElement)    := f -> error "method for 'diff(RingElement)' has been removed: use 'diff(vars ring f, f)' instead"
 diff(Matrix)         := f -> error "method for 'diff(Matrix)' has been removed: use 'diff(vars ring f, f)' instead"

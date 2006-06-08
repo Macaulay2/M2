@@ -477,6 +477,7 @@ int system_readline(M2_string buffer, int len, int offset, M2_string prompt) {
   return r;
 }
 
+#if 0
 M2_stringarray system_history(void) {
   M2_stringarray a;
   HIST_ENTRY **h = history_list();
@@ -487,6 +488,7 @@ M2_stringarray system_history(void) {
   for (i=0; i<n; i++) a->array[i] = tostring(h[i]->line);
   return a;
 }
+#endif
 
 /* stupid ANSI forces some systems to put underscores in front of useful identifiers */
 #if !defined(S_ISREG)

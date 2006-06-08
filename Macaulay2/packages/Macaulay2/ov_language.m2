@@ -921,19 +921,16 @@ document {
      white space.",
      EXAMPLE "2+\n3+\n4",
      PARA{},
---     "Parsing is determined by a triple of numbers attached to each token.
---     The following table (produced by the command ", TO "seeParsing", "), 
---     displays each of these numbers.",
---     EXAMPLE {
---	  "debug Macaulay2Core",
---	  "seeParsing()"
---	  },
---     "Here is the way these numbers work.  The parser maintains a number
---     which we will call the current parsing level, or simply, the level.
---     The parser builds up an expression until it encounters an input token
---     whose parsing precedence is less than or equal to the current level.
---     The tokens preceding the offending token are bundled into an expression
---     appropriately and incorporated into the containing expression.",
+     "Parsing is determined by a triple of numbers attached to each token.
+     The following table (produced by the command ", TO "seeParsing", "), 
+     displays each of these numbers.",
+     EXAMPLE "seeParsing()",
+     "Here is the way these numbers work.  The parser maintains a number
+     which called the current parsing level, or simply, the level.
+     The parser builds up an expression until it encounters an input token
+     whose parsing precedence is less than or equal to the current level.
+     The tokens preceding the offending token are bundled into an expression
+     appropriately and incorporated into the containing expression.",
      PARA{},
      "When an operator or token is encountered, its binding strength serves
      as the level for parsing the subsequent expression, unless the current level
@@ -961,7 +958,7 @@ document {
      the level will be set to 1 less than the precedence of an identifier,
      so that ", TT "b c d", " will be parsed as ", TT "b (c d)", ".",
      PARA{},
-     "The comma and semicolon get special treatment; the empty expression can
+     "The comma and semicolon get special treatment: the empty expression can
      occur to the right of the comma or semicolon or to the left of the comma."
      }
 

@@ -709,6 +709,73 @@ document { Key => getGlobalSymbol,
 	  peek d
      ///
      }     
+document { Key => Bag,
+     Headline => "the class of all bags",
+     PARA "A bag can be used for enclosing something in a container to prevent it from being printed, in normal circumstances.
+     Any mutable list can be used for this purpose, but bags are designated for this purpose.",
+     SeeAlso => {unbag}
+     }
+undocumented {(unbag,Sequence)}
+document { Key => {(unbag, Bag), unbag},
+     Usage => "unbag y",
+     Inputs => { "y" },
+     Outputs => { { "the contents of ", TT "y" }},
+     EXAMPLE lines ///
+     	  x = 100!
+	  y = new Bag from {x}
+	  unbag y
+     ///
+     }
+document { Key => {undocumented,(undocumented, Thing), (undocumented, List)},
+     Usage => "undocumented key",
+     Inputs => { "key" => { "a documentation key, or a list of keys" }},
+     Consequences => { { "the documentation key(s) are designated as keys not needing documentation, thus avoiding warning messages when a package is installed" }},
+     SeeAlso => { installPackage, "documentation keys" },
+     EXAMPLE lines ///
+     	  f = method()
+	  f List := x -> 1
+	  f VisibleList := x -> 2
+	  f BasicList := x -> 3
+	  undocumented { f, (f,List) }
+     ///,
+     }
+document { Key => "documentation keys",
+     PARA {"The Macaulay 2 documentation is linked together by cross-references from one documentation node to another.  Each node is identified by a
+     	  string, which is the title of the node.  Some nodes, such as this one, have titles that are simply invented by the author.  Others have titles
+     	  that are manufactured in a certain way from the aspect of the program being documented, for the sake of uniformity."
+	  },
+     PARA {"For example, the title of the node describing resolutions of modules is ", TT format "resolution Module", ".  The corresponding key is
+     	  ", TT "(resolution, Module)", ", and it is the job of the function ", TO "makeDocumentTag", " to convert keys to titles."
+	  },
+     PARA "Here is a list of the various types of documentation keys.",
+     UL {
+	  LI { TT format "a string" },
+	  LI { TT "s", "a symbol" },
+	  LI { TT "(f,X)", "a method function or unary operator ", TT "f", " that accepts an argument of type ", TT "X" },
+	  LI { TT "(f,X,Y)", "a method function or binary operator ", TT "f", " that accepts 2 arguments, of types ", TT "X", " and ", TT "Y" },
+	  LI { TT "(f,X,Y,Z)", "a method function ", TT "f", " that accepts 3 arguments, of types ", TT "X", ", ", TT "Y", " and ", TT "Z" },
+	  LI { TT "(f,X,Y,Z,T)", "a method function ", TT "f", " that accepts 4 arguments, of types ", TT "X", ", ", TT "Y", ", ", TT "Z", " and ", TT "T" },
+	  LI { TT "[f,A]", "a function ", TT "f", " with an optional named ", TT "A" },
+     	  LI { TT "(NewOfFromMethod,X,Y,Z)", "the method for ", TT "new X of Y from Z" },
+     	  LI { TT "(NewOfMethod,X,Y)", "the method for ", TT "new X of Y" },
+     	  LI { TT "(NewFromMethod,X,Z)", "the method for ", TT "new X from Z" },
+     	  LI { TT "(NewMethod,X)", "the method for ", TT "new X" },
+     	  LI { TT "((symbol ++, symbol =), X,Y)", "the method for assignment ", TT "X ++ Y = ..." },
+	  LI { TT "(homology,X)", "the method for ", TT "HH X" },
+	  LI { TT "(homology,ZZ,X)", "the method for ", TT "HH_ZZ X" },
+	  LI { TT "(cohomology,ZZ,X)", "the method for ", TT "HH^ZZ X" },
+	  LI { TT "(homology,ZZ,X,Y)", "the method for ", TT "HH_ZZ (X,Y)" },
+	  LI { TT "(cohomology,ZZ,X,Y)", "the method for ", TT "HH^ZZ (X,Y)" },
+	  LI { TT "(E,ZZ,X)", "the method for ", TT "E_ZZ X", " or ", TT "E^ZZ X", ", where ", TT "E", " is a scripted functor" },
+	  LI { TT "(E,ZZ,X,Y)", "the method for ", TT "E_ZZ (X,Y)", " or ", TT "E^ZZ (X,Y)", ", where ", TT "E", " is a scripted functor" }
+	  },
+     EXAMPLE lines ///
+     	  makeDocumentTag "some title"
+	  makeDocumentTag (symbol +, ZZ, ZZ)
+	  makeDocumentTag ((symbol +, symbol =), ZZ, ZZ)
+     	  makeDocumentTag (Tor,ZZ,Module,Module)
+     ///
+     }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
