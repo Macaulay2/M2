@@ -233,7 +233,7 @@ pathdo := (loadfun,path,filename,reportfun) -> (
      then error("file not found on path: \"", toString filename, "\"");
      ret)
 
-tryload := (filename,loadfun,notify) -> pathdo(loadfun,path,filename, fullfilename -> markLoaded(filename,filename,notify))
+tryload := (filename,loadfun,notify) -> pathdo(loadfun,path,filename, fullfilename -> markLoaded(fullfilename,filename,notify))
 load = (filename) -> (tryload(filename,simpleLoad,notify);)
 input = (filename) -> (tryload(filename,simpleInput,false);)
 needs = s -> if not filesLoaded#?s then load s
