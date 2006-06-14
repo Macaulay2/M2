@@ -130,6 +130,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  quotfix := rawRM -> if class R === QuotientRing and class ultimate(ambient,R) === PolynomialRing then rawQuotientRing(rawRM, raw R) else rawRM;
 	  Weyl := M.Options.WeylAlgebra =!= {};
 	  skews := M.Options.SkewCommutative;
+	  if skews === false then skews = {};
 	  degRing := if degreeLength M != 0 then degreesRing degreeLength M else ZZ;
 	  coeffOptions := options R;
 	  coeffWeyl := coeffOptions =!= null and coeffOptions.WeylAlgebra =!= {};
@@ -177,11 +178,10 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      	       addHook(RM, QuotientRingHook, S -> (S.diffs0 = diffs0; S.diffs1 = diffs1));
      	       if h != -1 then RM.homogenize = h;
 	       )
-	  else if skews =!= false or R.?SkewCommutative then (
+	  else if skews =!= {} or R.?SkewCommutative then (
 	       if R.?diffs0 then error "coefficient ring is a Weyl algebra";
 	       skews = (
-		    if skews === false then {}
-		    else if skews === true then toList (0 .. num - 1)
+		    if skews === true then toList (0 .. num - 1)
 		    else if class skews === List and all(skews, i -> class i === ZZ or class i === Symbol or class i === IndexedVariable or instance(i,RingElement))
 		    then (
 			 skews = skews / (i -> if instance(i,RingElement) then baseName i else i);
