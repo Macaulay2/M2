@@ -29,6 +29,7 @@ GeneralOrderedMonoid.synonym = "general ordered monoid"
 GeneralOrderedMonoid.Engine = true
 vars GeneralOrderedMonoid := M -> M.vars
 options GeneralOrderedMonoid := M -> M.Options
+degrees GeneralOrderedMonoid := M -> M.Options.Degrees
 raw GeneralOrderedMonoid := M -> M.RawMonoid
 
 parts := (M) -> (
@@ -89,7 +90,7 @@ monoidDefaults = (
 	  Inverses => false,
 	  MonomialOrder => GRevLex,
 	  MonomialSize => 32,				    -- we had this set to null, but some of the code needs a number here...
-	  SkewCommutative => false,
+	  SkewCommutative => {},
 	  VariableOrder => null,		  -- not implemented yet
 	  WeylAlgebra => {},
 	  Adjust => identity,
@@ -281,22 +282,22 @@ processDegrees := (degs,degrk,nvars) -> (
 	  );
      (degs,degrk));
 
-makeMonoid := (options) -> (
+makeMonoid := (opts) -> (
      -- check the options for consistency, and set everything to the correct defaults
-     options = new MutableHashTable from options;
+     opts = new MutableHashTable from opts;
 
-     if class options.Inverses =!= Boolean then error "expected true or false in option";
+     if class opts.Inverses =!= Boolean then error "expected true or false in option";
      
-     if options.SkewCommutative =!= false and options.Inverses then error "skew commutative ring with inverses requested";
+     if opts.SkewCommutative =!= {} and opts.Inverses then error "skew commutative ring with inverses requested";
 
      -- First check the variable names
-     if class options.Variables === ZZ 
+     if class opts.Variables === ZZ 
      then (
 	  x := local "$x";
-          options.Variables = toList (x_0 .. x_(options.Variables - 1)))
+          opts.Variables = toList (x_0 .. x_(opts.Variables - 1)))
      else (
-	  v := flatten toList apply(options.Variables, x->if class x === MutableList then toList x else x);
-          options.Variables = apply(#v, 
+	  v := flatten toList apply(opts.Variables, x->if class x === MutableList then toList x else x);
+          opts.Variables = apply(#v, 
 	       i -> (
 		    try baseName v#i
 		    else (
@@ -304,32 +305,32 @@ makeMonoid := (options) -> (
 			 preX := "        ";
 			 pw := max(printWidth,80) - promptWidth();
 			 error (msg,newline,toString (preX | silentRobustNetWithClass(pw - width  preX, 5, 3, v#i)))))));
-     -- if length unique options.Variables < length options.Variables then error "at least one variable listed twice";
+     -- if length unique opts.Variables < length opts.Variables then error "at least one variable listed twice";
 
-     (degs,degrk) := processDegrees(options.Degrees,options.DegreeRank,length options.Variables);
-     options.Degrees = degs;
-     options.DegreeRank = degrk;
+     (degs,degrk) := processDegrees(opts.Degrees,opts.DegreeRank,length opts.Variables);
+     opts.Degrees = degs;
+     opts.DegreeRank = degrk;
 
-     if not instance(options.Adjust, Function) then error("expected 'Adjust' option to be a function");
-     if not instance(options.Repair, Function) then error("expected 'Repair' option to be a function");
-     heft := options.Heft;
+     if not instance(opts.Adjust, Function) then error("expected 'Adjust' option to be a function");
+     if not instance(opts.Repair, Function) then error("expected 'Repair' option to be a function");
+     heft := opts.Heft;
      if heft =!= null then (
-     	  if options.Adjust =!= identity or options.Repair =!= identity then error "encountered both Heft and Adjust or Repair options";
-	  options.Adjust = x -> prepend(sum(heft,x,times),x); -- to internal degree
-	  options.Repair = x -> drop(x,1);		      -- to external degree
+     	  if opts.Adjust =!= identity or opts.Repair =!= identity then error "encountered both Heft and Adjust or Repair options";
+	  opts.Adjust = x -> prepend(sum(heft,x,times),x); -- to internal degree
+	  opts.Repair = x -> drop(x,1);		      -- to external degree
 	  scan(degs, d -> (
 		    if degrk =!= length heft then error ("expect Heft option to be a list of length ",toString degrk, " to match the degree rank");
-		    if not first options.Adjust d > 0 then error "Heft option doesn't yield a positive value for each variable";
+		    if not first opts.Adjust d > 0 then error "Heft option doesn't yield a positive value for each variable";
 		    )));
 
-     options = new OptionTable from options;
-     makeit1 options)
+     opts = new OptionTable from opts;
+     makeit1 opts)
 
 monoid Array := Monoid => (
-     monoidDefaults >> options -> args -> (
-     	  if options.Variables === null
-     	  then options = merge(options, new OptionTable from {Variables => deepSplice sequence args}, last);
-     	  makeMonoid options)
+     monoidDefaults >> opts -> args -> (
+     	  if opts.Variables === null
+     	  then opts = merge(opts, new OptionTable from {Variables => deepSplice sequence args}, last);
+     	  makeMonoid opts)
      ) @@ toSequence
 
 monoid Ring := Monoid => R -> R.monoid
@@ -361,12 +362,9 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
 	       ));
      opts.Inverses = if opts.Inverses === null then Mopts.Inverses or Nopts.Inverses else opts.Inverses;
      opts.WeylAlgebra = join(Mopts.WeylAlgebra, Nopts.WeylAlgebra);
-     skews := Mopts -> (
-	  sk := Mopts.Options.SkewCommutative;
-	  if sk === true then sk = generators Mopts;
-	  if sk === false then sk = {};
-	  sk);
-     opts.SkewCommutative = join(skews M, skews N);
+     oddp := x -> x#?0 and odd x#0;
+     m := numgens M;
+     opts.SkewCommutative = join(M.Options.SkewCommutative, apply(N.Options.SkewCommutative, i -> i+m));
      makeMonoid new OptionTable from opts)
 
 -- delayed installation of methods for monoid elements
