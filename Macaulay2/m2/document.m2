@@ -383,7 +383,7 @@ fixup MarkUpType := z -> (
 fixup Function   := z -> z				       -- allow Function => f 
 fixup String     := s -> (				       -- remove clumsy newlines within strings
      if not match("\n",s) then return s;
-     ln := lines s;
+     ln := separate s;
      concatenate ({addspaces0 trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
 
 hypertext = method(SingleArgumentDispatch => true)
@@ -678,6 +678,37 @@ topheader := s -> (
      h := headline s;
      HEADER1 { formatDocumentTag s, if h =!= null then " -- ", h })
 
+binary := set binaryOperators
+prefix := set prefixOperators
+postfix := set postfixOperators
+operator := set join(binaryOperators, prefixOperators, postfixOperators)
+
+op := s -> if operator#?s then (
+     ss := toString s;
+     fixup DIV {
+	  if binary#?s then DIV {
+	       "This operator may be used as a binary operator in an expression like ", TT ("x"|ss|"y"), ".  The user may install ", TO "binary methods", "
+	       for handling such expressions with code such as ",
+	       if ss == " "
+	       then PRE ("         X Y := (x,y) -> ...")
+	       else PRE ("         X "|ss|" Y := (x,y) -> ..."), 
+	       "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the class of ", TT "y", "."
+	       },
+	  if prefix#?s then DIV {
+	       "This operator may be used as a prefix unary operator in an expression like ", TT (ss|"y"), ".  The user may install a method for handling 
+	       such expressions with code such as",
+	       PRE ("           "|ss|" Y := (y) -> ..."),
+	       "where ", TT "Y", " is the class of ", TT "y", "."
+	       },
+	  if postfix#?s then DIV {
+	       "This operator may be used as a postfix unary operator in an expression like ", TT ("x "|ss), ".  The user may install a method for handling 
+	       such expressions with code such as",
+	       PRE ("         X "|ss|"   := (x,y) -> ..."),
+	       "where ", TT "X", " is the class of ", TT "x", "."
+	       }
+	  }
+     )
+
 type := S -> (
      s := value S;
      if not instance(s, Function) and class s =!= Package then DIV1 {
@@ -689,6 +720,7 @@ type := S -> (
 		    if #f>1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.", 
 		    toSequence between(" < ", f / (T -> TO T))),
 	       "."},
+          op S
 	  })
 
 typicalValue := k -> (
@@ -914,41 +946,6 @@ help String := key -> (
 	       );
 	  fixup page(formatDocumentTag key, {topheader key, b, caveat key, seealso key, theMenu key})))
 
-binary := set binaryOperators
-prefix := set prefixOperators
-postfix := set postfixOperators
-operator := set join(binaryOperators, prefixOperators, postfixOperators)
-
-op := s -> if operator#?s then (
-     ss := toString s;
-     fixup DIV {
-	  if binary#?s then DIV {
-	       "This operator may be used as a binary operator in an expression \n",
-	       "like ", TT ("x"|ss|"y"), ".  The user may install ", TO "binary methods", " \n",
-	       "for handling such expressions with code such as ",
-	       if ss == " "
-	       then PRE ("         X Y := (x,y) -> ...")
-	       else PRE ("         X "|ss|" Y := (x,y) -> ..."), 
-	       "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the \n",
-	       "class of ", TT "y", "."
-	       },
-	  if prefix#?s then DIV {
-	       "This operator may be used as a prefix unary operator in an expression \n",
-	       "like ", TT (ss|"y"), ".  The user may install a method for handling \n",
-	       "such expressions with code such as \n",
-	       PRE ("           "|ss|" Y := (y) -> ..."),
-	       "where ", TT "Y", " is the class of ", TT "y", "."
-	       },
-	  if postfix#?s then DIV {
-	       "This operator may be used as a postfix unary operator in an expression \n",
-	       "like ", TT ("x "|ss), ".  The user may install a method for handling \n",
-	       "such expressions with code such as \n",
-	       PRE ("         X "|ss|"   := (x,y) -> ..."),
-	       "where ", TT "X", " is the class of ", TT "x", "."
-	       },
-	  }
-     )
-
 optionFor := s -> unique select( value \ flatten(values \ globalDictionaries), f -> instance(f, Function) and (options f)#?s) -- this is slow!
 
 --ret := k -> (
@@ -1041,7 +1038,7 @@ help Symbol := S -> (
      currentHelpTag = makeDocumentTag S;
      a := smenu apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
      -- b := smenu documentableMethods s;
-     ret := fixup DIV { topheader S, synopsis S, makeDocBody S, op S,
+     ret := fixup DIV { topheader S, synopsis S, makeDocBody S,
 	  if #a > 0 then DIV1 { SUBSECTION {"Functions with optional argument named ", toExternalString S, " :"}, a},
 -- 	  if #b > 0 then DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", toExternalString s, " :"}, b),
           caveat S, seealso S,
