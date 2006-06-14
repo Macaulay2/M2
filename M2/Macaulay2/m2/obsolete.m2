@@ -69,7 +69,7 @@ diff(Matrix)         := f -> error "method for 'diff(Matrix)' has been removed: 
 undocumented(diff,RingElement)
 undocumented(diff,Matrix)
 
-map(Module,Module) := options -> (M,N) -> error "method for 'map(Module,Module)' has been removed: use 'inducedMap' instead"
+map(Module,Module) := opts -> (M,N) -> error "method for 'map(Module,Module)' has been removed: use 'inducedMap' instead"
 undocumented(map,Module,Module)
 
 -- Local Variables:

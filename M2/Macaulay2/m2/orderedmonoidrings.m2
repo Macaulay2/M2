@@ -165,6 +165,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       diffs = pack(2,diffs);
 	       diffs0 = monoidIndices(M,first\diffs);
 	       diffs1 = monoidIndices(M,last\diffs);
+	       if any(values tally join(diffs0,diffs1), n -> n > 1) then error "WeylAgebra option: a variable specified more than once";
 	       if coeffWeyl then (
 		    diffs0 = join(diffs0, apply(R.diffs0, i -> i + num));
 		    diffs1 = join(diffs1, apply(R.diffs1, i -> i + num));
