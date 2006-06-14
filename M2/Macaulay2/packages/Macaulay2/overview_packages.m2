@@ -130,54 +130,14 @@ document {
      list."
      }
 
+loadPackage "FirstPackage"
 document {
      Key => "an example of a package",
      "Here is a basic example of a complete package:",
-PRE///
-newPackage(
-	"FirstPackage",
-    	Version => "1.0", 
-    	Date => "February 11, 2004",
-    	Authors => {
-	     {Name => "Jane Doe", Email => "doe@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~doe/"}
-	     },
-    	Headline => "an example Macaulay 2 package",
-    	DebuggingMode => true
-    	)
-
-export {firstFunction}
-
-firstFunction = method(TypicalValue => String)
-firstFunction ZZ := String => n -> (
-	if n == 1
-	then print "Hello World!"
-	else print "D'oh!"	
-	);
-
-beginDocumentation()
-document { 
-	Key => FirstPackage,
-	Headline => "an example Macaulay 2 package",
-	EM "FirstPackage", " is a basic package to be used as an example."
-	}
-document {
-	Key => firstFunction,
-	Headline => "a silly first function",
-	Usage => "firstFunction n",
-	Inputs => {
-		"n" => ZZ => {}
-		},
-	Outputs => {
-		String => {}
-		},
-	EXAMPLE {
-		"firstFunction 1",
-		"firstFunction 0"
-		}
-	}
-TEST "firstFunction 2"
-///,
-	SeeAlso => {newPackage,
+     TABLE { "class" => "examples",  TR TD PRE (get (FirstPackage#"source directory"|"FirstPackage.m2"))  },
+     SeeAlso => {
+	     "packages",
+	     newPackage,
 	     export,
 	     exportMutable,
 	     beginDocumentation,
