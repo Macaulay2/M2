@@ -13,36 +13,36 @@ document {
 document { 
      Key => (use,Package),
      Headline => "activate a previously dismissed package",
-     Usage => "use P",
+     Usage => "use PACKAGENAME",
      Inputs => {
-	  "P" => "a package which was previously loaded, and dismissed."
+	  "PACKAGENAME" => "which was previously loaded, and then dismissed."
 	  },
      Consequences => {
 	  "activates the package, making all of its exported symbols visible."
 	  },     
      "This function is only necessary after dismissing a package.",
      EXAMPLE lines ///
-	  loadPackage "FourierMotzkin"
-	  fourierMotzkin
-	  dismiss "FourierMotzkin"
-	  fourierMotzkin	  
-	  use FourierMotzkin
-	  fourierMotzkin	  
+	  loadPackage "FirstPackage"
+	  firstFunction
+	  dismiss FirstPackage
+  	  firstFunction	
+	  use FirstPackage
+	  firstFunction
 	  ///,
-     SeeAlso => {loadPackage,(dismiss,Package)}
+     SeeAlso => {loadPackage,(dismiss,Package),"FirstPackage::FirstPackage"}
      }
 document { 
-     Key => (use,Ring),
+     Key => {(use,Ring),(use,Monoid)},
      Headline => "install ring variables and ring operations",
      Usage => "use R",
      Inputs => {
-	  "R" => ""
+	  "R" => Nothing => {ofClass Ring, " or ", ofClass Monoid}
 	  },
      Consequences => {
-	  "All variables of R are set to global variables.  Additionally, 
-	  certain operations creating elements of R are installed globally."
+	  {"All variables of ", TT "R", " are set to global variables.  Additionally, 
+	  certain operations creating elements of ", TT "R", " are installed globally."}
 	  },     
-     "When a ring is assigned to a global variable, this function is
+     "When a ring (or a monoid) is assigned to a global variable, this function is
      automatically called for it.",
      PARA{},
      "It is possible to have several polynomial rings defined, perhaps with a variable
