@@ -24,7 +24,7 @@
 -- primes of the ideal are of codimension 1).
 --
 -- In this tutorial, we consider the case when this
--- holds (e.g. this holds for complete intersections).
+-- holds (e.g., this holds for complete intersections).
 -- In a further tutorial, we will make the necessary
 -- extensions to handle the non $S_2$-case.
 --

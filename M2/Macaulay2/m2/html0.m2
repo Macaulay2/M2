@@ -179,6 +179,8 @@ new TO from List := (TO,x) -> if x#?1 then { makeDocumentTag x#0, concatenate dr
 TOH        = withQname_"span" new IntermediateMarkUpType of MarkUpList
 new TOH from List := (TOH,x) -> { makeDocumentTag x#0 }
 
+LATER      = new IntermediateMarkUpType of MarkUpList
+
 new TO from MarkUpList := 
 new TOH from MarkUpList := x -> error("TO of mark up list '", toString x, "'")
 

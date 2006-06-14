@@ -28,11 +28,11 @@ if firstTime then (
      loadedFiles = new MutableHashTable;
      notify = false;
 
-     markLoaded = (filename,origfilename,notify) -> ( 
-	  filename = minimizeFilename filename;
-	  filesLoaded#origfilename = filename; 
-	  loadedFiles##loadedFiles = filename; 
-	  if notify then stderr << "--loaded " << filename << endl;
+     markLoaded = (fullfilename,origfilename,notify) -> ( 
+	  fullfilename = minimizeFilename fullfilename;
+	  filesLoaded#origfilename = fullfilename; 
+	  loadedFiles##loadedFiles = fullfilename; 
+	  if notify then stderr << "--loaded " << fullfilename << endl;
 	  );
 
      ReverseDictionary = new MutableHashTable;		    -- values are symbols
@@ -188,7 +188,6 @@ if firstTime then (
 sourceHomeDirectory = null				    -- home directory of Macaulay 2
 buildHomeDirectory  = null	       -- parent of the directory of the executable described in command line argument 0
 prefixDirectory = null					    -- prefix directory, after installation, e.g., "/usr/local/"
-packagePath = null
 encapDirectory = null	   -- encap directory, after installation, if present, e.g., "/usr/local/encap/Macaulay2-0.9.5/"
 
 fullCopyright := false
@@ -456,21 +455,13 @@ if not noinitfile then (
 	  path);
      )
 
-packagePath = { }
+if prefixDirectory =!= null then path = prepend(prefixDirectory | LAYOUT#"packages", path)
 
-if prefixDirectory =!= null then packagePath = prepend(prefixDirectory | LAYOUT#"packages", packagePath)
-
-if not noinitfile then (
-     packagePath = prepend(applicationDirectory() | "local/" | LAYOUT#"packages", packagePath);
-     )
-if sourceHomeDirectory  =!= null
-then {
-     path = join(path, {sourceHomeDirectory|"m2/",sourceHomeDirectory|"packages/"});
-     packagePath = join(packagePath, {sourceHomeDirectory|"packages/"});
-     }
+if not noinitfile then path = prepend(applicationDirectory() | "local/" | LAYOUT#"packages", path)
+if sourceHomeDirectory  =!= null then path = join(path, {sourceHomeDirectory|"m2/",sourceHomeDirectory|"packages/"})
 if buildHomeDirectory   =!= null then (
      path = join(path, {buildHomeDirectory|"tutorial/final/"});
-     if buildHomeDirectory =!= sourceHomeDirectory then path = join(path, {buildHomeDirectory|"m2/"})
+     if buildHomeDirectory =!= sourceHomeDirectory then path = join(path, {buildHomeDirectory|"m2/",buildHomeDirectory|"packages/"})
      )
 if prefixDirectory      =!= null then (
      path = join(path, {prefixDirectory | LAYOUT#"m2", prefixDirectory | LAYOUT#"datam2"});

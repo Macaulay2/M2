@@ -745,7 +745,7 @@ document {
           },
      "The projective dimension of the face ring of D equals the
      regularity of the face ideal of the Alexander dual of D
-     see e.g. Corollary 5.59 of Miller-Sturmfels, Combinatorial
+     see e.g., Corollary 5.59 of Miller-Sturmfels, Combinatorial
      Commutative Alebra.",
      EXAMPLE {
 	  "R = QQ[a..f];",
@@ -776,7 +776,7 @@ document {
 -- Greg and Mike were working on this when Greg had to go home
 -- 7/13/05  Good example though!
      "Hochster gives a formula relating the homology of the Alexander dual 
-     to the betti numbers of the Stanley-Reisner ideal, see e.g. 
+     to the betti numbers of the Stanley-Reisner ideal, see e.g., 
      Corollary 1.40 in
      Miller-Sturmfels, Combinatorial Commutative Algebra. ",
      EXAMPLE {

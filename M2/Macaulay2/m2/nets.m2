@@ -48,6 +48,13 @@ net Command := toString Command := toExternalString Command := f -> (
      if ReverseDictionary#?f then return toString ReverseDictionary#f else "--Command--"
      )
 
+toExternalString Function := f -> (
+     if ReverseDictionary#?f then return toString ReverseDictionary#f;
+     t := locate f;
+     if t === null then error "can't convert anonymous function to external string"
+     else error("can't convert anonymous function (",t#0, ":", toString t#1| ":", toString t#2, "-", toString t#3| ":", toString t#4,") to external string")
+     )
+
 net Function := toString Function := f -> (
      if ReverseDictionary#?f then return toString ReverseDictionary#f;
      t := locate f;
@@ -59,6 +66,7 @@ toExternalString Manipulator := toString Manipulator := f -> (
      if ReverseDictionary#?f then return toString ReverseDictionary#f else "--Manipulator--"
      )
 -----------------------------------------------------------------------------
+toExternalString Thing := toString
 toExternalString String := format
 
 toString Net := x -> demark("\n",unstack x)
@@ -96,7 +104,6 @@ toExternalString Sequence := s -> (
      if # s === 1 then concatenate("1 : (",toExternalString s#0,")")
      else concatenate("(",between(",",toExternalString \ s),")")
      )
-toExternalString Thing := toString
 -----------------------------------------------------------------------------
 describe = method()
 describe Thing := net

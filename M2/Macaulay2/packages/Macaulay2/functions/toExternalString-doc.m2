@@ -12,6 +12,7 @@ undocumented {
     (toExternalString, Matrix),
     (toExternalString, GeneralOrderedMonoid),
     (toExternalString, Thing),
+    (toExternalString, Function),
     (toExternalString, CC),
     (toExternalString, HashTable),
     (toExternalString, MutableHashTable),
@@ -37,11 +38,9 @@ document {
 	  "x" => "any Macaulay 2 object"
 	  },
      Outputs => {
-	  String => {"a string representation of ", TT "x", ", which can often
-	       be used to read the object back into the program later"}
+	  String => {"a string representation of ", TT "x", ", which can be used, in conjunction with ", TO "value", ", to read the object back into the program later"}
 	  },
-     "See also ", TO "toString", " which simply converts ", TT "x", "
-     to a string which can be displayed meaningfully.",     
+     "See also ", TO "toString", " which simply converts ", TT "x", " to a string which can be displayed meaningfully.",     
      EXAMPLE {
 	  "toString {1,4,a,f,212312,2.123243242}"
 	  },
@@ -51,14 +50,11 @@ document {
 	  },
      "Matrices and ring elements are linearized",
      EXAMPLE {
-	  "toExternalString (x_1^3-3/4*x_5*x_3)",
-	  "toExternalString vars R"
+	  "x_1^3-3/4*x_5*x_3",
+	  "toExternalString oo",
+	  "value oo"
 	  },
-     Caveat => {
-	  "Not everything can be converted to a string in such a way that it
-     	  can be read back into the program later, because circular data structures
-     	  are common."
-	  },
+     Caveat => "Not everything can be converted to a string in such a way that it can be read back into the program later.",
      SeeAlso => {toString, value}
      }
 

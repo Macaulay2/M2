@@ -139,7 +139,7 @@ document {
 	  TO "definition of product (block) orders",
 	  TO "RevLex",
 	  TO "NCLex",
-      "Developers corner",
+      "Developers' corner",
 	  TO "obtaining the monomial order of a ring"
 	  }
      }
@@ -331,7 +331,7 @@ document {
 
 document {
      Key => Weights,
-     Headline => "Assigning weights to the variables",
+     Headline => "assigning weights to the variables",
      "Given a list L of n integers, the weight order on a polynomial ring
      in n variables is defined by: x^A > x^B if A_1 L_1 + ... + A_n L_n
      > B_1 L_1 + ... + B_n L_n.",
@@ -713,17 +713,17 @@ document {
      zero or negative.  The notion of small depends on the size of exponents one wants: the degree
      of each monomial occuring should fit in a 32 bit integer (or 64 bit integer, on 64 bit machines).",
      PARA{},
-     "Nonetheless, there are several routines (e.g. ", TO basis, ", ", TO random, ") which require that each multidegree
+     "Nonetheless, there are several routines (e.g., ", TO basis, ", ", TO random, ") which require that each multidegree
      be finite dimensional, and therefore require a ",
-     EM "Heft", " vector.  This is a vector of (small) integers, ", TEX "$w = (w_0, \\ldots, w_{d-1})$", 
+     TO "Heft", " vector.  This is a vector of (small) integers, ", TEX "$w = (w_0, \\ldots, w_{d-1})$", 
      " of length the ", TO degreeLength, " of the ring, such that the dot product of w with the degree of
      each variable is a positive integer.  Provide this vector when constructing the ring.",
---     EXAMPLE {
---	  "R = QQ[a,b,c,Degrees=>{{1,0},{-2,1},{-3,1}}, Heft=>{1,4}];",
---	  "random({1,1},R)",
---	  "basis({1,1},R)"
---	  },
-     "If the vector is not provided, many computations will work (e.g. Groebner bases), but operations requiring
+     EXAMPLE {
+	  "R = QQ[a,b,c,Degrees=>{{1,0},{-2,1},{-3,1}}, Heft=>{1,4}];",
+	  "random({1,1},R)",
+	  "basis({1,1},R)"
+	  },
+     "If the vector is not provided, many computations will work (e.g., Groebner bases), but operations requiring
      finite bases for a multidegree (such as ", TT "basis", " and ", TT "random", ") will raise errors."
      }
 

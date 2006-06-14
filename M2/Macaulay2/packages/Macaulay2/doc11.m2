@@ -196,11 +196,8 @@ document {
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA{},
-     "Here is an example.  The code ",
-     PRE "HEADER1 \"Interesting thing\", \"Here is an interesting thing.\"",
-     " produces ",
-     HEADER1 "Interesting thing", "Here is an interesting thing.",
-     PARA{},
+     "Here is an example.  The code ", PRE "HEADER1 \"Interesting thing\"", " produces the following header.",
+     HEADER1 "Interesting thing",
      SeeAlso => "hypertext"
      }
 
@@ -215,10 +212,8 @@ document {
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA{},
-     "Here is an example.  The code ",
-     PRE "HEADER2 \"Interesting thing\", \"Here is an interesting thing.\"",
-     " produces ",
-     HEADER2 "Interesting thing", "Here is an interesting thing.",
+     "Here is an example.  The code ", PRE "HEADER2 \"Interesting thing\"", " produces the following header.",
+     HEADER2 "Interesting thing",
      PARA{},
      SeeAlso => "hypertext"
      }
@@ -234,10 +229,8 @@ document {
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA{},
-     "Here is an example.  The code ",
-     PRE "SUBSECTION \"Interesting thing\", \"Here is an interesting thing.\"",
-     " produces ",
-     SUBSECTION "Interesting thing", "Here is an interesting thing.",
+     "Here is an example.  The code ", PRE "SUBSECTION \"Interesting thing\"", " produces the following header.",
+     SUBSECTION "Interesting thing",
      PARA{},
      SeeAlso => {"HEADER2", "hypertext"}
      }
@@ -253,10 +246,8 @@ document {
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA{},
-     "Here is an example.  The code ",
-     PRE "HEADER3 \"Interesting thing\", \"Here is an interesting thing.\"",
-     " produces ",
-     HEADER3 "Interesting thing", "Here is an interesting thing.",
+     "Here is an example.  The code ", PRE "HEADER3 \"Interesting thing\"", " produces the following header.",
+     HEADER3 "Interesting thing",
      PARA{},
      SeeAlso => "hypertext"
      }
@@ -272,10 +263,8 @@ document {
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA{},
-     "Here is an example.  The code ",
-     PRE "HEADER4 \"Interesting thing\", \"Here is an interesting thing.\"",
-     " produces ",
-     HEADER4 "Interesting thing", "Here is an interesting thing.",
+     "Here is an example.  The code ", PRE "HEADER4 \"Interesting thing\"", " produces the following header.",
+     HEADER4 "Interesting thing",
      PARA{},
      SeeAlso => "hypertext"
      }
@@ -291,10 +280,8 @@ document {
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA{},
-     "Here is an example.  The code ",
-     PRE "HEADER5 \"Interesting thing\", \"Here is an interesting thing.\"",
-     " produces ",
-     HEADER5 "Interesting thing", "Here is an interesting thing.",
+     "Here is an example.  The code ", PRE "HEADER5 \"Interesting thing\"", " produces the following header.",
+     HEADER5 "Interesting thing",
      PARA{},
      SeeAlso => "hypertext"
      }
@@ -310,10 +297,8 @@ document {
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA{},
-     "Here is an example.  The code ",
-     PRE "HEADER6 \"Interesting thing\", \"Here is an interesting thing.\"",
-     " produces ",
-     HEADER6 "Interesting thing", "Here is an interesting thing.",
+     "Here is an example.  The code ", PRE "HEADER6 \"Interesting thing\"", " produces the following header.",
+     HEADER6 "Interesting thing",
      PARA{},
      SeeAlso => "hypertext"
      }

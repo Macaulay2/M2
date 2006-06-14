@@ -1083,8 +1083,8 @@ Michael R. Stillman <mike@math.cornell.edu>
      dir)
 
 makePackageIndex = method(SingleArgumentDispatch => true)
-makePackageIndex Sequence := () -> makePackageIndex packagePath
-makePackageIndex List := packagePath -> (
+makePackageIndex Sequence := () -> makePackageIndex path    -- this might get too many files (formerly we used packagePath)
+makePackageIndex List := path -> (
      initInstallDirectory options installPackage;
      if prefixDirectory === null then (
 	  stderr << "warning: can't make package index" << endl;
@@ -1108,7 +1108,7 @@ makePackageIndex List := packagePath -> (
 	       HEADER3 "Documentation",
 	       UL splice {
                	    if prefixDirectory =!= null then HREF { prefixDirectory | LAYOUT#"packagehtml" "Macaulay2" | "index.html", "Macaulay 2" },
-		    apply(toSequence packagePath, pkgdir -> (
+		    apply(toSequence path, pkgdir -> (
 			      prefixDirectory := minimizeFilename(pkgdir | relativizeFilename(LAYOUT#"packages",""));
 			      p := prefixDirectory | LAYOUT#"docm2";
 			      if isDirectory p then (

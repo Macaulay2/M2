@@ -54,13 +54,13 @@ document {
      Cycle through the following steps as you refine your documentation.",
      UL {
 	  "edit your doc entries as desired",
-	  {"generate the html pages for your package, using e.g. ",
+	  {"generate the html pages for your package, using e.g., ",
 	       PRE///installPackage("yourPackage")///,
      	      "A link to your package documentation is placed in the ", 
 	      TT "index.html", " file in the directory ",
               TO2(applicationDirectory, TT "applicationDirectory()")},
 	  {"view your html using your favorite web browser, or use ",
-	       TO viewHelp, " as in e.g. ",
+	       TO viewHelp, " as in e.g., ",
 	       PRE///viewHelp "doc entry name"///,
 	       "which displays this page in your browser."}
 	  },

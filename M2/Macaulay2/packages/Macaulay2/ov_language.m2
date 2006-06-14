@@ -563,17 +563,22 @@ document {
 document {
      Key => "break",
      Headline => "break from a loop",
-     TT "break x", " interrupts execution of a loop controlled by ",
-     TO "for", ", ", TO "while", ", ", TO "apply", ", or ", TO "scan", ", returning ",
-     TT "x", " as the value of the loop currently being
-     evaluated.",BR{},
-     TT "break", " interrupts execution of a loop, returning
-     ", TO "null", " as the value of the function currently being evaluated.",
-     PARA{},
-     "Warning: trying to break from a loop controlled by ", TO "table", " will
-     probably not do what you expect, since ", TO "table", " is implemented by two nested
-     loops controlled by ", TO "apply", ", and only the inner one will stop.",
-     SeeAlso => { "scan", "while", "for" }
+     Usage => "break x",
+     Consequences => {
+	  { "this interrupts execution of a loop controlled by ", TO "for", ", ", TO "while", ", ", TO "apply", ", or ", TO "scan", ", returning ",
+     	       TT "x", " as the value of the loop currently being evaluated"
+	       }
+	  },
+     PARA {
+	  "Omitting ", TT "x", ", and executing ", TT "break", ", interrupts execution of a loop as above, returning
+     	  ", TO "null", " as the value of the function currently being evaluated, except, in the case of a ", TO "for", " loop or a ", TO "while", " loop with 
+     	  a list clause, the list accumulated so far is returned as the value."
+	  },
+     Caveat => {
+     	  "Warning: trying to break from a loop controlled by ", TO "table", " will probably not do what you expect, since ", TO "table", " is implemented by two nested
+     	  loops controlled by ", TO "apply", ", and only the inner one will stop."
+	  },
+     SeeAlso => { "apply", "scan", "while", "for" }
      }
 
 document {
@@ -678,7 +683,7 @@ document { Key => "for",
      Caveat => {
 	  },
      PARA{
-     	  "The variable ", TT "i", " is a new local variable whose scope includes only the expressions ", TT "c", ", ", TT "x", ",
+     	  "The variable ", TT "i", " is a new local variable whose scope includes only the expressions ", TT "p", ", ", TT "x", ",
 	  and ", TT "y", ".  The numbers ", TT "a", " and ", TT "b", " must be small integers that fit into a single word."
 	  }
      }
@@ -917,7 +922,21 @@ document {
      so that ", TT "b c d", " will be parsed as ", TT "b (c d)", ".",
      PARA{},
      "The comma and semicolon get special treatment: the empty expression can
-     occur to the right of the comma or semicolon or to the left of the comma."
+     occur to the right of the comma or semicolon or to the left of the comma.",
+     PARA {
+	  "One of the most unusual aspects of the parsing precedence table above is that ", TT "[", " is
+	  assigned a precedence several steps lower than the precedence of symbols and adjacency, and also
+	  lower than the precedence of ", TT "/", ".  This was done so expressions like ", TT "R/I[x]", "
+	  would be parsed according to mathematical custom, but it implies that expressions like ", TT "f g [x]", "
+	  will be parsed in a surprising way, with ", TT "f g", " being evaluated first, even if ", TT "f", " and ", TT "g", "
+	  are both functions.  Suitably placed parentheses can help, as illustrated in the next example."
+	  },
+     EXAMPLE lines ///
+     	  f = x -> (print x; print)
+	  f f [1,2,3]
+	  f f ([1,2,3])
+	  f (f [1,2,3])
+     ///
      }
 
 -- Local Variables:
