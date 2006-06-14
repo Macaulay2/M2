@@ -483,51 +483,6 @@ document {
      SeeAlso => { "showUserStructure", "parent"}
      }
 
-document {
-     Key => symbol "..",
-     Headline => "sequence of consecutive items",
-     TT "m .. n", " -- produces a sequence of integers in the range from m to 
-     n inclusive. If n is less than m then the result is an empty sequence.",
-     PARA{},
-     EXAMPLE {
-	  "1..5",
-      	  "{1..5}",
-      	  "toList(1..5)"
-	  },
-     "The most confusing thing about this operator is that it is not a syntactic
-     construction, and so the resulting sequences do not splice themselves into
-     enclosing lists, as in each of the following examples.  Use ", TO "splice", "
-     to fix that.",
-     PARA{},
-     EXAMPLE {
-      	  "{10..10}",
-      	  "{10..8}",
-      	  "{3..5,8..10}",
-      	  "splice {3..5,8..10}",
-	  },
-     PARA{},
-     NOINDENT{},
-     TT "a .. i", " -- produces a sequence of symbols for use as 
-     variables in polynomial rings.",
-     EXAMPLE "a .. i",
-     PARA{},
-     TT "x_0 .. x_9", " -- produces a sequence of indexed variables for use in
-     polynomial rings.",
-     EXAMPLE {
-	  "x_0 .. x_9",
-      	  "x_(t_0) .. x_(t_5)",
-      	  "x_a .. x_e",
-	  },
-     PARA{},
-     NOINDENT{},
-     "This operator can be used with sequences or lists to produce rectangular
-     intervals.",
-     EXAMPLE {
-	  "(0,0)..(1,3)",
-      	  "p_(0,a) .. p_(1,c)",
-	  },
-     }
-
 
 document {
      Key => Variety,

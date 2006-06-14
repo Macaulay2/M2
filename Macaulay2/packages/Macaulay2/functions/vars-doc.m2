@@ -37,7 +37,7 @@ document {
      Headline => "a sequence of variables",
      Usage => "vars L",
      Inputs => {
-	  "L" => {"or ", TO2("Sequence", "sequence"), " of integers"}
+	  "L" => {", integer, or ", TO2("Sequence", "sequence"), " of integers"}
 	  },
      Outputs => {
 	  Sequence => 

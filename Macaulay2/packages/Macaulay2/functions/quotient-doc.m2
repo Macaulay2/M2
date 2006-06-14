@@ -1,19 +1,22 @@
 --- status: DRAFT
---- author(s): DE
+--- author(s): DE, then MES
 --- notes: 
 
 document { 
-     Key => quotient,
+     Key => {quotient,
+	  (quotient, Ideal, Ideal),
+	  (quotient, Module, Ideal),
+	  (quotient, Ideal, RingElement),
+	  (quotient, Module, Module),
+	  (quotient, Module, RingElement)},
      Headline => "ideal or submodule quotient",
-     Usage => "quotient(I,J)",
+     Usage => "quotient(I,J)\nI:J",
      Inputs => {"I" => " an ideal or submodule", 
 	        "J" =>" an ideal, ring element, or submodule"
 	  },
      Outputs => {
-	  {TEX "the ideal or submodule $I:J = {f | fJ\\subset I}$"}
+	  {TEX ///the ideal or submodule $I:J = \{f | fJ\subset I\}$///}
 	  },
-     Consequences => {
-	  },     
      "Groebner bases will be computed as needed.",
      PARA{},
      "The colon operator ", TO (symbol :), " may be used as an abbreviation 
@@ -25,9 +28,29 @@ document {
      "The computation is not stored anywhere yet, BUT, it will soon be stored
      under I.cache.QuotientComputation{J}, or I.QuotientComputation{J},
      so that the computation can be restarted after an interrupt.",
-     EXAMPLE {
-	  },
-     Caveat => {},
+     EXAMPLE lines ///
+	  R = ZZ[a,b,c];
+	  F = a^3-b^2*c-11*c^2
+	  I = ideal(F,diff(a,F),diff(b,F),diff(c,F))
+	  I : (ideal(a,b,c))^3
+	  ///,
+     "If both arguments are submodules, the annihilator of J/I (or (J+I)/I) is returned.",
+     EXAMPLE lines ///
+          S = QQ[x,y,z]
+	  J = image vars S
+	  I = image symmetricPower(2,vars S)
+	  (I++I) : (J++J)
+	  (I++I) : x+y+z
+	  quotient(I,J)
+	  quotient(gens I, gens J)
+          ///,
+     "Ideal quotients and saturations are useful for manipulating components of ideals.
+     For example, ",
+     EXAMPLE lines ///
+          I = ideal(x^3-y^2*z^4+3*x-1, y^4)
+	  J = ideal((x+y+z)^3, x^6)
+          L = intersect(I,J)
+          ///,
      SeeAlso => {saturate},
      }
 document { 
