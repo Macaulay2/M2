@@ -47,9 +47,11 @@ document {
      "Ideal quotients and saturations are useful for manipulating components of ideals.
      For example, ",
      EXAMPLE lines ///
-          I = ideal(x^3-y^2*z^4+3*x-1, y^4)
-	  J = ideal((x+y+z)^3, x^6)
+          I = ideal(x^2-y^2, y^3)
+	  J = ideal((x+y+z)^3, z^2)
           L = intersect(I,J)
+	  L : z^2
+	  L : I == J
           ///,
      SeeAlso => {saturate},
      }
