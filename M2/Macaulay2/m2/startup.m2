@@ -43,6 +43,7 @@ if firstTime then (
 		symbol Boolean, symbol CacheTable, symbol Pseudocode, symbol Database,
 		symbol Dictionary, symbol File, symbol Function, symbol HashTable,
 		symbol FunctionClosure, symbol CompiledFunction, symbol CompiledFunctionClosure,
+		symbol CompiledFunctionBody,
 		symbol List, symbol MutableHashTable, symbol MutableList, symbol Net,
 		symbol Nothing, symbol Option, symbol QQ, symbol RR, symbol RR, symbol CC,
 		symbol Ring, symbol Sequence, symbol String, symbol Symbol, symbol Thing,

@@ -251,6 +251,7 @@ export {
 	symbol Function,
 	symbol FunctionClosure,
 	symbol CompiledFunction,
+	symbol CompiledFunctionBody,
 	symbol CompiledFunctionClosure,
 	symbol FunctionApplication,
 	symbol GBDegrees,

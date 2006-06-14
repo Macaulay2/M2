@@ -896,7 +896,7 @@ document {
 	  ", TT "*", " has higher parsing precedence than ", TT "+", ", and hence ", TT "2+3*5", " is
 	  parsed as though it had been written as ", TT "2+(3*5)", "."
 	  },	  
-     PRE net drop(apply(seeParsing(),x -> take(x,-1)),1)
+     TABLE { "class" => "examples",  TR TD PRE net drop(apply(seeParsing(),x -> take(x,-1)),1) }
      }
 
 document {

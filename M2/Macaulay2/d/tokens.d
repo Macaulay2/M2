@@ -124,6 +124,9 @@ export CompiledFunctionClosure := {
      hash:int,
      env:Sequence
      };
+export CompiledFunctionBody := {
+     fn:function(Expr,Sequence):Expr			    -- it's hard to make hash codes for these things!
+     };
 
 -- Code
 
@@ -299,6 +302,7 @@ export Expr := (
      Boolean or
      CodeClosure or
      CompiledFunction or
+     CompiledFunctionBody or
      CompiledFunctionClosure or
      Complex or
      Database or
@@ -552,6 +556,7 @@ export symbolClass := newbasictype();
 export keywordClass := newtypeof(symbolClass);
 export codeClass := newbasictype();
 export functionBodyClass := newbasictype();
+export compiledFunctionBodyClass := newbasictype();
 export errorClass := newbasictype();
 export netClass := newbasictype();
 export netFileClass := newbasictype();

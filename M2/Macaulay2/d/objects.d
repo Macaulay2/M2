@@ -305,7 +305,8 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       )
 	  else False
 	  )
-     is f:functionCode do False
+     is functionCode do False
+     is f:CompiledFunctionBody do when rhs is g:CompiledFunctionBody do if f.fn == g.fn then True else False else False
      is s:SpecialExpr do when rhs is t:SpecialExpr do if s.class == t.class && equal(s.e,t.e) == True then True else False else False
      is x:RawRingMap do (
 	  when rhs
@@ -445,6 +446,7 @@ export Class(e:Expr):HashTable := (
      is Integer do integerClass
      is CodeClosure do codeClass
      is functionCode do functionBodyClass
+     is CompiledFunctionBody do compiledFunctionBodyClass
      is Rational do rationalClass
      is Real do doubleClass
      is Complex do complexClass
@@ -496,6 +498,7 @@ setupconst("LocalDictionary",Expr(localDictionaryClass));
 setupconst("GlobalDictionary",Expr(globalDictionaryClass));
 setupconst("Pseudocode",Expr(codeClass));
 setupconst("FunctionBody",Expr(functionBodyClass));
+setupconst("CompiledFunctionBody",Expr(compiledFunctionBodyClass));
 setupconst("MutableHashTable",Expr(mutableHashTableClass));
 setupconst("CacheTable",Expr(cacheTableClass));
 setupconst("BasicList",Expr(basicListClass));
