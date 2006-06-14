@@ -808,7 +808,7 @@ installPackage Package := opts -> pkg -> (
 			 if not isUndocumented tag and not hasDocumentation s and signalDocError tag then stderr << "--warning: symbol has no documentation: " << tag << endl;
 			 f := value s;
 			 if instance(f, Function) then (
-			      scan(methods f, m -> (
+			      scan(methods f, m -> if isDocumentableMethod m then (
 					tag := makeDocumentTag m;
 					if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m and signalDocError tag
 					then stderr << "--warning: method has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;

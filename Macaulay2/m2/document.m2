@@ -39,12 +39,12 @@ isDocumentableThing   Nothing := key -> true
 
 errorMethod := key -> typicalValues#?key and typicalValues#key === Error
 
-isDocumentableMethod := method(SingleArgumentDispatch => true)
+isDocumentableMethod = method(SingleArgumentDispatch => true)
 isDocumentableMethod Sequence := key -> (
      all(key, i -> (
      	       class i === Sequence 			    -- assignment methods look like ((symbol *, symbol =), X, Y, Z)
      	       or isDocumentableMethod i)) 
-     and not methodDispatchFunctions#?(lookup key)
+     and not methodDispatchFunctions#?(functionBody lookup key)
      and not errorMethod key
      -- and not isUndocumented makeDocumentTag key
      )

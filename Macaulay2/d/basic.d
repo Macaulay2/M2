@@ -65,6 +65,7 @@ export hash(e:Expr):int := (
      is s:SpecialExpr do s.class.hash + 221 * hash(s.e)
      is x:CompiledFunction do x.hash
      is x:CompiledFunctionClosure do x.hash
+     is f:CompiledFunctionBody do 12347
      );
 export hash(x:List):int := (
      h := x.class.hash + 23407;

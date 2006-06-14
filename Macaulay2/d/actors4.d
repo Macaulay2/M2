@@ -805,6 +805,7 @@ tostringfun(e:Expr):Expr := (
      is functionCode do Expr("<<a function body>>")
      is CompiledFunction do Expr("<<a compiled function>>")
      is CompiledFunctionClosure do Expr("<<a compiled function closure>>")
+     is CompiledFunctionBody do Expr("<<a compiled function body>>")
      is FunctionClosure do Expr("<<a function closure>>")
      is DictionaryClosure do Expr("<<a dictionary>>")
      is NetFile do Expr("<<a netfile>>")
