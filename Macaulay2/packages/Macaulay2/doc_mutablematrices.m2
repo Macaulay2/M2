@@ -71,7 +71,7 @@ document {
 	  TO mutableZero,
 	  ", ", 
 	  TO mutableIdentity,
-     ").  Certain operations on (dense) matrices over RR or CC (e.g. eigenvalues,
+     ").  Certain operations on (dense) matrices over RR or CC (e.g., eigenvalues,
      eigenvectors, LU decomposition, SVD decomposition, and solving) 
      are performed using the lapack library.",
      HEADER3 "row and column operations",

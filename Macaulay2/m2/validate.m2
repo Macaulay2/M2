@@ -21,6 +21,7 @@ validate2 HEAD := x -> (
 validate2 TR := 
 validate2 UL := 
 validate2 BLOCKQUOTE := x -> if #x === 0 then stderr << "--warning: " << class x << " should contain at least one element" << endl
+validate2 LATER := x -> validate2 x#0()
 
 validate = method()
 validate String := x -> (

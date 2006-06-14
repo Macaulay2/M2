@@ -337,8 +337,7 @@ document {
      if a computation in Macaulay2 has been halted by pressing <CTRL>-C, 
      the computation
      can be restarted from where it left off, by giving the original 
-     command, e.g. ", 
-     TT "gb m", ".",
+     command, e.g., ", TT "gb m", ".",
      
      HEADER3 "cat <first var(0..numvars-1)> <result matrix>",
      "Macaulay1 then also prompts for two lists of integers, say ", 
@@ -534,7 +533,7 @@ document {
      "WRITE THIS",
      
      HEADER3 "ideal <resulting matrix>",
-     "To enter a one row matrix, use e.g.",
+     "To enter a one row matrix, use we may use the following method.",
      EXAMPLE {
 	  "R = ZZ[a..d]",
       	  "f = matrix{{a^2-b*c,3*b*c^4-1}}"},

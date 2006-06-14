@@ -42,10 +42,7 @@ loadPackage String := opts -> pkgtitle -> (
      -- if opts.DebuggingMode =!= true then loadDepth = loadDepth - 1;
      -- this was bad, because loadDepth might become negative, and then it gets converted to 255 in the pseudocode
      -- another problem was that loading the file might have resulted in an error.
-     savepath := path;
-     path = packagePath;
      load filename;
-     path = savepath;
      -- if opts.DebuggingMode =!= true then loadDepth = loadDepth + 1;
      remove(packageLoadingOptions,pkgtitle);
      if not PackageDictionary#?pkgtitle then error("the file ", filename, " did not define a package ", pkgtitle);

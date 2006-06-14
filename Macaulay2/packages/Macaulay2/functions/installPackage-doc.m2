@@ -11,6 +11,7 @@ document {
 	  DebuggingMode => Boolean => { "whether to enter ", TO "the debugger", " if an error occurs during installation" },
 	  RerunExamples => Boolean => "whether to rerun all the examples during installation",
 	  IgnoreExampleErrors => Boolean => "whether to ignore errors that occur during the running of examples during installation",
+     	  CheckDocumentation => Boolean => "whether to check the package's documentation for consistency and completeness",
 	  MakeDocumentation => Boolean => "whether to make the documentation for the package during installation",
 	  MakeInfo => Boolean => { "whether to make the info pages.  This is a form of the documentation that can be viewed using the
 	       Unix command ", TT "info", " or using ", TT "emacs", "." 

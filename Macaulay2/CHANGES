@@ -106,6 +106,7 @@ pre-loaded.
 
 New symbol 'packagePath' -- provides a list of top-level directories
 in which the directory trees for isntalled packages have been installed.
+... removed later
 
 The function 'printExamples' has been removed, and 'examples' has been
 modified to yield a net.

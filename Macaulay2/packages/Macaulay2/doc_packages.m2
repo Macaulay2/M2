@@ -19,18 +19,6 @@ document {
 	  },
      SeeAlso => {"packages", "an example of a package", needsPackage, load }
      }
--- document {
---      Headline => "whether to enter the debugger upon error",
---      Key => {DebuggingMode,[loadPackage,DebuggingMode],[needsPackage,DebuggingMode],[installPackage,DebuggingMode]},
---      Usage => "loadPackage(...,DebuggingMode=>b)",
---      Inputs => { "b" => Boolean },
---      Consequences => { {"if the value ", TT "b", " is ", TT "true", ", then, while loading the package, the debugger is entered if an error occurs"} },
---      PARA { "This option has the same effect when used with the functions ", TO "needsPackage", " and ", TO "installPackage", "." },
---      EXAMPLE {
--- 	  ///loadPackage("Points", DebuggingMode=>true)///
--- 	  },
---      SeeAlso => { debug, "the debugger" }
---      }
 document {
      Key => {needsPackage,(needsPackage,String)},
      Headline => "load a package if not already loaded",

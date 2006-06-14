@@ -1111,7 +1111,7 @@ document {
 --
 --     PARA{},
 --     "The n-th Weyl algebra is the associative ring on 2n variables,
---     e.g. K<x_1..x_n, D_1..D_n>, where all the variables commute except
+--     e.g., K<x_1..x_n, D_1..D_n>, where all the variables commute except
 --     for (D_i x_i = x_i D_i + 1).  It can be viewed as the ring
 --     of algebraic differential operators on affine space K^n.",
 --
@@ -1671,7 +1671,7 @@ document {
      This routine computes restrictions to coordinate subspaces,
      where the subspace is determined
      by the strictly positive entries of the weight vector", EM "w", ",
-     e.g. ", EM "{x_i = 0 : w_i > 0}", " if ", 
+     e.g., ", EM "{x_i = 0 : w_i > 0}", " if ", 
      EM "D = ", BOLD "C", EM "<x_1,...,x_n,d_1,...,d_n>", ".
      The input weight vector should be a list of ", EM "n", " numbers
      to induce the weight ", EM "(-w,w)", " on ", EM "D", ".",
@@ -1841,7 +1841,7 @@ document {
      This routine computes integration for projection to 
      coordinate subspaces, where the subspace is determined
      by the strictly positive entries of the weight vector ", EM "w", ",
-     e.g. ", EM "{x_i = 0 : w_i > 0}", " if ", 
+     e.g., ", EM "{x_i = 0 : w_i > 0}", " if ", 
      EM "D = ", BOLD "C", EM "<x_1,...,x_n,d_1,...,d_n>", ".
      The input weight vector should be a list of ", EM "n", " numbers	    
      to induce the weight ", EM "(-w,w)", " on ", EM "D", ".",

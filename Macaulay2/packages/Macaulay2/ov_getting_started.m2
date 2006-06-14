@@ -120,7 +120,7 @@ PRE///    ;; .emacs file in your home directory
 	  After saving that file, try running emacs.  Start Macaulay2
 	  by pressing the f12 function key.  On MacOS X systems, f12 is usurped
 	  by either DashBoard, SpotLight, or something else, so either you must
-	  change the f12 to some other key, e.g. f8 in the .emacs file, or disable
+	  change the f12 to some other key, e.g., f8 in the .emacs file, or disable
 	  the systems use of the f12 key."
 	  },
      PARA {"
@@ -261,7 +261,7 @@ document {
 	  PRE "viewHelp",
 	  " to start the web browser (if necessary) and to point it at
 	  the page index.html in your .Macaulay2 directory.
-	  For help on a specific topic, e.g. the jacobian function, use ",
+	  For help on a specific topic, e.g., the jacobian function, use ",
 	  PRE"viewHelp jacobian",
           " or ",
 	  PRE///viewHelp "jacobian"///,

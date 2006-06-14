@@ -179,9 +179,8 @@ document { Key => {applicationDirectory, "application directory"},
      Outputs => { String => "the path to the user's application directory" },
      SourceCode => applicationDirectory,
      PARA { "The function ", TO "installPackage", ", by default, installs packages under the application directory.  At program startup,
-	  unless the ", TT "-q", " option is provided on the command line, an entry will be added to the ", TO "packagePath", " so
-	  packages can be loaded from there by ", TO "loadPackage", " and ", TO "needsPackage", ".  An entry will also be added to the ", TO "path", "
-	  so ", TO "load", " can find files there.  Moreover, the ", TO "initialization file", ", if found there, will be run."
+	  unless the ", TT "-q", " option is provided on the command line, an entry will be added to the ", TO "path", " so
+	  packages can be loaded from there by ", TO "loadPackage", " and ", TO "needsPackage", ".  Moreover, the ", TO "initialization file", ", if found there, will be run."
 	  },
      PARA { "The function ", TO "applicationDirectorySuffix", " determines the value of ", TT "applicationDirectory", ", and can be modified by the user." },
      EXAMPLE "applicationDirectory()",
@@ -472,6 +471,7 @@ assert ( class depth === CompiledFunctionClosure )
 ///
 
 document { Key => Heft, 
+     Headline => "adjust the degrees of ring elements internally",
      "A symbol used as an option with some functions.  It denotes a way of internally adjusting the multi-degrees of elements of polynomials
      by attaching a prefix to each multi-degree that is computed as the dot product with a fixed vector of integers.",
      SeeAlso => { Adjust, Repair }
@@ -645,11 +645,6 @@ document { Key => "homeDirectory",
      Usage => "homeDirectory",
      Outputs => { String => "the home directory of the user" },
      EXAMPLE "homeDirectory"
-     }
-document { Key => "packagePath",
-     Headline => "the path along which to search when loading a package",
-     SeeAlso => { loadPackage, needsPackage, installPackage },
-     EXAMPLE "package"
      }
 document { Key => "backtrace",
      Headline => "whether a backtrace is displayed following an error message",

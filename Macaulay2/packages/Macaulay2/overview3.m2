@@ -151,7 +151,7 @@ document {
 	  LI { TT format "packageexamples", " : example input and output files for the Macaulay 2 package FOO" },
 	  LI { TT format "packagehtml", " : html documentation for the Macaulay 2 package FOO (*.html)" },
 	  LI { TT format "packageimages", " : images for the Macaulay 2 package FOO (*.jpg)" },
-	  LI { TT format "packages", " : source files for Macaulay 2 packages; this directory appears on ", TO "packagePath" },
+	  LI { TT format "packages", " : source files for Macaulay 2 packages; this directory appears on the ", TO "path" },
 	  LI { TT format "packagesrc", " : additional source files for the Macaulay 2 package FOO" },
 	  LI { TT format "packagetests", " : test files  for the Macaulay 2 package FOO" },
 	  LI { TT format "share", " : machine independent files for Macaulay 2 itself" },

@@ -2,6 +2,7 @@ undocumented {
     (net, BODY),
     (net, LITERAL),
     (net, LI),
+    (net, LATER),
     (expression, Nothing),
     (expression, PolynomialRing),
     (expression, ProjectiveHilbertPolynomial),
@@ -54,6 +55,7 @@ undocumented {
     (html, NOINDENT),
     (html, Nothing),
     (html, HR),
+    (html, LATER),
     (html, PARA),
     (html, DIV1),
     (html, TABLE),
@@ -136,6 +138,7 @@ undocumented {
     (info, HEADER1),
     (info, TOH),
     (info, HEADER2),
+    (info, LATER),
     (info, HEADER3),
     (info, MENU),
     (info, String)

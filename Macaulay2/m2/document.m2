@@ -4,7 +4,7 @@ checkLoadDocumentation = () -> if not isGlobalSymbol "Macaulay2" or class value 
      -- the documentation for things in the package Macaulay2Core is in the package Macaulay2 !
      oldnotify := notify;
      notify = false;
-     loadPackage("Macaulay2",DebuggingMode => not stopIfError);
+     loadPackage "Macaulay2";
      notify = oldnotify;
      )
 
@@ -299,6 +299,7 @@ fSeqInitialize := (toString,toStr) -> new HashTable from {
      (3,class,Sequence ) => s -> (toStr s#1, " ", toString s#0#0, " ", toStr s#2, " ", toString s#0#1, " Thing"),-- infix assignment operator (really a ternary operator!)
      (2,class,Keyword  ) => s -> (toString s#0, " ", toStr s#1),-- prefix operator
      (2,class,Sequence ) => s -> (toString s#0#0, " ", toStr s#1, " ", toString s#0#1, " Thing"),-- prefix assignment operator (need to handle the postfix assignment operators still!)
+     (2,symbol (*)     ) => s -> (toStr s#1, " ", toStr s#0), -- postfix operator
      (2,symbol ~       ) => s -> (toStr s#1, " ", toStr s#0), -- postfix operator
      (2,symbol !       ) => s -> (toStr s#1, " ", toStr s#0), -- postfix operator
      (2,class,ScriptedFunctor,ZZ) => s -> (
@@ -741,14 +742,18 @@ processInputOutputItems := (key,fn) -> x -> (
 	       else error("can't parse input/output item in documentation for ",toString key)
 	       )
 	  ) x;
+     default := if optsymb =!= null and text =!= null and #text > 0 then (
+	  t := toString (options fn)#optsymb;
+	  if not match("^--Function",t) then SPAN{"default value " ,t});
      r := SPAN splice between_", " nonnull nonempty { 
 	  if idname =!= null then TT idname, 
 	  if type =!= null and type =!= Nothing then ofClass type, -- type Nothing, treated as above
+	  default,
 	  text
 	  };
      if optsymb =!= null then r = (
-	  if #r === 0
-	  then SPAN between(", ", nonnull ( TO2{ [fn,optsymb], concatenate(toString optsymb," => ...") }, headline [fn,optsymb] ))
+	  if #r == 0
+	  then SPAN between(", ", nonnull ( TO2{ [fn,optsymb], concatenate(toString optsymb," => ...") }, LATER { () -> commentize (headline [fn,optsymb]) } ))
 	  else SPAN (TT ( toString optsymb, " => " ), r));
      r)
 
@@ -853,8 +858,8 @@ briefSynopsis := key -> (
 	       ),
 	  if o.?Inputs then DIV1 { "Inputs:", UL o.Inputs },
 	  if o.?Outputs then DIV1 { "Outputs:", UL o.Outputs },
-	  if o#?"optional inputs" then DIV1 { TO2{ "using functions with optional inputs", "Optional inputs"}, ":", UL o#"optional inputs" },
-	  if o.?Consequences and #o.Consequences > 0 then DIV1 { "Consequences:", UL o.Consequences }
+	  if o.?Consequences and #o.Consequences > 0 then DIV1 { "Consequences:", UL o.Consequences },
+	  if o#?"optional inputs" then DIV1 { TO2{ "using functions with optional inputs", "Optional inputs"}, ":", UL o#"optional inputs" }
 	  };
      if #r > 0 then fixup DIV { UL r })
 

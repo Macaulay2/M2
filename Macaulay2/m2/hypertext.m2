@@ -271,6 +271,11 @@ tex TO2 := x -> (
      text := x#1;
      tex TT text )
 
+net LATER := x -> net x#0()
+info LATER := x -> info x#0()
+html LATER := x -> html x#0()
+toExternalString LATER := x -> toExternalString x#0()
+
 net TO  := x -> (
      if class x#0 === DocumentTag 
      then concatenate( "\"", DocumentTag.FormattedKey x#0, "\"", if x#?1 then x#1)

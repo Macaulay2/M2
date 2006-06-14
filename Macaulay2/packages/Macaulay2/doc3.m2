@@ -92,12 +92,12 @@ document {
 
 document {
      Key => symbol "(*)",
-     Headline => ""
+     Headline => "a unary postfix operator, used for indicating a graded object"
      }
 
 document {
      Key => symbol "<==>",
-     Headline => "a postfix operator, used for indicating a graded object"
+     Headline => "a binary operator, available to the user as equivalence in logical expressions"
      }
 
 document {
