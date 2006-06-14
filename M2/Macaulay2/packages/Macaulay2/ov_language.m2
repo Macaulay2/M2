@@ -57,14 +57,15 @@ document {
 	      TO "saving polynomials and matrices in files",
 	      TO "two dimensional formatting",
 	      TO "file manipulation",
+	      TO "communicating with programs",
+	      TO "using sockets",
      	  "packages",
 	      TO "packages",
 	      TO "a sample package: Quaternions",
-	  "other topics",
-	      TO "setting an alarm",
-	      TO "interacting with the system",
-	      TO "communicating with programs",
-	      TO "using sockets",
+     	  "system facilities",
+	      TO "system facilities",
+	  "debugging",
+	      TO "debugging",
 	  }
      }
 ------------------------------------------------------------------

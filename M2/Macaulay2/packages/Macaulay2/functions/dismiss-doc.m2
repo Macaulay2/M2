@@ -21,7 +21,7 @@ document {
      	  newPackage "P"
 	  export x
 	  x=3
-	  closePackage "P"
+	  endPackage "P"
 	  globalDictionaries
 	  x
 	  dismiss P

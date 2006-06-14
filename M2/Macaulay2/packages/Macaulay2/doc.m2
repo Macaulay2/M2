@@ -231,12 +231,14 @@ document {
 document {
      Key => "path",
      Headline => "list of directories to look in",
-     "A list of strings containing names of directories in
-     which ", TO "load", " and ", TO "input", " should seek files.  These strings
-     are simply concatenated with the filename being sought, so should include
-     any necessary terminal slashes.  One further directory is implicitly searched 
-     first: the directory containing the current input file; when input is coming 
-     from the standard input, that directory is the current directory of the process.",
+     "A list of strings containing names of directories in which ", TO "load",
+     ", ", TO "input", ", ", TO "loadPackage", ", ", TO "needsPackage", ", and
+     ", TO "installPackage", " should seek files.  These strings are simply
+     concatenated with the filename being sought, so should include any
+     necessary terminal slashes.  One further directory is implicitly searched
+     first: the directory containing the current input file; when input is
+     coming from the standard input, that directory is the current directory of
+     the process.",
      EXAMPLE {
 	  "path",
 	  ///path = append(path, homeDirectory | "resolutions/")///

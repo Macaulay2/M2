@@ -7,15 +7,20 @@ packagelist := (
 
 packagelist = select(packagelist, pkg -> pkg =!= "Macaulay2")
 
+document { Key => "packages provided with Macaulay 2",
+     PARA{
+     	  "The packages that are distributed with Macaulay2 are:"
+	  },
+     UL apply(sort packagelist, pkg -> LI TO (pkg|"::"|pkg))
+     }
+
 document { Key => "packages",
      "A package is a body of Macaulay2 source code devoted to a 
      particular topic.  Many packages are distributed with Macaulay 2, 
      and others are available from various users on the internet.",
      PARA{}, "For more detailed information about packages, see ", 
      TO Package, ".",
-     PARA{},
-     "The packages that are distributed with Macaulay2 are:",
-     UL apply(sort packagelist, pkg -> LI TO (pkg|"::"|pkg)),
+     SeeAlso => { "packages provided with Macaulay 2" },
      Subnodes => {
      "Using existing packages",
 	  TO needsPackage,

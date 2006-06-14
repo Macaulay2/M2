@@ -896,16 +896,16 @@ document {
      it, let it communicate directly with the user, and wait for it to
      finish.  This is done with the ", TO "run", " command.",
      EXAMPLE ///run "uname -a"///,
+     "To run a program and provide it with input, one way is use the operator ", TO "<<", ",
+     with a file name whose first character is an
+     exclamation point; the rest of the file name will be taken as the
+     command to run, as in the following example.",
+     EXAMPLE ///"!grep a" << " ba \n bc \n ad \n ef \n" << close///,
      "More often, one wants to write Macaulay 2 code to obtain
      and manipulate the output from the other program.  If the program
-     requires no input data from us, as in the example above, then we can
-     use ", TO "get", " with a file name whose first character is an
-     exclamation point; the rest of the file name will be taken as the
-     command to run.  In this example, we also peek at the string
+     requires no input data, then we can use ", TO "get", " with a file name whose first character is an
+     exclamation point.  In the following example, we also peek at the string
      to see whether it includes a newline character.",
-     if version#"operating system" === "Windows-95-98-NT"
-     then PRE "<< example doesn't work under Windows >>"
-     else
      EXAMPLE {
 	  ///peek get "!uname -a"///,
 	  },
@@ -992,7 +992,7 @@ document {
      else
      EXAMPLE "wait pid",
      PARA{},
-     SeeAlso => { "openInOut", "openListener" }
+     SeeAlso => { "openInOut", "openListener", "getWWW" }
      }
 
 document {

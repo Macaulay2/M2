@@ -352,30 +352,24 @@ document {
      }
 
 document {
-     Key => "system",
-     "Loading files:",
-     UL {
+     Key => "system facilities",
+     Subnodes => {
+     	  "Loading files:",
 	  TO "autoload",
 	  TO "initialization file",
 	  TO "input",
 	  TO "load",
-	  TO "needs"
-	  },
-     "Echoing characters:",
-     UL {
+	  TO "needs",
+     	  "Echoing characters:",
 	  TO "clearEcho",
-	  TO "setEcho"
-	  },
-     "Dumping and restoring the state of the system:",
-     UL {
+	  TO "setEcho",
+     	  "Dumping and restoring the state of the system:",
 	  TO "dumpdata",
 	  TO "loaddata",
 	  TO "restart",
 	  TO "addStartFunction",
-	  TO "addEndFunction"
-	  },
-     "Interface to the operating system:",
-     UL{
+	  TO "addEndFunction",
+     	  "Interface to the operating system:",
 	  TO "top level loop",
 	  TO "alarm",
 	  TO "currentDirectory",
@@ -390,22 +384,13 @@ document {
 	  TO "sleep",
 	  TO "time",
 	  TO "timing",
-	  TO "temporaryFileName",
-	  TO "wait"
-	  },
-     "Variables with information about the state of the current process:",
-     UL {
+	  TO "wait",
+     	  "Variables with information about the state of the current process:",
 	  TO "commandLine",
 	  TO "environment",
-	  TO "version"
-	  },
-     "Miscellaneous commands:",
-     UL {
-	  TO "getWWW"
-	  },
-     "Dealing with the garbage collector:",
-     UL {
-	  TO "collectGarbage",
+	  TO "version",
+     	  "Dealing with the garbage collector:",
+	  TO "collectGarbage"
 	  }
      }
 
@@ -455,22 +440,6 @@ document {
 	  TO "NoPrint",
 	  TO "Print",
 	  }
-     }
-
-document {
-     Key => "executing other programs",
-     "The ", TO "run", " command can be used to execute another program,
-     after which control will return to Macaulay 2.",
-     PARA{},
-     "To pass the contents of a string as input to a program or
-     command, open an output file with ", TO "openOut", " whose name is
-     the character '!' followed by the command, write the data to the 
-     resulting file, and then close the file.  The output is displayed 
-     on the screen.",
-     PARA{},
-     "If you want to collect the output from a command in a string, use 
-     ", TO "get", " with a file name consisting of the character '!' 
-     followed by the command."
      }
 
 document {

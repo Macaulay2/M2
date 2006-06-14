@@ -345,7 +345,7 @@ function and show you the pseudo-code that implements it.  Refer to
 the source code in Macaulay2/d/ to understand what it means.
 
 New system for 3rd party packages: see 'Package'.  Related items:
-'newPackage', 'closePackage', 'installPackage', 'check', 'LAYOUT',
+'newPackage', 'endPackage', 'installPackage', 'check', 'LAYOUT',
 'loadPackage', 'use Package' 'dismiss Package', 'packages',
 'needsPackage'.
 

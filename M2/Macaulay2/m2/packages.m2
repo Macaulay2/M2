@@ -87,7 +87,7 @@ newPackage(String) := opts -> (title) -> (
 	       	    globalDictionaries = saveD;
 	       	    loadedPackages = saveP;
 		    )
-	       else closePackage title
+	       else endPackage title
 	       );
 	  fileExitHooks = prepend(hook, fileExitHooks);
 	  );
@@ -237,8 +237,8 @@ checkShadow = () -> (
 
 sortByHash := v -> last \ sort \\ (i -> (hash i, i)) \ v
 
-closePackage = method()
-closePackage String := title -> (
+endPackage = method()
+endPackage String := title -> (
      if currentPackage === null or title =!= currentPackage#"title" then error ("package not current: ",title);
      pkg := currentPackage;
      ws := set pkg#"exported mutable symbols";
