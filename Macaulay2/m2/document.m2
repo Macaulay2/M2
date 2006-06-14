@@ -510,7 +510,9 @@ fixupEntry := method(SingleArgumentDispatch => true)
 fixupEntry Thing := fixup
 fixupEntry Type := identity
 fixupEntry Option := z -> z#0 => fixupEntry z#1
-fixupList := x -> apply(nonnull x,fixupEntry)
+fixupList := x -> (
+     if not instance(x,List) then error "expected documentation option to be a list";
+     apply(nonnull x,fixupEntry))
 enlist := x -> if class x === List then x else {x}
 chkIsString := key -> val -> if class val === String then fixup val else error("expected ",toString key," option to be a string")
 fixupTable := new HashTable from {
@@ -571,10 +573,7 @@ reservedNodeNames := set apply( {"Top", "Table of Contents", "Symbol Index"}, to
 storeRawDocumentation := (tag,opts) -> (
      key := DocumentTag.FormattedKey tag;
      if currentPackage#rawKey#?key and signalDocError tag
-     then (
-	  stderr << currentFileName << ":" << currentLineNumber() << ": warning: documentation already provided for '" << tag << "'" << endl;
-     	  error "debug me";
-	  );
+     then stderr << currentFileName << ":" << currentLineNumber() << ": warning: documentation already provided for '" << tag << "'" << endl;
      currentPackage#rawKey#key = opts;
      )
 
