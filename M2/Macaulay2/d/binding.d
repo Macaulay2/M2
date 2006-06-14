@@ -208,7 +208,7 @@ bump();
      export GreaterEqualS := makeKeyword(unaryright(">="));
      export EqualEqualEqualS := makeKeyword(binaryright("==="));
      export EqualEqualS := makeKeyword(binaryright("=="));
-     export QuestionS := makeKeyword(binaryright("?"));
+     export QuestionS := makeKeyword(unaryright("?"));
      export NotEqualEqualEqualS := makeKeyword(binaryright("=!="));
      export NotEqualS := makeKeyword(binaryright("!="));
 -- operations on terms that yield terms:
@@ -465,7 +465,7 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS,
      StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
      AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS);
-export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, PlusS, LessLessS, notS, DeductionS,
+export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, PlusS, LessLessS, notS, DeductionS, QuestionS,
      LessS, GreaterS, LessEqualS, GreaterEqualS		    -- surprising to find these here...
      );
 export opsWithPostfixMethod := array(SymbolClosure)( TildeS, ParenStarParenS );

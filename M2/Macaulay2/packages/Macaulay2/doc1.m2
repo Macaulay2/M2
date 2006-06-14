@@ -871,8 +871,7 @@ document {
      }
 document {
      Key => symbol "_",
-     "A binary operator which is used for various mathematical operations
-     that are customarily written with subscripts."
+     Headline => "a binary operator, used for subscripting and access to elements"
      }
 document {
      Key => (symbol _, List, ZZ),
