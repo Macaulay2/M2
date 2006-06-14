@@ -39,6 +39,9 @@ installMethod(symbol =>, Thing, Thing, Option => dummy)
 installMethod(symbol >, Thing, Thing, Boolean => dummy)
 installMethod(symbol >=, Thing, Thing, Boolean => dummy)
 
+installMethod(symbol .., ZZ, ZZ, Sequence => dummy)
+
+
 acos RR := acos ZZ := RR => acos
 asin RR := asin ZZ := RR => asin
 atan(RR,RR) := atan RR := atan ZZ := RR => atan
