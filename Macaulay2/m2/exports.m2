@@ -561,7 +561,7 @@ export {
 	symbol close,
 	symbol closeIn,
 	symbol closeOut,
-	symbol closePackage,
+	symbol endPackage,
 	symbol code,
 	symbol codim,
 	symbol coefficientRing,

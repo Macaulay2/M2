@@ -118,11 +118,11 @@ TEST ///
   
        
 end
+
 -- Here place M2 code that you find useful while developing this
--- package
+-- package.  None of it will be executed when the file is loaded,
+-- because loading stops when the symbol "end" is encountered.
 
 installPackage "PackageTemplate"
 installPackage("PackageTemplate", RemakeAllDocumentation=>true)
 check PackageTemplate
-
-

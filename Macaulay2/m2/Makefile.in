@@ -83,6 +83,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		../emacs/Makefile.in \
 		../basictests/Makefile.in \
 		../packages/Makefile.in \
+		../packages/packagelist \
 		../../Makefile ../../GNUmakefile.in \
 		@srcdir@/../packages/*/Makefile.in \
 		@srcdir@/README.DOC \

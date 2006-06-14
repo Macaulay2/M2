@@ -9,7 +9,7 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export{firstFunction}
+export {firstFunction}
 
 firstFunction = method(TypicalValue => String)
 firstFunction ZZ := String => n -> (
@@ -28,12 +28,8 @@ document {
 	Key => {firstFunction,(firstFunction,ZZ)},
 	Headline => "a silly first function",
 	Usage => "firstFunction n",
-	Inputs => {
-		"n" => ZZ => {}
-		},
-	Outputs => {
-		String => {}
-		},
+	Inputs => { "n" => ZZ },
+	Outputs => { String => { "a silly string, depending on the value of ", TT "n" }},
 	EXAMPLE {
 		"firstFunction 1",
 		"firstFunction 0"
@@ -41,5 +37,5 @@ document {
 	}
 
 TEST///
-    firstFunction 2 == "D'oh!"
+    assert ( firstFunction 2 == "D'oh!" )
 ///

@@ -22,7 +22,7 @@ String.Wrap = x -> ( x = net x; if height x + depth x <= 3 then wr("",x) else x 
 Net.Wrap = x -> if height x + depth x <= 3 then wr("-",x) else x
 
 -- make sure this is after all global symbols are defined or erased
-closePackage "Macaulay2Core"
+endPackage "Macaulay2Core"
 
 load "installedpackages.m2"
 installedPackages := Macaulay2Core#"pre-installed packages"	-- initialized in the file installedpackages.m2, which is made from the file installedpackages
