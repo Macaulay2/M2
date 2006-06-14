@@ -351,10 +351,14 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
 	  );
      if opts.MonomialOrder === null 
      then opts.MonomialOrder = join(Mopts.MonomialOrder,Nopts.MonomialOrder); -- product order
-     processDegrees(opts.Degrees, Mopts.DegreeRank, length opts.Variables);	-- just for the error messages
-     if opts.Degrees === null then (
-	  nil := apply(Mopts.DegreeRank, i -> 0);
-          opts.Degrees = join(Mopts.Degrees, apply(Nopts.Degrees, v -> nil)));
+     processDegrees(opts.Degrees, opts.DegreeRank, length opts.Variables);	-- just for the error messages
+     if opts.Degrees === null and opts.DegreeRank === null then (
+	  M0 := apply(Mopts.DegreeRank, i -> 0);
+	  N0 := apply(Nopts.DegreeRank, i -> 0);
+          opts.Degrees = join(
+	       apply(Mopts.Degrees, d -> join(d,N0)),
+	       apply(Nopts.Degrees, e -> join(M0,e))
+	       ));
      opts.Inverses = if opts.Inverses === null then Mopts.Inverses or Nopts.Inverses else opts.Inverses;
      opts.WeylAlgebra = join(Mopts.WeylAlgebra, Nopts.WeylAlgebra);
      skews := Mopts -> (
