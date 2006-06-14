@@ -40,7 +40,11 @@ assert( class h == S )
 
 R = QQ[A,B,a,b,n][p]
 f = n*p^3+(A-B)*(p+1)^3+(b-a)*(p+2)^3+(p+3)^3*((p+2)*(p+1)/2-3*n+B)
+f = n*p^3+(A-B)*(p+1)^3+(b-a)*(p+2)^3+(p+3)^3*((p+2)*(p+1)//2-3*n+B)
 
+R = QQ[x]
+x/2
+x//2
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test rings.out"
