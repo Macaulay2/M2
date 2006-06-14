@@ -28,17 +28,3 @@ B = QQ[x,y,z]
 G = map(A,B,{s/t, (s^2-1)/(t^2-2), s^3/(t+1)})
 ker G -- not implemented yet
 
--- tensor products
-A = QQ[vars(0..2)]
-B = QQ[x,y,Degrees=>{2:{0,1}}]
-A ** B
-B ** A
-tensor(A,B,Degrees=>{3:{1,2,3}})  -- error
-
-A = QQ[vars(0..2),DegreeRank=>3]
-describe A
-toExternalString A
-A = QQ[vars(0..2),DegreeRank=>2]
-A ** A
-tensor(A,A,MonomialOrder=>Eliminate numgens A)
-tensor(A,A,DegreeRank=>6)  -- error
