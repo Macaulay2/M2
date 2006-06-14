@@ -810,7 +810,14 @@ document {
 
 document {
      Key => "operators",
-     "We present all of the unary and binary operators in the language.",
+     PARA {
+	  "Here we present all of the unary and binary operators in the language.  The binary operators are ",
+	  between_" " apply(sort toList value Macaulay2Core#"private dictionary"#"binaryOperators", s -> TO {s}),
+	  ", the unary prefix operators are ",
+	  between_" " apply(sort toList value Macaulay2Core#"private dictionary"#"prefixOperators", s -> TO {s}),
+	  ", and the unary postfix operators are ",
+	  between_" " apply(sort toList value Macaulay2Core#"private dictionary"#"postfixOperators", s -> TO {s}),
+	  "."},
      Subnodes => {
      "assignment",
 	  TO symbol = ,
@@ -874,12 +881,25 @@ document {
      "built in operators" ,
 	  TO symbol => ,
           TO symbol , ,
-          TO symbol ;
-	  }     
+          TO symbol ;,
+     "precedence",
+          TO "precedence of operators"
+	  }
      }
 
 document {
-     Key => "syntax",
+     Key => "precedence of operators",
+     SeeAlso => { "precedence of operators, in detail" },
+     PARA {
+	  "Here are the operators, keywords, and a few other items, arranged in order of increasing parsing precedence.  For example,
+	  ", TT "*", " has higher parsing precedence than ", TT "+", ", and hence ", TT "2+3*5", " is
+	  parsed as though it had been written as ", TT "2+(3*5)", "."
+	  },	  
+     PRE net drop(apply(seeParsing(),x -> take(x,-1)),1)
+     }
+
+document {
+     Key => "precedence of operators, in detail",
      "A newline ends a statement if it can, otherwise it acts like any
      white space.",
      EXAMPLE "2+\n3+\n4",
