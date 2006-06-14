@@ -287,7 +287,8 @@ compareop(lhs:Code,rhs:Code):Expr := (
 	  when y
 	  is Error do y
 	  else compare(x,y)));
-setup(QuestionS,compareop);
+unaryQuestionFun(rhs:Code):Expr := unarymethod(rhs,QuestionS);
+setup(QuestionS,unaryQuestionFun,compareop);
 
 whichway := GreaterS;
 sortlist := emptySequence;

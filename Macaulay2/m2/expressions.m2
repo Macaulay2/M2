@@ -1099,8 +1099,10 @@ Thing.AfterPrint = x -> (
 
 Function.AfterPrint = x -> (
      Thing.AfterPrint x;
-     briefDocumentation x;
+     -- briefDocumentation x; -- from now on, type "?foo" to get brief documentation on foo
      )
+
+? Function := x -> briefDocumentation x
 
 Nothing.AfterPrint = identity
 
