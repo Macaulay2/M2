@@ -1,10 +1,11 @@
 --- status: DRAFT
 --- author(s): MES
---- notes: BUG still (for quotient rings)
+--- notes: 
 
 undocumented {
 	  (allGenerators, PolynomialRing),
-	  (allGenerators, FractionField)}
+	  (allGenerators, FractionField),
+	  (allGenerators, QuotientRing)}
 
 document { 
      Key => {allGenerators, (allGenerators,Ring)},
@@ -34,7 +35,7 @@ document {
 	  "F = map(D, C, {0, u, v,  0, a*v+1, 1})",
 	  "F (x+s*y)"
 	  },
-     SeeAlso => {generators, vars, "substitution and maps of rings"}
+     SeeAlso => {generators, vars, "substitution and maps between rings"}
      }
 
 TEST ///
