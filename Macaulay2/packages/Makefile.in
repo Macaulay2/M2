@@ -39,7 +39,6 @@ check ::
 	  do ( \
 	     set -x ; \
 		  ../bin/M2$(EXE) -q --stop \
-		    --prefix $(encapdir) \
 		    -e "needsPackage(\"$$i\",MakeDocumentation=>true); check $$i; exit 0" ; \
 	     ) ; \
 	  done
@@ -51,7 +50,6 @@ install ::
 	      then \
 		  set -x ; \
 		  ../bin/M2$(EXE) -q --stop \
-		    --prefix $(encapdir) \
 		    -e errorDepth=0 \
 		    -e debugLevel=$(debugLevel) \
 		    -e "installPackage(\"$$i\" $(ARGS1))" \
@@ -59,7 +57,6 @@ install ::
 	      else \
 		  set -x ; \
 		  ../bin/M2$(EXE) -q --stop \
-		    --prefix $(encapdir) \
 		    -e errorDepth=0 \
 		    -e debugLevel=$(debugLevel) \
 		    -e "installPackage(\"$$i\" $(ARGS2))" \
