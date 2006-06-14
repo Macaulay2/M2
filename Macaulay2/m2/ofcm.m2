@@ -361,7 +361,8 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
 	       apply(Nopts.Degrees, e -> join(M0,e))
 	       ));
      opts.Inverses = if opts.Inverses === null then Mopts.Inverses or Nopts.Inverses else opts.Inverses;
-     opts.WeylAlgebra = join(Mopts.WeylAlgebra, Nopts.WeylAlgebra);
+     wfix := x -> if class x === Option then x = {x};
+     opts.WeylAlgebra = join(wfix Mopts.WeylAlgebra, wfix Nopts.WeylAlgebra);
      oddp := x -> x#?0 and odd x#0;
      m := numgens M;
      opts.SkewCommutative = join(M.Options.SkewCommutative, apply(N.Options.SkewCommutative, i -> i+m));
