@@ -1005,8 +1005,8 @@ document {
      }
 document {
      Key => (exteriorPower,ZZ,Matrix),
-	Headline => "exterior power of a matrix",
-     Usage => {TT "exteriorPower(i,f)", " or ", TT "exteriorPower_i f"},
+     Headline => "exterior power of a matrix",
+     Usage => "exteriorPower(i,f)\nexteriorPower_i f",
      Inputs => { "i", "f" },
      Outputs => {
 	  { "the ", TT "i", "-th exterior power of ", TT "f", "."}
@@ -1026,8 +1026,8 @@ document {
      }
 document {
      Key => (exteriorPower,ZZ,Module),
-	Headline => "exterior power of a module",
-     Usage => {TT "exteriorPower(i,M)", " or ", TT "exteriorPower_i M"},
+     Headline => "exterior power of a module",
+     Usage => "exteriorPower(i,M)\nexteriorPower_i M",
      Inputs => { "i", "M" },
      Outputs => {
 		{"the ", TT "i", "-th exterior power of ", TT "M", "."}

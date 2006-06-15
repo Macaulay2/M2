@@ -973,8 +973,9 @@ makeSet(v:Sequence):Expr := (
 makeSet(e:Expr):Expr := (
      when e
      is v:Sequence do makeSet(v)
-     is w:List do makeSet(w.v)
-     else WrongArg("a list or sequence"));
+     is w:List do if ancestor(w.class,visibleListClass) then makeSet(w.v)
+     else WrongArg("a visible list")
+     else WrongArg("a visible list"));
 setupfun("set",makeSet);
 
 modify(object:HashTable,key:Expr,f:function(Expr):Expr,v:Expr):void := (
@@ -999,10 +1000,10 @@ makeTally(v:Sequence):Expr := (
 makeTally(e:Expr):Expr := (
      when e
      is v:Sequence do makeTally(v)
-     is w:List do makeTally(w.v)
+     is w:List do if ancestor(w.class,visibleListClass) then makeTally(w.v)
+     else WrongArg("a visible list")
      else WrongArg("a list or sequence"));
 setupfun("tally",makeTally);
-
 
 export keys(o:HashTable):Expr := list(
      new Sequence len o.numEntries do

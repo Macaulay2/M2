@@ -246,7 +246,6 @@ export {
 	symbol First,
 	symbol ForestNode,
 	symbol Format,
-	symbol FormattedKey,
 	symbol FractionField,
 	symbol Function,
 	symbol FunctionClosure,

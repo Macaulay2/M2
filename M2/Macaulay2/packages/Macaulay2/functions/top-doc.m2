@@ -66,7 +66,6 @@ document {
  -- doc1.m2:82:     Key => topics,
  -- doc10.m2:77:     Key => [resolution,StopBeforeComputation],
  -- doc10.m2:368:     Key => topComponents,
- -- doc10.m2:369:     FormattedKey => "topComponents",
  -- doc10.m2:458:     Key => topCoefficients,
  -- doc8.m2:516:     Key => StopBeforeComputation,
  -- doc8.m2:523:     Key => [gb,StopBeforeComputation],

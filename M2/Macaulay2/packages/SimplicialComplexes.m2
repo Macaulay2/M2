@@ -360,7 +360,7 @@ document {
      Key => {simplicialComplex,(simplicialComplex,MonomialIdeal),
 	  (simplicialComplex,List)},
      Headline => "create a simplicial complex",
-     Usage => {"simplicialComplex I, ", EM " or ", "simplicialComplex L"},
+     Usage => "simplicialComplex I\nsimplicialComplex L",
      Inputs => {
 	  "I" => MonomialIdeal => "the ideal of minimal nonfaces (Stanley-Reisner ideal)",
 	  "L" => List => "a list of monomials representing faces"

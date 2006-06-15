@@ -64,17 +64,4 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
-document { 
-     Key => [makeDocumentTag, FormattedKey],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
+

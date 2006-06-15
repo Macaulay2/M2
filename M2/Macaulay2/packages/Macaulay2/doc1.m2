@@ -55,7 +55,7 @@ document {
 document {
      Key => viewHelp,
      Headline => "view online doc with a web browser",
-     Usage => {TT "viewHelp", EM " or ", TT "viewHelp s"},
+     Usage => "viewHelp\nviewHelp s",
      Inputs => {
 	  "s" => "a descriptor for a documentation node (see below for examples)"
 	  },
