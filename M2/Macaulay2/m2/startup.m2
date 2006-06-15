@@ -471,13 +471,12 @@ if sourceHomeDirectory  =!= null then path = join(path, {sourceHomeDirectory|"te
 -- path = select(path, fileExists)
 if firstTime then normalPrompts()
 
-if firstTime and not nosetup then (
-     loadSetup();
-     )
+printWidth = fileWidth stdio
 
-if not firstTime then globalDictionaries = delete(Macaulay2Core#"private dictionary", globalDictionaries)
+if firstTime and not nosetup then loadSetup()
 
-if instance(width,Function) then printWidth = width stdio
+-- if not firstTime then globalDictionaries = delete(Macaulay2Core#"private dictionary", globalDictionaries)
+
 processCommandLineOptions 2
 runStartFunctions()
 errorDepth = loadDepth

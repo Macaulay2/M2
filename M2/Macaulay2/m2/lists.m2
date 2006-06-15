@@ -55,33 +55,57 @@ same = v -> (
 
 member(Thing,VisibleList) := Boolean => (c,x) -> any(x, i -> c===i)
 
-sum(List) := x -> plus toSequence x
+sum List := x -> plus toSequence x
 
-sum(List,Function) := 
-sum(Sequence,Function) := 
 sum(ZZ,Function) := (n,f) -> (
-     s := 0;
-     g := x -> (
-	  s = f x; 
-	  g = x -> s = s + f x);
-     scan(n,x -> g x);
-     s);
+     if n === 0 then 0
+     else (
+	  s := f 0;
+	  for i from 1 to n-1 do s = s + f i;
+	  s))
 
-sum(VisibleList, VisibleList, Function) := (v,w,f) -> sum(apply(v,w,identity),f)
+sum(VisibleList,Function) := (x,f) -> (
+     n := #x;
+     if n === 0 then 0
+     else (
+	  s := f x#0;
+	  for i from 1 to n-1 do s = s + f x#i;
+	  s))
+
+sum(VisibleList, VisibleList, Function) := (x,y,f) -> (
+     n := #x;
+     if n =!= #y then error "expected lists of the same length";
+     if n === 0 then 0
+     else (
+	  s := f(x#0,y#0);
+	  for i from 1 to n-1 do s = s + f(x#i,y#i);
+	  s))
 
 product List := x -> times toSequence x
 
-product(List,Function) := 
-product(Sequence,Function) := 
 product(ZZ,Function) := (n,f) -> (
-     s := 1;
-     g := x -> (
-	  s = f x; 
-	  g = x -> s = s * f x);
-     scan(n,x -> g x);
-     s);
+     if n === 0 then 1
+     else (
+	  s := f 0;
+	  for i from 1 to n-1 do s = s * f i;
+	  s))
 
-product(VisibleList, VisibleList, Function) := (v,w,f) -> product(apply(v,w,identity),f)
+product(VisibleList,Function) := (x,f) -> (
+     n := #x;
+     if n === 0 then 1
+     else (
+	  s := f x#0;
+	  for i from 1 to n-1 do s = s * f x#i;
+	  s))
+
+product(VisibleList, VisibleList, Function) := (x,y,f) -> (
+     n := #x;
+     if n =!= #y then error "expected lists of the same length";
+     if n === 0 then 1
+     else (
+	  s := f(x#0,y#0);
+	  for i from 1 to n-1 do s = s * f(x#i,y#i);
+	  s))
 
 rotate = method()
 rotate(VisibleList,ZZ) := (s,n) -> (
