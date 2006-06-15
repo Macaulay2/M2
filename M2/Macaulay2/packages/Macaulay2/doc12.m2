@@ -424,7 +424,7 @@ document {
      TT "sum(n,f)", " computes the sum ", TT "f(0) + f(1) + ... + f(n-1)", ".",
      PARA{},
      EXAMPLE "sum(10, i -> i^2)",
-     SeeAlso => "sum"
+     SeeAlso => {"product", "plus", "times"}
      }
 document {
      Key => (sum, Tally),
@@ -435,7 +435,7 @@ document {
 	  "a = tally{1,1,1,1,1,10,10,10,100,100}",
       	  "sum a",
 	  },
-     SeeAlso => "sum"
+     SeeAlso => "product"
      }
 document {
      Key => (sum, Set),

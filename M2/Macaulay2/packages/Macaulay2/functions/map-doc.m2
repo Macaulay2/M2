@@ -70,29 +70,29 @@ document {
      including their gradings.  If you wish Macaulay 2 to compute the column degrees for
      you (so the resulting matrix will be homogeneous if possible), use ", 
      TO (map,Module,ZZ,Function), ".",
-     EXAMPLE {
-	  "R = ZZ[a..c];",
-	  "f = map(R^3,R^{0,-1,-2,-3},(i,j) -> R_i^j)",
-	  },
+     EXAMPLE lines ///
+	  R = ZZ[a..c];
+	  f = map(R^3,R^{0,-1,-2,-3},(i,j) -> R_i^j)
+	  ///,
      "We specified the degrees of the source basis elements explicitly
      to ensure the matrix would be homogeneous.",
      EXAMPLE "isHomogeneous f",
      SUBSECTION "Alternate approaches",
      "We could have let Macaulay2 take care of that for us, by replacing
      the source module by its desired rank.",
-     EXAMPLE {
-	  "g = map(R^3,4,(i,j) -> R_i^j)",
-	  "degrees g",
-	  "isHomogeneous g"
-	  },
+     EXAMPLE lines ///
+	  g = map(R^3,4,(i,j) -> R_i^j)
+	  degrees g
+	  isHomogeneous g
+	  ///,
      PARA{},
      "Another way would be to let ", TO "matrix", " take care of that for
      us.",
-     EXAMPLE {
-	  "h = matrix table(3,4,(i,j) -> R_i^j)",
-	  "degrees h",
-	  "isHomogeneous h"
-	  }
+     EXAMPLE lines ///
+	  h = matrix table(3,4,(i,j) -> R_i^j)
+	  degrees h
+	  isHomogeneous h
+	  ///
      }
 document {
      Key => (map,Module,Module,List),
@@ -463,35 +463,35 @@ document {
 	  with the same name in R, if any, and zero otherwise"}
 	  },
      "For example, consider the following rings.",
-     EXAMPLE {
-	  "A = QQ[a..e];",
-	  "B = A[x,y];",
-	  "C = QQ[a..e,x,y];"
-	  },
+     EXAMPLE lines ///
+	  A = QQ[a..e];
+	  B = A[x,y];
+	  C = QQ[a..e,x,y];
+	  ///,
      "The natural inclusion and projection maps between A and B are",
-     EXAMPLE {
-	  "map(B,A)",
-	  "map(A,B)"
-	  },
+     EXAMPLE lines ///
+	  map(B,A)
+	  map(A,B)
+	  ///,
      "The isomorphisms betwee B and C:",
-     EXAMPLE {
-	  "F = map(B,C)",
-	  "G = map(C,B)",
-	  "F*G, G*F"
-	  },
+     EXAMPLE lines ///
+	  F = map(B,C)
+	  G = map(C,B)
+	  F*G, G*F
+	  ///,
      PARA{},
      "The ring maps which are created are not always mathematically well-defined.
      For example, the map F below is the natural quotient map, but the
      the map G is not mathematically well-defined, although we can use it in Macaulay2 to
      lift elements of E to D.",
-     EXAMPLE {
-	  "D = QQ[x,y,z];",
-	  "E = D/(x^2-z-1,y);",
-	  "F = map(E,D)",
-	  "G = map(D,E)",
-	  "x^3",
-	  "G x^3"
-	  },
+     EXAMPLE lines ///
+	  D = QQ[x,y,z];
+	  E = D/(x^2-z-1,y);
+	  F = map(E,D)
+	  G = map(D,E)
+	  x^3
+	  G x^3
+	  ///,
      Caveat => {"The map is not always a mathematically well-defined ring map"},
      SeeAlso => {}
      }

@@ -1278,40 +1278,6 @@ scan(3, n -> scan(-3 .. 3, d -> (
 	       scan(3, i -> assert( h i === binomial(n+d+i,n) )))))
 "
 document {
-     Key => presentation,
-     Headline => "presentation of a module or ring",
-     TT "presentation M", " -- produce a presentation of the module ", TT "M", ".",
-     BR{},NOINDENT{},
-     TT "presentation R", " -- produce a presentation of the quotient ring ", TT "R", ".",
-     BR{},NOINDENT{},
-     TT "presentation(R,S)", " -- produce a presentation of the quotient ring ", TT "S", " over ", TT "R", ".",
-     PARA{},
-     "A presentation of ", TT "M", " is a map ", TT "p", " so that ", TT "coker p", " is 
-     isomorphic to ", TT "M", ".  The presentation obtained is expressed in 
-     terms of the given generators, i.e., the modules ", TT "cover M", " and 
-     ", TT "target p", " are identical.
-     The isomorphism can be obtained as ", TT "map(M,coker p,1)", ".",
-     PARA{},
-     "Since a module M may be described as a submodule or a subquotient 
-     module of a free module, some computation may be required to produce 
-     a presentation.  See also ", TO "prune", " which does a bit more work to try to
-     eliminate redundant generators.",
-     PARA{},
-     "For a quotient ring R, the result is a matrix over the ultimate
-     ambient polynomial ring, whose image is the ideal defining ", TT "R", ".",
-     SeeAlso => {"cover"}
-     }
-TEST ///
-    R = ZZ[x,y,z]
-    modules = {
-	 image matrix {{x^2,x,y}},
-	 coker matrix {{x^2,y^2,0},{0,y,z}},
-	 R^{-1,-2,-3},
-	 image matrix {{x,y}} ++ coker matrix {{y,z}}
-	 }
-    scan(modules, M -> assert( cover M == target presentation M ) )
-///
-document {
      Key => dual,
      Headline => "dual module or map",
      TT "dual M", " -- the dual.",
