@@ -247,6 +247,7 @@ packageKey = method(SingleArgumentDispatch => true)	    -- assume the input key 
 --packageKey DocumentTag := DocumentTag.Package
 --packageKey   Symbol := key -> package key
 packageKey   String := fkey -> (
+     -- checkLoadDocumentation();
      r := scan(loadedPackages, pkg -> if fetchRawDocumentation(pkg,fkey) =!= null then break pkg);
      if r === null then (
 	  -- if debugLevel > 0 then error "debug me";
@@ -580,7 +581,7 @@ storeRawDocumentation := (tag,opts) -> (
 undocumented = method(SingleArgumentDispatch => true)
 undocumented List  := x -> scan(x, undocumented)
 undocumented Thing := key -> (
-     tag := makeDocumentTag key;
+     tag := makeDocumentTag(key, Package => currentPackage);
      storeRawDocumentation(tag, new HashTable from { symbol DocumentTag => tag, "undocumented" => true}))
 
 -----------------------------------------------------------------------------

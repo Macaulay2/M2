@@ -477,7 +477,7 @@ if firstTime and not nosetup then (
 
 if not firstTime then globalDictionaries = delete(Macaulay2Core#"private dictionary", globalDictionaries)
 
-printWidth = width stdio
+if instance(width,Function) then printWidth = width stdio
 processCommandLineOptions 2
 runStartFunctions()
 errorDepth = loadDepth

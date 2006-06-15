@@ -1171,6 +1171,7 @@ showHtml = show MarkUpList := x -> (
 show TEX := x -> showTex x
 
 viewHelp = key -> (
+     checkLoadDocumentation();
      if prefixDirectory === null then error "can't run viewHelp from build tree";
      show new URL from { fix if key === () then applicationDirectory() | "index.html" else prefixDirectory | htmlFilename key }
      )

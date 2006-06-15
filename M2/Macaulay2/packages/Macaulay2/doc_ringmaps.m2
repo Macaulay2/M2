@@ -83,7 +83,7 @@ document {
      surprising results, especially if rational coefficients are converted
      to integer coefficients.",
      PARA{},
-     "A convenient abbreviation for ", TO "substitute", " is ", TO "sub", "."
+     "A convenient abbreviation for ", TO "substitute", " is ", TT "sub", "."
      }
 
 document {

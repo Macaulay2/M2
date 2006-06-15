@@ -63,9 +63,8 @@ tensor(QuotientRing, QuotientRing) := optns -> (R,S) -> (
 -- Graph of a ring map --
 -------------------------
 
-graphIdeal = method( Options => monoidDefaults )
-
-graphRing = method( Options => monoidDefaults )
+graphIdeal = method( Options => apply( {MonomialOrder, MonomialSize, VariableBaseName}, o -> o => monoidDefaults#o ))
+graphRing = method( Options => options graphIdeal )
 
 graphIdeal RingMap := Ideal => options -> (f) -> (
      -- return the ideal in the tensor product of the graph of f.
