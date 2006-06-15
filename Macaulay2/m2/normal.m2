@@ -112,6 +112,7 @@ newICnode = (R) -> (
 
 -- Tells us when to stop the algorithm.  Moves ideals from C#"todo" to C#"pending".
 next = (C) -> (
+     pretty C;
      if C#"pending" =!= null then true
      else if #C#"todo" > 0
      then (
