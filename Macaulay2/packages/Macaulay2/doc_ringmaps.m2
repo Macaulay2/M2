@@ -87,22 +87,6 @@ document {
      }
 
 document {
-     Key => graphIdeal,
-     Headline => "the ideal of the graph of a ring map",
-     TT "graphIdeal f", " -- provides the ideal of the graph of the map
-     associated to the ring map f.",
-     SeeAlso => "graphRing"
-     }
-
-document {
-     Key => graphRing,
-     Headline => "the ring of the graph of a ring map",
-     TT "graphRing f", " -- provides the ring of the graph of the map
-     associated to the ring map f.",
-     SeeAlso => "graphIdeal"
-     }
-
-document {
      Key => symmetricAlgebra,
      Headline => "the symmetric algebra of a module",
      TT "symmetricAlgebra M", " -- produces the symmetric algebra of a
