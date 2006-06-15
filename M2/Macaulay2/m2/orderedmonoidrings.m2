@@ -134,7 +134,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  degRing := if degreeLength M != 0 then degreesRing degreeLength M else ZZ;
 	  coeffOptions := options R;
 	  coeffWeyl := coeffOptions =!= null and coeffOptions.WeylAlgebra =!= {};
-	  coeffSkew := coeffOptions =!= null and coeffOptions.SkewCommutative;
+	  coeffSkew := coeffOptions =!= null and coeffOptions.SkewCommutative =!= {};
      	  local RM;
 	  if Weyl or coeffWeyl then (
 	       if Weyl and R.?SkewCommutative then error "coefficient ring has skew commuting variables";

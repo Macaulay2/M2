@@ -867,9 +867,10 @@ J = minors(2,row1 || row2)
   -- best time so far for the following: 30.41 seconds
   -- but this doesn't yet include finding a minimal set
   -- of generators for the image
-time saturate(J, ideal row2)
-time saturate(J, ideal row2, Strategy=>Iterate)
-time saturate(J, ideal row2, MinimalGenerators=>false)
+time saturate(J, ideal row2);
+time saturate(J, ideal row2, Strategy=>Iterate);
+time saturate(J, ideal row2, MinimalGenerators=>false);
+
   
   -- the time for the following is 40.58 seconds...
   -- but I think too many GB's are being done...

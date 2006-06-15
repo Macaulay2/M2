@@ -46,44 +46,115 @@ document {
      SeeAlso => { [map, DegreeMap] }
      }
 
-
-document {
-     Key => substitute,
+document { 
+     Key => {substitute,
+	  (substitute, Vector, Option),
+	  (substitute, Product, Thing),
+	  (substitute, Matrix, List),
+	  (substitute, Ideal, List),
+	  (substitute, Module, Matrix),
+	  (substitute, Matrix, Ring),
+	  (substitute, Matrix, ZZ),
+	  (substitute, Ideal, Ring),
+	  (substitute, Module, Option),
+	  (substitute, Vector, List),
+	  (substitute, RingElement, Matrix),
+	  (substitute, Vector, Ring),
+	  (substitute, RingElement, Option),
+	  (substitute, Matrix, Matrix),
+	  (substitute, Ideal, Matrix),
+	  (substitute, Module, List),
+	  (substitute, Divide, Thing),
+	  (substitute, Module, Ring),
+	  (substitute, Matrix, Option),
+	  (substitute, Sum, Thing),
+	  (substitute, Ideal, Option),
+	  (substitute, Vector, Matrix),
+	  (substitute, RingElement, List),
+	  (substitute, Power, Thing),
+	  (substitute, RingElement, Ring)},
      Headline => "substituting values for variables",
-     TT "substitute(f,v)", " -- substitute values for the variables in the matrix,
-     module, vector, polynomial, or monomial ", TT "f", " as specified by ", TT "v", ".", 
+     Usage => "substitute(f,v)\nsub(f,v)",
+     Inputs => {
+	  "f" => {ofClass RingElement, ", ",
+	         ofClass Matrix,", ",
+		 ofClass Ideal,", ",
+		 ofClass Module,", ",
+		 ofClass Vector,", or ",
+		 ofClass Expression, " over a ring ", TT "R"},
+	  "v" => {ofClass Ring, ", ",
+	       ofClass Matrix, ", ",
+	       ofClass Option, ", or a list of options"}
+	  },
+     Outputs => {
+	  {"An object of the same sort as ", TT "f", ", obtained by substituting values for
+	  the variables in the ring ", TT "R", " of ", TT "f", " using ", TT "v", "."}
+	  },
+     "A convenient abbreviation for ", TO "substitute", " is ", TT "sub", ".",
      PARA{},
-     "If ", TT "f", " is a matrix over ", TT "R", ", and ", TT "v", " is a 1 by k matrix over another
-     ring ", TT "S", ", then the result is obtained by substituting the entries in ", TT "v", " 
-     for the variables in ", TT "R", ".",
-     PARA{},
-     "If ", TT "f", " is a module over ", TT "R", ", then substitution amounts to substitution
-     in the matrices of generators and relations defining the module.  This is
-     not the same as tensor product!",
+     "The basic idea is that v determines the values for the variables appearing in f, or in the matrix or
+     matrices defining f, and the result is obtained by performing this substition on these elements
+     or matrices.  For example,",
+     EXAMPLE lines ///
+     	  A = QQ[a..d]; B = QQ[x,y];
+	  sub(x^4-x^2-y-1, x=>y^2)
+	  sub(x^2-y^2, {x=>a+b,y=>c+d})
+          ///,
+     "The result on this last line is obtained by replacing ", TT "x", " with ", TT "a+b", ", and ", TT "y", " with ", TT "c+d", 
+     " giving an element in the ring ", TT "A", ".",
      PARA{},
      "If ", TT "v", " is a ring, then the result is obtained by substituting the variables of
      ", TT "v", " for the variables of R with the same name.  The substitution extends
      to the coefficient ring of ", TT "R", ", and so on.",
+     EXAMPLE lines ///
+	  use A;
+	  C = A/(a^2,b^2,c^2,d^2)
+	  substitute((a+b+c+d)^3,C)
+	  ///,
+     EXAMPLE lines ///
+	  D = ZZ/101[gens A]; use A;
+	  substitute(ideal(a^2-b-1,1/3*a*b), D)
+	  ///,
      PARA{},
-     "If ", TT "v", " is a list of options ", TT "{a => f, b => g, ...}", " then the 
-     variable ", TT "a", " is replaced by the polynomial ", TT "f", ", etc.  Warning: 
-     this may lead to surprising results if the ring containing f and g doesn't have 
-     the same coefficient ring as the ring containing f, because currently no checking 
-     is done to see whether the substitution requested corresponds to a well-defined
-     ring homomorphism.",
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-      	  "f = x+2*y+3*z",
-      	  "substitute(f,{x=>x^3, y=>y^3})",
-      	  "S = ZZ/101[z,y,x]",
-      	  "substitute(f,S)"
-	  },
-     "Warning: the specified substitution is not checked to see whether
+     "If ", TT "v", " is a 1 by k matrix over another
+     ring ", TT "S", ", then the result is obtained by substituting the entries in ", TT "v", " 
+     for the variables in ", TT "R", ".",
+     EXAMPLE lines ///
+          substitute(a^4+b^3+c^2+d+1, matrix{{d,c,b,a}})
+	  S = QQ[r,s,t,u];
+	  substitute(a^4+b^3+c^2+d+1, vars S)
+     	  ///,
+     PARA{},
+     "If ", TT "f", " is a submodule of a free module over ", TT "R", ", then substitution amounts to substitution
+     in the matrices of generators of the module.  This is
+     not the same as tensor product!",
+     EXAMPLE lines ///
+     	  use A;
+	  M = image(vars A ++ vars A)
+	  N = substitute(M, {a=>b+c,c=>1})
+     	  M' = prune M
+	  N' = coker substitute(presentation M', {a=>b+c,c=>1})	  
+     	  ///,
+     PARA{},
+     "Unevaluated expressions (i.e. from ", TO hilbertSeries, ") may also
+     have variables substituted in all of the ways mentioned so far.",
+     EXAMPLE lines ///
+     	  hf = hilbertSeries coker matrix{{a,b^3,d^5}}
+	  hf1 = reduceHilbert hf
+	  use ring numerator hf;
+	  sub(hf1, T => -1)
+     	  ///,
+     "Of course, we can change the ring too:",
+     EXAMPLE lines ///
+          sub(hf, T => a)
+	  value oo
+	  oo == value sub(hf1, T=>a)
+     	  ///,
+     Caveat => "The specified substitution is not checked to see whether
      the corresponding ring homomorphism is well-defined; this may produce
      surprising results, especially if rational coefficients are converted
      to integer coefficients.",
-     PARA{},
-     "A convenient abbreviation for ", TO "substitute", " is ", TT "sub", "."
+     SeeAlso => {"substitution and maps between rings", hilbertSeries, value, Expression}
      }
 
 document {
