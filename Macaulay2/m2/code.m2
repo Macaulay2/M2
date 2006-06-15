@@ -49,9 +49,9 @@ codeFunction := (f,depth) -> (
 code = method(SingleArgumentDispatch=>true)
 code Nothing := null -> null
 code Symbol := code Pseudocode := s -> getSourceLines locate s
-code Sequence := s -> code lookup s
+code Sequence := s -> "-- code for method: " | formatDocumentTag s || code lookup s
 code Function := f -> codeFunction(f,0)
-code List := v -> stack apply(v,code)
+code List := v -> stack between_"---------------------------------" apply(v,code)
 code Command := cmd -> code cmd#0
 
 EDITOR := () -> if getenv "EDITOR" != "" then getenv "EDITOR" else "vi"
