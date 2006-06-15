@@ -1,6 +1,6 @@
 document { 
-     Key => {(graphIdeal, RingMap),graphIdeal},
-     Headline => "the ideal of the graph of regular map corresponding to a ring map",
+     Key => {(graphIdeal, RingMap),graphIdeal,[graphIdeal,MonomialOrder],[graphIdeal,MonomialSize],[graphIdeal,VariableBaseName]},
+     Headline => "the ideal of the graph of the regular map corresponding to a ring map",
      Usage => "graphIdeal f",
      Inputs => {
 	  "f",
