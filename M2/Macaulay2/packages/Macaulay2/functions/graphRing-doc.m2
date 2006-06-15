@@ -1,6 +1,6 @@
 document { 
-     Key => {(graphRing, RingMap),graphRing},
-     Headline => "the coordinate ring of the graph of regular map corresponding to a ring map",
+     Key => {(graphRing, RingMap),graphRing,[graphRing,MonomialOrder],[graphRing,MonomialSize],[graphRing,VariableBaseName]},
+     Headline => "the coordinate ring of the graph of the regular map corresponding to a ring map",
      Usage => "graphRing f",
      Inputs => {
 	  "f",
