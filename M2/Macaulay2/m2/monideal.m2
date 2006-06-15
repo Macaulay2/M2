@@ -176,12 +176,11 @@ monomialIdeal Ideal :=  MonomialIdeal => (I) -> monomialIdeal generators gb I
 
 monomialIdeal Module := MonomialIdeal => (M) -> (
      if isSubmodule M and rank ambient M === 1 
-     then monomialIdeal generators M
+     then monomialIdeal generators gb M
      else error "expected a submodule of a free module of rank 1"
      )
 
 monomialIdeal RingElement := MonomialIdeal => v -> monomialIdeal {v}
-monomialIdeal Ring := MonomialIdeal => R -> monomialIdeal {0_R}
 ring MonomialIdeal := I -> I.ring
 numgens MonomialIdeal := I -> I.numgens
 MonomialIdeal _ ZZ := (I,n) -> (generators I)_(0,n)

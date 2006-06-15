@@ -431,7 +431,6 @@ document {
 	  },
      Consequences => {
 	  },     
-     "description",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -496,7 +495,7 @@ document {
 	  G x^3
 	  ///,
      Caveat => {"The map is not always a mathematically well-defined ring map"},
-     SeeAlso => {}
+     SeeAlso => {"substitution and maps between rings"}
      }
 document { 
      Key => (map,Ring,Matrix),
@@ -560,14 +559,15 @@ document {
      module along the ring map to determine the degrees of the
      generators in the result, and to determine whether the map is
      homogeneous.",
-     EXAMPLE {
-	  "R = QQ[x,y,z];",
-	  "S = QQ[t,u];",
-	  "f = map(S,R,{t^2,t*u,u^2},DegreeMap => i -> 2*i)",
-	  "isHomogeneous f",
-	  "M = R^{1,2}",
-	  "f ** M"
-	  },
+     EXAMPLE lines ///
+	  R = QQ[x,y,z];
+	  S = QQ[t,u];
+	  f = map(S,R,{t^2,t*u,u^2},DegreeMap => i -> 2*i)
+	  isHomogeneous f
+	  M = R^{1,2}
+	  f M
+	  f ** M
+	  ///,
      "The default degree map function is the identity function, but when the two
      rings have different degree lengths, a function must be explicitly
      provided that transforms the lengths of the degree vectors appropriately, 
