@@ -192,9 +192,8 @@ assert ( rank HH_2 C == 1 )
 document { 
      Key => {(cohomology,ZZ,CoherentSheaf)},
      Headline => "cohomology of a coherent sheaf on a projective variety",
-     Usage => {"HH^i(F) or cohomology(i,F)"},
-     Inputs => {"i"=> ZZ, "F" => CoherentSheaf =>{"on a projective variety ", TT "X"}
-	  },
+     Usage => "HH^i F\ncohomology(i,F)",
+     Inputs => {"i"=> ZZ, "F" => CoherentSheaf =>{"on a projective variety ", TT "X"} },
      Outputs => {Module=>{"the ", TT "i", "-th cohomology group of ", TT "F", " as a vector space 
 	       over the coefficient field of ", TT "X"} 
 	  },

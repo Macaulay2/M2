@@ -304,7 +304,7 @@ assert( tally {1,1,1,2,1,3,2} === new Tally from {(1,4),(2,2),(3,1)} )
 ///
 
 document {
-	Key => (tally, BasicList),
+	Key => (tally, VisibleList),
 	Headline => "tally the elements of a list, sequence, or array",
 	Usage => "y = tally x",
 	Inputs => {
@@ -380,11 +380,9 @@ undocumented {
      }
 
 document {
-     Key => {set,
-	  (set,Sequence),
-	  (set,BasicList)},
+     Key => {set, (set,VisibleList)},
      Headline => "make a set",
-     Usage => {"set v, ", EM "or", " set(v1,v2,...)"},
+     Usage => "set v\nset(v1,v2,...)",
      Inputs => {"v" => List},
      Outputs => {Set => " the set whose elements are the members of the list v"},
      EXAMPLE {

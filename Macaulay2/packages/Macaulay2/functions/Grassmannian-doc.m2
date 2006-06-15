@@ -3,12 +3,10 @@
 --- notes: GRASSMANNIAN REWRITTEN 
 
 document { 
-     Key => {Grass, (Grass,ZZ,ZZ)
-       	  },
+     Key => {(Grass,ZZ,ZZ), Grass },
      Headline => "find the Pluecker ideal of a Grassmannian",
-     Usage => {"Grass(k,n)"},
-     Inputs => {"k" => ZZ,"n" => ZZ  
-	  },
+     Usage => "Grass(k,n)",
+     Inputs => {"k" => ZZ,"n" => ZZ },
      Outputs => {Ideal => "the ideal of the Grassmannian"
 	  },
      PARA {

@@ -473,11 +473,14 @@ document {
 	  map(B,A)
 	  map(A,B)
 	  ///,
-     "The isomorphisms betwee B and C:",
+     "The isomorphisms between B and C:",
      EXAMPLE lines ///
 	  F = map(B,C)
 	  G = map(C,B)
-	  F*G, G*F
+	  F*G
+	  oo == id_B
+	  G*F
+	  oo == id_C
 	  ///,
      PARA{},
      "The ring maps which are created are not always mathematically well-defined.

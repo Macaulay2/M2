@@ -93,14 +93,13 @@ pkgTitle String  := identity
 pkgTitle Nothing := x -> ""
 
 makeDocumentTag = method(SingleArgumentDispatch => true, Options => {
-	  FormattedKey => null,
 	  Package => null
 	  })
 makeDocumentTag DocumentTag := opts -> tag -> tag
 mdt := makeDocumentTag Thing := opts -> key -> (
      nkey := normalizeDocumentKey key;
      verifyKey nkey;
-     fkey := if opts#FormattedKey =!= null then opts#FormattedKey else formatDocumentTag nkey;
+     fkey := formatDocumentTag nkey;
      pkg := if opts#Package =!= null then opts#Package else packageKey fkey;
      new DocumentTag from {nkey,fkey,pkg,pkgTitle pkg})
 makeDocumentTag String := opts -> key -> (
@@ -515,17 +514,22 @@ fixupList := x -> (
      if not instance(x,List) then error "expected documentation option to be a list";
      apply(nonnull x,fixupEntry))
 enlist := x -> if class x === List then x else {x}
-chkIsString := key -> val -> if class val === String then fixup val else error("expected ",toString key," option to be a string")
+chkIsStringFixup := key -> val -> if class val === String then fixup val else error("expected ",toString key," option to be a string")
+chkIsString := key -> val -> if class val === String then val else error("expected ",toString key," option to be a string")
 fixupTable := new HashTable from {
      Key => identity,
      symbol DocumentTag => identity,
-     Usage => val -> fixup val,
+     Usage => val -> (
+	  if not instance(val,String) then error("expected Usage option to be a string");
+	  TABLE TR {
+	       TD { "valign" => "top" , "Usage: " },
+	       TD between_(BR{}) nonempty separate val
+	       } ),
      Function => val -> fixup val,
-     FormattedKey => chkIsString FormattedKey,
      Inputs => val -> fixupList val,
      Outputs => val -> fixupList val,
      Consequences => val -> fixupList val,
-     Headline => chkIsString Headline,
+     Headline => chkIsStringFixup Headline,
      Description => val -> extractExamples fixup val,
      Caveat  => v -> if v =!= {} then fixup DIV1 { SUBSECTION "Caveat", DIV v },
      SeeAlso => v -> if v =!= {} then fixup DIV1 { SUBSECTION "See also", UL (TO \ enlist v) },
@@ -558,7 +562,6 @@ theMenu := key -> getOption(key,Subnodes)
 documentOptions := new HashTable from {
      Key => true,
      Usage => true,
-     FormattedKey => true,
      Function => true,
      Inputs => true,
      Outputs => true,
@@ -809,7 +812,7 @@ document List := args -> (
 	  rest = drop(key,1);
 	  o.Key = key = first key;
 	  );
-     o.DocumentTag = tag := makeDocumentTag(key, Package => currentPackage, FormattedKey => if o.?FormattedKey then o.FormattedKey);
+     o.DocumentTag = tag := makeDocumentTag(key, Package => currentPackage);
      scan(rest, secondary -> (
 	       tag2 := makeDocumentTag secondary;
 	       storeRawDocumentation(tag2, new HashTable from { PrimaryTag => tag, symbol DocumentTag => tag2 })));

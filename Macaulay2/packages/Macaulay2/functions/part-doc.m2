@@ -5,7 +5,7 @@
 document { 
      Key => {part, (part,ZZ,RingElement), (part,List,RingElement)},
      Headline => "sum of monomials of a polynomial of a given degree",
-     Usage => {"part(d,F), ", EM "or", " part_d F"},
+     Usage => "part(d,F)\npart_d F",
      Inputs => {
 	  "d" => ZZ => {"or a ", TO List, " of integers denoting a (multi-) degree"},
 	  "F" => RingElement => "an element in a polynomial ring"

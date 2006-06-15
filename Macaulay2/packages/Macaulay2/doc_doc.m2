@@ -120,9 +120,9 @@ document {
 	"The ", TT "Usage", " entry should give a formal example showing the usage of the function. 
 	The variables used in this formal example should be the ones used in the ", TO "Inputs", " and ", TO "Outputs",
 	" sections of the documentation. Here is the code for the ", TT "Usage", " entry of the method ", TO (matrix, List), ":",
-	PRE ///Usage => "matrix v",///,
+	PRE ///Usage => "matrix v"///,
 	"Here is the code for the ", TT "Usage", " entry of the method ", TO (resolution, Module), ":",
-	PRE ///Usage => {TT "resolution M", " or ", TT "res M"},///,
+	PRE ///Usage => "resolution M\nres M"///,
 	SeeAlso => {document, Inputs, Outputs} 
 	}
 document {
@@ -226,14 +226,12 @@ document {
 
 document {
      Key => PARA,
-     Headline => "hypertext paragraph separator",
-     Usage => {"PARA", EM ", or ", "PARA x"},
+     Headline => "hypertext paragraph container",
+     Usage => "PARA x",
      Inputs => {
 	  "x" => String => {", a ", TO2("hypertext list format", "hypertext list")}
 	  },
-     Consequences => {
-       {" makes a ", TO "hypertext", " double-spaced paragraph break. If no 
-	    string is given, then a new paragraph is started" }
+     Outputs => { {" a ", TO "hypertext", " paragraph containing ", TT "x" }
      },
      "For an example, see ", TO "hypertext list format", "."
      }

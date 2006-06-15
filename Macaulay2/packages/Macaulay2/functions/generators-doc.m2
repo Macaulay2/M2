@@ -32,7 +32,7 @@ document {
 document { 
      Key => (generators,GroebnerBasis),
      Headline => "the generator matrix of a Groebner basis",
-     Usage => {TT "m = generators g", "  or   ", TT "m = gens g"},
+     Usage => "m = generators g\nm = gens g",
      Inputs => { "g" },
      Outputs => {"m" => {"whose columns are the generators of the Groebner basis ", TT "g"}},
      "The following ideal defines a set of 18 points over the complex numbers.  We compute a
@@ -89,7 +89,7 @@ document {
      Key => {(generators, Ideal),
 	  (generators, MonomialIdeal)},
      Headline => "the generator matrix of an ideal",
-     Usage => {"generators I", EM " or ", "gens I"},
+     Usage => "generators I\ngens I",
      Inputs => {"I"},
      Outputs => { Matrix => {"the one-row matrix whose entries are the generators of ", TT "I"} },
      "Each ideal in ", EM "Macaulay 2", " comes equipped with a one-row

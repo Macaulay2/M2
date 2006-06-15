@@ -11,13 +11,11 @@ document {
 document { 
      Key => {(chainComplex,List),(chainComplex,Sequence)},
      Headline => "make a chain complex",
-     Usage => {TT "C = chainComplex{f1,f2,f3,...} ", EM "or", TT " C = chainComplex(f1,f2,f3,...)"},
+     Usage => "C = chainComplex{f1,f2,f3,...}\nC = chainComplex(f1,f2,f3,...)",
      Inputs => {
 	  Nothing => { TT "f1,f2,f3,...", ", homomorphisms over the same ring, forming a complex" },
 	  },
-     Outputs => {
-	  "C" => ChainComplex => "the given complex, where f1 == C.dd_1, f2 = CC.dd_2, etc."
-	  },
+     Outputs => { "C" => ChainComplex => {"the given complex, where ", TT "f1 == C.dd_1", ", ", TT "f2 == CC.dd_2", ", etc."} },
      "The maps f1, f2, ... must be defined over the same base ring, and they must form
      a complex: the target of f(i+1) is the source of fi.",
      PARA{},

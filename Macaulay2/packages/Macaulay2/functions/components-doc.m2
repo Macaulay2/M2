@@ -114,7 +114,6 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc10.m2:369:     FormattedKey => "top components",                                 -- to avoid it looking like "Top", the top node in an info file
  -- doc6.m2:1108:     Key => components,
  -- doc9.m2:1642:     Key => (components, ChainComplex),
  -- overviewC.m2:1324:     Key => "truncation and homogeneous components of a graded module",

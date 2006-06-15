@@ -111,8 +111,8 @@ select(BasicList,Function) := BasicList => select
 select(HashTable,Function) := HashTable => select
 select(ZZ,BasicList,Function) := BasicList => select
 select(ZZ,HashTable,Function) := HashTable => select
-set BasicList := Set => set
-tally BasicList := Tally => tally
+set VisibleList := Set => set
+tally VisibleList := Tally => tally
 splice BasicList := BasicList => splice
 typicalValues#stack = Net
 stack BasicList := Net => stack

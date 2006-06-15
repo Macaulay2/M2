@@ -402,7 +402,6 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc10.m2:369:     FormattedKey => "top components",                                 -- to avoid it looking like "Top", the top node in an info file
  -- overview2.m2:229:     Key => "extracting information from chain complexes",
  -- overviewB.m2:907:     Key => "extracting information about a matrix",
  -- overviewC.m2:1302:     Key => "information about a map of modules",

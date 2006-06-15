@@ -178,13 +178,9 @@ assert (HH_4 C == 0)
 document {   -- This node is used as an example for the documentation node: Key, Usage
      Key => (resolution,Module),
      Headline => "compute a projective resolution of a module",
-     Usage => {TT "resolution M", " or ", TT "res M"},
-     Inputs => {
-	  "M",
-	  },
-     Outputs => {
-	  {"a free resolution of ", TT "M"}
-	  },
+     Usage => "resolution M\nres M",
+     Inputs => { "M" },
+     Outputs => { {"a free resolution of ", TT "M"} },
      "Warning: the resolution can have free modules with unexpected ranks
      when the module ", TT "M", " is not homogeneous.  Here is an example
      where even the lengths of the resolutions differ.  We compute

@@ -122,7 +122,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      	  num := numgens M;
 	  (basering,flatmonoid) := (
 	       if R.?isBasic then (R,M)
-	       else if R.?basering and R.?flatmonoid then (R.basering, M ** R.flatmonoid)
+	       else if R.?basering and R.?flatmonoid then (R.basering, tensor(M, R.flatmonoid, Degrees => degrees M | degrees R.flatmonoid))
 	       else if instance(R,FractionField) then (R,M)
 	       else error "internal error: expected coefficient ring to have a base ring and a flat monoid"
 	       );

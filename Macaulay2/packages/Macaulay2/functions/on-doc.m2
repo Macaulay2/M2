@@ -95,7 +95,6 @@ document {
  -- doc10.m2:241:     Key => (resolution, Ideal),
  -- doc10.m2:310:     Key => Monomials,
  -- doc10.m2:342:     Key => CompleteIntersection,
- -- doc10.m2:369:     FormattedKey => "top components",                                 -- to avoid it looking like "Top", the top node in an info file
  -- doc10.m2:385:     Key => removeLowestDimension,
  -- doc11.m2:731:     Key => monomialCurveIdeal, 
  -- doc11.m2:943:     Key => Monoid,

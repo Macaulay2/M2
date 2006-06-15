@@ -166,7 +166,7 @@ LABEL      = withOptions_{"title"} new MarkUpTypeWithOptions of MarkUpList
 
 TABLE      = withOptions_{"class"} new MarkUpTypeWithOptions of MarkUpListParagraph
 TR         = new MarkUpType of MarkUpList
-TD         = new MarkUpType of MarkUpList
+TD         = withOptions_{"valign"} new MarkUpTypeWithOptions of MarkUpList
 ButtonTABLE  = new MarkUpType of MarkUpListParagraph
 
 TO2        = withQname_"a" new IntermediateMarkUpType of MarkUpList
