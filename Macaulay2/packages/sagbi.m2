@@ -175,9 +175,10 @@ sagbi(Matrix,ZZ) := (Gens, maxnloops) -> (
 	         Degrees=>degrees source G];
 	  Gmap = map(R,S,G);
 	  inGmap = map(R,S,leadTerm G);
-	  nvars := numgens R + numgens S;
-	  J = graphIdeal(inGmap, Variables=>nvars,
-	             MonomialOrder => ProductOrder{numgens R,numgens S});
+	  -- nvars := numgens R + numgens S;
+	  J = graphIdeal(inGmap, 
+	       -- Variables=>nvars,
+	       MonomialOrder => ProductOrder{numgens R,numgens S});
 	  RS = ring J;
           RStoS = map(S, RS, (map(S^1, S^(numgens R), 0)) | vars S);
 	  );
