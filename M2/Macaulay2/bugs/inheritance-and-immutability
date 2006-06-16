@@ -1,4 +1,3 @@
--- owner: Dan
 -- urgency: low
 
 inheritance via lookup will probably stop working if any immutable types are
