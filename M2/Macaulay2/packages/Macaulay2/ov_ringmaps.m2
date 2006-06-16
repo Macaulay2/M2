@@ -2,7 +2,7 @@ document {
      Key => RingMap,
      Headline => "the class of all ring maps",
      "For an overview of ring maps, substitution of variables, and finding implicit
-     equations of a set of polynomial or rational functions, see ", TO "substitution and maps between maps", ".",
+     equations of a set of polynomial or rational functions, see ", TO "substitution and maps between rings", ".",
      PARA{},     
      TEX "A ring map $F : R \\rightarrow{} S$, where $R$ is a polynomial ring, is specified
      by giving the images in $S$ of the variables of $R$.  For a simple example, 

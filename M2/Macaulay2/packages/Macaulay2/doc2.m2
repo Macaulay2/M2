@@ -488,24 +488,57 @@ document {
 	  },
      "Calls upon ", TO "?", " to perform the comparison, if necessary.",
      }
+
+undocumented {
+     (symbol "?", TO2, TO2),
+     (symbol "?", TO2, TO),
+     (symbol "?", TO, TO2),
+     (symbol "?", TOH, TO2),
+     (symbol "?", TO2, TOH),
+     (symbol "?", TO, TO),
+     (symbol "?", String, DocumentTag),
+     (symbol "?", DocumentTag, String),
+     (symbol "?", TOH, TO),
+     (symbol "?", TO, TOH),
+     (symbol "?", Thing),
+     (symbol "?", InfiniteNumber, InfiniteNumber),
+     (symbol "?", DocumentTag, DocumentTag),
+     (symbol "?", Thing, InfiniteNumber),
+     (symbol "?", TOH, TOH),
+     (symbol "?", InfiniteNumber, Thing),
+     (symbol "?", Thing, Thing),
+     (symbol "?", Function),
+     }
 document {
-     Key => symbol "?",
+     Key => {symbol "?",
+     	  (symbol "?", Symbol, IndexedVariable),
+     	  (symbol "?", IndexedVariable, IndexedVariable),
+     	  (symbol "?", RingElement, RingElement),
+     	  (symbol "?", List, List),
+     	  (symbol "?", Tally, Tally)
+	  },
      Headline => "comparison operator",
-     TT "x ? y", " compares x and y, returning ", TT "symbol <", ", ",
+     Usage => "x ? y", 
+     "Compares x and y (of the same type), returning ", TT "symbol <", ", ",
      TT "symbol >", ", ", TT "symbol ==", ", or ", TO "incomparable", ".",
      PARA{},
-     "The user may install additional ", TO "binary methods", " for this 
-     operator with code such as ",
-     PRE "         X ? Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     EXAMPLE {
-	  "3 ? 4",
-      	  "\"book\" ? \"boolean\"",
-      	  "3 ? 3.",
-	  }
+     "Many types of objects may be compared. Numbers are handled as one would expect,
+     and string, lists and sequences are generally compared lexicographically.",
+     EXAMPLE lines ///
+     	  3 ? 4
+	  "book" ? "boolean"
+	  3 ? 3.
+	  {1,2,3} ? {4,5}
+     ///,
+     PARA{},
+     "Polynomials may also be compared.  The order depends on the 
+     monomial order in the ring.",
+     EXAMPLE lines ///
+     	  R = ZZ[a,b,c]
+	  a*c ? b^2
+     ///,
+     SeeAlso => {sort, rsort}
      }
-
 
 document {
      Key => getc,

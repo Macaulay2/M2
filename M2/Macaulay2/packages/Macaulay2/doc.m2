@@ -888,20 +888,27 @@ undocumented {
 document {
      Key => {symbol "%",
 	  (symbol "%", RingElement, GroebnerBasis),
-	  (symbol "%", Matrix, Matrix),
 	  (symbol "%", Matrix, Module),
 	  (symbol "%", Matrix, GroebnerBasis),
 	  (symbol "%", ZZ, ZZ)
 	  },	  
      Headline => "a binary operator, usually used for remainder and reduction",
      Usage => "x % y",
+     "In the simplest case, this is just remainder of integers.  Notice that
+     the result is always non-negative, for integer remainders.",
      EXAMPLE lines ///
        1232132141242345 % 3457834
-       R = ZZ[a,b]
+       (-4)%5
+       ///,
+     "In polynomial rings, the division algorithm is used.",
+     EXAMPLE lines ///
+       A = ZZ[a,b]
        (3*a^3-a*b-4) % (5*a-b)
        pseudoRemainder(3*a^3-a*b-4, 5*a-b)
-       eliminate(ideal(3*a^3-a*b-4, 5*a-b), a)
+       B = QQ[a,b]
+       (3*a^3-a*b-4) % (5*a-b)
      ///,
+     "In more complicated situations, Groebner bases are usually needed.",
      SeeAlso => { remainder, remainder', pseudoRemainder, "//", "operators" }
      }
 
