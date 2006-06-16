@@ -143,58 +143,69 @@ commentGuard := n -> if class n === String then concatenate(commentGuard,n) else
 binaryOperators = join(fixedBinaryOperators,flexibleBinaryOperators)
 prefixOperators = join(fixedPrefixOperators,flexiblePrefixOperators)
 postfixOperators = join(fixedPostfixOperators,flexiblePostfixOperators)
+flexibleOperators = join(flexibleBinaryOperators,flexiblePrefixOperators,flexiblePostfixOperators)
+fixedOperators = join(fixedBinaryOperators,fixedPrefixOperators,fixedPostfixOperators)
+
+undocumentedkeys = new MutableHashTable
+undocumented' = key -> undocumentedkeys#key = true
 
 scan(flexibleBinaryOperators, op -> (
      	  opstring := if op === symbol " " then format toString op else toString op;
 	  ht := 8;
 	  preX := "            ";
-	  if not Thing#?((op,symbol =),Thing,Thing) then installMethod((op,symbol =), Thing, Thing, Error => 
-	       (x,y,z) -> (
-	  	    preY := centerString(width preX, opstring);
-     	       	    preZ := centerString(width preX, "=");
-		    line1 := concatenate("no method for assignment to ",
-			 if op === symbol " " then "adjacent objects" else concatenate("binary operator ",op," applied to objects")
-			 );
-		    if hush then error line1;
-		    wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
-		    wid = wid - commentGuardWidth - width preX;
-		    hush = true;					    -- prevent error message recursion
-		    line2 := preX | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,x);
-		    line3 := preY | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,y);
-		    line4 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z);
-		    hush = false;
-		    error toString stack(line1,commentGuard line2,commentGuard line3,commentGuard line4)));
-	  if not Thing#?(op,Thing,Thing) then installMethod(op, Thing, Thing, Error => 
-	       (x,y) -> (
-		    line1 := concatenate("no method for ",
-			 if op === symbol " " then "adjacent objects:" else concatenate("binary operator ",op," applied to objects:")
-			 );
-		    if hush then error line1;
-	  	    preY := centerString(#preX, opstring);
-		    wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
-		    wid = wid - commentGuardWidth - width preX;
-		    hush = true;					    -- prevent error message recursion
-		    line2 := preX | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,x);
-		    line3 := preY | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,y);
-		    hush = false;
-		    error toString stack(line1,commentGuard line2,commentGuard line3)))))
-scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}, (ops,type) -> 
-     scan(ops, op -> (
-	       ht := 8;
-	       preX := "            ";
-	       if not Thing#?(op,symbol =) then installMethod((op,symbol =), Thing, Error => 
-		    (y,z) -> (
-	       		 preY := centerString(width preX, toString op);
-	       		 preZ := centerString(width preX, "=");
-			 line1 := concatenate("no method for assignment to ", concatenate(type," operator ",op), " applied to:");
+	  if not Thing#?((op,symbol =),Thing,Thing) then (
+	       undocumented' ((op,symbol =),Thing,Thing);
+	       installMethod((op,symbol =), Thing, Thing, Error => 
+		    (x,y,z) -> (
+			 preY := centerString(width preX, opstring);
+			 preZ := centerString(width preX, "=");
+			 line1 := concatenate("no method for assignment to ",
+			      if op === symbol " " then "adjacent objects" else concatenate("binary operator ",op," applied to objects")
+			      );
 			 if hush then error line1;
 			 wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
 			 wid = wid - commentGuardWidth - width preX;
 			 hush = true;					    -- prevent error message recursion
-			 line2 := preY | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,y);
-			 line3 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z);
+			 line2 := preX | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,x);
+			 line3 := preY | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,y);
+			 line4 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z);
 			 hush = false;
-			 error toString stack(line1,commentGuard line2,commentGuard line3)));
+			 error toString stack(line1,commentGuard line2,commentGuard line3,commentGuard line4))));
+	  if not Thing#?(op,Thing,Thing) then (
+	       undocumented' (op,Thing,Thing);
+	       installMethod(op, Thing, Thing, Error => 
+		    (x,y) -> (
+			 line1 := concatenate("no method for ",
+			      if op === symbol " " then "adjacent objects:" else concatenate("binary operator ",op," applied to objects:")
+			      );
+			 if hush then error line1;
+			 preY := centerString(#preX, opstring);
+			 wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
+			 wid = wid - commentGuardWidth - width preX;
+			 hush = true;					    -- prevent error message recursion
+			 line2 := preX | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,x);
+			 line3 := preY | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,y);
+			 hush = false;
+			 error toString stack(line1,commentGuard line2,commentGuard line3))))))
+scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}, (ops,type) -> 
+     scan(ops, op -> (
+	       ht := 8;
+	       preX := "            ";
+	       if not Thing#?(op,symbol =) then (
+		    undocumented' ((op,symbol =), Thing);
+		    installMethod((op,symbol =), Thing, Error => 
+			 (y,z) -> (
+			      preY := centerString(width preX, toString op);
+			      preZ := centerString(width preX, "=");
+			      line1 := concatenate("no method for assignment to ", concatenate(type," operator ",op), " applied to:");
+			      if hush then error line1;
+			      wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
+			      wid = wid - commentGuardWidth - width preX;
+			      hush = true;					    -- prevent error message recursion
+			      line2 := preY | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,y);
+			      line3 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z);
+			      hush = false;
+			      error toString stack(line1,commentGuard line2,commentGuard line3))));
 	       if not Thing#?op then installMethod(op, Thing, Error => 
 		    (x) -> (
 			 line1 := concatenate("no method for ", concatenate(type," operator ",op), " applied to:");

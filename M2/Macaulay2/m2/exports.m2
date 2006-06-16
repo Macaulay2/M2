@@ -538,6 +538,7 @@ export {
 	symbol betti,
 	symbol between,
 	symbol binomial,
+	symbol searchPath,
 	symbol borel,
 	symbol boxList,
 	symbol boxTable,

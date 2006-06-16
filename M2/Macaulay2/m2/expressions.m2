@@ -1084,7 +1084,7 @@ mathML Type := X -> if X.?mathML then X.mathML else mathML expression X
 mathML Thing := x -> mathML expression x
 
 File << Thing := File => (o,x) -> printString(o,net x)
-List << Thing := List => (o,x) -> (x = net x; scan(o, o -> printString(o,x)); o)
+List << Thing := List => (files,x) -> apply(files, o -> o << x)
 
 o := () -> concatenate(interpreterDepth:"o")
 
