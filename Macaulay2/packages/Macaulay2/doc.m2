@@ -720,26 +720,30 @@ document {
 	  "N = I*M + a*R^2",
 	  "isHomogeneous N"
 	  },
-     SeeAlso =>{ "times", "product", "operators" }
+     SeeAlso =>{ "times", "product"}
      }
 
 document {
      Key => symbol "&",
      Headline => "a binary operator",
-     SeeAlso => { "operators" }
      }
 
 document {
      Key => (symbol &, ZZ, ZZ),
      Headline => "logical and",
-     TT "m & n", " -- produce an integer obtained from the bits of the 
-     integers ", TT "m", " and ", TT "n", " by logical 'and'."
+     Usage => "m & n",
+     Inputs => {"m", "n"},
+     Outputs => {
+	  ZZ => {"obtained from the bits of the 
+     	       integers ", TT "m", " and ", TT "n", " by logical 'and'."}
+	  },
+     EXAMPLE "(2^15 + 2^13 + 2^42) & (2^15 + 2^23 + 2^42)",
+     SeeAlso => {(symbol |,ZZ,ZZ),xor}
      }
 
 document {
      Key => symbol "^^",
-     Headline => "a binary operator",
-     SeeAlso => { "operators" }     
+     Headline => "a binary operator"
      }
 
 undocumented {
@@ -802,7 +806,7 @@ document {
      	  M = matrix{{1,2,3},{2,3,4},{3,4,6}}
 	  M+1, M+2
      ///,
-     SeeAlso =>{ "plus", "sum", "operators" }
+     SeeAlso =>{ "plus", "sum"}
      }
 
 undocumented {
@@ -862,7 +866,7 @@ document {
      	  M = matrix{{1,2,3},{2,3,4},{3,4,6}}
 	  M-1, M-2
      ///,
-     SeeAlso =>{ "difference", "minus", "operators" }
+     SeeAlso =>{ "difference", "minus"}
      }
 
 document {
@@ -870,8 +874,7 @@ document {
      Headline => "a binary operator, usually used for division",
      TT "x / y", " -- a binary operator usually used for division, yielding a
      fraction, or for quotients (ring by ideal, etc.).",
-     PARA{},
-     SeeAlso => { "//", "operators" }
+     SeeAlso => { "//"}
      }
 
 undocumented {
@@ -887,19 +890,19 @@ undocumented {
 
 document {
      Key => {symbol "%",
-	  (symbol "%", RingElement, GroebnerBasis),
-	  (symbol "%", Matrix, Module),
-	  (symbol "%", Matrix, GroebnerBasis),
 	  (symbol "%", ZZ, ZZ)
 	  },	  
      Headline => "a binary operator, usually used for remainder and reduction",
      Usage => "x % y",
-     "In the simplest case, this is just remainder of integers.  Notice that
-     the result is always non-negative, for integer remainders.",
+     "The usual meaning for this operator is remainder, or normal form with respect
+     to a Groebner basis.",
+     PARA{},
+     "For integers, the remainder is non-negative.",
      EXAMPLE lines ///
        1232132141242345 % 3457834
        (-4)%5
        ///,
+     PARA{},
      "In polynomial rings, the division algorithm is used.",
      EXAMPLE lines ///
        A = ZZ[a,b]
@@ -908,8 +911,9 @@ document {
        B = QQ[a,b]
        (3*a^3-a*b-4) % (5*a-b)
      ///,
-     "In more complicated situations, Groebner bases are usually needed.",
-     SeeAlso => { remainder, remainder', pseudoRemainder, "//", "operators" }
+     "In more complicated situations, Groebner bases are usually needed.  See ",
+     TO "methods for normal forms and remainder", ".",
+     SeeAlso => { remainder, remainder', pseudoRemainder, "//"}
      }
 
 document {
@@ -918,13 +922,12 @@ document {
      TT "x // y", " -- a binary operator used for quotients in the same
      ring (with a possible remainder).",
      PARA{},
-     SeeAlso => { "/", "%", "operators" }
+     SeeAlso => { "/", "%" }
      }
 
 document {
      Key => symbol "\\\\",
      Headline => "a binary operator",
-     SeeAlso => { "operators" }     
      }
 
 document {
@@ -935,25 +938,7 @@ document {
      "In addition, if n is 0, then the unit element 
      ", TT "(class x)#1", " is returned.  If n is negative, then the method
      named ", TO "InverseMethod", " will be called.",
-     SeeAlso => { "operators" }     
      }
-
--- document {
---      Key => symbol "/^",
---      Headline => "a binary operator",
---      }
-
--- document {
---      Key => (symbol /^, Thing, ZZ),
---      Headline => "divided power",
---      TT "x /^ n", " -- computes the n-th divided power of x.",
---      PARA{},
---      "This is implemented naively as ", TT "x^n/n!", ".",
---      EXAMPLE {
--- 	  "ZZ/101[x];",
---       	  "x/^3"
--- 	  },
---      }
 
 document {
      Key => substring,
@@ -1085,20 +1070,32 @@ document {
 
 document {
      Key => symbol "|", 
-     Headline => "a binary operator",
-     SeeAlso => {"||", "operators" }
+     Headline => "a binary operator, often used for horizontal concatenation",
+     SeeAlso => {"||"}
      }
 
 document {
-     Key => (symbol |, List, List),
-     Headline => "join lists",
-     TT "v|w", " -- join two lists.", 
-     PARA{},
-     EXAMPLE "{1,2,3}|{4,5,6}"
+     Key => {(symbol |, List, List),
+	  (symbol |, Array, Array),
+	  (symbol |, Sequence, Sequence)},
+     Headline => "join lists, sequences or arrays",
+     Usage => "v|w",
+     Inputs => {"v" => Nothing =>  {ofClass List, ", ",
+	       ofClass Array, ", or ",
+	       ofClass Sequence},
+	  "w" => Nothing => {"of the same type as ", TT "v"}},
+     Outputs => {
+	  Nothing => "The join of the lists, sequences or arrays."},
+     EXAMPLE "{1,2,3}|{4,5,6}",
+     EXAMPLE "(a,b,c)|(1,2)",
+     SeeAlso => {join}
      }
 
 document {
-     Key => (symbol |, Net, Net),
+     Key => {(symbol |, Net, Net),
+	  (symbol |, String, String),
+	  (symbol |, String, ZZ),
+	  (symbol |, ZZ, String)},
      Headline => "join strings or nets",
      TT "s|t", " -- concatenates strings or nets horizontally.", 
      PARA{},
@@ -1116,37 +1113,45 @@ document {
 document {
      Key => (symbol |, ZZ, ZZ),
      Headline => "logical or",
-     TT "m|n", " -- produce an integer obtained from the bits of the 
-     integers ", TT "m", " and ", TT "n", " by logical 'or'.",
-     PARA{},
-     EXAMPLE "5 | 12"
+     Usage => "m | n",
+     Inputs => {"m", "n"},
+     Outputs => {
+	  ZZ => {"obtained from the bits of the 
+     	       integers ", TT "m", " and ", TT "n", " by logical 'or'."}
+	  },
+     EXAMPLE "2^42 | 2^15 == 2^42 + 2^15",
+     SeeAlso => {(symbol &,ZZ,ZZ),xor}
      }
 
 document {
-     Key => (symbol |, Matrix, Matrix),
+     Key => {(symbol |, Matrix, Matrix),
+	  (symbol |, RingElement, Matrix),
+	  (symbol |, Matrix, RingElement),
+	  (symbol |, RingElement, RingElement)
+	  },
      Headline => "join matrices horizontally",
 	Usage => "f = g | h",
 	Inputs => {
-		"g" => {"a ", TT "m", " by ", TT "n", " matrix."},
-		"h" => {"a ", TT "m", " by ", TT "r", " matrix."}
+		"g" => {"a ", TT "m", " by ", TT "n", " matrix"},
+		"h" => {"a ", TT "m", " by ", TT "r", " matrix"}
 		},
 	Outputs => {
-		"f" => {"a ", TT "m", " by ", TT "n+r", " matrix."}
-		},
-     EXAMPLE {
-		"R = ZZ/101[x,y,z]",
-      	"f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
-      	"f|f|f"
-	  },
-     "If one of the arguments is ring element or an integer, then it
+		"f" => {"the ", TT "m", " by ", TT "n+r", " matrix,
+		     obtained from matrices ", TT "g", " and ", TT "h", " by
+     		     concatenating the rows"}
+	        },
+     EXAMPLE lines ///
+	  R = ZZ[i..p];
+      	  g = matrix {{i,j},{k,l}}
+      	  h = matrix {{m,n},{o,p}}
+      	  f= g | h
+	  ///,
+     "If one of the arguments is a ring element or an integer, then it
      will be multiplied by a suitable identity matrix.",
-	EXAMPLE "33 | f",
-     Caveat => {"It is assumed that ", TT "g", " and ", TT "h", " both
-		have the same target. Moreover, it is assumed that both ", TT "g", " and ", 
-		TT "h", " have the same ", TO "Ring", "."},
-     SeeAlso => {(symbol ||, Matrix, Matrix), (ring, Matrix)}
+	EXAMPLE "f | (m-n)",
+	Caveat => {"It is assumed that the matrices ", TT "g", " and ", TT "h", " have the same ", TO Ring, "."},
+     SeeAlso =>{(symbol ||, Matrix, Matrix), (ring, Matrix)}
      }
-
 
 document {
      Key => (symbol |, ZZ, Matrix),
@@ -1154,20 +1159,18 @@ document {
      Usage => "f = n | g",
 	Inputs => {
 		"n",
-		"g" => {"a ", TT "r", " by ", TT "s", " matrix."}
+		"g" => {"a ", TT "r", " by ", TT "s", " matrix"}
 		},
 	Outputs => {
-		"f" => {"a ", TT "r", " by ", TT "r+s", " matrix."}
+		"f" => {"a ", TT "r", " by ", TT "r+s", " matrix"}
 		},
     EXAMPLE {
 	    "R = ZZ/101[x,y,z]",
          "f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
          "2|f|3"
 	  },
-  	"This also works for a arbitrary element of the ring of the matrix."
+  	"This also works for an arbitrary element of the ring of the matrix."
      }
-
-
 
 document {
      Key => (symbol |, Matrix, ZZ),
@@ -1190,7 +1193,7 @@ document {
 
 document {
      Key => symbol ||,
-     Headline => "a binary operator"
+     Headline => "a binary operator, often used for vertical concatenation"
      }
 
 document {
@@ -1210,7 +1213,11 @@ document {
      }
 
 document {
-     Key => (symbol ||, Matrix, Matrix),
+     Key => {(symbol ||, Matrix, Matrix),
+	  (symbol ||, RingElement, Matrix),
+	  (symbol ||, Matrix, RingElement),
+	  (symbol ||, RingElement, RingElement)
+	  },
      Headline => "join matrices vertically",
 	Usage => "f = g || h",
 	Inputs => {
@@ -1218,20 +1225,20 @@ document {
 		"h" => {"a ", TT "r", " by ", TT "n", " matrix."}
 		},
 	Outputs => {
-		"f" => {"a ", TT "m+r", " by ", TT "n", " matrix."}
+		"f" => {"the ", TT "m+r", " by ", TT "n", " matrix,
+		     obtained from matrices ", TT "g", " and ", TT "h", " by
+     		     concatenating the columns."}
 		},
-     TT "g||h", " yields the matrix obtained from matrices ", TT "g", " and ", TT "h", " by
-     concatenating the columns.",
-     EXAMPLE {
-	  "R = ZZ[i..p];",
-      	  "g = matrix {{i,j},{k,l}}",
-      	  "h = matrix {{m,n},{o,p}}",
-      	  "f= g || h",
-	  },
-     "If one of the arguments is ring element or an integer, then it
+     EXAMPLE lines ///
+	  R = ZZ[i..p];
+      	  g = matrix {{i,j},{k,l}}
+      	  h = matrix {{m,n},{o,p}}
+      	  f= g || h
+	  ///,
+     "If one of the arguments is a ring element or an integer, then it
      will be multiplied by a suitable identity matrix.",
 	EXAMPLE "f || 33",
-	Caveat => {"It is assumed that the matrices ", TT "g", " and ", TT "h", " have the same ", TO "Ring", "."},
+	Caveat => {"It is assumed that the matrices ", TT "g", " and ", TT "h", " have the same ", TO Ring, "."},
      SeeAlso =>{(symbol |, Matrix, Matrix), (ring, Matrix)}
      }
 
@@ -1538,13 +1545,13 @@ document {
     --(symbol**, ChainComplexMap, ChainComplex),
     (symbol**, Module, GradedModule)
 	  },
-     Headline => "a binary operator, usually used for tensor product",
-     "This here is tensor product land."
+     Headline => "a binary operator, usually used for tensor product or Cartesian product",
+     SeeAlso => {symbol "^**"}
      }
 
 document {
      Key => symbol "^**",
-     Headline => "a binary operator, usually used for tensor power",
+     Headline => "a binary operator, usually used for tensor or Cartesian power",
      }
 
 document {
