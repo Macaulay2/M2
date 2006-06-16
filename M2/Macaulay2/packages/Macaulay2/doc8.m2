@@ -793,8 +793,7 @@ document {
      Headline => "homogenize with respect to a variable",
      TT "homogenize(m,v)", " -- homogenize the ring element, vector,
      matrix, or module ", TT "m", " using the variable ", TT "v", " in the ring of ", TT "m", ".",
-     BR{},
-     NOINDENT{},     
+     BR{},     
      TT "homogenize(m,v,w)", " -- homogenize ", TT "m", " using the variable ", TT "v", ",
      so that the result is homogeneous with respect to the given list ", TT "w", " of
      integers provided as weights for the variables.",
@@ -894,7 +893,7 @@ document {
      Headline => "divide all columns by a (power of a) variable",
      TT "divideByVariable(m,v)", " -- divide each column of the matrix 'm' by 
      as high a power of the variable 'v' as possible.",
-     BR{},NOINDENT{},
+     BR{},
      TT "divideByVariable(m,v,d)", " -- divide each column of the matrix 'm' by 
      as high a power of the variable 'v' as possible, but divide by no more than v^d.",
      PARA{},

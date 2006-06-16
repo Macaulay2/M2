@@ -3,6 +3,7 @@
 export {
         symbol minimalPrimes,
 	symbol validate,
+	symbol MarkUpListContainer,
 	symbol minimalPresentationMap,
 	symbol LATER,
 	symbol minimalPresentationMapInv,
@@ -316,7 +317,6 @@ export {
 	symbol Keyword,
 	symbol LABEL,
 	symbol LAYOUT,
-	symbol LISTING,
 	symbol LITERAL,
 	symbol LengthLimit,
 	symbol Lex,
@@ -352,7 +352,6 @@ export {
 	symbol MutableHashTable,
 	symbol MutableList,
 	symbol NCLex,
-	symbol NOINDENT,
 	symbol Name,
 	symbol Net,
 	symbol NetFile,

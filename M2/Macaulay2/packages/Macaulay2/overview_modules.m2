@@ -20,7 +20,7 @@ document {
 	  },
      "Common ways to get information about modules:",
      UL {
-	  TO (ring, Module),
+	  TT "ring Module",
 	  TO (numgens, Module),
 	  TO (degrees, Module),
 	  TO (generators, Module),
@@ -50,7 +50,7 @@ document {
 	  TO (symbol ++, Module, Module),
 	  TO (symbol ^, Module, List),
 	  TO (symbol **, Module, Module),
-	  TO (symbol ^**, Module, List),
+	  TO (symbol ^**, Module, ZZ),
 	  TO (symbol _, Module, List),
 	  },
      "Minimalization:",

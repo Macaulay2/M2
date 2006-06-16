@@ -30,7 +30,7 @@ document {
      TT "userSymbols ()", " provides a list of symbols defined by
      the user.",
      BR{},
-     NOINDENT{}, TT "userSymbols X", " limits the list to those symbols whose
+     TT "userSymbols X", " limits the list to those symbols whose
      values are instances of the ", TO "class", " ", TT "X", ".",
      PARA{},
      "Protected symbols are excluded from the list.",
@@ -45,7 +45,7 @@ document {
      TT "listUserSymbols", " is a command which returns a display of the variables 
      defined by the user, along with their types.",
      BR{},
-     NOINDENT{}, TT "listUserSymbols X", " limits the list to those variables whose
+ TT "listUserSymbols X", " limits the list to those variables whose
      values are instances of ", TO "class", " ", TT "X", ".",
      PARA{},
      "After using ", TO "loaddata", " to restore 
@@ -341,7 +341,7 @@ document {
      TO2((symbol*,Set,Set),"intersection"), ", ",
      TO2((symbol-,Set,Set),"difference"), ", ",
      TO2((symbol**,Set,Set),"Cartesian product"), ", ",
-     TO2((symbol^**,Set,ZZ),"Cartesian power"), ", and ",
+     TO2((symbol^**,Tally,ZZ),"Cartesian power"), ", and ",
      TO2((isSubset,Set,Set),"subset"),
      " are available. For example,",
      EXAMPLE {
@@ -470,15 +470,18 @@ document {
      }
 
 document {
-     Key => (symbol ^**, Set, ZZ),
+     Key => (symbol ^**, Tally, ZZ),
      Headline => "Cartesian power",
      Usage => "B = A^**n",
      Inputs => { "A", "n" },
-     Outputs => {"B" => { "the set of n-tuples of elements from A" }},
-     EXAMPLE {
-     	  "A = set{1,2}",
-	  "A^**3"	  
-	  },
+     Outputs => {"B" => { "the tally of ", TT "n", "-tuples of elements from ", TT "A" }},
+     "If ", TT "A", " is ", ofClass Set, ", then so is ", TT "B", ".",
+     EXAMPLE lines ///
+     	  A = set {1,2}
+	  A^**3
+     	  A = tally {1,1,2}
+	  A^**3
+	  ///,
      SeeAlso => {Set, (symbol**,Set,Set)}
      }
 

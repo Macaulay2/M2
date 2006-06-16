@@ -50,6 +50,15 @@ boxTable Sequence := x -> (
      x = joinRow \ apply(x, row -> apply(colwids,row,upWidth));
      hbar := concatenate mingle(#colwids+1:"+",apply(colwids,wid -> wid:"-"));
      (stack mingle(#x+1:hbar,x))^(height x#0))
+netJoinRow := x -> horizontalJoin between(" ",x)
+netTable' = x -> (
+     n := max(length \ x);
+     x = apply(x, row -> if #row == n then row else join(row, n-#row : ""));
+     if #x == 0 or #x#0 == 0 then return "";
+     x = applyTable(x,net);
+     colwids := max \ transpose applyTable(x,width);
+     x = netJoinRow \ apply(x, row -> apply(colwids,row,upWidth));
+     (stack x)^(height x#0-1))
 
 peek'(ZZ,Net) := (depth,s) -> if depth === 0 then s else boxList {s}
 peek'(ZZ,Sequence) := (depth,s) -> (

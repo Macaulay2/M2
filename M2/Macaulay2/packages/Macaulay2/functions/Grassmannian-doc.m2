@@ -62,7 +62,7 @@ document {
      }
     
 -- doc11.m2:832:     Key => Grassmannian,
---  Description => {TT "Grassmannian(k,r)", " -- Grassmannian of k-planes in P^r",BR{},NOINDENT{},
+--  Description => {TT "Grassmannian(k,r)", " -- Grassmannian of k-planes in P^r",BR{},
 --     TT "Grassmanian(k,r,R)", 
 --     PARA{},
 --     "Given natural numbers k <= r, and optionally a ring ", TT "R", " with

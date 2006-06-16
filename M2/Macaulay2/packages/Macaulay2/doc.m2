@@ -124,7 +124,7 @@ document {
 	  },
      Consequences => {
 	  "The value returned result replaces the original for storing in the output variables and for printing"
-	  },
+	  }
      }
 
 document {
@@ -202,7 +202,7 @@ document {
      TT "x -> e", " -- denotes a function.  When the function is called, the initial 
      	      value of the variable x is the argument if there is just one, or
 	      else is the sequence of arguments.",
-     BR{},NOINDENT{},
+     BR{},
      TT "(x) -> e", " -- denotes a function of one argument.  When the function is 
      applied to an expression w three things may happen:",
      UL {
@@ -212,7 +212,7 @@ document {
      	  "if w is a sequence of length other than one, then it
      	  is an error."
 	  },
-     BR{},NOINDENT{},
+     BR{},
      TT "(x,y) -> e", " -- denotes a function of two arguments.",
      PARA{},
      "Similarly for more arguments.",
@@ -924,7 +924,8 @@ document {
      Key => symbol "^",
      Headline => "a binary operator, usually used for exponents",
      TT "x ^ y", " -- a binary operator used for powers and raising nets.",
-     NOINDENT{}, "In addition, if n is 0, then the unit element 
+     PARA{}, 
+     "In addition, if n is 0, then the unit element 
      ", TT "(class x)#1", " is returned.  If n is negative, then the method
      named ", TO "InverseMethod", " will be called.",
      SeeAlso => { "operators" }     
@@ -1036,11 +1037,9 @@ document {
      TT "get \"f\"", " -- yields a string containing the contents of the file whose name
      is f.",
      PARA{},
-     NOINDENT{},
      TT "get \"!f\"", " -- yields a string containing the output from the shell
      command \"f\".",
      PARA{},
-     NOINDENT{},
      TT "get \"$hostname:service\"", " -- yields a string containing the
      input from the socket obtained by connecting to the specified host at
      the port appropriate for the specified service.  Warning: if the process
@@ -1049,7 +1048,6 @@ document {
      because Sun doesn't provide static versions of crucial libraries dealing
      with network communications.",
      PARA{},
-     NOINDENT{},
      TT "get f", " -- yields a string containing the rest of the input from the 
      file ", TT "f", ", closing the file.",
      EXAMPLE {
@@ -1562,7 +1560,7 @@ document {
 	  "A ** A ** A"
 	  },
      "To make this last a set of triples, ", TO splice, " each element together.  
-     Or, use ", TO (symbol^**,Set,ZZ), ".",
+     Or, use ", TO (symbol^**,Tally,ZZ), ".",
      EXAMPLE {
 	  "(A ** A ** A)/splice",
 	  "A^**3"

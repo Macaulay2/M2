@@ -280,7 +280,6 @@ document {
 	  "degree f", 
       	  "degree g",
 	  },
-     NOINDENT{},
      "(Notice that the degree is a list containing one integer, rather than
      an integer.  The degree is actually a vector of integers, represented as
      a list, with one component by default.)",
@@ -325,7 +324,6 @@ document {
       	  "rem = f%g",
       	  "f == quot * g + rem",
 	  },
-     NOINDENT{},
      "Notice that as in the example above, comparison of polynomials is done
      with the operator ", TO "==", ".",
      PARA{},
@@ -347,7 +345,6 @@ document {
       	  "f_a",
       	  "g_(a*b)",
 	  },
-     NOINDENT{},
      "(Notice that the coefficients are elements of the coefficient ring.)",
      PARA{},
      "We may get parts of the leading term of a polynomial as follows.",
@@ -356,7 +353,6 @@ document {
       	  "leadCoefficient g",
       	  "leadMonomial g",
 	  },
-     NOINDENT{},
      "Notice that the lead monomial is an element of a monoid whose name is
      ", TT "[a,b]", ".  Its exponents can be extracted with ", TO "exponents", ".",
      EXAMPLE "exponents leadMonomial g",

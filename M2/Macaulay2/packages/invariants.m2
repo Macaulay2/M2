@@ -108,7 +108,7 @@ newGroup List := (FF) -> (
 document {
      Key => reynolds,
      TT "reynolds", "(Group,Matrix)      -- average each entry of matrix over the group",
-     BR{},NOINDENT{},
+     BR{},
      TT "reynolds", "(Group,RingElement) -- average the element over the group",
      PARA{},
      "In the case when the order of the group  G is invertible in the ring R of G,

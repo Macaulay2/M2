@@ -24,12 +24,11 @@ Tally ^** ZZ := Tally => (x,n) -> (
      y)
 
 Tally ? Tally := (x,y) -> (
-     w := values (x-y); -- warning: if x and y are both sets, then x-y isn't as expected here
+     w := values select(merge(x,applyValues(y,minus),plus),i -> i =!= 0);
      if #w === 0 then symbol ==
      else if all(w,i -> i>0) then symbol >
      else if all(w,i -> i<0) then symbol <
      else incomparable)
-Set ? Set := (x,y) -> (new Tally from x) ? (new Tally from y)
 
 Tally + Tally := Tally => (x,y) -> merge(x,y,plus)
 Tally - Tally := Tally => (x,y) -> select(merge(x,applyValues(y,minus),plus),i -> i > 0)

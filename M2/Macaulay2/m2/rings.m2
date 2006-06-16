@@ -30,11 +30,11 @@ numgens Ring := R -> #generators R
 
 ring = method(TypicalValue => Ring)
 
-ring Thing := x -> (
-     if x.?ring then x.ring 
-     else if instance(class x,Ring) then class x
-     else error "no ring")
-ring Type := T -> if T.?ring then T.ring else error "no ring"
+-- ring Thing := x -> (
+--      if x.?ring then x.ring 
+--      else if instance(class x,Ring) then class x
+--      else error "no ring")
+-- ring Type := T -> if T.?ring then T.ring else error "no ring"
 
 ambient Ring := Ring => R -> error "no ambient ring present"
 coefficientRing Ring := Ring => R -> error "no coefficient ring present"

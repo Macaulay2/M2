@@ -5,7 +5,6 @@ document {
      Headline => "exit the program",
      TT "exit n", " -- terminates the program and returns ", TT "n", " as return code.",
      BR{},
-     NOINDENT{}, 
      TT "exit", " -- terminates the program and returns 0 as return code.",
      PARA{},
      "Files are flushed and closed.  Functions registered with ", TO "addStartFunction", "
@@ -153,7 +152,7 @@ document {
      TT "mingle {v,w,...}", " -- produces a new list from the lists or
      sequences v,w,... by taking the first element from each, then the second, 
      and so on.",
-     BR{}, NOINDENT{},
+     BR{},
      TT "mingle (v,w,...)", " -- does the same.",
      PARA{},
      "After one of the lists is exhausted, it is silently ignored.",
@@ -196,7 +195,7 @@ document {
      Key => close,
      Headline => "close a file",
      TT "f << close", " -- closes the file ", TT "f", ".",
-     BR{}, NOINDENT{},
+     BR{},
      TT "close f", " -- closes the file ", TT "f", ".",
      PARA{},
      "In the case of an output file, any buffered output is first
@@ -228,7 +227,7 @@ document {
      Key => closeIn,
      Headline => "close an input file",
      TT "f << closeIn", " -- closes the input file ", TT "f", ".",
-     BR{}, NOINDENT{},
+     BR{},
      TT "closeIn f", " -- closes the input file ", TT "f", ".",
      PARA{},
      "If the file was open only for input, then ", TO "close", " is
@@ -242,7 +241,7 @@ document {
      Key => closeOut,
      Headline => "close an output file",
      TT "f << closeOut", " -- closes the output file ", TT "f", ".",
-     BR{}, NOINDENT{},
+     BR{},
      TT "closeOut f", " -- closes the output file ", TT "f", ".",
      PARA{},
      "Any buffered output is first written to the file,
@@ -619,11 +618,11 @@ document {
      Key => uncurry,
      Headline => "uncurry a function",
      TT "uncurry(f, (a,b))", "     -- computes ", TT "((f a) b)", ".",
-     BR{}, NOINDENT{},
+     BR{},
      TT "uncurry(f, (a,b,c))", "   -- computes ", TT "(((f a) b) c)", ".",
-     BR{}, NOINDENT{},
+     BR{},
      TT "uncurry(f, (a,b,c,d))", " -- computes ", TT "((((f a) b) c) d)", ".",
-     BR{}, NOINDENT{},
+     BR{},
      "... and so on.",
      EXAMPLE {
 	  "f = a -> b -> c -> [a,b,c]",

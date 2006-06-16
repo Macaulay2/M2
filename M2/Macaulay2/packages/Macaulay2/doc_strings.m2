@@ -205,7 +205,7 @@ document {
      Key => width,
      Headline => "width of a file or net",
      TT "width f", " -- determines the width of the terminal associated to an
-     output file ", TT "f", ", if any.", BR{},NOINDENT{}, 
+     output file ", TT "f", ", if any.", BR{}, 
      TT "width n", " -- the width of a net ", TT "n", ".",
      SeeAlso => {"Net", "File"}
      }
@@ -261,7 +261,7 @@ document {
      Headline => "split a string into lines",
      TT "lines s", " -- yields an array of strings obtained from the
      string ", TT "s", " by breaking it at newline or return characters.",
-     BR{},NOINDENT{},
+     BR{},
      TT "lines(nl,s)", " -- yields an array of strings obtained from the 
      string ", TT "s", " by breaking it at the newline characters
      specified by the string ", TT "nl", ".",

@@ -402,7 +402,7 @@ document {
      SeeAlso => "sum"
      }
 document {
-     Key => (sum, List, List, Function),
+     Key => (sum, VisibleList, VisibleList, Function),
      Headline => "sum results of applying a function pairwise",
      TT "sum(v,w,f)", " yields the sum of the results obtained by
      applying ", TT "f", " to each of the pairs ", TT "(i,j)", " of elements from 
@@ -416,7 +416,7 @@ document {
      SeeAlso => "sum"
      }
 document {
-     Key => (sum, List, Function),
+     Key => (sum, VisibleList, Function),
      Headline => "sum results of applying a function",
      TT "sum(v,f)", " yields the sum of the expressions obtained by
      applying ", TT "f", " to each of the elements of the list or sequence ", TT "v", ".",
@@ -468,7 +468,7 @@ document {
      EXAMPLE "product {1,2,3,4,5}"
      }
 document {
-     Key => (product, List, List, Function),
+     Key => (product, VisibleList, VisibleList, Function),
      Headline => "product of results of applying a function pairwise",
      TT "product(v,w,f)", " yields the product of the results obtained by
      applying ", TT "f", " to each of the pairs ", TT "(i,j)", " of elements from 
@@ -481,7 +481,7 @@ document {
      SeeAlso => "product"
      }
 document {
-     Key => (product, List, Function),
+     Key => (product, VisibleList, Function),
      Headline => "product of values of a function",
      TT "product(v,f)", " yields the product of the expressions obtained by
      applying ", TT "f", " to each of the elements of the list or sequence ", TT "v", ".",
@@ -799,7 +799,7 @@ document {
      TT "pad(s,n)", " -- pads the string ", TT "s", " to length ", TT "n", " with
      spaces on the right.",
      BR{},
-     NOINDENT{}, 
+ 
      TT "pad(n,s)", " -- pads the string ", TT "s", " to length ", TT "n", " with
      spaces on the left."
      }

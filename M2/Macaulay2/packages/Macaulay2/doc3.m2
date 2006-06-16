@@ -11,7 +11,7 @@ document {
      Key => symbol lineNumber,
      Headline => "current line number",
      TT "lineNumber", " -- the current line number.",
-     BR{}, NOINDENT{},
+     BR{},
      TT "lineNumber = n", " -- sets the line number to ", TT "n", ".",
      }
 

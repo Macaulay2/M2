@@ -118,7 +118,7 @@ document {
 document {
      Key => newClass,
      Headline => "copy an object, changing the class",
-     TT "newClass(N,m)", " -- makes a copy of m with N as the new class", BR{}, NOINDENT{},
+     TT "newClass(N,m)", " -- makes a copy of m with N as the new class", BR{},
      TT "newClass(N,M,m)", " -- makes a copy of m with N as class and M as parent",
      PARA{},
      "If m is a list, then BasicList should be an ancestor of N.  If m is 
@@ -132,27 +132,26 @@ document {
 document {
      Key => lookup,
      Headline => "look up methods",
-     NOINDENT{},
      TT "lookup(M,A)", " -- provides the binary method named ", TT "M", " for class ", TT "A", ".
      The first place to look is ", TT "A#M", ".  The search proceeds with
      the parent of ", TT "A", ", and so on.",
      PARA{},
-     NOINDENT{}, TT "lookup(M,A,B)", " -- provides the binary method named ", TT "M", " for ", TT "(A,B)", ".
+     TT "lookup(M,A,B)", " -- provides the binary method named ", TT "M", " for ", TT "(A,B)", ".
      The first place to look is ", TT "Y#(M,A,B)", " where ", TT "Y", " is the younger
      of ", TT "A", " and ", TT "B", ".  The search proceeds next with the parent of ", TT "B", ", 
      and so on. ",
      PARA{},
-     NOINDENT{}, TT "lookup(M,A,B,C)", " -- provides the ternary method named ", TT "M", " for
+     TT "lookup(M,A,B,C)", " -- provides the ternary method named ", TT "M", " for
      ", TT "(A,B,C)", ".  The first place to look is ", TT "Y#(M,A,B,C)", " where ", TT "Y", " 
      is the youngest of ", TT "A", ", ", TT "B", ", and ", TT "C", ".  The search proceeds with 
      the parent of ", TT "C", ", and so on.",
      PARA{},
-     NOINDENT{}, TT "lookup(M,A,B,C,D)", " -- provides the quaternary method named ", TT "M", " for
+     TT "lookup(M,A,B,C,D)", " -- provides the quaternary method named ", TT "M", " for
      ", TT "(A,B,C,D)", ".  The first place to look is ", TT "Y#(M,A,B,C,D)", " where ", TT "Y", " 
      is the youngest of ", TT "A", ", ", TT "B", ", ", TT "C", ", and ", TT "D", ".  The search proceeds with 
      the parent of ", TT "D", ", and so on.",
      PARA{},
-     NOINDENT{}, TT "lookup x", " -- where ", TT "x", " is a symbol or function, returns ", TT "x", ".",
+     TT "lookup x", " -- where ", TT "x", " is a symbol or function, returns ", TT "x", ".",
      PARA{},
      "If no method is found, then ", TO "null", " is returned.",
      PARA{},
@@ -164,13 +163,11 @@ document {
      PARA{},
      "Most users will use a different way of installing methods.",
      PARA{},
-     NOINDENT{},
      TT "installMethod(M,A,f)", "     -- installs a function ", TT "f", " as a unary method for
      the class ", TT "A", " under the name ", TT "M", ".  This is the same as ", "M A := f", " 
      if ", TT "M", " is a function.  As currently implemented, this is also the same 
      as ", TT "A#M = f", ".",
      PARA{},
-     NOINDENT{},
      TT "installMethod(M,A,B,f)", "   -- installs a function ", TT "f", " as a binary method for
      classes ", TT "A", " and ", TT "B", " under the name ", TT "M", ".  This is the same as 
      ", TT "M(A,B) := f", " if ", TT "M", " is a
@@ -178,7 +175,6 @@ document {
      implemented, this is also the same as ", TT "Y#(M,A,B) = f", ", where ", TT "Y", " is 
      the younger of ", TT "A", " and ", TT "B", ".",
      PARA{},
-     NOINDENT{},
      TT "installMethod(M,A,B,C,f)", " -- installs a function ", TT "f", " as a ternary method 
      for classes ", TT "A", ", ", TT "B", ", and ", TT "C", " under the name ", TT "M", ".  
      This is the same as ", TT "M(A,B,C) := f", " if ", TT "f", "
@@ -193,18 +189,14 @@ document {
      Headline => "new objects of various types",
      TT "new A of b from c", " -- make a hash table of class ", TT "A", " and 
      parent ", TT "b", " initialized from ", TT "c", ".", BR{},
-     NOINDENT{},
      TT "new A of b", " -- make a hash table of class ", TT "A", " 
      and parent ", TT "b", ".", BR{},
-     NOINDENT{},
      TT "new A from c", " -- make a new instance of class ", TT "A", " 
      initialized from ", TT "c", ".", BR{},
-     NOINDENT{},
      TT "new A", " -- makes a new instance ", TT "n", " 
      of class ", TT "A", ".", BR{},
      PARA{},
      hr,
-     NOINDENT{},
      TT "new A of b from c", " -- make a hash table ", TT "n", " of
      Here ", TT "A", " and ", TT "b", " are hash tables, and ", TT "c", " is
      any expression.  Let ", TT "b", " be an instance of ", TT "B", ", ", TT "c", "
@@ -222,7 +214,6 @@ document {
      "The class ", TT "A", " should be a type of type, which means that
      ", TT "Type", " is an ancestor of ", TT "A", " and of the class of ", TT "A", ".",
      hr,
-     NOINDENT{},
      TT "new A of b", " -- make a hash table of class ", TT "A", "
      and parent ", TT "b", ".",
      PARA{},
@@ -233,7 +224,6 @@ document {
      "The class ", TT "A", " should be a type of type, which means that
      ", TT "Type", " is an ancestor of ", TT "A", " and of the class of ", TT "A", ".",
      hr,
-     NOINDENT{},
      TT "new A from c", " -- make a hash table or list ", TT "n", " of 
      class ", TT "A", " initialized from ", TT "c", ".",
      PARA{},
@@ -248,7 +238,6 @@ document {
      "The class ", TT "A", " should be a type, which means that
      ", TT "Type", " is an ancestor of the class of ", TT "A", ".",
      hr,
-     NOINDENT{},
      TT "new A", " -- make a new instance ", TT "n", " of 
      class ", TT "A", ".",
      PARA{},
@@ -461,7 +450,6 @@ document {
 document {
      Key => [method,Associative],
      Headline => "allows associative methods to be created",
-     NOINDENT{},
      TT "f = method(Associative=>true)", " -- creates an associative
      method which will call upon the appropriate binary methods for its arguments 
      two at a time.",
@@ -723,11 +711,6 @@ document {
      TT "#x", " -- provides the length of a list.",
      }
 document {
-     Key => (symbol #, Sequence),
-     Headline => "length",
-     TT "#x", " -- provides the length of a sequence.",
-     }
-document {
      Key => (symbol #, HashTable),
      Headline => "length",
      TT "#x", " -- provides the number of key-value pairs recorded
@@ -858,13 +841,6 @@ document {
      SeeAlso => {(symbol #, BasicList, ZZ)}
      }
 document {
-     Key => (symbol #?, Sequence, ZZ),
-     Headline => "check for element in sequence",
-     TT "x#?i", " --tells whether there is an ", TT "i", "-th element in
-     the sequence ", TT "x", ".",
-     SeeAlso => {(symbol #, Sequence, ZZ)}
-     }
-document {
      Key => symbol "#?",
      Headline => "check for presence of elements",
      SeeAlso =>{ "#" }
@@ -872,23 +848,6 @@ document {
 document {
      Key => symbol "_",
      Headline => "a binary operator, used for subscripting and access to elements"
-     }
-document {
-     Key => (symbol _, List, ZZ),
-     Headline => "get element from list",
-     TT "x_i", " -- provides the ", TT "i", "-th element of the list ", TT "x", ".",
-     PARA{},
-     "This is merely a convenient synonym for ", TT "x#i", ".",
-     PARA{},
-     SeeAlso => {(symbol #, BasicList, ZZ)}
-     }
-document {
-     Key => (symbol _, Sequence, ZZ),
-     Headline => "get element from list",
-     TT "x_i", " -- provides the ", TT "i", "-th element of the sequence ", TT "x", ".",
-     PARA{},
-     "This is merely a convenient synonym for ", TT "x#i", ".",
-     SeeAlso => {(symbol #, BasicList, ZZ)}
      }
 document {
      Key => ".",

@@ -151,7 +151,7 @@ document {
 	Usage => "IMG{x,y}",
 	Inputs => {"x" => {}, "y" => {}},
 	Outputs => {IMG => {}},
-     TT "IMG{x,y}", " encloses ", TT "x,y", " in a hypertext IMG item.",
+     TT ///IMG{"src" => x, "alt" => y}///, " creates a hypertext IMG item.",
      PARA{},
      "The argument ", TT "x", " should be a string containing the URL of the image, and
      ", TT "y", " should be a suitable string for the ALT attribute.",
@@ -304,25 +304,6 @@ document {
      }
 
 document {
-     Key => LISTING,
-     Headline => "hypertext LISTING item",
-	Usage => "LISTING x",
-	Inputs => {"x" => {}},
-	Outputs => {LISTING => {}},
-     TT "LISTING x", " encloses ", TT "x", " in a hypertext LISTING item.",
-     PARA{},
-     "The argument ", TT "x", " should be a string.",
-     PARA{},
-     "Here is an example.",
-     LISTING "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  
-   1234   2345    4567    5678
-     34    345    3455       7
-",
-     PARA{},
-     SeeAlso => "hypertext"
-     }
-
-document {
      Key => BLOCKQUOTE,
      Headline => "hypertext BLOCKQUOTE item",
 	Usage => "BLOCKQUOTE x",
@@ -333,7 +314,7 @@ document {
      "The argument ", TT "x", " should be a string.",
      PARA{},
      "Here is an example.",
-     BLOCKQUOTE "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  
+     BLOCKQUOTE PARA "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  
    1234   2345    4567    5678
      34    345    3455       7
 ",
@@ -645,19 +626,6 @@ document {
      }
 
 document {
-     Key => NOINDENT,
-     Headline => "cancel hypertext indentation",
-	Usage => "NOINDENT",
-     TT "NOINDENT{}", " specifies that no indentation should be used
-     for following hypertext items.",
-     PARA{},
-     "This item is mainly of interest for hypertext that ultimately will
-     be viewed with TeX, for html viewers don't indent paragraphs.",
-     PARA{},
-     SeeAlso => "hypertext"
-     }
-
-document {
      Key => TO,
      Headline => "hypertext documentation link",
 	Usage => "TO x",
@@ -843,19 +811,19 @@ document {
      Key => code,
      Headline => "display source code",
      TT "code f", " -- prints out the source code of the function or command", TT "f", ".",
-     BR{}, NOINDENT{},
+     BR{},
      TT "code(f,X)", " -- prints out the source code of the particular 
      method that would be applied if ", TT "f", " were applied to an argument of 
      class ", TT "X", ".",
-     BR{}, NOINDENT{},
+     BR{},
      TT "code(f,X,Y)", " -- prints out the source code of the particular 
      method that would be applied if ", TT "f", " were applied to arguments of
      classes ", TT "X", " and ", TT "Y", ".",
-     BR{}, NOINDENT{},
+     BR{},
      TT "code(f,X,Y,Z)", " -- prints out the source code of the 
      particular method that would be applied if ", TT "f", " were applied to 
      arguments of classes ", TT "X", ", ", TT "Y", ", and ", TT "Z", ".",
-     BR{}, NOINDENT{},
+     BR{},
      TT "code {v,w,...}", " -- prints out the source code for each
      of the items listed.",
      PARA{},
@@ -867,18 +835,18 @@ document {
      Key => edit,
      Headline => "edit source code",
      TT "edit", " -- a command which starts the text editor",
-     BR{},NOINDENT{},
+     BR{},
      TT "edit f", " -- starts the text editor at the source code of the
      function ", TT "f", ".",
-     BR{},NOINDENT{},
+     BR{},
      TT "edit(f,X)", " -- edits the source code of the particular 
      method that would be applied if ", TT "f", " were applied to an argument of 
      class ", TT "X", ".",
-     BR{}, NOINDENT{},
+     BR{},
      TT "edit(f,X,Y)", " -- edits the source code of the particular 
      method that would be applied if ", TT "f", " were applied to arguments of
      classes ", TT "X", " and ", TT "Y", ".",
-     BR{}, NOINDENT{},
+     BR{},
      TT "edit(f,X,Y,Z)", " -- edits the source code of the 
      particular method that would be applied if ", TT "f", " were applied to 
      arguments of classes ", TT "X", ", ", TT "Y", ", and ", TT "Z", ".",
@@ -898,14 +866,14 @@ document {
      Headline => "list methods",
      TT "methods F", " -- produces a list of those methods associated with the
      function or type F.",
-     BR{}, NOINDENT{},
+     BR{},
      TT "methods symbol **", " -- produces a list of the methods 
      usable with the operator ", TT "**", ".",
-     BR{}, NOINDENT{},
+     BR{},
      TT "methods (symbol **, X)", " -- produces a list of the 
      methods usable with the operator ", TT "**", " and a thing of
      class ", TT "X", ".",
-     BR{}, NOINDENT{},
+     BR{},
      TT "methods (X, Y)", " -- produces a list of the 
      methods usable with a thing of class ", TT "X", " and a thing of class
      ", TT "Y", ".",

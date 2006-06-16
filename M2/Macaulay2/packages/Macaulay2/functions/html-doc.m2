@@ -323,22 +323,6 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (html,NOINDENT),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => (html,HR),
      Headline => "",
      Usage => "",
@@ -660,22 +644,6 @@ document {
      }
 document { 
      Key => (html,Subscript),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (html,LISTING),
      Headline => "",
      Usage => "",
      Inputs => {

@@ -17,6 +17,7 @@ CC.degreeLength = 0
 degree CC := i -> {}
 raw CC := x -> rawFromNumber(raw CC, x)
 new CC from RawRingElement := (CC,n) -> rawToComplex n
+ring CC := class
 
 CCC.isBasic = true
 CCC.synonym = "big complex number"
@@ -29,6 +30,8 @@ CCC.mathML = "<mi>&Copf;</mi>"
 CCC.char = 0
 CCC.degreeLength = 0
 degree CCC := i -> {}
+
+ring CCC := class
 
 conjugate ZZ := identity
 conjugate QQ := identity

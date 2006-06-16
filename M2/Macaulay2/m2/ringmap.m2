@@ -311,6 +311,18 @@ preimage(RingMap,Ideal) := (f,J) -> (
 List / RingMap := List => (v,f) -> apply(v,x -> f x)
 RingMap \ List := List => (f,v) -> apply(v,x -> f x)
 
+RingMap == RingMap := (f,g) -> (
+     f.target === g.target and
+     f.matrix === g.matrix and
+     f.source === g.source and (
+	  d := degreeLength f.source;
+	  m := f.DegreeMap;
+	  n := g.DegreeMap;
+	  e := toList prepend(1, d-1 : 0);
+	  null === for i from 1 to d do (
+	       if m e =!= n e then break false;
+	       e = rotate(e,1))))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

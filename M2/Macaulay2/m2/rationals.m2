@@ -12,6 +12,7 @@ raw QQ := x -> rawFraction(
      rawFromNumber(rawZZ(), numerator x),
      rawFromNumber(rawZZ(), denominator x))
 
+ring QQ := class
 
 ZZ.frac = QQ
 QQ#1 = 1/1

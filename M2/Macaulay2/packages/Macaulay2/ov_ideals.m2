@@ -134,7 +134,7 @@ document {
 	    },
 
      SUBSECTION "getting the quotient module corresponding to an ideal",
-       NOINDENT{}, "We also often work with ", TT "R/I", " as 
+ "We also often work with ", TT "R/I", " as 
        an ", TT "R", "-module.  Simply typing ", TT "R/I", " at a prompt
        in Macaulay 2 constructs the quotient ring (see ", 
        TO "quotient rings", ").  
@@ -281,7 +281,7 @@ document {
 	    "mingens I",
 	    "trim I"
 	    },
-       NOINDENT{}, "The function ", TT "mingens", " is only well-defined for a 
+ "The function ", TT "mingens", " is only well-defined for a 
        homogeneous ideal or in a local ring.  However, one can still try to 
        get as small a generating set as possible and when it is implemented
        this function will be done by ", TT "trim", ".",
@@ -435,7 +435,7 @@ document {
 	    "I = ideal(w*x^2-42*y*z, x^6+12*w*y+x^3*z, w^2-47*x^4*z-47*x*z^2)",
 	    "decompose I"
 	    },
-       NOINDENT{}, "If the ideal given is a prime ideal 
+ "If the ideal given is a prime ideal 
        then ", TT "decompose", " will return the ideal given.",
        EXAMPLE {
 	    "R = ZZ/101[w..z];",
@@ -499,7 +499,7 @@ document {
 	    "I = ideal(a*b-c*d, (a*c-b*d)^2);",
 	    "primaryDecomposition I"
 	    },
-       NOINDENT{}, "To obtain the associated prime ideals corresponding to the
+ "To obtain the associated prime ideals corresponding to the
        primary components returned by ", TT "primaryDecomposition", " use 
        the function ", TO "associatedPrimes", ".  The first entry 
        in the list given by ", TT "associatedPrimes", " is the radical of the first 
@@ -573,7 +573,7 @@ document {
       	  "substitute(I,S)",
       	  "homogenize(oo,t)",
 	  },
-     NOINDENT{}, "In this case, the substitution was done according to the names of
+ "In this case, the substitution was done according to the names of
      the variables in the two rings.  There are more explicit ways to specify the
      substitution to be performed.  Here is one where we list the new values for
      all the variables.",
@@ -640,7 +640,7 @@ document {
       	  "dim J",
       	  "codim I",
 	  },
-     NOINDENT{}, "(Beware that for a homogeneous ideal the
+ "(Beware that for a homogeneous ideal the
      dimension of its projective variety is one less than the number provided by
      ", TO "dim", ".)",
      PARA{},
@@ -651,7 +651,7 @@ document {
 	  "basis (R^1/J)",
       	  "rank source oo",
 	  },
-     NOINDENT{}, "(Here ", TO "oo", " refers to the result on the previous line.",
+ "(Here ", TO "oo", " refers to the result on the previous line.",
      PARA{},
      "For more information see ", TO "Ideal", "."
      }

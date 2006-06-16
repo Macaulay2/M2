@@ -120,15 +120,23 @@ rsort List := rsort Sequence := opts -> internalrsort
 -----------------------------------------------------------------------------
 -- sublists
 -----------------------------------------------------------------------------
-sublists = (x,f,g,h) -> (
+sublists = method()
+sublists(VisibleList, Function, Function, Function) := (x,f,g,h) -> (
      -- x is a list with elements i
-     -- apply g to those i for which f i is true
-     -- apply h to the sublists, possibly empty, including those at the beginning and end, of elements between the ones for which f i is true
+     -- apply g to the nonempty sublists of consecutive elements between the ones for which f i is true
+     -- apply h to those i for which f i is false
      -- return the results in the same order
-     p := positions(toSequence x, f);
-     mingle(
-	  apply( prepend(-1,p), append(p,#x), (i,j) -> h take(x,{i+1,j-1})),
-	  apply( p, i -> g x#i)))
+     p := positions(toSequence x, i -> not f i);
+     s := mingle( apply( prepend(-1,p), append(p,#x), identity), apply(p,i->(i,i)) );
+     s = select(s, (i,j) -> j != i+1);
+     s = apply(s, (i,j) -> if i === j then h x#i else g take(x,{i+1,j-1}));
+     s )
+sublists(VisibleList, Function) := (x,f) -> sublists(x,f,identity,identity)
+sublists(VisibleList, Function, Function) := (x,f,g) -> sublists(x,f,g,identity)
+sublists(VisibleList, Function, Nothing) := (x,f,g) -> sublists(x,f,identity,identity)
+sublists(VisibleList, Function, Function, Nothing) := (x,f,g,h) -> sublists(x,f,g,identity)
+sublists(VisibleList, Function, Nothing, Function) := (x,f,g,h) -> sublists(x,f,identity,h)
+sublists(VisibleList, Function, Nothing, Nothing) := (x,f,g,h) -> sublists(x,f,identity,identity)
 -----------------------------------------------------------------------------
 
 -- Local Variables:

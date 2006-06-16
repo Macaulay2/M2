@@ -62,7 +62,7 @@ document { -- This node is used as an example in the node: Key
 
 document {
      Key => [resolution,PairLimit],
-     Headline => "stop when this number of pairs are handled",
+     Headline => "stop when this number of pairs has been handled",
      TT "PairLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ", which specifies that the computation should
      be stopped after a certain number of S-pairs have been reduced.",
@@ -416,7 +416,7 @@ document {
      Headline => "get a web page",
      TT "getWWW URL", " -- obtain the contents of the web page addressed
      by ", TT "URL", " from an http server.",
-     BR{},NOINDENT{},
+     BR{},
      TT "getWWW(URL,TEXT)", " -- obtain the contents of the web page addressed
      by ", TT "URL", " from an http server, using the POST method, provided 
      with ", TT "TEXT", ".",
@@ -466,7 +466,7 @@ document {
      Headline => "show relationship between types",
      TT "showStructure", " -- a command which displays the structure of types
      assigned to global variables.",
-     BR{}, NOINDENT{},
+     BR{},
      TT "showStructure (X,Y,...)", " -- a command which displays the structure 
      of the types specified.",
      PARA{},

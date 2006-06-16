@@ -196,7 +196,7 @@ document {
      Headline => "open a port for listening",
      TT "f = openListener \"$:service\"", "  opens a listener on the local
      host at the specified service port.",
-     BR{},NOINDENT{},
+     BR{},
      TT "f = openListener \"$\"", "  opens a listener on the local
      host at the Macaulay2 port (2500).",
      PARA{},
@@ -227,24 +227,24 @@ document {
      Headline => "open an input output file",
      TT "openInOut \"fff\"", " opens an input output file whose 
      filename is ", TT "fff", ".",
-     BR{},NOINDENT{},
+     BR{},
      TT "openInOut \"!cmd\"", " opens an input output file which corresponds to a pipe 
      receiving the output from the shell command ", TT "cmd", ".",
-     BR{},NOINDENT{},
+     BR{},
      TT "openInOut \"$hostname:service\"", "opens an input output file
      by connecting to the specified service port at the specified host.",
-     BR{},NOINDENT{},
+     BR{},
      TT "openInOut \"$:service\"", " opens an input output file by
      listening to the specified service port on the local host, and 
      waiting for an incoming connection.",
-     BR{},NOINDENT{},
+     BR{},
      TT "openInOut \"$hostname\"", " opens an input output file
      by connecting to the Macaulay2 service port (2500) at the specified host.",
-     BR{},NOINDENT{},
+     BR{},
      TT "openInOut \"$\"", " opens an input output file by listening to the
      Macaulay2 service port (2500) on the local host, and waiting for an
      incoming connection.",
-     BR{},NOINDENT{},
+     BR{},
      TT "openInOut f", " opens an input output file by accepting a
      connection to the listener ", TT "f", ", previously created with
      ", TO "openListener", ".",
@@ -569,15 +569,12 @@ document {
      Headline => "assignment",
      TT "x = e", " assigns the value ", TT "e", " to the variable ", TT "x", ".",
      PARA{},
-     NOINDENT{},
      TT "x#i = e", " assigns the value ", TT "e", " to the ", TT "i", "-th member of the array ", TT "x", ".  Here
      ", TT "i", " must be a nonnegative integer.",
      PARA{},
-     NOINDENT{},
      TT "x#k = e", " assigns the value ", TT "e", " to the key ", TT "k", " in the hash table
      ", TT "x", ".  Here ", TT "k", " can be any expression.",
      PARA{},
-     NOINDENT{},
      TT "(a,b,c) = x", " assigns the members of the sequence ", TT "x", " as
      values of the variables ", TT "a", ", ", TT "b", ", ", TT "c", ".  If ", TT "x", "
      has too few elements, then the trailing symbols on the left
@@ -594,15 +591,14 @@ document {
      Key => ":=",
      Headline => "assignment of method or new local variable",
      TT "x := e", " assign the value e to the new local variable x",
-     BR{},NOINDENT{},
+     BR{},
      TT "f X := (x) -> ( ... )", " installs a method for the method function
      ", TT "f", " acting on an argument of class ", TT "X", ".",
-     BR{},NOINDENT{},
+     BR{},
      TT "X * Y := (x,y) -> ( ... )", " installs a method for the operator
      ", TT "*", " applied to arguments of classes ", TT "X", " and ", TT "Y", ".
      Many other operators are allowed: see ", TO "operators", ".",
      PARA{},
-     NOINDENT{},
      TT "(a,b,c) := x", " assigns the members of the sequence ", TT "x", " as
      values of the local variables ", TT "a", ", ", TT "b", ", ", TT "c", ".  If ", TT "x", "
      has too few elements, then the trailing symbols on the left
@@ -658,13 +654,13 @@ document {
      Headline => "wait for child process", 
      TT "wait i", " waits for the completion of child process with process id
      ", TT "i", ".",
-     BR{},NOINDENT{},
+     BR{},
      TT "wait f", " waits for the input file to have some input ready.",
-     BR{},NOINDENT{},
+     BR{},
      TT "wait s", " waits for at least one of the files in the list 
      ", TT "s", " of input files to be ready, and return the list of positions
      corresponding to ready files.",
-     BR{},NOINDENT{},
+     BR{},
      TT "wait v", " checks whether the processes whose id's are in the list
      ", TT "v", " of integers have terminated, and returns a list containing the 
      status codes for those processes that have terminated.  A value of -1 in the 
@@ -1051,9 +1047,9 @@ document {
 document {
      Key => (symbol _, ZZ, Ring),
      TT "1_R", " provides the unit element of the ring ", TT "R", ".",
-     BR{}, NOINDENT{},
+     BR{},
      TT "0_R", " provides the zero element of the ring ", TT "R", ".",
-     BR{}, NOINDENT{},
+     BR{},
      TT "n_R", " promotes the integer ", TT "n", " to the ring ", TT "R", ".",
      }
 

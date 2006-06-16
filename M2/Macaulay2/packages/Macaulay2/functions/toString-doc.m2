@@ -43,7 +43,6 @@ undocumented {
     (toString, RingElement),
     (toString, RingMap),
     (toString, EngineRing),
-    (toString, MonomialIdeal),
     (toString, IndexedVariable),
     (toString, Product),
     (toString, Module),

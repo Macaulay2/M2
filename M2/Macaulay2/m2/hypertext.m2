@@ -102,33 +102,58 @@ mathML Symbol := x -> concatenate("<mi>",if specials#?x then specials#x else toS
 
 texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
 
-wrapAndStack := x -> (
-     x = toList x;
-     x = net \ x;					    -- convert each to net
-     x = apply(x,p -> wrap net p);
-     stack x)
+-- spacing between lines and paragraphs:
+-- observation of browsers reveals:
+    -- nonempty PARA items get at least one blank line above and below
+    -- empty PARA items produce just one blank line
+    -- multiple consecutive empty PARA items have the same effect as one
+    -- empty BR items produce one line break, forcing the current line to terminate, and a second one does it again
+    -- empty DIV items produce one line break, forcing the current line to terminate, but a second one has no new effect
+    -- DIV items are single spaced on separate lines
+    -- nested DIV items don't space more widely
+    -- multiple empty BR items produce multiple line breaks
+    -- PARA "a", BR {}, PARA "c"        leads to "\na\n\n\n\nc\n"
+    -- PARA "a", "b", BR {}, PARA "c"   leads to "\na\n\nb\n\nc\n"
+    -- but: DIV elements can contain DIV elements and PARA elements
+    -- and: DIV{DIV PARA "a", DIV PARA "b", DIV PARA "c" } should format just like DIV{ PARA "a", PARA "b", PARA "c" }
+    -- that means the conversion to nets cannot be a totally recursive algorithm
 
-vert := (op,post) -> x -> wrapAndStack post select( -- wrapping gets done by the "net" on this line
-     sublists(
-	  toList x,
-	  i -> instance(i,MarkUpListParagraph),
-	  op,
-	  i -> horizontalJoin(op \ i)),
-     n -> width n > 0)
+    -- that leads to this algorithm:
+    --  introduce new symbols: BK SP
+    --  expand PARA{x} to SP x SP
+    --  expand BR{}    to "" BK
+    --  expand DIV{x}  to BK x BK
+    --  do the expansions above recursively, do the collapses below at top level
+    --  collapse each sequence of consecutive SPs and BKs to BK "" BK if there is at least one SP in there, else to BK
+    --  collect things between BKs and wrap them into nets, with empty sequences, if we didn't collapse each BK...BK, becoming empty nets of height 0 and depth 0
+    --  discard each BK
+    --  stack all the nets
 
-net BODY := net DIV := (vert(net,x -> between("",x))) @@ noopts -- doublespacing
-info BODY := info DIV := (vert(info,x -> between("",x))) @@ noopts -- doublespacing
+    -- We modify that slightly, by removing all the initial and final BKs and SPs at top level
 
-net LI := net DIV1 := (vert(net,identity)) @@ noopts				    -- singlespacing
-info LI := info DIV1 := (vert(info,identity)) @@ noopts				    -- singlespacing
+net' = method()						    -- this will return either a net (or string), or a sequence of nets and BKs, for later splicing
+net' Option := o -> ()
+net' String := identity
+net' BR := br -> ("", BK)
+net' MarkUpList := net
+net' MarkUpListParagraph := x -> (SP, net x, SP)
+net' UL := x -> (BK, net x, BK)
+net' MarkUpListContainer := x -> (BK, apply(toSequence x, net'), BK)
 
+net MarkUpListContainer := x -> (
+     x = deepSplice net' x;
+     n := 0;
+     while x#?n and (x#n === SP or x#n === BK) do n = n+1;
+     x = drop(x,n);
+     m := -1;
+     while x#?m and (x#m === SP or x#m === BK) do m = m-1;
+     x = drop(x,m+1);
+     x = splice sublists(x, i -> i === BK or i === SP, SPBKs -> if member(SP,SPBKs) then (BK,"",BK) else BK);
+     x = splice sublists(x, i -> i =!= BK, wrap @@ horizontalJoin, BK -> ());
+     stack x)     
+     
 tex  BR := x -> ///
 \hfil\break
-///
-
-html NOINDENT := x -> ""
-tex  NOINDENT := x -> ///
-\noindent\ignorespaces
 ///
 
 tex  HR := x -> ///
@@ -174,18 +199,13 @@ texMath TABLE := x -> concatenate (
      )
 
 info TABLE := x -> boxTable applyTable(toList \ noopts \\ toList x,info)
-net  TABLE := x -> boxTable applyTable(toList \ noopts \\ toList x,net)
--- html TABLE := x -> concatenate(
---      newline,
---      "<table>", newline,
---      apply(x, row -> ( 
--- 	       "  <tr>", newline,
--- 	       apply(row, item -> (
--- 			 "    <td>", html item, newline,
--- 			 "    </td>",newline
--- 			 )),
--- 	       "  </tr>", newline)),
---      "</table>", newline )
+
+
+ex := "class" => "examples"
+net TABLE :=  x -> (
+     x = toList x;
+     (if member(ex, x) then boxTable else netTable') (toList \ noopts \\ x)
+     )
 
 shorten := s -> (
      while #s > 0 and s#-1 == "" do s = drop(s,-1);
@@ -306,7 +326,11 @@ info TO  := x -> concatenate(format DocumentTag.FormattedKey x#0, if x#?1 then x
 info TO2 := x -> concatenate(x#1, "  (*note ", x#1, ":", infoTagConvert x#0, ".)")
 info TOH := x -> concatenate(DocumentTag.FormattedKey x#0, if x#?1 then x#1, commentize headline x#0,, "  (*note ", infoTagConvert x#0, "::)" )
 
-info IMG := net IMG := tex IMG  := x -> ""
+info IMG := net IMG := tex IMG  := x -> (
+     (o,cn) := override(IMG.Options,toSequence x);
+     if o#"alt" === null then error ("IMG item is missing alt attribute");
+     o#"alt")
+
 info HREF := net HREF := x -> net last x
 
 scan( (net,html,tex), op -> op TOH := x -> op SPAN{ new TO from toList x, commentize headline x#0 } )
@@ -391,13 +415,14 @@ tex HEADER6 := x -> concatenate (
 redoMENU := r -> DIV prepend(
      HEADER3 "Menu",
      nonnull sublists(toList r, 
-	  x -> not ( class x === TO ),
-	  x -> HEADER4 {x},
+	  x -> class x === TO,
 	  v -> if #v != 0 then UL apply(v, i -> (
 		    t := optTO i#0;
 		    if t === null then error("undocumented menu item ",toString i#0);
-		    last t
-		    ))))
+		    last t)),
+	  x -> HEADER4 {x}
+	  )
+     )
 net MENU := x -> net redoMENU x
 html MENU := x -> html redoMENU x
 
@@ -405,8 +430,7 @@ info MENU := r -> (
      pre := "* ";
      printWidth = printWidth - #pre;
      ret := sublists(toList r, 
-	  x -> not ( class x === TO ),
-	  x -> stack("",info PARA x),
+	  x -> class x === TO,
 	  v -> stack apply(v, i -> pre | (
 		    t := DocumentTag.FormattedKey i#0 | "::";
 		    h := headline i#0;
@@ -417,7 +441,9 @@ info MENU := r -> (
 		    	 t = t | info PARA h;
 		    	 printWidth = printWidth + wt;
 			 );
-		    t)));
+		    t)),
+	  x -> stack("",info PARA x)
+	  );
      printWidth = printWidth + #pre;
      stack join({"* Menu:",""}, ret))
 

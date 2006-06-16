@@ -129,7 +129,7 @@ localSymbols Type := X -> select2(X,localSymbols ())
 vbar := (ht,dp) -> " "^(ht-1)				    -- sigh
 upWidth := (wid,n) -> n | horizontalJoin(wid - width n : " "^(height n - 1))
 joinRow := x -> horizontalJoin mingle(x,#x-1:vbar(max\\height\x,max\\depth\x))
-netTable := x -> (
+netTable = x -> (
      if not isTable x then error "expected a table";
      if #x == 0 or #x#0 == 0 then return stack();
      colwids := max \ transpose applyTable(x,width);

@@ -8,7 +8,6 @@ undocumented {
 	(texMath, Divide),
 	(texMath, FunctionApplication),
 	(texMath, Thing),
-	(texMath, HashTable),
 	(texMath, Power),
 	(texMath, ZeroExpression),
 	(texMath, SparseMonomialVectorExpression),

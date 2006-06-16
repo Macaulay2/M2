@@ -5,6 +5,7 @@ value RingElement := identity
 raw RingElement := f -> f.RawRingElement
 RingElement == RawRingElement := (x,y) -> raw x === y
 RawRingElement == RingElement := (x,y) -> x === raw y
+ring RingElement := r -> class r
 
 EngineRing = new Type of Ring
 EngineRing.synonym = "engine ring"
