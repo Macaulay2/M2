@@ -23,11 +23,13 @@ document {
 	  Nothing => {"the normal form of ", TT "f", " w.r.t. a Groebner basis
 	  of the ideal I"}
 	  },
-     "The result has the same type as f.  If I is a matrix, ",
+     "The result has the same type as ", TT "f", ".  If ", TT "f", " is a matrix, then the matrix of the
+     normal forms of each column is returned.",
      PARA{},
-     "To reduce f with respect to I, a Groebner basis of I is computed, unless
-     it has already been done. Then the element is reduced to normal form using the division
-     algorithm.",
+     "To reduce ", TT "f", " with respect to ", TT "I", 
+     ", a Groebner basis of ", TT "I", " is computed, unless
+     it has already been done. Then the element is reduced 
+     to normal form using the division algorithm.",
      EXAMPLE lines ///
 	  R = ZZ/1277[x,y];
     	  I = ideal(x^3 - 2*x*y, x^2*y - 2*y^2 + x);
@@ -44,7 +46,7 @@ document {
 	  (gens J) % I
      ///,
      "Here is an example involving rational functions",
-     EXAMPLE ///
+     EXAMPLE lines ///
      	  kk = toField(frac(ZZ[a,b]))
 	  B = kk[x,y,z]
 	  I = ideal(a*x^2-b*x-y-1, 1/b*y^2-z-1)
