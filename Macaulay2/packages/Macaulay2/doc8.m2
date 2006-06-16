@@ -716,17 +716,52 @@ document {
      "If ", TT "f", " is null, then it's taken to be the identity.  If ", TT "g", " is null, it's
      taken to be zero."
      }
-document {
+
+document { 
      Key => (symbol //, Matrix, Matrix),
      Headline => "factor a map through another",
-     TT "f//g", " -- yields a matrix ", TT "h", " from matrices ", TT "f", " and ", TT "g", " 
-     such that ", TT "f - g*h", " is the reduction of ", TT "f", " modulo a Groebner basis 
+     Usage => "f//g",
+     Inputs => {
+	  "f" => "between free modules F --> H",
+	  "g" => "between free module G -->H"
+	  },
+     Outputs => {
+	  Matrix => "a matrix h : F --> G"
+	  },
+     "The resulting matrix h is such that ", TT "f - g*h", " is the reduction of ", TT "f", " modulo a Groebner basis 
      for the image of ", TT "g", ".",
      PARA{},
      "If the remainder ", TT "f - g*h", " is zero, then the quotient ", TT "f//g", "
      satisfies the equation ", TT "f = g * (f//g)", ".",
-     SeeAlso => {(symbol %, Matrix, Matrix)}
-     } 
+     PARA{},
+     "One common use is the following.  If an ideal contains 1, then write 1 in terms
+     of the generators of the ideal.",
+     EXAMPLE lines ///
+     	  A = ZZ/101[x,y,z]
+	  F = x^4 - y*z*(1-x)^2 - z - y^3
+	  I = ideal(F,diff(x,F),diff(y,F),diff(z,F))
+	  1 % I
+     ///,
+     "So we see that 1 is in the ideal.",
+     EXAMPLE lines ///
+	  g = gens I
+	  f = matrix{{1_A}}
+	  h = f // g
+	  g * (f//g)
+     ///,
+     "We may also find h directly.",
+     EXAMPLE "1 // (gens I)",
+     PARA{},
+     "One may also use this to compute the inverse of an invertible map",
+     EXAMPLE lines ///
+     	  M = matrix{{1,x,y},{x,0,y},{1,2,3}}
+	  M = substitute(M, frac A)
+	  det M
+	  Minv = id_(target M) // M
+	  M * Minv
+     ///,
+     SeeAlso => {(symbol %, Matrix, Matrix), generators, diff, substitute}
+     }
 
 TEST "
 R = ZZ/101[a..d]
