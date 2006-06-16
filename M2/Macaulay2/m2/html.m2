@@ -819,8 +819,10 @@ installPackage Package := opts -> pkg -> (
 					));
 			      ))));
 
-     	  if not opts.IgnoreDocumentationErrors
-	  then if hadDocumentationWarning then error(toString numDocumentationWarnings, " warning(s) occurred in documentation for package ", toString pkg);
+	  if hadDocumentationWarning then
+	  stderr << "--warning: " << numDocumentationWarnings << " warning" 
+	  << (if numDocumentationWarnings > 1 then "(s)" else "")
+     	  << " occurred in documentation for package " << pkg << endl;
 
 	  -- helper routine
 	  getPDoc := fkey -> (
