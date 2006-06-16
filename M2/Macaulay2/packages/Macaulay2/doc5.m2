@@ -471,7 +471,7 @@ document {
 
 document {
      Key => (symbol ^**, Tally, ZZ),
-     Headline => "Cartesian power",
+     Headline => "Cartesian power of sets and tallies",
      Usage => "B = A^**n",
      Inputs => { "A", "n" },
      Outputs => {"B" => { "the tally of ", TT "n", "-tuples of elements from ", TT "A" }},

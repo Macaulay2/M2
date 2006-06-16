@@ -97,7 +97,7 @@ document {
 
 document {
      Key => symbol "<==>",
-     Headline => "a binary operator, available to the user as equivalence in logical expressions"
+     Headline => "a binary operator"
      }
 
 document {
@@ -107,17 +107,17 @@ document {
 
 document {
      Key => symbol "==>",
-     Headline => "a binary operator, available to the user as implication in logical expressions"
+     Headline => "a binary operator"
      }
 
 document {
      Key => symbol "|-",
-     Headline => "a binary operator, available to the user in logical expressions"
+     Headline => "a binary operator"
      }
 
 document {
      Key => symbol "===>",
-     Headline => "a binary operator, available to the user"
+     Headline => "a binary operator"
      }
 
 document {
