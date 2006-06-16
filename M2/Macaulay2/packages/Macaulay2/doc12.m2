@@ -331,19 +331,25 @@ document {
      Key => (symbol -, List), Headline => "negation of a vector",
      Usage => "-v",
      Inputs => { "v" => "a list interpreted as a vector" },
-     Outputs => {{"the negation of ", TT "v"}}}
+     Outputs => {{"the negation of ", TT "v"}},
+     EXAMPLE "- {1,5,6}"
+     }
 
 document {
      Key => (symbol +, List, List), Headline => "sum of two vectors",
      Usage => "v+w",
      Inputs => { "v" => "a list interpreted as a vector", "w" => "a list interpreted as a vector" },
-     Outputs => {"the sum of the two vectors"}}
+     Outputs => {"the sum of the two vectors"},
+     EXAMPLE "{1,2,3} + {1,5,6}"
+     }
 
 document {
-     Key => (symbol -, List, List), Headline => "sum of two vectors",
+     Key => (symbol -, List, List), Headline => "difference of two vectors",
      Usage => "v-w",
      Inputs => { "v" => "a list interpreted as a vector", "w" => "a list interpreted as a vector" },
-     Outputs => {"the difference of the two vectors"}}
+     Outputs => {"the difference of the two vectors"},
+     EXAMPLE "{1,2,3} - {1,5,6}"
+     }
 
 document {
      Key => (symbol _, VisibleList, List),

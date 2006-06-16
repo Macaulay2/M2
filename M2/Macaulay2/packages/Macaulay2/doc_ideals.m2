@@ -35,7 +35,7 @@ document {
 	  TO leadTerm,
 	  TO codim,
 	  TO dim,
-	  TO (symbol%,Ideal,Ideal),
+	  TO (symbol%,Matrix,Ideal),
 	  TO resolution,
 	  TO betti
 	  },
