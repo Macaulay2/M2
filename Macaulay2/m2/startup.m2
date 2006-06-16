@@ -19,11 +19,26 @@ if regex(".*/","/aa/bb") =!= {(0, 4)}
 or regex(".*/","aabb") =!= null
 then error "regex regular expression library not working"
 
-if not firstTime then debug value PackageDictionary#"Macaulay2Core"
+-- we do this bit *before* "debug Macaulay2Core", so that Macaulay2Core, which may not be there yet, ends up in the right dictionary
+if firstTime then (
+     assert = x -> (
+	  if class x =!= Boolean then error "'assert' expected true or false";
+	  if not x then error "assertion failed");
+     PackageDictionary = new Dictionary;
+     globalDictionaries = append(globalDictionaries,PackageDictionary);
+     assert( not isGlobalSymbol "Macaulay2Core" );
+     getGlobalSymbol(PackageDictionary,"Macaulay2Core");
+     )
 
+-- we need access to the functions needed by this file and enclosed on the first pass.  We remove the private dictionary below.
+-- if not firstTime then debug value PackageDictionary#"Macaulay2Core"
+if not firstTime then debug Macaulay2Core
+
+-- this next bit has to be *parsed* after the "debug" above, to prevent the symbols from being added to the User dictionary
 if firstTime then (
      -- all global definitions go here, because after loaddata is run, we'll come through here again
      -- with all these already done and global variables set to read-only
+
      filesLoaded = new MutableHashTable;
      loadedFiles = new MutableHashTable;
      notify = false;
@@ -235,7 +250,7 @@ if fileExists (bindir | "../c/scc1") then (
 	  else (
 	       srcdirfile := buildHomeDirectory|"srcdir";
 	       if fileExists srcdirfile then (
-		    srcdir := minimizeFilename (concatPath(buildHomeDirectory,first lines simpleGet srcdirfile)|"/");
+		    srcdir := minimizeFilename (concatPath(buildHomeDirectory,first lines get srcdirfile)|"/");
 		    if fileExists(srcdir | "m2/setup.m2") then srcdir
 		    )));
      ) else setPrefixFromBindir bindir
@@ -408,6 +423,7 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
      loadDepth = loadDepth + 1;
      phase = phase0;
      argno = 1;
+     if notify then stderr << "--phase " << phase << endl;
      while argno < #commandLine do (
 	  arg := commandLine#argno;
 	  if action#?arg then action#arg arg
@@ -476,6 +492,9 @@ if firstTime then normalPrompts()
 printWidth = fileWidth stdio
 
 if firstTime and not nosetup then loadSetup()
+
+-- remove the Macaulay2Core private dictionary -- it was added by "debug" above
+globalDictionaries = select(globalDictionaries, d -> d =!= Macaulay2Core#"private dictionary")
 
 processCommandLineOptions 2
 runStartFunctions()
