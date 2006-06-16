@@ -335,6 +335,8 @@ showMaps := () -> (
 
 dump := () -> (
      if not version#"dumpdata" then error "not configured for dumping data with this version of Macaulay 2";
+     -- Macaulay2Core := if isGlobalSymbol "Macaulay2Core" then value getGlobalSymbol "Macaulay2Core" else error "dump: Macaulay2Core package not made yet";
+     -- if member(Macaulay2Core#"private dictionary", globalDictionaries) then error "dump: Macaulay2Core private dictionary is open";
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
      fn := (
 	  if buildHomeDirectory =!= null then concatenate(buildHomeDirectory , "cache/", "Macaulay2-", arch, "-data") else 
@@ -474,8 +476,6 @@ if firstTime then normalPrompts()
 printWidth = fileWidth stdio
 
 if firstTime and not nosetup then loadSetup()
-
--- if not firstTime then globalDictionaries = delete(Macaulay2Core#"private dictionary", globalDictionaries)
 
 processCommandLineOptions 2
 runStartFunctions()
