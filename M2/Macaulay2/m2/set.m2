@@ -69,6 +69,11 @@ unique List := x -> (
      seen := new MutableHashTable;
      select(x, i -> if seen#?i then false else seen#i = true))
 
+-- we've been waiting to do this:
+binaryOperators = unique binaryOperators
+prefixOperators = unique prefixOperators
+postfixOperators = unique postfixOperators
+
 isSubset(Set,Set) := Boolean => (S,T) -> all(S, (k,v) -> T#?k)
 
 isSubset(VisibleList,Set) := Boolean => (S,T) -> all(S, x -> T#?x)

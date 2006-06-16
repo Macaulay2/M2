@@ -704,7 +704,7 @@ operator := set join(binaryOperators, prefixOperators, postfixOperators)
 op := s -> if operator#?s then (
      ss := toString s;
      fixup DIV {
-	  if binary#?s then DIV {
+	  if binary#?s then PARA {
 	       "This operator may be used as a binary operator in an expression like ", TT ("x"|ss|"y"), ".  The user may install ", TO "binary methods", "
 	       for handling such expressions with code such as ",
 	       if ss == " "
@@ -712,13 +712,13 @@ op := s -> if operator#?s then (
 	       else PRE ("         X "|ss|" Y := (x,y) -> ..."), 
 	       "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the class of ", TT "y", "."
 	       },
-	  if prefix#?s then DIV {
+	  if prefix#?s then PARA {
 	       "This operator may be used as a prefix unary operator in an expression like ", TT (ss|"y"), ".  The user may install a method for handling 
 	       such expressions with code such as",
 	       PRE ("           "|ss|" Y := (y) -> ..."),
 	       "where ", TT "Y", " is the class of ", TT "y", "."
 	       },
-	  if postfix#?s then DIV {
+	  if postfix#?s then PARA {
 	       "This operator may be used as a postfix unary operator in an expression like ", TT ("x "|ss), ".  The user may install a method for handling 
 	       such expressions with code such as",
 	       PRE ("         X "|ss|"   := (x,y) -> ..."),
