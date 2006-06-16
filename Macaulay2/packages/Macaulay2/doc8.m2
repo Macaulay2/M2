@@ -753,20 +753,6 @@ document {
      } 
 
 document {
-     Key => (symbol %, Matrix, Matrix),
-     Headline => "find the normal form modulo the image of a map",
-     TT "f % g", " -- yields the reduction of the columns of the matrix
-     ", TT "f", " modulo a Groebner basis of the matrix ", TT "g", "."
-     }
-
-document {
-     Key => (symbol %, Matrix, RingElement),
-     Headline => "reduce the columns modulo of a ring element",
-     TT "f % r", " -- yields the reduction of the columns of the matrix
-     ", TT "f", " modulo the ring element ", TT "r", "."
-     }
-
-document {
      Key => complement,
      Headline => "find the minimal generators for cokernel of a matrix (low level form)",
      TT "complement f", " -- for a matrix ", TT "f", ", return a map ", TT "g", " with the same

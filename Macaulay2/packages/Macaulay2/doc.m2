@@ -887,14 +887,7 @@ undocumented {
 
 document {
      Key => {symbol "%",
-	  (symbol "%", RingElement, RingElement),
-	  (symbol "%", RingElement, MonomialIdeal),
-	  (symbol "%", RingElement, Ideal),
-	  (symbol "%", RingElement, Matrix),
 	  (symbol "%", RingElement, GroebnerBasis),
-	  (symbol "%", Matrix, RingElement),
-	  (symbol "%", Matrix, MonomialIdeal),
-	  (symbol "%", Matrix, Ideal),
 	  (symbol "%", Matrix, Matrix),
 	  (symbol "%", Matrix, Module),
 	  (symbol "%", Matrix, GroebnerBasis),
@@ -902,6 +895,13 @@ document {
 	  },	  
      Headline => "a binary operator, usually used for remainder and reduction",
      Usage => "x % y",
+     EXAMPLE lines ///
+       1232132141242345 % 3457834
+       R = ZZ[a,b]
+       (3*a^3-a*b-4) % (5*a-b)
+       pseudoRemainder(3*a^3-a*b-4, 5*a-b)
+       eliminate(ideal(3*a^3-a*b-4, 5*a-b), a)
+     ///,
      SeeAlso => { remainder, remainder', pseudoRemainder, "//", "operators" }
      }
 
