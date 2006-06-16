@@ -102,6 +102,7 @@ document {
      EXAMPLE "code Thing.NoPrint"
      }
 
+
 document {
      Key => BeforePrint,
      Headline => "top level method applied before printing results",
@@ -719,12 +720,13 @@ document {
 	  "N = I*M + a*R^2",
 	  "isHomogeneous N"
 	  },
-     SeeAlso =>{ "times", "product" }
+     SeeAlso =>{ "times", "product", "operators" }
      }
 
 document {
      Key => symbol "&",
      Headline => "a binary operator",
+     SeeAlso => { "operators" }
      }
 
 document {
@@ -737,26 +739,130 @@ document {
 document {
      Key => symbol "^^",
      Headline => "a binary operator",
+     SeeAlso => { "operators" }     
      }
 
+undocumented {
+	  (symbol "+", ZZ, RingElement),
+	  (symbol "+", RR, RingElement),
+	  (symbol "+", Thing, Thing),
+	  (symbol "+", RingElement, ZZ),
+	  (symbol "+", RingElement, QQ),
+	  (symbol "+", QQ, RingElement),
+	  (symbol "+", RingElement, RR),
+	  (symbol "+", Thing)
+	  }
 document {
-     Key => symbol "+",
-     Headline => "a binary operator",
-     TT "x + y", " -- a binary operator used for addition in many situations
-     and for union of sets.",
+     Key => {symbol "+",
+	  (symbol "+", ChainComplexMap, ChainComplexMap),
+	  (symbol "+", ZZ, InfiniteNumber),
+	  (symbol "+", Sum, Holder),
+	  (symbol "+", ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
+	  (symbol "+", Holder, Holder),
+	  (symbol "+", MonomialIdeal, MonomialIdeal),
+	  (symbol "+", RingElement, GradedModuleMap),
+	  (symbol "+", Matrix, ZZ),
+	  (symbol "+", ZZ, ChainComplexMap),
+	  (symbol "+", ChainComplexMap, ZZ),
+	  (symbol "+", RingElement, RingElement),
+	  (symbol "+", InfiniteNumber, InfiniteNumber),
+	  (symbol "+", Expression, Expression),
+	  (symbol "+", Ideal, RingElement),
+	  (symbol "+", RingElement, ChainComplexMap),
+	  (symbol "+", MutableMatrix, MutableMatrix),
+	  (symbol "+", Matrix, Matrix),
+	  (symbol "+", Sum, ZeroExpression),
+	  (symbol "+", Holder, ZeroExpression),
+	  (symbol "+", Sum, Sum),
+	  (symbol "+", GradedModuleMap, GradedModuleMap),
+	  (symbol "+", InfiniteNumber, ZZ),
+	  (symbol "+", Holder, Sum),
+	  (symbol "+", GradedModuleMap, RingElement),
+	  (symbol "+", ZZ, Matrix),
+	  (symbol "+", Vector, Vector),
+	  (symbol "+", Thing, Expression),
+	  (symbol "+", Expression, Thing),
+	  (symbol "+", Matrix, RingElement),
+	  (symbol "+", RingElement, Matrix),
+	  (symbol "+", ChainComplexMap, RingElement),
+	  (symbol "+", ZeroExpression, Expression),
+	  (symbol "+", Expression, ZeroExpression),
+	  (symbol "+", Expression, Sum),
+	  (symbol "+", Sum, Expression)
+     	  },
+     Headline => "a unary or binary operator, usually used for addition",
+     Usage => "+y \n x+y",
+     "In most cases, this operator refers to standard addition.",
      PARA{},
-     SeeAlso =>{ "plus", "sum" }
+     "In many cases, the integer 1 can be used as the identity, and scalars function as multiples
+     of the identity.  
+     For example, the 1 below refers to the identity matrix
+     and the 2 to twice the identity matrix.",
+     EXAMPLE lines ///
+     	  M = matrix{{1,2,3},{2,3,4},{3,4,6}}
+	  M+1, M+2
+     ///,
+     SeeAlso =>{ "plus", "sum", "operators" }
+     }
+
+undocumented {
+     (symbol "-", ZZ, RingElement),
+     (symbol "-", RR, RingElement),
+     (symbol "-", RingElement, RR),
+     (symbol "-", RingElement, ZZ),
+     (symbol "-", QQ, RingElement),
+     (symbol "-", RingElement, QQ),
+     (symbol "-", Thing, Thing),
+     (symbol "-", Thing),
      }
 
 document {
-     Key => symbol "-",
+     Key => {symbol "-",
+	  (symbol "-", ChainComplexMap, ChainComplexMap),
+	  (symbol "-", Minus),
+	  (symbol "-", ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
+	  (symbol "-", ZZ, InfiniteNumber),
+	  (symbol "-", RingElement, GradedModuleMap),
+	  (symbol "-", GradedModuleMap),
+	  (symbol "-", Matrix, ZZ),
+	  (symbol "-", ProjectiveHilbertPolynomial),
+	  (symbol "-", RingElement),
+	  (symbol "-", RingElement, RingElement),
+	  (symbol "-", InfiniteNumber),
+	  (symbol "-", Expression, Expression),
+	  (symbol "-", InfiniteNumber, InfiniteNumber),
+	  (symbol "-", ZeroExpression),
+	  (symbol "-", RingElement, ChainComplexMap),
+	  (symbol "-", ChainComplexMap),
+	  (symbol "-", MutableMatrix, MutableMatrix),
+	  (symbol "-", Matrix, Matrix),
+	  (symbol "-", GradedModuleMap, GradedModuleMap),
+	  (symbol "-", InfiniteNumber, ZZ),
+	  (symbol "-", GradedModuleMap, RingElement),
+	  (symbol "-", ZZ, Matrix),
+	  (symbol "-", Expression),
+	  (symbol "-", MutableMatrix),
+	  (symbol "-", Expression, Thing),
+	  (symbol "-", Thing, Expression),
+	  (symbol "-", Matrix, RingElement),
+	  (symbol "-", Matrix),
+	  (symbol "-", RingElement, Matrix),
+	  (symbol "-", ChainComplexMap, RingElement),
+	  (symbol "-", Holder)
+	  },
      Headline => "a unary or binary operator, usually used for negation or subtraction",
-     TT "x - y", " -- a binary operator used for subtraction in many situations
-     and set difference.",
-     BR{},NOINDENT{},
-     TT "- y", "   -- a unary operator usually used for negation.",
+     Usage => "-y \n x-y",
+     "In most cases, this operator refers to standard negation or subtraction.",
      PARA{},
-     SeeAlso =>{ "difference", "minus" }
+     "In many cases, the integer 1 can be used as the identity, and scalars function as multiples
+     of the identity.  
+     For example, the 1 below refers to the identity matrix
+     and the 2 to twice the identity matrix.",
+     EXAMPLE lines ///
+     	  M = matrix{{1,2,3},{2,3,4},{3,4,6}}
+	  M-1, M-2
+     ///,
+     SeeAlso =>{ "difference", "minus", "operators" }
      }
 
 document {
@@ -765,13 +871,39 @@ document {
      TT "x / y", " -- a binary operator usually used for division, yielding a
      fraction, or for quotients (ring by ideal, etc.).",
      PARA{},
-     SeeAlso => { "//" }
+     SeeAlso => { "//", "operators" }
+     }
+
+undocumented {
+     (symbol "%", Thing, Thing),
+	  (symbol "%", ZZ, Ideal),
+	  (symbol "%", RingElement, ZZ),
+	  (symbol "%", ZZ, RingElement),
+	  (symbol "%", RingElement, QQ),
+	  (symbol "%", QQ, RingElement),
+	  (symbol "%", ZZ, GroebnerBasis),
+	  (symbol "%", ZZ, MonomialIdeal)
      }
 
 document {
-     Key => symbol "%",
-     Headline => "a binary operator, usually used for remainder",
-     TT "x % y", " -- a binary operator used for remainder and reduction." }
+     Key => {symbol "%",
+	  (symbol "%", RingElement, RingElement),
+	  (symbol "%", RingElement, MonomialIdeal),
+	  (symbol "%", RingElement, Ideal),
+	  (symbol "%", RingElement, Matrix),
+	  (symbol "%", RingElement, GroebnerBasis),
+	  (symbol "%", Matrix, RingElement),
+	  (symbol "%", Matrix, MonomialIdeal),
+	  (symbol "%", Matrix, Ideal),
+	  (symbol "%", Matrix, Matrix),
+	  (symbol "%", Matrix, Module),
+	  (symbol "%", Matrix, GroebnerBasis),
+	  (symbol "%", ZZ, ZZ)
+	  },	  
+     Headline => "a binary operator, usually used for remainder and reduction",
+     Usage => "x % y",
+     SeeAlso => { remainder, remainder', pseudoRemainder, "//", "operators" }
+     }
 
 document {
      Key => symbol "//",
@@ -779,12 +911,13 @@ document {
      TT "x // y", " -- a binary operator used for quotients in the same
      ring (with a possible remainder).",
      PARA{},
-     SeeAlso => { "/" }
+     SeeAlso => { "/", "%", "operators" }
      }
 
 document {
      Key => symbol "\\\\",
      Headline => "a binary operator",
+     SeeAlso => { "operators" }     
      }
 
 document {
@@ -793,7 +926,8 @@ document {
      TT "x ^ y", " -- a binary operator used for powers and raising nets.",
      NOINDENT{}, "In addition, if n is 0, then the unit element 
      ", TT "(class x)#1", " is returned.  If n is negative, then the method
-     named ", TO "InverseMethod", " will be called."
+     named ", TO "InverseMethod", " will be called.",
+     SeeAlso => { "operators" }     
      }
 
 -- document {
@@ -928,9 +1062,13 @@ document {
      }
 
 document {
-     Key => symbol "!",
+     Key => {symbol "!",
+	  (symbol "!", ZZ)},
      Headline => "factorial",
-     TT "n !", " -- computes n factorial, 1*2*3*...*n."
+     Usage => "n!",
+     Inputs => {"n"=>ZZ},
+     Outputs => { ZZ => "n factorial, 1*2*3*...*n."},
+     EXAMPLE "30!"
      }
 
 document {
@@ -943,7 +1081,8 @@ document {
 document {
      Key => symbol "|", 
      Headline => "a binary operator",
-     SeeAlso => "||" }
+     SeeAlso => {"||", "operators" }
+     }
 
 document {
      Key => (symbol |, List, List),
@@ -1326,7 +1465,7 @@ document {
      Headline => "inequality",
      TT "x != y", " -- the negation of ", TT "x == y", ".",
      PARA{},
-     SeeAlso =>{ "==" }
+     SeeAlso =>{ "==", "operators" }
      }
 
 undocumented {

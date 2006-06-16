@@ -101,18 +101,29 @@ document {
      }
 document { 
      Key => [saturate, MinimalGenerators],
-     Headline => "",
-     Usage => "",
+     Headline => "whether to compute minimal generators",
+     Usage => "saturate(...,MinimalGenerators=>b)",
      Inputs => {
+	  "b" => Boolean => "default is true"
 	  },
      Consequences => {
+	  "If b is false, then the minimalization of the saturation will not be done"
 	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     "Sometimes the extra time to find the minimal generators is too large.  This allows one
+     to bypass this part of the computation.",
+     EXAMPLE lines ///
+	  R = ZZ/101[x_0..x_4]
+     	  I = truncate(8, monomialCurveIdeal(R,{1,4,5,9}));
+	  time gens gb I;
+	  time J1 = saturate(I);
+	  time J = saturate(I, MinimalGenerators=>false);
+	  numgens J
+	  numgens J1
+	  ///,
+     Caveat => {"Most of the time, you don't want to do this!"},
+     SeeAlso => {monomialCurveIdeal, truncate}
      }
+
  -- doc4.m2:614:     Key => saturate,
  -- doc4.m2:649:     Key => [saturate,Strategy],
  -- doc4.m2:679:     Key => [saturate,DegreeLimit],
