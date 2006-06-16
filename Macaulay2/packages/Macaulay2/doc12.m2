@@ -753,23 +753,6 @@ document {
      "The return value is ", TO "null", "."
      }
 
-undocumented {}
-document {
-     Key => (symbol <<, File, Thing),
-     Headline => "print something to a file",
-     TT "f << x", " -- prints the expression x on the output file f.",
-     PARA{},
-     "Returns f as its value.  Parsing associates leftward, so that 
-     several expressions may be displayed with something like ", TT "f<<x<<y<<z", ".
-     If ", TT "f", " is a string, then a new file with name ", TT "f", " is created,
-     the expression ", TT "x", " is printed into ", TT "f", ", and the file ", TT "f", " is closed.",
-     PARA{},
-     EXAMPLE {
-	  "x = 5",
-      	  ///<< "the value of x is " << x << endl///,
-	  },
-     SeeAlso => {"<<"}
-     }     
 
 document {
      Key => hold,

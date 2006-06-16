@@ -114,8 +114,15 @@ rotate(VisibleList,ZZ) := (s,n) -> (
 	  n = n % #s;
 	  join(drop(s,n),take(s,n))))
 
- sort List :=  sort Sequence := opts -> internalsort
+sort List :=  sort Sequence := opts -> internalsort
 rsort List := rsort Sequence := opts -> internalrsort
+
+-- we've been waiting to do this:
+binaryOperators = sort binaryOperators
+prefixOperators = sort prefixOperators
+postfixOperators = sort postfixOperators
+flexibleOperators = sort flexibleOperators
+fixedOperators = sort fixedOperators
 
 -----------------------------------------------------------------------------
 -- sublists

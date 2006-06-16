@@ -687,15 +687,6 @@ document {
      }
 document {
      Key => options, Headline => "get options" }
-document {
-     Key => (symbol <<, Nothing, Thing),
-     Headline => "dummy file output",
-     "null << x", " -- does nothing and returns ", TO "null", ".",
-     PARA{},
-     "The intention here is that you can use ", TO "null", " as a dummy
-     output file, but a lot of time may be wasted converting ", TT "x", " to
-     a net."
-     }
 
 document {
      Key => symbol "#",

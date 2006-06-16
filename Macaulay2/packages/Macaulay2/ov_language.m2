@@ -632,10 +632,10 @@ document { Key => "for",
      Headline => "for loops",
      Usage => "for i from m to n when p list x do z", 
      Consequences => { 
-	  {"The variable i is initialized to m.  As long as i is less than n, evaluation of the loop continues.  First p is evaluated.  
-	       As long as the value of p is true, evaluation of the loop continues.  Next x is evaluated and its value is saved, and
-	       z is evaluated and its value is discarded.  Then i is incremented by 1, and the loop repeats.  When the value of p is false,
-	       then the loop terminates, and the list of values of x is returned as the value of the entire expression."
+	  {"The variable ", TT "i", " is initialized to ", TT "m", ".  As long as ", TT "i", " is not greater than ", TT "n", ", evaluation of the loop continues.  First ", TT "p", " is evaluated.  
+	       As long as the value of ", TT "p", " is true, evaluation of the loop continues.  Next ", TT "x", " is evaluated and its value is saved, and
+	       ", TT "z", " is evaluated and its value is discarded.  Then ", TT "i", " is incremented by 1, and the loop repeats.  When the value of ", TT "p", " is false,
+	       then the loop terminates, and the list of values of ", TT "x", " is returned as the value of the entire expression."
 	       }},
      EXAMPLE lines ///
      	  for i from 1 to 5 when i < 15 list i^2 do print i
@@ -685,7 +685,7 @@ document { Key => "for",
 	  },
      PARA{
      	  "The variable ", TT "i", " is a new local variable whose scope includes only the expressions ", TT "p", ", ", TT "x", ",
-	  and ", TT "y", ".  The numbers ", TT "a", " and ", TT "b", " must be small integers that fit into a single word."
+	  and ", TT "y", ".  The numbers ", TT "m", " and ", TT "n", " must be small integers that fit into a single word."
 	  }
      }
 
@@ -812,7 +812,7 @@ document {
 document {
      Key => "operators",
      PARA {
-	  "Here we present all of the unary and binary operators in the language.
+	  "Here we present all of the unary and binary operators in the language.  They are members of the class ", TO "Keyword", ".
 	  The binary operators are ",
 	  between_" " apply(sort toList value Macaulay2Core#"private dictionary"#"binaryOperators", s -> TO {s}),
 	  " , the unary prefix operators are ",

@@ -135,7 +135,6 @@ if firstTime then (
      Manipulator Nothing := (m,null) -> null;
      File << Manipulator := File => (o,m) -> m#0 o;
      NetFile << Manipulator := File => (o,m) -> m#0 o;
-     List << Manipulator := File => (o,m) -> (scan(o, o -> m#0 o); o);
      Nothing << Manipulator := (null,m) -> null;
 
      close = new Manipulator from close;

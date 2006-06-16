@@ -534,7 +534,7 @@ fixupTable := new HashTable from {
 	  if not instance(val,String) then error("expected Usage option to be a string");
 	  TABLE TR {
 	       TD { "valign" => "top" , "Usage:" },
-	       TD between_(BR{}) (TT \ trimline \ nonempty separate val)
+	       TD between_(BR{}) (TT \ nonempty separate val)
 	       } ),
      Function => val -> fixup val,
      Inputs => val -> fixupList val,
@@ -600,6 +600,9 @@ undocumented List  := x -> scan(x, undocumented)
 undocumented Thing := key -> if key =!= null then (
      tag := makeDocumentTag(key, Package => currentPackage);
      storeRawDocumentation(tag, new HashTable from { symbol DocumentTag => tag, "undocumented" => true}))
+
+undocumented keys undocumentedkeys
+undocumentedkeys = null
 
 -----------------------------------------------------------------------------
 -- getting help from the documentation
@@ -675,7 +678,8 @@ justClass := X -> fixup SPAN {"an instance of class ", TO X}
 
 ofClass = X -> fixup (
      if parent X === Nothing then error "expected a class";
-     if X.?synonym then SPAN {indefiniteArticle X.synonym, TO2 {X, X.synonym}}
+     if X === Nothing then TO "null"
+     else if X.?synonym then SPAN {indefiniteArticle X.synonym, TO2 {X, X.synonym}}
      else SPAN {"an object of class ", TO X}
      )
 
@@ -696,13 +700,14 @@ topheader := s -> (
      h := headline s;
      HEADER1 { formatDocumentTag s, if h =!= null then " -- ", h })
 
-binary := set binaryOperators
-prefix := set prefixOperators
-postfix := set postfixOperators
-operator := set join(binaryOperators, prefixOperators, postfixOperators)
+binary := set flexibleBinaryOperators
+prefix := set flexiblePrefixOperators
+postfix := set flexiblePostfixOperators
+operator := binary+prefix+postfix
 
 op := s -> if operator#?s then (
      ss := toString s;
+     if match("^[[:alpha:]]*$",ss) then ss = " "|ss|" ";
      fixup DIV {
 	  if binary#?s then PARA {
 	       "This operator may be used as a binary operator in an expression like ", TT ("x"|ss|"y"), ".  The user may install ", TO "binary methods", "

@@ -73,6 +73,8 @@ unique List := x -> (
 binaryOperators = unique binaryOperators
 prefixOperators = unique prefixOperators
 postfixOperators = unique postfixOperators
+flexibleOperators = unique flexibleOperators
+fixedOperators = unique fixedOperators
 
 isSubset(Set,Set) := Boolean => (S,T) -> all(S, (k,v) -> T#?k)
 
