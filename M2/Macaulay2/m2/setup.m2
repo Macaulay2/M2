@@ -12,10 +12,6 @@ centerString = (wid,s) -> (
      	  w := (wid-n+1)//2;
      	  horizontalJoin(spaces w,s,spaces(wid-w-n))))
 
-assert = x -> (
-     if class x =!= Boolean then error "'assert' expected true or false";
-     if not x then error "assertion failed")
-
 if class oooo =!= Symbol then error "setup.m2 already loaded"
 
 if class RawMutableMatrix =!= Type then error "where is RawMutableMatrix?"
@@ -24,11 +20,6 @@ OutputDictionary = new Dictionary
 globalDictionaries = append(globalDictionaries,OutputDictionary)
 
 --
-
-PackageDictionary = new Dictionary
-globalDictionaries = append(globalDictionaries,PackageDictionary)
-assert( not isGlobalSymbol "Macaulay2Core" )
-getGlobalSymbol(PackageDictionary,"Macaulay2Core")
 
 -- references to the symbol 'User' occur before the corresponding package has been created...
 getGlobalSymbol(PackageDictionary,"User")
@@ -238,9 +229,6 @@ load = (filename) -> (tryload(filename,simpleLoad,notify);)
 input = (filename) -> (tryload(filename,simpleInput,false);)
 needs = s -> if not filesLoaded#?s then load s
      
--- get = (filename) -> pathdo(simpleGet, prepend("",path), filename, fullfilename -> null )     
-get = (filename) -> simpleGet filename
-
 load "loads.m2"
 
 protect Macaulay2Core.Dictionary

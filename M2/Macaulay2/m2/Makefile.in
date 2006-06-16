@@ -17,7 +17,8 @@ DUMPEDM2DOCFILES := \
 		@srcdir@/../packages/Macaulay2/functions/*.m2 \
 		@srcdir@/../packages/Macaulay2/variables/*.m2 \
 		../packages/Macaulay2.m2
-NONDOCM2FILES := sagbi.m2 startup.m2 setup.m2
+NONDOCM2FILES := startup.m2 setup.m2
+OTHERM2FILES := sagbi.m2
 ############################## statuscodes.m2
 MADEM2FILES += statuscodes.m2
 initialize :: statuscodes.m2
@@ -64,6 +65,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: \
 		$(NONDOCM2FILES) \
 		installedpackages \
+		$(OTHERM2FILES) \
 		$(shell find @srcdir@/../packages -name "*.m2" -o -name examples -prune | grep -v Macaulay2/examples | sort) \
 		../e/statuscodes \
 		../emacs/makehlp.m2 \
