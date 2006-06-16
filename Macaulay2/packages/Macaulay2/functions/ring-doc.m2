@@ -3,9 +3,9 @@
 --- notes: 
 
 document { 
-     Key => {ring, (ring,Vector), (ring,SheafOfRings), 
+     Key => {ring, (ring,Vector), (ring,SheafOfRings), (ring,RingElement),
 	  (ring,Variety), (ring,ChainComplexMap),
-	  (ring,Thing),(ring,Matrix),
+	  (ring,Module),(ring,ChainComplex),(ring,Matrix),
 	  (ring,MutableMatrix),(ring,Ideal), 
 	  (ring,CoherentSheaf),(ring,MonomialIdeal)},
      Headline => "Get the associated ring of an object",
@@ -15,7 +15,7 @@ document {
 	  Ring => "associated to the input object"
 	  },
      -- Consequences => {},
-     "For example, matrices, ideals, modules, chain complexes,
+     "For example, ring elements, matrices, ideals, modules, chain complexes,
      varieties, coherent sheaves, etc., all have a base ring naturally associated
      to them.  ",
      EXAMPLE {
@@ -31,12 +31,6 @@ document {
     -- Caveat => {},
      SeeAlso => {baseRings, coefficientRing}
      }
-
-document{Key=> (ring,Type), Headline => "associated ring of a user defined type",
-     {"If a user defined type has a ring as its data, the function ", 
-     TT "ring", " can be used to extract the ring. The command", TT "ring T", " will return ", TT "T.ring", 
-     " if there is an associated ring and ", TT "no ring", " otherwise."}}
-
 
  -- doc.m2:241:     Key => toString symbol commandLine,
  -- doc.m2:248:     Key => toString symbol environment,

@@ -75,7 +75,11 @@ htmlFilename FinalDocumentTag := tag -> (
      pkgtitle := FinalDocumentTag.Title tag;
      LAYOUT#"packagehtml" pkgtitle | if fkey === pkgtitle then topFileName else toFilename fkey|".html" )
 
-html IMG  := x -> concatenate("<img src=\"", rel x#0, "\" alt=\"", x#1, "\"/>")
+html IMG  := x -> (
+     (o,cn) := override(IMG.Options,toSequence x);
+     if o#"alt" === null then error ("IMG item is missing alt attribute");
+     concatenate("<img src=", format rel o#"src", " alt=", format o#"alt", "/>"))
+
 html LINK := x -> concatenate("<link href=\"", rel first x, "\"", concatenate drop(x,1), "/>",newline)
 html HREF := x -> concatenate("<a href=\"", rel first x, "\">", html last x, "</a>")
 tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral rel first x, "\">}", tex last x, "\\special{html:</a>}")

@@ -141,7 +141,7 @@ reach2 TO "Appendix"
  -- --///,
  --      apply(
  -- 	  sort join(keys docDatabase, {"Appendix"}), 
- -- 	  node -> (NOINDENT{}, TO node, PARA{})),
+ -- 	  node -> ( TO node, PARA{})),
  -- --     TEX ///
  -- --\endtwocolumn
  -- --///,
@@ -202,7 +202,6 @@ booktex UL := x -> concatenate(
 
 booktex HREF := s -> concatenate( "\\href{", tex s#0, "}{", booktex s#-1, "}" )
 booktex TEX := identity
-booktex NOINDENT := (x) -> ///\noindent\ignorespaces
 ///
 
 booktex HR := (x) -> ///\par

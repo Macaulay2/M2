@@ -429,8 +429,7 @@ document {
 		    "P = polarCone(transpose(A | -b), transpose(B | -c))",
 		    "vertices = submatrix(P#0, {0..3},)"
 		    },
-	       NOINDENT{},
-	       "By homogenizing, computing the polar cone and 
+	  	       "By homogenizing, computing the polar cone and 
 	       dehomogenizing, we find the five vertices of this 
 	       cone."
 	       }

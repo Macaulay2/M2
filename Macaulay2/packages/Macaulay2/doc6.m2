@@ -264,7 +264,7 @@ document {
      Headline => "list the exponents in a polynomial",
      TT "exponents m", " -- for a monomial ", TT "m", " provides the list
      of exponents.",
-     BR{}, NOINDENT{},
+     BR{},
      TT "exponents f", " -- for a polynomial ", TT "f", " provides a list
      whose elements are the lists of exponents of the terms of ", TT "f", ".",
      PARA{},
@@ -537,11 +537,9 @@ document {
      TT "monoid [a,b,c,Degrees=>{2,3,4}]", " -- makes a free ordered commutative monoid on the
 	     variables listed, with degrees 2, 3, and 4, respectively.",
      PARA{},
-     NOINDENT{},
      TT "monoid [a,b,c,Degrees=>{{1,2},{3,-3},{0,4}}]", " -- makes a free ordered
      commutative monoid on the variables listed, with multi-degrees as listed.",
      PARA{},
-     NOINDENT{},
      TT "monoid [a,b,c,Degrees=>{{},{},{}}]", " -- makes a free ordered commutative monoid on the
 	     variables listed, ungraded.",
      PARA{},
@@ -703,7 +701,7 @@ document {
      Headline => "list the components of a direct sum",
      TT "components x", " -- produces a list of the components of an element of a 
      free module.",
-     BR{},NOINDENT{},
+     BR{},
      TT "components M", " -- the list of components for a module ", TT "M", " which was
      formed as a direct sum, or ", TT "{M}", " if ", TT "M", " was not formed as a 
      direct sum.  Works also for homomorphism, chain complexes, and graded modules.",
@@ -753,7 +751,7 @@ document {
      Key => super,
      Headline => "get the ambient module",
      TT "super M", " -- yields the module which the module ", TT "M", " is a submodule of.",
-     BR{}, NOINDENT{},
+     BR{},
      TT "super f", " -- if ", TT "f", " is a map whose target is a submodule 
      of ", TT "M", ", yields the composite of ", TT "f", " with the inclusion into ", TT "M", ".",
      PARA{},

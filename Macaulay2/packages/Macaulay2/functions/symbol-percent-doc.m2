@@ -51,7 +51,7 @@ document {
 	  gens gb I
 	  x^2*y^2 % I
      ///,
-     SeeAlso => {(symbol "/", RingElement, Matrix), "Groebner bases", generators, toField},
+     SeeAlso => {"Groebner bases", generators, toField},
      }
 
 document {

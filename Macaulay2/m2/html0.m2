@@ -7,8 +7,11 @@
 MarkUpList = new Type of BasicList
 MarkUpList.synonym = "mark-up list"
 
-MarkUpListParagraph = new Type of MarkUpList
+MarkUpListParagraph = new Type of MarkUpList		    -- one of these will be a paragraph
 MarkUpListParagraph.synonym = "mark-up list paragraph"
+
+MarkUpListContainer = new Type of MarkUpListParagraph	    -- one of these may contain paragraphs or containers, and its method for printing has to handle the line breaks
+MarkUpListContainer.synonym = "mark-up list container"
 
      MarkUpType = new Type of Type
 MarkUpType.synonym = "mark-up type"
@@ -91,15 +94,12 @@ trimfront := x -> apply(x, line -> (
 
 new MarkUpType := x -> error "obsolete 'new' method called"
 
-BR         = new MarkUpType of MarkUpListParagraph
+BR         = new MarkUpType of MarkUpList		    -- MarkUpListParagraph?  no, because paragraphs are separated more by browsers
 br         = BR{}
-
-NOINDENT   = new IntermediateMarkUpType of MarkUpList
 
 HR         = new MarkUpType of MarkUpListParagraph
 hr         = HR{}
 
-new NOINDENT from List := 
 new HR from List := 
 new BR from List := (X,x) -> if #x>0 then error "expected empty list" else x
 
@@ -113,7 +113,7 @@ EXAMPLE String := x -> EXAMPLE {x}
 PRE        = new MarkUpType of MarkUpListParagraph
 TITLE      = new MarkUpType of MarkUpListParagraph
 HEAD       = new MarkUpType of MarkUpListParagraph
-BODY       = new MarkUpType of MarkUpListParagraph
+BODY       = new MarkUpType of MarkUpListContainer
 IMG	   = withOptions_{"src","alt"} new MarkUpTypeWithOptions of MarkUpList
 HTML       = new MarkUpType of MarkUpList
 HEADER1    = withQname_"h1" new MarkUpType of MarkUpListParagraph
@@ -123,9 +123,8 @@ HEADER4    = withQname_"h4" new MarkUpType of MarkUpListParagraph
 HEADER5    = withQname_"h5" new MarkUpType of MarkUpListParagraph
 HEADER6    = withQname_"h6" new MarkUpType of MarkUpListParagraph
 SUBSECTION = HEADER2
-LISTING    = new MarkUpType of MarkUpListParagraph
 LITERAL    = new IntermediateMarkUpType of MarkUpList
-BLOCKQUOTE = new MarkUpType of MarkUpList
+BLOCKQUOTE = new MarkUpType of MarkUpListContainer
 STRONG     = new MarkUpType of MarkUpList
 SMALL      = new MarkUpType of MarkUpList
 SUB        = new MarkUpType of MarkUpList
@@ -134,7 +133,7 @@ ITALIC     = withQname_"i" new MarkUpType of MarkUpList
 TEX	   = withQname_"#PCDATA" new MarkUpType of MarkUpList -- TEX really needs to be processed further so its output can be checked, too!
 SPAN       = new MarkUpType of MarkUpList
 TT         = new MarkUpType of MarkUpList
-LI         = new MarkUpType of MarkUpList
+LI         = new MarkUpType of MarkUpListContainer
 EM         = new MarkUpType of MarkUpList
 BOLD       = withQname_"b" new MarkUpType of MarkUpList
 CODE       = new MarkUpType of MarkUpList
@@ -159,14 +158,14 @@ new UL from VisibleList := (UL,x) -> (
 	       else if class e === LI then e
 	       else LI e)))
 
-DIV        = withOptions_{"class"} new MarkUpTypeWithOptions of MarkUpListParagraph
-DIV1       = withOptions_{"class"=>"single"} withQname_"div" new MarkUpTypeWithOptions of MarkUpListParagraph
+DIV        = withOptions_{"class"} new MarkUpTypeWithOptions of MarkUpListContainer
+DIV1       = withOptions_{"class"=>"single"} withQname_"div" new MarkUpTypeWithOptions of MarkUpListContainer -- phase this one out!
 
 LABEL      = withOptions_{"title"} new MarkUpTypeWithOptions of MarkUpList
 
 TABLE      = withOptions_{"class"} new MarkUpTypeWithOptions of MarkUpListParagraph
 TR         = new MarkUpType of MarkUpList
-TD         = withOptions_{"valign"} new MarkUpTypeWithOptions of MarkUpList
+TD         = withOptions_{"valign"} new MarkUpTypeWithOptions of MarkUpListContainer
 ButtonTABLE  = new MarkUpType of MarkUpListParagraph
 
 TO2        = withQname_"a" new IntermediateMarkUpType of MarkUpList

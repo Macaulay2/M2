@@ -429,7 +429,7 @@ document {
 	  TO (min,ChainComplex),
 	  TO (max,ChainComplex),
 	  TO (betti,ChainComplex),
-	  TO (ring,ChainComplex)
+	  TT "ring ChainComplex"
 	  },
      "Operations on chain complexes",
      UL {

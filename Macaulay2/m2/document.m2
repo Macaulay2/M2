@@ -59,10 +59,28 @@ isDocumentableMethod ScriptedFunctor := fn -> ReverseDictionary#?fn
 -- verifying the tags
 -----------------------------------------------------------------------------
 -- here we check that the method a putative document tag documents is actually installed
-verifyKey := method(SingleArgumentDispatch => true)
+verifyKey = method(SingleArgumentDispatch => true)
 verifyKey Thing    := s -> null
+
 verifyKey Sequence := s -> (				    -- e.g., (res,Module) or (symbol **, Module, Module)
-     if not instance(lookup s, Function) then error("documentation key for '", formatDocumentTag s, "' encountered, but no method installed"))
+     if not (
+	  if #s > 2 then (
+	       t := youngest drop(s,1);	                    -- this will all get screwed up with immutable types present
+	       t#?s
+	       and
+	       instance(t#s, Function)
+	       )
+	  else if #s == 2 then (
+	       s#1#?(s#0)
+	       and
+	       instance(s#1#(s#0), Function)
+	       )
+	  else (
+	       false
+	       )
+	  )
+     then error("documentation key for '", formatDocumentTag s, "' encountered, but no method installed"))
+
 verifyKey Array   := s -> (				    -- e.g., [res, Strategy]
      fn := s#0;
      opt := s#1;
@@ -345,23 +363,17 @@ addspaces0:= x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concat
 addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
 
 fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
-fixup MarkUpListParagraph := z -> splice apply(z,fixup)
-handlePara := x -> (				    -- assemble items between paragraphs in a list into paragraphs (using DIV)
-     x = splice apply(x, fixup);
-     if any(toSequence x, i -> instance(i, MarkUpListParagraph))
-     then new class x from splice sublists( x, i -> instance(i,MarkUpListParagraph), identity, i -> if #i===0 then () else DIV i)
-     else x)
-fixup MarkUpList := handlePara
-fixup Option     := identity
+fixup List       := z -> fixup toSequence z
+fixup Sequence   := 
+fixup MarkUpList := z -> splice apply(z,fixup)
 fixup Nothing    := x -> ()	      -- so it will get removed by splice later
+fixup Option     := identity
 fixup BR         := identity
 fixup PRE        := identity
 fixup CODE       := identity
 fixup ExampleItem := identity
 fixup LITERAL    := identity
 fixup ANCHOR     := identity
-fixup List       := handlePara @@ toSequence
-fixup Sequence   := handlePara
 fixup TO         := identity
 fixup TO2        := identity
 fixup TOH        := identity
@@ -374,7 +386,7 @@ deprecated := z -> if not doneit then (
      if z === PARA then stderr << "--        andgroup PARA{...} around entire paragraphs" << endl;
      )
 fixup MarkUpType := z -> (
-     if z === PARA or z === BR or z === HR or z === NOINDENT
+     if z === PARA or z === BR or z === HR
      then (
 	  deprecated z;
 	  z{})
@@ -515,15 +527,14 @@ fixupList := x -> (
      apply(nonnull x,fixupEntry))
 enlist := x -> if class x === List then x else {x}
 chkIsStringFixup := key -> val -> if class val === String then fixup val else error("expected ",toString key," option to be a string")
-chkIsString := key -> val -> if class val === String then val else error("expected ",toString key," option to be a string")
 fixupTable := new HashTable from {
-     Key => identity,
+     Key => x -> if class x === List then nonnull x else x,
      symbol DocumentTag => identity,
      Usage => val -> (
 	  if not instance(val,String) then error("expected Usage option to be a string");
 	  TABLE TR {
-	       TD { "valign" => "top" , "Usage: " },
-	       TD between_(BR{}) nonempty separate val
+	       TD { "valign" => "top" , "Usage:" },
+	       TD between_(BR{}) (TT \ trimline \ nonempty separate val)
 	       } ),
      Function => val -> fixup val,
      Inputs => val -> fixupList val,
@@ -531,21 +542,24 @@ fixupTable := new HashTable from {
      Consequences => val -> fixupList val,
      Headline => chkIsStringFixup Headline,
      Description => val -> extractExamples fixup val,
-     Caveat  => v -> if v =!= {} then fixup DIV1 { SUBSECTION "Caveat", DIV v },
-     SeeAlso => v -> if v =!= {} then fixup DIV1 { SUBSECTION "See also", UL (TO \ enlist v) },
-     SourceCode => v -> if v =!= {} then DIV { 
-	  "class" => "waystouse",
-	  fixup DIV1 {
-	       SUBSECTION "Code", 
-	       PRE demark(
-		    newline,
-		    unstack stack apply(enlist v,
-			 m -> (
-			      f := lookup m;
-			      if f === null then error("SourceCode: ", toString m, ": not a method");
-			      c := code f;
-			      if c === null then error("SourceCode: ", toString m, ": code for method not found");
-			      c)))}},
+     Caveat  => v -> if v =!= {} then fixup DIV1 { SUBSECTION "Caveat", DIV v } else v,
+     SeeAlso => v -> if v =!= {} then fixup DIV1 { SUBSECTION "See also", UL (TO \ enlist v) } else v,
+     SourceCode => v -> (
+	  if v =!= {} 
+	  then DIV { 
+	       "class" => "waystouse",
+	       fixup DIV1 {
+		    SUBSECTION "Code", 
+		    PRE demark(
+			 newline,
+			 unstack stack apply(enlist v,
+			      m -> (
+				   f := lookup m;
+				   if f === null then error("SourceCode: ", toString m, ": not a method");
+				   c := code f;
+				   if c === null then error("SourceCode: ", toString m, ": code for method not found");
+				   c)))}}
+	  else v),
      Subnodes => v -> (
 	  v = nonnull enlist v;
 	  if #v == 0 then error "encountered empty Subnodes list"
@@ -583,7 +597,7 @@ storeRawDocumentation := (tag,opts) -> (
 
 undocumented = method(SingleArgumentDispatch => true)
 undocumented List  := x -> scan(x, undocumented)
-undocumented Thing := key -> (
+undocumented Thing := key -> if key =!= null then (
      tag := makeDocumentTag(key, Package => currentPackage);
      storeRawDocumentation(tag, new HashTable from { symbol DocumentTag => tag, "undocumented" => true}))
 
@@ -597,7 +611,7 @@ getExampleInputs MarkUpList   := t -> join apply(toSequence t, getExampleInputs)
 
 examples = x -> stack getExampleInputs help x
 apropos = method()
-apropos String := (pattern) -> sort select(flatten \\ keys \ globalDictionaries, i -> match(pattern,i) and not match("\\$",i))
+apropos String := (pattern) -> last \ sort select(flatten \\ pairs \ globalDictionaries, (nam,sym) -> match(pattern,nam) and not match("\\$",nam))
 -----------------------------------------------------------------------------
 headline = method(SingleArgumentDispatch => true)
 headline Thing := key -> getOption(key,Headline)	    -- old method
@@ -861,6 +875,14 @@ document List := args -> (
      if #out>0 then o.Outputs = out else remove(o,Outputs);
      if #ino>0 then o#"optional inputs" = ino else remove(o,"optional inputs");
      -- end of pre-processing
+     scan(keys fixupTable, sym -> if o#?sym then (
+	       if sym === Consequences then scan(o#sym, x -> validate DIV x)
+	       else if sym === Key then null
+	       else if sym === Function then null
+	       else if sym === symbol DocumentTag then null
+	       else validate DIV o#sym
+	       )
+	  );
      o = new HashTable from o;
      storeRawDocumentation(tag, o);
      currentNodeName = null;
@@ -881,9 +903,7 @@ briefSynopsis := key -> (
      o := getDoc key;
      if o === null then return null;
      r := nonnull {
-	  if o.?Usage then (
-     	       usa := o.Usage;
-	       SPAN { "Usage: ", if class usa === String then TT usa else usa}),
+	  if o.?Usage then o.Usage,
 	  if o#?Function then SPAN { "Function: ", TO o#Function }
 	  else if instance(key, Sequence) and key#?0 then (
 	       if instance(key#0, Function) then SPAN { "Function: ", TO key#0 }
@@ -896,7 +916,7 @@ briefSynopsis := key -> (
 	  if o.?Consequences and #o.Consequences > 0 then DIV1 { "Consequences:", UL o.Consequences },
 	  if o#?"optional inputs" then DIV1 { TO2{ "using functions with optional inputs", "Optional inputs"}, ":", UL o#"optional inputs" }
 	  };
-     if #r > 0 then fixup DIV { UL r })
+     if #r > 0 then fixup UL r)
 
 synopsis := key -> (
      s := briefSynopsis key;
@@ -1127,10 +1147,14 @@ tutorial = x -> (
 	       {PRE concatenate between_newline apply(take(x,{p1#i+1,p2#i-1}),line -> replace("^--","",line))},
 	       take(x,{p2#i+1,#x-1})));
      x = apply(x, line -> if mat("^--$",line) then PARA{} else line);
-     x = sublists(x,line -> class line =!= String or not match("^--",line), identity, sublist -> if #sublist > 0 then TEX concatenate between(newline,apply(sublist,line -> replace("^-- *","",line))));
-     x = select(x, line -> line =!= null);
-     x = sublists(x,line -> class line =!= String, identity, sublist -> if #sublist > 0 then EXAMPLE sublist);
-     x = select(x, line -> line =!= null);
+     x = sublists(x,
+	  line -> class line === String and match("^--",line),
+	  sublist -> TEX concatenate between(newline,apply(sublist,line -> replace("^-- *","",line))),
+	  identity);
+     x = sublists(x,
+	  line -> class line === String,
+	  sublist -> EXAMPLE sublist,
+	  identity);
      x )
 
 -- Local Variables:

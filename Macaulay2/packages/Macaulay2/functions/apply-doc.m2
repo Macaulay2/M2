@@ -28,7 +28,7 @@ document {
 	  "apply([1,3,5,7], i -> i^2)",
 	  "apply((1,3,5,7), i -> i^2)"
      	  },
-     SeeAlso => {(symbol \, VisibleList, Function), (symbol \,Function,VisibleList)}
+     SeeAlso => {(symbol /, VisibleList, Function), (symbol \,Function,VisibleList)}
      }
 document { 
      Key => (apply,BasicList,BasicList,Function),

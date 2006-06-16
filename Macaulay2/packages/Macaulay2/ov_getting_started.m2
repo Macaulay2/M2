@@ -254,41 +254,45 @@ document {
 	  },
      PARA {"
 	  While in Macaulay 2, type ", 
-	  PRE"help", 
+	  TT"help", 
 	  " to get a summary of the most useful ways of obtaining
 	  help on a topic or function.
 	  Type",
-	  PRE "viewHelp",
+	  TT "viewHelp",
 	  " to start the web browser (if necessary) and to point it at
 	  the page index.html in your .Macaulay2 directory.
 	  For help on a specific topic, e.g., the jacobian function, use ",
-	  PRE"viewHelp jacobian",
+	  TT"viewHelp jacobian",
           " or ",
-	  PRE///viewHelp "jacobian"///,
+	  TT///viewHelp "jacobian"///,
 	  " or if you want the documentation for jacobian of an Ideal, use ",
-	  PRE ///viewHelp (jacobian,Ideal)///
+	  TT ///viewHelp (jacobian,Ideal)///
      	  },
      PARA {"
           Using 'help' instead of 'viewHelp' results in the help text appearing 
-	  in your Macaulay2 session. ",
-	  EXAMPLE ///help "jacobian"///,
+	  in your Macaulay2 session. " 
+	  },
+     EXAMPLE ///help "jacobian"///,
+     PARA {
 	  "A useful tip: in emacs, if you place your cursor on one of the lines which starts with a '*',
-	  and press return, then you will get help on that topic.",
-	  EXAMPLE ///* "jacobian Ideal"///
-     	  },	  
+	  and press return, then you will get help on that topic."
+	  },
+     EXAMPLE ///* "jacobian Ideal"///,	  
      PARA {"
 	  The function ", TO apropos, " is useful to find functions and other defined symbols 
 	  which match a search string.  For example, to find all symbols
-	  in Macaulay2 which contain the string 'deal', use",
-	  EXAMPLE ///apropos "deal"///
+	  in Macaulay2 which contain the string 'deal', use"
      	  },
+     EXAMPLE ///apropos "deal"///,
      PARA {"
           The documentation for most functions comes with example code.  You can 
-	  obtain the text of this example code using ", TO examples, ".",
-	  EXAMPLE ///examples "jacobian Ideal"///,
-     	  "which returns it as a string. To place these on their own lines, print the string.",
-	  EXAMPLE ///print examples "jacobian Ideal"///
-     	  },
+	  obtain the text of this example code using ", TO examples, "."
+	  },
+     EXAMPLE ///examples "jacobian Ideal"///,
+     PARA {
+	  "which returns it as a string. To place these on their own lines, print the string."
+	  },
+     EXAMPLE ///print examples "jacobian Ideal"///
      }
 
 
@@ -565,9 +569,9 @@ document {
      "On systems with a command line interface, the following commands
      can be used to start the program.  When the program starts up,
      the ", TO "initialization file", ", ", TT "init.m2", ", will be loaded.",
-     PARA{}, NOINDENT{},
+     PARA{},
      TT "M2", " -- starts the program.",
-     PARA{}, NOINDENT{},
+     PARA{},
      TT "M2 file1 file2 ... ", " -- starts the program, reading and 
      executing the specified files.",
      PARA{},

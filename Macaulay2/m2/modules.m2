@@ -13,6 +13,7 @@ degreeLength Module := M -> degreeLength ring M
 new Module of HashTable from List := (Module,Type,v) -> hashTable v
 Module.synonym = "module"
 raw Module := M -> M.RawFreeModule
+ring Module := M -> M.ring
 
 isModule = method(TypicalValue => Boolean)
 isModule Thing := M -> false

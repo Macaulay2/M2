@@ -14,6 +14,7 @@ new ChainComplex := ChainComplex => (cl) -> (
      b.degree = -1;
      b.source = b.target = C;
      C)
+ring ChainComplex := C -> C.ring
 
 raw ChainComplex := C -> raw C.Resolution
 

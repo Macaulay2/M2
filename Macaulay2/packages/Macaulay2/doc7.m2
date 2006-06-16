@@ -130,8 +130,8 @@ document {
       	  "submatrix(f, {1..3,0})",
 	  },
      SeeAlso => {
-	  (symbol_,Matrix,VisibleList),
-	  (symbol^,Matrix,VisibleList),
+	  (symbol_,Matrix,List),
+	  (symbol^,Matrix,List),
 	  (symbol_,Matrix,Array),
 	  (symbol^,Matrix,Array)
 	  },
@@ -1265,7 +1265,7 @@ document {
      Headline => "Hilbert polynomial of projective space",
      TT "projectiveHilbertPolynomial n", " -- produces the projective
      Hilbert polynomial corresponding to projective space of dimension n.",
-     BR{},NOINDENT{},
+     BR{},
      TT "projectiveHilbertPolynomial(n,d)", " -- produces the projective
      Hilbert polynomial corresponding to the graded ring of projective space
      of dimension n, but with its generator in degree -d.",

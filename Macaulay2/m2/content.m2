@@ -120,7 +120,7 @@ validContent#"h6" = HeadingContent
 validContent#"label" = PCDATA + set { "input", "select", "textarea", "button", "Inlstruct" } + Inlphras + Inlpres + AnchorClass + InlineExtra + MiscClass
 
 -- <!ENTITY % a.content "( #PCDATA | %Inline-noA.mix; )*" >
-validContent#"a" = InlineNoAClass
+validContent#"a" = PCDATA + InlineNoAClass
 -----------------------------------------------------------------------------
 ---- these are all empty:
 -- <!ENTITY % base.content  "EMPTY" >

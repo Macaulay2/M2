@@ -740,7 +740,6 @@ net MatrixExpression := x -> (
 	  m := net Table toList x;
 	  side := "|" ^ (height m, depth m);
 	  horizontalJoin(side,m,side)))
-net TABLE := x -> net MatrixExpression toList x
 html MatrixExpression := x -> html TABLE toList x
 
 mathML MatrixExpression := x -> concatenate(

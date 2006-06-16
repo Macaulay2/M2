@@ -8,7 +8,7 @@
 --      TT "coefficients({i,j,...},p)", " -- yields the coefficients and
 --      monomials of the polynomial or matrix p with respect to variables 
 --      numbered i, j, ... .",
---      BR{},NOINDENT{},
+--      BR{},
 --      TT "coefficients(p)", " -- yields the coefficients and monomials of
 --      the polynomial or matrix p with respect to all of the variables."
 --      }

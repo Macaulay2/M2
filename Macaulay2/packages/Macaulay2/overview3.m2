@@ -274,7 +274,7 @@ document {
      its introduction in 1988 has become the pre-eminent system for
      mathematics on the computer.",
      PARA{},
-     IMG { "../../Images/Grayson2.jpg", "picture of Grayson" }
+     IMG { "src" => "../../Images/Grayson2.jpg", "alt" => "picture of Grayson" }
      }
 
 document {

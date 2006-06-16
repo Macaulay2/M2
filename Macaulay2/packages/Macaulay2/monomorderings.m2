@@ -90,7 +90,7 @@ document {
 	  "protect xx; protect yy; protect zz;",
       	  "ZZ[ee_[xx],ee_[yy],ee_[zz]]",
 	  },
-     PARA{},NOINDENT{},
+     PARA{},
      "Some things to watch out for when using polynomial rings:",
      UL {
 	  LI ("Defining a ring twice gives different rings, as far as
@@ -638,7 +638,6 @@ document {
 	  "R=ZZ/101[a,b,c,MonomialOrder=>GLex];",
       	  "(a+b+c+1)^2",
 	  },
-     NOINDENT{},
      "(Notice how similar the result above is to the one obtained when
      graded reverse lexicographic ordering is used.)",
      PARA{},
