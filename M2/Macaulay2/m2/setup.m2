@@ -139,7 +139,12 @@ commentGuardWidth := #commentGuardString
 commentGuard := n -> if class n === String then concatenate(commentGuard,n) else (
      (stack((height n + depth n):commentGuardNet))^(height n) | n
      )
-scan(binaryOperators, op -> (
+
+binaryOperators = join(fixedBinaryOperators,flexibleBinaryOperators)
+prefixOperators = join(fixedPrefixOperators,flexiblePrefixOperators)
+postfixOperators = join(fixedPostfixOperators,flexiblePostfixOperators)
+
+scan(flexibleBinaryOperators, op -> (
      	  opstring := if op === symbol " " then format toString op else toString op;
 	  ht := 8;
 	  preX := "            ";
@@ -173,7 +178,7 @@ scan(binaryOperators, op -> (
 		    line3 := preY | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,y);
 		    hush = false;
 		    error toString stack(line1,commentGuard line2,commentGuard line3)))))
-scan( {(prefixOperators,"prefix"), (postfixOperators,"postfix")}, (ops,type) -> 
+scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}, (ops,type) -> 
      scan(ops, op -> (
 	       ht := 8;
 	       preX := "            ";

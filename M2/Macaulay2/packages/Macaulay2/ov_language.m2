@@ -812,13 +812,24 @@ document {
 document {
      Key => "operators",
      PARA {
-	  "Here we present all of the unary and binary operators in the language.  The binary operators are ",
+	  "Here we present all of the unary and binary operators in the language.
+	  The binary operators are ",
 	  between_" " apply(sort toList value Macaulay2Core#"private dictionary"#"binaryOperators", s -> TO {s}),
-	  ", the unary prefix operators are ",
+	  " , the unary prefix operators are ",
 	  between_" " apply(sort toList value Macaulay2Core#"private dictionary"#"prefixOperators", s -> TO {s}),
-	  ", and the unary postfix operators are ",
+	  " , and the unary postfix operators are ",
 	  between_" " apply(sort toList value Macaulay2Core#"private dictionary"#"postfixOperators", s -> TO {s}),
-	  "."},
+	  " ."
+	  },
+     PARA {
+	  "Of those, the ones for which users may install new methods are ",
+	  "the binary operators ",
+	  between_" " apply(sort toList value Macaulay2Core#"private dictionary"#"flexibleBinaryOperators", s -> TO {s}),
+	  " , the unary prefix operators ",
+	  between_" " apply(sort toList value Macaulay2Core#"private dictionary"#"flexiblePrefixOperators", s -> TO {s}),
+	  " , and the unary postfix operators ",
+	  between_" " apply(sort toList value Macaulay2Core#"private dictionary"#"flexiblePostfixOperators", s -> TO {s}),
+	  " ."},
      Subnodes => {
      "assignment",
 	  TO symbol = ,

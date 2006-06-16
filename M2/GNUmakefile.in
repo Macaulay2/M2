@@ -3,7 +3,7 @@ include include/config.Makefile
 VPATH = @srcdir@
 
 .PRECIOUS: @srcdir@/configure config.status
-.PHONY: install all clean distclean reconfigure configure-help
+.PHONY: install all clean distclean reconfigure configure-help install-others install-Macaulay2
 
 CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
 
@@ -58,20 +58,20 @@ configure-help: $(CONFIG_FILES)
 	@ @srcdir@/configure --help
 
 # announcement only:
-install all clean distclean ::
+install all clean distclean install-others install-Macaulay2 ::
 	@echo '-------- making '$@', $(PACKAGE_VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL) --------'
 
 # first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
-install :: all
+install install-others install-Macaulay2 :: all
 distclean::; rm -f config.cache config.log config.status configure.options
 distclean:: clean
 ifeq "$(CC)" "cl"
 all:: ;	$(MAKE) -C WindowsNT
 endif
-all distclean check clean install :: ; $(MAKE) -C Macaulay2 $@
+all distclean check clean install install-others install-Macaulay2 :: ; $(MAKE) -C Macaulay2 $@
 all::; $(MAKE) -C Macaulay2 doc
 DIRS := $(target) $(bindir) $(libm2dir) $(man1dir) $(emacsdir) $(m2dir) $(docm2reldir)
-install :: $(DIRS)
+install install-others install-Macaulay2 :: $(DIRS)
 $(DIRS) :; $(INSTALL) -d $@
 distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile
 
@@ -83,7 +83,7 @@ ifeq "$(CYGWIN)" "yes"
 install :: tarball
 endif
 
-install all clean distclean::; @echo "-------- done making '$@' --------"
+install install-others install-Macaulay2 all clean distclean::; @echo "-------- done making '$@' --------"
 install all::
 	@echo "************************************************"
 	@echo "*                                              *"
