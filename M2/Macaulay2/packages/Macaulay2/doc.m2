@@ -683,17 +683,11 @@ document {
      Headline => "a binary operator, usually used for multiplication",
      Usage => "x * y",
      "The return type depends on the types of x and y.  If they have the
-     same type, then usually the return type is the common type of x and y.
-     Returns true or false, depending on whether 
-     the objects x and y are (mathematically) equal.  The objects x and y are
-     typically numbers, elements of rings, matrices, modules, ideals,
-     chain complexes, and so on.",
+     same type, then usually the return type is the common type of x and y.",
      PARA{},
      "Multiplication involving ring elements (including integers, rational numbers,
      real and complex numbers), ideals, vectors, matrices, modules is 
      generally the usual multiplication, or composition of functions.",
-     EXAMPLE {
-	  },
      PARA{},
      "The intersection of sets is given by multiplication.  See ", TO (symbol*,Set,Set), ".",
      EXAMPLE {
@@ -737,7 +731,7 @@ document {
 	  ZZ => {"obtained from the bits of the 
      	       integers ", TT "m", " and ", TT "n", " by logical 'and'."}
 	  },
-     EXAMPLE "(2^15 + 2^13 + 2^42) & (2^15 + 2^23 + 2^42)",
+     EXAMPLE "(2^15 + 2^13 + 2^42) & (2^15 + 2^23 + 2^42) == 2^13 + 2^23",
      SeeAlso => {(symbol |,ZZ,ZZ),xor}
      }
 
@@ -916,12 +910,50 @@ document {
      SeeAlso => { remainder, remainder', pseudoRemainder, "//"}
      }
 
+undocumented {
+     (symbol "//", ZZ, MonomialIdeal),
+     (symbol "//", RR, ZZ),
+     (symbol "//", RR, RR),
+     (symbol "//", RingElement, ZZ),
+     (symbol "//", ZZ, RingElement),
+     (symbol "//", QQ, RingElement),
+     (symbol "//", RingElement, QQ),
+     (symbol "//", RR, RingElement),
+     (symbol "//", RingElement, RR),
+     (symbol "//", ZZ, InfiniteNumber),
+     (symbol "//", InfiniteNumber, ZZ),
+     (symbol "//", ZZ, Matrix),
+     (symbol "//", Matrix, ZZ),
+     }
+     
+(symbol "//", Thing, Command),
+(symbol "//", Thing, Function),
+(symbol "//", Matrix, Matrix),
+(symbol "//", RingElement, MonomialIdeal),
+(symbol "//", RingElement, GroebnerBasis),
+(symbol "//", RingElement, RingElement),
+(symbol "//", Matrix, MonomialIdeal),
+(symbol "//", Matrix, GroebnerBasis),
+(symbol "//", Matrix, RingElement),
+(symbol "//", RingElement, Matrix),
+
 document {
      Key => symbol "//",
      Headline => "a binary operator, usually used for quotient",
-     TT "x // y", " -- a binary operator used for quotients in the same
-     ring (with a possible remainder).",
-     PARA{},
+     Usage => "x // y",
+     "This is usually used for quotients in the same ring (with a possible 
+     remainder).  For ring elements, at least, the following example shows
+     the difference between ", TO "//", " and ", TO "/", ".",
+     EXAMPLE lines ///
+     	  3/2
+	  3//2
+     ///,
+     EXAMPLE lines ///
+     	  R = QQ[x];
+	  (x^2-3)//(x-1)
+	  (x^2-3)%(x-1)
+	  (x^2-3)/(x-1)
+     ///,
      SeeAlso => { "/", "%" }
      }
 
@@ -1325,6 +1357,8 @@ document {
 
 undocumented {
          (symbol==, RingElement, ZZ),
+         (symbol==, RingElement, QQ),
+         (symbol==, QQ, RingElement),
          (symbol==, RingElement, Matrix),
          (symbol==, Ideal, MonomialIdeal),
          (symbol==, GradedModuleMap, ZZ),
@@ -1405,7 +1439,8 @@ document {
          (symbol==, Set, Set),
          (symbol==, Ideal, Ideal),
          (symbol==, MutableMatrix, MutableMatrix),
-         (symbol==, Module, Module)
+         (symbol==, Module, Module),
+	 (symbol==, RingMap, RingMap)
 	  },
      Headline => "equality",
      Usage => "x == y",

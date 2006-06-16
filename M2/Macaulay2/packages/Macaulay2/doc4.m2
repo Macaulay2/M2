@@ -138,12 +138,17 @@ document {
      }
 
 document {
-     Key => xor,
+     Key => {xor,
+	  (xor,ZZ,ZZ)},
      Headline => "logical exclusive-or",
-     TT "xor(i,j)", " -- produces the bitwise logical exclusive-or of
-     the integers ", TT "i", " and ", TT "j", ".",
-     PARA{},
-     EXAMPLE "xor(10,12)"
+     Usage => "xor(m,n)",
+     Inputs => { "m", "n"},
+     Outputs => { 
+	  ZZ => {"the bitwise logical exclusive-or of
+     	       the integers ", TT "m", " and ", TT "n"}
+	  },
+     EXAMPLE "xor(10,12)",
+     SeeAlso => { (symbol|,ZZ,ZZ), (symbol&,ZZ,ZZ) }
      }
 
 document {
