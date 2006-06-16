@@ -310,6 +310,8 @@ debug Package := pkg -> (
      d := pkg#"private dictionary";
      if not member(d,globalDictionaries) then (
 	  globalDictionaries = prepend(d,globalDictionaries);
+	  -- if debugLevel > 0 then
+	  stderr << "--debug " << (if pkg#?title then pkg#title else pkg) << endl;
 	  );
      checkShadow())
 

@@ -1,0 +1,5 @@
+-- owner: Dan
+-- urgency: low
+
+inheritance via lookup will probably stop working if any immutable types are
+involved, installing a method might go to one of the immutable types.
