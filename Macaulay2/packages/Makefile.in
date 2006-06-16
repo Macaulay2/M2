@@ -43,18 +43,18 @@ check ::
 	     ) ; \
 	  done
 
-install ::
-	@ for i in $(PACKAGES) ; \
-	  do ( \
-	      if [ "$$i" = Macaulay2 ] ; \
-	      then \
-		  set -x ; \
-		  ../bin/M2$(EXE) -q --stop \
+install :: install-Macaulay2 install-others
+install-Macaulay2 ::
+	../bin/M2$(EXE) -q --stop \
 		    -e errorDepth=0 \
 		    -e debugLevel=$(debugLevel) \
-		    -e "installPackage(\"$$i\" $(ARGS1))" \
-		    -e "exit 0" ; \
-	      else \
+		    -e "installPackage(\"Macaulay2\" $(ARGS1))" \
+		    -e "exit 0"
+install-others ::
+	@ for i in $(PACKAGES) ; \
+	  do ( \
+	      if [ "$$i" != Macaulay2 ] ; \
+	      then \
 		  set -x ; \
 		  ../bin/M2$(EXE) -q --stop \
 		    -e errorDepth=0 \

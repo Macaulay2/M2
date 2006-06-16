@@ -104,9 +104,14 @@ peek'(ZZ,Dictionary) := (depth,d) -> (
 peek = s -> peek'(1,s)
 typicalValues#peek = Net
 
+ops = new MutableHashTable
+
 seeParsing = args -> (
      x := new MutableHashTable;
-     t := (p,s) -> if x#?p then x#p = append(x#p,s) else x#p = {s};
+     t := (p,s) -> (
+	  if x#?p then x#p = append(x#p,s) else x#p = {s};
+	  ops#s = true;
+	  );
      q := getParsing symbol apply;
      scan(keys set values Macaulay2Core.Dictionary, s -> if getParsing s =!= q and s =!= symbol " " then t(getParsing s,s));
      t(getParsing symbol apply, "<SYMBOLS>"  );

@@ -1189,12 +1189,12 @@ realpathfun(e:Expr):Expr := when e is filename:string do Expr(realpath(filename)
 setupfun("realpath",realpathfun);
 
 setupconst("typicalValues", Expr(typicalValues));
-setupconst("binaryOperators",Expr(new array(Expr) len length(opsWithBinaryMethod) do (
-     foreach s in opsWithBinaryMethod do provide Expr(s))));
-setupconst("prefixOperators",Expr(new array(Expr) len length(opsWithUnaryMethod) do (
-     foreach s in opsWithUnaryMethod do provide Expr(s))));
-setupconst("postfixOperators",Expr(new array(Expr) len length(opsWithPostfixMethod) do (
-     foreach s in opsWithPostfixMethod do provide Expr(s))));
+setupconst("flexibleBinaryOperators", Expr(new array(Expr) len length(opsWithBinaryMethod)   do foreach s in opsWithBinaryMethod do provide Expr(s)));
+setupconst("flexiblePrefixOperators", Expr(new array(Expr) len length(opsWithUnaryMethod)    do foreach s in opsWithUnaryMethod do provide Expr(s)));
+setupconst("flexiblePostfixOperators",Expr(new array(Expr) len length(opsWithPostfixMethod)  do foreach s in opsWithPostfixMethod do provide Expr(s)));
+setupconst("fixedBinaryOperators",    Expr(new array(Expr) len length(fixedBinaryOperators)  do foreach s in opsWithBinaryMethod do provide Expr(s)));
+setupconst("fixedPrefixOperators",    Expr(new array(Expr) len length(fixedPrefixOperators)  do foreach s in opsWithUnaryMethod do provide Expr(s)));
+setupconst("fixedPostfixOperators",   Expr(new array(Expr) len length(fixedPostfixOperators) do foreach s in opsWithPostfixMethod do provide Expr(s)));
 
 fileExists(e:Expr):Expr := (
      when e is name:string do toExpr(fileExists(name))
