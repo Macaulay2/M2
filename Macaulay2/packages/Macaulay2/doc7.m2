@@ -991,6 +991,7 @@ document {
      EXAMPLE lines ///
 	  I = ideal random(A^1, A^{-2,-2,-2})
 	  B = A/I
+	  use A
 	  C = A/(u^2-v^2,u*v)
 	  ///,
      EXAMPLE lines ///	  
