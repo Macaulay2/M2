@@ -879,7 +879,6 @@ undocumented {
      (symbol "/", Expression, OneExpression),
      (symbol "/", Holder, Expression),
      (symbol "/", Holder, Holder),
-     (symbol "/", List, MarkUpType),
      (symbol "/", List, SelfInitializingType)
      }
 

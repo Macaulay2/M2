@@ -151,7 +151,6 @@ document {
 	  (symbol "\\",Command,VisibleList),
 	  (symbol "\\",RingMap,List),
 	  (symbol "\\",Command,Tally),
-	  (symbol "/",List,SelfInitializingType),
 	  (symbol "/",VisibleList,SelfInitializingType),
 	  (symbol "/",List,Command),
 	  (symbol "/",Tally,Command),

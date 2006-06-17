@@ -952,6 +952,7 @@ document {
 	  "S" => { "the quotient ring ", TT "R/Rf"}
 	  }
      }
+
 document {
      Key => (symbol /, Ring, Sequence),
      Headline => "quotient ring",
@@ -959,6 +960,7 @@ document {
      Inputs => { "R", Nothing => { TT "(f,g,h,...)", ", a sequence of elements of ", TT "R" } },
      Outputs => { "S" => { "the quotient ring ", TT "R/(Rf+Rg+Rh+...)"} }
      }
+
 document {
      Key => {(symbol /, Ring, Ideal),
 	  (symbol "/", Ring, Module),
