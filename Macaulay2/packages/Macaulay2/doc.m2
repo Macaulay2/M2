@@ -926,27 +926,23 @@ undocumented {
      (symbol "//", Matrix, ZZ),
      }
      
-(symbol "//", Thing, Command),
-(symbol "//", Thing, Function),
-(symbol "//", Matrix, Matrix),
-(symbol "//", RingElement, MonomialIdeal),
-(symbol "//", RingElement, GroebnerBasis),
-(symbol "//", RingElement, RingElement),
-(symbol "//", Matrix, MonomialIdeal),
-(symbol "//", Matrix, GroebnerBasis),
-(symbol "//", Matrix, RingElement),
-(symbol "//", RingElement, Matrix),
+--(symbol "//", Thing, Command),
+--(symbol "//", Thing, Function),
 
 document {
      Key => symbol "//",
      Headline => "a binary operator, usually used for quotient",
      Usage => "x // y",
-     "This is usually used for quotients in the same ring (with a possible 
-     remainder).  For ring elements, at least, the following example shows
+     "For ring elements in the integers, polynomial rings, and other rings,
+     there are two types of division:  exact division, whose result is often in a larger
+     field, such as the rationals or a function field, and division with remainder,
+     whose result is in the same ring.  In Macaulay2, '/' denotes the first kind of division, while
+     '//' denotes the latter kind.
+     The following example shows
      the difference between ", TO "//", " and ", TO "/", ".",
      EXAMPLE lines ///
-     	  3/2
-	  3//2
+     	  4/2
+	  4//2
      ///,
      EXAMPLE lines ///
      	  R = QQ[x];

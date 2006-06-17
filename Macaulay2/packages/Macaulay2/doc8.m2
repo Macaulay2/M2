@@ -718,16 +718,34 @@ document {
      }
 
 document { 
-     Key => (symbol //, Matrix, Matrix),
+     Key => {(symbol //, Matrix, Matrix),
+       (symbol "//", Matrix, Matrix),
+       (symbol "//", RingElement, MonomialIdeal),
+       (symbol "//", RingElement, GroebnerBasis),
+       (symbol "//", RingElement, RingElement),
+       (symbol "//", Matrix, MonomialIdeal),
+       (symbol "//", Matrix, GroebnerBasis),
+       (symbol "//", Matrix, RingElement),
+       (symbol "//", RingElement, Matrix)},
      Headline => "factor a map through another",
      Usage => "f//g",
      Inputs => {
-	  "f" => "between free modules F --> H",
-	  "g" => "between free module G -->H"
+	  "f" => {"between free modules F --> H, or ",
+	     ofClass RingElement},
+	  "g" => {"between free module G --> H, ",
+	       ofClass RingElement, ", ", 
+	       ofClass MonomialIdeal, ", or ",
+	       ofClass GroebnerBasis}
 	  },
      Outputs => {
 	  Matrix => "a matrix h : F --> G"
 	  },
+     "If either f or g is a ring element, then it is taken to be the identity matrix on H.  If both are ring elements,
+     then the result is also a ring element.  If g is a
+     MonomialIdeal, then it is taken to be the matrix of generators of g.  Finally, if g is a GroebnerBasis
+     object, then the Groebner basis as so far computed is used.  In these latter two cases, no Groebner bases 
+     will be computed.",
+     PARA{},
      "The resulting matrix h is such that ", TT "f - g*h", " is the reduction of ", TT "f", " modulo a Groebner basis 
      for the image of ", TT "g", ".",
      PARA{},
@@ -742,7 +760,8 @@ document {
 	  I = ideal(F,diff(x,F),diff(y,F),diff(z,F))
 	  1 % I
      ///,
-     "So we see that 1 is in the ideal.",
+     "So we see that 1 is in the ideal.  Now let us find the representation of 1 in terms
+     of the four generators of ", TT "I", ".",
      EXAMPLE lines ///
 	  g = gens I
 	  f = matrix{{1_A}}
@@ -752,7 +771,7 @@ document {
      "We may also find h directly.",
      EXAMPLE "1 // (gens I)",
      PARA{},
-     "One may also use this to compute the inverse of an invertible map",
+     "One may also use ", TT "//", " to compute the inverse of an invertible matrix.",
      EXAMPLE lines ///
      	  M = matrix{{1,x,y},{x,0,y},{1,2,3}}
 	  M = substitute(M, frac A)
