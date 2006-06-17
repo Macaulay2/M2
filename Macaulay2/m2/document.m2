@@ -320,9 +320,13 @@ fSeqInitialize := (toString,toStr) -> new HashTable from {
      (2,symbol (*)     ) => s -> (toStr s#1, " ", toStr s#0), -- postfix operator
      (2,symbol ~       ) => s -> (toStr s#1, " ", toStr s#0), -- postfix operator
      (2,symbol !       ) => s -> (toStr s#1, " ", toStr s#0), -- postfix operator
-     (2,class,ScriptedFunctor,ZZ) => s -> (
+     (2,class,ScriptedFunctor) => s -> (
 	  hh := s#0;
-	  if hh.?subscript and hh.?superscript then toString s
+	  if hh.?subscript and hh.?superscript 
+	  then (
+	       stderr << "--warning: ambiguous scripted functor, with both subscript method and superscript method: " << s << endl;
+	       toString s
+	       )
 	  else if hh.?subscript   then (toString s#0, " _ ", toStr s#1)
 	  else if hh.?superscript then (toString s#0, " ^ ", toStr s#1)
 	  else (toString s#0, " ", toStr s#1)),
@@ -421,7 +425,7 @@ documentableValue := key -> (
      and not UndocumentableValue#?key and DocumentableValueType#?(basictype value key))
 
 ---- how could this have worked (so soon)?
--- scan(flatten(pairs \ globalDictionaries), (name,sym) -> if documentableValue sym then Symbols#(value sym) = sym)
+-- scan(flatten(pairs \ dictionaryPath), (name,sym) -> if documentableValue sym then Symbols#(value sym) = sym)
 
 
 file := null
@@ -614,7 +618,7 @@ getExampleInputs MarkUpList   := t -> join apply(toSequence t, getExampleInputs)
 
 examples = x -> stack getExampleInputs help x
 apropos = method()
-apropos String := (pattern) -> last \ sort select(flatten \\ pairs \ globalDictionaries, (nam,sym) -> match(pattern,nam) and not match("\\$",nam))
+apropos String := (pattern) -> last \ sort select(flatten \\ pairs \ dictionaryPath, (nam,sym) -> match(pattern,nam) and not match("\\$",nam))
 -----------------------------------------------------------------------------
 headline = method(SingleArgumentDispatch => true)
 headline Thing := key -> getOption(key,Headline)	    -- old method
@@ -649,11 +653,9 @@ optTO = i -> (
      if isSecondary i 
      then (
 	  primary := getPrimary i;
-	  if currentHelpTag === primary
-	  then (fkey, fixup fkey)
-	  else (fkey, fixup SPAN {fkey, ", see ", TOH{primary}})
+	  (DocumentTag.FormattedKey primary, fkey, fixup if currentHelpTag === primary then fkey else SPAN {fkey, ", see ", TOH{primary}})
 	  )
-     else (fkey, fixup TOH{i})				    -- need an alternative here for secondary tags such as (export,Symbol)
+     else (fkey                            , fkey, fixup TOH{i})      -- need an alternative here for secondary tags such as (export,Symbol)
      )
 optTOCLASS := i -> (					    -- this isn't different yet, work on it!
      r := fixup TOH{i};
@@ -975,7 +977,7 @@ help String := key -> (
 	       );
 	  fixup page(formatDocumentTag key, {topheader key, b, caveat key, seealso key, theMenu key})))
 
-optionFor := s -> unique select( value \ flatten(values \ globalDictionaries), f -> instance(f, Function) and (options f)#?s) -- this is slow!
+optionFor := s -> unique select( value \ flatten(values \ dictionaryPath), f -> instance(f, Function) and (options f)#?s) -- this is slow!
 
 --ret := k -> (
 --     t := typicalValue k;
@@ -985,7 +987,7 @@ optionFor := s -> unique select( value \ flatten(values \ globalDictionaries), f
 documentationValue := method()
 
 documentationValue(Symbol,Type) := (s,X) -> (
-     syms := unique flatten(values \ globalDictionaries);
+     syms := unique flatten(values \ dictionaryPath);
      a := smenu apply(select(pairs typicalValues, (key,Y) -> Y===X and isDocumentableMethod key), (key,Y) -> key);
      b := smenu(toString \ select(syms, y -> instance(value y, Type) and parent value y === X));
      c := smenu select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);

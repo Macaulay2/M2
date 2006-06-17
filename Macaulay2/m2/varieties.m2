@@ -209,11 +209,14 @@ cohomology(ZZ,CoherentSheaf) := Module => opts -> (i,F) -> (
 
 cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
 
-structureSheaf := method()				    -- we need good syntax for nameless method packages
-structureSheaf(Variety) := (X) -> sheaf_X ring X
-sheaf Variety := X -> sheaf_X ring X
+applyMethod = (key,x) -> (
+     f := lookup key;
+     if f === null then error "no method available";	    -- expand this error message later
+     f x)
 
-OO = new ScriptedFunctor from { subscript => structureSheaf }
+OO = new ScriptedFunctor from { subscript => X -> applyMethod((OO,class X),X) }
+OO(Variety) := (X) -> sheaf_X ring X			    -- really responds only to OO_X, not to OO X
+sheaf Variety := X -> sheaf_X ring X
 
 --PP = new ScriptedFunctor from {
 --     superscript => (

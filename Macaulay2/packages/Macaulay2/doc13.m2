@@ -527,17 +527,17 @@ document { Key => OutputDictionary,
      	  2+2
 	  "asdf" | "qwer"
 	  value \ values OutputDictionary
-	  globalDictionaries
+	  dictionaryPath
 	  peek OutputDictionary
      ///,
-     SeeAlso => { "globalDictionaries" }
+     SeeAlso => { "dictionaryPath" }
      }
 document { Key => PackageDictionary,
      Headline => "the dictionary for names of packages",
-     SeeAlso => { "globalDictionaries" },
+     SeeAlso => { "dictionaryPath" },
      "This dictionary is used just for names of packages.",
      EXAMPLE lines ///
-         globalDictionaries
+         dictionaryPath
 	 values PackageDictionary
      ///
      }

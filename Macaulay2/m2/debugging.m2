@@ -85,7 +85,7 @@ show1 Sequence := show1 List := types -> (
      net world)
 show1 Thing := X -> show1 {X}
 showUserStructure = Command(() -> show1 select1 userSymbols())
-showStructure = Command(types -> show1 if types === () then select1 flatten(values \ globalDictionaries) else types)
+showStructure = Command(types -> show1 if types === () then select1 flatten(values \ dictionaryPath) else types)
 
 -----------------------------------------------------------------------------
 

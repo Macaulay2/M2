@@ -151,7 +151,7 @@ document {
  -- doc4.m2:723:     Key => globalAssignFunction,
  -- doc4.m2:751:     Key => globalReleaseFunction,
  -- doc5.m2:96:     Key => on,
- -- doc5.m2:495:     Key => symbol globalDictionaries,
+ -- doc5.m2:495:     Key => symbol dictionaryPath,
  -- doc5.m2:502:     Key => Dictionary,
  -- doc5.m2:513:     Key => dictionary,
  -- doc6.m2:63:     Key => (ring, MonomialIdeal),

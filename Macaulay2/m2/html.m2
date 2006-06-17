@@ -926,7 +926,7 @@ installPackage Package := opts -> pkg -> (
 	  << fix ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" "$i")/// << endl
 	  << ///done/// << endl;
 	  if version#"dumpdata" and pkg#"title" == "Macaulay2" then (
-	       f << endl << fix "(set -x ; \"$ENCAP_SOURCE\"/\"$ENCAP_PKGNAME\"/bin/" << version#"M2 name" << " --stop --dumpdata)" << endl;
+	       f << endl << fix "(set -x ; \"$ENCAP_TARGET\"/bin/" << version#"M2 name" << " --stop --dumpdata)" << endl;
 	       );
 	  fileMode(f,octal "755");
 	  f << close;
@@ -967,7 +967,7 @@ installPackage Package := opts -> pkg -> (
      -- all done
      stderr << "--installed package " << pkg << " in " << buildDirectory << endl;
      currentPackage = oldpkg;
-     if prefixDirectory =!= null then makePackageIndex();
+     if not noinitfile and prefixDirectory =!= null then makePackageIndex();
      ignoreDocumentationErrors = true;
      )
 
@@ -1088,6 +1088,9 @@ Michael R. Stillman <mike@math.cornell.edu>
 	  );
      dir)
 
+
+toAbsolutePath = path -> "/" | relativizeFilename("/", path)
+
 makePackageIndex = method(SingleArgumentDispatch => true)
 makePackageIndex Sequence := () -> makePackageIndex path    -- this might get too many files (formerly we used packagePath)
 makePackageIndex List := path -> (
@@ -1125,7 +1128,7 @@ makePackageIndex List := path -> (
 				   r = select(r, pkg -> fileExists (prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html"));
 				   r = sort r;
 				   DIV {
-					HEADER3 {"Packages in ", prefixDirectory},
+					HEADER3 {"Packages in ", toAbsolutePath prefixDirectory},
 					if #r > 0 then UL apply(r, pkg -> HREF { prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html", pkg }) 
 					}
 				   )

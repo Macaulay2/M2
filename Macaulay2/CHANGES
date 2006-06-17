@@ -352,10 +352,10 @@ New system for 3rd party packages: see 'Package'.  Related items:
 The internal symbol tables of the interpreters are now available at
 top level as members of the new class 'Dictionary'.  Both local and
 global symbol tables are obtainable with the function
-'localDictionaries' and the variable 'globalDictionaries'.  Formerly
+'localDictionaries' and the variable 'dictionaryPath'.  Formerly
 there was just one global dictionary, but now there is a sequence of
 them that are searched for global symbols; the sequence can be set by
-setting the variable 'globalDictionaries', and must contain at least
+setting the variable 'dictionaryPath', and must contain at least
 one unprotected dictionary in which new global symbols can be created.
 
 The top level command interpreter can be called recursively through
@@ -376,7 +376,7 @@ functions, each of which takes two arguments (SYM,VAL), where SYM is the symbol
 and VAL is the new value about to be assigned.  The value of the function is
 ignored: only the side effects are useful.  It is initially populated with
 internal hooks for these variables: backtrace, debuggerHook, debuggingMode,
-debugLevel engineDebugLevel, errorDepth, gbTrace, globalDictionaries,
+debugLevel engineDebugLevel, errorDepth, gbTrace, dictionaryPath,
 lineNumber, loadDepth notify, printingPrecision, printWidth, recursionLimit,
 stopIfError.
 
