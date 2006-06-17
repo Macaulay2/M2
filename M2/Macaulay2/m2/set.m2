@@ -75,6 +75,7 @@ prefixOperators = unique prefixOperators
 postfixOperators = unique postfixOperators
 flexibleOperators = unique flexibleOperators
 fixedOperators = unique fixedOperators
+allOperators = unique allOperators
 
 isSubset(Set,Set) := Boolean => (S,T) -> all(S, (k,v) -> T#?k)
 

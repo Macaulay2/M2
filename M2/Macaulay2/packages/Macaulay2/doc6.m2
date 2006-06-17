@@ -125,8 +125,7 @@ document {
      Headline => "the class of all real numbers",
      "A real number is entered as a sequence of decimal digits with a point.",
      EXAMPLE "3.14159",
-     PARA{},
-     SeeAlso => {"basictype"}}
+     }
 
 undocumented {
 	  (symbol "-",ZZ,CC), 
@@ -205,22 +204,20 @@ document {
      SeeAlso => {CC}
      }
 
-undocumented {
-     (conjugate, RR),
-     (conjugate, ZZ),
-     (conjugate, QQ)
-     }
 document {
      Key => conjugate,
      Headline => "complex conjugate",
      TT "conjugate z", " -- the complex conjugate of the complex number z."}
 document {
-     Key => (conjugate,CC),
+     Key => {(conjugate,CC),(conjugate,Number)},
      Headline => "complex conjugate",
      Usage => "conjugate z",
      Inputs => {"z"},
      Outputs => {CC => {"the complex conjugate of ", TT "z"}},
-     EXAMPLE "conjugate(1+2.5*ii)"
+     EXAMPLE {
+	  "conjugate(1+2.5*ii)",
+	  "conjugate 3"
+	  }
      }
 
 document {

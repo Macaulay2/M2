@@ -1071,8 +1071,6 @@ texMath Symbol := x -> (
 tex Expression := x -> concatenate("$",texMath x,"$")
 tex Thing := x -> tex expression x
 
-html Thing := toString
-
 mathML Boolean := i -> if i then "<mi>true</mi>" else "<mi>false</mi>"
 
 mathML ZZ := i -> concatenate("<mn>",toString i, "</mn>")

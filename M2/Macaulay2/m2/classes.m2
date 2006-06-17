@@ -37,6 +37,7 @@ QQ.texMath = ///{\mathbb Q}///
 RR.synonym = "real number"
 RR.texMath = ///{\mathbb R}///
 Ring.synonym = "ring"
+Number.synonym = "number"
 
 uniform = (x) -> same apply(x,class)
 

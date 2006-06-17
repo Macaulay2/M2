@@ -1,13 +1,13 @@
 x  = {symbol generators, symbol size, symbol symmetricPower, symbol " ", symbol "!", symbol "#", symbol "%", symbol "&", symbol tex, symbol "*", symbol "+", symbol "-", symbol ".", symbol
       "/", symbol Ideal, symbol leadCoefficient, symbol ":", symbol ";", symbol "<", symbol "=", symbol ">", symbol "?", symbol SEQ, symbol "@", symbol variety, symbol showHtml, symbol
-      wrap, symbol "timing", symbol PARA1, symbol ideal, GLex, Iterate, symbol radical, symbol xor, symbol "\\", symbol lineNumber, symbol "^", symbol "_", symbol briefDocumentation, symbol
+      wrap, symbol "timing", symbol PARA1, symbol ideal, GLex, Iterate, symbol radical, symbol xor, symbol "\\", symbol lineNumber, symbol "^", symbol "_", symbol
       same, symbol rowAdd, symbol globalAssignFunction, symbol coimage, symbol isCommutative, symbol monomialCurveIdeal, symbol poincare, symbol genericMatrix, symbol "|", symbol "~",
       symbol mingle, Subnodes, symbol pad, symbol dictionary, symbol codim, symbol "list", symbol imaginaryPart, symbol nullhomotopy, symbol End, symbol identity, symbol MutableList,
       PairLimit, symbol method, symbol assign, symbol benchmark, symbol hash, symbol contract, symbol jacobian, symbol even, symbol document, symbol height, symbol integrate, symbol
       complete, symbol vector, symbol trace, symbol divideByVariable, symbol Tally, symbol peek, symbol projectiveHilbertPolynomial, WeylAlgebra, Monomials, symbol tally, symbol value,
       symbol wait, symbol rowPermute, symbol Net, CodimensionLimit, symbol permanents, symbol cos, symbol monomials, symbol loaddata, symbol target, symbol Grass, symbol minPosition, symbol
       BODY, symbol inducedMap, symbol Symbol, symbol "try", symbol BasicList, FindOne, symbol getenv, symbol memoize, symbol openDatabase, symbol decompose, Headline, symbol Ext, symbol
-      fraction, symbol Eliminate, symbol flatten, symbol error, symbol precedence, symbol scanKeys, VariableOrder, symbol environment, symbol pack, symbol SUB, symbol rowMult, symbol
+      fraction, symbol Eliminate, symbol flatten, symbol error, symbol scanKeys, VariableOrder, symbol environment, symbol pack, symbol SUB, symbol rowMult, symbol
       installPackage, symbol SUP, symbol applyValues, symbol Array, symbol SVD, symbol BinaryOperation, symbol openFiles, BeforePrint, symbol quit, AfterPrint, symbol installMethod, symbol
       denominator, symbol isQuotientOf, symbol toString, symbol topicList, SyzygyRows, symbol listForm, symbol BOLD, symbol stack, symbol Module, Print, symbol rowSwap, symbol isOpen,
       symbol last, symbol ambient, symbol expression, SeeAlso, symbol SparseVectorExpression, symbol erase, symbol print, symbol first, symbol realPart, symbol documentation, symbol "time",
@@ -45,7 +45,7 @@ x  = {symbol generators, symbol size, symbol symmetricPower, symbol " ", symbol 
       symbol ann, symbol leadTerm, symbol OrderedMonoid, symbol any, symbol genus, symbol isSquareFree, Lex, symbol modifyRing, symbol applyPairs, symbol removeFile, symbol exp, symbol QQ,
       symbol isBorel, symbol coverMap, Bayer, symbol infinity, symbol homogenize, symbol ring, symbol TITLE, symbol FunctionApplication, symbol RR, HardDegreeLimit, symbol topComponents,
       symbol pushForward, symbol alarm, symbol getWWW, symbol hilbertSeries, symbol characters, symbol quotient, symbol isIsomorphism, symbol TO, symbol PushforwardComputation, symbol TT,
-      symbol run, symbol nextkey, LongPolynomial, symbol STRONG, symbol UL, symbol member, symbol needs, symbol koszul, symbol AssociativeExpression, symbol chainComplex, getMatrix, symbol
+      symbol run, symbol nextkey, LongPolynomial, symbol STRONG, symbol UL, symbol member, symbol needs, symbol koszul, symbol AssociativeExpression, symbol chainComplex, symbol
       Schubert, symbol depth, symbol hilbertPolynomial, symbol betti, symbol partitions, NewFromMethod, symbol demark, DegreeMap, symbol "not", symbol FilePosition, symbol length, Degree,
       Homogeneous, symbol isAffineRing, symbol MutableHashTable, symbol inducesWellDefinedMap, symbol flush, symbol numeric, symbol degrees, symbol "while", symbol monoid, symbol ZZ, symbol
       HEADER1, Linear, symbol HEADER2, symbol HEADER3, symbol HEADER4, symbol HEADER5, symbol HEADER6, symbol number, symbol kill, symbol compress, symbol MinorsComputation, symbol
@@ -53,7 +53,7 @@ x  = {symbol generators, symbol size, symbol symmetricPower, symbol " ", symbol 
       symbol indices, symbol collectGarbage, Repair, symbol Table, symbol methods, incomparable, symbol ProductOrder, symbol "^^", symbol override, symbol getc, symbol table, symbol unique,
       symbol topCoefficients, symbol Spec, symbol Fano, symbol PARA, symbol Sequence, symbol symmetricAlgebra, symbol isListener, symbol fold, NewOfFromMethod, symbol diff, symbol between,
       generatorExpressions, symbol ProjectiveVariety, AfterNoPrint, symbol clearAll, symbol Hom, symbol Package, symbol rank, symbol String, PrimitiveElement, symbol OptionTable, symbol
-      kernel, symbol examples, symbol eigenvalues, symbol tensor, symbol GradedModule, symbol sortColumns, symbol set, symbol basictype, symbol positions, symbol youngest, AfterEval, dd,
+      kernel, symbol examples, symbol eigenvalues, symbol tensor, symbol GradedModule, symbol sortColumns, symbol set, symbol positions, symbol youngest, AfterEval, dd,
       symbol "do", symbol LITERAL, symbol TEST, symbol "===", Inhomogeneous, symbol Dictionary, symbol indeterminate, symbol fork, symbol "for", symbol connectionCount, symbol degreeLength,
       symbol sheaf, symbol reorganize, symbol sin, symbol version, symbol gb, Unmixed, symbol exteriorPower, symbol SMALL, symbol RingMap, symbol product, symbol someTerms, symbol
       applyTable, symbol hh, symbol echoOff, symbol rsort, symbol typicalValues, symbol id, symbol "if", symbol ii, symbol sqrt, symbol values, MonomialOrder, symbol join, symbol borel,

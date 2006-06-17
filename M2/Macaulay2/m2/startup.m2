@@ -53,7 +53,7 @@ if firstTime then (
      PrintNames = new MutableHashTable;			    -- values are strings
      Thing.AfterEval = identity;
      scan(
-	  {symbol Array, symbol BasicList, symbol RRR, symbol CCC,
+	  {symbol Array, symbol BasicList, symbol RRR, symbol CCC, symbol Number,
 		symbol Boolean, symbol CacheTable, symbol Pseudocode, symbol Database,
 		symbol Dictionary, symbol File, symbol Function, symbol HashTable,
 		symbol FunctionClosure, symbol CompiledFunction, symbol CompiledFunctionClosure,
@@ -492,12 +492,12 @@ printWidth = fileWidth stdio
 if firstTime and not nosetup then loadSetup()
 
 -- remove the Macaulay2Core private dictionary -- it was added by "debug" above
-dictionaryPath = select(dictionaryPath, d -> d =!= Macaulay2Core#"private dictionary")
+if not nosetup then dictionaryPath = select(dictionaryPath, d -> d =!= Macaulay2Core#"private dictionary")
 
 processCommandLineOptions 2
 runStartFunctions()
 errorDepth = loadDepth
-if not value Macaulay2Core#"private dictionary"#"noinitfile" then (
+if class Macaulay2Core =!= Symbol and not value Macaulay2Core#"private dictionary"#"noinitfile" then (
      -- the location of init.m2 is documented in the node "initialization file"
      tryLoad ("init.m2", applicationDirectory() | "init.m2");
      tryLoad ("init.m2", "init.m2");

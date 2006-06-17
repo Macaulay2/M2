@@ -257,14 +257,6 @@ document {
      }
 
 document {
-     Key => (symbol ?, Tally, Tally),
-     Headline => "comparison of tallies",
-     TT "x ? y", " -- compares two tallies, returning ", TT "symbol <", ", ",
-     TT "symbol >", ", ", TT "symbol ==", ", or ", TO "incomparable", ".",
-     SeeAlso => "Tally"
-     }
-
-document {
      Key => (symbol +, Tally, Tally),
      Headline => "union of tallies",
      TT "x + y", " -- produces the union of two tallies.",

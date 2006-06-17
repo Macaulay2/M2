@@ -575,13 +575,16 @@ export errorMessageClass := newtypeof(basicListClass);
 export missingMethodClass := newtypeof(errorMessageClass);
 
 export ringClass := newtypeof(typeClass);
-       newbasicringtype():HashTable := newHashTable(ringClass,thingClass);
-export integerClass := newbasicringtype();
-export rationalClass := newbasicringtype();
-export bigRealClass := newbasicringtype();
-export bigComplexClass := newbasicringtype();
-export doubleClass := newbasicringtype();
-export complexClass := newbasicringtype();
+export numberClass := newtypeof(thingClass);
+       newnumbertype():HashTable := newHashTable(ringClass,numberClass);
+
+export integerClass := newnumbertype();
+export rationalClass := newnumbertype();
+export bigRealClass := newnumbertype();
+export bigComplexClass := newnumbertype();
+export doubleClass := newnumbertype();
+export complexClass := newnumbertype();
+
 export rawObjectClass := newbasictype();		    -- RawObject
 export rawMonomialClass := newtypeof(rawObjectClass);	    -- RawMonomial
 export rawMonomialOrderingClass := newtypeof(rawObjectClass); -- RawMonomialOrdering
@@ -594,6 +597,7 @@ export rawFreeModuleClass := newtypeof(rawObjectClass);	    -- RawFreeModule
 export rawMatrixClass := newtypeof(rawObjectClass);	    -- RawMatrix
 export rawMutableMatrixClass := newtypeof(rawObjectClass);	    -- RawMutableMatrix
 export rawComputationClass := newtypeof(rawObjectClass);	    -- RawComputation
+
 export nothingClass := newbasictype();
 
 export (x:SymbolClosure) === (y:SymbolClosure) : bool := (

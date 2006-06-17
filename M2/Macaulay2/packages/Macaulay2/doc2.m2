@@ -339,7 +339,7 @@ document {
      Headline => "print to a file",
      Usage => "f << x\n  << x",
      Inputs => { 
-	  "f" => Nothing => { ofClass File, ", ", ofClass String, ", ", ofClass List, ", or ", ofClass Nothing },
+	  "f" => Nothing => { ofClass {File, String, List, Nothing} },
 	  "x"
 	  },
      Outputs => {
@@ -528,6 +528,7 @@ undocumented {
      (symbol "?", Thing, Thing),
      (symbol "?", Function),
      }
+
 document {
      Key => {symbol "?",
      	  (symbol "?", Symbol, IndexedVariable),
@@ -538,11 +539,13 @@ document {
 	  },
      Headline => "comparison operator",
      Usage => "x ? y", 
-     "Compares x and y (of the same type), returning ", TT "symbol <", ", ",
+     Inputs => { "x", "y" },
+     Outputs => { Boolean },
+     "Compares ", TT "x", " and ", TT "y", " (of the same type), returning ", TT "symbol <", ", ",
      TT "symbol >", ", ", TT "symbol ==", ", or ", TO "incomparable", ".",
      PARA{},
-     "Many types of objects may be compared. Numbers are handled as one would expect,
-     and string, lists and sequences are generally compared lexicographically.",
+     "Many types of objects may be compared.  Numbers are handled as one would expect,
+     and strings, lists and sequences are generally compared lexicographically.",
      EXAMPLE lines ///
      	  3 ? 4
 	  "book" ? "boolean"
@@ -555,6 +558,13 @@ document {
      EXAMPLE lines ///
      	  R = ZZ[a,b,c]
 	  a*c ? b^2
+     ///,
+     "A set is smaller than another if it is a subset; for tallies, corresponding counts should all be smaller.",
+     EXAMPLE lines ///
+     	  set {1,2} ? set {2,3}
+     	  set {1,2} ? set {1,2,3}
+	  tally {1,1,2} ? tally {1,2,3}
+	  tally {1,1,2} ? tally {1,1,2,3}
      ///,
      SeeAlso => {sort, rsort}
      }

@@ -246,7 +246,7 @@ coefficient(MonoidElement,RingElement) := (m,f) -> (
      RM := ring f;
      R := coefficientRing RM;
      M := monoid RM;
-     if M =!= class m then error "expected monomial from same ring";     
+     if not instance(m,M) then error "expected monomial from same ring";     
      new R from rawCoefficient(raw R, raw f, raw m))
 coefficient(RingElement,RingElement) := (m,f) -> (
      if size m != 1 or leadCoefficient m != 1 then error "expected a monomial";

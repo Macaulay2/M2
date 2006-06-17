@@ -13,7 +13,7 @@ MarkUpListParagraph.synonym = "mark-up list paragraph"
 MarkUpListContainer = new Type of MarkUpListParagraph	    -- one of these may contain paragraphs or containers, and its method for printing has to handle the line breaks
 MarkUpListContainer.synonym = "mark-up list container"
 
-     MarkUpType = new Type of Type
+     MarkUpType = new Type of SelfInitializingType
 MarkUpType.synonym = "mark-up type"
 
 options MarkUpType := X -> X.Options
@@ -21,13 +21,9 @@ options MarkUpType := X -> X.Options
 MarkUpTypeWithOptions = new Type of MarkUpType
 MarkUpTypeWithOptions.synonym = "mark-up type with options"
 
-MarkUpType Thing := (M,x) -> new M from x
 MarkUpType Net := (M,x) -> new M from {toString x}
 MarkUpType String :=
 MarkUpType MarkUpList := (M,x) -> new M from {x}
-
-MarkUpType\VisibleList := (M,x) -> (i -> M i) \ x
-List/MarkUpType := VisibleList/MarkUpType := (x,M) -> x / (i -> M i)
 
 IntermediateMarkUpType = new Type of MarkUpType	    -- this is for things like MENU, which do not correspond to an html entity, but have a recipe for translation into html
 IntermediateMarkUpType.synonym = "intermediate mark-up type"

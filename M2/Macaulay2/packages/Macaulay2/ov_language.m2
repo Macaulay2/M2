@@ -182,15 +182,6 @@ document {
 ------------------------------------------------------------------
 
 document {
-     Key => "basic types",
-     "The basic type of an object is the way the object is
-     essentially implemented internally.  It is not possible for
-     the user to create new basic types.  For details, see
-     ", TT "basictype", ".",
-     SeeAlso => { "strings", "nets", "lists and sequences", "hash tables" }
-     }
-
-document {
      Key => "valid names",
      "Valid names for symbols may be constructed using letters, digits, and
      the apostrophe, and should not begin with a digit.",
@@ -809,26 +800,28 @@ document {
 	  }
      }
 
+debug Macaulay2Core
+
 document {
      Key => "operators",
      PARA {
 	  "Here we present all of the unary and binary operators in the language.  They are members of the class ", TO "Keyword", ".
 	  The binary operators are ",
-	  between_" " apply(sort toList value Macaulay2Core#"private dictionary"#"binaryOperators", s -> TO {s}),
+	  between_" " apply(sort toList binaryOperators, s -> TO {s}),
 	  " , the unary prefix operators are ",
-	  between_" " apply(sort toList value Macaulay2Core#"private dictionary"#"prefixOperators", s -> TO {s}),
+	  between_" " apply(sort toList prefixOperators, s -> TO {s}),
 	  " , and the unary postfix operators are ",
-	  between_" " apply(sort toList value Macaulay2Core#"private dictionary"#"postfixOperators", s -> TO {s}),
+	  between_" " apply(sort toList postfixOperators, s -> TO {s}),
 	  " ."
 	  },
      PARA {
 	  "Of those, the ones for which users may install new methods are ",
 	  "the binary operators ",
-	  between_" " apply(sort toList value Macaulay2Core#"private dictionary"#"flexibleBinaryOperators", s -> TO {s}),
+	  between_" " apply(sort toList flexibleBinaryOperators, s -> TO {s}),
 	  " , the unary prefix operators ",
-	  between_" " apply(sort toList value Macaulay2Core#"private dictionary"#"flexiblePrefixOperators", s -> TO {s}),
+	  between_" " apply(sort toList flexiblePrefixOperators, s -> TO {s}),
 	  " , and the unary postfix operators ",
-	  between_" " apply(sort toList value Macaulay2Core#"private dictionary"#"flexiblePostfixOperators", s -> TO {s}),
+	  between_" " apply(sort toList flexiblePostfixOperators, s -> TO {s}),
 	  " ."},
      Subnodes => {
      "assignment",
@@ -901,17 +894,30 @@ document {
 
 document {
      Key => "precedence of operators",
-     SeeAlso => { "precedence of operators, in detail" },
+     SeeAlso => { "parsing precedence, in detail" },
      PARA {
-	  "Here are the operators, keywords, and a few other items, arranged in order of increasing parsing precedence.  For example,
+	  "One aspect of parsing precedence is associativity.  A ", EM "left-associative", " operator is one, such as ", TO "*", ", with
+	  the property that ", TT "x * y * z", " is parsed as ", TT "(x * y) * z", ".
+	  A ", EM "right-associative", " operator is one, such as ", TO "=", ", with the property that ", TT "x = y = z", " is parsed
+	  as ", TT "x = (y = z)", ".  These operators are left associative: ",
+	  between_" " apply(sort select(allOperators, s -> (getParsing s)#0 == (getParsing s)#1), s -> TO {s}),
+	  ", and these operators are right associative: ",
+	  between_" " apply(sort select(allOperators, s -> (getParsing s)#0 == (getParsing s)#1 + 1), s -> TO {s}),
+	  " ."
+	  },
+     PARA {
+	  "Here are the operators arranged in order of increasing parsing precedence.  For example,
 	  ", TT "*", " has higher parsing precedence than ", TT "+", ", and hence ", TT "2+3*5", " is
-	  parsed as though it had been written as ", TT "2+(3*5)", "."
-	  },	  
-     TABLE { "class" => "examples",  TR TD PRE net drop(apply(seeParsing(),x -> take(x,-1)),1) }
+	  parsed as though it had been written as ", TT "2+(3*5)", ".  The symbol ", TT "<ADJACENCY>", " stands in for ", TO " ", ", the symbol whose
+	  name is a single space."
+	  },
+     TABLE { "class" => "examples",  TR TD PRE net (value Macaulay2Core#"private dictionary"#"seeOperatorPrecedence")() }
      }
 
+dictionaryPath = select(dictionaryPath, d -> d =!= Macaulay2Core#"private dictionary")
+
 document {
-     Key => "precedence of operators, in detail",
+     Key => "parsing precedence, in detail",
      "A newline ends a statement if it can, otherwise it acts like any
      white space.",
      EXAMPLE "2+\n3+\n4",

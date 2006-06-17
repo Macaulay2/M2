@@ -1,4 +1,3 @@
-needsPackage "FirstPackage"
 newPackage (
      "SecondPackage",
      Version => "1.0", 

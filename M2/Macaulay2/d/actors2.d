@@ -193,16 +193,6 @@ transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
 			      	   if mutable then copy(v) else v,
 			      	   0,false),
 			      mutable))))
-	  else if basicType == complexClass then (
-	       if parent != nothingClass
-	       then buildErrorPacket("expected Nothing as parent for complex number")
-	       else (
-		    if length(v) != 2 then WrongNumArgs(2)
-		    else (
-			 when v.0 is x:Real do
-			 when v.1 is y:Real do Expr(Complex(x.v,y.v))
-			 else WrongArg(2,"a real number")
-			 else WrongArg(1,"a real number"))))
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
@@ -214,6 +204,16 @@ transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
 	  else "a list or hash table",
 	  returned
 	  ));
+
+newComplex(args:Expr):Expr := (
+     when args is v:Sequence do
+     if length(v) != 2 then WrongNumArgs(2) else
+     when v.0 is r0:Real do
+     when v.1 is r1:Real do Expr(Complex(r0.v,r1.v))
+     else WrongArg(2,"a real number")
+     else WrongArg(1,"a real number")
+     else WrongArg("a pair of real numbers"));
+setupfun("newCC",newComplex);
 
 transform(e:Expr,class:HashTable,returned:bool):Expr := (
      -- same as above, but no parent specified, so leave what s provided alone
@@ -259,13 +259,6 @@ transform(e:Expr,class:HashTable,returned:bool):Expr := (
 	       else (
 		    mutable := ancestor(class,mutableListClass);
 		    Expr( sethash( List(class, if mutable then copy(v) else v, 0,false), mutable))))
-	  else if basicType == complexClass then (
-	       if length(v) != 2 then WrongNumArgs(2)
-	       else (
-		    when v.0 is x:Real do
-		    when v.1 is y:Real do Expr(Complex(x.v,y.v))
-		    else WrongArg(2,"a real number")
-		    else WrongArg(1,"a real number")))
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())

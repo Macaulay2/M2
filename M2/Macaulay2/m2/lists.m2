@@ -123,6 +123,7 @@ prefixOperators = sort prefixOperators
 postfixOperators = sort postfixOperators
 flexibleOperators = sort flexibleOperators
 fixedOperators = sort fixedOperators
+allOperators = sort allOperators
 
 -----------------------------------------------------------------------------
 -- sublists
