@@ -147,7 +147,7 @@ document { Key => "right modules or left modules?",
      by reversing the multiplication.  Thus matrices over ", TT "R'", " can act on ", TT "R", "-modules from the left.  Matrices over ", TT "R", "
      in Macaulay 2 are ", EM "really", " matrices over ", TT "R'", ".",
      PARA{},
-     "We illustrate this state of affairs with an example over a (noncommutative Weyl algebra).  First observe the noncommutativity.",
+     "We illustrate this state of affairs with an example over a (noncommutative) Weyl algebra.  First observe the noncommutativity.",
      EXAMPLE lines ///
      	  R = QQ[x,dx,WeylAlgebra=>{x=>dx}]
 	  x*dx
