@@ -100,7 +100,7 @@ frac EngineRing := R -> (
 degreeLength Ring := R -> R.degreeLength
 
 use Ring := R -> (
-     if R.?ring then use R.ring;
+     if R.?ring then use R.ring;			    -- I'm not sure what this is for.  Which rings have this key?
      generators R;
      if R.?generators and R.?generatorSymbols then scan(R.generatorSymbols,R.generators,(sym,val) -> sym <- val);
      if R.?use then R.use R;

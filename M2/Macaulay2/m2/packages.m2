@@ -24,8 +24,8 @@ installMethod(GlobalReleaseHook,Package,globalReleaseFunction)
 
 dismiss Package := pkg -> (
      loadedPackages = delete(pkg,loadedPackages);
-     globalDictionaries = delete(pkg.Dictionary,globalDictionaries);
-     globalDictionaries = delete(pkg#"private dictionary",globalDictionaries);
+     dictionaryPath = delete(pkg.Dictionary,dictionaryPath);
+     dictionaryPath = delete(pkg#"private dictionary",dictionaryPath);
      -- stderr << "--previous definitions removed for package " << pkg << endl;
      )
 dismiss String := title -> if PackageDictionary#?title and class value PackageDictionary#title === Package then dismiss value PackageDictionary#title
@@ -78,13 +78,13 @@ newPackage(String) := opts -> (title) -> (
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
      -- stderr << "--package \"" << title << "\" loading" << endl;
      dismiss title;
-     saveD := globalDictionaries;
+     saveD := dictionaryPath;
      saveP := loadedPackages;
      local hook;
      if title =!= "Macaulay2Core" then (
      	  hook = (
 	       haderror -> if haderror then (
-	       	    globalDictionaries = saveD;
+	       	    dictionaryPath = saveD;
 	       	    loadedPackages = saveP;
 		    )
 	       else endPackage title
@@ -95,7 +95,7 @@ newPackage(String) := opts -> (title) -> (
           "title" => title,
 	  symbol Options => opts,
      	  symbol Dictionary => new Dictionary, -- this is the global one
-     	  "private dictionary" => if title === "Macaulay2Core" then first globalDictionaries else new Dictionary, -- this is the local one
+     	  "private dictionary" => if title === "Macaulay2Core" then first dictionaryPath else new Dictionary, -- this is the local one
      	  "close hook" => hook,
 	  "previous currentPackage" => currentPackage,
 	  "previous dictionaries" => saveD,
@@ -155,7 +155,7 @@ newPackage(String) := opts -> (title) -> (
 	  if title === "Macaulay2Core" then {} else {newpkg},
 	  {Macaulay2Core}
 	  );
-     globalDictionaries = join(
+     dictionaryPath = join(
 	  {newpkg#"private dictionary"},
 	  {Macaulay2Core.Dictionary, OutputDictionary, PackageDictionary}
 	  );
@@ -212,11 +212,11 @@ newPackage("Macaulay2Core",
 findSynonyms = method()
 findSynonyms Symbol := x -> (
      r := {};
-     scan(globalDictionaries, d -> scan(pairs d, (nam,sym) -> if x === sym and getGlobalSymbol nam === sym then r = append(r,nam)));
+     scan(dictionaryPath, d -> scan(pairs d, (nam,sym) -> if x === sym and getGlobalSymbol nam === sym then r = append(r,nam)));
      sort unique r)
 
 checkShadow = () -> (
-     d := globalDictionaries;
+     d := dictionaryPath;
      n := #d;
      for i from 0 to n-1 do
      for j from i+1 to n-1 do
@@ -228,7 +228,7 @@ checkShadow = () -> (
 	       if #w > 0 then stderr << "--   synonym" << (if #w > 1 then "s") << " for " << nam << ": " << demark(", ",w) << endl
 	       else if class User === Package
 	       and User#?"private dictionary"
-	       and member(User#"private dictionary",globalDictionaries) then for i from 0 do (
+	       and member(User#"private dictionary",dictionaryPath) then for i from 0 do (
 		    newsyn := nam | "$" | toString i;
 		    if not isGlobalSymbol newsyn then (
 			 User#"private dictionary"#newsyn = sym;
@@ -252,11 +252,11 @@ endPackage String := title -> (
 	  );
      if pkg#"title" === "Macaulay2Core" then (
 	  loadedPackages = {pkg};
-	  globalDictionaries = {Macaulay2Core.Dictionary, OutputDictionary, PackageDictionary};
+	  dictionaryPath = {Macaulay2Core.Dictionary, OutputDictionary, PackageDictionary};
 	  )
      else (
 	  loadedPackages = prepend(pkg,pkg#"previous packages");
-	  globalDictionaries = prepend(exportDict,pkg#"previous dictionaries");
+	  dictionaryPath = prepend(exportDict,pkg#"previous dictionaries");
 	  );
      checkShadow();
      remove(pkg,"previous dictionaries");
@@ -281,7 +281,7 @@ package Thing := x -> (
      if d =!= null then package d)
 package Symbol := s -> (
      n := toString s;
-     scan(globalDictionaries, d -> if d#?n and d#n === s then (
+     scan(dictionaryPath, d -> if d#?n and d#n === s then (
 	       if d === PackageDictionary and class value s === Package then break value s
 	       else if package d =!= null then break package d)));
 package HashTable := package Function := x -> if ReverseDictionary#?x then package ReverseDictionary#x
@@ -290,7 +290,7 @@ Package.GlobalAssignHook = (X,x) -> if not ReverseDictionary#?x then ReverseDict
 Package.GlobalReleaseHook = globalReleaseFunction
 use Package := pkg -> if not member(pkg,loadedPackages) then (
      loadedPackages = prepend(pkg,loadedPackages);
-     globalDictionaries = prepend(pkg.Dictionary,globalDictionaries);
+     dictionaryPath = prepend(pkg.Dictionary,dictionaryPath);
      )
 
 beginDocumentation = () -> (
@@ -308,8 +308,8 @@ beginDocumentation = () -> (
 debug = method()
 debug Package := pkg -> (
      d := pkg#"private dictionary";
-     if not member(d,globalDictionaries) then (
-	  globalDictionaries = prepend(d,globalDictionaries);
+     if not member(d,dictionaryPath) then (
+	  dictionaryPath = prepend(d,dictionaryPath);
 	  );
      checkShadow())
 

@@ -17,7 +17,7 @@ if class oooo =!= Symbol then error "setup.m2 already loaded"
 if class RawMutableMatrix =!= Type then error "where is RawMutableMatrix?"
 
 OutputDictionary = new Dictionary
-globalDictionaries = append(globalDictionaries,OutputDictionary)
+dictionaryPath = append(dictionaryPath,OutputDictionary)
 
 --
 
@@ -47,11 +47,6 @@ rotateOutputLines := x -> (
      if ooo =!= null then global oooo <- ooo;
      if oo =!= null then global ooo <- oo;
      if x =!= null then global oo <- x;
-     )
-
-applyMethod := (m,x) -> if x === null then x else (
-     method := lookup(m,class x);
-     if method === null then x else method x
      )
 
 Thing.AfterEval = x -> (

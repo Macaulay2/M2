@@ -19,5 +19,5 @@ document {
 	 res === resolution
 	 res
      ///,
-     SeeAlso => {"globalDictionaries"}
+     SeeAlso => {"dictionaryPath"}
      }

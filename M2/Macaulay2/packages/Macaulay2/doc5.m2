@@ -603,7 +603,7 @@ document {
 	  "p" => Package,
 	  },
      Consequences => {
-	  {"the private dictionary of the package ", TT "p", " is added to ", TO "globalDictionaries", 
+	  {"the private dictionary of the package ", TT "p", " is added to ", TO "dictionaryPath", 
 	       " so its non-exported symbols are visible" }
 	  },
      "For example, the private dictionary for Macaulay 2 may be opened using",
@@ -617,9 +617,9 @@ document {
      }
 
 document {
-     Key => symbol globalDictionaries,
-     "The value of ", TO "globalDictionaries", " is the list of global dictionaries whose symbols are visible.",
-     EXAMPLE { "globalDictionaries" },
+     Key => symbol dictionaryPath,
+     "The value of ", TO "dictionaryPath", " is the list of global dictionaries whose symbols are visible.",
+     EXAMPLE { "dictionaryPath" },
      SeeAlso => { Dictionary }
      }
 

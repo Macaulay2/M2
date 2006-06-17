@@ -1565,7 +1565,7 @@ globalDictionaryList():Expr := (		    -- get the current globalDictionary list
      g = globalDictionary;
      Expr(list(new Sequence len n do while true do ( provide Expr(DictionaryClosure(globalFrame,g)); g = g.outerDictionary ))));
 
-globalDictionaries(e:Expr):Expr := (
+dictionaryPath(e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  if length(a) == 0 then globalDictionaryList()
@@ -1573,7 +1573,7 @@ globalDictionaries(e:Expr):Expr := (
      is t:List do (					    -- set the current globalDictionary list
 	  s := t.v;
 	  n := length(s);
-	  if n == 0 then return WrongArg("expected a nonempty list of globalDictionaries");
+	  if n == 0 then return WrongArg("expected a nonempty list of dictionaryPath");
           sawUnprotected := false;
 	  foreach x in s do 
 	  when x is dc:DictionaryClosure do (
@@ -1589,16 +1589,16 @@ globalDictionaries(e:Expr):Expr := (
 	  globalDictionary = a.0;
 	  e)
      else WrongNumArgs(0));
-globalDictionariesS := setupvar("globalDictionaries",globalDictionaryList());
+dictionaryPathS := setupvar("dictionaryPath",globalDictionaryList());
 storeGlobalDictionaries(e:Expr):Expr := (			    -- called with (symbol,newvalue)
      when e
      is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
 	  sym := s.0;
-	  if !(sym === globalDictionariesS)
+	  if !(sym === dictionaryPathS)
 	  then buildErrorPacket("global assignment hook encountered unknown symbol")
-	  else globalDictionaries(s.1))
+	  else dictionaryPath(s.1))
      else WrongNumArgs(2));
-storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,globalDictionariesS)),Expr(CompiledFunction(storeGlobalDictionaries,nextHash())));
+storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,dictionaryPathS)),Expr(CompiledFunction(storeGlobalDictionaries,nextHash())));
 
 export setGlobalVariable(x:Symbol,y:Expr):void := globalFrame.values.(x.frameindex) = y;
 export getGlobalVariable(x:Symbol):Expr := globalFrame.values.(x.frameindex);

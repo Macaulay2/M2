@@ -1394,7 +1394,7 @@ export eval(c:Code):Expr := (
 	       err.frame = noRecycle(localFrame);
 	       err.position = p;
 	       if !err.printed || backtrace && localFrame != oldReportFrame then (
-		    if debuggingMode && (! (p.filename === "stdio")) then (
+		    if debuggingMode && !stopIfError && (! (p.filename === "stdio")) then (
 			 if !err.printed then printError(err);
 			 printErrorMessage(err.position,"--entering debugger--");
 			 z := debuggerFun(localFrame,c);

@@ -4,7 +4,7 @@ document {
      Usage => ///endPackage pkgname///,
      Inputs => { "pkgname" => { "the name of the package" } },
      Outputs => { Package => { "the new package" } },
-     Consequences => {{ "The package named should have been opened with ", TO "newPackage", ".  The package is closed, and the former value of ", TO "globalDictionaries", "
+     Consequences => {{ "The package named should have been opened with ", TO "newPackage", ".  The package is closed, and the former value of ", TO "dictionaryPath", "
 	       is restored, with the global dictionary (containing the exported symbols) of the package prepended."
 	  }},     
      "A package writer need not call this function explicitly, since the end of file hook for the file containing the ", TO "newPackage", " command
@@ -13,10 +13,10 @@ document {
           newPackage "Foo"
 	  export abc
 	  abc = 3
-	  globalDictionaries
+	  dictionaryPath
 	  endPackage "Foo"
 	  peek oo
-	  globalDictionaries
+	  dictionaryPath
 	  abc
      ///
      }

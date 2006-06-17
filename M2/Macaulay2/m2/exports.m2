@@ -1119,7 +1119,7 @@ exportMutable {
 	symbol errorDepth,
 	symbol fileExitHooks,
 	symbol gbTrace,
-	symbol globalDictionaries,
+	symbol dictionaryPath,
 	symbol lineNumber,
 	symbol loadDepth,
 	symbol notify,

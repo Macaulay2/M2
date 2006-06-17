@@ -19,19 +19,18 @@ if regex(".*/","/aa/bb") =!= {(0, 4)}
 or regex(".*/","aabb") =!= null
 then error "regex regular expression library not working"
 
--- we do this bit *before* "debug Macaulay2Core", so that Macaulay2Core, which may not be there yet, ends up in the right dictionary
+-- we do this bit *before* "debug Macaulay2Core", so that Macaulay2Core (the symbol, not the package), which may not be there yet, ends up in the right dictionary
 if firstTime then (
      assert = x -> (
 	  if class x =!= Boolean then error "'assert' expected true or false";
 	  if not x then error "assertion failed");
      PackageDictionary = new Dictionary;
-     globalDictionaries = append(globalDictionaries,PackageDictionary);
+     dictionaryPath = append(dictionaryPath,PackageDictionary);
      assert( not isGlobalSymbol "Macaulay2Core" );
      getGlobalSymbol(PackageDictionary,"Macaulay2Core");
      )
 
--- we need access to the functions needed by this file and enclosed on the first pass.  We remove the private dictionary below.
--- if not firstTime then debug value PackageDictionary#"Macaulay2Core"
+-- we need access to the private symbols -- (we remove the Macaulay2Core private dictionary later.)
 if not firstTime then debug Macaulay2Core
 
 -- this next bit has to be *parsed* after the "debug" above, to prevent the symbols from being added to the User dictionary
@@ -212,7 +211,7 @@ dir := s -> ( m := regex(".*/",s); if 0 == #m then "./" else substring_(m#0) s)
 noloaddata := false
 nobanner := false;
 nosetup := false
-noinitfile := false
+noinitfile = false
 interpreter := commandInterpreter
 
 getRealPath := fn -> (					    -- use this later if realpath doesn't work
@@ -350,7 +349,7 @@ showMaps := () -> (
 dump := () -> (
      if not version#"dumpdata" then error "not configured for dumping data with this version of Macaulay 2";
      -- Macaulay2Core := if isGlobalSymbol "Macaulay2Core" then value getGlobalSymbol "Macaulay2Core" else error "dump: Macaulay2Core package not made yet";
-     -- if member(Macaulay2Core#"private dictionary", globalDictionaries) then error "dump: Macaulay2Core private dictionary is open";
+     -- if member(Macaulay2Core#"private dictionary", dictionaryPath) then error "dump: Macaulay2Core private dictionary is open";
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
      fn := (
 	  if buildHomeDirectory =!= null then concatenate(buildHomeDirectory , "cache/", "Macaulay2-", arch, "-data") else 
@@ -493,12 +492,12 @@ printWidth = fileWidth stdio
 if firstTime and not nosetup then loadSetup()
 
 -- remove the Macaulay2Core private dictionary -- it was added by "debug" above
-globalDictionaries = select(globalDictionaries, d -> d =!= Macaulay2Core#"private dictionary")
+dictionaryPath = select(dictionaryPath, d -> d =!= Macaulay2Core#"private dictionary")
 
 processCommandLineOptions 2
 runStartFunctions()
 errorDepth = loadDepth
-if not noinitfile then (
+if not value Macaulay2Core#"private dictionary"#"noinitfile" then (
      -- the location of init.m2 is documented in the node "initialization file"
      tryLoad ("init.m2", applicationDirectory() | "init.m2");
      tryLoad ("init.m2", "init.m2");

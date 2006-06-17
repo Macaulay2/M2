@@ -66,7 +66,7 @@ x  = {symbol generators, symbol size, symbol symmetricPower, symbol " ", symbol 
       symbol newPackage, symbol deepSplice, symbol stdio, symbol cohomology, symbol RingElement, symbol ooo, symbol sinh, symbol subsets, SyzygyMatrix, symbol InfiniteNumber, symbol
       genericSkewMatrix, symbol minprimes, symbol mathML, symbol maxPosition, symbol saturate, symbol EmptyMarkUpType, symbol isNormal, Ascending, symbol Expression, argument, symbol
       currentFileName, symbol degree, symbol ChainComplex, symbol syz, Syzygies, GlobalAssignHook, symbol sleep, symbol isPrimitive, symbol seeParsing, symbol echoOn, symbol isSurjective,
-      symbol Subscript, symbol drop, symbol showStructure, symbol globalDictionaries, symbol lines, symbol gcd, symbol lift, subscript, symbol printWidth, symbol presentation, symbol
+      symbol Subscript, symbol drop, symbol showStructure, symbol dictionaryPath, symbol lines, symbol gcd, symbol lift, subscript, symbol printWidth, symbol presentation, symbol
       append, symbol extend, symbol cone, symbol MarkUpList, symbol openDatabaseOut, symbol LAYOUT, symbol ModuleMap, symbol addStartFunction, symbol help, symbol pushForward1, symbol
       fromDual, symbol ascii, symbol locate, symbol get, symbol QuotientRing, symbol toSequence, symbol minors, Inverses, symbol "shield", symbol "local", Outputs, symbol isPrime, symbol
       copy, symbol super, symbol columnate, symbol "||", symbol reduceHilbert, symbol userSymbols, symbol dumpdata, symbol tan, symbol graphIdeal, symbol HTML, symbol Nothing, symbol

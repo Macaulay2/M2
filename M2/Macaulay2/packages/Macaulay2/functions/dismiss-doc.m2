@@ -10,7 +10,7 @@ document {
 	  "P" => Package 
 	  },
      Consequences => {
-	  {"the dictionary of the package ", TT "P", " is removed from ", TO "globalDictionaries", ", so the symbols
+	  {"the dictionary of the package ", TT "P", " is removed from ", TO "dictionaryPath", ", so the symbols
 	       exported by ", TT "P", " are no longer available for use"  }
 	  },
      PARA {
@@ -22,15 +22,15 @@ document {
 	  export x
 	  x=3
 	  endPackage "P"
-	  globalDictionaries
+	  dictionaryPath
 	  x
 	  dismiss P
-	  globalDictionaries
+	  dictionaryPath
 	  x
 	  values PackageDictionary
      	  use P
 	  x
      ///,
-     SeeAlso => { "globalDictionaries", "PackageDictionary", "use" }
+     SeeAlso => { "dictionaryPath", "PackageDictionary", "use" }
      }
 
