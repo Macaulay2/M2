@@ -911,13 +911,6 @@ undocumented {
 (symbol "/", Ideal, Ideal),
 (symbol "/", Module, RingElement),
 
-(symbol "/", Ring, Module),
-(symbol "/", Ring, RingElement),
-(symbol "/", Ring, Ideal),
-(symbol "/", Ring, MonomialIdeal),
-(symbol "/", Ring, List),
-(symbol "/", Ring, Sequence),
-(symbol "/", Ring, ZZ),
 
 (symbol "/", CoherentSheaf, CoherentSheaf),
 (symbol "/", CoherentSheaf, Ideal),
