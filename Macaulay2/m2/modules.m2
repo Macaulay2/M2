@@ -204,6 +204,9 @@ RingElement * Vector := (r,v) -> new class v from {r * v#0}
 Vector + Vector := (v,w) -> (
      m := v#0 + w#0;
      new target m from {m})
+Vector - Vector := (v,w) -> (
+     m := v#0 - w#0;
+     new target m from {m})
 
 Ring * RingElement := (R,f) -> (
      if ring f === R then ideal(f)

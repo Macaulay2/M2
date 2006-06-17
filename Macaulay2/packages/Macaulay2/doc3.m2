@@ -163,7 +163,7 @@ document {
      Inputs => { "x" => Nothing => {ofClass{VisibleList,List,Sequence,Array,Tally,Set}}, "f" => Nothing => {ofClass{Function,Command,SelfInitializingType,RingMap}} },
      Outputs => {{ "the list, tally, or set obtained by applying ", TT "f", " to each element of ", TT "x", "; it has the same type as ", TT "x", " has" }},
      PARA {
-	  "The function ", TT "apply", " does the same thing."
+	  "The function ", TO "apply", " does the same thing."
 	  },
      PARA {
      	  "The operator ", TO "/", " is left associative, which means that ", TT "w / f / g", " is interpreted as ", TT "(w / f) / g", ".
@@ -203,6 +203,7 @@ document {
 	  },
      EXAMPLE lines ///
      	  toList \\ sin \ ( 1 .. 5 )
+     	  ( 1 .. 5 ) / sin // toList
 	  (x -> (x,x)) \ (a,b,c,d)
 	  splice \\ (x -> (x,x)) \ (a,b,c,d)
      ///

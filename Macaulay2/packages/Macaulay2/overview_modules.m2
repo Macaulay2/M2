@@ -110,6 +110,7 @@ document {
 	  "homomorphisms (maps) between modules",
 	  TO "module homomorphisms",
 	  TO "canonical maps between modules",
+	  TO "right modules or left modules?",
 
 	  "operations on modules",
 	  TO "direct sums of modules",
@@ -135,6 +136,61 @@ document {
 	  TO "local cohomology",
 	  TO "is a module Cohen-Macaulay?"
 	  }
+     }
+
+document { Key => "right modules or left modules?",
+     "Macaulay 2 can handle non-commutative rings, and for such rings there is a difference between left modules and right modules.
+     In Macaulay 2, all the modules are left modules, but matrices act on the left, too.  The usual convention would be to have the matrices
+     act on the right, so the homomorphism rule (", TT "f(av)=af(v)", ") becomes a consequence of associativity of matrix-vector-scalar
+     multiplication (", TT "(av)f=a(vf)", ").  Macaulay 2 makes things come out okay in the end -- a left ", TT "R", "-module can be regarded
+     naturally as a right ", TT "R'", "-module, where ", TT "R'", " is the opposite ring of ", TT "R", ", obtained from the ring ", TT "R", "
+     by reversing the multiplication.  Thus matrices over ", TT "R'", " can act on ", TT "R", "-modules from the left.  Matrices over ", TT "R", "
+     in Macaulay 2 are ", EM "really", " matrices over ", TT "R'", ".",
+     PARA{},
+     "We illustrate this state of affairs with an example over a (noncommutative Weyl algebra).  First observe the noncommutativity.",
+     EXAMPLE lines ///
+     	  R = QQ[x,dx,WeylAlgebra=>{x=>dx}]
+	  x*dx
+	  dx*x
+     ///,
+     "Now verify the module is a left module by checking associativity.",
+     EXAMPLE lines ///
+	  M = R^2
+	  v = M_0
+     	  dx*v
+	  x*(dx*v)
+	  (x*dx)*v
+     	  x*(dx*v) == (x*dx)*v
+     ///,
+     "Now make a matrix and check that left multiplication by it is a homomorphism from ", TT "M", " to ", TT "M", ".",
+     EXAMPLE lines ///
+     	  f = dx * id_M
+	  f*(x*v)
+	  x*(f*v)
+	  f*(x*v) == x*(f*v)
+     ///,
+     "Now we make another matrix and check that matrix multiplication treats the entries of the matrices as residing in the opposite ring, ", TT "R'", ".",
+     EXAMPLE lines ///
+     	  g = x * id_M
+	  f*g
+     	  f*g == (x*dx) * id_M
+     	  (dx * id_M)*(x * id_M) == (x*dx) * id_M
+     ///,
+     "Here we check that multiplication of a scalar times a matrix is compatible with multiplication of a scalar times a vector.",
+     EXAMPLE lines ///
+     	  x * ( (dx * id_M) * v )
+	  (x *  (dx * id_M) ) * v
+	  (x *  (dx * id_M) ) * v == x * ( (dx * id_M) * v )	  
+     ///,
+     "Unfortunately, one desirable associativity rule does ", EM "not", " hold, the one for ", EM "RingElement * Matrix * Matrix", ", as we
+     see in this example.",
+     EXAMPLE lines ///
+          x * ( id_M * ( dx * id_M ) )
+          (x * id_M) * ( dx * id_M )
+          x * ( id_M * ( dx * id_M ) ) == (x * id_M) * ( dx * id_M )
+     ///,
+     "The reason for this discrepancy is that the set of matrices over R' is naturally a left R'-module, not a left R-module, and scalar multiplication in Macaulay 2
+     is currently implemented as though it were.  Multiplication of a scalar by a matrix should be done with the reverse multiplication."
      }
 
 -------------------

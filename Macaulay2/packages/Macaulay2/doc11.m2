@@ -3,6 +3,14 @@
 -- html.m2 documentation
 -- Bart Snapp edited nearly all of these entries.
 document {
+     Key => MarkUpListContainer,
+     Headline => "the class of mark-up lists that can contain paragraphs",
+     PARA {
+	  "Mark-up lists of this time get special handling when converted to nets by ", TO "net", ", because
+	  the paragraphs must be collected and wrapped."
+	  }
+     }
+document {
      Key => MarkUpList, 
      Headline => "the class of mark-up lists used with hypertext",
      PARA{},
