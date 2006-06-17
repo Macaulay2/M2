@@ -971,9 +971,8 @@ document {
 	  "S" => {"the quotient ring ", TT "R/I"}
 	  },
      "The names of the variables are assigned values in the new quotient ring
-     by automatically running ", TT "use R", ", unless ", TT "R", " has a name,
-     or one of the rings ", TT "R", " is a quotient ring of has a name.
-     See: ", TO "use", ".",
+     (by automatically running ", TT "use R", ") when the new ring is assigned
+     to a global variable.",
      PARA{},
      "Warning: quotient rings are bulky objects, because they contain 
      a Groebner basis for their ideals, so only quotients of ", TO "ZZ", " 
