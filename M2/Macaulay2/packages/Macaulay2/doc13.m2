@@ -402,7 +402,8 @@ document { Key => "loadedFiles",
 
 
 undocumented {
-     (validate, TO),(validate, String),(validate, MarkUpTypeWithOptions, Set, BasicList),(validate, Type, Set, BasicList),(validate, TOH),(validate, Option),(validate, TO2)
+     (validate, TO),(validate, String),(validate, MarkUpTypeWithOptions, Set, BasicList),(validate, Type, Set, BasicList),(validate, TOH),(validate, Option),(validate, TO2),
+     (validate, COMMENT),(validate, CDATA),(validate, TEX)
      }
 document { Key => {(validate, MarkUpList),validate},
      Usage => "validate x",

@@ -88,15 +88,9 @@ html HREF := x -> (
      )
 tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral rel first x, "\">}", tex last x, "\\special{html:</a>}")
 html TO   := x -> (
-     concatenate(
-	  "<a href=\"",
-	  rel htmlFilename getPrimary x#0,
-	  "\" title=\"",
-	  headline x#0,
-	  "\">",
-	  htmlLiteral DocumentTag.FormattedKey x#0,
-	  "</a>",
-	  if x#?1 then x#1))
+     r := htmlLiteral DocumentTag.FormattedKey x#0;
+     if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
+     concatenate( "<a href=\"", rel htmlFilename getPrimary x#0, "\" title=\"", headline x#0, "\">", r, "</a>", if x#?1 then x#1))
 html TO2  := x -> concatenate("<a href=\"", rel htmlFilename getPrimary x#0, "\">", htmlLiteral x#1, "</a>")
 
 next := tag -> ( if NEXT#?tag then HREF { htmlFilename NEXT#tag, nextButton } else nextButton, " | ")

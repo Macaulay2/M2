@@ -131,26 +131,27 @@ texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
 
     -- We modify that slightly, by removing all the initial and final BKs and SPs at top level
 
-net' = method()						    -- this will return either a net (or string), or a sequence of nets and BKs, for later splicing
-net' Option := o -> ()
-net' String := identity
-net' BR := br -> ("", BK)
-net' MarkUpList := net
-net' MarkUpListParagraph := x -> (SP, net x, SP)
-net' UL := x -> (BK, net x, BK)
-net' MarkUpListContainer := x -> (BK, apply(toSequence x, net'), BK)
-
-net MarkUpListContainer := x -> (
-     x = deepSplice net' x;
-     n := 0;
-     while x#?n and (x#n === SP or x#n === BK) do n = n+1;
-     x = drop(x,n);
-     m := -1;
-     while x#?m and (x#m === SP or x#m === BK) do m = m-1;
-     x = drop(x,m+1);
-     x = splice sublists(x, i -> i === BK or i === SP, SPBKs -> if member(SP,SPBKs) then (BK,"",BK) else BK);
-     x = splice sublists(x, i -> i =!= BK, wrap @@ horizontalJoin, BK -> ());
-     stack x)     
+scan( ((net,net'), (info,info')), (f,f') -> (
+	  f' = f' <- method(); -- this will return either a f (or string), or a sequence of fs and BKs, for later splicing
+	  f' Option := o -> ();
+	  f' String := identity;
+	  f' BR := br -> ("", BK);
+	  f' MarkUpList := f;
+	  f' MarkUpListParagraph := x -> (SP, f x, SP);
+	  f' UL := x -> (BK, f x, BK);
+	  f' MarkUpListContainer := x -> (BK, apply(toSequence x, f'), BK);
+	  f MarkUpListContainer := x -> (
+	       x = deepSplice f' x;
+	       n := 0;
+	       while x#?n and (x#n === SP or x#n === BK) do n = n+1;
+	       x = drop(x,n);
+	       m := -1;
+	       while x#?m and (x#m === SP or x#m === BK) do m = m-1;
+	       x = drop(x,m+1);
+	       x = splice sublists(x, i -> i === BK or i === SP, SPBKs -> if member(SP,SPBKs) then (BK,"",BK) else BK);
+	       x = splice sublists(x, i -> i =!= BK, wrap @@ horizontalJoin, BK -> ());
+	       stack x);
+	  ))
      
 tex  BR := x -> ///
 \hfil\break
@@ -438,14 +439,20 @@ info MENU := r -> (
 		    	 t = concatenate(t,28-#t:" ","  ");
 			 wt := #t;
 		    	 printWidth = printWidth - wt;
-		    	 t = t | info PARA h;
+		    	 t = t | info DIV h;
 		    	 printWidth = printWidth + wt;
 			 );
 		    t)),
-	  x -> stack("",info PARA x)
+	  x -> stack("",info DIV x)
 	  );
+     ret = stack join({"* Menu:",""}, ret);
+     if debugLevel > 0 and width ret > printWidth then (
+	  stderr << "--warning: info overflowed screen width" << endl
+	  << "-- printWidth = " << printWidth << endl
+	  << "-- width ret = " << width ret << endl
+	  << "-- ret = " << ret << endl);
      printWidth = printWidth + #pre;
-     stack join({"* Menu:",""}, ret))
+     ret)
 
 html COMMENT := x -> concatenate("<!--",x,"-->")
 html CDATA := x -> concatenate("<![CDATA[",x,"]]>")
