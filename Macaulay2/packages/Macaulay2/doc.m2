@@ -863,11 +863,77 @@ document {
      SeeAlso =>{ "difference", "minus"}
      }
 
+undocumented {
+     (symbol "/", InfiniteNumber, InfiniteNumber),
+     (symbol "/", RingElement, ZZ),
+     (symbol "/", QQ, RingElement),
+     (symbol "/", RingElement, QQ),
+     (symbol "/", RingElement, RR),
+     (symbol "/", ZZ, InfiniteNumber),
+     (symbol "/", InfiniteNumber, ZZ),
+     (symbol "/", ZZ, RingElement),
+     (symbol "/", RR, RingElement),
+     (symbol "/", EngineRing, Ideal),
+     (symbol "/", Expression, Holder),
+     (symbol "/", Holder, OneExpression),
+     (symbol "/", Expression, OneExpression),
+     (symbol "/", Holder, Expression),
+     (symbol "/", Holder, Holder),
+     (symbol "/", List, MarkUpType),
+     (symbol "/", List, SelfInitializingType)
+     }
+
+
+-- keep these
+
+(symbol "/", Thing, Expression),
+(symbol "/", Expression, Expression),
+(symbol "/", Expression, Thing),
+
+(symbol "/", VisibleList, MarkUpType),
+(symbol "/", VisibleList, SelfInitializingType),
+(symbol "/", List, Thing),
+(symbol "/", List, Function),
+(symbol "/", List, Command),
+(symbol "/", Tally, Function),
+(symbol "/", Tally, Command),
+(symbol "/", List, RingMap),
+(symbol "/", VisibleList, Function),
+(symbol "/", VisibleList, Command),
+
+(symbol "/", RingElement, RingElement),
+
+(symbol "/", Module, Ideal),
+(symbol "/", Module, List),
+(symbol "/", Module, Sequence),
+(symbol "/", Module, Vector),
+(symbol "/", Module, Module),
+(symbol "/", Ideal, Ideal),
+(symbol "/", Module, RingElement),
+
+(symbol "/", Ring, Module),
+(symbol "/", Ring, RingElement),
+(symbol "/", Ring, Ideal),
+(symbol "/", Ring, MonomialIdeal),
+(symbol "/", Ring, List),
+(symbol "/", Ring, Sequence),
+(symbol "/", Ring, ZZ),
+
+(symbol "/", CoherentSheaf, CoherentSheaf),
+(symbol "/", CoherentSheaf, Ideal),
+
+
 document {
      Key => symbol "/",
      Headline => "a binary operator, usually used for division",
-     TT "x / y", " -- a binary operator usually used for division, yielding a
-     fraction, or for quotients (ring by ideal, etc.).",
+     Usage => "x / y",
+     "This operator is currently used in several ways in Macaulay2.",
+     UL {
+	  "division in a ring, yielding a fraction",
+     	  "division in unevaluated expressions",
+	  "quotient rings, modules and sheaves",
+	  "applying a function or ring map to every element of a list or set"
+	  },
      SeeAlso => { "//"}
      }
 
