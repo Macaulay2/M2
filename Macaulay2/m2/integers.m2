@@ -1,10 +1,13 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+ring Number := class
+degree Number := i -> {}
+conjugate Number := identity
+
 ZZ.RawRing = rawZZ()
 ZZ.isBasic = true
 new ZZ from RawRingElement := (ZZ,n) -> rawToInteger n
 raw ZZ := x -> rawFromNumber(rawZZ(), x)
-ring ZZ := class
 
 ZZ#1 = 1
 ZZ#0 = 0
@@ -17,7 +20,6 @@ ZZ.degreeLength = 0
 ZZ.mathML = "<mi>&Zopf;</mi>"
 ZZ.frac = QQ
 
-degree ZZ := i -> {}
 lift = method()
 liftable = method()
 promote = method()

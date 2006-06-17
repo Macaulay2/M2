@@ -45,7 +45,7 @@ check ::
 
 install :: install-Macaulay2 install-others
 install-Macaulay2 ::
-	../bin/M2$(EXE) -q --stop \
+	@ set -x ;  ../bin/M2$(EXE) -q --stop \
 		    -e errorDepth=0 \
 		    -e debugLevel=$(debugLevel) \
 		    -e "installPackage(\"Macaulay2\" $(ARGS1))" \

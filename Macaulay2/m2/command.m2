@@ -5,8 +5,11 @@
 SelfInitializingType = new Type of Type
 SelfInitializingType.synonym = "self initializing type"
 SelfInitializingType Thing := (T,z) -> new T from z
+
 SelfInitializingType\VisibleList := (T,z) -> (i -> T i) \ z
 List/SelfInitializingType := VisibleList/SelfInitializingType := (z,T) -> z / (i -> T i)
+SelfInitializingType \\ Thing := (T,z) -> T z
+Thing // SelfInitializingType := (z,T) -> T z
 
 Command = new SelfInitializingType of BasicList
 Command.synonym = "command"

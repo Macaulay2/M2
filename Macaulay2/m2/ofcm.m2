@@ -183,11 +183,7 @@ makeit1 := (opts) -> (
      M.generatorExpressions = apply(varlist,
 	  x -> if instance(x, Symbol) then x else expression x
 	  );
-     scan(varlist, 
-	  sym -> (
-	       if Symbol =!= basictype sym 
-	       and IndexedVariable =!= class sym
-	       then error "expected variable or symbol"));
+     scan(varlist, sym -> if not instance(sym,Symbol) and not instance(sym,IndexedVariable) then error "expected variable or symbol");
      M.standardForm = somethingElse;
      expression M := x -> new Product from apply( 
 	  rawSparseListFormMonomial x.RawMonomial,
@@ -375,7 +371,7 @@ promote(MonoidElement, RingElement) := RingElement => (m,o) -> (
      R := class o;
      M := monoid R;
      k := coefficientRing R;
-     if M =!= class m then error "expected monomial from same ring";
+     if not instance(m,M) then error "expected monomial from same ring";
      one := 1_k;
      promote(M,R) := (m,o) -> new R from rawTerm(R.RawRing, 
 	                                         raw one,

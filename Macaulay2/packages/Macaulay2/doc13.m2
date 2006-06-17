@@ -110,7 +110,7 @@ document { Key => unsequence,
 document { Key => {permutations, (permutations, ZZ), (permutations, VisibleList)},
      Headline => "produce all permutations of a list",
      Usage => "permutations x",
-     Inputs => { "x" => { ofClass VisibleList, " or ", ofClass ZZ } },
+     Inputs => { "x" => { ofClass {VisibleList, ZZ} } },
      Outputs => { { "a list of all the permutations of the visible list ", TT "x", ", or, if ", TT "x", " is an integer, of the list of
 	       integers from 0 through ", TT "n-1" 
 	       } },
@@ -318,15 +318,15 @@ document { Key => [needsPackage, LoadDocumentation],
 document { Key => ofClass, 
      Headline => "English phrases for types",
      Usage => "ofClass T",
-     Inputs => { "T" => Type },
-     Outputs => {{ "an English phrase, using a synonym for an instance of the type, together with an appropriate indefinite article" }},
-     PARA { "When viewed in html, the phrase is a hot link to the documentation node for the class." },
+     Inputs => { "T" => Nothing => {ofClass{Type,ImmutableType,List}, " of types"} },
+     Outputs => { Sequence => { "an English phrase in hypertext, using a synonym for each type, together with appropriate indefinite articles, and, if
+	       a list is presented, the word ", EM "or", " as a conjunction at the end" }},
+     PARA { "When viewed in html, words in the phrase hot link(s) to the documentation node(s) for the class(es)." },
      EXAMPLE lines ///
      	  ofClass class 3
 	  peek oo
      	  ofClass Ring
-     	  ofClass HashTable
-     	  ofClass ProjectiveVariety
+     	  SPAN ofClass {HashTable, ProjectiveVariety}
 	  document { Key => foo, "We may need ", ofClass ZZ, " and ", ofClass HashTable, "." }
 	  help foo
      ///}
@@ -378,7 +378,7 @@ document { Key => HomePage,
 document { Key => fileLength,
      Headline => "the length of a file",
      Usage => "fileLength f",
-     Inputs => { "f" => { ofClass String, " or ", ofClass File }},
+     Inputs => { "f" => { ofClass {String, File} }},
      Outputs => { ZZ => { "the length of the file ", TT "f", " or the file whose name is ", TT "f" }},
      PARA { "The length of an open output file is determined from the internal count of the number of bytes written so far." },
      SeeAlso => {fileTime},

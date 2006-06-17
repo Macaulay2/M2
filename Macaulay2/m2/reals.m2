@@ -13,9 +13,6 @@ RR.baseRings = {}
 RR.dim = 0
 RR.char = 0
 RR.Engine = true
-degree RR := i -> {}
-
-ring RR := class
 
 new RR from RawRingElement := (RR,x) -> rawToReal x
 
@@ -40,10 +37,7 @@ RRR.baseRings = {}
 RRR.dim = 0
 RRR.char = 0
 RRR.Engine = true
-degree RRR := i -> {}
 isConstant RRR := i -> true
-
-ring RRR := class
 
 round = x -> floor(x + 0.5)
 

@@ -6,7 +6,7 @@ document {
      Key => {intersect,(intersect, List),(intersect,Sequence)},
      Headline => "compute an intersection",
      Usage => "intersect (M,N,...,P) ",
-     Inputs => { Nothing => { TT "(M,N,...,P)", ", ", ofClass List, " or ", ofClass Sequence, " of modules or ideals that are submodules of the same module
+     Inputs => { Nothing => { TT "(M,N,...,P)", ", ", ofClass {List, Sequence}, " of modules or ideals that are submodules of the same module
 	       or ideals in the same ring" } },
      Outputs => { {ofClass Module, " or ", ofClass Ideal," that is the intersection of the elements in the list or in the sequence."} },
      "This function calculates the intersection of submodules of the same free module, or of ideals in the same ring.",

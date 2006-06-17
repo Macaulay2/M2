@@ -81,7 +81,11 @@ html IMG  := x -> (
      concatenate("<img src=", format rel o#"src", " alt=", format o#"alt", "/>"))
 
 html LINK := x -> concatenate("<link href=\"", rel first x, "\"", concatenate drop(x,1), "/>",newline)
-html HREF := x -> concatenate("<a href=\"", rel first x, "\">", html last x, "</a>")
+html HREF := x -> (
+     r := html last x;
+     if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
+     concatenate("<a href=\"", rel first x, "\">", r, "</a>")
+     )
 tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral rel first x, "\">}", tex last x, "\\special{html:</a>}")
 html TO   := x -> (
      concatenate(

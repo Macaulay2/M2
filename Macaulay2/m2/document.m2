@@ -202,10 +202,13 @@ fetchRawDocumentation(Package,String) := (pkg,fkey) -> (		    -- returns null if
 	       d = pkg#rawKeyDB;
 	       if isOpen d and d#?fkey then value d#fkey)))
 fetchRawDocumentation(String,String) := (pkgtitle,fkey) -> (
-     needsPackage pkgtitle;				    -- maybe later we should dismiss this package if it wasn't already open!
-     if PackageDictionary#?pkgtitle and instance(pkg := value PackageDictionary#pkgtitle, Package) then fetchRawDocumentation(pkg,fkey)
-     else (stderr << "--warning: no package named " << pkgtitle << endl;)
-     )
+     -- we should get a package's documentation from its database!!!
+     P := needsPackage pkgtitle;				    -- maybe later we should dismiss this package if it wasn't already open!
+     ret := (
+	  if PackageDictionary#?pkgtitle and instance(pkg := value PackageDictionary#pkgtitle, Package) then fetchRawDocumentation(pkg,fkey)
+     	  else (stderr << "--warning: no package named " << pkgtitle << endl;));
+     dismiss P;
+     ret)
 fetchRawDocumentation DocumentTag := tag -> (
      fetchRawDocumentation(DocumentTag.Package tag, DocumentTag.FormattedKey tag)
      )
@@ -411,22 +414,12 @@ hypertext Sequence := hypertext List := x -> fixup DIV x
 -----------------------------------------------------------------------------
 
 Nothing << Thing := (x,y) -> null			    -- turning off the output is easy to do
-DocumentableValueType := set { 
-     Boolean, 
-     HashTable, 
-     Function, 
-     BasicList, 
-     Nothing,
-     File
-     }
+
+documentableType := method()
+documentableType Thing := x -> false
+documentableType Boolean := documentableType HashTable := documentableType Function := documentableType BasicList := documentableType Nothing := documentableType File := x -> true
 UndocumentableValue := hashTable { symbol environment => true, symbol commandLine => true }
-documentableValue := key -> (
-     instance(key, Symbol) and value key =!= key
-     and not UndocumentableValue#?key and DocumentableValueType#?(basictype value key))
-
----- how could this have worked (so soon)?
--- scan(flatten(pairs \ dictionaryPath), (name,sym) -> if documentableValue sym then Symbols#(value sym) = sym)
-
+documentableValue := key -> ( instance(key, Symbol) and value key =!= key and documentableType value key and not UndocumentableValue#?key )
 
 file := null
 
@@ -678,7 +671,11 @@ synonymAndClass := X -> fixup (
 
 justClass := X -> fixup SPAN {"an instance of class ", TO X}
 
-ofClass = X -> fixup (
+ofClass = method()
+ofClass List := x -> (
+     if #x === 2 then (ofClass x#0, " or ", ofClass x#1)
+     else mingle (ofClass \ x, splice( #x - 2 : ", ", ", or " )))
+ofClass ImmutableType := ofClass Type := X -> fixup (
      if parent X === Nothing then error "expected a class";
      if X === Nothing then TO "null"
      else if X.?synonym then SPAN {indefiniteArticle X.synonym, TO2 {X, X.synonym}}
@@ -936,7 +933,7 @@ fmeth := f -> (						    -- compare with documentationValue(Symbol,Function) bel
      b := documentableMethods f;
      if #b > 0 then (
 	  c := smenu b;
-	  if #c > 0 then DIV1 { SUBSECTION { "Ways to use ", TT toString f }, c } 
+	  if #c > 0 then DIV1 { SUBSECTION { "Ways to use ", toString f }, c } 
 	  )
      )
 

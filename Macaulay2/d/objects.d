@@ -510,6 +510,7 @@ setupconst("RR",Expr(doubleClass));
 setupconst("CC",Expr(complexClass));
 setupconst("RRR",Expr(bigRealClass));
 setupconst("CCC",Expr(bigComplexClass));
+setupconst("Number",Expr(numberClass));
 setupconst("RawObject",Expr(rawObjectClass));
 setupconst("RawMonomial",Expr(rawMonomialClass));
 setupconst("RawMonomialOrdering",Expr(rawMonomialOrderingClass));

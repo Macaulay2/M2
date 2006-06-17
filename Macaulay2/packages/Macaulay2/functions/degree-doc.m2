@@ -28,12 +28,7 @@ document {
 undocumented {
 	  (degree, MonomialIdeal),
 	  (degree, CoherentSheaf),
-	  (degree, ZZ),
-	  (degree, QQ),
-	  (degree, RRR),
-	  (degree, CCC),
-	  (degree, RR),
-	  (degree, CC)
+	  (degree, Number)
 	  }
 
 document { 

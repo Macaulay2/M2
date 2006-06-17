@@ -63,28 +63,6 @@ document {
      "This command may interfere with ", TO "time", " or ", TO "sleep", " on some systems."
      }
 
-
-document {
-     Key => basictype,
-     Headline => "the basic type of an object",
-     Usage => "T = basictype x",
-     Inputs => { "x" => "anything" },
-     Outputs => { { "class representing the basic type of ", TT "x" } },
-     "Every thing has basic type which tells what sort of thing it
-     really is, internally.",
-     PARA{},
-     "The parent of a basic type is ", TO "Thing", ", and this property
-     characterizes the basic types.  The basic type of an object ", TT "x", "
-     is defined to be the ancestor of the class of ", TT "x", " that is a
-     basic type.",
-     PARA{},
-     "Let's compute a list of all the basic types:",
-     EXAMPLE ///stack sort unique (toString \
-     select(values Macaulay2Core.Dictionary, i -> parent value i === Thing)
-     )///,
-     SeeAlso => "basic types"
-     }
-
 document {
      Key => symbol "++",
      Headline => "a binary operator, usually used for direct sum"
@@ -151,35 +129,84 @@ document {
      }
 
 document {
-     Key => (symbol /, VisibleList, Function),
-     Headline => "apply a function to each member of a list",
-     TT "w / f", " -- apply the function ", TT "f", " to each member of the 
-     list or sequence ", TT "w"," returning a list or sequence containing the 
-     results.  The same as ", TT "apply(w,f)", ".",
-     PARA{},
-     "This operator is left associative, which means that ", TT "w / f / g", "
-     is interpreted as meaning ", TT "(w / f) / g", ".",
-     EXAMPLE "{1,2,3} / (i -> i+1) / (j -> j^2)",
-     SeeAlso => {"apply", (symbol \,Function, VisibleList)}
+     Key => Number,
+     Headline => "the class of all numbers"
      }
 
 document {
-     Key => (symbol \,Function, VisibleList),
-     Headline => "apply a function to each member of a list",
-     TT ///f \ w///, " -- apply the function ", TT "f", " to each member of the 
-     list or sequence ", TT "w"," returning a list or sequence containing the 
-     results.  The same as ", TT "apply(w,f)", ".",
-     PARA{},
-     "This operator is right associative, which means that ", TT ///g \ f \ w///, "
-     is interpreted as meaning ", TT ///g \ (f \ w)///, ".",
-     EXAMPLE ///(j -> j^2) \ (i -> i+1) \ {1,2,3}///,
-     "The precendence is lower than that of ", TT "@@", ".  Hence, the following 
-     two examples yield the same result.",
-     EXAMPLE {
-	  ///sin \ sin \ {1,2,3}///,
-      	  ///sin @@ sin \ {1,2,3}///,
+     Key => {(symbol "/",List,Thing)},
+     Headline => "vector division",
+     Usage => "v/c",
+     Inputs => {"v" => "to be treated as a vector", "c" => "a number or scalar ring element"},
+     Outputs => {{ "the quotient vector; every element of ", TT "v", " is divided by ", TT "c" }},
+     EXAMPLE "{1,2,3,4} / 3"     
+     }
+
+document {
+     Key => { (symbol "/",VisibleList,Function),
+	  (symbol "/",List,Function),
+	  (symbol "\\",Function,VisibleList),
+	  (symbol "\\",Function,Tally),
+	  (symbol "\\",SelfInitializingType,VisibleList),
+	  (symbol "\\",Command,VisibleList),
+	  (symbol "\\",RingMap,List),
+	  (symbol "\\",Command,Tally),
+	  (symbol "/",List,SelfInitializingType),
+	  (symbol "/",VisibleList,SelfInitializingType),
+	  (symbol "/",List,Command),
+	  (symbol "/",Tally,Command),
+	  (symbol "/",Tally,Function),
+	  (symbol "/",List,RingMap),
+	  (symbol "/",VisibleList,Command)
 	  },
-     SeeAlso => {"apply", "@@", (symbol /,List, Function)}
+     Headline => "apply a function to elements of a list",
+     Usage => "x/f\nf\\x",
+     Inputs => { "x" => Nothing => {ofClass{VisibleList,List,Sequence,Array,Tally,Set}}, "f" => Nothing => {ofClass{Function,Command,SelfInitializingType,RingMap}} },
+     Outputs => {{ "the list, tally, or set obtained by applying ", TT "f", " to each element of ", TT "x", "; it has the same type as ", TT "x", " has" }},
+     PARA {
+	  "The function ", TT "apply", " does the same thing."
+	  },
+     PARA {
+     	  "The operator ", TO "/", " is left associative, which means that ", TT "w / f / g", " is interpreted as ", TT "(w / f) / g", ".
+     	  The operator ", TO "\\", " is right associative, so ", TT ///g \ f \ w///, " is interpreted as ", TT ///g \ (f \ w)///, ".
+	  Both operators have parsing precedence lower than that of ", TO "@@", ", which means that the previous two expressions are equivalent to ", TT "w / g @@ f", "
+	  and ", TT "g @@ f \\ w", ", respectively. See ", TO "precedence of operators", "."
+	  },
+     EXAMPLE lines ///
+     	  f = x -> x+1
+	  g = x -> 2*x
+     	  g \ (1 .. 10)
+     	  (1 .. 10) / g
+     	  f \ g \ (1 .. 10)
+     	  f @@ g \ (1 .. 10)
+	  set (1 .. 10)
+	  g \ oo
+	  R = QQ[x];
+	  f = map(R,R,{x^2})
+	  f \ {x,x^2,x^3,x^4}
+     ///,
+     SourceCode => {(symbol "/",VisibleList,Function)},
+     }
+
+document {
+     Key => {(symbol "//",Thing,Function),(symbol "\\\\",Function,Thing),
+	  (symbol "//",Thing,Command),(symbol "\\\\",Command,Thing),
+	  (symbol "//",Thing,SelfInitializingType),(symbol "\\\\",SelfInitializingType,Thing)
+	  },
+     Headline => "apply a function",
+     Usage => "x // f\nf \\\\ x",
+     Inputs => { "x", "f" => Nothing => {ofClass{Function,Command,SelfInitializingType}}},
+     Outputs => {{ "the result of applying ", TT "f", " to ", TT "x", ", i.e., ", TT "f x" }},
+     SeeAlso => {(symbol "/",VisibleList,Function)},
+     PARA {
+	  "The parsing precedence of the operators ", TT "//", " and ", TT "\\\\", " is rather low, which makes
+	  them useful for avoiding parentheses.  See ", TO "precedence of operators", "."
+	  },
+     EXAMPLE lines ///
+     	  toList \\ sin \ ( 1 .. 5 )
+	  (x -> (x,x)) \ (a,b,c,d)
+	  splice \\ (x -> (x,x)) \ (a,b,c,d)
+     ///
      }
 
 document {

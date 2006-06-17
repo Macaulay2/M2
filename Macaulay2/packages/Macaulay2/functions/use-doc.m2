@@ -36,7 +36,7 @@ document {
      Headline => "install ring variables and ring operations",
      Usage => "use R",
      Inputs => {
-	  "R" => Nothing => {ofClass Ring, " or ", ofClass Monoid}
+	  "R" => Nothing => {ofClass {Ring, Monoid}}
 	  },
      Consequences => {
 	  {"All variables of ", TT "R", " are set to global variables.  Additionally, 

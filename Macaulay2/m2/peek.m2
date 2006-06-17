@@ -124,6 +124,16 @@ seeParsing = args -> (
 			 between("  ",
 			      sort(b/toString)))))))
 
+seeOperatorPrecedence = args -> (
+     x := new MutableHashTable;
+     t := (p,s) -> (
+	  if x#?p then x#p = append(x#p,s) else x#p = {s};
+	  ops#s = true;
+	  );
+     scan(allOperators, s -> if s =!= symbol " " then t(first getParsing s,s));
+     t(first getParsing symbol " ", "<ADJACENCY>");
+     new Table from sort pairs x / ( (a,b) -> {toString a, concatenate( between_"  " sort(b/toString))}))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

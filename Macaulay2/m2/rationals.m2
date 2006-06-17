@@ -12,8 +12,6 @@ raw QQ := x -> rawFraction(
      rawFromNumber(rawZZ(), numerator x),
      rawFromNumber(rawZZ(), denominator x))
 
-ring QQ := class
-
 ZZ.frac = QQ
 QQ#1 = 1/1
 QQ#0 = 0/1
@@ -25,7 +23,6 @@ QQ.mathML = "<mi>&Qopf;</mi>"
 QQ.frac = QQ
 
 QQ.random = () -> (random 21 - 10) / (random 9 + 1)
-degree QQ := i -> {}
 expression QQ := r -> (
      n := numerator r;
      d := denominator r;

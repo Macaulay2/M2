@@ -6,12 +6,14 @@ even = x -> 0 === x%2
 
 zero = x -> x == 0					    -- we use == so this can apply to all types of things
 
-numeric = x -> (
-     if basictype x === ZZ or basictype x === QQ
-     then 0. + x
-     else if basictype x === BasicList or basictype x === Sequence
-     then apply(x,numeric)
-     else x);
+numeric = method(SingleArgumentDispatch => true)
+numeric Thing := identity
+numeric VisibleList := x -> apply(x,numeric)
+numeric Number := x -> x + 0.
+numeric CC := identity
+numeric RR := identity
+numeric CCC := identity
+numeric RRR := identity
 
 pi=3.1415926535897932384626433832795028841971693993
 

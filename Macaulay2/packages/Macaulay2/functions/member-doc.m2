@@ -10,7 +10,7 @@ document {
      Usage => "member(e,x)",
      Inputs => {
 	  "e" => Thing,
-	  "x" => {ofClass List, ", ", ofClass Sequence, ", or ", ofClass Set}
+	  "x" => {ofClass {List, Sequence, Set}}
 	  },
      Outputs => {
 	  Boolean => "whether e is in the list, sequence, or set x"

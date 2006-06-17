@@ -1,6 +1,8 @@
 --		Copyright 1993-1999,2004 by Daniel R. Grayson
 
 
+new CC from Sequence := (CC,v) -> newCC v
+
 CC.isBasic = true
 CC.synonym = "complex number"
 CC.isCommutative = true
@@ -14,10 +16,8 @@ CC.char = 0
 CC#0 = new CC from (0.,0.)
 CC#1 = new CC from (1.,0.)
 CC.degreeLength = 0
-degree CC := i -> {}
 raw CC := x -> rawFromNumber(raw CC, x)
 new CC from RawRingElement := (CC,n) -> rawToComplex n
-ring CC := class
 
 CCC.isBasic = true
 CCC.synonym = "big complex number"
@@ -29,13 +29,8 @@ CCC.RawRing = rawCCC()
 CCC.mathML = "<mi>&Copf;</mi>"
 CCC.char = 0
 CCC.degreeLength = 0
-degree CCC := i -> {}
+conjugate CCC := notImplemented
 
-ring CCC := class
-
-conjugate ZZ := identity
-conjugate QQ := identity
-conjugate RR := identity
 conjugate CC := CC => z -> new CC from (realPart z,-imaginaryPart z)
 exprI := symbol ii
 expression CC := z -> realPart z + imaginaryPart z * hold exprI

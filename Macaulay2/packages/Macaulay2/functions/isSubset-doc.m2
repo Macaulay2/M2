@@ -10,8 +10,8 @@ document {
      Key => { (isSubset, Set, Set), (isSubset, Set, VisibleList), (isSubset, VisibleList, Set), (isSubset, VisibleList, VisibleList)},
      Usage => "isSubset(x,y)",
      Inputs => {
-	  "x" => {ofClass Set, ", or ", ofClass List},
-	  "y" => {ofClass Set, ", or ", ofClass List}
+	  "x" => {ofClass {Set, List}},
+	  "y" => {ofClass {Set, List}},
 	  },
      Outputs => {
 	  Boolean => {"whether every element of ", TT "x", " is in ", TT "y"},

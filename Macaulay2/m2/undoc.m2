@@ -88,7 +88,6 @@ undocumented {
     (html, HREF),
     (html, ANCHOR),
     (html, Divide),
-    (html, Thing),
     (html, UL),
     (html, DIV),
     (html, Power),

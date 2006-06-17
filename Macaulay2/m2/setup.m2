@@ -140,6 +140,7 @@ prefixOperators = join(fixedPrefixOperators,flexiblePrefixOperators)
 postfixOperators = join(fixedPostfixOperators,flexiblePostfixOperators)
 flexibleOperators = join(flexibleBinaryOperators,flexiblePrefixOperators,flexiblePostfixOperators)
 fixedOperators = join(fixedBinaryOperators,fixedPrefixOperators,fixedPostfixOperators)
+allOperators = join(fixedOperators,flexibleOperators)
 
 undocumentedkeys = new MutableHashTable
 undocumented' = key -> undocumentedkeys#key = true
