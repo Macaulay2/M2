@@ -182,15 +182,14 @@ document { Key => "right modules or left modules?",
 	  (x *  (dx * id_M) ) * v
 	  (x *  (dx * id_M) ) * v == x * ( (dx * id_M) * v )	  
      ///,
-     "Unfortunately, one desirable associativity rule does ", EM "not", " hold, the one for ", EM "RingElement * Matrix * Matrix", ", as we
+     "One desirable associativity rule does ", EM "not", " hold, the one for ", EM "RingElement * Matrix * Matrix", ", as we
      see in this example.",
      EXAMPLE lines ///
           x * ( id_M * ( dx * id_M ) )
           (x * id_M) * ( dx * id_M )
           x * ( id_M * ( dx * id_M ) ) == (x * id_M) * ( dx * id_M )
      ///,
-     "The reason for this discrepancy is that the set of matrices over R' is naturally a left R'-module, not a left R-module, and scalar multiplication in Macaulay 2
-     is currently implemented as though it were.  Multiplication of a scalar by a matrix should be done with the reverse multiplication."
+     "The reason for this discrepancy is that, as explained above, matrix multiplication is done over ", TT "R'", ", not over ", TT "R", "."
      }
 
 -------------------
