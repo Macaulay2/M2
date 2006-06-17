@@ -1,29 +1,72 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
+
 document {
-     Key => (symbol /, Module, Module),
-     Headline => "quotient module",
-     TT "M/N", " -- computes the quotient module ", TT "M/N", ".",
+     Key => {(symbol "/", Module, Module),
+	  (symbol "/", Module, Ideal),
+	  (symbol "/", Module, List),
+	  (symbol "/", Module, Sequence),
+	  (symbol "/", Module, Vector),
+	  (symbol "/", Module, RingElement)},
+     Headline => "make a quotient module",
+     Usage => "M/N",
+     Inputs => {
+	  "M",
+	  "N" => Nothing => {
+	       ofClass Module, ", ",
+	       ofClass Ideal, ", ",
+	       ofClass List, ", ",
+	       ofClass Sequence, ", ",
+	       ofClass RingElement, ", or ",
+	       ofClass Vector}
+	  },
+     Outputs => {
+	  Module => "The quotient module M/N of M"
+	  },
+     "If N is an ideal, ring element, or list or sequence of 
+     ring elements (in the ring of M), 
+     then the quotient is
+     by the submodule N*M of M.",
      PARA{},
-     "The modules should be submodules of the same module."
+     "If N is a submodule of M, or a list or sequence of submodules, or a vector, then the quotient
+     is by these elements or submodules.",
+     EXAMPLE lines ///
+     	  R = ZZ/173[a..d]
+	  M = ker matrix{{a^3-a*c*d,a*b*c-b^3,a*b*d-b*c^2}}
+	  M/a == M/(a*M)
+	  M/M_0
+	  M/(R*M_0 + b*M)
+	  M/(M_0,a*M_1+M_2)
+     	  presentation oo
+	  ///,
+      SeeAlso => {"subquotient modules", presentation}
      }
 
 document {
-     Key => (symbol /, Module, Ideal),
-     Headline => "quotient module by an ideal",
-     TT "M/I", " -- computes the quotient module ", TT "M/IM", ",
-     where ", TT "M", " is a module and ", TT "I", " is an ideal.",
-     PARA{},
-     "The module and ideal should belong to the same ring."
+     Key => (symbol "/", Ideal, Ideal),
+     Headline => "make a quotient module",
+     Usage => "I/J",
+     Inputs => { "I", "J" => {"in the same ring as ", TT "I"}},
+     Outputs => {
+	  Module => {"The quotient module ", TT "(I+J)/J"}
+	  },
+     EXAMPLE lines ///
+     	  R = QQ[a,b,c]
+	  I = ideal vars R
+	  M = I / I^2
+	  ///,
+     "There is a diffference between typing I/J and (I+J)/J
+     in Macaulay2, although conceptually they are the same module.
+     The former has as its generating set the generators of I,
+     while the latter has as its (redundant) generators 
+     the generators of I and J.  Generally, the former method is preferable.",
+     EXAMPLE lines ///     
+	  gens M
+	  N = (I + I^2)/I^2
+	  gens N
+     ///,
+     SeeAlso => {"subquotient modules", generators}
      }
 
-document {
-     Key => (symbol /, Ideal, Ideal),
-     Headline => "quotient module",
-     TT "I/J", " -- produces the quotient module ", TT "(I+J)/J", ", where
-     ", TT "I", " and ", TT "J", " are ideals in a ring.",
-     PARA{},
-     SeeAlso => "Module"
-     }
 
 document {
      Key => (symbol ^,Module,Array),
@@ -796,15 +839,6 @@ assert isWellDefined f
 assert isWellDefined g
 assert not isWellDefined map(R^1,cokernel matrix {{a}})
 "
-
-document {
-     Key => (symbol //, Matrix, RingElement),
-     Headline => "factor a map through a multiplication map",
-     TT "f//r", " -- yields a matrix h from a matrix f and a ring element r
-     such that f - r*h is the reduction of f modulo a Groebner basis 
-     for the image of r times the identity matrix.",
-     SeeAlso => "%"
-     } 
 
 document {
      Key => complement,
