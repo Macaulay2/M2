@@ -174,8 +174,8 @@ document {
      TEX "Another approach is to create the ring map $F : k[x,y,z] \\rightarrow{} k[s,t]$,
      and find its kernel.",
      EXAMPLE lines ///
-       A = QQ[s,t]
-       B = QQ[x,y,z]
+       A = QQ[s,t];
+       B = QQ[x,y,z];
        F = map(A,B,{s^3+s*t+1, t^3+3*t^2+t, s*t^3})
        time G = kernel F
        ans4 = G_0
