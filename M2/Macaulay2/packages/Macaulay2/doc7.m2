@@ -974,7 +974,7 @@ document {
 	  "R",
 	  "I" => Nothing => {
 	       { ofClass Ideal, " or element of ", TT "R", 
-		    "or ", ofClass List, " or ", ofClass Sequence, " of elements of ", TT "R"}
+		    "or ", ofClass List, " or ", ofClass Sequence, " of elements of ", TT "R"}}
 	  },
      Outputs => {
 	  "S" => {"the quotient ring ", TT "R/I"}
@@ -984,20 +984,18 @@ document {
      of a free module of rank 1.",
      EXAMPLE lines ///
      	  ZZ[x]/367236427846278621
-     	  x
-     	  A = QQ[u,v]
-	  B = A/(u^2-v^2,u*v)
-	  C = B[x,y,z]
-	  D = C/(x^2,u^2)
-	  vars D
-	  res(coker vars D, LengthLimit=>5)
-	  use C
-	  I = ideal(u*x+v*y+z)
-	  E = C/I
-	  res(coker vars E, LengthLimit=>5)
-	  u*x
+     	  A = QQ[u,v];
+	  ///,
+     EXAMPLE lines ///
+	  I = ideal random(A^1, A^{-2,-2,-2})
+	  B = A/I
+	  C = A/(u^2-v^2,u*v)
+	  ///,
+     EXAMPLE lines ///	  
+	  D = GF(9,Variable=>a)[x,y]/(y^2 - x*(x-1)*(x-a))
+	  R = ambient D
+	  presentation D
      	  ///,
-     "If I is ", ofClass MonomialIdeal, ".",
      "The names of the variables are assigned values in the new quotient ring
      (by automatically running ", TT "use R", ") when the new ring is assigned
      to a global variable.",
@@ -1013,7 +1011,6 @@ document {
       	  "R/t === R/t",
 	  }
      }
-
 
 document {
      Key => symmetricPower, Headline => "symmetric power" }
