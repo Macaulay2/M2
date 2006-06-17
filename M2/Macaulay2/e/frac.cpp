@@ -123,7 +123,7 @@ void FractionField::simplify(frac_elem *f) const
 	{
 	  //R_->zero_divisor = y;
 	  R_->remove(x);
-	  ERROR("zero divisor found");
+	  ERROR("zero divisor found in denominator");
 	  return;
 	  // NOW QUIT whatever computation is going on!! MES
 	}

@@ -889,30 +889,7 @@ undocumented {
 (symbol "/", Expression, Expression),
 (symbol "/", Expression, Thing),
 
-(symbol "/", VisibleList, MarkUpType),
-(symbol "/", VisibleList, SelfInitializingType),
-(symbol "/", List, Thing),
-(symbol "/", List, Function),
-(symbol "/", List, Command),
-(symbol "/", Tally, Function),
-(symbol "/", Tally, Command),
-(symbol "/", List, RingMap),
-(symbol "/", VisibleList, Function),
-(symbol "/", VisibleList, Command),
 
-(symbol "/", RingElement, RingElement),
-
-(symbol "/", Module, Ideal),
-(symbol "/", Module, List),
-(symbol "/", Module, Sequence),
-(symbol "/", Module, Vector),
-(symbol "/", Module, Module),
-(symbol "/", Ideal, Ideal),
-(symbol "/", Module, RingElement),
-
-
-(symbol "/", CoherentSheaf, CoherentSheaf),
-(symbol "/", CoherentSheaf, Ideal),
 
 
 document {
