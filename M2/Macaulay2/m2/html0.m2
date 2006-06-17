@@ -26,8 +26,8 @@ MarkUpType Net := (M,x) -> new M from {toString x}
 MarkUpType String :=
 MarkUpType MarkUpList := (M,x) -> new M from {x}
 
-MarkUpType\List := (M,x) -> (i -> M i) \ x
-List/MarkUpType := (x,M) -> x / (i -> M i)
+MarkUpType\VisibleList := (M,x) -> (i -> M i) \ x
+List/MarkUpType := VisibleList/MarkUpType := (x,M) -> x / (i -> M i)
 
 IntermediateMarkUpType = new Type of MarkUpType	    -- this is for things like MENU, which do not correspond to an html entity, but have a recipe for translation into html
 IntermediateMarkUpType.synonym = "intermediate mark-up type"

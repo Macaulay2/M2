@@ -603,12 +603,29 @@ document {
 	  }
      }
 
-document {
-     Key => (symbol /, CoherentSheaf, CoherentSheaf),
+document { 
+     Key => {(symbol /, CoherentSheaf, CoherentSheaf),
+	  (symbol /, CoherentSheaf, Ideal)
+	  },
      Headline => "quotient of coherent sheaves",
-     TT "F / G", " -- quotient of coherent sheaves.",
-     PARA{},
-     SeeAlso => "CoherentSheaf"
+     Usage => "F / G",
+     Inputs => {
+	  "F",
+	  "G" => {"or ", ofClass Ideal}
+	  },
+     Outputs => {
+	  CoherentSheaf => {"the quotient sheaf ", TT "F/G"}
+	  },
+     "We compute the cohomology of two sheaves supported on an elliptic curve.",
+     EXAMPLE lines ///
+     	  X = Proj(QQ[x,y,z])
+	  I = ideal(y^2*z-x*(x-z)*(x-11*z))
+	  N = (sheaf I)/(sheaf (I^2))
+	  G = OO_X^1/I
+	  HH^1(G)
+	  HH^1(N)
+	  ///,
+     SeeAlso => {Proj, Spec, sheaf, (cohomology,ZZ,CoherentSheaf), OO}
      }
 
 document {
