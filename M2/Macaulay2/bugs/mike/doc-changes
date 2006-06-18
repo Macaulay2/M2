@@ -1,0 +1,32 @@
+Mike:
+
+pseudoRemainder
+
+methods for normal forms...
+	TT I TT C ...
+	F%G != 0 shows it's a proper containment
+	the Ext is unmotivated
+
+^	other ways in summary
+	modernize
+	(class x)#1 is junk
+	kill link to InverseMethod
+
+ZZ & ZZ	example comes out false!
+
+++	modernize the methods, e.g., Module ++ Module
+	GradedModule -- deal with them by referring to ChainComplex
+
+**	methods should point elsewhere
+
+: methods should point to quotient
+
+..	text between example boxes
+
+"ranges and repetitions" -- move any of its good examples to .. or ZZ: and reduce or eliminate this node
+
+Matrix | ZZ -- direct to Matrix | Matrix
+ZZ | Matrix	same
+Matrix || ZZ -- direct to Matrix || Matrix
+ZZ || Matrix	same
+
