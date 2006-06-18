@@ -99,17 +99,19 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
      is Net do when y is Net do equal(x,y) else equalmethod(x,y)
      is string do when y is string do equal(x,y) else equalmethod(x,y)
      is a:List do when y is b:List do (
-	  if a.class != b.class then return False;				    -- oops, what if the classes are immutable????
-     	  s := a.v;
-	  t := b.v;
-	  if length(s) != length(t) then return False;
-	  for i from 0 to length(s)-1 do (
-	       ret := EqualEqualfun(s.i,t.i);
-	       when ret is Error do return ret else nothing;
-	       if ret == False then return False;
-	       );
-	  True
-	  ) else equalmethod(x,y)
+	  if ancestor(a.class,visibleListClass) && ancestor(b.class,visibleListClass) then (
+	       if a.class != b.class then return False;
+	       s := a.v;
+	       t := b.v;
+	       if length(s) != length(t) then return False;
+	       for i from 0 to length(s)-1 do (
+		    ret := EqualEqualfun(s.i,t.i);
+		    when ret is Error do return ret else nothing;
+		    if ret == False then return False;
+		    );
+	       True
+	       )
+	  else equalmethod(x,y)) else equalmethod(x,y)
      is s:Sequence do when y is t:Sequence do (
 	  if length(s) != length(t) then return False;
 	  for i from 0 to length(s)-1 do (

@@ -25,7 +25,7 @@ peek'(ZZ,List) := (depth,s) -> (
 	  "{", horizontalJoin between (", ", apply(s, value -> peek'(depth,value))), "}" ) )
 peek'(ZZ, String) := (depth,s) -> if depth === 0 then s else format s
 
-vbar := (ht,dp) -> (stack (ht + dp : "|"^-1)) ^ ht;
+vbar := (ht,dp) -> "|"^(ht,dp)
 boxList = method(SingleArgumentDispatch => true)
 boxList List := boxList Sequence := nets -> (
      nets = net \ nets;

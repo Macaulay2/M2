@@ -544,7 +544,6 @@ export {
 	symbol boxTable,
 	symbol break,
 	symbol browse,
-	symbol buckets,
 	symbol cache,
 	symbol capture,
 	symbol catch,

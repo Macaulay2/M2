@@ -141,18 +141,6 @@ String ^ Sequence := Net => (s,p) -> (
      ) p
 
 net Net := identity
----- this old routine draws a box around a net
---net Net := x -> ( 
---     s := concatenate("+", width x : "-", "+");
---     n := height x + depth x;
---     if n === 0 then (
---     	  (s || x || s) ^ (height x)
---	  )
---     else (
---     	  t := (stack (n : "|")) ^ (height x - 1);
---     	  (s || t | x | t || s) ^ (height x)
---	  )
---     )
 
 comma := ", "
 

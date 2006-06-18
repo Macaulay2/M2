@@ -803,18 +803,6 @@ a+a"///,
      }
 
 document {
-     Key => (value,Expression),
-     Headline => "evaluate an expression",
-     Usage => "value s",
-     Inputs => { "s" },
-     Outputs => { "x" => {"the value of ", TT "s" } },
-     EXAMPLE {
-	  "p = (expression 2)^3 * (expression 3)^2",
-      	  "value p"
-	  }
-     }
-
-document {
      Key => "global",
      Headline => "get a global symbol", 
      TT "global s", " provides the global symbol s, even if s currently has 
