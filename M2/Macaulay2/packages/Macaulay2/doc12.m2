@@ -604,7 +604,7 @@ document {
 	  (symbol "==",Expression,Expression),
 	  (symbol "^",Expression,Expression),
 	  (symbol "_",Expression,Expression),
-          (value,Expression),
+          (value,Expression)
 	  },
      Headline => "the class of all expressions",
      "An ", EM "expression", " is a symbolic representation of a mathematical expression.  It retains some of the semantics of the mathematical expression,
