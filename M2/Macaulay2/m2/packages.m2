@@ -160,6 +160,7 @@ newPackage(String) := opts -> (title) -> (
 	  );
      dictionaryPath = join(
 	  {newpkg#"private dictionary"},
+	  if newpkg === Macaulay2Core then {} else reverse apply(Macaulay2Core#"pre-installed packages", pkgname -> (needsPackage pkgname).Dictionary),
 	  {Macaulay2Core.Dictionary, OutputDictionary, PackageDictionary}
 	  );
      PrintNames#(newpkg.Dictionary) = title | ".Dictionary";
