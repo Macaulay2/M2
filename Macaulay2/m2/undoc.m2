@@ -143,7 +143,9 @@ undocumented {
     (symbol "+", ZeroExpression, Expression),
     (symbol "+", Expression, ZeroExpression),
     (symbol "+", Expression, Sum),
-    (symbol "+", Sum, Expression)
+    (symbol "+", Sum, Expression),
+    (expression, Thing),
+    (expression, Symbol)
     }
 
 -- Local Variables:

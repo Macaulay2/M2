@@ -14,9 +14,15 @@ Changes made, most recent ones first:
 
 -----------------------------------------------------------------------------
 
+New in 0.9.9:
+
+The 'browse' function has been moved to a package called Browse.
+
+-----------------------------------------------------------------------------
+
 New in 0.9.8:
 
-'unSingleton' changed to 'unsequence', to corresponsd with 'sequence'
+'unSingleton' changed to 'unsequence', to correspond with 'sequence'
 
 The method for Tally-Tally has been changed to eliminate negative numbers from
 the answer.  This makes results compatible with the fact that sets are a

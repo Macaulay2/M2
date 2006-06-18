@@ -543,7 +543,6 @@ export {
 	symbol boxList,
 	symbol boxTable,
 	symbol break,
-	symbol browse,
 	symbol cache,
 	symbol capture,
 	symbol catch,

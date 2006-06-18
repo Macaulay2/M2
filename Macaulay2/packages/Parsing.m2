@@ -5,7 +5,7 @@ newPackage ( "Parsing",
      Date => "June, 2006",
      Version => "1.0",
      Headline => "a framework for creating recursive descent parsers",
-     DebuggingMode => true
+     DebuggingMode => false
      )
 
 export Parser

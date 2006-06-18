@@ -1,16 +1,26 @@
 --		Copyright 1996 by Daniel R. Grayson
 
-back := symbol back
-menu := symbol menu
+newPackage ( "Browse",
+     Authors => {
+	  { Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/" }
+	  },
+     Date => "1996",
+     Version => "1.0",
+     Headline => "a method for browsing and examining Macaulay 2 data structures",
+     DebuggingMode => true
+     )
+
+export {browse}
+
 menu = method()
 
-RUNME := new SelfInitializingType of BasicList
+RUNME = new SelfInitializingType of BasicList
 PrintNames#RUNME = "RUNME"
 
-METHODS := new SelfInitializingType of BasicList
+METHODS = new SelfInitializingType of BasicList
 PrintNames#METHODS = "METHODS"
 
-showit := (ITEMS,SAME,DEFAULT) -> (
+showit = (ITEMS,SAME,DEFAULT) -> (
      wid := if # ITEMS < 10 then 1 else if # ITEMS < 100 then 2 else 3;
      << columnate(
 	  if printWidth != 0 then printWidth - 1 else 79,
@@ -132,6 +142,21 @@ browse = x -> (
      s := (x,null);
      while null =!= (s = menu s) do ( ))
 
+beginDocumentation()
+
+document {
+     Key => browse,
+     Headline => "browse the contents of an object",
+     TT "browse x", " -- provides an interactive mechanism which allows the user
+     to explore the hash table or list ", TT "x", ".",
+     PARA{},
+     "A menu of numbered items is presented to the user which allow the user to
+     inspect the ", TO "class", " or ", TO "parent", " of ", TT "x", ".  For a
+     hash table, the keys are presented so the user can visit the 
+     corresponding values, and for a list, the entries are presented so the user 
+     can visit them.  One of the menu items allows the user to go back to 
+     re-examine the previous item."
+     }
 
 
 -- Local Variables:

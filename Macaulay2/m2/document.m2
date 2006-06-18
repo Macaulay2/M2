@@ -586,17 +586,26 @@ documentOptions := new HashTable from {
 reservedNodeNames := set apply( {"Top", "Table of Contents", "Symbol Index"}, toLower )
 
 storeRawDocumentation := (tag,opts) -> (
-     key := DocumentTag.FormattedKey tag;
-     if currentPackage#rawKey#?key and signalDocError tag
-     then stderr << currentFileName << ":" << currentLineNumber() << ": warning: documentation already provided for '" << tag << "'" << endl;
-     currentPackage#rawKey#key = opts;
+     fkey := DocumentTag.FormattedKey tag;
+     if currentPackage#rawKey#?fkey and signalDocError tag
+     then (
+	  stderr << currentFileName << ":" << currentLineNumber() << ": warning: documentation already provided for '" << tag << "'" << endl;
+	  doc := currentPackage#rawKey#fkey;
+	  stderr << doc#"filename" << ":" << doc#"linenum" << ": ... here is the (end of the) previous documentation" << endl;
+	  );
+     currentPackage#rawKey#fkey = opts;
      )
 
 undocumented = method(SingleArgumentDispatch => true)
 undocumented List  := x -> scan(x, undocumented)
 undocumented Thing := key -> if key =!= null then (
      tag := makeDocumentTag(key, Package => currentPackage);
-     storeRawDocumentation(tag, new HashTable from { symbol DocumentTag => tag, "undocumented" => true}))
+     storeRawDocumentation(tag, new HashTable from { 
+	       symbol DocumentTag => tag, 
+	       "undocumented" => true,
+	       "filename" => currentFileName,
+	       "linenum" => currentLineNumber()
+	       }))
 
 undocumented keys undocumentedkeys
 undocumentedkeys = null
@@ -833,7 +842,12 @@ document List := args -> (
      o.DocumentTag = tag := makeDocumentTag(key, Package => currentPackage);
      scan(rest, secondary -> (
 	       tag2 := makeDocumentTag secondary;
-	       storeRawDocumentation(tag2, new HashTable from { PrimaryTag => tag, symbol DocumentTag => tag2 })));
+	       storeRawDocumentation(tag2, new HashTable from { 
+			 PrimaryTag => tag,
+			 symbol DocumentTag => tag2,
+	       		 "filename" => currentFileName,
+	       		 "linenum" => currentLineNumber()
+			 })));
      if not o.?Headline and class key === Sequence and key#?0 then (
 	  h := headline key#0;
 	  if h =!= null then o.Headline = h;
@@ -841,6 +855,7 @@ document List := args -> (
      currentNodeName = DocumentTag.FormattedKey tag;
      if reservedNodeNames#?(toLower currentNodeName) then error("'document' encountered a reserved node name '",currentNodeName,"'");
      pkg := DocumentTag.Package tag;
+     args = prepend(COMMENT{"loc:",currentFileName,":",toString currentLineNumber()},args);
      o.Description = toList args;
      exampleBaseFilename = makeFileName(currentNodeName,currentPackage);
      scan(keys o, key -> o#key = fixupTable#key o#key);
@@ -887,6 +902,8 @@ document List := args -> (
 	       else validate DIV o#sym
 	       )
 	  );
+     o#"filename" = currentFileName;
+     o#"linenum" = currentLineNumber();
      o = new HashTable from o;
      storeRawDocumentation(tag, o);
      currentNodeName = null;
@@ -955,7 +972,7 @@ briefDocumentation Thing := x -> (
 
 ignoreDocumentationErrors = true
 
-page = (title,body) -> HTML { HEAD { TITLE title }, BODY body }
+-- page = (title,body) -> HTML { HEAD { TITLE title }, BODY body }
 
 help = method(SingleArgumentDispatch => true)
 help String := key -> (
@@ -972,7 +989,7 @@ help String := key -> (
 	       else error("there is no documentation for '"|key|"'");
 	       b = ();
 	       );
-	  fixup page(formatDocumentTag key, {topheader key, b, caveat key, seealso key, theMenu key})))
+	  fixup DIV {topheader key, b, caveat key, seealso key, theMenu key}))
 
 optionFor := s -> unique select( value \ flatten(values \ dictionaryPath), f -> instance(f, Function) and (options f)#?s) -- this is slow!
 
