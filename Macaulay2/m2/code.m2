@@ -30,7 +30,7 @@ getSourceLines Sequence := (filename,start,startcol,stop,stopcol) -> if filename
      )
 
 limit := 4
-indent := n -> stack apply(unstack n, line -> "| " | line)
+indent := n -> "| "^(height n, depth n) | n
 
 codeFunction := (f,depth) -> (
      if depth <= limit then (

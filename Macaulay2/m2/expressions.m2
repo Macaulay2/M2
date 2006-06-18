@@ -40,6 +40,14 @@ expression Expression := identity
 Expression#operator = ""
 value Expression := x -> error "no method for 'value' of expression"
 
+Holder = new WrapperType of Expression
+Holder.synonym = "holder"
+
+hold = method(SingleArgumentDispatch => true, TypicalValue => Expression)
+hold Thing := x -> new Holder from {x}
+hold Expression := identity
+typicalValues#hold = Expression
+
 AssociativeExpression = new Type of Expression
 AssociativeExpression.synonym = "associative expression"
 --new AssociativeExpression from Sequence := 
@@ -66,9 +74,6 @@ toString Expression := v -> (
      if # v === 0 then op#EmptyName
      else demark(op#operator,names)
      )
-
-Holder = new WrapperType of Expression
-Holder.synonym = "holder"
 
 texMath Holder := v -> "{" | texMath v#0 | "}"
 mathML Holder := v -> mathML v#0
@@ -287,7 +292,7 @@ Equation == Expression      := append
 Equation == Holder          := append0
 Expression == Equation      := prepend
 Holder     == Equation      := prepend0
-Expression == Expression    := (x,y) -> new Equation from {x,y}
+Expression == Expression    := Equation => (x,y) -> new Equation from {x,y}
 Holder     == Holder        := (x,y) -> new Equation from {x#0,y#0}
 Expression == Thing         := (x,y) -> x == expression y
 Thing == Expression         := (x,y) -> expression x == y
@@ -300,7 +305,9 @@ Sum + Expression            := append
 Sum + Holder                := append0
 Expression + Sum            := prepend
 Holder     + Sum            := prepend0
-Expression + Expression     := (x,y) -> new Sum from {x,y}
+Expression + Expression     := Sum => (x,y) -> new Sum from {x,y}
+Expression + Holder         := (x,y) -> new Sum from {x,y#0}
+Holder     + Expression     := (x,y) -> new Sum from {x#0,y}
 Holder     + Holder         := (x,y) -> new Sum from {x#0,y#0}
 Expression + Thing          := (x,y) -> x + expression y
      Thing + Expression     := (x,y) -> expression x + y
@@ -308,7 +315,7 @@ Expression + Thing          := (x,y) -> x + expression y
 	   - Minus          := x -> expression x#0
            - Expression     := x -> new Minus from {x}
            - Holder         := x -> new Minus from {x#0}
-Expression - Expression     := (x,y) -> x + -y
+Expression - Expression     := Sum => (x,y) -> x + -y
 Expression - Thing          := (x,y) -> x - expression y
      Thing - Expression     := (x,y) -> expression x - y
 Product    * OneExpression  :=
@@ -325,7 +332,7 @@ Product * Expression        := append
 Product * Holder            := append0
 Expression * Product        := prepend
 Holder     * Product        := prepend0
-Expression * Expression := (x,y) -> new Product from {x,y}
+Expression * Expression := Product => (x,y) -> new Product from {x,y}
 Holder     * Expression := (x,y) -> new Product from {x#0,y}
 Expression * Holder     := (x,y) -> new Product from {x,y#0}
 Holder     * Holder     := (x,y) -> new Product from {x#0,y#0}
@@ -341,18 +348,16 @@ OneExpression ** Expression := (x,y) -> y
 NonAssociativeProduct ** NonAssociativeProduct := join
 NonAssociativeProduct ** Expression := append
 NonAssociativeProduct ** Holder     := append0
-Expression Expression := (x,y) -> new Adjacent from {x,y}
+Expression Expression := Adjacent => (x,y) -> new Adjacent from {x,y}
 Holder     Expression := (x,y) -> new Adjacent from {x#0,y}
 Expression Holder     := (x,y) -> new Adjacent from {x,y#0}
 Holder     Holder     := (x,y) -> new Adjacent from {x#0,y#0}
-Expression Array      := (x,y) -> new Adjacent from {x,y}
-Holder     Array      := (x,y) -> new Adjacent from {x#0,y}
      -- are lists expressions, too???
 Expression Thing      := (x,y) -> x (expression y)
      Thing Expression := (x,y) -> (expression x) y
 Expression ** NonAssociativeProduct := prepend
 Holder     ** NonAssociativeProduct := prepend0
-Expression ** Expression := (x,y) -> new NonAssociativeProduct from {x,y}
+Expression ** Expression := NonAssociativeProduct => (x,y) -> new NonAssociativeProduct from {x,y}
 Holder     ** Expression := (x,y) -> new NonAssociativeProduct from {x#0,y}
 Expression ** Holder     := (x,y) -> new NonAssociativeProduct from {x,y#0}
 Holder     ** Holder     := (x,y) -> new NonAssociativeProduct from {x#0,y#0}
@@ -360,7 +365,7 @@ Expression ** Thing      := (x,y) -> x ** (expression y)
      Thing ** Expression := (x,y) -> (expression x) ** y
 Holder     / OneExpression :=
 Expression / OneExpression := (x,y) -> x
-Expression / Expression := (x,y) -> new Divide from {x,y}
+Expression / Expression := Divide => (x,y) -> new Divide from {x,y}
 Holder     / Expression := (x,y) -> new Divide from {x#0,y}
 Expression / Holder     := (x,y) -> new Divide from {x,y#0}
 Holder     / Holder     := (x,y) -> new Divide from {x#0,y#0}
@@ -370,7 +375,7 @@ expression ZZ := i -> (
      if i === 0 then ZERO
      else if i === 1 then ONE
      else if i === -1 then new Minus from { ONE }
-     else if i < 0 then new Minus from { new Holder from {-i} }
+     else if i < 0 then new Minus from { -i }
      else new Holder from {i}
      )
 Holder     ^ OneExpression :=
@@ -380,13 +385,13 @@ Expression ^ ZeroExpression := (x,y) -> ONE
 ZeroExpression ^ Holder     :=
 ZeroExpression ^ Expression := (x,y) -> ZERO
 ZeroExpression ^ ZeroExpression := (x,y) -> ONE
-Expression ^ Expression := (x,y) -> Power{x,y}
+Expression ^ Expression := Power => (x,y) -> Power{x,y}
 Holder     ^ Expression := (x,y) -> Power{x#0,y}
 Expression ^ Holder     := (x,y) -> Power{x,y#0}
 Holder     ^ Holder     := (x,y) -> Power{x#0,y#0}
 Expression ^ Thing      := (x,y) -> x ^ (expression y)
      Thing ^ Expression := (x,y) -> (expression x) ^ y
-Expression _ Expression := (x,y) -> Subscript{x,y}
+Expression _ Expression := Subscript => (x,y) -> Subscript{x,y}
 Holder     _ Expression := (x,y) -> Subscript{x#0,y}
 Expression _ Holder     := (x,y) -> Subscript{x,y#0}
 Holder     _ Holder     := (x,y) -> Subscript{x#0,y#0}
@@ -1099,66 +1104,30 @@ Function.AfterPrint = x -> (
      -- briefDocumentation x; -- from now on, type "?foo" to get brief documentation on foo
      )
 
+Expression.AfterPrint = x -> (
+     << endl;				  -- double space
+     << o() << lineNumber << " : " << Expression << " of class " << class x << endl;
+     )
+-----------------------------------------------------------------------------
+
+expression VisibleList := v -> new Holder from {apply(v,expression)}
+
+expression RR := x -> if x < 0 then new Minus from {-x} else new Holder from {x}
+
+expression Thing := x -> new Holder from { if ReverseDictionary#?x then ReverseDictionary#x else x }
+expression Symbol := x -> new Holder from { x }
+
+-----------------------------------------------------------------------------
+
 ? Function := x -> briefDocumentation x
 
 Nothing.AfterPrint = identity
-
-Holder.AfterPrint = x -> (
-     << endl;				  -- double space
-     << o() << lineNumber << " : " << class x << " " << class x#0
-     << endl;
-     )
-
 ZZ.AfterPrint = identity
 Boolean.AfterPrint = identity
------------------------------------
-expression Array :=
-expression List :=
-expression Sequence := v -> apply(v,expression)
------------------------------------
--- these interact ... prevent an infinite loop!
-
--- maybe this isn't a good idea
--- expression Thing := x -> new FunctionApplication from { expression, x }
-
-expression HashTable := x -> (
-     new FunctionApplication from { 
-	  expression class x, 
-	  apply(pairs x, (k,v) -> expression(k=>v)) 
-	  }
-     )
-expression MutableHashTable := x -> (
-     new Holder from {"--a mutable hash table--"}
-     )
-expression Type := x -> (
-     if ReverseDictionary#?x then new Holder from {toString ReverseDictionary#x}
-     else new Holder from {"--a type--"}
-     )
-expression Option := x -> hold x
-expression BasicList := x -> (				    -- is this really any good?
-     new FunctionApplication from { 
-	  expression class x, 
-	  apply(toList x, expression) 
-	  }
-     )
-expression RR := x -> (
-     if x < 0 then -new Holder from {-x} else new Holder from {x}
-     )
------------------------------------------------------------------------------
-hold = x -> new Holder from {x}
-typicalValues#hold = Holder
-
-expression Boolean := expression Symbol := expression File := expression String := expression Net := 
-     expression Nothing := expression Database := 
-     expression Function := x -> new Holder from {x}
-
------------------------------------
 
 FilePosition = new Type of BasicList
 FilePosition.synonym = "file position"
 toString FilePosition := net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
-
------------------------------------------------------------------------------
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -240,9 +240,8 @@ hilbertSeries ProjectiveHilbertPolynomial := options -> h -> (
 	  }
      )
 
-PPP := new Holder from {"P"}
 expression ProjectiveHilbertPolynomial := (h) -> (
-     sum(sort pairs h, (n,c) -> c * new Subscript from {PPP, n})
+     sum(sort pairs h, (n,c) -> c * new Subscript from {"P", n})
      )	  
 net ProjectiveHilbertPolynomial := (h) -> net expression h
 

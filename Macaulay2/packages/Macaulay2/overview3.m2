@@ -343,11 +343,6 @@ document {
 	  TO "showUserStructure",
 	  TO "try",
 	  TO "userSymbols"
-	  },
-     "These functions are for debugging the kernel interpreter itself, and
-     are not intended for users.",
-     UL {
-	  TO "buckets",
 	  }
      }
 

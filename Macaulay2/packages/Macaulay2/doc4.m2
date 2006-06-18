@@ -77,15 +77,6 @@ document {
      }
 
 document {
-     Key => buckets,
-     Headline => "list the buckets in a hash table",
-     TT "buckets x", " -- returns a list of the buckets used internally in an 
-     hash table ", TT "x", ".",
-     PARA{},
-     "Each bucket is represented as a list of key/value pairs."
-     }
-
-document {
      Key => identity,
      Headline => "the identity function",
      TT "identity x", " -- returns x.",
