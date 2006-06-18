@@ -762,7 +762,6 @@ document {
 
 document { 
      Key => {(symbol //, Matrix, Matrix),
-       (symbol "//", Matrix, Matrix),
        (symbol "//", RingElement, MonomialIdeal),
        (symbol "//", RingElement, GroebnerBasis),
        (symbol "//", RingElement, RingElement),
