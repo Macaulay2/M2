@@ -68,6 +68,11 @@ topCoefficients Matrix := f -> (
      R := ring f;
      (monoms, coeffs) := rawTopCoefficients f.RawMatrix;
      (map(R,monoms), map(R,coeffs)))
+topCoefficients RingElement := f -> (
+     if f == 0 then (1_(ring f), f)
+     else (
+     	  (monoms,coeffs) := topCoefficients matrix{{f}};
+     	  (monoms_(0,0), coeffs_(0,0))))
 
 decompose = method()
 decompose Ideal := (I) -> if I.cache.?decompose then I.cache.decompose else I.cache.decompose = (

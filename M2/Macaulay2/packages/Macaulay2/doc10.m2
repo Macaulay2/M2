@@ -378,15 +378,6 @@ document {
      }
 
 document {
-     Key => pseudoRemainder,
-     Headline => "compute the pseudo-remainder",
-     TT "pseudoRemainder(f,g)", " -- computes the pseudo-remainder for
-     f divided by g.",
-     PARA{},
-     "This is an internal experimental routine."
-     }
-
-document {
      Key => topCoefficients,
      Headline => "list of top coefficients of a matrix",
      TT "topCoefficients m", " -- for a matrix ", TT "m", ", for each column, returns

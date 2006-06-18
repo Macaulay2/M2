@@ -12,7 +12,7 @@ methods for normal forms...
 	(class x)#1 is junk
 	kill link to InverseMethod
 
-ZZ & ZZ	example comes out false!
+-- DONE: ZZ & ZZ	example comes out false!
 
 ++	modernize the methods, e.g., Module ++ Module
 	GradedModule -- deal with them by referring to ChainComplex
@@ -25,8 +25,8 @@ ZZ & ZZ	example comes out false!
 
 "ranges and repetitions" -- move any of its good examples to .. or ZZ: and reduce or eliminate this node
 
-Matrix | ZZ -- direct to Matrix | Matrix
-ZZ | Matrix	same
-Matrix || ZZ -- direct to Matrix || Matrix
-ZZ || Matrix	same
+-- DONE: Matrix | ZZ -- direct to Matrix | Matrix
+-- DONE: ZZ | Matrix	same
+-- DONE: Matrix || ZZ -- direct to Matrix || Matrix
+-- DONE: ZZ || Matrix	same
 

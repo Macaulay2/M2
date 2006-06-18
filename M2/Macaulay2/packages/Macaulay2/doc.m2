@@ -726,7 +726,7 @@ document {
 	  ZZ => {"obtained from the bits of the 
      	       integers ", TT "m", " and ", TT "n", " by logical 'and'."}
 	  },
-     EXAMPLE "(2^15 + 2^13 + 2^42) & (2^15 + 2^23 + 2^42) == 2^13 + 2^23",
+     EXAMPLE "(2^15 + 2^13 + 2^42) & (2^15 + 2^23 + 2^42) == 2^15 + 2^42",
      SeeAlso => {(symbol |,ZZ,ZZ),xor}
      }
 
@@ -857,12 +857,6 @@ undocumented {
      (symbol "/", List, SelfInitializingType)
      }
 
-
--- keep these
-
-
-
-
 document {
      Key => symbol "/",
      Headline => "a binary operator, usually used for division",
@@ -960,10 +954,63 @@ document {
      Headline => "a binary operator",
      }
 
+(symbol "^", Thing, QQ),
+
+(symbol "^", ZeroExpression, Holder),
+(symbol "^", Holder, ZeroExpression),
+(symbol "^", Holder, OneExpression),
+(symbol "^", Holder, Holder),
+(symbol "^", Expression, Expression),
+(symbol "^", Expression, ZeroExpression),
+(symbol "^", ZeroExpression, Expression),
+(symbol "^", Expression, Thing),
+(symbol "^", Thing, Expression),
+(symbol "^", Expression, OneExpression),
+(symbol "^", Expression, Holder),
+(symbol "^", Holder, Expression),
+(symbol "^", ZeroExpression, ZeroExpression),
+
+
+(symbol "^", Ideal, ZZ),
+(symbol "^", MonomialIdeal, ZZ),
+(symbol "^", CC, ZZ),
+(symbol "^", RingElement, ZZ),
+(symbol "^", Matrix, ZZ),
+(symbol "^", ChainComplexMap, ZZ),
+(symbol "^", GradedModuleMap, ZZ),
+(symbol "^", ChainComplex, ZZ),
+
+(symbol "^", SheafOfRings, List),
+
+(symbol "^", Ring, ZZ),
+(symbol "^", Ring, List),
+(symbol "^", SheafOfRings, ZZ),
+(symbol "^", Module, ZZ),
+(symbol "^", CoherentSheaf, ZZ),
+
+(symbol "^", ChainComplexMap, Array),
+(symbol "^", Module, List),
+
+
+(symbol "^", Module, Array),
+(symbol "^", Matrix, Array),
+(symbol "^", ChainComplex, Array),
+(symbol "^", GradedModuleMap, Array),
+(symbol "^", Matrix, List),
+
+
+(symbol "^", ScriptedFunctor, Thing),
+
+(symbol "^", String, Sequence), -- make a net
+
+(symbol "^", Net, ZZ), -- raise a net
+(symbol "^", String, ZZ), -- make a net
+
+
 document {
      Key => symbol "^",
-     Headline => "a binary operator, usually used for exponents",
-     TT "x ^ y", " -- a binary operator used for powers and raising nets.",
+     Headline => "a binary operator, usually used for powers",
+     Usage => "x ^ y",
      PARA{}, 
      "In addition, if n is 0, then the unit element 
      ", TT "(class x)#1", " is returned.  If n is negative, then the method
@@ -1157,7 +1204,9 @@ document {
      Key => {(symbol |, Matrix, Matrix),
 	  (symbol |, RingElement, Matrix),
 	  (symbol |, Matrix, RingElement),
-	  (symbol |, RingElement, RingElement)
+	  (symbol |, RingElement, RingElement),
+	  (symbol |, ZZ, Matrix),
+	  (symbol |, Matrix, ZZ)
 	  },
      Headline => "join matrices horizontally",
 	Usage => "f = g | h",
@@ -1181,44 +1230,6 @@ document {
 	EXAMPLE "f | (m-n)",
 	Caveat => {"It is assumed that the matrices ", TT "g", " and ", TT "h", " have the same ", TO Ring, "."},
      SeeAlso =>{(symbol ||, Matrix, Matrix), (ring, Matrix)}
-     }
-
-document {
-     Key => (symbol |, ZZ, Matrix),
-     Headline => "join an integer multiple of an identity matrix to a matrix horizontally",
-     Usage => "f = n | g",
-	Inputs => {
-		"n",
-		"g" => {"a ", TT "r", " by ", TT "s", " matrix"}
-		},
-	Outputs => {
-		"f" => {"a ", TT "r", " by ", TT "r+s", " matrix"}
-		},
-    EXAMPLE {
-	    "R = ZZ/101[x,y,z]",
-         "f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
-         "2|f|3"
-	  },
-  	"This also works for an arbitrary element of the ring of the matrix."
-     }
-
-document {
-     Key => (symbol |, Matrix, ZZ),
-     Headline => "join an integer multiple of an identity matrix to a matrix horizontally",
-     Usage => "f = g | n",
-	Inputs => {
-    		"g" => {"a ", TT "r", " by ", TT "s", " matrix."},
-    		"n"
-		},
-	Outputs => {
-		"f" => {"a ", TT "r", " by ", TT "r+s", " matrix."}
-		},
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-       "f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
-      "2|f|3"
-	  },
-   	"This also works for a arbitrary element of the ring of the matrix."
      }
 
 document {
@@ -1246,7 +1257,9 @@ document {
      Key => {(symbol ||, Matrix, Matrix),
 	  (symbol ||, RingElement, Matrix),
 	  (symbol ||, Matrix, RingElement),
-	  (symbol ||, RingElement, RingElement)
+	  (symbol ||, RingElement, RingElement),
+	  (symbol ||, Matrix, ZZ),
+	  (symbol ||, ZZ, Matrix)
 	  },
      Headline => "join matrices vertically",
 	Usage => "f = g || h",
@@ -1271,47 +1284,6 @@ document {
 	Caveat => {"It is assumed that the matrices ", TT "g", " and ", TT "h", " have the same ", TO Ring, "."},
      SeeAlso =>{(symbol |, Matrix, Matrix), (ring, Matrix)}
      }
-
-
-document {
-     Key => (symbol ||, ZZ, Matrix),
-     Headline => "join an integer multiple of an identity matrix to a matrix vertically",
-     Usage => "f = n || g",
-	Inputs => {
-		"n",
-		"g" => {"a ", TT "r", " by ", TT "s", " matrix."}
-		},
-	Outputs => {
-		"f" => {"a ", TT "r+s", " by ", TT "s", " matrix."}
-		},
-    EXAMPLE {
-	    "R = ZZ/101[x,y,z]",
-         "f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
-         "2||f||3"
-	  },
-	"This also works for a arbitrary element of the ring of the matrix."
-     }
-
-
-document {
-     Key => (symbol ||, Matrix, ZZ),
-     Headline => "join an integer multiple of an identity matrix to a matrix vertically",
-     Usage => "f =  g || n",
-	Inputs => {
-		"g" => {"a ", TT "r", " by ", TT "s", " matrix."},
-		"n"
-		},
-	Outputs => {
-		"f" => {"a ", TT "r+s", " by ", TT "s", " matrix."}
-		},
-    EXAMPLE {
-	    "R = ZZ/101[x,y,z]",
-         "f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
-         "2||f||3"
-	  },
-  	"This also works for a arbitrary element of the ring of the matrix."
-     }
-
 
 document {
      Key => symbol "===",
