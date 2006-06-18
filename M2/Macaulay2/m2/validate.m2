@@ -20,7 +20,8 @@ validate2 HEAD := x -> (
      c := tally (class \ toList x);
      if c_TITLE == 0 then oops stderr << "--warning: HEAD should have a TITLE element" << endl;
      if c_TITLE > 1 then oops stderr << "--warning: HEAD should have at most one TITLE element" << endl;
-     if c_BASE > 1 then oops stderr << "--warning: HEAD should have at most one BASE element" << endl;
+     -- BASE html item is currently unimplemented:
+     -- if c_BASE > 1 then oops stderr << "--warning: HEAD should have at most one BASE element" << endl;
      )
 validate2 TR := 
 validate2 UL := 

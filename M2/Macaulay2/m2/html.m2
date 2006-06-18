@@ -14,7 +14,7 @@ Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/index-" | version
 local prefix; local topNodeButton
 local nullButton; local masterIndexButton; local tocButton; local homeButton
 local NEXT; local PREV; local UP; local tableOfContents; local linkTable; local SRC
-local nextButton; local prevButton; local upButton
+local nextButton; local prevButton; local upButton; local backwardButton; local forwardButton
 local masterIndex
 
 hadExampleError := false
@@ -113,28 +113,28 @@ links := tag -> (
      f := FORWARD tag;
      b := BACKWARD tag;
      nonnull splice (
-	  if topDocumentTag =!= null then LINK { "href" => htmlDirectory|topFileName, "rel" =>"Top", linkTitleTag topDocumentTag },
-	  LINK { "href" => htmlDirectory|indexFileName, "rel" => "Index" },
-	  LINK { "href" => htmlDirectory|tocFileName,   "rel" => "Table-of-Contents" },
-	  LINK { "href" => Macaulay2HomePage(), "rel" => "Macaulay-2-Home-Page" },
-	  if f =!= null then LINK { "href" => htmlFilename f, "rel" => "Next", linkTitleTag f},
-	  if b =!= null then LINK { "href" => htmlFilename b, "rel" => "Previous", linkTitleTag b},
+	  if topDocumentTag =!= null then LINK { "href" => rel htmlDirectory|topFileName, "rel" =>"Top", linkTitleTag topDocumentTag },
+	  LINK { "href" => rel htmlDirectory|indexFileName, "rel" => "Index" },
+	  LINK { "href" => rel htmlDirectory|tocFileName,   "rel" => "Table-of-Contents" },
+	  LINK { "href" => rel Macaulay2HomePage(), "rel" => "Macaulay-2-Home-Page" },
+	  if f =!= null then LINK { "href" => rel htmlFilename f, "rel" => "Next", linkTitleTag f},
+	  if b =!= null then LINK { "href" => rel htmlFilename b, "rel" => "Previous", linkTitleTag b},
 	  if NEXT#?tag then (
-	       LINK { "href" => htmlFilename NEXT#tag, "rel" => "Forward", linkTitleTag NEXT#tag},
-	       LINK { "href" => htmlFilename LAST tag, "rel" => "Last", linkTitleTag LAST tag}
+	       LINK { "href" => rel htmlFilename NEXT#tag, "rel" => "Forward", linkTitleTag NEXT#tag},
+	       LINK { "href" => rel htmlFilename LAST tag, "rel" => "Last", linkTitleTag LAST tag}
 	       ),
 	  if PREV#?tag then (
-	       LINK { "href" => htmlFilename PREV#tag, "rel" => "Backward", linkTitleTag PREV#tag},
-	       LINK { "href" => htmlFilename FIRST tag, "rel" => "First", linkTitleTag FIRST tag},
+	       LINK { "href" => rel htmlFilename PREV#tag, "rel" => "Backward", linkTitleTag PREV#tag},
+	       LINK { "href" => rel htmlFilename FIRST tag, "rel" => "First", linkTitleTag FIRST tag},
 	       ),
-	  if UP#?tag then LINK { "href" => htmlFilename UP#tag, "rel" => "Up", linkTitleTag UP#tag},
-	  LINK { "href" => LAYOUT #"packagesrc" "Style" | "doc.css", "rel" => "stylesheet", "type" => "text/css" },
-	  LINK { "href" => LAYOUT #"packagesrc" "Style" | "doc-no-buttons.css", "rel" => "alternate stylesheet", "title" => "no buttons", "type" => "text/css" },
+	  if UP#?tag then LINK { "href" => rel htmlFilename UP#tag, "rel" => "Up", linkTitleTag UP#tag},
+	  LINK { "href" => rel LAYOUT#"packagesrc" "Style" | "doc.css", "rel" => "stylesheet", "type" => "text/css" },
+	  LINK { "href" => rel LAYOUT#"packagesrc" "Style" | "doc-no-buttons.css", "rel" => "alternate stylesheet", "title" => "no buttons", "type" => "text/css" },
 	  if SRC#?tag then (
-     	       LINK { "href" => concatenate("file://", toAbsolutePath SRC#tag#0), "rel" => concatenate("Source (see text above line ", toString SRC#tag#1, ")") }
-	       )
-	  )
-     )
+     	       LINK { 
+		    "href" => concatenate("file://", toAbsolutePath SRC#tag#0), 
+		    "rel" => concatenate("Source (see text above line ", toString SRC#tag#1, ")"),
+		    "type" => "text/plain" } ) ) )
 
 BUTTON := (s,alt) -> (
      s = rel s;
@@ -434,7 +434,7 @@ runString := (x,pkg,rundir,usermode) -> (
      inf << x << endl << close;
      ret := runFile(inf,outf,tmpf,"test results",pkg,t->t,rundir,usermode);
      if ret then (rm inf; rm outf;);
-     result)
+     ret)
 
 check = method()
 check Package := pkg -> (

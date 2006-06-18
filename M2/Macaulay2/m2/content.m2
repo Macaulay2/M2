@@ -1,3 +1,5 @@
+protect qname 						    -- an internal key
+
 -- from xhtml-math11.dtd:
 
 PCDATA = set {"#PCDATA"}

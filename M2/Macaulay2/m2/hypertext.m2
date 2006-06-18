@@ -131,6 +131,9 @@ texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
 
     -- We modify that slightly, by removing all the initial and final BKs and SPs at top level
 
+BK := local BK
+SP := local SP
+
 scan( ((net,net'), (info,info')), (f,f') -> (
 	  f' = f' <- method(); -- this will return either a f (or string), or a sequence of fs and BKs, for later splicing
 	  f' Option := o -> ();
@@ -215,6 +218,8 @@ shorten := s -> (
      s)
 
 verbatim := x -> concatenate ( VERBATIM, texExtraLiteral concatenate x, ENDVERBATIM )
+
+maximumCodeWidth = 60					    -- see also booktex.m2, an old file that sets the same variable
 
 tex TT := texMath TT := verbatim
 tex CODE :=

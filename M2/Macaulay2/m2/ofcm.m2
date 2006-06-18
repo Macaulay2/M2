@@ -149,6 +149,9 @@ RingElement _ Ring := RingElement => (x,R) -> (
      else error "failed to interpret ring element in ring"
      )
 
+protect internalDegreeLength
+protect internalDegrees
+
 makeit1 := (opts) -> (
      M := new GeneralOrderedMonoid of MonoidElement;
      M#"original options" = opts;

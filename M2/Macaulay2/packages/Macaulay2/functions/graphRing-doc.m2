@@ -8,7 +8,7 @@ document {
 	  MonomialSize => ZZ => { "the monomial size, see ", TO MonomialSize },
 	  VariableBaseName => Symbol => { "the variable base name, see ", TO VariableBaseName }
 	  },
-     Outputs => { Ring => {"the coordinate ring of the graph of regular map corresponding to ", TT "f"}},
+     Outputs => {{"the coordinate ring of the graph of regular map corresponding to ", TT "f"}},
      EXAMPLE lines ///
      	  R = QQ[x,y]
 	  S = QQ[s,t,u]

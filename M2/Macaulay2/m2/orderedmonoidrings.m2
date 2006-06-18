@@ -47,6 +47,9 @@ toExternalString PolynomialRing := R -> toString expression R
 
 degreeLength PolynomialRing := (RM) -> degreeLength monoid RM
 
+protect basering
+protect flatmonoid
+
 degreesRing ZZ := PolynomialRing => memoize(
      (n) -> (
 	  local ZZn;
@@ -114,6 +117,9 @@ monoidIndices := (M,vars) -> apply(vars, x -> if class x === ZZ then x else (
 	  x = baseName x;
 	  if M.index#?x then M.index#x
 	  else error "expected a variable of the ring or an integer"))
+
+protect diffs0						    -- private keys for storing info about indices of WeylAlgebra variables
+protect diffs1
 
 Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      (R,M) -> (

@@ -151,8 +151,7 @@ scan(flexibleBinaryOperators, op -> (
 	  preX := "            ";
 	  if not Thing#?((op,symbol =),Thing,Thing) then (
 	       undocumented' ((op,symbol =),Thing,Thing);
-	       installMethod((op,symbol =), Thing, Thing, Error => 
-		    (x,y,z) -> (
+	       installMethod((op,symbol =), Thing, Thing, (x,y,z) -> (
 			 preY := centerString(width preX, opstring);
 			 preZ := centerString(width preX, "=");
 			 line1 := concatenate("no method for assignment to ",
@@ -169,8 +168,7 @@ scan(flexibleBinaryOperators, op -> (
 			 error toString stack(line1,commentGuard line2,commentGuard line3,commentGuard line4))));
 	  if not Thing#?(op,Thing,Thing) then (
 	       undocumented' (op,Thing,Thing);
-	       installMethod(op, Thing, Thing, Error => 
-		    (x,y) -> (
+	       installMethod(op, Thing, Thing, (x,y) -> (
 			 line1 := concatenate("no method for ",
 			      if op === symbol " " then "adjacent objects:" else concatenate("binary operator ",op," applied to objects:")
 			      );
@@ -189,8 +187,7 @@ scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}
 	       preX := "            ";
 	       if not Thing#?(op,symbol =) then (
 		    undocumented' ((op,symbol =), Thing);
-		    installMethod((op,symbol =), Thing, Error => 
-			 (y,z) -> (
+		    installMethod((op,symbol =), Thing, (y,z) -> (
 			      preY := centerString(width preX, toString op);
 			      preZ := centerString(width preX, "=");
 			      line1 := concatenate("no method for assignment to ", concatenate(type," operator ",op), " applied to:");
@@ -202,8 +199,7 @@ scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}
 			      line3 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z);
 			      hush = false;
 			      error toString stack(line1,commentGuard line2,commentGuard line3))));
-	       if not Thing#?op then installMethod(op, Thing, Error => 
-		    (x) -> (
+	       if not Thing#?op then installMethod(op, Thing, (x) -> (
 			 line1 := concatenate("no method for ", concatenate(type," operator ",op), " applied to:");
 			 if hush then error line1;
 			 wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
