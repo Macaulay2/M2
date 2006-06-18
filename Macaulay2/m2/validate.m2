@@ -3,7 +3,7 @@
 noqname := p -> (
      if instance(p,IntermediateMarkUpType)
      then stderr << "--warning: " << format toString p << " is an intermediate mark-up type with no qname" << endl
-     else stderr << "--warning: " << format toString p << " is a type with no qname" << endl;
+     else error("error: ", format toString p, " is an unrecognized type, appearing in hypertext, with no qname")
      )
 
 haderror := false
@@ -44,7 +44,7 @@ validate COMMENT := x -> (
 validate CDATA := x -> (
      if match("]]>",concatenate x) then oops stderr << "--warning: encountered \"]]>\" within CDATA" << endl;
      )
-validate TEX := x -> (
+validate LITERAL := validate TEX := x -> (
      -- don't know what to do here yet...
      )
 validate MarkUpList := x -> (

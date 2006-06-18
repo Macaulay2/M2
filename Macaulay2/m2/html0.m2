@@ -41,24 +41,26 @@ toupper := new HashTable from apply(characters lower,characters upper,identity)
 toLower = s -> concatenate apply(characters s, c -> if tolower#?c then tolower#c else c)
 toUpper = s -> concatenate apply(characters s, c -> if toupper#?c then toupper#c else c)
 
-block := BlockMix - set { "ins" } + set { "body", "tr", "li", "head", "html", "title" } 
+ewnl := BlockMix - set { "ins" } + set { "body", "tr", "li", "head", "html", "title", "link", "meta" } 
 
 htmlMarkUpType := s -> (
      on := "<" | s | ">";
      off := "</" | s | ">";
      onoff := "<" | s | "/>";
-     if block#?s then (off = off|"\n";onoff = onoff|"\n");
+     if ewnl#?s then (off = off|"\n";onoff = onoff|"\n");
      t -> if #t === 0 then onoff else concatenate(on, apply(t,html), off))
 
 htmlMarkUpTypeWithOptions := opts -> s -> (
      off := "</" | s | ">";
      lt := "<";
-     if block#?s then off = off|"\n";
+     onoff := "/>";
+     if ewnl#?s then (off = off|"\n";onoff = onoff|"\n");
      t -> (
 	  o := "";
 	  (opts',u) := override(opts, toSequence t);
 	  scanPairs(opts', (k,v) -> if v =!= null then o = concatenate(o, " ", k, "=", format v));
-	  concatenate(lt, s, o, ">", apply(sequence u,html), off)
+	  if #u === 0 then concatenate(lt, s, o, onoff)
+	  else concatenate(lt, s, o, ">", apply(sequence u,html), off)
 	  ))
 
 MarkUpType.GlobalAssignHook = (X,x) -> (
@@ -119,7 +121,7 @@ HEADER4    = withQname_"h4" new MarkUpType of MarkUpListParagraph
 HEADER5    = withQname_"h5" new MarkUpType of MarkUpListParagraph
 HEADER6    = withQname_"h6" new MarkUpType of MarkUpListParagraph
 SUBSECTION = HEADER2
-LITERAL    = new IntermediateMarkUpType of MarkUpList
+LITERAL    = withQname_"div" new IntermediateMarkUpType of MarkUpList -- fake!!!!! check later
 BLOCKQUOTE = new MarkUpType of MarkUpListContainer
 STRONG     = new MarkUpType of MarkUpList
 SMALL      = new MarkUpType of MarkUpList
@@ -135,6 +137,8 @@ BOLD       = withQname_"b" new MarkUpType of MarkUpList
 CODE       = new MarkUpType of MarkUpList
 COMMENT    = new MarkUpType of MarkUpList
 CDATA      = new MarkUpType of MarkUpList
+LINK       = withOptions_{"href","rel","title","type"} new MarkUpTypeWithOptions of MarkUpList
+META       = withOptions_{"name","content","http-equiv"} new MarkUpTypeWithOptions of MarkUpList
 
 HREF       = withQname_"a" new IntermediateMarkUpType of MarkUpList
 new HREF from List := (HREF,x) -> (
@@ -142,7 +146,6 @@ new HREF from List := (HREF,x) -> (
      if class x#0 =!= String then error "HREF expected URL to be a string";
      x)
 
-LINK       = new MarkUpType of MarkUpList
 ANCHOR     = withOptions_{"id"} withQname_"a" new MarkUpTypeWithOptions of MarkUpList
 
 UL         = new MarkUpType of MarkUpListParagraph

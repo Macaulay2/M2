@@ -123,6 +123,10 @@ validContent#"label" = PCDATA + set { "input", "select", "textarea", "button", "
 validContent#"a" = PCDATA + InlineNoAClass
 -----------------------------------------------------------------------------
 ---- these are all empty:
+-- <!ENTITY % link.content  "EMPTY" >
+validContent#"link" =
+-- <!ENTITY % meta.content  "EMPTY" >
+validContent#"meta" =
 -- <!ENTITY % base.content  "EMPTY" >
 validContent#"base" =
 -- <!ENTITY % link.content  "EMPTY" >

@@ -8,12 +8,8 @@ pretty2 = method(SingleArgumentDispatch => true)
 --      r := wrap(printWidth - 2, format s);
 --      if depth r > 0 then r = boxList {r};
 --      1:r)
-pretty2 String := s -> (
-     r := wrap format s;
-     if class r === Net then toSequence unstack r else 1:r)
-
-pretty2 Thing := x -> (
-     r := net x;
+pr := ou -> x -> (
+     r := ou x;
      if width r <= printWidth then return 1:r;
      f := lookup(Wrap, class x);
      if f =!= null then (
@@ -22,6 +18,14 @@ pretty2 Thing := x -> (
 	  );
      1: wrap("-",r)				    -- get the last bit separate!
      )
+pretty2 Thing := pr net
+
+pretty2 String := s -> (				    -- maybe we can get rid of this
+     r := wrap format s;
+     if class r === Net then toSequence unstack r else 1:r)
+pretty2 String := pr toString
+
+pretty2 Nothing := pr toString
 
 pretty2 List      := x -> pretty3("{", " ", ",", " ", "}", toSequence x)
 pretty2 Array     := x -> pretty3("[", " ", ",", " ", "]", toSequence x)

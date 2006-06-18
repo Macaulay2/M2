@@ -140,6 +140,7 @@ scan( ((net,net'), (info,info')), (f,f') -> (
 	  f' MarkUpListParagraph := x -> (SP, f x, SP);
 	  f' UL := x -> (BK, f x, BK);
 	  f' MarkUpListContainer := x -> (BK, apply(toSequence x, f'), BK);
+     	  f' Thing := x -> error("no hypertext conversion method for: ",toString x," of class ",toString class x);
 	  f MarkUpListContainer := x -> (
 	       x = deepSplice f' x;
 	       n := 0;

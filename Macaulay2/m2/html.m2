@@ -80,7 +80,6 @@ html IMG  := x -> (
      if o#"alt" === null then error ("IMG item is missing alt attribute");
      concatenate("<img src=", format rel o#"src", " alt=", format o#"alt", "/>"))
 
-html LINK := x -> concatenate("<link href=\"", rel first x, "\"", concatenate drop(x,1), "/>",newline)
 html HREF := x -> (
      r := html last x;
      if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
@@ -109,30 +108,30 @@ forward  := tag -> ( f := FORWARD  tag; ( if f =!= null then HREF { htmlFilename
 backward := tag -> ( b := BACKWARD tag; ( if b =!= null then HREF { htmlFilename b, backwardButton} else backwardButton, " | "))
 
 linkTitle := s -> concatenate( " title=\"", s, "\"" )
-linkTitleTag := tag -> concatenate( " title=\"", DocumentTag.FormattedKey tag, commentize headline tag, "\"" )
+linkTitleTag := tag -> "title" => concatenate(DocumentTag.FormattedKey tag, commentize headline tag)
 links := tag -> (
      f := FORWARD tag;
      b := BACKWARD tag;
-     splice (
-	  if topDocumentTag =!= null then LINK { htmlDirectory|topFileName,   " rel=\"Top\"", linkTitleTag topDocumentTag},
-	  LINK { htmlDirectory|indexFileName, " rel=\"Index\""},
-	  LINK { htmlDirectory|tocFileName,   " rel=\"Table-of-Contents\""},
-	  LINK { Macaulay2HomePage (), " rel=\"Macaulay-2-Home-Page\""},
-	  if f =!= null then LINK { htmlFilename f, " rel=\"Next\"", linkTitleTag f},
-	  if b =!= null then LINK { htmlFilename b, " rel=\"Previous\"", linkTitleTag b},
+     nonnull splice (
+	  if topDocumentTag =!= null then LINK { "href" => htmlDirectory|topFileName, "rel" =>"Top", linkTitleTag topDocumentTag },
+	  LINK { "href" => htmlDirectory|indexFileName, "rel" => "Index" },
+	  LINK { "href" => htmlDirectory|tocFileName,   "rel" => "Table-of-Contents" },
+	  LINK { "href" => Macaulay2HomePage(), "rel" => "Macaulay-2-Home-Page" },
+	  if f =!= null then LINK { "href" => htmlFilename f, "rel" => "Next", linkTitleTag f},
+	  if b =!= null then LINK { "href" => htmlFilename b, "rel" => "Previous", linkTitleTag b},
 	  if NEXT#?tag then (
-	       LINK { htmlFilename NEXT#tag, " rel=\"Forward\"", linkTitleTag NEXT#tag},
-	       LINK { htmlFilename LAST tag, " rel=\"Last\"", linkTitleTag LAST tag}
+	       LINK { "href" => htmlFilename NEXT#tag, "rel" => "Forward", linkTitleTag NEXT#tag},
+	       LINK { "href" => htmlFilename LAST tag, "rel" => "Last", linkTitleTag LAST tag}
 	       ),
 	  if PREV#?tag then (
-	       LINK { htmlFilename PREV#tag, " rel=\"Backward\"", linkTitleTag PREV#tag},
-	       LINK { htmlFilename FIRST tag, " rel=\"First\"", linkTitleTag FIRST tag},
+	       LINK { "href" => htmlFilename PREV#tag, "rel" => "Backward", linkTitleTag PREV#tag},
+	       LINK { "href" => htmlFilename FIRST tag, "rel" => "First", linkTitleTag FIRST tag},
 	       ),
-	  if UP#?tag then LINK { htmlFilename UP#tag, " rel=\"Up\"", linkTitleTag UP#tag},
-	  LINK { LAYOUT #"packagesrc" "Style" | "doc.css", " rel=\"stylesheet\" type=\"text/css\"" },
-	  LINK { LAYOUT #"packagesrc" "Style" | "doc-no-buttons.css", " rel=\"alternate stylesheet\" title=\"no buttons\" type=\"text/css\"" },
+	  if UP#?tag then LINK { "href" => htmlFilename UP#tag, "rel" => "Up", linkTitleTag UP#tag},
+	  LINK { "href" => LAYOUT #"packagesrc" "Style" | "doc.css", "rel" => "stylesheet", "type" => "text/css" },
+	  LINK { "href" => LAYOUT #"packagesrc" "Style" | "doc-no-buttons.css", "rel" => "alternate stylesheet", "title" => "no buttons", "type" => "text/css" },
 	  if SRC#?tag then (
-     	       LINK { concatenate("file://", toAbsolutePath SRC#tag#0), concatenate(" rel=\"Source (see text above line ", toString SRC#tag#1, ")\"") }
+     	       LINK { "href" => concatenate("file://", toAbsolutePath SRC#tag#0), "rel" => concatenate("Source (see text above line ", toString SRC#tag#1, ")") }
 	       )
 	  )
      )
@@ -345,8 +344,7 @@ makeMasterIndex := keylist -> (
      fn := buildDirectory | htmlDirectory | indexFileName;
      title := "Symbol Index";
      stderr << "--making  '" << title << "' in " << fn << endl;
-     fn
-     << html HTML {
+     r := HTML {
 	  HEAD splice { TITLE title, links() },
 	  BODY {
 	       DIV { topNodeButton, " | ", tocButton, " | ", homeButton },
@@ -356,9 +354,11 @@ makeMasterIndex := keylist -> (
 	       UL splice apply(sort keylist, (tag) -> (
 			 checkIsTag tag;
 			 (anchor tag, TOH tag)
-			 )),
+			 ))
 	       }
-	  } << endl << close
+	  };
+     validate r;
+     fn << html r << endl << close
      )
 
 maketableOfContents := () -> (
