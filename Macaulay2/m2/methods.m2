@@ -387,6 +387,9 @@ addHook   (HashTable,Thing,Function) := (obj,key,hook) -> (c := obj.cache; if c#
 removeHook(HashTable,Thing,Function) := (obj,key,hook) -> (c := obj.cache; if c#?key then c#key = delete(c#key,hook))
 runHooks  (HashTable,Thing,Thing   ) := (obj,key,arg ) -> (c := obj.cache; if c#?key then scan(c#key, hook -> hook arg))
 
+-- and keys
+protect QuotientRingHook
+
 -----------------------------------------------------------------------------
 -- stashing or caching computed values for future reference in functions that take a mutable hash table as input
 

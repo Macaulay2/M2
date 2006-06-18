@@ -203,7 +203,7 @@ homology(SimplicialComplex) := Chaincomplex => opts -> Delta -> (
      homology(chainComplex Delta))
 
 fVector = method(TypicalValue => List)
-fVector SimplicialComplex := List => D -> (
+fVector SimplicialComplex := HashTable => D -> (
      N := poincare cokernel generators ideal D;
      if N == 0 then (
 	  new HashTable from {-1 => 0}
@@ -528,7 +528,7 @@ document {
 	  "D" => SimplicialComplex
           },
      Outputs => {
-	  "f" => HashTable => {"such that ", TT "f#i", 
+	  "f" => {"such that ", TT "f#i", 
 	  " is the number of faces in ", TT "D", 
 	  " of dimension ", TT "i", ", 
 	  where ", TT "-1 <= i <= dim D"}

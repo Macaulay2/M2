@@ -12,11 +12,7 @@ newPackage(
 export {firstFunction}
 
 firstFunction = method(TypicalValue => String)
-firstFunction ZZ := String => n -> (
-	if n == 1
-	then "Hello World!"
-	else "D'oh!"	
-	);
+firstFunction ZZ := String => n -> if n == 1 then "Hello World!" else "D'oh!"
 
 beginDocumentation()
 document { 
@@ -25,17 +21,18 @@ document {
 	EM "FirstPackage", " is a basic package to be used as an example."
 	}
 document {
-	Key => {firstFunction,(firstFunction,ZZ)},
+	Key => {(firstFunction,ZZ),firstFunction},
 	Headline => "a silly first function",
 	Usage => "firstFunction n",
-	Inputs => { "n" => ZZ },
-	Outputs => { String => { "a silly string, depending on the value of ", TT "n" }},
-	EXAMPLE {
-		"firstFunction 1",
-		"firstFunction 0"
-		}
+	Inputs => { "n" },
+	Outputs => {{ "a silly string, depending on the value of ", TT "n" }},
+        SourceCode => {(firstFunction,ZZ)},
+	EXAMPLE lines ///
+	   firstFunction 1
+	   firstFunction 0
+     	///
 	}
 
-TEST///
+TEST ///
     assert ( firstFunction 2 == "D'oh!" )
 ///

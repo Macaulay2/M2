@@ -221,8 +221,7 @@ homogenize(Vector, RingElement) := Vector => (f,v) -> (
      new target p from {p})
 
 listOfVars := method()
-listOfVars(Ring,Thing) := (R,x) -> 
-     error(expected "'Variables=>' argument to be a List, Sequence, integer, or RingElement")
+listOfVars(Ring,Thing) := (R,x) -> error("expected 'Variables=>' argument to be a List, Sequence, integer, or RingElement")
 listOfVars(Ring,Nothing) := (R,x) -> toList(0 .. numgens R-1)
 listOfVars(Ring,List) := (R,x) -> (
      vrs := splice x;

@@ -170,8 +170,8 @@ generateAssertions = method(TypicalValue => Net)
 generateAssertions String := s -> generateAssertions select(lines s, x -> not match("^[[:space:]]*(--.*)?$",x))
 generateAssertions List := y -> stack apply(y, 
      lin -> ( 
-	  t := try value lin else oops;
-	  concatenate if t === oops
+	  t := try value lin else local oops;
+	  concatenate if t === local oops
 	  then ("assert( (try ", lin, " else oops) === ", toString t, " )")
 	  else ("assert( ("    , lin,            ") === ", toString t, " )")
 	  ))

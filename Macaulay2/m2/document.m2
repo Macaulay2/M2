@@ -39,16 +39,12 @@ isDocumentableThing    Symbol := key -> true
 isDocumentableThing  Sequence := key -> false 		    -- we're not looking for documentable methods here, just documentable objects
 isDocumentableThing   Nothing := key -> true
 
-errorMethod := key -> typicalValues#?key and typicalValues#key === Error
-
 isDocumentableMethod = method(SingleArgumentDispatch => true)
 isDocumentableMethod Sequence := key -> (
      all(key, i -> (
      	       class i === Sequence 			    -- assignment methods look like ((symbol *, symbol =), X, Y, Z)
      	       or isDocumentableMethod i)) 
      and not methodDispatchFunctions#?(functionBody lookup key)
-     and not errorMethod key
-     -- and not isUndocumented makeDocumentTag key
      )
 isDocumentableMethod    Thing := key -> false
 isDocumentableMethod   Symbol := key -> isGlobalSymbol toString key and getGlobalSymbol toString key === key
@@ -137,6 +133,7 @@ DocumentTag.Key = method(SingleArgumentDispatch => true)
 DocumentTag.Key DocumentTag := x -> x#0
 err := x -> error "expected a document tag; perhaps the function 'hypertext' has not yet been run on hypertext"
 DocumentTag.Key Thing := err
+protect FormattedKey
 DocumentTag.FormattedKey = method(SingleArgumentDispatch => true)
 DocumentTag.FormattedKey DocumentTag := x -> x#1
 DocumentTag.FormattedKey Thing := err
@@ -886,7 +883,7 @@ document List := args -> (
 	  );
      if #out' =!= 0 then (
      	  if #out =!= #out' then error ("mismatched number of outputs in documentation for ", toExternalString key);
-     	  outp = apply(out',out,(T,v) -> T => v);
+     	  out = apply(out',out,(T,v) -> T => v);
 	  );
      proc := processInputOutputItems(key,fn);
      inp = proc \ inp;

@@ -140,11 +140,11 @@ poincare MonomialIdeal := M -> (
 --minprimes MonomialIdeal := MonomialIdeal => m -> (
 --     newMonomialIdeal(ring m, rawAssociatedPrimes m.RawMonomialIdeal))
 
-independentSets = method(Options => { Limit => Infinity })
+independentSets = method(Options => { Limit => infinity })
 independentSets MonomialIdeal := o -> (M) -> (
      result := newMonomialIdeal(ring M, 
 	  rawMaximalIndependentSets(M.RawMonomialIdeal, 
-	       if o.Limit === Infinity then -1 else o.Limit));
+	       if o.Limit === infinity then -1 else o.Limit));
      result = flatten entries generators result;
      if #result === 1 and result#0 == 1_(ring M) then 
          {}

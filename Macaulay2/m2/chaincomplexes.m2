@@ -2,7 +2,7 @@
 
 Resolution = new Type of MutableHashTable
 Resolution.synonym = "resolution"
-toString Resolution := g -> "<<resolution " | toString g.handle | ">>"
+toString Resolution := C -> toString raw C
 raw Resolution := X -> X.RawComputation
 
 ChainComplex = new Type of GradedModule

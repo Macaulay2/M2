@@ -36,6 +36,11 @@ addStartFunction( () -> if sourceHomeDirectory =!= null then Macaulay2Core#"sour
 
 addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then makePackageIndex() )
 
+unexportedSymbols = () -> hashTable apply(pairs Macaulay2Core#"private dictionary", (n,s) -> if not Macaulay2Core.Dictionary#?n then (s => class value s => value s))
+
+scan(values Macaulay2Core#"private dictionary" - set values Macaulay2Core.Dictionary,
+     s -> if mutable s and value s === s then stderr << "--warning: mutable unexported unset symbol in Macaulay2Core: " << s << endl)
+
 -- make sure this is after all public global symbols are defined or erased
 endPackage "Macaulay2Core"
 -- after this point, private global symbols, such as noinitfile, are no longer visible

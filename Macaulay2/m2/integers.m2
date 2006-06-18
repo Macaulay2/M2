@@ -5,6 +5,7 @@ degree Number := i -> {}
 conjugate Number := identity
 
 ZZ.RawRing = rawZZ()
+protect isBasic
 ZZ.isBasic = true
 new ZZ from RawRingElement := (ZZ,n) -> rawToInteger n
 raw ZZ := x -> rawFromNumber(rawZZ(), x)
