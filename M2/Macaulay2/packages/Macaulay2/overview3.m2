@@ -324,7 +324,7 @@ document {
      UL {
 	  TO "assert",
 	  TO "benchmark",
-	  TO "browse",
+	  TO "Browse::browse",
 	  TO "code",
 	  TO "currentFileName",
 	  TO "edit",

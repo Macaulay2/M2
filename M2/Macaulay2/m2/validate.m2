@@ -59,7 +59,7 @@ validate MarkUpList := x -> (
      )
 chk := (valid,p,c) -> (
      if not c.?qname then noqname c
-     else if not valid#?(c.qname)
+     else if not valid#?(c.qname) and c.qname =!= "comment"
      then oops stderr << "--warning: element of type " << format toString p << " can't contain an element of type " << format toString c << endl
      )
 validate(Type, Set, BasicList) := (p,valid,x) -> (

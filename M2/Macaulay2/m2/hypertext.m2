@@ -456,6 +456,7 @@ info MENU := r -> (
 
 html COMMENT := x -> concatenate("<!--",x,"-->")
 html CDATA := x -> concatenate("<![CDATA[",x,"]]>")
+info COMMENT := net COMMENT := x -> ""
 
 -- the main idea of these comparisons is so sorting will sort by the way things will print:
 TO ? TO := TO ? TOH := TOH ? TO := TOH ? TOH := (x,y) -> x#0 ? y#0

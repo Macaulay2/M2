@@ -785,7 +785,6 @@ document {
 	  },
      Subnodes => {
 	  "functions for manipulating hash tables",
-	  TO "browse",
 	  TO "copy",
 	  TO "hashTable",
 	  TO "keys",

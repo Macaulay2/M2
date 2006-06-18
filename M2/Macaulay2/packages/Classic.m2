@@ -5,7 +5,7 @@ thisPackage := newPackage ( "Classic",
      Date => "June, 2006",
      Version => "1.0",
      Headline => "a classic Macaulay parser",
-     DebuggingMode => true
+     DebuggingMode => false
      )
 
 needsPackage "Parsing"
