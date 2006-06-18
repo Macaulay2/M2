@@ -13,7 +13,7 @@ Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/index-" | version
 
 local prefix; local topNodeButton
 local nullButton; local masterIndexButton; local tocButton; local homeButton
-local NEXT; local PREV; local UP; local tableOfContents; local linkTable
+local NEXT; local PREV; local UP; local tableOfContents; local linkTable; local SRC
 local nextButton; local prevButton; local upButton
 local masterIndex
 
@@ -130,7 +130,10 @@ links := tag -> (
 	       ),
 	  if UP#?tag then LINK { htmlFilename UP#tag, " rel=\"Up\"", linkTitleTag UP#tag},
 	  LINK { LAYOUT #"packagesrc" "Style" | "doc.css", " rel=\"stylesheet\" type=\"text/css\"" },
-	  LINK { LAYOUT #"packagesrc" "Style" | "doc-no-buttons.css", " rel=\"alternate stylesheet\" title=\"no buttons\" type=\"text/css\"" }
+	  LINK { LAYOUT #"packagesrc" "Style" | "doc-no-buttons.css", " rel=\"alternate stylesheet\" title=\"no buttons\" type=\"text/css\"" },
+	  if SRC#?tag then (
+     	       LINK { concatenate("file://", toAbsolutePath SRC#tag#0), concatenate(" rel=\"Source (see text above line ", toString SRC#tag#1, ")\"") }
+	       )
 	  )
      )
 
@@ -671,10 +674,6 @@ installPackage Package := opts -> pkg -> (
 			      )
 			 )));
 	  close rawdocDatabase;
-	  moveFile(rawdbnametmp,rawdbname);
-	  rawkey := "raw documentation database";
-	  pkg#rawkey = openDatabase rawdbname;
-	  addEndFunction(() -> if pkg#?rawkey and isOpen pkg#rawkey then close pkg#rawkey);
 
 	  -- run tests that are functions
 	  stderr << "--running tests that are functions " << exampleDir << endl;
@@ -754,6 +753,7 @@ installPackage Package := opts -> pkg -> (
 
 	  -- process documentation
 	  stderr << "--processing documentation nodes..." << endl;
+     	  SRC = new MutableHashTable;
 	  scan(nodes, 
 	       tag -> if isUndocumented tag then (
 		    if debugLevel > 0 then stderr << "--undocumented " << tag << endl;
@@ -769,6 +769,11 @@ installPackage Package := opts -> pkg -> (
 		    else (
 			 if debugLevel > 0 then stderr << "--processing   " << tag << endl;
 			 pkg#"processed documentation"#fkey = help tag;
+			 -- get source filename and linenum, too:
+			 if pkg#"raw documentation"#?fkey then (
+			      doc := pkg#"raw documentation"#fkey;
+			      SRC#tag = (doc#"filename",doc#"linenum");
+			      );
 			 );
 		    )
 	       );
@@ -787,8 +792,14 @@ installPackage Package := opts -> pkg -> (
 	  docDatabase := openDatabaseOut dbnametmp;
 	  scan(pairs pkg#"processed documentation", (k,v) -> docDatabase#k = toExternalString v);
 	  close docDatabase;
-	  moveFile(dbnametmp,dbname);
+	  shield (
+	       moveFile(dbnametmp,dbname);
+	       moveFile(rawdbnametmp,rawdbname);
+	       );
+	  rawkey := "raw documentation database";
 	  pkg#prockey = openDatabase dbname;
+	  pkg#rawkey = openDatabase rawdbname;
+	  addEndFunction(() -> if pkg#?rawkey and isOpen pkg#rawkey then close pkg#rawkey);
 	  addEndFunction(() -> if pkg#?prockey and isOpen pkg#prockey then close pkg#prockey);
 
 	  -- make table of contents, including next, prev, and up links
@@ -963,6 +974,7 @@ installPackage Package := opts -> pkg -> (
 	  );
 
      -- all done
+     SRC = null;
      stderr << "--installed package " << pkg << " in " << buildDirectory << endl;
      currentPackage = oldpkg;
      if not noinitfile and prefixDirectory =!= null then makePackageIndex();

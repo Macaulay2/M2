@@ -11,17 +11,22 @@ thisPackage := newPackage ( "Classic",
 needsPackage "Parsing"
 
 -- start --
-symbolP = (x -> ( if not isGlobalSymbol x then error("symbol ",x," undefined"); getGlobalSymbol x )) % letterParser
+symbolP = (x -> (
+	  if not isGlobalSymbol x then error("symbol ",x," undefined");
+ 	  getGlobalSymbol x)) % letterParser
 seqP = (comma, parser) -> prepend % parser @ * (last % comma @ parser)
 variableP = value % symbolP
 intP = NNParser | variableP
 subscriptP = ((lb,x,rb) -> x) % andP( "[", unsequence % seqP_"," intP, "]" )
-ringVariableP = ((x,n) -> if n === nil then value x else x_n) % symbolP @ optP subscriptP
+ringVariableP = ((x,n) -> if n === nil then value x else x_n) % 
+                symbolP @ optP subscriptP
 numberP = ZZParser | QQParser
-powerP = ((x,n) -> if n === nil then x else x^n) % (futureParser parenExprP | ringVariableP) @ optP NNParser
-monomialP = times @@ deepSplice % optionalSignParser @ (numberP @ *powerP | +powerP )
+powerP = ((x,n) -> if n === nil then x else x^n) % 
+         (futureParser parenExprP | ringVariableP) @ optP NNParser
+monomialP = times @@ deepSplice % 
+            optionalSignParser @ (numberP @ *powerP | +powerP )
 polyP = plus @@ deepSplice % +monomialP | terminalParser 0
-parenExprP = ((lp,x,rp) -> x) % andP("(", futureParser parenExprP | polyP, ")")
+parenExprP = ((l,x,r) -> x) % andP("(", futureParser parenExprP | polyP, ")")
 listPolyP = toList % seqP_"," polyP
 arrayPolyP = toList % seqP_";" listPolyP
 export poly ; poly = method()
