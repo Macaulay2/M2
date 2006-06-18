@@ -7,6 +7,8 @@ export {
 	symbol minimalPresentationMap,
 	symbol LATER,
 	symbol minimalPresentationMapInv,
+	symbol META,
+	symbol LINK,
 	symbol Number,
 	symbol seeParsing,
 	symbol FollowLinks,
