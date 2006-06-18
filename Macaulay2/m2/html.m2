@@ -1086,9 +1086,6 @@ Michael R. Stillman <mike@math.cornell.edu>
 	  );
      dir)
 
-
-toAbsolutePath = path -> "/" | relativizeFilename("/", path)
-
 makePackageIndex = method(SingleArgumentDispatch => true)
 makePackageIndex Sequence := () -> makePackageIndex path    -- this might get too many files (formerly we used packagePath)
 makePackageIndex List := path -> (

@@ -8,6 +8,8 @@ checkLoadDocumentation = () -> if not isGlobalSymbol "Macaulay2" or class value 
      notify = oldnotify;
      )
 
+toAbsolutePath = path -> if path =!= "stdio" then "/" | relativizeFilename("/", path) else path
+
 -----------------------------------------------------------------------------
 -- normalizing document keys
 -----------------------------------------------------------------------------
@@ -855,7 +857,7 @@ document List := args -> (
      currentNodeName = DocumentTag.FormattedKey tag;
      if reservedNodeNames#?(toLower currentNodeName) then error("'document' encountered a reserved node name '",currentNodeName,"'");
      pkg := DocumentTag.Package tag;
-     args = prepend(COMMENT{"loc:",currentFileName,":",toString currentLineNumber()},args);
+     args = prepend(COMMENT{"file://",toAbsolutePath currentFileName,":",toString currentLineNumber()},args);
      o.Description = toList args;
      exampleBaseFilename = makeFileName(currentNodeName,currentPackage);
      scan(keys o, key -> o#key = fixupTable#key o#key);
