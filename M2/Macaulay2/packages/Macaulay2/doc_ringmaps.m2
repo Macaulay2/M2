@@ -84,7 +84,7 @@ document {
 		 ofClass Expression, " over a ring ", TT "R"},
 	  "v" => {ofClass Ring, ", ",
 	       ofClass Matrix, ", ",
-	       ofClass Option, ", or a list of options"}
+	       ofClass Option, ", or a list of options: variable => value"}
 	  },
      Outputs => {
 	  {"An object of the same sort as ", TT "f", ", obtained by substituting values for
@@ -92,48 +92,64 @@ document {
 	  },
      "A convenient abbreviation for ", TO "substitute", " is ", TT "sub", ".",
      PARA{},
-     "The basic idea is that v determines the values for the variables appearing in f, or in the matrix or
-     matrices defining f, and the result is obtained by performing this substition on these elements
-     or matrices.  For example,",
+     "This function allows you to substitute values for some variables.  There are three ways to describe
+     the kind of substitution, depending on the second argument ", TT "v", ".",
+     UL {
+	  "give specific values for (some of) the variables",
+	  "give a matrix, the entries determines the values of each of the variables",
+	  "give a ring, the effect will be to substitute variables with variables of the same name, into this new ring"
+	  },
+     PARA{},
      EXAMPLE lines ///
-     	  A = QQ[a..d]; B = QQ[x,y];
-	  sub(x^4-x^2-y-1, x=>y^2)
-	  sub(x^2-y^2, {x=>a+b,y=>c+d})
+          A = QQ[a..f]; B = QQ[a..d]; C = ZZ/101[x,y];
+	  F = 3*a^2-b-d+101*c
+	  ///,
+     "The following line substitutes values for a and b, and the result is in the same ring ", 
+     TT "B", " of ", TT "F", ".",
+     EXAMPLE lines ///
+     	  sub(F, {a=>1, b=>b^4})
+	  ///,
+     "Substitute ", TT "a", " by ", TT "x", ", ", TT "b", " by ", TT "y", 
+     " and so on.  The result is a polynomial in the ring ", TT "C", ".",     
+     EXAMPLE lines ///
+	  sub(F, matrix{{x,y,1,0}})
           ///,
-     "The result on this last line is obtained by replacing ", TT "x", " with ", TT "a+b", ", and ", TT "y", " with ", TT "c+d", 
-     " giving an element in the ring ", TT "A", ".",
-     PARA{},
-     "If ", TT "v", " is a ring, then the result is obtained by substituting the variables of
-     ", TT "v", " for the variables of R with the same name.  The substitution extends
-     to the coefficient ring of ", TT "R", ", and so on.",
+     "Using a ring as the second argument substitutes variables with the same name.
+     The following produces the polynomial ", TT "F", " in the rings ", TT "A", " and ", TT "D", ".",
      EXAMPLE lines ///
-	  use A;
-	  C = A/(a^2,b^2,c^2,d^2)
-	  substitute((a+b+c+d)^3,C)
-	  ///,
-     EXAMPLE lines ///
-	  D = ZZ/101[gens A]; use A;
-	  substitute(ideal(a^2-b-1,1/3*a*b), D)
-	  ///,
-     PARA{},
-     "If ", TT "v", " is a 1 by k matrix over another
-     ring ", TT "S", ", then the result is obtained by substituting the entries in ", TT "v", " 
-     for the variables in ", TT "R", ".",
-     EXAMPLE lines ///
-          substitute(a^4+b^3+c^2+d+1, matrix{{d,c,b,a}})
-	  S = QQ[r,s,t,u];
-	  substitute(a^4+b^3+c^2+d+1, vars S)
+     	  sub(F, A)
+	  D = B/(a*b*c*d);
+	  sub(F,D)
      	  ///,
+     "If the values of all of the variables are in a different ring, then the result will be in that ring.",
+     EXAMPLE lines ///
+     	  use ring F;
+     	  sub(F, {a=>1, b=>3, c=> 1, d=>13})
+          ///,
+     "This can have strange results, if the values are all integers, but fractions are present.",
+     EXAMPLE lines ///
+          sub(1/3*a*b, {a=>1, b=>1, c=>1, d=>1})
+	  ///,
+     "By changing one of the values to a rational number, we insure that the result will be rational.",
+     EXAMPLE lines ///
+          sub(1/3*a*b, {a=>1_QQ, b=>1, c=>1, d=>1})	  
+          ///,
      PARA{},
-     "If ", TT "f", " is a submodule of a free module over ", TT "R", ", then substitution amounts to substitution
-     in the matrices of generators of the module.  This is
+     "If ", TT "f", " is an ideal or a submodule of a free module over ", TT "R", ", then substitution amounts to substitution
+     in the matrix of generators of ", TT "f", ".  This is
      not the same as tensor product!",
      EXAMPLE lines ///
-     	  use A;
-	  M = image(vars A ++ vars A)
+     	  use B;
+	  M = image(vars B ++ vars B)
 	  N = substitute(M, {a=>b+c,c=>1})
+	  ///,
+     "Although we cannot use substitute directly on modules
+     which are not submodules, here is a useful idiom for
+     moving a cokernel module to another ring.  One must be careful though:
+     the degrees of the generators might not be the desired ones.",
+     EXAMPLE lines ///
      	  M' = prune M
-	  N' = coker substitute(presentation M', {a=>b+c,c=>1})	  
+	  N' = coker substitute(presentation M', {a=>b+c,c=>1})
      	  ///,
      PARA{},
      "Unevaluated expressions (i.e. from ", TO hilbertSeries, ") may also
@@ -150,11 +166,22 @@ document {
 	  value oo
 	  oo == value sub(hf1, T=>a)
      	  ///,
+     PARA{},
+     "If you plan on using the same substitution over and over, it is
+     wise to create a ring map which will perform the same substitution.",
+     PARA{},
+     "For example, in the first example above, we can make ", ofClass RingMap, " ", TT "G", ", and then apply 
+     it to ", TT "F", ".",
+     EXAMPLE lines ///
+     	  use B;
+     	  G = map(B,B,{a=>1, b=>b^4})
+	  G F
+	  ///,
      Caveat => "The specified substitution is not checked to see whether
      the corresponding ring homomorphism is well-defined; this may produce
      surprising results, especially if rational coefficients are converted
      to integer coefficients.",
-     SeeAlso => {"substitution and maps between rings", hilbertSeries, value, Expression}
+     SeeAlso => {RingMap, hilbertSeries, value, Expression}
      }
 
 document {
