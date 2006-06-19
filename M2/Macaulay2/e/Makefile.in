@@ -65,8 +65,7 @@ include @srcdir@/Makefile.files
 all :: initialize
 
 all tags:: @srcdir@/TAGS
-@srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c @srcdir@/check/*.c @srcdir@/check/*.cpp @srcdir@/check/*.h \
-		 @srcdir@/check/src_test/*.c @srcdir@/check/src_test/*.h @srcdir@/check/src_test/*.cpp \
+@srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c \
 		 @srcdir@/rings/*.hpp @srcdir@/rings/*.cpp \
 		 @srcdir@/linalgGB/*.h @srcdir@/linalgGB/*.c \
 		 @srcdir@/linalgGB/*.hpp @srcdir@/linalgGB/*.cpp \
@@ -108,7 +107,6 @@ geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
 M2-factory.o : M2-factory.cpp ; $(COMPILE.cc) -Wno-old-style-cast $(OUTPUT_OPTION) $<
 
 clean::; rm -f *.lo *.o TAGS LOGFILE $(addsuffix .hpp, $(GENERATED_H))
-clean::; $(MAKE) -C tests $@
 clean::; $(MAKE) -C linalgGB $@
 clean::; $(MAKE) -C f4 $@
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
@@ -127,7 +125,6 @@ dups-tmp: $(ENGINE_OBJFILES)
 dups-okay: dups-tmp
 	@if [ -s $< ]; then echo "Multiple definitions found:"; cat $<; exit 1; \
 	 else touch $@; fi
-clean check::; $(MAKE) -C check $@
 doxygen : ; cd @srcdir@ && doxygen
 distclean: clean; rm -f Makefile
 
