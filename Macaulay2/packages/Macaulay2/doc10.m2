@@ -378,23 +378,6 @@ document {
      }
 
 document {
-     Key => topCoefficients,
-     Headline => "list of top coefficients of a matrix",
-     TT "topCoefficients m", " -- for a matrix ", TT "m", ", for each column, returns
-     the coefficients of the highest power of the variable with the lowest
-     index.",
-     PARA{},
-     "Beware: the greatest variable is usually the first variable.",
-     PARA{},
-     "The value returned is a list ", TT "{monoms, coeff}", ".
-     Let x_i be the smallest index variable that occurs in the
-     j-th column of ", TT "m", ". Then the j-th column of ", TT "coeff", "
-     contains the (vector) coefficient of the highest power of this
-     variable, and the j-th element of ", TT "monoms", " is the highest power
-     x_i^n."
-     }
-
-document {
      Key => integrate,
      Headline => "numerical integration",
      TT "integrate(f,a,b)", " -- integrate f from a to b numerically, using

@@ -76,7 +76,6 @@ document {
      field of the ring containing ", TT "f", " and ", TT "g", " without reducing
      it to lowest terms."}
 TEST ///
-if getenv "USER" == "dan" then exit 0
 frac(QQ[a,b])
 assert ( a == denominator(b/a) )
 assert ( b == numerator(b/a) )

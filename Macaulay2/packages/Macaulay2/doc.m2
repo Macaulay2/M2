@@ -581,9 +581,64 @@ document {
      SeeAlso => { (ascii, List) }
      }
 
+
+undocumented {
+     (symbol " ", RingMap, ZZ),
+     (symbol " ", RingMap, QQ)
+     }
+
+
+(symbol " ", WrapperType, List),
+(symbol " ", WrapperType, Sequence),
+(symbol " ", Manipulator, Database),
+(symbol " ", Function, Thing),
+(symbol " ", MarkUpType, MarkUpList),
+(symbol " ", Command, Thing),
+(symbol " ", Manipulator, Nothing),
+(symbol " ", WrapperType, Thing),
+(symbol " ", Expression, Expression),
+(symbol " ", Expression, Holder),
+(symbol " ", Holder, Expression),
+(symbol " ", Expression, Thing),
+(symbol " ", Thing, Expression),
+(symbol " ", Holder, Holder),
+(symbol " ", HeaderType, List),
+(symbol " ", HeaderType, Sequence),
+(symbol " ", MarkUpType, Net),
+(symbol " ", MarkUpType, String),
+(symbol " ", Thing, Thing),
+
+(symbol " ", Ring, Array),
+(symbol " ", Ring, OrderedMonoid),
+
+(symbol " ", RingMap, RingElement),
+(symbol " ", RingMap, ChainComplex),
+(symbol " ", RingMap, Matrix),
+(symbol " ", RingMap, Ideal),
+(symbol " ", RingMap, Vector),
+(symbol " ", RingMap, Module),
+(symbol " ", ProjectiveHilbertPolynomial, ZZ),
+(symbol " ", RingElement, Array),
+
+(symbol " ", ChainComplex, Array),
+(symbol " ", Module, Array),
+(symbol " ", GradedModule, Array),
+
+(symbol " ", SheafOfRings, ZZ),
+(symbol " ", SheafOfRings, LowerBound),
+(symbol " ", CoherentSheaf, ZZ),
+(symbol " ", CoherentSheaf, LowerBound),
+
+(symbol " ", ScriptedFunctor, Thing),
+
+(symbol " ", Manipulator, File),
+(symbol " ", Manipulator, NetFile),
+
+(symbol " ", SelfInitializingType, Thing),
+
 document {
      Key => symbol " ", 
-     Headline => "blank operator for adjacent expressions",
+     Headline => "blank operator; often used for function application, making polynomial rings",
      SeeAlso =>(symbol " ", Function, Thing)		    -- not really a method
      }
 
