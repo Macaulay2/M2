@@ -383,14 +383,15 @@ document {
 	  },
      "If the coefficient ring of ", TT "S", " is itself a polynomial ring, then
      one may optionally include values to which its variables should be 
-     sent: they should appear first in the matrix ", TT "m", ".",
+     sent: they should appear last in the matrix ", TT "m", ".",
      EXAMPLE {
 	  "S = ZZ[a][b,c];",
-	  "h = map(S,S,matrix {{b,c,a}})",
+	  "h = map(S,S,matrix {{b,c,2*a}})",
 	  "h(a^7 + b^3 + c)",
 	  "k = map(S,S,matrix {{c,b}})",
 	  "k(a^7 + b^3 + c)"
-	  }
+	  },
+     SeeAlso => {"substitution and maps between rings"}
      }
 document {
      Key => (map,Ring,Ring,List),
@@ -399,14 +400,14 @@ document {
      Inputs => {
 	  "R" => "the target ring",
 	  "S" => "the source ring",
-	  "m" => {"a list of n elements of ", TT "R", ", where n is the number of variables in the polynomial ring ", TT "S", ",
+	  "m" => {"of ", TT "n", " elements of ", TT "R", ", where ", TT "n", " is the number of variables in the polynomial ring ", TT "S", ",
 	       or a list of pairs ", TT "x => r", ", where ", TT "x", " is a generator of ", TT "S", " and ", TT "r", " is an element of ", TT "R", ",
 	       specifying that ", TT "x", " is to be sent to ", TT "r", "." }
 	  },
      Outputs => {
 	  {
-	       "the ring homomorphism from ", TT "S", " to ", TT "R", " which sends the i-th variable
-	       of ", TT "S", " to the i-th entry in ", TT "m", ", or in the second case, performs the
+	       "the ring homomorphism from ", TT "S", " to ", TT "R", " which sends the ", TT "i", "-th variable
+	       of ", TT "S", " to the ", TT "i", "-th entry in ", TT "m", ", or in the second case, performs the
 	       indicated substitutions."
 	       }
 	  },
@@ -418,7 +419,7 @@ document {
 	  "g = map(R,S,{a=>x^2,b=>x*y,c=>y^2})",
 	  "g(a+b+c^2)"
 	  },
-     SeeAlso => {(map,Ring,Ring,Matrix)}
+     SeeAlso => {"substitution and maps between rings", (map,Ring,Ring,Matrix)}
      }
 
 document { 
@@ -467,7 +468,7 @@ document {
 	  B = A[x,y];
 	  C = QQ[a..e,x,y];
 	  ///,
-     "The natural inclusion and projection maps between A and B are",
+     "The natural inclusion and projection maps between ", TT "A", " and ", TT "B", " are",
      EXAMPLE lines ///
 	  map(B,A)
 	  map(A,B)
@@ -483,9 +484,9 @@ document {
 	  ///,
      PARA{},
      "The ring maps which are created are not always mathematically well-defined.
-     For example, the map F below is the natural quotient map, but the
-     the map G is not mathematically well-defined, although we can use it in Macaulay2 to
-     lift elements of E to D.",
+     For example, the map F below is the natural quotient map, but
+     the map ", TT "G", " is not mathematically well-defined, although we can use it in Macaulay2 to
+     lift elements of ", TT "E", " to ", TT "D", ".",
      EXAMPLE lines ///
 	  D = QQ[x,y,z];
 	  E = D/(x^2-z-1,y);
@@ -513,7 +514,7 @@ document {
 	  "F = map(R,matrix{{s^4,s^3*t,s*t^3,t^4}})",
 	  "kernel F"
 	  },
-     SeeAlso => {(map,Ring,Ring,Matrix),"substitution and maps between rings"}
+     SeeAlso => {"substitution and maps between rings",(map,Ring,Ring,Matrix)}
      }
 document {
      Key => {(map,ChainComplex,ChainComplex,Function),

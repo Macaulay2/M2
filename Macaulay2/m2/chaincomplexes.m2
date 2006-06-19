@@ -830,7 +830,7 @@ kernel ChainComplexMap := ChainComplex => options -> (f) -> (
      C.ring = ring f;
      complete D;
      scan(spots D, k -> C#k = kernel f_k);
-     scan(spots C, k -> if C#?(k-1) then C.dd#k = (D.dd_k * inducedMap(D_k,C_k)) // map(D_(k-1),C_(k-1)));
+     scan(spots C, k -> if C#?(k-1) then C.dd#k = (D.dd_k * inducedMap(D_k,C_k)) // inducedMap(D_(k-1),C_(k-1)));
      C)
 
 coimage ChainComplexMap := ChainComplex => (f) -> (

@@ -84,7 +84,7 @@ document {
      HEADER2 "An overview",
      Subnodes => {
      	  "Substitution",
-	  TO "substituting values for variables",
+	  TO substitute,
 	  TO "working with multiple rings",
 	  "Ring maps",
 	  TO "basic construction, source and target of a ring map",

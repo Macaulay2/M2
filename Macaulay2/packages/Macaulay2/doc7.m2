@@ -830,14 +830,6 @@ document {
      ideal ", TT "I", " in a ring ", TT "R", "."
      }
 document {
-     Key => kernel,
-     Headline => "kernel of a map",
-     TT "kernel f", " -- produces the kernel of a matrix or ring homomorphism.",
-     PARA{},
-     "If ", TT "f", " is a ring element, it will be interpreted as a one by one
-     matrix."
-     }
-document {
      Key => SubringLimit,
      Headline => "stop after finding enough elements of a subring",
      TT "SubringLimit", " -- an option for  ", TO "kernel", " and ", TO "gb", "
@@ -906,11 +898,6 @@ document {
       	  "f^[1,0]",
 	  },
      SeeAlso => {submatrix, (symbol _,Module,Array), (symbol ^,Matrix,Array)}
-     }
-document {
-     Key => isInjective,
-     Headline => "whether a map is injective",
-     SeeAlso => "isSurjective"
      }
 document {
      Key => isSurjective,
