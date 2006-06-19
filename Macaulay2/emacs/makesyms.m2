@@ -1,8 +1,11 @@
-symbols := rsort join apply(
+symbols := join apply(
      toSequence pairs PackageDictionary,
      (pkgnam,pkgsym) -> prepend(
 	  (pkgnam,pkgsym), 
 	  select(pairs (value pkgsym).Dictionary,(nam,sym) -> not match("\\$",nam) and #nam > 1)))
+
+symbols = prepend( ("Macaulay2", symbol Macaulay2), symbols )
+symbols = rsort symbols
 
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 isKeyword := s -> not mutable s and s =!= symbol null and value s === null

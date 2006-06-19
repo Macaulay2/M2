@@ -629,25 +629,84 @@ document {
 document {
      Key => "=",
      Headline => "assignment",
-     TT "x = e", " assigns the value ", TT "e", " to the variable ", TT "x", ".",
-     PARA{},
-     TT "x#i = e", " assigns the value ", TT "e", " to the ", TT "i", "-th member of the array ", TT "x", ".  Here
-     ", TT "i", " must be a nonnegative integer.",
-     PARA{},
-     TT "x#k = e", " assigns the value ", TT "e", " to the key ", TT "k", " in the hash table
-     ", TT "x", ".  Here ", TT "k", " can be any expression.",
-     PARA{},
-     TT "(a,b,c) = x", " assigns the members of the sequence ", TT "x", " as
-     values of the variables ", TT "a", ", ", TT "b", ", ", TT "c", ".  If ", TT "x", "
-     has too few elements, then the trailing symbols on the left
-     side are given the value ", TO "null", ".  If ", TT "x", " has too
-     many elements, then the last symbol on the left hand side is given
-     as value a sequence containing the trailing elements of the right hand side.
-     If the right hand side is not a sequence, then ", TT "a", " gets the value, and
-     ", TT "b", " and ", TT "c", " get ", TO "null", ".",
-     SeeAlso => {"HashTable", ":=", "GlobalReleaseHook", "GlobalAssignHook"}
+     "In this section we'll discuss both simple assignment to variables, multiple assignment, assignment to parts of objects, assignment covered by various other methods, and 
+     briefly touch on the possibility of custom installation of assignment methods.",
+     SYNOPSIS (
+	  Heading => "simple assignment",
+	  Usage => "x = e",
+	  Inputs => { "x" => Symbol, "e" => Thing},
+	  Outputs => {Thing => { "the value of the expression is ", TT "e" }},
+	  Consequences => {
+	       { TT "e", " is assigned to ", TT "x", ", so future references to the value of ", TT "x", " yield ", TT "e" },
+	       { "if ", TT "x", " is a global variable, then the global assignment hook for the class of ", TT "e", ", if any, is run (see ", TO "GlobalAssignHook", ")." }
+	       },
+	  EXAMPLE lines ///
+	       x
+	       x = 4
+	       x
+	  ///
+	  ),
+     SYNOPSIS {
+	  Heading => "multiple assignment",
+	  Usage => "(x,y,z,...) = (c,d,e,...)",
+	  Inputs => { "x" => Symbol,"y" => Symbol,"z" => Symbol,"c","d","e" },
+	  Outputs => {{ "the value of the expression is ", TT "(c,d,e,...)" }},
+	  Consequences => {
+	       { "the expressions c,d,e,... are assigned to the variables x,y,z,..., respectively, as above.  Global assignment hooks may be run, as above." },
+	       { "If the left hand side has more elements than the right hand side, then the extra symbols on the left side are given the value ", TO "null", "." },
+	       { "If the left hand side has fewer elements than the right hand side, then the last symbol on the left hand side is given
+     		    as value a sequence containing the trailing elements of the right hand side." 
+		    },
+	       { "If the right hand side is not a sequence, then it is assigned to the first symbol on the left, and the remaining symbols are assigned the
+		    value ", TO "null", "."
+		    }
+	       },
+	  PARA {
+	       "Multiple assignment effectively means that functions can return multiple values usefully."
+	       },
+	  EXAMPLE lines ///
+	       (x,y) = (4,5)
+	       x
+	       y
+	       f = i -> (i,i^2)
+	       (x,y) = f 9
+	       x
+	       y
+	  ///
+	  },
+     SYNOPSIS {
+	  Heading => "assignment to an element of a mutable list",
+	  Usage => "x#i = e",
+	  Inputs => { "x" => MutableList, "i" => ZZ, "e" },
+	  Outputs => {{ "the value of the expression is ", TT "e" }},
+	  Consequences => {
+	       { "the ", TT "i", "-th element of the list ", TT "x", " is replaced by ", TT "e", ", so that future references to the value of ", TT "x#i", "
+		    yield ", TT "e" }
+	       },
+	  EXAMPLE lines ///
+	       x = new MutableList from a .. z
+	       x#10
+	       x#10 = "foo"
+	       x#10
+	  ///
+	  },
+     SYNOPSIS {
+	  Heading => "assignment to an element of a mutable hash table",
+	  Usage => "x#i = e",
+	  Inputs => { "x" => MutableList, "i", "e" },
+	  Outputs => {{ "the value of the expression is ", TT "e" }},
+	  Consequences => {
+	       { TT "e", " is stored in the hash table ", TT "x", " under the key ", TT "i", ", so that future references to the value of ", TT "x#i", " yield ", TT "e" }
+	       },
+	  EXAMPLE lines ///
+	       x = new MutableHashTable
+	       x#?"foo"
+	       x#"foo" = "bar"
+	       x#"foo"
+	  ///
+	  },
+     SeeAlso => {":="}
      }
-
 
 document {
      Key => ":=",

@@ -16,6 +16,10 @@ MarkUpListContainer.synonym = "mark-up list container"
      MarkUpType = new Type of SelfInitializingType
 MarkUpType.synonym = "mark-up type"
 
+new MarkUpType from Thing := (M,x) -> new M from {x}
+new MarkUpType from List := (M,x) -> new M from x
+new MarkUpType from Sequence := (M,x) -> new M from toList x
+
 options MarkUpType := X -> X.Options
 
 MarkUpTypeWithOptions = new Type of MarkUpType

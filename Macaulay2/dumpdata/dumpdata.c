@@ -39,7 +39,11 @@ static void trim(char *s) {
   if (s[0] == '\n') s[0] = 0;
 }
 
-#if BRK
+#ifndef USE_BRK
+#error USE_BRK undefined, expected TRUE or FALSE
+#endif
+
+#if USE_BRK
 static int extend_memory(void *newbreak) {
   if (ERROR == (int)brk(newbreak)) {
     warning("--warning: loaddata: out of memory (extending break to %p)\n", newbreak);
@@ -71,7 +75,7 @@ static int dumpmap(int fd, map m) {
   return write(fd, m->from, m->to-m->from);
 }
 
-#if BRK
+#if USE_BRK
 static char brkfmt[] = "sbrk(0)=%p\n";
 
 static int fdprintbrk(int fd) {
@@ -91,7 +95,7 @@ int dumpdata(char const *dumpfilename) {
     warning("--warning: can't open dump data file '%s'\n", dumpfilename);
     return ERROR;
   }
-#if BRK
+#if USE_BRK
   if (ERROR == fdprintbrk(fd)) return ERROR;
 #endif
   {
@@ -124,7 +128,7 @@ int dumpdata(char const *dumpfilename) {
 }
 
 int loaddata(char const *filename) {
-#if BRK
+#if USE_BRK
   void *newbreak;
   int got_newbreak = 0;
 #endif
@@ -147,7 +151,7 @@ int loaddata(char const *filename) {
     char r, w, x, S;
     fbuf[0]=0;
     f_end = NULL == fgets(fbuf,sizeof fbuf,f) || fbuf[0]=='\n';
-#if BRK
+#if USE_BRK
     if (!got_newbreak) {
       if (0 == sscanf(fbuf,brkfmt,&newbreak)) {
 	warning("--warning: loaddata: in data file %s: expected sbrk(0) line: \n", filename, fbuf);
@@ -287,7 +291,7 @@ int loaddata(char const *filename) {
     fclose(f);
     /* now we must stop using static memory and the heap! */
     pos = ((pos + PAGESIZE - 1)/PAGESIZE) * PAGESIZE;
-#if BRK
+#if USE_BRK
     if (ERROR == extend_memory(newbreak)) return ERROR;
 #endif
     for (i=0; i<ndumps; i++) {

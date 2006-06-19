@@ -2,18 +2,20 @@
 
 RingMap = new Type of HashTable
 RingMap.synonym = "ring map"
+matrix RingMap := opts -> (cacheValue symbol matrix) (f -> f vars source f)
 toString RingMap := f -> concatenate(
-     "map(", toString target f, ",", toString source f, ",", toString first entries f.matrix, ")"
+     "map(", toString target f, ",", toString source f, ",", toString first entries matrix f, ")"
      )
 net RingMap := f -> horizontalJoin(
-     "map(", net target f, ",", net source f, ",", net first entries f.matrix, ")"
+     "map(", net target f, ",", net source f, ",", net first entries matrix f, ")"
      )
 source RingMap := f -> f.source
 target RingMap := f -> f.target
 raw RingMap := f -> f.RawRingMap
 
+
 expression RingMap := f -> new FunctionApplication from {
-     map, expression (target f, source f, f.matrix)}
+     map, expression (target f, source f, matrix f)}
 
 map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
      if not isFreeModule target m or not isFreeModule source m
@@ -123,7 +125,7 @@ kernel RingMap := Ideal => options -> (f) -> if f.cache.?kernel then f.cache.ker
      n1 := numgens F;
      if class F === FractionField then (
 	  C := last F.baseRings;
-	  if not isHomogeneous f.matrix then error "not implemented yet";
+	  -- if not isHomogeneous f then error "not implemented yet";
 	  images := apply(generators R, x -> (
 		    w := f x;
 		    new Divide from {numerator w, denominator w} ));
@@ -194,7 +196,7 @@ coimage RingMap := QuotientRing => f -> f.source / kernel f
 
 RingMap * RingMap := RingMap => (g,f) -> (
      if source g =!= target f then error "ring maps not composable";
-     m := g f.matrix;
+     m := g matrix f;
      new RingMap from {
 	  symbol source => source f,
 	  symbol target => target g,
@@ -313,8 +315,8 @@ RingMap \ List := List => (f,v) -> apply(v,x -> f x)
 
 RingMap == RingMap := (f,g) -> (
      f.target === g.target and
-     f.matrix === g.matrix and
-     f.source === g.source and (
+     f.source === g.source and 
+     matrix f === matrix g and (
 	  d := degreeLength f.source;
 	  m := f.DegreeMap;
 	  n := g.DegreeMap;

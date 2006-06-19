@@ -207,6 +207,7 @@ Vector + Vector := (v,w) -> (
 Vector - Vector := (v,w) -> (
      m := v#0 - w#0;
      new target m from {m})
+Vector == Vector := (v,w) -> v === w
 
 Ring * RingElement := (R,f) -> (
      if ring f === R then ideal(f)

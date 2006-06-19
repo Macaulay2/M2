@@ -443,6 +443,13 @@ document {
      EXAMPLE {
 	  "set{a,b,c} + set{a,d,f}",
 	  },
+     PARA {
+	  "The function ", TT "sum", " can be used to form the union of a list of sets, but this can be slow for long lists."
+	  },
+     EXAMPLE lines ///
+     	  x = apply(3, i -> set apply(3, j -> 10*i+j))
+	  sum x
+     ///,
      SeeAlso => {Set}
      }
 
