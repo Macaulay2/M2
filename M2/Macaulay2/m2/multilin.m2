@@ -29,7 +29,7 @@ getMinorsStrategy := (R,options) -> (
 
 minors = method(Options => { Limit => infinity, First => null, Strategy => null })
 exteriorPower = method(Options => { Strategy => null })
-det = method(Options => { Strategy => null })
+determinant = method(Options => { Strategy => null })
 
 exteriorPower(ZZ,Module) := Module => options -> (p,M) -> (
      R := ring M;
@@ -89,7 +89,7 @@ trace Matrix := RingElement => f -> (
      then error "expected a square matrix";
      sum(rank source f, i -> f_(i,i)))
 -----------------------------------------------------------------------------
-det Matrix := RingElement => options -> f -> (
+determinant Matrix := RingElement => options -> f -> (
      if rank source f != rank target f
      or not isFreeModule source f
      or not isFreeModule target f

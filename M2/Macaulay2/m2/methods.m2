@@ -137,7 +137,7 @@ setup((), {
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, annihilator, assign, numgens, conjugate,
 	  autoload, minprimes, relations, cone, random, standardForm, inverse,
-	  det, presentation, dismiss, degreesMonoid, submatrix,
+	  determinant, presentation, dismiss, degreesMonoid, submatrix,
 	  truncate, fraction, part, coefficient, preimage
 	  })
 

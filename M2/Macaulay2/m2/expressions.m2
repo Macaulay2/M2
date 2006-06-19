@@ -783,6 +783,8 @@ texMath Expression := v -> (
 	  )
      )
 
+html Thing := toString
+
 html Expression := v -> (
      op := class v;
      p := precedence v;

@@ -522,6 +522,7 @@ fixupList := x -> (
      if not instance(x,List) then error "expected documentation option to be a list";
      apply(nonnull x,fixupEntry))
 enlist := x -> if class x === List then x else {x}
+chkIsString := key -> val -> if class val === String then val else error("expected ",toString key," option to be a string")
 chkIsStringFixup := key -> val -> if class val === String then fixup val else error("expected ",toString key," option to be a string")
 fixupTable := new HashTable from {
      Key => x -> if class x === List then nonnull x else x,
@@ -537,6 +538,7 @@ fixupTable := new HashTable from {
      Outputs => val -> fixupList val,
      Consequences => val -> fixupList val,
      Headline => chkIsStringFixup Headline,
+     Heading => chkIsString Heading,
      Description => val -> extractExamples fixup val,
      Caveat  => v -> if v =!= {} then fixup DIV1 { SUBSECTION "Caveat", DIV v } else v,
      SeeAlso => v -> if v =!= {} then fixup DIV1 { SUBSECTION "See also", UL (TO \ enlist v) } else v,
@@ -915,6 +917,33 @@ synopsisOpts := new OptionTable from {			    -- old
      Outputs => {},
      Consequences => {}
      }
+
+SYNOPSIS = method(
+     SingleArgumentDispatch => true,
+     TypicalValue => MarkUpList,
+     Options => {
+	  Heading => "",
+	  Usage => "",
+	  Inputs => {},
+	  Outputs => {},
+     	  Consequences => {},
+	  Caveat => {},
+	  SeeAlso => {},
+	  SourceCode => {}
+	  }
+     )
+SYNOPSIS List := o -> x -> SYNOPSIS splice (o, toSequence x)
+SYNOPSIS Thing := SYNOPSIS Sequence := o -> x -> (
+     proc := processInputOutputItems(,);
+     o = applyPairs(o, (k,v) -> (k,fixupTable#k v));
+     r := DIV nonnull {
+	  if o.Heading =!= "" then SUBSECTION o.Heading,
+	  o.Usage,
+	  if # o.Inputs > 0 then DIV { "Inputs:", UL ( proc \ o.Inputs ) },
+	  if # o.Outputs > 0 then DIV { "Outputs:", UL ( proc \ o.Outputs ) },
+	  if # o.Consequences > 0 and #o.Consequences > 0 then DIV { "Consequences:", UL o.Consequences },
+	  x};
+     if #r > 0 then fixup UL r)
 
 briefSynopsis := key -> (
      -- we still want to put

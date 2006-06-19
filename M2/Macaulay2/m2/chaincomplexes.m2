@@ -900,7 +900,7 @@ eagonNorthcott = M -> (
      time B := hashTable apply(toList(1..m-n+1), 
      	  i -> {i, flatten table(subsets(m,n+i-1), compositions(n,i-1), 
 	       	    (p,q) -> {p,q})});
-     d1 := map(R^1, R^{#B#1:-n}, matrix {apply(B#1, r -> det M_(r#0))});
+     d1 := map(R^1, R^{#B#1:-n}, matrix {apply(B#1, r -> determinant M_(r#0))});
      d := {d1} | apply(toList(2..m-n+1), i -> time (
 	       map(R^{#B#(i-1):-n-i+2}, R^{#B#i:-n-i+1}, 
 	       matrix table(B#(i-1), B#i, 
