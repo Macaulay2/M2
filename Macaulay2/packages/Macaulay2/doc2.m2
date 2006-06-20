@@ -732,18 +732,29 @@ document {
 	  Inputs => {
 	       "X" => Type,
 	       "OP" => { "one of the binary operators for which users may install methods, namely: ", 
-		    between_" " apply(sort select(keys operatorAttributes, op -> operatorAttributes#op#?Binary and operatorAttributes#op#Binary#?Flexible), s -> TO {s})
+		    between_" " apply(sort select(keys operatorAttributes, op -> operatorAttributes#op#?Binary and operatorAttributes#op#Binary#?Flexible), s -> TO {s}),
+		    " .  The operator SPACE, indicating adjacency, may be omitted from the usage above."
 		    },
 	       "Y" => Type
 	       },
-	  PARA "I'm writing text here..."
+	  Outputs => {{ "the value of the expression is the same as the function on the right hand side" }},
+	  Consequences => {{ "the function on the right hand side is installed as the method for assignment to ", TT "X OP Y", ".  See the next subsection below
+		    for using it"
+		    }},
+	  "The first line of the following example illustrates the syntax above.",
+	  EXAMPLE lines ///
+	       String * String = print
+	       "left" * "right" = "value"
+	  ///,
+	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
 	  },
      SYNOPSIS {
 	  Heading => "using other assignment methods for binary operators",
 	  Usage => "x OP y = e",
 	  Inputs => {
 	       "x" => { "an object of type ", TT "X" },
-	       "OP" => { "one of the binary operators for which users may install methods, listed above"},
+	       "OP" => { "one of the binary operators for which users may install methods, listed above.
+		    The operator SPACE, indicating adjacency, may be omitted from the usage above."},
 	       "y" => { "an object of type ", TT "Y" },
 	       "e" => Thing
 	       },
@@ -752,7 +763,95 @@ document {
 		    and its return value is returned"
 		    }
 	       },
-	  PARA "The return value and the consequences depend on the code of the installed assignment method.  References to other assignment methods are given below."
+	  PARA "The return value and the consequences depend on the code of the installed assignment method.
+	  References to currently installed assignment methods are given below.",
+	  "The second line of the following example illustrates the syntax above.",
+	  EXAMPLE lines ///
+	       String * String = print
+	       "left" * "right" = "value"
+	  ///
+	  },
+     SYNOPSIS {
+	  Heading => "installing other assignment methods for unary prefix operators",
+	  Usage => "OP X = (x,e) -> ...",
+	  Inputs => {
+	       "OP" => { "one of the unary prefix operators for which users may install methods, namely: ", 
+		    between_" " apply(sort select(keys operatorAttributes, op -> operatorAttributes#op#?Prefix and operatorAttributes#op#Prefix#?Flexible), s -> TO {s})
+		    },
+	       "X" => Type
+	       },
+	  Outputs => {{ "the value of the expression is the same as the function on the right hand side" }},
+	  Consequences => {{ "the function on the right hand side is installed as the method for assignment to ", TT "OP X", ".  See the next subsection below
+		    for using it."
+		    }},
+	  "The first line of the following example illustrates the syntax above.",
+	  EXAMPLE lines ///
+	       - String = print
+	       - "foo" = "value"
+	  ///,
+	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
+	  },
+     SYNOPSIS {
+	  Heading => "using other assignment methods for unary prefix operators",
+	  Usage => "OP x = e",
+	  Inputs => {
+	       "OP" => { "one of the unary prefix operators for which users may install methods, listed above." },
+	       "x" => { "an object of type ", TT "X" },
+	       "e" => Thing
+	       },
+	  Outputs => {
+	       { "the previously installed method for assignment to ", TT "OP X", " is called with arguments ", TT "(x,e)", ",
+		    and its return value is returned."
+		    }
+	       },
+	  PARA "The return value and the consequences depend on the code of the installed assignment method.
+	  References to currently installed assignment methods are given below.",
+	  "The second line of the following example illustrates the syntax above.",
+	  EXAMPLE lines ///
+	       - String = print
+	       - "foo" = "value"
+	  ///
+	  },
+     SYNOPSIS {
+	  Heading => "installing other assignment methods for unary postfix operators",
+	  Usage => "X OP = (x,e) -> ...",
+	  Inputs => {
+	       "OP" => { "one of the unary postfix operators for which users may install methods, namely: ", 
+		    between_" " apply(sort select(keys operatorAttributes, op -> operatorAttributes#op#?Postfix and operatorAttributes#op#Postfix#?Flexible), s -> TO {s})
+		    },
+	       "X" => Type
+	       },
+	  Outputs => {{ "the value of the expression is the same as the function on the right hand side" }},
+	  Consequences => {{ "the function on the right hand side is installed as the method for assignment to ", TT "OP X", ".  See the next subsection below
+		    for using it."
+		    }},
+	  "The first line of the following example illustrates the syntax above.",
+	  EXAMPLE lines ///
+	       String ~ = print
+	       "foo" ~ = "value"
+	  ///,
+	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
+	  },
+     SYNOPSIS {
+	  Heading => "using other assignment methods for unary postfix operators",
+	  Usage => "x OP = e",
+	  Inputs => {
+	       "x" => { "an object of type ", TT "X" },
+	       "OP" => { "one of the unary postfix operators for which users may install methods, listed above." },
+	       "e" => Thing
+	       },
+	  Outputs => {
+	       { "the previously installed method for assignment to ", TT "OP X", " is called with arguments ", TT "(x,e)", ",
+		    and its return value is returned."
+		    }
+	       },
+	  PARA "The return value and the consequences depend on the code of the installed assignment method.
+	  References to currently installed assignment methods are given below.",
+	  "The second line of the following example illustrates the syntax above.",
+	  EXAMPLE lines ///
+	       String ~ = print
+	       "foo" ~ = "value"
+	  ///
 	  },
      SeeAlso => {":=", "<-", "globalAssignmentHooks" }
      }
