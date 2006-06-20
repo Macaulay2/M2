@@ -301,7 +301,7 @@ computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
 
 exitMethod := method(SingleArgumentDispatch => true)
 exitMethod ZZ := i -> exit i
-exitMethod Sequence := () -> exit 0
+exitMethod Sequence := (x) -> exit 0
 quit = Command (() -> exit 0)
 erase symbol exit
 exit = Command exitMethod
@@ -335,10 +335,36 @@ Nothing == Nothing := Boolean => (x,y) -> x === y			    -- actually, x and y mus
 
 -- installation of assignment methods
 installAssignmentMethod = method()
-installAssignmentMethod(Symbol,HashTable,HashTable,Option) := 
-installAssignmentMethod(Symbol,HashTable,HashTable,Function) := (op,X,Y,f) -> installMethod((op,symbol =),X,Y,f)
-installAssignmentMethod(Symbol,HashTable,Option) := 
-installAssignmentMethod(Symbol,HashTable,Function) := (op,Y,f) -> installMethod((op,symbol =),Y,f)
+installAssignmentMethod(Symbol,HashTable,HashTable,Option) := (op,X,Y,o) -> (
+     (typ,f) := toSequence o;
+     if not instance(f,Function) then error "expected assignment method to be a function";
+     if numparms f =!= 3 and numparms f =!= -1 then error "expected assignment method to be a function of 3 arguments";
+     installMethod((op,symbol =),X,Y,o))
+installAssignmentMethod(Symbol,HashTable,HashTable,Function) := (op,X,Y,f) -> (
+     if numparms f =!= 3 and numparms f =!= -1 then error "expected assignment method to be a function of 3 arguments";
+     installMethod((op,symbol =),X,Y,f))
+
+installAssignmentMethod(Symbol,HashTable,Option) :=  (op,Y,o) -> (
+     (typ,f) := toSequence o;
+     if not instance(f,Function) then error "expected assignment method to be a function";
+     if numparms f =!= 2 and numparms f =!= -1 then error "expected assignment method to be a function of 2 arguments";
+     installMethod((op,symbol =),Y,o))
+installAssignmentMethod(Symbol,HashTable,Function) := (op,Y,f) -> (
+     if numparms f =!= 2 and numparms f =!= -1 then error "expected assignment method to be a function of 2 arguments";
+     installMethod((op,symbol =),Y,f))
+
+scan(flexibleBinaryOperators, op -> (
+	  installAssignmentMethod(op, Type, Type, (X,Y,am) -> installAssignmentMethod(op, X, Y, am));
+	  undocumented' ((op, symbol =), Type, Type);
+	  ))
+scan(flexiblePrefixOperators, op -> (
+	  installAssignmentMethod(op, Type, (X,am) -> installAssignmentMethod(op, X, am));
+	  undocumented' ((op, symbol =), Type);
+	  ))
+scan(flexiblePostfixOperators, op -> (
+	  installAssignmentMethod(op, Type, (X,am) -> installAssignmentMethod(op, X, am));
+	  undocumented' ((op, symbol =), Type);
+	  ))
 
 -----------------------------------------------------------------------------
 -- helper functions useable in documentation

@@ -19,8 +19,7 @@ toString Dictionary := d -> (
      toString class d | if length d == 0 then "{}" else "{..." | toString length d | "...}"
      )
 
-installMethod(GlobalAssignHook,Package,globalAssignFunction)
-installMethod(GlobalReleaseHook,Package,globalReleaseFunction)
+globalAssignment Package
 
 dismiss Package := pkg -> (
      loadedPackages = delete(pkg,loadedPackages);

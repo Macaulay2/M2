@@ -610,6 +610,7 @@ undocumented Thing := key -> if key =!= null then (
 
 undocumented keys undocumentedkeys
 undocumentedkeys = null
+undocumented' = x -> error "late use of function undocumented'"
 
 -----------------------------------------------------------------------------
 -- getting help from the documentation
@@ -943,7 +944,7 @@ SYNOPSIS Thing := SYNOPSIS Sequence := o -> x -> (
 	  if # o.Outputs > 0 then DIV { "Outputs:", UL ( proc \ o.Outputs ) },
 	  if # o.Consequences > 0 and #o.Consequences > 0 then DIV { "Consequences:", UL o.Consequences },
 	  x};
-     if #r > 0 then fixup UL r)
+     if #r > 0 then fixup r)
 
 briefSynopsis := key -> (
      -- we still want to put

@@ -2,7 +2,7 @@
 
 getSourceLines := method(SingleArgumentDispatch=>true) 
 getSourceLines Nothing := null -> null
-getSourceLines Sequence := (filename,start,startcol,stop,stopcol) -> if filename =!= "stdio" and filename =!= "a string" then (
+getSourceLines Sequence := x -> ((filename,start,startcol,stop,stopcol) -> if filename =!= "stdio" and filename =!= "a string" then (
      wp := set characters " \t);";
      file := (
 	  if filename === "layout.m2"
@@ -27,7 +27,7 @@ getSourceLines Sequence := (filename,start,startcol,stop,stopcol) -> if filename
 	  concatenate("-- ",filename, ":", toString start, if stop > start then ("-" ,toString stop)),
 	  apply(start-1 .. stop-1, i -> file#i)
 	  )
-     )
+     )) x
 
 limit := 4
 indent := n -> "| "^(height n, depth n) | n
@@ -67,7 +67,7 @@ editMethod String := filename -> (
 	  editor, " ", filename))
 EDIT := method(SingleArgumentDispatch=>true)
 EDIT Nothing := arg -> (stderr << "--warning: source code not available" << endl;)
-EDIT Sequence := (filename,start,startcol,stop,stopcol) -> (
+EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol) -> (
      editor := EDITOR();
      if 0 != run concatenate(
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
@@ -75,7 +75,7 @@ EDIT Sequence := (filename,start,startcol,stop,stopcol) -> (
 	  " +",toString start,
 	  " ",
 	  filename
-	  ) then error "command returned error code")
+	  ) then error "command returned error code")) x
 editMethod Function := args -> EDIT locate args
 editMethod Command := c -> editMethod c#0
 editMethod Sequence := args -> (

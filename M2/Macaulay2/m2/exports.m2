@@ -1,6 +1,12 @@
 --		Copyright 2004 by Daniel R. Grayson
 
 export {
+        symbol operatorAttributes,
+	symbol Fixed,
+	symbol Flexible,
+	symbol Binary,
+	symbol Prefix,
+	symbol Postfix,
         symbol minimalPrimes,
 	symbol validate,
 	symbol MarkUpListContainer,
@@ -16,8 +22,6 @@ export {
 	symbol FollowLinks,
 	symbol cacheValue,
 	symbol stashValue,
-	symbol cacheValue2,
-	symbol stashValue2,
 	symbol addHook,
 	symbol tutorial,
 	symbol removeHook,

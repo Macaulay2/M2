@@ -585,6 +585,15 @@ examine(e:Expr):Expr := (
      else WrongArg("(), a function, a symbol, or a basic list"));
 setupfun("examine",examine);
 
+numparms(e:Expr):Expr := (
+     when e
+     is fc:FunctionClosure do Expr(toInteger(if fc.model.desc.restargs then -1 else fc.model.desc.numparms))
+     is fn:CompiledFunction do Expr(toInteger(-1))
+     is fnc:CompiledFunctionClosure do Expr(toInteger(-1))
+     is s:SpecialExpr do numparms(s.e)
+     else WrongArg("a function"));
+setupfun("numparms",numparms);
+
 netWidth(e:Expr):Expr := (
      when e
      is n:Net do Expr(toInteger(n.width))

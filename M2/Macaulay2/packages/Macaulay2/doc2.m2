@@ -630,7 +630,9 @@ document {
      Key => "=",
      Headline => "assignment",
      "In this section we'll discuss both simple assignment to variables, multiple assignment, assignment to parts of objects, assignment covered by various other methods, and 
-     briefly touch on the possibility of custom installation of assignment methods.",
+     briefly touch on the possibility of custom installation of assignment methods.  See also the operator ", TO ":=", ", which handles assignment and declaration of
+     local variables and assignment of methods to operators, as well as the operator ", TO "<-", ", which is an assignment operator that evaluates its left hand side and
+     can have assignment methods installed for it by the user.",
      SYNOPSIS (
 	  Heading => "simple assignment",
 	  Usage => "x = e",
@@ -638,18 +640,31 @@ document {
 	  Outputs => {Thing => { "the value of the expression is ", TT "e" }},
 	  Consequences => {
 	       { TT "e", " is assigned to ", TT "x", ", so future references to the value of ", TT "x", " yield ", TT "e" },
-	       { "if ", TT "x", " is a global variable, then the global assignment hook for the class of ", TT "e", ", if any, is run (see ", TO "GlobalAssignHook", ")." }
+	       { "if ", TT "x", " is a global variable, then the global assignment hook for the class of ", TT "e", ", if any, is run (see ", TO "GlobalAssignHook", "),
+		    and the global assignment hook for the symbol itself (see ", TO "globalAssignmentHooks", "), if any, is run." }
 	       },
 	  EXAMPLE lines ///
 	       x
 	       x = 4
 	       x
-	  ///
+	  ///,
+	  PARA {
+	       "Since the value of the entire expression is e, and since the operator ", TO "=", " is right-associative (see ", TO "precedence of operators", "), 
+	       e can be assigned to more than one variable."
+	       },
+	  EXAMPLE lines ///
+	       x = y = 44
+	       x
+	       y
+	  ///	  
 	  ),
      SYNOPSIS {
 	  Heading => "multiple assignment",
 	  Usage => "(x,y,z,...) = (c,d,e,...)",
-	  Inputs => { "x" => Symbol,"y" => Symbol,"z" => Symbol,"c","d","e" },
+	  Inputs => { 
+	       { TT "(x,y,z,...)", " a ", TO2 {Sequence,"sequence"}, " of ", TO2 {Symbol,"symbols"} },
+	       { TT "(c,d,e,...)", " a ", TO2 {Sequence,"sequence"}, " of ", TO2 {Thing,"things"} }
+	       },
 	  Outputs => {{ "the value of the expression is ", TT "(c,d,e,...)" }},
 	  Consequences => {
 	       { "the expressions c,d,e,... are assigned to the variables x,y,z,..., respectively, as above.  Global assignment hooks may be run, as above." },
@@ -661,9 +676,15 @@ document {
 		    value ", TO "null", "."
 		    }
 	       },
-	  PARA {
-	       "Multiple assignment effectively means that functions can return multiple values usefully."
-	       },
+	  PARA "Multiple assignment makes it easy to switch the values of two variables, or to permute the values of several.",
+	  EXAMPLE lines ///
+	       x = 444
+	       y = foo
+	       (y,x) = (x,y)
+	       x
+	       y
+	  ///,
+	  PARA "Multiple assignment effectively means that functions can return multiple values usefully.",
 	  EXAMPLE lines ///
 	       (x,y) = (4,5)
 	       x
@@ -677,7 +698,7 @@ document {
      SYNOPSIS {
 	  Heading => "assignment to an element of a mutable list",
 	  Usage => "x#i = e",
-	  Inputs => { "x" => MutableList, "i" => ZZ, "e" },
+	  Inputs => { "x" => MutableList, "i" => ZZ, "e" => Thing },
 	  Outputs => {{ "the value of the expression is ", TT "e" }},
 	  Consequences => {
 	       { "the ", TT "i", "-th element of the list ", TT "x", " is replaced by ", TT "e", ", so that future references to the value of ", TT "x#i", "
@@ -705,7 +726,35 @@ document {
 	       x#"foo"
 	  ///
 	  },
-     SeeAlso => {":="}
+     SYNOPSIS {
+	  Heading => "installing other assignment methods for binary operators",
+	  Usage => "X OP Y = (x,y,e) -> ...",
+	  Inputs => {
+	       "X" => Type,
+	       "OP" => { "one of the binary operators for which users may install methods, namely: ", 
+		    between_" " apply(sort select(keys operatorAttributes, op -> operatorAttributes#op#?Binary and operatorAttributes#op#Binary#?Flexible), s -> TO {s})
+		    },
+	       "Y" => Type
+	       },
+	  PARA "I'm writing text here..."
+	  },
+     SYNOPSIS {
+	  Heading => "using other assignment methods for binary operators",
+	  Usage => "x OP y = e",
+	  Inputs => {
+	       "x" => { "an object of type ", TT "X" },
+	       "OP" => { "one of the binary operators for which users may install methods, listed above"},
+	       "y" => { "an object of type ", TT "Y" },
+	       "e" => Thing
+	       },
+	  Outputs => {
+	       { "the previously installed method for assignment to ", TT "X OP Y", " is called with arguments ", TT "(x,y,e)", ",
+		    and its return value is returned"
+		    }
+	       },
+	  PARA "The return value and the consequences depend on the code of the installed assignment method.  References to other assignment methods are given below."
+	  },
+     SeeAlso => {":=", "<-", "globalAssignmentHooks" }
      }
 
 document {

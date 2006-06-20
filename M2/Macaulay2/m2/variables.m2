@@ -37,12 +37,13 @@ value IndexedVariable := v -> (
      t := valueTable x;
      if t#?i then t#i else v)
 
-installMethod(symbol <-, IndexedVariable, 
+installMethod(symbol <-, IndexedVariable, 		    -- why does this look like a unary operator???
      (xi,y) -> (
 	  (valueTable xi#0)#(xi#1) = y;
 	  xi#0 <- xi#0;
 	  y))
-installAssignmentMethod(symbol "_",Symbol,Thing, (sym,i,val) -> (valueTable sym)#i=val)
+
+Symbol _ Thing = (sym,i,val) -> (valueTable sym)#i=val
 
 IndexedVariable .. IndexedVariable := Sequence => (v,w) -> (
      if v#0 =!= w#0 then error("unmatching base names in ", toString v, " .. ", toString w);

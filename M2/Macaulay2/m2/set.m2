@@ -95,6 +95,28 @@ permutations = method()
 permutations VisibleList := VisibleList => x -> if #x <= 1 then {x} else flatten apply(#x, i -> apply(permutations drop(x,{i,i}), t -> prepend(x#i,t)))
 permutations ZZ := List => n -> permutations toList (0 .. n-1)
 
+-----------------------------------------------------------------------------
+-- a first use of sets:
+
+protect Flexible
+protect Binary
+protect Prefix
+protect Postfix
+operatorAttributes = new MutableHashTable from apply(allOperators, op -> op => new MutableHashTable)
+scan((
+	  (binaryOperators,Binary),
+	  (prefixOperators,Prefix),
+	  (postfixOperators,Postfix)
+	  ),
+     (li,at) -> scan(li, op -> operatorAttributes#op#at = new MutableHashTable))
+scan((
+	  (flexibleBinaryOperators,Binary,Flexible),
+	  (flexiblePrefixOperators,Prefix,Flexible),
+	  (flexiblePostfixOperators,Postfix,Flexible)
+	  ),
+     (li,at,fl) -> scan(li, op -> operatorAttributes#op#at#fl = 1))
+operatorAttributes = hashTable apply(pairs operatorAttributes, (op,ats) -> (op, hashTable apply(pairs ats, (at,fls) -> (at, set keys fls))))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
