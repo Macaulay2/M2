@@ -359,42 +359,46 @@ export unaryfor(
 	  printErrorMessage(forToken," ... to match this 'for'");
 	  errorTree));
 
-unstringToken(q:Token):Token := (
-     if q.word.typecode == TCstring 
-     then (
-	  p := parseString(q.word.name);
-	  if parseError then (
-	       printErrorMessage(q,parseMessage);
-	       errorToken)
-	  else Token(
-	       makeUniqueWord(p,q.word.parse),
-	       q.filename, q.line, q.column, q.loadDepth,	    -- q.position,
-	       q.dictionary,q.entry,q.followsNewline)
-	  )
-     else q);
-export unaryquote(
+-- unstringToken(q:Token):Token := (
+--      if q.word.typecode == TCstring 
+--      then (
+-- 	  p := parseString(q.word.name);
+-- 	  if parseError then (
+-- 	       printErrorMessage(q,parseMessage);
+-- 	       errorToken)
+-- 	  else Token(
+-- 	       makeUniqueWord(p,q.word.parse),
+-- 	       q.filename, q.line, q.column, q.loadDepth,	    -- q.position,
+-- 	       q.dictionary,q.entry,q.followsNewline)
+-- 	  )
+--      else q);
+
+export unarysymbol(
      quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
-     u := unstringToken(arg);
-     if u == errorToken then return errorTree;
-     r := ParseTree(Quote(quotetoken,u));
+     -- u := unstringToken(arg);
+     -- if u == errorToken then return errorTree;
+     if arg.word.typecode != TCid then ( printErrorMessage(arg, "syntax error: " + arg.word.name); return errorTree; );
+     r := ParseTree(Quote(quotetoken,arg));
      accumulate(r,file,prec,obeylines));
 export unaryglobal(
      quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
-     u := unstringToken(arg);
-     if u == errorToken then return errorTree;
-     r := ParseTree(GlobalQuote(quotetoken,u));
+     -- u := unstringToken(arg);
+     -- if u == errorToken then return errorTree;
+     if arg.word.typecode != TCid then ( printErrorMessage(arg, "syntax error: " + arg.word.name); return errorTree; );
+     r := ParseTree(GlobalQuote(quotetoken,arg));
      accumulate(r,file,prec,obeylines));
 export unarylocal(
      quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
-     u := unstringToken(arg);
-     if u == errorToken then return errorTree;
-     r := ParseTree(LocalQuote(quotetoken,u));
+     -- u := unstringToken(arg);
+     -- if u == errorToken then return errorTree;
+     if arg.word.typecode != TCid then ( printErrorMessage(arg, "syntax error: " + arg.word.name); return errorTree; );
+     r := ParseTree(LocalQuote(quotetoken,arg));
      accumulate(r,file,prec,obeylines));
 export unaryif(ifToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      predicate := parse(file,ifToken.word.parse.unaryStrength,false);

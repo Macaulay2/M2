@@ -705,10 +705,12 @@ document {
 		    yield ", TT "e" }
 	       },
 	  EXAMPLE lines ///
-	       x = new MutableList from a .. z
-	       x#10
-	       x#10 = "foo"
-	       x#10
+	       x = new MutableList from a .. e
+	       peek x
+	       x#3
+	       x#3 = "foo"
+	       x#3
+	       peek x
 	  ///
 	  },
      SYNOPSIS {
@@ -720,10 +722,12 @@ document {
 	       { TT "e", " is stored in the hash table ", TT "x", " under the key ", TT "i", ", so that future references to the value of ", TT "x#i", " yield ", TT "e" }
 	       },
 	  EXAMPLE lines ///
-	       x = new MutableHashTable
+	       x = new MutableHashTable from { "a" => 2, "b" => 3 }
+	       peek x
 	       x#?"foo"
 	       x#"foo" = "bar"
 	       x#"foo"
+	       peek x
 	  ///
 	  },
      SYNOPSIS {
@@ -743,7 +747,7 @@ document {
 		    }},
 	  "The first line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       String * String = print
+	       String * String = print;
 	       "left" * "right" = "value"
 	  ///,
 	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
@@ -767,7 +771,7 @@ document {
 	  References to currently installed assignment methods are given below.",
 	  "The second line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       String * String = print
+	       String * String = print;
 	       "left" * "right" = "value"
 	  ///
 	  },
@@ -786,7 +790,7 @@ document {
 		    }},
 	  "The first line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       - String = print
+	       - String = print;
 	       - "foo" = "value"
 	  ///,
 	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
@@ -808,7 +812,7 @@ document {
 	  References to currently installed assignment methods are given below.",
 	  "The second line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       - String = print
+	       - String = print;
 	       - "foo" = "value"
 	  ///
 	  },
@@ -827,7 +831,7 @@ document {
 		    }},
 	  "The first line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       String ~ = print
+	       String ~ = print;
 	       "foo" ~ = "value"
 	  ///,
 	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
@@ -841,7 +845,7 @@ document {
 	       "e" => Thing
 	       },
 	  Outputs => {
-	       { "the previously installed method for assignment to ", TT "OP X", " is called with arguments ", TT "(x,e)", ",
+	       { "the previously installed method for assignment to ", TT "X OP", " is called with arguments ", TT "(x,e)", ",
 		    and its return value is returned."
 		    }
 	       },
@@ -849,7 +853,7 @@ document {
 	  References to currently installed assignment methods are given below.",
 	  "The second line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       String ~ = print
+	       String ~ = print;
 	       "foo" ~ = "value"
 	  ///
 	  },

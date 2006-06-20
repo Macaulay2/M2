@@ -292,7 +292,7 @@ makeMonoid := (opts) -> (
      -- First check the variable names
      if class opts.Variables === ZZ 
      then (
-	  x := local "$x";
+	  x := local x;					    -- Here is where $x was
           opts.Variables = toList (x_0 .. x_(opts.Variables - 1)))
      else (
 	  v := flatten toList apply(opts.Variables, x->if class x === MutableList then toList x else x);

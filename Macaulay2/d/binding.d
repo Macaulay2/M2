@@ -305,7 +305,7 @@ special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,prec:int):Symbol
      special("try",unarytry,wide);
      special("catch",unarycatch,wide);
 
-     special("symbol",unaryquote,prec);
+     special("symbol",unarysymbol,prec);
      special("global",unaryglobal,prec);
      special("local",unarylocal,prec);
 -----------------------------------------------------------------------------
