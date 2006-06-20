@@ -274,6 +274,7 @@ void LinAlgGB<CoeffRing>::make_matrix()
   // DEBUGGING:
   fprintf(stderr, "--matrix--%d by %d\n", 
 	  mat->rows.size(), mat->columns.size());
+  fflush(stderr);
   //  show_row_info();
   //show_column_info();
   //  H.dump();
@@ -310,16 +311,19 @@ void LinAlgGB<CoeffRing>::reorder_columns()
     }
 
   fprintf(stderr, "ncomparisons = ");
+  fflush(stderr);
   ncomparisons = 0;
   sort(column_order.begin(), 
        column_order.end(), 
        monomial_sorter<CoeffRing>(mat->columns));
   fprintf(stderr, "%d, ", ncomparisons);
+  fflush(stderr);
   clock_t end_time = clock();
   clock_sort_columns += end_time - begin_time;
   double nsecs = end_time - begin_time;
   nsecs /= CLOCKS_PER_SEC;
   fprintf(stderr, " time = %f\n", nsecs);
+  fflush(stderr);
   //  fprintf(stdout, "column order: ");
   //  for (int i=0; i<column_order.size(); i++)
   //      fprintf(stdout, "%d ", column_order[i]);
@@ -499,11 +503,6 @@ void LinAlgGB<CoeffRing>::tail_reduce_row(long r, long first, long last)
   elem *v = newarray(elem,ncols);
   sparse_to_dense_row(v, r);
 
-  if (r == 1010)
-    {
-      fprintf(stdout, "r is 1010\n");
-    }
-
   elem a;
   for (long i=0; i<row.len; i++)
     {
@@ -586,7 +585,7 @@ void LinAlgGB<CoeffRing>::LU_decompose()
   double nsecs = end_time - begin_time;
   nsecs /= CLOCKS_PER_SEC;
   fprintf(stderr, " gauss time = %f\n", nsecs);
-
+  fflush(stderr);
 
 #if 0
   // Dense LU code to make sure everything is working OK
@@ -692,6 +691,7 @@ void LinAlgGB<CoeffRing>::s_pair_step()
   double nsecs = end_time - begin_time;
   nsecs /= CLOCKS_PER_SEC;
   fprintf(stderr, " make matrix time = %f\n", nsecs);
+  fflush(stderr);
 
   LU_decompose();
   new_GB_elements();
@@ -758,11 +758,8 @@ void LinAlgGB<CoeffRing>::start_computation()
 	  break;
 	}
       fprintf(stdout, "DEGREE %d (npairs %d)\n", this_degree, npairs);
+      fflush(stderr);
 
-      if (this_degree == 148)
-	{
-	  fprintf(stdout, "degree 148\n");
-	}
       s_pair_step();
       complete_thru_this_degree = this_degree;
     }
@@ -771,15 +768,17 @@ void LinAlgGB<CoeffRing>::start_computation()
   double clock_time = clock_sort_columns;
   clock_time /= CLOCKS_PER_SEC;
   fprintf(stderr, "total time for sorting columns: %f\n", clock_time);
+  fflush(stderr);
 
   clock_time = clock_make_matrix;
   clock_time /= CLOCKS_PER_SEC;
   fprintf(stderr, "total time for making matrix (includes sort): %f\n", clock_time);
+  fflush(stderr);
 
   clock_time = clock_gauss;
   clock_time /= CLOCKS_PER_SEC;
   fprintf(stderr, "total time for gauss: %f\n", clock_time);
-
+  fflush(stderr);
 }
 
 template<typename CoeffRing>
