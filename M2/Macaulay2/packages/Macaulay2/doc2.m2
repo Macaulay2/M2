@@ -629,7 +629,7 @@ document {
 document {
      Key => "=",
      Headline => "assignment",
-     "In this section we'll discuss both simple assignment to variables, multiple assignment, assignment to parts of objects, assignment covered by various other methods, and 
+     "In this section we'll discuss simple assignment to variables, multiple assignment, assignment to parts of objects, assignment covered by various other methods, and 
      briefly touch on the possibility of custom installation of assignment methods.  See also the operator ", TO ":=", ", which handles assignment and declaration of
      local variables and assignment of methods to operators, as well as the operator ", TO "<-", ", which is an assignment operator that evaluates its left hand side and
      can have assignment methods installed for it by the user.",
