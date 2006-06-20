@@ -90,13 +90,11 @@ ans = ideal(-b*c*d+a*d^2+2*b*c-2*a*d,
 assert(ans == ideal mingens I)
 transpose mingens I
 
-error "we commented out the rest because it takes too long"
-end
 
 J = I : (a-3);
 transpose mingens J
 transpose gens gb J
-J == ideal(a*d-b*c, a^3-b-1, b^3-a-1) -- true
+assert(J == ideal(a*d-b*c, a^3-b-1, b^3-a-1))
 
 A = (ring I)/I
 m = transpose gens ideal(a-3) ** A

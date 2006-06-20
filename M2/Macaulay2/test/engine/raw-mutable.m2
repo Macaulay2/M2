@@ -83,49 +83,9 @@ p = rawMutableMatrix(raw m,false); p
 assert(rawNumberOfColumns p == 4)
 assert(rawNumberOfRows p == 3)
 
-rawMatrixColumnOperation2(p,1,2,raw e,raw f,raw g,raw h,false) -- WRONG!
+rawMatrixColumnOperation2(p,1,2,raw e,raw f,raw g,raw h,false)
 p
 
-error "the rest of this test file is not working yet, Mike will fix it"
-
-det m
-assert(rawToInteger (2 * rawMatrixEntry(p,0,0)) == det m)
-
-rawMatrixColumnSwap(p,3,9); p
-rawMatrixRowSwap(p,4,9); p
-reduceRowsColsGcd(p,9,9); p
-reduceRowsColsGcd(p,8,8); p
-
-reduceGCD(p,9,9,8)
-p
-reduceGCD(p,9,9,7)
-p
-reduceRowsCols(p,8,8); p
-p
-
-gcdCoefficients(2001,1007)
-gcd(2001,1007)
-
-
-rawMatrixColumnChange(p,8,raw (-42_R),9,false)
-p
-m = map(R,p)
-toString m
-p = rawMutableMatrix(p, true)
-p
-rawMatrix
-rawMinors(5,p,0)
-rawMatrixEntry(oo,0,0)
-
-
-R
-reduceRowsCols(p,9,9)
-///
-     for r from 0 to nrows-1 do
-         if r =!= i then (
-	     a := 
-     )
-///
 
 ---------------------------------------
 -- mutable matrix routines ------------
@@ -133,28 +93,28 @@ reduceRowsCols(p,9,9)
 needs "raw-util.m2"
 R = polyring(rawZZ(), (symbol a .. symbol g))
 
-<< "change these routines to call the correct raw routines with correct argument" << endl
-r5 = rawIdentity(R^5,0) -- mutable r5
+r5 = rawMutableIdentity(R,5,true) -- mutable r5
 
   -----------------------
   -- rawMatrixEntry -----
   -----------------------
-  rawMatrixEntry(r5,1,2,a+b)
+  rawSetMatrixEntry(r5,1,2,a+b)
   assert(rawMatrixEntry(r5,1,2) === a+b)
 
-  rawMatrixEntry(r5,0,0,a^5)
-  assert try(rawMatrixEntry(r5,5,5,a^5);false) else true
-  rawMatrixEntry(r5,0,0,0_R)
+  rawSetMatrixEntry(r5,0,0,a^5)
+  assert try(rawSetMatrixEntry(r5,5,5,a^5);false) else true
+  rawSetMatrixEntry(r5,0,0,0_R)
   assert(rawMatrixEntry(r5,0,0) === 0_R)
 
   ----------------------
   -- rawMatrixRowSwap --
   ----------------------
-  m = rawMatrix1(R^3, 4, (a,b,c,d,e,f,g,0_R,a+b,c+d,0_R,e+f), true, 0)
+  m = rawMatrix1(R^3, 4, (a,b,c,d,e,f,g,0_R,a+b,c+d,0_R,e+f), 0)
+  m = rawMutableMatrix(m)
   rawMatrixRowSwap(m, 0,1)
   m
   rawMatrixRowSwap(m, 0,1)
-  m0 = rawMatrixRemake1(rawTarget m, m, 0)
+  m0 = rawMatrix m
   assert(m0 ==  rawMatrix1(R^3, 4, (a,b,c,d,e,f,g,0_R,a+b,c+d,0_R,e+f), 0))
 
   rawMatrixRowSwap(m, 0,0)
@@ -224,7 +184,7 @@ r5 = rawIdentity(R^5,0) -- mutable r5
   -------------------------------
   -- rawSolve -------------------
   -------------------------------
-  load "raw-util.m2"
+  needs "raw-util.m2"
   m = mat table(4,4, (i,j) -> rawFromNumber(raw RR, random 1.0))
   b0 = mat table(4,1, (i,j) -> rawFromNumber(raw RR, random 1.0))
   A = rawMutableMatrix(m,true)

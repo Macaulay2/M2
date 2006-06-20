@@ -55,21 +55,17 @@ rawLift(raw ZZ, raw 2_R)
 rawToInteger rawLift(raw ZZ, raw 2_R)
 lift(2_R, ZZ)
 
+m' = rawLeadMonomial (3, raw(x^2 * y))
+n' = rawLeadMonomial (3, raw(x * y * z))
+rawCompareMonomial(M',m',n')
+rawSparseListFormMonomial m'
+
+exponents(3,m')
+exponents(3,n')
+
 m = leadMonomial (x^2 * y)
-m' = raw m
 n = leadMonomial (x * y * z)
-n' = raw n
-rawCompareMonomial(M',m',n')				    -- this will fail now that leadMonomial returns a polynomial
 m ? n
-
-rawSparseListFormMonomial raw m
-
-exponents(3,raw m)
-exponents(3,raw n)
-
--- exponents m
--- listForm m
--- standardForm m
 
 f = (x+y+1)^3
 

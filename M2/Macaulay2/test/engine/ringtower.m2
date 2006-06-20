@@ -13,7 +13,7 @@ assert ( 2*x*z === -z )
 ---------
 k = GF(9)
 R = k[t]
-presentation R                                              -- redesign
+presentation R -- redesign?
 
 -------------------------
 A = ZZ[s,t]
@@ -44,9 +44,9 @@ assert(2 == size g)
 
 leadCoefficient(g) == x
 leadMonomial(g)
-someTerms(g,0,0) -- the lead term
+someTerms(g,0,1) -- the lead term
 someTerms(g,1,1)
-someTerms(g,2,2)
+someTerms(g,2,1)
 listForm g
 leadMonomial y
 g _ (leadMonomial y) == x+1
@@ -67,93 +67,52 @@ ring r === C
 -- translate this is remove raw stuff
 A = polyring(rawZZ(), {symbol a, symbol b, symbol c})
 stderr << "warning: flattening not rewritten yet" << endl
-B = polyring(A, {symbol x, symbol y, symbol z})
+B = polyring(A, {symbol x, symbol y, symbol z, symbol a, symbol b, symbol c})
 a = rawPromote(B,a)
 ring a === B
 b = rawPromote(B,b)
 c = rawPromote(B,c)
-f = (a+b+1)*(x^2-y*z^5-1) -- display is a bit off
+f = (a+b+1)*(x^2-y*z^5-1)
 f^2
--- rawFromNumber(B,3462346246246246263287642) * c
--- assert(rawTermCount(3,f) === 3)
--- assert(rawGetTerms(3,f,1,1) === (a+b+1)*x^2)
--- assert((a+b+x+y)^2 === (a+b+x+y)*(a+b+x+y))
--- assert (rawWeightRange(f, {1,0,0}) == (0,2))
--- assert (rawWeightRange(f, {0,0,1}) == (0,5))
--- 
--- assert try rawWeightRange(f, {1,0,0,3,4,5}) else true 
--- assert (rawMultiDegree f == {6})
--- 
+rawFromNumber(B,3462346246246246263287642) * c
+assert(rawTermCount(3,f) === 3)
+assert(rawGetTerms(3,f,1,1) === (a+b+1)*x^2)
+assert((a+b+x+y)^2 === (a+b+x+y)*(a+b+x+y))
+assert (rawWeightRange({1,0,0},f) == (0,2))
+assert (rawWeightRange({0,0,1},f) == (0,5))
+ 
+assert(rawWeightRange({1,0,0,3,4,5},f) == (0,6))
+assert (rawMultiDegree f == {7}) -- because it is flattened, and 'polyring' gives everything degree 1.
+
+-- The following is hard to do using raw routines, so do the same at top level. 
 -- assert not rawIsHomogeneous f
 -- assert rawIsHomogeneous (a^100*x^2-b*x*z-z^2)
 -- rawHomogenize(a*x-y^3-1, 2, {1,1,1})
 -------------------------------
-needs "raw-util.m2"
+
 -- Polynomial rings ZZ[a,b][c,d],[e,f]
-A = rawPolynomialRing(rawZZ(), singlemonoid(symbol a, symbol b))
-B = rawPolynomialRing(A, singlemonoid(symbol c, symbol d))
-C = rawPolynomialRing(B, singlemonoid(symbol e, symbol f))
+a = symbol a;
+b = symbol b;
+c = symbol c;
+d = symbol d;
+e = symbol e;
+f = symbol f;
+A = ZZ[a,b]
+B = A[c,d]
+C = B[e,f]
 
-fa = rawRingVar(A,0,3)
-ga = rawRingVar(A,1,5)
-ha = 3*fa-7*ga
-fb = rawPromote(B,fa)
-gb1 = rawPromote(B,ga)
-hb = rawPromote(B,ha)
-assert(hb == 3*fb -7* gb1)
-
-fc = rawPromote(C,fb)
-gc1 = rawPromote(C,gb1)
-hc = rawPromote(C,hb)
-assert(hc == 3*fc -7* gc1)
-
-e = rawRingVar(C,0)
-f = rawRingVar(C,1)
-p = rawLeadCoefficient(hc*e*f + f^3)
-assert(rawRing p === B)
-p = rawLeadCoefficient(hc*e + f)
-assert(p === hb)
-
+h = 3*a^3-7*b^5
+promote(h,B)
+promote(h,C)
+promote(h,C) == 3*(promote(a,C))^3 - 7*(promote(b,C))^5
 
 -- Polynomial rings QQ[a,b][c,d],[e,f]
-A = rawPolynomialRing(rawQQ(), singlemonoid(symbol a, symbol b))
-B = rawPolynomialRing(A, singlemonoid(symbol c, symbol d))
-C = rawPolynomialRing(B, singlemonoid(symbol e, symbol f))
+A = QQ[a,b]
+B = A[c,d]
+C = B[e,f]
 
-fa = rawRingVar(A,0,3)
-ga = rawRingVar(A,1,5)
-ha = 3*fa-7*ga
-fb = rawPromote(B,fa)
-gb1 = rawPromote(B,ga)
-hb = rawPromote(B,ha)
-assert(hb == 3*fb -7* gb1)
+h = 3*a^3-7*b^5
+promote(h,B)
+promote(h,C)
+promote(h,C) == 3*(promote(a,C))^3 - 7*(promote(b,C))^5
 
-fc = rawPromote(C,fb)
-gc1 = rawPromote(C,gb1)
-hc = rawPromote(C,hb)
-assert(hc == 3*fc -7* gc1)
-
-e = rawRingVar(C,0)
-f = rawRingVar(C,1)
-p = rawLeadCoefficient(hc*e*f + f^3)
-assert(rawRing p === B)
-p = rawLeadCoefficient(hc*e + f)
-assert(p === hb)
-
-F = hc*e*f + f^2
-<< "rawIsHomogeneous NOT WORKING" << endl;
---assert rawIsHomogeneous F
---assert(rawMultiDegree F === {2})
-
--- Quotients of polynomial rings, and towers of such
-A = rawPolynomialRing(rawZZ(), singlemonoid(symbol a, symbol b))
-a = rawRingVar(A,0)
-b = rawRingVar(A,1)
-M = mat{{a^2-1, b^2-1}}
-B = rawQuotientRing(A,M)
-print "ERROR: rawAmbientRing needs to be implemented"
---assert(A === rawAmbientRing B)
-
-C1 = rawPolynomialRing(A, singlemonoid(symbol x, symbol y))
-print "ERROR: rawQuotientRing(Ring,Ring) needs to be implemented"
---C = rawQuotientRing(C1,B) -- B must be a quotient ring of the coefficient ring of C1.

@@ -47,21 +47,9 @@ k  = 27_Z
 
 3.5_Z
 
+
 -- not implemented yet:
 -- (toRRR 3.5)_Z
-
-i+j
-i-j
--j
-i*j
-q = i//j
-r = i%j
-assert( i != j )
-assert( j == j' )
-assert( (i+j)*k == i*k + j*k )
-assert( q * j + r == i )
-
-
 
 -- try single grading
 
@@ -116,25 +104,25 @@ assert( rawRingVar(R,1) == y )
 
 degree y^10
 assert( try ( degree 0_R ; false ) else true )
-rawWeightRange (x^10+x^3, {4,5,6})
-rawWeightRange (x^2 + x + y^5 + z^10, {1,0,0})
-rawWeightRange (z^10, {4,5,6})
+assert((12, 40) == rawWeightRange ({4,5,6}, x^10+x^3))
+assert((0,2) == rawWeightRange ({1,0,0}, x^2 + x + y^5 + z^10))
+assert((60,60) == rawWeightRange ({4,5,6}, z^10))
 
 assert( rawIsHomogeneous ( x^2 + y^2 ))
 assert( not rawIsHomogeneous ( x^2 + y ))
 
 f = (x+1)^5
 
-assert( rawGetTerms(3,f,2,2) == 10*x^3+10*x^2 )
-assert( rawGetTerms(1,f,2,2) == 10*x^3+10*x^2 )
+assert( rawGetTerms(3,f,2,3) == 10*x^3+10*x^2 )
+assert( rawGetTerms(1,f,2,3) == 10*x^3+10*x^2 )
 
 assert( rawTermCount(3,f) == 6 )
 f' = (x+1)^5
 g = (x-1)^6
 h = (x^2+x+1)^5
-q = g // h
+----q = g // h
 r = g %  h
-assert( g == q*h + r )
+----assert( g == q*h + r )
 assert( f != g )
 assert( f == f' )
 rawHomogenize(f,2,{1,1,1})
@@ -148,7 +136,7 @@ assert( 1_Z === rawLeadCoefficient(rawZZ(), f) )
 assert( rawVarMonomial(0,5) === rawLeadMonomial(3, f) )
 
 assert( ((),()) == rawPairs(rawZZ(),0_R) )
-assert( try ( rawLeadCoefficient(rawZZ(), 0_R) ; false ) else true )
+----assert( try ( rawLeadCoefficient(rawZZ(), 0_R) ; false ) else true )
 assert( try ( rawLeadMonomial(3,0_R) ; false ) else true )
 assert( try ( rawWeightRange (0_R, {4,5,6}) ; false ) else true )
 
@@ -197,19 +185,18 @@ assert( -f == (-1) * f )
 
 -- fraction ring
 
-stderr << "warning: rawFraction not implemented yet" << endl
--- G = rawFractionRing R
--- r = rawFraction(G,x,y)
--- assert( r == rawFraction(G,x*z,y*z) )
--- assert( toString rawFraction(G,x,y) === "x/y" )
--- assert( r // r == 1_G )
--- assert( rawIsHomogeneous r )
--- assert( degree r == {0} )
--- assert( not rawIsHomogeneous rawFraction(G,x,y+1) )
--- 
--- assert( 11_G === 11_R_G )
--- assert( 11_R === 11_Z_R )
--- assert( 11_G === 11_Z_R_G )
+ G = rawFractionRing R
+ r = rawFraction(G,x,y)
+ assert( r == rawFraction(G,x*z,y*z) )
+ assert( toString rawFraction(G,x,y) === "x/y" )
+ assert( r // r == 1_G )
+ assert( rawIsHomogeneous r )
+ assert( degree r == {0} )
+ assert( not rawIsHomogeneous rawFraction(G,x,y+1) )
+ 
+ assert( 11_G === 11_R_G )
+ assert( 11_R === 11_Z_R )
+ assert( 11_G === 11_Z_R_G )
 
 -----------------------------------------------------------------------------
 

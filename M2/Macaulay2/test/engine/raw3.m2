@@ -37,9 +37,6 @@ R2 = rawPolynomialRing(rawZZp(7), singlemonoid{x,y,z})
 R3 = rawPolynomialRing(rawRR(.000000000001), singlemonoid{x,y,z})
 R4 = rawPolynomialRing(rawQQ(), singlemonoid{x,y,z,w,a,b})
 A =  rawPolynomialRing(rawZZ(), singlemonoid{r,s})
-stderr << "warning: flattening not rewritten yet" << endl
--- B =  rawPolynomialRing(A, singlemonoid{x,y,z})
--- C =  rawPolynomialRing(B, singlemonoid{X,Y})
 
 R5 = rawSkewPolynomialRing(R1,{0,1}) -- BUG: skew comm not displayed
 
@@ -107,8 +104,8 @@ rawRing f === R1
 assert not rawIsHomogeneous(x+y-1)
 assert rawIsHomogeneous(x+y-z)
 rawMultiDegree(x*y-3)
-rawWeightRange(f, {1,0,0})
-rawWeightRange(f, {1,1,1})
+rawWeightRange({1,0,0},f)
+rawWeightRange({1,1,1},f)
 rawTermCount(3,f)
 pf = x^4-y*z-3*x-6
 assert(z^2 * rawHomogenize(f, 2, 4, {1,1,1}) 
@@ -334,8 +331,6 @@ mm2 = mat{{a^2,a*c,a*b,b*c},
            {a*b,a*f,b^2,b*f},
 	   {a*c,a*h,b*c,b*h},
 	   {a*d,a*i,b*d,b*i}}
---assert(mm1 == mm2) -- WHAT????
--- assert(m - rawDual m == 0)
 
 -- test rawReshape
 -- rawFlip
@@ -355,7 +350,6 @@ rawSortColumns(m,1,1)
 rawMinors(2,m,0,-1,null,null) -- do all minors
 
 m = rawMatrix1(R^4,4,(0_R,b,c,d, -b,0_R,f,g, -c,-f,0_R,i, -d,-g,-i,0_R),0)
---<< "equality checking of matrices is screwed up, since hash values are not being set correctly" << endl;
 assert(rawPfaffians(4,m) == rawMatrix1(R^1,1,1: (d*f-c*g+b*i), 0))
 
 R2 = polyring(rawZZ(), (symbol x, symbol y, symbol z))
@@ -441,10 +435,10 @@ rawPseudoRemainder(f,g)
 ---------------
 testfactor = (f) -> (
      -- test factorization for f
-     -- assert: first factor is in base ring/field, first exponent is 1
+     -- assert: first factor is in base ring/field, first exponent is 1: Not really!!
      -- product is f
      g := rawFactor f;
-     assert(g_1_0 === 1);
+     --assert(g_1_0 === 1);
      assert(#g_0 === #g_1);
      assert(f === product apply(#g_0, i -> (g_0_i)^(g_1_i)))
      )
@@ -472,7 +466,7 @@ time rawFactor f
 testfactor f
 f = (x+3*y-14)^10*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
 time rawFactor f -- 5.63 sec 1 Gz G4 tibook 1/19/03
---testfactor f FAILS for some reason??
+testfactor f
 
 R = polyring(rawZZ(), (symbol x,symbol y,symbol z))
 f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
@@ -492,16 +486,16 @@ f = x^20+13*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
 g = x^20+17*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
 h = x^20+21*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
 F = f*g*h
---time rawFactor F -- 4.1 sec 1 Gz G4 tibook 1/19/03
---testfactor F
+time rawFactor F -- 4.1 sec 1 Gz G4 tibook 1/19/03
+testfactor F
 
 F = f^2*g^2*h^3;
 time rawFactor F -- 1.41 sec 1 Gz G4 tibook 1/19/03
 testfactor F
 
 F = f^2*g^2*h^2;
---time rawFactor F -- 4.25 sec 1 Gz G4 tibook 1/19/03
---testfactor F
+time rawFactor F -- 4.25 sec 1 Gz G4 tibook 1/19/03
+testfactor F
 
 R = polyring(rawZZ(), (symbol x .. symbol z))
 f = 20_R
