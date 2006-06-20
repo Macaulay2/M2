@@ -440,8 +440,8 @@ document {
      PARA{},
      SUBSECTION "Sequences of symbols and index variables for 
      use as variables in polynomial rings",
-     EXAMPLE "a .. i",
      EXAMPLE lines ///
+     	  a..i
 	  x_0 .. x_9
       	  x_(t_0) .. x_(t_5)
       	  x_a .. x_e
@@ -449,6 +449,7 @@ document {
      SUBSECTION "Rectangular lists",
      "This operator can be used with sequences or lists to produce rectangular
      intervals.",
+     PARA{},
      EXAMPLE lines ///
 	  (0,0)..(1,3)
       	  p_(0,a) .. p_(1,c)

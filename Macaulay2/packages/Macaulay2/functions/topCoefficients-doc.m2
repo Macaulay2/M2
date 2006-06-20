@@ -12,10 +12,12 @@ document {
 	  "f" => Nothing => {ofClass RingElement, " or ", ofClass Matrix}
 	  },
      Outputs => {
-	  "lf" => Nothing => {"the power of the lowest inndex variable occuring in f, if f is a ring element,
+	  "lf" => Nothing => {ofClass RingElement, ", or ", ofClass Matrix, 
+	       ", the power of the lowest index variable occuring in f, if f is a ring element,
 	     or the one row matrix of these powers for each column, if f is a matrix."},
-	  "cf" => Nothing => {"the cofficient of lf in f, if f is a ring element,
-	       or the matrix of these coefficients for each column of f."}
+	  "cf" => Nothing => {ofClass RingElement, ", or ", ofClass Matrix, 
+	       ", the cofficient of lf in f, if f is a ring element,
+	       or the matrix of these coefficients for each column of f"}
 	  },
      EXAMPLE lines ///
      	  A = ZZ[x]

@@ -1,4 +1,6 @@
+-- from email 6/19/06 attachment name: dyer
 basering = QQ -- problem: Groebner bases not completely configured over reals!
+basering = ZZ/32003 -- problem: Groebner bases not completely configured over reals!
 R = basering[A,B,C,alpha,beta]
 numtruevars = 3;
 -- A, B, C variables (three of them, that's why numtruevars = 3)
@@ -54,7 +56,7 @@ factorable = (L,Mmat) -> (
   psi := map(S,S, apply(numtruevars, i->0_S) |
 	apply(dim S - numtruevars, i->(gens S)_(i+numtruevars)));
   I = I + sum apply(eqns, i -> viljnucoeffs(numtruevars,i,psi));
-  isSubset(ideal(1_S), I)
+  I
 --print "Wait just a bit (hours????) -- almost have the final answer: ";
  -- I == ideal(1_S) -- this takes too long!?
 )
@@ -72,4 +74,26 @@ viljnucoeffs = (m, tempoly,psi) -> (
   J
 )
 
---factorable({A, A + beta*B, alpha*B+C,C}, Mmat)
+end
+load "7-iswanson-3hours.m2"
+I = factorable({A, A + beta*B, alpha*B+C,C}, Mmat);
+betti I -- 166 gens
+numgens ring I -- 33 variables
+
+transpose gens I
+
+gbTrace=3
+gens gb I;
+I1 = monomialIdeal select(flatten entries gens I, f -> size f === 1);
+C = primaryDecomposition I1;
+J1 = I + ideal(C_0);
+J1 = ideal compress gens sub(I, apply(flatten entries gens C_0, x -> x => 0));
+numgens J1
+tally apply(flatten entries gens J1, size)
+J1a = ideal select(flatten entries gens J1, f -> size f <= 2);
+J11 = trim J1;
+
+
+--this next line should be about 3 hours?
+isSubset(ideal(1_S), I)
+

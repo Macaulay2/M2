@@ -768,7 +768,9 @@ document {
        (symbol //, Matrix, MonomialIdeal),
        (symbol //, Matrix, GroebnerBasis),
        (symbol //, Matrix, RingElement),
-       (symbol //, RingElement, Matrix)},
+       (symbol //, RingElement, Matrix),
+       (quotient, Matrix, Matrix),
+       (quotient, Matrix, GroebnerBasis)},
      Headline => "factor a map through another",
      Usage => "f//g",
      Inputs => {
@@ -782,6 +784,9 @@ document {
      Outputs => {
 	  Matrix => "a matrix h : F --> G"
 	  },
+     "If f is a matrix, and g is a matrix or Groebner basis, then quotient(f,g) is an alternate 
+     notation for f//g.",
+     PARA{},
      "If either f or g is a ring element, then it is taken to be the identity matrix on H.  If both are ring elements,
      then the result is also a ring element.  If g is a
      MonomialIdeal, then it is taken to be the matrix of generators of g.  Finally, if g is a GroebnerBasis
