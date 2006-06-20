@@ -276,16 +276,45 @@ document {
      }
 
 document {
-     Key => (symbol ^, Net, ZZ),
-     Headline => "raise a net",
-     TT "n^i", " -- elevates a net or string ", TT "n", " by raising its
-     characters by ", TT "i", " rows.",
-     PARA{},
-     "The number ", TT "i", " may be negative, in which case the net is
-     lowered.",
+     Key => {(symbol ^, Net, ZZ),
+	  (symbol ^, String, ZZ)},
+     Headline => "raise a net or string",
+     Usage => "n^i",
+     Inputs => {"n" => {"or a ", ofClass String}, "i"},
+     Outputs => {
+     	  Net => {"obtained by elevating ", TT "n", " by raising its characters by ", TT "i", " rows"}
+	  },
      PARA{},
      "If ", TT "n", " is a string, then ", TT "n^0", " is an easy way to convert
-     it to a net."
+     it to a net.",
+     EXAMPLE lines ///
+     	  s = "x"
+	  class(s^0)
+	  n = s^1|"ij"
+	  n^-3
+     	  ///,
+     SeeAlso => {"strings and nets"}
+     }
+
+document {
+     Key => {(symbol ^, String, Sequence)},
+     Headline => "vertical stacked copies of a string",
+     Usage => "s^(height,depth)",
+     Inputs => {"s", Nothing => { TT"(height,depth)", ", a pair of integers"}},
+     Outputs => {
+     	  Net => {TT "height + depth", " copies of ", TT "s", 
+	       ", stacked vertically.  There are ", TT "depth", " lines
+	       below the base line"}
+	  },
+     PARA{},
+     EXAMPLE lines ///
+     	  s = "|"
+	  s^(4,3)
+	  n = net(x_0)
+	  n0 = s^(height n, depth n)
+	  n0|n|n0
+     	  ///,
+     SeeAlso => {"strings and nets", height, depth}
      }
 
 document {

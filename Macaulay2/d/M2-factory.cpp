@@ -5,11 +5,11 @@
 #include <factory.h>		// to get definition of factoryseed()
 #endif
 
-extern "C" void actors5_setFactorySeed(int s) { 
-#if FACTORY
-  factoryseed(s);
-#endif
-}
+// extern "C" void actors5_setFactorySeed(int s) { 
+// #if FACTORY
+//   factoryseed(s);
+// #endif
+// }
 
 void factory_setup_1() {
 #if FACTORY

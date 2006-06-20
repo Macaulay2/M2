@@ -1014,39 +1014,25 @@ document {
      Headline => "a binary operator"
      }
 
-(symbol ^, Thing, QQ),
+undocumented {
+     (symbol ^, Thing, QQ),
+     (symbol ^, ZeroExpression, Holder),
+     (symbol ^, Holder, ZeroExpression),
+     (symbol ^, Holder, OneExpression),
+     (symbol ^, Holder, Holder),
+     (symbol ^, Expression, ZeroExpression),
+     (symbol ^, ZeroExpression, Expression),
+     (symbol ^, Expression, OneExpression),
+     (symbol ^, Expression, Holder),
+     (symbol ^, Holder, Expression),
+     (symbol ^, ZeroExpression, ZeroExpression),
+     }
 
-(symbol ^, ZeroExpression, Holder),
-(symbol ^, Holder, ZeroExpression),
-(symbol ^, Holder, OneExpression),
-(symbol ^, Holder, Holder),
-(symbol ^, Expression, Expression),
-(symbol ^, Expression, ZeroExpression),
-(symbol ^, ZeroExpression, Expression),
-(symbol ^, Expression, Thing),
-(symbol ^, Thing, Expression),
-(symbol ^, Expression, OneExpression),
-(symbol ^, Expression, Holder),
-(symbol ^, Holder, Expression),
-(symbol ^, ZeroExpression, ZeroExpression),
-
-
-(symbol ^, Ideal, ZZ),
-(symbol ^, MonomialIdeal, ZZ),
-(symbol ^, CC, ZZ),
-(symbol ^, RingElement, ZZ),
 (symbol ^, Matrix, ZZ),
 (symbol ^, ChainComplexMap, ZZ),
 (symbol ^, GradedModuleMap, ZZ),
+
 (symbol ^, ChainComplex, ZZ),
-
-(symbol ^, SheafOfRings, List),
-
-(symbol ^, Ring, ZZ),
-(symbol ^, Ring, List),
-(symbol ^, SheafOfRings, ZZ),
-(symbol ^, Module, ZZ),
-(symbol ^, CoherentSheaf, ZZ),
 
 (symbol ^, ChainComplexMap, Array),
 (symbol ^, Module, List),
@@ -1071,10 +1057,10 @@ document {
      Key => symbol ^,
      Headline => "a binary operator, usually used for powers",
      Usage => "x ^ y",
-     PARA{}, 
-     "In addition, if n is 0, then the unit element 
-     ", TT "(class x)#1", " is returned.  If n is negative, then the method
-     named ", TO "InverseMethod", " will be called.",
+     PARA{},
+     "This operator is used for exponentiation, making free modules and sheaves, 
+     for shifting complexes left or right, for projection maps involving direct sums, 
+     and for making nets.",
      }
 
 document {

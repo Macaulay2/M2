@@ -1,4 +1,4 @@
-void actors5_setFactorySeed(int s);
+// void actors5_setFactorySeed(int s);
 
 /*
 // Local Variables:
