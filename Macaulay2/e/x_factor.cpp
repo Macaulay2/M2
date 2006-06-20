@@ -2,17 +2,6 @@
 
 #include "../d/M2inits.h"
 
-static void enterFactory004() __attribute__ ((constructor));
-static void enterFactory004() { enterFactory(); }
-
-static void enterFactory005() __attribute__ ((destructor));
-static void enterFactory005() { enterFactory(); }
-
-static struct C {
-      C () { enterFactory(); }
-     ~C () { enterFactory(); }
-} enterFactory006;
-
 #include "config.h"
 #include <assert.h>
 #include <iostream>
@@ -591,15 +580,6 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
   return NULL;
 #endif
 }
-
-
-static void enterFactory001() __attribute__ ((constructor));
-static void enterFactory001() { enterFactory(); }
-
-static void enterFactory002() __attribute__ ((destructor));
-static void enterFactory002() { enterFactory(); }
-
-static struct C enterFactory003;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
