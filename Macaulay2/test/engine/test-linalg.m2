@@ -34,7 +34,7 @@ time G1 = gens gb(m, Algorithm=>LinearAlgebra);
 time G2 = gens gb(ideal flatten entries m);
 assert(transpose sort G1 - transpose sort G2 == 0)
 
-load "markov.m2"
+load "Markov.m2"
 R = markovRing(2,2,2,2)
 G = makeGraph {{},{1},{2},{1,2}}
 I = markovIdeal(R, localMarkovStmts G);
@@ -85,7 +85,7 @@ time gens gb I2
 I = ideal flatten entries gens I
 transpose gens gb I
 
-load "markov.m2"
+load "Markov.m2"
 R = markovRing(3,3,3,2,2)
 G = makeGraph {{},{1},{2},{1,2},{1,2}}
 I = markovIdeal(R, localMarkovStmts G);
