@@ -201,13 +201,10 @@ toString String := identity
 toString Symbol := simpleToString
 
 toExternalString = method(SingleArgumentDispatch => true, TypicalValue => String)
-toExternalString Keyword := s -> concatenate("symbol ", format simpleToString s)
+toExternalString Keyword := s -> concatenate("symbol ", simpleToString s)
 toExternalString Symbol := s -> (
      n := simpleToString s;
-     if isGlobalSymbol n and getGlobalSymbol n === s then (
-	  if value s === s then n
-	  else concatenate("symbol ",if n === " " or n === "--" then format n else n)
-	  )
+     if isGlobalSymbol n and getGlobalSymbol n === s then if value s === s then n else concatenate("symbol ", n)
      else error("can't convert local variable or shadowed or invisible global variable '",n,"' to external string"))
 
 options = method(SingleArgumentDispatch=>true, TypicalValue => OptionTable)
