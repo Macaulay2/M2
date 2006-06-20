@@ -901,7 +901,7 @@ document {
 	       p
 	  ///,
 	  PARA {
-	       "In this example, we see that a function returned by another function retains access to the values of local variables in its scope, and can change them."
+	       "In this example, we see that a function returned by another function retains access to the values of local variables in its scope."
 	       },
 	  EXAMPLE lines ///
 	       g = () -> ( p := 444; () -> p )
