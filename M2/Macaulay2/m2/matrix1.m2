@@ -460,13 +460,8 @@ Ideal.synonym = "ideal"
 
 ideal = method(SingleArgumentDispatch=>true, TypicalValue => Ideal)
 
-expression Ideal := (I) -> new FunctionApplication from { 
-     ideal,
-     (
-	  v := expression toSequence first entries generators I;
-     	  if #v === 1 then v#0 else v
-	  )
-     }
+expression Ideal := (I) -> new FunctionApplication from { ideal, expression unsequence toSequence first entries generators I }
+
 net Ideal := (I) -> (
      if numgens I === 0 then "0"
      else net expression I
