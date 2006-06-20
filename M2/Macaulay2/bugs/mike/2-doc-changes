@@ -1,11 +1,11 @@
 Mike:
 
-pseudoRemainder
+-- DONE: pseudoRemainder
 
-methods for normal forms...
-	TT I TT C ...
-	F%G != 0 shows it's a proper containment
-	the Ext is unmotivated
+-- DONE: methods for normal forms...
+-- DONE:	TT I TT C ...
+-- DONE:	F%G != 0 shows it's a proper containment
+-- DONE:	the Ext is unmotivated
 
 ^	other ways in summary
 	modernize
@@ -19,11 +19,11 @@ methods for normal forms...
 
 **	methods should point elsewhere
 
-: methods should point to quotient
+-- DONE: : methods should point to quotient
 
-..	text between example boxes
+-- DONE:  ..	text between example boxes
 
-"ranges and repetitions" -- move any of its good examples to .. or ZZ: and reduce or eliminate this node
+-- DONE: Dan did this.  "ranges and repetitions" -- move any of its good examples to .. or ZZ: and reduce or eliminate this node
 
 -- DONE: Matrix | ZZ -- direct to Matrix | Matrix
 -- DONE: ZZ | Matrix	same

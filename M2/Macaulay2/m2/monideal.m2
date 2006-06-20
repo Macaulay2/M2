@@ -65,6 +65,7 @@ MonomialIdeal - MonomialIdeal := MonomialIdeal => (I,J) -> (
 
 radical MonomialIdeal := MonomialIdeal => options -> (I) -> newMonomialIdeal(ring I, rawRadical raw I)
 
+quotient(MonomialIdeal, MonomialIdeal) :=
 MonomialIdeal : MonomialIdeal := MonomialIdeal => (I,J) -> newMonomialIdeal(ring I, rawColon(raw I, raw J))
 
 saturate(MonomialIdeal, MonomialIdeal) := MonomialIdeal => o -> (I,J) -> newMonomialIdeal(ring I, rawSaturate(raw I, raw J))
