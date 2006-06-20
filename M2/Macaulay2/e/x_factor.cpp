@@ -1,13 +1,24 @@
 // copyright Daniel R. Grayson, 1995
 
+#include "../d/M2inits.h"
+
+static void enterFactory004() __attribute__ ((constructor));
+static void enterFactory004() { enterFactory(); }
+
+static void enterFactory005() __attribute__ ((destructor));
+static void enterFactory005() { enterFactory(); }
+
+static struct C {
+      C () { enterFactory(); }
+     ~C () { enterFactory(); }
+} enterFactory006;
+
 #include "config.h"
 #include <assert.h>
 #include <iostream>
 using std::cout;
 using std::endl;
 #include <cstdio>
-
-#include "../d/M2inits.h"
 
 #if FACTORY
 #define Matrix MaTrIx
@@ -34,13 +45,6 @@ using std::endl;
 #if FACTORY
 #define REVERSE_VARIABLES 1	// did we have a good reason for reversing the variables before?  probably so the ideal reordering of Messollen would work...
 
-// debugging display routines to be called from gdb
-// needs factory to be configured without option --disable-streamio 
-void showvar(Variable &t) { cout << t << endl; }
-void showcf(CanonicalForm &t) { cout << t << endl; }
-void showcfl(CFList &t) { cout << t << endl; }
-void showcffl(CFFList &t) { cout << t << endl; }
-
 extern "C" {
   extern void factory_setup_2();
 };
@@ -55,7 +59,7 @@ static enum factoryCoeffMode coeffMode(const PolynomialRing *P) {
      return modeError;
 }
 
-int debugging = 0;
+int debugging;
 
 extern "C" {
      extern void *GC_malloc_function(size_t);
@@ -268,8 +272,15 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
 
 static struct enter_M2 b1;
 static struct enter_factory foo1;
- static int base_set = 0;
- static CanonicalForm base;
+    static int base_set = 0;
+    static CanonicalForm base;
+
+    // debugging display routines to be called from gdb
+    // needs factory to be configured without option --disable-streamio 
+    void showvar(Variable &t) { cout << t << endl; }
+    void showcf(CanonicalForm &t) { cout << t << endl; }
+    void showcfl(CFList &t) { cout << t << endl; }
+    void showcffl(CFFList &t) { cout << t << endl; }
 static struct enter_factory foo2;
 static struct enter_M2 b2;
 
@@ -580,6 +591,15 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
   return NULL;
 #endif
 }
+
+
+static void enterFactory001() __attribute__ ((constructor));
+static void enterFactory001() { enterFactory(); }
+
+static void enterFactory002() __attribute__ ((destructor));
+static void enterFactory002() { enterFactory(); }
+
+static struct C enterFactory003;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

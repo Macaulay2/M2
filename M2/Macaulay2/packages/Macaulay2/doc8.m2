@@ -69,21 +69,45 @@ document {
 
 
 document {
-     Key => (symbol ^,Module,Array),
-     Headline => "projection onto some factors of a direct sum module",
-     TT "M^[i,j,k]", " -- projection onto some factors of a direct sum module.",
-     PARA{},
-     "The module ", TT "M", " should be a direct sum, and the result is the matrix
-     obtained by projection onto the sum of the components numbered
-     ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
-     PARA{},
-     EXAMPLE {
-	  "M = ZZ^2 ++ ZZ^3",
-      	  "M^[0]",
-      	  "M^[1]",
-      	  "M^[1,0]",
+     Key => {(symbol ^,Module,Array),
+       (symbol ^,ChainComplex,Array)},
+     Headline => "projection onto some factors of a direct sum module or chain complex",
+     Usage => "M^[i,j,...,k]",
+     Inputs => {"M" => {"or ", ofClass ChainComplex},
+	  Nothing => {TT "[i,j,...,k]", ", an array of indices"}},
+     Outputs => {
+     	  Nothing => {ofClass Matrix, ", or ", ofClass ChainComplexMap}
 	  },
-     SeeAlso => {(symbol ^,Matrix,Array), (symbol _,Module,Array),(symbol ^,Module,List)}
+     PARA{},
+     "The module ", TT "M", " should be a direct sum, and the result is the map
+     obtained by projection onto the sum of the components numbered or named
+     ", TT "i, j, ..., k", ".  Free modules are regarded as direct sums of modules.",
+     PARA{},
+     EXAMPLE lines ///
+	  M = ZZ^2 ++ ZZ^3
+      	  M^[0]
+      	  M^[1]
+      	  M^[1,0]
+	  ///,
+     PARA{},
+     "If the components have been given names (see ", TO directSum, "), use those instead.",
+     EXAMPLE lines ///
+	  R = QQ[a..d];
+	  M = (a => image vars R) ++ (b => coker vars R)
+	  M^[a]
+	  isWellDefined oo
+	  M^[b]
+	  isWellDefined oo
+	  isWellDefined(M^{2})
+	  ///,
+     PARA{},
+     "This works the same way for chain complexes.",
+     EXAMPLE lines ///
+	  C = res coker vars R
+	  D = (a=>C) ++ (b=>C)
+	  D^[a]
+	  ///,
+     SeeAlso => {directSum, (symbol ^,Matrix,Array), (symbol _,Module,Array),(symbol ^,Module,List)}
      }
 
 document {

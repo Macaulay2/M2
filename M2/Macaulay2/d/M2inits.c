@@ -89,6 +89,10 @@ void enterFactory() {
   if (!done) {
     done = 1;
     initializeGMP_Cwrapper();
+    if (__gmp_allocate_func == getmem) {
+      fprintf(stderr, "internal error: gmp initialized before enterFactory called\n");
+      exit(1);
+    }
     save_gmp_allocate_func   = __gmp_allocate_func;
     save_gmp_reallocate_func = __gmp_reallocate_func;
     save_gmp_free_func       = __gmp_free_func;

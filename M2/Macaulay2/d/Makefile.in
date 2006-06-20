@@ -49,7 +49,7 @@ ifeq "$(DEBUG)" "yes"
 M2_OBJECTS += debug.o
 endif
 
-OPTCFILES += M2inits1.cc M2inits2.cc factory_init1.cc factory_init2.cc
+OPTCFILES += M2inits1.cc M2inits2.cc factory_init1.cc factory_init2.cc factory_init3.cc
 CFILES += M2inits.c M2types.c M2mem.c scclib.c M2lib.c gmp_aux.c gdbm_interface.c gmp_memory.c
 CFILES += factory_allocator.c main.c
 SRCFILES += $(OPTCFILES) $(CFILES)
@@ -66,7 +66,7 @@ M2_OBJECTS += ../regex/regex.o
 
 ## *.cc files
 
-CCFILES := version.cc gmp_init.cc
+CCFILES := gmp_init.cc
 M2_OBJECTS += $(CCFILES:.cc=.o)
 SRCFILES += $(CCFILES)
 
@@ -158,6 +158,9 @@ endif
 	$(COMPILE.c) -Wno-unused -Wno-uninitialized $*.c $(OUTPUT_OPTION)
 	rm $*.c
 
+# The following line has been included to remove old style cast warnings while compiling
+M2-factory.o : M2-factory.cpp ; $(COMPILE.cc) -Wno-old-style-cast $(OUTPUT_OPTION) $<
+
 M2INCLUDES  = -I../../include
 M2INCLUDES += -I@srcdir@
 M2INCLUDES += -I.
@@ -247,8 +250,8 @@ LIBRARYOPTIONS += M2inits2.o
 LIBRARYDEPS    += M2inits2.o
 
 ifeq "$(FACTORY)" "yes"
-LIBRARYDEPS    += factory_init1.o factory_init2.o
-LIBRARYOPTIONS += factory_init1.o $(LIBFAC) $(LIBCF) factory_init2.o
+LIBRARYDEPS    += factory_init1.o version.o M2-factory.o                    factory_init2.o
+LIBRARYOPTIONS += factory_init1.o version.o M2-factory.o $(LIBFAC) $(LIBCF) factory_init2.o
 endif
 
 LIBRARYOPTIONS += $(NTLLIB)
@@ -279,9 +282,9 @@ LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
 
 clean::; rm -f ../bin/M2$(EXE)
 # we make tmp_init.o depend on everything, because compiling it produces our timestamp
-tmp_init.o : $(M2_OBJECTS) $(LIBRARYDEPS) $(EFILES) 
+tmp_init.o : $(M2_OBJECTS) $(LIBRARYDEPS) $(EFILES) factory_init3.o
 ../bin/M2$(EXE) : tmp_init.o
-	time $(CC) $(M2_LDFLAGS) $(M2_OBJECTS) $^ $(EFILES) $(M2_LOADLIBES) $(M2_LDLIBS) $(UNSTATIC) -o "$@".tmp
+	time $(CC) $(M2_LDFLAGS) $(M2_OBJECTS) $^ factory_init3.o $(EFILES) $(M2_LOADLIBES) $(M2_LDLIBS) $(UNSTATIC) -o "$@".tmp
 	$(STRIPCMD) "$@".tmp
 	mv "$@".tmp "$@"
 
