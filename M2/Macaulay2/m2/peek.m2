@@ -113,9 +113,8 @@ seeParsing = args -> (
 	  ops#s = true;
 	  );
      q := getParsing symbol apply;
-     scan(keys set values Macaulay2Core.Dictionary, s -> if getParsing s =!= q and s =!= symbol " " then t(getParsing s,s));
-     t(getParsing symbol apply, "<SYMBOLS>"  );
-     t(getParsing symbol " ", "<ADJACENCY>");
+     scan(keys set values Macaulay2Core.Dictionary, s -> if getParsing s =!= q then t(getParsing s,s));
+     t(getParsing symbol apply, "<SYMBOLS>");
      new Table from prepend(
 	  { "parsing\nprecedence", "binary\nbinding\nstrength","unary\nbinding\nstrength", "\noperators" },
  	  sort pairs x / (
@@ -130,8 +129,7 @@ seeOperatorPrecedence = args -> (
 	  if x#?p then x#p = append(x#p,s) else x#p = {s};
 	  ops#s = true;
 	  );
-     scan(allOperators, s -> if s =!= symbol " " then t(first getParsing s,s));
-     t(first getParsing symbol " ", "<ADJACENCY>");
+     scan(allOperators, s -> t(first getParsing s,s));
      new Table from sort pairs x / ( (a,b) -> {toString a, concatenate( between_"  " sort(b/toString))}))
 
 -- Local Variables:

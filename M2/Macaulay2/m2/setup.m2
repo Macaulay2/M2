@@ -147,7 +147,7 @@ undocumented' = key -> undocumentedkeys#key = true
 
 -- all this code should go!!
 scan(flexibleBinaryOperators, op -> (
-     	  opstring := if op === symbol " " then format toString op else toString op;
+     	  opstring := toString op;
 	  ht := 8;
 	  preX := "            ";
 	  if not Thing#?((op,symbol =),Thing,Thing) then (
@@ -156,7 +156,7 @@ scan(flexibleBinaryOperators, op -> (
 			 preY := centerString(width preX, opstring);
 			 preZ := centerString(width preX, "=");
 			 line1 := concatenate("no method for assignment to ",
-			      if op === symbol " " then "adjacent objects" else concatenate("binary operator ",op," applied to objects")
+			      if op === symbol SPACE then "adjacent objects" else concatenate("binary operator ",op," applied to objects")
 			      );
 			 if hush then error line1;
 			 wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
@@ -171,7 +171,7 @@ scan(flexibleBinaryOperators, op -> (
 	       undocumented' (op,Thing,Thing);
 	       installMethod(op, Thing, Thing, (x,y) -> (
 			 line1 := concatenate("no method for ",
-			      if op === symbol " " then "adjacent objects:" else concatenate("binary operator ",op," applied to objects:")
+			      if op === symbol SPACE then "adjacent objects:" else concatenate("binary operator ",op," applied to objects:")
 			      );
 			 if hush then error line1;
 			 preY := centerString(#preX, opstring);

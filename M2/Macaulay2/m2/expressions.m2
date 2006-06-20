@@ -469,7 +469,7 @@ binary := new HashTable from {
      symbol ** => ((x,y) -> x**y),
      -- symbol /^ => ((x,y) -> x/^y),
      symbol _ => ((x,y) -> x_y),
-     symbol " " => ((x,y) -> x y)
+     symbol SPACE => ((x,y) -> x y)
      }
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
 BinaryOperation.synonym = "binary operation expression"

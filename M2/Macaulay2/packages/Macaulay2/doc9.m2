@@ -162,7 +162,7 @@ document {
      }
 
 document {
-     Key => (symbol "-", MonomialIdeal, MonomialIdeal),
+     Key => (symbol -, MonomialIdeal, MonomialIdeal),
      Headline => "monomial ideal difference",
      Usage => "I - J",
      Inputs => {
@@ -438,7 +438,7 @@ document {
 	  TO (symbol**,ChainComplex,Module),
 	  TO (symbol**,ChainComplex,ChainComplex),
 	  TO (Hom,ChainComplex,Module),
-	  TO (symbol" ", ChainComplex, Array)
+	  TO (symbol SPACE, ChainComplex, Array)
 	  },
      }
 
@@ -544,7 +544,7 @@ document {
 	  "g_1",
 	  "g_2"
 	  },
-     SeeAlso => {(symbol "_",ChainComplex,ZZ),(symbol "_",ChainComplexMap,ZZ),(cone,ChainComplexMap) }
+     SeeAlso => {(symbol _,ChainComplex,ZZ),(symbol _,ChainComplexMap,ZZ),(cone,ChainComplexMap) }
      }
 
 TEST "
@@ -1153,7 +1153,7 @@ TEST ///
      ///
 
 document {
-     Key => {(symbol ++,ChainComplex,ChainComplex),(symbol "++",GradedModule,GradedModule)},
+     Key => {(symbol ++,ChainComplex,ChainComplex),(symbol ++,GradedModule,GradedModule)},
      Headline => "direct sum",
      TT "C++D", " -- direct sum of chain complexes.",
      PARA{},
@@ -1172,7 +1172,7 @@ document {
      }
 
 document {
-     Key => (symbol " ", ChainComplex, Array),
+     Key => (symbol SPACE, ChainComplex, Array),
      Headline => "degree shift",
      Usage => "D = C[i]",
      Inputs => {
@@ -1186,7 +1186,7 @@ document {
      }
 
 document {
-     Key => (symbol " ", GradedModule, Array),
+     Key => (symbol SPACE, GradedModule, Array),
      Headline => "degree shift",
      TT "C[i]", " -- shifts the graded module ", TT "C", ", producing a new graded module
      ", TT "D", " in which ", TT "D_j", " is ", TT "C_(i+j)", "."
@@ -1370,7 +1370,7 @@ document {
      }
 
 document {
-     Key => (symbol " ", Module, Array),
+     Key => (symbol SPACE, Module, Array),
      Headline => "make a chain complex from a module",
      TT "M[n]", " -- create a chain complex with the module M concentrated
      in degree -n.",

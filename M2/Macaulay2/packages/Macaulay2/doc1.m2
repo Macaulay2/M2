@@ -344,12 +344,12 @@ document {
      Headline => "the class of hash tables for optional arguments",
      SeeAlso => ">>" }
 document {
-     Key => (symbol ">>", List, Function),
+     Key => (symbol >>, List, Function),
      Headline => "attaching options to a function",
-     "See ", TO (symbol ">>", OptionTable, Function), " for details."
+     "See ", TO (symbol >>, OptionTable, Function), " for details."
      }
 document {
-     Key => (symbol ">>", OptionTable, Function),
+     Key => (symbol >>, OptionTable, Function),
      Headline => "attaching options to a function",
      Usage => "g = defs >> fun",
      Inputs => {
@@ -404,7 +404,7 @@ document {
      function, and the types would have to be considered separately."
      }
 document {
-     Key => symbol "typicalValues",
+     Key => symbol typicalValues,
      Headline => "types of values returned by functions",
      "A hash table used to store information about the type of values
      typically returned by functions and methods.",
@@ -689,7 +689,7 @@ document {
      Key => options, Headline => "get options" }
 
 document {
-     Key => symbol "#",
+     Key => symbol #,
      Headline => "length, or access to elements",
      "The precedence of ", TT "#", " when used as a binary operator is high,
      as high as ", TT ".", ", but the precedence when used as a unary operator
@@ -787,7 +787,7 @@ document {
           x = a .. z
 	  x_12
 	  M = new Type of MutableList
-	  installAssignmentMethod(symbol "_", M, ZZ, (x,i,v) -> x#i = v);
+	  installAssignmentMethod(symbol _, M, ZZ, (x,i,v) -> x#i = v);
 	  y = new M from x
 	  y_12 = foo
 	  peek y
@@ -832,12 +832,12 @@ document {
      SeeAlso => {(symbol #, BasicList, ZZ)}
      }
 document {
-     Key => symbol "#?",
+     Key => symbol #?,
      Headline => "check for presence of elements",
      SeeAlso =>{ "#" }
      }
 document {
-     Key => symbol "_",
+     Key => symbol _,
      Headline => "a binary operator, used for subscripting and access to elements"
      }
 document {

@@ -549,7 +549,7 @@ document {
      }
 
 document {
-     Key => (symbol " ", CoherentSheaf, ZZ),
+     Key => (symbol SPACE, CoherentSheaf, ZZ),
      Headline => "canonical twist of a coherent sheaf",
      TT "F(n)", " -- twist a coherent sheaf F on a projective variety by
      the n-th power of the hyperplane line bundle.",

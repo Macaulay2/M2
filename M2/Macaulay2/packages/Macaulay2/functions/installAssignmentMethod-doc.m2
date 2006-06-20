@@ -23,7 +23,7 @@ document {
 	  M = new Type of MutableList
 	  net M := m -> peek m
 	  M _ ZZ := (x,i) -> x#i
-	  installAssignmentMethod(symbol "_", M, ZZ, (x,i,v) -> x#i = v);
+	  installAssignmentMethod(symbol _, M, ZZ, (x,i,v) -> x#i = v);
 	  y = new M from (a..z)
 	  y_12
 	  y_12 = foo
@@ -31,14 +31,14 @@ document {
 	  y_12
      ///,
      "For sample applications of this facility, see ", TO ((symbol _,symbol =),Symbol,Thing), " and 
-     ", TO ((symbol "_",symbol "="),MutableMatrix,Sequence), ".",
+     ", TO ((symbol _,symbol =),MutableMatrix,Sequence), ".",
      SeeAlso => {MutableList, (symbol #,BasicList,ZZ)},
      Caveat => { "The syntax involved here is not pleasant, so we may change it to something briefer, something involving yet another
 	  assignment operator, distinct from ", TT "=", " and ", TT ":=", "." }
      }
 
 document {
-     Key => ((symbol "_",symbol "="),Symbol,Thing),
+     Key => ((symbol _,symbol =),Symbol,Thing),
      -- this node documents the assignment method for x_a=v where x is a symbol
      Usage => "x_a = v",
      Inputs => { "x", "a", "v" },
@@ -54,7 +54,7 @@ document {
 	  x_c
      ///,
      "The source code explains how it works, behind the scences.",
-     PRE ("    " | code {(symbol "_",Symbol,Thing),((symbol "_",symbol "="),Symbol,Thing)}),
+     PRE ("    " | code {(symbol _,Symbol,Thing),((symbol _,symbol =),Symbol,Thing)}),
      "The package Macaulay2Core doesn't export the symbol valueTable, so we use ", TO "debug", " to examine it.",
      SeeAlso => { IndexedVariable },
      EXAMPLE lines ///
@@ -64,7 +64,7 @@ document {
      }
 
 document {
-     Key => ((symbol "_",symbol "="),MutableMatrix,Sequence),
+     Key => ((symbol _,symbol =),MutableMatrix,Sequence),
      Headline => "assignment to an element of a mutable matrix",
      Usage => "f_(i,j) = r",
      Inputs => { "f", Nothing => { "a pair ", TT "(i,j)", " of integers" }, "r" },

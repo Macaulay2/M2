@@ -380,7 +380,7 @@ document {
      }
 
 document {
-     Key => (symbol ">>", ZZ, ZZ),
+     Key => (symbol >>, ZZ, ZZ),
      Headline => "shift bits rightward",
      Usage => "i >> j",
      Inputs => { "i", "j" },
@@ -390,25 +390,25 @@ document {
      }
 
 document {
-     Key => symbol ":",
+     Key => symbol :,
      Headline => "a binary operator, uses include repetition; ideal quotients",
      }
 
 undocumented {
-     (symbol "..", InfiniteNumber, InfiniteNumber),
-     (symbol "..", ZZ, InfiniteNumber),
-     (symbol "..", InfiniteNumber, ZZ),
-     (symbol "..", Thing, Thing)
+     (symbol .., InfiniteNumber, InfiniteNumber),
+     (symbol .., ZZ, InfiniteNumber),
+     (symbol .., InfiniteNumber, ZZ),
+     (symbol .., Thing, Thing)
      }
 
 document {
      Headline => "a binary operator, uses include ranges; sequence of consecutive items",
-     Key => {symbol "..",
-     	  (symbol "..", IndexedVariable, IndexedVariable),
-     	  (symbol "..", List, List),
-     	  (symbol "..", Sequence, Sequence),
-     	  (symbol "..", Symbol, Symbol),
-	  (symbol "..", ZZ, ZZ)},
+     Key => {symbol ..,
+     	  (symbol .., IndexedVariable, IndexedVariable),
+     	  (symbol .., List, List),
+     	  (symbol .., Sequence, Sequence),
+     	  (symbol .., Symbol, Symbol),
+	  (symbol .., ZZ, ZZ)},
      Usage => "a .. b",
      Inputs => { "a" => {"of type ", TO "ZZ", ", ", 
      	       TO "IndexedVariable", ", ", 
@@ -474,7 +474,7 @@ document {
      SeeAlso => {sort, sortColumns, "operators"}
      }
 document {
-     Key => symbol "<",
+     Key => symbol <,
      Headline => "less than",
      TT "x < y", " yields ", TO "true", " or ", TO "false", 
      " depending on whether x < y.",
@@ -482,7 +482,7 @@ document {
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
 document {
-     Key => symbol "<=",
+     Key => symbol <=,
      Headline => "less than or equal",
      TT "x <= y", " yields ", TO "true", " or ", 
      TO "false", " depending on whether x <= y.",
@@ -490,7 +490,7 @@ document {
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
 document {
-     Key => symbol ">",
+     Key => symbol >,
      Headline => "greater than",
      TT "x > y", " yields ", TO "true", " or ", 
      TO "false", " depending on whether x > y.",
@@ -498,7 +498,7 @@ document {
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
 document {
-     Key => symbol ">=",
+     Key => symbol >=,
      Headline => "greater than or equal",
      Usage => "x >= y",
      Inputs => {"x", "y"},
@@ -509,33 +509,33 @@ document {
      }
 
 undocumented {
-     (symbol "?", TO2, TO2),
-     (symbol "?", TO2, TO),
-     (symbol "?", TO, TO2),
-     (symbol "?", TOH, TO2),
-     (symbol "?", TO2, TOH),
-     (symbol "?", TO, TO),
-     (symbol "?", String, DocumentTag),
-     (symbol "?", DocumentTag, String),
-     (symbol "?", TOH, TO),
-     (symbol "?", TO, TOH),
-     (symbol "?", Thing),
-     (symbol "?", InfiniteNumber, InfiniteNumber),
-     (symbol "?", DocumentTag, DocumentTag),
-     (symbol "?", Thing, InfiniteNumber),
-     (symbol "?", TOH, TOH),
-     (symbol "?", InfiniteNumber, Thing),
-     (symbol "?", Thing, Thing),
-     (symbol "?", Function),
+     (symbol ?, TO2, TO2),
+     (symbol ?, TO2, TO),
+     (symbol ?, TO, TO2),
+     (symbol ?, TOH, TO2),
+     (symbol ?, TO2, TOH),
+     (symbol ?, TO, TO),
+     (symbol ?, String, DocumentTag),
+     (symbol ?, DocumentTag, String),
+     (symbol ?, TOH, TO),
+     (symbol ?, TO, TOH),
+     (symbol ?, Thing),
+     (symbol ?, InfiniteNumber, InfiniteNumber),
+     (symbol ?, DocumentTag, DocumentTag),
+     (symbol ?, Thing, InfiniteNumber),
+     (symbol ?, TOH, TOH),
+     (symbol ?, InfiniteNumber, Thing),
+     (symbol ?, Thing, Thing),
+     (symbol ?, Function),
      }
 
 document {
-     Key => {symbol "?",
-     	  (symbol "?", Symbol, IndexedVariable),
-     	  (symbol "?", IndexedVariable, IndexedVariable),
-     	  (symbol "?", RingElement, RingElement),
-     	  (symbol "?", List, List),
-     	  (symbol "?", Tally, Tally)
+     Key => {symbol ?,
+     	  (symbol ?, Symbol, IndexedVariable),
+     	  (symbol ?, IndexedVariable, IndexedVariable),
+     	  (symbol ?, RingElement, RingElement),
+     	  (symbol ?, List, List),
+     	  (symbol ?, Tally, Tally)
 	  },
      Headline => "comparison operator",
      Usage => "x ? y", 
@@ -605,7 +605,7 @@ document {
      }
 
 document {
-     Key => symbol "<-",
+     Key => symbol <-,
      Headline => "assignment with left side evaluated",
      TT "x <- y    ", " assigns the value of y to x, but x is evaluated, too.",
      PARA{},
@@ -1036,7 +1036,7 @@ document {
      }
 
 document {
-     Key => symbol "~",
+     Key => symbol ~,
      Headline => "a unary postfix operator",
      }
 
@@ -1177,7 +1177,7 @@ document {
      "Common ways to make a ring:",
      UL {
 	  TO (symbol /, Ring, Ideal),
-	  TO (symbol " ", Ring, Array),
+	  TO (symbol SPACE, Ring, Array),
 	  TO "GF",
 	  },
      "Common functions for accessing the variables or elements in a ring:",
@@ -1213,14 +1213,14 @@ document {
 
 
 document {
-     Key => symbol "=>",
+     Key => symbol =>,
      Headline => "produce an Option",
      TT "x => y", " a binary operator which produces a type of list called
      an ", TO "Option", "."
      }
 
 document {
-     Key => (symbol " ", RingElement, Array),
+     Key => (symbol SPACE, RingElement, Array),
      Headline => "substitution of variables",
      Usage => "f[a,b,c]",
      Inputs => { "f", Nothing => { TT "[a,b,c]", ", an array of ring elements" } },

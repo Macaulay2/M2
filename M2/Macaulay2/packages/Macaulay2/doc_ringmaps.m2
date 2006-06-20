@@ -16,11 +16,11 @@ document {
 	  "f ** coker vars R",
 	  "f ** image vars R"
 	  },
-     SeeAlso => { (symbol " ", RingMap, Module) }
+     SeeAlso => { (symbol SPACE, RingMap, Module) }
      }
 
 document {
-     Key => (symbol " ", RingMap, Module),
+     Key => (symbol SPACE, RingMap, Module),
      Headline => "apply a ring map to a submodule of a free module",
      Usage => "f M",
      Inputs => {
@@ -36,7 +36,7 @@ document {
 	  "f = map(S,R,{t^2,t^3})",
 	  "f image vars R"
 	  },
-     SeeAlso => { (symbol " ", RingMap, Module) }
+     SeeAlso => { (symbol SPACE, RingMap, Module) }
      }
 
 document {

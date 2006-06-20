@@ -492,7 +492,7 @@ document { Key => LowerBound,
 	  "> 4"
 	  }}
 
-document { Key => {NetFile,(symbol <<, NetFile, String),(symbol <<, NetFile, Net),(symbol " ",Manipulator,NetFile),(symbol <<,NetFile,Manipulator)},
+document { Key => {NetFile,(symbol <<, NetFile, String),(symbol <<, NetFile, Net),(symbol SPACE,Manipulator,NetFile),(symbol <<,NetFile,Manipulator)},
      Headline => "the class of all net files",
      "This class is experimental.  Net files are intended to supplant output files eventually.  Whereas a file is a stream of bytes,
      or in some non-unix operating systems, a sequence of lines each of which is a sequence of bytes, a net file is a sequence of lines, each of which is
