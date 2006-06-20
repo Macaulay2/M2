@@ -18,7 +18,7 @@ List .. List := Sequence => (v,w) -> apply(toSequence v .. toSequence w, toList)
 IndexedVariable = new Type of BasicList
 IndexedVariable.synonym = "indexed variable"
 
-expression IndexedVariable := x -> new Subscript from { expression x#0, expression x#1 }
+expression IndexedVariable := x -> (expression x#0) _ (expression x#1)
 net IndexedVariable := v -> net expression v
 toString IndexedVariable := v -> toString expression v
 IndexedVariable ? IndexedVariable := (x,y) -> toSequence x ? toSequence y
