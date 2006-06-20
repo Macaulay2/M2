@@ -1,0 +1,39 @@
+
+i11 : newPackage "foo"
+
+o11 = foo
+
+o11 : Package
+
+i12 : TEST "error x"
+
+i13 : endPackage "foo"
+
+o13 = foo
+
+o13 : Package
+
+i14 : check foo
+--testing input 0 on line 14 from file stdio
+--making test results in file /tmp/M2-6877-1.out
+ulimit  -t 40; ulimit  -m 200000; ulimit  -v 200000; cd .; time M2 --silent --print-width 77 --stop --int -e errorDepth=0 -q -e 'needsPackage "foo"' <"/tmp/M2-6877-1.m2" >>"/tmp/M2-6877-1.tmp" 2>&1
+
+real	0m0.302s
+user	0m0.272s
+sys	0m0.012s
+/tmp/M2-6877-1.tmp:0: error output left in this file, return code: (1,0)
+document.m2:875:48:(0): not among the options for fooFiles: FollowLinks'
+foo.m2:3:1:(2): --back trace--
+setup.m2:230:27:(0): --back trace--
+setup.m2:222:18:(0): --back trace--
+setup.m2:236:41:(0): --back trace--
+setup.m2:237:23:(0): --back trace--
+packages.m2:44:6:(0): --back trace--
+methods.m2:83:64:(0): --back trace--
+option.m2:9:8:(0): --back trace--
+methods.m2:83:64:(0): --back trace--
+a string:1:1:(2): --back trace--
+methods.m2:261:22:(0): --back trace--
+startup.m2:430:28:(1): --back trace--
+startup.m2:506:1:(1): --back trace--
+stdio:15:1:(2): 1 error(s) occurred running tests for package foo
