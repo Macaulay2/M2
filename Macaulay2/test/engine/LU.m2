@@ -30,9 +30,6 @@ collectGarbage()
 time m = mutableMatrix(random(RR^600, RR^600), Dense=>true);
 time randomMutableMatrix
 time (P,L,U) = LU m;
-stderr << "Dan, this error is for you, I think.  I commented out the offending line" << endl
-stderr << "Mike, why?  The function numcols takes one arg, not three." << endl
-numcols(P,L,U) -- should give error, but instead crashes!!
 
 -- Over ZZ/p
 K = ZZ/7
@@ -67,20 +64,9 @@ assert(0 == (permutationMatrix P) * (matrix L) * (matrix U) - m )
 
 print "rawFFLU seems to be non-functional? next part commented out"
 ///
+debug Macaulay2Core
 rawFFLU raw m1
 m1
-
-R = QQ
-m = matrix(R, {{1,2,3,4,5},
-	  {2,3,4,5,1},
-	  {3,4,5,1,2},
-	  {4,5,1,2,3},
-	  {5,1,2,3,4}})
-m1 = mutableMatrix(m, Dense=>false)
-rawFFLU raw m1
-m1
-det m
-det matrix m1
 
 debug Macaulay2Core
 R = ZZ

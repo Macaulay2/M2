@@ -4,6 +4,14 @@ homog = m -> isHomogeneous m
 both = m -> true
 algs = { (Inhomogeneous,both), (Homogeneous,homog), (Sugarless,both), (Homogeneous2,homog), (Faugere,both) }
 
+algs = { (Inhomogeneous,both) }
+algs = { (Homogeneous,homog) }
+algs = { (Sugarless,both) }
+algs = { (Homogeneous2,homog) }
+algs = { (Faugere,both) } -- 6/19/06: these do not sort or auto reduce, so answer is harder to check.
+
+algs = { (Inhomogeneous,both), (Homogeneous,homog), (Sugarless,both), (Homogeneous2,homog) }
+
 scan(algs, (a,c) -> (
 	  alg = a;
 	  crit = c;

@@ -26,7 +26,6 @@ A = ZZ[x]
 B = A[y]
 use A
 C = A/(2*x^3-3*x-1)
-D1 = rawQuotientRing(raw B, raw C)
 
 D2 = ZZ[y,x,MonomialOrder=>{1,1}]/(2*x^3-3*x-1)
 D2/(x*y-x-1)
@@ -37,8 +36,8 @@ assert(rawDenominatorRing raw R === null)
 
 A = R/(x^2+3*y^3-4)
 describe A
-toString A -- WRONG
-toExternalString A -- WRONG TOO??
+toString A
+toExternalString A
 
 R2 = ZZ[x,y,z]
 assert(rawAmbientRing raw A === raw R)
@@ -51,8 +50,7 @@ rawAmbientRing raw B
 R = ZZ[x,y,z]
 S = R[a,b,c]
 ambS = ZZ[a,b,c,x,y,z,Degrees=>{1,1,1,0,0,0},MonomialOrder=>{3,3}]
-  -- currently an error: degrees must be positive?
-ambS = ZZ[a,b,c,x,y,z,MonomialOrder=>{3,3}]
+--ambS = ZZ[a,b,c,x,y,z,MonomialOrder=>{3,3}]
 
 use R
 A = R/(x^2+3*y^3-4)
@@ -66,7 +64,6 @@ presentation A1
 describe A1
 toString A1
 A2 = ZZ [a, b, c, x, y, z, MonomialOrder => {3, 3}]/(3*x-4,20*z^2-243*y,y*z-3,27*y^2+x*z-8*z,x*z^2-8*z^2+81*y,x^2*z+9*y^2-4*z,x^3+y^3-x^2-x)
-  -- fails
 use A1
 n = ideal(a*x+b*y+c*z)
 n1 = gens gb n
@@ -82,5 +79,5 @@ raw B
 C = ZZ[s,t][x,y]
 raw C
 f = 11 + 2*s^3 + 3*t^4 + 4*x + 5*y
-monomials(0..3,f)
-coefficients(0..3,f)
+monomials(Variables => 0..3,f)
+coefficients(Variables => 0..3,f)
