@@ -145,6 +145,7 @@ allOperators = join(fixedOperators,flexibleOperators)
 undocumentedkeys = new MutableHashTable
 undocumented' = key -> undocumentedkeys#key = true
 
+-- all this code should go!!
 scan(flexibleBinaryOperators, op -> (
      	  opstring := if op === symbol " " then format toString op else toString op;
 	  ht := 8;

@@ -864,8 +864,8 @@ installMethodFun2(arg1:Expr,args:CodeSequence):Expr := (
 		    opr := eval(args.0);
 		    when opr is Error do opr
 		    else installMethod(opr,aa,bb,eval(args.3)))
-	       else buildErrorPacket("expected right hand parameter to be arg1 hash table")))
-     else buildErrorPacket("expected left hand parameter to be arg1 function, type, or arg1 hash table"));
+	       else buildErrorPacket("expected right hand parameter to be a hash table")))
+     else buildErrorPacket("expected left hand parameter to be a function, type, or a hash table"));
 installMethodFun(args:CodeSequence):Expr := installMethodFun2(eval(args.1),args);
 InstallMethodFun = installMethodFun;
 

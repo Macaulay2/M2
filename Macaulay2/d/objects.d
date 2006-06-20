@@ -596,19 +596,44 @@ export commonAncestor(x:HashTable,y:HashTable):HashTable := (
      while t != thingClass do ( t.numEntries = - 1 - t.numEntries; t = t.parent; );
      a);
 -----------------------------------------------------------------------------
+
+assignmentMethodP(meth:Expr):bool := (
+     when meth is s:Sequence do true 			-- something like (OP, symbol =), where OP is a symbol such as symbol +
+     is sym:SymbolClosure do (
+	  sym === LeftArrowS	    	-- symbol <- , which is an assignment operator in its own right  -- this should go away!!!
+     	  ||
+	  sym === GlobalAssignS	        -- global assignment, dispatched internally (it's like    GlobalAssignHook X = (X,x) -> ...    )
+	  )
+     else false);
+
+ernary(n:int):string := (
+     if n == 4 then "quaternary"
+     else if n == 3 then "ternary"
+     else if n == 2 then "binary"
+     else if n == 1 then "unary"
+     else tostring(n)+"-ary");
+
 export typicalValues := newHashTable(mutableHashTableClass,nothingClass);
-messx := "method should be 'function' or 'returntype => function'";
-installIt(h:HashTable,key:Expr,value:Expr):Expr := (
+messx := "expected method to be a function or TYPE => function'";
+installIt(numtypes:int,assgnmt:bool,h:HashTable,key:Expr,value:Expr):Expr := (
      when value
      is Error do value
-     is FunctionClosure do storeInHashTable(h,key,value)
+     is fc:FunctionClosure do (
+	  numparms := if assgnmt then numtypes+1 else numtypes;
+	  if numtypes!=-1 && !fc.model.desc.restargs && fc.model.desc.numparms!=numparms
+	  then buildErrorPacket( "expected method for " + ernary(numtypes)
+	       + (if assgnmt then " assignment" else "") + " operator to be a function of "
+	       + tostring(numparms) + if numparms == 1 then " variable" else " variables" )
+	  else storeInHashTable(h,key,value))
      is CompiledFunction do storeInHashTable(h,key,value)
      is CompiledFunctionClosure do storeInHashTable(h,key,value)
      is s:SpecialExpr do if ancestor(s.class,functionClass) then storeInHashTable(h,key,value) else buildErrorPacket(messx)
      is x:List do (
 	  if x.class == optionClass && length(x.v) == 2 then (
-	       storeInHashTable(typicalValues,key,x.v.0);
-	       installIt(h,key,x.v.1);
+	       installIt(numtypes,assgnmt,h,key,x.v.1);
+	       storeInHashTable(typicalValues,
+		    if numtypes == 1 then Expr(Sequence(key,Expr(h))) else key,
+		    x.v.0);
 	       value)
 	  else buildErrorPacket(messx))
      else buildErrorPacket(messx));
@@ -625,10 +650,16 @@ export lookup(e:Expr):Expr := (
      r);
 export installMethod(meth:Expr,value:Expr):Expr := (
      when value is Error do value
-     is FunctionClosure do storeInHashTable(NullaryMethods,Expr(Sequence(meth)),value)
+     is fc:FunctionClosure do (
+	  if !fc.model.desc.restargs && fc.model.desc.numparms!=0
+	  then buildErrorPacket("expected method for nullary operator to be a function of 0 variables")
+     	  else storeInHashTable(NullaryMethods,Expr(Sequence(meth)),value))
      is CompiledFunction do storeInHashTable(NullaryMethods,Expr(Sequence(meth)),value)
      is CompiledFunctionClosure do storeInHashTable(NullaryMethods,Expr(Sequence(meth)),value)
-     is s:SpecialExpr do if ancestor(s.class,functionClass) then storeInHashTable(NullaryMethods,Expr(Sequence(meth)),value) else buildErrorPacket(messx)
+     is s:SpecialExpr do if ancestor(s.class,functionClass) then (
+	  -- could check the function takes 0 arguments here...
+	  storeInHashTable(NullaryMethods,Expr(Sequence(meth)),value)
+	  ) else buildErrorPacket(messx)
      is x:List do (
 	  if x.class == optionClass && length(x.v) == 2 then (
 	       storeInHashTable(typicalValues,Expr(Sequence(meth)),x.v.0);
@@ -638,19 +669,7 @@ export installMethod(meth:Expr,value:Expr):Expr := (
      else buildErrorPacket(messx));
 -----------------------------------------------------------------------------
 -- unary methods
-export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (
-     when value is Error do value
-     is FunctionClosure do storeInHashTable(s,meth,value)
-     is CompiledFunction do storeInHashTable(s,meth,value)
-     is CompiledFunctionClosure do storeInHashTable(s,meth,value)
-     is spec:SpecialExpr do if ancestor(s.class,functionClass) then storeInHashTable(s,meth,spec.e) else buildErrorPacket(messx)
-     is x:List do (
-	  if x.class == optionClass && length(x.v) == 2 then (
-	       storeInHashTable(typicalValues,Expr(Sequence(meth,Expr(s))),x.v.0);
-	       installMethod(meth,s,x.v.1);
-	       value)
-	  else buildErrorPacket(messx))
-     else buildErrorPacket(messx));
+export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := installIt(1, assignmentMethodP(meth), s, meth, value);
 key1 := Sequence(nullE,nullE);
 key1E := Expr(key1);
 export lookupUnaryValue(s:HashTable,meth:Expr,methhash:int):Expr := (
@@ -662,7 +681,7 @@ export lookupUnaryValue(s:HashTable,meth:Expr,methhash:int):Expr := (
 -----------------------------------------------------------------------------
 -- binary methods
 export installMethod(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
-     installIt(
+     installIt(2, assignmentMethodP(meth),
 	  if lhs.hash > rhs.hash then lhs else rhs,
 	  Expr(Sequence(meth,Expr(lhs),Expr(rhs))),
 	  value));
@@ -671,15 +690,6 @@ export installMethod(s:SymbolClosure,X:HashTable,Y:HashTable,f:fun):Expr := (
      installMethod(Expr(s),X,Y,Expr(CompiledFunction(f,nextHash())))
      );
 
--- export installValue(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
---      if ! rhs.mutable && !lhs.mutable
---      then return buildErrorPacket("value installation attempted, but neither hash table is mutable");
---      storeInHashTable(
--- 	  if !lhs.mutable then rhs
--- 	  else if rhs.mutable then ( if lhs.hash > rhs.hash then lhs else rhs )
--- 	  else lhs,
--- 	  Expr(Sequence(Expr(lhs),Expr(rhs),meth)),
--- 	  value));
 key2 := Sequence(nullE,nullE,nullE);
 key2E := Expr(key2);
 export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Expr := (
@@ -725,7 +735,7 @@ export lookupBinaryValue(lhs:HashTable,rhs:HashTable,meth:SymbolClosure):Expr :=
 -----------------------------------------------------------------------------
 -- ternary methods
 export installMethod(meth:Expr,s1:HashTable,s2:HashTable,s3:HashTable,value:Expr):Expr := (
-     installIt( 
+     installIt(3, assignmentMethodP(meth),
 	  if s1.hash > s2.hash then (
 	       if s1.hash > s3.hash then s1 else s3
 	       )
@@ -789,7 +799,7 @@ export lookupTernaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,meth:Expr):Exp
 -----------------------------------------------------------------------------
 -- quaternary methods
 export installMethod(meth:Expr,s1:HashTable,s2:HashTable,s3:HashTable,s4:HashTable,value:Expr):Expr := (
-     installIt( 
+     installIt(4, assignmentMethodP(meth),
 	  if s1.hash > s2.hash
 	  then if s1.hash > s3.hash 
 	  then if s1.hash < s4.hash then s4 else s1

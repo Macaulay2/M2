@@ -1099,7 +1099,10 @@ Michael R. Stillman <mike@math.cornell.edu>
      dir)
 
 makePackageIndex = method(SingleArgumentDispatch => true)
-makePackageIndex Sequence := () -> makePackageIndex path    -- this might get too many files (formerly we used packagePath)
+makePackageIndex Sequence := x -> (
+     if #x > 0 then error "expected 0 arguments";
+     makePackageIndex path    -- this might get too many files (formerly we used packagePath)
+     )
 makePackageIndex List := path -> (
      initInstallDirectory options installPackage;
      if prefixDirectory === null then (
