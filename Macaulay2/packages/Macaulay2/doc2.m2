@@ -629,10 +629,12 @@ document {
 document {
      Key => "=",
      Headline => "assignment",
-     "In this section we'll discuss simple assignment to variables, multiple assignment, assignment to parts of objects, assignment covered by various other methods, and 
-     briefly touch on the possibility of custom installation of assignment methods.  See also the operator ", TO ":=", ", which handles assignment and declaration of
-     local variables and assignment of methods to operators, as well as the operator ", TO "<-", ", which is an assignment operator that evaluates its left hand side and
-     can have assignment methods installed for it by the user.",
+     PARA {
+     	  "In this section we'll discuss simple assignment to variables, multiple assignment, assignment to parts of objects, assignment covered by various other methods, and 
+     	  briefly touch on the possibility of custom installation of assignment methods.  See also the operator ", TO ":=", ", which handles assignment and declaration of
+     	  local variables and assignment of methods to operators, as well as the operator ", TO "<-", ", which is an assignment operator that evaluates its left hand side and
+     	  can have assignment methods installed for it by the user."
+	  },
      SYNOPSIS (
 	  Heading => "simple assignment",
 	  Usage => "x = e",
@@ -649,8 +651,8 @@ document {
 	       x
 	  ///,
 	  PARA {
-	       "Since the value of the entire expression is e, and since the operator ", TO "=", " is right-associative (see ", TO "precedence of operators", "), 
-	       e can be assigned to more than one variable."
+	       "Since the value of the entire expression is ", TT "e", ", and since the operator ", TO "=", " is right-associative (see ", TO "precedence of operators", "), 
+	       ", TT "e", " can be easily assigned to more than one variable, as in the following example."
 	       },
 	  EXAMPLE lines ///
 	       x = y = 44
@@ -686,9 +688,6 @@ document {
 	  ///,
 	  PARA "Multiple assignment effectively means that functions can return multiple values usefully.",
 	  EXAMPLE lines ///
-	       (x,y) = (4,5)
-	       x
-	       y
 	       f = i -> (i,i^2)
 	       (x,y) = f 9
 	       x
@@ -716,22 +715,29 @@ document {
      SYNOPSIS {
 	  Heading => "assignment to an element of a mutable hash table",
 	  Usage => "x#i = e",
-	  Inputs => { "x" => MutableList, "i", "e" },
+	  Inputs => { 
+	       "x" => MutableList, 
+	       "i" => Thing, 
+	       "e" => Thing
+	       },
 	  Outputs => {{ "the value of the expression is ", TT "e" }},
 	  Consequences => {
-	       { TT "e", " is stored in the hash table ", TT "x", " under the key ", TT "i", ", so that future references to the value of ", TT "x#i", " yield ", TT "e" }
+	       { TT "e", " is stored in the hash table ", TT "x", " under the key ", TT "i", ", so that future references to the value of ", TT "x#i", " yield ", TT "e" },
+	       { "future references to the value of ", TT "x#?i", " will yield the value ", TO "true", ", indicating that something has been 
+		    stored in ", TT "x", " under the key ", TT "i", ".  See ", TT "#?", "." }
 	       },
 	  EXAMPLE lines ///
 	       x = new MutableHashTable from { "a" => 2, "b" => 3 }
 	       peek x
 	       x#?"foo"
 	       x#"foo" = "bar"
+	       x#?"foo"
 	       x#"foo"
 	       peek x
 	  ///
 	  },
      SYNOPSIS {
-	  Heading => "installing other assignment methods for binary operators",
+	  Heading => "installing assignment methods for binary operators",
 	  Usage => "X OP Y = (x,y,e) -> ...",
 	  Inputs => {
 	       "X" => Type,
@@ -739,7 +745,8 @@ document {
 		    between_" " apply(sort select(keys operatorAttributes, op -> operatorAttributes#op#?Binary and operatorAttributes#op#Binary#?Flexible), s -> TO {s}),
 		    " .  The operator SPACE, indicating adjacency, may be omitted from the usage above."
 		    },
-	       "Y" => Type
+	       "Y" => Type,
+	       { TT "(x,y,e) -> ...", ", ", ofClass Function }
 	       },
 	  Outputs => {{ "the value of the expression is the same as the function on the right hand side" }},
 	  Consequences => {{ "the function on the right hand side is installed as the method for assignment to ", TT "X OP Y", ".  See the next subsection below
@@ -776,13 +783,14 @@ document {
 	  ///
 	  },
      SYNOPSIS {
-	  Heading => "installing other assignment methods for unary prefix operators",
+	  Heading => "installing assignment methods for unary prefix operators",
 	  Usage => "OP X = (x,e) -> ...",
 	  Inputs => {
 	       "OP" => { "one of the unary prefix operators for which users may install methods, namely: ", 
 		    between_" " apply(sort select(keys operatorAttributes, op -> operatorAttributes#op#?Prefix and operatorAttributes#op#Prefix#?Flexible), s -> TO {s})
 		    },
-	       "X" => Type
+	       "X" => Type,
+	       { TT "(x,e) -> ...", ", ", ofClass Function }
 	       },
 	  Outputs => {{ "the value of the expression is the same as the function on the right hand side" }},
 	  Consequences => {{ "the function on the right hand side is installed as the method for assignment to ", TT "OP X", ".  See the next subsection below
@@ -817,13 +825,14 @@ document {
 	  ///
 	  },
      SYNOPSIS {
-	  Heading => "installing other assignment methods for unary postfix operators",
+	  Heading => "installing assignment methods for unary postfix operators",
 	  Usage => "X OP = (x,e) -> ...",
 	  Inputs => {
 	       "OP" => { "one of the unary postfix operators for which users may install methods, namely: ", 
 		    between_" " apply(sort select(keys operatorAttributes, op -> operatorAttributes#op#?Postfix and operatorAttributes#op#Postfix#?Flexible), s -> TO {s})
 		    },
-	       "X" => Type
+	       "X" => Type,
+	       { TT "(x,e) -> ...", ", ", ofClass Function }
 	       },
 	  Outputs => {{ "the value of the expression is the same as the function on the right hand side" }},
 	  Consequences => {{ "the function on the right hand side is installed as the method for assignment to ", TT "OP X", ".  See the next subsection below
@@ -863,28 +872,280 @@ document {
 document {
      Key => ":=",
      Headline => "assignment of method or new local variable",
-     TT "x := e", " assign the value e to the new local variable x",
-     BR{},
-     TT "f X := (x) -> ( ... )", " installs a method for the method function
-     ", TT "f", " acting on an argument of class ", TT "X", ".",
-     BR{},
-     TT "X * Y := (x,y) -> ( ... )", " installs a method for the operator
-     ", TT "*", " applied to arguments of classes ", TT "X", " and ", TT "Y", ".
-     Many other operators are allowed: see ", TO "operators", ".",
-     PARA{},
-     TT "(a,b,c) := x", " assigns the members of the sequence ", TT "x", " as
-     values of the local variables ", TT "a", ", ", TT "b", ", ", TT "c", ".  If ", TT "x", "
-     has too few elements, then the trailing symbols on the left
-     side are given the value ", TO "null", ".  If ", TT "x", " has too
-     many elements, then the last symbol on the left hand side is given
-     as value a sequence containing the trailing elements of the right hand side.
-     If the right hand side is not a sequence, then ", TT "a", " gets the value, and
-     ", TT "b", " and ", TT "c", " get ", TO "null", ".",
-     PARA{},
-     "This operator is slightly schizophrenic in its function, as the installation
-     of a method has global effect if the classes involved are globally known,
-     as is typically the case, whereas the assignment of a value to a local
-     variable is never globally known."
+     PARA {
+	  "In this section we'll discuss simple local assignment to variables, multiple local assignment, and installation and use of method functions.
+     	  See also the operator ", TO "=", ", which handles other forms of assignment, as well as the operator ", TO "<-", ", which is an
+	  assignment operator that evaluates its left hand side and can have assignment methods installed for it by the user.",
+	  },
+     SYNOPSIS (
+	  Heading => "simple local assignment",
+	  Usage => "x := e",
+	  Inputs => { "x" => Symbol, "e" => Thing},
+	  Outputs => {Thing => { "the value of the expression is ", TT "e" }},
+	  Consequences => {
+	       { "a new local variable ", TT "x", " is created.  The scope of ", TT "x", " is the current function body, or if there is none, the current file" },
+	       { TT "e", " is assigned to ", TT "x", ", so future references to the value of ", TT "x", " yield ", TT "e" },
+	       { "a warning message is issued if a local variable with the same name has already been created" }
+	       },
+	  EXAMPLE lines ///
+	       x
+	       x := 4
+	       x
+	  ///,
+	  PARA {
+	       "In the next example, we see that the scope of the local variable ", TT "p", " is limited to the body of the function."
+	       },
+	  EXAMPLE lines ///
+	       g = () -> ( p := 444; p )
+	       g()
+	       p
+	  ///,
+	  PARA {
+	       "In this example, we see that a function returned by another function retains access to the values of local variables in its scope, and can change them."
+	       },
+	  EXAMPLE lines ///
+	       g = () -> ( p := 444; () -> p )
+	       g()
+	       oo ()
+	  ///,
+	  PARA {
+	       "Functions returned by a function can also modify local variables within their scope, thereby communicating with each other."
+	       },
+	  EXAMPLE lines ///
+	       g = () -> ( p := 444; (() -> p, i -> p = i))
+	       (b,c) = g()
+	       b()
+	       c 555
+	       b()
+	  ///,
+	  PARA {
+	       "Since the value of the entire expression is ", TT "e", ", and since the operator ", TO "=", " is right-associative (see ", TO "precedence of operators", "), 
+	       ", TT "e", " can be easily assigned to more than one variable, as in the following example."
+	       },
+	  EXAMPLE lines ///
+	       a := b := 44
+	       a
+	       b
+	  ///	  
+	  ),
+     SYNOPSIS {
+	  Heading => "multiple local assignment",
+	  Usage => "(x,y,z,...) := (c,d,e,...)",
+	  Inputs => { 
+	       { TT "(x,y,z,...)", " a ", TO2 {Sequence,"sequence"}, " of ", TO2 {Symbol,"symbols"} },
+	       { TT "(c,d,e,...)", " a ", TO2 {Sequence,"sequence"}, " of ", TO2 {Thing,"things"} }
+	       },
+	  Outputs => {{ "the value of the expression is ", TT "(c,d,e,...)" }},
+	  Consequences => {
+	       { "new local variables ", TT "x", ", ", TT "y", ", ", TT "z", ", ... are created" },
+	       { "the expressions c,d,e,... are assigned to the variables x,y,z,..., respectively, as above." },
+	       { "If the left hand side has more elements than the right hand side, then the extra symbols on the left side are given the value ", TO "null", "." },
+	       { "If the left hand side has fewer elements than the right hand side, then the last symbol on the left hand side is given
+     		    as value a sequence containing the trailing elements of the right hand side." 
+		    },
+	       { "If the right hand side is not a sequence, then it is assigned to the first symbol on the left, and the remaining symbols are assigned the
+		    value ", TO "null", "."
+		    }
+	       },
+	  PARA "Multiple assignment effectively means that functions can return multiple values usefully.",
+	  EXAMPLE lines ///
+	       f = i -> (i,i^2)
+	       (r,s) := f 9
+	       r
+	       s
+	  ///
+	  },
+     SYNOPSIS {
+	  Heading => "installing methods for binary operators",
+	  Usage => "X OP Y := (x,y) -> ...",
+	  Inputs => {
+	       "X" => Type,
+	       "OP" => { "one of the binary operators for which users may install methods, namely: ", 
+		    between_" " apply(sort select(keys operatorAttributes, op -> operatorAttributes#op#?Binary and operatorAttributes#op#Binary#?Flexible), s -> TO {s}),
+		    " .  The operator SPACE, indicating adjacency, may be omitted from the usage above."
+		    },
+	       "Y" => Type,
+	       { TT "(x,y) -> ...", ", ", ofClass Function }
+	       },
+	  Outputs => {{ "the value of the expression is the same as the function on the right hand side" }},
+	  Consequences => {{ "the function on the right hand side is installed as the method for ", TT "X OP Y", ".  See the next subsection below
+		    for using it."
+		    }},
+	  "The first line of the following example illustrates the syntax above.",
+	  EXAMPLE lines ///
+	       String * String := print;
+	       "left" * "right"
+	  ///,
+	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
+	  },
+     SYNOPSIS {
+	  Heading => "using methods for binary operators",
+	  Usage => "x OP y",
+	  Inputs => {
+	       "x" => { "an object of type ", TT "X" },
+	       "OP" => { "one of the binary operators for which users may install methods, listed above.
+		    The operator SPACE, indicating adjacency, may be omitted from the usage above."},
+	       "y" => { "an object of type ", TT "Y" }
+	       },
+	  Outputs => {
+	       { "the previously installed method for ", TT "X OP Y", " is called with arguments ", TT "(x,y)", ", and its return value is returned" }
+	       },
+	  "The second line of the following example illustrates the syntax above.",
+	  EXAMPLE lines ///
+	       String * String := print;
+	       "left" * "right"
+	  ///
+	  },
+     SYNOPSIS {
+	  Heading => "installing methods for unary prefix operators",
+	  Usage => "OP X = (x) -> ...",
+	  Inputs => {
+	       "OP" => { "one of the unary prefix operators for which users may install methods, namely: ", 
+		    between_" " apply(sort select(keys operatorAttributes, op -> operatorAttributes#op#?Prefix and operatorAttributes#op#Prefix#?Flexible), s -> TO {s})
+		    },
+	       "X" => Type,
+	       { TT "(x) -> ...", ", ", ofClass Function }
+	       },
+	  Outputs => {{ "the value of the expression is the same as the function on the right hand side" }},
+	  Consequences => {{ "the function on the right hand side is installed as the method for ", TT "OP X", ".  See the next subsection below
+		    for using it."
+		    }},
+	  "The first line of the following example illustrates the syntax above.",
+	  EXAMPLE lines ///
+	       - String := print;
+	       - "foo"
+	  ///,
+	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
+	  },
+     SYNOPSIS {
+	  Heading => "using methods for unary prefix operators",
+	  Usage => "OP x",
+	  Inputs => {
+	       "OP" => { "one of the unary prefix operators for which users may install methods, listed above." },
+	       "x" => { "an object of type ", TT "X" }
+	       },
+	  Outputs => {
+	       { "the previously installed method for ", TT "OP X", " is called with argument ", TT "x", ", and its return value is returned." }
+	       },
+	  "The second line of the following example illustrates the syntax above.",
+	  EXAMPLE lines ///
+	       - String := print;
+	       - "foo"
+	  ///
+	  },
+     SYNOPSIS {
+	  Heading => "installing methods for unary postfix operators",
+	  Usage => "X OP = (x) -> ...",
+	  Inputs => {
+	       "OP" => { "one of the unary postfix operators for which users may install methods, namely: ", 
+		    between_" " apply(sort select(keys operatorAttributes, op -> operatorAttributes#op#?Postfix and operatorAttributes#op#Postfix#?Flexible), s -> TO {s})
+		    },
+	       "X" => Type,
+	       { TT "(x) -> ...", ", ", ofClass Function }
+	       },
+	  Outputs => {{ "the value of the expression is the same as the function on the right hand side" }},
+	  Consequences => {{ "the function on the right hand side is installed as the method for ", TT "OP X", ".  See the next subsection below
+		    for using it."
+		    }},
+	  "The first line of the following example illustrates the syntax above.",
+	  EXAMPLE lines ///
+	       String ~ := print;
+	       "foo" ~
+	  ///,
+	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
+	  },
+     SYNOPSIS {
+	  Heading => "using methods for unary postfix operators",
+	  Usage => "x OP",
+	  Inputs => {
+	       "x" => { "an object of type ", TT "X" },
+	       "OP" => { "one of the unary postfix operators for which users may install methods, listed above." }
+	       },
+	  Outputs => {
+	       { "the previously installed method for ", TT "X OP", " is called with argument= ", TT "x", ",
+		    and its return value is returned."
+		    }
+	       },
+	  "The second line of the following example illustrates the syntax above.",
+	  EXAMPLE lines ///
+	       String ~ := print;
+	       "foo" ~
+	  ///
+	  },
+     SYNOPSIS {
+	  Heading => "installing unary methods for method functions",
+	  Usage => "f X := (x) -> ...",
+	  Inputs => {
+	       "f" => { "a previously defined method function.  A method function may be created with the function ", TO "method", "." },
+	       "X" => Type,
+	       { TT "(x) -> ...", ", ", ofClass Function }
+	       },
+	  Consequences => {{ "the function on the right hand side is installed as the method for assignment to ", TT "f X", ".  See the next subsection below
+		    for using it."
+		    }},
+	  "The first line of the following example illustrates the syntax above, using ", TO "source", ", which happens to be a method function.",
+	  EXAMPLE lines ///
+	       source String := print;
+	       source "foo"
+	  ///,
+	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
+	  },
+     SYNOPSIS {
+	  Heading => "using unary methods for method functions",
+	  Usage => "f x",
+	  Inputs => {
+	       "f" => { "a method function" },
+	       "x" => { "an object of type ", TT "X" }
+	       },
+	  Outputs => {
+	       { "the previously installed method for ", TT "f X", " is called with argument ", TT "x", ", and its return value is returned" }
+	       },
+	  "The second line of the following example illustrates the syntax above, using ", TO "source", ", which happens to be a method function.",
+	  EXAMPLE lines ///
+	       source String := print;
+	       source "foo"
+	  ///
+	  },
+     SYNOPSIS {
+	  Heading => "installing binary methods for method functions",
+	  Usage => "f(X,Y) := (x,y) -> ...",
+	  Inputs => {
+	       "f" => { "a previously defined method function.  A method function may be created with the function ", TO "method", "." },
+	       "X" => Type,
+	       "Y" => Type,
+	       { TT "(x,y) -> ...", ", ", ofClass Function }
+	       },
+	  Consequences => {{ "the function on the right hand side is installed as the method for assignment to ", TT "f(X,Y)", ".  See the next subsection below
+		    for using it."
+		    }},
+	  "The first line of the following example illustrates the syntax above, using ", TO "source", ", which happens to be a method function.",
+	  EXAMPLE lines ///
+	       source(String,String) := print;
+	       source("foo","bar")
+	  ///,
+	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2.",
+	  PARA "The same syntax works for 3 or 4 arguments."
+	  },
+     SYNOPSIS {
+	  Heading => "using binary methods for method functions",
+	  Usage => "f(x,y)",
+	  Inputs => {
+	       "f" => { "a method function" },
+	       "x" => { "an object of type ", TT "X" },
+	       "y" => { "an object of type ", TT "Y" }
+	       },
+	  Outputs => {
+	       { "the previously installed method for ", TT "f(X,Y)", " is called with arguments ", TT "(x,y)", ", and the return value is returned" }
+	       },
+	  "The second line of the following example illustrates the syntax above, using ", TO "source", ", which happens to be a method function.",
+	  EXAMPLE lines ///
+	       source(String,String) := print;
+	       source("foo","bar")
+	  ///,
+	  PARA "The same syntax works for 3 or 4 arguments."
+	  },
+     -- put synopses for "new" methods here?  or refer to another page?
+     SeeAlso => {"=", "<-" }
      }
 document {
      Key => abs,

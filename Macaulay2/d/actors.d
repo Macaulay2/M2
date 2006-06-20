@@ -843,7 +843,7 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 			 else buildErrorPacket("expected second parameter to be a hash table")
 			 else buildErrorPacket("expected first parameter to be a hash table")
 			 )
-		    else buildErrorPacket("expected two or three parameter types"))
+		    else buildErrorPacket("expected 1, 2, 3, or 4 parameter types"))
 	       is bb:HashTable do installMethod(a,bb,eval(args.3))
 	       else buildErrorPacket("expected right hand parameter to be a hash table or sequence"))
 	  else buildErrorPacket("expected adjacency operator ' ' on left"))

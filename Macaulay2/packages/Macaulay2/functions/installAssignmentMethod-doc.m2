@@ -41,6 +41,7 @@ document {
      Key => ((symbol _,symbol =),Symbol,Thing),
      -- this node documents the assignment method for x_a=v where x is a symbol
      Usage => "x_a = v",
+     Headline => "assignment to an indexed variable",
      Inputs => { "x", "a", "v" },
      Outputs => { "v" },
      Consequences => { 
