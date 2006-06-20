@@ -480,6 +480,9 @@ setup(SlashSlashS,quotientC);
 BackslashBackslashFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BackslashBackslashS);
 setup(BackslashBackslashS,BackslashBackslashFun);
 
+adjacentFun(lhs:Code,rhs:Code):Expr := eval(Code(adjacentCode(lhs,rhs,codePosition(rhs))));
+setup(AdjacentS,adjacentFun);
+
 doublepower(x:double,n:int):double := (
      if n == 0 then return 1.0;
      if n < 0 then (x = 1./x; n = -n;);

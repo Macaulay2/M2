@@ -307,7 +307,7 @@ fSeqInitialize := (toString,toStr) -> new HashTable from {
      (4,homology,ZZ    ) => s -> ("HH^", toStr s#1, "_", toStr s#2, " ", toStr s#3),
      (3,NewFromMethod  ) => s -> ("new ", toString s#1, " from ", toStr s#2),
      (3,NewOfMethod    ) => s -> ("new ", toString s#1, " of ", toString s#2),
-     (3,symbol " "     ) => s -> (toStr s#1, " ", toStr s#2),
+     (3,symbol SPACE     ) => s -> (toStr s#1, " ", toStr s#2),
      (3,homology,ZZ    ) => s -> ("HH_", toStr s#1, " ", toStr s#2),
      (3,cohomology,ZZ  ) => s -> ("HH^", toStr s#1, " ", toStr s#2),
      (2,homology       ) => s -> ("HH ", toStr s#1),
@@ -958,7 +958,7 @@ briefSynopsis := key -> (
 	  else if instance(key, Sequence) and key#?0 then (
 	       if instance(key#0, Function) then SPAN { "Function: ", TO key#0 }
 	       else if instance(key#0, Keyword) then SPAN { "Operator: ", TO key#0 }
-	       else if instance(key#0,Sequence) and #key#0 === 2 and key#0#1 === symbol "="
+	       else if instance(key#0,Sequence) and #key#0 === 2 and key#0#1 === symbol =
 	       then SPAN { "Operator: ", TO key#0#0 }	    -- assignment operator for this operator
 	       ),
 	  if o.?Inputs then DIV1 { "Inputs:", UL o.Inputs },

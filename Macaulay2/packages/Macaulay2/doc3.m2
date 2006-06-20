@@ -64,42 +64,42 @@ document {
      }
 
 document {
-     Key => symbol "++",
+     Key => symbol ++,
      Headline => "a binary operator, usually used for direct sum"
      }
 
 document {
-     Key => symbol "(*)",
+     Key => symbol (*),
      Headline => "a unary postfix operator, used for indicating a graded object"
      }
 
 document {
-     Key => symbol "<==>",
+     Key => symbol <==>,
      Headline => "a binary operator"
      }
 
 document {
-     Key => symbol ",",
+     Key => symbol ,,
      Headline => "the comma, used for separating entries in a list or sequence"
      }
 
 document {
-     Key => symbol "==>",
+     Key => symbol ==>,
      Headline => "a binary operator"
      }
 
 document {
-     Key => symbol "|-",
+     Key => symbol |-,
      Headline => "a binary operator"
      }
 
 document {
-     Key => symbol "===>",
+     Key => symbol ===>,
      Headline => "a binary operator"
      }
 
 document {
-     Key => symbol "@@",
+     Key => symbol @@,
      Headline => "a binary operator"
      }
 
@@ -118,14 +118,9 @@ document {
      }
 
 document {
-     Key => symbol "@",
+     Key => symbol @,
      Headline => "a binary operator",
      "This operator is right associative."
-     }
-
-document {
-     Key => symbol "\\",
-     Headline => "a binary operator"
      }
 
 document {
@@ -134,7 +129,7 @@ document {
      }
 
 document {
-     Key => {(symbol "/",List,Thing)},
+     Key => {(symbol /,List,Thing)},
      Headline => "vector division",
      Usage => "v/c",
      Inputs => {"v" => "to be treated as a vector", "c" => "a number or scalar ring element"},
@@ -143,20 +138,20 @@ document {
      }
 
 document {
-     Key => { (symbol "/",VisibleList,Function),
-	  (symbol "/",List,Function),
-	  (symbol "\\",Function,VisibleList),
-	  (symbol "\\",Function,Tally),
-	  (symbol "\\",SelfInitializingType,VisibleList),
-	  (symbol "\\",Command,VisibleList),
-	  (symbol "\\",RingMap,List),
-	  (symbol "\\",Command,Tally),
-	  (symbol "/",VisibleList,SelfInitializingType),
-	  (symbol "/",List,Command),
-	  (symbol "/",Tally,Command),
-	  (symbol "/",Tally,Function),
-	  (symbol "/",List,RingMap),
-	  (symbol "/",VisibleList,Command)
+     Key => { (symbol /,VisibleList,Function),
+	  (symbol /,List,Function),
+	  (symbol \,Function,VisibleList),
+	  (symbol \,Function,Tally),
+	  (symbol \,SelfInitializingType,VisibleList),
+	  (symbol \,Command,VisibleList),
+	  (symbol \,RingMap,List),
+	  (symbol \,Command,Tally),
+	  (symbol /,VisibleList,SelfInitializingType),
+	  (symbol /,List,Command),
+	  (symbol /,Tally,Command),
+	  (symbol /,Tally,Function),
+	  (symbol /,List,RingMap),
+	  (symbol /,VisibleList,Command)
 	  },
      Headline => "apply a function to elements of a list",
      Usage => "x/f\nf\\x",
@@ -184,19 +179,19 @@ document {
 	  f = map(R,R,{x^2})
 	  f \ {x,x^2,x^3,x^4}
      ///,
-     SourceCode => {(symbol "/",VisibleList,Function)},
+     SourceCode => {(symbol /,VisibleList,Function)},
      }
 
 document {
-     Key => {(symbol "//",Thing,Function),(symbol "\\\\",Function,Thing),
-	  (symbol "//",Thing,Command),(symbol "\\\\",Command,Thing),
-	  (symbol "//",Thing,SelfInitializingType),(symbol "\\\\",SelfInitializingType,Thing)
+     Key => {(symbol //,Thing,Function),(symbol \\,Function,Thing),
+	  (symbol //,Thing,Command),(symbol \\,Command,Thing),
+	  (symbol //,Thing,SelfInitializingType),(symbol \\,SelfInitializingType,Thing)
 	  },
      Headline => "apply a function",
      Usage => "x // f\nf \\\\ x",
      Inputs => { "x", "f" => Nothing => {ofClass{Function,Command,SelfInitializingType}}},
      Outputs => {{ "the result of applying ", TT "f", " to ", TT "x", ", i.e., ", TT "f x" }},
-     SeeAlso => {(symbol "/",VisibleList,Function)},
+     SeeAlso => {(symbol /,VisibleList,Function)},
      PARA {
 	  "The parsing precedence of the operators ", TT "//", " and ", TT "\\\\", " is rather low, which makes
 	  them useful for avoiding parentheses.  See ", TO "precedence of operators", "."

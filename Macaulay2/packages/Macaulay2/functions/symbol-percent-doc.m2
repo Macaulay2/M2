@@ -76,13 +76,13 @@ document {
 	  gens gb I
 	  x^2*y^2 % I
      ///,
-     SeeAlso => {symbol "%", "Groebner bases", generators, toField,(symbol "%", Matrix, GroebnerBasis)},
+     SeeAlso => {symbol %, "Groebner bases", generators, toField,(symbol %, Matrix, GroebnerBasis)},
      }
 
 document { 
      Key => {
-	  (symbol "%", Matrix, GroebnerBasis),
-	  (symbol "%", RingElement, GroebnerBasis)
+	  (symbol %, Matrix, GroebnerBasis),
+	  (symbol %, RingElement, GroebnerBasis)
 	  },
      Headline => "calculate the normal form of ring elements and 
           matrices using a (partially computed) Groebner basis",

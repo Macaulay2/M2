@@ -280,7 +280,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.use = x -> (
 	       M + M := (m,n) -> R#1 * m + R#1 * n;
 	       M - M := (m,n) -> R#1 * m - R#1 * n;
-	       - M := (m,n) -> - R#1 * n;
+	       - M := (n) -> - R#1 * n;
 	       scan(RM.baseRings, A -> (
 		    if A =!= R then (
 		    	 A * M := (i,m) -> (i * R#1) * m;

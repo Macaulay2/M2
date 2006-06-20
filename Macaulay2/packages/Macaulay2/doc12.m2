@@ -581,29 +581,29 @@ document {
      }
 
 undocumented {
-     (symbol " ",Expression,Thing), (symbol " ",Thing,Expression),
-     (symbol "*",Expression,Thing), (symbol "*",Thing,Expression),
-     (symbol "**",Expression,Thing), (symbol "**",Thing,Expression),
-     (symbol "+",Expression,Thing), (symbol "+",Thing,Expression),
-     (symbol "-",Expression,Thing), (symbol "-",Thing,Expression),
-     (symbol "/",Expression,Thing), (symbol "/",Thing,Expression),
-     (symbol "==",Expression,Thing), (symbol "==",Thing,Expression),
-     (symbol "^",Expression,Thing), (symbol "^",Thing,Expression),
-     (symbol "_",Expression,Thing), (symbol "_",Thing,Expression)
+     (symbol SPACE,Expression,Thing), (symbol SPACE,Thing,Expression),
+     (symbol *,Expression,Thing), (symbol *,Thing,Expression),
+     (symbol **,Expression,Thing), (symbol **,Thing,Expression),
+     (symbol +,Expression,Thing), (symbol +,Thing,Expression),
+     (symbol -,Expression,Thing), (symbol -,Thing,Expression),
+     (symbol /,Expression,Thing), (symbol /,Thing,Expression),
+     (symbol ==,Expression,Thing), (symbol ==,Thing,Expression),
+     (symbol ^,Expression,Thing), (symbol ^,Thing,Expression),
+     (symbol _,Expression,Thing), (symbol _,Thing,Expression)
      }
 
 document {
      Key => {Expression,
-	  (symbol " ",Expression,Expression),
-	  (symbol "*",Expression,Expression),
-	  (symbol "**",Expression,Expression),
-	  (symbol "+",Expression,Expression),
-	  (symbol "-",Expression),
-	  (symbol "-",Expression,Expression),
-	  (symbol "/",Expression,Expression),
-	  (symbol "==",Expression,Expression),
-	  (symbol "^",Expression,Expression),
-	  (symbol "_",Expression,Expression),
+	  (symbol SPACE,Expression,Expression),
+	  (symbol *,Expression,Expression),
+	  (symbol **,Expression,Expression),
+	  (symbol +,Expression,Expression),
+	  (symbol -,Expression),
+	  (symbol -,Expression,Expression),
+	  (symbol /,Expression,Expression),
+	  (symbol ==,Expression,Expression),
+	  (symbol ^,Expression,Expression),
+	  (symbol _,Expression,Expression),
           (value,Expression)
 	  },
      Headline => "the class of all expressions",
@@ -643,7 +643,7 @@ document {
 	  value e == f
      	  value c
      ///,
-     "The following operators can be applied to expressions: ", TO " ", ", ", TO "*", ", ", TO "**", ", ", TO "+", ", ", TO "-", ", ", 
+     "The following operators can be applied to expressions: ", TO "SPACE", ", ", TO "*", ", ", TO "**", ", ", TO "+", ", ", TO "-", ", ", 
      TO "/", ", ", TO "==", ", ", TO "^", ", and ", TO "_", ".  They are contagious, in the sense that when applied to an expression and a non-expression,
      the non-expression will be converted to an expression and the operator will be applied.  Only the most trivial algebraic simplications are applied.",
      EXAMPLE lines ///

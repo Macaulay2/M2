@@ -271,7 +271,7 @@ document {
      }
 
 document {
-     Key => symbol "newline",
+     Key => symbol newline,
      Headline => "the new line character sequence",
      TT "newline", " -- a string containing the character or sequence of
      characters which represents the end of a line.  To end an output line,
@@ -398,7 +398,7 @@ document {
      }
 
 document {
-     Key => symbol "oo",
+     Key => symbol oo,
      Headline => "the last output value",
      TT "oo", " -- denotes the value of the expression on the previous output
      line.",
@@ -406,7 +406,7 @@ document {
      }
 
 document {
-     Key => symbol "ooo",
+     Key => symbol ooo,
      Headline => "the next to the last output value",
      TT "ooo", " -- denotes the value of the expression on the output line
      two lines above.",
@@ -414,7 +414,7 @@ document {
      }
 
 document {
-     Key => symbol "oooo",
+     Key => symbol oooo,
      Headline => "the third to the last output value",
      TT "oooo", " -- denotes the value of the expression on the output line
      three lines above.",

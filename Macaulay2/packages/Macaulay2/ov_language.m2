@@ -843,7 +843,7 @@ document {
 	  TO symbol or ,
 	  TO symbol not ,
      "functions",
-          TO " ",
+          TO symbol SPACE,
 	  TO symbol -> ,
           TO symbol @@ ,
           TO symbol \\ ,
@@ -907,8 +907,8 @@ document {
      PARA {
 	  "Here are the operators arranged in order of increasing parsing precedence.  For example,
 	  ", TT "*", " has higher parsing precedence than ", TT "+", ", and hence ", TT "2+3*5", " is
-	  parsed as though it had been written as ", TT "2+(3*5)", ".  The symbol ", TT "<ADJACENCY>", " stands in for ", TO " ", ", the symbol whose
-	  name is a single space."
+	  parsed as though it had been written as ", TT "2+(3*5)", ".  The symbol ", TO "SPACE", " represents the operator that is used when
+	  two things are adjacent in program code."
 	  },
      TABLE { "class" => "examples",  TR TD PRE net (value Macaulay2Core#"private dictionary"#"seeOperatorPrecedence")() }
      }

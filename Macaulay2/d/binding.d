@@ -244,7 +244,7 @@ bump();
      export AtS := makeKeyword(binaryright("@"));
 bump();
      export ParenStarParenS := makeKeyword(postfix("(*)"));
-     export AdjacentS:=makeKeyword(binaryright(" "));
+     export AdjacentS:=makeKeyword(binaryright("SPACE"));   -- used to be " "
      precSpace = prec;
      parseWORD.precedence = prec; parseWORD.binaryStrength = prec; parseWORD.unaryStrength = prec;
 bump();

@@ -127,29 +127,29 @@ document {
      }
 
 undocumented {
-	  (symbol "-",ZZ,CC), 
-	  (symbol "+",ZZ,CC), 
-	  (symbol "-",RR,CC), 
-	  (symbol "+",RR,CC), 
-	  (symbol "/",ZZ,CC), 
-	  (symbol "/",RR,CC), 
-	  (symbol "-",CC), 
-	  (symbol "-",CC,ZZ), 
-	  (symbol "-",CC,QQ), 
-	  (symbol "-",QQ,CC), 
-	  (symbol "+",CC,ZZ), 
-	  (symbol "+",CC,QQ), 
-	  (symbol "+",QQ,CC), 
-	  (symbol "-",CC,RR), 
-	  (symbol "-",CC,CC), 
-	  (symbol "+",CC,RR), 
-	  (symbol "+",CC,CC), 
-	  (symbol "/",CC,ZZ), 
-	  (symbol "/",CC,QQ), 
-	  (symbol "/",QQ,CC), 
-	  (symbol "/",CC,RR), 
-	  (symbol "/",CC,CC), 
-	  (symbol "^",CC,ZZ)}
+	  (symbol -,ZZ,CC), 
+	  (symbol +,ZZ,CC), 
+	  (symbol -,RR,CC), 
+	  (symbol +,RR,CC), 
+	  (symbol /,ZZ,CC), 
+	  (symbol /,RR,CC), 
+	  (symbol -,CC), 
+	  (symbol -,CC,ZZ), 
+	  (symbol -,CC,QQ), 
+	  (symbol -,QQ,CC), 
+	  (symbol +,CC,ZZ), 
+	  (symbol +,CC,QQ), 
+	  (symbol +,QQ,CC), 
+	  (symbol -,CC,RR), 
+	  (symbol -,CC,CC), 
+	  (symbol +,CC,RR), 
+	  (symbol +,CC,CC), 
+	  (symbol /,CC,ZZ), 
+	  (symbol /,CC,QQ), 
+	  (symbol /,QQ,CC), 
+	  (symbol /,CC,RR), 
+	  (symbol /,CC,CC), 
+	  (symbol ^,CC,ZZ)}
 document {
      Key => CC,
      Headline => "the class of all complex numbers",
@@ -500,9 +500,9 @@ document {
      PARA{},
      "Optional arguments (placed between the brackets):",
      UL (TO \ keys value Macaulay2Core#"private dictionary"#"monoidDefaults"),
-     SeeAlso => {(symbol " ", Ring, Array)}}
+     SeeAlso => {(symbol SPACE, Ring, Array)}}
 document {
-     Key => (symbol " ", Ring, Array),
+     Key => (symbol SPACE, Ring, Array),
      Headline => "the standard way to make a polynomial ring",
      TT "R[...]", " -- produces the monoid ring from a ring ", TT "R", " and the
      ordered monoid specified by ", TT "[...]", ".",
@@ -513,7 +513,7 @@ document {
      UL (TO \ keys value Macaulay2Core#"private dictionary"#"monoidDefaults"),
      SeeAlso => "polynomial rings"}
 document {
-     Key => (symbol " ",Ring, OrderedMonoid),
+     Key => (symbol SPACE,Ring, OrderedMonoid),
      Headline => "make a polynomial ring",
      TT "R M", " -- produces the monoid ring from a ring ", TT "R", " and an ordered monoid
      ", TT "M", ".",
@@ -892,8 +892,8 @@ document {
 document {
      Key => {
 	  (symbol ++,Module,Module),
-	  (symbol "++",Module,GradedModule),
-	  (symbol "++",GradedModule,Module)
+	  (symbol ++,Module,GradedModule),
+	  (symbol ++,GradedModule,Module)
 	  },
      Headline => "direct sum of modules",
      TT "M++N", " -- computes the direct sum of two modules (or coherent sheaves).",
@@ -910,19 +910,19 @@ document {
      SeeAlso => directSum}
 
 undocumented {
-     (symbol "++",RingElement,ZZ),
-     (symbol "++",ZZ,RingElement),
-     (symbol "++",Matrix,ZZ),
-     (symbol "++",ZZ,Matrix)
+     (symbol ++,RingElement,ZZ),
+     (symbol ++,ZZ,RingElement),
+     (symbol ++,Matrix,ZZ),
+     (symbol ++,ZZ,Matrix)
      }
 
 document {
      Key => {
 	  (symbol ++,Matrix,Matrix),
-	  (symbol "++",GradedModuleMap,GradedModuleMap),
-	  (symbol "++",RingElement,Matrix),
-	  (symbol "++",Matrix,RingElement),
-	  (symbol "++",RingElement,RingElement)
+	  (symbol ++,GradedModuleMap,GradedModuleMap),
+	  (symbol ++,RingElement,Matrix),
+	  (symbol ++,Matrix,RingElement),
+	  (symbol ++,RingElement,RingElement)
 	  },
      Headline => "direct sum of maps",
      TT "f++g", " -- computes the direct sum of two maps between modules.",

@@ -41,5 +41,5 @@ document {
  -- doc7.m2:277:     Key => (diff,ProjectiveHilbertPolynomial,ZZ),
  -- doc7.m2:281:     Key => (diff, ProjectiveHilbertPolynomial),
  -- doc7.m2:2254:     Key => ProjectiveHilbertPolynomial,
- -- doc7.m2:2268:     Key => (symbol " ", ProjectiveHilbertPolynomial, ZZ),
+ -- doc7.m2:2268:     Key => (symbol SPACE, ProjectiveHilbertPolynomial, ZZ),
  -- doc7.m2:2317:     Key => Projective,

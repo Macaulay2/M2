@@ -800,7 +800,7 @@ ZZ[t]
 assert (matrix {{t}} ** matrix {{t}} == matrix{{t^2}})
 "
 document {
-     Key => symbol "compactMatrixForm",
+     Key => symbol compactMatrixForm,
      Headline => "global flag for compact printing",
 	Usage => "compactMatrixForm = x",
 	Consequences => {"changes the display of matrices"},
@@ -929,7 +929,7 @@ document {
      }
 
 document {
-     Key => (symbol "/", RingElement, RingElement),
+     Key => (symbol /, RingElement, RingElement),
      Headline => "fraction",
      Usage => "f/g",
      Inputs => { "f", "g" },
@@ -961,17 +961,17 @@ document {
 	  ///,
      "At this point, if one types ", TT "f^2", ", then Macaulay2 would give an error
      saying that a zero divisor was found in the denominator.",
-     SeeAlso => {symbol "//"}
+     SeeAlso => {symbol //}
      }
 
 document {
      Key => {(symbol /, Ring, Ideal),
-	  (symbol "/", Ring, Module),
-	  (symbol "/", Ring, RingElement),
-	  (symbol "/", Ring, MonomialIdeal),
-	  (symbol "/", Ring, List),
-	  (symbol "/", Ring, Sequence),
-	  (symbol "/", Ring, ZZ)
+	  (symbol /, Ring, Module),
+	  (symbol /, Ring, RingElement),
+	  (symbol /, Ring, MonomialIdeal),
+	  (symbol /, Ring, List),
+	  (symbol /, Ring, Sequence),
+	  (symbol /, Ring, ZZ)
 	  },
      Headline => "make a quotient ring",
      Usage => "S = R/I",
@@ -1280,7 +1280,7 @@ document {
 	  }
      }
 document {
-     Key => (symbol " ", ProjectiveHilbertPolynomial, ZZ),
+     Key => (symbol SPACE, ProjectiveHilbertPolynomial, ZZ),
      Headline => "value of polynomial",
      TT "P i", " -- the value of a projective Hilbert polynomial ", TT "P", " at 
      an integer ", TT "i", ".",

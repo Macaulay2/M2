@@ -1,12 +1,12 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 document {
-     Key => {(symbol "/", Module, Module),
-	  (symbol "/", Module, Ideal),
-	  (symbol "/", Module, List),
-	  (symbol "/", Module, Sequence),
-	  (symbol "/", Module, Vector),
-	  (symbol "/", Module, RingElement)},
+     Key => {(symbol /, Module, Module),
+	  (symbol /, Module, Ideal),
+	  (symbol /, Module, List),
+	  (symbol /, Module, Sequence),
+	  (symbol /, Module, Vector),
+	  (symbol /, Module, RingElement)},
      Headline => "make a quotient module",
      Usage => "M/N",
      Inputs => {
@@ -42,7 +42,7 @@ document {
      }
 
 document {
-     Key => (symbol "/", Ideal, Ideal),
+     Key => (symbol /, Ideal, Ideal),
      Headline => "make a quotient module",
      Usage => "I/J",
      Inputs => { "I", "J" => {"in the same ring as ", TT "I"}},
@@ -762,13 +762,13 @@ document {
 
 document { 
      Key => {(symbol //, Matrix, Matrix),
-       (symbol "//", RingElement, MonomialIdeal),
-       (symbol "//", RingElement, GroebnerBasis),
-       (symbol "//", RingElement, RingElement),
-       (symbol "//", Matrix, MonomialIdeal),
-       (symbol "//", Matrix, GroebnerBasis),
-       (symbol "//", Matrix, RingElement),
-       (symbol "//", RingElement, Matrix)},
+       (symbol //, RingElement, MonomialIdeal),
+       (symbol //, RingElement, GroebnerBasis),
+       (symbol //, RingElement, RingElement),
+       (symbol //, Matrix, MonomialIdeal),
+       (symbol //, Matrix, GroebnerBasis),
+       (symbol //, Matrix, RingElement),
+       (symbol //, RingElement, Matrix)},
      Headline => "factor a map through another",
      Usage => "f//g",
      Inputs => {

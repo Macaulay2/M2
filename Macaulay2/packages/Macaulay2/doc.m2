@@ -583,67 +583,67 @@ document {
 
 
 undocumented {
-     (symbol " ", RingMap, ZZ),
-     (symbol " ", RingMap, QQ)
+     (symbol SPACE, RingMap, ZZ),
+     (symbol SPACE, RingMap, QQ)
      }
 
 
-(symbol " ", WrapperType, List),
-(symbol " ", WrapperType, Sequence),
-(symbol " ", Manipulator, Database),
-(symbol " ", Function, Thing),
-(symbol " ", MarkUpType, MarkUpList),
-(symbol " ", Command, Thing),
-(symbol " ", Manipulator, Nothing),
-(symbol " ", WrapperType, Thing),
-(symbol " ", Expression, Expression),
-(symbol " ", Expression, Holder),
-(symbol " ", Holder, Expression),
-(symbol " ", Expression, Thing),
-(symbol " ", Thing, Expression),
-(symbol " ", Holder, Holder),
-(symbol " ", HeaderType, List),
-(symbol " ", HeaderType, Sequence),
-(symbol " ", MarkUpType, Net),
-(symbol " ", MarkUpType, String),
-(symbol " ", Thing, Thing),
+(symbol SPACE, WrapperType, List),
+(symbol SPACE, WrapperType, Sequence),
+(symbol SPACE, Manipulator, Database),
+(symbol SPACE, Function, Thing),
+(symbol SPACE, MarkUpType, MarkUpList),
+(symbol SPACE, Command, Thing),
+(symbol SPACE, Manipulator, Nothing),
+(symbol SPACE, WrapperType, Thing),
+(symbol SPACE, Expression, Expression),
+(symbol SPACE, Expression, Holder),
+(symbol SPACE, Holder, Expression),
+(symbol SPACE, Expression, Thing),
+(symbol SPACE, Thing, Expression),
+(symbol SPACE, Holder, Holder),
+(symbol SPACE, HeaderType, List),
+(symbol SPACE, HeaderType, Sequence),
+(symbol SPACE, MarkUpType, Net),
+(symbol SPACE, MarkUpType, String),
+(symbol SPACE, Thing, Thing),
 
-(symbol " ", Ring, Array),
-(symbol " ", Ring, OrderedMonoid),
+(symbol SPACE, Ring, Array),
+(symbol SPACE, Ring, OrderedMonoid),
 
-(symbol " ", RingMap, RingElement),
-(symbol " ", RingMap, ChainComplex),
-(symbol " ", RingMap, Matrix),
-(symbol " ", RingMap, Ideal),
-(symbol " ", RingMap, Vector),
-(symbol " ", RingMap, Module),
-(symbol " ", ProjectiveHilbertPolynomial, ZZ),
-(symbol " ", RingElement, Array),
+(symbol SPACE, RingMap, RingElement),
+(symbol SPACE, RingMap, ChainComplex),
+(symbol SPACE, RingMap, Matrix),
+(symbol SPACE, RingMap, Ideal),
+(symbol SPACE, RingMap, Vector),
+(symbol SPACE, RingMap, Module),
+(symbol SPACE, ProjectiveHilbertPolynomial, ZZ),
+(symbol SPACE, RingElement, Array),
 
-(symbol " ", ChainComplex, Array),
-(symbol " ", Module, Array),
-(symbol " ", GradedModule, Array),
+(symbol SPACE, ChainComplex, Array),
+(symbol SPACE, Module, Array),
+(symbol SPACE, GradedModule, Array),
 
-(symbol " ", SheafOfRings, ZZ),
-(symbol " ", SheafOfRings, LowerBound),
-(symbol " ", CoherentSheaf, ZZ),
-(symbol " ", CoherentSheaf, LowerBound),
+(symbol SPACE, SheafOfRings, ZZ),
+(symbol SPACE, SheafOfRings, LowerBound),
+(symbol SPACE, CoherentSheaf, ZZ),
+(symbol SPACE, CoherentSheaf, LowerBound),
 
-(symbol " ", ScriptedFunctor, Thing),
+(symbol SPACE, ScriptedFunctor, Thing),
 
-(symbol " ", Manipulator, File),
-(symbol " ", Manipulator, NetFile),
+(symbol SPACE, Manipulator, File),
+(symbol SPACE, Manipulator, NetFile),
 
-(symbol " ", SelfInitializingType, Thing),
+(symbol SPACE, SelfInitializingType, Thing),
 
 document {
-     Key => symbol " ", 
+     Key => symbol SPACE, 
      Headline => "blank operator; often used for function application, making polynomial rings",
-     SeeAlso =>(symbol " ", Function, Thing)		    -- not really a method
+     SeeAlso =>(symbol SPACE, Function, Thing)		    -- not really a method
      }
 
 document {
-     Key => (symbol " ", Function, Thing),
+     Key => (symbol SPACE, Function, Thing),
      Headline => "function application",
      TT "f x", " -- yields the result of applying the function ", TT "f", " to ", TT "x", ".",
      }
@@ -768,7 +768,7 @@ document {
      }
 
 document {
-     Key => symbol "&",
+     Key => symbol &,
      Headline => "a binary operator",
      }
 
@@ -786,43 +786,43 @@ document {
      }
 
 document {
-     Key => symbol "^^",
+     Key => symbol ^^,
      Headline => "a binary operator"
      }
 
 undocumented {
-	  (symbol "+", ZZ, RingElement),
-	  (symbol "+", RR, RingElement),
-	  (symbol "+", RingElement, ZZ),
-	  (symbol "+", RingElement, QQ),
-	  (symbol "+", QQ, RingElement),
-	  (symbol "+", RingElement, RR),
-	  (symbol "+", Thing)
+	  (symbol +, ZZ, RingElement),
+	  (symbol +, RR, RingElement),
+	  (symbol +, RingElement, ZZ),
+	  (symbol +, RingElement, QQ),
+	  (symbol +, QQ, RingElement),
+	  (symbol +, RingElement, RR),
+	  (symbol +, Thing)
 	  }
 document {
-     Key => {symbol "+",
-	  (symbol "+", ChainComplexMap, ChainComplexMap),
-	  (symbol "+", ZZ, InfiniteNumber),
-	  (symbol "+", ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
-	  (symbol "+", MonomialIdeal, MonomialIdeal),
-	  (symbol "+", RingElement, GradedModuleMap),
-	  (symbol "+", Matrix, ZZ),
-	  (symbol "+", ZZ, ChainComplexMap),
-	  (symbol "+", ChainComplexMap, ZZ),
-	  (symbol "+", RingElement, RingElement),
-	  (symbol "+", InfiniteNumber, InfiniteNumber),
-	  (symbol "+", Ideal, RingElement),
-	  (symbol "+", RingElement, ChainComplexMap),
-	  (symbol "+", MutableMatrix, MutableMatrix),
-	  (symbol "+", Matrix, Matrix),
-	  (symbol "+", GradedModuleMap, GradedModuleMap),
-	  (symbol "+", InfiniteNumber, ZZ),
-	  (symbol "+", GradedModuleMap, RingElement),
-	  (symbol "+", ZZ, Matrix),
-	  (symbol "+", Vector, Vector),
-	  (symbol "+", Matrix, RingElement),
-	  (symbol "+", RingElement, Matrix),
-	  (symbol "+", ChainComplexMap, RingElement)
+     Key => {symbol +,
+	  (symbol +, ChainComplexMap, ChainComplexMap),
+	  (symbol +, ZZ, InfiniteNumber),
+	  (symbol +, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
+	  (symbol +, MonomialIdeal, MonomialIdeal),
+	  (symbol +, RingElement, GradedModuleMap),
+	  (symbol +, Matrix, ZZ),
+	  (symbol +, ZZ, ChainComplexMap),
+	  (symbol +, ChainComplexMap, ZZ),
+	  (symbol +, RingElement, RingElement),
+	  (symbol +, InfiniteNumber, InfiniteNumber),
+	  (symbol +, Ideal, RingElement),
+	  (symbol +, RingElement, ChainComplexMap),
+	  (symbol +, MutableMatrix, MutableMatrix),
+	  (symbol +, Matrix, Matrix),
+	  (symbol +, GradedModuleMap, GradedModuleMap),
+	  (symbol +, InfiniteNumber, ZZ),
+	  (symbol +, GradedModuleMap, RingElement),
+	  (symbol +, ZZ, Matrix),
+	  (symbol +, Vector, Vector),
+	  (symbol +, Matrix, RingElement),
+	  (symbol +, RingElement, Matrix),
+	  (symbol +, ChainComplexMap, RingElement)
      	  },
      Headline => "a unary or binary operator, usually used for addition",
      Usage => "+y \n x+y",
@@ -840,43 +840,43 @@ document {
      }
 
 undocumented {
-     (symbol "-", ZZ, RingElement),
-     (symbol "-", RR, RingElement),
-     (symbol "-", RingElement, RR),
-     (symbol "-", RingElement, ZZ),
-     (symbol "-", QQ, RingElement),
-     (symbol "-", RingElement, QQ),
+     (symbol -, ZZ, RingElement),
+     (symbol -, RR, RingElement),
+     (symbol -, RingElement, RR),
+     (symbol -, RingElement, ZZ),
+     (symbol -, QQ, RingElement),
+     (symbol -, RingElement, QQ),
      }
 
 document {
-     Key => {symbol "-",
-	  (symbol "-", ChainComplexMap, ChainComplexMap),
-	  (symbol "-", Minus),
-	  (symbol "-", ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
-	  (symbol "-", ZZ, InfiniteNumber),
-	  (symbol "-", RingElement, GradedModuleMap),
-	  (symbol "-", GradedModuleMap),
-	  (symbol "-", Matrix, ZZ),
-	  (symbol "-", ProjectiveHilbertPolynomial),
-	  (symbol "-", RingElement),
-	  (symbol "-", RingElement, RingElement),
-	  (symbol "-", InfiniteNumber),
-	  (symbol "-", InfiniteNumber, InfiniteNumber),
-	  (symbol "-", ZeroExpression),
-	  (symbol "-", RingElement, ChainComplexMap),
-	  (symbol "-", ChainComplexMap),
-	  (symbol "-", MutableMatrix, MutableMatrix),
-	  (symbol "-", Matrix, Matrix),
-	  (symbol "-", GradedModuleMap, GradedModuleMap),
-	  (symbol "-", InfiniteNumber, ZZ),
-	  (symbol "-", GradedModuleMap, RingElement),
-	  (symbol "-", ZZ, Matrix),
-	  (symbol "-", MutableMatrix),
-	  (symbol "-", Matrix, RingElement),
-	  (symbol "-", Matrix),
-	  (symbol "-", RingElement, Matrix),
-	  (symbol "-", ChainComplexMap, RingElement),
-	  (symbol "-", Holder)
+     Key => {symbol -,
+	  (symbol -, ChainComplexMap, ChainComplexMap),
+	  (symbol -, Minus),
+	  (symbol -, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
+	  (symbol -, ZZ, InfiniteNumber),
+	  (symbol -, RingElement, GradedModuleMap),
+	  (symbol -, GradedModuleMap),
+	  (symbol -, Matrix, ZZ),
+	  (symbol -, ProjectiveHilbertPolynomial),
+	  (symbol -, RingElement),
+	  (symbol -, RingElement, RingElement),
+	  (symbol -, InfiniteNumber),
+	  (symbol -, InfiniteNumber, InfiniteNumber),
+	  (symbol -, ZeroExpression),
+	  (symbol -, RingElement, ChainComplexMap),
+	  (symbol -, ChainComplexMap),
+	  (symbol -, MutableMatrix, MutableMatrix),
+	  (symbol -, Matrix, Matrix),
+	  (symbol -, GradedModuleMap, GradedModuleMap),
+	  (symbol -, InfiniteNumber, ZZ),
+	  (symbol -, GradedModuleMap, RingElement),
+	  (symbol -, ZZ, Matrix),
+	  (symbol -, MutableMatrix),
+	  (symbol -, Matrix, RingElement),
+	  (symbol -, Matrix),
+	  (symbol -, RingElement, Matrix),
+	  (symbol -, ChainComplexMap, RingElement),
+	  (symbol -, Holder)
 	  },
      Headline => "a unary or binary operator, usually used for negation or subtraction",
      Usage => "-y \n x-y",
@@ -894,26 +894,26 @@ document {
      }
 
 undocumented {
-     (symbol "/", InfiniteNumber, InfiniteNumber),
-     (symbol "/", RingElement, ZZ),
-     (symbol "/", QQ, RingElement),
-     (symbol "/", RingElement, QQ),
-     (symbol "/", RingElement, RR),
-     (symbol "/", ZZ, InfiniteNumber),
-     (symbol "/", InfiniteNumber, ZZ),
-     (symbol "/", ZZ, RingElement),
-     (symbol "/", RR, RingElement),
-     (symbol "/", EngineRing, Ideal),
-     (symbol "/", Expression, Holder),
-     (symbol "/", Holder, OneExpression),
-     (symbol "/", Expression, OneExpression),
-     (symbol "/", Holder, Expression),
-     (symbol "/", Holder, Holder),
-     (symbol "/", List, SelfInitializingType)
+     (symbol /, InfiniteNumber, InfiniteNumber),
+     (symbol /, RingElement, ZZ),
+     (symbol /, QQ, RingElement),
+     (symbol /, RingElement, QQ),
+     (symbol /, RingElement, RR),
+     (symbol /, ZZ, InfiniteNumber),
+     (symbol /, InfiniteNumber, ZZ),
+     (symbol /, ZZ, RingElement),
+     (symbol /, RR, RingElement),
+     (symbol /, EngineRing, Ideal),
+     (symbol /, Expression, Holder),
+     (symbol /, Holder, OneExpression),
+     (symbol /, Expression, OneExpression),
+     (symbol /, Holder, Expression),
+     (symbol /, Holder, Holder),
+     (symbol /, List, SelfInitializingType)
      }
 
 document {
-     Key => symbol "/",
+     Key => symbol /,
      Headline => "a binary operator, usually used for division",
      Usage => "x / y",
      "This operator is currently used in several ways in Macaulay2.",
@@ -927,18 +927,18 @@ document {
      }
 
 undocumented {
-	  (symbol "%", ZZ, Ideal),
-	  (symbol "%", RingElement, ZZ),
-	  (symbol "%", ZZ, RingElement),
-	  (symbol "%", RingElement, QQ),
-	  (symbol "%", QQ, RingElement),
-	  (symbol "%", ZZ, GroebnerBasis),
-	  (symbol "%", ZZ, MonomialIdeal)
+	  (symbol %, ZZ, Ideal),
+	  (symbol %, RingElement, ZZ),
+	  (symbol %, ZZ, RingElement),
+	  (symbol %, RingElement, QQ),
+	  (symbol %, QQ, RingElement),
+	  (symbol %, ZZ, GroebnerBasis),
+	  (symbol %, ZZ, MonomialIdeal)
      }
 
 document {
-     Key => {symbol "%",
-	  (symbol "%", ZZ, ZZ)
+     Key => {symbol %,
+	  (symbol %, ZZ, ZZ)
 	  },	  
      Headline => "a binary operator, usually used for remainder and reduction",
      Usage => "x % y",
@@ -965,23 +965,23 @@ document {
      }
 
 undocumented {
-     (symbol "//", ZZ, MonomialIdeal),
-     (symbol "//", RR, ZZ),
-     (symbol "//", RR, RR),
-     (symbol "//", RingElement, ZZ),
-     (symbol "//", ZZ, RingElement),
-     (symbol "//", QQ, RingElement),
-     (symbol "//", RingElement, QQ),
-     (symbol "//", RR, RingElement),
-     (symbol "//", RingElement, RR),
-     (symbol "//", ZZ, InfiniteNumber),
-     (symbol "//", InfiniteNumber, ZZ),
-     (symbol "//", ZZ, Matrix),
-     (symbol "//", Matrix, ZZ),
+     (symbol //, ZZ, MonomialIdeal),
+     (symbol //, RR, ZZ),
+     (symbol //, RR, RR),
+     (symbol //, RingElement, ZZ),
+     (symbol //, ZZ, RingElement),
+     (symbol //, QQ, RingElement),
+     (symbol //, RingElement, QQ),
+     (symbol //, RR, RingElement),
+     (symbol //, RingElement, RR),
+     (symbol //, ZZ, InfiniteNumber),
+     (symbol //, InfiniteNumber, ZZ),
+     (symbol //, ZZ, Matrix),
+     (symbol //, Matrix, ZZ),
      }
      
 document {
-     Key => symbol "//",
+     Key => symbol //,
      Headline => "a binary operator, usually used for quotient",
      Usage => "x // y",
      "For ring elements in the integers, polynomial rings, and other rings,
@@ -1005,65 +1005,70 @@ document {
      }
 
 document {
-     Key => symbol "\\\\",
+     Key => symbol \,
      Headline => "a binary operator",
      }
 
-(symbol "^", Thing, QQ),
+document {
+     Key => symbol \\,
+     Headline => "a binary operator"
+     }
 
-(symbol "^", ZeroExpression, Holder),
-(symbol "^", Holder, ZeroExpression),
-(symbol "^", Holder, OneExpression),
-(symbol "^", Holder, Holder),
-(symbol "^", Expression, Expression),
-(symbol "^", Expression, ZeroExpression),
-(symbol "^", ZeroExpression, Expression),
-(symbol "^", Expression, Thing),
-(symbol "^", Thing, Expression),
-(symbol "^", Expression, OneExpression),
-(symbol "^", Expression, Holder),
-(symbol "^", Holder, Expression),
-(symbol "^", ZeroExpression, ZeroExpression),
+(symbol ^, Thing, QQ),
 
-
-(symbol "^", Ideal, ZZ),
-(symbol "^", MonomialIdeal, ZZ),
-(symbol "^", CC, ZZ),
-(symbol "^", RingElement, ZZ),
-(symbol "^", Matrix, ZZ),
-(symbol "^", ChainComplexMap, ZZ),
-(symbol "^", GradedModuleMap, ZZ),
-(symbol "^", ChainComplex, ZZ),
-
-(symbol "^", SheafOfRings, List),
-
-(symbol "^", Ring, ZZ),
-(symbol "^", Ring, List),
-(symbol "^", SheafOfRings, ZZ),
-(symbol "^", Module, ZZ),
-(symbol "^", CoherentSheaf, ZZ),
-
-(symbol "^", ChainComplexMap, Array),
-(symbol "^", Module, List),
+(symbol ^, ZeroExpression, Holder),
+(symbol ^, Holder, ZeroExpression),
+(symbol ^, Holder, OneExpression),
+(symbol ^, Holder, Holder),
+(symbol ^, Expression, Expression),
+(symbol ^, Expression, ZeroExpression),
+(symbol ^, ZeroExpression, Expression),
+(symbol ^, Expression, Thing),
+(symbol ^, Thing, Expression),
+(symbol ^, Expression, OneExpression),
+(symbol ^, Expression, Holder),
+(symbol ^, Holder, Expression),
+(symbol ^, ZeroExpression, ZeroExpression),
 
 
-(symbol "^", Module, Array),
-(symbol "^", Matrix, Array),
-(symbol "^", ChainComplex, Array),
-(symbol "^", GradedModuleMap, Array),
-(symbol "^", Matrix, List),
+(symbol ^, Ideal, ZZ),
+(symbol ^, MonomialIdeal, ZZ),
+(symbol ^, CC, ZZ),
+(symbol ^, RingElement, ZZ),
+(symbol ^, Matrix, ZZ),
+(symbol ^, ChainComplexMap, ZZ),
+(symbol ^, GradedModuleMap, ZZ),
+(symbol ^, ChainComplex, ZZ),
+
+(symbol ^, SheafOfRings, List),
+
+(symbol ^, Ring, ZZ),
+(symbol ^, Ring, List),
+(symbol ^, SheafOfRings, ZZ),
+(symbol ^, Module, ZZ),
+(symbol ^, CoherentSheaf, ZZ),
+
+(symbol ^, ChainComplexMap, Array),
+(symbol ^, Module, List),
 
 
-(symbol "^", ScriptedFunctor, Thing),
+(symbol ^, Module, Array),
+(symbol ^, Matrix, Array),
+(symbol ^, ChainComplex, Array),
+(symbol ^, GradedModuleMap, Array),
+(symbol ^, Matrix, List),
 
-(symbol "^", String, Sequence), -- make a net
 
-(symbol "^", Net, ZZ), -- raise a net
-(symbol "^", String, ZZ), -- make a net
+(symbol ^, ScriptedFunctor, Thing),
+
+(symbol ^, String, Sequence), -- make a net
+
+(symbol ^, Net, ZZ), -- raise a net
+(symbol ^, String, ZZ), -- make a net
 
 
 document {
-     Key => symbol "^",
+     Key => symbol ^,
      Headline => "a binary operator, usually used for powers",
      Usage => "x ^ y",
      PARA{}, 
@@ -1184,8 +1189,8 @@ document {
      }
 
 document {
-     Key => {symbol "!",
-	  (symbol "!", ZZ)},
+     Key => {symbol !,
+	  (symbol !, ZZ)},
      Headline => "factorial",
      Usage => "n!",
      Inputs => {"n"=>ZZ},
@@ -1201,7 +1206,7 @@ document {
      }
 
 document {
-     Key => symbol "|", 
+     Key => symbol |, 
      Headline => "a binary operator, often used for horizontal concatenation",
      SeeAlso => {"||"}
      }
@@ -1341,7 +1346,7 @@ document {
      }
 
 document {
-     Key => symbol "===",
+     Key => symbol ===,
      Headline => "strict equality",
      TT "x === y", " -- returns true or false depending on whether the 
      expressions x and y are strictly equal.",
@@ -1372,7 +1377,7 @@ document {
      }
 
 document {
-     Key => symbol "=!=",
+     Key => symbol =!=,
      Headline => "strict inequality",
      TT "x =!= y", " -- returns true or false depending on whether the expressions
      x and y are strictly unequal.",
@@ -1537,7 +1542,7 @@ document {
      }
 
 document {
-     Key => symbol "!=",
+     Key => symbol !=,
      Headline => "inequality",
      TT "x != y", " -- the negation of ", TT "x == y", ".",
      PARA{},
@@ -1606,11 +1611,11 @@ document {
     (symbol**, Module, GradedModule)
 	  },
      Headline => "a binary operator, usually used for tensor product or Cartesian product",
-     SeeAlso => {symbol "^**"}
+     SeeAlso => {symbol ^**}
      }
 
 document {
-     Key => symbol "^**",
+     Key => symbol ^**,
      Headline => "a binary operator, usually used for tensor or Cartesian power",
      }
 
