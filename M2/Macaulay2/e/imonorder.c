@@ -593,12 +593,6 @@ int monomialOrderFromActualExponents(const MonomialOrder *mo,
 	  if (!mo->is_laurent[i])
 	    result = 0;
 	}
-#if 0
-      else 
-	{
-	  if (expon[i] > mo->top[i]
-	}
-#endif
     }
   return result;
 }
