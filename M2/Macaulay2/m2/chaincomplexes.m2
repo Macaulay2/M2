@@ -890,7 +890,7 @@ compositions(ZZ,ZZ) := (n,k) -> (
      compositionn = null;
      result);
 
-eagonNorthcott = method()
+eagonNorthcott = method(TypicalValue => ChainComplex)
 eagonNorthcott Matrix := f -> (
      -- code is by GREG SMITH, but is experimental, and 
      -- should be replaced by engine code
