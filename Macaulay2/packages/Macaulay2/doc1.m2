@@ -856,7 +856,7 @@ document {
 	       "C" =>Type,
 	       { TT "(A,b,c) -> ...", ", a function of 3 arguments: ", TT "AA", " will be an ancestor of ", TT "A", ",
 		    ", TT "B", " will be an ancestor of the class of ", TT "b", ",
-		    and ", TT "C", " will be an ancestor of the class of ", TT "c" }
+up		    and ", TT "C", " will be an ancestor of the class of ", TT "c" }
 	       },
 	  Consequences => {
 	       { "the function will be installed as the method for ", TT "new AA of B from C" }
@@ -864,11 +864,11 @@ document {
 	  Outputs => {
 	       { "the function is returned as the value of the expression" }
 	       },
-	  PARA { "In this example we install a creation method for new types of types from strings.  The string is used to construct the method for converting
+	  PARA { "In this example we install a creation method for new types of types from functions.  The function is used to construct the method for converting
 	       instances of the new type to nets for display."
 	       },
 	  EXAMPLE lines ///
-	       new Type of Type from String := (A,b,c) -> hashTable { net => s -> c }
+	       new Type of Type from Function := (A,b,f) -> hashTable { net => f };
 	  ///
 	  ),
      SYNOPSIS (
@@ -881,8 +881,10 @@ document {
 	       },
 	  Consequences => {
 	       { "the function previously installed as the method for ", TT "new A of B from C", " will be called with arguments ", TT "(A,b,c)", "." },
-	       { "if no such method has been installed, then ancstors of A, B, and C, will be consulted searching lexicographically for a method; see ", TO "inheritance", "." },
-	       { "the value returned by the function will be converted so its class is ", TT "A", " and its parent is ", TT "b", "; this will involve copying unless the 
+	       { "if no such method has been installed, then ancestors of A, B, and C, will be consulted searching lexicographically for a method; see ", TO "inheritance", "." },
+	       { "if no method is found by searching the ancestors, then the function ", TT "(A,b,c) -> c", " will be used" },
+	       { "the value returned by the function, (or ", TT "c", ", if no method was found), will be converted so
+		    its class is ", TT "A", " and its parent is ", TT "b", "; this will involve copying unless the 
 		    value returned is mutable and objects of class ", TT "A", " are mutable." },
 	       },
 	  Outputs => {
@@ -890,15 +892,20 @@ document {
 	       },
 	  PARA "We use the creation method installed above to create a new type of list.",
 	  EXAMPLE lines ///
-	       X = new Type of List from "--list of type X--"
+	       f = s -> "--list of type X--"
+	       X = new Type of List from f
+     	       class X
+	       parent X
 	       peek X
 	  ///,
-	  PARA { "Now we use ", TO "new", " to create a new list of type X from a list.  The system knows how to convert lists to lists of type X, so no creation
+	  PARA { "Now we use ", TO "new", " to create a new list of type ", TT "X", " from a list.  The system knows how to convert lists to lists of type ", TT "X", ", so no creation
 	       method need be installed for ", TT "new X from List", "."
 	       },
 	  EXAMPLE lines ///
-	       new X from {1,3,11,12}
-	       peek oo
+	       x = new X from {1,3,11,12}
+	       class x
+	       parent x
+	       peek x
 	  ///
 	  ),
      SYNOPSIS (
@@ -916,23 +923,41 @@ document {
 	  Outputs => {
 	       { "the function is returned as the value of the expression" }
 	       },
--- 	  PARA {
--- 	       },
+ 	  PARA {
+	       "This operation turns out to be needed infrequently."
+ 	       },
 -- 	  EXAMPLE lines ///
 -- 	  ///
 	  ),
      SYNOPSIS (
-	  -- TT "new A of b", " -- make a hash table of class ", TT "A", " 
-	  -- and parent ", TT "b", ".", BR{},
 	  Heading => "new-of",
 	  Usage => "new A of b",
-	  Inputs => {},
-	  Consequences => {},
-	  Outputs => {},
--- 	  PARA {
--- 	       },
--- 	  EXAMPLE lines ///
--- 	  ///
+	  Inputs => {
+	       "A" => Type,
+	       "b" => { "an instance of ", TT "B" },
+	       },
+	  Consequences => {
+	       { "TO BE FILLED IN" }
+	       },
+	  Outputs => {
+	       { "a new object of class ", TT "A", " and with parent ", TT "b" }
+	       },
+ 	  PARA {
+     	       "We illustrate this operation by making a new type of basic list, and then by making a list of that type."
+ 	       },
+ 	  EXAMPLE lines ///
+	       M = new Type of BasicList
+	       m = new M from {3,4,5}
+	       class m
+	       m#1
+ 	  ///,
+	  PARA {
+	       "Now let's define a method for reversing the elements of a list of class ", TT "M", ", using the unary operator ", TT "-", "."
+	       },
+ 	  EXAMPLE lines ///
+	       - M := reverse
+	       - m
+	  ///
 	  ),
      SYNOPSIS (
 	  Heading => "installing a new method for new-from",
@@ -950,22 +975,33 @@ document {
 	       { "the function is returned as the value of the expression" }
 	       },
 	  PARA {
+	       "Let's use the class ", TT "M", " defined above, and introduce a method for creating lists of class ", TT "M", " from integers.  Then we use it
+	       in the subsection below."
 	       },
 	  EXAMPLE lines ///
+	       new M from ZZ := (M',i) -> 0 .. i
 	  ///
 	  ),
      SYNOPSIS (
-	  -- TT "new A from c", " -- make a new instance of class ", TT "A", " 
-	  -- initialized from ", TT "c", ".", BR{},
 	  Heading => "new-from",
 	  Usage => "new A from c",
-	  Inputs => {},
-	  Consequences => {},
-	  Outputs => {},
--- 	  PARA {
--- 	       },
--- 	  EXAMPLE lines ///
--- 	  ///
+	  Inputs => {
+	       "A" => Type,
+	       "c" => { "an instance of ", TT "C" }
+	       },
+	  Consequences => {
+	       { "TO BE FILLED IN" }	       
+	       },
+	  Outputs => {
+	       { "a new object of class ", TT "A", " initialized from ", TT "c" }
+	       },
+ 	  PARA {
+	       "We use the new-from method for ", TT "new M from ZZ", " installed above."
+ 	       },
+ 	  EXAMPLE lines ///
+	       n = new M from 13
+	       - n
+ 	  ///
 	  ),
      SYNOPSIS (
 	  Heading => "installing a new method for new",
@@ -980,23 +1016,28 @@ document {
 	  Outputs => {
 	       { "the function is returned as the value of the expression" }
 	       },
--- 	  PARA {
--- 	       },
--- 	  EXAMPLE lines ///
--- 	  ///
+ 	  PARA {
+	       "We use the class ", TT "M", " introduced above, and installe a method for ", TT "new M", " that returns an empty list of class ", TT "M", ",
+	       and we use it in the next subsection."
+ 	       },
+ 	  EXAMPLE lines ///
+	       new M := (M') -> {}
+ 	       ///
 	  ),
      SYNOPSIS (
-	  -- TT "new A", " -- makes a new instance ", TT "n", " 
-	  -- of class ", TT "A", ".", BR{},
 	  Heading => "new",
 	  Usage => "new A",
 	  Inputs => {},
 	  Consequences => {},
-	  Outputs => {},
--- 	  PARA {
--- 	       },
--- 	  EXAMPLE lines ///
--- 	  ///
+	  Outputs => {
+	       { "a new object of class ", TT "A", "" }
+	       },
+ 	  PARA {
+	       "We use the method for ", TT "new M", " installed above."
+ 	       },
+ 	  EXAMPLE lines ///
+	       new M
+ 	  ///
 	  ),
 
      SUBSECTION "the old documentation",

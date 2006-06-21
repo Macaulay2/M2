@@ -126,7 +126,12 @@ part(List,RingElement) := RingElement => (d,f) -> (
 
 Ring _ ZZ := RingElement => (R,i) -> (generators R)#i
 
-EngineRing _ ZZ := (R,i) -> new R from R.RawRing_i
+protect numallvars
+
+EngineRing _ ZZ := (R,i) -> (
+     if i < 0 or R.?numallvars and i >= R.numallvars then error("index ", toString i, " out of bounds 0 .. ", toString (R.numallvars-1));
+     new R from R.RawRing_i
+     )
 
 size RingElement := f -> rawTermCount(numgens ring f, f.RawRingElement)
 

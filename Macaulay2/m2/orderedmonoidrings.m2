@@ -58,6 +58,7 @@ degreesRing ZZ := PolynomialRing => memoize(
 	       ZZn = new PolynomialRing from rawPolynomialRing();
 	       ZZn.basering = ZZ;
 	       ZZn.flatmonoid = ZZn.monoid = monoid[];
+	       ZZn.numallvars = 0;
 	       ZZn.baseRings = {ZZ};
 	       ZZn)
 	  else (
@@ -126,13 +127,12 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  if not M.?RawMonoid then error "expected ordered monoid handled by the engine";
 	  if not R.?RawRing then error "expected coefficient ring handled by the engine";
      	  num := numgens M;
-	  (basering,flatmonoid) := (
-	       if R.?isBasic then (R,M)
-	       else if R.?basering and R.?flatmonoid then (R.basering, tensor(M, R.flatmonoid, Degrees => degrees M | degrees R.flatmonoid))
-	       else if instance(R,FractionField) then (R,M)
+	  (basering,flatmonoid,numallvars) := (
+	       if R.?isBasic then (R,M,num)
+	       else if R.?basering and R.?flatmonoid then (R.basering, tensor(M, R.flatmonoid, Degrees => degrees M | degrees R.flatmonoid), num + R.numallvars)
+	       else if instance(R,FractionField) then (R,M,num)
 	       else error "internal error: expected coefficient ring to have a base ring and a flat monoid"
 	       );
-	  local basering; local flatmonoid;
 	  quotfix := rawRM -> if class R === QuotientRing and class ultimate(ambient,R) === PolynomialRing then rawQuotientRing(rawRM, raw R) else rawRM;
 	  Weyl := M.Options.WeylAlgebra =!= {};
 	  skews := M.Options.SkewCommutative;
@@ -204,6 +204,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       );
 	  RM.basering = basering;
 	  RM.flatmonoid = flatmonoid;
+	  RM.numallvars = numallvars;
 	  RM.baseRings = append(R.baseRings,R);
 	  RM.monoid = M;
 	  RM.Adjust = (options M).Adjust;
