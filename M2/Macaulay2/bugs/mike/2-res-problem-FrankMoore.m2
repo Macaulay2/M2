@@ -28,11 +28,5 @@ S = R/K
 gbTrace = 3
 res coker vars S
 
---- other problem
-R = ZZ/101[x,y,z,w]/ideal{x*y-z*w}
---- returns 2(incorrect)
-(2_R)^(-1)
---- returns -50 (correct)
-lift(1_R/2_R,R)
 
 --- Thanks!

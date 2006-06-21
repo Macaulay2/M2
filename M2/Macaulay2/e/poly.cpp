@@ -143,14 +143,15 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
       return 0;
     }
   VECTOR(Nterm *) elems;
-  for (int i=0; i<R->n_quotients(); i++)
-    elems.push_back(R->quotient_element(i));
 
   for (int i=0; i<M->n_cols(); i++)
     {
       Nterm *f = R->numerator(M->elem(0,i));
       elems.push_back(f);
     }
+
+  for (int i=0; i<R->n_quotients(); i++)
+    elems.push_back(R->quotient_element(i));
 
   return create_quotient(R->getAmbientRing(),elems);
 }
