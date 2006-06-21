@@ -261,40 +261,106 @@ document {
 	  ///,
      SeeAlso => {(symbol _, Ring , ZZ), (symbol _, Ring, String)}
      }
-end
+document { 
+     Key => {
+	  (symbol _, ChainComplex, ZZ),     -- component
+	  (symbol _, GradedModule, ZZ)},     -- component
+     Headline => "component",
+     Usage => "C_i",
+     Inputs => {
+	  "C" => {"or ", ofClass GradedModule},
+	  "i"
+	  },
+     Outputs => {
+	  Module => { "the ", TT "i", "-th component of ", TT "C"}
+	       },
+     EXAMPLE lines ///
+     	  R = QQ[x,y,z]/(x^3,y^3,z^3,x*y*z);
+	  C = res(coker vars R, LengthLimit=>8)
+     	  rank C_7
+	  C.dd_3
+	  ///,
+     SUBSECTION "Programming hint",
+	  "The chain complex ", TT "C", " is implemented as a hash table, 
+	  but since the computation of a projective resolution 
+	  can be stopped prematurely, Macaulay 2 doesn't bother
+	  populating the hash table with the relevant free modules 
+	  until explicitly requested by the user, for example, in response to the
+	  command ", TT "C_i", " described above.  The hash table ", 
+	  TT "C", " can be examined directly with code like ", TT "C#i", ", but in order to populate 
+	  the hash table completely, use ", TO (complete, ChainComplex), ".",
+     SeeAlso => {resolution,
+	  (symbol ^, ChainComplex, ZZ),
+	  (symbol _, ChainComplexMap, ZZ)}
+     }
+
+document {
+     Key => {(symbol _, ChainComplexMap, ZZ),
+	  (symbol _, GradedModuleMap, ZZ)},
+     Headline => "component map",
+     Usage => "p_i",
+     Inputs => {
+	  "p" => ("a map ", TT "D", " <- ", TT "C", " of chain complexes, of degree ", TT "d", ", say"),
+	  "i"
+	  },
+     Outputs => { Matrix => {"the component ", TT "D_(i+d) <- C_i"} },
+     EXAMPLE lines ///
+	  R = ZZ/101[a..c];
+	  I = image vars R
+	  J = image symmetricPower (2,vars R)
+	  g = extend( resolution (R^1/I), resolution (R^1/J), id_(R^1))
+	  g_1
+	  g_2
+	  ///,
+     "The map ", TT "p", " may also be ", ofClass GradedModuleMap, ".",
+     SeeAlso => { (symbol _, ChainComplex, ZZ), extend, resolution, image, vars, symmetricPower }
+     }
 
 document { 
-     Key => {},
+     Key => {"generators of ideals and modules",
+	  (symbol _, Ideal, ZZ),
+	  (symbol _, MonomialIdeal, ZZ),
+	  (symbol _, Module, ZZ)},
      Headline => "",
-     Usage => "",
-     Inputs => {
+     SYNOPSIS {
+	  Heading => "Synopsis",
+     	  Usage => "L_i",
+     	  Inputs => {
+	       "L" => ofClass{Ideal,MonomialIdeal,Module},
+	       "i" => ZZ
+	       },
+     	  Outputs => {
+	       {ofClass{RingElement,Vector}, " the ", TT "i", "-th generator of ", TT "L"}
+	       },
 	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE lines ///
+     	  "As usual in Macaulay2, the first generator has index zero.",
+	  PARA{},
+     	  EXAMPLE lines ///
+	       R = QQ[a..d];
+	       I = ideal(a^3, b^3-c^3, a^4, a*c);
+	       numgens I
+	       I_0, I_2
 	  ///,
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => {},
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE lines ///
+	  PARA{},
+	  "Notice that the generators are the ones provided.  Alternatively we can
+	  minimalize the set of generators.",
+	  EXAMPLE lines ///
+	       J = trim I
+	       J_0
 	  ///,
-     Caveat => {},
-     SeeAlso => {}
+	  PARA{},
+	  "Elements of modules are useful for producing submodules or quotients.",
+	  EXAMPLE lines ///
+	       M = cokernel matrix{{a,b},{c,d}}
+	       M_0
+	       M/M_0
+	       N = M/(a*M + R*M_0)
+     	       N_0 == 0_N
+	       ///,
+     	  Caveat => {"Fewer methods exist for manipulating vectors than other types, such as modules and matrices"},
+     	  SeeAlso => {"_"}
      }
+end
 document { 
      Key => {},
      Headline => "",
@@ -373,33 +439,8 @@ document {
 	  "rank C_2",
 	  "degrees C_2"
 	  },
-     SUBSECTION "Programming hint",
-	  "The chain complex ", TT "C", " is implemented as a hash table, but since the computation of a projective resolution can be stopped prematurely, Macaulay 2 doesn't bother
-	  populating the hash table with the relevant free modules until explicitly requested by the user, for example, in response to the
-	  command ", TT "C_i", " described above.  The hash table ", TT "C", " can be examined directly with code like ", TT "C#i", ", but in order to populate 
-	  the hash table completely, use ", TO (complete, ChainComplex), ".",
-     SeeAlso => {res}
      }
 
-document {
-     Key => (symbol _, ChainComplexMap, ZZ),
-     Headline => "get component of chain map",
-     Usage => "p_i",
-     Inputs => {
-	  "p" => ("a map ", TT "D", " <- ", TT "C", " of chain complexes, of degree ", TT "d", ", say"),
-	  "i" => ()
-	  },
-     Outputs => { ("the component ", TT "D_(i+d) <- C_i" ) },
-     EXAMPLE {
-	  "R = ZZ/101[a..c]",
-	  "I = image vars R",
-	  "J = image symmetricPower (2,vars R)",
-	  "g = extend( resolution (R^1/I), resolution (R^1/J), id_(R^1))",
-	  "g_1",
-	  "g_2"
-	  },
-     SeeAlso => { (symbol _, ChainComplex, ZZ), extend, resolution, image, vars, symmetricPower }
-     }
 
 document {
      Key => (symbol _,Function,Thing),
@@ -578,15 +619,6 @@ document {
 (symbol _, Symbol, Ring),         -- ring variable
 
 -- Another page
-(symbol _, Ideal, ZZ),            -- generator
-(symbol _, MonomialIdeal, ZZ),      -- generator
-(symbol _, Module, ZZ),           -- generator
-
--- A page
-(symbol _, ChainComplex, ZZ),     -- component
-(symbol _, GradedModule, ZZ),     -- component
-(symbol _, ChainComplexMap, ZZ),  -- component
-(symbol _, GradedModuleMap, ZZ),  -- component
 
 -- A page (or ScriptedFunctor)
 (symbol _, ScriptedFunctor, Thing),

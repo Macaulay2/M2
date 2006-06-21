@@ -63,7 +63,7 @@ QRingInfo_field::QRingInfo_field(const PolyRing *ambientR,
 	  R->getMonoid()->to_varpower(f->monom, vp);
 	  Bag *b = new Bag(index, vp);
 	  Rideal->insert(b);
-	  ringtable->insert(exp, 1, i); // consumes exp
+	  ringtable->insert(exp, 1, index); // consumes exp
 	  exp = newarray(int,R->n_vars());
 	}
     }
