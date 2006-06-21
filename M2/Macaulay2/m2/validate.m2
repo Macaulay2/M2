@@ -11,7 +11,7 @@ oops := x -> (haderror = true; x)
 
 
 validate2 = method()					    -- check extra requirements, such as having at least one element, and the order of the elements
-validate2 MarkUpList := x -> null
+validate2 Hypertext := x -> null
 validate2 HTML := x -> (
      if not x#?0 or not class x#0 === HEAD then oops stderr << "--warning: first element of HTML must be HEAD" << endl;
      if not x#?1 or not class x#1 === BODY then oops stderr << "--warning: second element of HTML must be BODY" << endl;
@@ -48,7 +48,7 @@ validate CDATA := x -> (
 validate LITERAL := validate TEX := x -> (
      -- don't know what to do here yet...
      )
-validate MarkUpList := x -> (
+validate Hypertext := x -> (
      p := class x;
      if p.?qname then (
 	  n := p.qname;

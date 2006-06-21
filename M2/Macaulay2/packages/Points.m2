@@ -19,7 +19,7 @@ export {
      }
 
 
-debug Macaulay2Core
+debug Core
 points = method()
 pointsByIntersection = method()
 pointsMat = method()

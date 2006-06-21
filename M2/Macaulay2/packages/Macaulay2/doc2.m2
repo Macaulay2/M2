@@ -606,7 +606,7 @@ document {
      }
 
 document {
-     Key => symbol <-,
+     Key => {symbol <-, (symbol <-, IndexedVariable)},
      Headline => "assignment with left side evaluated",
      SYNOPSIS (
 	  Heading => "assignment to symbols",
@@ -679,11 +679,38 @@ document {
 	       "foo" | "foo" <- "bar"
 	  ///,
 	  ),
+     SYNOPSIS (
+	  Heading => "assignment to an indexed variable",
+	  Usage => "x <- e",
+	  Inputs => {
+	       "x" => IndexedVariable,
+	       "e" => Thing
+	       },
+	  Consequences => {
+	       { "assuming the value of ", TT "x", " is ", ofClass IndexedVariable, ", the value of e is assigned to it, so that future references to 
+		    ", TT "value x", " or to ", TT "s_i", ", if that's what the value of ", TT "x", " is, yield ", TT "e", ".
+		    Moreover, the value of ", TT "s", " is set to ", TT "s", "."
+		    }
+	       },
+	  Outputs => {
+	       { "the value of the expression is the value returned by the previously installed method" }
+	       },
+	  PARA { "This assignment method is pre-installed." },
+	  EXAMPLE lines ///
+	       u = s_4
+	       s = 3
+	       u <- 555
+	       s
+	       s_4
+	       u
+	       value u
+	  ///,
+	  ),
      SeeAlso => {"=", ":=", (symbol <-, IndexedVariable)}
      }
 
 document {
-     Key => "=",
+     Key => symbol =,
      Headline => "assignment",
      PARA {
      	  "In this section we'll discuss simple assignment to variables, multiple assignment, assignment to parts of objects, assignment covered by various other methods, and 
@@ -850,7 +877,8 @@ document {
 	       },
 	  Consequences => {
 	       { "The ", TO2{IndexedVariable, "indexed variable"}, " ", TT { "x", SUB "i" }, " is created (if necessary) and is assigned the value ", TT "e", " so that future
-		    references to ", TT "x_i", " yield the value ", TT "e", "."
+		    references to ", TT "x_i", " yield the value ", TT "e", ".
+		    Moreover, the value of the symbol ", TT "x", " is set to ", TT "x", "."
 		    }
 	       },
 	  Outputs => { "e" },
@@ -1308,38 +1336,6 @@ document {
      list indicates an error for that process id, and a value of -2 in the list
      indicates that the process is still running."
      }
-
-undocumented {
-	  (value, Minus),
-	  (value, NonAssociativeProduct),
-	  (value, Equation),
-	  (value, Nothing),
-	  (value, BinaryOperation),
-	  (value, SparseVectorExpression),
-	  (value, Divide),
-	  (value, FunctionApplication),
-	  (value, Power),
-	  (value, ZeroExpression),
-	  (value, Subscript),
-	  (value, SparseMonomialVectorExpression),
-	  (value, OneExpression),
-	  (value, Superscript),
-	  (value, Sum),
-	  (value, RingElement),
-	  (value, MatrixExpression),
-	  (value, IndexedVariable),
-	  (value, Table),
-	  (value, Sequence),
-	  (value, Product),
-	  (value, Adjacent),
-	  (value, Holder),
-	  (value, ZZ),
-	  (value, QQ),
-	  (value, RRR),
-	  (value, CCC),
-	  (value, RR),
-	  (value, CC)
-	  }
 
 document {
      Key => value,

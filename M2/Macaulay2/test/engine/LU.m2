@@ -64,11 +64,11 @@ assert(0 == (permutationMatrix P) * (matrix L) * (matrix U) - m )
 
 print "rawFFLU seems to be non-functional? next part commented out"
 ///
-debug Macaulay2Core
+debug Core
 rawFFLU raw m1
 m1
 
-debug Macaulay2Core
+debug Core
 R = ZZ
 m = matrix(R, {{1,2,3,4,5},
 	  {2,3,4,5,1},

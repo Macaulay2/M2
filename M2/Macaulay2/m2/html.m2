@@ -543,7 +543,7 @@ installPackage Package := opts -> pkg -> (
 
      excludes := Exclude => {"^CVS$", "^\\.svn$"};
 
-     if pkg === Macaulay2Core then (
+     if pkg === Core then (
 	  ) else (
      	  
 	  -- copy package source subdirectory
@@ -806,7 +806,7 @@ installPackage Package := opts -> pkg -> (
 	  stderr << "--assembling table of contents" << endl;
 	  assembleTree(pkg,getPrimary \ select(nodes,tag -> not isUndocumented tag)); -- sets tableOfContents
 	  -- if chkdoc then stderr << "+++++" << endl << "table of contents, in tree form:" << endl << tableOfContents << endl << "+++++" << endl;
-	  pkg#"table of contents" = new Bag from {tableOfContents}; -- we bag it because it might be big!
+	  pkg#"table of contents" = Bag {tableOfContents}; -- we bag it because it might be big!
 	  pkg#"links up" = UP;
 	  pkg#"links next" = NEXT;
 	  pkg#"links prev" = PREV;
@@ -816,7 +816,7 @@ installPackage Package := opts -> pkg -> (
 	       seenit = new MutableHashTable;
 	       hadDocumentationWarning = false;
 	       numDocumentationWarnings = 0;
-	       scan((if pkg#"title" == "Macaulay2" then Macaulay2Core else pkg)#"exported symbols", s -> (
+	       scan((if pkg#"title" == "Macaulay2" then Core else pkg)#"exported symbols", s -> (
 			 tag := makeDocumentTag s;
 			 if not isUndocumented tag and not hasDocumentation s and signalDocError tag then stderr << "--warning: symbol has no documentation: " << tag << endl;
 			 f := value s;
@@ -1174,7 +1174,7 @@ show URL := x -> (
      )
 
 fix := fn -> "file://" | replace(" ","%20",fn) 		    -- might want to replace more characters
-showHtml = show MarkUpList := x -> (
+showHtml = show Hypertext := x -> (
      fn := temporaryFileName() | ".html";
      fn << html HTML {
 	  HEAD {

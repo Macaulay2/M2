@@ -75,7 +75,7 @@ degreesRing Ring := R -> error "no degreesRing for this ring"
 
 generators PolynomialRing := R -> R.generators
 coefficientRing PolynomialRing := Ring => R -> last R.baseRings
-allGenerators PolynomialRing := R -> join(generators R, apply(allGenerators coefficientRing R, a -> a * 1_R))
+allGenerators PolynomialRing := (stashValue symbol allGenerators) (R -> join(generators R, apply(allGenerators coefficientRing R, a -> a * 1_R)))
 isHomogeneous PolynomialRing := R -> (
      k := coefficientRing R;
      isField k or isHomogeneous k)
@@ -122,6 +122,11 @@ monoidIndices := (M,vars) -> apply(vars, x -> if class x === ZZ then x else (
 protect diffs0						    -- private keys for storing info about indices of WeylAlgebra variables
 protect diffs1
 
+protect indexStrings
+protect generatorSymbols
+protect generatorExpressions
+protect indexSymbols
+
 Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      (R,M) -> (
 	  if not M.?RawMonoid then error "expected ordered monoid handled by the engine";
@@ -133,6 +138,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       else if instance(R,FractionField) then (R,M,num)
 	       else error "internal error: expected coefficient ring to have a base ring and a flat monoid"
 	       );
+     	  local RM;
 	  quotfix := rawRM -> if class R === QuotientRing and class ultimate(ambient,R) === PolynomialRing then rawQuotientRing(rawRM, raw R) else rawRM;
 	  Weyl := M.Options.WeylAlgebra =!= {};
 	  skews := M.Options.SkewCommutative;
@@ -141,7 +147,6 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  coeffOptions := options R;
 	  coeffWeyl := coeffOptions =!= null and coeffOptions.WeylAlgebra =!= {};
 	  coeffSkew := coeffOptions =!= null and coeffOptions.SkewCommutative =!= {};
-     	  local RM;
 	  if Weyl or coeffWeyl then (
 	       if Weyl and R.?SkewCommutative then error "coefficient ring has skew commuting variables";
 	       diffs := M.Options.WeylAlgebra;
@@ -200,7 +205,9 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       if #skews > 0 then RM.SkewCommutative = skews;
 	       )
 	  else (
-	       RM = new PolynomialRing from quotfix rawPolynomialRing(raw basering, raw flatmonoid);
+	       log := FunctionApplication {rawPolynomialRing, (raw basering, raw flatmonoid)};
+	       RM = new PolynomialRing from quotfix value log;
+	       RM#"raw creation log" = Bag {log};
 	       );
 	  RM.basering = basering;
 	  RM.flatmonoid = flatmonoid;
@@ -268,16 +275,12 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       );
 	  RM.generatorSymbols = M.generatorSymbols;
 	  RM.generatorExpressions = M.generatorExpressions;
-	  RM.generators = apply(# M.generators, i -> RM#(toString M.generators#i) = RM_i);
-	  gt := apply(RM.generatorSymbols, RM.generators, (v,x) -> v => x);
-	  RM.generatorsTable = (
-	       if R.?generatorsTable 
-	       then hashTable join(
-		    apply(pairs M.generatorsTable, (v,x) -> v => new RM from rawTerm(RM.RawRing, (1_R).RawRingElement, x.RawMonomial)),
-		    gt)
-	       else hashTable gt
+	  RM.generators = apply(num, i -> RM_i);
+	  RM.indexSymbols = new HashTable from join(
+	       if R.?indexSymbols then apply(pairs R.indexSymbols, (nm,x) -> nm => new RM from rawPromote(raw RM,raw x)) else {},
+	       apply(num, i -> M.generatorSymbols#i => RM_i)
 	       );
-	  scan(keys R, k -> if class k === String then RM#k = new RM from rawPromote(raw RM, raw R#k));
+     	  RM.indexStrings = applyKeys(RM.indexSymbols, toString);
 	  RM.use = x -> (
 	       M + M := (m,n) -> R#1 * m + R#1 * n;
 	       M - M := (m,n) -> R#1 * m - R#1 * n;

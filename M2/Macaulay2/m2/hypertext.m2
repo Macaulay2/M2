@@ -48,15 +48,15 @@ scan((
 	  (texMath,concatenate),
 	  (mathML,concatenate)
 	  ),
-     (op,joiner) -> op MarkUpList := x -> joiner apply(noopts x,op))
+     (op,joiner) -> op Hypertext := x -> joiner apply(noopts x,op))
 
 -- defop := (joiner,op) -> x -> joiner apply(x,op)
--- info MarkUpList := defop(horizontalJoin,info)
--- net MarkUpList := defop(horizontalJoin,net)
--- html MarkUpList := defop(concatenate,html)
--- tex MarkUpList := defop(concatenate,tex)
--- texMath MarkUpList := defop(concatenate,texMath)
--- mathML MarkUpList := defop(concatenate,mathML)
+-- info Hypertext := defop(horizontalJoin,info)
+-- net Hypertext := defop(horizontalJoin,net)
+-- html Hypertext := defop(concatenate,html)
+-- tex Hypertext := defop(concatenate,tex)
+-- texMath Hypertext := defop(concatenate,texMath)
+-- mathML Hypertext := defop(concatenate,mathML)
 
 info TITLE := net TITLE := x -> ""
 
@@ -139,12 +139,12 @@ scan( ((net,net'), (info,info')), (f,f') -> (
 	  f' Option := o -> ();
 	  f' String := identity;
 	  f' BR := br -> ("", BK);
-	  f' MarkUpList := f;
-	  f' MarkUpListParagraph := x -> (SP, f x, SP);
+	  f' Hypertext := f;
+	  f' HypertextParagraph := x -> (SP, f x, SP);
 	  f' UL := x -> (BK, f x, BK);
-	  f' MarkUpListContainer := x -> (BK, apply(toSequence x, f'), BK);
+	  f' HypertextContainer := x -> (BK, apply(toSequence x, f'), BK);
      	  f' Thing := x -> error("no hypertext conversion method for: ",toString x," of class ",toString class x);
-	  f MarkUpListContainer := x -> (
+	  f HypertextContainer := x -> (
 	       x = deepSplice f' x;
 	       n := 0;
 	       while x#?n and (x#n === SP or x#n === BK) do n = n+1;

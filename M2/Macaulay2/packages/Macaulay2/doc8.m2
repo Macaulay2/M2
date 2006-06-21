@@ -832,7 +832,7 @@ assert( f*g == 1 )
 assert( g*f == 1 )
 assert isWellDefined f
 assert isWellDefined g
-assert not isWellDefined map(R^1,cokernel matrix {{a}})
+assert not isWellDefined inducedMap(R^1,cokernel matrix {{a}},Verify => false)
 "
 
 document {

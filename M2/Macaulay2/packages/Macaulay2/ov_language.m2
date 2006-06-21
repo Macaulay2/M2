@@ -805,7 +805,7 @@ document {
 	  }
      }
 
-debug Macaulay2Core
+debug Core
 
 document {
      Key => "operators",
@@ -892,8 +892,9 @@ document {
 	  TO symbol => ,
           TO symbol , ,
           TO symbol ;,
-     "precedence",
-          TO "precedence of operators"
+     "further information",
+          TO "precedence of operators",
+	  TO "operatorAttributes"
 	  }
      }
 
@@ -916,10 +917,12 @@ document {
 	  parsed as though it had been written as ", TT "2+(3*5)", ".  The symbol ", TO "SPACE", " represents the operator that is used when
 	  two things are adjacent in program code."
 	  },
-     TABLE { "class" => "examples",  TR TD PRE net (value Macaulay2Core#"private dictionary"#"seeOperatorPrecedence")() }
+     TABLE { "class" => "examples",  TR TD PRE net (value Core#"private dictionary"#"seeOperatorPrecedence")() }
      }
 
-dictionaryPath = select(dictionaryPath, d -> d =!= Macaulay2Core#"private dictionary")
+sp := seeParsing()
+
+dictionaryPath = select(dictionaryPath, d -> d =!= Core#"private dictionary")
 
 document {
      Key => "parsing precedence, in detail",
@@ -930,7 +933,7 @@ document {
      "Parsing is determined by a triple of numbers attached to each token.
      The following table (produced by the command ", TO "seeParsing", "), 
      displays each of these numbers.",
-     EXAMPLE "seeParsing()",
+     TABLE { "class" => "examples", TR TD PRE { toString net sp} },
      "Here is the way these numbers work.  The parser maintains a number
      which called the current parsing level, or simply, the level.
      The parser builds up an expression until it encounters an input token

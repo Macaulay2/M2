@@ -755,7 +755,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (html,MarkUpList),
+     Key => (html,Hypertext),
      Headline => "",
      Usage => "",
      Inputs => {

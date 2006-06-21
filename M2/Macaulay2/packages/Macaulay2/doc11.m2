@@ -3,7 +3,7 @@
 -- html.m2 documentation
 -- Bart Snapp edited nearly all of these entries.
 document {
-     Key => MarkUpListContainer,
+     Key => HypertextContainer,
      Headline => "the class of mark-up lists that can contain paragraphs",
      PARA {
 	  "Mark-up lists of this time get special handling when converted to nets by ", TO "net", ", because
@@ -11,13 +11,13 @@ document {
 	  }
      }
 document {
-     Key => MarkUpList, 
+     Key => Hypertext, 
      Headline => "the class of mark-up lists used with hypertext",
      PARA{},
      "Intended for internal use only."
      }
 document {
-     Key => MarkUpListParagraph,
+     Key => HypertextParagraph,
      Headline => "the class of mark-up lists that constitute separate paragraphs",
      PARA "Intended for internal use only."
      }
@@ -57,6 +57,37 @@ document {
      Headline => "a hypertext division",
      Usage => "DIV x",
      "This corresponds directly to an HTML DIV element.  It is sort of a general-purpose container for top-level blocks, such as paragraphs, lists, and tables."
+     }
+
+document {
+     Key => META,
+     Headline => "a hypertext META element",
+     Usage => "META x",
+     "This corresponds directly to an html META element.",
+     EXAMPLE ///html META { "name" => "description",  "content" => "Dan Grayson's home page." }///
+     }
+
+document {
+     Key => LINK,
+     Headline => "a hypertext LINK element",
+     Usage => "LINK x",
+     "This corresponds directly to an html LINK element.",
+     EXAMPLE ///html LINK { "title" => "Macaulay2", "rel" => "Top", "href" => "index.html" }///
+     }
+
+document {
+     Key => LATER,
+     Headline => "a hypertext element for lazy evaluation",
+     Usage => "LATER {f}",
+     Inputs => { "f" => Function },
+     Outputs => { LATER },
+     "When the resulting hypertext element is processed later for conversion to html or for printing, the function f will be evaluated (with no
+     arguments) and the hypertext it returns will be formatted.",
+     EXAMPLE lines ///
+     	  f = () -> DIV { "hi there" }
+	  LATER {f}
+	  peek oo
+	  ///
      }
 
 document {

@@ -26,7 +26,7 @@ export{
      RealRR
      }
 
-debug Macaulay2Core
+debug Core
 
 ---------------------------------------------------
 dot = (m,i,j) -> (

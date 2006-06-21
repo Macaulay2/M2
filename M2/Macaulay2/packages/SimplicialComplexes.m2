@@ -26,7 +26,7 @@ complement = (m) -> (
      F := matrix{{product gens A}};
      contract(m,F))
 
-debug Macaulay2Core; -- for rawKoszulMonomials
+debug Core; -- for rawKoszulMonomials
 
 SimplicialComplex = new Type of HashTable
 

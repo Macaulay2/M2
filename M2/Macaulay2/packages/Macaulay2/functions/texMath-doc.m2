@@ -19,7 +19,7 @@ undocumented {
 	(texMath, Expression),
 	(texMath, Sum),
 	(texMath, Symbol),
-	(texMath, MarkUpList),
+	(texMath, Hypertext),
 	(texMath, SUB),
 	(texMath, SUP),
 	(texMath, Net),

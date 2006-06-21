@@ -891,19 +891,19 @@ compositions(ZZ,ZZ) := (n,k) -> (
      result);
 
 eagonNorthcott = method()
-eagonNorthcott = M -> (
+eagonNorthcott Matrix := f -> (
      -- code is by GREG SMITH, but is experimental, and 
      -- should be replaced by engine code
-     R := ring M;
-     m := rank source M;
-     n := rank target M;
-     time B := hashTable apply(toList(1..m-n+1), 
+     R := ring f;
+     m := rank source f;
+     n := rank target f;
+     B := hashTable apply(toList(1..m-n+2), 
      	  i -> {i, flatten table(subsets(m,n+i-1), compositions(n,i-1), 
 	       	    (p,q) -> {p,q})});
-     d1 := map(R^1, R^{#B#1:-n}, matrix {apply(B#1, r -> determinant M_(r#0))});
-     d := {d1} | apply(toList(2..m-n+1), i -> time (
+     d1 := map(R^1, R^{#B#1:-n}, matrix {apply(B#1, r -> determinant f_(r#0))});
+     d := {d1} | apply(toList(2..m-n+2), i -> (
 	       map(R^{#B#(i-1):-n-i+2}, R^{#B#i:-n-i+1}, 
-	       matrix table(B#(i-1), B#i, 
+	       matrix_R table(B#(i-1), B#i, 
 		    (p,q) -> if not isSubset(p#0,q#0) then 0_R
 		    else (
 			 vec := q#1 - p#1;
@@ -912,7 +912,7 @@ eagonNorthcott = M -> (
 			      s := first select(toList(0..#q#0-1), 
 				   l -> not member(q#0#l, p#0));
       	       		      t := first select(toList(0..n-1), l -> vec#l == 1);
-	       		      (-1)^(s+1)*M_(t,q#0#s)))))));
+	       		      (-1)^(s+1)*f_(t,q#0#s)))))));
      chainComplex d);
 
 -- Local Variables:

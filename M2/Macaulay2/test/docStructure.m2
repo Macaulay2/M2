@@ -29,7 +29,7 @@ reach3 = method(SingleArgumentDispatch=>true)
 
 reach1 Thing := identity
 reach1 Sequence :=
-reach1 MarkUpList := x -> scan(x,reach1)
+reach1 Hypertext := x -> scan(x,reach1)
 reach1 TO := identity
 reach1 TOH := identity
 reach1 UL := x -> scan(x,reach2)

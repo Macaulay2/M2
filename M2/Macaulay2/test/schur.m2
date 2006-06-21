@@ -18,7 +18,7 @@ assert(g == g1)
 
 needsPackage "SchurRings"
 debug SchurRings
-debug Macaulay2Core
+debug Core
 B = schurRing(s, 7)
 f = s_{3,3,2,1,0}
 s1 = rawmonom2schur rawLeadMonomialR f

@@ -4,14 +4,14 @@
 -- html input
 -----------------------------------------------------------------------------
 
-MarkUpList = new Type of BasicList
-MarkUpList.synonym = "mark-up list"
+Hypertext = new Type of BasicList
+Hypertext.synonym = "mark-up list"
 
-MarkUpListParagraph = new Type of MarkUpList		    -- one of these will be a paragraph
-MarkUpListParagraph.synonym = "mark-up list paragraph"
+HypertextParagraph = new Type of Hypertext		    -- one of these will be a paragraph
+HypertextParagraph.synonym = "mark-up list paragraph"
 
-MarkUpListContainer = new Type of MarkUpListParagraph	    -- one of these may contain paragraphs or containers, and its method for printing has to handle the line breaks
-MarkUpListContainer.synonym = "mark-up list container"
+HypertextContainer = new Type of HypertextParagraph	    -- one of these may contain paragraphs or containers, and its method for printing has to handle the line breaks
+HypertextContainer.synonym = "mark-up list container"
 
      MarkUpType = new Type of SelfInitializingType
 MarkUpType.synonym = "mark-up type"
@@ -27,7 +27,7 @@ MarkUpTypeWithOptions.synonym = "mark-up type with options"
 
 MarkUpType Net := (M,x) -> new M from {toString x}
 MarkUpType String :=
-MarkUpType MarkUpList := (M,x) -> new M from {x}
+MarkUpType Hypertext := (M,x) -> new M from {x}
 
 IntermediateMarkUpType = new Type of MarkUpType	    -- this is for things like MENU, which do not correspond to an html entity, but have a recipe for translation into html
 IntermediateMarkUpType.synonym = "intermediate mark-up type"
@@ -35,8 +35,8 @@ IntermediateMarkUpType.synonym = "intermediate mark-up type"
 makeList := method()
 makeList MarkUpType := X -> toString X
 makeList Type       := X -> concatenate("new ", toString X, " from ")
-toExternalString MarkUpList := s -> concatenate(makeList class s, toExternalString toList s)
-toString         MarkUpList := s -> concatenate(makeList class s, toString         toList s)
+toExternalString Hypertext := s -> concatenate(makeList class s, toExternalString toList s)
+toString         Hypertext := s -> concatenate(makeList class s, toString         toList s)
 
 lower := "abcdefghijklmnopqrstuvwxyz"
 upper := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -96,63 +96,63 @@ trimfront := x -> apply(x, line -> (
 
 new MarkUpType := x -> error "obsolete 'new' method called"
 
-BR         = new MarkUpType of MarkUpList		    -- MarkUpListParagraph?  no, because paragraphs are separated more by browsers
+BR         = new MarkUpType of Hypertext		    -- HypertextParagraph?  no, because paragraphs are separated more by browsers
 br         = BR{}
 
-HR         = new MarkUpType of MarkUpListParagraph
+HR         = new MarkUpType of HypertextParagraph
 hr         = HR{}
 
 new HR from List := 
 new BR from List := (X,x) -> if #x>0 then error "expected empty list" else x
 
-PARA       = withQname_"p" new MarkUpType of MarkUpListParagraph	    -- double spacing inside
+PARA       = withQname_"p" new MarkUpType of HypertextParagraph	    -- double spacing inside
 
-ExampleItem = withQname_"code" new MarkUpType of MarkUpList
+ExampleItem = withQname_"code" new MarkUpType of Hypertext
 EXAMPLE = method(SingleArgumentDispatch => true)
 EXAMPLE VisibleList := x -> TABLE splice { "class" => "examples", apply(nonempty trimfront requirestrings nonnull toSequence x, item -> TR TD ExampleItem item) }
 EXAMPLE String := x -> EXAMPLE {x}
 
-PRE        = new MarkUpType of MarkUpListParagraph
-TITLE      = new MarkUpType of MarkUpListParagraph
-HEAD       = new MarkUpType of MarkUpListParagraph
-BODY       = new MarkUpType of MarkUpListContainer
-IMG	   = withOptions_{"src","alt"} new MarkUpTypeWithOptions of MarkUpList
-HTML       = new MarkUpType of MarkUpList
-HEADER1    = withQname_"h1" new MarkUpType of MarkUpListParagraph
-HEADER2    = withQname_"h2" new MarkUpType of MarkUpListParagraph
-HEADER3    = withQname_"h3" new MarkUpType of MarkUpListParagraph
-HEADER4    = withQname_"h4" new MarkUpType of MarkUpListParagraph
-HEADER5    = withQname_"h5" new MarkUpType of MarkUpListParagraph
-HEADER6    = withQname_"h6" new MarkUpType of MarkUpListParagraph
+PRE        = new MarkUpType of HypertextParagraph
+TITLE      = new MarkUpType of HypertextParagraph
+HEAD       = new MarkUpType of HypertextParagraph
+BODY       = new MarkUpType of HypertextContainer
+IMG	   = withOptions_{"src","alt"} new MarkUpTypeWithOptions of Hypertext
+HTML       = new MarkUpType of Hypertext
+HEADER1    = withQname_"h1" new MarkUpType of HypertextParagraph
+HEADER2    = withQname_"h2" new MarkUpType of HypertextParagraph
+HEADER3    = withQname_"h3" new MarkUpType of HypertextParagraph
+HEADER4    = withQname_"h4" new MarkUpType of HypertextParagraph
+HEADER5    = withQname_"h5" new MarkUpType of HypertextParagraph
+HEADER6    = withQname_"h6" new MarkUpType of HypertextParagraph
 SUBSECTION = HEADER2
-LITERAL    = withQname_"div" new IntermediateMarkUpType of MarkUpList -- fake!!!!! check later
-BLOCKQUOTE = new MarkUpType of MarkUpListContainer
-STRONG     = new MarkUpType of MarkUpList
-SMALL      = new MarkUpType of MarkUpList
-SUB        = new MarkUpType of MarkUpList
-SUP        = new MarkUpType of MarkUpList
-ITALIC     = withQname_"i" new MarkUpType of MarkUpList
-TEX	   = withQname_"#PCDATA" new MarkUpType of MarkUpList -- TEX really needs to be processed further so its output can be checked, too!
-SPAN       = new MarkUpType of MarkUpList
-TT         = new MarkUpType of MarkUpList
-LI         = new MarkUpType of MarkUpListContainer
-EM         = new MarkUpType of MarkUpList
-BOLD       = withQname_"b" new MarkUpType of MarkUpList
-CODE       = new MarkUpType of MarkUpList
-COMMENT    = new MarkUpType of MarkUpList
-CDATA      = new MarkUpType of MarkUpList
-LINK       = withOptions_{"href","rel","title","type"} new MarkUpTypeWithOptions of MarkUpList
-META       = withOptions_{"name","content","http-equiv"} new MarkUpTypeWithOptions of MarkUpList
+LITERAL    = withQname_"div" new IntermediateMarkUpType of Hypertext -- fake!!!!! check later
+BLOCKQUOTE = new MarkUpType of HypertextContainer
+STRONG     = new MarkUpType of Hypertext
+SMALL      = new MarkUpType of Hypertext
+SUB        = new MarkUpType of Hypertext
+SUP        = new MarkUpType of Hypertext
+ITALIC     = withQname_"i" new MarkUpType of Hypertext
+TEX	   = withQname_"#PCDATA" new MarkUpType of Hypertext -- TEX really needs to be processed further so its output can be checked, too!
+SPAN       = new MarkUpType of Hypertext
+TT         = new MarkUpType of Hypertext
+LI         = new MarkUpType of HypertextContainer
+EM         = new MarkUpType of Hypertext
+BOLD       = withQname_"b" new MarkUpType of Hypertext
+CODE       = new MarkUpType of Hypertext
+COMMENT    = new MarkUpType of Hypertext
+CDATA      = new MarkUpType of Hypertext
+LINK       = withOptions_{"href","rel","title","type"} new MarkUpTypeWithOptions of Hypertext
+META       = withOptions_{"name","content","http-equiv"} new MarkUpTypeWithOptions of Hypertext
 
-HREF       = withQname_"a" new IntermediateMarkUpType of MarkUpList
+HREF       = withQname_"a" new IntermediateMarkUpType of Hypertext
 new HREF from List := (HREF,x) -> (
      if #x > 2 or #x == 0 then error "HREF list should have length 1 or 2";
      if class x#0 =!= String then error "HREF expected URL to be a string";
      x)
 
-ANCHOR     = withOptions_{"id"} withQname_"a" new MarkUpTypeWithOptions of MarkUpList
+ANCHOR     = withOptions_{"id"} withQname_"a" new MarkUpTypeWithOptions of Hypertext
 
-UL         = new MarkUpType of MarkUpListParagraph
+UL         = new MarkUpType of HypertextParagraph
 new UL from VisibleList := (UL,x) -> (
      x = nonnull x;
      if #x == 0 then error("empty element of type ", format toString UL, " encountered");
@@ -161,34 +161,34 @@ new UL from VisibleList := (UL,x) -> (
 	       else if class e === LI then e
 	       else LI e)))
 
-DIV        = withOptions_{"class"} new MarkUpTypeWithOptions of MarkUpListContainer
-DIV1       = withOptions_{"class"=>"single"} withQname_"div" new MarkUpTypeWithOptions of MarkUpListContainer -- phase this one out!
+DIV        = withOptions_{"class"} new MarkUpTypeWithOptions of HypertextContainer
+DIV1       = withOptions_{"class"=>"single"} withQname_"div" new MarkUpTypeWithOptions of HypertextContainer -- phase this one out!
 
-LABEL      = withOptions_{"title"} new MarkUpTypeWithOptions of MarkUpList
+LABEL      = withOptions_{"title"} new MarkUpTypeWithOptions of Hypertext
 
-TABLE      = withOptions_{"class"} new MarkUpTypeWithOptions of MarkUpListParagraph
-TR         = new MarkUpType of MarkUpList
-TD         = withOptions_{"valign"} new MarkUpTypeWithOptions of MarkUpListContainer
-ButtonTABLE  = new MarkUpType of MarkUpListParagraph
+TABLE      = withOptions_{"class"} new MarkUpTypeWithOptions of HypertextParagraph
+TR         = new MarkUpType of Hypertext
+TD         = withOptions_{"valign"} new MarkUpTypeWithOptions of HypertextContainer
+ButtonTABLE  = new MarkUpType of HypertextParagraph
 
-TO2        = withQname_"a" new IntermediateMarkUpType of MarkUpList
+TO2        = withQname_"a" new IntermediateMarkUpType of Hypertext
 new TO2 from Sequence := 
 new TO2 from List := (TO2,x) -> { makeDocumentTag x#0, concatenate drop(toSequence x,1) }
 
-TO         = withQname_"a" new IntermediateMarkUpType of MarkUpList
+TO         = withQname_"a" new IntermediateMarkUpType of Hypertext
 new TO from List := (TO,x) -> if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
 
-TOH        = withQname_"span" new IntermediateMarkUpType of MarkUpList
+TOH        = withQname_"span" new IntermediateMarkUpType of Hypertext
 new TOH from List := (TOH,x) -> { makeDocumentTag x#0 }
 
-LATER      = new IntermediateMarkUpType of MarkUpList
+LATER      = new IntermediateMarkUpType of Hypertext
 
-new TO from MarkUpList := 
-new TOH from MarkUpList := x -> error("TO of mark up list '", toString x, "'")
+new TO from Hypertext := 
+new TOH from Hypertext := x -> error("TO of mark up list '", toString x, "'")
 
 new TO from Thing := new TOH from Thing := (TO,x) -> new TO from {x} -- document tags can be sequences or arrays, so keep them intact
 
-MENU       = withQname_"div" new IntermediateMarkUpType of MarkUpListParagraph	            -- like "* Menu:" of "info"
+MENU       = withQname_"div" new IntermediateMarkUpType of HypertextParagraph	            -- like "* Menu:" of "info"
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

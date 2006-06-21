@@ -240,7 +240,7 @@ needs = s -> if not filesLoaded#?s then load s
      
 load "loads.m2"
 
-protect Macaulay2Core.Dictionary
+protect Core.Dictionary
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -23,7 +23,7 @@ undocumented {
     (toExternalString, Option),
     (toExternalString, Symbol),
     (toExternalString, Command),
-    (toExternalString, MarkUpList),
+    (toExternalString, Hypertext),
     (toExternalString, Keyword),
     (toExternalString, PolynomialRing),
     (toExternalString, Net),

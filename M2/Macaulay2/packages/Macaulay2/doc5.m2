@@ -598,7 +598,7 @@ document {
 	       " so its non-exported symbols are visible" }
 	  },
      "For example, the private dictionary for Macaulay 2 may be opened using",
-     EXAMPLE"debug Macaulay2Core",
+     EXAMPLE"debug Core",
      "This allows access to the low level (\"raw\") routines implemented by the Macaulay 2 engine,
      although this is mainly useful for debugging Macaulay 2 itself.",
      EXAMPLE {
@@ -620,8 +620,8 @@ document {
      "A dictionary is a special sort of hash table whose keys are the strings, and whose values are the
      corresponding symbols.",
      EXAMPLE {
-	  "Macaulay2Core.Dictionary # \"sin\"",
-	  "Macaulay2Core.Dictionary #? \"sin\""
+	  "Core.Dictionary # \"sin\"",
+	  "Core.Dictionary #? \"sin\""
 	  }
      }
 

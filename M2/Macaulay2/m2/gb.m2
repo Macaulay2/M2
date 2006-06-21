@@ -142,21 +142,6 @@ newGB := (f,type,opts) -> (
      f.cache#type = G;			  -- do this last, in case of an interrupt
      G)
 
-setStopGB := (G,opts) -> (
-     rawGBSetStop (G.RawComputation,
-	  opts.StopBeforeComputation,
-	  opts.DegreeLimit =!= stoppingOptionDefaults.DegreeLimit,
-	  if opts.DegreeLimit =!= stoppingOptionDefaults.DegreeLimit then checkListOfIntegers opts.DegreeLimit else {},
-     	  toEngineNat opts.BasisElementLimit,
-     	  toEngineNat opts.SyzygyLimit,
-     	  toEngineNat opts.PairLimit,
-     	  toEngineNat opts.CodimensionLimit,
-     	  toEngineNat opts.SubringLimit,
-     	  toEngineNat opts.StopWithMinimalGenerators,
-	  {}						    -- not used, just for resolutions
-	  );
-     )
-
 checkArgGB := f -> (
      R := ring target f;
      if ring source f =!= R then error "expected module map with source and target over the same ring";
@@ -174,7 +159,21 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
      type := gbTypeCode opts;
      G := elseSomething( gbGetSuitable(f,type), () -> newGB(f,type,opts) );
      ifSomething( gbGetHilbertHint(f,opts), hil -> rawGBSetHilbertFunction(G.RawComputation,raw hil) );
-     setStopGB(G,opts);
+     log := FunctionApplication { rawGBSetStop, (
+	       G.RawComputation,
+	       opts.StopBeforeComputation,
+	       opts.DegreeLimit =!= stoppingOptionDefaults.DegreeLimit,
+	       if opts.DegreeLimit =!= stoppingOptionDefaults.DegreeLimit then checkListOfIntegers opts.DegreeLimit else {},
+	       toEngineNat opts.BasisElementLimit,
+	       toEngineNat opts.SyzygyLimit,
+	       toEngineNat opts.PairLimit,
+	       toEngineNat opts.CodimensionLimit,
+	       toEngineNat opts.SubringLimit,
+	       toEngineNat opts.StopWithMinimalGenerators,
+	       {}						    -- not used, just for resolutions
+	       )};
+     G#"rawGBSetStop log" = log;
+     value log;
      recordOptions(G,opts);
      rawStartComputation G.RawComputation;
      f.cache#type = G;

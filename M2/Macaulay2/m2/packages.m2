@@ -84,7 +84,7 @@ newPackage(String) := opts -> (title) -> (
      saveD := dictionaryPath;
      saveP := loadedPackages;
      local hook;
-     if title =!= "Macaulay2Core" then (
+     if title =!= "Core" then (
      	  hook = (
 	       haderror -> if haderror then (
 	       	    dictionaryPath = saveD;
@@ -98,7 +98,7 @@ newPackage(String) := opts -> (title) -> (
           "title" => title,
 	  symbol Options => opts,
      	  symbol Dictionary => new Dictionary, -- this is the global one
-     	  "private dictionary" => if title === "Macaulay2Core" then first dictionaryPath else new Dictionary, -- this is the local one
+     	  "private dictionary" => if title === "Core" then first dictionaryPath else new Dictionary, -- this is the local one
      	  "close hook" => hook,
 	  "previous currentPackage" => currentPackage,
 	  "previous dictionaries" => saveD,
@@ -155,13 +155,13 @@ newPackage(String) := opts -> (title) -> (
      ReverseDictionary#newpkg = pkgsym;
      pkgsym <- newpkg;
      loadedPackages = join(
-	  if title === "Macaulay2Core" then {} else {newpkg},
-	  {Macaulay2Core}
+	  if title === "Core" then {} else {newpkg},
+	  {Core}
 	  );
      dictionaryPath = join(
 	  {newpkg#"private dictionary"},
-	  if newpkg === Macaulay2Core then {} else reverse apply(Macaulay2Core#"pre-installed packages", pkgname -> (needsPackage pkgname).Dictionary),
-	  {Macaulay2Core.Dictionary, OutputDictionary, PackageDictionary}
+	  if newpkg === Core then {} else reverse apply(Core#"pre-installed packages", pkgname -> (needsPackage pkgname).Dictionary),
+	  {Core.Dictionary, OutputDictionary, PackageDictionary}
 	  );
      PrintNames#(newpkg.Dictionary) = title | ".Dictionary";
      PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
@@ -200,11 +200,11 @@ exportMutable List := v -> (
      currentPackage#"exported mutable symbols" = join(currentPackage#"exported mutable symbols",select(v,s -> instance(s,Symbol)));
      )
 
-addStartFunction( () -> if prefixDirectory =!= null then Macaulay2Core#"package prefix" = prefixDirectory )
+addStartFunction( () -> if prefixDirectory =!= null then Core#"package prefix" = prefixDirectory )
 
 saveCurrentPackage := currentPackage
 
-newPackage("Macaulay2Core", 
+newPackage("Core", 
      Authors => {
 	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}, 
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
@@ -250,13 +250,13 @@ endPackage String := title -> (
      scan(sortByHash values exportDict, s -> if not ws#?s then (
 	       protect s;
 	       if value s =!= s and not ReverseDictionary#?(value s) then ReverseDictionary#(value s) = s));
-     if true or pkg =!= Macaulay2Core then (			    -- protect it later
+     if true or pkg =!= Core then (			    -- protect it later
 	  protect pkg#"private dictionary";
 	  protect exportDict;
 	  );
-     if pkg#"title" === "Macaulay2Core" then (
+     if pkg#"title" === "Core" then (
 	  loadedPackages = {pkg};
-	  dictionaryPath = {Macaulay2Core.Dictionary, OutputDictionary, PackageDictionary};
+	  dictionaryPath = {Core.Dictionary, OutputDictionary, PackageDictionary};
 	  )
      else (
 	  loadedPackages = prepend(pkg,pkg#"previous packages");

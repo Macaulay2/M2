@@ -339,7 +339,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (info,MarkUpList),
+     Key => (info,Hypertext),
      Headline => "",
      Usage => "",
      Inputs => {

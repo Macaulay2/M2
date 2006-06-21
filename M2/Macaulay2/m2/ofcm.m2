@@ -122,20 +122,20 @@ listForm(MonoidElement) := (m) -> (
 MonoidElement _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (baseName x)_M
 
 Symbol _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (
-     if M.?generatorsTable and M.generatorsTable#?x then M.generatorsTable#x
+     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
      else error "symbol not found in monoid"
      )
 IndexedVariable _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (
-     if M.?generatorsTable and M.generatorsTable#?x then M.generatorsTable#x
+     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
      else error "indexed variable not found in monoid"
      )
 
 Symbol _ Ring := RingElement => (x,M) -> (
-     if M.?generatorsTable and M.generatorsTable#?x then M.generatorsTable#x
+     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
      else error "symbol not found in ring"
      )
 IndexedVariable _ Ring := RingElement => (x,M) -> (
-     if M.?generatorsTable and M.generatorsTable#?x then M.generatorsTable#x
+     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
      else error "indexed variable not found in ring"
      )
 
@@ -196,7 +196,7 @@ makeit1 := (opts) -> (
      w = apply(w, x -> apply(makeSparse x, (k,v) -> (k + n, v)));
      if #w =!= #varlist then error "expected same number of degrees as variables";
      M.vars = M.generators = apply(# varlist, i -> new M from rawVarMonomial(i,1));
-     M.generatorsTable = hashTable apply(M.generatorSymbols,M.generators,(v,x) -> v => x);
+     M.indexSymbols = hashTable apply(M.generatorSymbols,M.generators,(v,x) -> v => x);
      M.index = new MutableHashTable;
      scan(#varlist, i -> M.index#(varlist#i) = i);
      M.internalDegrees = internalDegrees;

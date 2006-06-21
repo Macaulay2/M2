@@ -70,14 +70,14 @@ degreeCheck := (d,R) -> (
 	  );
      toSequence d)
 
-map(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
+map(Module,Module,Matrix) := Matrix => o -> (M,N,f) -> (
      if M === f.target and N === f.source
-     and (options.Degree === null or options.Degree === degree f)
+     and (o.Degree === null or o.Degree === degree f)
      then f
      else (
 	  R := ring M;
 	  N' := cover N ** R;
-	  deg := if options.Degree === null then (degreeLength R : 0) else options.Degree;
+	  deg := if o.Degree === null then (degreeLength R : 0) else o.Degree;
 	  deg = degreeCheck(deg,R);
 	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw N', deg, raw f,0)))))
 

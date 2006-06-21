@@ -1,6 +1,6 @@
 document {
-     Key => {
-	  sublists,
+     Key => { sublists,
+	  (sublists, VisibleList, Function, Nothing),
 	  (sublists, VisibleList, Function, Function, Function),
 	  (sublists, VisibleList, Function),
 	  (sublists, VisibleList, Function, Function),

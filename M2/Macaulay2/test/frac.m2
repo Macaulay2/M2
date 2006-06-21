@@ -34,7 +34,7 @@ assert(numerator (f/g) == x)
 -- assert(numerator((-f)/(-g)) == numerator(f/g))
 
 -----------------------------------------------------------------------------
-debug Macaulay2Core
+debug Core
 R = QQ[x]
 b = x^3*(x-1)*(1/2)
 c = x^5-1
@@ -45,7 +45,7 @@ rawGCD(raw b, raw c)
 assert( f === g )
 -- assert( numerator f === numerator g ) -- (commented out, see wish above)
 f
-debug Macaulay2Core
+debug Core
 h = rawGCD(raw numerator f, raw denominator f)
 -----------------------------------------------------------------------------
 R = QQ[x]

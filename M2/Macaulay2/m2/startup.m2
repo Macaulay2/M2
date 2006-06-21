@@ -19,19 +19,19 @@ if regex(".*/","/aa/bb") =!= {(0, 4)}
 or regex(".*/","aabb") =!= null
 then error "regex regular expression library not working"
 
--- we do this bit *before* "debug Macaulay2Core", so that Macaulay2Core (the symbol, not the package), which may not be there yet, ends up in the right dictionary
+-- we do this bit *before* "debug Core", so that Core (the symbol, not the package), which may not be there yet, ends up in the right dictionary
 if firstTime then (
      assert = x -> (
 	  if class x =!= Boolean then error "'assert' expected true or false";
 	  if not x then error "assertion failed");
      PackageDictionary = new Dictionary;
      dictionaryPath = append(dictionaryPath,PackageDictionary);
-     assert( not isGlobalSymbol "Macaulay2Core" );
-     getGlobalSymbol(PackageDictionary,"Macaulay2Core");
+     assert( not isGlobalSymbol "Core" );
+     getGlobalSymbol(PackageDictionary,"Core");
      )
 
--- we need access to the private symbols -- (we remove the Macaulay2Core private dictionary later.)
-if not firstTime then debug Macaulay2Core
+-- we need access to the private symbols -- (we remove the Core private dictionary later.)
+if not firstTime then debug Core
 
 -- this next bit has to be *parsed* after the "debug" above, to prevent the symbols from being added to the User dictionary
 if firstTime then (
@@ -47,22 +47,6 @@ if firstTime then (
 	  filesLoaded#origfilename = fullfilename; 
 	  loadedFiles##loadedFiles = fullfilename; 
 	  if notify then stderr << "--loaded " << fullfilename << endl;
-	  );
-
-     ReverseDictionary = new MutableHashTable;		    -- values are symbols
-     PrintNames = new MutableHashTable;			    -- values are strings
-     Thing.AfterEval = identity;
-     scan(
-	  {symbol Array, symbol BasicList, symbol RRR, symbol CCC, symbol Number,
-		symbol Boolean, symbol CacheTable, symbol Pseudocode, symbol Database,
-		symbol Dictionary, symbol File, symbol Function, symbol HashTable,
-		symbol FunctionClosure, symbol CompiledFunction, symbol CompiledFunctionClosure,
-		symbol CompiledFunctionBody,
-		symbol List, symbol MutableHashTable, symbol MutableList, symbol Net,
-		symbol Nothing, symbol Option, symbol QQ, symbol RR, symbol RR, symbol CC,
-		symbol Ring, symbol Sequence, symbol String, symbol Symbol, symbol Thing,
-		symbol Time, symbol Type, symbol VisibleList, symbol ZZ},
-	  s -> ReverseDictionary#(value s) = s		    -- get an early start for debugging
 	  );
 
      slimPrompts = () -> (
@@ -175,6 +159,11 @@ if firstTime then (
 	  );
 
      use = identity;				  -- temporary, until methods.m2
+
+     ReverseDictionary = new MutableHashTable;		    -- values are symbols
+     PrintNames = new MutableHashTable;			    -- values are strings
+     Thing.AfterEval = identity;
+
      globalAssignFunction = (X,x) -> (
 	  if not ReverseDictionary#?x then ReverseDictionary#x = X;
 	  use x;
@@ -189,6 +178,11 @@ if firstTime then (
 	  else error "expected a type";
 	  );
      globalAssignment {Type,Function};
+     scan(dictionaryPath, dict -> (
+	       scan(pairs dict, (nm,sym) -> (
+			 x := value sym;
+			 if instance(x, Function) or instance(x, Type) then ReverseDictionary#x = sym))));
+
      applicationDirectorySuffix = () -> (
 	  if version#"operating system" === "Darwin" then "Library/Application Support/Macaulay2/" else ".Macaulay2/"
 	  );
@@ -348,8 +342,8 @@ showMaps := () -> (
 
 dump := () -> (
      if not version#"dumpdata" then error "not configured for dumping data with this version of Macaulay 2";
-     -- Macaulay2Core := if isGlobalSymbol "Macaulay2Core" then value getGlobalSymbol "Macaulay2Core" else error "dump: Macaulay2Core package not made yet";
-     -- if member(Macaulay2Core#"private dictionary", dictionaryPath) then error "dump: Macaulay2Core private dictionary is open";
+     -- Core := if isGlobalSymbol "Core" then value getGlobalSymbol "Core" else error "dump: Core package not made yet";
+     -- if member(Core#"private dictionary", dictionaryPath) then error "dump: Core private dictionary is open";
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
      fn := (
 	  if buildHomeDirectory =!= null then concatenate(buildHomeDirectory , "cache/", "Macaulay2-", arch, "-data") else 
@@ -491,13 +485,13 @@ printWidth = fileWidth stdio
 
 if firstTime and not nosetup then loadSetup()
 
--- remove the Macaulay2Core private dictionary -- it was added by "debug" above
-if not nosetup then dictionaryPath = select(dictionaryPath, d -> d =!= Macaulay2Core#"private dictionary")
+-- remove the Core private dictionary -- it was added by "debug" above
+if not nosetup then dictionaryPath = select(dictionaryPath, d -> d =!= Core#"private dictionary")
 
 processCommandLineOptions 2
 runStartFunctions()
 errorDepth = loadDepth
-if class Macaulay2Core =!= Symbol and not value Macaulay2Core#"private dictionary"#"noinitfile" then (
+if class Core =!= Symbol and not value Core#"private dictionary"#"noinitfile" then (
      -- the location of init.m2 is documented in the node "initialization file"
      tryLoad ("init.m2", applicationDirectory() | "init.m2");
      tryLoad ("init.m2", "init.m2");

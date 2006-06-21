@@ -72,22 +72,14 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 
 map(Ring,Matrix) := RingMap => options -> (S,m) -> map(ring m,S,m)
 
-map(Ring,Ring) := RingMap => options -> (S,R) -> (
-     A := R; 
-     v := {};
-     while (
-	  v = join(
-	       apply(allGenerators A, 
-		    x -> (
-			 x = toString x;
-			 if S#?x then S#x else 0_S
-			 )),
-	       v);
-	  A.?ring )
-     do A = A.ring;
-     map(S,R,matrix (S,{v})))
+map(Ring,Ring) := RingMap => options -> (S,R) -> if R === S then id_R else (
+     map(S,R,matrix (S,{
+		    if S.?indexStrings 
+		    then apply(allGenerators R, x -> ( x = toString x; if S.indexStrings#?x then S.indexStrings#x else 0_S))
+		    else toList (# allGenerators R : 0_S)
+		    })))
 
-Ring#id = (R) -> map(R,R)
+Ring#id = (R) -> map(R,R,vars R)
 
 RingMap.AfterPrint = RingMap.AfterNoPrint = f -> (
      << endl;				  -- double space

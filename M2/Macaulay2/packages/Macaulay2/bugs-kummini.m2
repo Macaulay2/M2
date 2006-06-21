@@ -96,7 +96,7 @@ Symbols are not initialised after a clearAll. See Example below:
 
 i66 : restart
 Macaulay 2, version 0.9.5
---package "Macaulay2Core" loaded
+--package "Core" loaded
 --beginDocumentation: using documentation database, skipping the rest of /a/porky/home/dan/local/share/Macaulay2/PrimaryDecomposition.m2
 --package "PrimaryDecomposition" loaded
 --beginDocumentation: using documentation database, skipping the rest of /u/m2fest3/.Macaulay2/local/share/Macaulay2/Macaulay2.m2

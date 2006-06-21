@@ -18,6 +18,10 @@ List .. List := Sequence => (v,w) -> apply(toSequence v .. toSequence w, toList)
 IndexedVariable = new Type of BasicList
 IndexedVariable.synonym = "indexed variable"
 
+value' IndexedVariable := value				    -- do we really want this?
+
+Ring _ IndexedVariable := (x,s) -> x.indexSymbols#s
+
 expression IndexedVariable := x -> (expression x#0) _ (expression x#1)
 net IndexedVariable := v -> net expression v
 toString IndexedVariable := v -> toString expression v

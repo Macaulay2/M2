@@ -21,7 +21,7 @@ undocumented {
      (mathML, Minus),
      (mathML, Sum),
      (mathML, Symbol),
-     (mathML, MarkUpList),
+     (mathML, Hypertext),
      (mathML, Nothing)
      }
 

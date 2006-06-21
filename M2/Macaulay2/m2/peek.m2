@@ -13,11 +13,11 @@ peek'(ZZ,BasicList) := (depth,s) -> (
 	  net class s,
 	  "{", horizontalJoin between (", ", apply(toList s, value -> peek'(depth-1,value))), "}" ) )
 
-peek'(ZZ,MarkUpListParagraph) := peek'(ZZ,MarkUpList) := (depth,s) -> (
+peek'(ZZ,HypertextParagraph) := peek'(ZZ,Hypertext) := (depth,s) -> (
      if depth === 0 then net s
      else horizontalJoin(
 	  net class s,
-	  "{", horizontalJoin between (", ", apply(toList s, value -> peek'(if instance(value,MarkUpList) or instance(value,String) then depth else depth-1, value))), "}" ) )
+	  "{", horizontalJoin between (", ", apply(toList s, value -> peek'(if instance(value,Hypertext) or instance(value,String) then depth else depth-1, value))), "}" ) )
 
 peek'(ZZ,List) := (depth,s) -> (
      if depth === 0 then net s
@@ -106,14 +106,14 @@ typicalValues#peek = Net
 
 ops = new MutableHashTable
 
-seeParsing = args -> (
+seeParsing = args -> (					    -- let's eliminate this in favor of operatorAttributes
      x := new MutableHashTable;
      t := (p,s) -> (
 	  if x#?p then x#p = append(x#p,s) else x#p = {s};
 	  ops#s = true;
 	  );
      q := getParsing symbol apply;
-     scan(keys set values Macaulay2Core.Dictionary, s -> if getParsing s =!= q then t(getParsing s,s));
+     scan(keys set values Core.Dictionary, s -> if getParsing s =!= q then t(getParsing s,s));
      t(getParsing symbol apply, "<SYMBOLS>");
      new Table from prepend(
 	  { "parsing\nprecedence", "binary\nbinding\nstrength","unary\nbinding\nstrength", "\noperators" },

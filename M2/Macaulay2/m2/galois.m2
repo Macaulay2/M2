@@ -114,7 +114,7 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      F.generators = apply(generators S, a -> promote(a,F));
      F.generatorSymbols = S.generatorSymbols;
      F.generatorExpressions = S.generatorExpressions;
-     scan(keys S, a -> if class a === String then F#a = promote(R#a,F));
+     F.indexStrings = new HashTable from applyValues(S.indexStrings, x -> promote(x,F));
      baseName F := y -> (
 	  if F_0 == y then var else error "expected a generator"
 	  );
