@@ -70,7 +70,6 @@ document {
  -- doc5.m2:111:     Key => assert,
  -- doc6.m2:480:     Key => assign,
  -- doc8.m2:1305:     Key => GaloisField, Headline => "the class of all Galois fields" }
- -- overview2.m2:515:     Key => "classes and types",
  -- overview2.m2:551:     Key => "assigning values",
  -- overview2.m2:1911:     Key => "making new classes",
  -- overview2.m2:1962:     Key => "what a class is",

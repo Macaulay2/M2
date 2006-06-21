@@ -18,6 +18,8 @@ New in 0.9.9:
 
 The 'browse' function has been moved to a package called Browse.
 
+Instead of x_i <- e for assignment to indexed variables, one now uses x_i = e.
+
 -----------------------------------------------------------------------------
 
 New in 0.9.8:

@@ -1206,7 +1206,7 @@ document {
      }
 
 document {
-     Key => "inheritance from parents",
+     Key => "inheritance",
      "Each class has a parent class which can be used as a container
      for bits of code that apply to a more general class of objects.
      In this section we show how this mechanism works in detail.",

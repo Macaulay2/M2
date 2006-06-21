@@ -200,20 +200,22 @@ document {
 
 document {
      Key => "ranges and repetitions",
+     PARA {
+	  "In this section we discuss the use of ranges and repetitions."
+	  },
+     SUBSECTION "ranges",
      "The operator ", TO "..", " can be used to create sequences of numbers,
      sequences of subscripted variables, or sequences of those particular 
      symbols that are known to ", TO "vars", ", and so on.",
-     EXAMPLE {
-	  "-3 .. 3",
-	  "y_1 .. y_10",
-	  "a .. p",
-	  "(1,1) .. (2,3)",
-	  "{a,1} .. {c,2}",
-	  },
+     EXAMPLE lines ///
+	  1 .. 5, y_1 .. y_5, a .. e
+     ///,
+     SUBSECTION "repetitions",
      "The operator ", TO (symbol :, ZZ, Thing), " is used to create sequences by replicating something a certain number of times.",
      EXAMPLE "12:a",
      "Replicating something once results in a sequence of length 1, which cannot be entered by simply typing parentheses.",
      EXAMPLE { "1:a", "(a)" },
+     SUBSECTION "ranges and repetitions in lists",
      "Notice what happens when we try to construct a list using ", TO "..", " or ", TO ":", ".",
      EXAMPLE {
 	  "z = {3 .. 6, 9, 3:12}",
@@ -222,29 +224,24 @@ document {
      This may be a problem if the user intended to produce the list 
      ", TT "{3, 4, 5, 6, 9, 12, 12, 12}", ".  The function ", TO "splice", " can
      be used to flatten out one level of nesting - think of it as removing those
-     pairs of parentheses that are one level in.",
+     pairs of parentheses that are one level inward.",
      EXAMPLE "splice z",
      "The difference between ", TO "splice", " and ", TO "flatten", " is, essentially, that
-     ", TO "flatten", " removes inner pairs of braces and ", TO "splice", " removes inner pairs of parentheses.",
+     ", TO "flatten", " removes braces one level inward.",
      EXAMPLE lines ///
          flatten {a,{b,c}}
-         flatten {a,(b,c)}
-         splice {a,{b,c}}
          splice {a,(b,c)}
-         flatten (a,{b,c})
-         flatten (a,(b,c))
-         splice (a,{b,c})
-         splice (a,(b,c))
      ///,
-     "The function ", TT "toList", " converts sequences to lists.",
+     "The function ", TO "toList", " converts sequences to lists.",
      EXAMPLE lines ///
-          splice {1..6}
+          1..6
           toList(1..6)
      ///,
-     "Many operators and function  will splice lists presented to them.  For example, when
-     creating a polynomial ring, the array of variables is spliced for you.",
+     "Many operators and functions will splice lists presented to them.  For example, when
+     creating a polynomial ring, the array of variables and the list of degrees are spliced for you.",
      EXAMPLE lines ///
-       QQ[a..c,x_1..x_4]
+         QQ[a..c,x_1..x_4, Degrees => { 3:1, 4:2 }]
+	 degrees oo
      ///
      }
 

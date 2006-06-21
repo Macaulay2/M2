@@ -41,7 +41,7 @@ document {
      "We say that x is an instance of X if X is the class of x, or a parent
      of the class of x, or a grandparent, and so on.",
      PARA{},
-     SeeAlso => { "classes and types", "class", "parent" }
+     SeeAlso => { "class", "parent" }
      }
 
 document {
