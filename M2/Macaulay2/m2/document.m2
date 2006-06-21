@@ -719,25 +719,30 @@ op := s -> if operator#?s then (
      ss := toString s;
      if match("^[[:alpha:]]*$",ss) then ss = " "|ss|" ";
      fixup DIV {
-	  if binary#?s then PARA {
-	       "This operator may be used as a binary operator in an expression like ", TT ("x"|ss|"y"), ".  The user may install ", TO "binary methods", "
-	       for handling such expressions with code such as ",
-	       if ss == " "
-	       then PRE ("         X Y := (x,y) -> ...")
-	       else PRE ("         X "|ss|" Y := (x,y) -> ..."), 
-	       "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the class of ", TT "y", "."
+	  if binary#?s then DIV {
+	       DIV {
+	       	    "This operator may be used as a binary operator in an expression like ", TT ("x"|ss|"y"), ".  The user may install ", TO "binary methods", "
+	       	    for handling such expressions with code such as"
+		    },
+	       PRE if s === symbol SPACE then "         X Y := (x,y) -> ..." else "         X "|ss|" Y := (x,y) -> ...", 
+	       DIV {
+		    "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the class of ", TT "y", "."
+		    }
 	       },
-	  if prefix#?s then PARA {
-	       "This operator may be used as a prefix unary operator in an expression like ", TT (ss|"y"), ".  The user may install a method for handling 
-	       such expressions with code such as",
+	  if prefix#?s then DIV {
+	       DIV {"This operator may be used as a prefix unary operator in an expression like ", TT (ss|"y"), ".  The user may install a method for handling 
+	       	    such expressions with code such as"
+	       	    },
 	       PRE ("           "|ss|" Y := (y) -> ..."),
-	       "where ", TT "Y", " is the class of ", TT "y", "."
+	       DIV { "where ", TT "Y", " is the class of ", TT "y", "." }
 	       },
-	  if postfix#?s then PARA {
-	       "This operator may be used as a postfix unary operator in an expression like ", TT ("x "|ss), ".  The user may install a method for handling 
-	       such expressions with code such as",
+	  if postfix#?s then DIV {
+	       DIV {
+	       	    "This operator may be used as a postfix unary operator in an expression like ", TT ("x "|ss), ".  The user may install a method for handling 
+	       	    such expressions with code such as"
+		    },
 	       PRE ("         X "|ss|"   := (x,y) -> ..."),
-	       "where ", TT "X", " is the class of ", TT "x", "."
+	       DIV { "where ", TT "X", " is the class of ", TT "x", "." }
 	       }
 	  }
      )
@@ -941,8 +946,8 @@ SYNOPSIS Thing := SYNOPSIS Sequence := o -> x -> (
 	  if o.Heading =!= "" then SUBSECTION o.Heading,
 	  o.Usage,
 	  if # o.Inputs > 0 then DIV { "Inputs:", UL ( proc \ o.Inputs ) },
-	  if # o.Outputs > 0 then DIV { "Outputs:", UL ( proc \ o.Outputs ) },
 	  if # o.Consequences > 0 and #o.Consequences > 0 then DIV { "Consequences:", UL o.Consequences },
+	  if # o.Outputs > 0 then DIV { "Outputs:", UL ( proc \ o.Outputs ) },
 	  x};
      if #r > 0 then fixup r)
 
@@ -962,8 +967,8 @@ briefSynopsis := key -> (
 	       then SPAN { "Operator: ", TO key#0#0 }	    -- assignment operator for this operator
 	       ),
 	  if o.?Inputs then DIV1 { "Inputs:", UL o.Inputs },
-	  if o.?Outputs then DIV1 { "Outputs:", UL o.Outputs },
 	  if o.?Consequences and #o.Consequences > 0 then DIV1 { "Consequences:", UL o.Consequences },
+	  if o.?Outputs then DIV1 { "Outputs:", UL o.Outputs },
 	  if o#?"optional inputs" then DIV1 { TO2{ "using functions with optional inputs", "Optional inputs"}, ":", UL o#"optional inputs" }
 	  };
      if #r > 0 then fixup UL r)

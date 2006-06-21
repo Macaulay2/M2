@@ -155,7 +155,7 @@ document {
      PARA{},
      "If no method is found, then ", TO "null", " is returned.",
      PARA{},
-     SeeAlso => {"#", "classes and types", "installMethod", "youngest"}
+     SeeAlso => {"#", "installMethod", "youngest"}
      }
 document {
      Key => installMethod,
@@ -182,84 +182,7 @@ document {
      ", TT "Y#(M,A,B,C) = f", ", where ", TT "Y", " is the youngest of ", TT "A", ", ", TT "B", ", 
      and ", TT "C", ".",
      PARA{},
-     SeeAlso =>{"#", "lookup",  "new", "classes and types"}
-     }
-document {
-     Key => "new",
-     Headline => "new objects of various types",
-     TT "new A of b from c", " -- make a hash table of class ", TT "A", " and 
-     parent ", TT "b", " initialized from ", TT "c", ".", BR{},
-     TT "new A of b", " -- make a hash table of class ", TT "A", " 
-     and parent ", TT "b", ".", BR{},
-     TT "new A from c", " -- make a new instance of class ", TT "A", " 
-     initialized from ", TT "c", ".", BR{},
-     TT "new A", " -- makes a new instance ", TT "n", " 
-     of class ", TT "A", ".", BR{},
-     PARA{},
-     hr,
-     TT "new A of b from c", " -- make a hash table ", TT "n", " of
-     Here ", TT "A", " and ", TT "b", " are hash tables, and ", TT "c", " is
-     any expression.  Let ", TT "b", " be an instance of ", TT "B", ", ", TT "c", "
-     be an instance of ", TT "C", ", and let ", TT "AA", " be an
-     ancestor of ", TT "A", ".  Then use",
-     PRE "          new AA of B from C := (A,b,c) -> ... ",
-     "to install the corresponding optional creation routine -- the
-     value it returns will be converted so its class is ", TT "A", " and its
-     parent is ", TT "b", "; this will involve copying unless the returned value 
-     is mutable and objects of class ", TT "A", " are mutable.",
-     PARA{},
-     "If no installation routine has been installed, then ", TT "c", " should be
-     a hash table or a list, and it will be converted directly.",
-     PARA{},
-     "The class ", TT "A", " should be a type of type, which means that
-     ", TT "Type", " is an ancestor of ", TT "A", " and of the class of ", TT "A", ".",
-     hr,
-     TT "new A of b", " -- make a hash table of class ", TT "A", "
-     and parent ", TT "b", ".",
-     PARA{},
-     "Same as above, except ", TT "c", " is missing.  Use ",
-     PRE "          new AA of B := (A,b) -> ... ",
-     "to install the initialization routine.",
-     PARA{},
-     "The class ", TT "A", " should be a type of type, which means that
-     ", TT "Type", " is an ancestor of ", TT "A", " and of the class of ", TT "A", ".",
-     hr,
-     TT "new A from c", " -- make a hash table or list ", TT "n", " of 
-     class ", TT "A", " initialized from ", TT "c", ".",
-     PARA{},
-     "The same as above except ", TT "b", " is missing.  Use ",
-     PRE "          new AA from C := (A,c) -> ... ",
-     "to install the corresponding initialization routine.",
-     PARA{},
-     "Since no parent ", TT "b", " has been provided, the value returned by the
-     initialization routine will not have its parent reset.  If there
-     is no initialization routine the parent will be set to Nothing.",
-     PARA{},
-     "The class ", TT "A", " should be a type, which means that
-     ", TT "Type", " is an ancestor of the class of ", TT "A", ".",
-     hr,
-     TT "new A", " -- make a new instance ", TT "n", " of 
-     class ", TT "A", ".",
-     PARA{},
-     "Same as above, except ", TT "b", " and ", TT "c", " are missing.
-     Use ", TT "new AA := A -> ... ", " to install the initialization routine.",
-     PARA{},
-     "Since no parent ", TT "b", " has been provided, the value returned by the
-     initialization routine will not have its parent reset.  If there
-     is no initialization routine the parent will be set to Nothing.",
-     PARA{},
-     "The class ", TT "A", " should be a type, which means that
-     ", TT "Type", " is an ancestor of the class of ", TT "A", ".",
-     hr,
-     "Note that if the ", TT "of", " option is not used, then the class ", TT "A", "
-     need not consist of hash tables or lists.  We are using this feature by
-     installing a method so that ", TT "new ZZ", " returns an integer popped
-     from the top of the engine's stack.",
-     PARA{},
-     "The symbols ", TO "NewMethod", ", ", TO "NewOfMethod", ", ", 
-     TO "NewFromMethod", ", and ", TO "NewOfFromMethod", " are used internally
-     for installation of the initialization routines.",
-     SeeAlso => {"classes and types"}
+     SeeAlso =>{"#", "lookup",  "new"}
      }
 document {
      Key => "of",
@@ -327,7 +250,7 @@ document {
      "These pairs are implemented as lists, so that if ", TT "z", " is ", TT "x => y", ", then 
      ", TT "x", " is ", TT "z#0", " and ", TT "y", " is ", TT "z#1", ".",
      PARA{},
-     SeeAlso => {"classes and types", "=>"}
+     SeeAlso => { "=>"}
      }
 document {
      Key => (NewFromMethod, HashTable, List),
@@ -916,6 +839,220 @@ TEST ///
      assert(Ext^0(G,omega) == dual HH^2(G))
      ///
 
+
+-- this node is in progress
+-- document {
+--      Key => "new",
+--      Headline => "new objects and new types",
+--      PARA {
+-- 	  "In this (reference) section we discuss how to make new types of object and new objects of those types.
+-- 	  For a more informal discussion, see ", TO "making new classes", "."
+-- 	  },
+--      SYNOPSIS (
+-- 	  Heading => "installing a new method for new-of-from",
+-- 	  Usage => "new AA of B from C := (A,b,c) -> ..."
+-- 	  Inputs => {
+-- 	       "AA" => Type,
+-- 	       "B" => Type,
+-- 	       "C" =>Type,
+-- 	       { TT "(A,b,c) -> ...", ", a function of 3 arguments: ", TT "AA", " will be an ancestor of ", TT "A", ",
+-- 		    ", TT "B", " will be an ancestor of the class of ", TT "b", ",
+-- 		    and ", TT "C", " will be an ancestor of the class of ", TT "c" }
+-- 	       },
+-- 	  Consequences => {
+-- 	       { "the function will be installed as the method for ", TT "new AA of B from C" }
+-- 	       }
+-- 	  Outputs => {
+-- 	       { "the function is returned as the value of the expression" }
+-- 	       },
+-- 	  PARA {
+-- 	       },
+-- 	  EXAMPLE lines ///
+-- 	  ///
+-- 	  ),
+--      SYNOPSIS (
+-- 	  -- TT "new A of b from c", " -- make a hash table of class ", TT "A", " and 
+-- 	  -- parent ", TT "b", " initialized from ", TT "c", ".", BR{},
+-- 	  Heading => "new-of-from",
+-- 	  Usage => "new A of b from c"
+-- 	  Inputs => {},
+-- 	  Consequences => {}
+-- 	  Outputs => {},
+-- 	  PARA {
+-- 	       },
+-- 	  EXAMPLE lines ///
+-- 	  ///
+-- 	  ),
+--      SYNOPSIS (
+-- 	  Heading => "installing a new method for new-of",
+-- 	  Usage => "new AA of B := (A,b) -> ..."
+-- 	  Inputs => {
+-- 	       "AA" => Type,
+-- 	       "B" => Type,
+-- 	       { TT "(A,b) -> ...", ", a function of 2 arguments: ", TT "AA", " will be an ancestor of ", TT "A", ", 
+-- 		    and ", TT "B", " will be an ancestor of the class of ", TT "b" }
+-- 	       },
+-- 	  Consequences => {
+-- 	       { "the function will be installed as the method for ", TT "new AA of B" }
+-- 	       }
+-- 	  Outputs => {
+-- 	       { "the function is returned as the value of the expression" }
+-- 	       },
+-- 	  PARA {
+-- 	       },
+-- 	  EXAMPLE lines ///
+-- 	  ///
+-- 	  ),
+--      SYNOPSIS (
+-- 	  -- TT "new A of b", " -- make a hash table of class ", TT "A", " 
+-- 	  -- and parent ", TT "b", ".", BR{},
+-- 	  Heading => "new-of",
+-- 	  Usage => "new A of b"
+-- 	  Inputs => {},
+-- 	  Consequences => {}
+-- 	  Outputs => {},
+-- 	  PARA {
+-- 	       },
+-- 	  EXAMPLE lines ///
+-- 	  ///
+-- 	  ),
+--      SYNOPSIS (
+-- 	  Heading => "installing a new method for new-from",
+-- 	  Usage => "new AA from C := (A,c) -> ..."
+-- 	  Inputs => {
+-- 	       "AA" => Type,
+-- 	       "C" =>Type,
+-- 	       { TT "(A,c) -> ...", ", a function of 2 arguments: ", TT "AA", " will be an ancestor of ", TT "A", ", 
+-- 		    and ", TT "C", " will be an ancestor of the class of ", TT "c" }
+-- 	       },
+-- 	  Consequences => {
+-- 	       { "the function will be installed as the method for ", TT "new AA from C" }
+-- 	       }
+-- 	  Outputs => {
+-- 	       { "the function is returned as the value of the expression" }
+-- 	       },
+-- 	  PARA {
+-- 	       },
+-- 	  EXAMPLE lines ///
+-- 	  ///
+-- 	  ),
+--      SYNOPSIS (
+-- 	  -- TT "new A from c", " -- make a new instance of class ", TT "A", " 
+-- 	  -- initialized from ", TT "c", ".", BR{},
+-- 	  Heading => "new-from",
+-- 	  Usage => "new A from c"
+-- 	  Inputs => {},
+-- 	  Consequences => {}
+-- 	  Outputs => {},
+-- 	  PARA {
+-- 	       },
+-- 	  EXAMPLE lines ///
+-- 	  ///
+-- 	  ),
+--      SYNOPSIS (
+-- 	  Heading => "installing a new method for new",
+-- 	  Usage => "new AA := (A) -> ..."
+-- 	  Inputs => {
+-- 	       "AA" => Type,
+-- 	       { TT "(A) -> ...", ", a function of 1 argument: ", TT "AA", " will be an ancestor of ", TT "A" }
+-- 	       },
+-- 	  Consequences => {
+-- 	       { "the function will be installed as the method for ", TT "new AA" }
+-- 	       }
+-- 	  Outputs => {
+-- 	       { "the function is returned as the value of the expression" }
+-- 	       },
+-- 	  PARA {
+-- 	       },
+-- 	  EXAMPLE lines ///
+-- 	  ///
+-- 	  ),
+--      SYNOPSIS (
+-- 	  -- TT "new A", " -- makes a new instance ", TT "n", " 
+-- 	  -- of class ", TT "A", ".", BR{},
+-- 	  Heading => "new",
+-- 	  Usage => "new A"
+-- 	  Inputs => {},
+-- 	  Consequences => {}
+-- 	  Outputs => {},
+-- 	  PARA {
+-- 	       },
+-- 	  EXAMPLE lines ///
+-- 	  ///
+-- 	  ),
+-- 
+--      TT "new A of b from c", " -- make a hash table ", TT "n", " of
+--      Here ", TT "A", " and ", TT "b", " are hash tables, and ", TT "c", " is
+--      any expression.  Let ", TT "b", " be an instance of ", TT "B", ", ", TT "c", "
+--      be an instance of ", TT "C", ", and let ", TT "AA", " be an
+--      ancestor of ", TT "A", ".  Then use",
+--      PRE "          new AA of B from C := (A,b,c) -> ... ",
+--      "to install the corresponding optional creation routine -- the
+--      value it returns will be converted so its class is ", TT "A", " and its
+--      parent is ", TT "b", "; this will involve copying unless the returned value 
+--      is mutable and objects of class ", TT "A", " are mutable.",
+--      PARA{},
+--      "If no installation routine has been installed, then ", TT "c", " should be
+--      a hash table or a list, and it will be converted directly.",
+--      PARA{},
+--      "The class ", TT "A", " should be a type of type, which means that
+--      ", TT "Type", " is an ancestor of ", TT "A", " and of the class of ", TT "A", ".",
+--      hr,
+-- 
+-- 
+--      TT "new A of b", " -- make a hash table of class ", TT "A", "
+--      and parent ", TT "b", ".",
+--      PARA{},
+--      "Same as above, except ", TT "c", " is missing.  Use ",
+--      PRE "          new AA of B := (A,b) -> ... ",
+--      "to install the initialization routine.",
+--      PARA{},
+--      "The class ", TT "A", " should be a type of type, which means that
+--      ", TT "Type", " is an ancestor of ", TT "A", " and of the class of ", TT "A", ".",
+--      hr,
+-- 
+-- 
+--      TT "new A from c", " -- make a hash table or list ", TT "n", " of 
+--      class ", TT "A", " initialized from ", TT "c", ".",
+--      PARA{},
+--      "The same as above except ", TT "b", " is missing.  Use ",
+--      PRE "          new AA from C := (A,c) -> ... ",
+--      "to install the corresponding initialization routine.",
+--      PARA{},
+--      "Since no parent ", TT "b", " has been provided, the value returned by the
+--      initialization routine will not have its parent reset.  If there
+--      is no initialization routine the parent will be set to Nothing.",
+--      PARA{},
+--      "The class ", TT "A", " should be a type, which means that
+--      ", TT "Type", " is an ancestor of the class of ", TT "A", ".",
+--      hr,
+-- 
+-- 
+--      TT "new A", " -- make a new instance ", TT "n", " of 
+--      class ", TT "A", ".",
+--      PARA{},
+--      "Same as above, except ", TT "b", " and ", TT "c", " are missing.
+--      Use ", TT "new AA := A -> ... ", " to install the initialization routine.",
+--      PARA{},
+--      "Since no parent ", TT "b", " has been provided, the value returned by the
+--      initialization routine will not have its parent reset.  If there
+--      is no initialization routine the parent will be set to Nothing.",
+--      PARA{},
+--      "The class ", TT "A", " should be a type, which means that
+--      ", TT "Type", " is an ancestor of the class of ", TT "A", ".",
+--      hr,
+--      "Note that if the ", TT "of", " option is not used, then the class ", TT "A", "
+--      need not consist of hash tables or lists.  We are using this feature by
+--      installing a method so that ", TT "new ZZ", " returns an integer popped
+--      from the top of the engine's stack.",
+-- 
+--      PARA{
+--      	  "The symbols ", TO "NewMethod", ", ", TO "NewOfMethod", ", ", 
+--      	  TO "NewFromMethod", ", and ", TO "NewOfFromMethod", " are used internally
+--      	  for installation of the initialization routines."
+-- 	  }
+--      }
+-- 
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

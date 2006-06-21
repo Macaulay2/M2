@@ -608,23 +608,78 @@ document {
 document {
      Key => symbol <-,
      Headline => "assignment with left side evaluated",
-     TT "x <- y    ", " assigns the value of y to x, but x is evaluated, too.",
-     PARA{},
-     "If the value of x is a symbol, then the value of y is assigned as the
-     value of that symbol.  If the value of x is a hash table, then the value 
-     of y must be one, too, and the contents of y bodily replace the contents
-     of x.  If the value of x is a list, then the value of y must be a list, 
-     and the contents of y replace the contents of x.",
-     PARA{},
-     "Warning: if y is a class with instances, these instances
-     will NOT become instances of x.  If instances of x are 
-     created later, then they will not be compatible with the
-     instances of y.  One should try to avoid using ", TO "<-", " in this
-     case.",
-     PARA{},
-     "The value of the expression x <- y is x, with its new contents.",
-     PARA{},
-     SeeAlso => "="
+     SYNOPSIS (
+	  Heading => "assignment to symbols",
+	  Usage => "x <- e",
+	  Inputs => { "x" => Symbol => " (evaluated)", "e" => Thing },
+	  Outputs => { { "the value of the expression is the value of ", TT "e" } },
+	  Consequences => {
+	       { "assuming the value of ", TT "x", " is a symbol, ", TT "t", ", say, the value of ", TT "e", " is assigned to ", TT "t", " so that
+		    future references to the value of ", TT "t", " yield ", TT "e", "."
+		    }
+	       },
+	  EXAMPLE lines ///
+	       x = t
+	       x <- 4
+	       x
+	       t
+	  ///,
+	  PARA {"Initially, the value of a symbol ", TT "y", " is ", TT "y", " itself, and then ", TT "y = e", " and ", TT "y <- e", " do the same thing."},
+	  EXAMPLE lines ///
+	       y <- 44
+	       y
+	  ///,
+	  PARA { "The code to the left of the arrow can be any expression whose value is a symbol." },
+	  EXAMPLE lines ///
+	       f = () -> symbol z
+	       (f()) <- 44
+	       z
+	  ///
+	  ),
+     SYNOPSIS (
+	  Heading => "installing new assignment methods",
+	  Usage => "installMethod(symbol <-, X, (x,e) -> ...)",
+	  Inputs => {
+	       "X" => Type,
+	       { TT "(x,e) -> ...", ", ", ofClass Function, " of two arguments" }
+	       },
+	  Consequences => {
+	       { "the function ", TT "(x,e) -> ...", " is installed as the method for assignment to objects of type ", TT "X", ".  See the next subsection below
+		    for using it." }
+	       },
+	  Outputs => {
+	       { "the value returned is the function provided" }
+	       },
+	  EXAMPLE lines ///
+	       installMethod(symbol <-, String, peek)
+	  ///
+	  ),
+     SYNOPSIS (
+	  Heading => "using installed assignment methods",
+	  Usage => "x <- e",
+	  Inputs => {
+	       "x" => { "an object of type X" },
+	       "e" => Thing
+	       },
+	  Consequences => {
+	       { "the previously installed method for assignment to objects of type ", TT "X", " is called with arguments ", TT "(x,e)", ",
+		    unless ", TT "x", " is a symbol, in which case the internal assignment method applies, as described above.
+		    If there is no method for ", TT "X", ", then the ancestors of ", TT "X", " are consulted, starting with the parent of ", TT "X", "
+		    and ending with ", TO "Thing", " (see ", TO "inheritance", ")." }
+	       },
+	  Outputs => {
+	       { "the value of the expression is the value returned by the previously installed method" }
+	       },
+	  PARA { "The following example used the method for assignment to strings installed above." },
+	  EXAMPLE lines ///
+	       "foo" <- "bar"
+	  ///,
+	  PARA "As before, the left hand side is evaluated, and in this case, it can be any expression whose value is a string.",
+	  EXAMPLE lines ///
+	       "foo" | "foo" <- "bar"
+	  ///,
+	  ),
+     SeeAlso => {"=", ":="}
      }
 
 document {
@@ -639,7 +694,7 @@ document {
      SYNOPSIS (
 	  Heading => "simple assignment",
 	  Usage => "x = e",
-	  Inputs => { "x" => Symbol, "e" => Thing},
+	  Inputs => { "x" => Symbol => " (unevaluated)", "e" => Thing},
 	  Outputs => {Thing => { "the value of the expression is ", TT "e" }},
 	  Consequences => {
 	       { TT "e", " is assigned to ", TT "x", ", so future references to the value of ", TT "x", " yield ", TT "e" },
@@ -665,7 +720,7 @@ document {
 	  Heading => "multiple assignment",
 	  Usage => "(x,y,z,...) = (c,d,e,...)",
 	  Inputs => { 
-	       { TT "(x,y,z,...)", " a ", TO2 {Sequence,"sequence"}, " of ", TO2 {Symbol,"symbols"} },
+	       { TT "(x,y,z,...)", " a ", TO2 {Sequence,"sequence"}, " of ", TO2 {Symbol,"symbols"}, " (unevaluated)" },
 	       { TT "(c,d,e,...)", " a ", TO2 {Sequence,"sequence"}, " of ", TO2 {Thing,"things"} }
 	       },
 	  Outputs => {{ "the value of the expression is ", TT "(c,d,e,...)" }},
@@ -755,13 +810,13 @@ document {
 		    }},
 	  "The first line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       String * String = print;
+	       String * String = peek;
 	       "left" * "right" = "value"
 	  ///,
 	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
 	  },
      SYNOPSIS {
-	  Heading => "using other assignment methods for binary operators",
+	  Heading => "using assignment methods for binary operators",
 	  Usage => "x OP y = e",
 	  Inputs => {
 	       "x" => { "an object of type ", TT "X" },
@@ -772,17 +827,42 @@ document {
 	       },
 	  Outputs => {
 	       { "the previously installed method for assignment to ", TT "X OP Y", " is called with arguments ", TT "(x,y,e)", ",
-		    and its return value is returned"
+		    and its return value is returned.  If no such method has been installed, then Macaulay 2 searches for a method
+		    for assignment to ", TT "X' OP Y'", ", where ", TT "X'", " is an ancestor of ", TT "X", " and ", TT "Y'", " is an ancestor of ", TT "Y", "
+		    (see ", TO "inheritance", " for details)."
 		    }
 	       },
 	  PARA "The return value and the consequences depend on the code of the installed assignment method.
 	  References to currently installed assignment methods are given below.",
 	  "The second line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       String * String = print;
+	       String * String = peek;
 	       "left" * "right" = "value"
 	  ///
 	  },
+     SYNOPSIS (
+	  Heading => "assignment to indexed variables",
+	  Usage => "x_i = e",
+	  Inputs => {
+	       "x" => Symbol => " (evaluated)",
+	       "i" => Thing,
+	       "e" => Thing
+	       },
+	  Consequences => {
+	       { "The ", TO2{IndexedVariable, "indexed variable"}, " ", TT { "x", SUB "i" }, " is created (if necessary) and is assigned the value ", TT "e", " so that future
+		    references to ", TT "x_i", " yield the value ", TT "e", "."
+		    }
+	       },
+	  Outputs => { "e" },
+	  PARA "The method for assignment to indexed variables is pre-installed.",
+	  EXAMPLE lines ///
+	       s
+	       s_2
+	       s_2 = 44
+	       s_2
+	       s_(i,j)
+	  ///
+	  ),
      SYNOPSIS {
 	  Heading => "installing assignment methods for unary prefix operators",
 	  Usage => "OP X = (x,e) -> ...",
@@ -799,13 +879,13 @@ document {
 		    }},
 	  "The first line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       - String = print;
+	       - String = peek;
 	       - "foo" = "value"
 	  ///,
 	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
 	  },
      SYNOPSIS {
-	  Heading => "using other assignment methods for unary prefix operators",
+	  Heading => "using assignment methods for unary prefix operators",
 	  Usage => "OP x = e",
 	  Inputs => {
 	       "OP" => { "one of the unary prefix operators for which users may install methods, listed above." },
@@ -821,7 +901,7 @@ document {
 	  References to currently installed assignment methods are given below.",
 	  "The second line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       - String = print;
+	       - String = peek;
 	       - "foo" = "value"
 	  ///
 	  },
@@ -841,13 +921,13 @@ document {
 		    }},
 	  "The first line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       String ~ = print;
+	       String ~ = peek;
 	       "foo" ~ = "value"
 	  ///,
 	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
 	  },
      SYNOPSIS {
-	  Heading => "using other assignment methods for unary postfix operators",
+	  Heading => "using assignment methods for unary postfix operators",
 	  Usage => "x OP = e",
 	  Inputs => {
 	       "x" => { "an object of type ", TT "X" },
@@ -863,7 +943,7 @@ document {
 	  References to currently installed assignment methods are given below.",
 	  "The second line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       String ~ = print;
+	       String ~ = peek;
 	       "foo" ~ = "value"
 	  ///
 	  },
@@ -881,7 +961,7 @@ document {
      SYNOPSIS (
 	  Heading => "simple local assignment",
 	  Usage => "x := e",
-	  Inputs => { "x" => Symbol, "e" => Thing},
+	  Inputs => { "x" => Symbol => " (unevaluated)", "e" => Thing},
 	  Outputs => {Thing => { "the value of the expression is ", TT "e" }},
 	  Consequences => {
 	       { "a new local variable ", TT "x", " is created.  The scope of ", TT "x", " is the current function body, or if there is none, the current file" },
@@ -933,7 +1013,7 @@ document {
 	  Heading => "multiple local assignment",
 	  Usage => "(x,y,z,...) := (c,d,e,...)",
 	  Inputs => { 
-	       { TT "(x,y,z,...)", " a ", TO2 {Sequence,"sequence"}, " of ", TO2 {Symbol,"symbols"} },
+	       { TT "(x,y,z,...)", " a ", TO2 {Sequence,"sequence"}, " of ", TO2 {Symbol,"symbols"}, " (unevaluated)" },
 	       { TT "(c,d,e,...)", " a ", TO2 {Sequence,"sequence"}, " of ", TO2 {Thing,"things"} }
 	       },
 	  Outputs => {{ "the value of the expression is ", TT "(c,d,e,...)" }},
@@ -974,7 +1054,7 @@ document {
 		    }},
 	  "The first line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       String * String := print;
+	       String * String := peek;
 	       "left" * "right"
 	  ///,
 	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
@@ -989,12 +1069,28 @@ document {
 	       "y" => { "an object of type ", TT "Y" }
 	       },
 	  Outputs => {
-	       { "the previously installed method for ", TT "X OP Y", " is called with arguments ", TT "(x,y)", ", and its return value is returned" }
+	       { "the previously installed method for ", TT "X OP Y", " is called with arguments ", TT "(x,y)", ", and its return value is returned.
+		    If no such method has been installed, then Macaulay 2 searches for a method
+		    for ", TT "X' OP Y'", ", where ", TT "X'", " is an ancestor of ", TT "X", " and ", TT "Y'", " is an ancestor of ", TT "Y", "
+		    (see ", TO "inheritance", " for details)."
+		    }
 	       },
 	  "The second line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       String * String := print;
-	       "left" * "right"
+	       String * Number := peek;
+	       "left" * 33
+	       "left" * 3.3
+	  ///,
+	  PARA "Some methods for operators are ", EM "internal", ", and cannot be successfully overridden by the user, as we illustrate in the next example,
+	  where we try (and fail) to override the definition of the sum of two integers.",
+	  EXAMPLE lines ///
+	       ZZ + ZZ := (x,y) -> x+y+100
+	       3 + 4
+	  ///,
+	  "By contrast, addition of complex numbers is not internal, and can be overridden.",
+	  EXAMPLE lines ///
+	       CC + CC := (w,z) -> w*z
+	       ii + ii
 	  ///
 	  },
      SYNOPSIS {
@@ -1013,7 +1109,7 @@ document {
 		    }},
 	  "The first line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       - String := print;
+	       - String := peek;
 	       - "foo"
 	  ///,
 	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
@@ -1026,11 +1122,13 @@ document {
 	       "x" => { "an object of type ", TT "X" }
 	       },
 	  Outputs => {
-	       { "the previously installed method for ", TT "OP X", " is called with argument ", TT "x", ", and its return value is returned." }
+	       { "the previously installed method for ", TT "OP X", " is called with argument ", TT "x", ", and its return value is returned.
+		    If no such method has been installed, then Macaulay 2 searches for a method
+		    for ", TT "OP X'", ", where ", TT "X'", " is an ancestor of ", TT "X", " (see ", TO "inheritance", " for details)." }
 	       },
 	  "The second line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       - String := print;
+	       - String := peek;
 	       - "foo"
 	  ///
 	  },
@@ -1050,7 +1148,7 @@ document {
 		    }},
 	  "The first line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       String ~ := print;
+	       String ~ := peek;
 	       "foo" ~
 	  ///,
 	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
@@ -1063,19 +1161,20 @@ document {
 	       "OP" => { "one of the unary postfix operators for which users may install methods, listed above." }
 	       },
 	  Outputs => {
-	       { "the previously installed method for ", TT "X OP", " is called with argument= ", TT "x", ",
-		    and its return value is returned."
+	       { "the previously installed method for ", TT "X OP", " is called with argument= ", TT "x", ", and its return value is returned.
+		    If no such method has been installed, then Macaulay 2 searches for a method
+		    for to ", TT "X' OP", ", where ", TT "X'", " is an ancestor of ", TT "X", " (see ", TO "inheritance", " for details)." 
 		    }
 	       },
 	  "The second line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       String ~ := print;
+	       String ~ := peek;
 	       "foo" ~
 	  ///
 	  },
      SYNOPSIS {
 	  Heading => "installing unary methods for method functions",
-	  Usage => "f X := (x) -> ...",
+	  Usage => "f X := (x) -> ...\nf(X) := (x) -> ...",
 	  Inputs => {
 	       "f" => { "a previously defined method function.  A method function may be created with the function ", TO "method", "." },
 	       "X" => Type,
@@ -1086,7 +1185,7 @@ document {
 		    }},
 	  "The first line of the following example illustrates the syntax above, using ", TO "source", ", which happens to be a method function.",
 	  EXAMPLE lines ///
-	       source String := print;
+	       source String := peek;
 	       source "foo"
 	  ///,
 	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
@@ -1103,7 +1202,7 @@ document {
 	       },
 	  "The second line of the following example illustrates the syntax above, using ", TO "source", ", which happens to be a method function.",
 	  EXAMPLE lines ///
-	       source String := print;
+	       source String := peek;
 	       source "foo"
 	  ///
 	  },
@@ -1116,13 +1215,14 @@ document {
 	       "Y" => Type,
 	       { TT "(x,y) -> ...", ", ", ofClass Function }
 	       },
-	  Consequences => {{ "the function on the right hand side is installed as the method for assignment to ", TT "f(X,Y)", ".  See the next subsection below
+	  Consequences => {{ "the function on the right hand side is installed as the method for ", TT "f(X,Y)", ".  See the next subsection below
 		    for using it."
 		    }},
 	  "The first line of the following example illustrates the syntax above, using ", TO "source", ", which happens to be a method function.",
 	  EXAMPLE lines ///
-	       source(String,String) := print;
-	       source("foo","bar")
+	       source(String,Number) := peek;
+	       source("foo",33)
+	       source("foo",3.3)
 	  ///,
 	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2.",
 	  PARA "The same syntax works for 3 or 4 arguments."
@@ -1136,17 +1236,23 @@ document {
 	       "y" => { "an object of type ", TT "Y" }
 	       },
 	  Outputs => {
-	       { "the previously installed method for ", TT "f(X,Y)", " is called with arguments ", TT "(x,y)", ", and the return value is returned" }
+	       { "the previously installed method for ", TT "f(X,Y)", " is called with arguments ", TT "(x,y)", ", and the return value is returned.
+  		    If no such method has been installed, then Macaulay 2 searches for a method
+		    for ", TT "f(X',Y')", ", where ", TT "X'", " is an ancestor of ", TT "X", " and ", TT "Y'", " is an ancestor of ", TT "Y", "
+		    (see ", TO "inheritance", " for details)."
+		    }
 	       },
 	  "The second line of the following example illustrates the syntax above, using ", TO "source", ", which happens to be a method function.",
 	  EXAMPLE lines ///
-	       source(String,String) := print;
+	       source(String,String) := peek;
 	       source("foo","bar")
 	  ///,
 	  PARA "The same syntax works for 3 or 4 arguments."
 	  },
-     -- put synopses for "new" methods here?  or refer to another page?
-     SeeAlso => {"=", "<-" }
+     PARA {
+	  "Another use of the operator ", TO ":=", " is for installing methods for creation of new objects.  For details, see ", TO "new", "."
+	  },
+     SeeAlso => {"=", "<-", "new" }
      }
 document {
      Key => abs,
@@ -1514,8 +1620,7 @@ document {
      Usage => "ancestor(x,y)",
      Inputs => { "x" => Type, "y" => Type },
      Outputs => { {"whether ", TT "y", " is an ancestor of ", TT "x"} },
-     "The ancestors of ", TT "x", " are ", TT "x", ", ", TT "parent x", ", ", TT "parent parent x", ", and so on.",
-     SeeAlso => "classes and types"
+     "The ancestors of ", TT "x", " are ", TT "x", ", ", TT "parent x", ", ", TT "parent parent x", ", and so on."
      }
 
 document {

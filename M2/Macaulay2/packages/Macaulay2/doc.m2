@@ -55,8 +55,7 @@ document {
      is ", TO "Thing", " itself (because every thing is a thing).",
      PARA{},
      "The entire structure of types and their parents can be displayed
-     with ", TO "showStructure", ".",
-     SeeAlso => "classes and types"
+     with ", TO "showStructure", "."
      }
 
 document {

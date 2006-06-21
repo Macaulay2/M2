@@ -19,4 +19,4 @@ document {
      SeeAlso => {}
      }
  -- doc.m2:23:     Key => parent,
- -- overview2.m2:2121:     Key => "inheritance from parents",
+ -- overview2.m2:2121:     Key => "inheritance",

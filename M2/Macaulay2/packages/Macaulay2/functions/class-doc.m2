@@ -12,8 +12,7 @@ document {
      Outputs => {
 	  Type => {"the class of ", TT "x"}
 	  },
-     "Every object in Macaulay 2 has a class, see ", TO "classes and types", 
-     " for more details.",
+     "Every object in Macaulay 2 has a class, see ", TO "what a class is", " for more details.",
      EXAMPLE {
 	  "class {1,2,3}",
 	  "R = QQ[a..d]",
@@ -30,5 +29,5 @@ document {
      EXAMPLE {
 	  "instance(R,Ring)"
 	  },
-     SeeAlso => {instance, "classes and types"}
+     SeeAlso => {instance}
      }

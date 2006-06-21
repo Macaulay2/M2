@@ -9,6 +9,7 @@ document {
      and operator expressions.
      Every expression returns an object, although ", TO "null", " is often returned if the 
      expression is only being used to produce some side effect.",
+
      PARA{},
 
      "There is special syntax for creating and accessing strings, lists, sequences, and
@@ -16,6 +17,11 @@ document {
      engine implements rings, ring elements, and matrices, as instances of low-level types, 
      and various high-level types, visible to the user, are based on them.  Examples include
      ", TO "Ring", ", ", TO "RingElement", ", ", TO "Matrix", ", ", TO "Ideal", ", ", TO "RingMap", ", ", TO "Module", ", and ", TO "ChainComplex", ".",
+
+     PARA{},
+
+     "The user can create new types of higher level mathematical objects, whose types
+     form a hierarchy that facilitates the installation and use of appropriate methods for computing with them.",
 
      Subnodes => {
 	      TO "variables",
@@ -46,7 +52,7 @@ document {
 	      TO "installing methods",
 	      TO "binary methods",
 	      TO "making new classes",
-	      TO "inheritance from parents",
+	      TO "inheritance",
 	      TO "printing and formatting for new classes",
 	      TO "making a new method function",
 	  "input and output",

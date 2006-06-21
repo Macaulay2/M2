@@ -37,11 +37,11 @@ value IndexedVariable := v -> (
      t := valueTable x;
      if t#?i then t#i else v)
 
-installMethod(symbol <-, IndexedVariable, 		    -- why does this look like a unary operator???
-     (xi,y) -> (
-	  (valueTable xi#0)#(xi#1) = y;
-	  xi#0 <- xi#0;
-	  y))
+-- installMethod(symbol <-, IndexedVariable, 		    -- why does this look like a unary operator?  Because it's an assignment operator, and the type of the rhs doesn't matter.
+--      (xi,y) -> (
+-- 	  (valueTable xi#0)#(xi#1) = y;
+-- 	  xi#0 <- xi#0;
+-- 	  y))
 
 Symbol _ Thing = (sym,i,val) -> (valueTable sym)#i=val
 
