@@ -1,4 +1,4 @@
-debug Macaulay2Core
+debug Core
 assert( parse(symbolP, "x") === x )
 assert( parse(symbolP, "y") === y )
 assert( parse(natNumberP, "234") === 234 )

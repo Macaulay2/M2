@@ -118,7 +118,7 @@ document {
 	  the main Macaulay 2 system.  The remaining entries are functions.  These provide paths to various
 	  types of files associated with packages, and accept a string containing the name of the package
 	  as argument.  Finally, for convenience, many Macaulay 2 files are regarded as being associated
-	  with a special package called ", TO "Macaulay2Core", ", and the corresponding documentation files
+	  with a special package called ", TO "Core", ", and the corresponding documentation files
 	  are part of the package ", TT "Macaulay2", "."
      	  },
      EXAMPLE "LAYOUT",
@@ -134,7 +134,7 @@ document {
 	  LI { TT format "datam2", " : Macaulay 2 source files (*.m2) for Macaulay 2; this directory appears on the ", TO "path" },
 	  LI { TT format "doc", " : documentation, not just for Macaulay 2" },
 	  LI { TT format "docm2", " : documentation for Macaulay 2 and its packages" },
-	  LI { TT format "docm2rel", " : documentation for Macaulay 2 itself (the Macaulay2Core package)" },
+	  LI { TT format "docm2rel", " : documentation for Macaulay 2 itself (the Core package)" },
 	  LI { TT format "docpackages", " : documentation for Macaulay 2 packages" },
 	  LI { TT format "emacs", " : emacs source files (*.el, *.elc)" },
 	  LI { TT format "emacsdoc", " : documentation for using Macaulay 2 itself with emacs" },
@@ -142,7 +142,7 @@ document {
 	  LI { TT format "info", " : documentation in info form, not just for Macaulay 2" },
 	  LI { TT format "lib", " : machine dependent data and executable files, not just for Macaulay 2" },
 	  LI { TT format "libm2", " : machine dependent data and executable files for Macaulay 2 itself" },
-	  LI { TT format "m2", " : source files for Macaulay 2 itself (the Macaulay2Core package: *.m2)" },
+	  LI { TT format "m2", " : source files for Macaulay 2 itself (the Core package: *.m2)" },
 	  LI { TT format "man", " : man pages" },
 	  LI { TT format "man1", " : man pages, section 1" },
 	  LI { TT format "man3", " : man pages, section 3" },

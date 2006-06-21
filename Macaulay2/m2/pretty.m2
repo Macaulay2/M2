@@ -30,7 +30,7 @@ pretty2 Nothing := pr toString
 pretty2 List      := x -> pretty3("{", " ", ",", " ", "}", toSequence x)
 pretty2 Array     := x -> pretty3("[", " ", ",", " ", "]", toSequence x)
 pretty2 Sequence  := x -> pretty3("(", " ", ",", " ", ")", x)
-pretty2 MarkUpList := x -> pretty3(net class x|"{","   ",","," ","}",toSequence x)
+pretty2 Hypertext := x -> pretty3(net class x|"{","   ",","," ","}",toSequence x)
 pretty2 IntermediateMarkUpType := x -> (
      r := wrap net x;
      if class r === Net then toSequence unstack r else 1:r)

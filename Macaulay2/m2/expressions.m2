@@ -38,7 +38,11 @@ Expression.synonym = "expression"
 expression = method(SingleArgumentDispatch=>true, TypicalValue => Expression)
 expression Expression := identity
 Expression#operator = ""
-value Expression := x -> error "no method for 'value' of expression"
+
+value' = method(SingleArgumentDispatch => true)
+value' Thing := identity
+value' Symbol := value					    -- do we really want this?
+value Expression := value'
 
 Holder = new WrapperType of Expression
 Holder.synonym = "holder"
@@ -87,7 +91,7 @@ Minus = new WrapperType of Expression		  -- unary minus
 Minus.synonym = "minus expression"
 
 Minus#operator = "-"
-value Minus := v -> minus apply(toSequence v,value)
+value' Minus := v -> minus apply(toSequence v,value')
 toString Minus := v -> (
      term := v#0;
      if precedence term > precedence v or class term === Product
@@ -98,8 +102,8 @@ toString Minus := v -> (
 Equation = new HeaderType of AssociativeExpression
 Equation.synonym = "equation expression"
 Equation#operator = "=="
-value Equation := (v) -> (
-     v = apply(toSequence v,value);
+value' Equation := (v) -> (
+     v = apply(toSequence v,value');
      if # v === 2
      then v#0 == v#1
      else if # v <= 1
@@ -141,7 +145,7 @@ Sum.synonym = "sum expression"
 Sum#unit = ZERO
 Sum#EmptyName = "0"
 Sum#operator = "+"
-value Sum := v -> plus apply(toSequence v,value)
+value' Sum := v -> plus apply(toSequence v,value')
 
 toString Sum := v -> (
      n := # v;
@@ -166,7 +170,7 @@ Product.synonym = "product expression"
 Product#unit = ONE
 Product#EmptyName = "1"
 Product#operator = "*"
-value Product := v -> times apply(toSequence v,value)
+value' Product := v -> times apply(toSequence v,value')
 
 toString Product := v -> (
      n := # v;
@@ -204,7 +208,7 @@ NonAssociativeProduct.synonym = "nonassociative product expression"
 NonAssociativeProduct#unit = ONE
 NonAssociativeProduct#EmptyName = "1"
 NonAssociativeProduct#operator = "**"
-value NonAssociativeProduct := v -> times apply(toSequence v,value)
+value' NonAssociativeProduct := v -> times apply(toSequence v,value')
 
 toString NonAssociativeProduct := v -> (
      n := # v;
@@ -236,32 +240,24 @@ toString NonAssociativeProduct := v -> (
 Divide = new HeaderType of Expression
 Divide.synonym = "divide expression"
 Divide#operator = "/"
-value Divide := (x) -> (value x#0) / (value x#1)
+value' Divide := (x) -> (value' x#0) / (value' x#1)
 numerator Divide := x -> x#0
 denominator Divide := x -> x#1
 
 Power = new HeaderType of Expression
 Power.synonym = "power expression"
 Power#operator = "^"
-value ZZ := identity
-value QQ := identity
-value RR := identity
-value CC := identity
-value RRR := identity
-value CCC := identity
-
-value RR := identity
-value Power := (x) -> (value x#0) ^ (value x#1)
+value' Power := (x) -> (value' x#0) ^ (value' x#1)
 
 Subscript = new HeaderType of Expression
 Subscript.synonym = "subscript expression"
 Subscript#operator = "_"
-value Subscript := (x) -> (value x#0)_(value x#1)
+value' Subscript := (x) -> (value' x#0)_(value' x#1)
 
 Superscript = new HeaderType of Expression
 Superscript.synonym = "superscript expression"
 Superscript#operator = "^"
-value Superscript := (x) -> (value x#0)^(value x#1)
+value' Superscript := (x) -> (value' x#0)^(value' x#1)
 
 toString Subscript := toString Superscript := v -> (
      x := toString v#0;
@@ -292,7 +288,7 @@ toString RowExpression := w -> concatenate apply(w,toString)
 -----------------------------------------------------------------------------
 Adjacent = new HeaderType of Expression
 Adjacent.synonym = "adjacent expression"
-value Adjacent := x -> (value x#0) (value x#1)
+value' Adjacent := x -> (value' x#0) (value' x#1)
 -----------------------------------------------------------------------------
 prepend0 := (e,x) -> prepend(e#0, x)
 append0 := (x,e) -> append(x, e#0)
@@ -407,13 +403,13 @@ Holder     _ Holder     := (x,y) -> Subscript{x#0,y#0}
 Expression _ Thing      := (x,y) -> x _ (expression y)
      Thing _ Expression := (x,y) -> (expression x) _ y
 -----------------------------------------------------------------------------
-value Holder := x -> value x#0
-value OneExpression := v -> 1
-value ZeroExpression := v -> 0
+value' Holder := x -> x#0
+value' OneExpression := v -> 1
+value' ZeroExpression := v -> 0
 -----------------------------------------------------------------------------
 SparseVectorExpression = new HeaderType of Expression
 SparseVectorExpression.synonym = "sparse vector expression"
-value SparseVectorExpression := x -> notImplemented()
+value' SparseVectorExpression := x -> notImplemented()
 toString SparseVectorExpression := v -> (
      n := v#0;
      w := newClass(MutableList, apply(n,i->"0"));
@@ -425,7 +421,7 @@ toString SparseVectorExpression := v -> (
 SparseMonomialVectorExpression = new HeaderType of Expression
 SparseMonomialVectorExpression.synonym = "sparse monomial vector expression"
 -- in these, the basis vectors are treated as variables for printing purposes
-value SparseMonomialVectorExpression := x -> notImplemented()
+value' SparseMonomialVectorExpression := x -> notImplemented()
 toString SparseMonomialVectorExpression := v -> toString (
      sum(v#1,(i,m,a) -> 
 	  expression a * 
@@ -435,7 +431,7 @@ toString SparseMonomialVectorExpression := v -> toString (
 -----------------------------------------------------------------------------
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
-value MatrixExpression := x -> matrix applyTable(toList x,value)
+value' MatrixExpression := x -> matrix applyTable(toList x,value')
 toString MatrixExpression := m -> concatenate(
      "MatrixExpression {",		  -- ????
      between(",",apply(toList m,row->("{", between(",",apply(row,toString)), "}"))),
@@ -443,7 +439,7 @@ toString MatrixExpression := m -> concatenate(
 -----------------------------------------------------------------------------
 Table = new HeaderType of Expression
 Table.synonym = "table expression"
-value Table := x -> applyTable(toList x,value)
+value' Table := x -> applyTable(toList x,value')
 toString Table := m -> concatenate(
      "Table {",
      between(",",apply(toList m,row->("{", between(",",apply(row,toString)), "}"))),
@@ -482,8 +478,8 @@ binary := new HashTable from {
      }
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
 BinaryOperation.synonym = "binary operation expression"
-value BinaryOperation := (m) -> (
-     if binary#?(m#0) then binary#(m#0) (value m#1,value m#2) else m
+value' BinaryOperation := (m) -> (
+     if binary#?(m#0) then binary#(m#0) (value' m#1,value' m#2) else m
      )
 net BinaryOperation := m -> (
      -- must put precedences here eventually
@@ -495,7 +491,7 @@ toString BinaryOperation := m -> (
 -----------------------------------------------------------------------------
 FunctionApplication = new HeaderType of Expression -- {fun,args}
 FunctionApplication.synonym = "function application expression"
-value FunctionApplication := (m) -> (value m#0) (value m#1)
+value' FunctionApplication := (m) -> (value' m#0) (value' m#1)
 toString Adjacent := toString FunctionApplication := m -> (
      p := precedence m;
      fun := m#0;

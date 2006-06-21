@@ -9,7 +9,7 @@ document {
 	  "x" => List => {"a list of strings and hypertext mark-up lists"}
 	  },
      Outputs => {
-	  MarkUpList => {"a new list of mark-up lists obtained from the old by making the format more suitable for
+	  Hypertext => {"a new list of mark-up lists obtained from the old by making the format more suitable for
 	       ultimate display"}
 	  },
      "Here is a list of some of the transformations that are performed.",
@@ -24,7 +24,7 @@ document {
 	  {"strings spanning multiple lines are wrapped into one long line after appropriately trimming the spaces at the beginning and end of each line"},
 	  {"an error message is produced if something not recognizable as documentation is encountered"},
 	  },
-     SeeAlso => {"MarkUpList"}
+     SeeAlso => {"Hypertext"}
      }
 
 document {

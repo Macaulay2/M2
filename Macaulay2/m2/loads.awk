@@ -1,5 +1,5 @@
 # BEGIN { printf "s := currentPackage\n" }
-# BEGIN { printf "currentPackage = Macaulay2Core\n" }
+# BEGIN { printf "currentPackage = Core\n" }
 { printf "load \"%s\"\n", $0 }
 # END { printf "currentPackage = s\n" }
 # Local Variables:

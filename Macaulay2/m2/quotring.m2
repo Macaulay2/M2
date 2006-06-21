@@ -85,9 +85,10 @@ EngineRing / Ideal := (R,I) -> (
      -- recall that ZZ is NOT an engine ring.
      A := R;
      while class A === QuotientRing do A = last A.baseRings;
-     gensI := generators I ** R;
+     gensI := generators I;
      gensgbI := generators gb gensI;
      S := new QuotientRing from rawQuotientRing(raw R, raw gensgbI);
+     S#"raw creation log" = Bag { FunctionApplication {rawQuotientRing, (raw R, raw gensgbI)} };
      S.cache = new CacheTable;
      S.basering = R.basering;
      S.flatmonoid = R.flatmonoid;
@@ -99,13 +100,8 @@ EngineRing / Ideal := (R,I) -> (
      S.relations = gensI;
      S.isCommutative = R.isCommutative;
      if R.?generatorSymbols then S.generatorSymbols = R.generatorSymbols;
-     if R.?generatorExpressions then (
-	  S.generatorExpressions = R.generatorExpressions;
-	  scan(R.generatorExpressions, x -> (
-		    a := if instance(x, Symbol) then toString x else toString x;
-		    S#a = promote(R#a,S);
-		    ));
-	  );
+     if R.?generatorExpressions then S.generatorExpressions = R.generatorExpressions;
+     if R.?indexStrings then S.indexStrings = applyValues(R.indexStrings, x -> promote(x,S));
      S.use = x -> (
 	  try monoid S;
 	  if S.?monoid then (

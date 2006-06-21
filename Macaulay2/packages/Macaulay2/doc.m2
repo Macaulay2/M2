@@ -591,7 +591,7 @@ undocumented {
 (symbol SPACE, WrapperType, Sequence),
 (symbol SPACE, Manipulator, Database),
 (symbol SPACE, Function, Thing),
-(symbol SPACE, MarkUpType, MarkUpList),
+(symbol SPACE, MarkUpType, Hypertext),
 (symbol SPACE, Command, Thing),
 (symbol SPACE, Manipulator, Nothing),
 (symbol SPACE, WrapperType, Thing),

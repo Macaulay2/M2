@@ -829,7 +829,7 @@ document {
 	       "C" =>Type,
 	       { TT "(A,b,c) -> ...", ", a function of 3 arguments: ", TT "AA", " will be an ancestor of ", TT "A", ",
 		    ", TT "B", " will be an ancestor of the class of ", TT "b", ",
-up		    and ", TT "C", " will be an ancestor of the class of ", TT "c" }
+		    and ", TT "C", " will be an ancestor of the class of ", TT "c" }
 	       },
 	  Consequences => {
 	       { "the function will be installed as the method for ", TT "new AA of B from C" }

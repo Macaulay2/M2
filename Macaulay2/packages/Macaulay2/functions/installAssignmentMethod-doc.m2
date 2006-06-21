@@ -48,6 +48,7 @@ document {
 	  { "the indexed variable ", TT "x_a", " is assigned the value ", TT "v", "." }
 	  },
      EXAMPLE lines ///
+     	  x_a
           x_a = b
 	  x_a
 	  x_c
@@ -56,10 +57,10 @@ document {
      ///,
      "The source code explains how it works, behind the scences.",
      PRE ("    " | code {(symbol _,Symbol,Thing),((symbol _,symbol =),Symbol,Thing)}),
-     "The package Macaulay2Core doesn't export the symbol valueTable, so we use ", TO "debug", " to examine it.",
+     "The package Core doesn't export the symbol valueTable, so we use ", TO "debug", " to examine it.",
      SeeAlso => { IndexedVariable },
      EXAMPLE lines ///
-	  debug Macaulay2Core
+	  debug Core
 	  peek valueTable x
      ///
      }

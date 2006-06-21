@@ -3,7 +3,7 @@
 newPackage "Local"
 export {LocalRing,localRing,ambientRing,maxIdeal}
 LocalRing = new Type of EngineRing
-debug Macaulay2Core
+debug Core
 presentation LocalRing := (R) -> presentation R.ambientRing
 generators LocalRing := (R) -> generators R.ambientRing
 isCommutative LocalRing := (R) -> isCommutative R.ambientRing

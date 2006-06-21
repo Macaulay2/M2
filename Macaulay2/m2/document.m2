@@ -1,7 +1,7 @@
 --		Copyright 1994-2002 by Daniel R. Grayson
 
 checkLoadDocumentation = () -> if not isGlobalSymbol "Macaulay2" or class value getGlobalSymbol "Macaulay2" =!= Package then (
-     -- the documentation for things in the package Macaulay2Core is in the package Macaulay2 !
+     -- the documentation for things in the package Core is in the package Macaulay2 !
      oldnotify := notify;
      notify = false;
      loadPackage "Macaulay2";
@@ -91,8 +91,8 @@ verifyKey Array   := s -> (				    -- e.g., [res, Strategy]
 -- We need three bits of information about a document tag:
 --     the original key	    	    e.g., (operator **,Module,Module)
 --     the formatted key            e.g., "Module ** Module"
---     the package                  e.g., Macaulay2Core, or null if there is none
---     the package title            e.g., "Macaulay2Core", or "" if there is none
+--     the package                  e.g., Core, or null if there is none
+--     the package title            e.g., "Core", or "" if there is none
 -- Here we assemble them together, so we don't have to recompute the information later.
 DocumentTag = new Type of BasicList
 DocumentTag.synonym = "document tag"
@@ -156,7 +156,7 @@ hasDocumentation = key -> (
 -----------------------------------------------------------------------------
 -- Here we introduce the class FormattedDocumentTag, which contains just the parts of a DocumentTag that are strings
 --     the formatted key            e.g., "Module ** Module"
---     the package title            e.g., "Macaulay2Core", or "" if there is none
+--     the package title            e.g., "Core", or "" if there is none
 -- The main point is that toExternalString will work for objects of this type, and thus they can be stored externally
 -- as part of the documentation.
 FinalDocumentTag = new Type of BasicList
@@ -307,7 +307,8 @@ fSeqInitialize := (toString,toStr) -> new HashTable from {
      (4,homology,ZZ    ) => s -> ("HH^", toStr s#1, "_", toStr s#2, " ", toStr s#3),
      (3,NewFromMethod  ) => s -> ("new ", toString s#1, " from ", toStr s#2),
      (3,NewOfMethod    ) => s -> ("new ", toString s#1, " of ", toString s#2),
-     (3,symbol SPACE     ) => s -> (toStr s#1, " ", toStr s#2),
+     (3,symbol SPACE   ) => s -> (toStr s#1, " ", toStr s#2),
+     (2,symbol <-      ) => s -> (toStr s#1, " <- Thing"),  -- assignment statement with left hand side evaluated
      (3,homology,ZZ    ) => s -> ("HH_", toStr s#1, " ", toStr s#2),
      (3,cohomology,ZZ  ) => s -> ("HH^", toStr s#1, " ", toStr s#2),
      (2,homology       ) => s -> ("HH ", toStr s#1),
@@ -371,7 +372,7 @@ addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concat
 fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
 fixup List       := z -> fixup toSequence z
 fixup Sequence   := 
-fixup MarkUpList := z -> splice apply(z,fixup)
+fixup Hypertext := z -> splice apply(z,fixup)
 fixup Nothing    := x -> ()	      -- so it will get removed by splice later
 fixup Option     := identity
 fixup BR         := identity
@@ -405,7 +406,7 @@ fixup String     := s -> (				       -- remove clumsy newlines within strings
      concatenate ({addspaces0 trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
 
 hypertext = method(SingleArgumentDispatch => true)
-hypertext MarkUpList := fixup
+hypertext Hypertext := fixup
 hypertext Sequence := hypertext List := x -> fixup DIV x
 
 -----------------------------------------------------------------------------
@@ -439,7 +440,7 @@ extractExamplesLoop            := method(SingleArgumentDispatch => true)
 extractExamplesLoop Thing       := x -> {}
 extractExamplesLoop ExampleItem := toList
 extractExamplesLoop Sequence := 
-extractExamplesLoop MarkUpList := x -> join apply(toSequence x, extractExamplesLoop)
+extractExamplesLoop Hypertext := x -> join apply(toSequence x, extractExamplesLoop)
 
 extractExamples := docBody -> (
      ex := extractExamplesLoop docBody;
@@ -482,7 +483,7 @@ processExamplesLoop TOH :=
 processExamplesLoop Option :=
 processExamplesLoop String := identity
 processExamplesLoop Sequence := 
-processExamplesLoop MarkUpList := x -> apply(x,processExamplesLoop)
+processExamplesLoop Hypertext := x -> apply(x,processExamplesLoop)
 processExamplesLoop ExampleItem := x -> (
      ret := (
 	  if exampleResults#?exampleCounter
@@ -618,7 +619,7 @@ undocumented' = x -> error "late use of function undocumented'"
 
 getExampleInputs := method(SingleArgumentDispatch => true)
 getExampleInputs Thing        := t -> {}
-getExampleInputs MarkUpList   := t -> join apply(toSequence t, getExampleInputs)
+getExampleInputs Hypertext   := t -> join apply(toSequence t, getExampleInputs)
 
 examples = x -> stack getExampleInputs help x
 apropos = method()
@@ -926,7 +927,7 @@ synopsisOpts := new OptionTable from {			    -- old
 
 SYNOPSIS = method(
      SingleArgumentDispatch => true,
-     TypicalValue => MarkUpList,
+     TypicalValue => Hypertext,
      Options => {
 	  Heading => "",
 	  Usage => "",
@@ -995,7 +996,7 @@ briefDocumentation VisibleList := x -> null
 
 briefDocumentation Thing := x -> (
      if noBriefDocThings#?x or not isDocumentableThing x then return null;
-     if package x === Macaulay2Core then checkLoadDocumentation();
+     if package x === Core then checkLoadDocumentation();
      r := briefSynopsis normalizeDocumentKey x;
      if r =!= null then << endl << r << endl
      else (
@@ -1058,7 +1059,7 @@ documentationValue(Symbol,Keyword) := (s,k) -> (
 documentationValue(Symbol,Thing) := (s,x) -> ()
 
 authorDefaults := new HashTable from { Name => "Anonymous", Email => null, HomePage => null }
-documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2Core then (
+documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
      e := toSequence pkg#"exported symbols";
      a := select(e,x -> instance(value x,Function));	    -- functions
      b := select(e,x -> instance(value x,Type));	    -- types
@@ -1113,7 +1114,7 @@ theAugmentedMenu := S -> (
 
 help Symbol := S -> (
      -- s := value S;
-     if package S === Macaulay2Core then checkLoadDocumentation();
+     if package S === Core then checkLoadDocumentation();
      currentHelpTag = makeDocumentTag S;
      a := smenu apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
      -- b := smenu documentableMethods s;

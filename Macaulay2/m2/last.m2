@@ -27,27 +27,27 @@ addStartFunction(
      	       dismiss "User";
 	       newPackage("User", DebuggingMode => true);
 	       );
-	  needsPackage \ Macaulay2Core#"pre-installed packages";
-	  << "with packages: " << wrap concatenate between_", " sort Macaulay2Core#"pre-installed packages" << endl;
+	  needsPackage \ Core#"pre-installed packages";
+	  << "with packages: " << wrap concatenate between_", " sort Core#"pre-installed packages" << endl;
 	  )
      )
 
-addStartFunction( () -> if sourceHomeDirectory =!= null then Macaulay2Core#"source directory" = sourceHomeDirectory|"m2/" )
+addStartFunction( () -> if sourceHomeDirectory =!= null then Core#"source directory" = sourceHomeDirectory|"m2/" )
 
 addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then makePackageIndex() )
 
-unexportedSymbols = () -> hashTable apply(pairs Macaulay2Core#"private dictionary", (n,s) -> if not Macaulay2Core.Dictionary#?n then (s => class value s => value s))
+unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s) -> if not Core.Dictionary#?n then (s => class value s => value s))
 
-scan(values Macaulay2Core#"private dictionary" - set values Macaulay2Core.Dictionary,
-     s -> if mutable s and value s === s then stderr << "--warning: mutable unexported unset symbol in Macaulay2Core: " << s << endl)
+scan(values Core#"private dictionary" - set values Core.Dictionary,
+     s -> if mutable s and value s === s then stderr << "--warning: mutable unexported unset symbol in Core: " << s << endl)
 
 -- make sure this is after all public global symbols are defined or erased
-endPackage "Macaulay2Core"
+endPackage "Core"
 -- after this point, private global symbols, such as noinitfile, are no longer visible
 
 load "installedpackages.m2"
 
-scan(Macaulay2Core#"pre-installed packages",	-- initialized in the file installedpackages.m2, which is made from the file installedpackages
+scan(Core#"pre-installed packages",	-- initialized in the file installedpackages.m2, which is made from the file installedpackages
      pkg -> loadPackage(pkg, DebuggingMode => not stopIfError))
 
 -- Local Variables:

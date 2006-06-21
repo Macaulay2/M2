@@ -566,18 +566,6 @@ document {
 	  },
      }
 
-
-document {
-     Key => (symbol :, Ideal, Ideal),
-     Headline => "ideal quotient",
-     TT "I:J", " -- computes the ideal quotient.",
-     PARA{},
-     "The notation ", TT "I:J", " is equivalent to ", TT "quotient(I,J)", ",
-     although with the latter form, optional arguments can be provided.
-     See ", TO quotient, " for further details."
-     }
-
-
 TEST ///
 R=ZZ[a]
 assert( toString a === "a" )
@@ -611,8 +599,13 @@ TEST ///
      z = 2 - 3*ii
      w = 4 + 5*ii
      x = 2 + ii - ii
+
+     eps = 10.^-10
+     small = (x) -> abs x < eps
+     near = (w,z) -> small realPart(w-z) and small imaginaryPart(w-z) 
+
      assert( z*w == 23  - 2*ii )
-     assert( z/w == -7/41 + -22/41 * ii )
+     assert( near(z/w , -7/41 + -22/41 * ii ) )
      assert( 1 + z == 3 - 3*ii )
      assert( 2*w == 8 + 10*ii )
      assert( z + w == 6 + 2*ii )

@@ -449,7 +449,7 @@ document {
      TT "monoid [a,b,c,...]", " -- makes a free ordered commutative monoid on the variables listed.",
      PARA{},
      "Optional arguments (placed between the brackets):",
-     UL (TO \ keys value Macaulay2Core#"private dictionary"#"monoidDefaults"),
+     UL (TO \ keys value Core#"private dictionary"#"monoidDefaults"),
      SeeAlso => {(symbol SPACE, Ring, Array)}}
 document {
      Key => (symbol SPACE, Ring, Array),
@@ -460,7 +460,7 @@ document {
      "This is the customary way to make a polynomial ring.",
      PARA{},
      "Optional arguments (placed inside the array):",
-     UL (TO \ keys value Macaulay2Core#"private dictionary"#"monoidDefaults"),
+     UL (TO \ keys value Core#"private dictionary"#"monoidDefaults"),
      SeeAlso => "polynomial rings"}
 document {
      Key => (symbol SPACE,Ring, OrderedMonoid),

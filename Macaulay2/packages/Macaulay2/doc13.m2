@@ -223,10 +223,10 @@ document { Key => {URL,(NewFromMethod, URL, String)},
      PARA {
 	  "The function ", TO "show", " knows how display entities of various types, including URLs."
 	  }}
-document { Key => {show, (show, TEX), (show, URL)},
+document { Key => {show, (show, TEX), (show, URL), (show, Hypertext)},
      Headline => "display various TeX, hypertext, or a URL, in an external application",
      Usage => "show x",
-     Inputs => { "x" => { "an object of type ", TT "TEX", ", or ", TT "URL" }},
+     Inputs => { "x" => { ofClass{ Hypertext, TEX, URL } }},
      Consequences => {{ "an external viewer, such as a web browser, is started to view the object ", TT "x" }},
      SeeAlso => { showTex, showHtml }}
 document { Key => {(irreducibleDecomposition,MonomialIdeal),irreducibleDecomposition},
@@ -260,7 +260,7 @@ document { Key => {[newPackage,Version],Version},
      Usage => "newPackage(..., Version => num)",
      Inputs => { "num" => String => "the version number of the new package" },
      Consequences => {{ "the version number will be stored under the key ", TO "Version", " in the resulting package" }},
-     EXAMPLE "(options Macaulay2Core).Version"}
+     EXAMPLE "(options Core).Version"}
 document { Key => currentTime,
      Headline => "get the current time",
      Usage => "currentTime()",
@@ -364,7 +364,7 @@ document { Key => {[newPackage, Authors], Authors},
 	  where ", TT "key", " is ", TT "Name", ", ", TT "Email", ", or ", TT "HomePage", ", and
 	  ", TT "val", " is a string containing the corresponding information."
 	  },
-     EXAMPLE "Macaulay2Core.Options.Authors"
+     EXAMPLE "Core.Options.Authors"
      }
 document { Key => Name,
      "This symbol is used as a key when providing information about the authors of a package to the ", TO "newPackage", " command.
@@ -403,9 +403,9 @@ document { Key => "loadedFiles",
 
 undocumented {
      (validate, TO),(validate, String),(validate, MarkUpTypeWithOptions, Set, BasicList),(validate, Type, Set, BasicList),(validate, TOH),(validate, Option),(validate, TO2),
-     (validate, COMMENT),(validate, CDATA),(validate, TEX)
+     (validate, COMMENT),(validate, CDATA),(validate, TEX), (validate, LITERAL)
      }
-document { Key => {(validate, MarkUpList),validate},
+document { Key => {(validate, Hypertext),validate},
      Usage => "validate x",
      Inputs => { "x" => { TO "hypertext" } },
      Consequences => { { "The hypertext is checked for validity, to ensure that the HTML code returned by ", TT "html x", " is valid." }},
@@ -707,7 +707,7 @@ document { Key => getGlobalSymbol,
 document { Key => Bag,
      Headline => "the class of all bags",
      PARA "A bag can be used for enclosing something in a container to prevent it from being printed, in normal circumstances.
-     Any mutable list can be used for this purpose, but bags are designated for this purpose.",
+     Any mutable list can be used for this purpose, but bags are designed for this purpose.",
      SeeAlso => {unbag}
      }
 undocumented {(unbag,Sequence)}
@@ -717,7 +717,7 @@ document { Key => {(unbag, Bag), unbag},
      Outputs => { { "the contents of ", TT "y" }},
      EXAMPLE lines ///
      	  x = 100!
-	  y = new Bag from {x}
+	  y = Bag {x}
 	  unbag y
      ///
      }

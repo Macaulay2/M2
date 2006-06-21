@@ -17,7 +17,7 @@ undocumented {
      (tex, LITERAL),
      (tex, STRONG),
      (tex, Expression),
-     (tex, MarkUpList),
+     (tex, Hypertext),
      (tex, String),
      (tex, ITALIC),
      (tex, PolynomialRing),

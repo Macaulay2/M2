@@ -399,6 +399,20 @@ document {
 	  }
      }
 
+document {
+     Key => {operatorAttributes, Flexible, Binary, Prefix, Postfix},
+     Usage => "operatorAttributes",
+     Outputs => {{ "an experimental hash table that give information about ", TO "operators", " in the Macaulay2 language" }},
+     "Meanings of the symbols used:",
+     UL {
+	  LI { TO "Flexible", " -- user defined methods may be installed" },
+	  LI { TO "Binary", " -- it's a binary operator" },
+	  LI { TO "Prefix", " -- it's a prefix unary operator" },
+	  LI { TO "Postfix", " -- it's a postfix unary operator" }
+	  },
+     "We intend to add parsing precedences to this table and eliminate ", TO "seeParsing", "."
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -7,7 +7,7 @@
 
 -- this next file loads before this:
 
-debug Macaulay2Core
+debug Core
 
 quotMin = (I, facs, F) -> (
      J := quotient(I,F);

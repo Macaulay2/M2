@@ -86,15 +86,17 @@ resolutionInEngine := opts -> (M) -> (
 	  W.ring = R;
 	  W.length = maxlevel;
 	  W.DegreeLimit = degreelimit;
-	  W.RawComputation = rawResolution(
-	       raw g,					    -- the matrix
-	       true,					    -- whether to resolve the cokernel of the matrix
-	       maxlevel,				    -- how long a resolution to make, (hard : cannot be increased by stop conditions below)
-	       false,					    -- useMaxSlantedDegree
-	       0,					    -- maxSlantedDegree (is this the same as harddegreelimit?)
-	       opts.Strategy,				    -- algorithm
-	       opts.SortStrategy			    -- strategy (is this the same as opts.SortStrategy?)
-	       );
+	  log := FunctionApplication { rawResolution, (
+		    raw g,					    -- the matrix
+		    true,					    -- whether to resolve the cokernel of the matrix
+		    maxlevel,				    -- how long a resolution to make, (hard : cannot be increased by stop conditions below)
+		    false,					    -- useMaxSlantedDegree
+		    0,					    -- maxSlantedDegree (is this the same as harddegreelimit?)
+		    opts.Strategy,				    -- algorithm
+		    opts.SortStrategy			    -- strategy (is this the same as opts.SortStrategy?)
+		    )};
+	  W#"RawComputation log" = Bag {log};
+     	  W.RawComputation = value log;
 	  W.returnCode = rawStatus1 W.RawComputation;
 	  C = new ChainComplex;
 	  C.ring = R;
@@ -114,20 +116,24 @@ resolutionInEngine := opts -> (M) -> (
 	       scan(keys C.dd,i -> if class i === ZZ then remove(C.dd,i));
 	       remove(C,symbol complete);
 	       if not opts.StopBeforeComputation then (
-                    rawGBSetStop(W.RawComputation,
-			 -- fill these in eventually:
-			 opts.StopBeforeComputation,	    -- always_stop
-			 false,				    -- stop_after_degree
-			 degreelimit,			    -- degree_limit -- why does this take a list?
-			 0,				    -- basis_element_limit (not relevant for resolutions)
-			 inf opts.SyzygyLimit,		    -- syzygy_limit
-			 inf opts.PairLimit,		    -- pair_limit
-			 0,				    -- codim_limit (not relevant for resolutions)
-			 0,				    -- subring_limit (not relevant for resolutions)
-			 false,				    -- just_min_gens
-			 -- {maxlevel}			    -- length_limit -- error if present is: "cannot change length of resolution using this algorithm"
-			 {} 				    -- length_limit
-			 );
+		    log = FunctionApplication { rawGBSetStop,
+			 (
+			      W.RawComputation,
+			      -- fill these in eventually:
+			      opts.StopBeforeComputation,	    -- always_stop
+			      false,				    -- stop_after_degree
+			      degreelimit,			    -- degree_limit -- why does this take a list?
+			      0,				    -- basis_element_limit (not relevant for resolutions)
+			      inf opts.SyzygyLimit,		    -- syzygy_limit
+			      inf opts.PairLimit,		    -- pair_limit
+			      0,				    -- codim_limit (not relevant for resolutions)
+			      0,				    -- subring_limit (not relevant for resolutions)
+			      false,				    -- just_min_gens
+			      -- {maxlevel}			    -- length_limit -- error if present is: "cannot change length of resolution using this algorithm"
+			      {} 				    -- length_limit
+			      )};
+		    W#"rawGBSetStop log" = Bag {log};
+		    value log;
 		    rawStartComputation W.RawComputation;
 		    W.returnCode = rawStatus1 W.RawComputation;
 		    W.length = maxlevel;

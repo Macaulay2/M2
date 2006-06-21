@@ -85,20 +85,6 @@ document {
      }
 
 document {
-     Key => generatorSymbols,
-     Headline => "store the symbols for the generators",
-     TT "generatorSymbols", " -- a key used in a ", TO "Monoid", " under
-     which is stored a list of the symbols used as generators for the monoid."
-     }
-
-document {
-     Key => generatorExpressions,
-     Headline => "store the generators",
-     TT "generatorExpressions", " -- a key used in a ", TO "Monoid", " under which 
-     is stored a list of the generators for the monoid."
-     }
-
-document {
      Key => pairs,
      Headline => "list the pairs in a hash table",
      TT "pairs x", " -- makes a list of all key/value pairs ", TT "(k,v)", " in

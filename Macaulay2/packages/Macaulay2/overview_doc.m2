@@ -74,7 +74,8 @@ document {
 		},
   SeeAlso => {
        document,
-       "hypertext list format"
+       "hypertext list format",
+       SYNOPSIS
      }
   }
 document {
@@ -312,4 +313,51 @@ document {
      SeeAlso => {"writing documentation",
 	  "hypertext list format",
 	  document}
+     }
+
+undocumented {(SYNOPSIS, Sequence),(SYNOPSIS, Thing),(SYNOPSIS, List)}
+document { Key => {SYNOPSIS,Heading},
+     PARA {
+	  "This function prepares a standardized synopsis in hypertext for use in documentation nodes."
+	  },
+     "Here is an empty template for use with SYNOPSIS.",
+     PRE "     SYNOPSIS (
+	  Heading => \"\",
+	  Usage => \"\"
+	  Inputs => {
+	       },
+	  Consequences => {
+	       }
+	  Outputs => {
+	       },
+	  PARA {
+	       },
+	  EXAMPLE lines ///
+	  ///
+	  ),
+",
+     "Here is an example of its use.",
+     PRE "     SYNOPSIS {
+	  Heading => \"using binary methods for method functions\",
+	  Usage => \"f(x,y)\",
+	  Inputs => {
+	       \"f\" => { \"a method function\" },
+	       \"x\" => { \"an object of type \", TT \"X\" },
+	       \"y\" => { \"an object of type \", TT \"Y\" }
+	       },
+	  Outputs => {
+	       { \"the previously installed method for \", TT \"f(X,Y)\", \" is called with arguments \", TT \"(x,y)\", \", and the return value is returned.
+  		    If no such method has been installed, then Macaulay 2 searches for a method
+		    for \", TT \"f(X',Y')\", \", where \", TT \"X'\", \" is an ancestor of \", TT \"X\", \" and \", TT \"Y'\", \" is an ancestor of \", TT \"Y\", \"
+		    (see \", TO \"inheritance\", \" for details).\"
+		    }
+	       },
+	  \"The second line of the following example illustrates the syntax above, using \", TO \"source\", \", which happens to be a method function.\",
+	  EXAMPLE lines ///
+	       source(String,String) := peek;
+	       source(\"foo\",\"bar\")
+	  ///,
+	  PARA \"The same syntax works for 3 or 4 arguments.\"
+	  }
+",
      }

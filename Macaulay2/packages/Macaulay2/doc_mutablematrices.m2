@@ -304,7 +304,7 @@ document {
      }
 
 TEST ///
-debug Macaulay2Core
+debug Core
 M = mutableMatrix(map(ZZ^5, ZZ^7, (i,j) -> 3*i^3 + j^2 +3),Dense=>false)
 rawInsertColumns(raw M,3,4)
 M

@@ -92,7 +92,8 @@ frac EngineRing := R -> (
 	  if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
 	  if R.?generatorExpressions then F.generatorExpressions = R.generatorExpressions;
 	  if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
-	  scan(keys R,k -> if class k === String then F#k = promote(R#k,F));
+	  if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
+	  if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
 	  F))
 
 -- methods for all ring elements
@@ -509,7 +510,8 @@ liftable(QQ,Ring) := (f,R) -> try (lift(f,R);true) else false
 
 isUnit(RingElement) := (f) -> 1 % ideal f == 0
 
-Ring _ String := RingElement => (x,s) -> x#s
+Ring _ String := RingElement => (x,s) -> x.indexStrings#s
+Ring _ Symbol := RingElement => (x,s) -> x.indexSymbols#s
 
 random Ring := RingElement => (R) -> (
      if R.?random then R.random()

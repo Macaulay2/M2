@@ -50,7 +50,7 @@ INSTALLEDPACKAGES := $(shell cat @srcdir@/installedpackages)
 MADEM2FILES += installedpackages.m2
 initialize :: installedpackages.m2
 installedpackages.m2 : installedpackages Makefile
-	exec <$< >$@ ; echo 'Macaulay2Core#"pre-installed packages" = {'; read x ; echo \"$$x\"; while read x ; do echo , \"$$x\" ; done ; echo '}'
+	exec <$< >$@ ; echo 'Core#"pre-installed packages" = {'; read x ; echo \"$$x\"; while read x ; do echo , \"$$x\" ; done ; echo '}'
 clean :: ; rm -f installedpackages.m2
 OTHERDUMPEDM2FILES += \
 	$(wildcard $(patsubst %, @srcdir@/../packages/%/*.m2, $(INSTALLEDPACKAGES))) \
@@ -191,7 +191,7 @@ M2OPTIONS += --no-debug
 endif
 M2OPTIONS += -e errorDepth=0
 M2OPTIONS += -e debugLevel=0
-M2OPTIONS += -e 'installPackage(Macaulay2Core, Encapsulate => false, PackagePrefix => "$(encapdir)/", MakeLinks => false, MakeDocumentation => false, UserMode => false)'
+M2OPTIONS += -e 'installPackage(Core, Encapsulate => false, PackagePrefix => "$(encapdir)/", MakeLinks => false, MakeDocumentation => false, UserMode => false)'
 ifndef INTERACTIVE
 M2OPTIONS += -e 'exit 0 '
 endif
@@ -199,7 +199,7 @@ endif
 # $(TMPDIR) :; mkdir "$@"
 # install :: $(TMPDIR)
 install ::
-	@ echo installing the Macaulay2Core package
+	@ echo installing the Core package
 	@ set -x ; time ../bin/M2$(EXE) $(M2OPTIONS)
 
 clean::; rm -rf ../cache/$(DUMPDATAFILE) cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 version.m2 core gmon.out

@@ -59,7 +59,7 @@ undocumented {
     (toString, Function),
     (toString, Symbol),
     (toString, BinaryOperation),
-    (toString, MarkUpList),
+    (toString, Hypertext),
     (toString, FractionField),
     (toString, Net),
     (toString, String),

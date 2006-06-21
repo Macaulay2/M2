@@ -3,7 +3,7 @@
 
 -- make a degree monoid, with n degrees.
 --trivmonoid = rawMonoid();
-debug Macaulay2Core
+debug Core
 
 trivring = rawPolynomialRing();
 degmonoid = (n) -> (

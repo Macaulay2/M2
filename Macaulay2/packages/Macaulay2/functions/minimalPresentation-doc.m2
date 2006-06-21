@@ -12,7 +12,7 @@ document {
      }
 
 document { 
-     Key => (minimalPresentation,Ring),
+     Key => {(minimalPresentation,Ring),minimalPresentationMap, minimalPresentationMapInv},
      Headline => "compute a minimal presentation of a quotient ring",
      Usage => "S = minimalPresentation R",
      Inputs => { "R" => { "a quotient ring" } },
