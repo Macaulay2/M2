@@ -26,6 +26,14 @@ R = Q/I
 K = ideal {b^3}
 S = R/K
 -- gbTrace = 3
-res coker vars S					    -- goes to higher and higher degree without stopping
+C = res coker vars S  -- goes to higher and higher degree without stopping: FIXED: 6/20/06
 
-error "this test finally worked, it's time to add an assertion to verify the result is correct"
+betti C == net "total: 1 4 13 41 129 406
+    0: 1 4  6  4   1   .
+    1: . .  3 12  18  12
+    2: . .  4 22  58  93
+    3: . .  .  3  36 150
+    4: . .  .  .  16 127
+    5: . .  .  .   .  24"
+    
+
