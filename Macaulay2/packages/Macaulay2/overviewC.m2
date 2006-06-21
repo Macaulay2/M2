@@ -548,12 +548,9 @@ document {
       	  "S = symmetricAlgebra R^3",
       	  "describe S",
 	  },
-     "The dollar signs used in displaying the names of the variables indicate that
-     the names were invented for us, and are not available by typing them, but you can
-     get them in the usual way by indexing.",
      EXAMPLE {
 	  "S_0+S_4",
-      	  ///S_"$x_0"///,
+      	  ///S_"x_0"///,
 	  },
      "To specify the names of the variables when creating the ring, use the 
      ", TO "Variables", " option.",

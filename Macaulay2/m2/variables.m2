@@ -37,13 +37,8 @@ value IndexedVariable := v -> (
      t := valueTable x;
      if t#?i then t#i else v)
 
--- installMethod(symbol <-, IndexedVariable, 		    -- why does this look like a unary operator?  Because it's an assignment operator, and the type of the rhs doesn't matter.
---      (xi,y) -> (
--- 	  (valueTable xi#0)#(xi#1) = y;
--- 	  xi#0 <- xi#0;
--- 	  y))
-
-Symbol _ Thing = (sym,i,val) -> (valueTable sym)#i=val
+Symbol _ Thing = (x,i,e) -> ( x <- x; (valueTable x)#i = e )
+installMethod(symbol <-, IndexedVariable, (xi,e) -> ((x,i) -> x_i = e) toSequence xi) -- assignment operators don't dispatch on the type of the value to be assigned
 
 IndexedVariable .. IndexedVariable := Sequence => (v,w) -> (
      if v#0 =!= w#0 then error("unmatching base names in ", toString v, " .. ", toString w);

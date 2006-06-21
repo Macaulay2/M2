@@ -679,7 +679,7 @@ document {
 	       "foo" | "foo" <- "bar"
 	  ///,
 	  ),
-     SeeAlso => {"=", ":="}
+     SeeAlso => {"=", ":=", (symbol <-, IndexedVariable)}
      }
 
 document {

@@ -15,6 +15,8 @@ Module.synonym = "module"
 raw Module := M -> M.RawFreeModule
 ring Module := M -> M.ring
 
+globalAssignment ImmutableType
+
 isModule = method(TypicalValue => Boolean)
 isModule Thing := M -> false
 isModule Module := M -> true

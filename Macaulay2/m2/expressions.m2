@@ -263,10 +263,19 @@ Superscript.synonym = "superscript expression"
 Superscript#operator = "^"
 value Superscript := (x) -> (value x#0)^(value x#1)
 
-toString Power := toString Subscript := toString Superscript := v -> (
+toString Subscript := toString Superscript := v -> (
+     x := toString v#0;
+     y := toString v#1;
+     prec := precedence v;
+     if precedence v#0 <  prec then x = "(" | x | ")";
+     if precedence v#1 <= prec then y = "(" | y | ")";
+     concatenate(x,(class v)#operator,y))
+
+toString Power := v -> (
      x := v#0;
      y := v#1;
-     if y === 1 then toString x else (
+     if y === 1 then toString x 
+     else (
 	  x = toString x;
 	  y = toString y;
 	  if precedence v#0 <  PowerPrecedence then x = "(" | x | ")";
