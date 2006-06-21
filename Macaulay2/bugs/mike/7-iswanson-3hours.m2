@@ -75,19 +75,25 @@ viljnucoeffs = (m, tempoly,psi) -> (
 )
 
 end
+restart
 load "7-iswanson-3hours.m2"
 I = factorable({A, A + beta*B, alpha*B+C,C}, Mmat);
 betti I -- 166 gens
 numgens ring I -- 33 variables
 
-transpose gens I
-
+G = flatten entries gens I;
+G/(g -> part(0,g))
+tally(G/support)
+I1 = ideal select(flatten entries gens I, f -> size f <= 2);
+transpose gens I1
+C = decompose I1;
 gbTrace=3
-gens gb I;
-I1 = monomialIdeal select(flatten entries gens I, f -> size f === 1);
+gens gb I1;
+codim I1
+I1 = monomialIdeal select(flatten entries gens I, f -> size f <= 1);
 C = primaryDecomposition I1;
 J1 = I + ideal(C_0);
-J1 = ideal compress gens sub(I, apply(flatten entries gens C_0, x -> x => 0));
+J1 = ideal compress gens sub(I, apply(flatten entries gens C_-1, x -> x => 0));
 numgens J1
 tally apply(flatten entries gens J1, size)
 J1a = ideal select(flatten entries gens J1, f -> size f <= 2);
@@ -97,3 +103,6 @@ J11 = trim J1;
 --this next line should be about 3 hours?
 isSubset(ideal(1_S), I)
 
+I0 = substitute(I, a_5=>0);
+I0 = ideal compress gens I0;
+betti I0
