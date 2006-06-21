@@ -448,3 +448,27 @@ i27 :
    -- ooooooooozmzmzmmzzmmzzzmzoooooomoooozzmmzzmmozzzzzozzzzzzzzzmzzmmzmzzzzmzzz
    -- zzzmzzzzzzzzzzzzmzmomzomozzzzzzzmzzzmzmzzzzzmmzzzzzzzzzzzzzomzmmmzzzzzzzzzz
    -- zzzzzzzzmzmmmmmmmmmmmmmmmmmmmmmzzommmmmmmmmmmmmmmmmmmmmmmmmzzmmmmmz
+   
+   
+-----------------
+syze = 5; -- for 3 and 4, no segfault
+kk = QQ
+kk = ZZ/101
+R = kk[t, x_(1,1) .. x_(syze,syze), MonomialSize=>8];
+
+X = matrix apply(syze, i->apply(syze, j->x_(i+1,j+1)));
+
+SlowerPart = M -> matrix apply(syze, i->apply(syze,
+j->(if (i>j)
+then M_(i,j) else 0)));
+brake = A -> {A-SlowerPart(A),SlowerPart(A)};
+cpl = (p1,p2)->{p1_0 * p2_0, SlowerPart(p1_0*p2_1 +
+p1_1*p2_0)}
+cp = (A,B)->(p := cpl(brake(A),brake(B)); p_0 + p_1)
+
+Xcp3 = cp(X,cp(X,X));
+I3 = ideal Xcp3;
+
+print "Computing syzygies";
+sy = syz gens I3;
+   
