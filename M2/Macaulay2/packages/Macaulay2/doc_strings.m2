@@ -298,7 +298,7 @@ document {
 
 document {
      Key => {(symbol ^, String, Sequence)},
-     Headline => "vertical stacked copies of a string",
+     Headline => "vertically stacked copies of a string",
      Usage => "s^(height,depth)",
      Inputs => {"s", Nothing => { TT"(height,depth)", ", a pair of integers"}},
      Outputs => {

@@ -7,7 +7,7 @@ document {
 	  (symbol /, Module, Sequence),
 	  (symbol /, Module, Vector),
 	  (symbol /, Module, RingElement)},
-     Headline => "make a quotient module",
+     Headline => "quotient module",
      Usage => "M/N",
      Inputs => {
 	  "M",
@@ -43,7 +43,7 @@ document {
 
 document {
      Key => (symbol /, Ideal, Ideal),
-     Headline => "make a quotient module",
+     Headline => "quotient module",
      Usage => "I/J",
      Inputs => { "I", "J" => {"in the same ring as ", TT "I"}},
      Outputs => {
@@ -71,7 +71,7 @@ document {
 document {
      Key => {(symbol ^,Module,Array),
        (symbol ^,ChainComplex,Array)},
-     Headline => "projection onto some factors of a direct sum module or chain complex",
+     Headline => "projection onto summand",
      Usage => "M^[i,j,...,k]",
      Inputs => {"M" => {"or ", ofClass ChainComplex},
 	  Nothing => {TT "[i,j,...,k]", ", an array of indices"}},
@@ -129,7 +129,7 @@ document {
      }
 document {
      Key => (symbol ^, Module, List),
-     Headline => "projection map from a free module",
+     Headline => "projection onto summand",
      TT "M^{i,j,k,...}", " -- provides the projection map from a free module
      ", TT "M", " to the free module corresponding to the basis vectors whose
      index numbers are listed.",
@@ -138,39 +138,6 @@ document {
      SeeAlso => {"_", Module, List}
      }
 
-document {
-     Key => (symbol _, Module, List),
-     Headline => "map from free module to some generators",
-     TT "M_{i,j,k,...}", " -- provides a map from a free module to the module
-     ", TT "M", " which sends the basis vectors to the generators of ", TT "M", "
-     whose index numbers are listed.",
-     PARA{},
-     EXAMPLE "(ZZ^5)^{2,3}",
-     SeeAlso => {"^", Module, List}
-     }
-
-document {
-     Key => (symbol _, Ideal, List),
-     Headline => "map from free module to some generators",
-     Usage => "I_{i,j,k,...}",
-     Inputs => {
-	  "I",
-	  { TT "{i,j,k,...}", ", a list of integers" }
-	  },
-     Outputs => {
-	  "f" => { "a map from a free module to the module ", TT "module I", "
-	       which sends the basis vectors to the generators of ", TT "I", "
-     	       whose index numbers are listed."
-	       }
-	  },
-     EXAMPLE {
-	  "R = QQ[x,y,z]",
-	  "I = ideal vars R",
-	  "f = I_{0,2}",
-	  "image f"
-	  },
-     SeeAlso => { (module, Ideal) }
-     }
 
 document {
      Key => (basis,List,Module),

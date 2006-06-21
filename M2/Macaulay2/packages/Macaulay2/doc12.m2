@@ -352,25 +352,6 @@ document {
      }
 
 document {
-     Key => (symbol _, VisibleList, List),
-     Headline => "get some entries of a list",
-     Usage => "w_{i,j,...}",
-     Inputs => {
-	  "w" => "a list",
-	  Nothing => { TT "{i,j,...}", ", a list of integers to serve as indices" }
-	  },
-     Outputs => {{ "the list of entries ", TT "{w_i, w_j, ...}" }},
-     EXAMPLE {
-	  "w = {a,b,c,d,e,f,g,h};",
-      	  "w_{1,3,4}",
-	  },
-     "We can use this operation to compute composition of permutations represented as lists.",
-     EXAMPLE "{4,2,3,1,0} _ {2,1,3,4,0}",
-     "Remark: any subscripts which are sequences will have their elements spliced into the rest of the list.",
-     EXAMPLE "{a,b,c,d,e}_{2..4}"
-     }
-
-document {
      Key => number,
      Headline => "count how many elements of a list satisfy a condition",
      TT "number(x,f)", " the number of elements ", TT "e", " of the list ", TT "x", " 

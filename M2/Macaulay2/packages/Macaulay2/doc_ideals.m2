@@ -124,7 +124,7 @@ document {
      Key => {(symbol ^,Ideal,ZZ),
 	  (symbol ^,MonomialIdeal,ZZ)
 	  },
-     Headline => "power of an ideal",
+     Headline => "power",
      Usage => "I^n",
      Inputs => { "I", "n" => {"at least zero"}, },
      Outputs => { {"the ideal ", TT "I^n"} },

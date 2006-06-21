@@ -24,7 +24,7 @@ document {
 
 document {  -- This node is used as an example in the node: Key
      Key => resolution, 
-     Headline => "make a projective resolution"
+     Headline => "projective resolution"
      }
 document {
      Key => [resolution,DegreeLimit],
@@ -624,25 +624,6 @@ document {
      Outputs => { { "the structure sheaf of ", TT "X", "." } }
      }
 
-document {
-     Key => (symbol _, RingElement, ZZ),
-     Usage => "f_d",
-     Inputs => { "f" => "a polynomial", "d" },
-     Outputs => { { "the sum of those terms of ", TT "f", " whose total degree is ", TT "d" } },
-     SeeAlso => (symbol _, RingElement, List)
-     }
-
-document {
-     Key => (symbol _, RingElement, List),
-     Usage => "f_d",
-     Inputs => {
-	  "f" => "a polynomial",
-	  "d" => "a list of integers"
-	  },
-     Outputs => { { "the sum of those terms of ", TT "f", " whose multi-degree is ", TT "d" } },
-     "The length of ", TT "d", " should be the same as the degree length of ", TT "f", ".",
-     SeeAlso => {(symbol _, RingElement, ZZ), "degreeLength"}
-     }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

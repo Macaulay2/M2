@@ -695,30 +695,6 @@ document {
      ///
      }
 document {
-     Key => (symbol _, VisibleList, ZZ),
-     Headline => "get element from list",
-     Usage => "x_i",
-     Inputs => { "x", "i" },
-     Outputs => { { "the ", TT "i", "-th element of the list ", TT "x" }},
-     SeeAlso => {(symbol #, BasicList, ZZ), installAssignmentMethod},
-     PARA{
-     	  "The entries of the list are numbered starting with 0.  If  ", TT "i", " 
-          is negative, then the ", TT "i", "-th entry counting from the end is provided.
-          If ", TT "i", " is out of range, an error is signaled.  Methods for assignment
-	  to ", TT "x_i", " can be provided, but the syntax is not pleasant (yet)." },
-     EXAMPLE lines ///
-          x = a .. z
-	  x_12
-	  M = new Type of MutableList
-	  installAssignmentMethod(symbol _, M, ZZ, (x,i,v) -> x#i = v);
-	  y = new M from x
-	  y_12 = foo
-	  peek y
-	  net M := m -> peek m
-	  y
-     ///
-     }
-document {
      Key => (symbol #?, HashTable, Thing),
      Headline => "check for value in hash table",
      TT "x#?i", " -- tells whether there is a value associated to the
@@ -759,10 +735,7 @@ document {
      Headline => "check for presence of elements",
      SeeAlso =>{ "#" }
      }
-document {
-     Key => symbol _,
-     Headline => "a binary operator, used for subscripting and access to elements"
-     }
+
 document {
      Key => ".",
      Headline => "access to elements whose key is a symbol",
