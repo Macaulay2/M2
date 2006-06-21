@@ -19,7 +19,8 @@ toString Dictionary := d -> (
      toString class d | if length d == 0 then "{}" else "{..." | toString length d | "...}"
      )
 
-globalAssignment Package
+Package.GlobalAssignHook = (X,x) -> if not ReverseDictionary#?x then ReverseDictionary#x = X;     -- not 'use x';
+Package.GlobalReleaseHook = globalReleaseFunction
 
 dismiss Package := pkg -> (
      loadedPackages = delete(pkg,loadedPackages);
@@ -289,8 +290,6 @@ package Symbol := s -> (
 	       else if package d =!= null then break package d)));
 package HashTable := package Function := x -> if ReverseDictionary#?x then package ReverseDictionary#x
 
-Package.GlobalAssignHook = (X,x) -> if not ReverseDictionary#?x then ReverseDictionary#x = X;     -- not 'use x';
-Package.GlobalReleaseHook = globalReleaseFunction
 use Package := pkg -> if not member(pkg,loadedPackages) then (
      loadedPackages = prepend(pkg,loadedPackages);
      dictionaryPath = prepend(pkg.Dictionary,dictionaryPath);
