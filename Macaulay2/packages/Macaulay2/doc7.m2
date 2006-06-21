@@ -1,7 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 document {
      Key => (symbol _, Matrix, List),
-     Headline => "select some columns from a matrix",
+     Headline => "select columns",
      Usage => "f_cols",
      Inputs => {
 	  "f" => {"a matrix between free modules"},
@@ -22,7 +22,7 @@ document {
      }
 document {
      Key => (symbol ^, Matrix, List),
-     Headline => "select some rows from a matrix",
+     Headline => "select rows",
      Usage => "f_rows",
      Inputs => {
 	  "f" => {"a matrix between free modules"},
@@ -108,7 +108,7 @@ document {
      }
 document {
      Key => (submatrix,Matrix,VisibleList),
-     Headline => "select certain columns of a matrix",
+     Headline => "select columns",
      Usage => "submatrix(f, cols)",
      Inputs => { "f" => "a map between free modules",
 	  "cols" => "a list of integers denoting the choice of columns"},
@@ -137,8 +137,7 @@ document {
 	  },
      }
 document {
-     Key => submatrix,
-     Headline => "select part of a matrix"
+     Key => submatrix
      }
 document {
      Key => (diff,RingElement,RingElement),
@@ -867,7 +866,7 @@ TEST "
      "
 document {
      Key => (symbol ^,Matrix,Array),
-     Headline => "select some rows of blocks",
+     Headline => "select rows of blocks",
      TT "f^[i,j,k]", " -- extract some rows of blocks from a matrix ", TT "f", ".",
      PARA{},
      "The target of ", TT "f", " should be a direct sum, and the result is obtained by
@@ -884,7 +883,7 @@ document {
      }
 document {
      Key => (symbol _, Matrix, Array),
-     Headline => "select some columns of blocks",
+     Headline => "select columns of blocks",
      TT "f_[i,j,k]", " -- extract some columns of blocks from a matrix ", TT "f", ".",
      PARA{},
      "The source of ", TT "f", " should be a direct sum, and the result is obtained by
@@ -1073,34 +1072,6 @@ document {
      ", TT "cover exteriorPower(i,M)", " and ", TT "exteriorPower(i,cover M)", " 
      will be equal.",
      SeeAlso => {(exteriorPower,ZZ,Matrix)}
-     }
-document {
-     Key => (symbol _,Function,Thing),
-     Headline => "attach the first argument to a function of two or more arguments",
-     Usage => "g = f_x",
-     Inputs => {
-	  "f" => Function => "a function of two or more arguments",
-	  "x" => Thing
-	  },
-     Outputs => {
-	  "g" => Function => {
-	       "a new function with the property that ", TT "g(y)", "
-	       returns the value of  ", TT "f(x,y)", ", that
-	       ", TT "g(y,z)", " returns the value of ", TT "f(x,y,z)", ", and
-	       so on."
-	       }
-	  },
-     PARA {
-     	  "This abbreviation allows us to save a bit of typing, and in some
-     	  cases, agrees with standard mathematical notation."},
-     EXAMPLE {
-	  "R = ZZ[a .. i];",
-	  "f = genericMatrix(R,a,3,3)",
-	  "exteriorPower(2,f)",
-	  "exteriorPower_2 f",
-	  "p = prepend_7",
-	  "p {8,9,10}"
-	  }
      }
 document {
      Key => MinorsComputation,

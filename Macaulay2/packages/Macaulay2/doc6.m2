@@ -321,50 +321,6 @@ document {
       	  "dx*x^10",
       	  "dx*y^10"
 	  }}
-document {
-     Key => (symbol _, RingElement, RingElement),
-     Headline => "get a coefficient",
-     TT "f_m", " -- provide the coefficient of the monomial m in the polynomial f.",
-     PARA{},
-     EXAMPLE {
-	  "ZZ[y];",
-      	  "((1+y)^5) _ (y^2)",
-	  },
-     SeeAlso => {"_"}}
-document {
-     Key => (symbol _, Ring, String),
-     Headline => "get a variable by name",
-     TT "R_\"x\"", " -- produce the variable of the polynomial ring R 
-     whose name is ", TT "x", ".",
-     PARA{},
-     EXAMPLE {
-	  "R = ZZ[x,y,z];",
-      	  ///R_"x"///,
-	  },
-     PARA{},
-     "Eventually we will implement this for monoids, too."}
-document {
-     Key => (symbol _, Ring, ZZ),
-     Headline => "get a variable by number",
-     TT "R_i", " -- produce the ", TT "i", "-th generator of a ring ", TT "R", ".",
-     PARA{},
-     "The indexing of generators is based on 0, so ", TT "R_0", " would be
-     the first one, and so on.",
-     PARA{},
-     EXAMPLE {
-	  "R = ZZ[a..d]",
-      	  "R_2"
-	  }}
-document {
-     Key => (symbol _, Ring, List),
-     Headline => "make a monomial from a list of exponents",
-     TT "R_w", " -- produce the monomial of the ring ", TT "R", " by using the 
-     integers in the list ", TT "w", " as exponents of the variables.",
-     PARA{},
-     EXAMPLE {
-	  "R = ZZ[a..d]",
-      	  "R_{1,2,3,4}"
-	  }}
 TEST "
 -- test name
 R = ZZ/101[a..e]
@@ -458,12 +414,6 @@ document {
      PARA{},
      SeeAlso => { "monoid" }
      }     
-document {
-     Key => (symbol _, Monoid, ZZ),
-     Headline => "get a generator of a monoid",
-     TT "M_i", " -- produces the i-th generator of a monoid ", TT "M", ".",
-     PARA{},
-     SeeAlso => { "Monoid", "_" }}
 document {
      Key => degreesMonoid,
      Headline => "get the monoid of degrees",
@@ -637,17 +587,6 @@ document {
      module over ", TT "R", ", then M is a subclass of Vector.",
      PARA{},
      SeeAlso => {"engine", "Module"}}
-document {
-     Key => (symbol _, Vector, ZZ),
-     Headline => "get a component",
-     TT "v_i", " -- produce the i-th entry of a vector or module element v.",
-     PARA{},
-     EXAMPLE {
-	  "R = ZZ/101[a..f]",
-      	  "v = vector {a,b,c}",
-      	  "v_1",
-	  },
-     SeeAlso => {"_"}}
 document { Key => degrees, Headline => "degrees of generators" }
 document {
      Key => (degrees, Ideal),
@@ -717,7 +656,7 @@ document {
      SeeAlso => {"vector", "directSum", "++"}}
 document {
      Key => (symbol ^,Module,ZZ),
-     Headline => "make a direct sum of several copies of a module",
+     Headline => "direct sum",
      Usage => "M^n",
      Inputs => {"M", "n"},
      Outputs => {{"the direct sum of ", TT "n", " copies of ", TT "M"}},
@@ -770,7 +709,7 @@ document {
      Key => {
 	  (symbol ^, CoherentSheaf, ZZ),
 	  (symbol ^, SheafOfRings, ZZ)},
-     Headline => "make a direct sum of several copies of a sheaf",
+     Headline => "direct sum",
      Usage => "F^n",
      Inputs => {"F" => {", or a ", ofClass SheafOfRings}, "n"},
      Outputs => {
@@ -838,12 +777,14 @@ document {
      }
 document {
      Key => {(symbol ^, ChainComplex, ZZ)},
-     Headline => "cohomological degree",
+     Headline => "access member, cohomological degree",
      Usage => "C^n",
      Inputs => {"C", "n"},
      Outputs => {
      	  Module => {"The ", TT "(-n)", "-th component ", TT "C_(-n)", " of ", TT "C"}
 	  },
+     "Subscripts refer to homological degree, and superscripts refer to cohomological degree.
+     It is only a matter of notation: ", TT "C_(-n)", " is always the same as ", TT "C^n", ".",
      EXAMPLE lines ///
      	  R = QQ[x,y,z];
 	  C = res coker vars R
@@ -1015,19 +956,6 @@ document {
 	  TO (kernel, Matrix),
 	  TO (homology, Matrix, Matrix),
 	  }}
-document {
-     Key => (symbol _, Matrix, Sequence),
-     Headline => "get an entry",
-     TT "f_(i,j)", " -- provide the element in row ", TT "i", " and
-     column ", TT "j", " of the matrix ", TT "f", ".",
-     SeeAlso => {"_", "Matrix"}}
-document {
-     Key => (symbol _, Matrix, ZZ),
-     Headline => "get a column from a matrix",
-     TT "f_i", " -- provide the ", TT "i", "-th column of a matrix ", TT "f", " as a vector.",
-     PARA{},
-     "Vectors are disparaged, so we may do away with this function in the future.",
-     SeeAlso => "_"}
 document {
      Key => isWellDefined,
      Headline => "whether a map is well defined" }

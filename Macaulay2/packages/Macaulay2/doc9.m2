@@ -464,26 +464,6 @@ document {
 	  }
      }
 
-document {
-     Key => (symbol _, ChainComplex, ZZ),
-     Headline => "get component of chain complex",
-     Usage => "C_i",
-     Inputs => { "C" , "i" },
-     Outputs => {{"the ", TT "i", "-th module of the chain complex ", TT "C"}},
-     EXAMPLE {
-	  "R = ZZ[x..z]",
-	  "C = res coker vars R",
-	  "C_2",
-	  "rank C_2",
-	  "degrees C_2"
-	  },
-     SUBSECTION "Programming hint",
-	  "The chain complex ", TT "C", " is implemented as a hash table, but since the computation of a projective resolution can be stopped prematurely, Macaulay 2 doesn't bother
-	  populating the hash table with the relevant free modules until explicitly requested by the user, for example, in response to the
-	  command ", TT "C_i", " described above.  The hash table ", TT "C", " can be examined directly with code like ", TT "C#i", ", but in order to populate 
-	  the hash table completely, use ", TO (complete, ChainComplex), ".",
-     SeeAlso => {res}
-     }
 
 document {
      Key => (length, ChainComplex),
@@ -506,25 +486,6 @@ document {
      identity map."
      }
 
-document {
-     Key => (symbol _, ChainComplexMap, ZZ),
-     Headline => "get component of chain map",
-     Usage => "p_i",
-     Inputs => {
-	  "p" => ("a map ", TT "D", " <- ", TT "C", " of chain complexes, of degree ", TT "d", ", say"),
-	  "i" => ()
-	  },
-     Outputs => { ("the component ", TT "D_(i+d) <- C_i" ) },
-     EXAMPLE {
-	  "R = ZZ/101[a..c]",
-	  "I = image vars R",
-	  "J = image symmetricPower (2,vars R)",
-	  "g = extend( resolution (R^1/I), resolution (R^1/J), id_(R^1))",
-	  "g_1",
-	  "g_2"
-	  },
-     SeeAlso => { (symbol _, ChainComplex, ZZ), extend, resolution, image, vars, symmetricPower }
-     }
 
 document { Key => extend, Headline => "extend a module map to a chain map, if possible" }
 document {

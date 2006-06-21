@@ -1672,15 +1672,6 @@ document {
 	  },
      }
 
-document {
-     Key => (symbol _, ZZ, Ring),
-     TT "1_R", " provides the unit element of the ring ", TT "R", ".",
-     BR{},
-     TT "0_R", " provides the zero element of the ring ", TT "R", ".",
-     BR{},
-     TT "n_R", " promotes the integer ", TT "n", " to the ring ", TT "R", ".",
-     }
-
 
 document {
      Key => symbol =>,
@@ -1703,21 +1694,6 @@ document {
 	  }
      }
      
-document {
-     Key => (symbol _, Symbol, Ring),
-     Headline => "generator of a ring with a given name",
-     Usage => "x_R",
-     Inputs => { "x", "R" },
-     Outputs => { { "the generator of the ring ", TT "R", " whose name is ", TT "x" } }
-     }
-     
-document {
-     Key => (symbol _, RingElement, Ring),
-     Headline => "generator of a ring with a given name",
-     Usage => "x_R",
-     Inputs => { "x", "R" },
-     Outputs => { { "the generator of the ring ", TT "R", " whose name is the same as that of ", TT "x" } }
-     }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

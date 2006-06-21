@@ -915,11 +915,6 @@ document {
      created before the polynomial ring is created."
      }
 
-document {
-     Key => (symbol _, ZZ, Monoid),
-     Headline => "get unit element",
-     TT "1_M", " -- provides the unit element of a monoid ", TT "M", "."
-     }
 
 
 -- Local Variables:

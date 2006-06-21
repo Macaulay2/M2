@@ -228,14 +228,6 @@ assert( a == 3 )
 "
 
 document {
-     Key => (symbol _, Tally, Thing),     
-     Headline => "get a count from a tally",
-     TT "t_x", " -- returns the number of times ", TT "x", " is counted
-     by ", TT "t", ".",
-     SeeAlso => "Tally"
-     }
-
-document {
      Key => Tally,
      Headline => "the class of all tally results",
      TT "Tally", " -- a class designed to hold tally results, i.e., multisets."
