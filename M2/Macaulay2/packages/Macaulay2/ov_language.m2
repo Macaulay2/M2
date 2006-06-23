@@ -1,27 +1,27 @@
 document {
      Key => "The Macaulay2 language",
-     "The Macaulay2 language is a simple yet powerful interpreted language.  Every 
-     object has a type, such as Type, ZZ (integer), String, HashTable, Ring, Matrix,
-     Function, etc.  User defined variables are hold values of any type.",
-     PARA{},
-     "Expressions in Macaulay2 include function calls,
-     control structures (e.g., ", TO "for", " and ", TO "while", " loops), function definitions,
-     and operator expressions.
-     Every expression returns an object, although ", TO "null", " is often returned if the 
-     expression is only being used to produce some side effect.",
-
+     
+     "The Macaulay2 language is a simple yet powerful interpreted language.  Every object has a type, such as ", TO "Type", ", ", TO "ZZ", "
+     (integer), ", TO "String", ", ", TO "HashTable", ", ", TO "Ring", ", ", TO "Matrix", ", ", TO "Function", ", etc.  User defined variables may
+     hold values of any type.",
+     
      PARA{},
 
-     "There is special syntax for creating and accessing strings, lists, sequences, and
-     hashtables.  These are the key data types underlying many new types.  The Macaulay2
-     engine implements rings, ring elements, and matrices, as instances of low-level types, 
-     and various high-level types, visible to the user, are based on them.  Examples include
-     ", TO "Ring", ", ", TO "RingElement", ", ", TO "Matrix", ", ", TO "Ideal", ", ", TO "RingMap", ", ", TO "Module", ", and ", TO "ChainComplex", ".",
+     "Expressions in Macaulay2 include function calls, control structures (e.g., ", TO "for", " and ", TO "while", " loops), function definitions, and
+     operator expressions.  Every expression returns an object, although ", TO "null", " is often returned if the expression is being used only to
+     produce some side effect.",
 
      PARA{},
 
-     "The user can create new types of higher level mathematical objects, whose types
-     form a hierarchy that facilitates the installation and use of appropriate methods for computing with them.",
+     "There is special syntax for creating and accessing strings, lists, sequences, and hashtables.  These are the key data types underlying many new
+     types.  The Macaulay2 engine implements rings, ring elements, and matrices, as instances of low-level types, and various high-level types,
+     visible to the user, are based on them.  Examples include ", TO "Ring", ", ", TO "RingElement", ", ", TO "Matrix", ", ", TO "Ideal", ", ", 
+     TO "RingMap", ", ", TO "Module", ", and ", TO "ChainComplex", ".",
+
+     PARA{},
+
+     "The user can create new types of higher level mathematical objects, whose types form a hierarchy that facilitates the installation and use of
+     appropriate methods for computing with them.",
 
      Subnodes => {
 	      TO "variables",

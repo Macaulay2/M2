@@ -1,9 +1,9 @@
 --		Copyright 2006 by Daniel R. Grayson
 
-pretty = method(SingleArgumentDispatch => true)
+pretty = method(Dispatch => Input)
 pretty Thing := x -> stack pretty2 x
 
-pretty2 = method(SingleArgumentDispatch => true)
+pretty2 = method(Dispatch => Input)
 -- pretty2 String := s -> (
 --      r := wrap(printWidth - 2, format s);
 --      if depth r > 0 then r = boxList {r};

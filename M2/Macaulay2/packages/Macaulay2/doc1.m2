@@ -306,10 +306,14 @@ document {
 	  },
      SeeAlso => {"making new functions with optional arguments", "OptionTable", "Option", "=>"}
      }
+
+undocumented [method, SingleArgumentDispatch]
+
+stderr << "--warning: this node needs rewriting : method(Dispatch => ...)" << endl
 document {
-     Key => [method, SingleArgumentDispatch],
+     Key => [method, Dispatch],
      Headline => "method functions with a variable number of arguments",
-     Usage => "f = method(SingleArgumentDispatch => true)",
+     Usage => "f = method(Dispatch => Input)",
      Inputs => {
 	  },
      Outputs => {
@@ -317,7 +321,7 @@ document {
 	  },
      "Here is an example.",
      EXAMPLE {
-	  "f = method(SingleArgumentDispatch=>true);",
+	  "f = method(Dispatch => Input);",
 	  "f ZZ := i -> -i;",
 	  "f Sequence := S -> reverse S;",
 	  "f 44",
@@ -326,6 +330,7 @@ document {
      "Normally, at most three arguments could be handled by such a method
      function, and the types would have to be considered separately."
      }
+
 document {
      Key => symbol typicalValues,
      Headline => "types of values returned by functions",

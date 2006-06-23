@@ -26,7 +26,7 @@ peek'(ZZ,List) := (depth,s) -> (
 peek'(ZZ, String) := (depth,s) -> if depth === 0 then s else format s
 
 vbar := (ht,dp) -> "|"^(ht,dp)
-boxList = method(SingleArgumentDispatch => true)
+boxList = method(Dispatch => Input)
 boxList List := boxList Sequence := nets -> (
      nets = net \ nets;
      wid := if #nets === 0 then 0 else max \\ width \ nets;
@@ -38,7 +38,7 @@ boxList List := boxList Sequence := nets -> (
      w)
 upWidth := (wid,n) -> n | horizontalJoin(wid - width n : " "^(height n - 1))
 joinRow := x -> horizontalJoin mingle(#x+1:vbar(max\\height\x,max\\depth\x),x)
-boxTable = method(SingleArgumentDispatch => true)
+boxTable = method(Dispatch => Input)
 boxTable List :=
 boxTable Sequence := x -> (
      if not all(x, row -> class row === List) then error "expected a list or sequence of lists";

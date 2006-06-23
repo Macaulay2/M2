@@ -1,0 +1,5 @@
+method has been rewritten, now supports Dispatch => {Input, Output, ...} or Dispatch => Input
+
+SingleArgumentDispatch phased out
+
+document it!

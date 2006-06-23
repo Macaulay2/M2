@@ -9,7 +9,7 @@ export {ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,bFunctio
         globalB,globalBFunction,ViaAnnFs,ReducedB,factorBFunction,getIntRoots,Boperator,Bpolynomial,globalBoperator,
 	AnnFs,AnnIFs,Dtrace,getDtrace,setHomSwitch,getHomSwitch,localCohom,Walther,OaTa,LocStrategy,
 	OaTaWa,pruneLocalCohom,paramBpoly,GroundField,makeCyclic,Generator,AnnG,isHolonomic,DHom,DExt,Special,
-	None,Output,Info,PolySols,Alg,GD,Duality,PolyExt,RatSols,RatExt,createDpairs,dpairInds,
+	None,Info,PolySols,Alg,GD,Duality,PolyExt,RatSols,RatExt,createDpairs,dpairInds,
 	dpairVars,Fourier,Dtransposition,singLocus,charIdeal,Drank,Ddim,makeWeylAlgebra,Ddual,Dlocalize,
 	Oaku,OTW,Dlocalization,DlocalizationAll,DlocalizeMap,LocModule,GeneratorPower,LocMap,annFS,
 	DlocalizeAll,IntegrateBfunction,Bfunction,DlocalizationMap,Dresolution,Schreyer,Vhomogenize,Dres,
@@ -24,7 +24,7 @@ export {ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,bFunctio
 	reduceCompress,zeroize
 	}
    
-
+assert (isGlobalSymbol "Output" and value getGlobalSymbol "Output" === getGlobalSymbol "Output")
 
 load "Dmodules/Dloadfile.m2"
 

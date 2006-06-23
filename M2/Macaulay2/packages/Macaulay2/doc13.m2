@@ -710,7 +710,6 @@ document { Key => Bag,
      Any mutable list can be used for this purpose, but bags are designed for this purpose.",
      SeeAlso => {unbag}
      }
-undocumented {(unbag,Sequence)}
 document { Key => {(unbag, Bag), unbag},
      Usage => "unbag y",
      Inputs => { "y" },

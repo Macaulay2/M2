@@ -61,7 +61,7 @@ Set - List := Set => (x,y) -> x - set y
 sum Set := s -> sum toList s
 product Set := s -> product toList s
 
-unique = method(SingleArgumentDispatch => true, TypicalValue => List)
+unique = method(Dispatch => Input, TypicalValue => List)
 unique Sequence := x -> unique toList x
 unique List := x -> (
      -- old faster way: keys set x

@@ -815,14 +815,34 @@ method1(e:Expr,env:Sequence):Expr := (
      f := lookup(Class(e),env.0);
      applyEE(if f == nullE then env.1 else f,e)
      );
+method1c(e:Expr,env:Sequence):Expr := (
+     -- env.0 : the primary method function, used as key for lookup
+     -- env.1 : the function to call if no method found
+     when e is c:HashTable do (
+     	  f := lookup(c,env.0);
+     	  applyEE(if f == nullE then env.1 else f,e))
+     else WrongArg("a class")
+     );
 newmethod1(e:Expr):Expr := (
-     env := Sequence(nullE,e);
-     cfc := Expr(CompiledFunctionClosure(method1,nextHash(),env));
-     env.0 = cfc;
-     cfc);
+     when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
+	  f := s.0;
+	  output := s.1;
+	  env := Sequence(nullE,f);
+	  cfc := Expr(CompiledFunctionClosure(if output == True then method1c else method1,nextHash(),env));
+	  env.0 = cfc;
+	  cfc)
+     else WrongNumArgs(2));
 setupfun("newmethod1",newmethod1);
 
-method123(e:Expr,env:Sequence):Expr := (
+applyEOS(f:Expr,o:Expr,s:Sequence):Expr := (
+     g := applyEE(f,o);
+     when g is Error do g else applyES(g,s));
+
+applyEOE(f:Expr,o:Expr,x:Expr):Expr := (
+     g := applyEE(f,o);
+     when g is Error do g else applyEE(g,x));
+
+method1234(e:Expr,env:Sequence):Expr := (
      -- env.0 : the primary method function, used as key for lookup
      -- env.1 : the function to call if no method found
      when e is args:Sequence do (
@@ -849,96 +869,135 @@ method123(e:Expr,env:Sequence):Expr := (
 	  else applyES(env.1, args))
      else (
 	  f := lookup(Class(e),env.0);
-	  if f == nullE then f = env.1;
-     	  applyEE(f,e)));
+	  if f == nullE then applyEE(env.1,e)
+	  else applyEE(f,e)));
 
-anonymousClass := newHashTable(thingClass,thingClass);
-method123c(e:Expr,env:Sequence):Expr := (
+method1234o(e:Expr,env:Sequence):Expr := (
+     -- e is (opt,arg);
+     -- env.0 : the primary method function, used as key for lookup
+     -- env.1 : the function to call if no method found
+     when e is s:Sequence do if length(s) != 2 then return WrongNumArgs(2) else (
+	  opt := s.0;
+	  arg := s.1;
+	  when arg is args:Sequence do (
+	       if length(args) == 2 then (
+		    f := lookupBinaryMethod(Class(args.0),Class(args.1),env.0);
+		    if f == nullE then applyES(env.1, args)
+		    else applyEOS(f, opt, args))
+	       else if length(args) == 3 then (
+		    f := lookupTernaryMethod(Class(args.0),Class(args.1),Class(args.2),env.0);
+		    if f == nullE then applyES(env.1, args)
+		    else applyEOS(f, opt, args))
+	       else if length(args) == 1 then (
+		    f := lookup(Class(args.0),env.0);
+		    if f == nullE then applyEE(env.1, args.0)
+		    else applyEOE(f, opt, args.0))
+	       else if length(args) == 0 then (
+		    f := lookup(env.0);
+		    if f == nullE then applyES(env.1, args)
+		    else applyEOS(f, opt, args))
+	       else if length(args) == 4 then (
+		    f := lookupQuaternaryMethod(Class(args.0),Class(args.1),Class(args.2),Class(args.3),env.0);
+		    if f == nullE then applyES(env.1, args)
+		    else applyEOS(f, opt, args))
+	       else applyES(env.1, args))
+	  else (
+	       f := lookup(Class(arg),env.0);
+	       if f == nullE then applyEE(env.1,arg)
+	       else applyEOE(f,opt,arg)) )
+     else WrongNumArgs(2));
+
+method1234c(e:Expr,env:Sequence):Expr := (
      -- ClassArgument version
      -- env.0 : the primary method function, used as key for lookup
      -- env.1 : the function to call if no method found
-     -- env.2 : a list {false,true,...} telling whether to treat
+     -- env.2 : the function to call with the (i,args) if i-th output argument isn't even a hashtable, or -1 if args is not a sequence
+     -- env.3 : a list {false,true,...} telling whether to treat
      --         the corresponding argument as the type.  Otherwise, use
      --         its class.  Assumed to be 'false' for arguments off
      --         the end of the list.
-     when env.2 is u:List do (
-	  useClass := u.v;
-	  when e is args:Sequence do
+     -- env.4 : true, if the methods are expecting options first
+     --	    	this means we dispatch on e.1 instead of on e, and we call the resulting method function f as ((f e.0) e.1) instead of (f e)
+     arg := e;
+     haveopts := false;
+     opt := nullE;
+     if env.4 == True then (
+	  haveopts = true;
+     	  when e is s:Sequence do if length(s) != 2 then return WrongNumArgs(2) else (opt = s.0; arg = s.1)
+	  else return WrongNumArgs(2));
+     when env.3 is u:List do (
+	  outputs := u.v;
+	  when arg is args:Sequence do
 	  if length(args) == 2 then (
 	       a0 := (
-		    if length(useClass) <= 0 || useClass.0 == False
+		    if length(outputs) <= 0 || outputs.0 == False
 		    then Class(args.0)
-		    else when args.0 is o:HashTable do o else anonymousClass);
+		    else when args.0 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(0)),arg))));
 	       a1 := (
-		    if length(useClass) <= 1 || useClass.1 == False
+		    if length(outputs) <= 1 || outputs.1 == False
 		    then Class(args.1)
-		    else when args.1 is o:HashTable do o else anonymousClass);
+		    else when args.1 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(1)),arg))));
 	       f := lookupBinaryMethod(a0,a1,env.0);
-	       if f == nullE then f = env.1;
-	       applyES(f, args))
+	       if f == nullE then applyES(env.1, args)
+	       else if haveopts then applyEOS(f,opt,args) else applyES(f, args))
 	  else if length(args) == 3 then (
 	       a0 := (
-		    if length(useClass) <= 0 || useClass.0 == False
+		    if length(outputs) <= 0 || outputs.0 == False
 		    then Class(args.0)
-		    else when args.0 is o:HashTable do o else anonymousClass);
+		    else when args.0 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(0)),arg))));
 	       a1 := (
-		    if length(useClass) <= 1 || useClass.1 == False
+		    if length(outputs) <= 1 || outputs.1 == False
 		    then Class(args.1)
-		    else when args.1 is o:HashTable do o else anonymousClass);
+		    else when args.1 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(1)),arg))));
 	       a2 := (
-		    if length(useClass) <= 2 || useClass.2 == False
+		    if length(outputs) <= 2 || outputs.2 == False
 		    then Class(args.2)
-		    else when args.2 is o:HashTable do o else anonymousClass);
+		    else when args.2 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(2)),arg))));
 	       f := lookupTernaryMethod(a0,a1,a2,env.0);
-	       if f == nullE then f = env.1;
-	       applyES(f, args))
+	       if f == nullE then applyES(env.1, args)
+	       else if haveopts then applyEOS(f,opt,args) else applyES(f, args))
 	  else if length(args) == 1 then (
 	       a0 := (
-		    if length(useClass) <= 0 || useClass.0 == False
+		    if length(outputs) <= 0 || outputs.0 == False
 		    then Class(args.0)
-		    else when args.0 is o:HashTable do o else anonymousClass);
+		    else when args.0 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(0)),arg))));
 	       f := lookup(a0,env.0);
-	       if f == nullE then f = env.1;
-	       applyEE(f, args.0))
+	       if f == nullE then applyEE(env.1, args.0)
+	       else applyEE(f, args.0))
 	  else if length(args) == 4 then (
 	       a0 := (
-		    if length(useClass) <= 0 || useClass.0 == False
+		    if length(outputs) <= 0 || outputs.0 == False
 		    then Class(args.0)
-		    else when args.0 is o:HashTable do o else anonymousClass);
+		    else when args.0 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(0)),arg))));
 	       a1 := (
-		    if length(useClass) <= 1 || useClass.1 == False
+		    if length(outputs) <= 1 || outputs.1 == False
 		    then Class(args.1)
-		    else when args.1 is o:HashTable do o else anonymousClass);
+		    else when args.1 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(1)),arg))));
 	       a2 := (
-		    if length(useClass) <= 2 || useClass.2 == False
+		    if length(outputs) <= 2 || outputs.2 == False
 		    then Class(args.2)
-		    else when args.2 is o:HashTable do o else anonymousClass);
+		    else when args.2 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(2)),arg))));
 	       a3 := (
-		    if length(useClass) <= 3 || useClass.3 == False
+		    if length(outputs) <= 3 || outputs.3 == False
 		    then Class(args.3)
-		    else when args.3 is o:HashTable do o else anonymousClass);
+		    else when args.3 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(3)),arg))));
 	       f := lookupQuaternaryMethod(a0,a1,a2,a3,env.0);
-	       if f == nullE then f = env.1;
-	       applyES(f, args))
-	  else applyES(env.1, args)
+	       if f == nullE then applyES(env.1, args)
+	       else if haveopts then applyEOS(f,opt,args) else applyES(f, args))
+	  else applyES(env.1, args)			    -- it's too long!
 	  else (
 	       a0 := (
-		    if length(useClass) <= 0 || useClass.0 == False
-		    then Class(e)
-		    else when e is o:HashTable do o else anonymousClass);
-	       f := lookup(Class(e),env.0);
-	       if f == nullE then f = env.1;
-	       applyEE(f,e)))
-     else buildErrorPacket("invalid list"));
-newmethod123c(e:Expr):Expr := (
+		    if length(outputs) <= 0 || outputs.0 == False
+		    then Class(arg)
+		    else when arg is o:HashTable do o else return applyEE(env.1, Expr(Sequence(Expr(toInteger(-1)),arg))));
+	       f := lookup(Class(arg),env.0);
+	       if f == nullE then applyEE(env.1,arg)
+	       else if haveopts then applyEOE(f,opt,arg) else applyEE(f,arg)))
+     else buildErrorPacket("env.3: invalid list"));
+newmethod1234c(e:Expr):Expr := (
      when e is env:Sequence do (
-	  -- env.0 : the primary method function, used as key for lookup
-	  -- env.1 : the function to call if no method found
-	  -- env.2 : a list {false,true,...} telling whether to treat
-	  --         the corresponding argument as the type.  Otherwise, use
-	  --         its class.  Assumed to be 'false' for arguments off
-	  --         the end of the list.
-	  if length(env) == 3
+	  -- see above for description of elements of env, except that env.0 is supplanted by us if null
+	  if length(env) == 5
 	  then (
 	       when env.0
 	       is Nothing do nothing
@@ -946,30 +1005,39 @@ newmethod123c(e:Expr):Expr := (
 	       is CompiledFunctionClosure do nothing
 	       is FunctionClosure do nothing
 	       is s:SpecialExpr do if ancestor(s.class,functionClass) then nothing else return WrongArg(1,"a function")
-	       else return WrongArg(1,"a function");
+	       else return WrongArg(1,"a function or null");
 	       when env.1
 	       is CompiledFunction do nothing
 	       is CompiledFunctionClosure do nothing
 	       is FunctionClosure do nothing
 	       is s:SpecialExpr do if ancestor(s.class,functionClass) then nothing else return WrongArg(2,"a function")
 	       else return WrongArg(2,"a function");
-	       when env.2 is u:List do (
+	       when env.2
+	       is CompiledFunction do nothing
+	       is CompiledFunctionClosure do nothing
+	       is FunctionClosure do nothing
+	       is s:SpecialExpr do if ancestor(s.class,functionClass) then nothing else return WrongArg(3,"a function")
+	       else return WrongArg(3,"a function");
+	       if !(env.4 == True || env.4 == False) then return WrongArgBoolean(5);
+	       when env.3 is u:List do (
 		    useClass := u.v;
 		    foreach i in useClass do if !(i == True || i == False) 
-		    then return  WrongArg(3,"a list of boolean values") ;
+		    then return  WrongArg(4,"a list of boolean values") ;
 		    allFalse := true;
 		    foreach i in useClass do if i != False then allFalse = false;
 		    cfc :=
 		    if allFalse
-		    then Expr(CompiledFunctionClosure(method123,nextHash(),env))
-		    else Expr(CompiledFunctionClosure(method123c,nextHash(),env));
-		    if env.0 == nullE then env.0 = cfc;
+		    then (if env.4 == True 
+		    	 then Expr(CompiledFunctionClosure(method1234o,nextHash(),env))
+		    	 else Expr(CompiledFunctionClosure(method1234,nextHash(),env)))
+		    else Expr(CompiledFunctionClosure(method1234c,nextHash(),env));
+		    if env.0 == nullE then env.0 = cfc;	    -- oops -- this assignment is not safe -- sequences are read-only
 		    cfc)
-	       else WrongArg(3,"a list of boolean values")
+	       else WrongArg(4,"a list of boolean values")
 	       )
-	  else WrongNumArgs(3))
-     else WrongNumArgs(3));
-setupfun("newmethod123c",newmethod123c);
+	  else WrongNumArgs(5))
+     else WrongNumArgs(5));
+setupfun("newmethod1234c",newmethod1234c);
 
 drop(v:Sequence,b:Expr):Expr := (
      when b

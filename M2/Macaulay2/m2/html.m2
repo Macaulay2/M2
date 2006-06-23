@@ -64,7 +64,7 @@ rel := url -> (
 	  if absoluteLinks and class prefixDirectory === String and fileExists (prefixDirectory | url) then (prefixDirectory | url)
      	  else relativizeFilename(htmlDirectory, url)))
 
-htmlFilename = method(SingleArgumentDispatch => true)
+htmlFilename = method(Dispatch => Input)
 htmlFilename Thing := x -> htmlFilename makeDocumentTag x
 htmlFilename DocumentTag := tag -> (
      fkey := DocumentTag.FormattedKey tag;
@@ -182,8 +182,7 @@ anchor := entry -> (
      if alpha#?anchorPoint and entry >= alpha#anchorPoint then (
      	  s := select(drop(alpha,anchorPoint), c -> entry >= c);
      	  anchorPoint = anchorPoint + #s;
-     	  toSequence apply(s, c -> ANCHOR{ "id" => c, ""})
-     	  ))
+     	  SPAN apply(s, c -> ANCHOR{ "id" => c, ""})))
 
 packageTagList := (pkg,topDocumentTag) -> checkIsTag \ unique join(
      apply(
@@ -351,12 +350,10 @@ makeMasterIndex := keylist -> (
 	       HR{},
 	       HEADER1 title,
 	       DIV between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), 
-	       UL splice apply(sort keylist, (tag) -> (
+	       UL apply(sort keylist, (tag) -> (
 			 checkIsTag tag;
-			 (anchor tag, TOH tag)
-			 ))
-	       }
-	  };
+			 anch := anchor tag;
+			 if anch === null then LI TOH tag else LI {anch, TOH tag}))}};
      validate r;
      fn << html r << endl << close
      )
@@ -1098,7 +1095,7 @@ Michael R. Stillman <mike@math.cornell.edu>
 	  );
      dir)
 
-makePackageIndex = method(SingleArgumentDispatch => true)
+makePackageIndex = method(Dispatch => Input)
 makePackageIndex Sequence := x -> (
      if #x > 0 then error "expected 0 arguments";
      makePackageIndex path    -- this might get too many files (formerly we used packagePath)

@@ -42,15 +42,12 @@ document {
      SeeAlso => {sortColumns}
      }
 document { 
-     Key => {(sort,List),(sort,Sequence)},
+     Key => {(sort,List)},
      Headline => "sort a list",
      Usage => "sort v",
-     Inputs => {
-	  "v" => {" or a ", TO Sequence}
-	  },
+     Inputs => { "v" },
      Outputs => {
-	  List => {"(or ", TO Sequence, ") of the same length as ", TT "v", " sorted
-	  in ascending order"}
+	  List => {" of the same length as ", TT "v", " sorted in ascending order"}
 	  },
      "The sort function uses ", TO symbol<=, " to compare elements of the
      list, which in turn calls upon ", TO symbol?, ".",

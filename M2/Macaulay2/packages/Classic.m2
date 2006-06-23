@@ -75,7 +75,6 @@ document {
 	  }
      }
 
-undocumented {(poly,Sequence)}
 document { 
      Key => {(poly,String),poly},
      Headline => "make a polynomial using classic Macaulay syntax",
