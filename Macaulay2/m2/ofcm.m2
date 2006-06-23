@@ -104,7 +104,7 @@ tensorDefaults = merge(monoidDefaults,
      new OptionTable from {MonomialOrder => null},
      (x,y) -> y)
 
-monoid = method(SingleArgumentDispatch => true)
+monoid = method(Dispatch => Input)
 options PolynomialRing := options @@ monoid
 
 generators GeneralOrderedMonoid := M -> M.generators

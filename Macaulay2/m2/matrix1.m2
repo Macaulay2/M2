@@ -458,7 +458,7 @@ image RingElement := Module => f -> image matrix {{f}}
 Ideal = new Type of HashTable
 Ideal.synonym = "ideal"
 
-ideal = method(SingleArgumentDispatch=>true, TypicalValue => Ideal)
+ideal = method(Dispatch => Input, TypicalValue => Ideal)
 
 expression Ideal := (I) -> new FunctionApplication from { ideal, expression unsequence toSequence first entries generators I }
 

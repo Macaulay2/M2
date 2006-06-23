@@ -108,7 +108,7 @@ new BR from List := (X,x) -> if #x>0 then error "expected empty list" else x
 PARA       = withQname_"p" new MarkUpType of HypertextParagraph	    -- double spacing inside
 
 ExampleItem = withQname_"code" new MarkUpType of Hypertext
-EXAMPLE = method(SingleArgumentDispatch => true)
+EXAMPLE = method(Dispatch => Input)
 EXAMPLE VisibleList := x -> TABLE splice { "class" => "examples", apply(nonempty trimfront requirestrings nonnull toSequence x, item -> TR TD ExampleItem item) }
 EXAMPLE String := x -> EXAMPLE {x}
 

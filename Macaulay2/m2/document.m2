@@ -22,7 +22,7 @@ toAbsolutePath = path -> if path =!= "stdio" then "/" | relativizeFilename("/", 
    -- or
    --	             TO symbol sin
    -- and have them all get recorded the same way
-normalizeDocumentKey := method(SingleArgumentDispatch => true)
+normalizeDocumentKey := method(Dispatch => Input)
 normalizeDocumentKey   String := key -> if isGlobalSymbol key then getGlobalSymbol key else key
 normalizeDocumentKey    Array := identity
 normalizeDocumentKey   Symbol := identity
@@ -33,13 +33,13 @@ normalizeDocumentKey    Thing := key -> (
      error("encountered unidentifiable document tag: ",key);
      )
 
-isDocumentableThing  = method(SingleArgumentDispatch => true)
+isDocumentableThing  = method(Dispatch => Input)
 isDocumentableThing    String := key -> true
 isDocumentableThing    Symbol := key -> true
 isDocumentableThing  Sequence := key -> false 		    -- we're not looking for documentable methods here, just documentable objects
 isDocumentableThing   Nothing := key -> true
 
-isDocumentableMethod = method(SingleArgumentDispatch => true)
+isDocumentableMethod = method(Dispatch => Input)
 isDocumentableMethod Sequence := key -> (
      all(key, i -> (
      	       class i === Sequence 			    -- assignment methods look like ((symbol *, symbol =), X, Y, Z)
@@ -57,7 +57,7 @@ isDocumentableMethod ScriptedFunctor := fn -> ReverseDictionary#?fn
 -- verifying the tags
 -----------------------------------------------------------------------------
 -- here we check that the method a putative document tag documents is actually installed
-verifyKey = method(SingleArgumentDispatch => true)
+verifyKey = method(Dispatch => Input)
 verifyKey Thing    := s -> null
 
 verifyKey Sequence := s -> (				    -- e.g., (res,Module) or (symbol **, Module, Module)
@@ -108,7 +108,7 @@ pkgTitle Symbol  := toString
 pkgTitle String  := identity
 pkgTitle Nothing := x -> ""
 
-makeDocumentTag = method(SingleArgumentDispatch => true, Options => {
+makeDocumentTag = method(Dispatch => Input, Options => {
 	  Package => null
 	  })
 makeDocumentTag DocumentTag := opts -> tag -> tag
@@ -129,18 +129,18 @@ makeDocumentTag String := opts -> key -> (
 	  )
      )
 -- a bit of experimentation...
-DocumentTag.Key = method(SingleArgumentDispatch => true)
+DocumentTag.Key = method(Dispatch => Input)
 DocumentTag.Key DocumentTag := x -> x#0
 err := x -> error "expected a document tag; perhaps the function 'hypertext' has not yet been run on hypertext"
 DocumentTag.Key Thing := err
 protect FormattedKey
-DocumentTag.FormattedKey = method(SingleArgumentDispatch => true)
+DocumentTag.FormattedKey = method(Dispatch => Input)
 DocumentTag.FormattedKey DocumentTag := x -> x#1
 DocumentTag.FormattedKey Thing := err
-DocumentTag.Package = method(SingleArgumentDispatch => true)
+DocumentTag.Package = method(Dispatch => Input)
 DocumentTag.Package DocumentTag := x -> x#2
 DocumentTag.Package Thing := err
-DocumentTag.Title = method(SingleArgumentDispatch => true)
+DocumentTag.Title = method(Dispatch => Input)
 DocumentTag.Title DocumentTag := x -> x#3
 DocumentTag.Title Thing := err
 DocumentTag ? DocumentTag := (x,y) -> x#1 ? y#1
@@ -161,9 +161,9 @@ hasDocumentation = key -> (
 -- as part of the documentation.
 FinalDocumentTag = new Type of BasicList
 FinalDocumentTag.synonym = "final document tag"
-FinalDocumentTag.FormattedKey = method(SingleArgumentDispatch => true)
+FinalDocumentTag.FormattedKey = method(Dispatch => Input)
 FinalDocumentTag.FormattedKey FinalDocumentTag := x -> x#0
-FinalDocumentTag.Title = method(SingleArgumentDispatch => true)
+FinalDocumentTag.Title = method(Dispatch => Input)
 FinalDocumentTag.Title FinalDocumentTag := x -> x#1
 toFinalDocumentTag = method()
 toFinalDocumentTag DocumentTag := x -> new FinalDocumentTag from { DocumentTag.FormattedKey x, DocumentTag.Title x }
@@ -180,7 +180,7 @@ formattedKey FinalDocumentTag := tag -> FinalDocumentTag.FormattedKey tag
 local exampleBaseFilename
 local currentNodeName
 local currentHelpTag
-fixup := method(SingleArgumentDispatch => true)
+fixup := method(Dispatch => Input)
 
 rawKey := "raw documentation"
 rawKeyDB := "raw documentation database"
@@ -262,7 +262,7 @@ record      := f -> x -> (
 -- If we don't find it in a package, then we assume it's missing, and assign it to the "Missing" package.  -- or not...
 -- That way we can compute the package during the loading of a package, while just some of the documentation has been installed.
 -- Missing documentation can be detected when the package is closed, or later.
-packageKey = method(SingleArgumentDispatch => true)	    -- assume the input key has been normalized
+packageKey = method(Dispatch => Input)	    -- assume the input key has been normalized
 --packageKey DocumentTag := DocumentTag.Package
 --packageKey   Symbol := key -> package key
 packageKey   String := fkey -> (
@@ -294,7 +294,7 @@ Strings := hashTable {
      -- Sequence => "(...)", List => "{...}", Array => "[...]" 
      }
 toStr := s -> if Strings#?s then Strings#s else toString s
-formatDocumentTag           = method(SingleArgumentDispatch => true)
+formatDocumentTag           = method(Dispatch => Input)
 	  
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'"
 
@@ -405,7 +405,7 @@ fixup String     := s -> (				       -- remove clumsy newlines within strings
      ln := separate s;
      concatenate ({addspaces0 trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
 
-hypertext = method(SingleArgumentDispatch => true)
+hypertext = method(Dispatch => Input)
 hypertext Hypertext := fixup
 hypertext Sequence := hypertext List := x -> fixup DIV x
 
@@ -436,7 +436,7 @@ getBody := key -> getOption(key,Description)		    -- get rid of this
 -- process examples
 -----------------------------------------------------------------------------
 
-extractExamplesLoop            := method(SingleArgumentDispatch => true)
+extractExamplesLoop            := method(Dispatch => Input)
 extractExamplesLoop Thing       := x -> {}
 extractExamplesLoop ExampleItem := toList
 extractExamplesLoop Sequence := 
@@ -476,7 +476,7 @@ checkForExampleOutputFile := (node,pkg) -> (
      else false)
 
 currentExampleKey := ""
-processExamplesLoop = method(SingleArgumentDispatch => true)
+processExamplesLoop = method(Dispatch => Input)
 processExamplesLoop TO :=
 processExamplesLoop TO2 :=
 processExamplesLoop TOH :=
@@ -506,7 +506,7 @@ processExamples := (pkg,fkey,docBody) -> (
 -----------------------------------------------------------------------------
 -- 'document' function
 -----------------------------------------------------------------------------
-fixupEntry := method(SingleArgumentDispatch => true)
+fixupEntry := method(Dispatch => Input)
 	-- "x" => List => { "a list of numbers" }
 	-- "x" => List => "a list of numbers"
 	-- "x" => List
@@ -598,7 +598,7 @@ storeRawDocumentation := (tag,opts) -> (
      currentPackage#rawKey#fkey = opts;
      )
 
-undocumented = method(SingleArgumentDispatch => true)
+undocumented = method(Dispatch => Input)
 undocumented List  := x -> scan(x, undocumented)
 undocumented Thing := key -> if key =!= null then (
      tag := makeDocumentTag(key, Package => currentPackage);
@@ -617,7 +617,7 @@ undocumented' = x -> error "late use of function undocumented'"
 -- getting help from the documentation
 -----------------------------------------------------------------------------
 
-getExampleInputs := method(SingleArgumentDispatch => true)
+getExampleInputs := method(Dispatch => Input)
 getExampleInputs Thing        := t -> {}
 getExampleInputs Hypertext   := t -> join apply(toSequence t, getExampleInputs)
 
@@ -625,7 +625,7 @@ examples = x -> stack getExampleInputs help x
 apropos = method()
 apropos String := (pattern) -> last \ sort select(flatten \\ pairs \ dictionaryPath, (nam,sym) -> match(pattern,nam) and not match("\\$",nam))
 -----------------------------------------------------------------------------
-headline = method(SingleArgumentDispatch => true)
+headline = method(Dispatch => Input)
 headline Thing := key -> getOption(key,Headline)	    -- old method
 headline FinalDocumentTag := headline DocumentTag := tag -> (
      d := fetchPrimaryRawDocumentation tag;
@@ -651,6 +651,8 @@ isSecondary = tag -> (
 -- these menus have to get sorted, so optTO and optTOCLASS return pairs:
 --   the first member of the pair is the string to use for sorting
 --   the second member is the corresponding hypertext entry in the UL list
+counter := 0
+next := () -> counter = counter + 1
 optTO = i -> (
      i = makeDocumentTag i;
      fkey := DocumentTag.FormattedKey i;
@@ -658,18 +660,18 @@ optTO = i -> (
      if isSecondary i 
      then (
 	  primary := getPrimary i;
-	  (DocumentTag.FormattedKey primary, fkey, fixup if currentHelpTag === primary then fkey else SPAN {fkey, ", see ", TOH{primary}})
+	  (DocumentTag.FormattedKey primary, fkey, next(), fixup if currentHelpTag === primary then fkey else SPAN {fkey, ", see ", TOH{primary}})
 	  )
-     else (fkey                            , fkey, fixup TOH{i})      -- need an alternative here for secondary tags such as (export,Symbol)
+     else (fkey                            , fkey, next(), fixup TOH{i})      -- need an alternative here for secondary tags such as (export,Symbol)
      )
 optTOCLASS := i -> (					    -- this isn't different yet, work on it!
      r := fixup TOH{i};
-     (DocumentTag.FormattedKey first r, r))
+     (DocumentTag.FormattedKey first r, next(), r))
 
 ul := t -> if #t =!= 0 then UL t else t
-menu       := s -> ul (last \         nonnull \\ optTO      \ s)
-smenu      := s -> ul (last \ sort \\ nonnull \\ optTO      \ s)
-smenuCLASS := s -> ul (last \ sort \\ nonnull \\ optTOCLASS \ s)
+menu       := s -> ul (last \         nonnull \\ optTO      \ toList s)
+smenu      := s -> ul (last \ sort \\ nonnull \\ optTO      \ toList s)
+smenuCLASS := s -> ul (last \ sort \\ nonnull \\ optTOCLASS \ toList s)
 
 vowels := set characters "aeiouAEIOU"
 indefiniteArticle := s -> if vowels#?(s#0) and not match("^one ",s) then "an " else "a "
@@ -694,7 +696,7 @@ ofClass ImmutableType := ofClass Type := X -> fixup (
      else SPAN {"an object of class ", TO X}
      )
 
-makeDocBody := method(SingleArgumentDispatch => true)
+makeDocBody := method(Dispatch => Input)
 makeDocBody Thing := key -> (
      fkey := formatDocumentTag key;
      pkg := packageKey fkey;
@@ -768,7 +770,7 @@ typicalValue := k -> (
      else Thing
      )
 
-types := method(SingleArgumentDispatch => true)
+types := method(Dispatch => Input)
 types Thing := x -> ({},{})
 types Function := x -> ({},{typicalValue x})
 types Sequence := x -> (
@@ -781,7 +783,7 @@ types Sequence := x -> (
 	  ))
 
 emptyOptionTable := new OptionTable from {}
-getOptionDefaultValues := method(SingleArgumentDispatch => true)
+getOptionDefaultValues := method(Dispatch => Input)
 getOptionDefaultValues Symbol := x -> if value x =!= x then getOptionDefaultValues value x else emptyOptionTable
 getOptionDefaultValues Thing := x -> emptyOptionTable
 getOptionDefaultValues Function := f -> (
@@ -926,7 +928,7 @@ synopsisOpts := new OptionTable from {			    -- old
      }
 
 SYNOPSIS = method(
-     SingleArgumentDispatch => true,
+     Dispatch => Input,
      TypicalValue => Hypertext,
      Options => {
 	  Heading => "",
@@ -990,7 +992,7 @@ fmeth := f -> (						    -- compare with documentationValue(Symbol,Function) bel
      )
 
 noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
-briefDocumentation = method(SingleArgumentDispatch => true)
+briefDocumentation = method(Dispatch => Input)
 
 briefDocumentation VisibleList := x -> null
 
@@ -1009,7 +1011,7 @@ ignoreDocumentationErrors = true
 
 -- page = (title,body) -> HTML { HEAD { TITLE title }, BODY body }
 
-help = method(SingleArgumentDispatch => true)
+help = method(Dispatch => Input)
 help String := key -> (
      checkLoadDocumentation();
      if unformatTag#?key then help unformatTag#key 

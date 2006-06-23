@@ -49,7 +49,7 @@ isListOfIntegers := x -> class x === List and all(x,i -> class i === ZZ)
 isListOfListsOfIntegers := x -> class x === List and all(x,isListOfIntegers)
 checkCount := i -> if not isCount i then error "expected a small positive integer"
 
-fixup := method(SingleArgumentDispatch => true)
+fixup := method(Dispatch => Input)
 err := o -> error ("unrecognized ordering option " | toString o)
 
 deglist := {}						    -- filled in below each time

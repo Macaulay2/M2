@@ -39,7 +39,7 @@ addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then make
 unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s) -> if not Core.Dictionary#?n then (s => class value s => value s))
 
 scan(values Core#"private dictionary" - set values Core.Dictionary,
-     s -> if mutable s and value s === s then stderr << "--warning: mutable unexported unset symbol in Core: " << s << endl)
+     s -> if mutable s and value s === s then stderr << symbolLocation s << ": warning: mutable unexported unset symbol in Core: " << s << endl)
 
 -- make sure this is after all public global symbols are defined or erased
 endPackage "Core"

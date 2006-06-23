@@ -6,7 +6,7 @@ even = x -> 0 === x%2
 
 zero = x -> x == 0					    -- we use == so this can apply to all types of things
 
-numeric = method(SingleArgumentDispatch => true)
+numeric = method(Dispatch => Input)
 numeric Thing := identity
 numeric VisibleList := x -> apply(x,numeric)
 numeric Number := x -> x + 0.

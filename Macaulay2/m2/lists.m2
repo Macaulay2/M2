@@ -19,8 +19,8 @@ List / Thing := List => (v,b) -> apply(v,x->x / b)	    -- slight conflict with L
 
 VisibleList _ List := VisibleList => (x,y) -> apply(splice y, i -> x#i)
 
-maxPosition = method(SingleArgumentDispatch => true)
-minPosition = method(SingleArgumentDispatch => true)
+maxPosition = method(Dispatch => Input)
+minPosition = method(Dispatch => Input)
 
 maxPosition BasicList := ZZ => x -> (
      if # x === 0 then error "expected a nonempty list" 
@@ -114,8 +114,9 @@ rotate(VisibleList,ZZ) := (s,n) -> (
 	  n = n % #s;
 	  join(drop(s,n),take(s,n))))
 
-sort List :=  sort Sequence := opts -> internalsort
-rsort List := rsort Sequence := opts -> internalrsort
+-- sort should not accept sequences because sort is now a function with options!
+sort List :=  opts -> internalsort
+rsort List := opts -> internalrsort
 
 -- we've been waiting to do this:
 binaryOperators = sort binaryOperators

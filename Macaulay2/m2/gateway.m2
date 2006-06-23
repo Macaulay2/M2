@@ -80,7 +80,8 @@ f :=
 g :=
 cohomology(ZZ,Sequence) := opts -> (i,X) -> cohomology(prepend(i,X), opts)
 
-dispatcherFunctions = join(dispatcherFunctions, {f,g})
+ck := f -> ( assert( f =!= null ); assert( instance(f, Function) ); f)
+dispatcherFunctions = join(dispatcherFunctions, {ck f, ck g})
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

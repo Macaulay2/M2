@@ -1,6 +1,6 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
-precedence = method(SingleArgumentDispatch=>true)
+precedence = method(Dispatch => Input)
 
 -- local variables
 local PowerPrecedence
@@ -35,11 +35,11 @@ WrapperType Thing := (T,z) -> new T from {z}
 
 Expression = new Type of BasicList
 Expression.synonym = "expression"
-expression = method(SingleArgumentDispatch=>true, TypicalValue => Expression)
+expression = method(Dispatch => Input, TypicalValue => Expression)
 expression Expression := identity
 Expression#operator = ""
 
-value' = method(SingleArgumentDispatch => true)
+value' = method(Dispatch => Input)
 value' Thing := identity
 value' Symbol := value					    -- do we really want this?
 value Expression := value'
@@ -47,7 +47,7 @@ value Expression := value'
 Holder = new WrapperType of Expression
 Holder.synonym = "holder"
 
-hold = method(SingleArgumentDispatch => true, TypicalValue => Expression)
+hold = method(Dispatch => Input, TypicalValue => Expression)
 hold Thing := x -> new Holder from {x}
 hold Expression := identity
 typicalValues#hold = Expression

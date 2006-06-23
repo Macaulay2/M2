@@ -360,12 +360,16 @@ debugger(f:Frame,c:Code):Expr := (
      ret);
 debuggerFun = debugger;
 
+currentString := setupvar("currentString", nullE);
 value(e:Expr):Expr := (
      when e
      is q:SymbolClosure do q.frame.values.(q.symbol.frameindex)
      is c:CodeClosure do eval(c.frame,c.code)
      is s:string do (
+      	  savecs := getGlobalVariable(currentString);
+	  setGlobalVariable(currentString,Expr(s));
 	  r := readeval(stringTokenFile("a string", s+newline),true);
+	  setGlobalVariable(currentString,savecs);
 	  when r 
 	  is err:Error do (
 	       if err.message == returnMessage || err.message == continueMessage || err.message == continueMessageWithArg 

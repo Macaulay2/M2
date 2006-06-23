@@ -2,7 +2,7 @@
 
 MonomialIdeal = new Type of Ideal
 MonomialIdeal.synonym = "monomial ideal"
-monomialIdeal = method(TypicalValue => MonomialIdeal,SingleArgumentDispatch=>true)
+monomialIdeal = method(TypicalValue => MonomialIdeal,Dispatch => Input)
 numgens MonomialIdeal := I -> I.numgens
 raw MonomialIdeal := I -> I.RawMonomialIdeal
 generators MonomialIdeal := (cacheValue symbol generators) ( (I) -> map(ring I, rawMonomialIdealToMatrix raw I) )
