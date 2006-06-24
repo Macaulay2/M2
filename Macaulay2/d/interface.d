@@ -923,15 +923,21 @@ setupfun("rawDivMod",rawDivMod);
 export rawPromote(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
-     when a.0 is R:RawRing do 
-     when a.1 is x:RawRingElement do toExpr(
-	  Ccode(RawRingElementOrNull, 
+     when a.0 is R:RawRing do (
+     	  when a.1 is x:RawRingElement do toExpr( 
+	       Ccode(RawRingElementOrNull, 
 		    "(engine_RawRingElementOrNull)IM2_RingElement_promote(",
 		    "(Ring *)", R,
-		    ",(RingElement *)", x,
-		    ")" ))
-     else WrongArg(2,"a raw ring element")
-     else WrongArg(1,"a raw ring")
+		    ",(RingElement *)", x, ")" ))
+	  else WrongArg(2,"a raw ring element"))
+     is M:RawFreeModule do (				    -- M is the new target free module
+	  when a.1 is f:RawMatrix do toExpr(
+	       Ccode(RawRingElementOrNull, 
+		    "(engine_RawMatrixOrNull)IM2_Matrix_promote(",
+		    "(FreeModule *)", M,
+		    ",(Matrix *)", f, ")" ))
+	  else WrongArg("a raw matrix"))
+     else WrongArg(1,"a raw ring or a raw free module")
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("rawPromote", rawPromote);
@@ -939,15 +945,21 @@ setupfun("rawPromote", rawPromote);
 export rawLift(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
-     when a.0 is R:RawRing do 
-     when a.1 is x:RawRingElement do toExpr(
-	  Ccode(RawRingElementOrNull, 
+     when a.0 is R:RawRing do (
+     	  when a.1 is x:RawRingElement do toExpr( 
+	       Ccode(RawRingElementOrNull, 
 		    "(engine_RawRingElementOrNull)IM2_RingElement_lift(",
 		    "(Ring *)", R,
-		    ",(RingElement *)", x,
-		    ")" ))
-     else WrongArg(2,"a raw ring element")
-     else WrongArg(1,"a raw ring")
+		    ",(RingElement *)", x, ")" ))
+	  else WrongArg(2,"a raw ring element"))
+     is M:RawFreeModule do (				    -- M is the new target free module
+	  when a.1 is f:RawMatrix do toExpr(
+	       Ccode(RawRingElementOrNull, 
+		    "(engine_RawMatrixOrNull)IM2_Matrix_lift(",
+		    "(FreeModule *)", M,
+		    ",(Matrix *)", f, ")" ))
+	  else WrongArg("a raw matrix"))
+     else WrongArg(1,"a raw ring or a raw free module")
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("rawLift", rawLift);
