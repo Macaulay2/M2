@@ -6,15 +6,15 @@ set environment LOADDATA_IGNORE_CHECKSUMS yes
 
 directory /usr/tmp/gdbm-build/1.8.3/gdbm-1.8.3/
 directory /usr/tmp/readline-build/5.1/readline-5.1/
-directory /usr/tmp/factory-build/3.0.0.9/Singular-3-0-0/factory/
-directory /usr/tmp/libfac-build/3.0.0.9/Singular-3-0-0/libfac/
-directory /usr/tmp/libfac-build/3.0.0.9/Singular-3-0-0/libfac/factor/
-directory /usr/tmp/libfac-build/3.0.0.9/Singular-3-0-0/libfac/charset/
-directory /usr/tmp/gmp-build/4.1.3/gmp-4.1.3/
-directory /usr/tmp/gmp-build/4.1.3/gmp-4.1.3/mpn/
-directory /usr/tmp/gmp-build/4.1.3/gmp-4.1.3/mpz/
-directory /usr/tmp/gmp-build/4.1.3/gmp-4.1.3/mpq/
-directory /usr/tmp/gmp-build/4.1.3/gmp-4.1.3/mpf/
+directory /usr/tmp/factory-build/3.0.1.3/factory/
+directory /usr/tmp/libfac-build/3.0.1.3/libfac/
+directory /usr/tmp/libfac-build/3.0.1.3/libfac/factor/
+directory /usr/tmp/libfac-build/3.0.1.3/libfac/charset/
+directory /usr/tmp/gmp-build/4.2.1/gmp-4.2.1/
+directory /usr/tmp/gmp-build/4.2.1/gmp-4.2.1/mpn/
+directory /usr/tmp/gmp-build/4.2.1/gmp-4.2.1/mpz/
+directory /usr/tmp/gmp-build/4.2.1/gmp-4.2.1/mpq/
+directory /usr/tmp/gmp-build/4.2.1/gmp-4.2.1/mpf/
 directory /usr/tmp/gc-build/6.7/gc6.7/
 directory /usr/tmp/ntl-build/5.4/ntl-5.4/src/
 source .gdb-files
