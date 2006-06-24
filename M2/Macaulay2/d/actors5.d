@@ -1025,13 +1025,14 @@ newmethod1234c(e:Expr):Expr := (
 		    then return  WrongArg(4,"a list of boolean values") ;
 		    allFalse := true;
 		    foreach i in useClass do if i != False then allFalse = false;
+		    env = copy(env);
 		    cfc :=
 		    if allFalse
 		    then (if env.4 == True 
 		    	 then Expr(CompiledFunctionClosure(method1234o,nextHash(),env))
 		    	 else Expr(CompiledFunctionClosure(method1234,nextHash(),env)))
 		    else Expr(CompiledFunctionClosure(method1234c,nextHash(),env));
-		    if env.0 == nullE then env.0 = cfc;	    -- oops -- this assignment is not safe -- sequences are read-only
+		    if env.0 == nullE then env.0 = cfc;
 		    cfc)
 	       else WrongArg(4,"a list of boolean values")
 	       )
