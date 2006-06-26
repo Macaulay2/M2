@@ -3,6 +3,7 @@
 export {
         symbol operatorAttributes,
 	symbol Flexible,
+	symbol lift', symbol liftable', symbol promote',    -- temporary new versions
 	symbol Binary,
 	symbol Prefix,
 	symbol Postfix,

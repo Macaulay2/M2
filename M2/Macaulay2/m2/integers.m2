@@ -24,8 +24,13 @@ ZZ.frac = QQ
 lift = method()
 liftable = method()
 promote = method()
+
 promote(ZZ,ZZ) := (i,ZZ) -> i
 lift(ZZ,ZZ) := (i,ZZ) -> i
+
+promote'(ZZ,ZZ) := lift'(ZZ,ZZ) := (i,ZZ) -> i
+liftable'(ZZ,ZZ) := x -> true
+
 ZZ.random = () -> random 21 - 10
 
 oldgcd := gcd
