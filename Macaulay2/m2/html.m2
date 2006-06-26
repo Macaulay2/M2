@@ -462,7 +462,7 @@ installPackage = method(Options => {
 	  CheckDocumentation => true,
 	  MakeDocumentation => true,
 	  MakeInfo => false,
-	  RemakeAllDocumentation => false,
+	  RemakeAllDocumentation => true,		    -- until we get better dependency graphs between documentation nodes, "false" here will confuse users
 	  RerunExamples => false,
 	  AbsoluteLinks => false,
 	  MakeLinks => true,
@@ -1187,10 +1187,23 @@ showHtml = show Hypertext := x -> (
 show TEX := x -> showTex x
 
 viewHelp = key -> (
+     -- we have to rewrite this to check for secondary keys
      checkLoadDocumentation();
-     if prefixDirectory === null then error "can't run viewHelp from build tree";
-     show new URL from { fix if key === () then applicationDirectory() | "index.html" else prefixDirectory | htmlFilename key }
-     )
+     if key === () then {
+	  show new URL from { fix (applicationDirectory() | "index.html") }
+	  }
+     else (
+     	  prefixes := nonnull {
+	       if not member("-q",commandLine) then applicationDirectory()|"local/",
+	       prefixDirectory
+	       };
+	  fn := htmlFilename key;
+	  p := null;
+	  display := x -> (print x; x);
+	  scan(prefixes, dir -> if fileExists display (dir|fn) then p = dir|fn);
+	  if p === null then error("html file not found: ",fn)
+	  else show new URL from { fix p }
+	  ))
 viewHelp = new Command from viewHelp
 
 indexHtml = dir -> (
