@@ -183,6 +183,17 @@ ring Matrix := f -> (
 source Matrix := f -> f.source
 target Matrix := f -> f.target
 
+lift'(Matrix,RingElement) := lift'(Matrix,Number) := Matrix => (f,S) -> lift'(f, ring f, S)
+liftable'(Matrix,RingElement) := liftable'(Matrix,Number) := Boolean => (f,S) -> liftable'(f, ring f, S)
+promote'(Matrix,RingElement) := promote'(Matrix,Number) := Matrix => (f,S) -> promote'(f, ring f, S)
+
+lift'(Matrix,QQ,ZZ) := (f,ZZ,QQ) -> basicLiftMatrix(f,QQ^(dim target f))
+
+promote'(Matrix,Number,Number) := promote'(Matrix,Number,RingElement) := (f,A,R) -> basicPromoteMatrix(f,R^(rank target f))
+lift'(Matrix,Number,Number) := lift'(Matrix,RingElement,Number) := (f,R,A) -> (
+     if not isFreeModule source f or not isFreeModule target f then error "expected source and target to be free";
+     basicLiftMatrix(f,R^(rank target f)))
+
 Vector = new Type of BasicList				    -- an instance v will have one entry, an n by 1 matrix m, with class v === target m
 Vector.synonym = "vector"
 Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)

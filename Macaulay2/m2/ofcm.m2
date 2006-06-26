@@ -381,6 +381,12 @@ promote(MonoidElement, RingElement) := RingElement => (m,o) -> (
 						 m.RawMonomial);
      promote(m,o))
 
+promote'(MonoidElement, RingElement) := RingElement => (m,R) -> (
+     M := monoid R;
+     k := coefficientRing R;
+     if not instance(m,M) then error "expected monomial from same ring";
+     new R from rawTerm(R.RawRing, raw 1_k, m.RawMonomial))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

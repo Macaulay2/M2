@@ -30,6 +30,8 @@ ZZ _ EngineRing :=
 RR _ EngineRing := 
 promote(ZZ,EngineRing) := RingElement => (i,R) -> new R from i_(R.RawRing)
 
+promote(Number,RingElement) := RingElement => (i,R) -> new R from rawFromNumber(raw R, i)
+
 new RingElement from RawRingElement := (R, f) -> new R from { symbol RawRingElement => f };
 
 new EngineRing from RawRing := (EngineRing,R) -> (
@@ -405,6 +407,19 @@ ZZ / RingElement := RingElement / ZZ :=
      )
 
 -----------------------------------------------------------------------------
+
+--- new lift and promote, version 3
+basicLift = (r,B) -> new B from rawLift(raw B, raw r)
+multipleBasicLift = (r,v) -> ( r = raw r; scan(v, B -> r = rawLift(raw B, raw r)); new last v from r )
+
+basicLiftMatrix = (m,F) -> map(F,, rawLift(raw F, raw m))
+multipleBasicLiftMatrix = (m,v) -> (m = raw m; scan(v, F -> m = rawLift(raw F, m)) map(last v,,m) )
+
+basicPromote = (r,B) -> new B from rawPromote(raw B, raw r)
+multipleBasicPromote = (r,v) -> ( r = raw r; scan(v, B -> r = rawPromote(raw B, raw r)); new last v from r )
+
+basicPromoteMatrix = (m,F) -> map(F,, rawPromote(raw F, raw m))
+multipleBasicPromoteMatrix = (m,v) -> (m = raw m; scan(v, F -> m = rawPromote(raw F, m)) map(last v,,m) )
 
 -- new lift and promote, version 2
 

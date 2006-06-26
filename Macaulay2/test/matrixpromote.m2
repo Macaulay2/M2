@@ -1,14 +1,19 @@
+errorDepth = 0
 R = ZZ[x]
-
-assert( promote(matrix{{2}}, QQ) === matrix {{2/1}} )
-assert( lift(matrix{{2/1}}, ZZ) === matrix {{2}} )
-assert liftable(matrix{{2/1}}, ZZ)
-assert not liftable(matrix{{2/3}}, ZZ)
-
-assert( promote(matrix{{2}}, R) === matrix {{2_R}} )
-assert( lift(matrix{{2/1}}, ZZ) === matrix {{2}} )
-
+promote'(matrix{{2}}, QQ)
+  assert( oo === matrix {{2/1}} )
+lift'(matrix{{2/1}}, ZZ)
+  assert( oo === matrix {{2}} )
+lift'able(matrix{{2/1}}, ZZ)
+  assert oo
+lift'able(matrix{{2/3}}, ZZ)
+  assert not oo
+promote'(matrix{{2}}, R)
+  assert( oo === matrix {{2_R}} )
+lift'(matrix{{2/1}}, ZZ)
+  assert( oo === matrix {{2}} )
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test matrixpromote.out"
+-- M2-send-to-buffer: "*gud*"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test matrixpromote'.out"
 -- End:
