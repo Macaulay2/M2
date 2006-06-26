@@ -215,12 +215,6 @@ bool gbres_comp::stop_conditions_ok()
       ERROR("cannot change length of resolution using this algorithm");
       return false;
     }
-
-  if (stop_.stop_after_degree && stop_.degree_limit != 0)
-    {
-      ERROR("expected resolution stop degree");
-      return false;
-    }
   return true;
 }
 

@@ -882,11 +882,6 @@ bool res_comp::stop_conditions_ok()
 	length_limit = stop_.length_limit->array[0];
     }
 
-  if (stop_.stop_after_degree && stop_.degree_limit != 0)
-    {
-      ERROR("expected resolution stop degree");
-      return false;
-    }
   return true;
 }
 

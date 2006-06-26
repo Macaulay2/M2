@@ -2676,46 +2676,43 @@ setupfun("rawGBForce", rawGBForce);
 
 export rawGBSetStop(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) != 11 then WrongNumArgs(11) else
+     if length(s) != 10 then WrongNumArgs(10) else
      when s.0 is G:RawComputation do
      when s.1 is always_stop:Boolean do
-     when s.2 is stop_after_degree:Boolean do
-     if !isSequenceOfSmallIntegers(s.3) then WrongArg(4,"a sequence of small integers") else -- degree_limit
-     when s.4 is basis_element_limit:Integer do
-     if !isInt(basis_element_limit) then WrongArgSmallInteger(5) else
-     when s.5 is syzygy_limit:Integer do
-     if !isInt(syzygy_limit) then WrongArgSmallInteger(6) else
-     when s.6 is pair_limit:Integer do
-     if !isInt(pair_limit) then WrongArgSmallInteger(7) else
-     when s.7 is codim_limit:Integer do
-     if !isInt(codim_limit) then WrongArgSmallInteger(8) else
-     when s.8 is subring_limit:Integer do
-     if !isInt(subring_limit) then WrongArgSmallInteger(9) else
-     when s.9 is just_min_gens:Boolean do
-     if !isSequenceOfSmallIntegers(s.10) then WrongArg(11,"a sequence of small integers") else -- length_limit
+     if !isSequenceOfSmallIntegers(s.2) then WrongArg(3,"a sequence of small integers") else -- degree_limit
+     when s.3 is basis_element_limit:Integer do
+     if !isInt(basis_element_limit) then WrongArgSmallInteger(4) else
+     when s.4 is syzygy_limit:Integer do
+     if !isInt(syzygy_limit) then WrongArgSmallInteger(5) else
+     when s.5 is pair_limit:Integer do
+     if !isInt(pair_limit) then WrongArgSmallInteger(6) else
+     when s.6 is codim_limit:Integer do
+     if !isInt(codim_limit) then WrongArgSmallInteger(7) else
+     when s.7 is subring_limit:Integer do
+     if !isInt(subring_limit) then WrongArgSmallInteger(8) else
+     when s.8 is just_min_gens:Boolean do
+     if !isSequenceOfSmallIntegers(s.9) then WrongArg(10,"a sequence of small integers") else -- length_limit
      toExpr(
 	  Ccode(RawComputationOrNull,"(engine_RawComputationOrNull)IM2_Computation_set_stop(",
 		    "(Computation *)", G, ",",
 		    True == always_stop, ",",
-		    True == stop_after_degree, ",",
-		    "(M2_arrayint)", getSequenceOfSmallIntegers(s.3), ",",
+		    "(M2_arrayint)", getSequenceOfSmallIntegers(s.2), ",",
 		    toInt(basis_element_limit), ",",
 		    toInt(syzygy_limit), ",",
 		    toInt(pair_limit), ",",
 		    toInt(codim_limit), ",",
 		    toInt(subring_limit), ",",
 		    True == just_min_gens, ",",
-		    "(M2_arrayint)", getSequenceOfSmallIntegers(s.10),
+		    "(M2_arrayint)", getSequenceOfSmallIntegers(s.9),
 	       ")"
 	       )
 	  )
-     else WrongArgBoolean(10)
-     else WrongArgInteger(9)
+     else WrongArgBoolean(9)
      else WrongArgInteger(8)
      else WrongArgInteger(7)
      else WrongArgInteger(6)
      else WrongArgInteger(5)
-     else WrongArgBoolean(3)
+     else WrongArgInteger(4)
      else WrongArgBoolean(2)
      else WrongArg("a raw computation")
      else WrongNumArgs(11)

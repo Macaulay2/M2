@@ -5,7 +5,6 @@
 
 ComputationOrNull *
 Computation::set_stop_conditions(M2_bool always_stop,
-				 M2_bool stop_after_degree,
 				 M2_arrayint degree_limit,
 				 int basis_element_limit,
 				  int syzygy_limit,
@@ -16,7 +15,7 @@ Computation::set_stop_conditions(M2_bool always_stop,
 				 M2_arrayint length_limit)
 {
   stop_.always_stop = always_stop;
-  stop_.stop_after_degree = stop_after_degree;
+  stop_.stop_after_degree = (degree_limit != 0 && degree_limit->len > 0);
   stop_.degree_limit = degree_limit;
   stop_.basis_element_limit = basis_element_limit;
   stop_.syzygy_limit = syzygy_limit;

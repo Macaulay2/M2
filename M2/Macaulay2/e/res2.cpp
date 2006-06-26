@@ -22,11 +22,6 @@ bool res2_comp::stop_conditions_ok()
     {
     }
 
-  if (stop_.stop_after_degree && stop_.degree_limit != 0)
-    {
-      ERROR("expected resolution stop degree");
-      return false;
-    }
   return true;
 }
 
