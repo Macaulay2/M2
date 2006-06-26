@@ -1500,8 +1500,7 @@ enum gbTraceValues
   
   ComputationOrNull* IM2_Computation_set_stop(Computation *G,          
 				     M2_bool always_stop,       /* 1 */
-				     M2_bool stop_after_degree, /* 2 */
-				     M2_arrayint degree_limit,
+				     M2_arrayint degree_limit,  /* 2*/
 				     int basis_element_limit,   /* 3 */
 				     int syzygy_limit,          /* 4 */
 				     int pair_limit,            /* 5 */

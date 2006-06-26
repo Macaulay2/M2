@@ -121,8 +121,7 @@ resolutionInEngine := opts -> (M) -> (
 			      W.RawComputation,
 			      -- fill these in eventually:
 			      opts.StopBeforeComputation,	    -- always_stop
-			      false,				    -- stop_after_degree
-			      degreelimit,			    -- degree_limit -- why does this take a list?
+			      degreelimit,			    -- degree_limit -- {d} or {}
 			      0,				    -- basis_element_limit (not relevant for resolutions)
 			      inf opts.SyzygyLimit,		    -- syzygy_limit
 			      inf opts.PairLimit,		    -- pair_limit

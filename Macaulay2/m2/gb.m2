@@ -33,7 +33,7 @@ computationOptionDefaults := new OptionTable from {
 
 stoppingOptionDefaults := new OptionTable from {
      StopBeforeComputation => false,		    -- stopping condition (always_stop)
-     DegreeLimit => {},				    -- stopping condition (stop_after_degree and degree_limit) (not max_degree)
+     DegreeLimit => {},				    -- stopping condition (degree_limit) (not max_degree)
      BasisElementLimit => infinity,		    -- stopping condition (basis_element_limit)
      SyzygyLimit => infinity,			    -- stopping condition (syzygy_limit) (not for res computations)
      PairLimit => infinity,			    -- stopping condition (pair_limit)
@@ -162,7 +162,6 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
      log := FunctionApplication { rawGBSetStop, (
 	       G.RawComputation,
 	       opts.StopBeforeComputation,
-	       opts.DegreeLimit =!= stoppingOptionDefaults.DegreeLimit,
 	       if opts.DegreeLimit =!= stoppingOptionDefaults.DegreeLimit then checkListOfIntegers opts.DegreeLimit else {},
 	       toEngineNat opts.BasisElementLimit,
 	       toEngineNat opts.SyzygyLimit,

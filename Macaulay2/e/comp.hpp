@@ -35,7 +35,6 @@ protected:
 public:
   ComputationOrNull *
   set_stop_conditions(M2_bool always_stop,
-		      M2_bool stop_after_degree,
 		      M2_arrayint degree_limit,
 		      int basis_element_limit,
 		      int syzygy_limit,

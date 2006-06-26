@@ -79,7 +79,6 @@ IM2_GB_force(const Matrix *m, /* trimmed or minimal gens, may be the same as gb 
 ComputationOrNull* 
 IM2_Computation_set_stop(Computation *G,
 		M2_bool always_stop,
-		M2_bool stop_after_degree,
 		M2_arrayint degree_limit,
 		int basis_element_limit,
 		int syzygy_limit,
@@ -92,7 +91,6 @@ IM2_Computation_set_stop(Computation *G,
   /* Res: SortStrategy, 0, 1, 2, 3 ?? */
 {
   return  G->set_stop_conditions(always_stop,
-				 stop_after_degree,
 				 degree_limit,
 				 basis_element_limit,
 				 syzygy_limit,

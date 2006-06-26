@@ -213,7 +213,6 @@ ring_elem PolyRingQuotient::ann(const ring_elem a, const ring_elem b) const
 					      -1,
 					      0,0);
   G->set_stop_conditions(false,
-			 false,
 			 NULL,
 			 -1,
 			 -1, // syzygy limit
@@ -249,7 +248,6 @@ void PolyRingQuotient::syzygy(const ring_elem a, const ring_elem b,
 					      -1,
 					      0,0);
   G->set_stop_conditions(false,
-			 false,
 			 NULL,
 			 -1,
 			 1, // syzygy limit
