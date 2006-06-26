@@ -325,7 +325,7 @@ computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
 
 exitMethod := method(Dispatch => Input)
 exitMethod ZZ := i -> exit i
-exitMethod Sequence := (x) -> exit 0
+exitMethod Sequence := x -> exit 0
 quit = Command (() -> exit 0)
 erase symbol exit
 exit = Command exitMethod
