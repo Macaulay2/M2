@@ -44,7 +44,7 @@ enum ComputationStatusCode gb_emitter::hilbertNumeratorCoefficient(int, int &)
 }
 #endif
 
-enum ComputationStatusCode gb_emitter::calc_gb(int degree, const intarray & /*stop*/)
+enum ComputationStatusCode gb_emitter::calc_gb(int degree)
 {
   // This is when we ship off the elements in this degree.  This should NEVER
   // be called if elements of lower degree have not been sent.
@@ -69,9 +69,9 @@ enum ComputationStatusCode gb_emitter::calc_gb(int degree, const intarray & /*st
       n_left--;
     }
 }
-enum ComputationStatusCode gb_emitter::calc_gens(int degree, const intarray &stop)
+enum ComputationStatusCode gb_emitter::calc_gens(int degree)
 {
-  return calc_gb(degree, stop);
+  return calc_gb(degree);
 }
 
 int gb_emitter::start_degree(int deg)
@@ -220,7 +220,6 @@ bool gbres_comp::stop_conditions_ok()
 
 void gbres_comp::start_computation()
 {
-  intarray stop;
   int old_compare_type = compare_type;
   compare_type = (strategy_flags >> 10);
   if (gbTrace >= 4) 
@@ -243,7 +242,7 @@ void gbres_comp::start_computation()
 	  o << "{" << i << "}";
 	  emit(o.str());
 	}
-      enum ComputationStatusCode ret = nodes[n_nodes-1]->calc_gens(i+n_nodes-3, stop);
+      enum ComputationStatusCode ret = nodes[n_nodes-1]->calc_gens(i+n_nodes-3);
       if (ret != COMP_DONE)
 	{
 	  set_status(ret);
@@ -322,7 +321,6 @@ const Matrix *gbres_comp::min_gens_matrix(int level)
 }
 const Matrix *gbres_comp::get_matrix(int level)
 {
-#warning "if the matrix could change in the future, we MUST copy it"
   if (level <= 0 || level >= n_nodes)
     return Matrix::zero(free_module(level-1), free_module(level));
   return nodes[level]->get_matrix();
@@ -423,150 +421,6 @@ M2_arrayint gbres_comp::get_betti(int type) const
   ERROR("received unsupported betti type for this algorithm");
   return 0;
 }
-/////////////////////////////////////////
-// Commands for using this computation //
-/////////////////////////////////////////
-
-#if 0
-void cmd_gbres_calc(object &op, object &odeg, object &oargs)
-{
-  gbres_comp *p = op->cast_to_gbres_comp();
-  intarray *deg = odeg->intarray_of();
-  intarray *args = oargs->intarray_of();
-  if (args->length() != 6)
-    {
-      gError << "res: expected 5 elements in parameter array";
-      return;
-    }
-  int *d;
-  if (deg->length() == 0)
-    d = NULL;
-  else 
-    d = deg->raw();
-
-  //args[0] = LengthLimit
-  //args[1] = SyzygyLimit
-  //args[2] = PairLimit
-  //args[3..5] = SyzygyLimit(nSyz, Level, Degree)
-  gStack.insert(make_object_int(p->calc(d, *args)));
-}
-void cmd_gbres_stats(object &op)
-{
-  gbres_comp *p = op->cast_to_gbres_comp();
-  p->stats();
-}
-void cmd_betti2_pairs(object & /*op*/)
-{
-#if 0
-  gbres_comp *p = op->cast_to_gbres_comp();
-  object_intarray *result = new object_intarray;
-  //  p->betti_skeleton(*result->intarray_of());
-  gStack.insert(result);
-#endif
-}
-void cmd_betti2_remaining(object & /*op*/)
-{
-#if 0
-  gbres_comp *p = op->cast_to_gbres_comp();
-  object_intarray *result = new object_intarray;
-  //  p->betti_remaining(*result->intarray_of());
-  gStack.insert(result);
-#endif
-}
-void cmd_betti2_minimal(object &op)
-{
-  gbres_comp *p = op->cast_to_gbres_comp();
-  object_intarray *result = new object_intarray;
-  p->betti_minimal(*result->intarray_of());
-  gStack.insert(result);
-}
-void cmd_betti2_nmonoms(object & /*op*/)
-{
-#if 0
-  gbres_comp *p = op->cast_to_gbres_comp();
-  object_intarray *result = new object_intarray;
-  //  p->betti_nmonoms(*result->intarray_of());
-  gStack.insert(result);
-#endif
-}
-
-void cmd_gbres_Nmap(object &op, object &on)
-{
-  gbres_comp *p = op->cast_to_gbres_comp();
-  int n = on->int_of();
-  gStack.insert(p->get_matrix(n));
-}
-
-void cmd_gbres_map(object &op, object &on)
-{
-  gbres_comp *p = op->cast_to_gbres_comp();
-  int n = on->int_of();
-  gStack.insert(p->get_matrix(n));
-}
-
-void cmd_gbres_Nmodule(object &op, object &on)
-{
-  gbres_comp *p = op->cast_to_gbres_comp();
-  int n = on->int_of();
-  gStack.insert(p->free_module(n));
-}
-
-void cmd_gbres_module(object &op, object &on)
-{
-  gbres_comp *p = op->cast_to_gbres_comp();
-  int n = on->int_of();
-  gStack.insert(p->free_module(n));
-}
-void cmd_gbres_mingens(object &op, object &on)
-{
-  gbres_comp *p = op->cast_to_gbres_comp();
-  int n = on->int_of();
-  gStack.insert(p->min_gens_matrix(n));
-}
-void cmd_gbres_getgb(object &op, object &on)
-{
-  gbres_comp *p = op->cast_to_gbres_comp();
-  int n = on->int_of();
-  gStack.insert(p->gb_matrix(n));
-}
-void cmd_gbres_change(object &op, object &on)
-{
-  gbres_comp *p = op->cast_to_gbres_comp();
-  int n = on->int_of();
-  gStack.insert(p->change_matrix(n));
-}
-void cmd_gbres_initial(object &op, object &on, object &olevel)
-{
-  gbres_comp *p = op->cast_to_gbres_comp();
-  int n = on->int_of();
-  int level = olevel->int_of();
-  gStack.insert(p->initial_matrix(n,level));
-}
-
-int i_gbres_cmds()
-{
-  // Resolutions
-  //install(ggres, cmd_gbres, TY_MATRIX, TY_INT, TY_INT);
-  install(ggcalc, cmd_gbres_calc, TY_GBRES_COMP, TY_INTARRAY, TY_INTARRAY);
-
-  install(ggstats, cmd_gbres_stats, TY_GBRES_COMP);
-  install(ggpairs, cmd_betti2_pairs, TY_GBRES_COMP);
-  install(ggremaining, cmd_betti2_remaining, TY_GBRES_COMP);
-  install(ggbetti, cmd_betti2_minimal, TY_GBRES_COMP);
-  install(ggnmonoms, cmd_betti2_nmonoms, TY_GBRES_COMP);
-
-  install(ggresmap, cmd_gbres_map, TY_GBRES_COMP, TY_INT);
-  install(ggresNmap, cmd_gbres_Nmap, TY_GBRES_COMP, TY_INT);
-  install(ggresmodule, cmd_gbres_module, TY_GBRES_COMP, TY_INT);
-  install(ggresNmodule, cmd_gbres_Nmodule, TY_GBRES_COMP, TY_INT);
-
-  install(gggetmingens, cmd_gbres_mingens, TY_GBRES_COMP, TY_INT);
-  install(gggetgb, cmd_gbres_getgb, TY_GBRES_COMP, TY_INT);
-  install(gggetchange, cmd_gbres_change, TY_GBRES_COMP, TY_INT);
-  install(gginitial, cmd_gbres_initial, TY_GBRES_COMP, TY_INT, TY_INT);
-  return 1;
-}
-#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

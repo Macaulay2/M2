@@ -99,5 +99,3 @@ rawsyz = (m) -> (
   Gcomp = rawGB(m,true,-1,{},false,0,0,0);
   rawStartComputation Gcomp;
   rawGBSyzygies Gcomp)
-
-          

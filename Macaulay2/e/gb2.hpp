@@ -28,8 +28,8 @@ public:
   // The following two routines return one of 
   // COMP_DONE, COMP_DONE_*, COMP_COMPUTING, COMP_INTERRUPTED
 
-  virtual enum ComputationStatusCode calc_gb(int degree, const intarray &stop) = 0;
-  virtual enum ComputationStatusCode calc_gens(int degree, const intarray &stop) = 0;
+  virtual enum ComputationStatusCode calc_gb(int degree) = 0;
+  virtual enum ComputationStatusCode calc_gens(int degree) = 0;
 
   virtual bool is_done() = 0;	// Returns true if computation is completely done,
 				// if no other generators are received.
@@ -84,8 +84,8 @@ public:
   ~gb_emitter();
   virtual void set_output(gb_node *gg) { g = gg; }
 
-  virtual enum ComputationStatusCode calc_gb(int degree, const intarray &stop);
-  virtual enum ComputationStatusCode calc_gens(int degree, const intarray &stop);
+  virtual enum ComputationStatusCode calc_gb(int degree);
+  virtual enum ComputationStatusCode calc_gens(int degree);
 
   virtual bool is_done();
 
@@ -241,8 +241,8 @@ public:
   void end_degree();
   bool is_done();
 
-  enum ComputationStatusCode calc_gb(int deg, const intarray &stop);
-  enum ComputationStatusCode calc_gens(int deg, const intarray &stop);
+  enum ComputationStatusCode calc_gb(int deg);
+  enum ComputationStatusCode calc_gens(int deg);
 
   virtual void reduce(gbvector * &f, gbvector * &fsyz);
 

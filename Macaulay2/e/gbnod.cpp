@@ -704,7 +704,7 @@ void gb2_comp::end_degree()
   state = STATE_NEW_DEGREE;
 }
 
-enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
+enum ComputationStatusCode gb2_comp::calc_gb(int deg)
 {
   enum ComputationStatusCode ret = COMP_DONE;
   if (this_degree > deg) return COMP_DONE;
@@ -713,7 +713,7 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
   if (this_degree < deg) 
     {
       // Now make sure that previous computations have been done:
-      ret = calc_gens(deg-1, stop);
+      ret = calc_gens(deg-1);
       if (ret != COMP_DONE) return ret;
     }
   // At this point, we have completely computed a GB with new gens
@@ -738,7 +738,7 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
 	      h = (*h) + (*hsyz);
 	    }
 	  RingElement *hf1 = hilbertNumerator();
-	  if (hf == 0) return COMP_INTERRUPTED;
+	  if (hf1 == 0) return COMP_INTERRUPTED;
 	  h = (*h) + (*hf1);
 	  RingElement *hF = hilb_comp::hilbertNumerator(F);
 	  if (hF == 0) return COMP_INTERRUPTED;
@@ -759,32 +759,10 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
 	      emit(o.str());
 	    }
 
-#warning "there is an error here somewhere"
 	  n_gb_syz = hilb_comp::coeff_of(h, this_degree);
 	  if (error())
 	    return COMP_ERROR;
 
-#if 0
-
-	  if (syz != NULL)
-	    {
-	      ret = syz->hilbertNumeratorCoefficient(this_degree, n1);
-	      if (ret != COMP_DONE)
-		{
-		  return ret;
-		}
-	    }
-	  else 
-	    n1 = 0;
-	  ret = hilbertNumeratorCoefficient(this_degree, n2);
-	  if (ret != COMP_DONE)
-	    {
-	      return ret;
-	    }
-#endif
-#if 0
-	  n_gb_syz = n1 + n2;
-#endif
 	}
 
       // Compute new s-pairs
@@ -831,7 +809,7 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
     {
       // Get the generators of the same degree, since these
       // may produce syzygies of this degree.
-      ret = gens->calc_gb(deg, stop);
+      ret = gens->calc_gb(deg);
       if (ret == COMP_DONE)
 	{
 	  // Cleanup, go to next degree.
@@ -847,18 +825,18 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
   return ret;
 }
 
-enum ComputationStatusCode gb2_comp::calc_gens(int deg, const intarray &stop)
+enum ComputationStatusCode gb2_comp::calc_gens(int deg)
 {
   enum ComputationStatusCode ret;
   // First check whether we have done this:
   if (this_degree > deg) return COMP_DONE;
 
   // First make sure that we have a GB here:
-  ret = calc_gb(deg, stop);
+  ret = calc_gb(deg);
   if (ret != COMP_DONE) return ret;
 
   // Go get the generators:
-  ret = gens->calc_gb(deg, stop);
+  ret = gens->calc_gb(deg);
   if (ret != COMP_DONE) return ret;
 
   end_degree();
@@ -882,20 +860,21 @@ Matrix *gb2_comp::make_lead_term_matrix()
     {
       gb_elem *g = gb[i];
       gbvector *f = g->f;
-      int x = f->comp-1;
-#warning "the f->monom on the next line is WRONG"
-      ring_elem a = originalR->make_flat_term(one, f->monom);
-      result.set_entry(x,i,a);
+      if (f == 0) continue;
+      // Only grab the lead term, which should be non-null
+      gbvector *fnext = f->next;
+      f->next = 0;
+      vec v = originalR->translate_gbvector_to_vec(F, f);
+      f->next = fnext;
+      result.set_column(i,v);
     }
   return result.to_matrix();
 }
 
 RingElementOrNull *gb2_comp::hilbertNumerator()
 {
-  // It is possible that the computation was not completed before.
   if (hf_numgens_gb == n_gb && hf_numgens_F == F->rank())
     {
-      // No more is needed to be computed
       return hf;
     }
 
@@ -907,14 +886,6 @@ RingElementOrNull *gb2_comp::hilbertNumerator()
 
   hf_numgens_F = F->rank();
   hf_numgens_gb = n_gb;
-
-  emit("hilbert function of ");
-  dfree(hf_matrix->rows());
-  emit("\n");
-  dmatrix(hf_matrix);
-  emit("  is ");
-  drelem(hf);
-  emit("\n");
 
   return hf;
 }
