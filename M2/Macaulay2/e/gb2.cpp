@@ -29,21 +29,6 @@ RingElement *gb_emitter::hilbertNumerator()
   assert(0); // This routine should NEVER be called
   return 0;
 }
-
-#if 0
-enum ComputationStatusCode gb_emitter::hilbertNumerator(RingElement *&)
-{
-  assert(0); // This routine should NEVER be called
-  return COMP_DONE;
-}
-
-enum ComputationStatusCode gb_emitter::hilbertNumeratorCoefficient(int, int &)
-{
-  assert(0); // This routine should NEVER be called
-  return COMP_DONE;
-}
-#endif
-
 enum ComputationStatusCode gb_emitter::calc_gb(int degree)
 {
   // This is when we ship off the elements in this degree.  This should NEVER
@@ -118,7 +103,6 @@ void gbres_comp::setup(const Matrix *m,
   if (originalR == NULL) assert(0);
   GR = originalR->get_gb_ring();
 
-#warning "FreeModules should be over what ring?"
   FreeModule *Fsyz = originalR->make_Schreyer_FreeModule();
   if (length <= 0)
     {

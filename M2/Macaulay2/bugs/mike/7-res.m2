@@ -128,6 +128,7 @@ bettiMatrix C == matrix"1,3,3,1"
 M = coker matrix{{a,b,c}}
 C = res(M, Strategy => 3)
 assert(C.dd^2 == 0)
+bettiMatrix C == matrix"1,3,3,1"
 
 R = ZZ/101[a,b,c,d]
 M = coker vars R
@@ -138,6 +139,7 @@ bettiMatrix C == matrix"1,4,6,4,1"
 M = coker matrix{{a,b,c,d}}
 C = res(M, Strategy => 3)
 assert(C.dd^2 == 0)
+bettiMatrix C == matrix"1,4,6,4,1"
 
 R = QQ[symbol a .. symbol f]
 I = ideal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f, b*c*d,b*d*e,b*e*f,c*d*f,c*e*f)
@@ -151,6 +153,7 @@ I = ideal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f, b*c*d,b*d*e,b*e*f,c*d*f,c*e*f)
 M = coker syz gens I
 C = res(M, Strategy => 3)
 assert(C.dd^2 == 0)
+bettiMatrix C == matrix"10,15,6"
 
 R = ZZ/32003[vars(0..17)]
 m1 = genericMatrix(R,a,3,3)
@@ -158,22 +161,57 @@ m2 = genericMatrix(R,j,3,3)
 J = ideal flatten(m1*m2-m2*m1)
 time C = res(J, Strategy => 2)
 assert(C.dd^2 == 0)
-bettiMatrix C == matrix"1,0,0,0,0,0,0;
-                        0,8,2,0,0,0,0;
+bettiMatrix C == matrix"1,0,1,0,0,0,0;
+                        0,9,2,0,0,0,0;
 			0,0,31,32,3,0,0;
 			0,0,0,28,58,32,4;
 			0,0,0,0,0,0,1"
 J = ideal flatten(m1*m2-m2*m1)
 time C = res(J, Strategy => 1)
 assert(C.dd^2 == 0)
+bettiMatrix C == matrix"1,0,0,0,0,0,0;
+                        0,8,2,0,0,0,0;
+			0,0,31,32,3,0,0;
+			0,0,0,28,58,32,4;
+			0,0,0,0,0,0,1"
 
 J = ideal flatten(m1*m2-m2*m1)
-time C = res(J, Strategy => 0)
+time time C = res(J, Strategy => 0)
 assert(C.dd^2 == 0)
+bettiMatrix C == matrix"1,0,0,0,0,0,0;
+                        0,8,2,0,0,0,0;
+			0,0,31,32,3,0,0;
+			0,0,0,28,58,32,4;
+			0,0,0,0,0,0,1"
 
 J = ideal flatten(m1*m2-m2*m1)
-C = res(J, Strategy => 3)
+time C = res(J, Strategy => 3)
 assert(C.dd^2 == 0)
+bettiMatrix C == matrix"1,0,1,0,0,0,0;
+                        0,9,2,0,0,0,0;
+			0,0,31,32,3,0,0;
+			0,0,0,28,58,32,4;
+			0,0,0,0,0,0,1"
+
+J = ideal flatten(m1*m2-m2*m1)
+R = ring J
+time C = res(J, Strategy => 3, SortStrategy=>2^10)
+assert(C.dd^2 == 0)
+bettiMatrix C == matrix"1,0,1,0,0,0,0;
+                        0,9,2,0,0,0,0;
+			0,0,31,32,3,0,0;
+			0,0,0,28,58,32,4;
+			0,0,0,0,0,0,1"
+
+J = ideal flatten(m1*m2-m2*m1)
+R = ring J
+time C = res(J, Strategy => 2, SortStrategy=>1+2+4+2^11)
+assert(C.dd^2 == 0)
+bettiMatrix C == matrix"1,0,1,0,0,0,0;
+                        0,9,2,0,0,0,0;
+			0,0,31,32,3,0,0;
+			0,0,0,28,58,32,4;
+			0,0,0,0,0,0,1"
 
 R = ZZ/31991 [a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, MonomialSize=>8]
 I = ideal" pr-os+mt,          
@@ -218,7 +256,7 @@ I = ideal flatten entries gens I
 time C = res(I, Strategy=>0);
 betti C
 
-gbTrace=1
+gbTrace=3
 I = ideal flatten entries gens I
-time C = res(I, Strategy=>2);
+time C = res(I, Strategy=>3);
 betti C

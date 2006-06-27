@@ -1,4 +1,4 @@
-// Copyright 1997  Michael E. Stillman
+// Copyright 1997-2006  Michael E. Stillman
 #ifndef _gb2_hh_
 #define _gb2_hh_
 
@@ -44,10 +44,6 @@ public:
   // Hilbert functions of these nodes...
   // Both of these return 0 if computed, non-zero if interrupted.
   virtual RingElementOrNull * hilbertNumerator() = 0;
-#if 0
-  virtual enum ComputationStatusCode hilbertNumerator(RingElement *&result) = 0;
-  virtual enum ComputationStatusCode hilbertNumeratorCoefficient(int deg, int &result) = 0;
-#endif
 
   virtual int n_gb_elems() const = 0;
   virtual const FreeModule *output_free_module() const = 0;
@@ -94,24 +90,12 @@ public:
   // Reduction of a vector f (in correct free module), and its rep 'fsyz'.
   virtual void reduce(gbvector * &, gbvector * &) {}
 
-  // The following two routines should NEVER be called
-#if 0
-  virtual enum ComputationStatusCode hilbertNumerator(RingElement *&);
-  virtual enum ComputationStatusCode hilbertNumeratorCoefficient(int, int &);
-#endif
+  // The following routine should NEVER be called
   virtual RingElementOrNull * hilbertNumerator();
 
   virtual int n_gb_elems() const { return 0; }
   virtual const FreeModule *output_free_module() const { return gens->rows(); }
   virtual Matrix *get_matrix() { return const_cast<Matrix *>(gens); }
-
-#if 0
-  // These are the ones from 2/9/04.  Can't we just return 0 for many of these?
-  virtual Matrix *min_gens_matrix() { return new Matrix(gens->rows()); }
-  virtual Matrix *initial_matrix(int) { return new Matrix(gens->rows()); }
-  virtual Matrix *gb_matrix() { return new Matrix(gens->rows()); }
-  virtual Matrix *change_matrix() { return new Matrix(gens->rows()); }
-#endif
 
   virtual Matrix *min_gens_matrix() { return 0; }
   virtual Matrix *initial_matrix(int) { return 0; }
@@ -211,13 +195,6 @@ private:
   void flush_pairs();
   Matrix *make_lead_term_matrix(); // for computing hilbert functions
   
-  int computation_complete(int stop_gb, 
-			   int stop_syz, 
-			   int stop_codim,
-			   int stop_pairs, 
-			   int stop_min_gens,
-			   int subring);
-
   void schreyer_append(gbvector *f);
   bool s_pair_step();
   int get_pairs();
@@ -233,9 +210,6 @@ public:
   ~gb2_comp();
   virtual void set_output(gb_node *p);
 
-  // Performing the computation
-  int start_degree(int degree, int expected=-1);// Returns the number of pairs in this degree.
-  int calc(const intarray &stop_conditions);
   // calc returns COMP_DONE_*, or COMP_DONE, or COMP_INTERRUPTED.
   bool receive_generator(gbvector * f, int n, const ring_elem denom);
   void end_degree();
@@ -247,11 +221,6 @@ public:
   virtual void reduce(gbvector * &f, gbvector * &fsyz);
 
   virtual RingElementOrNull * hilbertNumerator();
-
-#if 0
-  virtual enum ComputationStatusCode hilbertNumerator(RingElement *&result);
-  virtual enum ComputationStatusCode hilbertNumeratorCoefficient(int deg, int &result);
-#endif
 
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
   int n_gb_elems() const { return n_gb; }
