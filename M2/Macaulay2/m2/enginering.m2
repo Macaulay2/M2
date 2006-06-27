@@ -7,12 +7,53 @@ RingElement == RawRingElement := (x,y) -> raw x === y
 RawRingElement == RingElement := (x,y) -> x === raw y
 ring RingElement := r -> class r
 
+promote'(Number,RingElement) := (n,R) -> new R from rawFromNumber(R,n)
+
 EngineRing = new Type of Ring
 EngineRing.synonym = "engine ring"
 raw EngineRing := R -> R.RawRing
 raw Ring := R -> if R.?RawRing then R.RawRing else error "no raw engine ring associated with this ring"
 -----------------------------------------------------------------------------
+--- new lift and promote, version 3
+basicLift = (r,B) -> new B from rawLift(raw B, raw r)
+multipleBasicLift = (r,v) -> ( r = raw r; scan(v, B -> r = rawLift(raw B, raw r)); new last v from r )
 
+basicLiftMatrix = (m,F) -> map(F,, rawLift(raw F, raw m))
+multipleBasicLiftMatrix = (m,v) -> (m = raw m; scan(v, F -> m = rawLift(raw F, m)); map(last v,,m) )
+
+basicPromote = (r,B) -> new B from rawPromote(raw B, raw r)
+multipleBasicPromote = (r,v) -> ( r = raw r; scan(v, B -> r = rawPromote(raw B, raw r)); new last v from r )
+
+basicPromoteMatrix = (m,F) -> map(F,, rawPromote(raw F, raw m))
+multipleBasicPromoteMatrix = (m,v) -> (m = raw m; scan(v, F -> m = rawPromote(raw F, m)) map(last v,,m) )
+
+if debugLevel > 0 then (
+
+basicLiftMatrix = (m,F) -> ( R := ring F; map(F,,applyTable(entries m, r -> lift(r, R)))); -- temporary
+multipleBasicLiftMatrix = (m,v) -> (m = entries m; scan(v, F -> m = applyTable(m, r -> lift(r, ring F))); map(last v,,m) ); -- temporary
+
+basicPromoteMatrix = (m,F) -> ( R := ring F; map(F,,applyTable(entries m, r -> promote(r, R)))); -- temporary
+multipleBasicPromoteMatrix = (m,v) -> (m = entries m; scan(v, F -> m = applyTable(m, r -> promote(r, ring F))); map(last v,,m) ); -- temporary
+
+)
+
+setupPromoteLift = (F) -> (
+     promote'(F,F) := (f,F) -> f;
+     baserings := F.baseRings;
+     n := # baserings;
+     scan(n, i -> (
+	       A := baserings#i;
+	       if not ancestor(A, Number) then (
+		    if i == n-1 then (
+			 promote'(A,F) := basicPromote;
+			 )
+		    else (
+			 v := append(take(baserings, -(n-i-1)), F);
+			 promote'(A,F) := (a,F) -> multipleBasicPromote(a, v);
+			 ))));
+     )
+
+-----------------------------------------------------------------------------
 reduce := (r,s) -> (
      z := syz( matrix{{r,s}}, SyzygyLimit => 1 );
      a := z_(1,0);
@@ -91,6 +132,7 @@ frac EngineRing := R -> (
 	  F.generators = apply(generators R, m -> promote(m,F));
 	  fraction(F,F) := F / F := (x,y) -> x//y;
 	  fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,r.RawRingElement,s.RawRingElement);
+	  setupPromoteLift F;
 	  if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
 	  if R.?generatorExpressions then F.generatorExpressions = R.generatorExpressions;
 	  if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
@@ -407,19 +449,6 @@ ZZ / RingElement := RingElement / ZZ :=
      )
 
 -----------------------------------------------------------------------------
-
---- new lift and promote, version 3
-basicLift = (r,B) -> new B from rawLift(raw B, raw r)
-multipleBasicLift = (r,v) -> ( r = raw r; scan(v, B -> r = rawLift(raw B, raw r)); new last v from r )
-
-basicLiftMatrix = (m,F) -> map(F,, rawLift(raw F, raw m))
-multipleBasicLiftMatrix = (m,v) -> (m = raw m; scan(v, F -> m = rawLift(raw F, m)) map(last v,,m) )
-
-basicPromote = (r,B) -> new B from rawPromote(raw B, raw r)
-multipleBasicPromote = (r,v) -> ( r = raw r; scan(v, B -> r = rawPromote(raw B, raw r)); new last v from r )
-
-basicPromoteMatrix = (m,F) -> map(F,, rawPromote(raw F, raw m))
-multipleBasicPromoteMatrix = (m,v) -> (m = raw m; scan(v, F -> m = rawPromote(raw F, m)) map(last v,,m) )
 
 -- new lift and promote, version 2
 

@@ -172,7 +172,7 @@ firstTime := true
 debuggerHook = () -> (
      if firstTime then ( 
 	  usage(); 
-	  -- firstTime = false; 
+	  firstTime = false; 
 	  );
      << endl << " -- code just attempted: " << code errorCode << endl
      )

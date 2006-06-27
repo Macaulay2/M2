@@ -514,20 +514,6 @@ chainComplex List := maps -> (
 	       ));
      C)
 
-betti = method(TypicalValue => Net)
-
-betti Matrix := f -> betti chainComplex f
-betti GroebnerBasis := G -> betti generators G
-betti Ideal := I -> "generators: " | betti generators I
-betti Module := M -> (
-     if M.?relations then (
-	  if M.?generators then (
-	       "generators: " | betti generators M || "relations : " | betti relations M
-	       )
-	  else "relations : " | betti relations M
-	  )
-     else "generators: " | betti generators M
-     )
 
 directSum ChainComplex := C -> directSum(1 : C)
 ChainComplex.directSum = args -> (
@@ -615,11 +601,18 @@ regularity Module := (M) -> regularity resolution M
 
 regularity Ideal := (I) -> 1 + regularity resolution cokernel generators I
 
-rawbetti := method()
-     -- returns a hash table with pairs of the form (d,i) => n
+BettiTally = new Type of Tally
+
+betti = method(TypicalValue => BettiTally)
+     -- returns a hash table with pairs of the form (i,d) => n
      -- where d is the multi-degree, i is the homological degree, and 
      -- n is the betti number.
-rawbetti Resolution := X -> (
+
+betti Matrix := f -> betti chainComplex f
+betti GroebnerBasis := G -> betti generators G
+betti Ideal := I -> betti generators I
+betti Module := M -> betti presentation M
+betti Resolution := X -> (
      bettiType := 0;
      w := rawGBBetti(X.RawComputation, bettiType);
      lo := w#0;
@@ -627,26 +620,19 @@ rawbetti Resolution := X -> (
      len := w#2;
      w = drop(w,3);
      w = pack(len+1,w);
-     w = table(lo .. hi, 0 .. len, (i,j) -> ({i+j},j) => w#(i-lo)#j);
-     w = hashTable toList splice w;
-     w = select(w, n -> n != 0);
-     w )
-rawbetti ChainComplex := C -> (
+     w = table(lo .. hi, 0 .. len, (i,j) -> (j,{i+j}) => w#(i-lo)#j);
+     new BettiTally from select(toList splice w, pair -> pair#-1 != 0))
+betti ChainComplex := C -> (
      if C.?Resolution and degreeLength ring C === 1 then (
      	  repair := (ring C).Repair;
-     	  applyKeys( rawbetti C.Resolution, (d,i) -> (first repair d,i) )
-	  )
+     	  applyKeys(betti C.Resolution, (i,d) -> (i,repair d)))
      else (
-     	  betti := new MutableHashTable;
 	  complete C;
-	  p := select(pairs C, (i,F) -> class i === ZZ);
-	  hashTable flatten apply(p, (i,F) -> apply(pairs tally apply(degrees F, first), (d,n) -> (d,i) => n))
-	  )
-     )
-
-bettiDisplay := v -> (
-     -- convert the hash table created by rawbetti to the standard display
-     v = applyKeys( v, (d,i) -> (d-i,i) );		    -- skew the degrees
+	  new BettiTally from flatten apply(
+	       select(pairs C, (i,F) -> class i === ZZ), 
+	       (i,F) -> apply(pairs tally degrees F, (d,n) -> (i,d) => n))))
+net BettiTally := v -> (
+     v = applyKeys( v, (i,d) -> (first d - i, i)); -- skew the degrees in the usual way; this way the Koszul complex occupies a horizontal line instead of a diagonal line
      k := keys v;
      fi := first \ k;
      la := last  \ k;
@@ -654,23 +640,14 @@ bettiDisplay := v -> (
      maxcol := max la;
      minrow := min fi;
      maxrow := max fi;
-     v = table(toList (minrow .. maxrow), toList (mincol .. maxcol),
-	  (i,j) -> if v#?(i,j) then v#(i,j) else 0);
-     leftside := apply(
-	  splice {"total:", apply(minrow .. maxrow, i -> toString i | ":")},
-	  s -> (6-# s,s));
+     v = table(toList (minrow .. maxrow), toList (mincol .. maxcol), (i,j) -> if v#?(i,j) then v#(i,j) else 0);
+     leftside := apply( splice {"total:", apply(minrow .. maxrow, i -> toString i | ":")}, s -> (6-# s,s));
      totals := apply(transpose v, sum);
-     v = prepend(totals,v);
-     v = transpose v;
+     v = transpose prepend(totals,v);
      v = applyTable(v, bt -> if bt === 0 then "." else toString bt);
-     v = apply(v, col -> (
-	       wid := 1 + max apply(col, i -> #i);
-	       apply(col, s -> (wid-#s, s))));
-     v = prepend(leftside,v);
-     v = transpose v;
+     v = apply(v, col -> ( wid := 1 + max apply(col, i -> #i); apply(col, s -> (wid-#s, s))));
+     v = transpose prepend(leftside,v);
      stack apply(v, concatenate))
-
-betti ChainComplex := C -> bettiDisplay rawbetti C
 
 -----------------------------------------------------------------------------
 syzygyScheme = (C,i,v) -> (

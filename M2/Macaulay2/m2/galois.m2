@@ -106,6 +106,7 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      toString F := h -> toString expression h;
      net F := h -> net expression h;
      F.baseRings = append(S.baseRings,S);
+     setupPromoteLift F;
      F.isCommutative = true;
      expression F := t -> expression lift(t, S);
      F.degreeLength = 0;

@@ -70,9 +70,9 @@ scan(flexibleBinaryOperators, op -> (
 			 preY := centerString(width preX, opstring);
 			 preZ := centerString(width preX, "=");
 			 line1 := concatenate("no method for assignment to ",
-			      if op === symbol SPACE then "adjacent objects" else concatenate("binary operator ",op," applied to objects")
+			      if op === symbol SPACE then "adjacent objects:" else concatenate("binary operator ",op," applied to objects:")
 			      );
-			 if hush then error line1;
+			 if hush then error(line1, " not displayed");
 			 wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
 			 wid = wid - commentGuardWidth - width preX;
 			 hush = true;					    -- prevent error message recursion
@@ -87,7 +87,7 @@ scan(flexibleBinaryOperators, op -> (
 			 line1 := concatenate("no method for ",
 			      if op === symbol SPACE then "adjacent objects:" else concatenate("binary operator ",op," applied to objects:")
 			      );
-			 if hush then error line1;
+			 if hush then error(line1, " not displayed");
 			 preY := centerString(#preX, opstring);
 			 wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
 			 wid = wid - commentGuardWidth - width preX;
@@ -105,8 +105,8 @@ scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}
 		    installMethod((op,symbol =), Thing, (y,z) -> (
 			      preY := centerString(width preX, toString op);
 			      preZ := centerString(width preX, "=");
-			      line1 := concatenate("no method for assignment to ", concatenate(type," operator ",op), " applied to:");
-			      if hush then error line1;
+			      line1 := concatenate("no method for assignment to ", concatenate(type," operator ",op), " applied to objects:");
+			      if hush then error(line1, " not displayed");
 			      wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
 			      wid = wid - commentGuardWidth - width preX;
 			      hush = true;					    -- prevent error message recursion
@@ -115,8 +115,8 @@ scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}
 			      hush = false;
 			      error toString stack(line1,commentGuard line2,commentGuard line3))));
 	       if not Thing#?op then installMethod(op, Thing, (x) -> (
-			 line1 := concatenate("no method for ", concatenate(type," operator ",op), " applied to:");
-			 if hush then error line1;
+			 line1 := concatenate("no method for ", concatenate(type," operator ",op), " applied to objects:");
+			 if hush then error(line1, " not displayed");
 			 wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
 			 wid = wid - commentGuardWidth - width preX;
 			 hush = true;					    -- prevent error message recursion

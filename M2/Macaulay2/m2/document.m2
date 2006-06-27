@@ -43,8 +43,7 @@ isDocumentableMethod = method(Dispatch => Input)
 isDocumentableMethod Sequence := key -> (
      all(key, i -> (
      	       class i === Sequence 			    -- assignment methods look like ((symbol *, symbol =), X, Y, Z)
-     	       or isDocumentableMethod i)) 
-     and not methodDispatchFunctions#?(functionBody lookup key)
+     	       or isDocumentableMethod i))
      )
 isDocumentableMethod    Thing := key -> false
 isDocumentableMethod   Symbol := key -> isGlobalSymbol toString key and getGlobalSymbol toString key === key
