@@ -4,9 +4,9 @@ promote'(matrix{{2}}, QQ)
   assert( oo === matrix {{2/1}} )
 lift'(matrix{{2/1}}, ZZ)
   assert( oo === matrix {{2}} )
-lift'able(matrix{{2/1}}, ZZ)
+liftable'(matrix{{2/1}}, ZZ)
   assert oo
-lift'able(matrix{{2/3}}, ZZ)
+liftable'(matrix{{2/3}}, ZZ)
   assert not oo
 promote'(matrix{{2}}, R)
   assert( oo === matrix {{2_R}} )
