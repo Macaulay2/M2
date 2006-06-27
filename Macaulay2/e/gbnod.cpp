@@ -7,9 +7,7 @@
 #include "comp_gb.hpp"
 #include "matrixcon.hpp"
 
-#warning "gbres: over QQ, is this OK implemented over ZZ?"
 #warning "gbres: quotient rings -- need to do normal form of fsyz's"
-#warning "gbres: HF -- matrix creation is incorrect"
 
 void gb2_comp::setup(FreeModule *FFsyz,
 		     gb_node *ggens,
@@ -151,12 +149,6 @@ int gb2_comp::gb_sort_partition(int lo, int hi)
   int j = hi+1;
   for (;;)
     {
-#if 0
-      do { j--; }
-      while (M->compare(gb[j]->f->monom, pivot_monom) > 0);
-      do { i++; }
-      while (M->compare(gb[i]->f->monom, pivot_monom) < 0);
-#endif
       do { j--; }
       while (M->compare(gb[j]->f->monom, pivot_monom) < 0);
       do { i++; }
@@ -394,7 +386,6 @@ void gb2_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
 
 void gb2_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 {
-#warning "noet tested yet"
   gbvector head;
   gbvector *result = &head;
   result->next = 0;
@@ -412,7 +403,6 @@ void gb2_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
     {
       Bag *b;
       GR->gbvector_get_lead_exponents(F, lead, div_totalexp);
-#warning "quotient ring stuff"
       if (originalR->is_quotient_ring() 
 	  && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
 	{
@@ -515,7 +505,6 @@ void gb2_comp::gb_insert(gbvector * f, gbvector * fsyz, int ismin)
   M->remove(f_m);
 
   // Now do auto-reduction of previous elements using this one.
-  // MES: possible fix: only do this if the current element is not minimal
   if (orig_syz >= 0 || !ismin)
     for (int i=n_gb_first; i<n_gb; i++)
       {
@@ -616,23 +605,6 @@ bool gb2_comp::s_pair_step()
 
 
 //---- Completion testing -----------------------------
-
-int gb2_comp::computation_complete(int stop_gb, int /*stop_syz*/, 
-				  int /*stop_codim*/,
-				  int stop_pairs, int /*stop_min_gens*/,
-				  int stop_subring)
-     // Test whether the current computation is done.
-     // Return COMP_DONE_DEGREE_LIMIT, COMP_DONE, COMP_DONE_GB_LIMIT, COMP_DONE_SYZ_LIMIT,
-     // COMP_DONE_PAIR_LIMIT, COMP_DONE_CODIM, COMP_DONE_MIN_GENS, or
-     // (if not done) COMP_COMPUTING.
-{
-  if (stop_gb > 0 && n_gb >= stop_gb) return COMP_DONE_GB_LIMIT;
-  //  if (stop_syz > 0 && syz->value().n_cols() >= stop_syz) return COMP_DONE_SYZ_LIMIT;
-  if (stop_pairs > 0 && n_pairs_computed >= stop_pairs) return COMP_DONE_PAIR_LIMIT;
-  //if (stop_codim > 0 && ...) return COMP_DONE_CODIM;
-  if (stop_subring > 0 && n_subring >= stop_subring) return COMP_DONE_SUBRING_LIMIT;
-  return COMP_COMPUTING;
-}
 
 bool gb2_comp::receive_generator(gbvector *f, int n, const ring_elem denom)
 {
