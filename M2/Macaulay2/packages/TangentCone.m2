@@ -35,7 +35,12 @@ tangentCone Ideal := (opts) -> (i) -> (
 beginDocumentation()
 
 document {
-     Key => {tangentCone, [tangentCone, Strategy]},
+     Key => "TangentCone",
+     "This package provides a single function that computes the tangent cone at a point."
+     }
+
+document {
+     Key => {(tangentCone, Ideal), tangentCone, [tangentCone, Strategy]},
      Usage => "tangentCone I",
      Inputs => { "I",
 	  Strategy => { TT "Local", " or ", TT "Global" }
