@@ -313,7 +313,7 @@ stderr << "--warning: this node needs rewriting : method(Dispatch => ...)" << en
 document {
      Key => [method, Dispatch],
      Headline => "method functions with a variable number of arguments",
-     Usage => "f = method(Dispatch => Input)",
+     Usage => "f = method(Dispatch => Thing)",
      Inputs => {
 	  },
      Outputs => {
@@ -321,7 +321,7 @@ document {
 	  },
      "Here is an example.",
      EXAMPLE {
-	  "f = method(Dispatch => Input);",
+	  "f = method(Dispatch => Thing);",
 	  "f ZZ := i -> -i;",
 	  "f Sequence := S -> reverse S;",
 	  "f 44",

@@ -242,7 +242,7 @@ Module ** GradedModule := GradedModule => (M,C) -> (
 	  scan(spots C, i -> D#i = M ** C#i);
 	  D))
 
-gradedModule = method(Dispatch => Input)
+gradedModule = method(Dispatch => Thing)
 
 gradedModule Sequence := gradedModule List := GradedModule => modules -> (
      C := new GradedModule;
@@ -303,7 +303,7 @@ GradedModule ** GradedModule := GradedModule => (C,D) -> (
 	  E
 	  ))
 
-gradedModuleMap = method(Dispatch => Input)
+gradedModuleMap = method(Dispatch => Thing)
 
 gradedModuleMap Sequence := gradedModuleMap List := GradedModuleMap => maps -> (
      if #maps === 0 then error "expected at least one argument";

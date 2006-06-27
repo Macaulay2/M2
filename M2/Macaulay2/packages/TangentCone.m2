@@ -9,7 +9,7 @@ newPackage ("TangentCone",
     	DebuggingMode => false
     	)
 
-export { tangentCone, Local, Global }
+export { tangentCone, Local }
 
 tangentCone = method(TypicalValue => Ideal, 
      Options => { 
@@ -21,7 +21,7 @@ tangentCone Ideal := (opts) -> (i) -> (
      n := numgens R;
      k := coefficientRing R;
      if opts.Strategy === Local then (
-	  SS := k[Variables=>n,MonomialOrder=>Weights=>splice{n:-1}];
+	  SS := k[Variables=>n,MonomialOrder=>Weights=>splice{n:-1},Global=>false];
 	  toSS := map(SS, R, vars SS);
 	  fromSS := map(R, SS, vars R);
 	  ideal mingens fromSS ideal leadTerm(1, gens gb toSS i))

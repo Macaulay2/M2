@@ -11,7 +11,7 @@ typicalValues#(symbol global) = Symbol
 typicalValues#(symbol symbol) = Symbol
 typicalValues#(symbol ?) = Boolean
 
-dummy := method(Dispatch => Input)	    -- a compiled function closure is pretty anonymous
+dummy := method(Dispatch => Thing)	    -- a compiled function closure is pretty anonymous
 installMethod(symbol !, ZZ, ZZ => dummy)
 -- installMethod(symbol ##, Function, Sequence, Thing => dummy)
 installMethod(symbol #?, HashTable, Thing, Boolean => dummy)

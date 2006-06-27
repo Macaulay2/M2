@@ -61,9 +61,9 @@ record = (
 	  )
      )
 
-reach1 = method(Dispatch => Input) 
-reach2 = method(Dispatch => Input)
-reach3 = method(Dispatch => Input)
+reach1 = method(Dispatch => Thing) 
+reach2 = method(Dispatch => Thing)
+reach3 = method(Dispatch => Thing)
 
 reach1 Thing := identity
 reach1 Sequence := reach1 BasicList := x -> scan(x,reach1)
@@ -169,7 +169,7 @@ crossReference := (key,text,optional) -> (
      else ( "\\hyperlink{", sectionNumber, "}{{\\bf ", tex text, "}} [", sectionNumber, "]" )
      )
 
-booktex = method(Dispatch => Input)
+booktex = method(Dispatch => Thing)
 booktex TO := booktex TOH := x -> crossReference(formatDocumentTag x#0, formatDocumentTag x#0,false) 
 
 menuLevel := 2

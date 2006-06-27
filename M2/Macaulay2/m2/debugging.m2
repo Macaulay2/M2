@@ -74,7 +74,7 @@ net Descent := x -> stack sort apply(pairs x,
 	  ))
 select1 := syms -> select(apply(syms, value), s -> instance(s, Type))
      
-show1 := method(Dispatch => Input)
+show1 := method(Dispatch => Thing)
 show1 Sequence := show1 List := types -> (
      world := new Descent;
      install := v -> (

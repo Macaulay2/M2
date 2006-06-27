@@ -37,7 +37,8 @@ multipleBasicPromoteMatrix = (m,v) -> (m = entries m; scan(v, F -> m = applyTabl
 
 )
 
-setupPromoteLift = (F) -> (
+commonEngineRingInitializations = (F) -> (
+     F ? F := (f,g) -> raw f ? raw g;
      promote'(F,F) := (f,F) -> f;
      baserings := F.baseRings;
      n := # baserings;
@@ -132,7 +133,7 @@ frac EngineRing := R -> (
 	  F.generators = apply(generators R, m -> promote(m,F));
 	  fraction(F,F) := F / F := (x,y) -> x//y;
 	  fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,r.RawRingElement,s.RawRingElement);
-	  setupPromoteLift F;
+	  commonEngineRingInitializations F;
 	  if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
 	  if R.?generatorExpressions then F.generatorExpressions = R.generatorExpressions;
 	  if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
@@ -184,10 +185,8 @@ isHomogeneous RingElement := f -> rawIsHomogeneous f.RawRingElement
 
 - RingElement := RingElement => x -> new ring x from -x.RawRingElement
 
-RingElement ? RingElement := (x,y) -> (
-     if ring x === ring y and x == y then symbol == else x.RawRingElement ? y.RawRingElement
-     );
-
+RingElement ? ZZ := (x,n) -> x ? n_(class x)
+ZZ ? RingElement := (m,y) -> m_(class y) ? y
 
 RingElement ^ ZZ := RingElement => (x,i) -> new ring x from x.RawRingElement^i
 

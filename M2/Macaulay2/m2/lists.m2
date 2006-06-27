@@ -19,8 +19,8 @@ List / Thing := List => (v,b) -> apply(v,x->x / b)	    -- slight conflict with L
 
 VisibleList _ List := VisibleList => (x,y) -> apply(splice y, i -> x#i)
 
-maxPosition = method(Dispatch => Input)
-minPosition = method(Dispatch => Input)
+maxPosition = method(Dispatch => Thing)
+minPosition = method(Dispatch => Thing)
 
 maxPosition BasicList := ZZ => x -> (
      if # x === 0 then error "expected a nonempty list" 

@@ -97,28 +97,28 @@ EngineRing / Ideal := (R,I) -> (
      if R.?Repair then S.Repair = R.Repair;
      S.ideal = I;
      S.baseRings = append(R.baseRings,R);
-     setupPromoteLift S;
+     commonEngineRingInitializations S;
      S.relations = gensI;
      S.isCommutative = R.isCommutative;
      if R.?generatorSymbols then S.generatorSymbols = R.generatorSymbols;
      if R.?generatorExpressions then S.generatorExpressions = R.generatorExpressions;
      if R.?indexStrings then S.indexStrings = applyValues(R.indexStrings, x -> promote(x,S));
      S.use = x -> (
-	  try monoid S;
-	  if S.?monoid then (
-	       M := S.monoid;
-	       M + M := (m,n) -> S#1 * m + S#1 * n;
-	       M - M := (m,n) -> S#1 * m - S#1 * n;
-	       - M := m -> (- S#1) * m;
-	       scan(S.baseRings, A -> (
-		    A + M := (i,m) -> promote(i, S) + m;
-		    M + A := (m,i) -> m + promote(i, S);
-		    A - M := (i,m) -> promote(i, S) - m;
-		    M - A := (m,i) -> m - promote(i, S);
-		    A * M := (i,m) -> promote(i, S) * m;
-		    M * A := (m,i) -> m * promote(i, S);
-		    ));
-	       );
+--	  try monoid S;
+--	  if S.?monoid then (
+--	       M := S.monoid;
+--	       M + M := (m,n) -> S#1 * m + S#1 * n;
+--	       M - M := (m,n) -> S#1 * m - S#1 * n;
+--	       - M := m -> (- S#1) * m;
+--	       scan(S.baseRings, A -> (
+--		    A + M := (i,m) -> promote(i, S) + m;
+--		    M + A := (m,i) -> m + promote(i, S);
+--		    A - M := (i,m) -> promote(i, S) - m;
+--		    M - A := (m,i) -> m - promote(i, S);
+--		    A * M := (i,m) -> promote(i, S) * m;
+--		    M * A := (m,i) -> m * promote(i, S);
+--		    ));
+--	       );
 	  );
      runHooks(R,QuotientRingHook,S);
      S)

@@ -106,7 +106,7 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      toString F := h -> toString expression h;
      net F := h -> net expression h;
      F.baseRings = append(S.baseRings,S);
-     setupPromoteLift F;
+     commonEngineRingInitializations F;
      F.isCommutative = true;
      expression F := t -> expression lift(t, S);
      F.degreeLength = 0;
@@ -121,7 +121,6 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
 	  );
      F.order = p^n;
      F / F := (x,y) -> x // y;
-     F.use = F -> var <- F_0;
      F))
 
 random GaloisField := F -> (

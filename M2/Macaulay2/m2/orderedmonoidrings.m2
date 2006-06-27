@@ -213,7 +213,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.flatmonoid = flatmonoid;
 	  RM.numallvars = numallvars;
 	  RM.baseRings = append(R.baseRings,R);
-	  setupPromoteLift RM;
+	  commonEngineRingInitializations RM;
 	  RM.monoid = M;
 	  RM.Adjust = (options M).Adjust;
 	  RM.Repair = (options M).Repair;
@@ -221,27 +221,27 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.isCommutative = not Weyl and not RM.?SkewCommutative;
      	  ONE := RM#1;
 	  if R.?char then RM.char = R.char;
-	  RM ? RM := (f,g) -> raw f ? raw g;
-	  R * M := (r,m) -> new RM from rawTerm(RM.RawRing,raw r,m.RawMonomial);
-	  M * R := (m,r) -> new RM from rawTerm(RM.RawRing,raw r,m.RawMonomial);
-	  RM * M := (p,m) -> p * (R#1 * m);
-	  M * RM := (m,p) -> (R#1 * m) * p;
-	  M / RM := (m,f) -> (m * ONE) / f;
-	  M / R := (m,r) -> (m * ONE) / (r * ONE);
-	  RM / M := (f,m) -> f / (m * ONE);
-	  R / M := (r,m) -> (r * ONE) / (m * ONE);
-	  M % RM := (m,f) -> (m * ONE) % f;
-	  M % R := (m,r) -> (m * ONE) % (r * ONE);
-	  RM % M := (f,m) -> f % (m * ONE);
-	  R % M := (r,m) -> (r * ONE) % (m * ONE);
-	  R + M := (r,m) -> r * M#1 + R#1 * m;
-	  M + R := (m,r) -> r * M#1 + R#1 * m;
-	  RM + M := (p,m) -> p + R#1 * m;
-	  M + RM := (m,p) -> p + R#1 * m;
-	  R - M := (r,m) -> r * M#1 - R#1 * m;
-	  M - R := (m,r) -> R#1 * m - r * M#1;
-	  RM - M := (p,m) -> p - R#1 * m;
-	  M - RM := (m,p) -> R#1 * m - p;
+-- monomial arithmetic is getting deprecated
+--	  R * M := (r,m) -> new RM from rawTerm(RM.RawRing,raw r,m.RawMonomial);
+--	  M * R := (m,r) -> new RM from rawTerm(RM.RawRing,raw r,m.RawMonomial);
+--	  RM * M := (p,m) -> p * (R#1 * m);
+--	  M * RM := (m,p) -> (R#1 * m) * p;
+--	  M / RM := (m,f) -> (m * ONE) / f;
+--	  M / R := (m,r) -> (m * ONE) / (r * ONE);
+--	  RM / M := (f,m) -> f / (m * ONE);
+--	  R / M := (r,m) -> (r * ONE) / (m * ONE);
+--	  M % RM := (m,f) -> (m * ONE) % f;
+--	  M % R := (m,r) -> (m * ONE) % (r * ONE);
+--	  RM % M := (f,m) -> f % (m * ONE);
+--	  R % M := (r,m) -> (r * ONE) % (m * ONE);
+--	  R + M := (r,m) -> r * M#1 + R#1 * m;
+--	  M + R := (m,r) -> r * M#1 + R#1 * m;
+--	  RM + M := (p,m) -> p + R#1 * m;
+--	  M + RM := (m,p) -> p + R#1 * m;
+--	  R - M := (r,m) -> r * M#1 - R#1 * m;
+--	  M - R := (m,r) -> R#1 * m - r * M#1;
+--	  RM - M := (p,m) -> p - R#1 * m;
+--	  M - RM := (m,p) -> R#1 * m - p;
 	  RM _ M := (f,m) -> new R from rawCoefficient(R.RawRing, f.RawRingElement, m.RawMonomial);
 	  expression RM := f -> (
 	       (coeffs,monoms) -> (
@@ -283,23 +283,23 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       );
      	  RM.indexStrings = applyKeys(RM.indexSymbols, toString);
 	  RM.use = x -> (
-	       M + M := (m,n) -> R#1 * m + R#1 * n;
-	       M - M := (m,n) -> R#1 * m - R#1 * n;
-	       - M := (n) -> - R#1 * n;
-	       scan(RM.baseRings, A -> (
-		    if A =!= R then (
-		    	 A * M := (i,m) -> (i * R#1) * m;
-		    	 M * A := (m,i) -> m * (i * R#1);
-			 );
-		    A + M := (i,m) -> i * ONE + m * ONE;
-		    M + A := (m,i) -> m * ONE + i * ONE;
-		    A - M := (i,m) -> i * ONE - m * ONE;
-		    M - A := (m,i) -> m * ONE - i * ONE;
-		    M / A := (m,r) -> (m * ONE) / (r * ONE);
-		    A / M := (r,m) -> (r * ONE) / (m * ONE);
-		    M % A := (m,r) -> (m * ONE) % (r * ONE);
-		    A % M := (r,m) -> (r * ONE) % (m * ONE);
-		    ));
+--	       M + M := (m,n) -> R#1 * m + R#1 * n;
+--	       M - M := (m,n) -> R#1 * m - R#1 * n;
+--	       - M := (n) -> - R#1 * n;
+--	       scan(RM.baseRings, A -> (
+--		    if A =!= R then (
+--		    	 A * M := (i,m) -> (i * R#1) * m;
+--		    	 M * A := (m,i) -> m * (i * R#1);
+--			 );
+--		    A + M := (i,m) -> i * ONE + m * ONE;
+--		    M + A := (m,i) -> m * ONE + i * ONE;
+--		    A - M := (i,m) -> i * ONE - m * ONE;
+--		    M - A := (m,i) -> m * ONE - i * ONE;
+--		    M / A := (m,r) -> (m * ONE) / (r * ONE);
+--		    A / M := (r,m) -> (r * ONE) / (m * ONE);
+--		    M % A := (m,r) -> (m * ONE) % (r * ONE);
+--		    A % M := (r,m) -> (r * ONE) % (m * ONE);
+--		    ));
 	       RM);
 	  RM
 	  )

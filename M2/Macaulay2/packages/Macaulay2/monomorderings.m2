@@ -578,7 +578,7 @@ R = QQ[a..d, MonomialOrder => {GRevLex=>2, GRevLex=>2}]
 a*c + b^2 + a*c^3
 R = QQ[a..d, MonomialOrder => {2,2}]
 a*c + b^2 + a*c^3
-R = QQ[a..d, MonomialOrder => RevLex => 4]
+R = QQ[a..d, MonomialOrder => RevLex => 4, Global => false]
 1 + a*c + b^2 + a*c^3
 a+a^2
 "

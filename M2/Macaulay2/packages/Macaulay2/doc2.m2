@@ -534,7 +534,6 @@ document {
      Key => {symbol ?,
      	  (symbol ?, Symbol, IndexedVariable),
      	  (symbol ?, IndexedVariable, IndexedVariable),
-     	  (symbol ?, RingElement, RingElement),
      	  (symbol ?, List, List),
      	  (symbol ?, Tally, Tally)
 	  },
@@ -554,7 +553,7 @@ document {
 	  {1,2,3} ? {4,5}
      ///,
      PARA{},
-     "Polynomials may also be compared.  The order depends on the 
+     "Polynomials from the same ring may also be compared.  The order depends on the 
      monomial order in the ring.",
      EXAMPLE lines ///
      	  R = ZZ[a,b,c]

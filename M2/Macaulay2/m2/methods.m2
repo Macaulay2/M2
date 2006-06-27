@@ -42,12 +42,9 @@ methodDefaults := new OptionTable from {
      Associative => false,
      TypicalValue => Thing,
      Options => null,
-     Dispatch => {}					    -- Input or Output (for single arg dispatch) or list of Input or Output (for multiple inheritance)
-     	       	    	      	   	     	       	    -- if a list, it's assumed to continue with the default, which is Input ...
+     Dispatch => {}					    -- Thing or Type (for single arg dispatch) or list of Thing or Type (for multiple inheritance)
+     	       	    	      	   	     	       	    -- if a list, it's assumed to continue with the default, which is Thing ...
      }
-
-methodFunctionOptions = new MutableHashTable
-methodOptions = new MutableHashTable
 
 AssociativeNoOptions := (outputs) -> (
      methodFunction := newmethod1(args -> noMethod(methodFunction,args,outputs),outputs);
@@ -84,7 +81,6 @@ SingleArgWithOptions := (opts,outputs) -> (
 	  f := lookup(methodFunction, class arg);
 	  if f === null then noMethodSingle(methodFunction,arg,outputs) else (f o) arg
 	  );
-     methodOptions#methodFunction = opts;
      methodFunction)
 
 AssociativeWithOptions := (opts,outputs) -> (
@@ -92,18 +88,20 @@ AssociativeWithOptions := (opts,outputs) -> (
      error "associative methods with options not implemented yet"
      )
 
-MultipleArgsWithOptions := (opts,outputs) -> (
+MultipleArgsWithOptions := (methopts,opts,outputs) -> (
      if class opts =!= OptionTable then opts = new OptionTable from opts;
      local innerMethodFunction;
      methodFunction := new MethodFunctionWithOptions from (opts >> o -> arg -> innerMethodFunction(o,arg));
      innerMethodFunction = newmethod1234c(methodFunction, args -> noMethod(methodFunction,args,outputs), (i,args) -> badClass(methodFunction,i,args), outputs, true);
      methodFunction)     
+MultipleArgsWithOptionsGetMethodOptions := meth -> (frames (frames meth)#0#1)#0#0 -- this recovers the value of methopts
 
-MultipleArgsNoOptions := (outputs) -> (
+MultipleArgsNoOptions := (methopts,outputs) -> (
      local innerMethodFunction;
      methodFunction := new MethodFunction from (x -> innerMethodFunction x);
      innerMethodFunction = newmethod1234c(methodFunction,args -> noMethod(methodFunction,args,outputs), (i,args) -> badClass(methodFunction,i,args), outputs, false);
      methodFunction)
+MultipleArgsNoOptionsGetMethodOptions := meth -> (frames meth)#0#0 -- this recovers the value of methopts
 
 all' := (x,f) -> (
      r := true;
@@ -112,29 +110,26 @@ all' := (x,f) -> (
 
 method = methodDefaults >> opts -> args -> (
      if args =!= () then error "expected only optional arguments";
-     chk := c -> c === Input or c === Output;
+     chk := c -> c === Thing or c === Type;
      if not if instance(opts.Dispatch,List) then all'(opts.Dispatch, chk) else chk opts.Dispatch
-     then error "expected Dispatch option to be: Input, Output, or a list of those";
+     then error "expected Dispatch option to be: Thing, Type, or a list of those";
      if not instance(opts.SingleArgumentDispatch, Boolean) then error "expected SingleArgumentDispatch option to be true or false";
-     if opts.SingleArgumentDispatch === true then error "method: the SingleArgumentDispatch option has been removed; use 'Dispatch => Input' instead";
+     if opts.SingleArgumentDispatch === true then error "method: the SingleArgumentDispatch option has been removed; use 'Dispatch => Thing' instead";
      singleArgDispatch := opts.SingleArgumentDispatch or chk opts.Dispatch;
-     outputs := if not singleArgDispatch then apply(opts.Dispatch, c -> c === Output) else opts.Dispatch === Output;
+     outputs := if not singleArgDispatch then apply(opts.Dispatch, c -> c === Type) else opts.Dispatch === Type;
      methodFunction := (
 	  if opts.Options === null then (
        	       if opts.Associative then AssociativeNoOptions(outputs)
        	       else if singleArgDispatch then newmethod1 (args -> noMethodSingle(methodFunction,args,outputs), outputs)
-       	       else MultipleArgsNoOptions(outputs))
+       	       else MultipleArgsNoOptions(opts, outputs))
 	  else (
        	       if opts.Associative then AssociativeWithOptions(opts.Options,outputs)
        	       else if singleArgDispatch then SingleArgWithOptions (opts.Options, outputs)
-       	       else MultipleArgsWithOptions(opts.Options, outputs)
+       	       else MultipleArgsWithOptions(opts, opts.Options, outputs)
 	       )
 	  );
      if opts.TypicalValue =!= Thing then typicalValues#methodFunction = opts.TypicalValue;
-     methodFunctionOptions#methodFunction = opts;	    -- not the options to the method itself!
      methodFunction)
-
-methodOptions#method = methodDefaults 			    -- hack in the first one
 
 setup := (args, symbols) -> (
      scan(symbols, n -> (
@@ -197,7 +192,7 @@ mopts := Options => {
 matrix = method mopts
 map = method mopts
 
-setup(Dispatch => Input, {transpose} )
+setup(Dispatch => Thing, {transpose} )
 setup(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit, match,
 	  isSubset,isHomogeneous, isIsomorphism, isPrime, isField, isConstant
@@ -212,21 +207,21 @@ radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null } )
 primaryDecomposition = method( TypicalValue => List, Options => { Strategy => null } )
 associatedPrimes = method( TypicalValue => List, Options =>{ Strategy => 1 } )
 
-toString = method(Dispatch => Input, TypicalValue => String)
+toString = method(Dispatch => Thing, TypicalValue => String)
 toString Thing := simpleToString			    -- if all else fails...
 toString String := identity
 toString Symbol := simpleToString
 
-toExternalString = method(Dispatch => Input, TypicalValue => String)
+toExternalString = method(Dispatch => Thing, TypicalValue => String)
 toExternalString Keyword := s -> concatenate("symbol ", simpleToString s)
 toExternalString Symbol := s -> (
      n := simpleToString s;
      if isGlobalSymbol n and getGlobalSymbol n === s then if value s === s then n else concatenate("symbol ", n)
      else error("can't convert local variable or shadowed or invisible global variable '",n,"' to external string"))
 
-options = method(Dispatch => Input, TypicalValue => OptionTable)
-setup(Dispatch => Input, {max,min,directSum,intersect,vars})
-net = method(Dispatch => Input, TypicalValue => Net)
+options = method(Dispatch => Thing, TypicalValue => OptionTable)
+setup(Dispatch => Thing, {max,min,directSum,intersect,vars})
+net = method(Dispatch => Thing, TypicalValue => Net)
 factor = method( Options => { } )
 
 cohomology = method( Options => { 
@@ -256,7 +251,7 @@ depth String := s -> 0
 
 oldflatten := flatten
 erase symbol flatten
-flatten = method(Dispatch => Input)
+flatten = method(Dispatch => Thing)
 flatten VisibleList := VisibleList => oldflatten
 
 -----------------------------------------------------------------------------
@@ -302,7 +297,7 @@ options Sequence := s -> if lookup s =!= null then options lookup s
 
  optionFunction1 := {} >> identity
  optionFunction2 := method(Options => {})
- optionFunction3 := method(Options => {}, Dispatch => Input)
+ optionFunction3 := method(Options => {}, Dispatch => Thing)
 options Function := OptionTable => function -> (
      if functionBody function === functionBody optionFunction1 then first frame function
      else if functionBody function === functionBody optionFunction2 then notImplemented()
@@ -318,7 +313,7 @@ computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
      else M#Name#1
      )
 
-exitMethod := method(Dispatch => Input)
+exitMethod := method(Dispatch => Thing)
 exitMethod ZZ := i -> exit i
 exitMethod Sequence := x -> exit 0
 quit = Command (() -> exit 0)
@@ -450,18 +445,19 @@ stashValue = key -> f -> x -> if x#?key then x#key else x#key = f x
 -----------------------------------------------------------------------------
 -- hypertext conversion
 
-html = method(Dispatch => Input, TypicalValue => String)
-tex = method(Dispatch => Input, TypicalValue => String)
-texMath = method(Dispatch => Input, TypicalValue => String)
-mathML = method(Dispatch => Input, TypicalValue => String)
-info = method(Dispatch => Input, TypicalValue => String)
+html = method(Dispatch => Thing, TypicalValue => String)
+tex = method(Dispatch => Thing, TypicalValue => String)
+texMath = method(Dispatch => Thing, TypicalValue => String)
+mathML = method(Dispatch => Thing, TypicalValue => String)
+info = method(Dispatch => Thing, TypicalValue => String)
 
 -----------------------------------------------------------------------------
 -- method options
 
-methodOptions := method()
+methodOptions = method()
 methodOptions Function := f -> null
-methodOptions MethodFunctionWithOptions := f -> notImplemented()
+methodOptions MethodFunctionWithOptions := MultipleArgsWithOptionsGetMethodOptions
+methodOptions MethodFunction := MultipleArgsNoOptionsGetMethodOptions
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
