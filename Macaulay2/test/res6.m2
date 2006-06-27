@@ -22,7 +22,33 @@
 -- 
 
 -- hmm, these use a LOT of memory and time, so I've commented them out
+
+R=ZZ/101[vars(0..5)]
+N=genericMatrix(R,a,2,3);
+J=minors(2,N);
+Q=R/J;
+M=coker vars Q;
+time betti res (M,Strategy=>3,LengthLimit=>4) -- this has a problem
+
+R=ZZ/101[vars(0..5)]
+N=genericMatrix(R,a,2,3);
+J=minors(2,N);
+Q=R/J;
+M=coker vars Q;
+time betti res (M,Strategy=>2,LengthLimit=>7)
+
 end
+
+R=ZZ/101[a..t, MonomialSize=>8];
+N=genericMatrix(R,a,4,5);
+J=minors(3,N);
+Q=R/J;
+M=coker vars Q;
+time betti res (M,Strategy=>2,LengthLimit=>3)
+time betti res (M,Strategy=>3,LengthLimit=>4) -- this has a problem
+time betti res (M,Strategy=>2,LengthLimit=>5)
+time betti res (M,Strategy=>2,LengthLimit=>6)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test res6.out"
 -- End:

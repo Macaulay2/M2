@@ -18,7 +18,7 @@ betti(fn=res(image n,LengthLimit=>4))
 betti(fnt=res(image transpose n,LengthLimit=>4))
 bb = betti(fc=res(image fnt.dd_2,LengthLimit=>2))
 cc = betti(fc=res(ker fnt.dd_1,LengthLimit=>2))
-assert ( bb == cc )
+assert ( bb === cc )
 
 
 n=6
@@ -39,7 +39,7 @@ M1 = map(E^(- degrees target M), E^(- degrees source M), M);
 gens gb M1
 bb1 = betti syz M1 -- wrong if return cmp;
 cc = betti (fnt.dd_3)
-assert ( bb == cc)
+assert ( bb === cc)
 
 end
 -- Local Variables:
