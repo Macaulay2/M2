@@ -20,7 +20,7 @@ ReducedGB_Field_Local::ReducedGB_Field_Local(GBRing *R0,
     T1(0),
     wt(wt0)
 {
-  fprintf(stderr, "creating GB with local order\n");
+     // fprintf(stderr, "creating GB with local order\n");
   T1 = MonomialTable::make(R->n_vars());
   if (wt == 0)
     wt = new GBWeight(F0, 0);
