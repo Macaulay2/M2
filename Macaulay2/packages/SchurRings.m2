@@ -54,7 +54,7 @@ newSchur := (R,M,p) -> (
      SR := new SchurRing from rawSchurRing(RM.RawRing);
      SR.Symbol = p;
      SR.baseRings = append(R.baseRings,R);
-     setupPromoteLift SR;
+     commonEngineRingInitializations SR;
      ONE := SR#1;
      if degreeLength M != 0 then (
 	  -- there must be something smarter to do, but if we

@@ -332,23 +332,18 @@ makenew(class:HashTable,parent:HashTable):Expr := (
 makenew(class:HashTable):Expr := makenew(class,nothingClass);
 -----------------------------------------------------------------------------
 
-errt (newClassCode :Code):Expr := printErrorMessageE(newClassCode ,"'new' expected a Type as prospective class");
-errtt(newClassCode :Code):Expr := printErrorMessageE(newClassCode ,"'new' expected a Type of HashTable as prospective class");
-errp (newParentCode:Code):Expr := printErrorMessageE(newParentCode,"'new' expected a Type as prospective parent");
+errt(newClassCode :Code):Expr := printErrorMessageE(newClassCode ,"new: expected a hash table as prospective class");
+errp(newParentCode:Code):Expr := printErrorMessageE(newParentCode,"new: expected a hash table as prospective parent");
 
 newfun(newClassCode:Code):Expr := (
      classExpr := eval(newClassCode);
      when classExpr 
      is Error do classExpr
      is class:HashTable do (
-	  -- if ancestor(class.class,typeClass)
-	  if class.parent != nothingClass
-	  then (
-	       method := lookup(class,NewS);
-	       if method != nullE
-	       then transform(applyEE(method,Expr(class)),class,true)
-	       else makenew(class))
-	  else errt(newClassCode))
+	  method := lookup(class,NewS);
+	  if method != nullE
+	  then transform(applyEE(method,Expr(class)),class,true)
+	  else makenew(class))
      else errt(newClassCode));
 NewFun = newfun;
 newoffun(newClassCode:Code,newParentCode:Code):Expr := (
@@ -356,54 +351,41 @@ newoffun(newClassCode:Code,newParentCode:Code):Expr := (
      when classExpr 
      is Error do classExpr
      is class:HashTable do (
-     	  -- here is where we become less stringent with the new definition, so any hash table can be a type!
-	  -- if !ancestor(class.class,typeClass) || !ancestor(class,typeClass) 
-	  if class.parent == nothingClass || !ancestor(class,hashTableClass) 
-	  then errtt(newClassCode)
-	  else (
-	       newParentExpr := eval(newParentCode);
-	       when newParentExpr
-	       is Error do newParentExpr
-	       is parent:HashTable do (
-		    -- if !ancestor(parent.class,typeClass)
-		    if parent.parent == nothingClass
-		    then errp(newParentCode)
-		    else (
-			 method := lookupBinaryMethod(class,parent.class,NewOfS);
-			 if method != nullE
-			 then transform(applyEEE(method,Expr(class),Expr(parent)),class,parent,true)
-			 else makenew(class,parent)))
-	       else errp(newParentCode)))
-     else errtt(newClassCode));
+	  newParentExpr := eval(newParentCode);
+	  when newParentExpr
+	  is Error do newParentExpr
+	  is parent:HashTable do (
+	       method := lookupBinaryMethod(class,parent.class,NewOfS);
+	       if method != nullE
+	       then transform(applyEEE(method,Expr(class),Expr(parent)),class,parent,true)
+	       else makenew(class,parent))
+	  else errp(newParentCode))
+     else errt(newClassCode));
 NewOfFun = newoffun;
 newfromfun(newClassCode:Code,newInitCode:Code):Expr := (
      classExpr := eval(newClassCode);
      when classExpr 
      is Error do classExpr
      is class:HashTable do (
-	  -- if !ancestor(class.class,typeClass)
-	  if class.parent == nothingClass
-	  then errt(newClassCode)
+	  newInitExpr := eval(newInitCode);
+	  when newInitExpr
+	  is Error do newInitExpr
 	  else (
-	       newInitExpr := eval(newInitCode);
-	       when newInitExpr
-	       is Error do newInitExpr
+	       method := lookupBinaryMethod(class,Class(newInitExpr),NewFromS);
+	       if method != nullE
+	       then transform(applyEEE(method,Expr(class),newInitExpr),class,true)
 	       else (
-		    method := lookupBinaryMethod(class,Class(newInitExpr),NewFromS);
-		    if method != nullE
-		    then transform(applyEEE(method,Expr(class),newInitExpr),class,true)
-		    else (
-			 when newInitExpr
-			 is s:Sequence do transform(newInitExpr,class,false)
-			 is p:List do (
-			      if p.class == class
-			      then Expr(if p.mutable then copy(p) else p)
-			      else transform(newInitExpr,class,false))
-			 is p:HashTable do (
-			      if p.class == class
-			      then Expr(if p.mutable then copy(p) else p)
-			      else transform(newInitExpr,class,false))
-			 else transform(newInitExpr,class,false)))))
+		    when newInitExpr
+		    is s:Sequence do transform(newInitExpr,class,false)
+		    is p:List do (
+			 if p.class == class
+			 then Expr(if p.mutable then copy(p) else p)
+			 else transform(newInitExpr,class,false))
+		    is p:HashTable do (
+			 if p.class == class
+			 then Expr(if p.mutable then copy(p) else p)
+			 else transform(newInitExpr,class,false))
+		    else transform(newInitExpr,class,false))))
      else errt(newClassCode));
 NewFromFun = newfromfun;
 newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
@@ -411,42 +393,31 @@ newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
      when classExpr 
      is Error do classExpr
      is class:HashTable do (
-     	  -- here is where we become less stringent with the new definition, so any hash table can be a type!
-	  -- if !ancestor(class.class,typeClass) && !ancestor(class,typeClass)
-	  if class.parent == nothingClass && !ancestor(class,hashTableClass)
-	  then errtt(newClassCode)
-	  else (
-	       newParentExpr := eval(newParentCode);
-	       when newParentExpr
-	       is Error do newParentExpr
-	       is parent:HashTable do (
-		    -- if !ancestor(parent.class,typeClass)
-		    if parent.parent == nothingClass
-		    then errp(newParentCode)
+	  newParentExpr := eval(newParentCode);
+	  when newParentExpr
+	  is Error do newParentExpr
+	  is parent:HashTable do (
+	       newInitExpr := eval(newInitCode);
+	       when newInitExpr
+	       is Error do newInitExpr
+	       else (
+		    method := lookupTernaryMethod(class,parent.class,Class(newInitExpr),NewOfFromE,NewOfFromS.symbol.hash);
+		    if method != nullE 
+		    then transform(applyEEE(method,Expr(class),Expr(parent),newInitExpr),class,parent,true)
 		    else (
-			 newInitExpr := eval(newInitCode);
 			 when newInitExpr
-			 is Error do newInitExpr
-			 else (
-			      method := lookupTernaryMethod(
-				   class,parent.class,Class(newInitExpr),NewOfFromE,NewOfFromS.symbol.hash);
-			      if method != nullE 
-			      then transform(
-				   applyEEE(method,Expr(class),Expr(parent),newInitExpr),
-				   class,parent,true)
-			      else (when newInitExpr
-				   is p:Sequence do transform(newInitExpr,class,parent,false)
-				   is p:List do (
-					if p.class == class && nothingClass == parent
-					then Expr(if p.mutable then copy(p) else p)
-					else transform(newInitExpr,class,parent,false))
-				   is p:HashTable do (
-					if p.class == class && p.parent == parent
-					then Expr(if p.mutable then copy(p) else p)
-					else transform(newInitExpr,class,false))
-				   else transform(newInitExpr,class,parent,false)))))
-	       else errp(newParentCode)))
-     else errtt(newClassCode));
+			 is p:Sequence do transform(newInitExpr,class,parent,false)
+			 is p:List do (
+			      if p.class == class && nothingClass == parent
+			      then Expr(if p.mutable then copy(p) else p)
+			      else transform(newInitExpr,class,parent,false))
+			 is p:HashTable do (
+			      if p.class == class && p.parent == parent
+			      then Expr(if p.mutable then copy(p) else p)
+			      else transform(newInitExpr,class,false))
+			 else transform(newInitExpr,class,parent,false))))
+	  else errp(newParentCode))
+     else errt(newClassCode));
 NewOfFromFun = newoffromfun;
 -----------------------------------------------------------------------------
 

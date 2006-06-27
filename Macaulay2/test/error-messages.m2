@@ -20,8 +20,8 @@ p3 = long "abcd" | ".  "
 high = w -> stack(20:w)
 h1 = high "hi there"
 
-d = method(Dispatch => Input)
-e = method(Dispatch => Input, Options => {a=>null})
+d = method(Dispatch => Thing)
+e = method(Dispatch => Thing, Options => {a=>null})
 f = method()
 g = method(Options => {a=>null})
 

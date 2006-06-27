@@ -27,4 +27,3 @@ On Jun 26, 2006, at 9:31 PM, Dan Grayson wrote:
 > interested in the boolean return value.
 >
 > Shall I implement it?  (After you fix lift and promote.)
-

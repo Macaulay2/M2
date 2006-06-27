@@ -1,6 +1,6 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-getSourceLines := method(Dispatch => Input) 
+getSourceLines := method(Dispatch => Thing) 
 getSourceLines Nothing := null -> null
 getSourceLines Sequence := x -> ((filename,start,startcol,stop,stopcol) -> if filename =!= "stdio" and filename =!= "a string" then (
      wp := set characters " \t);";
@@ -46,7 +46,7 @@ codeFunction := (f,depth) -> (
 			      comment, 
 			      if instance(val, Function) then codeFunction(val,depth+1) else net val
 			      )))))
-code = method(Dispatch => Input)
+code = method(Dispatch => Thing)
 code Nothing := null -> null
 code Symbol := code Pseudocode := s -> getSourceLines locate s
 code Sequence := s -> (
@@ -59,13 +59,13 @@ code List := v -> stack between_"---------------------------------" apply(v,code
 code Command := cmd -> code cmd#0
 
 EDITOR := () -> if getenv "EDITOR" != "" then getenv "EDITOR" else "vi"
-editMethod := method(Dispatch => Input)
+editMethod := method(Dispatch => Thing)
 editMethod String := filename -> (
      editor := EDITOR();
      run concatenate(
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
 	  editor, " ", filename))
-EDIT := method(Dispatch => Input)
+EDIT := method(Dispatch => Thing)
 EDIT Nothing := arg -> (stderr << "--warning: source code not available" << endl;)
 EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol) -> (
      editor := EDITOR();
@@ -89,7 +89,7 @@ editMethod Sequence := args -> (
 edit = Command editMethod
 
 -----------------------------------------------------------------------------
-methods = method(Dispatch => Input)
+methods = method(Dispatch => Thing)
 methods Command := c -> methods c#0
 methods Type := F -> (
      seen := new MutableHashTable;

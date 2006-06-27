@@ -396,7 +396,7 @@ poincare ChainComplex := C -> (
 poincareN ChainComplex := (C) -> (
      s := global S;
      t := global T;
-     G := monoid [s, t_0 .. t_(degreeLength ring C - 1), Inverses=>true, MonomialOrder => RevLex];
+     G := monoid [s, t_0 .. t_(degreeLength ring C - 1), Inverses=>true, MonomialOrder => RevLex, Global => false];
      -- this stuff has to be redone as in Poincare itself, DRG
      R := ZZ G;
      f := 0_R;
@@ -484,7 +484,7 @@ homology(ChainComplexMap) := GradedModuleMap => opts -> (f) -> (
      scan(spots f, i -> g#i = homology(i,f));
      g)
 
-chainComplex = method(Dispatch => Input, TypicalValue => ChainComplex)
+chainComplex = method(Dispatch => Thing, TypicalValue => ChainComplex)
 
 chainComplex Ring := R -> (
      C := new ChainComplex;

@@ -64,7 +64,7 @@ rel := url -> (
 	  if absoluteLinks and class prefixDirectory === String and fileExists (prefixDirectory | url) then (prefixDirectory | url)
      	  else relativizeFilename(htmlDirectory, url)))
 
-htmlFilename = method(Dispatch => Input)
+htmlFilename = method(Dispatch => Thing)
 htmlFilename Thing := x -> htmlFilename makeDocumentTag x
 htmlFilename DocumentTag := tag -> (
      fkey := DocumentTag.FormattedKey tag;
@@ -1095,7 +1095,7 @@ Michael R. Stillman <mike@math.cornell.edu>
 	  );
      dir)
 
-makePackageIndex = method(Dispatch => Input)
+makePackageIndex = method(Dispatch => Thing)
 makePackageIndex Sequence := x -> (
      if #x > 0 then error "expected 0 arguments";
      makePackageIndex path    -- this might get too many files (formerly we used packagePath)

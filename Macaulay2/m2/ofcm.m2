@@ -7,6 +7,9 @@ raw MonoidElement := x -> x.RawMonomial
 
 MonoidElement == MonoidElement := (x,y) -> x === y
 
+MonoidElement ? ZZ := (x,n) -> x ? n_(class x)
+ZZ ? MonoidElement := (n,x) -> n_(class x) ? x
+
 ZZ _ Monoid := MonoidElement => (i,M) -> (
      if i === 1 then M#1
      else error "expected integer to be 1"
@@ -78,6 +81,7 @@ degreesMonoid ZZ := memoize(
 	  Zn := monoid [if n === 1 then T else T_0 .. T_(n-1),
 	       Degrees => {}, 
 	       MonomialOrder => RevLex,
+	       Global => false,
 	       Inverses=>true];
 	  Zn))
 
@@ -85,6 +89,7 @@ monoidDefaults = (
      new OptionTable from {
 	  VariableBaseName => null,
 	  Variables => null,
+	  Global => true,				    -- means that all variables are > 1
 	  Degrees => null,
 	  Weights => {},
 	  Inverses => false,
@@ -104,7 +109,7 @@ tensorDefaults = merge(monoidDefaults,
      new OptionTable from {MonomialOrder => null},
      (x,y) -> y)
 
-monoid = method(Dispatch => Input)
+monoid = method(Dispatch => Thing)
 options PolynomialRing := options @@ monoid
 
 generators GeneralOrderedMonoid := M -> M.generators
@@ -259,6 +264,7 @@ makeit1 := (opts) -> (
      M : M := (x,y) -> new M from x.RawMonomial : y.RawMonomial;
      M ^ ZZ := (x,n) -> new M from x.RawMonomial ^ n;
      M.use = x -> scan(M.generatorSymbols,M.vars,(sym,val) -> sym <- val);
+     if opts.Global then scan(M.generators, x -> if x <= 1 then error "not all variables are > 1, and Global => true");
      M)
 
 processDegrees := (degs,degrk,nvars) -> (

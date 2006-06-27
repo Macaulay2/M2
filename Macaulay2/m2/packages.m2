@@ -168,7 +168,7 @@ newPackage(String) := opts -> (title) -> (
      debuggingMode = if packageLoadingOptions#?title and packageLoadingOptions#title#DebuggingMode =!= null then packageLoadingOptions#title#DebuggingMode else opts.DebuggingMode;
      newpkg)
 
-export = method(Dispatch => Input)
+export = method(Dispatch => Thing)
 export Symbol := x -> export {x}
 export List := v -> (
      if currentPackage === null then error "no current package";
@@ -193,7 +193,7 @@ export List := v -> (
 	       ));
      currentPackage#"exported symbols" = join(currentPackage#"exported symbols",select(v,s -> instance(s,Symbol)));
      )
-exportMutable = method(Dispatch => Input)
+exportMutable = method(Dispatch => Thing)
 exportMutable Symbol := x -> exportMutable {x}
 exportMutable List := v -> (
      export v;

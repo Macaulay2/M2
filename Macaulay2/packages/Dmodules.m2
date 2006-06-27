@@ -20,11 +20,11 @@ export {ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,bFunctio
 	DintegrationClasses,DintegrateAll,DintegrationAll,gkz,Vars,AppellF1,PolyAnn,
 	RatAnn,WeylClosure,deRham,deRhamAll,TransferCycles,CohomologyGroups,PreCycles,OmegaRes,
 	diffOps,PolyGens,BasisElts,putWeylAlgebra,inw,gbw,pInfo,
-	Dprune,Dprune2,optGB,FourierInverse,	
+	Dprune,Dprune2,optGB,FourierInverse,Output,
 	reduceCompress,zeroize
 	}
    
-scan({"Output", "Local", "Global"}, nm -> assert (isGlobalSymbol nm and value getGlobalSymbol nm === getGlobalSymbol nm))
+scan({"Local", "Global"}, nm -> assert (isGlobalSymbol nm and value getGlobalSymbol nm === getGlobalSymbol nm))
 
 load "Dmodules/Dloadfile.m2"
 

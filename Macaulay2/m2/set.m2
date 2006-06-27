@@ -48,7 +48,7 @@ toString Set := x -> (
 Set + Set := Set => (x,y) -> merge(x,y,(i,j)->i)
 -- Set ++ Set := Set => (x,y) -> applyKeys(x,i->(0,i)) + applyKeys(y,j->(1,j))
 Set ** Set := Set => (x,y) -> combine(x,y,identity,(i,j)->i,)
-Set == Set := Boolean => (x,y) -> x === y
+Tally == Tally := Boolean => (x,y) -> x === y
 special := symbol special
 Set * Set := Set => (x,y) -> (
      if # x < # y 
@@ -61,7 +61,7 @@ Set - List := Set => (x,y) -> x - set y
 sum Set := s -> sum toList s
 product Set := s -> product toList s
 
-unique = method(Dispatch => Input, TypicalValue => List)
+unique = method(Dispatch => Thing, TypicalValue => List)
 unique Sequence := x -> unique toList x
 unique List := x -> (
      -- old faster way: keys set x

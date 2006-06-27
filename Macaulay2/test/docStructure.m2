@@ -23,9 +23,9 @@ enter(Descent, String) := (r,s) -> (
 currentDescent = world = new Descent
 reachable = new MutableHashTable
 
-reach1 = method(Dispatch => Input)
-reach2 = method(Dispatch => Input)
-reach3 = method(Dispatch => Input)
+reach1 = method(Dispatch => Thing)
+reach2 = method(Dispatch => Thing)
+reach3 = method(Dispatch => Thing)
 
 reach1 Thing := identity
 reach1 Sequence :=

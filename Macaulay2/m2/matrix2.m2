@@ -2,22 +2,23 @@
 
 complement = method()
 
-mingens Module := Matrix => options -> (M) -> if M.cache.?mingens then M.cache.mingens else M.cache.mingens = (
-     if M.?generators then (
-	  if M.?relations then (
-	       c := mingens gb (M.generators|M.relations,
+mingens Module := Matrix => options -> (cacheValue symbol mingens) (
+     (M) -> (
+	  if M.?generators then (
+	       if M.?relations then (
+		    c := mingens gb (M.generators|M.relations,
+			 options,
+			 StopWithMinimalGenerators=>true,Syzygies=>false,ChangeMatrix=>false);
+		    c * complement(M.relations // c))
+	       else mingens gb (M.generators, 
 		    options,
-		    StopWithMinimalGenerators=>true,Syzygies=>false,ChangeMatrix=>false);
-	       c * complement(M.relations // c))
-	  else mingens gb (M.generators, 
-	       options,
-	       StopWithMinimalGenerators=>true,Syzygies=>false,ChangeMatrix=>false)
-	  )
-     else (
-	  if M.?relations then complement M.relations
-	  else id_M
-	  )
-     )
+		    StopWithMinimalGenerators=>true,Syzygies=>false,ChangeMatrix=>false)
+	       )
+	  else (
+	       if M.?relations then complement M.relations
+	       else id_M
+	       )
+	  ))
 
 trim Ring := Ring => options -> (R) -> R
 trim QuotientRing := options -> (R) -> (
