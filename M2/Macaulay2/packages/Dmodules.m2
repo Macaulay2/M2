@@ -17,14 +17,14 @@ export {ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,bFunctio
 	DrestrictionComplex,DrestrictionAll,DrestrictionIdeal,DrestrictComplex,HomologyModules,
 	GenCycles,Exponents,Cycles,Boundaries,VResolution,Explicit,IntegrateComplex,Dintegration,
 	Dintegrate,DintegrateIdeal,DintegrationIdeal,DintegrationComplex,DintegrateClasses,DintegrateComplex,
-	DintegrationClasses,DintegrateAll,DintegrationAll,gkz,Vars,Local,Global,AppellF1,PolyAnn,
+	DintegrationClasses,DintegrateAll,DintegrationAll,gkz,Vars,AppellF1,PolyAnn,
 	RatAnn,WeylClosure,deRham,deRhamAll,TransferCycles,CohomologyGroups,PreCycles,OmegaRes,
 	diffOps,PolyGens,BasisElts,putWeylAlgebra,inw,gbw,pInfo,
 	Dprune,Dprune2,optGB,FourierInverse,	
 	reduceCompress,zeroize
 	}
    
-assert (isGlobalSymbol "Output" and value getGlobalSymbol "Output" === getGlobalSymbol "Output")
+scan({"Output", "Local", "Global"}, nm -> assert (isGlobalSymbol nm and value getGlobalSymbol nm === getGlobalSymbol nm))
 
 load "Dmodules/Dloadfile.m2"
 
