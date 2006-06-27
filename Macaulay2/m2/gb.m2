@@ -31,7 +31,7 @@ computationOptionDefaults := new OptionTable from {
      Hilbert => null				    -- also obtainable from f.cache.cokernel.poincare
      };
 
-stoppingOptionDefaults := new OptionTable from {
+stoppingOptionDefaults = new OptionTable from {
      StopBeforeComputation => false,		    -- stopping condition (always_stop)
      DegreeLimit => {},				    -- stopping condition (degree_limit) (not max_degree)
      BasisElementLimit => infinity,		    -- stopping condition (basis_element_limit)

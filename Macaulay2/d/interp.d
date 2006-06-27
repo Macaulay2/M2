@@ -342,6 +342,7 @@ setupfun("commandInterpreter",commandInterpreter);
 
 errorCodeS := setupvar("errorCode",nullE);
 debugger(f:Frame,c:Code):Expr := (
+     -- stdIO << "-- recursionDepth = " << recursionDepth << endl;
      oldrecursionDepth := recursionDepth;
      recursionDepth = 0;
      setDebuggingMode(false);

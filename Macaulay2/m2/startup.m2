@@ -33,6 +33,8 @@ if firstTime then (
 -- we need access to the private symbols -- (we remove the Core private dictionary later.)
 if not firstTime then debug Core
 
+toString := value getGlobalSymbol if firstTime then "simpleToString" else "toString"
+
 -- this next bit has to be *parsed* after the "debug" above, to prevent the symbols from being added to the User dictionary
 if firstTime then (
      -- all global definitions go here, because after loaddata is run, we'll come through here again

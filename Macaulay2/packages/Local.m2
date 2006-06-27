@@ -18,6 +18,7 @@ localRing(EngineRing,Ideal) := (R,m) -> (					    -- R = poly ring, m = max idea
      S.ambientRing = R;
      S.maxIdeal = m;
      S.baseRings = append(R.baseRings, R);
+     setupPromoteLift S;
      expression S := s -> expression lift(s,R);
      S)
 endPackage "Local"

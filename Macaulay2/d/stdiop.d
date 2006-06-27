@@ -101,16 +101,20 @@ cleanscreen():void := (
      	  flush(stdout);
 	  )
      );
+
+export recursionDepth := 0;
+export recursionLimit := 300;
+
 export printErrorMessage(position:Position,message:string):void := (
      if !SuppressErrors then (
      	  cleanscreen();
-     	  stderr << position << ' ' << message << endl;
+     	  stderr << position << '[' << recursionDepth << "] " << message << endl;
 	  );
      );
 export printErrorMessage(filename:string,line:ushort,column:ushort,message:string):void := (
      if !SuppressErrors then (
      	  cleanscreen();
-     	  stderr << Position(filename,line,column,uchar(0)) << ' ' << message << endl;
+     	  stderr << Position(filename,line,column,uchar(0)) << '[' << recursionDepth << "] " << message << endl;
 	  );
      );
 export (o:file) << (p:(null or Position)):file := (

@@ -213,6 +213,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.flatmonoid = flatmonoid;
 	  RM.numallvars = numallvars;
 	  RM.baseRings = append(R.baseRings,R);
+	  setupPromoteLift RM;
 	  RM.monoid = M;
 	  RM.Adjust = (options M).Adjust;
 	  RM.Repair = (options M).Repair;

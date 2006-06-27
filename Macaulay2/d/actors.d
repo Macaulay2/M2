@@ -854,7 +854,7 @@ installMethodFun2(arg1:Expr,args:CodeSequence):Expr := (
      is CompiledFunction do installFun2(arg1,args)
      is CompiledFunctionClosure do installFun2(arg1,args)
      is FunctionClosure do installFun2(arg1,args)
-     is s:SpecialExpr do installMethodFun2(s.e,args)
+     is s:SpecialExpr do if ancestor(s.class,functionClass) then installFun2(arg1,args) else buildErrorPacket("expected right hand parameter to be a type of function")
      is aa:HashTable do (
 	  if aa.parent == nothingClass
 	  then (

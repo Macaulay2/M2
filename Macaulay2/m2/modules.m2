@@ -187,7 +187,7 @@ lift'(Matrix,RingElement) := lift'(Matrix,Number) := Matrix => (f,S) -> lift'(f,
 liftable'(Matrix,RingElement) := liftable'(Matrix,Number) := Boolean => (f,S) -> liftable'(f, ring f, S)
 promote'(Matrix,RingElement) := promote'(Matrix,Number) := Matrix => (f,S) -> promote'(f, ring f, S)
 
-lift'(Matrix,QQ,ZZ) := (f,ZZ,QQ) -> basicLiftMatrix(f,QQ^(dim target f))
+lift'(Matrix,QQ,ZZ) := (f,ZZ,QQ) -> basicLiftMatrix(f,QQ^(rank target f))
 
 promote'(Matrix,Number,Number) := promote'(Matrix,Number,RingElement) := (f,A,R) -> basicPromoteMatrix(f,R^(rank target f))
 lift'(Matrix,Number,Number) := lift'(Matrix,RingElement,Number) := (f,R,A) -> (

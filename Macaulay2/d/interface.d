@@ -932,7 +932,7 @@ export rawPromote(e:Expr):Expr := (
 	  else WrongArg(2,"a raw ring element"))
      is M:RawFreeModule do (				    -- M is the new target free module
 	  when a.1 is f:RawMatrix do toExpr(
-	       Ccode(RawRingElementOrNull, 
+	       Ccode(RawMatrixOrNull, 
 		    "(engine_RawMatrixOrNull)IM2_Matrix_promote(",
 		    "(FreeModule *)", M,
 		    ",(Matrix *)", f, ")" ))
@@ -954,7 +954,7 @@ export rawLift(e:Expr):Expr := (
 	  else WrongArg(2,"a raw ring element"))
      is M:RawFreeModule do (				    -- M is the new target free module
 	  when a.1 is f:RawMatrix do toExpr(
-	       Ccode(RawRingElementOrNull, 
+	       Ccode(RawMatrixOrNull, 
 		    "(engine_RawMatrixOrNull)IM2_Matrix_lift(",
 		    "(FreeModule *)", M,
 		    ",(Matrix *)", f, ")" ))

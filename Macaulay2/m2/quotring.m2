@@ -97,6 +97,7 @@ EngineRing / Ideal := (R,I) -> (
      if R.?Repair then S.Repair = R.Repair;
      S.ideal = I;
      S.baseRings = append(R.baseRings,R);
+     setupPromoteLift S;
      S.relations = gensI;
      S.isCommutative = R.isCommutative;
      if R.?generatorSymbols then S.generatorSymbols = R.generatorSymbols;

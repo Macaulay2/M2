@@ -1,5 +1,21 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+-- temporary definitions to get error messages to work before methods are working, so we can debug methods
+assert( class between === Symbol )
+between = (m,v) -> mingle(v,#v-1:m)
+assert( class toString === Symbol )
+toString = x -> (
+     if ReverseDictionary#?x then simpleToString ReverseDictionary#?x
+     else if class x === Net then concatenate between("\n",unstack x)
+     else simpleToString x
+     )
+silentRobustString = (wid,sec,y) -> simpleToString y
+silentRobustNetWithClass = silentRobustNet = (wid,ht,sec,y) -> simpleToString y
+--
+
+MethodFunction = new Type of FunctionClosure
+MethodFunctionWithOptions = new Type of FunctionClosure
+
 dispatcherFunctions = {}
 
 noapp := (f,x) -> error(
@@ -32,7 +48,6 @@ methodDefaults := new OptionTable from {
 
 methodFunctionOptions = new MutableHashTable
 methodOptions = new MutableHashTable
-methodDispatchFunctions = new MutableHashTable		    -- store function bodies here
 
 AssociativeNoOptions := (outputs) -> (
      methodFunction := newmethod1(args -> noMethod(methodFunction,args,outputs),outputs);
@@ -53,7 +68,6 @@ AssociativeNoOptions := (outputs) -> (
 	       )
 	  else error "wrong number of arguments"
 	  );
-     -- methodDispatchFunctions#(functionBody self) = true;
      methodFunction)
 
 chkopt0 := k -> if not ( instance(k, Symbol) ) then error "expected SYMBOL => VALUE"
@@ -81,33 +95,15 @@ AssociativeWithOptions := (opts,outputs) -> (
 MultipleArgsWithOptions := (opts,outputs) -> (
      if class opts =!= OptionTable then opts = new OptionTable from opts;
      local innerMethodFunction;
-     methodFunction := opts >> o -> arg -> innerMethodFunction(o,arg);
+     methodFunction := new MethodFunctionWithOptions from (opts >> o -> arg -> innerMethodFunction(o,arg));
      innerMethodFunction = newmethod1234c(methodFunction, args -> noMethod(methodFunction,args,outputs), (i,args) -> badClass(methodFunction,i,args), outputs, true);
-     -- methodDispatchFunctions#(functionBody methodFunction) = true;
      methodFunction)     
-
---     methodFunction := opts >> 
---     o -> arg -> (
---	  -- Common code for methods with options, multiple arguments.
---	  -- Dispatches on type of argument.
---	  f := lookup(methodFunction, class arg);
---	  if f === null then noMethod(methodFunction,arg,outputs) else (f o) arg
---	  );
---     methodOptions#methodFunction = opts;
---     self := 
---     methodFunction(Sequence) := o -> args -> (
---	  -- Common code for every method with o, multiple arguments
---	  -- Dispatches on type of arguments ('args' is a sequence).
---	  f := lookup prepend(methodFunction,apply(args,class));                 -- use outputs here...
---	  if f === null then noMethod(methodFunction,args,outputs) else (f o) args
---	  );
---     methodDispatchFunctions#(functionBody self) = true;
---     methodFunction)
 
 MultipleArgsNoOptions := (outputs) -> (
-     methodFunction := newmethod1234c(,args -> noMethod(methodFunction,args,outputs), (i,args) -> badClass(methodFunction,i,args), outputs, false);
-     -- methodDispatchFunctions#(functionBody methodFunction) = true;
-     methodFunction)     
+     local innerMethodFunction;
+     methodFunction := new MethodFunction from (x -> innerMethodFunction x);
+     innerMethodFunction = newmethod1234c(methodFunction,args -> noMethod(methodFunction,args,outputs), (i,args) -> badClass(methodFunction,i,args), outputs, false);
+     methodFunction)
 
 all' := (x,f) -> (
      r := true;
@@ -216,7 +212,6 @@ radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null } )
 primaryDecomposition = method( TypicalValue => List, Options => { Strategy => null } )
 associatedPrimes = method( TypicalValue => List, Options =>{ Strategy => 1 } )
 
-simpleToString = toString
 toString = method(Dispatch => Input, TypicalValue => String)
 toString Thing := simpleToString			    -- if all else fails...
 toString String := identity
@@ -460,6 +455,13 @@ tex = method(Dispatch => Input, TypicalValue => String)
 texMath = method(Dispatch => Input, TypicalValue => String)
 mathML = method(Dispatch => Input, TypicalValue => String)
 info = method(Dispatch => Input, TypicalValue => String)
+
+-----------------------------------------------------------------------------
+-- method options
+
+methodOptions := method()
+methodOptions Function := f -> null
+methodOptions MethodFunctionWithOptions := f -> notImplemented()
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
