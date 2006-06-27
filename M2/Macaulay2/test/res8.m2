@@ -28,7 +28,7 @@ S = R/K
 -- gbTrace = 3
 C = res coker vars S  -- goes to higher and higher degree without stopping: FIXED: 6/20/06
 
-betti C == net "total: 1 4 13 41 129 406
+net betti C == net "total: 1 4 13 41 129 406
     0: 1 4  6  4   1   .
     1: . .  3 12  18  12
     2: . .  4 22  58  93
