@@ -147,8 +147,15 @@ document {
 document {
      Key => "examples of specifying alternate monomial orders",
      "For definitions of these monomial orders, see ", 
-     TO "GRevLex,", TO " Lex,", TO " Weights,", TO " Eliminate,", TO " GroupLex,",
-     TO " GroupRevLex,", TO " product orders,", TO " RevLex,", TO " NCLex.",
+     TO "GRevLex", ", ",
+     TO "Lex", ", ",
+     TO "Weights", ", ",
+     TO "Eliminate", ", ",
+     TO "GroupLex", ", ",
+     TO "GroupRevLex", ", ",
+     TO "product orders", ", ",
+     TO "RevLex", ", and ",
+     TO "NCLex", ".",
      HEADER2 "Graded reverse lexicographic order",
      EXAMPLE {
 	  "R = ZZ[a..d];",

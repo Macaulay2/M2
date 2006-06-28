@@ -148,14 +148,10 @@ transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
      is Error do e
      is o:HashTable do (
 	  if basicType == hashTableClass then (
-	       if o.class == class && o.parent == parent
-	       then e
-	       else if parent == sequenceClass then buildErrorPacket("can't make subclass of Sequence")
+	       if o.class == class && o.parent == parent then e
 	       else (
 	       	    mutable := ancestor(class,mutableHashTableClass);
-		    x := HashTable(
-			 if mutable || o.mutable then copy(o.table) else o.table,
-			 class, parent, o.numEntries, 0, mutable);
+		    x := HashTable( if mutable || o.mutable then copy(o.table) else o.table, class, parent, o.numEntries, 0, mutable);
 		    if mutable then (
 			 if class != cacheTableClass then x.hash = nextHash(); -- cache tables are mutable and have hash code 0
 			 )
@@ -171,39 +167,27 @@ transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
 	       else if class == sequenceClass then Expr(o.v)
 	       else (
 	       	    mutable := ancestor(class,mutableListClass);
-		    Expr(
-			 sethash(
-			      List(class,
-			      	   if mutable || o.mutable then copy(o.v) else o.v,
-			      	   0,false),
-			      mutable))))
-	  else if basicType == hashTableClass 
-	  then expected("a hash table",returned)
+		    Expr(sethash( List(class, if mutable || o.mutable then copy(o.v) else o.v, 0,false), mutable))))
+	  else if basicType == hashTableClass then expected("a hash table",returned)
 	  else wrongTarget())
      is v:Sequence do (
      	  if basicType == basicListClass then (
-	       if parent != nothingClass
-	       then buildErrorPacket("expected Nothing as parent for list")
+	       if parent != nothingClass then buildErrorPacket("expected Nothing as parent for list")
 	       else if class == sequenceClass then Expr(v)
 	       else (
 	       	    mutable := ancestor(class,mutableListClass);
-		    Expr(
-			 sethash(
-			      List(class,
-			      	   if mutable then copy(v) else v,
-			      	   0,false),
-			      mutable))))
-	  else if basicType == hashTableClass 
-	  then expected("a hash table",returned)
+		    Expr( sethash( List(class, if mutable then copy(v) else v, 0,false), mutable))))
+	  else if basicType == hashTableClass then expected("a hash table",returned)
 	  else wrongTarget())
-     else expected(
-	  if basicType == basicListClass
-	  then "a list"
-	  else if basicType == hashTableClass
-	  then "a hash table"
-	  else "a list or hash table",
-	  returned
-	  ));
+     is s:SpecialExpr do (
+	  if s.class == class && Parent(s.e) == parent then e else transform(s.e,class,parent,returned)
+	  )
+     else (
+	  c := Class(e);
+	  if c == class then e
+	  else if !ancestor(class,c) then buildErrorPacket("expected new class to be a specialization of the old one")
+	  else if Parent(e) != parent then buildErrorPacket("unable to set new parent")
+	  else Expr(SpecialExpr(class,e))));
 
 newComplex(args:Expr):Expr := (
      when args is v:Sequence do
@@ -268,15 +252,7 @@ transform(e:Expr,class:HashTable,returned:bool):Expr := (
 	  if c == class then e
 	  else if !ancestor(class,c) 
 	  then buildErrorPacket("expected new class to be a specialization of the old one")
-	  else Expr(SpecialExpr(class,e)))
--- 	  (
--- 	  basicType := basictype(class);
--- 	  expected(
--- 	       if basicType == basicListClass then "a list"
--- 	       else if basicType == hashTableClass then "a hash table"
--- 	       else "a list or hash table",
--- 	       returned))
-     );
+	  else Expr(SpecialExpr(class,e))));
 newclassfun(e:Expr):Expr := (
      when e
      is a:Sequence do
@@ -355,7 +331,7 @@ newoffun(newClassCode:Code,newParentCode:Code):Expr := (
 	  when newParentExpr
 	  is Error do newParentExpr
 	  is parent:HashTable do (
-	       method := lookupBinaryMethod(class,parent.class,NewOfS);
+	       method := lookupBinaryMethod(class,parent,NewOfS);
 	       if method != nullE
 	       then transform(applyEEE(method,Expr(class),Expr(parent)),class,parent,true)
 	       else makenew(class,parent))
@@ -401,7 +377,7 @@ newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
 	       when newInitExpr
 	       is Error do newInitExpr
 	       else (
-		    method := lookupTernaryMethod(class,parent.class,Class(newInitExpr),NewOfFromE,NewOfFromS.symbol.hash);
+		    method := lookupTernaryMethod(class,parent,Class(newInitExpr),NewOfFromE,NewOfFromS.symbol.hash);
 		    if method != nullE 
 		    then transform(applyEEE(method,Expr(class),Expr(parent),newInitExpr),class,parent,true)
 		    else (

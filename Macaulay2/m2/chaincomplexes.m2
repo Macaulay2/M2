@@ -30,7 +30,7 @@ ChainComplex _ ZZ := Module => (C,i) -> (
      then C#i
      else if C.?Resolution then (
 	  gr := C.Resolution;
-	  F := newModule(ring C,rawResolutionGetFree(gr.RawComputation,i));
+	  F := new Module from (ring C,rawResolutionGetFree(gr.RawComputation,i));
 	  if F != 0 then C#i = F;
 	  F)
      else (ring C)^0                           -- for chain complexes of sheaves we'll want something else!

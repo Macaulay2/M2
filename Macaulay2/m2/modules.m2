@@ -4,18 +4,104 @@
 vector = (v) -> (
      m := matrix apply(v, i -> {i});
      new target m from {m})
+
 -----------------------------------------------------------------------------
--- BasicModule = new Type of Type
+-- Matrix
+
+ModuleMap = new Type of HashTable
+ModuleMap.synonym = "module map"
+
+Matrix = new Type of ModuleMap
+Matrix.synonym = "matrix"
+raw Matrix := f -> f.RawMatrix
+ring Matrix := f -> (
+     S := ring target f;
+     R := ring source f;
+     if R === S then R
+     else error "expected module map with source and target over the same ring"
+     )
+source Matrix := f -> f.source
+target Matrix := f -> f.target
+
+lift'(Matrix,RingElement) := lift'(Matrix,Number) := Matrix => (f,S) -> lift'(f, ring f, S)
+liftable'(Matrix,RingElement) := liftable'(Matrix,Number) := Boolean => (f,S) -> liftable'(f, ring f, S)
+promote'(Matrix,RingElement) := promote'(Matrix,Number) := Matrix => (f,S) -> promote'(f, ring f, S)
+
+lift'(Matrix,QQ,ZZ) := (f,ZZ,QQ) -> basicLiftMatrix(f,QQ^(rank target f))
+
+promote'(Matrix,Number,Number) := promote'(Matrix,Number,RingElement) := (f,A,R) -> basicPromoteMatrix(f,R^(rank target f))
+lift'(Matrix,Number,Number) := lift'(Matrix,RingElement,Number) := (f,R,A) -> (
+     if not isFreeModule source f or not isFreeModule target f then error "expected source and target to be free";
+     basicLiftMatrix(f,R^(rank target f)))
+
+-----------------------------------------------------------------------------
+-- Vector
+
+Vector = new Type of BasicList				    -- an instance v will have one entry, an n by 1 matrix m, with class v === target m
+Vector.synonym = "vector"
+Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)
+net Vector := v -> net first v
+entries Vector := v -> entries ambient v#0 / first
+toExternalString Vector := 				    -- not quite right
+toString Vector := v -> concatenate ( "vector ", toString entries v )
+ring Vector := v -> ring class v
+module Vector := v -> target first v
+leadTerm Vector := v -> new class v from leadTerm v#0
+degree Vector := v -> (
+     f := ambient v#0;
+     first degrees source map(target f,,f))
+new Matrix from Vector := (Matrix,v) -> v#0
+new Vector from Matrix := (M,f) -> (
+     if not isFreeModule source f or numgens source f =!= 1 then error "expected source to be free with rank 1";
+     if M === Vector then error "expected a module";
+     new target f from {f})
+
+RingElement * Vector := (r,v) -> new class v from {r * v#0}
+Vector + Vector := (v,w) -> (
+     m := v#0 + w#0;
+     new target m from {m})
+Vector - Vector := (v,w) -> (
+     m := v#0 - w#0;
+     new target m from {m})
+Vector == Vector := (v,w) -> v === w
+
+Ring * RingElement := (R,f) -> (
+     if ring f === R then ideal(f)
+     else ideal(promote(f,R)))
+Ring * Vector := (R,v) -> (
+     if ring v =!= R then error "different rings encountered";
+     image v#0
+     )
+isHomogeneous Vector := (v) -> isHomogeneous v#0
+
+-----------------------------------------------------------------------------
+-- ImmutableType
+
 ImmutableType = new Type of HashTable
+ImmutableType.synonym = "immutable type"
+globalAssignment ImmutableType
+
+-----------------------------------------------------------------------------
+-- Module
+
 Module = new Type of ImmutableType
+Module.synonym = "module"
+new Module from List := (Module,v) -> new Module of Vector from hashTable v
+new Module from Sequence := (Module,x) -> (
+     (R,rM) -> (
+	  assert instance(R,Ring);
+	  assert instance(rM,RawFreeModule);
+	  new Module of Vector from hashTable {
+     	       symbol cache => new CacheTable,
+     	       symbol RawFreeModule => rM,
+     	       symbol ring => R,
+     	       symbol numgens => rawRank rM
+     	       })) x
+
 degreesRing Module := M -> degreesRing ring M
 degreeLength Module := M -> degreeLength ring M
-new Module of HashTable from List := (Module,Type,v) -> hashTable v
-Module.synonym = "module"
 raw Module := M -> M.RawFreeModule
 ring Module := M -> M.ring
-
-globalAssignment ImmutableType
 
 isModule = method(TypicalValue => Boolean)
 isModule Thing := M -> false
@@ -166,79 +252,6 @@ Module == Module := (M,N) -> (
 		    isSubset(ambient M, image g))
 	       else true)))
 
------------------------------------------------------------------------------
-
-ModuleMap = new Type of HashTable
-ModuleMap.synonym = "module map"
-
-Matrix = new Type of ModuleMap
-Matrix.synonym = "matrix"
-raw Matrix := f -> f.RawMatrix
-ring Matrix := f -> (
-     S := ring target f;
-     R := ring source f;
-     if R === S then R
-     else error "expected module map with source and target over the same ring"
-     )
-source Matrix := f -> f.source
-target Matrix := f -> f.target
-
-lift'(Matrix,RingElement) := lift'(Matrix,Number) := Matrix => (f,S) -> lift'(f, ring f, S)
-liftable'(Matrix,RingElement) := liftable'(Matrix,Number) := Boolean => (f,S) -> liftable'(f, ring f, S)
-promote'(Matrix,RingElement) := promote'(Matrix,Number) := Matrix => (f,S) -> promote'(f, ring f, S)
-
-lift'(Matrix,QQ,ZZ) := (f,ZZ,QQ) -> basicLiftMatrix(f,QQ^(rank target f))
-
-promote'(Matrix,Number,Number) := promote'(Matrix,Number,RingElement) := (f,A,R) -> basicPromoteMatrix(f,R^(rank target f))
-lift'(Matrix,Number,Number) := lift'(Matrix,RingElement,Number) := (f,R,A) -> (
-     if not isFreeModule source f or not isFreeModule target f then error "expected source and target to be free";
-     basicLiftMatrix(f,R^(rank target f)))
-
-Vector = new Type of BasicList				    -- an instance v will have one entry, an n by 1 matrix m, with class v === target m
-Vector.synonym = "vector"
-Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)
-net Vector := v -> net first v
-entries Vector := v -> entries ambient v#0 / first
-toExternalString Vector := 				    -- not quite right
-toString Vector := v -> concatenate ( "vector ", toString entries v )
-ring Vector := v -> ring class v
-module Vector := v -> target first v
-leadTerm Vector := v -> new class v from leadTerm v#0
-degree Vector := v -> (
-     f := ambient v#0;
-     first degrees source map(target f,,f))
-new Matrix from Vector := (Matrix,v) -> v#0
-new Vector from Matrix := (M,f) -> (
-     if not isFreeModule source f or numgens source f =!= 1 then error "expected source to be free with rank 1";
-     if M === Vector then error "expected a module";
-     new target f from {f})
-
-RingElement * Vector := (r,v) -> new class v from {r * v#0}
-Vector + Vector := (v,w) -> (
-     m := v#0 + w#0;
-     new target m from {m})
-Vector - Vector := (v,w) -> (
-     m := v#0 - w#0;
-     new target m from {m})
-Vector == Vector := (v,w) -> v === w
-
-Ring * RingElement := (R,f) -> (
-     if ring f === R then ideal(f)
-     else ideal(promote(f,R)))
-Ring * Vector := (R,v) -> (
-     if ring v =!= R then error "different rings encountered";
-     image v#0
-     )
-isHomogeneous Vector := (v) -> isHomogeneous v#0
-
-newModule = method()
-newModule(Ring,RawFreeModule) := (R,rM) -> new Module of Vector from {
-     symbol cache => new CacheTable,
-     symbol RawFreeModule => rM,
-     symbol ring => R,
-     symbol numgens => rawRank rM
-     }
-
 degrees Module := N -> if N.?degrees then N.cache.degrees else N.cache.degrees = (
      if not isFreeModule N then N = cover N;
      rk := numgens N;
@@ -278,8 +291,8 @@ Ring ^ List := Module => (
 	       fdegs := flatten degs;
 	       -- then do it
 	       if # fdegs === 0 
-	       then newModule(R,rawFreeModule(R.RawRing,#degs))
-	       else newModule(R,rawFreeModule(R.RawRing,toSequence fdegs))
+	       then new Module from (R,rawFreeModule(R.RawRing,#degs))
+	       else new Module from (R,rawFreeModule(R.RawRing,toSequence fdegs))
 	       )
 	  else error "non-engine free modules with degrees not implemented yet"
 	  ))
@@ -288,7 +301,7 @@ SparseDisplayThreshhold := 15
 
 Ring ^ ZZ := Module => (R,n) -> (
      if R.?RawRing
-     then newModule (R, rawFreeModule(R.RawRing,n))
+     then new Module from (R, rawFreeModule(R.RawRing,n))
      else notImplemented()
      )
 
@@ -296,11 +309,11 @@ schreyerOrder = method()
 schreyerOrder Module := Matrix => (F) -> (
      if not isFreeModule F then error "expected a free module";
      m := rawGetSchreyer F.RawFreeModule;
-     src := newModule(ring F, rawSource m);
-     tar := newModule(ring F, rawTarget m);
+     src := new Module from (ring F, rawSource m);
+     tar := new Module from (ring F, rawTarget m);
      map(tar,src,m))
 
-schreyerOrder Matrix := Matrix => (m) -> map(target m, newModule(ring m, rawSchreyerSource raw m), m)
+schreyerOrder Matrix := Matrix => (m) -> map(target m, new Module from (ring m, rawSchreyerSource raw m), m)
 schreyerOrder RawMatrix := RawMatrix => (m) -> rawMatrixRemake2(rawTarget m, rawSchreyerSource m, rawMultiDegree m, m, 0)
 
 euler Module := (M) -> euler hilbertPolynomial M
