@@ -2040,16 +2040,21 @@ enum ComputationStatusCode gbA::computation_is_complete()
 
 Matrix *gbA::make_lead_term_matrix()
 {
-  MatrixConstructor result(_F, gb.size());
+  MatrixConstructor result(_F,0);
   ring_elem one = originalR->Ncoeffs()->one();
   for (int i=first_gb_element; i<gb.size(); i++)
     {
       gbelem *g = gb[i];
       if (g->minlevel != ELEM_NON_MIN_GB)
 	{
-	  int x = gbelem_COMPONENT(g)-1;
-	  ring_elem a = originalR->make_flat_term(one, g->g.f->monom);
-	  result.set_entry(x,i,a);
+	  gbvector *f = g->g.f;
+	  assert(f != 0);
+	  // Only grab the lead term, which should be non-null
+	  gbvector *fnext = f->next;
+	  f->next = 0;
+	  vec v = originalR->translate_gbvector_to_vec(_F, f);
+	  f->next = fnext;
+	  result.append(v);
 	}
     }
   return result.to_matrix();

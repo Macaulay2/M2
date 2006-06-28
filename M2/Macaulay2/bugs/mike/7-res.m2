@@ -274,3 +274,27 @@ toExternalString toString net betti C  ==
 toExternalString "total: 1 4 8 12 16 20 24
     0: 1 4 8 12 16 20 24"
 
+-- Now for a skew commutative ring
+gbTrace=3
+kk=ZZ/101;
+E=kk[y_0..y_6,SkewCommutative=>true]/(y_0*y_1-y_2*y_3)
+E.SkewCommutative = true
+n=matrix{{y_1*y_2*y_4,y_2*y_3*y_5,y_3*y_4*y_6,y_4*y_5*y_0,y_5*y_6*y_1,y_6*y_0*y_2,y_0*y_1*y_3},
+         {y_3*y_5*y_6,y_4*y_6*y_0,y_5*y_0*y_1,y_6*y_1*y_2,y_0*y_2*y_3,y_1*y_3*y_4,y_2*y_4*y_5}}
+M = image n
+betti(fn=res(M,LengthLimit=>4))
+n=matrix{{y_1*y_2*y_4,y_2*y_3*y_5,y_3*y_4*y_6,y_4*y_5*y_0,y_5*y_6*y_1,y_6*y_0*y_2,y_0*y_1*y_3},
+         {y_3*y_5*y_6,y_4*y_6*y_0,y_5*y_0*y_1,y_6*y_1*y_2,y_0*y_2*y_3,y_1*y_3*y_4,y_2*y_4*y_5}}
+M = image n
+betti(fn=res(M,Strategy=>3,LengthLimit=>4))
+betti fn == new BettiTally from {
+     (0,{3}) => 7, 
+     (1,{4}) => 18, 
+     (1,{5}) => 37, 
+     (2,{5}) => 33, 
+     (2,{6}) => 248, 
+     (3,{6}) => 56, 
+     (3,{7}) => 983, 
+     (4,{7}) => 90, 
+     (4,{8}) => 2968, 
+     (4,{9}) => 185}
