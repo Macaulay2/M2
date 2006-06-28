@@ -36,7 +36,6 @@ Matrix::Matrix(const FreeModule *rows0,
   make_immutable(z);
 }
 
-
 const MatrixOrNull * Matrix::make(const FreeModule *target,
 				  int ncols,
 				  const RingElement_array *M)
@@ -280,24 +279,6 @@ ring_elem Matrix::elem(int i, int j) const
 {
   return get_ring()->get_entry(elem(j), i);
 }
-
-#if 0
-bool Matrix::get_entry(int r, int c, ring_elem &a) const
-  // This one returns false if (r,c) is out of range.
-{
-  if (error_row_bound(r)) return false;
-  if (error_column_bound(c)) return false;
-  if (!get_ring()->get_entry(_entries[c], r, a))
-    a = get_ring()->zero();
-  return true;
-}
-
-bool Matrix::get_nonzero_entry(int r, int c, ring_elem &result) const
-{
-  if (c < 0 || c >= n_cols()) return false;
-  return get_ring()->get_entry(_entries[c],r,result);
-}
-#endif
 
 bool Matrix::is_equal(const Matrix &m) const
 {
@@ -1736,59 +1717,6 @@ MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const Matrix *monoms) const
   return mat.to_matrix();
 }
 
-#if 0
-// REMOVE this one.
-MonomialIdeal *Matrix::make_monideal(int n) const
-{
-  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("expected polynomial ring");
-      return 0;
-    }
-  const Monoid *M = P->getMonoid();
-  queue <Bag *> new_elems;
-  for (int i=0; i<n_cols(); i++)
-    {
-      vec v = elem(i);
-      if (v == 0) continue;
-      const vecterm * w = P->vec_locate_lead_term(rows(), v);
-      if (w->comp != n) continue;
-      Bag *b = new Bag(i);
-      M->to_varpower(P->lead_flat_monomial(w->coeff), b->monom());
-      new_elems.insert(b);      
-    }
-
-  // If the base ring is a quotient ring, include these lead monomials.
-  if (P->is_quotient_ring())
-    {
-      const MonomialIdeal *Rideal = P->get_quotient_monomials();
-      for (Index<MonomialIdeal> j = Rideal->first(); j.valid(); j++)
-	{
-	  Bag *b = new Bag(-1, (*Rideal)[j]->monom());
-	  new_elems.insert(b);
-	}
-    }
-
-  // If the base ring has skew commuting variables, include their squares
-  if (P->is_skew_commutative())
-    {
-      intarray vp;
-      for (int i=0; i<M->n_vars(); i++)
-	if (P->is_skew_var(i))
-	  {
-	    vp.shrink(0);
-	    varpower::var(i,2,vp);
-	    Bag *b = new Bag(-1, vp);
-	    new_elems.insert(b);
-	  }
-    }
-
-  MonomialIdeal *result = new MonomialIdeal(P, new_elems);
-  return result;
-}
-#endif
-
 MonomialIdeal *Matrix::make_monideal(int n) const
 {
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
@@ -1840,168 +1768,6 @@ MonomialIdeal *Matrix::make_monideal(int n) const
   return result;
 }
 
-#if 0
-// REMOVE this one
-MonomialIdeal *Matrix::make_skew_monideal(int n) const
-{
-  MonomialIdeal *result = make_monideal(n);
-  if (result == 0) return 0;
-  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  assert(P != 0);
-  if (P->is_skew_commutative())
-    {
-      const Monoid *M = P->Nmonoms();
-      intarray vp;
-      for (int i=0; i<M->n_vars(); i++)
-	if (P->is_skew_var(i))
-	  {
-	    vp.shrink(0);
-	    varpower::var(i,2,vp);
-	    Bag *b = new Bag(-1, vp);
-	    result->insert_minimal(b);
-	  }
-    }
-  return result;
-}
-#endif
-
-#if 0
-// REMOVE this one
-MonomialIdeal *Matrix::make_basis_monideal(int n) const
-{
-#warning "make_basis_monideal doesn't handle fractions"
-#warning "include the squares of the skew communting vars?"
-  // Create what here?
-  // If the ring R is a polynomial ring over a field:
-  //   take the initial terms of the columns (occuring in row n),
-  //   together with the lead terms of the quotients, skew variable 
-  //   squares, if any.
-  // If the ring R is a poly ring over ZZ, only take those
-  //   monomials above whose lead coeff is 1.
-  // If the ring R is a poly ring over a quotient ring, then what?
-  //   If over a fraction field, then what?
-  //   If over a fraction ring, then what?  check for the lead coeff
-  //     being a unit in that ring?
-  // If the ring R is itself a fraction ring?
-  //
-  // Question: is the result over the flat monoid, or logical monoid?
-  const PolyRing *P = get_ring()->cast_to_PolyRing();
-  if (P == 0)
-    {
-      ERROR("expected polynomial ring");
-      return 0;
-    }
-  const Monoid *M = P->getMonoid();
-  intarray vp;
-  queue <Bag *> new_elems;
-  bool coeffsZZ = (P->coefficient_type() == Ring::COEFF_ZZ);
-  int nlogical = P->getLogicalMonoid()->n_vars();
-  int nothers = P->n_vars() - nlogical;
-  exponents exp = newarray(int,P->n_vars());
-  for (int i=0; i<n_cols(); i++)
-    {
-      vec v = elem(i);
-      if (v == 0) continue;
-      const vecterm * w = P->vec_locate_lead_term(rows(), v);
-      if (w->comp != n) continue;
-      if (coeffsZZ && !globalZZ->is_unit(P->lead_flat_coeff(w->coeff)))
-	continue;
-      M->to_expvector(P->lead_flat_monomial(w->coeff), exp);
-      if (!ntuple::is_one(nothers, exp + nlogical))
-	continue;
-      vp.shrink(0);
-      varpower::from_ntuple(P->getLogicalMonoid()->n_vars(), exp, vp);
-      Bag *b = new Bag(i, vp);
-      new_elems.insert(b);      
-    }
-
-  // If the base ring is a quotient ring, include these lead monomials.
-  for (int i=0; i<P->n_quotients(); i++)
-    {
-      Nterm *f = P->quotient_element(i);
-      if (coeffsZZ && !globalZZ->is_unit(f->coeff))
-	continue;
-      M->to_expvector(f->monom, exp); // flat monomial
-      if (!ntuple::is_one(nothers, exp + nlogical))
-	continue;
-      vp.shrink(0);
-      varpower::from_ntuple(P->getLogicalMonoid()->n_vars(), exp, vp);
-      Bag *b = new Bag(-1, vp);
-      new_elems.insert(b);
-    }
-
-  MonomialIdeal *result = new MonomialIdeal(P, new_elems);
-  deletearray(exp);
-  return result;
-}
-#endif
-
-#if 0
-// REMOVE this one
-MonomialIdeal *Matrix::make_basis_monideal(int n) const
-{
-  // Given a (quotient of a) polynomial ring, and a GB 'this'
-  // over this ring, create the monomial ideal (in all of the variables
-  // of the 'flat' monoid) of all of the initial terms of the
-  // columns, occuring in row n, together with the lead terms of the
-  // quotient ring elements, and squares of any skew commuting variables.
-  //
-  // If the final base is a field, then every monomial is taken,
-  // but if the final base is ZZ, then only lead monomials whose coeff
-  // is a unit in ZZ is taken.
-#warning "make_basis_monideal doesn't handle fractions"
-#warning "include the squares of the skew communting vars?"
-  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("expected polynomial ring");
-      return 0;
-    }
-  const Monoid *M = P->getMonoid();
-  intarray vp;
-  queue <Bag *> new_elems;
-  bool coeffsZZ = (P->coefficient_type() == Ring::COEFF_ZZ);
-
-  int nlogical = P->getLogicalMonoid()->n_vars();
-  int nothers = P->n_vars() - nlogical;
-  exponents exp = newarray(int,P->n_vars());
-  for (int i=0; i<n_cols(); i++)
-    {
-      vec v = elem(i);
-      if (v == 0) continue;
-      const vecterm * w = P->vec_locate_lead_term(rows(), v);
-      if (w->comp != n) continue;
-      if (coeffsZZ && !globalZZ->is_unit(P->lead_flat_coeff(w->coeff)))
-	continue;
-      M->to_expvector(P->lead_flat_monomial(w->coeff), exp);
-      if (!ntuple::is_one(nothers, exp + nlogical))
-	continue;
-      vp.shrink(0);
-      varpower::from_ntuple(P->getLogicalMonoid()->n_vars(), exp, vp);
-      Bag *b = new Bag(i, vp);
-      new_elems.insert(b);      
-    }
-
-  // If the base ring is a quotient ring, include these lead monomials.
-  for (int i=0; i<P->n_quotients(); i++)
-    {
-      Nterm *f = P->quotient_element(i);
-      if (coeffsZZ && !globalZZ->is_unit(f->coeff))
-	continue;
-      M->to_expvector(f->monom, exp); // flat monomial
-      if (!ntuple::is_one(nothers, exp + nlogical))
-	continue;
-      vp.shrink(0);
-      varpower::from_ntuple(P->getLogicalMonoid()->n_vars(), exp, vp);
-      Bag *b = new Bag(-1, vp);
-      new_elems.insert(b);
-    }
-
-  MonomialIdeal *result = new MonomialIdeal(P, new_elems);
-  deletearray(exp);
-  return result;
-}
-#endif
 
 int Matrix::dimension() const
 {

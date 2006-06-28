@@ -7,8 +7,6 @@
 #include "comp_gb.hpp"
 #include "matrixcon.hpp"
 
-#warning "gbres: quotient rings -- need to do normal form of fsyz's"
-
 void gb2_comp::setup(FreeModule *FFsyz,
 		     gb_node *ggens,
 		     int lodeg,
