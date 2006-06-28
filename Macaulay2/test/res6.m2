@@ -28,14 +28,17 @@ N=genericMatrix(R,a,2,3);
 J=minors(2,N);
 Q=R/J;
 M=coker vars Q;
-time betti res (M,Strategy=>3,LengthLimit=>4) -- this has a problem
+time betti res (M,Strategy=>3,LengthLimit=>4) === new BettiTally from {
+     (2,{2}) => 18, (3,{3}) => 40, (0,{0}) => 1, (4,{4}) => 81, (1,{1}) => 6}
 
-R=ZZ/101[vars(0..5)]
+R=QQ[vars(0..5)]
 N=genericMatrix(R,a,2,3);
 J=minors(2,N);
 Q=R/J;
 M=coker vars Q;
-time betti res (M,Strategy=>2,LengthLimit=>7)
+time betti res (M,Strategy=>3,LengthLimit=>4) === new BettiTally from {
+     (2,{2}) => 18, (3,{3}) => 40, (0,{0}) => 1, (4,{4}) => 81, (1,{1}) => 6}
+
 
 end
 
@@ -45,7 +48,7 @@ J=minors(3,N);
 Q=R/J;
 M=coker vars Q;
 time betti res (M,Strategy=>2,LengthLimit=>3)
-time betti res (M,Strategy=>3,LengthLimit=>4) -- this has a problem
+time betti res (M,Strategy=>3,LengthLimit=>4)
 time betti res (M,Strategy=>2,LengthLimit=>5)
 time betti res (M,Strategy=>2,LengthLimit=>6)
 

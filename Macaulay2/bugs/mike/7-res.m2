@@ -6,7 +6,7 @@ path = prepend("/Users/mike/M2/Macaulay2/test/engine/",path)
 needs "raw-util.m2"
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
 m = mat{{a,b,c}}
-gbTrace=10
+--gbTrace=10
 C = rawResolution(m,true,5,false,0,3,0)
 
 rawGBSetStop(C,false,{},0,0,0,0,0,false,{})
@@ -32,7 +32,7 @@ assert(F3 == F3b)
 needs "raw-util.m2"
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c, symbol d))
 m = mat{{a,b,c^2,d^2}}
-gbTrace=10
+--gbTrace=10
 C = rawResolution(m,true,5,false,0,3,0)
 
 rawGBSetStop(C,false,{},0,0,0,0,0,false,{})
@@ -250,13 +250,27 @@ I = ideal" pr-os+mt,
      de-bg+ai,
      ce-bf+ah"
 time C = res(I, Strategy=>1);
-betti C
+betti C === new BettiTally from {
+     (0,{0}) => 1, 
+     (1,{2}) => 35, 
+     (2,{3}) => 140, 
+     (3,{4}) => 189, 
+     (3,{5}) => 112, 
+     (4,{6}) => 735, 
+     (5,{7}) => 1080, 
+     (6,{8}) => 735, 
+     (7,{9}) => 112, 
+     (7,{10}) => 189,
+     (8,{11}) => 140, 
+     (9,{12}) => 35, 
+     (10,{14}) => 1
+     }
 
-I = ideal flatten entries gens I
-time C = res(I, Strategy=>0);
-betti C
+-- Now for a quotient
+R = ZZ/101[a..d]/(a*d,b*c)
+Q = cokernel matrix{{a,b,c,d}}
+C = res(Q, Strategy=>3, LengthLimit => 6)
+toExternalString toString net betti C  ==
+toExternalString "total: 1 4 8 12 16 20 24
+    0: 1 4 8 12 16 20 24"
 
-gbTrace=3
-I = ideal flatten entries gens I
-time C = res(I, Strategy=>3);
-betti C

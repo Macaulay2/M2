@@ -612,7 +612,8 @@ RingElement *hilb_comp::hilbertNumerator(const Matrix *M)
 
 RingElement *hilb_comp::hilbertNumerator(const FreeModule *F)
 {
-  const PolynomialRing *P = F->get_ring()->get_degree_ring();
+  const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
+  const PolynomialRing *P = R->get_degree_ring();
   ring_elem f = P->zero();
   ring_elem one = P->Ncoeffs()->one();
   for (int i=0; i<F->rank(); i++)
@@ -620,7 +621,14 @@ RingElement *hilb_comp::hilbertNumerator(const FreeModule *F)
       ring_elem f1 = P->make_flat_term(one, F->degree(i));
       P->add_to(f, f1);
     }
-  return RingElement::make_raw(P, f);
+  RingElement *result = RingElement::make_raw(P, f);
+  // Now multiply by the numerator of the Hilbert series for the ring itself
+  if (R->n_quotients() > 0)
+    {
+      RingElement *hR = hilbertNumerator(R->get_quotient_monomials());
+      result = *result * (*hR);
+    }
+  return result;
 }
 
 RingElementOrNull *hilb_comp::hilbertNumerator(const MonomialIdeal *I)
