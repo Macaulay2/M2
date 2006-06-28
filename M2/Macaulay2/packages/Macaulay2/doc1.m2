@@ -822,22 +822,22 @@ document {
      Key => "new",
      Headline => "new objects and new types",
      PARA {
-	  "In this (reference) section we discuss how to make new types of object and new objects of those types.
+	  "In this reference section we discuss how to make new types of object and new objects of those types.
 	  For a more informal discussion, see ", TO "making new classes", "."
 	  },
      SYNOPSIS (
 	  Heading => "installing a new method for new-of-from",
-	  Usage => "new AA of B from C := (A,b,c) -> ...",
+	  Usage => "new AA of BB from C := (A,B,c) -> ...",
 	  Inputs => {
-	       "AA" => Type,
-	       "B" => Type,
+	       "AA" => HashTable,
+	       "BB" => HashTable,
 	       "C" =>Type,
-	       { TT "(A,b,c) -> ...", ", a function of 3 arguments: ", TT "AA", " will be an ancestor of ", TT "A", ",
-		    ", TT "B", " will be an ancestor of the class of ", TT "b", ",
-		    and ", TT "C", " will be an ancestor of the class of ", TT "c" }
+	       { TT "(A,B,c) -> ...", ", a function of 3 arguments: ", TT "AA", " will be an ancestor of ", TT "A", ",
+		    ", TT "BB", " will be an ancestor of ", TT "B", ", and ", TT "C", " will be an ancestor of the class of ", TT "c" }
 	       },
 	  Consequences => {
-	       { "the function will be installed as the method for ", TT "new AA of B from C" }
+	       { "the function will be installed as the method for ", TT "new AA of BB from C", ".  It will be stored under the key ", TT "(NewOfFromMethod,AA,BB,C)", "
+		    in the youngest of the hash tables ", TT "AA", ", ", TT "BB", ", and ", TT "C", "." }
 	       },
 	  Outputs => {
 	       { "the function is returned as the value of the expression" }
@@ -846,27 +846,34 @@ document {
 	       instances of the new type to nets for display."
 	       },
 	  EXAMPLE lines ///
-	       new Type of Type from Function := (A,b,f) -> hashTable { net => f };
+	       new Type of BasicList from Function := (A,B,f) -> hashTable { net => f };
 	  ///
 	  ),
      SYNOPSIS (
 	  Heading => "new-of-from",
-	  Usage => "new A of b from c",
+	  Usage => "new A of B from c",
 	  Inputs => {
-	       "A" => Type,
-	       "b" => { "an instance of ", TT "B" },
+	       "A" => HashTable,
+	       "B" => HashTable,
 	       "c" => { "an instance of ", TT "C" }
 	       },
 	  Consequences => {
-	       { "the function previously installed as the method for ", TT "new A of B from C", " will be called with arguments ", TT "(A,b,c)", "." },
-	       { "if no such method has been installed, then ancestors of A, B, and C, will be consulted searching lexicographically for a method; see ", TO "inheritance", "." },
-	       { "if no method is found by searching the ancestors, then the function ", TT "(A,b,c) -> c", " will be used" },
-	       { "the value returned by the function, (or ", TT "c", ", if no method was found), will be converted so
-		    its class is ", TT "A", " and its parent is ", TT "b", "; this will involve copying unless the 
-		    value returned is mutable and objects of class ", TT "A", " are mutable." },
+	       { "the function previously installed as the method for ", TT "new A of B from C", " will be called with arguments ", TT "(A,B,c)", "." },
+	       { "if no such method has been installed, then ancestors of ", TT "A", ", ", TT "B", ", and ", TT "C", ", will be consulted
+		    searching lexicographically for a method; see ", TO "inheritance", "." },
+	       { "if no method is found by searching the ancestors, then the function ", TT "(A,B,c) -> c", " will be used" },
+	       { "the value returned by the function, (or ", TT "c", ", if no method was found), will have
+		    its class set to ", TT "A", " and its parent set to ", TT "B", "; this will involve copying the elements of a list or hash table unless the 
+		    value returned by the function is mutable and objects of new class ", TT "A", " are mutable." 
+		    },
+	       { "if the value returned by the function is not a hash table, basic list, or sequence, then its class will be set to ", TT "A", " internally, essentially by wrapping it
+		    in a special kind of object designed solely to indicate the new class.  The parent cannot be reset this way, which implies that ", TT "B", " must 
+		    be ", TO "Nothing", ".  Not all of the internal code of Macaulay 2 is ready to recognize
+		    such wrapped objects, which are a new feature, except for the code that handles functions." },
+	       { "if ", TT "A", " is type of list, then ", TT "B", " must be ", TO "Nothing" },
 	       },
 	  Outputs => {
-	       { "the new object of class ", TT "A", " and with parent ", TT "b", " described above" }
+	       { "the new object of class ", TT "A", " and with parent ", TT "B", " described above" }
 	       },
 	  PARA "We use the creation method installed above to create a new type of list.",
 	  EXAMPLE lines ///
@@ -888,37 +895,51 @@ document {
 	  ),
      SYNOPSIS (
 	  Heading => "installing a new method for new-of",
-	  Usage => "new AA of B := (A,b) -> ...",
+	  Usage => "new AA of BB := (A,B) -> ...",
 	  Inputs => {
-	       "AA" => Type,
-	       "B" => Type,
-	       { TT "(A,b) -> ...", ", a function of 2 arguments: ", TT "AA", " will be an ancestor of ", TT "A", ", 
-		    and ", TT "B", " will be an ancestor of the class of ", TT "b" }
+	       "AA" => HashTable,
+	       "BB" => HashTable,
+	       { TT "(A,B) -> ...", ", a function of 2 arguments: ", TT "AA", " will be an ancestor of ", TT "A", ", 
+		    and ", TT "BB", " will be an ancestor of ", TT "B" }
 	       },
 	  Consequences => {
-	       { "the function will be installed as the method for ", TT "new AA of B" }
+	       { "the function will be installed as the method for ", TT "new AA of BB", "  It will be stored under the key ", TT "(NewOfMethod,AA,BB)", "
+		    in the younger of the hash tables ", TT "AA", " and ", TT "BB", "." }
 	       },
 	  Outputs => {
 	       { "the function is returned as the value of the expression" }
 	       },
  	  PARA {
-	       "This operation turns out to be needed infrequently."
+	       "This operation turns out to be needed infrequently, because there is no ", TT "from", "-clause to provide data for initializing the instance of ", TT "A", "."
  	       },
--- 	  EXAMPLE lines ///
--- 	  ///
+ 	  EXAMPLE lines ///
+	       new Type of BasicList := (type,array) -> ( stderr << "--new " << type << " of " << array << " being made" << endl; new MutableHashTable)
+ 	  ///
 	  ),
      SYNOPSIS (
 	  Heading => "new-of",
-	  Usage => "new A of b",
+	  Usage => "new A of B",
 	  Inputs => {
-	       "A" => Type,
-	       "b" => { "an instance of ", TT "B" },
+	       "A" => HashTable,
+	       "B" => HashTable,
 	       },
 	  Consequences => {
-	       { "TO BE FILLED IN" }
+	       { "the function previously installed as the method for ", TT "new A of B", " will be called with arguments ", TT "(A,B)", "." },
+	       { "if no such method has been installed, then ancestors of ", TT "A", ", and ", TT "B", " will be consulted
+		    searching lexicographically for a method; see ", TO "inheritance", "." },
+	       { "if no method is found by searching the ancestors, then a new empty instance of ", TT "A", " with parent ", TT "B", " will be created, if possible" },
+	       { "the value returned by the function will have
+		    its class set to ", TT "A", " and its parent set to ", TT "B", "; this will involve copying the elements of a list or hash table unless the 
+		    value returned by the function is mutable and objects of new class ", TT "A", " are mutable." 
+		    },
+	       { "if the value returned by the function is not a hash table, basic list, or sequence, then its class will be set to ", TT "A", " internally, essentially by wrapping it
+		    in a special kind of object designed solely to indicate the new class.  The parent cannot be reset this way, which implies that ", TT "B", " must 
+		    be ", TO "Nothing", ".  Not all of the internal code of Macaulay 2 is ready to recognize
+		    such wrapped objects, which are a new feature, except for the code that handles functions." },
+	       { "if ", TT "A", " is type of list, then ", TT "B", " must be ", TO "Nothing" },
 	       },
 	  Outputs => {
-	       { "a new object of class ", TT "A", " and with parent ", TT "b" }
+	       { "a new object of class ", TT "A", " and with parent ", TT "B" }
 	       },
  	  PARA {
      	       "We illustrate this operation by making a new type of basic list, and then by making a list of that type."
@@ -941,13 +962,14 @@ document {
 	  Heading => "installing a new method for new-from",
 	  Usage => "new AA from C := (A,c) -> ...",
 	  Inputs => {
-	       "AA" => Type,
+	       "AA" => HashTable,
 	       "C" =>Type,
 	       { TT "(A,c) -> ...", ", a function of 2 arguments: ", TT "AA", " will be an ancestor of ", TT "A", ", 
 		    and ", TT "C", " will be an ancestor of the class of ", TT "c" }
 	       },
 	  Consequences => {
-	       { "the function will be installed as the method for ", TT "new AA from C" }
+	       { "the function will be installed as the method for ", TT "new AA from C", "  It will be stored under the key ", TT "(NewFromMethod,AA,C)", "
+		    in the younger of the hash tables ", TT "AA", " and ", TT "C", "." }
 	       },
 	  Outputs => {
 	       { "the function is returned as the value of the expression" }
@@ -964,11 +986,21 @@ document {
 	  Heading => "new-from",
 	  Usage => "new A from c",
 	  Inputs => {
-	       "A" => Type,
+	       "A" => HashTable,
 	       "c" => { "an instance of ", TT "C" }
 	       },
 	  Consequences => {
-	       { "TO BE FILLED IN" }	       
+	       { "the function previously installed as the method for ", TT "new A from C", " will be called with arguments ", TT "(A,c)", "." },
+	       { "if no such method has been installed, then ancestors of ", TT "A", " and ", TT "C", ", will be consulted searching
+		    lexicographically for a method; see ", TO "inheritance", "." },
+	       { "if no method is found by searching the ancestors, then the function ", TT "(A,c) -> c", " will be used" },
+	       { "the value returned by the function, (or ", TT "c", ", if no method was found), will have
+		    its class set to ", TT "A", " and its parent retained; this will involve copying the elements of a list or hash table unless the 
+		    value returned by the function is mutable and objects of new class ", TT "A", " are mutable." 
+		    },
+	       { "if the value retuned by the function is not a hash table, basic list, or sequence, then its class will be set to ", TT "A", " internally, essentially by wrapping it
+		    in a special kind of object designed solely to indicate the new class.  Not all of the internal code of Macaulay 2 is ready to recognize
+		    such wrapped objects, which are a new feature, except for the code that handles functions." }
 	       },
 	  Outputs => {
 	       { "a new object of class ", TT "A", " initialized from ", TT "c" }
@@ -985,30 +1017,41 @@ document {
 	  Heading => "installing a new method for new",
 	  Usage => "new AA := (A) -> ...",
 	  Inputs => {
-	       "AA" => Type,
+	       "AA" => HashTable,
 	       { TT "(A) -> ...", ", a function of 1 argument: ", TT "AA", " will be an ancestor of ", TT "A" }
 	       },
 	  Consequences => {
-	       { "the function will be installed as the method for ", TT "new AA" }
+	       { "the function will be installed as the method for ", TT "new AA", "  It will be stored under the key ", TT "NewMethod", "
+		    in the hash table ", TT "AA", "." }
 	       },
 	  Outputs => {
 	       { "the function is returned as the value of the expression" }
 	       },
  	  PARA {
-	       "We use the class ", TT "M", " introduced above, and installe a method for ", TT "new M", " that returns an empty list of class ", TT "M", ",
-	       and we use it in the next subsection."
+	       "We use the class ", TT "M", " introduced above, and install a method for ", TT "new M", ", and we use it in the next subsection."
  	       },
  	  EXAMPLE lines ///
-	       new M := (M') -> {}
+	       new M := (M') -> {a,b,c}
  	       ///
 	  ),
      SYNOPSIS (
 	  Heading => "new",
 	  Usage => "new A",
-	  Inputs => {},
-	  Consequences => {},
+	  Inputs => { "A" => HashTable },
+	  Consequences => {
+	       { "the function previously installed as the method for ", TT "new A", " will be called with argument ", TT "A", "." },
+	       { "if no such method has been installed, then ancestors of ", TT "A", " will be consulted searching for a method; see ", TO "inheritance", "." },
+	       { "if no method is found by searching the ancestors, then a new empty instance of ", TT "A", " will be created, if possible" },
+	       { "the value returned by the function will have
+		    its class set to ", TT "A", "; this will involve copying the elements of a list or hash table unless the 
+		    value returned by the function is mutable and objects of new class ", TT "A", " are mutable." 
+		    },
+	       { "if the value returned by the function is not a hash table, basic list, or sequence, then its class will be set to ", TT "A", " internally, essentially by wrapping it
+		    in a special kind of object designed solely to indicate the new class.  Not all of the internal code of Macaulay 2 is ready to recognize
+		    such wrapped objects, which are a new feature, except for the code that handles functions." }
+	       },
 	  Outputs => {
-	       { "a new object of class ", TT "A", "" }
+	       { "the new object of class ", TT "A", " described above" }
 	       },
  	  PARA {
 	       "We use the method for ", TT "new M", " installed above."
@@ -1016,80 +1059,7 @@ document {
  	  EXAMPLE lines ///
 	       new M
  	  ///
-	  ),
-
-     SUBSECTION "the old documentation",
-
-     TT "new A of b from c", " -- make a hash table ", TT "n", " of
-     Here ", TT "A", " and ", TT "b", " are hash tables, and ", TT "c", " is
-     any expression.  Let ", TT "b", " be an instance of ", TT "B", ", ", TT "c", "
-     be an instance of ", TT "C", ", and let ", TT "AA", " be an
-     ancestor of ", TT "A", ".  Then use",
-     PRE "          new AA of B from C := (A,b,c) -> ... ",
-     "to install the corresponding optional creation routine -- the
-     value it returns will be converted so its class is ", TT "A", " and its
-     parent is ", TT "b", "; this will involve copying unless the returned value 
-     is mutable and objects of class ", TT "A", " are mutable.",
-     PARA{},
-     "If no installation routine has been installed, then ", TT "c", " should be
-     a hash table or a list, and it will be converted directly.",
-     PARA{},
-     "The class ", TT "A", " should be a type of type, which means that
-     ", TT "Type", " is an ancestor of ", TT "A", " and of the class of ", TT "A", ".",
-     hr,
-
-
-     TT "new A of b", " -- make a hash table of class ", TT "A", "
-     and parent ", TT "b", ".",
-     PARA{},
-     "Same as above, except ", TT "c", " is missing.  Use ",
-     PRE "          new AA of B := (A,b) -> ... ",
-     "to install the initialization routine.",
-     PARA{},
-     "The class ", TT "A", " should be a type of type, which means that
-     ", TT "Type", " is an ancestor of ", TT "A", " and of the class of ", TT "A", ".",
-     hr,
-
-
-     TT "new A from c", " -- make a hash table or list ", TT "n", " of 
-     class ", TT "A", " initialized from ", TT "c", ".",
-     PARA{},
-     "The same as above except ", TT "b", " is missing.  Use ",
-     PRE "          new AA from C := (A,c) -> ... ",
-     "to install the corresponding initialization routine.",
-     PARA{},
-     "Since no parent ", TT "b", " has been provided, the value returned by the
-     initialization routine will not have its parent reset.  If there
-     is no initialization routine the parent will be set to Nothing.",
-     PARA{},
-     "The class ", TT "A", " should be a type, which means that
-     ", TT "Type", " is an ancestor of the class of ", TT "A", ".",
-     hr,
-
-
-     TT "new A", " -- make a new instance ", TT "n", " of 
-     class ", TT "A", ".",
-     PARA{},
-     "Same as above, except ", TT "b", " and ", TT "c", " are missing.
-     Use ", TT "new AA := A -> ... ", " to install the initialization routine.",
-     PARA{},
-     "Since no parent ", TT "b", " has been provided, the value returned by the
-     initialization routine will not have its parent reset.  If there
-     is no initialization routine the parent will be set to Nothing.",
-     PARA{},
-     "The class ", TT "A", " should be a type, which means that
-     ", TT "Type", " is an ancestor of the class of ", TT "A", ".",
-     hr,
-     "Note that if the ", TT "of", " option is not used, then the class ", TT "A", "
-     need not consist of hash tables or lists.  We are using this feature by
-     installing a method so that ", TT "new ZZ", " returns an integer popped
-     from the top of the engine's stack.",
-
-     PARA{
-     	  "The symbols ", TO "NewMethod", ", ", TO "NewOfMethod", ", ", 
-     	  TO "NewFromMethod", ", and ", TO "NewOfFromMethod", " are used internally
-     	  for installation of the initialization routines."
-	  }
+	  )
      }
 
 

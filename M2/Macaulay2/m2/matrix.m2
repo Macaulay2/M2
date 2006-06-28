@@ -10,8 +10,8 @@ map(Module,Module,RawMatrix) := opts -> (tar,src,f) -> (
 	  symbol RawMatrix => f,
 	  symbol cache => new CacheTable
 	  })
-map(Module,Nothing,RawMatrix) := opts -> (tar,nullsrc,f) -> map(tar,newModule(ring tar,rawSource f),f,opts)
-map(Ring,RawMatrix) := opts -> (R,f) -> map(newModule(R,rawTarget f),newModule(R,rawSource f),f,opts)
+map(Module,Nothing,RawMatrix) := opts -> (tar,nullsrc,f) -> map(tar,new Module from (ring tar,rawSource f),f,opts)
+map(Ring,RawMatrix) := opts -> (R,f) -> map(new Module from (R,rawTarget f),new Module from (R,rawSource f),f,opts)
 
 reduce = (tar,f) -> (
      if isFreeModule tar then f

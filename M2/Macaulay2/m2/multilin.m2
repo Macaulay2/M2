@@ -37,7 +37,7 @@ exteriorPower(ZZ,Module) := Module => options -> (p,M) -> (
      else if p === 0 then R^1
      else if p === 1 then M
      else (
-	  if isFreeModule M then newModule(R, rawExteriorPower(p,M.RawFreeModule))
+	  if isFreeModule M then new Module from (R, rawExteriorPower(p,M.RawFreeModule))
 	  else (
 	       m := presentation M;
 	       F := target m;

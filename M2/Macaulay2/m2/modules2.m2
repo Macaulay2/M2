@@ -38,7 +38,7 @@ Module ** Module := Module => (M,N) -> (
 	       if M == R^1 then N
 	       else if isFreeModule N then (
 		    if N == R^1 then M
-		    else newModule(R, raw M ** raw N)
+		    else new Module from (R, raw M ** raw N)
 		    )
 	       else subquotient(
 		    if N.?generators then M ** N.generators,
@@ -392,7 +392,7 @@ minimalPresentation(Matrix) := Matrix => opts -> (m) -> (
 
 dual Module := Module => F -> if F.cache.?dual then F.cache.dual else F.cache.dual = (
      if not isFreeModule F then kernel transpose presentation F
-     else newModule(ring F,rawDual raw F))
+     else new Module from (ring F,rawDual raw F))
 
 -----------------------------------------------------------------------------
 Hom(Ideal, Ideal) := Module => (I,J) -> Hom(module I, module J)

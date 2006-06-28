@@ -43,12 +43,12 @@ map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
 	  M' := source M.generators;
 	  if numgens M' != numgens target p then error "expected matrix and new target module to agree";
      	  f := rawMatrixRemake1(raw M', raw p,0);
-     	  map(M, newModule(R, rawSource f), f)
+     	  map(M, new Module from (R, rawSource f), f)
 	  )
      else (
 	  if numgens M != numgens target p then error "expected matrix and new target module to agree";
      	  f = rawMatrixRemake1(raw M, raw p,0);
-     	  map(M, newModule(R, rawSource f), f)
+     	  map(M, new Module from (R, rawSource f), f)
 	  )
      )
 
@@ -130,7 +130,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	  new Matrix from {
 	       symbol target => M,
 	       symbol RawMatrix => m,
-	       symbol source => if class N === Module then N else newModule(R, rawSource m),
+	       symbol source => if class N === Module then N else new Module from (R, rawSource m),
 	       symbol ring => R,
 	       symbol cache => new CacheTable
 	       })
@@ -147,7 +147,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	  new Matrix from {
 	       symbol target => M,
 	       symbol RawMatrix => h,
-	       symbol source => if class N === Module then N else newModule(R, rawSource h),
+	       symbol source => if class N === Module then N else new Module from (R, rawSource h),
 	       symbol ring => R,
 	       symbol cache => new CacheTable
 	       })
@@ -343,7 +343,7 @@ subquotient(Nothing,Matrix) := Module => (null,relns) -> (
      if relns != 0 then (
 	  Mparts = append(Mparts, symbol relations => relns);
 	  );
-     new Module of Vector from Mparts)
+     new Module of Vector from hashTable Mparts)
 subquotient(Matrix,Nothing) := Module => (subgens,null) -> (
      R := ring subgens;
      E := target subgens;
@@ -360,14 +360,14 @@ subquotient(Matrix,Nothing) := Module => (subgens,null) -> (
      if E.?relations then (
 	  Mparts = append(Mparts, symbol relations => E.relations);
 	  );
-     new Module of Vector from Mparts)
+     new Module of Vector from hashTable Mparts)
 subquotient(Matrix,Matrix) := Module => (subgens,relns) -> (
      R := ring relns;
      E := target subgens;
      if E != target relns then error "expected maps with the same target";
      rE := E.RawFreeModule;
      n := rawRank rE;
-     if n == 0 then newModule(R,rE)
+     if n == 0 then new Module from (R,rE)
      else (
 	  relns = align matrix relns;
 	  subgens = align matrix subgens;
@@ -386,7 +386,7 @@ subquotient(Matrix,Matrix) := Module => (subgens,relns) -> (
 	  if relns != 0 then (
 	       Mparts = append(Mparts, symbol relations => relns);
 	       );
-	  new Module of Vector from Mparts))
+	  new Module of Vector from hashTable Mparts))
 
 Matrix ** Matrix := Matrix => (f,g) -> (
      R := ring target f;
