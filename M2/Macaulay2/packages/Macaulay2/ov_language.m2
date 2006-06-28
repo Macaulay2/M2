@@ -51,7 +51,6 @@ document {
 	      TO "what a class is",
 	      TO "installing methods",
 	      TO "binary methods",
-	      TO "making new classes",
 	      TO "inheritance",
 	      TO "printing and formatting for new classes",
 	      TO "making a new method function",
