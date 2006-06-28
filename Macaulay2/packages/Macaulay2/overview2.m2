@@ -1095,8 +1095,9 @@ document {
 	  TO "parent",
 	  TO "instance",
 	  TO "ancestor",
-	  TO "newClass",
+	  TO "making new classes",
 	  TO "new",
+	  TO "newClass",
 	  },
      SeeAlso => { "uniform", "Thing", "Nothing", "Type", "MutableList", "MutableHashTable", "SelfInitializingType" }
      }

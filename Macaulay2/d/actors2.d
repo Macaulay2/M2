@@ -141,7 +141,7 @@ expected(type:string,returned:bool):Expr := buildErrorPacket(
 
 wrongTarget():Expr := buildErrorPacket("'new' expected a type of list or hash table");
 
-transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
+newClassParent(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
      -- same as below, but parent specified
      basicType := basictype(class);
      when e
@@ -180,7 +180,7 @@ transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
 	  else if basicType == hashTableClass then expected("a hash table",returned)
 	  else wrongTarget())
      is s:SpecialExpr do (
-	  if s.class == class && Parent(s.e) == parent then e else transform(s.e,class,parent,returned)
+	  if s.class == class && Parent(s.e) == parent then e else newClassParent(s.e,class,parent,returned)
 	  )
      else (
 	  c := Class(e);
@@ -199,7 +199,7 @@ newComplex(args:Expr):Expr := (
      else WrongArg("a pair of real numbers"));
 setupfun("newCC",newComplex);
 
-transform(e:Expr,class:HashTable,returned:bool):Expr := (
+newClass(e:Expr,class:HashTable,returned:bool):Expr := (
      -- same as above, but no parent specified, so leave what s provided alone
      when e
      is Error do e
@@ -246,7 +246,7 @@ transform(e:Expr,class:HashTable,returned:bool):Expr := (
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
-     is s:SpecialExpr do if s.class == class then e else transform(s.e,class,returned)
+     is s:SpecialExpr do if s.class == class then e else newClass(s.e,class,returned)
      else (
 	  c := Class(e);
 	  if c == class then e
@@ -258,13 +258,13 @@ newclassfun(e:Expr):Expr := (
      is a:Sequence do
      if length(a) == 2
      then when a.0
-     is class:HashTable do transform(a.1,class,false)
+     is class:HashTable do newClass(a.1,class,false)
      else WrongArg(1,"a hash table")
      else if length(a) == 3
      then when a.0
      is class:HashTable do (
 	  when a.1
-	  is parent:HashTable do transform(a.2,class,parent,false)
+	  is parent:HashTable do newClassParent(a.2,class,parent,false)
 	  else WrongArg(2,"a hash table"))
      else WrongArg(1,"a hash table")
      else WrongNumArgs(2,3)
@@ -318,7 +318,7 @@ newfun(newClassCode:Code):Expr := (
      is class:HashTable do (
 	  method := lookup(class,NewS);
 	  if method != nullE
-	  then transform(applyEE(method,Expr(class)),class,true)
+	  then newClass(applyEE(method,Expr(class)),class,true)
 	  else makenew(class))
      else errt(newClassCode));
 NewFun = newfun;
@@ -333,7 +333,7 @@ newoffun(newClassCode:Code,newParentCode:Code):Expr := (
 	  is parent:HashTable do (
 	       method := lookupBinaryMethod(class,parent,NewOfS);
 	       if method != nullE
-	       then transform(applyEEE(method,Expr(class),Expr(parent)),class,parent,true)
+	       then newClassParent(applyEEE(method,Expr(class),Expr(parent)),class,parent,true)
 	       else makenew(class,parent))
 	  else errp(newParentCode))
      else errt(newClassCode));
@@ -349,19 +349,19 @@ newfromfun(newClassCode:Code,newInitCode:Code):Expr := (
 	  else (
 	       method := lookupBinaryMethod(class,Class(newInitExpr),NewFromS);
 	       if method != nullE
-	       then transform(applyEEE(method,Expr(class),newInitExpr),class,true)
+	       then newClass(applyEEE(method,Expr(class),newInitExpr),class,true)
 	       else (
 		    when newInitExpr
-		    is s:Sequence do transform(newInitExpr,class,false)
+		    is s:Sequence do newClass(newInitExpr,class,false)
 		    is p:List do (
 			 if p.class == class
 			 then Expr(if p.mutable then copy(p) else p)
-			 else transform(newInitExpr,class,false))
+			 else newClass(newInitExpr,class,false))
 		    is p:HashTable do (
 			 if p.class == class
 			 then Expr(if p.mutable then copy(p) else p)
-			 else transform(newInitExpr,class,false))
-		    else transform(newInitExpr,class,false))))
+			 else newClass(newInitExpr,class,false))
+		    else newClass(newInitExpr,class,false))))
      else errt(newClassCode));
 NewFromFun = newfromfun;
 newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
@@ -379,19 +379,19 @@ newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
 	       else (
 		    method := lookupTernaryMethod(class,parent,Class(newInitExpr),NewOfFromE,NewOfFromS.symbol.hash);
 		    if method != nullE 
-		    then transform(applyEEE(method,Expr(class),Expr(parent),newInitExpr),class,parent,true)
+		    then newClassParent(applyEEE(method,Expr(class),Expr(parent),newInitExpr),class,parent,true)
 		    else (
 			 when newInitExpr
-			 is p:Sequence do transform(newInitExpr,class,parent,false)
+			 is p:Sequence do newClassParent(newInitExpr,class,parent,false)
 			 is p:List do (
 			      if p.class == class && nothingClass == parent
 			      then Expr(if p.mutable then copy(p) else p)
-			      else transform(newInitExpr,class,parent,false))
+			      else newClassParent(newInitExpr,class,parent,false))
 			 is p:HashTable do (
 			      if p.class == class && p.parent == parent
 			      then Expr(if p.mutable then copy(p) else p)
-			      else transform(newInitExpr,class,false))
-			 else transform(newInitExpr,class,parent,false))))
+			      else newClassParent(newInitExpr,class,parent,false))
+			 else newClassParent(newInitExpr,class,parent,false))))
 	  else errp(newParentCode))
      else errt(newClassCode));
 NewOfFromFun = newoffromfun;
