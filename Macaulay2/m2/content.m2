@@ -90,6 +90,8 @@ BlockMix = HeadingClass + ListClass + BlockClass + MiscClass
 validContent = new MutableHashTable
 
 -----------------------------------------------------------------------------
+-- <!ENTITY % dd.content "( #PCDATA | %Flow.mix; )*" >
+validContent#"dd" =
 -- <!ENTITY % li.content "( #PCDATA | %Flow.mix; )*" >
 validContent#"li" = 
 -- <!ENTITY % div.content "( #PCDATA | %Flow.mix; )*" >
@@ -101,6 +103,11 @@ validContent#"blockquote" =
 -- <!ENTITY % body.content "( %Block.mix; )+" >
 validContent#"body" = BlockMix
 
+-- <!ENTITY % dl.content  "( %dt.qname; | %dd.qname; )+" >
+validContent#"dl" = set { "dt", "dd" }
+
+-- <!ENTITY % dt.content "( #PCDATA | %Inline.mix; )*" >
+validContent#"dt" =
 -- <!ENTITY % Heading.content  "( #PCDATA | %Inline.mix; )*" >
 HeadingContent = PCDATA + InlineMix
 -- <!ELEMENT %h1.qname;  %Heading.content; >
@@ -195,6 +202,9 @@ validContent#"ul" = set { "li" }
 
 validContent#"comment" = PCDATA
 validContent#"cdata" = PCDATA
+
+-- <!ENTITY % style.content  "( #PCDATA )" >
+validContent#"style" = PCDATA
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
