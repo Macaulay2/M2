@@ -529,10 +529,17 @@ fixupTable := new HashTable from {
      symbol DocumentTag => identity,
      Usage => val -> (
 	  if not instance(val,String) then error("expected Usage option to be a string");
-	  TABLE TR {
-	       TD { "valign" => "top" , "Usage:" },
-	       TD between_(BR{}) (TT \ nonempty separate val)
-	       } ),
+	  -- use CSS tables
+	  DIV { "class" => "list",
+	       DL { "class" => "element",
+		    DT { "class" => "heading", "Usage" },
+		    DD { "class" => "value", SPAN between_(BR{}) (TT \ nonempty separate val) }
+		    }}
+--	  TABLE TR {
+--	       TD { "valign" => "top" , "Usage:" },
+--	       TD between_(BR{}) (TT \ nonempty separate val)
+--	       }
+	  ),
      Function => val -> fixup val,
      Inputs => val -> fixupList val,
      Outputs => val -> fixupList val,

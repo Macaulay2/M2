@@ -160,7 +160,8 @@ newPackage(String) := opts -> (title) -> (
 	  );
      dictionaryPath = join(
 	  {newpkg#"private dictionary"},
-	  if newpkg === Core then {} else reverse apply(Core#"pre-installed packages", pkgname -> (needsPackage pkgname).Dictionary),
+	  if newpkg === Core or member(title,Core#"pre-installed packages") then {}
+	  else reverse apply(Core#"pre-installed packages", pkgname -> (needsPackage pkgname).Dictionary),
 	  {Core.Dictionary, OutputDictionary, PackageDictionary}
 	  );
      PrintNames#(newpkg.Dictionary) = title | ".Dictionary";
