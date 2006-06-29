@@ -45,7 +45,8 @@ toupper := new HashTable from apply(characters lower,characters upper,identity)
 toLower = s -> concatenate apply(characters s, c -> if tolower#?c then tolower#c else c)
 toUpper = s -> concatenate apply(characters s, c -> if toupper#?c then toupper#c else c)
 
-ewnl := BlockMix - set { "ins" } + set { "body", "tr", "li", "head", "html", "title", "link", "meta" } 
+-- the tags that print with extra newlines after the close tag:
+ewnl := BlockMix - set { "ins" } + set { "body", "tr", "li", "head", "html", "title", "link", "meta", "style" } 
 
 htmlMarkUpType := s -> (
      on := "<" | s | ">";
@@ -143,6 +144,12 @@ COMMENT    = new MarkUpType of Hypertext
 CDATA      = new MarkUpType of Hypertext
 LINK       = withOptions_{"href","rel","title","type"} new MarkUpTypeWithOptions of Hypertext
 META       = withOptions_{"name","content","http-equiv"} new MarkUpTypeWithOptions of Hypertext
+
+DL         = withOptions_{"class"} new MarkUpTypeWithOptions of Hypertext
+DD         = withOptions_{"class"} new MarkUpTypeWithOptions of Hypertext
+DT         = withOptions_{"class"} new MarkUpTypeWithOptions of Hypertext
+
+STYLE      = withOptions_{"type"} new MarkUpTypeWithOptions of Hypertext
 
 HREF       = withQname_"a" new IntermediateMarkUpType of Hypertext
 new HREF from List := (HREF,x) -> (
