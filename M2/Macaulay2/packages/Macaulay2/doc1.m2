@@ -293,32 +293,10 @@ document {
      SeeAlso => {"making new functions with optional arguments", "OptionTable", "Option", "=>"}
      }
 
-undocumented [method, SingleArgumentDispatch]
-
 stderr << "--warning: this node needs rewriting : method(Dispatch => ...)" << endl
-document {
-     Key => [method, Dispatch],
-     Headline => "method functions with a variable number of arguments",
-     Usage => "f = method(Dispatch => Thing)",
-     Inputs => {
-	  },
-     Outputs => {
-	  "f" => "a method function that treats several arguments as a single argument, i.e., as a sequence."
-	  },
-     "Here is an example.",
-     EXAMPLE {
-	  "f = method(Dispatch => Thing);",
-	  "f ZZ := i -> -i;",
-	  "f Sequence := S -> reverse S;",
-	  "f 44",
-	  "f(3,4,5,6)"
-	  },
-     "Normally, at most three arguments could be handled by such a method
-     function, and the types would have to be considered separately."
-     }
 
 document {
-     Key => symbol typicalValues,
+     Key => "typicalValues",
      Headline => "types of values returned by functions",
      "A hash table used to store information about the type of values
      typically returned by functions and methods.",
@@ -327,55 +305,7 @@ document {
      EXAMPLE "typicalValues#isRing",
      SeeAlso => { "specifying typical values" }
      }
-document {
-     Key => TypicalValue,
-     "A symbol used as a name for optional arguments to some functions."
-     }
-document {
-     Key => [method,TypicalValue],
-     Headline => "specify return value type",
-     TT "TypicalValue => X", " -- an option to ", TO "method", "
-     which specifies that values returned by the method function will
-     typically be of type ", TT "X", ".",
-     PARA{},
-     "This information is used only to build documentation automatically, and
-     is stored in the hash table ", TO "typicalValues", ".",
-     SeeAlso => { "specifying typical values" }
-     }
-document {
-     Key => method,
-     Headline => "make a new method function",
-     Usage => "f = method()",
-     PARA{},
-     "The code above creates a method function which takes up to three 
-     arguments, looking up the appropriate method according to the classes of 
-     the arguments, with inheritance.  To install a method for two arguments,
-     (x,y), of classes X and Y, use code like this:",
-     PRE "     f(X,Y) := (x,y) -> ...",
-     "where '...' represents the body of the function you wish to install.
-     The syntax for one or three arguments is analogous.  For a single
-     argument ", TT "x", " of class ", TT "X", ", one could omit the parentheses, and write:",
-     PRE "     f X := (x) -> ...",
-     "the effect of which happens to be the same as that of",
-     PRE "     X#f := (x) -> ...",
-     PARA{},
-     SeeAlso => {"methods" }
-     }
-document {
-     Key => [method,Associative],
-     Headline => "allows associative methods to be created",
-     TT "f = method(Associative=>true)", " -- creates an associative
-     method which will call upon the appropriate binary methods for its arguments 
-     two at a time.",
-     PARA{},
-     "In the following example we install a method which isn't associative
-     to illustrate the order of evaluation.",
-     EXAMPLE {
-	  ///f = method(Associative => true)///,
-	  ///f(String,String) := (i,j) -> "(" | i | ")," | j;///,
-      	  ///f("a","b","c","d")///,
-	  }
-     }
+
 document {
      Key => size,
      Headline => "the size of an object",
@@ -1029,7 +959,10 @@ document {
  	  EXAMPLE lines ///
 	       new M
  	  ///
-	  )
+	  ),
+     Subnodes => {
+	  TO "newClass"
+	  }
      }
 
 document {

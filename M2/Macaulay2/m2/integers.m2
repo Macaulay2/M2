@@ -37,7 +37,7 @@ ZZ.random = () -> random 21 - 10
 oldgcd := gcd
 erase symbol gcd
 
-gcd = method(Associative => true)
+gcd = method(Binary => true)
 gcd List := x -> gcd toSequence x
 gcd(ZZ,ZZ) := ZZ => (x,y) -> oldgcd(x,y)
 gcd(ZZ,QQ) := QQ => (x,y) -> gcd(x * denominator y, numerator y) / denominator y

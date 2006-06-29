@@ -16,6 +16,8 @@ Changes made, most recent ones first:
 
 New in 0.9.9:
 
+Option 'Associative' for 'method' has been renamed to 'Binary'.
+
 The search for methods to handle 'new A of B from c' or 'new A from B' is now
 conducted by looking through ancestors of B rather than of the class of B.
 After all, B is a type and is to be used as the parent of the new object
