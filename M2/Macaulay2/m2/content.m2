@@ -1,6 +1,6 @@
 protect qname 						    -- an internal key
 
--- from xhtml-math11.dtd:
+-- from xhtml-math11-f.dtd:
 
 PCDATA = set {"#PCDATA"}
 String.qname = "#PCDATA"
