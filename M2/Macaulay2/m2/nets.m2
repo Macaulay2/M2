@@ -62,11 +62,13 @@ net Function := toString Function := f -> (
      else concatenate("--Function[", t#0, ":", toString t#1| ":", toString t#2, "-", toString t#3| ":", toString t#4, "]--")
      )
 
-toExternalString Manipulator := toString Manipulator := f -> (
-     if ReverseDictionary#?f then return toString ReverseDictionary#f else "--Manipulator--"
+toExternalString Manipulator := f -> (
+     if ReverseDictionary#?f then return toString ReverseDictionary#f else concatenate("new Manipulator from ",toExternalString toList f)
+     )
+toString Manipulator := f -> (
+     if ReverseDictionary#?f then return toString ReverseDictionary#f else concatenate("new Manipulator from ",toString toList f)
      )
 -----------------------------------------------------------------------------
-toExternalString Thing := toString
 toExternalString String := format
 
 toString Net := x -> demark("\n",unstack x)

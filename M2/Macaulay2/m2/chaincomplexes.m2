@@ -612,16 +612,22 @@ betti Matrix := f -> betti chainComplex f
 betti GroebnerBasis := G -> betti generators G
 betti Ideal := I -> betti generators I
 betti Module := M -> betti presentation M
-betti Resolution := X -> (
-     bettiType := 0;
-     w := rawGBBetti(X.RawComputation, bettiType);
+
+rawBetti = (computation, type) -> (
+     w := rawGBBetti(computation, type);
      lo := w#0;
      hi := w#1;
      len := w#2;
      w = drop(w,3);
      w = pack(len+1,w);
      w = table(lo .. hi, 0 .. len, (i,j) -> (j,{i+j}) => w#(i-lo)#j);
-     new BettiTally from select(toList splice w, pair -> pair#-1 != 0))
+     w = toList splice w;
+     w = select(w, pair -> pair#-1 != 0);
+     new BettiTally from w)
+
+undocumented' (betti,Resolution)
+betti Resolution := X -> rawBetti(X.RawComputation, 0)
+
 betti ChainComplex := C -> (
      if C.?Resolution and degreeLength ring C === 1 then (
      	  repair := (ring C).Repair;

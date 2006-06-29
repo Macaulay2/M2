@@ -328,7 +328,7 @@ document {
      Key => status,
      Headline => "status of a resolution computation",
      TT "status C", " -- displays the status of the computation of a
-     chain complex C constructed by ", TO "resolution", ".  The display has
+     chain complex ", TT "C", " constructed by ", TO "resolution", ".  The display has
      the same shape as the display produced by ", TO "betti", ", but
      the number(s) displayed in each degree differ.",
      PARA{},
@@ -340,7 +340,12 @@ document {
 	       toString (options status).PairsRemaining},
 	  {TO Monomials, " -- display the number of monomials, default value ",
 	       toString (options status).Monomials}
-	  }
+	  },
+     EXAMPLE lines ///
+          R = QQ[a..d]
+	  D = res coker random(R^2,R^{4:-2})
+	  status(D, TotalPairs => true, PairsRemaining => true, Monomials => true)
+     ///
      }
 
 document {

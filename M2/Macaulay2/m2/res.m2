@@ -192,58 +192,45 @@ remaining := g -> rawGBBetti(raw g,2)
 nmonoms := g -> rawGBBetti(raw g,3)
 
 status Resolution := options -> (r) -> (
-     v := {};
-     lab := {};
-     if options#TotalPairs     === true then (
-	  v = append(v,getpairs r);
-	  lab = append(lab,"total pairs");
+     r = raw r;
+     b := new BettiTally;
+     lab := ();
+     f := (label,type) -> (
+	  b = merge( applyValues(b, x->append(x,0)), applyValues(rawBetti(r,type), x->splice{#lab:0,x}), plus);
+	  lab = append(lab,label);
 	  );
-     if options#PairsRemaining === true then (
-	  v = append(v,remaining r);
-	  lab = append(lab,"pairs remaining");
-	  );
-     if options#Monomials      === true then (
-	  v = append(v,nmonoms r);
-	  lab = append(lab,"monomials");
-	  );
-     numops := # v;
-     if numops === 1 
-     then lab = concatenate( "        : ", lab)
-     else lab = concatenate( "        : (", between(",",lab), ")" );
+     if options#TotalPairs     === true then f("total pairs",1);
+     if options#PairsRemaining === true then f("pairs remaining",2);
+     if options#Monomials      === true then f("monomials",3);
+     numops := # lab;
      if numops === 0 then error "expected at least one option to be true";
-     ss := v#0;
-     minrow := ss_0;
-     maxrow := ss_1;
-     mincol := 0;
-     maxcol := ss_2;
-     leftside := apply(
-	  splice {"totals:", apply(minrow .. maxrow, i -> toString i | ":")},
-	  s -> (9-# s,s));
-     v = transpose v;
-     v = drop(v,3);
-     v = pack(maxcol-mincol+1,v);
-     totals := apply(transpose v, sum);
-     v = prepend(totals,v);
-     v = transpose v;
-     v = applyTable(v, toSequence);
-     if numops === 1
-     then v = applyTable(v,(i) -> if i === 0 then "." else toString i)
-     else v = applyTable(v,args -> concatenate("(", between(",",apply(args,toString)), ")" ));
-     just := (
-	  if numops === 1
-	  then (wid,s) -> (wid - # s, s)  -- right justify
-	  else (wid,s) -> (			  -- center
-	       n := # s;
-	       w := (wid - n + 1)//2; 
-	       (w, s, wid-w-n)));
-     v = apply(v, col -> apply(col, s -> just(1 + max apply(col, i -> #i), s)));
-     v = prepend(leftside,v);
-     v = transpose v;
-     v = apply(v, row -> (row,"\n"));
-     << lab << endl;
-     printString(stdio,v);
-     << endl;
-     )
+     b = applyKeys( b, (i,d) -> (first d - i, i)); -- skew the degrees in the usual way; this way the Koszul complex occupies a horizontal line instead of a diagonal line
+     k := keys b;
+     fi := first \ k;
+     la := last  \ k;
+     mincol := min la;
+     mincol = min(0,mincol);
+     maxcol := max la;
+     minrow := min fi;
+     maxrow := max fi;
+     zer := toList (numops : 0);
+     b = table(toList (minrow .. maxrow), toList (mincol .. maxcol), (i,j) -> if b#?(i,j) then b#(i,j) else zer);
+     leftside := apply( splice {"total:", apply(minrow .. maxrow, i -> toString i | ":")}, s -> (6-# s,s));
+     totals := apply(transpose b, sum);
+     b = transpose prepend(totals,b);
+     b = applyTable(b, unsequence @@ toSequence);
+     zer = unsequence toSequence zer;
+     b = applyTable(b, bt -> if bt === zer then "." else toString bt);
+     b = apply(b, col -> ( 
+	       wid := 1 + max apply(col, i -> #i); 
+	       apply(col, 
+		    if numops == 1
+		    then s -> (wid-#s, s)		    -- right justify
+		    else s -> ( n := # s; w := (wid - n + 1)//2; (w, s, wid-w-n)) -- center
+		    )
+	       ));
+     b = transpose prepend(leftside,b);
+     toString unsequence lab || "" || stack apply(b, concatenate))
 
 status ChainComplex := options -> (C) -> status(C.Resolution, options)
 
