@@ -56,7 +56,7 @@ div.waystouse {
 /* css tables */
 
 div.list {
-  display: table;
+     /* display: table; */
 }
 
 dl.element {

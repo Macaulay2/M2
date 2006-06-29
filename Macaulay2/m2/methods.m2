@@ -14,7 +14,7 @@ silentRobustNetWithClass = silentRobustNet = (wid,ht,sec,y) -> simpleToString y
 --
 
 MethodFunction = new Type of FunctionClosure
-MethodFunctionWithOptions = new Type of FunctionClosure
+MethodFunctionWithOptions = new Type of MethodFunction
 
 dispatcherFunctions = {}
 
@@ -35,18 +35,17 @@ noMethod := (meth,args,outputs) -> error toString stack join( {line0 meth},
 	       )})
 badClass := (meth,i,args) -> (
      if i == -1 then error(silentRobustString(45,3,meth),": expected an output class, but got: ", silentRobustString(45,3,args))
-     else error(silentRobustString(45,3,meth),": expected argument ",toString (i+1)," to be an output class, but it was: ", silentRobustString(45,3,args#i)))
+     else error(silentRobustString(45,3,meth),": expected argument ",toString (i+1)," to be a type, but it was: ", silentRobustString(45,3,args#i)))
 
 methodDefaults := new OptionTable from {
-     SingleArgumentDispatch => false,
-     Associative => false,
+     Binary => false,
      TypicalValue => Thing,
      Options => null,
-     Dispatch => {}					    -- Thing or Type (for single arg dispatch) or list of Thing or Type (for multiple inheritance)
+     Dispatch => {Thing,Thing,Thing,Thing}                  -- Thing or Type (for single arg dispatch) or list of Thing or Type (for multiple inheritance)
      	       	    	      	   	     	       	    -- if a list, it's assumed to continue with the default, which is Thing ...
      }
 
-AssociativeNoOptions := (outputs) -> (
+BinaryNoOptions := (outputs) -> (
      methodFunction := newmethod1(args -> noMethod(methodFunction,args,outputs),outputs);
      binaryLookup := (x,y) -> (
 	  -- Common code for every associative method without options
@@ -83,7 +82,7 @@ SingleArgWithOptions := (opts,outputs) -> (
 	  );
      methodFunction)
 
-AssociativeWithOptions := (opts,outputs) -> (
+BinaryWithOptions := (opts,outputs) -> (
      -- chkopts opts;
      error "associative methods with options not implemented yet"
      )
@@ -113,17 +112,15 @@ method = methodDefaults >> opts -> args -> (
      chk := c -> c === Thing or c === Type;
      if not if instance(opts.Dispatch,List) then all'(opts.Dispatch, chk) else chk opts.Dispatch
      then error "expected Dispatch option to be: Thing, Type, or a list of those";
-     if not instance(opts.SingleArgumentDispatch, Boolean) then error "expected SingleArgumentDispatch option to be true or false";
-     if opts.SingleArgumentDispatch === true then error "method: the SingleArgumentDispatch option has been removed; use 'Dispatch => Thing' instead";
-     singleArgDispatch := opts.SingleArgumentDispatch or chk opts.Dispatch;
+     singleArgDispatch := chk opts.Dispatch;
      outputs := if not singleArgDispatch then apply(opts.Dispatch, c -> c === Type) else opts.Dispatch === Type;
      methodFunction := (
 	  if opts.Options === null then (
-       	       if opts.Associative then AssociativeNoOptions(outputs)
+       	       if opts.Binary then BinaryNoOptions(outputs)
        	       else if singleArgDispatch then newmethod1 (args -> noMethodSingle(methodFunction,args,outputs), outputs)
        	       else MultipleArgsNoOptions(opts, outputs))
 	  else (
-       	       if opts.Associative then AssociativeWithOptions(opts.Options,outputs)
+       	       if opts.Binary then BinaryWithOptions(opts.Options,outputs)
        	       else if singleArgDispatch then SingleArgWithOptions (opts.Options, outputs)
        	       else MultipleArgsWithOptions(opts, opts.Options, outputs)
 	       )

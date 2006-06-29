@@ -52,6 +52,8 @@ document {
 	      TO "installing methods",
 	      TO "binary methods",
 	      TO "inheritance",
+	      TO "making new classes",
+	      TO "new",
 	      TO "printing and formatting for new classes",
 	      TO "making a new method function",
 	  "input and output",

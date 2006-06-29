@@ -1095,9 +1095,6 @@ document {
 	  TO "parent",
 	  TO "instance",
 	  TO "ancestor",
-	  TO "making new classes",
-	  TO "new",
-	  TO "newClass",
 	  },
      SeeAlso => { "uniform", "Thing", "Nothing", "Type", "MutableList", "MutableHashTable", "SelfInitializingType" }
      }
@@ -1267,38 +1264,6 @@ document {
      PARA{},
      "The same search order applies to method functions defined with
      ", TO "method", "."
-     }
-
-document {
-     Key => [method,Options],
-     Headline => "method functions with optional arguments",
-     Usage => "f = method(Options => {a=>x, b=>y, ...})",
-     Inputs => { { TT "{a=>x, b=>y, ...}", ", a list of names ", TT "a", ", ", TT "b", ", ..., for optional
-	       arguments with default values ", TT "x", ", ", TT "y", ", ... ." } },
-     Outputs => { "f" => "a method function that accepts optional arguments" },
-     "The list of options could be replaced by the corresponding ", TT "OptionTable", ".",
-     PARA{},
-     "The methods installed for this method function should be written in
-     the form ", TT "opts -> args -> (...)", ".  The argument ", TT "args", "
-     will be assigned a hash table of type ", TO "OptionTable", " containing 
-     the optional argument names and their current values.  For example,
-     in the body of the function, the current value for the argument named
-     ", TT "b", " can be recovered with ", TT "opts#b", ", or with ", TT "opts.b", ",
-     in case ", TT "b", " is known to be a global symbol.  Warning: be careful 
-     not to change the value of ", TT "b", ", or the code will stop working; it
-     would be a good idea to protect it.  The default option table for ", TT "f", " 
-     can be recovered with the function ", TO "options", ".",
-     PARA{},
-     "In this example we make a linear function of a single real variable whose 
-     coefficients are provided as optional arguments.",
-     EXAMPLE {
-	  "protect Slope; protect Intercept;",
-	  "f = method(Options => {Slope => 1, Intercept => 1})",
-      	  "f RR := o -> x -> o.Slope * x + o.Intercept",
-      	  "f(5.)",
-      	  "f(5.,Slope=>100)",
-	  "options f",
-	  }
      }
 
 document {
