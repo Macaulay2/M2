@@ -218,6 +218,12 @@ toExternalString Symbol := s -> (
      n := simpleToString s;
      if isGlobalSymbol n and getGlobalSymbol n === s then if value s === s then n else concatenate("symbol ", n)
      else error("can't convert local variable or shadowed or invisible global variable '",n,"' to external string"))
+toExternalString Boolean := simpleToString
+toExternalString Nothing := simpleToString
+
+toExternalString Thing := x -> (
+     if ReverseDictionary#?x then return toString ReverseDictionary#x;
+     error("can't convert anonymous object of class ",toString class x," to external string"))
 
 options = method(Dispatch => Thing, TypicalValue => OptionTable)
 setup(Dispatch => Thing, {max,min,directSum,intersect,vars})

@@ -3,6 +3,7 @@
 ring Number := class
 degree Number := i -> {}
 conjugate Number := identity
+toExternalString Number := simpleToString
 
 ZZ.RawRing = rawZZ()
 protect isBasic
