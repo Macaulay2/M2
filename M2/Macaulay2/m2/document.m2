@@ -937,7 +937,7 @@ SYNOPSIS = method(
      Dispatch => Thing,
      TypicalValue => Hypertext,
      Options => {
-	  Heading => "",
+	  Heading => "Synopsis",
 	  Usage => "",
 	  Inputs => {},
 	  Outputs => {},
@@ -949,16 +949,18 @@ SYNOPSIS = method(
      )
 SYNOPSIS List := o -> x -> SYNOPSIS splice (o, toSequence x)
 SYNOPSIS Thing := SYNOPSIS Sequence := o -> x -> (
-     proc := processInputOutputItems(,);
      o = applyPairs(o, (k,v) -> (k,fixupTable#k v));
-     r := DIV nonnull {
-	  if o.Heading =!= "" then SUBSECTION o.Heading,
-	  o.Usage,
-	  if # o.Inputs > 0 then DIV { "Inputs:", UL ( proc \ o.Inputs ) },
-	  if # o.Consequences > 0 and #o.Consequences > 0 then DIV { "Consequences:", UL o.Consequences },
-	  if # o.Outputs > 0 then DIV { "Outputs:", UL ( proc \ o.Outputs ) },
-	  x};
-     if #r > 0 then fixup r)
+     proc := processInputOutputItems(,);
+     fixup DIV nonnull {
+	  SUBSECTION o.Heading,
+	  UL {
+	       LI o.Usage,
+	       if # o.Inputs > 0 then LI { "Inputs:", UL ( proc \ o.Inputs ) },
+	       if # o.Consequences > 0 and #o.Consequences > 0 then LI { "Consequences:", UL o.Consequences },
+	       if # o.Outputs > 0 then LI { "Outputs:", UL ( proc \ o.Outputs ) }
+	       },
+	  x
+	  })
 
 briefSynopsis := key -> (
      -- we still want to put
