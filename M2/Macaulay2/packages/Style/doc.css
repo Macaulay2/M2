@@ -72,9 +72,13 @@ dt.heading {
   margin-right: 1em;
 }
 
+/*
+
 dt.heading:after {
   content: ":";
 }
+
+*/
 
 dd.value {
   display: table-cell;

@@ -18,6 +18,7 @@ debug Core
 
 SchurRing = new Type of EngineRing
 SchurRing.synonym = "Schur ring"
+monoid SchurRing := o -> R -> R.monoid
 expression SchurRing := S -> new FunctionApplication from { schurRing, (S.Symbol, numgens monoid S) }
 toExternalString SchurRing := R -> toString expression R
 toString SchurRing := R -> (

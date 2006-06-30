@@ -96,6 +96,16 @@ tryload := (filename,loadfun,notify) -> pathdo(loadfun,path,filename, fullfilena
 load = (filename) -> (tryload(filename,simpleLoad,notify);)
 input = (filename) -> (tryload(filename,simpleInput,false);)
 needs = s -> if not filesLoaded#?s then load s
+
+
+lastLN := 0
+lastWI := 0
+promptWidth = () -> (
+     if lineNumber === lastLN then lastWI
+     else (
+	  lastLN = lineNumber;
+	  lastWI = max \\ width \ lines ZZ.InputPrompt lineNumber))
+
      
 load "loads.m2"
 

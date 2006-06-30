@@ -996,11 +996,14 @@ method1234c(e:Expr,env:Sequence):Expr := (
      else buildErrorPacket("env.3: invalid list"));
 newmethod1234c(e:Expr):Expr := (
      when e is env:Sequence do (
-	  -- see above for description of elements of env, except that env.0 is supplanted by us if null
+	  -- see above for description of elements of env, except that env.0 is supplanted by us if it is null or a type of CompiledFunctionClosure
 	  if length(env) == 5
 	  then (
 	       when env.0
 	       is Nothing do nothing
+	       is typ:HashTable do (
+		    if !ancestor(typ,compiledFunctionClosureClass) then return WrongArg(1,"a function or a type of CompiledFunctionClosure");
+		    )
 	       is CompiledFunction do nothing
 	       is CompiledFunctionClosure do nothing
 	       is FunctionClosure do nothing
@@ -1032,7 +1035,12 @@ newmethod1234c(e:Expr):Expr := (
 		    	 then Expr(CompiledFunctionClosure(method1234o,nextHash(),env))
 		    	 else Expr(CompiledFunctionClosure(method1234,nextHash(),env)))
 		    else Expr(CompiledFunctionClosure(method1234c,nextHash(),env));
-		    if env.0 == nullE then env.0 = cfc;
+		    if env.0 == nullE then env.0 = cfc
+		    else when env.0 is typ:HashTable do (
+			 if typ != compiledFunctionClosureClass then cfc = SpecialExpr(typ,cfc);
+			 env.0 = cfc;
+			 )
+		    else nothing;
 		    cfc)
 	       else WrongArg(4,"a list of boolean values")
 	       )

@@ -490,7 +490,7 @@ export {
 	symbol UseHilbertFunction,
 	symbol Variable,
 	symbol VariableBaseName,
-	symbol VariableOrder,
+	-- symbol VariableOrder,
 	symbol Variables,
 	symbol Variety,
 	symbol Vector,

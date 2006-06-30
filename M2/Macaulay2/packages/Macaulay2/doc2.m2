@@ -941,7 +941,12 @@ document {
      Usage => "ancestor(x,y)",
      Inputs => { "x" => Type, "y" => Type },
      Outputs => { {"whether ", TT "y", " is an ancestor of ", TT "x"} },
-     "The ancestors of ", TT "x", " are ", TT "x", ", ", TT "parent x", ", ", TT "parent parent x", ", and so on."
+     PARA {
+     	  "The ancestors of ", TT "x", " are ", TT "x", ", ", TT "parent x", ", ", TT "parent parent x", ", and so on."
+	  },
+     PARA {
+	  "If ", TT "y", " is an ancestor of ", TT "x", ", then we also say that ", TT "x", " is a ", EM "specialization", " of ", TT "y", "."
+	  }
      }
 
 document {

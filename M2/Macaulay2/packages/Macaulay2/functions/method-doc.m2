@@ -9,11 +9,10 @@ document {
 	       Alternatively, the list of options could be replaced by the corresponding ", TO "OptionTable", "." },
 	  Binary => Boolean => { "whether the method is to be binary: for three arguments or more the result will be computed by calling binary methods installed for
 	       ", TT "f", " with two arguments at a time." },
-	  Dispatch => { "the method for getting a list of types from the parameters; the value of this option should be ", TO "Thing", ", ", TO "Type", "
-	       (which indicates that a sequence should be regarded as a single argument), or a list, of length up
-	       to 4, whose elements are ", TO "Thing", " or ", TO "Type", " (which indicates that the elements of a sequence are to be interpreted
-	       as separate arguments).  Parameters corresponding to ", TO "Thing", " or to a position beyond the end of the list
-	       are dispatched according to their ", TO "class", ", and parameters
+	  Dispatch => { "the method for getting a list of types from the parameters; the value of this option should be ", TO "Thing", " or ", TO "Type", "
+	       to indicate that a sequence should be regarded as a single argument, or, if the elements of a sequence are to be regarded as separate parameters,
+	       a list whose elements are ", TO "Thing", " or ", TO "Type", ".  Parameters corresponding to ", TO "Thing", " or to a position beyond the end of the list
+	       are dispatched according to their ", TO "class", ", whereas parameters
 	       corresponding to ", TO "Type", " are expected to be types (actually, hash tables) and are used directly in the search for methods; see
 	       ", TO "inheritance", "."
 	       }

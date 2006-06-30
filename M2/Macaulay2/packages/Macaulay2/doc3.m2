@@ -413,6 +413,149 @@ document {
      "We intend to add parsing precedences to this table and eliminate ", TO "seeParsing", "."
      }
 
+undocumented lift'
+undocumented promote'
+undocumented liftable'
+
+undocumented methods lift'
+undocumented methods promote'
+undocumented methods liftable'
+
+document { Key => MethodFunction, Headline => "a type of method function", "Functions of this type are created by ", TO "method", "." }
+document { Key => MethodFunctionWithOptions, Headline => "a type of method function", "Functions of this type are created by ", TO "method", "." }
+undocumented (methodOptions, MethodFunctionWithOptions)
+undocumented (methodOptions, MethodFunction)
+document { Key => {(methodOptions, Function),methodOptions},
+     Headline => "recover the options used when a method function was created",
+     Usage => "methodOptions f",
+     Inputs => { "f" },
+     Outputs => {{ "the options used when ", TT "f", " was created by ", TO "method", "" }},
+     EXAMPLE lines ///
+     	  methodOptions source
+     	  methodOptions res
+     ///
+     }
+
+document { Key => ExampleItem, Headline => "a type of hypertext for holding example inputs awaiting outputs" }
+document { Key => {(numRows, MutableMatrix),numRows}, Headline => "number of rows in a mutable matrix",
+     Usage => "numRows m", Inputs => { "m" }, Outputs => {{ "the number of rows in ", TT "m" }}}
+document { Key => {(numColumns, MutableMatrix),numColumns}, Headline => "number of columns in a mutable matrix",
+     Usage => "numColumns m", Inputs => { "m" }, Outputs => {{ "the number of columns in ", TT "m" }}}
+document { Key => {mutableMatrix,(mutableMatrix, MutableMatrix),(mutableMatrix, Matrix),(mutableMatrix, List)},
+     Headline => "make a mutable matrix",
+     Usage => "mutableMatrix m",
+     Inputs => { "m" => {ofClass{Matrix, MutableMatrix, List}}},
+     Outputs => {{ "a new mutable matrix whose entries are obtained from ", TT "m", ".  If ", TT "m", " is a list, it should
+	       be a doubly nested list (table) of ring elements, all from the same ring." }},
+     EXAMPLE lines ///
+     	  f = mutableMatrix {{1,2,3,4}}
+	  f_(0,2)
+	  f_(0,2) = 33
+	  f
+	  R = QQ[a..z]
+	  mutableMatrix genericMatrix(R,3,3)
+     ///
+     }
+document { Key => {(randomMutableMatrix, ZZ, ZZ, RR, ZZ),randomMutableMatrix},
+     Headline => "a random mutable matrix of integers",
+     Usage => "randomMutableMatrix(nrows,ncols,zerof,max)",
+     Inputs => {
+	  "nrows",
+	  "ncols",
+	  "zerof" => { "between 0 and 1" },
+	  "max"
+	  },
+     Outputs => {
+	  {"a random mutable ", TT "nrows", " by ", TT "ncols", " matrix of integers.  The absolute value of the entries is bounded by ", TT "max", ", and
+	       the frequency of entries equal to zero is given by ", TT "zerof", "." }
+	  },
+     EXAMPLE lines ///
+          randomMutableMatrix(10,15,.9,100)
+     ///
+     }
+
+document { Key => {(mutableZero, Ring, ZZ, ZZ),mutableZero}, Headline => "make a mutable matrix filled with zeroes",
+     Usage => "mutableZero(R,nrows,ncols)",
+     Inputs => { "R","nrows","ncols" },
+     Outputs => {{"an ", TT "nrows", " by ", TT "ncols", " mutable matrix filled with zeroes from the ring ", TT "R" }},
+     EXAMPLE lines ///
+         m = mutableZero(QQ,10,20)
+	 m_(5,5) = 11/13
+	 m
+     ///
+     }
+document { Key => {(mutableIdentity, Ring, ZZ),mutableIdentity}, Headline => "make a mutable identity matrix",
+     Usage => "mutableIdentity(R,nrows)",
+     Inputs => { "R","nrows" },
+     Outputs => {{"an ", TT "nrows", " by ", TT "nrows", " mutable identity matrix filled elements of the ring ", TT "R" }},
+     EXAMPLE lines ///
+         m = mutableIdentity(QQ,10)
+	 m_(5,5) = 11/13
+	 m
+     ///
+     }
+
+undocumented (pretty, Thing)
+document { Key => pretty, Headline => "a pretty printer", "This function is experimental and under development." }
+
+document { Key => {(symlinkDirectory, String, String),symlinkDirectory,[symlinkDirectory,Undo],[symlinkDirectory, Exclude],
+	  [symlinkDirectory, FollowLinks]}, 
+     Headline => "make symbolic links for all files in a directory tree",
+     Usage => "symlinkDirectory(src,dst)",
+     Inputs => {
+	  "src" => "the path to an existing directory, the root of the source directory tree",
+	  "dst" => "a path to the root of the destination directory tree, which may not exist yet",
+	  Exclude => {"a string containing a regular expression, or a list of such strings.  If the base part of the name of a file in the source tree
+	       matches one of the regular expressions, then no link to it is created"
+	       },
+	  Undo => Boolean => {"whether to undo the symbolic links created in a previous application of this function.  The directories in the destination
+	       directory tree will remain."
+	       },
+	  FollowLinks => Boolean => {"whether to follow symbolic links in the source tree to directories"},
+	  Verbose => Boolean => {"whether to report the creation or deletion of each symbolic link"}
+	  },
+     Consequences => {
+	  {"The directory tree rooted at ", TT "src", " is duplicated by a directory tree rooted at ", TT "dst", ".  The files in the source tree are represented by
+	       relative symbolic links in the destination tree to the original files in the source tree."
+	       }
+	  },
+     EXAMPLE lines ///
+     	  src = temporaryFileName() | "/"
+	  dst = temporaryFileName() | "/"
+	  makeDirectory (src|"a/")
+	  makeDirectory (src|"b/")
+	  makeDirectory (src|"b/c/")
+	  src|"a/f" << "hi there" << close
+	  src|"a/g" << "hi there" << close
+	  src|"b/c/g" << "ho there" << close
+	  symlinkDirectory(src,dst,Verbose=>true)
+	  get (dst|"b/c/g")
+	  symlinkDirectory(src,dst,Verbose=>true,Undo=>true)
+	  rm = d -> if isDirectory d then removeDirectory d else removeFile d
+	  scan(reverse findFiles src, rm)
+	  scan(reverse findFiles dst, rm)
+     ///
+     }
+
+document { Key => symlinkFile, Headline => "make a symbolic link to a file",
+     Usage => "symlinkFile(src,dst)",
+     Inputs => {
+	  "src" => String,
+	  "dst" => String
+	  },
+     Consequences => {
+	  {"a symbolic link at the location in the directory tree specified by ", TT "dst", " is created, pointing to ", TT "src"}
+	  },
+     EXAMPLE lines ///
+     	  fn = temporaryFileName()
+	  symlinkFile("qwert", fn)
+	  fileExists fn
+	  readlink fn
+	  removeFile fn
+     ///
+     }
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

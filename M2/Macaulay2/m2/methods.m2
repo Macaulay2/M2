@@ -13,8 +13,8 @@ silentRobustString = (wid,sec,y) -> simpleToString y
 silentRobustNetWithClass = silentRobustNet = (wid,ht,sec,y) -> simpleToString y
 --
 
-MethodFunction = new Type of FunctionClosure
-MethodFunctionWithOptions = new Type of MethodFunction
+MethodFunction = new Type of CompiledFunctionClosure
+MethodFunctionWithOptions = new Type of FunctionClosure
 
 dispatcherFunctions = {}
 
@@ -96,11 +96,9 @@ MultipleArgsWithOptions := (methopts,opts,outputs) -> (
 MultipleArgsWithOptionsGetMethodOptions := meth -> (frames (frames meth)#0#1)#0#0 -- this recovers the value of methopts
 
 MultipleArgsNoOptions := (methopts,outputs) -> (
-     local innerMethodFunction;
-     methodFunction := new MethodFunction from (x -> innerMethodFunction x);
-     innerMethodFunction = newmethod1234c(methodFunction,args -> noMethod(methodFunction,args,outputs), (i,args) -> badClass(methodFunction,i,args), outputs, false);
-     methodFunction)
-MultipleArgsNoOptionsGetMethodOptions := meth -> (frames meth)#0#0 -- this recovers the value of methopts
+     methodFunction := newmethod1234c(MethodFunction,args -> noMethod(methodFunction,args,outputs), (i,args) -> badClass(methodFunction,i,args), outputs, false)
+     )
+MultipleArgsNoOptionsGetMethodOptions := meth -> (frames (frames meth)#0#1)#0#0
 
 all' := (x,f) -> (
      r := true;
@@ -457,7 +455,7 @@ info = method(Dispatch => Thing, TypicalValue => String)
 -----------------------------------------------------------------------------
 -- method options
 
-methodOptions = method()
+methodOptions = method(TypicalValue => OptionTable)
 methodOptions Function := f -> null
 methodOptions MethodFunctionWithOptions := MultipleArgsWithOptionsGetMethodOptions
 methodOptions MethodFunction := MultipleArgsNoOptionsGetMethodOptions

@@ -147,20 +147,6 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [symmetricAlgebra, VariableOrder],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => [symmetricAlgebra, DegreeRank],
      Headline => "",
      Usage => "",

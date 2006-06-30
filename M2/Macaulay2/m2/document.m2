@@ -532,7 +532,7 @@ fixupTable := new HashTable from {
 	  -- use CSS tables
 	  DIV { "class" => "list",
 	       DL { "class" => "element",
-		    DT { "class" => "heading", "Usage" },
+		    DT { "class" => "heading", "Usage: " },
 		    DD { "class" => "value", SPAN between_(BR{}) (TT \ nonempty separate val) }
 		    }}
 --	  TABLE TR {

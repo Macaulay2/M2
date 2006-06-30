@@ -2,6 +2,9 @@ protect qname 						    -- an internal key
 
 -- from xhtml-math11-f.dtd:
 
+-- the one I looked at first:           "http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd"
+---the newer version that works better: "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd"
+
 PCDATA = set {"#PCDATA"}
 String.qname = "#PCDATA"
 
@@ -12,10 +15,12 @@ InlineExtra = set {}
 Ruby = set { "ruby" }
 
 -- <!ENTITY % Inlform.class "| %input.qname; | %select.qname; | %textarea.qname; | %label.qname; | %button.qname;" >
-Inlform = set { "input", "select", "textarea", "label", "button" }
+---<!ENTITY % InlForm.class "| %input.qname; | %select.qname; | %textarea.qname; | %label.qname; | %button.qname;" >
+InlForm = set { "input", "select", "textarea", "label", "button" }
 
 -- <!ENTITY % Inlspecial.class "| %img.qname; | %map.qname; | %applet.qname;" >
-Inlspecial = set { "img", "map", "applet" }
+---<!ENTITY % InlSpecial.class "| %img.qname; | %map.qname; | %object.qname;" >
+InlSpecial = set { "img", "map", "applet" }
 
 -- <!ENTITY % Anchor.class "| %a.qname;" >
 AnchorClass = set { "a" }
@@ -23,8 +28,9 @@ AnchorClass = set { "a" }
 -- <!ENTITY % I18n.class "| %bdo.qname;" >
 I18nClass = set { "bdo" }
 
--- <!ENTITY % Inlpres.class "| %tt.qname; | %i.qname; | %b.qname; | %big.qname; | %small.qname; | %sub.qname; | %sup.qname;" >
-Inlpres = set { "tt", "i", "b", "big", "small", "sub", "sup" }
+-- <!ENTITY % InlPres.class "| %tt.qname; | %i.qname; | %b.qname; | %big.qname; | %small.qname; | %sub.qname; | %sup.qname;" >
+---<!ENTITY % InlPres.class "| %tt.qname; | %i.qname; | %b.qname; | %big.qname; | %small.qname; | %sub.qname; | %sup.qname;" >
+InlPres = set { "tt", "i", "b", "big", "small", "sub", "sup" }
 
 -- <!ENTITY % Inlphras.class "| %em.qname; | %strong.qname; | %dfn.qname; | %code.qname; | %samp.qname; | %kbd.qname; | %var.qname; | %cite.qname; | %abbr.qname; | %acronym.qname; | %q.qname;" >
 Inlphras = set { "em", "strong", "dfn", "code", "samp", "kbd", "var", "cite", "abbr", "acronym", "q" }
@@ -32,31 +38,40 @@ Inlphras = set { "em", "strong", "dfn", "code", "samp", "kbd", "var", "cite", "a
 -- <!ENTITY % Inlstruct.class "%br.qname; | %span.qname;" >
 Inlstruct = set { "br", "span" }
 
--- <!ENTITY % Inline-noA.class "%Inlstruct.class; %Inlphras.class; %Inlpres.class; %I18n.class; %Inlspecial.class; %Inlform.class; %Ruby.class; %Inline.extra;">
-InlineNoAClass = Inlstruct + Inlphras + Inlpres + I18nClass +          Inlspecial + Inlform + Ruby + InlineExtra
+-- <!ENTITY % Inline-noA.class "%Inlstruct.class; %Inlphras.class; %InlPres.class; %I18n.class; %InlSpecial.class; %InlForm.class; %Ruby.class; %Inline.extra;">
+InlineNoAClass = Inlstruct + Inlphras + InlPres + I18nClass +          InlSpecial + InlForm + Ruby + InlineExtra
 
--- <!ENTITY % Inline.class "%Inlstruct.class; %Inlphras.class; %Inlpres.class; %I18n.class; %Anchor.class; %Inlspecial.class; %Inlform.class; %Ruby.class; %Inline.extra;" >
-InlineClass    = Inlstruct + Inlphras + Inlpres + I18nClass + AnchorClass + Inlspecial + Inlform + Ruby + InlineExtra
+-- <!ENTITY % Inline.class "%Inlstruct.class; %Inlphras.class; %InlPres.class; %I18n.class; %Anchor.class; %InlSpecial.class; %InlForm.class; %Ruby.class; %Inline.extra;" >
+InlineClass    = Inlstruct + Inlphras + InlPres + I18nClass + AnchorClass + InlSpecial + InlForm + Ruby + InlineExtra
 
 -- <!ENTITY % Block.extra "" >
 BlockExtra = set {}
 
 -- <!ENTITY % Blkspecial.class "| %table.qname; | %form.qname; | %fieldset.qname;" >
-Blkspecial = set { "table", "form", "fieldset" }
+---<!ENTITY % Table.class "| %table.qname;" >
+---<!ENTITY % Form.class  "| %form.qname;" >
+---<!ENTITY % Fieldset.class  "| %fieldset.qname;" >
+---<!ENTITY % BlkSpecial.class "%Table.class; %Form.class; %Fieldset.class;" >
+BlkSpecial = set { "table", "form", "fieldset" }
 
 -- <!ENTITY % Blkpres.class "| %hr.qname;" >
-Blkpres = set {"hr"}
+---<!ENTITY % BlkPres.class "| %hr.qname;" >
+BlkPres = set {"hr"}
 
 -- <!ENTITY % Blkphras.class "| %pre.qname; | %blockquote.qname; | %address.qname;" >
-Blkphras = set {"pre", "blockquote", "address" }
+---<!ENTITY % BlkPhras.class "| %pre.qname; | %blockquote.qname; | %address.qname;" >
+BlkPhras = set {"pre", "blockquote", "address" }
 
 -- <!ENTITY % Blkstruct.class "%p.qname; | %div.qname;" >
-Blkstruct = set {"p", "div" }
+---<!ENTITY % BlkStruct.class "%p.qname; | %div.qname;" >
+BlkStruct = set {"p", "div" }
 
--- <!ENTITY % Block.class "%Blkstruct.class; %Blkphras.class; %Blkpres.class; %Blkspecial.class; %Block.extra;">
-BlockClass = Blkstruct + Blkphras + Blkpres + Blkspecial + BlockExtra
+-- <!ENTITY % Block.class "%BlkStruct.class; %BlkPhras.class; %BlkPres.class; %BlkSpecial.class; %Block.extra;">
+---<!ENTITY % Block.class "%BlkStruct.class; %BlkPhras.class; %BlkPres.class; %BlkSpecial.class; %Block.extra;">
+BlockClass = BlkStruct + BlkPhras + BlkPres + BlkSpecial + BlockExtra
 
 -- <!ENTITY % List.class "%ul.qname; | %ol.qname; | %dl.qname;" >
+---<!ENTITY % List.class "%ul.qname; | %ol.qname; | %dl.qname;" >
 ListClass = set {"ul", "ol", "dl" }
 
 -- <!ENTITY % Heading.class "%h1.qname; | %h2.qname; | %h3.qname; | %h4.qname; | %h5.qname; | %h6.qname;" >
@@ -124,9 +139,9 @@ validContent#"h5" =
 validContent#"h6" = HeadingContent
 
 -- <!ENTITY % label.content "( #PCDATA | %input.qname; | %select.qname; | %textarea.qname; | %button.qname; | %Inlstruct.class;
---       %Inlphras.class; %I18n.class; %Inlpres.class; %Anchor.class; %Inlspecial.class; %Inline.extra; %Misc.class; )*" >
+--       %Inlphras.class; %I18n.class; %InlPres.class; %Anchor.class; %InlSpecial.class; %Inline.extra; %Misc.class; )*" >
 -- <!ELEMENT %label.qname;  %label.content; >
-validContent#"label" = PCDATA + set { "input", "select", "textarea", "button", "Inlstruct" } + Inlphras + Inlpres + AnchorClass + InlineExtra + MiscClass
+validContent#"label" = PCDATA + set { "input", "select", "textarea", "button", "Inlstruct" } + Inlphras + InlPres + AnchorClass + InlineExtra + MiscClass
 
 -- <!ENTITY % a.content "( #PCDATA | %Inline-noA.mix; )*" >
 validContent#"a" = PCDATA + InlineNoAClass
