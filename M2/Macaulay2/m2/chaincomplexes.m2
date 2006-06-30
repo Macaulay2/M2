@@ -383,28 +383,20 @@ nullhomotopy ChainComplexMap := ChainComplexMap => f -> (
 poincare ChainComplex := C -> (
      R := ring C;
      S := degreesRing R;
-     G := monoid S;
      use S;
      f := 0_S;
      complete C;
-     scan(keys C, i -> (
-	       if class i === ZZ
-	       then scanPairs(tally degrees C_i, 
-		    (d,m) -> f = f + m * (-1)^i * product(# d, j -> G_j^(d_j)))));
+     scan(keys C, i -> if class i === ZZ then scanPairs(tally degrees C_i, (d,m) -> f = f + m * (-1)^i * product(# d, j -> S_j^(d_j))));
      f)
 
 poincareN ChainComplex := (C) -> (
      s := global S;
      t := global T;
-     G := monoid [s, t_0 .. t_(degreeLength ring C - 1), Inverses=>true, MonomialOrder => RevLex, Global => false];
      -- this stuff has to be redone as in Poincare itself, DRG
-     R := ZZ G;
+     R := ZZ[s, t_0 .. t_(degreeLength ring C - 1), Inverses=>true, MonomialOrder => RevLex, Global => false];
      f := 0_R;
      complete C;
-     scan(keys C, n -> (
-	       if class n === ZZ
-	       then scanPairs(tally degrees C_n, 
-		    (d,m) -> f = f + m * G_0^n * product(# d, j -> G_(j+1)^(d_j)))));
+     scan(keys C, n -> if class n === ZZ then scanPairs(tally degrees C_n, (d,m) -> f = f + m * R_0^n * product(# d, j -> R_(j+1)^(d_j))));
      f )
 
 ChainComplex ** Ring := ChainComplex => (C,S) -> (

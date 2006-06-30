@@ -265,7 +265,7 @@ makeit1 := (opts) -> (
      M : M := (x,y) -> new M from x.RawMonomial : y.RawMonomial;
      M ^ ZZ := (x,n) -> new M from x.RawMonomial ^ n;
      M.use = x -> scan(M.generatorSymbols,M.vars,(sym,val) -> sym <- val);
-     if opts.Global then scan(M.generators, x -> if x <= 1 then error "not all variables are > 1, and Global => true");
+     if opts.Global and not opts.Inverses then scan(M.generators, x -> if x <= 1 then error "not all variables are > 1, and Global => true");
      M)
 
 processDegrees := (degs,degrk,nvars) -> (

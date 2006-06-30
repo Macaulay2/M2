@@ -774,20 +774,18 @@ document {
      this idea into practice.  Nets are used extensively in Macaulay 2
      for formatting, for example, for formatting of polynomials and
      matrices.",
-     PARA{},
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z];",
-	  "f = random(R^1,R^{5:-3})",
-	  },
-     PARA{},
+     EXAMPLE lines ///
+	  R = ZZ/101[x,y,z];
+	  f = random(R^1,R^{5:-3})
+     ///,
      "Output of routines such as ", TO "betti", " and ", TO "net", " that
      return nets can be easily incorporated into more complex displays 
      using standard operations on nets (see ", TO "Net", ").",
-     EXAMPLE {
-	  "C = resolution cokernel f",
-	  "be = betti C",
-	  ///"Betti numbers of " | net C | " are " | be^2///,
-	  },
+     EXAMPLE lines ///
+	  C = resolution cokernel f
+	  be = betti C
+	  "Betti numbers of " | net C | " are " | (net be)^2
+     ///,
      "You could even learn how to display algebraic expressions with nets.",
      EXAMPLE ///"x" | "2"^1///,
      "There is an easier way to display algebraic expressions, using a

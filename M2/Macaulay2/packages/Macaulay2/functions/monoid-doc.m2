@@ -9,9 +9,9 @@ document {
 	  DegreeRank => ZZ => {"the length of each multidegree"},
 	  Degrees => List => {"a list of degrees or multidegrees of the variables.  Each degree is an integers, and each multidegree is a list of integers.
 	       Degrees will be converted into multidegrees of length 1."},
-	  Global => Boolean => {"whether this ring is a global ring.  If it is a global ring, then an error is signalled if any of the variables are not
-	       greater than 1 in the monomial ordering."},
 	  Inverses => Boolean => {"whether negative exponents will be allowed, making the monoid into a group"},
+	  Global => Boolean => {"whether this ring is to be a global ring.  If it is a global ring, and the Inverses=>true is not specified, then
+	       an error is signalled if any of the variables are not greater than 1 in the monomial ordering, as required by the standard theory of Groebner bases."},
 	  MonomialOrder => List => {"an option for specifying the monomial ordering, see ", TO "MonomialOrder"},
 	  MonomialSize => ZZ => {"the minimum number of bits to be used for storing each exponent in a monomial.  The exponents are stored as signed binary numbers, so
 	       ", TT "n", " bits allows an exponent as large as 2", SUP "n-1", "-1.  Useful values are 8, 16, and 32."},

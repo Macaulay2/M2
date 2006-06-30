@@ -244,12 +244,12 @@ document {
      SUBSECTION "local orderings",
      "Negative lexicographic order.",
      EXAMPLE {
-	  "A = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,0,0},Weights=>{0,-1,0},Weights=>{0,0,-1}}];",
+	  "A = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,0,0},Weights=>{0,-1,0},Weights=>{0,0,-1}},Global=>false];",
 	  "substitute(f,A)"
 	  },
      "Negative graded reverse lexicographic order.",
      EXAMPLE {
-	  "A = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},GRevLex}];",
+	  "A = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},GRevLex},Global=>false];",
 	  "substitute(f,A)"
 	  },
 
@@ -339,7 +339,7 @@ document {
 	  },
      "Now let's use a local order.",
      EXAMPLE {
-	  "R = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},RevLex}];",
+	  "R = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},RevLex},Global=>false];",
 	  "J = substitute(I,R)",
 	  "gens gb J",
 	  },
@@ -374,21 +374,21 @@ document {
      "We define the rings of example 1.5.3, in the Singular book.",
      EXAMPLE {
 	  "(n,m) = (2,3);",
-	  "A1 = QQ[x_1..x_n,y_1..y_m,MonomialOrder=>{n, RevLex=>m}];",
+	  "A1 = QQ[x_1..x_n,y_1..y_m,MonomialOrder=>{n, RevLex=>m},Global=>false];",
 	  "f = x_1*x_2^2 + 1 + y_1^10 + x_1*y_2^5 + y_3",
 	  "1_A1 > y_1^10",
 	  },
      PARA{},
      "The second monomial order has the first block local, and the second block polynomial.",
      EXAMPLE {
-	  "A2 = QQ[x_1..x_n,y_1..y_m,MonomialOrder=>{RevLex=>n, m}];",
+	  "A2 = QQ[x_1..x_n,y_1..y_m,MonomialOrder=>{RevLex=>n, m},Global=>false];",
 	  "substitute(f,A2)",
 	  "x_1*y_2^5 < 1_A2",
 	  },
      PARA{},
      "The third example has three blocks of variables.",
      EXAMPLE {
-	  "A3 = QQ[x_1..x_n,y_1..y_m,MonomialOrder=>{n, RevLex=>2, m-2}];",
+	  "A3 = QQ[x_1..x_n,y_1..y_m,MonomialOrder=>{n, RevLex=>2, m-2},Global=>false];",
 	  "substitute(f,A3)",
 	  },
      SeeAlso => {}
@@ -443,14 +443,14 @@ document {
      PARA{},
      "Now we change to a local order",
      EXAMPLE {
-	  "B = QQ[x,y,MonomialOrder=>{Weights=>{-1,-1},2}];",
+	  "B = QQ[x,y,MonomialOrder=>{Weights=>{-1,-1},2},Global=>false];",
 	  "I = substitute(I,B)",
 	  "transpose gens gb I"
 	  },
      PARA{},
      "Another local order: negative lexicographic.",
      EXAMPLE {
-	  "B = QQ[x,y,MonomialOrder=>{Weights=>{-1,0},Weights=>{0,-1}}];",
+	  "B = QQ[x,y,MonomialOrder=>{Weights=>{-1,0},Weights=>{0,-1}},Global=>false];",
 	  "I = substitute(I,B)",
 	  "transpose gens gb I"
 	  },
@@ -917,7 +917,7 @@ document {
      Key => "Singular Book 2.1.34",
      Headline => "minimal presentations, prune",
      EXAMPLE {
-     	  "R = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},RevLex}]",
+     	  "R = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},RevLex},Global=>false]",
      	  "M = cokernel matrix{{0,y},{x*y-1,x*z},{x*y+1,x*z}}",
      	  "prune M -- INCORRECT",
 	  },

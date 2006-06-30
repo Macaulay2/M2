@@ -146,7 +146,7 @@ setup((), {
 	  leadComponent, degreesRing, degrees, annihilator, assign, numgens, conjugate,
 	  autoload, minprimes, relations, cone, random, standardForm, inverse,
 	  determinant, presentation, dismiss, degreesMonoid, submatrix,
-	  truncate, fraction, part, coefficient, preimage
+	  fraction, part, coefficient, preimage
 	  })
 
 use = method()
