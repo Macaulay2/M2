@@ -1,0 +1,23 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : X = Proj(QQ[x..z])
+
+o1 = X
+
+o1 : ProjectiveVariety
+
+i2 : O = OO_X
+
+o2 = OO
+       X
+
+o2 : SheafOfRings
+
+i3 : variety O
+
+o3 = X
+
+o3 : ProjectiveVariety
+
+i4 : 

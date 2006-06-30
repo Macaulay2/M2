@@ -1,0 +1,28 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings, TangentCone
+
+i1 : p = temporaryFileName() | "/"
+
+o1 = /tmp/M2-3405-1/
+
+i2 : mkdir p
+
+i3 : isDirectory p
+
+o3 = true
+
+i4 : (fn = p | "foo") << "hi there" << close
+
+o4 = /tmp/M2-3405-1/foo
+
+o4 : File
+
+i5 : get fn
+
+o5 = hi there
+
+i6 : removeFile fn
+
+i7 : removeDirectory p
+
+i8 : 

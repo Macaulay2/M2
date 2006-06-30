@@ -121,32 +121,6 @@ document {
      }
 
 document {
-     Key => "bases of parts of modules",
-     "The function ", TO "basis", " can be used to produce bases (over the
-     ground field) of parts of modules (and rings) of a specified degree.",
-     EXAMPLE {
-	  "R = ZZ/101[a..c];",
-      	  "basis(2, R)",
-	  "M = ideal(a,b,c)/ideal(a^2,b^2,c^2);",
-      	  "f = basis(2,M)",
-	  },
-     "Notice that the matrix of ", TT "f", " is expressed in terms of the
-     generators of ", TT "M", ".  The reason is that ", TT "M", " is the target
-     of ", TT "f", ", and matrices such as ", TT "f", " are always expressed 
-     in terms of the generators of the source and target.",
-     EXAMPLE "target f",
-     "The command ", TO "super", " is useful for getting around this.",
-     EXAMPLE "super f",
-     "When a ring is multi-graded, we specify the degree as a list of
-     integers.",
-     EXAMPLE {
-      	  "S = ZZ/101[x,y,z,Degrees=>{{1,3},{1,4},{1,-1}}];",
-      	  "basis({7,24}, S)",
-	  },
-     }
-
-
-document {
      Key => "free resolutions of modules",
      "The function ", TO "resolution", " (also called ", TT "res", "),
      can be used to produce a free resolution of a module.",
@@ -1043,6 +1017,9 @@ document {
      EXAMPLE {
 	  "f(ZZ,String) := (n,s) -> concatenate (n:s);",
 	  ///f(5,".abcd.")///,
+	  },
+     Subnodes => {
+	  TO "method"
 	  }
      }
 

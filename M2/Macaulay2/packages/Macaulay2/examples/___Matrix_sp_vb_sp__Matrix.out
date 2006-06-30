@@ -1,36 +1,38 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
-i1 : R = ZZ/101[x,y,z]
+i1 : R = ZZ[i..p];
 
-o1 = R
+i2 : g = matrix {{i,j},{k,l}}
 
-o1 : PolynomialRing
+o2 = | i j |
+     | k l |
 
-i2 : f = matrix {{x,0,0},{0,y,0},{0,0,z}}
-
-o2 = | x 0 0 |
-     | 0 y 0 |
-     | 0 0 z |
-
-             3       3
+             2       2
 o2 : Matrix R  <--- R
 
-i3 : f|f|f
+i3 : h = matrix {{m,n},{o,p}}
 
-o3 = | x 0 0 x 0 0 x 0 0 |
-     | 0 y 0 0 y 0 0 y 0 |
-     | 0 0 z 0 0 z 0 0 z |
+o3 = | m n |
+     | o p |
 
-             3       9
+             2       2
 o3 : Matrix R  <--- R
 
-i4 : 33 | f
+i4 : f= g | h
 
-o4 = | 33 0  0  x 0 0 |
-     | 0  33 0  0 y 0 |
-     | 0  0  33 0 0 z |
+o4 = | i j m n |
+     | k l o p |
 
-             3       6
+             2       4
 o4 : Matrix R  <--- R
 
-i5 : 
+i5 : f | (m-n)
+
+o5 = | i j m n m-n 0   |
+     | k l o p 0   m-n |
+
+             2       6
+o5 : Matrix R  <--- R
+
+i6 : 

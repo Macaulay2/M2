@@ -1,0 +1,10 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : - {1,5,6}
+
+o1 = {-1, -5, -6}
+
+o1 : List
+
+i2 : 

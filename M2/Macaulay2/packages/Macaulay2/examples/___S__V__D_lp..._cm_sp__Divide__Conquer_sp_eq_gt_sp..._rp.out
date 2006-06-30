@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : M = random(RR^200, RR^200);
 
@@ -6,9 +7,9 @@ i1 : M = random(RR^200, RR^200);
 o1 : Matrix RR    <--- RR
 
 i2 : time SVD(M);
-     -- used 0.33195 seconds
+     -- used 0.96406 seconds
 
 i3 : time SVD(M, DivideConquer=>true);
-     -- used 0.351946 seconds
+     -- used 0.236015 seconds
 
 i4 : 

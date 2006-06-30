@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : F = GF(81,Variable=>a)
 
@@ -61,8 +62,11 @@ o8 : PolynomialRing
 
 i9 : f = random(2,R)
 
-       3    2          2       3            3 2                  3    2      2
-o9 = (a  + a  + a + 1)x  + (- a  + 1)x*y + a y  + (a - 1)y*z + (a  + a  + a)z
+       3    2          2       3            3 2                  3    2  
+o9 = (a  + a  + a + 1)x  + (- a  + 1)x*y + a y  + (a - 1)y*z + (a  + a  +
+     ------------------------------------------------------------------------
+        2
+     a)z
 
 o9 : R
 

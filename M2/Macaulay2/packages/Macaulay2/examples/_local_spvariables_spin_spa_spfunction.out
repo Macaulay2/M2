@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : i = 22;
 
@@ -6,7 +7,7 @@ i2 : f = () -> (i := 0; while i<9 do (<< i << " "; i=i+1); <<endl;)
 
 o2 = f
 
-o2 : Function
+o2 : FunctionClosure
 
 i3 : f()
 0 1 2 3 4 5 6 7 8 
@@ -20,19 +21,19 @@ i5 : f = () -> (i := 0; () -> i = i+1)
 
 o5 = f
 
-o5 : Function
+o5 : FunctionClosure
 
 i6 : p = f()
 
 o6 = p
 
-o6 : Function
+o6 : FunctionClosure
 
 i7 : q = f()
 
 o7 = q
 
-o7 : Function
+o7 : FunctionClosure
 
 i8 : p(),p(),p(),p(),q(),p(),p(),q(),p(),p()
 

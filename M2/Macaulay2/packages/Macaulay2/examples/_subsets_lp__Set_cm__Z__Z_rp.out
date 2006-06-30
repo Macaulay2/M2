@@ -1,8 +1,9 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : subsets(set {a,b,c},2)
 
-o1 = {Set {c, a}, Set {c, b}, Set {a, b}}
+o1 = {Set {a, b}, Set {a, c}, Set {b, c}}
 
 o1 : List
 

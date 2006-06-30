@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : Table {{a,b,c},{a,bb,ccc}}
 
@@ -6,7 +7,7 @@ o1 =  a   b   c
 
       a  bb  ccc 
 
-o1 : Table
+o1 : Expression of class Table
 
 i2 : value oo
 

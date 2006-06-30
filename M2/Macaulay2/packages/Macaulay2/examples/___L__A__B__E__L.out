@@ -1,0 +1,14 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : html LABEL { "b" }
+
+o1 = <label>b</label>
+
+i2 : LABEL { "title" => "a", "b" }
+
+o2 = b
+
+o2 : LABEL
+
+i3 : 

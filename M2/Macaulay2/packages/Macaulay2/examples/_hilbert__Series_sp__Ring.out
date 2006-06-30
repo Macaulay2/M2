@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/101[x, Degrees => {2}]/ideal(x^2);
 
@@ -10,7 +11,7 @@ o2 = --------
            2
      (1 - T )
 
-o2 : Divide
+o2 : Expression of class Divide
 
 i3 : numerator s
 
@@ -30,14 +31,14 @@ i5 : R=ZZ/101[x, Degrees => {{1,1}}]/ideal(x^2);
 
 i6 : s = hilbertSeries R
 
-            2 2
-       1 - T T
-            0 1
-o6 = -----------
-     (1 - T *T )
-           0  1
+           2 2
+      1 - T T
+           0 1
+o6 = ----------
+     (1 - T T )
+           0 1
 
-o6 : Divide
+o6 : Expression of class Divide
 
 i7 : numerator s
 

@@ -1,7 +1,7 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
-i1 : 
-     R = QQ[x,y,z]
+i1 : R = QQ[x,y,z]
 
 o1 = R
 
@@ -27,4 +27,3 @@ o4 = ideal (u , t*u, t )
 o4 : Ideal of S
 
 i5 : 
-     

@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = QQ[a..f]
 
@@ -17,8 +18,11 @@ o2 : Matrix R  <--- R
 
 i3 : I = minors(2,M)
 
-               2                                                  2                                                  2
-o3 = ideal (- b  + a*d, - b*c + a*e, - c*d + b*e, - b*c + a*e, - c  + a*f, - c*e + b*f, - c*d + b*e, - c*e + b*f, - e  + d*f)
+               2                                                  2         
+o3 = ideal (- b  + a*d, - b*c + a*e, - c*d + b*e, - b*c + a*e, - c  + a*f, -
+     ------------------------------------------------------------------------
+                                             2
+     c*e + b*f, - c*d + b*e, - c*e + b*f, - e  + d*f)
 
 o3 : Ideal of R
 

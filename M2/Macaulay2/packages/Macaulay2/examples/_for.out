@@ -1,21 +1,76 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
-i1 : for i from 3 to 6 do print i
+i1 : for i from 1 to 5 when i < 15 list i^2 do print i
+1
+2
 3
 4
 5
-6
 
-i2 : for i when i^2 < 90 list i
+o1 = {1, 4, 9, 16, 25}
 
-o2 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+o1 : List
+
+i2 : for i from 1 to 5 when i^2 < 15 list i^2 do print i
+1
+2
+3
+
+o2 = {1, 4, 9}
 
 o2 : List
 
-i3 : for i in {a,4,1/2} list class i
+i3 : for i from 1 to 5 when i < 15 list i^2
 
-o3 = {Symbol, ZZ, QQ}
+o3 = {1, 4, 9, 16, 25}
 
 o3 : List
 
-i4 : 
+i4 : for i to 5 when i < 15 list i^2
+
+o4 = {0, 1, 4, 9, 16, 25}
+
+o4 : List
+
+i5 : for i to 5 list i^2
+
+o5 = {0, 1, 4, 9, 16, 25}
+
+o5 : List
+
+i6 : for i when i < 15 list i^2
+
+o6 = {0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196}
+
+o6 : List
+
+i7 : for i when i^2 < 15 do print i
+0
+1
+2
+3
+
+i8 : for i from 0 when i < 10 list (if odd i then continue; i^2)
+
+o8 = {0, 4, 16, 36, 64}
+
+o8 : List
+
+i9 : for i from 0 when i < 10 list (if odd i then continue x; i^2)
+
+o9 = {0, x, 4, x, 16, x, 36, x, 64, x}
+
+o9 : List
+
+i10 : for i from 0 when i < 10 list (if i== 5 then break i; i^2)
+
+o10 = 5
+
+i11 : for i from 0 when i < 10 list (if i== 5 then break; i^2)
+
+o11 = {0, 1, 4, 9, 16}
+
+o11 : List
+
+i12 : 

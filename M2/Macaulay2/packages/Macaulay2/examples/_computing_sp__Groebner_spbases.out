@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/1277[x,y];
 
@@ -85,13 +86,13 @@ o16 : Ideal of R
 
 i17 : gb(I,BasisElementLimit => 2)
 
-o17 = GroebnerBasis[status: BasisElementLimit; all S-pairs handled up to degree 1]
+o17 = GroebnerBasis[status: done; S-pairs encountered up to degree 4]
 
 o17 : GroebnerBasis
 
 i18 : gb(I,BasisElementLimit => 3)
 
-o18 = GroebnerBasis[status: BasisElementLimit; all S-pairs handled up to degree 2]
+o18 = GroebnerBasis[status: done; S-pairs encountered up to degree 4]
 
 o18 : GroebnerBasis
 
@@ -171,7 +172,7 @@ i32 : f = random(R^1,R^{-3,-3,-5,-6});
 o32 : Matrix R  <--- R
 
 i33 : time betti gb f
-     -- used 2.12068 seconds
+     -- used 0.580036 seconds
 
 o33 = total: 1 53
           0: 1  .
@@ -199,7 +200,7 @@ o35 = 1 - 2T  - T  + 2T  + 2T  - T   - 2T   + T
 o35 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
 
 i36 : time betti gb f
-     -- used 0.024997 seconds
+     -- used 0.028001 seconds
 
 o36 = total: 1 53
           0: 1  .

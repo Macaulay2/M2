@@ -1,3 +1,3 @@
-debug Macaulay2Core
+debug Core
 R = QQ[a..d];
 raw R

@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = QQ[x..z];
 
@@ -37,10 +38,10 @@ i6 : (<< "-- computation started: " << endl;
           << "-- continuing the computation" << endl;
           ))
 -- computation started: 
-     -- used 2.19214 seconds
+     -- used 2.84818 seconds
 -- computation interrupted
         : total pairs
-  totals: 4 11 646 594 145
+  totals: 4 11 646 594 185
        0: 4  .   .   .   .
        1: .  .   .   .   .
        2: .  5   2   .   .
@@ -51,10 +52,10 @@ i6 : (<< "-- computation started: " << endl;
        7: .  .  62  54  15
        8: .  . 138 138  46
        9: .  . 252 252  84
-      10: .  . 120 120   .
+      10: .  . 120 120  40
 
 -- continuing the computation
-     -- used 2.55616 seconds
+     -- used 1.5881 seconds
 -- computation complete
         : total pairs
   totals: 4 11 646 594 185

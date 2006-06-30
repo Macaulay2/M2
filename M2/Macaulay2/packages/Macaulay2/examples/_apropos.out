@@ -1,13 +1,14 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : apropos "atrix"
 
 o1 = {ChangeMatrix, compactMatrixForm, diagonalMatrix, genericMatrix,
-     ---------------------------------------------------------------------------
-     genericSkewMatrix, genericSymmetricMatrix, getChangeMatrix, Matrix, matrix,
-     ---------------------------------------------------------------------------
-     MatrixExpression, MinimalMatrix, MutableMatrix, mutableMatrix,
-     ---------------------------------------------------------------------------
+     ------------------------------------------------------------------------
+     genericSkewMatrix, genericSymmetricMatrix, getChangeMatrix, Matrix,
+     ------------------------------------------------------------------------
+     matrix, MatrixExpression, MinimalMatrix, MutableMatrix, mutableMatrix,
+     ------------------------------------------------------------------------
      randomMutableMatrix, submatrix, sylvesterMatrix, SyzygyMatrix}
 
 o1 : List

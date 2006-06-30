@@ -1,16 +1,17 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : f = i -> i+1
 
 o1 = f
 
-o1 : Function
+o1 : FunctionClosure
 
 i2 : g = i -> i^2
 
 o2 = g
 
-o2 : Function
+o2 : FunctionClosure
 
 i3 : apply(0 .. 10, f @@ g)
 

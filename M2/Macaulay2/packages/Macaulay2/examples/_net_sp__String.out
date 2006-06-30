@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : net "line 1\nline 2\nline 3\n"
 
@@ -6,12 +7,14 @@ o1 = line 1
      line 2
      line 3
 
+
 i2 : peek oo
 
      +------+
 o2 = |line 1|
      |line 2|
      |line 3|
+     |      |
      +------+
 
 i3 : net ""
@@ -20,17 +23,20 @@ o3 =
 
 i4 : peek oo
 
-o4 = ++
+     ++
+o4 = ||
      ++
 
 i5 : net "\n"
 
 o5 = 
 
+
 i6 : peek oo
 
      ++
 o6 = ||
+     ||
      ++
 
 i7 : net "\n\n\ta"

@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = QQ[a..f];
 
@@ -692,7 +693,7 @@ o95 : PolynomialRing
 
 i96 : A ** A
 
-o96 = QQ [a, b, c, a, b, c, Degrees => {{1}, {1}, {1}, {0}, {0}, {0}}, MonomialOrder => {GRevLex => {1, 1, 1}, GRevLex => {1, 1, 1}}, SkewCommutative => {}]
+o96 = QQ [a, b, c, a, b, c, Degrees => {{1, 0}, {1, 0}, {1, 0}, {0, 1}, {0, 1}, {0, 1}}, MonomialOrder => {GRevLex => {1, 1, 1}, GRevLex => {1, 1, 1}}]
 
 o96 : PolynomialRing
 
@@ -712,7 +713,7 @@ o99 = false
 
 i100 : tensor(A,A,Variables=>{a,b,c,d,e,f})
 
-o100 = QQ [a, b, c, d, e, f, Degrees => {{1}, {1}, {1}, {0}, {0}, {0}}, MonomialOrder => {GRevLex => {1, 1, 1}, GRevLex => {1, 1, 1}}, SkewCommutative => {}]
+o100 = QQ [a, b, c, d, e, f, Degrees => {{1, 0}, {1, 0}, {1, 0}, {0, 1}, {0, 1}, {0, 1}}, MonomialOrder => {GRevLex => {1, 1, 1}, GRevLex => {1, 1, 1}}]
 
 o100 : PolynomialRing
 

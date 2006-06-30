@@ -1,0 +1,14 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : p = temporaryFileName ()
+
+o1 = /tmp/M2-18060-1
+
+i2 : symlinkFile ("foo", p)
+
+i3 : readlink p
+
+o3 = foo
+
+i4 : 

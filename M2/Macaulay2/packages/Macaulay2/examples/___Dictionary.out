@@ -1,12 +1,13 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
-i1 : Macaulay2Core.Dictionary # "sin"
+i1 : Core.Dictionary # "sin"
 
 o1 = sin
 
 o1 : Symbol
 
-i2 : Macaulay2Core.Dictionary #? "sin"
+i2 : Core.Dictionary #? "sin"
 
 o2 = true
 

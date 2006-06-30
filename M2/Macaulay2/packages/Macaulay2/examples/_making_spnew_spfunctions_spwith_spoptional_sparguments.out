@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : opts = {Slope => 1, Intercept => 1}
 
@@ -10,7 +11,7 @@ i2 : f = opts >> o -> x -> x * o.Slope + o.Intercept
 
 o2 = f
 
-o2 : Function
+o2 : FunctionClosure
 
 i3 : f 5
 

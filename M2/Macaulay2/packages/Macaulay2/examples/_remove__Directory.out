@@ -1,0 +1,18 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : dir = temporaryFileName()
+
+o1 = /tmp/M2-17098-1
+
+i2 : makeDirectory dir
+
+i3 : readDirectory dir
+
+o3 = {., ..}
+
+o3 : List
+
+i4 : removeDirectory dir
+
+i5 : 

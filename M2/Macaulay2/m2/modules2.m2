@@ -549,32 +549,33 @@ Module _ List := Matrix => (M,v) -> (
      f := id_N_v;
      map(M, source f, f))
 -----------------------------------------------------------------------------
-basis(List,Module) := Matrix => opts -> (deg,M) -> basis(deg,deg,M,opts)
-basis(List,List,Module) := Matrix => opts -> (lo,hi,M) -> (
+basis = method(
+     TypicalValue => Matrix,
+     Options => new OptionTable from {
+	  Truncate => false,
+	  Limit => -1,
+	  Variables => null
+     	  })
+neginf := -infinity
+basis(InfiniteNumber,InfiniteNumber,Module) := 
+basis(List,InfiniteNumber,Module) := 
+basis(InfiniteNumber,List,Module) := 
+basis(List,List,Module) := opts -> (lo,hi,M) -> (
      R := ring M;
-     if #lo != 0 and #lo =!= degreeLength R
-     or #hi != 0 and #hi =!= degreeLength R then error "expected degree length to match that of ring";
-     if lo =!= hi and #lo > 1 then error "encountered a range of multi-degrees";
-     heft := null;
-     -- we are handling Heft at top level now using Adjust/Repair
-     -- heft = opts.Heft;
-     -- if heft === null and (options R).?Heft then heft = (options R).Heft;
+     if lo === infinity then error "incongruous lower degree bound: infinity";
+     if hi === neginf then error "incongruous upper degree bound: -infinity";
+     if lo === neginf then lo = {};
+     if hi === infinity then hi = {};
+     if #lo != 0 and #lo =!= degreeLength R or #hi != 0 and #hi =!= degreeLength R then error "expected degree length to match that of ring";
+     if lo =!= hi and #lo > 1 then error "degree rank > 1 and degree bounds differ";
      var := opts.Variables;
      if var === null then var = 0 .. numgens R - 1
      else if class var === List then (
-	  var = apply(var, v -> if class v === R then 
-	                           index v 
-				else if class v === ZZ 
-				then v
-				else error "expected list of ring variables or integers")
-	  )
+	  var = apply(var, v -> if instance(v,R) then index v 
+				else if instance(v,ZZ) then v
+				else error "expected list of ring variables or integers"))
      else error "expected list of ring variables or integers";
-     if R.?Adjust then (
-	  lo = R.Adjust lo;
-	  hi = R.Adjust hi;
-	  if R.Adjust =!= identity and heft =!= null then error "encountered both Heft and Adjust options";
-	  );
-     if heft === null then heft = splice(1, degreeLength R - 1 : 0);
+     if R.?Adjust then ( lo = R.Adjust lo; hi = R.Adjust hi; );
      A := ultimate(ambient,R);
      if not (
 	  isAffineRing A 
@@ -587,36 +588,46 @@ basis(List,List,Module) := Matrix => opts -> (lo,hi,M) -> (
 	  ) then error "'basis' can't handle this type of ring";
      k := coefficientRing A;
      pres := generators gb presentation M;
-     f := map(M,,rawBasis(raw pres, lo, hi, heft, var, opts.Truncate, opts.Limit));
-     --s := sortColumns f;
-     --f = f_s;
-     f)
+     heft := splice(1, degreeLength R - 1 : 0);
+     M.cache#"rawBasis log" = log := FunctionApplication { rawBasis, (raw pres, lo, hi, heft, var, opts.Truncate, opts.Limit) };
+     map(M,,value log))
 
-basis(ZZ,Module) := Matrix => opts -> (deg,M) -> basis({deg},M,opts)
-basis(ZZ,ZZ,Module) := Matrix => opts -> (lo,hi,M) -> basis({lo},{hi},M,opts)
-basis(List,Ideal) := basis(ZZ,Ideal) := Matrix => opts -> (deg,I) -> basis(deg,module I,opts)
-basis(List,List,Ideal) := basis(ZZ,ZZ,Ideal) := Matrix => opts -> (lo,hi,I) -> basis(lo,hi,module I,opts)
-basis(List,Ring) := Matrix => opts -> (deg,R) -> basis(deg, R^1,opts)
-basis(List,List,Ring) := Matrix => opts -> (lo,hi,R) -> basis(lo,hi,R^1,opts)
+basis(List,Module) := opts -> (deg,M) -> basis(deg,deg,M,opts)
+basis(ZZ,Module) := opts -> (deg,M) -> basis({deg},M,opts)
+basis(InfiniteNumber,ZZ,Module) := opts -> (lo,hi,M) -> basis(lo,{hi},M,opts)
+basis(ZZ,InfiniteNumber,Module) := opts -> (lo,hi,M) -> basis({lo},hi,M,opts)
+basis(ZZ,ZZ,Module) := opts -> (lo,hi,M) -> basis({lo},{hi},M,opts)
 
-basis(ZZ,Ring) := Matrix => opts -> (deg,R) -> basis({deg}, R^1,opts)
-basis(ZZ,ZZ,Ring) := Matrix => opts -> (lo,hi,R) -> basis({lo},{hi}, R^1,opts)
+basis(List,Ideal) := basis(ZZ,Ideal) := opts -> (deg,I) -> basis(deg,module I,opts)
 
-basis Module := Matrix => opts -> M -> if M.cache.?basis then M.cache.basis else M.cache.basis = (
-     -- check the following:
-     --     R = ring m is a polynomial ring
-     --     
-     R := ring M;
-     A := ultimate(ambient,R);
-     if not isField coefficientRing A then error "expected ring to be an algebra over a field";
-     -- the engine better catch this now:
-     -- if dim M != 0 then error "expected module to be a finite dimensional module";
-     k := coefficientRing A;
-     pres := generators gb presentation M;
-     map(M,,rawBasis(raw pres, {}, {}, splice(1, degreeLength R - 1 : 0), 0 .. numgens R - 1, false, -1)))
+basis(InfiniteNumber,InfiniteNumber,Ideal) := 
+basis(List,InfiniteNumber,Ideal) := 
+basis(InfiniteNumber,List,Ideal) := 
+basis(InfiniteNumber,ZZ,Ideal) := 
+basis(ZZ,InfiniteNumber,Ideal) := 
+basis(InfiniteNumber,InfiniteNumber,Ideal) := 
+basis(List,ZZ,Ideal) := 
+basis(ZZ,List,Ideal) := 
+basis(List,List,Ideal) := 
+basis(ZZ,ZZ,Ideal) := opts -> (lo,hi,I) -> basis(lo,hi,module I,opts)
 
-basis Ring := Matrix => opts -> R -> if R.?basis then R.basis else R.basis = basis(R^1,opts)
-basis Ideal := Matrix => opts -> I -> if I.cache.?basis then I.cache.basis else I.cache.basis = basis(module I,opts)
+basis(InfiniteNumber,InfiniteNumber,Ring) := 
+basis(List,InfiniteNumber,Ring) := 
+basis(InfiniteNumber,List,Ring) := 
+basis(List,ZZ,Ring) := 
+basis(ZZ,List,Ring) := 
+basis(List,List,Ring) := 
+basis(InfiniteNumber,ZZ,Ring) := 
+basis(ZZ,InfiniteNumber,Ring) := 
+basis(InfiniteNumber,InfiniteNumber,Ring) := 
+basis(ZZ,ZZ,Ring) := opts -> (lo,hi,R) -> basis(lo,hi,R^1,opts)
+
+basis(ZZ,Ring) := 
+basis(List,Ring) := opts -> (deg,R) -> basis(deg, R^1,opts)
+
+basis Module := opts -> (M) -> basis(-infinity,infinity,M,opts)
+basis Ring := opts -> R -> basis(R^1,opts)
+basis Ideal := opts -> I -> basis(module I,opts)
 -----------------------------------------------------------------------------
 
 truncate(List,Ideal) := Ideal => (deg,I) -> ideal truncate(deg,module I)

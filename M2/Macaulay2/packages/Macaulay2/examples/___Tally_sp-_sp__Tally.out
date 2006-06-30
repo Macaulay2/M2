@@ -1,10 +1,10 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : tally {a,a,b,c} - tally {c,d,d}
 
-o1 = Tally{a => 2 }
+o1 = Tally{a => 2}
            b => 1
-           d => -2
 
 o1 : Tally
 

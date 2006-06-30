@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = QQ[t][a..d];
 
@@ -12,7 +13,7 @@ o2 : Ideal of R
 i3 : trim I
 
                           2
-o3 = ideal ((t + 1)c, a, b )
+o3 = ideal (a, (t + 1)c, b )
 
 o3 : Ideal of R
 

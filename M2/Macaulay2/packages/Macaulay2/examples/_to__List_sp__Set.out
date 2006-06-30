@@ -1,14 +1,15 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : x = set {a,b,c}
 
-o1 = Set {b, c, a}
+o1 = Set {a, b, c}
 
 o1 : Set
 
 i2 : toList x
 
-o2 = {b, c, a}
+o2 = {a, b, c}
 
 o2 : List
 

@@ -1,0 +1,10 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : class sin
+
+o1 = CompiledFunction
+
+o1 : Type
+
+i2 : 

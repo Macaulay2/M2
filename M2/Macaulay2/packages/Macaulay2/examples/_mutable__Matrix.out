@@ -1,0 +1,38 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings, TangentCone
+
+i1 : f = mutableMatrix {{1,2,3,4}}
+
+o1 = | 1 2 3 4 |
+
+o1 : MutableMatrix
+
+i2 : f_(0,2)
+
+o2 = 3
+
+i3 : f_(0,2) = 33
+
+o3 = 33
+
+i4 : f
+
+o4 = | 1 2 33 4 |
+
+o4 : MutableMatrix
+
+i5 : R = QQ[a..z]
+
+o5 = R
+
+o5 : PolynomialRing
+
+i6 : mutableMatrix genericMatrix(R,3,3)
+
+o6 = | a d g |
+     | b e h |
+     | c f i |
+
+o6 : MutableMatrix
+
+i7 : 

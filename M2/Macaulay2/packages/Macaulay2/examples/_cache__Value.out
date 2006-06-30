@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : x = new HashTable from { val => 1000, cache => new CacheTable }
 
@@ -7,24 +8,24 @@ o1 = HashTable{cache => CacheTable{}}
 
 o1 : HashTable
 
-i2 : g = (t -> (print "hi there"; t.val^4))
+i2 : f = (t -> (print "hi there"; t.val^4))
 
-o2 = g
+o2 = f
 
-o2 : Function
+o2 : FunctionClosure
 
-i3 : f = (cacheValue VALUE) g
+i3 : h = (cacheValue VALUE) f
 
-o3 = f
+o3 = h
 
-o3 : Function
+o3 : FunctionClosure
 
-i4 : f x
+i4 : h x
 hi there
 
 o4 = 1000000000000
 
-i5 : f x
+i5 : h x
 
 o5 = 1000000000000
 

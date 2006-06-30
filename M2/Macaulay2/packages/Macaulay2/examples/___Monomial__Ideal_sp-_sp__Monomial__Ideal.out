@@ -1,0 +1,41 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : R = QQ[a..d];
+
+i2 : I = monomialIdeal(a^3,b^2,a*b*c)
+
+                     3   2
+o2 = monomialIdeal (a , b , a*b*c)
+
+o2 : MonomialIdeal of R
+
+i3 : J = monomialIdeal(a^2,b^3,a*b*c)
+
+                     2   3
+o3 = monomialIdeal (a , b , a*b*c)
+
+o3 : MonomialIdeal of R
+
+i4 : I - J
+
+                         2
+o4 = monomialIdeal 1 : (b )
+
+o4 : MonomialIdeal of R
+
+i5 : J - I
+
+                         2
+o5 = monomialIdeal 1 : (a )
+
+o5 : MonomialIdeal of R
+
+i6 : I - (I-J)
+
+                     3
+o6 = monomialIdeal (a , a*b*c)
+
+o6 : MonomialIdeal of R
+
+i7 : 

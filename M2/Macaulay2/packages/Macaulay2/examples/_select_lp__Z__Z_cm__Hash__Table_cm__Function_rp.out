@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : x = new HashTable from { x => 1, y => 2, z => 3 }
 
@@ -10,7 +11,7 @@ o1 : HashTable
 
 i2 : select(1,x,odd)
 
-o2 = HashTable{z => 3}
+o2 = HashTable{x => 1}
 
 o2 : HashTable
 

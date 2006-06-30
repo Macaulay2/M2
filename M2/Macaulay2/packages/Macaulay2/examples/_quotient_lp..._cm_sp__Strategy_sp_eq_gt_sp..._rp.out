@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : n = 6
 
@@ -8,15 +9,21 @@ i2 : S = ZZ/101[vars(0..n-1)];
 
 i3 : i1 = monomialCurveIdeal(S, 1..n-1)
 
-             2                                          2                               2                    2
-o3 = ideal (e  - d*f, d*e - c*f, c*e - b*f, b*e - a*f, d  - b*f, c*d - a*f, b*d - a*e, c  - a*e, b*c - a*d, b  - a*c)
+             2                                          2                  
+o3 = ideal (e  - d*f, d*e - c*f, c*e - b*f, b*e - a*f, d  - b*f, c*d - a*f,
+     ------------------------------------------------------------------------
+                 2                    2
+     b*d - a*e, c  - a*e, b*c - a*d, b  - a*c)
 
 o3 : Ideal of S
 
 i4 : i2 = monomialCurveIdeal(S, 1..n-1)
 
-             2                                          2                               2                    2
-o4 = ideal (e  - d*f, d*e - c*f, c*e - b*f, b*e - a*f, d  - b*f, c*d - a*f, b*d - a*e, c  - a*e, b*c - a*d, b  - a*c)
+             2                                          2                  
+o4 = ideal (e  - d*f, d*e - c*f, c*e - b*f, b*e - a*f, d  - b*f, c*d - a*f,
+     ------------------------------------------------------------------------
+                 2                    2
+     b*d - a*e, c  - a*e, b*c - a*d, b  - a*c)
 
 o4 : Ideal of S
 
@@ -35,12 +42,12 @@ o6 = ideal (a , b , c , d , e , f )
 o6 : Ideal of S
 
 i7 : time quotient(i1^3,j1^2,Strategy=>Iterate);
-     -- used 3.01454 seconds
+     -- used 1.50409 seconds
 
 o7 : Ideal of S
 
 i8 : time quotient(i2^3,j2^2,Strategy=>Quotient);
-     -- used 3.63745 seconds
+     -- used 2.50416 seconds
 
 o8 : Ideal of S
 
@@ -67,12 +74,12 @@ o14 : Ideal of S
 o15 : Ideal of S
 
 i16 : time quotient(i5,i3,Strategy=>Iterate);
-     -- used 0.092986 seconds
+     -- used 0.096006 seconds
 
 o16 : Ideal of S
 
 i17 : time quotient(j5,j3,Strategy=>Quotient);
-     -- used 0.031995 seconds
+     -- used 0.036002 seconds
 
 o17 : Ideal of S
 

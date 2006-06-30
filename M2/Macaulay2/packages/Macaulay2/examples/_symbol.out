@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : num
 
@@ -25,7 +26,5 @@ i5 : symbol +
 o5 = +
 
 o5 : Keyword
-
- -- a binary operator
 
 i6 : 

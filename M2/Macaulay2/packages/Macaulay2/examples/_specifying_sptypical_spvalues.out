@@ -1,8 +1,10 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : code(prune, Matrix)
 
-o1 = -- ../../../Macaulay2/m2/modules2.m2:386-391
+o1 = -- code for method: minimalPresentation Matrix
+     -- ../../../../Macaulay2/m2/modules2.m2:384-389
      minimalPresentation(Matrix) := Matrix => opts -> (m) -> (
           M := source m;
           if not M.cache.?pruningMap then m = m * (minimalPresentation M).cache.pruningMap;
@@ -15,7 +17,5 @@ i2 : typicalValues#(prune,Matrix)
 o2 = Matrix
 
 o2 : Type
-
- -- the class of all matrices
 
 i3 : 

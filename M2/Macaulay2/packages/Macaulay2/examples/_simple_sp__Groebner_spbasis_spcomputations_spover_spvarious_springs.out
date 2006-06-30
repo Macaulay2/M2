@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = QQ[a..f,MonomialOrder=>Weights=>{1,1,1,1,0,0}]
 
@@ -14,7 +15,9 @@ o2 : Ideal of R
 
 i3 : gens gb I
 
-o3 = | bce-adf ace-bdf abc-def b2df-de2f a2df-de2f c2de3f-d3ef3 abd2f2-cde3f |
+o3 = | bce-adf ace-bdf abc-def b2df-de2f a2df-de2f c2de3f-d3ef3 abd2f2-cde3f
+     ------------------------------------------------------------------------
+     |
 
              1       7
 o3 : Matrix R  <--- R
@@ -26,8 +29,7 @@ o4 = | bce ace abc b2df a2df c2de3f abd2f2 |
              1       7
 o4 : Matrix R  <--- R
 
-i5 : 
-     leadTerm(1,I)
+i5 : leadTerm(1,I)
 
 o5 = | bce-adf ace-bdf abc b2df a2df c2de3f-d3ef3 abd2f2 |
 
@@ -72,10 +74,9 @@ i11 : factor 174
 
 o11 = 2*3*29
 
-o11 : Product
+o11 : Expression of class Product
 
-i12 : 
-      R = QQ[a..d]/(a^2+b^2+c^2+d^2-1)
+i12 : R = QQ[a..d]/(a^2+b^2+c^2+d^2-1)
 
 o12 = R
 
@@ -94,8 +95,7 @@ o14 = | abcd b3cd+bc3d+bcd3-bcd |
               1       2
 o14 : Matrix R  <--- R
 
-i15 : 
-      R = QQ[a..d,SkewCommutative=>true]
+i15 : R = QQ[a..d,SkewCommutative=>true]
 
 o15 = R
 
@@ -114,8 +114,7 @@ o17 = | ab-cd bcd acd |
               1       3
 o17 : Matrix R  <--- R
 
-i18 : 
-      A = QQ[s,c]/(s^2+c^2-1)
+i18 : A = QQ[s,c]/(s^2+c^2-1)
 
 o18 = A
 
@@ -149,4 +148,3 @@ o22 = | xs xc2 y2 xy x2 |
 o22 : Matrix B  <--- B
 
 i23 : 
-      

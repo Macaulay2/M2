@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/101[a..c];
 
@@ -45,8 +46,8 @@ i9 : B = L[s,t];
 
 i10 : truncate(2,ideal(3*x*s,5*y*t^2,s*t))
 
-                 2      2
-o10 = ideal (3x*s , 5y*t , s*t)
+                       2
+o10 = ideal (3x*s, 5y*t , s*t)
 
 o10 : Ideal of B
 

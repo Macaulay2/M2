@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/101[x,y,z,u,w]/ideal(x-x^2-y,z+x*y,w^2-u^2);
 
@@ -13,4 +14,36 @@ o2 = --------------------------------------------
 
 o2 : QuotientRing
 
-i3 : 
+i3 : R.minimalPresentationMap
+
+          ZZ
+         --- [x, u, w, MonomialOrder => GRevLex => 3]
+         101                                                   2       3    2
+o3 = map(--------------------------------------------,R,{x, - x  + x, x  - x , u, w})
+                             2    2
+                            u  - w
+
+              ZZ
+             --- [x, u, w, MonomialOrder => GRevLex => 3]
+             101
+o3 : RingMap -------------------------------------------- <--- R
+                                 2    2
+                                u  - w
+
+i4 : R.minimalPresentationMapInv
+
+            ZZ
+           --- [x, u, w, MonomialOrder => GRevLex => 3]
+           101
+o4 = map(R,--------------------------------------------,{x, u, w})
+                               2    2
+                              u  - w
+
+                     ZZ
+                    --- [x, u, w, MonomialOrder => GRevLex => 3]
+                    101
+o4 : RingMap R <--- --------------------------------------------
+                                        2    2
+                                       u  - w
+
+i5 : 

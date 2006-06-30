@@ -1,0 +1,2 @@
+pseudocode resolution
+disassemble oo

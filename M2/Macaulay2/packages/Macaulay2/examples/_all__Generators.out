@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : A = GF(9,Variable=>a)
 
@@ -46,7 +47,7 @@ i8 : D = A[u,v];
 
 i9 : F = map(D, C, {0, u, v,  0, a*v+1, 1})
 
-o9 = map(D,C,{0, u, v, 0, a*v + 1, 1, a})
+o9 = map(D,C,{0, u, v})
 
 o9 : RingMap D <--- C
 

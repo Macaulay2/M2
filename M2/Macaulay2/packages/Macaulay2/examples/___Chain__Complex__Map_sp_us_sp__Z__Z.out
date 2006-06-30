@@ -1,10 +1,7 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
-i1 : R = ZZ/101[a..c]
-
-o1 = R
-
-o1 : PolynomialRing
+i1 : R = ZZ/101[a..c];
 
 i2 : I = image vars R
 

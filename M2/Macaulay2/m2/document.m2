@@ -533,7 +533,7 @@ fixupTable := new HashTable from {
 	  DIV { "class" => "list",
 	       DL { "class" => "element",
 		    DT { "class" => "heading", "Usage: " },
-		    DD { "class" => "value", SPAN between_(BR{}) (TT \ nonempty separate val) }
+		    DD { "class" => "value", DIV between_(BR{}) (TT \ nonempty separate val) }
 		    }}
 --	  TABLE TR {
 --	       TD { "valign" => "top" , "Usage:" },
@@ -821,6 +821,7 @@ processInputOutputItems := (key,fn) -> x -> (
 	       )
 	  ) x;
      default := if optsymb =!= null and text =!= null and #text > 0 then (
+	  if fn === null or fn === () then error ("default value for option ",toString optsymb, " not accessible, function not specified");
 	  t := toString (options fn)#optsymb;
 	  if not match("^--Function",t) then SPAN{"default value " ,t});
      r := SPAN splice between_", " nonnull nonempty { 
@@ -939,6 +940,7 @@ SYNOPSIS = method(
      Options => {
 	  Heading => "Synopsis",
 	  Usage => "",
+	  Function => null,
 	  Inputs => {},
 	  Outputs => {},
      	  Consequences => {},
@@ -950,7 +952,8 @@ SYNOPSIS = method(
 SYNOPSIS List := o -> x -> SYNOPSIS splice (o, toSequence x)
 SYNOPSIS Thing := SYNOPSIS Sequence := o -> x -> (
      o = applyPairs(o, (k,v) -> (k,fixupTable#k v));
-     proc := processInputOutputItems(,);
+     fn := o#Function;
+     proc := processInputOutputItems(,fn);
      fixup DIV nonnull {
 	  SUBSECTION o.Heading,
 	  UL {

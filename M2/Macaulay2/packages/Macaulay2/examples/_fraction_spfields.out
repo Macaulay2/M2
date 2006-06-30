@@ -1,12 +1,11 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : frac ZZ
 
 o1 = QQ
 
 o1 : Ring
-
- -- the class of all rational numbers
 
 i2 : R = ZZ/101[x,y]/(x^3 + 1 + y^3)
 

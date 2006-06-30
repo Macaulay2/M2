@@ -1,0 +1,12 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : loadedPackages
+
+o1 = {SchurRings, Classic, PrimaryDecomposition, LLLBases, Elimination, User,
+     ------------------------------------------------------------------------
+     Macaulay2Core}
+
+o1 : List
+
+i2 : 

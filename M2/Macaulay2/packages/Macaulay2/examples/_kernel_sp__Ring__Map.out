@@ -1,0 +1,38 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : R = QQ[a..d];
+
+i2 : S = QQ[s,t];
+
+i3 : F = map(S,R,{s^5, s^3*t^2-t, s*t-s, t^5})
+
+               5   3 2                5
+o3 = map(S,R,{s , s t  - t, s*t - s, t })
+
+o3 : RingMap S <--- R
+
+i4 : J = ker F;
+
+o4 : Ideal of R
+
+i5 : numgens J
+
+o5 = 30
+
+i6 : G = map(S,R,{s^5, s^3*t^2-t, s*t-s, t^5})
+
+               5   3 2                5
+o6 = map(S,R,{s , s t  - t, s*t - s, t })
+
+o6 : RingMap S <--- R
+
+i7 : K = ker(G, SubringLimit=>1);
+
+o7 : Ideal of R
+
+i8 : numgens K
+
+o8 = 30
+
+i9 : 

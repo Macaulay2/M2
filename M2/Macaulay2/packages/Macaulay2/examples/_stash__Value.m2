@@ -1,6 +1,6 @@
 x = new MutableHashTable from { val => 1000 }
-g = (t -> (print "hi there"; t.val^4))
-f = (stashValue VALUE) g
-f x
-f x
+f = (t -> (print "hi there"; t.val^4))
+h = (stashValue VALUE) f
+h x
+h x
 peek x

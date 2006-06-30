@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/101[x,y,z];
 
@@ -13,11 +14,11 @@ i3 : leadMonomial f
           11
 o3 = x*y*z
 
-o3 : [x, y, z]
+o3 : R
 
 i4 : exponents leadMonomial f
 
-o4 = {1, 1, 11}
+o4 = {{1, 1, 11}}
 
 o4 : List
 

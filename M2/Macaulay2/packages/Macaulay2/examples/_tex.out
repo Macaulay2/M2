@@ -1,10 +1,11 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ[a..f];
 
 i2 : tex matrix {{a^2+2,b,c},{d,e,f^3-a}}
 
-o2 = $\bgroup\begin{pmatrix}a^{2}+{2}&
+o2 = $\bgroup\begin{pmatrix}a^{2}+2&
      b&
      c\\
      d&

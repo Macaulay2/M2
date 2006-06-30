@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : ZZ/101[t_0 .. t_4]
 
@@ -10,9 +11,9 @@ o1 : PolynomialRing
 
 i2 : (t_0 -  2*t_1)^3
 
-      3     2           2     3
-o2 = t  - 6t t  + 12t *t  - 8t
-      0     0 1      0  1     1
+      3     2          2     3
+o2 = t  - 6t t  + 12t t  - 8t
+      0     0 1      0 1     1
 
       ZZ
 o2 : --- [t , t , t , t , t ]

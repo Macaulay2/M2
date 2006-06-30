@@ -1,0 +1,26 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : partitions 3
+
+o1 = {Partition{3}, Partition{2, 1}, Partition{1, 1, 1}}
+
+o1 : List
+
+i2 : p = new Partition from {2,1}
+
+o2 = Partition{2, 1}
+
+o2 : Partition
+
+i3 : p_0
+
+o3 = 2
+
+i4 : w = toList p
+
+o4 = {2, 1}
+
+o4 : List
+
+i5 : 

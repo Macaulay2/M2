@@ -1,10 +1,11 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : sq = i -> i^2
 
 o1 = sq
 
-o1 : Function
+o1 : FunctionClosure
 
 i2 : sq 10
 
@@ -18,7 +19,7 @@ i4 : tm = (i,j) -> i*j
 
 o4 = tm
 
-o4 : Function
+o4 : FunctionClosure
 
 i5 : tm(5,7)
 
@@ -32,7 +33,7 @@ i7 : sincos = sin @@ cos
 
 o7 = sincos
 
-o7 : Function
+o7 : FunctionClosure
 
 i8 : sincos 2.2
 
@@ -50,20 +51,20 @@ i10 : compose = (f,g) -> x -> f(g(x))
 
 o10 = compose
 
-o10 : Function
+o10 : FunctionClosure
 
 i11 : sincos = compose(sin,cos)
 --warning: sincos redefined
 
 o11 = sincos
 
-o11 : Function
+o11 : FunctionClosure
 
 i12 : cossin = compose(cos,sin)
 
 o12 = cossin
 
-o12 : Function
+o12 : FunctionClosure
 
 i13 : sincos 2.2
 

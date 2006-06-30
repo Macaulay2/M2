@@ -1,0 +1,82 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : A = QQ[a..e];
+
+i2 : B = A[x,y];
+
+i3 : C = QQ[a..e,x,y];
+
+i4 : map(B,A)
+
+o4 = map(B,A,{a, b, c, d, e})
+
+o4 : RingMap B <--- A
+
+i5 : map(A,B)
+
+o5 = map(A,B,{0, 0})
+
+o5 : RingMap A <--- B
+
+i6 : F = map(B,C)
+
+o6 = map(B,C,{a, b, c, d, e, x, y})
+
+o6 : RingMap B <--- C
+
+i7 : G = map(C,B)
+
+o7 = map(C,B,{x, y})
+
+o7 : RingMap C <--- B
+
+i8 : F*G
+
+o8 = map(B,B,{x, y})
+
+o8 : RingMap B <--- B
+
+i9 : oo == id_B
+
+o9 = true
+
+i10 : G*F
+
+o10 = map(C,C,{a, b, c, d, e, x, y})
+
+o10 : RingMap C <--- C
+
+i11 : oo == id_C
+
+o11 = true
+
+i12 : D = QQ[x,y,z];
+
+i13 : E = D/(x^2-z-1,y);
+
+i14 : F = map(E,D)
+
+o14 = map(E,D,{x, 0, z})
+
+o14 : RingMap E <--- D
+
+i15 : G = map(D,E)
+
+o15 = map(D,E,{x, 0, z})
+
+o15 : RingMap D <--- E
+
+i16 : x^3
+
+o16 = x*z + x
+
+o16 : E
+
+i17 : G x^3
+
+o17 = x*z + x
+
+o17 : D
+
+i18 : 

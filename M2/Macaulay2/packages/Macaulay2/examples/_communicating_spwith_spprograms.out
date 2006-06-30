@@ -1,32 +1,41 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : run "uname -a"
-Linux rhodium 2.6.11 #3 SMP Tue Jun 28 07:39:29 CDT 2005 i686 unknown unknown GNU/Linux
+Linux rhodium 2.6.16 #3 SMP PREEMPT Mon Jun 12 11:56:50 CDT 2006 i686 unknown unknown GNU/Linux
 
 o1 = 0
 
-i2 : peek get "!uname -a"
+i2 : "!grep a" << " ba \n bc \n ad \n ef \n" << close
+ ba 
+ ad 
 
-o2 = "Linux rhodium 2.6.11 #3 SMP Tue Jun 28 07:39:29 CDT 2005 i686 unknown
-     unknown GNU/Linux\n"
+o2 = !grep a
 
-i3 : f = openInOut "!egrep '^in'"
+o2 : File
 
-o3 = !egrep '^in'
+i3 : peek get "!uname -a"
 
-o3 : File
+o3 = "Linux rhodium 2.6.16 #3 SMP PREEMPT Mon Jun 12 11:56:50 CDT 2006 i686
+     unknown unknown GNU/Linux\n"
 
-i4 : scan(keys Macaulay2Core.Dictionary, key -> f << key << endl)
+i4 : f = openInOut "!egrep '^in'"
 
-i5 : f << closeOut
+o4 = !egrep '^in'
 
-o5 = !egrep '^in'
+o4 : File
 
-o5 : File
+i5 : scan(keys Core.Dictionary, key -> f << key << endl)
 
-i6 : get f
+i6 : f << closeOut
 
-o6 = interpreterDepth
+o6 = !egrep '^in'
+
+o6 : File
+
+i7 : get f
+
+o7 = interpreterDepth
      infoHelp
      integrate
      inducedMap
@@ -43,41 +52,41 @@ o6 = interpreterDepth
      infinity
      inducesWellDefinedMap
      inverse
-     indexHtml
      indices
      incomparable
      indeterminate
      in
      independentSets
 
-i7 : f = openIn "!sleep 5; echo -n the answer is 4"
 
-o7 = !sleep 5; echo -n the answer is 4
+i8 : f = openIn "!sleep 5; echo -n the answer is 4"
 
-o7 : File
+o8 = !sleep 5; echo -n the answer is 4
 
-i8 : isReady f
+o8 : File
 
-o8 = false
+i9 : isReady f
 
-i9 : while not isReady f do (sleep 1; << "." << flush)
+o9 = false
+
+i10 : while not isReady f do (sleep 1; << "." << flush)
 .....
-i10 : read f
+i11 : read f
 
-o10 = the answer is 4
+o11 = the answer is 4
 
-i11 : isReady f
-
-o11 = true
-
-i12 : atEndOfFile f
+i12 : isReady f
 
 o12 = true
 
-i13 : close f
+i13 : atEndOfFile f
 
-o13 = !sleep 5; echo -n the answer is 4
+o13 = true
 
-o13 : File
+i14 : close f
 
-i14 : 
+o14 = !sleep 5; echo -n the answer is 4
+
+o14 : File
+
+i15 : 

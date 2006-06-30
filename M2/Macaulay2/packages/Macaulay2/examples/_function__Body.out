@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : f = a -> b -> a+b+a*b
 
@@ -21,4 +22,3 @@ i4 : functionBody f 1 === functionBody f 2
 o4 = true
 
 i5 : 
-     

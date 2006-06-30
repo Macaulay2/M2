@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : round(-2.3)
 
@@ -9,4 +10,3 @@ i2 : round(2/3)
 o2 = 1
 
 i3 : 
-     

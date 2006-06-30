@@ -1,0 +1,20 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings, TangentCone
+
+i1 : fn = temporaryFileName()
+
+o1 = /tmp/M2-12934-1
+
+i2 : symlinkFile("qwert", fn)
+
+i3 : fileExists fn
+
+o3 = true
+
+i4 : readlink fn
+
+o4 = qwert
+
+i5 : removeFile fn
+
+i6 : 

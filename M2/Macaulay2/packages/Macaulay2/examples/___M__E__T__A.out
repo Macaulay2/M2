@@ -1,0 +1,9 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : html META { "name" => "description",  "content" => "Dan Grayson's home page." }
+
+o1 = <meta content="Dan Grayson's home page." name="description"/>
+
+
+i2 : 

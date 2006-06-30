@@ -1,0 +1,19 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings, TangentCone
+
+i1 : randomMutableMatrix(10,15,.9,100)
+
+o1 = | . . .  .  .   -90 .   .  .   80  . . . .  .   |
+     | . . .  .  -17 .   .   .  .   -47 . . . .  94  |
+     | . . .  .  62  .   .   66 .   -88 . . . .  .   |
+     | . . .  .  .   .   .   .  .   .   . . . .  -4  |
+     | . . 12 .  .   92  .   .  .   .   . . . .  .   |
+     | . . .  .  .   .   -97 .  .   .   . . . .  .   |
+     | . . .  .  .   .   .   .  -43 .   8 . . .  -39 |
+     | . . .  -1 -60 .   .   .  .   .   . . . .  -70 |
+     | . . .  .  .   .   .   .  .   .   . . . 11 .   |
+     | . . .  .  .   .   .   .  .   .   . . . .  .   |
+
+o1 : MutableMatrix
+
+i2 : 

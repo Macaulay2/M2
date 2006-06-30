@@ -1,17 +1,20 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : code Thing.Print
 
-o1 = -- ../../../Macaulay2/m2/setup.m2:75-87
+o1 = -- ../../../../Macaulay2/m2/setup.m2:77-91
      Thing.Print = x -> (
           oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
-          printWidth = printWidth - #oprompt;
+          save := printWidth;
+          if printWidth != 0 then printWidth = printWidth - #oprompt;
           z := robustNet x;
-          printWidth = printWidth + #oprompt;
+          printWidth = save;
           wrapper := lookup(symbol Wrap,class x);
           if wrapper =!= null then (
                fun := () -> z = wrapper z;
                try timelimit(printingTimeLimit, fun) else (
+                    alarm 0;
                     global debugError <- fun;
                     stderr << "--error or time limit reached in applying Wrap method to output; type 'debugError()' to see it" << endl << endl));
           << endl << oprompt << z << endl;

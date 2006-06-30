@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : x = {2,3,,4}
 
@@ -16,6 +17,6 @@ o3 = null
 
 i4 : peek x
 
-o4 = {2,3,null,4}
+o4 = {2, 3, null, 4}
 
 i5 : 

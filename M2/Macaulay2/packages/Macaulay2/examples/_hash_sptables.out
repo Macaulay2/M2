@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : book = new HashTable from {
           "Joe" => "344-5567",
@@ -21,7 +22,7 @@ o3 = false
 
 i4 : x = set {a,b,c,r,t}
 
-o4 = Set {t, a, b, c, r}
+o4 = Set {a, b, c, r, t}
 
 o4 : Set
 

@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : a => 5
 
@@ -8,7 +9,7 @@ o1 : Option
 
 i2 : peek (a => 5)
 
-o2 = Option{a,5}
+o2 = Option{a, 5}
 
 i3 : new HashTable from {a => 5, b => 7}
 

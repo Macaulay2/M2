@@ -1,16 +1,11 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : sin
 
 o1 = sin
 
-o1 : Function
-
-  * Usage: sin x
-  * Inputs:
-      * x, a real number
-  * Outputs:
-      * a real number, the sine of x
+o1 : CompiledFunction
 
 i2 : sin 1.2
 
@@ -37,14 +32,7 @@ i6 : append
 
 o6 = append
 
-o6 : Function
-
- -- append an element to a list
-
-Ways to use append
-==================
-
-  * "append(BasicList,Thing)" -- append an element to a list
+o6 : CompiledFunction
 
 i7 : append({a,b,c},d)
 
@@ -56,14 +44,7 @@ i8 : join
 
 o8 = join
 
-o8 : Function
-
- -- join lists
-
-Ways to use join
-================
-
-  * "join(BasicList,BasicList)" -- missing documentation
+o8 : CompiledFunction
 
 i9 : join({a,b},{c,d},{e,f},{g,h,i})
 

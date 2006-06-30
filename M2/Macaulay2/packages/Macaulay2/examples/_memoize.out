@@ -1,13 +1,14 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : fib = n -> if n <= 1 then 1 else fib(n-1) + fib(n-2)
 
 o1 = fib
 
-o1 : Function
+o1 : FunctionClosure
 
 i2 : time fib 16
-     -- used 0.009998 seconds
+     -- used 0.012001 seconds
 
 o2 = 1597
 
@@ -16,7 +17,7 @@ i3 : fib = memoize fib
 
 o3 = fib
 
-o3 : Function
+o3 : FunctionClosure
 
 i4 : time fib 16
      -- used 0. seconds

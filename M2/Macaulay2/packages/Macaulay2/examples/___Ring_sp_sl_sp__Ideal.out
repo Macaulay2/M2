@@ -1,17 +1,54 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
-i1 : ZZ/2 === ZZ/(4,6)
+i1 : ZZ[x]/367236427846278621
 
-o1 = true
+           ZZ [x]
+o1 = ------------------
+     367236427846278621
 
-i2 : R = ZZ/101[t]
+o1 : QuotientRing
 
-o2 = R
+i2 : A = QQ[u,v];
 
-o2 : PolynomialRing
+i3 : I = ideal random(A^1, A^{-2,-2,-2})
 
-i3 : R/t === R/t
+            5        2    8       2  2    2  2   9  2
+o3 = ideal (-*u*v + v , - -*u*v - -*v , - -*u  - -*v )
+            2             9       5       3      5
 
-o3 = false
+o3 : Ideal of A
 
-i4 : 
+i4 : B = A/I;
+
+i5 : use A;
+
+i6 : C = A/(u^2-v^2,u*v);
+
+i7 : D = GF(9,Variable=>a)[x,y]/(y^2 - x*(x-1)*(x-a))
+
+o7 = D
+
+o7 : QuotientRing
+
+i8 : ambient D
+
+o8 = (GF 9)[x, y]
+
+o8 : PolynomialRing
+
+i9 : ZZ/2 === ZZ/(4,6)
+
+o9 = true
+
+i10 : R = ZZ/101[t]
+
+o10 = R
+
+o10 : PolynomialRing
+
+i11 : R/t === R/t
+
+o11 = false
+
+i12 : 

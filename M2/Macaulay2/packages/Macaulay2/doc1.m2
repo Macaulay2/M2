@@ -293,8 +293,6 @@ document {
      SeeAlso => {"making new functions with optional arguments", "OptionTable", "Option", "=>"}
      }
 
-stderr << "--warning: this node needs rewriting : method(Dispatch => ...)" << endl
-
 document {
      Key => "typicalValues",
      Headline => "types of values returned by functions",

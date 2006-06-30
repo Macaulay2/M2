@@ -1,0 +1,30 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : f = method()
+
+o1 = f
+
+o1 : CompiledFunctionClosure
+
+i2 : f List := x -> 1
+
+o2 = --Function[stdio:2:12-2:15]--
+
+o2 : FunctionClosure
+
+i3 : f VisibleList := x -> 2
+
+o3 = --Function[stdio:3:19-3:22]--
+
+o3 : FunctionClosure
+
+i4 : f BasicList := x -> 3
+
+o4 = --Function[stdio:4:17-4:20]--
+
+o4 : FunctionClosure
+
+i5 : undocumented { f, (f,List) }
+
+i6 : 

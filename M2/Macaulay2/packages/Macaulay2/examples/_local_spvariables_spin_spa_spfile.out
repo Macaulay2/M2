@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : ff := 5
 
@@ -12,7 +13,7 @@ i3 : h = () -> j
 
 o3 = h
 
-o3 : Function
+o3 : FunctionClosure
 
 i4 : h()
 

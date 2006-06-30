@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : X = new Type of MutableHashTable
 
@@ -16,17 +17,13 @@ i3 : X.GlobalAssignHook = globalAssignFunction
 
 o3 = globalAssignFunction
 
-o3 : Function
-
- -- the standard method for the global assignment hook
+o3 : FunctionClosure
 
 i4 : X.GlobalReleaseHook = globalReleaseFunction
 
 o4 = globalReleaseFunction
 
-o4 : Function
-
- -- the standard method for the global variable release hook
+o4 : FunctionClosure
 
 i5 : x' = new X
 
@@ -52,7 +49,7 @@ o8 : List
 
 i9 : code globalAssignFunction
 
-o9 = -- startup.m2:168-171
+o9 = -- startup.m2:167-170
           globalAssignFunction = (X,x) -> (
                if not ReverseDictionary#?x then ReverseDictionary#x = X;
                use x;

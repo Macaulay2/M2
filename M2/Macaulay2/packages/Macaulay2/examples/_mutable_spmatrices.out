@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : m = matrix{{1,2,3},{4,5,6}}
 
@@ -29,6 +30,8 @@ o4 = true
 
 i5 : n_(0,0) = 212314323
 
+o5 = 212314323
+
 i6 : n_(0,0)
 
 o6 = 212314323
@@ -57,8 +60,6 @@ i11 : ring n
 o11 = ZZ
 
 o11 : Ring
-
- -- the class of all integers
 
 i12 : mutableIdentity(RR,5)
 

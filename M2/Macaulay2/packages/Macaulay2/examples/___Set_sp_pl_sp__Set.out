@@ -1,9 +1,22 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : set{a,b,c} + set{a,d,f}
 
-o1 = Set {a, b, c, d, f}
+o1 = Set {f, a, b, c, d}
 
 o1 : Set
 
-i2 : 
+i2 : x = apply(3, i -> set apply(3, j -> 10*i+j))
+
+o2 = {Set {0, 1, 2}, Set {12, 10, 11}, Set {20, 21, 22}}
+
+o2 : List
+
+i3 : sum x
+
+o3 = Set {0, 1, 2, 20, 21, 22, 10, 11, 12}
+
+o3 : Set
+
+i4 : 

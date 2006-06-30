@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : isHomogeneous(ZZ)
 
@@ -22,7 +23,7 @@ o6 = true
 
 i7 : isHomogeneous ideal(a*x+y,y^3-b*x^2*y)
 
-o7 = true
+o7 = false
 
 i8 : R = QQ[a,b,c,Degrees=>{{1,1},{1,0},{0,1}}];
 

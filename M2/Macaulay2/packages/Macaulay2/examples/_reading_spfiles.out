@@ -1,19 +1,20 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : fn = temporaryFileName()
 
-o1 = /tmp/M2-7449-1
+o1 = /tmp/M2-17426-1
 
 i2 : fn << "z^6+3*x*z^4+6*y*z^4+3*x^2*z^2+12*x*y*z^2+12*y^2*z^2+x^3+6*x^2*y+12*x*y^2+8*y^3" << endl << close
 
-o2 = /tmp/M2-7449-1
+o2 = /tmp/M2-17426-1
 
 o2 : File
 
 i3 : get fn
 
-o3 = z^6+3*x*z^4+6*y*z^4+3*x^2*z^2+12*x*y*z^2+12*y^2*z^2+x^3+6*x^2*y+12*x*y^2+8*
-     y^3
+o3 = z^6+3*x*z^4+6*y*z^4+3*x^2*z^2+12*x*y*z^2+12*y^2*z^2+x^3+6*x^2*y+12*x*y^2
+     +8*y^3
 
 i4 : R = ZZ/101[x,y,z]
 
@@ -23,8 +24,11 @@ o4 : PolynomialRing
 
 i5 : f = value get fn
 
-      6       4       4     2 2          2      2 2    3     2         2     3
-o5 = z  + 3x*z  + 6y*z  + 3x z  + 12x*y*z  + 12y z  + x  + 6x y + 12x*y  + 8y
+      6       4       4     2 2          2      2 2    3     2         2  
+o5 = z  + 3x*z  + 6y*z  + 3x z  + 12x*y*z  + 12y z  + x  + 6x y + 12x*y  +
+     ------------------------------------------------------------------------
+       3
+     8y
 
 o5 : R
 
@@ -33,13 +37,13 @@ i6 : factor f
        2          3
 o6 = (z  + x + 2y)
 
-o6 : Product
+o6 : Expression of class Product
 
 i7 : fn << "sample = 2^100
      print sample
      " << close
 
-o7 = /tmp/M2-7449-1
+o7 = /tmp/M2-17426-1
 
 o7 : File
 
@@ -84,4 +88,6 @@ i18 : stack lines get fn
 o18 = sample = 2^100
       print sample
 
-i19 : 
+i19 : removeFile fn
+
+i20 : 

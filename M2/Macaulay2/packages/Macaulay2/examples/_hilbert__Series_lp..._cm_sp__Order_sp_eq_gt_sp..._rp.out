@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/101[x,y];
 
@@ -10,7 +11,7 @@ o2 = --------
             2
      (1 - T)
 
-o2 : Divide
+o2 : Expression of class Divide
 
 i3 : hilbertSeries(R/x^3, Order =>5)
 
@@ -23,9 +24,9 @@ i4 : R = ZZ/101[x,y, Degrees=>{{1,2},{2,3}}];
 
 i5 : hilbertSeries(R/x^3, Order =>5)
 
-             2    2 3    2 4    3 5    4 6    4 7
-o5 = 1 + T *T  + T T  + T T  + T T  + T T  + T T
-          0  1    0 1    0 1    0 1    0 1    0 1
+            2    2 3    2 4    3 5    4 6    4 7
+o5 = 1 + T T  + T T  + T T  + T T  + T T  + T T
+          0 1    0 1    0 1    0 1    0 1    0 1
 
 o5 : ZZ [T , T , MonomialOrder => RevLex, Inverses => true]
           0   1

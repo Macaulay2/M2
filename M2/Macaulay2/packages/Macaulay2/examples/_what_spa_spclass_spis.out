@@ -1,12 +1,11 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : class 33
 
 o1 = ZZ
 
 o1 : Ring
-
- -- the class of all integers
 
 i2 : instance(33,ZZ)
 
@@ -34,14 +33,10 @@ o7 = Ring
 
 o7 : Type
 
- -- the class of all rings
-
 i8 : parent class ZZ
 
 o8 = Type
 
 o8 : Type
-
- -- the class of all types
 
 i9 : 
