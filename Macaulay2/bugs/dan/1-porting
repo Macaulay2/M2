@@ -1,0 +1,22 @@
+To: Dan Grayson <dan@math.uiuc.edu>
+From: Michael Stillman <mike@math.cornell.edu>
+Subject: new machine
+Date: Fri, 30 Jun 2006 10:13:30 -0400
+
+We got a new computer in our department, that I will probably be  
+kicking in 10-15 grand on.
+
+octopus.math.cornell.edu.  Get to it as with mathvader's.
+
+specs: 8 dual core AMD-64 opteron's
+128 GB RAM  (!!)
+
+Let's get M2 running on it!  If you get a chance to make sure that our
+mathvader build situation is current (capybara and M2 using svn),  
+that would be great.
+I can do it too, but you set it up initially, and can probably do it  
+much faster than me.
+Then let's run the tests.  Once that is done, I'll try out some big  
+problems.
+
+
