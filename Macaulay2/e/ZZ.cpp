@@ -130,7 +130,7 @@ ring_elem RingZZ::from_rational(mpq_ptr q) const
   return RingZZ::from_int(mpq_numref(q));
 }
 
-bool RingZZ::promote(const Ring *, const ring_elem, ring_elem &) const
+bool RingZZ::promote(const Ring *R, const ring_elem a, ring_elem &result) const
 {
   return false;
 }

@@ -536,7 +536,7 @@ const Matrix *IM2_Matrix_promote(const FreeModule *newTarget,
   Matrix::iterator i(f);
   for (int c=0; c<f->n_cols(); c++)
     for (i.set(c); i.valid(); i.next())
-      if (R->promote(S,i.entry(),a))
+      if (S->promote(R,i.entry(),a))
 	mat.set_entry(i.row(), c, a);
       else
 	{
