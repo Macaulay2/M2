@@ -2,8 +2,7 @@
 -- Koszul complex on 3 elements --
 -- Algorithm 3                  --
 ----------------------------------
-path = prepend("/Users/mike/M2/Macaulay2/test/engine/",path)
-needs "raw-util.m2"
+needs "engine/raw-util.m2"
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
 m = mat{{a,b,c}}
 --gbTrace=10
@@ -114,8 +113,7 @@ assert(m1 == m)
 --------------------------------
 -- non raw versions
 --------------------------------
-path = prepend("/Users/mike/M2/Macaulay2/test/engine/",path)
-needs "raw-util.m2"
+needs "engine/raw-util.m2"
 
 bettiMatrix = (C) -> rawbettimat(raw C.Resolution, 0)
 
@@ -250,7 +248,7 @@ I = ideal" pr-os+mt,
      de-bg+ai,
      ce-bf+ah"
 time C = res(I, Strategy=>1);
-betti C === new BettiTally from {
+betti C == new BettiTally from {
      (0,{0}) => 1, 
      (1,{2}) => 35, 
      (2,{3}) => 140, 
@@ -266,6 +264,9 @@ betti C === new BettiTally from {
      (10,{14}) => 1
      }
 
+I = ideal flatten entries gens I;
+time C = res(I, Strategy=>3);
+time C = res(I, Strategy=>3, StopBeforeComputation => true)
 -- Now for a quotient
 R = ZZ/101[a..d]/(a*d,b*c)
 Q = cokernel matrix{{a,b,c,d}}

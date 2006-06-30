@@ -1096,7 +1096,6 @@ ring_elem PolyRing::random() const
 
 void PolyRing::elem_text_out(buffer &o, const ring_elem f) const
 {
-#warning "display using parentheses"
   Nterm *t = f;
   if (t == NULL)
     {
@@ -1126,8 +1125,6 @@ void PolyRing::elem_text_out(buffer &o, const ring_elem f) const
       K_->elem_text_out(o,t->coeff);
       if (!isone)
 	{
-//	  if (!K_->is_equal(t->coeff, one) && !K_->is_equal(t->coeff, minus_one))
-//	    o << "*";
 	  M_->elem_text_out(o, t->monom);
 	}
       p_plus = 1;
@@ -1409,7 +1406,6 @@ ring_elem PolyRing::get_logical_coeff(const Ring *coeffR, const Nterm *&f) const
       f = f->next;
       return result;
     }
-#warning "this cast should be to polynomial ring w/o fractions"
   const PolynomialRing *KR = coeffR->cast_to_PolynomialRing();
   assert(KR);
   const PolyRing *K = KR->getNumeratorRing();
@@ -1613,7 +1609,6 @@ const int * PolyRing::lead_flat_monomial(const ring_elem f) const
 ring_elem PolyRing::get_coeff(const Ring *coeffR, const ring_elem f, const int *vp) const
   // note: vp is a varpower monomial.
 {
-#warning "uses flat monomials"
   const PolynomialRing *coeffR1 = coeffR->cast_to_PolynomialRing();
   int nvars0 = n_vars();
   if (coeffR1 != 0)
