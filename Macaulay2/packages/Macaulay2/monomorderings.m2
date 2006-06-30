@@ -212,7 +212,7 @@ document {
      HEADER2 "RevLex",
      "Warning: this is not a well-ordering.",
      EXAMPLE {
-	  "R = ZZ[a..f, MonomialOrder=>RevLex];",
+	  "R = ZZ[a..f, MonomialOrder=>RevLex, Global=>false];",
 	  "a^2*(c+d) + b*(c^100+d^100)*(c + e + f)"
 	  },
      HEADER2 "NCLex",
@@ -348,7 +348,7 @@ document {
      have the same weight, by default they are further distinguished
      with the GRevLex order.",
      EXAMPLE {
-	  "R = QQ[a..d,MonomialOrder=>{Weights => {-1,2,3,4}}];",
+	  "R = QQ[a..d,MonomialOrder=>{Weights => {-1,2,3,4}},Global=>false];",
 	  "f = a^2 + b+ c^2 + b*d",
 	  "leadTerm f",
 	  },
@@ -486,7 +486,7 @@ document {
      In the following example, ", TT "a^-1", " is in the ring,
      but ", TT "c^-1", " is not.",
      EXAMPLE {
-	  "R = QQ[a..d, MonomialOrder=> GroupRevLex=>2];",
+	  "R = QQ[a..d, MonomialOrder=>GroupRevLex=>2, Global=>false];",
 	  "a^-1",
 	  "try c^(-1) else \"failed\"",
 	  },
@@ -631,7 +631,7 @@ document {
      power of the last variable, the exponent on the next to last variable 
      is consulted, and so on.  Under this ordering the monomials are not
      well ordered.",
-     EXAMPLE "R=ZZ/101[x,y,z,MonomialOrder=>RevLex];",
+     EXAMPLE "R=ZZ/101[x,y,z,MonomialOrder=>RevLex,Global=>false];",
      "We currently get a monomial overflow if we try to compute anything
      in this ring, sigh.",
      -- EXAMPLE "(x+y+z+1)^2",

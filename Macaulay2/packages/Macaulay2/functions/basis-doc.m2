@@ -13,12 +13,15 @@ document { Key => {basis,
 	  "i" => "a list of integers to serve as a degree or multidegree",
 	  "M" => {ofClass{Module,Ring,Ideal}},
 	  Limit => ZZ => {"the maximum number of basis elements to find"},
-	  Truncate => Boolean => {"whether to truncate (?)"},
-	  Variables => List => {"a list of variables; only basis elements involving just these variables will be reported"}
+	  Truncate => Boolean => {"whether to add additional generators to the basis sufficient to generate the submodule of ", TT "M", " generated
+	       by all elements of degree at least ", TT "i", ".  If true, the degree rank must be equal to 1.  This option is intended mainly for internal use by
+	       ", TO "truncate", "."
+	       },
+	  Variables => List => {"a list of variables; only basis elements involving only these variables will be reported"}
 	  },
      Outputs => {
 	  {
-	       "a map from a free module over the ring of M to ", TT "M", " which sends the
+	       "a map from a free module over the ring of ", TT "M", " to ", TT "M", " which sends the
 	       basis elements to a basis (over the coefficient field) of the degree ", TT "i", " part of ", TT "M"
 	       }
 	  },
@@ -59,20 +62,24 @@ document { Key => {basis,
 	  ///
 	  ),
      SYNOPSIS (
-	  Usage => "basis R",
+	  Usage => "basis(lo.hi,M)",
 	  Inputs => {
-	       "R" => "a ring"
+	       "M" => {ofClass{Module,Ring,Ideal}},
+	       "lo" => {ofClass{ZZ,List,InfiniteNumber}},
+	       "hi" => {ofClass{ZZ,List,InfiniteNumber}}
 	       },
-	  Outputs => {
-	       {
+	  Outputs => {{
 		    "a map from a free module to ", TT "R", " which sends the
-		    basis elements to a basis, over the ground field, of ", TT "R"
-		    }
-	       },
-	  EXAMPLE {
-	       "R = QQ[x,y]/(x^3,y^2);",
-	       "basis R"
-	       }
+		    basis elements to a basis, over the ground field, of the part of M spanned by elements of degrees between ", TT "lo", " and ", TT "hi", ".
+		    The degree rank must be 1."
+		    }},
+	  EXAMPLE lines ///
+	       R = QQ[x,y,z]/(x^3,y^2,z^5);
+	       basis R
+	       basis(-infinity,4,R)
+	       basis(5,infinity,R)
+	       basis(2,4,R)
+	  ///
 	  )
      }
 

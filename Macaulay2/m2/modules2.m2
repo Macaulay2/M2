@@ -629,22 +629,17 @@ basis Module := opts -> (M) -> basis(-infinity,infinity,M,opts)
 basis Ring := opts -> R -> basis(R^1,opts)
 basis Ideal := opts -> I -> basis(module I,opts)
 -----------------------------------------------------------------------------
-
-truncate(List,Ideal) := Ideal => (deg,I) -> ideal truncate(deg,module I)
-
+truncate = method()
 truncate(List,Module) := Module => (deg,M) -> (
      if M.?generators then (
 	  b := M.generators * cover basis(deg,deg,cokernel presentation M,Truncate=>true);
-	  if M.?relations
-	  then subquotient(b, M.relations)
-	  else image b
-	  )
-     else image basis(deg,deg,M,Truncate=>true)
-     )
-
+	  if M.?relations then subquotient(b, M.relations)
+	  else image b)
+     else image basis(deg,deg,M,Truncate=>true))
+truncate(List,Ideal) := Ideal => (deg,I) -> ideal truncate(deg,module I)
 truncate(ZZ,Module) := Module => (deg,M) -> truncate({deg},M)
-truncate(ZZ,Ideal) := Ideal => (deg,M) -> truncate({deg},M)
-
+truncate(ZZ,Ideal) := Ideal => (deg,I) -> truncate({deg},I)
+-----------------------------------------------------------------------------
 issub := (f,g) -> -1 === rawGBContains(raw gb g,raw f)
 
 isSubset(Module,Module) := (M,N) -> (
