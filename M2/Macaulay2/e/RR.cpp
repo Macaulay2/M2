@@ -142,8 +142,13 @@ ring_elem RingRR::from_int(mpz_ptr n) const
   return RingRR::from_double(a);
 }
 
-bool RingRR::promote(const Ring *, const ring_elem, ring_elem &) const
+bool RingRR::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
+  if (Rf->is_ZZ())
+    {
+      result = RingRR::from_int(MPZ_VAL(f));
+      return true;
+    }
   return false;
 }
 

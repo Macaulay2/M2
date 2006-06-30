@@ -155,7 +155,7 @@ bool QQ::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
   if (Rg->is_ZZ())
     {
       M2_Rational h = MPQ_VAL(f);
-      if (mask_mpq_cmp_si(h,1,1) == 0)
+      if (mask_mpz_cmp_si(mpq_denref(h),1) == 0)
 	{
 	  result = globalZZ->RingZZ::from_int(mpq_numref(h));
 	  return true;
