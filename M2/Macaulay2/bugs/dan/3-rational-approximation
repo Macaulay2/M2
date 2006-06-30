@@ -37,3 +37,21 @@ Failure is not possible, we can always lift to something.
 By the way, lifting QQ --> RRR or RR can be done with continued fractions.  We
 should do that, too.
 
+-----------------------------------------------------------------------------
+
+In-Reply-To: <200606301529.k5UFT3p25565@u00.math.uiuc.edu>
+From: Michael Stillman <mike@math.cornell.edu>
+Subject: Re: Re: 
+Date: Fri, 30 Jun 2006 11:34:25 -0400
+To: dan@math.uiuc.edu
+
+The algorithm is simple: start the extended gcd alg  (on a and p),  
+proceed until the coefficients and "gcd in progress" are small enough  
+(less than sqrt(p), or 1/2 of that -- I'd have to think about it).   
+In Macaulay classic, that was one way we displayed coeffs and (since  
+we didn't actually have QQ implemented).
+
+For continued fractions, when should we stop?
+
+On Jun 30, 2006, at 11:29 AM, Dan Grayson wrote:
+
