@@ -1,6 +1,7 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
-i1 : debug Macaulay2Core
+i1 : debug Core
 
 i2 : R = QQ[a..d];
 

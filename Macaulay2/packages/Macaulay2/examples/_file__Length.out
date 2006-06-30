@@ -1,8 +1,9 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : f = temporaryFileName() << "hi there"
 
-o1 = /tmp/M2-15313-1
+o1 = /tmp/M2-18262-1
 
 o1 : File
 
@@ -12,13 +13,13 @@ o2 = 8
 
 i3 : close f
 
-o3 = /tmp/M2-15313-1
+o3 = /tmp/M2-18262-1
 
 o3 : File
 
 i4 : filename = toString f
 
-o4 = /tmp/M2-15313-1
+o4 = /tmp/M2-18262-1
 
 i5 : fileLength filename
 
@@ -32,5 +33,6 @@ i7 : length oo
 
 o7 = 8
 
-i8 : 
-     
+i8 : removeFile filename
+
+i9 : 

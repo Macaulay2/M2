@@ -1,10 +1,11 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : f = method()
 
 o1 = f
 
-o1 : Function
+o1 : CompiledFunctionClosure
 
 i2 : f String := s -> s|s;
 

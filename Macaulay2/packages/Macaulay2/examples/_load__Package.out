@@ -1,11 +1,10 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : loadPackage "FirstPackage"
 
 o1 = FirstPackage
 
 o1 : Package
-
- -- an example Macaulay 2 package
 
 i2 : 

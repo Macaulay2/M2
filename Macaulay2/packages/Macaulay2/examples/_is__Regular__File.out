@@ -1,0 +1,20 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : fn = temporaryFileName()
+
+o1 = /tmp/M2-18302-1
+
+i2 : fn << "hi there" << close
+
+o2 = /tmp/M2-18302-1
+
+o2 : File
+
+i3 : isRegularFile fn
+
+o3 = true
+
+i4 : removeFile fn
+
+i5 : 

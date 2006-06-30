@@ -1,0 +1,72 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : newPackage "P"
+
+o1 = P
+
+o1 : Package
+
+i2 : export x
+
+i3 : x=3
+
+o3 = 3
+
+i4 : endPackage "P"
+
+o4 = P
+
+o4 : Package
+
+i5 : dictionaryPath
+
+o5 = {P.Dictionary, User#"private dictionary", SchurRings.Dictionary,
+     ------------------------------------------------------------------------
+     Classic.Dictionary, PrimaryDecomposition.Dictionary,
+     ------------------------------------------------------------------------
+     LLLBases.Dictionary, Elimination.Dictionary, Macaulay2Core.Dictionary,
+     ------------------------------------------------------------------------
+     OutputDictionary, PackageDictionary}
+
+o5 : List
+
+i6 : x
+
+o6 = 3
+
+i7 : dismiss P
+
+i8 : dictionaryPath
+
+o8 = {User#"private dictionary", SchurRings.Dictionary, Classic.Dictionary,
+     ------------------------------------------------------------------------
+     PrimaryDecomposition.Dictionary, LLLBases.Dictionary,
+     ------------------------------------------------------------------------
+     Elimination.Dictionary, Macaulay2Core.Dictionary, OutputDictionary,
+     ------------------------------------------------------------------------
+     PackageDictionary}
+
+o8 : List
+
+i9 : x
+
+o9 = x
+
+o9 : Symbol
+
+i10 : values PackageDictionary
+
+o10 = {P, Parsing, Macaulay2Core, Classic, Elimination, LLLBases,
+      -----------------------------------------------------------------------
+      PrimaryDecomposition, User, SchurRings}
+
+o10 : List
+
+i11 : use P
+
+i12 : x
+
+o12 = 3
+
+i13 : 

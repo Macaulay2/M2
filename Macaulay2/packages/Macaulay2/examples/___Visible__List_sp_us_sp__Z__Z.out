@@ -1,0 +1,20 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : x = a..t
+
+o1 = (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t)
+
+o1 : Sequence
+
+i2 : #x
+
+o2 = 20
+
+i3 : x_-1, x_19, x_0
+
+o3 = (t, t, a)
+
+o3 : Sequence
+
+i4 : 

@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/101[x, Degrees => {2}];
 
@@ -17,7 +18,7 @@ o3 = --------
            2
      (1 - T )
 
-o3 : Divide
+o3 : Expression of class Divide
 
 i4 : numerator s
 
@@ -40,7 +41,7 @@ i6 : reduceHilbert s
 o6 = ------
         1
 
-o6 : Divide
+o6 : Expression of class Divide
 
 i7 : R=ZZ/101[x, Degrees => {{1,1}}];
 
@@ -50,14 +51,14 @@ o8 : Ideal of R
 
 i9 : s = hilbertSeries I
 
-            2 2
-       1 - T T
-            0 1
-o9 = -----------
-     (1 - T *T )
-           0  1
+           2 2
+      1 - T T
+           0 1
+o9 = ----------
+     (1 - T T )
+           0 1
 
-o9 : Divide
+o9 : Expression of class Divide
 
 i10 : numerator s
 
@@ -79,11 +80,11 @@ o11 : ZZ [T , T , MonomialOrder => RevLex, Inverses => true]
 
 i12 : reduceHilbert s
 
-      1 + T *T
-           0  1
-o12 = ---------
+      1 + T T
+           0 1
+o12 = --------
           1
 
-o12 : Divide
+o12 : Expression of class Divide
 
 i13 : 

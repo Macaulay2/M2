@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : if (pid = fork()) == 0 then (
           try "$:7500" << "hi there" << close;

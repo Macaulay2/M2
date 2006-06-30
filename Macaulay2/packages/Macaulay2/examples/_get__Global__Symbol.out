@@ -1,0 +1,41 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : d = new Dictionary
+
+o1 = GlobalDictionary{}
+
+o1 : GlobalDictionary
+
+i2 : sym = getGlobalSymbol(d,"foo")
+
+o2 = foo
+
+o2 : Symbol
+
+i3 : d
+
+o3 = GlobalDictionary{...1...}
+
+o3 : GlobalDictionary
+
+i4 : peek d
+
+o4 = Dictionary{"foo" => foo}
+
+i5 : d#"foo" === sym
+
+o5 = true
+
+i6 : d#"asfd" = sym
+
+o6 = foo
+
+o6 : Symbol
+
+i7 : peek d
+
+o7 = Dictionary{"asfd" => foo}
+                "foo" => foo
+
+i8 : 

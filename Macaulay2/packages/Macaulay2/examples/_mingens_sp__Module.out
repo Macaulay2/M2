@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = QQ[a..f]
 
@@ -28,8 +29,14 @@ o4 : Ideal of R
 
 i5 : I = J*J
 
-             2                                                                  2                                                                    2
-o5 = ideal (a  - 2a + 1, a*b - 2a - b + 2, a*c - 3a - c + 3, a*b - 2a - b + 2, b  - 4b + 4, b*c - 3b - 2c + 6, a*c - 3a - c + 3, b*c - 3b - 2c + 6, c  - 6c + 9)
+             2                                                             
+o5 = ideal (a  - 2a + 1, a*b - 2a - b + 2, a*c - 3a - c + 3, a*b - 2a - b +
+     ------------------------------------------------------------------------
+         2                                                                  
+     2, b  - 4b + 4, b*c - 3b - 2c + 6, a*c - 3a - c + 3, b*c - 3b - 2c + 6,
+     ------------------------------------------------------------------------
+      2
+     c  - 6c + 9)
 
 o5 : Ideal of R
 

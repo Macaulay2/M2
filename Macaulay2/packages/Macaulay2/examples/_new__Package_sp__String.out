@@ -1,0 +1,36 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings, TangentCone
+
+i1 : newPackage ( "Foo", Version => "1.1", Headline => "making Foo" )
+
+o1 = Foo
+
+o1 : Package
+
+i2 : endPackage "Foo"
+
+o2 = Foo
+
+o2 : Package
+
+i3 : options Foo
+
+o3 = OptionTable{Authors => {}                                }
+                 Date => 
+                 DebuggingMode => false
+                 Headline => making Foo
+                 HomePage => 
+                 InfoDirSection => Macaulay 2 and its packages
+                 Version => 1.1
+
+o3 : OptionTable
+
+i4 : oo.Headline
+
+o4 = making Foo
+
+i5 : (options Core).Version
+
+o5 = 0.9.10
+
+i6 : 

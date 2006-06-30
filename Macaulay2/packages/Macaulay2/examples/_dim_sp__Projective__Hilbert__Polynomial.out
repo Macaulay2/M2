@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : V = Proj(QQ[x_0..x_5]/(x_0^3+x_5^3))
 

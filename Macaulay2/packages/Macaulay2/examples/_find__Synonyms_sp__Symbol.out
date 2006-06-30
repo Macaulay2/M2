@@ -1,0 +1,24 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : findSynonyms symbol res
+
+o1 = {Macaulay2Core$res, Macaulay2Core$resolution, res, resolution}
+
+o1 : List
+
+i2 : symbol res === symbol resolution
+
+o2 = true
+
+i3 : res === resolution
+
+o3 = true
+
+i4 : res
+
+o4 = resolution
+
+o4 : FunctionClosure
+
+i5 : 

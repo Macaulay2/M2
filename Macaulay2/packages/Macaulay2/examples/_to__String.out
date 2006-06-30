@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : toString {1,4,a,f,212312,2.123243242}
 
@@ -28,6 +29,7 @@ o7 = matrix {{x_1, x_2, x_3, x_4, x_5}}
 
 i8 : toExternalString vars R
 
-o8 = map(R^{{0}}, R^{{-1}, {-1}, {-1}, {-1}, {-1}}, {{x_1, x_2, x_3, x_4, x_5}})
+o8 = map(R^{{0}}, R^{{-1}, {-1}, {-1}, {-1}, {-1}}, {{x_1, x_2, x_3, x_4,
+     x_5}})
 
 i9 : 

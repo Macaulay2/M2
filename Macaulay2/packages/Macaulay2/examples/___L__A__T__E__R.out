@@ -1,0 +1,20 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : f = () -> DIV { "hi there" }
+
+o1 = f
+
+o1 : FunctionClosure
+
+i2 : LATER {f}
+
+o2 = hi there
+
+o2 : LATER
+
+i3 : peek oo
+
+o3 = LATER{f}
+
+i4 : 

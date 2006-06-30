@@ -1,0 +1,12 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : isGlobalSymbol "res"
+
+o1 = true
+
+i2 : isGlobalSymbol "resres"
+
+o2 = false
+
+i3 : 

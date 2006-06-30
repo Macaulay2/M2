@@ -1,0 +1,8 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : homeDirectory
+
+o1 = /home/dan/
+
+i2 : 

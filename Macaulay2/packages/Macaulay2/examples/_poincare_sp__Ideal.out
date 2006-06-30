@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/101[w..z];
 
@@ -37,8 +38,8 @@ o7 : ZZ [T , T , MonomialOrder => RevLex, Inverses => true]
 
 i8 : numerator reduceHilbert hilbertSeries I
 
-o8 = 1 + T *T
-          0  1
+o8 = 1 + T T
+          0 1
 
 o8 : ZZ [T , T , MonomialOrder => RevLex, Inverses => true]
           0   1

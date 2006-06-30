@@ -497,9 +497,8 @@ document { Key => {(mutableIdentity, Ring, ZZ),mutableIdentity}, Headline => "ma
 
 undocumented (pretty, Thing)
 document { Key => pretty, Headline => "a pretty printer", "This function is experimental and under development." }
-
 document { Key => {(symlinkDirectory, String, String),symlinkDirectory,[symlinkDirectory,Undo],[symlinkDirectory, Exclude],
-	  [symlinkDirectory, FollowLinks]}, 
+	  [symlinkDirectory, FollowLinks],[symlinkDirectory, Verbose]}, 
      Headline => "make symbolic links for all files in a directory tree",
      Usage => "symlinkDirectory(src,dst)",
      Inputs => {
@@ -531,10 +530,14 @@ document { Key => {(symlinkDirectory, String, String),symlinkDirectory,[symlinkD
 	  symlinkDirectory(src,dst,Verbose=>true)
 	  get (dst|"b/c/g")
 	  symlinkDirectory(src,dst,Verbose=>true,Undo=>true)
+     ///,
+     "Now we remove the files and directories we created.",
+     EXAMPLE lines ///
 	  rm = d -> if isDirectory d then removeDirectory d else removeFile d
 	  scan(reverse findFiles src, rm)
 	  scan(reverse findFiles dst, rm)
-     ///
+     ///,
+     SeeAlso => { symlinkFile, copyDirectory }
      }
 
 document { Key => symlinkFile, Headline => "make a symbolic link to a file",
@@ -552,9 +555,128 @@ document { Key => symlinkFile, Headline => "make a symbolic link to a file",
 	  fileExists fn
 	  readlink fn
 	  removeFile fn
-     ///
+     ///,
+     SeeAlso => { symlinkDirectory }
      }
 
+document { Key => {(copyDirectory, String, String),copyDirectory,[copyDirectory, Exclude],[copyDirectory, FollowLinks],[copyDirectory, Verbose]},
+     Usage => "copyDirectory(src,dst)",
+     Inputs => {
+	  "src" => String,
+	  "dst" => String,
+	  Exclude => {"a string containing a regular expression, or a list of such strings.  If the base part of the name of a file in the source tree
+	       matches one of the regular expressions, then no link to it is created"
+	       },
+	  UpdateOnly => Boolean => {"whether to copy files only if the target file does not exist or is older than the source file"},
+	  FollowLinks => Boolean => {"whether to follow symbolic links in the source tree to directories"},
+	  Verbose => Boolean => {"whether to report individual file operations"}
+	  },
+     Consequences => {
+	  {"a copy of the directory tree rooted at ", TT "src", " is created, rooted at ", TT "dst"}
+	  },
+     EXAMPLE lines ///
+     	  src = temporaryFileName() | "/"
+	  dst = temporaryFileName() | "/"
+	  makeDirectory (src|"a/")
+	  makeDirectory (src|"b/")
+	  makeDirectory (src|"b/c/")
+	  src|"a/f" << "hi there" << close
+	  src|"a/g" << "hi there" << close
+	  src|"b/c/g" << "ho there" << close
+	  stack findFiles src
+	  copyDirectory(src,dst,Verbose=>true)
+	  copyDirectory(src,dst,Verbose=>true,UpdateOnly => true)
+	  stack findFiles dst
+	  get (dst|"b/c/g")
+     ///,
+     "Now we remove the files and directories we created.",
+     EXAMPLE lines ///
+	  rm = d -> if isDirectory d then removeDirectory d else removeFile d
+	  scan(reverse findFiles src, rm)
+	  scan(reverse findFiles dst, rm)
+     ///,
+     SeeAlso => { symlinkDirectory }
+     }
+document { Key => {(copyFile, String, String),copyFile,[copyFile, UpdateOnly],[copyFile, Verbose]},
+     Usage => "copyFile(src,dst)",
+     Inputs => {
+	  "src" => "the filename or path to an existing regular file",
+	  "dst" => "the filename or path to the copy to be made",
+	  UpdateOnly => Boolean => {"whether to copy file only if the destination file does not exist or is older than the source file"},
+	  Verbose => Boolean => {"whether to report individual file operations"}
+	  },
+     Consequences => {
+	  "the file may be copied"
+	  },     
+     EXAMPLE lines ///
+     	  src = temporaryFileName()
+	  dst = temporaryFileName()
+	  src << "hi there" << close
+	  copyFile(src,dst,Verbose=>true)
+	  get dst
+	  copyFile(src,dst,Verbose=>true,UpdateOnly => true)
+	  src << "ho there" << close
+	  copyFile(src,dst,Verbose=>true,UpdateOnly => true)
+	  get dst
+	  removeFile src
+	  removeFile dst
+     ///,
+     SeeAlso => { copyDirectory, symlinkDirectory }
+     }
+document { Key => {(moveFile, String, String),moveFile},
+     Usage => "moveFile(src,dst)",
+     Inputs => {
+	  "src" => "the filename or path to an existing file",
+	  "dst" => "the new filename or path to a location (on the same file system)",
+	  Verbose => Boolean => {"whether to report individual file operations"}
+	  },
+     Consequences => {
+	  "the file will be moved by creating a new link to the file and removing the old one"
+	  },     
+     EXAMPLE lines ///
+     	  src = temporaryFileName()
+	  dst = temporaryFileName()
+	  src << "hi there" << close
+	  moveFile(src,dst,Verbose=>true)
+	  get dst
+	  removeFile dst
+     ///,
+     SeeAlso => { copyFile }
+     }
+document { Key => mkdir,
+     Usage => "mkdir p",
+     Inputs => {
+	  "p" => String => "a path to a directory to be made"
+	  },
+     Consequences => {{"a directory will be created at the path ", TT "p"}},
+     PARA {"Only one directory will be made, so the components of the path p other than the last must already exist."},
+     EXAMPLE lines ///
+     	  p = temporaryFileName() | "/"
+	  mkdir p
+	  isDirectory p
+	  (fn = p | "foo") << "hi there" << close
+	  get fn
+	  removeFile fn
+	  removeDirectory p
+     ///,
+     SeeAlso => {makeDirectory}
+     }
+
+document { 
+     Key => {(makeDirectory,String),makeDirectory},
+     Headline => "make a directory",
+     Usage => "makeDirectory dir",
+     Inputs => { "dir" => String => "a path to the desired directory" },
+     Consequences => { { "the directory is made, with as many new path components as needed" } },     
+     EXAMPLE lines ///
+     	  dir = temporaryFileName()
+	  makeDirectory (dir|"/a/b/c")
+	  removeDirectory (dir|"/a/b/c")
+	  removeDirectory (dir|"/a/b")
+	  removeDirectory (dir|"/a")
+     ///,
+     SeeAlso => {mkdir}
+     }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

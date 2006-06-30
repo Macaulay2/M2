@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = QQ[x,y,z,w]
 
@@ -15,28 +16,28 @@ o2 : R-module, quotient of R
 
 i3 : res(M, PairLimit => 1)
 
-      1      8      17      14      4
-o3 = R  <-- R  <-- R   <-- R   <-- R  <-- 0
-                                           
-     0      1      2       3       4      5
+      1      1
+o3 = R  <-- R  <-- 0
+                    
+     0      1      2
 
 o3 : ChainComplex
 
 i4 : res(M, PairLimit => 10)
 
-      1      8      17      14      4
-o4 = R  <-- R  <-- R   <-- R   <-- R  <-- 0
-                                           
-     0      1      2       3       4      5
+      1      4      2
+o4 = R  <-- R  <-- R  <-- 0
+                           
+     0      1      2      3
 
 o4 : ChainComplex
 
 i5 : res(M, PairLimit => 20)
 
-      1      8      17      14      4
-o5 = R  <-- R  <-- R   <-- R   <-- R  <-- 0
-                                           
-     0      1      2       3       4      5
+      1      6      8      2
+o5 = R  <-- R  <-- R  <-- R  <-- 0
+                                  
+     0      1      2      3      4
 
 o5 : ChainComplex
 

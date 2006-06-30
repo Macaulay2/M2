@@ -1,0 +1,8 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : 30!
+
+o1 = 265252859812191058636308480000000
+
+i2 : 

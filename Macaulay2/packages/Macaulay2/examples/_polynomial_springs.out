@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = QQ[x,y,z];
 
@@ -80,8 +81,6 @@ o14 = QQ
 
 o14 : Ring
 
- -- the class of all rational numbers
-
 i15 : random(2,R)
 
         10  2   5         2   7       1  2
@@ -142,9 +141,9 @@ o26 : PolynomialRing
 
 i27 : (p_(0,0)+q_2-1)^2
 
-       2                 2
-o27 = p    + 2p   *q  + q  - 2p    - 2q  + 1
-       0,0     0,0  2    2     0,0     2
+       2                2
+o27 = p    + 2p   q  + q  - 2p    - 2q  + 1
+       0,0     0,0 2    2     0,0     2
 
 o27 : ZZ [p   , p   , p   , p   , p   , p   , q , q , q , q , q , q ]
            0,0   0,1   1,0   1,1   2,0   2,1   0   1   2   3   4   5

@@ -1,0 +1,37 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : 2+2
+
+o1 = 4
+
+i2 : "asdf" | "qwer"
+
+o2 = asdfqwer
+
+i3 : value \ values OutputDictionary
+
+o3 = {4, asdfqwer}
+
+o3 : List
+
+i4 : dictionaryPath
+
+o4 = {User#"private dictionary", SchurRings.Dictionary, Classic.Dictionary,
+     ------------------------------------------------------------------------
+     PrimaryDecomposition.Dictionary, LLLBases.Dictionary,
+     ------------------------------------------------------------------------
+     Elimination.Dictionary, Macaulay2Core.Dictionary, OutputDictionary,
+     ------------------------------------------------------------------------
+     PackageDictionary}
+
+o4 : List
+
+i5 : peek OutputDictionary
+
+o5 = Dictionary{"o1" => o1}
+                "o2" => o2
+                "o3" => o3
+                "o4" => o4
+
+i6 : 

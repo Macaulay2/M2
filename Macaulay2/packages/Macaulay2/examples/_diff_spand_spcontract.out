@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = QQ[a,b,t,x,y,z];
 
@@ -211,7 +212,7 @@ o29 : R
 i30 : n = matrix {{f,g}} ** symmetricPower(2,matrix {{x,y}})
 
 o30 = | ax5+bx4y+x2y3 ax4y+bx3y2+xy4 ax3y2+bx2y3+y5 bx5+ax3y2+x2y3
-      --------------------------------------------------------------------------
+      -----------------------------------------------------------------------
       bx4y+ax2y3+xy4 bx3y2+axy4+y5 |
 
               1       6

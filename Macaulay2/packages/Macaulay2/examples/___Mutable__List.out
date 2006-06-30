@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : s = new MutableList from {a,b,c};
 
@@ -12,6 +13,6 @@ o3 : MutableList
 
 i4 : peek s
 
-o4 = MutableList{a,b,1234}
+o4 = MutableList{a, b, 1234}
 
 i5 : 

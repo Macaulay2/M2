@@ -1,12 +1,13 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : filename = temporaryFileName () | ".dbm"
 
-o1 = /tmp/M2-6519-1.dbm
+o1 = /tmp/M2-17826-1.dbm
 
 i2 : x = openDatabaseOut filename
 
-o2 = /tmp/M2-6519-1.dbm
+o2 = /tmp/M2-17826-1.dbm
 
 o2 : Database
 

@@ -1,0 +1,32 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : R = QQ[x,y,z];
+
+i2 : p = matrix {{x,y,z}}
+
+o2 = | x y z |
+
+             1       3
+o2 : Matrix R  <--- R
+
+i3 : q = map(R^1,R^3,p)
+
+o3 = | x y z |
+
+             1       3
+o3 : Matrix R  <--- R
+
+i4 : degrees source p
+
+o4 = {{1}, {1}, {1}}
+
+o4 : List
+
+i5 : degrees source q
+
+o5 = {{0}, {0}, {0}}
+
+o5 : List
+
+i6 : 

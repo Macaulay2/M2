@@ -1,0 +1,23 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : R = ZZ[x,y,z]/(x^2-y*x)
+
+o1 = R
+
+o1 : QuotientRing
+
+i2 : F = R^4
+
+      4
+o2 = R
+
+o2 : R-module, free
+
+i3 : degrees F
+
+o3 = {{0}, {0}, {0}, {0}}
+
+o3 : List
+
+i4 : 

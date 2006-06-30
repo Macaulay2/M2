@@ -1,0 +1,46 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : 1232132141242345 % 3457834
+
+o1 = 1249597
+
+i2 : (-4)%5
+
+o2 = 1
+
+i3 : A = ZZ[a,b]
+
+o3 = A
+
+o3 : PolynomialRing
+
+i4 : (3*a^3-a*b-4) % (5*a-b)
+
+         3    2
+o4 = - 2a  + a b - a*b - 4
+
+o4 : A
+
+i5 : pseudoRemainder(3*a^3-a*b-4, 5*a-b)
+
+       3      2
+o5 = 3b  - 25b  - 500
+
+o5 : A
+
+i6 : B = QQ[a,b]
+
+o6 = B
+
+o6 : PolynomialRing
+
+i7 : (3*a^3-a*b-4) % (5*a-b)
+
+      3   3   1  2
+o7 = ---*b  - -*b  - 4
+     125      5
+
+o7 : B
+
+i8 : 

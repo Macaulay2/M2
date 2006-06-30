@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/32003[a..d];
 
@@ -18,8 +19,17 @@ o3 : Ideal of R
 
 i4 : I = intersect(I,J)
 
-             4    3      3    3      4      3         3      4   6      3 2    3 3      5     5    2 3       2 3    2 4   2 4    3 3    3 3    2   3   3 3    3 3     2 3    3   2    3   2      2 3   2   3    3 2     3 2     2   3   3 3    3   2   4 2    3 2
-o4 = ideal (b  - a d, a*b  - a c, b*c  - a*c d - b*c*d  + a*d , c  - b*c d  - c d  + b*d , a*c  - b c d - a*c d  + b d , a c  - a d  + b d  - a c*d , b c  - a d , a*b c  - a c*d  + b c*d  - a*b d , a b*c  - a c d + b c d - a b*d , a c  - a b*d , a c  - a b d)
+             4    3      3    3      4      3         3      4   6      3 2  
+o4 = ideal (b  - a d, a*b  - a c, b*c  - a*c d - b*c*d  + a*d , c  - b*c d  -
+     ------------------------------------------------------------------------
+      3 3      5     5    2 3       2 3    2 4   2 4    3 3    3 3    2   3 
+     c d  + b*d , a*c  - b c d - a*c d  + b d , a c  - a d  + b d  - a c*d ,
+     ------------------------------------------------------------------------
+      3 3    3 3     2 3    3   2    3   2      2 3   2   3    3 2     3 2   
+     b c  - a d , a*b c  - a c*d  + b c*d  - a*b d , a b*c  - a c d + b c d -
+     ------------------------------------------------------------------------
+      2   3   3 3    3   2   4 2    3 2
+     a b*d , a c  - a b*d , a c  - a b d)
 
 o4 : Ideal of R
 
@@ -46,11 +56,11 @@ o7 : Ideal of R
 
 i8 : decompose I
 
-                             3      2       2    2    3    2                   
-o8 = {ideal (- b*c + a*d, - c  + b*d , - a*c  + b d, b  - a c), ideal (- c + d,
-     ---------------------------------------------------------------------------
-                    2          2
-     b, a), ideal (c  + c*d + d , b, a)}
+                             3      2       2    2    3    2                
+o8 = {ideal (- b*c + a*d, - c  + b*d , - a*c  + b d, b  - a c), ideal (- c +
+     ------------------------------------------------------------------------
+                       2          2
+     d, b, a), ideal (c  + c*d + d , b, a)}
 
 o8 : List
 

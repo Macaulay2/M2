@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = QQ[a,b,c]; S = QQ[s,t];
 
@@ -37,11 +38,11 @@ o7 : S
 
 i8 : I = kernel F
 
-            6       4       4     5     2 2         2     2 2       3       3  
-o8 = ideal(c  + 3a*c  - 3b*c  + 3c  + 3a c  - 6a*b*c  + 3b c  + 6a*c  - 8b*c  +
-     ---------------------------------------------------------------------------
-       4    3     2        2    3     2      2        2     2
-     3c  + a  - 3a b + 3a*b  - b  + 3a c - 3b c - 3a*c  + 2a  - a*b - 3a*c)
+            6       4       4     5     2 2         2     2 2       3       3
+o8 = ideal(c  + 3a*c  - 3b*c  + 3c  + 3a c  - 6a*b*c  + 3b c  + 6a*c  - 8b*c 
+     ------------------------------------------------------------------------
+         4    3     2        2    3     2      2        2     2
+     + 3c  + a  - 3a b + 3a*b  - b  + 3a c - 3b c - 3a*c  + 2a  - a*b - 3a*c)
 
 o8 : Ideal of R
 

@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/10007[a,b];
 
@@ -18,17 +19,17 @@ o3 : R
 
 i4 : S = factor f
 
-       2
-o4 = (a  + 3a - 2301)(a + 405)(a - 402)(16)
+                         2
+o4 = (a + 405)(a - 402)(a  + 3a - 2301)(16)
 
-o4 : Product
+o4 : Expression of class Product
 
 i5 : T = factor g
 
                        3
 o5 = (a - 5003b - 5003) (8)
 
-o5 : Product
+o5 : Expression of class Product
 
 i6 : #T
 
@@ -39,7 +40,7 @@ i7 : T#0
                        3
 o7 = (a - 5003b - 5003)
 
-o7 : Power
+o7 : Expression of class Power
 
 i8 : T#0#0
 

@@ -290,15 +290,6 @@ document { Key => [copyDirectory, UpdateOnly],
      Usage => "copyDirectory(..., UpdateOnly => true)",
      Consequences => {{ "during the indicated copy operation, newer files will not be replaced by copies of older ones" }}}
 document { Key => Verbose, Headline => "request verbose feedback" }
-document { Key => [symlinkDirectory, Verbose],
-     Usage => "symlinkDirectory(..., Verbose => ...)",
-     Consequences => {{ "during the file operation, details of the operations performed will be displayed" }}}
-document { Key => [copyDirectory, Verbose],
-     Usage => "copyDirectory(..., Verbose => ...)",
-     Consequences => {{ "during the file operation, details of the operations performed will be displayed" }}}
-document { Key => [moveFile, Verbose],
-     Usage => "moveFile(..., Verbose => ...)",
-     Consequences => {{ "during the file operation, details of the operations performed will be displayed" }}}
 document { Key => PrimaryTag, Headline => "for internal use only: a symbol used in storing documentation" }
 document { Key => LoadDocumentation, Headline => "when loading a package, load the documentation, too" }
 document { Key => [loadPackage, LoadDocumentation],

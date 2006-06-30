@@ -1,0 +1,2 @@
+isGlobalSymbol "res"
+isGlobalSymbol "resres"

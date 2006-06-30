@@ -8,3 +8,6 @@ random({15,15},R)
 degree (a+b)
 degreeLength R
 degreeLength ZZ
+R = QQ[a,b,c,Degrees=>{{1,0},{-2,1},{-3,1}}, Heft=>{1,4}];
+random({1,1},R)
+basis({1,1},R)

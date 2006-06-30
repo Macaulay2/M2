@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ[a..d]
 
@@ -6,11 +7,36 @@ o1 = R
 
 o1 : PolynomialRing
 
-i2 : R_{1,2,3,4}
+i2 : R_{3,1,5}
 
-        2 3 4
-o2 = a*b c d
+      3   5
+o2 = a b*c
 
 o2 : R
 
-i3 : 
+i3 : R_{1,1,1,1}
+
+o3 = a*b*c*d
+
+o3 : R
+
+i4 : S = R[x,y,z]
+
+o4 = S
+
+o4 : PolynomialRing
+
+i5 : S_{1,1,1}
+
+o5 = x*y*z
+
+o5 : S
+
+i6 : S_{1,1,1,4}
+
+      4
+o6 = a x*y*z
+
+o6 : S
+
+i7 : 

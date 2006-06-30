@@ -1,6 +1,6 @@
 document {
      Key => {installPackage,(installPackage,String),(installPackage,Package),RemakeAllDocumentation,
-	  CheckDocumentation,[installPackage,CheckDocumentation],
+	  CheckDocumentation,[installPackage,CheckDocumentation],AbsoluteLinks,[installPackage,AbsoluteLinks],
 	  MakeLinks,[installPackage,MakeLinks]},
      Headline => "load and install a package and its documentation ",
      Usage => "installPackage PACKAGENAME",

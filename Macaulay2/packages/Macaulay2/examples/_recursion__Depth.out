@@ -1,0 +1,38 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : recursionDepth()
+
+o1 = 3
+
+i2 : f = x -> recursionDepth()
+
+o2 = f
+
+o2 : FunctionClosure
+
+i3 : f()
+
+o3 = 4
+
+i4 : g = x -> f()
+
+o4 = g
+
+o4 : FunctionClosure
+
+i5 : g()
+
+o5 = 5
+
+i6 : r = i -> if i == 100 then recursionDepth() else r(i+1)
+
+o6 = r
+
+o6 : FunctionClosure
+
+i7 : r 0
+
+o7 = 4
+
+i8 : 

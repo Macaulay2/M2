@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/101[a..d];
 
@@ -8,27 +9,27 @@ o2 : Ideal of R
 
 i3 : primaryDecomposition I
 
-              2                   2                             2           2 
-o3 = {ideal (d , a*d, a*b - c*d, a ), ideal (a*c + b*d + 2c*d, b  + 2b*c + c ,
-     ---------------------------------------------------------------------------
-                 2           2           2        2                          
-     a*b - c*d, a  + 2a*d + d ), ideal (c , b*c, b , a*b - c*d), ideal (a*c +
-     ---------------------------------------------------------------------------
-                  2           2              2           2
-     b*d - 2c*d, b  - 2b*c + c , a*b - c*d, a  - 2a*d + d )}
+              2                   2                             2         
+o3 = {ideal (d , a*d, a*b - c*d, a ), ideal (a*c + b*d + 2c*d, b  + 2b*c +
+     ------------------------------------------------------------------------
+      2              2           2           2        2                   
+     c , a*b - c*d, a  + 2a*d + d ), ideal (c , b*c, b , a*b - c*d), ideal
+     ------------------------------------------------------------------------
+                         2           2              2           2
+     (a*c + b*d - 2c*d, b  - 2b*c + c , a*b - c*d, a  - 2a*d + d )}
 
 o3 : List
 
 i4 : primaryDecomposition(I, Strategy => EHV)
 
-              2                   2                             2           2 
-o4 = {ideal (d , a*d, a*b - c*d, a ), ideal (a*c + b*d + 2c*d, b  + 2b*c + c ,
-     ---------------------------------------------------------------------------
-                 2           2           2        2                          
-     a*b - c*d, a  + 2a*d + d ), ideal (c , b*c, b , a*b - c*d), ideal (a*c +
-     ---------------------------------------------------------------------------
-                  2           2              2           2
-     b*d - 2c*d, b  - 2b*c + c , a*b - c*d, a  - 2a*d + d )}
+              2                   2                             2         
+o4 = {ideal (d , a*d, a*b - c*d, a ), ideal (a*c + b*d + 2c*d, b  + 2b*c +
+     ------------------------------------------------------------------------
+      2              2           2           2        2                   
+     c , a*b - c*d, a  + 2a*d + d ), ideal (c , b*c, b , a*b - c*d), ideal
+     ------------------------------------------------------------------------
+                         2           2              2           2
+     (a*c + b*d - 2c*d, b  - 2b*c + c , a*b - c*d, a  - 2a*d + d )}
 
 o4 : List
 

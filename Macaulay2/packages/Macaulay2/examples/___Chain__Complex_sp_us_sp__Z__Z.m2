@@ -1,5 +1,4 @@
-R = ZZ[x..z]
-C = res coker vars R
-C_2
-rank C_2
-degrees C_2
+R = QQ[x,y,z]/(x^3,y^3,z^3,x*y*z);
+C = res(coker vars R, LengthLimit=>8)
+rank C_7
+C.dd_3

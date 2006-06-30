@@ -1,19 +1,18 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ[x,y];
 
 i2 : mathML (x+2*y-1)^2
 
-o2 = <mrow><mrow><msup><mi>x</mi><mn>2</mn></msup><mo>&InvisibleTimes;</mo></
-     <mo>+</mo><mrow><mn>4</mn><mo>&InvisibleTimes;</mo><mi>x</mi><mo>*</mo><
-     <mo>+</mo><mrow><mn>4</mn><mo>&InvisibleTimes;</mo><msup><mi>y</mi><mn>2
+o2 = <mrow><mrow><msup><mi>x</mi><mn>2</mn></msup><mo>&InvisibleTimes;</mo></mrow>
+     <mo>+</mo><mrow><mn>4</mn><mo>&InvisibleTimes;</mo><mi>x</mi><mo>*</mo><mi>y</mi></mrow>
+     <mo>+</mo><mrow><mn>4</mn><mo>&InvisibleTimes;</mo><msup><mi>y</mi><mn>2</mn></msup><mo>&InvisibleTimes;</mo></mrow>
      <mo>-</mo><mrow><mn>2</mn><mo>&InvisibleTimes;</mo><mi>x</mi></mrow>
      <mo>-</mo><mrow><mn>4</mn><mo>&InvisibleTimes;</mo><mi>y</mi></mrow>
      <mo>+</mo><mn>1</mn>
      </mrow>
-     mrow>
-     mi>y</mi></mrow>
-     </mn></msup><mo>&InvisibleTimes;</mo></mrow>
+
 
 i3 : mathML matrix {{x,y},{x^2+2,0}}
 
@@ -21,13 +20,13 @@ o3 = <mrow><mo>(</mo><mtable>
      <mtr><mtd><mrow><mi>x</mi></mrow></mtd>
      <mtd><mrow><mi>y</mi></mrow></mtd>
      </mtr>
-     <mtr><mtd><mrow><mrow><msup><mi>x</mi><mn>2</mn></msup><mo>&InvisibleTimes
+     <mtr><mtd><mrow><mrow><msup><mi>x</mi><mn>2</mn></msup><mo>&InvisibleTimes;</mo></mrow>
      <mo>+</mo><mn>2</mn>
      </mrow>
      </mtd>
      <mtd><mn>0</mn></mtd>
      </mtr>
      </mtable><mo>)</mo></mrow>
-     ;</mo></mrow>
+
 
 i4 : 

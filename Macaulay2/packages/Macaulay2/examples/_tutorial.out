@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : ///-- We can compute $(x+y)^3$ as follows.
      R = QQ[x,y]
@@ -23,7 +24,7 @@ o2 : List
 i3 : peek oo
 
 o3 = {TEX{"We can compute $(x+y)^3$ as follows."}, TABLE{class => examples,
-     ---------------------------------------------------------------------------
+     ------------------------------------------------------------------------
      TR{TD{ExampleItem{"R = QQ[x,y]"}}}, TR{TD{ExampleItem{"(x+y)^3"}}}}}
 
 i4 : 

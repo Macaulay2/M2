@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : separate( ".", "a.b.c.d" )
 
@@ -8,7 +9,7 @@ o1 : List
 
 i2 : peek separate( ".", "a.b.c.d" )
 
-o2 = {"a","b","c","d"}
+o2 = {"a", "b", "c", "d"}
 
 i3 : demark("=",ooo)
 

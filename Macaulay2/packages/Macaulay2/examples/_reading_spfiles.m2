@@ -15,3 +15,4 @@ peek get fn
 lines get fn
 peek lines get fn
 stack lines get fn
+removeFile fn

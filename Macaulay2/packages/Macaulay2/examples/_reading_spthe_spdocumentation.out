@@ -1,19 +1,18 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : help "jacobian"
+../../../../Macaulay2/packages/Macaulay2/functions/quotient-doc.m2:70: warning: documentation already provided for 'Macaulay2 :: Ideal : Ideal'
+../../../../Macaulay2/packages/Macaulay2/doc9.m2:618: ... here is the (end of the) previous documentation
+--warning: tag has no documentation: User :: jacobian MonomialIdeal, key (jacobian,MonomialIdeal)
 
 o1 = jacobian -- the Jacobian matrix of partial derivatives
      ******************************************************
 
-     Ways to use jacobian
-     ====================
+     Description
+     ===========
 
-       * "jacobian Ideal" -- the Jacobian matrix of the generators of an ideal
-       * "jacobian Matrix" -- the matrix of partial derivatives of polynomials
-         in a matrix
-       * "jacobian MonomialIdeal" -- missing documentation
-       * "jacobian Ring" -- the Jacobian matrix of the polynomials defining a
-         quotient ring
+
 
      See also
      ========
@@ -21,7 +20,18 @@ o1 = jacobian -- the Jacobian matrix of partial derivatives
        * "diff" -- differentiate or take difference
        * "contract" -- contract one matrix by another
 
-o1 : Hypertext
+     Ways to use jacobian :
+     ======================
+
+       * "jacobian Ideal" -- the Jacobian matrix of the generators of an
+         ideal
+       * "jacobian Matrix" -- the matrix of partial derivatives of
+         polynomials in a matrix
+       * "jacobian MonomialIdeal" -- missing documentation
+       * "jacobian Ring" -- the Jacobian matrix of the polynomials defining a
+         quotient ring
+
+o1 : DIV
 
 i2 : * "jacobian Ideal"
 
@@ -42,49 +52,41 @@ o2 = jacobian Ideal -- the Jacobian matrix of the generators of an ideal
      Description
      ===========
 
-     This is identical to jacobian generators I.  See "jacobian Matrix" for more
-     information.
+     This is identical to jacobian generators I.  See "jacobian Matrix" for
+     more information.
 
-         +----------------------------------+
-         |i1 : R = QQ[x,y,z];               |
-         +----------------------------------+
-         |i2 : I = ideal(y^2-x*(x-1)*(x-13))|
-         +----------------------------------+
-         |i3 : jacobian I                   |
-         +----------------------------------+
+     +-----------------------------+
+     |R = QQ[x,y,z];               |
+     +-----------------------------+
+     |I = ideal(y^2-x*(x-1)*(x-13))|
+     +-----------------------------+
+     |jacobian I                   |
+     +-----------------------------+
 
      If the ring of I is a polynomial ring over a polynomial ring, then
      indeterminates in the coefficient ring are treated as constants.
 
-         +--------------------------------------+
-         |i4 : R = ZZ[a,b,c][x,y,z]             |
-         +--------------------------------------+
-         |i5 : jacobian ideal(a*y*z+b*x*z+c*x*y)|
-         +--------------------------------------+
+     +---------------------------------+
+     |R = ZZ[a,b,c][x,y,z]             |
+     +---------------------------------+
+     |jacobian ideal(a*y*z+b*x*z+c*x*y)|
+     +---------------------------------+
 
-o2 : Hypertext
+o2 : DIV
 
 i3 : apropos "deal"
 
 o3 = {fittingIdeal, graphIdeal, Ideal, ideal, isIdeal, isMonomialIdeal,
-     ---------------------------------------------------------------------------
+     ------------------------------------------------------------------------
      monomialCurveIdeal, MonomialIdeal, monomialIdeal, monomialSubideal}
 
 o3 : List
 
 i4 : examples "jacobian Ideal"
 
-o4 = R = QQ[x,y,z];
-     I = ideal(y^2-x*(x-1)*(x-13))
-     jacobian I
-     R = ZZ[a,b,c][x,y,z]
-     jacobian ideal(a*y*z+b*x*z+c*x*y)
+o4 = 
 
 i5 : print examples "jacobian Ideal"
-R = QQ[x,y,z];
-I = ideal(y^2-x*(x-1)*(x-13))
-jacobian I
-R = ZZ[a,b,c][x,y,z]
-jacobian ideal(a*y*z+b*x*z+c*x*y)
+
 
 i6 : 

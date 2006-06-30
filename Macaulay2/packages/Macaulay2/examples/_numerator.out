@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : numerator (4/6)
 
@@ -22,7 +23,7 @@ o5 = ----------------------------
                       4
                (1 - T)
 
-o5 : Divide
+o5 : Expression of class Divide
 
 i6 : numerator hf
 

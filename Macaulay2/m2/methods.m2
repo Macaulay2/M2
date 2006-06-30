@@ -161,14 +161,6 @@ status = method (
      	  Monomials => false
      	  })
 
-basis = method(
-     Options => new OptionTable from {
-	  Heft => null,
-	  Truncate => false,
-	  Limit => -1,
-	  Variables => null
-     	  })
-
 sopts := 
 Options => {
      DegreeOrder => Ascending,

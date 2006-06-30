@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : "junk" << "hi there" << close
 
@@ -14,7 +15,7 @@ i3 : removeFile "junk"
 
 i4 : get "!date"
 
-o4 = Wed May 24 19:38:44 CDT 2006
+o4 = Wed Jun 21 13:24:14 CDT 2006
 
 
 i5 : 

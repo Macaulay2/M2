@@ -1,17 +1,18 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/101[x,y,z];
 
 i2 : f = random(R^1,R^{5:-3})
 
 o2 = | 42x3-50x2y+9xy2+50y3+39x2z-15xyz+45y2z-22xz2-29yz2-39z3
-     ---------------------------------------------------------------------------
+     ------------------------------------------------------------------------
      30x3+19x2y+2xy2-16y3-38x2z-4xyz-6y2z-36xz2-32yz2+31z3
-     ---------------------------------------------------------------------------
+     ------------------------------------------------------------------------
      -32x3-38x2y+24xy2-41y3+31x2z-42xyz+15y2z-50xz2+17yz2-28z3
-     ---------------------------------------------------------------------------
+     ------------------------------------------------------------------------
      37x3-22x2y+45xy2-9y3-19x2z-8xyz+32y2z-31xz2-4yz2+4z3
-     ---------------------------------------------------------------------------
+     ------------------------------------------------------------------------
      -2x3+24x2y-45xy2-10y3+x2z+15xyz-2y2z-15xz2+21z3 |
 
              1       5
@@ -53,20 +54,20 @@ i7 : Divide(Minus a,b)
 o7 = --
       b
 
-o7 : Divide
+o7 : Expression of class Divide
 
 i8 : Power(Sum(3,4,5),7)
 
                 7
 o8 = (3 + 4 + 5)
 
-o8 : Power
+o8 : Expression of class Power
 
 i9 : Sum(1,2, Minus 3, 4,5)
 
 o9 = 1 + 2 - 3 + 4 + 5
 
-o9 : Sum
+o9 : Expression of class Sum
 
 i10 : Minus a / b
 
@@ -74,20 +75,20 @@ i10 : Minus a / b
 o10 = --
        b
 
-o10 : Divide
+o10 : Expression of class Divide
 
 i11 : (Sum(3,4,5))^7
 
                  7
 o11 = (3 + 4 + 5)
 
-o11 : Power
+o11 : Expression of class Power
 
 i12 : 1 + 2 + Minus 3 + 4 + 5
 
 o12 = 3 - 3 + 4 + 5
 
-o12 : Sum
+o12 : Expression of class Sum
 
 i13 : g = (x+y)^2
 
@@ -101,7 +102,7 @@ i14 : e = expression g
        2           2
 o14 = x  + 2x*y + y
 
-o14 : Sum
+o14 : Expression of class Sum
 
 i15 : peek e
 
@@ -119,7 +120,7 @@ o17 =  1   2   3
 
        a  bb  ccc 
 
-o17 : Table
+o17 : Expression of class Table
 
 i18 : MatrixExpression{{1,2,3},{a,bb,ccc}}
 
@@ -127,7 +128,7 @@ o18 = | 1   2   3  |
       |            |
       | a  bb  ccc |
 
-o18 : MatrixExpression
+o18 : Expression of class MatrixExpression
 
 i19 : Table{{"Example 1","Example 2"},
             {Table{{1,2},{3,4}},Table{{11,22},{3,444}}}}
@@ -138,6 +139,6 @@ o19 =  Example 1  Example 2
 
           3  4      3  444 
 
-o19 : Table
+o19 : Expression of class Table
 
 i20 : 

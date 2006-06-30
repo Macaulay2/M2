@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ[a..d];
 
@@ -17,9 +18,9 @@ o3 : Matrix
 
 i4 : (target f,source f)
 
-o4 = (subquotient (| a |, | 2a-b 3c-5d a2-b-3 |), cokernel | 2a-b 3c-5d a2-b-3
-     ---------------------------------------------------------------------------
-     |)
+o4 = (subquotient (| a |, | 2a-b 3c-5d a2-b-3 |), cokernel | 2a-b 3c-5d
+     ------------------------------------------------------------------------
+     a2-b-3 |)
 
 o4 : Sequence
 

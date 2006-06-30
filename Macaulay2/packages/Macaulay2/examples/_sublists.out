@@ -1,15 +1,10 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
-i1 : sublists({0,0,1,2,0,3,0},i -> i == 0, identity, identity)
+i1 : sublists( (1,2,3,5,7,8,10,12,13,17,18,20,21), odd, toList, minus)
 
-o1 = {{}, 0, {}, 0, {1, 2}, 0, {3}, 0, {}}
+o1 = {{1}, -2, {3, 5, 7}, -8, -10, -12, {13, 17}, -18, -20, {21}}
 
 o1 : List
 
-i2 : sublists({0,0,1,2,0,3,0},i -> i != 0, identity, identity)
-
-o2 = {{0, 0}, 1, {}, 2, {0}, 3, {0}}
-
-o2 : List
-
-i3 : 
+i2 : 

@@ -1,0 +1,55 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : DIV { PARA "Hi there.",
+         MENU { "some topics", TO "topic a", TO "topic b", "more topics", TO "topic c" } }
+--warning: tag has no documentation: User :: topic a, key "topic a"
+--warning: tag has no documentation: User :: topic b, key "topic b"
+--warning: tag has no documentation: User :: topic c, key "topic c"
+
+o1 = Hi there.
+
+     Menu
+     ----
+
+     some topics
+
+       * "topic a" -- missing documentation
+       * "topic b" -- missing documentation
+
+     more topics
+
+       * "topic c" -- missing documentation
+
+o1 : DIV
+
+i2 : info oo
+
+o2 = Hi there.
+
+     * Menu:
+
+
+     some topics
+     * topic a::                     missing documentation
+     * topic b::                     missing documentation
+
+     more topics
+     * topic c::                     missing documentation
+
+i3 : html ooo
+
+o3 = <div><p>Hi there.</p>
+     <div><h3>Menu</h3>
+     <h4>some topics</h4>
+     <ul><li><span><a href="share/doc/Macaulay2/User/html/_topic_spa.html" title="missing documentation">topic a</a> -- missing documentation</span></li>
+     <li><span><a href="share/doc/Macaulay2/User/html/_topic_spb.html" title="missing documentation">topic b</a> -- missing documentation</span></li>
+     </ul>
+     <h4>more topics</h4>
+     <ul><li><span><a href="share/doc/Macaulay2/User/html/_topic_spc.html" title="missing documentation">topic c</a> -- missing documentation</span></li>
+     </ul>
+     </div>
+     </div>
+
+
+i4 : 

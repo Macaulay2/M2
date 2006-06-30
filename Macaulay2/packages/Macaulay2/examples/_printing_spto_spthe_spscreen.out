@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : << 2^100
 1267650600228229401496703205376
@@ -6,20 +7,18 @@ o1 = stdio
 
 o1 : File
 
- -- the standard input output file
-
 i2 : stdio << 2^100
 1267650600228229401496703205376
 o2 = stdio
 
 o2 : File
 
- -- the standard input output file
-
 i3 : << "The answer is " << 2^100 << ".";
-The answer is 1267650600228229401496703205376.                                                    aaa.
-i4 : << "The answer is " << "aaa"||"bb"||"c" << ".";bb
-The answer is                                       c
+The answer is 1267650600228229401496703205376.
+i4 : << "The answer is " << "aaa"||"bb"||"c" << ".";
+The answer is aaa.
+              bb
+              c
 i5 : R = ZZ[x,y];
 
 i6 : f = (x+y+1)^2; g = (x-y+1)^2
@@ -28,10 +27,10 @@ i6 : f = (x+y+1)^2; g = (x-y+1)^2
 o7 = x  - 2x*y + y  + 2x - 2y + 1
 
 o7 : R
-                                                    2           2
-                                                   x  + 2x*y + y  + 2x + 2y + 1
+
 i8 : << "f = " << f << endl << "g = " << g << endl;
-f = 
+     2           2
+f = x  + 2x*y + y  + 2x + 2y + 1
      2           2
 g = x  - 2x*y + y  + 2x - 2y + 1
 
@@ -55,9 +54,7 @@ i14 : truncateOutput infinity
 
 o14 = identity
 
-o14 : Function
-
- -- the identity function
+o14 : CompiledFunction
 
 i15 : 43!
 

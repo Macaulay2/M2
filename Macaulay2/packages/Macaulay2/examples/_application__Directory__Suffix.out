@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : applicationDirectorySuffix()
 
@@ -18,4 +19,3 @@ i4 : applicationDirectory()
 o4 = /home/dan/local/Mac2
 
 i5 : 
-     

@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = QQ[x,y,z,a,b,c,MonomialOrder=>Eliminate 3];
 
@@ -23,4 +24,3 @@ o4 = a  - 3a*b + 3c
 o4 : R
 
 i5 : 
-     

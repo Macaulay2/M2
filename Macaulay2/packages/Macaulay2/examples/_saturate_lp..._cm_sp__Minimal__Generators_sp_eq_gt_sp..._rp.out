@@ -1,0 +1,38 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : R = ZZ/101[x_0..x_4]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : I = truncate(8, monomialCurveIdeal(R,{1,4,5,9}));
+
+o2 : Ideal of R
+
+i3 : time gens gb I;
+     -- used 0.17201 seconds
+
+             1       428
+o3 : Matrix R  <--- R
+
+i4 : time J1 = saturate(I);
+     -- used 1.16007 seconds
+
+o4 : Ideal of R
+
+i5 : time J = saturate(I, MinimalGenerators=>false);
+     -- used 1.08407 seconds
+
+o5 : Ideal of R
+
+i6 : numgens J
+
+o6 = 1002
+
+i7 : numgens J1
+
+o7 = 7
+
+i8 : 

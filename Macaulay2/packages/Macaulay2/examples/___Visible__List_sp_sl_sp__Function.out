@@ -1,9 +1,69 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
-i1 : {1,2,3} / (i -> i+1) / (j -> j^2)
+i1 : f = x -> x+1
 
-o1 = {4, 9, 16}
+o1 = f
 
-o1 : List
+o1 : FunctionClosure
 
-i2 : 
+i2 : g = x -> 2*x
+
+o2 = g
+
+o2 : FunctionClosure
+
+i3 : g \ (1 .. 10)
+
+o3 = (2, 4, 6, 8, 10, 12, 14, 16, 18, 20)
+
+o3 : Sequence
+
+i4 : (1 .. 10) / g
+
+o4 = (2, 4, 6, 8, 10, 12, 14, 16, 18, 20)
+
+o4 : Sequence
+
+i5 : f \ g \ (1 .. 10)
+
+o5 = (3, 5, 7, 9, 11, 13, 15, 17, 19, 21)
+
+o5 : Sequence
+
+i6 : f @@ g \ (1 .. 10)
+
+o6 = (3, 5, 7, 9, 11, 13, 15, 17, 19, 21)
+
+o6 : Sequence
+
+i7 : set (1 .. 10)
+
+o7 = Set {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+o7 : Set
+
+i8 : g \ oo
+
+o8 = Set {16, 18, 2, 20, 4, 6, 8, 10, 12, 14}
+
+o8 : Set
+
+i9 : R = QQ[x];
+
+i10 : f = map(R,R,{x^2})
+--warning: f redefined
+
+                2
+o10 = map(R,R,{x })
+
+o10 : RingMap R <--- R
+
+i11 : f \ {x,x^2,x^3,x^4}
+
+        2   4   6   8
+o11 = {x , x , x , x }
+
+o11 : List
+
+i12 : 

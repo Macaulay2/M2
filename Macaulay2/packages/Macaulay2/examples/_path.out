@@ -1,22 +1,23 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : path
 
-o1 = {./, ../../../Macaulay2/m2/, ../../../Macaulay2/packages/,
-     ---------------------------------------------------------------------------
-     ../tutorial/final/, ../m2/, ../../../Macaulay2/test/,
-     ---------------------------------------------------------------------------
-     ../../../Macaulay2/test/engine/}
+o1 = {./, ../../../../Macaulay2/m2/, ../../../../Macaulay2/packages/,
+     ------------------------------------------------------------------------
+     ../tutorial/final/, ../m2/, ../../../../Macaulay2/test/,
+     ------------------------------------------------------------------------
+     ../../../../Macaulay2/test/engine/}
 
 o1 : List
 
 i2 : path = append(path, homeDirectory | "resolutions/")
 
-o2 = {./, ../../../Macaulay2/m2/, ../../../Macaulay2/packages/,
-     ---------------------------------------------------------------------------
-     ../tutorial/final/, ../m2/, ../../../Macaulay2/test/,
-     ---------------------------------------------------------------------------
-     ../../../Macaulay2/test/engine/, /home/dan/resolutions/}
+o2 = {./, ../../../../Macaulay2/m2/, ../../../../Macaulay2/packages/,
+     ------------------------------------------------------------------------
+     ../tutorial/final/, ../m2/, ../../../../Macaulay2/test/,
+     ------------------------------------------------------------------------
+     ../../../../Macaulay2/test/engine/, /home/dan/resolutions/}
 
 o2 : List
 

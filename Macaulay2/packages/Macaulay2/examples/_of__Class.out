@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : ofClass class 3
 
@@ -16,36 +17,29 @@ o3 = a ring
 
 o3 : SPAN
 
-i4 : ofClass HashTable
+i4 : SPAN ofClass {HashTable, ProjectiveVariety}
 
-o4 = a hash table
+o4 = a hash table or a projective variety
 
 o4 : SPAN
 
-i5 : ofClass ProjectiveVariety
+i5 : document { Key => foo, "We may need ", ofClass ZZ, " and ", ofClass HashTable, "." }
 
-o5 = a projective variety
+i6 : help foo
 
-o5 : SPAN
-
-i6 : document { Key => foo, "We may need ", ofClass ZZ, " and ", ofClass HashTable, "." }
-
-i7 : help foo
-
-o7 = foo
+o6 = foo
      ***
-
 
      Description
      ===========
-     We may need an integer and a hash table.
 
+     We may need an integer and a hash table.
 
      For the programmer
      ==================
+
      The object "foo" is a symbol.
 
-o7 : DIV
+o6 : DIV
 
-i8 : 
-     
+i7 : 

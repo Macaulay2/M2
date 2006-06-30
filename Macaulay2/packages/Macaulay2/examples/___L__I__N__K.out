@@ -1,0 +1,9 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : html LINK { "title" => "Macaulay2", "rel" => "Top", "href" => "index.html" }
+
+o1 = <link title="Macaulay2" rel="Top" href="index.html"/>
+
+
+i2 : 

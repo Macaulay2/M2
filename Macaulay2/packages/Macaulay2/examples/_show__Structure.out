@@ -1,11 +1,11 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : showStructure
 
 o1 = Thing : BasicList : Command
                          DocumentTag
                          Eliminate
-                         Error : MissingMethod
                          Expression : Adjacent
                                       AssociativeExpression : Equation
                                                               Product
@@ -27,28 +27,29 @@ o1 = Thing : BasicList : Command
                                       Table
                          FilePosition
                          ForestNode
+                         Hybrid
                          IndeterminateNumber
                          IndexedVariable
                          InfiniteNumber
                          LowerBound
                          Manipulator
                          MarkUpList : ANCHOR
-                                      BLOCKQUOTE
                                       BOLD
+                                      BR
+                                      CDATA
                                       CODE
+                                      COMMENT
                                       EM
+                                      ExampleItem
                                       HREF
                                       HTML
                                       IMG
                                       ITALIC
                                       LABEL
+                                      LATER
+                                      LINK
                                       LITERAL
-                                      MarkUpListParagraph : BODY
-                                                            BR
-                                                            DIV
-                                                            EXAMPLE
-                                                            ExampleTABLE
-                                                            HEAD
+                                      MarkUpListParagraph : HEAD
                                                             HEADER1
                                                             HEADER2
                                                             HEADER3
@@ -56,19 +57,21 @@ o1 = Thing : BasicList : Command
                                                             HEADER5
                                                             HEADER6
                                                             HR
-                                                            Hypertext
-                                                            LISTING
+                                                            MarkUpListContainer : BLOCKQUOTE
+                                                                                  BODY
+                                                                                  DIV
+                                                                                  DIV1
+                                                                                  LI
+                                                                                  TD
                                                             MENU
-                                                            NL
                                                             PARA
-                                                            PARA1
                                                             PRE
                                                             TABLE
                                                             TITLE
                                                             UL
-                                      NOINDENT
-                                      SEQ
+                                      META
                                       SMALL
+                                      SPAN
                                       STRONG
                                       SUB
                                       SUP
@@ -76,12 +79,11 @@ o1 = Thing : BasicList : Command
                                       TO
                                       TO2
                                       TOH
+                                      TR
                                       TT
-                                      UNDERLINE
                          MinorsComputation
                          MutableList : Bag
                          Option
-                         ParagraphList
                          Partition
                          ProductOrder
                          PushforwardComputation
@@ -89,17 +91,20 @@ o1 = Thing : BasicList : Command
                          TreeNode
                          URL
                          Vector
-                         VerticalList
                          VisibleList : Array
                                        List
                                        Sequence
+                                       VerticalList
              Boolean
-             CC
-             CCC
+             CompiledFunctionBody
              Database
-             Dictionary
+             Dictionary : GlobalDictionary
+                          LocalDictionary
              File
-             Function
+             Function : CompiledFunction
+                        CompiledFunctionClosure
+                        FunctionClosure
+             FunctionBody
              HashTable : CoherentSheaf
                          Ideal : MonomialIdeal
                          ImmutableType : Module
@@ -114,14 +119,14 @@ o1 = Thing : BasicList : Command
                                             Resolution
                                             ScriptedFunctor
                                             Type : HeaderType
-                                                   MarkUpType : DistributedMarkUpType
-                                                                EmptyMarkUpType
                                                    Monoid : OrderedMonoid : GeneralOrderedMonoid
                                                    Ring : EngineRing : FractionField
                                                                        GaloisField
                                                                        PolynomialRing
                                                                        QuotientRing
-                                                   SelfInitializingType
+                                                                       SchurRing
+                                                   SelfInitializingType : MarkUpType : IntermediateMarkUpType
+                                                                                       MarkUpTypeWithOptions
                                                    WrapperType
                                             Variety : AffineVariety
                                                       ProjectiveVariety
@@ -134,12 +139,15 @@ o1 = Thing : BasicList : Command
                          SumOfTwists
                          Tally : Set
              Net : String
+             NetFile
              Nothing
+             Number : CC
+                      CCC
+                      QQ
+                      RR
+                      RRR
+                      ZZ
              Pseudocode
-             QQ
-             RR
-             RRR
              Symbol : Keyword
-             ZZ
 
 i2 : 

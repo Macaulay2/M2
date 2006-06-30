@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : m = mutableZero(ZZ,3,5)
 
@@ -8,9 +9,15 @@ o1 : MutableMatrix
 
 i2 : m_(1,2) = 3
 
+o2 = 3
+
 i3 : m_(2,4) = 54
 
+o3 = 54
+
 i4 : m_(0,0) = -12
+
+o4 = -12
 
 i5 : m
 

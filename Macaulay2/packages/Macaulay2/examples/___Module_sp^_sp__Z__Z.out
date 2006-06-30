@@ -1,0 +1,29 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : M = coker matrix{{1,2,3}}
+
+o1 = cokernel | 1 2 3 |
+
+                              1
+o1 : ZZ-module, quotient of ZZ
+
+i2 : M^3
+
+o2 = cokernel | 1 2 3 0 0 0 0 0 0 |
+              | 0 0 0 1 2 3 0 0 0 |
+              | 0 0 0 0 0 0 1 2 3 |
+
+                              3
+o2 : ZZ-module, quotient of ZZ
+
+i3 : directSum(3:M)
+
+o3 = cokernel | 1 2 3 0 0 0 0 0 0 |
+              | 0 0 0 1 2 3 0 0 0 |
+              | 0 0 0 0 0 0 1 2 3 |
+
+                              3
+o3 : ZZ-module, quotient of ZZ
+
+i4 : 

@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : Quartic = Proj(QQ[x_0..x_2]/ideal(x_0^4+x_1^4+x_2^4))
 

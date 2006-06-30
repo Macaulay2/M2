@@ -1,7 +1,8 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
-i1 : 5 | 12
+i1 : 2^42 | 2^15 == 2^42 + 2^15
 
-o1 = 13
+o1 = true
 
 i2 : 

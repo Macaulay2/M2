@@ -1,0 +1,18 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : s = "what are you thinking?"
+
+o1 = what are you thinking?
+
+i2 : #s
+
+o2 = 22
+
+i3 : s_-1, s_19, s_0
+
+o3 = (?, n, w)
+
+o3 : Sequence
+
+i4 : 

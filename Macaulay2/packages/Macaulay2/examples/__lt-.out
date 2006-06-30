@@ -1,0 +1,96 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : x = t
+
+o1 = t
+
+o1 : Symbol
+
+i2 : x <- 4
+
+o2 = 4
+
+i3 : x
+
+o3 = t
+
+o3 : Symbol
+
+i4 : t
+
+o4 = 4
+
+i5 : y <- 44
+
+o5 = 44
+
+i6 : y
+
+o6 = 44
+
+i7 : f = () -> symbol z
+
+o7 = f
+
+o7 : FunctionClosure
+
+i8 : (f()) <- 44
+
+o8 = 44
+
+i9 : z
+
+o9 = 44
+
+i10 : installMethod(symbol <-, String, peek)
+
+o10 = peek
+
+o10 : FunctionClosure
+
+i11 : "foo" <- "bar"
+
+o11 = ("foo", "bar")
+
+i12 : "foo" | "foo" <- "bar"
+
+o12 = ("foofoo", "bar")
+
+i13 : u = s_4
+
+o13 = s
+       4
+
+o13 : IndexedVariable
+
+i14 : s = 3
+
+o14 = 3
+
+i15 : u <- 555
+
+o15 = 555
+
+i16 : s
+
+o16 = s
+
+o16 : Symbol
+
+i17 : s_4
+
+o17 = 555
+
+i18 : u
+
+o18 = s
+       4
+
+o18 : IndexedVariable
+
+i19 : value u
+
+o19 = 555
+
+i20 : 

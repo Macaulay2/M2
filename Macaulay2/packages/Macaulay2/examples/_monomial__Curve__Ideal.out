@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/101[a..f]
 
@@ -22,8 +23,11 @@ o3 : Ideal of R
 
 i4 : monomialCurveIdeal(R,{6,7,8,9,11})
 
-             2                    2                    2                   2   2            2            3
-o4 = ideal (e  - c*f, d*e - b*f, d  - c*e, c*d - b*e, c  - b*d, b*c*e - a*f , b d - a*e*f, b c - a*d*f, b  - a*c*f)
+             2                    2                    2                   2 
+o4 = ideal (e  - c*f, d*e - b*f, d  - c*e, c*d - b*e, c  - b*d, b*c*e - a*f ,
+     ------------------------------------------------------------------------
+      2            2            3
+     b d - a*e*f, b c - a*d*f, b  - a*c*f)
 
 o4 : Ideal of R
 

@@ -1,0 +1,23 @@
+-- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
+
+i1 : R = QQ[t_1..t_4]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : S = QQ[t_1..t_12]
+
+o2 = S
+
+o2 : PolynomialRing
+
+i3 : (t_1)_R
+
+o3 = t
+      1
+
+o3 : R
+
+i4 : 

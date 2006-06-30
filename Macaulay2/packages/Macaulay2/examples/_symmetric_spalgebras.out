@@ -1,4 +1,5 @@
 -- -*- M2-comint -*-
+with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = QQ[a..d];
 
@@ -10,20 +11,22 @@ o2 : PolynomialRing
 
 i3 : describe S
 
-o3 = QQ [$x , $x , $x , a, b, c, d, Degrees => {{1}, {1}, {1}, {0}, {0}, {0}, {0}}, SkewCommutative => {}]
-           0    1    2
+o3 = QQ [x , x , x , a, b, c, d, Degrees => {{1, 0}, {1, 0}, {1, 0}, {0, 1},
+          0   1   2
+     ------------------------------------------------------------------------
+     {0, 1}, {0, 1}, {0, 1}}]
 
 i4 : S_0+S_4
 
-o4 = $x  + b
-       0
+o4 = x  + b
+      0
 
 o4 : S
 
-i5 : S_"$x_0"
+i5 : S_"x_0"
 
-o5 = $x
-       0
+o5 = x
+      0
 
 o5 : S
 
@@ -35,10 +38,10 @@ o6 : PolynomialRing
 
 i7 : symmetricAlgebra(R^1/(R_0,R_1^3), Variables => {t})
 
-     QQ [t, a, b, c, d, Degrees => {{1}, {0}, {0}, {0}, {0}}, SkewCommutative => {}]
-o7 = -------------------------------------------------------------------------------
-                                                3
-                                       (t*a, t*b )
+     QQ [t, a, b, c, d, Degrees => {{1, 0}, {0, 1}, {0, 1}, {0, 1}, {0, 1}}]
+o7 = -----------------------------------------------------------------------
+                                            3
+                                   (t*a, t*b )
 
 o7 : QuotientRing
 
