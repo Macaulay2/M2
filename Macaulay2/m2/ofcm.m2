@@ -96,7 +96,7 @@ monoidDefaults = (
 	  MonomialOrder => GRevLex,
 	  MonomialSize => 32,				    -- we had this set to null, but some of the code needs a number here...
 	  SkewCommutative => {},
-	  VariableOrder => null,		  -- not implemented yet
+	  -- VariableOrder => null,		  -- not implemented yet
 	  WeylAlgebra => {},
 	  Adjust => identity,
 	  Repair => identity,
@@ -109,7 +109,8 @@ tensorDefaults = merge(monoidDefaults,
      new OptionTable from {MonomialOrder => null},
      (x,y) -> y)
 
-monoid = method(Dispatch => Thing)
+monoid = method(Dispatch => Thing, Options => monoidDefaults, TypicalValue => GeneralOrderedMonoid)
+monoid PolynomialRing := o -> R -> R.monoid
 options PolynomialRing := options @@ monoid
 
 generators GeneralOrderedMonoid := M -> M.generators
@@ -331,14 +332,12 @@ makeMonoid := (opts) -> (
      opts = new OptionTable from opts;
      makeit1 opts)
 
-monoid Array := Monoid => (
-     monoidDefaults >> opts -> args -> (
-     	  if opts.Variables === null
-     	  then opts = merge(opts, new OptionTable from {Variables => deepSplice sequence args}, last);
-     	  makeMonoid opts)
-     ) @@ toSequence
-
-monoid Ring := Monoid => R -> R.monoid
+monoid Array := opts -> args -> (
+     (opts,args) = override(opts,toSequence args);
+     if opts.Variables === null
+     then opts = merge(opts, new OptionTable from {Variables => deepSplice sequence args}, last)
+     else if args =!= () then error "variables provided conflict with Variables option";
+     makeMonoid opts)
 
 tensor = method( Options => tensorDefaults)
 

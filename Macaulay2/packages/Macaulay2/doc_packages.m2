@@ -119,19 +119,46 @@ document {
 	  assert
 	  }
      }
+
 document {
-     Key => {newPackage, (newPackage,String)}, 
+     Key => {(newPackage,String), newPackage, Date, [newPackage,Date], Authors, [newPackage,Authors], Version, [newPackage, Version],
+	  [newPackage,Headline],HomePage, [newPackage,HomePage],[newPackage,DebuggingMode],
+	  InfoDirSection, [newPackage,InfoDirSection]
+	  }, 
      Headline => "start a new package",
-     Usage => "newPackage ( \"package name\", ... )",
+     Usage => "newPackage ( title )",
      Inputs => {
+	  "title" => "the name of the new package",
+	  Version => String => "the version number of the package",
+	  Date => String => "the date of this version of the package",
+	  InfoDirSection => String => {"the title of the section in the info page directory where the menu entry for this package should be made"},
+	  Headline => String => {"a brief (5-10 words) description of the package"},
+	  Authors => List => {"a list of lists of options, one for each author.  The suboptions are of the form
+	       ", TT "Name => x", ", ", TT "Email => x", ", or ", TT "HomePage => x", ", where ", TT "x", " is a string."
+	       },
+	  HomePage => String => "the URI pointing to the home page of the package, if any",
+	  DebuggingMode => Boolean => {"whether ", TO "debuggingMode", " should be true during package loading"},
 	  },
      Consequences => {"a package is created"},
+     EXAMPLE lines ///
+     	  newPackage ( "Foo", Version => "1.1", Headline => "making Foo" )
+	  endPackage "Foo"
+     ///,
+     "The options used when the package was created can be recovered with ", TO "options", ".",
+     EXAMPLE lines ///
+     	  options Foo
+	  oo.Headline
+     	  (options Core).Version
+     ///,
      PARA { "Here is a template for a typical ", TT "newPackage", " entry in a package."},
-     PRE ///newPackage("package name",
+     PRE ///newPackage("PACKAGENAME",
     Headline => "one line description",
     Version => 1.0,
     Date => "month XX, 20XX",
-    Authors => {{Name => "author", Email => "email", HomePage => "url"}},
+    Authors => {
+	 {Name => "author1", Email => "email1", HomePage => "url1"}
+	 {Name => "author2", Email => "email2", HomePage => "url2"},
+	 },
     DebuggingMode => true
     )///,
 	SeeAlso => {"packages"}

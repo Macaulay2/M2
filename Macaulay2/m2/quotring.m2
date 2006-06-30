@@ -4,6 +4,7 @@ QuotientRing = new Type of EngineRing
 QuotientRing.synonym = "quotient ring"
 ideal QuotientRing := R -> R.ideal
 isQuotientRing = method(TypicalValue => Boolean)
+monoid QuotientRing := o -> R -> R.monoid
 isQuotientRing Ring := R -> false
 isQuotientRing QuotientRing := R -> true
 coefficientRing QuotientRing := (cacheValue coefficientRing) (R -> coefficientRing ambient R)
@@ -162,7 +163,7 @@ dim QuotientRing := (R) -> (
      )
 
 hilbertSeries QuotientRing := options -> (S) -> hilbertSeries(cokernel presentation S,options)
-monoid QuotientRing := (cacheValue monoid) (S -> monoid ambient S)
+monoid QuotientRing := o -> (cacheValue monoid) (S -> monoid ambient S)
 degreesRing QuotientRing := (cacheValue degreesRing) (S -> degreesRing ambient S)
 QuotientRing_String := (S,s) -> if S#?s then S#s else (
      R := ultimate(ambient, S);

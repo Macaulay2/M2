@@ -147,20 +147,6 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [modifyRing, VariableOrder],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => [modifyRing, Weights],
      Headline => "",
      Usage => "",

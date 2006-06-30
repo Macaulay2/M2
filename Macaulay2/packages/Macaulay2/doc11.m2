@@ -646,6 +646,11 @@ document {
      SeeAlso => "hypertext"
      }
 
+document { Key => DL, Headline => "hypertext DL element" }
+document { Key => DT, Headline => "hypertext DT element" }
+document { Key => DD, Headline => "hypertext DD element" }
+document { Key => STYLE, Headline => "hypertext STYLE element" }
+
 document {
      Key => UL,
      Headline => "hypertext UL item",

@@ -143,11 +143,12 @@ BUTTON := (s,alt) -> (
      else IMG("src" => s, "alt" => concatenate("[",alt,"]")))
 
 html HTML := t -> concatenate(
-     "<?xml version=\"1.0\" encoding=\"us-ascii\"?>", newline,
-     "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN\" \"http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd\" >", newline,
-     "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">", newline,
+///<?xml version="1.0" encoding="us-ascii" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"	 "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+///,
      apply(t,html), 
-     "</html>",newline
+     "</html>\n"
      )
 
 -- produce html form of documentation, for Macaulay 2 and for packages

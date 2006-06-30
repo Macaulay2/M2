@@ -259,20 +259,6 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [tensor, VariableOrder],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => [tensor, DegreeRank],
      Headline => "",
      Usage => "",

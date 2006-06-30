@@ -255,12 +255,6 @@ document { Key => {isConstant,(isConstant, RingElement)},
      SeeAlso => coefficientRing,
      SourceCode => (isConstant,RingElement)
      }
-document { Key => {[newPackage,Version],Version},
-     Headline => "specify the version number when creating a new package",
-     Usage => "newPackage(..., Version => num)",
-     Inputs => { "num" => String => "the version number of the new package" },
-     Consequences => {{ "the version number will be stored under the key ", TO "Version", " in the resulting package" }},
-     EXAMPLE "(options Core).Version"}
 document { Key => currentTime,
      Headline => "get the current time",
      Usage => "currentTime()",
@@ -315,7 +309,7 @@ document { Key => [needsPackage, LoadDocumentation],
      Usage => "needsPackage(..., LoadDocumentation => ...)",
      SeeAlso => beginDocumentation,
      Consequences => {{ "when the package is loaded, the documentation is loaded, too" }}}
-document { Key => ofClass, 
+document { Key => {ofClass,(ofClass, Type),(ofClass, ImmutableType),(ofClass, List)}, 
      Headline => "English phrases for types",
      Usage => "ofClass T",
      Inputs => { "T" => Nothing => {ofClass{Type,ImmutableType,List}, " of types"} },
@@ -355,26 +349,6 @@ document { Key => functionBody,
 document { Key => FunctionBody,
      Headline => "the class of function bodies",
      SeeAlso => functionBody }
-document { Key => {[newPackage, Authors], Authors},
-     Usage => "newPackage(..., Authors => au)",
-     Headline => "provide contact information for the authors of a package",
-     Inputs => { "au" => List => { "a list of lists, each of which describes one of the authors" } },
-     Consequences => { { "the authors will be stored in the newly created package" } },
-     PARA { "Each elemnt of ", TT "au", " should be a list of options of the form ", TT "key => val", ",
-	  where ", TT "key", " is ", TT "Name", ", ", TT "Email", ", or ", TT "HomePage", ", and
-	  ", TT "val", " is a string containing the corresponding information."
-	  },
-     EXAMPLE "Core.Options.Authors"
-     }
-document { Key => Name,
-     "This symbol is used as a key when providing information about the authors of a package to the ", TO "newPackage", " command.
-     See ", TO [newPackage, Authors], "." }
-document { Key => Email,
-     "This symbol is used as a key when providing information about the authors of a package to the ", TO "newPackage", " command.
-     See ", TO [newPackage, Authors], "." }
-document { Key => HomePage,
-     "This symbol is used as a key when providing information about the authors of a package to the ", TO "newPackage", " command.
-     See ", TO [newPackage, Authors], "." }
 document { Key => fileLength,
      Headline => "the length of a file",
      Usage => "fileLength f",
@@ -469,13 +443,6 @@ assert ( class (x->x) === FunctionClosure )
 assert ( class sin === CompiledFunction )
 assert ( class depth === CompiledFunctionClosure )
 ///
-
-document { Key => Heft, 
-     Headline => "adjust the degrees of ring elements internally",
-     "A symbol used as an option with some functions.  It denotes a way of internally adjusting the multi-degrees of elements of polynomials
-     by attaching a prefix to each multi-degree that is computed as the dot product with a fixed vector of integers.",
-     SeeAlso => { Adjust, Repair }
-     }
 
 scan((
 	  FollowLinks,Hilbert,UserMode,RerunExamples,MakeDocumentation,IgnoreExampleErrors,IgnoreDocumentationErrors,MakeInfo,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate

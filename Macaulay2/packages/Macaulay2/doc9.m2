@@ -55,37 +55,6 @@ document {
      }
 
 document {
-     Key => Adjust,
-     Headline => "adjust the multi-degree",
-     TT "Adjust", " -- an option used when creating a polynomial ring
-     to specify a linear function for transforming multi-degrees of monomials 
-     into multi-degrees whose first component is positive, for internal use.",
-     PARA{},
-     "This facility is used in particular by ", TT "(Ext,Module,Module)", ".",
-     PARA{},
-     EXAMPLE {
-	  "R = ZZ[x,y, Degrees => {-1,-2}, 
-	  Repair => d -> -d,
-	  Adjust => d -> -d];",
-     	  ///degree \ gens R///,
-	  "transpose vars R"
-     	  },
-     SeeAlso => { "Repair" }
-     }
-
-document {
-     Key => Repair,
-     Headline => "repair the multi-degree",
-     TT "Adjust", " -- an option used when creating a polynomial ring
-     to specify a linear function for transforming internally used multi-degrees
-     (whose first component is positive) of monomials into the original externally 
-     used multi-degrees.",
-     PARA{},
-     "This facility is used in particular by ", TT "(Ext,Module,Module)", ".",
-     SeeAlso => { "Adjust" }
-     }
-
-document {
      Key => dd,
      Headline => "differential in a chain complex",
      TT "dd", " -- a symbol used as a key in a chain complex, under which

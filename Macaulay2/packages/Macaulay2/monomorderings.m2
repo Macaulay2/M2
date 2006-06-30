@@ -753,7 +753,7 @@ chosen monomial ordering.",
      }
 
 document {
-     Key => {MonomialOrder,Position,Up,Down},
+     Key => {MonomialOrder,Position,Up,Down,Global},
      Headline => "monomial ordering",
      TT "MonomialOrder", " -- an optional argument used with polynomial rings and monoids
      to indicate a
@@ -792,6 +792,13 @@ document {
 	  (TT "MonomialOrder => {Weights=>{1,13,6,2}}", " -- a weight order"),
 	  (TT "MonomialOrder => Weights=>{1,13,6,2}", " -- same"),
 	  },
+     "If any monomials will be less than 1 in the ordering, then the option ", TT "Global => false", "
+     should be used.",
+     EXAMPLE lines ///
+     	  QQ[x,y, Weights => {-1,1}, Global => false]
+	  x<1
+	  y<1
+     ///,
      SeeAlso => {"monomial orderings"}}
 
 

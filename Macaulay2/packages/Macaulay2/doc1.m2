@@ -975,11 +975,16 @@ document {
 	  ),
      SYNOPSIS (
 	  Usage => "newClass(A,x)",
+	  Inputs => { "A" => HashTable, "x" },
 	  Outputs => {{"a copy (possibly) of ", TT "x", " with ", TT "A", " as the new class"}},
 	  ),
      SUBSECTION "common remarks",
-     PARA{"If ", TT "x", " is a basic list or sequence, then ", TO "BasicList", " should be an ancestor of ", TT "A", " and ", TT "B", " should be ", TO "Nothing", ".
+     PARA{
+	  "If ", TT "x", " is a basic list or sequence, then ", TO "BasicList", " should be an ancestor of ", TT "A", " and ", TT "B", " should be ", TO "Nothing", ".
 	  If ", TT "x", " is a hash table, then ", TO "HashTable", " should be an ancestor of ", TT "A", "."
+	  },
+     PARA {
+	  "If the class (and parent) of x are already equal to A (and B, respectively), then copying of the elements of ", TT "x", " is not required, and is not done."
 	  },
      PARA{
 	  "If ", TT "x", " is mutable, and instances of class ", TT "A", " are also mutable, then copying of the elements of ", TT "x", " is not required, and is not done."
@@ -1000,14 +1005,14 @@ document {
      PARA {
 	  "The difference between ", TT "new A of B from x", " and ", TT "newClass(A,B,x)", " is that the methods installed for ", TO "new", " are not used."
 	  },
-     EXAMPLE lines ///
-	  new Thing of Thing from Thing := (A,B,c) -> (
-	       << "-- new " << A << " of " << B 
-	       << " from " << toString c << endl;
-	       c);
-	  new ImmutableType of Vector from x
-	  newClass(ImmutableType,Vector,x)
-     ///,
+     EXAMPLE {
+	  ///new Thing of Thing from Thing := (A,B,c) -> (
+       << "-- new " << A << " of " << B 
+       << " from " << toString c << endl;
+       c);///,
+	  "new ImmutableType of Vector from x",
+	  "newClass(ImmutableType,Vector,x)"
+     	  },
      SeeAlso => { "new", "copy", "toList" }
      }
 

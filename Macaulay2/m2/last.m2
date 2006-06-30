@@ -8,14 +8,6 @@ addStartFunction(() -> path = unique apply( path, minimizeFilename))
 addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))
 addEndFunction(() -> path = {})
 
-lastLN := 0
-lastWI := 0
-promptWidth = () -> (
-     if lineNumber === lastLN then lastWI
-     else (
-	  lastLN = lineNumber;
-	  lastWI = max \\ width \ lines ZZ.InputPrompt lineNumber))
-
 wr := (sep,x) -> wrap(printWidth - promptWidth(), sep, net x)
 Tally.Wrap = RawMatrix.Wrap = Matrix.Wrap = Ideal.Wrap = RingElement.Wrap = VisibleList.Wrap = Sequence.Wrap = x -> wr("-",x)
 String.Wrap = x -> ( x = net x; if height x + depth x <= 3 then wr("",x) else x )

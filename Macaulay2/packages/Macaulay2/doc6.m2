@@ -302,25 +302,7 @@ document {
 	  "R = ZZ/101[x,y,z];",
       	  "listForm (x^2 - 7 + x*y*z^11 + y)"
 	  }}
-document {
-     Key => WeylAlgebra,
-     Headline => "make a Weyl algebra",
-     TT "WeylAlgebra", " -- an option used when creating a polynomial ring
-     to specify that a Weyl algebra is to be produced.",
-     PARA{},
-     "A Weyl algebra is an algebra in which some of the variables behave
-     as derivatives with respect to the other variables.",
-     PARA{},
-     EXAMPLE "R = ZZ/101[x,dx,y,dy,WeylAlgebra => {x=>dx, y=>dy}];",
-     "The list ", TT "{x=>dx, y=>dy}", " indicates that the variable ", TT "dx", "
-     is to play the role of the derivative with respect to ", TT "x", ", and
-     that ", TT "y", " is to play the role of the derivative with respect
-     to ", TT "y", ".",
-     EXAMPLE {
-	  "dx*x",
-      	  "dx*x^10",
-      	  "dx*y^10"
-	  }}
+
 TEST "
 -- test name
 R = ZZ/101[a..e]
@@ -365,47 +347,6 @@ document {
      Headline => "the class of all monoid elements",
      SeeAlso => "monoid"}
 document {
-     Key => Degrees,
-     Headline => "specify the degrees",
-     TT "Degrees", " -- an option which specifies the degrees of the generators.",
-     PARA{},
-     "Used as an option to ", TO "monoid", ", or when a polynomial ring
-     is created.",
-     PARA{},
-     "See ", TO "monoid", " for details."}
-document {
-     Key => SkewCommutative,
-     Headline => "make a skewcommutative (alternating) ring",
-     TT "SkewCommutative", " -- name for an optional argument for monoids
-     that specifies that monoid rings created from them will be skewcommutative.",
-     PARA{},
-     "The default value is false.",
-     EXAMPLE {
-	  "R = ZZ[x,y,SkewCommutative=>true]",
-      	  "x*y",
-      	  "y*x"
-	  }}
-document {
-     Key => MonomialSize,
-     Headline => "specify maximum exponent size",
-     TT "MonomialSize => n", " -- an option which determines the maximum 
-     exponent size.",
-     PARA{},
-     "Used as an option to ", TO "monoid", ", or when a polynomial ring
-     is created.  Setting 'MonomialSize=>n' specifies that monomial exponents 
-     may be as large as 2^(n-1) - 1.  
-     The default value is 8, allowing for exponents up to 127.  Currently
-     the maximum value is 16, allowing for exponents up to 32767.",
-     PARA{},
-     "See ", TO "monoid", " for details."}
-document {
-     Key => Inverses,
-     Headline => "specify whether generators are invertible",
-     TT "Inverses", " -- an option used in creating a monoid which tells
-     whether negative exponents will be allowed, making the monoid into
-     a group.",
-     SeeAlso => "monoid"}
-document {
      Key => GeneralOrderedMonoid,
      Headline => "the class of all ordered free commutative monoids",
      "This is the class of free monoids that can be handled by 
@@ -421,36 +362,6 @@ document {
      to the multi-degrees of monomials in another monoid.",
      PARA{},
      "Also used as a key under which to store the result."}
-document {
-     Key => VariableBaseName,
-     Headline => "base name for variables",
-     TT "VariableBaseName => x", " -- an optional argument used when creating
-     monoids or rings to specify that the variables should be ",
-     TT "x_0, ..., x_n", "."}
-document {
-     Key => Variables,
-     Headline => "specify the variable names",
-     TT "Variables", " -- a key used with monoids to indicate the list of 
-     variable names, or the number of variables.",
-     PARA{},
-     "This option is useful for those situations when one doesn't care about the
-     names of the variables in a ring or monoid, or when one is creating a 
-     tensor product ring, symmetric algebra, or other ring, and one wants control
-     over the names of the ring variables."}
-document {
-     Key => VariableOrder,
-     TT "VariableOrder", " -- an option used when creating a monoid.",
-     PARA{},
-     "Not implemented yet.",
-     SeeAlso => "monoid"}
-document {
-     Key => (monoid, Array),
-     Headline => "make a polynomial ring or monoid ring",
-     TT "monoid [a,b,c,...]", " -- makes a free ordered commutative monoid on the variables listed.",
-     PARA{},
-     "Optional arguments (placed between the brackets):",
-     UL (TO \ keys value Core#"private dictionary"#"monoidDefaults"),
-     SeeAlso => {(symbol SPACE, Ring, Array)}}
 document {
      Key => (symbol SPACE, Ring, Array),
      Headline => "the standard way to make a polynomial ring",
@@ -468,35 +379,6 @@ document {
      TT "R M", " -- produces the monoid ring from a ring ", TT "R", " and an ordered monoid
      ", TT "M", ".",
      SeeAlso => "polynomial rings"}
-document {
-     Key => (monoid, Ring),
-     Headline => "get the monoid from a monoid ring",
-     TT "monoid R", " -- yields the underlying monoid of polynomial ring
-     or monoid ring.",
-     EXAMPLE {
-	  "R = QQ[x,y]",
-	  "monoid R"
-	  }}
-document {
-     Key => monoid,
-     Headline => "make a monoid",
-     TT "monoid [a,b,c,Degrees=>{2,3,4}]", " -- makes a free ordered commutative monoid on the
-	     variables listed, with degrees 2, 3, and 4, respectively.",
-     PARA{},
-     TT "monoid [a,b,c,Degrees=>{{1,2},{3,-3},{0,4}}]", " -- makes a free ordered
-     commutative monoid on the variables listed, with multi-degrees as listed.",
-     PARA{},
-     TT "monoid [a,b,c,Degrees=>{{},{},{}}]", " -- makes a free ordered commutative monoid on the
-	     variables listed, ungraded.",
-     PARA{},
-     "The variables listed may be symbols or indexed variables.
-     The values assigned to these variables (with ", TO "assign", ") are
-     the corresponding monoid generators.  The function ", TO "baseName", "
-     may be used to recover the original symbol or indexed variable.",
-     PARA{},
-     "The class of all monoids created this way is ", TO "GeneralOrderedMonoid", ".",
-     PARA{},
-     SeeAlso => {"OrderedMonoid","IndexedVariable","Symbol"}}
 document {
      Key => (symbol **, Monoid, Monoid),
      Headline => "tensor product of monoids",
