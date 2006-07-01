@@ -265,7 +265,9 @@ ifneq "$(CC)" "cl"
 # -fomit-frame-pointer causes strange bugs!
 # CFLAGS   += -fomit-frame-pointer
 # CXXFLAGS += -fomit-frame-pointer
+ifneq "$(OS)" "Darwin"
 LDFLAGS  += -s
+endif
 STRIPCMD := strip
 endif
 endif
