@@ -424,11 +424,11 @@ document {
 
 
 document {
-     Key => describe,
+     Key => {describe,(describe, PolynomialRing),(describe, QuotientRing),(describe, Thing)},
      Headline => "real description",
-     TT "describe x", " -- returns an ", TO "Expression", " containing the 
+     TT "describe x", " -- returns ", ofClass Net, " containing the 
      real description of ", TT "x", ", bypassing the feature which causes
-     certain types of things to acquire the names of global variables to which
+     certain types of things to acquire, for brevity, the names of global variables to which
      they are assigned.",
      PARA{},
      EXAMPLE {
@@ -437,11 +437,6 @@ document {
       	  "describe R",
 	  "toString describe R",
 	  },
-     PARA{},
-     "Currently, this function works by temporarily removing the value
-     stored under ", TT "name", " from the hash table ", TT "x", ",
-     which therefore must be mutable.",
-     PARA{},
      SeeAlso => "toString"
      }
 
@@ -1150,8 +1145,8 @@ document {
      }
 
 document {
-     Key => get,
-     Headline => "get an entire file",
+     Key => {get,(get, File),(get, String)},
+     Headline => "get the contents of a file",
      TT "get \"f\"", " -- yields a string containing the contents of the file whose name
      is f.",
      PARA{},

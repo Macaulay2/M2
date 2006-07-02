@@ -444,10 +444,9 @@ document {
      }
 
 document {
-     Key => getWWW,
+     Key => {getWWW,(getWWW, String),(getWWW, String, Nothing),(getWWW, String, String)},
      Headline => "get a web page",
-     TT "getWWW URL", " -- obtain the contents of the web page addressed
-     by ", TT "URL", " from an http server.",
+     TT "getWWW URL", " -- obtain the contents of the web page, together with the http headers, at the address given by ", TT "URL", ", from an http server.",
      BR{},
      TT "getWWW(URL,TEXT)", " -- obtain the contents of the web page addressed
      by ", TT "URL", " from an http server, using the POST method, provided 
@@ -457,7 +456,17 @@ document {
      or name service to statically linked programs like this one.",
      PARA{},
      "Accessing a secure web site (whose URL begins with ", TT "https:", ")
-     depends on your having installed ", TT "openssl", " on your system."
+     depends on your having installed ", TT "openssl", " on your system.",
+     PARA{},
+     "In this example we show how to use ", TO "regex", " to separate the header lines in the response from the content.",
+     EXAMPLE lines ///
+         p = getWWW "http://www.math.uiuc.edu/Macaulay2/Makefile"
+	 r = regex("\r\n\r\n",p)
+	 substring(p,r#0#0+4)
+	 peek oo
+	 substring(p,0,r#0#0+2)
+	 peek oo
+     ///
      }
 
 document {

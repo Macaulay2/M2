@@ -914,7 +914,7 @@ extern "C" {
   const MatrixOrNull * 
   rawKoszulMonomials(int nskew,
 		     const Matrix *M,
-		     const Matrix *N);
+		     const Matrix *N); /* drg: connected rawKoszulMonomials */
   /* M and N should each have one row, and the base ring should be a
      polynomial ring.  The (i,j) th entry of the resulting matrix is
      1 or -1 times N_j/M_i (if M_i divides N_j). The sign is determined only from

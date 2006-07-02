@@ -20,6 +20,7 @@ SchurRing = new Type of EngineRing
 SchurRing.synonym = "Schur ring"
 monoid SchurRing := o -> R -> R.monoid
 expression SchurRing := S -> new FunctionApplication from { schurRing, (S.Symbol, numgens monoid S) }
+undocumented (expression, SchurRing)
 toExternalString SchurRing := R -> toString expression R
 toString SchurRing := R -> (
      if ReverseDictionary#?R then toString ReverseDictionary#R
@@ -27,6 +28,8 @@ toString SchurRing := R -> (
 net SchurRing := R -> (
      if ReverseDictionary#?R then toString ReverseDictionary#R
      else net expression R)
+
+
 
 degreeLength SchurRing := (RM) -> degreeLength monoid RM
 coefficientRing SchurRing := Ring => R -> last R.baseRings

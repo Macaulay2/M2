@@ -228,7 +228,7 @@ document {
 	  },
      }
 document {
-     Key => (diff,Matrix,Matrix),
+     Key => {(diff,Matrix,Matrix),(diff, Matrix, Vector),(diff, RingElement, Vector),(diff, Vector, Matrix),(diff, Vector, RingElement),(diff, Vector, Vector)},
      Headline => "differentiate a matrix by a matrix",
      Usage => "diff(m,n)",
      Inputs => {
@@ -236,15 +236,13 @@ document {
 	  "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."}
 	  },
      Outputs => {
-	  Matrix => {"with the shape ", TT "h : dual F ** G <--- dual P ** Q", ",
-	       whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
-	       is the result of differentiating ", TT { "n", SUB "j,l" }, "
-	       by the ",
-	       TO2("differential operator corresponding to a polynomial",
-	       "differential operator"),
-	       " corresponding to  ", TT {"m", SUB "i,k", "."}
+	  Matrix => {"with the shape ", TT "h : dual F ** G <--- dual P ** Q", ", whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
+	       is the result of differentiating ", TT { "n", SUB "j,l" }, " by the ",
+	       TO2("differential operator corresponding to a polynomial", "differential operator"), " corresponding to  ", TT {"m", SUB "i,k", "."
+		    }
 	       }
 	  },
+     "The arguments ", TT "m", " and ", TT "n", " may also be vectors or ring elements.",
      TEST ///
 	  R = ZZ[x]
 	  m = random(R^2,R^{-1,-2,-3,-4,-5})
@@ -330,7 +328,10 @@ document {
 document {
      Key => {(contract,Matrix,Matrix),(contract,RingElement,RingElement), (contract,Vector,RingElement),
 	  (contract,RingElement,Vector), (contract,Vector,Vector), (contract,Matrix,RingElement),
-       	  (contract,RingElement,Matrix), (contract,Vector,Matrix), (contract,Matrix,Vector)},
+       	  (contract,RingElement,Matrix), (contract,Vector,Matrix), (contract,Matrix,Vector),
+	  (contract,Number,RingElement), (contract,RingElement,Number), (contract,Number,Number), 
+	  (contract,Number,Vector), (contract,Vector,Number), (contract,Number,Matrix),
+     	  (contract,Matrix,Number)},
      Headline => "contract a matrix by a matrix",
      Usage => "h = contract(m,n)",
      Inputs => {
@@ -488,7 +489,7 @@ document {
 	       }
      }
 document {
-     Key => (jacobian,Ideal),
+     Key => {(jacobian,Ideal),(jacobian, MonomialIdeal)},
      Headline => "the Jacobian matrix of the generators of an ideal",
      Usage => "jacobian I",
      Inputs => {"I" => " in a polynomial ring"},
@@ -673,13 +674,14 @@ document {
      TO2 ("parts of a monomial order", "parts of the monomial order"), "."
      }
 document {
-     Key => borel,
+     Key => {(borel, Matrix),borel,(borel, MonomialIdeal)},
      Headline => "make a Borel fixed submodule",
      TT "borel m", " -- make a Borel fixed submodule",
      PARA{},
      "Yields the matrix with the same target as the matrix ", TT "m", ", whose columns
      generate the smallest Borel fixed submodule containing the lead monomials
-     of the columns of ", TT "m", ".",
+     of the columns of ", TT "m", ".  If ", TT "m", " is a monomial ideal, then the minimal Borel
+     fixed monomial ideal containing it is returned.",
      PARA{},
      "For example, if R = ZZ/101[a..f], then",
      EXAMPLE {
@@ -688,7 +690,7 @@ document {
 	  }
      }
 document {
-     Key => (inducedMap, Module, Module),
+     Key => {(inducedMap, Module, Module),(inducedMap, ChainComplex, ChainComplex)},
      Headline => "compute the map induced by the identity",
      Usage => "inducedMap(M,N)",
      Inputs => { "M", "N" },
@@ -717,7 +719,7 @@ document {
      SeeAlso => {inducesWellDefinedMap, subquotient}
      }
 document {
-     Key => (inducedMap, Module, Module, Matrix),
+     Key => {(inducedMap, Module, Module, Matrix),(inducedMap, Module, Nothing, Matrix),(inducedMap, Nothing, Module, Matrix),(inducedMap, Nothing, Nothing, Matrix)},
      Headline => "compute the induced map",
      Usage => "inducedMap(M,N)",
      Inputs => { "M", "N", "f" => {"a homomorphism ", TT "P <-- Q"}
@@ -779,7 +781,9 @@ document {
      requests verification that the induced map produced is well defined."
      }
 document {
-     Key => inducesWellDefinedMap,
+     Key => {inducesWellDefinedMap,(inducesWellDefinedMap, Module, Module, Matrix),
+	  (inducesWellDefinedMap, Module, Nothing, Matrix),(inducesWellDefinedMap, Nothing, Module, Matrix),
+	  (inducesWellDefinedMap, Nothing, Nothing, Matrix)},
      Headline => "whether a map is well defined",
      TT "inducesWellDefinedMap(M,N,f)", " -- tells whether the matrix ", TT "f", " would
      induce a well defined map from ", TT "N", " to ", TT "M", ".",
@@ -1041,7 +1045,7 @@ document {
      SeeAlso => {submatrix, (symbol _,Module,Array), (symbol ^,Matrix,Array)}
      }
 document {
-     Key => isSurjective,
+     Key => {isSurjective,(isSurjective, Matrix)},
      Headline => "whether a map is surjective",
      SeeAlso => "isInjective"
      }
@@ -1069,7 +1073,7 @@ document {
      Headline => "the class of all quotient rings"
      }
 document {
-     Key => isQuotientOf,
+     Key => {isQuotientOf,(isQuotientOf, QuotientRing, Ring),(isQuotientOf, Ring, Ring)},
      Headline => "whether one thing is a quotient of another"
      }
 
@@ -1269,7 +1273,7 @@ document {
      after ", TT "n", " more elements are computed."
      }
 document {
-     Key => fittingIdeal,
+     Key => {fittingIdeal,(fittingIdeal, ZZ, Module)},
      Headline => "Fitting ideal of a module",
      TT "fittingIdeal(i,M)", " -- the i-th Fitting ideal of the module M",
      PARA{},
@@ -1468,7 +1472,12 @@ document {
      TT "dual M", " -- the dual of a module."
      }
 document {
-     Key => homomorphism,
+     Key => (dual, CoherentSheaf),
+     Headline => "dual coherent sheaf",
+     TT "dual M", " -- the dual of a coherent sheaf."
+     }
+document {
+     Key => {homomorphism,(homomorphism, Matrix)},
      Headline => "get the homomorphism from element of Hom",
      Usage => "homomorphism f",
      Inputs => {
