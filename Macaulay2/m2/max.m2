@@ -2,7 +2,7 @@
 InfiniteNumber = new Type of BasicList
 InfiniteNumber.synonym = "infinite number"
 infinity = new InfiniteNumber from {1}
-neginfinity := new InfiniteNumber from {-1}
+neginfinity = new InfiniteNumber from {-1}
 - InfiniteNumber := x -> if x === infinity then neginfinity else infinity
 ReverseDictionary#infinity = symbol infinity
 PrintNames#( infinity) =  "infinity"

@@ -435,7 +435,6 @@ stringcatfun(e:Expr):Expr := (
 	  else buildErrorPacket("encountered a large integer")
 	  )
      is string do e
-     is Error do e
      else WrongArg("a sequence or list of strings, integers, or symbols"));
 setupfun("concatenate",stringcatfun);
 

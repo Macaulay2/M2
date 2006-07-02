@@ -726,6 +726,151 @@ document { Key => CompiledFunctionBody, Headline => "the class of all compiled f
      ///
      }
 
+document { Key => ImmutableType, Headline => "the class of immutable types",
+     "All types are implemented as hash tables.  Most types are mutable, so that additional methods for handling their instances can be added
+     at any time.  However, if a type has an ancestor where the methods can be stored, then mutability is not needed.",
+     PARA{},
+     "When a type is used to represent a mathematical object, then immutability is desirable, in order to make the strict equality operator work on it.  For example, a
+     module ", TT "M", " is a type, with its elements are its instances, but we would like to be able to compare two modules quickly, and form sets of modules.  This
+     is possible, because we have implemented modules as immutable types, and we have put the methods for adding and subtracting elements of ", TT "M", " into the
+     class ", TO "Vector", ".",
+     EXAMPLE lines ///
+     	  F = ZZ^3
+	  class F
+	  parent class F
+	  showStructure class F
+	  showStructure F
+     	  v = F_0 + 3*F_2
+	  F === ZZ^3
+	  set (ZZ^3, ZZ^2, ZZ^3)
+	  peek F
+     ///,
+     "Another advantage of immutability of modules is that there is no particular reason, aside from efficiency, to avoid creating a given module multiple times, as
+     one copy of the module is as good as another.",
+     EXAMPLE lines ///
+     	  ZZ^3_0 + ZZ^3_2
+     ///,
+     SeeAlso => {showStructure,parent,class}
+     }
+
+document { Key => SumOfTwists, Headline => "the class of all sums of twists",
+     "This class is used internally as an abstract representation of a graded module as an infinite direct sum of twists of a coherent sheaf.",
+     EXAMPLE lines ///
+     	  R = QQ[x,y,z]
+     	  X = Proj R
+	  OO_X(*)
+	  peek oo
+	  OO_X(>=2)
+	  peek oo
+	  Ext^0(OO_X^1, OO_X^1)
+	  Ext^0(OO_X^1, OO_X^1(*))
+     ///
+     }
+
+document { Key => Wrap, Headline => "a key for methods for wrapping printed output",
+     "The default method for printing results of computations (stored in ", TT "Thing.Print", ") searches for a method for wrapping the output by search in the class of 
+     the result (and its ancestors) for a function stored under the key ", TT "Wrap", ".  The preinstalled wrapping methods use ", TO "wrap", ", they differ in their choice of
+     separator between wrapped lines, or in whether to wrap at all.",
+     EXAMPLE lines ///
+     	  QQ[x_0 .. x_40 ]
+	  concatenate(50:"abcd ")
+     ///
+     }
+
+document { Key => baseFilename, Headline => "the base part of a filename or path",
+     Usage => "baseFilename fn",
+     Inputs => { "fn" => String => "a filename or path" },
+     Outputs => { "the last component of the path" },
+     EXAMPLE lines ///
+     	  baseFilename "/a/b/dir/"
+     	  baseFilename "/a/b/file"
+     ///
+     }
+document { Key => BettiTally, Headline => "the class of all Betti tallies",
+     "A Betti tally is a special type of ", TO "Tally", " that is printed as a display of graded Betti numbers.  The class was created
+     so the function ", TO "betti", " could return something that both prints nicely and from which information can be extracted.  The keys
+     are pairs ", TT "(i,d)", ", where ", TT "i", " is the homological degree, and ", TT "d", " is a list of integers giving a multidegree.
+     Only the first component of ", TT "d", " is used in printing.",
+     EXAMPLE lines ///
+          t = new BettiTally from { (0,{0}) => 1, (1,{1}) => 2, (2,{3}) => 3, (2,{4}) => 4 }
+	  peek oo
+	  t#(2,{4})
+     ///
+     }
+
+document { Key => {(searchPath, List, String), searchPath}, Headline => "search a path for a file",
+     Usage => "searchPath(pa,fn)",
+     Inputs => { "pa" => {"a list of strings giving paths to directories.  Each one ends with a slash."}, "fn" },
+     Outputs => {{"a list of those directories in ", TT "pa", " containing files named ", TT "fn" }}}
+
+document { Key => {(boxList, List),boxList,(boxList, Sequence)}, Headline => "ascii art: a vertical list of boxes",
+     Usage => "boxList v",
+     Inputs => { "v" },
+     Outputs => {{"a net obtained by converting the elements of the list ", TT "v", " to nets and stacking them vertically, with boxes drawn around them.  Its baseline
+	       is the baseline of first net."}},
+     EXAMPLE lines ///
+         boxList {12345,"b","asdsf"}
+     ///}
+
+document { Key => {(boxTable, List),boxTable,(boxTable, Sequence)}, Headline => "ascii art: a table of boxes",
+     Usage => "boxTable v",
+     Inputs => { "v" },
+     Outputs => {{"a net obtained by converting the elements of each list in the list of lists ", TT "v", " to nets and arranging them
+	       in a table, with boxes drawn around them.  Its baseline is the baseline of nets in the top row."}},
+     EXAMPLE lines ///
+     	  R = QQ[x,y]
+	  random(R^2,R^{2:-2})
+	  boxTable entries oo
+     ///}
+
+document { Key => cache, Headline => "a key under which to store cache tables",
+     SeeAlso => {CacheTable},
+     EXAMPLE lines ///
+     	  F = ZZ^3
+     	  peek F
+	  F.cache#Foo = Bar
+	  peek F
+	  peek F.cache
+	  F === ZZ^3
+     ///}
+document { Key => {(capture, String),capture}, Headline => "evaluate Macaulay 2 code and capture the output (under development)" }
+document { Key => "catch", Headline => "catch a thrown exception", SeeAlso => {"throw"},
+     Usage => "catch c",
+     Outputs => {{"the value obtained by evaluating the code ", TT "c", ", or, if a ", TO "throw", " was executed during the evaluation of ", TT "c", ",
+	       the argument given to ", TO "throw", "."}},
+     EXAMPLE lines ///
+          catch scan(0..10, i -> if i == 5 then throw 18 else print i)
+     ///}
+document { Key => "throw", Headline => "throw an exception", SeeAlso => {"catch"},
+     Usage => "throw x", 
+     Consequences => {{"the flow of control is passed to the surrounding ", TO "catch", ", and ", TT "x", " is returned as its value"}},
+     EXAMPLE lines ///
+          catch scan(0..10, i -> if i == 5 then throw 18 else print i)
+     ///}
+document { Key => centerString, Headline => "center a string or net",
+     Usage => "centerString(wid,s)",
+     Inputs => { "wid" => ZZ, "s" => Net },
+     Outputs => {{"a net with spaces added, as needed, to center ", TT "s", " in a net of width ", TT "wid" }},
+     EXAMPLE lines ///
+         centerString(18,"asdf"||"qwer")
+     ///}
+document { Key => commandInterpreter, Headline => "the top level command interpreter",
+     Usage => "commandInterpreter f",
+     Inputs => { 
+	  "f" => { TT "()", " or ", ofClass{Dictionary, Symbol, Pseudocode, Function} }
+	  },
+     Consequences => {{"the top level command interpreter will be called with the symbols in the lexical scope of ", TT "f", " visible to the user."}},
+     "One more ", TT "i", " will be added to prompt each time the command interpreter is entered.  To leave it, type ", TT "end", " or the end of file character.",
+     EXAMPLE lines ///
+     	  f = (x -> y -> 11) 13
+     	  commandInterpreter f
+	  x
+	  end
+	  x
+     ///,
+     "This facility is useful as a debugging tool, and is used by the standard debugger."
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => apropos,
+     Key => {(apropos, String),apropos},
      Headline => "symbols matching a pattern",
      Usage => "apropos pat",
      Inputs => {

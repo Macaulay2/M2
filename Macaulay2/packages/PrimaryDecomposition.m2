@@ -5,6 +5,7 @@ newPackage(
 export {
      EHV,					    -- cryptic
      Hybrid,
+     Increment,
      GTZ,
      SY,
      binomialCD,

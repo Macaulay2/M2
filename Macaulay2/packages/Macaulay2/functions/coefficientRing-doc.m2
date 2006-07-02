@@ -5,7 +5,7 @@
 undocumented {
 	  (coefficientRing,FractionField),
 	  (coefficientRing,QuotientRing),
-	  (coefficientRing,PolynomialRing),
+	  (coefficientRing,PolynomialRing),(coefficientRing, SchurRing),
 	  (coefficientRing,GaloisField)}
 
 document { 

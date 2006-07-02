@@ -556,15 +556,14 @@ basis = method(
 	  Limit => -1,
 	  Variables => null
      	  })
-neginf := -infinity
 basis(InfiniteNumber,InfiniteNumber,Module) := 
 basis(List,InfiniteNumber,Module) := 
 basis(InfiniteNumber,List,Module) := 
 basis(List,List,Module) := opts -> (lo,hi,M) -> (
      R := ring M;
      if lo === infinity then error "incongruous lower degree bound: infinity";
-     if hi === neginf then error "incongruous upper degree bound: -infinity";
-     if lo === neginf then lo = {};
+     if hi === neginfinity then error "incongruous upper degree bound: -infinity";
+     if lo === neginfinity then lo = {};
      if hi === infinity then hi = {};
      if #lo != 0 and #lo =!= degreeLength R or #hi != 0 and #hi =!= degreeLength R then error "expected degree length to match that of ring";
      if lo =!= hi and #lo > 1 then error "degree rank > 1 and degree bounds differ";

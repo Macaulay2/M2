@@ -56,11 +56,13 @@ new Vector from Matrix := (M,f) -> (
      if M === Vector then error "expected a module";
      new target f from {f})
 
-RingElement * Vector := (r,v) -> new class v from {r * v#0}
+Number * Vector := RingElement * Vector := (r,v) -> new class v from {r * v#0}
 Vector + Vector := (v,w) -> (
+     if class v =!= class w then error "expected vectors from the same module";
      m := v#0 + w#0;
      new target m from {m})
 Vector - Vector := (v,w) -> (
+     if class v =!= class w then error "expected vectors from the same module";
      m := v#0 - w#0;
      new target m from {m})
 Vector == Vector := (v,w) -> v === w

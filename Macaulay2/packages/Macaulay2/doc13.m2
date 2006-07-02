@@ -267,9 +267,14 @@ document { Key => currentTime,
      PARA { "Compare that to the current date, available from a standard Unix command." },
      EXAMPLE ///run "date"///
      }
-document { Key => Partition, 
-     Headline => "a type of list representing a partition of a natural number",
+document { Key => Partition, Headline => "a type of list representing a partition of a natural number",
      SeeAlso => { partitions, (conjugate,Partition) } }
+document { Key => (conjugate,Partition), Headline => "conjugate a partition",
+     Usage => "conjugate p", Inputs => {"p"}, Outputs => {{"the conjugate of ", TT "p" }},
+     EXAMPLE lines ///
+     	  partitions 4
+	  conjugate \ oo
+     ///}
 document { Key => partitions, Headline => "list the partitions of an integer" }
 document { Key => (partitions, ZZ, ZZ),
      Usage => "partitions(n,k)",

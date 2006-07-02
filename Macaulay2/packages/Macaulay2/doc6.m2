@@ -208,7 +208,7 @@ document {
      Headline => "complex conjugate",
      TT "conjugate z", " -- the complex conjugate of the complex number z."}
 document {
-     Key => {(conjugate,CC),(conjugate,Number)},
+     Key => {(conjugate,CC),(conjugate,CCC),(conjugate,Number)},
      Headline => "complex conjugate",
      Usage => "conjugate z",
      Inputs => {"z"},
@@ -218,7 +218,6 @@ document {
 	  "conjugate 3"
 	  }
      }
-
 document {
      Key => gcdCoefficients,
      Headline => "gcd with coefficients",
@@ -527,7 +526,7 @@ document {
      	  ///,
      SeeAlso => {"degrees", "free modules", "graded and multigraded polynomial rings"}}
 document {
-     Key => components,
+     Key => {components,(components, GradedModuleMap),(components, Module),(components, Matrix),(components, GradedModule),(components, ChainComplexMap)},
      Headline => "list the components of a direct sum",
      TT "components x", " -- produces a list of the components of an element of a 
      free module.",
