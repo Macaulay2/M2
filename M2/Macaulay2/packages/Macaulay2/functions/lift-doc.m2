@@ -8,6 +8,7 @@ undocumented {
 	  (lift,QQ,Ring),
 	  (lift,ZZ,ZZ),
 	  (lift,QQ,ZZ),
+	  (lift, RingElement, RingElement),		    -- these methods are about to be phased out
 	  (lift,QQ,QQ),
 	  (lift,Matrix,ZZ),
 	  (lift,RingElement,ZZ),

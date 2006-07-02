@@ -278,7 +278,7 @@ document {
      }
 
 document {
-     Key => lines,
+     Key => {lines,(lines, String),(lines, String, String)},
      Headline => "split a string into lines",
      TT "lines s", " -- yields an array of strings obtained from the
      string ", TT "s", " by breaking it at newline or return characters.",

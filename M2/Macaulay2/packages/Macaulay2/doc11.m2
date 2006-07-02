@@ -927,7 +927,7 @@ document {
      }
 
 document {
-     Key => methods,
+     Key => {methods,(methods, Command),(methods, Sequence),(methods, Thing),(methods, Type)},
      Headline => "list methods",
      TT "methods F", " -- produces a list of those methods associated with the
      function or type F.",

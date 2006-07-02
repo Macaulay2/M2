@@ -129,7 +129,7 @@ document {
      }
 
 document {
-     Key => mingle,
+     Key => {mingle,(mingle, BasicList)},
      Headline => "mingle elements of several lists",
      TT "mingle {v,w,...}", " -- produces a new list from the lists or
      sequences v,w,... by taking the first element from each, then the second, 
@@ -438,7 +438,7 @@ document {
      }
 
 document {
-     Key => locate,
+     Key => {locate,(locate, Pseudocode), (locate, Function), (locate, Sequence), (locate, Symbol), (locate, Nothing)},
      Headline => "locate source code",
      TT "locate f", " -- for a symbol interpreted function ", TT "f", " 
      returns a sequence ", TT "(n,i,c,j,d)", " describing the location of

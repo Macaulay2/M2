@@ -712,11 +712,11 @@ document { Key => LocalDictionary,
      have values; thus they may be referred to as dictionary closures.",
      SeeAlso => { localDictionaries, GlobalDictionary }
      }
-document { Key => localDictionaries,
+document { Key => {localDictionaries,(localDictionaries, Symbol), (localDictionaries, Pseudocode), (localDictionaries, Dictionary), (localDictionaries, Function)},
      Headline => "get local dictionaries",
      Usage => "localDictionaries f",
      Inputs => {
-	  "f" => {"() or ", ofClass{Function,Symbol,Pseudocode,LocalDictionary,GlobalDictionary}}
+	  "f" => {"() or ", ofClass{Function,Symbol,Pseudocode,Dictionary}}
 	  },
      Outputs => {
 	  List => {"a list of the local dictionaries associated with the lexical scopes containing ", TT "f"}
@@ -918,6 +918,29 @@ document { Key => "continue",
 document { Key => "copyright",
      Headline => "a string containing the copyright notice for Macaulay 2",
      EXAMPLE "copyright" }
+document { Key => {listSymbols,(listSymbols, Dictionary), (listSymbols, List)},
+     Headline => "compact display of symbols and their values",
+     Usage => "listSymbols v",
+     Inputs => { "v" => {ofClass{List,Dictionary}, "; if it's a list, it should be a list of symbols"}},
+     Outputs => { Net => {"a compact display of the symbols in ", TT "v", " and their values"}},
+     EXAMPLE lines ///
+     	  x:=3; y:="hi there"; z:=2^30;
+	  listSymbols { symbol x, symbol y }
+	  listSymbols first localDictionaries()
+     ///}
+
+document { Key => {makeDocumentTag,(makeDocumentTag, Thing), (makeDocumentTag, DocumentTag), (makeDocumentTag, String)},
+     Headline => "convert a documentation key to a documentation tag",
+     EXAMPLE lines ///
+     	  makeDocumentTag (res,Module)
+	  peek oo
+     	  makeDocumentTag (koszul,ZZ,Matrix)
+	  peek oo
+	  makeDocumentTag [res,PairLimit]
+	  peek oo
+     ///,
+     SeeAlso => {"documentation keys"}
+     }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

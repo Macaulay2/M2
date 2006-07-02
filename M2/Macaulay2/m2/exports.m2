@@ -817,7 +817,7 @@ export {
 	symbol loaddata,
 	symbol local,
 	symbol localDictionaries,
-	symbol localSymbols,
+	-- symbol localSymbols,
 	symbol locate,
 	symbol log,
 	symbol lookup,

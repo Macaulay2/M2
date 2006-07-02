@@ -626,7 +626,7 @@ document {
      Inputs => { "x" => RR },
      Outputs => { { "the exponential of ", TT "x" } } }
 document {
-     Key => log,
+     Key => {log,(log, RR),(log, ZZ)},
      Headline => "logarithm function",
      Usage => "log x",
      Inputs => { "x" => RR },
@@ -852,7 +852,7 @@ document {
      }
 
 document {
-     Key => mergePairs,
+     Key => {mergePairs,(mergePairs, BasicList, BasicList, Function)},
      Headline => "merge sorted lists of pairs",
      TT "mergePairs(x,y,f)", " merges sorted lists of pairs.",
      PARA{},
@@ -871,7 +871,7 @@ document {
      }
 
 document {
-     Key => merge,
+     Key => {merge,(merge, HashTable, HashTable, Function)},
      Headline => "merge hash tables",
      Usage => "z = merge(x,y,g)",
      Inputs => {

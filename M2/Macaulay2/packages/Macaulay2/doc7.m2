@@ -556,7 +556,7 @@ document {
      SeeAlso => {"leadCoefficient", "leadMonomial", "leadComponent"}
      }
 document {
-     Key => (leadTerm, Matrix),
+     Key => {(leadTerm, Matrix),(leadTerm, GroebnerBasis),(leadTerm, Vector)},
      Headline => "get the greatest term of each column",
      Usage => "leadTerm f",
      Inputs => {"f" => "in a polynomial ring"},
@@ -566,17 +566,18 @@ document {
      " and this routine
      returns the matrix whose ", TT "i", "-th column is the lead term of the ", 
      TT "i", " th column of ", TT "f", ".",
-     EXAMPLE {
-	  "R = QQ[a..d];",
-	  "f = matrix{{0,a^2-b*c},{c,d}}",
-	  "leadTerm f",
-	  },
+     EXAMPLE lines ///
+	  R = QQ[a..d];
+	  f = matrix{{0,a^2-b*c},{c,d}}
+	  leadTerm f
+	  ///,
      "Coefficients are included in the result:",
      EXAMPLE {
 	  "R = ZZ[a..d][x,y,z];",
 	  "f = matrix{{0,(a+b)*x^2},{c*x, (b+c)*y}}",
 	  "leadTerm f"
 	  },
+     "The argument ", TT "f", " can also be ", ofClass GroebnerBasis, ", in which case the lead term matrix of the generating matrix of ", TT "f", " is returned.",
      SeeAlso => {"leadCoefficient", "leadMonomial", "leadComponent"}
      }
 document {
@@ -600,31 +601,26 @@ document {
 	  },
      SeeAlso => {"Groebner bases"}
      }
-///
--- Put this in once the routine exists!! (MES 3/27/04)
+
 document {
      Key => (leadTerm, ZZ, RingElement),
      Headline => "get the lead polynomials using part of the monomial order",
      Usage => "leadTerm(n,f)",
-     Inputs => {"n",
-	  "f" => "in a polynomial ring"},
-     Outputs => { RingElement => {"the lead term of ", TT "f", " using the first ", TT "n", " parts 
-	       of the monomial order"}},
-     "Returns the sum of the terms of ", TT "f", " which are greatest using the 
-     first ", TT "n", " parts of
-     the monomial order in the ring of ", TT "f", ". ",
-     "See ", TO "parts of monomial orders", " for an explanation.",
+     Inputs => {"n", "f" => "in a polynomial ring" },
+     Outputs => { RingElement => {"the lead term of ", TT "f", " using the first ", TT "n", " parts of the monomial order"}},
+     "Returns the sum of the terms of ", TT "f", " which are greatest using the      first ", TT "n", " parts of
+     the monomial order in the ring of ", TT "f", ".  See ", TO "parts of monomial orders", " for an explanation.",
      PARA{},
      "In the following example, the lead terms using the first part refers to all the
      monomials which have the lead monomial in the indeterminates a and b.  This has a
-     similar effect as selecting leadTerm in the ring QQ[c,d][a,b].",
-     EXAMPLE {
-	  "R = QQ[a..d, MonomialOrder=>ProductOrder{2,2}];",
-	  "leadTerm(1, (c+d)*a^3 - c^100*a - 1)"
-	  },
+     effect similar to selecting leadTerm in the ring ", TT "QQ[c,d][a,b]", ".",
+     EXAMPLE lines ///
+	  R = QQ[a..d, MonomialOrder => ProductOrder{2,2}];
+	  leadTerm(1, (c+d)*a^3 - c^100*a - 1)
+	  ///,
      SeeAlso => {selectInSubring}
      }
-///
+
 document {
      Key => (leadTerm, ZZ, Matrix),
      Headline => "get the matrix of lead polynomials of each column",

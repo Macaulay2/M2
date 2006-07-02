@@ -36,7 +36,7 @@ document {
      SeeAlso => {"packages", "an example of a package", loadPackage }
      }
 document {
-     Key => makePackageIndex,
+     Key => {makePackageIndex,(makePackageIndex, List), (makePackageIndex, Sequence)},
      Headline => "",
      Usage => "makePackageIndex()",
      Consequences => {"Creates a file 'index.html' in your Macaulay2 directory,

@@ -349,7 +349,7 @@ document {
      TT "isIsomorphism f", " -- whether the map f of modules is an isomorphism."
      }
 document {
-     Key => leadCoefficient,
+     Key => {leadCoefficient,(leadCoefficient, RingElement)},
      Headline => "the leading coefficient",
      TT "leadCoefficient f", " -- return the leading coefficient of the polynomial
      or vector ", TT "f", ".",
@@ -357,15 +357,15 @@ document {
      SeeAlso => {"leadTerm", "leadMonomial", "leadComponent"}
      }
 document {
-     Key => leadComponent,
-     Headline => "the leading component of a vector",
+     Key => {leadComponent,(leadComponent, Matrix),(leadComponent, Vector)},
+     Headline => "the leading component of a vector or matrix",
      TT "leadComponent f", " -- return the leading component of the vector f,
      i.e., the integer i so that f_i is the first nonzero component of f.",
      PARA{},
      SeeAlso => {"leadTerm", "leadCoefficient", "leadMonomial"}
      }
 document {
-     Key => leadMonomial,
+     Key => {leadMonomial,(leadMonomial, RingElement)},
      Headline => "the leading monomial",
      TT "leadMonomial f", " -- return the leading monomial of the polynomial
      or vector f, as a ring element.  (Warning: in version 0.9.2, a
