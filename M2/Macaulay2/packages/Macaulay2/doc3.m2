@@ -421,8 +421,10 @@ undocumented methods lift'
 undocumented methods promote'
 undocumented methods liftable'
 
-document { Key => MethodFunction, Headline => "a type of method function", "Functions of this type are created by ", TO "method", "." }
-document { Key => MethodFunctionWithOptions, Headline => "a type of method function", "Functions of this type are created by ", TO "method", "." }
+document { Key => MethodFunction,
+     Headline => "a type of method function", "Functions of this type are created by ", TO "method", "." }
+document { Key => MethodFunctionWithOptions,
+     Headline => "a type of method function", "Functions of this type are created by ", TO "method", "." }
 undocumented (methodOptions, MethodFunctionWithOptions)
 undocumented (methodOptions, MethodFunction)
 document { Key => {(methodOptions, Function),methodOptions},
@@ -436,10 +438,13 @@ document { Key => {(methodOptions, Function),methodOptions},
      ///
      }
 
-document { Key => ExampleItem, Headline => "a type of hypertext for holding example inputs awaiting outputs" }
-document { Key => {(numRows, MutableMatrix),numRows}, Headline => "number of rows in a mutable matrix",
+document { Key => ExampleItem,
+     Headline => "a type of hypertext for holding example inputs awaiting outputs" }
+document { Key => {(numRows, MutableMatrix),numRows},
+     Headline => "number of rows in a mutable matrix",
      Usage => "numRows m", Inputs => { "m" }, Outputs => {{ "the number of rows in ", TT "m" }}}
-document { Key => {(numColumns, MutableMatrix),numColumns}, Headline => "number of columns in a mutable matrix",
+document { Key => {(numColumns, MutableMatrix),numColumns},
+     Headline => "number of columns in a mutable matrix",
      Usage => "numColumns m", Inputs => { "m" }, Outputs => {{ "the number of columns in ", TT "m" }}}
 document { Key => {mutableMatrix,(mutableMatrix, MutableMatrix),(mutableMatrix, Matrix),(mutableMatrix, List)},
      Headline => "make a mutable matrix",
@@ -474,7 +479,8 @@ document { Key => {(randomMutableMatrix, ZZ, ZZ, RR, ZZ),randomMutableMatrix},
      ///
      }
 
-document { Key => {(mutableZero, Ring, ZZ, ZZ),mutableZero}, Headline => "make a mutable matrix filled with zeroes",
+document { Key => {(mutableZero, Ring, ZZ, ZZ),mutableZero},
+     Headline => "make a mutable matrix filled with zeroes",
      Usage => "mutableZero(R,nrows,ncols)",
      Inputs => { "R","nrows","ncols" },
      Outputs => {{"an ", TT "nrows", " by ", TT "ncols", " mutable matrix filled with zeroes from the ring ", TT "R" }},
@@ -484,7 +490,8 @@ document { Key => {(mutableZero, Ring, ZZ, ZZ),mutableZero}, Headline => "make a
 	 m
      ///
      }
-document { Key => {(mutableIdentity, Ring, ZZ),mutableIdentity}, Headline => "make a mutable identity matrix",
+document { Key => {(mutableIdentity, Ring, ZZ),mutableIdentity},
+     Headline => "make a mutable identity matrix",
      Usage => "mutableIdentity(R,nrows)",
      Inputs => { "R","nrows" },
      Outputs => {{"an ", TT "nrows", " by ", TT "nrows", " mutable identity matrix filled elements of the ring ", TT "R" }},
@@ -496,7 +503,8 @@ document { Key => {(mutableIdentity, Ring, ZZ),mutableIdentity}, Headline => "ma
      }
 
 undocumented (pretty, Thing)
-document { Key => pretty, Headline => "a pretty printer", "This function is experimental and under development." }
+document { Key => pretty,
+     Headline => "a pretty printer", "This function is experimental and under development." }
 document { Key => {(symlinkDirectory, String, String),symlinkDirectory,[symlinkDirectory,Undo],[symlinkDirectory, Exclude],
 	  [symlinkDirectory, FollowLinks],[symlinkDirectory, Verbose]}, 
      Headline => "make symbolic links for all files in a directory tree",
@@ -540,7 +548,8 @@ document { Key => {(symlinkDirectory, String, String),symlinkDirectory,[symlinkD
      SeeAlso => { symlinkFile, copyDirectory }
      }
 
-document { Key => symlinkFile, Headline => "make a symbolic link to a file",
+document { Key => symlinkFile,
+     Headline => "make a symbolic link to a file",
      Usage => "symlinkFile(src,dst)",
      Inputs => {
 	  "src" => String,
@@ -687,19 +696,24 @@ document { Key => Cofactor,
      SeeAlso => {[exteriorPower,Strategy], [minors,Strategy], [det,Strategy]}
      }
 
-document { Key => CCC, Headline => "high-precision complex numbers", "This class is experimental." }
-document { Key => RRR, Headline => "high-precision real numbers", "This class is experimental." }
-document { Key => GlobalDictionary, Headline => "the class of all global dictionaries",
+document { Key => CCC,
+     Headline => "high-precision complex numbers", "This class is experimental." }
+document { Key => RRR,
+     Headline => "high-precision real numbers", "This class is experimental." }
+document { Key => GlobalDictionary,
+     Headline => "the class of all global dictionaries",
      SeeAlso => { "dictionaryPath", LocalDictionary }
      }
-document { Key => LocalDictionary, Headline => "the class of all local dictionaries",
+document { Key => LocalDictionary,
+     Headline => "the class of all local dictionaries",
      "A local dictionary is one used in connection with a local scope, such as one which is bounded by the body of a function closure.
      A local dictionary is created on the fly by the interpreter, and after the scope has been closed, the dictionary can be enlarged no further.
      Accessing local dictionaries can be a useful debugging tool.  The local dictionaries accessible to the user come with frames, so their symbols
      have values; thus they may be referred to as dictionary closures.",
      SeeAlso => { localDictionaries, GlobalDictionary }
      }
-document { Key => localDictionaries, Headline => "get local dictionaries",
+document { Key => localDictionaries,
+     Headline => "get local dictionaries",
      Usage => "localDictionaries f",
      Inputs => {
 	  "f" => {"() or ", ofClass{Function,Symbol,Pseudocode,LocalDictionary,GlobalDictionary}}
@@ -717,8 +731,10 @@ document { Key => localDictionaries, Headline => "get local dictionaries",
      ///
      }
 
-document { Key => DocumentTag, Headline => "the class of all document tags", "This class is mainly for internal use, in constructing documentation." }
-document { Key => CompiledFunctionBody, Headline => "the class of all compiled function bodies",
+document { Key => DocumentTag,
+     Headline => "the class of all document tags", "This class is mainly for internal use, in constructing documentation." }
+document { Key => CompiledFunctionBody,
+     Headline => "the class of all compiled function bodies",
      "A compiled function body is the body of a compiled function closure.  It is not a function.",
      EXAMPLE lines ///
      	  source
@@ -726,7 +742,8 @@ document { Key => CompiledFunctionBody, Headline => "the class of all compiled f
      ///
      }
 
-document { Key => ImmutableType, Headline => "the class of immutable types",
+document { Key => ImmutableType,
+     Headline => "the class of immutable types",
      "All types are implemented as hash tables.  Most types are mutable, so that additional methods for handling their instances can be added
      at any time.  However, if a type has an ancestor where the methods can be stored, then mutability is not needed.",
      PARA{},
@@ -753,7 +770,8 @@ document { Key => ImmutableType, Headline => "the class of immutable types",
      SeeAlso => {showStructure,parent,class}
      }
 
-document { Key => SumOfTwists, Headline => "the class of all sums of twists",
+document { Key => SumOfTwists,
+     Headline => "the class of all sums of twists",
      "This class is used internally as an abstract representation of a graded module as an infinite direct sum of twists of a coherent sheaf.",
      EXAMPLE lines ///
      	  R = QQ[x,y,z]
@@ -767,7 +785,8 @@ document { Key => SumOfTwists, Headline => "the class of all sums of twists",
      ///
      }
 
-document { Key => Wrap, Headline => "a key for methods for wrapping printed output",
+document { Key => Wrap,
+     Headline => "a key for methods for wrapping printed output",
      "The default method for printing results of computations (stored in ", TT "Thing.Print", ") searches for a method for wrapping the output by search in the class of 
      the result (and its ancestors) for a function stored under the key ", TT "Wrap", ".  The preinstalled wrapping methods use ", TO "wrap", ", they differ in their choice of
      separator between wrapped lines, or in whether to wrap at all.",
@@ -777,7 +796,8 @@ document { Key => Wrap, Headline => "a key for methods for wrapping printed outp
      ///
      }
 
-document { Key => baseFilename, Headline => "the base part of a filename or path",
+document { Key => baseFilename,
+     Headline => "the base part of a filename or path",
      Usage => "baseFilename fn",
      Inputs => { "fn" => String => "a filename or path" },
      Outputs => { "the last component of the path" },
@@ -786,7 +806,8 @@ document { Key => baseFilename, Headline => "the base part of a filename or path
      	  baseFilename "/a/b/file"
      ///
      }
-document { Key => BettiTally, Headline => "the class of all Betti tallies",
+document { Key => BettiTally,
+     Headline => "the class of all Betti tallies",
      "A Betti tally is a special type of ", TO "Tally", " that is printed as a display of graded Betti numbers.  The class was created
      so the function ", TO "betti", " could return something that both prints nicely and from which information can be extracted.  The keys
      are pairs ", TT "(i,d)", ", where ", TT "i", " is the homological degree, and ", TT "d", " is a list of integers giving a multidegree.
@@ -798,12 +819,14 @@ document { Key => BettiTally, Headline => "the class of all Betti tallies",
      ///
      }
 
-document { Key => {(searchPath, List, String), searchPath}, Headline => "search a path for a file",
+document { Key => {(searchPath, List, String), searchPath},
+     Headline => "search a path for a file",
      Usage => "searchPath(pa,fn)",
      Inputs => { "pa" => {"a list of strings giving paths to directories.  Each one ends with a slash."}, "fn" },
      Outputs => {{"a list of those directories in ", TT "pa", " containing files named ", TT "fn" }}}
 
-document { Key => {(boxList, List),boxList,(boxList, Sequence)}, Headline => "ascii art: a vertical list of boxes",
+document { Key => {(boxList, List),boxList,(boxList, Sequence)},
+     Headline => "ascii art: a vertical list of boxes",
      Usage => "boxList v",
      Inputs => { "v" },
      Outputs => {{"a net obtained by converting the elements of the list ", TT "v", " to nets and stacking them vertically, with boxes drawn around them.  Its baseline
@@ -812,7 +835,8 @@ document { Key => {(boxList, List),boxList,(boxList, Sequence)}, Headline => "as
          boxList {12345,"b","asdsf"}
      ///}
 
-document { Key => {(boxTable, List),boxTable,(boxTable, Sequence)}, Headline => "ascii art: a table of boxes",
+document { Key => {(boxTable, List),boxTable,(boxTable, Sequence)},
+     Headline => "ascii art: a table of boxes",
      Usage => "boxTable v",
      Inputs => { "v" },
      Outputs => {{"a net obtained by converting the elements of each list in the list of lists ", TT "v", " to nets and arranging them
@@ -823,7 +847,8 @@ document { Key => {(boxTable, List),boxTable,(boxTable, Sequence)}, Headline => 
 	  boxTable entries oo
      ///}
 
-document { Key => cache, Headline => "a key under which to store cache tables",
+document { Key => cache,
+     Headline => "a key under which to store cache tables",
      SeeAlso => {CacheTable},
      EXAMPLE lines ///
      	  F = ZZ^3
@@ -833,28 +858,33 @@ document { Key => cache, Headline => "a key under which to store cache tables",
 	  peek F.cache
 	  F === ZZ^3
      ///}
-document { Key => {(capture, String),capture}, Headline => "evaluate Macaulay 2 code and capture the output (under development)" }
-document { Key => "catch", Headline => "catch a thrown exception", SeeAlso => {"throw"},
+document { Key => {(capture, String),capture},
+     Headline => "evaluate Macaulay 2 code and capture the output (under development)" }
+document { Key => "catch",
+     Headline => "catch a thrown exception", SeeAlso => {"throw"},
      Usage => "catch c",
      Outputs => {{"the value obtained by evaluating the code ", TT "c", ", or, if a ", TO "throw", " was executed during the evaluation of ", TT "c", ",
 	       the argument given to ", TO "throw", "."}},
      EXAMPLE lines ///
           catch scan(0..10, i -> if i == 5 then throw 18 else print i)
      ///}
-document { Key => "throw", Headline => "throw an exception", SeeAlso => {"catch"},
+document { Key => "throw",
+     Headline => "throw an exception", SeeAlso => {"catch"},
      Usage => "throw x", 
      Consequences => {{"the flow of control is passed to the surrounding ", TO "catch", ", and ", TT "x", " is returned as its value"}},
      EXAMPLE lines ///
           catch scan(0..10, i -> if i == 5 then throw 18 else print i)
      ///}
-document { Key => centerString, Headline => "center a string or net",
+document { Key => centerString,
+     Headline => "center a string or net",
      Usage => "centerString(wid,s)",
      Inputs => { "wid" => ZZ, "s" => Net },
      Outputs => {{"a net with spaces added, as needed, to center ", TT "s", " in a net of width ", TT "wid" }},
      EXAMPLE lines ///
          centerString(18,"asdf"||"qwer")
      ///}
-document { Key => commandInterpreter, Headline => "the top level command interpreter",
+document { Key => commandInterpreter,
+     Headline => "the top level command interpreter",
      Usage => "commandInterpreter f",
      Inputs => { 
 	  "f" => { TT "()", " or ", ofClass{Dictionary, Symbol, Pseudocode, Function} }
@@ -870,6 +900,24 @@ document { Key => commandInterpreter, Headline => "the top level command interpr
      ///,
      "This facility is useful as a debugging tool, and is used by the standard debugger."
      }
+
+document { Key => "continue",
+     Headline => "continue with the next iteration of a loop",
+     Usage => "continue x",
+     Inputs => {"x"},
+     Consequences => {{"the currently executing ", TT "list", "-clause of a ", TO "for", "-loop or ", TO "while", "-loop is finished, and iteration continues with the
+	       ", TO "do", "-clause or the next iteration of the loop, if any.  The value ", TT "x", " is
+	       added to the list being accumulated.  If ", TT "x", " is omitted, then no value is added to the list, and the statement may be used in a ", TT "do", "-clause."
+	       }},
+     EXAMPLE lines ///
+          for i from 1 to 4 list (continue 4; print ho) do print hi
+          for i from 1 to 4 list (continue ; 14) do print hi
+          for i from 1 to 4 list 14 do print hi
+	  i = 0 ; while i < 10 do ( i = i+1; if i == 5 then continue ; print i )
+     ///}
+document { Key => "copyright",
+     Headline => "a string containing the copyright notice for Macaulay 2",
+     EXAMPLE "copyright" }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

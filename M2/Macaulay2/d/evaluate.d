@@ -185,7 +185,8 @@ evalWhileDoCode(c:whileDoCode):Expr := (
 	  else if p == True then (
 	       b := eval(c.doClause);
 	       when b is err:Error 
-	       do return if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else b 
+	       do if err.message == continueMessage then nothing
+	       else return if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else b 
 	       else nothing;
 	       )
 	  else if p == False then break
@@ -382,7 +383,7 @@ evalForCode(c:forCode):Expr := (
 	  if c.doClause != dummyCode then (
 	       b := eval(c.doClause);
 	       when b is err:Error do (
-		    if err.message != continueMessage && err.message != continueMessageWithArg then (
+		    if err.message != continueMessage then (
 			 localFrame = localFrame.outerFrame;
 			 return
 			 if err.message == breakMessage then (

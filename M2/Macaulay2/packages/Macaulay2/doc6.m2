@@ -468,7 +468,8 @@ document {
      module over ", TT "R", ", then M is a subclass of Vector.",
      PARA{},
      SeeAlso => {"engine", "Module"}}
-document { Key => degrees, Headline => "degrees of generators" }
+document { Key => degrees,
+     Headline => "degrees of generators" }
 document {
      Key => (degrees, Ideal),
      Usage => "degrees I",
@@ -697,20 +698,40 @@ document {
      }
 
 document {
-     Key => coverMap,
-     Headline => "get the map to the module given by the generators of a module",
-     Usage => "coverMap M",
-     Inputs => {"M"},
-     Outputs => {{ "the map from a free module to ", TT "M", " given by the generators of ", TT "M"}},
-     SeeAlso => { "cover" }}
-document {
      Key => cover,
      Headline => "get the covering free module",
      TT "cover M", " -- yields the free module whose basis elements correspond
      to the generators of M.",
      SeeAlso => {"ambient", "super"}}
+
 document {
-     Key => (cover,Module),
+     Key => {(coverMap,Module),coverMap},
+     Headline => "the surjective map from a free module to a module corresponding to the generators",
+     Usage => "coverMap M",
+     Inputs => {"M"},
+     Outputs => {{"the surjective map from a free module to ", TT "M", " corresponding to the generators"}},
+     EXAMPLE lines ///
+     	  M = image matrix {{2},{0}}
+	  f = coverMap M
+	  isSurjective f
+     ///,
+     TEST ///
+     	  R = ZZ[x]
+     	  M = image map(R^2,,{{2},{0}})
+	  f = coverMap M
+	  assert isSurjective f
+	  assert ( cokernel f == 0 )
+	  -- now check it over ZZ, too!
+     	  M = image matrix {{2},{0}}
+	  f = coverMap M
+	  assert isSurjective f
+	  assert ( cokernel f == 0 )
+     ///
+     }
+
+
+document {
+     Key => {(cover,Module),(cover, CoherentSheaf),(cover, GradedModule)},
      Usage => "F = cover M",
      Inputs => {"M"},
      Outputs => {"F" => {"the free module whose basis elements correspond to the generators of ", TT "M", "."}},
@@ -723,6 +744,13 @@ document {
 	  "cover M",
 	  "cover M == source generators M"},
      SeeAlso => {(ambient,Module), (super,Module)}}
+document {
+     Key => {(cover,Matrix)},
+     Usage => "cover f",
+     Inputs => {"f"},
+     Outputs => {{"the corresponding map of free modules between the covers of the source and target of ", TT "f" }},
+     SeeAlso => {(cover,Module)}
+     }
 document {
      Key => super,
      Headline => "get the ambient module",

@@ -335,7 +335,8 @@ document {
      }
 
 document {
-     Key => keys, Headline => "keys used in a hash table" }
+     Key => keys,
+     Headline => "keys used in a hash table" }
 document {
      Key => (keys,HashTable),
      Usage => "keys t",
@@ -352,7 +353,8 @@ document {
      }
 
 document {
-     Key => values, Headline => "values in a hash table" }
+     Key => values,
+     Headline => "values in a hash table" }
 document {
      Key => (values,HashTable),
      Usage => "values t",
@@ -552,7 +554,8 @@ document {
      }
 
 document {
-     Key => ascii, Headline => "ASCII character conversion" }
+     Key => ascii,
+     Headline => "ASCII character conversion" }
 
 document {
      Key => (ascii, List),
@@ -1090,7 +1093,8 @@ document {
      }
 
 document {
-     Key => read, Headline => "read from a file", }
+     Key => read,
+     Headline => "read from a file", }
 document {
      Key => (read,Sequence),
      Usage => "read()",

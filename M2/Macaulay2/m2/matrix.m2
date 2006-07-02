@@ -127,7 +127,9 @@ transpose Matrix := Matrix => (m) -> if m.cache.?transpose then m.cache.transpos
 
 ring(Matrix) := m -> m.target.ring
 
-Matrix * Vector := Vector => (m,v) -> new class v from m * new Matrix from v
+Matrix * Vector := Vector => (m,v) -> (
+     u := m * v#0;
+     new target u from {u})
 
 expression Matrix := m -> MatrixExpression applyTable(entries m, expression)
 
@@ -352,7 +354,7 @@ diff(Vector, Vector) := (v,w) -> diff(matrix{v}, transpose matrix{w})
 diff(Matrix, Vector) := (m,w) -> diff(m,transpose matrix {w})
 diff(Vector, Matrix) := (v,m) -> diff(matrix {v}, m)
 
-contract (Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixContract(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ sameRing
+contract(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixContract(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ sameRing
 contract(RingElement, RingElement) := RingElement => (f,g) -> (contract(matrix{{f}},matrix{{g}}))_(0,0)
 contract(Matrix, RingElement) := (m,f) -> contract(m,matrix{{f}})
 contract(RingElement, Matrix) := (f,m) -> contract(matrix{{f}},m)
@@ -361,6 +363,14 @@ contract(RingElement, Vector) := (f,v) -> contract(matrix{{f}},transpose matrix{
 contract(Vector, Vector) := (v,w) -> contract(matrix{v}, transpose matrix{w})
 contract(Matrix, Vector) := (m,w) -> contract(m,transpose matrix {w})
 contract(Vector, Matrix) := (v,m) -> contract(matrix {v}, m)
+
+contract(Number, Number) := Number => (f,g) -> (contract(matrix{{f}},matrix{{g}}))_(0,0)
+contract(RingElement, Number) := RingElement => (f,g) -> (contract(matrix{{f}},matrix{{g}}))_(0,0)
+contract(Number, RingElement) := RingElement => (f,g) -> (contract(matrix{{f}},matrix{{g}}))_(0,0)
+contract(Matrix, Number) := (m,f) -> contract(m,matrix{{f}})
+contract(Number, Matrix) := (f,m) -> contract(matrix{{f}},m)
+contract(Vector, Number) := (v,f) -> (contract(matrix{v},matrix{{f}}))_0
+contract(Number, Vector) := (f,v) -> contract(matrix{{f}},transpose matrix{v})
 
 diff'(Matrix, Matrix) := Matrix => ((m,n) -> ( flip(dual target n, target m) * diff(n,m) * flip(source m, dual source n) )) @@ bothFree @@ sameRing
 contract'(Matrix, Matrix) := Matrix => ((m,n) -> ( flip(dual target n, target m) * contract(n,m) * flip(source m, dual source n) )) @@ bothFree @@ sameRing
@@ -485,7 +495,7 @@ relations Module := Matrix => M -> (
 
 degrees Matrix := f -> {degrees target f, degrees source f}
 
-coverMap(Module) := Matrix => (M) -> map(M, cover M, generators M)
+coverMap(Module) := Matrix => (M) -> map(M, cover M, id_(cover M))
 
 ambient Matrix := Matrix => f -> (
      M := target f;

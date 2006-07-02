@@ -111,7 +111,7 @@ document {
 
 document {
      Key => {(newPackage,String), newPackage, Date, [newPackage,Date], Authors, [newPackage,Authors], Version, [newPackage, Version],
-	  [newPackage,Headline],HomePage, [newPackage,HomePage],[newPackage,DebuggingMode],
+	  [newPackage,Headline],HomePage, [newPackage,HomePage],[newPackage,DebuggingMode],Email,Name,
 	  InfoDirSection, [newPackage,InfoDirSection]
 	  }, 
      Headline => "start a new package",
@@ -130,7 +130,7 @@ document {
 	  },
      Consequences => {"a package is created"},
      EXAMPLE lines ///
-     	  newPackage ( "Foo", Version => "1.1", Headline => "making Foo" )
+     	  newPackage("Foo", Version => "1.1", Headline => "making Foo")
 	  endPackage "Foo"
      ///,
      "The options used when the package was created can be recovered with ", TO "options", ".",

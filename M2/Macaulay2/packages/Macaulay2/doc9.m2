@@ -456,7 +456,8 @@ document {
      }
 
 
-document { Key => extend, Headline => "extend a module map to a chain map, if possible" }
+document { Key => extend,
+     Headline => "extend a module map to a chain map, if possible" }
 document {
      Key => (extend,ChainComplex,ChainComplex,Matrix),
      Usage => "extend(D,C,f0)",
@@ -485,7 +486,8 @@ g = extend( resolution (R^1/I), resolution (R^1/J), id_(R^1))
 E = cone g
 "
 
-document { Key => cone, Headline => "mapping cone of a chain map" }
+document { Key => cone,
+     Headline => "mapping cone of a chain map" }
 document {
      Key => (cone,ChainComplexMap),
      Usage => "cone f",

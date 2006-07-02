@@ -646,20 +646,29 @@ document {
      SeeAlso => "hypertext"
      }
 
-document { Key => HR, Headline => "hypertext HR element (horizontal rule)", EXAMPLE lines ///
+document { Key => HR,
+     Headline => "hypertext HR element (horizontal rule)", EXAMPLE lines ///
          DIV{"hi there", HR{}, "ho there" }
          html oo
      ///}
-document { Key => TR, Headline => "hypertext TR element" }
-document { Key => TD, Headline => "hypertext TD element" }
-document { Key => DL, Headline => "hypertext DL element" }
-document { Key => DT, Headline => "hypertext DT element" }
-document { Key => DD, Headline => "hypertext DD element" }
-document { Key => STYLE, Headline => "hypertext STYLE element" }
-document { Key => COMMENT, Headline => "hypertext COMMENT element", EXAMPLE lines ///
+document { Key => TR,
+     Headline => "hypertext TR element" }
+document { Key => TD,
+     Headline => "hypertext TD element" }
+document { Key => DL,
+     Headline => "hypertext DL element" }
+document { Key => DT,
+     Headline => "hypertext DT element" }
+document { Key => DD,
+     Headline => "hypertext DD element" }
+document { Key => STYLE,
+     Headline => "hypertext STYLE element" }
+document { Key => COMMENT,
+     Headline => "hypertext COMMENT element", EXAMPLE lines ///
      html COMMENT "hi there"
 ///       }
-document { Key => CDATA, Headline => "hypertext CDATA element", EXAMPLE lines ///
+document { Key => CDATA,
+     Headline => "hypertext CDATA element", EXAMPLE lines ///
      html CDATA "hi there"
 ///       }
 

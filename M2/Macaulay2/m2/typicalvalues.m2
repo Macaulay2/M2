@@ -55,8 +55,7 @@ exp RR := exp ZZ := RR => exp
 log RR := log ZZ := RR => log
 sqrt RR := sqrt ZZ := RR => sqrt
 ancestor(Type,Type) := Boolean => ancestor
-any(BasicList,Function) := 
-any(HashTable,Function) := Boolean => any
+any(BasicList,Function) := any(BasicList,BasicList,Function) := any(HashTable,Function) := Boolean => any
 append(BasicList,Thing) := BasicList => append
 prepend(Thing,BasicList) := BasicList => prepend
 apply(BasicList,Function) := BasicList => apply

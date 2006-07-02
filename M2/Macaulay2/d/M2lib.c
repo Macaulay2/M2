@@ -120,7 +120,7 @@ void segv_handler(int sig) {
      D;
 #undef i
      fprintf(stderr,"-----------------------------------------------------------------------------\n");
-     exit(1);
+     abort();
 }
 #endif
 

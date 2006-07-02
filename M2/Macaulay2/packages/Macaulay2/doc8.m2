@@ -975,11 +975,14 @@ document {
      }
 
 document {
-     Key => GaloisField, Headline => "the class of all Galois fields" }
+     Key => GaloisField,
+     Headline => "the class of all Galois fields" }
 document {
-     Key => GF, Headline => "make a finite field" }
+     Key => GF,
+     Headline => "make a finite field" }
 document {
-     Key => (GF,Ring), Headline => "make a finite field from a ring",
+     Key => (GF,Ring),
+     Headline => "make a finite field from a ring",
      TT "GF R", " -- make a Galois field from a quotient ring R which happens
      to be isomorphic to a finite field.",
      EXAMPLE {
@@ -988,7 +991,8 @@ document {
 	  }
      }
 document {
-     Key => (GF,ZZ,ZZ), Headline => "make a finite field of a given prime power order",
+     Key => (GF,ZZ,ZZ),
+     Headline => "make a finite field of a given prime power order",
      TT "GF(p,n)", " -- make a Galois field with ", TT "p^n", " elements, where 
      ", TT "p", " is a prime.",
      EXAMPLE {
@@ -997,7 +1001,8 @@ document {
 	  }
      }
 document {
-     Key => (GF,ZZ), Headline => "make a finite field of a given order",
+     Key => (GF,ZZ),
+     Headline => "make a finite field of a given order",
      TT "GF(q)", " -- make a Galois field with ", TT "q", " elements, where 
      ", TT "q", " is a power of a prime.",
      EXAMPLE {
@@ -1008,7 +1013,8 @@ document {
      }
 
 document {
-     Key => isPrimitive, Headline => "whether an element is a primitive element of a finite field",
+     Key => isPrimitive,
+     Headline => "whether an element is a primitive element of a finite field",
      TT "isPrimitive(f)", " -- Given an element ", TT "f", " in a quotient of a polynomial ring ",
      TT "R", " over a finite field ", TT "K", "which is itself a finite field,
       with the ring being finite dimensional over the field,
@@ -1055,7 +1061,8 @@ document {
      }
 
 document {
-     Key => getNonUnit, Headline => "retrieve a previously discovered non-unit",
+     Key => getNonUnit,
+     Headline => "retrieve a previously discovered non-unit",
      Usage => "getNonUnit R",
      Inputs => {
 	  "R" => "a ring in which division by a non-unit has been attempted"
@@ -1087,7 +1094,8 @@ TEST "
 "
 
 document {
-     Key => (symbol **, Ring, Ring), Headline => "tensor product",
+     Key => (symbol **, Ring, Ring),
+     Headline => "tensor product",
      "For complete documentation, see ", TO "tensor", "."
      }
 

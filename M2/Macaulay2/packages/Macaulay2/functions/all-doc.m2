@@ -5,13 +5,12 @@
 document { 
      Key => all,
      Headline => "whether all elements satisfy a specified condition",
-     Usage => "all(V,f)",
      SeeAlso => { "scan", "apply", "select", "any", "member" }
      }
 document { 
      Key => (all,BasicList,Function),
      Headline => "whether all elements of a list satisfy a specified condition",
-     Usage => "all((L,f)",
+     Usage => "all(L,f)",
      Inputs => {
 	  "L" => BasicList,
 	  "f" => Function => "which returns true or false"
@@ -24,6 +23,26 @@ document {
 	  "all({1,2,3,4}, even)",
 	  "all({2,4,6,8}, even)"
 	  },
+     SeeAlso => { "scan", "apply", "select", "any", "member" }
+     }
+document { 
+     Key => (all,BasicList,BasicList,Function),
+     Headline => "whether all corresponding elements of a pair of lists satisfy a condition",
+     Usage => "all(v,w,f)",
+     Inputs => {
+	  "v" => BasicList,
+	  "w" => BasicList,
+	  "f" => Function => "a function of two variables that returns true or false"
+	  },
+     Outputs => {
+	  Boolean => {TO "true", " if ", TT "f", " returns true when applied to every pair ", TT "(x,y)", " of corresponding elements of ", TT "v", " and ", TT "w", ",
+	       and ", TO "false", " otherwise"}},
+     EXAMPLE lines ///
+	  all((1,2,3,4),(2,3,4,5), (i,j) -> i<=j)
+	  all((1,2,5,4),(2,3,4,5), (i,j) -> i<=j)
+	  all((1,2,5,4),(2,3,4,5), x -> (print x; false))
+	  all((1,2,5,4),(2,3,4,5), x -> (print x; true))
+	  ///,
      SeeAlso => { "scan", "apply", "select", "any", "member" }
      }
 document { 
