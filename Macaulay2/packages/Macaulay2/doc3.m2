@@ -33,7 +33,7 @@ document {
      }
 
 document {
-     Key => instance,
+     Key => {instance,(instance, Thing, Type)},
      Headline => "whether something has a certain type",
      TT "instance(x,X)", " -- tells whether ", TT "x", " is an instance
      of the type ", TT "X", ".",
@@ -287,13 +287,13 @@ document {
      }
 
 document {
-     Key => echoOn,
+     Key => {echoOn,(echoOn, File)},
      Headline => "turn on echoing",
      TT "echoOn f", " -- turns on echoing for the file ", TT "f", "."
      }
 
 document {
-     Key => echoOff,
+     Key => {echoOff,(echoOff, File)},
      Headline => "turn off echoing",
      TT "echoOff f", " -- turns off echoing for the file ", TT "f", "."
      }

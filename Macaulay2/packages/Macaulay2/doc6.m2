@@ -71,7 +71,7 @@ document {
 	  "the handle of on engine ring"
 	  }}
 document {
-     Key => fraction,
+     Key => {fraction,(fraction, RingElement, RingElement)},
      TT "fraction(f,g)", " -- manufactures the fraction ", TT "f/g", " in the fraction
      field of the ring containing ", TT "f", " and ", TT "g", " without reducing
      it to lowest terms."}
@@ -219,7 +219,7 @@ document {
 	  }
      }
 document {
-     Key => gcdCoefficients,
+     Key => {gcdCoefficients,(gcdCoefficients, RingElement, RingElement),(gcdCoefficients, ZZ, ZZ)},
      Headline => "gcd with coefficients",
      TT "gcdCoefficients(a,b)", " -- returns ", TT "{d,r,s}", " so that
      ", TT"a*r + b*s", " is the greatest common divisor ", TT "d", " of ", TT "a", "
@@ -255,7 +255,7 @@ document {
      "Every element of a polynomial ring is also a ", TO "RingElement", ".",
      SeeAlso => "polynomial rings"}
 document {
-     Key => exponents,
+     Key => {exponents,(exponents, MonoidElement),(exponents, RingElement)},
      Headline => "list the exponents in a polynomial",
      TT "exponents m", " -- for a monomial ", TT "m", " provides the list
      of exponents.",
@@ -355,12 +355,12 @@ document {
      SeeAlso => { "monoid" }
      }     
 document {
-     Key => degreesMonoid,
+     Key => {degreesMonoid,(degreesMonoid, GeneralOrderedMonoid), (degreesMonoid, ZZ)},
      Headline => "get the monoid of degrees",
      TT "degreesMonoid n", " -- returns the monoid whose elements correspond
-     to the multi-degrees of monomials in another monoid.",
-     PARA{},
-     "Also used as a key under which to store the result."}
+     to the multidegrees of length ", TT "n", ", or, if ", TT "n", " is a monoid, the monoid whose elements correspond to 
+     degrees of elements of ", TT "n", "."
+     }
 document {
      Key => (symbol SPACE, Ring, Array),
      Headline => "the standard way to make a polynomial ring",
@@ -494,16 +494,19 @@ document {
       	  "F = R^{1,2,3,4}",
       	  "degrees F" } }
 document {
-     Key => (degrees, Ring),
+     Key => {(degrees, Ring),(degrees, GeneralOrderedMonoid)},
      Usage => "degrees R",
      Inputs => {"R"},
      Outputs => {},
-     Consequences => {{ "the list of multi-degrees for the generators (variables) of the ring ", TT "R"}},
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-      	  "degrees R",
-	  "S = ZZ/101[x,y,z,Degrees => {{2,3},{1,2},{2,0}}]",
-      	  "degrees S" } }
+     Consequences => {{ "the list of multi-degrees for the generators (variables) of the ring (or monoid) ", TT "R"}},
+     EXAMPLE lines ///
+	  R = ZZ/101[x,y,z]
+      	  degrees R
+	  monoid R
+	  degrees oo
+	  S = ZZ/101[x,y,z,Degrees => {{2,3},{1,2},{2,0}}]
+      	  degrees S
+      ///}
 document {
      Key => (symbol ^, Ring, List),
      Headline => "make a free module",
@@ -866,13 +869,20 @@ document {
 	  TO (homology, Matrix, Matrix),
 	  }}
 document {
-     Key => isWellDefined,
+     Key => {isWellDefined,(isWellDefined, Matrix)},
      Headline => "whether a map is well defined" }
 document {
-     Key => isDirectSum,
+     Key => {isDirectSum,(isDirectSum, ChainComplex),(isDirectSum, GradedModule),(isDirectSum, Module)},
      Headline => "whether something is a direct sum",
      "Works for modules, graded modules, etc.  The components of the sum
-     can be recovered with ", TO "components", "."}
+     can be recovered with ", TO "components", ".",
+     EXAMPLE lines ///
+     	  isDirectSum ZZ^6
+	  F = ZZ^2 ++ ZZ^3
+     	  isDirectSum F
+	  components F
+     ///
+     }
 TEST "
 assert isDirectSum (QQ^1 ++ QQ^2)
 assert isDirectSum (QQ^1 ++ QQ^2)
@@ -936,8 +946,9 @@ document {
 	  TO (symbol _,Matrix,Array)
 	  },
      SeeAlso => {directSum, (symbol |, Matrix, Matrix), (symbol ||, Matrix, Matrix)}}
+
 document {
-     Key => directSum,
+     Key => {directSum,(directSum, Module),(directSum, ChainComplex),(directSum, GradedModule),(directSum, List),(directSum, Matrix),(directSum, Option),(directSum, Sequence)},
      Headline => "direct sum of modules or maps",
      TT "directSum(M,N,...)", " -- forms the direct sum of matrices or modules.",
      PARA{},

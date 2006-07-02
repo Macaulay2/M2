@@ -63,18 +63,9 @@ verifyKey Sequence := s -> (				    -- e.g., (res,Module) or (symbol **, Module,
      if not (
 	  if #s > 2 then (
 	       t := youngest drop(s,1);	                    -- this will all get screwed up with immutable types present
-	       t#?s
-	       and
-	       instance(t#s, Function)
-	       )
-	  else if #s == 2 then (
-	       s#1#?(s#0)
-	       and
-	       instance(s#1#(s#0), Function)
-	       )
-	  else (
-	       false
-	       )
+	       t#?s and instance(t#s, Function) )
+	  else if #s == 2 then ( instance(s#1,HashTable) and s#1#?(s#0) and instance(s#1#(s#0), Function) )
+	  else false
 	  )
      then error("documentation key for '", formatDocumentTag s, "' encountered, but no method installed"))
 

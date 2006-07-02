@@ -1,8 +1,10 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 
+undocumented (hypertext, Hypertext)
+
 document {
-     Key => "hypertext",
+     Key => {hypertext,(hypertext, List),(hypertext, Sequence)},
      Headline => "prepare hypertext for display",
      Usage => "hypertext x",
      Inputs => {
@@ -24,6 +26,7 @@ document {
 	  {"strings spanning multiple lines are wrapped into one long line after appropriately trimming the spaces at the beginning and end of each line"},
 	  {"an error message is produced if something not recognizable as documentation is encountered"},
 	  },
+     "We may phase out this function in favor of performing the listed transformations automatically when hypertext elements are created.",
      SeeAlso => {"Hypertext"}
      }
 

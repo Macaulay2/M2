@@ -9,7 +9,7 @@
 -- the changes.
 
 document {  
-     Key => {document},
+     Key => {document,(document, List)},
      Usage => "document { Key => key, ... }",
      Headline => "install documentation",
      Inputs => {

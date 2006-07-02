@@ -280,7 +280,7 @@ document {
      }
 
 document {
-     Key => isInputFile,
+     Key => {isInputFile,(isInputFile, File)},
      Headline => "whether a file is open for input",
      TT "isInputFile f", " whether ", TT "f", " is an input file.",
      PARA{},
@@ -296,7 +296,7 @@ document {
      }
 
 document {
-     Key => isOpen,
+     Key => {isOpen,(isOpen, Database),(isOpen, File),(isOutputFile, File)},
      Headline => "whether a file or database is open",
      TT "isOpen f", " whether ", TT "f", " is an open file or an
      open database.",
@@ -308,7 +308,7 @@ document {
      }
 
 document {
-     Key => isListener,
+     Key => {isListener,(isListener, File)},
      Headline => "whether a file is open for listening",
      TT "isListener f", " whether ", TT "f", " is a listener.",
      PARA{},
@@ -570,7 +570,7 @@ document {
      }
 
 document {
-     Key => getc,
+     Key => {getc,(getc, File)},
      Headline => "get a byte",
      TT "getc f", " obtains one byte from the input file f and provides it as a 
      string of length 1.  On end of file an empty string of is returned.",
@@ -620,7 +620,7 @@ document {
 		},
      }
 document {
-     Key => exp,
+     Key => {exp,(exp,RR),(exp,ZZ)},
      Headline => "exponential function",
      Usage => "exp x",
      Inputs => { "x" => RR },
@@ -762,7 +762,7 @@ document {
      }
 
 document {
-     Key => gcd,
+     Key => {gcd,(gcd, List),(gcd, Sequence),(gcd, QQ, QQ),(gcd, RingElement, RingElement),(gcd, ZZ, QQ),(gcd, ZZ, ZZ)},
      Headline => "greatest common divisor",
      Usage => "gcd(x,y,...)",
      Inputs => { "x" => ZZ },
@@ -813,7 +813,7 @@ document {
      }
 
 document {
-     Key => getenv,
+     Key => {getenv,(getenv, String)},
      Headline => "get value of environment variable",
      TT "getenv s", " yields the value associated with the string s in the 
      environment.",

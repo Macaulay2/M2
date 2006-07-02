@@ -309,7 +309,7 @@ assert(
 "
 
 document {
-     Key => isBorel,
+     Key => {isBorel,(isBorel, MonomialIdeal)},
      Headline => "whether an ideal is fixed by upper triangular changes of coordinates"
      }
 
@@ -369,17 +369,33 @@ document {
      }
 
 document {
-     Key => gradedModule,
+     Key => {gradedModule,(gradedModule, Module), (gradedModule, List), (gradedModule, Sequence), (gradedModule, ChainComplex)},
      Headline => "make a graded module",
-     TT "gradedModule", " -- a method for creating graded modules."
+     Usage => "gradedModule v",
+     Inputs => { "v" => List => "a module, or a list or sequence of modules" },
+     Outputs => {{"the graded module with the ", TT "i", "-th element of ", TT "v", " installed as its ", TT "i", "-th component"}},
+     EXAMPLE lines ///
+     	  gradedModule ZZ^2
+     	  gradedModule(ZZ^2,ZZ^3,ZZ^400)
+     ///,
+     "If ", TT "v", " is ", ofClass ChainComplex, " then the return value is the graded module underlying it.",
+     EXAMPLE lines ///
+     	  R = QQ[x,y]
+	  C = res coker vars R
+	  gradedModule C
+     ///,
      }
 
 document {
-     Key => gradedModuleMap,
+     Key => {gradedModuleMap,(gradedModuleMap, Sequence), (gradedModuleMap, ModuleMap), (gradedModuleMap, List)},
      Headline => "make a map of graded modules",
-     TT "gradedModuleMap", " -- a method for creating maps of graded modules."
+     Usage => "gradedModuleMap v",
+     Inputs => { "v" => List => "a matrix, or a list or sequence of matrices" },
+     Outputs => {{"the graded module map with the ", TT "i", "-th element of ", TT "v", " installed as its ", TT "i", "-th component"}},
+     EXAMPLE lines ///
+     	  gradedModuleMap(random(ZZ^3,ZZ^4),random(ZZ^2,ZZ^2))
+     ///
      }
-
 
 document {
      Key => ChainComplex,

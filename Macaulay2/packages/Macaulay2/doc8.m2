@@ -535,7 +535,7 @@ document {
      }
 
 document {
-     Key => getChangeMatrix,
+     Key => {getChangeMatrix,(getChangeMatrix, GroebnerBasis)},
      Headline => "get the change of basis matrix",
      TT "getChangeMatrix G", " -- for a Groebner basis G, return the change of
      basis matrix from the Groebner basis to another generating set, 
@@ -772,7 +772,7 @@ assert not isWellDefined inducedMap(R^1,cokernel matrix {{a}},Verify => false)
 "
 
 document {
-     Key => complement,
+     Key => {(complement, Matrix),complement},
      Headline => "find the minimal generators for cokernel of a matrix (low level form)",
      TT "complement f", " -- for a matrix ", TT "f", ", return a map ", TT "g", " with the same
      target whose columns are minimal generators for the cokernel of ", TT "f", ".",
@@ -808,7 +808,10 @@ assert ( so h1 == so matrix {{
 "
 
 document {
-     Key => homogenize,
+     Key => {homogenize,(homogenize, Ideal, RingElement),(homogenize, Matrix, RingElement),
+	  (homogenize, Matrix, RingElement, List),(homogenize, Module, RingElement),
+	  (homogenize, Module, RingElement, List),(homogenize, RingElement, RingElement),(homogenize, RingElement, RingElement, List),
+	  (homogenize, Vector, RingElement),(homogenize, Vector, RingElement, List)},
      Headline => "homogenize with respect to a variable",
      TT "homogenize(m,v)", " -- homogenize the ring element, vector,
      matrix, or module ", TT "m", " using the variable ", TT "v", " in the ring of ", TT "m", ".",
@@ -908,7 +911,7 @@ document {
      }
 
 document {
-     Key => divideByVariable,
+     Key => {divideByVariable,(divideByVariable, Matrix, RingElement),(divideByVariable, Matrix, RingElement, ZZ)},
      Headline => "divide all columns by a (power of a) variable",
      TT "divideByVariable(m,v)", " -- divide each column of the matrix 'm' by 
      as high a power of the variable 'v' as possible.",

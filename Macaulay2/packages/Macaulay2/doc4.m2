@@ -200,7 +200,7 @@ document {
      }
 
 document {
-     Key => kill,
+     Key => {kill,(kill, File)},
      Headline => "kill a process",
      TT "kill f", " -- kill the process associated with the file ", TT "f", "."
      }
@@ -481,7 +481,7 @@ document {
 --      }
 
 document {
-     Key => hashTable,
+     Key => {hashTable,(hashTable, List)},
      Headline => "make a hash table",
      TT "hashTable v", " -- produce a hash table from a list ", TT "v", " of key-value
      pairs.",

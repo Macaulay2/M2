@@ -2,6 +2,7 @@
 
 GradedModule = new Type of MutableHashTable
 GradedModule.synonym = "graded module"
+ring GradedModule := (M) -> M.ring
 
 spots := C -> select(keys C, i -> class i === ZZ)
 union := (x,y) -> keys(set x + set y)
@@ -26,7 +27,7 @@ GradedModuleMap.synonym = "graded module map"
 
 source GradedModuleMap := GradedModule => f -> f.source
 target GradedModuleMap := GradedModule => f -> f.target
-
+ring GradedModuleMap := (f) -> ring source f
 net GradedModuleMap := f -> (
      d := f.degree;
      v := between("",

@@ -2027,6 +2027,7 @@ setupfun("rawKoszul",rawKoszul);
 
 export rawKoszulMonomials(e:Expr):Expr := (
      when e is s:Sequence do
+     if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is n:Integer do
      when s.1 is F:RawMatrix do 
      when s.2 is G:RawMatrix do 

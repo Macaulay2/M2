@@ -167,7 +167,7 @@ document {
      }
 
 document {
-     Key => horizontalJoin,
+     Key => {horizontalJoin,(horizontalJoin, BasicList)},
      Headline => "join nets or strings horizontally",
      TT "horizontalJoin(m,n,...)", " -- joins nets or strings by concatenating
      them horizontally.  The baselines in each of the nets are aligned
@@ -203,28 +203,49 @@ document {
 
 document {
      Key => width,
-     Headline => "width of a file or net",
-     TT "width f", " -- determines the width of the terminal associated to an
-     output file ", TT "f", ", if any.", BR{}, 
-     TT "width n", " -- the width of a net ", TT "n", ".",
-     SeeAlso => {"Net", "File"}
+     Headline => "width of a file or net"
      }
 
+
+
 document {
-     Key => height,
+     Key => {height,(height,Net),(height,String)},
      Headline => "height of a net",
      TT "height n", " -- the height of a net ", TT "n", ".",
      PARA{},
      "The height of a net is the number of rows of characters it has above
      the baseline.  It may be a negative number, but the depth plus the 
      height is always the total number of rows, which is not negative.",
-     SeeAlso => {"Net", "depth"}
-     }
+     SeeAlso => {"Net", "depth"}}
 
 document {
-     Key => depth,
+     Key => {(width,Net),(width,String)},
+     Headline => "width of a net",
+     TT "width n", " -- the width of a net ", TT "n", ".",
+     PARA{},
+     "The width of a net is the length of its longest row, if any, else 0.  For a string, the width and the height are the same.",
+     EXAMPLE lines ///
+     	  "a c" || "-" || "adsf"
+	  width oo
+     ///,
+     SeeAlso => {"depth", "height"}
+     }
+
+document { Key => (height,File),
+     Headline => "get window height",
+     Usage => "height f",
+     Inputs => { "f" },
+     Outputs => { ZZ => {"the height of the window or terminal attached to the file ", TT "f", ", if any, else 0" }}}
+document { Key => (width,File),
+     Headline => "get window width",
+     Usage => "width f",
+     Inputs => { "f" },
+     Outputs => { ZZ => {"the width of the window or terminal attached to the file ", TT "f", ", if any, else 0" }}}
+
+document {
+     Key => {depth,(depth, Net),(depth, String)},
      Headline => "depth of a net",
-     TT "depth n", " -- the depth of a net ", TT "n", ".",
+     TT "depth n", " -- the depth of a net or string ", TT "n", ".",
      PARA{},
      "The depth of a net is the number of rows of characters it has below
      the baseline.  It may be a negative number, but the depth plus the 

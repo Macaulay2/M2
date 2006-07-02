@@ -327,16 +327,24 @@ document {
      monoid or polynomial ring is based."
      }
 document {
-     Key => degreeLength,
+     Key => {degreeLength,
+	  (degreeLength,PolynomialRing), (degreeLength,QuotientRing), (degreeLength,SchurRing), 
+	  (degreeLength,Module), (degreeLength,OrderedMonoid), (degreeLength,FractionField),
+     	  (degreeLength,GeneralOrderedMonoid), (degreeLength,Ring)},
      Headline => "the number of degrees",
-     TT "degreeLength x", " -- returns the number of degrees of x.",
-     PARA{},
-     "Here x may be a ring, in which case it returns the number of degrees
-     (the length of the degree vector) used in grading the ring.",
+     Usage => "degreeLength X",
+     Inputs => {"X" => {"a ring, module, or monoid"}},
+     Outputs => { ZZ => {"the length of a multidegree vector used as a degree of an element of ", TT "X"}},
+     EXAMPLE lines ///
+     	  degreeLength ZZ
+     	  degreeLength (ZZ[x])
+     	  degreeLength (ZZ[x, Degrees => {{1,2,3}}])
+     	  degreeLength (GF 9)
+     ///,
      SeeAlso => "degree"
      }
 document {
-     Key => isIsomorphism,
+     Key => {isIsomorphism,(isIsomorphism, Matrix)},
      Headline => "whether a map is an isomorphism",
      TT "isIsomorphism f", " -- whether the map f of modules is an isomorphism."
      }
@@ -366,7 +374,7 @@ document {
      SeeAlso => {"leadTerm", "leadCoefficient", "leadCoefficient"}
      }
 document {
-     Key => flatten,
+     Key => {flatten,(flatten, VisibleList)},
      Headline => "flatten a list by unnesting lists",
      TT "flatten m", " -- produces a new list from ", TT "m", " by
      effectively removing the braces surrounding the elements
@@ -394,7 +402,7 @@ document {
 	"Note that this is the matrix given by unnesting the list which was used to enter the matrix.",
      }
 document {
-     Key => image,
+     Key => {image,(image, Matrix),(image, ChainComplexMap),(image, GradedModuleMap),(image, RingElement)},
      Headline => "image of a map",
      TT "image h", " -- yields the image of the homomorphism ", TT "h", ".",
      PARA{},
