@@ -691,6 +691,7 @@ export {
 	symbol gcd,
 	symbol gcdCoefficients,
 	symbol genera,
+	symbol generator,
 	symbol generators,
 	symbol genericMatrix,
 	symbol genericSkewMatrix,

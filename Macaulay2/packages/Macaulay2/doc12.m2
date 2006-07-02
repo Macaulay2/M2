@@ -328,7 +328,8 @@ assert( partitions(5,3) === {{3,2},{3,1,1},{2,2,1},{2,1,1,1},{1,1,1,1,1}} / (x -
 "
 
 document {
-     Key => (symbol -, List), Headline => "negation of a vector",
+     Key => (symbol -, List),
+     Headline => "negation of a vector",
      Usage => "-v",
      Inputs => { "v" => "a list interpreted as a vector" },
      Outputs => {{"the negation of ", TT "v"}},
@@ -336,7 +337,8 @@ document {
      }
 
 document {
-     Key => (symbol +, List, List), Headline => "sum of two vectors",
+     Key => (symbol +, List, List),
+     Headline => "sum of two vectors",
      Usage => "v+w",
      Inputs => { "v" => "a list interpreted as a vector", "w" => "a list interpreted as a vector" },
      Outputs => {"the sum of the two vectors"},
@@ -344,7 +346,8 @@ document {
      }
 
 document {
-     Key => (symbol -, List, List), Headline => "difference of two vectors",
+     Key => (symbol -, List, List),
+     Headline => "difference of two vectors",
      Usage => "v-w",
      Inputs => { "v" => "a list interpreted as a vector", "w" => "a list interpreted as a vector" },
      Outputs => {"the difference of the two vectors"},

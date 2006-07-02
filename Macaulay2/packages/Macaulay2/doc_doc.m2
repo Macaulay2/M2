@@ -97,7 +97,8 @@ document {
 document { -- This node is used as an example in the node: Consequences 
      Key => Headline,
      Headline => "make a headline for a documentation node",
-     Usage => "document { Key => key, Headline => \"one line description\", ... }",
+     Usage => "document { Key => key,
+     Headline => \"one line description\", ... }",
      BaseFunction => document,
      Consequences => {
 	  { "the headline string will be used to annotate itemized 

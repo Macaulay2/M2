@@ -1,6 +1,6 @@
 scan((
 	  FollowLinks,Hilbert,UserMode,RerunExamples,MakeDocumentation,IgnoreExampleErrors,IgnoreDocumentationErrors,MakeInfo,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate,
-	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing
+	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing,Undo,SourceCode,Description,Variables
 	  ),
      s -> document { Key => s, "A symbol used as the name of an optional argument, for some function(s)." })
 
@@ -511,7 +511,8 @@ document {
 	  },
      EXAMPLE { "drop({a,b,c,d,e},2)", "drop({a,b,c,d,e},-2)" }
      }
-document { Key => drop, Headline => "drop some elements from a list or sequence", SeeAlso => "take" }
+document { Key => drop,
+     Headline => "drop some elements from a list or sequence", SeeAlso => "take" }
 document {
      Key => (options, Function),
      Headline => "get optional arguments and default values for a function which accepts them",
@@ -539,7 +540,8 @@ document {
      was created."
      }
 document {
-     Key => options, Headline => "get options" }
+     Key => options,
+     Headline => "get options" }
 
 document {
      Key => symbol #,

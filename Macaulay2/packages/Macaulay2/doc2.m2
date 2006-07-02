@@ -620,17 +620,20 @@ document {
 		},
      }
 document {
-     Key => exp, Headline => "exponential function",
+     Key => exp,
+     Headline => "exponential function",
      Usage => "exp x",
      Inputs => { "x" => RR },
      Outputs => { { "the exponential of ", TT "x" } } }
 document {
-     Key => log, Headline => "logarithm function",
+     Key => log,
+     Headline => "logarithm function",
      Usage => "log x",
      Inputs => { "x" => RR },
      Outputs => { { "the logarithm of ", TT "x"} } }
 document {
-     Key => sqrt, Headline => "square root function",
+     Key => sqrt,
+     Headline => "square root function",
      Usage => "sqrt x",
      Inputs => { "x" => RR },
      Outputs => { { "the square root of ", TT "x"} } }

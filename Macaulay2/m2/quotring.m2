@@ -13,7 +13,7 @@ isQuotientOf = method(TypicalValue => Boolean)
 isQuotientOf(Ring,Ring) := (S,R) -> S === R
 isQuotientOf(QuotientRing,Ring) := (S,R) -> S === R or isQuotientOf(ambient S,R)
 degreeLength QuotientRing := S -> degreeLength ambient S
-vars QuotientRing := (cacheValue vars) (S -> matrix table (1, numgens S, (i,j) -> S_j))
+vars QuotientRing := (cacheValue vars) (S -> map(S^1,, table (1, numgens S, (i,j) -> S_j)))
 numgens QuotientRing := (cacheValue numgens) (S -> numgens ambient S)
 pretty := relns -> (
      s := toSequence flatten entries relns;

@@ -245,6 +245,23 @@ document {
 	       " corresponding to  ", TT {"m", SUB "i,k", "."}
 	       }
 	  },
+     TEST ///
+	  R = ZZ[x]
+	  m = random(R^2,R^{-1,-2,-3,-4,-5})
+	  F = target m
+	  f = rank F
+	  P = source m
+	  p = rank P
+	  n = random(R^3,R^{-6,-7,-8,-9})
+	  G = target n
+	  g = rank G
+	  Q = source n
+	  q = rank Q
+	  h = diff(m,n)
+	  assert( source h === dual P ** Q )
+	  assert( target h === dual F ** G )
+	  scan(f, i -> scan(g, j -> scan(p, k -> scan(q, l -> assert( h_(g*i+j,q*k+l) === diff(m_(i,k),n_(j,l)))))))
+	  ///,
      EXAMPLE {
 	  "R = QQ[a,b,c][x,y,z]",
 	  "m = transpose vars R",
@@ -275,6 +292,16 @@ document {
      PARA{},
      "The second use, less common but sometimes useful, is to compute the difference
      polynomial of a Hilbert polynomial.",
+     PARA{},
+     "The arguments can also be ring elements or vectors.",
+     EXAMPLE lines ///
+     	  R = ZZ[x,y,z]
+	  f = vars R ** vars R
+	  diff(transpose vars R, f)
+	  diff(x, f)
+	  diff(y, f)
+	  diff(z, f)
+     ///,
      SeeAlso => {
 	  "differential operator corresponding to a polynomial",
 	  "diff and contract",
@@ -297,10 +324,13 @@ document {
 document {
      Key => contract,
      Headline => "contract one matrix by another",
-     SeeAlso => "diff and contract"
+     SeeAlso => {"diff and contract",contract'}
      }
+
 document {
-     Key => (contract,Matrix,Matrix),
+     Key => {(contract,Matrix,Matrix),(contract,RingElement,RingElement), (contract,Vector,RingElement),
+	  (contract,RingElement,Vector), (contract,Vector,Vector), (contract,Matrix,RingElement),
+       	  (contract,RingElement,Matrix), (contract,Vector,Matrix), (contract,Matrix,Vector)},
      Headline => "contract a matrix by a matrix",
      Usage => "h = contract(m,n)",
      Inputs => {
@@ -308,17 +338,111 @@ document {
 	  "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."}
 	  },
      Outputs => {
-	  "h" => {"a matrix with the shape ", TT "h : dual F ** G <--- dual P ** Q", ",
-	       whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
-	       is the result of contracting ", TT { "n", SUB "j,l" }, ",
-		    by ", TT {"m", SUB "i,k", "."}}},
+	  "h" => {"the contraction of ", TT "n", " by ", TT "m", ", a matrix with the shape ", TT "h : dual F ** G <--- dual P ** Q", ", 
+	       whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, " is the result of contracting
+	        ", TT { "n", SUB "j,l" }, ", by ", TT {"m", SUB "i,k"}
+		}
+	   },
+     "The arguments can also be ring elements or vectors.",
+     EXAMPLE lines ///
+     	  R = ZZ[x,y,z]
+	  f = vars R ** vars R
+	  contract(transpose vars R, f)
+	  contract(x, f)
+	  contract(y, f)
+	  contract(z, f)
+     ///,
+     TEST ///
+	  R = ZZ[x]
+	  m = random(R^2,R^{-1,-2,-3,-4,-5})
+	  F = target m
+	  f = rank F
+	  P = source m
+	  p = rank P
+	  n = random(R^3,R^{-6,-7,-8,-9})
+	  G = target n
+	  g = rank G
+	  Q = source n
+	  q = rank Q
+	  h = contract(m,n)
+	  assert( source h === dual P ** Q )
+	  assert( target h === dual F ** G )
+	  scan(f, i -> scan(g, j -> scan(p, k -> scan(q, l -> assert( h_(g*i+j,q*k+l) === contract(m_(i,k),n_(j,l)))))))
+	  ///,
      PARA{},
      "This function is identical to ", TO (diff,Matrix,Matrix), ", except that 
      the multiplication by integers that occurs during differentiation is
      omitted.",
      PARA{},
-     SeeAlso => "diff and contract"
+     SeeAlso => {contract', "diff and contract"}
      }
+
+document { Key => {(contract', Matrix, Matrix),contract'},
+     Headline => "contract a matrix by a matrix, the dual notion",
+     Usage => "h = contract'(m,n)",
+     Inputs => {
+	  "m" => {"a map ", TT "m : F <--- P", " between free modules of ranks f and p."},
+	  "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."}
+	  },
+     Outputs => {
+	  "h" => {"a matrix with the shape ", TT "h : F ** dual G <--- P ** dual Q", ", whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
+	       is the result of contracting ", TT { "m", SUB "i,k" }, ", by ", TT {"n", SUB "j,l", "."}}},
+     TEST ///
+	  R = ZZ[x]
+	  m = random(R^2,R^{-6,-7,-8,-9})
+	  F = target m
+	  f = rank F
+	  P = source m
+	  p = rank P
+	  n = random(R^3,R^{-1,-2,-3,-4,-5})
+	  G = target n
+	  g = rank G
+	  Q = source n
+	  q = rank Q
+	  h = contract'(m,n)
+	  assert( source h === P ** dual Q )
+	  assert( target h === F ** dual G )
+	  scan(f, i -> scan(g, j -> scan(p, k -> scan(q, l -> assert( h_(g*i+j,q*k+l) === contract(n_(j,l),m_(i,k)))))))
+	  ///,
+     PARA{},
+     "This function is identical to ", TO (diff',Matrix,Matrix), ", except that 
+     the multiplication by integers that occurs during differentiation is
+     omitted.",
+     PARA{},
+     SeeAlso => {contract,"diff and contract"}
+     }
+
+document { Key => {(diff', Matrix, Matrix),diff'},
+     Headline => "differentiate a matrix by a matrix, the dual notion",
+     Usage => "h = diff'(m,n)",
+     Inputs => {
+	  "m" => {"a map ", TT "m : F <--- P", " between free modules of ranks f and p."},
+	  "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."}
+	  },
+     Outputs => {
+	  "h" => {"a matrix with the shape ", TT "h : F ** dual G <--- P ** dual Q", ", whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
+	       is the result of differentiating ", TT {"n", SUB "j,l"}, ", by ", TT { "m", SUB "i,k" }}},
+     TEST ///
+	  R = ZZ[x]
+	  m = random(R^2,R^{-6,-7,-8,-9})
+	  F = target m
+	  f = rank F
+	  P = source m
+	  p = rank P
+	  n = random(R^3,R^{-1,-2,-3,-4,-5})
+	  G = target n
+	  g = rank G
+	  Q = source n
+	  q = rank Q
+	  h = diff'(m,n)
+	  assert( source h === P ** dual Q )
+	  assert( target h === F ** dual G )
+	  scan(f, i -> scan(g, j -> scan(p, k -> scan(q, l -> assert( h_(g*i+j,q*k+l) === diff(n_(j,l),m_(i,k)))))))
+	  ///,
+     SeeAlso => {diff,"diff and contract"}
+     }
+
+
 TEST "
 R = ZZ/101[a..d]
 I = monomialCurveIdeal(R,{1,3,4})
@@ -782,10 +906,28 @@ document {
      SeeAlso => {adjoint1, flip, reshape, (symbol**,Module,Module), dual}
      }
 document {
-     Key => (flip,Module,Module),
+     Key => {(flip,Module,Module),flip},
      Headline => "matrix of commutativity of tensor product",
-     TT "flip(F,G)", " -- yields the matrix representing the map F ** G --> G ** F."
-     }
+     Usage => "flip(F,G)",
+     Inputs => {"F", "G"},
+     Outputs => {{"the matrix representing the natural isomorphism ", TT "G ** F <-- F ** G"}},
+     EXAMPLE lines ///
+     	  R = QQ[x,y];
+	  F = R^{1,2,3}
+	  G = R^{10,20,30}
+	  f = flip(F,G)
+	  isHomogeneous f
+	  target f
+	  source f
+	  target f === G**F
+	  source f === F**G
+	  u = x * F_0
+	  v = y * G_1
+	  u ** v
+	  v ** u
+	  f * (u ** v)
+	  f * (u ** v) === v ** u
+     ///}
 document {
      Key => (symbol **, Matrix, Matrix),
      Headline => "tensor product of matrices",
@@ -911,12 +1053,16 @@ assert isSurjective R^2_{0,0,1}
 assert not isSurjective R^2_{1}
 "
 document {
-     Key => content,
+     Key => {(content, RingElement),content},
      Headline => "the content of a polynomial",
      TT "content f", " -- returns the content of a matrix or polynomial.",
      PARA{},
-     "The content is the ideal of the base ring generated by the 
-     coefficients."
+     "The content is the ideal in the base ring generated by the coefficients.",
+     EXAMPLE lines ///
+     	  R = ZZ[x]
+	  content(4*x + 6*x^5)
+	  generator oo
+     ///
      }
 document {
      Key => QuotientRing,
@@ -1020,7 +1166,8 @@ document {
      }
 
 document {
-     Key => symmetricPower, Headline => "symmetric power" }
+     Key => symmetricPower,
+     Headline => "symmetric power" }
 document {
      Key => (symmetricPower,ZZ,Matrix),
      Usage => "symmetricPower(i,f)",

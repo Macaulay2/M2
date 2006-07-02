@@ -29,6 +29,22 @@ document {
      SeeAlso => {numgens, Monoid, GroebnerBasis, Module, relations, subquotient}
      }
 
+document {
+     Key => {generator,(generator,Ideal),(generator,Module)},
+     Headline => "provide a single generator",
+     Usage => "generator I",
+     Inputs => { "I" => {ofClass{Ideal,Module}} },
+     Outputs => {{"the single generator of ", TT "I", ", if it has just one"}},
+     PARA {"If the number of apparent generators is greater than 1, then ", TO "trim", " will be called."},
+     EXAMPLE lines ///
+     	  I = ideal (4,6)
+	  generator I
+	  M = image matrix {{4,6},{0,0}}
+	  generator M
+     ///,
+     SeeAlso => {generators}
+     }
+
 document { 
      Key => (generators,GroebnerBasis),
      Headline => "the generator matrix of a Groebner basis",

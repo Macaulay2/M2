@@ -27,6 +27,26 @@ document {
      SeeAlso => { "scan", "apply", "select", "any", "member" }
      }
 document { 
+     Key => (any,BasicList,BasicList,Function),
+     Headline => "whether any corresponding elements of a pair of lists satisfy a condition",
+     Usage => "any(v,w,f)",
+     Inputs => {
+	  "v" => BasicList,
+	  "w" => BasicList,
+	  "f" => Function => "a function of two variables that returns true or false"
+	  },
+     Outputs => {
+	  Boolean => {TO "true", " if ", TT "f", " returns true when applied to some pair ", TT "(x,y)", " of corresponding elements of ", TT "v", " and ", TT "w", ",
+	       and ", TO "false", " otherwise"}},
+     EXAMPLE lines ///
+	  any((1,2,3,4),(2,3,4,5), (i,j) -> i>j)
+	  any((1,2,5,4),(2,3,4,5), (i,j) -> i>j)
+	  any((1,2,5,4),(2,3,4,5), x -> (print x; false))
+	  any((1,2,5,4),(2,3,4,5), x -> (print x; true))
+	  ///,
+     SeeAlso => { "scan", "apply", "select", "any", "member" }
+     }
+document { 
      Key => (any,HashTable,Function),
      Headline => "whether all key/value pairs in a hash table satisfy a specified condition",
      Usage => "any(H,f)",

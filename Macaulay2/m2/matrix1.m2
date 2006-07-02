@@ -486,6 +486,30 @@ RingElement * Ideal := Ideal => (r,I) -> ideal (r ** generators I)
 ZZ * Ideal := (r,I) -> ideal (r * generators I)
 
 generators Ideal := Matrix => (I) -> I.generators
+
+generator = method()
+generator Ideal := RingElement => (I) -> (
+     if I.cache.?trim then I = I.cache.trim;
+     R := ring I;
+     n := numgens I;
+     if n == 0 then return 0_R;
+     if n == 1 then return I_0;
+     I = trim I;
+     n = numgens I;
+     if n == 0 then return 0_R;
+     if n == 1 then return I_0;
+     error "expected ideal to have a single generator")
+generator Module := RingElement => (M) -> (
+     if M.cache.?trim then M = M.cache.trim;
+     n := rank source generators M;
+     if n == 0 then return 0_M;
+     if n == 1 then return M_0;
+     M = trim M;
+     n = rank source generators M;
+     if n == 0 then return 0_M;
+     if n == 1 then return M_0;
+     error "expected ideal to have a single generator")
+
 mingens Ideal := Matrix => options -> (I) -> mingens(module I,options)
 Ideal / Ideal := Module => (I,J) -> module I / module J
 Module / Ideal := Module => (M,J) -> M / (J * M)
@@ -503,7 +527,7 @@ codim Ideal := I -> codim cokernel generators I
 Ideal + Ideal := Ideal => (I,J) -> ideal (generators I | generators J)
 Ideal + RingElement := (I,r) -> I + ideal r
 degree Ideal := I -> degree cokernel generators I
-trim Ideal := Ideal => options -> (I) -> ideal trim(module I, options)
+trim Ideal := Ideal => options -> (cacheValue symbol trim) ((I) -> ideal trim(module I, options))
 Ideal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
 Matrix % Ideal := Matrix => (f,I) -> f % gb I
 numgens Ideal := (I) -> numgens source generators I

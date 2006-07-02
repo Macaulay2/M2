@@ -40,10 +40,10 @@ lift'(Matrix,Number,Number) := lift'(Matrix,RingElement,Number) := (f,R,A) -> (
 Vector = new Type of BasicList				    -- an instance v will have one entry, an n by 1 matrix m, with class v === target m
 Vector.synonym = "vector"
 Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)
-net Vector := v -> net first v
+net Vector := v -> net super first v
 entries Vector := v -> entries ambient v#0 / first
 toExternalString Vector := 				    -- not quite right
-toString Vector := v -> concatenate ( "vector ", toString entries v )
+toString Vector := v -> concatenate ( "vector ", toString entries super v )
 ring Vector := v -> ring class v
 module Vector := v -> target first v
 leadTerm Vector := v -> new class v from leadTerm v#0
@@ -65,6 +65,12 @@ Vector - Vector := (v,w) -> (
      if class v =!= class w then error "expected vectors from the same module";
      m := v#0 - w#0;
      new target m from {m})
+
+Vector ** Vector := (v,w) -> (
+     if ring v =!= ring w then error "expected vectors over the same ring";
+     u := v#0 ** w#0;
+     new target u from {u})
+
 Vector == Vector := (v,w) -> v === w
 
 Ring * RingElement := (R,f) -> (

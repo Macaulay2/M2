@@ -120,7 +120,8 @@ document { Key => {permutations, (permutations, ZZ), (permutations, VisibleList)
 	  }
      }
 
-document { Key => separateRegexp, Headline => "separate a string into pieces, with separators determined by a regular expression" }
+document { Key => separateRegexp,
+     Headline => "separate a string into pieces, with separators determined by a regular expression" }
 document { Key => (separateRegexp, String, String),
      Usage => "separateRegexp(sep,str)",
      Inputs => { "sep" => "a regular expression" , "str" => "a string to be separated" },
@@ -131,7 +132,8 @@ document { Key => (separateRegexp, String, ZZ, String),
      Inputs => { "sep" => "a regular expression" , "n", "str" => "a string to be separated" },
      Outputs => { { "a list of substrings consecutively extracted from ", TT "str", ", with separators recognized by the ", TT "n", "-th parenthesized subexpression of", TT "sep" } },
      EXAMPLE { ///separateRegexp("f(-)", 1, "asdf-qwer-dfadf")/// }}
-document { Key => tutorial, Headline => "convert documentation from tutorial format",
+document { Key => tutorial,
+     Headline => "convert documentation from tutorial format",
      Usage => "tutorial x",
      Inputs => { "x" => String => "documentation in tutorial format" },
      Outputs => {{ "documentation in hypertext format" }},
@@ -267,15 +269,18 @@ document { Key => currentTime,
      PARA { "Compare that to the current date, available from a standard Unix command." },
      EXAMPLE ///run "date"///
      }
-document { Key => Partition, Headline => "a type of list representing a partition of a natural number",
+document { Key => Partition,
+     Headline => "a type of list representing a partition of a natural number",
      SeeAlso => { partitions, (conjugate,Partition) } }
-document { Key => (conjugate,Partition), Headline => "conjugate a partition",
+document { Key => (conjugate,Partition),
+     Headline => "conjugate a partition",
      Usage => "conjugate p", Inputs => {"p"}, Outputs => {{"the conjugate of ", TT "p" }},
      EXAMPLE lines ///
      	  partitions 4
 	  conjugate \ oo
      ///}
-document { Key => partitions, Headline => "list the partitions of an integer" }
+document { Key => partitions,
+     Headline => "list the partitions of an integer" }
 document { Key => (partitions, ZZ, ZZ),
      Usage => "partitions(n,k)",
      Inputs => { "n", "k" },
@@ -290,13 +295,17 @@ document { Key => (partitions, ZZ),
      PARA { "Each partition is a basic list of type ", TO "Partition", "." },
      SeeAlso => {Partition,(partitions, ZZ, ZZ)},
      EXAMPLE "partitions 4"}
-document { Key => UpdateOnly, Headline => "only copies of newer files should replace files" }
+document { Key => UpdateOnly,
+     Headline => "only copies of newer files should replace files" }
 document { Key => [copyDirectory, UpdateOnly],
      Usage => "copyDirectory(..., UpdateOnly => true)",
      Consequences => {{ "during the indicated copy operation, newer files will not be replaced by copies of older ones" }}}
-document { Key => Verbose, Headline => "request verbose feedback" }
-document { Key => PrimaryTag, Headline => "for internal use only: a symbol used in storing documentation" }
-document { Key => LoadDocumentation, Headline => "when loading a package, load the documentation, too" }
+document { Key => Verbose,
+     Headline => "request verbose feedback" }
+document { Key => PrimaryTag,
+     Headline => "for internal use only: a symbol used in storing documentation" }
+document { Key => LoadDocumentation,
+     Headline => "when loading a package, load the documentation, too" }
 document { Key => [loadPackage, LoadDocumentation],
      Usage => "loadPackage(..., LoadDocumentation => ...)",
      SeeAlso => beginDocumentation,
@@ -320,7 +329,8 @@ document { Key => {ofClass,(ofClass, Type),(ofClass, ImmutableType),(ofClass, Li
 	  document { Key => foo, "We may need ", ofClass ZZ, " and ", ofClass HashTable, "." }
 	  help foo
      ///}
-document { Key => inverse, Headline => "compute the inverse" }
+document { Key => inverse,
+     Headline => "compute the inverse" }
 document { Key => (inverse, Matrix),
      Usage => "inverse f",
      Inputs => { "f" },
