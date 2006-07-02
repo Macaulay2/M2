@@ -115,13 +115,13 @@ document {
      }
 
 document {
-     Key => max,
+     Key => {max,(max, List),(max, Sequence)},
      Headline => "maximum of elements of a list",
      TT "max x", " -- yields the maximum of the elements in the list or sequence x."
      }
 
 document {
-     Key => min,
+     Key => {min,(min, List),(min, Sequence)},
      Headline => "minimum of elements of a list",
      TT "min x", " -- yields the minimum of the elements in the list or sequence x."
      }

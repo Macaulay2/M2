@@ -123,6 +123,20 @@ document {
      SeeAlso => {cover,super,basis}
      }
 
+document {
+     Key => (matrix, RingMap),
+     Headline => "the matrix associated to a ring map",
+     Usage => "matrix f",
+     Inputs => {"f"},
+     Outputs => {{"the matrix associated to the ring map ", TT "f", ", computed by applying ", TT "f", " to the matrix of variables of its source ring" }},
+     EXAMPLE lines ///
+     	  R = QQ[x,y]
+	  S = QQ[s,t,u]
+	  f = map(R,S,{x^2,x*y,y^2})
+	  matrix f
+     ///	  
+     }
+
 document { 
      Key => (matrix,MutableMatrix),
      Headline => "make a matrix from a mutable one",

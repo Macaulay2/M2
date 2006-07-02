@@ -178,7 +178,7 @@ document {
      }
 
 document {
-     Key => memoize,
+     Key => {memoize,(memoize, Function),(memoize, Function, List)},
      Headline => "record results of function evaluation for future use",
      TT "memoize f", " -- produces, from a function ", TT "f", ", a new function which
      behaves the same as ", TT "f", ", but remembers previous answers to be provided
@@ -579,7 +579,7 @@ document {
 	  
 document {
      Headline => "make a new link to a file",
-     Key => linkFile,
+     Key => {(linkFile, String, String),linkFile},
      Usage => "linkFile(o,n)",
      Inputs => {
 	  "o" => String => "the path to an existing file",

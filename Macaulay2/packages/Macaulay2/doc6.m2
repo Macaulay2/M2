@@ -287,7 +287,7 @@ document {
       	  "standardForm (x^2 - 7 + x*y*z^11 + y)"
 	  }}
 document {
-     Key => listForm,
+     Key => {listForm,(listForm, MonoidElement),(listForm, RingElement)},
      Headline => "convert to list form",
      TT "listForm f", " -- converts a polynomial or monomial to a form
      represented by nested lists.",

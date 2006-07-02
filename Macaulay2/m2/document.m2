@@ -48,7 +48,7 @@ isDocumentableMethod Sequence := key -> (
 isDocumentableMethod    Thing := key -> false
 isDocumentableMethod   Symbol := key -> isGlobalSymbol toString key and getGlobalSymbol toString key === key
 isDocumentableMethod     Type := 
-isDocumentableThing     Thing := key -> ReverseDictionary#?key
+isDocumentableThing     Thing := key -> ReverseDictionary#?key and isDocumentableMethod ReverseDictionary#key
 isDocumentableMethod Function := fn -> ReverseDictionary#?fn and dictionary ReverseDictionary#fn =!= null
 isDocumentableMethod ScriptedFunctor := fn -> ReverseDictionary#?fn
 
