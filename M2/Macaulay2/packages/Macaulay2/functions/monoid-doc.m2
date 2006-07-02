@@ -61,7 +61,7 @@ document {
      "The variables listed may be symbols or indexed variables. The values assigned to these variables are the corresponding monoid generators.  
      The function ", TO "baseName", " may be used to recover the original symbol or indexed variable.",
      PARA{
-     	  "The ", TO "Adjust", " and ", TO "Repair", " options are used in particular by ", TO "(Ext,Module,Module)", ".",
+     	  "The ", TO "Adjust", " and ", TO "Repair", " options are used in particular by ", TO (Ext,Module,Module), ".",
      	  },
      EXAMPLE lines ///
 	  R = ZZ[x,y, Degrees => {-1,-2}, Repair => d -> -d, Adjust => d -> -d]

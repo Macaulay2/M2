@@ -205,12 +205,29 @@ any(f:Expr,e:Expr):Expr := (
      is c:HashTable do 
      if c.mutable then WrongArg(1,"an immutable hash table") else
      Expr(any(f,c))
-     else WrongArg("a list"));
+     else WrongArg("a list or a hash table"));
+any(f:Expr,a:Sequence,b:Sequence):Expr := (
+     if length(a) != length(b) then return buildErrorPacket("expected lists of the same length");
+     foreach x at i in a do (
+	  y := applyEEE(f,x,b.i);
+	  when y is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return y else nothing;
+	  if y == True then return True);
+     False);
+any(f:Expr,a:Sequence,y:Expr):Expr := (
+     when y
+     is c:Sequence do Expr(any(f,a,c))
+     is d:List do Expr(any(f,a,d.v))
+     else WrongArg("a basic list or sequence"));
+any(f:Expr,x:Expr,y:Expr):Expr := (
+     when x
+     is a:Sequence do Expr(any(f,a,y))
+     is b:List do Expr(any(f,b.v,y))
+     else WrongArg("a basic list or sequence"));
 any(e:Expr):Expr := (
      when e is a:Sequence do (
-	  if length(a) == 2
-	  then any(a.1,a.0)
-	  else WrongNumArgs(2))
+	  if length(a) == 2 then any(a.1,a.0)
+	  else if length(a) == 3 then any(a.2,a.0,a.1)
+	  else WrongNumArgs(2,3))
      else WrongNumArgs(2));
 setupfun("any",any);
 

@@ -50,7 +50,7 @@ primaryDecomposition Ideal := List => o -> (I) -> (
      -- Now call the correct algorithm
      if opt === Monomial then (
 	  C := primaryDecomposition monomialIdeal I;
-	  I.cache.Assassinator = apply(C, I -> ideal radical I);
+	  I.cache#"Assassinator" = apply(C, I -> ideal radical I);
 	  C/ideal
 	  )
      else if opt === Binomial then binomialCD I

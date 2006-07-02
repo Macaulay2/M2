@@ -1447,7 +1447,6 @@ document {
          (symbol==, ChainComplex, ChainComplex),
          (symbol==, RingElement, RingElement),
          (symbol==, GradedModuleMap, GradedModuleMap),
-         (symbol==, Tally, Tally),
          (symbol==, Ideal, Ideal),
          (symbol==, MutableMatrix, MutableMatrix),
          (symbol==, Module, Module),

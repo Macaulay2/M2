@@ -20,6 +20,7 @@ document {
 	  TO "integers modulo a prime",
 	  TO "finite fields",
 	  TO "polynomial rings",
+	  TO "monoid",
 	  TO "monomial orderings",
 	  TO "graded and multigraded polynomial rings",
 	  TO "quotient rings",

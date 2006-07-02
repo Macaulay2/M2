@@ -678,6 +678,54 @@ document {
      SeeAlso => {mkdir}
      }
 
+document { Key => Bareiss,
+     "This symbol is used as one of the permissible values for the strategy option in function dealing with determinants.",
+     SeeAlso => {[exteriorPower,Strategy], [minors,Strategy], [det,Strategy]}
+     }
+document { Key => Cofactor,
+     "This symbol is used as one of the permissible values for the strategy option in function dealing with determinants.",
+     SeeAlso => {[exteriorPower,Strategy], [minors,Strategy], [det,Strategy]}
+     }
+
+document { Key => CCC, Headline => "high-precision complex numbers", "This class is experimental." }
+document { Key => RRR, Headline => "high-precision real numbers", "This class is experimental." }
+document { Key => GlobalDictionary, Headline => "the class of all global dictionaries",
+     SeeAlso => { "dictionaryPath", LocalDictionary }
+     }
+document { Key => LocalDictionary, Headline => "the class of all local dictionaries",
+     "A local dictionary is one used in connection with a local scope, such as one which is bounded by the body of a function closure.
+     A local dictionary is created on the fly by the interpreter, and after the scope has been closed, the dictionary can be enlarged no further.
+     Accessing local dictionaries can be a useful debugging tool.  The local dictionaries accessible to the user come with frames, so their symbols
+     have values; thus they may be referred to as dictionary closures.",
+     SeeAlso => { localDictionaries, GlobalDictionary }
+     }
+document { Key => localDictionaries, Headline => "get local dictionaries",
+     Usage => "localDictionaries f",
+     Inputs => {
+	  "f" => {"() or ", ofClass{Function,Symbol,Pseudocode,LocalDictionary,GlobalDictionary}}
+	  },
+     Outputs => {
+	  List => {"a list of the local dictionaries associated with the lexical scopes containing ", TT "f"}
+	  },
+     EXAMPLE lines ///
+     	  f := x -> y -> z -> 11;
+	  d := localDictionaries ((f 22) 33)
+	  peek d
+	  d#0#"y"
+	  value d#0#"y"
+	  peek localDictionaries()
+     ///
+     }
+
+document { Key => DocumentTag, Headline => "the class of all document tags", "This class is mainly for internal use, in constructing documentation." }
+document { Key => CompiledFunctionBody, Headline => "the class of all compiled function bodies",
+     "A compiled function body is the body of a compiled function closure.  It is not a function.",
+     EXAMPLE lines ///
+     	  source
+	  functionBody source
+     ///
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

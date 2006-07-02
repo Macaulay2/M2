@@ -1116,13 +1116,6 @@ document {
      }
 
 document {
-     Key => (Hom,ChainComplex,Module),
-     Headline => "Hom",
-     TT "Hom(C,M)", " -- produces the Hom complex from a chain complex C and
-     a module M."
-     }
-
-document {
      Key => (dual, ChainComplex),
      Headline => "dual",
      TT "dual C", " -- the dual of a chain complex."

@@ -520,7 +520,7 @@ SYprimaryDecomposition = (I) -> (		    -- called by a later file
 	  PDdonode C
 	  );
      if C.H != I then error "algorithm missed components!";
-     I.cache.Assassinator =  apply(C.U, i -> trim(i#1));
+     I.cache#"Assassinator" =  apply(C.U, i -> trim(i#1));
      apply(C.U, i -> trim(i#0)))
 
 TEST ///

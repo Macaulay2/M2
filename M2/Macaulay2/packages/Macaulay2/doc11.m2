@@ -362,7 +362,7 @@ document {
      }
 
 document {
-     Key => EXAMPLE,
+     Key => {EXAMPLE,(EXAMPLE, VisibleList),(EXAMPLE, String)},
      Headline => "hypertext EXAMPLE item",
 	Usage => "EXAMPLE x",
 	Inputs => {"x" => {}},
@@ -646,10 +646,20 @@ document {
      SeeAlso => "hypertext"
      }
 
+document { Key => HR, Headline => "hypertext HR element (horizontal rule)", EXAMPLE lines ///
+         DIV{"hi there", HR{}, "ho there" }
+         html oo
+     ///}
 document { Key => DL, Headline => "hypertext DL element" }
 document { Key => DT, Headline => "hypertext DT element" }
 document { Key => DD, Headline => "hypertext DD element" }
 document { Key => STYLE, Headline => "hypertext STYLE element" }
+document { Key => COMMENT, Headline => "hypertext COMMENT element", EXAMPLE lines ///
+     html COMMENT "hi there"
+///       }
+document { Key => CDATA, Headline => "hypertext CDATA element", EXAMPLE lines ///
+     html CDATA "hi there"
+///       }
 
 document {
      Key => UL,

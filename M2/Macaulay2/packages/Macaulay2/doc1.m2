@@ -1,3 +1,9 @@
+scan((
+	  FollowLinks,Hilbert,UserMode,RerunExamples,MakeDocumentation,IgnoreExampleErrors,IgnoreDocumentationErrors,MakeInfo,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate,
+	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing
+	  ),
+     s -> document { Key => s, "A symbol used as the name of an optional argument, for some function(s)." })
+
 document {
      Key => "initial help",				    -- display by the help command by default
      "Welcome to Macaulay 2",
@@ -396,15 +402,20 @@ document {
      PARA{},
      "If h is a ring element, it is interpreted as a one by one matrix."
      }
+
 document {
-     Key => Hom,
+     Key => {(Hom,Module,Module), Hom,(Hom,Ideal,Ring), (Hom,Ring,Ideal), 
+	  (Hom,CoherentSheaf,CoherentSheaf), (Hom,Ideal,Module), (Hom,Module,Ideal), (Hom,ChainComplexMap,Module),
+      	  (Hom,Ideal,Ideal), (Hom,Module,ChainComplexMap), (Hom,Matrix,Module), (Hom,Ring,Module), 
+	  (Hom,Module,Matrix), (Hom,Module,Ring), 
+	  (Hom,Module,ChainComplex), (Hom,ChainComplex,Module)
+	  },
      Headline => "module of homomorphisms",
-     TT "Hom(M,N)", " -- constructs the module of homomorphisms from M to N.",
+     TT "Hom(M,N)", " -- constructs the module of homomorphisms from ", TT "M", " to ", TT "N", ".",
      PARA{},
      "Implemented with a method of the same name.",
      PARA{},
-     "Use ", TO "homomorphism", " to convert an element of the module of
-     homomorphisms to a matrix."
+     "Use ", TO "homomorphism", " to convert an element of the module of homomorphisms to a matrix."
      }
      
 document {
