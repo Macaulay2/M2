@@ -435,10 +435,6 @@ assert ( class sin === CompiledFunction )
 assert ( class depth === CompiledFunctionClosure )
 ///
 
-scan((
-	  FollowLinks,Hilbert,UserMode,RerunExamples,MakeDocumentation,IgnoreExampleErrors,IgnoreDocumentationErrors,MakeInfo,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate
-	  ),
-     s -> document { Key => s, "A symbol used as an option with some functions." })
 
 document { Key => LowerBound,
      Headline => "the class of lower bound objects",

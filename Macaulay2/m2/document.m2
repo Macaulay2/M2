@@ -371,7 +371,8 @@ addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concat
 fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
 fixup List       := z -> fixup toSequence z
 fixup Sequence   := 
-fixup Hypertext := z -> splice apply(z,fixup)
+fixup Hypertext  := z -> splice apply(z,fixup)
+fixup LATER      := identity
 fixup Nothing    := x -> ()	      -- so it will get removed by splice later
 fixup Option     := identity
 fixup BR         := identity
@@ -398,7 +399,7 @@ fixup MarkUpType := z -> (
 	  z{})
      else error("isolated mark up type encountered: ",toString z)
      ) -- convert PARA to PARA{}
-fixup Function   := z -> z				       -- allow Function => f 
+-- fixup Function   := z -> z				       -- allow BaseFunction => f 
 fixup String     := s -> (				       -- remove clumsy newlines within strings
      if not match("\n",s) then return s;
      ln := separate s;
@@ -540,7 +541,7 @@ fixupTable := new HashTable from {
 --	       TD between_(BR{}) (TT \ nonempty separate val)
 --	       }
 	  ),
-     Function => val -> fixup val,
+     BaseFunction => val -> (if val =!= null and not instance(val,Function) then error "expected BaseFunction option value to be a function"; val),
      Inputs => val -> fixupList val,
      Outputs => val -> fixupList val,
      Consequences => val -> fixupList val,
@@ -578,18 +579,18 @@ caveat := key -> getOption(key,Caveat)
 seealso := key -> getOption(key,SeeAlso)
 sourcecode := key -> getOption(key,SourceCode)
 theMenu := key -> getOption(key,Subnodes)
-documentOptions := new HashTable from {
-     Key => true,
-     Usage => true,
-     Function => true,
-     Inputs => true,
-     Outputs => true,
-     Consequences => true,
-     Headline => true,
-     SeeAlso => true,
-     SourceCode => true,
-     Caveat => true,
-     Subnodes => true
+documentOptions := new OptionTable from {
+     Key => null,
+     Usage => null,
+     BaseFunction => null,
+     Inputs => null,
+     Outputs => null,
+     Consequences => null,
+     Headline => null,
+     SeeAlso => null,
+     SourceCode => null,
+     Caveat => null,
+     Subnodes => null
      }
 reservedNodeNames := set apply( {"Top", "Table of Contents", "Symbol Index"}, toLower )
 
@@ -838,8 +839,9 @@ processInputOutputItems := (key,fn) -> x -> (
 
 sortByName := v -> last \ sort \\ (i -> (toString i, i)) \ v
 
-document = method()
-document List := args -> (
+document = method(Options => documentOptions)
+document List := opts -> args -> (
+     if opts =!= documentOptions then error "'document' expects its optional arguments inside the list";
      args = toSequence args;
      if currentPackage === null then error "encountered 'document' command, but no package is open";
      o := new MutableHashTable;
@@ -914,7 +916,7 @@ document List := args -> (
      scan(keys fixupTable, sym -> if o#?sym then (
 	       if sym === Consequences then scan(o#sym, x -> validate DIV x)
 	       else if sym === Key then null
-	       else if sym === Function then null
+	       else if sym === BaseFunction then null
 	       else if sym === symbol DocumentTag then null
 	       else validate DIV o#sym
 	       )
@@ -922,17 +924,10 @@ document List := args -> (
      o#"filename" = currentFileName;
      o#"linenum" = currentLineNumber();
      o = new HashTable from o;
+     assert( not o.?BaseFunction or instance( o.BaseFunction, Function ) );
      storeRawDocumentation(tag, o);
      currentNodeName = null;
      )
-
-synopsisOpts := new OptionTable from {			    -- old
-     Usage => null,
-     Function => null,
-     Inputs => {},
-     Outputs => {},
-     Consequences => {}
-     }
 
 SYNOPSIS = method(
      Dispatch => Thing,
@@ -940,7 +935,7 @@ SYNOPSIS = method(
      Options => {
 	  Heading => "Synopsis",
 	  Usage => "",
-	  Function => null,
+	  BaseFunction => null,
 	  Inputs => {},
 	  Outputs => {},
      	  Consequences => {},
@@ -952,7 +947,7 @@ SYNOPSIS = method(
 SYNOPSIS List := o -> x -> SYNOPSIS splice (o, toSequence x)
 SYNOPSIS Thing := SYNOPSIS Sequence := o -> x -> (
      o = applyPairs(o, (k,v) -> (k,fixupTable#k v));
-     fn := o#Function;
+     fn := o#BaseFunction;
      proc := processInputOutputItems(,fn);
      fixup DIV nonnull {
 	  SUBSECTION o.Heading,
@@ -973,7 +968,9 @@ briefSynopsis := key -> (
      if o === null then return null;
      r := nonnull {
 	  if o.?Usage then o.Usage,
-	  if o#?Function then SPAN { "Function: ", TO o#Function }
+	  if o.?BaseFunction then (
+	       assert( o.BaseFunction =!= null );
+	       SPAN { "Function: ", TO o.BaseFunction })
 	  else if instance(key, Sequence) and key#?0 then (
 	       if instance(key#0, Function) then SPAN { "Function: ", TO key#0 }
 	       else if instance(key#0, Keyword) then SPAN { "Operator: ", TO key#0 }
@@ -1156,7 +1153,10 @@ help Array := key -> (		    -- optional argument
 	  SUBSECTION "Further information", 
 	  UL {
 	       SPAN{ "Default value: ", if isDocumentableThing default and hasDocumentation default then TO {default} else TT toString default },
-	       SPAN{ if class fn === Sequence then "Method: " else "Function: ", TOH {fn} },
+	       SPAN{
+		    assert ( fn =!= null ); 
+		    if class fn === Sequence then "Method: " else "Function: ", TOH {fn}
+		    },
 	       SPAN{ "Option name: ", TOH {opt} }
 	       },
 	  caveat key, seealso key, theMenu key })

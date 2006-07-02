@@ -2,6 +2,7 @@
 
 export {
         symbol operatorAttributes,
+	symbol CoefficientRing,
 	symbol Flexible,
 	symbol lift', symbol liftable', symbol promote',    -- temporary new versions
 	symbol Binary,
@@ -66,7 +67,6 @@ export {
 	symbol part,
      	symbol hh,
         symbol Schubert,
-	symbol Grass,
 	symbol ExampleItem,
 	symbol RerunExamples,
      	symbol permanents,
@@ -122,8 +122,6 @@ export {
 	symbol Authors,
 	symbol AbsoluteLinks,
         symbol Truncate,
-     	symbol runEndFunctions,
-     	symbol runStartFunctions,
 	"coker" => symbol cokernel,
 	"gens" => symbol generators,
 	"ker" => symbol kernel,
@@ -192,7 +190,6 @@ export {
 	symbol Algorithm,
 	symbol Array,
 	symbol Ascending,
-	symbol Assassinator,
 	symbol AssociativeExpression,
 	symbol BLOCKQUOTE,
 	symbol BODY,
@@ -221,10 +218,10 @@ export {
 	symbol ChangeMatrix,
 	symbol CodimensionLimit,
 	symbol Cofactor,
+	symbol BaseFunction,
 	symbol CoherentSheaf,
 	symbol Command,
 	symbol CompleteIntersection,
-	symbol Component,
 	symbol Consequences,
 	symbol DIV,
 	symbol Database,
@@ -244,7 +241,6 @@ export {
 	symbol DivideConquer,
 	symbol DocumentTag,
 	symbol Down,
-	symbol DownArrow,
 	symbol EM,					    -- cryptic
 	symbol EXAMPLE,
 	symbol Eliminate,

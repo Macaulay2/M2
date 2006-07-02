@@ -145,7 +145,13 @@ undocumented {
     (symbol +, Expression, Sum),
     (symbol +, Sum, Expression),
     (expression, Thing),
-    (expression, Symbol)
+    (expression, Symbol),
+    symbol (,
+    symbol ),
+    symbol [,
+    symbol ],
+    symbol {,
+    symbol }
     }
 
 -- Local Variables:

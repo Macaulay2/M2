@@ -40,8 +40,9 @@ minPosition BasicList := ZZ => x -> (
 
 number = x -> # select x
 
-all = method()
-all(HashTable,Function) := all(BasicList,Function) := Boolean => (x,p) -> not any(x, i -> not p i)
+all = method(TypicalValue => Boolean)
+all(HashTable,Function) := all(BasicList,Function) := (x,p) -> not any(x, i -> not p i)
+all(BasicList,BasicList,Function) := (x,y,p) -> not any(apply(x,y,identity), ij -> not p ij)
 
 same = v -> (
      -- this could be compiled for speed

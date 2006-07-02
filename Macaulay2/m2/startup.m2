@@ -205,7 +205,7 @@ matchpart := (pat,i,s) -> substring_((regex(pat, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
 dir := s -> ( m := regex(".*/",s); if 0 == #m then "./" else substring_(m#0) s)
 noloaddata := false
-nobanner := false;
+nobanner := false
 nosetup := false
 noinitfile = false
 interpreter := commandInterpreter
@@ -489,11 +489,13 @@ if firstTime and not nosetup then loadSetup()
 
 -- remove the Core private dictionary -- it was added by "debug" above
 if not nosetup then dictionaryPath = select(dictionaryPath, d -> d =!= Core#"private dictionary")
+-- install a local way to use private global symbols
+core := nm -> value Core#"private dictionary"#nm
 
 processCommandLineOptions 2
-runStartFunctions()
+(core "runStartFunctions")()
 errorDepth = loadDepth
-if class Core =!= Symbol and not value Core#"private dictionary"#"noinitfile" then (
+if class Core =!= Symbol and not core "noinitfile" then (
      -- the location of init.m2 is documented in the node "initialization file"
      tryLoad ("init.m2", applicationDirectory() | "init.m2");
      tryLoad ("init.m2", "init.m2");

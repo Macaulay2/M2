@@ -11,7 +11,7 @@
 --
 
 ass1 := (I) -> (
-     if I.cache.?Assassinator then I.cache.Assassinator else I.cache.Assassinator = (
+     if I.cache#?"Assassinator" then I.cache#"Assassinator" else I.cache#"Assassinator" = (
      assassinator := {};
      RI := ring I;
      polyRing := ring presentation RI;
@@ -38,7 +38,7 @@ ass1 := (I) -> (
 
 
 ass2 := (I) -> (
-     if I.cache.?Assassinator then I.cache.Assassinator else I.cache.Assassinator = (
+     if I.cache#?"Assassinator" then I.cache#"Assassinator" else I.cache#"Assassinator" = (
      assassinator := {};
      local newcomponents;
      RI := ring I;
@@ -65,7 +65,7 @@ ass2 := (I) -> (
 
 
 associatedPrimes Ideal := List => o -> (I) -> (
-     if I.cache.?Assassinator then I.cache.Assassinator else I.cache.Assassinator = (
+     if I.cache#?"Assassinator" then I.cache#"Assassinator" else I.cache#"Assassinator" = (
      	  if o.Strategy === 1 then (
 	       if debugLevel >= 1 then stderr << "associatedPrimes: using Strategy 1" << endl;
 	       ass1 I) 

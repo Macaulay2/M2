@@ -9,8 +9,7 @@ document {
      Outputs => {
 	  {"a list of prime ideals in ", TT "R", " that are associated to ", TT "I"}
 	  },
-     "Computes the set of associated primes for the ideal ", TT "I", ".  The resulting list
-     is stashed in ", TT "I", " under the key ", TT "Assassinator", ".",
+     "Computes the set of associated primes for the ideal ", TT "I", ".",
      EXAMPLE {
 	  "R = ZZ/101[a..d];",
 	  "I = intersect(ideal(a^2,b),ideal(a,b,c^5),ideal(b^4,c^4))",

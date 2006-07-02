@@ -190,7 +190,10 @@ document {
      SeeAlso => {(minimalPresentation, Module)}
      }
 document { 
-     Key => (minimalPresentation,Module),
+     Key => {(minimalPresentation,Module),
+	  (minimalPresentation, GradedModule),(minimalPresentation, GradedModuleMap),
+	  (minimalPresentation, ChainComplex),(minimalPresentation, ChainComplexMap),
+	  (minimalPresentation, CoherentSheaf)},
      Headline => "minimal presentation of a module",
      Usage => "N = minimalPresentation M",
      Inputs => {
@@ -210,14 +213,21 @@ document {
      is a minimal presentation of ", TT "M", ".  If not, then an 
      attempt is made to improve the presentation of ", TT "M", ".  An 
      example follows.", 
-     EXAMPLE {
-	  "R = ZZ/32003[a..d];",
-	  "M = coker matrix {{a,1,b},{c,3,b+d}}",
-	  "N = minimalPresentation M",
- 	  "peek N.cache",
-	  "g = N.cache.pruningMap",
-	  "g^-1"
-	  },
+     EXAMPLE lines ///
+	  R = ZZ/32003[a..d];
+	  M = coker matrix {{a,1,b},{c,3,b+d}}
+	  N = minimalPresentation M
+ 	  peek N.cache
+	  g = N.cache.pruningMap
+	  g^-1
+     ///,
+     "This function also works when M is ", ofClass{GradedModule,ChainComplex,CoherentSheaf}, ".",
+     EXAMPLE lines ///
+	  I = ideal(a^2,b^3,c^4,d^7)
+     	  X = Proj R
+	  J = I~
+	  minimalPresentation J
+     ///,
      SeeAlso => {(minimalPresentation, Matrix), (trim, Module), (mingens,Module)}
      }
 document { 

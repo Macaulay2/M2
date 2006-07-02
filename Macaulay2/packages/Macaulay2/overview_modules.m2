@@ -122,6 +122,7 @@ document {
 	  TO "Hilbert functions and free resolutions",
 	  TO "degrees of elements and free modules",
 	  TO "degree and multiplicity of a module",
+	  TO "basis",
 	  TO "Hilbert functions and polynomials",
 	  TO "homogenization",
 	  TO "truncation and homogeneous components of a graded module",

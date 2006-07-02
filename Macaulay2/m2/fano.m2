@@ -4,7 +4,7 @@
 -- in the tutorial 'Fano.m2', if that is possible.
 --
 Fano = method()
-Grassmannian = method()
+-- Grassmannian = method()
 
 Fano(ZZ,Ideal,Ring) := Ideal => (k,X,GR) -> (
   -- Get info about the base ring of X:
@@ -68,19 +68,19 @@ Fano(ZZ, Ideal) := Ideal => (k,X) -> (
 )
 
 
-Grassmannian(ZZ,ZZ,Ring) := Ideal => (k,r,R) ->( 
-        KK := coefficientRing R;
-        RPr := KK[Variables => r+1];
-        Pr := ideal(0_RPr);
-        substitute( Fano(k,Pr) , vars R )
-     )
-
-Grassmannian(ZZ,ZZ) := Ideal => (k,r) -> (
-        R := ZZ/31991[
-               vars(0..(binomial(r+1,k+1)-1))
-                    ];
-        Grassmannian(k,r,R)
-                     )
+-- Grassmannian(ZZ,ZZ,Ring) := Ideal => (k,r,R) ->( 
+--         KK := coefficientRing R;
+--         RPr := KK[Variables => r+1];
+--         Pr := ideal(0_RPr);
+--         substitute( Fano(k,Pr) , vars R )
+--      )
+-- 
+-- Grassmannian(ZZ,ZZ) := Ideal => (k,r) -> (
+--         R := ZZ/31991[
+--                vars(0..(binomial(r+1,k+1)-1))
+--                     ];
+--         Grassmannian(k,r,R)
+--                      )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

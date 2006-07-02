@@ -40,6 +40,7 @@ expression Expression := identity
 Expression#operator = ""
 
 value' = method(Dispatch => Thing)
+value' Sequence := x -> apply(x,value')
 value' Thing := identity
 value' Symbol := value					    -- do we really want this?
 value Expression := value'
@@ -1047,7 +1048,7 @@ texMath MatrixExpression := m -> (
 ctr := 0
 showTex = method(
      Options => { 
-	  Format => "dvi", -- or "pdf"
+	  Format => "dvi", -- or "pdf", not implemented yet
 	  }
      )
 

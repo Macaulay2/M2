@@ -629,12 +629,24 @@ document {
 document { Key => "for",
      Headline => "for loops",
      Usage => "for i from m to n when p list x do z", 
+     Inputs => { "m" => ZZ, "n" => ZZ },
      Consequences => { 
 	  {"The variable ", TT "i", " is initialized to ", TT "m", ".  As long as ", TT "i", " is not greater than ", TT "n", ", evaluation of the loop continues.  First ", TT "p", " is evaluated.  
 	       As long as the value of ", TT "p", " is true, evaluation of the loop continues.  Next ", TT "x", " is evaluated and its value is saved, and
 	       ", TT "z", " is evaluated and its value is discarded.  Then ", TT "i", " is incremented by 1, and the loop repeats.  When the value of ", TT "p", " is false,
 	       then the loop terminates, and the list of values of ", TT "x", " is returned as the value of the entire expression."
 	       }},
+     Outputs => {{"the list of values of the clause ", TT "x", ", as desribed above"}},
+     SYNOPSIS (
+	  Usage => "for i in v when p list x do z",
+	  Inputs => { "v" => BasicList },
+	  Consequences => {{"The variable ", TT "i", " is set to consecutive values of the list ", TT "v", ".  First ", TT "p", " is evaluated.  
+	       As long as the value of ", TT "p", " is true, evaluation of the loop continues.  Next ", TT "x", " is evaluated, and its value is saved.  Then
+	       ", TT "z", " is evaluated and its value is discarded.  Then the loop repeats with the next element of ", TT "v", ".  When the value of ", TT "p", " is false,
+	       then the loop terminates, and the list of values of ", TT "x", " is returned as the value of the entire expression."
+	       }},
+	  ),
+     SUBSECTION "examples",
      EXAMPLE lines ///
      	  for i from 1 to 5 when i < 15 list i^2 do print i
      	  for i from 1 to 5 when i^2 < 15 list i^2 do print i
@@ -684,9 +696,11 @@ document { Key => "for",
      PARA{
      	  "The variable ", TT "i", " is a new local variable whose scope includes only the expressions ", TT "p", ", ", TT "x", ",
 	  and ", TT "y", ".  The numbers ", TT "m", " and ", TT "n", " must be small integers that fit into a single word."
-	  }
+	  },
+     EXAMPLE lines ///
+          for i in 0..3 list i^2
+     ///
      }
-
 
 document {
      Key => "local variables in a function",

@@ -93,18 +93,23 @@ document {
      }
 
 document {
-     Key => on,
+     Key => {on,[on,CallLimit],[on,Name],CallLimit},
      Headline => "trace a function each time it's run",
-     TT "f = on f", " -- replaces the function ", TT "f", " by a version which 
-     will print out its arguments and return value each time it's called,
-     together with a sequence number so the two reports can be connected.",
-     PARA{},
-     "This function is of only limited utility because it cannot be used
-     with write-protected system functions.",
-     PARA{},
-     "The reason we write ", TT "f = on f", " and not something like
-     ", TT "f = on(x -> ...)", " is so the function handed to ", TO "on", "
-     will know its name.  The name will appear in the display."
+     Usage => "on f",
+     Inputs => { 
+	  "f" => Function,
+	  CallLimit => ZZ => "the maximum number of times to permit the function f to be called",
+	  Name => String => "the name to use for the function, in case ", TT "f", " is an anonymous function (not assigned to a global variable)"
+	  },
+     Outputs => { Function => {"a new function that returns the same values that ", TT "f", " would have returned, but has a few side effects
+	       useful for debugging: upon entry, it prints its arguments, and upon exit it prints its return values.  The display includes the name of ", TT "f", ",
+	       a sequence number in parentheses that tells how many times the function has been called, and a number in brackets that gives the nesting (recursion) depth.
+	       The sequence number allows the entry and exit reports to be connected." 
+	       }},
+     PARA{
+     	  "Ideally, this function would replace ", TT "f", ", i.e., we would write ", TT "f = on f", ".  Unfortunately, all the pre-installed system functions
+	  are write-protected."
+	  }
      }
 
 document {
@@ -337,11 +342,11 @@ document {
 	  "set{1,3,2} - set{1}",
 	  "set{4,5} + set{5,6}",
 	  "set{4,5} * set{5,6}",
-	  "set{1,3,2} == set{1,2,3}"
+	  "set{1,3,2} === set{1,2,3}"
 	  },
      PARA{},
-     TO2(Ideal,"Ideals"), " in Macaulay2 come equipped with a specific generating
-     set, so the following two ideals are considered different.",
+     TO2(Ideal,"Ideals"), " in Macaulay2 come equipped with a specific sequence of generators, so the following two ideals are not considered strictly equal,
+     and thus the set containing them will appear to have two elements.",
      EXAMPLE {
      	  "I = ideal(a,b); J = ideal(b,a);",
 	  "I == J",
@@ -356,7 +361,7 @@ document {
      PARA{},
      "A set is implemented as a ", TO HashTable, ", whose keys are the elements of the
      set, and whose values are all 1.  In particular, this means that two objects 
-     are considered the same exactly when the are equal under ", TO symbol===, "."
+     are considered the same exactly when they are strictly equal, according to ", TO symbol===, "."
      }
 
 undocumented {

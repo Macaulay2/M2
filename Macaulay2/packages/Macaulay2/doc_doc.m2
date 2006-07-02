@@ -9,70 +9,66 @@
 -- the changes.
 
 document {  
-     Key => document,
+     Key => {document},
      Usage => "document { Key => key, ... }",
      Headline => "install documentation",
-	Inputs => {List => {"a hyptertext list including special documentation entries"}},
-	Consequences => {"formatted documentation is created"},
-	    "There are two basic types of documentation. The first type documents 
-	    a function or a method, as in ", TO (resolution,Module), ". The second type of 
-	    documentation is for overviews or functions with methods, as in ", 
-	    TO "chain complexes", 
-	    " or ", TO resolution, " respectively. The headings ", TO "Usage", ", ", TO2 {"Function ", "Function"}, 
-	    ", ", TO "Inputs", ", ", TO "Outputs", ", and ", TO "Consequences", ", are useful only for documentation of the first type. 
-	    Here is a template for a typical documentation node.",
- 	PRE ///document {
+     Inputs => {
+	  List => {"a hypertext list including special documentation entries; any optional arguments are to be placed in this list"}
+	  },
+     Consequences => {"formatted documentation is created and stored"},
+     PARA {
+     	  "There are two basic types of documentation.  The first type documents a function or a method, as in ", TO (resolution,Module), ". The second type of 
+	  documentation is for overviews or functions with methods, as in ", TO "chain complexes", " or ", TO resolution, " respectively.
+	  The headings ", TO "Usage", ", ", TO2 {"Function ", "Function"}, ", ", TO "Inputs", ", ", TO "Outputs", ", and ", TO "Consequences", ", are 
+	  useful only for documentation of the first type."
+	  },
+     PARA {
+	  "Here is a template for a typical documentation node."
+	  },
+     PRE ///document {
      Key => key,
      Headline => "one line description", -- not needed for overviews
      Usage => "usage",
-     Function => "function",
+     BaseFunction => "function", -- usually not needed
      Inputs => {
-		inputs
-	  },
-     Outputs => {
-		outputs
+          inputs
 	  },
      Consequences => {
-		effects
+	  effects
 	  },
-  	"There can be explanatory prose here in the form of a hypertext list.",
+     Outputs => {
+          outputs
+	  },
+     "There can be explanatory prose here in the form of a hypertext list.",
      EXAMPLE {
 		"m2code",
 		"m2code",
 		"m2code"
 		 },
-	"There can be explanatory prose here in the form of a hypertext list.",
+     "There can be explanatory prose here in the form of a hypertext list.",
      Caveat => {"warning"},
-     SeeAlso => {linkFile},
-     Subnodes => {listOfNodes},
-     }///,
-     PARA "Special documentation entries:",
-     UL {
-	  TOH Key,
-	  TOH Headline,
-	  TOH Usage,
-	  {TO2 {"Function ", "Function"}, " -- function for a documented feature"},
-	  TOH Inputs,
-	  TOH Outputs,
-	  TOH Consequences,
-    	  TOH Caveat,
-	  TOH EXAMPLE,
-	  TOH SeeAlso,
-          TOH Subnodes
+     SeeAlso => {"other things"},
+     Subnodes => {
+	  "subheading a",
+	  TO "node 1", 
+	  TO "node 2",
+	  "subheading b",
+	  TO "node 3", 
+     	  ...
 	  },
+     }///,
      PARA "Hypertext markup items that you may use:",
      UL {
-	  TOH "hypertext format"
+	  TOH "hypertext format",
+	  TOH EXAMPLE,
 	  },
-     SeeAlso => {"writing documentation", 
-	  "conventions for documentation",
-	  hypertext}
-  }
+     SeeAlso => {"writing documentation", "conventions for documentation", hypertext}
+     }
+
 document {
-	Key => Key,
+	Key => {[document,Key],Key},
 	Headline => "key of a documentation node",
 	Usage => "document { Key => key, ... }",
-	Function => document, 
 	Consequences => {"specifies the name under which the documentation is stored"},
 	"The document key is the the name of the node, specifically the one that allows 
 	users to find the documentation for the desired command. Some node names, rather than being strings, 
@@ -102,7 +98,7 @@ document { -- This node is used as an example in the node: Consequences
      Key => Headline,
      Headline => "make a headline for a documentation node",
      Usage => "document { Key => key, Headline => \"one line description\", ... }",
-     Function => document,
+     BaseFunction => document,
      Consequences => {
 	  { "the headline string will be used to annotate itemized 
 		  lists of cross references to the documentation ", TO "Key" }
@@ -116,7 +112,7 @@ document {
      Key => Usage, 
 	Headline => "shows the usage of a function",
 	Usage => "document { ... , Usage => \"usage\", ... }",
-     Function => document,
+     BaseFunction => document,
 	"The ", TT "Usage", " entry should give a formal example showing the usage of the function. 
 	The variables used in this formal example should be the ones used in the ", TO "Inputs", " and ", TO "Outputs",
 	" sections of the documentation. Here is the code for the ", TT "Usage", " entry of the method ", TO (matrix, List), ":",
@@ -125,19 +121,18 @@ document {
 	PRE ///Usage => "resolution M\nres M"///,
 	SeeAlso => {document, Inputs, Outputs} 
 	}
+
 document {
-	Key => "Function ",
+	Key => {[document,BaseFunction],BaseFunction},
 	Headline => "function for a documented feature",
-	"The ", TT "Function", " entry gives the function that uses the feature being documented. 
-	Using this node as an example we see that the function is ", TO "document", 
-	". Indeed, outside of the function ", TO "document", ", ", TT "Function", " has a completely different usage.", 
+	"The ", TT "BaseFunction", " entry gives the function that uses the feature being documented."
 	}
+
 document {
-     Key => Inputs, 
-	Headline => "inputs for a function",
-	Usage => "document { ... , Inputs => { inputs, ... }, ... }",
-	Function => document,
-	"The entries should consist of items in one of the following forms.",
+     Key => {[document,Inputs],Inputs}, 
+     Headline => "inputs for a function",
+     Usage => "document { ... , Inputs => { inputs, ... }, ... }",
+     "The entries should consist of items in one of the following forms.",
 	  UL {
 	      TT "hypertext",
 	      TT "class",
@@ -154,10 +149,10 @@ document {
 	SeeAlso => {document, Outputs, Usage}
 	}
 document {
-     Key => Outputs,
+     Key => {[document,Outputs],Outputs},
 	Headline => "outputs for a function",
 	Usage => "document { ... , Outputs => { outputs, ... }, ... }",
-	Function => document,
+	BaseFunction => document,
 	"The entries should consist of items in one of the following forms.",
 	  UL {
 	      TT "hypertext",
@@ -175,10 +170,10 @@ document {
     	SeeAlso => {document, Inputs, Usage}
 	}
 document {
-     Key => Consequences, 
+     Key => {[document,Consequences],Consequences}, 
 	Headline => "side-effects of a function",
 	Usage => "document { ... , Consequences => {\"effects\" }, ... }",
-	Function => document,
+	BaseFunction => document,
     	"Here is where one documents effects of a function which are not return values. As an 
 	example here is the ", TT "Consequences", " entry for the documentation node ", TO Headline, ":", 
 	PRE ///Consequences => {
@@ -188,40 +183,37 @@ document {
 	SeeAlso => {document}
 	}
 document {
-     Key => Caveat, 
+     Key => {[document,Caveat],Caveat}, 
 	Headline => "warnings",
 	Usage => "document { ... , Caveat => {\"warning\"}, ... }",
-	Function => document,
+	BaseFunction => document,
     	"This part of the documentation serves to highlight pitfalls for the user.",
 	SeeAlso => {document}
 	}
 document {
-     Key => SeeAlso,
+     Key => {[document,SeeAlso],SeeAlso},
      Headline => "crossreferences in documentation",
      Usage =>  "document { ... , SeeAlso => { ... }, ... }",
-	Function => document,
-    	"This option inserts into a documentation page a sentence
-     instructing the reader to see some other topics.",
+     BaseFunction => document,
+     "This option inserts into a documentation page a sentence instructing the reader to see some other topics.",
      PARA{},
-     "The entries may have the special forms used with ", TO "TO", ". As an example, here is the code for the ", TT "SeeAlso", 
-	" part of this documentation node.",
-	PRE ///SeeAlso => {document, TO},///,
+     "The entries may have the special forms used with ", TO "TO", ". As an example, here is the code for the ", TT "SeeAlso", " part of this documentation node.",
+     PRE ///SeeAlso => {document, TO},///,
      SeeAlso => {document, TO}
      }
 document {
-     Key => Subnodes,
+     Key => {[document,Subnodes],Subnodes},
      Headline => "a menu of documentation nodes",
      Usage =>  "document { ... , Subnodes => { ... }, ... }",
-	Function => document,
-   	"This option inserts into a documentation page a menu of subnodes. Here is a generic example:",
-	PRE ///Subnodes => {
-		"An example of subnodes",
-		TO "a link name",
-		TO "another link name"
-		},///,
-	"The ", TT "Subnodes", " option defines how the tree structure of the documentation is constructed. This is relevant when printing
-	the documentation.",   
-    	SeeAlso => {document, TO},
+     BaseFunction => document,
+     "This option inserts into a documentation page a menu of subnodes. Here is a generic example:",
+     PRE ///Subnodes => {
+	  "An example of subnodes",
+	  TO "a link name",
+	  TO "another link name"
+	  },///,
+     "The ", TT "Subnodes", " option defines how the tree structure of the documentation is constructed. This is relevant when printing the documentation.",   
+     SeeAlso => {document, TO}
      }
 
 document {

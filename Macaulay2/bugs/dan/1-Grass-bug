@@ -15,29 +15,71 @@ Grass is wrong
 
 =============================================================================
 
-we get two wrong long ones in the wrong list
+we get two wrong (?) ones in the wrong list
 
       {-2} | -p_(2,3,4)p_(0,1,5)+p_(1,3,4)p_(0,2,5)-p_(0,2,4)p_(1,3,5)+p_(0,1,4)p_(2,3,5)+p_(1,2,3)p_(0,4,5)+p_(0,1,2)p_(3,4,5) |
+
+		 r =   0  4==5   i=1
+     	       	    	  |
+		 s =   1==2  3 
+
+		s1 = {1, 2}  s2 = {4, 5}  c = {0, 4, 5}  d = {1, 2, 3}  sgn = 1
+		s1 = {1, 4}  s2 = {2, 5}  c = {0, 2, 5}  d = {1, 4, 3}  sgn = 1
+		s1 = {2, 4}  s2 = {1, 5}  c = {0, 1, 5}  d = {2, 4, 3}  sgn = -1
+		s1 = {1, 5}  s2 = {2, 4}  c = {0, 2, 4}  d = {1, 5, 3}  sgn = -1
+		s1 = {2, 5}  s2 = {1, 4}  c = {0, 1, 4}  d = {2, 5, 3}  sgn = 1
+		s1 = {4, 5}  s2 = {1, 2}  c = {0, 1, 2}  d = {4, 5, 3}  sgn = 1
+
+
       {-2} |  p_(2,3,4)p_(0,1,5)-p_(1,3,4)p_(0,2,5)+p_(1,2,4)p_(0,3,5)-p_(0,2,3)p_(1,4,5)+p_(0,1,3)p_(2,4,5)-p_(0,1,2)p_(3,4,5) |
+
+		 r =   0  3==5   i=1
+     	       	    	  |
+		 s =   1==2  4 
+
+		s1 = {1, 2}  s2 = {3, 5}  c = {0, 3, 5}  d = {1, 2, 4}  sgn = 1
+		s1 = {1, 3}  s2 = {2, 5}  c = {0, 2, 5}  d = {1, 3, 4}  sgn = -1
+		s1 = {2, 3}  s2 = {1, 5}  c = {0, 1, 5}  d = {2, 3, 4}  sgn = 1
+		s1 = {1, 5}  s2 = {2, 3}  c = {0, 2, 3}  d = {1, 5, 4}  sgn = -1
+		s1 = {2, 5}  s2 = {1, 3}  c = {0, 1, 3}  d = {2, 5, 4}  sgn = 1
+		s1 = {3, 5}  s2 = {1, 2}  c = {0, 1, 2}  d = {3, 5, 4}  sgn = -1
 
 and we aren't getting these two good ones:
 
       {-2} | p_(1,2,3)p_(0,4,5)-p_(0,2,3)p_(1,4,5)+p_(0,1,3)p_(2,4,5)-p_(0,1,2)p_(3,4,5)                                       |
+
+     	       	      1==2==3
+     	       	      |
+                      0  4  5
+
       {-2} | p_(1,2,4)p_(0,3,5)-p_(0,2,4)p_(1,3,5)+p_(0,1,4)p_(2,3,5)+p_(0,1,2)p_(3,4,5)                                       |
 
-What's the difference?
+     	       	      1==2==4
+     	       	      |
+                      0  3  5
 
 we get this good long one
  
      {-2} | p_(0,3,4)p_(1,2,5)-p_(0,2,4)p_(1,3,5)+p_(0,1,4)p_(2,3,5)+p_(0,2,3)p_(1,4,5)-p_(0,1,3)p_(2,4,5)+p_(0,1,2)p_(3,4,5)  |
- 
+
+		 r =   0  3==4   i=1
+     	       	    	  |
+		 s =   1==2  5 
+
+		s1 = {1, 2}  s2 = {3, 4}  c = {0, 3, 4}  d = {1, 2, 5}  sgn = 1
+		s1 = {1, 3}  s2 = {2, 4}  c = {0, 2, 4}  d = {1, 3, 5}  sgn = -1
+		s1 = {2, 3}  s2 = {1, 4}  c = {0, 1, 4}  d = {2, 3, 5}  sgn = 1
+		s1 = {1, 4}  s2 = {2, 3}  c = {0, 2, 3}  d = {1, 4, 5}  sgn = 1
+		s1 = {2, 4}  s2 = {1, 3}  c = {0, 1, 3}  d = {2, 4, 5}  sgn = -1
+		s1 = {3, 4}  s2 = {1, 2}  c = {0, 1, 2}  d = {3, 4, 5}  sgn = 1
+
 we get only two medium length good ones:
 
       {-2} | p_(1,3,4)p_(0,2,5)-p_(0,2,4)p_(1,3,5)+p_(0,2,3)p_(1,4,5)+p_(0,1,2)p_(3,4,5)                                        |
 
 		 r =   0  2  5   i=2
-
-		 s =   1  3  4 
+     	       	    	     |
+		 s =   1==3==4 
 
 		s1 = {1, 3, 4}  s2 = {5}  c = {0, 2, 5}  d = {1, 3, 4}  sgn = 1
 		s1 = {1, 3, 5}  s2 = {4}  c = {0, 2, 4}  d = {1, 3, 5}  sgn = -1
@@ -47,8 +89,8 @@ we get only two medium length good ones:
       {-2} | p_(2,3,4)p_(0,1,5)-p_(0,1,4)p_(2,3,5)+p_(0,1,3)p_(2,4,5)-p_(0,1,2)p_(3,4,5)                                        |
 
 		 r =   0  1  5   i=2
-
-		 s =   2  3  4 
+     	       	    	     |
+		 s =   2==3==4 
 
 		s1 = {2, 3, 4}  s2 = {5}  c = {0, 1, 5}  d = {2, 3, 4}  sgn = 1
 		s1 = {2, 3, 5}  s2 = {4}  c = {0, 1, 4}  d = {2, 3, 5}  sgn = -1
@@ -371,3 +413,92 @@ I've added their names to the file...
 > >>>     o9 : ----- [a, b, c, d, e, f]
 > >>> 	 31991
 
+==========================================================================================================================================================
+In-Reply-To: <200607010344.k613ihr01176@u00.math.uiuc.edu>
+From: Michael Stillman <mike@math.cornell.edu>
+Subject: Re: Grass
+Date: Fri, 30 Jun 2006 23:53:34 -0400
+To: dan@math.uiuc.edu
+
+Please change it.  However, could yo do the following first:
+
+J = Grassmannian(2,5)
+time res J
+
+and then make sure that afterwards, the time hasn't changed (if it  
+has, then the variable order has changed).
+
+
+On Jun 30, 2006, at 11:44 PM, Dan Grayson wrote:
+
+>
+> This routine wipes out a *lot* of global variables.  I think I  
+> should change that.
+>
+>
+>     i3 : 	 Grassmannian(1,3)
+>
+>     o3 = ideal(c*d - b*e + a*f)
+>
+> 		    ZZ
+>     o3 : Ideal of ----- [a, b, c, d, e, f]
+> 		  31991
+=============================================================================
+Date: Fri, 30 Jun 2006 23:04:39 -0500 (CDT)
+From: Dan Grayson <dan@math.uiuc.edu>
+To: Michael Stillman <mike@math.cornell.edu>
+CC: dan@math.uiuc.edu
+In-reply-to: <793381FF-2061-43D4-A93F-B3766EFD4570@math.cornell.edu> (message
+	from Michael Stillman on Fri, 30 Jun 2006 23:47:42 -0400)
+Subject: Re: Grassmannian char
+Reply-to: dan@math.uiuc.edu
+
+
+I'll fix it soe there is just one function, Grassmannian, with the option you
+suggest.
+
+Or, what if we declare that tensor product doesn't have to involve two modules
+over the same ring.  If I is an ideal in ZZ[x,y,z] and kk is a field, then we
+want I**kk to work.  It will work if we decree that the tensor product is over
+the largest ring which appears as a basering for both of the rings.  We could
+also provide a three argument version of tensor: tensor(kk,R,S) would be tensor
+over kk.
+
+Actually, for situations where ZZ[x,y,z]/I is not flat, what we really want is
+to promote the ideal to kk[x,y,z], not to tensor it with kk.  Unfortunately,
+ZZ[x,y,z] is not one of the baserings of kk[x,y,z].  How do we do that kind of
+promotion?  Make a ring map, I guess.  So then our notation is lengthy, sigh:
+
+    i34 : R = ZZ[x]
+
+    o34 = R
+
+    o34 : PolynomialRing
+
+    i35 : I = ideal x^6
+
+		 6
+    o35 = ideal(x )
+
+    o35 : Ideal of R
+
+    i36 : S = QQ[x]
+
+    o36 = S
+
+    o36 : PolynomialRing
+
+    i37 : f = map(S,R)
+
+    o37 = map(S,R,{x})
+
+    o37 : RingMap S <--- R
+
+    i38 : f I
+
+		 6
+    o38 = ideal(x )
+
+    o38 : Ideal of S
+
+Must think...
