@@ -1,4 +1,4 @@
-
+document { Key => Increment, "A symbol used as the name of an optional argument, for some function(s)." }
 document {
      Key => (associatedPrimes, Ideal),
      Headline => "find the associated primes of an ideal",

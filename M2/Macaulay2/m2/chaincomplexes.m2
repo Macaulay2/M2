@@ -36,6 +36,8 @@ ChainComplex _ ZZ := Module => (C,i) -> (
      else (ring C)^0                           -- for chain complexes of sheaves we'll want something else!
      )
 
+ChainComplex _ ZZ = (C,i,M) -> C#i = M
+
 ChainComplex ^ ZZ := Module => (C,i) -> C_-i
 
 spots := C -> select(keys C, i -> class i === ZZ)
@@ -128,6 +130,7 @@ net ChainComplexMap := f -> (
      if # v === 0 then "0"
      else stack v)
 ring ChainComplexMap := (f) -> ring source f
+
 ChainComplexMap _ ZZ := Matrix => (f,i) -> if f#?i then f#i else (
      de := if f.?degree then f.degree else 0;
      so := (source f)_i;
@@ -138,6 +141,12 @@ ChainComplexMap _ ZZ := Matrix => (f,i) -> if f#?i then f#i else (
 	  if p != 0 then f#i = p;
 	  p)
      else map(ta,so,0))
+
+ChainComplexMap _ ZZ = (f,i,p) -> (
+     f#i = p;
+     (target f)_(i + degree f) = target p;
+     (source f)_i = source p;
+     p)
 
 ChainComplex#id = (C) -> (
      complete C;
@@ -594,6 +603,7 @@ regularity Module := (M) -> regularity resolution M
 regularity Ideal := (I) -> 1 + regularity resolution cokernel generators I
 
 BettiTally = new Type of Tally
+BettiTally.synonym = "Betty tally"
 
 betti = method(TypicalValue => BettiTally)
      -- returns a hash table with pairs of the form (i,d) => n

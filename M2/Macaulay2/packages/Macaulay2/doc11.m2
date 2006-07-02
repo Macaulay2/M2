@@ -650,6 +650,8 @@ document { Key => HR, Headline => "hypertext HR element (horizontal rule)", EXAM
          DIV{"hi there", HR{}, "ho there" }
          html oo
      ///}
+document { Key => TR, Headline => "hypertext TR element" }
+document { Key => TD, Headline => "hypertext TD element" }
 document { Key => DL, Headline => "hypertext DL element" }
 document { Key => DT, Headline => "hypertext DT element" }
 document { Key => DD, Headline => "hypertext DD element" }

@@ -321,7 +321,7 @@ document {
      "This function should be replaced by something more generally useful."
      }
 document {
-     Key => baseName,
+     Key => {baseName,(baseName, Symbol),(baseName, IndexedVariable),(baseName, RingElement),(baseName, Subscript),(baseName, Holder)},
      Headline => "the base name of a generator",
      TT "baseName x", " -- returns the variable or symbol upon which a generator of a
      monoid or polynomial ring is based."
@@ -480,7 +480,7 @@ document {
      SeeAlso => "GlobalAssignHook"
      }
 document {
-     Key => complete,
+     Key => {complete,(complete, GradedModule),(complete, ChainComplexMap)},
      TT "complete C", " -- completely fills out the chain complex C by
      calling upon the engine to provide the maps and modules computed
      by ", TO "resolution", ".",
@@ -691,14 +691,24 @@ document {
      PARA{},
      SeeAlso =>{ ".", "#?" }
      }
-document {
-     Key => autoload,
-     Headline => "arrange for a function to be loaded automatically",
-     TT "autoload(f,\"x\")", " -- arranges for a function ", TT "f", " to be 
-     automatically loaded from the file named ", TT "x", " the first
-     time it is used."
-     }
 
+undocumented (autoload, Function, String)
+document {
+     Key => {(autoload, Symbol, String),autoload},
+     Headline => "arrange for a function to be loaded automatically",
+     Usage => "autoload(f,x)",
+     Inputs => { "f", "x" },
+     Consequences => { "arranges for a function named ", TT "f", " to be automatically loaded from the file ", TT "x", " the first time it is used.
+	  This is accomplished by creating a suitable function that will load the file and assigning the function to ", TT "f", "." },
+     EXAMPLE lines ///
+     	  fn = temporaryFileName()
+	  fn << "f = x -> x+1\n" << close
+	  autoload(f,fn)
+	  code f
+	  f 4
+	  removeFile fn
+     ///
+     }
 
 TEST ///
      k = ZZ/101

@@ -519,14 +519,14 @@ document {
      }
 
 document {
-     Key => Spec,
+     Key => {(Spec, Ring),Spec},
      Headline => "make an affine variety",
      TT "Spec R", " -- create an affine variety or scheme from the ring ", TT "R", ".",
      EXAMPLE { "R = QQ[x,y];", "Spec R" }
      }
 
 document {
-     Key => Proj,
+     Key => {(Proj, Ring), Proj},
      Headline => "make a projective variety",
      TT "Proj R", " -- create a projective variety or scheme from the graded ring ", TT "R", ".",
      EXAMPLE { "R = QQ[x,y];", "Proj R" }

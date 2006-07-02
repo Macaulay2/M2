@@ -96,28 +96,17 @@ document {
      SeeAlso => { installPackage, check, "writing documentation" }
      }
 document {
-     Key => {TEST, (TEST,String)},
+     Key => {TEST, (TEST,String), (TEST,List)},
      Headline => "package item: register a test of the package",
      Usage => "TEST s",
-     Inputs => {
-	  "s" => String => "containing Macaulay2 code"
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  {"Registers the string ", TT "s", " as a test of the
-     	       current package"},
-	},
-     "This function should only occur in the documentation section 
-     of a package.  Use ", TO check, " to run all of the tests
+     Inputs => { "s" => {"a string or list of strings containing Macaulay2 code"} },
+     Consequences => { {"Registers the string ", TT "s", " as a test of the current package"}},
+     "This function should only occur in the documentation section of a package.  Use ", TO check, " to run all of the tests
      associated to a package.",
      PARA{},
      "For an example, see ", TO "an example of a package",
      Caveat => "When creating tests, try to insure that they run relatively quickly.",
-     SeeAlso => {
-	  beginDocumentation,
-	  assert
-	  }
+     SeeAlso => { beginDocumentation, assert }
      }
 
 document {

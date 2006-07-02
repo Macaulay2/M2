@@ -181,16 +181,16 @@ LowerBound = new SelfInitializingType of BasicList
 SheafOfRings(*) := O -> O^1(*)
 CoherentSheaf(*) := F -> F(>=-infinity)
 
-SumOfTwists = new Type of HashTable
-CoherentSheaf LowerBound := SumOfTwists => (F,b) -> new SumOfTwists from { "object" => F, "bound" => b}
+SumOfTwists = new Type of BasicList
+CoherentSheaf LowerBound := SumOfTwists => (F,b) -> new SumOfTwists from {F, b}
 SheafOfRings LowerBound := SumOfTwists => (O,b) -> O^1 b
-net SumOfTwists := S -> net S#"object" | "(>=" | net S#"bound" | ")"
+net SumOfTwists := S -> net S#0 | if S#1#0 === neginfinity then "(*)" else "(>=" | net S#1#0 | ")"
 
 cohomology(ZZ,SumOfTwists) :=  Module => opts -> (i,S) -> (
-     F := S#"object";
+     F := S#0;
      R := ring F;
      if not isAffineRing R then error "expected coherent sheaf over a variety over a field";
-     b := first S#"bound";
+     b := first S#1;
      if i == 0 then globalSectionsModule(F,b) else HH^(i+1)(module F,Degree => b))
 
 cohomology(ZZ,CoherentSheaf) := Module => opts -> (i,F) -> (
@@ -349,8 +349,8 @@ sheafExt(ZZ,SheafOfRings,SheafOfRings) := Module => (n,O,R) -> sheafExt^n(O^1,R^
 -----------------------------------------------------------------------------
 
 Ext(ZZ,CoherentSheaf,SumOfTwists) := Module => (m,F,G') -> (
-     G := G'#"object";
-     e := (G'#"bound")#0;
+     G := G'#0;
+     e := G'#1#0;
      if variety G =!= variety F
      then error "expected sheaves on the same variety";
      if not instance(variety G,ProjectiveVariety)

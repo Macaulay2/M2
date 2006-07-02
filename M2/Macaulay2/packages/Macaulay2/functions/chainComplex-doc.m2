@@ -8,6 +8,19 @@ document {
      TT "chainComplex", " -- a method for creating chain complexes.",
      }
 
+document { Key => (chainComplex,Ring), Headline => "make an empty chain complex over a ring",
+     Usage => "chainComplex R",
+     Inputs => {"R"},
+     Outputs => {{"an empty chain complex over ", TT "R"}},
+     "The resulting chain complex can be further populated with modules and maps.",
+     EXAMPLE lines ///
+     	  C = chainComplex ZZ
+	  C.dd_101 = random(ZZ^2,ZZ^3)
+	  C.dd_105 = id_(ZZ^2)
+	  C
+	  C.dd
+     ///}
+
 document { 
      Key => {(chainComplex,List),(chainComplex,Sequence)},
      Headline => "make a chain complex",

@@ -77,7 +77,7 @@ instance(Thing,Type) := Boolean => instance
 regex(String,String) := List => regex
 regex(String,ZZ,String) := List => regex
 characters String := List => characters
-concatenate List := String => concatenate
+concatenate Nothing := concatenate String := concatenate Symbol := concatenate ZZ := concatenate BasicList := String => concatenate
 deepSplice BasicList := BasicList => deepSplice
 drop(BasicList,ZZ) := drop(BasicList,List) := BasicList => drop
 take(BasicList,ZZ) := take(BasicList,List) := BasicList => take

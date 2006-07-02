@@ -139,6 +139,7 @@ DocumentTag.FormattedKey Thing := err
 DocumentTag.Package = method(Dispatch => Thing)
 DocumentTag.Package DocumentTag := x -> x#2
 DocumentTag.Package Thing := err
+protect Title
 DocumentTag.Title = method(Dispatch => Thing)
 DocumentTag.Title DocumentTag := x -> x#3
 DocumentTag.Title Thing := err

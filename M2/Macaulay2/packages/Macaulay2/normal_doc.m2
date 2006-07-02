@@ -111,7 +111,7 @@ document {
       	  "S = ICfractions R",
 	  "integralClosure(R,Variable => a)"
 	  },
-     "Thus the new variables a_7 and a_6 correspond to the 
+     "Thus the new variables ", TT "w_7", " and ", TT "w_6", " correspond to the 
      fractions respectively.  The program currently also returns the original 
      variables as part of the matrix.  In this way the user can see if any are 
      simplified out of the ring during the process of computing the integral

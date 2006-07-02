@@ -39,7 +39,7 @@ document {
 	      TO "mapping over lists",
 	      TO "mapping over hash tables",
 	      TO "error handling",
-	      TO "catch and throw",
+	      TO "catch",
 	  "functions",
 	      TO "using functions",
 	      TO "using functions with optional inputs",
