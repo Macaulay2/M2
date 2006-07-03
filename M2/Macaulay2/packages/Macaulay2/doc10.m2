@@ -236,7 +236,7 @@ document {
      }
 
 document { -- This node is used as an example in the documentation nodes: Inputs, Outputs
-     Key => (resolution, Ideal),
+     Key => {(resolution, Ideal),(resolution, MonomialIdeal)},
      Headline => "compute a projective resolution of (the quotient ring corresponding to) an ideal",
      Usage => "resolution I",
      Inputs => {
@@ -325,7 +325,7 @@ assert( rank C_5 == 0 )
 ///
 
 document {
-     Key => status,
+     Key => {status,(status, GroebnerBasis),(status, Resolution),(status, ChainComplex)},
      Headline => "status of a resolution computation",
      TT "status C", " -- displays the status of the computation of a
      chain complex ", TT "C", " constructed by ", TO "resolution", ".  The display has

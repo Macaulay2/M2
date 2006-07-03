@@ -964,6 +964,12 @@ I = ideal(x,y)
 assert( 1 == dim I )
 assert( 2 == codim I )
 "
+
+document {
+     Key => module,
+     Headline => "make or get a module"
+     }
+
 document {
      Key => {(module, Ideal),(module, MonomialIdeal)},
      Headline => "turn an ideal into a module",

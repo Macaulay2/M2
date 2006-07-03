@@ -249,7 +249,7 @@ scan(1 .. 22, i -> fib = fib())
 "
 
 document {
-     Key => ultimate,
+     Key => {ultimate,(ultimate, Function, Thing)},
      Headline => "ultimate value for an iteration",
      TT "ultimate(f,x)", " -- yields the value ultimately obtained by
      applying the function ", TT "f", " to ", TT "x", ".",
@@ -288,41 +288,51 @@ document {
 document {
      Key => (subsets,ZZ,ZZ),
      Usage => "subsets(n,j)",
-     Inputs => {
-	  "n",
-	  "j"
-	  },
-     Outputs => {
-	  {"a list of the subsets of ", TT "{0, ..., n-1}", " that have ", TT "j", " elements; each
-	       subset is provided as a list"}
-	  },
+     Inputs => { "n", "j" },
+     Outputs => { {"a list of the subsets of ", TT "{0, ..., n-1}", " that have ", TT "j", " elements; each subset is provided as a list"} },
      EXAMPLE "subsets(7,3)",
+     "If each of the sets is reversed, then the resulting list is in lexicographic order.",
+     EXAMPLE lines ///
+     	  x = reverse \ subsets(6,3)
+	  sort x === x
+     ///
      }
 
 document {
      Key => (subsets,Set,ZZ),
-     TT "subsets(s,j)", " -- yields a list of those subsets of the list or 
-     set ", TT "s", " which have ", TT "j", " elements.",
-     PARA{},
-     EXAMPLE "subsets(set {a,b,c},2)",
-     SeeAlso => "subsets"
+     TT "subsets(s,j)", " -- yields a list of those subsets of the set ", TT "s", " that have ", TT "j", " elements.",
+     EXAMPLE "subsets(set {a,b,c},2)"
      }
 
 document {
-     Key => (subsets,List),
+     Key => (subsets,List,ZZ),
+     TT "subsets(s,j)", " -- yields a list of those subsets of the list ", TT "s", " that have ", TT "j", " elements.",
+     EXAMPLE "subsets({a,b,c},2)"
+     }
+
+document {
+     Key => (subsets,ZZ),
+     Usage => "subsets n",
+     Inputs => { "n" },
+     Outputs => {{"a list of the subsets of the {0,1,...,n-1}"}},
+     EXAMPLE lines ///
+     	  subsets 4
+     ///
+     }
+
+document {
+     Key => {(subsets,List)},
      TT "subsets s", " -- yields a list of the subsets of the list ", TT "s", ".",
      PARA{},
      "The subsets are returned as lists whose elements are in the same order.",
-     EXAMPLE "subsets {1,2,3}",
-     SeeAlso => "subsets"
+     EXAMPLE "subsets {1,2,3}"
      }
 
 document {
      Key => (subsets,Set),
      TT "subsets s", " yields a list of the subsets of the set ", TT "s", ".",
      PARA{},
-     EXAMPLE "subsets set {a,b,c}",
-     SeeAlso => "subsets"
+     EXAMPLE "subsets set {a,b,c}"
      }
 
 TEST "

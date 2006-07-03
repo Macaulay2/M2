@@ -66,6 +66,7 @@ import fileTime(name:string):int;
 import setFileTime(name:string,modtime:int):int;
 import currentTime():int;
 import fileMode(name:string):int;
+import fileModeFD(fd:int):int;
 import mkdir(name:string):int;
 import rmdir(name:string):int;
 import isDirectory(name:string):int;

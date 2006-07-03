@@ -183,7 +183,7 @@ document {
      }
 
 document {
-     Key => stack,
+     Key => {stack,(stack, BasicList)},
      Headline => "join nets or string vertically",
      TT "stack(m,n,...)", " -- joins nets or strings by concatenating
      them vertically.  The baseline of the result is the baseline of the

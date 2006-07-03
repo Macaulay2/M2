@@ -551,47 +551,7 @@ document {
      }
 
 document {
-     Key => globalAssignFunction,
-     Headline => "the standard method for the global assignment hook",
-     TT "globalAssignFunction", " -- the standard function which can be used
-     as a method for ", TO GlobalAssignHook, " so that certain types of
-     mutable hash tables ", TT "X", ", when assigned to a global variable, will acquire
-     the name of the global variable as their name.  The companion function
-     ", TO "globalReleaseFunction", " is used to release the name when the
-     global variable gets reassigned.",
-     PARA{},
-     "Another thing done by this function is to apply ", TO use, " to the thing.
-     This is used for polynomial rings to assign values to the symbols representing
-     the variables (indeterminates) in the ring.",
-     PARA{},
-     EXAMPLE {
-	  "X = new Type of MutableHashTable",
-      	  "x = new X",
-      	  "X.GlobalAssignHook = globalAssignFunction",
-      	  "X.GlobalReleaseHook = globalReleaseFunction",
-      	  "x' = new X",
-      	  "t = {x,x'}",
-      	  "x = x' = 44",
-      	  "t",
-      	  "code globalAssignFunction",
-	  },
-     SeeAlso => { "name", "symbol", "SelfInitializingType" }
-     }
-
-document {
-     Key => globalReleaseFunction,
-     Headline => "the standard method for the global variable release hook",
-     TT "globalReleaseFunction", " -- the standard function which can be used as
-     a method for ", TO GlobalReleaseHook, " so that certain types of things, which
-     have acquired as their name the name of a global variable to which they have
-     been assigned, will lose that name when a different value is assigned to
-     the variable.",
-     PARA{},
-     SeeAlso => "globalAssignFunction"
-     }
-
-document {
-     Key => unstack,
+     Key => {unstack,(unstack, Net)},
      Headline => "list the rows of a net",
      TT "unstack x", " -- produces a list of strings, each containing the
      characters in one row of the ", TT "Net", " ", TT "x", ".",

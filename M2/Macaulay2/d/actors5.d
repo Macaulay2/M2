@@ -1808,35 +1808,44 @@ fileMode(e:Expr):Expr := (
 	  if length(s) != 2 
 	  then WrongNumArgs(2) 
 	  else (
-	       when s.0 
+	       when s.1 
 	       is o:file do (
-	  	    when s.1
+	  	    when s.0
 		    is mode:Integer do (
 	  		 if !isInt(mode)
-			 then WrongArgSmallInteger(2) 
+			 then WrongArgSmallInteger(1)
 			 else (
 	       		      r := fchmod(o,toInt(mode));
 	       		      if r == -1
 			      then buildErrorPacket(syscallErrorMessage("fchmod")) 
 			      else nullE))
-	  	    else WrongArgInteger(2))
+	  	    else WrongArgInteger(1))
 	       is filename:string do (
-		    when s.1 
+		    when s.0 
 		    is mode:Integer do (
 			 if !isInt(mode)
-			 then WrongArgSmallInteger(2) 
+			 then WrongArgSmallInteger(1)
 			 else (
 			      r := chmod(filename,toInt(mode));
 			      if r == -1
 			      then buildErrorPacket(syscallErrorMessage("chmod"))
 			      else nullE))
-		    else WrongArgInteger(2))
-	       else WrongArg(1,"a file")))
+		    else WrongArgInteger(1))
+	       else WrongArg(2,"a file")))
+     is f:file do (
+	  fd := -1;
+	  if f.input then fd = f.infd
+	  else if f.output then fd = f.outfd
+	  else if f.listener then fd = f.listenerfd
+	  else return WrongArg("an open file");
+	  r := fileModeFD(fd);
+	  if r == -1 then buildErrorPacket(syscallErrorMessage("fstat"))
+	  else Expr(toInteger(r)))
      is fn:string do (
 	  r := fileMode(fn);
 	  if r == -1 then buildErrorPacket(syscallErrorMessage("stat"))
 	  else Expr(toInteger(r)))
-     else WrongArg("string, file and integer, or string and integer"));
+     else WrongArg("string, integer and string or file"));
 setupfun("fileMode",fileMode);
 
 recursionDepthFun(e:Expr):Expr := (

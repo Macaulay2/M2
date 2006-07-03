@@ -31,8 +31,8 @@ currentTime
 minimizeFilename
 relativizeFilename 
 fileMode -- can use to get or set mode (can take File, or String), and ZZ.
-         -- fileMode(File,ZZ)
-	 -- fileMode(String,ZZ)
+         -- fileMode(ZZ,File)
+	 -- fileMode(ZZ,String)
 	 -- fileMode(String)
 fileLength (File or String)
 openFiles

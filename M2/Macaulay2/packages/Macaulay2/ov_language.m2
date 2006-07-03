@@ -626,6 +626,11 @@ document {
      ///,
      }
 
+document { Key => "in",
+     Headline => "a keyword used in for-loops",
+     SeeAlso => {"for"}
+     }
+
 document { Key => "for",
      Headline => "for loops",
      Usage => "for i from m to n when p list x do z", 
