@@ -18,6 +18,10 @@ New in 0.9.10:
 
 The two arguments of 'rotate' have been interchanged.
 
+The two arguments of quotientRemainder'(Matrix,Matrix),
+quotient'(Matrix,Matrix), and remainder'(Matrix,Matrix) have been interchanged,
+so the first argument is "divided by" the second.
+
 -----------------------------------------------------------------------------
 
 New in 0.9.9:

@@ -272,7 +272,7 @@ document {
 	  "exponents leadMonomial f"
 	  }}
 document {
-     Key => standardForm,
+     Key => {standardForm,(standardForm, RingElement),(standardForm, MonoidElement)},
      Headline => "convert to standard form",
      TT "standardForm f", " -- converts a polynomial or monomial to a
      form involving hash tables.",
@@ -386,8 +386,11 @@ document {
      TT "M ** N", " -- tensor product of monoids.",
      PARA{},
      "For complete documentation, see ", TO "tensor", "."}
+
+undocumented {}
 document {
-     Key => tensor,
+     Key => {tensor,(tensor, Ring, Ring),(tensor, QuotientRing, QuotientRing),(tensor, PolynomialRing, PolynomialRing),(tensor, Module, Module),
+	  (tensor, QuotientRing, PolynomialRing),(tensor, PolynomialRing, QuotientRing),(tensor, Monoid, Monoid),(tensor, CoherentSheaf, CoherentSheaf)},
      Headline => "tensor product",
      TT "tensor(M,N)", " -- tensor product of rings or monoids.",
      PARA{},
@@ -448,7 +451,7 @@ document {
      "The elements a,b,c,... must be elements of the same ring, or be
      convertible to elements of the same ring."}
 document {
-     Key => relations,
+     Key => {relations,(relations, Module)},
      Headline => "the defining relations",
      TT "relations M", " -- produce the relations defining a module M.",
      PARA{},
@@ -757,7 +760,7 @@ document {
      SeeAlso => {(cover,Module)}
      }
 document {
-     Key => super,
+     Key => {super,(super, GradedModule),(super, CoherentSheaf),(super, Matrix),(super, Module)},
      Headline => "get the ambient module",
      TT "super M", " -- yields the module which the module ", TT "M", " is a submodule of.",
      BR{},

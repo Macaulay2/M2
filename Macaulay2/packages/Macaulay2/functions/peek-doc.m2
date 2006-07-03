@@ -23,7 +23,7 @@ undocumented {(peek',ZZ,List), (peek',ZZ,Sequence), (peek',ZZ,HashTable),
      (peek',ZZ,Nothing), (peek',ZZ,Hypertext), (peek',ZZ,Dictionary), (peek',ZZ,HypertextParagraph)}
 
 document {
-     Key => (peek',ZZ,Thing),
+     Key => {(peek',ZZ,Thing),peek'},
      Headline => "examine contents of an object",
      Usage => "peek'(n,s)",
      Inputs => { "n", "s" },

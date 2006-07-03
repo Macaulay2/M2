@@ -3,6 +3,12 @@
 --- notes: 
 
 undocumented {
+    (toExternalString, Nothing),
+    (toExternalString, Ideal),
+    (toExternalString, SchurRing),
+    (toExternalString, Boolean),
+    (toExternalString, LATER),
+    (toExternalString, Number),
     (toExternalString, Manipulator),
     (toExternalString, Module),
     (toExternalString, Sequence),

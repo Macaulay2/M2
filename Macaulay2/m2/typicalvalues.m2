@@ -122,7 +122,7 @@ substring(String,ZZ) := String => substring
 substring(String,ZZ,ZZ) := String => substring
 substring(ZZ,String) := String => substring
 substring(ZZ,ZZ,String) := String => substring
-toList HashTable := toList Set := toList BasicList := List => toList
+toList Set := toList BasicList := List => toList
 toSequence BasicList := Sequence => toSequence
 xor(ZZ,ZZ) := ZZ => xor
 ascii String := List => ascii

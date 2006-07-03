@@ -63,7 +63,9 @@ TEST ///
      assert(source n === source h)
 ///
 document {
-     Key => (submatrix,Matrix,VisibleList,VisibleList),
+     Key => {(submatrix,Matrix,VisibleList,VisibleList),
+	  (submatrix, Matrix, Nothing, VisibleList),
+	  (submatrix, Matrix, VisibleList, Nothing)},
      Headline => "select part of a matrix",
      Usage => "submatrix(f, rows, cols) or submatrix(f,,cols) or submatrix(f,rows,)",
      Inputs => { "f" => "a map between free modules",
@@ -996,14 +998,18 @@ document {
      TT "dual f", " -- the dual (transpose) of a homomorphism."
      }
 document {
-     Key => singularLocus,
+     Key => {singularLocus,(singularLocus, ProjectiveVariety),(singularLocus, Ideal),(singularLocus, Ring)},
      Headline => "singular locus",
-     TT "singularLocus R", " -- produce the singular locus of a ring,
-     which is assumed to be integral and defined by a homogeneous ideal.",
+     TT "singularLocus R", " -- produce the singular locus of a ring, which is assumed to be integral.",
      PARA{},
-     "Can also be applied to an ideal, in which case the singular locus of
-     the quotient ring is returned."
-     }
+     "This function can also be applied to an ideal, in which case the singular locus of
+     the quotient ring is returned, or to a variety.",
+     EXAMPLE lines ///
+     	  singularLocus(QQ[x,y] / (x^2 - y^3))
+	  singularLocus Spec( QQ[x,y,z] / (x^2 - y^3) )
+	  singularLocus Proj( QQ[x,y,z] / (x^2*z - y^3) )
+     ///}
+
 TEST "
      R=ZZ/101[x,y,z]
      assert( dim singularLocus ideal {y^2*z - x*(x - z)*(x + z) } === 0 )
@@ -1257,7 +1263,7 @@ TEST ///
     scan(modules, M -> assert( cover exteriorPower(2,M) == exteriorPower(2,cover M) ))
 ///
 document {
-     Key => trace,
+     Key => {(trace, Matrix),trace},
      Headline => "trace of a matrix",
      TT "trace f", " -- returns the trace of the matrix f.",
      PARA{},

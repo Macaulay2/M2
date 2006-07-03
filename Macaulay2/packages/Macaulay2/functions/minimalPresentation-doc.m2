@@ -189,6 +189,10 @@ document {
      Caveat => {"Check out the example just above."},
      SeeAlso => {(minimalPresentation, Module)}
      }
+
+document { Key => pruningMap,
+     "This symbol is used as a key for storing results in modules, by ", TO "minimalPresentation", "."
+     }
 document { 
      Key => {(minimalPresentation,Module),
 	  (minimalPresentation, GradedModule),(minimalPresentation, GradedModuleMap),

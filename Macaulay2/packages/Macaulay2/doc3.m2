@@ -216,7 +216,7 @@ document {
      }
 
 document {
-     Key => remove,
+     Key => {remove,(remove, HashTable, Thing)},
      Headline => "remove an entry from a hash table",
      TT "remove(x,k)", " -- removes the entry stored in the hash table ", TT "x", "
      under the key ", TT "k", ".",
@@ -1176,16 +1176,17 @@ document { Key => pager,
 	       }}}
 
 document { Key => precision,
+     Caveat => "this routine is provisional, and may be replaced",
      Usage => "precision x",
      Inputs => { "x" => RRR },
      Outputs => { ZZ => {"the precision of x"}}}
 
 document { Key => setPrecision,
+     Caveat => "this routine is provisional, and may be replaced",
      Usage => "setPrecision n",
      Inputs => { "n" => ZZ },
      Consequences => {{"the current precision is set to ", TT "n", " bits"}},
      Outputs => { ZZ => {"the previous precision"}},
-     "This function may be phased out in favor of something better.",
      EXAMPLE lines ///
      	  setPrecision 200
 	  x = sqrt toRRR 2
@@ -1248,6 +1249,183 @@ document { Key => "currentPackage",
 	  endPackage "Foo"
      ///}
 
+document { Key => {quotientRemainder,(quotientRemainder, Matrix, GroebnerBasis), (quotientRemainder, Matrix, Matrix)},
+     Headline => "matrix quotient and remainder",
+     Usage => "(q,r) = quotientRemainder(f,g)",
+     Inputs => { "f" => Matrix, "g" => {ofClass{GroebnerBasis,Matrix}, ", with the same target as ", TT "f"}},
+     Outputs => {
+	  "q" => {"the quotient of ", TT "f", " upon division by ", TT "g"},
+	  "r" => {"the remainder of ", TT "f", " upon division by ", TT "g"}
+	  },
+     "The equation ", TT "g*q+r == f", " will hold.  The source of ", TT "f", " should be a free module.",
+     EXAMPLE lines ///
+     	  R = ZZ[x,y]
+	  f = random(R^2,R^{2:-1})
+	  g = vars R ++ vars R
+	  (q,r) = quotientRemainder(f,g)
+	  g*q+r == f
+	  f = f + map(target f, source f, id_(R^2))
+	  (q,r) = quotientRemainder(f,g)
+	  g*q+r == f
+     ///,
+     SeeAlso => {quotientRemainder'}
+     }
+
+document { Key => {quotientRemainder',(quotientRemainder', Matrix, Matrix)},
+     Headline => "matrix quotient and remainder (opposite)",
+     Usage => "(q,r) = quotientRemainder'(f,g)",
+     Inputs => { "f" => Matrix, "g" => {ofClass{GroebnerBasis,Matrix}, ", with the same source as ", TT "f"}},
+     Outputs => {
+	  "q" => {"the quotient of ", TT "f", " upon (opposite) division by ", TT "g"},
+	  "r" => {"the remainder of ", TT "f", " upon (opposite) division by ", TT "g"}
+	  },
+     "The equation ", TT "q*g+r == f", " will hold.  The sources and targets of the maps should be free modules.
+     This function is obtained from ", TT "quotientRemainder", " by transposing the inputs and outputs.",
+     EXAMPLE lines ///
+     	  R = ZZ[x,y]
+	  f = random(R^{2:1},R^2)
+	  g = transpose (vars R ++ vars R)
+	  (q,r) = quotientRemainder'(f,g)
+	  q*g+r == f
+	  f = f + map(target f, source f, id_(R^2))
+	  (q,r) = quotientRemainder'(f,g)
+	  q*g+r == f
+     ///,
+     SeeAlso => {quotientRemainder},
+     SourceCode => {quotientRemainder'}
+     }
+     
+document { Key => {(quotient, Matrix, GroebnerBasis), (quotient, Matrix, Matrix)},
+     Headline => "matrix quotient",
+     Usage => "(q,r) = quotient(f,g)",
+     Inputs => { "f" => Matrix, "g" => {ofClass{GroebnerBasis,Matrix}, ", with the same target as ", TT "f"}},
+     Outputs => {
+	  "q" => {"the quotient of ", TT "f", " upon division by ", TT "g"}
+	  },
+     "The equation ", TT "g*q+r == f", " will hold, where ", TT "r", " is the map provided by ", TO "remainder", ".  The source of ", TT "f", " should be a free module.",
+     EXAMPLE lines ///
+     	  R = ZZ[x,y]
+	  f = random(R^2,R^{2:-1})
+	  g = vars R ++ vars R
+	  quotient(f,g)
+	  f = f + map(target f, source f, id_(R^2))
+	  quotient(f,g)
+     ///,
+     SeeAlso => {quotientRemainder,quotient'}
+     }
+
+document { Key => {quotient',(quotient', Matrix, Matrix)},
+     Headline => "matrix quotient (opposite)",
+     Usage => "(q,r) = quotient'(f,g)",
+     Inputs => { "f" => Matrix, "g" => {ofClass{GroebnerBasis,Matrix}, ", with the same source as ", TT "f"}},
+     Outputs => {
+	  "q" => {"the quotient of ", TT "f", " upon (opposite) division by ", TT "g"},
+	  },
+     "The equation ", TT "q*g+r == f", " will hold, where ", TT "r", " is the map provided by ", TO "remainder'", " .  The sources and targets of the maps should be free modules.
+     This function is obtained from ", TT "quotient", " by transposing the inputs and outputs.",
+     EXAMPLE lines ///
+     	  R = ZZ[x,y]
+	  f = random(R^{2:1},R^2)
+	  g = transpose (vars R ++ vars R)
+	  quotient'(f,g)
+	  f = f + map(target f, source f, id_(R^2))
+	  quotient'(f,g)
+     ///,
+     SeeAlso => {quotientRemainder,quotient},
+     SourceCode => {quotient'}
+     }
+
+document { Key => {remainder,(remainder, Matrix, GroebnerBasis), (remainder, Matrix, Matrix)},
+     Headline => "matrix remainder",
+     Usage => "(q,r) = remainder(f,g)",
+     Inputs => { "f" => Matrix, "g" => {ofClass{GroebnerBasis,Matrix}, ", with the same target as ", TT "f"}},
+     Outputs => {
+	  "r" => {"the remainder of ", TT "f", " upon division by ", TT "g"}
+	  },
+     PARA{"This operation is the same as ", TO "(symbol %, Matrix, GroebnerBasis)", "."},
+     PARA{"The equation ", TT "g*q+r == f", " will hold, where ", TT "q", " is the map provided by ", TO "quotient", ".  The source of ", TT "f", " should be a free module."},
+     EXAMPLE lines ///
+     	  R = ZZ[x,y]
+	  f = random(R^2,R^{2:-1})
+	  g = vars R ++ vars R
+	  remainder(f,g)
+	  f = f + map(target f, source f, id_(R^2))
+	  remainder(f,g)
+     ///,
+     SeeAlso => {quotientRemainder,remainder'}
+     }
+
+document { Key => {remainder',(remainder', Matrix, Matrix)},
+     Headline => "matrix quotient and remainder (opposite)",
+     Usage => "(q,r) = remainder'(f,g)",
+     Inputs => { "f" => Matrix, "g" => {ofClass{GroebnerBasis,Matrix}, ", with the same source as ", TT "f"}},
+     Outputs => {
+	  "r" => {"the remainder of ", TT "f", " upon (opposite) division by ", TT "g"}
+	  },
+     "The equation ", TT "q*g+r == f", " will hold, where ", TT "q", " is the map provided by ", TO "quotient'", ".  The sources and targets of the maps should be free modules.
+     This function is obtained from ", TT "remainder", " by transposing the inputs and outputs.",
+     EXAMPLE lines ///
+     	  R = ZZ[x,y]
+	  f = random(R^{2:1},R^2)
+	  g = transpose (vars R ++ vars R)
+	  remainder'(f,g)
+	  f = f + map(target f, source f, id_(R^2))
+	  remainder'(f,g)
+     ///,
+     SeeAlso => {quotientRemainder,remainder},
+     SourceCode => {remainder'}
+     }
+
+document { Key => toLower,
+     Headline => "convert to lower case",
+     Usage => "toLower s",
+     Inputs => {"s"=>String},
+     Outputs => {String => {"the string produced from ", TT "s", " by converting its characters to lower case"}},
+     EXAMPLE lines ///
+     	  toLower "A b C d E f"
+     ///}
+
+document { Key => toUpper,
+     Headline => "convert to upper case",
+     Usage => "toUpper s",
+     Inputs => {"s"=>String},
+     Outputs => {String => {"the string produced from ", TT "s", " by converting its characters to lower case"}},
+     EXAMPLE lines ///
+     	  toUpper "A b C d E f"
+     ///}
+
+document { Key => "encapDirectory",
+     Headline => "encapsulated installation directory",
+     "This variable contains the path to the encapsulation directory tree where the files of Macaulay 2 are located.",
+     SeeAlso => { "prefixDirectory" }
+     }
+
+document { Key => "synonym",
+     Headline => "synonym for members of a class",
+     Usage => "synonym X",
+     Inputs => { "X" => Type },
+     Outputs => { String => {"a synonym for members of the class ", TT "X" }},
+     "A synonym can be installed with the assignment statement ", TT "X.synonym=t", ".  The synonym is used by ", TO "ofClass", ".",
+     EXAMPLE lines ///
+     	  synonym ZZ
+	  Stack = new Type of HashTable
+	  synonym Stack
+	  Stack.synonym = "Deligne-Mumford stack"
+	  ofClass Stack
+     ///}
+
+document { Key => toRRR,
+     Headline => "convert to high-precision real",
+     Caveat => "this routine is provisional, and may be replaced",
+     Usage => "toRRR x",
+     Inputs => { "x" => {ofClass{RR,ZZ,QQ}}},
+     Outputs => {RRR => {"the result of converting ", TT "x", " to a high-precision real number, at the current precision"}},
+     EXAMPLE lines ///
+     	  setPrecision 200
+	  toRRR(1/7)
+	  precision oo
+     ///}
+	       
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

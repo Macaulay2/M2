@@ -240,6 +240,7 @@ quotientRemainder(Matrix,GroebnerBasis) := Matrix => (n,g) -> (
 
 RingElement // GroebnerBasis := Matrix => (r,g) -> (r * id_(target g)) // g
 
+remainder(Matrix,GroebnerBasis) :=
 Matrix % GroebnerBasis := Matrix => (n,g) -> (
      R := ring n;
      map(target n,, rawGBMatrixRemainder(raw g, raw n)));

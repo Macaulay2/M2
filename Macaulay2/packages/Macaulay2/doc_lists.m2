@@ -337,7 +337,7 @@ document {
      }
 
 document {
-     Key => toSequence,
+     Key => {toSequence,(toSequence, BasicList)},
      Headline => "convert to sequence",
      TT "toSequence x", " -- yields the elements of a list ", TT "x", " as a sequence.",
      PARA{},
@@ -362,7 +362,7 @@ document {
      }
 
 document {
-     Key => splice,
+     Key => {splice,(splice, BasicList)},
      Headline => "remove subsequences",
      TT "splice v", " -- yields a new list v where any members of v which are sequences
      are replaced by their elements.",

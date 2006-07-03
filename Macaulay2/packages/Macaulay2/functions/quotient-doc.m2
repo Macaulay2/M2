@@ -2,8 +2,13 @@
 --- author(s): DE, then MES
 --- notes: 
 
+document {
+     Key => quotient,
+     Headline => "quotient or division"
+     }
+
 document { 
-     Key => {quotient,
+     Key => {
 	  (quotient, Ideal, Ideal),
 	  (quotient, MonomialIdeal, MonomialIdeal),
 	  (quotient, Module, Ideal),

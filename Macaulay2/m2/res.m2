@@ -160,6 +160,8 @@ resolution = method(
      )
 
 resolution Module := ChainComplex => o -> (M) -> (
+     C := tryHooks(Module,symbol resolution,(o,M));
+     if C =!= null then return C;
      R := ring M;
      k := ultimate(coefficientRing, R);
      oR := options R;
