@@ -167,7 +167,7 @@ calculateAss := (I) -> (
 	       
 	       I' := toL(gens I) / (u->QtoZ(u,Z));
 	       I' = ideal I';
-	       decomp := decompose(I');
+	       decomp := minimalPrimes(I');
 	       l = decomp / (u -> (
 			 Ide := ideal (toL(gens u) / (u->ZtoQ(u,R)));
 		    	 Ide
@@ -175,7 +175,7 @@ calculateAss := (I) -> (
 	       )
 	  else ( 
 	       -- for ZZ/DBIGPRIME
-	       l = decompose(I);
+	       l = minimalPrimes(I);
 	       );
 	  r = select(l, u -> u != (ideal 1_R));
 	  );

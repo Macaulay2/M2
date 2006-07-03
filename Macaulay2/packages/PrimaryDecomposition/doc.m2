@@ -24,14 +24,14 @@ document {
      associated primes of codimension ", TT "i", " of ", TT "I", " and ",
      TT "Ext^i(R^1/I,R)", " are identical, as shown in 
      Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992).",
-     Caveat => ("This function uses ", TT "decompose", 
+     Caveat => ("This function uses ", TT "minimalPrimes", 
 	  ", which currently only works
           over finite ground fields, not the rationals or integers."),
      PARA {
 	 BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
 	 Last modified June 2000."},
      SeeAlso => {(primaryDecomposition,Ideal), 
-     	       radical, decompose, topComponents, 
+     	       radical, minimalPrimes, topComponents, 
 	       removeLowestDimension}
      }
 
@@ -85,7 +85,7 @@ document {
      Caveat => "The ideal P is not checked to be prime.",
      BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
      Last modified June 2000.",
-     SeeAlso => {(primaryDecomposition,Ideal), radical, decompose, topComponents, 
+     SeeAlso => {(primaryDecomposition,Ideal), radical, minimalPrimes, topComponents, 
 	  removeLowestDimension}
      }
 ///
@@ -136,7 +136,7 @@ document {
      PARA {
 	 BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
 	 Last modified June, 2000."},
-     SeeAlso => {(associatedPrimes,Ideal), (primaryDecomposition,Ideal), radical, decompose, topComponents, removeLowestDimension}
+     SeeAlso => {(associatedPrimes,Ideal), (primaryDecomposition,Ideal), radical, minimalPrimes, topComponents, removeLowestDimension}
      }
 
 document {

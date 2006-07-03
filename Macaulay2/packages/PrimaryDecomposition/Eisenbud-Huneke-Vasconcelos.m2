@@ -26,7 +26,7 @@ ass1 := (I) -> (
 	  if debugLevel >= 2 then (<< "  associatedPrimes loop " << i << endl);
 	  currentext = Ext^i(polyRing^1/I1,polyRing);
 	  if codim currentext == i then (
-	       firstlist := decompose ann currentext;
+	       firstlist := minimalPrimes ann currentext;
 	       scan(firstlist, P -> (if codim P == i then (
 			      if debugLevel >= 1 then << "    " << P  << endl << endl ;
 			      assassinator = append(assassinator,P)))
@@ -47,13 +47,13 @@ ass2 := (I) -> (
      topcurrentI := topComponents currentI;
      while not isSubset(topcurrentI, currentI) do(
 	if debugLevel >= 2 then print "  beginning new associatedPrimes loop";
-        newcomponents = flatten decompose topcurrentI;
+        newcomponents = flatten minimalPrimes topcurrentI;
 	if debugLevel >=1 then (scan(newcomponents, P -> ( << endl << "    " << P << endl)));
 	assassinator = append(assassinator, newcomponents);
 	  currentI = currentI:topcurrentI;
 	  topcurrentI = topComponents currentI;
 	  );
-     newcomponents = flatten decompose topcurrentI;
+     newcomponents = flatten minimalPrimes topcurrentI;
      if debugLevel >=1 then (scan(newcomponents, P -> ( << endl << "    " << P << endl)));
      assassinator = append(assassinator, newcomponents);
      assassinator = flatten assassinator;

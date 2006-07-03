@@ -38,5 +38,5 @@ document {
      Caveat => {"The current implementation requires that the
 	  characteristic of the ground field is either zero
 	  or a \"large\" prime (unless ", TT "I", " is  ", ofClass MonomialIdeal, ")."},
-     SeeAlso => {decompose, topComponents, removeLowestDimension, saturate, quotient}
+     SeeAlso => {minimalPrimes, topComponents, removeLowestDimension, saturate, quotient}
      }

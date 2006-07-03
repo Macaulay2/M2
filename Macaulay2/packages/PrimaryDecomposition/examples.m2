@@ -10,7 +10,7 @@ needsPackage "PrimaryDecomposition"
 
 (I = clear I; time res coker gens I)           -- seconds
 (I = clear I; time primaryDecomposition I)     -- 
-(I = clear I; time decompose I)                -- 
+(I = clear I; time minimalPrimes I)                -- 
 (I = clear I; time associatedPrimes(I,Strategy=>1)) -- 
 (I = clear I; time associatedPrimes(I,Strategy=>2)) -- 
 (I = clear I; time radical I)                  -- 
@@ -62,7 +62,7 @@ I = ideal(
     a^4*f^2)
     
 (I = clear I; time primaryDecomposition I)     -- 4.89 [24.67 seconds] (5 components)
-(I = clear I; time decompose I)                --  .3 [1.92 -  2.99]
+(I = clear I; time minimalPrimes I)                --  .3 [1.92 -  2.99]
 (I = clear I; time radical I)                  -- 2.48 [30.48]
 (I = clear I; time topComponents I)                      --  .22 [2.67]
 (I = clear I; time removeLowestDimension I)    --  .46 [14.81]
@@ -99,7 +99,7 @@ I = ideal(
 					       --        with debugging: 296.08 sec????
 					       --        with fastgb.m2: 223.87!
 					       --        fastgb.m2, sorting mingens: 219.83, 213.57
-(I = clear I; time decompose I)                -- 4.14  [33.72 (used to be) 48.3 seconds]
+(I = clear I; time minimalPrimes I)                -- 4.14  [33.72 (used to be) 48.3 seconds]
                                                --        (the char sets takes about 20 sec)
 					       --         Singular time = 31 seconds
 (I = clear I; time radical I)                  -- ????
@@ -135,7 +135,7 @@ I = ideal(
 
 (I = clear I; time res coker gens I)           --  .13 [0.47 seconds]
 (I = clear I; time primaryDecomposition I)     -- 6.61 [22.54 seconds]
-(I = clear I; time decompose I)                --  .23 [0.8 sec]
+(I = clear I; time minimalPrimes I)                --  .23 [0.8 sec]
 (I = clear I; time radical I)                  -- 2.1  [8.48 sec]
 (I = clear I; time topComponents I)                      --  .4  [0.98 sec]
 (I = clear I; time removeLowestDimension I)    --  .68 [3.58 sec]
@@ -163,7 +163,7 @@ I = ideal(
 (I = clear I; time primaryDecomposition I)     -- 20.28 [136.46 (with lots of debug output)]
      	       	    	      	   	       --        fastgb 86.32
      	       	    	      	   	       --        Singular92i: 45 sec
-(I = clear I; time decompose I)                --  1.11  [7.19 sec]
+(I = clear I; time minimalPrimes I)                --  1.11  [7.19 sec]
 (I = clear I; time radical I)                  --  5.01
 (I = clear I; time topComponents I)                      --   .18
 (I = clear I; time removeLowestDimension I)    --   .2
@@ -229,7 +229,7 @@ I = ideal(
     
 (I = clear I; time res coker gens I)           -- TOO LONG at moment
 (I = clear I; time primaryDecomposition I)     -- alas, doesn't yet work...
-(I = clear I; time decompose I)                -- 35.68
+(I = clear I; time minimalPrimes I)                -- 35.68
 (I = clear I; time radical I)                  -- 
 (I = clear I; time topComponents I)                      -- 
 (I = clear I; time removeLowestDimension I)    -- 
@@ -315,7 +315,7 @@ I = ideal(
 (I = clear I; time res coker gens I)           --   .03
 (I = clear I; time primaryDecomposition I)     -- 11.58 [67.26 sec (lots of debug output)]
      	       	    	      	   	       --        fastgb 54.94
-(I = clear I; time decompose I)                --  6.65 [25.69 sec]
+(I = clear I; time minimalPrimes I)                --  6.65 [25.69 sec]
 (I = clear I; time radical I)                  --  ????
 (I = clear I; time topComponents I)                      --   .58
 (I = clear I; time removeLowestDimension I)    --   .46
@@ -341,7 +341,7 @@ I = ideal(
 XXX    
 (I = clear I; time res coker gens I)           --   .25
 (I = clear I; time primaryDecomposition I)     --  PROBLEMS: figure it out.
-(I = clear I; time decompose I)                --  3.01 [12.0 sec (or actually around 144 sec??)]
+(I = clear I; time minimalPrimes I)                --  3.01 [12.0 sec (or actually around 144 sec??)]
 (I = clear I; time radical I)                  -- 16.03
 (I = clear I; time topComponents I)                      --  2.58 
 (I = clear I; time removeLowestDimension I)    --   .5
@@ -350,7 +350,7 @@ XXX
 
 restart
 load "c3primedec.m2"
-time newdecompose I
+time newminimalPrimes I
 gbTrace 3
 C = PDinitialize(I,1)
 time PDnext C;
@@ -430,7 +430,7 @@ I = ideal(
 
 (I = clear I; time res coker gens I)           -- 6.66 sec (is a complete intersection).
 (I = clear I; time primaryDecomposition I)     -- 
-(I = clear I; time decompose I)                -- 47.32 (probably missing components...)
+(I = clear I; time minimalPrimes I)                -- 47.32 (probably missing components...)
 (I = clear I; time radical I)                  -- 
 (I = clear I; time topComponents I)                      -- 
 (I = clear I; time removeLowestDimension I)    -- 
@@ -491,7 +491,7 @@ I = ideal(
 (I = clear I; time res coker gens I)           -- amazingly hard...C.I. so could write it down
      	       	    	      	   	       -- but slanted degree: 261.09 (min betti nums buggy)
 (I = clear I; time primaryDecomposition I)     -- fastgb 27.31
-(I = clear I; time decompose I)                -- 2.35
+(I = clear I; time minimalPrimes I)                -- 2.35
 (I = clear I; time radical I)                  -- 
 (I = clear I; time topComponents I)                      -- 
 (I = clear I; time removeLowestDimension I)    -- 
@@ -529,7 +529,7 @@ I = ideal(
 (I = clear I; time primaryDecomposition I)     -- fastgb: 6.0 sec
      	       	    	      	   	       -- could notice: codim=numvars, homog, therefore
 					       -- already primary to max ideal
-(I = clear I; time decompose I)                -- 5.36
+(I = clear I; time minimalPrimes I)                -- 5.36
 (I = clear I; time radical I)                  -- 
 (I = clear I; time topComponents I)                      -- 
 (I = clear I; time removeLowestDimension I)    -- 
@@ -782,14 +782,14 @@ I = ideal(
 
 (I = clear I; time res coker gens I)           -- 1.32 (pd=9)
 (I = clear I; time primaryDecomposition I)     -- 
-(I = clear I; time decompose I)                -- 481.42 sec
+(I = clear I; time minimalPrimes I)                -- 481.42 sec
 (I = clear I; time radical I)                  -- 
 (I = clear I; time topComponents I)                      -- 
 (I = clear I; time removeLowestDimension I)    -- 
 (I = clear I; time (I : ideal vars R))         --  .75
 (I = clear I; time saturate(I, ideal vars R))  -- 1.25 sec
 
--- Here is the result of decompose I above:
+-- Here is the result of minimalPrimes I above:
 -- {ideal | a+e+i fg-di -ce+bf bg+eh+hi ch-bi -eg+dh bd+e2+ei cg+ei+i2 fh-ei cd+ef+fi |}    
 
 //////////////////////////////////////////////////////////
@@ -815,7 +815,7 @@ I = ideal(
 
 (I = clear I; time res coker gens I)           --  1.09
 (I = clear I; time primaryDecomposition I)     -- 35.11 sec
-(I = clear I; time decompose I)                --   .66 sec
+(I = clear I; time minimalPrimes I)                --   .66 sec
 (I = clear I; time radical I)                  -- 
 (I = clear I; time topComponents I)                      -- 
 (I = clear I; time removeLowestDimension I)    -- 
@@ -903,7 +903,7 @@ I = ideal(
 
 (I = clear I; time res coker gens I)           -- 
 (I = clear I; time primaryDecomposition I)     -- 
-(I = clear I; time decompose I)                -- 
+(I = clear I; time minimalPrimes I)                -- 
 (I = clear I; time radical I)                  -- 
 (I = clear I; time topComponents I)                      -- 
 (I = clear I; time removeLowestDimension I)    -- 
@@ -944,7 +944,7 @@ I = ideal(
     
 (I = clear I; time res coker gens I)           -- 
 (I = clear I; time primaryDecomposition I)     -- 
-(I = clear I; time decompose I)                -- 
+(I = clear I; time minimalPrimes I)                -- 
 (I = clear I; time radical I)                  -- 
 (I = clear I; time topComponents I)                      -- 
 (I = clear I; time removeLowestDimension I)    -- 
@@ -968,7 +968,7 @@ I = ideal(
 
 (I = clear I; time res coker gens I)           -- 14.66
 (I = clear I; time primaryDecomposition I)     -- seconds
-(I = clear I; time decompose I)                -- 
+(I = clear I; time minimalPrimes I)                -- 
 (I = clear I; time radical I)                  -- 
 (I = clear I; time topComponents I)                      -- 
 (I = clear I; time removeLowestDimension I)    -- 

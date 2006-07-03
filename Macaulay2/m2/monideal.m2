@@ -244,6 +244,33 @@ lcmOfGens := (I) -> if I.cache#?lcmgens then I.cache#lcmgens else I.cache#lcmgen
  -- We use E. Miller's definition for nonsquare 
  -- free monomial -- ideals.
 
+-- The following is not exported directly (it is a subroutine for minimalPrimes, dual).
+squarefreeDual = (J) -> (
+     -- assumption: J is a squarefree MonomialIdeal
+     (Js,Qs,ans,i) := null;
+     if gbTrace > 0 then (
+       time Js = apply(numgens J, i -> J_i);
+       time Qs = apply(Js, i -> monomialIdeal support(i));
+       ans = Qs_0;
+       i = 1;
+       time while i < #Qs do (
+     	  time ans = intersect(ans,Qs_i);
+     	  << "i = " << i << " numgens " << numgens ans << endl;
+     	  i = i+1;
+     	  );
+       ans)
+     else (
+       Js = apply(numgens J, i -> J_i);
+       Qs = apply(Js, i -> monomialIdeal support(i));
+       ans = Qs_0;
+       i = 1;
+       while i < #Qs do (
+     	  ans = intersect(ans,Qs_i);
+     	  i = i+1;
+     	  );
+       ans)
+     )
+
 dual(MonomialIdeal, List) := (I,a) -> ( -- Alexander dual
      R := ring I;
      X := generators R;
@@ -270,7 +297,7 @@ dual MonomialIdeal := (I) -> (
     then I.cache#alexanderdual
     else I.cache#alexanderdual = (
 	 d := lcmOfGens(I);
-	 if max d === 1 then minimalPrimes I
+	 if max d === 1 then squarefreeDual I
 	 else dual(I, lcmOfGens(I))
     ))
 
@@ -297,32 +324,11 @@ associatedPrimes MonomialIdeal := List => o -> (I) -> (
 
 --  PRIMARY DECOMPOSITION  ---------------------------------
 
-minimalPrimes = method()
-minimalPrimes MonomialIdeal := (I) -> (
-     (J,Js,Qs,ans,i) := null;
-     J = radical I;
-     if gbTrace > 0 then (
-       time Js = apply(numgens J, i -> J_i);
-       time Qs = apply(Js, i -> monomialIdeal support(i));
-       ans = Qs_0;
-       i = 1;
-       time while i < #Qs do (
-     	  time ans = intersect(ans,Qs_i);
-     	  << "i = " << i << " numgens " << numgens ans << endl;
-     	  i = i+1;
-     	  );
-       ans)
-     else (
-       Js = apply(numgens J, i -> J_i);
-       Qs = apply(Js, i -> monomialIdeal support(i));
-       ans = Qs_0;
-       i = 1;
-       while i < #Qs do (
-     	  ans = intersect(ans,Qs_i);
-     	  i = i+1;
-     	  );
-       ans)
-     )
+minimalPrimes MonomialIdeal := (I) -> (if I.cache.?minimalPrimes
+   then I.cache.minimalPrimes 
+   else I.cache.minimalPrimes = (
+	minI := squarefreeDual radical I;
+	apply(flatten entries generators minI, monomialIdeal @@ support)))
 
 irreducibleDecomposition = method();
 irreducibleDecomposition MonomialIdeal := List => (I) -> (

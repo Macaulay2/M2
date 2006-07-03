@@ -51,7 +51,7 @@ document {
 	  },
      "Primary decomposition and components of an ideal",
      UL {
-	  TO decompose,
+	  TO minimalPrimes,
 	  TO radical,
 	  TO associatedPrimes,
 	  TO primaryDecomposition,
@@ -142,7 +142,3 @@ document {
      SeeAlso => {"ideals"}
      }
 
-document {
-     Key => minimalPrimes,
-     Headline => "find the minimal primes of an ideal"
-     }

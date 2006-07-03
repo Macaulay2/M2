@@ -417,37 +417,37 @@ document {
        ideal ", TT "I", " is to take the intersection of its 
        minimal prime ideals.  To find 
        the ", TO "minimal primes of an ideal ", TT "I", " use the 
-       function ", TO "decompose", ".  Then use ", TO "intersect", ".",
+       function ", TO "minimalPrimes", ".  Then use ", TO "intersect", ".",
        EXAMPLE {
-	    "intersect decompose I"
+	    "intersect minimalPrimes I"
 	    }
      }
  
 document {
      Key => "minimal primes of an ideal",
      
-     SUBSECTION "using decompose",
+     SUBSECTION "using minimalPrimes",
        "To obtain a list of the minimal associated primes for an 
        ideal ", TT "I", " (i.e. the smallest primes 
-	    containing ", TT "I", "), use the function ", TO "decompose", ".",
+	    containing ", TT "I", "), use the function ", TO "minimalPrimes", ".",
        EXAMPLE {
 	    "R = QQ[w,x,y,z];",
 	    "I = ideal(w*x^2-42*y*z, x^6+12*w*y+x^3*z, w^2-47*x^4*z-47*x*z^2)",
-	    "decompose I"
+	    "minimalPrimes I"
 	    },
  "If the ideal given is a prime ideal 
-       then ", TT "decompose", " will return the ideal given.",
+       then ", TT "minimalPrimes", " will return the ideal given.",
        EXAMPLE {
 	    "R = ZZ/101[w..z];",
 	    "I = ideal(w*x^2-42*y*z, x^6+12*w*y+x^3*z, w^2-47*x^4*z-47*x*z^2);",
-	    "decompose I"
+	    "minimalPrimes I"
 	    },
 
      SUBSECTION "warning",
        "Warning (15 May 2001):  If you stop a 
-       function mid process and then run ", TT "decompose", " an 
+       function mid process and then run ", TT "minimalPrimes", " an 
        error is given.  Restarting Macaulay 2 and then 
-       running ", TT "decompose", " works around this.",
+       running ", TT "minimalPrimes", " works around this.",
        PARA{},
        "See ", TO "associated primes of an ideal", " for information 
        on finding associated prime ideals 

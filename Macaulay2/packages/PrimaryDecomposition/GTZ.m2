@@ -340,7 +340,7 @@ oo == I
 (J16, F35) = GTZ0 F34
 (gens L) % J16 == 0
 radI = intersect(L,F35)
-intersect decompose I
+intersect minimalPrimes I
 (J16, F36) = GTZ0 F35
 (gens L) % J16 == 0
 

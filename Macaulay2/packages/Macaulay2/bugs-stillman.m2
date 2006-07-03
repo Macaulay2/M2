@@ -88,7 +88,7 @@ saturation
 elimination
 
 gb: doesn't allow stopping conditions?
-decompose: doesn't quit
+minimalPrimes: doesn't quit
 aborting: lose all your variables
 
 gens gb: recomputes the min gens...

@@ -56,7 +56,7 @@ document {
      UL {
 	  TOH "factor",
 	  TOH "gcd",
-	  TOH "decompose",
+	  TOH "minimalPrimes",
 	  TOH "irreducibleCharacteristicSeries"
 	  }
      }
@@ -77,7 +77,7 @@ document {
      UL {
 	  TOH "factor",
 	  TOH "gcd",
-	  TOH "decompose",
+	  TOH "minimalPrimes",
 	  TOH "irreducibleCharacteristicSeries"
 	  }
      }
