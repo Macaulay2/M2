@@ -553,7 +553,7 @@ document {
      }
 
 document {
-     Key => truncateOutput,
+     Key => {truncateOutput,(truncateOutput, ZZ),(truncateOutput, InfiniteNumber)},
      Usage => "truncateOutput w",
      Inputs => {"w" => ZZ },
      Outputs => {},

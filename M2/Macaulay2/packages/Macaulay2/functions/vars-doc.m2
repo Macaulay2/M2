@@ -32,6 +32,19 @@ document {
 	  "vars S"
 	  },
      }
+
+document { 
+     Key => {(vars, GeneralOrderedMonoid)},
+     Headline => "row matrix of the variables",     
+     Usage => "vars M",
+     Inputs => { "R" },
+     Outputs => { List => { "a list of the generators of ", TT "M"} },
+     "The result is the same as that provided by ", TO (generators,GeneralOrderedMonoid), ".",
+     EXAMPLE lines ///
+     	  M = monoid[x,y,z]
+	  vars M
+     ///
+     }
 document { 
      Key => {(vars,List), (vars,Sequence), (vars,ZZ)},
      Headline => "a sequence of variables",

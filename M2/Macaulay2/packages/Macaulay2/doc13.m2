@@ -70,7 +70,7 @@ document {
 	  { "the function ", TT "hook", " is removed from the list of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key" }
 	  },
      SourceCode => {(removeHook,HashTable,Thing,Function), (removeHook,MutableHashTable,Thing,Function)},
-     SeeAlso => { runHooks, removeHook }
+     SeeAlso => { runHooks, removeHook, tryHooks }
      }
 undocumented (runHooks,MutableHashTable,Thing,Thing)
 document {
@@ -83,7 +83,21 @@ document {
 	       called with ", TT "arg", " as its argument or sequence of arguments" }
 	  },
      SourceCode => { (runHooks,HashTable,Thing,Thing), (runHooks,MutableHashTable,Thing,Thing) },
-     SeeAlso => { addHook, removeHook }
+     SeeAlso => { addHook, removeHook, tryHooks }
+     }
+undocumented (tryHooks,MutableHashTable,Thing,Thing)
+document {
+     Key => { (tryHooks,HashTable,Thing,Thing), tryHooks },
+     Headline => "try the hook functions stored in an object",
+     Usage => "tryHooks(obj,key,arg)",
+     Inputs => { "obj", "key", "arg" },
+     Consequences => {
+	  { "the functions ", TT "hook", " in list of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key", " is
+	       called with ", TT "arg", " as its argument or sequence of arguments, and when one returns a non-null value, that value is returned
+	       and the rest of the hooks are not called" }
+	  },
+     SourceCode => { (tryHooks,HashTable,Thing,Thing), (tryHooks,MutableHashTable,Thing,Thing) },
+     SeeAlso => { addHook, removeHook, runHooks }
      }
 undocumented (generateAssertions, List)
 document { Key => {generateAssertions,(generateAssertions, String)},

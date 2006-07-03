@@ -594,6 +594,8 @@ undocumented {
      (symbol _,Expression,Thing), (symbol _,Thing,Expression)
      }
 
+undocumented {(value, RingElement),(value, Nothing)}
+
 document {
      Key => {Expression,
 	  (symbol SPACE,Expression,Expression),

@@ -1294,7 +1294,10 @@ TEST ///
      ///
 
 document {
-     Key => tensorAssociativity,
+     Key => {tensorAssociativity,
+	  (tensorAssociativity, Module, Module, Module),
+	  (tensorAssociativity, ChainComplex, ChainComplex, ChainComplex),
+	  (tensorAssociativity, GradedModule, GradedModule, GradedModule)},
      Headline => "associativity isomorphisms for tensor products",
      TT "tensorAssociativity(A,B,C)", " -- produces the isomorphism from
      A**(B**C) to (A**B)**C.",

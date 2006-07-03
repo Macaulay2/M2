@@ -695,9 +695,7 @@ document {
        (symbol //, Matrix, MonomialIdeal),
        (symbol //, Matrix, GroebnerBasis),
        (symbol //, Matrix, RingElement),
-       (symbol //, RingElement, Matrix),
-       (quotient, Matrix, Matrix),
-       (quotient, Matrix, GroebnerBasis)},
+       (symbol //, RingElement, Matrix)},
      Headline => "factor a map through another",
      Usage => "f//g",
      Inputs => {
@@ -753,7 +751,7 @@ document {
 	  Minv = id_(target M) // M
 	  M * Minv
      ///,
-     SeeAlso => {(symbol %, Matrix, Matrix), generators, diff, substitute}
+     SeeAlso => {(symbol %, Matrix, Matrix), generators, diff, substitute, quotient, remainder, quotientRemainder }
      }
 
 TEST "

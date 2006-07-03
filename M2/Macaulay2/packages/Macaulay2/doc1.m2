@@ -311,7 +311,7 @@ document {
      }
 
 document {
-     Key => size,
+     Key => {size,(size, RingElement)},
      Headline => "the size of an object",
      TT "size x", " -- returns the size of ", TT "x", " which usually gives
      a rough indication of memory space required to store the object ", TT "x", ".",

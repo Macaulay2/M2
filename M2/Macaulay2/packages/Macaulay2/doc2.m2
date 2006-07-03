@@ -682,6 +682,21 @@ document {
      }
 
 document {
+     Key => (value, IndexedVariable),
+     Headline => "retrieve the value of an indexed variable",
+     Usage => "value s",
+     Inputs => { "s" },
+     Outputs => { {"the value of ", TT "s" } },
+     EXAMPLE lines ///
+     	  y = x_3
+	  x_3 = 4
+	  x_3
+	  y
+	  value y
+     ///
+     }
+
+document {
      Key => {(value,String),"currentString"},
      Headline => "evaluate a string",
      Usage => "value s",

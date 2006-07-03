@@ -20,6 +20,7 @@ undocumented {
 	  (promote, QQ, CC),
 	  (promote, Matrix, ZZ),
 	  (promote, Matrix, QQ),
+	  (promote, Number, RingElement),
 	  (promote, RR, RR),
 	  (promote, RR, CC),
 	  (promote, CC, CC),

@@ -28,6 +28,12 @@ scan({"Local", "Global"}, nm -> assert (isGlobalSymbol nm and value getGlobalSym
 
 load "Dmodules/Dloadfile.m2"
 
+addHook(Module, symbol resolution, (o,M) -> (
+	  R := ring M;
+	  op := options R;
+	  o' := applyPairs(options Dresolution, (key,val) -> (key, o#key));
+	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then Dresolution(o',M)))
+
 beginDocumentation()
 load "Dmodules/DMODdoc.m2"
 
