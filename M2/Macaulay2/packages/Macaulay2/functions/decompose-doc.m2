@@ -3,10 +3,11 @@
 --- notes: 
 
 document { 
-     Key => {decompose,(decompose,Ideal)},
+     Key => {minimalPrimes,(minimalPrimes,Ideal),
+	  (minimalPrimes,MonomialIdeal)},
      Headline => "minimal associated primes of an ideal",
-     Usage => "decompose I",
-     Inputs => {"I" => Ideal
+     Usage => "minimalPrimes I",
+     Inputs => {"I" => Ideal,
 	  },
      Outputs => {List => {"whose entries are the minimal associated primes of ", TT "I", " ."}
 	  },
@@ -14,27 +15,45 @@ document {
      of the ideal ", TT "I"," using characteristic sets. Geometrically, 
      it decomposes the algebraic set defined by ", TT "I.",
      PARA{},
+     "If I is ", ofClass MonomialIdeal, ", then a more efficient algorithm
+     is used.",
+     PARA{},
      "Example. The homogenized equations
       of the affine twisted cubic curve define the union of the
       projective twisted cubic curve and a line at infinity:",
-     EXAMPLE {
-	  "R=QQ[w,x,y,z]",
-	  "I=ideal(x^2-y*w,x^3-z*w^2)",
-	  "decompose I"
-	  },
+     EXAMPLE lines ///
+	  R=QQ[w,x,y,z];
+	  I=ideal(x^2-y*w,x^3-z*w^2)
+	  minimalPrimes I
+	  ///,
      "Note that the ideal is decomposed over the given field
      of coefficients and not over the extension field where
      the decomposition into absolutely irreducible factors
      occurs:",
-      EXAMPLE {
-	  "R=QQ[x,y]",
-	  "I=ideal(x^2+y^2)",
-	  "decompose I"
-	  },
-     SeeAlso => {topComponents, removeLowestDimension, radical, irreducibleCharacteristicSeries}
+      EXAMPLE lines ///
+	  I=ideal(x^2+y^2)
+	  minimalPrimes I
+	  ///,
+     PARA{},
+     "For monomial ideals, the method used is essentially what is shown in the example.",
+     EXAMPLE lines ///
+	  I = monomialIdeal ideal"wxy,xz,yz"
+	  minimalPrimes I
+	  P = intersect(monomialIdeal(w,x,y),monomialIdeal(x,z),monomialIdeal(y,z))
+	  minI = apply(flatten entries gens P, monomialIdeal @@ support)
+	  ///,
+     "It is sometimes useful to have the result P instead (where each generator
+     encodes a single minimal prime.  This can be obtained directly, as in the
+     following code.",
+     EXAMPLE lines ///
+	  dual radical I
+	  P == oo
+          ///,
+     SeeAlso => {topComponents, removeLowestDimension, radical, irreducibleCharacteristicSeries,
+	  dual}
      }
 
- -- doc10.m2:475:     Key => decompose,
+ -- doc10.m2:475:     Key => minimalPrimes,
 
 TEST ///
 R = ZZ[x,y,z]
@@ -48,7 +67,7 @@ R=ZZ/32003[a..h]
 I=ideal(-b*d^2*f*h^2+a*b*d*g*h^2,
 	-a*b*d^2*e^2+c^2*g^2*h^2,
 	-d^2*f*g^3+a*b*d*e^2*h)
-dec = decompose I
+dec = minimalPrimes I
 assert(dec#0 == ideal ( d*f-a*g,  g^4-b*e^2*h, a*d^2*g^2-c^2*h^3,
  	  a*b*d^2*e^2-c^2*g^2*h^2, a^2*b*d*e^2-c^2*f*g*h^2, 
 	  a^3*b*e^2-c^2*f^2*h^2 ))
@@ -80,7 +99,7 @@ TEST ///
     R = ZZ/32003[r,s,t,u,v,w,x,y,z]
     I = ideal( r*v+s*u, r*w+t*u, s*w+t*v, r*y+s*x, r*z+t*x, s*z+t*y,
 	u*y+v*x, u*z+w*x, v*z+w*y)
-    time D = decompose I 
+    time D = minimalPrimes I 
 			-- used 130.74 seconds
 			-- used 127.85 seconds
 		        -- used 102.09 seconds
@@ -113,7 +132,7 @@ TEST ///
 
 TEST "
      R = ZZ/31991[x,y,z];
-     ivd = decompose ideal (x^3-y^2,x^3-z^2,y^3-z^2);
+     ivd = minimalPrimes ideal (x^3-y^2,x^3-z^2,y^3-z^2);
      assert( #ivd ===  5 )
 "
 
@@ -122,7 +141,7 @@ TEST "
      I = ideal (x,y)
      J = ideal (y-1,z-1)
      K = intersect(I,J)
-     ivd = decompose K
+     ivd = minimalPrimes K
      assert( #ivd == 2 )
 "
 
@@ -134,7 +153,7 @@ TEST "
 	       -3*x_1^2*x_4 - 4*x_2*x_3 - 6*x_1*x_3 + 2*x_2^2 + 3*x_1*x_2,
 	       -3*x_3^2*x_4 - x_1*x_4 + x_2^2*x_3 + x_2
 	       )
-     ivd = decompose I
+     ivd = minimalPrimes I
      assert( #ivd === 2 )
 "
 
@@ -146,7 +165,7 @@ TEST "
      P1 = ideal (x^2-x-3,y^2-y-3,z-13)
      P2 = ideal (x-13,y-55,z-12)
      K = intersect(I,J,P1,P2)
-     ivd = decompose K
+     ivd = minimalPrimes K
      "
 
 TEST "

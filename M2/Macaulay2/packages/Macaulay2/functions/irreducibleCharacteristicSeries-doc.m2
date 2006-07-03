@@ -12,7 +12,7 @@ document {
 	                   an irreducible characteristic series for ", TT "I", " . 
 			   The second entry is a ring map as explained below."}
 	  },	          
-     "This is an internal routine used by ", TO "decompose", ".
+     "This is an internal routine used by ", TO "minimalPrimes", ".
      It computes an irreducible characteristic series for ", TT "I", " .
      On its way, it possibly permutes the variables. The second entry
      of the output list gives the inverse coordinate change. The first
@@ -37,8 +37,8 @@ document {
      defined by ", TT "I", " is the union of the ", TEX "(V(T_i) \\setminus V(I_i))", " . 
      The minimal associated primes of  ", TT "I", " can, thus, be recovered from the
      irreducible characteristic series by saturation (and by throwing
-     away superfluous primes). This is done by ", TO "decompose", ".
+     away superfluous primes). This is done by ", TO "minimalPrimes", ".
      ",
-     SeeAlso => {decompose}
+     SeeAlso => {minimalPrimes}
      }
  -- doc10.m2:449:     Key => irreducibleCharacteristicSeries,

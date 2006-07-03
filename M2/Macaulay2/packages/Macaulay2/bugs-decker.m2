@@ -2,7 +2,7 @@
 -- then check in the file, using (outside of M2):
 --   cvs ci -m "another bug"
 
-In documentation to decompose, finish example on absolute 
+In documentation to minimalPrimes, finish example on absolute 
    decomposition by showing how factor works over extension
    fields. Do the relevant interface to libfac first.
 

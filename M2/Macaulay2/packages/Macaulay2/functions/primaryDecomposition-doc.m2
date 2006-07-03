@@ -45,6 +45,6 @@ document {
 	  "associatedPrimes I / print;"
 	  },
      Caveat => {"The ground ring must be a prime field."},
-     SeeAlso => {PrimaryDecomposition,(associatedPrimes,Ideal), radical, decompose, topComponents, removeLowestDimension}
+     SeeAlso => {PrimaryDecomposition,(associatedPrimes,Ideal), radical, minimalPrimes, topComponents, removeLowestDimension}
      }
 

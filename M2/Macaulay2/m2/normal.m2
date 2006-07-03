@@ -42,7 +42,7 @@ isNormal(Ring) := Boolean => (R) -> (
 -- radical0 does not finish.
 radical0 = (I) -> (
      I = ideal mingens ideal generators gb I;
-     comps := decompose I;
+     comps := minimalPrimes I;
      result := if #comps === 1 then comps#0
                else intersect toSequence comps;
      result)

@@ -74,8 +74,7 @@ topCoefficients RingElement := f -> (
      	  (monoms,coeffs) := topCoefficients matrix{{f}};
      	  (monoms_(0,0), coeffs_(0,0))))
 
-decompose = method()
-decompose Ideal := (I) -> if I.cache.?decompose then I.cache.decompose else I.cache.decompose = (
+minimalPrimes Ideal := (I) -> if I.cache.?minimalPrimes then I.cache.minimalPrimes else I.cache.minimalPrimes = (
      R := ring I;
      if isQuotientRing R then (
 	  A := ultimate(ambient, R);

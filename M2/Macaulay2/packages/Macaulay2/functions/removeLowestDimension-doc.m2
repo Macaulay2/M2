@@ -24,7 +24,7 @@ document {
 	  "I=intersect(ideal(a*b+a^2,b^2),ideal(a^2,b^2,c^2),ideal(b^3,c^3,d^3))",
 	  "removeLowestDimension I"
 	  },
-     SeeAlso => {"topComponents", "saturate", "quotient", "radical", "decompose"}
+     SeeAlso => {"topComponents", "saturate", "quotient", "radical", "minimalPrimes"}
      }
 
  -- doc10.m2:385:     Key => removeLowestDimension,
@@ -47,5 +47,5 @@ document {
 --     "Computes one free resolution, and some homology groups, but no
 --     projections or determinants are used.  For a very brief description
 --     of the method used, see ", TO "topComponents", ".",
---     SeeAlso => {"topComponents", "saturate", "quotient", "radical", "decompose"}
+--     SeeAlso => {"topComponents", "saturate", "quotient", "radical", "minimalPrimes"}
 --     }

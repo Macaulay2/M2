@@ -54,7 +54,7 @@ document {
      Key => "component example",
      "The following simple example illustrates the use of 
      ", TO "removeLowestDimension", ",", TO "topComponents", ",", TO "radical",
-     ", and ", TO "decompose", ".",
+     ", and ", TO "minimalPrimes", ".",
      EXAMPLE {
 	  "R = ZZ/32003[a..d];",
       	  "I = monomialCurveIdeal(R,{1,3,4})",
@@ -63,7 +63,7 @@ document {
       	  "removeLowestDimension I",
       	  "topComponents I",
       	  "radical I",
-      	  "decompose I"
+      	  "minimalPrimes I"
 	  },
      }
 
@@ -75,7 +75,7 @@ TEST "
     removeLowestDimension I
     topComponents I
     radical I
-    decompose I
+    minimalPrimes I
 "
 TEST "
     -- test of removeLowestDimension

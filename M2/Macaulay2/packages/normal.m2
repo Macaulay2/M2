@@ -3,7 +3,7 @@ radical0 = (I) -> (
      --I = trim I;
      III = I;
      << "-----take radical of     = " << transpose gens I << endl;
-     comps := decompose I;
+     comps := minimalPrimes I;
      result := if #comps === 1 then comps#0
                else intersect toSequence comps;
      << "-----radical = " << transpose gens result << endl;

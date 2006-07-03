@@ -1,31 +1,31 @@
 R = ZZ/101[a..d]
 I = ideal 0_R
-assert ( decompose I == {I} )
-assert ( decompose ideal 1_R == {} )
+assert ( minimalPrimes I == {I} )
+assert ( minimalPrimes ideal 1_R == {} )
 S = R / ((a+b)*(a^2+b))
 I = ideal 0_S
 assert (
-     decompose I == {ideal(a^2+b), ideal(a+b)} 
+     minimalPrimes I == {ideal(a^2+b), ideal(a+b)} 
      or
-     decompose I == {ideal(a+b), ideal(a^2+b)} 
+     minimalPrimes I == {ideal(a+b), ideal(a^2+b)} 
      )
 
 A = ZZ/101[a,b,c]
 I = ideal (b^2 - 4*a*c)
 irreducibleCharacteristicSeries I
-decompose I
-assert ( decompose I == { I } )
+minimalPrimes I
+assert ( minimalPrimes I == { I } )
 
 A = QQ[a,b,c]
 I = ideal (b^2 - 4*a*c)
-decompose I
-assert ( decompose I == { I } )
+minimalPrimes I
+assert ( minimalPrimes I == { I } )
 J = a*I
-decompose J
+minimalPrimes J
 assert( 
-     decompose J == {ideal a, ideal(b^2-4*a*c)}
+     minimalPrimes J == {ideal a, ideal(b^2-4*a*c)}
      or 
-     decompose J == {ideal(b^2-4*a*c), ideal a}
+     minimalPrimes J == {ideal(b^2-4*a*c), ideal a}
      )
 
 
@@ -45,8 +45,8 @@ I = ideal ( a+b+c+d+e, a*b + b*c + c*d + d*e + e*a ,
      a*b*c*d + b*c*d*e + c*d*e*a + d*e*a*b + e*a*b*c,
      a*b*c*d*e - h^5
      )
-time decompose I
-assert ( 25 == # decompose I )
+time minimalPrimes I
+assert ( 25 == # minimalPrimes I )
 
 A = ZZ/101[a..e,h]
 I = ideal ( a+b+c+d+e, a*b + b*c + c*d + d*e + e*a ,
@@ -54,8 +54,8 @@ I = ideal ( a+b+c+d+e, a*b + b*c + c*d + d*e + e*a ,
      a*b*c*d + b*c*d*e + c*d*e*a + d*e*a*b + e*a*b*c,
      a*b*c*d*e - h^5
      )
-time decompose I
-assert ( 75 == # decompose I )
+time minimalPrimes I
+assert ( 75 == # minimalPrimes I )
 
 end
 
@@ -67,8 +67,8 @@ I = ideal ( a+b+c+d+e, a*b + b*c + c*d + d*e + e*a ,
      a*b*c*d + b*c*d*e + c*d*e*a + d*e*a*b + e*a*b*c,
      a*b*c*d*e - 1
      )
-time decompose I
-assert ( 25 == # decompose I )
+time minimalPrimes I
+assert ( 25 == # minimalPrimes I )
 
 
 end
@@ -79,8 +79,8 @@ I = ideal ( a+b+c+d+e, a*b + b*c + c*d + d*e + e*a ,
      a*b*c*d + b*c*d*e + c*d*e*a + d*e*a*b + e*a*b*c,
      a*b*c*d*e - h^5
      )
-time decompose I
-assert ( 25 == # decompose I )
+time minimalPrimes I
+assert ( 25 == # minimalPrimes I )
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test decompose.out"

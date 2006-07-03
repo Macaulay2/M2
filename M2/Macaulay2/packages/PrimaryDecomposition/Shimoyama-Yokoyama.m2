@@ -82,20 +82,20 @@ time minSatPPD(I1,{b,t})
 removeScalarMultipleColumns = m -> map(target m,,rawRemoveScalarMultiples raw m)
 
 -- This version of newdecompose can be truly awful: the ideal I2 which is
---  passed to 'decompose' can have a huge number of generators.  Even cleaning the
+--  passed to 'minimalPrimes' can have a huge number of generators.  Even cleaning the
 --  gb by taking squarefree parts doesn't help
 newdecompose = method()
 newdecompose(Ideal) := List => (I) -> (
      squarefree := (f) -> (
      	  g := factor f;
      	  value apply(g, i -> i#0));
-     if I.cache.?decompose then I.cache.decompose
-     else I.cache.decompose = (
+     if I.cache.?minimalPrimes then I.cache.minimalPrimes
+     else I.cache.minimalPrimes = (
        I1 := ideal apply(numgens I, i -> squarefree(I_i));
        I2 := trim ideal generators gb I1;
-       if numgens I2 > 0 then decompose I2 else {}))
+       if numgens I2 > 0 then minimalPrimes I2 else {}))
 
-newdecompose(Ideal) := List => (I) -> decompose I
+newdecompose(Ideal) := List => (I) -> minimalPrimes I
 
 -- Find the independent sets of the ideal I
 -- This doesn't necessarily find them all

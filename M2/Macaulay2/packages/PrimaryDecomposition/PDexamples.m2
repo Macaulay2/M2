@@ -133,7 +133,7 @@ I = ideal(
     -b^2-c^2+2*b*x+2*c*y,
     -d^2-f^2-g^2+2*d*x+2*f*y+2*g*z)
 
-time decompose I -- 7.06 sec, or 5.53 sec
+time minimalPrimes I -- 7.06 sec, or 5.53 sec
 time primaryDecomposition(I, Strategy=>SY)
 debug PrimaryDecomposition
 time GTZ1 I;
@@ -148,11 +148,11 @@ C1 = time primaryDecomposition(J1, Strategy=>SY);
 C2 = time primaryDecomposition(J2, Strategy=>SY);
 
 
-time decompose J -- this is much worse than 'decompose I'
+time minimalPrimes J -- this is much worse than 'minimalPrimes I'
 transpose gens J
 time I = trim I 
 L = ideal apply(sort apply(flatten entries gens I, f -> (size f, first degree f, f)), g -> g#2)
-time decompose L
+time minimalPrimes L
 
 gbTrace = 3
 time (L1, M1) = GTZ0 I;

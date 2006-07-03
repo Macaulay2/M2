@@ -304,7 +304,7 @@ time binomialPD I
 R = ZZ/101[a..d]
 I = ideal(a^2*(a*d-b*c), b^2*(b^2-a*c))
 time binomialMinprimes I
-time decompose I   -- This is the fastest at the moment...
+time minimalPrimes I   -- This is the fastest at the moment...
                    -- There should be builtin binomial routines for these?
 time radical I
 ///
@@ -315,7 +315,7 @@ I = ideal(
   a*(a*d-b*c),
   b*(a*c-b^2),
   c*(b*d-c^2))
-time decompose I
+time minimalPrimes I
 time binomialMinprimes I
 time radical I
 time binomialPD I
