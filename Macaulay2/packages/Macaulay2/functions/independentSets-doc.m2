@@ -11,7 +11,7 @@ document {
      Usage => "independentSets J",
      Inputs => {
 	  "J" => Nothing => {ofClass Ideal, ", or ", ofClass MonomialIdeal},
-	  Limit => "a positive integer, limiting the number of independent sets found"
+	  Limit => ZZ => "the maximum number of independent sets to be found"
 	  },
      Outputs => {
 	  List => {" of products of variables.  The support of any one of these products

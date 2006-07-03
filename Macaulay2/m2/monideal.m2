@@ -324,9 +324,9 @@ associatedPrimes MonomialIdeal := List => o -> (I) -> (
 
 --  PRIMARY DECOMPOSITION  ---------------------------------
 
-minimalPrimes MonomialIdeal := (I) -> (if I.cache.?minimalPrimes
-   then I.cache.minimalPrimes 
-   else I.cache.minimalPrimes = (
+minimalPrimes MonomialIdeal := (I) -> (if I.cache#?"MinimalPrimes"
+   then I.cache#"MinimalPrimes" 
+   else I.cache#"MinimalPrimes" = (
 	minI := squarefreeDual radical I;
 	apply(flatten entries generators minI, monomialIdeal @@ support)))
 

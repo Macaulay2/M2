@@ -1,14 +1,17 @@
 document { Key => Increment, "A symbol used as the name of an optional argument, for some function(s)." }
+
 document {
-     Key => {(associatedPrimes, Ideal),(associatedPrimes, MonomialIdeal)},
+     Key => {associatedPrimes,(associatedPrimes, Ideal),(associatedPrimes, MonomialIdeal)},
      Headline => "find the associated primes of an ideal",
-     Usage => "associatedPrimes I",
+     Usage => "associatedPrimes I\nass I",
      Inputs => {
-	  "I" => {"an ideal in a (quotient of a) polynomial ring ", TT "R"}
+	  "I" => Nothing => {ofClass Ideal, " in a (quotient of a) polynomial ring ", TT "R"}
 	  },
      Outputs => {
-	  {"a list of prime ideals in ", TT "R", " that are associated to ", TT "I"}
+	  {"a list of the prime ideals in ", TT "R", " that are associated to ", TT "I"}
 	  },
+     TT "ass", " is an abbreviation for ", TT "associatedPrimes", ".",
+     PARA{},
      "Computes the set of associated primes for the ideal ", TT "I", ".",
      EXAMPLE {
 	  "R = ZZ/101[a..d];",
@@ -20,38 +23,63 @@ document {
 	  "I=ideal(0_R);",
 	  "associatedPrimes I"
 	  },
-     "The associated primes are found using the Ext modules: The 
+     PARA{},
+     "In general, the associated primes are found using Ext modules: The 
      associated primes of codimension ", TT "i", " of ", TT "I", " and ",
      TT "Ext^i(R^1/I,R)", " are identical, as shown in 
      Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992).",
-     Caveat => ("This function uses ", TT "minimalPrimes", 
-	  ", which currently only works
-          over finite ground fields, not the rationals or integers."),
+     PARA{},
+     TO primaryDecomposition, " also computes the associated primes.  After doing 
+     a primaryDecomposition, calling ", TT "associatedPrimes", " requires no new computation,
+     and the list of associated primes are in the same order as 
+     the list of primary components returned by ", TT "primaryDecomposition", ".",
+     PARA{},
+     "If the ideal is ", ofClass MonomialIdeal, ", then a more efficient 
+     method is used.  This monomial ideal
+     code was written by Greg Smith and Serkan Hosten.  The above comments 
+     about primary decomposition hold in this case too.",
+     EXAMPLE lines ///
+     	  R = QQ[a..f];
+	  I = monomialIdeal ideal"abc,bcd,af3,a2cd,bd3d,adf,f5"
+	  ass I
+	  primaryDecomposition I
+     ///,
+     "The list of associated primes corresponds to the list of primary components of ", TT "I", ": the
+     ", TT "i", "-th associated prime is the radical of the ", TT "i", "-th primary component.",
      PARA {
-	 BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
-	 Last modified June 2000."},
+	 BOLD "Original author: ", "C. Yackel, http://faculty.mercer.edu/yackel_ca/", ".",
+	 },
      SeeAlso => {(primaryDecomposition,Ideal), 
-     	       radical, minimalPrimes, topComponents, 
-	       removeLowestDimension}
+     	       "radical", "minimalPrimes", "topComponents", 
+	       "removeLowestDimension"}
      }
 
 document {
      Key => [associatedPrimes,Strategy],
-     "The strategy option value should be one of the following.",
-     UL{
-	  LI ("1", " -- The assassinator is found using ", TT "Ext", " modules"),
-	  LI ("2", " -- The assassinator is found using ", TO topComponents, " on a sequence of ideals.")
-	  },
-     "The default strategy is 2.",
-     HEADER3 "Strategy => 1",
-     "The associated primes are found using the Ext modules: The 
-     associated primes of codimension ", TT "i", " of ", TT "I", " and ",
-     TT "Ext^i(R^1/I,R)", " are identical, as shown in 
-     Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992).",
-     HEADER3 "Strategy => 2", 
-     "The associated primes are found by iterating the two steps:  take the 
-     minimal primes of", TO(topComponents), " of the ideal, ", TT "I", ", and replace ",
-     TT "I", " by ", TT "I:(topComponents I)", "."
+     "The strategy option value is currently not considered while computing associated primes",
+     PARA{},
+     "There are three methods for 
+     computing associated primes in Macaulay2: If the ideal is a monomial ideal, use code that 
+     Greg Smith and Serkan Hosten wrote.  If a primary decomposition has already been found, use the
+     stashed associated primes found.  If neither of these is the case, then use Ext 
+     modules to find the associated primes (this is ", TT "Strategy=>1", ")",
+     PARA{},
+     "In order to use the monomial ideal algorithm, it is necessary
+     to make ", TT "I", " into a monomial ideal.",
+     EXAMPLE lines ///
+         S = QQ[a,b,c,d,e];
+     	 I1 = ideal(a,b,c);
+	 I2 = ideal(a,b,d);
+	 I3 = ideal(a,e);
+	 P = I1*I2*I3
+	 L1 = associatedPrimes P
+	 L2 = apply(associatedPrimes monomialIdeal P, J -> ideal J)
+	 M1 = set apply(L1, I -> sort flatten entries gens I)
+	 M2 = set apply(L2, I -> sort flatten entries gens I)
+	 assert(M1 === M2)
+     ///,
+     "The method using Ext modules comes from     
+     Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992)."
      }
 
 document {

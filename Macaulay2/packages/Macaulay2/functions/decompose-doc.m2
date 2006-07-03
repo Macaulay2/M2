@@ -6,11 +6,13 @@ document {
      Key => {minimalPrimes,(minimalPrimes,Ideal),
 	  (minimalPrimes,MonomialIdeal)},
      Headline => "minimal associated primes of an ideal",
-     Usage => "minimalPrimes I",
+     Usage => "minimalPrimes I\ndecompose I",
      Inputs => {"I" => Ideal,
 	  },
      Outputs => {List => {"whose entries are the minimal associated primes of ", TT "I", " ."}
 	  },
+     TT "decompose", " is a synonym for ", TT "minimalPrimes", ".",
+     PARA{},
      "This function computes the minimal associated primes
      of the ideal ", TT "I"," using characteristic sets. Geometrically, 
      it decomposes the algebraic set defined by ", TT "I.",
