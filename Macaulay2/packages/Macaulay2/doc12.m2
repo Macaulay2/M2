@@ -134,7 +134,7 @@ assert(min(4,5,6) === 4)
 ///
 
 document {
-     Key => pack,
+     Key => {pack,(pack, BasicList, ZZ),(pack, ZZ, BasicList)},
      Headline => "pack elements of a list into shorter ones",
      TT "pack(n,v)", " -- packs the elements of the list or sequence
      ", TT "v", " into a table ", TT "n", " at a time.",
@@ -201,7 +201,7 @@ document {
      }
 
 document {
-     Key => positions,
+     Key => {positions,(positions, VisibleList, Function)},
      Headline => "which elements of a list satisfy a condition",
      TT "positions(v,f)", " -- yields a list of integers giving the positions of the
      elements of the list ", TT "v", " which yield the value ", TT "true", " when
@@ -214,12 +214,20 @@ assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
 "
 
 document {
-     Key => position,
+     Key => {position,(position, VisibleList, Function)},
      Headline => "find first element of a list satisfying a condition",
      TT "position(v,f)", " -- returns the index of the first element of ", TT "v", " satisfying 
      the condition ", TT "f", ", or ", TO "null", " if there is none.",
      SeeAlso => "positions"
      }
+
+document { Key => (position, VisibleList, VisibleList, Function),
+     Usage => "position(v,w,f)",
+     Inputs => {"v","w","f"},
+     Outputs => {{"the smallest index ", TT "i", " such that ", TT "f(v#i,w#i)", " is true"}},
+     EXAMPLE lines ///
+     	  position((0,1,2,3,4), (0,0,0,9,9), (i,j)->i<j)
+     ///}
 
 document {
      Key => delete,
@@ -813,7 +821,7 @@ document {
      }
 
 document {
-     Key => pad,
+     Key => {pad,(pad, String, ZZ),(pad, ZZ, String)},
      Headline => "pad a string with spaces",
      TT "pad(s,n)", " -- pads the string ", TT "s", " to length ", TT "n", " with
      spaces on the right.",

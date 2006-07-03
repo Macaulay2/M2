@@ -262,7 +262,7 @@ document {
      }
 
 document {
-     Key => separate,
+     Key => {separate,(separate, String),(separate, String, String)},
      Headline => "split a string into pieces",
      TT "separate(d,s)", " -- split the string ", TT "s", " into pieces 
      delimited by the string ", TT "d", ".",

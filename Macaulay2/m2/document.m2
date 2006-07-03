@@ -280,11 +280,6 @@ packageKey   String := fkey -> (
    --    for display in menus and links
    --    as the key for access in a database, where the key must be a string
 
-Strings := hashTable { 
-     -- I'm not sure I like this any longer;
-     -- Sequence => "(...)", List => "{...}", Array => "[...]" 
-     }
-toStr := s -> if Strings#?s then Strings#s else toString s
 formatDocumentTag           = method(Dispatch => Thing)
 	  
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'"
@@ -292,28 +287,28 @@ alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
 formatDocumentTag Thing    := toString
 formatDocumentTag String   := s -> s
 
-fSeqInitialize := (toString,toStr) -> new HashTable from {
-     (4,NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toStr s#3),
-     (4,cohomology,ZZ  ) => s -> ("HH_", toStr s#1, "^", toStr s#2, " ", toStr s#3),
-     (4,homology,ZZ    ) => s -> ("HH^", toStr s#1, "_", toStr s#2, " ", toStr s#3),
-     (3,NewFromMethod  ) => s -> ("new ", toString s#1, " from ", toStr s#2),
+fSeqInitialize := (toString,toString) -> new HashTable from {
+     (4,NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toString s#3),
+     (4,cohomology,ZZ  ) => s -> ("HH_", toString s#1, "^", toString s#2, " ", toString s#3),
+     (4,homology,ZZ    ) => s -> ("HH^", toString s#1, "_", toString s#2, " ", toString s#3),
+     (3,NewFromMethod  ) => s -> ("new ", toString s#1, " from ", toString s#2),
      (3,NewOfMethod    ) => s -> ("new ", toString s#1, " of ", toString s#2),
-     (3,symbol SPACE   ) => s -> (toStr s#1, " ", toStr s#2),
-     (2,symbol <-      ) => s -> (toStr s#1, " <- Thing"),  -- assignment statement with left hand side evaluated
-     (3,homology,ZZ    ) => s -> ("HH_", toStr s#1, " ", toStr s#2),
-     (3,cohomology,ZZ  ) => s -> ("HH^", toStr s#1, " ", toStr s#2),
-     (2,homology       ) => s -> ("HH ", toStr s#1),
+     (3,symbol SPACE   ) => s -> (toString s#1, " ", toString s#2),
+     (2,symbol <-      ) => s -> (toString s#1, " <- Thing"),  -- assignment statement with left hand side evaluated
+     (3,homology,ZZ    ) => s -> ("HH_", toString s#1, " ", toString s#2),
+     (3,cohomology,ZZ  ) => s -> ("HH^", toString s#1, " ", toString s#2),
+     (2,homology       ) => s -> ("HH ", toString s#1),
 -- this one was wrong:
---      (2,cohomology     ) => s -> ("HH ", toStr s#1),
+--      (2,cohomology     ) => s -> ("HH ", toString s#1),
      (2,NewMethod      ) => s -> ("new ", toString s#1),
-     (3,class,Keyword  ) => s -> (toStr s#1, " ", toString s#0, " ", toStr s#2),-- infix operator
-     (3,class,Symbol   ) => s -> (toStr s#1, " ", toString s#0, " ", toStr s#2),-- infix operator
-     (3,class,Sequence ) => s -> (toStr s#1, " ", toString s#0#0, " ", toStr s#2, " ", toString s#0#1, " Thing"),-- infix assignment operator (really a ternary operator!)
-     (2,class,Keyword  ) => s -> (toString s#0, " ", toStr s#1),-- prefix operator
-     (2,class,Sequence ) => s -> (toString s#0#0, " ", toStr s#1, " ", toString s#0#1, " Thing"),-- prefix assignment operator (need to handle the postfix assignment operators still!)
-     (2,symbol (*)     ) => s -> (toStr s#1, " ", toStr s#0), -- postfix operator
-     (2,symbol ~       ) => s -> (toStr s#1, " ", toStr s#0), -- postfix operator
-     (2,symbol !       ) => s -> (toStr s#1, " ", toStr s#0), -- postfix operator
+     (3,class,Keyword  ) => s -> (toString s#1, " ", toString s#0, " ", toString s#2),-- infix operator
+     (3,class,Symbol   ) => s -> (toString s#1, " ", toString s#0, " ", toString s#2),-- infix operator
+     (3,class,Sequence ) => s -> (toString s#1, " ", toString s#0#0, " ", toString s#2, " ", toString s#0#1, " Thing"),-- infix assignment operator (really a ternary operator!)
+     (2,class,Keyword  ) => s -> (toString s#0, " ", toString s#1),-- prefix operator
+     (2,class,Sequence ) => s -> (toString s#0#0, " ", toString s#1, " ", toString s#0#1, " Thing"),-- prefix assignment operator (need to handle the postfix assignment operators still!)
+     (2,symbol (*)     ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+     (2,symbol ~       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
+     (2,symbol !       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
      (2,class,ScriptedFunctor) => s -> (
 	  hh := s#0;
 	  if hh.?subscript and hh.?superscript 
@@ -321,24 +316,46 @@ fSeqInitialize := (toString,toStr) -> new HashTable from {
 	       stderr << "--warning: ambiguous scripted functor, with both subscript method and superscript method: " << s << endl;
 	       toString s
 	       )
-	  else if hh.?subscript   then (toString s#0, " _ ", toStr s#1)
-	  else if hh.?superscript then (toString s#0, " ^ ", toStr s#1)
-	  else (toString s#0, " ", toStr s#1)),
+	  else if hh.?subscript   then (toString s#0, " _ ", toString s#1)
+	  else if hh.?superscript then (toString s#0, " ^ ", toString s#1)
+	  else (toString s#0, " ", toString s#1)),
      (3,class,ScriptedFunctor,ZZ) => s -> (
 	  if s#0 .? subscript
-	  then (toString s#0, "_", toStr s#1, "(", toStr s#2, ")")
-	  else (toString s#0, "^", toStr s#1, "(", toStr s#2, ")")),
+	  then (toString s#0, "_", toString s#1, "(", toString s#2, ")")
+	  else (toString s#0, "^", toString s#1, "(", toString s#2, ")")),
      (4,class,ScriptedFunctor,ZZ) => s -> (
 	  if s#0 .? subscript
-	  then (toString s#0, "_", toStr s#1, "(", toStr s#2, ",", toStr s#3, ")")
-	  else (toString s#0, "^", toStr s#1, "(", toStr s#2, ",", toStr s#3, ")")),
-     5 => s -> (toString s#0, "(", toStr s#1, ",", toStr s#2, ",", toStr s#3, ",", toStr s#4, ")"),
-     4 => s -> (toString s#0, "(", toStr s#1, ",", toStr s#2, ",", toStr s#3, ")"),
-     3 => s -> (toString s#0, "(", toStr s#1, ",", toStr s#2, ")"),
-     2 => s -> (toString s#0, " ", toStr s#1)
+	  then (toString s#0, "_", toString s#1, "(", toString s#2, ",", toString s#3, ")")
+	  else (toString s#0, "^", toString s#1, "(", toString s#2, ",", toString s#3, ")")),
+     5 => s -> (
+	  t := if methodOptions s#0 =!= null then (methodOptions s#0).Dispatch else {Thing,Thing};
+	  (toString s#0, "(", 
+	       if t#?0 and t#0===Type then "type of ", toString s#1, ",",
+	       if t#?1 and t#1===Type then "type of ", toString s#2, ",",
+	       if t#?2 and t#2===Type then "type of ", toString s#3, ",",
+	       if t#?3 and t#3===Type then "type of ", toString s#4,
+	       ")")),
+     4 => s -> (
+	  t := if methodOptions s#0 =!= null then (methodOptions s#0).Dispatch else {Thing,Thing};
+	  (toString s#0, "(", 
+	       if t#?0 and t#0===Type then "type of ", toString s#1, ",",
+	       if t#?1 and t#1===Type then "type of ", toString s#2, ",",
+	       if t#?2 and t#2===Type then "type of ", toString s#3,
+	       ")")),
+     3 => s -> (
+	  t := if methodOptions s#0 =!= null then (methodOptions s#0).Dispatch else {Thing,Thing};
+	  (toString s#0, "(", 
+	       if t#?0 and t#0===Type then "type of ", toString s#1, ",",
+	       if t#?1 and t#1===Type then "type of ", toString s#2,
+	       ")")),
+     2 => s -> (
+	  t := if methodOptions s#0 =!= null then (methodOptions s#0).Dispatch else {Thing,Thing};
+	  (toString s#0, "(", 
+	       if t===Type or instance(t,List) and t#?0 and t#0===Type then "type of ", toString s#1,
+	       ")"))
      }
 
-fSeq := fSeqInitialize(toString,toStr)
+fSeq := fSeqInitialize(toString,toString)
 formatDocumentTag Sequence := record(
      s -> concatenate (
 	  if #s == 0                                            then toString

@@ -427,7 +427,7 @@ document {
      }
      
 document {
-     Key => scanKeys,
+     Key => {scanKeys,(scanKeys, Database, Function),(scanKeys, HashTable, Function)},
      Headline => "apply a function to each key in a hash table or database",
      TT "scanKeys(x,f)", " -- apply the function ", TT "f", " to each key used in the
      hash table or database ", TT "x", ".",
@@ -436,7 +436,7 @@ document {
      a mutable hash table, use ", TT "scan(keys x, f)", "."
      }
 document {
-     Key => scanValues,
+     Key => {scanValues,(scanValues, HashTable, Function)},
      Headline => "apply a function to each value in a hash table",
      TT "scanValues(x,f)", " -- apply the function ", TT "f", " to each value
      appearing in the hash table ", TT "x", ".",
@@ -522,12 +522,10 @@ document {
 document { Key => drop,
      Headline => "drop some elements from a list or sequence", SeeAlso => "take" }
 document {
-     Key => (options, Function),
+     Key => {(options, Function),(options, Sequence)},
      Headline => "get optional arguments and default values for a function which accepts them",
      Usage => "options f",
-     Inputs => {
-	  "f"
-	  },
+     Inputs => { "f" },
      Outputs => {
 	  { "a hash table whose keys are the names of the optional arguments accepted by the function ", TT "f", " and whose values are the corresponding default values" }
 	  },
@@ -536,13 +534,26 @@ document {
 	  }
      }
 document {
-     Key => (options, Ring),
+     Key => {(options, Ring),(options, PolynomialRing),(options, QuotientRing)},
      Headline => "get values used for optional arguments",
      TT "options R", " -- returns the options used when the polynomial
      ring ", TT "R", " was created."
      }
+document { Key => (options, MarkUpType),
+     "Optional arguments of mark up types allow attributes to be added to html elements.",
+     EXAMPLE lines ///
+     	  DIV
+     	  options DIV
+	  d = DIV { "class" => "examples", "hi there" }
+	  html d
+	  net d
+     ///}
+document { Key => (options, Package),
+     EXAMPLE lines ///
+     	  options Core
+     ///}
 document {
-     Key => (options, Monoid),
+     Key => {(options, Monoid),(options, GeneralOrderedMonoid)},
      Headline => "get values used for optional arguments",
      TT "options M", " -- returns the options used when the monoid ", TT "M", " 
      was created."

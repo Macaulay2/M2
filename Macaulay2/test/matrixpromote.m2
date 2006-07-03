@@ -15,5 +15,5 @@ lift'(matrix{{2/1}}, ZZ)
 end
 -- Local Variables:
 -- M2-send-to-buffer: "*gud*"
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test matrixpromote'.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test matrixpromote.out"
 -- End:

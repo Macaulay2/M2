@@ -5,6 +5,7 @@ ScriptedFunctor.synonym = "scripted functor"
 precedence ScriptedFunctor := x -> 70
 net ScriptedFunctor := lookup(net,Type)
 toString ScriptedFunctor := lookup(toString,Type)
+methodOptions ScriptedFunctor := H -> null
 
 ScriptedFunctor ^ Thing := (G,i) -> (
      if G#?superscript 

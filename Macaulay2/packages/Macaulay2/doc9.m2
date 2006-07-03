@@ -528,7 +528,7 @@ document {
 	  }}
 
 document {
-     Key => nullhomotopy,
+     Key => {nullhomotopy,(nullhomotopy, ChainComplexMap)},
      Headline => "make a null homotopy",
      TT "nullhomotopy f", " -- produce a nullhomotopy for a map f of 
      chain complexes.",

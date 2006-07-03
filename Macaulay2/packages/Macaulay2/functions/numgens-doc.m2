@@ -102,7 +102,7 @@ document {
      SeeAlso => {(module,CoherentSheaf),tangentSheaf}
      }
 document { 
-     Key => (numgens,Ring),
+     Key => {(numgens,Ring),(numgens, EngineRing),(numgens, FractionField),(numgens, MonomialIdeal),(numgens, PolynomialRing),(numgens, QuotientRing)},
      Headline => "number of generators of a polynomial ring",
      Usage => "numgens R",
      Inputs => {

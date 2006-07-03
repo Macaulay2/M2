@@ -192,7 +192,7 @@ document {
      }
 
 document {
-     Key => openListener,
+     Key => {openListener,(openListener, String)},
      Headline => "open a port for listening",
      TT "f = openListener \"$:service\"", "  opens a listener on the local
      host at the specified service port.",
@@ -207,7 +207,7 @@ document {
      }
 
 document {
-     Key => openIn,
+     Key => {openIn,(openIn, String)},
      Headline => "open an input file",
      TT "openIn \"fff\"", " opens an input file whose filename is ", TT "fff", ".",
      PARA{},
@@ -215,7 +215,7 @@ document {
      }
 
 document {
-     Key => openOut,
+     Key => {openOut,(openOut, String)},
      Headline => "open an output file",
      TT "openOut \"fff\"", " opens an output file whose filename is ", TT "fff", ".",
      PARA{},
@@ -223,7 +223,7 @@ document {
      }
 
 document {
-     Key => openInOut,
+     Key => {openInOut,(openInOut, String)},
      Headline => "open an input output file",
      TT "openInOut \"fff\"", " opens an input output file whose 
      filename is ", TT "fff", ".",

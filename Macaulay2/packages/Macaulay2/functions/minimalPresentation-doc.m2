@@ -225,7 +225,7 @@ document {
      EXAMPLE lines ///
 	  I = ideal(a^2,b^3,c^4,d^7)
      	  X = Proj R
-	  J = I~
+	  J = (module I)~
 	  minimalPresentation J
      ///,
      SeeAlso => {(minimalPresentation, Matrix), (trim, Module), (mingens,Module)}
