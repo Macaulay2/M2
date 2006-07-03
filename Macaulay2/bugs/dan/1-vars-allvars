@@ -1,0 +1,51 @@
+Date: Sun, 2 Jul 2006 20:18:19 -0500 (CDT)
+From: Dan Grayson <dan@math.uiuc.edu>
+To: Michael Stillman <mike@math.cornell.edu>
+CC: dan@math.uiuc.edu
+In-reply-to: <C549F623-F642-431D-9C21-7F87EECE1C6C@math.cornell.edu> (message
+	from Michael Stillman on Sun, 2 Jul 2006 20:40:27 -0400)
+Subject: Re: vars and fields
+Reply-to: dan@math.uiuc.edu
+
+
+
+> From: Michael Stillman <mike@math.cornell.edu>
+> Subject: Re: vars and fields
+> Date: Sun, 2 Jul 2006 20:40:27 -0400
+> To: dan@math.uiuc.edu
+> 
+> I'm starting work now, after a day with family...
+> 
+> Are you at home or still in NJ?
+
+I'm in NJ, we fly home tomorrow PM.
+ 
+> As far as this goes: I'm not sure.  Here is another similar case:
+> 
+> i1 : R = frac (ZZ[x,y])
+> 
+> o1 = R
+> 
+> o1 : FractionField
+> 
+> i2 : vars R
+> 
+> o2 = | x y |
+> 
+>               1       2
+> o2 : Matrix R  <--- R
+
+Okay, I think the answer is vars should be empty.  We could also introduce
+allVars ...
+
+> On Jul 2, 2006, at 12:07 PM, Dan Grayson wrote:
+> 
+> >
+> > Is this right??
+> >
+> > i5 : vars GF 9
+> >
+> > o5 = | GF$a |
+> >
+> 
+
