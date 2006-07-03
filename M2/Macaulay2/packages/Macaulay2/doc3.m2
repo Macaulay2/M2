@@ -315,7 +315,7 @@ document {
      }
 
 document {
-     Key => mutable,
+     Key => {mutable,(mutable, Thing)},
      Headline => "whether something may be modified",
      TT "mutable x", " -- returns true or false, depending on whether x is mutable.",
      PARA{},
@@ -941,6 +941,48 @@ document { Key => {makeDocumentTag,(makeDocumentTag, Thing), (makeDocumentTag, D
      ///,
      SeeAlso => {"documentation keys"}
      }
+
+document { Key => (module, Ring),
+     Usage => "module R",
+     Inputs => {"R"},
+     Outputs => {{"the free module of rank 1 over the ring R"}},
+     EXAMPLE lines ///
+     	  ZZ
+	  module ZZ
+     ///}
+
+document { Key => (module, Vector),
+     Headline => "the module of a vector",
+     Usage => "module v",
+     Inputs => {"v"},
+     Outputs => {{"the module that contains the vector ", TT "v"}},
+     "The class of ", TT "v", " is also equal to the module of ", TT "v", ".",
+     EXAMPLE lines ///
+     	  F = ZZ^4
+	  v = F_2
+	  module v
+	  class v
+     ///}
+
+document { Key => {package,(package, Dictionary), (package, Thing), (package, HashTable), (package, Function), (package, DocumentTag), (package, Symbol)},
+     Headline => "get containing package",
+     Usage => "package x",
+     Inputs => {"x"},
+     Outputs => {{"the package in which ", TT "x", " was defined"}},
+     EXAMPLE lines ///
+     	  package sin
+	  package poly
+     ///}
+document { Key => {(rotate, ZZ, VisibleList),rotate},
+     Headline => "rotate a list",
+     Usage => "rotate(n,v)",
+     Inputs => {"n","v"},
+     Outputs => {{"the list obtained by rotating the list ", TT "v", " leftward ", TT "n", " places"}},
+     EXAMPLE lines ///
+     	 p = 0 .. 20
+	 rotate(3,p)
+	 rotate(-3,p)
+     ///}
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

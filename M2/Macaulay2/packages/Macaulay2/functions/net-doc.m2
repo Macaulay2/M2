@@ -97,7 +97,11 @@ undocumented {(net, Function),
 	  (net, Variety),
 	  (net, Vector),
 	  (net, VerticalList),
-	  (net, ZZ)
+	  (net, ZZ),
+	  (net, BettiTally),
+	  (net, COMMENT),
+	  (net, HypertextContainer),
+	  (net, SchurRing)
 	  }
 
 document {

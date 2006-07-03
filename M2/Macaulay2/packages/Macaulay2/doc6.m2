@@ -11,6 +11,8 @@ document {
      TT "even x", " -- returns true or false, tells whether x is an even integer.",
      PARA{},
      "See also ", TO "odd", "."}
+
+undocumented {(numeric, CC),(numeric, CCC),(numeric, Number),(numeric, RR),(numeric, RRR),(numeric, Thing),(numeric, VisibleList)}
 document {
      Key => numeric,
      Headline => "convert to floating point",

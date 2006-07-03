@@ -103,7 +103,9 @@ sheaf(Variety,Module) :=  CoherentSheaf => (X,M) -> if M.cache#?(sheaf,X) then M
 	  }
      )
 Module ~ := sheaf Module := CoherentSheaf => (M) -> sheaf(Proj ring M,M)
-Ideal ~ := sheaf Ideal := CoherentSheaf => (M) -> sheaf(Proj ring M,module M)
+
+-- I've removed these methods because they should really produce a coherent sheaf of ideals rather than a coherent sheaf of modules!
+-- Ideal ~ := sheaf Ideal := CoherentSheaf => (M) -> sheaf(Proj ring M,module M)
 
 variety = method()
 variety CoherentSheaf := Variety => (F) -> F.variety

@@ -18,6 +18,9 @@ document {
      SeeAlso => "peek'"
      }
 
+undocumented {(peek',ZZ,List), (peek',ZZ,Sequence), (peek',ZZ,HashTable), 
+     (peek',ZZ,ZZ), (peek',ZZ,BasicList), (peek',ZZ,Symbol), (peek',ZZ,Net), (peek',ZZ,String),
+     (peek',ZZ,Nothing), (peek',ZZ,Hypertext), (peek',ZZ,Dictionary), (peek',ZZ,HypertextParagraph)}
 
 document {
      Key => (peek',ZZ,Thing),

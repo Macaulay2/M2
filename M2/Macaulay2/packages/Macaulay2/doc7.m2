@@ -965,7 +965,7 @@ assert( 1 == dim I )
 assert( 2 == codim I )
 "
 document {
-     Key => (module, Ideal),
+     Key => {(module, Ideal),(module, MonomialIdeal)},
      Headline => "turn an ideal into a module",
      TT "module I", " -- produce the submodule of ", TT "R^1", " corresponding to an
      ideal ", TT "I", " in a ring ", TT "R", "."
@@ -1410,7 +1410,7 @@ document {
      SeeAlso => ProjectiveHilbertPolynomial
      }
 document {
-     Key => projectiveHilbertPolynomial,
+     Key => {projectiveHilbertPolynomial,(projectiveHilbertPolynomial, ZZ),(projectiveHilbertPolynomial, ZZ, ZZ)},
      Headline => "Hilbert polynomial of projective space",
      TT "projectiveHilbertPolynomial n", " -- produces the projective
      Hilbert polynomial corresponding to projective space of dimension n.",

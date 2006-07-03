@@ -315,7 +315,7 @@ RingMap == RingMap := (f,g) -> (
 	  e := toList prepend(1, d-1 : 0);
 	  null === for i from 1 to d do (
 	       if m e =!= n e then break false;
-	       e = rotate(e,1))))
+	       e = rotate(1,e))))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

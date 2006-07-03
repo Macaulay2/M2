@@ -562,6 +562,31 @@ document {
      }
 
 document {
+     Key => (sheaf, Variety, Ring),
+     Headline => "make a coherent sheaf of rings",
+     TT "sheaf(X,R)", " -- produce the coherent sheaf on the variety ", TT "X", " corresponding
+     to the ring ", TT "R", ".  The variety ", TT "X", " must be ", TT "Spec R", " or ", TT "Proj R", ".",
+     EXAMPLE lines ///
+     	  R = QQ[x,y,z]
+	  X = Proj R
+	  Y = Spec R
+	  sheaf(X,R)
+	  sheaf(Y,R)
+     ///}
+
+document {
+     Key => (sheaf, Variety),
+     Headline => "make a coherent sheaf",
+     TT "sheaf(X)", " -- produce the structure sheaf of rings on the variety ", TT "X", ".",
+     EXAMPLE lines ///
+     	  R = QQ[x,y,z]
+	  X = Proj R
+	  Y = Spec R
+	  sheaf X
+	  sheaf Y
+     ///}
+
+document {
      Key => (sheaf, Module),
      Headline => "make a coherent sheaf",
      TT "sheaf M", " -- produce the coherent sheaf on a projective variety ", TT "X", "

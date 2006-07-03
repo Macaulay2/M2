@@ -1,0 +1,25 @@
+
+    i6 : R = QQ[x,y]/(x^2-y^3)
+
+    o6 = R
+
+    o6 : QuotientRing
+
+    i7 : f = map(frac R, QQ[t_0..t_2], {x/1,y/1,x/y})
+
+					    x
+    o7 = map(frac(R),QQ [t , t , t ],{x, y, -})
+			  0   1   2         y
+
+    o7 : RingMap frac(R) <--- QQ [t , t , t ]
+				   0   1   2
+
+    i8 : kernel f
+
+    o8 = ideal(t t  - t )
+		1 2    0
+
+    o8 : Ideal of QQ [t , t , t ]
+		       0   1   2
+
+This is the wrong answer -- it seems to have ignored the relation between x and y, which should give a relation between t_0 and t_1.

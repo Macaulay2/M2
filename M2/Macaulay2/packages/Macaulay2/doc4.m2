@@ -85,7 +85,7 @@ document {
      }
 
 document {
-     Key => pairs,
+     Key => {pairs,(pairs, HashTable)},
      Headline => "list the pairs in a hash table",
      TT "pairs x", " -- makes a list of all key/value pairs ", TT "(k,v)", " in
      a hash table ", TT "x", ".",
@@ -348,14 +348,14 @@ document {
      }
 
 document {
-     Key => openDatabase,
+     Key => {openDatabase,(openDatabase, String)},
      Headline => "open a database file",
      TT "openDatabase \"filename\"", " -- open a database file with the given
      file name."
      }
 
 document {
-     Key => openDatabaseOut,
+     Key => {openDatabaseOut,(openDatabaseOut, String)},
      Headline => "open a database file for writing",
      TT "openDatabaseOut \"filename\"", " -- open a database file with the given
      file name, and allow changes to be made to it."
@@ -526,15 +526,22 @@ document {
      }
 
 document {
-     Key => profile,
+     Key => {profile,(profile, Function),(profile, String, Function)},
      Headline => "profile a function",
      TT "f = profile f", " -- replace a global function ", TT "f", " by a profiled version.",
      PARA{},
-     "The new function is the same as the old one, except that when
-     the new function is run, it will record the number of times it
-     is called and the total execution time.  Use ", TO "profileSummary", "
-     to display the data recorded so far."
-     }
+     "The new function is the same as the old one, except that when the new function is run, it will record the number of times it
+     is called and the total execution time.  Use the command ", TO "profileSummary", " to display the data recorded so far.",
+     EXAMPLE lines ///
+     	  R = ZZ/31[x]
+	  f = (x^110+1)*(x^13+1)
+	  time factor f
+     	  g = () -> factor f
+	  g = profile g
+	  h = profile("h", () -> factor f)
+	  for i to 10 do (g();h();h())
+     	  profileSummary
+     ///}
 
 document {
      Key => profileSummary,

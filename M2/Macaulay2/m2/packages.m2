@@ -210,7 +210,8 @@ newPackage("Core",
 	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}, 
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
 	  },
-     DebuggingMode => debuggingMode, 
+     DebuggingMode => debuggingMode,
+     HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION", 
      Headline => "A computer algebra system designed to support algebraic geometry")
 

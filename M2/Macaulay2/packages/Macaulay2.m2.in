@@ -3,6 +3,13 @@
 ver := "@PACKAGE_VERSION@"
 
 newPackage ("Macaulay2",
+     InfoDirSection => "Macaulay 2 and its packages", 
+     Headline => "Macaulay 2 documentation", 
+     Authors => {
+	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
+	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
+	  },
+     HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => ver)
 
 if version#"VERSION" =!= ver 

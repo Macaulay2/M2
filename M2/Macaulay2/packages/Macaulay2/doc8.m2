@@ -676,7 +676,7 @@ document {
      }
 
 document {
-     Key => modulo,
+     Key => {modulo,(modulo, Matrix, Matrix),(modulo, Matrix, Nothing),(modulo, Nothing, Matrix)},
      Headline => "find the pre-image of a map (low level version)",
      "modulo(f,g) - given homomorphisms ", TT "f", " and ", TT "g", " of free 
      modules with the same target, produces a homomorphism of free modules whose 
@@ -933,7 +933,7 @@ document {
      }
 
 document {
-     Key => newCoordinateSystem,
+     Key => {newCoordinateSystem,(newCoordinateSystem, PolynomialRing, Matrix)},
      Headline => "change variables",
      TT "newCoordinateSystem(S,m)", " -- takes a one-rowed matrix ", TT "m", " of
      independent linear forms over a ring ", TT "R", " and returns a list 
@@ -1082,7 +1082,7 @@ document {
 
 
 document {
-     Key => modifyRing,
+     Key => {modifyRing,(modifyRing, Ring)},
      Headline => "make a copy of a ring, with some features changed",
      TT "modifyRing(R,options)", " -- yields a ring similar to R, with 
      certain features changed.",

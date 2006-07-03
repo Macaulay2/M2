@@ -109,7 +109,7 @@ product(VisibleList, VisibleList, Function) := (x,y,f) -> (
 	  s))
 
 rotate = method()
-rotate(VisibleList,ZZ) := (s,n) -> (
+rotate(ZZ,VisibleList) := (n,s) -> (
      if #s == 0 then s
      else (
 	  n = n % #s;
