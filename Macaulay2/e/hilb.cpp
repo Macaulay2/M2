@@ -51,11 +51,12 @@ void partition_table::merge_in(const int *m)
     }
 }
 
-partition_table::partition_table(int nvars)
+partition_table::partition_table(int nvars, stash *mi_stash0)
   : n_vars(nvars),
     n_sets(nvars),
     adad(nvars),
-    aoccurs(nvars)
+    aoccurs(nvars),
+    mi_stash(mi_stash0)
 {
   dad = adad.alloc(nvars);
   occurs = aoccurs.alloc(nvars);
@@ -110,7 +111,7 @@ void partition_table::partition(MonomialIdeal * &I, array<MonomialIdeal *> &resu
 
   int first = result.length();
   for (k=0; k<n_sets; k++)
-    result.append(new MonomialIdeal(I->get_ring()));
+    result.append(new MonomialIdeal(I->get_ring(), mi_stash));
 
   // Now partition the monomials
   Bag *b;
@@ -209,11 +210,12 @@ static int find_pivot(const MonomialIdeal &I, int &npure, int *pure, intarray &m
 static void iquotient_and_sum(MonomialIdeal &I,
 		       const int *m, // varpower
 		       MonomialIdeal *&quot, 
-		       MonomialIdeal *&sum)
+		       MonomialIdeal *&sum,
+		       stash *mi_stash)
 {
   array< queue<Bag *> *> bins;
-  sum = new MonomialIdeal(I.get_ring());
-  quot = new MonomialIdeal(I.get_ring());
+  sum = new MonomialIdeal(I.get_ring(), mi_stash);
+  quot = new MonomialIdeal(I.get_ring(), mi_stash);
   Bag *bmin = new Bag();
   varpower::copy(m, bmin->monom());
   sum->insert_minimal(bmin);
@@ -284,11 +286,12 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix *m)
   R(RR),
   M(S->Nmonoms()),
   D(S->degree_monoid()),
+  mi_stash(new stash("hilb mi", sizeof(Nmi_node))),
   input_mat(m),
   this_comp(0),
   n_components(m->n_rows()),
   current(NULL),
-  part_table(S->n_vars())
+  part_table(S->n_vars(), mi_stash)
 {
   assert(D == R->Nmonoms());
   one = R->Ncoeffs()->from_int(1);
@@ -311,11 +314,12 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const MonomialIdeal *I)
   R(RR),
   M(S->Nmonoms()),
   D(S->degree_monoid()),
+  mi_stash(new stash("hilb mi", sizeof(Nmi_node))),
   input_mat(0),
   this_comp(0),
   n_components(1),
   current(NULL),
-  part_table(S->n_vars())
+  part_table(S->n_vars(),mi_stash)
 {
   assert(D == R->Nmonoms());
   one = R->Ncoeffs()->from_int(1);
@@ -353,6 +357,7 @@ hilb_comp::~hilb_comp()
   R->Ncoeffs()->remove(one);
   R->Ncoeffs()->remove(minus_one);
   D->remove(LOCAL_deg1);
+  delete mi_stash;
 }
 
 int hilb_comp::calc(int n_steps)
@@ -451,9 +456,9 @@ void hilb_comp::recurse(MonomialIdeal *&I, const int *pivot_vp)
   current->h0 = R->from_int(0);
   M->degree_of_varpower(pivot_vp, LOCAL_deg1);
   current->h1 = R->make_flat_term(one, LOCAL_deg1); // t^(deg vp)
-  MonomialIdeal *quot = new MonomialIdeal(S);
-  MonomialIdeal *sum = new MonomialIdeal(S);
-  iquotient_and_sum(*I, pivot_vp, quot, sum);
+  MonomialIdeal *quot = new MonomialIdeal(S, mi_stash);
+  MonomialIdeal *sum = new MonomialIdeal(S, mi_stash);
+  iquotient_and_sum(*I, pivot_vp, quot, sum, mi_stash);
   part_table.partition(sum, current->monids);
   current->first_sum = current->monids.length() - 1;
   part_table.partition(quot, current->monids);

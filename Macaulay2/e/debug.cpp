@@ -106,6 +106,13 @@ void dmonideal(MonomialIdeal *m)
   m->text_out(o);
   emit(o.str());
 }
+
+void dstash()
+{
+  buffer o;
+  stash::stats(o);
+  emit(o.str());
+}
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:
