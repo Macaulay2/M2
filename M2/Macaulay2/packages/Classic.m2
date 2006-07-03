@@ -32,6 +32,7 @@ arrayPolyP = toList % seqP_";" listPolyP
 export poly ; poly = method()
 poly String :=  polyP : nonspaceAnalyzer
 ideal String := ideal % listPolyP : nonspaceAnalyzer
+monomialIdeal String := monomialIdeal % listPolyP : nonspaceAnalyzer
 matrix String := opts -> matrix_opts % arrayPolyP : nonspaceAnalyzer
 -- end --
 
