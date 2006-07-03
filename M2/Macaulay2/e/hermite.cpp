@@ -367,6 +367,7 @@ void HermiteComputation::gb_reduce(vec &f) const
   // (in absolute value).
   vecterm head;
   vecterm *result = &head;
+  head.next = 0;
   while (f != 0) 
     {
       int x = f->comp;
@@ -402,6 +403,7 @@ void HermiteComputation::gb_reduce(vec &f, vec &fsyz) const
   // (in absolute value).
   vecterm head;
   vecterm *result = &head;
+  head.next = 0;
   while (f != 0) 
     {
       int x = f->comp;

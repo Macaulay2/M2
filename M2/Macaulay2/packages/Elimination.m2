@@ -26,7 +26,7 @@ inversePermutation = (p) -> (
      scan(0..#p-1, i -> q#(p#i) = i);
      toList q)
 
-eliminate (Ideal, List) := (I,v) -> (
+eliminate (List, Ideal) := (v,I) -> (     
      if #v === 0 then return I;
      R := ring I;
      varlist := getIndices(ring I,v);
@@ -45,7 +45,9 @@ eliminate (Ideal, List) := (I,v) -> (
      ideal mingens ideal toR selectInSubring(1,generators gb J)
      )
 
-eliminate (Ideal, RingElement) := (I,v) -> eliminate(I,{v})
+eliminate (Ideal, RingElement) := (I,v) -> eliminate({v},I)
+eliminate (Ideal, List) := (I,v) -> eliminate(v,I)
+eliminate(RingElement, Ideal) := (v,I) -> eliminate({v},I)
 
 -----------------------------------------------
 -- Sylvester matrix, resultant, discriminant --
@@ -87,7 +89,16 @@ beginDocumentation()
 
 document {
      Key => Elimination,
-     Headline => "eliminating specified variables, and applications"
+     Headline => "eliminating specified variables, and Sylvester resultant",
+     "This package contains functions to eliminate variables from an ideal (that is, 
+     intersect the ideal with the subring of the variables to keep), and to compute
+     Sylvester resultants.",
+     PARA{
+	  "It would be nice to implement multivariate resultants, Bezoutians, and
+	  sparse resultants.  Laurent Buse has written code for this in the past.
+	  We hope to provide a package, Resultants, which will do this.  If you
+	  are willing to help write this, please contact the author if this package!"
+	  },
      }
 
 document {
@@ -104,29 +115,47 @@ document {
 	  a variable in that ring.  The result is the determinant of the Sylvester matrix, 
 	  ", TT "sylvesterMatrix(f,g,x)", ".  The resultant of ", TT "f", " and its derivative with respect to ", TT "x", " is the
 	  discriminant, ", TT "discriminant(f,x)", "."},
-     EXAMPLE {
-	  "R = ZZ[x,a,b,c,d];",
-	  "f = x^2+a*x+b",
-	  "g = x^2+c*x+d",
-	  "resultant(f,g,x)",
-	  "sylvesterMatrix(f,g,x)",
-	  "discriminant(f,x)"
-	  },
+     EXAMPLE lines ///
+	  R = ZZ/101[x,a,b,c,d,Degrees=>{1,1,2,1,2}];
+	  R = ZZ[x,a,b,c,d]	  
+	  f = x^7+3*x^4+a*x+b
+	  g = x^8+x^5+c*x+d
+	  time eliminate(ideal(f,g),x)
+	  time ideal resultant(f,g,x)
+	  sylvesterMatrix(f,g,x)
+	  discriminant(f,x)
+	  ///,
      SeeAlso => {"sylvesterMatrix", "discriminant", "eliminate"}
      }
 
 
+undocumented {
+	  (eliminate, Ideal, RingElement), 
+	  (eliminate, Ideal, List)
+     }
 document {
-     Key => eliminate,
-     EXAMPLE {
-	  "R = ZZ/101[x,a,b,c,d,Degrees=>{1,1,2,1,2}];",
-	  "f = x^2+a*x+b",
-	  "g = x^2+c*x+d",
-	  "time eliminate(ideal(f,g),x)",
-	  "time ideal resultant(f,g,x)",
-	  "sylvesterMatrix(f,g,x)",
-	  "discriminant(f,x)"
+     Key => {eliminate,
+	  (eliminate, RingElement, Ideal), 
+	  (eliminate, List, Ideal)
 	  },
+     Usage => "eliminate(v,J)",
+     Inputs => {
+	  "v" => Nothing => {ofClass RingElement, " or ", ofClass List, ", a variable or list of variables of a polynomial ring ", TT "R"},
+	  "J" => Ideal => {"in the ring ", TT "R"},
+	  },
+     EXAMPLE lines ///
+	  R = ZZ/101[x,a,b,c,d]	  
+	  f = x^2+a*x+b
+	  g = x^2+c*x+d
+	  time eliminate(x,ideal(f,g))
+	  time ideal resultant(f,g,x)
+	  sylvesterMatrix(f,g,x)
+	  discriminant(f,x)
+	  ///,
+     PARA{	  
+       "One may also switch the order of arguments: the ideal being the first argument.  
+       This usage has been deprecated, and should no longer be used."},
+     Caveat => {"The ring ", TT "R", " should not be a quotient ring, or a non-commutative ring."},
      SeeAlso => "sylvesterMatrix"
      }
 
@@ -139,7 +168,16 @@ document {
 	  },
      Outputs => {
      	  "d" => {"the discriminant of ", TT "f", " with respect to ", TT "x"}
-	  }
+	  },
+     EXAMPLE lines ///
+	  R = ZZ/101[x,a,b,c,d]	  
+	  f = x^2+a*x+b
+	  g = x^2+c*x+d
+	  time eliminate(x,ideal(f,g))
+	  time ideal resultant(f,g,x)
+	  sylvesterMatrix(f,g,x)
+	  discriminant(f,x)
+	  ///
      }
 
 document {
@@ -154,6 +192,16 @@ document {
      	  "s" => {"the Sylvester matrix of ", TT "f", " and ", TT "g", " with respect to ", TT "x"}
 	  },
      "Its determinant is the resultant of ", TT "f", " and ", TT "g", ".",
+     EXAMPLE lines ///
+	  R = ZZ/101[x,a,b,c,d,Degrees=>{1,1,2,1,2}];
+	  R = ZZ[x,a,b,c,d]	  
+	  f = x^7+3*x^4+a*x+b
+	  g = x^8+x^5+c*x+d
+	  time eliminate(ideal(f,g),x)
+	  time ideal resultant(f,g,x)
+	  sylvesterMatrix(f,g,x)
+	  discriminant(f,x)
+	  ///,
      SeeAlso => "resultant"
      }
 
@@ -180,6 +228,9 @@ time resultant(f1,f2,a)
 time eliminate(ideal(f1,f2),a)
 ///
 
+end
+loadPackage "Elimination"
+installPackage Elimination
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages Elimination.installed"
 -- End:

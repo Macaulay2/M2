@@ -29,8 +29,9 @@ class partition_table
   void merge_in(const int *m);
   int representative(int x);
 
+  stash *mi_stash; // for all of the nodes in all of the monomial ideals
 public:
-  partition_table(int nvars);
+  partition_table(int nvars, stash *mi_stash0);
   ~partition_table() {}
 
   void reset(int nvars);
@@ -54,6 +55,8 @@ class hilb_comp : public mutable_object
   const PolynomialRing *R;		// This is the output degree ring.
   const Monoid *M;		// S->Nmonoms()
   const Monoid *D;		// R->Nmonoms() == S->degree_monoid()
+
+  stash *mi_stash; // for all of the nodes in all of the monomial ideals
 
   // Collected values from the matrix
   const Matrix *input_mat;	// The input matrix
