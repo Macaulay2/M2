@@ -31,7 +31,7 @@ document {
      PARA{},
      TO primaryDecomposition, " also computes the associated primes.  After doing 
      a primaryDecomposition, calling ", TT "associatedPrimes", " requires no new computation,
-     and the list of associated primes are in the same order as 
+     and the list of associated primes is in the same order as 
      the list of primary components returned by ", TT "primaryDecomposition", ".",
      PARA{},
      "If the ideal is ", ofClass MonomialIdeal, ", then a more efficient 
