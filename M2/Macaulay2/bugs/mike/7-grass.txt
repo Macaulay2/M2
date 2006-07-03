@@ -1,0 +1,163 @@
+From: Dan Grayson <dan@math.uiuc.edu>
+Date: July 1, 2006 7:29:52 AM EDT
+To: Michael Stillman <mike@math.cornell.edu>
+Cc: dan@math.uiuc.edu
+Subject: Re: Grass
+Reply-To: dan@math.uiuc.edu
+
+
+One of those two functions is just wrong (I've edited the display on  
+line o17
+to make the discrepancy clear:
+
+     Macaulay 2, version 0.9.10
+     with packages: Classic, Elimination, LLLBases,  
+PrimaryDecomposition, SchurRings, TangentCone
+
+     i1 : J = Grassmannian (2,5);
+
+     i2 : R = ring J;
+
+     i4 : I = Grass(2,5);
+
+     i5 : S = ring I
+
+     o5 = S
+
+     o5 : PolynomialRing
+
+     i6 : f = map(R,S,vars R)
+
+     o6 = map(R,S,{a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q,  
+r, s, t})
+
+     o6 : RingMap R <--- S
+
+     i7 : J' = f I;
+
+     i8 : J == J'
+
+     o8 = false
+
+     i17 : net transpose gens J | net transpose gens J'
+
+     o17 = {-2} | pr-os+mt          |{-2} | pr-os+mt          |
+	  {-2} | jr-is+gt          |{-2} | jr-is+gt          |
+	  {-2} | pq-ns+lt          |{-2} | pq-ns+lt          |
+	  {-2} | oq-nr+kt          |{-2} | oq-nr+kt          |
+	  {-2} | mq-lr+ks          |{-2} | mq-lr+ks          |
+	  {-2} | jq-hs+ft          |{-2} | jq-hs+ft          |
+	  {-2} | iq-hr+et          |{-2} | iq-hr+et          |
+	  {-2} | gq-fr+es          |{-2} | gq-fr+es          |
+	  {-2} | dq-cr+bs-at       |
+	  {-2} | jo-ip+dt          |{-2} | jo-ip+dt          |
+	  {-2} | mn-lo+kp          |{-2} | mn-lo+kp          |
+	  {-2} | jn-hp+ct          |{-2} | jn-hp+ct          |
+	  {-2} | in-ho+bt          |{-2} | in-ho+bt          |
+	  {-2} | gn-fo+ep+at       |
+	  {-2} | dn-co+bp          |{-2} | dn-co+bp          |
+	  {-2} | jm-gp+ds          |{-2} | jm-gp+ds          |
+	  {-2} | im-go+dr          |{-2} | im-go+dr          |
+	  {-2} | hm-fo+ep+cr-bs+at |{-2} | hm-fo+ep+cr-bs+at |
+	  {-2} | jl-fp+cs          |{-2} | jl-fp+cs          |
+	  {-2} | il-fo+cr+at       |{-2} | il-fo+cr+at       |
+	  {-2} | hl-fn+cq          |{-2} | hl-fn+cq          |
+	  {-2} | gl-fm+as          |{-2} | gl-fm+as          |
+	  {-2} | dl-cm+ap          |{-2} | dl-cm+ap          |
+	  {-2} | jk-ep+bs-at       |{-2} | jk-ep-dq+cr       |
+	  {-2} | ik-eo+br          |{-2} | ik-eo+br          |
+	  {-2} | hk-en+bq          |{-2} | hk-en+bq          |
+	  {-2} | gk-em+ar          |{-2} | gk-em+ar          |
+	  {-2} | fk-el+aq          |{-2} | fk-el+aq          |
+	  {-2} | dk-bm+ao          |{-2} | dk-bm+ao          |
+	  {-2} | ck-bl+an          |{-2} | ck-bl+an          |
+	  {-2} | gh-fi+ej          |{-2} | gh-fi+ej          |
+	  {-2} | dh-ci+bj          |{-2} | dh-ci+bj          |
+	  {-2} | df-cg+aj          |{-2} | df-cg+aj          |
+	  {-2} | de-bg+ai          |{-2} | de-bg+ai          |
+	  {-2} | ce-bf+ah          |{-2} | ce-bf+ah          |
+
+     i18 : d*q-c*r+b*s-a*t % J'
+
+     o18 = d*q - c*r + b*s - a*t
+
+     o18 : R
+
+
+> From: Michael Stillman <mike@math.cornell.edu>
+> Subject: Re: Grass
+> Date: Fri, 30 Jun 2006 23:53:34 -0400
+> To: dan@math.uiuc.edu
+>
+> Please change it.  However, could yo do the following first:
+>
+> J = Grassmannian(2,5)
+> time res J
+>
+> and then make sure that afterwards, the time hasn't changed (if it
+> has, then the variable order has changed).
+>
+>
+> On Jun 30, 2006, at 11:44 PM, Dan Grayson wrote:
+>
+>>
+>> This routine wipes out a *lot* of global variables.  I think I
+>> should change that.
+>>
+>>
+>>     i3 : 	 Grassmannian(1,3)
+>>
+>>     o3 = ideal(c*d - b*e + a*f)
+>>
+>> 		    ZZ
+>>     o3 : Ideal of ----- [a, b, c, d, e, f]
+>> 		  31991
+>>
+>>     i4 : a
+>>
+>>     o4 = a
+>>
+>> 	   ZZ
+>>     o4 : ----- [a, b, c, d, e, f]
+>> 	 31991
+>>
+>>     i5 : b
+>>
+>>     o5 = b
+>>
+>> 	   ZZ
+>>     o5 : ----- [a, b, c, d, e, f]
+>> 	 31991
+>>
+>>     i6 : c
+>>
+>>     o6 = c
+>>
+>> 	   ZZ
+>>     o6 : ----- [a, b, c, d, e, f]
+>> 	 31991
+>>
+>>     i7 : d
+>>
+>>     o7 = d
+>>
+>> 	   ZZ
+>>     o7 : ----- [a, b, c, d, e, f]
+>> 	 31991
+>>
+>>     i8 : e
+>>
+>>     o8 = e
+>>
+>> 	   ZZ
+>>     o8 : ----- [a, b, c, d, e, f]
+>> 	 31991
+>>
+>>     i9 : f
+>>
+>>     o9 = f
+>>
+>> 	   ZZ
+>>     o9 : ----- [a, b, c, d, e, f]
+>> 	 31991
+>
