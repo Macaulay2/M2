@@ -31,7 +31,7 @@ document {
      the decomposition into absolutely irreducible factors
      occurs:",
       EXAMPLE lines ///
-	  I=ideal(x^2+y^2)
+	  I = ideal(x^2+y^2)
 	  minimalPrimes I
 	  ///,
      PARA{},
@@ -50,7 +50,7 @@ document {
 	  P == oo
           ///,
      SeeAlso => {topComponents, removeLowestDimension, radical, irreducibleCharacteristicSeries,
-	  dual}
+	  (dual,MonomialIdeal)}
      }
 
  -- doc10.m2:475:     Key => minimalPrimes,
