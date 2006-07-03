@@ -39,7 +39,7 @@ document {
 	  "C/degree"
 	  },
      PARA{},
-     "The corresponding list of associated prime ideals is cached in ", TT "I.cache.associatedPrimes", ",
+     "The corresponding list of associated prime ideals is cached in ", TT ///I.cache#"AssociatedPrimes"///, ",
      and can be obtained by using ", TO (associatedPrimes,Ideal), ".",
      EXAMPLE {
 	  "associatedPrimes I / print;"

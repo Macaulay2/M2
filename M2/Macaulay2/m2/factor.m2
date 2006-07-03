@@ -74,7 +74,7 @@ topCoefficients RingElement := f -> (
      	  (monoms,coeffs) := topCoefficients matrix{{f}};
      	  (monoms_(0,0), coeffs_(0,0))))
 
-minimalPrimes Ideal := (I) -> if I.cache.?minimalPrimes then I.cache.minimalPrimes else I.cache.minimalPrimes = (
+minimalPrimes Ideal := (I) -> if I.cache.?minimalPrimes then I.cache#"MinimalPrimes" else I.cache#"MinimalPrimes" = (
      R := ring I;
      if isQuotientRing R then (
 	  A := ultimate(ambient, R);

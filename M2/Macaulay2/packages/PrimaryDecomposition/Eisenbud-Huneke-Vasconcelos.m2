@@ -11,7 +11,7 @@
 --
 
 ass1 := (I) -> (
-     if I.cache#?"Assassinator" then I.cache#"Assassinator" else I.cache#"Assassinator" = (
+     if I.cache#?"AssociatedPrimes" then I.cache#"AssociatedPrimes" else I.cache#"AssociatedPrimes" = (
      assassinator := {};
      RI := ring I;
      polyRing := ring presentation RI;
@@ -37,8 +37,10 @@ ass1 := (I) -> (
      ))
 
 
+-- WARNING: this code below does NOT compute the associated primes of I.
+-- Why not? (MES, 3 Jul 2006).
 ass2 := (I) -> (
-     if I.cache#?"Assassinator" then I.cache#"Assassinator" else I.cache#"Assassinator" = (
+     if I.cache#?"AssociatedPrimes" then I.cache#"AssociatedPrimes" else I.cache#"AssociatedPrimes" = (
      assassinator := {};
      local newcomponents;
      RI := ring I;
@@ -64,16 +66,7 @@ ass2 := (I) -> (
      ))
 
 
-associatedPrimes Ideal := List => o -> (I) -> (
-     if I.cache#?"Assassinator" then I.cache#"Assassinator" else I.cache#"Assassinator" = (
-     	  if o.Strategy === 1 then (
-	       if debugLevel >= 1 then stderr << "associatedPrimes: using Strategy 1" << endl;
-	       ass1 I) 
-     	  else (
-	       stderr << "--warning: Strategy 2 has been known to fail with 'associatedPrimes'!" << endl;
-	       if debugLevel >= 1 then stderr << "associatedPrimes: using Strategy 2" << endl;
-	       ass2 I)))
-
+associatedPrimes Ideal := List => o -> (I) -> ass1 I
 
 TEST ///
 -- This last little code is to check if two lists are the

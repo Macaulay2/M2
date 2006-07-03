@@ -89,8 +89,8 @@ newdecompose(Ideal) := List => (I) -> (
      squarefree := (f) -> (
      	  g := factor f;
      	  value apply(g, i -> i#0));
-     if I.cache.?minimalPrimes then I.cache.minimalPrimes
-     else I.cache.minimalPrimes = (
+     if I.cache#?"MinimalPrimes" then I.cache#"MinimalPrimes"
+     else I.cache#"MinimalPrimes" = (
        I1 := ideal apply(numgens I, i -> squarefree(I_i));
        I2 := trim ideal generators gb I1;
        if numgens I2 > 0 then minimalPrimes I2 else {}))
@@ -520,7 +520,7 @@ SYprimaryDecomposition = (I) -> (		    -- called by a later file
 	  PDdonode C
 	  );
      if C.H != I then error "algorithm missed components!";
-     I.cache#"Assassinator" =  apply(C.U, i -> trim(i#1));
+     I.cache#"AssociatedPrimes" =  apply(C.U, i -> trim(i#1));
      apply(C.U, i -> trim(i#0)))
 
 TEST ///
