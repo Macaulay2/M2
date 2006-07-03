@@ -935,7 +935,7 @@ installPackage Package := opts -> pkg -> (
 	  if version#"dumpdata" and pkg#"title" == "Macaulay2" then (
 	       f << endl << fix "(set -x ; \"$ENCAP_TARGET\"/bin/" << version#"M2 name" << " --stop --dumpdata)" << endl;
 	       );
-	  fileMode(f,octal "755");
+	  fileMode(octal "755",f);
 	  f << close;
 	  -- preremove
      	  f = buildDirectory | "preremove"
@@ -944,7 +944,7 @@ installPackage Package := opts -> pkg -> (
 	  << ///for i in *.info/// << endl
 	  << fix ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" --delete "$i")/// << endl
 	  << ///done/// << endl;
-	  fileMode(f,octal "755");
+	  fileMode(octal "755",f);
  	  f << close;
 	  -- encapinfo
 	  f = buildDirectory | "encapinfo"
@@ -953,14 +953,14 @@ installPackage Package := opts -> pkg -> (
 	  removeLastSlash := s -> if s#?0 and s#-1 === "/" then substring(s,0,#s-1) else s;
 	  scan(("libm2","packagedoc","packageexamples","packagehtml","packageimages","packagesrc","packagetests"),
 	       k -> f << "linkdir " << (if instance(LAYOUT#k, Function) then removeLastSlash LAYOUT#k "*" else removeLastSlash LAYOUT#k) << endl);
-	  fileMode(f,octal "644");
+	  fileMode(octal "644",f);
 	  f << close;
 	  -- INSTALL
 	  if pkg#"title" == "Macaulay2" then (
 	       assert( class installFile === String );
 	       f = buildDirectory | "INSTALL"
 	       << installFile;
-	       fileMode(f,octal "644");
+	       fileMode(octal "644",f);
 	       f << close;
 	       );
 	  );

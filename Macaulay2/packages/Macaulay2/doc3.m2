@@ -924,10 +924,31 @@ document { Key => {listSymbols,(listSymbols, Dictionary), (listSymbols, List)},
      Inputs => { "v" => {ofClass{List,Dictionary}, "; if it's a list, it should be a list of symbols"}},
      Outputs => { Net => {"a compact display of the symbols in ", TT "v", " and their values"}},
      EXAMPLE lines ///
-     	  x:=3; y:="hi there"; z:=2^30;
+     	  x:=3; y:="hi there"; z:=2^30; f = x->x;
 	  listSymbols { symbol x, symbol y }
 	  listSymbols first localDictionaries()
      ///}
+
+document { Key => listLocalSymbols,
+     Headline => "compact display of symbols and their values",
+     Usage => "listLocalSymbols f",
+     Inputs => { "f" => {ofClass{Pseudocode,Symbol,Dictionary,Function}}},
+     Outputs => { Net => {"a compact display of the symbols in the local dictionaries attached to the closure ", TT "f", ", and their values"}},
+     EXAMPLE lines ///
+     	  x:=3; y:="hi there"; z:=2^30; f = x->x;
+	  listLocalSymbols f
+	  listLocalSymbols symbol x
+     ///,
+     SYNOPSIS (
+     	  Usage => "listLocalSymbols(X,f)",
+     	  Inputs => { "X" => Type, "f" => {ofClass{Pseudocode,Symbol,Dictionary,Function}}},
+     	  Outputs => { Net => {"a compact display of the symbols in the local dictionaries attached to the closure ", TT "f", ", and their values, provided their
+		    values are instances of the type ", TT "X"}},
+	  EXAMPLE lines ///
+	       listLocalSymbols(ZZ,f)
+	  ///
+	  )
+     }
 
 document { Key => {makeDocumentTag,(makeDocumentTag, Thing), (makeDocumentTag, DocumentTag), (makeDocumentTag, String)},
      Headline => "convert a documentation key to a documentation tag",
@@ -982,6 +1003,249 @@ document { Key => {(rotate, ZZ, VisibleList),rotate},
      	 p = 0 .. 20
 	 rotate(3,p)
 	 rotate(-3,p)
+     ///}
+document { Key => fileDictionaries,
+     Headline => "local dictionaries for loaded files",
+     Usage => "fileDictionaries#fn",
+     Inputs => { "fn" => String },
+     Outputs => {{"the local dictionary in effect for the scope of the file loaded from the path ", TT "fn"}},
+     EXAMPLE lines ///
+     	  loadedFiles#3
+	  fileDictionaries#oo
+	  keys oo
+     ///}
+document { Key => fileMode,
+     Headline => "set or get file mode"
+     }
+document { Key => (fileMode,String),
+     Headline => "get file mode",
+     Usage => "fileMode fn",
+     Inputs => {"fn"},
+     Outputs => {{"the mode of the file located at the filename or path ", TT "fn"}},
+     EXAMPLE lines ///
+     	  fn = temporaryFileName()
+	  fn << "hi there" << close
+	  fileMode fn
+	  removeFile fn
+     ///	       
+     }
+document { Key => (fileMode,File),
+     Headline => "get file mode",
+     Usage => "fileMode f",
+     Inputs => {"f"},
+     Outputs => {{"the mode of the open file ", TT "f"}},
+     EXAMPLE lines ///
+     	  fn = temporaryFileName()
+	  f = fn << "hi there"
+	  fileMode f
+	  close f
+	  removeFile fn
+     ///	       
+     }
+document { Key => (fileMode,ZZ,String),
+     Headline => "set file mode",
+     Usage => "fileMode(mo,fn)",
+     Inputs => {"mo","fn"},
+     Consequences => {{"the mode of the file located at the filename or path ", TT "fn", " is set to ", TT "mo"}},
+     EXAMPLE lines ///
+     	  fn = temporaryFileName()
+	  fn << "hi there" << close
+	  m = fileMode fn
+	  fileMode(m|7,fn)
+	  fileMode fn
+	  removeFile fn
+     ///	       
+     }
+
+document { Key => (fileMode,ZZ,File),
+     Headline => "set file mode",
+     Usage => "fileMode(mo,f)",
+     Inputs => {"mo","f"},
+     Consequences => {{"the mode of the open file ", TT "f", " is set to ", TT "mo"}},
+     EXAMPLE lines ///
+     	  fn = temporaryFileName()
+	  f = fn << "hi there"
+	  m = 7 + 7*8 + 7*64
+	  fileMode(m,f)
+	  fileMode f
+	  close f
+	  fileMode fn
+	  removeFile fn
+     ///	       
+     }
+
+document { Key => {frames,(frames, Symbol), (frames, Sequence), (frames, Pseudocode), (frames, Function)},
+     Headline => "get the frames associated to a closure",
+     Usage => "frames f",
+     Inputs => { "f" => {"() or ", ofClass{Symbol,Function,Pseudocode}}},
+     Outputs => {{"a list of mutable lists, the frames attached to the closure ", TT "f", " or, if ", TT "f", " is ", TT "()", ", then
+	       the frames attached to the current lexical scope" 
+	       }},
+     "This function is occasionally useful as a debugging tool.",
+     EXAMPLE lines ///
+     	  f = (x,y,z) -> t -> t
+	  g = f(111,222,"hi there")
+	  frames g
+	  peek first oo
+     ///}
+
+document {
+     Key => globalAssignFunction,
+     Headline => "the standard method for the global assignment hook",
+     TT "globalAssignFunction", " -- the standard function which can be used
+     as a method for ", TO GlobalAssignHook, " so that certain types of
+     things, when assigned to a global variable, will acquire
+     the name of the global variable as their name.  The companion function
+     ", TO "globalReleaseFunction", " is used to release the name when the
+     global variable gets reassigned.",
+     PARA{},
+     "Another thing done by this function is to apply ", TO use, " to the thing.
+     This is used for polynomial rings to assign values to the symbols representing
+     the variables (indeterminates) in the ring.",
+     PARA{},
+     EXAMPLE {
+	  "X = new Type of MutableHashTable",
+      	  "x = new X",
+      	  "X.GlobalAssignHook = globalAssignFunction",
+      	  "X.GlobalReleaseHook = globalReleaseFunction",
+      	  "x' = new X",
+      	  "t = {x,x'}",
+      	  "x = x' = 44",
+      	  "t",
+      	  "code globalAssignFunction",
+	  },
+     SeeAlso => { "name", "symbol", "SelfInitializingType" }
+     }
+
+document {
+     Key => globalReleaseFunction,
+     Headline => "the standard method for the global variable release hook",
+     TT "globalReleaseFunction", " -- the standard function which can be used as
+     a method for ", TO GlobalReleaseHook, " so that certain types of things, which
+     have acquired as their name the name of a global variable to which they have
+     been assigned, will lose that name when a different value is assigned to
+     the variable.",
+     PARA{},
+     SeeAlso => "globalAssignFunction"
+     }
+
+document { Key => globalAssignment,
+     Headline => "install standard global assignment method",
+     Usage => "globalAssignment X",
+     Inputs => { "X" => Type },
+     Consequences => {{"the functions ", TO "globalAssignFunction", " and ", TO "globalReleaseFunction", " are installed in the type ", TT "X", " 
+	       under ", TO "GlobalAssignHook", " and ", TO "GlobalReleaseHook", ", respectively.  The effect is that when an object of type ", TT "X", " is
+	       assigned to a global variable, the function ", TO "use", " is called on it, and thereafter that object will print out as the name of the variable."
+	       }},
+     "One type for which this has been done is ", TO "Ring", ", as illustrated in the following example.",
+     EXAMPLE lines ///
+     	  S := QQ[x]
+	  S
+	  S^3
+	  R = S
+	  S
+	  S^3
+     ///}
+
+document { Key => minimizeFilename,
+     Headline => "minimize a file name",
+     Usage => "minimizeFilename fn",
+     Inputs => { "fn" => "a path to a file" },
+     Outputs => {{"a minimized path, equivalent to ", TT "fn"}},
+     EXAMPLE lines ///
+         minimizeFilename "a/b/c/../d"
+	 minimizeFilename "../../../../../../"
+     ///}
+
+document { Key => info,
+     Headline => "convert hypertext to info format",
+     "This function is used internally when preparing documentation."
+     }
+
+document { Key => "nullaryMethods",
+     "This experimental hash table is to contain methods for handling the case where a method function, ", TT "f", " say, is called with
+     0 argument, i.e., as ", TT "f()", "."
+     }
+
+document { Key => pager,
+     Headline => "display with paging",
+     Usage => "pager x",
+     Inputs => {"x"},
+     Consequences => {{TT "x", " is converted to a net and displayed through the pager specified by the environment variable PAGER, if set,
+	       else through the program ", TT "more", "."
+	       }}}
+
+document { Key => precision,
+     Usage => "precision x",
+     Inputs => { "x" => RRR },
+     Outputs => { ZZ => {"the precision of x"}}}
+
+document { Key => setPrecision,
+     Usage => "setPrecision n",
+     Inputs => { "n" => ZZ },
+     Consequences => {{"the current precision is set to ", TT "n", " bits"}},
+     Outputs => { ZZ => {"the previous precision"}},
+     "This function may be phased out in favor of something better.",
+     EXAMPLE lines ///
+     	  setPrecision 200
+	  x = sqrt toRRR 2
+	  precision x
+	  x^2-2
+     ///
+     }
+
+document { Key => "printingTimeLimit",
+     "This variable specifies the number of seconds to allow for printing an output line"
+     }
+
+document { Key => promptWidth,
+     Usage => "promptWidth()",
+     Outputs => {{"the current width of an input or output prompt"}},
+     EXAMPLE lines ///
+     	  promptWidth()
+     ///}
+
+document { Key => "stopIfError",
+     Headline => "whether to stop the program when an error occurs"
+     }
+document { Key => "interpreterDepth",
+     Headline => "nesting depth of the interpreter",
+     SeeAlso => {commandInterpreter}}
+document { Key => "printingPrecision",
+     Headline => "current precision for printing real numbers",
+     "This variable is in place, but the corresponding code is not implemented yet."
+     }
+document { Key => "notify",
+     Headline => "whether to notify the user when a file is loaded"
+     }
+document { Key => "fileExitHooks",
+     Headline => "a list of hooks (functions) to execute when the current file has been loaded"
+     }
+document { Key => "engineDebugLevel",
+     Headline => "current engine debugging level",
+     "This variable is in place, but the corresponding code is not implemented yet."
+     }
+document { Key => "debuggingMode",
+     Headline => "whether to enter the debugger when an error occurs",
+     Usage => "debuggingMode = true",
+     Consequences => {{"the debugger will be entered when an error occurs"}}}
+document { Key => "debugLevel",
+     Headline => "current level debugging",
+     Usage => "debugLevel = n",
+     Inputs => {"n" => ZZ },
+     "Some M2 routines will display debugging information if ", TO "debugLevel", " is set to a value greater than 0."}
+document { Key => "debugError",
+     Headline => "a function to debug",
+     Usage => "debugError()",
+     "In certain situations, after an error occurs, the offending code, in the form of a function, will be stored in the
+     variable ", TO "debugError", ", so the user can debug it by running it."
+     }
+document { Key => "currentPackage",
+     Headline => "the current package",
+     EXAMPLE lines ///
+     	  newPackage "Foo"
+	  currentPackage
+	  endPackage "Foo"
      ///}
 
 -- Local Variables:

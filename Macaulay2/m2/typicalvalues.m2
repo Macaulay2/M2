@@ -155,6 +155,14 @@ lines(String,String) := List => lines
 lines String := List => lines
 linkFile(String,String) := Nothing => linkFile
 replace(String,String,String) := String => replace
+fileMode(String) := ZZ => fileMode
+fileMode(ZZ,File) := fileMode
+fileMode(File) := fileMode
+fileMode(ZZ,String) := fileMode
+frames(Sequence) := frames
+frames(Symbol) := frames
+frames(Function) := frames
+frames(Pseudocode) := frames
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -1061,7 +1061,7 @@ document {
      }
 
 document {
-     Key => substring,
+     Key => {substring,(substring, String, ZZ),(substring, ZZ, String),(substring, ZZ, ZZ, String),(substring, String, ZZ, ZZ)},
      Headline => "extract part of a string",
      TT "substring(i,n,s)", " -- yields the substring of the string ", TT "s", " starting at 
      position ", TT "i", " with length ", TT "n", ".",
@@ -1080,7 +1080,7 @@ document {
      }
 
 document {
-     Key => reverse,
+     Key => {(reverse, BasicList),reverse},
      Headline => "reverse a list",
      TT "reverse v", " -- yields a list containing the elements of the 
      list ", TT "v", " in reverse order.",

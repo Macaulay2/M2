@@ -514,7 +514,13 @@ int system_fileMode(M2_string name) {
   struct stat buf;
   int r = stat(cname,&buf);
   GC_FREE(cname);
-  return r == ERROR ? -1 : buf.st_mode;
+  return r == ERROR ? -1 : buf.st_mode & ~S_IFMT;
+}
+
+int system_fileModeFD(int fd) {
+  struct stat buf;
+  int r = fstat(fd,&buf);
+  return r == ERROR ? -1 : buf.st_mode & ~S_IFMT;
 }
 
 int system_chmod(M2_string name,int mode) {

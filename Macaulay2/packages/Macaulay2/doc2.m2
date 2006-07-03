@@ -632,7 +632,7 @@ document {
      Inputs => { "x" => RR },
      Outputs => { { "the logarithm of ", TT "x"} } }
 document {
-     Key => sqrt,
+     Key => {sqrt,(sqrt, ZZ),(sqrt, RR)},
      Headline => "square root function",
      Usage => "sqrt x",
      Inputs => { "x" => RR },
@@ -953,7 +953,7 @@ document {
      }
 
 document {
-     Key => unique,
+     Key => {unique,(unique, List),(unique, Sequence)},
      Headline => "eliminate duplicates from a list",
      TT "unique v", " yields the elements of the list ", TT "v", ", without duplicates.",
      PARA{},
