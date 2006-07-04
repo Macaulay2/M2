@@ -13,6 +13,7 @@ resolutionLength := (R,options) -> (
      )
 
 resolutionByHomogenization := options -> (M) -> (
+     if gbTrace >= 1 then << "using resolution by homogenization" << endl;
      R    := ring M;
      f    := presentation M;
      p    := presentation R;
@@ -36,6 +37,7 @@ resolutionByHomogenization := options -> (M) -> (
      toR C)
 
 resolutionBySyzygies := options -> (M) -> (
+     if gbTrace >= 1 then << "using resolution by syzygyies" << endl;     
      R := ring M;
      maxlength := resolutionLength(R,options);
      if M.cache.?resolution 
