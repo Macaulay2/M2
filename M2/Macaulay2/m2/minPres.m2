@@ -1,6 +1,6 @@
 -- This file written by Amelia Taylor <ataylor@stolaf.edu>
 
------ This file was last updated on May 5, 2005
+----- This file was last updated on June 22, 2006
 
 --------------------------------------------------------------
 -- This begins the code for minimalPresentation which takes both ideals and 
@@ -38,7 +38,8 @@ finishMap := (L,xmap) -> (
      A := ring L_0;
      count := #L;
      while count > 0 do (
-	  p := checkpoly(L_(count-1));
+	  M := map(A,A,matrix{toList xmap});
+	  p := checkpoly(M(L_(count-1)));     
 	  if p =!= {} then (
 	       xmap#(p#0) = p#1;
 	       F1 := map(A,A,toList xmap);
@@ -104,7 +105,7 @@ coreProgram := (I, newvar) -> (
      degreesS := apply(l,i->((monoid R).degrees)#i);
      newMonOrder := monOrder((monoid R).Options.MonomialOrder, l);
      -- The two cases cover if the user does not or does (respectively
-     -- give a new variable name for the minimal presentation ring.
+     -- give a new variable name for the minimal presentation ring).
      if newvar === null then (
 	  S := (coefficientRing R)[varsR, Degrees => degreesS, MonomialOrder => newMonOrder];
 	  vv := map(S,S);
@@ -128,7 +129,7 @@ coreProgram := (I, newvar) -> (
      )
 
 
-
+minimalPresentation = method(Options=>{Variable => null})
 minimalPresentation Ideal := o -> (I) -> (
      --1 Argument: Any ideal in a polynomial ring.
      --Return:     An ideal J in a polynomial ring S such that 
@@ -184,5 +185,6 @@ minimalPresentation Ring := o -> (R) -> (
      --         presentation of R.  
 --     finishMap(flatten entries generators I, new MutableList from first entries (generators I))
 --     )
+
 
 
