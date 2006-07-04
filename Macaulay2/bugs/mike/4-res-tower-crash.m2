@@ -4,4 +4,5 @@ C = B[x,y,z]
 I = ideal(u*x+v*y+z)
 E = C/I
 gbTrace=3
+errorDepth=0
 res(coker vars E, LengthLimit=>5)

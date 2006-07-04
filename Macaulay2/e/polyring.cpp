@@ -455,14 +455,14 @@ ring_elem PolyRing::homogenize(const ring_elem f,
   // If an error occurs, then return 0, and set gError.
 
   int *exp = newarray(int, nvars_);
-
+  int maxlen = (wts->len < nvars_ ? wts->len : nvars_);
   Nterm head;
   Nterm *result = &head;
   for (Nterm *a = f ; a != NULL; a = a->next)
     {
       M_->to_expvector(a->monom, exp);
       int e = 0;
-      for (int i=0; i<nvars_; i++) e += wts->array[i] * exp[i];
+      for (int i=0; i<maxlen; i++) e += wts->array[i] * exp[i];
       if (((d-e) % wts->array[v]) != 0)
 	{
 	  // We cannot homogenize, so clean up and exit.
