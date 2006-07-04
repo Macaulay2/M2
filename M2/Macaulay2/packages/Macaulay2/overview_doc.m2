@@ -316,8 +316,7 @@ document {
      }
 
 undocumented {(SYNOPSIS, Sequence),(SYNOPSIS, Thing),(SYNOPSIS, List)}
-document { Key => {SYNOPSIS,Heading,[SYNOPSIS, Caveat],[SYNOPSIS, Consequences],[SYNOPSIS, Inputs],[SYNOPSIS, Outputs],[SYNOPSIS, SeeAlso],[SYNOPSIS, Usage],
-	  [SYNOPSIS, BaseFunction]},
+document { Key => {SYNOPSIS, Heading},
      PARA {
 	  "This function prepares a standardized synopsis in hypertext for use in documentation nodes."
 	  },

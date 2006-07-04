@@ -30,10 +30,10 @@ parenExprP = ((l,x,r) -> x) % andP("(", futureParser parenExprP | polyP, ")")
 listPolyP = toList % seqP_"," polyP
 arrayPolyP = toList % seqP_";" listPolyP
 export poly ; poly = method()
-poly String :=  polyP : nonspaceAnalyzer
-ideal String := ideal % listPolyP : nonspaceAnalyzer
-monomialIdeal String := monomialIdeal % listPolyP : nonspaceAnalyzer
-matrix String := opts -> matrix_opts % arrayPolyP : nonspaceAnalyzer
+poly String :=  RingElement => polyP : nonspaceAnalyzer
+ideal String := Ideal => ideal % listPolyP : nonspaceAnalyzer
+monomialIdeal String := MonomialIdeal => monomialIdeal % listPolyP : nonspaceAnalyzer
+matrix String := Matrix => opts -> matrix_opts % arrayPolyP : nonspaceAnalyzer
 -- end --
 
 beginDocumentation()
@@ -107,11 +107,30 @@ document {
 	  },
      PARA {
 	  "Creates an ideal using an abbreviated format. Each polynomial has the form described in ", TO Classic, ".  The polynomials are separated by commas.
-     	  Spaces and newline characters are ignored. "
+     	  Spaces and newline characters are ignored."
 	  },
      EXAMPLE lines ///
 	  R = ZZ/32003[a..d,x_1..x_4];
 	  I = ideal "a+b2-1,(a+b)(c+d),x[1]-x[2]3"
+     ///,
+     SeeAlso => {(poly,String), (matrix,String)}
+     }
+
+document { 
+     Key => (monomialIdeal,String),
+     Headline => "make a monomial ideal using classic Macaulay syntax",
+     Usage => "monomialIdeal s",
+     Inputs => {
+	  "s" => "in the form: \"f1,f2,...,fr\""
+	  },
+     Outputs => { MonomialIdeal },
+     PARA {
+	  "Creates a monomial ideal using an abbreviated format.  Each polynomial has the form described in ", TO Classic, ".  The polynomials are separated by commas.
+     	  Spaces and newline characters are ignored."
+	  },
+     EXAMPLE lines ///
+	  R = ZZ[a..e];
+	  I = monomialIdeal "abc,bcd,cde11"
      ///,
      SeeAlso => {(poly,String), (matrix,String)}
      }

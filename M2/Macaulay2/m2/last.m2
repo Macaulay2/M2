@@ -34,6 +34,11 @@ unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s)
 scan(values Core#"private dictionary" - set values Core.Dictionary,
      s -> if mutable s and value s === s then stderr << symbolLocation s << ": warning: mutable unexported unset symbol in Core: " << s << endl)
 
+document { Key => Core,
+     Headline => "the core part of Macaulay 2",
+     "This package contains the core functionality of Maculay 2, without the documentation, which is in the package ", TO "Maculay2::Maculay2", "."
+     }
+
 -- make sure this is after all public global symbols are defined or erased
 endPackage "Core"
 -- after this point, private global symbols, such as noinitfile, are no longer visible

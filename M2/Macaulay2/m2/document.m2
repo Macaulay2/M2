@@ -946,11 +946,11 @@ SYNOPSIS = method(
 	  Usage => "",
 	  BaseFunction => null,
 	  Inputs => {},
-	  Outputs => {},
      	  Consequences => {},
-	  Caveat => {},
-	  SeeAlso => {},
-	  SourceCode => {}
+	  -- Caveat => {},
+	  -- SeeAlso => {},
+	  -- SourceCode => {},
+	  Outputs => {}
 	  }
      )
 SYNOPSIS List := o -> x -> SYNOPSIS splice (o, toSequence x)

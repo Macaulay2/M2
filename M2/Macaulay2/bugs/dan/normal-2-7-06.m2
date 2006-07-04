@@ -18,8 +18,8 @@
 -- into its integral closure and applying conductor to this map 
 -- yeilds the conductor of the integral closure into R.
 
-isNormal2 = method()     
-isNormal2(Ring) := Boolean => (R) -> (
+isNormal = method()     
+isNormal(Ring) := Boolean => (R) -> (
      --Input:  Takes a quotient ring. 
      --Method:  Check if the Jacobian ideal of R has
      --codim >= 2, if true then check the codimension 
@@ -272,7 +272,7 @@ integralClosure Ring := Ring => o -> (R) -> (
       	  if C#"pending"#1 === null 
      	  then normal0 (C) --Compute J defining the NNL.
      	  else idealizer0(C,if o.Variable =!= null then o.Variable else local w));
-     A := apply(C#"answer",i->minimalPresentation2(i_0/i_1));
+     A := apply(C#"answer",i->minimalPresentation(i_0/i_1));
      if #A == 1 then A#0
      else toSequence A
      )
@@ -287,7 +287,7 @@ ICmap(Ring) := RingMap => (R) -> (
      -- Output:  The natural map from R to its integral closure S.
      -- Note:  This is needed to compute the conductor of R into S.
      if R#?IIICCC or not isNormal R then (
-	  if not R#?IIICCC then integralClosure2(R);
+	  if not R#?IIICCC then integralClosure(R);
 	  S := (R#IIICCC#"answer"#0)#0/(R#IIICCC#"answer"#0)#1;
 	  U := R#IIICCC#"map";
      	  if U === null then R#IIICCC#"map" = map(S,S)
@@ -309,7 +309,7 @@ ICfractions(Ring) := RingMap => o-> R -> (
      -- for reduced rings yet.  #C#"answer" == 1 if and only if a 
      -- domain was the input into the function.  
      if R#?IIICCC or not isNormal R then (
-	  integralClosure2 R;
+	  integralClosure R;
 	  K := (R#IIICCC#"basefield")[join(flatten R#IIICCC#"newvars",R.generatorSymbols)];
 	  -- This constructs the new ring using all of the new variables.
 	  KF := frac(K);
@@ -376,7 +376,7 @@ load "normal-15-6-06.m2"
 S = ZZ/32003[x,y,z]
 I = ideal"xy-z2, x2-yz"
 A = S/I
-integralClosure2(A)
+integralClosure(A)
 
 load "minPres-17-6-06.m2"
 S = ZZ/32003[w_0,w_1,x,y,z,MonomialSize => 16]
@@ -386,7 +386,7 @@ w_0*y-x, w_0*x-z, w_1^2-w_0, w_0*w_1-1, w_0^2-w_1)
 S=ZZ/101[symbol a,symbol b,symbol c, symbol d]
 I=ideal(a*(b-c),c*(b-d),b*(c-d))
 A=S/I                              
-time V = integralClosure2 A
+time V = integralClosure A
 apply(V, i-> ideal i) == (ideal (S_3, S_1, S_0),ideal (S_2, S_1),ideal (S_2 - S_3, S_1 - S_3), ideal (S_3, S_2, S_0))
 
 ///

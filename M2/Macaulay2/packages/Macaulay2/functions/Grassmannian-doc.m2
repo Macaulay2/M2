@@ -5,7 +5,8 @@ document { Key => {(Grassmannian, ZZ, ZZ), Grassmannian},
 	  "k", 
 	  "r",
 	  CoefficientRing => Ring => "the coefficient ring for the polynomial ring to be made",
-	  Variable => Symbol => { "the base symbol for the indexed variables to be used.  The subscripts are the elements of ", TT "subsets(n+1,k+1)" }
+	  Variable => Symbol => { "the base symbol for the indexed variables to be used.  The subscripts are the elements of ", TT "subsets(n+1,k+1)",
+	       ", converted to sequences and, if ", TT "k", " is 0, converted to integers." }
 	  },
      Outputs => {{ "the ideal of the Grassmannian variety of all projective ", TT "k", "-planes in ", BOLD "P", SUP "r"}},
      EXAMPLE lines ///
@@ -34,7 +35,8 @@ document {
 	  "n", 
 	  "sigma" => {"a subset of ", TT "0..n", " of size ", TT "k+1", " that indexes the Schubert variety"},
 	  CoefficientRing => Ring => "the coefficient ring for the polynomial ring to be made",
-	  Variable => Symbol => { "the base symbol for the indexed variables to be used.  The subscripts are the elements of ", TT "subsets(n+1,k+1)" }
+	  Variable => Symbol => { "the base symbol for the indexed variables to be used.  The subscripts are the elements of ", TT "subsets(n+1,k+1)",
+	       ", converted to sequences and, if ", TT "k", " is 0, converted to integers." }
 	  },
      Outputs => {Ideal => "the ideal of the Schubert variety indexed by sigma" },
      TEX ///Given natural numbers $k \le{} n$, this routine finds the

@@ -410,8 +410,7 @@ document {
      	  "f = x_1 + x_2 * z + x_3 * z^2 + x_4 * z^3",
      	  "AnnFs f"
      	  },
-     Caveat => {"
-	  The ring of ", TT "f", " should not have any parameters, 
+     Caveat => {"The ring of ", TT "f", " should not have any parameters, 
      	  i.e., it should be a pure Weyl algebra. 
 	  Also this ring should not be a homogeneous Weyl algebra."},
      SeeAlso => {"AnnIFs", "WeylAlgebra"}
@@ -436,8 +435,7 @@ document {
 	  "W = QQ[x,dx, WeylAlgebra=>{x=>dx}]",
 	  "AnnIFs (ideal dx, x^2)"
 	  }, 
-     Caveat => {"
-     	  Caveats and known problems: The ring of f should not have any 
+     Caveat => {"Caveats and known problems: The ring of f should not have any 
 	  parameters: it should be a pure Weyl algebra. Similarly, 
 	  this ring should not be a homogeneous Weyl algebra."
      	  },

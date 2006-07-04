@@ -2,6 +2,8 @@
 --- author(s): from before, MES
 --- notes: 
 
+undocumented {(showTex, Thing)}
+
 document { 
      Key => showTex,
      Headline => "convert to TeX and display on screen",

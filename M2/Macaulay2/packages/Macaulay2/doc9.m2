@@ -1,7 +1,8 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 document {
-     Key => (Ext,Module,Module),
+     Key => {(Ext,Module,Module),(Ext,Ideal,Ideal),(Ext,Ideal,Module),(Ext,Ideal,Ring),(Ext,Module,Ideal),
+	  (Ext,Module,Ring)},
      Headline => "total Ext module",
      Usage => "Ext(M,N)",
      Inputs => { "M", "N" },
@@ -39,7 +40,7 @@ document {
      }
 
 document {
-     Key => (Ext,ZZ,Module,Module),
+     Key => {(Ext,ZZ,Module,Module)},
      Usage => "Ext^i(M,N)",
      Headline => "Ext module",
      Inputs => { "i", "M", "N" },
@@ -1094,14 +1095,14 @@ TEST ///
      ///
 
 document {
-     Key => {(symbol ++,ChainComplex,ChainComplex),(symbol ++,GradedModule,GradedModule)},
+     Key => {(symbol ++,ChainComplex,ChainComplex),(symbol ++,GradedModule,GradedModule),
+	  (symbol ++,ChainComplexMap,ChainComplexMap)},
      Headline => "direct sum",
-     TT "C++D", " -- direct sum of chain complexes.",
-     PARA{},
-     EXAMPLE {
-	  "C = resolution cokernel matrix {{4,5}}",
-      	  "C ++ C[-2]"
-	  },
+     TT "C++D", " -- direct sum of chain complexes and maps",
+     EXAMPLE lines ///
+	  C = resolution cokernel matrix {{4,5}}
+      	  C ++ C[-2]
+     ///
      }
 
 document {

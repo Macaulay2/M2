@@ -9,8 +9,8 @@ document {
      Inputs => { "f" => Matrix },
      Outputs => { GroebnerBasis },
      "Declares that the columns of the matrix ", TT "f", "
-     constitute a Groebner basis, and returns a Groebner basis object
-     encapsulating that assertion.",
+     constitute a Groebner basis, autoreduces it, minimizes it, sorts it, and returns a Groebner basis object
+     declaring itself complete, without computing any S-pairs.",
      PARA{},
      "Sometimes one knows that a set of polynomials (or columns of such)
      form a Groebner basis, but ", EM "Macaulay 2", " doesn't.  This is the
@@ -25,13 +25,14 @@ document {
      EXAMPLE {
 	  "g === gb(f, StopBeforeComputation=>true)"
 	  },
-     "Requesting a Groebner bsis for ", TT "f", " requires no 
-     computation.",
+     "Requesting a Groebner basis for ", TT "f", " requires no computation.",
      EXAMPLE {
 	  "gens gb f"
 	  },
-     Caveat => {"If the columns do not form a Groebner basis, 
-	  nonsensical answers may result"},
+     PARA {
+	  "If an autoreduced Groebner basis is desired, replace ", TT "f", " by ", TT "gens forceGB f", " first."
+	  },
+     Caveat => {"If the columns do not form a Groebner basis, nonsensical answers may result"},
      SeeAlso => {"Groebner bases"}
      }
 document { 

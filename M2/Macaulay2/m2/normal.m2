@@ -33,7 +33,7 @@ isNormal(Ring) := Boolean => (R) -> (
      Jac := minors(n,jacobian R);  -- R1 this way the user gets more info.
      S2 := apply (m-n-1, i-> codim Ext^(i+n+1)(M,ring M));
      test := apply(m-n-1,i->i+n+3);
-     m2-dim Jac >= 2 and S2 >= test
+     m2 - dim Jac >= 2 and all(S2, test, (i,j) -> i>=j)
      )
 
 -- As the engine code changes, comparisons of the time for 
@@ -44,7 +44,7 @@ isNormal(Ring) := Boolean => (R) -> (
 -- radical0 does not finish.
 radical0 = (I) -> (
      I = ideal mingens ideal generators gb I;
-     comps := decompose I;
+     comps := minimalPrimes I;
      result := if #comps === 1 then comps#0
                else intersect toSequence comps;
      result)
@@ -91,6 +91,8 @@ isSinglyGraded := (R) -> (
 -- then the defining ideal of theis integral closure is placed in C#"answer".
 
 ICnode = new Type of MutableHashTable;
+ 
+protect IIICCC
 
 newICnode = (R) -> (
      I := ideal presentation R;
@@ -131,7 +133,7 @@ idealizer0 = (C,w) -> (
      I := C#"pending"#0;
      J := C#"pending"#1;
      Jc := ideal compress (generators J % generators I);
-     << "--checking Jc" << Jc << endl;
+--     << "--checking Jc" << Jc << endl;
  --    error "debug me";
      -- Find an element of J, a nzd in S/I.  Need to make sure we donot 
      -- choose an element in I, so first we reduce J mod I.
@@ -180,14 +182,14 @@ idealizer0 = (C,w) -> (
        	       C#"vars" = splice(varsA, C#"vars");       
      	       C#"blocks" = select(C#"blocks", d -> d =!= 0);
      	       A := (if any(C#"degrees", d -> d#0 <= 0) then (
-       			 (C#"basefield")[C#"vars", 
+       			 (C#"basefield")(monoid [C#"vars", 
 	  		      MonomialOrder=>ProductOrder (C#"blocks"),
-	  		      MonomialSize=>16])
+	  		      MonomialSize=>16]))
      		    else (
-       			 (C#"basefield")[C#"vars",
+       			 (C#"basefield")(monoid [C#"vars",
 	  		      Degrees => C#"degrees", 
 	  		      MonomialOrder=>ProductOrder (C#"blocks"),
-	  		      MonomialSize=>16])
+	  		      MonomialSize=>16]))
      		    );
 	       newvars := (vars A)_{0..n-1};
 	       C#"newvars" = join(entries newvars,C#"newvars");
@@ -204,8 +206,8 @@ idealizer0 = (C,w) -> (
 	       newI1 := trim ideal matrix entries generators (
 		    ideal lins + ideal quads + IA);
 	       newJ1 := newI1 + RtoA JR;
-	       newI = minimalPresentation(newI1);
-	       R2 = ring newI;
+	       newI := minimalPresentation(newI1);
+	       R2 := ring newI;
 	       FF := substitute(((newI1).cache.minimalPresentationMap).matrix,R2);
 	       F := map(R2,A,FF);
 	       newJ :=  F newJ1;
@@ -215,7 +217,7 @@ idealizer0 = (C,w) -> (
 	       if C#"map" === null then C#"map" = F * F1
 	       else C#"map" = F * F1 * C#"map";
 	       --Resetting the necessary values of the hash table.
-	       indexvars = apply(first entries substitute(vars R2,A), index);
+	       indexvars := apply(first entries substitute(vars R2,A), index);
       	       C#"degrees" = apply(indexvars,i->(C#"degrees")#i);
 	       C#"fractions" = apply(indexvars, i->(C#"fractions")#i);
 	       C#"blocks" = {numgens R2};
@@ -234,7 +236,6 @@ normal0 = (C) -> (
      -- This handles the first node: finding an ideal that contains the NNL 
      -- locus.  
      I := C#"pending"#0;
-     III = I;
      local J;
      SI := jacobian I;
      R := (ring I)/I;
@@ -263,15 +264,14 @@ normal0 = (C) -> (
      C#"pending" = null;
      )
 
-w := local w
-integralClosure = method(Options=>{Variable => null}) -- changed to local variable, and hid it from the documentation -- drg
+integralClosure = method(Options=>{Variable => global w})
 integralClosure Ring := Ring => o -> (R) -> (
      if not R#?IIICCC then newICnode R;
      C := R#IIICCC;
      while next C do (
       	  if C#"pending"#1 === null 
      	  then normal0 (C) --Compute J defining the NNL.
-     	  else idealizer0(C,if o.Variable =!= null then o.Variable else local w));
+     	  else idealizer0(C, o.Variable));
      A := apply(C#"answer",i->minimalPresentation(i_0/i_1));
      if #A == 1 then A#0
      else toSequence A
@@ -310,7 +310,7 @@ ICfractions(Ring) := RingMap => o-> R -> (
      -- domain was the input into the function.  
      if R#?IIICCC or not isNormal R then (
 	  integralClosure R;
-	  K := (R#IIICCC#"basefield")[join(flatten R#IIICCC#"newvars",R.generatorSymbols)];
+	  K := (R#IIICCC#"basefield")(monoid [join(flatten R#IIICCC#"newvars",R.generatorSymbols)]);
 	  -- This constructs the new ring using all of the new variables.
 	  KF := frac(K);
 	  M1 := first entries substitute(vars R,KF);  -- puts the vars of R in KF
@@ -361,10 +361,13 @@ conductor(RingMap) := Ideal => (F) -> (
      	       intersect apply((numgens P)-1, i->(
 	       m:=matrix{P_(i+1)};
 	       I:=ideal modulo(m,matrix{P_0}|M))))
-	  else (<< " --No conductor for " << F << endl;)
+	  else error "conductor: expected a homgeneous ideal in a singly graded ring"
      )
 
-///
+---
+end
+---
+
 restart
 
 R = ZZ/101[symbol x..symbol z,Degrees=>{2,5,6}]/(z*y^2-x^5*z-x^8)
@@ -389,10 +392,6 @@ A=S/I
 time V = integralClosure A
 apply(V, i-> ideal i) == (ideal (S_3, S_1, S_0),ideal (S_2, S_1),ideal (S_2 - S_3, S_1 - S_3), ideal (S_3, S_2, S_0))
 
-///
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
-
-

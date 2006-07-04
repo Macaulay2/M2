@@ -114,15 +114,18 @@ scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}
 			      line3 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z);
 			      hush = false;
 			      error toString stack(line1,commentGuard line2,commentGuard line3))));
-	       if not Thing#?op then installMethod(op, Thing, (x) -> (
-			 line1 := concatenate("no method for ", concatenate(type," operator ",op), " applied to objects:");
-			 if hush then error(line1, " not displayed");
-			 wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
-			 wid = wid - commentGuardWidth - width preX;
-			 hush = true;					    -- prevent error message recursion
-			 line2 := preX | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,x);
-			 hush = false;
-			 error toString stack(line1,commentGuard line2))))))
+	       if not Thing#?op then (
+		    undocumented' (op, Thing);
+		    installMethod(op, Thing, (x) -> (
+			      line1 := concatenate("no method for ", concatenate(type," operator ",op), " applied to objects:");
+			      if hush then error(line1, " not displayed");
+			      wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
+			      wid = wid - commentGuardWidth - width preX;
+			      hush = true;					    -- prevent error message recursion
+			      line2 := preX | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,x);
+			      hush = false;
+			      error toString stack(line1,commentGuard line2)));
+		    ))))
 
 Thing.Print = x -> (
      oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");

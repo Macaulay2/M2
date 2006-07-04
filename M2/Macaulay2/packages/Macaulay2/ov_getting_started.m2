@@ -39,44 +39,36 @@ document {
 	  you should see a prompt such as this:"},
 PRE///    indigo% M2
     Macaulay 2, version 1.0
+    with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings, TangentCone
+
     i1 : ///,
-     PARA {"
-	  If this is the first time that you are running Macaulay2, then Macaulay2
-	  creates a directory ", TT ".Macaulay2", 
-	  " in your home directory (on unix machines)
-	  or ", TT "Library/Application Support/Macaulay2", " under MacOS X.  Inside this 
+     PARA {"If this is the first time that you are running Macaulay2, then Macaulay2
+	  creates a directory called ", TT ".Macaulay2", 
+	  " in your home directory (on unix machines),
+	  or called ", TT "Library/Application Support/Macaulay2", " under MacOS X.  Inside this 
 	  directory are several files of interest, including an ", 
-	  TT "index.html", " file
-          which contains links to your local copy of the Macaulay2 documentation.
-	  "},
-     PARA {"
-	  The ", TO viewHelp, " command in Macaulay2 starts up your web browser (if it is not
+	  TT "index.html", " file that contains links to your local copy of the Macaulay2 documentation."},
+     PARA {"The ", TO viewHelp, " command in Macaulay2 starts up your web browser (if it is not
 	  already running) and places you at this ", TT "index.html", " page.
 	  "},
 PRE///    viewHelp///,
-     PARA {"
-	  This web page includes links to the main Macaulay2 documentation, as well as
+     PARA {"This web page includes links to the main Macaulay2 documentation, as well as
 	  documentation for any installed packages.   This is a good time to
-	  bookmark the page in your browser.
-	  "},
-     PARA {"
-	  At this point you should try something simple in Macaulay2, such as
-	  "},
+	  bookmark the page in your browser."},
+     PARA {"At this point you should try something simple in Macaulay2, such as"},
 PRE///    printWidth = 60
     R = QQ[a..d]
     (a+b+c+d)^4///,
      PARA {"
-	  To exit Macaulay2, type one of: exit, end, or quit.
+	  To exit Macaulay2, type one of: exit, end, quit, or your end of file character.
 	  "},
 	  PRE///    exit///,
-     PARA {"
-	  Macaulay2 can be run in this way from the command line, but it is
+     PARA {"Macaulay2 can be run in this way from the command line, but it is
 	  generally much more convenient to run Macaulay2 from inside the emacs
 	  text editor.  This is because you can more easily view larger objects,
 	  do command completion, use cut and paste, search, save your session,
-	  and so on.  There is a very nice mode for running Macaulay2 inside
-	  emacs.
-	  "},
+	  and so on.  There is a nice mode for running Macaulay2 inside
+	  emacs."},
      }
 
 document {
@@ -91,19 +83,18 @@ document {
           to examine the online emacs manual which can be read with ", TT "info", "
           mode; you may enter or re-enter that mode with the keystrokes ", TT "C-H i", ".  "
           },
-     PARA {"
-	  The Macaulay2 emacs interface consists of several files
+     PARA {"The Macaulay2 emacs interface consists of several files
 	  in the directory ", 
-	  TT "Macaulay2/share/emacs/site-lisp/",
-	  " in the Macaulay2 distribution tree.  In order for
-	  emacs to be able to find these files, place the following lines
-	  in the ", TT ".emacs", " file in your home directory.  If you don't have a 
-	  ", TT ".emacs", " file, just make one and cut and paste these lines in.",
+	  TT "share/emacs/site-lisp/",
+	  " in the Macaulay2 distribution tree.  If you're lucky, then your system administrator has installed Macaulay 2 so
+	  that directory ends up in the same place where emacs looks for its files, as listed by the emacs variable ", TT "loadpath", ".
+	  If not, then in order for emacs to be able to find these files, place the following lines
+	  in the ", TT ".emacs", " file in your home directory, creating the file if necessary.",
 	  },
 PRE///    ;; .emacs file in your home directory
     (setq load-path 
           (append
-           '( "usr/local/Macaulay2/share/emacs/site-lisp/" )
+           '( "/usr/local/Macaulay2-1.0/share/emacs/site-lisp" )
            load-path
            ))
 
@@ -114,26 +105,25 @@ PRE///    ;; .emacs file in your home directory
     ; or change f12 to (for example) f8
     (global-set-key [ f12 ] 'M2)
 ///,
-     "where ", TT "/usr/local", " on the fourth line should be replaced by 
-     the actual path to the installed Macaulay2.",
-     PARA {"
-	  After saving that file, try running emacs.  Start Macaulay2
+     "where ", TT "/usr/local/Macaulay2-1.0", " on the fourth line should be replaced by 
+     the actual path to the installed Macaulay2.  Macaulay 2 can tell you what that part of the path
+     is: type ", TO "prefixDirectory", ".",
+     PRE "    prefixDirectory",
+     PARA {"After saving your ", TT ".emacs", " file, try running emacs.  Start Macaulay2
 	  by pressing the f12 function key.  On MacOS X systems, f12 is usurped
 	  by either DashBoard, SpotLight, or something else, so either you must
-	  change the f12 to some other key, e.g., f8 in the .emacs file, or disable
+	  change the f12 to some other key, e.g., f8, in the ", TT ".emacs", " file, or you should disable
 	  the systems use of the f12 key."
 	  },
-     PARA {"
-	  If Macaulay2 doesn't start up (in a buffer named *M2*), check that you
-	  typed in the above lines correctly into .emacs, and also check that
+     PARA {"If Macaulay2 doesn't start up (in a buffer named *M2*), check that you
+	  typed in the above lines correctly into ", TT ".emacs", ", and also check that
 	  you have the correct path to the Macaulay2 emacs files."
 	  },
      }
 
 document {
      Key => "using Macaulay2 with emacs",
-     PARA {"
-	  In this section, we show by example how to use the Macaulay2 emacs interface.
+     PARA {"In this section, we show by example how to use the Macaulay2 emacs interface.
 	  We assume that you have already set up this interface, as described in 
 	  ", TO "setting up the Macaulay2 emacs interface", ".  After creating or changing
 	  the .emacs file mentioned there, you need to exit and restart emacs.  For the rest
@@ -141,19 +131,19 @@ document {
 	  },
      "The aspects of this interface that we describe include",
      UL {
-	  "Starting Macaulay2 with the f12 key,  or with M-x M2",
-	  "Working with 2 buffers",
+	  "Starting Macaulay2 with the f12 key, or with M-x M2",
+	  "Working with two buffers",
 	  "Sending lines or selected text to Macaulay2 using the f11 key",
 	  "Command completion with TAB",
 	  "Horizontal scrolling with f3,f4,f5,f6,f7"
 	  },
-     PARA {"Before starting, note that when we say to type M-x M2
-	  what we really mean is to hold down the meta key (on Macs this is either
-	       the option key or the apple key, depending on how your emacs is set up)
-	  pressing the x key, and then type M2, and press the return after that.  Similarly, C-c
-	  means hold down the control character and press the c key."},
-     PARA {"Use the keystrokes
-     	  ", TT "C-x 2", " to divide the buffer containing this file into two windows.
+     PARA {"Before starting, note that when we say to type M-x M2, what we really mean is: press the x key while holding down the meta key (on Macs this is either
+	  the option key or the apple key, depending on how your emacs is set up); type M2; and then press the return (or enter) key after that.  Similarly, C-c
+	  means to press the c key while holding down the control key, and ", TT "C-x 2", " means to press x while holding down the control key, then to
+	  press 2; this time do not press enter."},
+     PARA {"Perhaps you are reading this text in emacs, either in the info documentation reader, or by viewing the 
+
+Use the keystrokes ", TT "C-x 2", " to divide the buffer containing this file into two windows.
      	  Then press the f12 key or type ", TT "M-x M2", " to start up Macaulay 2 in a buffer
      	  named ", TT "*M2*", ".  (The command line used to start Macaulay 2 may
 	  be edited before being run if you use a prefix argument with the above
@@ -252,8 +242,7 @@ document {
 	  TOH "viewHelp",
 	  TOH "infoHelp"
 	  },
-     PARA {"
-	  While in Macaulay 2, type ", 
+     PARA {"While in Macaulay 2, type ", 
 	  TT"help", 
 	  " to get a summary of the most useful ways of obtaining
 	  help on a topic or function.
@@ -268,8 +257,7 @@ document {
 	  " or if you want the documentation for jacobian of an Ideal, use ",
 	  TT ///viewHelp (jacobian,Ideal)///
      	  },
-     PARA {"
-          Using 'help' instead of 'viewHelp' results in the help text appearing 
+     PARA {"Using 'help' instead of 'viewHelp' results in the help text appearing 
 	  in your Macaulay2 session. " 
 	  },
      EXAMPLE ///help "jacobian"///,
@@ -278,14 +266,12 @@ document {
 	  and press return, then you will get help on that topic."
 	  },
      EXAMPLE ///* "jacobian Ideal"///,	  
-     PARA {"
-	  The function ", TO apropos, " is useful to find functions and other defined symbols 
+     PARA {"The function ", TO apropos, " is useful to find functions and other defined symbols 
 	  which match a search string.  For example, to find all symbols
 	  in Macaulay2 which contain the string 'deal', use"
      	  },
      EXAMPLE ///apropos "deal"///,
-     PARA {"
-          The documentation for most functions comes with example code.  You can 
+     PARA {"The documentation for most functions comes with example code.  You can 
 	  obtain the text of this example code using ", TO examples, "."
 	  },
      EXAMPLE ///examples "jacobian Ideal"///,
@@ -298,8 +284,7 @@ document {
 
 document {
      Key => "getting help or reporting bugs",
-     PARA {"
-	  An easy way to get help or to report a bug is to go to ", HREF "http://sourceforge.net/projects/macaulay2",
+     PARA {"An easy way to get help or to report a bug is to go to ", HREF "http://sourceforge.net/projects/macaulay2",
 	  " and choose the appropriate section in the 'Public areas' part of that webpage.  In order to
 	  submit a feature request, support request, bug report, etc, you might need to create a 
 	  sourceforge user id for yourself.  This is free and easy (Choose 'create account' near the top of

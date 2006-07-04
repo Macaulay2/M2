@@ -38,7 +38,7 @@ product(Tally) := (w) -> product(pairs w, (k,v) -> k^v)
 
 new Set from List := Set => (X,x) -> set x
 
-net Set := x -> net class x | " " | net keys x
+net Set := x -> "set " | net keys x
 toString Set := x -> (
      -- unpleasant hack
      if class x === Set

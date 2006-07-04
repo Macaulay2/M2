@@ -98,7 +98,7 @@ document {
 		    LI ("poly -- ", TO "not documented yet"),
 		    LI ("power -- ", TO "^"),
 		    LI ("pr -- ", TO "not documented yet"),
-		    LI (BOLD "pres <C:complex> -- ", "Use ", TT "C.dd", " or ", TO "print C.dd"),
+		    LI (BOLD "pres <C:complex> -- ", "Use ", TT "C.dd", " or ", TT "print C.dd"),
 		    LI ("present_ring -- ", TO "not documented yet"),
 		    LI ("pring -- ", TO "not documented yet"),
 		    LI ("prmat -- ", TO "print", " or ", TO "toString"),

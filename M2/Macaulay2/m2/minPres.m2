@@ -28,14 +28,13 @@ checkpoly := (f)->(
 	  )
      )
 
-finishMap := (L,xmap) -> (
+finishMap := (A,L,xmap) -> (
      -- 2 Arguments:  A matrix and a new mutable list.
      -- Return:       a map from the ring corresponding to 
      --               entries in the matix to itself given by 
      --               entries in the matrix which have a linear
      --               term that does not occur elsewhere in the 
      --               polynomial. 
-     A := ring L_0;
      count := #L;
      while count > 0 do (
 	  M := map(A,A,matrix{toList xmap});
@@ -91,7 +90,7 @@ coreProgram := (I, newvar) -> (
      --               ring similar for minimalPresentation ring.  The 
      --               matrices set up the maps.
      R := ring I;
-     F := finishMap(flatten entries generators I, new MutableList from first entries (vars R)); 
+     F := finishMap(R,flatten entries generators I, new MutableList from first entries (vars R)); 
      -- The key computation of the polynomials with linear 
      -- terms is complete.  Now build desired rings, ideals 
      -- and maps through this map.
@@ -107,17 +106,17 @@ coreProgram := (I, newvar) -> (
      -- The two cases cover if the user does not or does (respectively
      -- give a new variable name for the minimal presentation ring).
      if newvar === null then (
-	  S := (coefficientRing R)[varsR, Degrees => degreesS, MonomialOrder => newMonOrder];
+	  S := (coefficientRing R)(monoid [varsR, Degrees => degreesS, MonomialOrder => newMonOrder]);
 	  vv := map(S,S);
 	  newI := trim vv(substitute (ideal compress generators F(I), S));
 	  S2 := S/newI;
 	  FmatS := substitute(F.matrix, S);
 	  FmatS2 := substitute(F.matrix, S2))
      else (
-	  R2 := (coefficientRing R)[varsR];
+	  R2 := (coefficientRing R)(monoid [varsR]);
 	  y := newvar;
 	  var := splice{y_0..y_(#l-1)};
-	  S = (coefficientRing R)[var,Degrees => degreesS, MonomialOrder => newMonOrder];
+	  S = (coefficientRing R)(monoid [var,Degrees => degreesS, MonomialOrder => newMonOrder]);
 	  vv = map(S, R2,vars S);
 	  J := substitute (ideal compress generators F(I), R2);
 	  newI = trim vv(J);
@@ -128,8 +127,6 @@ coreProgram := (I, newvar) -> (
      (newI, S, S2, FmatS, FmatS2, varsR)	      	   	
      )
 
-
-minimalPresentation = method(Options=>{Variable => null})
 minimalPresentation Ideal := o -> (I) -> (
      --1 Argument: Any ideal in a polynomial ring.
      --Return:     An ideal J in a polynomial ring S such that 
@@ -175,7 +172,7 @@ minimalPresentation Ring := o -> (R) -> (
      --Output:  A map from the polynomial ring to itself 
      --         that is the map used to form a minimal 
      --         presentation of R.  
---     finishMap(flatten entries presentation R, new MutableList from first entries (generators ideal presentation R))
+--     finishMap(R,flatten entries presentation R, new MutableList from first entries (generators ideal presentation R))
 --          )
 
 --minimalPresentationMap2 Ideal := (I) -> ( 
@@ -183,8 +180,10 @@ minimalPresentation Ring := o -> (R) -> (
      --Output:  A map from the ring of I, call it A, 
      --         to itself, that is the map used to form a minimal 
      --         presentation of R.  
---     finishMap(flatten entries generators I, new MutableList from first entries (generators I))
+--     finishMap(R,flatten entries generators I, new MutableList from first entries (generators I))
 --     )
 
 
-
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
+-- End:

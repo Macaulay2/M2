@@ -41,7 +41,7 @@ Grassmannian(ZZ,ZZ):= o -> (k,n) -> Schubert(k,n,n-k..n,o)
 Schubert = method(TypicalValue => Ideal, Options => { CoefficientRing => ZZ, Variable => global p });
 Schubert(ZZ, ZZ, VisibleList) := o -> (k,n,sigma) -> (
      L := toSequence \ subsets(n+1,k+1);
-     R := o.CoefficientRing (monoid [apply(L, i -> new IndexedVariable from {baseName o.Variable,i})]);
+     R := o.CoefficientRing (monoid [apply(L, i -> new IndexedVariable from {baseName o.Variable,unsequence i})]);
      vr := new HashTable from apply(#L, i -> L#i => R_i);
      higher := apply( select( L, s -> any(s, sigma, (a,b) -> a>b)), s -> vr#s );
      G := flatten for i from 0 to #L-1 list for j from i+1 to #L-1 list (
@@ -58,7 +58,7 @@ Schubert(ZZ, ZZ, VisibleList) := o -> (k,n,sigma) -> (
 	       if sgn2 == 0 then continue;
 	       sgn := sgn1 * sgn2 * signOfShuffle(s1,s2);
 	       sgn * vr#c * vr#d));
-     g := generators forceGB matrix{(G|higher)};
+     g := generators forceGB matrix(R,{(G|higher)});
      forceGB g;
      ideal g)
 

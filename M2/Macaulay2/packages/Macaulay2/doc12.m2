@@ -305,7 +305,7 @@ document {
      }
 
 document {
-     Key => (subsets,List,ZZ),
+     Key => {(subsets,List,ZZ),(subsets, Sequence, ZZ)},
      TT "subsets(s,j)", " -- yields a list of those subsets of the list ", TT "s", " that have ", TT "j", " elements.",
      EXAMPLE "subsets({a,b,c},2)"
      }

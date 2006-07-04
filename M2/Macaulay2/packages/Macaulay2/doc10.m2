@@ -693,14 +693,14 @@ document {
      }
 
 document {
-     Key => (symbol >=, ZZ),
+     Key => {(symbol >=, ZZ),(symbol >=,InfiniteNumber)},
      Usage => "(>= d)",
      Inputs => { "d" },
      Outputs => { { "a special object of class ", TT "LowerBound", " used to represent the set of natural numbers at least as large as ", TT "d" } }
      }
 
 document {
-     Key => (symbol >, ZZ),
+     Key => {(symbol >, ZZ),(symbol >,InfiniteNumber)},
      Usage => "(> d)",
      Inputs => { "d" },
      Outputs => { { "a special object of class ", TT "LowerBound", " used to represent the set of natural numbers larger than ", TT "d" } }

@@ -13,7 +13,9 @@ document {
      Usage => "document { Key => key, ... }",
      Headline => "install documentation",
      Inputs => {
-	  List => {"a hypertext list including special documentation entries; any optional arguments are to be placed in this list"}
+	  List => {"a hypertext list including special documentation entries; any optional arguments are to be placed in this list"},
+	  Usage => String => "a string giving a template for using the function or feature being documented",
+	  SourceCode => List => "a list of functions whose source code should be displayed in the documentation"
 	  },
      Consequences => {"formatted documentation is created and stored"},
      PARA {

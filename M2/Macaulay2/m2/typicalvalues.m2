@@ -25,7 +25,7 @@ installMethod(symbol #, Database, String, String => dummy)
 installMethod(symbol #, String, ZZ, Thing => dummy)
 installMethod(symbol #, BasicList, ZZ, Thing => dummy)
 
-installMethod(symbol #, File, ZZ => dummy)
+-- installMethod(symbol #, File, ZZ => dummy)
 installMethod(symbol #, Set, ZZ => dummy)
 installMethod(symbol #, HashTable, ZZ => dummy)
 installMethod(symbol #, BasicList, ZZ => dummy)

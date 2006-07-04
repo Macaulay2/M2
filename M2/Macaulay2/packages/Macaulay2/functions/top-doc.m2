@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {"topComponents"},
+     Key => {topComponents},
      Headline => "compute top dimensional component",
      "The method used is that of Eisenbud-Huneke-Vasconcelos, in their 1993 Inventiones Mathematicae paper.",
      PARA{},
@@ -39,7 +39,7 @@ document {
 	  "I=intersect(ideal(a,b),ideal(b,c),ideal(c,a),ideal(a^2,b^3,c^4));",
 	  "topComponents I" 
 	  },
-     SeeAlso => {"topComponents Module","removeLowestDimension", "saturate", "quotient", "radical", "component example"}
+     SeeAlso => {(topComponents, Module),"removeLowestDimension", "saturate", "quotient", "radical", "component example"}
      },
 
 document { 
@@ -56,8 +56,7 @@ document {
     "The method used is that of Eisenbud-Huneke-Vasconcelos. ", 
     "For a brief description see: ",TO "topComponents",".", 
      
-     SeeAlso => {"topComponents Ideal","removeLowestDimension", "saturate", "quotient", 
-	  "radical","component example"}
+     SeeAlso => {(topComponents,Ideal),"removeLowestDimension", "saturate", "quotient", "radical","component example"}
      }
 
 
