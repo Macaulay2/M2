@@ -567,15 +567,15 @@ public:
     if (r >= 0 && r < n_rows() && c >= 0 && c < n_cols())
       {
 	elem a;
-	bool ret = mat.get_entry(r,c,a);
-	mat.get_CoeffRing()->to_ring_elem(result,a);
-	return ret;
+	if (mat.get_entry(r,c,a))
+	  {
+	    mat.get_CoeffRing()->to_ring_elem(result,a);
+	    return true;
+	  }
       }
-    else
-      {
-	result = mat.get_ring()->zero();
-	return false;
-      }
+
+    result = mat.get_ring()->zero();
+    return false;
   }
 
   virtual bool set_entry(long r, long c, const ring_elem a)
