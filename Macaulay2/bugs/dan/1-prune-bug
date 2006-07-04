@@ -31,3 +31,23 @@ o6 : ZZ-module, quotient of ZZ
 
     i22 : 	  assert ( cokernel f == 0 )
     stdio:22:11:(2):[2]: assertion failed
+
+=============================================================================
+
+and this is related!
+
+    ii47 : prune coker id_(ZZ^10)
+
+    oo47 = cokernel | 1 0 0 0 0 0 0 0 0 0 |
+		    | 0 1 0 0 0 0 0 0 0 0 |
+		    | 0 0 1 0 0 0 0 0 0 0 |
+		    | 0 0 0 1 0 0 0 0 0 0 |
+		    | 0 0 0 0 1 0 0 0 0 0 |
+		    | 0 0 0 0 0 1 0 0 0 0 |
+		    | 0 0 0 0 0 0 1 0 0 0 |
+		    | 0 0 0 0 0 0 0 1 0 0 |
+		    | 0 0 0 0 0 0 0 0 1 0 |
+		    | 0 0 0 0 0 0 0 0 0 1 |
+
+				    10
+    oo47 : ZZ-module, quotient of ZZ
