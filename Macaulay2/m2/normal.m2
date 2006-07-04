@@ -1,5 +1,7 @@
 -- This file written by Amelia Taylor <ataylor@math.rutgers.edu>
 
+-- debug Macaulay2Core
+
 -- Computes the integral closure of a reduced ring (R/I where I is radical).  
 -- integralClosure takes R/I as input and outputs a sequence of ideals, 
 -- I_1,..., I_n such that the integral closure of R/I is the direct product 
@@ -30,8 +32,8 @@ isNormal(Ring) := Boolean => (R) -> (
      m2:= dim R;         -- S2 first and prints "is S2".  Then checks
      Jac := minors(n,jacobian R);  -- R1 this way the user gets more info.
      S2 := apply (m-n-1, i-> codim Ext^(i+n+1)(M,ring M));
-     check := apply(m-n-1,i->i+n+3);
-     m2-dim Jac >= 2 and S2 >= check 
+     test := apply(m-n-1,i->i+n+3);
+     m2-dim Jac >= 2 and S2 >= test
      )
 
 -- As the engine code changes, comparisons of the time for 
@@ -42,7 +44,7 @@ isNormal(Ring) := Boolean => (R) -> (
 -- radical0 does not finish.
 radical0 = (I) -> (
      I = ideal mingens ideal generators gb I;
-     comps := minimalPrimes I;
+     comps := decompose I;
      result := if #comps === 1 then comps#0
                else intersect toSequence comps;
      result)
@@ -90,8 +92,6 @@ isSinglyGraded := (R) -> (
 
 ICnode = new Type of MutableHashTable;
 
-protect IIICCC
-
 newICnode = (R) -> (
      I := ideal presentation R;
      C := new ICnode;
@@ -113,8 +113,7 @@ newICnode = (R) -> (
      C)
 
 -- Tells us when to stop the algorithm.  Moves ideals from C#"todo" to C#"pending".
-next = (C) -> (
-     pretty C;
+next := (C) -> (
      if C#"pending" =!= null then true
      else if #C#"todo" > 0
      then (
@@ -132,6 +131,8 @@ idealizer0 = (C,w) -> (
      I := C#"pending"#0;
      J := C#"pending"#1;
      Jc := ideal compress (generators J % generators I);
+     << "--checking Jc" << Jc << endl;
+ --    error "debug me";
      -- Find an element of J, a nzd in S/I.  Need to make sure we donot 
      -- choose an element in I, so first we reduce J mod I.
      J1 := I:Jc_0;
@@ -203,20 +204,18 @@ idealizer0 = (C,w) -> (
 	       newI1 := trim ideal matrix entries generators (
 		    ideal lins + ideal quads + IA);
 	       newJ1 := newI1 + RtoA JR;
-	       newI := minimalPresentation(newI1);
-	       R2 := ring newI;
+	       newI = minimalPresentation(newI1);
+	       R2 = ring newI;
 	       FF := substitute(((newI1).cache.minimalPresentationMap).matrix,R2);
 	       F := map(R2,A,FF);
 	       newJ :=  F newJ1;
 	       --Making the map from S to it's integral closure.
 	       S1 := C#"rings";  
-	       --AT8/23: S1 needs to be global.  Appears to be a bug. 
-	       --AT9/13: Not global now - ok?
 	       F1 := map(A,S1); 
 	       if C#"map" === null then C#"map" = F * F1
 	       else C#"map" = F * F1 * C#"map";
 	       --Resetting the necessary values of the hash table.
-	       indexvars := apply(first entries substitute(vars R2,A), index);
+	       indexvars = apply(first entries substitute(vars R2,A), index);
       	       C#"degrees" = apply(indexvars,i->(C#"degrees")#i);
 	       C#"fractions" = apply(indexvars, i->(C#"fractions")#i);
 	       C#"blocks" = {numgens R2};
@@ -235,8 +234,7 @@ normal0 = (C) -> (
      -- This handles the first node: finding an ideal that contains the NNL 
      -- locus.  
      I := C#"pending"#0;
-     -- this line does nothing, since III is referred to nowhere else, so I commented it out (dan):
-     -- III = I;
+     III = I;
      local J;
      SI := jacobian I;
      R := (ring I)/I;
@@ -266,7 +264,7 @@ normal0 = (C) -> (
      )
 
 w := local w
-integralClosure = method(Options=>{Variable => null})	    -- changed to local variable, and hid it from the documentation -- drg
+integralClosure = method(Options=>{Variable => null}) -- changed to local variable, and hid it from the documentation -- drg
 integralClosure Ring := Ring => o -> (R) -> (
      if not R#?IIICCC then newICnode R;
      C := R#IIICCC;
@@ -274,7 +272,7 @@ integralClosure Ring := Ring => o -> (R) -> (
       	  if C#"pending"#1 === null 
      	  then normal0 (C) --Compute J defining the NNL.
      	  else idealizer0(C,if o.Variable =!= null then o.Variable else local w));
-     A := apply(C#"answer",i->i_0/i_1);
+     A := apply(C#"answer",i->minimalPresentation(i_0/i_1));
      if #A == 1 then A#0
      else toSequence A
      )
@@ -300,8 +298,8 @@ ICmap(Ring) := RingMap => (R) -> (
      )
 
 --------------------------------------------------------------------
-ICfractions = method()
-ICfractions(Ring) := RingMap => (R) -> (
+ICfractions = method(Options => {Strategy => null})
+ICfractions(Ring) := RingMap => o-> R -> (
      -- Input:  A quotient ring that is a domain.
      -- Output:  A matrix of the fractions added to R to get the integral closure.
      -- These correspond directly to the variables in the output of integralClosure 
@@ -313,66 +311,40 @@ ICfractions(Ring) := RingMap => (R) -> (
      if R#?IIICCC or not isNormal R then (
 	  integralClosure R;
 	  K := (R#IIICCC#"basefield")[join(flatten R#IIICCC#"newvars",R.generatorSymbols)];
-	  K2 := (R#IIICCC#"basefield")[toList R#IIICCC#"vars"];
 	  -- This constructs the new ring using all of the new variables.
 	  KF := frac(K);
-	  KF2 := frac K2;  
 	  M1 := first entries substitute(vars R,KF);  -- puts the vars of R in KF
 	  M2 := apply(R#IIICCC#"fraclong", i->matrix{{i}});
 	  M2' := apply(M2, i->substitute(i,KF));
 	  M3 := flatten apply(M2', j-> first entries j);
-	  L1 := apply(R#IIICCC#"fractions", i->matrix{{i}});
-	  L2 := matrix{flatten apply(apply(L1, i->substitute(i,KF)), j-> first entries j)};
-	  G := map(KF,KF,matrix{join(M3,M1)});
-	  done := false;
-	  while done == false do (
-	       L2 = G(L2);
-	       done = isSubset(ideal apply(first entries L2,i->numerator i), ideal take(generators K , {#(generators K)-#(R.generatorSymbols),#(generators K)}));
-	       );
-	  K3 := frac R;
-	  substitute(L2,K3)
-	  )
+	  if o.Strategy === null then (
+	       L1 := apply(R#IIICCC#"fractions", i->matrix{{i}});
+	       L2 := matrix{flatten apply(apply(L1, i->substitute(i,KF)), j-> first entries j)};
+	       done := false;
+	       while done == false do (
+		    G := map(KF,KF,matrix{join(M3,M1)});
+	       	    L2 = G(L2);
+	       	    done = isSubset(ideal apply(first entries L2,i->numerator i), ideal take(generators K , {#(generators K)-#(R.generatorSymbols),#(generators K)}));
+	       	    );
+	       K2 := frac R;
+	       substitute(L2,K2)
+	       )
+	       else (
+		    G2 := matrix{join(M3,M1)};
+     	  	    Map := map(KF,KF,G2);
+     	  	    done = false;
+	  	    while done == false do (
+	       		 G2 = Map(G2);
+	       		 done = isSubset(ideal apply(first entries G2,i->numerator i), ideal take(generators K , {#(generators K)-#(R.generatorSymbols),#(generators K)}));
+	       		 );
+	  	    K2 = frac R;
+	  	    substitute(G2,K2)
+		    )
+	       )
      else (
 	  I := ideal(R);
 	  vars R)
 	  )
-
-------------------
-ICfractionsLong = method()
-ICfractionsLong(Ring) := RingMap => (R) -> (
-     -- Input:  A quotient ring which is a domain.
-     -- Output:  A matrix of the fractions generated by integralClosure.
-     -- The actual output of integralClosure does not add all off these as they
-     -- are extraneous.  
-     --
-     -- I haven't figured out how to do the fractions and the maps
-     -- for reduced rings yet.  #C#"answer" == 1 if and only if a 
-     -- domain was the input into the function.  
-     if R#?IIICCC or not isNormal R then (
-	  integralClosure(R);
-	  K := (R#IIICCC#"basefield")[join(flatten R#IIICCC#"newvars",R.generatorSymbols)];
-	  -- This constructs the new ring using all of the new variables.
-	  KF := frac(K);  
-     	  M1 := first entries substitute(vars R,KF);  -- puts the vars of R in KF
-	  M2 := apply(R#IIICCC#"fraclong", i->matrix{{i}});
-     	  M2' := apply(M2, i->substitute(i,KF));
-     	  M3 := flatten apply(M2', j-> first entries j);
-	  G2 := matrix{join(M3,M1)};
-     	  Map := map(KF,KF,G2);
-     	  done := false;
-	  while done == false do (
-	       G2 = Map(G2);
-	       done = isSubset(ideal apply(first entries G2,i->numerator i), ideal take(generators K , {#(generators K)-#(R.generatorSymbols),#(generators K)}));
-	       );
-	  K2 := frac R;
-	  substitute(G2,K2))
-     else (
-	  I := ideal(R);
-	  map(frac(ring I),frac(ring I)))
-     --if M3 === {} then R#IIICCC#"fractions" = {G,G.matrix}
-     --else R#IIICCC#"fractions" = {G,transpose G (matrix{M3})};
-     --R#IIICCC#"fractions"
-     )
 
 --------------------------------------------------------------------
 conductor = method()
@@ -392,6 +364,35 @@ conductor(RingMap) := Ideal => (F) -> (
 	  else (<< " --No conductor for " << F << endl;)
      )
 
+///
+restart
+
+R = ZZ/101[symbol x..symbol z,Degrees=>{2,5,6}]/(z*y^2-x^5*z-x^8)
+ICfractions(R)
+ICfractions(R, Strategy => Long)
+
+debug Macaulay2Core
+load "normal-15-6-06.m2"
+S = ZZ/32003[x,y,z]
+I = ideal"xy-z2, x2-yz"
+A = S/I
+integralClosure(A)
+
+load "minPres-17-6-06.m2"
+S = ZZ/32003[w_0,w_1,x,y,z,MonomialSize => 16]
+newI1 = ideal (y^2-x*z, x*y-z^2, x^2-y*z, w_1*z-x, w_1*y-z, w_1*x-y, w_0*z-y, 
+w_0*y-x, w_0*x-z, w_1^2-w_0, w_0*w_1-1, w_0^2-w_1)
+
+S=ZZ/101[symbol a,symbol b,symbol c, symbol d]
+I=ideal(a*(b-c),c*(b-d),b*(c-d))
+A=S/I                              
+time V = integralClosure A
+apply(V, i-> ideal i) == (ideal (S_3, S_1, S_0),ideal (S_2, S_1),ideal (S_2 - S_3, S_1 - S_3), ideal (S_3, S_2, S_0))
+
+///
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
+
+
