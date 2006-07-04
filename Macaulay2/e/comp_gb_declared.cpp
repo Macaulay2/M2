@@ -65,6 +65,12 @@ GBComputation *GBDeclared::create(const Matrix *m,
       return 0;
     }
   
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("declaring a GB requires a polynomial ring");
+      return 0;
+    }
   // Then: create and return the object
   return new GBDeclared(m,gb,change,syz);
 }
