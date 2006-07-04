@@ -245,6 +245,14 @@ document { Key => {show, (show, TEX), (show, URL), (show, Hypertext)},
      Inputs => { "x" => { ofClass{ Hypertext, TEX, URL } }},
      Consequences => {{ "an external viewer, such as a web browser, is started to view the object ", TT "x" }},
      SeeAlso => { showTex, showHtml }}
+document { Key => showHtml,
+     Headline => "convert hypertext to html and display with a browser",
+     Usage => "showHtml x",
+     Inputs => { "x" => Hypertext },
+     Consequences => {{ "an external viewer, such as a web browser, is started to view the object ", TT "x" }},
+     "The result is the same as ", TT "show x", ".",
+     Caveat => "This function may be phased out."
+     }
 document { Key => {(irreducibleDecomposition,MonomialIdeal),irreducibleDecomposition},
      Headline => "express a monomial ideal as an intersection of irreducible monomial ideals",
      Usage => "irreducibleDecomposition I",
@@ -465,7 +473,7 @@ assert ( class depth === CompiledFunctionClosure )
 ///
 
 
-document { Key => LowerBound,
+document { Key => {LowerBound,(symbol SPACE,CoherentSheaf,LowerBound)},
      Headline => "the class of lower bound objects",
      "This is a type of list that represents a lower bound.  The single element of the list is an integer, and the object represents the condititon
      that some other integer, such as the index in a direct sum, should be at least as large.",

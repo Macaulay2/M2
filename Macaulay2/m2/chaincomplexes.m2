@@ -151,6 +151,7 @@ ChainComplexMap _ ZZ = (f,i,p) -> (
 ChainComplex#id = (C) -> (
      complete C;
      f := new ChainComplexMap;
+     f.cache = new CacheTable;
      f.source = f.target = C;
      f.degree = 0;
      scan(spots C, i -> f#i = id_(C_i));
@@ -158,6 +159,7 @@ ChainComplex#id = (C) -> (
 - ChainComplexMap := ChainComplexMap => f -> (
      complete f;
      g := new ChainComplexMap;
+     g.cache = new CacheTable;
      g.source = f.source;
      g.target = f.target;
      g.degree = f.degree;
@@ -197,6 +199,7 @@ ChainComplexMap == RingElement := (f,r) -> (
 RingElement * ChainComplexMap := (r,f) -> (
      complete f;
      g := new ChainComplexMap;
+     g.cache = new CacheTable;
      g.source = f.source;
      g.target = f.target;
      g.degree = f.degree;
@@ -205,6 +208,7 @@ RingElement * ChainComplexMap := (r,f) -> (
 ZZ * ChainComplexMap := (n,f) -> (
      complete f;
      g := new ChainComplexMap;
+     g.cache = new CacheTable;
      g.source = f.source;
      g.target = f.target;
      g.degree = f.degree;
@@ -217,6 +221,7 @@ ChainComplexMap ^ ZZ := ChainComplexMap => (f,n) -> (
      else (
      	  complete f;
 	  g := new ChainComplexMap;
+	  g.cache = new CacheTable;
 	  C := g.source = f.source;
 	  g.target = f.target;
 	  d := g.degree = n * f.degree;
@@ -242,6 +247,7 @@ ChainComplexMap + ChainComplexMap := ChainComplexMap => (f,g) -> (
 	  error "expected maps of the same degree with the same source and target";
 	  );
      h := new ChainComplexMap;
+     h.cache = new CacheTable;
      h.source = f.source;
      h.target = f.target;
      h.degree = f.degree;
@@ -256,6 +262,7 @@ ChainComplexMap - ChainComplexMap := ChainComplexMap => (f,g) -> (
 	  error "expected maps of the same degree with the same source and target";
 	  );
      h := new ChainComplexMap;
+     h.cache = new CacheTable;
      h.source = f.source;
      h.target = f.target;
      h.degree = f.degree;
@@ -282,6 +289,7 @@ ChainComplexMap ++ ChainComplexMap := ChainComplexMap => (f,g) -> (
 	  error "expected maps of the same degree";
 	  );
      h := new ChainComplexMap;
+     h.cache = new CacheTable;
      h.source = f.source ++ g.source;
      h.target = f.target ++ g.target;
      h.degree = f.degree;
@@ -311,6 +319,7 @@ RingMap ChainComplex := ChainComplex => (f,C) -> (
 ChainComplexMap * ChainComplexMap := ChainComplexMap => (g,f) -> (
      if target f != source g then error "expected composable maps of chain complexes";
      h := new ChainComplexMap;
+     h.cache = new CacheTable;
      h.source = source f;
      h.target = target g;
      h.degree = f.degree + g.degree;
@@ -326,6 +335,7 @@ extend(ChainComplex,ChainComplex,Matrix) := ChainComplexMap => (D,C,fi)-> (
      i := 0;
      j := 0;
      f := new ChainComplexMap;
+     f.cache = new CacheTable;
      f.source = C;
      f.target = D;
      complete C;
@@ -357,6 +367,7 @@ cone ChainComplexMap := ChainComplex => f -> (
 
 nullhomotopy ChainComplexMap := ChainComplexMap => f -> (
      s := new ChainComplexMap;
+     s.cache = new CacheTable;
      s.ring = ring f;
      s.source = C := source f;
      c := C.dd;
@@ -416,6 +427,7 @@ ChainComplex ** Ring := ChainComplex => (C,S) -> (
      D.complete = true;
      D.ring = S;
      D.dd = new ChainComplexMap;
+     D.dd.cache = new CacheTable;
      D.dd.degree = deg := C.dd.degree;
      D.dd.source = D;
      D.dd.target = D;
@@ -574,6 +586,7 @@ dual ChainComplex := ChainComplex => (C) -> (
 
 Hom(ChainComplexMap, Module) := ChainComplexMap => (f,N) -> (
      g := new ChainComplexMap;
+     g.cache = new CacheTable;
      d := g.degree = f.degree;
      g.source = Hom(target f, N);
      g.target = Hom(source f, N);
@@ -585,6 +598,7 @@ Hom(ChainComplexMap, Module) := ChainComplexMap => (f,N) -> (
 
 Hom(Module, ChainComplexMap) := ChainComplexMap => (N,f) -> (
      g := new ChainComplexMap;
+     g.cache = new CacheTable;
      d := g.degree = f.degree;
      g.source = Hom(N, source f);
      g.target = Hom(N, target f);
@@ -604,6 +618,33 @@ regularity Ideal := (I) -> 1 + regularity resolution cokernel generators I
 
 BettiTally = new Type of Tally
 BettiTally.synonym = "Betty tally"
+BettiTally ++ BettiTally := (C,D) -> merge(C,D,plus)
+BettiTally ** BettiTally := (C,D) -> combine(C,D,(j,k)->apply(j,k,plus),times,plus)
+dual BettiTally := (C) -> applyKeys(C,j -> apply(j,minus))
+BettiTally Array := (C,A) -> (
+      if # A =!= 1 then error "expected array of length 1";
+      n := A#0;
+      applyKeys(C,(i,d) -> (i-n,d)))
+
+net BettiTally := v -> (
+     v = applyKeys( v, (i,d) -> (first d - i, i)); -- skew the degrees in the usual way; this way the Koszul complex occupies a horizontal line instead of a diagonal line
+     k := keys v;
+     fi := first \ k;
+     la := last  \ k;
+     mincol := min la;
+     maxcol := max la;
+     minrow := min fi;
+     maxrow := max fi;
+     v = table(toList (minrow .. maxrow), toList (mincol .. maxcol), (i,j) -> if v#?(i,j) then v#(i,j) else 0);
+     leftside := apply( splice {"", "total:", apply(minrow .. maxrow, i -> toString i | ":")}, s -> (6-# s,s));
+     totals := apply(transpose v, sum);
+     v = prepend(totals,v);
+     v = applyTable(v, bt -> if bt === 0 then "." else toString bt);
+     v = prepend(toString \ toList (mincol .. maxcol), v);
+     v = transpose v;
+     v = apply(v, col -> ( wid := 1 + max apply(col, i -> #i); apply(col, s -> (wid-#s, s))));
+     v = transpose prepend(leftside,v);
+     (stack apply(v, concatenate))^1)
 
 betti = method(TypicalValue => BettiTally)
      -- returns a hash table with pairs of the form (i,d) => n
@@ -639,23 +680,6 @@ betti ChainComplex := C -> (
 	  new BettiTally from flatten apply(
 	       select(pairs C, (i,F) -> class i === ZZ), 
 	       (i,F) -> apply(pairs tally degrees F, (d,n) -> (i,d) => n))))
-net BettiTally := v -> (
-     v = applyKeys( v, (i,d) -> (first d - i, i)); -- skew the degrees in the usual way; this way the Koszul complex occupies a horizontal line instead of a diagonal line
-     k := keys v;
-     fi := first \ k;
-     la := last  \ k;
-     mincol := min la;
-     maxcol := max la;
-     minrow := min fi;
-     maxrow := max fi;
-     v = table(toList (minrow .. maxrow), toList (mincol .. maxcol), (i,j) -> if v#?(i,j) then v#(i,j) else 0);
-     leftside := apply( splice {"total:", apply(minrow .. maxrow, i -> toString i | ":")}, s -> (6-# s,s));
-     totals := apply(transpose v, sum);
-     v = transpose prepend(totals,v);
-     v = applyTable(v, bt -> if bt === 0 then "." else toString bt);
-     v = apply(v, col -> ( wid := 1 + max apply(col, i -> #i); apply(col, s -> (wid-#s, s))));
-     v = transpose prepend(leftside,v);
-     stack apply(v, concatenate))
 
 -----------------------------------------------------------------------------
 syzygyScheme = (C,i,v) -> (
@@ -667,6 +691,7 @@ syzygyScheme = (C,i,v) -> (
 chainComplex GradedModule := ChainComplex => (M) -> (
      C := new ChainComplex from M;
      b := C.dd = new ChainComplexMap;
+     b.cache = new CacheTable;
      b.degree = -1;
      b.source = b.target = C;
      C)
@@ -701,6 +726,7 @@ GradedModule ** ChainComplex := ChainComplex => (C,D) -> chainComplex C ** D
 
 ChainComplexMap ** ChainComplexMap := ChainComplexMap => (f,g) -> (
      h := new ChainComplexMap;
+     h.cache = new CacheTable;
      E := h.source = source f ** source g;
      F := h.target = target f ** target g;
      deg := h.degree = f.degree + g.degree;
@@ -787,6 +813,7 @@ ChainComplex ^ Array := ChainComplexMap => (C,v) -> if C#?(symbol ^,v) then C#(s
 
 map(ChainComplex,ChainComplex,Function) := ChainComplexMap => options -> (C,D,f) -> (
      h := new ChainComplexMap;
+     h.cache = new CacheTable;
      h.source = D;
      h.target = C;
      deg := h.degree = if options.Degree === null then 0 else options.Degree;
@@ -802,6 +829,7 @@ map(ChainComplex,ChainComplex,ChainComplexMap) := ChainComplexMap => options -> 
 
 inducedMap(ChainComplex,ChainComplex) := ChainComplexMap => options -> (C,D) -> (
      h := new ChainComplexMap;
+     h.cache = new CacheTable;
      h.source = D;
      h.target = C;
      deg := h.degree = if options.Degree === null then 0 else options.Degree;

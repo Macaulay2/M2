@@ -427,7 +427,7 @@ document { Key => MethodFunctionWithOptions,
      Headline => "a type of method function", "Functions of this type are created by ", TO "method", "." }
 undocumented (methodOptions, MethodFunctionWithOptions)
 undocumented (methodOptions, MethodFunction)
-document { Key => {(methodOptions, Function),methodOptions},
+document { Key => {(methodOptions, Function),(methodOptions, ScriptedFunctor),methodOptions},
      Headline => "recover the options used when a method function was created",
      Usage => "methodOptions f",
      Inputs => { "f" },
@@ -785,6 +785,18 @@ document { Key => SumOfTwists,
      ///
      }
 
+document { Key => (symbol (*),CoherentSheaf),
+     Headline => "sum of twists",
+     Usage => "F(*)",
+     Inputs => {"F"},
+     Outputs => {{"a symbolic representation of the graded object consisting of the twists ", TT "F(n)", ", for all integers ", TT "n"}},
+     EXAMPLE lines ///
+     	  R = QQ[x,y,z]
+     	  X = Proj R
+	  Ext^0(OO_X^1, OO_X^1)
+	  Ext^0(OO_X^1, OO_X^1(*))
+     ///}
+
 document { Key => Wrap,
      Headline => "a key for methods for wrapping printed output",
      "The default method for printing results of computations (stored in ", TT "Thing.Print", ") searches for a method for wrapping the output by search in the class of 
@@ -806,7 +818,8 @@ document { Key => baseFilename,
      	  baseFilename "/a/b/file"
      ///
      }
-document { Key => BettiTally,
+
+document { Key => {BettiTally,(symbol ++,BettiTally,BettiTally), (symbol **,BettiTally,BettiTally), (symbol SPACE,BettiTally,Array), (dual,BettiTally)},
      Headline => "the class of all Betti tallies",
      "A Betti tally is a special type of ", TO "Tally", " that is printed as a display of graded Betti numbers.  The class was created
      so the function ", TO "betti", " could return something that both prints nicely and from which information can be extracted.  The keys
@@ -816,6 +829,13 @@ document { Key => BettiTally,
           t = new BettiTally from { (0,{0}) => 1, (1,{1}) => 2, (2,{3}) => 3, (2,{4}) => 4 }
 	  peek oo
 	  t#(2,{4})
+     ///,
+     "For convenience, the operations of direct sum (", TO "++", "), tensor product (", TO "**", "), ", TO "dual", ", and degree shifting (numbers in brackets), have
+     been implemented for Betti tallies.  These operations mimic the corresponding operations on chain complexes.",
+     EXAMPLE lines ///
+     	  t ++ t[-5]
+	  t ** t
+	  dual t
      ///
      }
 
@@ -1157,6 +1177,17 @@ document { Key => minimizeFilename,
 	 minimizeFilename "../../../../../../"
      ///}
 
+document { Key => relativizeFilename,
+     Headline => "relativize a file name",
+     Usage => "relativizeFilename(dir,fn)",
+     Inputs => { "dir" => "a path to a directory", "fn" => "a path to a file" },
+     Outputs => {{"a relativized path, equivalent to ", TT "fn", " when starting from ", TT "dir"}},
+     EXAMPLE lines ///
+         relativizeFilename("a/b/","a/b/c/d")
+         relativizeFilename("a/b/c/d","a/b/")
+         relativizeFilename("a/b/c/d","a/b/e/f")
+     ///}
+
 document { Key => info,
      Headline => "convert hypertext to info format",
      "This function is used internally when preparing documentation."
@@ -1342,7 +1373,7 @@ document { Key => {remainder,(remainder, Matrix, GroebnerBasis), (remainder, Mat
      Outputs => {
 	  "r" => {"the remainder of ", TT "f", " upon division by ", TT "g"}
 	  },
-     PARA{"This operation is the same as ", TO "(symbol %, Matrix, GroebnerBasis)", "."},
+     PARA{"This operation is the same as ", TO (symbol %, Matrix, GroebnerBasis), "."},
      PARA{"The equation ", TT "g*q+r == f", " will hold, where ", TT "q", " is the map provided by ", TO "quotient", ".  The source of ", TT "f", " should be a free module."},
      EXAMPLE lines ///
      	  R = ZZ[x,y]
@@ -1425,7 +1456,34 @@ document { Key => toRRR,
 	  toRRR(1/7)
 	  precision oo
      ///}
-	       
+
+document { Key => {(sheafHom, CoherentSheaf, CoherentSheaf),sheafHom},
+     Headline => "sheaf Hom",
+     Usage => "sheafHom(F,G)",
+     Inputs => {"F","G"},
+     Outputs => {{"the coherent sheaf of homomorphisms from ", TT "F", " to ", TT "G", ""}},
+     SeeAlso => {(Hom, CoherentSheaf, CoherentSheaf)},
+     EXAMPLE lines ///
+     	  X = Proj(QQ[x,y])
+	  sheafHom(OO_X^1(2),OO_X(11)^1)
+     ///
+     }
+
+document { Key => "globalAssignmentHooks",
+     Headline => "assignment hooks for global symbols",
+     Usage => "globalAssignmentHooks#s = f",
+     Inputs => {
+	  "s" => Symbol => "a global symbol",
+	  "f" => Function => {"a function of two arguments, ", TT "f = (sym,val) -> ...", "; the argument ", TT "sym", " is the symbol whose
+	       value is about to be assigned to, and ", TT "val", " is the value about be assigned to it"
+	       }
+	  },
+     Consequences => {
+	  {"whenever an assignment statement of the form ", TT "s=e", " is done, the expression ", TT "f(s,e)", " is first evaluated"}
+	  },
+     SeeAlso => {globalAssignFunction}
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

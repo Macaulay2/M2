@@ -116,7 +116,7 @@ document {
      SeeAlso => {(primaryDecomposition,Ideal), radical, minimalPrimes, topComponents, 
 	  removeLowestDimension}
      }
-///
+
 document {
      Key => [localize,Strategy],
 	  "The strategy option value should be one of the following.",
@@ -140,10 +140,10 @@ document {
 	  Shimoyama-Yokoyama, J. Symbolic computation, 22(3) 247-277 (1996).",
 	  HEADER3 "Strategy => 2",
 	  "This is the same as ", TT "Strategy => 1", " except that, if 
-	  unknown, the assassinator is computer using ", TO associatedPrimes => Strategy ,
+	  unknown, the assassinator is computer using ", TO [associatedPrimes, Strategy],
 	  " = 2."
 	   }
-///
+
 
 document {
      Key => (primaryComponent, Ideal, Ideal),

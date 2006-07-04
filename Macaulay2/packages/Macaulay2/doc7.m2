@@ -998,7 +998,7 @@ document {
      TT "dual f", " -- the dual (transpose) of a homomorphism."
      }
 document {
-     Key => {singularLocus,(singularLocus, ProjectiveVariety),(singularLocus, Ideal),(singularLocus, Ring)},
+     Key => {singularLocus,(singularLocus, ProjectiveVariety),(singularLocus, Ideal),(singularLocus, Ring),(singularLocus, AffineVariety)},
      Headline => "singular locus",
      TT "singularLocus R", " -- produce the singular locus of a ring, which is assumed to be integral.",
      PARA{},

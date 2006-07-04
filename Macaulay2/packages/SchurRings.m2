@@ -143,8 +143,10 @@ schurRing(Symbol,ZZ) := SchurRing => (p,n) -> (
 beginDocumentation()
 
 document {
-     Key => "Schur rings",
-     Headline => "monomials representing irreducible representations of GL(n)",
+     Key => "SchurRings",
+     Headline => "rings representing irreducible representations of GL(n)",
+     "This package make computations in the representation ring of GL(n) possible.",
+     PARA{},
      "Given a positive integer ", TT "n", ", 
      we may define a polynomial ring over ", TO "ZZ", " in ", TT "n", " variables, whose
      monomials correspond to the irreducible representations of GL(n), and where 
@@ -176,7 +178,7 @@ document {
      }
 
 document {
-     Key => schurRing,
+     Key => {schurRing,(schurRing,Symbol,ZZ)},
      Headline => "make a Schur ring",
      TT "schurRing(s,n)", " -- creates a Schur ring of degree n with variables based on the symbol s",
      PARA{},

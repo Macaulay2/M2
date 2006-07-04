@@ -691,7 +691,7 @@ document {
      }
 
 document {
-     Key => TO,
+     Key => {TO,(NewFromMethod,TO,Thing)},
      Headline => "hypertext documentation link",
 	Usage => "TO x",
 	Inputs => {"x" => {"a documentation key"}},
@@ -735,7 +735,7 @@ document {
 
 
 document {
-     Key => TOH,
+     Key => {TOH,(NewFromMethod,TOH,Thing)},
      Headline => "hypertext documentation link followed by a headline",
 	Usage => "TOH x",
 	Inputs => {"x" => {"a documentation key"}},
@@ -746,7 +746,7 @@ document {
 
 
 document {
-     Key => Command,
+     Key => {Command,(symbol SPACE,Command,Thing)},
      Headline => "the class of all commands",
      Usage => "Command g",
      Inputs => { "g" => "a function or a string" },

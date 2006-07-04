@@ -164,7 +164,7 @@ independentSets Ideal := o -> (M) -> independentSets(monomialIdeal M,o)
 
 expression MonomialIdeal := (I) -> (
      if numgens I === 0 then hold "0" 
-     else new FunctionApplication from { monomialIdeal, unsequence expression toSequence first( entries generators I) }
+     else new FunctionApplication from { monomialIdeal, expression unsequence toSequence first( entries generators I) }
      )
 
 MonomialIdeal.AfterPrint = MonomialIdeal.AfterNoPrint = (I) -> (
@@ -236,55 +236,23 @@ lcmgens := local lcmgens
 alexanderdual := local alexanderdual
 
 lcmOfGens := (I) -> if I.cache#?lcmgens then I.cache#lcmgens else I.cache#lcmgens = (
-     max \ transpose apply(first entries generators I, i -> first exponents i)
+     if I == 0 then toList (numgens ring I : 0)
+     else max \ transpose apply(first entries generators I, i -> first exponents i)
      )
-
-
 
  -- We use E. Miller's definition for nonsquare 
  -- free monomial -- ideals.
 
 -- The following is not exported directly (it is a subroutine for minimalPrimes, dual).
-squarefreeDual = (J) -> (
-     -- assumption: J is a squarefree MonomialIdeal
-     (Js,Qs,ans,i) := null;
-     if gbTrace > 0 then (
-       time Js = apply(numgens J, i -> J_i);
-       time Qs = apply(Js, i -> monomialIdeal support(i));
-       ans = Qs_0;
-       i = 1;
-       time while i < #Qs do (
-     	  time ans = intersect(ans,Qs_i);
-     	  << "i = " << i << " numgens " << numgens ans << endl;
-     	  i = i+1;
-     	  );
-       ans)
-     else (
-       Js = apply(numgens J, i -> J_i);
-       Qs = apply(Js, i -> monomialIdeal support(i));
-       ans = Qs_0;
-       i = 1;
-       while i < #Qs do (
-     	  ans = intersect(ans,Qs_i);
-     	  i = i+1;
-     	  );
-       ans)
-     )
+squarefreeDual = (J) -> if J == 0 then monomialIdeal 1_(ring J) else intersect (monomialIdeal @@ support \ first entries generators J)
 
 dual(MonomialIdeal, List) := (I,a) -> ( -- Alexander dual
      R := ring I;
      X := generators R;
      aI := lcmOfGens I;
      if aI =!= a then (
-     	  if #aI =!= #a 
-	  then error (
-	       "expected list of length ",
-	       toString (#aI));
-	  scan(a, aI, 
-	       (b,c) -> (
-		    if b<c then
-		    error "exponent vector not large enough"
-		    ));
+     	  if #aI =!= #a then error ( "expected list of length ", toString (#aI));
+	  scan(a, aI, (b,c) -> if b<c then error "exponent vector not large enough" );
 	  );
      P := monomialIdeal apply(#X, i -> X#i^(a#i+1));
      monomialIdeal( (generators (P:I)) % P )

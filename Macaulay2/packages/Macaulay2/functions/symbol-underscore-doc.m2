@@ -441,6 +441,39 @@ document {
 	  },
      }
 
+document {
+     Key => ((symbol _,symbol =),ChainComplex,ZZ),
+     Headline => "install component of chain complex",
+     Usage => "C_i = M",
+     Inputs => { "C" , "i", "M" },
+     Outputs => {{"install ", TT "M", " as the ", TT "i", "-th module of the chain complex ", TT "C"}},
+     EXAMPLE lines ///
+	  R = ZZ[x..z]
+	  C = chainComplex R
+	  C_2 = R^11
+	  C_4 = R^13
+	  C
+     ///,
+     SeeAlso => {((symbol _,symbol =),ChainComplexMap,ZZ)}}
+
+document {
+     Key => ((symbol _,symbol =),ChainComplexMap,ZZ),
+     Headline => "install component of chain complex map",
+     Usage => "f_i = g",
+     Inputs => { "f" , "i", "g" },
+     Outputs => {{"install ", TT "g", " as the ", TT "i", "-th module of the chain complex map ", TT "f"}},
+     EXAMPLE lines ///
+	  R = ZZ[x..z]
+	  C = chainComplex R
+	  C.dd
+	  C.dd_1 = vars R
+	  C.dd_3 = transpose vars R
+	  C.dd
+	  C
+	  HH C
+	  prune HH C
+     ///,
+     SeeAlso => {((symbol _,symbol =),ChainComplex,ZZ)}}
 
 document {
      Key => (symbol _,Function,Thing),

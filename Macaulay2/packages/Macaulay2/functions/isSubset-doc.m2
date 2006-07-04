@@ -49,7 +49,7 @@ document {
 	  "isSubset(I^2,I)",
 	  "isSubset(I,I^2)"
 	  },
-     "In polynomial rings, this is accomplished by computing a ", TO "Groebner basis", " of ", TT "J", " and testing 
+     "In polynomial rings, this is accomplished by computing a Groebner basis of ", TT "J", " and testing 
      whether every element of ", TT "I", " reduces to 0 modulo ", TT "I", "."
      }
 
