@@ -1,0 +1,19 @@
+Where are all the anchors G-Z?
+
+And why is there an extra list item?
+
+-----------------------------------------------------------------------------
+
+<body><div><a href="index.html">top</a> | <a href="toc.html">toc</a> | <a href="http://www.math.uiuc.edu/Macaulay2/index-0.9.9.html">home</a></div>
+
+<hr/>
+<h1>Symbol Index</h1>
+<div><a href="#A">A</a>&nbsp;&nbsp;&nbsp;<a href="#B">B</a>&nbsp;&nbsp;&nbsp;<a href="#C">C</a>&nbsp;&nbsp;&nbsp;<a href="#D">D</a>&nbsp;&nbsp;&nbsp;<a href="#E">E</a>&nbsp;&nbsp;&nbsp;<a href="#F">F</a>&nbsp;&nbsp;&nbsp;<a href="#G">G</a>&nbsp;&nbsp;&nbsp;<a href="#H">H</a>&nbsp;&nbsp;&nbsp;<a href="#I">I</a>&nbsp;&nbsp;&nbsp;<a href="#J">J</a>&nbsp;&nbsp;&nbsp;<a href="#K">K</a>&nbsp;&nbsp;&nbsp;<a href="#L">L</a>&nbsp;&nbsp;&nbsp;<a href="#M">M</a>&nbsp;&nbsp;&nbsp;<a href="#N">N</a>&nbsp;&nbsp;&nbsp;<a href="#O">O</a>&nbsp;&nbsp;&nbsp;<a href="#P">P</a>&nbsp;&nbsp;&nbsp;<a href="#Q">Q</a>&nbsp;&nbsp;&nbsp;<a href="#R">R</a>&nbsp;&nbsp;&nbsp;<a href="#S">S</a>&nbsp;&nbsp;&nbsp;<a href="#T">T</a>&nbsp;&nbsp;&nbsp;<a href="#U">U</a>&nbsp;&nbsp;&nbsp;<a href="#V">V</a>&nbsp;&nbsp;&nbsp;<a href="#W">W</a>&nbsp;&nbsp;&nbsp;<a href="#X">X</a>&nbsp;&nbsp;&nbsp;<a href="#Y">Y</a>&nbsp;&nbsp;&nbsp;<a href="#Z">Z</a></div>
+
+<ul><li><a id="A"/><a id="B"/><a id="C"/><a id="D"/><a id="E"/><a id="F"/></li>
+<li><span><a href="_first__Function_sp__Z__Z.html" title="a silly first function">firstFunction</a> -- a silly first function</span></li>
+<li><span><a href="index.html" title="an example Macaulay 2 package">FirstPackage</a> -- an example Macaulay 2 package</span></li>
+</ul>
+</body>
+</html>
+
