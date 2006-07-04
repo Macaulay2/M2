@@ -11,7 +11,7 @@ m = mat{{a,b,c}}
 gbTrace=3
 C = rawResolution(m,true,5,false,0,1,0)
 
-rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+rawGBSetStop(C,false,{},0,0,0,0,0,false,{})
 
 rawStartComputation C
 rawGBBetti(C,0)
@@ -42,7 +42,7 @@ m = mat{{a,b,c}}
 gbTrace=3
 C = rawResolution(m,true,5,false,0,0,0)
 
-rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+rawGBSetStop(C,false,{},0,0,0,0,0,false,{})
 
 rawStartComputation C
 rawGBBetti(C,0)
@@ -63,7 +63,7 @@ m = mat{{a,b,c}}
 gbTrace=10
 C = rawResolution(m,true,5,false,0,2,0)
 
-rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+rawGBSetStop(C,false,{},0,0,0,0,0,false,{})
 
 rawStartComputation C
 rawGBBetti(C,0)
@@ -90,7 +90,7 @@ m = mat{{b^2-a*c,a*d-b*c,c^2-b*d}}
 gbTrace=3
 C = rawResolution(m,true,5,false,0,2,0)
 
-rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+rawGBSetStop(C,false,{},0,0,0,0,0,false,{})
 
 rawStartComputation C
 rawGBBetti(C,0)
@@ -118,7 +118,7 @@ I = ideal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f, b*c*d,b*d*e,b*e*f,c*d*f,c*e*f)
 M = module I
 m = raw gens gb syz gens I
 C = rawResolution(m,true,6,false,0,0,0)
-rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+rawGBSetStop(C,false,{},0,0,0,0,0,false,{})
 rawStartComputation C
 assert(rawbettimat(C,0) == matrix{{10,15,6}})
 m1 = rawResolutionGetMatrix(C,1)
@@ -137,7 +137,7 @@ I = ideal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f, b*c*d,b*d*e,b*e*f,c*d*f,c*e*f)
 M = module I
 m = raw gens gb syz gens I
 C = rawResolution(m,true,6,false,0,1,0)
-rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+rawGBSetStop(C,false,{},0,0,0,0,0,false,{})
 rawStartComputation C
 assert(rawbettimat(C,0) == matrix{{10,15,6}})
 m1 = rawResolutionGetMatrix(C,1)
@@ -156,7 +156,7 @@ I = ideal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f, b*c*d,b*d*e,b*e*f,c*d*f,c*e*f)
 M = module I
 m = raw gens gb syz gens I
 C = rawResolution(m,true,6,false,0,2,0)
-rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+rawGBSetStop(C,false,{},0,0,0,0,0,false,{})
 rawStartComputation C
 assert(rawbettimat(C,0) == matrix {{10, 15, 7}, {0, 1, 0}})
 m1 = rawResolutionGetMatrix(C,1)
@@ -177,7 +177,7 @@ J = flatten(m1*m2-m2*m1)
 J = ideal J
 m = raw gens gb J
 time C = rawResolution(m,true,10,false,0,0,0)
-rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+rawGBSetStop(C,false,{},0,0,0,0,0,false,{})
 time rawStartComputation C
 bettimat = matrix {{1, 0, 0, 0, 0, 0, 0}, 
         {0, 8, 2, 0, 0, 0, 0}, 
@@ -211,7 +211,7 @@ J = flatten(m1*m2-m2*m1)
 J = ideal J
 m = raw gens J
 time C = rawResolution(m,true,10,false,0,1,0)
-rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+rawGBSetStop(C,false,{},0,0,0,0,0,false,{})
 gbTrace = 0
 time rawStartComputation C
 bettimat = matrix {{1, 0, 0, 0, 0, 0, 0}, 
@@ -246,7 +246,7 @@ J = flatten(m1*m2-m2*m1)
 J = ideal J
 m = raw gens J
 time C = rawResolution(m,true,10,false,0,2,0)
-rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+rawGBSetStop(C,false,{},0,0,0,0,0,false,{})
 time rawStartComputation C
 bettimat = matrix {
      {1, 0, 1, 0, 0, 0, 0}, 
@@ -287,7 +287,7 @@ gbTrace=3
 algorithm = 0
 C = rawResolution(m,true,5,false,0,algorithm,0)
 
-rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+rawGBSetStop(C,false,{},0,0,0,0,0,false,{})
 
 rawStartComputation C
 rawGBBetti(C,0)
@@ -319,7 +319,7 @@ gbTrace=3
 algorithm = 1
 C = rawResolution(m,true,5,false,0,algorithm,0)
 
-rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+rawGBSetStop(C,false,{},0,0,0,0,0,false,{})
 
 rawStartComputation C
 rawGBBetti(C,0)
@@ -349,7 +349,7 @@ gbTrace=3
 algorithm = 2
 C = rawResolution(m,true,5,false,0,algorithm,0)
 
-rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+rawGBSetStop(C,false,{},0,0,0,0,0,false,{})
 
 rawStartComputation C
 rawGBBetti(C,0)

@@ -460,7 +460,7 @@ R = ZZ[symbol a .. symbol c, MonomialOrder => { Position => Down }]
 m = matrix{{a},{a},{a}}
 assert(leadTerm m == matrix{{a},{0},{0}})
 
-R = ZZ[symbol a .. symbol c, MonomialOrder => { RevLex => 3, Position => Down }]
+R = ZZ[symbol a .. symbol c, MonomialOrder => { RevLex => 3, Position => Down }, Global => false]
 m = matrix{{1+b+c}}
 leadTerm m
 assert(leadTerm m - matrix{{1_R}} == 0)
@@ -474,7 +474,7 @@ assert(leadTerm(1,f) == matrix{{(a+b+c)*x^3}})
 assert(leadTerm(2,f) == matrix{{a*x^3}})
 assert(leadTerm(3,f) == leadTerm(2,f))
 
-R = ZZ[symbol a .. symbol d, MonomialOrder => { RevLex => 1, GRevLex => 2, RevLex => 1}]
+R = ZZ[symbol a .. symbol d, MonomialOrder => { RevLex => 1, GRevLex => 2, RevLex => 1}, Global=>false]
 f = matrix{{1+a+b+c+d+b*d}}
 assert(leadTerm(0,f) == f)
 assert(leadTerm(1,f) == matrix{{b+b*d+c+1+d}})
