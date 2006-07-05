@@ -81,8 +81,10 @@ L1 = ideal gens gb L
 assert(L == L1)
 
 stderr << "The following decompose takes too long, so it is commented out" << endl
--- decompose ideal mingens L1 -- ouch!
-irreducibleCharacteristicSeries L1
+time decompose ideal mingens L1 -- ouch!
+
+time irreducibleCharacteristicSeries L1
+time irreducibleCharacteristicSeries ideal mingens L1
 
 -- decompose interrupt bug
 R = ZZ/32003[symbol a..symbol d]
