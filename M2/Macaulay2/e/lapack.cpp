@@ -20,8 +20,8 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
   int *perm = newarray_atomic(int, min);
   LMatrixRR *copyA = A->copy();
 
-  L->resize(rows, rows);
-  U->resize(rows, cols);
+  L->resize(rows, min);
+  U->resize(min, cols);
 
   dgetrf_(&rows, &cols, copyA->get_lapack_array(),
 	  &rows, perm, &info);
@@ -29,7 +29,7 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
   /* set the lower triangular matrix L */
   double *vals = L->get_array();
   int loc = 0;
-  for (int j=0; j<cols; j++) {
+  for (int j=0; j<min; j++) {
     for (int i=0; i<rows; i++) {
       assert(vals < L->get_array() + L->n_rows() * L->n_cols());
       if (i > j) {
@@ -48,7 +48,7 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
   vals = U->get_array();
   loc = 0;
   for (int j=0; j<cols; j++) {
-    for (int i=0; i<rows; i++) {
+    for (int i=0; i<min; i++) {
       assert(vals < U->get_array() + U->n_rows() * U->n_cols());
       if (i <= j) {
 	*vals++ = copyA->get_array()[loc++];

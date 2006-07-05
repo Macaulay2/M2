@@ -292,11 +292,10 @@ associatedPrimes MonomialIdeal := List => o -> (I) -> (
 
 --  PRIMARY DECOMPOSITION  ---------------------------------
 
-minimalPrimes MonomialIdeal := (I) -> (if I.cache#?"MinimalPrimes"
-   then I.cache#"MinimalPrimes" 
-   else I.cache#"MinimalPrimes" = (
-	minI := squarefreeDual radical I;
-	apply(flatten entries generators minI, monomialIdeal @@ support)))
+minimalPrimes MonomialIdeal := (cacheValue symbol minimalPrimes) (
+     (I) -> (
+	  minI := squarefreeDual radical I;
+	  apply(flatten entries generators minI, monomialIdeal @@ support)))
 
 irreducibleDecomposition = method();
 irreducibleDecomposition MonomialIdeal := List => (I) -> (

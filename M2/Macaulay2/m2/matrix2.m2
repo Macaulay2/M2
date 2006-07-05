@@ -177,8 +177,8 @@ listZ := v -> (
 homogCheck := (f, v, wts) -> (
     if ring f =!= ring v then error "homogenization requires variable in the same ring";
     listZ wts;
-    if # wts != numgens ring f 
-       then error "homogenization weight vector has incorrect length";)
+    -- if # wts != numgens ring f then error "homogenization weight vector has incorrect length";
+    )
 
 homogenize(RingElement, RingElement, List) := RingElement => (f,v,wts) -> (
      R := ring f;
@@ -190,12 +190,10 @@ homogenize(Matrix, RingElement, List) := Matrix => (f,v,wts) -> (
      R := ring f;
      wts = flatten wts;
      homogCheck(f,v,wts);
+     if debugLevel > 0 then << (new FunctionApplication from {rawHomogenize, (f.RawMatrix, index v, wts)}) << endl;
      map(target f, source f, rawHomogenize(f.RawMatrix, index v, wts)))
 
-homogenize(Matrix, RingElement) := Matrix => (f,n) -> (
-     wts := (transpose (monoid ring f).Options.Degrees)#0;
-     homogenize(f,n,wts)
-     )
+homogenize(Matrix, RingElement) := Matrix => (f,n) -> homogenize(f,n,apply(allGenerators ring f, degree))
 
 homogenize(Module,RingElement) := Module => (M,z) -> (
      if isFreeModule M then M

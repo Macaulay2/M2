@@ -203,13 +203,11 @@ texMath TABLE := x -> concatenate (
 ///
      )
 
-info TABLE := x -> boxTable applyTable(toList \ noopts \\ toList x,info)
+info TABLE := x -> netTable(Boxes=>true, applyTable(toList \ noopts \\ toList x,info))
 
-
-ex := "class" => "examples"
 net TABLE :=  x -> (
-     x = toList x;
-     (if member(ex, x) then boxTable else netTable') (toList \ noopts \\ x)
+     (op,ag) := override(options TABLE, toSequence x);
+     netTable(Boxes => op#"class" === "examples", toList ag)
      )
 
 shorten := s -> (

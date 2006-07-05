@@ -114,11 +114,6 @@ listForm RingElement := (f) -> (
 -- 	  flatten entries lift(cc, k),
 -- 	  identity))
 
-monoidIndices := (M,vars) -> apply(vars, x -> if class x === ZZ then x else (
-	  x = baseName x;
-	  if M.index#?x then M.index#x
-	  else error "expected a variable of the ring or an integer"))
-
 protect diffs0						    -- private keys for storing info about indices of WeylAlgebra variables
 protect diffs1
 
@@ -141,8 +136,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      	  local RM;
 	  quotfix := rawRM -> if class R === QuotientRing and class ultimate(ambient,R) === PolynomialRing then rawQuotientRing(rawRM, raw R) else rawRM;
 	  Weyl := M.Options.WeylAlgebra =!= {};
-	  skews := M.Options.SkewCommutative;
-	  if skews === false then skews = {};
+	  skews := monoidIndices(M,M.Options.SkewCommutative);
 	  degRing := if degreeLength M != 0 then degreesRing degreeLength M else ZZ;
 	  coeffOptions := options R;
 	  coeffWeyl := coeffOptions =!= null and coeffOptions.WeylAlgebra =!= {};
@@ -191,18 +185,9 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       )
 	  else if skews =!= {} or R.?SkewCommutative then (
 	       if R.?diffs0 then error "coefficient ring is a Weyl algebra";
-	       skews = (
-		    if skews === true then toList (0 .. num - 1)
-		    else if class skews === List and all(skews, i -> class i === ZZ or class i === Symbol or class i === IndexedVariable or instance(i,RingElement))
-		    then (
-			 skews = skews / (i -> if instance(i,RingElement) then baseName i else i);
-			 monoidIndices(M,skews)
-			 )
-		    else error "expected SkewCommutative option to be true, false, or a list of variables or integers"
-		    );
 	       if R.?SkewCommutative then skews = join(skews, apply(R.SkewCommutative, i -> i + num));
 	       RM = new PolynomialRing from quotfix rawSkewPolynomialRing(rawPolynomialRing(raw basering, raw flatmonoid),skews);
-	       if #skews > 0 then RM.SkewCommutative = skews;
+	       RM.SkewCommutative = skews;
 	       )
 	  else (
 	       log := FunctionApplication {rawPolynomialRing, (raw basering, raw flatmonoid)};

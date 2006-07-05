@@ -6,7 +6,7 @@ pretty Thing := x -> stack pretty2 x
 pretty2 = method(Dispatch => Thing)
 -- pretty2 String := s -> (
 --      r := wrap(printWidth - 2, format s);
---      if depth r > 0 then r = boxList {r};
+--      if depth r > 0 then r = netTable {{r}};
 --      1:r)
 pr := ou -> x -> (
      r := ou x;

@@ -1528,6 +1528,7 @@ scanpairsfun(e:Expr):Expr := (
      else      WrongNumArgs(2));
 setupfun("scanPairs",scanpairsfun);
 
+mpre():Expr := buildErrorPacket("applyPairs: expected function to return null, a sequence of length 2, or an option x=>y");
 mappairs(f:Expr,obj:HashTable):Expr := (
      newobj := newHashTable(obj.class,obj.parent);
      foreach bucket in obj.table do (
@@ -1538,19 +1539,20 @@ mappairs(f:Expr,obj:HashTable):Expr := (
 	       when v 
 	       is Error do return v 
 	       is Nothing do nothing
+	       is b:List do (
+		    if b.class != optionClass then return mpre();
+		    a := b.v;
+		    if length(a) != 2 then return mpre();
+		    when storeInHashTable(newobj,a.0,a.1) is e:Error do return Expr(e) else nothing)
 	       is a:Sequence do (
 		    if length(a) == 2
 		    then (
 			 ret := storeInHashTable(newobj,a.0,a.1);
 			 when ret is Error do return ret else nothing;
 			 )
-		    else return 
-			 buildErrorPacket(
-			      "'applyPairs' expected return value to be a pair or 'null'");
+		    else return mpre();
 		    )
-	       else return 
-		    buildErrorPacket(
-			 "'applyPairs' expected return value to be a pair or 'null'");
+	       else return mpre();
 	       p = p.next;
 	       ));
      sethash(newobj,obj.mutable);

@@ -1,0 +1,47 @@
+Date: Wed, 5 Jul 2006 08:42:13 -0500 (CDT)
+From: Dan Grayson <dan@math.uiuc.edu>
+To: Michael Stillman <mike@math.cornell.edu>
+CC: dan@math.uiuc.edu
+In-reply-to: <2B21061C-9AA9-4B6F-8638-92E60027CDBB@math.cornell.edu> (message
+	from Michael Stillman on Wed, 5 Jul 2006 09:30:42 -0400)
+Subject: Re: monomial orders
+Reply-to: dan@math.uiuc.edu
+
+
+Oh, right.  We would like an option like MonomialSize => n in the MonomialOrder
+list to apply to subsequent options as a default, until overriden by another
+one.  It would be important to document which ones it applies to.
+
+    i21 : apropos "Small"
+
+    o21 = {GRevLexSmall, LexSmall}
+
+    o21 : List
+
+Does the list above imply it would apply only to GRevLex and Lex?
+
+Shall I implement that now at top level?  (I assume yes.)
+
+Do we get rid of the words with Tiny and Small in them now?
+
+> To: Dan Grayson <dan@math.uiuc.edu>
+> From: Michael Stillman <mike@math.cornell.edu>
+> Subject: monomial orders
+> Date: Wed, 5 Jul 2006 09:30:42 -0400
+> 
+> I am going through and cleaning up/finishing the documentation for  
+> monomial orders (including schreyer orders).  Remember how we  
+> discussed the use of monomial size, instead of use of small, tiny.  I  
+> would like to document the final version of what we wish to use.  Do  
+> you recall what the status of that is?
+> 
+> The idea was to do something like:
+> 
+> MonomialOrder=>{3, MonomialSize=>8, Lex=>4}
+> 
+> or allow a single MonomialSize => 8, 16, 32, or 64 outside the  
+> MonomialOrder option too.
+> (Which will be the size that the monomial order starts with, unless  
+> changed as in the example above)
+> 
+

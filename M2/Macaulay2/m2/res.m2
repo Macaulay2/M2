@@ -31,7 +31,7 @@ resolutionByHomogenization := options -> (M) -> (
      toRH := map(RH, R', vars RH);
      fH   := homogenize(toRH generators gb f',RH_n); 	  forceGB fH;
      MH   := cokernel fH;
-     -- assert(isHomogeneous MH);
+     assert isHomogeneous MH;
      C    := resolution(MH, options, LengthLimit => resolutionLength(R,options));
      toR  := map(R, RH, vars R | 1);
      toR C)

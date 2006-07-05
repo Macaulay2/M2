@@ -74,46 +74,47 @@ topCoefficients RingElement := f -> (
      	  (monoms,coeffs) := topCoefficients matrix{{f}};
      	  (monoms_(0,0), coeffs_(0,0))))
 
-minimalPrimes Ideal := (I) -> if I.cache.?minimalPrimes then I.cache#"MinimalPrimes" else I.cache#"MinimalPrimes" = (
-     R := ring I;
-     if isQuotientRing R then (
-	  A := ultimate(ambient, R);
-	  I = lift(I,A);
-	  )
-     else A = R;
-     if not isPolynomialRing A then error "expected ideal in a polynomial ring or a quotient of one";
-     if I == 0 then return {if A === R then I else ideal 0_R};
-     ics := irreducibleCharacteristicSeries I;
-     -- remove any elements which have numgens > numgens I (Krull's Hauptidealsatz)
-     ngens := numgens I;
-     ics0 := select(ics#0, CS -> numgens source CS <= ngens);
-     Psi := apply(ics0, CS -> (
-	       chk := topCoefficients CS;
-	       chk = chk#1;  -- just keep the coefficients
-	       chk = first entries chk;
-	       iniCS := select(chk, i -> degree i =!= {0});
-	       if gbTrace >= 1 then << "saturating with " << iniCS << endl;
-	       CS = ideal CS;
-	       --<< "saturating " << CS << " with respect to " << iniCS << endl;
-	       -- warning: over ZZ saturate does unexpected things.
-	       scan(iniCS, a -> CS = saturate(CS, a, Strategy=>Eliminate));
---	       scan(iniCS, a -> CS = saturate(CS, a));
-	       --<< "result is " << CS << endl;
-	       CS));
-     Psi = new MutableList from Psi;
-     p := #Psi;
-     scan(0 .. p-1, i -> if Psi#i =!= null then 
-	  scan(i+1 .. p-1, j -> 
-	       if Psi#i =!= null and Psi#j =!= null then
-	       if isSubset(Psi#i, Psi#j) then Psi#j = null else
-	       if isSubset(Psi#j, Psi#i) then Psi#i = null));
-     Psi = toList select(Psi,i -> i =!= null);
-     components := apply(Psi, p -> ics#1 p);
-     if A =!= R then (
-	  components = apply(components, I -> ideal(generators I ** R));
-	  );
-     components
-     )
+minimalPrimes Ideal := (cacheValue symbol minimalPrimes) (
+     (I) -> (
+	  R := ring I;
+	  if isQuotientRing R then (
+	       A := ultimate(ambient, R);
+	       I = lift(I,A);
+	       )
+	  else A = R;
+	  if not isPolynomialRing A then error "expected ideal in a polynomial ring or a quotient of one";
+	  if I == 0 then return {if A === R then I else ideal 0_R};
+	  ics := irreducibleCharacteristicSeries I;
+	  -- remove any elements which have numgens > numgens I (Krull's Hauptidealsatz)
+	  ngens := numgens I;
+	  ics0 := select(ics#0, CS -> numgens source CS <= ngens);
+	  Psi := apply(ics0, CS -> (
+		    chk := topCoefficients CS;
+		    chk = chk#1;  -- just keep the coefficients
+		    chk = first entries chk;
+		    iniCS := select(chk, i -> degree i =!= {0});
+		    if gbTrace >= 1 then << "saturating with " << iniCS << endl;
+		    CS = ideal CS;
+		    --<< "saturating " << CS << " with respect to " << iniCS << endl;
+		    -- warning: over ZZ saturate does unexpected things.
+		    scan(iniCS, a -> CS = saturate(CS, a, Strategy=>Eliminate));
+     --	       scan(iniCS, a -> CS = saturate(CS, a));
+		    --<< "result is " << CS << endl;
+		    CS));
+	  Psi = new MutableList from Psi;
+	  p := #Psi;
+	  scan(0 .. p-1, i -> if Psi#i =!= null then 
+	       scan(i+1 .. p-1, j -> 
+		    if Psi#i =!= null and Psi#j =!= null then
+		    if isSubset(Psi#i, Psi#j) then Psi#j = null else
+		    if isSubset(Psi#j, Psi#i) then Psi#i = null));
+	  Psi = toList select(Psi,i -> i =!= null);
+	  components := apply(Psi, p -> ics#1 p);
+	  if A =!= R then (
+	       components = apply(components, I -> ideal(generators I ** R));
+	       );
+	  components
+	  ))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

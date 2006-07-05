@@ -126,16 +126,6 @@ localSymbols(Type,Pseudocode) := (X,f) -> select2(X,localSymbols f)
 
 localSymbols Type := X -> select2(X,localSymbols ())
 
-vbar := (ht,dp) -> " "^(ht-1)				    -- sigh
-upWidth := (wid,n) -> n | horizontalJoin(wid - width n : " "^(height n - 1))
-joinRow := x -> horizontalJoin mingle(x,#x-1:vbar(max\\height\x,max\\depth\x))
-netTable = x -> (
-     if not isTable x then error "expected a table";
-     if #x == 0 or #x#0 == 0 then return stack();
-     colwids := max \ transpose applyTable(x,width);
-     x = joinRow \ apply(x, row -> apply(colwids,row,upWidth));
-     ( stack x -- stack mingle(x,#x-1:"") -- try it without the blank lines
-	  )^(height x#0 -1))
 robust := y -> silentRobustNet(55,4,3,y)
 abbreviate := x -> (
      if instance(x, Function) and match("^--Function.*--$", toString x) then "..."

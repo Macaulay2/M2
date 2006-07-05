@@ -391,17 +391,14 @@ Module.AfterPrint = M -> (
 
 RingElement * Module := Module => ZZ * Module := (r,M) -> subquotient (r ** generators M, relations M)
 
-isHomogeneous Module := Boolean => (M) -> ring M === ZZ or (
-     isHomogeneous ring M and (
-     if M.cache.?isHomogeneous 
-     then M.cache.isHomogeneous 
-     else M.cache.isHomogeneous = (
+isHomogeneous Module := Boolean => (cacheValue symbol isHomogeneous) (
+     (M) -> (
+     	  isHomogeneous ring M 
+	  and 
      	  (not M.?generators or isHomogeneous M.generators)
      	  and
      	  (not M.?relations or isHomogeneous M.relations)
-	  )
-     ))
-
+	  ))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
