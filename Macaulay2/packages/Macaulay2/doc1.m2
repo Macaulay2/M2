@@ -5,7 +5,7 @@ scan((
 	  ),
      s -> document { Key => s, "A symbol used as the name of an optional argument, for some function(s)." })
 scan((
-     	  Center, Right, Left
+     	  Center, Right, Left, Quotient
 	  ),
      s -> document { Key => s, "A symbol used as the value of an optional argument, for some function(s)." })
 

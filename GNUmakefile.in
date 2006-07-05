@@ -87,7 +87,7 @@ install install-others install-Macaulay2 all clean distclean::; @echo "-------- 
 install all::
 	@echo "************************************************"
 	@echo "*                                              *"
-	@echo "*    don't forget to run 'make check'          *"
+	@echo "*    don't forget to run 'make -k check'       *"
 	@echo "*                                              *"
 	@echo "************************************************"
 help :
