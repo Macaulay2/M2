@@ -1,0 +1,46 @@
+The debug version doesn't crash, but the normal version does.
+
+    rhodium% M2
+    Macaulay 2, version 0.9.10
+    with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings, TangentCone
+
+    i1 : f = matrix "2;0"
+
+    o1 = | 2 |
+	 | 0 |
+
+		  2        1
+    o1 : Matrix ZZ  <--- ZZ
+
+    i2 : f%f
+    =============================================================================
+    SIGSEGV -- back trace
+    level 0 -- return addr: 0xffffe420 -- frame: 0xbfff7a88
+    level 1 -- return addr: 0x08198a46 -- frame: 0xbfff7d88
+    level 2 -- return addr: 0x081cd64c -- frame: 0xbfff7de8
+    level 3 -- return addr: 0x0809e55f -- frame: 0xbfff7e18
+    level 4 -- return addr: 0x080c5fa7 -- frame: 0xbfff7e48
+    level 5 -- return addr: 0x08089804 -- frame: 0xbfff7ea8
+    level 6 -- return addr: 0x080c2927 -- frame: 0xbfff7ee8
+    level 7 -- return addr: 0x080c0653 -- frame: 0xbfff8348
+    level 8 -- return addr: 0x080c249d -- frame: 0xbfff8498
+    level 9 -- return addr: 0x080c6bd3 -- frame: 0xbfff88f8
+    -----------------------------------------------------------------------------
+    +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    Segmentation fault (core dumped)
+
+
+    (gdb) where
+    #0  0x08051404 in segv_handler2 (sig=11) at ../../../../Macaulay2/d/M2lib.c:84
+    #1  <signal handler called>
+    #2  0x407b1663 in abort () from /lib/tls/libc.so.6
+    #3  0x08051949 in segv_handler (sig=11) at ../../../../Macaulay2/d/M2lib.c:123
+    #4  <signal handler called>
+    #5  Ring::get_entry (this=0x84fc0, v=0x2100c33b, r=0)
+	at ../../../../Macaulay2/e/ring-vecs.cpp:105
+    #6  0x08198a46 in Matrix::text_out (this=0xfa3988, o=@0xbfff7e08)
+	at ../../../../Macaulay2/e/matrix.cpp:280
+    #7  0x081cd64c in IM2_Matrix_to_string (M=0xfa3988)
+	at ../../../../Macaulay2/e/x_mat.cpp:40
+    #8  0x0809e55f in tostringfun (e_30={type_ = 49979, ptr_ = 0xfa3988})
+	at actors4.d:836
