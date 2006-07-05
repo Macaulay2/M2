@@ -2,15 +2,19 @@
 -- degrees and homogenization have different behavior
 A = ZZ [u, v]/(u^2-v^2,u*v)
 B = A[x_0, x_1, x_2, x_3]
-M = map(B^1, B^{{-4}},
-  {{v^2*x_2+u}})
 M = matrix{{v^2*x_2+u}}
+assert not isHomogeneous M
+Mh = homogenize(M, x_3)
+assert isHomogeneous Mh
 
-Mh = homogenize(M, x_3) -- the weight vector being sent to the engine has length 4, which gives u and v weight 0.
-assert isHomogeneous Mh -- but the degrees are somehow all 1.
-assert not(Mh == M)
+M = map(B^1, B^{{-4}}, {{v^2*x_2+u}})
+assert not isHomogeneous M
+Mh = homogenize(M, x_3)
+assert isHomogeneous Mh
 
 
-N = map(B^1, B^{{-4}},
-  {{v^2*x_2+u}})
+N = map(B^1, B^{{-4}}, {{v^2*x_2+u}})
+assert not isHomogeneous N
 Nh = homogenize(N, x_3)
+assert isHomogeneous Nh
+
