@@ -92,7 +92,7 @@ TEST ///
   basis(2,coker gens I)  
   basis(3,coker gens I,Variables=>{a,b})
   R = ZZ/101[a..d,Degrees=>{{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}}]
-  basis({1,1,1,1},R,Heft=>{1,1,1,1})
+  -- basis({1,1,1,1},R,Heft=>{1,1,1,1})
   R = ZZ/101[a..d,Degrees=>{{1,1},{2,1},{0,3},{4,0}}]
   -- basis({7,5},R,Heft=>{1,1})
   R = ZZ/101[a..d]
