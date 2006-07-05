@@ -1,0 +1,20 @@
+this takes forever now, but in 0.9.2 it was quick.  Whose problem is it?
+
+    i1 : -- line 768 in /home/dan/src/M2/Macaulay2/packages/Macaulay2/doc1.m2
+
+	      S = ZZ/32003[u,v,w,x,y,z];
+
+    i2 :      I = minors(2,genericSymmetricMatrix(S,u,3));
+
+    o2 : Ideal of S
+
+    i3 :      X = variety I;
+
+    i4 :      R = ring X;
+
+    i5 :      Omega = cotangentSheaf X;
+
+    i6 :      OmegaDual = dual Omega;
+
+    i7 :      assert(Ext^1(OmegaDual, OO_X^1(>= 0)) == Ext^1(OO_X^1, Omega(>= 0)))
+
