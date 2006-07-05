@@ -34,7 +34,7 @@ quot1 := options -> (I,J) -> (
     scan(numgens J, i -> (
        f := J_i;
        if generators(f*M1) % (generators I) != 0 then (
-	    M2 := quotient(I,f);
+	    M2 := quotient(I,f, Strategy=>Quotient);
 	    M1 = intersect(M1,M2);)));
     M1)
 
@@ -72,7 +72,7 @@ quotmod1 := options -> (I,J) -> (
     scan(numgens J, i -> (
        f := J_i;
        if generators(f*M1) % m != 0 then (
-	    M2 := quotient(I,f);
+	    M2 := quotient(I,f,Strategy=>Quotient);
 	    M1 = intersect(M1,M2);)));
     M1)
 
@@ -106,7 +106,7 @@ quotann1 := options -> (I,J) -> (
     scan(numgens J, i -> (
        f := image (J_{i});
        if generators(f**M1) % m != 0 then (
-	    M2 := quotient(I,f);
+	    M2 := quotient(I,f,Strategy=>Quotient);
 	    M1 = intersect(M1,M2);)));
     M1)
 
@@ -127,6 +127,7 @@ quotientIdeal := options -> (I,J) -> (
      strat := options.Strategy;
      options = doQuotientOptions options;
      local IJ;
+     if strat === null then strat = symbol Iterate;
      if strat === symbol Iterate then (
 	 if gbTrace > 0 then << "colon ideal: using Strategy=>Iterate" << endl;	
          IJ = (quot1 options)(I,J);
