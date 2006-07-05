@@ -7,6 +7,7 @@ export {
 	symbol lift', symbol liftable', symbol promote',    -- temporary new versions
 	symbol Binary,
 	symbol Boxes,
+	symbol Quotient,
 	symbol BaseRow,
 	symbol HorizontalSpace,
 	symbol VerticalSpace,

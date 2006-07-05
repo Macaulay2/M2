@@ -39,7 +39,7 @@ check ::
 	  do ( \
 	     set -x ; \
 		  ../bin/M2$(EXE) -q --stop \
-		    -e "needsPackage(\"$$i\",MakeDocumentation=>true); check $$i; exit 0" ; \
+		    -e "needsPackage(\"$$i\",LoadDocumentation=>true); check $$i; exit 0" ; \
 	     ) ; \
 	  done
 
