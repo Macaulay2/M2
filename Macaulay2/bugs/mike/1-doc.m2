@@ -13,11 +13,11 @@ code methods solve -- what rings is this restricted to?
 end
 
 DONE    method has no documentation: Macaulay2 :: minimalPrimes(MonomialIdeal), key: (minimalPrimes, MonomialIdeal)
-    symbol has no documentation: Macaulay2 :: LU
-    method has no documentation: Macaulay2 :: LU(MutableMatrix), key: (LU, MutableMatrix)
-    symbol has no documentation: Macaulay2 :: solve
-    method has no documentation: Macaulay2 :: solve(Matrix,Matrix), key: (solve, Matrix, Matrix)
-    method has no documentation: Macaulay2 :: solve(MutableMatrix,MutableMatrix), key: (solve, MutableMatrix, MutableMatrix)
+DONE    symbol has no documentation: Macaulay2 :: LU
+DONE    method has no documentation: Macaulay2 :: LU(MutableMatrix), key: (LU, MutableMatrix)
+DONE    symbol has no documentation: Macaulay2 :: solve
+DONE    method has no documentation: Macaulay2 :: solve(Matrix,Matrix), key: (solve, Matrix, Matrix)
+DONE    method has no documentation: Macaulay2 :: solve(MutableMatrix,MutableMatrix), key: (solve, MutableMatrix, MutableMatrix)
 DONE    symbol has no documentation: Macaulay2 :: independentSets
 DONE    method has no documentation: Macaulay2 :: independentSets(Ideal), key: (independentSets, Ideal)
 DONE    method has no documentation: Macaulay2 :: independentSets(MonomialIdeal), key: (independentSets, MonomialIdeal)

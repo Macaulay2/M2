@@ -5,7 +5,7 @@ document {
      Usage => "x = solve(A,b)",
      Inputs => {
 	  "A" => {ofClass Matrix, ", or ", ofClass MutableMatrix, " of size m by n over either
-	  a finit field ZZ/p, RR or CC"},
+	  a finite field ZZ/p, RR or CC"},
 	  "b" => {"the same type of matrix, over the same ring, of size m by r"}
 	  },
      Outputs => {
@@ -13,8 +13,10 @@ document {
 	       such that ", TT "Ax=b"}
 	  },
      "There are several restrictions.  The first is that there are only a limited number of rings
-     for which this function is implemented.  Second, over RR or CC, the matrix A must be a square
-     non-singular matrix.  Third, if A and b are mutable matrices over RR or CC, they must be dense matrices.",
+     for which this function is implemented.  Second, over ", TO "RR", " or ", TO "CC", 
+     ", the matrix ", TT "A", " must be a square
+     non-singular matrix.  Third, if ", TT "A", " and ", TT "b", 
+     " are mutable matrices over ", TT "RR", " or ", TT "CC", ", they must be dense matrices.",
      PARA{},
      EXAMPLE lines ///
      	  kk = ZZ/101;
@@ -23,7 +25,7 @@ document {
 	  x = solve(A,b)
 	  A*x-b
      ///,
-     "Over RR or CC, the matrix A must be a non-singular square matrix.",
+     "Over ", TT "RR", " or ", TT "CC", ", the matrix ", TT "A", " must be a non-singular square matrix.",
      EXAMPLE lines ///
      	  kk = RR
      	  A = matrix"1,2,3;1,3,6;19,7,11" ** kk
@@ -31,7 +33,7 @@ document {
 	  x = solve(A,b)
 	  A*x-b
      ///,
-     "For large dense matrices over RR or CC, this function calls 
+     "For large dense matrices over ", TT "RR", " or ", TT "CC", ", this function calls 
      the lapack routines.",
      EXAMPLE lines ///
      	  kk = CC
@@ -45,7 +47,7 @@ document {
 	  C_(123,0)
 	  C_(567,1)
      ///,
-     "This may be used to invert a matrix over ZZ/p, RR or QQ",
+     "This may be used to invert a matrix over ", TT "ZZ/p", ", ", TT "RR", " or ", TT "QQ", ".",
      EXAMPLE lines ///
           kk = RR
           A = random(kk^5, kk^5)
