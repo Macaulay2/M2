@@ -25,42 +25,7 @@ peek'(ZZ,List) := (depth,s) -> (
 	  "{", horizontalJoin between (", ", apply(s, value -> peek'(depth,value))), "}" ) )
 peek'(ZZ, String) := (depth,s) -> if depth === 0 then s else format s
 
-vbar := (ht,dp) -> "|"^(ht,dp)
-boxList = method(Dispatch => Thing)
-boxList List := boxList Sequence := nets -> (
-     nets = net \ nets;
-     wid := if #nets === 0 then 0 else max \\ width \ nets;
-     side := stack between("+", apply(nets, n -> vbar(height n, depth n)));
-     w := side | stack between(concatenate (wid:"-"), nets) | side;
-     top := concatenate("+", width w - 2 : "-", "+");
-     w = stack(top,w,top);
-     if #nets > 0 then w = w ^ (height first nets);
-     w)
-upWidth := (wid,n) -> n | horizontalJoin(wid - width n : " "^(height n - 1))
-joinRow := x -> horizontalJoin mingle(#x+1:vbar(max\\height\x,max\\depth\x),x)
-boxTable = method(Dispatch => Thing)
-boxTable List :=
-boxTable Sequence := x -> (
-     if not all(x, row -> class row === List) then error "expected a list or sequence of lists";
-     n := max(length \ x);
-     x = apply(x, row -> if #row == n then row else join(row, n-#row : ""));
-     if #x == 0 or #x#0 == 0 then return boxList x;
-     x = applyTable(x,net);
-     colwids := max \ transpose applyTable(x,width);
-     x = joinRow \ apply(x, row -> apply(colwids,row,upWidth));
-     hbar := concatenate mingle(#colwids+1:"+",apply(colwids,wid -> wid:"-"));
-     (stack mingle(#x+1:hbar,x))^(height x#0))
-netJoinRow := x -> horizontalJoin between(" ",x)
-netTable' = x -> (
-     n := max(length \ x);
-     x = apply(x, row -> if #row == n then row else join(row, n-#row : ""));
-     if #x == 0 or #x#0 == 0 then return "";
-     x = applyTable(x,net);
-     colwids := max \ transpose applyTable(x,width);
-     x = netJoinRow \ apply(x, row -> apply(colwids,row,upWidth));
-     (stack x)^(height x#0-1))
-
-peek'(ZZ,Net) := (depth,s) -> if depth === 0 then s else boxList {s}
+peek'(ZZ,Net) := (depth,s) -> if depth === 0 then s else netTable {{s}}
 peek'(ZZ,Sequence) := (depth,s) -> (
      if depth === 0 then net s
      else horizontalJoin(

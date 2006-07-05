@@ -636,15 +636,13 @@ net BettiTally := v -> (
      minrow := min fi;
      maxrow := max fi;
      v = table(toList (minrow .. maxrow), toList (mincol .. maxcol), (i,j) -> if v#?(i,j) then v#(i,j) else 0);
-     leftside := apply( splice {"", "total:", apply(minrow .. maxrow, i -> toString i | ":")}, s -> (6-# s,s));
+     leftside := splice {"", "total:", apply(minrow .. maxrow, i -> toString i | ":")};
      totals := apply(transpose v, sum);
      v = prepend(totals,v);
      v = applyTable(v, bt -> if bt === 0 then "." else toString bt);
      v = prepend(toString \ toList (mincol .. maxcol), v);
-     v = transpose v;
-     v = apply(v, col -> ( wid := 1 + max apply(col, i -> #i); apply(col, s -> (wid-#s, s))));
-     v = transpose prepend(leftside,v);
-     (stack apply(v, concatenate))^1)
+     v = apply(leftside,v,prepend);
+     netTable(v, Alignment => Right, HorizontalSpace => 1, BaseRow => 1))
 
 betti = method(TypicalValue => BettiTally)
      -- returns a hash table with pairs of the form (i,d) => n

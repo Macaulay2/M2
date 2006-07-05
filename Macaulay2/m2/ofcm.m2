@@ -288,6 +288,12 @@ processDegrees := (degs,degrk,nvars) -> (
 	  );
      (degs,degrk));
 
+monoidIndices = (M,vars) -> (				    -- also used in orderedmonoidrings.m2, but we should phase that out
+     apply(vars, x -> if class x === ZZ then x else (
+	       x = baseName x;
+	       if M.index#?x then M.index#x
+	       else error("expected an integer or variable of the ring (or monoid): ", toString x))))
+
 makeMonoid := (opts) -> (
      -- check the options for consistency, and set everything to the correct defaults
      opts = new MutableHashTable from opts;
@@ -316,6 +322,19 @@ makeMonoid := (opts) -> (
      (degs,degrk) := processDegrees(opts.Degrees,opts.DegreeRank,length opts.Variables);
      opts.Degrees = degs;
      opts.DegreeRank = degrk;
+
+     num := # opts.Variables;
+
+     skews := opts.SkewCommutative;
+     opts.SkewCommutative = (
+	  if skews === false then {}
+	  else if skews === true then toList (0 .. num - 1)
+     	  else (
+	       if not instance(skews, List) then error "expected SkewCommutative option to a true, false, or a list";
+	       apply(skews, i -> (
+			 if instance(i,ZZ) or instance(i,Symbol) or instance(i,IndexedVariable) then i
+			 else try baseName i else error("SkewCommutative option: expected base name for: ",toString i)
+			 ))));
 
      if not instance(opts.Adjust, Function) then error("expected 'Adjust' option to be a function");
      if not instance(opts.Repair, Function) then error("expected 'Repair' option to be a function");
@@ -369,7 +388,7 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
      opts.WeylAlgebra = join(wfix Mopts.WeylAlgebra, wfix Nopts.WeylAlgebra);
      oddp := x -> x#?0 and odd x#0;
      m := numgens M;
-     opts.SkewCommutative = join(M.Options.SkewCommutative, apply(N.Options.SkewCommutative, i -> i+m));
+     opts.SkewCommutative = join(monoidIndices(M,M.Options.SkewCommutative), apply(monoidIndices(N,N.Options.SkewCommutative), i -> i+m));
      makeMonoid new OptionTable from opts)
 
 -- delayed installation of methods for monoid elements

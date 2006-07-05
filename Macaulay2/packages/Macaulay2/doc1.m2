@@ -1,8 +1,13 @@
 scan((
 	  FollowLinks,Hilbert,UserMode,RerunExamples,MakeDocumentation,IgnoreExampleErrors,IgnoreDocumentationErrors,MakeInfo,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate,
-	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing,Undo,SourceCode,Description,Variables
+	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing,Undo,SourceCode,Description,Variables,
+	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment
 	  ),
      s -> document { Key => s, "A symbol used as the name of an optional argument, for some function(s)." })
+scan((
+     	  Center, Right, Left
+	  ),
+     s -> document { Key => s, "A symbol used as the value of an optional argument, for some function(s)." })
 
 document {
      Key => "initial help",				    -- display by the help command by default

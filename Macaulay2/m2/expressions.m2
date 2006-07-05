@@ -739,18 +739,14 @@ net SparseMonomialVectorExpression := v -> (
 	  )
      )
 
-net Table := x -> (
-     x = applyTable(toList x, net);
-     w := apply(transpose x, col -> 2 + max apply(col, i -> width i));
-     stack between("",
-	  apply(x, row -> horizontalJoin apply(#row, j -> centerString(w#j,row#j)))))
+net Table := x -> netTable (toList x, HorizontalSpace=>2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center)
 
 net MatrixExpression := x -> (
      if # x === 0 or # (x#0) === 0 then "|  |"
      else (
 	  m := net Table toList x;
 	  side := "|" ^ (height m, depth m);
-	  horizontalJoin(side,m,side)))
+	  horizontalJoin(side," ",m," ",side)))
 html MatrixExpression := x -> html TABLE toList x
 
 mathML MatrixExpression := x -> concatenate(

@@ -25,6 +25,17 @@ assert( degree g == {0} )
 assert( degree q == {0} )
 assert( degree f == {0} )
 
+R = ZZ[x,d,WeylAlgebra=>{x=>d}]
+f = matrix{{x*d,d*x,x,d}}
+g = matrix{{x,d}}
+(q,r) = quotientRemainder(f,g)
+assert(g*q+r == f)
+g = matrix{{x}}
+(q,r) = quotientRemainder(f,g)
+assert(g*q+r == f)
+g = matrix{{d}}
+(q,r) = quotientRemainder(f,g)
+assert(g*q+r == f)
 
 end
 -- Local Variables:

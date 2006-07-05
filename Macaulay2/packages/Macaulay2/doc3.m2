@@ -845,26 +845,27 @@ document { Key => {(searchPath, List, String), searchPath},
      Inputs => { "pa" => {"a list of strings giving paths to directories.  Each one ends with a slash."}, "fn" },
      Outputs => {{"a list of those directories in ", TT "pa", " containing files named ", TT "fn" }}}
 
-document { Key => {(boxList, List),boxList,(boxList, Sequence)},
-     Headline => "ascii art: a vertical list of boxes",
-     Usage => "boxList v",
-     Inputs => { "v" },
-     Outputs => {{"a net obtained by converting the elements of the list ", TT "v", " to nets and stacking them vertically, with boxes drawn around them.  Its baseline
-	       is the baseline of first net."}},
+document { Key => {(netTable, List),netTable},
+     Headline => "a table of boxes",
+     Usage => "netTable v",
+     Inputs => { 
+	  "v" => {"a list of lists of things to be converted to nets and displayed as a table in a net"},
+	  Boxes => Boolean => {"whether to draw boxes around the individual nets"},
+	  BaseRow => ZZ => {"the index of the base row, for the purpose of setting the baseline net produced"},
+	  HorizontalSpace => ZZ => {"the amount of space horizontally between entries or between entries and their enclosing boxes"},
+	  VerticalSpace => ZZ => "the amount of space vertically between entries or between entries and their enclosing boxes",
+	  Alignment => {TT "Center", ", ", TT "Left", ", ", TT "Right", ", or a list of those symbols indicating horizontal adjustment; if it's a list, the ", TT "i", "-th
+	       entry specifies the adjustment in the ", TT "i", "-th column; if not, the symbol applies to all columns."}
+	  },
+     Outputs => {{"a net obtained by converting the elements of each list in the list of lists ", TT "v", " to nets and arranging them in a table, as specified by the
+	       options"}},
      EXAMPLE lines ///
-         boxList {12345,"b","asdsf"}
-     ///}
-
-document { Key => {(boxTable, List),boxTable,(boxTable, Sequence)},
-     Headline => "ascii art: a table of boxes",
-     Usage => "boxTable v",
-     Inputs => { "v" },
-     Outputs => {{"a net obtained by converting the elements of each list in the list of lists ", TT "v", " to nets and arranging them
-	       in a table, with boxes drawn around them.  Its baseline is the baseline of nets in the top row."}},
-     EXAMPLE lines ///
-     	  R = QQ[x,y]
-	  random(R^2,R^{2:-2})
-	  boxTable entries oo
+	  f = {{"hi there","foo"},{-3, 2^40}}
+	  netTable f
+	  netTable(f,Boxes=>true)
+	  netTable(f,Boxes=>true,HorizontalSpace=>1,VerticalSpace=>1)
+	  netTable(f,Boxes=>true,Alignment=>Center)
+	  netTable(f,Boxes=>true,BaseRow=>1)
      ///}
 
 document { Key => cache,

@@ -284,7 +284,7 @@ usage := arg -> (
      << "                       and when evaluating command line arguments" << newline
      << "    --no-prompts       print no input prompts" << newline;
      << "    --no-readline      don't use readline" << newline;
-     << "    --no-setup         don't try to load setup.m2" << newline
+     << "    --no-setup         don't try to load setup.m2 or to loaddata" << newline
      << "    --no-personality   don't set the personality and re-exec M2 (linux only)" << newline
      << "    --prefix DIR       set prefixDirectory" << newline
      << "    --print-width n    set printWidth=n (the default is the window width)" << newline
@@ -387,7 +387,7 @@ action := hashTable {
      "--no-personality" => arg -> arg,
      "--no-prompts" => arg -> if phase == 1 then noPrompts(),
      "--no-readline" => arg -> arg,			    -- handled in d/stdio.d
-     "--no-setup" => arg -> if phase == 1 then nosetup = true,
+     "--no-setup" => arg -> if phase == 1 then noloaddata = nosetup = true,
      "--notify" => arg -> if phase <= 2 then notify = true,
      "--silent" => arg -> nobanner = true,
      "--stop" => arg -> (if phase == 1 then stopIfError = true; debuggingMode = false;), -- see also M2lib.c and tokens.d
@@ -488,9 +488,14 @@ printWidth = fileWidth stdio
 if firstTime and not nosetup then loadSetup()
 
 -- remove the Core private dictionary -- it was added by "debug" above
-if not nosetup then dictionaryPath = select(dictionaryPath, d -> d =!= Core#"private dictionary")
--- install a local way to use private global symbols
-core := nm -> value Core#"private dictionary"#nm
+-- and install a local way to use private global symbols
+local core
+if not nosetup then (
+     dictionaryPath = select(dictionaryPath, d -> d =!= Core#"private dictionary");
+     core = nm -> value Core#"private dictionary"#nm;
+     ) else (
+     core = nm -> value getGlobalSymbol nm
+     )
 
 processCommandLineOptions 2
 (core "runStartFunctions")()

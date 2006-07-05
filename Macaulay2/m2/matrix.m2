@@ -146,20 +146,7 @@ toString Matrix := m -> concatenate ( "matrix ", toString entries m )
 
 isIsomorphism Matrix := f -> cokernel f == 0 and kernel f == 0
 
-isHomogeneous Matrix := m -> (
-     if m.cache.?isHomogeneous then m.cache.isHomogeneous 
-     else m.cache.isHomogeneous = (
-	  isHomogeneous ring target m
-	  and isHomogeneous ring source m
-	  and (
-	       M := source m;
-	       N := target m;
-	       rawIsHomogeneous m.RawMatrix
-	       and
-	       ( not M.?generators or isHomogeneous M.generators )
-	       and
-	       ( not N.?generators or isHomogeneous N.generators )
-	       )))
+isHomogeneous Matrix := (cacheValue symbol isHomogeneous) ( m -> ( isHomogeneous target m and isHomogeneous source m and rawIsHomogeneous m.RawMatrix ) )
 
 isWellDefined Matrix := f -> matrix f * presentation source f % presentation target f == 0
 

@@ -20,7 +20,7 @@ document {
      " is a new hash table obtained by applying the function ", TT "f",
      " to each key/value pair ", TT "(k,v)", " in ", TT "H", 
      " and storing the resulting key/value pair in the new hash table. ",
-     " If the function returns ", TO "null",  "then no action is performed.",
+     " If the function returns ", TO "null",  " then no action is performed.",
      PARA{},
      "In this example, we show how to produce the hash table corresponding
      to the inverse of a function.",

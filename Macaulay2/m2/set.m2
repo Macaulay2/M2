@@ -3,11 +3,7 @@
 Set.synonym = "set"
 Tally.synonym = "tally"
 
-toString Tally := x -> (
-     "new Tally from {"
-     | demark(", ", apply(pairs x, (v,i) -> toString v | " => " | toString i))
-     | "}"
-     )
+toString Tally := x -> concatenate( "new ", toString class x, " from {", demark(", ", apply(pairs x, (v,i) -> (toString v, " => ", toString i))), "}" )
 
 net Tally := t -> peek t
 

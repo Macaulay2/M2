@@ -201,6 +201,61 @@ texMath Net := n -> concatenate (
 \end{matrix}}
 ///)
 
+-----------------------------------------------------------------------------
+
+netTable = method(Options => {
+	  Boxes => false,
+	  BaseRow => 0,
+	  HorizontalSpace => 0,
+	  VerticalSpace => 0,
+	  Alignment => Left				    -- Center, Left, or Right or list of those
+	  })
+
+maxN := x -> if #x === 0 then 0 else max x
+
+alignmentFunctions := new HashTable from {
+     Left => (wid,n) -> n | horizontalJoin(wid - width n : " "^(height n - 1)),
+     Right => (wid,n) -> horizontalJoin(wid - width n : " "^(height n - 1)) | n,
+     Center => centerString
+     }
+
+netTable List := o -> (x) -> (
+     if not all(x, row -> instance(row,List)) then error "netTable: expected a list of lists";
+     (br,hs,vs,bx,algn) := (o.BaseRow,o.HorizontalSpace,o.VerticalSpace,o.Boxes,splice o.Alignment);
+     if #x == 0 then return if bx then stack(2 : "++") else stack();
+     if br < 0 or br >= #x then error "netTable: base row out of bounds";
+     x = apply(x, row->apply(row, net));
+     n := maxN(length \ x);
+     if n == 0 then return if bx then stack(2 : "++") else stack();
+     x = apply(x, row -> if #row == n then row else join(row, n-#row : stack()));
+     colwids := max \ transpose applyTable(x,width);
+     if not instance(algn,List) then algn = n : algn ;
+     algn = apply(algn, key -> alignmentFunctions#key);
+     x = apply(x, row -> apply(n, i -> algn#i(colwids#i,row#i)));
+     if bx then (
+     	  if hs > 0 then (
+	       colwids = apply(colwids, wid -> wid+2*hs);
+	       hsep := spaces hs;                                 -- "spaces" puts characters on the baseline, what about an empty net of width hs?
+	       x = apply(x, row -> apply(row, i -> horizontalJoin(hsep,i,hsep)));
+	       );
+	  x = apply(x, row -> mingle(#row+1:"|"^(max(height\row)+vs,max(depth\row)+vs), row));
+	  )
+     else if hs > 0 then (
+	  hsep = spaces hs;                                 -- "spaces" puts characters on the baseline, what about an empty net of width hs?
+	  x = apply(x,i -> between(hsep,i));
+	  );
+     x = apply(x, horizontalJoin);
+     if bx then (
+	  hbar := concatenate mingle(#colwids+1:"+",apply(colwids,wid -> wid:"-"));
+	  x = mingle(#x+1:hbar,x);
+	  br = 2*br + 1;
+	  )
+     else if vs > 0 then (
+     	  x = between(stack(vs : ""),x);
+	  br = 2*br;
+	  );
+     (stack x)^(sum(0 .. br-1, i -> depth x#i) + sum(1 .. br, i -> height x#i)))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
