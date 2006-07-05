@@ -815,10 +815,7 @@ ring_elem PolyRing::divide(const ring_elem f, const ring_elem g) const
 {
   ring_elem rem, d;
   rem = remainderAndQuotient(f,g,d);
-  if (is_zero(rem)) return d;
-  ring_elem ginv = invert(g);
-  ring_elem result = mult(f, ginv);
-  return result;
+  return d;
 }
 
 void PolyRing::imp_subtract_multiple_to(ring_elem &f, 
