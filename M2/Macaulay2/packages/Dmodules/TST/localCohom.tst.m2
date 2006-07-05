@@ -38,4 +38,4 @@ time h = localCohom (I, M, Strategy=>Walther, LocStrategy=>Oaku)
 time h' = localCohom (ideal x)  
 h = pruneLocalCohom h
 h' = pruneLocalCohom h'
-assert all(toList h, i-> not h'#?i or h'#i == h#i)
+assert all(keys h, i-> not h'#?i or h'#i == h#i)
