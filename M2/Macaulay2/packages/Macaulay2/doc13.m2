@@ -469,7 +469,7 @@ document { Key => CompiledFunctionClosure,
 TEST ///
 assert ( class (x->x) === FunctionClosure )
 assert ( class sin === CompiledFunction )
-assert ( class depth === CompiledFunctionClosure )
+assert ( class depth === MethodFunction )
 ///
 
 
