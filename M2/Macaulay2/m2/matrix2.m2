@@ -5,7 +5,8 @@ complement = method()
 mingens Module := Matrix => options -> (cacheValue symbol mingens) (
      (M) -> (
 	  if M.?generators then (
-	       if M.?relations then (
+	       if M.?relations and isHomogeneous M then (
+		    -- is there something better to do when M has relations and is not homogeneous??
 		    c := mingens gb (M.generators|M.relations,
 			 options,
 			 StopWithMinimalGenerators=>true,Syzygies=>false,ChangeMatrix=>false);
