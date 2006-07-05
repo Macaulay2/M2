@@ -1796,6 +1796,11 @@ void gbA::insert(POLY f, gbelem_type minlevel)
   minimal_gb_valid = false;
   int me = gb.size();
   gb.push_back(g);
+
+  // In a encoded Schreyer order, the following line might miss subring elements.
+  // But it at least won't be incorrect...
+  if (R->get_flattened_monoid()->in_subring(1,f.f->monom))
+    n_subring++;
   
   int x = g->g.f->comp;
 
@@ -1940,6 +1945,11 @@ void gbA::new_insert(POLY f, gbelem_type minlevel)
   gb.push_back(g);
   n_gb++;
   int x = g->g.f->comp;
+
+  // In a encoded Schreyer order, the following line might miss subring elements.
+  // But it at least won't be incorrect...
+  if (R->get_flattened_monoid()->in_subring(1,g->g.f->monom))
+    n_subring++;
 
   if (over_ZZ())
     lookupZZ->insert(MPZ_VAL(g->g.f->coeff),g->lead,x,me);
@@ -2168,10 +2178,11 @@ void gbA::do_computation()
 	    while ((p = spair_set_next()) != 0)
 	      {
 		process_spair(p);
-		
-		if (stop_.pair_limit > 0 && n_pairs_computed >= stop_.pair_limit)
+
+		enum ComputationStatusCode ret;
+		if ((ret = computation_is_complete()) != COMP_COMPUTING)
 		  {
-		    set_status(COMP_DONE_PAIR_LIMIT);
+		    set_status(ret);
 		    return;
 		  }
 		
