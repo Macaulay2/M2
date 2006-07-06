@@ -1,0 +1,32 @@
+Date: Thu, 6 Jul 2006 16:15:25 -0500
+From: Dan Grayson <dan@math.uiuc.edu>
+To: mike@math.cornell.edu
+CC: dan@math.uiuc.edu
+Subject: leadTerm vs. hermiteLLL
+Reply-to: dan@math.uiuc.edu
+
+
+We have to make these two routines agree on which end of the vector is the
+leading end:
+
+
+    i61 : hermiteLLL random (ZZ^4, ZZ^4)
+
+    o61 = | 0  0   0 1  |
+	  | 0  0   1 0  |
+	  | 0  14  0 8  |
+	  | 17 251 2 13 |
+
+		   4        4
+    o61 : Matrix ZZ  <--- ZZ
+
+    i62 : leadTerm oo
+
+    o62 = | 0  0   0 0  |
+	  | 0  0   0 0  |
+	  | 0  0   0 0  |
+	  | 17 251 2 13 |
+
+		   4        4
+    o62 : Matrix ZZ  <--- ZZ
+
