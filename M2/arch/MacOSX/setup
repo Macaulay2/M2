@@ -1,10 +1,16 @@
 #! /bin/bash
 M2PATH=`pwd`
+
+if ! [ -f share/emacs/site-lisp/M2.el ]
+then echo "--error: file ./share/emacs/site-lisp/M2.el not found, please run $0 from the directory it's in" >&2
+     exit 1
+fi
+
 cat >>~/.profile <<STUFF
 ### Macaulay2 ###
   export PATH=$M2PATH/bin:\$PATH
-  export MANPATH=$M2PATH/share/man:$M2PATH/man:\$MANPATH
-  export INFOPATH=$M2PATH/share/info:$M2PATH/info:\$INFOPATH
+  export MANPATH=$M2PATH/share/man:\$MANPATH
+  export INFOPATH=$M2PATH/info:\$INFOPATH
 ### end Macaulay2 ###
 STUFF
 
