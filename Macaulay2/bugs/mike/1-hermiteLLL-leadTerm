@@ -30,3 +30,28 @@ leading end:
 		   4        4
     o62 : Matrix ZZ  <--- ZZ
 
+
+=============================================================================
+
+
+Here's another oddity:
+
+    i69 : leadTerm transpose matrix {{3,3}}
+
+    o69 = | 0 |
+	  | 3 |
+
+		   2        1
+    o69 : Matrix ZZ  <--- ZZ
+
+    i70 : leadTerm transpose matrix {{3_R,3_R}}
+
+    o70 = | 3 |
+	  | 0 |
+
+		  2       1
+    o70 : Matrix R  <--- R
+
+    i71 : describe R
+
+    o71 = QQ [x]
