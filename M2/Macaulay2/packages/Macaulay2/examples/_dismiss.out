@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : newPackage "P"
 
@@ -21,13 +20,15 @@ o4 : Package
 
 i5 : dictionaryPath
 
-o5 = {P.Dictionary, User#"private dictionary", SchurRings.Dictionary,
+o5 = {P.Dictionary, User#"private dictionary", TangentCone.Dictionary,
      ------------------------------------------------------------------------
-     Classic.Dictionary, PrimaryDecomposition.Dictionary,
+     SchurRings.Dictionary, Classic.Dictionary,
      ------------------------------------------------------------------------
-     LLLBases.Dictionary, Elimination.Dictionary, Macaulay2Core.Dictionary,
+     PrimaryDecomposition.Dictionary, LLLBases.Dictionary,
      ------------------------------------------------------------------------
-     OutputDictionary, PackageDictionary}
+     Elimination.Dictionary, Core.Dictionary, OutputDictionary,
+     ------------------------------------------------------------------------
+     PackageDictionary}
 
 o5 : List
 
@@ -39,11 +40,13 @@ i7 : dismiss P
 
 i8 : dictionaryPath
 
-o8 = {User#"private dictionary", SchurRings.Dictionary, Classic.Dictionary,
+o8 = {User#"private dictionary", TangentCone.Dictionary,
+     ------------------------------------------------------------------------
+     SchurRings.Dictionary, Classic.Dictionary,
      ------------------------------------------------------------------------
      PrimaryDecomposition.Dictionary, LLLBases.Dictionary,
      ------------------------------------------------------------------------
-     Elimination.Dictionary, Macaulay2Core.Dictionary, OutputDictionary,
+     Elimination.Dictionary, Core.Dictionary, OutputDictionary,
      ------------------------------------------------------------------------
      PackageDictionary}
 
@@ -57,9 +60,9 @@ o9 : Symbol
 
 i10 : values PackageDictionary
 
-o10 = {P, Parsing, Macaulay2Core, Classic, Elimination, LLLBases,
+o10 = {P, Parsing, Classic, Elimination, LLLBases, PrimaryDecomposition,
       -----------------------------------------------------------------------
-      PrimaryDecomposition, User, SchurRings}
+      TangentCone, User, SchurRings, Core}
 
 o10 : List
 

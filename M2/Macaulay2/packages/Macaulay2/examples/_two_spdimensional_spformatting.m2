@@ -2,7 +2,7 @@ R = ZZ/101[x,y,z];
 f = random(R^1,R^{5:-3})
 C = resolution cokernel f
 be = betti C
-"Betti numbers of " | net C | " are " | be^2
+"Betti numbers of " | net C | " are " | (net be)^2
 "x" | "2"^1
 Divide(Minus a,b)
 Power(Sum(3,4,5),7)

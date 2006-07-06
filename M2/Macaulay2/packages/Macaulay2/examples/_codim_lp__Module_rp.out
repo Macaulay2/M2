@@ -1,0 +1,17 @@
+-- -*- M2-comint -*-
+
+i1 : R = ZZ/101[a..d];
+
+i2 : M = coker matrix{{a,b},{c,d}}
+
+o2 = cokernel | a b |
+              | c d |
+
+                            2
+o2 : R-module, quotient of R
+
+i3 : codim M
+
+o3 = 1
+
+i4 : 

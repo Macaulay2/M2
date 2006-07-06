@@ -1,9 +1,6 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : examples partitions
-../../../../Macaulay2/packages/Macaulay2/functions/quotient-doc.m2:70: warning: documentation already provided for 'Macaulay2 :: Ideal : Ideal'
-../../../../Macaulay2/packages/Macaulay2/doc9.m2:618: ... here is the (end of the) previous documentation
 
 o1 = 
 

@@ -1,0 +1,11 @@
+-- -*- M2-comint -*-
+
+i1 : R = QQ[x,y];
+
+i2 : Spec R
+
+o2 = Spec(R)
+
+o2 : AffineVariety
+
+i3 : 

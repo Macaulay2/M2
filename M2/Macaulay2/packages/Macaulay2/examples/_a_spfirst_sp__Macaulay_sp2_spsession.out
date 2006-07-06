@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : 2+2
 
@@ -331,6 +330,8 @@ i55 : betti C
 o55 = total: 1 3 3 1
           0: 1 3 3 1
 
+o55 : BettiTally
+
 i56 : R = ZZ/101[a .. r];
 
 i57 : g = genericMatrix(R,a,3,6)
@@ -367,6 +368,8 @@ o60 = total: 3 6 15 18 6
           0: 3 6  .  . .
           1: . .  .  . .
           2: . . 15 18 6
+
+o60 : BettiTally
 
 i61 : S = ZZ/101[t_1 .. t_9, u_1 .. u_9];
 
@@ -435,5 +438,7 @@ o68 = total: 1 26
           2: . 12
           3: .  5
           4: .  1
+
+o68 : BettiTally
 
 i69 : 

@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : X = Proj(QQ[x,y,z])
 
@@ -14,9 +13,11 @@ o2 = ideal(- x  + 12x z + y z - 11x*z )
 
 o2 : Ideal of QQ [x, y, z]
 
-i3 : N = (sheaf I)/(sheaf (I^2))
+i3 : N = (sheaf module I)/(sheaf module I^2)
 
-o3 = subquotient (| -x3+12x2z+y2z-11xz2 |, | x6-24x5z-2x3y2z+166x4z2+24x2y2z2+y4z2-264x3z3-22xy2z3+121x2z4 |)
+o3 = subquotient (| -x3+12x2z+y2z-11xz2 |, |
+     ------------------------------------------------------------------------
+     x6-24x5z-2x3y2z+166x4z2+24x2y2z2+y4z2-264x3z3-22xy2z3+121x2z4 |)
 
                                             1
 o3 : coherent sheaf on X, subquotient of OO

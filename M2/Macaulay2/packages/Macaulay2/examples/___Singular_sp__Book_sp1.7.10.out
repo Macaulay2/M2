@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : A = QQ[x,y];
 
@@ -38,7 +37,7 @@ o6 = {-15} | y15-y12  |
               4        1
 o6 : Matrix A1  <--- A1
 
-i7 : B = QQ[x,y,MonomialOrder=>{Weights=>{-1,-1},2}];
+i7 : B = QQ[x,y,MonomialOrder=>{Weights=>{-1,-1},2},Global=>false];
 
 i8 : I = substitute(I,B)
 
@@ -48,7 +47,6 @@ o8 = ideal (x   + x y , y  - x y )
 o8 : Ideal of B
 
 i9 : transpose gens gb I
-creating GB with local order
 
 o9 = {-11} | x10+x9y2 |
      {-9}  | y8-x2y7  |
@@ -56,7 +54,7 @@ o9 = {-11} | x10+x9y2 |
              2       1
 o9 : Matrix B  <--- B
 
-i10 : B = QQ[x,y,MonomialOrder=>{Weights=>{-1,0},Weights=>{0,-1}}];
+i10 : B = QQ[x,y,MonomialOrder=>{Weights=>{-1,0},Weights=>{0,-1}},Global=>false];
 
 i11 : I = substitute(I,B)
 
@@ -66,7 +64,6 @@ o11 = ideal (x y  + x  , y  - x y )
 o11 : Ideal of B
 
 i12 : transpose gens gb I
-creating GB with local order
 
 o12 = {-15} | x13+x14y |
       {-11} | x9y2+x10 |

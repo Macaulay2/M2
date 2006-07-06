@@ -1,0 +1,7 @@
+-- -*- M2-comint -*-
+
+i1 : toLower "A b C d E f"
+
+o1 = a b c d e f
+
+i2 : 

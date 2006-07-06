@@ -1,24 +1,23 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : currentTime()
 
-o1 = 1150914281
+o1 = 1151812967
 
 i2 : currentTime() /( (365 + 97./400) * 24 * 60 * 60 )
 
-o2 = 36.471
+o2 = 36.4995
 
 o2 : RR
 
 i3 : 12 * (oo - floor oo)
 
-o3 = 5.65226
+o3 = 5.994
 
 o3 : RR
 
 i4 : run "date"
-Wed Jun 21 13:24:41 CDT 2006
+Sat Jul  1 23:02:47 CDT 2006
 
 o4 = 0
 

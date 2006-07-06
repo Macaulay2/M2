@@ -1,7 +1,6 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
-i1 : R = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},RevLex}]
+i1 : R = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},RevLex},Global=>false]
 
 o1 = R
 
@@ -17,7 +16,6 @@ o2 = cokernel | 0     y  |
 o2 : R-module, quotient of R
 
 i3 : prune M -- INCORRECT
-creating GB with local order
 
 o3 = cokernel | y  0     |
               | xz 1-xy  |

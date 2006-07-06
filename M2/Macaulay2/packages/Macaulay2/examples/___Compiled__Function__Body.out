@@ -1,0 +1,15 @@
+-- -*- M2-comint -*-
+
+i1 : source
+
+o1 = source
+
+o1 : MethodFunction
+
+i2 : functionBody source
+
+o2 = <<a compiled function body>>
+
+o2 : CompiledFunctionBody
+
+i3 : 

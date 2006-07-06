@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : S = QQ[x,y,z];
 
@@ -24,7 +23,7 @@ o5 = y
 
 o5 : S
 
-i6 : R = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},RevLex}];
+i6 : R = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},RevLex},Global=>false];
 
 i7 : J = substitute(I,R)
 
@@ -33,7 +32,6 @@ o7 = ideal (- y + x*y, - z + x*z)
 o7 : Ideal of R
 
 i8 : gens gb J
-creating GB with local order
 
 o8 = | y-xy z-xz |
 
@@ -57,7 +55,6 @@ o11 = ideal (x*y, x*z)
 o11 : Ideal of R
 
 i12 : dim J
-creating GB with local order
 
 o12 = 2
 

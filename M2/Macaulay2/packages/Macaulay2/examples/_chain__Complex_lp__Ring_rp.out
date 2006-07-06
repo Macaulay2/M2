@@ -1,0 +1,48 @@
+-- -*- M2-comint -*-
+
+i1 : C = chainComplex ZZ
+
+o1 = 0
+
+o1 : ChainComplex
+
+i2 : C.dd_101 = random(ZZ^2,ZZ^3)
+
+o2 = | 0 5 -9 |
+     | 1 2 -9 |
+
+              2        3
+o2 : Matrix ZZ  <--- ZZ
+
+i3 : C.dd_105 = id_(ZZ^2)
+
+o3 = | 1 0 |
+     | 0 1 |
+
+              2        2
+o3 : Matrix ZZ  <--- ZZ
+
+i4 : C
+
+       2       3                       2       2
+o4 = ZZ  <-- ZZ  <-- 0   <-- 0   <-- ZZ  <-- ZZ
+                                              
+     100     101     102     103     104     105
+
+o4 : ChainComplex
+
+i5 : C.dd
+
+             2                   3
+o5 = 100 : ZZ  <-------------- ZZ  : 101
+                  | 0 5 -9 |
+                  | 1 2 -9 |
+
+             2                2
+     104 : ZZ  <----------- ZZ  : 105
+                  | 1 0 |
+                  | 0 1 |
+
+o5 : ChainComplexMap
+
+i6 : 

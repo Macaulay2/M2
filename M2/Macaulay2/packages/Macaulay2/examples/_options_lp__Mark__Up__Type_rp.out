@@ -1,0 +1,30 @@
+-- -*- M2-comint -*-
+
+i1 : DIV
+
+o1 = DIV
+
+o1 : MarkUpTypeWithOptions
+
+i2 : options DIV
+
+o2 = OptionTable{class => }
+
+o2 : OptionTable
+
+i3 : d = DIV { "class" => "examples", "hi there" }
+
+o3 = hi there
+
+o3 : DIV
+
+i4 : html d
+
+o4 = <div class="examples">hi there</div>
+
+
+i5 : net d
+
+o5 = hi there
+
+i6 : 

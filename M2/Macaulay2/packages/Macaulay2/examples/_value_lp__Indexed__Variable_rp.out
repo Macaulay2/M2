@@ -1,0 +1,29 @@
+-- -*- M2-comint -*-
+
+i1 : y = x_3
+
+o1 = x
+      3
+
+o1 : IndexedVariable
+
+i2 : x_3 = 4
+
+o2 = 4
+
+i3 : x_3
+
+o3 = 4
+
+i4 : y
+
+o4 = x
+      3
+
+o4 : IndexedVariable
+
+i5 : value y
+
+o5 = 4
+
+i6 : 

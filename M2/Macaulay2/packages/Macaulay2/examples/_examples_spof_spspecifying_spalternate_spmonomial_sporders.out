@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ[a..d];
 
@@ -86,7 +85,7 @@ o18 = b*c    + b*c   e + b*c   f + b*c*d    + b*d   e + b*d   f + a  c + a  d
 
 o18 : R
 
-i19 : R = ZZ[a..f, MonomialOrder=>RevLex];
+i19 : R = ZZ[a..f, MonomialOrder=>RevLex, Global=>false];
 
 i20 : a^2*(c+d) + b*(c^100+d^100)*(c + e + f)
 

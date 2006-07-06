@@ -1,0 +1,31 @@
+-- -*- M2-comint -*-
+
+i1 : R = ZZ/32003[vars(0..10)]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : M = genericSkewMatrix(R,a,5)
+
+o2 = | 0  a  b  c  d |
+     | -a 0  e  f  g |
+     | -b -e 0  h  i |
+     | -c -f -h 0  j |
+     | -d -g -i -j 0 |
+
+             5       5
+o2 : Matrix R  <--- R
+
+i3 : ker M
+
+o3 = image {1} | gh-fi+ej  |
+           {1} | -dh+ci-bj |
+           {1} | df-cg+aj  |
+           {1} | -de+bg-ai |
+           {1} | ce-bf+ah  |
+
+                             5
+o3 : R-module, submodule of R
+
+i4 : 

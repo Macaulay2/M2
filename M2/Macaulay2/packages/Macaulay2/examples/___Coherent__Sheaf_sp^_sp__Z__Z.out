@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = QQ[a..d]/(a*d-b*c)
 
@@ -21,7 +20,7 @@ o3 = OO
 
 o3 : coherent sheaf on Q, free
 
-i4 : IL = sheaf ideal(a,b)
+i4 : IL = sheaf module ideal(a,b)
 
 o4 = image | a b |
 

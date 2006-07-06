@@ -1,0 +1,41 @@
+-- -*- M2-comint -*-
+
+i1 : R = ZZ/31991[a,b,c,d]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : I = monomialCurveIdeal(R,{1,2,3})
+
+             2                    2
+o2 = ideal (c  - b*d, b*c - a*d, b  - a*c)
+
+o2 : Ideal of R
+
+i3 : M = Ext^1(I,R)
+
+o3 = cokernel {-3} | d c b |
+              {-3} | c b a |
+
+                            2
+o3 : R-module, quotient of R
+
+i4 : dim M
+
+o4 = 2
+
+i5 : N = Ext^0(I,R)
+
+o5 = image {-2} | c2-bd |
+           {-2} | bc-ad |
+           {-2} | b2-ac |
+
+                             3
+o5 : R-module, submodule of R
+
+i6 : dim N
+
+o6 = 4
+
+i7 : 

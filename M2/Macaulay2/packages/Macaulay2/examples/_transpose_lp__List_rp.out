@@ -1,0 +1,9 @@
+-- -*- M2-comint -*-
+
+i1 : transpose{{a, b, c},{d, e, f}}
+
+o1 = {{a, d}, {b, e}, {c, f}}
+
+o1 : List
+
+i2 : 

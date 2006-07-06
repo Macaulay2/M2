@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : for i from 1 to 5 when i < 15 list i^2 do print i
 1
@@ -73,4 +72,10 @@ o11 = {0, 1, 4, 9, 16}
 
 o11 : List
 
-i12 : 
+i12 : for i in 0..3 list i^2
+
+o12 = {0, 1, 4, 9}
+
+o12 : List
+
+i13 : 

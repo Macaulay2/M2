@@ -1,9 +1,8 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : code Thing.Print
 
-o1 = -- ../../../../Macaulay2/m2/setup.m2:77-91
+o1 = -- ../../../../Macaulay2/m2/robust.m2:127-141
      Thing.Print = x -> (
           oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
           save := printWidth;

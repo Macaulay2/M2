@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/32003[a..d];
 
@@ -54,7 +53,7 @@ o7 = ideal (b*c - a*d, a*c  - b d, b  - a c, c  - c d  - b d  + b*d )
 
 o7 : Ideal of R
 
-i8 : decompose I
+i8 : minimalPrimes I
 
                              3      2       2    2    3    2                
 o8 = {ideal (- b*c + a*d, - c  + b*d , - a*c  + b d, b  - a c), ideal (- c +

@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : S = ZZ/101[x,y,z]
 
@@ -21,7 +20,7 @@ o3 = ideal (y*z, x*z, x  - y )
 
 o3 : Ideal of S
 
-i4 : intersect decompose I
+i4 : intersect minimalPrimes I
 
                            3    2
 o4 = ideal (-y*z, -x*z, - x  + y )

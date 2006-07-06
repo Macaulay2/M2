@@ -1,0 +1,15 @@
+-- -*- M2-comint -*-
+
+i1 : relativizeFilename("a/b/","a/b/c/d")
+
+o1 = c/d
+
+i2 : relativizeFilename("a/b/c/d","a/b/")
+
+o2 = ../../
+
+i3 : relativizeFilename("a/b/c/d","a/b/e/f")
+
+o3 = ../../e/f
+
+i4 : 

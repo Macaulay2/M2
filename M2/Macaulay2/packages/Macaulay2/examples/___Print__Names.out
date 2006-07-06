@@ -1,24 +1,25 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : hashTable apply(pairs PrintNames, (k,v) -> (v,class k))
 
 o1 = HashTable{-infinity => InfiniteNumber                                  }
                Classic#"private dictionary" => GlobalDictionary
                Classic.Dictionary => GlobalDictionary
+               Core#"private dictionary" => GlobalDictionary
+               Core.Dictionary => GlobalDictionary
                Elimination#"private dictionary" => GlobalDictionary
                Elimination.Dictionary => GlobalDictionary
                infinity => InfiniteNumber
                LLLBases#"private dictionary" => GlobalDictionary
                LLLBases.Dictionary => GlobalDictionary
-               Macaulay2Core#"private dictionary" => GlobalDictionary
-               Macaulay2Core.Dictionary => GlobalDictionary
                Parsing#"private dictionary" => GlobalDictionary
                Parsing.Dictionary => GlobalDictionary
                PrimaryDecomposition#"private dictionary" => GlobalDictionary
                PrimaryDecomposition.Dictionary => GlobalDictionary
                SchurRings#"private dictionary" => GlobalDictionary
                SchurRings.Dictionary => GlobalDictionary
+               TangentCone#"private dictionary" => GlobalDictionary
+               TangentCone.Dictionary => GlobalDictionary
                User#"private dictionary" => GlobalDictionary
                User.Dictionary => GlobalDictionary
 

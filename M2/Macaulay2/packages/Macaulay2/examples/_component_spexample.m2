@@ -5,4 +5,4 @@ I = intersect(I,J)
 removeLowestDimension I
 topComponents I
 radical I
-decompose I
+minimalPrimes I

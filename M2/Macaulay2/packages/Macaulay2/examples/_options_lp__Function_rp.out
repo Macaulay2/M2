@@ -1,0 +1,16 @@
+-- -*- M2-comint -*-
+
+i1 : options res
+
+o1 = OptionTable{DegreeLimit =>                }
+                 HardDegreeLimit => {}
+                 LengthLimit => infinity
+                 PairLimit => infinity
+                 SortStrategy => 0
+                 StopBeforeComputation => false
+                 Strategy => 
+                 SyzygyLimit => infinity
+
+o1 : OptionTable
+
+i2 : 

@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/1277[x,y];
 
@@ -172,7 +171,7 @@ i32 : f = random(R^1,R^{-3,-3,-5,-6});
 o32 : Matrix R  <--- R
 
 i33 : time betti gb f
-     -- used 0.580036 seconds
+     -- used 0.596037 seconds
 
 o33 = total: 1 53
           0: 1  .
@@ -190,6 +189,8 @@ o33 = total: 1 53
          12: .  3
          13: .  1
 
+o33 : BettiTally
+
 i34 : remove(f.cache,{false,0})
 
 i35 : (cokernel f).cache.poincare = (1-T^3)*(1-T^3)*(1-T^5)*(1-T^6)
@@ -200,7 +201,7 @@ o35 = 1 - 2T  - T  + 2T  + 2T  - T   - 2T   + T
 o35 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
 
 i36 : time betti gb f
-     -- used 0.028001 seconds
+     -- used 0.024002 seconds
 
 o36 = total: 1 53
           0: 1  .
@@ -217,5 +218,7 @@ o36 = total: 1 53
          11: .  6
          12: .  3
          13: .  1
+
+o36 : BettiTally
 
 i37 : 

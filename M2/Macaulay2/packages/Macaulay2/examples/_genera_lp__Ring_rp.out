@@ -1,0 +1,15 @@
+-- -*- M2-comint -*-
+
+i1 : R = ZZ/101[x_0..x_4];
+
+i2 : I = ideal random(R^1, R^{-2,-3});
+
+o2 : Ideal of R
+
+i3 : genera(R/I)
+
+o3 = {1, 4, 5}
+
+o3 : List
+
+i4 : 

@@ -1,0 +1,13 @@
+-- -*- M2-comint -*-
+
+i1 : "a c" || "-" || "adsf"
+
+o1 = a c
+     -
+     adsf
+
+i2 : width oo
+
+o2 = 4
+
+i3 : 

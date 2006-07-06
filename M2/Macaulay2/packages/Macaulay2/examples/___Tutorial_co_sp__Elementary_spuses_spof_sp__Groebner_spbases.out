@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : KK = ZZ/31991
 
@@ -108,6 +107,8 @@ o18 = total: 1 4 4 1
           1: . 1 . .
           2: . 3 4 1
 
+o18 : BettiTally
+
 i19 : R = KK[x,y,z]
 
 o19 = R
@@ -150,6 +151,8 @@ o23 = total: 1 3
           1: . 1
           2: . 1
           3: . 1
+
+o23 : BettiTally
 
 i24 : R = KK[x,y,z, MonomialOrder => Lex]
 
@@ -199,6 +202,8 @@ o28 = total: 1 5
           3: . 1
           4: . 1
           5: . 1
+
+o28 : BettiTally
 
 i29 : R = KK[a..i]
 

@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/101[x,y,z];
 
@@ -35,7 +34,9 @@ o4 = total: 1 5 9 5
          2: . 5 . .
          3: . . 9 5
 
-i5 : "Betti numbers of " | net C | " are " | be^2
+o4 : BettiTally
+
+i5 : "Betti numbers of " | net C | " are " | (net be)^2
 
                                                         total: 1 5 9 5
                        1      5      9      5               0: 1 . . .

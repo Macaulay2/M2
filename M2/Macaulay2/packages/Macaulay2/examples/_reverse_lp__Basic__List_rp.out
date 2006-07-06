@@ -1,0 +1,9 @@
+-- -*- M2-comint -*-
+
+i1 : reverse {a,b,c,d}
+
+o1 = {d, c, b, a}
+
+o1 : List
+
+i2 : 

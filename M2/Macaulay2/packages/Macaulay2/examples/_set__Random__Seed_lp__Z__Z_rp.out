@@ -1,0 +1,23 @@
+-- -*- M2-comint -*-
+
+i1 : setRandomSeed 123456
+
+o1 = 123459876
+
+i2 : for i to 10 list random 100
+
+o2 = {37, 62, 53, 72, 18, 25, 31, 12, 82, 2, 34}
+
+o2 : List
+
+i3 : setRandomSeed 123456
+
+o3 = 843086434
+
+i4 : for i to 10 list random 100
+
+o4 = {37, 62, 53, 72, 18, 25, 31, 12, 82, 2, 34}
+
+o4 : List
+
+i5 : 

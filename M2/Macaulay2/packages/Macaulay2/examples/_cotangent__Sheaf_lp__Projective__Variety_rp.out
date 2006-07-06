@@ -1,0 +1,27 @@
+-- -*- M2-comint -*-
+
+i1 : X=Proj(QQ[x,y,z]/(x^4+y^4+z^4))
+
+o1 = X
+
+o1 : ProjectiveVariety
+
+i2 : genus(X)
+
+o2 = 3
+
+i3 : omega = cotangentSheaf(X)
+
+o3 = subquotient ({1} | 0  -z -y x3 |, {1} | 4x3 |)
+                  {1} | -z 0  x  y3 |  {1} | 4y3 |
+                  {1} | y  x  0  z3 |  {1} | 4z3 |
+
+                                            3
+o3 : coherent sheaf on X, subquotient of OO  (-1)
+                                           X
+
+i4 : degree omega
+
+o4 = 4
+
+i5 : 

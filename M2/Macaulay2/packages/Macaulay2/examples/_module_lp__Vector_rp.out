@@ -1,0 +1,34 @@
+-- -*- M2-comint -*-
+
+i1 : F = ZZ^4
+
+       4
+o1 = ZZ
+
+o1 : ZZ-module, free
+
+i2 : v = F_2
+
+o2 = | 0 |
+     | 0 |
+     | 1 |
+     | 0 |
+
+       4
+o2 : ZZ
+
+i3 : module v
+
+       4
+o3 = ZZ
+
+o3 : ZZ-module, free
+
+i4 : class v
+
+       4
+o4 = ZZ
+
+o4 : ZZ-module, free
+
+i5 : 

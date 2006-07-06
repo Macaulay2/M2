@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/32003[vars(0..17)];
 
@@ -110,5 +109,7 @@ o14 = total: 3 6 15 18 6
           0: 3 6  .  . .
           1: . .  .  . .
           2: . . 15 18 6
+
+o14 : BettiTally
 
 i15 : 

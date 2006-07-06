@@ -1,0 +1,29 @@
+-- -*- M2-comint -*-
+
+i1 : R = QQ[a,b,c];
+
+i2 : I = ideal"a2-b2,abc"
+
+             2    2
+o2 = ideal (a  - b , a*b*c)
+
+o2 : Ideal of R
+
+i3 : M = I/(I^2+a*I)
+
+o3 = subquotient (| a2-b2 abc |, | a4-2a2b2+b4 a3bc-ab3c a2b2c2 a3-ab2 a2bc
+     ------------------------------------------------------------------------
+     |)
+
+                               1
+o3 : R-module, subquotient of R
+
+i4 : presentation M
+
+o4 = {2} | a 0 b2 0  |
+     {3} | 0 a 0  b2 |
+
+             2       4
+o4 : Matrix R  <--- R
+
+i5 : 

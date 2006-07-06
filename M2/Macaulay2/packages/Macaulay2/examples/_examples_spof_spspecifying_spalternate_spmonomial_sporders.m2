@@ -16,5 +16,5 @@ R = ZZ[a..f, MonomialOrder=>{Weights=>2:1,Lex}]
 a^2*(c+d) + b*(c^100+d^100)*(c + e + f)
 R = ZZ[a..f, MonomialOrder => GroupLex => 3];
 a^-2*(c+d) + b*(c^100+d^100)*(c + e + f)
-R = ZZ[a..f, MonomialOrder=>RevLex];
+R = ZZ[a..f, MonomialOrder=>RevLex, Global=>false];
 a^2*(c+d) + b*(c^100+d^100)*(c + e + f)

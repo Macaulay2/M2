@@ -9,3 +9,4 @@ for i from 0 when i < 10 list (if odd i then continue; i^2)
 for i from 0 when i < 10 list (if odd i then continue x; i^2)
 for i from 0 when i < 10 list (if i== 5 then break i; i^2)
 for i from 0 when i < 10 list (if i== 5 then break; i^2)
+for i in 0..3 list i^2

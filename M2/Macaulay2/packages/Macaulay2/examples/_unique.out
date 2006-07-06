@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : unique {3,2,1,3,2,4,a,3,2,3,-2,1,2,4}
 

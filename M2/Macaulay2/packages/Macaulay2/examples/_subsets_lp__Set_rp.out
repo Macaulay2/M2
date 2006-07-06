@@ -1,0 +1,11 @@
+-- -*- M2-comint -*-
+
+i1 : subsets set {a,b,c}
+
+o1 = {Set {}, Set {c}, Set {a}, Set {c, a}, Set {b}, Set {c, b}, Set {a, b},
+     ------------------------------------------------------------------------
+     Set {c, a, b}}
+
+o1 : List
+
+i2 : 

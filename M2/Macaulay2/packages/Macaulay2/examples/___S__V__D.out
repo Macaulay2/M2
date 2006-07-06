@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : M = map(RR^3, RR^5, (i,j) -> (i+1)^j * 1.0)
 

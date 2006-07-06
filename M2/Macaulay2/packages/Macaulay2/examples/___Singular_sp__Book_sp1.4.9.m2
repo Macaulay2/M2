@@ -3,7 +3,7 @@ I = ideal(y*(x-1), z*(x-1));
 dim I
 gens gb I
 y % I
-R = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},RevLex}];
+R = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},RevLex},Global=>false];
 J = substitute(I,R)
 gens gb J
 dim J

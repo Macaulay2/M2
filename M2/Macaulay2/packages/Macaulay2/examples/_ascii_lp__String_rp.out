@@ -1,0 +1,17 @@
+-- -*- M2-comint -*-
+
+i1 : ascii "abcdef"
+
+o1 = {97, 98, 99, 100, 101, 102}
+
+o1 : List
+
+i2 : ascii oo
+
+o2 = abcdef
+
+i3 : first ascii "A"
+
+o3 = 65
+
+i4 : 

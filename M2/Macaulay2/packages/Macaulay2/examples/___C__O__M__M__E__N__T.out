@@ -1,0 +1,7 @@
+-- -*- M2-comint -*-
+
+i1 : html COMMENT "hi there"
+
+o1 = <!--hi there-->
+
+i2 : 

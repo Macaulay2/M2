@@ -1,1 +1,1 @@
-concatenate {"a",("s",3,"d"),"f"}
+concatenate {"a",("s",3,"d",),"f"}

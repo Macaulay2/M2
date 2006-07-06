@@ -1,0 +1,27 @@
+-- -*- M2-comint -*-
+
+i1 : synonym ZZ
+
+o1 = integer
+
+i2 : Stack = new Type of HashTable
+
+o2 = Stack
+
+o2 : Type
+
+i3 : synonym Stack
+
+o3 = object of class Stack
+
+i4 : Stack.synonym = "Deligne-Mumford stack"
+
+o4 = Deligne-Mumford stack
+
+i5 : ofClass Stack
+
+o5 = a Deligne-Mumford stack
+
+o5 : SPAN
+
+i6 : 

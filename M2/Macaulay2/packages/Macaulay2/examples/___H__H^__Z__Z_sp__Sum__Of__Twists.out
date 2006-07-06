@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : X = Proj(QQ[x_0..x_2])
 
@@ -115,6 +114,8 @@ o16 = total: 5 15 29 37 20 2
           2: .  . 15 35 20 .
           3: .  .  .  .  . 2
 
+o16 : BettiTally
+
 i17 : N = transpose submatrix(C.dd_3,{10..28},{2..36});
 
               35       19
@@ -131,6 +132,8 @@ o18 = total: 35 19 19 35 20 2
           0:  .  .  4  .  . .
           1:  .  . 15 35 20 .
           2:  .  .  .  .  . 2
+
+o18 : BettiTally
 
 i19 : Pfour = Proj(R)
 

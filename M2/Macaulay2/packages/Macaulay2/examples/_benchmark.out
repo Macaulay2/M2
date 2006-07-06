@@ -1,9 +1,8 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : benchmark "2^500"
 
-o1 = 3.54772*10^-6
+o1 = 3.2562*10^-6
 
 o1 : RR
 

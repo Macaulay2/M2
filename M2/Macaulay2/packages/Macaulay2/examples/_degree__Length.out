@@ -1,0 +1,19 @@
+-- -*- M2-comint -*-
+
+i1 : degreeLength ZZ
+
+o1 = 0
+
+i2 : degreeLength (ZZ[x])
+
+o2 = 1
+
+i3 : degreeLength (ZZ[x, Degrees => {{1,2,3}}])
+
+o3 = 3
+
+i4 : degreeLength (GF 9)
+
+o4 = 0
+
+i5 : 

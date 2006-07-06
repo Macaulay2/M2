@@ -1,0 +1,23 @@
+-- -*- M2-comint -*-
+
+i1 : QQ[x_0 .. x_40 ]
+
+o1 = QQ [x , x , x , x , x , x , x , x , x , x , x  , x  , x  , x  , x  ,
+          0   1   2   3   4   5   6   7   8   9   10   11   12   13   14 
+     ------------------------------------------------------------------------
+     x  , x  , x  , x  , x  , x  , x  , x  , x  , x  , x  , x  , x  , x  ,
+      15   16   17   18   19   20   21   22   23   24   25   26   27   28 
+     ------------------------------------------------------------------------
+     x  , x  , x  , x  , x  , x  , x  , x  , x  , x  , x  , x  ]
+      29   30   31   32   33   34   35   36   37   38   39   40
+
+o1 : PolynomialRing
+
+i2 : concatenate(50:"abcd ")
+
+o2 = abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd
+     abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd
+     abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd abcd
+     abcd abcd abcd abcd abcd abcd abcd abcd
+
+i3 : 

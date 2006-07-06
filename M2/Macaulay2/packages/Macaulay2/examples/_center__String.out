@@ -1,0 +1,8 @@
+-- -*- M2-comint -*-
+
+i1 : centerString(18,"asdf"||"qwer")
+
+o1 =        asdf       
+            qwer
+
+i2 : 
