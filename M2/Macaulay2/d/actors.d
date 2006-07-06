@@ -452,7 +452,7 @@ export (lhs:Expr) // (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:Integer do (
 	       if y === 0
-	       then buildErrorPacket("division by zero")
+	       then Expr(toInteger(0))
 	       else Expr(x//y)
 	       )
      	  is Error do rhs

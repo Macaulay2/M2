@@ -6,19 +6,14 @@
 
 quotelem0 = (I,f) -> (
      -- I is an ideal, f is an element
-     If := matrix{{f}} | (generators I);
-     g := syz gb(If,
-	  Strategy=>LongPolynomial,
-	  Syzygies=>true,
-	  SyzygyRows=>1);
-     g)
+     syz gb(matrix{{f}} | generators I, Strategy=>LongPolynomial, Syzygies=>true, SyzygyRows=>1))
 
-quot0 := options -> (I,J) -> (
+quot0 := opts -> (I,J) -> (
     -- this is the version when I, J are ideals,
     R := (ring I)/I;
     mR := transpose generators J ** R;
     g := syz gb(mR,
-           options,
+           opts,
            Strategy=>LongPolynomial,
            Syzygies=>true,SyzygyRows=>1);
     -- The degrees of g are not correct, so we fix that here:
@@ -26,24 +21,23 @@ quot0 := options -> (I,J) -> (
     lift(ideal g, ring I)
     )
 
-quot1 := options -> (I,J) -> (
-    -- This is the iterative version, where I and J
-    -- are ideals
+quot1 := opts -> (I,J) -> (
+    -- This is the iterative version, where I and J are ideals
     R := ring I;
     M1 := ideal(1_R);
     scan(numgens J, i -> (
        f := J_i;
        if generators(f*M1) % (generators I) != 0 then (
-	    M2 := quotient(I,f, Strategy=>Quotient);
+	    M2 := quotient(I,f, opts, Strategy=>Quotient);
 	    M1 = intersect(M1,M2);)));
     M1)
 
-quot2 := options -> (I,J) -> (
+quot2 := opts -> (I,J) -> (
      error "not implemented yet";
      -- linear case, I,J ideals homog. J=(x) linear
      )
 
-quotmod0 := options -> (M,J) -> (
+quotmod0 := opts -> (M,J) -> (
      m := generators M;
      F := target m;
      mm := generators M;
@@ -53,7 +47,7 @@ quotmod0 := options -> (M,J) -> (
      -- We would like to be able to inform the engine that
      -- it is not necessary to compute various of the pairs
      -- of the columns of the matrix g.
-     h := syz gb(g, options,
+     h := syz gb(g, opts,
 	  Strategy=>LongPolynomial,
 	  SyzygyRows=>numgens F,
 	  Syzygies=>true);
@@ -64,7 +58,7 @@ quotmod0 := options -> (M,J) -> (
          image h
      )
 
-quotmod1 := options -> (I,J) -> (
+quotmod1 := opts -> (I,J) -> (
     -- This is the iterative version, where I is a 
     -- submodule of F/K, or ideal, and J is an ideal.
     M1 := super I;
@@ -72,17 +66,17 @@ quotmod1 := options -> (I,J) -> (
     scan(numgens J, i -> (
        f := J_i;
        if generators(f*M1) % m != 0 then (
-	    M2 := quotient(I,f,Strategy=>Quotient);
+	    M2 := quotient(I,f, opts, Strategy=>Quotient);
 	    M1 = intersect(M1,M2);)));
     M1)
 
-quotmod2 := options -> (I,J) -> (
+quotmod2 := opts -> (I,J) -> (
      error "not implemented yet";
      -- This is the case when J is a single linear 
      -- element, and everything is homogeneous
      )
 
-quotann0 := options -> (M,J) -> (
+quotann0 := opts -> (M,J) -> (
      m := generators M;
      if M.?relations then m = m | M.relations;
      j := adjoint(generators J, (ring J)^1, source generators J);
@@ -92,91 +86,78 @@ quotann0 := options -> (M,J) -> (
      -- We would like to be able to inform the engine that
      -- it is not necessary to compute various of the pairs
      -- of the columns of the matrix g.
-     h := syz gb(g, options,
+     h := syz gb(g, opts,
 	  Strategy=>LongPolynomial,
 	  SyzygyRows=>1,
 	  Syzygies=>true);
      ideal h
      )
 
-quotann1 := options -> (I,J) -> (
+quotann1 := opts -> (I,J) -> (
     R := ring I;
     M1 := ideal(1_R);
     m := generators I | relations I;
     scan(numgens J, i -> (
        f := image (J_{i});
        if generators(f**M1) % m != 0 then (
-	    M2 := quotient(I,f,Strategy=>Quotient);
+	    M2 := quotient(I,f, opts, Strategy=>Quotient);
 	    M1 = intersect(M1,M2);)));
     M1)
 
 
-doQuotientOptions := (options) -> (
-    options = new MutableHashTable from options;
-    remove(options,Strategy);
-    remove(options,MinimalGenerators);
-    --options.SyzygyLimit = options.BasisElementLimit;
-    --remove(options,BasisElementLimit);
-    new OptionTable from options
+doQuotientOptions := (opts) -> (
+    opts = new MutableHashTable from opts;
+    remove(opts,Strategy);
+    remove(opts,MinimalGenerators);
+    --opts.SyzygyLimit = opts.BasisElementLimit;
+    --remove(opts,BasisElementLimit);
+    new OptionTable from opts
     )
 
-quotientIdeal := options -> (I,J) -> (
+quotientIdeal := opts -> (I,J) -> (
      if ring I =!= ring J
        then error "expected ideals in the same ring";
-     domins := options.MinimalGenerators;
-     strat := options.Strategy;
-     options = doQuotientOptions options;
-     local IJ;
-     if strat === null then strat = symbol Iterate;
-     if strat === symbol Iterate then (
-	 if gbTrace > 0 then << "colon ideal: using Strategy=>Iterate" << endl;	
-         IJ = (quot1 options)(I,J);
-	 )
-     else if strat === symbol Linear then (
-	 if gbTrace > 0 then << "colon ideal: using Strategy=>Linear" << endl;
-         IJ = (quot2 options)(I,J);
-	 )
-     else (
-	 if gbTrace > 0 then << "colon ideal: using Strategy=>Quotient" << endl;	 
-     	 IJ = (quot0 options)(I,J);
-	 );
+     domins := opts.MinimalGenerators;
+     strat := opts.Strategy;
+     opts = doQuotientOptions opts;
+     if gbTrace > 0 then << "-- colon(Ideal,Ideal, Strategy => " << strat << ")" << endl;	
+     IJ := if strat === symbol Iterate then (quot1 opts)(I,J)
+     else if strat === symbol Linear then (quot2 opts)(I,J)
+     else if strat === symbol Quotient then (quot0 opts)(I,J)
+     else error("quotient, Strategy option, expected Iterate, Linear, or Quotient: ",toString strat);
      if domins then trim IJ else IJ)
 
-quotientModule := options -> (I,J) -> (
+quotientModule := opts -> (I,J) -> (
      if ring I =!= ring J
        then error "expected same ring";
-     domins := options.MinimalGenerators;
-     strat := options.Strategy;
-     options = doQuotientOptions options;
-     local IJ;
-     if strat === symbol Iterate then
-         IJ = (quotmod1 options)(I,J)
-     else if strat === symbol Linear then
-         IJ = (quotmod2 options)(I,J)
-     else 
-     	 IJ = (quotmod0 options)(I,J);
+     domins := opts.MinimalGenerators;
+     strat := opts.Strategy;
+     if gbTrace > 0 then << "-- colon(Module,Ideal, Strategy => " << strat << ")" << endl;	
+     opts = doQuotientOptions opts;
+     IJ := if strat === symbol Iterate then (quotmod1 opts)(I,J)
+     else if strat === symbol Linear then (quotmod2 opts)(I,J)
+     else if strat === symbol Quotient then (quotmod0 opts)(I,J)
+     else error("quotient, Strategy option, expected Iterate, Linear, or Quotient: ",toString strat);
      if domins then trim IJ else IJ)
 
-quotientAnn := options -> (I,J) -> (
+quotientAnn := opts -> (I,J) -> (
      if ring I =!= ring J
        then error "expected same ring";
-     domins := options.MinimalGenerators;
-     strat := options.Strategy;
-     options = doQuotientOptions options;
-     local IJ;
-     if strat === symbol Iterate then
-         IJ = (quotann1 options)(I,J)
-     else if strat === symbol Linear then
-         error "'Linear' not allowable strategy"
-     else
-     	 IJ = (quotann0 options)(I,J);
+     domins := opts.MinimalGenerators;
+     strat := opts.Strategy;
+     if gbTrace > 0 then << "-- colon(Module,Module, Strategy => " << strat << ")" << endl;	
+     opts = doQuotientOptions opts;
+     IJ := if strat === symbol Iterate then (quotann1 opts)(I,J)
+     else if strat === symbol Linear then error "'Linear' not allowable strategy"
+     else if strat === symbol Quotient then  (quotann0 opts)(I,J)
+     else error("quotient, Strategy option, expected Iterate or Quotient: ",toString strat);
      if domins then trim IJ else IJ)
 
-quotient(Ideal ,Ideal      ) := Ideal  => options -> (I,J) -> (quotientIdeal options)(I,J)
-quotient(Ideal ,RingElement) := Ideal  => options -> (I,f) -> (quotientIdeal options)(I,ideal(f))
-quotient(Module,Ideal      ) := Module => options -> (M,I) -> (quotientModule options)(M,I)
-quotient(Module,RingElement) := Module => options -> (M,f) -> (quotientModule options)(M,ideal(f))
-quotient(Module,Module     ) := Ideal  => options -> (M,N) -> (quotientAnn options)(M,N)
+quotient(Ideal ,Ideal      ) := Ideal  => opts -> (I,J) -> (quotientIdeal opts)(I,J)
+quotient(Ideal ,RingElement) := Ideal  => opts -> (I,f) -> (quotientIdeal opts)(I,ideal(f))
+quotient(Module,Ideal      ) := Module => opts -> (M,I) -> (quotientModule opts)(M,I)
+quotient(Module,RingElement) := Module => opts -> (M,f) -> (quotientModule opts)(M,ideal(f))
+quotient(Module,Module     ) := Ideal  => opts -> (M,N) -> (quotientAnn opts)(M,N)
 Ideal : Ideal := Ideal => (I,J) -> quotient(I,J)
 Ideal : RingElement := Ideal => (I,r) -> quotient(I,r)
 Module : Ideal := Module => (M,I) -> quotient(M,I)
@@ -197,7 +178,7 @@ saturate = method(
 	  }
      )
 
-satideal0old := options -> (I,J) -> (
+satideal0old := opts -> (I,J) -> (
     R := ring I;
     I = lift(I,ring presentation R);
     m := transpose generators J;
@@ -209,7 +190,7 @@ satideal0old := options -> (I,J) -> (
     -- lift(I,R)
     ideal (presentation ring I ** R)
     )
-satideal0 := options -> (I,J) -> (
+satideal0 := opts -> (I,J) -> (
     R := ring I;
     m := transpose generators J;
     while (
@@ -222,7 +203,7 @@ satideal0 := options -> (I,J) -> (
     ideal (presentation ring I ** R)
     )
 
-satideal1 := options -> (I,f) -> (
+satideal1 := opts -> (I,f) -> (
     I1 := ideal(1_(ring I));
     f = f_0;
     while not(I1 == I) do (
@@ -231,7 +212,7 @@ satideal1 := options -> (I,f) -> (
                 SyzygyRows=>1,Syzygies=>true););
     I)
 
-satideal2 := options -> (I,f) -> (
+satideal2 := opts -> (I,f) -> (
     -- This version may be used if f is a linear form
     -- and I is a submodule
     -- We need an easy test whether the ring of I
@@ -244,12 +225,12 @@ satideal2 := options -> (I,f) -> (
 	fto := res#1;
 	fback := res#0;
 	J := fto generators I;
-	gb(J,options);
+	gb(J,opts);
 	(m, notused) := divideByVariable(generators gb J, R_(numgens R-1));
 	ideal fback m)
     )
 
-satideal3 := options -> (I,f) -> (
+satideal3 := opts -> (I,f) -> (
      -- Bayer method.  This may be used if I,f are homogeneous.
      -- Basic idea: in a ring R[z]/(f-z), with the rev lex order,
      -- compute a GB of I.
@@ -264,12 +245,12 @@ satideal3 := options -> (I,f) -> (
      A := R1/(f1-R1_n);
      iback := map(R,A,vars R | f);
      IA := generators I1 ** A;
-     g := generators gb(IA,options);
+     g := generators gb(IA,opts);
      (g1,notused) := divideByVariable(g, A_n);
      ideal iback g1
      )
 
-satideal4 := options -> (I,f) -> (
+satideal4 := opts -> (I,f) -> (
      f = f_0;
      R := ring I;
      n := numgens R;
@@ -280,16 +261,16 @@ satideal4 := options -> (I,f) -> (
      fback := map(R,R2,matrix{{0_R}} | vars R);
      fto =  map(R2,R,genericMatrix(R2,R2_1,1,n));
      II := ideal fto generators I;
-     g := gb(II,options);
+     g := gb(II,opts);
      p1 := selectInSubring(1, generators g);
      ideal fback p1)
 
-removeOptions := (options, badopts) -> (
-    options = new MutableHashTable from options;
-    scan(badopts, k -> remove(options, k));
-    new OptionTable from options)
+removeOptions := (opts, badopts) -> (
+    opts = new MutableHashTable from opts;
+    scan(badopts, k -> remove(opts, k));
+    new OptionTable from opts)
 
-saturate(Ideal,Ideal) := Ideal => options -> (J,I) -> (
+saturate(Ideal,Ideal) := Ideal => opts -> (J,I) -> (
     -- various cases here
     n := numgens I;
     R := ring I;
@@ -297,9 +278,9 @@ saturate(Ideal,Ideal) := Ideal => options -> (J,I) -> (
     linearvar := (n === 1 and degree(I_0) === {1});
     homog := isHomogeneous I and isHomogeneous J;
     
-    strategy := options.Strategy;
-    domins := options.MinimalGenerators;
-    options = removeOptions(options, {MinimalGenerators,Strategy});
+    strategy := opts.Strategy;
+    domins := opts.MinimalGenerators;
+    opts = removeOptions(opts, {MinimalGenerators,Strategy});
     if strategy === null then
        if linearvar and homog and isPolynomialRing R 
           then strategy = Linear
@@ -338,15 +319,15 @@ saturate(Ideal,Ideal) := Ideal => options -> (J,I) -> (
 	if gbTrace > 0 then << "colon ideal: using Quotient Iteration strategy" << endl;
 	);
 
-    g := (f options)(J,I);
+    g := (f opts)(J,I);
     if domins then trim g else g
     )
 
-saturate(Ideal, RingElement) := Ideal => options -> (I,f) -> saturate(I,ideal f,options)
+saturate(Ideal, RingElement) := Ideal => opts -> (I,f) -> saturate(I,ideal f,opts)
 
-saturate Ideal := Ideal => options -> (I) -> saturate(I,ideal vars ring I, options)
+saturate Ideal := Ideal => opts -> (I) -> saturate(I,ideal vars ring I, opts)
 
-saturate(Module,Ideal) := Module => options -> (M,I) -> (
+saturate(Module,Ideal) := Module => opts -> (M,I) -> (
     -- various cases here
     M1 := M : I;
     while M1 != M do (
@@ -354,9 +335,9 @@ saturate(Module,Ideal) := Module => options -> (M,I) -> (
 	 M1 = M : I;
 	 );
     M)
-saturate(Module,RingElement) := Module => options -> (M,f) -> saturate(M,ideal(f),options)
-saturate(Module) := Module => options -> (M) -> saturate(M,ideal vars ring M, options)
-saturate(Vector) := Module => options -> (v) -> saturate(image matrix {v}, options)
+saturate(Module,RingElement) := Module => opts -> (M,f) -> saturate(M,ideal(f),opts)
+saturate(Module) := Module => opts -> (M) -> saturate(M,ideal vars ring M, opts)
+saturate(Vector) := Module => opts -> (v) -> saturate(image matrix {v}, opts)
 
 
 -- Local Variables:

@@ -14,6 +14,28 @@ RR.dim = 0
 RR.char = 0
 RR.Engine = true
 
+scan((QQ,RR,CC,RRR,CCC), F -> (
+	  F // F := (x,y) -> if y == 0 then 0_F else x/y;
+	  F % F := (x,y) -> if y == 0 then x else 0_F;
+	  F // ZZ := (x,y) -> x // y_F;
+	  F % ZZ := (x,y) -> x % y_F;
+	  ))
+
+scan((RR,CC,RRR,CCC), F -> (
+	  F // QQ := (x,y) -> x // y_F;
+	  F % QQ := (x,y) -> x % y_F;
+	  ))
+
+scan((CC,RRR,CCC), F -> (
+	  F // RR := (x,y) -> x // y_F;
+	  F % RR := (x,y) -> x % y_F;
+	  ))
+
+	  CCC // RRR := (x,y) -> x // y_CCC;
+	  CCC % RRR := (x,y) -> x % y_CCC;
+	  CCC // CC := (x,y) -> x // y_CCC;
+	  CCC % CC := (x,y) -> x % y_CCC;
+
 new RR from RawRingElement := (RR,x) -> rawToReal x
 
 RR == ZZ := (x,y) -> x === y+0.

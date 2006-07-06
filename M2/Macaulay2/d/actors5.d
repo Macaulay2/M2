@@ -250,7 +250,7 @@ integermod(e:Expr):Expr := (
      if length(a) == 2 then 
      when a.0 is x:Integer do 
      when a.1 is y:Integer do 
-     if y === 0 then buildErrorPacket("division by zero")
+     if y === 0 then a.0
      else Expr(x % y)
      else WrongArgInteger(2)
      else WrongArgInteger(1)

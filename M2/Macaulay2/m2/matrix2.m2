@@ -26,22 +26,21 @@ trim QuotientRing := options -> (R) -> (
      f := presentation R;
      A := ring f;
      A/(trim(ideal f,options)))
-trim Module := Module => options -> (M) -> if M.cache.?trim then M.cache.trim else M.cache.trim = (
-     if isFreeModule M
-     then M
-     else (
-          -- this helps sometimes, even if M is *not* homogeneous : see test/trim.m2 and figure it out
-	  g := mingens(M,options);
-	  relns := if M.?relations then mingens(image M.relations,options);
-	  N := (
-	       if not isSubset(target g, image g)
-	       then subquotient( g, relns )
-	       else if relns === null then ambient M
-	       else cokernel relns
-	       );
-	  N.cache.trim = N;
-	  N)
-     )
+trim Module := Module => options -> (cacheValue symbol trim) ((M) -> (
+	  if isFreeModule M
+	  then M
+	  else (
+	       -- this helps sometimes, even if M is *not* homogeneous : see test/trim.m2 and figure it out
+	       g := mingens(M,options);
+	       relns := if M.?relations then mingens(image M.relations,options);
+	       N := (
+		    if not isSubset(target g, image g)
+		    then subquotient( g, relns )
+		    else if relns === null then ambient M
+		    else cokernel relns
+		    );
+	       N.cache.trim = N;
+	       N)))
 
 syz Matrix := Matrix => options -> (f) -> (
      if not isFreeModule target f or not isFreeModule source f

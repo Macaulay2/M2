@@ -5,6 +5,7 @@
 #include "comp_gb.hpp"
 #include "comp_res.hpp"
 #include "comp_gb_declared.hpp"
+#include "text_io.hpp"
 
 const RingElementOrNull * IM2_Matrix_Hilbert(const Matrix *M)
   /* This routine computes the numerator of the Hilbert series
@@ -25,6 +26,7 @@ ComputationOrNull *IM2_GB_make(const Matrix *m,
 			       int strategy) /* drg: connected rawGB */
 {
   // Choose the correct computation here.
+  clear_emit_size();
   return GBComputation::choose_gb(
 				  m,
 				  collect_syz,
@@ -47,6 +49,7 @@ ComputationOrNull *IM2_res_make(
 	   )
 {
   // Choose the correct computation here.
+  clear_emit_size();
   return ResolutionComputation::choose_res(m,
 				 resolve_cokernel,
 				 max_level,
@@ -60,6 +63,7 @@ ComputationOrNull *
 IM2_GB_set_hilbert_function(Computation *C,
 			    const RingElement *h)
 {
+  clear_emit_size();
   GBComputation *G = C->cast_to_GBComputation();
   if (G != 0)
     return G->set_hilbert_function(h);
@@ -90,6 +94,7 @@ IM2_Computation_set_stop(Computation *G,
   /* LongPolynomial, Sort, Primary, Inhomogeneous, Homogeneous */
   /* Res: SortStrategy, 0, 1, 2, 3 ?? */
 {
+  clear_emit_size();
   return  G->set_stop_conditions(always_stop,
 				 degree_limit,
 				 basis_element_limit,
@@ -105,6 +110,7 @@ ComputationOrNull*
 rawStartComputation(Computation *C)
   /* start or continue the computation */
 {
+  clear_emit_size();
   C->start_computation();
   return error() ? 0 : C;
 }
@@ -123,6 +129,7 @@ const MatrixOrNull *rawGBGetMatrix(Computation *C)
   /* Get the minimal, auto-reduced GB of a GB computation.
      Each call to this will produce a different raw matrix */
 {
+  clear_emit_size();
   GBComputation *G = C->cast_to_GBComputation();
   if (G != 0)
     return G->get_gb();
@@ -136,6 +143,7 @@ const MatrixOrNull *rawGBMinimalGenerators(Computation *C)
      inhomogeneous case, this yields a generating set which is
      sometimes smaller than the entire Groebner basis. */
 {
+  clear_emit_size();
   GBComputation *G = C->cast_to_GBComputation();
   if (G != 0)
     return G->get_mingens();
@@ -150,6 +158,7 @@ const MatrixOrNull *rawGBChangeOfBasis(Computation *C)
      computation has run to completion, should satisfy:
      (original matrix) = (GB matrix) * (change of basis matrix). */
 {
+  clear_emit_size();
   GBComputation *G = C->cast_to_GBComputation();
   if (G != 0)
     return G->get_change();
@@ -160,6 +169,7 @@ const MatrixOrNull *rawGBChangeOfBasis(Computation *C)
 const MatrixOrNull *
 rawGBGetLeadTerms(Computation *C, int nparts)
 {
+  clear_emit_size();
   GBComputation *G = C->cast_to_GBComputation();
   if (G != 0)
     return G->get_initial(nparts);
@@ -174,6 +184,7 @@ const MatrixOrNull *rawGBSyzygies(Computation *C)
      set to a non-negative integer, then only that many rows of each
      syzygy are kept. */
 {
+  clear_emit_size();
   GBComputation *G = C->cast_to_GBComputation();
   if (G != 0)
     return G->get_syzygies();
@@ -185,6 +196,7 @@ const MatrixOrNull *
 rawGBMatrixRemainder(Computation *C, 
 		     const Matrix *m)
 {
+  clear_emit_size();
   GBComputation *G = C->cast_to_GBComputation();
   if (G != 0)
     return G->matrix_remainder(m);
@@ -198,6 +210,7 @@ void IM2_GB_matrix_lift(Computation *C,
 			MatrixOrNull **result_quotient
 			)
 {
+  clear_emit_size();
   GBComputation *G = C->cast_to_GBComputation();
   if (G != 0)
     G->matrix_lift(m, result_remainder, result_quotient);
@@ -208,6 +221,7 @@ int
 IM2_GB_contains(Computation *C, 
 		const Matrix *m)
 {
+  clear_emit_size();
   GBComputation *G = C->cast_to_GBComputation();
   if (G != 0)
     return G->contains(m);
@@ -219,6 +233,7 @@ const MatrixOrNull *
 rawResolutionGetMatrix(Computation *C, 
 		       int level)
 {
+  clear_emit_size();
   ResolutionComputation *G = C->cast_to_ResolutionComputation();
   if (G != 0)
     return G->get_matrix(level);
@@ -230,6 +245,7 @@ const FreeModuleOrNull *
 rawResolutionGetFree(Computation *C, 
 		     int level)
 {
+  clear_emit_size();
   ResolutionComputation *G = C->cast_to_ResolutionComputation();
   if (G != 0)
     return G->get_free(level);

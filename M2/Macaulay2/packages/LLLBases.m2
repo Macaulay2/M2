@@ -47,8 +47,6 @@ iden = (R,n) -> mutableIdentity(R,n)
 
 getEntry = (m,i,j) -> m_(i,j)
 
-RR // ZZ := (a,b) -> a/b
-RR // RR := (a,b) -> a/b
 --------------------------------------------------
 LLLstrategies = new HashTable from {
      NTL => 2,

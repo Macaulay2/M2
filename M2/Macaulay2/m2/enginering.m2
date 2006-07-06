@@ -260,9 +260,9 @@ ZZ // RingElement := RingElement // ZZ :=
      R := class f;
      S := class g;
      R // S := (
-	  if R === S then (x,y) -> (
-	       try new R from x.RawRingElement // y.RawRingElement
-	       else first first entries (matrix {{x}} // y))
+	  if R === S then (
+	       (x,y) -> new R from x.RawRingElement // y.RawRingElement
+	       )
 	  else if member(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) // y
 	       )

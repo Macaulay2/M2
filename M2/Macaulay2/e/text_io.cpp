@@ -9,7 +9,7 @@ int p_one = 1;
 int p_parens = 0;
 
 int MAX_LINE_LENGTH = 75;
-int emit_line_len = MAX_LINE_LENGTH;
+int emit_line_len = 0;
 
 int i_text_io()
 {
@@ -35,7 +35,7 @@ void bignum_text_out(buffer &o, mpz_t a)
 
 void clear_emit_size()
 {
-  emit_line_len = MAX_LINE_LENGTH;
+  emit_line_len = 0;
 }
 
 void emit_wrapped(char *s)
