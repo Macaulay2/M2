@@ -760,7 +760,6 @@ addHook(Module, symbol minimalPresentation, (o,M) -> (
 		    << "-- pm   = " << pm << endl;
 		    assert( h*ch === p );
      	       	    assert( isIsomorphism pm );
-		    if debugLevel > 100 then error "debug me";
 		    );
 	       N)))
 
