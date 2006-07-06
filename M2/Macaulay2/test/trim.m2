@@ -9,10 +9,9 @@ assert ( set flatten entries gens J === set {y-2*x-1, x^4+x^3+3*x^2+3*x} )
 
 --
 
-
 R = ZZ/32003[a..j]
 I = ideal random(R^1, R^{-2,-2,-2,-2,-2,-2,-2});
-trim I -- this fails because it takes a long time...  It should stop after mingens are known to be computed.
+trim I  -- fixed: this fails because it takes a long time...  It should stop after mingens are known to be computed:
 
 end
 -- Local Variables:

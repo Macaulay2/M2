@@ -82,8 +82,8 @@ document {
 	  },
      "Every module I in Macaulay2 is a submodule of a quotient of some ambient
      free module F.  This routine returns a minimal, or improved generating set 
-     for the same module I.  If you require a minimal presentation, use ", TO trim, " or ", 
-     TO minimalPresentation, ".",
+     for the same module I.  If you want to minimize the generators and the relations of a 
+     subquotient module, use ", TO trim, ".  If you want a minimal presentation, then use ", TO minimalPresentation, ".",
      EXAMPLE {
 	  "M = matrix{{a^2*b*c-d*e*f,a^3*c-d^2*f,a*d*f-b*c*e-1}}",
 	  "I = kernel M",

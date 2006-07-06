@@ -10,5 +10,7 @@ document {
 	  fn << "hi there" << close
 	  fileExists fn
 	  removeFile fn
-     ///
+     ///,
+     "If ", TT "fn", " refers to a symbolic link, then whether the file exists is determined by the content of the link and whether there is
+     a file with the new path determined by it."
      }

@@ -228,6 +228,7 @@ trim    = method ( Options => {
 	  -- DegreeLimit => {}
 	  } )
 mingens = method ( Options => { 
+	  Strategy => null				    -- or complement
 	  -- DegreeLimit => {}
 	  } )
 

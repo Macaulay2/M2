@@ -324,7 +324,7 @@ align := f -> (
      )
 
 subquotient = method(TypicalValue => Module)
-subquotient(Nothing,Matrix) := Module => (null,relns) -> (
+subquotient(Nothing,Matrix) := (null,relns) -> (
      R := ring relns;
      E := target relns;
      rE := E.RawFreeModule;
@@ -344,7 +344,7 @@ subquotient(Nothing,Matrix) := Module => (null,relns) -> (
 	  Mparts = append(Mparts, symbol relations => relns);
 	  );
      new Module of Vector from hashTable Mparts)
-subquotient(Matrix,Nothing) := Module => (subgens,null) -> (
+subquotient(Matrix,Nothing) := (subgens,null) -> (
      R := ring subgens;
      E := target subgens;
      rE := E.RawFreeModule;
@@ -361,7 +361,7 @@ subquotient(Matrix,Nothing) := Module => (subgens,null) -> (
 	  Mparts = append(Mparts, symbol relations => E.relations);
 	  );
      new Module of Vector from hashTable Mparts)
-subquotient(Matrix,Matrix) := Module => (subgens,relns) -> (
+subquotient(Matrix,Matrix) := (subgens,relns) -> (
      R := ring relns;
      E := target subgens;
      if E != target relns then error "expected maps with the same target";
@@ -387,6 +387,17 @@ subquotient(Matrix,Matrix) := Module => (subgens,relns) -> (
 	       Mparts = append(Mparts, symbol relations => relns);
 	       );
 	  new Module of Vector from hashTable Mparts))
+
+subquotient(Module,Matrix,Matrix) := (F,g,r) -> (
+     if F =!= target g or F =!= target r then error "expected module to be target of maps";
+     subquotient(g,r))
+subquotient(Module,Nothing,Matrix) := (F,g,r) -> (
+     if F =!= target r then error "expected module to be target of maps";
+     subquotient(g,r))
+subquotient(Module,Matrix,Nothing) := (F,g,r) -> (
+     if F =!= target g then error "expected module to be target of maps";
+     subquotient(g,r))
+subquotient(Module,Nothing,Nothing) := (F,g,r) -> F
 
 Matrix ** Matrix := Matrix => (f,g) -> (
      R := ring target f;
