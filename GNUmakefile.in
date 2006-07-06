@@ -77,7 +77,7 @@ distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile
 
 tarball: tarball.$(COMPRESS)
 tarballs: tarball.bz2 tarball.tgz
-tarball.bz2 :; tar cfh  -                            --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir) |bzip2 >$(package)-$(ARCH)-$(OS).bz2
+tarball.bz2 :; tar cfh  -                            --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir) |bzip2 >$(package)-$(ARCH)-$(OS).tar.bz2
 tarball.gz  :; tar cfhz $(package)-$(ARCH)-$(OS).tgz --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir)
 ifeq "$(CYGWIN)" "yes"
 install :: tarball
