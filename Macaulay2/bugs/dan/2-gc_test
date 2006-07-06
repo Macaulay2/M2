@@ -1,0 +1,62 @@
+-- also, print the error only once:
+
+Date: Wed, 5 Jul 2006 20:53:50 -0500 (CDT)
+From: Dan Grayson <dan@math.uiuc.edu>
+To: Michael Stillman <mike@math.cornell.edu>
+CC: dan@math.uiuc.edu
+In-reply-to: <CF66ACB0-E5D7-4AD2-BB64-68AB9A8E1E83@math.cornell.edu> (message
+	from Michael Stillman on Wed, 5 Jul 2006 21:33:11 -0400)
+Subject: Re: build from source issues
+Reply-to: dan@math.uiuc.edu
+
+
+I'm glad gc_test is showing the gc bug we discovered.  I wish we had seen that
+earlier.  That's a bug we fixed while I was in Ithaca, and gc_test doesn't have
+the benefit of these lines:
+
+    #if defined(__APPLE__) && defined(__MACH__) 
+	 GC_add_roots(get_etext(),get_end());
+    #endif
+
+that we put into scc1 and M2.  Try adding those lines and see if it helps.
+
+The best solution is to have those lines just once in a central location where
+all three programs can include them.  Then we'll know that gc_test is testing
+the same thing that M2 and scc1 are running with.  I'll do that later ***
+
+(I hope that's the right #if -- does it fire just on the same Mac?)
+
+> To: Dan Grayson <dan@math.uiuc.edu>
+> From: Michael Stillman <mike@math.cornell.edu>
+> Subject: build from source issues
+> Date: Wed, 5 Jul 2006 21:33:11 -0400
+> 
+> In doing my build from scratch, it runs gc_test and has a bunch of  
+> errors...
+> 
+> Here is part of it: there were many more such lines.
+> 
+> make[2]: Entering directory `/Users/mike/M2-build/M2/build/Macaulay2/d'
+> gcc -g -pipe -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign- 
+> compare -Werror-implicit-function-declaration -Wno-strict-aliasing - 
+> O3 -faltivec  -Wno-unused-label -I../../include -I../../../M2/ 
+> Macaulay2/d -I. -I../util -I../e -I../../../M2/Macaulay2/d/../regex - 
+> I/capybara/include -DNDEBUG  -c -o tokens_stub.o ../../../M2/ 
+> Macaulay2/d/tokens_stub.c
+> gcc -g -pipe -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign- 
+> compare -Werror-implicit-function-declaration -Wno-strict-aliasing - 
+> O3 -faltivec  -Wno-unused-label -I../../include -I../../../M2/ 
+> Macaulay2/d -I. -I../util -I../e -I../../../M2/Macaulay2/d/../regex - 
+> I/capybara/include -DNDEBUG -L/capybara/lib -bind_at_load -Wl,- 
+> search_paths_first -faltivec  ../../../M2/Macaulay2/d/gc_test.c / 
+> capybara/lib/libgc.a -o gc_test
+> ./gc_test; touch gc_tested
+> ../../../M2/Macaulay2/d/gc_test.c:18: error: gc library doesn't find  
+> all the active pointers in static memory!
+>             Perhaps GC_add_roots needs to be told about static memory.
+> ../../../M2/Macaulay2/d/gc_test.c:18: error: gc library doesn't find  
+> all the active pointers in static memory!
+>             Perhaps GC_add_roots needs to be told about static memory.
+> ../../../M2/Macaulay2/d/gc_test.c:18: error: gc library doesn't find  
+> all the active pointers in static memory!
+>             Perhaps GC_add_roots needs to be told about static memory.
