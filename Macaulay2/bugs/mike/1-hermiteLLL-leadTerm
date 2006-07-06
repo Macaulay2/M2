@@ -55,3 +55,33 @@ Here's another oddity:
     i71 : describe R
 
     o71 = QQ [x]
+
+=============================================================================
+
+Date: Thu, 6 Jul 2006 16:25:10 -0500
+From: Dan Grayson <dan@math.uiuc.edu>
+To: Michael Stillman <mike@math.cornell.edu>
+CC: dan@math.uiuc.edu
+In-reply-to: <DBE40707-7D97-44C3-A4EB-E811429DA18E@math.cornell.edu> (message
+	from Michael Stillman on Thu, 6 Jul 2006 17:22:15 -0400)
+Subject: Re: leadTerm vs. hermiteLLL
+Reply-to: dan@math.uiuc.edu
+
+
+Which routine doesn't do auto reduction?  I know you can't be referring to
+hermiteLLL, because it's a normal form.  Nor to leadTerm.
+
+Why is LLL part of the name of hermiteLLL???  That must refer only to the
+strategy, not to what is being computed.
+
+It would be nice if hermite normal form would be triangular.
+
+> From: Michael Stillman <mike@math.cornell.edu>
+> Subject: Re: leadTerm vs. hermiteLLL
+> Date: Thu, 6 Jul 2006 17:22:15 -0400
+> To: dan@math.uiuc.edu
+> 
+> Good point...  Also, one of the routines doesn't do an auto  
+> reduction, meaning that the result is not in Hermite normal form.   
+> Part of the reason for this: the numbers blowup in size upon  
+> autoreduction...  But it should at least be possible.
