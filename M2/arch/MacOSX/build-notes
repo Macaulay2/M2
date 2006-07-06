@@ -1,4 +1,44 @@
-# this one works nicely, using only standard dynamic libraries
+-------------------------------------------------------
+-- Building a binary disk image for ppc or i386 mac ---
+-------------------------------------------------------
+## Step 1. Download the desired version of Macaulay2 ##
+# from subversion, supposing the stable version is 4123.
+ mkdir M2-build
+ cd M2-build
+ svn export -r 4123 svn://u123.math.uiuc.edu/Macaulay2/trunk M2
+ cd M2
+ mkdir installed
+ mkdir build
+## Step 2. Build Macaulay2 ##
+## We assume libraries and include files are installed at /capybara/include and /caypbara/lib
+# this one works nicely, using only standard dynamic libraries (under 10.4)
+ cd M2
+ make
+ cd ../build
+ ../M2/configure --prefix=/Users/mike/M2-build/M2/installed --with-veclib --enable-altivec CFLAGS=-g CPPFLAGS=-I/capybara/include LDFLAGS=-L/capybara/lib LOADLIBES="-lgcc_s.10.5 -lncurses" --with-gdbmlib=/capybara/lib/libgdbm.a --with-readlinelib=/capybara/lib/libreadline.a --with-historylib=/capybara/lib/libhistory.a --with-gclib=/capybara/lib/libgc.a
+ make
+ make install # this can take awhile (started: 9:33 pm, done at 10:10pm, MBP 2 GZ)
+
+## Step 3.  Create the disk image
+export VERSION=0.9.10
+cd ../installed
+cp ../M2/arch/MacOSX/ReadMe-MacOSX.rtf .
+#mv Macaulay2-$VERSION Macaulay2
+cp ./ReadMe-MacOSX.rtf Macaulay2-$VERSION/
+cp ../M2/arch/MacOSX/setup Macaulay2-$VERSION/
+rm Macaulay2-$VERSION/bin/M2-emacs
+rm Macaulay2-$VERSION/bin/M2-load-libs
+rm Macaulay2-$VERSION/bin/M2-help
+cd .. # to original directory
+echo "about to do hdiutil"
+# comment one of these out
+echo `pwd`
+#hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-ppc Macaulay2-$VERSION-macosx-ppc.dmg
+hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-i386 Macaulay2-$VERSION-macosx-i386.dmg
+ls -l
+
+-------------------------------------------------------
+
 ../configure  --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib --enable-altivec CFLAGS=-g CPPFLAGS=-I/capybara/include LDFLAGS=-L/capybara/lib LOADLIBES="-lgcc_s.10.5 -lncurses" --with-gdbmlib=/capybara/lib/libgdbm.a --with-readlinelib=/capybara/lib/libreadline.a --with-historylib=/capybara/lib/libhistory.a --with-gclib=/capybara/lib/libgc.a
 
 
