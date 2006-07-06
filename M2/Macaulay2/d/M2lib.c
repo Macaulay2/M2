@@ -133,7 +133,11 @@ static void alarm_handler(int sig)
 #endif
      }
 
-static sigjmp_buf loaddata_jump, abort_jump;
+#if DUMPDATA
+static sigjmp_buf loaddata_jump;
+#endif
+
+static sigjmp_buf abort_jump;
 static bool abort_jump_set = FALSE;
 
 #undef ABORT
@@ -339,8 +343,8 @@ char **argv;
      char dummy;
      int returncode = 0;
      int volatile envc = 0;
-     static int old_collections = 0;
 #if DUMPDATA
+     static int old_collections = 0;
      char ** volatile saveenvp = NULL;
      char ** volatile saveargv;
      int volatile savepid = 0;
@@ -389,9 +393,12 @@ char **argv;
      abort_jump_set = FALSE;
 
 #if HAVE__SETMODE
+     {
+     extern void _setmode(int, int);
      _setmode(STDIN ,_O_BINARY);
      _setmode(STDOUT,_O_BINARY);
      _setmode(STDERR,_O_BINARY);
+     }
 #endif
 
 #if DUMPDATA
