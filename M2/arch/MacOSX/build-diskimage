@@ -1,36 +1,54 @@
 -------------------------------------------------------
 -- Building a binary disk image for ppc or i386 mac ---
 -------------------------------------------------------
-export VERSION=0.9.10
 
-## Step 1. Download the desired version of Macaulay2 ##
-# from subversion, supposing the stable version is 4123.
+## Step 1. Download the most recent stable version of Macaulay2 ##
+# from subversion.
+
+ # automatically get the most recent stable version:
+ STABLE=`svn list svn://u123.math.uiuc.edu/Macaulay2/stable | tail -1`
+
+ TOPDIR=`/bin/pwd`
  mkdir M2-build
  cd M2-build
- svn export svn://u123.math.uiuc.edu/Macaulay2/stable/2006-07-04/ M2
+ svn export svn://u123.math.uiuc.edu/Macaulay2/stable/$STABLE M2
  mkdir installed
  mkdir build
 
 ## Step 2. Build Macaulay2 ##
 ## We assume libraries and include files are installed at /capybara/include and /caypbara/lib
 # this one works nicely, using only standard dynamic libraries (under 10.4)
+
  cd M2
  make
  cd ../build
- ../M2/configure --prefix=/Users/mike/M2-build/installed --with-veclib --enable-altivec CFLAGS=-g CPPFLAGS=-I/capybara/include LDFLAGS=-L/capybara/lib LOADLIBES="-lgcc_s.10.5 -lncurses" --with-gdbmlib=/capybara/lib/libgdbm.a --with-readlinelib=/capybara/lib/libreadline.a --with-historylib=/capybara/lib/libhistory.a --with-gclib=/capybara/lib/libgc.a
+ ../M2/configure \
+	--prefix=$TOPDIR/M2-build/installed \
+	CFLAGS=-g \
+	CPPFLAGS=-I/capybara/include \
+	LDFLAGS=-L/capybara/lib \
+	LOADLIBES="-lgcc_s.10.5 -lncurses" \
+	--with-veclib \
+	--enable-altivec \
+	--with-gdbmlib=/capybara/lib/libgdbm.a \
+	--with-readlinelib=/capybara/lib/libreadline.a \
+	--with-historylib=/capybara/lib/libhistory.a \
+	--with-gclib=/capybara/lib/libgc.a
  make
- make install # this can take awhile (started: 9:33 pm, done at 10:10pm, MBP 2 GZ)
+
+ # this can take a while (started: 9:33 pm, done at 10:10pm, MBP 2 GZ) :
+ make install 
 
 ## Step 3.  Create the disk image
-cd ../installed
-cp ../M2/arch/MacOSX/ReadMe-MacOSX.rtf .
-cp ../M2/arch/MacOSX/ReadMe-MacOSX.rtf Macaulay2-$VERSION/
-cp ../M2/arch/MacOSX/setup Macaulay2-$VERSION/
-rm Macaulay2-$VERSION/bin/M2-emacs
-rm Macaulay2-$VERSION/bin/M2-load-libs
-rm Macaulay2-$VERSION/bin/M2-help
-mv Macaulay2-$VERSION Macaulay2
-cd .. # to original directory
-# comment one of these out
-#hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-ppc Macaulay2-$VERSION-macosx-ppc.dmg
-hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-i386 Macaulay2-$VERSION-macosx-i386.dmg
+
+ cd ../installed
+ VERSION=`grep AC_INIT ../M2/configure.ac | awk -F, '{print $2}'`
+ cp ../M2/arch/MacOSX/ReadMe-MacOSX.rtf .
+ cp ../M2/arch/MacOSX/ReadMe-MacOSX.rtf Macaulay2-$VERSION/
+ cp ../M2/arch/MacOSX/setup Macaulay2-$VERSION/
+ rm Macaulay2-$VERSION/bin/M2-emacs
+ rm Macaulay2-$VERSION/bin/M2-load-libs
+ rm Macaulay2-$VERSION/bin/M2-help
+ mv Macaulay2-$VERSION Macaulay2
+ cd .. # to original directory
+ hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-`uname -m` Macaulay2-$VERSION-macosx-`uname -m`.dmg
