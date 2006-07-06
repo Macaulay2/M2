@@ -1625,7 +1625,7 @@ TEST ///
 
 TEST ///
      debugLevel = 10
-     scan(1 .. 4, d -> scan(10, i -> prune coker random (ZZ^d, ZZ^d))
-     scan(1 .. 4, d -> scan(10, i -> prune coker random (ZZ^d, ZZ^(d+1)))
-     scan(1 .. 4, d -> scan(10, i -> prune coker random (ZZ^(d+1), ZZ^d))
+     scan(1 .. 4, d -> scan(5, i -> prune coker random (ZZ^d, ZZ^d)))
+     scan(1 .. 4, d -> scan(5, i -> prune coker random (ZZ^d, ZZ^(d+1))))
+     scan(1 .. 4, d -> scan(5, i -> prune coker random (ZZ^(d+1), ZZ^d)))
 ///
