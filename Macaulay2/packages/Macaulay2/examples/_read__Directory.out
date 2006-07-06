@@ -1,15 +1,14 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : dir = temporaryFileName()
 
-o1 = /tmp/M2-17799-1
+o1 = /tmp/M2-13480-1
 
 i2 : makeDirectory dir
 
 i3 : (fn = dir | "/" | "foo") << "hi there" << close
 
-o3 = /tmp/M2-17799-1/foo
+o3 = /tmp/M2-13480-1/foo
 
 o3 : File
 

@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : load "demo1.m2"
 
@@ -38,8 +37,8 @@ o5 = -
 o5 : QQ
 
 i6 : g 2
-../../../../Macaulay2/m2/demo1.m2:8:12:(2): division by zero
-../../../../Macaulay2/m2/demo1.m2:8:12:(2): --entering debugger--
+../../../../Macaulay2/m2/demo1.m2:8:12:(2):[2]: division by zero
+../../../../Macaulay2/m2/demo1.m2:8:12:(2):[2]: --entering debugger--
 
  -- useful debugger commands:
      break                  -- leave the debugger, returning to top level
@@ -74,18 +73,7 @@ oo8 = -- ../../../../Macaulay2/m2/demo1.m2:6-9
 
 ii9 : end
 --leaving debugger--
-../../../../Macaulay2/m2/demo1.m2:13:11:(2): --entering debugger--
-
- -- useful debugger commands:
-     break                  -- leave the debugger, returning to top level
-     end                    -- abandon the code, enter debugger one level up
-     listLocalSymbols       -- display local symbols and their values
-     listUserSymbols        -- display user symbols and their values
-     continue               -- execute the code and continue
-     continue n             -- execute the code, stop after n microsteps
-     return                 -- bypass code, return 'null', and continue
-     return x               -- bypass code, return 'x', and continue
-     value errorCode        -- execute the code, returning its value
+../../../../Macaulay2/m2/demo1.m2:13:11:(2):[2]: --entering debugger--
 
  -- code just attempted: -- ../../../../Macaulay2/m2/demo1.m2:13
                               d := f(y-2);

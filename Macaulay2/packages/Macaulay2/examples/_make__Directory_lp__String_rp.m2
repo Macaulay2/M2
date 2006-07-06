@@ -1,0 +1,5 @@
+dir = temporaryFileName()
+makeDirectory (dir|"/a/b/c")
+removeDirectory (dir|"/a/b/c")
+removeDirectory (dir|"/a/b")
+removeDirectory (dir|"/a")

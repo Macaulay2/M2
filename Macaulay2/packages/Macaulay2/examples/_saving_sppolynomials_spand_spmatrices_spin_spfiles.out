@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = QQ[x..z]
 
@@ -30,11 +29,11 @@ o4 : R-module, submodule of R
 
 i5 : f = temporaryFileName()
 
-o5 = /tmp/M2-17624-1
+o5 = /tmp/M2-13322-1
 
 i6 : f << toString (p,m,M) << close
 
-o6 = /tmp/M2-17624-1
+o6 = /tmp/M2-13322-1
 
 o6 : File
 

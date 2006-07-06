@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : toString {1,4,a,f,212312,2.123243242}
 

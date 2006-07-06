@@ -1,0 +1,35 @@
+-- -*- M2-comint -*-
+
+i1 : fn = temporaryFileName()
+
+o1 = /tmp/M2-13710-1
+
+i2 : f = fn << "hi there"
+
+o2 = /tmp/M2-13710-1
+
+o2 : File
+
+i3 : m = 7 + 7*8 + 7*64
+
+o3 = 511
+
+i4 : fileMode(m,f)
+
+i5 : fileMode f
+
+o5 = 511
+
+i6 : close f
+
+o6 = /tmp/M2-13710-1
+
+o6 : File
+
+i7 : fileMode fn
+
+o7 = 511
+
+i8 : removeFile fn
+
+i9 : 

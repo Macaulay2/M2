@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : DIV { PARA "Hi there.",
          MENU { "some topics", TO "topic a", TO "topic b", "more topics", TO "topic c" } }

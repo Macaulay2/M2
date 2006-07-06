@@ -9,7 +9,7 @@ A^**2
 set{1,3,2} - set{1}
 set{4,5} + set{5,6}
 set{4,5} * set{5,6}
-set{1,3,2} == set{1,2,3}
+set{1,3,2} === set{1,2,3}
 I = ideal(a,b); J = ideal(b,a);
 I == J
 I === J

@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : printString(stdio, (a,10,"b",20,c))
 a          b                    c

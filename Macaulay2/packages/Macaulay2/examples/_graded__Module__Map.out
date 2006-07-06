@@ -1,0 +1,16 @@
+-- -*- M2-comint -*-
+
+i1 : gradedModuleMap(random(ZZ^3,ZZ^4),random(ZZ^2,ZZ^2))
+
+          3                       4
+o1 = 0: ZZ  <--| 0 2  0 -9  |-- ZZ  :0
+               | 1 -9 7 4   |
+               | 5 -9 8 -10 |
+
+          2                  2
+     1: ZZ  <--| -4 0  |-- ZZ  :1
+               | 6  -2 |
+
+o1 : GradedModuleMap
+
+i2 : 

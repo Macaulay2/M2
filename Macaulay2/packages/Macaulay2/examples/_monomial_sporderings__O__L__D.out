@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R=ZZ/101[a,b,c]
 
@@ -31,7 +30,7 @@ o5 = {1, b, a, b , a*b, a , b , a }
 
 o5 : List
 
-i6 : R=ZZ/101[x,y,z,MonomialOrder=>RevLex];
+i6 : R=ZZ/101[x,y,z,MonomialOrder=>RevLex,Global=>false];
 
 i7 : R=ZZ/101[a,b,c,MonomialOrder=>GLex];
 

@@ -1,0 +1,39 @@
+-- -*- M2-comint -*-
+
+i1 : R = ZZ/101[x,y,z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : degrees R
+
+o2 = {{1}, {1}, {1}}
+
+o2 : List
+
+i3 : monoid R
+
+o3 = [x, y, z]
+
+o3 : GeneralOrderedMonoid
+
+i4 : degrees oo
+
+o4 = {{1}, {1}, {1}}
+
+o4 : List
+
+i5 : S = ZZ/101[x,y,z,Degrees => {{2,3},{1,2},{2,0}}]
+
+o5 = S
+
+o5 : PolynomialRing
+
+i6 : degrees S
+
+o6 = {{2, 3}, {1, 2}, {2, 0}}
+
+o6 : List
+
+i7 : 

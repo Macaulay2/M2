@@ -1,0 +1,62 @@
+-- -*- M2-comint -*-
+
+i1 : R = QQ[x,y,z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : I =ideal(y^2*z-x^3)
+
+              3    2
+o2 = ideal(- x  + y z)
+
+o2 : Ideal of R
+
+i3 : sing = singularLocus(R/I)
+
+o3 = sing
+
+o3 : QuotientRing
+
+i4 : dim sing
+
+o4 = 1
+
+i5 : R = ZZ/101[a,b,SkewCommutative => true]
+
+o5 = R
+
+o5 : PolynomialRing
+
+i6 : dim R
+
+o6 = 0
+
+i7 : R = ZZ/101[x,dx,y,dy,WeylAlgebra => {x=>dx, y=>dy}];
+
+i8 : dim R
+
+o8 = 4
+
+i9 : R = ZZ[a,b]/(a*b-1)
+
+o9 = R
+
+o9 : QuotientRing
+
+i10 : dim R
+
+o10 = 2
+
+i11 : S = R[x,y]
+
+o11 = S
+
+o11 : PolynomialRing
+
+i12 : dim S
+
+o12 = 4
+
+i13 : 

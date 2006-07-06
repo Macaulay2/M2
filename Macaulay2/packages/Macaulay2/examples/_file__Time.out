@@ -1,8 +1,7 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : currentTime() - fileTime "."
 
-o1 = 190
+o1 = 192
 
 i2 : 

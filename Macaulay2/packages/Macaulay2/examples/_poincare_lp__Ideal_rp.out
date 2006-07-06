@@ -1,0 +1,46 @@
+-- -*- M2-comint -*-
+
+i1 : R = ZZ/101[w..z];
+
+i2 : I = monomialCurveIdeal(R,{1,3,4});
+
+o2 : Ideal of R
+
+i3 : poincare I
+
+          2     3     4    5
+o3 = 1 - T  - 3T  + 4T  - T
+
+o3 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+
+i4 : numerator reduceHilbert hilbertSeries I
+
+                2    3
+o4 = 1 + 2T + 2T  - T
+
+o4 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+
+i5 : R=ZZ/101[x, Degrees => {{1,1}}];
+
+i6 : I = ideal x^2;
+
+o6 : Ideal of R
+
+i7 : poincare I
+
+          2 2
+o7 = 1 - T T
+          0 1
+
+o7 : ZZ [T , T , MonomialOrder => RevLex, Inverses => true]
+          0   1
+
+i8 : numerator reduceHilbert hilbertSeries I
+
+o8 = 1 + T T
+          0 1
+
+o8 : ZZ [T , T , MonomialOrder => RevLex, Inverses => true]
+          0   1
+
+i9 : 

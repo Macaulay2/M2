@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : ZZ/101[x,y]/(x^2-y^2) ** ZZ/101[a,b]/(a^3+b^3)
 
@@ -23,6 +22,7 @@ i3 : options tensor
 o3 = OptionTable{Adjust => identity   }
                  DegreeRank => 
                  Degrees => 
+                 Global => true
                  Heft => 
                  Inverses => false
                  MonomialOrder => 
@@ -30,7 +30,6 @@ o3 = OptionTable{Adjust => identity   }
                  Repair => identity
                  SkewCommutative => {}
                  VariableBaseName => 
-                 VariableOrder => 
                  Variables => 
                  Weights => {}
                  WeylAlgebra => {}

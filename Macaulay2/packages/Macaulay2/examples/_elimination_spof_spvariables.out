@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = QQ[s,t,x,y,z, MonomialOrder=>Eliminate 2];
 
@@ -11,7 +10,7 @@ o2 = ideal (- s  - s*t + x - 1, - t  - 3t  - t + y, - s*t  + z)
 o2 : Ideal of R
 
 i3 : time leadTerm gens gb I
-     -- used 1.96812 seconds
+     -- used 1.94012 seconds
 
 o3 = | x3y9 5148txy3 108729sxy2z2 sy4z 46644741sxy3z 143sy5 6sxy4
      ------------------------------------------------------------------------
@@ -90,7 +89,7 @@ o7 = ideal (- s  - s*t + x - 1, - t  - 3t  + y - t, - s*t  + z)
 o7 : Ideal of R
 
 i8 : time G = eliminate(I,{s,t})
-     -- used 7.21645 seconds
+     -- used 6.94043 seconds
 
             3 9     2 9     2 8      2 6 3       9    2 7         8   
 o8 = ideal(x y  - 3x y  - 6x y z - 3x y z  + 3x*y  - x y z + 12x*y z +
@@ -159,7 +158,7 @@ i11 : I1 = substitute(I,R1);
 o11 : Ideal of R1
 
 i12 : time G = eliminate(I1,{s,t})
-     -- used 1.77211 seconds
+     -- used 1.71611 seconds
 
              3 9     2 6 3       3 6    9     2 8         5 4      2 7  
 o12 = ideal(x y  - 3x y z  + 3x*y z  - z  - 6x y z - 15x*y z  + 21y z  -
@@ -233,7 +232,7 @@ o16 = map(A,B,{s  + s*t + 1, t  + 3t  + t, s*t })
 o16 : RingMap A <--- B
 
 i17 : time G = kernel F
-     -- used 0.65204 seconds
+     -- used 0.720045 seconds
 
              3 9     2 9     2 8      2 6 3       9    2 7         8   
 o17 = ideal(x y  - 3x y  - 6x y z - 3x y z  + 3x*y  - x y z + 12x*y z +
@@ -302,7 +301,7 @@ o19 = R
 o19 : PolynomialRing
 
 i20 : time f1 = resultant(I_0,I_2,s)
-     -- used 0.096006 seconds
+     -- used 0.008001 seconds
 
            9    9      7    3
 o20 = - x*t  + t  + z*t  + z

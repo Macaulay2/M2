@@ -1,9 +1,6 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : help "jacobian"
-../../../../Macaulay2/packages/Macaulay2/functions/quotient-doc.m2:70: warning: documentation already provided for 'Macaulay2 :: Ideal : Ideal'
-../../../../Macaulay2/packages/Macaulay2/doc9.m2:618: ... here is the (end of the) previous documentation
 --warning: tag has no documentation: User :: jacobian MonomialIdeal, key (jacobian,MonomialIdeal)
 
 o1 = jacobian -- the Jacobian matrix of partial derivatives

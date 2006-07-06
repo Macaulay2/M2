@@ -1,0 +1,54 @@
+-- -*- M2-comint -*-
+
+i1 : S = QQ[w,x,y,z];
+
+i2 : vars S
+
+o2 = | w x y z |
+
+             1       4
+o2 : Matrix S  <--- S
+
+i3 : ideal vars S
+
+o3 = ideal (w, x, y, z)
+
+o3 : Ideal of S
+
+i4 : coker vars S
+
+o4 = cokernel | w x y z |
+
+                            1
+o4 : S-module, quotient of S
+
+i5 : res coker vars S
+
+      1      4      6      4      1
+o5 = S  <-- S  <-- S  <-- S  <-- S  <-- 0
+                                         
+     0      1      2      3      4      5
+
+o5 : ChainComplex
+
+i6 : R = S/(x^2-w*y, x*y-w*z, x*z-y^2);
+
+i7 : vars R
+
+o7 = | w x y z |
+
+             1       4
+o7 : Matrix R  <--- R
+
+i8 : use S;
+
+i9 : Q = S/(x^2-w*y, z);
+
+i10 : vars S
+
+o10 = | w x y z |
+
+              1       4
+o10 : Matrix S  <--- S
+
+i11 : 

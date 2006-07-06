@@ -9,7 +9,7 @@ A4 = QQ[x,y,z,MonomialOrder=>{Weights=>{5,3,2},Lex}];
 substitute(f,A4)
 A = QQ[x,y,z,MonomialOrder=>{1,2}];
 substitute(f,A)
-A = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,0,0},Weights=>{0,-1,0},Weights=>{0,0,-1}}];
+A = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,0,0},Weights=>{0,-1,0},Weights=>{0,0,-1}},Global=>false];
 substitute(f,A)
-A = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},GRevLex}];
+A = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},GRevLex},Global=>false];
 substitute(f,A)

@@ -1,13 +1,14 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : dictionaryPath
 
-o1 = {User#"private dictionary", SchurRings.Dictionary, Classic.Dictionary,
+o1 = {User#"private dictionary", TangentCone.Dictionary,
+     ------------------------------------------------------------------------
+     SchurRings.Dictionary, Classic.Dictionary,
      ------------------------------------------------------------------------
      PrimaryDecomposition.Dictionary, LLLBases.Dictionary,
      ------------------------------------------------------------------------
-     Elimination.Dictionary, Macaulay2Core.Dictionary, OutputDictionary,
+     Elimination.Dictionary, Core.Dictionary, OutputDictionary,
      ------------------------------------------------------------------------
      PackageDictionary}
 

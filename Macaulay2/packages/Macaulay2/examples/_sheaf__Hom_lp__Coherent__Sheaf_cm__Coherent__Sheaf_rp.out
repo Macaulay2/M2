@@ -1,0 +1,17 @@
+-- -*- M2-comint -*-
+
+i1 : X = Proj(QQ[x,y])
+
+o1 = X
+
+o1 : ProjectiveVariety
+
+i2 : sheafHom(OO_X^1(2),OO_X(11)^1)
+
+        1
+o2 = OO  (9)
+       X
+
+o2 : coherent sheaf on X, free
+
+i3 : 

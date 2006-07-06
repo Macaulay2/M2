@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = QQ[a..f];
 
@@ -51,6 +50,8 @@ o8 = total: 1 15 35 42 35 15 1
          2: .  .  . 21 35 15 .
          3: .  .  .  .  .  . 1
 
+o8 : BettiTally
+
 i9 : secantvariety = pfaffians(6,M)
 
 o9 = ideal(y y y  - y y y  - y y y   + y y y   + y y y   - y y y   + y y y  
@@ -97,5 +98,7 @@ o14 = total: 1 5 5 1
           0: 1 . . .
           1: . 5 5 .
           2: . . . 1
+
+o14 : BettiTally
 
 i15 : 

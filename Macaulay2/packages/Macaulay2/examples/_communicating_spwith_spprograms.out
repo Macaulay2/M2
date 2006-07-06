@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : run "uname -a"
 Linux rhodium 2.6.16 #3 SMP PREEMPT Mon Jun 12 11:56:50 CDT 2006 i686 unknown unknown GNU/Linux

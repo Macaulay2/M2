@@ -1,0 +1,11 @@
+-- -*- M2-comint -*-
+
+i1 : baseFilename "/a/b/dir/"
+
+o1 = dir
+
+i2 : baseFilename "/a/b/file"
+
+o2 = file
+
+i3 : 

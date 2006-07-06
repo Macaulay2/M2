@@ -1,0 +1,32 @@
+-- -*- M2-comint -*-
+
+i1 : degreesRing 3
+
+o1 = ZZ [T , T , T , MonomialOrder => RevLex, Inverses => true]
+          0   1   2
+
+o1 : PolynomialRing
+
+i2 : T_0
+
+o2 = T
+      0
+
+o2 : IndexedVariable
+
+i3 : use degreesRing 3
+
+o3 = ZZ [T , T , T , MonomialOrder => RevLex, Inverses => true]
+          0   1   2
+
+o3 : PolynomialRing
+
+i4 : T_0
+
+o4 = T
+      0
+
+o4 : ZZ [T , T , T , MonomialOrder => RevLex, Inverses => true]
+          0   1   2
+
+i5 : 

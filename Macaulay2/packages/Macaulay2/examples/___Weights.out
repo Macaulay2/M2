@@ -1,7 +1,6 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
-i1 : R = QQ[a..d,MonomialOrder=>{Weights => {-1,2,3,4}}];
+i1 : R = QQ[a..d,MonomialOrder=>{Weights => {-1,2,3,4}},Global=>false];
 
 i2 : f = a^2 + b+ c^2 + b*d
 
@@ -18,7 +17,6 @@ o3 = c
 o3 : R
 
 i4 : leadTerm(1,ideal(f))
-creating GB with local order
 
 o4 = | c2+bd |
 

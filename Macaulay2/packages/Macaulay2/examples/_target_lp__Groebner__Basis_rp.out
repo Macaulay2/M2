@@ -1,0 +1,14 @@
+-- -*- M2-comint -*-
+
+i1 : R = ZZ/10007[x,y,z];
+
+i2 : g = gb ideal(x^2, x*y-z^2, z^5);
+
+i3 : target g
+
+      1
+o3 = R
+
+o3 : R-module, free
+
+i4 : 

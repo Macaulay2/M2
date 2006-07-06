@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : showStructure
 
@@ -28,59 +27,63 @@ o1 = Thing : BasicList : Command
                          FilePosition
                          ForestNode
                          Hybrid
+                         Hypertext : ANCHOR
+                                     BOLD
+                                     BR
+                                     CDATA
+                                     CODE
+                                     COMMENT
+                                     DD
+                                     DL
+                                     DT
+                                     EM
+                                     ExampleItem
+                                     HREF
+                                     HTML
+                                     HypertextParagraph : HEAD
+                                                          HEADER1
+                                                          HEADER2
+                                                          HEADER3
+                                                          HEADER4
+                                                          HEADER5
+                                                          HEADER6
+                                                          HR
+                                                          HypertextContainer : BLOCKQUOTE
+                                                                               BODY
+                                                                               DIV
+                                                                               DIV1
+                                                                               LI
+                                                                               TD
+                                                          MENU
+                                                          PARA
+                                                          PRE
+                                                          TABLE
+                                                          TITLE
+                                                          UL
+                                     IMG
+                                     ITALIC
+                                     LABEL
+                                     LATER
+                                     LINK
+                                     LITERAL
+                                     META
+                                     SMALL
+                                     SPAN
+                                     STRONG
+                                     STYLE
+                                     SUB
+                                     SUP
+                                     TEX
+                                     TO
+                                     TO2
+                                     TOH
+                                     TR
+                                     TT
                          IndeterminateNumber
                          IndexedVariable
                          InfiniteNumber
                          LowerBound
                          Manipulator
-                         MarkUpList : ANCHOR
-                                      BOLD
-                                      BR
-                                      CDATA
-                                      CODE
-                                      COMMENT
-                                      EM
-                                      ExampleItem
-                                      HREF
-                                      HTML
-                                      IMG
-                                      ITALIC
-                                      LABEL
-                                      LATER
-                                      LINK
-                                      LITERAL
-                                      MarkUpListParagraph : HEAD
-                                                            HEADER1
-                                                            HEADER2
-                                                            HEADER3
-                                                            HEADER4
-                                                            HEADER5
-                                                            HEADER6
-                                                            HR
-                                                            MarkUpListContainer : BLOCKQUOTE
-                                                                                  BODY
-                                                                                  DIV
-                                                                                  DIV1
-                                                                                  LI
-                                                                                  TD
-                                                            MENU
-                                                            PARA
-                                                            PRE
-                                                            TABLE
-                                                            TITLE
-                                                            UL
-                                      META
-                                      SMALL
-                                      SPAN
-                                      STRONG
-                                      SUB
-                                      SUP
-                                      TEX
-                                      TO
-                                      TO2
-                                      TOH
-                                      TR
-                                      TT
                          MinorsComputation
                          MutableList : Bag
                          Option
@@ -102,8 +105,8 @@ o1 = Thing : BasicList : Command
                           LocalDictionary
              File
              Function : CompiledFunction
-                        CompiledFunctionClosure
-                        FunctionClosure
+                        CompiledFunctionClosure : MethodFunction
+                        FunctionClosure : MethodFunctionWithOptions
              FunctionBody
              HashTable : CoherentSheaf
                          Ideal : MonomialIdeal
@@ -137,7 +140,8 @@ o1 = Thing : BasicList : Command
                          RingMap
                          SheafOfRings
                          SumOfTwists
-                         Tally : Set
+                         Tally : BettiTally
+                                 Set
              Net : String
              NetFile
              Nothing

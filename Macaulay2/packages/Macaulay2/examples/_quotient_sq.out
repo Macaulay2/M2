@@ -1,0 +1,47 @@
+-- -*- M2-comint -*-
+
+i1 : R = ZZ[x,y]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : f = random(R^{2:1},R^2)
+
+o2 = {-1} | y     -9x-9y |
+     {-1} | 5x+2y 7y     |
+
+             2       2
+o2 : Matrix R  <--- R
+
+i3 : g = transpose (vars R ++ vars R)
+
+o3 = {-1} | x 0 |
+     {-1} | y 0 |
+     {-1} | 0 x |
+     {-1} | 0 y |
+
+             4       2
+o3 : Matrix R  <--- R
+
+i4 : quotient'(f,g)
+
+o4 = --Function[../../../../Macaulay2/m2/matrix2.m2:99:44-102:32]--
+
+o4 : FunctionClosure
+
+i5 : f = f + map(target f, source f, id_(R^2))
+
+o5 = {-1} | y+1   -9x-9y |
+     {-1} | 5x+2y 7y+1   |
+
+             2       2
+o5 : Matrix R  <--- R
+
+i6 : quotient'(f,g)
+
+o6 = --Function[../../../../Macaulay2/m2/matrix2.m2:99:44-102:32]--
+
+o6 : FunctionClosure
+
+i7 : 

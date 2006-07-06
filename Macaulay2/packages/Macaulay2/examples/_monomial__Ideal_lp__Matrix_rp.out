@@ -1,0 +1,24 @@
+-- -*- M2-comint -*-
+
+i1 : R = ZZ/101[a,b,c];
+
+i2 : I = monomialIdeal(a^3,b^3,c^3, a^2-b^2)
+
+                     2   3   3
+o2 = monomialIdeal (a , b , c )
+
+o2 : MonomialIdeal of R
+
+i3 : M = monomialIdeal vars R
+
+o3 = monomialIdeal (a, b, c)
+
+o3 : MonomialIdeal of R
+
+i4 : J = monomialIdeal 0_R
+
+o4 = 0
+
+o4 : MonomialIdeal of R
+
+i5 : 

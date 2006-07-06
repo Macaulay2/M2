@@ -1,11 +1,10 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : loadedPackages
 
-o1 = {SchurRings, Classic, PrimaryDecomposition, LLLBases, Elimination, User,
+o1 = {TangentCone, SchurRings, Classic, PrimaryDecomposition, LLLBases,
      ------------------------------------------------------------------------
-     Macaulay2Core}
+     Elimination, User, Core}
 
 o1 : List
 

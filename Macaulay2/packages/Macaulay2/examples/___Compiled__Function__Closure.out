@@ -1,9 +1,8 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : class depth
 
-o1 = CompiledFunctionClosure
+o1 = MethodFunction
 
 o1 : Type
 
@@ -11,11 +10,11 @@ i2 : f = method()
 
 o2 = f
 
-o2 : CompiledFunctionClosure
+o2 : MethodFunction
 
 i3 : class f
 
-o3 = CompiledFunctionClosure
+o3 = MethodFunction
 
 o3 : Type
 

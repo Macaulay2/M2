@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : y = (2^15-4)/(2^15-5)
 
@@ -64,17 +63,17 @@ o8 : Expression of class Divide
 i9 : code(factor,F)
 
 o9 = -- code for method: factor F
-     -- ../../../../Macaulay2/m2/enginering.m2:79
+     -- ../../../../Macaulay2/m2/enginering.m2:123
                factor F := options -> f -> factor numerator f / factor denominator f;
-     | symbol   class             value                                          location of symbol                                
+     | symbol   class             value                                          location of symbol                                  
      | ------   -----             -----                                          ------------------
      |                             ZZ                                            
-     | R      : PolynomialRing -- --- [t]                                        ../../../../Macaulay2/m2/enginering.m2:70:19-70:19
+     | R      : PolynomialRing -- --- [t]                                        ../../../../Macaulay2/m2/enginering.m2:114:19-114:19
      |                            101
-     | o      : OptionTable    -- OptionTable{Adjust => identity               } ../../../../Macaulay2/m2/enginering.m2:73:10-73:10
+     | o      : OptionTable    -- OptionTable{Adjust => identity               } ../../../../Macaulay2/m2/enginering.m2:117:10-117:10
      |                                        DegreeRank => 1
      |                                        Degrees => {{1}}
      |                            $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-     | F      : FractionField  -- F                                              ../../../../Macaulay2/m2/enginering.m2:77:19-77:19
+     | F      : FractionField  -- F                                              ../../../../Macaulay2/m2/enginering.m2:121:19-121:19
 
 i10 : 

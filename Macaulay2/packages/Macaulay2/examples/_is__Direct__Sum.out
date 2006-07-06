@@ -1,0 +1,25 @@
+-- -*- M2-comint -*-
+
+i1 : isDirectSum ZZ^6
+
+o1 = false
+
+i2 : F = ZZ^2 ++ ZZ^3
+
+       5
+o2 = ZZ
+
+o2 : ZZ-module, free
+
+i3 : isDirectSum F
+
+o3 = true
+
+i4 : components F
+
+        2    3
+o4 = {ZZ , ZZ }
+
+o4 : List
+
+i5 : 

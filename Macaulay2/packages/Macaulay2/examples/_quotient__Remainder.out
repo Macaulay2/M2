@@ -1,0 +1,59 @@
+-- -*- M2-comint -*-
+
+i1 : R = ZZ[x,y]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : f = random(R^2,R^{2:-1})
+
+o2 = | y     -9x-9y |
+     | 5x+2y 7y     |
+
+             2       2
+o2 : Matrix R  <--- R
+
+i3 : g = vars R ++ vars R
+
+o3 = | x y 0 0 |
+     | 0 0 x y |
+
+             2       4
+o3 : Matrix R  <--- R
+
+i4 : (q,r) = quotientRemainder(f,g)
+
+o4 = ({1} | 0 -9 |, 0)
+      {1} | 1 -9 |
+      {1} | 5 0  |
+      {1} | 2 7  |
+
+o4 : Sequence
+
+i5 : g*q+r == f
+
+o5 = true
+
+i6 : f = f + map(target f, source f, id_(R^2))
+
+o6 = | y+1   -9x-9y |
+     | 5x+2y 7y+1   |
+
+             2       2
+o6 : Matrix R  <--- R
+
+i7 : (q,r) = quotientRemainder(f,g)
+
+o7 = ({1} | 0 -9 |, | 1 0 |)
+      {1} | 1 -9 |  | 0 1 |
+      {1} | 5 0  |
+      {1} | 2 7  |
+
+o7 : Sequence
+
+i8 : g*q+r == f
+
+o8 = true
+
+i9 : 

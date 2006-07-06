@@ -1,0 +1,16 @@
+-- -*- M2-comint -*-
+
+i1 : x = new HashTable from {a => 1, b => 2}
+
+o1 = HashTable{a => 1}
+               b => 2
+
+o1 : HashTable
+
+i2 : keys x
+
+o2 = {b, a}
+
+o2 : List
+
+i3 : 

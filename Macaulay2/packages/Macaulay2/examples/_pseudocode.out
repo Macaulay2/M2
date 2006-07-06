@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : pseudocode resolution
 
@@ -9,7 +8,7 @@ o1 : Pseudocode
 
 i2 : disassemble oo
 
-o2 = (function restargs: true numparms: 1 framesize: 1 frameID: 193 (adjacent
+o2 = (function restargs: true numparms: 1 framesize: 1 frameID: 168 (adjacent
      (fetch 239) (sequence (fetch 1 1) (adjacent (fetch 215) (sequence (fetch
      0 1) (fetch 0 0))))))
 

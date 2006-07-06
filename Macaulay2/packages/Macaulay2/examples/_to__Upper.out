@@ -1,0 +1,7 @@
+-- -*- M2-comint -*-
+
+i1 : toUpper "A b C d E f"
+
+o1 = A B C D E F
+
+i2 : 

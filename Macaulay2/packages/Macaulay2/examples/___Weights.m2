@@ -1,4 +1,4 @@
-R = QQ[a..d,MonomialOrder=>{Weights => {-1,2,3,4}}];
+R = QQ[a..d,MonomialOrder=>{Weights => {-1,2,3,4}},Global=>false];
 f = a^2 + b+ c^2 + b*d
 leadTerm f
 leadTerm(1,ideal(f))

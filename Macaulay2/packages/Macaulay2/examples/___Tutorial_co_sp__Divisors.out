@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : KK = ZZ/31991
 
@@ -60,7 +59,7 @@ i7 : divisor = method()
 
 o7 = divisor
 
-o7 : CompiledFunctionClosure
+o7 : MethodFunction
 
 i8 : divisor(Ideal,Ideal) := (I,J) -> new Divisor from {purify1S2 I,purify1S2 J}
 
@@ -108,7 +107,7 @@ i15 : normalForm = method()
 
 o15 = normalForm
 
-o15 : CompiledFunctionClosure
+o15 : MethodFunction
 
 i16 : normalForm Divisor := (D) -> new Divisor from {D#0 : D#1, D#1 : D#0}
 
@@ -236,7 +235,7 @@ i37 : globalSections = method()
 
 o37 = globalSections
 
-o37 : CompiledFunctionClosure
+o37 : MethodFunction
 
 i38 : globalSections Divisor := (D) -> (
           -- First let's grab the parts (I,J) of D.
@@ -451,6 +450,8 @@ i68 : betti canpres
 
 o68 = total: 2 3
           1: 2 3
+
+o68 : BettiTally
 
 i69 : I1 = transpose (syz transpose canpres)_{0}
 

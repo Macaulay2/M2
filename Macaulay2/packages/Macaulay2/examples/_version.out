@@ -1,11 +1,10 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : version
 
 o1 = HashTable{architecture => i686                                                                                                                                                             }
                compile node name => rhodium
-               compile time => Jun 21 2006, 12:21:02
+               compile time => Jul  1 2006, 10:47:36
                compiler => gcc 4.1.0
                configure arguments => {--prefix=/capybara/encap, --with-lapacklibs=-llapack -lcblas -lf77blas -lg2c, CC=gcc, CPPFLAGS=-I/capybara/include, LDFLAGS=-L/capybara/lib, LDLIBS=-ldl}
                dumpdata => true

@@ -1,0 +1,21 @@
+-- -*- M2-comint -*-
+
+i1 : newPackage "Foo"
+
+o1 = Foo
+
+o1 : Package
+
+i2 : currentPackage
+
+o2 = Foo
+
+o2 : Package
+
+i3 : endPackage "Foo"
+
+o3 = Foo
+
+o3 : Package
+
+i4 : 

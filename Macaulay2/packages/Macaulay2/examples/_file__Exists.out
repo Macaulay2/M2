@@ -1,9 +1,8 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : fn = temporaryFileName()
 
-o1 = /tmp/M2-16733-1
+o1 = /tmp/M2-12442-1
 
 i2 : fileExists fn
 
@@ -11,7 +10,7 @@ o2 = false
 
 i3 : fn << "hi there" << close
 
-o3 = /tmp/M2-16733-1
+o3 = /tmp/M2-12442-1
 
 o3 : File
 

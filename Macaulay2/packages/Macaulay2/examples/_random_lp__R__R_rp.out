@@ -1,0 +1,9 @@
+-- -*- M2-comint -*-
+
+i1 : random pi
+
+o1 = 0.762082
+
+o1 : RR
+
+i2 : 

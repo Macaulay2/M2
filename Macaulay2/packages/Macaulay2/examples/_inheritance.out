@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : X = new Type of BasicList
 
@@ -16,7 +15,7 @@ o2 : Type
 i3 : code(net,BasicList)
 
 o3 = -- code for method: net BasicList
-     -- ../../../../Macaulay2/m2/nets.m2:164-167
+     -- ../../../../Macaulay2/m2/nets.m2:166-169
      net BasicList := x -> horizontalJoin deepSplice (
            net class x, 
            "{",

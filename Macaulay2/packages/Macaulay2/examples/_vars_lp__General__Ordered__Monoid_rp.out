@@ -1,0 +1,15 @@
+-- -*- M2-comint -*-
+
+i1 : M = monoid[x,y,z]
+
+o1 = M
+
+o1 : GeneralOrderedMonoid
+
+i2 : vars M
+
+o2 = {x, y, z}
+
+o2 : List
+
+i3 : 

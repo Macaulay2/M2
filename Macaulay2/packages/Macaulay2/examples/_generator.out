@@ -1,0 +1,29 @@
+-- -*- M2-comint -*-
+
+i1 : I = ideal (4,6)
+
+o1 = ideal (4, 6)
+
+o1 : Ideal of ZZ
+
+i2 : generator I
+
+o2 = 2
+
+i3 : M = image matrix {{4,6},{0,0}}
+
+o3 = image | 4 6 |
+           | 0 0 |
+
+                               2
+o3 : ZZ-module, submodule of ZZ
+
+i4 : generator M
+
+o4 = | 2 |
+     | 0 |
+
+o4 : image | 2 |
+           | 0 |
+
+i5 : 

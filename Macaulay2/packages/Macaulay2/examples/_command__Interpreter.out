@@ -1,0 +1,23 @@
+-- -*- M2-comint -*-
+
+i1 : f = (x -> y -> 11) 13
+
+o1 = f
+
+o1 : FunctionClosure
+
+i2 : commandInterpreter f
+
+ii3 : x
+
+oo3 = 13
+
+ii4 : end
+
+i5 : x
+
+o5 = x
+
+o5 : Symbol
+
+i6 : 

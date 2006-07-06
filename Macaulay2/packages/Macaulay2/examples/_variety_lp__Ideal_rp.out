@@ -1,0 +1,21 @@
+-- -*- M2-comint -*-
+
+i1 : R = QQ[x..z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : variety ideal x
+
+          QQ [x, y, z]
+o2 = Proj(------------)
+                x
+
+o2 : ProjectiveVariety
+
+i3 : dim oo
+
+o3 = 1
+
+i4 : 

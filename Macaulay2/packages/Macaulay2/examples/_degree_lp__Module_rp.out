@@ -1,0 +1,9 @@
+-- -*- M2-comint -*-
+
+i1 : R = ZZ/101[x,y,z];
+
+i2 : degree cokernel symmetricPower ( 2, vars R )
+
+o2 = 4
+
+i3 : 

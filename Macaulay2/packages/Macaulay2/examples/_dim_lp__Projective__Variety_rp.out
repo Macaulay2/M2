@@ -1,0 +1,27 @@
+-- -*- M2-comint -*-
+
+i1 : R = ZZ/101[x_0..x_4];
+
+i2 : M = matrix{{x_0,x_1,x_2,x_3},{x_1,x_2,x_3,x_4}}
+
+o2 = | x_0 x_1 x_2 x_3 |
+     | x_1 x_2 x_3 x_4 |
+
+             2       4
+o2 : Matrix R  <--- R
+
+i3 : V = Proj(R/minors(2,M));
+
+i4 : degree V
+
+o4 = 4
+
+i5 : dim V
+
+o5 = 1
+
+i6 : dim minors(2,M)
+
+o6 = 2
+
+i7 : 

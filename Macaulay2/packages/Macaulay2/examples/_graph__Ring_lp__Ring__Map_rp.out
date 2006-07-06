@@ -1,0 +1,40 @@
+-- -*- M2-comint -*-
+
+i1 : R = QQ[x,y]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : S = QQ[s,t,u]
+
+o2 = S
+
+o2 : PolynomialRing
+
+i3 : f = map(R,S,{x^2,x*y,y^2})
+
+               2        2
+o3 = map(R,S,{x , x*y, y })
+
+o3 : RingMap R <--- S
+
+i4 : graphRing f
+
+     QQ [x, y, s, t, u, Degrees => {{1}, {1}, {2}, {2}, {2}}]
+o4 = --------------------------------------------------------
+                      2                    2
+                  (- x  + s, - x*y + t, - y  + u)
+
+o4 : QuotientRing
+
+i5 : Spec oo
+
+          QQ [x, y, s, t, u, Degrees => {{1}, {1}, {2}, {2}, {2}}]
+o5 = Spec(--------------------------------------------------------)
+                           2                    2
+                       (- x  + s, - x*y + t, - y  + u)
+
+o5 : AffineVariety
+
+i6 : 

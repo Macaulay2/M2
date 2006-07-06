@@ -1,0 +1,21 @@
+-- -*- M2-comint -*-
+
+i1 : R = ZZ/101[x,y,z];
+
+i2 : f = matrix {{2, x},{y^2, 23},{z, z^3}}
+
+o2 = | 2  x  |
+     | y2 23 |
+     | z  z3 |
+
+             3       2
+o2 : Matrix R  <--- R
+
+i3 : flatten f
+
+o3 = | 2 y2 z x 23 z3 |
+
+             1       6
+o3 : Matrix R  <--- R
+
+i4 : 

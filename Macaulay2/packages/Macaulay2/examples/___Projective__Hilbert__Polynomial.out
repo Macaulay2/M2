@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : Z = Proj(QQ[x_0..x_12]/(x_0^3+x_12^3))
 

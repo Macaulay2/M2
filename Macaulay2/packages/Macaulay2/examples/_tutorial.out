@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : ///-- We can compute $(x+y)^3$ as follows.
      R = QQ[x,y]

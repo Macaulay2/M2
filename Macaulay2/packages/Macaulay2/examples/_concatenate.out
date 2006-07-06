@@ -1,7 +1,6 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
-i1 : concatenate {"a",("s",3,"d"),"f"}
+i1 : concatenate {"a",("s",3,"d",),"f"}
 
 o1 = as   df
 

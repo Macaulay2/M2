@@ -1,9 +1,8 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : methods drop
 
-o1 = {(drop, BasicList, List), (drop, BasicList, ZZ)}
+o1 = {(drop, BasicList, ZZ), (drop, BasicList, List)}
 
 o1 : List
 

@@ -1,0 +1,30 @@
+-- -*- M2-comint -*-
+
+i1 : R = QQ[x,y];
+
+i2 : f = vars R
+
+o2 = | x y |
+
+             1       2
+o2 : Matrix R  <--- R
+
+i3 : chainComplex f
+
+      1      2
+o3 = R  <-- R
+             
+     0      1
+
+o3 : ChainComplex
+
+i4 : HH oo
+
+o4 = 0 : cokernel | x y |
+
+     1 : image {1} | -y |
+               {1} | x  |
+
+o4 : GradedModule
+
+i5 : 

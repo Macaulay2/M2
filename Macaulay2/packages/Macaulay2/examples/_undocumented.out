@@ -1,11 +1,10 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : f = method()
 
 o1 = f
 
-o1 : CompiledFunctionClosure
+o1 : MethodFunction
 
 i2 : f List := x -> 1
 

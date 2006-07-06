@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : A = set {1,2};
 
@@ -57,7 +56,7 @@ o11 = Set {5}
 
 o11 : Set
 
-i12 : set{1,3,2} == set{1,2,3}
+i12 : set{1,3,2} === set{1,2,3}
 
 o12 = true
 

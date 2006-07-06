@@ -1,0 +1,17 @@
+-- -*- M2-comint -*-
+
+i1 : V = Proj(ZZ/101[x_0..x_2]);
+
+i2 : S = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})
+
+o2 = image | x_0^3+x_1^3+x_2^3 |
+
+                                         1
+o2 : coherent sheaf on V, subsheaf of OO
+                                        V
+
+i3 : pdim S
+
+o3 = 0
+
+i4 : 

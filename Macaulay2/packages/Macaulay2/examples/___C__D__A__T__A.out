@@ -1,0 +1,7 @@
+-- -*- M2-comint -*-
+
+i1 : html CDATA "hi there"
+
+o1 = <![CDATA[hi there]]>
+
+i2 : 

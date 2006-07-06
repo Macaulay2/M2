@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings, TangentCone
 
 i1 : new Type of BasicList from Function := (A,B,f) -> hashTable { net => f };
 

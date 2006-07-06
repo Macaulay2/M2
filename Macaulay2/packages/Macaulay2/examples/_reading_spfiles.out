@@ -1,13 +1,12 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : fn = temporaryFileName()
 
-o1 = /tmp/M2-17426-1
+o1 = /tmp/M2-13122-1
 
 i2 : fn << "z^6+3*x*z^4+6*y*z^4+3*x^2*z^2+12*x*y*z^2+12*y^2*z^2+x^3+6*x^2*y+12*x*y^2+8*y^3" << endl << close
 
-o2 = /tmp/M2-17426-1
+o2 = /tmp/M2-13122-1
 
 o2 : File
 
@@ -43,7 +42,7 @@ i7 : fn << "sample = 2^100
      print sample
      " << close
 
-o7 = /tmp/M2-17426-1
+o7 = /tmp/M2-13122-1
 
 o7 : File
 

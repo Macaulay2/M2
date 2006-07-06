@@ -4,10 +4,10 @@ transpose gens gb I
 A1 = QQ[x,y,MonomialOrder=>Lex];
 I = substitute(I,A1)
 transpose gens gb I
-B = QQ[x,y,MonomialOrder=>{Weights=>{-1,-1},2}];
+B = QQ[x,y,MonomialOrder=>{Weights=>{-1,-1},2},Global=>false];
 I = substitute(I,B)
 transpose gens gb I
-B = QQ[x,y,MonomialOrder=>{Weights=>{-1,0},Weights=>{0,-1}}];
+B = QQ[x,y,MonomialOrder=>{Weights=>{-1,0},Weights=>{0,-1}},Global=>false];
 I = substitute(I,B)
 transpose gens gb I
 M = matrix{{1,1,1},{0,-1,-1},{0,0,-1}}

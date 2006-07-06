@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = QQ[x_1 .. x_10, MonomialOrder=>{4,6}];
 
@@ -8,6 +7,7 @@ i2 : options R
 o2 = OptionTable{Adjust => identity                                                       }
                  DegreeRank => 1
                  Degrees => {{1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}}
+                 Global => true
                  Heft => 
                  Inverses => false
                  MonomialOrder => {GRevLex => {1, 1, 1, 1}, GRevLex => {1, 1, 1, 1, 1, 1}}
@@ -15,7 +15,6 @@ o2 = OptionTable{Adjust => identity                                             
                  Repair => identity
                  SkewCommutative => {}
                  VariableBaseName => 
-                 VariableOrder => 
                  Variables => {x , x , x , x , x , x , x , x , x , x  }
                                 1   2   3   4   5   6   7   8   9   10
                  Weights => {}

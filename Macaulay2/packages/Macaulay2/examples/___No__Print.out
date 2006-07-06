@@ -1,9 +1,8 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : code Thing.NoPrint
 
-o1 = -- ../../../../Macaulay2/m2/setup.m2:213
+o1 = -- ../../../../Macaulay2/m2/setup.m2:72
      Thing.NoPrint = x -> (
 
 i2 : 

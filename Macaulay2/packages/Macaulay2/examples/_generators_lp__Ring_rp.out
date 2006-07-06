@@ -1,0 +1,27 @@
+-- -*- M2-comint -*-
+
+i1 : A = QQ[x,y];
+
+i2 : gens A
+
+o2 = {x, y}
+
+o2 : List
+
+i3 : kk = toField(QQ[t]/(t^3-t-1));
+
+i4 : B = kk[x,y,z];
+
+i5 : generators B
+
+o5 = {x, y, z}
+
+o5 : List
+
+i6 : allGenerators B
+
+o6 = {x, y, z, t}
+
+o6 : List
+
+i7 : 

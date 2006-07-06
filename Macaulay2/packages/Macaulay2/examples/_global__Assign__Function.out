@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : X = new Type of MutableHashTable
 
@@ -49,7 +48,7 @@ o8 : List
 
 i9 : code globalAssignFunction
 
-o9 = -- startup.m2:167-170
+o9 = -- startup.m2:169-172
           globalAssignFunction = (X,x) -> (
                if not ReverseDictionary#?x then ReverseDictionary#x = X;
                use x;

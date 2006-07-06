@@ -1,0 +1,15 @@
+-- -*- M2-comint -*-
+
+i1 : package sin
+
+o1 = Core
+
+o1 : Package
+
+i2 : package poly
+
+o2 = Classic
+
+o2 : Package
+
+i3 : 

@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : R = ZZ/32003[a,b,c,d]
 
@@ -138,10 +137,12 @@ o16 = 27
 
 i17 : betti fano
 
-o17 = generators: total: 1 20
-                      0: 1  .
-                      1: .  1
-                      2: . 19
+o17 = total: 1 20
+          0: 1  .
+          1: .  1
+          2: . 19
+
+o17 : BettiTally
 
 i18 : document {
            Key => Fano2, 
@@ -176,7 +177,7 @@ i20 : Fano2 = method()
 
 o20 = Fano2
 
-o20 : CompiledFunctionClosure
+o20 : MethodFunction
 
 i21 : Fano2(ZZ,Ideal,Ring) := (k,X,GR) -> (
         -- Get info about the base ring of X:
@@ -251,7 +252,7 @@ i23 : Grassmannian2 = method()
 
 o23 = Grassmannian2
 
-o23 : CompiledFunctionClosure
+o23 : MethodFunction
 
 i24 : Grassmannian2(ZZ,ZZ,Ring) := (k,r,R) ->( 
               KK := coefficientRing R;
@@ -435,17 +436,23 @@ o45 = total: 1 6 8 3
           0: 1 . . .
           1: . 6 8 3
 
+o45 : BettiTally
+
 i46 : betti S22res
 
 o46 = total: 1 6 8 3
           0: 1 . . .
           1: . 6 8 3
 
+o46 : BettiTally
+
 i47 : betti S13res
 
 o47 = total: 1 6 8 3
           0: 1 . . .
           1: . 6 8 3
+
+o47 : BettiTally
 
 i48 : FVero = Fano2(1, Vero)
 
@@ -506,6 +513,8 @@ i49 : betti gens FVero
 o49 = total: 1 120
           0: 1   .
           1: . 120
+
+o49 : BettiTally
 
 i50 : FS13 = Fano2(1, S13)
 

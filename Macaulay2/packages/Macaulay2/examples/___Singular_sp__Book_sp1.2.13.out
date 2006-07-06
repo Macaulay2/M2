@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
 
 i1 : A2 = QQ[x,y,z];
 
@@ -48,7 +47,7 @@ o11 = x y*z + x  + x*y  + y  + z
 
 o11 : A
 
-i12 : A = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,0,0},Weights=>{0,-1,0},Weights=>{0,0,-1}}];
+i12 : A = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,0,0},Weights=>{0,-1,0},Weights=>{0,0,-1}},Global=>false];
 
 i13 : substitute(f,A)
 
@@ -57,7 +56,7 @@ o13 = z  + y  + x*y  + x  + x y*z
 
 o13 : A
 
-i14 : A = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},GRevLex}];
+i14 : A = QQ[x,y,z,MonomialOrder=>{Weights=>{-1,-1,-1},GRevLex},Global=>false];
 
 i15 : substitute(f,A)
 

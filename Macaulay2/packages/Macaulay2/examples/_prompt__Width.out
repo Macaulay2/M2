@@ -1,0 +1,7 @@
+-- -*- M2-comint -*-
+
+i1 : promptWidth()
+
+o1 = 5
+
+i2 : 

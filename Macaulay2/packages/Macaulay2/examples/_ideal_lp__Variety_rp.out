@@ -1,0 +1,40 @@
+-- -*- M2-comint -*-
+
+i1 : R = QQ[w,x,y,z];
+
+i2 : X = Spec(R/(y^2-x*z,x^2*y-z^2,x^3-y*z))
+
+o2 = X
+
+o2 : AffineVariety
+
+i3 : ideal X
+
+             2         2     2   3
+o3 = ideal (y  - x*z, x y - z , x  - y*z)
+
+o3 : Ideal of R
+
+i4 : ring X
+
+             QQ [w, x, y, z]
+o4 = ------------------------------
+       2         2     2   3
+     (y  - x*z, x y - z , x  - y*z)
+
+o4 : QuotientRing
+
+i5 : Y = Proj(R/(x^2-w*y, x*y-w*z, x*z-y^2))
+
+o5 = Y
+
+o5 : ProjectiveVariety
+
+i6 : ideal Y
+
+             2                      2
+o6 = ideal (x  - w*y, x*y - w*z, - y  + x*z)
+
+o6 : Ideal of R
+
+i7 : 

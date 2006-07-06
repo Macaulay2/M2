@@ -1,5 +1,4 @@
 -- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings, TangentCone
 
 i1 : R = ZZ/101[a..c];
 
@@ -62,13 +61,38 @@ o10 = | 1 x xy xy2 xy2z xy2z2 xy2z3 xy2z4 xyz xyz2 xyz3 xyz4 xz xz2 xz3 xz4 y
               1       30
 o10 : Matrix R  <--- R
 
-i11 : R = QQ[x,y]/(x^3,y^2);
+i11 : R = QQ[x,y,z]/(x^3,y^2,z^5);
 
 i12 : basis R
 
-o12 = | 1 x x2 x2y xy y |
+o12 = | 1 x x2 x2y x2yz x2yz2 x2yz3 x2yz4 x2z x2z2 x2z3 x2z4 xy xyz xyz2 xyz3
+      -----------------------------------------------------------------------
+      xyz4 xz xz2 xz3 xz4 y yz yz2 yz3 yz4 z z2 z3 z4 |
 
-              1       6
+              1       30
 o12 : Matrix R  <--- R
 
-i13 : 
+i13 : basis(-infinity,4,R)
+
+o13 = | 1 x x2 x2y x2yz x2z x2z2 xy xyz xyz2 xz xz2 xz3 y yz yz2 yz3 z z2 z3
+      -----------------------------------------------------------------------
+      z4 |
+
+              1       21
+o13 : Matrix R  <--- R
+
+i14 : basis(5,infinity,R)
+
+o14 = | x2yz2 x2yz3 x2yz4 x2z3 x2z4 xyz3 xyz4 xz4 yz4 |
+
+              1       9
+o14 : Matrix R  <--- R
+
+i15 : basis(2,4,R)
+
+o15 = | x2 x2y x2yz x2z x2z2 xy xyz xyz2 xz xz2 xz3 yz yz2 yz3 z2 z3 z4 |
+
+              1       17
+o15 : Matrix R  <--- R
+
+i16 : 
