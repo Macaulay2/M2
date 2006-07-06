@@ -2,45 +2,66 @@
 
 complement = method()
 
-mingens Module := Matrix => options -> (cacheValue symbol mingens) (
-     (M) -> (
+complement Matrix := Matrix => (m) -> (
+     if not isHomogeneous m then error "complement: expected homogeneous matrix";
+     n := transpose syz transpose substitute(m,0);
+     id_(target n) // n)
+
+mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
+ 	  mingb := m -> gb (m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);
+	  zr := f -> if f === null or f == 0 then null else f;
+	  F := ambient M;
+	  epi := g -> -1 === rawGBContains(g, rawIdentity(raw F,0));
 	  if M.?generators then (
-	       if M.?relations and isHomogeneous M then (
-		    -- is there something better to do when M has relations and is not homogeneous??
-		    c := mingens gb (M.generators|M.relations,
-			 options,
-			 StopWithMinimalGenerators=>true,Syzygies=>false,ChangeMatrix=>false);
-		    c * complement(M.relations // c))
-	       else mingens gb (M.generators, 
-		    options,
-		    StopWithMinimalGenerators=>true,Syzygies=>false,ChangeMatrix=>false)
-	       )
+	       if M.?relations then (
+		    if opts.Strategy === complement and isHomogeneous M then (
+			 c := generators mingb (M.generators|M.relations);
+			 c * complement(M.relations // c))
+		    else (
+	  	    	 tot := mingb(M.generators|M.relations);
+		    	 rel := mingb(M.relations);
+		    	 generators mingb (generators tot % rel)))
+	       else generators mingb M.generators)
 	  else (
-	       if M.?relations then complement M.relations
-	       else id_M
-	       )
-	  ))
+	       if M.?relations then (
+		    if opts.Strategy === complement and isHomogeneous M.relations then (
+			 complement M.relations)
+		    else generators mingb (id_F % mingb(M.relations)))
+	       else id_F)))
 
 trim Ring := Ring => options -> (R) -> R
 trim QuotientRing := options -> (R) -> (
      f := presentation R;
      A := ring f;
      A/(trim(ideal f,options)))
+
 trim Module := Module => options -> (cacheValue symbol trim) ((M) -> (
-	  if isFreeModule M
-	  then M
+	  -- we preserve the ambient free module of which M is subquotient and try to minimize the generators and relations
+	  --   without computing an entire gb
+	  -- does using "complement" as in "mingens Module" above offer a benefit?
+ 	  mingb := m -> gb (m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);
+	  zr := f -> if f === null or f == 0 then null else f;
+	  F := ambient M;
+	  epi := g -> -1 === rawGBContains(g, rawIdentity(raw F,0));
+	  N := if M.?generators then (
+	       if M.?relations then (
+	  	    tot := mingb(M.generators|M.relations);
+		    rel := mingb(M.relations);
+		    subquotient(F, if not epi raw tot then generators mingb (generators tot % rel), zr generators rel )
+		    )
+	       else (
+	  	    tot = mingb M.generators;
+		    subquotient(F, if not epi raw tot then generators tot, )
+		    )
+	       )
 	  else (
-	       -- this helps sometimes, even if M is *not* homogeneous : see test/trim.m2 and figure it out
-	       g := mingens(M,options);
-	       relns := if M.?relations then mingens(image M.relations,options);
-	       N := (
-		    if not isSubset(target g, image g)
-		    then subquotient( g, relns )
-		    else if relns === null then ambient M
-		    else cokernel relns
-		    );
-	       N.cache.trim = N;
-	       N)))
+	       if M.?relations then (
+		    subquotient(F, , zr generators mingb M.relations )
+		    )
+	       else F
+	       );
+	  N.cache.trim = N;
+	  N))
 
 syz Matrix := Matrix => options -> (f) -> (
      if not isFreeModule target f or not isFreeModule source f
@@ -146,11 +167,6 @@ RingElement % Ideal := (r,I) -> (
 ZZ % Ideal := (r,I) -> r_(ring I) % gb I
 
 Matrix % RingElement := (f,r) -> f % (r * id_(target f))
-
-complement Matrix := Matrix => (m) -> (
-     if not isHomogeneous m then error "expected homogeneous matrix";
-     n := transpose syz transpose substitute(m,0);
-     id_(target n) // n)
 
 -------------------------------------
 -- index number of a ring variable --
@@ -353,7 +369,7 @@ divideByVariable(Matrix, RingElement, ZZ) := Matrix => (m,v,d) -> (
 
 compress = method()
 
-compress Matrix := Matrix => (m) -> map(ring m, rawMatrixCompress m.RawMatrix)
+compress Matrix := Matrix => (m) -> map(target m,, rawMatrixCompress m.RawMatrix)
 
 diagonalMatrix = method()
 diagonalMatrix Matrix := Matrix => (m) -> (
