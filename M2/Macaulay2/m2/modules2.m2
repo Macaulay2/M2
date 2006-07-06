@@ -357,29 +357,27 @@ presentation(Module) := Matrix => M -> (
 	  else relations M))
 -----------------------------------------------------------------------------  
 
-minimalPresentation(Module) := Module => opts -> M -> (
-     if M.cache.?pruningMap then M
-     else if M.cache.?minimalPresentation then M.cache.minimalPresentation else M.cache.minimalPresentation = (
-	  R := ring M;
-	  oR := options R;
-	  if isFreeModule M then (
-	       M.cache.pruningMap = id_M;
-	       M)
-	  else if (isAffineRing R and isHomogeneous M)
-	         or (oR.?SkewCommutative and R.?SkewCommutative and isHomogeneous M) then (
-	       f := presentation M;
-	       g := complement f;
-	       N := cokernel modulo(g, f);
-	       N.cache.pruningMap = map(M,N,g);
-	       N)
-	  else (
-	       f = generators gb presentation M;
-	       -- MES: can't it do more here?
-	       N = cokernel f;
-	       N.cache.pruningMap = map(M,N,id_(cover M));
-	       N)
-	  )
-     )
+minimalPresentation(Module) := Module => opts -> (cacheValue symbol minimalPresentation) (M -> (
+     C := tryHooks(Module,symbol minimalPresentation,(opts,M));
+     if C =!= null then return C;
+     R := ring M;
+     oR := options R;
+     if isFreeModule M then (
+	  M.cache.pruningMap = id_M;
+	  M)
+     else if (isAffineRing R and isHomogeneous M)
+	    or (oR.?SkewCommutative and R.?SkewCommutative and isHomogeneous M) then (
+	  f := presentation M;
+	  g := complement f;
+	  N := cokernel modulo(g, f);
+	  N.cache.pruningMap = map(M,N,g);
+	  N)
+     else (
+	  f = generators gb presentation M;
+	  -- MES: can't it do more here? -- drg: LLLBases installs a hook for the case where R === ZZ
+	  N = cokernel f;
+	  N.cache.pruningMap = map(M,N,id_(cover M));
+	  N)))
 
 minimalPresentation(Matrix) := Matrix => opts -> (m) -> (
      M := source m;

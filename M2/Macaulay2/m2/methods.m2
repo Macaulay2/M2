@@ -420,12 +420,12 @@ removeHook = method()
 runHooks = method()
 tryHooks = method()
 
-addHook   (MutableHashTable,Thing,Function) := (obj,key,hook) -> if obj#?key then obj#key = append(obj#key,hook) else obj#key = {hook}
+addHook   (MutableHashTable,Thing,Function) := (obj,key,hook) -> if obj#?key then obj#key = prepend(hook,obj#key) else obj#key = {hook}
 removeHook(MutableHashTable,Thing,Function) := (obj,key,hook) -> if obj#?key then obj#key = delete(obj#key,hook)
 runHooks  (MutableHashTable,Thing,Thing   ) := (obj,key,arg ) -> if obj#?key then scan(obj#key, hook -> hook arg)
 tryHooks  (MutableHashTable,Thing,Thing   ) := (obj,key,arg ) -> if obj#?key then for hook in obj#key do ( r := hook arg ; if r =!= null then return r )
 
-addHook   (HashTable,Thing,Function) := (obj,key,hook) -> (c := obj.cache; if c#?key then c#key = append(c#key,hook) else c#key = {hook})
+addHook   (HashTable,Thing,Function) := (obj,key,hook) -> (c := obj.cache; if c#?key then c#key = prepend(hook,c#key) else c#key = {hook})
 removeHook(HashTable,Thing,Function) := (obj,key,hook) -> (c := obj.cache; if c#?key then c#key = delete(c#key,hook))
 runHooks  (HashTable,Thing,Thing   ) := (obj,key,arg ) -> (c := obj.cache; if c#?key then scan(c#key, hook -> hook arg))
 tryHooks  (HashTable,Thing,Thing   ) := (obj,key,arg ) -> (c := obj.cache; if c#?key then for hook in c#key do ( r := hook arg ; if r =!= null then return r ) )
