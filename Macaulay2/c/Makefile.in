@@ -20,7 +20,7 @@ CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c co
 HFILES := $(CNAMES:.c=.h) scc.h grammar.h
 OFILES := $(CNAMES:.c=.o) grammar.o
 SRCFILES := $(HFILES) $(CNAMES) grammar.y
-CPPFLAGS += -I../../include
+CPPFLAGS += -I../../include -I@srcdir@/../../include
 CPPFLAGS += -I@srcdir@
 ############################## compiling
 scc1 : $(OFILES)

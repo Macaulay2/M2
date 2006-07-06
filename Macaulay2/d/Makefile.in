@@ -162,6 +162,7 @@ endif
 M2-factory.o : M2-factory.cpp ; $(COMPILE.cc) -Wno-old-style-cast $(OUTPUT_OPTION) $<
 
 M2INCLUDES  = -I../../include
+M2INCLUDES += -I@srcdir@/../../include
 M2INCLUDES += -I@srcdir@
 M2INCLUDES += -I.
 M2INCLUDES += -I../util

@@ -21,11 +21,6 @@ chk(x^10*(1+x+x^500)*(1-x+x^2),x^6*(1-x+x^2))
 chk(x^10*(1+x+x^100)*(1-x+x^2),x^6*(1-x+x^2))
 
 stderr << currentFileName << ": test deferred" << endl
-exit 0
-
-assert( try (
-	  x//(x-x); -- division by zero doesn't give error, medium priority
-	  false ) else true )
 
 end
 -- Local Variables:
