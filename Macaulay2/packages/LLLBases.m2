@@ -3,7 +3,7 @@ newPackage("LLLBases",
      Date => "July 7, 2005",
      Authors => {{Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}},
      Headline => "a package for computing Lenstra-Lenstra-Lovasz bases",
-     DebuggingMode => true
+     DebuggingMode => false
      )
 
 export{
@@ -728,6 +728,41 @@ gcdLLL List := options -> (s) -> (
      then bgcdLLL(s,options.Threshold)
      else agcdLLL(s,options.Threshold))
 
+addHook(Module, symbol minimalPresentation, (o,M) -> (
+	  R := ring M;
+	  if R === ZZ then (
+	       h := presentation M;
+	       (p,ch) := hermiteLLL(h, ChangeMatrix => true);
+	       m := rank target p;
+	       n := rank source p;
+	       cols := entries transpose p;
+	       piv := for i from 0 to #cols-1 list (
+		    col := cols#i;
+		    k := position(col, e -> e =!= 0);
+		    if k === null then continue;
+		    if col#k =!= 1 then continue;
+		    (k,i));
+	       rows' := toList(0 .. m-1) - set(first\piv);
+	       cols' := toList(0 .. n-1) - set(last\piv);
+	       p' := p^rows'_cols';
+	       N := coker p';
+	       pm := N.cache.pruningMap = map(M,N,id_(target p)_rows');
+	       if debugLevel > 5 then (
+		    stderr
+		    << "-- h    = " << h << endl
+		    << "-- p    = " << p << endl
+		    << "-- ch   = " << ch << endl
+		    << "-- piv  = " << piv << endl
+		    << "-- rows'= " << rows' << endl
+		    << "-- cols'= " << cols' << endl
+		    << "-- p'   = " << p' << endl
+		    << "-- N    = " << N << endl
+		    << "-- pm   = " << pm << endl;
+		    assert( h*ch === p );
+     	       	    assert( isIsomorphism pm );
+		    if debugLevel > 100 then error "debug me";
+		    );
+	       N)))
 
 beginDocumentation()
 
@@ -1588,3 +1623,9 @@ TEST ///
 	      assert(i === j or h_(i,j) == 0)))
 ///
 
+TEST ///
+     debugLevel = 10
+     scan(1 .. 4, d -> scan(10, i -> prune coker random (ZZ^d, ZZ^d))
+     scan(1 .. 4, d -> scan(10, i -> prune coker random (ZZ^d, ZZ^(d+1)))
+     scan(1 .. 4, d -> scan(10, i -> prune coker random (ZZ^(d+1), ZZ^d))
+///

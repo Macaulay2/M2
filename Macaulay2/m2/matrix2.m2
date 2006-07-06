@@ -4,6 +4,7 @@ complement = method()
 
 complement Matrix := Matrix => (m) -> (
      if not isHomogeneous m then error "complement: expected homogeneous matrix";
+     if not isAffineRing ring m then error "complement: expected affine ring";
      n := transpose syz transpose substitute(m,0);
      id_(target n) // n)
 

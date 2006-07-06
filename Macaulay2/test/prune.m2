@@ -1,3 +1,5 @@
+-----------------------------------------------------------------------------
+
 kk=ZZ/101
 R=kk[a,b,c,SkewCommutative=>true]
 m=map(R^{-1,0},R^{-2,-1},matrix{{a,0},{b*c,a}})
@@ -35,6 +37,16 @@ M = n^3 * F
 M' = module prune sheaf_X M
 degrees M'
 assert ( M' == F )
+
+-----------------------------------------------------------------------------
+
+-- a conceptual problem with the design:
+R = QQ[x]
+M = coker matrix {{x,x}}
+N = prune M
+assert( target N.cache.pruningMap === M )
+P = prune N						    -- N is already pruned!
+assert( target P.cache.pruningMap === N )
 
 -----------------------------------------------------------------------------
 end
