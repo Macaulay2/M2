@@ -154,7 +154,12 @@ setup((), {
 use = method()
 use Thing := identity
 
-minimalPresentation = method(Options=>{Variable => null})
+minimalPresentation = method(
+     Options=>{
+	  Variable => null,
+	  Strategy => null
+	  }
+     )
 
 status = method (
      Options => new OptionTable from {

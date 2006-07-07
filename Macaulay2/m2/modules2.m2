@@ -306,31 +306,21 @@ Ideal == ZZ := (I,n) -> (
      then 1_(ring I) % I == 0
      else error "attempted to compare ideal to integer not 0 or 1"
      )
+
+issub := (f,g) -> -1 === rawGBContains(raw gb g,raw f)	    -- we can do better in the homogeneous case!
+
 ZZ == Module := (n,M) -> M == n
 Module == ZZ := (M,n) -> (
      if n =!= 0 then error "attempted to compare module to nonzero integer";
      if M.?generators then (
-	  if M.?relations then M.generators % M.relations == 0
+	  if M.?relations then issub(M.generators, M.relations)
 	  else M.generators == 0
 	  )
      else (
-	  if M.?relations then (
-	       f := M.relations;
-	       id_(target f) % f == 0
-	       )
+	  if M.?relations then issub(id_(ambient M), M.relations)
 	  else M.numgens === 0
 	  )
      )
-
--- dim Module := M -> (
---      if degreeLength ring M === 0 
---      then error "can't compute dimension over a ring with zero degree length";
---      if not isHomogeneous M
---      then M = cokernel leadTerm generators gb presentation M;
---      if poincare M == 0
---      then -1
---      else 1 + dim hilbertPolynomial M + dim coefficientRing ring M
---      )
 
 dim Module := M -> (
      c := codim M;
@@ -344,7 +334,6 @@ degree Module := M -> (
   if hf == 0 then 0
   else (
        while substitute(hf,{T=>1}) == 0 do hf = hf // (1-T);
-       -- while hf % (1 - T) == 0 do hf = hf // (1-T);
        substitute(hf,{T=>1})))
 
 -----------------------------------------------------------------------------
@@ -637,8 +626,6 @@ truncate(List,Ideal) := Ideal => (deg,I) -> ideal truncate(deg,module I)
 truncate(ZZ,Module) := Module => (deg,M) -> truncate({deg},M)
 truncate(ZZ,Ideal) := Ideal => (deg,I) -> truncate({deg},I)
 -----------------------------------------------------------------------------
-issub := (f,g) -> -1 === rawGBContains(raw gb g,raw f)
-
 isSubset(Module,Module) := (M,N) -> (
      -- here is where we could use gb of a subquotient!
      ambient M == ambient N and

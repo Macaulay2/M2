@@ -2,11 +2,28 @@
 
 complement = method()
 
-complement Matrix := Matrix => (m) -> (
-     if not isHomogeneous m then error "complement: expected homogeneous matrix";
-     if not isAffineRing ring m then error "complement: expected affine ring";
-     n := transpose syz transpose substitute(m,0);
-     id_(target n) // n)
+complement Matrix := Matrix => (f) -> (
+     if not isHomogeneous f then error "complement: expected homogeneous matrix";
+     R := ring f;
+     if R === ZZ then (
+	  error "complement: encountered matrix over ZZ: not implemented yet";
+--	  p := generators gb(f, ChangeMatrix => false, Syzygies => false);
+--	  m := rank target p;
+--	  n := rank source p;
+--	  cols := entries transpose p;
+--	  piv := for i from 0 to #cols-1 list (
+--	       col := cols#i;
+--	       k := n-1 - position(reverse col, e -> e =!= 0);
+--	       if k === null then continue;
+--	       if col#k =!= 1 then continue;
+--	       k);
+--	  rows' := toList(0 .. m-1) - set piv;
+--	  id_(ZZ^m)_rows'
+	  )
+     else if isAffineRing R then (
+	  g := transpose syz transpose substitute(f,0);
+	  id_(target g) // g)
+     else error "complement: expected matrix over affine ring or ZZ")
 
 mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
  	  mingb := m -> gb (m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);
@@ -15,19 +32,19 @@ mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
 	  epi := g -> -1 === rawGBContains(g, rawIdentity(raw F,0));
 	  if M.?generators then (
 	       if M.?relations then (
-		    if opts.Strategy === complement and isHomogeneous M then (
-			 c := generators mingb (M.generators|M.relations);
+		    if opts.Strategy === complement and isHomogeneous M and isAffineRing ring M then (
+			 c := mingens mingb (M.generators|M.relations);
 			 c * complement(M.relations // c))
 		    else (
 	  	    	 tot := mingb(M.generators|M.relations);
 		    	 rel := mingb(M.relations);
-		    	 generators mingb (generators tot % rel)))
-	       else generators mingb M.generators)
+		    	 mingens mingb (mingens tot % rel)))
+	       else mingens mingb M.generators)
 	  else (
 	       if M.?relations then (
 		    if opts.Strategy === complement and isHomogeneous M.relations then (
 			 complement M.relations)
-		    else generators mingb (id_F % mingb(M.relations)))
+		    else mingens mingb (id_F % mingb(M.relations)))
 	       else id_F)))
 
 trim Ring := Ring => options -> (R) -> R
@@ -48,16 +65,16 @@ trim Module := Module => options -> (cacheValue symbol trim) ((M) -> (
 	       if M.?relations then (
 	  	    tot := mingb(M.generators|M.relations);
 		    rel := mingb(M.relations);
-		    subquotient(F, if not epi raw tot then generators mingb (generators tot % rel), zr generators rel )
+		    subquotient(F, if not epi raw tot then mingens mingb (mingens tot % rel), zr mingens rel )
 		    )
 	       else (
 	  	    tot = mingb M.generators;
-		    subquotient(F, if not epi raw tot then generators tot, )
+		    subquotient(F, if not epi raw tot then mingens tot, )
 		    )
 	       )
 	  else (
 	       if M.?relations then (
-		    subquotient(F, , zr generators mingb M.relations )
+		    subquotient(F, , zr mingens mingb M.relations )
 		    )
 	       else F
 	       );

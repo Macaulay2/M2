@@ -618,6 +618,7 @@ regularity Ideal := (I) -> 1 + regularity resolution cokernel generators I
 
 BettiTally = new Type of Tally
 BettiTally.synonym = "Betty tally"
+BettiTally == BettiTally := (C,D) -> C === D
 BettiTally ++ BettiTally := (C,D) -> merge(C,D,plus)
 BettiTally ** BettiTally := (C,D) -> combine(C,D,(j,k)->apply(j,k,plus),times,plus)
 dual BettiTally := (C) -> applyKeys(C,j -> apply(j,minus))
