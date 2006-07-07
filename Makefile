@@ -2,6 +2,7 @@
 
 all: configure monitor include/config.h.in.stamp
 	@echo 'Makefile: now run "configure" from a temporary build directory and start "make" there'
+	@echo 'Makefile: ... or run "make reconfigure" there and then start "make"'
 
 configure : configure.ac config/files # aclocal.m4
 	autoconf
