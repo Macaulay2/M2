@@ -124,7 +124,6 @@ document {
      Subnodes => {
 	  TO "examples of specifying alternate monomial orders",
 	  TO "monomial orders for free modules",
-	  TO "operations involving monomial orders",
 	  TO "packing monomials for efficiency",
       "Definitions of the specific monomial orders",
 	  TO "GRevLex",
@@ -137,6 +136,8 @@ document {
 	  TO "definition of product (block) orders",
 	  TO "RevLex",
 	  TO "NCLex",
+      "A succinct summary",
+          TO "MonomialOrder",
       "Developers' corner",
 	  TO "obtaining the monomial order of a ring"
 	  }
@@ -215,14 +216,7 @@ document {
 	  },
      HEADER2 "NCLex",
      "For non-commutative Groebner bases.  Not implemented yet.",
-     }
-
-document {
-     Key => "monomial orders for free modules",
-     }
-
-document {
-     Key => "operations involving monomial orders"
+     SeeAlso => {"Singular Book 1.2.13"}
      }
 
 document {
@@ -231,70 +225,232 @@ document {
      several exponents per machine word.  Polynomials take less space, and monomial 
      operations such as comparison and multiplication become faster.",
      PARA{},
-     "The monomial order keys ", TO "Lex", " and ", TO "GRevLex", " have alternate
-     versions, which allow the packing of monomials 2 per machine word (LexSmall and
-	  GRevLexSmall), and 4 per machine word (LexTiny and GRevLexTiny).",
+     "The monomial order keys ", TO "Lex", " and ", TO "GRevLex", " allow packing.  The ",
+     TT "MonomialSize => n", " option allows one to set the minimum packing size, in number of bits.
+     Monomials are stored as signed exponent vectors, so maximum exponents of 2^(n-1)-1 are possible
+     for packed variables.  Useful values include 8, 16, 32, and (on 64-bit machines) 64.  The default
+     monomial size is 32.",
+     EXAMPLE lines ///
+     	  A = QQ[a..d,MonomialSize=>8]
+     	  B = QQ[x,y,z,w,MonomialSize=>16,MonomialOrder=>Lex]	  
+	  ///,
+     "The maximum degree for monomials in A is 127.  Monomials of higher degree
+     will encounter a monomial overflow.  In the second example, the maximum exponent
+     is 32767 (2^15-1).",
+     PARA{},
+     "It is possible to pack different parts of the monomial with different sizes.
+     For example, the following order has two blocks: a graded reverse lexicographic block of 3 variables,
+     packed into one 32-bit word, and a second lexicographic block for 4 variables, taking 4 32-bit words.
+     Each monomial will be packed into 5 32-bit words (on a computer with a 32-bit word size).",
+     EXAMPLE lines ///
+     	  --C = QQ[a,b,c,x,y,z,w,MonomialOrder=>{MonomialSize=>8,3,MonomialSize=>32,Lex=>4}];
+          ///,
+     PARA{},
      EXAMPLE {
-	  "A = QQ[a..d,MonomialOrder=>Lex];",
+	  "D = QQ[a..d,MonomialOrder=>Lex];",
 	  "a^1000000000",
 	  },
-     "This exponent would give a monomial overflow error in the next ring",
+     PARA{},     
+     "This exponent would give a monomial overflow error in the next two rings.",
+     EXAMPLE lines ///
+	  E = QQ[a..d,MonomialSize=>16,MonomialOrder=>Lex];
+  	  F = QQ[a..d,MonomialSize=>8,MonomialOrder=>Lex];
+	  ///
+     }
+
+document { 
+     Key => "monomial orders for free modules",
+     TEX ///In Macaulay 2, each free module $F = R^s$ over a ring $R$ has a basis
+     of unit column vectors $F_0, F_1, ..., F_(s-1)$.  The monomials of $F$
+     are the elements $m F_i$, where $m$ is a monomial of the ring $R$.
+     In Macaulay 2, orders on the monomials of $F$ are used for computing Groebner bases and
+     syzygies, and also to determine the initial, or lead term of elements of $F$.///,
+     PARA{},
+     TEX ///"The ring $R$ comes equipped with a total order on the monomials of $R$.
+     A total order on the monomials of $F$ is called {\bf compatible} (with the order
+     on $R$), if $m F_i > n F_i$ (in $F$) whenever $m > n$ (in $R$). There are many types of
+     compatible orders, but several stand out: term over position up (the default in Macaulay2), 
+     term over position down,
+     position up over term, position down over term, and Schreyer orders.///,
+     PARA{},
+     TEX "term over position up:   $m F_i > n F_j$ iff $m>n$ or $m==n$ and $i>j$",
+     PARA{},
+     TEX "term over position down: $m F_i > n F_j$ iff $m>n$ or $m==n$ and $i<j$",
+     PARA{},
+     TEX "position up over term:   $m F_i > n F_j$ iff $i>j$ or $i==j$ and $m>n$",
+     PARA{},
+     TEX "position down over term: $m F_i > n F_j$ iff $i<j$ or $i==j$ and $m>n$",
+     PARA{},
+     "Induced monomial orders are another class of important orders on ", TT "F", ", see ",
+     TO "Schreyer orders", " for their definition and use in Macaulay2.",
+     PARA{},
+     "In Macaulay 2, free modules come equipped with a compatible order.  The default
+     order is: term over position up.
+     This is called Position=>Up.  In the following example, the lead term is ",
+     TEX "$a F_1$, since $a > b$.",
      EXAMPLE {
-	  "B = QQ[a..d,MonomialOrder=>LexSmall];",
-  	  "C = QQ[a..d,MonomialOrder=>LexTiny];"
+	  "R = ZZ[a..d];",
+	  "F = R^3",
+	  "f = b*F_0 + a*F_1",
+	  "leadTerm f"
+	  },
+     "This is the same as giving the monomial order as:",
+     EXAMPLE {
+	  "R = ZZ[a..d, MonomialOrder => {GRevLex => 4, Position => Up}];",
+	  "F = R^3",
+	  "leadTerm(a*F_0 + a*F_1)"
+	  },
+     "Giving Position=>Down instead switches the test above to i < j.  In this case the 
+     monomial order on F is:
+     m*F_i > n*F_j if m>n or m==n and i<j.",
+     EXAMPLE {
+	  "R = ZZ[a..d, MonomialOrder => {GRevLex => 4, Position => Down}];",
+	  "F = R^3",
+	  "leadTerm(a*F_0 + a*F_1)"
+	  },
+     "If one gives Position=>Up or Position=>Down earlier, then the position will be 
+     taken into account earlier. For example",
+     EXAMPLE {
+	  "R = ZZ[a..d, MonomialOrder => {GRevLex => 2, Position => Down, GRevLex => 2}];",
+	  "F = R^3",
+	  "leadTerm(a*F_0 + a*F_1)",
+	  "leadTerm(b*F_0 + c^4*F_1)",	  
+	  "leadTerm(c*F_0 + d^2*F_1)"	  
+	  },
+     "If one wants Position over Term (POT), place the Position element first",
+     EXAMPLE {
+	  "R = ZZ[a..d, MonomialOrder => {Position => Down}];",
+	  "F = R^3",
+	  "leadTerm(a*F_0 + a*F_1)",
+	  "leadTerm(b*F_0 + c^4*F_1)",	  
+	  "leadTerm(c*F_0 + d^2*F_1)"	  
+	  },
+     Subnodes => {
+	  TO "Schreyer orders"
 	  }
      }
+     
+document {
+     Key => "Schreyer orders",
+     Headline => "induced monomial order on a free module",
+     "The Schreyer order is a monomial order on a free module which is particularly
+     efficient for computing Groebner bases and syzygies.  The size of Groebner bases
+     of submodules using such orders is often much much smaller than if a position over term
+     or term over position order would be used.  We call these Schreyer orders, after
+     Frank Olaf-Schreyer, who used them to give an algorithm for syzygies, and who also 
+     recognized many of their beneficial properties.  See Schreyer.... for more 
+     information.",
+     PARA{},
+     TEX /// Given a free $R$-module $G$, a set of monomials $m_0, \ldots, m_(s-1)$ of $G$,
+     and a monomial order on the monomials of $G$, the induced order, or, Schreyer
+     order on $F = R^s$ is defined by:
+     $a F_i > b F_j$ (in $F$) iff $a m_i > b m_j$ (in $G$), or $a m_i and b m_j$
+     are scalar multiples of each other, and $i>j$, where $F_i$ are the unit column vectors of $F$
+     ///,
+     PARA{},
+     "In Macaulay 2, free modules with a Schreyer order on them can be created using ", 
+     TO (schreyerOrder,Matrix), ".",
+     EXAMPLE lines ///
+	  R = ZZ/101[a..f];
+	  m = matrix{{a,b,c,d}};
+	  m1 = schreyerOrder m
+	  F = source m1
+	  g = syz m1
+	  leadTerm g
+	  ///,
+     "In Macaulay 2, free modules are displayed without any indication of whether they are
+     endowed with a Schreyer order or not.  To determine whether one is, use ", 
+     TO (schreyerOrder,Module), ".  If the result is the zero matrix, then the monomial order
+     associated with this free module is not a Schreyer order.  In that case, the monomial order
+     for the free module is the one determined directly from the ring.",
+     EXAMPLE lines ///
+	  schreyerOrder target m
+	  schreyerOrder source g
+	  ///,
+     TEX "Over quotient rings, the multiplications $a m_i$ and $b m_j$ are over the ambient polynomial
+     ring, not the quotient.",
+     PARA{},
+     "It is fine for the free module ", TT "G", " above to be endowed with a Schreyer order too.",
+     PARA{},
+     "The only places that Schreyer orders are considered is in computation of Groebner bases,
+     syzygies, and free resolutions, and with the ", TO leadTerm, " routine.",
+     PARA{},
+     "The size of the Groebner bases of syzygy modules is often dramatically smaller if
+     the monomial order is the Schreyer order, as in the following example.",
+     EXAMPLE lines ///
+          R = QQ[a..f];
+     	  I = ideal"abc-def,a2c-d2f,aef-bcd,a3-d3,af2-cd2"
+	  F = syz gens I
+	  betti gens gb syz F
+	  G = schreyerOrder F
+	  betti gens gb syz G	  
+     ///,
+     SeeAlso => {
+	  leadTerm,
+	  (schreyerOrder,Matrix),
+	  (schreyerOrder,Module),
+	  gb,
+	  syz,
+	  resolution,
+	  betti
+	  }
+     }
+
 document {
      Key => RevLex,
      Headline => "reverse lexicographic ordering",
-     "The reverse lexicographic order is defined by: x^A > x^B if
-     the LAST non-zero entry of the vector of integers A-B is NEGATIVE.
-     This is not a total order.",
+     "The reverse lexicographic order is defined by: ", TEX /// x^A > x^B ///, " if
+     the LAST non-zero entry of the vector of integers ", TT "A-B", " is NEGATIVE.
+     This is a local order, not a global order.  Therefore Groebner bases over this
+     ring only give generators over the local ring whose fractions are all elements 
+     not in the ideal generated by the variables.",
      EXAMPLE {
 	  "R = QQ[a..d];",
 	  "a^3 + b^2 + b*c + a*c^2 + b^2*c",
 	  },
-     "The calculations in this order are done using the Mora algorithm.",
+     "Computations of Groebner bases for local orders are done using Mora's algorithm.",
      SeeAlso => {GRevLex}
      }
 
 document {
-     Key => {GRevLex,GRevLexSmall,GRevLexTiny},
+     Key => GRevLex,
      Headline => "graded reverse lexicographical monomial order.",
-     "The graded reverse lexicographic order is defined by: x^A > x^B if either
-     the degree(x^A) > degree(x^B) or degree(x^A) = degree(x^B) and
-     the LAST non-zero entry of the vector of integers A-B is NEGATIVE.",
+     TEX /// The graded reverse lexicographic order is defined by: $x^A > x^B$ if either
+     $degree(x^A) > degree(x^B)$ or $degree(x^A) = degree(x^B)$ and
+     the LAST non-zero entry of the vector of integers $A-B$ is NEGATIVE. ///,
      PARA{},
-     "This is the default order in Macaulay 2, in large part because it is often
+     TEX /// This is the default order in Macaulay 2, in large part because it is often
      the most efficient order for use with Groebner bases.  By giving GRevLex
-     a list of integers, one may change the definition of the order: deg(x^A) is
-     the dot product of A with the argument of GRevLex.",
+     a list of integers, one may change the definition of the order: $degree(x^A)$ is
+     the dot product of $A$ with the argument of GRevLex.///,
      EXAMPLE {
 	  "R = QQ[a..d];",
 	  "a^3 + b^2 + b*c",
 	  "S = QQ[a..d, MonomialOrder => GRevLex => {1,2,3,4}];",
 	  "a^3 + b^2 + b*c"
 	  },
-     "The largest possible exponent of variables in ", TT "GRevLex",
-     " order is 2^31-1.  For efficiency reasons, the size of the exponents
-     of variables may be restricted.  Then instead of ", TT "GRevLex", ", one can use ",
-     TT " GRevLexSmall", ", which allows maximal exponent 2^15-1, 
-     or ", TT "GRevLexTiny", ", which allows maximal exponent 2^7-1.", 
+     "The largest possible exponent of variables in the ", TT "GRevLex",
+     " order is 2^31-1.  For efficiency reasons, it is sometimes useful to
+     limit the size of monomials (this often makes computations more efficient).",
+     "Use ", 
+     TT "MonomialSize => 16", ", which allows maximal exponent 2^15-1, 
+     or ", TT "MonomialSize => 8", ", which allows maximal exponent 2^7-1.", 
      EXAMPLE {
-	  "B = QQ[a..d,MonomialOrder=>GRevLexSmall];",
+	  "B1 = QQ[a..d,MonomialSize=>16,MonomialOrder=>GRevLex];",
+	  "B = QQ[a..d,MonomialSize=>16];",	  
 	  "a^(2^15-1)",
-  	  "C = QQ[a..d,MonomialOrder=>GRevLexTiny];",
+  	  "C = QQ[a..d,MonomialSize=>8,MonomialOrder=>GRevLex];",
 	  "try a^(2^15-1) else \"failed\"",
 	  "a^(2^7-1)"
 	  },
-     SeeAlso => {Weights}
+     SeeAlso => {"packing monomials for efficiency"}
      }
 
 document {
-     Key => {Lex,LexSmall,LexTiny},
+     Key => Lex,
      Headline => "lexicographical monomial order.",
-     "The lexicographic order is defined by: x^A > x^B if the FIRST
-     non-zero entry of the vector of integers A-B is POSITIVE.",
+     "The lexicographic order is defined by: ", TEX "x^A > x^B", " if the FIRST
+     non-zero entry of the vector of integers ", TEX "A-B", " is POSITIVE.",
      EXAMPLE {
 	  "R = QQ[a..d, MonomialOrder => Lex];",
 	  "a^3 + a^2*b^2 + b*c"
@@ -302,12 +458,12 @@ document {
      "The largest possible exponent of variables in ", TT "Lex",
      " order is 2^31-1.  For efficiency reasons, the size of the exponents
      of variables may be restricted.  Then instead of ", TT "Lex", ", one can use ",
-     TT " LexSmall", ", which allows maximal exponent 2^15-1, 
-     or ", TT "LexTiny", ", which allows maximal exponent 2^7-1.", 
+     TT " MonomialSize=>16", ", which allows maximal exponent 2^15-1, 
+     or ", TT "MonomialSize=>8", ", which allows maximal exponent 2^7-1.", 
      EXAMPLE {
-	  "B = QQ[a..d,MonomialOrder=>LexSmall];",
+	  "B = QQ[a..d,MonomialOrder=>Lex,MonomialSize=>16];",
 	  "a^(2^15-1)",
-  	  "C = QQ[a..d,MonomialOrder=>LexTiny];",
+  	  "C = QQ[a..d,MonomialOrder=>Lex,MonomialSize=>8];",
 	  "try a^(2^15-1) else \"failed\"",
 	  "a^(2^7-1)"
 	  },
@@ -316,7 +472,7 @@ document {
      weight(x^A) > weight(x^B) or if weight(x^A) = weight(x^B)
      and if the FIRST non-zero entry of the vector of integers A-B is POSITIVE.",
      EXAMPLE {
-	  "B = QQ[a..d,MonomialOrder=>{Weights => {1,2,3,4}, LexSmall}];",
+	  "B = QQ[a..d,MonomialSize=>16,MonomialOrder=>{Weights => {1,2,3,4}, Lex}];",
 	  "a^2 + b+ c + b*d"
 	  },
      SeeAlso => {Weights}
@@ -325,13 +481,13 @@ document {
 document {
      Key => GLex,
      Headline => "graded lexicographic ordering",
-     TT "GLex", " -- a symbol used as an optional argument of
-     ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
-     indicate that the monomial order is the graded lexicographic order.",
-     PARA{},
-     Caveat => "If the number of degree vectors is greater than one, this
-     is currently only graded using the first degree vector.  This will 
-     eventually change."  -- MES
+     "The option ", TT "GLex => n",
+     " is a shortcut for ", TT "Weights => n:1, Lex=>n", " in creating a ", TO "monomial ordering",
+     EXAMPLE lines ///
+     	  R = QQ[a..d,MonomialOrder=>GLex]
+	  a^3*b+a^4+b^100
+	  ///,
+     SeeAlso => MonomialOrder
      }
 
 document {
@@ -387,7 +543,7 @@ document {
 
 document {
      Key => "Eliminate",
-     Headline => "Elimination order",
+     Headline => "elimination order",
      "The option ", TT "Eliminate => n",
      " is a shortcut for ", TT "Weights => {n:1}",
      " The remaining variables are given weight 0.",
@@ -447,7 +603,7 @@ document {
 
 document {
      Key => "definition of product (block) orders",
-     TT "MonomialSize => {n_1, ..., n_l}", " divides the variables of the
+     TT "MonomialOrder => {n_1, ..., n_l}", " divides the variables of the
      ring into ", TT "l", " blocks, the first block consisting of the first ",
      TT "n_1", " variables, the second block consisting of the subsequent ",
      TT "n_2", " variables, and so on.  For each block of variables,
@@ -527,55 +683,6 @@ document {
      ///
      }
 
-
-
-document {
-     Key => "monomial orderings1", 
-     HEADER2 "The default monomial order: GRevLex",
-     "Every polynomial ring in Macaulay 2 comes equipped with an ordering on
-     the monomials.  The default ordering is GRevLex: the graded reverse lexicographic
-     order. Suppose that m = x^A and n = x^B are monomials of a polynomial ring R having 
-     r variables,
-     where A = (a1, ..., ar) and B = (b1, ..., br) are exponent vectors.  Then 
-     the GRevLex order is defined by: x^A > x^B if either x^A has higher degree
-     than x^B, or the degrees are the same, and the LAST non-zero entry of A-B is NEGATIVE.",
-     HEADER2 "Specifying alternate monomial orders",
-     "We can choose different orderings of the monomials.  The
-     choice of ordering can make a difference in the time taken in
-     various computations.",
-     EXAMPLE {
-	  "R = ZZ[a..d];",
-	  "a*d + b*c"     
-     	  },
-     "Notice that the monomials are displayed in descending monomial order .",
-     HEADER2 "Examples of monomial orders",
-     HEADER3 "Lex => n",
-     EXAMPLE {
-	  "R = ZZ[a..d, MonomialOrder => {Lex => 4}];",
-	  "1+a+b+c+d+a*d+b*c"
-	  },
-     HEADER3 "Weights => {...}",
-     EXAMPLE {
-	  "R = ZZ[a..d,MonomialOrder => {Weights => {1,0,0,1}}];",
-	  "1+a+b+c+d+a*d+b*c"
-	  },
-     "The explicit way to get GRevLex is given in the following example:",
-     EXAMPLE {
-	  "R = ZZ[a..d,MonomialOrder=>GRevLex]"
-     },
-     HEADER3 "GRevLex => {...}",
-     HEADER3 "Position => Up or Position => Down",
-     HEADER3 "GroupLex => n",
-     HEADER3 "GroupRevLex => n",
-     Subnodes => {
-	  TO "examples of monomial orders",
-	  TO "general monomial orders",
-	  TO "term orders",
-	  TO "local orders",
-	  TO "negative exponents"
-	  }
-     }
-
 TEST "
 R = QQ[a..d, MonomialOrder => GRevLex]
 a*c + b^2 + a*c^3
@@ -587,100 +694,6 @@ R = QQ[a..d, MonomialOrder => RevLex => 4, Global => false]
 1 + a*c + b^2 + a*c^3
 a+a^2
 "
-
-document {
-     Key => "monomial orderingsOLD",
-     -- Defining the orders
-     -- MonomialOrder option.  Currently: Weights option.
-     -- Philosophy: each ring comes equipped with a monomial order.
-     -- ProductOrder, Eliminate, Lex, RevLex, GRevLex...
-     -- What are these order in free modules.  Point to the Schreyer order
-     -- information, either in the manual, or in the overview.
-     "We can make polynomial rings with various other orderings of the
-     monomials used in storing and displaying the polynomials.  The
-     choice of ordering can make a difference in the time taken in
-     various computations.",
-     PARA{},
-     "The material in this section will be completely redone soon.",
-     PARA{},
-     "The default is to use the graded reverse lexicographic ordering 
-     of monomials.
-     This means that terms of higher total degree come first;
-     and for two terms of the same degree, the term with the higher
-     power of the last variable comes last; for terms with the same 
-     power of the last variable, the exponent on the next to last 
-     variable is consulted, and so on.",
-     EXAMPLE {
-	  "R=ZZ/101[a,b,c]",
-      	  "(a+b+c+1)^2",
-	  },
-     "Explicit comparison of monomials with respect to the chosen
-     ordering is possible.",
-     EXAMPLE "b^2 > a*c",
-     "The comparison operator ", TO "?", " returns a symbol indicating
-     the result of the comparison: the convention is that the larger
-     monomials are printed first (leftmost).",
-     EXAMPLE "b^2 ? a*c",
-     "The monomial ordering is also used when sorting lists with ", TO "sort", ".",
-     EXAMPLE "sort {1_R, a, a^2, b, b^2, a*b, a^3, b^3}",
-     "The next ring uses ", TO "MonomialOrder", " to specify reverse
-     lexicographic ordering.  This means that the term with 
-     the higher power of the last variable comes last; for terms with the same 
-     power of the last variable, the exponent on the next to last variable 
-     is consulted, and so on.  Under this ordering the monomials are not
-     well ordered.",
-     EXAMPLE "R=ZZ/101[x,y,z,MonomialOrder=>RevLex,Global=>false];",
-     "We currently get a monomial overflow if we try to compute anything
-     in this ring, sigh.",
-     -- EXAMPLE "(x+y+z+1)^2",
-     PARA{},
-     "The next ring uses graded lexicographic ordering.  This means that
-     terms of higher total degree come first; for two terms of the
-     same degree, the term with the higher power of the first variable comes
-     first: for terms with the same power of the first variable the
-     power of the second variable is consulted, and so on.",
-     EXAMPLE {
-	  "R=ZZ/101[a,b,c,MonomialOrder=>GLex];",
-      	  "(a+b+c+1)^2",
-	  },
-     "(Notice how similar the result above is to the one obtained when
-     graded reverse lexicographic ordering is used.)",
-     PARA{},
-     "The next ring uses lexicographic ordering.  This means that 
-     terms with the highest power of the first variable come
-     first: for two terms with the same power of the first variable the
-     power of the second variable is consulted, and so on.",
-     EXAMPLE {
-	  "R=ZZ/101[a,b,c,MonomialOrder=>Lex];",
-      	  "(a+b+c+1)^2",
-	  },
-     "The next ring uses an elimination order suitable for eliminating
-     the first two variables, ", TT "a", " and ", TT "b", ".  In such an 
-     ordering we want all terms in which either of the first two
-     variables appears to come before all of those terms in which
-     the first two variables don't appear.  This particular ordering
-     accomplishes this by consulting first the graded reverse lexicographic
-     ordering ignoring all variables but the first two, and in case of
-     a tie, consulting the graded reverse lexicographic ordering of the
-     entire monomials.",
-     EXAMPLE {
-	  "R=ZZ/101[a,b,c,MonomialOrder=>Eliminate 2];",
-      	  "(a+b+c+1)^2",
-	  },
-     "The next ring uses the product ordering that segregates the
-     first variable from the next two.  This means that terms come
-     first that would come first in the graded reverse lexicographic
-     ordering when their parts involving the
-     second two variables are ignored, and in case of equality,
-     the graded reverse lexicographic ordering of their parts involving
-     just the next two variables is consulted.",
-     EXAMPLE {
-	  "R=ZZ/101[a,b,c,MonomialOrder=>ProductOrder{1,2}];",
-      	  "(a+b+c+1)^2"
-	  },
-     PARA{},
-     "See ", TO "MonomialOrder", " for further details."
-     }
 
 document {
      Key => "graded and multigraded polynomial rings",
@@ -737,20 +750,6 @@ document {
      }
 
 document {
-     Key => "monomial orderings v1.0",
-     "This section is only valid for Macaulay2, versions 1.0 and higher.",
-     PARA{},
-     "Each ring in Macaulay2 comes equipped with an ordering on the
-monomials.  This ordering is used in the display and storing of polynomials.
-The choice of ordering can make a difference in the time taken in various
-computations.  Groebner bases performed on ideals and modules will use the
-chosen monomial ordering.",
-     PARA{},
-     "The default is to use the graded lexicographic order.  This order is defined 
-     as follows: x^A > x^B "
-     }
-
-document {
      Key => {MonomialOrder,Position,Up,Down,Global},
      Headline => "monomial ordering",
      TT "MonomialOrder", " -- an optional argument used with polynomial rings and monoids
@@ -771,22 +770,20 @@ document {
      "Permissible elements:",
      UL {
 	  (TO "GRevLex", " => n -- A graded reverse lexicographic block of variables"),
-	  (TO "GRevLexSmall", " => n -- Same, but with exponents packed two per word"),
-	  (TO "GRevLexTiny", " => n -- Same, but packed 4 per word"),
 	  (TO "Lex", " => n"),
-	  (TO "LexSmall", " => n"),
-	  (TO "LexTiny", " => n"),
 	  (TO "Weights", " => {...}"),
 	  (TO "Position", " => Up  or  Position => Down"),
 	  (TO "RevLex", " => n"),
      	  (TO "GroupLex", " => n"),
-	  (TO "GroupRevLex", " => n")
+	  (TO "GroupRevLex", " => n"),
+	  (TO "MonomialSize", " => n, n being 8,16,32, or 64.  Set the packing size for exponents for further variables")
           },
      PARA{},
      "Some examples of monomial orders.  Note that if only one item is in the list, 
      we can dispense with the list.",
      UL {
 	  (TT "MonomialOrder => {GRevLex=>2, GRevLex=>3}", " -- a product order"),
+	  (TT "MonomialOrder => {2, 3}", " -- same"),
 	  (TT "MonomialOrder => {Weights=>{1,13,6,2}}", " -- a weight order"),
 	  (TT "MonomialOrder => Weights=>{1,13,6,2}", " -- same"),
 	  },

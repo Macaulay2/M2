@@ -139,181 +139,6 @@ document {
      SeeAlso => {"_", Module, List}
      }
 
--- a) free modules, bases and monomials
--- b) monomial orders: def
--- c) kinds in M2
--- d) Schreyer orders
---    examples of use
-
-document { 
-     Key => "Monomial orders in free modules",
-     "In Macaulay 2, each free module F = R^s over a ring R has a basis
-     of unit column vectors F_0, F_1, ..., F_(s-1).  The monomials of F
-     are the elements m*F_i, where m is a monomial of the ring R.
-     In Macaulay 2, orders on the monomials of F are used for computing Groebner bases and
-     syzygies, and also to determine the initial, or lead term of elements of F.",
-     PARA{},
-     "The ring R comes equipped with a total order on the monomials of R.
-     A total order on the monomials of F is called ", EM "compatible", " (with the order
-     on R), if m*F_i > n*F_i (in F) whenever m > n (in R). There are many types of
-     compatible orders, but several stand out: term over position up, term over position down,
-     position up over term, position down over term, and Schreyer orders.",
-     PARA{},
-     "term over position up:   m*F_i > n*F_j iff m>n or m==n and i>j",
-     PARA{},
-     "term over position down: m*F_i > n*F_j iff m>n or m==n and i<j",
-     PARA{},
-     "position up over term:   m*F_i > n*F_j iff i>j or i==j and m>n",
-     PARA{},
-     "position down over term: m*F_i > n*F_j iff i>j or i==j and m>n",
-     PARA{},
-     "Induced monomial orders are another class of important orders on F.",
-     "Given a free module G and a set of monomials phi_0, ..., phi_(s-1) of G,
-     and a monomial order on the monomials of G, the induced order, or, Schreyer
-     order is defined by:
-     m*F_i > n*F_j (in F) iff m*phi_i > n*phi_j (in G), or m*phi_i and n*phi_j
-     are scalar multiples of each other, and i>j.
-     ",
-     PARA{},
-     "In Macaulay 2, free modules come equipped with a compatible order.  The default
-     order is: m*F_i > n*F_j if m > n (in R), or m == n, and i > j. 
-     This is called Position=>Up.  In the following example, the lead term is a*F_1,
-     since a > b.",
-     EXAMPLE {
-	  "R = ZZ[a..d];",
-	  "F = R^3",
-	  "f = b*F_0 + a*F_1",
-	  "leadTerm f"
-	  },
-     "This is the same as giving the monomial order as:",
-     EXAMPLE {
-	  "R = ZZ[a..d, MonomialOrder => {GRevLex => 4, Position => Up}];",
-	  "F = R^3",
-	  "leadTerm(a*F_0 + a*F_1)"
-	  },
-     "Giving Position=>Down instead switches the test above to i < j.  In this case the 
-     monomial order on F is:
-     m*F_i > n*F_j if m>n or m==n and i<j.",
-     EXAMPLE {
-	  "R = ZZ[a..d, MonomialOrder => {GRevLex => 4, Position => Down}];",
-	  "F = R^3",
-	  "leadTerm(a*F_0 + a*F_1)"
-	  },
-     "If one gives Position=>Up or Position=>Down earlier, then the position will be 
-     taken into account earlier. For example",
-     EXAMPLE {
-	  "R = ZZ[a..d, MonomialOrder => {GRevLex => 2, Position => Down, GRevLex => 2}];",
-	  "F = R^3",
-	  "leadTerm(a*F_0 + a*F_1)",
-	  "leadTerm(b*F_0 + c^4*F_1)",	  
-	  "leadTerm(c*F_0 + d^2*F_1)"	  
-	  },
-     "If one wants Position over Term (POT), place the Position element first",
-     EXAMPLE {
-	  "R = ZZ[a..d, MonomialOrder => {Position => Down}];",
-	  "F = R^3",
-	  "leadTerm(a*F_0 + a*F_1)",
-	  "leadTerm(b*F_0 + c^4*F_1)",	  
-	  "leadTerm(c*F_0 + d^2*F_1)"	  
-	  },
-     SeeAlso => {
-	  "Schreyer order"
-	  }
-     }
-     
-document {
-     Key => "Schreyer order",
-     Headline => "induced monomial order on a free module",
-     "The Schreyer order is a monomial order on a free module which is particularly
-     efficient for computing Groebner bases and syzygies.  The size of Groebner bases
-     of submodules using such orders is often much much smaller than if a position over term
-     or term over position order would be used.  We call these Schreyer orders, after
-     Frank Olaf-Schreyer, who used them to give an algorithm for syzygies, and who also 
-     recognized many of their beneficial properties.  See Schreyer.... for more 
-     information.",
-     PARA{},
-     "Let F be a free module, with basis e_0, e_1, ..., e_r (unit column vectors),
-     and suppose that a e_i, and b e_j are monomials in F (that is, a and b are monomials in
-     the base ring, and e_i and e_j are elements of the basis of F).  Suppose also that 
-     m0, m1, ..., mr are monomials of a free module G (which is itself endowed with a monomial
-     order).",
-     PARA{},
-     "Then, a e_i > b e_j if a mi > b mj, in the order on G, or, if a mi and b mj are 
-     scalar multiples of each other, if i > j.",
-     PARA{},
-     "In Macaulay 2, free modules with a Schreyer order on them can be created using ", 
-     TO (schreyerOrder,Matrix), ".",
-     EXAMPLE {
-	  "R = ZZ/101[a..d];",
-	  "m = matrix{{a,b,c,d}};",
-	  "m1 = schreyerOrder m",
-	  "F = source m1",
-	  "g = syz m1",
-	  "leadTerm g"
-	  },
-     "In Macaulay 2, free modules are displayed without any indication of whether they are
-     endowed with a Schreyer order or not.  To determine whether one is, use ", 
-     TO (schreyerOrder,Module), ".  If the result is the zero matrix, then the monomial order
-     associated with this free module is not a Schreyer order.  Instead it is the 
-     order determined directly from the ring.",
-     EXAMPLE {
-	  "schreyerOrder target m",
-	  "schreyerOrder source g"
-	  },
-     "Over quotient rings, the multiplication a mi and b mj are over the ambient polynomial
-     ring, not the quotient.",
-     PARA{},
-     "It is fine for the free module G above to be endowed with a Schreyer order too.",
-     PARA{},
-     "The only places that Schreyer orders are considered is in computation of Groebner bases,
-     syzygies, and free resolutions, and with the ", TO leadTerm, " routine.",
-     SeeAlso => {
-	  leadTerm,
-	  (schreyerOrder,Matrix),
-	  (schreyerOrder,Module),
-	  gb,
-	  syz,
-	  resolution
-	  }
-     }
-
-document {
-     Key => (schreyerOrder,Matrix),
-     Headline => "create a matrix with the same entries whose source free module has a Schreyer monomial order",
-     Usage => "schreyerOrder m",
-     Inputs => {
-	  "m" => "G <-- F between free modules"
-	  },
-     Outputs => {
-	  {
-	       "the same matrix as ", TT "m", ", except that its source free module
-	       is endowed with a Schreyer, or induced, monomial order"
-	       }
-	  },
-     "Given a matrix m : F --> G, the Schreyer order on the monomials
-     of F is given by: If a e_i and b e_j are monomials of F, i.e. a and b are 
-     monomials in the ring, and
-     e_i and e_j are unit column vectors of F, then a e_i > b e_j iff
-     either leadterm(m)(a e_i) > leadterm(m)(b e_j) or they are k-multiples of
-     the same monomial in G, and i > j.",
-     PARA{},
-     "If the base ring is a quotient ring, we think of leadterm(m) as a matrix
-     over the ambient polynomial ring",
-     "Given a matrix m with define a monomial order ",
-     EXAMPLE {
-	  "R = ZZ/101[a..d];",
-	  "m = matrix{{a,b,c,d}};",
-	  "f = schreyerOrder m",
-	  "g = syz f",
-	  "leadTerm g"
-	  },
-     SeeAlso => {
-	  "Schreyer monomial orders",
-	  leadTerm,
-	  (schreyerOrder,Module)
-	  }
-     }
-
      
 -----------------------------------------------------------------------------
 
@@ -880,33 +705,46 @@ document {
 document {
      Key => {selectInSubring,(selectInSubring, ZZ, Matrix)},
      Headline => "select columns in a subring",
-     TT "selectInSubring(i,m)", " -- Form the submatrix of the matrix 'm' consisting of those
-     columns which lie in the subring generated by all but the first 'i' parts of the
-     monomial order.",
-     PARA{},
-     "We say that a monomial ordering has n 'parts' if the variables are partitioned
-     into n subsets in such a way that for each j, any monomial smaller than a
-     monomial that involves variables only from the last j parts, also involves
-     variables only from the last j parts.  Such monomial orderings include
-     product orderings, lexicographic orderings, and elimination orderings.",
-     PARA{},
-     "For example, consider the lexicographic ordering of four variables, where
-     the parts are the singletons ", TT "{a}, {b}, {c}, {d}", ".",
-     EXAMPLE {
-	  "R = ZZ/101[a..d,MonomialOrder=>Lex]",
-      	  "m = matrix{{b^2-c^2, a^2 - b^2, c*d}}",
-      	  "selectInSubring(1,m)",
-      	  "selectInSubring(2,m)",
-      	  "selectInSubring(3,m)",
+     Usage => "selectInSubring(i,m)",
+     Inputs => {
+	  "i" => ZZ,
+	  "m" => Matrix
 	  },
+     Outputs => {
+	  Matrix => {"with the same target and ring as ", TT "m", ", consisting of those columns
+	  of ", TT "m", " which lie in the subring where the first 
+	  ", TT "i", " blocks of the monomial order are zero"}
+	  },
+     "For example, consider the following block (or product) order.",
+     EXAMPLE lines ///
+     	  R = QQ[x,y,a..d,t,MonomialOrder=>{2,4,1}];
+	  m = matrix{{x*a-d^2, a^3-1, x-a^100, a*b*d+t*c^3, t^3-t^2-t+1}}
+	  selectInSubring(1,m)
+	  selectInSubring(2,m)
+     ///,
      PARA{},
+     "The lexicographic order is considered as one block, as in the following example.",
+     EXAMPLE lines ///
+     	  S = QQ[a..d,MonomialOrder=>Lex];
+	  m = matrix{{a^2-b, b^2-c, c^2-d, d^2-1}}
+	  selectInSubring(1,m)
+     ///,
+     PARA{},
+     "If you wish to be able to pick out the elements not involving a, or a and b, etc,
+     then create a block monomial order.",
+     EXAMPLE lines ///
+     	  S = QQ[a..d,MonomialOrder=>{4:1}];
+	  m = matrix{{a^2-b, b^2-c, c^2-d, d^2-1}}
+	  selectInSubring(1,m)
+	  selectInSubring(2,m)
+	  selectInSubring(3,m)	  
+     ///,
      Caveat => {
 	  "This routine doesn't do what one would expect for graded orders
      	  such as ", TT "GLex", ".  There, the first part of the monomial 
-	  order is the degree, which is usually not zero.  This routine 
-	  should detect and correct this."
-     },
-     SeeAlso => "monomial orderings"
+	  order is the degree, which is usually not zero."
+          },
+     SeeAlso => {"monomial orderings", leadTerm, "eliminate"}
      }
 
 document {

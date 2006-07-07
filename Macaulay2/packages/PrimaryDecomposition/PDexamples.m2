@@ -119,7 +119,7 @@ restart
 errorDepth = 0
 debug PrimaryDecomposition
 
-R = ZZ/32003[a,b,c,d,f,g,h,k,l,s,t,u,v,w,x,y,z, MonomialOrder=>GRevLexTiny]
+R = ZZ/32003[a,b,c,d,f,g,h,k,l,s,t,u,v,w,x,y,z, MonomialSize=>8]
 I = ideal(
     -a*b-a*d+2*a*h,
     a*d-b*d-c*f-2*a*h+2*b*h+2*c*k,

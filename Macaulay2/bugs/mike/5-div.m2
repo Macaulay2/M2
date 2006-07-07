@@ -28,7 +28,6 @@ F = substitute(F,B)
 --                     else first first entries (matrix {{x}} // y))
 
 
-restart
 A = QQ[x]
 (x-1) // x
 
@@ -38,5 +37,6 @@ A = ZZ[x]
 F = poly"x6-6x5+15x4-20x3+15x2-6x+1"
 G = poly"x10+5x9+15x8+30x7+45x6+51x5+45x4+30x3+15x2+5x+1"
 F//G  -- OK
+
 debug Core
-(raw F) // (raw G) -- fails
+(raw F) // (raw G)

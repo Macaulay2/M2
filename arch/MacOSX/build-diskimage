@@ -43,6 +43,7 @@
 
  cd ../installed
  VERSION=`grep AC_INIT ../M2/configure.ac | awk -F, '{print $2}'`
+ VERSION=0.9.10
  cp ../M2/arch/MacOSX/ReadMe-MacOSX.rtf .
  cp ../M2/arch/MacOSX/ReadMe-MacOSX.rtf Macaulay2-$VERSION/
  cp ../M2/arch/MacOSX/setup Macaulay2-$VERSION/
@@ -52,3 +53,4 @@
  mv Macaulay2-$VERSION Macaulay2
  cd .. # to original directory
  hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-`uname -m` Macaulay2-$VERSION-macosx-`uname -m`.dmg
+ scp Macaulay2-$VERSION-macosx-`uname -m`.dmg ssh.math.uiuc.edu:~

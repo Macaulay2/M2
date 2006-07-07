@@ -20,3 +20,5 @@ f = a^256 -- should overflow
 R = ZZ/101[a..d,Degrees=>{4:65536}]
 f = a^65536 -- should not be negative!
 
+end
+

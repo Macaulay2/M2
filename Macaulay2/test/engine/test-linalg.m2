@@ -47,7 +47,7 @@ assert(transpose sort G1 - transpose sort G2 == 0)
 end
 -- The ones after this still take too much time...
 
-R = ZZ/3[x,y,u,s,t, MonomialOrder=>GRevLexSmall]
+R = ZZ/3[x,y,u,s,t, MonomialSize=>16]
 I = ideal(
     x^81,
     y^81,

@@ -2,7 +2,7 @@ restart
 if instance(gbTrace,ZZ) then gbTrace = 1 else gbTrace 1
 
 R = ZZ/32003[p_(1,1,1,1,1)..p_(2,2,2,2,2)]
-R = ZZ/32003[p_(1,1,1,1,1)..p_(2,2,2,2,2), MonomialOrder=>GRevLexTiny]
+R = ZZ/32003[p_(1,1,1,1,1)..p_(2,2,2,2,2), MonomialSize=>8]
 -- Bayesian graph ideal #148
 J = ideal(
          -p_(1,1,2,1,1)*p_(2,1,1,1,1)+p_(1,1,1,1,1)*p_(2,1,2,1,1),
