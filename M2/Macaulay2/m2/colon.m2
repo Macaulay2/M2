@@ -99,7 +99,8 @@ quotann1 := opts -> (I,J) -> (
     m := generators I | relations I;
     scan(numgens J, i -> (
        f := image (J_{i});
-       if generators(f**M1) % m != 0 then (
+       if generators(M1 * f) % m != 0			    -- it used to say f ** M1, but that can't have been right.  I'm just guessing that M1 * f is better.  (drg)
+       then (
 	    M2 := quotient(I,f, opts, Strategy=>Quotient);
 	    M1 = intersect(M1,M2);)));
     M1)
