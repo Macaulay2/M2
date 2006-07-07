@@ -174,6 +174,7 @@ resolution Module := ChainComplex => o -> (M) -> (
 	       (resolutionBySyzygies o)(M))
      else if not isCommutative R then (resolutionBySyzygies o)(M)
      else if R === ZZ then (resolutionBySyzygies o)(M)
+     else if k === ZZ then (resolutionBySyzygies o)(M)
      else if not isHomogeneous M then (resolutionByHomogenization o)(M)
      else if isQuotientRing R then (resolutionInEngine default(o,Strategy2))(M)
      else (resolutionInEngine default(o,Strategy1))(M)

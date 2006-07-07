@@ -725,9 +725,9 @@ gcdLLL List := options -> (s) -> (
 
 addHook(Module, symbol minimalPresentation, (o,M) -> (
 	  R := ring M;
-	  if R === ZZ then (
+	  if R === ZZ and o.Strategy === null then (
 	       h := presentation M;
-	       (p,ch) := hermite(h, ChangeMatrix => true);
+	       p := hermite h;
 	       m := rank target p;
 	       n := rank source p;
 	       cols := entries transpose p;
@@ -747,14 +747,12 @@ addHook(Module, symbol minimalPresentation, (o,M) -> (
 		    << "-- M    = " << M << endl
 		    << "-- h    = " << h << endl
 		    << "-- p    = " << p << endl
-		    << "-- ch   = " << ch << endl
 		    << "-- piv  = " << piv << endl
 		    << "-- rows'= " << rows' << endl
 		    << "-- cols'= " << cols' << endl
 		    << "-- p'   = " << p' << endl
 		    << "-- N    = " << N << endl
 		    << "-- pm   = " << pm << endl;
-		    assert( h*ch === p );
      	       	    assert( isIsomorphism pm );
 		    );
 	       N)))
