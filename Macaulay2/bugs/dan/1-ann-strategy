@@ -1,0 +1,18 @@
+Date: Fri, 7 Jul 2006 17:31:54 -0500 (CDT)
+From: Dan Grayson <dan@math.uiuc.edu>
+To: mike@math.cornell.edu
+CC: dan@math.uiuc.edu
+Subject: ann'
+Reply-to: dan@math.uiuc.edu
+
+
+I hope you don't mind if I merge ann and ann' and add a Strategy option.  Are
+Iterative and Total descriptive words?
+
+document { 
+     Key => {ann', (ann',Module)},
+     Headline => "an alternate algorithm for the annihilator ideal",
+     Usage => "ann' M",
+     "See ", TO annihilator, " for usage, description, and example."
+     }
+

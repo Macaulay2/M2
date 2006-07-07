@@ -21,14 +21,233 @@ document {
 	  "
 	  },
      Subnodes => {
-	  TOH "checking your Macaulay2 installation",
-	  TOH "setting up the Macaulay2 emacs interface",
-	  TOH "using Macaulay2 with emacs",
-	  TOH "a first Macaulay 2 session",
-	  TOH "reading the documentation",
-	  TOH "getting help or reporting bugs",
-	  TOH "what to read next??"
+	  TO "checking your Macaulay2 installation",
+	  TO "finding the Macaulay 2 files",
+	  TO "teaching your shell how to find M2",
+	  TO "setting up the Macaulay2 emacs interface",
+	  TO "teaching emacs how to find M2-init.el",
+	  TO "teaching emacs how to find M2",
+	  TO "using Macaulay2 with emacs",
+	  TO "a first Macaulay 2 session",
+	  TO "reading the documentation",
+	  TO "getting help or reporting bugs",
+	  TO "what to read next??"
 	  }
+     }
+
+document { Key => "finding the Macaulay 2 files",
+     "Often you will know where the Macaulay 2 files are, because you have
+     installed them yourself.  But it can happen that Macaulay 2 was installed
+     by your system administrator so you can run M2, but you don't know where
+     its files are.  In that case, there are a couple of ways to locate the
+     files.",
+     PARA {},
+     "One way is to use the following shell command.",
+     PRE ///     type M2///,
+     "The response will be of the following form.",
+     PRE ///     M2 is /foo/bar/bin/M2///,
+     "The Macaulay2 files come in a directory tree that mimics the directory
+     tree found on unix systems in the directory /usr.  In particular, its
+     top-level directory has subdirectories called ", TT "bin", ", ", TT "info", ", ", TT "lib", ", and
+     ", TT "share", ", so now we know, from the output above, that the Macaulay
+     2 files have been installed with a prefix ", TT "/foo/bar", " as the name
+     of its root directory.  It will follow, for example, that the M2 emacs
+     init file is located at ", TT "/foo/bar/share/emacs/site-lisp/M2-init.el", ".",
+     PARA {},
+     "Another way to locate the files of Macaulay 2 is to ask M2, assuming you
+     can run it.  Start M2 and type the following expression.",
+     PRE ///     prefixDirectory///,
+     "The response will be of the following form, and will also tell you the
+     prefix for the paths to the Macaulay 2 files.",
+     PRE ///     i1 : prefixDirectory
+
+     o1 = /foo/bar/ ///,
+     "If you are running M2 and emacs under cygwin on a Windows computer, then that
+     can prevent special difficulties: see ", TO "finding your files under cygwin", "."
+     }
+
+document { Key => "finding your files under cygwin",
+     "In Microsoft Windows, most people run programs by pulling down menus or by clicking on icons
+     that have been carefully placed there by install programs.  Thus the idea of a
+     ", EM "path", " along which to search for programs (such as a browser) is no longer useful in Windows.",
+     PARA{},
+     "On my computer the browser program ", TT "firefox.exe", " is in the following directory.",
+     PRE ///    c:/Program Files/Mozilla Firefox///,
+     "But M2 is a Cygwin program, and it lives in a different world, where paths to
+     files don't ever start out with something like ", TT "c:", ".  In that world, that
+     directory is known instead as:",
+     PRE ///     /cygdrive/c/Program Files/Mozilla Firefox///,
+     "Conversely, the root directory known in the Cygwin world as ", TT "/", " could be located
+     anywhere in the Windows world.  On my machine it is at",
+     PRE ///     s:/cygwin///,
+     "Use the ", TT "df", " command in a cygwin command shell window to determine
+     that path: it is the file system on which ", TT "/", " is mounted.",
+     PARA {},
+     "At least we can get back and forth between the two worlds.",
+     PARA {},
+     "Assuming you use a Bourne shell such as bash, you can edit your ", TT ".profile", " and add that 
+     directory to your PATH with a command like this:",
+     PRE ///    export PATH="/cygdrive/c/Program Files/Mozilla Firefox":$PATH///,
+     "Then M2 will be able to start firefox, but it will have trouble telling it
+     where any files are.  It may tell firefox to look at ",
+     PRE ///      /usr/share/doc/Macaulay2/Macaulay2/html/index.html///,
+     "but firefox lives in the windows world and wants to be told to look at",
+     PRE ///      s:/cygwin/usr/share/doc/Macaulay2/Macaulay2/html/index.html///,
+     "instead.  The same problem holds for the ", TT "index.html", " file in your directory
+     ", TT "$HOME/.Macaulay2", ", because the absolute links there look like that, too.",
+     PARA{},
+     "For now the solution is to find your Cygwin files, start up firefox the
+     usual way (from a menu), navigate to the appropriate version of",
+     PRE ///    s:/cygwin/usr/share/doc/Macaulay2/Macaulay2/html/index.html///,
+     "somehow and make a bookmark there.",
+     PARA{},
+     "It would be nice if there were a cygwin version of firefox, for then it and its
+     file names would live in the cygwin world, and those absolute links would work.
+     Perhaps there will be one soon, and I won't have to think about adjusting those
+     links.  We should probably just make the links relative, so that once you
+     navigate to s:/cygwin/$HOME/.Macaulay2/index.html from the windows world and
+     bookmark it, the links will work."
+     }
+
+document { Key => "teaching your shell how to find M2",
+     "Perhaps you have typed M2 into a shell window and gotten something like the
+     following response:",
+     PRE ///     % M2
+     bash: M2: command not found///,
+     "If so, then you have to teach your shell how to find M2.",
+     PARA {},
+     "Your shell will look for M2 in the directories listed in the value of the PATH environment variable.  You
+     will want to arrange for that value to get set when you log in or when you start your shell.  The former
+     is preferable, because environment variables are inherited by new processes only from their 
+     parents, and your login shell is an ancestor of all of your processes.",
+     PARA {},
+     "If you teach your shell how to find M2, then emacs may be able to find M2, also.",
+     PARA {},
+     "Your goal is to add the directory containing M2 to the value of the PATH environment variable.
+     For this, you must know where the Macaulay2 files are: see ", TO "finding the Macaulay 2 files", ".  Your system administrator may have installed
+     the Macaulay2 files under /usr, in which case you will see M2 in /usr/bin, and you can ignore the 
+     rest of this section.  The files may also be installed under /usr/local, in which case you will see M2
+     in /usr/local/bin, and you can ignore the rest of this section, provided you have /usr/local/bin
+     on your PATH.  Or the files may be installed somewhere else, such as in /Applications/Macaulay2,
+     in which case you will see M2 in /Applications/Macaulay2/bin, and you will want to add that
+     directory to your path now.",
+     PARA {},
+     "The method for setting environment variables depends on which shell you are
+     using.  Typical shells in use include ash, bash, csh, tcsh, ksh, sh, and zsh.  The command
+     languages understood by these shells differ, but they fall into two main classes: the 
+     Bourne shells sh, bash, ash, zsh, and ksh; and the C shells csh and tcsh.",
+     SUBSECTION "Bourne shells",
+     "A Bourne shell reads commands from the file .profile in your home directory when you log in,
+     except perhaps under Mac OS X.
+     The bash shell will also read commands from .bashrc each subsequent time it starts up,
+     after the initial log in.  To add a directory called, say ", TT "/foo/bar/bin", ", to your
+     PATH, put this command in your file .profile:",
+     PRE "     export PATH=/foo/bar/bin:$PATH",
+     "It will be acted upon the next time you log in, or the following shell command will
+     run those commands in your current shell.",
+     PRE "     source $HOME/.profile",
+     SUBSECTION "C shells",
+     "A C shell reads commands from the file .login in your home directory when you log in,
+     except perhaps under Mac OS X.
+     The shell will also read commands from .cshrc or perhaps .tcshrc.  Check the man page of your
+     shell.",
+     PARA {},
+     "To add a directory called, say ", TT "/foo/bar/bin", ", to your PATH, put this command in your file .login:",
+     PRE "     setenv PATH /foo/bar/bin:$PATH",
+     "It will be acted upon the next time you log in, or the following shell command will
+     run those commands in your current shell.",
+     PRE "     source $HOME/.profile",
+     SUBSECTION "making a link to M2",
+     "Another way to proceed that sometimes works is this.  Look at the output from the shell command:",
+     PRE ///	  printenv PATH///,
+     "and see whether one of your own directories is already on the path.
+     If so, say it's ~/bin, then you can make a symbolic link from M2 to that directory,
+     and it will appear on your path.  First ensure the directory has been made with this command:",
+     PRE ///      mkdir ~/bin///,
+     "Ignore the error message if the directory already exists.  Then make the symbolic link with this command:",
+     PRE ///	  ln -s /Applications/Macaulay2/bin/M2 ~/bin/M2///,
+     "After that your shell will be able to find M2, and M2 will be able to find
+     its files (because it knows about symbolic links).  (Don't use a hard link.)",
+     SUBSECTION "what else to try",
+     "If you fail to teach your shell how to find M2, then all is not lost.  We prefer
+     to run M2 within emacs, and it is enough to teach emacs how find M2.  See ", TO "teaching emacs how to find M2", "."
+     }
+
+document { Key => "teaching emacs how to find M2-init.el",
+     "Files containing emacs source code have names of the form ", TT "*.el", ".
+     Macaulay 2 comes with a file called ", TT "M2-init.el", " that sets up
+     emacs for running M2 conveniently.  It is important that emacs be able to
+     find that file and the three other files that come with it, by searching
+     in the directories listed in the emacs variable ", TT "load-path", ".",
+     PARA{},
+     "If you are lucky, then the Macaulay 2 directory tree has been installed
+     with the same root as the emacs directory tree.  For example, if emacs
+     and Macaulay 2 are both installed in /usr, then M2.el is located at
+     ", TT "/usr/share/emacs/site-lisp/M2-init.el", ", and emacs already knows
+     to look in that directory for source files.",
+     PARA {},
+     "To determine the precise path of the site-lisp directory emacs is looking
+     in, so that you can install Macaulay 2 properly, use the emacs
+     describe-variable command, accessible with the key strokes ", TT "C-h v",
+     ", and ask for the description of the variable ", TT "load-path", ".",
+     PARA {},
+     "Let's assume that you have located the Macaulay 2 source code, and that
+     M2.el is located at ", TT "/foo/bar/share/emacs/site-lisp/M2-init.el", ",
+     and that you want to tell emacs to search that directory, too.  
+     Insert the following command into the file .emacs in your home directory.",
+     PRE ///    (setq load-path 
+          (append
+           '( "/foo/bar/share/emacs/site-lisp" )
+           load-path))///,
+     "The next time you start emacs, emacs will look also in that directory for 
+     files, and it should find M2-init.el."
+     }
+
+
+document { Key => "teaching emacs how to find M2",
+     "If you teach your shell how to find M2, then you do not have to teach emacs how
+     to find M2.  See ", TO "teaching your shell how to find M2", ", and come back to
+     this section only if you fail with that.  Let's assume that you have found M2 (the 
+     program), and that is located in the directory ", TT "/foo/bar/bin", ", say.",
+     PARA {},
+     "Let's assume you have already set up the function key f12 to call M2.  That is done with
+     the following command in the .emacs file.",
+     PRE ///     (global-set-key [ f12 ] 'M2)///,
+     "Then when you press f12, M2 should start running.",
+     PARA {},
+     "Here is what you will see on your screen in the minibuffer at the bottom of the screen when you press f12 if
+     emacs doesn't know how to find the file M2-init.el.",
+     PRE ///     Symbol's function definition is void: M2///,
+     "If you see that, you are not ready for this section: see ", TO "teaching emacs how to find M2-init.el", ".",
+     PARA {},
+     "Here is what you will see on your screen in a buffer named ", TT "*M2*", " if emacs knows how
+     to find the file ", TT "M2-init.el", " but not how to find the program M2.",
+     PARA {},
+     PRE ///    + M2 --no-readline --print-width 189
+    /bin/sh: M2: command not found
+
+    Process M2 exited abnormally with code 127
+///,
+     SUBSECTION "teaching emacs temporarily",
+     "To teach emacs temporarily where to find M2, press",
+     PRE ///     C-u f12///,
+     "(Recall that in emacs' notation for key-presses, C-u means to press u while holding down
+     the control key.)  You will get the M2 command line in the minibuffer at the bottom of
+     the screen, and you can edit it.  It will initially look something like this:",
+     PRE ///     M2 --no-readline --print-width 189 ///,
+     "You can change it to the right thing:",
+     PRE ///     /foo/bar/bin/M2 --no-readline --print-width 189 ///,
+     "Then press ", TT "enter", " and M2 should start running.
+     That will stick for the rest of your emacs session.  Later, to return to the *M2* window from another, or to start
+     up M2 again, just press f12.",
+
+     SUBSECTION "teaching emacs permanently",
+
+     "Every time emacs starts up it reads commands from the file .emacs in your home
+     directory.  Put the following command in your
+     .emacs file.",
+     PRE ///(setq M2-exe "/foo/bar/bin/M2")///,
+     "The next time you start emacs it wil know how to find M2."
      }
 
 document {
@@ -92,23 +311,12 @@ document {
 	  in the ", TT ".emacs", " file in your home directory, creating the file if necessary.",
 	  },
 PRE///    ;; .emacs file in your home directory
-    (setq load-path 
-          (append
-           '( "/usr/local/Macaulay2-1.0/share/emacs/site-lisp" )
-           load-path
-           ))
-
     (load "M2-init.el" t)
 
     ; comment out the following line with an initial semicolon 
     ; if you want to use your f12 key for something else
     ; or change f12 to (for example) f8
-    (global-set-key [ f12 ] 'M2)
-///,
-     "where ", TT "/usr/local/Macaulay2-1.0", " on the fourth line should be replaced by 
-     the actual path to the installed Macaulay2.  Macaulay 2 can tell you what that part of the path
-     is: type ", TO "prefixDirectory", ".",
-     PRE "    prefixDirectory",
+    (global-set-key [ f12 ] 'M2)///,
      PARA {"After saving your ", TT ".emacs", " file, try running emacs.  Start Macaulay2
 	  by pressing the f12 function key.  On MacOS X systems, f12 is usurped
 	  by either DashBoard, SpotLight, or something else, so either you must
@@ -116,9 +324,10 @@ PRE///    ;; .emacs file in your home directory
 	  the systems use of the f12 key."
 	  },
      PARA {"If Macaulay2 doesn't start up (in a buffer named *M2*), check that you
-	  typed in the above lines correctly into ", TT ".emacs", ", and also check that
-	  you have the correct path to the Macaulay2 emacs files."
-	  },
+	  typed in the above lines correctly into ", TT ".emacs", ".  If they look okay, then
+	  see ", TO "teaching emacs how to find M2-init.el", ", ", TO "teaching emacs how to find M2", ", and ",
+	  TO "teaching your shell how to find M2", "."
+	  }
      }
 
 document {
