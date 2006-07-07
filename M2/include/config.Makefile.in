@@ -92,7 +92,7 @@ M2PKGNAME = PackageName
 #      http://cr.yp.to/unix.html, the section on "Filesystem layout"
 
 # this might have to get changed manually, but hopefully not:
-MAINPACKAGE = Macaulay2Core
+MAINPACKAGE = Core
 
 binRelDir = bin
 libRelDir = lib

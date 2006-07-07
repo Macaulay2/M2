@@ -10,7 +10,7 @@ export{
      LLL,
      isLLL, 
      kernelLLL,
-     hermiteLLL,
+     hermite,
      gcdLLL,
      gram,
      Threshold,
@@ -89,14 +89,13 @@ setLLLthreshold := (result,alpha) -> (
          error "LLL threshold out of range (1/4,1]";
      result.threshold = alpha;)
 
-LLLoptions := Options => {
-     Threshold => null,
-     ChangeMatrix => false,
-     Limit => infinity,
-     Strategy => NTL
-     }
-
-LLL = method LLLoptions
+LLL = method (
+     Options => {
+     	  Threshold => null,
+     	  ChangeMatrix => false,
+     	  Limit => infinity,
+     	  Strategy => NTL
+     	  })
 
 LLL MutableMatrix :=
 LLL Matrix := options -> (M) -> (
@@ -292,7 +291,8 @@ gramMultipliers = (B) -> (
      matrix A
      )
 
-isLLL = method(Options => {Threshold => 3/4});
+isLLL = method(Options => {Threshold => 3/4})
+
 isLLL Matrix := options -> (m) -> (
      LLLalpha := options.Threshold;
      (B, mu) := gram m;
@@ -456,11 +456,7 @@ doKernelLLL = (C,count) -> (
      if k > n then C.isDone = true;
      )
 
-LLLKernelOptions := Options => {
-     Limit => -1
-     }
-
-kernelLLL = method LLLKernelOptions
+kernelLLL = method (Options => { Limit => -1 })
 
 kernelLLL Matrix := options -> (M) -> (
      C := newLLLKernelComputation M;
@@ -472,7 +468,7 @@ kernelLLL Matrix := options -> (M) -> (
      )
 
 ----------------
--- hermiteLLL --
+-- hermite --
 ----------------
 -- This algorithm is from:
 --   Havas, Majewski, Matthews, 
@@ -604,45 +600,44 @@ doHermiteLLL = (C,count) -> (
      if k > m then C.isDone = true;
      );
 
-HermiteLLLoptions := Options => {
-     Threshold => 3/4,
-     ChangeMatrix => false,
-     Limit => -1
-     }
+hermite = method (Options => {
+     	  Threshold => 3/4,
+     	  ChangeMatrix => false,
+     	  Limit => -1,
+     	  Strategy => LLL
+     	  })
 
-hermiteLLL = method HermiteLLLoptions
-
-hermiteLLL Matrix := options -> (M) -> (
-     -- Possible options: Threshold=>QQ, ChangeMatrix,
-     -- and for the specific computation: 
-     C := newLLLHermiteComputation(M,options.Threshold, options.ChangeMatrix);
-     doHermiteLLL(C, options.Limit);     
-     if options.ChangeMatrix then
-       (matrix C.A, matrix C.changeOfBasis)
-     else
-       matrix C.A
-     )
+hermite Matrix := opts -> (M) -> (
+     if ring M =!= ZZ then error "hermite: expected matrix over ZZ";
+     if opts.Strategy === LLL then (
+	  -- Possible opts: Threshold=>QQ, ChangeMatrix,
+	  -- and for the specific computation: 
+	  C := newLLLHermiteComputation(M,opts.Threshold, opts.ChangeMatrix);
+	  doHermiteLLL(C, opts.Limit);     
+	  if opts.ChangeMatrix then (matrix C.A, matrix C.changeOfBasis)
+	  else matrix C.A
+	  )
+     else error "hermite: expected Strategy => LLL")
 
 ------------
 -- gcdLLL --
 ------------
-gcdLLLoptions := Options => {
-     Strategy => null,
-     Threshold => 3/4
-     }
 
-gcdLLL = method gcdLLLoptions
+gcdLLL = method(Options => {
+     	  Strategy => null,
+     	  Threshold => 3/4
+     	  })
 
 --gcdLLL Matrix := options -> (M) -> (
 --     -- Possible options: Threshold=>QQ, ChangeMatrix,
 --     -- and for the specific computation: 
---     (m,u) := hermiteLLL(M,options,ChangeMatrix=>true);
+--     (m,u) := hermite(M,options,ChangeMatrix=>true);
 --     (getEntry(m,0,numcols m-1), matrix u)
 --     )
 
 bgcdLLL = (s,thresh) -> (
      M := matrix{s};
-     (m,u) := hermiteLLL(M,Threshold=>thresh,ChangeMatrix=>true);
+     (m,u) := hermite(M,Threshold=>thresh,ChangeMatrix=>true);
      (m_(0,numgens source m - 1), u)
      )
 
@@ -732,7 +727,7 @@ addHook(Module, symbol minimalPresentation, (o,M) -> (
 	  R := ring M;
 	  if R === ZZ then (
 	       h := presentation M;
-	       (p,ch) := hermiteLLL(h, ChangeMatrix => true);
+	       (p,ch) := hermite(h, ChangeMatrix => true);
 	       m := rank target p;
 	       n := rank source p;
 	       cols := entries transpose p;
@@ -749,6 +744,7 @@ addHook(Module, symbol minimalPresentation, (o,M) -> (
 	       pm := N.cache.pruningMap = map(M,N,id_(target p)_rows');
 	       if debugLevel > 5 then (
 		    stderr
+		    << "-- M    = " << M << endl
 		    << "-- h    = " << h << endl
 		    << "-- p    = " << p << endl
 		    << "-- ch   = " << ch << endl
@@ -787,7 +783,7 @@ document {
 	     "applications and variants",
 	     TO kernelLLL,
 	     TO gcdLLL,
-	     TO hermiteLLL,
+	     TO hermite,
 	     "support routines that are occasionally useful",
 	     TO gram,
 	     TO isLLL
@@ -824,7 +820,7 @@ document {
 	  },
      Caveat => {"If the strategy given is not an NTL strategy, then the columns of the matrix m must be linearly independent.",
 	  "In any case, the matrix must be defined over the ring ZZ."},
-     SeeAlso => {isLLL, gcdLLL, kernelLLL, hermiteLLL}
+     SeeAlso => {isLLL, gcdLLL, kernelLLL, hermite}
      }
 document { 
      Key => [LLL, Threshold],
@@ -1083,7 +1079,7 @@ document {
 	  correctness.",
 	  "The matrix must be defined over the ring ZZ.  It should be possible to 
 	  allow real and rational matrices too, but this is not yet implemented."},
-     SeeAlso => {LLL, gcdLLL, kernelLLL, hermiteLLL}
+     SeeAlso => {LLL, gcdLLL, kernelLLL, hermite}
      }
 document { 
      Key => [isLLL, Threshold],
@@ -1128,7 +1124,7 @@ document {
 	  "(g,z) = gcdLLL s",
 	  "matrix{s} * z"
 	  },
-     SeeAlso => {LLLBases, LLL, kernelLLL, hermiteLLL}
+     SeeAlso => {LLLBases, LLL, kernelLLL, hermite}
      }
 document { 
      Key => [gcdLLL, Threshold],
@@ -1191,8 +1187,8 @@ document {
      EXAMPLE {
 	  ///
 	  A = map(ZZ^10, ZZ^7, (i,j) -> if random 1.0 > .2 then random 1000 else 0)
-	  hermiteLLL A
-	  (B,U) = hermiteLLL(A, ChangeMatrix=>true)
+	  hermite A
+	  (B,U) = hermite(A, ChangeMatrix=>true)
 	  A*U == B
 	  ///
 	  },
@@ -1214,9 +1210,9 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => {hermiteLLL,(hermiteLLL,Matrix)},
+     Key => {hermite,(hermite,Matrix)},
      Headline => "compute the Hermite normal form and small multiplier matrix using LLL bases",
-     Usage => "hermiteLLL m",
+     Usage => "hermite m",
      Inputs => {
 	  },
      Outputs => {
@@ -1230,7 +1226,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [hermiteLLL, Threshold],
+     Key => [hermite, Threshold],
      Headline => "",
      Usage => "",
      Inputs => {
@@ -1244,7 +1240,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [hermiteLLL, Limit],
+     Key => [hermite, Limit],
      Headline => "",
      Usage => "",
      Inputs => {
@@ -1258,7 +1254,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [hermiteLLL, ChangeMatrix],
+     Key => [hermite, ChangeMatrix],
      Headline => "",
      Usage => "",
      Inputs => {
@@ -1382,7 +1378,7 @@ TEST ///
     time assert(isLLL matrix mz3)
     mz == mz3 -- not always true.  Why not?
 
-    assert(hermiteLLL mz == hermiteLLL mz3)
+    assert(hermite mz == hermite mz3)
     
     time mz4 = LLL(m, Strategy=>CohenTopLevel, Threshold => 101/400)    
     assert( not isLLL matrix mz4 )
@@ -1467,7 +1463,7 @@ TEST ///
     m = matrix randomMutableMatrix(10,15,.5,5)
     mz = kernelLLL m
     mz2 = syz m
-    hermiteLLL mz
+    hermite mz
     LLL mz
     LLL syz m
 
@@ -1501,56 +1497,56 @@ TEST ///
     time LLL m1;  -- .76 sec 44.9 seconds (front-end implementation), Quality of output is higher still
     time LLL(m1, Strategy=>CohenEngine); -- 
     time LLL(m1, Strategy=>CohenTopLevel); -- 
-    time LLL(m1, Strategy=>{BKZ,RealFP}); -- 
+    -- time LLL(m1, Strategy=>{BKZ,RealFP}); -- too long
     
-    time LLL(m, Strategy=>{BKZ,RealFP}); -- 
-    time LLL(m, Strategy=>{BKZ,RealRR});
+    -- time LLL(m, Strategy=>{BKZ,RealFP}); -- too long
+    -- time LLL(m, Strategy=>{BKZ,RealRR}); -- too long
     time LLL(m);    
 ///
 
 
 -------------------
--- hermiteLLL -----
+-- hermite -----
 -------------------
 TEST ///
      loadPackage "LLLBases";
 
     time m1 = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
-    a = hermiteLLL m1
-    (b,c) = hermiteLLL(m1,ChangeMatrix=>true) -- comes out in a different format than 'gb'
+    a = hermite m1
+    (b,c) = hermite(m1,ChangeMatrix=>true) -- comes out in a different format than 'gb'
     assert(a == b)
     assert(m1*c == b)
 
     -- A simple one:
     m = matrix{{1,1,1,1},{0,1,2,3}}  
-    mh = hermiteLLL m
-    (mh1,mz) = hermiteLLL(m,ChangeMatrix=>true)
+    mh = hermite m
+    (mh1,mz) = hermite(m,ChangeMatrix=>true)
     assert(m * mz == mh)
 
     -- Test from Havas et al paper 1998:
     m = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
-    time (mh,mz) = hermiteLLL(m, ChangeMatrix=>true)
+    time (mh,mz) = hermite(m, ChangeMatrix=>true)
     assert(m * mz == mh)
 
     -- Random entries
     m = matrix randomMutableMatrix(10,15,.9,5)
-    time (mh,mz) = hermiteLLL(m, ChangeMatrix=>true)
+    time (mh,mz) = hermite(m, ChangeMatrix=>true)
     assert(m * mz == mh)
 
     -- Random entries
     m = matrix randomMutableMatrix(20,35,.9,5)
-    time (mh,mz) = hermiteLLL(m, ChangeMatrix=>true)
+    time (mh,mz) = hermite(m, ChangeMatrix=>true)
     assert(m * mz == mh)
 
     -- Random entries
     m = matrix randomMutableMatrix(20,35,.1,10)
-    time (mh,mz) = hermiteLLL(m, ChangeMatrix=>true)
+    time (mh,mz) = hermite(m, ChangeMatrix=>true)
     assert(m * mz == mh)
     det mz
     
     -- One that caused an error in an earlier version:
     m = matrix {{0, 0, 0, 2, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {-4, 0, 0, 0, 0, 2, 0, -1, 0, 0, -1, 0, 0, 0, 0}, {-4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -5}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -2, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0}}
-    time (mh,mz) = hermiteLLL(m, ChangeMatrix=>true)
+    time (mh,mz) = hermite(m, ChangeMatrix=>true)
     assert(m * mz == mh)
 
 ///
@@ -1624,7 +1620,11 @@ TEST ///
 
 TEST ///
      debugLevel = 10
-     scan(1 .. 4, d -> scan(5, i -> prune coker random (ZZ^d, ZZ^d)))
-     scan(1 .. 4, d -> scan(5, i -> prune coker random (ZZ^d, ZZ^(d+1))))
-     scan(1 .. 4, d -> scan(5, i -> prune coker random (ZZ^(d+1), ZZ^d)))
+     scan(2 .. 7, d -> scan(5, i -> scan(-1 .. 1, e -> (
+			 f := random(ZZ^d, ZZ^(d+e));
+			 prune coker f;
+			 prune image f;
+			 prune subquotient(f, f * random(ZZ^(d+e), ZZ^(d+e-1)));
+			 prune subquotient(f, random(ZZ^d, ZZ^(d-1)));
+			 ))));
 ///

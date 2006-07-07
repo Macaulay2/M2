@@ -1,4 +1,4 @@
--- sort \\ toString \ unique \\ flatten \\ keys \ select( options \ select(value \ values Macaulay2Core.Dictionary, f -> class f === Function), x -> x =!= null )
+-- sort \\ toString \ unique \\ flatten \\ keys \ select( options \ select(value \ values Core.Dictionary, f -> class f === Function), x -> x =!= null )
 
 {AbsoluteLinks, Adjust, Algorithm, Associative, Author, BasisElementLimit, CallLimit, ChangeMatrix, CodimensionLimit, CompleteIntersection, Date, DebuggingMode, Degree, DegreeLimit,
       DegreeMap, DegreeOrder, DegreeRank, Degrees, Dense, DivideConquer, Email, Encapsulate, Exclude, First, FormattedKey, GBDegrees, HardDegreeLimit, Headline, Heft, Hermitian, Hilbert,
@@ -8,7 +8,7 @@
       TotalPairs, Truncate, TypicalValue, Undo, Unmixed, UpdateOnly, UseHilbertFunction, Variable, VariableBaseName, VariableOrder, Variables, Verbose, Verify, Version, Weights, WeylAlgebra}
 
 
-f = key -> select(value \ unique values Macaulay2Core.Dictionary, f -> class f === Function and options f =!= null and (options f)#?key)
+f = key -> select(value \ unique values Core.Dictionary, f -> class f === Function and options f =!= null and (options f)#?key)
 f Truncate
 
 document {

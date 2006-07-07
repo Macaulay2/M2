@@ -13,7 +13,7 @@ newPackage ("Macaulay2",
      Version => ver)
 
 if version#"VERSION" =!= ver 
-then error ("version number mismatch: Macaulay2 (documentation) package is version ",ver,", but Macaulay2Core is version ", version#"VERSION")
+then error ("version number mismatch: Macaulay2 (documentation) package is version ",ver,", but Core is version ", version#"VERSION")
 
 beginDocumentation()
 

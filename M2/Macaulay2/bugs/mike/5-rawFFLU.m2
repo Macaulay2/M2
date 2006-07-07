@@ -1,5 +1,5 @@
 -- MES yanked this from test/engine/LU.m2, 6/19/06
-debug Macaulay2Core
+debug Core
 R = QQ
 m = matrix(R, {{1,2,3,4,5},
 	  {2,3,4,5,1},

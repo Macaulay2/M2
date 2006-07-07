@@ -1,6 +1,6 @@
 -- This file written by Amelia Taylor <ataylor@math.rutgers.edu>
 
--- debug Macaulay2Core
+-- debug Core
 
 -- Computes the integral closure of a reduced ring (R/I where I is radical).  
 -- integralClosure takes R/I as input and outputs a sequence of ideals, 
@@ -374,7 +374,7 @@ R = ZZ/101[symbol x..symbol z,Degrees=>{2,5,6}]/(z*y^2-x^5*z-x^8)
 ICfractions(R)
 ICfractions(R, Strategy => Long)
 
-debug Macaulay2Core
+debug Core
 load "normal-15-6-06.m2"
 S = ZZ/32003[x,y,z]
 I = ideal"xy-z2, x2-yz"
