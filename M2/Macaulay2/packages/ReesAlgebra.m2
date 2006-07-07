@@ -542,8 +542,8 @@ document {
      Headline => "compute the distinguished subvarieties of a variety along 
      with their multiplicities",
      Usage => "distinguishedAndMult I" ,
-     Inputs =>  "I" => {"an ", ofClass Ideal, " over a ", 
-	  ofClass PolynomialRing},
+     Inputs => { "I" => {"an ", ofClass Ideal, " over a ", 
+	  ofClass PolynomialRing}},
      Outputs => {{"a ", ofClass List, " of pairs where the first entry 
 	       is the multiplicity of the second entry which is one 
 	       of the ideals defining a component of the support of 
