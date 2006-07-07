@@ -93,7 +93,7 @@ public:
       v = M->columns_[col];
     }
     iterator(const SMat<CoeffRing> *M0) : M(M0), 
-					  col(0), 
+					  col(-1), 
 					  v(0) {}
     const elem &value() { return v->coeff; }
     void next() { v = v->next; }

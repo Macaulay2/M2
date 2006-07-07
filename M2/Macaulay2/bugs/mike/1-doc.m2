@@ -32,11 +32,12 @@ missing reference to documentation as subnode: Macaulay2 :: partial computation 
 missing reference to documentation as subnode: Macaulay2 :: Hilbert driven Groebner basis
 missing reference to documentation as subnode: Macaulay2 :: assignment
 missing reference to documentation as subnode: Macaulay2 :: a sample package: Quaternions
-missing reference to documentation as subnode: Macaulay2 :: examples of monomial orders
-missing reference to documentation as subnode: Macaulay2 :: general monomial orders
-missing reference to documentation as subnode: Macaulay2 :: term orders
-missing reference to documentation as subnode: Macaulay2 :: local orders
-missing reference to documentation as subnode: Macaulay2 :: negative exponents
 
-symbol has no documentation: Macaulay2 :: schreyerOrder
-method has no documentation: Macaulay2 :: schreyerOrder(Module), key: 
+GONE? missing reference to documentation as subnode: Macaulay2 :: examples of monomial orders
+GONE? missing reference to documentation as subnode: Macaulay2 :: general monomial orders
+GONE? missing reference to documentation as subnode: Macaulay2 :: term orders
+GONE? missing reference to documentation as subnode: Macaulay2 :: local orders
+GONE? missing reference to documentation as subnode: Macaulay2 :: negative exponents
+
+DONE symbol has no documentation: Macaulay2 :: schreyerOrder
+DONE method has no documentation: Macaulay2 :: schreyerOrder(Module), key: 

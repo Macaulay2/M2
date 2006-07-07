@@ -281,8 +281,12 @@ Linux notes
 ----------------------
 MacOS X notes
 ----------------------
-The easiest way to install Macaulay2 under Mac OS X is to use the Fink system
-<http://fink.sourceforge.net>.  Follow the instructions at the Fink website
+There are several methods for installing Macaulay2 under Mac OS X.
+(1) Download the ppc or i386 disk images and follow the directions in
+the read me file.
+
+(2) Use the fink system (http://fink.sourceforge.net).
+Follow the instructions at the Fink website
 to install Fink itself, add unstable/main to the appropriate line in
 /sw/etc/fink.conf, and then install Fink's "macaulay2" package.  You can
 choose the binary installation method or the source installation method
@@ -291,17 +295,7 @@ may also wish to install emacs or xemacs using Fink, for the best interface
 to Macaulay2.
 
 Fink can also be used to install other software of interest to
-mathematicians.  In most cases, you simply install the relevant Fink package.
-In two special cases -- the X11 windowing system, and TeX -- it is possible
-to install the software using another method, and then tell Fink about it (by
-installing Fink's packages "system-xfree86" and "system-tetex",
-respectively).
-
-Note, June 1, 2003: The bug, which caused Macaulay2 for Mac OS X as compiled
-by fink as version 0.9.2-6 to crash occasionally, has been fixed!  The
-problem was that the garbage collector library, gc, was configured
-incorrectly.  It passes all the tests, so look forward to a version that fink
-will call "stable".
+mathematicians, and is highly recommended. 
 
 Issues remaining:
   the fink ".info" file needs to be improved
@@ -312,14 +306,24 @@ Each user needs to do the following after installation:
   add to .emacs file
     (load "/sw/lib/Macaulay2-0.9.2/emacs/M2-init.el")
 
-These are done by the fink macaulay2 package, but if you compile on your own,
-you may need to do the following:
+(3) Build from source yourself.  The following are the steps we take
+to build a binary disk image for Macaulay2.  First, the libraries mentioned above must have been built.
+This assumes that the library files are in /capybara/lib and the include files are in /capybara/include.
 
-	# this is in Macaulay2/d
-        ar x /sw/lib/libfac.a tmpl_inst.o
-        mv tmpl_inst.o libfac_tmpl_inst.o
+ svn export svn://u123.math.uiuc.edu/Macaulay2/trunk M2
+ cd M2/M2
+ mkdir tmp-opt
+ cd tmp-opt
 
-Dumpdata doesn't work, I haven't tried removing --disable-strip yet.
+ LOADLIBES=-lgcc_s.10.5 CPPFLAGS="-I/capybara/include" LDFLAGS="-L/capybara/lib" ../configure --prefix=../../M2-installed --with-veclib --enable-altivec
+ make
+ make install
+
+ # assuming that that compile and install had no errors (warnings are fine), then now we build
+ # a binary disk image
+
+
+(4) 
 Here are the configure line I have used that works:
 
     mkdir tmp

@@ -1,4 +1,5 @@
 kk = GF(25,Variable => a)
+ambient kk
 b = promote(1/2,kk)
 
 f = map(kk,kk,{a})

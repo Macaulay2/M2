@@ -23,6 +23,15 @@ chk(x^10*(1+x+x^100)*(1-x+x^2),x^6*(1-x+x^2))
 stderr << currentFileName << ": test deferred" << endl
 
 end
+
+R = ZZ[x,Inverses=>true,MonomialOrder=>RevLex]
+f = x
+g = 1-x
+debug Core
+raw f // raw g
+
+x//(0_R)
 -- Local Variables:
+-- M2-send-to-buffer: "*gud*"
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test euclid.out"
 -- End:

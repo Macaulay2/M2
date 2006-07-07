@@ -7,8 +7,8 @@ errorDepth = 0
 
 -- Test of the following routines:
 --   rawMonomialOrdering
---     Lex, LexSmall, LexTiny,
---     GRevLex, GRevLexSmall, GRevLexTiny
+--     Lex, 
+--     GRevLex, 
 --     RevLex
 --     Weights
 --     GroupLex, GroupRevLex

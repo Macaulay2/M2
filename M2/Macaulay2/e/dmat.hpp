@@ -66,9 +66,9 @@ public:
       to_next_valid();
     }
     iterator(const DMat<CoeffRing> *M0) : M(M0), 
-					  col(0), 
+					  col(-1), 
 					  begin(0),
-					  end(0) { set(0); }
+					  end(0) { }
     const elem &value() { return *begin; }
     void next() { to_next_valid(); }
     bool valid() { return begin >= end; }
