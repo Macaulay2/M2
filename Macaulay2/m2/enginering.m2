@@ -9,6 +9,8 @@ ring RingElement := r -> class r
 
 promote'(Number,RingElement) := (n,R) -> new R from rawFromNumber(R,n)
 
+-- RingElement.directSum = v -> directSum apply(v, a -> matrix{{a}})
+
 EngineRing = new Type of Ring
 EngineRing.synonym = "engine ring"
 raw EngineRing := R -> R.RawRing

@@ -234,10 +234,14 @@ directSum Sequence := args -> (
      key := (directSum, args);
      if y =!= null and y#?key then y#key else (
 	  type := single apply(args, class);
-	  if not type.?directSum then error "no method for direct sum";
-	  S := type.directSum args;
+	  meth := lookup(symbol directSum, type);
+	  if meth === null then error "no method for direct sum";
+	  S := meth args;
 	  if y =!= null then y#key = S;
 	  S))
+
+-- Number.directSum = v -> directSum apply(v, a -> matrix{{a}})
+
 Option ++ Option := directSum
 directSum Option := o -> directSum(1 : o)
 Option.directSum = args -> (
