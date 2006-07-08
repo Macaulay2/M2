@@ -1,8 +1,49 @@
 document {
      Key => Package,
      Headline => "the class of all packages",
+     "A package is a body of Macaulay2 source code devoted to a 
+     particular topic.  Many packages are distributed with Macaulay 2, 
+     and others are available from various users on the internet.",
+     PARA{},
      "See ", TO "packages", " for an overview about using and writing packages.",
-     PARA { "The directory containing the packages is ", HREF { LAYOUT#"packages",LAYOUT#"packages" }, "." }
+     PARA{},
+     BOLD "Available packages",
+     UL {
+	  TO "packages provided with Macaulay 2",
+	  {"The directory containing the packages is ", HREF { LAYOUT#"packages",LAYOUT#"packages" }}
+	  },
+     PARA{},
+     BOLD "Functions useful when ", TO "using packages", ".",
+     UL {
+	  TO needsPackage,
+	  TO loadPackage,
+	  TO installPackage,
+	  TO check,
+	  TO debug
+	  },
+     BOLD "Parts of a package.  See ", TO "creating a package", ".",
+     UL {
+	  TO newPackage,
+	  TO export,
+	  TO exportMutable,
+	  TO beginDocumentation,
+	  TO document,
+	  TO TEST
+	  },
+     BOLD "Functions useful while writing and debugging a package", ".",
+     UL {
+	  TO "debugging",
+	  TO debug,
+	  TO check
+	  },
+     BOLD "Functions which are only rarely used.",
+     UL {
+	  TO dismiss,
+	  TO uninstallPackage,
+	  TO use,
+	  TO makePackageIndex,
+	  TO "loadedPackages"
+	  },
      }
 
 document {
@@ -114,7 +155,7 @@ document {
 	  [newPackage,Headline],HomePage, [newPackage,HomePage],[newPackage,DebuggingMode],Email,Name,
 	  InfoDirSection, [newPackage,InfoDirSection]
 	  }, 
-     Headline => "start a new package",
+     Headline => "package item: start a new package",
      Usage => "newPackage ( title )",
      Inputs => {
 	  "title" => "the name of the new package",
