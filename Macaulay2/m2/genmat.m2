@@ -45,7 +45,7 @@ randommat := (R,r,c) -> (
      if R.?Adjust then c = R.Adjust c;
      map(R, rawMatrixRandom(R.RawRing, r, c, 1.0, 0, 0)))
 
-random(List,Ring) := RingElement => (deg,R) -> (
+random(List,Ring) := RingElement => opts -> (deg,R) -> (
      if #deg =!= degreeLength R then error ("expected length of degree vector to be ", degreeLength R);
      if deg === {} then return random R;
      k := coefficientRing R;
@@ -53,9 +53,22 @@ random(List,Ring) := RingElement => (deg,R) -> (
      n := matrix table(numgens source m,1, x -> promote(random k,R));
      (m*n)_(0,0))
 
-random(ZZ,Ring) := RingElement => (n,R) -> random({n},R)
+random(ZZ,Ring) := RingElement => opts -> (n,R) -> random({n},R)
 
-random(Module, Module) := Matrix => (F,G) -> (
+randomIso := (F) -> (
+     if not isFreeModule F then error "random isomorphism: expected free module";
+     R := ring F;
+     n := numgens F;
+     f := new MutableMatrix from id_F;
+     d := toList ( degreeLength F : 1 );
+     for count to 5 * n do (if count%2 == 0 then rowAdd else columnAdd)(f, i := random n, random(d,R), (i + random(n-1)) % n);
+     map(F,F,new Matrix from f))
+
+random(Module, Module) := Matrix => opts -> (F,G) -> (
+     if opts.Isomorphism then (
+	  if F =!= G then error "random: expected source equal to target";
+	  return randomIso(F);
+	  );
      R := ring F;
      p := char R;
      if p === 0 then p = ZZ;

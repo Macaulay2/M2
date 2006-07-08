@@ -146,13 +146,17 @@ setup((), {
 	  degree, coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, annihilator, assign, numgens, conjugate,
-	  autoload, minprimes, relations, cone, random, standardForm, inverse,
+	  autoload, minprimes, relations, cone, standardForm, inverse,
 	  determinant, presentation, dismiss, degreesMonoid, submatrix,
 	  fraction, part, coefficient, preimage, minimalPrimes
 	  })
 
 use = method()
 use Thing := identity
+
+random = method(Options => {
+	  Isomorphism => false
+	  })
 
 minimalPresentation = method(
      Options=>{
