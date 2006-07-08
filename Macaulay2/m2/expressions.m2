@@ -484,7 +484,7 @@ value' BinaryOperation := (m) -> (
      )
 net BinaryOperation := m -> (
      -- must put precedences here eventually
-     horizontalJoin( "(", net m#1, toString m#0, net m#2, ")" )
+     horizontalJoin( net m#1, toString m#0, net m#2 )
      )
 toString BinaryOperation := m -> (
      horizontalJoin( "(", toString m#1, toString m#0, toString m#2, ")" )

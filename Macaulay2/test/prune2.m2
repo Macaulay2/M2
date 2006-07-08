@@ -15,4 +15,4 @@ assert ( ideal(0) == fittingIdeal_0 N)
 assert ( ideal(7*7*11) == fittingIdeal_1 N)
 assert ( ideal(7) == fittingIdeal_2 N)
 assert ( ideal(1) == fittingIdeal_3 N)
-
+assert ( rank M == 1 )

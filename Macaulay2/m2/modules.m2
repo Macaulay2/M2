@@ -344,12 +344,25 @@ genus Module := (M) -> (
      (-1)^d * (e - 1))
 genus Ring := (R) -> genus R^1
 
-rank Module := M -> (
-     if isFreeModule M then numgens M 
-     else if degreeLength ring M === 0 and isField ring M then numgens minimalPresentation M
-     else if dim M < dim ring M then 0
-     else degree M // degree ring M
-     )
+rank Module := (cacheValue symbol rank) (M -> (
+	  R := ring M;
+	  if isFreeModule M then numgens M 
+	  else if isField R or R === ZZ then (
+	       if M.?relations then (
+		    if M.?generators then (
+			 g := M.relations | M.generators;
+			 h := M.relations;
+			 numgens source generators gb g - numgens source generators gb h)
+		    else (
+	       		 p := M.relations;
+	       		 numgens target p - numgens source generators gb p))
+	       else (
+		    if M.?generators then (
+			 numgens source generators gb M.generators)
+		    else numgens M))
+	  else if dim M < dim ring M then 0
+	  else degree M // degree ring M
+	  ))
 
 ambient Module := Module => M -> (
      if M.?generators then M.generators.target

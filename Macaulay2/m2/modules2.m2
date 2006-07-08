@@ -108,7 +108,7 @@ Matrix ** Ring := Matrix => (f,R) -> (
 poincare Module := M -> (
      R := ring M;
      n := degreeLength R;
-     if n == 0 then error "expected nonzero degree length";
+     if n == 0 then error "expected nonzero degree length"; -- return the rank?
      M = cokernel presentation M;
      -- if not isHomogeneous M then error "expected a homogeneous module";
      if M.cache.?poincare then M.cache.poincare else M.cache.poincare = (
@@ -357,6 +357,12 @@ minimalPresentation(Module) := Module => opts -> (cacheValue symbol minimalPrese
      else if R === ZZ then (
 	  f := presentation M;
 	  (g,ch) := smithNormalForm(f, ChangeMatrix => {true, false});
+	  m := numgens target g;
+	  n := numgens source g;
+	  piv := select(pivots g,ij -> abs g_ij === 1);
+	  rows := toList (0 .. m-1) - set(first \ piv);
+	  cols := toList (0 .. n-1) - set(last \ piv);
+	  (g,ch) = (g^rows_cols,ch^rows);
 	  N := cokernel g;
 	  N.cache.pruningMap = map(M,N,id_(target ch) // ch);	    -- yuk, taking an inverse here, gb should give inverse change matrices, or the pruning map should go the other way
 	  N)
@@ -380,6 +386,21 @@ minimalPresentation(Matrix) := Matrix => opts -> (m) -> (
      N := target m;
      if not N.cache.?pruningMap then m = (minimalPresentation N).cache.pruningMap^-1 * m;
      m)
+
+factor Module := opts -> (M) -> (
+     R := ring M;
+     if R === ZZ then (
+	  p := presentation minimalPresentation M;
+	  m := numgens target p;
+	  n := numgens source p;
+	  t := tally apply(pivots p, (i,j) -> abs p_(i,j));
+	  if m > n then t = t + new Tally from { 0 => m-n };
+	  new Sum from apply(sort pairs t, (d,e) -> (
+		    fac := if d === 0 then hold ZZ else Divide{ hold ZZ, hold d};
+		    if e > 1 then fac = Power { Divide{ hold ZZ, hold d}, e };
+		    fac)))
+     else error "expected module over ZZ"
+     )
 
 -----------------------------------------------------------------------------
 
