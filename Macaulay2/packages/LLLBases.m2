@@ -731,13 +731,7 @@ addHook(Module, symbol minimalPresentation, (o,M) -> (
 	       p := hermite h;
 	       m := rank target p;
 	       n := rank source p;
-	       cols := entries transpose p;
-	       piv := for i from 0 to #cols-1 list (
-		    col := cols#i;
-		    k := position(col, e -> e =!= 0);
-		    if k === null then continue;
-		    if col#k =!= 1 then continue;
-		    (k,i));
+	       piv := pivots p;
 	       rows' := toList(0 .. m-1) - set(first\piv);
 	       cols' := toList(0 .. n-1) - set(last\piv);
 	       p' := p^rows'_cols';

@@ -9,9 +9,6 @@ scan({autoReduce,ConvertJoin,ConvertRepeat,ConvertApply},
 undocumented unlist
 unlist = X -> error "'unlist' has been replaced by toSequence"
 
-undocumented elements
-elements = X -> error "'elements' has been replace by toList"
-
 undocumented evaluate
 evaluate = X -> error "'evaluate' has been replaced by 'value'"
 

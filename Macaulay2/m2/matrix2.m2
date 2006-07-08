@@ -1,5 +1,17 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
+pivots = method()
+
+pivots Matrix := (p) -> (			    -- I wish this could be in the engine
+     R := ring p;
+     f := leadTerm matrix {{1_R},{1_R}};
+     dir := if f_(0,0) == 1 then Down else Up;
+     opt := Reverse => dir === Up;
+     cols := entries transpose p;
+     for j from 0 to #cols-1 list (
+	  i := position(cols#j, e -> e =!= 0, opt);
+	  if i =!= null then (i,j)))
+
 smithNormalForm = method(
      Options => {
 	  ChangeMatrix => {true, true}		    -- target, source
@@ -9,13 +21,16 @@ smithNormalForm Matrix := o -> (f) -> (
      (tchg,schg) := (o.ChangeMatrix#0, o.ChangeMatrix#1);
      (tmat,smat) := null;	-- null represents the identity, lazily
      (tzer,szer) := null;	-- null represents zero, lazily
+     R := ring f;
+     d := degreeLength R;
      g := f;
      op := false;	       -- whether we are working on the transposed side
+     count := 0;
      while true do (
 	  flag := if op then tchg else schg;
 	  G := gb(g, ChangeMatrix => flag, Syzygies => flag);
 	  h := generators G;
-     	  if h == g then break;	  
+     	  if count > 0 and h == g then break;	  
 	  if op then (
 	       if tchg then (
 	       	    chg := getChangeMatrix G;
@@ -32,41 +47,63 @@ smithNormalForm Matrix := o -> (f) -> (
 		    else ( smat = smat * chg; szer = smat * zer | szer )));
 	  g = transpose h;
 	  op = not op;
+	  count = count + 1;
 	  );
      if op then g = transpose g;
      if tchg then (
-     	  tmat = transpose tmat;
-     	  tzer = transpose tzer;
-	  g = g || map(target tzer, source g,0);
+	  if tmat === null then (
+	       tchange := id_(target f);
+	       )
+	  else (
+     	       tmat = transpose tmat;
+     	       tzer = transpose tzer;
+	       tchange = tmat || tzer;
+	       g = g || map(target tzer, source g,0);
+	       );
+	  )
+     else (
+--	  if d == 0 then g = g || map(R^(numgens target f - numgens target g), source g,0)
+--	  else (
+--	       degs := elements (tally degrees target f - tally degrees target g);
+--	       if #degs == numgens target f - numgens target g
+--	       then g = g || map(R^degs, source g,0)
+--	       else g = g || map(R^(numgens target f - numgens target g), source g,0))
 	  );
      if schg then (
+	  if smat === null
+	  then (
+	       schange := id_(source f);
+	       )
+	  else (
+	       schange = smat | szer);
 	  g = g | map(target g, source szer, 0);
+	  )
+     else (
+--	  if d == 0 then g = g | map(target g, R^(numgens source f - numgens source g), 0)
+--	  else (
+--	       degs = elements (tally degrees source f - tally degrees source g);
+--	       if #degs == numgens source f - numgens source g
+--	       then g = g | map(target g, R^degs, 0)
+--	       else g = g | map(target g, R^(numgens source f - numgens source g), 0))
 	  );
-     unsequence nonnull ( g, if tchg then tmat || tzer, if schg then smat | szer ))
+     unsequence nonnull ( g, if tchg then tchange, if schg then schange ))
 
 complement = method()
 
 complement Matrix := Matrix => (f) -> (
      if not isHomogeneous f then error "complement: expected homogeneous matrix";
+     if not isFreeModule source f or not isFreeModule target f then error "expected map between free modules";
      R := ring f;
      if R === ZZ then (
-	  error "complement: encountered matrix over ZZ: not implemented yet";
---	  p := generators gb(f, ChangeMatrix => false, Syzygies => false);
---	  m := rank target p;
---	  n := rank source p;
---	  cols := entries transpose p;
---	  piv := for i from 0 to #cols-1 list (
---	       col := cols#i;
---	       k := n-1 - position(reverse col, e -> e =!= 0);
---	       if k === null then continue;
---	       if col#k =!= 1 then continue;
---	       k);
---	  rows' := toList(0 .. m-1) - set piv;
---	  id_(ZZ^m)_rows'
+	  (g,ch) := smithNormalForm(f,ChangeMatrix=>{true,false});
+	  m := numgens target g;
+	  piv := select(pivots g,(i,j) -> abs g_(i,j) === 1);
+	  rows' := toList(0 .. m-1) - set (first \ piv);
+	  id_(ZZ^m)_rows' // ch				    -- would be faster if gb provided inverse change matrices!!!
 	  )
      else if isAffineRing R then (
-	  g := transpose syz transpose substitute(f,0);
-	  id_(target g) // g)
+	  h := transpose syz transpose substitute(f,0);
+	  id_(target h) // h)
      else error "complement: expected matrix over affine ring or ZZ")
 
 mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (

@@ -16,6 +16,9 @@ gens(g = gb(f = random (ZZ^6, ZZ^6), ChangeMatrix => true))
 assert( gens g == f * getChangeMatrix g )
 assert( leadTerm gens g == transpose leadTerm gens g)
 
+-- uniqueness of gb's:
+assert( gens gb matrix {{-1}} == gens gb matrix {{1}} )
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test gb3.out"
