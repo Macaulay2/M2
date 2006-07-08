@@ -82,6 +82,8 @@ random ZZ := ZZ => opts -> x -> (
      if x <= 0 then error "expected a positive number";
      rawRandomInteger x)
 
+random(ZZ,ZZ) := ZZ => opts -> (min,max) -> min + rawRandomInteger(max-min+1)
+
 d := 2^31 - 1
 df := d + 0.
 

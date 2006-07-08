@@ -230,7 +230,7 @@ export {
 	symbol IntermediateMarkUpType,
 	symbol InverseMethod,
 	symbol Inverses,
-	symbol Isomorphism,
+	symbol MaximalRank,
 	symbol Iterate,
 	symbol Key,
 	symbol Keyword,

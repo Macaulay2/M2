@@ -16,6 +16,12 @@ assert( g == matrix {{5/6*x-y, 9/4*x+7/3*y}, {-3/7*x-4/3*y, -9/10*x+1/4*y}} )
 
 -- check random isomorphisms are isomorphisms
 
-assert isIsomorphism random(ZZ^6,ZZ^6,Isomorphism=>true)
-R = QQ[x,y]
-assert isIsomorphism random(R^4,R^4,Isomorphism=>true)
+assert isIsomorphism random(ZZ^6,ZZ^6,MaximalRank=>true)
+assert isInjective random(ZZ^6,ZZ^3,MaximalRank=>true)
+assert isSurjective random(ZZ^3,ZZ^6,MaximalRank=>true)
+
+R = ZZ/101[x,y]
+assert isIsomorphism random(R^4,R^4,MaximalRank=>true)
+assert isInjective random(R^6,R^3,MaximalRank=>true)
+assert isSurjective random(R^3,R^6,MaximalRank=>true)
+
