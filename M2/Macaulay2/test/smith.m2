@@ -17,3 +17,9 @@
 (g,t,s) = smithNormalForm ( f = random(ZZ^15,ZZ^3) * matrix "14,,;,140,;,,1260" * random(ZZ^3,ZZ^20) );
 g
 assert ( t*f*s == g )
+
+
+(g,t,s) = smithNormalForm ( f = random(ZZ^15,ZZ^3,MaximalRank=>true) * matrix "14,,;,140,;,,1260" * random(ZZ^3,ZZ^20,MaximalRank=>true) );
+g
+assert ( t*f*s == g )
+assert numgens target 
