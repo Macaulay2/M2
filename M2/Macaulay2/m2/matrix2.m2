@@ -471,8 +471,8 @@ compress = method()
 
 compress Matrix := Matrix => (m) -> map(target m,, rawMatrixCompress m.RawMatrix)
 
-diagonalMatrix = method()
-diagonalMatrix Matrix := Matrix => (m) -> (
+diagonalMatrix = method(TypicalValue => Matrix)
+diagonalMatrix Matrix := (m) -> (
      R := ring m;
      nrows := numgens target m;
      if nrows === 0 then
@@ -482,6 +482,12 @@ diagonalMatrix Matrix := Matrix => (m) -> (
      m1 := mutableZero(R,a,a);
      for i from 0 to a-1 do m1_(i,i) = m_(0,i);
      matrix m1)
+
+diagonalMatrix(Ring, List) := (R,v) -> diagonalMatrix matrix(R,{v})
+
+diagonalMatrix List := v -> (
+     if #v === 0 then return id_(ZZ^0);
+     diagonalMatrix matrix {v})
 
 newCoordinateSystem = method()
 

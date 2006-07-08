@@ -395,10 +395,7 @@ factor Module := opts -> (M) -> (
 	  n := numgens source p;
 	  t := tally apply(pivots p, (i,j) -> abs p_(i,j));
 	  if m > n then t = t + new Tally from { 0 => m-n };
-	  new Sum from apply(sort pairs t, (d,e) -> (
-		    fac := if d === 0 then hold ZZ else Divide{ hold ZZ, hold d};
-		    if e > 1 then fac = Power { Divide{ hold ZZ, hold d}, e };
-		    fac)))
+	  new Sum from apply(sort pairs t, (d,e) -> Power { if d === 0 then hold ZZ else Divide{ hold ZZ, hold d}, e }))
      else error "expected module over ZZ"
      )
 
