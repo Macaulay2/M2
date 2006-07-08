@@ -13,6 +13,7 @@ export {
 	symbol VerticalSpace,
 	symbol Alignment,
 	symbol Global,
+	symbol smithNormalForm,
 	symbol MethodFunction,
 	symbol DL,
 	symbol DT,

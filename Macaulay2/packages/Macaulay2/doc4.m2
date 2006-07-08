@@ -579,6 +579,12 @@ document {
 	  }
      }
 
+document {
+     Key => smithNormalForm,
+     "This routine is under development.  The main idea is to compute a Groebner basis, transpose the generators, and repeat, until
+     we encounter a matrix whose transpose is already a Groebner basis.  This may depend heavily on the monomial order."
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

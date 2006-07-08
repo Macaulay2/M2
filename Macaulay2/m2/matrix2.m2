@@ -1,5 +1,49 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
+smithNormalForm = method(
+     Options => {
+	  ChangeMatrix => {true, true}		    -- target, source
+	  }
+     )
+smithNormalForm Matrix := o -> (f) -> (
+     (tchg,schg) := (o.ChangeMatrix#0, o.ChangeMatrix#1);
+     (tmat,smat) := null;	-- null represents the identity, lazily
+     (tzer,szer) := null;	-- null represents zero, lazily
+     g := f;
+     op := false;	       -- whether we are working on the transposed side
+     while true do (
+	  flag := if op then tchg else schg;
+	  G := gb(g, ChangeMatrix => flag, Syzygies => flag);
+	  h := generators G;
+     	  if h == g then break;	  
+	  if op then (
+	       if tchg then (
+	       	    chg := getChangeMatrix G;
+	       	    zer := syz G;
+		    if tmat === null
+		    then ( tmat =        chg; tzer =        zer        )
+		    else ( tmat = tmat * chg; tzer = tmat * zer | tzer )))
+	  else (
+	       if schg then (
+	       	    chg = getChangeMatrix G;
+	       	    zer = syz G;
+		    if smat === null
+		    then ( smat =        chg; szer =        zer        )
+		    else ( smat = smat * chg; szer = smat * zer | szer )));
+	  g = transpose h;
+	  op = not op;
+	  );
+     if op then g = transpose g;
+     if tchg then (
+     	  tmat = transpose tmat;
+     	  tzer = transpose tzer;
+	  g = g || map(target tzer, source g,0);
+	  );
+     if schg then (
+	  g = g | map(target g, source szer, 0);
+	  );
+     unsequence nonnull ( g, if tchg then tmat || tzer, if schg then smat | szer ))
+
 complement = method()
 
 complement Matrix := Matrix => (f) -> (

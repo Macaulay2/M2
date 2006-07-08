@@ -1,0 +1,16 @@
+-*- M2 -*-
+
+issub := (f,g) -> -1 === rawGBContains(raw gb g,raw f)	    -- we can do better in the homogeneous case!
+
+ZZ == Module := (n,M) -> M == n
+Module == ZZ := (M,n) -> (
+     if n =!= 0 then error "attempted to compare module to nonzero integer";
+     if M.?generators then (
+	  if M.?relations then issub(M.generators, M.relations)
+	  else M.generators == 0
+	  )
+     else (
+	  if M.?relations then issub(id_(ambient M), M.relations)
+	  else M.numgens === 0
+	  )
+     )
