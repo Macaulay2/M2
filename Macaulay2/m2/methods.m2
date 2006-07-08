@@ -155,7 +155,7 @@ use = method()
 use Thing := identity
 
 random = method(Options => {
-	  Isomorphism => false
+	  MaximalRank => false
 	  })
 
 minimalPresentation = method(

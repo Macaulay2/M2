@@ -55,24 +55,53 @@ random(List,Ring) := RingElement => opts -> (deg,R) -> (
 
 random(ZZ,Ring) := RingElement => opts -> (n,R) -> random({n},R)
 
-randomIso := (F) -> (
-     if not isFreeModule F then error "random isomorphism: expected free module";
+randomMR := (F,G) -> (
      R := ring F;
-     n := numgens F;
-     f := new MutableMatrix from id_F;
-     d := toList ( degreeLength F : 1 );
-     for count to 5 * n do (if count%2 == 0 then rowAdd else columnAdd)(f, i := random n, random(d,R), (i + random(n-1)) % n);
-     map(F,F,new Matrix from f))
+     m := numgens F;
+     n := numgens G;
+     k := min(m,n);
+     d1 := toList ( degreeLength F : 1 );
+     d0 := toList ( degreeLength F : 0 );
+     f := id_(R^k);
+     if m>k then f = f || random(R^(toList( m-k : d1 )), R^n)
+     else if n > k then f = f | random(R^(toList( m : d1 )), R^(n-k));
+     f = mutableMatrix f;
+     other := (i,m) -> (i + random(m-1)) % m;
+     if m>k then (
+	  for i to k-1 do rowAdd(f, i, random(d0,R), random(k,m-1));
+	  for i to k-1 do rowSwap(f, i, other(i,m)))
+     else if n>k then (
+	  for j to k-1 do columnAdd(f, j, random(d0,R), random(k,n-1));
+	  for j to k-1 do columnSwap(f, j, other(j,n)));
+     if m>1 then (
+	  for i to m-1 do (
+	       rowAdd(f, i, random(d0,R), other(i,m));
+	       rowAdd(f, other(i,m), random(d0,R), i);
+	       );
+	  for i to m-1 do (
+	       rowAdd(f, i, random(d1,R), other(i,m));
+	       rowAdd(f, other(i,m), random(d1,R), i);
+	       );
+	  );
+     if n>1 then (
+	  for j to n-1 do (
+	       columnAdd(f, j, random(d0,R), other(j,n));
+	       columnAdd(f, other(j,n), random(d0,R), j);
+	       );
+	  for j to n-1 do (
+	       columnAdd(f, j, random(d1,R), other(j,n));
+	       columnAdd(f, other(j,n), random(d1,R), j);
+	       );
+	  );
+     map(F,G,new Matrix from f))
 
 random(Module, Module) := Matrix => opts -> (F,G) -> (
-     if opts.Isomorphism then (
-	  if F =!= G then error "random: expected source equal to target";
-	  return randomIso(F);
-	  );
+     if not isFreeModule F or not isFreeModule G then error "random: expected free modules";
      R := ring F;
+     if R =!= ring G then error "modules over different rings";
+     if opts.MaximalRank then return randomMR(F,G);
      p := char R;
      if p === 0 then p = ZZ;
-     if R =!= ring G then error "modules over different rings";
      degreesTable := table(degrees F, degrees G, 
 	  (i,j) -> toList apply(j,i,difference));
      degreesTally := tally flatten degreesTable;
