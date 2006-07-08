@@ -4,7 +4,7 @@ peek' = method(TypicalValue => Net)
 
 peek'(ZZ,ZZ) := (depth,n) -> toString n
 peek'(ZZ,Nothing) := (depth,s) -> "null"
-peek'(ZZ,Symbol) := (depth,s) -> if depth === 0 then toString s else toExternalString s
+peek'(ZZ,Symbol) := (depth,s) -> toString s
 peek'(ZZ,Thing) := (depth,s) -> net s
 
 peek'(ZZ,BasicList) := (depth,s) -> (

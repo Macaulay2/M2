@@ -389,14 +389,15 @@ minimalPresentation(Matrix) := Matrix => opts -> (m) -> (
 
 factor Module := opts -> (M) -> (
      R := ring M;
-     if R === ZZ then (
+     if isField R then Sum { Power { expression R, rank M } }
+     else if R === ZZ then (
 	  p := presentation minimalPresentation M;
 	  m := numgens target p;
 	  n := numgens source p;
 	  t := tally apply(pivots p, (i,j) -> abs p_(i,j));
 	  if m > n then t = t + new Tally from { 0 => m-n };
-	  new Sum from apply(sort pairs t, (d,e) -> Power { if d === 0 then hold ZZ else Divide{ hold ZZ, hold d}, e }))
-     else error "expected module over ZZ"
+	  Sum apply(sort pairs t, (d,e) -> Power { if d === 0 then hold ZZ else Divide{ hold ZZ, hold d}, e }))
+     else error "expected module over ZZ or a field"
      )
 
 -----------------------------------------------------------------------------
