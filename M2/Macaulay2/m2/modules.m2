@@ -184,7 +184,7 @@ expression Module := M -> (
      else if M.?generators
      then new FunctionApplication from { image, expression M.generators }
      else if numgens M === 0 then 0
-     else new Superscript from {expression ring M, numgens M}
+     else new Power from {expression ring M, numgens M}
      )
 
 -- net Module := M -> net expression M
@@ -198,7 +198,7 @@ net Module := M -> (
      else if M.?generators
      then net new FunctionApplication from { image, net M.generators }
      else if numgens M === 0 then "0"
-     else net new Superscript from {net ring M, numgens M}
+     else net new Superscript from {expression ring M, numgens M}
      )
 
 Module == Module := (M,N) -> (
