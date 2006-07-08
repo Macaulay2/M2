@@ -1,0 +1,6 @@
+Make this work again:
+
+
+i12 : examples (jacobian,Ideal)
+
+o12 = 
