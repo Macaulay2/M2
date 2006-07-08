@@ -2890,7 +2890,7 @@ export rawGBBetti(e:Expr):Expr := (
      when a.0 is G:RawComputation do 
      when a.1 is type:Integer do
      if !isInt(type) then WrongArgSmallInteger(2) else
-     toExpr( Ccode(RawArrayInt, "(engine_RawArrayInt)rawResolutionBetti(", "(Computation *)", G, ",", toInt(type), ")" ))
+     toExpr( Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)rawResolutionBetti(", "(Computation *)", G, ",", toInt(type), ")" ))
      else WrongArgInteger(2)
      else WrongArg(1,"a raw computation")
      else WrongNumArgs(2)

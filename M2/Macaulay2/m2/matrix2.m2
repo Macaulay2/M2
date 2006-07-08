@@ -10,7 +10,8 @@ pivots Matrix := (p) -> (			    -- I wish this could be in the engine
      cols := entries transpose p;
      for j from 0 to #cols-1 list (
 	  i := position(cols#j, e -> e =!= 0, opt);
-	  if i =!= null then (i,j)))
+	  if i === null then continue;
+	  (i,j)))
 
 smithNormalForm = method(
      Options => {
