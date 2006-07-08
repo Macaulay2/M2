@@ -78,14 +78,14 @@ isPrime ZZ := Boolean => n -> (
      else isPrime1 n and (n == 2 or isPrime2 n)
      )
 
-random ZZ := ZZ => x -> (
+random ZZ := ZZ => opts -> x -> (
      if x <= 0 then error "expected a positive number";
      rawRandomInteger x)
 
 d := 2^31 - 1
 df := d + 0.
 
-random RR := RR => x -> (
+random RR := RR => opts -> x -> (
      if x <= 0. then (
 	  error "expected a positive number"
 	  );

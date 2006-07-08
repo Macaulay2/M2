@@ -21,7 +21,7 @@ pretty := relns -> (
      s)
 toExternalString QuotientRing := S -> toString expression S
 toString QuotientRing := S -> toExternalString S
-random QuotientRing := S -> (
+random QuotientRing := opts -> S -> (
      if S.baseRings === {ZZ} then (random char S)_S
      else notImplemented())
 expression QuotientRing := S -> new Divide from { expression ambient S, expression pretty S.relations }

@@ -14,3 +14,8 @@ g = random(S^{2:0},S^{2:-1})
 toString g
 assert( g == matrix {{5/6*x-y, 9/4*x+7/3*y}, {-3/7*x-4/3*y, -9/10*x+1/4*y}} )
 
+-- check random isomorphisms are isomorphisms
+
+assert isIsomorphism random(ZZ^6,ZZ^6,Isomorphism=>true)
+R = QQ[x,y]
+assert isIsomorphism random(R^4,R^4,Isomorphism=>true)

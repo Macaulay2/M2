@@ -123,7 +123,7 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      F / F := (x,y) -> x // y;
      F))
 
-random GaloisField := F -> (
+random GaloisField := opts -> F -> (
      i := random F.order;
      if i === 0 then 0_F else F_0^i
      )
