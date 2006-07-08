@@ -1,0 +1,17 @@
+-*- M2 -*-
+
+We want gb's to be unique, depending only on the submodule:
+
+    i4 : gens gb matrix {{-1}}
+
+    o4 = | -1 |
+
+		  1        1
+    o4 : Matrix ZZ  <--- ZZ
+
+    i5 : gens gb matrix {{1}}
+
+    o5 = | 1 |
+
+		  1        1
+    o5 : Matrix ZZ  <--- ZZ
