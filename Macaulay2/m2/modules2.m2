@@ -354,16 +354,22 @@ minimalPresentation(Module) := Module => opts -> (cacheValue symbol minimalPrese
      if isFreeModule M then (
 	  M.cache.pruningMap = id_M;
 	  M)
+     else if R === ZZ then (
+	  f := presentation M;
+	  (g,ch) := smithNormalForm(f, ChangeMatrix => {true, false});
+	  N := cokernel g;
+	  N.cache.pruningMap = map(M,N,id_(target ch) // ch);	    -- yuk, taking an inverse here, gb should give inverse change matrices, or the pruning map should go the other way
+	  N)
      else if (isAffineRing R and isHomogeneous M)
 	    or (oR.?SkewCommutative and R.?SkewCommutative and isHomogeneous M) then (
-	  f := presentation M;
-	  g := complement f;
-	  N := cokernel modulo(g, f);
+	  f = presentation M;
+	  g = complement f;
+	  N = cokernel modulo(g, f);
 	  N.cache.pruningMap = map(M,N,g);
 	  N)
      else (
 	  f = generators gb presentation M;
-	  -- MES: can't it do more here? -- drg: LLLBases installs a hook for the case where R === ZZ
+	  -- MES: can't it do more here?
 	  N = cokernel f;
 	  N.cache.pruningMap = map(M,N,id_(cover M));
 	  N)))
