@@ -182,7 +182,7 @@ document { Key => "teaching emacs how to find M2-init.el",
      PARA{},
      "If you are lucky, then the Macaulay 2 directory tree has been installed
      with the same root as the emacs directory tree.  For example, if emacs
-     and Macaulay 2 are both installed in /usr, then M2.el is located at
+     and Macaulay 2 are both installed in /usr, then M2-init.el is located at
      ", TT "/usr/share/emacs/site-lisp/M2-init.el", ", and emacs already knows
      to look in that directory for source files.",
      PARA {},
@@ -295,12 +295,12 @@ document {
      PARA {"If you are a newcomer to emacs, you should spend a few minutes
 	  going through the emacs tutorial.  Start up emacs with the command 
 	  ", TT "emacs", " and then start up the emacs tutorial with the keystrokes 
-	  ", TT "C-H t", ".  (The notation ", TT "C-H", " indicates that you should type 
+	  ", TT "C-h t", ".  (The notation ", TT "C-h", " indicates that you should type 
           ", TT "Control-H", ", by holding down the control key, 
 	  and pressing ", TT "H", ".)  The emacs tutorial will introduce you to the
           basic keystrokes useful with emacs.  After running through that you will want
           to examine the online emacs manual which can be read with ", TT "info", "
-          mode; you may enter or re-enter that mode with the keystrokes ", TT "C-H i", ".  "
+          mode; you may enter or re-enter that mode with the keystrokes ", TT "C-h i", ".  "
           },
      PARA {"The Macaulay2 emacs interface consists of several files
 	  in the directory ", 
@@ -311,7 +311,7 @@ document {
 	  in the ", TT ".emacs", " file in your home directory, creating the file if necessary.",
 	  },
 PRE///    ;; .emacs file in your home directory
-    (load "M2-init.el" t)
+    (load "M2-init.el")
 
     ; comment out the following line with an initial semicolon 
     ; if you want to use your f12 key for something else
@@ -360,7 +360,7 @@ Use the keystrokes ", TT "C-x 2", " to divide the buffer containing this file in
           },
      PARA {
           "If f12 doesn't start up Macaulay 2, one reason may be that your function
-	  keys are not operable.  In that case press ", TT "C-C m", " instead. 
+	  keys are not operable.  In that case press ", TT "C-c m", " instead. 
        	  Another
           reason may be that you have not installed Macaulay 2 properly - the startup
 	  script (", TT "M2", " or ", TT "M2.bat", ") should be on your path.
@@ -375,7 +375,7 @@ Use the keystrokes ", TT "C-x 2", " to divide the buffer containing this file in
 	  important, as it informs emacs to use the Macaulay2 mode).
 	  Paste the following text into a buffer.  If you wish, save the file using C-x C-s."
 	  },
-     CODE ///    R = QQ[x,y,z]
+     PRE ///    R = QQ[x,y,z]
     f = symmetricPower(2,vars R)
     M = cokernel f
     C = resolution M
@@ -394,7 +394,7 @@ for you.  Delete the word with ", TT "M-DEL", ", type ", TT "res", "
 and then press the ", TT "TAB", " key.  The possible completions are displayed 
 in a window.  Switch to it with the ", TT "F8", " key, move to the desired 
 completion, select it with the ", TT "RETURN", " key, and then return to the 
-", TT "*M2*", " buffer with ", TT "C-X o", ".  Alternatively, if you have a
+", TT "*M2*", " buffer with ", TT "C-x o", ".  Alternatively, if you have a
 mouse, use the middle button to select the desired completion. (On the mac, hold down the
      option key while clicking the mouse)",
 hr,
@@ -409,7 +409,7 @@ slightly to change it before pressing return.",
      "Now let's see how we can handle wide and tall Macaulay 2 output.  Execute the
      following line of code (put it in your foo.m2 buffer, and then press f11)",
      PARA{},
-     CODE ///printWidth=0\nrandom(R^20,R^{6:-2})///,
+     PRE ///printWidth=0\nrandom(R^20,R^{6:-2})///,
      "Setting printWidth to zero removes line wrapping in the buffer, sometimes useful to 
      view large matrices.",
 PARA{},
@@ -417,8 +417,8 @@ PARA{},
 around to the next line, simply disappear off the right side of the screen,
 as indicated by the dollar signs or little arrows in the rightmost column.  Switch to the
 other window and practice scrolling up and down with ", TT "M-v", " and ", TT "C-v", ", 
-and scrolling left and right with the function key ", TT "F3", " (or ", TT "C-C <", ") 
-and the function key ", TT "F4", " (or ", TT "C-C >", ").  In modern emacs implementations
+and scrolling left and right with the function key ", TT "F3", " (or ", TT "C-c <", ") 
+and the function key ", TT "F4", " (or ", TT "C-c >", ").  In modern emacs implementations
 where mouse clicking works, click on the arrow to scroll in that direction.  In
 these versions of emacs, typing C-e, or C-a to get at the end or beginning of the line
 also horizontally scrolls the text to that position.  Older emacs tend to need
@@ -474,7 +474,7 @@ document {
 	  "A useful tip: in emacs, if you place your cursor on one of the lines which starts with a '*',
 	  and press return, then you will get help on that topic."
 	  },
-     EXAMPLE ///* "jacobian Ideal"///,	  
+     EXAMPLE ///* "jacobian(Ideal)"///,	  
      PARA {"The function ", TO apropos, " is useful to find functions and other defined symbols 
 	  which match a search string.  For example, to find all symbols
 	  in Macaulay2 which contain the string 'deal', use"
@@ -704,7 +704,7 @@ PARA{},
 "To see how electric parentheses, electric semicolons, and indentation work,
 move to a blank line of this file and type the following text.",
 PARA{},
-CODE ///f = () -> (
+PRE ///f = () -> (
      a := 4;
      b := {6,7};
      a+b)///,
@@ -718,24 +718,24 @@ again.  Experiment with ", TT "M-C-f", " and ", TT "M-C-b", " to move forward
 and back over complete parenthesized
 expressions.  (In the emacs manual a complete parenthesized expression is
 referred to as an sexp, which is an abbreviation for S-expression.)  Try out
- ", TT "C-U 2 M-C-@", " as a way of marking the next two complete parenthesized
-expression, and see how to use ", TT "C-W", " to kill them and ", TT "C-Y", " to yank 
-them back.  Experiment with ", TT "M-C-K", " to kill the next complete parenthesized 
+ ", TT "C-u 2 M-C-@", " as a way of marking the next two complete parenthesized
+expression, and see how to use ", TT "C-w", " to kill them and ", TT "C-y", " to yank 
+them back.  Experiment with ", TT "M-C-k", " to kill the next complete parenthesized 
 expression.",
 PARA{},
 "Position your cursor on the 4 and observe how ", TT "M-;", " will start a comment 
 for you with two hyphens, and position the cursor at the point where commentary
 may be entered.",
 PARA{},
-"Type ", TT "res", " somewhere and then press ", TT "C-C TAB", " to bring up the
+"Type ", TT "res", " somewhere and then press ", TT "C-c TAB", " to bring up the
 possible completions of the word to documented Macaulay 2 symbols.",
 PARA{},
-"Notice how ", TT "C-H m", " will display the keystrokes peculiar to 
+"Notice how ", TT "C-h m", " will display the keystrokes peculiar to 
 the mode in a help window.",
 PARA{},
 "Assuming you have installed the ", TO "w3", " emacs web browser,
 you may explore the documentation by positioning the cursor near a documented
-word such as ", TT "List", " and pressing ", TT "C-C d", ".  Alternatively,
+word such as ", TT "List", " and pressing ", TT "C-c d", ".  Alternatively,
 when the prompt appears, you can type the key whose documentation should be
 found."
 }
@@ -794,12 +794,12 @@ text into emacs buffers for the deomonstrations below.",
 PARA{},
 "If you are a newcomer to emacs, start up emacs with the command 
 ", TT "emacs", " and then start up the emacs tutorial with the keystrokes 
-", TT "C-H t", ".  (The notation ", TT "C-H", " indicates that you should type 
+", TT "C-h t", ".  (The notation ", TT "C-h", " indicates that you should type 
 ", TT "Control-H", ", by holding down the control key, 
 and pressing ", TT "H", ".)  The emacs tutorial will introduce you to the
 basic keystrokes useful with emacs.  After running through that you will want
 to examine the online emacs manual which can be read with ", TT "info", "
-mode; you may enter or re-enter that mode with the keystrokes ", TT "C-H i", ".  
+mode; you may enter or re-enter that mode with the keystrokes ", TT "C-h i", ".  
 You may also want to purchase (or print out) the emacs manual.  It is cheap,
 comprehensive and informative.  Once you have spent an hour with the emacs
 tutorial and manual, come back and continue from this point.",
@@ -816,7 +816,7 @@ file the following line of emacs-lisp code (which can also be found
 in the file ", TT "emacs/emacs-hlp.txt", ", or obtained by running
 ", TT ///help "running Macaulay 2 in emacs"///, " in Macaulay 2).",
 PARA{},
-CODE ///(load "/usr/local/Macaulay2-0.9/lib/Macaulay2-0.9/emacs/M2-init.el")///,
+PRE ///(load "/usr/local/Macaulay2-0.9/lib/Macaulay2-0.9/emacs/M2-init.el")///,
 PARA{},
 "Now edit that line and replace the path by the correct path to Macaulay2's
 files on your system.  To find out what that path is, evaluate the variable 
@@ -844,11 +844,11 @@ If you are reading this file with emacs, then use the keystrokes
 Then press the ", TT "M-x M2", " to start up Macaulay 2 in a buffer
 named ", TT "*M2*", ".  (The command line used to start Macaulay 2 may
 be edited before being run if you use a prefix argument with the above
-command: press ", TT "C-U", " just before.)",
+command: press ", TT "C-u", " just before.)",
 PARA{},
 "If this doesn't start up Macaulay 2, one reason may be that your function
-keys are not operable.  In that case press ", TT "C-C m", " instead.  (The 
-notation ", TT "C-C", " is standard emacs notation for Control-C.)  Another
+keys are not operable.  In that case press ", TT "C-c m", " instead.  (The 
+notation ", TT "C-c", " is standard emacs notation for Control-C.)  Another
 reason may be that you have not installed Macaulay 2 properly - the startup
 script (", TT "M2", " or ", TT "M2.bat", ") should be on your path.
 A third reason may be that you are in Windows-98 and are using anti-virus 
@@ -860,8 +860,7 @@ to a global keystroke for ease of use; this is done automatically for
 in Macaulay 2 buffers.  For example, the following emacs code
 will bind it to the function key ", TT "f11", ".",
 PARA{},
-CODE ///(global-set-key [ f11 ] 'M2-send-to-program)
-///,
+PRE ///(global-set-key [ f11 ] 'M2-send-to-program)///,
 PARA{},
 "You may use ", TT "C-x o", " freely to switch from one window to the other.
 Verify that Macaulay 2 is running by entering a command such as ", TT "2+2", ".  
@@ -870,7 +869,7 @@ version of this documentation in an emacs buffer already, position
 the cursor on the first line of code, and press the ", TT "f11", " function 
 key repeatedly to present each line to Macaulay 2.",
 PARA{},
-CODE ///i1 : R = ZZ/101[x,y,z]
+PRE ///i1 : R = ZZ/101[x,y,z]
 i2 : f = symmetricPower(2,vars R)
 i3 : M = cokernel f
 i4 : C = resolution M
@@ -882,7 +881,7 @@ PARA{},
 submitted is not visible on the screen.  Paste the following text into
 an emacs buffer.",
 PARA{},
-CODE ///20!
+PRE ///20!
 4 + 5 * 2^20
 -- that's all folks!///,
 PARA{},
@@ -913,7 +912,7 @@ and then press ", TT "f11", " to send it to Macaulay 2.  (The notation ", TT "M-
 means: while holding down the Meta key and the Control key press the ", TT "@", " key, 
 for which you'll also need the shift key.)",
 PARA{},
-CODE ///{a,b,c,d,e,f,
+PRE ///{a,b,c,d,e,f,
 g,h,i,j,k,l,
 m,n}///,
 PARA{},
@@ -921,7 +920,7 @@ PARA{},
 files.  Here is an example of how that looks.  Paste the following text
 into an emacs buffer.",
 PARA{},
-CODE ///The answer, 4, is displayed after the output label ``{\tt o1\ =}''.
+PRE ///The answer, 4, is displayed after the output label ``{\tt o1\ =}''.
 Multiplication is indicated with the traditional {\tt *}.
 <<<1*2*3*4>>>
 Powers are obtained as follows.
@@ -940,23 +939,23 @@ PARA{},
 "Now let's see how we can handle wide and tall Macaulay 2 output.  Execute the
 following line of code.",
 PARA{},
-CODE ///random(R^20,R^{6:-2})///,
+PRE ///random(R^20,R^{6:-2})///,
 PARA{},
 "Notice that the long lines in the Macaulay 2 window, instead of being wrapped
 around to the next line, simply disappear off the right side of the screen,
 as indicated by the dollar signs in the rightmost column.  Switch to the
 other window and practice scrolling up and down with ", TT "M-v", " and ", TT "C-v", ", 
-and scrolling left and right with the function key ", TT "F3", " (or ", TT "C-C <", ") 
-and the function key ", TT "F4", " (or ", TT "C-C >", ").  Notice how the use of
-", TT "C-E", " to go to the end of the line
+and scrolling left and right with the function key ", TT "F3", " (or ", TT "C-c <", ") 
+and the function key ", TT "F4", " (or ", TT "C-c >", ").  Notice how the use of
+", TT "C-e", " to go to the end of the line
 sends the cursor to the dollar sign at the right hand side of the screen;
 that's where the cursor will appear whenever you go to a position off the
-screen to the right.  Then use the ", TT "F2", " function key (or ", TT "C-C .", ") to 
-scroll the text so the cursor appears at the center of the screen.  Use ", TT "C-A", " to 
+screen to the right.  Then use the ", TT "F2", " function key (or ", TT "C-c .", ") to 
+scroll the text so the cursor appears at the center of the screen.  Use ", TT "C-a", " to 
 move to the beginning of the line and then the ", TT "F2", " function key 
-(or ", TT "C-C .", ") to bring the left margin back into view.",
+(or ", TT "C-c .", ") to bring the left margin back into view.",
 PARA{},
-"You may use the ", TT "F5", " function key or (or ", TT "C-C ?", ") to 
+"You may use the ", TT "F5", " function key or (or ", TT "C-c ?", ") to 
 toggle whether long lines are truncated or wrapped; initially they are truncated.",
 PARA{},
 "Now go to the very end of the ", TT "*M2*", " buffer with ", TT "M->", " and 
@@ -966,7 +965,7 @@ for you.  Delete the word with ", TT "M-DEL", ", type ", TT "res", "
 and then press the ", TT "TAB", " key.  The possible completions are displayed 
 in a window.  Switch to it with the ", TT "F8", " key, move to the desired 
 completion, select it with the ", TT "RETURN", " key, and then return to the 
-", TT "*M2*", " buffer with ", TT "C-X o", ".  Alternatively, if you have a
+", TT "*M2*", " buffer with ", TT "C-x o", ".  Alternatively, if you have a
 mouse, use the middle button to select the desired completion.",
 PARA{},
 "Experiment with command line history in the ", TT "*M2*", " buffer.  Position 
@@ -977,7 +976,7 @@ slightly to change it before pressing return.",
 PARA{},
 "Assuming you have installed the ", TO "w3", " emacs web browser,
 you may explore the documentation by positioning the cursor near a documented
-word such as ", TT "List", " and pressing ", TT "C-C d", ".  Alternatively,
+word such as ", TT "List", " and pressing ", TT "C-c d", ".  Alternatively,
 when the prompt appears, you can type the key whose documentation should be
 found."
 }

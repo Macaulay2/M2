@@ -724,6 +724,7 @@ gcdLLL List := options -> (s) -> (
      else agcdLLL(s,options.Threshold))
 
 addHook(Module, symbol minimalPresentation, (o,M) -> (
+	  return null;					    -- this routine isn't correct yet -- it only partially minimizes; we could use this for trim and improve it for this
 	  R := ring M;
 	  if R === ZZ and o.Strategy === null then (
 	       h := presentation M;

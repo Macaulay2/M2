@@ -12,6 +12,10 @@ R = ZZ[s,t,x,y,z, MonomialOrder=>{2,3}];
 I = ideal(x-s^3-s*t-1, y-t^3-3*t^2-t, z-s*t^3)
 leadTerm gens gb I  --crashes on my macintel.
 
+gens(g = gb(f = random (ZZ^6, ZZ^6), ChangeMatrix => true))
+assert( gens g == f * getChangeMatrix g )
+assert( leadTerm gens g == transpose leadTerm gens g)
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test gb3.out"
