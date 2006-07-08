@@ -209,7 +209,7 @@ document {
      "This order is useful for making degree rings, and allows some
      variables to appear with negative exponent.  Not implemented yet.",
      HEADER2 "RevLex",
-     "Warning: this is not a well-ordering.",
+     "Warning: this is a local ordering, not a global ordering.",
      EXAMPLE {
 	  "R = ZZ[a..f, MonomialOrder=>RevLex, Global=>false];",
 	  "a^2*(c+d) + b*(c^100+d^100)*(c + e + f)"

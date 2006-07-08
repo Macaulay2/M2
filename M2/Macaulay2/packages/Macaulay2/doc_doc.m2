@@ -11,7 +11,7 @@
 document {  
      Key => {document,(document, List)},
      Usage => "document { Key => key, ... }",
-     Headline => "install documentation",
+     Headline => "package item: documentation node",
      Inputs => {
 	  List => {"a hypertext list including special documentation entries; any optional arguments are to be placed in this list"},
 	  Usage => String => "a string giving a template for using the function or feature being documented",
@@ -42,11 +42,11 @@ document {
           outputs
 	  },
      "There can be explanatory prose here in the form of a hypertext list.",
-     EXAMPLE {
-		"m2code",
-		"m2code",
-		"m2code"
-		 },
+     EXAMPLE lines \/\/\/
+		m2code
+		m2code
+		m2code
+	  \/\/\/,
      "There can be explanatory prose here in the form of a hypertext list.",
      Caveat => {"warning"},
      SeeAlso => {"other things"},

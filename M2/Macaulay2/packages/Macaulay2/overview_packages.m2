@@ -11,7 +11,16 @@ document { Key => "packages provided with Macaulay 2",
      PARA{
      	  "The packages that are distributed with Macaulay2 are:"
 	  },
-     UL apply(sort packagelist, pkg -> LI TO (pkg|"::"|pkg))
+     UL apply(sort packagelist, pkg -> LI TO (pkg|"::"|pkg)),
+     PARA {
+	  "Use ",
+	  TO loadPackage, ", or ", 
+	  TO needsPackage, " to load a package.  Use ", 
+	  TO installPackage, " to install the documentation for a package.
+	  Some of these packages are automatically loaded, use ",
+	  TO "loadedPackages", " to see which have been loaded."
+	  },
+     SeeAlso => Package
      }
 
 document { Key => "packages",
@@ -29,6 +38,32 @@ document { Key => "packages",
 	  TO "loadedPackages",
      "Creating new packages",
      	  TO "creating a package"
+	  }
+     }
+
+document { Key => "using packages",
+     "A package is a body of Macaulay2 source code devoted to a 
+     particular topic.  Many packages are distributed with Macaulay 2, 
+     and others are available from various users on the internet.",
+     PARA{}, "For more detailed information about packages, see ", 
+     TO Package, ".",
+     PARA{},
+     "To load a package, say FirstPackage, use ", TO loadPackage, " or ", TO needsPackage, ", as in:",
+     PRE///    loadPackage "FirstPackage"///,
+     "or",
+     PRE///    needsPackage "FirstPackage"///,
+     "Macaulay2 searches for the file FirstPackage.m2 on your search ", TO "path", ".
+     The packages provided with Macaulay2 are on your search path,
+     as is your current working directory.",
+     PARA{},
+     "Documentation for the packages provided with Macaulay2 is already installed.  TO
+     install documentation for another package, use ", TO installPackage, ".",
+     PRE///    installPackage FirstPackage///,
+     "You may see what packages have been loaded with the variable ", TO "loadedPackages", ".",
+     PRE///    loadedPackages///,
+     SeeAlso => {
+     	  "packages provided with Macaulay 2",
+	  "creating a package"
 	  }
      }
 
@@ -85,14 +120,14 @@ document { Key => "creating a package",
 	"A basic template for new packages:",
 	PRE///newPackage( ... )
 	
-	export{ ... }
-	exportMutable{ ... }
+  export{ ... }
+  exportMutable{ ... }
 	
-	-- Macaulay 2 code goes here
+  -- Macaulay 2 code goes here
 	
-	beginDocumentation()
-	document { ... }  -- several document's and TEST's, interspersed
-	TEST " ... "///,
+  beginDocumentation()
+  document { ... }  -- several document's and TEST's, interspersed
+  TEST " ... "///,
 	"The name of the package must be the name of the file, without the
 	'.m2' suffix.  Thus a package 'PACKAGENAME' will be in a file named
 	'PACKAGENAME.m2'.  If the package were more complex, then by convention,
@@ -106,26 +141,13 @@ document { Key => "creating a package",
 	  TO "export",
 	  TO "exportMutable",
 	  TO beginDocumentation,
+	  TO document,
+	  TO TEST,
 	  "Documenting, testing, and distributing a package",
 	  TO "writing documentation",
-	  TO "testing a package",
+	  TO check,
 	  TO "informing others about your package"
 	  },
-     SeeAlso => {
-	  document,
-	  TEST
-	  }
-     }
-
-document {
-     Key => "testing a package",
-     "It is important to provide tests to insure that your package
-     is functioning properly.  One provides tests using  ", TO TEST,
-     " in the ", TO beginDocumentation, " section.",
-     PARA{},
-     "All of the tests provided for a package 'YourPackage' may be run by 
-     using ", TO check,
-     PRE///check YourPackage///
      }
 
 document {

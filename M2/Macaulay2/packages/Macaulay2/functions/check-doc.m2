@@ -15,9 +15,11 @@ document {
 	  },     
      "For example, to run the tests for the LLLBases package (Lenstra-Lenstra-Lovasz bases)
      do the following.",
-     PRE///installPackage "LLLBases"///,
-     PRE///check LLLBases///,
+     PRE///installPackage "LLLBases"
+check LLLBases///,
+     PARA{},
+     "It is important for package authors to provide tests to insure that the package
+     is functioning properly.  One provides tests using  ", TO TEST,
+     " in the ", TO beginDocumentation, " section.",
      SeeAlso => {"packages", installPackage, loadPackage}
      }
-
-

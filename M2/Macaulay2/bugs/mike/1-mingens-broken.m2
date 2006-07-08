@@ -1,3 +1,12 @@
+gbTrace=10
+R = QQ[x,y,MonomialOrder => Position => Down ]
+f = transpose matrix {{0,1-y,x+x^2}, {x,y,0}, {x,0,y}}
+g = gens gb (f, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false)
+g = mingens gb (f, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false)
+image g == image f
+
+end
+
 Date: Thu, 6 Jul 2006 16:37:24 -0500
 From: Dan Grayson <dan@math.uiuc.edu>
 To: mike@math.cornell.edu
