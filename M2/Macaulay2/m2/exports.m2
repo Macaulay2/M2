@@ -232,6 +232,7 @@ export {
 	symbol Inverses,
 	symbol MaximalRank,
 	symbol Iterate,
+	symbol KeepZeroes,
 	symbol Key,
 	symbol Keyword,
 	symbol LABEL,

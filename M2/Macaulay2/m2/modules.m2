@@ -198,7 +198,10 @@ net Module := M -> (
      else if M.?generators
      then net new FunctionApplication from { image, net M.generators }
      else if numgens M === 0 then "0"
-     else net new Superscript from {expression ring M, numgens M}
+     else (
+	  R := ring M;
+	  net new Superscript from { if ReverseDictionary#?R then ReverseDictionary#R else expression R, numgens M}
+	  )
      )
 
 Module == Module := (M,N) -> (
