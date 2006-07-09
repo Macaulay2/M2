@@ -37,15 +37,15 @@ smithNormalForm Matrix := o -> (f) -> (
 	       	    chg := getChangeMatrix G;
 	       	    zer := syz G;
 		    if tmat === null
-		    then ( tmat =        chg; tzer =        zer        )
-		    else ( tmat = tmat * chg; tzer = tmat * zer | tzer )))
+		    then (tmat,tzer) = (chg,zer)
+		    else (tmat,tzer) = (tmat * chg, tmat * zer | tzer )))
 	  else (
 	       if schg then (
 	       	    chg = getChangeMatrix G;
 	       	    zer = syz G;
 		    if smat === null
-		    then ( smat =        chg; szer =        zer        )
-		    else ( smat = smat * chg; szer = smat * zer | szer )));
+		    then (smat, szer) = (chg, zer)
+		    else (smat, szer) = (smat * chg, smat * zer | szer )));
 	  g = transpose h;
 	  op = not op;
 	  count = count + 1;
@@ -217,7 +217,7 @@ quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
      ))
 
 Matrix // Matrix := Matrix => (f,g) -> quotient(f,g)
-quotient'(Matrix,Matrix) := Matrix -> (f,g) -> (
+quotient'(Matrix,Matrix) := Matrix => (f,g) -> (
      if not isFreeModule source f or not isFreeModule source g
      or not isFreeModule source g or not isFreeModule source g then error "expected maps between free modules";
      dual quotient(dual f, dual g))
