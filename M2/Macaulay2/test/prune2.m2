@@ -6,9 +6,11 @@ for i to 5 do (
 
 --
 inc = random(ZZ^11, ZZ^3, MaximalRank => true)
+f = inc * matrix "2,,;,5,;,,3"
+g = inc * matrix "0,,;,385,;,,21"
 M = subquotient(
-     inc * matrix "2,,;,5,;,,3"   * random(ZZ^3,ZZ^4,MaximalRank => true),
-     inc * matrix "0,,;,385,;,,21" * random(ZZ^3,ZZ^4,MaximalRank => true)
+     f  * random(ZZ^3,ZZ^4,MaximalRank => true),
+     g * random(ZZ^3,ZZ^4,MaximalRank => true)
      )	-- isomorphic to ZZ ++ ZZ/77 ++ ZZ/7
 N = prune M
 assert ( ideal(0) == fittingIdeal_0 N)
