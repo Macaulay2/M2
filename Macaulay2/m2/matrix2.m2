@@ -9,17 +9,18 @@ pivots Matrix := (p) -> (			    -- I wish this could be in the engine
      opt := Reverse => dir === Up;
      cols := entries transpose p;
      for j from 0 to #cols-1 list (
-	  i := position(cols#j, e -> e =!= 0, opt);
+	  i := position(cols#j, e -> e != 0, opt);
 	  if i === null then continue;
 	  (i,j)))
 
 smithNormalForm = method(
      Options => {
-	  ChangeMatrix => {true, true}		    -- target, source
+	  ChangeMatrix => {true, true},		    -- target, source
+     	  KeepZeroes => true
 	  }
      )
 smithNormalForm Matrix := o -> (f) -> (
-     (tchg,schg) := (o.ChangeMatrix#0, o.ChangeMatrix#1);
+     (tchg,schg,keepz) := (o.ChangeMatrix#0, o.ChangeMatrix#1,o.KeepZeroes);
      (tmat,smat) := null;	-- null represents the identity, lazily
      (tzer,szer) := null;	-- null represents zero, lazily
      R := ring f;
@@ -36,57 +37,49 @@ smithNormalForm Matrix := o -> (f) -> (
 	       if tchg then (
 	       	    chg := getChangeMatrix G;
 	       	    zer := syz G;
-		    if tmat === null
-		    then (tmat,tzer) = (chg,zer)
-		    else (tmat,tzer) = (tmat * chg, tmat * zer | tzer )))
+		    if keepz then (
+			 if tmat === null
+			 then (tmat,tzer) = (chg,zer)
+			 else (tmat,tzer) = (tmat * chg, tmat * zer | tzer ))
+		    else (
+			 if tmat === null
+			 then tmat = chg
+			 else tmat = tmat * chg)))
 	  else (
 	       if schg then (
 	       	    chg = getChangeMatrix G;
 	       	    zer = syz G;
-		    if smat === null
-		    then (smat, szer) = (chg, zer)
-		    else (smat, szer) = (smat * chg, smat * zer | szer )));
+		    if keepz then (
+			 if smat === null
+			 then (smat, szer) = (chg, zer)
+			 else (smat, szer) = (smat * chg, smat * zer | szer ))
+		    else (
+			 if smat === null
+			 then smat = chg
+			 else smat = smat * chg)));
 	  g = transpose h;
 	  op = not op;
 	  count = count + 1;
 	  );
      if op then g = transpose g;
      if tchg then (
-	  if tmat === null then (
-	       tchange := id_(target f);
-	       )
+	  if tmat === null
+	  then tchange := id_(target f)
 	  else (
      	       tmat = transpose tmat;
-     	       tzer = transpose tzer;
-	       tchange = tmat || tzer;
-	       g = g || map(target tzer, source g,0);
-	       );
-	  )
-     else (
---	  if d == 0 then g = g || map(R^(numgens target f - numgens target g), source g,0)
---	  else (
---	       degs := elements (tally degrees target f - tally degrees target g);
---	       if #degs == numgens target f - numgens target g
---	       then g = g || map(R^degs, source g,0)
---	       else g = g || map(R^(numgens target f - numgens target g), source g,0))
-	  );
+	       if keepz then (
+     	       	    tzer = transpose tzer;
+	       	    tchange = tmat || tzer;
+	       	    g = g || map(target tzer, source g,0))
+	       else tchange = tmat));
      if schg then (
 	  if smat === null
-	  then (
-	       schange := id_(source f);
-	       )
+	  then schange := id_(source f)
 	  else (
-	       schange = smat | szer);
-	  g = g | map(target g, source szer, 0);
-	  )
-     else (
---	  if d == 0 then g = g | map(target g, R^(numgens source f - numgens source g), 0)
---	  else (
---	       degs = elements (tally degrees source f - tally degrees source g);
---	       if #degs == numgens source f - numgens source g
---	       then g = g | map(target g, R^degs, 0)
---	       else g = g | map(target g, R^(numgens source f - numgens source g), 0))
-	  );
+	       if keepz then (
+	       	    schange = smat | szer;
+	       	    g = g | map(target g, source szer, 0))
+	       else schange = smat));
      unsequence nonnull ( g, if tchg then tchange, if schg then schange ))
 
 complement = method()
