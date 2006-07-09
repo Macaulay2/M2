@@ -5,3 +5,5 @@ M = subquotient(
      )	-- isomorphic to ZZ^2 ++ ZZ/77 ++ ZZ/7
 C = res M
 assert (length C <= 1)
+assert isIsomorphism map(M,HH_0 C,id_(cover M))
+assert ( HH_1 C == 0 )
