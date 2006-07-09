@@ -395,11 +395,28 @@ document {
      have the same dimension.  In this case the algorithm tends to be much faster."
      }
 
-undocumented { (factor,ZZ) }
-undocumented { (factor,QQ) }
-
 document {
      Key => factor,
+     Headline => "factor a ring element or a ZZ-module"
+     }
+
+document {
+     Key => (factor,Module),
+     Headline => "factor a ZZ-module",
+     Usage => "factor M",
+     Inputs => { "M" },
+     Outputs => {{ "a symbolic expression describing the decomposition of ", TT "M", " into a direct sum of principal modules"}},
+     "The ring of ", TT "M", " must be ", TO "ZZ", ".",
+     PARA {},
+     "In the following example we construct a module with a known (but disguised) factorization.",
+     EXAMPLE lines ///
+     	  f = random(ZZ^6, ZZ^4)
+          M = subquotient ( f * diagonalMatrix{2,3,8,21}, f * diagonalMatrix{2*11,3*5*13,0,21*5} )
+	  factor M
+     ///}
+
+document {
+     Key => {(factor,RingElement),(factor,QQ),(factor,ZZ)},
      Headline => "factor a ring element",
      TT "factor x", " -- factors x.",
      PARA{},
