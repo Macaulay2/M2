@@ -153,6 +153,11 @@ trim Module := Module => options -> (cacheValue symbol trim) ((M) -> (
 		    )
 	       else F
 	       );
+	  if ring M === ZZ then (
+	       LLLBases := needsPackage "LLLBases";
+	       LLL := value LLLBases.Dictionary#"LLL";
+	       N = subquotient(F, compress LLL N.generators, compress LLL N.relations);
+	       );
 	  N.cache.trim = N;
 	  N))
 
