@@ -583,7 +583,13 @@ int rawRingElementCompare(const RingElement *a,
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (R != b->get_ring() || P == 0)
     return 0;
-  
+
+  if (a->is_zero())
+    {
+      if (b->is_zero()) return 0;
+      return -1;
+    }
+  if (b->is_zero()) return 1;
   const int *m = P->lead_flat_monomial(a->get_value());
   const int *n = P->lead_flat_monomial(b->get_value());
   return P->getMonoid()->compare(m,n);
