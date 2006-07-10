@@ -1,3 +1,9 @@
+R = QQ[x]
+x-x ? x-x
+m = matrix{{x^3, x^2-1, 0_R, x, 0_R, 1_R, 2_R}}
+sort first entries m
+sort m
+end
 -*-M2-*-
 
 Macaulay 2, version 0.9.20
