@@ -278,7 +278,7 @@ bool PolyRing::promote(const Ring *Rf, const ring_elem f, ring_elem &result) con
   int nvars0 = n_vars();
   if (Rf1 != 0)
     nvars0 -= Rf1->n_vars();
-  if (nvars0 == 0) 
+  if (Rf1 && nvars0 == 0) 
     {
       result = copy(f);
       return true;
@@ -788,27 +788,9 @@ ring_elem PolyRing::invert(const ring_elem f) const
 	M_->power(ft->monom, -1, t->monom);
 	return t;
       }
-#warning "invert doesn't handle quotient rings yet"
-#if 0
-  if (nvars_ == 1 && _quotient_ideal.length() == 1 && K_->is_field())
-    {
-      ring_elem u,v;
-      ring_elem F = _quotient_ideal[0];
-      ring_elem g = _base_ring->gcd_extended(F, f, u, v);
-      if (!_base_ring->is_unit(g))
-	{
-	  ERROR("element is not invertible");
-	  // MES: what about setting some global error ring element
-	  // which contains this 'certificate' g of non-field-ness?
-	}
-      return v;
-    }
-  else
-#endif
-    {
-      ERROR("division is not defined in this ring");
-      return ZERO_RINGELEM;
-    }
+
+  ERROR("division is not defined in this ring");
+  return ZERO_RINGELEM;
 }
 
 ring_elem PolyRing::divide(const ring_elem f, const ring_elem g) const

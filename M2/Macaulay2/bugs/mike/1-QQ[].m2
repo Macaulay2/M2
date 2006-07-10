@@ -1,3 +1,7 @@
+R = QQ[]
+matrix (R,{{2/1},{1/2}})
+
+end
     Macaulay 2, version 0.9.20
     with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings, TangentCone
 
