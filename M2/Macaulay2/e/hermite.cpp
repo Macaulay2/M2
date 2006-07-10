@@ -282,8 +282,29 @@ void HermiteComputation::start_computation()
       n_gb++;
     }
   // At this point, we are done, so reset initial[...] (it is all NULL right now)
+
+  // Now let's auto reduce the result...
+  // We will reduce the GB elems 
+  // one by one, placing them back into the 'initial' table.
+  // We use the following: the lead components of elements of GB_list are in increasing order
+
   for (hm_elem *p = GB_list; p != 0; p = p->next)
-    initial[p->f->comp] = p;
+    {
+      if (!globalZZ->is_positive(p->f->coeff))
+	{
+	  vec f = globalZZ->negate_vec(p->f);
+	  vec fsyz = globalZZ->negate_vec(p->fsyz);
+	  globalZZ->remove_vec(p->f);
+	  globalZZ->remove_vec(p->fsyz);
+	  p->f = f;
+	  p->fsyz = fsyz;
+	}
+      //      gb_reduce(p->f, p->fsyz);
+      initial[p->f->comp] = p;
+    }
+
+  //  for (hm_elem *p = GB_list; p != 0; p = p->next)
+  //    initial[p->f->comp] = p;
   set_status(COMP_DONE);
 }
 
