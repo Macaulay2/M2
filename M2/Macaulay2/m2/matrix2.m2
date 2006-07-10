@@ -32,6 +32,16 @@ smithNormalForm Matrix := o -> (f) -> (
 	  flag := if op then tchg else schg;
 	  G := gb(g, ChangeMatrix => flag, Syzygies => flag);
 	  h := generators G;
+	  if debugLevel > 0 then (
+	       << "-- count = " << count << endl;
+	       if op then (
+		    << "-- lead terms in rows    (gb    ) : " << transpose leadTerm h << endl;
+		    << "-- lead terms in columns (not gb) : " << leadTerm transpose h << endl;
+		    )
+	       else (
+		    << "-- lead terms in columns (gb    ) : " << leadTerm h << endl;
+		    << "-- lead terms in rows    (not gb) : " << transpose leadTerm transpose h << endl;
+		    ));
      	  if count > 0 and h == g then break;	  
 	  if op then (
 	       if tchg then (
