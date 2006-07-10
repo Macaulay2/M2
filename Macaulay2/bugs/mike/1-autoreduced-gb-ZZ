@@ -1,0 +1,27 @@
+-*- M2 -*-
+
+The number -41 below would be 0 if the gb were autoreduced, and it should be.
+
+    i4 :      f = random(ZZ^6,ZZ^3)
+
+    o4 = | -6 -3 -10 |
+	 | 4  -9 1   |
+	 | -4 -4 4   |
+	 | 3  7  8   |
+	 | -7 3  4   |
+	 | 4  9  6   |
+
+		  6        3
+    o4 : Matrix ZZ  <--- ZZ
+
+    i5 :      g = gens gb f
+
+    o5 = | -684 -118 13  |
+	 | 669  115  3   |
+	 | 460  80   -36 |
+	 | 248  43   -13 |
+	 | 0    1    -41 |
+	 | 0    0    1   |
+
+		  6        3
+    o5 : Matrix ZZ  <--- ZZ
