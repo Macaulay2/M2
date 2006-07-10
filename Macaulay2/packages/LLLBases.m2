@@ -101,6 +101,8 @@ LLL MutableMatrix :=
 LLL Matrix := options -> (M) -> (
      -- First check that the base ring is ZZ
      -- Check that the threshold is in range
+     if ring M =!= ZZ then
+       error "expected a matrix over the integers";
      m := mutableMatrix M;
      mchange := if options.ChangeMatrix then
      	          iden(ring m, numcols m)
