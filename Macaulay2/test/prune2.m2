@@ -13,6 +13,7 @@ M = subquotient(
      g * random(ZZ^3,ZZ^4,MaximalRank => true)
      )	-- isomorphic to ZZ ++ ZZ/77 ++ ZZ/7
 N = prune M
+factor M
 assert ( ideal(0) == fittingIdeal_0 N)
 assert ( ideal(7*7*11) == fittingIdeal_1 N)
 assert ( ideal(7) == fittingIdeal_2 N)

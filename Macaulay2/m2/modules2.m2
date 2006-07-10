@@ -431,7 +431,7 @@ factor Module := opts -> (M) -> (
 	  Sum apply(
 	       -- sort -- comparison of 0_R with other elements causes a crash
 	       pairs t, (d,e) -> Power { if d === 0 then hold eR else Divide{ eR, factor d}, e }))
-     else error "expected module over ZZ or a field"
+     else error "expected module over ZZ, k[x], or a field"
      )
 
 -----------------------------------------------------------------------------
