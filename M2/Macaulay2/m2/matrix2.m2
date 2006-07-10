@@ -32,7 +32,7 @@ smithNormalForm Matrix := o -> (f) -> (
 	  flag := if op then tchg else schg;
 	  G := gb(g, ChangeMatrix => flag, Syzygies => flag);
 	  h := generators G;
-	  if debugLevel > 0 then (
+	  if debugLevel > 100 then (
 	       << "-- count = " << count << endl;
 	       if op then (
 		    << "-- lead terms in rows    (gb    ) : " << transpose leadTerm h << endl;
@@ -166,7 +166,7 @@ trim Module := Module => options -> (cacheValue symbol trim) ((M) -> (
 	  if ring M === ZZ then (
 	       LLLBases := needsPackage "LLLBases";
 	       LLL := value LLLBases.Dictionary#"LLL";
-	       N = subquotient(F, compress LLL N.generators, compress LLL N.relations);
+	       N = subquotient(F, if N.?generators then compress LLL N.generators, if N.?relations then compress LLL N.relations);
 	       );
 	  N.cache.trim = N;
 	  N))
