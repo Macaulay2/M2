@@ -710,7 +710,7 @@ Matrix *Matrix::random(const Ring *R,
       doing_fraction = true;
       int f = static_cast<int>(fraction_non_zero * 10000);
       threshold = 10000 - f;
-      printf("threshold is %d\n", threshold);
+      // printf("threshold is %d\n", threshold);
     }
 
 

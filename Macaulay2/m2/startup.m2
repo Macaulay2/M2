@@ -234,7 +234,20 @@ bindirsuffix := LAYOUT#"bin";
 setPrefixFromBindir := bindir -> if bindir =!= null then (
      if bindirsuffix === substring(bindir,-#bindirsuffix) then (
 	  prefixdir := substring(bindir,0,#bindir-#bindirsuffix);
-	  if fileExists(prefixdir | LAYOUT#"share") then prefixDirectory = realpath prefixdir | "/"))
+ 	  setup := prefixdir | LAYOUT#"m2" | "setup.m2";
+	  if fileExists setup then prefixDirectory = realpath prefixdir | "/"
+	  else (
+	      stderr
+	      << "--warning: expected setup file here: " << setup << endl
+	      << "--:        because we seem to be running an " << version#"M2 name" << " found in " << bindir << endl
+	      << "--:        Perhaps " << version#"M2 name" << " has been moved or copied to a different directory." << endl;
+	      error "file setup.m2 not found"))
+     else (
+	  stderr
+	  << "--warning: expected directory " << bindir << " to end with " << bindirsuffix << endl
+     	  << "--:        because we seem to be running an " << version#"M2 name" << " found there." << endl
+	  << "--:        Perhaps " << version#"M2 name" << " has been moved or copied to a different directory." << endl;
+	  error "file setup.m2 not found"))
 
 if fileExists (bindir | "../c/scc1") then (
      -- we're running from the build directory
@@ -245,9 +258,14 @@ if fileExists (bindir | "../c/scc1") then (
 	       srcdirfile := buildHomeDirectory|"srcdir";
 	       if fileExists srcdirfile then (
 		    srcdir := minimizeFilename (concatPath(buildHomeDirectory,first lines get srcdirfile)|"/");
-		    if fileExists(srcdir | "m2/setup.m2") then srcdir
-		    )));
-     ) else setPrefixFromBindir bindir
+		    setup := srcdir | "m2/setup.m2";
+		    if fileExists setup then srcdir
+		    else ( stderr << "--warning: file missing: " << setup << endl; )
+		    )
+	       else ( stderr << "--warning: file missing: " << srcdirfile << endl; )));
+     ) else (
+     -- we hope we're running from an installed version with files still in the right place
+     setPrefixFromBindir bindir)
 
 if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then (
      -- now get the second to last entry in the chain of symbolic links, which will be in the final prefix directory
@@ -314,22 +332,7 @@ loadSetup := () -> (
      or
      prefixDirectory =!= null and tryLoad("setup.m2", minimizeFilename(prefixDirectory | LAYOUT#"m2" | "setup.m2"))
      or
-     error splice ("can't find file setup.m2\n",
-	  "\trunning M2: ",exe,"\n",
-	  "\tbindir = ", toString bindir, "\n",
-     	  "\tbuildHomeDirectory = ", toString buildHomeDirectory, "\n",
-	  "\tsourceHomeDirectory = ", toString sourceHomeDirectory, "\n",
-	  "\tprefixDirectory = ", toString prefixDirectory, "\n",
-	  if buildHomeDirectory =!= null and fileExists(buildHomeDirectory|"srcdir")
-	  then ("\t",buildHomeDirectory|"srcdir", " contains ",first lines get (buildHomeDirectory|"srcdir"),"\n",
-	       (
-		    fn := buildHomeDirectory|(first lines get (buildHomeDirectory|"srcdir")) | "/m2/setup.m2";
-		    "\tfileExists(",fn,") = ",toString fileExists fn,"\n"
-		    )
-	       )
-	  else "",
-	  "\tcommandLine#0 = ",commandLine#0
-	  )
+     error "file setup.m2 not found"
      )
 
 showMaps := () -> (
