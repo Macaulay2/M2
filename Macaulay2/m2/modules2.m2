@@ -347,38 +347,69 @@ presentation(Module) := Matrix => M -> (
 -----------------------------------------------------------------------------  
 
 minimalPresentation(Module) := Module => opts -> (cacheValue symbol minimalPresentation) (M -> (
-     C := tryHooks(Module,symbol minimalPresentation,(opts,M));
-     if C =!= null then return C;
-     R := ring M;
-     oR := options R;
      if isFreeModule M then (
 	  M.cache.pruningMap = id_M;
-	  M)
-     else if R === ZZ then (
-	  f := presentation M;
-	  (g,ch) := smithNormalForm(f, ChangeMatrix => {true, false});
-	  m := numgens target g;
-	  n := numgens source g;
-	  piv := select(pivots g,ij -> abs g_ij === 1);
-	  rows := toList (0 .. m-1) - set(first \ piv);
-	  cols := toList (0 .. n-1) - set(last \ piv);
-	  (g,ch) = (g^rows_cols,ch^rows);
-	  N := cokernel g;
-	  N.cache.pruningMap = map(M,N,id_(target ch) // ch);	    -- yuk, taking an inverse here, gb should give inverse change matrices, or the pruning map should go the other way
-	  N)
-     else if (isAffineRing R and isHomogeneous M)
-	    or (oR.?SkewCommutative and R.?SkewCommutative and isHomogeneous M) then (
-	  f = presentation M;
-	  g = complement f;
-	  N = cokernel modulo(g, f);
-	  N.cache.pruningMap = map(M,N,g);
-	  N)
-     else (
-	  f = generators gb presentation M;
+	  return M);
+     C := tryHooks(Module,symbol minimalPresentation,(opts,M));
+     if C =!= null then return C;
+     error "minimalPresentation: internal error: no method for this type of module"
+     ))
+
+addHook(Module, symbol minimalPresentation, (opts,M) -> (
+	  -- we try to handle any module here
+	  f := generators gb presentation M;
 	  -- MES: can't it do more here?
-	  N = cokernel f;
+	  N := cokernel f;
 	  N.cache.pruningMap = map(M,N,id_(cover M));
-	  N)))
+	  N))
+
+addHook(Module, symbol minimalPresentation, (opts,M) -> (
+     	  R := ring M;
+     	  oR := options R;
+	  if (isAffineRing R and isHomogeneous M) or (oR.?SkewCommutative and R.?SkewCommutative and isHomogeneous M) then (
+	       f := presentation M;
+	       g := complement f;
+	       N := cokernel modulo(g, f);
+	       N.cache.pruningMap = map(M,N,g);
+	       N)))
+
+addHook(Module, symbol minimalPresentation, (opts,M) -> (
+     	  R := ring M;
+	  if R === ZZ then (
+	       f := presentation M;
+	       (g,ch) := smithNormalForm(f, ChangeMatrix => {true, false});
+	       m := numgens target g;
+	       n := numgens source g;
+	       piv := select(pivots g,ij -> abs g_ij === 1);
+	       rows := toList (0 .. m-1) - set(first \ piv);
+	       cols := toList (0 .. n-1) - set(last \ piv);
+	       (g,ch) = (g^rows_cols,ch^rows);
+	       N := cokernel g;
+	       N.cache.pruningMap = map(M,N,id_(target ch) // ch);	    -- yuk, taking an inverse here, gb should give inverse change matrices, or the pruning map should go the other way
+	       N)))
+
+addHook(Module, symbol minimalPresentation, (opts,M) -> (
+     	  R := ring M;
+	  if instance(R,PolynomialRing) and numgens R === 1 and isField coefficientRing R then (
+	       f := presentation M;
+	       k := coefficientRing R;
+	       x := local x;
+	       S := k[x, MonomialOrder => {Position => Down}];
+	       p := map(S,R,vars S);
+	       p' := map(R,S,vars R);
+	       f = p f;
+	       (g,ch) := smithNormalForm(f, ChangeMatrix => {true, false});
+	       m := numgens target g;
+	       n := numgens source g;
+	       isunit := r -> r != 0 and degree r === {0};
+	       piv := select(pivots g,ij -> isunit g_ij);
+	       rows := toList (0 .. m-1) - set(first \ piv);
+	       cols := toList (0 .. n-1) - set(last \ piv);
+	       (g,ch) = (g^rows_cols,ch^rows);
+	       (g,ch) = (p' g,p' ch);
+	       N := cokernel g;
+	       N.cache.pruningMap = map(M,N,id_(target ch) // ch);	    -- yuk, taking an inverse here, gb should give inverse change matrices, or the pruning map should go the other way
+	       N)))
 
 minimalPresentation(Matrix) := Matrix => opts -> (m) -> (
      M := source m;
@@ -390,13 +421,16 @@ minimalPresentation(Matrix) := Matrix => opts -> (m) -> (
 factor Module := opts -> (M) -> (
      R := ring M;
      if isField R then Sum { Power { expression R, rank M } }
-     else if R === ZZ then (
+     else if R === ZZ or instance(R,PolynomialRing) and numgens R == 1 and isField coefficientRing R then (
 	  p := presentation minimalPresentation M;
 	  m := numgens target p;
 	  n := numgens source p;
-	  t := tally apply(pivots p, (i,j) -> abs p_(i,j));
+	  t := tally apply(pivots p, (i,j) -> if R === ZZ then abs p_(i,j) else p_(i,j));
 	  if m > n then t = t + new Tally from { 0 => m-n };
-	  Sum apply(sort pairs t, (d,e) -> Power { if d === 0 then hold ZZ else Divide{ hold ZZ, hold d}, e }))
+	  eR := if ReverseDictionary#?R then ReverseDictionary#R else expression R;
+	  Sum apply(
+	       -- sort -- comparison of 0_R with other elements causes a crash
+	       pairs t, (d,e) -> Power { if d === 0 then hold eR else Divide{ eR, factor d}, e }))
      else error "expected module over ZZ or a field"
      )
 
