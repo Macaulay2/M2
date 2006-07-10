@@ -93,7 +93,7 @@ monoidDefaults = (
 	  Degrees => null,
 	  Weights => {},
 	  Inverses => false,
-	  MonomialOrder => GRevLex,
+	  MonomialOrder => {GRevLex, Position => Up},
 	  MonomialSize => 32,				    -- we had this set to null, but some of the code needs a number here...
 	  SkewCommutative => {},
 	  -- VariableOrder => null,		  -- not implemented yet
@@ -207,7 +207,7 @@ makeit1 := (opts) -> (
      scan(#varlist, i -> M.index#(varlist#i) = i);
      M.internalDegrees = internalDegrees;
      M.internalDegreeLength = internalDegreeLength := if internalDegrees#?0 then #internalDegrees#0 else 0;
-     (MOopts,rawMO) := makeMonomialOrdering(
+     (MOopts,rawMO) := makeMonomialOrdering (
      	  opts.MonomialSize,
 	  opts.Inverses,
      	  #varlist,
@@ -217,7 +217,7 @@ makeit1 := (opts) -> (
 	  );
      M.RawMonomialOrdering = rawMO;
      opts = new MutableHashTable from opts;
-     opts.MonomialOrder = MOopts;
+     opts.MonomialOrder = MOopts;			    -- these are exactly the arguments given to rawMonomialOrdering!
      M.Options = new OptionTable from opts;
      toString M := toExternalString M := x -> toString expression x;
      M.RawMonoid = (

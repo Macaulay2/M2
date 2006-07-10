@@ -673,7 +673,9 @@ document { Key => "prefixDirectory",
      PARA {
 	 "When Macaulay 2 is successfully installed, its files are installed in a directory tree whose layout, relative to the root, is determined
 	 by the hash table ", TO "LAYOUT", ".  When M2 starts up, it detects whether it is running in such a layout, and sets ", TO "prefixDirectory", "
-	 to the root of that directory tree."
+	 to the root of that directory tree.  The way it does that is that it locates the running M2 executable and determines whether it is
+	 located in a directory whose name is ", TT "bin", " that has a sibling directory called ", TT "share", " that leads to a directory
+	 called ", TT "share/Macaulay2/Core/", "."
 	 },
      PARA {
 	  "The prefix directory can be set at an early stage when ", TT "M2", " starts up with the ", TT "--prefix", " command line option."

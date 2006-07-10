@@ -1,0 +1,11 @@
+To: Dan Grayson <dan@math.uiuc.edu>
+From: Michael Stillman <mike@math.cornell.edu>
+Subject: setting up .emacs
+Date: Mon, 10 Jul 2006 15:51:48 -0400
+
+Remember the idea we had the other day:
+
+One would call a routine in M2 which would help set up .profile,  
+or .bashrc, or .emacs...
+
+

@@ -62,6 +62,14 @@ varcount := 0						    -- re-initialized below each time
 MonSize := 32						    -- re-initialized below each time
 invert := false	    					    -- re-initialized below each time
 bump := n -> varcount = varcount + n
+
+processMonSize := monsize -> (
+     if monsize =!= null then (
+	  if class monsize =!= ZZ then error "expected an integer as MonomialSize option";
+	  if monsize <= 8 then MonSize = 8
+	  else if monsize <= 16 then MonSize = 16
+	  else MonSize = 32))
+
 optionSizes := hashTable {
      (Lex,8) => LexTiny,
      (Lex,16) => LexSmall,
@@ -101,6 +109,7 @@ grevOption := (key,v) -> (
 optionFixes := hashTable {
      Weights => (key,val) -> key => val,
      Position => (key,val) -> key => val,
+     MonomialSize => (key,val) -> (processMonSize val; null),
      Lex => intOption,
      LexSmall => intOption,
      LexTiny => intOption,
@@ -152,11 +161,7 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      --    the *separate* Weights option.  Could be an empty list.
      -- 'ordering' is a list of ordering options, e.g., { Lex => 4, GRevLex => 4 }
      --    If it's not a list, we'll make a list of one element from it.
-     if monsize =!= null then (
-	  if class monsize =!= ZZ then error "expected an integer as MonomialSize option";
-	  if monsize <= 8 then MonSize = 8
-	  else if monsize <= 16 then MonSize = 16
-	  else MonSize = 32);
+     processMonSize monsize;
      invert = inverses;
      if not isListOfIntegers degs then error "expected a list of integers";
      deglist = degs;
@@ -167,8 +172,9 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      else error "expected a list of integers or a list of lists of small integers";
      if class ordering =!= List then ordering = {ordering};
      ordering = join(weights / (i -> Weights => i), ordering);
-     t := toList splice fixup ordering;
+     t := toList splice nonnull fixup ordering;
      if varcount < nvars then t = append(t,fixup(GRevLex => nvars - varcount));
+     if not any(t, x -> class x === Option and x#0 === Position) then t = append(t, Position => Up);
      (t,rawMonomialOrdering t))
 
 RawMonomialOrdering ** RawMonomialOrdering := RawMonomialOrdering => rawProductMonomialOrdering
