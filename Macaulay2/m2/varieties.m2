@@ -231,23 +231,22 @@ sheaf Variety := X -> sheaf_X ring X
 
 minimalPresentation CoherentSheaf := opts -> F -> sheaf minimalPresentation HH^0 F(>=0)
 
-cotangentSheaf = method()
-cotangentSheaf ProjectiveVariety := CoherentSheaf => (X) -> (
-     if X.cache.?cotangentSheaf
-     then X.cache.cotangentSheaf
-     else X.cache.cotangentSheaf = (
+cotangentSheaf = method(Options => {Minimize => true})
+tangentSheaf = method(Options => {Minimize => true})
+
+cotangentSheaf ProjectiveVariety := CoherentSheaf => opts -> (cacheValue symbol cotangentSheaf) ((X) -> (
 	  R := ring X;
 	  F := presentation R;
-	  minimalPresentation sheaf(X, homology(vars ring F ** R,jacobian F ** R))
-	  )
-     )
-cotangentSheaf(ZZ,ProjectiveVariety) := CoherentSheaf => (i,X) -> (
+	  om := sheaf(X, homology(vars ring F ** R,jacobian F ** R));
+	  if opts.Minimize then om = minimalPresentation om;
+	  om))
+
+cotangentSheaf(ZZ,ProjectiveVariety) := CoherentSheaf => opts -> (i,X) -> (
      if X#?(cotangentSheaf,i)
      then X#(cotangentSheaf,i) 
-     else X#(cotangentSheaf,i) = exteriorPower(i,cotangentSheaf X))
+     else X#(cotangentSheaf,i) = exteriorPower(i,cotangentSheaf(X,opts)))
 
-tangentSheaf = method()
-tangentSheaf ProjectiveVariety := CoherentSheaf => (X) -> dual cotangentSheaf X
+tangentSheaf ProjectiveVariety := CoherentSheaf => opts -> (X) -> dual cotangentSheaf(X,opts)
 
 dim AffineVariety := X -> dim ring X
 dim ProjectiveVariety := X -> dim ring X - 1
