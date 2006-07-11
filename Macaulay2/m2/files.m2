@@ -216,13 +216,16 @@ toFilename String := s -> (
      s = concatenate("_",apply(characters s, c -> tt#c));
      s)
 
-regexpString = s -> replace(///([][\.^$+*{()}])///,///\\1///,s)
+regexpString := s -> replace(///([][\.^$+*{()}])///,///\\1///,s)
 
 mungeFile = (filename, headerline, trailerline, text) -> (
-     oldcontents := get filename;
-     hdr := regexpString headerline;
-     tlr := regexpString trailerline;
+     oldcontents := if fileExists filename then get filename else "";
+     headerline = headerline | newline;
+     trailerline = trailerline | newline;
+     text = replace("/PREFIX/",prefixDirectory,text);
      insert := headerline | text | trailerline;
+     hdr := "^" | regexpString headerline;
+     tlr := "^" | regexpString trailerline;
      regexp := hdr | "(.|\n)*" | tlr ;
      if match(regexp,oldcontents) then (
      	  excerpt := first select(regexp, oldcontents);
@@ -239,30 +242,29 @@ mungeFile = (filename, headerline, trailerline, text) -> (
 	  newcontents = oldcontents | newline | insert; 
 	  );
      filename = realpath filename;
-     stderr << "--initialization text about to be added to file: " << filename << endl;
-     bak := filename | ".bak";
-     for i from 1 do (
-	  try linkFile(filename,bak) else ( 
-	       if not fileExists bak then error("failed to create backup file: ", bak);
-	       bak = filename | ".bak-" | toString i;
-	       continue );
-	  stderr << "--backup file created: " << bak << endl;
-	  break);
-     tmp := filename | ".tmp";
+     tmp := filename | ".Macaulay2.tmp";
      tmp << newcontents << close;
-     removeFile filename;
+     if fileExists filename then (
+	  stderr << "--initialization text about to be added to file: " << filename << endl;
+	  bak := filename | ".bak";
+	  for i from 1 do (
+	       try linkFile(filename,bak) else ( 
+		    if not fileExists bak then error("failed to create backup file: ", bak);
+		    bak = filename | ".bak-" | toString i;
+		    continue );
+	       stderr << "--backup file created: " << bak << endl;
+	       break);
+	  removeFile filename;
+	  )
+     else (
+	  stderr << "--file about to be created for initialization text: " << filename << endl;
+	  );
      linkFile(tmp,filename);
      removeFile tmp;
      stderr << "--operation complete" << endl;
      )
 
-setup = () -> (
-     if prefixDirectory === null then error "can't determine Macaulay 2 prefix (prefixDirectory not set)";
-     mungeFile(
-	  homeDirectory | ".emacs",
-	  ";; Macaulay 2 start\n",
-	  ";; Macaulay 2 end\n",
-	  replace_("/PREFIX/",prefixDirectory) ///
+dotemacsFix = ///
 (setq load-path
        (append
         '( "/PREFIX/share/emacs/site-lisp/" )
@@ -274,7 +276,45 @@ setup = () -> (
 ; want to use your f12 key for something else
 (global-set-key [ f12 ] 'M2)
 ///
-          )
+
+dotprofileFix = dotbashrcFix = ///
+if [ "$MACAULAY2" ]
+then MACAULAY2=setup
+     PATH=/PREFIX/bin:$PATH
+     MANPATH=/PREFIX/share/man:$MANPATH
+     INFOPATH=/PREFIX/info:$INFOPATH
+     export MACAULAY2 PATH MANPATH INFOPATH
+fi
+///
+
+dotloginFix = dotcshrcFix = ///
+if ( "$MACAULAY2" != "" )
+then setenv MACAULAY2 setup
+     setenv PATH /PREFIX/bin:$PATH
+     setenv MANPATH /PREFIX/share/man:$MANPATH
+     setenv INFOPATH /PREFIX/info:$INFOPATH
+endif
+///
+
+---- from bash info:
+-- After reading that file, it looks for `~/.bash_profile',
+-- `~/.bash_login', and `~/.profile', in that order, and reads and
+-- executes commands from the first one that exists and is readable.
+
+setup = method( Dispatch => Thing, Options => {} )
+
+setup Sequence := o -> () -> (
+     if prefixDirectory === null then error "can't determine Macaulay 2 prefix (prefixDirectory not set)";
+     bashlogin := (
+	  if fileExists(homeDirectory | ".bash_profile") then homeDirectory | ".bash_profile" else
+	  if fileExists(homeDirectory | ".bash_login") then homeDirectory | ".bash_login");
+     if bashlogin =!= null then
+     mungeFile( bashlogin, "## Macaulay 2 start", "## Macaulay 2 end", dotprofileFix );
+     mungeFile( homeDirectory | ".profile", "## Macaulay 2 start", "## Macaulay 2 end", dotprofileFix );
+     mungeFile( homeDirectory | ".login", "## Macaulay 2 start", "## Macaulay 2 end", dotloginFix );
+     mungeFile( homeDirectory | ".cshrc", "## Macaulay 2 start", "## Macaulay 2 end", dotcshrcFix );
+     mungeFile( homeDirectory | ".bashrc", "## Macaulay 2 start", "## Macaulay 2 end", dotbashrcFix );
+     mungeFile( homeDirectory | ".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", dotemacsFix );
      )
 
 -- Local Variables:

@@ -98,17 +98,20 @@ complement Matrix := Matrix => (f) -> (
      if not isHomogeneous f then error "complement: expected homogeneous matrix";
      if not isFreeModule source f or not isFreeModule target f then error "expected map between free modules";
      R := ring f;
-     if R === ZZ then (
+     if isField R then (
+	  h := transpose syz transpose f;
+	  id_(target h) // h)
+     else if R === ZZ then (
 	  (g,ch) := smithNormalForm(f,ChangeMatrix=>{true,false});
 	  m := numgens target g;
 	  piv := select(pivots g,(i,j) -> abs g_(i,j) === 1);
 	  rows' := first \ piv;
 	  submatrix'(id_(ZZ^m),rows') // ch				    -- would be faster if gb provided inverse change matrices!!!
 	  )
-     else if isAffineRing R or isField coefficientRing R and R.?SkewCommutative then (
-	  h := transpose syz transpose substitute(f,0);
-	  id_(target h) // h)
-     else error "complement: expected matrix over affine ring or ZZ")
+     else if isAffineRing R then R ** complement (map(coefficientRing R, R)) f
+     else if instance(R,PolynomialRing) then R ** complement (map(coefficientRing R, R)) f
+     else if instance(R,QuotientRing) then R ** complement lift(f,ambient R)
+     else error "complement: expected matrix over affine ring or finitely generated ZZ-algebra")
 
 mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
  	  mingb := m -> gb (m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);

@@ -131,25 +131,15 @@ random GaloisField := opts -> F -> (
 dim GaloisField := R -> 0
 
 isField GaloisField := F -> true
-isField QuotientRing := R -> (
-     R.?isField and R.isField
-     or
-     ambient R === ZZ and isPrime char R
-     )
-isField Ring := R -> (
-     R.?isField and R.isField
-     or
-     R === QQ
-     )
+isField QuotientRing := R -> R.?isField and R.isField or ambient R === ZZ and isPrime char R
+isField Ring := R -> R.?isField and R.isField
+isField PolynomialRing := R -> numgens R === 0 and isField coefficientRing R
+isField QuotientRing := R -> isField ambient R and R != 0
 
 isAffineRing = method(TypicalValue => Boolean)
 isAffineRing Ring := R -> isField R
-isAffineRing PolynomialRing := R -> (
-     not R.?SkewCommutative and not (options R).Inverses and
-     isAffineRing coefficientRing R
-     )
+isAffineRing PolynomialRing := R -> not (options R).Inverses and isAffineRing coefficientRing R
 isAffineRing QuotientRing := R -> isField R or isAffineRing ambient R
-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
