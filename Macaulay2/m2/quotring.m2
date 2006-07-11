@@ -186,7 +186,7 @@ singularLocus(Ideal) := QuotientRing => (I) -> singularLocus(ring I / I)
 
 toField = R -> (
      R.frac = R;
-     R.isField = true;
+     -- R.isField = true;
      if R.?Engine and R.Engine then (
 	  rawDeclareField raw R;
 	  R / R := (x,y) -> notImplemented();

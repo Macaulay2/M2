@@ -13,7 +13,8 @@ promote'(matrix{{2}}, R)
 lift'(matrix{{2/1}}, ZZ)
   assert( oo === matrix {{2}} )
 end
--- Local Variables:
 -- M2-send-to-buffer: "*gud*"
+
+-- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test matrixpromote.out"
 -- End:

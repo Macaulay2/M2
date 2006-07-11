@@ -358,11 +358,14 @@ minimalPresentation(Module) := Module => opts -> (cacheValue symbol minimalPrese
      ))
 
 addHook(Module, symbol minimalPresentation, (opts,M) -> (
-	  -- we try to handle any module here
+	  -- we try to handle any module here, without any information about the ring
 	  f := generators gb presentation M;
-	  -- MES: can't it do more here?
+	  piv := select(pivots f, ij -> isUnit f_ij);
+	  rows := first \ piv;
+	  cols := last \ piv;
+	  f = submatrix'(f,rows,cols);
 	  N := cokernel f;
-	  N.cache.pruningMap = map(M,N,id_(cover M));
+	  N.cache.pruningMap = map(M,N,submatrix'(id_(cover M),rows));
 	  N))
 
 addHook(Module, symbol minimalPresentation, (opts,M) -> (

@@ -130,11 +130,7 @@ random GaloisField := opts -> F -> (
 
 dim GaloisField := R -> 0
 
-isField GaloisField := F -> true
-isField QuotientRing := R -> R.?isField and R.isField or ambient R === ZZ and isPrime char R
 isField Ring := R -> R.?isField and R.isField
-isField PolynomialRing := R -> numgens R === 0 and isField coefficientRing R
-isField QuotientRing := R -> isField ambient R and R != 0
 
 isAffineRing = method(TypicalValue => Boolean)
 isAffineRing Ring := R -> isField R
