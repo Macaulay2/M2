@@ -7,3 +7,16 @@ C = res M
 assert (length C <= 1)
 assert isIsomorphism map(M,HH_0 C,id_(cover M))
 assert ( HH_1 C == 0 )
+
+
+--
+R = QQ[x]
+M = coker matrix(R, {{1},{0}})
+C = res M
+HH_0 C
+assert ( M == HH_0 C )
+
+M = coker matrix(R, {{0},{1}})
+C = res M
+HH_0 C
+assert ( M == HH_0 C )

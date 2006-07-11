@@ -1001,6 +1001,7 @@ export {
 	symbol stdio,
 	symbol sublists,
 	symbol submatrix,
+	symbol submatrix',
 	symbol submodule,
 	symbol subquotient,
 	symbol subscript,

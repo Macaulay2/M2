@@ -1,5 +1,15 @@
 -*- M2 -*-
 
+R = ZZ/101[x]
+f = inducedMap(R^1/x,R^1/x^2)
+g = inducedMap(R^1/x,R^1/x^3)
+quotientRemainder(g,f)
+isWellDefined first oo
+quotientRemainder(f,g)
+isWellDefined first oo
+
+
+
 Date: Mon, 3 Jul 2006 06:43:42 -0500 (CDT)
 From: Dan Grayson <dan@math.uiuc.edu>
 To: mike@math.cornell.edu
@@ -12,12 +22,6 @@ Here is a rather silly bug of mine from long ago.  Did I just not think about
 whether the resulting maps are well-defined?  Hmm...
 
      R = ZZ[x]
-
-    i2 : f = inducedMap(R^1/x,R^1/x^3)
-
-    o2 = | 1 |
-
-    o2 : Matrix
 
     i3 : f = inducedMap(R^1/x,R^1/x^2)
 

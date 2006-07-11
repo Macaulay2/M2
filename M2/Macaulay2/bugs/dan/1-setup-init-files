@@ -42,3 +42,65 @@ up .emacs will see that.  Let's change it to
 (global-set-key [ f12 ] 'M2)
 
 ;; Macaulay 2 end
+
+=============================================================================
+
+To: Michael Stillman <mike@math.cornell.edu>
+In-reply-to: <EE9ED1C1-7D83-418B-B94A-DA0A2E39C569@math.cornell.edu> (message
+	from Michael Stillman on Mon, 10 Jul 2006 20:21:21 -0400)
+Subject: Re: .emacs
+Reply-to: dan@math.uiuc.edu
+References: <0EF97FFB-9049-4E96-AE57-24377A4B941E@math.cornell.edu> <200607102330.k6ANUaj00803@u00.math.uiuc.edu> <EE9ED1C1-7D83-418B-B94A-DA0A2E39C569@math.cornell.edu>
+--text follows this line--
+
+Yup, that's all in dan/1-setup-init-files already, and will be done.
+
+I was thinking of having just one function that sets up .emacs, .login, and
+.profile.
+
+Perhaps it should be called "setup" or "init" or "setupInitializationFiles".
+
+> From: Michael Stillman <mike@math.cornell.edu>
+> Subject: Re: .emacs
+> Date: Mon, 10 Jul 2006 20:21:21 -0400
+> To: dan@math.uiuc.edu
+> 
+> Then should we have a function
+> 
+> fixMacaulay2Emacs()
+> 
+> (or hopefully a better name!) which looks at the .emacs file,
+> and removes the last ";; Macaulay2 start" block if it is there, and
+> then adds these lines?
+> 
+> I suppose that there should be a similar function for placing M2 on  
+> the path, etc.
+> for bash and/or tcsh?
+
+=============================================================================
+
+To: Michael Stillman <mike@math.cornell.edu>
+In-reply-to: <F8D0155D-2705-48D0-99B0-E5211079D00B@math.cornell.edu> (message
+	from Michael Stillman on Mon, 10 Jul 2006 22:38:06 -0400)
+Subject: Re: .emacs
+Reply-to: dan@math.uiuc.edu
+References: <0EF97FFB-9049-4E96-AE57-24377A4B941E@math.cornell.edu> <200607102330.k6ANUaj00803@u00.math.uiuc.edu> <EE9ED1C1-7D83-418B-B94A-DA0A2E39C569@math.cornell.edu> <200607110233.k6B2XoZ03117@u00.math.uiuc.edu> <F8D0155D-2705-48D0-99B0-E5211079D00B@math.cornell.edu>
+--text follows this line--
+
+> From: Michael Stillman <mike@math.cornell.edu>
+> Subject: Re: .emacs
+> Date: Mon, 10 Jul 2006 22:38:06 -0400
+> To: dan@math.uiuc.edu
+> 
+> I think 'setup' is a good name.
+> 
+> Remember that on the Mac, .profile gets read infrequently.  You had  
+> the DOTPROFILE_LOADED trick to fix that.  Maybe we should do that  
+> here...
+
+Okay, as the same thing might be a problem with X Windows.  We could do the
+same with .cshrc.
+
+> What is the difference between .login and .profile?
+
+C shells read .login and Bourne shells read .profile.

@@ -1,0 +1,17 @@
+
+i20 : R = ZZ[x,y]
+
+o20 = R
+
+o20 : PolynomialRing
+
+i21 : prune coker id_(R^3)
+
+   -- {0}(3)mmm
+   -- ...
+o21 = cokernel | 1 0 0 |
+               | 0 1 0 |
+               | 0 0 1 |
+
+                             3
+o21 : R-module, quotient of R

@@ -36,3 +36,13 @@ assert ( ideal(x-3) == fittingIdeal_2 N)
 assert ( ideal(1_R) == fittingIdeal_3 N)
 assert ( rank M == 1 )
 factor M
+
+-- 
+
+
+R = QQ[x,y]
+assert ( R^0 == prune coker id_(R^3) )
+
+R = ZZ[x,y]
+assert ( R^0 == prune coker id_(R^3) )
+

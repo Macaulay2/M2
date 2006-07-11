@@ -60,12 +60,17 @@ degreesRing ZZ := PolynomialRing => memoize(
 	       ZZn.flatmonoid = ZZn.monoid = monoid[];
 	       ZZn.numallvars = 0;
 	       ZZn.baseRings = {ZZ};
+	       ZZn.Adjust = identity;
+	       ZZn.Repair = identity;
+	       ZZn.degreesRing = ZZn;
+	       ZZn.isCommutative = true;
+	       ZZn.generatorSymbols = {};
+	       ZZn.generatorExpressions = {};
+	       ZZn.generators = {};
+	       ZZn.indexSymbols = new HashTable;
+	       ZZn.indexStrings = new HashTable;
 	       ZZn)
-	  else (
-	       Zn = degreesMonoid n;
-	       ZZn = ZZ Zn;
-	       ZZn.baseRings = {ZZ};
-	       ZZn)))
+	  else ZZ degreesMonoid n))
 
 degreesRing PolynomialRing := PolynomialRing => R -> (
      if R.?degreesRing then R.degreesRing

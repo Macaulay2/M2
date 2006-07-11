@@ -71,3 +71,6 @@ assert( id_(R^2) == sort id_(R^2) )
 
 R = QQ[]
 assert( id_(R^2) == sort id_(R^2) )
+
+R = degreesRing 0
+assert( id_(R^2) == sort id_(R^2) )
