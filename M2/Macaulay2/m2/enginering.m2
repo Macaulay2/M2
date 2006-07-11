@@ -8,8 +8,6 @@ RawRingElement == RingElement := (x,y) -> x === raw y
 ring RingElement := r -> class r
 factor RingElement := r -> error "factor: unimplemented for this ring"
 
-promote'(Number,RingElement) := (n,R) -> new R from rawFromNumber(R,n)
-
 -- RingElement.directSum = v -> directSum apply(v, a -> matrix{{a}})
 
 EngineRing = new Type of Ring
@@ -41,21 +39,29 @@ multipleBasicPromoteMatrix = (m,v) -> (m = raw m; scan(v, F -> m = rawPromote(ra
 -- 
 -- )
 
+promote'(ZZ,RingElement) := (n,R) -> new R from rawFromNumber(R,n)
+
 commonEngineRingInitializations = (F) -> (
      F ? F := (f,g) -> raw f ? raw g;
-     promote'(F,F) := (f,F) -> f;
+     promote'(F,F) := lift'(F,F) := (f,F) -> f;
+     liftable'(F,F) := (f,F) -> true;
      baserings := F.baseRings;
      n := # baserings;
      scan(n, i -> (
 	       A := baserings#i;
-	       if not ancestor(A, Number) then (
-		    if i == n-1 then (
-			 promote'(A,F) := basicPromote;
-			 )
-		    else (
-			 v := append(take(baserings, -(n-i-1)), F);
-			 promote'(A,F) := (a,F) -> multipleBasicPromote(a, v);
-			 ))));
+	       if i == n-1 then (
+		    lift'(A,F) := basicLift;
+	       	    if ancestor(A, Number) 
+		    then promote'(A,F) := (n,R) -> new R from rawFromNumber(R,n)
+	       	    else promote'(A,F) := basicPromote;
+		    )
+	       else (
+		    v := append(take(baserings, -(n-i-1)), F);
+		    lift'(A,F) := (a,F) -> multipleBasicLift(a, v);
+	       	    if ancestor(A, Number)
+		    then promote'(A,F) := (n,R) -> new R from rawFromNumber(R,n)
+	       	    else promote'(A,F) := (a,F) -> multipleBasicPromote(a, v);
+		    )));
      )
 
 -----------------------------------------------------------------------------

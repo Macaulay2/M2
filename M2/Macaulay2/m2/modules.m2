@@ -35,10 +35,16 @@ promote'(Matrix,RingElement) := promote'(Matrix,Number) := Matrix => (f,S) -> (
 
 lift'(Matrix,QQ,ZZ) := (f,ZZ,QQ) -> basicLiftMatrix(f,QQ^(numgens target f))
 
-promote'(Matrix,Number,Number) := promote'(Matrix,Number,RingElement) := (f,A,R) -> basicPromoteMatrix(f,R^(numgens target f))
-lift'(Matrix,Number,Number) := lift'(Matrix,RingElement,Number) := (f,R,A) -> (
-     if not isFreeModule source f or not isFreeModule target f then error "expected source and target to be free";
-     basicLiftMatrix(f,R^(numgens target f)))
+scan((ZZ,QQ,RR,RRR,CC,CCC), F -> (
+	  promote'(Matrix,F,F) := (f,A,B) -> f;
+	  lift'(Matrix,F,F) := (f,A,B) -> f;
+	  ))
+
+promote'(Matrix,Number,Number) := (f,A,R) -> basicPromoteMatrix(f,R^(numgens target f))
+promote'(Matrix,Number,RingElement) := (f,A,R) -> basicPromoteMatrix(f,R^(numgens target f))
+
+lift'(Matrix,Number,Number) := (f,R,A) -> basicLiftMatrix(f,R^(numgens target f))
+lift'(Matrix,RingElement,Number) := (f,R,A) -> basicLiftMatrix(f,R^(numgens target f))
 
 -----------------------------------------------------------------------------
 -- Vector
