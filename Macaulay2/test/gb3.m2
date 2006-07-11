@@ -19,6 +19,21 @@ assert( leadTerm gens g == transpose leadTerm gens g)
 -- uniqueness of gb's:
 assert( gens gb matrix {{-1}} == gens gb matrix {{1}} )
 
+-- gb over ZZ
+f = matrix {
+     {13650502, 198662, -1514226}, {-528389638951, -7688266050, 58613349522}, {1819050, 26473, -201784},
+     {-34721130542, -505205335, 3851555009}, {13943863165, 202888407, -1546768644}, {112371429966, 1635046125, -12465168534}}
+h = gens gb f
+assert(gens gb h == h)
+assert( h == matrix {
+	  {-304371114, 129997874, -86994465284}, {-224654892, 95950799, 337132988376}, {-38621018, 16495160, -10628621651},
+	  {51393451, -21950302, -74040381498}, {0, 1, -18062908713}, {0, 0, 3}})
+assert isIsomorphism map(coker f, coker h, id_(target f))
+G = gb(f,ChangeMatrix => true)
+c = getChangeMatrix G
+assert( h == gens G )
+assert isIsomorphism map(image f, image h, c)
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test gb3.out"
