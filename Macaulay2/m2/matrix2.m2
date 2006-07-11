@@ -105,7 +105,7 @@ complement Matrix := Matrix => (f) -> (
 	  rows' := first \ piv;
 	  submatrix'(id_(ZZ^m),rows') // ch				    -- would be faster if gb provided inverse change matrices!!!
 	  )
-     else if isAffineRing R then (
+     else if isAffineRing R or isField coefficientRing R and R.?SkewCommutative then (
 	  h := transpose syz transpose substitute(f,0);
 	  id_(target h) // h)
      else error "complement: expected matrix over affine ring or ZZ")
