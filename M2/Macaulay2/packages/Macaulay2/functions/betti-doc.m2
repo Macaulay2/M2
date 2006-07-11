@@ -87,15 +87,9 @@ document {
 	". When the chain complex is the resolution of a module the entries are
 	the total and the graded Betti numbers of the module.",
      PARA{},
-     "If these numbers are needed in a program, one way to get them is
-     with ", TO "tally", ".",
-     EXAMPLE {
-	  "degrees C_2",
-      	  "t2 = tally degrees C_2",
-      	  "peek t2",
-      	  "t2_{2}",
-      	  "t2_{3}"
-	  }
+     "If the numbers are needed in a program, then they are accessible, because
+     the value returned is ", ofClass BettiTally, ", and the diagram you see
+     on the screen is just the way it prints out."
      }
 
 document { 

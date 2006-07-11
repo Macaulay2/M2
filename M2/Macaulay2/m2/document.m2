@@ -634,10 +634,14 @@ undocumented' = x -> error "late use of function undocumented'"
 -----------------------------------------------------------------------------
 
 getExampleInputs := method(Dispatch => Thing)
-getExampleInputs Thing        := t -> {}
-getExampleInputs Hypertext   := t -> join apply(toSequence t, getExampleInputs)
+getExampleInputs Thing       := t -> ()
+getExampleInputs Sequence    := 
+getExampleInputs Hypertext   := t -> apply(toSequence t, getExampleInputs)
+getExampleInputs ExampleItem := t -> 1 : t#0
 
-examples = x -> stack getExampleInputs help x
+examples = x -> (
+     checkLoadDocumentation();
+     stack deepSplice getExampleInputs (fetchRawDocumentation makeDocumentTag x).Description)
 apropos = method()
 apropos String := (pattern) -> last \ sort select(flatten \\ pairs \ dictionaryPath, (nam,sym) -> match(pattern,nam) and not match("\\$",nam))
 -----------------------------------------------------------------------------
