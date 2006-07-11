@@ -23,16 +23,22 @@ ring Matrix := f -> (
 source Matrix := f -> f.source
 target Matrix := f -> f.target
 
-lift'(Matrix,RingElement) := lift'(Matrix,Number) := Matrix => (f,S) -> lift'(f, ring f, S)
-liftable'(Matrix,RingElement) := liftable'(Matrix,Number) := Boolean => (f,S) -> liftable'(f, ring f, S)
-promote'(Matrix,RingElement) := promote'(Matrix,Number) := Matrix => (f,S) -> promote'(f, ring f, S)
+lift'(Matrix,RingElement) := lift'(Matrix,Number) := Matrix => (f,S) -> (
+     if not isFreeModule target f or not isFreeModule source f then error "lift': expected source and target to be free modules";
+     lift'(f, ring f, S))     
+liftable'(Matrix,RingElement) := liftable'(Matrix,Number) := Boolean => (f,S) -> (
+     if not isFreeModule target f or not isFreeModule source f then error "lift': expected source and target to be free modules";
+     liftable'(f, ring f, S))
+promote'(Matrix,RingElement) := promote'(Matrix,Number) := Matrix => (f,S) -> (
+     if not isFreeModule target f or not isFreeModule source f then error "lift': expected source and target to be free modules";
+     promote'(f, ring f, S))
 
-lift'(Matrix,QQ,ZZ) := (f,ZZ,QQ) -> basicLiftMatrix(f,QQ^(rank target f))
+lift'(Matrix,QQ,ZZ) := (f,ZZ,QQ) -> basicLiftMatrix(f,QQ^(numgens target f))
 
-promote'(Matrix,Number,Number) := promote'(Matrix,Number,RingElement) := (f,A,R) -> basicPromoteMatrix(f,R^(rank target f))
+promote'(Matrix,Number,Number) := promote'(Matrix,Number,RingElement) := (f,A,R) -> basicPromoteMatrix(f,R^(numgens target f))
 lift'(Matrix,Number,Number) := lift'(Matrix,RingElement,Number) := (f,R,A) -> (
      if not isFreeModule source f or not isFreeModule target f then error "expected source and target to be free";
-     basicLiftMatrix(f,R^(rank target f)))
+     basicLiftMatrix(f,R^(numgens target f)))
 
 -----------------------------------------------------------------------------
 -- Vector

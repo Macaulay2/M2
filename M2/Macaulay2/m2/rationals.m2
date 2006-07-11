@@ -52,7 +52,7 @@ lift'(QQ,QQ) := promote'(QQ,QQ) := (r,QQ) -> r
 liftable'(QQ,QQ) := (QQ,QQ) -> true
 
 QQ.degreeLength = 0
-isUnit QQ := x -> x != 0
+isUnit Number := x -> x != 0
 
 isConstant QQ := i -> true
 

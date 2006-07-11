@@ -312,7 +312,7 @@ Matrix || RingElement := (f,g) -> concatRows(f,g**id_(source f))
 ZZ || Matrix := (f,g) -> concatRows(f*id_(source g),g)
 Matrix || ZZ := (f,g) -> concatRows(f,g*id_(source f))
 
-listZ := v -> ( if not all(v,i -> class i === ZZ) then error "expected list of integers"; v )
+listZ := v -> ( if not all(v,i -> instance(i, ZZ)) then error "expected list of integers"; v )
 Matrix _ List := Matrix => (f,v) -> submatrix(f,listZ splice v)	-- get some columns
 Matrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,) -- get some rows
 
@@ -334,10 +334,10 @@ submatrix(Matrix,VisibleList,Nothing    ) := (m,rows,cols) -> (
      map((ring m)^#rows,source m,rawSubmatrix(raw m, listZ toList rows, 0 .. numgens source m - 1)))
 
 compl := (m,v) -> toList (0 .. m-1) - set v
-submatrix'(Matrix,VisibleList,VisibleList) := (m,rows,cols) -> if #rows === 0 and #cols === 0 then m else submatrix(m,compl(numgens target m,rows),compl(numgens source m,cols))
-submatrix'(Matrix,VisibleList            ) := (m,cols     ) -> if #cols === 0 then m else submatrix(m,compl(numgens source m,cols))
+submatrix'(Matrix,VisibleList,VisibleList) := (m,rows,cols) -> if #rows === 0 and #cols === 0 then m else submatrix(m,compl(numgens target m,listZ toList splice rows),compl(numgens source m,listZ toList splice cols))
+submatrix'(Matrix,VisibleList            ) := (m,cols     ) -> if #cols === 0 then m else submatrix(m,compl(numgens source m,listZ toList splice cols))
 submatrix'(Matrix,Nothing    ,VisibleList) := (m,null,cols) -> if #cols === 0 then m else submatrix'(m,cols)
-submatrix'(Matrix,VisibleList,Nothing    ) := (m,rows,null) -> if #rows === 0 then m else submatrix(m,compl(numgens target m,rows),)
+submatrix'(Matrix,VisibleList,Nothing    ) := (m,rows,null) -> if #rows === 0 then m else submatrix(m,compl(numgens target m,listZ toList splice rows),)
 
 bothFree := (f,g) -> (
      if not isFreeModule source f or not isFreeModule target f

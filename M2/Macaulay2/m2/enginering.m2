@@ -16,6 +16,7 @@ EngineRing = new Type of Ring
 EngineRing.synonym = "engine ring"
 raw EngineRing := R -> R.RawRing
 raw Ring := R -> if R.?RawRing then R.RawRing else error "no raw engine ring associated with this ring"
+isField EngineRing := R -> rawIsField raw R
 -----------------------------------------------------------------------------
 --- new lift and promote, version 3
 basicLift = (r,B) -> new B from rawLift(raw B, raw r)
@@ -30,15 +31,15 @@ multipleBasicPromote = (r,v) -> ( r = raw r; scan(v, B -> r = rawPromote(raw B, 
 basicPromoteMatrix = (m,F) -> map(F,, rawPromote(raw F, raw m))
 multipleBasicPromoteMatrix = (m,v) -> (m = raw m; scan(v, F -> m = rawPromote(raw F, m)) map(last v,,m) )
 
-if debugLevel > 0 then (
-
-basicLiftMatrix = (m,F) -> ( R := ring F; map(F,,applyTable(entries m, r -> lift(r, R)))); -- temporary
-multipleBasicLiftMatrix = (m,v) -> (m = entries m; scan(v, F -> m = applyTable(m, r -> lift(r, ring F))); map(last v,,m) ); -- temporary
-
-basicPromoteMatrix = (m,F) -> ( R := ring F; map(F,,applyTable(entries m, r -> promote(r, R)))); -- temporary
-multipleBasicPromoteMatrix = (m,v) -> (m = entries m; scan(v, F -> m = applyTable(m, r -> promote(r, ring F))); map(last v,,m) ); -- temporary
-
-)
+-- if debugLevel > 0 then (
+-- 
+-- basicLiftMatrix = (m,F) -> ( R := ring F; map(F,,applyTable(entries m, r -> lift(r, R)))); -- temporary
+-- multipleBasicLiftMatrix = (m,v) -> (m = entries m; scan(v, F -> m = applyTable(m, r -> lift(r, ring F))); map(last v,,m) ); -- temporary
+-- 
+-- basicPromoteMatrix = (m,F) -> ( R := ring F; map(F,,applyTable(entries m, r -> promote(r, R)))); -- temporary
+-- multipleBasicPromoteMatrix = (m,v) -> (m = entries m; scan(v, F -> m = applyTable(m, r -> promote(r, ring F))); map(last v,,m) ); -- temporary
+-- 
+-- )
 
 commonEngineRingInitializations = (F) -> (
      F ? F := (f,g) -> raw f ? raw g;
@@ -554,7 +555,7 @@ liftable(RingElement,Ring) := Boolean =>
 liftable(ZZ,Ring) := 
 liftable(QQ,Ring) := (f,R) -> try (lift(f,R);true) else false
 
-isUnit(RingElement) := (f) -> 1 % ideal f == 0
+isUnit(RingElement) := (f) -> 1 % gb matrix {{f}} == 0
 
 Ring _ String := RingElement => (x,s) -> x.indexStrings#s
 Ring _ Symbol := RingElement => (x,s) -> x.indexSymbols#s
