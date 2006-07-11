@@ -19,8 +19,10 @@ for i from 0 to #chain-1 do for j from i to #chain-1 do (
      A = chain#i;
      B = chain#j;
      f = id_(A^3);
+     stderr << "trying matrix promotion from " << A << " to " << B << endl;
      g = promote'(f,B);
      assert(g == id_(B^3));
+     stderr << "trying matrix lift from " << A << " to " << B << endl;
      h = lift'(g,A);
      assert(f == h);
      )
