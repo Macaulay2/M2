@@ -1,3 +1,7 @@
+I gave this bug to Mike, as 1-res-change-basis.  Let's wait and see what happens.
+
+-----------------------------------------------------------------------------
+
 Date: Fri, 7 Jul 2006 11:24:02 -0500 (CDT)
 From: Dan Grayson <dan@math.uiuc.edu>
 To: mike@math.cornell.edu
@@ -76,3 +80,28 @@ Here is a simpler example:
     o14 = {{3}, {2}}
 
     o14 : List
+
+-----------------------------------------------------------------------------
+
+Here is an example:
+
+    i32 : M = coker matrix {{1_R},{0}}
+
+    o32 = cokernel | 1 |
+		   | 0 |
+
+				 2
+    o32 : R-module, quotient of R
+
+    i33 : HH_0 res M
+
+    o33 = cokernel | 0 |
+		   | 1 |
+
+				 2
+    o33 : R-module, quotient of R
+
+    i34 : describe R
+
+    o34 = QQ [x]
+
