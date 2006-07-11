@@ -51,14 +51,14 @@ commonEngineRingInitializations = (F) -> (
 	       A := baserings#i;
 	       if i == n-1 then (
 		    lift'(A,F) := basicLift;
-	       	    if ancestor(A, Number) 
+	       	    if ancestor(Number, A) 
 		    then promote'(A,F) := (n,R) -> new R from rawFromNumber(R,n)
 	       	    else promote'(A,F) := basicPromote;
 		    )
 	       else (
 		    v := append(take(baserings, -(n-i-1)), F);
 		    lift'(A,F) := (a,F) -> multipleBasicLift(a, v);
-	       	    if ancestor(A, Number)
+	       	    if ancestor(Number, A)
 		    then promote'(A,F) := (n,R) -> new R from rawFromNumber(R,n)
 	       	    else promote'(A,F) := (a,F) -> multipleBasicPromote(a, v);
 		    )));
