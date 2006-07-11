@@ -970,6 +970,7 @@ export {
 	symbol setEcho,
 	symbol setPrecision,
 	symbol setRandomSeed,
+	symbol setup,
 	symbol sheaf,
 	symbol sheafExt,
 	symbol sheafHom,

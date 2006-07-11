@@ -216,6 +216,71 @@ toFilename String := s -> (
      s = concatenate("_",apply(characters s, c -> tt#c));
      s)
 
+regexpString = s -> replace(///([][\.^$+*{()}])///,///\\1///,s)
+
+mungeFile = (filename, headerline, trailerline, text) -> (
+     oldcontents := get filename;
+     hdr := regexpString headerline;
+     tlr := regexpString trailerline;
+     insert := headerline | text | trailerline;
+     regexp := hdr | "(.|\n)*" | tlr ;
+     if match(regexp,oldcontents) then (
+     	  excerpt := first select(regexp, oldcontents);
+	  if 1 < length select(hdr,excerpt) or 1 < length select(tlr,excerpt) then (
+	       error("multiple Macaulay 2 insertion markers encountered in file: ", filename);
+	       );
+     	  newcontents := replace(regexp, insert, oldcontents);
+     	  if oldcontents == newcontents then (
+	       stderr << "--initialization text already in file, no changes needed: " << filename << endl;
+	       return;
+	       );
+	  )
+     else (
+	  newcontents = oldcontents | newline | insert; 
+	  );
+     filename = realpath filename;
+     stderr << "--initialization text about to be added to file: " << filename << endl;
+     bak := filename | ".bak";
+     for i from 1 do (
+	  try linkFile(filename,bak) else ( 
+	       if not fileExists bak then error("failed to create backup file: ", bak);
+	       bak = filename | ".bak-" | toString i;
+	       continue );
+	  stderr << "--backup file created: " << bak << endl;
+	  break);
+     tmp := filename | ".tmp";
+     tmp << newcontents << close;
+     removeFile filename;
+     linkFile(tmp,filename);
+     removeFile tmp;
+     stderr << "--operation complete" << endl;
+     )
+
+setup = () -> (
+     if prefixDirectory === null then error "can't determine Macaulay 2 prefix (prefixDirectory not set)";
+     mungeFile(
+	  homeDirectory | ".emacs",
+	  ";; Macaulay 2 start\n",
+	  ";; Macaulay 2 end\n",
+     	  ///
+(setq load-path
+       (append
+        '( "/// 
+
+          | prefixDirectory |
+
+        ///share/emacs/site-lisp/" )
+        load-path))
+
+(load "M2-init.el" t)
+
+; comment out the following line with an initial semicolon if you 
+; want to use your f12 key for something else
+(global-set-key [ f12 ] 'M2)
+///
+          )
+     )
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

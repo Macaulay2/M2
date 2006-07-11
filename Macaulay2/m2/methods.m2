@@ -128,7 +128,7 @@ method = methodDefaults >> opts -> args -> (
      if opts.TypicalValue =!= Thing then typicalValues#methodFunction = opts.TypicalValue;
      methodFunction)
 
-setup := (args, symbols) -> (
+setupMethods := (args, symbols) -> (
      scan(symbols, n -> (
 	  if value n =!= n then error concatenate("symbol ",toString n," redefined");
 	  f := method args;
@@ -136,7 +136,7 @@ setup := (args, symbols) -> (
 	  n <- f;
 	  )))
 
-setup((), { 
+setupMethods((), { 
 	  entries, borel, gcdCoefficients, singularLocus,
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
 	  koszul, symmetricPower, coefficientRing, trace, target, source,
@@ -190,14 +190,14 @@ mopts := Options => {
 matrix = method mopts
 map = method mopts
 
-setup(Dispatch => Thing, {transpose} )
-setup(TypicalValue => Boolean,
+setupMethods(Dispatch => Thing, {transpose} )
+setupMethods(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit, match,
 	  isSubset,isHomogeneous, isIsomorphism, isPrime, isField, isConstant
 	  })
-setup(TypicalValue => ZZ,
+setupMethods(TypicalValue => ZZ,
      {length,codim,binomial,degreeLength,height,char,pdim,dim,depth,width,regularity,euler,genus})
-setup(TypicalValue => List,
+setupMethods(TypicalValue => List,
      {eulers, genera})
 
 radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null } )
@@ -224,7 +224,7 @@ toExternalString Thing := x -> (
      error("can't convert anonymous object of class ",toString class x," to external string"))
 
 options = method(Dispatch => Thing, TypicalValue => OptionTable)
-setup(Dispatch => Thing, {max,min,directSum,intersect,vars})
+setupMethods(Dispatch => Thing, {max,min,directSum,intersect,vars})
 net = method(Dispatch => Thing, TypicalValue => Net)
 factor = method( Options => { } )
 
