@@ -1,3 +1,10 @@
+--FIXED
+
+f = random(ZZ^6,ZZ^3)
+g = gens gb f
+end
+
+
 -*- M2 -*-
 
 The number -41 below would be 0 if the gb were autoreduced, and it should be.
