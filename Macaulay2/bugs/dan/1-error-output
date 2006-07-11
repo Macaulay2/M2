@@ -1,3 +1,4 @@
+-*- M2 -*-
 
 i11 : newPackage "foo"
 
