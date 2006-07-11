@@ -1,3 +1,5 @@
+-- This file now works...
+
 satideal0 = (I,F) -> (
     R := ring I;
     m := transpose generators ideal(F);
