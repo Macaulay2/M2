@@ -628,7 +628,7 @@ BettiTally Array := (C,A) -> (
       applyKeys(C,(i,d) -> (i-n,d)))
 
 net BettiTally := v -> (
-     v = applyKeys( v, (i,d) -> (first d - i, i)); -- skew the degrees in the usual way; this way the Koszul complex occupies a horizontal line instead of a diagonal line
+     v = applyKeys( v, (i,d) -> ((if d#?0 then d#0 else 0) - i, i)); -- skew the degrees in the usual way; this way the Koszul complex occupies a horizontal line instead of a diagonal line
      k := keys v;
      fi := first \ k;
      la := last  \ k;

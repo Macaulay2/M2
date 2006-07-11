@@ -165,6 +165,7 @@ resolution Module := ChainComplex => o -> (M) -> (
      C := tryHooks(Module,symbol resolution,(o,M));
      if C =!= null then return C;
      R := ring M;
+     if isField R then return chainComplex map(minimalPresentation M,R^0,0);
      k := ultimate(coefficientRing, R);
      oR := options R;
      if R.?SkewCommutative then (

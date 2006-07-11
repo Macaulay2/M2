@@ -158,6 +158,8 @@ RingElement _ Ring := RingElement => (x,R) -> (
 protect internalDegreeLength
 protect internalDegrees
 
+madeTrivialMonoid := false
+
 makeit1 := (opts) -> (
      M := new GeneralOrderedMonoid of MonoidElement;
      M#"original options" = opts;
@@ -221,8 +223,8 @@ makeit1 := (opts) -> (
      M.Options = new OptionTable from opts;
      toString M := toExternalString M := x -> toString expression x;
      M.RawMonoid = (
-	  if n == 0 and class firstMonoid === Symbol then (
-	       firstMonoid = M;
+	  if n == 0 and not madeTrivialMonoid then (
+	       madeTrivialMonoid = true;
 	       rawMonoid())
 	  else rawMonoid(
 	       M.RawMonomialOrdering,
