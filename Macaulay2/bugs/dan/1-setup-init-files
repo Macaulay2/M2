@@ -104,3 +104,47 @@ same with .cshrc.
 > What is the difference between .login and .profile?
 
 C shells read .login and Bourne shells read .profile.
+
+=============================================================================
+
+In-Reply-To: <200607111452.k6BEqLf07129@u00.math.uiuc.edu>
+From: Michael Stillman <mike@math.cornell.edu>
+Subject: Re: Re: 
+Date: Tue, 11 Jul 2006 10:56:44 -0400
+To: dan@math.uiuc.edu
+
+On the mac, LD_LIBRARY_PATH isn't used.
+
+But basically, this sounds like a good idea.
+
+On Jul 11, 2006, at 10:52 AM, Dan Grayson wrote:
+
+>
+> We could *diagnose* whether things need fixing.
+>
+> Here's the list:
+>
+>        PATH
+>        INFOPATH
+>        MANPATH
+>        LD_LIBRARY_PATH
+>        load-path
+>
+>> From: Michael Stillman <mike@math.cornell.edu>
+>> Subject: Re:
+>> Date: Tue, 11 Jul 2006 10:34:58 -0400
+>> To: dan@math.uiuc.edu
+>>
+>> Some people will only want to fix emacs.  For example, the path is
+>> correctly set for fink users.
+>>
+>> On Jul 11, 2006, at 12:46 AM, Dan Grayson wrote:
+>>
+>>>
+>>> good night
+>>>
+>>> I've put in setup()
+>>>
+>>> right now it does just .emacs, but you can try it out
+>>
+

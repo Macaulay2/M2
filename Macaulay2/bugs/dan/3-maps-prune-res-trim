@@ -1,0 +1,4 @@
+The functions res, trim, and prune return new modules are chain complexes that
+are isomorphic or homotopy equivalent to the old ones.  But they don't return
+the maps.  Instead, they cache them somewhere, which isn't very intuitive.  We
+need something more uniform.

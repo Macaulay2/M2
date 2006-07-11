@@ -122,7 +122,7 @@ optionFixes := hashTable {
      GRevLexTiny => grevOption
      }
      
-ordOption := o -> fixup ( o => numvars - varcount )
+ordOption := o -> if numvars > varcount then fixup ( o => numvars - varcount )
 symbolFixes := hashTable {
      -- Component has no other occurence in our code, so this must be something we never implemented:
      -- Position => o -> Component => null,

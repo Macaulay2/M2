@@ -262,17 +262,13 @@ setup = () -> (
 	  homeDirectory | ".emacs",
 	  ";; Macaulay 2 start\n",
 	  ";; Macaulay 2 end\n",
-     	  ///
+	  replace_("/PREFIX/",prefixDirectory) ///
 (setq load-path
        (append
-        '( "/// 
-
-          | prefixDirectory |
-
-        ///share/emacs/site-lisp/" )
+        '( "/PREFIX/share/emacs/site-lisp/" )
         load-path))
 
-(load "M2-init.el" t)
+(load "M2-init" t)
 
 ; comment out the following line with an initial semicolon if you 
 ; want to use your f12 key for something else
