@@ -47,6 +47,8 @@ iden = (R,n) -> mutableIdentity(R,n)
 
 getEntry = (m,i,j) -> m_(i,j)
 
+reverseColumns = m -> m^(toList reverse (0 .. numgens target m - 1))
+
 --------------------------------------------------
 LLLstrategies = new HashTable from {
      NTL => 2,
@@ -614,10 +616,10 @@ hermite Matrix := opts -> (M) -> (
      if opts.Strategy === LLL then (
 	  -- Possible opts: Threshold=>QQ, ChangeMatrix,
 	  -- and for the specific computation: 
-	  C := newLLLHermiteComputation(M,opts.Threshold, opts.ChangeMatrix);
+	  C := newLLLHermiteComputation(reverseColumns M,opts.Threshold, opts.ChangeMatrix);
 	  doHermiteLLL(C, opts.Limit);     
-	  if opts.ChangeMatrix then (matrix C.A, matrix C.changeOfBasis)
-	  else matrix C.A
+	  if opts.ChangeMatrix then (reverseColumns matrix C.A, matrix C.changeOfBasis)
+	  else reverseColumns matrix C.A
 	  )
      else error "hermite: expected Strategy => LLL")
 
@@ -732,7 +734,7 @@ addHook(Module, symbol minimalPresentation, (o,M) -> (
 	  R := ring M;
 	  if R === ZZ and o.Strategy === null then (
 	       h := presentation M;
-	       p := hermite h;
+	       p := hermite h;				    -- check the column ordering, too!
 	       m := rank target p;
 	       n := rank source p;
 	       piv := pivots p;
@@ -1348,8 +1350,6 @@ document {
      the threshold value, see ", TO [LLL,Threshold], "."
      }
 
-
-
 ------------------------------------------
 --------- Tests --------------------------
 ------------------------------------------
@@ -1357,8 +1357,21 @@ document {
 ---------------------------------------
 -- LLL engine and frontend version-----
 ---------------------------------------
+
 TEST ///
-     loadPackage "LLLBases";
+f = matrix {
+     {13650502, 198662, -1514226}, {-528389638951, -7688266050, 58613349522}, {1819050, 26473, -201784},
+     {-34721130542, -505205335, 3851555009}, {13943863165, 202888407, -1546768644}, {112371429966, 1635046125, -12465168534}}
+h = hermite f
+assert(gens gb h == h)
+assert isIsomorphism map(coker f, coker h, id_(target f))
+(k,c) = hermite(f,ChangeMatrix => true)
+assert( k == h )
+assert isIsomorphism map(image f, image h, c)
+///
+
+
+TEST ///
 
     time m1 = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
     time m = syz m1
@@ -1385,20 +1398,19 @@ TEST ///
     time (mz5,ch5) = LLL(m, Strategy=>CohenTopLevel, ChangeMatrix=>true)
 ///
 
-TEST ""
+TEST 
 /// -- DON'T TEST YET??
-     loadPackage "LLLBases";
      testLLL = (m) -> (
   	  -- Test 1:
   	  remove(m.cache,symbol LLL);
   	  time m1 = matrix LLL(m,Engine=>true);
-  	  --time assert(isLLL m1);
+  	  time assert(isLLL m1);
   	  -- Test 2:
-  	  --remove(m.cache,symbol LLL);
-  	  --time m2 = matrix LLL(m, Engine=>true,ChangeMatrix=>true);
-  	  --assert(m1 == m2);
-  	  --h = matrix getColumnChange m2;
-  	  --assert(m2 == m*h);
+  	  remove(m.cache,symbol LLL);
+  	  time m2 = matrix LLL(m, Engine=>true,ChangeMatrix=>true);
+  	  assert(m1 == m2);
+  	  h = matrix getColumnChange m2;
+  	  assert(m2 == m*h);
   	  -- Test 3:
   	  remove(m.cache,symbol LLL);
   	  time m3 = matrix LLL(m,Engine=>false);
@@ -1409,7 +1421,7 @@ TEST ""
   	  assert(m3 == m4);
   	  h2 = matrix getColumnChange m4;  -- FAILS
   	  assert(m3 == m*h2);
-  	  --assert(h == h2);
+  	  assert(h == h2);
   	  )
 
      -- a random example
@@ -1437,22 +1449,19 @@ TEST ""
      m = matrix randomMutableMatrix(40,40,.5,5)
      testLLL m
 
-
 ///
 
 -------------------
 -- kernelLLL ------
 -------------------
 TEST ///
-     loadPackage "LLLBases";
 
     time m1 = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
     time m = syz m1
     time mz = LLL(m)
 
     time s1 = kernelLLL m1
-     assert(m1 * s1 == 0)
-
+    assert(m1 * s1 == 0)
 
     m = matrix{{1,1,1,1},{0,1,2,3}}  
     kernelLLL m
@@ -1506,7 +1515,6 @@ TEST ///
 -- hermite -----
 -------------------
 TEST ///
-     loadPackage "LLLBases";
 
     time m1 = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
     a = hermite m1
@@ -1553,7 +1561,6 @@ TEST ///
 -- gcdLLL ---------
 -------------------
 TEST ///
-     loadPackage "LLLBases";
 
      time (g,mz) = gcdLLL {3,7,11}
      time gcdLLL ({3,7,11}, Strategy => Hermite)
@@ -1580,10 +1587,8 @@ TEST ///
      gcd arandomlist == g
      assert(matrix{arandomlist} * mz == map(ZZ^1, ZZ^(#arandomlist-1), 0) | matrix{{g}})
 
-
      time gcdLLL {116085838, 181081878, 314252913, 10346840}
      time gcdLLL( {116085838, 181081878, 314252913, 10346840}, Strategy=>Hermite)
-
 
      mylist = {763836, 1066557, 113192, 1785102, 1470060, 3077752, 114793, 3126753, 1997137, 2603018}
      time gcdLLL mylist
@@ -1603,8 +1608,6 @@ TEST ///
 -- gram, isLLL ----
 -------------------
 TEST ///
-     loadPackage "LLLBases";
-
     time m1 = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
     time m = syz m1
     time mz = LLL(m)

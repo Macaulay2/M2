@@ -9,3 +9,36 @@ One would call a routine in M2 which would help set up .profile,
 or .bashrc, or .emacs...
 
 
+
+=============================================================================
+
+Date: Mon, 10 Jul 2006 18:30:36 -0500 (CDT)
+From: Dan Grayson <dan@math.uiuc.edu>
+To: Michael Stillman <mike@math.cornell.edu>
+CC: dan@math.uiuc.edu
+In-reply-to: <0EF97FFB-9049-4E96-AE57-24377A4B941E@math.cornell.edu> (message
+	from Michael Stillman on Mon, 10 Jul 2006 19:17:52 -0400)
+Subject: Re: .emacs
+Reply-to: dan@math.uiuc.edu
+
+
+Your emailer keeps wrapping.
+
+That looks fine, but we need markers so that the new routine I write for fixing
+up .emacs will see that.  Let's change it to
+
+;; Macaulay 2 start
+
+(setq load-path
+       (append
+        '( "/capybara/encap/Macaulay2-0.9.20/share/emacs/site-lisp/" )
+        load-path
+        ))
+
+(load "M2-init.el" t)
+
+; comment out the following line with an initial semicolon if you 
+; want to use your f12 key for something else
+(global-set-key [ f12 ] 'M2)
+
+;; Macaulay 2 end
