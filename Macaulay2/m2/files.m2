@@ -296,20 +296,15 @@ then setenv MACAULAY2 setup
 endif
 ///
 
----- from bash info:
--- After reading that file, it looks for `~/.bash_profile',
--- `~/.bash_login', and `~/.profile', in that order, and reads and
--- executes commands from the first one that exists and is readable.
-
-setup = method( Dispatch => Thing, Options => {} )
-
+setup = method( Dispatch => Thing, Options => { } )
 setup Sequence := o -> () -> (
      if prefixDirectory === null then error "can't determine Macaulay 2 prefix (prefixDirectory not set)";
-     bashlogin := (
-	  if fileExists(homeDirectory | ".bash_profile") then homeDirectory | ".bash_profile" else
-	  if fileExists(homeDirectory | ".bash_login") then homeDirectory | ".bash_login");
-     if bashlogin =!= null then
-     mungeFile( bashlogin, "## Macaulay 2 start", "## Macaulay 2 end", dotprofileFix );
+     ---- from bash info:
+     -- After reading that file, it looks for `~/.bash_profile',
+     -- `~/.bash_login', and `~/.profile', in that order, and reads and
+     -- executes commands from the first one that exists and is readable.
+     if fileExists(homeDirectory | ".bash_profile") then mungeFile( homeDirectory | ".bash_profile", "## Macaulay 2 start", "## Macaulay 2 end", dotprofileFix );
+     if fileExists(homeDirectory | ".bash_login"  ) then mungeFile( homeDirectory | ".bash_login"  , "## Macaulay 2 start", "## Macaulay 2 end", dotprofileFix );
      mungeFile( homeDirectory | ".profile", "## Macaulay 2 start", "## Macaulay 2 end", dotprofileFix );
      mungeFile( homeDirectory | ".login", "## Macaulay 2 start", "## Macaulay 2 end", dotloginFix );
      mungeFile( homeDirectory | ".cshrc", "## Macaulay 2 start", "## Macaulay 2 end", dotcshrcFix );
