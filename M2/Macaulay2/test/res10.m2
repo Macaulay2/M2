@@ -1,7 +1,11 @@
 R = ZZ[x,y]
 f = random(R^2,R^{4:-2})
 gbTrace = 3
-C = res coker f
+M = coker f
+C = res M
 b = betti C
-assert( b == new BettiTally from {(1,{2}) => 4, (2,{4}) => 2, (2,{5}) => 2, (3,{5}) => 2, (0,{0}) => 2} )
-
+assert( length C <= 3 )
+assert ( prune HH_1 C == R^0 )
+assert ( prune HH_2 C == R^0 )
+assert ( prune HH_3 C == R^0 )
+assert ( isIsomorphism map(M,HH_0 C, id_(cover M)) )
