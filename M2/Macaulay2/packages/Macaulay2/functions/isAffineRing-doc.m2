@@ -13,7 +13,7 @@ document {
 	  Boolean => 
 	  {TO "true", " if ", TT "R", " is an affine ring and ", TO "false", " otherwise"}
 	  },
-     "An affine ring is a quotient of a commutative ", TO2("PolynomialRing","polynomial ring"), 
+     "For our purposes, an affine ring is a quotient of a (not necessarily commutative) ", TO2("PolynomialRing","polynomial ring"), 
      " over a field.",
      EXAMPLE {
 	  "isAffineRing CC",

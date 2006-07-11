@@ -89,7 +89,9 @@ Module ** Ring := Module => (M,R) -> (
 	       )
 	  ))
 
-Matrix ** Ring := Matrix => (f,R) -> (
+Matrix ** Ring := Matrix => (f,R) -> R ** f		    -- grandfathered, even though our modules are left modules
+
+Ring ** Matrix := Matrix => (R,f) -> (
      k := ring source f;
      S := ring target f;
      if k === R and S === R then f
@@ -365,8 +367,7 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 
 addHook(Module, symbol minimalPresentation, (opts,M) -> (
      	  R := ring M;
-     	  oR := options R;
-	  if (isAffineRing R and isHomogeneous M) or (oR.?SkewCommutative and R.?SkewCommutative and isHomogeneous M) then (
+	  if (isAffineRing R and isHomogeneous M) or (isField coefficientRing R and R.?SkewCommutative and isHomogeneous M) then (
 	       f := presentation M;
 	       g := complement f;
 	       N := cokernel modulo(g, f);
