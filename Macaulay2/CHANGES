@@ -14,6 +14,15 @@ Changes made, most recent ones first:
 
 -----------------------------------------------------------------------------
 
+New in 0.9.20:
+
+'ancestor' -- order of arguments reversed so that now the English reading
+of ancestor(A,B) is correct -- it now means "A is an ancestor of B".  The
+English reading of 'instance' is already correct.  This function is used very
+little in the code.
+
+-----------------------------------------------------------------------------
+
 New in 0.9.10:
 
 The two arguments of 'rotate' have been interchanged.

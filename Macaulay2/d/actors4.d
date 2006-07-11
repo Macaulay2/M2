@@ -907,19 +907,22 @@ instanceof(e:Expr):Expr := (
      is args:Sequence do (
 	  when args.1
 	  is y:HashTable do if ancestor(Class(args.0),y) then True else False
-	  else False)
+	  else WrongArg(2,"a hash table"))
      else WrongNumArgs(2));
 setupfun("instance",instanceof);
 
 ancestorfun(e:Expr):Expr := (
      when e
      is args:Sequence do (
-	  x := args.0;
-	  y := args.1;
+	  x := args.1;					    -- args reversed
+	  y := args.0;
 	  if x==y then return True;
-	  when y 
-	  is yy:HashTable do if ancestor(Parent(x),yy) then True else False
-	  else False)
+	  when x
+	  is xx:HashTable do (
+	       when y 
+	       is yy:HashTable do if ancestor(xx,yy) then True else False
+	       else WrongArg(1,"a hash table"))
+	  else WrongArg(2,"a hash table"))
      else WrongNumArgs(2));
 setupfun("ancestor",ancestorfun);
 
