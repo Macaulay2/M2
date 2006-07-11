@@ -34,7 +34,7 @@ Monoid::Monoid()
      n_invertible_vars_(0),
      n_before_component_(0),
      n_after_component_(0),
-     component_up_(false),
+     component_up_(true),
      local_vars(0),
      EXP1_(0),
      EXP2_(0),

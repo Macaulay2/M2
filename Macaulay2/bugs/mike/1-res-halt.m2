@@ -1,7 +1,15 @@
     R = ZZ[x,y]
     f = random(R^2,R^{4:-2})
-    gbTrace = 3
-    res coker f
+    f = random(R^2,R^{4:-2})    
+    C = res coker f
+
+    R = ZZ[x,y, MonomialOrder=>Position=>Down]
+    f = substitute(f,R)
+    C = res coker f
+
+    R = ZZ[x,y, MonomialOrder=>Position=>Up]
+    f = substitute(f,R)
+    C = res coker f
 
 slows to a strange halt looping forever here:
 
