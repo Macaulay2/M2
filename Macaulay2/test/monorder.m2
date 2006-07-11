@@ -50,3 +50,24 @@ assert ( sort basis(0,3,R^2) ==
       a*b*d, 0, a*c^2, 0, a*c*d, 0, a*d^2, 0, b^3, 0, b^2*c, 0, b^2*d, 0, b*c^2, 0, b*c*d, 0, b*d^2, 0, c^3, 0, c^2*d, 0, c*d^2, 0, d^3}, {1, 0, a, 0, b, 0, c, 0, d, 0, a^2, 0, a*b, 0, a*c,
       0, a*d, 0, b^2, 0, b*c, 0, b*d, 0, c^2, 0, c*d, 0, d^2, 0, a^3, 0, a^2*b, 0, a^2*c, 0, a^2*d, 0, a*b^2, 0, a*b*c, 0, a*b*d, 0, a*c^2, 0, a*c*d, 0, a*d^2, 0, b^3, 0, b^2*c, 0, b^2*d,
       0, b*c^2, 0, b*c*d, 0, b*d^2, 0, c^3, 0, c^2*d, 0, c*d^2, 0, d^3, 0}})
+
+R = ZZ
+assert( id_(R^2) == sort id_(R^2) )
+
+R = QQ
+assert( id_(R^2) == sort id_(R^2) )
+
+R = GF 9
+assert( id_(R^2) == sort id_(R^2) )
+
+R = ZZ[x]
+assert( id_(R^2) == sort id_(R^2) )
+
+R = QQ[x]
+assert( id_(R^2) == sort id_(R^2) )
+
+R = ZZ[]
+assert( id_(R^2) == sort id_(R^2) )
+
+R = QQ[]
+assert( id_(R^2) == sort id_(R^2) )
