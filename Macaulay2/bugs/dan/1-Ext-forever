@@ -1,5 +1,8 @@
 --*- M2 -*-
 
+-- solution: cotangent sheaf has stopped pruning its result
+-- now it does, but its optional
+
 --if version#"VERSION" == "0.9.20" then (
 --     gbTrace = 3;
 --     errorDepth = 0;
