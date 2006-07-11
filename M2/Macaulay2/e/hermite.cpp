@@ -299,7 +299,7 @@ void HermiteComputation::start_computation()
 	  p->f = f;
 	  p->fsyz = fsyz;
 	}
-      //      gb_reduce(p->f, p->fsyz);
+      gb_reduce(p->f, p->fsyz);
       initial[p->f->comp] = p;
     }
 

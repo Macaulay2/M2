@@ -1,3 +1,36 @@
+R = ZZ[MonomialOrder=>Position=>Up]
+R = ZZ[MonomialOrder=>Position=>Down]
+R = ZZ[x,MonomialOrder=>Position=>Up]
+options R
+
+    o2 = OptionTable{Adjust => identity                              }
+		     DegreeRank => 1
+		     Degrees => {}
+		     Global => true
+		     Heft => 
+		     Inverses => false
+		     MonomialOrder => {GRevLex => {}, Position => Up}
+		     MonomialSize => 32
+		     Repair => identity
+		     SkewCommutative => {}
+		     VariableBaseName => 
+		     Variables => {}
+		     Weights => {}
+		     WeylAlgebra => {}
+
+debug Core; raw R
+gens gb (M = random(R^6,R^3))
+
+    o5 = | 0   0  4  |
+	 | 0   1  0  |
+	 | 27  5  3  |
+	 | 23  2  -9 |
+	 | -67 -9 4  |
+	 | -53 -9 4  |
+
+
+end
+
 Date: Thu, 6 Jul 2006 16:15:25 -0500
 From: Dan Grayson <dan@math.uiuc.edu>
 To: mike@math.cornell.edu
