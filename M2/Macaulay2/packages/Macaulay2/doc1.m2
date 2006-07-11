@@ -1,7 +1,7 @@
 scan((
 	  FollowLinks,Hilbert,UserMode,RerunExamples,MakeDocumentation,IgnoreExampleErrors,IgnoreDocumentationErrors,MakeInfo,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate,
 	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing,Undo,SourceCode,Description,Variables,
-	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment
+	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize
 	  ),
      s -> document { Key => s, "A symbol used as the name of an optional argument, for some function(s)." })
 scan((
@@ -761,7 +761,7 @@ TEST ///
      I = minors(2,genericSymmetricMatrix(S,u,3));
      X = variety I;
      R = ring X;
-     Omega = cotangentSheaf X;
+     Omega = prune cotangentSheaf X;
      OmegaDual = dual Omega;
      assert(Ext^1(OmegaDual, OO_X^1(>= 0)) == Ext^1(OO_X^1, Omega(>= 0)))
      ///
