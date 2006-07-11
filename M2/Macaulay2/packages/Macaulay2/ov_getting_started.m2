@@ -36,6 +36,18 @@ document {
 	  }
      }
 
+document {
+     Key => setup,
+     Usage => "setup()",
+     Consequences => {
+	  {"initialization files for emacs and the standard command shells will have lines added to them to allow the Macaulay 2 files to be found" }
+	  },
+     PARA {
+	  "Backup files are made carefully, and if a mangled initialization file is detected, it will not be modified.
+	  The lines added are bracketed by comment lines containing the phrases ", TT "Macaulay 2 start", " and ", TT "Macaulay 2 end", "."
+	  }
+     }
+
 document { Key => "moving or copying the Macaulay 2 files",
      "It is important, if you want to move or copy the Macaulay 2 files, to move or
      copy the entire directory tree, so their relative locations do not change.",
@@ -137,6 +149,12 @@ document { Key => "teaching your shell how to find M2",
      PARA {},
      "If you teach your shell how to find M2, then emacs may be able to find M2, also.",
      PARA {},
+     "The simplest way to teach your shell how to find M2 is to let M2 do it for you.  Assume that you have
+     found M2, and it is located at the path ", TT "/foo/bar/bin/M2", ".  Run the command /foo/bar/bin/M2,
+     and then, in response to Macaulay2's input prompt, enter ", TT "setup()", ".  If that works,
+     the next time you log in or start a new shell, the shell should know how to find M2 (see
+     ", TO "setup", ").  If that doesn't work, read onward."
+     PARA {},
      "Your goal is to add the directory containing M2 to the value of the PATH environment variable.
      For this, you must know where the Macaulay2 files are: see ", TO "finding the Macaulay 2 files", ".  Your system administrator may have installed
      the Macaulay2 files under /usr, in which case you will see M2 in /usr/bin, and you can ignore the 
@@ -199,6 +217,11 @@ document { Key => "teaching emacs how to find M2-init.el",
      and Macaulay 2 are both installed in /usr, then M2-init.el is located at
      ", TT "/usr/share/emacs/site-lisp/M2-init.el", ", and emacs already knows
      to look in that directory for source files.",
+     PARA {},
+     "The simplest way to teach emacs how to find M2-init.el is to let M2 do it for you.  Run M2,
+     and then, in response to Macaulay2's input prompt, enter ", TT "setup()", ".  If that works,
+     the next time you start emacs, it should know how to find M2-init.el (see
+     ", TO "setup", ").  If that doesn't work, read onward."
      PARA {},
      "To determine the precise path of the site-lisp directory emacs is looking
      in, so that you can install Macaulay 2 properly, use the emacs
