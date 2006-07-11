@@ -1,3 +1,5 @@
+FIXED (in front end):
+
     R = ZZ[x,y]
     f = random(R^2,R^{4:-2})
     f = random(R^2,R^{4:-2})    
