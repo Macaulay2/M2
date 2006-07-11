@@ -1,3 +1,10 @@
+-- FIXED
+
+R = QQ[x,y,z]
+minimalPrimes monomialIdeal (x*y,x*z)
+minimalPrimes monomialIdeal (x,y,z)
+
+end
 Date: Sun, 21 May 2006 09:37:10 -0500 (CDT)
 From: Dan Grayson <dan@math.uiuc.edu>
 To: mike@math.cornell.edu
