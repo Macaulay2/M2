@@ -378,12 +378,10 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 	  if R === ZZ then (
 	       f := presentation M;
 	       (g,ch) := smithNormalForm(f, ChangeMatrix => {true, false});
-	       m := numgens target g;
-	       n := numgens source g;
 	       piv := select(pivots g,ij -> abs g_ij === 1);
-	       rows := toList (0 .. m-1) - set(first \ piv);
-	       cols := toList (0 .. n-1) - set(last \ piv);
-	       (g,ch) = (g^rows_cols,ch^rows);
+	       rows := first \ piv;
+	       cols := last \ piv;
+	       (g,ch) = (submatrix'(g,rows,cols),submatrix'(ch,rows,));
 	       N := cokernel g;
 	       N.cache.pruningMap = map(M,N,id_(target ch) // ch);	    -- yuk, taking an inverse here, gb should give inverse change matrices, or the pruning map should go the other way
 	       N)))
@@ -399,13 +397,11 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 	       p' := map(R,S,vars R);
 	       f = p f;
 	       (g,ch) := smithNormalForm(f, ChangeMatrix => {true, false});
-	       m := numgens target g;
-	       n := numgens source g;
 	       isunit := r -> r != 0 and degree r === {0};
 	       piv := select(pivots g,ij -> isunit g_ij);
-	       rows := toList (0 .. m-1) - set(first \ piv);
-	       cols := toList (0 .. n-1) - set(last \ piv);
-	       (g,ch) = (g^rows_cols,ch^rows);
+	       rows := first \ piv;
+	       cols := last \ piv;
+	       (g,ch) = (submatrix'(g,rows,cols),submatrix'(ch,rows,));
 	       (g,ch) = (p' g,p' ch);
 	       N := cokernel g;
 	       N.cache.pruningMap = map(M,N,id_(target ch) // ch);	    -- yuk, taking an inverse here, gb should give inverse change matrices, or the pruning map should go the other way

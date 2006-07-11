@@ -102,8 +102,8 @@ complement Matrix := Matrix => (f) -> (
 	  (g,ch) := smithNormalForm(f,ChangeMatrix=>{true,false});
 	  m := numgens target g;
 	  piv := select(pivots g,(i,j) -> abs g_(i,j) === 1);
-	  rows' := toList(0 .. m-1) - set (first \ piv);
-	  id_(ZZ^m)_rows' // ch				    -- would be faster if gb provided inverse change matrices!!!
+	  rows' := first \ piv;
+	  submatrix'(id_(ZZ^m),rows') // ch				    -- would be faster if gb provided inverse change matrices!!!
 	  )
      else if isAffineRing R then (
 	  h := transpose syz transpose substitute(f,0);

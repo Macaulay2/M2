@@ -323,12 +323,21 @@ Matrix _ ZZ := Vector => (m,i) -> (
      h = map(M, R^1, h, Degree => first degrees source h);
      new target h from {h})
 
-submatrix(Matrix,VisibleList,VisibleList) := Matrix => (m,rows,cols) -> map(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols))
-submatrix(Matrix,VisibleList            ) := Matrix => (m,cols     ) -> map(target m,,rawSubmatrix(raw m, listZ toList splice cols))
-submatrix(Matrix,Nothing    ,VisibleList) := Matrix => (m,rows,cols) -> submatrix(m,cols)
-submatrix(Matrix,VisibleList,Nothing    ) := Matrix => (m,rows,cols) -> (
+submatrix  = method(TypicalValue => Matrix)
+submatrix' = method(TypicalValue => Matrix)
+
+submatrix(Matrix,VisibleList,VisibleList) := (m,rows,cols) -> map(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols))
+submatrix(Matrix,VisibleList            ) := (m,cols     ) -> map(target m,,rawSubmatrix(raw m, listZ toList splice cols))
+submatrix(Matrix,Nothing    ,VisibleList) := (m,null,cols) -> submatrix(m,cols)
+submatrix(Matrix,VisibleList,Nothing    ) := (m,rows,cols) -> (
      rows = splice rows; 
      map((ring m)^#rows,source m,rawSubmatrix(raw m, listZ toList rows, 0 .. numgens source m - 1)))
+
+compl := (m,v) -> toList (0 .. m-1) - set v
+submatrix'(Matrix,VisibleList,VisibleList) := (m,rows,cols) -> if #rows === 0 and #cols === 0 then m else submatrix(m,compl(numgens target m,rows),compl(numgens target m,cols))
+submatrix'(Matrix,VisibleList            ) := (m,cols     ) -> if #cols === 0 then m else submatrix(m,compl(numgens target m,cols))
+submatrix'(Matrix,Nothing    ,VisibleList) := (m,null,cols) -> if #cols === 0 then m else submatrix'(m,cols)
+submatrix'(Matrix,VisibleList,Nothing    ) := (m,rows,null) -> if #rows === 0 then m else submatrix(m,compl(numgens target m,rows),)
 
 bothFree := (f,g) -> (
      if not isFreeModule source f or not isFreeModule target f
