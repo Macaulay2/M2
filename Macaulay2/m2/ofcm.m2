@@ -221,8 +221,9 @@ makeit1 := (opts) -> (
      M.Options = new OptionTable from opts;
      toString M := toExternalString M := x -> toString expression x;
      M.RawMonoid = (
-	  if n == 0 
-	  then rawMonoid()
+	  if n == 0 and class firstMonoid === Symbol then (
+	       firstMonoid = M;
+	       rawMonoid())
 	  else rawMonoid(
 	       M.RawMonomialOrdering,
 	       toSequence M.generators / toString,
