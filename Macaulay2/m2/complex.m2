@@ -19,6 +19,17 @@ CC.degreeLength = 0
 raw CC := x -> rawFromNumber(raw CC, x)
 new CC from RawRingElement := (CC,n) -> rawToComplex n
 
+lift'(CC,QQ) := z -> if imaginaryPart z == 0 then lift'(realPart z, QQ)
+lift'(CC,RR) := z -> if imaginaryPart z == 0 then realPart z
+lift'(CC,ZZ) := z -> if imaginaryPart z == 0 then lift'(realPart z, ZZ)
+
+lift'(CCC,QQ) := z -> if imaginaryPart z == 0 then lift'(realPart z, QQ)
+lift'(CCC,ZZ) := z -> if imaginaryPart z == 0 then lift'(realPart z, ZZ)
+lift'(CCC,RRR):= z -> if imaginaryPart z == 0 then realPart z
+lift'(CCC,RR) := z -> if imaginaryPart z == 0 then lift'(realPart z, RR)
+
+lift'(CCC,CC) := z -> new CC from (lift'(realPart z, RR), lift'(imaginaryPart z, RR))
+
 CCC.isBasic = true
 CCC.synonym = "big complex number"
 CCC.isCommutative = true
