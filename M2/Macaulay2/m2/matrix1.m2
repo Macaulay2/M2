@@ -690,13 +690,6 @@ degree Matrix := List => (f) -> (
      if N.?generators then d = d + getshift N.generators;
      d)
 
-promote(Matrix,ZZ) := (f,ZZ) -> (
-     if ring f === ZZ then f
-     else error "can't promote");
-promote(Matrix,QQ) := (f,QQ) -> (
-     if ring f === QQ then f
-     else matrix applyTable(entries f, r -> promote(r,QQ)));
-
 super(Matrix) := Matrix => (f) -> (
      M := target f;
      if M.?generators then map(super M, M, M.generators) * f
@@ -706,24 +699,11 @@ super(Matrix) := Matrix => (f) -> (
 isInjective Matrix := (f) -> kernel f == 0
 isSurjective Matrix := (f) -> cokernel f == 0
 
-scan({ZZ}, S -> (
-	  lift(Matrix,S) := (f,S) -> (
-	       -- this will be pretty slow
-	       if ring target f === S then f
-	       else if isQuotientOf(ring f,S) and
-		       isFreeModule source f and
-		       isFreeModule target f then
-		   map(S^(-degrees target f), S^(-degrees source f), 
-		       applyTable(entries f, r -> lift(r,S)))
-	       else matrix(S, applyTable(entries f, r -> lift(r,S)))
-	       );
+scan({ZZ,QQ}, S -> (
 	  lift(Ideal,S) := (I,S) -> (
 	       -- this will be pretty slow
 	       if ring I === S then I
-	       else
-		   (ideal lift(generators I,S)) +
-		   ideal (presentation ring I ** S));
-	  ));
+	       else (ideal lift(generators I,S)) + ideal (presentation ring I ** S))));
 
 content(RingElement) := Ideal => (f) -> ideal \\ last \ listForm f
 

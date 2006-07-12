@@ -238,7 +238,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 --	  M - R := (m,r) -> R#1 * m - r * M#1;
 --	  RM - M := (p,m) -> p - R#1 * m;
 --	  M - RM := (m,p) -> R#1 * m - p;
-	  RM _ M := (f,m) -> new R from rawCoefficient(R.RawRing, f.RawRingElement, m.RawMonomial);
+	  RM _ M := (f,m) -> new R from rawCoefficient(R.RawRing, raw f, raw m);
 	  expression RM := f -> (
 	       (coeffs,monoms) -> (
 		    if #coeffs === 0

@@ -38,28 +38,16 @@ ZZ == QQ := (i,r) -> r == i/1
 
 QQ.Engine = true
 assert (hash ZZ < hash QQ)
-promote(ZZ,QQ) := (n,QQ) -> n/1
-lift(QQ,ZZ) := (r,o) -> (
-     if denominator r === 1 then numerator r 
-     else error "rational number is not an integer"
-     )
-promote(QQ,QQ) := (r,QQ) -> r
-lift(QQ,QQ) := (r,QQ) -> r
 
-lift'(QQ,ZZ) := (r,o) -> if denominator r === 1 then numerator r else error "rational number is not an integer"
+lift(QQ,ZZ) := (r,o) -> if denominator r === 1 then numerator r else error "rational number is not an integer"
 liftable'(QQ,ZZ) := (r,o) -> denominator r === 1
-lift'(QQ,QQ) := promote'(QQ,QQ) := (r,QQ) -> r
+lift(QQ,QQ) := promote(QQ,QQ) := (r,QQ) -> r
 liftable'(QQ,QQ) := (QQ,QQ) -> true
 
 QQ.degreeLength = 0
 isUnit Number := x -> x != 0
 
 isConstant QQ := i -> true
-
-promote(QQ,QQ) := (i,o) -> i
-promote(ZZ,QQ) := (i,o) -> i/1
-promote(QQ,Ring) := (r,S) -> promote(r,S#0)
-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

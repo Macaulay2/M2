@@ -58,6 +58,7 @@ ZZquotient := (R,I) -> (
 	  S.isBasic = true;
 	  S.ideal = I;
 	  S.baseRings = {R};
+     	  commonEngineRingInitializations S;
 	  S.relations = gensI;
 	  S.isCommutative = R.isCommutative;
 	  S.presentation = matrix{{n}};

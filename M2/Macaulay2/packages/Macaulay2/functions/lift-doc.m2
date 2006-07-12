@@ -2,23 +2,14 @@
 --- author(s): MES
 --- notes: BUG to fix
 
-undocumented {
-	  (lift,Ideal,ZZ),
-	  (lift,ZZ,Ring),
-	  (lift,QQ,Ring),
-	  (lift,ZZ,ZZ),
-	  (lift,QQ,ZZ),
-	  (lift, RingElement, RingElement),		    -- these methods are about to be phased out
-	  (lift,QQ,QQ),
-	  (lift,Matrix,ZZ),
-	  (lift,RingElement,ZZ),
-	  (lift,RingElement,QQ)}
+undocumented {(lift,Matrix,CC,CC), (lift,Matrix,Number), (lift,Matrix,ZZ,ZZ), (lift,Matrix,QQ,ZZ), (lift,Matrix,RRR,ZZ), (lift,Matrix,QQ,QQ), (lift,Matrix,RRR,QQ), (lift,Matrix,CCC,ZZ),
+     (lift,Matrix,RRR,RRR), (lift,Matrix,RR,ZZ), (lift,Matrix,CCC,QQ), (lift,Matrix,CC,ZZ), (lift,Matrix,RR,QQ), (lift,Matrix,CCC,RRR), (lift,Matrix,RRR,RR), (lift,Matrix,CC,QQ),
+     (lift,Matrix,CCC,CCC), (lift,Matrix,CCC,RR), (lift,Matrix,RR,RR), (lift,Matrix,CCC,CC), (lift,Matrix,CC,RR)}
 
 document { 
      Key => {lift,
-	  (lift,Ideal,Ring),
-	  (lift,Matrix,Ring),
-	  (lift,RingElement,Ring)},
+	  (lift,Ideal,RingElement),
+	  (lift,Matrix,RingElement)},
      Headline => "lift to another ring",
      Usage => "lift(f,R)",
      Inputs => {

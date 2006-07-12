@@ -16,13 +16,13 @@ ZZ _ Monoid := MonoidElement => (i,M) -> (
      )
 
 rawLeadMonomialR = method()
-rawLeadMonomialR RingElement := RawMonomial => (f) -> rawLeadMonomial(numgens monoid ring f, f.RawRingElement)
+rawLeadMonomialR RingElement := RawMonomial => (f) -> rawLeadMonomial(numgens monoid ring f, raw f)
 
 leadMonomial RingElement := RingElement => (f) -> (
      R := ring f;
      k := coefficientRing R;
      n := numgens monoid R;
-     leadMonomial R := f -> new R from rawTerm(raw R, raw 1_k, rawLeadMonomial(n, f.RawRingElement)); -- quicker the second time
+     leadMonomial R := f -> new R from rawTerm(raw R, raw 1_k, rawLeadMonomial(n, raw f)); -- quicker the second time
      leadMonomial f)
 
 makeSparse := (v) -> select(apply(#v, i -> (i,v#i)), (k,v) -> v != 0)
@@ -396,19 +396,7 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
 
 -- delayed installation of methods for monoid elements
 
-promote(MonoidElement, Ring) := RingElement => (m,R) -> promote(m,R#0)
-promote(MonoidElement, RingElement) := RingElement => (m,o) -> (
-     R := class o;
-     M := monoid R;
-     k := coefficientRing R;
-     if not instance(m,M) then error "expected monomial from same ring";
-     one := 1_k;
-     promote(M,R) := (m,o) -> new R from rawTerm(R.RawRing, 
-	                                         raw one,
-						 m.RawMonomial);
-     promote(m,o))
-
-promote'(MonoidElement, RingElement) := RingElement => (m,R) -> (
+promote(MonoidElement, RingElement) := RingElement => (m,R) -> (
      M := monoid R;
      k := coefficientRing R;
      if not instance(m,M) then error "expected monomial from same ring";

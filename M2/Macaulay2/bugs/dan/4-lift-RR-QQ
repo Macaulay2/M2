@@ -1,0 +1,5 @@
+install rational approximation routines:
+
+	lift(RR,QQ)
+	lift(RRR,QQQ)
+

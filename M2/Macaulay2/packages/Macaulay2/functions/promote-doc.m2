@@ -2,35 +2,15 @@
 --- author(s): MES
 --- notes: 
 
-undocumented {
-	  (promote, ZZ, RingElement),
-	  (promote, QQ, RingElement),
-	  (promote, ZZ, EngineRing),
-	  (promote, RR, EngineRing),
-	  (promote, ZZ, Ring),
-	  (promote, QQ, Ring),
-	  (promote, ZZ, ZZ),
-	  (promote, ZZ, QQ),
-	  (promote, QQ, QQ),
-	  (promote, RR, Ring),
-	  (promote, CC, Ring),
-	  (promote, ZZ, RR),
-	  (promote, ZZ, CC),
-	  (promote, QQ, RR),
-	  (promote, QQ, CC),
-	  (promote, Matrix, ZZ),
-	  (promote, Matrix, QQ),
-	  (promote, Number, RingElement),
-	  (promote, RR, RR),
-	  (promote, RR, CC),
-	  (promote, CC, CC),
-	  (promote, MonoidElement, Ring),
-	  (promote, MonoidElement, RingElement),
-	  (promote, RingElement, RingElement)}
+undocumented {(promote,Matrix,ZZ,RR), (promote,Matrix,RRR,RRR), (promote,Matrix,QQ,CCC), (promote,Matrix,ZZ,CC), (promote,Matrix,RRR,CCC), (promote,Matrix,QQ,RR), (promote,Matrix,RR,RRR),
+     (promote,Matrix,QQ,CC), (promote,Matrix,CCC,CCC), (promote,Matrix,RR,CCC), (promote,Matrix,RR,RR), (promote,Matrix,CC,CCC), (promote,Matrix,RR,CC), (promote,Matrix,CC,CC),
+     (promote,MonoidElement,RingElement), (promote,ZZ,ZZ), (promote,ZZ,QQ), (promote,ZZ,RRR), (promote,QQ,QQ), (promote,QQ,RRR), (promote,ZZ,CCC), (promote,Matrix,Number),
+     (promote,RRR,RRR), (promote,QQ,CCC), (promote,ZZ,RR), (promote,ZZ,CC), (promote,RRR,CCC), (promote,QQ,RR), (promote,QQ,CC), (promote,CCC,CCC), (promote,RR,RRR), (promote,RR,CCC),
+     (promote,CC,CCC), (promote,RR,RR), (promote,RR,CC), (promote,CC,CC), (promote,ZZ,RingElement), (promote,Matrix,RingElement), (promote,Matrix,ZZ,ZZ), (promote,Matrix,ZZ,QQ),
+     (promote,Matrix,QQ,QQ), (promote,Matrix,ZZ,RRR), (promote,Matrix,QQ,RRR), (promote,Matrix,ZZ,CCC)}
 
 document { 
-     Key => {promote,
-	  (promote, RingElement, Ring)},
+     Key => {promote},
      Headline => "promote to another ring",
      Usage => "promote(f,R)",
      Inputs => {
