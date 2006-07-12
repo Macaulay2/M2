@@ -90,11 +90,21 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
      -- some cases, where the types are equal, call immediately for strict equality
      -- some cases call for simple recursive routines
      when x
-     is Integer do when y is Integer do equal(x,y) else equalmethod(x,y)
+     is xx:Integer do (
+	  when y 
+	  is Integer do equal(x,y) 
+	  is yy:RRR do if isInt(xx) then toExpr(yy === toInt(xx)) else toExpr(yy === toBigReal(xx))
+	  else equalmethod(x,y)
+	  )
      is SymbolClosure do when y is SymbolClosure do equal(x,y) else equalmethod(x,y)
      is Rational do when y is Rational do equal(x,y) else equalmethod(x,y)
      is Real do when y is Real do equal(x,y) else equalmethod(x,y)
-     is RRR do when y is RRR do equal(x,y) else equalmethod(x,y)
+     is xx:RRR do (
+	  when y
+	  is yy:RRR do toExpr(xx === yy)
+	  is i:Integer do if isInt(i) then toExpr(xx === toInt(i)) else toExpr(xx === toBigReal(i))
+	  else equalmethod(x,y)
+	  )
      is Boolean do when y is Boolean do equal(x,y) else equalmethod(x,y)
      is Net do when y is Net do equal(x,y) else equalmethod(x,y)
      is string do when y is string do equal(x,y) else equalmethod(x,y)
@@ -669,6 +679,7 @@ floor(e:Expr):Expr := (
 	  if finite(x.v) then Expr(Floor(x.v))
 	  else WrongArg("a finite real number")
 	  )
+     is x:RRR do Expr(floor(x))
      is x:Rational do Expr(floor(x))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")

@@ -185,11 +185,6 @@ makeit1 := (opts) -> (
 --	  else error "first component of each degree should be positive" -- this error message will go away
 --	  );
      variableOrder := toList (0 .. n-1);
-     wts := splice flatten opts.Weights;
-     if not all(wts,i -> class i === ZZ)
-     then error "expected Weights option to be a list or list of lists of integers";
-     if n != 0 and #wts % n != 0 or n == 0 and #wts != 0
-     then error "expected Weights option length to be a multiple of the number of variables";
      M.generatorSymbols = varlist;
      M.generatorExpressions = apply(varlist,
 	  x -> if instance(x, Symbol) then x else expression x
@@ -214,7 +209,7 @@ makeit1 := (opts) -> (
 	  opts.Inverses,
      	  #varlist,
 	  if degreeLength M > 0 then internalDegrees/first else {},
-	  wts,
+	  opts.Weights,
 	  opts.MonomialOrder
 	  );
      M.RawMonomialOrdering = rawMO;
