@@ -27,8 +27,8 @@ for i from 0 to #chain-1 do for j from i to #chain-1 do (
      )
 
 assert( degrees promote'(vars S, T) === degrees vars S )
-assert( degrees promote'(vars S, U) === degrees vars S )
-assert( degrees promote'(vars S, V) === degrees vars S )
+assert( degrees promote'(vars S, U) === {{{0}}, {{0}, {0}, {0}}} )
+assert( degrees promote'(vars S, V) === {{{0}}, {{0}, {0}, {0}}} )
 
 end
 
