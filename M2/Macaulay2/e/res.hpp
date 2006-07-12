@@ -190,8 +190,8 @@ private:
 		      array<res_pair *> &elems) const;
 public:
 
-  FreeModule *free_of(int i) const;
-  FreeModule *minimal_free_of(int i) const;
+  const FreeModule *free_of(int i) const;
+  const FreeModule *minimal_free_of(int i) const;
   Matrix *make(int i) const;
   Matrix *make_minimal(int i) const;
 

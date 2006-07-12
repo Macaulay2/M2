@@ -1,3 +1,52 @@
+gbTrace=3
+R = QQ[x,y,z]
+M = coker matrix(R, {{x^2},{y^3},{z}})
+C = res(M, Strategy=>1)
+C.dd
+
+
+R = QQ[x]
+
+M = coker matrix(R, {{1},{0}})
+C = res M
+C.dd
+
+M = coker matrix(R, {{1},{0}})
+C = res(M, Strategy=>0)
+C.dd
+
+M = coker matrix(R, {{1},{0}})
+C = res(M, Strategy=>1)
+C.dd
+
+M = coker matrix(R, {{1},{0}})
+C = res(M, Strategy=>2)
+C.dd
+
+M = coker matrix(R, {{1},{0}})
+C = res(M, Strategy=>3)
+C.dd
+
+R = QQ[x,y,z]
+
+M = coker matrix(R, {{x^2},{y^3},{z}})
+C = res(M, Strategy=>0)
+C.dd
+
+M = coker matrix(R, {{x^2},{y^3},{z}})
+C = res(M, Strategy=>1)
+C.dd
+
+M = coker matrix(R, {{x^2},{y^3},{z}})
+C = res(M, Strategy=>2)
+C.dd
+
+M = coker matrix(R, {{x^2},{y^3},{z}})
+C = res(M, Strategy=>3)
+C.dd
+
+
+end
 -*-M2-*-
 
 "res" is changing the basis of the cover of the module gratuitously.

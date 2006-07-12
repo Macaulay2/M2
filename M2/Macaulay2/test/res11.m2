@@ -12,6 +12,7 @@ assert ( HH_1 C == 0 )
 --
 R = QQ[x]
 M = coker matrix(R, {{1},{0}})
+C = res(M, Strategy=>2)  -- this one fails too...
 C = res M
 HH_0 C
 assert ( M == HH_0 C )

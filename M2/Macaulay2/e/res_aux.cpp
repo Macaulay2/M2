@@ -223,7 +223,7 @@ void res_comp::text_out(buffer &o) const
 
 }
 
-FreeModule *res_comp::free_of(int i) const
+const FreeModule *res_comp::free_of(int i) const
 {
   FreeModule *result;
   result = P->make_Schreyer_FreeModule();
@@ -246,9 +246,11 @@ FreeModule *res_comp::free_of(int i) const
   
   return result;
 }
-FreeModule *res_comp::minimal_free_of(int i) const
+const FreeModule *res_comp::minimal_free_of(int i) const
 {
   FreeModule *result;
+  if (i == 0)
+    return generator_matrix->rows();
   result = P->make_FreeModule();
   if (i < 0 || i > length_limit)
     return result;
