@@ -20,19 +20,19 @@ o2 = OptionTable{Adjust => identity
                  Weights => {}
                  WeylAlgebra => {}
      ------------------------------------------------------------------------
-                   }
+                                   }
 
      }}
 
 
 
-     , 1, 1, 1, 1}}
+     , 1, 1, 1, 1}, Position => Up}
 
 o2 : OptionTable
 
 i3 : (options R).MonomialOrder
 
-o3 = {GRevLex => {1, 1, 1, 1}, GRevLex => {1, 1, 1, 1, 1, 1}}
+o3 = {GRevLex => {1, 1, 1, 1}, GRevLex => {1, 1, 1, 1, 1, 1}, Position => Up}
 
 o3 : List
 
@@ -40,7 +40,7 @@ i4 : S = QQ[a..d];
 
 i5 : (options S).MonomialOrder
 
-o5 = {GRevLex => {1, 1, 1, 1}}
+o5 = {GRevLex => {1, 1, 1, 1}, Position => Up}
 
 o5 : List
 

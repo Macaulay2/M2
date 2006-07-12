@@ -2,13 +2,13 @@
 
 i1 : dir = temporaryFileName()
 
-o1 = /tmp/M2-4603-1
+o1 = /tmp/M2-6993-1
 
 i2 : makeDirectory dir
 
 i3 : (fn = dir | "/" | "foo") << "hi there" << close
 
-o3 = /tmp/M2-4603-1/foo
+o3 = /tmp/M2-6993-1/foo
 
 o3 : File
 

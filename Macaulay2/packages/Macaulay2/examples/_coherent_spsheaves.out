@@ -10,14 +10,16 @@ o2 : ProjectiveVariety
 
 i3 : Omega = cotangentSheaf X
 
-o3 = subquotient ({1} | 0  0  0  -d -c -b a3 |, {1} | 4a3 |)
-                  {1} | 0  -d -c 0  0  a  b3 |  {1} | 4b3 |
-                  {1} | -d 0  b  0  a  0  c3 |  {1} | 4c3 |
-                  {1} | c  b  0  a  0  0  d3 |  {1} | 4d3 |
+o3 = cokernel {2} | b  a  0  0  0  0   -d3 c3 |
+              {2} | d  0  a  0  0  -c3 b3  0  |
+              {2} | -c 0  0  a  0  -d3 0   b3 |
+              {2} | 0  0  c  d  b3 a3  0   0  |
+              {2} | 0  d  -b 0  c3 0   a3  0  |
+              {2} | 0  -c 0  -b d3 0   0   a3 |
 
-                                            4
-o3 : coherent sheaf on X, subquotient of OO  (-1)
-                                           X
+                                         6
+o3 : coherent sheaf on X, quotient of OO  (-2)
+                                        X
 
 i4 : HH^1(Omega)
 

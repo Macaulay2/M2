@@ -14,8 +14,8 @@ o2 : PolynomialRing
 
 i3 : S^3
 
-           3
-o3 = QQ [x]
+             3
+o3 = (QQ [x])
 
 o3 : QQ [x]-module, free
 

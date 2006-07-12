@@ -16,8 +16,8 @@ o3 = 8
 
 i4 : B = basis({2,2},M)
 
-o4 = | b2 bc c2 0  0  0  0  0  |
-     | 0  0  0  a2 ac c2 cd d2 |
+o4 = | b2 bc c2 cd d2 0  0  0  |
+     | 0  0  0  0  0  a2 ac c2 |
 
 o4 : Matrix
 
@@ -41,8 +41,8 @@ o8 = 8
 
 i9 : basis(2,M)
 
-o9 = | b2 bc c2 0  0  0  0  0  |
-     | 0  0  0  a2 ac c2 cd d2 |
+o9 = | b2 bc c2 cd d2 0  0  0  |
+     | 0  0  0  0  0  a2 ac c2 |
 
 o9 : Matrix
 

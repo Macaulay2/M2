@@ -28,8 +28,8 @@ o4 : A-module, submodule of A
 
 i5 : intersect(M,N)
 
-o5 = image | x 0       |
-           | x xy2-xz2 |
+o5 = image | x xy2-xz2 |
+           | x 0       |
 
                              2
 o5 : A-module, submodule of A
@@ -65,8 +65,8 @@ o10 : Ideal of Q
 
 i11 : M : x
 
-o11 = image | 1 0   0  |
-            | 1 y-z x4 |
+o11 = image | 1 y-z x4 |
+            | 1 0   0  |
 
                               2
 o11 : Q-module, submodule of Q

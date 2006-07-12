@@ -90,6 +90,7 @@ o1 = Thing : BasicList : Command
                          Partition
                          ProductOrder
                          PushforwardComputation
+                         RingElement
                          SumOfTwists
                          Time
                          TreeNode
@@ -137,7 +138,6 @@ o1 = Thing : BasicList : Command
                          MutableMatrix
                          OptionTable
                          ProjectiveHilbertPolynomial
-                         RingElement
                          RingMap
                          SheafOfRings
                          Tally : BettiTally

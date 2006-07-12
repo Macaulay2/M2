@@ -16,8 +16,8 @@ o2 : coherent sheaf on X, free
 
 i3 : module F
 
-                 1
-o3 = QQ [x, y, z]
+                   1
+o3 = (QQ [x, y, z])
 
 o3 : QQ [x, y, z]-module, free, degrees {-3}
 

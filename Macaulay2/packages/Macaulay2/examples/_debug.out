@@ -9,7 +9,8 @@ i3 : raw R
 o3 = QQ[a,b,c,d,
        Degrees => {1, 1, 1, 1},
        MonomialOrdering => {
-         GRevLex => {1,1,1,1}
+         GRevLex => {1,1,1,1},
+         Position => Up
          }
        ]
 

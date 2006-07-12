@@ -19,9 +19,9 @@ i4 : G = substitute(F, R/(det F))
 o4 = | a b |
      | c d |
 
-            QQ [a, b, c, d]2      QQ [a, b, c, d]2
-o4 : Matrix ---------------  <--- ---------------
-              - b*c + a*d           - b*c + a*d
+             QQ [a, b, c, d] 2       QQ [a, b, c, d] 2
+o4 : Matrix (---------------)  <--- (---------------)
+               - b*c + a*d             - b*c + a*d
 
 i5 : isInjective G
 

@@ -17,16 +17,16 @@ o3 : R-module, submodule of R
 
 i4 : N = prune M
 
-o4 = cokernel {1} | x  |
-              {1} | -y |
+o4 = cokernel {1} | -y |
+              {1} | x  |
 
                             2
 o4 : R-module, quotient of R
 
 i5 : f = N.cache.pruningMap
 
-o5 = {1} | 0 1 |
-     {1} | 1 0 |
+o5 = {1} | 1 0 |
+     {1} | 0 1 |
 
 o5 : Matrix
 
@@ -36,15 +36,15 @@ o6 = true
 
 i7 : f^-1
 
-o7 = {1} | 0 1 |
-     {1} | 1 0 |
+o7 = {1} | 1 0 |
+     {1} | 0 1 |
 
 o7 : Matrix
 
 i8 : source f
 
-o8 = cokernel {1} | x  |
-              {1} | -y |
+o8 = cokernel {1} | -y |
+              {1} | x  |
 
                             2
 o8 : R-module, quotient of R
@@ -73,18 +73,18 @@ o11 : R-module, free, degrees {1, 1}
 i12 : M ++ N
 
 o12 = subquotient ({0} | x y 0 0 |, {0} | 0  |)
-                   {1} | 0 0 1 0 |  {1} | x  |
-                   {1} | 0 0 0 1 |  {1} | -y |
+                   {1} | 0 0 1 0 |  {1} | -y |
+                   {1} | 0 0 0 1 |  {1} | x  |
 
                                 3
 o12 : R-module, subquotient of R
 
 i13 : M ** N
 
-o13 = cokernel {2} | x  0  -y 0  |
-               {2} | -y 0  0  -y |
-               {2} | 0  x  x  0  |
-               {2} | 0  -y 0  x  |
+o13 = cokernel {2} | -y 0  -y 0  |
+               {2} | x  0  0  -y |
+               {2} | 0  -y x  0  |
+               {2} | 0  x  0  x  |
 
                              4
 o13 : R-module, quotient of R

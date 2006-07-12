@@ -26,9 +26,11 @@ o3 : Matrix R  <--- R
 
 i4 : quotient'(f,g)
 
-o4 = --Function[../../../../Macaulay2/m2/matrix2.m2:138:44-141:32]--
+o4 = {-1} | 0 1 -9 -9 |
+     {-1} | 5 2 0  7  |
 
-o4 : FunctionClosure
+             2       4
+o4 : Matrix R  <--- R
 
 i5 : f = f + map(target f, source f, id_(R^2))
 
@@ -40,8 +42,10 @@ o5 : Matrix R  <--- R
 
 i6 : quotient'(f,g)
 
-o6 = --Function[../../../../Macaulay2/m2/matrix2.m2:138:44-141:32]--
+o6 = {-1} | 0 1 -9 -9 |
+     {-1} | 5 2 0  7  |
 
-o6 : FunctionClosure
+             2       4
+o6 : Matrix R  <--- R
 
 i7 : 

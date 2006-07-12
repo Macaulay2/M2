@@ -18,8 +18,8 @@ o2 : R-module, quotient of R
 i3 : prune M -- INCORRECT
 
 o3 = cokernel | y  0     |
-              | xz 1-xy  |
-              | xz -1-xy |
+              | xz -1+xy |
+              | xz 1+xy  |
 
                             3
 o3 : R-module, quotient of R

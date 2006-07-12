@@ -40,13 +40,13 @@ o6 : M
 
 i7 : options M
 
-o7 = OptionTable{Adjust => identity                     }
+o7 = OptionTable{Adjust => identity                                     }
                  DegreeRank => 1
                  Degrees => {{2}, {3}, {4}}
                  Global => true
                  Heft => 
                  Inverses => false
-                 MonomialOrder => {GRevLex => {2, 3, 4}}
+                 MonomialOrder => {GRevLex => {2, 3, 4}, Position => Up}
                  MonomialSize => 32
                  Repair => identity
                  SkewCommutative => {}

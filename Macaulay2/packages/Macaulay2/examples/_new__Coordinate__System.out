@@ -14,7 +14,9 @@ o2 : PolynomialRing
 
 i3 : newCoordinateSystem(S,matrix{{a+2*b,3*c-d}})
 
-o3 = {map(S,R,{r, p, p + 2q, 3r - s}), map(R,S,{b, 50b - 50c, a, 3a - d})}
+o3 = {map(S,R,{50p, 3r, p + 2q, 3r - s}), map(R,S,{-2a, a - 50c, 34b, b -
+     ------------------------------------------------------------------------
+     d})}
 
 o3 : List
 

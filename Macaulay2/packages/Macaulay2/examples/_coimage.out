@@ -18,20 +18,20 @@ o3 : R-module, submodule of R
 
 i4 : coimage M
 
-o4 = cokernel {3} | 0    0     -b2+c2 -bc |
-              {3} | a    0     0      0   |
-              {3} | b-c  b2-c2 0      a2  |
-              {3} | -b-c -bc   a2     0   |
+o4 = cokernel {3} | 0    0     -bc -b2+c2 |
+              {3} | a    0     0   0      |
+              {3} | b-c  b2-c2 a2  0      |
+              {3} | -b-c -bc   0   a2     |
 
                             4
 o4 : R-module, quotient of R
 
 i5 : kernel M
 
-o5 = image {3} | 0    0     -b2+c2 -bc |
-           {3} | a    0     0      0   |
-           {3} | b-c  b2-c2 0      a2  |
-           {3} | -b-c -bc   a2     0   |
+o5 = image {3} | 0    0     -bc -b2+c2 |
+           {3} | a    0     0   0      |
+           {3} | b-c  b2-c2 a2  0      |
+           {3} | -b-c -bc   0   a2     |
 
                              4
 o5 : R-module, submodule of R

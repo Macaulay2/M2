@@ -176,7 +176,7 @@ i32 : f = random(R^1,R^{-3,-3,-5,-6});
 o32 : Matrix R  <--- R
 
 i33 : time betti gb f
-     -- used 0.580036 seconds
+     -- used 0.572035 seconds
 
              0  1
 o33 = total: 1 53
@@ -207,7 +207,7 @@ o35 = 1 - 2T  - T  + 2T  + 2T  - T   - 2T   + T
 o35 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
 
 i36 : time betti gb f
-     -- used 0.100006 seconds
+     -- used 0.112007 seconds
 
              0  1
 o36 = total: 1 53

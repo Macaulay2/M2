@@ -12,10 +12,10 @@ o2 : Matrix R  <--- R
 
 i3 : M = ker F
 
-o3 = image {1} | 0      e2-df  ce-bf  cd-be  |
-           {1} | e2-df  0      -be+af -bd+ae |
-           {1} | -ce+bf -be+af 0      b2-ac  |
-           {1} | cd-be  bd-ae  b2-ac  0      |
+o3 = image {1} | 0      e2-df  cd-be  ce-bf  |
+           {1} | e2-df  0      -bd+ae -be+af |
+           {1} | -ce+bf -be+af b2-ac  0      |
+           {1} | cd-be  bd-ae  0      b2-ac  |
 
                              4
 o3 : R-module, submodule of R
@@ -38,10 +38,10 @@ o5 : R-module, submodule of R
 
 i6 : generators M
 
-o6 = {1} | 0      e2-df  ce-bf  cd-be  |
-     {1} | e2-df  0      -be+af -bd+ae |
-     {1} | -ce+bf -be+af 0      b2-ac  |
-     {1} | cd-be  bd-ae  b2-ac  0      |
+o6 = {1} | 0      e2-df  cd-be  ce-bf  |
+     {1} | e2-df  0      -bd+ae -be+af |
+     {1} | -ce+bf -be+af b2-ac  0      |
+     {1} | cd-be  bd-ae  0      b2-ac  |
 
              4       4
 o6 : Matrix R  <--- R
@@ -57,8 +57,8 @@ i8 : presentation M
 
 o8 = {3} | b  a  |
      {3} | -c -b |
-     {3} | e  d  |
      {3} | -f -e |
+     {3} | e  d  |
 
              4       2
 o8 : Matrix R  <--- R

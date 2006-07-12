@@ -76,9 +76,9 @@ o11 : R-module, submodule of R
 
 i12 : kernel F
 
-o12 = image {1} | 0  -z -y |
-            {1} | -z 0  x  |
-            {1} | y  x  0  |
+o12 = image {1} | 0  -y -z |
+            {1} | -z x  0  |
+            {1} | y  0  x  |
 
                               3
 o12 : R-module, submodule of R

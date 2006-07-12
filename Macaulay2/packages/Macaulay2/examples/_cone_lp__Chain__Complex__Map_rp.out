@@ -51,18 +51,18 @@ o7 : R-module
 
 i8 : prune HH_1 C
 
-o8 = cokernel {1} | 0 0 z 0 0 y 0 0 x |
+o8 = cokernel {1} | z 0 0 y 0 0 x 0 0 |
               {1} | 0 z 0 0 y 0 0 x 0 |
-              {1} | z 0 0 y 0 0 x 0 0 |
+              {1} | 0 0 z 0 0 y 0 0 x |
 
                             3
 o8 : R-module, quotient of R
 
 i9 : prune (m/m2)
 
-o9 = cokernel {1} | 0 0 z 0 0 y 0 0 x |
+o9 = cokernel {1} | z 0 0 y 0 0 x 0 0 |
               {1} | 0 z 0 0 y 0 0 x 0 |
-              {1} | z 0 0 y 0 0 x 0 0 |
+              {1} | 0 0 z 0 0 y 0 0 x |
 
                             3
 o9 : R-module, quotient of R

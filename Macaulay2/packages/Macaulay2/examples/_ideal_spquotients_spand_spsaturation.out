@@ -26,14 +26,14 @@ o5 : Ideal of R
 
 i6 : Q = quotient(I,J,MinimalGenerators => false)
 
-                 2    3     2     2     5         4   3           4     3  
-o6 = ideal (- a*b  + d , - a b + c , - c  + d, - a c*d  + a*d, - a b*c*d  +
+                 2    3     2     2     5       4   3         4     3  
+o6 = ideal (- a*b  + d , - a b + c , - c  + d, a c*d  - a*d, a b*c*d  -
      ------------------------------------------------------------------------
-               4 2   2      2     4   3 2        2     6     2    4 3 2    3 
-     a*b*d, - a b c*d  + a*b , - a b*c d  + a*b*c , - a b*c*d  + a c d  + a b
+             4 2   2      2   4   3 2        2   6     2    4 3 2    3   
+     a*b*d, a b c*d  - a*b , a b*c d  - a*b*c , a b*c*d  - a c d  - a b +
      ------------------------------------------------------------------------
-          2
-     - a*c )
+        2
+     a*c )
 
 o6 : Ideal of R
 

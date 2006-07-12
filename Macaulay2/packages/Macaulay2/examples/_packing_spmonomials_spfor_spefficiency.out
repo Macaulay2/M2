@@ -12,18 +12,19 @@ o2 = B
 
 o2 : PolynomialRing
 
-i3 : --C = QQ[a,b,c,x,y,z,w,MonomialOrder=>{MonomialSize=>8,3,MonomialSize=>32,Lex=>4}];
-     D = QQ[a..d,MonomialOrder=>Lex];
+i3 : C = QQ[a,b,c,x,y,z,w,MonomialOrder=>{MonomialSize=>8,3,MonomialSize=>32,Lex=>4}];
 
-i4 : a^1000000000
+i4 : D = QQ[a..d,MonomialOrder=>Lex];
+
+i5 : a^1000000000
 
       1000000000
-o4 = a
+o5 = a
 
-o4 : D
+o5 : D
 
-i5 : E = QQ[a..d,MonomialSize=>16,MonomialOrder=>Lex];
+i6 : E = QQ[a..d,MonomialSize=>16,MonomialOrder=>Lex];
 
-i6 : F = QQ[a..d,MonomialSize=>8,MonomialOrder=>Lex];
+i7 : F = QQ[a..d,MonomialSize=>8,MonomialOrder=>Lex];
 
-i7 : 
+i8 : 

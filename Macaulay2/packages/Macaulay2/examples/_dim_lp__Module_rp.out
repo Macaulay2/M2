@@ -15,8 +15,8 @@ o2 : Ideal of R
 
 i3 : M = Ext^1(I,R)
 
-o3 = cokernel {-3} | d c b |
-              {-3} | c b a |
+o3 = cokernel {-3} | c b a |
+              {-3} | d c b |
 
                             2
 o3 : R-module, quotient of R

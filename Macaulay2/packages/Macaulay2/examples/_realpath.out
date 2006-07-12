@@ -6,30 +6,30 @@ o1 = /home/dan/src/M2/BUILD/normal/Macaulay2/packages
 
 i2 : p = temporaryFileName()
 
-o2 = /tmp/M2-4906-1
+o2 = /tmp/M2-7313-1
 
 i3 : q = temporaryFileName()
 
-o3 = /tmp/M2-4906-2
+o3 = /tmp/M2-7313-2
 
 i4 : symlinkFile(p,q)
 
 i5 : readlink q
 
-o5 = /tmp/M2-4906-1
+o5 = /tmp/M2-7313-1
 
 i6 : realpath q
 
-o6 = /tmp/M2-4906-2
+o6 = /tmp/M2-7313-2
 
 i7 : p << "hi there" << close
 
-o7 = /tmp/M2-4906-1
+o7 = /tmp/M2-7313-1
 
 o7 : File
 
 i8 : realpath q
 
-o8 = /tmp/M2-4906-1
+o8 = /tmp/M2-7313-1
 
 i9 : 

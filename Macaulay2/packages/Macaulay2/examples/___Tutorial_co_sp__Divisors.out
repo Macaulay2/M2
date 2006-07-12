@@ -432,16 +432,16 @@ o65 : QuotientRing
 
 i66 : KX = Ext^2(coker gens IC,S^{-4})
 
-o66 = cokernel {1} | -d -c -b |
-               {1} | c  b  a  |
+o66 = cokernel {1} | c  b  a  |
+               {1} | -d -c -b |
 
                              2
 o66 : S-module, quotient of S
 
 i67 : canpres = substitute(presentation(KX), SX)
 
-o67 = {1} | -d -c -b |
-      {1} | c  b  a  |
+o67 = {1} | c  b  a  |
+      {1} | -d -c -b |
 
                2        3
 o67 : Matrix SX  <--- SX
@@ -456,7 +456,7 @@ o68 : BettiTally
 
 i69 : I1 = transpose (syz transpose canpres)_{0}
 
-o69 = | c d |
+o69 = | d c |
 
                1        2
 o69 : Matrix SX  <--- SX
@@ -494,8 +494,8 @@ i71 : divisorFromModule = M -> (
 
 i72 : M = coker canpres
 
-o72 = cokernel {1} | -d -c -b |
-               {1} | c  b  a  |
+o72 = cokernel {1} | c  b  a  |
+               {1} | -d -c -b |
 
                                2
 o72 : SX-module, quotient of SX

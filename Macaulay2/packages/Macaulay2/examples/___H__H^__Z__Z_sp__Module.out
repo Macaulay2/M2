@@ -4,17 +4,17 @@ i1 : R = QQ[a,b];
 
 i2 : HH^2 (R^{-3})
 
-o2 = cokernel | a  b 0 |
-              | -b 0 a |
+o2 = cokernel | b a  0 |
+              | 0 -b a |
 
                             2
 o2 : R-module, quotient of R
 
 i3 : HH^2 (R^{-4})
 
-o3 = cokernel | 0  a  b 0 |
-              | a  -b 0 0 |
-              | -b 0  0 a |
+o3 = cokernel | b a  0  0 |
+              | 0 -b a  0 |
+              | 0 0  -b a |
 
                             3
 o3 : R-module, quotient of R
