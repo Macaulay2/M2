@@ -1,0 +1,35 @@
+-- -*- M2-comint -*-
+
+i1 : f = random(ZZ^6, ZZ^4)
+
+o1 = | 0  0   -4 -6 |
+     | 1  7   6  4  |
+     | 5  8   0  -4 |
+     | 2  -9  -2 3  |
+     | -9 4   9  -7 |
+     | -9 -10 -5 4  |
+
+              6        4
+o1 : Matrix ZZ  <--- ZZ
+
+i2 : M = subquotient ( f * diagonalMatrix{2,3,8,21}, f * diagonalMatrix{2*11,3*5*13,0,21*5} )
+
+o2 = subquotient (| 0   0   -32 -126 |, | 0    0     0 -630 |)
+                  | 2   21  48  84   |  | 22   1365  0 420  |
+                  | 10  24  0   -84  |  | 110  1560  0 -420 |
+                  | 4   -27 -16 63   |  | 44   -1755 0 315  |
+                  | -18 12  72  -147 |  | -198 780   0 -735 |
+                  | -18 -30 -40 84   |  | -198 -1950 0 420  |
+
+                                 6
+o2 : ZZ-module, subquotient of ZZ
+
+i3 : factor M
+
+          ZZ   ZZ    ZZ
+o3 = ZZ + -- + -- + ----
+           5   11   5*13
+
+o3 : Expression of class Sum
+
+i4 : 
