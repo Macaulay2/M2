@@ -840,18 +840,8 @@ export tostring(x:RRR,digits:int):string := (
      s := getstr(Cstring(null()), e, base, digits, x);
      "."+tostring(s) + "*10^" + tostring(int(e)));
 
-compare0(x:RRR, y:RRR):int ::= Ccode( int,
-     "mpf_cmp(",
-	 "(__mpf_struct *)", x, ",", 
-	 "(__mpf_struct *)", y,
-     ")" 
-     );
-export compare(x:RRR, y:RRR):int := Ccode( int,
-     "mpf_cmp(",
-	 "(__mpf_struct *)", x, ",", 
-	 "(__mpf_struct *)", y,
-     ")" 
-     );
+compare0(x:RRR, y:RRR):int ::= Ccode( int, "mpf_cmp(", "(__mpf_struct *)", x, ",", "(__mpf_struct *)", y, ")" );
+export compare(x:RRR, y:RRR):int := Ccode( int, "mpf_cmp(", "(__mpf_struct *)", x, ",", "(__mpf_struct *)", y, ")" );
 export (x:RRR) === (y:RRR) : bool := compare0(x,y) == 0;
 export (x:RRR)  >  (y:RRR) : bool := compare0(x,y) >  0;
 export (x:RRR)  <  (y:RRR) : bool := compare0(x,y) <  0;
@@ -964,6 +954,23 @@ export sqrt(y:RRR) : RRR := (
 	  ")" 
      );
      z);
+
+export floor(x:RRR) : Integer := (
+-- - Function: void mpz_set_f (mpz_t ROP, mpf_t OP)
+--     Set the value of ROP from OP.
+
+--  - Function: void mpf_ceil (mpf_t ROP, mpf_t OP)
+--  - Function: void mpf_floor (mpf_t ROP, mpf_t OP)
+--  - Function: void mpf_trunc (mpf_t ROP, mpf_t OP)
+--      Set ROP to OP rounded to an integer.  `mpf_ceil' rounds to the
+--      next higher integer, `mpf_floor' to the next lower, and `mpf_trunc'
+--      to the integer towards zero.
+
+     z := newBigReal();
+     Ccode( void, "mpf_floor((__mpf_struct *)", z, ",(__mpf_struct *)", x, ")" );
+     y := newInteger();
+     Ccode( void, "mpz_set_f((__mpz_struct *)", y, ",(__mpf_struct *)", z, ")" );
+     y);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

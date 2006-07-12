@@ -1,14 +1,39 @@
+--*-M2-*-
+
+-- input "4-lift-RR-QQ"
+
+approx := (r,limit) -> (
+     if r == 0 then return 0/1;
+     r' := r;
+     m := mutableIdentity(ZZ,2);
+     while true do (
+	  a := floor r';
+	  columnSwap(m,0,1);
+	  columnAdd(m,0,a,1);
+	  r' = r' - a;
+	  if r' == 0 or abs(r - m_(0,0) / m_(1,0)) < limit then return m_(0,0) / m_(1,0);
+	  r' = 1/r' ;
+	  ))
+
+app = method()
+
+app RRR := r -> approx(r,abs r / 2^(precision r - 16))
+app RR := r -> approx(r,abs r * 10.^-14)
+
+app (1234/32455.)
+
+setPrecision 1000
+x = (475259746493058769138469/697185469164695069)_RRR
+app x
+
+end
+
 install rational approximation routines:
 
 	lift(RR,QQ)
 	lift(RRR,QQQ)
 
-| 0 1 |  | x | = |   y  |
-| 1 a |  | y |   | x+ay |
-
-
 | a 1 |  | x | = | ax+y  |
 | 1 0 |  | y |   |  x    |
 
 a + 1 / (x/y)  = (ax+y)/x
-

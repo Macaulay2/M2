@@ -55,8 +55,6 @@ promote(ZZ,RR) := (i,RR) -> i + 0.
 lift(RR,ZZ) := (r,ZZ) -> if r == floor r then floor r else error("can't lift ",toString r, " to ZZ")
 liftable'(RR,ZZ) := (r,ZZ) -> r == floor r
 
-lift(RR,QQ) := (r,QQ) -> notImplemented() -- we should do a good rational approximation here by continued fractions
-
 -- big reals: RRR
 
 RRR.isBasic = true
@@ -82,9 +80,24 @@ promote(ZZ,RRR) := (i,RRR) -> toRRR i
 lift(RRR,ZZ) := (r,ZZ) -> if r == floor r then floor r else error("can't lift ",toString r, " to ZZ")
 liftable'(RRR,ZZ) := (r,ZZ) -> r == floor r
 
+approx := (r,limit) -> (
+     if r == 0 then return 0/1;
+     r' := r;
+     m := mutableIdentity(ZZ,2);
+     while true do (
+	  a := floor r';
+	  columnSwap(m,0,1);
+	  columnAdd(m,0,a,1);
+	  r' = r' - a;
+	  if r' == 0 or abs(r - m_(0,0) / m_(1,0)) < limit then return m_(0,0) / m_(1,0);
+	  r' = 1/r' ;
+	  ))
+
+lift(RR,QQ) := (r,QQ) -> approx(r,abs r * 10.^-14)
+lift(RRR,QQ) := (r,QQ) -> approx(r,abs r / 2^(precision r - 16))
+
 lift(RRR,RR) := (r,RR) -> notImplemented()
-lift(RRR,QQ) := (r,QQ) -> notImplemented()
-lift(RRR,ZZ) := (r,ZZ) -> notImplemented()
+lift(RRR,ZZ) := (r,ZZ) -> (i := floor r; if r == i then i else error "can't lift to ZZ")
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -283,16 +283,34 @@ then MACAULAY2=setup
      PATH=/PREFIX/bin:$PATH
      MANPATH=/PREFIX/share/man:$MANPATH
      INFOPATH=/PREFIX/info:$INFOPATH
-     export MACAULAY2 PATH MANPATH INFOPATH
+     LD_LIBRARY_PATH=/PREFIX/lib:$LD_LIBRARY_PATH
+     export MACAULAY2 PATH MANPATH INFOPATH LD_LIBRARY_PATH
 fi
 ///
 
 dotloginFix = dotcshrcFix = ///
 if ( $?MACAULAY2 == 0 ) then
      setenv MACAULAY2 setup
-     setenv PATH /PREFIX/bin:$PATH
-     setenv MANPATH /PREFIX/share/man:$MANPATH
-     setenv INFOPATH /PREFIX/info:$INFOPATH
+     if ( $?PATH == 0 ) then
+         setenv PATH /PREFIX/bin:/usr/bin:/bin
+     else
+         setenv PATH /PREFIX/bin:$PATH
+     endif
+     if ( $?MANPATH == 0 ) then
+         setenv MANPATH /PREFIX/share/man
+     else
+         setenv MANPATH /PREFIX/share/man:$MANPATH
+     endif
+     if ( $?INFOPATH == 0 ) then
+         setenv INFOPATH /PREFIX/info
+     else
+         setenv INFOPATH /PREFIX/info:$INFOPATH
+     endif
+     if ( $?LD_LIBRARY_PATH == 0 ) then
+         setenv LD_LIBRARY_PATH /PREFIX/lib
+     else
+         setenv LD_LIBRARY_PATH /PREFIX/lib:$LD_LIBRARY_PATH
+     endif
 endif
 ///
 
