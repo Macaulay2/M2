@@ -5,6 +5,10 @@
 #undef free
 #include <gmp.h>
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 extern char newline[];
 extern char startupString1[];
 extern char startupString2[];
@@ -44,12 +48,9 @@ typedef __mpf_struct *M2_RRR; /* must agree with RRR in gmp.d */
 typedef struct M2_CCC_struct { __mpf_struct re, im; } *M2_CCC; /* must agree with CCC in gmp.d */
 
 #ifndef DCODE
-/* The C code produced from the D language has its own declarations for these things */
-extern M2_string system_newline;
+  /* The C code produced from the D language has its own declarations for these things */
+  extern M2_string system_newline;
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
   extern M2_string tostring(char const *);
   extern M2_string tostringn(char *s,int n);
   extern M2_string strings_substr(M2_string x, int start, int len);
@@ -57,23 +58,23 @@ extern "C" {
   extern M2_string strings_join(M2_string x,M2_string y);
   extern char *tocharstar(M2_string);
   extern char *tocharstar_malloc(M2_string);
-  
+
   extern M2_arrayint toarrayint(int n,int *p);
   extern M2_arrayint makearrayint(int n); /* Make an array of n 0's */
-  
+
   extern char **tocharstarstar(M2_stringarray);
   extern char **tocharstarstar_malloc(M2_stringarray);
   extern M2_stringarray tostrings(int,char **);
-#if defined(__cplusplus)
-}
-#endif
-
 #endif
 
 #define sizeofarray(s,len) (sizeof(*s) - sizeof(s->array) + (len)*sizeof(s->array[0]))
 
 #include <gc.h>
 extern void dummy_GC_warn_proc(char *, GC_word);
+
+#if defined(__cplusplus)
+}
+#endif
 
 #endif
 
