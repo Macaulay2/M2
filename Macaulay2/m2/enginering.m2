@@ -111,7 +111,6 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
        toString FractionField := F -> if ReverseDictionary#?F then toString ReverseDictionary#F else "frac(" | toString last F.baseRings | ")"
         numgens FractionField := F -> numgens last F.baseRings
   allGenerators FractionField := F -> allGenerators last F.baseRings
-	isField FractionField := F -> true
            char FractionField := F -> char last F.baseRings
 	    dim FractionField := F -> 0
             net FractionField := F -> if ReverseDictionary#?F then toString ReverseDictionary#F else net new FunctionApplication from { frac, last F.baseRings }
@@ -561,7 +560,7 @@ liftable(RingElement,Ring) := Boolean =>
 liftable(ZZ,Ring) := 
 liftable(QQ,Ring) := (f,R) -> try (lift(f,R);true) else false
 
-isUnit(RingElement) := (f) -> 1 % gb matrix {{f}} == 0
+isUnit(RingElement) := (f) -> 1 % ideal f == 0
 
 Ring _ String := RingElement => (x,s) -> x.indexStrings#s
 Ring _ Symbol := RingElement => (x,s) -> x.indexSymbols#s

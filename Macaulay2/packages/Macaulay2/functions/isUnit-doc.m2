@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {isUnit, (isUnit,RingElement), (isUnit, ZZ), (isUnit, QQ)},
+     Key => {isUnit, (isUnit, ZZ), (isUnit, RingElement), (isUnit, Number)},
      Headline => "whether a ring element is a unit",
      Usage => "isUnit r",
      Inputs => {

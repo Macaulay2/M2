@@ -1,3 +1,11 @@
+we have a test file
+
+     test/matrixpromote.m2
+     
+it currently crashes and I told Mike     
+
+-----------------------------------------------------------------------------
+
 To: Dan Grayson <dan@math.uiuc.edu>
 From: Michael Stillman <mike@math.cornell.edu>
 Subject: 

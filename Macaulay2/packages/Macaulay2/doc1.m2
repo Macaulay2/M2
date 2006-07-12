@@ -761,7 +761,7 @@ TEST ///
      I = minors(2,genericSymmetricMatrix(S,u,3));
      X = variety I;
      R = ring X;
-     Omega = prune cotangentSheaf X;
+     Omega = cotangentSheaf X;
      OmegaDual = dual Omega;
      assert(Ext^1(OmegaDual, OO_X^1(>= 0)) == Ext^1(OO_X^1, Omega(>= 0)))
      ///

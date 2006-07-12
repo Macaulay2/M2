@@ -271,13 +271,14 @@ Matrix % Module := Matrix => (f,M) -> f % gb M
 RingElement % Matrix := (r,f) -> ((r * id_(target f)) % f)_(0,0)
 RingElement % Ideal := (r,I) -> (
      if ring r =!= ring I then error "expected ring element and ideal for the same ring";
-     if isHomogeneous I
-     then r % gb(I, DegreeLimit => degree r)
-     else r % gb I
-     )
-ZZ % Ideal := (r,I) -> r_(ring I) % gb I
+     if r == 0 then return r;
+     r % if isHomogeneous I then gb(I, DegreeLimit => degree r) else gb I)
+ZZ % Ideal := (r,I) -> (
+     r = r_(ring I);
+     if r == 0 then return r;
+     r % if isHomogeneous I then gb(I,DegreeLimit=>0) else gb I)
 
-Matrix % RingElement := (f,r) -> f % (r * id_(target f))
+Matrix % RingElement := (f,r) -> f % (r * id_(target f))    -- this could be sped up: compute gb matrix {{r}} first, tensor with id matrix, force gb, etc
 
 -------------------------------------
 -- index number of a ring variable --

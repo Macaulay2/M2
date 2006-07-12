@@ -153,7 +153,7 @@ document { Key => "teaching your shell how to find M2",
      found M2, and it is located at the path ", TT "/foo/bar/bin/M2", ".  Run the command /foo/bar/bin/M2,
      and then, in response to Macaulay2's input prompt, enter ", TT "setup()", ".  If that works,
      the next time you log in or start a new shell, the shell should know how to find M2 (see
-     ", TO "setup", ").  If that doesn't work, read onward."
+     ", TO "setup", ").  If that doesn't work, read onward.",
      PARA {},
      "Your goal is to add the directory containing M2 to the value of the PATH environment variable.
      For this, you must know where the Macaulay2 files are: see ", TO "finding the Macaulay 2 files", ".  Your system administrator may have installed
@@ -221,7 +221,7 @@ document { Key => "teaching emacs how to find M2-init.el",
      "The simplest way to teach emacs how to find M2-init.el is to let M2 do it for you.  Run M2,
      and then, in response to Macaulay2's input prompt, enter ", TT "setup()", ".  If that works,
      the next time you start emacs, it should know how to find M2-init.el (see
-     ", TO "setup", ").  If that doesn't work, read onward."
+     ", TO "setup", ").  If that doesn't work, read onward.",
      PARA {},
      "To determine the precise path of the site-lisp directory emacs is looking
      in, so that you can install Macaulay 2 properly, use the emacs
@@ -520,11 +520,11 @@ document {
      PARA {"The documentation for most functions comes with example code.  You can 
 	  obtain the text of this example code using ", TO examples, "."
 	  },
-     EXAMPLE ///examples "jacobian Ideal"///,
+     EXAMPLE ///examples "jacobian(Ideal)"///,
      PARA {
 	  "which returns it as a string. To place these on their own lines, print the string."
 	  },
-     EXAMPLE ///print examples "jacobian Ideal"///
+     EXAMPLE ///print examples "jacobian(Ideal)"///
      }
 
 

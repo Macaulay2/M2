@@ -1,5 +1,9 @@
 -*- M2 -*-
 
+I'm currently begging Mike for an easy way to tell the maximum degree of the entries of a matrix
+
+--
+
 issub := (f,g) -> -1 === rawGBContains(raw gb g,raw f)	    -- we can do better in the homogeneous case!
 
 ZZ == Module := (n,M) -> M == n
