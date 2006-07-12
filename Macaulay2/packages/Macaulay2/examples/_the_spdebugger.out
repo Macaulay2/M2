@@ -4,13 +4,9 @@ i1 : load "demo1.m2"
 
 i2 : listUserSymbols
 
-o2 = symbol   class              value
-     ------   -----              -----
-     g      : FunctionClosure -- g    
-     ------------------------------------------------------------------------
-     location of symbol                         
-     ------------------
-     ../../../../Macaulay2/m2/demo1.m2:11:0-11:0
+o2 = symbol class            valuelocation of symbol                         
+     ------ -----            -----------------------
+     g     :FunctionClosure--g    ../../../../Macaulay2/m2/demo1.m2:11:0-11:0
 
 i3 : code g
 
@@ -56,12 +52,12 @@ i6 : g 2
 
 ii7 : listLocalSymbols
 
-oo7 = symbol   class              value      location of symbol                       
-      ------   -----              -----      ------------------
-      x      : ZZ              -- 0          ../../../../Macaulay2/m2/demo1.m2:6:5-6:5
-      a      : String          -- "hi there" ../../../../Macaulay2/m2/demo1.m2:7:5-7:5
-      b      : Nothing         -- null       ../../../../Macaulay2/m2/demo1.m2:8:5-8:5
-      f      : FunctionClosure -- ...        ../../../../Macaulay2/m2/demo1.m2:6:0-6:0
+oo7 = symbol class            value     location of symbol                       
+      ------ -----            -----     ------------------
+      x     :ZZ             --0         ../../../../Macaulay2/m2/demo1.m2:6:5-6:5
+      a     :String         --"hi there"../../../../Macaulay2/m2/demo1.m2:7:5-7:5
+      b     :Nothing        --null      ../../../../Macaulay2/m2/demo1.m2:8:5-8:5
+      f     :FunctionClosure--...       ../../../../Macaulay2/m2/demo1.m2:6:0-6:0
 
 ii8 : code f
 
@@ -80,12 +76,12 @@ ii9 : end
 
 ii10 : listLocalSymbols
 
-oo10 = symbol   class              value location of symbol                         
-       ------   -----              ----- ------------------
-       y      : ZZ              -- 2     ../../../../Macaulay2/m2/demo1.m2:11:4-11:4
-       c      : QQ              -- 2     ../../../../Macaulay2/m2/demo1.m2:12:5-12:5
-       d      : Nothing         -- null  ../../../../Macaulay2/m2/demo1.m2:13:5-13:5
-       f      : FunctionClosure -- ...   ../../../../Macaulay2/m2/demo1.m2:6:0-6:0  
+oo10 = symbol class            valuelocation of symbol                         
+       ------ -----            -----------------------
+       y     :ZZ             --2    ../../../../Macaulay2/m2/demo1.m2:11:4-11:4
+       c     :QQ             --2    ../../../../Macaulay2/m2/demo1.m2:12:5-12:5
+       d     :Nothing        --null ../../../../Macaulay2/m2/demo1.m2:13:5-13:5
+       f     :FunctionClosure--...  ../../../../Macaulay2/m2/demo1.m2:6:0-6:0  
 
 ii11 : break
 --leaving debugger--

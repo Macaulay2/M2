@@ -16,7 +16,7 @@ options:
                        and when evaluating command line arguments
     --no-prompts       print no input prompts
     --no-readline      don't use readline
-    --no-setup         don't try to load setup.m2
+    --no-setup         don't try to load setup.m2 or to loaddata
     --no-personality   don't set the personality and re-exec M2 (linux only)
     --prefix DIR       set prefixDirectory
     --print-width n    set printWidth=n (the default is the window width)

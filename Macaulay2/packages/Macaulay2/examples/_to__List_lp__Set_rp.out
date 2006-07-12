@@ -2,7 +2,7 @@
 
 i1 : x = set {a,b,c}
 
-o1 = Set {b, c, a}
+o1 = set {b, c, a}
 
 o1 : Set
 

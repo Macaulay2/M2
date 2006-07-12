@@ -33,36 +33,11 @@ o4 : ChainComplex
 
 i5 : betti C
 
+            0  1  2 3 4
 o5 = total: 2 10 14 7 1
          0: 2  4  6 4 1
          1: .  6  8 3 .
 
 o5 : BettiTally
 
-i6 : degrees C_2
-
-o6 = {{2}, {2}, {2}, {2}, {2}, {2}, {3}, {3}, {3}, {3}, {3}, {3}, {3}, {3}}
-
-o6 : List
-
-i7 : t2 = tally degrees C_2
-
-o7 = Tally{{2} => 6}
-           {3} => 8
-
-o7 : Tally
-
-i8 : peek t2
-
-o8 = Tally{{2} => 6}
-           {3} => 8
-
-i9 : t2_{2}
-
-o9 = 6
-
-i10 : t2_{3}
-
-o10 = 8
-
-i11 : 
+i6 : 

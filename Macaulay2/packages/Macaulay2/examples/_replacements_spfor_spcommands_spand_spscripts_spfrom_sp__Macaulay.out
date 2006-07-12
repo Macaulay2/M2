@@ -129,6 +129,7 @@ o20 : Matrix R  <--- R
 
 i21 : betti m
 
+             0 1
 o21 = total: 2 2
           0: 2 .
           1: . 1
@@ -146,6 +147,7 @@ o22 : Matrix R  <--- R
 
 i23 : betti n
 
+             0 1
 o23 = total: 2 2
           1: 2 .
           2: . 1

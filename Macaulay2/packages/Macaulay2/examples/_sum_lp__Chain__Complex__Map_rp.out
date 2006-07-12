@@ -27,6 +27,7 @@ o3 : Matrix R  <--- R
 
 i4 : betti oo
 
+            0 1
 o4 = total: 8 8
         -1: . 1
          0: 1 3

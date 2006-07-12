@@ -2,13 +2,13 @@
 
 i1 : makeDocumentTag (res,Module)
 
-o1 = User :: resolution Module
+o1 = User :: resolution(Module)
 
 o1 : DocumentTag
 
 i2 : peek oo
 
-o2 = DocumentTag{(resolution, Module), resolution Module, User, User}
+o2 = DocumentTag{(resolution, Module), resolution(Module), User, User}
 
 i3 : makeDocumentTag (koszul,ZZ,Matrix)
 

@@ -8,6 +8,7 @@ o2 : Ideal of S
 
 i3 : betti I
 
+            0 1
 o3 = total: 1 2
          0: 1 .
          1: . 1

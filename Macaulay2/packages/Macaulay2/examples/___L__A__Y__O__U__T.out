@@ -3,20 +3,20 @@
 i1 : LAYOUT
 
 o1 = HashTable{bin => bin/                                           }
-               cache => lib/Macaulay2/Macaulay2Core/cache/
+               cache => lib/Macaulay2/Core/cache/
                data => share/
                datam2 => share/Macaulay2/
                doc => share/doc/
                docm2 => share/doc/Macaulay2/
-               docm2rel => share/doc/Macaulay2/Macaulay2Core/
+               docm2rel => share/doc/Macaulay2/Core/
                docpackages => share/doc/Macaulay2/
                emacs => share/emacs/site-lisp/
-               emacsdoc => share/doc/Macaulay2/Macaulay2Core/emacs/
-               images => share/doc/Macaulay2/Macaulay2Core/images/
+               emacsdoc => share/doc/Macaulay2/Core/emacs/
+               images => share/doc/Macaulay2/Core/images/
                info => info/
                lib => lib/
-               libm2 => lib/Macaulay2/Macaulay2Core/
-               m2 => share/Macaulay2/Macaulay2Core/m2/
+               libm2 => lib/Macaulay2/Core/
+               m2 => share/Macaulay2/Core/m2/
                man => share/man/
                man1 => share/man/man1/
                man3 => share/man/man3/
@@ -28,28 +28,28 @@ o1 = HashTable{bin => bin/                                           }
                packages => share/Macaulay2/
                packagesrc => --Function[layout.m2:23:34-23:67]--
                packagetests => --Function[layout.m2:26:36-26:73]--
-               share => share/Macaulay2/Macaulay2Core/
-               style => share/doc/Macaulay2/Macaulay2Core/style/
+               share => share/Macaulay2/Core/
+               style => share/doc/Macaulay2/Core/style/
 
 o1 : HashTable
 
 i2 : applyValues (LAYOUT, f -> if instance(f,Function) then f "FOO" else f)
 
 o2 = HashTable{bin => bin/                                         }
-               cache => lib/Macaulay2/Macaulay2Core/cache/
+               cache => lib/Macaulay2/Core/cache/
                data => share/
                datam2 => share/Macaulay2/
                doc => share/doc/
                docm2 => share/doc/Macaulay2/
-               docm2rel => share/doc/Macaulay2/Macaulay2Core/
+               docm2rel => share/doc/Macaulay2/Core/
                docpackages => share/doc/Macaulay2/
                emacs => share/emacs/site-lisp/
-               emacsdoc => share/doc/Macaulay2/Macaulay2Core/emacs/
-               images => share/doc/Macaulay2/Macaulay2Core/images/
+               emacsdoc => share/doc/Macaulay2/Core/emacs/
+               images => share/doc/Macaulay2/Core/images/
                info => info/
                lib => lib/
-               libm2 => lib/Macaulay2/Macaulay2Core/
-               m2 => share/Macaulay2/Macaulay2Core/m2/
+               libm2 => lib/Macaulay2/Core/
+               m2 => share/Macaulay2/Core/m2/
                man => share/man/
                man1 => share/man/man1/
                man3 => share/man/man3/
@@ -61,8 +61,8 @@ o2 = HashTable{bin => bin/                                         }
                packages => share/Macaulay2/
                packagesrc => share/Macaulay2/FOO/
                packagetests => share/doc/Macaulay2/FOO/tests/
-               share => share/Macaulay2/Macaulay2Core/
-               style => share/doc/Macaulay2/Macaulay2Core/style/
+               share => share/Macaulay2/Core/
+               style => share/doc/Macaulay2/Core/style/
 
 o2 : HashTable
 

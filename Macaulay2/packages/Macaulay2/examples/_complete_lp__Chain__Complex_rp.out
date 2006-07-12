@@ -6,7 +6,7 @@ i2 : C = resolution cokernel vars R;
 
 i3 : keys C
 
-o3 = {dd, Resolution, cache, ring}
+o3 = {cache, dd, Resolution, ring}
 
 o3 : List
 
@@ -14,7 +14,7 @@ i4 : complete C;
 
 i5 : keys C
 
-o5 = {0, 1, 2, 3, 4, ring, 5, dd, complete, cache, Resolution}
+o5 = {0, 1, 2, 3, 4, 5, cache, dd, Resolution, complete, ring}
 
 o5 : List
 

@@ -60,6 +60,7 @@ o8 : Matrix R  <--- R
 
 i9 : betti (C=res coker M)
 
+            0  1  2  3  4 5
 o9 = total: 5 15 29 37 20 2
          0: 5 15 10  2  . .
          1: .  .  4  .  . .
@@ -75,6 +76,7 @@ o10 : Matrix R   <--- R
 
 i11 : betti (D=res coker N)
 
+              0  1  2  3  4 5
 o11 = total: 35 19 19 35 20 2
          -5: 35 15  .  .  . .
          -4:  .  4  .  .  . .

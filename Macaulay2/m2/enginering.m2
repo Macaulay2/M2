@@ -23,21 +23,31 @@ multipleBasicLift = (r,v) -> ( r = raw r; scan(v, B -> r = rawLift(raw B, raw r)
 basicLiftMatrix = (m,F) -> map(F,, rawLift(raw F, raw m))
 multipleBasicLiftMatrix = (m,v) -> (m = raw m; scan(v, F -> m = rawLift(raw F, m)); map(last v,,m) )
 
-basicPromote = (r,B) -> new B from rawPromote(raw B, raw r)
-multipleBasicPromote = (r,v) -> ( r = raw r; scan(v, B -> r = rawPromote(raw B, raw r)); new last v from r )
+basicPromote = (r,B) -> (
+     if debugLevel > 10 then stderr << "promoting from " << ring r << " to " << B << endl;
+     new B from rawPromote(raw B, raw r))
 
-basicPromoteMatrix = (m,F) -> map(F,, rawPromote(raw F, raw m))
-multipleBasicPromoteMatrix = (m,v) -> (m = raw m; scan(v, F -> m = rawPromote(raw F, m)) map(last v,,m) )
+multipleBasicPromote = (r,v) -> (
+     if debugLevel > 10 then stderr << "promoting from " << ring r << flush;
+     r = raw r;
+     scan(v, B -> (
+     	       if debugLevel > 10 then stderr << " to " << B << flush;
+	       r = rawPromote(raw B, raw r)));
+     if debugLevel > 10 then stderr << endl;
+     new last v from r)
 
--- if debugLevel > 0 then (
--- 
--- basicLiftMatrix = (m,F) -> ( R := ring F; map(F,,applyTable(entries m, r -> lift(r, R)))); -- temporary
--- multipleBasicLiftMatrix = (m,v) -> (m = entries m; scan(v, F -> m = applyTable(m, r -> lift(r, ring F))); map(last v,,m) ); -- temporary
--- 
--- basicPromoteMatrix = (m,F) -> ( R := ring F; map(F,,applyTable(entries m, r -> promote(r, R)))); -- temporary
--- multipleBasicPromoteMatrix = (m,v) -> (m = entries m; scan(v, F -> m = applyTable(m, r -> promote(r, ring F))); map(last v,,m) ); -- temporary
--- 
--- )
+basicPromoteMatrix = (m,F) -> (
+     if debugLevel > 10 then stderr << "promoting from " << ring m << " to " << F << endl;
+     map(F,, rawPromote(raw F, raw m)))
+
+multipleBasicPromoteMatrix = (m,v) -> (
+     if debugLevel > 10 then stderr << "promoting from " << ring m << flush;
+     m = raw m;
+     scan(v, F -> (
+     	       if debugLevel > 10 then stderr << " to " << F << flush;
+	       m = rawPromote(raw F, m)));
+     if debugLevel > 10 then stderr << endl;
+     map(last v,,m))
 
 promote'(ZZ,RingElement) := (n,R) -> new R from rawFromNumber(R,n)
 
@@ -54,6 +64,8 @@ commonEngineRingInitializations = (F) -> (
 	       	    if ancestor(Number, A) 
 		    then promote'(A,F) := (n,R) -> new R from rawFromNumber(R,n)
 	       	    else promote'(A,F) := basicPromote;
+		    promote'(Matrix,A,F) := (m,A,F) -> basicPromoteMatrix(m,F);
+		    lift'(Matrix,A,F) := (m,A,F) -> basicLiftMatrix(m,F);
 		    )
 	       else (
 		    v := append(take(baserings, -(n-i-1)), F);
@@ -61,6 +73,8 @@ commonEngineRingInitializations = (F) -> (
 	       	    if ancestor(Number, A)
 		    then promote'(A,F) := (n,R) -> new R from rawFromNumber(R,n)
 	       	    else promote'(A,F) := (a,F) -> multipleBasicPromote(a, v);
+		    promote'(Matrix,A,F) := (m,A,F) -> multipleBasicPromoteMatrix(m,v);
+		    lift'(Matrix,A,F) := (m,A,F) -> multipleBasicLiftMatrix(m,v);
 		    )));
      )
 

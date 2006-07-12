@@ -34,11 +34,9 @@ o5 : Sequence
 
 i6 : peek oo
 
-                +------+  +------+
-      +------+  |  bb  |  |  bb  |
-o6 = (|aabbcc|, |aa    |, |aa    |)
-      +------+  |    cc|  |    cc|
-                +------+  +------+
+                bb      bb
+o6 = (aabbcc, aa    , aa    )
+                  cc      cc
 
 i7 : class \ ooo
 

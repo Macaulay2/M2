@@ -186,6 +186,7 @@ o23 : ChainComplexMap
 
 i24 : betti C
 
+             0 1 2 3
 o24 = total: 1 3 3 1
           0: 1 . . .
           1: . 3 1 .
@@ -204,6 +205,7 @@ o25 : ChainComplex
 
 i26 : betti C
 
+             0 1 2
 o26 = total: 4 6 2
           0: . 1 .
           1: 4 1 .
@@ -245,6 +247,7 @@ o29 : Ideal of R
 
 i30 : betti res J
 
+             0 1 2 3
 o30 = total: 1 3 4 2
           0: 1 . . .
           1: . 3 . .
@@ -580,25 +583,25 @@ o80 : A-module, submodule of A
 
 i81 : H = Hom(M,M)
 
-o81 = subquotient ({0}  | 0 1 |, {0}  | 0  y  0  x2 |)
-                   {1}  | 1 0 |  {1}  | 0  -x 0  -y |
-                   {-1} | x 0 |  {-1} | y  0  x2 0  |
-                   {0}  | 0 1 |  {0}  | -x 0  -y 0  |
+o81 = subquotient ({0}  | 1 0 0 |, {0}  | 0  y  0  x2 |)
+                   {1}  | 0 1 x |  {1}  | 0  -x 0  -y |
+                   {-1} | 0 x 0 |  {-1} | y  0  x2 0  |
+                   {0}  | 1 0 y |  {0}  | -x 0  -y 0  |
 
                                 4
 o81 : A-module, subquotient of A
 
 i82 : F = homomorphism(H_{0})
 
-o82 = {2} | 0 x |
-      {3} | 1 0 |
+o82 = {2} | 1 0 |
+      {3} | 0 1 |
 
 o82 : Matrix
 
 i83 : G = homomorphism(H_{1})
 
-o83 = {2} | 1 0 |
-      {3} | 0 1 |
+o83 = {2} | 0 x |
+      {3} | 1 0 |
 
 o83 : Matrix
 
@@ -619,7 +622,7 @@ o86 : A-module, submodule of A
 
 i87 : coker F
 
-o87 = subquotient (| x y |, | y x2 |)
+o87 = subquotient (| x y |, | x y |)
 
                                 1
 o87 : A-module, subquotient of A
@@ -698,7 +701,11 @@ o95 : PolynomialRing
 
 i96 : A ** A
 
-o96 = QQ [a, b, c, a, b, c, Degrees => {{1, 0}, {1, 0}, {1, 0}, {0, 1}, {0, 1}, {0, 1}}, MonomialOrder => {GRevLex => {1, 1, 1}, GRevLex => {1, 1, 1}}]
+o96 = QQ [a, b, c, a, b, c, Degrees => {{1, 0}, {1, 0}, {1, 0}, {0, 1}, {0,
+      -----------------------------------------------------------------------
+      1}, {0, 1}}, MonomialOrder => {GRevLex => {1, 1, 1}, GRevLex => {1, 1,
+      -----------------------------------------------------------------------
+      1}}]
 
 o96 : PolynomialRing
 
@@ -718,7 +725,11 @@ o99 = false
 
 i100 : tensor(A,A,Variables=>{a,b,c,d,e,f})
 
-o100 = QQ [a, b, c, d, e, f, Degrees => {{1, 0}, {1, 0}, {1, 0}, {0, 1}, {0, 1}, {0, 1}}, MonomialOrder => {GRevLex => {1, 1, 1}, GRevLex => {1, 1, 1}}]
+o100 = QQ [a, b, c, d, e, f, Degrees => {{1, 0}, {1, 0}, {1, 0}, {0, 1}, {0,
+       ----------------------------------------------------------------------
+       1}, {0, 1}}, MonomialOrder => {GRevLex => {1, 1, 1}, GRevLex => {1, 1,
+       ----------------------------------------------------------------------
+       1}}]
 
 o100 : PolynomialRing
 

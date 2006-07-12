@@ -124,7 +124,7 @@ o20 : R-module, subquotient of R
 
 i21 : trim (M+M)
 
-o21 = subquotient (| x y |, | y2 xy x2 z4 |)
+o21 = subquotient (| y x |, | y2 xy x2 z4 |)
 
                                 1
 o21 : R-module, subquotient of R

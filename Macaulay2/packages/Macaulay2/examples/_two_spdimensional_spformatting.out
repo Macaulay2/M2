@@ -28,6 +28,7 @@ o3 : ChainComplex
 
 i4 : be = betti C
 
+            0 1 2 3
 o4 = total: 1 5 9 5
          0: 1 . . .
          1: . . . .
@@ -38,6 +39,7 @@ o4 : BettiTally
 
 i5 : "Betti numbers of " | net C | " are " | (net be)^2
 
+                                                               0 1 2 3
                                                         total: 1 5 9 5
                        1      5      9      5               0: 1 . . .
 o5 = Betti numbers of R  <-- R  <-- R  <-- R  <-- 0 are     1: . . . .
@@ -117,9 +119,9 @@ o16 = Sum{Product{x }, Product{2, x, y}, Product{y }}
 
 i17 : Table{{1,2,3},{a,bb,ccc}}
 
-o17 =  1   2   3  
+o17 = 1   2   3 
 
-       a  bb  ccc 
+      a  bb  ccc
 
 o17 : Expression of class Table
 
@@ -134,11 +136,11 @@ o18 : Expression of class MatrixExpression
 i19 : Table{{"Example 1","Example 2"},
             {Table{{1,2},{3,4}},Table{{11,22},{3,444}}}}
 
-o19 =  Example 1  Example 2 
+o19 = Example 1  Example 2
 
-          1  2     11   22  
+         1  2     11   22 
 
-          3  4      3  444 
+         3  4      3  444
 
 o19 : Expression of class Table
 

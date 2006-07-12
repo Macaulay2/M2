@@ -40,11 +40,17 @@ scan((ZZ,QQ,RR,RRR,CC,CCC), F -> (
 	  lift'(Matrix,F,F) := (f,A,B) -> f;
 	  ))
 
-promote'(Matrix,Number,Number) := (f,A,R) -> basicPromoteMatrix(f,R^(numgens target f))
-promote'(Matrix,Number,RingElement) := (f,A,R) -> basicPromoteMatrix(f,R^(numgens target f))
-
-lift'(Matrix,Number,Number) := (f,R,A) -> basicLiftMatrix(f,R^(numgens target f))
-lift'(Matrix,RingElement,Number) := (f,R,A) -> basicLiftMatrix(f,R^(numgens target f))
+scan((
+	  ZZ => ( QQ, RR, RRR, CC, CCC ),
+	  QQ => ( RR, RRR, CC, CCC ),
+	  RR => ( RRR, CC, CCC ),
+	  RRR => 1 : CCC,
+	  CC => 1 : CCC
+	  ), 
+     (K,Ls) -> scan(Ls, L -> (
+	       promote'(Matrix,K,L) := (m,K,L) -> basicPromoteMatrix(m,L^(numgens target m));
+	       lift'(Matrix,K,L) := (m,K,L) -> basicLiftMatrix(m,L^(numgens target m));
+	       )))	  
 
 -----------------------------------------------------------------------------
 -- Vector

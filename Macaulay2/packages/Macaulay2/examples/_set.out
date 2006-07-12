@@ -8,13 +8,13 @@ o1 : List
 
 i2 : S = set v
 
-o2 = Set {1, 2, 3}
+o2 = set {1, 2, 3}
 
 o2 : Set
 
 i3 : T = set(a,b,c,a,b,d)
 
-o3 = Set {a, b, c, d}
+o3 = set {c, d, a, b}
 
 o3 : Set
 

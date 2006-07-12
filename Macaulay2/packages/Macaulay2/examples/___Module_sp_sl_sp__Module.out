@@ -30,18 +30,26 @@ o4 : R-module, subquotient of R
 
 i5 : M/(R*M_0 + b*M)
 
-o5 = subquotient ({3} | 0      bc2-abd b3-abc |, {3} | 0      0        b2c2-ab2d b4-ab2c  |)
-                  {3} | -c2+ad 0       a3-acd |  {3} | -c2+ad -bc2+abd 0         a3b-abcd |
-                  {3} | b2-ac  a3-acd  0      |  {3} | b2-ac  b3-abc   a3b-abcd  0        |
+o5 = subquotient ({3} | 0      bc2-abd b3-abc |, {3} | 0      0       
+                  {3} | -c2+ad 0       a3-acd |  {3} | -c2+ad -bc2+abd
+                  {3} | b2-ac  a3-acd  0      |  {3} | b2-ac  b3-abc  
+     ------------------------------------------------------------------------
+     b2c2-ab2d b4-ab2c  |)
+     0         a3b-abcd |
+     a3b-abcd  0        |
 
                                3
 o5 : R-module, subquotient of R
 
 i6 : M/(M_0,a*M_1+M_2)
 
-o6 = subquotient ({3} | 0      bc2-abd b3-abc |, {3} | 0      abc2-a2bd+b3-abc |)
-                  {3} | -c2+ad 0       a3-acd |  {3} | -c2+ad a3-acd           |
-                  {3} | b2-ac  a3-acd  0      |  {3} | b2-ac  a4-a2cd          |
+o6 = subquotient ({3} | 0      bc2-abd b3-abc |, {3} | 0     
+                  {3} | -c2+ad 0       a3-acd |  {3} | -c2+ad
+                  {3} | b2-ac  a3-acd  0      |  {3} | b2-ac 
+     ------------------------------------------------------------------------
+     abc2-a2bd+b3-abc |)
+     a3-acd           |
+     a4-a2cd          |
 
                                3
 o6 : R-module, subquotient of R

@@ -90,6 +90,7 @@ o1 = Thing : BasicList : Command
                          Partition
                          ProductOrder
                          PushforwardComputation
+                         SumOfTwists
                          Time
                          TreeNode
                          URL
@@ -139,7 +140,6 @@ o1 = Thing : BasicList : Command
                          RingElement
                          RingMap
                          SheafOfRings
-                         SumOfTwists
                          Tally : BettiTally
                                  Set
              Net : String

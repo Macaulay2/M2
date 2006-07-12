@@ -44,7 +44,7 @@ o7 = true
 i8 : set (ZZ^3, ZZ^2, ZZ^3)
 
             2    3
-o8 = Set {ZZ , ZZ }
+o8 = set {ZZ , ZZ }
 
 o8 : Set
 

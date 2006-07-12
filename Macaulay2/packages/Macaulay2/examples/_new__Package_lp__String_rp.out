@@ -30,6 +30,6 @@ o4 = making Foo
 
 i5 : (options Core).Version
 
-o5 = 0.9.10
+o5 = 0.9.20
 
 i6 : 

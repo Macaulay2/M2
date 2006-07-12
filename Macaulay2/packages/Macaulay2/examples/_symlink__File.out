@@ -2,13 +2,13 @@
 
 i1 : fn = temporaryFileName()
 
-o1 = /tmp/M2-13222-1
+o1 = /tmp/M2-4287-1
 
 i2 : symlinkFile("qwert", fn)
 
 i3 : fileExists fn
 
-o3 = true
+o3 = false
 
 i4 : readlink fn
 

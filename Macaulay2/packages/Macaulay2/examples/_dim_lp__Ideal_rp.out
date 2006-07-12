@@ -52,7 +52,7 @@ o8 : SimplicialComplex
 
 i9 : I = monomialIdeal D
 
-o9 = monomialIdeal 1 : (a*b*c*d)
+o9 = monomialIdeal(a*b*c*d)
 
 o9 : MonomialIdeal of R
 

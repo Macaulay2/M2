@@ -11,8 +11,8 @@ o2 : MonomialIdeal of QQ [x, y, z]
 
 i3 : w = irreducibleDecomposition I
 
-                                                 2                   3
-o3 = {monomialIdeal 1 : (x), monomialIdeal 1 : (y ), monomialIdeal (y , z)}
+                                       2                   3
+o3 = {monomialIdeal(x), monomialIdeal(y ), monomialIdeal (y , z)}
 
 o3 : List
 

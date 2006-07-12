@@ -51,25 +51,25 @@ o2 = ideal -- make an ideal
      Ways to use ideal :
      ===================
 
-       * "ideal List" -- make an ideal
-       * ideal Sequence, see "ideal List" -- make an ideal
-       * "ideal Matrix" -- make an ideal
-       * "ideal Module" -- converts a module to an ideal
-       * "ideal MonomialIdeal" -- converts a monomial ideal to an ideal
-       * ideal QuotientRing, see "ideal Ring" -- returns the defining ideal
-       * "ideal Ring" -- returns the defining ideal
-       * ideal QQ, see "ideal RingElement" -- make an ideal
-       * "ideal RingElement" -- make an ideal
-       * ideal ZZ, see "ideal RingElement" -- make an ideal
-       * "ideal String" -- make an ideal using classic Macaulay syntax
-       * "ideal Variety" -- returns the defining ideal
+       * "ideal(List)" -- make an ideal
+       * ideal(Sequence), see "ideal(List)" -- make an ideal
+       * "ideal(Matrix)" -- make an ideal
+       * "ideal(Module)" -- converts a module to an ideal
+       * "ideal(MonomialIdeal)" -- converts a monomial ideal to an ideal
+       * ideal(QuotientRing), see "ideal(Ring)" -- returns the defining ideal
+       * "ideal(Ring)" -- returns the defining ideal
+       * ideal(QQ), see "ideal(RingElement)" -- make an ideal
+       * "ideal(RingElement)" -- make an ideal
+       * ideal(ZZ), see "ideal(RingElement)" -- make an ideal
+       * "ideal(String)" -- make an ideal using classic Macaulay syntax
+       * "ideal(Variety)" -- returns the defining ideal
 
 o2 : DIV
 
 i3 : help (ideal,List)
 
-o3 = ideal List -- make an ideal
-     ***************************
+o3 = ideal(List) -- make an ideal
+     ****************************
 
      Synopsis
      ========

@@ -25,6 +25,7 @@ o5 : ChainComplex
 
 i6 : betti C
 
+            0 1 2 3
 o6 = total: 1 4 4 1
          0: 1 . . .
          1: . . . .

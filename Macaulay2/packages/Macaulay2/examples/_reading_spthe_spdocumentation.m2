@@ -1,5 +1,5 @@
 help "jacobian"
-* "jacobian Ideal"
+* "jacobian(Ideal)"
 apropos "deal"
-examples "jacobian Ideal"
-print examples "jacobian Ideal"
+examples "jacobian(Ideal)"
+print examples "jacobian(Ideal)"

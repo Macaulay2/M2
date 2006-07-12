@@ -44,6 +44,7 @@ o7 : Ideal of S
 
 i8 : betti res pluecker
 
+            0  1  2  3  4  5 6
 o8 = total: 1 15 35 42 35 15 1
          0: 1  .  .  .  .  . .
          1: . 15 35 21  .  . .
@@ -94,6 +95,7 @@ o13 : Ideal of R
 
 i14 : betti res I
 
+             0 1 2 3
 o14 = total: 1 5 5 1
           0: 1 . . .
           1: . 5 5 .
