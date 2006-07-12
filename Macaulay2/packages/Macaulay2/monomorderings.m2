@@ -243,7 +243,7 @@ document {
      packed into one 32-bit word, and a second lexicographic block for 4 variables, taking 4 32-bit words.
      Each monomial will be packed into 5 32-bit words (on a computer with a 32-bit word size).",
      EXAMPLE lines ///
-     	  --C = QQ[a,b,c,x,y,z,w,MonomialOrder=>{MonomialSize=>8,3,MonomialSize=>32,Lex=>4}];
+     	  C = QQ[a,b,c,x,y,z,w,MonomialOrder=>{MonomialSize=>8,3,MonomialSize=>32,Lex=>4}];
           ///,
      PARA{},
      EXAMPLE {
