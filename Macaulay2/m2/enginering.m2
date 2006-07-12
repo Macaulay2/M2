@@ -20,9 +20,6 @@ isField EngineRing := R -> rawIsField raw R
 basicLift = (r,B) -> new B from rawLift(raw B, raw r)
 multipleBasicLift = (r,v) -> ( r = raw r; scan(v, B -> r = rawLift(raw B, raw r)); new last v from r )
 
-basicLiftMatrix = (m,F) -> map(F,, rawLift(raw F, raw m))
-multipleBasicLiftMatrix = (m,v) -> (m = raw m; scan(v, F -> m = rawLift(raw F, m)); map(last v,,m) )
-
 basicPromote = (r,B) -> (
      if debugLevel > 10 then stderr << "promoting from " << ring r << " to " << B << endl;
      new B from rawPromote(raw B, raw r))
@@ -36,18 +33,45 @@ multipleBasicPromote = (r,v) -> (
      if debugLevel > 10 then stderr << endl;
      new last v from r)
 
-basicPromoteMatrix = (m,F) -> (
-     if debugLevel > 10 then stderr << "promoting from " << ring m << " to " << F << endl;
-     map(F,, rawPromote(raw F, raw m)))
+protect promoteDegree
+protect liftDegree
+rk := v -> if instance(v,ZZ) then v else #v
+makepromoter = memoize (
+     degreerank -> (
+	  if degreerank === 0 then rk 
+	  else (
+     	       zr := toList ( degreerank : 0 );
+	       v -> toList (rk v : zr))))
+
+basicPromoteMatrix = (m,R,p) -> (
+     dF := p degrees target m;
+     dG := p degrees source m;
+     F := R^dF;
+     G := R^dG;
+     map(F,G, rawPromote(raw F, raw m)))
 
 multipleBasicPromoteMatrix = (m,v) -> (
-     if debugLevel > 10 then stderr << "promoting from " << ring m << flush;
+     dF := degrees target m;
+     dG := degrees source m;
      m = raw m;
-     scan(v, F -> (
-     	       if debugLevel > 10 then stderr << " to " << F << flush;
-	       m = rawPromote(raw F, m)));
-     if debugLevel > 10 then stderr << endl;
-     map(last v,,m))
+     local S;
+     scan(v, (R,p) -> ( S = R; dF = p dF; dG = p dG; m = rawPromote((raw R)^dF, m)));
+     map(S^dF,S^dG,m))
+
+basicLiftMatrix = (m,R,p) -> (
+     dF := p degrees target m;
+     dG := p degrees source m;
+     F := R^dF;
+     G := R^dG;
+     map(F,G, rawLift(raw F, raw m)))
+
+multipleBasicLiftMatrix = (m,v) -> (
+     dF := degrees target m;
+     dG := degrees source m;
+     m = raw m;
+     local S;
+     scan(v, (R,p) -> ( S = R; dF = p dF; dG = p dG; m = rawLift((raw R)^dF, m)));
+     map(S^dF,S^dG,m))
 
 promote'(ZZ,RingElement) := (n,R) -> new R from rawFromNumber(R,n)
 
@@ -55,26 +79,37 @@ commonEngineRingInitializations = (F) -> (
      F ? F := (f,g) -> raw f ? raw g;
      promote'(F,F) := lift'(F,F) := (f,F) -> f;
      liftable'(F,F) := (f,F) -> true;
+     promote'(Matrix,F,F) := (m,F,G) -> m;
+     lift'(Matrix,F,F) := (m,F,G) -> m;
+     liftable'(Matrix,F,F) := (f,F,G) -> true;
      baserings := F.baseRings;
      n := # baserings;
+     baserings = append(baserings, F);
+     promoters:= apply(baserings, R -> if R.?promoteDegree then R.promoteDegree else identity);
+     lifters  := apply(baserings, R -> if R.?liftDegree then R.liftDegree else identity);
      scan(n, i -> (
 	       A := baserings#i;
 	       if i == n-1 then (
-		    lift'(A,F) := basicLift;
-	       	    if ancestor(Number, A) 
-		    then promote'(A,F) := (n,R) -> new R from rawFromNumber(R,n)
-	       	    else promote'(A,F) := basicPromote;
-		    promote'(Matrix,A,F) := (m,A,F) -> basicPromoteMatrix(m,F);
-		    lift'(Matrix,A,F) := (m,A,F) -> basicLiftMatrix(m,F);
+		    promoter := promoters#n;
+		    lifter := lifters#n;
+	       	    promote'(A,F) := (
+			 if ancestor(Number, A) 
+		    	 then (n,R) -> new R from rawFromNumber(R,n)
+	       	    	 else basicPromote);
+		    lift'(F,A) := basicLift;
+		    promote'(Matrix,A,F) := (m,A,F) -> basicPromoteMatrix(m,F,promoter);
+		    lift'(Matrix,F,A) := (m,F,A) -> basicLiftMatrix(m,A,lifter);
 		    )
 	       else (
-		    v := append(take(baserings, -(n-i-1)), F);
-		    lift'(A,F) := (a,F) -> multipleBasicLift(a, v);
-	       	    if ancestor(Number, A)
-		    then promote'(A,F) := (n,R) -> new R from rawFromNumber(R,n)
-	       	    else promote'(A,F) := (a,F) -> multipleBasicPromote(a, v);
-		    promote'(Matrix,A,F) := (m,A,F) -> multipleBasicPromoteMatrix(m,v);
-		    lift'(Matrix,A,F) := (m,A,F) -> multipleBasicLiftMatrix(m,v);
+		    promoteChain := apply(take(baserings, {i+1,n}), take(promoters, {i+1,n}), identity);
+		    liftChain := reverse apply(take(baserings, {i,n-1}), take(lifters, {i+1,n}), identity);
+	       	    promote'(A,F) := (
+			 if ancestor(Number, A)
+		    	 then (n,R) -> new R from rawFromNumber(R,n)
+	       	    	 else (a,F) -> multipleBasicPromote(a, promoteChain));
+		    lift'(F,A) := (f,A) -> multipleBasicLift(f, liftChain);
+		    promote'(Matrix,A,F) := (m,A,F) -> multipleBasicPromoteMatrix(m,promoteChain);
+		    lift'   (Matrix,F,A) := (m,F,A) -> multipleBasicLiftMatrix   (m,liftChain);
 		    )));
      )
 
@@ -153,6 +188,8 @@ frac EngineRing := R -> (
 	  expression F := (f) -> expression numerator f / expression denominator f;
 	  numerator F := (f) -> new R from rawNumerator f.RawRingElement;
 	  denominator F := (f) -> new R from rawDenominator f.RawRingElement;
+	  F.promoteDegree = makepromoter 0;
+	  F.liftDegree = makepromoter degreeLength R;
 	  F.generators = apply(generators R, m -> promote(m,F));
 	  fraction(F,F) := F / F := (x,y) -> x//y;
 	  fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,r.RawRingElement,s.RawRingElement);

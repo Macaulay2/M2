@@ -110,6 +110,8 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      F.isCommutative = true;
      expression F := t -> expression lift(t, S);
      F.degreeLength = 0;
+     F.promoteDegree = makepromoter 0;
+     F.liftDegree = makepromoter degreeLength S;
      F.char = p;
      F.frac = F;
      F.generators = apply(generators S, a -> promote(a,F));

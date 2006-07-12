@@ -644,7 +644,7 @@ examples = x -> (
      d := fetchRawDocumentation makeDocumentTag x;
      if d =!= null then stack deepSplice getExampleInputs d.Description)
 apropos = method()
-apropos String := (pattern) -> last \ sort select(flatten \\ pairs \ dictionaryPath, (nam,sym) -> match(pattern,nam) and not match("\\$",nam))
+apropos String := (pattern) -> last \ sort unique select(flatten \\ pairs \ dictionaryPath, (nam,sym) -> match(pattern,nam) and not match("\\$",nam))
 -----------------------------------------------------------------------------
 headline = method(Dispatch => Thing)
 headline Thing := key -> getOption(key,Headline)	    -- old method

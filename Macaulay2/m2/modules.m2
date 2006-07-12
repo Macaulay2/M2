@@ -33,24 +33,26 @@ promote'(Matrix,RingElement) := promote'(Matrix,Number) := Matrix => (f,S) -> (
      if not isFreeModule target f or not isFreeModule source f then error "lift': expected source and target to be free modules";
      promote'(f, ring f, S))
 
-lift'(Matrix,QQ,ZZ) := (f,ZZ,QQ) -> basicLiftMatrix(f,QQ^(numgens target f))
-
-scan((ZZ,QQ,RR,RRR,CC,CCC), F -> (
-	  promote'(Matrix,F,F) := (f,A,B) -> f;
-	  lift'(Matrix,F,F) := (f,A,B) -> f;
-	  ))
-
 scan((
-	  ZZ => ( QQ, RR, RRR, CC, CCC ),
-	  QQ => ( RR, RRR, CC, CCC ),
-	  RR => ( RRR, CC, CCC ),
-	  RRR => 1 : CCC,
-	  CC => 1 : CCC
+	  (ZZ, { QQ, RR, RRR, CC, CCC }),		    -- Mike gave me this list of basic promotions
+	  (QQ, { RR, RRR, CC, CCC }),
+	  (RR, { RRR, CC, CCC }),
+	  (RRR,{ CCC }),
+	  (CC, { CCC }),
+	  (CCC,{  })
 	  ), 
-     (K,Ls) -> scan(Ls, L -> (
-	       promote'(Matrix,K,L) := (m,K,L) -> basicPromoteMatrix(m,L^(numgens target m));
-	       lift'(Matrix,K,L) := (m,K,L) -> basicLiftMatrix(m,L^(numgens target m));
-	       )))	  
+     (K,Ls) -> (
+	  promote'(Matrix,K,K) := (f,A,B) -> f;
+	  lift'(Matrix,K,K) := (f,A,B) -> f;
+	  promote'(Matrix,K,K) := (m,K,L) -> m;
+	  lift'(Matrix,K,K) := (m,K,L) -> m;
+	  scan(Ls, L -> (
+     	       -- I should make sure we have all these for field elements, which are all done in the front end
+	       -- or should I make ring maps, instead?
+	       p := makepromoter 0;
+	       promote'(Matrix,K,L) := (m,K,L) -> basicPromoteMatrix(m,L,p);
+	       lift'(Matrix,L,K) := (m,L,K) -> basicLiftMatrix(m,K,p);
+	       ))))	  
 
 -----------------------------------------------------------------------------
 -- Vector
