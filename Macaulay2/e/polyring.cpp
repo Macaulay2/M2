@@ -274,6 +274,12 @@ bool PolyRing::promote(const Ring *Rf, const ring_elem f, ring_elem &result) con
   // case 1:  Rf = A[x]/J ---> A[x]/I  is one of the 'base_ring's of 'this'.
   // case 2:  Rf = A      ---> A[x]/I  is the ring of scalars
 
+  // Cases:
+  //  Rf is a poly ring (or quotient of one), with the same coeff ring as this.
+  //  Rf is a poly ring (or quotient) with the same monoid as this (but coeffs are maybe different).
+  //  Rf is the coeff ring of this
+  //  Rf is not the coeff ring K of this, but is a base ring of K (e.g. ZZ --> QQ, A --> frac(A), any others?)
+  //  Rf is a poly ring in a smaller number of variables
   const PolynomialRing *Rf1 = Rf->cast_to_PolynomialRing();
   int nvars0 = n_vars();
   if (Rf1 != 0)

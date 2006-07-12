@@ -28,26 +28,26 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
   case 1 : 
     if (!resolve_cokernel)
       {
-	ERROR("resolution algorithm 1 cannot resolve a cokernel with a given presentation: use algorithm 2 or 3 instead");
+	ERROR("resolution Strategy=>1 cannot resolve a cokernel with a given presentation: use Strategy=>2 or Strategy=>3 instead");
 	return 0;
       }
-    if (gbTrace > 0) emit_line("resolution algorithm 1");
+    if (gbTrace > 0) emit_line("resolution Strategy=>1");
     return new res_comp(m, max_level, strategy);
   case 0: 
     if (!resolve_cokernel)
       {
-	ERROR("resolution algorithm 0 cannot resolve a cokernel with a given presentation: use algorithm 2 or 3 instead");
+	ERROR("resolution Strategy=>0 cannot resolve a cokernel with a given presentation: use Strategy=>2 or Strategy=>3 instead");
 	return 0;
       }
-    if (gbTrace > 0) emit_line("resolution algorithm 0");
+    if (gbTrace > 0) emit_line("resolution Strategy=>0");
     return new res2_comp(m, max_level, use_max_slanted_degree, max_slanted_degree, strategy);
   case 2 : 
     origsyz = m->n_cols();
-    if (gbTrace > 0) emit_line("resolution algorithm 2");
+    if (gbTrace > 0) emit_line("resolution Strategy=>2");
     return new gbres_comp(m, max_level+1, origsyz, strategy);
   case 3: 
     origsyz = m->n_cols();
-    if (gbTrace > 0) emit_line("resolution algorithm 3");
+    if (gbTrace > 0) emit_line("resolution Strategy=>3");
     return new gbres_comp(m, max_level+1, origsyz, strategy | STRATEGY_USE_HILB);
 
   }

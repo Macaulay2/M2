@@ -2073,12 +2073,19 @@ Matrix *gbA::make_lead_term_matrix()
 // new code
 void gbA::do_computation()
 {
+  enum ComputationStatusCode ret;
   int npairs;
   spair *p;
 
   // initial state is STATE_NEWDEGREE
 
   if (stop_.always_stop) return; // set_status to what?
+
+  if ((ret = computation_is_complete()) != COMP_COMPUTING)
+    {
+      set_status(ret);
+      return;
+    }
 
   for (;;)
     {
@@ -2179,7 +2186,6 @@ void gbA::do_computation()
 	      {
 		process_spair(p);
 
-		enum ComputationStatusCode ret;
 		if ((ret = computation_is_complete()) != COMP_COMPUTING)
 		  {
 		    set_status(ret);

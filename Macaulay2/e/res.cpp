@@ -61,6 +61,7 @@ void res_comp::initialize(const Matrix *mat,
       res_pair *p = new_res_pair();
 
       p->me = component_number++;
+      p->minimal_me = p->me;
       next_me_number++;	// this and 'component_number' should still be equal here.
       p->compare_num = i;
 

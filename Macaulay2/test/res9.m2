@@ -28,7 +28,7 @@ assert(F3 == F3b)
 -- Koszul complex on 4 elements --
 -- Algorithm 3                  --
 ----------------------------------
-needs "raw-util.m2"
+needs "engine/raw-util.m2"
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c, symbol d))
 m = mat{{a,b,c^2,d^2}}
 --gbTrace=10
@@ -58,7 +58,7 @@ assert(F3 == F3b)
 -- Algorithm 3                  --
 ----------------------------------
 -- WARNING: algorithm 0 requires a GB!!
-needs "raw-util.m2"
+needs "engine/raw-util.m2"
 R = QQ[symbol a .. symbol f]
 I = ideal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f, b*c*d,b*d*e,b*e*f,c*d*f,c*e*f)
 M = module I
@@ -77,7 +77,7 @@ assert(m3 == 0)
 -- 3 by 3 commuting matrices    --
 -- Algorithm 3                  --
 ----------------------------------
-needs "raw-util.m2"
+needs "engine/raw-util.m2"
 R = ZZ/32003[vars(0..17)]
 m1 = genericMatrix(R,a,3,3)
 m2 = genericMatrix(R,j,3,3)
@@ -265,8 +265,6 @@ betti C == new BettiTally from {
      }
 
 I = ideal flatten entries gens I;
-time C = res(I, Strategy=>3);
-time C = res(I, Strategy=>3, StopBeforeComputation => true)
 -- Now for a quotient
 R = ZZ/101[a..d]/(a*d,b*c)
 Q = cokernel matrix{{a,b,c,d}}
@@ -279,7 +277,6 @@ toExternalString "total: 1 4 8 12 16 20 24
 gbTrace=3
 kk=ZZ/101;
 E=kk[y_0..y_6,SkewCommutative=>true]/(y_0*y_1-y_2*y_3)
-E.SkewCommutative = true
 n=matrix{{y_1*y_2*y_4,y_2*y_3*y_5,y_3*y_4*y_6,y_4*y_5*y_0,y_5*y_6*y_1,y_6*y_0*y_2,y_0*y_1*y_3},
          {y_3*y_5*y_6,y_4*y_6*y_0,y_5*y_0*y_1,y_6*y_1*y_2,y_0*y_2*y_3,y_1*y_3*y_4,y_2*y_4*y_5}}
 M = image n
