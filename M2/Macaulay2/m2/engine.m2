@@ -248,7 +248,11 @@ ZZ _ RawFreeModule := (i,F) -> (
      )
 
 RawRing ^ ZZ := (R,i) -> rawFreeModule(R,i)
-RawRing ^ List := (R,i) -> rawFreeModule(R,toSequence( - flatten splice i ))
+RawRing ^ List := (R,i) -> (
+     i = splice i;
+     v := - flatten i;
+     if #v === 0 then rawFreeModule(R, #i ) 
+     else rawFreeModule(R,toSequence v ))
 
 rank RawFreeModule := rawRank
 

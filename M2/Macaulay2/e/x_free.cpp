@@ -39,6 +39,10 @@ const FreeModuleOrNull *IM2_FreeModule_make_degs(const Ring *R,
 {
   const Monoid *D = R->degree_monoid();
   unsigned int eachdeg = D->n_vars();
+  if (eachdeg == 0) {
+       ERROR("rawFreeModule: degree rank 0, but sequence of degrees given");
+       return NULL;
+  }
   unsigned int rank = degs->len / eachdeg;
   if (rank * eachdeg != degs->len)
     {
