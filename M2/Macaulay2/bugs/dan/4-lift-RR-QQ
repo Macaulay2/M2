@@ -3,3 +3,12 @@ install rational approximation routines:
 	lift(RR,QQ)
 	lift(RRR,QQQ)
 
+| 0 1 |  | x | = |   y  |
+| 1 a |  | y |   | x+ay |
+
+
+| a 1 |  | x | = | ax+y  |
+| 1 0 |  | y |   |  x    |
+
+a + 1 / (x/y)  = (ax+y)/x
+
