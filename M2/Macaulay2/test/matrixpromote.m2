@@ -19,9 +19,13 @@ chain = (ZZ,QQ,S,T,U,V)
 for i from 0 to #chain-1 do for j from i to #chain-1 do (
      A = chain#i;
      B = chain#j;
-     f = id_(A^3);
+     a := if numgens A > 0 then A_0^2+1 else 3_A;
+     b := promote'(a,B);
+     assert( b == a_B );
+     assert( a == lift'(b,A) );
+     f = a * id_(A^3);
      g = promote'(f,B);
-     assert(g == id_(B^3));
+     assert(g == b * id_(B^3));
      h = lift'(g,A);
      assert(f == h);
      )

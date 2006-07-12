@@ -18,20 +18,9 @@ isField EngineRing := R -> rawIsField raw R
 -----------------------------------------------------------------------------
 --- new lift and promote, version 3
 basicLift = (r,B) -> new B from rawLift(raw B, raw r)
-multipleBasicLift = (r,v) -> ( r = raw r; scan(v, B -> r = rawLift(raw B, raw r)); new last v from r )
-
-basicPromote = (r,B) -> (
-     if debugLevel > 10 then stderr << "promoting from " << ring r << " to " << B << endl;
-     new B from rawPromote(raw B, raw r))
-
-multipleBasicPromote = (r,v) -> (
-     if debugLevel > 10 then stderr << "promoting from " << ring r << flush;
-     r = raw r;
-     scan(v, B -> (
-     	       if debugLevel > 10 then stderr << " to " << B << flush;
-	       r = rawPromote(raw B, raw r)));
-     if debugLevel > 10 then stderr << endl;
-     new last v from r)
+multipleBasicLift = (r,v) -> ( r = raw r; scan(v, B -> r = rawLift(raw B, r)); new v#-1 from r )
+basicPromote = (r,B) -> new B from rawPromote(raw B, raw r)
+multipleBasicPromote = (r,v) -> ( r = raw r; scan(v, B -> r = rawPromote(raw B, r)); new v#-1 from r)
 
 protect promoteDegree
 protect liftDegree
@@ -94,22 +83,24 @@ commonEngineRingInitializations = (F) -> (
 		    lifter := lifters#n;
 	       	    promote'(A,F) := (
 			 if ancestor(Number, A) 
-		    	 then (n,R) -> new R from rawFromNumber(R,n)
+		    	 then (n,R) -> new R from rawFromNumber(raw R,n)
 	       	    	 else basicPromote);
 		    lift'(F,A) := basicLift;
 		    promote'(Matrix,A,F) := (m,A,F) -> basicPromoteMatrix(m,F,promoter);
 		    lift'(Matrix,F,A) := (m,F,A) -> basicLiftMatrix(m,A,lifter);
 		    )
 	       else (
-		    promoteChain := apply(take(baserings, {i+1,n}), take(promoters, {i+1,n}), identity);
-		    liftChain := reverse apply(take(baserings, {i,n-1}), take(lifters, {i+1,n}), identity);
+		    promoteChain := take(baserings, {i+1,n});
+		    liftChain := reverse take(baserings, {i,n-1});
+		    promoteMatrixChain := apply(promoteChain, take(promoters, {i+1,n}), identity);
+		    liftMatrixChain := apply(liftChain, reverse take(lifters, {i+1,n}), identity);
 	       	    promote'(A,F) := (
 			 if ancestor(Number, A)
-		    	 then (n,R) -> new R from rawFromNumber(R,n)
+		    	 then (n,R) -> new R from rawFromNumber(raw R,n)
 	       	    	 else (a,F) -> multipleBasicPromote(a, promoteChain));
 		    lift'(F,A) := (f,A) -> multipleBasicLift(f, liftChain);
-		    promote'(Matrix,A,F) := (m,A,F) -> multipleBasicPromoteMatrix(m,promoteChain);
-		    lift'   (Matrix,F,A) := (m,F,A) -> multipleBasicLiftMatrix   (m,liftChain);
+		    promote'(Matrix,A,F) := (m,A,F) -> multipleBasicPromoteMatrix(m,promoteMatrixChain);
+		    lift'   (Matrix,F,A) := (m,F,A) -> multipleBasicLiftMatrix   (m,liftMatrixChain);
 		    )));
      )
 

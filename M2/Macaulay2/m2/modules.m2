@@ -42,16 +42,17 @@ scan((
 	  (CCC,{  })
 	  ), 
      (K,Ls) -> (
-	  promote'(Matrix,K,K) := (f,A,B) -> f;
-	  lift'(Matrix,K,K) := (f,A,B) -> f;
+	  promote'(K,K) := (f,K) -> f;
 	  promote'(Matrix,K,K) := (m,K,L) -> m;
+	  lift'(K,K) := (f,K) -> f;
 	  lift'(Matrix,K,K) := (m,K,L) -> m;
 	  scan(Ls, L -> (
-     	       -- I should make sure we have all these for field elements, which are all done in the front end
-	       -- or should I make ring maps, instead?
 	       p := makepromoter 0;
+	       promote'(K,L) := (a,L) -> a_L;
 	       promote'(Matrix,K,L) := (m,K,L) -> basicPromoteMatrix(m,L,p);
 	       lift'(Matrix,L,K) := (m,L,K) -> basicLiftMatrix(m,K,p);
+	       if lookup(promote',K,L) === null then stderr << "--warning: no method installed for promote'(" << L << ", type of " << K << ")" << endl;
+	       if lookup(lift',L,K) === null then stderr << "--warning: no method installed for lift'(" << L << ", type of " << K << ")" << endl;
 	       ))))	  
 
 -----------------------------------------------------------------------------
