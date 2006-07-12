@@ -132,10 +132,14 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  if not M.?RawMonoid then error "expected ordered monoid handled by the engine";
 	  if not R.?RawRing then error "expected coefficient ring handled by the engine";
      	  num := numgens M;
-	  (basering,flatmonoid,numallvars,degreepromotefun,degreeliftfun) := (
-	       if R.?isBasic then (R,M,num,makepromoter degreeLength M,makepromoter degreeLength R)
-	       else if R.?basering and R.?flatmonoid then (R.basering, tensor(M, R.flatmonoid, Degrees => degrees M | degrees R.flatmonoid), num + R.numallvars, identity, identity)
-	       else if instance(R,FractionField) then (R,M,num,makepromoter degreeLength M,makepromoter degreeLength R)
+	  (basering,flatmonoid,numallvars) := (
+	       if R.?isBasic then (R,M,num)
+	       else if R.?basering and R.?flatmonoid 
+	       then ( 
+		    R.basering, 
+		    tensor(M, R.flatmonoid, Degrees => degrees M | toList ( numgens R.flatmonoid : toList (degreeLength M : 0))),
+		    num + R.numallvars)
+	       else if instance(R,FractionField) then (R,M,num)
 	       else error "internal error: expected coefficient ring to have a base ring and a flat monoid"
 	       );
      	  local RM;
@@ -202,10 +206,8 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.basering = basering;
 	  RM.flatmonoid = flatmonoid;
 	  RM.numallvars = numallvars;
-	  if degreepromotefun =!= identity then (
-	       RM.promoteDegree = degreepromotefun;
-	       RM.liftDegree = degreeliftfun;
-	       );
+	  RM.promoteDegree = makepromoter degreeLength M;
+	  RM.liftDegree = makepromoter degreeLength R;
 	  RM.baseRings = append(R.baseRings,R);
 	  commonEngineRingInitializations RM;
 	  RM.monoid = M;
