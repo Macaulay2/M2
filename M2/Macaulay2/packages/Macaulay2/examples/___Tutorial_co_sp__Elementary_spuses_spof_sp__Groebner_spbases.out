@@ -102,6 +102,7 @@ o17 : ChainComplex
 
 i18 : betti Mres
 
+             0 1 2 3
 o18 = total: 1 4 4 1
           0: 1 . . .
           1: . 1 . .
@@ -146,6 +147,7 @@ o22 : Matrix R  <--- R
 
 i23 : betti LT
 
+             0 1
 o23 = total: 1 3
           0: 1 .
           1: . 1
@@ -195,6 +197,7 @@ o27 : Matrix R  <--- R
 
 i28 : betti LT
 
+             0 1
 o28 = total: 1 5
           0: 1 .
           1: . 1

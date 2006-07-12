@@ -36,16 +36,16 @@ o5 = HashTable{a => 1}
 o5 : HashTable
 
 i6 : scanValues(x, print)
-1
 2
+1
 
 i7 : scanKeys(x, print)
-a
 b
+a
 
 i8 : scanPairs(x, print)
-(a, 1)
 (b, 2)
+(a, 1)
 
 i9 : y = new HashTable from {b=>200, c=>300}
 

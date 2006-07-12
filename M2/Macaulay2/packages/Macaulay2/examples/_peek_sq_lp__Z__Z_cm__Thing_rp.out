@@ -22,30 +22,30 @@ o4 = DIV{HEADER1{"resolution", " -- ", "projective resolution"},
      DIV1{HEADER2{"Synopsis"}, UL{LI{DIV1{TO2{Macaulay2 :: using functions with
      optional inputs, "Optional inputs"}, ":", UL{LI{SPAN{TO2{Macaulay2 ::
      resolution(..., DegreeLimit => ...), "DegreeLimit => ..."}, ", ",
-     LATER{--Function[../../../../Macaulay2/m2/document.m2:836:117-836:145]--}}},
+     LATER{--Function[../../../../Macaulay2/m2/document.m2:845:117-845:145]--}}},
      LI{SPAN{TO2{Macaulay2 :: resolution(..., HardDegreeLimit => ...),
      "HardDegreeLimit => ..."}, ", ",
-     LATER{--Function[../../../../Macaulay2/m2/document.m2:836:117-836:145]--}}},
+     LATER{--Function[../../../../Macaulay2/m2/document.m2:845:117-845:145]--}}},
      LI{SPAN{TO2{Macaulay2 :: resolution(..., LengthLimit => ...), "LengthLimit =>
-     ..."}, ", ", LATER{--Function[../../../../Macaulay2/m2/document.m2:836:117-836:
+     ..."}, ", ", LATER{--Function[../../../../Macaulay2/m2/document.m2:845:117-845:
      145]--}}}, LI{SPAN{TO2{Macaulay2 :: resolution(..., PairLimit => ...),
      "PairLimit => ..."}, ", ",
-     LATER{--Function[../../../../Macaulay2/m2/document.m2:836:117-836:145]--}}},
+     LATER{--Function[../../../../Macaulay2/m2/document.m2:845:117-845:145]--}}},
      LI{SPAN{TO2{Macaulay2 :: resolution(..., SortStrategy => ...), "SortStrategy =>
-     ..."}, ", ", LATER{--Function[../../../../Macaulay2/m2/document.m2:836:117-836:
+     ..."}, ", ", LATER{--Function[../../../../Macaulay2/m2/document.m2:845:117-845:
      145]--}}}, LI{SPAN{TO2{Macaulay2 :: resolution(..., StopBeforeComputation =>
      ...), "StopBeforeComputation => ..."}, ", ",
-     LATER{--Function[../../../../Macaulay2/m2/document.m2:836:117-836:145]--}}},
+     LATER{--Function[../../../../Macaulay2/m2/document.m2:845:117-845:145]--}}},
      LI{SPAN{TO2{Macaulay2 :: resolution(..., Strategy => ...), "Strategy => ..."},
-     ", ", LATER{--Function[../../../../Macaulay2/m2/document.m2:836:117-836:145
+     ", ", LATER{--Function[../../../../Macaulay2/m2/document.m2:845:117-845:145
      ]--}}}, LI{SPAN{TO2{Macaulay2 :: resolution(..., SyzygyLimit => ...),
      "SyzygyLimit => ..."}, ", ",
-     LATER{--Function[../../../../Macaulay2/m2/document.m2:836:117-836:145
+     LATER{--Function[../../../../Macaulay2/m2/document.m2:845:117-845:145
      ]--}}}}}}}}, DIV1{HEADER2{"Description"}, DIV{COMMENT{"file://",
      "/home/dan/src/M2/Macaulay2/packages/Macaulay2/doc10.m2", ":", "29"}}},
      DIV{class => waystouse, HEADER2{"Ways to use ", TT{"resolution"}, " :"},
-     UL{LI{TOH{Macaulay2 :: resolution Ideal}}, LI{TOH{Macaulay2 :: resolution
-     Matrix}}, LI{TOH{Macaulay2 :: resolution Module}}, LI{TOH{User :: resolution
-     MonomialIdeal}}}}}
+     UL{LI{TOH{Macaulay2 :: resolution(Ideal)}}, LI{SPAN{"resolution(MonomialIdeal)",
+     ", see ", TOH{Macaulay2 :: resolution(Ideal)}}}, LI{TOH{Macaulay2 ::
+     resolution(Matrix)}}, LI{TOH{Macaulay2 :: resolution(Module)}}}}}
 
 i5 : 

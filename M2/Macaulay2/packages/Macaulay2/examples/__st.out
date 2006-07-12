@@ -2,7 +2,7 @@
 
 i1 : set{hi,you,there} * set{hi,us,here,you}
 
-o1 = Set {hi, you}
+o1 = set {hi, you}
 
 o1 : Set
 

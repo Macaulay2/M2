@@ -2,11 +2,11 @@
 
 i1 : fn = temporaryFileName()
 
-o1 = /tmp/M2-13710-1
+o1 = /tmp/M2-3846-1
 
 i2 : f = fn << "hi there"
 
-o2 = /tmp/M2-13710-1
+o2 = /tmp/M2-3846-1
 
 o2 : File
 
@@ -22,7 +22,7 @@ o5 = 511
 
 i6 : close f
 
-o6 = /tmp/M2-13710-1
+o6 = /tmp/M2-3846-1
 
 o6 : File
 

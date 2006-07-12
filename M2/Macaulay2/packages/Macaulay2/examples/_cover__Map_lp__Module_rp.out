@@ -16,6 +16,6 @@ o2 : Matrix
 
 i3 : isSurjective f
 
-o3 = false
+o3 = true
 
 i4 : 

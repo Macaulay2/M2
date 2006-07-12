@@ -2,7 +2,7 @@
 
 i1 : subsets(set {a,b,c},2)
 
-o1 = {Set {a, b}, Set {a, c}, Set {b, c}}
+o1 = {set {c, a}, set {c, b}, set {a, b}}
 
 o1 : List
 

@@ -448,6 +448,7 @@ o67 : Matrix SX  <--- SX
 
 i68 : betti canpres
 
+             0 1
 o68 = total: 2 3
           1: 2 3
 

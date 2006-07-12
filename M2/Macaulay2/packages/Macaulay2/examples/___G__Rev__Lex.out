@@ -18,29 +18,31 @@ o4 = b*c + b  + a
 
 o4 : S
 
-i5 : B = QQ[a..d,MonomialOrder=>GRevLexSmall];
+i5 : B1 = QQ[a..d,MonomialSize=>16,MonomialOrder=>GRevLex];
 
-i6 : a^(2^15-1)
+i6 : B = QQ[a..d,MonomialSize=>16];
+
+i7 : a^(2^15-1)
 
       32767
-o6 = a
+o7 = a
 
-o6 : B
+o7 : B
 
-i7 : C = QQ[a..d,MonomialOrder=>GRevLexTiny];
+i8 : C = QQ[a..d,MonomialSize=>8,MonomialOrder=>GRevLex];
 
-i8 : try a^(2^15-1) else "failed"
+i9 : try a^(2^15-1) else "failed"
 
       255
-o8 = a
-
-o8 : C
-
-i9 : a^(2^7-1)
-
-      127
 o9 = a
 
 o9 : C
 
-i10 : 
+i10 : a^(2^7-1)
+
+       127
+o10 = a
+
+o10 : C
+
+i11 : 

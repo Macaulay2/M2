@@ -61,6 +61,7 @@ o8 : Matrix R  <--- R
 
 i9 : betti F1
 
+            0 1
 o9 = total: 1 1
          0: 1 .
          1: . .
@@ -91,6 +92,7 @@ o11 : Matrix R  <--- R
 
 i12 : betti F2
 
+             0 1
 o12 = total: 1 1
           0: 1 .
           1: . .
@@ -137,6 +139,7 @@ o16 : Matrix R  <--- R
 
 i17 : betti F3
 
+             0 1
 o17 = total: 1 1
           0: 1 .
           1: . .
@@ -216,6 +219,7 @@ o26 : Matrix R  <--- R
 
 i27 : betti  can1
 
+             0 1
 o27 = total: 1 7
           0: 1 .
           1: . .
@@ -225,6 +229,7 @@ o27 : BettiTally
 
 i28 : betti  can2
 
+             0 1
 o28 = total: 1 7
           0: 1 .
           1: . .
@@ -234,6 +239,7 @@ o28 : BettiTally
 
 i29 : betti  can3
 
+             0 1
 o29 = total: 1 7
           0: 1 .
           1: . .
@@ -380,6 +386,7 @@ o40 : ChainComplex
 
 i41 : betti  IC1res
 
+             0  1  2  3  4 5
 o41 = total: 1 10 25 25 10 1
           0: 1  .  .  .  . .
           1: . 10 16  9  . .
@@ -399,6 +406,7 @@ o42 : ChainComplex
 
 i43 : betti  IC2res
 
+             0  1  2  3  4 5
 o43 = total: 1 14 35 35 14 1
           0: 1  .  .  .  . .
           1: . 10 20 15  4 .
@@ -418,6 +426,7 @@ o44 : ChainComplex
 
 i45 : betti  IC3res
 
+             0  1  2  3  4 5
 o45 = total: 1 10 25 25 10 1
           0: 1  .  .  .  . .
           1: . 10 16  9  . .
@@ -452,6 +461,7 @@ o47 : ChainComplex
 
 i48 : betti IC1res
 
+             0  1  2  3  4 5
 o48 = total: 1 10 25 25 10 1
           0: 1  .  .  .  . .
           1: . 10 16  9  . .

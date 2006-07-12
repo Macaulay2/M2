@@ -4,17 +4,17 @@ i1 : R = QQ[a,b];
 
 i2 : HH^2 (R^{-3})
 
-o2 = cokernel | 0 -b a |
-              | b a  0 |
+o2 = cokernel | a  b 0 |
+              | -b 0 a |
 
                             2
 o2 : R-module, quotient of R
 
 i3 : HH^2 (R^{-4})
 
-o3 = cokernel | 0 0  -b a |
-              | 0 -b a  0 |
-              | b a  0  0 |
+o3 = cokernel | 0  a  b 0 |
+              | a  -b 0 0 |
+              | -b 0  0 a |
 
                             3
 o3 : R-module, quotient of R
@@ -31,7 +31,9 @@ o5 : Ideal of R
 
 i6 : M = R^1/module(I)
 
-o6 = cokernel | -x_2x_3+x_1x_4 x_0x_1x_2-x_0x_2^2+x_1^2x_3 x_3^3+x_0x_3x_4-x_0x_4^2 |
+o6 = cokernel | -x_2x_3+x_1x_4 x_0x_1x_2-x_0x_2^2+x_1^2x_3
+     ------------------------------------------------------------------------
+     x_3^3+x_0x_3x_4-x_0x_4^2 |
 
                             1
 o6 : R-module, quotient of R

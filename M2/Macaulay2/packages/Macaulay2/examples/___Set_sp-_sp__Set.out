@@ -2,13 +2,13 @@
 
 i1 : set{a,b,c} - set{a}
 
-o1 = Set {b, c}
+o1 = set {c, b}
 
 o1 : Set
 
 i2 : set{a,b,c} - {a}
 
-o2 = Set {b, c}
+o2 = set {c, b}
 
 o2 : Set
 

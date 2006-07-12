@@ -2,14 +2,7 @@
 
 i1 : code methods use
 
-o1 = -- code for method: use Monoid
-     -- ../../../../Macaulay2/m2/orderedmonoidrings.m2:7
-     use Monoid := x -> ( if x.?use then x.use x; x)
-     ---------------------------------
-     -- code for method: use Thing
-     function 'identity': source code not available
-     ---------------------------------
-     -- code for method: use Ring
+o1 = -- code for method: use(Ring)
      -- ../../../../Macaulay2/m2/enginering.m2:148-153
      use Ring := R -> (
           if R.?ring then use R.ring;                            -- I'm not sure what this is for.  Which rings have this key?
@@ -18,11 +11,18 @@ o1 = -- code for method: use Monoid
           if R.?use then R.use R;
           R)
      ---------------------------------
-     -- code for method: use Package
-     -- ../../../../Macaulay2/m2/packages.m2:294-297
+     -- code for method: use(Monoid)
+     -- ../../../../Macaulay2/m2/orderedmonoidrings.m2:7
+     use Monoid := x -> ( if x.?use then x.use x; x)
+     ---------------------------------
+     -- code for method: use(Package)
+     -- ../../../../Macaulay2/m2/packages.m2:295-298
      use Package := pkg -> if not member(pkg,loadedPackages) then (
           loadedPackages = prepend(pkg,loadedPackages);
           dictionaryPath = prepend(pkg.Dictionary,dictionaryPath);
           )
+     ---------------------------------
+     -- code for method: use(Thing)
+     function 'identity': source code not available
 
 i2 : 

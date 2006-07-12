@@ -9,7 +9,7 @@ o2 = a  + a b  + b*c
 
 o2 : R
 
-i3 : B = QQ[a..d,MonomialOrder=>LexSmall];
+i3 : B = QQ[a..d,MonomialOrder=>Lex,MonomialSize=>16];
 
 i4 : a^(2^15-1)
 
@@ -18,7 +18,7 @@ o4 = a
 
 o4 : B
 
-i5 : C = QQ[a..d,MonomialOrder=>LexTiny];
+i5 : C = QQ[a..d,MonomialOrder=>Lex,MonomialSize=>8];
 
 i6 : try a^(2^15-1) else "failed"
 
@@ -34,7 +34,7 @@ o7 = a
 
 o7 : C
 
-i8 : B = QQ[a..d,MonomialOrder=>{Weights => {1,2,3,4}, LexSmall}];
+i8 : B = QQ[a..d,MonomialSize=>16,MonomialOrder=>{Weights => {1,2,3,4}, Lex}];
 
 i9 : a^2 + b+ c + b*d
 

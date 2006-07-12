@@ -22,8 +22,8 @@ o3 : Ideal of S
 
 i4 : quotient(i, a^3+b^3, MinimalGenerators=>false)
 
-                  3    3   4   4
-o4 = ideal (a*b, a  - b , a , b )
+                  3    3
+o4 = ideal (a*b, a  - b )
 
 o4 : Ideal of S
 

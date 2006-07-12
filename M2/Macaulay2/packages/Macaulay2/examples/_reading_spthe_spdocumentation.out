@@ -1,7 +1,6 @@
 -- -*- M2-comint -*-
 
 i1 : help "jacobian"
---warning: tag has no documentation: User :: jacobian MonomialIdeal, key (jacobian,MonomialIdeal)
 
 o1 = jacobian -- the Jacobian matrix of partial derivatives
      ******************************************************
@@ -20,20 +19,21 @@ o1 = jacobian -- the Jacobian matrix of partial derivatives
      Ways to use jacobian :
      ======================
 
-       * "jacobian Ideal" -- the Jacobian matrix of the generators of an
+       * "jacobian(Ideal)" -- the Jacobian matrix of the generators of an
          ideal
-       * "jacobian Matrix" -- the matrix of partial derivatives of
+       * jacobian(MonomialIdeal), see "jacobian(Ideal)" -- the Jacobian
+         matrix of the generators of an ideal
+       * "jacobian(Matrix)" -- the matrix of partial derivatives of
          polynomials in a matrix
-       * "jacobian MonomialIdeal" -- missing documentation
-       * "jacobian Ring" -- the Jacobian matrix of the polynomials defining a
-         quotient ring
+       * "jacobian(Ring)" -- the Jacobian matrix of the polynomials defining
+         a quotient ring
 
 o1 : DIV
 
-i2 : * "jacobian Ideal"
+i2 : * "jacobian(Ideal)"
 
-o2 = jacobian Ideal -- the Jacobian matrix of the generators of an ideal
-     *******************************************************************
+o2 = jacobian(Ideal) -- the Jacobian matrix of the generators of an ideal
+     ********************************************************************
 
      Synopsis
      ========
@@ -49,7 +49,7 @@ o2 = jacobian Ideal -- the Jacobian matrix of the generators of an ideal
      Description
      ===========
 
-     This is identical to jacobian generators I.  See "jacobian Matrix" for
+     This is identical to jacobian generators I.  See "jacobian(Matrix)" for
      more information.
 
      +-----------------------------+
@@ -79,11 +79,19 @@ o3 = {fittingIdeal, graphIdeal, Ideal, ideal, isIdeal, isMonomialIdeal,
 
 o3 : List
 
-i4 : examples "jacobian Ideal"
+i4 : examples "jacobian(Ideal)"
 
-o4 = 
+o4 = R = QQ[x,y,z];
+     I = ideal(y^2-x*(x-1)*(x-13))
+     jacobian I
+     R = ZZ[a,b,c][x,y,z]
+     jacobian ideal(a*y*z+b*x*z+c*x*y)
 
-i5 : print examples "jacobian Ideal"
-
+i5 : print examples "jacobian(Ideal)"
+R = QQ[x,y,z];
+I = ideal(y^2-x*(x-1)*(x-13))
+jacobian I
+R = ZZ[a,b,c][x,y,z]
+jacobian ideal(a*y*z+b*x*z+c*x*y)
 
 i6 : 

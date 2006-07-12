@@ -4,6 +4,7 @@ i1 : S = ZZ/10007[x,y];
 
 i2 : betti coker matrix{{x^3,x*y^2},{y*x^2,y^3}}
 
+            0 1
 o2 = total: 2 2
          0: 2 .
          1: . .
@@ -13,6 +14,7 @@ o2 : BettiTally
 
 i3 : betti coker map(S^{0,-1},,matrix{{x^2,y},{y^3,x^2}})
 
+            0 1
 o3 = total: 2 2
          0: 1 .
          1: 1 .

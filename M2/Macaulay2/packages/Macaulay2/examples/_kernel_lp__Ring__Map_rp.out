@@ -32,6 +32,6 @@ o7 : Ideal of R
 
 i8 : numgens K
 
-o8 = 30
+o8 = 1
 
 i9 : 

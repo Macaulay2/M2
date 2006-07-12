@@ -34,4 +34,61 @@ o5 = {1} | 0 0 0 0 0 0 |
              4       6
 o5 : Matrix R  <--- R
 
-i6 : 
+i6 : hf = map(source f, 1, {{d},{c},{b},{a}})
+
+o6 = {1} | d |
+     {1} | c |
+     {1} | b |
+     {1} | a |
+
+             4       1
+o6 : Matrix R  <--- R
+
+i7 : hm = map(source m, 1, {{d},{c},{b},{a}})        
+
+o7 = {1} | d |
+     {1} | c |
+     {1} | b |
+     {1} | a |
+
+             4       1
+o7 : Matrix R  <--- R
+
+i8 : leadTerm hf
+
+o8 = {1} | 0 |
+     {1} | 0 |
+     {1} | b |
+     {1} | 0 |
+
+             4       1
+o8 : Matrix R  <--- R
+
+i9 : leadTerm hm
+
+o9 = {1} | 0 |
+     {1} | 0 |
+     {1} | 0 |
+     {1} | a |
+
+             4       1
+o9 : Matrix R  <--- R
+
+i10 : schreyerOrder source m
+
+o10 = 0
+
+                     4
+o10 : Matrix 0 <--- R
+
+i11 : schreyerOrder source f
+
+o11 = | a 0 0 0 |
+      | 0 b 0 0 |
+      | 0 0 c 0 |
+      | 0 0 0 d |
+
+              4       4
+o11 : Matrix R  <--- R
+
+i12 : 

@@ -7,7 +7,7 @@ o1 = fib
 o1 : FunctionClosure
 
 i2 : time fib 16
-     -- used 0.008 seconds
+     -- used 0.012 seconds
 
 o2 = 1597
 

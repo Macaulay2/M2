@@ -22,7 +22,9 @@ i4 : installAssignmentMethod(symbol _, M, ZZ, (x,i,v) -> x#i = v);
 
 i5 : y = new M from (a..z)
 
-o5 = M{a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z}
+o5 = M{a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w,
+     ------------------------------------------------------------------------
+     x, y, z}
 
 o5 : M
 
@@ -40,7 +42,9 @@ o7 : Symbol
 
 i8 : y
 
-o8 = M{a, b, c, d, e, f, g, h, i, j, k, l, foo, n, o, p, q, r, s, t, u, v, w, x, y, z}
+o8 = M{a, b, c, d, e, f, g, h, i, j, k, l, foo, n, o, p, q, r, s, t, u, v, w,
+     ------------------------------------------------------------------------
+     x, y, z}
 
 o8 : M
 

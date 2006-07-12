@@ -2,20 +2,20 @@
 
 i1 : src = temporaryFileName()
 
-o1 = /tmp/M2-12492-1
+o1 = /tmp/M2-3512-1
 
 i2 : dst = temporaryFileName()
 
-o2 = /tmp/M2-12492-2
+o2 = /tmp/M2-3512-2
 
 i3 : src << "hi there" << close
 
-o3 = /tmp/M2-12492-1
+o3 = /tmp/M2-3512-1
 
 o3 : File
 
 i4 : moveFile(src,dst,Verbose=>true)
---moving: /tmp/M2-12492-1 -> /tmp/M2-12492-2
+--moving: /tmp/M2-3512-1 -> /tmp/M2-3512-2
 
 i5 : get dst
 

@@ -18,15 +18,15 @@ o3 : MonomialIdeal of R
 
 i4 : I - J
 
-                         2
-o4 = monomialIdeal 1 : (b )
+                    2
+o4 = monomialIdeal(b )
 
 o4 : MonomialIdeal of R
 
 i5 : J - I
 
-                         2
-o5 = monomialIdeal 1 : (a )
+                    2
+o5 = monomialIdeal(a )
 
 o5 : MonomialIdeal of R
 

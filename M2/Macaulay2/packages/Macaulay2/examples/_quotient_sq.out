@@ -26,7 +26,7 @@ o3 : Matrix R  <--- R
 
 i4 : quotient'(f,g)
 
-o4 = --Function[../../../../Macaulay2/m2/matrix2.m2:99:44-102:32]--
+o4 = --Function[../../../../Macaulay2/m2/matrix2.m2:138:44-141:32]--
 
 o4 : FunctionClosure
 
@@ -40,7 +40,7 @@ o5 : Matrix R  <--- R
 
 i6 : quotient'(f,g)
 
-o6 = --Function[../../../../Macaulay2/m2/matrix2.m2:99:44-102:32]--
+o6 = --Function[../../../../Macaulay2/m2/matrix2.m2:138:44-141:32]--
 
 o6 : FunctionClosure
 

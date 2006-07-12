@@ -24,8 +24,12 @@ o4 = P
 
 i5 : tensor(M,M,Variables => {t_0 .. t_7}, MonomialOrder => ProductOrder{4,4})
 
-o5 = [t , t , t , t , t , t , t , t , Degrees => {{1, 0}, {1, 0}, {1, 0}, {1, 0}, {0, 1}, {0, 1}, {0, 1}, {0, 1}}, MonomialOrder => ProductOrder{4, 4}]
+o5 = [t , t , t , t , t , t , t , t , Degrees => {{1, 0}, {1, 0}, {1, 0}, {1,
        0   1   2   3   4   5   6   7
+     ------------------------------------------------------------------------
+     0}, {0, 1}, {0, 1}, {0, 1}, {0, 1}}, MonomialOrder => ProductOrder{4,
+     ------------------------------------------------------------------------
+     4}]
 
 o5 : GeneralOrderedMonoid
 
@@ -41,8 +45,10 @@ o6 = [t , t , t , t , t , t , t , t , Degrees => {{1, 0}, {1, 0}, {1, 0}, {1,
 i7 : tensor(ZZ/101[x,y], ZZ/101[r,s], MonomialOrder => Eliminate 2)
 
       ZZ
-o7 = --- [x, y, r, s, Degrees => {{1, 0}, {1, 0}, {0, 1}, {0, 1}}, MonomialOrder => Eliminate{2}]
+o7 = --- [x, y, r, s, Degrees => {{1, 0}, {1, 0}, {0, 1}, {0, 1}},
      101
+     ------------------------------------------------------------------------
+     MonomialOrder => Eliminate{2}]
 
 o7 : PolynomialRing
 

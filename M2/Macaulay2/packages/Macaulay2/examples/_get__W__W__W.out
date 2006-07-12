@@ -3,7 +3,7 @@
 i1 : p = getWWW "http://www.math.uiuc.edu/Macaulay2/Makefile"
 
 o1 = HTTP/1.1 200 OK
-     Date: Sun, 02 Jul 2006 20:01:38 GMT
+     Date: Fri, 07 Jul 2006 19:38:11 GMT
      Server: Apache/2.0.50 (Fedora)
      Last-Modified: Tue, 16 May 2006 16:46:53 GMT
      ETag: "401df-1c0-8cd6b940"
@@ -72,7 +72,7 @@ o4 = "all :\n\t$(MAKE) -C $(HOME)/local/htdig M2\n\nVERSION = 0.9.8\nDIR =
 i5 : substring(p,0,r#0#0+2)
 
 o5 = HTTP/1.1 200 OK
-     Date: Sun, 02 Jul 2006 20:01:38 GMT
+     Date: Fri, 07 Jul 2006 19:38:11 GMT
      Server: Apache/2.0.50 (Fedora)
      Last-Modified: Tue, 16 May 2006 16:46:53 GMT
      ETag: "401df-1c0-8cd6b940"
@@ -84,7 +84,7 @@ o5 = HTTP/1.1 200 OK
 
 i6 : peek oo
 
-o6 = "HTTP/1.1 200 OK\r\nDate: Sun, 02 Jul 2006 20:01:38 GMT\r\nServer:
+o6 = "HTTP/1.1 200 OK\r\nDate: Fri, 07 Jul 2006 19:38:11 GMT\r\nServer:
      Apache/2.0.50 (Fedora)\r\nLast-Modified: Tue, 16 May 2006 16:46:53
      GMT\r\nETag: \"401df-1c0-8cd6b940\"\r\nAccept-Ranges:
      bytes\r\nContent-Length: 448\r\nConnection: close\r\nContent-Type:

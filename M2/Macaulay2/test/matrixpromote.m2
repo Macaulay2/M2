@@ -1,3 +1,4 @@
+debugLevel = 11
 errorDepth = 0
 R = ZZ[t,u]
 promote'(matrix{{2}}, QQ)
