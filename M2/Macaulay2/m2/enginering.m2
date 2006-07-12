@@ -16,6 +16,13 @@ raw EngineRing := R -> R.RawRing
 raw Ring := R -> if R.?RawRing then R.RawRing else error "no raw engine ring associated with this ring"
 isField EngineRing := R -> rawIsField raw R
 -----------------------------------------------------------------------------
+-- rational promotion to any engine ring
+promote(QQ,RingElement) := (r,S) -> (
+     a := promote(numerator r,S);
+     b := promote(denominator r,S);
+     if a % b == 0 then a // b
+     else error "promotion of this rational number not possible")
+
 -- some remnants from lift and promote, version 2
 liftable(RingElement,RingElement) := 
 liftable(Number,RingElement) := 
