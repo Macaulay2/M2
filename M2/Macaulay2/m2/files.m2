@@ -288,8 +288,8 @@ fi
 ///
 
 dotloginFix = dotcshrcFix = ///
-if ( "$MACAULAY2" != "" )
-then setenv MACAULAY2 setup
+if ( $?MACAULAY2 == 0 ) then
+     setenv MACAULAY2 setup
      setenv PATH /PREFIX/bin:$PATH
      setenv MANPATH /PREFIX/share/man:$MANPATH
      setenv INFOPATH /PREFIX/info:$INFOPATH
