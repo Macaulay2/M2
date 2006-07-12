@@ -23,15 +23,15 @@ ring Matrix := f -> (
 source Matrix := f -> f.source
 target Matrix := f -> f.target
 
-lift'(Matrix,RingElement) := lift'(Matrix,Number) := Matrix => (f,S) -> (
-     if not isFreeModule target f or not isFreeModule source f then error "lift': expected source and target to be free modules";
-     lift'(f, ring f, S))     
+lift(Matrix,RingElement) := lift(Matrix,Number) := Matrix => (f,S) -> (
+     if not isFreeModule target f or not isFreeModule source f then error "lift: expected source and target to be free modules";
+     lift(f, ring f, S))     
 liftable'(Matrix,RingElement) := liftable'(Matrix,Number) := Boolean => (f,S) -> (
-     if not isFreeModule target f or not isFreeModule source f then error "lift': expected source and target to be free modules";
+     if not isFreeModule target f or not isFreeModule source f then error "lift: expected source and target to be free modules";
      liftable'(f, ring f, S))
-promote'(Matrix,RingElement) := promote'(Matrix,Number) := Matrix => (f,S) -> (
-     if not isFreeModule target f or not isFreeModule source f then error "lift': expected source and target to be free modules";
-     promote'(f, ring f, S))
+promote(Matrix,RingElement) := promote(Matrix,Number) := Matrix => (f,S) -> (
+     if not isFreeModule target f or not isFreeModule source f then error "lift: expected source and target to be free modules";
+     promote(f, ring f, S))
 
 scan((
 	  (ZZ, { QQ, RR, RRR, CC, CCC }),		    -- Mike gave me this list of basic promotions
@@ -42,17 +42,17 @@ scan((
 	  (CCC,{  })
 	  ), 
      (K,Ls) -> (
-	  promote'(K,K) := (f,K) -> f;
-	  promote'(Matrix,K,K) := (m,K,L) -> m;
-	  lift'(K,K) := (f,K) -> f;
-	  lift'(Matrix,K,K) := (m,K,L) -> m;
+	  promote(K,K) := (f,K) -> f;
+	  promote(Matrix,K,K) := (m,K,L) -> m;
+	  lift(K,K) := (f,K) -> f;
+	  lift(Matrix,K,K) := (m,K,L) -> m;
 	  scan(Ls, L -> (
 	       p := makepromoter 0;
-	       promote'(K,L) := (a,L) -> a_L;
-	       promote'(Matrix,K,L) := (m,K,L) -> basicPromoteMatrix(m,L,p);
-	       lift'(Matrix,L,K) := (m,L,K) -> basicLiftMatrix(m,K,p);
-	       if lookup(promote',K,L) === null then stderr << "--warning: no method installed for promote'(" << L << ", type of " << K << ")" << endl;
-	       if lookup(lift',L,K) === null then stderr << "--warning: no method installed for lift'(" << L << ", type of " << K << ")" << endl;
+	       promote(K,L) := (a,L) -> a_L;
+	       promote(Matrix,K,L) := (m,K,L) -> basicPromoteMatrix(m,L,p);
+	       lift(Matrix,L,K) := (m,L,K) -> basicLiftMatrix(m,K,p);
+	       if lookup(promote,K,L) === null then stderr << "--warning: no method installed for promote(" << L << ", type of " << K << ")" << endl;
+	       if lookup(lift,L,K) === null then stderr << "--warning: no method installed for lift(" << L << ", type of " << K << ")" << endl;
 	       ))))	  
 
 -----------------------------------------------------------------------------

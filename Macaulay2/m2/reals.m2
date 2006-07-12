@@ -48,20 +48,14 @@ isConstant RR := i -> true
 
 round = x -> floor(x + 0.5)
 
-promote(RR,RR) := (i,o) -> i
-promote(ZZ,RR) := (i,o) -> i + 0.
+promote(RR,RR) := (i,RR) -> i
 promote(QQ,RR) := 
-promote(ZZ,RR) := (i,o) -> i + 0.
-promote(RR,Ring) := (r,S) -> promote(r,S#0)
+promote(ZZ,RR) := (i,RR) -> i + 0.
 
-promote'(RR,RR) := (i,RR) -> i
-promote'(QQ,RR) := 
-promote'(ZZ,RR) := (i,RR) -> i + 0.
-
-lift'(RR,ZZ) := (r,ZZ) -> if r == floor r then floor r else error("can't lift ",toString r, " to ZZ")
+lift(RR,ZZ) := (r,ZZ) -> if r == floor r then floor r else error("can't lift ",toString r, " to ZZ")
 liftable'(RR,ZZ) := (r,ZZ) -> r == floor r
 
-lift'(RR,QQ) := (r,QQ) -> notImplemented()
+lift(RR,QQ) := (r,QQ) -> notImplemented() -- we should do a good rational approximation here by continued fractions
 
 -- big reals: RRR
 
@@ -80,17 +74,17 @@ RRR.char = 0
 RRR.Engine = true
 isConstant RRR := i -> true
 
-promote'(RRR,RRR) := (i,RRR) -> i
-promote'(RR,RRR) := 
-promote'(QQ,RRR) := 
-promote'(ZZ,RRR) := (i,RRR) -> toRRR i
+promote(RRR,RRR) := (i,RRR) -> i
+promote(RR,RRR) := 
+promote(QQ,RRR) := 
+promote(ZZ,RRR) := (i,RRR) -> toRRR i
 
-lift'(RRR,ZZ) := (r,ZZ) -> if r == floor r then floor r else error("can't lift ",toString r, " to ZZ")
+lift(RRR,ZZ) := (r,ZZ) -> if r == floor r then floor r else error("can't lift ",toString r, " to ZZ")
 liftable'(RRR,ZZ) := (r,ZZ) -> r == floor r
 
-lift'(RRR,RR) := (r,RR) -> notImplemented()
-lift'(RRR,QQ) := (r,QQ) -> notImplemented()
-lift'(RRR,ZZ) := (r,ZZ) -> notImplemented()
+lift(RRR,RR) := (r,RR) -> notImplemented()
+lift(RRR,QQ) := (r,QQ) -> notImplemented()
+lift(RRR,ZZ) := (r,ZZ) -> notImplemented()
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

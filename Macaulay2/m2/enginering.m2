@@ -1,8 +1,8 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
-RingElement = new Type of HashTable
+RingElement = new Type of BasicList
 RingElement.synonym = "ring element"
 value RingElement := identity
-raw RingElement := f -> f.RawRingElement
+raw RingElement := f -> f#0
 RingElement == RawRingElement := (x,y) -> raw x === y
 RawRingElement == RingElement := (x,y) -> x === raw y
 ring RingElement := r -> class r
@@ -16,6 +16,11 @@ raw EngineRing := R -> R.RawRing
 raw Ring := R -> if R.?RawRing then R.RawRing else error "no raw engine ring associated with this ring"
 isField EngineRing := R -> rawIsField raw R
 -----------------------------------------------------------------------------
+-- some remnants from lift and promote, version 2
+liftable(RingElement,Ring) := Boolean => 
+liftable(ZZ,Ring) := 
+liftable(QQ,Ring) := (f,R) -> try (lift(f,R);true) else false -- we'll do better than this eventually, see liftable'
+
 --- new lift and promote, version 3
 basicLift = (r,B) -> new B from rawLift(raw B, raw r)
 multipleBasicLift = (r,v) -> ( r = raw r; scan(v, B -> r = rawLift(raw B, r)); new v#-1 from r )
@@ -62,15 +67,19 @@ multipleBasicLiftMatrix = (m,v) -> (
      scan(v, (R,p) -> ( S = R; dF = p dF; dG = p dG; m = rawLift((raw R)^dF, m)));
      map(S^dF,S^dG,m))
 
-promote'(ZZ,RingElement) := (n,R) -> new R from rawFromNumber(R,n)
+promote(ZZ,RingElement) := (n,R) -> new R from rawFromNumber(R,n)
+
+commonRingInitializations = (F) -> (
+     promote(F,F) := lift(F,F) := (f,F) -> f;
+     liftable'(F,F) := (f,F) -> true;
+     promote(Matrix,F,F) := (m,F,G) -> m;
+     lift(Matrix,F,F) := (m,F,G) -> m;
+     liftable'(Matrix,F,F) := (f,F,G) -> true;
+     )
 
 commonEngineRingInitializations = (F) -> (
+     commonRingInitializations F;
      F ? F := (f,g) -> raw f ? raw g;
-     promote'(F,F) := lift'(F,F) := (f,F) -> f;
-     liftable'(F,F) := (f,F) -> true;
-     promote'(Matrix,F,F) := (m,F,G) -> m;
-     lift'(Matrix,F,F) := (m,F,G) -> m;
-     liftable'(Matrix,F,F) := (f,F,G) -> true;
      baserings := F.baseRings;
      n := # baserings;
      baserings = append(baserings, F);
@@ -81,26 +90,26 @@ commonEngineRingInitializations = (F) -> (
 	       if i == n-1 then (
 		    promoter := promoters#n;
 		    lifter := lifters#n;
-	       	    promote'(A,F) := (
+	       	    promote(A,F) := (
 			 if ancestor(Number, A) 
 		    	 then (n,R) -> new R from rawFromNumber(raw R,n)
 	       	    	 else basicPromote);
-		    lift'(F,A) := basicLift;
-		    promote'(Matrix,A,F) := (m,A,F) -> basicPromoteMatrix(m,F,promoter);
-		    lift'(Matrix,F,A) := (m,F,A) -> basicLiftMatrix(m,A,lifter);
+		    lift(F,A) := basicLift;
+		    promote(Matrix,A,F) := (m,A,F) -> basicPromoteMatrix(m,F,promoter);
+		    lift(Matrix,F,A) := (m,F,A) -> basicLiftMatrix(m,A,lifter);
 		    )
 	       else (
 		    promoteChain := take(baserings, {i+1,n});
 		    liftChain := reverse take(baserings, {i,n-1});
 		    promoteMatrixChain := apply(promoteChain, take(promoters, {i+1,n}), identity);
 		    liftMatrixChain := apply(liftChain, reverse take(lifters, {i+1,n}), identity);
-	       	    promote'(A,F) := (
+	       	    promote(A,F) := (
 			 if ancestor(Number, A)
 		    	 then (n,R) -> new R from rawFromNumber(raw R,n)
 	       	    	 else (a,F) -> multipleBasicPromote(a, promoteChain));
-		    lift'(F,A) := (f,A) -> multipleBasicLift(f, liftChain);
-		    promote'(Matrix,A,F) := (m,A,F) -> multipleBasicPromoteMatrix(m,promoteMatrixChain);
-		    lift'   (Matrix,F,A) := (m,F,A) -> multipleBasicLiftMatrix   (m,liftMatrixChain);
+		    lift(F,A) := (f,A) -> multipleBasicLift(f, liftChain);
+		    promote(Matrix,A,F) := (m,A,F) -> multipleBasicPromoteMatrix(m,promoteMatrixChain);
+		    lift   (Matrix,F,A) := (m,F,A) -> multipleBasicLiftMatrix   (m,liftMatrixChain);
 		    )));
      )
 
@@ -119,12 +128,9 @@ reduce := (r,s) -> (
 toString EngineRing := R -> if ReverseDictionary#?R then toString ReverseDictionary#R else toString R.RawRing
 
 ZZ _ EngineRing := 
-RR _ EngineRing := 
-promote(ZZ,EngineRing) := RingElement => (i,R) -> new R from i_(R.RawRing)
+RR _ EngineRing := RingElement => (i,R) -> new R from i_(R.RawRing)
 
-promote(Number,RingElement) := RingElement => (i,R) -> new R from rawFromNumber(raw R, i)
-
-new RingElement from RawRingElement := (R, f) -> new R from { symbol RawRingElement => f };
+new RingElement from RawRingElement := (R, f) -> new R from {f};
 
 new EngineRing from RawRing := (EngineRing,R) -> (
      S := new EngineRing of RingElement;
@@ -133,11 +139,9 @@ new EngineRing from RawRing := (EngineRing,R) -> (
      S#0 = 0_S;
      S)
 
-promote(RR,EngineRing) := RingElement => (i,R) -> i_R
-
 -----------------------------------------------------------------------------
-                FractionField = new Type of EngineRing
-		FractionField.synonym = "fraction field"
+FractionField = new Type of EngineRing
+FractionField.synonym = "fraction field"
 
 frac = method(TypicalValue => FractionField)
 frac Ring := R -> (
@@ -160,15 +164,16 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 
 isHomogeneous FractionField := (F) -> isHomogeneous last F.baseRings
 
-frac EngineRing := R -> (
-     if R.?frac then R.frac
-     else (
+frac EngineRing := (stashValue symbol frac) (R -> (
 	  o := options R;
 	  if o.Inverses then error "not implemented : fraction fields of rings with inverses";
 	  if o.WeylAlgebra =!= {} or R.?SkewCommutative
 	  then error "fraction field of non-commutative ring requested";
 	  R.frac = F := new FractionField from rawFractionRing R.RawRing;
 	  F.baseRings = append(R.baseRings,R);
+	  F.promoteDegree = makepromoter 0;
+	  F.liftDegree = makepromoter degreeLength R;
+	  commonEngineRingInitializations F;
 	  factor F := options -> f -> factor numerator f / factor denominator f;
 	  toString F := x -> toString expression x;
 	  net F := x -> net expression x;
@@ -177,14 +182,11 @@ frac EngineRing := R -> (
 	       then error "expected a generator"
 	       else baseName numerator f);
 	  expression F := (f) -> expression numerator f / expression denominator f;
-	  numerator F := (f) -> new R from rawNumerator f.RawRingElement;
-	  denominator F := (f) -> new R from rawDenominator f.RawRingElement;
-	  F.promoteDegree = makepromoter 0;
-	  F.liftDegree = makepromoter degreeLength R;
+	  numerator F := (f) -> new R from rawNumerator raw f;
+	  denominator F := (f) -> new R from rawDenominator raw f;
 	  F.generators = apply(generators R, m -> promote(m,F));
 	  fraction(F,F) := F / F := (x,y) -> x//y;
-	  fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,r.RawRingElement,s.RawRingElement);
-	  commonEngineRingInitializations F;
+	  fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,raw r,raw s);
 	  if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
 	  if R.?generatorExpressions then F.generatorExpressions = R.generatorExpressions;
 	  if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
@@ -230,16 +232,16 @@ EngineRing _ ZZ := (R,i) -> (
      new R from R.RawRing_i
      )
 
-size RingElement := f -> rawTermCount(numgens ring f, f.RawRingElement)
+size RingElement := f -> rawTermCount(numgens ring f, raw f)
 
-isHomogeneous RingElement := f -> rawIsHomogeneous f.RawRingElement
+isHomogeneous RingElement := f -> rawIsHomogeneous raw f
 
-- RingElement := RingElement => x -> new ring x from -x.RawRingElement
+- RingElement := RingElement => x -> new ring x from -raw x
 
 RingElement ? ZZ := (x,n) -> x ? n_(class x)
 ZZ ? RingElement := (m,y) -> m_(class y) ? y
 
-RingElement ^ ZZ := RingElement => (x,i) -> new ring x from x.RawRingElement^i
+RingElement ^ ZZ := RingElement => (x,i) -> new ring x from (raw x)^i
 
 toString RingElement := x -> toString expression x
 
@@ -261,10 +263,10 @@ baseName RingElement := x -> (
 
 leadCoefficient RingElement := RingElement => (f) -> (
      k := coefficientRing ring f;
-     new k from rawLeadCoefficient(k.RawRing, f.RawRingElement))
+     new k from rawLeadCoefficient(raw k, raw f))
 
 degree RingElement := f -> if f == 0 then -infinity else (
-     d := rawMultiDegree f.RawRingElement;
+     d := rawMultiDegree raw f;
      R := ring f;
      if R.?Repair then R.Repair d else d
      )
@@ -290,7 +292,7 @@ ZZ % RingElement := RingElement % ZZ :=
      S := class g;
      R % S := (
 	  if R === S then (
-	       (x,y) -> new R from x.RawRingElement % y.RawRingElement
+	       (x,y) -> new R from raw x % raw y
 	       )
 	  else if member(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) % y
@@ -312,7 +314,7 @@ ZZ // RingElement := RingElement // ZZ :=
      S := class g;
      R // S := (
 	  if R === S then (
-	       (x,y) -> new R from x.RawRingElement // y.RawRingElement
+	       (x,y) -> new R from raw x // raw y
 	       )
 	  else if member(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) // y
@@ -347,7 +349,7 @@ ZZ - RingElement := RingElement - ZZ :=
      S := class g;
      R - S := (
 	  if R === S then (
-	       (x,y) -> new R from x.RawRingElement - y.RawRingElement
+	       (x,y) -> new R from raw x - raw y
 	       )
 	  else if member(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) - y
@@ -382,7 +384,7 @@ ZZ * RingElement := RingElement * ZZ :=
      S := class g;
      R * S := (
 	  if R === S then (
-	       (x,y) -> new R from x.RawRingElement * y.RawRingElement
+	       (x,y) -> new R from raw x * raw y
 	       )
 	  else if member(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) * y
@@ -417,7 +419,7 @@ ZZ + RingElement := RingElement + ZZ :=
      S := class g;
      R + S := (
 	  if R === S then (
-	       (x,y) -> new R from x.RawRingElement + y.RawRingElement
+	       (x,y) -> new R from raw x + raw y
 	       )
 	  else if member(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) + y
@@ -430,14 +432,14 @@ ZZ + RingElement := RingElement + ZZ :=
      f + g
      )
 
-ZZ == RingElement := (i,x) -> i == x.RawRingElement
-RingElement == ZZ := (x,i) -> x.RawRingElement == i
+ZZ == RingElement := (i,x) -> i == raw x
+RingElement == ZZ := (x,i) -> raw x == i
 RingElement == RingElement := (f,g) -> (
      R := class f;
      S := class g;
      R == S := (
 	  if R === S then (
-	       (x,y) -> x.RawRingElement === y.RawRingElement
+	       (x,y) -> raw x === raw y
 	       )
 	  else if member(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) == y
@@ -499,108 +501,6 @@ ZZ / RingElement := RingElement / ZZ :=
      )
 
 -----------------------------------------------------------------------------
-
--- new lift and promote, version 2
-
-liftChain := (R,A) -> (
-     -- how to lift from R to A, assuming A is a precursor of R
-     if R === A then ()
-     else (
-	  S := R;
-	  while S =!= A and class S === QuotientRing do S = ambient S;
-	  if S === A then 1 : S
-	  else (
-	       if S.?baseRings then S = last S.baseRings;
-	       if S === A then 1 : S
-	       else if R === S then error "no lifting possible for these rings"
-	       else prepend(S, liftChain(S, A)))))
-
-promoteChain := (A,R) -> (
-     -- how to promote from A to R, assuming A is a precursor of R
-     if R === A then ()
-     else append((
-	       S := R;
-	       while S =!= A and class S === QuotientRing do S = ambient S;
-	       if S === A then ()
-	       else (
-	       	    if class S === PolynomialRing 
-	       	    or class S === GaloisField
-	       	    or class S === FractionField
-		    then S = last S.baseRings;
-		    if S === A then ()
-		    else if R === S then error "no promotion possible for these rings"
-		    else promoteChain(A, S))),
-	  R))
-
-eeLift := (B,r) -> new B from rawLift(raw B, raw r)
-
-lift(RingElement, RingElement) := RingElement =>
-lift(RingElement, ZZ) :=
-lift(RingElement, QQ) := (r,o) -> (
-     R := class r;
-     A := class o;
-     if R === A then (
-	  lift(R,A) := (r,o) -> r
-	  )
-     else (
-	  c := liftChain(R,A);
-	  lift(R,A) := (r,o) -> (
-	       scan(c, B -> r = eeLift(B,r));
-	       r)
-	  );
-     lift(r,o))
-
-lift(RingElement,Ring) := RingElement => 
-lift(ZZ,Ring) :=
-lift(QQ,Ring) := (r,A) -> lift(r,A#0)
-
-promote(QQ, RingElement) := RingElement => (r,o) -> (
-     S := class o;
-     if member(QQ,S.baseRings) then (
-	  c := promoteChain(QQ,S);
-	  promote(QQ,S) := (f,o) -> (
-	       f = raw f;
-	       scan(c, S -> f = rawPromote(S.RawRing,f));
-	       new S from f)
-	  )
-     else (
-	  promote(QQ,S) := (r,S) -> (
-	       a := promote(numerator r,S);
-	       b := promote(denominator r,S);
-	       if isField class S then (
-		    a/b
-		    )
-	       else (
-	       	    if a % b == 0 then a // b
-	       	    else error "division not possible"
-		    )
-	       );
-	  );
-     promote(r,S))
-
-promote(RingElement, RingElement) := RingElement => (r,o) -> (
-     R := class r;
-     S := class o;
-     if R === S then (
-	  promote(R,S) := (r,o) -> r
-	  )
-     else (
-	  c := promoteChain(R,S);
-	  promote(R,S) := (f,o) -> (
-	       f = raw f;
-	       scan(c, S -> f = rawPromote(S.RawRing,f));
-	       new S from f)
-	  );
-     promote(r,S))
-
-promote(ZZ,RingElement) := (i,o) -> promote(i, ring o)
-
-promote(RingElement,Ring) := RingElement => (r,S) -> promote(r,S#0)
-promote(ZZ,Ring) := (r,S) -> promote(r,S#0)
-
-liftable(RingElement,Ring) := Boolean => 
-liftable(ZZ,Ring) := 
-liftable(QQ,Ring) := (f,R) -> try (lift(f,R);true) else false
 
 isUnit(RingElement) := (f) -> 1 % ideal f == 0
 

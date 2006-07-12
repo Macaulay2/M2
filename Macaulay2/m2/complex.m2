@@ -19,16 +19,16 @@ CC.degreeLength = 0
 raw CC := x -> rawFromNumber(raw CC, x)
 new CC from RawRingElement := (CC,n) -> rawToComplex n
 
-lift'(CC,QQ) := z -> if imaginaryPart z == 0 then lift'(realPart z, QQ)
-lift'(CC,RR) := z -> if imaginaryPart z == 0 then realPart z
-lift'(CC,ZZ) := z -> if imaginaryPart z == 0 then lift'(realPart z, ZZ)
+lift(CC,QQ) := z -> if imaginaryPart z == 0 then lift(realPart z, QQ)
+lift(CC,RR) := z -> if imaginaryPart z == 0 then realPart z
+lift(CC,ZZ) := z -> if imaginaryPart z == 0 then lift(realPart z, ZZ)
 
-lift'(CCC,QQ) := z -> if imaginaryPart z == 0 then lift'(realPart z, QQ)
-lift'(CCC,ZZ) := z -> if imaginaryPart z == 0 then lift'(realPart z, ZZ)
-lift'(CCC,RRR):= z -> if imaginaryPart z == 0 then realPart z
-lift'(CCC,RR) := z -> if imaginaryPart z == 0 then lift'(realPart z, RR)
+lift(CCC,QQ) := z -> if imaginaryPart z == 0 then lift(realPart z, QQ)
+lift(CCC,ZZ) := z -> if imaginaryPart z == 0 then lift(realPart z, ZZ)
+lift(CCC,RRR):= z -> if imaginaryPart z == 0 then realPart z
+lift(CCC,RR) := z -> if imaginaryPart z == 0 then lift(realPart z, RR)
 
-lift'(CCC,CC) := z -> new CC from (lift'(realPart z, RR), lift'(imaginaryPart z, RR))
+lift(CCC,CC) := z -> new CC from (lift(realPart z, RR), lift(imaginaryPart z, RR))
 
 CCC.isBasic = true
 CCC.synonym = "big complex number"
@@ -98,13 +98,6 @@ CC == RR := (z,i) -> (realPart z) == i and (imaginaryPart z) == 0
 RR == CC := (i,z) -> (realPart z) == i and (imaginaryPart z) == 0
 CC == CC := (w,z) -> w === z
 isConstant CC := i -> true
-
-zeroCC := 0 * ii
-promote(RR,CC) := 
-promote(QQ,CC) := 
-promote(ZZ,CC) := (i,o) -> i + zeroCC
-promote(CC,Ring) := (r,S) -> promote(r,S#0)
-promote(CC,CC) := (i,o) -> i
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

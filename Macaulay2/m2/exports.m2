@@ -760,7 +760,7 @@ export {
 	symbol leadMonomial,
 	symbol leadTerm,
 	symbol length,
-	symbol lift', symbol liftable', symbol promote',    -- temporary new versions
+	symbol liftable',    -- temporary new undocumented version
 	symbol lift,
 	symbol liftable,
 	symbol lines,

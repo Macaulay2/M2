@@ -30,7 +30,7 @@ RingElement * Matrix := (r,m) -> map(target m, source m, reduce(target m, raw r 
 Matrix * RingElement := (m,r) -> (
      R := ring r;
      -- if R =!= ring m then error "scalar not in ring of matrix";
-     map(target m, source m, reduce(target m, m.RawMatrix * r.RawRingElement)))
+     map(target m, source m, reduce(target m, raw m * raw r)))
 
 sameRing := (m,n) -> (
      if ring m =!= ring n then (

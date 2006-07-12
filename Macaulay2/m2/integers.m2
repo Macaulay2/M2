@@ -22,14 +22,7 @@ ZZ.degreeLength = 0
 ZZ.mathML = "<mi>&Zopf;</mi>"
 ZZ.frac = QQ
 
-lift = method()
-liftable = method()
-promote = method()
-
-promote(ZZ,ZZ) := (i,ZZ) -> i
-lift(ZZ,ZZ) := (i,ZZ) -> i
-
-promote'(ZZ,ZZ) := lift'(ZZ,ZZ) := (i,ZZ) -> i
+promote(ZZ,ZZ) := lift(ZZ,ZZ) := (i,ZZ) -> i
 liftable'(ZZ,ZZ) := x -> true
 
 ZZ.random = () -> random 21 - 10
@@ -100,8 +93,6 @@ isUnit ZZ := x -> x == 1 or x == -1
 ZZ & ZZ := ZZ => lookup(symbol &, ZZ, ZZ)
 
 isConstant ZZ := i -> true
-
-promote(ZZ,ZZ) := (i,o) -> i
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

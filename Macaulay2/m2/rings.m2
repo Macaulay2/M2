@@ -56,9 +56,12 @@ isHomogeneous Ring := R -> (
      degreeLength R == 0 
      )
 
-promote' = method(Dispatch=>{Thing,Type,Type})
-lift' = method(Dispatch=>{Thing,Type,Type})
+promote = method(Dispatch=>{Thing,Type,Type})
+lift = method(Dispatch=>{Thing,Type,Type})
+
 liftable' = method(Dispatch=>{Thing,Type,Type}, TypicalValue => Boolean)
+
+liftable  = method(Dispatch=>{Thing,Type,Type}, TypicalValue => Boolean)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

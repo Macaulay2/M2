@@ -312,7 +312,7 @@ homogenize(RingElement, RingElement, List) := RingElement => (f,v,wts) -> (
      R := ring f;
      wts = flatten wts;
      homogCheck(f,v,wts);
-     new R from rawHomogenize(f.RawRingElement, index v, wts))
+     new R from rawHomogenize(raw f, index v, wts))
 
 homogenize(Matrix, RingElement, List) := Matrix => (f,v,wts) -> (
      R := ring f;
@@ -518,18 +518,7 @@ newCoordinateSystem(PolynomialRing, Matrix) := (S,x) -> (
   { map(S,R,vars S * substitute(n, S)), map(R,S,vars R * n^(-1))}
   )
 
-lift(Matrix,Ring) := Matrix => (f,S) -> (
-     -- this will be pretty slow and stupid
-     if ring target f === S then f
-     else if isQuotientOf(ring f,S) and
-	     isFreeModule source f and
-	     isFreeModule target f then
-	 map(S^(-degrees target f), S^(-degrees source f), 
-	     applyTable(entries f, r -> lift(r,S)))
-     else matrix(S, applyTable(entries f, r -> lift(r,S)))
-     )
-
-lift(Ideal,Ring) := Ideal => (I,S) -> (
+lift(Ideal,RingElement) := Ideal => (I,S) -> (
      -- provisional, just for quotient rings
      T := ring I;
      if T === S then I
@@ -548,14 +537,6 @@ permanents(ZZ,Matrix) := Ideal => (p,M) -> (
      D1=substitute(D1,R2);
      F := map(ring M, R2,flatten entries M);
      F D1)
-
--- promote(Matrix,Ring) := (f,S) -> (
---      error "this use of 'promote' has been replaced by '**'";
---      );
--- 
--- promote(Ideal,Ring) := (I,S) -> (
---      error "this use of 'promote' has been replaced by '*'";
---      );
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

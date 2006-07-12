@@ -413,12 +413,7 @@ document {
      "We intend to add parsing precedences to this table and eliminate ", TO "seeParsing", "."
      }
 
-undocumented lift'
-undocumented promote'
 undocumented liftable'
-
-undocumented methods lift'
-undocumented methods promote'
 undocumented methods liftable'
 
 document { Key => MethodFunction,
