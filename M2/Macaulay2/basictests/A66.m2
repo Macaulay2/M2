@@ -36,7 +36,6 @@ assert ( deepSplice (a,(b,c,(d,(e,(f,{g}))))) === (a,b,c,d,e,f,{g}) )
 assert instance(3,ZZ)
 assert instance(3,Thing)
 assert (not instance(3,Ring))
-assert (not instance(3,3))
 assert (not instance(Ring,Ring))
 
 -- test version
