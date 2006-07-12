@@ -8,7 +8,9 @@ o1 = {ChangeMatrix, compactMatrixForm, diagonalMatrix, genericMatrix,
      ------------------------------------------------------------------------
      matrix, MatrixExpression, MinimalMatrix, MutableMatrix, mutableMatrix,
      ------------------------------------------------------------------------
-     randomMutableMatrix, submatrix, sylvesterMatrix, SyzygyMatrix}
+     randomMutableMatrix, submatrix, submatrix', sylvesterMatrix,
+     ------------------------------------------------------------------------
+     SyzygyMatrix}
 
 o1 : List
 

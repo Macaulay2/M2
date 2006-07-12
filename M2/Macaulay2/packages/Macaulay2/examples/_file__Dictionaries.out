@@ -24,9 +24,9 @@ o3 = {noapp, computeAndCache, oldnumerator, noMethod, chkopt0, foo, chkopts,
      ------------------------------------------------------------------------
      f, ck, oldvalue, noMethodSingle, MultipleArgsNoOptions,
      ------------------------------------------------------------------------
-     MultipleArgsWithOptionsGetMethodOptions, badClass, foodict,
+     MultipleArgsWithOptionsGetMethodOptions, badClass, setupMethods,
      ------------------------------------------------------------------------
-     BinaryNoOptions, line0, oldflatten, setup}
+     foodict, BinaryNoOptions, line0, oldflatten}
 
 o3 : List
 

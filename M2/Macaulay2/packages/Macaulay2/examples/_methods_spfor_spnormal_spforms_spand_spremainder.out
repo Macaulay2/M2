@@ -50,12 +50,12 @@ o9 : ChainComplex
 
 i10 : F = syz transpose C.dd_4
 
-o10 = {-8} | a 0 0 ce de  bd  bc  0   0   0  0   |
-      {-8} | 0 b 0 cf df  0   0   ad  ac  0  0   |
-      {-8} | 0 0 c 0  -ef -bf 0   -ae 0   ab 0   |
-      {-8} | 0 0 d ef 0   0   bf  0   ae  0  ab  |
-      {-8} | 0 e 0 0  0   -df -cf 0   0   ad -ac |
-      {-8} | f 0 0 0  0   0   0   -de -ce bd -bc |
+o10 = {-8} | a 0 0 de  ce bd  bc  0   0   0  0   |
+      {-8} | 0 b 0 df  cf 0   0   ad  ac  0  0   |
+      {-8} | 0 0 c -ef 0  -bf 0   -ae 0   ab 0   |
+      {-8} | 0 0 d 0   ef 0   bf  0   ae  0  ab  |
+      {-8} | 0 e 0 0   0  -df -cf 0   0   ad -ac |
+      {-8} | f 0 0 0   0  0   0   -de -ce bd -bc |
 
               6       11
 o10 : Matrix S  <--- S
@@ -81,12 +81,12 @@ o12 : Matrix S  <--- S
 
 i13 : F % G
 
-o13 = {-8} | 0 0 0 ce de  bd  bc  0   bd  -ce de  |
-      {-8} | 0 0 0 cf df  0   0   ad  0   -cf df  |
-      {-8} | 0 0 0 0  -ef -bf 0   -ae -bf 0   -ef |
-      {-8} | 0 0 0 ef 0   0   bf  0   0   -ef 0   |
-      {-8} | 0 0 0 0  0   -df -cf 0   -df 0   0   |
-      {-8} | 0 0 0 0  0   0   0   -de 0   0   0   |
+o13 = {-8} | 0 0 0 de  ce bd  bc  0   bd  -ce de  |
+      {-8} | 0 0 0 df  cf 0   0   ad  0   -cf df  |
+      {-8} | 0 0 0 -ef 0  -bf 0   -ae -bf 0   -ef |
+      {-8} | 0 0 0 0   ef 0   bf  0   0   -ef 0   |
+      {-8} | 0 0 0 0   0  -df -cf 0   -df 0   0   |
+      {-8} | 0 0 0 0   0  0   0   -de 0   0   0   |
 
               6       11
 o13 : Matrix S  <--- S

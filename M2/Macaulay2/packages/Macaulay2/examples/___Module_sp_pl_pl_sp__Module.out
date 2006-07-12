@@ -5,9 +5,9 @@ i1 : R = ZZ/101[a..c];
 i2 : image vars R ++ kernel vars R
 
 o2 = image {0} | a b c 0  0  0  |
-           {1} | 0 0 0 0  -c -b |
-           {1} | 0 0 0 -c 0  a  |
-           {1} | 0 0 0 b  a  0  |
+           {1} | 0 0 0 0  -b -c |
+           {1} | 0 0 0 -c a  0  |
+           {1} | 0 0 0 b  0  a  |
 
                              4
 o2 : R-module, submodule of R

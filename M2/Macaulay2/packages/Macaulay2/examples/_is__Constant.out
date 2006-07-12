@@ -8,7 +8,7 @@ i2 : QQ[a,b][x,y];
 
 i3 : isConstant (x+a-x)
 
-o3 = false
+o3 = true
 
 i4 : isConstant x
 

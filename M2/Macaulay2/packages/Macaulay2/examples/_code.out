@@ -2,8 +2,11 @@
 
 i1 : code methods use
 
-o1 = -- code for method: use(Ring)
-     -- ../../../../Macaulay2/m2/enginering.m2:148-153
+o1 = -- code for method: use(Thing)
+     function 'identity': source code not available
+     ---------------------------------
+     -- code for method: use(Ring)
+     -- ../../../../Macaulay2/m2/enginering.m2:201-206
      use Ring := R -> (
           if R.?ring then use R.ring;                            -- I'm not sure what this is for.  Which rings have this key?
           generators R;
@@ -21,8 +24,5 @@ o1 = -- code for method: use(Ring)
           loadedPackages = prepend(pkg,loadedPackages);
           dictionaryPath = prepend(pkg.Dictionary,dictionaryPath);
           )
-     ---------------------------------
-     -- code for method: use(Thing)
-     function 'identity': source code not available
 
 i2 : 

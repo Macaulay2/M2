@@ -11,9 +11,9 @@ o2 : Matrix R  <--- R
 
 i3 : K = kernel f
 
-o3 = image {1} | 0  -z -y |
-           {1} | -z 0  x  |
-           {1} | y  x  0  |
+o3 = image {1} | 0  -y -z |
+           {1} | -z x  0  |
+           {1} | y  0  x  |
 
                              3
 o3 : R-module, submodule of R
@@ -31,9 +31,9 @@ o5 = true
 
 i6 : g = generators K
 
-o6 = {1} | 0  -z -y |
-     {1} | -z 0  x  |
-     {1} | y  x  0  |
+o6 = {1} | 0  -y -z |
+     {1} | -z x  0  |
+     {1} | y  0  x  |
 
              3       3
 o6 : Matrix R  <--- R

@@ -11,9 +11,9 @@ o2 : Matrix R  <--- R
 
 i3 : ker f
 
-o3 = image {1} | 0  -c -b |
-           {1} | -c 0  a  |
-           {1} | b  a  0  |
+o3 = image {1} | 0  -b -c |
+           {1} | -c a  0  |
+           {1} | b  0  a  |
 
                              3
 o3 : R-module, submodule of R
@@ -49,8 +49,8 @@ o7 : R-module, subquotient of R
 
 i8 : prune M
 
-o8 = cokernel {1} | b  0 a |
-              {1} | -c a 0 |
+o8 = cokernel {1} | -c a 0 |
+              {1} | b  0 a |
 
                             2
 o8 : R-module, quotient of R

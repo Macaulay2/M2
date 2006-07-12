@@ -7,8 +7,8 @@ i2 : matrix{{x^2 + 3, x^4 + 1},{x^13 - 5, x^7 - 1}}
 o2 = | x2+3  x4+1 |
      | x13-5 x7-1 |
 
-                  2            2
-o2 : Matrix QQ [x]  <--- QQ [x]
+                    2              2
+o2 : Matrix (QQ [x])  <--- (QQ [x])
 
 i3 : compactMatrixForm = false
 
@@ -22,8 +22,8 @@ o4 = |  x  + 3  x  + 1 |
      |  13       7     |
      | x   - 5  x  - 1 |
 
-                  2            2
-o4 : Matrix QQ [x]  <--- QQ [x]
+                    2              2
+o4 : Matrix (QQ [x])  <--- (QQ [x])
 
 i5 : compactMatrixForm = true
 
@@ -34,7 +34,7 @@ i6 : matrix{{x^2 + 3, x^4 + 1},{x^13 - 5, x^7 - 1}}
 o6 = | x2+3  x4+1 |
      | x13-5 x7-1 |
 
-                  2            2
-o6 : Matrix QQ [x]  <--- QQ [x]
+                    2              2
+o6 : Matrix (QQ [x])  <--- (QQ [x])
 
 i7 : 

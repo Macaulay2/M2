@@ -21,20 +21,20 @@ o3 : A-module, quotient of A
 
 i4 : H = Hom(M,N)
 
-o4 = subquotient (| 0  1  |, | 0 0 x 0 0 y |)
-                  | 1  0  |  | 0 0 z 0 0 0 |
-                  | 0  -2 |  | 0 x 0 0 y 0 |
-                  | -2 0  |  | 0 z 0 0 0 0 |
-                  | 0  1  |  | x 0 0 y 0 0 |
-                  | 1  0  |  | z 0 0 0 0 0 |
+o4 = subquotient (| 1  0  |, | x 0 0 y 0 0 |)
+                  | 0  1  |  | z 0 0 0 0 0 |
+                  | -2 0  |  | 0 x 0 0 y 0 |
+                  | 0  -2 |  | 0 z 0 0 0 0 |
+                  | 1  0  |  | 0 0 x 0 0 y |
+                  | 0  1  |  | 0 0 z 0 0 0 |
 
                                6
 o4 : A-module, subquotient of A
 
 i5 : f = homomorphism H_{0}
 
-o5 = | 0 0  0 |
-     | 1 -2 1 |
+o5 = | 1 -2 1 |
+     | 0 0  0 |
 
 o5 : Matrix
 
@@ -48,8 +48,8 @@ o7 = true
 
 i8 : matrix f
 
-o8 = | 0 0  0 |
-     | 1 -2 1 |
+o8 = | 1 -2 1 |
+     | 0 0  0 |
 
              2       3
 o8 : Matrix A  <--- A

@@ -125,8 +125,8 @@ i22 : presentation S
 
 o22 = | x2-y y3-z |
 
-                         1                  2
-o22 : Matrix QQ [x, y, z]  <--- QQ [x, y, z]
+                           1                    2
+o22 : Matrix (QQ [x, y, z])  <--- (QQ [x, y, z])
 
 i23 : R = ZZ/101[x,y,z]/(x-y,y-z,z-x)
 

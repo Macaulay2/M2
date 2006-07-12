@@ -14,7 +14,7 @@ o2 : Set
 
 i3 : T = set(a,b,c,a,b,d)
 
-o3 = set {c, d, a, b}
+o3 = set {b, c, d, a}
 
 o3 : Set
 

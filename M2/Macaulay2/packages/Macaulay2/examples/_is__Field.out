@@ -38,6 +38,6 @@ o8 : QuotientRing
 
 i9 : isField F
 
-o9 = true
+o9 = false
 
 i10 : 

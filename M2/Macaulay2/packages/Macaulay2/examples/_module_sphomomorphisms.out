@@ -72,10 +72,9 @@ o14 = false
 
 i15 : prune coker G
 
-o15 = cokernel {1} | 0 y x |
-               {1} | 1 0 0 |
+o15 = cokernel {1} | y x |
 
-                             2
+                             1
 o15 : R-module, quotient of R
 
 i16 : kernel G == 0

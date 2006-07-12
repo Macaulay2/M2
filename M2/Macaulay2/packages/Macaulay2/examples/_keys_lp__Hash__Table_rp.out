@@ -9,7 +9,7 @@ o1 : HashTable
 
 i2 : keys x
 
-o2 = {b, a}
+o2 = {a, b}
 
 o2 : List
 

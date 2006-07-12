@@ -36,9 +36,9 @@ o5 : Matrix R  <--- R
 
 i6 : inducedMap(source f, ker f)
 
-o6 = {1} | 0  -z -y |
-     {1} | -z 0  x  |
-     {1} | y  x  0  |
+o6 = {1} | 0  -y -z |
+     {1} | -z x  0  |
+     {1} | y  0  x  |
 
 o6 : Matrix
 

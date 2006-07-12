@@ -28,10 +28,10 @@ o4 : R-module, submodule of R
 
 i5 : K = kernel m
 
-o5 = image {1} | 0      e2-df  ce-bf  cd-be  |
-           {1} | e2-df  0      -be+af -bd+ae |
-           {1} | -ce+bf -be+af 0      b2-ac  |
-           {1} | cd-be  bd-ae  b2-ac  0      |
+o5 = image {1} | 0      e2-df  cd-be  ce-bf  |
+           {1} | e2-df  0      -bd+ae -be+af |
+           {1} | -ce+bf -be+af b2-ac  0      |
+           {1} | cd-be  bd-ae  0      b2-ac  |
 
                              4
 o5 : R-module, submodule of R
@@ -46,10 +46,10 @@ o6 : Matrix R  <--- R
 
 i7 : presentation N -- this one requires computation
 
-o7 = {1} | 0      e2-df  ce-bf  cd-be  |
-     {1} | e2-df  0      -be+af -bd+ae |
-     {1} | -ce+bf -be+af 0      b2-ac  |
-     {1} | cd-be  bd-ae  b2-ac  0      |
+o7 = {1} | 0      e2-df  cd-be  ce-bf  |
+     {1} | e2-df  0      -bd+ae -be+af |
+     {1} | -ce+bf -be+af b2-ac  0      |
+     {1} | cd-be  bd-ae  0      b2-ac  |
 
              4       4
 o7 : Matrix R  <--- R
@@ -215,25 +215,27 @@ o26 : BettiTally
 
 i27 : C.dd
 
-           4                                                           6
-o27 = 0 : R  <------------------------------------------------------- R  : 1
-                {1} | 1  0 -ac   0            -ae-be+af -be-ce+bf |
-                {1} | -1 0 b2    0            bd        cd        |
-                {1} | 0  a -be   bd-be        0         e2-df     |
-                {1} | 0  0 ce-bf -cd+be+ce-bf e2-df     0         |
+           4                                                               6
+o27 = 0 : R  <----------------------------------------------------------- R 
+                {1} | 1  0 0     0            0           0           |
+                {1} | -1 0 b2-ac 0            bd-ae-be+af cd-be-ce+bf |
+                {1} | 0  a -be   bd-be        0           e2-df       |
+                {1} | 0  0 ce-bf -cd+be+ce-bf e2-df       0           |
 
-           6                                2
-      1 : R  <---------------------------- R  : 2
-                {1} | -acd+b2e b2e-b2f |
-                {2} | e2-df    0       |
-                {3} | -d+e     e-f     |
-                {3} | -e       f       |
-                {3} | b        -c      |
-                {3} | -a       b       |
+           6                         2
+      1 : R  <--------------------- R  : 2
+                {1} | 0     0   |
+                {2} | e2-df 0   |
+                {3} | -d+e  e-f |
+                {3} | -e    f   |
+                {3} | b     -c  |
+                {3} | -a    b   |
 
            2
       2 : R  <----- 0 : 3
                 0
+      -----------------------------------------------------------------------
+      : 1
 
 o27 : ChainComplexMap
 
@@ -266,77 +268,77 @@ i32 : M
 o32 = cokernel | a b d e |
                | b c e f |
 
-                                                                     2
-o32 : QQ [a, b, c, d, e, f]-module, quotient of QQ [a, b, c, d, e, f]
+                                                                       2
+o32 : QQ [a, b, c, d, e, f]-module, quotient of (QQ [a, b, c, d, e, f])
 
 i33 : N = a*M
 
 o33 = subquotient (| a 0 |, | a b d e |)
                    | 0 a |  | b c e f |
 
-                                                                        2
-o33 : QQ [a, b, c, d, e, f]-module, subquotient of QQ [a, b, c, d, e, f]
+                                                                          2
+o33 : QQ [a, b, c, d, e, f]-module, subquotient of (QQ [a, b, c, d, e, f])
 
 i34 : M/N
 
 o34 = cokernel | a 0 a b d e |
                | 0 a b c e f |
 
-                                                                     2
-o34 : QQ [a, b, c, d, e, f]-module, quotient of QQ [a, b, c, d, e, f]
+                                                                       2
+o34 : QQ [a, b, c, d, e, f]-module, quotient of (QQ [a, b, c, d, e, f])
 
 i35 : generators N
 
 o35 = | a 0 |
       | 0 a |
 
-                                  2                           2
-o35 : Matrix QQ [a, b, c, d, e, f]  <--- QQ [a, b, c, d, e, f]
+                                    2                             2
+o35 : Matrix (QQ [a, b, c, d, e, f])  <--- (QQ [a, b, c, d, e, f])
 
 i36 : relations N
 
 o36 = | a b d e |
       | b c e f |
 
-                                  2                           4
-o36 : Matrix QQ [a, b, c, d, e, f]  <--- QQ [a, b, c, d, e, f]
+                                    2                             4
+o36 : Matrix (QQ [a, b, c, d, e, f])  <--- (QQ [a, b, c, d, e, f])
 
 i37 : presentation N
 
 o37 = {1} | e d b a |
       {1} | f e c b |
 
-                                  2                           4
-o37 : Matrix QQ [a, b, c, d, e, f]  <--- QQ [a, b, c, d, e, f]
+                                    2                             4
+o37 : Matrix (QQ [a, b, c, d, e, f])  <--- (QQ [a, b, c, d, e, f])
 
 i38 : trim N
 
 o38 = subquotient (| 0 0 |, | e d b a |)
                    | b a |  | f e c b |
 
-                                                                        2
-o38 : QQ [a, b, c, d, e, f]-module, subquotient of QQ [a, b, c, d, e, f]
+                                                                          2
+o38 : QQ [a, b, c, d, e, f]-module, subquotient of (QQ [a, b, c, d, e, f])
 
 i39 : minimalPresentation N
 
-o39 = cokernel {1} | f e c b |
-               {1} | e d b a |
+o39 = cokernel {1} | e d b a |
+               {1} | f e c b |
 
-                                                                     2
-o39 : QQ [a, b, c, d, e, f]-module, quotient of QQ [a, b, c, d, e, f]
+                                                                       2
+o39 : QQ [a, b, c, d, e, f]-module, quotient of (QQ [a, b, c, d, e, f])
 
 i40 : prune N
 
-o40 = cokernel {1} | f e c b |
-               {1} | e d b a |
+o40 = cokernel {1} | e d b a |
+               {1} | f e c b |
 
-                                                                     2
-o40 : QQ [a, b, c, d, e, f]-module, quotient of QQ [a, b, c, d, e, f]
+                                                                       2
+o40 : QQ [a, b, c, d, e, f]-module, quotient of (QQ [a, b, c, d, e, f])
 
 i41 : ambient N
 
-                           2
-o41 = QQ [a, b, c, d, e, f]
+                             2
+o41 = (QQ [a, b, c, d, e, f])
 
 o41 : QQ [a, b, c, d, e, f]-module, free
 
@@ -353,8 +355,8 @@ i44 : super N
 o44 = cokernel | a b d e |
                | b c e f |
 
-                                                                     2
-o44 : QQ [a, b, c, d, e, f]-module, quotient of QQ [a, b, c, d, e, f]
+                                                                       2
+o44 : QQ [a, b, c, d, e, f]-module, quotient of (QQ [a, b, c, d, e, f])
 
 i45 : super N == coker relations N
 
@@ -362,8 +364,8 @@ o45 = true
 
 i46 : cover N
 
-                           2
-o46 = QQ [a, b, c, d, e, f]
+                             2
+o46 = (QQ [a, b, c, d, e, f])
 
 o46 : QQ [a, b, c, d, e, f]-module, free, degrees {1, 1}
 
@@ -583,10 +585,10 @@ o80 : A-module, submodule of A
 
 i81 : H = Hom(M,M)
 
-o81 = subquotient ({0}  | 1 0 0 |, {0}  | 0  y  0  x2 |)
-                   {1}  | 0 1 x |  {1}  | 0  -x 0  -y |
-                   {-1} | 0 x 0 |  {-1} | y  0  x2 0  |
-                   {0}  | 1 0 y |  {0}  | -x 0  -y 0  |
+o81 = subquotient ({0}  | 1 0 |, {0}  | 0  y  0  x2 |)
+                   {1}  | 0 1 |  {1}  | 0  -x 0  -y |
+                   {-1} | 0 x |  {-1} | y  0  x2 0  |
+                   {0}  | 1 0 |  {0}  | -x 0  -y 0  |
 
                                 4
 o81 : A-module, subquotient of A
@@ -685,10 +687,10 @@ o93 : A-module, quotient of A
 
 i94 : M2 = prune(M ** M)
 
-o94 = cokernel | 0  x  0 0 0 y |
-               | x  0  0 0 y 0 |
+o94 = cokernel | 0  -x y x x 0 |
                | -x 0  x y 0 x |
-               | 0  -x y x x 0 |
+               | x  0  0 0 y 0 |
+               | 0  x  0 0 0 y |
 
                              4
 o94 : A-module, quotient of A
@@ -703,9 +705,9 @@ i96 : A ** A
 
 o96 = QQ [a, b, c, a, b, c, Degrees => {{1, 0}, {1, 0}, {1, 0}, {0, 1}, {0,
       -----------------------------------------------------------------------
-      1}, {0, 1}}, MonomialOrder => {GRevLex => {1, 1, 1}, GRevLex => {1, 1,
+      1}, {0, 1}}, MonomialOrder => {GRevLex => {1, 1, 1}, Position => Up,
       -----------------------------------------------------------------------
-      1}}]
+      GRevLex => {1, 1, 1}, Position => Up}]
 
 o96 : PolynomialRing
 
@@ -727,9 +729,9 @@ i100 : tensor(A,A,Variables=>{a,b,c,d,e,f})
 
 o100 = QQ [a, b, c, d, e, f, Degrees => {{1, 0}, {1, 0}, {1, 0}, {0, 1}, {0,
        ----------------------------------------------------------------------
-       1}, {0, 1}}, MonomialOrder => {GRevLex => {1, 1, 1}, GRevLex => {1, 1,
+       1}, {0, 1}}, MonomialOrder => {GRevLex => {1, 1, 1}, Position => Up,
        ----------------------------------------------------------------------
-       1}}]
+       GRevLex => {1, 1, 1}, Position => Up}]
 
 o100 : PolynomialRing
 
