@@ -17,9 +17,10 @@ raw Ring := R -> if R.?RawRing then R.RawRing else error "no raw engine ring ass
 isField EngineRing := R -> rawIsField raw R
 -----------------------------------------------------------------------------
 -- some remnants from lift and promote, version 2
-liftable(RingElement,Ring) := Boolean => 
-liftable(ZZ,Ring) := 
-liftable(QQ,Ring) := (f,R) -> try (lift(f,R);true) else false -- we'll do better than this eventually, see liftable'
+liftable(RingElement,RingElement) := 
+liftable(Number,RingElement) := 
+liftable(RingElement,Number) := 
+liftable(Number,Number) := (f,R) -> try (lift(f,R);true) else false -- we'll do better than this eventually, see liftable'
 
 --- new lift and promote, version 3
 basicLift = (r,B) -> new B from rawLift(raw B, raw r)
