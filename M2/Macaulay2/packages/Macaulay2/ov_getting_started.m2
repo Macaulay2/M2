@@ -23,6 +23,7 @@ document {
      Subnodes => {
 	  TO "checking your Macaulay2 installation",
 	  TO "finding the Macaulay 2 files",
+	  TO "teaching M2 how to find its shared libraries",
 	  TO "teaching your shell how to find M2",
 	  TO "moving or copying the Macaulay 2 files",
 	  TO "setting up the Macaulay2 emacs interface",
@@ -34,6 +35,33 @@ document {
 	  TO "getting help or reporting bugs",
 	  TO "what to read next??"
 	  }
+     }
+
+document {
+     Key => "teaching M2 how to find its shared libraries",
+     "Perhaps you know that your M2 executable is locate at ", TT "/foo/bar/bin/M2", ", say, but when you run
+     it, you get something like this:",
+     PRE ////foo/bar/bin/M2
+M2: error while loading shared libraries: liblapack.so: cannot open shared object file: No such file or directory///,
+     "What that means is that M2 hasn't been told where its shared libraries are.  Actually, it's the operating
+     system that has to be told, since otherwise M2 can't even start up.  Hopefully, the missing shared libraries
+     are located in ", TT "/foo/bar/lib", ", and all we have to do is to tell the operating system by
+     setting the environment variable ", TT "LD_LIBRARY_PATH", ".",
+     PARA {},
+     "Alternatively, you may be getting something like this:",
+     PRE ///$ /foo/bar/bin/M2
+dyld: Library not loaded: /capybara/lib/libgmp.3.dylib
+  Referenced from: /foo/bar/bin/M2
+  Reason: image not found
+Trace/BPT trap///,
+     "That would mean that you are running under MacOS, and the instructions here may not apply.",
+     PARA {},
+     "The simplest way to teach your operating system how to find M2's shared libraries is to let M2 do it for you.  Assuming that
+     M2 is located at ", TT "/foo/bar/bin/M2", ", run the following command:",
+     PRE ////foo/bar/bin/M2-load-libs///,
+     "and then, in response to Macaulay2's input prompt, enter ", TT "setup()", ".  If that works,
+     the next time you log in or start a new shell, the operating system should know how to find
+     M2's shared libraries, and running ", TT "/foo/bar/bin/M2", " should work, and you can move on to the next step."
      }
 
 document {

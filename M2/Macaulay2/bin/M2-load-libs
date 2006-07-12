@@ -1,16 +1,21 @@
 #! /bin/bash
 
-if ! type -p M2 >/dev/null
-then echo 'M2 not found on path' >&2
+if ! type -p $0 >/dev/null
+then echo '$0 not found on path, something is strange' >&2
      exit 1
 fi
 
-BINDIR=$(dirname $(type -p M2))
+BINDIR=$(dirname $(type -p $0))
 M2DIR=$(cd "$BINDIR"/..; /bin/pwd)
 LIBDIR=$M2DIR/lib
 
+if ! [ -f "$M2DIR/bin/M2" ]
+then echo "missing executable: $M2DIR/bin/M2" >&2
+     exit 1
+fi
+
 if ! [ -d "$LIBDIR" ]
-then echo "directory $LIBDIR not found" >&2
+then echo "missing directory: $LIBDIR" >&2
      exit 1
 fi
 
@@ -18,5 +23,5 @@ if [ -f /etc/ld.so.conf ]
 then OLIBS=$(echo $(</etc/ld.so.conf) | sed 's/ /:/g')
 fi
 
-export LD_LIBRARY_PATH="/usr/lib:/lib:/usr/local/lib:$OLIBS:$LIBDIR" 
-exec M2 "$@"
+export LD_LIBRARY_PATH="$LIBDIR:/usr/lib:/lib:/usr/local/lib:$OLIBS" 
+exec "$M2DIR/bin/M2" "$@"
