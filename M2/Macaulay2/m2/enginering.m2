@@ -44,30 +44,30 @@ makepromoter = memoize (
 	       v -> toList (rk v : zr))))
 
 basicPromoteMatrix = (m,R,p) -> (
-     dF := p degrees target m;
-     dG := p degrees source m;
+     dF := p minus degrees target m;
+     dG := p minus degrees source m;
      F := R^dF;
      G := R^dG;
      map(F,G, rawPromote(raw F, raw m)))
 
 multipleBasicPromoteMatrix = (m,v) -> (
-     dF := degrees target m;
-     dG := degrees source m;
+     dF := - degrees target m;
+     dG := - degrees source m;
      m = raw m;
      local S;
      scan(v, (R,p) -> ( S = R; dF = p dF; dG = p dG; m = rawPromote((raw R)^dF, m)));
      map(S^dF,S^dG,m))
 
 basicLiftMatrix = (m,R,p) -> (
-     dF := p degrees target m;
-     dG := p degrees source m;
+     dF := p minus degrees target m;
+     dG := p minus degrees source m;
      F := R^dF;
      G := R^dG;
      map(F,G, rawLift(raw F, raw m)))
 
 multipleBasicLiftMatrix = (m,v) -> (
-     dF := degrees target m;
-     dG := degrees source m;
+     dF := - degrees target m;
+     dG := - degrees source m;
      m = raw m;
      local S;
      scan(v, (R,p) -> ( S = R; dF = p dF; dG = p dG; m = rawLift((raw R)^dF, m)));
