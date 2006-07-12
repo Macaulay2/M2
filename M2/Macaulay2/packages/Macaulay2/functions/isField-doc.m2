@@ -3,8 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {isField, (isField, FractionField), (isField, QuotientRing), (isField, GaloisField), 
-	  (isField, Ring)},
+     Key => {isField, (isField, EngineRing), (isField, Ring)},
      Headline => "whether something is a field",
      Usage => "isField R",
      Inputs => {

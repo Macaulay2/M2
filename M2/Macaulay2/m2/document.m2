@@ -641,7 +641,8 @@ getExampleInputs ExampleItem := t -> 1 : t#0
 
 examples = x -> (
      checkLoadDocumentation();
-     stack deepSplice getExampleInputs (fetchRawDocumentation makeDocumentTag x).Description)
+     d := fetchRawDocumentation makeDocumentTag x;
+     if d =!= null then stack deepSplice getExampleInputs d.Description)
 apropos = method()
 apropos String := (pattern) -> last \ sort select(flatten \\ pairs \ dictionaryPath, (nam,sym) -> match(pattern,nam) and not match("\\$",nam))
 -----------------------------------------------------------------------------
