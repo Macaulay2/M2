@@ -28,7 +28,6 @@ extern "C" void remove_gbA(void *p, void *cd)
 {
   gbA *G = static_cast<gbA *>(p);
   fprintf(stderr, "removing gbA %d\n",nremoved++);
-  delete G;
 }
 
 gbA * gbA::create(const Matrix *m,
