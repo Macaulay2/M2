@@ -2,9 +2,10 @@ gbTrace = 3
 R = QQ [x, y, MonomialOrder => Position => Up]
 scan(100, i -> (
 	  f := substitute (random(R^10, R^{10:-2}),y=>1);
-	  g := gens gb f;
-	  h := gens gb g;
-	  k := gens gb h;
+	  g := gens gb(f);
+	  h := gens gb(g);
+	  k := gens gb(h);
+	  collectGarbage();
 	  ))
 
 	  h := time ultimate(g -> map(R^(rank g), R^(rank g), gens gb transpose g), f);
