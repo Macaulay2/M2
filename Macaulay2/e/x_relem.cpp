@@ -400,6 +400,17 @@ M2_RationalOrNull IM2_RingElement_to_rational(const RingElement *a)
   return static_cast<M2_Rational>(f);
 }
 
+M2_RRRorNull IM2_RingElement_to_BigReal(const RingElement *a)
+{
+  if (!a->get_ring()->is_RRR())
+    {
+      ERROR("expected an element of RRR");
+      return 0;
+    }
+  void *f = a->get_value().poly_val;
+  return static_cast<M2_RRR>(f);
+}
+
 double IM2_RingElement_to_double(const RingElement *a)
 /* If the ring of a is RR, this returns the underlying representation of 'a'.
    Otherwise 0.0 is returned. */
