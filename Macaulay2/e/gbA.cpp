@@ -21,6 +21,16 @@
  * Initialization ********
  *************************/
 
+int nfinalized = 0;
+int nremoved = 0;
+
+extern "C" void remove_gbA(void *p, void *cd)
+{
+  gbA *G = static_cast<gbA *>(p);
+  fprintf(stderr, "removing gbA %d\n",nremoved++);
+  delete G;
+}
+
 gbA * gbA::create(const Matrix *m,
 		  M2_bool collect_syz,
 		  int n_rows_to_keep,
@@ -31,6 +41,8 @@ gbA * gbA::create(const Matrix *m,
 {
   gbA *result = new gbA;
   result->initialize(m, collect_syz, n_rows_to_keep, gb_weights, strategy);
+  GC_register_finalizer(result,remove_gbA,0,0,0);
+  fprintf(stderr, "registering gbA %d\n", nfinalized++);
   return result;
 }
 
@@ -2247,9 +2259,9 @@ void gbA::start_computation()
   do_computation();
 
   // debugging
-  // buffer o;
-  // R->memstats(o);
-  // emit(o.str());
+  //  buffer o;
+  //  R->memstats(o);
+  //  emit(o.str());
 
   return;
   int npairs;

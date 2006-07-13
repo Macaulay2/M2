@@ -1,3 +1,16 @@
+weight = (5,7,13,17)
+A = QQ[x, y, p, n, d, q, 
+     MonomialOrder=>{
+	  Weights=>{1,1,0,0,0,0},
+	  Weights=>splice{0,0,weight}},
+     MonomialSize => 16]
+
+A = QQ[x, y, p, n, d, q, 
+          Weights => {{1,1,0,0,0,0},splice{0,0,weight}},
+          MonomialSize => 16]
+I = ideal(p - x*y, n - x*y^5, d - x*y^10, q - x*y^25);
+
+
 -*- M2 -*-
 
 weight = (5,7,13,17)
