@@ -580,10 +580,8 @@ document {
 
 
 undocumented {
-     (symbol SPACE, RingMap, ZZ),
-     (symbol SPACE, RingMap, QQ)
+     (symbol SPACE, RingMap, Number)
      }
-
 
 (symbol SPACE, WrapperType, List),
 (symbol SPACE, WrapperType, Sequence),
