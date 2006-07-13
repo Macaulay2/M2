@@ -25,28 +25,28 @@
  ../M2/configure \
 	--prefix=$TOPDIR/M2-build/installed \
 	CFLAGS=-g \
-	CPPFLAGS=-I/capybara/include \
-	LDFLAGS=-L/capybara/lib \
+	CPPFLAGS="-I/capybara/include -I/sw/include"\
+	LDFLAGS="-L/capybara/lib -L/sw/lib"\
 	LOADLIBES="-lgcc_s.10.5 -lncurses" \
 	--with-veclib \
 	--enable-altivec \
-	--with-gdbmlib=/capybara/lib/libgdbm.a \
-	--with-readlinelib=/capybara/lib/libreadline.a \
-	--with-historylib=/capybara/lib/libhistory.a \
+	--with-gdbmlib=/sw/lib/libgdbm.a \
+	--with-readlinelib=/sw/lib/libreadline.a \
+	--with-historylib=/sw/lib/libhistory.a \
 	--with-gclib=/capybara/lib/libgc.a
  make
 
  # this can take a while (started: 9:33 pm, done at 10:10pm, MBP 2 GZ) :
  make install 
 
-## Step 3.  Create the disk image
+## Step 3-i386.  Create the disk image
 
  cd ../installed
  VERSION=`grep AC_INIT ../M2/configure.ac | awk -F, '{print $2}'`
  VERSION=0.9.10
- cp ../M2/arch/MacOSX/ReadMe-MacOSX.rtf .
- cp ../M2/arch/MacOSX/ReadMe-MacOSX.rtf Macaulay2-$VERSION/
- cp ../M2/arch/MacOSX/setup Macaulay2-$VERSION/
+ cp ~/M2/arch/MacOSX/ReadMe-MacOSX.rtf .
+ cp ~/M2/arch/MacOSX/ReadMe-MacOSX.rtf Macaulay2-$VERSION/
+ cp ~/M2/arch/MacOSX/setup Macaulay2-$VERSION/
  rm Macaulay2-$VERSION/bin/M2-emacs
  rm Macaulay2-$VERSION/bin/M2-load-libs
  rm Macaulay2-$VERSION/bin/M2-help
@@ -54,3 +54,20 @@
  cd .. # to original directory
  hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-`uname -m` Macaulay2-$VERSION-macosx-`uname -m`.dmg
  scp Macaulay2-$VERSION-macosx-`uname -m`.dmg ssh.math.uiuc.edu:~
+
+
+## Step 3-PPC.  Create the disk image
+
+ cd ../installed
+# VERSION=`grep AC_INIT ../M2/configure.ac | awk -F, '{print $2}'`
+ VERSION=0.9.10
+ cp ~/M2/arch/MacOSX/ReadMe-MacOSX.rtf .
+ cp ~/M2/arch/MacOSX/ReadMe-MacOSX.rtf Macaulay2-$VERSION/
+ cp ~/M2/arch/MacOSX/setup Macaulay2-$VERSION/
+ rm Macaulay2-$VERSION/bin/M2-emacs
+ rm Macaulay2-$VERSION/bin/M2-load-libs
+ rm Macaulay2-$VERSION/bin/M2-help
+ mv Macaulay2-$VERSION Macaulay2
+ cd .. # to original directory
+ hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-ppc Macaulay2-$VERSION-macosx-ppc.dmg
+ scp Macaulay2-$VERSION-macosx-ppc.dmg ssh.math.uiuc.edu:~
