@@ -190,7 +190,10 @@ document { Key => "right modules or left modules?",
           (x * id_M) * ( dx * id_M )
           x * ( id_M * ( dx * id_M ) ) == (x * id_M) * ( dx * id_M )
      ///,
-     "The reason for this discrepancy is that, as explained above, matrix multiplication is done over ", TT "R'", ", not over ", TT "R", "."
+     "The reason for this discrepancy is that, as explained above, matrix multiplication is done over ", TT "R'", ", not over ", TT "R", ".",
+     PARA{},
+     "Currently, tensor product of a module ", TT "M", " by a ring ", TT "R", " works on either side and does the same thing.  In
+     other words, you can write ", TT "R**M", " or ", TT "M**R", ".  That may change in the future."
      }
 
 -------------------

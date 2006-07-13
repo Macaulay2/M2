@@ -223,25 +223,15 @@ GradedModuleMap * GradedModuleMap := GradedModuleMap => (g,f) -> (
 	  i -> h#i = g_(i+f.degree) * f_i);
      h)
 GradedModule ** Module := GradedModule => (C,M) -> (
---      P := youngest(C,M);
---      key := (C,M,symbol **);
---      if P#?key then P#key
---      else C**M = 
-     (
-	  D := new GradedModule;
-	  D.ring = C.ring;
-	  scan(spots C, i -> D#i = C#i ** M);
-	  D))
+     D := new GradedModule;
+     D.ring = C.ring;
+     scan(spots C, i -> D#i = C#i ** M);
+     D)
 Module ** GradedModule := GradedModule => (M,C) -> (
---      P := youngest(M,C);
---      key := (M,C,symbol **);
---      if P#?key then P#key
---      else M**C = 
-     (
-	  D := new GradedModule;
-	  D.ring = C.ring;
-	  scan(spots C, i -> D#i = M ** C#i);
-	  D))
+     D := new GradedModule;
+     D.ring = C.ring;
+     scan(spots C, i -> D#i = M ** C#i);
+     D)
 
 gradedModule = method(Dispatch => Thing)
 
@@ -279,30 +269,24 @@ GradedModule Array := GradedModule => (C,A) -> (
      D)
 
 GradedModule ** GradedModule := GradedModule => (C,D) -> (
---      P := youngest(C,D);
---      key := (C,D,symbol **);
---      if P#?key then P#key
---      else C**D = 
-     (
-	  R := C.ring;
-	  if R =!= D.ring then error "expected graded modules over the same ring";
-	  c := spots C;
-	  d := spots D;
-	  pairs := new MutableHashTable;
-	  scan(c, i -> scan(d, j -> (
-			 k := i+j;
-			 p := if not pairs#?k then pairs#k = new MutableHashTable else pairs#k;
-			 p#(i,j) = 1;
-			 )));
-	  scan(keys pairs, k -> pairs#k = sort keys pairs#k);
-	  E := new GradedModule;
-	  E.ring = R;
-	  scan(keys pairs, k -> (
-		    p := pairs#k;
-		    E#k = directSum apply(p, v -> v => C#(v#0) ** D#(v#1));
-		    ));
-	  E
-	  ))
+     R := C.ring;
+     if R =!= D.ring then error "expected graded modules over the same ring";
+     c := spots C;
+     d := spots D;
+     pairs := new MutableHashTable;
+     scan(c, i -> scan(d, j -> (
+		    k := i+j;
+		    p := if not pairs#?k then pairs#k = new MutableHashTable else pairs#k;
+		    p#(i,j) = 1;
+		    )));
+     scan(keys pairs, k -> pairs#k = sort keys pairs#k);
+     E := new GradedModule;
+     E.ring = R;
+     scan(keys pairs, k -> (
+	       p := pairs#k;
+	       E#k = directSum apply(p, v -> v => C#(v#0) ** D#(v#1));
+	       ));
+     E)
 
 gradedModuleMap = method(Dispatch => Thing)
 

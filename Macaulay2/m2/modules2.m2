@@ -21,89 +21,53 @@ Module + Module := Module => (M,N) -> (
 
 tensor(Module, Module) := Module => options -> (M,N) -> M**N
 Module ** Module := Module => (M,N) -> (
--- don't cache it any more
---      P := youngest(M,N);
---      key := (M,N,symbol **);
---      if P#?key then P#key
---      else M**N = 
-     (
-	  if M.?generators and not isFreeModule N
-	  or N.?generators and not isFreeModule M then (
-	       if M.?generators then M = cokernel presentation M;
-	       if N.?generators then N = cokernel presentation N;
-	       );
-	  R := ring M;
-	  if R =!= ring N then error "expected modules over the same ring";
-	  if isFreeModule M then (
-	       if M == R^1 then N
-	       else if isFreeModule N then (
-		    if N == R^1 then M
-		    else new Module from (R, raw M ** raw N)
-		    )
+     if M.?generators and not isFreeModule N
+     or N.?generators and not isFreeModule M then (
+	  if M.?generators then M = cokernel presentation M;
+	  if N.?generators then N = cokernel presentation N;
+	  );
+     R := ring M;
+     if R =!= ring N then error "expected modules over the same ring";
+     if isFreeModule M then (
+	  if M == R^1 then N
+	  else if isFreeModule N then (
+	       if N == R^1 then M
+	       else new Module from (R, raw M ** raw N)
+	       )
+	  else subquotient(
+	       if N.?generators then M ** N.generators,
+	       if N.?relations then M ** N.relations))
+     else (
+	  if isFreeModule N then (
+	       if N == R^1 then M
 	       else subquotient(
-		    if N.?generators then M ** N.generators,
-		    if N.?relations then M ** N.relations))
-	  else (
-	       if isFreeModule N then (
-		    if N == R^1 then M
-		    else subquotient(
-			 if M.?generators then M.generators ** N,
-			 if M.?relations then M.relations ** N))
-	       else cokernel map(R, rawModuleTensor( raw M.relations, raw N.relations )))))
+		    if M.?generators then M.generators ** N,
+		    if M.?relations then M.relations ** N))
+	  else cokernel map(R, rawModuleTensor( raw M.relations, raw N.relations ))))
 
-Matrix ** Module := Matrix => (f,M) -> (
-     -- P := youngest(f,M);
-     -- key := (f,M,symbol **);
-     -- if P#?key then P#key else 
-     -- f**M = (
-     	  f ** id_M
-     --	  )
-     )
-Module ** Matrix := Matrix => (M,f) -> (
---      P := youngest(M,f);
---      key := (M,f,symbol **);
---      if P#?key then P#key
---      else M**f = 
-     (
-     	  id_M ** f
-	  )
-     )
+Matrix ** Module := Matrix => (f,M) -> f ** id_M
+Module ** Matrix := Matrix => (M,f) -> id_M ** f
 
 -----------------------------------------------------------------------------
 -- base change
 -----------------------------------------------------------------------------
-Module ** Ring := Module => (M,R) -> (
---      P := youngest(M,R);
---      key := (M,R,symbol **);
---      if P#?key then P#key
---      else M**R = 
-     (
-	  k := ring M;
-	  if k === R then M
-	  else (
-	       try promote(1_k, R) else error "can't tensor by this ring";
-	       if M.?generators then cokernel presentation M ** R
-	       else if M.?relations then cokernel (M.relations ** R)
-	       else if isQuotientOf(R,k) then R^(- degrees M)
-	       else R^(rank M)
-	       )
-	  ))
+Module ** Ring := Module => (M,R) -> R ** M		    -- grandfathered, even though our modules are left modules
+
+Ring ** Module := Module => (R,M) -> (
+     A := ring M;
+     try promote(1_A, R) else error "can't tensor by this ring";
+     if A === R then M
+     else if M.?generators then cokernel promote(presentation M, R)
+     else if M.?relations then cokernel promote(M.relations,R)
+     else R^(promote(- degrees M,A,R)))
 
 Matrix ** Ring := Matrix => (f,R) -> R ** f		    -- grandfathered, even though our modules are left modules
 
 Ring ** Matrix := Matrix => (R,f) -> (
-     k := ring source f;
-     S := ring target f;
-     if k === R and S === R then f
-     else if S === R then (
-	  -- map(target f, (source f ** R) ** R^(-degree f), f)
-	  map(target f, source f ** R, f, Degree => degree f)
-	  )
-     else map(
-	  -- this will be pretty slow
-	  target f ** R, source f ** R, applyTable(entries f, r -> promote(r,R)),
-	  Degree => if isQuotientOf(R,k) then degree f else degree 1_R
-	  )
+     B := ring source f;
+     A := ring target f;
+     if B === R and A === R then f
+     else map( target f ** R, source f ** R, promote(cover f, R), Degree => first promote({degree f}, A, R) )
      )
 
 -----------------------------------------------------------------------------       
