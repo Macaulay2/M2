@@ -75,6 +75,8 @@ multipleBasicLiftMatrix = (m,v) -> (
      scan(v, (R,p) -> ( S = R; dF = p dF; dG = p dG; m = rawLift((raw R)^dF, m)));
      map(S^dF,S^dG,m))
 
+multipleBasicLiftDegrees = multipleBasicPromoteDegrees = (dF,v) -> ( scan(v, p -> dF = p dF); dF )
+
 promote(ZZ,RingElement) := (n,R) -> new R from rawFromNumber(R,n)
 
 commonRingInitializations = (F) -> (
@@ -105,12 +107,16 @@ commonEngineRingInitializations = (F) -> (
 		    lift(F,A) := basicLift;
 		    promote(Matrix,A,F) := (m,A,F) -> basicPromoteMatrix(m,F,promoter);
 		    lift(Matrix,F,A) := (m,F,A) -> basicLiftMatrix(m,A,lifter);
+		    promote(List,A,F) := (m,A,F) -> promoter m;
+		    lift(List,F,A) := (m,F,A) -> lifter m;
 		    )
 	       else (
 		    promoteChain := take(baserings, {i+1,n});
-		    liftChain := reverse take(baserings, {i,n-1});
-		    promoteMatrixChain := apply(promoteChain, take(promoters, {i+1,n}), identity);
-		    liftMatrixChain := apply(liftChain, reverse take(lifters, {i+1,n}), identity);
+		    liftChain    := reverse take(baserings, {i,n-1});
+		    promoteDegreesChain := take(promoters, {i+1,n});
+		    liftDegreesChain    := reverse take(lifters, {i+1,n});
+		    promoteMatrixChain := apply(promoteChain, promoteDegreesChain, identity);
+		    liftMatrixChain    := apply(liftChain   , liftDegreesChain   , identity);
 	       	    promote(A,F) := (
 			 if ancestor(Number, A)
 		    	 then (n,R) -> new R from rawFromNumber(raw R,n)
@@ -118,6 +124,8 @@ commonEngineRingInitializations = (F) -> (
 		    lift(F,A) := (f,A) -> multipleBasicLift(f, liftChain);
 		    promote(Matrix,A,F) := (m,A,F) -> multipleBasicPromoteMatrix(m,promoteMatrixChain);
 		    lift   (Matrix,F,A) := (m,F,A) -> multipleBasicLiftMatrix   (m,liftMatrixChain);
+		    promote(List,A,F) := (m,A,F) -> multipleBasicPromoteDegrees(m,promoteDegreesChain);
+		    lift   (List,F,A) := (m,F,A) -> multipleBasicLiftDegrees   (m,liftDegreesChain);
 		    )));
      )
 
