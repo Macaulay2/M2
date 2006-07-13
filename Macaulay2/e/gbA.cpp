@@ -28,6 +28,7 @@ extern "C" void remove_gbA(void *p, void *cd)
 {
   gbA *G = static_cast<gbA *>(p);
   fprintf(stderr, "\nremoving gbA %d\n",nremoved++);
+  G->remove_gb();
 }
 
 gbA * gbA::create(const Matrix *m,
@@ -71,6 +72,7 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
   _F = m->rows();
   _Fsyz = m->cols()->sub_space(n_rows_per_syz);  
 
+  S = new SPairSet;
   first_in_degree = 0;
   n_syz = 0;
   n_pairs_computed = 0;
@@ -111,9 +113,6 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
   else
     {
       lookup = MonomialTable::make(R->n_vars());
-      lookups = newarray(MonomialLookupTable *, _F->rank()+1);
-      for (long i=0; i<_F->rank()+1; i++)
-	lookups[i] = new MonomialLookupTable;
     }
 
   minimal_gb = ReducedGB::create(originalR,_F,_Fsyz);
@@ -185,8 +184,29 @@ gbA::spair *gbA::new_gen(int i, gbvector *f, ring_elem denom)
 
 // We might not have to do ANYTHING here, since the garbage collector
 // will free everything up for us...
+void gbA::remove_gb()
+{
+  // removes all allocated objects
+  for (int i=0; i<gb.size(); i++)
+    {
+      R->gbvector_remove(gb[i]->g.f);
+      R->gbvector_remove(gb[i]->g.fsyz);
+      gb[i] = 0; // gb[i] was allocated via gc, so it will be collected
+    }
+  delete minimal_gb; // will free its own gbvector's.
+  for (int i=0; i<_syz.size(); i++)
+    {
+      R->gbvector_remove(_syz[i]);
+      _syz[i] = 0;
+    }
+  delete lookup;
+  delete lookupZZ;
+  // Also remove the SPAirSet...
+}
+
 gbA::~gbA()
 {
+  remove_gb();
 }
 
 /*************************
@@ -481,7 +501,7 @@ void gbA::remove_unneeded_pairs(int id)
   spair *p = &head;
   gbelem *m = gb[id];
 
-  head.next = S.heap;
+  head.next = S->heap;
   while (p->next != 0)
     if (pair_not_needed(p->next, m))
       {
@@ -496,11 +516,11 @@ void gbA::remove_unneeded_pairs(int id)
 	    emit_line(o.str());
 	  }
 	spair_delete(tmp);
-	S.nelems--;
+	S->nelems--;
       }
   else
     p = p->next;
-  S.heap = head.next;
+  S->heap = head.next;
 }
 
 bool gbA::is_gcd_one_pair(spair *p)
@@ -748,25 +768,27 @@ gbA::SPairSet::SPairSet()
 {
 }
 
-#if 0
-gbA::SPairSet::~SPairSet()
+void gbA::remove_spair_list(spair *&set)
 {
-  spair *set = heap;
   while (!set)
     {
       spair *tmp = set;
       set = set->next;
       spair_delete(tmp);
     }
-  set = this_set;
-  while (!set)
-    {
-      spair *tmp = set;
-      set = set->next;
-      spair_delete(tmp);
-    }
+  set = 0;
 }
-#endif
+
+void gbA::remove_SPairSet()
+{
+  remove_spair_list(S->heap);
+  remove_spair_list(S->spair_list);
+  remove_spair_list(S->spair_deferred_list.next);
+  remove_spair_list(S->gen_list);
+  remove_spair_list(S->gen_deferred_list.next);
+  S->spair_last_deferred = 0;
+  S->gen_last_deferred = 0;
+}
 
 void gbA::spair_set_insert(gbA::spair *p)
   /* Insert a LIST of s pairs into S */
@@ -775,55 +797,55 @@ void gbA::spair_set_insert(gbA::spair *p)
     {
       spair *tmp = p;
       p = p->next;
-      S.nelems++;
-      tmp->next = S.heap;
-      S.heap = tmp;
+      S->nelems++;
+      tmp->next = S->heap;
+      S->heap = tmp;
     }
 }
 
 gbA::spair *gbA::spair_set_next()
   /* Removes the next element of the current degree, returning NULL if none left */
 {
-  spair *result = S.spair_list;
+  spair *result = S->spair_list;
   if (result)
     {
-      S.spair_list = result->next;
+      S->spair_list = result->next;
     }
   else
     {
-      if (S.spair_deferred_list.next != 0)
+      if (S->spair_deferred_list.next != 0)
 	{
 	  if (gbTrace >= 4)
 	    {
 	      emit_wrapped(" deferred pairs: ");
 	    }
-	  S.spair_list = S.spair_deferred_list.next;
-	  S.spair_deferred_list.next = 0;
-	  S.spair_last_deferred = &S.spair_deferred_list;
-	  result = S.spair_list;
-	  S.spair_list = result->next;
+	  S->spair_list = S->spair_deferred_list.next;
+	  S->spair_deferred_list.next = 0;
+	  S->spair_last_deferred = &S->spair_deferred_list;
+	  result = S->spair_list;
+	  S->spair_list = result->next;
 	}
       else
 	{
 	  // Now do the same for generators
-	  result = S.gen_list;
+	  result = S->gen_list;
 	  if (result)
 	    {
-	      S.gen_list = result->next;
+	      S->gen_list = result->next;
 	    }
 	  else
 	    {
-	      if (S.gen_deferred_list.next != 0)
+	      if (S->gen_deferred_list.next != 0)
 		{
 		  if (gbTrace >= 4)
 		    {
 		      emit_wrapped(" deferred gen pairs: ");
 		    }
-		  S.gen_list = S.gen_deferred_list.next;
-		  S.gen_deferred_list.next = 0;
-		  S.gen_last_deferred = &S.gen_deferred_list;
-		  result = S.gen_list;
-		  S.gen_list = result->next;
+		  S->gen_list = S->gen_deferred_list.next;
+		  S->gen_deferred_list.next = 0;
+		  S->gen_last_deferred = &S->gen_deferred_list;
+		  result = S->gen_list;
+		  S->gen_list = result->next;
 		}
 	      else
 		return 0;
@@ -832,9 +854,9 @@ gbA::spair *gbA::spair_set_next()
     }
 
   result->next = 0;
-  S.nelems--;
-  S.n_in_degree--;
-  S.n_computed++;
+  S->nelems--;
+  S->n_in_degree--;
+  S->n_computed++;
   return result;
 }
 
@@ -846,16 +868,16 @@ void gbA::spair_set_defer(spair *&p)
   if (gbTrace >= 4) emit_wrapped("D");
   //  spair_delete(p); // ONLY FOR TESTING!! THIS IS INCORRECT!!
   //  return;
-  S.n_in_degree++;
+  S->n_in_degree++;
   if (p->type == SPAIR_GEN)
     {
-      S.gen_last_deferred->next = p;
-      S.gen_last_deferred = p;
+      S->gen_last_deferred->next = p;
+      S->gen_last_deferred = p;
     }
   else
     {
-      S.spair_last_deferred->next = p;
-      S.spair_last_deferred = p;
+      S->spair_last_deferred->next = p;
+      S->spair_last_deferred = p;
     }
 }
 
@@ -864,9 +886,9 @@ int gbA::spair_set_determine_next_degree(int &nextdegree)
   spair *p;
   int nextdeg;
   int len = 1;
-  if (S.heap == 0) return 0;
-  nextdeg = S.heap->deg;
-  for (p = S.heap->next; p!=0; p=p->next)
+  if (S->heap == 0) return 0;
+  nextdeg = S->heap->deg;
+  for (p = S->heap->next; p!=0; p=p->next)
     if (p->deg > nextdeg) 
       continue;
     else if (p->deg < nextdeg)
@@ -883,20 +905,20 @@ int gbA::spair_set_determine_next_degree(int &nextdegree)
 int gbA::spair_set_prepare_next_degree(int &nextdegree)
   /* Finds the next degree to consider, returning the number of spairs in that degree */
 {
-  S.spair_list = 0;
-  S.spair_deferred_list.next = 0;
-  S.spair_last_deferred = &S.spair_deferred_list;
+  S->spair_list = 0;
+  S->spair_deferred_list.next = 0;
+  S->spair_last_deferred = &S->spair_deferred_list;
 
-  S.gen_list = 0;
-  S.gen_deferred_list.next = 0;
-  S.gen_last_deferred = &S.gen_deferred_list;
+  S->gen_list = 0;
+  S->gen_deferred_list.next = 0;
+  S->gen_last_deferred = &S->gen_deferred_list;
   
   int len = spair_set_determine_next_degree(nextdegree);
   if (len == 0) return 0;
 
   spair head;
   spair *p;
-  head.next = S.heap;
+  head.next = S->heap;
   p = &head;
   while (p->next != 0)
     if (p->next->deg != nextdegree)
@@ -907,24 +929,24 @@ int gbA::spair_set_prepare_next_degree(int &nextdegree)
 	p->next = tmp->next;
 	if (tmp->type == SPAIR_GEN)
 	  {
-	    tmp->next = S.gen_list;
-	    S.gen_list = tmp;
+	    tmp->next = S->gen_list;
+	    S->gen_list = tmp;
 	  }
 	else
 	  {
 	    // All other types are on the spair list
-	    tmp->next = S.spair_list;
-	    S.spair_list = tmp;
+	    tmp->next = S->spair_list;
+	    S->spair_list = tmp;
 	  }
       }
-  S.heap = head.next;
-  S.n_in_degree = len;
+  S->heap = head.next;
+  S->n_in_degree = len;
 
   /* Now sort 'spair_list' and 'gen_list'. */
-  spairs_sort(len, S.spair_list);
-  spairs_sort(len, S.gen_list);
-  //  G->spairs_reverse(S.spair_list);
-  //  G->spairs_reverse(S.gen_list);
+  spairs_sort(len, S->spair_list);
+  spairs_sort(len, S->gen_list);
+  //  G->spairs_reverse(S->spair_list);
+  //  G->spairs_reverse(S->gen_list);
   return len;
 }
 
@@ -2151,7 +2173,7 @@ void gbA::do_computation()
       case STATE_NEWDEGREE:
 	// Get the spairs and generators for the next degree
 	
-	    if (S.n_in_degree == 0)
+	    if (S->n_in_degree == 0)
 	      {
 		int old_degree = this_degree;
 		npairs = spair_set_prepare_next_degree(this_degree); // sets this_degree
@@ -2287,7 +2309,7 @@ void gbA::start_computation()
       if (is_done != COMP_COMPUTING) break;
 
       /* If we need to move to the next degree, do it. */
-      if (S.n_in_degree  == 0)
+      if (S->n_in_degree  == 0)
 	{
 	  if (hilb_new_elems)
 	    {

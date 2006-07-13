@@ -72,13 +72,6 @@ protected:
   
   bool _up_order; // is the free module order up or down?
 
-#if 0
-  int _nquotients;
-  gbvector **_quotients;
-  MonomialIdeal *_Rideal;
-  TermIdeal *_RidealZZ;
-#endif
-
   bool _is_skew;
   SkewMultiplication _skew;
   int * const *_skew_monoms; // array 0.._skew.n_skew_vars()-1 of elements of monoid

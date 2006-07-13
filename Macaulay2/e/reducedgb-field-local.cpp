@@ -21,7 +21,6 @@ ReducedGB_Field_Local::ReducedGB_Field_Local(GBRing *R0,
     wt(wt0)
 {
      // fprintf(stderr, "creating GB with local order\n");
-  T1 = MonomialTable::make(R->n_vars());
   if (wt == 0)
     wt = new GBWeight(F0, 0);
   for (int i=0; i<originalR0->n_quotients(); i++)
@@ -155,6 +154,7 @@ void ReducedGB_Field_Local::reset_table()
 {
   newpol.clear();
   newpol_alpha.clear();
+  delete T1;
 }
 
 void ReducedGB_Field_Local::store_in_table(const POLY &h, 
@@ -171,6 +171,7 @@ void ReducedGB_Field_Local::store_in_table(const POLY &h,
 void ReducedGB_Field_Local::remainder(POLY &f, bool use_denom, ring_elem &denom)
 {
   if (f.f == 0) return;
+  T1 = MonomialTable::make(R->n_vars());
   gbvector head;
   gbvector *frem = &head;
   frem->next = 0;
@@ -225,6 +226,7 @@ void ReducedGB_Field_Local::remainder(POLY &f, bool use_denom, ring_elem &denom)
 void ReducedGB_Field_Local::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
 {
   if (f == 0) return;
+  T1 = MonomialTable::make(R->n_vars());
   gbvector *zero = 0;
   gbvector head;
   gbvector *frem = &head;

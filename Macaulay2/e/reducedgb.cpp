@@ -47,7 +47,11 @@ ReducedGB::ReducedGB(GBRing *R0,
 
 ReducedGB::~ReducedGB()
 {
-  // intentionally blank
+  for (int i=0; i<polys.size(); i++)
+    {
+      R->gbvector_remove(polys[i].f);
+      R->gbvector_remove(polys[i].fsyz);
+    }
 }
 
 const MatrixOrNull *ReducedGB::get_gb()

@@ -69,7 +69,7 @@ public:
 private:
   typedef VECTOR(spair *) spairs;
 
-  struct SPairSet {
+  struct SPairSet : public our_new_delete {
     int nelems;  /* Includes the number in this_set */
     int n_in_degree; /* The number in 'this_set */
     spair *heap;
@@ -113,12 +113,9 @@ private:
   MonomialTable *lookup;
   MonomialTableZZ *lookupZZ; // Only one of these two will be non-NULL.
 
-  MemoryBlock monomial_memory; // Where we keep monomial space for 'lookups'
-  MonomialLookupTable **lookups; // one for each component
-  
   exponents EXP_; // Used in 'remainder'
 
-  SPairSet S;
+  SPairSet *S;
   VECTOR(gbvector *) _syz;
 
   int _strategy;
@@ -225,6 +222,8 @@ private:
   void update_pairs(int id);
 
   /* spair set handling */
+  void remove_spair_list(spair *&set);
+  void remove_SPairSet();
   void spair_set_insert(spair *p);
     /* Insert a LIST of s pairs into S */
   spair *spair_set_next(); 
@@ -320,6 +319,7 @@ public:
 				 const Matrix *gb, 
 				 const Matrix *mchange);
 
+  void remove_gb();
   virtual ~gbA();
 
   virtual int kind() { return 231; } // FIX THIS!!

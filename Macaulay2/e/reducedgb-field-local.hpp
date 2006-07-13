@@ -19,7 +19,7 @@ protected:
   const GBWeight *wt;
   VECTOR(int) alpha; // for GB array
   VECTOR(int) ring_alpha; // for quotient ring elements
-  VECTOR(int) newpol_alpha;
+  VECTOR(int) newpol_alpha; // These next two are local values...
   VECTOR(POLY) newpol;
 
   bool find_good_divisor(exponents h_exp,

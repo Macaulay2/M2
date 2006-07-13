@@ -7,6 +7,8 @@
 
 ReducedGB_Field::~ReducedGB_Field()
 {
+  delete T;
+  Rideal = 0;
 }
 
 void ReducedGB_Field::set_gb(VECTOR(POLY) &polys0)
