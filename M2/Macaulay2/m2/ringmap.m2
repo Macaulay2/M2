@@ -279,7 +279,7 @@ RingMap Module := Module => (f,M) -> (
      R := source f;
      S := target f;
      if R =!= ring M then error "expected module over source ring";
-     if M.?relations then error "ring map applied to module with relations: use '**' instead";
+     if M.?relations then error "ring map applied to module with relations: use '**' or 'tensor' instead";
      if M.?generators then image f M.generators
      else (
 	  d := degrees M;
@@ -290,12 +290,14 @@ RingMap Module := Module => (f,M) -> (
 	  )
      )
 
+tensor(RingMap,Module) := 
 RingMap ** Module := Module => (f,M) -> (
      R := source f;
      S := target f;
      if R =!= ring M then error "expected module over source ring";
      cokernel f presentation M);
 
+tensor(RingMap,Matrix) :=
 RingMap ** Matrix := Matrix => (f,m) -> (
      if source f =!= ring m then error "expected matrix over source ring";
      map(f ** target m, f ** source m, f cover m))
