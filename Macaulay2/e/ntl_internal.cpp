@@ -58,7 +58,7 @@ mat_ZZ *makeNTLMatrixZZ(int nrows, int ncols)
 {
   mat_ZZ *X = new mat_ZZ;	// this uses builtin operator new
   X->SetDims(nrows,ncols);
-  GC_register_finalizer(X, removeNTL_mat_ZZ, 0, 0, 0); // how can this work if X was not allocated by gc?
+  GC_REGISTER_FINALIZER(X, removeNTL_mat_ZZ, 0, 0, 0); // how can this work if X was not allocated by gc?
   return X;
 }
 

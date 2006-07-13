@@ -199,6 +199,8 @@ bool ntl_LLL(MutableMatrix *M, MutableMatrix *U, long numer, long denom, int str
       rk = G_BKZ_RR(*A,*V,delta);
     break;
   default:
+    delete A;
+    if (V) delete V;
     ERROR("Strategy option to LLL not understood");
     return false;
   }
@@ -225,6 +227,8 @@ bool ntl_LLL(MutableMatrix *M, MutableMatrix *U, long numer, long denom, int str
 	    U->set_entry(i,j,b);
 	  }
     }
+  delete A;
+  if (V) delete V;
   return true;
 }
 // Local Variables:
