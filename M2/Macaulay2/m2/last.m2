@@ -21,7 +21,8 @@ addStartFunction(
 	       newPackage("User", DebuggingMode => true);
 	       );
 	  needsPackage \ Core#"pre-installed packages";
-	  if not member("--silent",commandLine) then stderr << "with packages: " << wrap concatenate between_", " sort Core#"pre-installed packages" << endl;
+	  hd := "with packages: ";
+	  if not member("--silent",commandLine) then stderr << hd << wrap(printWidth-#hd, concatenate between_", " sort Core#"pre-installed packages") << endl;
 	  )
      )
 

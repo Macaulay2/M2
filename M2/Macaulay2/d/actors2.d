@@ -656,6 +656,23 @@ imaginaryPart(e:Expr):Expr := (
      else WrongArg("a number"));
 setupfun("imaginaryPart",imaginaryPart);
 
+Foo := { foo:void };					    -- make a new type of pointer that's innocuous and unusable
+finalizer(x:Foo,msg:string):void := (
+     stderr << "--finalization: " << msg << endl ;
+     );
+finalizerCount := 0;
+registerFinalizer(e:Expr):Expr := (
+     when e is s:Sequence do (
+	  if length(s) != 2 then WrongNumArgs(2) else
+ 	  when s.1 is msg:string do (
+	       msg = "[" + tostring(finalizerCount) + "]: " + msg;
+	       finalizerCount = finalizerCount + 1;
+	       Ccode(void, "GC_register_finalizer((GC_PTR)",e,".ptr_,(GC_finalization_proc)",finalizer,",",msg,",0,0)");
+	       toExpr(finalizerCount))
+     	  else WrongArgString(2))
+     else WrongNumArgs(2));
+setupfun("registerFinalizer",registerFinalizer);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

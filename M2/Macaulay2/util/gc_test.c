@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
+#define MAKE_FINALIZATION_CYCLES 0
+
 static int had_error = 0;
 
 /* we test gc to see whether it properly marks pointers found in registers */
@@ -25,12 +27,19 @@ static void *x[100];
 
 static int count;
 
+struct A { int count ; void *ptr; };
+
 static void fin(void *p, void *cd) {
-     printf("finalizer called: count = %d\n", *((int *)p));
+     struct A *t = (struct A *)p;
+     printf("finalizer called: count = %d\n", t->count);
 }
 
 static void reg(void *p) {
-     *((int *)p) = count++;
+     struct A *t = (struct A *)p;
+     t->count = count++;
+#if MAKE_FINALIZATION_CYCLES
+     t->ptr = p;		/* self-pointer, to see if it interferes with finalization */
+#endif
      GC_register_finalizer(p,fin,0,0,0);
 }
 
@@ -67,6 +76,6 @@ int main() {
 
 /*
  Local Variables:
- compile-command: "make -C $M2BUILDDIR/Macaulay2/util "
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/util gc_tested"
  End:
 */
