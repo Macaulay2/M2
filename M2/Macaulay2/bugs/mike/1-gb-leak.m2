@@ -1,6 +1,6 @@
 gbTrace = 0
 R = QQ [x, y, MonomialOrder => Position => Up]
-scan(50, i -> (
+scan(1000, i -> (
 	  f := substitute (random(R^10, R^{10:-2}),y=>1);
 	  g := gens gb(f);
 	  h := gens gb(g);
@@ -26,7 +26,7 @@ dogb = () -> (
      gens gb f;)
 dogb()
 collectGarbage()
-scan(100, i -> dogb())
+scan(10000, i -> dogb())
 
 
 gb f
