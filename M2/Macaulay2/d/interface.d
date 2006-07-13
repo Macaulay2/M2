@@ -834,11 +834,9 @@ setupfun("rawToReal",rawToReal);
 
 -- waiting for Mike to implement IM2_RingElement_to_BigReal
 export rawToRRR(e:Expr):Expr := (
-     buildErrorPacket("not implemented yet")
---     when e
---     is x:RawRingElement do toExpr(Ccode(RRRorNull, "(engine_RRRorNull)IM2_RingElement_to_BigReal((RingElement*)",x, ")" ))
---     else WrongArg("a raw ring element")
-     );
+     when e
+     is x:RawRingElement do toExpr(Ccode(RRRorNull, "(engine_RRRorNull)IM2_RingElement_to_BigReal((RingElement*)",x, ")" ))
+     else WrongArg("a raw ring element"));
 setupfun("rawToRRR",rawToRRR);
 
 export rawToComplex(e:Expr):Expr := (

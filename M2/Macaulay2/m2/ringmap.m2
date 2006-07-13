@@ -95,7 +95,7 @@ RingMap RingElement := RingElement => fff := (p,m) -> (
 	  );
      new S from rawRingMapEval(raw p, raw m))
 
-RingMap QQ := RingMap ZZ := (p,m) -> fff(p, promote(m,source p))
+RingMap Number := (p,m) -> fff(p, promote(m,source p))
 
 RingMap Matrix := Matrix => (p,m) -> (
      R := source p;
