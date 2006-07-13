@@ -23,6 +23,17 @@ static void uniq(char *msg, void *p, ...) {
 
 static void *x[100];
 
+static int count;
+
+static void fin(void *p, void *cd) {
+     printf("finalizer called: count = %d\n", *((int *)p));
+}
+
+static void reg(void *p) {
+     *((int *)p) = count++;
+     GC_register_finalizer(p,fin,0,0,0);
+}
+
 int main() {
   int i;
 
@@ -45,11 +56,17 @@ int main() {
         "           Perhaps GC_add_roots needs to be told about static memory.\n",
        x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9],x[10],x[11],x[12],x[13],x[14],x[15],x[16],x[17],x[18],x[19], (void *)0);
 
+
+  for (i=0; i<20; i++) {
+       reg(GC_malloc(12));
+  }
+  GC_gcollect();		/* just to see if finalizers get called */
+
   return had_error;
 }
 
 /*
  Local Variables:
- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/util "
  End:
 */
