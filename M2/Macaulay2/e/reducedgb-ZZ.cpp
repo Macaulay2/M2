@@ -7,6 +7,8 @@
 #include "text_io.hpp"
 ReducedGB_ZZ::~ReducedGB_ZZ()
 {
+  delete T;
+  ringtableZZ = 0;
 }
 
 ReducedGB_ZZ::ReducedGB_ZZ(GBRing *R0,
