@@ -1,3 +1,11 @@
+porting machines:
+
+	Linux octopus.math.cornell.edu 2.6.9-34.ELlargesmp #1 SMP Fri Feb 24 17:06:55 EST 2006 x86_64 x86_64 x86_64 GNU/Linux
+	CYGWIN_NT-5.0 niobium 1.5.20(0.156/4/2) 2006-07-01 02:22 i686 Cygwin
+	SunOS u24.math.uiuc.edu 5.8 Generic_117350-34 sun4u sparc
+	Linux u123.math.uiuc.edu 2.4.22-1.2199.4.legacy.nptl #1 Sun Feb 20 18:21:21 EST 2005 i686 i686 i386 GNU/Linux
+
+-----------------------------------------------------------------------------
 To: Dan Grayson <dan@math.uiuc.edu>
 From: Michael Stillman <mike@math.cornell.edu>
 Subject: new machine
