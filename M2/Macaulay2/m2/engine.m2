@@ -199,10 +199,8 @@ RawRingElement.synonym = "raw ring element"
 RawRingElement == RawRingElement := (x,y) -> x === y
 
 RawRing _ ZZ := (R,n) -> rawRingVar(R,n)
-ZZ _ RawRing := (n,R) -> rawFromNumber(R,n)
-raw RR := x -> x _ (RR.RawRing)
-RR _ RawRing := (n,R) -> rawFromNumber(R,n)
-RRR _ RawRing := (n,R) -> rawFromNumber(R,n)
+raw Number := x -> x_((class x).RawRing)
+Number _ RawRing := (n,R) -> rawFromNumber(R,n)
 RawRingElement _ RawRing := (x,R) -> rawPromote(R,x)
 
 RawRingElement == RawRingElement := (x,y) -> x === y

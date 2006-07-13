@@ -72,6 +72,8 @@ RRR.char = 0
 RRR.Engine = true
 isConstant RRR := i -> true
 
+new RRR from RawRingElement := (RRR,x) -> rawToRRR x
+
 promote(RRR,RRR) := (i,RRR) -> i
 promote(RR,RRR) := 
 promote(QQ,RRR) := 

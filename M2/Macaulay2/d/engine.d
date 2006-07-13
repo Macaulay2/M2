@@ -29,6 +29,7 @@ export IntegerPair := {a:Integer,b:Integer};
 export IntegerPairOrNull := IntegerPair or null;
 export IntegerOrNull := Integer or null;
 export RationalOrNull := Rational or null;
+export RRRorNull := RRR or null;
 export RawMonomialOrderingArray := array(RawMonomialOrdering);
 export RawMatrixPair := { a:RawMatrix, b:RawMatrix };
 export RawMatrixPairOrNull := RawMatrixPair or null;

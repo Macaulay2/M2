@@ -161,6 +161,8 @@ resolution = method(
 	  }
      )
 
+engineReady := R -> R.?flatmonoid and all(first \ degrees R.flatmonoid, i -> i > 0)
+
 resolution Module := ChainComplex => o -> (M) -> (
      C := tryHooks(Module,symbol resolution,(o,M));
      if C =!= null then return C;
@@ -169,16 +171,16 @@ resolution Module := ChainComplex => o -> (M) -> (
      k := ultimate(coefficientRing, R);
      oR := options R;
      if R.?SkewCommutative then (
-	  if isHomogeneous M then (
-	       (resolutionInEngine default(o,Strategy2))(M))
-	  else
-	       (resolutionBySyzygies o)(M))
+	  if isHomogeneous M and engineReady R 
+	  then (resolutionInEngine default(o,Strategy2))(M)
+	  else (resolutionBySyzygies o)(M))
      else if not isCommutative R then (resolutionBySyzygies o)(M)
      else if R === ZZ then (resolutionBySyzygies o)(M)
      else if k === ZZ then (resolutionBySyzygies o)(M)
      else if not isHomogeneous M then (resolutionByHomogenization o)(M)
-     else if isQuotientRing R then (resolutionInEngine default(o,Strategy2))(M)
-     else (resolutionInEngine default(o,Strategy1))(M)
+     else if isQuotientRing R and engineReady R then (resolutionInEngine default(o,Strategy2))(M)
+     else if engineReady R then (resolutionInEngine default(o,Strategy1))(M)
+     else (resolutionBySyzygies o)(M)
      )
 
 resolution Matrix := ChainComplexMap => options -> (f) -> extend(
