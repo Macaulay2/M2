@@ -925,6 +925,7 @@ export {
 	symbol recursionDepth,
 	symbol reduceHilbert,
 	symbol regex,
+	symbol registerFinalizer,
 	symbol regularity,
 	symbol relations,
 	symbol relativizeFilename,

@@ -656,7 +656,11 @@ isSubset(Module,Module) := (M,N) -> (
 	  issub(M.relations | generators M, N.relations | generators N))
      else if not M.?relations and not N.?relations then (
 	  issub(generators M, generators N))
-     else false
+     else (
+	  -- see the code for subquotient: if present, M.relations is nonzero; same for N
+	  -- so one of the modules has nonzero relations and the other doesn't
+	  false
+	  )
      )
 isSubset(Ideal,Ideal) := (I,J) -> isSubset(module I, module J)
 isSubset(Module,Ideal) := (M,J) -> isSubset(M, module J)
