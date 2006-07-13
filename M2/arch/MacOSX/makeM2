@@ -15,6 +15,6 @@ cd .. # to original directory
 echo "about to do hdiutil"
 # comment one of these out
 echo `pwd`
-#hdiutil create -srcfolder tmp -volname Macaulay2-$VERSION-ppc Macaulay2-$VERSION-macosx-ppc.dmg
-hdiutil create -srcfolder tmp -volname Macaulay2-$VERSION-i386 Macaulay2-$VERSION-macosx-i386.dmg
+hdiutil create -srcfolder tmp -volname Macaulay2-$VERSION-ppc Macaulay2-$VERSION-macosx-ppc.dmg
+#hdiutil create -srcfolder tmp -volname Macaulay2-$VERSION-i386 Macaulay2-$VERSION-macosx-i386.dmg
 
