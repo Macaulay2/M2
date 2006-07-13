@@ -5,6 +5,7 @@ scan(100, i -> (
 	  g := gens gb(f);
 	  h := gens gb(g);
 	  k := gens gb(h);
+	  collectGarbage();
 	  ))
 
 	  h := time ultimate(g -> map(R^(rank g), R^(rank g), gens gb transpose g), f);
