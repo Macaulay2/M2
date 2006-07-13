@@ -212,6 +212,7 @@ export toExpr(x:RawMatrixOrNull):Expr := when x is r:RawMatrix do Expr(r) is nul
 export toExpr(x:RawMutableMatrixOrNull):Expr := when x is r:RawMutableMatrix do Expr(r) is null do engineErrorMessage();
 export toExpr(x:IntegerOrNull):Expr := when x is i:Integer do Expr(i) is null do engineErrorMessage();
 export toExpr(x:RationalOrNull):Expr := when x is i:Rational do Expr(i) is null do engineErrorMessage();
+export toExpr(x:RRRorNull):Expr := when x is i:RRR do Expr(i) is null do engineErrorMessage();
 export toExpr(x:ComplexOrNull):Expr := when x is i:Complex do Expr(i) is null do engineErrorMessage();
 export toExpr(x:RawMatrixPairOrNull):Expr := when x is p:RawMatrixPair do seq(Expr(p.a),Expr(p.b)) is null do engineErrorMessage();
 export toExpr(x:RawMatrixArray):Expr := Expr( list( new Sequence len length(x) do foreach m in x do provide Expr(m) ) );

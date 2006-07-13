@@ -29,6 +29,14 @@ distclean : clean
 	rm -f Makefile
 
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/util/Makefile
+
+# gc_test
+CPPFLAGS += -I@srcdir@/../../include
+all :: gc_tested
+gc_test : gc_test.c ; $(LINK.c) $^ $(GCLIB) -o $@
+gc_tested: gc_test; ./$<; touch $@
+clean ::; rm -f gc_tested gc_test
+
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/util "
 # End:

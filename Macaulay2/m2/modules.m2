@@ -33,6 +33,14 @@ promote(Matrix,RingElement) := promote(Matrix,Number) := Matrix => (f,S) -> (
      if not isFreeModule target f or not isFreeModule source f then error "lift: expected source and target to be free modules";
      promote(f, ring f, S))
 
+scan({
+	  (QQ, { RR, RRR })
+	  }, 
+     (K,Ls) -> scan(Ls, L -> (
+	       promote(Matrix,K,L) := (m,K,L) -> map(L^(numgens target m),L^(numgens source m),applyTable(entries m, x -> promote(x,L)));
+	       lift(Matrix,L,K) := (m,L,K) -> map(K^(numgens target m),K^(numgens source m),applyTable(entries m, x -> lift(x,K)));
+	       )))
+
 scan((
 	  (ZZ, { QQ, RR, RRR, CC, CCC }),		    -- Mike gave me this list of basic promotions
 	  (QQ, { RR, RRR, CC, CCC }),
@@ -48,10 +56,13 @@ scan((
 	  lift(Matrix,K,K) := (m,K,L) -> m;
 	  scan(Ls, L -> (
 	       p := makepromoter 0;
+	       if lookup(promote,K,L) === null then
 	       promote(K,L) := (a,L) -> a_L;
+	       if lookup(promote,Matrix,K,L) === null then
 	       promote(Matrix,K,L) := (m,K,L) -> basicPromoteMatrix(m,L,p);
+	       if lookup(lift,Matrix,L,K) === null then
 	       lift(Matrix,L,K) := (m,L,K) -> basicLiftMatrix(m,K,p);
-	       if lookup(promote,K,L) === null then stderr << "--warning: no method installed for promote(" << L << ", type of " << K << ")" << endl;
+	       if lookup(promote,K,L) === null then stderr << "--warning: no method installed for promote(" << K << ", type of " << L << ")" << endl;
 	       if lookup(lift,L,K) === null then stderr << "--warning: no method installed for lift(" << L << ", type of " << K << ")" << endl;
 	       ))))	  
 
