@@ -458,7 +458,9 @@ void gb2_comp::flush_pairs()
     }
 }
 
+#ifdef DEVELOPMENT
 #warning" schreyer append: wrong if not encoded order"
+#endif
 void gb2_comp::schreyer_append(gbvector * f)
 {
   if (orig_syz < 0)

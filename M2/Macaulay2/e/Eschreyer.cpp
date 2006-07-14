@@ -126,7 +126,10 @@ gbvector * GBKernelComputation::make_syz_term(ring_elem c, const int *m, int com
   // c is an element of GR->get_flattened_coefficients()
   // (m,comp) is a Schreyer encoded monomial in Fsyz
 {
+#ifdef DEVELOPMENT
 #warning "this might add in the Schreyer up"
+#endif
+
   return GR->gbvector_raw_term(c,m,comp);
 }
 

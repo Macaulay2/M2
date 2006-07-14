@@ -1,6 +1,8 @@
 // Copyright 1997  Michael E. Stillman
 
+#ifdef DEVELOPMENT
 #warning "sagbi code commented out"
+#endif
 #if 0
 #include "sagbi.hpp"
 
@@ -12,7 +14,9 @@ vec sagbi::subduct(const FreeModule *F,
   vecterm head;
   vec result = &head;
 
+#ifdef DEVELOPMENT
 #warning "subduct required Vector reduction: rewrite"
+#endif
 #if 0
   while (f != NULL)
     {

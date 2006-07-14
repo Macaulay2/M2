@@ -43,7 +43,9 @@ bool FractionField::initialize_frac(const PolyRingFlat *R)
     use_gcd_simplify = false;
   else
     use_gcd_simplify = true;
+#ifdef DEVELOPMENT
 #warning "frac simplify: doesn't handle towers of fracs"
+#endif
 
   declare_field();
   return true;

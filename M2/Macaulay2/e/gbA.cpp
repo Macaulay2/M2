@@ -29,7 +29,7 @@ extern "C" void remove_gbA(void *p, void *cd)
   gbA *G = static_cast<gbA *>(p);
   nremoved++;
   if (gbTrace>=3)
-    fprintf(stderr, "\nremoving gbA %d at %x\n",nremoved, G);
+    fprintf(stderr, "\nremoving gbA %d at %p\n",nremoved, G);
   G->remove_gb();
 }
 
@@ -46,7 +46,7 @@ gbA * gbA::create(const Matrix *m,
   GC_REGISTER_FINALIZER(result,remove_gbA,0,0,0);
   nfinalized++;
   if (gbTrace>=3)
-    fprintf(stderr, "\nregistering gbA %d at %x\n", nfinalized, (void *)result);
+    fprintf(stderr, "\nregistering gbA %d at %p\n", nfinalized, (void *)result);
   return result;
 }
 
@@ -1099,7 +1099,9 @@ bool gbA::reduce(spair *p)
 	      {
 		// f <-- u*p+v*f (same with syz versions), need to change lookupZZ too?
 		// p <-- c*p-d*f
+#ifdef DEVELOPMENT
 #warning "quotient ring handling, lookupZZ needs to change too?"
+#endif
 		gbelem *g = gb[t->_val];
 		if (gbTrace >= 10)
 		  {
@@ -1326,7 +1328,9 @@ int gbA::find_good_divisor(exponents e,
   VECTOR(MonomialTable::mon_term *) divisors;
   ealpha = degf - weightInfo_->exponents_weight(e,x);
 
+#ifdef DEVELOPMENT
 #warning "previous divisor code might not work with alpha..."
+#endif
   if (divisor_previous >= 0 && x == divisor_previous_comp)
     {
       gbelem *tg = gb[divisor_previous];
@@ -1434,7 +1438,9 @@ int gbA::find_good_divisor(exponents e,
   VECTOR(MonomialTable::mon_term *) divisors;
   ealpha = degf - weightInfo_->exponents_weight(e,x);
 
+#ifdef DEVELOPMENT
 #warning "previous divisor code might not work with alpha..."
+#endif
   if (divisor_previous >= 0 && x == divisor_previous_comp)
     {
       gbelem *tg = gb[divisor_previous];
@@ -1880,7 +1886,9 @@ void gbA::insert(POLY f, gbelem_type minlevel)
     }
   else
     {
+#ifdef DEVELOPMENT
 #warning "todo: codimension stop condition"
+#endif
       // codim test is set.  Compute the codimension now.
     }
 
@@ -2015,7 +2023,9 @@ void gbA::new_insert(POLY f, gbelem_type minlevel)
     }
   else
     {
+#ifdef DEVELOPMENT
 #warning "todo: codimension stop condition"
+#endif
       // codim test is set.  Compute the codimension now.
     }
 

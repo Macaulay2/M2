@@ -122,7 +122,9 @@ void ReducedGB_Field::remainder(POLY &f, bool use_denom, ring_elem &denom)
 					   h.f, h.fsyz,
 					   g.f, g.fsyz,
 					   use_denom, denom);
+#ifdef DEVELOPMENT
 #warning "reduce h.fsyz??"
+#endif
 	    }
 	  else
 	    {

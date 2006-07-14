@@ -52,7 +52,9 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 	{
 	  return new GaussElimComputation(m, collect_syz, n_rows_to_keep);
 	}
+#ifdef DEVELOPMENT
 #warning "handle non polynomial rings"
+#endif
       ERROR("GB computation for non-polynomial rings not yet re-implemented");
       return 0;
     }
@@ -61,8 +63,10 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
   // bool is_graded = (R->is_graded() && m->is_homogeneous());
   //bool ring_is_base = R->is_basic_ring();
   //bool base_is_ZZ = R->Ncoeffs()->is_ZZ(); 
+#ifdef DEVELOPMENT
 #warning "NOT QUITE!!  Need to know if it is ZZ or QQ"
 #warning "unused variables commented out"
+#endif
   // bool base_is_field = !R->Ncoeffs()->is_ZZ();
 
   GBComputation *result;

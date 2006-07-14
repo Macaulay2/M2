@@ -410,7 +410,9 @@ void varpower::power(const int *a, int n, intarray &result)
   for (index_varpower i = a; i.valid(); ++i)
     {
       pairs->var = i.var();
+#ifdef DEVELOPMENT
 #warning "check overflow"
+#endif
       long e = i.exponent();
       long long e1 = e;
       e *= n;

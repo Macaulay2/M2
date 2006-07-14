@@ -55,7 +55,9 @@ void PolyQQ::text_out(buffer &o) const
   o << "polyring(QQ,";
   getMonoid()->text_out(o);
   o << ")\n";
+#ifdef DEVELOPMENT
 #warning "display quotient polynomials"
+#endif
 }
 
 PolyQQ::elem *PolyQQ::new_elem() const
@@ -95,7 +97,9 @@ mpz_ptr PolyQQ::denom(ring_elem f) const
 void PolyQQ::simplify(elem *f) const
 {
   // Find and remove the content between denominator, numerator.
+#ifdef DEVELOPMENT
 #warning "write this!"
+#endif
 }
 
 Nterm *PolyQQ::mult_by_coeff(mpz_ptr c, Nterm *f) const
@@ -153,19 +157,25 @@ bool PolyQQ::lift(const Ring *R, const ring_elem f, ring_elem &result) const
 {
   // R may be QQ, or a ring of the form QQ[M'],for some possibly smaller monoid
   // R cannot be ZZ?
+#ifdef DEVELOPMENT
 #warning "write lift"
+#endif
   return false;
 }
 
 ring_elem PolyQQ::preferred_associate(ring_elem f) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return ZERO_RINGELEM;
 }
 
 bool PolyQQ::is_unit(const ring_elem f) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return false;
 }
 
@@ -183,13 +193,17 @@ bool PolyQQ::is_equal(const ring_elem f, const ring_elem g) const
 
 ring_elem PolyQQ::copy(const ring_elem f) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return ZERO_RINGELEM;
 }
 
 void PolyQQ::remove(ring_elem &f) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
 }
 
 ring_elem PolyQQ::negate(const ring_elem f) const 
@@ -255,7 +269,9 @@ ring_elem PolyQQ::mult(const ring_elem f, const ring_elem g) const
 
 ring_elem PolyQQ::power(const ring_elem f, mpz_t n) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return ZERO_RINGELEM;
 }
 
@@ -268,13 +284,17 @@ ring_elem PolyQQ::power(const ring_elem f, int n) const
 
 ring_elem PolyQQ::invert(const ring_elem f) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return ZERO_RINGELEM;
 }
 
 ring_elem PolyQQ::divide(const ring_elem f, const ring_elem g) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return ZERO_RINGELEM;
 }
 
@@ -301,27 +321,35 @@ ring_elem PolyQQ::divide(const ring_elem f, const ring_elem g) const
 
 ring_elem PolyQQ::remainder(const ring_elem f, const ring_elem g) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return ZERO_RINGELEM;
 }
 
 ring_elem PolyQQ::quotient(const ring_elem f, const ring_elem g) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return ZERO_RINGELEM;
 }
 
 ring_elem PolyQQ::remainderAndQuotient(const ring_elem f, const ring_elem g, 
 				       ring_elem &quot) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return ZERO_RINGELEM;
 }
 
 void PolyQQ::syzygy(const ring_elem a, const ring_elem b,
 		    ring_elem &x, ring_elem &y) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
 }
 
 ring_elem PolyQQ::random() const 
@@ -346,7 +374,9 @@ void PolyQQ::elem_text_out(buffer &o, const ring_elem f) const
 
 ring_elem PolyQQ::eval(const RingMap *map, const ring_elem f,int first_var) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return ZERO_RINGELEM;
 }
 
@@ -407,7 +437,9 @@ ring_elem PolyQQ::homogenize(const ring_elem f, int v, M2_arrayint wts) const
 ring_elem PolyQQ::mult_by_term(const ring_elem f, 
 			       const ring_elem c, const int *m) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return ZERO_RINGELEM;
 }
 
@@ -466,7 +498,9 @@ ArrayPairOrNull PolyQQ::list_form(const Ring *coeffR, const ring_elem f) const
 
 ring_elem PolyQQ::make_flat_term(const ring_elem a, const int *m) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return ZERO_RINGELEM;
 }
 
@@ -500,19 +534,25 @@ ring_elem PolyQQ::make_logical_term(const Ring *coeffR, const ring_elem a, const
 
 ring_elem PolyQQ::lead_flat_coeff(const ring_elem f) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return ZERO_RINGELEM;
 }
 
 ring_elem PolyQQ::lead_logical_coeff(const Ring *coeffR, const ring_elem f) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return ZERO_RINGELEM;
 }
 
 ring_elem PolyQQ::get_coeff(const Ring *coeffR, const ring_elem f, const int *vp) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return ZERO_RINGELEM;
 }
 
@@ -542,7 +582,9 @@ void PolyQQ::lead_logical_exponents(int nvars0, const ring_elem f, int * result_
 
 void PolyQQ::mult_coeff_to(ring_elem a, ring_elem &f) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
 }
 
 void PolyQQ::monomial_divisor(const ring_elem a, int *exp) const 
@@ -552,7 +594,9 @@ void PolyQQ::monomial_divisor(const ring_elem a, int *exp) const
 
 ring_elem PolyQQ::diff(ring_elem a, ring_elem b, int use_coeff) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return ZERO_RINGELEM;
 }
 
@@ -584,25 +628,33 @@ ring_elem PolyQQ::divide_by_expvector(const int *exp, const ring_elem a) const
 
 const vecterm * PolyQQ::vec_locate_lead_term(const FreeModule *F, vec v) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return 0;
 }
 
 vec PolyQQ::vec_lead_term(int nparts, const FreeModule *F, vec v) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return 0;
 }
 
 vec PolyQQ::vec_top_coefficient(const vec v, int &x, int &e) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return 0;
 }
 
 gbvector * PolyQQ::translate_gbvector_from_ringelem(ring_elem coeff) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return 0;
 }
 
@@ -610,13 +662,17 @@ gbvector * PolyQQ::translate_gbvector_from_vec(const FreeModule *F,
 					       const vec v, 
 					       ring_elem &result_denominator) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return 0;
 }
 
 vec PolyQQ::translate_gbvector_to_vec(const FreeModule *F, const gbvector *v) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return 0;
 }
 
@@ -624,7 +680,9 @@ vec PolyQQ::translate_gbvector_to_vec_denom(const FreeModule *F,
 					    const gbvector *v,
 					    const ring_elem denom0) const 
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
   return 0;
 }
 

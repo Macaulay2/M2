@@ -156,7 +156,7 @@ ring_elem PolyRingQuotient::invert(const ring_elem f) const
       RingElement *g1 = RingElement::make_raw(getAmbientRing(),g);
       const RingElement *u1;
       const RingElement *v1;
-      const RingElement *h = rawExtendedGCDRingElement(f1,g1,&u1,&v1);
+      rawExtendedGCDRingElement(f1,g1,&u1,&v1); // ignore return value
       // The gcd should be 1.
       return u1->get_value();
       

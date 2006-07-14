@@ -296,7 +296,7 @@ void F4GB<CoeffRing>::make_matrix()
     process_column(next_col_to_process++);
 
   // DEBUGGING:
-  fprintf(stderr, "--matrix--%u by %u\n", 
+  fprintf(stderr, "--matrix--%ld by %ld\n", 
 	  mat->rows.size(), mat->columns.size());
 
   // Now we reorder the columns, rows?
@@ -420,7 +420,9 @@ enum ComputationStatusCode F4GB<CoeffRing>::computation_is_complete(StopConditio
     return COMP_DONE_SUBRING_LIMIT;
   if (stop_.use_codim_limit)
     {
+#ifdef DEVELOPMENT
 #warning "compute the codimension"
+#endif
       int c = 0; // replace this line
       //int c = codim_of_lead_terms();
       if (c >= stop_.codim_limit)

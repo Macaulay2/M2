@@ -835,7 +835,9 @@ bool SMat<CoeffRing>::set_submatrix(M2_arrayint rows,
 				    M2_arrayint cols,
 				    const MutableMatrix *M)
 {
+#ifdef DEVELOPMENT
 #warning "write set_submatrix"
+#endif
   return false;
   MutableMatrix::iterator *i = M->begin();
 #if 0
@@ -920,7 +922,9 @@ SMat<CoeffRing> * SMat<CoeffRing>::submatrix(M2_arrayint cols) const
 template <typename CoeffRing>
 bool SMat<CoeffRing>::is_equal(const MutableMatrix *B) const
 {
+#ifdef DEVELOPMENT
 #warning "to be written"
+#endif
   return 0;
 }
 
@@ -930,7 +934,9 @@ SMat<CoeffRing> * SMat<CoeffRing>::add(const MutableMatrix *B) const
   // note: can add a sparse + dense
   //       can add a matrix over RR and one over CC and/or one over ZZ.
 {
+#ifdef DEVELOPMENT
 #warning "to be written"
+#endif
   return 0;
 }
 
@@ -940,7 +946,9 @@ SMat<CoeffRing> * SMat<CoeffRing>::subtract(const MutableMatrix *B) const
   // note: can subtract a sparse + dense
   //       can subtract a matrix over RR and one over CC and/or one over ZZ.
 {
+#ifdef DEVELOPMENT
 #warning "to be written"
+#endif
   return 0;
 }
 
@@ -950,7 +958,9 @@ SMat<CoeffRing> * SMat<CoeffRing>::mult(const MutableMatrix *B) const
   // note: can mult a sparse + dense
   //       can mult a matrix over RR and one over CC and/or one over ZZ.
 {
+#ifdef DEVELOPMENT
 #warning "to be written"
+#endif
   return 0;
 }
 
@@ -958,21 +968,28 @@ template <typename CoeffRing>
 SMat<CoeffRing> * SMat<CoeffRing>::mult(const elem &f) const
 // return f*this.  return NULL of sizes or types do not match.
 {
+#ifdef DEVELOPMENT
 #warning "to be written"
+#endif
   return 0;
 }
 
 template <typename CoeffRing>
 SMat<CoeffRing> * SMat<CoeffRing>::negate() const
 {
+#ifdef DEVELOPMENT
 #warning "to be written"
+#endif
   return 0;
 }
 
 template <typename CoeffRing>
 M2_arrayint columnEchelonForm(SMat<CoeffRing> *A)
 {
-  
+#ifdef DEVELOPMENT
+#warning "to be written"
+#endif
+  return 0;
 }
 
 template class SMat<CoefficientRingZZ_NTL>;

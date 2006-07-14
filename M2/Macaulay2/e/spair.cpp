@@ -240,7 +240,9 @@ void s_pair_heap::stats() const
 
 void s_pair_heap::text_out(buffer &o) const
 {
+#ifdef DEVELOPMENT
 #warning "should we display anything in spair text_out, stats?"
+#endif
 }
 
 // Local Variables:

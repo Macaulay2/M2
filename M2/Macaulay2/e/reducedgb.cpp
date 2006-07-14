@@ -67,13 +67,17 @@ const MatrixOrNull *ReducedGB::get_gb()
 
 const MatrixOrNull *ReducedGB::get_mingens()
 {
+#ifdef DEVELOPMENT
 #warning "mingens?"
+#endif
   return 0;
 }
 
 const MatrixOrNull *ReducedGB::get_syzygies()
 {
+#ifdef DEVELOPMENT
 #warning "syzygies?"
+#endif
   return 0;
 }
 
@@ -152,7 +156,9 @@ void ReducedGB::matrix_lift(const Matrix *m,
   MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift());
   MatrixConstructor mat_quotient(Fsyz, m->cols(), 0);
 
+#ifdef DEVELOPMENT
 #warning "K should be the denominator ring?"
+#endif
   const Ring *K = R->get_flattened_coefficients();
   for (int i=0; i<m->n_cols(); i++)
     {

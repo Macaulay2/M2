@@ -286,7 +286,9 @@ gbvector *GBRingSolvable::mult_by_term1(const FreeModule *F,
 				       int comp)
 {
   // Remember: this multiplies w/o regard to any quotient elements
+#ifdef DEVELOPMENT
 #warning "implement GBRingSolvable::mult_by_term"
+#endif
   return 0;
 }
 
@@ -433,7 +435,9 @@ void GBRing::gbvector_weight(const FreeModule *F, const gbvector *f,
 		     int &result_lo,
 		     int &result_hi)
 {
+#ifdef DEVELOPMENT
 #warning "gbvector_weight not implemented"
+#endif
   assert(0);
 }
 
@@ -520,7 +524,9 @@ gbvector * GBRing::gbvector_lead_term(int nparts,
   // If nparts < 0, only take the actual lead term (i.e. one monomial
   // in one component only).
 {
+#ifdef DEVELOPMENT
 #warning "Schreyer order question"
+#endif
   if (v == NULL) return NULL;
   if (nparts < 0)
     {

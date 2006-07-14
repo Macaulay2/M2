@@ -88,7 +88,9 @@ WeylAlgebra *WeylAlgebra::create(const Ring *K,
 
   result->initialize_poly_ring(K,M);
   if (!result->initialize_weyl(derivs,comms,homog_var)) return 0;
+#ifdef DEVELOPMENT
 #warning "hack for ZZ and QQ coeffs in Weyl algebra: clean it up?"
+#endif
   WeylAlgebra *weyl = result;
   if (K->is_QQ())
     {

@@ -781,7 +781,9 @@ RingElementOrNull * GB_comp::compute_hilbert_function() const
   // using also the degrees of _F.
   // Don't forget the quotient monomials too!
   // Returns NULL if interrupted.
+#ifdef DEVELOPMENT
 #warning "not implemented yet"
+#endif
   return NULL;
 }
 

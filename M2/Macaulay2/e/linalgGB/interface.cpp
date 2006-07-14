@@ -91,7 +91,9 @@ vec M2Interface<CoefficientRing>::to_M2_vec(CoefficientRing *K,
 					    poly &f,
 					    const FreeModule *F)
 {
+#ifdef DEVELOPMENT
 #warning "only handles polynomials in one component, assumes polynomials are in order"
+#endif
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
   const Monoid *M = R->getMonoid();
   

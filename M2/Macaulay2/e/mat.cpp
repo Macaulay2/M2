@@ -35,7 +35,9 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
     }
   if (R == globalZZ)
     {
+#ifdef DEVELOPMENT
  #warning "change to NTL mat_ZZ"
+#endif
       if (dense)
 	{
 	  return MutableMat<CoefficientRingZZ_NTL, DMat<CoefficientRingZZ_NTL> >

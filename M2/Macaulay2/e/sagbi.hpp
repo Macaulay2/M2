@@ -3,7 +3,9 @@
 #ifndef _sagbi_hh_
 #define _sagbi_hh_
 
+#ifdef DEVELOPMENT
 #warning "sagbi code commented out"
+#endif
 #if 0
 
 #include "matrix.hpp"

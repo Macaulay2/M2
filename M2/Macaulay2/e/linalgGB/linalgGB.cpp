@@ -272,7 +272,7 @@ void LinAlgGB<CoeffRing>::make_matrix()
     process_column(next_col_to_process++);
 
   // DEBUGGING:
-  fprintf(stderr, "--matrix--%d by %d\n", 
+  fprintf(stderr, "--matrix--%ld by %ld\n", 
 	  mat->rows.size(), mat->columns.size());
   fflush(stderr);
   //  show_row_info();
@@ -716,7 +716,9 @@ enum ComputationStatusCode LinAlgGB<CoeffRing>::computation_is_complete()
     return COMP_DONE_SUBRING_LIMIT;
   if (stop_.use_codim_limit)
     {
+#ifdef DEVELOPMENT
 #warning "compute the codimension"
+#endif
       int c = 0; // replace this line
       //int c = codim_of_lead_terms();
       if (c >= stop_.codim_limit)
@@ -784,7 +786,9 @@ void LinAlgGB<CoeffRing>::start_computation()
 template<typename CoeffRing>
 LinAlgGB<CoeffRing>::~LinAlgGB()
 {
+#ifdef DEVELOPMENT
 #warning "anything to delete?"
+#endif
 }
 
 /*************************

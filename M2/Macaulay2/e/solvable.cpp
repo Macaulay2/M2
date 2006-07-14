@@ -58,7 +58,9 @@ ring_elem SolvableAlgebra::mult_by_term(const ring_elem f,
   // Computes c*m*f, BUT NOT doing normal form wrt a quotient ideal..
 {
   // TODO
+#ifdef DEVELOPMENT
 #warning "implement SolvableAlgebra::mult_by_term"
+#endif
   return ZERO_RINGELEM;
 }
 

@@ -257,7 +257,9 @@ int IM2_Resolution_status(Computation *C,
 			  int * complete_up_through_this_degree,
 			  int * complete_up_through_this_level)
 {
+#ifdef DEVELOPMENT
 #warning "IM2_Resolution_status to be written"
+#endif
   ERROR("not re-implemented yet");
   return -1;
 }
@@ -269,7 +271,9 @@ IM2_Resolution_status_level(Computation *C,
 		    M2_bool minimize,
 		    int * complete_up_through_this_degree)
 {
+#ifdef DEVELOPMENT
 #warning "IM2_Resolution_status to be written"
+#endif
   ERROR("not re-implemented yet");
   return COMP_ERROR;
 #if 0

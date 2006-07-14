@@ -71,7 +71,9 @@ ring_elem Ring::var(int v) const
 ring_elem Ring::power(const ring_elem ff, mpz_t m) const
 {
   // The exponent 'm' should be > 0 here.
+#ifdef DEVELOPMENT
 #warning "error check: m >= 0"
+#endif
   mpz_t n;
   mpz_init_set(n, m);
   ring_elem prod = from_int(1);
@@ -101,7 +103,9 @@ ring_elem Ring::power(const ring_elem ff, mpz_t m) const
 
 ring_elem Ring::power(const ring_elem ff, int n) const
 {
+#ifdef DEVELOPMENT
 #warning "error check: n >= 0"
+#endif
   // The exponent 'n' should be > 0 here.
   ring_elem prod = from_int(1);
   ring_elem base = copy(ff);
@@ -176,19 +180,25 @@ ring_elem Ring::from_double(double a) const
 
 ring_elem Ring::from_BigReal(mpf_ptr a) const
 {
+#ifdef DEVELOPMENT
 #warning "not implemented yet"
+#endif
   return from_int(0);
 }
 
 ring_elem Ring::from_BigComplex(M2_CCC z) const
 {
+#ifdef DEVELOPMENT
 #warning "not implemented yet"
+#endif
   return from_int(0);
 }
 
 ring_elem Ring::from_complex(M2_CC z) const
 {
+#ifdef DEVELOPMENT
 #warning "not implemented yet"
+#endif
   return from_int(0);
 }
 

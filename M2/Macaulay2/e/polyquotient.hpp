@@ -238,7 +238,9 @@ public:
   }
 
   virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const {
+#ifdef DEVELOPMENT
 #warning "diff for quotient rings: should do what?"
+#endif
     return numerR_->PolyRing::diff(a,b,use_coeff);
   }
 
@@ -269,7 +271,9 @@ public:
   }
 
   virtual vec vec_top_coefficient(const vec v, int &x, int &e) const {
+#ifdef DEVELOPMENT
 #warning "vec_top_coefficient not implemented for quotient rings"
+#endif
     return 0;
   }
 

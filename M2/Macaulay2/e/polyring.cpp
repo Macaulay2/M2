@@ -2092,7 +2092,9 @@ vec PolyRing::translate_gbvector_to_vec_QQ(const FreeModule *F,
 					   const gbvector *v,
 					   const ring_elem denom) const
 {
+#ifdef DEVELOPMENT
 #warning "is this too inefficient?"
+#endif
   GBRing *GR = get_gb_ring();
   vecHeap H(F);
 

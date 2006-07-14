@@ -314,7 +314,9 @@ int buchberger_moeller_keep(const_varpower_monomial m,
      /* Returns 1 iff either (a) m does not divide pq,
 	or (b) m does divide pq, and lcm(m,p) == lcm(m,q) */
 {
+#ifdef DEVELOPMENT
 #warning "buchberger-moeller still to write"
+#endif
   return 0;
 }
 
