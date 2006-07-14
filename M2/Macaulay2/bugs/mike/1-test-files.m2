@@ -21,6 +21,10 @@ skewmonideal.m2   -- MES: squares appear
 sortcols.m2       -- MES: what should sorting be for ZZ?  Should we always look at coeff for sorting?
 subst3.m2         -- MES: galois ringmap bug
 
+engine/LU.m2
+engine/raw-decompose.m2
+engine/raw.m2
+
 -- New errors since this afternoon:
 inhom.m2
 
@@ -29,3 +33,5 @@ gb3.m2            -- GB bug?
 gbZZbug4.m2       -- GB bug?
 intersect.m2      -- GB bug?
 localgb.m2
+
+-- make check
