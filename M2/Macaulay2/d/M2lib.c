@@ -465,6 +465,11 @@ char **argv;
 
      system_stime();
 
+     if (__gmp_allocate_func != (void *(*) (size_t))getmem) {
+	  fprintf(stderr,"--warning: possible memory leak, gmp allocator not set up properly, resetting\n");
+	  enterM2();
+     }
+
      if (!gotArg("--int", saveargv))
      {
        signal(SIGINT,interrupt_handler);
