@@ -1,16 +1,17 @@
-gbTrace = 0
+gbTrace = 3
 R = QQ [x, y, MonomialOrder => Position => Up]
 scan(1000, i -> (
 	  f := substitute (random(R^10, R^{10:-2}),y=>1);
 	  g := gens gb(f);
 	  h := gens gb(g);
 	  k := gens gb(h);
+	  if i % 10 == 0 then collectGarbage();
 	  ))
 
 	  h := time ultimate(g -> map(R^(rank g), R^(rank g), gens gb transpose g), f);
 	  collectGarbage()
 	  ))
-
+end
 -- finalization bug
 R = ZZ/101[a..d]
 dogb = () -> (
