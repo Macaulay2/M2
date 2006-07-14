@@ -13,6 +13,13 @@
 
 #define sizeofgbvector(s,len) (sizeof(*s) - sizeof(s->monom) + (len)*sizeof(s->monom[0]))
 
+void GBRing::memstats() 
+{ 
+  buffer o; 
+  mem->stats(o); 
+  emit(o.str()); 
+}
+
 static void mult_monomials(int len, const_monomial m, const_monomial n, monomial result)
 {
   for (int i=len; i>0; --i)
