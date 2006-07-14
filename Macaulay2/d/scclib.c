@@ -698,7 +698,7 @@ int fd;
 
 static const char *hostname_error_message;
 
-#if HAVE_GETADDRINFO
+#if HAVE_GETADDRINFO && GETADDRINFO_WORKS
 static int set_addrinfo(struct addrinfo **addr, struct addrinfo *hints, char *hostname, char *service) {
      int ret;
      ret = getaddrinfo(hostname, service, NULL, addr);
@@ -707,7 +707,7 @@ static int set_addrinfo(struct addrinfo **addr, struct addrinfo *hints, char *ho
 }
 #endif
 
-#if !HAVE_GETADDRINFO
+#if !(HAVE_GETADDRINFO && GETADDRINFO_WORKS)
 int host_address(name)
 char *name;
 {
@@ -787,7 +787,7 @@ int system_acceptNonblocking(int so) {
 
 int openlistener(char *service) {
 #if HAVE_SOCKET
-#if HAVE_GETADDRINFO
+#if HAVE_GETADDRINFO && GETADDRINFO_WORKS
   struct addrinfo *addr;
   static struct addrinfo hints;
   int so;
@@ -817,7 +817,7 @@ int openlistener(char *service) {
 
 int opensocket(char *host, char *service) {
 #if HAVE_SOCKET
-#if HAVE_GETADDRINFO
+#if HAVE_GETADDRINFO && GETADDRINFO_WORKS
   struct addrinfo *addr;
   int so;
   if (0 != set_addrinfo(&addr,NULL,host,service)) return ERROR;
