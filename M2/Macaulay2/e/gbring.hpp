@@ -162,7 +162,7 @@ public:
   const Ring * get_flattened_coefficients() const { return K; }
   int n_vars() const { return _nvars; }
 
-  void memstats(buffer &o) { mem->stats(o); }
+  void memstats();
 
   //////////////////////
   // Ring information //

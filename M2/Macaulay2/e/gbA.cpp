@@ -2284,9 +2284,7 @@ void gbA::start_computation()
   do_computation();
 
   // debugging
-  //  buffer o;
-  //  R->memstats(o);
-  //  emit(o.str());
+  // R->memstats();
 
   return;
   int npairs;

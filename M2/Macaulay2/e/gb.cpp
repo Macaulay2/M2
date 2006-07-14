@@ -946,9 +946,7 @@ void GB_comp::start_computation()
       emit(o.str());
     }
 
-      buffer o;
-      _GR->memstats(o);
-      emit(o.str());
+  // _GR->memstats();
   set_status(is_done);
 }
 

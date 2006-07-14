@@ -18,7 +18,7 @@ leadTerm gens gb M
 N1 = substitute(N,R)
 gens gb N1
 LLL gens gb N -- kill internal debug message
-LLL N1 -- check that the ring is correct! This is a CRASH
+try LLL N1 else true -- check that the ring is correct! This used to be a CRASH
 S = QQ[x]
 N2 = substitute(N,S)
 gens gb N2
@@ -42,12 +42,13 @@ S = QQ[x,MonomialOrder=>Position=>Up]
 M2 = substitute(M,S);
 time gens gb M2;
 
+T = ZZ[MonomialOrder=>Position=>Up]
 M2 = substitute(M,T);
 time gens gb M2;
 
 -- The GB over ZZ code is much better
 M = random(ZZ^70, ZZ^40);
-time gens gb M;
+-- time gens gb M; -- This one is very bad...
 T = ZZ[x,MonomialOrder=>Position=>Up]
 M1 = substitute(M,T);
 gbM1 = time gens gb M1;
