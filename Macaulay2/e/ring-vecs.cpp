@@ -1016,7 +1016,9 @@ bool Ring::vec_is_scalar_multiple(vec f, vec g) const
   const PolynomialRing *PR = cast_to_PolynomialRing();
   if (PR == 0) return true;
   const PolyRing *PR1 = PR->getNumeratorRing();
+#ifdef DEVELOPMENT
 #warning "use numerator only"
+#endif
   if (f->comp != g->comp) return false;
   Nterm *f1 = f->coeff;
   Nterm *g1 = g->coeff;

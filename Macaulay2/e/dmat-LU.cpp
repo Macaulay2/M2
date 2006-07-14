@@ -434,7 +434,9 @@ M2_arrayint  DMatLU<CoeffRing>::LU_one_step(DMat<CoeffRing> *A, // col-th column
 {
   // First we create the perm structure as expected by LU_step above, set pivotcol,
   // call that routine, and then retranslate the permutation array.
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
 }
 
 template <typename CoeffRing>
@@ -533,7 +535,9 @@ void DMatLU<CoeffRing>::kernel1(DMat<CoeffRing> *A, // in LU format
 			       DMat<CoeffRing> *result) // replaces this with a matrix whose
                                           // columns form the kernel of the original A.
 {
+#ifdef DEVELOPMENT
 #warning "write 'kernel'"
+#endif
 }
 
 template <typename CoeffRing>
@@ -550,14 +554,18 @@ void DMatLU<CoeffRing>::kernel(DMat<CoeffRing> *LU, // in LU format
 		    DMat<CoeffRing> *result) // replaces this with a matrix whose
                                               // columns form the kernel of the original A.
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
 }
 
 
 template <typename CoeffRing>
 typename CoeffRing::elem DMatLU<CoeffRing>::determinant(DMat<CoeffRing> *LU)
 {
+#ifdef DEVELOPMENT
 #warning "write this"
+#endif
 }
 #endif
 

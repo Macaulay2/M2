@@ -66,7 +66,9 @@ const RingElementOrNull * IM2_Matrix_get_entry(const Matrix *M, int r, int c)
 const Matrix * IM2_Matrix_identity(const FreeModule *F,
 				   int preference)
 {
+#ifdef DEVELOPMENT
 #warning prefer_dense not yet used
+#endif
   return Matrix::identity(F);
 }
 
@@ -74,7 +76,9 @@ const MatrixOrNull * IM2_Matrix_zero(const FreeModule *F,
 				     const FreeModule *G,
 				     int preference)
 {
+#ifdef DEVELOPMENT
 #warning prefer_dense not yet used
+#endif
   return Matrix::zero(F,G);
 }
 
@@ -84,7 +88,9 @@ const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
 				      const RingElement_array *M,
 				      int preference)
 {
+#ifdef DEVELOPMENT
 #warning prefer_dense not yet used
+#endif
   return Matrix::make(target, ncols, M);
 }
 
@@ -94,7 +100,9 @@ const MatrixOrNull * IM2_Matrix_make2(const FreeModule *target,
 				      const RingElement_array *M,
 				      int preference)
 {
+#ifdef DEVELOPMENT
 #warning prefer_dense not yet used
+#endif
   return Matrix::make(target, source, deg, M);
 }
 
@@ -105,7 +113,9 @@ const MatrixOrNull * IM2_Matrix_make_sparse1(const FreeModule *target,
 					     const RingElement_array *entries,
 					     int preference)
 {
+#ifdef DEVELOPMENT
 #warning prefer_dense not yet used
+#endif
   return Matrix::make_sparse(target, ncols, rows, cols, entries);
 }
   
@@ -117,14 +127,18 @@ const MatrixOrNull * IM2_Matrix_make_sparse2(const FreeModule *target,
 					     const RingElement_array *entries,
 					     int preference)
 {
+#ifdef DEVELOPMENT
 #warning prefer_dense not yet used
+#endif
   return Matrix::make_sparse(target, source, deg, rows, cols, entries);
 }
 
 M2_bool IM2_Matrix_is_implemented_as_dense(const Matrix *M)
   /* Is the matrix M implemented as dense? */
 {
+#ifdef DEVELOPMENT
 #warning not implemented yet
+#endif
   return 0;
 }
 
@@ -138,7 +152,9 @@ const MatrixOrNull * IM2_Matrix_remake2(const FreeModule *target,
      the expected rank. 
   */
 {
+#ifdef DEVELOPMENT
 #warning prefer_dense not yet used
+#endif
   return M->remake(target, source, deg);
 }
 
@@ -151,7 +167,9 @@ const MatrixOrNull * IM2_Matrix_remake1(const FreeModule *target,
      columns of the matrix.
   */
 {
+#ifdef DEVELOPMENT
 #warning prefer_dense not yet used
+#endif
   return M->remake(target);
 }
 
@@ -161,7 +179,9 @@ MatrixOrNull *IM2_Matrix_random(const Ring *R,
 				int special_type, // 0: general, 1:upper triangular, others?
 				int preference)
 {
+#ifdef DEVELOPMENT
 #warning preference not yet used
+#endif
   return Matrix::random(R,r,c,fraction_non_zero,special_type);
 }
 
@@ -345,7 +365,9 @@ rawKoszulMonomials(int nskew,
 		     const Matrix *M,
 		     const Matrix *N)
 {
+#ifdef DEVELOPMENT
 #warning "check with 0.9.2 about what this should even do"
+#endif
   if (M->get_ring() != N->get_ring())
     {
       ERROR("expected same ring");
@@ -419,7 +441,9 @@ const MatrixOrNull * IM2_Matrix_homogenize(const Matrix *M,
 
 const Matrix_pair_OrNull * IM2_Matrix_coeffs(const Matrix *M, M2_arrayint vars)
 {
+#ifdef DEVELOPMENT
 #warning "implement IM2_Matrix_coeffs"
+#endif
   return 0;
 }
 
@@ -522,7 +546,9 @@ const Matrix * rawRemoveScalarMultiples(const Matrix *m)
 }
 
 const MatrixOrNull *IM2_Matrix_remove_content(const Matrix *M) {
+#ifdef DEVELOPMENT
 #warning "const MatrixOrNull * IM2_Matrix_remove_content(const Matrix *M) -- not implemented yet"
+#endif
      return NULL;
 }
 

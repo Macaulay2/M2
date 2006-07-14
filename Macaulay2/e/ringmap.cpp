@@ -53,7 +53,9 @@ RingMap::RingMap(const Matrix *m)
 	}
       else {
 	// A polynomial ring.
+#ifdef DEVELOPMENT
 #warning "also handle fraction rings"
+#endif
 	Nterm *t = f;
 	if (t->next == NULL)
 	  {

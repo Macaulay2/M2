@@ -92,7 +92,9 @@ bool SchurRing::initialize_schur()
 SchurRing * SchurRing::create(const PolynomialRing *R)
 {
   SchurRing *result = new SchurRing;
+#ifdef DEVELOPMENT
 #warning "Schur rings have a problem with flattened monoids"
+#endif
   result->initialize_poly_ring(R->getCoefficients(),
 			       R->getMonoid());
   if (!result->initialize_schur()) return 0;

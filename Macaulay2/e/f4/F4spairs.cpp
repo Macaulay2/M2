@@ -11,7 +11,9 @@ F4SPairSet::F4SPairSet(MonomialSet *H0)
 
 F4SPairSet::~F4SPairSet()
 {
+#ifdef DEVELOPMENT
 #warning "write deallocator"
+#endif
   // Remove the spairs
   // TO BE WRITTEN
 }
@@ -54,7 +56,9 @@ int F4SPairSet::remove_unneeded_pairs()
   // and do so.  Return the number removed.
 
   // Check the ones in this_set?
+#ifdef DEVELOPMENT
 #warning "unneeded pairs"
+#endif
   return 0;
 }
 

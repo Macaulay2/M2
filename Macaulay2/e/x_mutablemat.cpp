@@ -659,14 +659,18 @@ M2_bool rawLLL(MutableMatrix *M,
 
 M2_bool IM2_SmithNormalForm(MutableMatrix *M)
 {
+#ifdef DEVELOPMENT
 #warning "implement smith"
+#endif
   ERROR("not implemented yet");
   return 0;
 }
 
 M2_bool IM2_HermiteNormalForm(MutableMatrix *M)
 {
+#ifdef DEVELOPMENT
 #warning "implement hermite"
+#endif
   ERROR("not implemented yet");
   return 0;
 }

@@ -527,7 +527,9 @@ bool DMat<CoeffRing>::set_submatrix(M2_arrayint rows,
 				    const MutableMatrix *M)
 {
   MutableMatrix::iterator *i = M->begin();
+#ifdef DEVELOPMENT
 #warning "set_submatrix"
+#endif
 #if 0
   elem *first = array_ + first_row + nrows_ * first_col;
   long ncols = M->n_cols();
@@ -626,11 +628,13 @@ DMat<CoeffRing> * DMat<CoeffRing>::add(const MutableMatrix *B) const
   // note: can add a sparse + dense
   //       can add a matrix over RR and one over CC and/or one over ZZ.
 {
+#ifdef DEVELOPMENT
   DMat<CoeffRing> *result = copy();
   for (long c=0; c<B->n_cols(); c++)
     {
     }
 #warning "to be written"
+#endif
   return 0;
 }
 
@@ -640,7 +644,9 @@ DMat<CoeffRing> * DMat<CoeffRing>::subtract(const MutableMatrix *B) const
   // note: can subtract a sparse + dense
   //       can subtract a matrix over RR and one over CC and/or one over ZZ.
 {
+#ifdef DEVELOPMENT
 #warning "to be written"
+#endif
   return 0;
 }
 
@@ -650,7 +656,9 @@ DMat<CoeffRing> * DMat<CoeffRing>::mult(const MutableMatrix *B) const
   // note: can mult a sparse + dense
   //       can mult a matrix over RR and one over CC and/or one over ZZ.
 {
+#ifdef DEVELOPMENT
 #warning "to be written"
+#endif
   return 0;
 }
 
@@ -658,7 +666,9 @@ template <typename CoeffRing>
 DMat<CoeffRing> * DMat<CoeffRing>::mult(const elem &f) const
 // return f*this.  return NULL of sizes or types do not match.
 {
+#ifdef DEVELOPMENT
 #warning "to be written"
+#endif
   return 0;
 }
 

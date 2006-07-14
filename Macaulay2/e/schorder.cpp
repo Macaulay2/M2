@@ -62,7 +62,9 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
 
 SchreyerOrder *SchreyerOrder::create(const GBMatrix *m)
 {
+#ifdef DEVELOPMENT
 #warning "the logic in SchreyerOrder creation is WRONG!"
+#endif
   int i;
   const FreeModule *F = m->get_free_module();
   const Ring *R = F->get_ring();
@@ -95,7 +97,9 @@ SchreyerOrder *SchreyerOrder::create(const GBMatrix *m)
 	M->one(base);
       else //if (S == NULL)
 	M->copy(v->monom, base);
+#ifdef DEVELOPMENT
 #warning "Schreyer unencoded case not handled here"
+#endif
 #if 0
       else
 	M->mult(v->monom, S->base_monom(i), base);

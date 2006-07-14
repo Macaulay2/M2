@@ -324,7 +324,9 @@ void GBinhom_comp::find_pairs(gb_elem *p)
     }
 
   // Add in syzygies arising from a base ring
+#ifdef DEVELOPMENT
 #warning "quotient ring stuff"
+#endif
   if (originalR->is_quotient_ring())
     {
       for (int i=0; i<originalR->n_quotients(); i++)
@@ -493,7 +495,9 @@ int GBinhom_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
   while (f != NULL)
     {
       GR->gbvector_get_lead_exponents(F, f, div_totalexp);
+#ifdef DEVELOPMENT
 #warning "quotient ring stuff"
+#endif
       Bag *b;
       if (originalR->is_quotient_ring() 
 	  && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
@@ -549,7 +553,9 @@ int GBinhom_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
   while ((lead = fb.get_lead_term()) != NULL)
     {
       GR->gbvector_get_lead_exponents(F, lead, div_totalexp);
+#ifdef DEVELOPMENT
 #warning "quotient ring stuff"
+#endif
       Bag *b;
       if (originalR->is_quotient_ring()
 	  && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
@@ -891,7 +897,9 @@ int GBinhom_comp::contains(const Matrix *m)
 int GBinhom_comp::complete_thru_degree() const
   // The computation is complete up through this degree.
 {
+#ifdef DEVELOPMENT
 #warning "not set"
+#endif
   return 0;
 }
 
@@ -932,7 +940,9 @@ const MatrixOrNull *GBinhom_comp::get_change()
 
 const MatrixOrNull *GBinhom_comp::get_syzygies()
 {
+#ifdef DEVELOPMENT
 #warning "this is not correct: this grabs the vectors, and so can't be called twice"
+#endif
   return syz.to_matrix();
 }
 

@@ -217,7 +217,9 @@ const RingOrNull *IM2_Ring_localization(const Ring *R, const Matrix *Prime)
   return P->create_FractionRing(Prime);
 #endif
   /* TODO */
+#ifdef DEVELOPMENT
 #warning "implement IM2_Ring_localization"
+#endif
   return 0;
 }
 
@@ -502,7 +504,9 @@ const RingElementOrNull *IM2_RingElement_div(const RingElement *a,
   // What is this exactly??
   return (*a) / (*b);
 
+#ifdef DEVELOPMENT
 #warning "after Dan changes // in the front end to use GB's, comment out the previous line"
+#endif
   const Ring *R = a->get_ring();
   if (R != b->get_ring())
     {

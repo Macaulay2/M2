@@ -187,7 +187,9 @@ const MatrixOrNull * Matrix::make_sparse(const FreeModule *target,
 					 M2_arrayint cols,
 					 const RingElement_array *entries)
 {
+#ifdef DEVELOPMENT
 #warning "check that all rings are correct, give error otherwise"
+#endif
   const Ring *R = target->get_ring();
   int *degshift = R->degree_monoid()->make_one();
   R->degree_monoid()->from_expvector(deg->array, degshift);
@@ -703,7 +705,9 @@ Matrix *Matrix::random(const Ring *R,
   // Loop through all selected elements, flip a 'fraction_non_zero' coin, and if non-zero
   // set that element.
 
+#ifdef DEVELOPMENT
 #warning "fraction_non_zero not yet used"  
+#endif
 
   if (fraction_non_zero != 1.0)
     {
@@ -1115,7 +1119,6 @@ MatrixOrNull *Matrix::koszul_monomials(int nskew, const Matrix *r, const Matrix 
   for (int j=0; j<nskew; j++)
     skew_list[j] = j;
   SkewMultiplication skew(nvars, nskew, skew_list);
-  int nrows = r->n_cols();
   int ncols = c->n_cols();
   const int *a; // a monomial
 
@@ -1612,7 +1615,9 @@ static void get_part_of_expvector(M2_arrayint vars,
 static vec coeffs_of_vec(exponent_table *E, M2_arrayint vars,
 			 const FreeModule *F, vec f)
     // private routine for 'coeffs'.
+#ifdef DEVELOPMENT
 #warning "coeffs_of_vec should maybe be in PolynomialRing"
+#endif
 {
   if (f == NULL) return 0;
   const PolynomialRing *P = F->get_ring()->cast_to_PolynomialRing();

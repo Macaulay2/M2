@@ -8,6 +8,10 @@ Gausser::Gausser(const Ring *K)
 
 F4CoefficientArray Gausser::from_ringelem_array(int len, ring_elem *elems) const
 {
+#ifdef DEVELOPMENT
+#warning "to be written"
+#endif
+  return 0;
 }
 
 void Gausser::to_ringelem_array(int len, F4CoefficientArray, ring_elem *result) const
