@@ -187,7 +187,7 @@ gbA::spair *gbA::new_gen(int i, gbvector *f, ring_elem denom)
 void gbA::remove_gb()
 {
   // removes all allocated objects
-  for (int i=0; i<gb.size(); i++)
+  for (int i=first_gb_element; i<gb.size(); i++)
     {
       R->gbvector_remove(gb[i]->g.f);
       R->gbvector_remove(gb[i]->g.fsyz);
