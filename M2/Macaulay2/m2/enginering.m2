@@ -88,6 +88,9 @@ commonRingInitializations = (F) -> (
      )
 
 commonEngineRingInitializations = (F) -> (
+     if debugLevel > 5 then (
+	  registerFinalizer(F,"ring");
+	  );
      commonRingInitializations F;
      F ? F := (f,g) -> raw f ? raw g;
      baserings := F.baseRings;
