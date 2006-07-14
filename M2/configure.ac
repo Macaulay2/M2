@@ -197,7 +197,11 @@ then case "$OS" in
 	 Linux|SunOS) DUMPDATA=yes;;
 	 *) DUMPDATA=no;;
      esac
-     AC_MSG_NOTICE([default dumpdata option for $OS operating system used: $DUMPDATA])
+     AC_MSG_NOTICE([default dumpdata option for $OS operating system used, value: $DUMPDATA])
+else case "$DUMPDATA" in
+         yes|no) ;;
+	 *) AC_MSG_ERROR([dumpdata option: invalid value: $DUMPDATA])
+     esac
 fi
 
 test "$COMPRESS" != "gz" -a "$COMPRESS" != "bz2" && AC_MSG_ERROR(unrecognized option for enable-compress)
@@ -327,6 +331,20 @@ AC_LINK_IFELSE([
     ],
     AC_MSG_RESULT(yes),
     AC_MSG_RESULT(no);AC_MSG_ERROR([missing library: gdbm]))
+
+AC_MSG_CHECKING([whether getaddrinfo can handle numeric service (port) numbers])
+LIBS="$SAVELIBS"
+AC_LANG(C)
+AC_RUN_IFELSE([
+    #include <sys/types.h>
+    #include <sys/socket.h>
+    #include <netdb.h>
+    main() { struct addrinfo *addr; return 0 != getaddrinfo("1.2.3.4", "80", 0, &addr); }
+    ],
+    GETADDRINFO_WORKS=1;AC_MSG_RESULT(yes),
+    GETADDRINFO_WORKS=0;AC_MSG_RESULT(no),
+    AC_MSG_RESULT([yes (cross-compiling, not tested)]))
+AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,$GETADDRINFO_WORKS,[whether getaddrinfo can handle numeric service (port) numbers])
 
 NTLLIB=-lntl
 AC_SUBST(NTLLIB)
