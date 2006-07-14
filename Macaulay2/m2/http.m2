@@ -36,11 +36,11 @@ getpost := (host,url,body,connection) -> (
 
 protocols := {
      ("http://" , (host,port,url,body) -> getpost(host, url, body, (
-		    "$" | host | ":" | (if port =!= null then port else "80")
+		    "$" | host | ":" | (if port =!= null then port else "http")
 		    ))),
      ("https://", (host,port,url,body) -> getpost(host, url, body, (
 	       	    "!openssl s_client -quiet -verify 1 -CApath ~/.w3/certs/" |
-	       	    " -host " | host | " -port " | (if port =!= null then port else "443")
+	       	    " -host " | host | " -port " | (if port =!= null then port else "https")
 	       	    )))
      }
 
