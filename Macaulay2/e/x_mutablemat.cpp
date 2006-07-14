@@ -572,6 +572,8 @@ MutableMatrixOrNull * IM2_MutableMatrix_add(const MutableMatrix *M, const Mutabl
    of the result is set to have each degree zero.  Similarly with the
    source, and also with the degree of the matrix. */
 {
+  ERROR("not implemented for mutable matrices");
+  return 0;
   return M->add(N);
 }
 
@@ -581,6 +583,8 @@ MutableMatrixOrNull * IM2_MutableMatrix_subtract(const MutableMatrix *M, const M
    of the result is set to have each degree zero.  Similarly with the
    source, and also with the degree of the matrix. */
 {
+  ERROR("not implemented for mutable matrices");
+  return 0;
   return M->subtract(N);
 }
 
@@ -596,6 +600,8 @@ MutableMatrixOrNull * IM2_MutableMatrix_mult(const MutableMatrix *M,
    the multiplication is performed, and the source and target are taken from N,M
    respectively.  The degree of the result is the sum of the two degrees */
 {
+  ERROR("not implemented for mutable matrices");
+  return 0;
   return M->mult(N);
 }
 
