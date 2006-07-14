@@ -126,6 +126,9 @@ elseSomething(Nothing,Function) := (x,f) -> f()
 
 newGB := (f,type,opts) -> (
      G := new GroebnerBasis;
+     if debugLevel > 5 then (
+	  registerFinalizer(G,"gb (newGB)");
+	  );
      G.matrix = Bag{f};
      G.ring = ring f;
      G.target = target f;
@@ -216,6 +219,9 @@ forceGB Matrix := GroebnerBasis => options -> (f) -> (
 					       ChangeMatrix => options.ChangeMatrix =!= null, 
 					       HardDegreeLimit => null };
      g := new GroebnerBasis;
+     if debugLevel > 5 then (
+	  registerFinalizer(g,"gb (forceGB)");
+	  );
      g.matrix = Bag {f};
      g.ring = ring f;
      g.target = target f;
