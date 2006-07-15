@@ -1,0 +1,172 @@
+Date: Sat, 15 Jul 2006 18:02:47 -0500 (CDT)
+From: Bart Snapp <snapp@math.uiuc.edu>
+To: Dan Grayson <dan@math.uiuc.edu>
+Subject: Re: M2
+In-Reply-To: <200607152300.k6FN0Jw19908@u00.math.uiuc.edu>
+
+Ok,
+
+
+(gdb) run
+Starting program: /home/snapp/Macaulay2-0.9.20/bin/M2
+(no debugging symbols found)
+(no debugging symbols found)
+(no debugging symbols found)
+(no debugging symbols found)
+(no debugging symbols found)
+
+Program received signal SIGILL, Illegal instruction.
+0x083b3472 in error ()
+(gdb)
+
+Bart Snapp ======================================
+Office: 123 Altgeld Hall
+Email: snapp@math.uiuc.edu
+URL: http://www.math.uiuc.edu/~snapp/
+University of Illinois at Urbana-Champaign
+=================================================
+
+-----------------------------------------------------------------------------
+Date: Sat, 15 Jul 2006 18:10:53 -0500 (CDT)
+From: Bart Snapp <snapp@math.uiuc.edu>
+To: Dan Grayson <dan@math.uiuc.edu>
+cc: <mike@math.cornell.edu>
+Subject: Re: M2
+In-Reply-To: <200607152240.k6FMexs19809@u00.math.uiuc.edu>
+
+
+
+(gdb) x/40x $pc
+0x83b3472 <error+2808146>:      0x0fcafb0f      0x7e0fc8fb      0x730f8a0c   0xc1833fd1
+0x83b3482 <error+2808162>:      0x0f257401      0x0f88046e      0x0f8b146e   0xfb0fc2fb
+0x83b3492 <error+2808178>:      0x047e0fc1      0xd0730f8a      0x01c1833f   0x7e0fca75
+0x83b34a2 <error+2808194>:      0x245c8bc0      0xc3770f08      0x8bc87e0f   0x0f08245c
+0x83b34b2 <error+2808210>:      0x9090c377      0x90909090      0x90909090   0x6e0f9090
+0x83b34c2 <error+2808226>:      0xeb142444      0xc0ef0f03      0x0824448b   0x247c6e0f
+0x83b34d2 <error+2808242>:      0x24548b10      0x244c8b04      0x086e0f0c   0x0f04c083
+0x83b34e2 <error+2808258>:      0xd40fcff4      0x027e0fc1      0x0f04c283   0x8320d073
+0x83b34f2 <error+2808274>:      0xe57501e9      0x0fc07e0f      0x9090c377   0x6e0f9090
+0x83b3502 <error+2808290>:      0xeb142464      0xe4ef0f03      0x0824448b   0x0c244c8b
+
+-----------------------------------------------------------------------------
+
+Date: Sat, 15 Jul 2006 18:09:33 -0500 (CDT)
+From: Bart Snapp <snapp@math.uiuc.edu>
+To: Dan Grayson <dan@math.uiuc.edu>
+Subject: Re: M2
+In-Reply-To: <200607152300.k6FN0Jw19908@u00.math.uiuc.edu>
+
+Ok
+
+$1 = (void (*)()) 0x83b3472 <error+2808146>
+(gdb) x/100i $pc-100
+0x83b340e <error+2808046>:      adc    %cl,0x1c8d8804(%ebp)
+0x83b3414 <error+2808052>:      mov    0xd9f78a14(%ebp),%ecx
+0x83b341a <error+2808058>:      movd   (%eax,%ecx,4),%mm1
+0x83b341e <error+2808062>:      movd   (%ebx,%ecx,4),%mm2
+0x83b3422 <error+2808066>:      paddq  %mm2,%mm1
+0x83b3425 <error+2808069>:      paddq  %mm1,%mm0
+0x83b3428 <error+2808072>:      movd   %mm0,(%edx,%ecx,4)
+0x83b342c <error+2808076>:      psrlq  $0x20,%mm0
+0x83b3430 <error+2808080>:      add    $0x1,%ecx
+0x83b3433 <error+2808083>:      jne    0x83b341a <error+2808058>
+0x83b3435 <error+2808085>:      movd   %mm0,%eax
+0x83b3438 <error+2808088>:      mov    0x8(%esp),%ebx
+0x83b343c <error+2808092>:      emms
+0x83b343e <error+2808094>:      ret
+0x83b343f <error+2808095>:      nop
+0x83b3440 <error+2808096>:      movd   0x14(%esp),%mm0
+0x83b3445 <error+2808101>:      jmp    0x83b344b <error+2808107>
+0x83b3447 <error+2808103>:      nop
+0x83b3448 <error+2808104>:      pxor   %mm0,%mm0
+0x83b344b <error+2808107>:      mov    0x8(%esp),%eax
+0x83b344f <error+2808111>:      mov    %ebx,0x8(%esp)
+0x83b3453 <error+2808115>:      mov    0xc(%esp),%ebx
+0x83b3457 <error+2808119>:      mov    0x4(%esp),%edx
+---Type <return> to continue, or q <return> to quit---
+0x83b345b <error+2808123>:      mov    0x10(%esp),%ecx
+0x83b345f <error+2808127>:      lea    (%eax,%ecx,4),%eax
+0x83b3462 <error+2808130>:      lea    (%ebx,%ecx,4),%ebx
+0x83b3465 <error+2808133>:      lea    (%edx,%ecx,4),%edx
+0x83b3468 <error+2808136>:      neg    %ecx
+0x83b346a <error+2808138>:      movd   (%eax,%ecx,4),%mm1
+0x83b346e <error+2808142>:      movd   (%ebx,%ecx,4),%mm2
+0x83b3472 <error+2808146>:      psubq  %mm2,%mm1
+0x83b3475 <error+2808149>:      psubq  %mm0,%mm1
+0x83b3478 <error+2808152>:      movd   %mm1,(%edx,%ecx,4)
+0x83b347c <error+2808156>:      psrlq  $0x3f,%mm1
+0x83b3480 <error+2808160>:      add    $0x1,%ecx
+0x83b3483 <error+2808163>:      je     0x83b34aa <error+2808202>
+0x83b3485 <error+2808165>:      movd   (%eax,%ecx,4),%mm0
+0x83b3489 <error+2808169>:      movd   (%ebx,%ecx,4),%mm2
+0x83b348d <error+2808173>:      psubq  %mm2,%mm0
+0x83b3490 <error+2808176>:      psubq  %mm1,%mm0
+0x83b3493 <error+2808179>:      movd   %mm0,(%edx,%ecx,4)
+0x83b3497 <error+2808183>:      psrlq  $0x3f,%mm0
+0x83b349b <error+2808187>:      add    $0x1,%ecx
+0x83b349e <error+2808190>:      jne    0x83b346a <error+2808138>
+0x83b34a0 <error+2808192>:      movd   %mm0,%eax
+0x83b34a3 <error+2808195>:      mov    0x8(%esp),%ebx
+---Type <return> to continue, or q <return> to quit---
+0x83b34a7 <error+2808199>:      emms
+0x83b34a9 <error+2808201>:      ret
+0x83b34aa <error+2808202>:      movd   %mm1,%eax
+0x83b34ad <error+2808205>:      mov    0x8(%esp),%ebx
+0x83b34b1 <error+2808209>:      emms
+0x83b34b3 <error+2808211>:      ret
+0x83b34b4 <error+2808212>:      nop
+0x83b34b5 <error+2808213>:      nop
+0x83b34b6 <error+2808214>:      nop
+0x83b34b7 <error+2808215>:      nop
+0x83b34b8 <error+2808216>:      nop
+0x83b34b9 <error+2808217>:      nop
+0x83b34ba <error+2808218>:      nop
+0x83b34bb <error+2808219>:      nop
+0x83b34bc <error+2808220>:      nop
+0x83b34bd <error+2808221>:      nop
+0x83b34be <error+2808222>:      nop
+0x83b34bf <error+2808223>:      nop
+0x83b34c0 <error+2808224>:      movd   0x14(%esp),%mm0
+0x83b34c5 <error+2808229>:      jmp    0x83b34ca <error+2808234>
+0x83b34c7 <error+2808231>:      pxor   %mm0,%mm0
+0x83b34ca <error+2808234>:      mov    0x8(%esp),%eax
+0x83b34ce <error+2808238>:      movd   0x10(%esp),%mm7
+---Type <return> to continue, or q <return> to quit---
+0x83b34d3 <error+2808243>:      mov    0x4(%esp),%edx
+0x83b34d7 <error+2808247>:      mov    0xc(%esp),%ecx
+0x83b34db <error+2808251>:      movd   (%eax),%mm1
+0x83b34de <error+2808254>:      add    $0x4,%eax
+0x83b34e1 <error+2808257>:      pmuludq %mm7,%mm1
+0x83b34e4 <error+2808260>:      paddq  %mm1,%mm0
+0x83b34e7 <error+2808263>:      movd   %mm0,(%edx)
+0x83b34ea <error+2808266>:      add    $0x4,%edx
+0x83b34ed <error+2808269>:      psrlq  $0x20,%mm0
+0x83b34f1 <error+2808273>:      sub    $0x1,%ecx
+0x83b34f4 <error+2808276>:      jne    0x83b34db <error+2808251>
+0x83b34f6 <error+2808278>:      movd   %mm0,%eax
+0x83b34f9 <error+2808281>:      emms
+0x83b34fb <error+2808283>:      ret
+0x83b34fc <error+2808284>:      nop
+0x83b34fd <error+2808285>:      nop
+0x83b34fe <error+2808286>:      nop
+0x83b34ff <error+2808287>:      nop
+0x83b3500 <error+2808288>:      movd   0x14(%esp),%mm4
+0x83b3505 <error+2808293>:      jmp    0x83b350a <error+2808298>
+0x83b3507 <error+2808295>:      pxor   %mm4,%mm4
+0x83b350a <error+2808298>:      mov    0x8(%esp),%eax
+0x83b350e <error+2808302>:      mov    0xc(%esp),%ecx
+---Type <return> to continue, or q <return> to quit---
+0x83b3512 <error+2808306>:      mov    0x4(%esp),%edx
+0x83b3516 <error+2808310>:      movd   0x10(%esp),%mm7
+0x83b351b <error+2808315>:      movd   (%eax),%mm2
+0x83b351e <error+2808318>:      pmuludq %mm7,%mm2
+0x83b3521 <error+2808321>:      shr    %ecx
+0x83b3523 <error+2808323>:      jae    0x83b3545 <error+2808357>
+0x83b3525 <error+2808325>:      lea    0x4(%eax),%eax
+0x83b3528 <error+2808328>:      movd   (%edx),%mm1
+
+
+
+
+Bart Snapp ======================================
+Office: 123 Altgeld Hall
