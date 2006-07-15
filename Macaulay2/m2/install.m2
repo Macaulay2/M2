@@ -58,7 +58,7 @@ files called: INSTALL (this file), encapinfo, postinstall, and preremove.
 
         cd /foo/bar/Macaulay2-@VERSION@
 	cd bin
-	./M2-load-libs -e 'setup();exit 0' 
+	./M2 -e 'setup();exit 0' 
 
    After you log in again, your PATH will have Macaulay2's bin directory on it.
 
