@@ -271,6 +271,11 @@ endif
 
 # we successfully avoid using streamio, but we need the personality function in libstc++
 LIBRARYOPTIONS += -lstdc++
+
+ifeq "$(STATIC)" "yes"
+LIBRARYOPTIONS += $(UNSTATIC)
+endif
+
 LIBRARYOPTIONS += -lm
 
 M2_LOADLIBES := $(LIBRARYOPTIONS) $(M2_LOADLIBES)
@@ -283,7 +288,7 @@ clean::; rm -f ../bin/M2$(EXE)
 # we make tmp_init.o depend on everything, because compiling it produces our timestamp
 tmp_init.o : $(M2_OBJECTS) $(LIBRARYDEPS) $(EFILES) factory_init3.o
 ../bin/M2$(EXE) : tmp_init.o
-	time $(CC) $(M2_LDFLAGS) $(M2_OBJECTS) $^ factory_init3.o $(EFILES) $(M2_LOADLIBES) $(M2_LDLIBS) $(UNSTATIC) -o "$@".tmp
+	time $(CC) $(M2_LDFLAGS) $(M2_OBJECTS) $^ factory_init3.o $(EFILES) $(M2_LOADLIBES) $(M2_LDLIBS) -o "$@".tmp
 	$(STRIPCMD) "$@".tmp
 	mv "$@".tmp "$@"
 

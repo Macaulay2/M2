@@ -15,6 +15,10 @@ Public License, version 2, as published by the Free Software Foundation; see
 the file Macaulay2/COPYING.  This is free software.  There is no warranty;
 not even for merchantability or fitness for a particular purpose.
 
+This file describes how to build the software from sources and is not included
+in binary distributions.  Most users will prefer to download a binary
+distribution.
+
 ---------
 Libraries
 ---------
