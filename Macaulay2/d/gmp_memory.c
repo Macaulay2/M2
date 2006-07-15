@@ -23,6 +23,8 @@ void	__gmp_default_free (void *p , unsigned n) {
 
 void *	(*__gmp_allocate_func) (unsigned) = __gmp_default_allocate;
 void *	(*__gmp_reallocate_func) (void *, unsigned, unsigned) = __gmp_default_reallocate;
+void *	(*__gmp_allocate_atomic_func) (unsigned) = __gmp_default_allocate;
+void *	(*__gmp_reallocate_atomic_func) (void *, unsigned, unsigned) = __gmp_default_reallocate;
 void	(*__gmp_free_func) (void *, unsigned) = __gmp_default_free;
 
 /*
