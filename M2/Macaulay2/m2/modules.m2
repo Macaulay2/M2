@@ -52,6 +52,7 @@ scan((
      (K,Ls) -> (
 	  promote(K,K) := (f,K) -> f;
 	  promote(Matrix,K,K) := (m,K,L) -> m;
+	  promote(List,K,K) := (m,K,L) -> m;
 	  lift(K,K) := (f,K) -> f;
 	  lift(Matrix,K,K) := (m,K,L) -> m;
 	  scan(Ls, L -> (
@@ -60,6 +61,7 @@ scan((
 	       promote(K,L) := (a,L) -> a_L;
 	       if lookup(promote,Matrix,K,L) === null then
 	       promote(Matrix,K,L) := (m,K,L) -> basicPromoteMatrix(m,L,p);
+	       promote(List,K,L) := (m,K,L) -> m;
 	       if lookup(lift,Matrix,L,K) === null then
 	       lift(Matrix,L,K) := (m,L,K) -> basicLiftMatrix(m,K,p);
 	       if lookup(promote,K,L) === null then stderr << "--warning: no method installed for promote(" << K << ", type of " << L << ")" << endl;
