@@ -12,14 +12,14 @@ $(bindir) :; $(INSTALL) -d "$@"
 
 $(bindir)/M2$(EXE) : M2$(EXE); $(INSTALL_PROGRAM) M2$(EXE) $(bindir)/M2$(EXE)
 
-install       :: $(bindir)/M2-load-libs
-$(bindir)/M2-load-libs : M2-load-libs ; $(INSTALL) $^ $@
+# install       :: $(bindir)/M2-load-libs
+# $(bindir)/M2-load-libs : M2-load-libs ; $(INSTALL) $^ $@
 
-install       :: $(bindir)/M2-emacs
-$(bindir)/M2-emacs : M2-emacs ; $(INSTALL) $^ $@
+# install       :: $(bindir)/M2-emacs
+# $(bindir)/M2-emacs : M2-emacs ; $(INSTALL) $^ $@
 
-install       :: $(bindir)/M2-help
-$(bindir)/M2-help : M2-help ; $(INSTALL) $^ $@
+# install       :: $(bindir)/M2-help
+# $(bindir)/M2-help : M2-help ; $(INSTALL) $^ $@
 
 # shared library links 
 ifeq ($(ENCAP),yes)
