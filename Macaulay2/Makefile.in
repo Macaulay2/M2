@@ -12,13 +12,17 @@ VPATH = @srcdir@
 install install-others install-Macaulay2 :: $(docm2reldir) \
 	   $(docm2reldir)/COPYING \
 	   $(docm2reldir)/CHANGES \
-	   $(docm2reldir)/README \
 	   $(docm2reldir)/LAYOUT
+
+
 $(docm2reldir):; $(INSTALL) -d "$@"
 $(docm2reldir)/COPYING : COPYING ; $(INSTALL_DATA) $< "$@"
 $(docm2reldir)/CHANGES : CHANGES ; $(INSTALL_DATA) $< "$@"
-$(docm2reldir)/README  : README  ; $(INSTALL_DATA) $< "$@"
 $(docm2reldir)/LAYOUT  : LAYOUT  ; $(INSTALL_DATA) $< "$@"
+
+# install install-others install-Macaulay2 :: $(docm2reldir)/INSTALL
+# $(encapdir)/INSTALL  : INSTALL  ; $(INSTALL_DATA) $< "$@"
+
 ################################# srcdir
 initialize :: srcdir
 srcdir :; echo "@srcdir@" >$@

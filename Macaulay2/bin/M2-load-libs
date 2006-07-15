@@ -1,7 +1,7 @@
 #! /bin/bash
 
 if ! type -p $0 >/dev/null
-then echo '$0 not found on path, something is strange' >&2
+then echo '$0 not found, something is strange' >&2
      exit 1
 fi
 

@@ -278,7 +278,7 @@ dotemacsFix = ///
 ///
 
 dotprofileFix = dotbashrcFix = ///
-if [ "$MACAULAY2" ]
+if [ "$MACAULAY2" = "" ]
 then MACAULAY2=setup
      PATH=/PREFIX/bin:$PATH
      MANPATH=/PREFIX/share/man:$MANPATH

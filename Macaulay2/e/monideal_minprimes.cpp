@@ -270,8 +270,8 @@ void MinimalPrimes::ass_prime_generator(Nmi_node *p, int codim)
   int i=codim+1;
   if (exps[i] == 0)
     exps[i] = newarray(int,nvars);
-  int *exp = exps[i];
-  for (int j=0; j<nvars; j++) exp[j] = exps[codim][j];
+  int *exp0 = exps[i];
+  for (int j=0; j<nvars; j++) exp0[j] = exps[codim][j];
   for (;;)
     {
       if (p == NULL)
@@ -280,16 +280,16 @@ void MinimalPrimes::ass_prime_generator(Nmi_node *p, int codim)
 	    { if (codim < codim_limit) codim_limit = codim; }
 	  else
 	    { 
-	      to_prime_ideal(nvars, exp); 
+	      to_prime_ideal(nvars, exp0); 
 	      Bag *b = new Bag(0);
-	      varpower::from_ntuple(nvars, exp, b->monom());
+	      varpower::from_ntuple(nvars, exp0, b->monom());
 	      primes->insert(b);
 	      n_minprimes++;
 	    }
 	  return ;
 	}
       const int *m = p->monom().raw();
-      switch (reduce_exp(m, exp)) 
+      switch (reduce_exp(m, exp0)) 
 	{
 	case 0 : 
 	  p = mi->next(p);
@@ -299,11 +299,11 @@ void MinimalPrimes::ass_prime_generator(Nmi_node *p, int codim)
 	case 1 : 
 	  if (codim < codim_limit)
 	    for (index_varpower i2 = m; i2.valid(); ++i2)
-	      if (exp[i2.var()] == 0)
+	      if (exp0[i2.var()] == 0)
 		{
-		  exp[i2.var()] = 1 ;
+		  exp0[i2.var()] = 1 ;
 		  ass_prime_generator(mi->next(p), codim+1) ;
-		  exp[i2.var()] = -1 ;
+		  exp0[i2.var()] = -1 ;
 		  if (minprime_limit > 0 && n_minprimes >= minprime_limit)
 		    return;
 		}

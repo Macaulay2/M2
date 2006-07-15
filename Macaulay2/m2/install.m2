@@ -1,4 +1,4 @@
-installFile = ///
+installFile = replace_("@VERSION@", version#"VERSION") ///
 			   Macaulay 2
 	    by Daniel R. Grayson <dan@math.uiuc.edu>
 	 and Michael E. Stillman <mike@math.cornell.edu>
@@ -7,84 +7,107 @@ installFile = ///
 
 Welcome to Macaulay2!
 
-This file tells how to install Macaulay 2 from a binary distribution
-on linux or other unix systems.  This is a first draft so if you
-have any difficulty with these instructions, please email us.
+This file tells how to install Macaulay 2 from a binary distribution on unix
+systems such as linux, or under Microsoft Windows.  If you have any difficulty
+with these instructions (which are not complete yet), please email us.
+
+---------------------------------------
+-- Strengthen your operating system ---
+---------------------------------------
+
+If you are running under Microsoft Windows, you should first make your
+operating system look as much as possible like a unix operating system.  The
+way to do this is to install cygwin, available from http://cygwin.org/.  Be
+sure to install X11 and emacs.  The rest of the instructions should be followed
+in a cygwin bash command shell.
 
 ---------------------------------------
 -- Download and unpack Macaulay2 ------
 ---------------------------------------
 
-In your browser, download the file
+In your browser, visit the web page at
 
-  http://www.math.uiuc.edu/Macaulay2/ftp-site/Macaulay2-0.9.8-Linux.tar.gz
+     http://www.math.uiuc.edu/Macaulay2/Downloads/
 
-If there is a later version, use that instead. Unpack this gzipped tar
-file as usual, in whatever directory is convenient:
+and download the appropriate file for your architecture and operating system.
+Details about the file naming conventions are visible there.  Typical names
+include these.
+  
+     Macaulay2-@VERSION@-i686-Linux.tgz
+     Macaulay2-@VERSION@-i686-CYGWIN_NT-5.0.tgz
 
-	tar zxf Macaulay2-0.9.8-Linux.tar.gz
+If there is a later version than @VERSION@, use that instead. Unpack this
+gzipped tar file as usual, in whatever directory is convenient, say in
+/foo/bar, as follows.
+
+     cd /foo/bar
+     tar zxfp Macaulay2-@VERSION@-Linux.tar.gz
+
+You will see that a directory tree rooted at /foo/bar/Macaulay2-@VERSION@ has
+been created.  The subdirectories and files are organized in a way that mimics
+the usual unix tree of subdirectories rooted at /usr.  For example, there are
+subdirectories called bin, info, lib, and share.  There are also some extra
+files called: INSTALL (this file), encapinfo, postinstall, and preremove.
 
 -------------------------------------------------
--- Install method #1 for System administrators --
+-- Install method for Users ---------------------
 -------------------------------------------------
 
-1. After unpacking this tarfile, rename (or link) the directory name 
-    to Macaulay2.
-2. Make a symbolic link from somewhere on the path to Macaulay2/bin/M2
-3. In the "For users" section below, change the "/usr/local" path
-    to wherever you have placed the Macaulay2 directory.
-4. Give your users the info in the "For users" section below.
+   Arrange for Macaulay 2 to set up your .emacs files and your command shell
+   init files so that M2 will be on the path.
+
+        cd /foo/bar/Macaulay2-@VERSION@
+	cd bin
+	./M2-load-libs -e 'setup();exit 0' 
+
+   After you log in again, your PATH will have Macaulay2's bin directory on it.
+
+   The difference between M2-load-libs and M2 is that the former is a shell
+   script that arranges for shared libraries that may be needed to be found.
 
 -------------------------------------------------
--- Install method #2 for System administrators --
+-- Install method for System administrators -----
 -------------------------------------------------
 
-1. After unpacking this tarfile, unpack into /usr/local.
-2. In the "For users" section below, change the "/usr/local" path
-    to wherever you have placed the Macaulay2 directory.
-3. Give your users the info in the "For users" section below.
+   Copy the contents of the subdirectories of /foo/bar/Macaulay2-@VERSION@ into
+   /usr or /usr/local/.  If you have gnu "cp", the following command will do
+   it:
 
-------------------------------------------------
--- Install method for Users --------------------
-------------------------------------------------
+      cd /foo/bar/Macaulay2-@VERSION@
+      cp -ai bin info lib share /usr/local
 
-The easiest way is to follow the method #1 above.  You can unpack
-Macaulay2 into some directory in your own account.  Suppose that 
-directory is ~/foo.  You will need a bin directory on your path (say
-~/bin).  Then make a symbolic link:
-  ln -s ~/foo/Macaulay2/bin/M2 ~/bin/
-After that, continue with the "For Users" section below.
+   The "i" option to "cp" will prompt you before clobbering a file in the
+   target directory.  The reason not to use the command
 
----------------------------------------------------------------------
--- For Users --------------------------------------------------------
--- Give the following info to each user who plans to use Macaulay2 --
----------------------------------------------------------------------
+      cp -ai . /usr/local
 
-First, make sure your Macaulay2 emacs interface is set up.
-Place the following lines into your .emacs file in your home
-directory.  If this file doesn't exist, create it.
+   is to avoid copying the extra files, including this one.
 
-	(setq load-path 
-	      (append
-	       '( "/usr/local/Macaulay2/share/emacs/site-lisp/" )
-	       load-path
-	       ))
+   On some systems Macaulay2 comes with shared libraries, so if you want to
+   change /usr/local to something nonstandard, M2 may not be able to find its
+   shared libraries unless you add /foo/bar/Macaulay2-@VERSION@/lib to the
+   search path.  Under linux, that would involve editing /etc/ld.so.conf.
 
-	(load "M2-init.el" t)
+-------------------------------------------------
+-- For Users, after installation ----------------
+-------------------------------------------------
 
-	; comment out the following line with an initial 
-	; semicolon if you want to use your f12 key for 
-	; something else
-	(global-set-key [ f12 ] 'M2)
-
-Second, on a command line, type 'M2' (without the quotes).  If
+On a command line, type 'M2' (without the quotes).  If
 Macaulay2 has been installed properly, then you should see a prompt
 such as this:
 
 	% M2
-	Macaulay 2, version 0.9.8
+	Macaulay 2, version @VERSION@
 
 	i1 : 
+
+At this point you should try something simple in Macaulay2, such as
+
+   	100!
+	R = QQ[a..d]
+	(a+b+c+d)^4
+	C = res coker vars R
+	C.dd
 
 Now type
 
@@ -97,22 +120,18 @@ to get the html help on a topic, such as "ideals", use
 
 	viewHelp "ideals"
 
-At this point you should try something simple in Macaulay2, such as
+To exit Macaulay2, type one of: exit, end, quit, or the end of file character,
+which is usually set to CTRL-D.
 
-	R = QQ[a..d]
-	(a+b+c+d)^4
-
-To exit Macaulay2, type one of: exit, end, or quit.
-
-	exit
-
-The Macaulay2 application directory
+-------------------------------------------------
+-- The Macaulay2 application directory ----------
+-------------------------------------------------
 
 If this is the first time that you have run a recent version of
 Macaulay2 from your user account, Macaulay2 creates an "application
 directory" for Macaulay2 in your home directory.  Under unix, that
 directory is named ".Macaulay2", and under Mac OS X, it is
-called "Library/Application Support/Macaulay2".)
+called "Library/Application Support/Macaulay2".
 
 The application directory contains several useful files and
 directories:
@@ -154,5 +173,4 @@ post a message at our sourceforge web site:
 You may need to create a sourceforge user id in order to post
 messages, but this is easy: choose the 'create user account' found
 near the top of the page.
-
 ///

@@ -1,3 +1,9 @@
+-*- text -*-
+
+This file is obsolete now, supplanted by m2/install.m2
+
+-----------------------------------------------------------------------------
+
 			   Macaulay 2
 	    by Daniel R. Grayson <dan@math.uiuc.edu>
 	 and Michael E. Stillman <mike@math.cornell.edu>
@@ -23,11 +29,16 @@ instructions in a later section of this document.
 
 You have downloaded an unpacked a file with a name something like
 
-    Macaulay2-0.9-i686-Linux.tar.gz
+    Macaulay2-1.0-i686-Linux.tar.gz
 
-Untarring this file creates a directory called Macaulay2-0.9, where 0.9 may be
+Untarring this file creates a directory called Macaulay2-1.0, where 1.0 may be
 replaced by the current version number, and whose subdirectories and files are
-organized as described in the file "LAYOUT".
+organized in a way that mimics the usual unix tree of subdirectories rooted at
+/usr.  For example, there are subdirectories called bin, info, lib, and share.
+There are also files called INSTALL (this file), encapinfo, postinstall, and
+preremove.
+
+as described in the file "LAYOUT".
 
 There are two ways to install the package:
 
@@ -35,7 +46,7 @@ There are two ways to install the package:
 
 	This way works especially well under Unix.
 
-	Put the entire Macaulay2-0.9 directory tree in the source directory
+	Put the entire Macaulay2-1.0 directory tree in the source directory
 	for epkg, which is /usr/local/encap by default.  Then run
 
 		epkg Macaulay2
@@ -50,26 +61,26 @@ There are two ways to install the package:
 	place and makes a minimal number of links to them from other
 	places.
 	       
-	There are four steps.  (Replace 0.9 in the description below by
+	There are four steps.  (Replace 1.0 in the description below by
 	the appropriate version number.)
 
 	a.  Untar the tar file in a permanent location of your choice,
-	    for example, /usr/lib/Macaulay2-0.9:
+	    for example, /usr/lib/Macaulay2-1.0:
 		cd /usr/lib
-		tar xzf Macaulay2-0.9-i686-Linux.tar.gz
-		cd Macaulay2-0.9
+		tar xzf Macaulay2-1.0-i686-Linux.tar.gz
+		cd Macaulay2-1.0
 
 	b.  Edit the shell scripts bin/M2 and bin/M2-help to record the 
 	    location of Macaulay2's files.  The line starting with 
 	    'PREFIX=' should be made to look like this:
 	    
-		PREFIX=/usr/lib/Macaulay2-0.9
+		PREFIX=/usr/lib/Macaulay2-1.0
 
 	    Then put links to M2 and M2-help from a directory on your path,
 	    for example:
 
-		ln -s /usr/lib/Macaulay2-0.9/M2      /usr/bin
-		ln -s /usr/lib/Macaulay2-0.9/M2-help /usr/bin
+		ln -s /usr/lib/Macaulay2-1.0/M2      /usr/bin
+		ln -s /usr/lib/Macaulay2-1.0/M2-help /usr/bin
 
 	    [ Under Windows, you will see the shell script bin/M2, but it will
 	      be useful to you only if you install cygwin, in which case you
@@ -82,7 +93,7 @@ There are two ways to install the package:
 	c.  Put links to the emacs files in your emacs site-lisp directory,
 	    so they will be on the load-path of every emacs user:
 
-		ln -s /usr/lib/Macaulay2-0.9/share/emacs/site-lisp/*.el /usr/share/emacs/site-lisp
+		ln -s /usr/lib/Macaulay2-1.0/share/emacs/site-lisp/*.el /usr/share/emacs/site-lisp
 
 	d.  Optionally run this command:
 
@@ -105,7 +116,7 @@ There are two ways to install the package:
 		image of the data segment of the program saved with
 		"dumpdata" by the "setup" script mentioned above.  That
 		'dumpdata' file is named something like
-			 lib/Macaulay2/0.9/libexec/Macaulay2-*-data, 
+			 lib/Macaulay2/1.0/libexec/Macaulay2-*-data, 
 		where * identifies the architecture.  On Sun machines, the 
 		differences between architectures sun4d and sun4c are slight 
 		enough that the binary file bin/Macaulay2 will work on both, but 
@@ -217,7 +228,7 @@ address will get forwarded to both of us.
 
     You will have downloaded a file with a name like this:
 
-              Macaulay2-0.9-i586-Windows-95-98-NT.zip
+              Macaulay2-1.0-i586-Windows-95-98-NT.zip
 
     This file contains the files you need to run the program, as well as the
     html documentation files.  If you want the dvi file containing the book
