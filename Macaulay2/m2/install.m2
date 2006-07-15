@@ -17,7 +17,7 @@ with these instructions (which are not complete yet), please email us.
 
 If you are running under Microsoft Windows, you should first make your
 operating system look as much as possible like a unix operating system.  The
-way to do this is to install cygwin, available from http://cygwin.org/.  Be
+way to do this is to install cygwin, available from http://cygwin.com/.  Be
 sure to install X11 and emacs.  The rest of the instructions should be followed
 in a cygwin bash command shell.
 
@@ -69,6 +69,18 @@ files called: INSTALL (this file), encapinfo, postinstall, and preremove.
 -- Install method for System administrators -----
 -------------------------------------------------
 
+   The easiest way to install Macaulay2 is with "epkg", available from 
+
+   	http://encap.cso.uiuc.edu/epkg/
+
+   The files encapinfo, preremove, and postinstall in the top level directory
+   or init files for that program, whose purpose is to put appropriate
+   symbolics from locations under /usr or /usr/local to the files in 
+   /foo/bar/Macaulay2-@VERSION@.
+   
+   However, if you don't have "epkg", you can install Macaulay2 directly,
+   as follows.
+
    Copy the contents of the subdirectories of /foo/bar/Macaulay2-@VERSION@ into
    /usr or /usr/local/.  If you have gnu "cp", the following command will do
    it:
@@ -83,10 +95,27 @@ files called: INSTALL (this file), encapinfo, postinstall, and preremove.
 
    is to avoid copying the extra files, including this one.
 
-   On some systems Macaulay2 comes with shared libraries, so if you want to
-   change /usr/local to something nonstandard, M2 may not be able to find its
-   shared libraries unless you add /foo/bar/Macaulay2-@VERSION@/lib to the
-   search path.  Under linux, that would involve editing /etc/ld.so.conf.
+   On some systems Macaulay2 comes with shared libraries, in the "lib"
+   subdirectory, so if you want to change /usr/local to something nonstandard,
+   M2 may not be able to find its shared libraries unless you add
+   /foo/bar/Macaulay2-@VERSION@/lib to the search path.  Under linux, that
+   would involve editing /etc/ld.so.conf.
+
+-------------------------------------------------
+-- Dumping data ---------------------------------
+-------------------------------------------------
+   
+   Here is an additional step that will speed later loading of the program on
+   linux systems and solaris systems.  Issue the following command:
+   
+   	M2 --dumpdata
+	
+   It will save a file with a name of the form
+   
+        lib/Macaulay2/Core/cache/Macaulay2-*-data
+   
+   in the directory tree where you have installed it.  It contains the result
+   of interpreting the source code written in the Macaulay 2 language.
 
 -------------------------------------------------
 -- For Users, after installation ----------------
