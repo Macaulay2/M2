@@ -1,0 +1,87 @@
+Date: Sat, 15 Jul 2006 15:09:09 -0500 (CDT)
+From: Bart Snapp <snapp@math.uiuc.edu>
+To: Michael Stillman <mike@math.cornell.edu>
+cc: Dan Grayson <dan@math.uiuc.edu>
+Subject: Re: M2
+In-Reply-To: <C5B5C10A-9D1A-44EB-96B5-209C9C4BFA4E@math.cornell.edu>
+
+Also, a bug,
+
+help koszul --has some weird output.
+
+if you type it in emacs running M2... Looks good in html.
+
+help methods --koszul is fine though.
+
+=============================================================================
+
+Date: Sat, 15 Jul 2006 11:49:01 -0500 (CDT)
+From: Bart Snapp <snapp@math.uiuc.edu>
+To: Dan Grayson <dan@math.uiuc.edu>
+cc: <mike@math.cornell.edu>
+Subject: Re: M2
+In-Reply-To: <200607151415.k6FEFmi16369@u00.math.uiuc.edu>
+
+Ok,
+
+I encountered some problems, and seem to have fixed most of them:
+
+When I ran
+
+./M2-load-libs -e 'setup();exit 0'
+
+I got the message:
+
+/home/snapp/Macaulay2-0.9.20/bin/M2: error while loading shared libraries:
+liblapack.so.3: cannot open shared object file: No such file or directory
+
+I was able to find the appropraite debian/ubuntu package to intstall to
+fix this sort of message. Here are the debian/ubuntu packages I got:
+
+lapack3
+libgmp3c2
+libgdbmg1
+
+Now the command ran fine, I needed all three because in each case the
+error reappeared needing a different package. I logged out, logged back in
+and started emacs, hit F12 and everything worked.
+
+Then I read the "Dump Data" instructions.
+
+So I went and did
+
+M2 --dumpdata
+
+Now I get a warning when I start M2. It doesn't seem to be a big deal, but
+I thought you'd like to know. Here it is
+
+-warning: memory maps have changed, can't load cached data:
+Macaulay2-0.9.20/lib/Macaulay2/Core/cache/Macaulay2-i686-data
+
+Also the "viewHelp" command works great!
+
+ok?
+
+Thanks!!
+
+-Bart
+
+Bart Snapp ======================================
+Office: 123 Altgeld Hall
+Email: snapp@math.uiuc.edu
+URL: http://www.math.uiuc.edu/~snapp/
+University of Illinois at Urbana-Champaign
+=================================================
+
+On Sat, 15 Jul 2006, Dan Grayson wrote:
+
+>
+> I just put the latest linux release in
+>
+> http://www.math.uiuc.edu/Macaulay2/Downloads/Test-Versions/
+>
+>
+> try it out and let us (both) know how it works for you.
+>
+
+
