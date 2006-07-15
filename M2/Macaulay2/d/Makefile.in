@@ -123,7 +123,13 @@ ifeq ($(OS),Linux)
 TOSTATIC = -Wl,-Bstatic
 UNSTATIC = -Wl,-Bdynamic
 else
+ifeq ($(OS),SunOS)
+# we'd really like to test whether ld is gnu ld here
+TOSTATIC = -Wl,-Bstatic
+UNSTATIC = -Wl,-Bdynamic
+else
 $(error static linking requested, new OS)
+endif
 endif
 endif
 
