@@ -11,7 +11,7 @@
  TOPDIR=`/bin/pwd`
  mkdir M2-build
  cd M2-build
- svn export svn://u123.math.uiuc.edu/Macaulay2/stable/$STABLE M2
+ svn co svn://u123.math.uiuc.edu/Macaulay2/stable/$STABLE M2
  mkdir installed
  mkdir build
 
@@ -22,9 +22,9 @@
  cd M2
  make
  cd ../build
+# on my ppc, which has mixed fink and capybara do
  ../M2/configure \
 	--prefix=$TOPDIR/M2-build/installed \
-	CFLAGS=-g \
 	CPPFLAGS="-I/capybara/include -I/sw/include"\
 	LDFLAGS="-L/capybara/lib -L/sw/lib"\
 	LOADLIBES="-lgcc_s.10.5 -lncurses" \
@@ -33,7 +33,23 @@
 	--with-gdbmlib=/sw/lib/libgdbm.a \
 	--with-readlinelib=/sw/lib/libreadline.a \
 	--with-historylib=/sw/lib/libhistory.a \
-	--with-gclib=/capybara/lib/libgc.a
+	--with-gclib=/capybara/lib/libgc.a \
+	--with-gmplib=/capybara/lib/libgmp.a
+
+# or on i386, using just capybara
+ ../M2/configure \
+	--prefix=$TOPDIR/M2-build/installed \
+	CPPFLAGS="-I/capybara/include"\
+	LDFLAGS="-L/capybara/lib"\
+	LOADLIBES="-lgcc_s.10.5 -lncurses" \
+	--with-veclib \
+	--enable-altivec \
+	--with-gdbmlib=/capybara/lib/libgdbm.a \
+	--with-readlinelib=/capybara/lib/libreadline.a \
+	--with-historylib=/capybara/lib/libhistory.a \
+	--with-gclib=/capybara/lib/libgc.a \
+	--with-gmplib=/capybara/lib/libgmp.a
+
  make
 
  # this can take a while (started: 9:33 pm, done at 10:10pm, MBP 2 GZ) :
@@ -43,7 +59,7 @@
 
  cd ../installed
  VERSION=`grep AC_INIT ../M2/configure.ac | awk -F, '{print $2}'`
- VERSION=0.9.10
+ VERSION=0.9.20
  cp ~/M2/arch/MacOSX/ReadMe-MacOSX.rtf .
  cp ~/M2/arch/MacOSX/ReadMe-MacOSX.rtf Macaulay2-$VERSION/
  cp ~/M2/arch/MacOSX/setup Macaulay2-$VERSION/
@@ -60,7 +76,7 @@
 
  cd ../installed
 # VERSION=`grep AC_INIT ../M2/configure.ac | awk -F, '{print $2}'`
- VERSION=0.9.10
+ VERSION=0.9.20
  cp ~/M2/arch/MacOSX/ReadMe-MacOSX.rtf .
  cp ~/M2/arch/MacOSX/ReadMe-MacOSX.rtf Macaulay2-$VERSION/
  cp ~/M2/arch/MacOSX/setup Macaulay2-$VERSION/
