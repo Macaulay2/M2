@@ -16,78 +16,41 @@
 \
 Welcome to Macaulay2!\
 \
-This file tells how to get Macaulay2 installed and running on your MacOS X 10.3 or 10.4 system, for either power pc, or intel macs.\
-\
-This is a first draft so if you have any difficulty with these instructions, please email us.\
+This file tells how to get Macaulay2 installed and running on your MacOS X 10.3 or 10.4 system, for either power pc, or intel macs.  If you have any difficulty with these instructions (which are not complete yet), please email us.\
 \
 
-\f0\b Step 1.  Download and install Macaulay2.
+\f0\b Step 1.  Download and unpack Macaulay2.
 \f1\b0 \
 \
 In your browser, download one of the files\
 \
-	http://www.math.uiuc.edu/Macaulay2/downloads/Macaulay2-0.9.10-macosx-ppc.dmg\
+	http://www.math.uiuc.edu/Macaulay2/Downloads/Macaulay2-0.9.10-macosx-ppc.dmg\
 or\
 	http://www.math.uiuc.edu/Macaulay2/downloads/Macaulay2-0.9.10-macosx-i386.dmg\
 \
 If there is a later version, use that instead. Mount this disk image by double-clicking on it, and drag the Macaulay2 folder in this mounted disk to somewhere on your disk. One possible location is your Applications folder (your system Applications folder, at top level on your main disk).\
 \
 
-\f0\b Step 2. Setting up .profile and .emacs
+\f0\b Step 2. Installation
 \f1\b0 \
 \
-Adding the lines below to these two files allows you to run Macaulay2 by typing 'M2' (without the quotes) at a terminal command line, to access the info and man pages, and to use the Macaulay2 emacs interface.\
+Arrange for Macaulay 2 to set up your .emacs files and your command shell init files so that M2 will be on the path.  \
 \
-The easiest way to setup your .profile and .emacs files is to do the following in a Terminal window (the Terminal application is found in the Utilities folder inside the Applications folder.  You might want to drag this application to your dock too).\
+The easiest way to setup these files is to do the following in a Terminal window (the Terminal application is found in the Utilities folder inside the Applications folder.  You might want to drag this application to your dock too).\
 \
-First change to the Macaulay2 folder (here we suppose that it is in your Applications directory), and then run the 'setup' command:\
+First change to the Macaulay2 folder (here we suppose that it is in your Applications directory), and then run the 'setup' routine in Macaulay2:\
 \
-	cd /Applications/Macaulay2\
-	./setup\
+	cd /Applications/Macaulay2-0.9.20\
+	cd bin\
+	./M2 -e 'setup();exit 0' \
 \
-It is important that you change the directory to the Macaulay2 folder, and run 'setup' there.  The 'setup' script uses this information to correctly set the files .profile and .emacs.\
+It is important that you change the directory to the Macaulay2 folder first.  The 'setup' script uses this information to correctly set the init files.\
 \
-If you have already set .profile and .emacs, you do not need to redo it (unless you have placed the Macaulay2 folder somewhere different this time).  After running setup, you need to either log out, and then back in (the easiest and safest way), or to type\
+After you log out and in again, your PATH will have Macaulay2's bin directory on it.  The 'setup' routine will modify your shell command init files (such as .profile, .bashrc, .login, .cshrc), and your .emacs file.  The existing files are backed up first.\
 \
-	source ~/.profile\
-\
-in your Terminal window.\
-\
-Here is what setup does.  In your home directory, it creates the files: .profile and .emacs, if they don't exist.  In either case it then places the following lines at the end of the files (Where /Applications is replaced with the location where you put the Macaulay2 folder).\
-\
-.profile:\
-\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+This allows you to run Macaulay2 by typing 'M2' (without the quotes) at a terminal command line, to access the info and man pages, and to use the Macaulay2 emacs interface.\
 
-\f2\fs18 \cf0 	### Macaulay2 ###\
-	export PATH=/Applications/Macaulay2/bin:$PATH\
-	export MANPATH=/Applications/Macaulay2/share/man:/Applications/Macaulay2/man:$MANPATH\
-	export INFOPATH=/Applications/Macaulay2/share/info:/Applications/Macaulay2/info:$INFOPATH\
-	### end Macaulay2 ###\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
-
-\f1\fs24 \cf0 \
-.emacs\
-\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
-
-\f2\fs18 \cf0 	;;; Macaulay2 ;;;\
-	(setq load-path \
-	      (append\
-	       '( "/Applications/Macaulay2/share/emacs/site-lisp/" )\
-	       load-path\
-	       ))\
-\
-	(load "M2-init.el" t)\
-\
-	; comment out the following line with an initial \
-      ; semicolon if you want to use your f12 key for \
-	; something else\
-	(global-set-key [ f12 ] 'M2)\
-	;;; end Macaulay2 ;;;\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
-
-\f0\b\fs24 \cf0 \
+\f0\b \
 Step 3. Try M2 in a terminal window\
 
 \f1\b0 \
@@ -96,9 +59,19 @@ In a Terminal window, type 'M2' (without the quotes).  If Macaulay2 has been ins
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
 \f2\fs18 \cf0 	indigo% M2\
-	Macaulay 2, version 0.9.10\
+	Macaulay 2, version 0.9.20\
 	with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings, TangentCone\
 	i1 : \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+
+\f1\fs24 \cf0 At this point you should try something simple in Macaulay2, such as\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf0 \
+	printWidth = 60\
+	R = QQ[a..d]\
+	(a+b+c+d)^4\
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
 
@@ -118,16 +91,6 @@ This starts your default web browser (if it is not already running), and then op
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
 
-\f1\fs24 \cf0 At this point you should try something simple in Macaulay2, such as\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
-
-\f2\fs18 \cf0 \
-	printWidth = 60\
-	R = QQ[a..d]\
-	(a+b+c+d)^4\
-\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
-
 \f1\fs24 \cf0 To exit Macaulay2, type one of: exit, end, or quit.
 \f2\fs18 \
 \
@@ -135,24 +98,34 @@ This starts your default web browser (if it is not already running), and then op
 
 \f1\fs24 \
 
-\f0\b The Macaulay2 support folder\
+\f0\b The Macaulay2 application directory (folder)\
 
 \f1\b0 \
-If this is the first time that you have run a recent version of Macaulay2 from your user account, Macaulay2 create a folder in your home:\
+If this is the first time that you have run a recent version of Macaulay2 from your user account, Macaulay2 creates an "application folder" in your home:\
 \
 	Library/Application Support/Macaulay2\
 \
-(Actually, Macaulay2 creates this folder if it doesn't exist).\
-\
-This folder contains several useful files and directories:\
+The application folder contains several useful files and\
+directories:\
 \
 	init.m2	This file is run every time you start Macaulay2\
 	code/		This directory is on your Macaulay2 path, \
 			so any .m2 files you put here are easy \
 			to load in Macaulay2.\
-	index.html	This is the top page for the Macaulay2 html documentation.\
-			It includes the Macaulay2 html distribution, together with\
-			any html files from installed Macaulay2 packages.\
+	index.html	This is the top page for the Macaulay2 html \
+			documentation. It includes the Macaulay2 html\
+			distribution, together with any html files from\
+			installed Macaulay2 packages.\
+	encap/	A directory containing one subdirectory for\
+			each installed package.  The subdirectory\
+			houses the files for that package.\
+	local/		A directory tree containing symbolic links\
+			to the files of each installed package.\
+	local/info/	A directory with links to the info files\
+			for each installed package.  You may wish\
+			to add this directory to the list of\
+			directories in your environment variable\
+			INFOPATH.\
 \
 After creating this directory, Macaulay2 
 \f0\b never
