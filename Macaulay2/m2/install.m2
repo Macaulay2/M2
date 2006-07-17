@@ -69,17 +69,34 @@ files called: INSTALL (this file), encapinfo, postinstall, and preremove.
 -- Install method for System administrators -----
 -------------------------------------------------
 
-   The easiest way to install Macaulay2 is with "epkg", available from 
+   The easiest and best way to install Macaulay2 is with "epkg", available from
 
    	http://encap.cso.uiuc.edu/epkg/
 
    The files encapinfo, preremove, and postinstall in the top level directory
    or init files for that program, whose purpose is to put appropriate
-   symbolics from locations under /usr or /usr/local to the files in 
-   /foo/bar/Macaulay2-@VERSION@.
+   symbolic links from locations under /usr or /usr/local to the files in 
+   /foo/bar/Macaulay2-@VERSION@.  If you do this, then Macaulay2's files can
+   be found without modifying any paths.  Otherwise, each user will have to
+   run our "setup()" command, as described above, to set the paths correctly.
+   The paths we have in mind are the environment variables "LD_LIBRARY_PATH",
+   "INFOPATH" (used by "emacs" and "info"), and "PATH", as well as the emacs 
+   variable "load-path".  Moreover, an installation made with "epkg" can be
+   reliably removed.  If you manually remove the files without asking
+   "epkg" to remove the symbolic links, the only thing left behind will be
+   symbolic links pointing nowhwere, which take up little space on the disk and
+   could be easily found and removed manually.
+   
+   Another thing "epkg" does is to run the "postinstall" script we provide,
+   which runs "dumpdata" (if implemented on your system) and puts directory
+   entries for Macaulay2 and each of its packages into the master info dir
+   file, making the Macaulay2 documentation visible to the user who uses
+   "info", stand-alone, or in emacs.
    
    However, if you don't have "epkg", you can install Macaulay2 directly,
-   as follows.
+   as follows.  Warning: this direct approach is not as good, because it
+   may wipe out the previous version of Macaulay 2, and because there is
+   no reliable way to remove all the files you've installed.
 
    Copy the contents of the subdirectories of /foo/bar/Macaulay2-@VERSION@ into
    /usr or /usr/local/.  If you have gnu "cp", the following command will do
@@ -106,7 +123,10 @@ files called: INSTALL (this file), encapinfo, postinstall, and preremove.
 -------------------------------------------------
    
    Here is an additional step that will speed later loading of the program on
-   linux systems and solaris systems.  Issue the following command:
+   linux systems and solaris systems.  (Mac OS X is sufficiently different from
+   Unix that we haven't been able to implement dumpdata under it yet.)
+
+   Issue the following command:
    
    	M2 --dumpdata
 	
