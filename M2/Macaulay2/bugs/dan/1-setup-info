@@ -1,0 +1,6 @@
+
+*** Nevertheless, I should also have the setup() function do one more thing: if
+/foo/bar/Macaulay2-@VERSION@/info/dir is writable or doesn't exist and its
+directory is writable, then it should put entries in that file for each of the
+info files accompanying Macaulay 2, to make that documentation visible to the
+user. ***

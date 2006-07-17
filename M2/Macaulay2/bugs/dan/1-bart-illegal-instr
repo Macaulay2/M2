@@ -1,3 +1,28 @@
+
+Linux rhodium 2.6.16 #3 SMP PREEMPT Mon Jun 12 11:56:50 CDT 2006 i686 unknown unknown GNU/Linux
+
+    gmp compiled for pentium4:
+
+	i1 : benchmark "2^3000 * 3^2000"
+
+	o1 = 0.0000435189
+
+    gmp compiled for i486:
+
+	i1 : benchmark "2^3000 * 3^2000"
+
+	o1 = 0.0000952533
+
+    gmp compiled for i386:
+
+	i1 : benchmark "2^3000 * 3^2000"
+
+	o1 = 0.0000961388
+
+	o1 : RR
+
+-----------------------------------------------------------------------------
+
 Date: Sat, 15 Jul 2006 18:02:47 -0500 (CDT)
 From: Bart Snapp <snapp@math.uiuc.edu>
 To: Dan Grayson <dan@math.uiuc.edu>
@@ -90,8 +115,8 @@ $1 = (void (*)()) 0x83b3472 <error+2808146>
 0x83b3465 <error+2808133>:      lea    (%edx,%ecx,4),%edx
 0x83b3468 <error+2808136>:      neg    %ecx
 0x83b346a <error+2808138>:      movd   (%eax,%ecx,4),%mm1
-0x83b346e <error+2808142>:      movd   (%ebx,%ecx,4),%mm2
-0x83b3472 <error+2808146>:      psubq  %mm2,%mm1
+0x83b346e <error+2808142>:      movd   (%ebx,%ecx,4),%mm2		crashed here?
+0x83b3472 <error+2808146>:      psubq  %mm2,%mm1			<--- $pc
 0x83b3475 <error+2808149>:      psubq  %mm0,%mm1
 0x83b3478 <error+2808152>:      movd   %mm1,(%edx,%ecx,4)
 0x83b347c <error+2808156>:      psrlq  $0x3f,%mm1
