@@ -1,0 +1,22 @@
+Date: Sun, 16 Jul 2006 17:01:02 -0500 (CDT)
+Subject: Thanks & some new things to consider
+From: ataylor@stolaf.edu
+To: mike@math.cornell.edu, dan@math.uiuc.edu
+
+...
+
+Also, the documentation for primaryDecomposition indicates that it should
+work over a quotient ring.  However, one of the students found an example
+from Atiyah McDonald (chapter 4, example 3, p. 51) that gives the wrong
+answer.  Here is the example,
+
+R=k[x,y,z]/(xy-z^2)
+P=(x,z)
+
+P^2 is not primary (z^2 = xy is in it, but neither x nor a power of y is
+in P^2), but Macaulay2 says that it is primary.
+
+Either the example (and my logic) in A/M is wrong, or there is trouble
+with using primaryDecomposition over a quotient ring.  If this was never
+meant to work, then that is fine, but then the documentation should
+reflect that.
