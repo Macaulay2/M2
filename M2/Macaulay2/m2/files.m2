@@ -326,6 +326,7 @@ setup Sequence := o -> () -> (
      mungeFile( homeDirectory | ".profile", "## Macaulay 2 start", "## Macaulay 2 end", dotprofileFix );
      mungeFile( homeDirectory | ".login", "## Macaulay 2 start", "## Macaulay 2 end", dotloginFix );
      mungeFile( homeDirectory | ".cshrc", "## Macaulay 2 start", "## Macaulay 2 end", dotcshrcFix );
+     if fileExists(homeDirectory | ".tcshrc"  ) then mungeFile( homeDirectory | ".tcshrc"  , "## Macaulay 2 start", "## Macaulay 2 end", dotcshrcFix );
      mungeFile( homeDirectory | ".bashrc", "## Macaulay 2 start", "## Macaulay 2 end", dotbashrcFix );
      mungeFile( homeDirectory | ".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", dotemacsFix );
      )
