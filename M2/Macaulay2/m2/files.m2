@@ -277,42 +277,38 @@ dotemacsFix = ///
 (global-set-key [ f12 ] 'M2)
 ///
 
-dotprofileFix = dotbashrcFix = ///
-if [ "$MACAULAY2" = "" ]
-then MACAULAY2=setup
-     PATH=/PREFIX/bin:$PATH
-     MANPATH=/PREFIX/share/man:$MANPATH
-     INFOPATH=/PREFIX/info:$INFOPATH
-     LD_LIBRARY_PATH=/PREFIX/lib:$LD_LIBRARY_PATH
-     export MACAULAY2 PATH MANPATH INFOPATH LD_LIBRARY_PATH
-fi
+bashtempl := ///
+case "$VAR" in 
+     "/PREFIX/DIR"|"/PREFIX/DIR:*"|"*:/PREFIX/DIR"|"*:/PREFIX/DIR:*") ;;
+     "") VAR="/PREFIX/DIR" ; export VAR ;;
+     *) VAR="/PREFIX/DIR:$VAR" ; export VAR ;;
+esac
 ///
 
-dotloginFix = dotcshrcFix = ///
-if ( $?MACAULAY2 == 0 ) then
-     setenv MACAULAY2 setup
-     if ( $?PATH == 0 ) then
-         setenv PATH /PREFIX/bin:/usr/bin:/bin
-     else
-         setenv PATH /PREFIX/bin:$PATH
-     endif
-     if ( $?MANPATH == 0 ) then
-         setenv MANPATH /PREFIX/share/man
-     else
-         setenv MANPATH /PREFIX/share/man:$MANPATH
-     endif
-     if ( $?INFOPATH == 0 ) then
-         setenv INFOPATH /PREFIX/info
-     else
-         setenv INFOPATH /PREFIX/info:$INFOPATH
-     endif
-     if ( $?LD_LIBRARY_PATH == 0 ) then
-         setenv LD_LIBRARY_PATH /PREFIX/lib
-     else
-         setenv LD_LIBRARY_PATH /PREFIX/lib:$LD_LIBRARY_PATH
-     endif
+cshtempl := ///
+if ( $?VAR == 1 ) then
+  switch ("$VAR")
+    case "/PREFIX/DIR":
+    case "/PREFIX/DIR:*":
+    case "*:/PREFIX/DIR":
+    case "*:/PREFIX/DIR:*":
+       breaksw
+    case "":
+       setenv VAR "/PREFIX/DIR"
+       breaksw
+    default:
+       setenv VAR "/PREFIX/DIR:$VAR"
+       breaksw
+  endsw
+else
+  setenv VAR "/PREFIX/DIR"
 endif
 ///
+stripdir := dir -> if dir === "/" then dir else replace("/$","",dir)
+fixes := { ("PATH", LAYOUT#"bin"), ("MANPATH", LAYOUT#"man"), ("INFOPATH", LAYOUT#"info" ), ("LD_LIBRARY_PATH", LAYOUT#"lib" ) }
+fix := (var,dir,templ) -> replace_("VAR",var) replace_("DIR",stripdir dir) templ
+dotprofileFix = dotbashrcFix = concatenate apply(fixes, (var,dir) -> fix(var,dir,bashtempl))
+dotloginFix = dotcshrcFix = concatenate apply(fixes, (var,dir) -> fix(var,dir,cshtempl))
 
 setup = method( Dispatch => Thing, Options => { } )
 setup Sequence := o -> () -> (
@@ -326,6 +322,7 @@ setup Sequence := o -> () -> (
      mungeFile( homeDirectory | ".profile", "## Macaulay 2 start", "## Macaulay 2 end", dotprofileFix );
      mungeFile( homeDirectory | ".login", "## Macaulay 2 start", "## Macaulay 2 end", dotloginFix );
      mungeFile( homeDirectory | ".cshrc", "## Macaulay 2 start", "## Macaulay 2 end", dotcshrcFix );
+     -- tcsh reads .tcshrc, or, if that doesn't exists, .cshrc
      if fileExists(homeDirectory | ".tcshrc"  ) then mungeFile( homeDirectory | ".tcshrc"  , "## Macaulay 2 start", "## Macaulay 2 end", dotcshrcFix );
      mungeFile( homeDirectory | ".bashrc", "## Macaulay 2 start", "## Macaulay 2 end", dotbashrcFix );
      mungeFile( homeDirectory | ".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", dotemacsFix );
