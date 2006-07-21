@@ -207,7 +207,7 @@ info TABLE := x -> netTable(Boxes=>true, applyTable(toList \ noopts \\ toList x,
 
 net TABLE :=  x -> (
      (op,ag) := override(options TABLE, toSequence x);
-     netTable(Boxes => op#"class" === "examples", toList (toList \ ag))
+     netTable(Boxes => op#"class" === "examples", toList \ toList ag)
      )
 
 shorten := s -> (
