@@ -143,7 +143,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       else error "internal error: expected coefficient ring to have a base ring and a flat monoid"
 	       );
      	  local RM;
-	  quotfix := rawRM -> if class R === QuotientRing and class ultimate(ambient,R) === PolynomialRing then rawQuotientRing(rawRM, raw R) else rawRM;
+	  quotfix := rawRM -> if isQuotientOf(PolynomialRing,R) then rawQuotientRing(rawRM, raw R) else rawRM;
 	  Weyl := M.Options.WeylAlgebra =!= {};
 	  skews := monoidIndices(M,M.Options.SkewCommutative);
 	  degRing := if degreeLength M != 0 then degreesRing degreeLength M else ZZ;
@@ -180,7 +180,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       diffs = pack(2,diffs);
 	       diffs0 = monoidIndices(M,first\diffs);
 	       diffs1 = monoidIndices(M,last\diffs);
-	       if any(values tally join(diffs0,diffs1), n -> n > 1) then error "WeylAgebra option: a variable specified more than once";
+	       if any(values tally join(diffs0,diffs1), n -> n > 1) then error "WeylAlgebra option: a variable specified more than once";
 	       if coeffWeyl then (
 		    diffs0 = join(diffs0, apply(R.diffs0, i -> i + num));
 		    diffs1 = join(diffs1, apply(R.diffs1, i -> i + num));
@@ -311,6 +311,9 @@ Ring _ List := RingElement => (R,w) -> product(#w, i -> (R_i)^(w_i))
 dim PolynomialRing := R -> dim coefficientRing R + # generators R - if R.?SkewCommutative then #R.SkewCommutative else 0
 char PolynomialRing := (R) -> char coefficientRing R
 numgens PolynomialRing := R -> numgens monoid R
+isSkewCommutative PolynomialRing := R -> (
+     o := options R;
+     0 < #o.SkewCommutative and 0 == #o.WeylAlgebra)
 
 weightRange = method()
 weightRange(List,RingElement) := (w,f) -> rawWeightRange(w,raw f)

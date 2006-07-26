@@ -1,6 +1,6 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
-module Ring := Module => R -> R^1
+module Ring := Module => (stashValue symbol module) (R -> R^1)
 
 matrix(Ring,List) := Matrix => options -> (R,m) -> (
      m = apply(splice m,splice);
@@ -579,11 +579,11 @@ Ideal == Ideal := (I,J) -> (
 Ideal == Module := (I,M) -> module I == M
 Module == Ideal := (M,I) -> M == module I
 
-module Ideal := Module => I -> (
-     M := image generators I;
-     if I.cache.?poincare then M.cache.poincare = I.cache.poincare;
-     M
-     )
+module Ideal := Module => (cacheValue symbol module) (
+     I -> (
+	  M := image generators I;
+	  if I.cache.?poincare then M.cache.poincare = I.cache.poincare;
+	  M))
 
 ideal Matrix := Ideal => (f) -> (
      R := ring f;

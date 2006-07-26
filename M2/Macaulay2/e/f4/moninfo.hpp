@@ -9,7 +9,9 @@
 #include "varpower_monomial.hpp"
 #include "ntuple_monomial.hpp"
 
-typedef int64 monomial_word; // Used for all types of monomials.  Is this OK?
+#include <stdint.h>
+
+typedef int64_t monomial_word; // Used for all types of monomials.  Is this OK?
 typedef monomial_word * packed_monomial; 
 typedef const monomial_word * const_packed_monomial; 
   // format: [hash,component,e1,...,envars],

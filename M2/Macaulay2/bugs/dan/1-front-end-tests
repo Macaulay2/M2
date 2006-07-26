@@ -1,3 +1,12 @@
+these tests have been installed, except:
+
+	for res we have never provided a hilbert function hint and I don't know how to do it
+	IM2_GB_set_hilbert_function seems to be only for gb's, not for res's
+
+	how do I tell whether a matrix is homogeneous with respect to just the first component of the degree?
+
+=============================================================================
+
 In-Reply-To: <200606281441.k5SEf4Y01872@u00.math.uiuc.edu>
 From: Michael Stillman <mike@math.cornell.edu>
 Subject: Re: good morning!

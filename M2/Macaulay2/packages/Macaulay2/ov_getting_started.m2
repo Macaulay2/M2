@@ -242,13 +242,13 @@ document { Key => "teaching emacs how to find M2-init.el",
      PARA{},
      "If you are lucky, then the Macaulay 2 directory tree has been installed
      with the same root as the emacs directory tree.  For example, if emacs
-     and Macaulay 2 are both installed in /usr, then M2-init.el is located at
+     and Macaulay 2 are both installed in /usr, then ", TT "M2-init.el", " is located at
      ", TT "/usr/share/emacs/site-lisp/M2-init.el", ", and emacs already knows
      to look in that directory for source files.",
      PARA {},
-     "The simplest way to teach emacs how to find M2-init.el is to let M2 do it for you.  Run M2,
+     "The simplest way to teach emacs how to find ", TT "M2-init.el", " is to let M2 do it for you.  Run M2,
      and then, in response to Macaulay2's input prompt, enter ", TT "setup()", ".  If that works,
-     the next time you start emacs, it should know how to find M2-init.el (see
+     the next time you start emacs, it should know how to find ", TT "M2-init.el", " (see
      ", TO "setup", ").  If that doesn't work, read onward.",
      PARA {},
      "To determine the precise path of the site-lisp directory emacs is looking
@@ -257,7 +257,7 @@ document { Key => "teaching emacs how to find M2-init.el",
      ", and ask for the description of the variable ", TT "load-path", ".",
      PARA {},
      "Let's assume that you have located the Macaulay 2 source code, and that
-     M2.el is located at ", TT "/foo/bar/share/emacs/site-lisp/M2-init.el", ",
+     ", TT "M2-init.el", " is located at ", TT "/foo/bar/share/emacs/site-lisp/M2-init.el", ",
      and that you want to tell emacs to search that directory, too.  
      Insert the following command into the file .emacs in your home directory.",
      PRE ///    (setq load-path 
@@ -265,7 +265,7 @@ document { Key => "teaching emacs how to find M2-init.el",
            '( "/foo/bar/share/emacs/site-lisp" )
            load-path))///,
      "The next time you start emacs, emacs will look also in that directory for 
-     files, and it should find M2-init.el."
+     files, and it should find ", TT "M2-init.el", "."
      }
 
 
@@ -281,12 +281,12 @@ document { Key => "teaching emacs how to find M2",
      "Then when you press f12, M2 should start running.",
      PARA {},
      "Here is what you will see on your screen in the minibuffer at the bottom of the screen when you press f12 if
-     emacs doesn't know how to find the file M2-init.el.",
+     emacs doesn't know how to find the file ", TT "M2-init.el", ".",
      PRE ///     Symbol's function definition is void: M2///,
      "If you see that, you are not ready for this section: see ", TO "teaching emacs how to find M2-init.el", ".",
      PARA {},
      "Here is what you will see on your screen in a buffer named ", TT "*M2*", " if emacs knows how
-     to find the file ", TT "M2-init.el", " but not how to find the program M2.",
+     to find the file ", TT "M2-init.el", " but not how to find the program ", TT "M2", ".",
      PARA {},
      PRE ///    + M2 --no-readline --print-width 189
     /bin/sh: M2: command not found
@@ -376,7 +376,7 @@ document {
 	  in the ", TT ".emacs", " file in your home directory, creating the file if necessary.",
 	  },
 PRE///    ;; .emacs file in your home directory
-    (load "M2-init.el")
+    (load "M2-init")
 
     ; comment out the following line with an initial semicolon 
     ; if you want to use your f12 key for something else
@@ -844,207 +844,180 @@ document {
 
 document {
      Key => "running Macaulay 2 in emacs",
--- don't indent
-"Because some answers can be very wide, it is a good idea to run Macaulay 2
-in a window which does not wrap output lines and allows the
-user to scroll horizontally to see the rest of the output.  We
-provide a package for ", TO "emacs", " which implements this, in
-", TT "emacs/M2.el", ".  It also provides for dynamic completion
-of symbols in the language.",
-PARA{},
-"There is an ASCII version of this section of the documentation distributed
-in the file ", TT "emacs/emacs-hlp.txt", ".  It might be useful for you to visit
-that file with emacs now, thereby avoiding having to cut and paste bits of
-text into emacs buffers for the deomonstrations below.",
-PARA{},
-"If you are a newcomer to emacs, start up emacs with the command 
-", TT "emacs", " and then start up the emacs tutorial with the keystrokes 
-", TT "C-h t", ".  (The notation ", TT "C-h", " indicates that you should type 
-", TT "Control-H", ", by holding down the control key, 
-and pressing ", TT "H", ".)  The emacs tutorial will introduce you to the
-basic keystrokes useful with emacs.  After running through that you will want
-to examine the online emacs manual which can be read with ", TT "info", "
-mode; you may enter or re-enter that mode with the keystrokes ", TT "C-h i", ".  
-You may also want to purchase (or print out) the emacs manual.  It is cheap,
-comprehensive and informative.  Once you have spent an hour with the emacs
-tutorial and manual, come back and continue from this point.",
-PARA{},
-"Edit your ", TT ".emacs", " initialization file, located in your home directory,
-creating one if necessary.  (Under Windows, this file might also be called
-", TT "_emacs", ", and your home directory is the one where the environment 
-variable ", TT "HOME", " says it is, if that variable has been set.  If it has not
-been set, the value of the registry entry named HKEY_CURRENT_USER\\SOFTWARE\\GNU\\Emacs 
-will be used, if set.  The default if neither of those is set is C:/.  In 
-any case, the name of the home directory is abbreviated to a single
-tilde ", TT "~", " under emacs.)  Insert into your initialization
-file the following line of emacs-lisp code (which can also be found
-in the file ", TT "emacs/emacs-hlp.txt", ", or obtained by running
-", TT ///help "running Macaulay 2 in emacs"///, " in Macaulay 2).",
-PARA{},
-PRE ///(load "/usr/local/Macaulay2-0.9/lib/Macaulay2-0.9/emacs/M2-init.el")///,
-PARA{},
-"Now edit that line and replace the path by the correct path to Macaulay2's
-files on your system.  To find out what that path is, evaluate the variable 
-", TT ///sourceHomeDirectory///, " in Macaulay 2.  Then append 
-", TT "emacs/M2-init.el", " to the value returned and incorporate it into 
-the ", TT "load", " command above.",
-PARA{},
-"Loading the file will cause emacs to enter a special mode for editing
-Macaulay 2 code whenever a file whose name has the form ", TT "*.m2", " is
-encountered.  It will also provide a special mode for running Macaulay 2 in
-an emacs buffer.  It sets the variable ", TT "transient-mark-mode", " to have
-a different value in each buffer, and sets hooks so that 
-", TT "transient-mark-mode", " will be set to ", TT "t", " in M2 buffers.  The
-effect of this is that the mark is only active occasionally, and then emacs
-functions which act on a region of text will refuse to proceed unless the
-mark is active.  The ", TT "set-mark", " function or the 
-", TT "exchange-point-and-mark", " function will activate the mark, and it will
-remain active until some change occurs to the buffer.  The only reason we
-recommend the use of this mode is so the same key can be used to evaluate a
-line or a region of code, depending on whether the region is active.",
-PARA{},
-"Exit and restart emacs with your new initialization file.  
-If you are reading this file with emacs, then use the keystrokes
-", TT "C-x 2", " to divide the buffer containing this file into two windows.
-Then press the ", TT "M-x M2", " to start up Macaulay 2 in a buffer
-named ", TT "*M2*", ".  (The command line used to start Macaulay 2 may
-be edited before being run if you use a prefix argument with the above
-command: press ", TT "C-u", " just before.)",
-PARA{},
-"If this doesn't start up Macaulay 2, one reason may be that your function
-keys are not operable.  In that case press ", TT "C-c m", " instead.  (The 
-notation ", TT "C-c", " is standard emacs notation for Control-C.)  Another
-reason may be that you have not installed Macaulay 2 properly - the startup
-script (", TT "M2", " or ", TT "M2.bat", ") should be on your path.
-A third reason may be that you are in Windows-98 and are using anti-virus 
-software such as ", TT "Dr. Solomon's", ", which can interfere with emacs 
-when it tries to run a subprocess.",
-PARA{},
-"You may wish to bind the emacs function ", TT "M2-send-to-program", "
-to a global keystroke for ease of use; this is done automatically for
-in Macaulay 2 buffers.  For example, the following emacs code
-will bind it to the function key ", TT "f11", ".",
-PARA{},
-PRE ///(global-set-key [ f11 ] 'M2-send-to-program)///,
-PARA{},
-"You may use ", TT "C-x o", " freely to switch from one window to the other.
-Verify that Macaulay 2 is running by entering a command such as ", TT "2+2", ".  
-Now paste the following text into a buffer, unless you have the ASCII
-version of this documentation in an emacs buffer already, position
-the cursor on the first line of code, and press the ", TT "f11", " function 
-key repeatedly to present each line to Macaulay 2.",
-PARA{},
-PRE ///i1 : R = ZZ/101[x,y,z]
-i2 : f = symmetricPower(2,vars R)
-i3 : M = cokernel f
-i4 : C = resolution M
-i5 : betti C///,
-PARA{},
-"Notice that the input prompts are not submitted to Macaulay 2.",
-PARA{},
-"Here is a way to conduct a demo of Macaulay 2 in which the code to be
-submitted is not visible on the screen.  Paste the following text into
-an emacs buffer.",
-PARA{},
-PRE ///20!
-4 + 5 * 2^20
--- that's all folks!///,
-PARA{},
-"Press ", TT "M-f11", " with your cursor in this buffer to designate it as
-the source for the Macaulay 2 commands.  (The notation ", TT "M-f11", " means 
-that while holding the ", TT "Meta", " key down, you should press the ", TT "f11", " 
-function key.  The Meta key is the Alt key on some keyboards, or it can be simulated by 
-pressing Escape (just once) and following that with the key you wanted to press 
-while the meta key was held down.)  Then position your cursor (and thus the 
-emacs point) within the line containing ", TT "20!", ".  Now press 
-", TT "M-x M2-demo", " to open up a new frame called ", TT "DEMO", "
-for the ", TT "*M2*", " window with a large font suitable for use with
-a projector, and with your cursor in that frame, press ", TT "f11", "
-a few times to conduct the demo.  (If the font or frame is the wrong
-size, you may have to create a copy of the file ", TT "M2.el", " with
-a version of the function ", TT "M2-demo", " modified to fit your
-screen.)",
-PARA{},
-"One press of ", TT "f11", " brings the next line of code forward into the
-", TT "*M2*", " buffer, and the next press executes it.  Use ", TT "C-x 5 0", " 
-when you want the demo frame to go away.",
-PARA{},
-"There is a way to send a region of text to Macaulay 2: simply select a region
-of text, making sure the mark is active (as described above) and press ", TT "f11", ".
-Try that on the list below; put it into an emacs buffer, move your cursor to the 
-start of the list, press ", TT "M-C-@", " or ", TT "M-C-space", " to mark the list, 
-and then press ", TT "f11", " to send it to Macaulay 2.  (The notation ", TT "M-C-@", " 
-means: while holding down the Meta key and the Control key press the ", TT "@", " key, 
-for which you'll also need the shift key.)",
-PARA{},
-PRE ///{a,b,c,d,e,f,
-g,h,i,j,k,l,
-m,n}///,
-PARA{},
-"We have developed a system for incorporating Macaulay 2 interactions into TeX
-files.  Here is an example of how that looks.  Paste the following text
-into an emacs buffer.",
-PARA{},
-PRE ///The answer, 4, is displayed after the output label ``{\tt o1\ =}''.
-Multiplication is indicated with the traditional {\tt *}.
-<<<1*2*3*4>>>
-Powers are obtained as follows.
-<<<2^100>>>///,
-PARA{},
-"The bits in brackets can be submitted to Macaulay 2 easily.  Position your
-cursor at the top of the buffer and press ", TT "F10.", "  The cursor will move 
-just past the first ", TT "<<<", ", and the emacs mark will be positioned just 
-before the ", TT ">>>", ".  Thus ", TT "1*2*3*4", " is the region, and it will
-even be highlighted if you have set the emacs variable ", TT "transient-mark-mode", "
-to ", TT "t", " for this buffer.  Pressing ", TT "f11", " will send ", TT "1*2*3*4", " 
-to Macaulay 2 for execution: try it now.  A sequence of such Macaulay 2 commands 
-can be executed by alternately pressing ", TT "F10", " and ", TT "f11", ".  You may
-also use ", TT "M-F10", " to move backward to the previous bracketed expression.",
-PARA{},
-"Now let's see how we can handle wide and tall Macaulay 2 output.  Execute the
-following line of code.",
-PARA{},
-PRE ///random(R^20,R^{6:-2})///,
-PARA{},
-"Notice that the long lines in the Macaulay 2 window, instead of being wrapped
-around to the next line, simply disappear off the right side of the screen,
-as indicated by the dollar signs in the rightmost column.  Switch to the
-other window and practice scrolling up and down with ", TT "M-v", " and ", TT "C-v", ", 
-and scrolling left and right with the function key ", TT "F3", " (or ", TT "C-c <", ") 
-and the function key ", TT "F4", " (or ", TT "C-c >", ").  Notice how the use of
-", TT "C-e", " to go to the end of the line
-sends the cursor to the dollar sign at the right hand side of the screen;
-that's where the cursor will appear whenever you go to a position off the
-screen to the right.  Then use the ", TT "F2", " function key (or ", TT "C-c .", ") to 
-scroll the text so the cursor appears at the center of the screen.  Use ", TT "C-a", " to 
-move to the beginning of the line and then the ", TT "F2", " function key 
-(or ", TT "C-c .", ") to bring the left margin back into view.",
-PARA{},
-"You may use the ", TT "F5", " function key or (or ", TT "C-c ?", ") to 
-toggle whether long lines are truncated or wrapped; initially they are truncated.",
-PARA{},
-"Now go to the very end of the ", TT "*M2*", " buffer with ", TT "M->", " and 
-experiment with keyword completion.  Type ", TT "reso", " and then press the 
-", TT "TAB", " key.  Notice how the word is completed to ", TT "resolution", "
-for you.  Delete the word with ", TT "M-DEL", ", type ", TT "res", "
-and then press the ", TT "TAB", " key.  The possible completions are displayed 
-in a window.  Switch to it with the ", TT "F8", " key, move to the desired 
-completion, select it with the ", TT "RETURN", " key, and then return to the 
-", TT "*M2*", " buffer with ", TT "C-x o", ".  Alternatively, if you have a
-mouse, use the middle button to select the desired completion.",
-PARA{},
-"Experiment with command line history in the ", TT "*M2*", " buffer.  Position 
-your cursor at the end of the buffer, and then use ", TT "M-p", " and ", TT "M-n", " 
-to move to the previous and next line of input remembered in the history.  When you 
-get to one you'd like to run again, simply press return to do so.  Or edit it
-slightly to change it before pressing return.",
-PARA{},
-"Assuming you have installed the ", TO "w3", " emacs web browser,
-you may explore the documentation by positioning the cursor near a documented
-word such as ", TT "List", " and pressing ", TT "C-c d", ".  Alternatively,
-when the prompt appears, you can type the key whose documentation should be
-found."
-}
+     "Because some answers can be very wide, it is a good idea to run Macaulay 2
+     in a window which does not wrap output lines and allows the
+     user to scroll horizontally to see the rest of the output.  We
+     provide a package for ", TO "emacs", " that implements this.
+     It also provides for dynamic completion of symbols in the language.",
+     PARA{},
+     "There is an ASCII version of this section of the documentation distributed
+     in the file ", TT (LAYOUT#"packagedoc" "Core" | "emacs/" |
+     "emacs-hlp.txt"), ". It might be useful for you to visit
+     that file with emacs now, thereby avoiding having to cut and paste bits of
+     text into emacs buffers for the deomonstrations below.",
+     PARA{},
+     "If you are a newcomer to emacs, start up emacs with the command 
+     ", TT "emacs", " and then start up the emacs tutorial with the keystrokes 
+     ", TT "C-h t", ".  (The notation ", TT "C-h", " indicates that you should type 
+     ", TT "Control-H", ", by holding down the control key, 
+     and pressing ", TT "H", ".)  The emacs tutorial will introduce you to the
+     basic keystrokes useful with emacs.  After running through that you will want
+     to examine the online emacs manual which can be read with ", TT "info", "
+     mode; you may enter or re-enter that mode with the keystrokes ", TT "C-h i", ".  
+     You may also want to purchase (or print out) the emacs manual.  It is cheap,
+     comprehensive and informative.  Once you have spent an hour with the emacs
+     tutorial and manual, come back and continue from this point.",
+     PARA{},
+     "We assume you have taught emacs how to find Macaulay2's files, as described in
+     the previous sections, and that emacs is loading the file ", TT "M2-init.el", "
+     successfully.  Loading that file will cause emacs to enter a special mode for editing
+     Macaulay 2 code whenever a file whose name has the form ", TT "*.m2", " is
+     encountered.  It will also provide a special mode for running Macaulay 2 in
+     an emacs buffer.  It sets the variable ", TT "transient-mark-mode", " to have
+     a different value in each buffer, and sets hooks so that 
+     ", TT "transient-mark-mode", " will be set to ", TT "t", " in M2 buffers.  The
+     effect of this is that the mark is only active occasionally, and then emacs
+     functions which act on a region of text will refuse to proceed unless the
+     mark is active.  The ", TT "set-mark", " function or the 
+     ", TT "exchange-point-and-mark", " function will activate the mark, and it will
+     remain active until some change occurs to the buffer.  The only reason we
+     recommend the use of this mode is so the same key can be used to evaluate a
+     line or a region of code, depending on whether the region is active.",
+     PARA{},
+     "Exit and restart emacs with your new initialization file.  
+     If you are reading this file with emacs, then use the keystrokes
+     ", TT "C-x 2", " to divide the buffer containing this file into two windows.
+     Then press the ", TT "M-x M2", " to start up Macaulay 2 in a buffer
+     named ", TT "*M2*", ".  (The command line used to start Macaulay 2 may
+     be edited before being run if you use a prefix argument with the above
+     command: press ", TT "C-u", " just before.)",
+     PARA{},
+     "If this doesn't start up Macaulay 2, one reason may be that your function
+     keys are not operable.  In that case press ", TT "M-x M2", " instead.  (The 
+     notation ", TT "M-x", " is emacs notation for pressing the ", TT "x", "
+     key while holding down the Meta or Alt key.)  If that doesn't work, please
+     see ", TO "teaching emacs how to find M2-init.el", " and ",
+     TO "teaching emacs how to find M2", ".",
+     PARA{},
+     "You may wish to bind the emacs function ", TT "M2-send-to-program", "
+     to a global keystroke for ease of use; this is done automatically for
+     in Macaulay 2 buffers.  For example, the following emacs code
+     will bind it to the function key ", TT "f11", ".",
+     PARA{},
+     PRE ///(global-set-key [ f11 ] 'M2-send-to-program)///,
+     PARA{},
+     "You may use ", TT "C-x o", " freely to switch from one window to the other.
+     Verify that Macaulay 2 is running by entering a command such as ", TT "2+2", ".  
+     Now paste the following text into a buffer, unless you have the ASCII
+     version of this documentation in an emacs buffer already, position
+     the cursor on the first line of code, and press the ", TT "f11", " function 
+     key repeatedly to present each line to Macaulay 2.",
+     PARA{},
+     PRE ///i1 : R = ZZ/101[x,y,z]
+     i2 : f = symmetricPower(2,vars R)
+     i3 : M = cokernel f
+     i4 : C = resolution M
+     i5 : betti C///,
+     PARA{},
+     "Notice that the input prompts are not submitted to Macaulay 2.",
+     PARA{},
+     "Here is a way to conduct a demo of Macaulay 2 in which the code to be
+     submitted is not visible on the screen.  Visit a file called ", 
+     TT "foo.m2", " and paste the following text into it.",
+     PARA{},
+     PRE ///20!
+     4 + 5 * 2^20
+     -- that's all folks!///,
+     PARA{},
+     "Press ", TT "M-f11", " with your cursor in this buffer to designate it as
+     the source for the Macaulay 2 commands.  (The notation ", TT "M-f11", " means 
+     that while holding the ", TT "Meta", " key down, you should press the ", TT "f11", " 
+     function key.  The Meta key is the Alt key on some keyboards, or it can be simulated by 
+     pressing Escape (just once) and following that with the key you wanted to press 
+     while the meta key was held down.)  Then position your cursor (and thus the 
+     emacs point) within the line containing ", TT "20!", ".  Now press 
+     ", TT "M-x M2-demo", " to open up a new frame called ", TT "DEMO", "
+     for the ", TT "*M2*", " window with a large font suitable for use with
+     a projector, and with your cursor in that frame, press ", TT "f11", "
+     a few times to conduct the demo.  (If the font or frame is the wrong
+     size, you may have to create a copy of the file ", TT "M2.el", " with
+     a version of the function ", TT "M2-demo", " modified to fit your
+     screen.)",
+     PARA{},
+     "One press of ", TT "f11", " brings the next line of code forward into the
+     ", TT "*M2*", " buffer, and the next press executes it.  Use ", TT "C-x 5 0", " 
+     when you want the demo frame to go away.",
+     PARA{},
+     "There is a way to send a region of text to Macaulay 2: simply select a region
+     of text, making sure the mark is active (as described above) and press ", TT "f11", ".
+     Try that on the list below; put it into an emacs buffer, move your cursor to the 
+     start of the list, press ", TT "M-C-@", " or ", TT "M-C-space", " to mark the list, 
+     and then press ", TT "f11", " to send it to Macaulay 2.  (The notation ", TT "M-C-@", " 
+     means: while holding down the Meta key and the Control key press the ", TT "@", " key, 
+     for which you'll also need the shift key.)",
+     PARA{},
+     PRE ///{a,b,c,d,e,f,
+     g,h,i,j,k,l,
+     m,n}///,
+     PARA{},
+     "We have developed a system for incorporating Macaulay 2 interactions into TeX
+     files.  Here is an example of how that looks.  Paste the following text
+     into an emacs buffer.",
+     PARA{},
+     PRE ///The answer, 4, is displayed after the output label ``{\tt o1\ =}''.
+     Multiplication is indicated with the traditional {\tt *}.
+     <<<1*2*3*4>>>
+     Powers are obtained as follows.
+     <<<2^100>>>///,
+     PARA{},
+     "The bits in brackets can be submitted to Macaulay 2 easily.  Position your
+     cursor at the top of the buffer and press ", TT "F10.", "  The cursor will move 
+     just past the first ", TT "<<<", ", and the emacs mark will be positioned just 
+     before the ", TT ">>>", ".  Thus ", TT "1*2*3*4", " is the region, and it will
+     even be highlighted if you have set the emacs variable ", TT "transient-mark-mode", "
+     to ", TT "t", " for this buffer.  Pressing ", TT "f11", " will send ", TT "1*2*3*4", " 
+     to Macaulay 2 for execution: try it now.  A sequence of such Macaulay 2 commands 
+     can be executed by alternately pressing ", TT "F10", " and ", TT "f11", ".  You may
+     also use ", TT "M-F10", " to move backward to the previous bracketed expression.",
+     PARA{},
+--     "Now let's see how we can handle wide and tall Macaulay 2 output.  Execute the
+--     following line of code.",
+--     PARA{},
+--     PRE ///random(R^20,R^{6:-2})///,
+--     PARA{},
+--     "Notice that the long lines in the Macaulay 2 window, instead of being wrapped
+--     around to the next line, simply disappear off the right side of the screen,
+--     as indicated by the dollar signs in the rightmost column.  Switch to the
+--     other window and practice scrolling up and down with ", TT "M-v", " and ", TT "C-v", ", 
+--     and scrolling left and right with the function key ", TT "F3", " (or ", TT "C-c <", ") 
+--     and the function key ", TT "F4", " (or ", TT "C-c >", ").  Notice how the use of
+--     ", TT "C-e", " to go to the end of the line
+--     sends the cursor to the dollar sign at the right hand side of the screen;
+--     that's where the cursor will appear whenever you go to a position off the
+--     screen to the right.  Then use the ", TT "F2", " function key (or ", TT "C-c .", ") to 
+--     scroll the text so the cursor appears at the center of the screen.  Use ", TT "C-a", " to 
+--     move to the beginning of the line and then the ", TT "F2", " function key 
+--     (or ", TT "C-c .", ") to bring the left margin back into view.",
+--     PARA{},
+--     "You may use the ", TT "F5", " function key or (or ", TT "C-c ?", ") to 
+--     toggle whether long lines are truncated or wrapped; initially they are truncated.",
+--     PARA{},
+     "Now go to the very end of the ", TT "*M2*", " buffer with ", TT "M->", " and 
+     experiment with keyword completion.  Type ", TT "reso", " and then press the 
+     ", TT "TAB", " key.  Notice how the word is completed to ", TT "resolution", "
+     for you.  Delete the word with ", TT "M-DEL", ", type ", TT "res", "
+     and then press the ", TT "TAB", " key.  The possible completions are displayed 
+     in a window.  Switch to it with the ", TT "F8", " key, move to the desired 
+     completion, select it with the ", TT "RETURN", " key, and then return to the 
+     ", TT "*M2*", " buffer with ", TT "C-x o", ".  Alternatively, if you have a
+     mouse, use the middle button to select the desired completion.",
+     PARA{},
+     "Experiment with command line history in the ", TT "*M2*", " buffer.  Position 
+     your cursor at the end of the buffer, and then use ", TT "M-p", " and ", TT "M-n", " 
+     to move to the previous and next line of input remembered in the history.  When you 
+     get to one you'd like to run again, simply press return to do so.  Or edit it
+     slightly to change it before pressing return.",
+     }
 
 document {
      Key => "how Macaulay 2 finds its files",

@@ -71,25 +71,26 @@ Ring ** Matrix := Matrix => (R,f) -> (
      )
 
 -----------------------------------------------------------------------------       
-poincare Module := M -> (
-     R := ring M;
-     n := degreeLength R;
-     if n == 0 then error "expected nonzero degree length"; -- return the rank?
-     M = cokernel presentation M;
-     -- if not isHomogeneous M then error "expected a homogeneous module";
-     if M.cache.?poincare then M.cache.poincare else M.cache.poincare = (
-     	  ZZn := degreesRing R;
-	  g := leadTerm gb presentation M;
-	  p := new ZZn from rawHilbert raw g;
-	  assert( raw ring p === rawRing raw p );	    -- fix this!
-	  if R.?Repair and R.Repair =!= identity then (
-	       repair := R.Repair;
-	       p = substitute(p,
-		    toList apply( 0 .. n-1, 
-		       	 i -> ZZn_i => ZZn_(
-			      repair toList apply( 0 .. n-1,  -- should just have the matrix of Repair available! 
-				   j -> if j === i then 1 else 0 ) ) ) ) );
-          p))
+poincare Module := (cacheValue symbol poincare) (
+     M -> (
+	  R := ring M;
+	  n := degreeLength R;
+	  if n == 0 then error "expected nonzero degree length"; -- return the rank?
+	  M = cokernel presentation M;
+	  -- if not isHomogeneous M then error "expected a homogeneous module";
+	  if M.cache.?poincare then M.cache.poincare else M.cache.poincare = (
+	       ZZn := degreesRing R;
+	       g := leadTerm gb presentation M;
+	       p := new ZZn from rawHilbert raw g;
+	       assert( raw ring p === rawRing raw p );	    -- fix this!
+	       if R.?Repair and R.Repair =!= identity then (
+		    repair := R.Repair;
+		    p = substitute(p,
+			 toList apply( 0 .. n-1, 
+			      i -> ZZn_i => ZZn_(
+				   repair toList apply( 0 .. n-1,  -- should just have the matrix of Repair available! 
+					j -> if j === i then 1 else 0 ) ) ) ) );
+	       p)))
 
 hilbertFunction(ZZ,Module) :=
 hilbertFunction(ZZ,Ring) :=
@@ -489,23 +490,22 @@ Module / Vector := Module => (M,v) -> (
 --     }
 -----------------------------------------------------------------------------
 
-ann = annihilator
+annihilator = method(
+     Options => {
+	  Strategy => Intersection			    -- or Quotient
+	  }
+     )
 
-ann' = method()
-
-ann' Module := Ideal => M -> (
+annihilator Module := Ideal => o -> (M) -> (
      f := presentation M;
-     image f : target f )
+     if o.Strategy === Intersection then (
+	  F := target f;
+	  intersect apply(numgens F, i -> ideal modulo(F_{i},f)))
+     else if o.Strategy === Quotient then image f : target f
+     else error "annihilator: expected Strategy option to be Intersection or Quotient")
 
-annihilator Module := Ideal => (M) -> (
-     if M == 0 then ideal 1_(ring M)
-     else (
-	  P := presentation M;
-	  F := target P;
-	  intersect apply(numgens F, i-> ideal modulo(matrix{F_i},P))))
-
-annihilator Ideal := Ideal => I -> annihilator module I
-annihilator RingElement := Ideal => f -> annihilator ideal f
+annihilator Ideal := Ideal => o -> I -> annihilator(module I, o)
+annihilator RingElement := Ideal => o -> f -> annihilator(ideal f, o)
 
 -----------------------------------------------------------------------------
 ZZ _ Module := Vector => (i,M) -> (
@@ -627,10 +627,10 @@ basis(List,List,Ring) :=
 basis(InfiniteNumber,ZZ,Ring) := 
 basis(ZZ,InfiniteNumber,Ring) := 
 basis(InfiniteNumber,InfiniteNumber,Ring) := 
-basis(ZZ,ZZ,Ring) := opts -> (lo,hi,R) -> basis(lo,hi,R^1,opts)
+basis(ZZ,ZZ,Ring) := opts -> (lo,hi,R) -> basis(lo,hi,module R,opts)
 
 basis(ZZ,Ring) := 
-basis(List,Ring) := opts -> (deg,R) -> basis(deg, R^1,opts)
+basis(List,Ring) := opts -> (deg,R) -> basis(deg, module R, opts)
 
 basis Module := opts -> (M) -> basis(-infinity,infinity,M,opts)
 basis Ring := opts -> R -> basis(R^1,opts)

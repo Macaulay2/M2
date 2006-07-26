@@ -140,7 +140,6 @@ void *sbrk();		/* not really ansi standard, sigh */
 #include "M2types.h"
 #include "../e/engine.h"
 #include "compat.h"		/* same include files seen by *.c files produced from *.d files */
-#include "targettypes.h"
 
 #define STDIN 0
 #define STDOUT 1

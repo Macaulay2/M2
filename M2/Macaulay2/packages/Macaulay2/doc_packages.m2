@@ -197,7 +197,6 @@ document {
 --error: option has no documentation: Macaulay2 :: installPackage(..., PackagePrefix => ...), key: [installPackage, PackagePrefix]
 --error: option has no documentation: Macaulay2 :: installPackage(..., Encapsulate => ...), key: [installPackage, Encapsulate]
 --error: option has no documentation: Macaulay2 :: installPackage(..., InstallPrefix => ...), key: [installPackage, InstallPrefix]
---error: option has no documentation: Macaulay2 :: installPackage(..., IgnoreDocumentationErrors => ...), key: [installPackage, IgnoreDocumentationErrors]
 --error: option has no documentation: Macaulay2 :: installPackage(..., AbsoluteLinks => ...), key: [installPackage, AbsoluteLinks]
 --error: option has no documentation: Macaulay2 :: installPackage(..., MakeLinks => ...), key: [installPackage, MakeLinks]
 --error: symbol has no documentation: Macaulay2 :: uninstallPackage

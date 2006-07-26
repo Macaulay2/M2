@@ -110,79 +110,90 @@ RingMap Vector := Vector => (p,m) -> (
      f := p new Matrix from m;
      new target f from f)
 
-kernel RingMap := Ideal => options -> (f) -> if f.cache.?kernel then f.cache.kernel else f.cache.kernel = (
-     R := source f;
-     n2 := numgens R;
-     F := target f;
-     n1 := numgens F;
-     if class F === FractionField then (
-	  C := last F.baseRings;
-	  -- if not isHomogeneous f then error "not implemented yet";
-	  images := apply(generators R, x -> (
-		    w := f x;
-		    new Divide from {numerator w, denominator w} ));
-	  -- now make a common denominator for all images
-	  images = new MutableList from images;
-	  i := 1;
-	  while i < #images do (
-	       z := syz(
-		    matrix{{denominator images#0,denominator images#i}},
-		    SyzygyLimit => 1 );
-	       a := -z_(0,0);
-	       b := z_(1,0);
-	       j := 0;
-	       while j < i do (
-		    images#j = apply(images#j, s -> s*a);
-		    j = j+1;
+kernel RingMap := Ideal => opts -> (cacheValue symbol kernel) (
+     (f) -> (
+	  R := source f;
+	  n2 := numgens R;
+	  F := target f;
+	  n1 := numgens F;
+	  if class F === FractionField then (
+	       C := last F.baseRings;
+	       if not (
+		    (isPolynomialRing C or isQuotientOf(PolynomialRing,C))
+		    and
+		    (isPolynomialRing R or isQuotientOf(PolynomialRing,R))
+		    and
+		    coefficientRing R === coefficientRing C
+		    ) then error "kernel: not implemented yet";
+	       k := coefficientRing R;
+	       prs := presentation C;
+	       B := ring prs;
+	       images := apply(generators R, x -> (
+			 w := f x;
+			 new Divide from {numerator w, denominator w} ));
+	       -- now make a common denominator for all images
+	       images = new MutableList from images;
+	       i := 1;
+	       while i < #images do (
+		    z := syz(
+			 matrix{{denominator images#0,denominator images#i}},
+			 SyzygyLimit => 1 );
+		    a := -z_(0,0);
+		    b := z_(1,0);
+		    j := 0;
+		    while j < i do (
+			 images#j = apply(images#j, s -> s*a);
+			 j = j+1;
+			 );
+		    images#i = apply(images#i, s -> s*b);
+		    i = i+1;
 		    );
-	       images#i = apply(images#i, s -> s*b);
-	       i = i+1;
-	       );
-	  images = toList images;
-	  commonDenominator := images#0#1;
-	  k := coefficientRing R;
-	  d := symbol d;
-	  h := symbol h;
-	  x := symbol x;
-	  y := symbol y;
-	  S := k[x_1 .. x_n1, d, y_1 .. y_n2, h,
-	       MonomialOrder => Eliminate (n1 + 1),
-	       Degrees => join(
-		    apply(generators C, degree), {{1}}, 
-		    apply(generators R, degree), {{1}})];
-	  in1 := map(S,C,matrix {take (generators S, n1)});
-	  in2 := map(S,R,matrix {take (generators S, {n1 + 1, n1 + n2})});
-	  back := map(R,S,map(R^1,R^(n1 + 1),0) | vars R | 1 );
-	  ideal back selectInSubring( 1, 
-	       generators gb(
-		    homogenize (
-	       		 in2 vars source in2 - d * in1 matrix {apply(images, first)}
-	       		 | d * in1 commonDenominator - 1,
-	       		 h),
-		    Strategy => LongPolynomial, options)))
-     else if (
-	  isAffineRing R
-	  and isAffineRing F
-	  and coefficientRing R === coefficientRing F
-	  ) 
-     then (
-	  JJ := generators graphIdeal(f,
-	       MonomialOrder => Eliminate n1, 
-	       MonomialSize => 16,
-	       VariableBaseName => local X);
-	  if isHomogeneous JJ then (
-	      hf := poincare (target f)^1;
-	      T := (ring hf)_0;
-	      hf = hf * product(numgens source JJ, i -> (
-			d := (degrees source JJ)#i#0; 
-			1 - T^d));
-	      (cokernel JJ).cache.poincare = hf;
-	      );
-	  mapback := map(R, ring JJ, map(R^1, R^n1, 0) | vars R);
-	  ideal mapback selectInSubring(1,generators gb(JJ,options))
-	  )
-     else error "not implemented yet"
-     )
+	       images = toList images;
+	       commonDenominator := images#0#1;
+	       d := symbol d;
+	       h := symbol h;
+	       x := symbol x;
+	       y := symbol y;
+	       S := k[x_1 .. x_n1, d, y_1 .. y_n2, h,
+		    MonomialOrder => Eliminate (n1 + 1),
+		    Degrees => join(
+			 apply(generators C, degree), {{1}}, 
+			 apply(generators R, degree), {{1}})];
+	       in1 := map(S,C,matrix {take (generators S, n1)});
+	       in2 := map(S,B,matrix {take (generators S, n1)});
+	       in3 := map(S,R,matrix {take (generators S, {n1 + 1, n1 + n2})});
+	       back := map(R,S,map(R^1,R^(n1 + 1),0) | vars R | 1 );
+	       ideal back selectInSubring( 1, 
+		    generators gb(
+			 in2 prs |
+			 homogenize (
+			      in3 vars source in3 - d * in1 matrix {apply(images, first)}
+			      | d * in1 commonDenominator - 1,
+			      h),
+			 Strategy => LongPolynomial, opts)))
+	  else if (
+	       isAffineRing R
+	       and isAffineRing F
+	       and coefficientRing R === coefficientRing F
+	       ) 
+	  then (
+	       JJ := generators graphIdeal(f,
+		    MonomialOrder => Eliminate n1, 
+		    MonomialSize => 16,
+		    VariableBaseName => local X);
+	       if isHomogeneous JJ then (
+		   hf := poincare (target f)^1;
+		   T := (ring hf)_0;
+		   hf = hf * product(numgens source JJ, i -> (
+			     d := (degrees source JJ)#i#0; 
+			     1 - T^d));
+		   (cokernel JJ).cache.poincare = hf;
+		   );
+	       mapback := map(R, ring JJ, map(R^1, R^n1, 0) | vars R);
+	       ideal mapback selectInSubring(1,generators gb(JJ,opts))
+	       )
+	  else error "not implemented yet"
+	  ))
 
 coimage RingMap := QuotientRing => f -> f.source / kernel f
 

@@ -27,7 +27,7 @@
 #include "random.hpp"
 
 
-int32 rawSetRandomSeed(M2_Integer seed)
+int32_t rawSetRandomSeed(M2_Integer seed)
 {
   return Random::set_seed(seed);
 }

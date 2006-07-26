@@ -296,7 +296,7 @@ void F4GB<CoeffRing>::make_matrix()
     process_column(next_col_to_process++);
 
   // DEBUGGING:
-  fprintf(stderr, "--matrix--%ld by %ld\n", 
+  fprintf(stderr, "--matrix--%d by %d\n", 
 	  mat->rows.size(), mat->columns.size());
 
   // Now we reorder the columns, rows?

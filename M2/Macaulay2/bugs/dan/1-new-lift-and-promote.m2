@@ -1,21 +1,4 @@
-we have a test file
-
-     test/matrixpromote.m2
-     
-it currently crashes and I told Mike     
-
------------------------------------------------------------------------------
-
-To: Dan Grayson <dan@math.uiuc.edu>
-From: Michael Stillman <mike@math.cornell.edu>
-Subject: 
-Date: Fri, 30 Jun 2006 11:50:15 -0400
-
-rawLift and rawPromote now work as in your matrixpromote.m2 file.  I  
-haven't changed anything (much) between QQ and RR, RRR, ZZ/p, until  
-we figure out what we want.
-
------------------------------------------------------------------------------
+-- now it's time to implement "liftable" in the engine
 
 In-Reply-To: <200606270131.k5R1Vje16349@u00.math.uiuc.edu>
 From: Michael Stillman <mike@math.cornell.edu>

@@ -177,13 +177,14 @@ commentize := s -> if s =!= null then concatenate(" -- ",s)
 checkIsTag := tag -> ( assert(class tag === DocumentTag); tag )
 
 alpha := characters "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-anchorPoint := 0
-anchor := entry -> (
-     checkIsTag entry;
-     if alpha#?anchorPoint and entry >= alpha#anchorPoint then (
-     	  s := select(drop(alpha,anchorPoint), c -> entry >= c);
-     	  anchorPoint = anchorPoint + #s;
-     	  SPAN apply(s, c -> ANCHOR{ "id" => c, ""})))
+indAl := new HashTable from apply(#alpha, i -> alpha#i => i)
+numAnchorsMade := 0
+makeAnchors := n -> (
+     ret := SPAN apply(take(alpha,{numAnchorsMade,n-1}), c -> ANCHOR{ "id" => c, ""});
+     numAnchorsMade = n;
+     ret)
+anchorsUpTo := entry -> if alpha#?numAnchorsMade and entry >= alpha#numAnchorsMade then makeAnchors length select(alpha, c -> entry >= c)
+remainingAnchors := () -> makeAnchors (#alpha)
 
 packageTagList := (pkg,topDocumentTag) -> checkIsTag \ unique join(
      apply(
@@ -340,7 +341,7 @@ capture String := s -> (
 -----------------------------------------------------------------------------
 
 makeMasterIndex := keylist -> (
-     anchorPoint = 0;
+     numAnchorsMade = 0;
      fn := buildDirectory | htmlDirectory | indexFileName;
      title := "Symbol Index";
      stderr << "--making  '" << title << "' in " << fn << endl;
@@ -353,8 +354,10 @@ makeMasterIndex := keylist -> (
 	       DIV between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), 
 	       UL apply(sort keylist, (tag) -> (
 			 checkIsTag tag;
-			 anch := anchor tag;
-			 if anch === null then LI TOH tag else LI {anch, TOH tag}))}};
+			 anch := anchorsUpTo tag;
+			 if anch === null then LI TOH tag else LI {anch, TOH tag})),
+	       DIV remainingAnchors()
+	       }};
      validate r;
      fn << html r << endl << close
      )
@@ -459,10 +462,9 @@ installPackage = method(Options => {
 	  UserMode => false,
 	  Encapsulate => true,
 	  IgnoreExampleErrors => false,
-	  IgnoreDocumentationErrors => false,
 	  CheckDocumentation => true,
 	  MakeDocumentation => true,
-	  MakeInfo => false,
+	  MakeInfo => true,
 	  RemakeAllDocumentation => true,		    -- until we get better dependency graphs between documentation nodes, "false" here will confuse users
 	  RerunExamples => false,
 	  AbsoluteLinks => false,
@@ -476,20 +478,18 @@ uninstallPackage = method(Options => {
 	  MakeLinks => true
 	  })
 uninstallPackage String := opts -> pkg -> (
-     if isGlobalSymbol pkg and class value getGlobalSymbol pkg === Package then return uninstallPackage(value getGlobalSymbol pkg, opts);
-     needsPackage pkg;
-     if class value pkg === Package then return uninstallPackage(value pkg, opts);
-     error ("can't locate package '",pkg,"'");
-     )
-
-uninstallPackage Package := o -> pkg -> (
-     setupNames(o,pkg);
-     initInstallDirectory o;
-     stderr << "--uninstalling package " << pkg << " in " << buildDirectory << endl;
-     -- unmake symbolic links
-     if o.Encapsulate and o.MakeLinks then (
-	  symlinkDirectory(buildDirectory, installDirectory, Verbose => debugLevel > 0, Undo => true);
-	  );
+     if not opts.Encapsulate then error "uninstallPackage: can't uninstall with Encapsulate => false";
+     if not match("^[a-zA-Z0-9]+$",pkg) then error( "package title not alphanumeric: ",pkg);
+     buildDirectory := minimizeFilename(runfun opts.PackagePrefix | "/");
+     installDirectory := minimizeFilename(runfun opts.InstallPrefix | "/");
+     rex := "^" | pkg | "-";
+     scan(readDirectory buildDirectory, dir -> if match(rex,dir) then (
+	       dir = buildDirectory|dir|"/";
+	       enc := dir|"encapinfo";
+	       if not fileExists enc then error ("expected package to contain file: ",enc);
+	       symlinkDirectory(dir, installDirectory, Verbose => debugLevel > 0, Undo => true);
+	       scan(reverse findFiles dir, fn -> if isDirectory fn then removeDirectory fn else removeFile fn);
+	       ));
      )
 
 installPackage String := opts -> pkg -> (
@@ -508,7 +508,6 @@ dispatcherMethod := m -> m#-1 === Sequence and (
 
 installPackage Package := opts -> pkg -> (
      use pkg;
-     ignoreDocumentationErrors = opts.IgnoreDocumentationErrors;
      chkdoc = opts.CheckDocumentation;			    -- oops, this will have a lingering effect...
 
      if opts.MakeDocumentation and pkg#?"documentation not loaded"
@@ -976,7 +975,6 @@ installPackage Package := opts -> pkg -> (
      stderr << "--installed package " << pkg << " in " << buildDirectory << endl;
      currentPackage = oldpkg;
      if not noinitfile and prefixDirectory =!= null then makePackageIndex();
-     ignoreDocumentationErrors = true;
      )
 
 userMacaulay2Directory := () -> (
@@ -1027,7 +1025,7 @@ userMacaulay2Directory := () -> (
        load-path
        ))
 
-(load "M2-init.el" t)
+(load "M2-init" t)
 
 ; comment out the following line with an initial semicolon if you want to use your f12 key for something else
 (global-set-key [ f12 ] 'M2)

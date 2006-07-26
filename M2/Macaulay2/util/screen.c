@@ -267,7 +267,7 @@ HandleSIGCHLD(int sig)
 	       if (status != 0) {
 		    int code = (status >> 8) & 0xff;
 		    int sig0 = status & 0xff;
-		    int n;
+		    unsigned int n;
      		    char buf[BUFFER_SIZE];
 		    while (0 < (n = read(masterfd,buf,sizeof(buf)))) {
 			 write(STDOUT,buf,n);
@@ -384,7 +384,7 @@ EventManager()
      }
 
 void
-Writemasterfd(char *buf,int n)
+Writemasterfd(char *buf,unsigned int n)
 {
      /* even if n==0 we write, so ^D from typist gets passed through */
      n = write(masterfd,buf,n);
@@ -401,7 +401,7 @@ hFromKeyboard(int fd){
     rdbuf[n++] = master_ttyparm.termios.c_cc[VEOF];
     unheed(fd);
   }
-  Writemasterfd(rdbuf,n);
+  Writemasterfd(rdbuf,(unsigned)n);
 }
 
 void
@@ -412,7 +412,7 @@ hmasterfd(int fd){
      n = read(masterfd,buf,sizeof(buf));
      if (n == NODATA) terminate(0);
      if (n == ERROR) terminate(0); /* the shell has terminated */
-     check(write(STDOUT,buf,n),"write stdout",__LINE__);
+     check(write(STDOUT,buf,(unsigned)n),"write stdout",__LINE__);
      }
 
 void

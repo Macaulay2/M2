@@ -16,7 +16,7 @@ extern bool gcc;
 extern char *getmem(unsigned);
 extern char *strnperm(const char *, unsigned);
 extern char *strperm(const char *);
-extern node newnode1(int, enum TAG);
+extern node newnode1(unsigned int, enum TAG);
 extern void fail (char *, int);
 extern void myexit(int);
 extern const struct POS empty_pos;

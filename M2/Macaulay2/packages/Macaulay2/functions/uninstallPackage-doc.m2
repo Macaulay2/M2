@@ -1,5 +1,5 @@
 document { 
-     Key => {uninstallPackage,(uninstallPackage,String),(uninstallPackage,Package)},
+     Key => {uninstallPackage,(uninstallPackage,String)},
      Headline => "uninstall a package",
      Usage => "uninstallPackage PACKAGENAME",
      Inputs => {
@@ -10,6 +10,7 @@ document {
 	  MakeLinks => Boolean => "whether the links were made when installed"
 	  },
      Consequences => {
-	  { "the links to the files of the specified package created by ", TO "installPackage", ", in case encapsulation is enabled, are removed" }
+	  { "the links to the files and the files of the specified package created by ", TO "installPackage", ", in case encapsulation is enabled, are removed,
+	       for every bersion of the package." }
 	  }
      }

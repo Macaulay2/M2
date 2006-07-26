@@ -270,7 +270,11 @@ dotemacsFix = ///
         '( "/PREFIX/share/emacs/site-lisp/" )
         load-path))
 
-(load "M2-init" t)
+;; this version will give an error if M2-init.el is not found:
+(load "M2-init")
+
+;; this version will not give an error if M2-init.el is not found:
+;(load "M2-init" t)
 
 ; comment out the following line with an initial semicolon if you 
 ; want to use your f12 key for something else

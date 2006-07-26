@@ -31,7 +31,7 @@ void myexit(int i){
      exit(i);
      }
 
-node newnode1(int len, enum TAG tag) {
+node newnode1(unsigned int len, enum TAG tag) {
      node p = (node) getmem(len);
      memset(p,0x00,len);
      p->tag = tag;
@@ -113,21 +113,23 @@ char *BaseName(char *s) {
      }
 
 char *newsuffix(char *s, char *suf){
-     char *t, *u;
-     t = tail(s);
-     u = getmem(t-s+1+strlen(suf));
-     strncpy(u,s,t-s);
-     strcpy(u+(t-s),suf);
+     char *t = tail(s);
+     unsigned int len = t-s;
+     char *u = getmem(len+1+strlen(suf));
+     strncpy(u,s,len);
+     strcpy(u+len,suf);
      return u;
      }
 
 char *newsuffixbase(char *s, char *suf){
      char *t, *u;
+     unsigned int len;
      s = BaseName(s);
      t = tail(s);
-     u = getmem(t-s+1+strlen(suf));
-     strncpy(u,s,t-s);
-     strcpy(u+(t-s),suf);
+     len = t-s;
+     u = getmem(len+1+strlen(suf));
+     strncpy(u,s,len);
+     strcpy(u+len,suf);
      return u;
      }
 

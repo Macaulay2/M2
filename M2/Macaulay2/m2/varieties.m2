@@ -132,7 +132,7 @@ SheafOfRings ^ ZZ := SheafOfRings ^ List := (O,n) -> (
      sheaf_X R^n
      )
 
-annihilator CoherentSheaf := Ideal => (F) -> annihilator F.module
+annihilator CoherentSheaf := Ideal => o -> (F) -> annihilator F.module
 
 codim   CoherentSheaf := (F) -> codim module F
 rank    CoherentSheaf := (F) -> rank  module F

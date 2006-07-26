@@ -1,9 +1,9 @@
 #include <stdio.h>
-#include "targettypes.h"
+#include <stdint.h>
 
 union {
-     int32 x;
-     struct { int8 a,b,c,d; } s;
+     int32_t x;
+     struct { int8_t a,b,c,d; } s;
 } u;
 
 int main () {

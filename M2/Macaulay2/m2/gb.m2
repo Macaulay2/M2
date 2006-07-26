@@ -111,9 +111,24 @@ gb Module := GroebnerBasis => options -> (M) -> (
 	  -- handle the Hilbert numerator later, which might be here:
 	  -- 
 
+checkHilbertHint := f -> (
+     R := ring f;
+     -- Needed for using Hilbert functions to aid in Groebner basis computation:
+     --    Ring is poly ring over a field (or skew commutative, or quotient ring of such, or both)
+     --    Ring is singly graded, every variable is positive
+     --    Ring is homogeneous in this grading
+     --    Matrix is homogeneous in this grading
+     isHomogeneous f
+     and degreeLength R === 1
+     and (instance(R,PolynomialRing) or isQuotientOf(PolynomialRing, R))
+     and isField coefficientRing R
+     and (isCommutative R or isSkewCommutative R)
+     and all(R.Adjust \ degree \ allGenerators R, deg -> deg#0 > 0)
+     )
+
 gbGetHilbertHint := (f,opts) -> (
      if opts.Hilbert =!= null then opts.Hilbert
-     else if f.cache.?cokernel and f.cache.cokernel.cache.?poincare then f.cache.cokernel.cache.poincare
+     else if f.cache.?cokernel and f.cache.cokernel.cache.?poincare and checkHilbertHint f then f.cache.cokernel.cache.poincare
      )
 
 ifSomething := method()
@@ -161,7 +176,12 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
      checkArgGB f;
      type := gbTypeCode opts;
      G := elseSomething( gbGetSuitable(f,type), () -> newGB(f,type,opts) );
-     ifSomething( gbGetHilbertHint(f,opts), hil -> rawGBSetHilbertFunction(G.RawComputation,raw hil) );
+     ifSomething( gbGetHilbertHint(f,opts), 
+	  hil -> (
+	       log := FunctionApplication { rawGBSetHilbertFunction, (G.RawComputation,raw hil) };
+	       G#"rawGBSetHilbertFunction log" = log;
+	       value log;
+	       ));
      log := FunctionApplication { rawGBSetStop, (
 	       G.RawComputation,
 	       opts.StopBeforeComputation,

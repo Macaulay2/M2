@@ -12,10 +12,10 @@
 #include "gmp.h"
 
 extern RingZZ *globalZZ;
-int32 RandomSeed = MASK;
+int32_t RandomSeed = MASK;
 
 #define INITIALMAXINT 10
-int32 Random::maxNint = INITIALMAXINT;
+int32_t Random::maxNint = INITIALMAXINT;
 bool Random::maxNisSmall = true;
 
 RingElement *Random::maxint;
@@ -30,10 +30,10 @@ void Random::i_random()
   gmp_randinit_default(state);
 }
 
-int32 Random::set_seed(M2_Integer newseed)
+int32_t Random::set_seed(M2_Integer newseed)
 {
-  int32 old = RandomSeed;
-  int32 s = mpz_get_si(newseed);
+  int32_t old = RandomSeed;
+  int32_t s = mpz_get_si(newseed);
   s = s & 0x7fffffff; // Used to be dome in cmd_random_seed
   if (s == MASK) s = 0;
   RandomSeed = s ^ MASK;
@@ -42,9 +42,9 @@ int32 Random::set_seed(M2_Integer newseed)
   return old;
 }
 
-int32 Random::random0()
+int32_t Random::random0()
 {
-  int32 k = RandomSeed/IQ;
+  int32_t k = RandomSeed/IQ;
   RandomSeed = IA * (RandomSeed - k*IQ) - IR*k; /* Schrage algorithm to compute 
 				       idum = (IA*idum) mod IM */
   if (RandomSeed < 0) RandomSeed += IM;
@@ -52,7 +52,7 @@ int32 Random::random0()
   return RandomSeed;
 }
 
-int32 Random::random0(int32 r)
+int32_t Random::random0(int32_t r)
 {
      // this routine returns a number in the range 0 .. r-1
   if (r <= 0) return 0;
@@ -77,7 +77,7 @@ M2_Integer Random::get_random_integer(M2_Integer mxN) // this one is used for ra
   M2_Integer result = newitem(__mpz_struct);
   if (mpz_fits_sint_p(mxN)) {
        // return a number in the range -mxN .. mxN-1
-       int32 n = mpz_get_si(mxN);
+       int32_t n = mpz_get_si(mxN);
        mpz_init_set_si(result,Random::random0(2*n)-n);
   }
   else {
@@ -93,7 +93,7 @@ M2_Integer Random::get_random_integer_0(M2_Integer mxN)	// this one is used for 
   M2_Integer result = newitem(__mpz_struct);
   if (mpz_fits_sint_p(mxN)) {
        // return a number in the range 0 .. mxN-1
-       int32 n = mpz_get_si(mxN);
+       int32_t n = mpz_get_si(mxN);
        mpz_init_set_si(result,Random::random0(n));
   }
   else {
@@ -111,7 +111,7 @@ void Random::random_integer(M2_Integer result)
   if (maxNisSmall)
     {
       // return a number in the range -maxNint .. maxNint-1
-      int32 r = Random::random0(2*maxNint)-maxNint;
+      int32_t r = Random::random0(2*maxNint)-maxNint;
       mpz_init_set_si(result,r);
     }
   else
@@ -123,7 +123,7 @@ void Random::random_integer(M2_Integer result)
 }
 
 extern "C"
-int32 random00() {
+int32_t random00() {
      return Random::random0();
 }
 
