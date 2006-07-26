@@ -26,9 +26,12 @@
   case 8: int64 = #x; break; \
   }
 
-int main() {
+/* phase out integer size variables, use types in stdint.h instead */
+#define INTSIZES 0
+
+#if INTSIZES
+void intsizes() {
   static char *int8, *int16, *int32, *int64;
-  int x = 1;
   try(short);
 #ifndef _WIN32
   try(long long);
@@ -46,7 +49,17 @@ int main() {
   case 4: printf("typedef int32 intp;\n"); break;
   case 8: printf("typedef int64 intp;\n"); break;
   }
+}
+#endif
+
+int main() {
+#if 0
+  int x = 1;
   printf("#define LittleEndFirst %d\n", *(char *)&x == 1);
   printf("#define SIZEOF_POINTER %d\n", sizeof(char *));
+#endif
+#if INTSIZES
+  intsizes();
+#endif
   return 0;
 }

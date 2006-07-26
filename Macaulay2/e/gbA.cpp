@@ -46,7 +46,7 @@ gbA * gbA::create(const Matrix *m,
   GC_REGISTER_FINALIZER(result,remove_gbA,0,0,0);
   nfinalized++;
   if (gbTrace>=3)
-    fprintf(stderr, "\nregistering gbA %d at %p\n", nfinalized, (void *)result);
+    fprintf(stderr, "\n   -- registering gbA %d at %p\n", nfinalized, (void *)result);
   return result;
 }
 

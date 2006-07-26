@@ -29,7 +29,7 @@ removeLowestDimension Module := Module => (M) -> (
         )
     else (
         -- use the annihilator of Ext to improve M
-        I := ann E;
+        I := annihilator E;
         cokernel generators saturate(image presentation M,I))
     )
 removeLowestDimension Ideal := Ideal => (I) -> (
@@ -48,7 +48,7 @@ removeLowestDimension Ideal := Ideal => (I) -> (
         )
     else (
         -- use the annihilator of Ext to improve M
-        J := ann E;
+        J := annihilator E;
         saturate(I,J))
     )
 
@@ -59,7 +59,7 @@ removeLowestDimension Ideal := Ideal => (I) -> (
 topComponents Ideal := Ideal => (I) -> (
      R := ring I;
      c := codim I;
-     ann Ext^c(cokernel generators I, R))
+     annihilator Ext^c(cokernel generators I, R))
      
 topComponents Module := Module => (M) -> (
     R := ring M;
@@ -71,7 +71,7 @@ topComponents Module := Module => (M) -> (
 	E := minimalPresentation Ext^p(M,R);
 	if E != 0 and codim E === p then (
 	    -- improve M
-	    J := ann E;
+	    J := annihilator E;
 	    I := saturate(M, J);
 	    -- alternate strategy: modify M as well:
 	    -- this next line could be commented out
@@ -112,7 +112,7 @@ unmixedradical := (I) -> (
 	       then size = size+1
       	       else (
 		    -- we would like the next line to read:
-		    -- I = ann J;
+		    -- I = annihilator J;
 		    I = ideal syz(transpose mingens J, 
 		                  SyzygyRows=>1, Syzygies=>true);
 		    I = lift(I,B); 

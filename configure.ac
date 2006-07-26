@@ -169,7 +169,7 @@ else AC_MSG_RESULT(no);  AC_MSG_ERROR([failure: linking C++ program with $CC, se
 fi
 
 AC_HEADER_TIME() dnl # time.h sys/time.h
-AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h sys/wait.h sys/resource.h io.h linux/personality.h)
+AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h sys/wait.h sys/resource.h io.h linux/personality.h stdint.h)
 AC_CHECK_FUNCS([personality somesillyfunction sys_errlist herror error socket gnu_get_libc_version __environ _environ environ _setmode getaddrinfo])
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([sys_errlist,sys_nerr,herror,gnu_get_libc_version])

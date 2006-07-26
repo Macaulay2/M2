@@ -8,17 +8,12 @@ PACKAGES = $(shell cat @srcdir@/packagelist)
 RemakeAllDocumentation ?= false
 IgnoreExampleErrors ?= false
 CheckDocumentation ?= true
-
-# we'll leave this on until we get the documentation fixed!
-IgnoreDocumentationErrors ?= true
-
 RerunExamples ?= false
 debugLevel ?= 0
 
 ARGS := , MakeLinks => false
 ARGS += , RerunExamples => $(RerunExamples)
 ARGS += , IgnoreExampleErrors => $(IgnoreExampleErrors)
-ARGS += , IgnoreDocumentationErrors => $(IgnoreDocumentationErrors)
 ARGS += , RemakeAllDocumentation => $(RemakeAllDocumentation)
 ARGS += , CheckDocumentation => $(CheckDocumentation)
 ARGS += , MakeInfo => true

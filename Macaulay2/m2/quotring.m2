@@ -10,8 +10,10 @@ isQuotientRing QuotientRing := R -> true
 coefficientRing QuotientRing := (cacheValue coefficientRing) (R -> coefficientRing ambient R)
 options QuotientRing := R -> options ambient R
 isQuotientOf = method(TypicalValue => Boolean)
-isQuotientOf(Ring,Ring) := (S,R) -> S === R
-isQuotientOf(QuotientRing,Ring) := (S,R) -> S === R or isQuotientOf(ambient S,R)
+isQuotientOf(Ring,Ring) := (R,S) -> false
+isQuotientOf(Ring,QuotientRing) := (R,S) -> R === ambient S or isQuotientOf(R,ambient S)
+isQuotientOf(Type,Ring) := (X,S) -> false
+isQuotientOf(Type,QuotientRing) := (X,S) -> instance(ambient S,X) or isQuotientOf(X,ambient S)
 degreeLength QuotientRing := S -> degreeLength ambient S
 vars QuotientRing := (cacheValue vars) (S -> map(S^1,, table (1, numgens S, (i,j) -> S_j)))
 numgens QuotientRing := (cacheValue numgens) (S -> numgens ambient S)
@@ -32,6 +34,7 @@ net QuotientRing := S -> if ReverseDictionary#?S then toString ReverseDictionary
 ambient PolynomialRing := R -> R
 ambient QuotientRing := Ring => (cacheValue ambient) (R -> last R.baseRings)
 isHomogeneous QuotientRing := (cacheValue isHomogeneous) (R -> isHomogeneous ambient R and isHomogeneous R.relations)
+isSkewCommutative QuotientRing := R -> isSkewCommutative ambient R
 
 Ring / Module := QuotientRing => (R,I) -> (
      if ambient I != R^1 or I.?relations
@@ -39,7 +42,6 @@ Ring / Module := QuotientRing => (R,I) -> (
      R / ideal I)
 
 savedQuotients := new MutableHashTable
-savedEQuotients := new MutableHashTable
 
 ZZquotient := (R,I) -> (
      gensI := generators I;
@@ -60,10 +62,10 @@ ZZquotient := (R,I) -> (
 	  S.baseRings = {R};
      	  commonEngineRingInitializations S;
 	  S.relations = gensI;
-	  S.isCommutative = R.isCommutative;
+	  S.isCommutative = true;
 	  S.presentation = matrix{{n}};
 	  S.order = S.char = n;
-	  if n === 1 then S.dim = -1 else if n === 0 then S.dim = 1 else S.dim = 0;
+	  S.dim = 0;					    -- n != 0 and n!= 1
 	  expression S := x -> expression rawToInteger raw x;
 	  fraction(S,S) := S / S := (x,y) -> x//y;
 	  S.frac = S;		  -- ZZ/n with n PRIME!
@@ -105,6 +107,7 @@ EngineRing / Ideal := (R,I) -> (
      if R.?generatorSymbols then S.generatorSymbols = R.generatorSymbols;
      if R.?generatorExpressions then S.generatorExpressions = R.generatorExpressions;
      if R.?indexStrings then S.indexStrings = applyValues(R.indexStrings, x -> promote(x,S));
+     expression S := lookup(expression,R);
      S.use = x -> (
 --	  try monoid S;
 --	  if S.?monoid then (
@@ -127,7 +130,13 @@ EngineRing / Ideal := (R,I) -> (
 
 Ring / ZZ := (R,f) -> R / ideal f_R
 
-Ring / RingElement := Ring / List := Ring / Sequence := QuotientRing => (R,f) -> R / ideal f
+Ring / RingElement := QuotientRing => (R,f) -> (
+     if ring f =!= R then error "expected element of the same ring";
+     R / ideal f)
+
+Ring / List := Ring / Sequence := QuotientRing => (R,f) -> (
+     if not all(f, r -> ring r === R) then error "expected elements of the same ring";
+     R / ideal f)
 
 presentation QuotientRing := Matrix => R -> (
      if R.?presentation then R.presentation else R.presentation = (
@@ -147,7 +156,7 @@ presentation(QuotientRing,QuotientRing) :=
 presentation(PolynomialRing,QuotientRing) := 
 presentation(QuotientRing,PolynomialRing) := 
 presentation(PolynomialRing,PolynomialRing) := (R,S) -> (
-     if not isQuotientOf(S,R) then error "expected ring and a quotient ring of it";
+     if not (R === S or isQuotientOf(R,S)) then error "expected ring and a quotient ring of it";
      v := map(R^1,R^0,0);
      while S =!= R do (
 	  v = v | lift(S.relations,R);

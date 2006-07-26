@@ -290,17 +290,6 @@ degree RingElement := f -> if f == 0 then -infinity else (
      if R.?Repair then R.Repair d else d
      )
 
--- delayed installation of certain methods
-
-expression RingElement := (r) -> (
-     R := class r;
-     if class R === QuotientRing then (
-	  A := ultimate(ambient,R);
-	  expression R := lookup(expression,A);
-	  expression r)
-     else error ("no method found for element of ring ", toString R)
-     )
-
 leadTerm RingElement := RingElement => (f) -> someTerms(f,0,1)
 
 RingElement % RingElement := RingElement => 

@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include "imonorder.h"
 #include "../d/M2mem.h"
 /* TODO:
@@ -330,38 +331,38 @@ extern void monomialOrderFree(MonomialOrder *mo)
 #include "overlay.h"
 #if OVERLAY == 0x04030201
 union pack4 {
-  long i;
+  int32_t i;
   struct {
-    unsigned char a;
-    unsigned char b;
-    unsigned char c;
-    unsigned char d;
+    uint8_t a;
+    uint8_t b;
+    uint8_t c;
+    uint8_t d;
   } ch;
 };
 
 union pack2 {
-  long i;
+  int32_t i;
   struct {
-    unsigned short a;
-    unsigned short b;
+    uint16_t a;
+    uint16_t b;
   } ch;
 };
 #else
 union pack4 {
-  long i;
+  int32_t i;
   struct {
-    unsigned char d;
-    unsigned char c;
-    unsigned char b;
-    unsigned char a;
+    uint8_t d;
+    uint8_t c;
+    uint8_t b;
+    uint8_t a;
   } ch;
 };
 
 union pack2 {
-  long i;
+  int32_t i;
   struct {
-    unsigned short b;
-    unsigned short a;
+    uint16_t b;
+    uint16_t a;
   } ch;
 };
 #endif

@@ -109,7 +109,6 @@ help :
 	@ echo ""
 	@ echo "options:"
 	@ echo "      IgnoreExampleErrors=true       continue even after errors in example code"
-	@ echo "      IgnoreDocumentationErrors=true continue even after errors in documentation"
 	@ echo "      RemakeAllDocumentation=true    remake all documentation"
 	@ echo "      CheckDocumentation=false       don't check documentation for completeness"
 	@ echo "      RerunExamples=true             rerun example output files"

@@ -1029,8 +1029,6 @@ briefDocumentation Thing := x -> (
 	       s := fmeth x;
 	       if s =!= null then << endl << s << endl;)))
 
-ignoreDocumentationErrors = true
-
 -- page = (title,body) -> HTML { HEAD { TITLE title }, BODY body }
 
 help = method(Dispatch => Thing)
@@ -1043,9 +1041,7 @@ help String := key -> (
      else (
 	  b := makeDocBody key;
 	  if b === null then (
-	       if ignoreDocumentationErrors
-	       then stderr << "--warning: there is no documentation for '" << key << "'" << endl
-	       else error("there is no documentation for '"|key|"'");
+	       stderr << "--warning: there is no documentation for '" << key << "'" << endl;
 	       b = ();
 	       );
 	  fixup DIV {topheader key, b, caveat key, seealso key, theMenu key}))

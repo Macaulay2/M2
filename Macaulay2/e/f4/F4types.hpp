@@ -13,8 +13,8 @@
 extern char system_interruptedFlag;
 extern int gbTrace;
 
-// int8, int16, int32, int64, uint8, uint16, uint32, uint64
-// are all defined in "../../util/targettypes.h"
+// int32_t is defined in stdint.h
+#include <stdint.h>
 
 // The various kinds of monomials
 
@@ -146,7 +146,7 @@ template <typename MonInfo> class MonomialHashTable;
   typedef typename F4types<CoeffRing>::row_elem row_elem; \
   typedef typename F4types<CoeffRing>::column_elem column_elem; \
   typedef typename F4types<CoeffRing>::coefficient_matrix coefficient_matrix; \
-  typedef MonomialLookupTable<int32> MonomialLookupTable; \
+  typedef MonomialLookupTable<int32_t> MonomialLookupTable; \
 
 //  typedef typename F4types<CoeffRing>::poly poly; 
   

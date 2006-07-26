@@ -29,7 +29,6 @@ document {
 	       the user's ", TO "application directory", "." },
 	  MakeLinks => Boolean => { "whether to make links to the files after installing them, in case encapsulation is enabled" },
 	  AbsoluteLinks => { "whether the links made should contain absolute paths, rather than relative paths" },
-	  IgnoreDocumentationErrors => { "whether warnings about missing documentation should be ignored during the installation" },
 	  RemakeAllDocumentation => { "whether to regenerate all of the help pages for this package.  The default action
      	       is to rebuild only the html pages of the documentation entries that have been changed since the last time
      	       the package was installed.  However, some changes to an entry, such as to its headline, will change the html of other pages

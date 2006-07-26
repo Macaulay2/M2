@@ -94,11 +94,46 @@ M2PKGNAME = PackageName
 # this might have to get changed manually, but hopefully not:
 MAINPACKAGE = Core
 
-binRelDir = bin
-libRelDir = lib
-infoRelDir = info
-dataRelDir = share
-manRelDir = $(dataRelDir)/man
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+ifeq "$(ENCAP)" "yes"
+encapdir = $(prefix)/$(package)
+tarparent = $(prefix)
+tarsubdir = $(package)
+else
+ifeq "$(CYGWIN)" "yes"
+tarparent = $(prefix)/$(package)
+tarsubdir = usr
+encapdir = $(prefix)/$(package)/usr
+else
+encapdir = $(prefix)/.
+tarparent = NONE
+tarsubdir = NONE
+endif
+endif
+
+ifeq ($(findstring $(prefix),@infodir@),)
+$(error expected infodir @infodir@ to begin with $(prefix))
+endif
+ifeq ($(findstring $(prefix),@bindir@),)
+$(error expected bindir @bindir@ to begin with $(prefix))
+endif
+ifeq ($(findstring $(prefix),@datadir@),)
+$(error expected datadir @datadir@ to begin with $(prefix))
+endif
+ifeq ($(findstring $(prefix),@libdir@),)
+$(error expected libdir @libdir@ to begin with $(prefix))
+endif
+ifeq ($(findstring $(prefix),@mandir@),)
+$(error expected mandir @mandir@ to begin with $(prefix))
+endif
+
+infoRelDir = $(subst $(prefix)/,,@infodir@)
+binRelDir = $(subst $(prefix)/,,@bindir@)
+dataRelDir = $(subst $(prefix)/,,@datadir@)
+libRelDir = $(subst $(prefix)/,,@libdir@)
+manRelDir = $(subst $(prefix)/,,@mandir@)
 man1RelDir = $(manRelDir)/man1
 man3RelDir = $(manRelDir)/man3
 emacsRelDir = $(dataRelDir)/emacs/site-lisp
@@ -122,24 +157,6 @@ docm2relRelDir = $(docm2RelDir)/$(MAINPACKAGE)
 emacsdocRelDir = $(docm2relRelDir)/emacs
 imagesRelDir = $(docm2relRelDir)/images
 styleRelDir = $(docm2relRelDir)/style
-
-prefix = @prefix@
-
-ifeq "$(ENCAP)" "yes"
-encapdir = $(prefix)/$(package)
-tarparent = $(prefix)
-tarsubdir = $(package)
-else
-ifeq "$(CYGWIN)" "yes"
-tarparent = $(prefix)/$(package)
-tarsubdir = usr
-encapdir = $(prefix)/$(package)/usr
-else
-encapdir = $(prefix)/.
-tarparent = NONE
-tarsubdir = NONE
-endif
-endif
 
 bindir = $(encapdir)/$(binRelDir)
 libdir = $(encapdir)/$(libRelDir)
@@ -240,7 +257,7 @@ CPPFLAGS += -DNDEBUG
 endif
 
 ifeq "$(GCC)" "yes"
-CFLAGS   += -pipe -Wall -Wconversion -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare -Werror-implicit-function-declaration
+CFLAGS   += -pipe -Wall              -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare -Werror-implicit-function-declaration
 CXXFLAGS += -pipe -Wall -Wconversion -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare
 # -Werror-implicit-function-declaration is important, because if we include the wrong include file and a function that
 # returns a 64-bit pointer is not declared as such, then only 32 bits of the return value will be used.

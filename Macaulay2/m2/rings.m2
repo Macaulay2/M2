@@ -11,7 +11,7 @@ Ring == Ring := (R,S) -> R === S
 
 ZZ == Ring := (i,R) -> R == i
 
-poincare Ring := R -> poincare R^1
+poincare Ring := R -> poincare module R
 
 dim Ring := R -> (
      if R.?dim then R.dim
@@ -41,6 +41,9 @@ coefficientRing Ring := Ring => R -> error "no coefficient ring present"
 
 isCommutative = method(TypicalValue => Boolean)
 isCommutative Ring := R -> R.isCommutative
+
+isSkewCommutative = method(TypicalValue => Boolean)
+isSkewCommutative Ring := R -> false
 
 ZZ.isCommutative = true
 QQ.isCommutative = true

@@ -2,6 +2,7 @@
 
 export {
 	"ass" => symbol associatedPrimes,
+        "ann" => symbol annihilator,
 	"coker" => symbol cokernel,
 	"decompose" => symbol minimalPrimes,
 	"det" => symbol determinant,
@@ -14,7 +15,6 @@ export {
 	"res" => symbol resolution,
 	"sub" => symbol substitute,
 	"top" => symbol topComponents,
-	-- symbol indexHtml, -- experimental
 	symbol !,
 	symbol !=,
 	symbol #,
@@ -215,7 +215,6 @@ export {
 	symbol IMG,
 	symbol ITALIC,
 	symbol Ideal,
-	symbol IgnoreDocumentationErrors,
 	symbol IgnoreExampleErrors,
 	symbol ImmutableType,
 	symbol IndeterminateNumber,
@@ -226,6 +225,7 @@ export {
 	symbol Inputs,
 	symbol InstallPrefix,
 	symbol IntermediateMarkUpType,
+	symbol Intersection,
 	symbol InverseMethod,
 	symbol Inverses,
 	symbol MaximalRank,
@@ -454,8 +454,6 @@ export {
 	symbol ambient,
 	symbol ancestor,
 	symbol and,
-	symbol ann',
-	symbol ann,
 	symbol annihilator,
 	symbol any,
 	symbol append,
@@ -741,6 +739,7 @@ export {
 	symbol isReady,
 	symbol isRegularFile,
 	symbol isRing,
+	symbol isSkewCommutative,
 	symbol isSquareFree,
 	symbol isSubmodule,
 	symbol isSubset,

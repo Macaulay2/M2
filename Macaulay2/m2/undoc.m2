@@ -16,7 +16,6 @@ undocumented {
     (expression, Ideal),
     (expression, ZZ),
     (expression, RingMap),
-    (expression, RingElement),
     (expression, QQ),
     (expression, RR),
     (expression, CC),

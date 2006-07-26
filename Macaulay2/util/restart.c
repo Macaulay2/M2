@@ -16,7 +16,8 @@ void usage() {
      }
 
 int main(int argc,char **argv) {
-     int i,n;
+     int i;
+     unsigned n;
      char *filename, *command;
      struct stat buf;
      progname = argv[0], argc--, argv++;

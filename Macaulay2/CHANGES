@@ -21,6 +21,9 @@ of ancestor(A,B) is correct -- it now means "A is an ancestor of B".  The
 English reading of 'instance' is already correct.  This function is used very
 little in the code.
 
+The function ann' has been merged with "ann".  Use ann(M,Strategy=>Quotient) to
+get the behavior of ann'.
+
 -----------------------------------------------------------------------------
 
 New in 0.9.10:

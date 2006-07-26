@@ -146,6 +146,7 @@ default := (o,defaults) -> merge(o,defaults,(x,y) -> if x === null then y else x
 Strategy0 := new OptionTable from { Strategy => 0 }
 Strategy1 := new OptionTable from { Strategy => 1 }
 Strategy2 := new OptionTable from { Strategy => 2 }
+Strategy3 := new OptionTable from { Strategy => 3 }
 
 resolution = method(
      Options => {
@@ -161,7 +162,21 @@ resolution = method(
 	  }
      )
 
-engineReady := R -> R.?flatmonoid and all(first \ degrees R.flatmonoid, i -> i > 0)
+engineReady := M -> (
+     R := ring M;
+     -- Needed to compute resolutions, (algorithms 0,1,2,3):
+     --    Ring is poly ring over a field (or skew commutative, or quotient ring of such, or both)
+     --    Ring is graded, first degree of every variable is positive
+     --    Ring is homogeneous in this grading (actually, only need graded with respect to the first degree)
+     --    Matrix is homogeneous in this grading (same note as previous line)
+     -- Additional requirements for resolution algorithm 3 (which uses hilbert function):
+     --    Ring is singly graded
+     isHomogeneous M
+     and (instance(R,PolynomialRing) or isQuotientOf(PolynomialRing, R))
+     and isField coefficientRing R
+     and (isCommutative R or isSkewCommutative R)
+     and all(R.Adjust \ degree \ allGenerators R, deg -> deg#0 > 0)
+     )
 
 resolution Module := ChainComplex => o -> (M) -> (
      C := tryHooks(Module,symbol resolution,(o,M));
@@ -170,16 +185,9 @@ resolution Module := ChainComplex => o -> (M) -> (
      if isField R then return chainComplex map(minimalPresentation M,R^0,0);
      k := ultimate(coefficientRing, R);
      oR := options R;
-     if R.?SkewCommutative then (
-	  if isHomogeneous M and engineReady R 
-	  then (resolutionInEngine default(o,Strategy2))(M)
-	  else (resolutionBySyzygies o)(M))
-     else if not isCommutative R then (resolutionBySyzygies o)(M)
-     else if R === ZZ then (resolutionBySyzygies o)(M)
+     if engineReady M then (resolutionInEngine default(o,if isQuotientRing R or isSkewCommutative R then Strategy2 else Strategy1))(M)
      else if k === ZZ then (resolutionBySyzygies o)(M)
-     else if not isHomogeneous M then (resolutionByHomogenization o)(M)
-     else if isQuotientRing R and engineReady R then (resolutionInEngine default(o,Strategy2))(M)
-     else if engineReady R then (resolutionInEngine default(o,Strategy1))(M)
+     else if not isHomogeneous M and isCommutative R then (resolutionByHomogenization o)(M)
      else (resolutionBySyzygies o)(M)
      )
 
