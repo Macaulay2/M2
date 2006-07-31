@@ -1,0 +1,3 @@
+in configure.ac:
+
+	if socket() seems to be absent, try linking with -lsocket!
