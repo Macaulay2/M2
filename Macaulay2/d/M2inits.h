@@ -12,6 +12,8 @@ extern int M2inits_run;
 extern void *	(*__gmp_allocate_func) (size_t);
 extern void *	(*__gmp_reallocate_func) (void *, size_t, size_t);
 extern void	(*__gmp_free_func) (void *, size_t);
+extern void *   (*__gmp_allocate_atomic_func  )(size_t);
+extern void *   (*__gmp_reallocate_atomic_func)(void *, size_t, size_t);
 
 #ifdef __cplusplus
 }
