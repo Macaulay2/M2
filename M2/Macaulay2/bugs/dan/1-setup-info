@@ -12,3 +12,5 @@ set, it checks whether PATH contains the desired directory.  Same for INFOPATH, 
 directory is writable, then it should put entries in that file for each of the
 info files accompanying Macaulay 2, to make that documentation visible to the
 user. ***
+
+--- and maybe that should also be done each time by installPackage and uninstallPackage.!
