@@ -707,6 +707,19 @@ static int set_addrinfo(struct addrinfo **addr, struct addrinfo *hints, char *ho
 }
 #endif
 
+#ifndef HAVE_HSTRERROR
+const char *hstrerror(int herrno) {
+     switch(herrno) {
+     case HOST_NOT_FOUND: return "authoritive answer: host not found";
+     case TRY_AGAIN: return "non-authoritive answer: host not found; or server failed";
+     case NO_RECOVERY: return "nonrecoverable errors";
+     case NO_DATA: return "valid name, no data record of requested type";
+     case -1: return "malformed address or internal error";
+     default: return "unknown error";
+     }
+}
+#endif
+
 #if !(HAVE_GETADDRINFO && GETADDRINFO_WORKS)
 int host_address(name)
 char *name;
@@ -829,6 +842,16 @@ int opensocket(char *host, char *service) {
   int sd = socket(AF_INET,SOCK_STREAM,0);
   struct sockaddr_in addr;
   int sa = serv_address(service);
+  if (sa == ERROR) {
+       /* strange but true, some systems don't list the common services:
+		u24% uname -a
+		SunOS u24.math.uiuc.edu 5.8 Generic_117350-34 sun4u sparc
+		u24% grep http /etc/services
+		u24% 
+       */
+       if (0 == strcmp(service,"http")) sa = 80;
+       else if (0 == strcmp(service,"https")) sa = 443;
+  }
   addr.sin_family = PF_INET;
   addr.sin_port = sa;
   addr.sin_addr.s_addr = host_address(host);
