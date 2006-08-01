@@ -225,7 +225,7 @@ pathsearch := e -> (
      e)
 
 exe := (
-     processExe := "/proc/" | toString processID() | "/exe";  -- this is a reliable way to get the executable in linux
+     processExe := "/proc/self/exe";  -- this is a reliable way to get the executable in linux
      if fileExists processExe then realpath processExe
      else realpath pathsearch commandLine#0)
 bindir := dir exe
