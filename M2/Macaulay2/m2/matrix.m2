@@ -274,30 +274,26 @@ RingElement  | RingElement := Matrix => (r,s) -> matrix {{r}}  | matrix {{s}}
 RingElement || RingElement := Matrix => (r,s) -> matrix {{r}} || matrix {{s}}
 
 concatCols = mats -> (
-     mats = select(toList mats,m -> m =!= null);
-     if # mats === 1 
-     then mats#0
-     else (
-	  samering mats;
-	  targets := unique apply(mats,target);
-	  M := targets#0;
-	  if not all(targets, F -> F == M) 
-	  and not all(targets, F -> isFreeModule F)
-	  then error "unequal targets";
-	  ggConcatCols(targets#0, Module.directSum apply(mats,source), mats)))
+     mats = nonnull toList mats;
+     if # mats === 1 then return mats#0;
+     samering mats;
+     sources := apply(mats,source);
+     if not all(sources, F -> isFreeModule F) then error "expected sources to be free modules";
+     targets := apply(mats,targets);
+     if not same targets then error "expected matrices in the same row to have equal targets";
+     if not all(targets, F -> isFreeModule F) then error "expected targets to be free modules";
+     ggConcatCols(targets#0, Module.directSum sources, mats))
 
 concatRows = mats -> (
-     mats = select(toList mats,m -> m =!= null);
-     if # mats === 1 
-     then mats#0
-     else (
-	  samering mats;
-	  sources := unique apply(mats,source);
-	  N := sources#0;
-	  if not all(sources, F -> F == N) 
-	  and not all(sources, F -> isFreeModule F)
-	  then error "unequal sources";
-	  ggConcatRows(Module.directSum apply(mats,target), sources#0, mats)))
+     mats = nonnull toList mats;
+     if # mats === 1 then return mats#0;
+     samering mats;
+     sources := apply(mats,source);
+     if not same sources then error "expected matrices in the same column to have equal sources";
+     if not all(sources, F -> isFreeModule F) then error "expected sources to be free modules";
+     targets := apply(mats,targets);
+     if not all(targets, F -> isFreeModule F) then error "expected targets to be free modules";
+     ggConcatRows(Module.directSum targets, sources#0, mats))
 
 Matrix | Matrix := Matrix => (f,g) -> concatCols(f,g)
 RingElement | Matrix := (f,g) -> concatCols(f**id_(target g),g)

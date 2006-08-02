@@ -166,18 +166,13 @@ concatBlocks = mats -> (
      then concatRows (mats/first)
      else (
      	  samering flatten mats;
-	  sources := unique applyTable(mats,source);
-	  N := sources#0;
-	  if not all(sources, F -> F == N) and not all(sources, F -> all(F,isFreeModule))
-	  then error "unequal sources";
-	  targets := unique transpose applyTable(mats,target);
-	  M := targets#0;
-	  if not all(targets, F -> F == M) and not all(targets, F -> all(F,isFreeModule))
-	  then error "unequal targets";
-     	  ggConcatBlocks(
-	       Module.directSum (mats/first/target),
-	       Module.directSum (mats#0/source),
-	       mats)))
+	  sources := applyTable(mats,source);
+	  targets := transpose applyTable(mats,target);
+	  if not same sources then error "expected matrices in the same column to have equal sources";
+	  if not same targets then error "expected matrices in the same row to have equal targets";
+	  if not all(first sources,isFreeModule) then error "expected sources to be free modules";
+	  if not all(first targets,isFreeModule) then error "expected targets to be free modules";
+     	  ggConcatBlocks( Module.directSum first targets, Module.directSum first sources, mats)))
 
 Matrix.matrix = options -> (f) -> concatBlocks f
 
@@ -205,15 +200,17 @@ matrixTable := options -> (f) -> (
 	  n := #f#0;
 	  tars := new MutableHashTable;
 	  srcs := new MutableHashTable;
-	  scan(m, i->scan(n, j-> (
-			 r := f#i#j;
-			 if class r === Matrix then (
-			      if tars#?i and tars#i != target r
-			      then error "matrices not compatible";
-			      tars#i = target r;
-			      if srcs#?i and srcs#i != source r
-			      then error "matrices not compatible";
-			      srcs#j = source r;
+	  scan(m, row -> scan(n, col-> (
+			 r := f#row#col;
+			 if instance(r, Matrix) then (
+			      if tars#?row then (
+				   if tars#row != target r then error "expected matrices in the same row to have equal targets";
+				   )
+			      else tars#row = target r;
+			      if srcs#?col then (
+				   if srcs#col != source r then error "expected matrices in the same column to have equal sources";
+				   )
+			      else srcs#col = source r;
 			      ))));
 	  scan(m, i->scan(n, j-> (
 			 r := f#i#j;
