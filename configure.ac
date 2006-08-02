@@ -7,6 +7,11 @@ esac
 for i in "$@"
 do case "$i" in
      "--no-create"|"--no-recursion") ;;
+     *"$"*" "*|*" "*"$"*)
+	    j=`echo $i |sed 's/\\$/\\\\$$/g'`
+	    CONFIG_ARGS="$CONFIG_ARGS \"$j\"" CONFIG_ARGS_C="$CONFIG_ARGS_C \"$i\"," ;;
+     *"$"*) j=`echo $i |sed 's/\\$/\\\\$$/g'`
+	    CONFIG_ARGS="$CONFIG_ARGS $j" CONFIG_ARGS_C="$CONFIG_ARGS_C \"$i\"," ;;
      *" "*) CONFIG_ARGS="$CONFIG_ARGS \"$i\"" CONFIG_ARGS_C="$CONFIG_ARGS_C \"$i\"," ;;
      *) CONFIG_ARGS="$CONFIG_ARGS $i" CONFIG_ARGS_C="$CONFIG_ARGS_C \"$i\"," ;;
    esac
