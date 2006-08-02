@@ -182,7 +182,6 @@ syz Matrix := Matrix => options -> (f) -> (
      else mingens image syz gb (f, options, Syzygies=>true)
      )
 
-
 modulo = method(
      Options => {
      	  -- DegreeLimit => {}
@@ -193,24 +192,25 @@ modulo(Nothing,Matrix) := Matrix => options -> (null,n) -> n
 modulo(Matrix,Matrix)  := Matrix => options -> (m,n) -> (
      P := target m;
      Q := target n;
-     if P != Q then error "expected maps with the same target";
-     if not isFreeModule P or not isFreeModule Q
-     or not isFreeModule source m or not isFreeModule source n
+     L := source m;
+     if P =!= Q then error "expected maps with the same target";
+     if not isFreeModule P or not isFreeModule L or not isFreeModule source n
      then error "expected maps between free modules";
-     syz(m|n, options, SyzygyRows => numgens source m)
-     )
+     f := syz(m|n, options, SyzygyRows => numgens L);
+     if target f =!= L 
+     then map(L,source f,f)			    -- it can happen that L has a Schreier order, and we want to preserve that exactly
+     else f)
 
 quotientRemainder'(Matrix,Matrix) := Matrix => (f,g) -> (
-     if source f != source g then error "expected maps with the same source";
-     if not isFreeModule source f or not isFreeModule source g
-     or not isFreeModule source g or not isFreeModule source g then error "expected maps between free modules";
+     if source f =!= source g then error "expected maps with the same source";
+     if not isFreeModule source f or not isFreeModule source g or not isFreeModule source g then error "expected maps between free modules";
      (q,r) := quotientRemainder(dual f, dual g);
      (dual q, dual r))
 
 quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
      if ring g =!= ring f then error "expected maps over the same ring";
      M := target f;
-     if M != target g then error "expected maps with the same target";
+     if M =!= target g then error "expected maps with the same target";
      L := source f;
      if not isFreeModule L then error "expected source of map to be lifted to be a free module";
      N := source g;
