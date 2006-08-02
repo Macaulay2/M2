@@ -81,7 +81,7 @@ quotann0 := opts -> (M,J) -> (
      if M.?relations then m = m | M.relations;
      j := adjoint(generators J, (ring J)^1, source generators J);
      F := target m;
-     g := j | (source generators J ** m);
+     g := j | (dual source generators J ** m);
      -- << g << endl;
      -- We would like to be able to inform the engine that
      -- it is not necessary to compute various of the pairs
