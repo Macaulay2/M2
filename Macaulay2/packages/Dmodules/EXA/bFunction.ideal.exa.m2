@@ -1,5 +1,4 @@
-restart
-load "Dloadfile.m2"
+load "D-modules.m2"
 
 -------------------------EXAMPLES for bFunction
 
