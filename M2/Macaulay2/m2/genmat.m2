@@ -64,7 +64,7 @@ randomMR := (F,G) -> (
      d0 := toList ( degreeLength F : 0 );
      f := id_(R^k);
      if m>k then f = f || random(R^(toList( m-k : d1 )), R^n)
-     else if n > k then f = f | random(R^(toList( m : d1 )), R^(n-k));
+     else if n > k then f = f | random(R^m, R^(toList (n-k : -d1)));
      f = mutableMatrix f;
      other := (i,m) -> (i + random(m-1)) % m;
      if m>k then (
