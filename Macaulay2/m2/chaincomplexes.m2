@@ -702,21 +702,17 @@ ChainComplex ** ChainComplex := ChainComplex => (C,D) -> (
      R := ring C;
      if ring D =!= R then error "expected chain complexes over the same ring";
      E := chainComplex (lookup(symbol **, GradedModule, GradedModule))(C,D);
-     scan(spots E, i -> if E#?i and E#?(i-1) then E.dd#i = map(
-	       E#(i-1),
-	       E#i,
+     scan(spots E, i -> if E#?i and E#?(i-1) then E.dd#i = 
+	  map( E#(i-1), E#i,
 	       concatBlocks(table(
 			 E#(i-1).cache.indices,
 			 E#i.cache.indices,
-			 (j,k) -> (
-			      if j#0 === k#0 and j#1 === k#1 - 1 
-			      then (-1)^(k#0) * tens(R, id_(cover C#(j#0)), matrix D.dd_(k#1))
-			      else if j#0 === k#0 - 1 and j#1 === k#1 
-			      then tens(R, matrix C.dd_(k#0), id_(cover D#(k#1)))
-			      else map(
+			 (j,k) -> map(
 				   E#(i-1).cache.components#(E#(i-1).cache.indexComponents#j),
 				   E#i.cache.components#(E#i.cache.indexComponents#k),
-				   0))))));
+				   if j#0 === k#0 and j#1 === k#1 - 1 then (-1)^(k#0) * tens(R, id_(cover C#(j#0)), matrix D.dd_(k#1))
+				   else if j#0 === k#0 - 1 and j#1 === k#1 then tens(R, matrix C.dd_(k#0), id_(cover D#(k#1)))
+				   else 0)))));
      E)
 
 ChainComplex ** GradedModule := ChainComplex => (C,D) -> C ** chainComplex D
