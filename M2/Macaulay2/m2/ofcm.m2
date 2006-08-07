@@ -286,11 +286,14 @@ processDegrees := (degs,degrk,nvars) -> (
 	  );
      (degs,degrk));
 
-monoidIndices = (M,vars) -> (				    -- also used in orderedmonoidrings.m2, but we should phase that out
-     apply(vars, x -> if class x === ZZ then x else (
+monoidIndex = (M,x) -> if class x === ZZ then x else (
 	       x = baseName x;
 	       if M.index#?x then M.index#x
-	       else error("expected an integer or variable of the ring (or monoid): ", toString x))))
+	       else error("expected an integer or variable of the ring (or monoid): ", toString x))
+
+monoidIndices = (M,varlist) -> (				    -- also used in orderedmonoidrings.m2, but we should phase that out
+     apply(varlist, x -> monoidIndex(M,x))
+     )
 
 makeMonoid := (opts) -> (
      -- check the options for consistency, and set everything to the correct defaults
@@ -382,8 +385,10 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
 	       apply(Nopts.Degrees, e -> join(M0,e))
 	       ));
      opts.Inverses = if opts.Inverses === null then Mopts.Inverses or Nopts.Inverses else opts.Inverses;
-     wfix := x -> if class x === Option then {x} else x;
-     opts.WeylAlgebra = join(wfix Mopts.WeylAlgebra, wfix Nopts.WeylAlgebra);
+     wfix := (M,w,bump) -> (
+	  if class w === Option then w = {w};
+	  apply(w, o -> monoidIndex(M,o#0) + bump => monoidIndex(M,o#1) + bump));
+     opts.WeylAlgebra = join(wfix(M, Mopts.WeylAlgebra, 0), wfix(N, Nopts.WeylAlgebra, numgens M));
      oddp := x -> x#?0 and odd x#0;
      m := numgens M;
      opts.SkewCommutative = join(monoidIndices(M,M.Options.SkewCommutative), apply(monoidIndices(N,N.Options.SkewCommutative), i -> i+m));
