@@ -118,35 +118,35 @@
 ;;
 
 (defvar M2-exe "M2" "*The default Macaulay2 executable name.")
-(defvar M2-command (concat M2-exe " --no-readline --print-width " (number-to-string (- (screen-width) 1)) " ") "*The default Macaulay2 command line.")
+(defvar M2-command (concat M2-exe " --no-readline --print-width " (number-to-string (- (window-width) 1)) " ") "*The default Macaulay2 command line.")
 (defvar M2-history (list M2-command) "The history of recent Macaulay2 command lines.")
 (defvar M2-send-to-buffer "*M2*" "*The default buffer that \\[M2-send-to-program] sends input to.")
 (make-variable-buffer-local 'M2-send-to-buffer)
 
+(defun M2-add-width-option (command)
+  (concat
+   (replace-regexp-in-string " +--print-width [0-9]+\\| +$" "" command)
+   " --print-width "
+   (number-to-string (- (window-width) 1))
+   " "))
+
 (defun M2 (command)
-  "Run Macaulay 2 in a buffer.  With C-U as prefix argument, the command line 
-that runs Macaulay 2 can be edited in the minibuffer.  With C-U C-U as 
-prefix argument, the command line will also have the appropriate option for
-the current screen width of the current frame added to it."
+  "Run Macaulay 2 in a buffer.  With a prefix argument, the command line 
+that runs Macaulay 2 can be edited in the minibuffer.  The command line
+will always have the appropriate option for the width of the current window
+added to it."
   (interactive
    (list
     (cond 
-     ((equal current-prefix-arg '(4))
+     (current-prefix-arg
       (read-from-minibuffer
 	   "M2 command line: "
-	   (if M2-history (car M2-history) M2-command)
+	   (M2-add-width-option (if M2-history (car M2-history) M2-command))
 	   nil
 	   nil
 	   (if M2-history '(M2-history . 1) 'M2-history)))
-     ((equal current-prefix-arg '(16))
-      (read-from-minibuffer
-	   "M2 command line: "
-	   (concat M2-command " --print-width " (number-to-string (- (screen-width) 1)) " ")
-	   nil
-	   nil
-	   (if M2-history '(M2-history . 1) 'M2-history)))
-     (M2-history (car M2-history))
-     (t M2-command))))
+     (M2-history (M2-add-width-option (car M2-history)))
+     (t (M2-add-width-option M2-command)))))
   (setq foobar current-prefix-arg)
   (switch-to-buffer 
    (make-comint "M2" ; specifying "M2" here means the buffer will be named *M2*
@@ -362,6 +362,7 @@ M2-send-to-prorgram can obtain lines from this buffer."
 	       (new-frame
 		'((height . 24)
 		  (width . 65)
+		  (menu-bar-lines . 0)
 		  (visiblity . t)
 		  ; (minibuffer . nil)
 		  ;; (reverse . t)
