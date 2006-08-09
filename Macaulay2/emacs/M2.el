@@ -124,27 +124,37 @@
 (make-variable-buffer-local 'M2-send-to-buffer)
 
 (defun M2 (command)
-  "Run Macaulay 2 in a buffer.  With a prefix argument, the command line that runs Macaulay 2
-  can be edited in the minibuffer."
+  "Run Macaulay 2 in a buffer.  With C-U as prefix argument, the command line 
+that runs Macaulay 2 can be edited in the minibuffer.  With C-U C-U as 
+prefix argument, the command line will also have the appropriate option for
+the current screen width of the current frame added to it."
   (interactive
    (list
-    (if current-prefix-arg
-	(read-from-minibuffer
-	 "M2 command line: "
-	 (if M2-history (car M2-history) M2-command)
-	 nil
-	 nil
-	 (if M2-history '(M2-history . 1) 'M2-history))
-      (if M2-history (car M2-history) M2-command))))
+    (cond 
+     ((equal current-prefix-arg '(4))
+      (read-from-minibuffer
+	   "M2 command line: "
+	   (if M2-history (car M2-history) M2-command)
+	   nil
+	   nil
+	   (if M2-history '(M2-history . 1) 'M2-history)))
+     ((equal current-prefix-arg '(16))
+      (read-from-minibuffer
+	   "M2 command line: "
+	   (concat M2-command " --print-width " (number-to-string (- (screen-width) 1)) " ")
+	   nil
+	   nil
+	   (if M2-history '(M2-history . 1) 'M2-history)))
+     (M2-history (car M2-history))
+     (t M2-command))))
+  (setq foobar current-prefix-arg)
   (switch-to-buffer 
    (make-comint "M2" ; specifying "M2" here means the buffer will be named *M2*
 		"/bin/sh" ; name of program
 		nil			; starting input file
 		"-c" (concat "echo; set -x; " command)		; arguments to the program
-		)
-   )
-  (M2-comint-mode)
-  )
+		))
+  (M2-comint-mode))
 
 (defun Macaulay2 () "Run Macaulay 2 in a buffer, non-interactive." (M2 M2-command))
 (defvar M2-usual-jog 30 "Usual distance scrolled by M2-jog-left and M2-jog-right")
@@ -353,7 +363,7 @@ M2-send-to-prorgram can obtain lines from this buffer."
 		'((height . 24)
 		  (width . 65)
 		  (visiblity . t)
-		  (minibuffer . nil)
+		  ; (minibuffer . nil)
 		  ;; (reverse . t)
 		  (modeline . nil);; doesn't work
 		  (name . "DEMO"))))
@@ -366,7 +376,7 @@ M2-send-to-prorgram can obtain lines from this buffer."
 	 (height (frame-pixel-height))
 	 )
     (modify-frame-parameters f '((left + 0) (top + 0)))
-    (M2)
+    ; (M2)
     (make-variable-buffer-local 'comint-scroll-show-maximum-output)
     (save-excursion 
       (set-buffer "*M2*")
