@@ -593,7 +593,7 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
 	  or
 	  ZZ === A
 	  ) then error "'basis' can't handle this type of ring";
-     if dim M > 0 then error "basis: expected a finite dimensional module";
+     if hi === infinity and dim M > 0 then error "basis: expected a finite dimensional module";
      k := coefficientRing A;
      pres := generators gb presentation M;
      heft := splice(1, degreeLength R - 1 : 0);
