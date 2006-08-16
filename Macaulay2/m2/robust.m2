@@ -117,7 +117,7 @@ scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}
 	       if not Thing#?op then (
 		    undocumented' (op, Thing);
 		    installMethod(op, Thing, (x) -> (
-			      line1 := concatenate("no method for ", concatenate(type," operator ",op), " applied to objects:");
+			      line1 := concatenate("no method for ", concatenate(type," operator ",op), " applied to object:");
 			      if hush then error(line1, " not displayed");
 			      wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
 			      wid = wid - commentGuardWidth - width preX;
