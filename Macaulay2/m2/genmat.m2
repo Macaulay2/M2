@@ -111,14 +111,11 @@ random(Module, Module) := Matrix => opts -> (F,G) -> (
 	  if all(deg,i->i===0) 
 	  then (randmat := randommat(R,numgens F, numgens G);
 	        map(F,G,randmat))
-	       --map(F,G,table(numgens F, numgens G, x -> random p))
 	  else (
 	       m := basis(deg,R);
 	       s := degreesTally#deg;
 	       reshape(F,G, 
 		    m * randommat(R, numgens source m, s))))
---		    m * map(source m, R^s, 
---			 table(numgens source m, s, x -> random p)))))
      else (
 	  randomElement := memoize(
 	       deg -> (
