@@ -16,7 +16,7 @@ test.out.expected.trim : test.out.expected $(book_patterns) $(chapter_patterns)
 	<$< awk '{print $$0}' | sed -f $(book_patterns) -f $(chapter_patterns) >$@
 
 test.out : test.m2 ../../../bin/M2$(EXE)
-	@ set -xe ; ulimit -v 320000; ulimit -t 3000 ; time nice -18 ../../../bin/M2$(EXE) --stop -q -e 'input "$<"' -e "exit 0" >test.out.tmp; mv test.out.tmp test.out
+	@ set -xe ; ulimit -v 380000; ulimit -t 3000 ; time nice -18 ../../../bin/M2$(EXE) --stop -q -e 'input "$<"' -e "exit 0" >test.out.tmp; mv test.out.tmp test.out
 
 distclean::clean
 distclean::; rm -f Makefile
