@@ -281,7 +281,6 @@ concatCols = mats -> (
      if not all(sources, F -> isFreeModule F) then error "expected sources to be free modules";
      targets := apply(mats,target);
      if not same targets then error "expected matrices in the same row to have equal targets";
-     if not all(targets, F -> isFreeModule F) then error "expected targets to be free modules";
      ggConcatCols(targets#0, Module.directSum sources, mats))
 
 concatRows = mats -> (
@@ -290,9 +289,7 @@ concatRows = mats -> (
      samering mats;
      sources := apply(mats,source);
      if not same sources then error "expected matrices in the same column to have equal sources";
-     if not all(sources, F -> isFreeModule F) then error "expected sources to be free modules";
      targets := apply(mats,target);
-     if not all(targets, F -> isFreeModule F) then error "expected targets to be free modules";
      ggConcatRows(Module.directSum targets, sources#0, mats))
 
 Matrix | Matrix := Matrix => (f,g) -> concatCols(f,g)

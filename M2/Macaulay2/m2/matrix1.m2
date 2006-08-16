@@ -170,8 +170,6 @@ concatBlocks = mats -> (
 	  targets := transpose applyTable(mats,target);
 	  if not same sources then error "expected matrices in the same column to have equal sources";
 	  if not same targets then error "expected matrices in the same row to have equal targets";
-	  if not all(first sources,isFreeModule) then error "expected sources to be free modules";
-	  if not all(first targets,isFreeModule) then error "expected targets to be free modules";
      	  ggConcatBlocks( Module.directSum first targets, Module.directSum first sources, mats)))
 
 Matrix.matrix = options -> (f) -> concatBlocks f
