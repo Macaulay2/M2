@@ -184,7 +184,7 @@ allGenerators QuotientRing := (cacheValue allGenerators) ((S) -> apply(allGenera
 char QuotientRing := (stashValue symbol char) ((S) -> (
      p := char ambient S;
      if p == 1 then return 1;
-     if isPrime p or member(QQ,S.baseRings) then return if S == 0 then 1 else 0;
+     if isPrime p or member(QQ,S.baseRings) then return if S == 0 then 1 else p;
      notImplemented()))
 singularLocus(Ring) := QuotientRing => (R) -> (
      if not isAffineRing(R) then error "expected an affine ring";
