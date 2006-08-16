@@ -180,7 +180,7 @@ criticalDegree M'
 supportVarietyIdeal = M -> (
    B := ring M;
    k := B/ideal vars B;
-   annihilator Ext(M,k)
+   ann Ext(M,k)
    );
 K'' = ZZ/7;
 A'' = K''[x,y,z];
