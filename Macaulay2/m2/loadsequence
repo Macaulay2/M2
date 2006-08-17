@@ -5,7 +5,6 @@ methods.m2
 profile.m2
 underscore.m2
 autoload.m2
-equal.m2
 convert.m2
 system.m2
 debugging.m2
