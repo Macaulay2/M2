@@ -4,7 +4,7 @@ VPATH = $(chapter_srcdir)
 include ../../../../include/config.Makefile
 all:: check
 check: test.out.expected.trim test.out.trim
-	diff -u $^
+	diff -u -b $^
 
 book_patterns := $(chapter_srcdir)/../patterns
 chapter_patterns := $(chapter_srcdir)/patterns
