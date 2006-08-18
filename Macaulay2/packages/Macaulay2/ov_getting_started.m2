@@ -303,7 +303,7 @@ document { Key => "teaching emacs how to find M2",
      "You can change it to the right thing:",
      PRE ///     /foo/bar/bin/M2 --no-readline --print-width 189 ///,
      "Then press ", TT "enter", " and M2 should start running.
-     That will stick for the rest of your emacs session.  Later, to return to the *M2* window from another, or to start
+     That will stick for the rest of your emacs session.  Later, to return to the ", TT "*M2*", " window from another, or to start
      up M2 again, just press f12.",
 
      SUBSECTION "teaching emacs permanently",
@@ -388,7 +388,7 @@ PRE///    ;; .emacs file in your home directory
 	  change the f12 to some other key, e.g., f8, in the ", TT ".emacs", " file, or you should disable
 	  the systems use of the f12 key."
 	  },
-     PARA {"If Macaulay2 doesn't start up (in a buffer named *M2*), check that you
+     PARA {"If Macaulay2 doesn't start up (in a buffer named ", TT "*M2*", "), check that you
 	  typed in the above lines correctly into ", TT ".emacs", ".  If they look okay, then
 	  see ", TO "teaching emacs how to find M2-init.el", ", ", TO "teaching emacs how to find M2", ", and ",
 	  TO "teaching your shell how to find M2", "."
@@ -415,10 +415,8 @@ document {
 	  the option key or the apple key, depending on how your emacs is set up); type M2; and then press the return (or enter) key after that.  Similarly, C-c
 	  means to press the c key while holding down the control key, and ", TT "C-x 2", " means to press x while holding down the control key, then to
 	  press 2; this time do not press enter."},
-     PARA {"Perhaps you are reading this text in emacs, either in the info documentation reader, or by viewing the 
-
-Use the keystrokes ", TT "C-x 2", " to divide the buffer containing this file into two windows.
-     	  Then press the f12 key or type ", TT "M-x M2", " to start up Macaulay 2 in a buffer
+     PARA {"Use the keystrokes ", TT "C-x 2", " to divide the buffer containing this file into two windows.
+     	  Then press the ", TT "f12", " key or type ", TT "M-x M2", " to start up Macaulay 2 in a buffer
      	  named ", TT "*M2*", ".  (The command line used to start Macaulay 2 may
 	  be edited before being run if you use a prefix argument with the above
 	  command: press ", TT "C-u", " just before.)"
@@ -474,7 +472,7 @@ slightly to change it before pressing return.",
      "Now let's see how we can handle wide and tall Macaulay 2 output.  Execute the
      following line of code (put it in your foo.m2 buffer, and then press f11)",
      PARA{},
-     PRE ///printWidth=0\nrandom(R^20,R^{6:-2})///,
+     PRE ///printWidth=0; random(R^20,R^{6:-2})///,
      "Setting printWidth to zero removes line wrapping in the buffer, sometimes useful to 
      view large matrices.",
 PARA{},
