@@ -387,6 +387,8 @@ RingElement _ RingElement := RingElement => (f,m) -> coefficient(m,f)
 coefficients = method(Options => {Variables => null, Monomials => null})
 coefficients(RingElement) := o -> (f) -> coefficients(matrix{{f}},o)
 coefficients(Matrix) := o -> (f) -> (
+     if not isFreeModule target f then error "expected target to be a free module";
+     if numgens target f =!= 1 then error "expected target to be a free module of rank 1";
      m := raw f;
      vrs := listOfVars(ring f,o.Variables);
      rawmonoms := if o.Monomials === null then
