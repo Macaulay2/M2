@@ -29,8 +29,7 @@ exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
 describe PolynomialRing := R -> net expression R
 expression PolynomialRing := R -> (
      k := last R.baseRings;
-     ke := if ReverseDictionary#?k then expression ReverseDictionary#k;
-     ke (expression monoid R)
+     (expression if ReverseDictionary#?k then ReverseDictionary#k else k) (expression monoid R)
      )
 
 tex PolynomialRing := R -> "$" | texMath R | "$"	    -- silly!
