@@ -136,7 +136,9 @@ hilbertSeries Module := options -> (M) -> (
      T := degreesRing A;
      denom := tally (degree \ generators A);
      if ord === infinity then (
-	  y := flatten apply(pairs denom, (i,e) -> Power {(1 - T_i),e});
+	  y := apply(pairs denom, (i,e) -> {1 - T_i,e});
+	  y = sort y;
+	  y = apply(y, t -> Power t);
 	  M.cache#"exact hilbertSeries" = Divide{num, Product y})
      else if class ord === ZZ then (
 	  s := if num == 0 then 0_T else (
