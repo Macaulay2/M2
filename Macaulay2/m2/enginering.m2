@@ -203,12 +203,13 @@ frac EngineRing := (stashValue symbol frac) (R -> (
 	  expression F := (f) -> expression numerator f / expression denominator f;
 	  numerator F := (f) -> new R from rawNumerator raw f;
 	  denominator F := (f) -> new R from rawDenominator raw f;
-	  F.generators = apply(generators R, m -> promote(m,F));
 	  fraction(F,F) := F / F := (x,y) -> x//y;
 	  fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,raw r,raw s);
-	  if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
-	  if R.?generatorExpressions then F.generatorExpressions = R.generatorExpressions;
-	  if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
+     	  F.generators = {};
+--	  F.generators = apply(generators R, m -> promote(m,F));
+--	  if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
+--	  if R.?generatorExpressions then F.generatorExpressions = R.generatorExpressions;
+--	  if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
 	  if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
 	  if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
 	  F))
