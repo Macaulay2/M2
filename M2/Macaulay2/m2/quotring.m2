@@ -104,7 +104,7 @@ EngineRing / Ideal := (R,I) -> (
      commonEngineRingInitializations S;
      S.relations = gensI;
      S.isCommutative = R.isCommutative;
-     S.SkewCommutative = R.SkewCommutative;
+     if R.?SkewCommutative then S.SkewCommutative = R.SkewCommutative;
      if R.?generatorSymbols then S.generatorSymbols = R.generatorSymbols;
      if R.?generatorExpressions then S.generatorExpressions = R.generatorExpressions;
      if R.?indexStrings then S.indexStrings = applyValues(R.indexStrings, x -> promote(x,S));
