@@ -37,7 +37,27 @@ document {
      to the public.  It is available at
      ", HREF "http://www.hpl.hp.com/personal/Hans_Boehm/gc/", ".",
      PARA{},
-     SeeAlso => {"collectGarbage" }
+     SeeAlso => {"collectGarbage", "GC error messages" }
+     }
+
+document {
+     Key => "GC error messages",
+     PARA {
+     	  "The ", TT "GC garbage collector", " is used by Macaulay 2 for its memory management.  It is reponsible
+     	  for getting more memory from the operating system when needed for storage of data, and for recovering areas of memory no longer needed."
+	  },
+     PARA {
+	  "Here is a list of error messages you may see from it when it aborts the program, due to lack of memory or related problems.
+	  Typically, the only recourse for the user is to increase the memory available to the program."
+	  },
+     UL {
+	  "Insufficient space for initial table allocation",
+	  "No space for lwp data structures",
+	  "Out of memory",
+	  "Too many exclusions",
+	  "Too many heap sections: Increase MAXHINCR or MAX_HEAP_SECTS",
+	  "Too many root sets"
+	  }
      }
 
 document {
