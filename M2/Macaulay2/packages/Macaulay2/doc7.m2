@@ -843,7 +843,7 @@ g = reshape(R^1, R^{-1}, f)
 assert isHomogeneous g
 "
 document {
-     Key => (adjoint1,Matrix,Module,Module),
+     Key => {(adjoint1,Matrix,Module,Module),adjoint1},
      Headline => "an adjoint map",
      Usage => "adjoint1(f,G,H)",
      Inputs => {
@@ -875,7 +875,7 @@ document {
      SeeAlso => {adjoint, flip, reshape, (symbol**,Module,Module), dual}
      }
 document {
-     Key => (adjoint,Matrix,Module,Module),
+     Key => {(adjoint,Matrix,Module,Module),adjoint},
      Headline => "an adjoint map",
      Usage => "adjoint(f,G,H)",
      Inputs => {
@@ -1449,14 +1449,6 @@ scan(3, n -> scan(-3 .. 3, d -> (
 document {
      Key => dual,
      Headline => "dual module or map",
-     TT "dual M", " -- the dual.",
-     PARA{},
-     "For details, see one of the following.",
-     UL {
-	  TO (dual,ChainComplex),
-	  TO (dual,Matrix),
-	  TO (dual,Module)
-	  }
      }
 TEST "
 r = ZZ/101[a,b]
