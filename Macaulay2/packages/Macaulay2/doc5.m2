@@ -161,14 +161,14 @@ document {
 document {
      Key => benchmark,
      Headline => "accurate timing of execution",
-	Inputs => {
-		"s" => String => "a string containing Macaulay 2 code"
-		},
-	Outputs => {
-		RR => {"the number of seconds it takes to evaluate the code in ", TT "s"}
-		},
-     TT "benchmark s", " produces an accurate timing for the code contained
-     in the string ", TT "s", ".  The value returned is the number of seconds.",
+     Inputs => {
+	     "s" => String => "a string containing Macaulay 2 code"
+	     },
+     Outputs => {
+	     RR => {"the number of seconds it takes to evaluate the code in ", TT "s"}
+	     },
+     Usage => "benchmark s",
+     "Produces an accurate timing for the code contained in the string ", TT "s", ".  The value returned is the number of seconds.",
      EXAMPLE {
 		///benchmark "2^500"///
 		},
