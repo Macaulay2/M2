@@ -103,7 +103,7 @@ document {
 
 document {
      Key => resultant,
-     Usage => "resultant(f:RingElement,g:RingElement,x:RingElement) --> RingElement",
+     Usage => "resultant(f,g,x)",
      Inputs => { 
 	  "f" => RingElement,
 	  "g" => RingElement,
