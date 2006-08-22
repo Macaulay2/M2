@@ -1400,7 +1400,7 @@ document {
 document {
      Key => Projective,
      Headline => "whether to produce a projective Hilbert polynomial",
-     TT "Projective", " -- an optional argument used with ", TO "hilbertPolynnomial", 
+     TT "Projective", " -- an optional argument used with ", TO "hilbertPolynomial", 
      " to specify the way the Hilbert Polynomial is expressed."
      }
 document {
