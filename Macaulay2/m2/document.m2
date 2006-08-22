@@ -727,8 +727,9 @@ makeDocBody Thing := key -> (
 	  if docBody =!= null and #docBody > 0 then (
 	       docBody = processExamples(pkg, fkey, docBody);
 	       if class key === String 
-	       then DIV {docBody}
-	       else DIV1 { SUBSECTION "Description", DIV {docBody} })))
+	       then DIV { rec#"comment", docBody}
+	       else DIV1 { rec#"comment", SUBSECTION "Description", DIV {docBody} })
+	  else DIV { rec#"comment" }))
 
 topheader := s -> (
      h := headline s;
@@ -888,13 +889,13 @@ document List := opts -> args -> (
      currentNodeName = DocumentTag.FormattedKey tag;
      if reservedNodeNames#?(toLower currentNodeName) then error("'document' encountered a reserved node name '",currentNodeName,"'");
      pkg := DocumentTag.Package tag;
-     args = prepend(COMMENT{"file://",toAbsolutePath currentFileName,":",toString currentLineNumber()},args);
      o.Description = toList args;
      exampleBaseFilename = makeFileName(currentNodeName,currentPackage);
      scan(keys o, key -> o#key = fixupTable#key o#key);
      if o.?Headline and o.Headline === "" then remove(o,Headline);
      if o.?Usage and o.Usage === "" then remove(o,Usage);
      -- pre-processing of inputs and outputs
+     if not o.?Usage and (o.?Inputs or o.?Outputs) then error "document: Inputs or Outputs specified, but Usage not provided";
      inp := if o.?Inputs then o.Inputs else {};
      out := if o.?Outputs then o.Outputs else {};
      iso := x -> instance(x,Option) and #x==2 and instance(x#0,Symbol);
@@ -905,19 +906,21 @@ document List := opts -> args -> (
      fn := if instance(key, Sequence) then key#0 else if instance(key,Symbol) then value key else key;
      if not isSubset(keys inoh, keys opt) then error concatenate("not among the options for ", toString fn, ": ", between_", " keys (set keys inoh - set keys opt));
      ino = join(ino, sortByName (keys opt - set keys inoh));
-     (inp',out') := types key;
-     inp' = select(inp', T -> T =!= Nothing);
-     out' = select(out', T -> T =!= Nothing);
-     if out' === {Thing} then out' = {};		    -- not informative enough
-     if #inp === 0 then inp = inp';
-     if #out === 0 then out = out';
-     if #inp' =!= 0 then (
-     	  if #inp =!= #inp' then error ("mismatched number of inputs in documentation for ", toExternalString key);
-     	  inp = apply(inp',inp,(T,v) -> T => v);
-	  );
-     if #out' =!= 0 then (
-     	  if #out =!= #out' then error ("mismatched number of outputs in documentation for ", toExternalString key);
-     	  out = apply(out',out,(T,v) -> T => v);
+     if o.?Usage then (
+	  (inp',out') := types key;
+	  inp' = select(inp', T -> T =!= Nothing);
+	  out' = select(out', T -> T =!= Nothing);
+	  if out' === {Thing} then out' = {};		    -- not informative enough
+	  if #inp === 0 then inp = inp';
+	  if #out === 0 then out = out';
+	  if #inp' =!= 0 then (
+	       if #inp =!= #inp' then error ("mismatched number of inputs in documentation for ", toExternalString key);
+	       inp = apply(inp',inp,(T,v) -> T => v);
+	       );
+	  if #out' =!= 0 then (
+	       if #out =!= #out' then error ("mismatched number of outputs in documentation for ", toExternalString key);
+	       out = apply(out',out,(T,v) -> T => v);
+	       );
 	  );
      proc := processInputOutputItems(key,fn);
      inp = proc \ inp;
@@ -937,6 +940,7 @@ document List := opts -> args -> (
 	  );
      o#"filename" = currentFileName;
      o#"linenum" = currentLineNumber();
+     o#"comment" = COMMENT{"file://",toAbsolutePath currentFileName,":",toString currentLineNumber()};
      o = new HashTable from o;
      assert( not o.?BaseFunction or instance( o.BaseFunction, Function ) );
      storeRawDocumentation(tag, o);
