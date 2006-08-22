@@ -723,14 +723,15 @@ makeDocBody Thing := key -> (
      pkg := packageKey fkey;
      if pkg =!= null then (
 	  rec := fetchRawDocumentation(pkg,fkey);
-	  comment := COMMENT{"file://",toAbsolutePath rec#"filename",":",toString rec#"linenum"};
-	  docBody := extractBody rec;
-	  if docBody =!= null and #docBody > 0 then (
-	       docBody = processExamples(pkg, fkey, docBody);
-	       if class key === String 
-	       then DIV { comment, docBody}
-	       else DIV1 { comment, SUBSECTION "Description", DIV {docBody} })
-	  else DIV { comment }))
+	  if rec =!= null then (
+	       comment := COMMENT{"file://",toAbsolutePath rec#"filename",":",toString rec#"linenum"};
+	       docBody := extractBody rec;
+	       if docBody =!= null and #docBody > 0 then (
+		    docBody = processExamples(pkg, fkey, docBody);
+		    if class key === String 
+		    then DIV { comment, docBody}
+		    else DIV1 { comment, SUBSECTION "Description", DIV {docBody} })
+	       else DIV { comment })))
 
 topheader := s -> (
      h := headline s;
