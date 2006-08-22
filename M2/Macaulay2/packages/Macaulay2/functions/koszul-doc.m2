@@ -2,9 +2,9 @@
 --- author(s): Caviglia, Kummini
 --- notes: 
 
---document {
---     Key => (koszul,Matrix)
---     }
+document {
+     Key => (koszul,Matrix)
+     }
 
 document { 
      Key => koszul,
