@@ -155,6 +155,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  coeffSkew := coeffOptions =!= null and coeffOptions.SkewCommutative =!= {};
 	  if Weyl or coeffWeyl then (
 	       if Weyl and R.?SkewCommutative then error "coefficient ring has skew commuting variables";
+	       if Weyl and skews =!= {} then error "skew commutative Weyl algebra requested";
 	       diffs := M.Options.WeylAlgebra;
 	       if class diffs === Option then diffs = {diffs}
 	       else if class diffs =!= List then error "expected list as WeylAlgebra option";
