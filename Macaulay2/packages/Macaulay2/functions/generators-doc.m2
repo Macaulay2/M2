@@ -10,7 +10,7 @@ undocumented {
 document {
      Key => generators,
      Headline => "provide matrix or list of generators",
-     Usage => "generators x",
+     Usage => "generators x\ngens x",
      Inputs => { "x"  },
      Outputs => { {"provides the generators of ", TT "x", 
 	       " in a convenient form, as a list or a matrix, depending on the type"} },
@@ -48,9 +48,9 @@ document {
 document { 
      Key => (generators,GroebnerBasis),
      Headline => "the generator matrix of a Groebner basis",
-     Usage => "m = generators g\nm = gens g",
+     Usage => "generators g\ngens g",
      Inputs => { "g" },
-     Outputs => {"m" => {"whose columns are the generators of the Groebner basis ", TT "g"}},
+     Outputs => {Matrix => {"whose columns are the generators of the Groebner basis ", TT "g"}},
      "The following ideal defines a set of 18 points over the complex numbers.  We compute a
      lexicographic Groebner basis of the ideal.",
      EXAMPLE {
@@ -63,7 +63,7 @@ document {
 document {
      Key => (generators,Module),
      Headline => "the generator matrix of a module",     
-     Usage => "generators M",
+     Usage => "generators M\ngens M",
      Inputs => { "M" },
      Outputs => {
 	  {"the matrix of generators of ", TT "M", "."}
@@ -87,19 +87,20 @@ document {
      }
 document { 
      Key => (generators,GeneralOrderedMonoid),
-     Headline => "Remove this documentation node?",
-     Usage => "",
+     Headline => "list of generators",
+     Usage => "generators M\ngens M",
      Inputs => {
+	  "M"
 	  },
      Outputs => {
+	  List => "of generators"
 	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     EXAMPLE lines ///
+     	  R = QQ[a..d];
+	  M = monoid R
+	  gens M
+	  ///,
+     SeeAlso => {monoid}
      }
 document {
      Key => {(generators, Ideal),
@@ -129,7 +130,7 @@ document {
 document { 
      Key => (generators,Ring),
      Headline => "the list of generators of a ring",
-     Usage => "generators R",
+     Usage => "generators R\ngens R",
      Inputs => {
 	  "R"
 	  },

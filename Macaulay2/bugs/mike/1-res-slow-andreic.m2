@@ -72,3 +72,13 @@ bt ** N
 H2 = Hom(b_i,N)
 homology(H1,H2)
 homology(Hom(b_(i+1),N), Hom(b_i,N))
+
+G0 = target presentation N
+G1 = source presentation N
+F = C_3
+F' = C_4
+F'' = C_2
+Hom(F,G0)
+a = Hom(C.dd_4,G0);
+b = Hom(F',presentation N);
+c = modulo(a,b);

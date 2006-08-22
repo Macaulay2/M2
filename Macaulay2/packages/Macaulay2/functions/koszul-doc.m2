@@ -3,7 +3,13 @@
 --- notes: 
 
 document { 
-     Key => {koszul,(koszul,ZZ,Matrix)},
+     Key => koszul,
+     "Returns either the entire Koszul complex, or a specific matrix in the Koszul complex.",
+     SeeAlso => {eagonNorthcott}
+     }
+
+document { 
+     Key => (koszul,ZZ,Matrix),
      Headline => "a differential in a Koszul complex",
      Usage => "g = koszul(i,f)",
      Inputs => {
@@ -13,17 +19,33 @@ document {
      Outputs => {
           "g" => { "the ", TT "i", "-th differential in the Koszul complex of the matrix ", TT "f"}
      },
-
      EXAMPLE {
           "R = QQ[x_1..x_4];",
           "f = matrix{{x_1..x_4}}"
      },
      "To see the second differential in the Koszul complex of the matrix ", TT "f", " look at:",
      EXAMPLE {
-     "koszul(2,f)",
-     },
-     SeeAlso => {}
+        "koszul(2,f)"
+        }
      }
+--document { 
+--     Key => (koszul,Matrix),
+--     Headline => "the Koszul complex",
+--     Usage => "g = koszul f",
+--     Inputs => {
+--             "f" => {"a ", TT "1", " by ", TT "n", " matrix"},
+--     },
+--     Outputs => {
+--          "g" => { "the Koszul complex of the matrix ", TT "f"}
+--     },
+--     EXAMPLE lines ///
+--          R = QQ[x_1..x_4];
+--          f = matrix{{x_1..x_4}}
+--	  C = koszul f
+--	  C.dd^2
+--     ///,
+--     SeeAlso => {eagonNorthcott}
+--     }
 ///
 document { 
      Key => (koszul,Matrix,Matrix),
