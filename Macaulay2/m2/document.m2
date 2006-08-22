@@ -723,13 +723,14 @@ makeDocBody Thing := key -> (
      pkg := packageKey fkey;
      if pkg =!= null then (
 	  rec := fetchRawDocumentation(pkg,fkey);
+	  comment := COMMENT{"file://",toAbsolutePath rec#"filename",":",toString rec#"linenum"};
 	  docBody := extractBody rec;
 	  if docBody =!= null and #docBody > 0 then (
 	       docBody = processExamples(pkg, fkey, docBody);
 	       if class key === String 
-	       then DIV { rec#"comment", docBody}
-	       else DIV1 { rec#"comment", SUBSECTION "Description", DIV {docBody} })
-	  else DIV { rec#"comment" }))
+	       then DIV { comment, docBody}
+	       else DIV1 { comment, SUBSECTION "Description", DIV {docBody} })
+	  else DIV { comment }))
 
 topheader := s -> (
      h := headline s;
@@ -940,7 +941,6 @@ document List := opts -> args -> (
 	  );
      o#"filename" = currentFileName;
      o#"linenum" = currentLineNumber();
-     o#"comment" = COMMENT{"file://",toAbsolutePath currentFileName,":",toString currentLineNumber()};
      o = new HashTable from o;
      assert( not o.?BaseFunction or instance( o.BaseFunction, Function ) );
      storeRawDocumentation(tag, o);
