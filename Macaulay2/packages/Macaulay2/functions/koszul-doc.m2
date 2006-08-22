@@ -2,11 +2,16 @@
 --- author(s): Caviglia, Kummini
 --- notes: 
 
+--document {
+--     Key => (koszul,Matrix)
+--     }
+
 document { 
      Key => koszul,
      "Returns either the entire Koszul complex, or a specific matrix in the Koszul complex.",
      SeeAlso => {eagonNorthcott}
      }
+
 
 document { 
      Key => (koszul,ZZ,Matrix),
@@ -29,7 +34,7 @@ document {
         }
      }
 --document { 
---     Key => (koszul,Matrix),
+--     Key => (koszul,Matrix)
 --     Headline => "the Koszul complex",
 --     Usage => "g = koszul f",
 --     Inputs => {
@@ -45,7 +50,7 @@ document {
 --	  C.dd^2
 --     ///,
 --     SeeAlso => {eagonNorthcott}
---     }
+--   }
 ///
 document { 
      Key => (koszul,Matrix,Matrix),
