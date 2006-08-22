@@ -224,7 +224,7 @@ projectiveHilbertPolynomial(ZZ,ZZ) := ProjectiveHilbertPolynomial => memoize(
 	  then apply(min(-d+1,n+1), j -> n-j => (-1)^j * binomial(-d,j))
      	  else apply(n+1, j -> n-j => binomial(d-1+j,j))))
 
-hilbertFunctionRing := QQ(monoid [global i])
+hilbertFunctionRing <- QQ(monoid [global i])
 i := hilbertFunctionRing_0
 assert(value global i === global i)
 
