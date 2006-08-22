@@ -154,7 +154,7 @@ document {
 	    --"J = ideal(x*y-z^2,x*z^3-y^4);",
 	    "resolution I"
 	    },
-       "The functions ", TO "dimension", " and ", TO "degree", " also 
+       "The functions ", TO "dim", " and ", TO "degree", " also 
        operate on ", TT "R^1/I", " if the input 
        is ", TT "I", " or ", TT "R^1/I", ".  However, the 
        function ", TO "hilbertPolynomial", " computes the Hilbert 

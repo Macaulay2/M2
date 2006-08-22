@@ -88,7 +88,7 @@ pushlinear := options -> (f,M) -> (
     fmat := substitute(f.matrix,Rbase);
     n := numgens source f.matrix;
     n1 := numgens R - n;
-    R1 := (ring Rbase)[Variables => numgens R, MonomialOrder => Eliminate n1];
+    R1 := (coefficientRing Rbase)[Variables => numgens R, MonomialOrder => Eliminate n1];
     fg := newCoordinateSystem(R1, fmat);
     Fto := fg#0;  -- we don't need to go back, so we ignore fg#1
     m1 := Fto substitute(m,Rbase);
@@ -104,7 +104,7 @@ pushlinear := options -> (f,M) -> (
     mapback g
     )
 
-pushForward1(RingMap, Module) := Module => options -> (f,M) -> (
+pushForward1(RingMap, Module) := Matrix => options -> (f,M) -> (
     if options.Strategy === Linear then
         (pushlinear options)(f,M)
     else if options.Strategy === NonLinear then
@@ -120,7 +120,8 @@ pushForward(RingMap, Module) := Module => options -> (f,M) -> (
 	  S := target f;
 	  M = cokernel presentation M;
 	  M1 := M ** (S^1/(image f.matrix));
-	  if dim M1 > 0 then error "module given is not finite over base";
+	  d := dim M1;
+	  if d > 0 then error("module given is not finite over base: dim of M/vars = "|d);
 	  M2 := subquotient(matrix (basis M1), relations M);
 	  cokernel pushForward1(f,M2,options)
 	  )
