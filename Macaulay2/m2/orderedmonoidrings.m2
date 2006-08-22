@@ -315,10 +315,7 @@ Ring _ List := RingElement => (R,w) -> product(#w, i -> (R_i)^(w_i))
 dim PolynomialRing := R -> dim coefficientRing R + # generators R - if R.?SkewCommutative then #R.SkewCommutative else 0
 char PolynomialRing := (R) -> char coefficientRing R
 numgens PolynomialRing := R -> numgens monoid R
-isSkewCommutative PolynomialRing := R -> (
-     o := options R;
-     0 < #o.SkewCommutative and 0 == #o.WeylAlgebra)
-
+isSkewCommutative PolynomialRing := R -> isSkewCommutative coefficientRing R or 0 < #(options R).SkewCommutative
 weightRange = method()
 weightRange(List,RingElement) := (w,f) -> rawWeightRange(w,raw f)
 
