@@ -41,3 +41,10 @@ GONE? missing reference to documentation as subnode: Macaulay2 :: negative expon
 
 DONE symbol has no documentation: Macaulay2 :: schreyerOrder
 DONE method has no documentation: Macaulay2 :: schreyerOrder(Module), key: 
+
+Also: notes on problems with the doc:
+generators-doc.m2: gens(GeneralOrderedMonoid), remove it.
+  gens too in synopsis
+  TO each type...
+  remove see also: Monoid
+  

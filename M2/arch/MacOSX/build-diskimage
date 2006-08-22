@@ -1,6 +1,6 @@
--------------------------------------------------------
--- Building a binary disk image for ppc or i386 mac ---
--------------------------------------------------------
+-------------------------------------------------------------------------
+-- Building a binary disk image for ppc or i386 mac, and fink tarball ---
+-------------------------------------------------------------------------
 
 ## Step 1. Download the most recent stable version of Macaulay2 ##
 # from subversion.
@@ -14,6 +14,14 @@
  svn co svn://u123.math.uiuc.edu/Macaulay2/stable/$STABLE M2
  mkdir installed
  mkdir build
+
+## Step 1A. Create the source tarball for use with fink.
+ # starting in M2-build
+ VERSION=0.9.20
+ mv M2 Macaulay2-$VERSION
+ tar zcf Macaulay2-$VERSION-src.tar.gz Macaulay2-$VERSION/
+ mv Macaulay2-$VERSION M2
+ scp Macaulay2-$VERSION-src.tar.gz ssh.math.uiuc.edu:~  
 
 ## Step 2. Build Macaulay2 ##
 ## We assume libraries and include files are installed at /capybara/include and /caypbara/lib
@@ -62,11 +70,12 @@
  VERSION=0.9.20
  cp ~/M2/arch/MacOSX/ReadMe-MacOSX.rtf .
  cp ~/M2/arch/MacOSX/ReadMe-MacOSX.rtf Macaulay2-$VERSION/
- cp ~/M2/arch/MacOSX/setup Macaulay2-$VERSION/
+ rm Macaulay2-$VERSION/encapinfo
+ rm Macaulay2-$VERSION/postinstall
+ rm Macaulay2-$VERSION/preremove
  rm Macaulay2-$VERSION/bin/M2-emacs
  rm Macaulay2-$VERSION/bin/M2-load-libs
  rm Macaulay2-$VERSION/bin/M2-help
- mv Macaulay2-$VERSION Macaulay2
  cd .. # to original directory
  hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-`uname -m` Macaulay2-$VERSION-macosx-`uname -m`.dmg
  scp Macaulay2-$VERSION-macosx-`uname -m`.dmg ssh.math.uiuc.edu:~
