@@ -1366,7 +1366,7 @@ document {
      }
 
 document {
-     Key => symbol ===,
+     Key => {symbol ===,(symbol===,Thing,Thing)},
      Headline => "strict equality",
      TT "x === y", " -- returns true or false depending on whether the 
      expressions x and y are strictly equal.",
@@ -1397,7 +1397,7 @@ document {
      }
 
 document {
-     Key => symbol =!=,
+     Key => {symbol =!=, (symbol=!=,Thing,Thing)},
      Headline => "strict inequality",
      TT "x =!= y", " -- returns true or false depending on whether the expressions
      x and y are strictly unequal.",
