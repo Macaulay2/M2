@@ -1009,8 +1009,7 @@ undocumented {
      (symbol //, CCC, RR),
      (symbol //, CCC, CC),
      (symbol //, CC, RR),
-     (symbol //, CC, CC),
-     (symbol //, Matrix, Matrix)
+     (symbol //, CC, CC)
      }
 
      
