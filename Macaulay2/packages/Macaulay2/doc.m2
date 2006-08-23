@@ -928,8 +928,28 @@ undocumented {
 	  (symbol %, RingElement, QQ),
 	  (symbol %, QQ, RingElement),
 	  (symbol %, ZZ, GroebnerBasis),
-	  (symbol %, ZZ, MonomialIdeal)
-     }
+	  (symbol %, ZZ, MonomialIdeal),
+	  (symbol %, QQ, ZZ),
+	  (symbol %, RRR, ZZ),
+	  (symbol %, QQ, QQ),
+	  (symbol %, RRR, QQ),
+	  (symbol %, CCC, ZZ),
+	  (symbol %, RRR, RRR),
+	  (symbol %, RR, ZZ),
+	  (symbol %, CCC, QQ),
+	  (symbol %, CC, ZZ),
+	  (symbol %, RR, QQ),
+	  (symbol %, CCC, RRR),
+	  (symbol %, CC, QQ),
+	  (symbol %, RRR, RR),
+	  (symbol %, CCC, CCC),
+	  (symbol %, CCC, RR),
+	  (symbol %, CCC, CC),
+	  (symbol %, RR, RR),
+	  (symbol %, CC, RR),
+	  (symbol %, CC, CC)
+     	  }
+
 
 document {
      Key => {symbol %,
@@ -973,7 +993,26 @@ undocumented {
      (symbol //, InfiniteNumber, ZZ),
      (symbol //, ZZ, Matrix),
      (symbol //, Matrix, ZZ),
+     (symbol //, QQ, ZZ),
+     (symbol //, RRR, ZZ),
+     (symbol //, QQ, QQ),
+     (symbol //, RRR, QQ),
+     (symbol //, CCC, ZZ),
+     (symbol //, RRR, RRR),
+     (symbol //, CCC, QQ),
+     (symbol //, CC, ZZ),
+     (symbol //, RR, QQ),
+     (symbol //, CCC, RRR),
+     (symbol //, CC, QQ),
+     (symbol //, RRR, RR),
+     (symbol //, CCC, CCC),
+     (symbol //, CCC, RR),
+     (symbol //, CCC, CC),
+     (symbol //, CC, RR),
+     (symbol //, CC, CC),
+     (symbol //, Matrix, Matrix)
      }
+
      
 document {
      Key => symbol //,
