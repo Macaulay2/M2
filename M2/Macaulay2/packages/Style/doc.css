@@ -32,7 +32,7 @@ table.examples {
      border-width: 3px;
      border-spacing: 0px;
      font-size: 75%;
-     line-height: 12pt;
+     line-height: 110%;		/* 122% seems to be the default, and 100% leaves almost no space between lines */
 }
 table.examples td {
      border-style: solid;
