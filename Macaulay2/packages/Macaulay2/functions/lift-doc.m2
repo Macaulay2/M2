@@ -2,9 +2,59 @@
 --- author(s): MES
 --- notes: BUG to fix
 
-undocumented {(lift,Matrix,CC,CC), (lift,Matrix,Number), (lift,Matrix,ZZ,ZZ), (lift,Matrix,QQ,ZZ), (lift,Matrix,RRR,ZZ), (lift,Matrix,QQ,QQ), (lift,Matrix,RRR,QQ), (lift,Matrix,CCC,ZZ),
-     (lift,Matrix,RRR,RRR), (lift,Matrix,RR,ZZ), (lift,Matrix,CCC,QQ), (lift,Matrix,CC,ZZ), (lift,Matrix,RR,QQ), (lift,Matrix,CCC,RRR), (lift,Matrix,RRR,RR), (lift,Matrix,CC,QQ),
-     (lift,Matrix,CCC,CCC), (lift,Matrix,CCC,RR), (lift,Matrix,RR,RR), (lift,Matrix,CCC,CC), (lift,Matrix,CC,RR)}
+///
+(lift, Ideal, RingElement)
+(lift, Matrix, ZZ, ZZ)
+(lift, Matrix, RRR, ZZ)
+(lift, Matrix, RRR, QQ)
+(lift, Matrix, RRR, RRR)
+(lift, Matrix, RR, ZZ)
+(lift, Matrix, RR, QQ)
+
+(lift, Matrix, RRR, RR)
+(lift, Matrix, RR, RR)
+(lift, Matrix, Number)
+(lift, Matrix, RingElement)
+///
+
+undocumented {(lift,Matrix,CC,CC), 
+     (lift,Matrix,Number), 
+     (lift,Matrix,ZZ,ZZ), (lift,Matrix,QQ,ZZ), (lift,Matrix,RRR,ZZ), 
+     (lift,Matrix,QQ,QQ), (lift,Matrix,RRR,QQ), (lift,Matrix,CCC,ZZ),
+     (lift,Matrix,RRR,RRR), (lift,Matrix,RR,ZZ), (lift,Matrix,CCC,QQ), (lift,Matrix,CC,ZZ), (lift,Matrix,RR,QQ), 
+     (lift,Matrix,CCC,RRR), (lift,Matrix,RRR,RR), (lift,Matrix,CC,QQ),
+     (lift,Matrix,CCC,CCC), (lift,Matrix,CCC,RR), (lift,Matrix,RR,RR), (lift,Matrix,CCC,CC), (lift,Matrix,CC,RR),
+     (lift, ZZ, ZZ),
+     (lift, RRR, ZZ),
+     (lift, RRR, QQ),
+     (lift, RR, ZZ),
+     (lift, RRR, RRR),
+     (lift, RR, QQ),
+     (lift, RRR, RR),
+     (lift, RR, RR),
+     (lift, QQ, ZZ),
+     (lift, QQ, QQ),
+     (lift, CCC, ZZ),
+     (lift, CCC, QQ),
+     (lift, CC, ZZ),
+     (lift, CCC, RRR),
+     (lift, CC, QQ),
+     (lift, CCC, CCC),
+     (lift, CCC, RR),
+     (lift, CCC, CC),
+     (lift, CC, RR),
+     (lift, CC, CC),
+     (lift, List, hilbertFunctionRing, ZZ),
+     (lift, List, hilbertFunctionRing, QQ),
+     (lift, Matrix, hilbertFunctionRing, ZZ),
+     (lift, hilbertFunctionRing, ZZ),
+     (lift, hilbertFunctionRing, QQ),
+     (lift, Matrix, hilbertFunctionRing, hilbertFunctionRing),
+     (lift, hilbertFunctionRing, hilbertFunctionRing),
+     (lift, Matrix, hilbertFunctionRing, QQ),
+     (lift, Ideal, ZZ),
+     (lift, Ideal, QQ)
+     }
 
 document { 
      Key => {lift,
@@ -56,12 +106,25 @@ document {
 	  "lift(g,QQ)",
 	  "lift(lift(g,QQ),ZZ)"
 	  },
+     TT "lift", " and ", TO "promote", " are useful to move numbers from one kind of
+     coefficient ring to another.",
+     EXAMPLE lines ///
+          promote(3,RR)
+	  lift(3.0,ZZ)
+	  lift(3.0,QQ)
+	  12/127 * 1.0
+	  lift(oo,QQ)
+          ///,
      SeeAlso => {baseRings,liftable,promote}
      }
 
 TEST ///
 A = QQ[a..d]
 f = (a+1)^2-a^2-2*a
-lift(f,ZZ)  -- BUG
+lift(f,ZZ)
 lift(lift(f,QQ),ZZ)
+
+lift(0.0 * ii + 3.0, RR)
+a = promote(1.34242,RRR)
+b = lift(a,RR)
 ///
