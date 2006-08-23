@@ -98,16 +98,18 @@ document {
 	  "lift(g,QQ)",
 	  "lift(lift(g,QQ),ZZ)"
 	  },
-     TT "lift", " and ", TO "promote", " are useful to move numbers from one kind of
+     "The functions ", TT "lift", " and ", TO "substitute", " are useful to move numbers from one kind of
      coefficient ring to another.",
      EXAMPLE lines ///
-          promote(3,RR)
+          substitute(3,RR)
 	  lift(3.0,ZZ)
 	  lift(3.0,QQ)
-	  12/127 * 1.0
+	  12/127.
 	  lift(oo,QQ)
           ///,
-     SeeAlso => {baseRings,liftable,promote}
+     SeeAlso => {baseRings,liftable
+	  -- ,promote
+	  }
      }
 
 TEST ///
