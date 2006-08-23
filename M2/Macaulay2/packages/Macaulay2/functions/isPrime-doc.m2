@@ -2,10 +2,6 @@
 --- author(s): Gregory G. Smith
 --- notes: 
 
-undocumented {
-     (isPrime, hilbertFunctionRing)
-     }
-
 document { 
      Key => {isPrime, (isPrime, ZZ)},
      Headline => "whether a integer or polynomial is prime",

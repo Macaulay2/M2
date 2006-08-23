@@ -65,8 +65,7 @@ undocumented {
     (toString, Net),
     (toString, String),
     (toString, SparseVectorExpression),
-    (toString, Dictionary),
-    (toString, hilbertFunctionRing)
+    (toString, Dictionary)
     }
 
 document { 

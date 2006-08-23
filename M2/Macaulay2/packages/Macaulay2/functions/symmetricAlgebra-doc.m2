@@ -1,39 +1,34 @@
---- status: TODO
---- author(s): 
+--- status: Draft
+--- author(s): MES
 --- notes: 
 
 document { 
-     Key => symmetricAlgebra,
-     Headline => "",
-     Usage => "",
+     Key => {(symmetricAlgebra,Module),symmetricAlgebra},
+     Headline => "the symmetric algebra of a module",
+     Usage => "symmetricAlgebra M",
      Inputs => {
+	  "M"
 	  },
      Outputs => {
+	  Ring => {"the symmetric algebra of ", TT "M"}
 	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     EXAMPLE lines ///
+     	  R = QQ[a..d];
+	  M = image matrix{{a,b,c}}
+	  symmetricAlgebra M
+     	  symmetricAlgebra(R^{1,2,3})
+	  ///,
+     PARA{},
+     "Most of the optional arguments for monoids are available here as well, such as ",
+     EXAMPLE lines ///
+	  symmetricAlgebra(M, Variables=>{x,y,z})
+	  symmetricAlgebra(M, VariableBaseName=>G, MonomialSize=>16)
+	  symmetricAlgebra(M, Degrees=> {7:1})
+          ///,
+     Caveat => {"This function predates the ability to create polynomial rings over polynomial rings,
+	  and perhaps that is what should be returned."},
      }
-document { 
-     Key => (symmetricAlgebra,Module),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
+end
 document { 
      Key => [symmetricAlgebra, Variables],
      Headline => "",

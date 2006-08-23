@@ -669,7 +669,6 @@ export {
 	symbol help,
 	symbol hh,
 	symbol hilbertFunction,
-	symbol hilbertFunctionRing,
 	symbol hilbertPolynomial,
 	symbol hilbertSeries,
 	symbol hold,

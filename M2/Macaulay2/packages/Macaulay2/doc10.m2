@@ -395,10 +395,6 @@ document {
      have the same dimension.  In this case the algorithm tends to be much faster."
      }
 
-undocumented {
-     (factor,hilbertFunctionRing)
-     }
-
 document {
      Key => factor,
      Headline => "factor a ring element or a ZZ-module"

@@ -124,9 +124,9 @@ symmetricAlgebraIdeal Module := Ideal => opts -> (M) -> (
      m = substitute(m,xvars);
      I := yvars*m)
 
-symmetricAlgebra Module := QuotientRing => options -> (M) -> (
+symmetricAlgebra Module := Ring => options -> (M) -> (
      I := symmetricAlgebraIdeal(M,options);
-     (ring I)/(image I))
+     if I == 0 then ring I else (ring I)/(image I))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
