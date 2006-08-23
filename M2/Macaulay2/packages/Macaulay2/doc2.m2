@@ -528,6 +528,11 @@ undocumented {
      (symbol ?, InfiniteNumber, Thing),
      (symbol ?, Thing, Thing),
      (symbol ?, Function),
+     (symbol ?, hilbertFunctionRing, hilbertFunctionRing),
+     (symbol ?, ZZ, MonoidElement),
+     (symbol ?, MonoidElement, ZZ),
+     (symbol ?, RingElement, ZZ),
+     (symbol ?, ZZ, RingElement)
      }
 
 document {

@@ -807,10 +807,24 @@ document {
      SeeAlso => {"map", "matrix", [inducedMap,Degree]}
      }
 document {
-     Key => id,
+     Key => {id,(id,Ring),(id,Module),(id,ChainComplex)},
      Headline => "identity map",
-     TT "id_M", " -- the identity homomorphism from ", TT "M", " to ", TT "M", "."
+     Usage => "id_F",
+     Inputs => {
+	  "F" => {ofClass Ring, ", ", ofClass Module, ", or ", ofClass ChainComplex}
+	  },
+     Outputs => {
+	  {ofClass RingMap, ", ", ofClass Matrix, ", or ", ofClass ChainComplexMap, " the identity map on ", TT "F"}
+	  },
+     EXAMPLE lines ///
+     	  R = QQ[a..d];
+	  id_R
+	  id_(R^3)
+	  C = res coker vars R
+	  id_C
+	  ///
      }
+
 document {
      Key => {(reshape,Module,Module,Matrix),reshape},
      Headline => "reshape a matrix",

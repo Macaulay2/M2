@@ -192,7 +192,7 @@ document {
 	  "G = map(A1,A,v)",
 	  "G f",
 	  },
-     SeeAlso => {"ring maps", map, substitute, RingMap, generators, numgens, take}
+     SeeAlso => {"substitution and maps between rings", map, substitute, RingMap, generators, numgens, take}
      }
 
 document {

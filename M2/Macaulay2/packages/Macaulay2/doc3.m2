@@ -415,6 +415,7 @@ document {
 
 undocumented liftable'
 undocumented {(liftable', ZZ, ZZ), (liftable', QQ, ZZ), (liftable', RRR, ZZ), (liftable', QQ, QQ), (liftable', Matrix, Number), (liftable', RR, ZZ), (liftable', Matrix, RingElement)}
+undocumented {(liftable', Matrix, hilbertFunctionRing, hilbertFunctionRing), (liftable', hilbertFunctionRing, hilbertFunctionRing)}
 
 document { Key => MethodFunction,
      Headline => "a type of method function", "Functions of this type are created by ", TO "method", "." }
