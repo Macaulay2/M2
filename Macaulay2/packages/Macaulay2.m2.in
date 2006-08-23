@@ -19,4 +19,13 @@ beginDocumentation()
 
 load "Macaulay2/loads.m2"
 
+if keys Macaulay2#"private dictionary" =!= {} 
+then error splice("Macaulay2 documentation: global symbols inadvertently defined: ", 
+     toSequence between_", " apply(values Macaulay2#"private dictionary", s -> (
+	       p := locate s;
+	       toString s | " [" | p#0 | ":" | toString p#1 | "]"
+	       )))
 
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages "
+-- End:
