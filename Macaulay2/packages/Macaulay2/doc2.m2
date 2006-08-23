@@ -508,6 +508,12 @@ document {
 	  },
      "Calls upon ", TO "?", " to perform the comparison, if necessary.",
      }
+undocumented {
+     (symbol >, Thing, Thing),
+     (symbol <, Thing, Thing),
+     (symbol <=, Thing, Thing),
+     (symbol >=, Thing, Thing)
+     }
 
 undocumented {
      (symbol ?, TO2, TO2),
