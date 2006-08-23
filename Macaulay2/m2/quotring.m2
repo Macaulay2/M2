@@ -43,6 +43,10 @@ Ring / Module := QuotientRing => (R,I) -> (
 
 savedQuotients := new MutableHashTable
 
+liftZZmodQQ := (r,S) -> (
+     v := LLL syz matrix {{-1,lift(r,ZZ),char ring r}};
+     v_(0,0) / v_(1,0))
+
 ZZquotient := (R,I) -> (
      gensI := generators I;
      if ring gensI =!= ZZ then error "expected an ideal of ZZ";
@@ -70,6 +74,7 @@ ZZquotient := (R,I) -> (
 	  fraction(S,S) := S / S := (x,y) -> x//y;
 	  S.frac = S;		  -- ZZ/n with n PRIME!
 	  savedQuotients#n = S;
+	  lift(S,QQ) := liftZZmodQQ;
 	  S))
 
 Ring / Ideal := QuotientRing => (R,I) -> (
