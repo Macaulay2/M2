@@ -1,21 +1,24 @@
---- status: TODO
---- author(s): 
+--- status: Draft
+--- author(s): MES
 --- notes: 
 
 document { 
-     Key => elements,
-     Headline => "",
-     Usage => "",
+     Key => {elements,(elements,Tally),(elements,Set)},
+     Headline => "list of elements",
+     Usage => "elements S",
      Inputs => {
+	  "S" => {ofClass Set, ", or ", ofClass Tally}
 	  },
      Outputs => {
+	  List
 	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     EXAMPLE lines ///
+     	  set{1,2,3,1,2,4}
+	  elements oo
+	  ///,
+     EXAMPLE lines ///
+     	  tally apply(10, i -> random 5)
+	  elements oo
+	  ///,
+     SeeAlso => {tally, set}
      }
- -- overviewC.m2:1244:     Key => "extracting elements",

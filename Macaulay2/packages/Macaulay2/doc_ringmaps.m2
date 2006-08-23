@@ -185,16 +185,6 @@ document {
      }
 
 document {
-     Key => symmetricAlgebra,
-     Headline => "the symmetric algebra of a module",
-     TT "symmetricAlgebra M", " -- produces the symmetric algebra of a
-     module M.",
-     PARA{},
-     "Bugs: uses symbols from the beginning of the alphabet as variables in
-     the new ring; makes a quotient ring when it doesn't have to."
-     }
-
-document {
      Key => NonLinear,
      Headline => "use the algorithm which doesn't assume that the ring map is linear",
      TT "Strategy => NonLinear", " -- an option value for the ", TO "Strategy", "

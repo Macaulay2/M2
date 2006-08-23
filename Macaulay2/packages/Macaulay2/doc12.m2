@@ -816,10 +816,6 @@ document {
      EXAMPLE "(hold 2)^5 * (hold 3)^3",
      }
 
-undocumented {
-     (expression, hilbertFunctionRing)
-     }
-
 document {
      Key => expression,
      Headline => "convert to an expression",

@@ -33,8 +33,7 @@ undocumented {
     (toExternalString, Keyword),
     (toExternalString, PolynomialRing),
     (toExternalString, Net),
-    (toExternalString, String),
-    (toExternalString, hilbertFunctionRing)    
+    (toExternalString, String)
     }     
 
 document { 

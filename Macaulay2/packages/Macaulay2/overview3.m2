@@ -350,7 +350,7 @@ document {
 	  TO "edit",
 	  TO "error",
 	  TO "errorDepth",
-	  TO "flag",
+	  TO "flagLookup",
 	  TO "listUserSymbols",
      	  TO "locate",
 	  TO "methods",
