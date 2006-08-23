@@ -116,6 +116,8 @@ minimalPrimes Ideal := (cacheValue symbol minimalPrimes) (
 	  components
 	  ))
 
+isPrime Ideal := J -> (C := minimalPrimes J; #C === 1 and C#0 == J)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
