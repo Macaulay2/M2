@@ -233,7 +233,7 @@ substitute(Matrix,Ring) := Matrix => (m,S) -> (map(S,ring m)) m
 substitute(Module,Ring) := Module => (M,S) -> (map(S,ring M)) M
 substitute(Ideal,Ring) := Ideal => (I,S) -> (map(S,ring I)) I
 substitute(Vector,Ring) := Vector => (v,S) -> (map(S,ring v)) v
-substitute(RingElement,Ring) := RingElement => (r,S) -> (map(S,ring r)) r
+substitute(Number,Ring) := substitute(RingElement,Ring) := RingElement => (r,S) -> (map(S,ring r)) r
 
 substitute(Matrix,ZZ) := Matrix => (m,i) -> (
      R := ring m;
