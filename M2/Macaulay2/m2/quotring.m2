@@ -44,7 +44,8 @@ Ring / Module := QuotientRing => (R,I) -> (
 savedQuotients := new MutableHashTable
 
 liftZZmodQQ := (r,S) -> (
-     v := LLL syz matrix {{-1,lift(r,ZZ),char ring r}};
+     needsPackage "LLLBases";
+     v := (value getGlobalSymbol "LLL") syz matrix {{-1,lift(r,ZZ),char ring r}};
      v_(0,0) / v_(1,0))
 
 ZZquotient := (R,I) -> (
