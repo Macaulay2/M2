@@ -27,7 +27,7 @@ document {
      "In general, the associated primes are found using Ext modules: The 
      associated primes of codimension ", TT "i", " of ", TT "I", " and ",
      TT "Ext^i(R^1/I,R)", " are identical, as shown in 
-     Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992).",
+     Eisenbud-Huneke-Vasconcelos, Invent. Math. 110 (1992) 207-235.",
      PARA{},
      TO primaryDecomposition, " also computes the associated primes.  After doing 
      a primaryDecomposition, calling ", TT "associatedPrimes", " requires no new computation,
@@ -79,7 +79,7 @@ document {
 	 assert(M1 === M2)
      ///,
      "The method using Ext modules comes from     
-     Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992)."
+     Eisenbud-Huneke-Vasconcelos, Invent. Math 110 (1992) 207-235."
      }
 
 document {
@@ -129,7 +129,7 @@ document {
 	  "This strategy does not require the calculation of the assassinator, 
 	  but can require the computation of high powers of ideals. The 
 	  method appears in 
-	  Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992).",
+	  Eisenbud-Huneke-Vasconcelos, Invent. Math. 110 (1992) 207-235.",
           HEADER3 "Strategy => 1",
 	  "This strategy uses a separator polynomial - a polynomial in all of 
 	  the associated primes of ", TT "I", " but ", TT "P", " and those 
@@ -159,8 +159,7 @@ document {
 	  },
      "Q is topComponents(I + P^m), for sufficiently large m.  The criterion that Q
      is primary is given in 
-     Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992).",
-     "However, we use", TO (localize,Ideal,Ideal), ".",
+     Eisenbud-Huneke-Vasconcelos, Invent. Math. 110 (1992) 207-235.  However, we use ", TO (localize,Ideal,Ideal), ".",
      PARA {
 	 BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
 	 Last modified June, 2000."},
@@ -181,7 +180,7 @@ document {
      Key => [primaryComponent,Increment],
       "The Increment option value should be an integer.  As explained in ",
       TO (primaryComponent,Ideal,Ideal), " the algorithm, given in 
-      Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992),
+      Eisenbud-Huneke-Vasconcelos, Invent. Math. 110 (1992) 207-235,
       relies on ", TT  "topComponents(I + P^m)", " for ", TT "m", " sufficiently large.
       The algoritm begins with ", TT "m = 1", ", and increases m by the 
       value of the ", TT "Increment", "option until ", TT "m", " is 
