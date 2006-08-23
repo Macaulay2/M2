@@ -897,7 +897,7 @@ export {
 	symbol profile,
 	symbol profileSummary,
 	symbol projectiveHilbertPolynomial,
-	symbol promote,
+	-- symbol promote,
 	symbol promptWidth,
 	symbol protect,
 	symbol pruningMap,

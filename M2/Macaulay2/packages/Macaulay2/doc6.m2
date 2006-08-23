@@ -45,8 +45,7 @@ document {
      stored a list of base rings for ", TT "R", ".",
      PARA{},
      "A base ring ", TT "A", " of ", TT "R", " is one of the rings involved in the
-     construction of ", TT "R", ".  The natural ring homomorphism from ", TT "A", "
-     to ", TT "R", " is implemented with ", TO "promote", ".",
+     construction of ", TT "R", ".",
      PARA{},
      "The base rings are presented in chronological order."}
 

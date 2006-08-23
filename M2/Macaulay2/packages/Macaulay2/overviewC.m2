@@ -159,9 +159,9 @@ document {
      "Notice that ", TT "T", " is still recorded as an element of its
      quotient ring, rather than this finite field.",
      EXAMPLE "T",
-     "Use ", TO "promote", " to see how the generator ", TT "T", " appears as
+     "Use ", TO "substitute", " to see how the generator ", TT "T", " appears as
      an element of the finite field.",
-     EXAMPLE "promote(T,k)",
+     EXAMPLE "substitute(T,k)",
      "Conversely, a given element of the finite field can be transferred back
      to the quotient ring with ", TO "lift", ".",
      EXAMPLE "lift(k_0, ring T)",
@@ -204,11 +204,11 @@ document {
 	  "U = ooo",
       	  "r^3+s^3+t^3",
 	  },
-     "The functions ", TO "lift", " and ", TO "promote", " can be used to transfer
+     "The functions ", TO "lift", " and ", TO "substitute", " can be used to transfer
      elements between the polynomial ring and its quotient ring.",
      EXAMPLE {
 	  ///lift(U_"r",T)///,
-      	  ///promote(T_"r",U)///,
+      	  ///substitute(T_"r",U)///,
 	  },
      "A random element of degree ", TT "n", " can be obtained with ", TO "random", ".",
      EXAMPLE "random(2,S)",
