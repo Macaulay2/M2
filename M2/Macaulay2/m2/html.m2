@@ -414,7 +414,8 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> ( -- retur
 	       removeFile tmpf;
 	       exit r;
 	       );
-	  stderr << tmpf << ":0: error output left in this file, return code: (" << r//256 << "," << r%256 << ")" << endl;
+	  stderr << tmpf << ":0: (output file) error return code: (" << r//256 << "," << r%256 << ")" << endl;
+	  stderr << inf  << ":0: (input file)" << endl;
 	  stderr << aftermatch(M2errorRegexp,get tmpf);
 	  if r == 131 then (
 	       stderr << "subprocess terminated abnormally, exiting" << endl;
