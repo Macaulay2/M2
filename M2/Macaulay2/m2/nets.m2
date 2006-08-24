@@ -214,8 +214,8 @@ netTable = method(Options => {
 maxN := x -> if #x === 0 then 0 else max x
 
 alignmentFunctions := new HashTable from {
-     Left => (wid,n) -> n | horizontalJoin(wid - width n : " "^(height n - 1)),
-     Right => (wid,n) -> horizontalJoin(wid - width n : " "^(height n - 1)) | n,
+     Left => (wid,n) -> n | horizontalJoin(wid - width n : " "^(depth n)),
+     Right => (wid,n) -> horizontalJoin(wid - width n : " "^(depth n)) | n,
      Center => centerString
      }
 
@@ -244,6 +244,7 @@ netTable List := o -> (x) -> (
 	  hsep = spaces hs;                                 -- "spaces" puts characters on the baseline, what about an empty net of width hs?
 	  x = apply(x,i -> between(hsep,i));
 	  );
+     if debugLevel > 0 then error "debug me";
      x = apply(x, horizontalJoin);
      if bx then (
 	  hbar := concatenate mingle(#colwids+1:"+",apply(colwids,wid -> wid:"-"));
