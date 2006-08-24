@@ -66,7 +66,7 @@ GF(ZZ,ZZ) := GaloisField => options -> (p,n) -> (
      if n === 1 then ZZ/p
      else (
 	  x := if options.Variable === null then symbol GF$a else baseName options.Variable;
-	  R := ZZ/p[x];
+	  R := (ZZ/p) (monoid [x]);
 	  t := R_0;
 	  while ( f := t^n + sum(n, i-> random p * t^i); not isPrime f) do ();
 	  GF(R/f,options,Variable => x)))
@@ -122,6 +122,8 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
 	  if F_0 == y then var else error "expected a generator"
 	  );
      F.order = p^n;
+     F.use = F -> var <- F_0;
+     F.use F;
      F / F := (x,y) -> x // y;
      F))
 
