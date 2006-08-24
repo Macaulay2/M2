@@ -425,6 +425,17 @@ map(Module,Nothing,Matrix) := Matrix => options -> (M,f) -> (
      map(M,source f ** R^{-first diffs},f)
      )
 
+isSubquotient = method()
+isSubquotient(Module,Module) := (M,N) -> (
+     ring M === ring N
+     and
+     ambient M === ambient N
+     and
+     (generators M | relations M) % (generators N | relations N) == 0
+     and
+     relations N % relations M == 0
+     )
+
 inducedMap = method (
      Options => {
 	  Verify => true,
@@ -433,18 +444,16 @@ inducedMap = method (
 inducedMap(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
      sM := target f;
      sN := source f;
-     if ambient M != sM
-     then error "'inducedMap' expected target of map to be a subquotient of target module provided";
-     if ambient N != sN
-     then error "'inducedMap' expected source of map to be a subquotient of source module provided";
-     g := f * generators N;
+     if ambient M =!= ambient sM then error "inducedMap: expected new target and target of map provided to be subquotients of same free module";
+     if ambient N =!= ambient sN then error "inducedMap: expected new source and source of map provided to be subquotients of same free module";
+     g := generators sM * cover f * (generators N // generators sN);
      h := generators M;
      p := map(M, N, g // h, Degree => options.Degree);
      if options.Verify then (
-	  if g % h != 0
-	  then error "'inducedMap' expected matrix to induce a map";
-	  if not isWellDefined p
-	  then error "'inducedMap' expected matrix to induce a well-defined map";
+	  if relations sM % relations M != 0 then error "inducedMap: expected new target not to have fewer relations";
+	  if generators N % generators sN != 0 then error "inducedMap: expected new source not to have more generators";
+	  if g % h != 0 then error "inducedMap: expected matrix to induce a map";
+	  if not isWellDefined p then error "inducedMap: expected matrix to induce a well-defined map";
 	  );
      p)
 inducedMap(Module,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(M,source f, f,o)
