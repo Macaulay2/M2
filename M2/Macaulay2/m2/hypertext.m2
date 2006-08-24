@@ -444,7 +444,7 @@ info MENU := r -> (
      ret := sublists(toList r, 
 	  x -> class x === TO,
 	  v -> stack apply(v, i -> pre | (
-		    t := DocumentTag.FormattedKey i#0 | "::";
+		    t := infoTagConvert i#0 | "::";
 		    h := headline i#0;
 		    if h =!= null then (
 		    	 t = concatenate(t,28-#t:" ","  ");
