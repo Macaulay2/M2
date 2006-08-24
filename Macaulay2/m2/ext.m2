@@ -69,6 +69,7 @@ Ext(ZZ, Module, Matrix) := Matrix => (i,N,f) -> (
 	  Et':= target Et.cache.pruningMap;
 	  Et.cache.pruningMap^-1 * inducedMap(Et',Es',Hom(C_i,f)) * Es.cache.pruningMap))
 
+Ext(ZZ, Ideal, Matrix) := (i,J,f) -> Ext^i(module J,f)
 Ext(ZZ, Matrix, Ring) := (i,f,R) -> Ext^i(f,R^1)
 Ext(ZZ, Matrix, Ideal) := (i,f,J) -> Ext^i(f,module J)
 Ext(ZZ, Module, Ring) := (i,M,R) -> Ext^i(M,R^1)

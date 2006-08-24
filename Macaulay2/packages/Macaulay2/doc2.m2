@@ -1043,9 +1043,8 @@ document {
 	  },
      }
 
-
 document {
-     Key => symbol =>,
+     Key => {symbol =>,(symbol =>, Thing, Thing)},
      Headline => "produce an Option",
      TT "x => y", " a binary operator which produces a type of list called
      an ", TO "Option", "."

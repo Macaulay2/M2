@@ -324,6 +324,14 @@ sheafHom = method(TypicalValue => CoherentSheaf)
 sheafHom(CoherentSheaf,CoherentSheaf) := (F,G) -> sheaf Hom(module F, module G)
 Hom(CoherentSheaf,CoherentSheaf) := Module => (F,G) -> HH^0 sheafHom(F,G)
 
+Hom(SheafOfRings,CoherentSheaf) := Module => (O,G) -> Hom(O^1,G)
+Hom(CoherentSheaf,SheafOfRings) := Module => (F,O) -> Hom(F,O^1)
+Hom(SheafOfRings,SheafOfRings) := Module => (O,R) -> Hom(O^1,R^1)
+
+sheafHom(SheafOfRings,CoherentSheaf) := Module => (O,G) -> sheafHom(O^1,G)
+sheafHom(CoherentSheaf,SheafOfRings) := Module => (F,O) -> sheafHom(F,O^1)
+sheafHom(SheafOfRings,SheafOfRings) := Module => (O,R) -> sheafHom(O^1,R^1)
+
 sheafExt = new ScriptedFunctor from {
      superscript => (
 	  i -> new ScriptedFunctor from {
