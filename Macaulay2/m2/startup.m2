@@ -153,7 +153,7 @@ if firstTime then (
      concatPath = (a,b) -> if isAbsolutePath b then b else a|b;
      copyright = (
 	  "Macaulay 2, version " | version#"VERSION" | newline
-	  | "--Copyright 1993-2004, D. R. Grayson and M. E. Stillman" | newline
+	  | "--Copyright 1993-2006, D. R. Grayson and M. E. Stillman" | newline
 	  | "--Singular-Factory " | version#"factory version" | ", copyright 1993-2001, G.-M. Greuel, et al." | newline
 	  | "--Singular-Libfac " | version#"libfac version" | ", copyright 1996-2001, M. Messollen" | newline
 	  | "--NTL Library " | version#"ntl version" | ", copyright, Victor Shoup" | newline
