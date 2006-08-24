@@ -2,16 +2,6 @@
 --- author(s): 
 --- notes: 
 
-document {
-     Key => wedgeProduct,
-     Headline => "the exterior multiplication map",
-     TT "wedgeProduct(p,q,M)", " -- returns the matrix which represents the
-     multiplication map from ", TT "exteriorPower(p,M) ** exteriorPower(q,M)", "
-     to ", TT "exteriorPower(p+q,M)", ".",
-     PARA{},
-     "Here ", TT "M", " is free module."
-     }
-
 document { 
      Key => {(wedgeProduct,ZZ,ZZ,Module),wedgeProduct},
      Headline => "the exterior multiplication map",
