@@ -977,6 +977,7 @@ export {
 	symbol sheafHom,
 	symbol shield,
 	symbol show,
+	symbol showClassStructure,
 	symbol showHtml,
 	symbol showStructure,
 	symbol showTex,
