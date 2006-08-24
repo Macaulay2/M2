@@ -4,18 +4,15 @@ Ext = new ScriptedFunctor from {
      argument => (
 	  (M,N) -> (
 	       f := lookup(Ext,class M,class N);
-	       if f === null then error "no method available"
-	       else f(M,N)
-	       )
-	  ),	  
+	       if f === null then noMethod(Ext,(M,N),{false,false});
+	       f(M,N))),	  
      superscript => (
 	  i -> new ScriptedFunctor from {
 	       argument => (X -> (
 	       	    	 (M,N) -> (
 		    	      f := lookup(Ext,class i,class M,class N);
-		    	      if f === null then error "no method available"
-		    	      else f(i,M,N)
-		    	      )
+		    	      if f === null then noMethod(Ext,(i,M,N),{false,false,false});
+		    	      f(i,M,N))
 	       	    	 ) X
 	       	    )
 	       }

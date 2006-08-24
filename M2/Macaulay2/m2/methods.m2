@@ -26,8 +26,8 @@ noapp := (f,x) -> error(
 f := (i,arg,out) -> horizontalJoin("     argument ",i," :  ", (if out then silentRobustNet else silentRobustNetWithClass)(60,5,3,arg));
 line0 := meth -> concatenate("no method found for applying ", silentRobustString(45,3,meth), " to:");
 
-noMethodSingle := (meth,args,output) -> error toString stack( line0 meth, f(" ",args,output))
-noMethod := (meth,args,outputs) -> error toString stack join( {line0 meth},
+noMethodSingle = (meth,args,output) -> error toString stack( line0 meth, f(" ",args,output))
+noMethod = (meth,args,outputs) -> error toString stack join( {line0 meth},
      if class args === Sequence and 0 < #args and #args <= 4
      then apply(#args, i -> f(toString (i+1),args#i,if outputs#?i then outputs#i else false))
      else {f(" ",args,
