@@ -1,6 +1,6 @@
-document { Key => {(Grassmannian, ZZ, ZZ), Grassmannian},
+document { Key => {(Grassmannian, ZZ, ZZ), Grassmannian, (Grassmannian, ZZ, ZZ, PolynomialRing)},
      Headline => "the Grassmannian of linear subspaces of a vector space",
-     Usage => "Grassmannian(k,r)",
+     Usage => "Grassmannian(k,r)\nGrassmannian(k,r,R)",
      Inputs => { 
 	  "k", 
 	  "r",
@@ -9,6 +9,7 @@ document { Key => {(Grassmannian, ZZ, ZZ), Grassmannian},
 	       ", converted to sequences and, if ", TT "k", " is 0, converted to integers." }
 	  },
      Outputs => {{ "the ideal of the Grassmannian variety of all projective ", TT "k", "-planes in ", BOLD "P", SUP "r"}},
+     "If a polynomial ring ", TT "R", " is given as the third argument, then the resulting ideal is moved to that ring.",
      EXAMPLE lines ///
 	 Grassmannian(1,3)
 	 J = Grassmannian(2,5, CoefficientRing => ZZ/31, Variable => T)
@@ -47,7 +48,7 @@ document {
      	  " in the Grassmannian of projective planes in ", TT "P^5", " is displayed in the following example."
      	  },
      EXAMPLE lines ///
-	  I = Schubert(2,4,{1,2,4})
+	  I = Schubert(2,4,{1,2,4},CoefficientRing => QQ)
 	  R = ring I;
 	  C = res I
 	  betti C

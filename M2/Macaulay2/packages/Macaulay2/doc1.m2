@@ -417,21 +417,6 @@ document {
      }
 
 document {
-     Key => {(Hom,Module,Module), Hom,(Hom,Ideal,Ring), (Hom,Ring,Ideal), 
-	  (Hom,CoherentSheaf,CoherentSheaf), (Hom,Ideal,Module), (Hom,Module,Ideal), (Hom,ChainComplexMap,Module),
-      	  (Hom,Ideal,Ideal), (Hom,Module,ChainComplexMap), (Hom,Matrix,Module), (Hom,Ring,Module), 
-	  (Hom,Module,Matrix), (Hom,Module,Ring), 
-	  (Hom,Module,ChainComplex), (Hom,ChainComplex,Module)
-	  },
-     Headline => "module of homomorphisms",
-     TT "Hom(M,N)", " -- constructs the module of homomorphisms from ", TT "M", " to ", TT "N", ".",
-     PARA{},
-     "Implemented with a method of the same name.",
-     PARA{},
-     "Use ", TO "homomorphism", " to convert an element of the module of homomorphisms to a matrix."
-     }
-     
-document {
      Key => {scanKeys,(scanKeys, Database, Function),(scanKeys, HashTable, Function)},
      Headline => "apply a function to each key in a hash table or database",
      TT "scanKeys(x,f)", " -- apply the function ", TT "f", " to each key used in the

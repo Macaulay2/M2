@@ -1453,16 +1453,27 @@ document { Key => toRRR,
 	  precision oo
      ///}
 
-document { Key => {(sheafHom, CoherentSheaf, CoherentSheaf),sheafHom},
+document { Key => {
+	  (sheafHom, CoherentSheaf, CoherentSheaf),
+	  sheafHom,
+	  (sheafHom, SheafOfRings, CoherentSheaf),
+	  (sheafHom, CoherentSheaf, SheafOfRings),
+	  (sheafHom, SheafOfRings, SheafOfRings)
+	  },
      Headline => "sheaf Hom",
-     Usage => "sheafHom(F,G)",
-     Inputs => {"F","G"},
-     Outputs => {{"the coherent sheaf of homomorphisms from ", TT "F", " to ", TT "G", ""}},
-     SeeAlso => {(Hom, CoherentSheaf, CoherentSheaf)},
+     Usage => "sheafHom(M,N)",
+     Inputs => {"M","N"},
+     Outputs => {{"the coherent sheaf of homomorphisms from ", TT "M", " to ", TT "N", ""}},
+     "If ", TT "M", " or ", TT "N", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way.",
+     PARA{},
+     TT "M", " and ", TT "N", " must be coherent sheaves on the same projective variety or scheme ", TT "X", ".",
+     PARA{},
+     "The result is the sheaf associated to the graded module Hom(module M, module N).",
      EXAMPLE lines ///
      	  X = Proj(QQ[x,y])
 	  sheafHom(OO_X^1(2),OO_X(11)^1)
-     ///
+     ///,
+     SeeAlso => {OO, sheafExt, Hom, Ext, HH, (Hom, CoherentSheaf, CoherentSheaf)}
      }
 
 document { Key => "globalAssignmentHooks",

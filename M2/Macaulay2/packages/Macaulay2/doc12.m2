@@ -901,15 +901,26 @@ TEST ("
      ")
 
 document {
-     Key => sheafExt,
-     Headline => "sheaf Ext of coherent sheaves"
-     }
-
-document {
-     Key => (sheafExt,ZZ,CoherentSheaf,CoherentSheaf),
-     Usage => "E = sheafExt^n(F,G)",
+     Key => {(sheafExt,ZZ,CoherentSheaf,CoherentSheaf),
+	  sheafExt,
+       	  (sheafExt, ZZ, SheafOfRings, CoherentSheaf),
+       	  (sheafExt, ZZ, CoherentSheaf, SheafOfRings),
+	  (sheafExt, ZZ, SheafOfRings, SheafOfRings)},
+     Headline => "sheaf Ext of coherent sheaves",
+     Usage => "sheafExt^n(F,G)",
      Inputs => { "n", "F", "G" },
-     Outputs => { { "the n-th sheaf Ext of ", TT "F", " and ", TT "G" } }
+     Outputs => { CoherentSheaf => { "the n-th sheaf Ext of ", TT "F", " and ", TT "G" } },
+     "If ", TT "F", " or ", TT "G", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way.",
+     PARA{},
+     TT "F", " and ", TT "G", " must be coherent sheaves on the same projective variety or scheme ", TT "X", ".",
+     PARA{},
+     "The result is the sheaf associated to the graded module ", TT "Ext^n(module M, module N).",
+     EXAMPLE lines ///
+     	  X = Proj(QQ[x,y])
+	  sheafExt^1(OO_X^1(2),OO_X(-11)^1)
+     ///,
+     SeeAlso => {OO, sheafHom, Hom, Ext, HH, (Ext, ZZ, CoherentSheaf, CoherentSheaf)}
+     
      }
 
 -- Local Variables:

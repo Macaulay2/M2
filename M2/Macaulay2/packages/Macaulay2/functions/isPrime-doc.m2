@@ -3,11 +3,11 @@
 --- notes: 
 
 document { 
-     Key => {isPrime, (isPrime, ZZ)},
-     Headline => "whether a integer or polynomial is prime",
+     Key => {isPrime, (isPrime, ZZ), (isPrime,Ideal)},
+     Headline => "whether a integer, polynomial, or ideal is prime",
      Usage => "isPrime f",
      Inputs => {
-	  "f" => {TO "ZZ", " or an element in a ", TO2("PolynomialRing", "polynomial ring")}
+	  "f" => {ofClass ZZ, ", or an element in a ", TO2("PolynomialRing", "polynomial ring"), ", or an ", ofClass Ideal, " in a polynomial ring"}
 	  },
      Outputs => {
 	  Boolean => {TO "true", " if ", TT "f", " is either a prime integer or an irreducible polynomial and ",
@@ -22,6 +22,12 @@ document {
 	  "isPrime(t^2+t+1)",
           "isPrime(t^2+1)"
 	  },
+     "This function can be used to determine whether an ideal in a polynomial ring is prime.",
+     EXAMPLE ///
+          R = QQ[a..d];
+	  I = monomialCurveIdeal(R,{1,5,8})
+	  isPrime I
+          ///,
      Caveat => {
 	  {"At the moment, for integers larger than ", TT "2^31-1", " it checks for
      	       divisibility by small primes, and then applies a strong pseudoprimality
