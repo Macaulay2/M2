@@ -1261,15 +1261,6 @@ document {
      internally by ", TO "minors", "."
      }
 document {
-     Key => wedgeProduct,
-     Headline => "the exterior multiplication map",
-     TT "wedgeProduct(p,q,M)", " -- returns the matrix which represents the
-     multiplication map from ", TT "exteriorPower(p,M) ** exteriorPower(q,M)", "
-     to ", TT "exteriorPower(p+q,M)", ".",
-     PARA{},
-     "Here ", TT "M", " is free module."
-     }
-document {
      Key => exteriorPower,
      Headline => "exterior power",
      SeeAlso => {"minors", "det", "wedgeProduct"}
@@ -1511,18 +1502,34 @@ document {
 	  },
      "When ", TT "H := Hom(M,N)", " is computed, enough information is stored in ", 
      TT "H.cache.Hom", " to compute this correspondence.",
-     EXAMPLE {
-	  "R = QQ[x,y,z]/(y^2-x^3)",
-	  "H = Hom(ideal(x,y), R^1)",
-	  "g = homomorphism H_{1}"
-	  },
+     EXAMPLE lines ///
+	  R = QQ[x,y,z]/(y^2-x^3)
+	  H = Hom(ideal(x,y), R^1)
+	  g = homomorphism H_{1}
+	  ///,
      "The homomorphism g takes x to y and y to x2.  The source and target are
      what they should be.",
-     EXAMPLE {
-	  "source g",
-	  "target g"
-	  },
-     SeeAlso => Hom
+     EXAMPLE lines ///
+	  source g
+	  target g
+	  ///,
+     PARA{},
+     "After ", TO2((minimalPresentation,Module),"pruning"), " a Hom module, one cannot use 
+     homomorphism directly.  Instead, first apply the pruning map:",
+     EXAMPLE ///
+          H1 = prune H
+	  homomorphism(H1.cache.pruningMap * H1_{1})
+          ///,
+     PARA{},
+     "Sometime, one wants a random homomorphism of a given degree.  Here is one method:",
+     EXAMPLE ///
+          f = basis(3,H)
+	  rand = random(R^(numgens source f), R^1)
+	  h = homomorphism(f * rand)
+	  source h
+	  target h
+          ///,
+     SeeAlso => {Hom,prune,random,basis}
      }
 TEST ///
 S = ZZ/101[a..d]

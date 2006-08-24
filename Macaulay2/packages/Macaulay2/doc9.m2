@@ -125,8 +125,39 @@ document {
      SeeAlso => {resolution,Tor,Hom,(Ext,ZZ,Module,Module),(Ext,ZZ,Matrix,Module)}
      }
 
-	  (Ext, ZZ, CoherentSheaf, SumOfTwists)
+document {
+     Key => {
+	  (Ext, ZZ, CoherentSheaf, SumOfTwists),
 	  (Ext, ZZ, SheafOfRings, SumOfTwists)
+	  },
+     Usage => "Ext^i(M,N(>=d))",
+     Headline => "global Ext",
+     Inputs => { "i", "M", "N(>=d)"},
+     Outputs => {
+	  Module => {"The R-module ", TEX ///$\oplus_{j \geq d}{Ext^i_X(M,N(j))$///}
+	  },
+     "If ", TT "M", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way.",
+     PARA{},
+     TT "M", " and ", TT "N", " must be coherent sheaves on the same projective variety or scheme ", TT "X = Proj R", ".",
+     PARA{},
+     "As an example, we consider the rational quartic curve in 
+     ", TEX "$P^3$", ".",
+     EXAMPLE lines ///
+     	  S = QQ[a..d];
+	  I = monomialCurveIdeal(S,{1,3,4})
+	  R = S/I
+	  X = Proj R
+     	  IX = sheaf (module I ** R)
+     	  Ext^1(IX,OO_X(>=-3))
+	  Ext^0(IX,OO_X(>=-10))
+	  ///,
+     PARA{},
+     "The method used may be found in: 
+     Smith, G., ", EM "Computing global extension modules", ", J. Symbolic Comp (2000) 29, 729-746",
+     PARA{},
+     TEX ///If the vector space $Ext^i(M,N)$ is desired, see ///, TO (Ext,ZZ,CoherentSheaf,CoherentSheaf), ".",
+     SeeAlso => {resolution,Tor,Hom,HH,sheafExt}
+     }
 
 document {
      Key => {
