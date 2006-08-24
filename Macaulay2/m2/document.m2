@@ -1,4 +1,4 @@
---		Copyright 1994-2002 by Daniel R. Grayson
+--		Copyright 1994-2006 by Daniel R. Grayson
 
 checkLoadDocumentation = () -> if not isGlobalSymbol "Macaulay2" or class value getGlobalSymbol "Macaulay2" =!= Package then (
      -- the documentation for things in the package Core is in the package Macaulay2 !
@@ -993,6 +993,7 @@ briefSynopsis := key -> (
 	  else if instance(key, Sequence) and key#?0 then (
 	       if instance(key#0, Function) then SPAN { "Function: ", TO key#0 }
 	       else if instance(key#0, Keyword) then SPAN { "Operator: ", TO key#0 }
+	       else if instance(key#0, ScriptedFunctor) then SPAN { "ScriptedFunctor: ", TO key#0 }
 	       else if instance(key#0,Sequence) and #key#0 === 2 and key#0#1 === symbol =
 	       then SPAN { "Operator: ", TO key#0#0 }	    -- assignment operator for this operator
 	       ),
@@ -1073,13 +1074,11 @@ documentationValue(Symbol,Type) := (s,X) -> (
 	  if #c > 0 then ( SUBSECTION {"Methods that use ", indefinite synonym X, " :"}, c),
 	  if #e > 0 then ( SUBSECTION {"Fixed objects of class ", toString X, " :"}, e)))
 
+documentationValue(Symbol,ScriptedFunctor) := 
+documentationValue(Symbol,Keyword) := 
 documentationValue(Symbol,Function) := (s,f) -> (	    -- compare with fmeth above
      a := smenu documentableMethods f;
      if #a > 0 then DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", TT toString f, " :"}, a))
-
-documentationValue(Symbol,Keyword) := (s,k) -> (
-     a := smenu documentableMethods k;
-     if #a > 0 then DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", TT toString k, " :"}, a))
 
 documentationValue(Symbol,Thing) := (s,x) -> ()
 
