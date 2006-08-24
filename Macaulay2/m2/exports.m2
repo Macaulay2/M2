@@ -741,6 +741,7 @@ export {
 	symbol isSkewCommutative,
 	symbol isSquareFree,
 	symbol isSubmodule,
+	symbol isSubquotient,
 	symbol isSubset,
 	symbol isSurjective,
 	symbol isTable,

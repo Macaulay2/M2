@@ -181,7 +181,7 @@ export List := v -> (
 	       if class sym === Option then (
 		    nam = sym#0;			    -- synonym
      	       	    if class nam =!= String then error("expected a string: ", nam);
-		    if pd#?nam then error("symbol intended as exported synonym already used internally: ",format nam, ", at ", symbolLocation pd#nam);
+		    if pd#?nam then error("symbol intended as exported synonym already used internally: ",format nam, "\n", symbolLocation pd#nam, ": it was used here");
 		    sym = sym#1;
 		    )
 	       else (
