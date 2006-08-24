@@ -444,8 +444,13 @@ inducedMap = method (
 inducedMap(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
      sM := target f;
      sN := source f;
-     if ambient M =!= ambient sM then error "inducedMap: expected new target and target of map provided to be subquotients of same free module";
-     if ambient N =!= ambient sN then error "inducedMap: expected new source and source of map provided to be subquotients of same free module";
+     if ring M =!= ring N or ring M =!= ring f then error "inducedMap: expected modules and map over the same ring";
+     if isFreeModule sM and isFreeModule sN and (sM =!= ambient M and rank sM === rank ambient M or sN =!= ambient N and rank sN === rank ambient N)
+     then f = map(sM = ambient M, sN = ambient N, f)
+     else (
+     	  if ambient M =!= ambient sM then error "inducedMap: expected new target and target of map provided to be subquotients of same free module";
+     	  if ambient N =!= ambient sN then error "inducedMap: expected new source and source of map provided to be subquotients of same free module";
+	  );
      g := generators sM * cover f * (generators N // generators sN);
      h := generators M;
      p := map(M, N, g // h, Degree => options.Degree);
