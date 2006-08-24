@@ -192,9 +192,14 @@ char QuotientRing := (stashValue symbol char) ((S) -> (
      p := char ambient S;
      if p == 1 then return 1;
      if isPrime p or member(QQ,S.baseRings) then return if S == 0 then 1 else p;
-     notImplemented()))
+     relns := presentation S;
+     if relns == 0 then return char ring relns;
+     if coefficientRing S =!= ZZ then notImplemented();
+     g := generators gb relns;
+     if g == 0 then return char ring g;
+     m := g_(0,0);
+     if liftable(m,ZZ) then lift(m,ZZ) else 0))
 singularLocus(Ring) := QuotientRing => (R) -> (
-     if not isAffineRing(R) then error "expected an affine ring";
      f := presentation R;
      A := ring f;
      A / (ideal f + minors(codim R, jacobian presentation R)))
