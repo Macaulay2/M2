@@ -993,7 +993,7 @@ briefSynopsis := key -> (
 	  else if instance(key, Sequence) and key#?0 then (
 	       if instance(key#0, Function) then SPAN { "Function: ", TO key#0 }
 	       else if instance(key#0, Keyword) then SPAN { "Operator: ", TO key#0 }
-	       else if instance(key#0, ScriptedFunctor) then SPAN { "ScriptedFunctor: ", TO key#0 }
+	       else if instance(key#0, ScriptedFunctor) then SPAN { "Scripted functor: ", TO key#0 }
 	       else if instance(key#0,Sequence) and #key#0 === 2 and key#0#1 === symbol =
 	       then SPAN { "Operator: ", TO key#0#0 }	    -- assignment operator for this operator
 	       ),
