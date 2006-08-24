@@ -444,7 +444,9 @@ info MENU := r -> (
      ret := sublists(toList r, 
 	  x -> class x === TO,
 	  v -> stack apply(v, i -> pre | (
-		    t := infoTagConvert i#0 | "::";
+		    fkey := DocumentTag.FormattedKey i#0;
+		    icon := infoTagConvert i#0;
+		    t := fkey | if fkey === icon then "::" else ": " | icon | ".";
 		    h := headline i#0;
 		    if h =!= null then (
 		    	 t = concatenate(t,28-#t:" ","  ");
