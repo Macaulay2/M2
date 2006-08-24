@@ -72,20 +72,27 @@ net Descent := x -> stack sort apply(pairs x,
 	  then net k
 	  else net k | " : " | net v
 	  ))
-select1 := syms -> select(apply(syms, value), s -> instance(s, Type))
+justTypes := syms -> select(apply(syms, value), s -> instance(s, Type))
+allThingsWithNames := syms -> select(apply(syms, value), s -> ReverseDictionary#?s)
      
-show1 := method(Dispatch => Thing)
-show1 Sequence := show1 List := types -> (
+show1 := method()
+show1(Sequence,Function) := show1(List,Function) := (types,pfun) -> (
      world := new Descent;
      install := v -> (
-	  w := if v === Thing then world else install parent v;
+	  w := (
+	       if pfun === parent and v === Thing
+	       or pfun === class and v === Type
+	       then world
+	       else install pfun v);
+	  v = ReverseDictionary#v;
 	  if w#?v then w#v else w#v = new Descent
 	  );
      scan(types, install);
      net world)
-show1 Thing := X -> show1 {X}
-showUserStructure = Command(() -> show1 select1 userSymbols())
-showStructure = Command(types -> show1 if types === () then select1 flatten(values \ dictionaryPath) else types)
+show1(Thing,Function) := (X,pfun) -> show1({X},pfun)
+showUserStructure = Command(() -> show1(justTypes userSymbols(), parent))
+showStructure = Command(types -> show1(if types === () then justTypes flatten(values \ dictionaryPath) else types, parent))
+showClassStructure = Command(types -> show1(if types === () then allThingsWithNames flatten(values \ dictionaryPath) else types, class))
 
 -----------------------------------------------------------------------------
 
