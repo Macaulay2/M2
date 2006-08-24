@@ -84,7 +84,7 @@ show1(Sequence,Function) := show1(List,Function) := (types,pfun) -> (
 	       or pfun === class and v === Type
 	       then world
 	       else install pfun v);
-	  v = ReverseDictionary#v;
+	  if ReverseDictionary#?v then v = ReverseDictionary#v;
 	  if w#?v then w#v else w#v = new Descent
 	  );
      scan(types, install);
