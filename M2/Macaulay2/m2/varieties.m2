@@ -4,11 +4,17 @@ Variety = new Type of MutableHashTable
 Variety.synonym = "variety"
 Variety.GlobalAssignHook = globalAssignFunction
 Variety.GlobalReleaseHook = globalReleaseFunction
+describe Variety := X -> net expression X
 AffineVariety = new Type of Variety
 AffineVariety.synonym = "affine variety"
 ProjectiveVariety = new Type of Variety
 ProjectiveVariety.synonym = "projective variety"
 ring Variety := X -> X.ring
+
+char AffineVariety := X -> char ring X
+char ProjectiveVariety := X -> (
+     I := saturate ideal X;
+     char( ring I / I ))
 
 ambient ProjectiveVariety := X -> Proj ambient ring X
 ambient     AffineVariety := X -> Spec ambient ring X
