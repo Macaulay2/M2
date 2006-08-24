@@ -14,6 +14,8 @@ document {
      "The modules ", TT "M", " and ", TT "N", " should be graded (homogeneous) modules 
      over the same ring.",
      PARA{},
+     "If ", TT "M", " or ", TT "N", " is an ideal or ring, it is regarded as a module in the evident way.",
+     PARA{},
      "The computation of the total Ext module is possible for modules over the
      ring ", TT "R", " of a complete intersection, according the algorithm
      of Shamash-Eisenbud-Avramov-Buchweitz.  The result is provided as a finitely
@@ -40,14 +42,129 @@ document {
      }
 
 document {
-     Key => {(Ext,ZZ,Module,Module)},
+     Key => {(Ext,ZZ,Module,Module),
+	  (Ext, ZZ, Ideal, Ideal),
+	  (Ext, ZZ, Ideal, Module),
+	  (Ext, ZZ, Module, Ideal),
+	  (Ext, ZZ, Ideal, Ring),
+	  (Ext, ZZ, Module, Ring)
+	  },
      Usage => "Ext^i(M,N)",
      Headline => "Ext module",
      Inputs => { "i", "M", "N" },
      Outputs => {
 	  { "the ", TT "i", "-th ", TT "Ext", " module of ", TT "M", " and ", TT "N" }
 	  },
-     "If ", TT "M", " or ", TT "N", " is an ideal or ring, it is regarded as a module in the evident way."
+     "If ", TT "M", " or ", TT "N", " is an ideal or ring, it is regarded as a module in the evident way.",
+     EXAMPLE lines ///
+     	  R = ZZ/32003[a..d];
+	  I = monomialCurveIdeal(R,{1,3,4})
+	  M = R^1/I
+	  Ext^1(M,R)
+	  Ext^2(M,R)
+	  Ext^3(M,R)
+	  Ext^1(I,R)
+          ///,
+     "As an efficiency consideration, it is generally much more efficient to compute
+     Ext^i(R^1/I,N) rather than Ext^(i-1)(I,N).  The latter first computes a presentation 
+     of the ideal I, and then a free resolution of that.  For many examples, the
+     difference in time and space required can be very large.",
+     SeeAlso => {resolution,Tor,Hom,monomialCurveIdeal,(Ext,ZZ,Matrix,Module),(Ext,ZZ,Module,Matrix)}
+     }
+
+document {
+     Key => {(Ext, ZZ, Matrix, Module),
+	  (Ext, ZZ, Matrix, Ideal),
+	  (Ext, ZZ, Matrix, Ring)
+	  },
+     Usage => "Ext^i(f,N)",
+     Headline => "map between Ext modules",
+     Inputs => { "i", "f" => "M1 --> M2", "N" },
+     Outputs => {
+	  Matrix => {TEX ///the map $Ext^i(M2,N) \rightarrow{} Ext^i(M1,N)$///}
+	  },
+     "If ", TT "N", " is an ideal or ring, it is regarded as a module in the evident way.",
+     EXAMPLE lines ///
+     	  R = ZZ/32003[a..d];
+	  I = monomialCurveIdeal(R,{1,3,4})
+	  M1 = R^1/I
+	  M2 = R^1/ideal(I_0,I_1)
+	  f = inducedMap(M1,M2)
+	  Ext^1(f,R)
+	  g = Ext^2(f,R)
+	  source g == Ext^2(M1,R)
+	  target g == Ext^2(M2,R)
+	  Ext^3(f,R)
+          ///,
+     SeeAlso => {resolution,Tor,Hom,(Ext,ZZ,Module,Module)}
+     }
+
+document {
+     Key => {(Ext, ZZ, Module, Matrix),
+	  (Ext, ZZ, Ideal, Matrix)
+	  },
+     Usage => "Ext^i(M,f)",
+     Headline => "map between Ext modules",
+     Inputs => { "i", "M", "f" => "N1 --> N2"},
+     Outputs => {
+	  Matrix => {TEX ///the induced map $Ext^i(M,N1) \rightarrow{} Ext^i(M,N2)$///}
+	  },
+     "If ", TT "M", " is an ideal, it is regarded as a module in the evident way.",
+     PARA{},
+     EXAMPLE lines ///
+     	  R = ZZ/32003[a..d];
+	  I = monomialCurveIdeal(R,{1,3,4})
+	  M = R^1/I
+	  f = inducedMap(R^1,module I)
+	  Ext^1(M,f)
+	  g = Ext^2(M,f)
+	  source g == Ext^2(M1,R)
+	  target g == Ext^2(M2,R)
+	  Ext^3(f,R)
+          ///,
+     SeeAlso => {resolution,Tor,Hom,(Ext,ZZ,Module,Module),(Ext,ZZ,Matrix,Module)}
+     }
+
+	  (Ext, ZZ, CoherentSheaf, SumOfTwists)
+	  (Ext, ZZ, SheafOfRings, SumOfTwists)
+
+document {
+     Key => {
+	  (Ext, ZZ, CoherentSheaf, CoherentSheaf),
+	  (Ext, ZZ, SheafOfRings, CoherentSheaf),
+	  (Ext, ZZ, CoherentSheaf, SheafOfRings),
+	  (Ext, ZZ, SheafOfRings, SheafOfRings)
+	  },
+     Usage => "Ext^i(M,N)",
+     Headline => "global Ext",
+     Inputs => { "i", "M", "N"},
+     Outputs => {
+	  Module => {"The global Ext module ", TEX "$Ext^i_X(M,N)$"}
+	  },
+     "If ", TT "M", " or ", TT "N", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way.",
+     PARA{},
+     TT "M", " and ", TT "N", " must be coherent sheaves on the same projective variety or scheme ", TT "X", ".",
+     PARA{},
+     "As an example, we compute Hom_X(I_X,OO_X), and Ext^1_X(I_X,OO_X), for the rational quartic curve in 
+     ", TEX "$P^3$", ".",
+     EXAMPLE lines ///
+     	  S = QQ[a..d];
+	  I = monomialCurveIdeal(S,{1,3,4})
+	  R = S/I
+	  X = Proj R
+     	  IX = sheaf (module I ** R)
+     	  Ext^1(IX,OO_X)
+	  Hom(IX,OO_X)
+	  ///,
+     "The Ext^1 being zero says that the point corresponding to I on the Hilbert scheme is
+     smooth (unobstructed), and vector space dimension of Hom tells us that the
+     dimension of the component at the point I is 16.",
+     PARA{},
+     "The method used may be found in: 
+     Smith, G., ", EM "Computing global extension modules", ", J. Symbolic Comp (2000) 29, 729-746",
+     PARA{},
+     TEX ///If the module $\oplus_{d\geq 0} Ext^i(M,N(d))$ is desired, see ///, TO (Ext,ZZ,CoherentSheaf,SumOfTwists), ".",
+     SeeAlso => {resolution,Tor,Hom,HH,sheafExt,(Ext,ZZ,CoherentSheaf,SumOfTwists)}
      }
 
 document {
