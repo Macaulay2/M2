@@ -2,7 +2,43 @@
 --- author(s): MES
 --- notes: 
 
-end -- we are phasing out "promote" in favor of "substitute"
+undocumented {(promote,Matrix,ZZ,RR), (promote,Matrix,RRR,RRR), (promote,Matrix,QQ,CCC), 
+     (promote,Matrix,ZZ,CC), (promote,Matrix,RRR,CCC), (promote,Matrix,QQ,RR), 
+     (promote,Matrix,RR,RRR),
+     (promote,Matrix,QQ,CC), (promote,Matrix,CCC,CCC), (promote,Matrix,RR,CCC), 
+     (promote,Matrix,RR,RR), (promote,Matrix,CC,CCC), (promote,Matrix,RR,CC), (promote,Matrix,CC,CC),
+     (promote,MonoidElement,RingElement), (promote,ZZ,ZZ), (promote,ZZ,QQ), 
+     (promote,ZZ,RRR), (promote,QQ,QQ), (promote,QQ,RRR), (promote,ZZ,CCC), 
+     (promote,Matrix,Number),
+     (promote,RRR,RRR), (promote,QQ,CCC), (promote,ZZ,RR), (promote,ZZ,CC), 
+     (promote,RRR,CCC), (promote,QQ,RR), (promote,QQ,CC), (promote,CCC,CCC), 
+     (promote,RR,RRR), (promote,RR,CCC),
+     (promote,CC,CCC), (promote,RR,RR), (promote,RR,CC), (promote,CC,CC), 
+     (promote,ZZ,RingElement), (promote,Matrix,RingElement), (promote,Matrix,ZZ,ZZ), (promote,Matrix,ZZ,QQ),
+     (promote,Matrix,QQ,QQ), (promote,Matrix,ZZ,RRR), (promote,Matrix,QQ,RRR), 
+     (promote,Matrix,ZZ,CCC),
+     (promote, List, QQ, QQ),
+     (promote, List, QQ, RRR),
+     (promote, List, QQ, CCC),
+     (promote, List, QQ, RR),
+     (promote, List, QQ, CC),
+     (promote, List, CCC, CCC),
+     (promote, List, CC, CCC),
+     (promote, List, CC, CC),
+     (promote, List, ZZ, ZZ),
+     (promote, List, ZZ, QQ),
+     (promote, List, ZZ, RRR),
+     (promote, List, ZZ, CCC),
+     (promote, List, RRR, RRR),
+     (promote, List, ZZ, RR),
+     (promote, List, ZZ, CC),
+     (promote, List, RRR, CCC),
+     (promote, List, RR, RRR),
+     (promote, List, RR, CCC),
+     (promote, List, RR, RR),
+     (promote, List, RR, CC),     
+     (promote, QQ, RingElement)
+     }
 
 document { 
      Key => {promote},
