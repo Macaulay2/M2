@@ -214,8 +214,8 @@ netTable = method(Options => {
 maxN := x -> if #x === 0 then 0 else max x
 
 alignmentFunctions := new HashTable from {
-     Left => (wid,n) -> n | horizontalJoin(wid - width n : " "^(depth n)),
-     Right => (wid,n) -> horizontalJoin(wid - width n : " "^(depth n)) | n,
+     Left => (wid,n) -> n | horizontalJoin(wid - width n : " "^(- depth n)),
+     Right => (wid,n) -> horizontalJoin(wid - width n : " "^(- depth n)) | n,
      Center => centerString
      }
 
