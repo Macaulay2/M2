@@ -673,10 +673,15 @@ document {
      }
 
 document {
-     Key => (symbol SPACE, CoherentSheaf, ZZ),
+     Key => {(symbol SPACE, CoherentSheaf, ZZ),
+	  (symbol SPACE, SheafOfRings, ZZ)},
      Headline => "canonical twist of a coherent sheaf",
-     TT "F(n)", " -- twist a coherent sheaf F on a projective variety by
-     the n-th power of the hyperplane line bundle.",
+     Usage => "F(n)",
+     Inputs => {"F" => {"or a ", ofClass SheafOfRings, ", on a projective variety"}, "n"},
+     Outputs => {
+	  CoherentSheaf => "the twist of F on a projective variety by
+         the n-th power of the hyperplane line bundle.",
+	 },
      PARA{},
      EXAMPLE {
 	  "X = Proj(QQ[x,y,z])",

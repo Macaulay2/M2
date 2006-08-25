@@ -473,7 +473,7 @@ assert ( class depth === MethodFunction )
 ///
 
 
-document { Key => {LowerBound,(symbol SPACE,CoherentSheaf,LowerBound)},
+document { Key => {LowerBound,(symbol SPACE,CoherentSheaf,LowerBound),(symbol SPACE,SheafOfRings,LowerBound)},
      Headline => "the class of lower bound objects",
      "This is a type of list that represents a lower bound.  The single element of the list is an integer, and the object represents the condititon
      that some other integer, such as the index in a direct sum, should be at least as large.",
