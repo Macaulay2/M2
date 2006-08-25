@@ -235,8 +235,9 @@ blankcolumn(i:int, t:Net):bool := (
      true
      );
 
-splitcolumn(i:int, t:Net):bool := (			    -- can split to left of column i, worst case: i=0.
-     if i > 0 then foreach s in t.body do if length(s) > i && (
+splitcolumn(i:int, t:Net):bool := (			    -- whether we can split between column i and column i-1
+     if i <= 0 then return false;			    -- shouldn't happen!
+     foreach s in t.body do if length(s) > i && (
 	  a := isalnum(s.(i-1));     c := !a && s.(i-1) != ' ';
 	  b := isalnum(s.i);	     d := !b && s.i     != ' ';
 	  a && b || c && d ) then return false;
@@ -313,17 +314,18 @@ export wrap(wid:int, sep:char, t:Net):Net := (
 	       nextleftbkpt2 = n;
 	       )
 	  else for i from n to leftbkpt + minwid by -1 do (
-	       if splitcolumn(i-1,t) then (
+	       if splitcolumn(i,t) then (
 	       	    found2 = true;
-		    rightbkpt2 = i-1;
-		    nextleftbkpt2 = i-1;
+		    rightbkpt2 = i;
+		    nextleftbkpt2 = i;
 		    break;
 		    ));
 	  while rightbkpt2>leftbkpt && blankcolumn(rightbkpt2-1,t) do rightbkpt2 = rightbkpt2-1;
      	  -- choose the best one
-     	  if !found
-	  -- || found2 && nextleftbkpt < nextleftbkpt2
-	  then ( rightbkpt = rightbkpt2; nextleftbkpt = nextleftbkpt2; );
+     	  if !found then ( 
+	       rightbkpt = rightbkpt2;
+	       nextleftbkpt = nextleftbkpt2;
+	       );
 	  -- record the break point for future use
 	  breaks << rightbkpt;
 	  leftbkpt = nextleftbkpt;
