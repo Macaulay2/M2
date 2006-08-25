@@ -1,0 +1,19 @@
+divisors tutorial:
+
+This could return a function instead of true or false.
+
+linearlyEquivalent = (D,E) -> (
+    F := normalForm(D-E);
+    LB := globalSections F;
+    L := LB#0;
+    -- L is the matrix of numerators. Thus numgens source L
+    -- is the dimension of the space of global sections.
+    if numgens source L != 1 
+    then false
+    else (
+        R := ring L;
+        V := sectionIdeal(L_(0,0), LB#1, F);
+        if V == ideal(1_R) 
+          then L_(0,0)/LB#1
+          else false)
+    );
