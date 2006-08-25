@@ -1,0 +1,11 @@
+
+i14 : ZZ[x]
+
+o14 = ZZ [x]
+
+o14 : PolynomialRing
+
+i15 : minimalPrimes ideal (6,y)
+--error message bumped: expected coefficient ring of the form ZZ/n, ZZ, or QQ
+--error message bumped: expected coefficient ring of the form ZZ/n, ZZ, or QQ
+stdio:15:1:(2):[2]: expected coefficient ring of the form ZZ/n, ZZ, or QQ
