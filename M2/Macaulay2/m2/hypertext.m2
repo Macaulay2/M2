@@ -443,29 +443,17 @@ info MENU := r -> (
      printWidth = printWidth - #pre;
      ret := sublists(toList r, 
 	  x -> class x === TO,
-	  v -> stack apply(v, i -> pre | (
+	  v -> stack apply(v, i -> pre | wrap (
 		    fkey := DocumentTag.FormattedKey i#0;
 		    icon := infoTagConvert i#0;
 		    t := fkey | if fkey === icon then "::" else ": " | icon | ".";
 		    h := headline i#0;
-		    if h =!= null then (
-		    	 t = concatenate(t,28-#t:" ","  ");
-			 wt := #t;
-		    	 printWidth = printWidth - wt;
-		    	 t = t | info DIV h;
-		    	 printWidth = printWidth + wt;
-			 );
+		    if h =!= null then t = concatenate(t,28-#t:" ","  ") | h;
 		    t)),
 	  x -> stack("",info DIV x)
 	  );
-     ret = stack join({"* Menu:",""}, ret);
-     if debugLevel > 0 and width ret > printWidth then (
-	  stderr << "--warning: info overflowed screen width" << endl
-	  << "-- printWidth = " << printWidth << endl
-	  << "-- width ret = " << width ret << endl
-	  << "-- ret = " << ret << endl);
      printWidth = printWidth + #pre;
-     ret)
+     stack join({"* Menu:",""}, ret))
 
 html COMMENT := x -> concatenate("<!--",x,"-->")
 html CDATA := x -> concatenate("<![CDATA[",x,"]]>")
