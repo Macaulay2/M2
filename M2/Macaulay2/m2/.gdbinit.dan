@@ -24,6 +24,7 @@ b fatalarrayindex
 # b __gmp_set_memory_functions
 # b main
 # b ERROR
+b outofmem
 b rawGCDRingElement
 b abort
 source .gdb-run-it
