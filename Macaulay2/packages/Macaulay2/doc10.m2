@@ -514,15 +514,30 @@ document {
      TT "showStructure (X,Y,...)", " -- a command which displays the structure 
      of the types specified.",
      PARA{},
-     "Each such type is displayed to the right of its parent.",
+     "Each such type is displayed to the right of its ", TO "parent", ".",
      PARA{},
      "A type is an instance of ", TO "Type", ", by definition.",
      EXAMPLE {
 	  "showStructure",
 	  },
-     SeeAlso => { "showUserStructure", "parent"}
+     SeeAlso => { "showClassStructure", "showUserStructure" }
      }
 
+document {
+     Key => showClassStructure,
+     Headline => "show relationship between things",
+     TT "showClassStructure", " -- a command which displays the structure of things
+     assigned to global variables.",
+     BR{},
+     TT "showClassStructure (x,y,...)", " -- a command which displays the structure 
+     of the things specified.",
+     PARA{},
+     "Each such type is displayed to the right of its ", TO "class", ".",
+     EXAMPLE {
+	  "showClassStructure",
+	  },
+     SeeAlso => { "showStructure", "showUserStructure" }
+     }
 
 document {
      Key => Variety,
