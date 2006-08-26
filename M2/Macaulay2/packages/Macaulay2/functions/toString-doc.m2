@@ -4,7 +4,6 @@
 
 undocumented {
     (toString, FunctionApplication),
-    (toString, SchurRing),
     (toString, Sequence),
     (toString, Array),
     (toString, Power),

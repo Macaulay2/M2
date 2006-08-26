@@ -21,19 +21,21 @@ SchurRing.synonym = "Schur ring"
 monoid SchurRing := o -> R -> R.monoid
 expression SchurRing := S -> new FunctionApplication from { schurRing, (S.Symbol, numgens monoid S) }
 undocumented (expression, SchurRing)
+
 toExternalString SchurRing := R -> toString expression R
+undocumented (toExternalString, SchurRing),
+
 toString SchurRing := R -> (
      if ReverseDictionary#?R then toString ReverseDictionary#R
      else toString expression R)
+undocumented (toString, SchurRing)
+
 net SchurRing := R -> (
      if ReverseDictionary#?R then toString ReverseDictionary#R
      else net expression R)
-
-
+undocumented (net, SchurRing)
 
 degreeLength SchurRing := (RM) -> degreeLength monoid RM
-undocumented (degreeLength,SchurRing)
-
 coefficientRing SchurRing := Ring => R -> last R.baseRings
 
 ck := i -> if i < 0 then error "expected decreasing row lengths" else i
@@ -189,7 +191,7 @@ document {
      SeeAlso => {"SchurRing"}}
 
 document {
-     Key => SchurRing,
+     Key => {SchurRing, (degreeLength,SchurRing), (coefficientRing, SchurRing), (monoid, SchurRing)},
      Headline => "the class of all Schur rings",
      "A Schur ring is the representation ring for the general linear group of 
      n by n matrices, and one can be constructed with ", TO schurRing, ".",
