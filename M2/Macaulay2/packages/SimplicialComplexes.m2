@@ -998,7 +998,6 @@ document {
      }
      
 TEST ///
-needsPackage "SimplicialComplexes"
 
 kk = ZZ
 R = kk[x]
@@ -1010,6 +1009,7 @@ assert(faces(0,void) == 0)
 assert(faces(-1,void) == 0)
 dual void
 C = chainComplex void
+assert( C.dd^2 == 0 )
 assert(HH_0(void) == 0)
 assert(HH_-1(void) == 0)
 fVector void
@@ -1022,6 +1022,7 @@ assert(faces(0,irrelevant) == 0)
 assert(numgens source faces(-1,irrelevant) === 1)
 assert(irrelevant == dual irrelevant)
 C = chainComplex irrelevant
+assert( C.dd^2 == 0 )
 assert(HH_0(irrelevant) == 0)
 assert(HH_-1(irrelevant) == R^1)
 assert(fVector irrelevant === new HashTable from {-1=>1})
@@ -1029,13 +1030,16 @@ assert(boundary irrelevant == void)
 
 D5 = simplicialComplex {1_R}
 D5 == irrelevant
+///
 
-x = symbol x
+
+TEST ///
 kk = ZZ
 R = kk[x_1..x_4]
 D6 = simplicialComplex monomialIdeal gens R
 time A6 = dual D6
 time C = chainComplex A6;
+assert( C.dd^2 == 0 )
 C
 time prune HH(C)
 fVector D6
@@ -1043,10 +1047,12 @@ fVector D6
 D7 = simplicialComplex monomialIdeal 1_R
 dual D7
 fVector D7
+///
 -- examples
 -----------------------------------------
 -- Miller and Sturmfels, example 1.8 ----
 -----------------------------------------
+TEST ///
 kk = ZZ
 R = kk[a..e]
 D = simplicialComplex monomialIdeal(a*d, a*e, b*c*d, d*e, c*e, b*e)
@@ -1058,13 +1064,14 @@ boundary D
 S = ZZ/32003[u,v,w,x,y]
 label(D, {u,v,w,x,y})
 C = chainComplex D
-C.dd
+assert( C.dd^2 == 0 )
 prune HH(C)
 label(D,{})
-
+///
 -----------------------------------------
 -- torus  : Munkres page 15 example 3 ---
 -----------------------------------------
+TEST ///
 kk = QQ
 R = kk[a..j]
 D = simplicialComplex{a*b*i, a*e*i, i*b*j, j*c*b, j*c*a, j*a*e,
@@ -1072,16 +1079,20 @@ D = simplicialComplex{a*b*i, a*e*i, i*b*j, j*c*b, j*c*a, j*a*e,
      d*f*a, f*b*a, f*g*c, f*b*c, g*c*a, g*d*a}
 assert isPure D
 C = chainComplex D
+assert( C.dd^2 == 0 )
 prune HH(C)
 D' = dual D
 C' = chainComplex D'
+assert( C'.dd^2 == 0 )
 prune HH(C')
 fVector D
 boundary D
 fVector boundary D
+///
 ----------------------------------------------
 -- Klein bottle : Munkres page 18 example 5 --
 ----------------------------------------------
+TEST ///
 kk = ZZ/2
 R = kk[a..j]
 D = simplicialComplex {a*b*i, a*e*i, b*i*j, b*c*j, a*c*j, 
@@ -1089,24 +1100,30 @@ D = simplicialComplex {a*b*i, a*e*i, b*i*j, b*c*j, a*c*j,
      f*g*h, d*e*f, a*d*f, a*b*f, c*f*g, b*c*f, a*c*g, a*e*g}
 isPure D
 C = chainComplex D
+assert( C.dd^2 == 0 )
 prune HH(C)
 fVector D
+///
 ---------------------------
 -- Real Projective Plane --
 ---------------------------
+TEST ///
 kk = ZZ
 R = kk[a..f]
 D = simplicialComplex monomialIdeal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f,b*c*d,b*d*e,b*e*f,c*d*f,c*e*f)
 C = chainComplex D
+assert( C.dd^2 == 0 )
 prune HH(C)
 fVector D
 boundary D
 fVector boundary D
+///
 ----------------------------------------
 -- Degenerations of Abelian surfaces ---
 -- Gross and Popescu, math.AG/9609001 --
 ----------------------------------------
 -- n >= 13
+TEST ///
 kk = QQ
 abelian = (n) -> (
      R := kk[symbol x_0..symbol x_(n-1)];
@@ -1120,13 +1137,15 @@ numgens source faces(1,D)
 numgens source faces(2,D)
 numgens source faces(3,D)
 C = chainComplex D
+assert( C.dd^2 == 0 )
 prune HH(C)
 transpose gens ideal D     
 fVector D
-
+///
 ------------------------------
 -- Simplex with labelling ----
 ------------------------------
+TEST ///
 R = ZZ[a..e]
 D = simplicialComplex monomialIdeal product gens R
 D = dual simplicialComplex monomialIdeal gens R
@@ -1134,9 +1153,11 @@ S = ZZ/32003[u,v,x,y,z]
 L = {x^2, x*y, x*z, y^2, y*z}
 label(D,L)
 C = chainComplex D
-C.dd
+assert( C.dd^2 == 0 )
+///
 ------------------------------
 -- testing the chain complexes
+TEST ///
 R = ZZ/101[a..e]
 D = simplicialComplex monomialIdeal product gens R
 boundary(0,D)
@@ -1145,10 +1166,13 @@ boundary(2,D)
 boundary(3,D)
 boundary(4,D)
 C = chainComplex D
+assert( C.dd^2 == 0 )
 HH_3(C)
 HH_2(C)
 prune oo
+///
 
+TEST ///
 kk = ZZ
 R = kk[a..h]
 I = monomialIdeal(a*b*c*d,e*f*g*h)
@@ -1169,7 +1193,9 @@ faces(-2,D)
 faces(0,D)
 
 assert try (simplicialComplex {};false) else true
+///
 
+TEST ///
 R = ZZ/101[symbol x_0 .. symbol x_3]
 D = simplicialComplex {x_0 * x_1 * x_2, x_1 * x_2 * x_3}
 facets D
@@ -1177,10 +1203,11 @@ dual D
 faces(0,D)
 chainComplex D
 dual D
-
+///
 ----------------------
 -- link of a face ----
 ----------------------
+TEST ///
 R = ZZ[a..e]
 D = simplicialComplex {b*c,c*a,a*e,a*d,c*d,d*e}
 I = ideal D
@@ -1190,12 +1217,11 @@ D = simplicialComplex {b*c,c*a,a*e,a*d,c*d,d*e,a*c*d,a*d*e}
 assert(link(D,a) == simplicialComplex{c*d,d*e})
 assert(link(D,a*d) == simplicialComplex{c,e})
 assert(link(D,c*d) == simplicialComplex{a})
-
+///
 --------------------------------------------
 -- Buchberger complex of a monomial ideal --
 --------------------------------------------
-restart
-load "SimplicialComplexes.m2"
+TEST ///
 debug SimplicialComplexes
 S=ZZ/32003[x,y,z]
 L={x^3,x*y,x*z,y^2,y*z,z^2}
