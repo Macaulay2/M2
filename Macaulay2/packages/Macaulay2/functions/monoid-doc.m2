@@ -1,5 +1,5 @@
 document {
-     Key => {monoid,(monoid, Array),(monoid, PolynomialRing),(monoid, QuotientRing),(monoid, SchurRing), [monoid,DegreeRank], DegreeRank,Heft,[monoid,Heft],
+     Key => {monoid,(monoid, Array),(monoid, PolynomialRing),(monoid, QuotientRing), [monoid,DegreeRank], DegreeRank,Heft,[monoid,Heft],
 	  Adjust,[monoid,Adjust],Repair,[monoid,Repair],Inverses,[monoid,Inverses],MonomialSize,[monoid,MonomialSize],VariableBaseName,[monoid,VariableBaseName],
 	  WeylAlgebra,[monoid,WeylAlgebra],[monoid,Degrees],Degrees,SkewCommutative,[monoid,SkewCommutative]},
      Headline => "make or retrieve a monoid",

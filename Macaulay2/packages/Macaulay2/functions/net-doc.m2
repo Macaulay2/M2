@@ -100,8 +100,7 @@ undocumented {(net, Function),
 	  (net, ZZ),
 	  (net, BettiTally),
 	  (net, COMMENT),
-	  (net, HypertextContainer),
-	  (net, SchurRing)
+	  (net, HypertextContainer)
 	  }
 
 document {

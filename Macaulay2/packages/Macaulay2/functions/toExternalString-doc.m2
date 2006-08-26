@@ -5,7 +5,6 @@
 undocumented {
     (toExternalString, Nothing),
     (toExternalString, Ideal),
-    (toExternalString, SchurRing),
     (toExternalString, Boolean),
     (toExternalString, LATER),
     (toExternalString, Number),
