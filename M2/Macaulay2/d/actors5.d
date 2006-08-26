@@ -1659,7 +1659,7 @@ dictionaryPath(e:Expr):Expr := (
      is t:List do (					    -- set the current globalDictionary list
 	  s := t.v;
 	  n := length(s);
-	  if n == 0 then return WrongArg("expected a nonempty list of dictionaryPath");
+	  if n == 0 then return WrongArg("expected a nonempty list of dictionaries");
           sawUnprotected := false;
 	  foreach x in s do 
 	  when x is dc:DictionaryClosure do (
@@ -1668,6 +1668,7 @@ dictionaryPath(e:Expr):Expr := (
 	       if d.frameID != 0 || d.transient then return WrongArg("expected a list of global dictionaries")
 	       )
 	  else return WrongArg("expected a list of dictionaries");
+	  for i from 0 to n-2 do for j from i+1 to n-1 do if s.i == s.j then return WrongArg("expected a list of dictionaries with no duplicate entries");
           if !sawUnprotected then return WrongArg("expected a list of dictionaries, not all protected");
      	  a := new array(Dictionary) len n do foreach x in s do when x is d:DictionaryClosure do provide d.dictionary else nothing;
      	  a.(n-1).outerDictionary = a.(n-1);
@@ -1676,6 +1677,7 @@ dictionaryPath(e:Expr):Expr := (
 	  e)
      else WrongNumArgs(0));
 dictionaryPathS := setupvar("dictionaryPath",globalDictionaryList());
+setupfun("internalDictionaryPathFunction",dictionaryPath);
 storeGlobalDictionaries(e:Expr):Expr := (			    -- called with (symbol,newvalue)
      when e
      is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
