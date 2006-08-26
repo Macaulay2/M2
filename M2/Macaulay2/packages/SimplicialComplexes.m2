@@ -721,12 +721,9 @@ document {
      Outputs => {
 	  SimplicialComplex => {"the Alexander dual of ", TT "D"}
           },
-     "The Alexander dual of D is the simplicial complex
-     whose faces are the complements of the nonfaces of D.",
-     EXAMPLE {
-	  ///loadPackage "SimplicialComplexes";///,
-          },
-     "The Alexander dual of a square is the disjoint union of
+     "The Alexander dual of ", TT "D", " is the simplicial complex
+     whose faces are the complements of the nonfaces of ", TT "D", ".
+     The Alexander dual of a square is the disjoint union of
      two edges.",
      EXAMPLE {
 	  "R = ZZ[a..d];",
@@ -734,10 +731,9 @@ document {
           "dual D"
 	  },
      PARA{},
-     "The Alexander dual is homotopic to the complement of D in the sphere generated
-     by all of the variables in the ",
-     TO2((ring,SimplicialComplex),"ring"),
-     " of D.  In particular, it depends on the number of variables.",
+     "The Alexander dual is homotopy equivalent to the complement of ", TT "D", " in the sphere generated
+     by all of the variables in the ", TO2((ring,SimplicialComplex),"ring"),
+     " of ", TT "D", ".  In particular, it depends on the number of variables.",
      EXAMPLE {
 	  "R = ZZ[a..e]",
 	  "E = simplicialComplex {a*b,b*c,c*d,d*a}",
@@ -746,7 +742,7 @@ document {
      "The projective dimension of the face ring of D equals the
      regularity of the face ideal of the Alexander dual of D
      see e.g., Corollary 5.59 of Miller-Sturmfels, Combinatorial
-     Commutative Alebra.",
+     Commutative Algebra.",
      EXAMPLE {
 	  "R = QQ[a..f];",
 	  "D = simplicialComplex monomialIdeal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f,b*c*d,b*d*e,b*e*f,c*d*f,c*e*f)",
