@@ -1,12 +1,22 @@
 --		Copyright 1994-2006 by Daniel R. Grayson
 
-checkLoadDocumentation = () -> if not isGlobalSymbol "Macaulay2" or class value getGlobalSymbol "Macaulay2" =!= Package then (
-     -- the documentation for things in the package Core is in the package Macaulay2 !
-     oldnotify := notify;
-     notify = false;
-     needsPackage "Macaulay2";
-     notify = oldnotify;
-     )
+checkLoadDocumentation = () -> (
+     if (
+	  not isGlobalSymbol "Macaulay2"
+	  or
+	  class value getGlobalSymbol "Macaulay2" =!= Package
+	  or
+	  not member(value getGlobalSymbol "Macaulay2", loadedPackages)
+	  or
+	  not member((value getGlobalSymbol "Macaulay2").Dictionary, dictionaryPath)
+	  )
+     then (
+	  -- the documentation for things in the package Core is in the package Macaulay2 !
+	  oldnotify := notify;
+	  notify = false;
+	  needsPackage "Macaulay2";
+	  notify = oldnotify;
+	  ))
 
 -----------------------------------------------------------------------------
 -- normalizing document keys
