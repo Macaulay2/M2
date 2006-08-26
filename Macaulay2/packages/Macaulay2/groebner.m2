@@ -154,7 +154,7 @@ document {
        ///,
        PARA{},
        "This method (with some optimizations incorporated) is provided
-       by the ", TO eliminate, " function.",
+       by the ", TO "Elimination::eliminate", " function.",
      EXAMPLE lines ///
        R = QQ[x,y,z,s,t];
        I = ideal(x-s^3-s*t-1, y-t^3-3*t^2-t, z-s*t^3)
