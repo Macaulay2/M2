@@ -20,9 +20,9 @@ addStartFunction(
      	       dismiss "User";
 	       newPackage("User", DebuggingMode => true);
 	       );
-	  needsPackage \ Core#"pre-installed packages";
 	  hd := "with packages: ";
-	  if not member("--silent",commandLine) then stderr << hd << wrap(printWidth-#hd, concatenate between_", " sort Core#"pre-installed packages") << endl;
+	  if not member("--silent",commandLine) 
+	  then stderr << hd << wrap(printWidth-#hd, concatenate between_", " sort apply(loadedPackages,toString)) << endl;
 	  )
      )
 
@@ -48,6 +48,9 @@ document { Key => Core,
      "This package contains the core functionality of Maculay 2, without the documentation, which is in the package ", TO "Maculay2::Maculay2", "."
      }
 
+Core#"pre-installed packages" = {}			    -- these will loaded before dumping, see below
+Core#"base packages" = {}				    -- these will be kept visible with other packages are loaded
+
 -- make sure this is after all public global symbols are defined or erased
 endPackage "Core"
 -- after this point, private global symbols, such as noinitfile, are no longer visible
@@ -56,6 +59,8 @@ load "installedpackages.m2"
 
 scan(Core#"pre-installed packages",	-- initialized in the file installedpackages.m2, which is made from the file installedpackages
      pkg -> needsPackage(pkg, DebuggingMode => not stopIfError))
+
+Core#"base packages" = join(Core#"pre-installed packages",Core#"base packages")
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
