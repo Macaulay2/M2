@@ -25,6 +25,6 @@ GF (ZZ/2[T]/(T^9+T+1), Variable => T)
 A = ZZ/2[T]/(T^9+T+1)
 k = GF (A, PrimitiveElement => T^3+1)
 T
-promote(T,k)
+substitute(T,k)
 lift(k_0, ring T)
 lift(k_0, ambient ring T)

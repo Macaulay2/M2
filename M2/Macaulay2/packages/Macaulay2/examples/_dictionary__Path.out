@@ -2,7 +2,7 @@
 
 i1 : dictionaryPath
 
-o1 = {User#"private dictionary", TangentCone.Dictionary,
+o1 = {User#"private dictionary", Parsing.Dictionary, TangentCone.Dictionary,
      ------------------------------------------------------------------------
      SchurRings.Dictionary, Classic.Dictionary,
      ------------------------------------------------------------------------

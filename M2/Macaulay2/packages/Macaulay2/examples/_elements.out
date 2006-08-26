@@ -1,0 +1,30 @@
+-- -*- M2-comint -*-
+
+i1 : set{1,2,3,1,2,4}
+
+o1 = set {1, 2, 3, 4}
+
+o1 : Set
+
+i2 : elements oo
+
+o2 = {1, 2, 3, 4}
+
+o2 : List
+
+i3 : tally apply(10, i -> random 5)
+
+o3 = Tally{0 => 3}
+           1 => 4
+           2 => 2
+           3 => 1
+
+o3 : Tally
+
+i4 : elements oo
+
+o4 = {0, 0, 0, 1, 1, 1, 1, 2, 2, 3}
+
+o4 : List
+
+i5 : 

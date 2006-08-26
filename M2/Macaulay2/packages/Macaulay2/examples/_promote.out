@@ -59,4 +59,11 @@ o13 = | b+1 ab+a b2+2b+1 |
               1       3
 o13 : Matrix S  <--- S
 
-i14 : 
+i14 : ideal promote(m, S)
+
+                              2
+o14 = ideal (b + 1, a*b + a, b  + 2b + 1)
+
+o14 : Ideal of S
+
+i15 : 

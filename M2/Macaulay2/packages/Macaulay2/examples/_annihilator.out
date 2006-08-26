@@ -31,13 +31,13 @@ o5 = A
 
 o5 : QuotientRing
 
-i6 : ann(a)
+i6 : ann a
 
 o6 = ideal (d, c, b)
 
 o6 : Ideal of A
 
-i7 : ann' M
+i7 : annihilator(M, Strategy=>Quotient)
 
                         3      2     2    2    3    2
 o7 = ideal (b*c - a*d, c  - b*d , a*c  - b d, b  - a c)

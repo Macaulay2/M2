@@ -2,7 +2,7 @@
 
 i1 : p = temporaryFileName() | "/"
 
-o1 = /tmp/M2-6171-1/
+o1 = /tmp/M2-28376-1/
 
 i2 : mkdir p
 
@@ -12,7 +12,7 @@ o3 = true
 
 i4 : (fn = p | "foo") << "hi there" << close
 
-o4 = /tmp/M2-6171-1/foo
+o4 = /tmp/M2-28376-1/foo
 
 o4 : File
 

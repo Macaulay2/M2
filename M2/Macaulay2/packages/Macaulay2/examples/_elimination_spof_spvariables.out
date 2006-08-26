@@ -10,7 +10,7 @@ o2 = ideal (- s  - s*t + x - 1, - t  - 3t  - t + y, - s*t  + z)
 o2 : Ideal of R
 
 i3 : time leadTerm gens gb I
-     -- used 2.03613 seconds
+     -- used 1.19608 seconds
 
 o3 = | x3y9 5148txy3 108729sxy2z2 sy4z 46644741sxy3z 143sy5 6sxy4
      ------------------------------------------------------------------------
@@ -89,7 +89,7 @@ o7 = ideal (- s  - s*t + x - 1, - t  - 3t  + y - t, - s*t  + z)
 o7 : Ideal of R
 
 i8 : time G = eliminate(I,{s,t})
-     -- used 7.23645 seconds
+     -- used 4.7683 seconds
 
             3 9     2 9     2 8      2 6 3       9    2 7         8   
 o8 = ideal(x y  - 3x y  - 6x y z - 3x y z  + 3x*y  - x y z + 12x*y z +
@@ -158,7 +158,7 @@ i11 : I1 = substitute(I,R1);
 o11 : Ideal of R1
 
 i12 : time G = eliminate(I1,{s,t})
-     -- used 1.74011 seconds
+     -- used 0.984062 seconds
 
              3 9     2 6 3       3 6    9     2 8         5 4      2 7  
 o12 = ideal(x y  - 3x y z  + 3x*y z  - z  - 6x y z - 15x*y z  + 21y z  -
@@ -232,7 +232,7 @@ o16 = map(A,B,{s  + s*t + 1, t  + 3t  + t, s*t })
 o16 : RingMap A <--- B
 
 i17 : time G = kernel F
-     -- used 0.64404 seconds
+     -- used 0.352022 seconds
 
              3 9     2 9     2 8      2 6 3       9    2 7         8   
 o17 = ideal(x y  - 3x y  - 6x y z - 3x y z  + 3x*y  - x y z + 12x*y z +
@@ -301,7 +301,7 @@ o19 = R
 o19 : PolynomialRing
 
 i20 : time f1 = resultant(I_0,I_2,s)
-     -- used 0.008 seconds
+     -- used 0.088006 seconds
 
            9    9      7    3
 o20 = - x*t  + t  + z*t  + z
@@ -309,7 +309,7 @@ o20 = - x*t  + t  + z*t  + z
 o20 : R
 
 i21 : time f2 = resultant(I_1,f1,t)
-     -- used 0.204013 seconds
+     -- used 0.044003 seconds
 
          3 9     2 9     2 8      2 6 3       9    2 7         8        7 2  
 o21 = - x y  + 3x y  + 6x y z + 3x y z  - 3x*y  + x y z - 12x*y z - 7x*y z  +

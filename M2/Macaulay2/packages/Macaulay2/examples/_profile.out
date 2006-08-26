@@ -14,7 +14,7 @@ o2 = x    + x    + x   + 1
 o2 : R
 
 i3 : time factor f
-     -- used 0.064004 seconds
+     -- used 0.056003 seconds
 
               2       2       2       2        2       4     3      2       
 o3 = (x + 1)(x  + 4)(x  + 1)(x  + 2)(x  - 15)(x  + 8)(x  - 4x  + 11x  - 4x +
@@ -61,7 +61,7 @@ o6 : FunctionClosure
 i7 : for i to 10 do (g();h();h())
 
 i8 : profileSummary
-g: 11 times, used 0.724046 seconds
-h: 22 times, used 1.44809 seconds
+g: 11 times, used 0.720045 seconds
+h: 22 times, used 1.45609 seconds
 
 i9 : 

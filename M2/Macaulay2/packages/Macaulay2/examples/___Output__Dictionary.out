@@ -16,7 +16,7 @@ o3 : List
 
 i4 : dictionaryPath
 
-o4 = {User#"private dictionary", TangentCone.Dictionary,
+o4 = {User#"private dictionary", Parsing.Dictionary, TangentCone.Dictionary,
      ------------------------------------------------------------------------
      SchurRings.Dictionary, Classic.Dictionary,
      ------------------------------------------------------------------------

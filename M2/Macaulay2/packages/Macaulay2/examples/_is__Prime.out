@@ -27,3 +27,18 @@ i7 : isPrime(t^2+1)
 o7 = false
 
 i8 : 
+               R = QQ[a..d];
+
+i9 :           I = monomialCurveIdeal(R,{1,5,8})
+
+               2    2      3    2 2   3     3    5        3   5    4
+o9 = ideal (a*c  - b d, b*c  - a d , b c - a d, c  - a*b*d , b  - a c)
+
+o9 : Ideal of R
+
+i10 :           isPrime I
+
+o10 = true
+
+i11 :           
+      

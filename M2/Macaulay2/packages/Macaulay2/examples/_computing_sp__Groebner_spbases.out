@@ -134,6 +134,8 @@ o23 : Ideal of ---- [x, y, z, w]
 
 i24 : gb I
 
+registering gbA 6 at 0xd2abb0
+
    -- {2}(2)mm{3}(1)m{4}(2)om{5}(1)o
 o24 = GroebnerBasis[status: done; S-pairs encountered up to degree 4]
 
@@ -176,7 +178,7 @@ i32 : f = random(R^1,R^{-3,-3,-5,-6});
 o32 : Matrix R  <--- R
 
 i33 : time betti gb f
-     -- used 0.572035 seconds
+     -- used 0.584036 seconds
 
              0  1
 o33 = total: 1 53
@@ -207,7 +209,7 @@ o35 = 1 - 2T  - T  + 2T  + 2T  - T   - 2T   + T
 o35 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
 
 i36 : time betti gb f
-     -- used 0.112007 seconds
+     -- used 0.100006 seconds
 
              0  1
 o36 = total: 1 53

@@ -1,8 +1,0 @@
--- -*- M2-comint -*-
-with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings
-
-i1 : sum {1,2,3,4,5}
-
-o1 = 15
-
-i2 : 

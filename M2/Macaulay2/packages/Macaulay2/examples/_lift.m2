@@ -13,3 +13,8 @@ g = (a^2+2*a-3)-(a+1)^2
 lift(g,A)
 lift(g,QQ)
 lift(lift(g,QQ),ZZ)
+substitute(3,RR)
+lift(3.0,ZZ)
+lift(3.0,QQ)
+12/127.
+lift(oo,QQ)

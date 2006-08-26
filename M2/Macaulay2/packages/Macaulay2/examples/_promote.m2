@@ -8,3 +8,4 @@ use R;
 m = gens ideal(a^2,a^3,a^4)
 G m
 m ** S
+ideal promote(m, S)
