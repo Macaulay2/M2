@@ -118,8 +118,8 @@ document {
 	  f = inducedMap(R^1,module I)
 	  Ext^1(M,f)
 	  g = Ext^2(M,f)
-	  source g == Ext^2(M1,R)
-	  target g == Ext^2(M2,R)
+	  source g == Ext^2(M,source f)
+	  target g == Ext^2(M,target f)
 	  Ext^3(f,R)
           ///,
      SeeAlso => {resolution,Tor,Hom,(Ext,ZZ,Module,Module),(Ext,ZZ,Matrix,Module)}
