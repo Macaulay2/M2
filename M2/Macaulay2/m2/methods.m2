@@ -214,8 +214,9 @@ toExternalString = method(Dispatch => Thing, TypicalValue => String)
 toExternalString Keyword := s -> concatenate("symbol ", simpleToString s)
 toExternalString Symbol := s -> (
      n := simpleToString s;
-     if isGlobalSymbol n and getGlobalSymbol n === s then if value s === s then n else concatenate("symbol ", n)
-     else error("can't convert local variable or shadowed or invisible global variable '",n,"' to external string"))
+     if not isGlobalSymbol n then error("can't convert local symbol or invisible global symbol ",s," to external string");
+     if getGlobalSymbol n =!= s then error("can't convert symbol ",s," to external string because it is shadowed by ", getGlobalSymbol n);
+     if value s === s then n else concatenate("symbol ", n))
 toExternalString Boolean := simpleToString
 toExternalString Nothing := simpleToString
 
