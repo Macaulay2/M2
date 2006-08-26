@@ -1,7 +1,3 @@
---*- m2 -*-
-
-ver := "@PACKAGE_VERSION@"
-
 newPackage ("Macaulay2",
      InfoDirSection => "Macaulay 2 and its packages", 
      Headline => "Macaulay 2 documentation", 
@@ -10,10 +6,7 @@ newPackage ("Macaulay2",
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
 	  },
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
-     Version => ver)
-
-if version#"VERSION" =!= ver 
-then error ("version number mismatch: Macaulay2 (documentation) package is version ",ver,", but Core is version ", version#"VERSION")
+     Version => version#"VERSION")
 
 beginDocumentation()
 

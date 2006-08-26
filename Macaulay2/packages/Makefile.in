@@ -38,7 +38,6 @@ check ::
 	     ) ; \
 	  done
 
-install all :: Macaulay2.m2
 install :: install-Macaulay2 install-others
 install-Macaulay2 ::
 	@ set -x ;  ../bin/M2$(EXE) -q --stop \
@@ -72,7 +71,6 @@ tmp : ; mkdir tmp
 distclean::clean
 clean check distclean ::; $(MAKE) -C ComputationsBook $@
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
-Macaulay2.m2: Macaulay2.m2.in; cd ../..; ./config.status Macaulay2/packages/Macaulay2.m2
 distclean::; rm -f Makefile
 
 ## here is the list of other files to install along with Macaulay2
