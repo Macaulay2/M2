@@ -1,10 +1,15 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 olderror := error
-erase symbol error
 error = args -> olderror (
      -- this is the body of the "error" function, which prints out error messages
-     apply(sequence args, x -> if class x === String then x else silentRobustString(40,3,x) )
+     args = sequence args;
+     apply(args, x -> 
+	  if class x === String then x
+	  else if class x === Symbol then ("'", toString x, "'")
+	  else silentRobustString(40,3,x)
+	  ),
+     apply(args, x -> if class x === Symbol then ("\n", symbolLocation x, ": here is the first use of '",toString x, "'") else "")
      )
 protect symbol error
 
