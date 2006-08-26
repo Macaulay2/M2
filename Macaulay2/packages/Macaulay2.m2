@@ -10,7 +10,7 @@ newPackage ("Macaulay2",
 
 beginDocumentation()
 
-load "Macaulay2/loads.m2"
+load replace("\\.m2$","/loads.m2",toAbsolutePath currentFileName)
 
 if keys Macaulay2#"private dictionary" =!= {} 
 then error splice("Macaulay2 documentation: global symbols inadvertently defined: ", 
