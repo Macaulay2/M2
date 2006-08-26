@@ -1,0 +1,12 @@
+Here is a difference between substitute and promote!
+
+    i2 : promote(1/2,ZZ[x])
+    stdio:2:1:(2):[2]: promotion of this rational number not possible
+
+    i3 : substitute(1/2,ZZ[x])
+
+    o3 = 1
+
+    o3 : ZZ [x]
+
+    i4 : substitute(22,ZZ[x])
