@@ -32,6 +32,8 @@ net SchurRing := R -> (
 
 
 degreeLength SchurRing := (RM) -> degreeLength monoid RM
+undocumented (degreeLength,SchurRing)
+
 coefficientRing SchurRing := Ring => R -> last R.baseRings
 
 ck := i -> if i < 0 then error "expected decreasing row lengths" else i
