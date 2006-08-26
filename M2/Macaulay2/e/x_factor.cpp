@@ -522,6 +522,7 @@ M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
      }
 
      struct enter_factory foo(P);
+     if (foo.mode == modeError) return NULL;
 
      List<int> t = neworderint(I);
 
@@ -566,6 +567,7 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
      }
 
      struct enter_factory foo(P);
+     if (foo.mode == modeError) return NULL;
      init_seeds();
 
      List<CFList> t = IrrCharSeries(I);
