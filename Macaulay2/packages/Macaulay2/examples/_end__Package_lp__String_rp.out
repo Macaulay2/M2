@@ -14,7 +14,7 @@ o3 = 3
 
 i4 : dictionaryPath
 
-o4 = {Foo#"private dictionary", TangentCone.Dictionary,
+o4 = {Foo#"private dictionary", Parsing.Dictionary, TangentCone.Dictionary,
      ------------------------------------------------------------------------
      SchurRings.Dictionary, Classic.Dictionary,
      ------------------------------------------------------------------------
@@ -58,9 +58,9 @@ o6 = Package{Dictionary => Foo.Dictionary                                       
 
 i7 : dictionaryPath
 
-o7 = {Foo.Dictionary, User#"private dictionary", TangentCone.Dictionary,
+o7 = {Foo.Dictionary, User#"private dictionary", Parsing.Dictionary,
      ------------------------------------------------------------------------
-     SchurRings.Dictionary, Classic.Dictionary,
+     TangentCone.Dictionary, SchurRings.Dictionary, Classic.Dictionary,
      ------------------------------------------------------------------------
      PrimaryDecomposition.Dictionary, LLLBases.Dictionary,
      ------------------------------------------------------------------------

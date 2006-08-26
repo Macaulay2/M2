@@ -108,7 +108,9 @@ o1 = Thing : BasicList : Command
              File
              Function : CompiledFunction
                         CompiledFunctionClosure : MethodFunction
-                        FunctionClosure : MethodFunctionWithOptions
+                        FunctionClosure : Analyzer
+                                          MethodFunctionWithOptions
+                                          Parser
              FunctionBody
              HashTable : CoherentSheaf
                          Ideal : MonomialIdeal

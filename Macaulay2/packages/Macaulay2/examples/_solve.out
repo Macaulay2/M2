@@ -102,7 +102,7 @@ i15 : for i from 0 to 999 do b_(i,0) = random 1.0 + ii * random 1.0;
 i16 : for i from 0 to 999 do b_(i,1) = random 1.0 + ii * random 1.0;          
 
 i17 : time x = solve(A,b);
-     -- used 2.44815 seconds
+     -- used 2.46815 seconds
 
 i18 : C = (matrix A)*(matrix x)-matrix b;
 

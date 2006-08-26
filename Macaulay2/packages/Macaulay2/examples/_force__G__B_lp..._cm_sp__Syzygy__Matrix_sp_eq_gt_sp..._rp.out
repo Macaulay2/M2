@@ -33,6 +33,8 @@ o6 : Matrix R  <--- R
 
 i7 : syz f
 
+registering gbA 1 at 0x69e330
+
    -- {2}(1)m{3}(1)m{4}(1)m{5}(1)z{6}(1)z{7}(1)z
    -- ...
 o7 = {2} | -y3+1 -z4+2 0     |

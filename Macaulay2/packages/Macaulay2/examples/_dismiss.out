@@ -20,9 +20,9 @@ o4 : Package
 
 i5 : dictionaryPath
 
-o5 = {P.Dictionary, User#"private dictionary", TangentCone.Dictionary,
+o5 = {P.Dictionary, User#"private dictionary", Parsing.Dictionary,
      ------------------------------------------------------------------------
-     SchurRings.Dictionary, Classic.Dictionary,
+     TangentCone.Dictionary, SchurRings.Dictionary, Classic.Dictionary,
      ------------------------------------------------------------------------
      PrimaryDecomposition.Dictionary, LLLBases.Dictionary,
      ------------------------------------------------------------------------
@@ -40,7 +40,7 @@ i7 : dismiss P
 
 i8 : dictionaryPath
 
-o8 = {User#"private dictionary", TangentCone.Dictionary,
+o8 = {User#"private dictionary", Parsing.Dictionary, TangentCone.Dictionary,
      ------------------------------------------------------------------------
      SchurRings.Dictionary, Classic.Dictionary,
      ------------------------------------------------------------------------

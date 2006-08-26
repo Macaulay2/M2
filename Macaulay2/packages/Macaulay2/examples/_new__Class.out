@@ -38,7 +38,7 @@ i6 : new Thing of Thing from Thing := (A,B,c) -> (
             c);
 
 i7 : new ImmutableType of Vector from x
--- new ImmutableType of Vector from new HashTable from {b => 2, a => 1}
+-- new ImmutableType of Vector from new HashTable from {a => 1, b => 2}
 
 o7 = ImmutableType{a => 1}
                    b => 2

@@ -2,9 +2,9 @@
 
 i1 : subsets set {a,b,c}
 
-o1 = {set {}, set {b}, set {c}, set {b, c}, set {a}, set {b, a}, set {c, a},
+o1 = {set {}, set {a}, set {b}, set {a, b}, set {c}, set {a, c}, set {b, c},
      ------------------------------------------------------------------------
-     set {b, c, a}}
+     set {a, b, c}}
 
 o1 : List
 

@@ -101,14 +101,13 @@ o1 = MutableHashTable{0 => ../../../../Macaulay2/m2/command.m2                  
                       96 => ../../../../Macaulay2/packages/PrimaryDecomposition/Eisenbud-Huneke-Vasconcelos.m2
                       97 => ../../../../Macaulay2/packages/PrimaryDecomposition/doc.m2
                       98 => ../../../../Macaulay2/packages/PrimaryDecomposition.m2
-                      99 => ../../../../Macaulay2/packages/SchurRings.m2
-                      100 => ../../../../Macaulay2/packages/TangentCone.m2
-                      101 => ../../../../Macaulay2/packages/Parsing.m2
-                      102 => ../../../../Macaulay2/packages/Classic.m2
-                      103 => ../../../../Macaulay2/packages/SchurRings.m2
-                      104 => ../../../../Macaulay2/packages/TangentCone.m2
-                      105 => ../../../../Macaulay2/m2/last.m2
-                      106 => loads.m2
-                      107 => ../../../../Macaulay2/m2/setup.m2
+                      99 => ../../../../Macaulay2/packages/Parsing.m2
+                      100 => ../../../../Macaulay2/packages/Classic.m2
+                      101 => ../../../../Macaulay2/packages/SchurRings.m2
+                      102 => ../../../../Macaulay2/packages/TangentCone.m2
+                      103 => ../../../../Macaulay2/packages/Parsing.m2
+                      104 => ../../../../Macaulay2/m2/last.m2
+                      105 => loads.m2
+                      106 => ../../../../Macaulay2/m2/setup.m2
 
 i2 : 

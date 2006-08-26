@@ -63,17 +63,17 @@ o8 : Expression of class Divide
 i9 : code(factor,F)
 
 o9 = -- code for method: factor(F)
-     -- ../../../../Macaulay2/m2/enginering.m2:177
+     -- ../../../../Macaulay2/m2/enginering.m2:196
                factor F := options -> f -> factor numerator f / factor denominator f;
      | symbol class           value                                                  location of symbol                                  
      | ------ -----           -----                                                  ------------------
      |                         ZZ                                                    
-     | R     :PolynomialRing----- [t]                                                ../../../../Macaulay2/m2/enginering.m2:167:45-167:45
+     | R     :PolynomialRing----- [t]                                                ../../../../Macaulay2/m2/enginering.m2:186:45-186:45
      |                        101
-     | o     :OptionTable   --OptionTable{Adjust => identity                        $../../../../Macaulay2/m2/enginering.m2:168:10-168:10
+     | o     :OptionTable   --OptionTable{Adjust => identity                        $../../../../Macaulay2/m2/enginering.m2:187:10-187:10
      |                                    DegreeRank => 1                           $
      |                                    Degrees => {{1}}                          $
      |                        $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-     | F     :FractionField --F                                                      ../../../../Macaulay2/m2/enginering.m2:172:19-172:19
+     | F     :FractionField --F                                                      ../../../../Macaulay2/m2/enginering.m2:191:19-191:19
 
 i10 : 

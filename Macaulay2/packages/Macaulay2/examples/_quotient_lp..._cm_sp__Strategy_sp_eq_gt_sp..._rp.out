@@ -41,12 +41,12 @@ o6 = ideal (a , b , c , d , e , f )
 o6 : Ideal of S
 
 i7 : time quotient(i1^3,j1^2,Strategy=>Iterate);
-     -- used 1.48009 seconds
+     -- used 1.38009 seconds
 
 o7 : Ideal of S
 
 i8 : time quotient(i2^3,j2^2,Strategy=>Quotient);
-     -- used 2.52416 seconds
+     -- used 2.33615 seconds
 
 o8 : Ideal of S
 
@@ -73,12 +73,12 @@ o14 : Ideal of S
 o15 : Ideal of S
 
 i16 : time quotient(i5,i3,Strategy=>Iterate);
-     -- used 0.188012 seconds
+     -- used 0.076005 seconds
 
 o16 : Ideal of S
 
 i17 : time quotient(j5,j3,Strategy=>Quotient);
-     -- used 0.032002 seconds
+     -- used 0.020001 seconds
 
 o17 : Ideal of S
 

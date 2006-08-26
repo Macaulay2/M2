@@ -1,0 +1,15 @@
+-- -*- M2-comint -*-
+
+i1 : X = Proj(QQ[x,y])
+
+o1 = X
+
+o1 : ProjectiveVariety
+
+i2 : sheafExt^1(OO_X^1(2),OO_X(-11)^1)
+
+o2 = 0
+
+o2 : coherent sheaf on X
+
+i3 : 

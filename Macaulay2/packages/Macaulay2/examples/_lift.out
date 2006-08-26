@@ -82,4 +82,34 @@ i15 : lift(lift(g,QQ),ZZ)
 
 o15 = -4
 
-i16 : 
+i16 : substitute(3,RR)
+
+o16 = 3.
+
+o16 : RR
+
+i17 : lift(3.0,ZZ)
+
+o17 = 3
+
+i18 : lift(3.0,QQ)
+
+o18 = 3
+
+o18 : QQ
+
+i19 : 12/127.
+
+o19 = 0.0944882
+
+o19 : RR
+
+i20 : lift(oo,QQ)
+
+       12
+o20 = ---
+      127
+
+o20 : QQ
+
+i21 : 

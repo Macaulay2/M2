@@ -358,7 +358,7 @@ o58 = cokernel | a d g j m p |
 o58 : R-module, quotient of R
 
 i59 : time C = resolution M
-     -- used 0.004 seconds
+     -- used 0.008001 seconds
 
        3      6      15      18      6
 o59 = R  <-- R  <-- R   <-- R   <-- R  <-- 0

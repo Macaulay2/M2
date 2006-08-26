@@ -8,7 +8,7 @@ r^3+s^3+t^3
 U = ooo
 r^3+s^3+t^3
 lift(U_"r",T)
-promote(T_"r",U)
+substitute(T_"r",U)
 random(2,S)
 isQuotientRing ZZ
 isQuotientRing S

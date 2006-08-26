@@ -37,10 +37,10 @@ i6 : (<< "-- computation started: " << endl;
           << "-- continuing the computation" << endl;
           ))
 -- computation started: 
-     -- used 2.80817 seconds
+     -- used 2.93218 seconds
 -- computation interrupted
 -- continuing the computation
-     -- used 1.70011 seconds
+     -- used 1.5761 seconds
 -- computation complete
  4      11      89      122      40
 R  <-- R   <-- R   <-- R    <-- R   <-- 0

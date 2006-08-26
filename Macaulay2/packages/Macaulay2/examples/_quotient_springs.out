@@ -67,7 +67,7 @@ o10 = r
 
 o10 : T
 
-i11 : promote(T_"r",U)
+i11 : substitute(T_"r",U)
 
 o11 = r
 
@@ -119,7 +119,7 @@ o20 = 0
 
 i21 : char U
 
-o21 = 0
+o21 = 101
 
 i22 : presentation S
 
