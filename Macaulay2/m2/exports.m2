@@ -1043,6 +1043,7 @@ export {
 	symbol times,
 	symbol timing,
 	symbol to,
+	symbol toAbsolutePath,
 	symbol toDual,
 	symbol toExternalString,
 	symbol toField,

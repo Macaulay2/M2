@@ -4,11 +4,9 @@ checkLoadDocumentation = () -> if not isGlobalSymbol "Macaulay2" or class value 
      -- the documentation for things in the package Core is in the package Macaulay2 !
      oldnotify := notify;
      notify = false;
-     loadPackage "Macaulay2";
+     needsPackage "Macaulay2";
      notify = oldnotify;
      )
-
-toAbsolutePath = path -> if path =!= "stdio" then "/" | relativizeFilename("/", path) else path
 
 -----------------------------------------------------------------------------
 -- normalizing document keys
@@ -266,12 +264,9 @@ packageKey   String := fkey -> (
 	  )
      else r)
 --packageKey  Package := identity
---packageKey    Array := key -> youngest \\ package \ toSequence key
+--packageKey    Array := key -> package key#0
 --packageKey Sequence := key -> youngest splice apply(key, i -> if class i === Sequence then apply(i,package) else package i)
 --packageKey    Thing := key -> ( p := package key; if p === null then currentPackage else p)
-
--- here is an alternative method -- it's fishy that we have both!
--- getPackage := fkey -> scan(value \ values PackageDictionary, pkg -> if null =!= fetchRawDocumentation(pkg,fkey) then break pkg)
 -----------------------------------------------------------------------------
 -- formatting document tags
 -----------------------------------------------------------------------------

@@ -494,6 +494,10 @@ uninstallPackage String := opts -> pkg -> (
      )
 
 installPackage String := opts -> pkg -> (
+     if pkg =!= "Macaulay2" then (
+     	  needsPackage "Macaulay2";
+     	  if not member("Macaulay2", Core#"pre-installed packages") then Core#"pre-installed packages" = prepend("Macaulay2",Core#"pre-installed packages");
+	  );
      if PackageDictionary#?pkg and class value PackageDictionary#pkg === Package 
      then (
 	  installPackage(value PackageDictionary#pkg, opts)

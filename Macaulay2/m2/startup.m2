@@ -47,7 +47,7 @@ if firstTime then (
      markLoaded = (fullfilename,origfilename,notify) -> ( 
 	  fullfilename = minimizeFilename fullfilename;
 	  filesLoaded#origfilename = fullfilename; 
-	  loadedFiles##loadedFiles = fullfilename; 
+	  loadedFiles##loadedFiles = toAbsolutePath fullfilename; 
 	  if notify then stderr << "--loaded " << fullfilename << endl;
 	  );
 
@@ -151,6 +151,9 @@ if firstTime then (
 	  );
      isAbsolutePath = filename -> match(isAbsolutePathRegexp, filename);
      concatPath = (a,b) -> if isAbsolutePath b then b else a|b;
+
+     toAbsolutePath = pth -> if pth =!= "stdio" and not isAbsolutePath pth then "/" | relativizeFilename("/", pth) else pth;
+
      copyright = (
 	  "Macaulay 2, version " | version#"VERSION" | newline
 	  | "--Copyright 1993-2006, D. R. Grayson and M. E. Stillman" | newline
@@ -193,6 +196,8 @@ if firstTime then (
 	  then homeDirectory | applicationDirectorySuffix()
 	  else homeDirectory | applicationDirectorySuffix
 	  );
+
+     dumpdataFile = null;
      )
 
 sourceHomeDirectory = null				    -- home directory of Macaulay 2
@@ -359,6 +364,7 @@ dump := () -> (
      fnmaps := fn | ".maps";
      fnmaps << showMaps() << endl << close;
      runEndFunctions();
+     dumpdataFile = toAbsolutePath fn;					    -- so we know after "loaddata" where we put the file
      collectGarbage();
      interpreterDepth = 0;
      stderr << "--dumping to " << fntmp << endl;
