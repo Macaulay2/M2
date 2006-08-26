@@ -444,7 +444,7 @@ errorfun(e:Expr):Expr := (
      when e
      is s:string do buildErrorPacket(s)
      else buildErrorPacket("expects a string or sequence of strings as its argument"));
-setupfun("error",errorfun);
+setupfun("error",errorfun).protected = false;		    -- this will be replaced by a toplevel function that calls this one
 
 mingleseq(a:Sequence):Expr := (
      n := length(a);
