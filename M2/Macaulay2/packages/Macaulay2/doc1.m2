@@ -333,7 +333,7 @@ document {
      }
 document {
      Key => {degreeLength,
-	  (degreeLength,PolynomialRing), (degreeLength,QuotientRing), (degreeLength,SchurRing), 
+	  (degreeLength,PolynomialRing), (degreeLength,QuotientRing),
 	  (degreeLength,Module), (degreeLength,OrderedMonoid), (degreeLength,FractionField),
      	  (degreeLength,GeneralOrderedMonoid), (degreeLength,Ring)},
      Headline => "the number of degrees",
