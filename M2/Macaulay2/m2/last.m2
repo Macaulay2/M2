@@ -30,6 +30,14 @@ addStartFunction( () -> if sourceHomeDirectory =!= null then Core#"source direct
 
 addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then makePackageIndex() )
 
+addStartFunction( () -> if dumpdataFile =!= null and fileExists dumpdataFile then (
+	  dumptime := fileTime dumpdataFile;
+	  newfiles := select(values loadedFiles, fn -> dumptime < fileTime fn);
+	  if #newfiles == 0 then return;
+	  stderr << "--warning: old dumpdata file: " << dumpdataFile << endl;
+	  stderr << "--         the following source files are newer:" << endl;
+	  scan(sort newfiles, fn -> stderr << "--         " << fn << endl)))
+
 unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s) -> if not Core.Dictionary#?n then (s => class value s => value s))
 
 scan(values Core#"private dictionary" - set values Core.Dictionary,
@@ -47,7 +55,7 @@ endPackage "Core"
 load "installedpackages.m2"
 
 scan(Core#"pre-installed packages",	-- initialized in the file installedpackages.m2, which is made from the file installedpackages
-     pkg -> loadPackage(pkg, DebuggingMode => not stopIfError))
+     pkg -> needsPackage(pkg, DebuggingMode => not stopIfError))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

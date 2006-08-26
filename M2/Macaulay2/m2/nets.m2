@@ -244,7 +244,6 @@ netTable List := o -> (x) -> (
 	  hsep = spaces hs;                                 -- "spaces" puts characters on the baseline, what about an empty net of width hs?
 	  x = apply(x,i -> between(hsep,i));
 	  );
-     if debugLevel > 0 then error "debug me";
      x = apply(x, horizontalJoin);
      if bx then (
 	  hbar := concatenate mingle(#colwids+1:"+",apply(colwids,wid -> wid:"-"));
