@@ -154,16 +154,9 @@ newPackage(String) := opts -> (title) -> (
      global currentPackage <- newpkg;
      ReverseDictionary#newpkg = pkgsym;
      pkgsym <- newpkg;
-     loadedPackages = join(
-	  if title === "Core" then {} else {newpkg},
-	  {Core}
-	  );
-     dictionaryPath = join(
-	  {newpkg#"private dictionary"},
-	  if title === "Core" or title === "Macaulay2" or member(title,Core#"pre-installed packages") then {}
-	  else reverse apply(Core#"pre-installed packages", pkgname -> (needsPackage pkgname).Dictionary),
-	  {Core.Dictionary, OutputDictionary, PackageDictionary}
-	  );
+     loadedPackages = join( if title === "Core" then {} else {newpkg}, {Core} );
+     dictionaryPath = join( {newpkg#"private dictionary"}, {Core.Dictionary, OutputDictionary, PackageDictionary});
+     if Core#?"base packages" then scan(reverse Core#"base packages", needsPackage);
      PrintNames#(newpkg.Dictionary) = title | ".Dictionary";
      PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
      debuggingMode = if packageLoadingOptions#?title and packageLoadingOptions#title#DebuggingMode =!= null then packageLoadingOptions#title#DebuggingMode else opts.DebuggingMode;
@@ -292,9 +285,15 @@ package Symbol := s -> (
 	       else if package d =!= null then break package d)));
 package HashTable := package Function := x -> if ReverseDictionary#?x then package ReverseDictionary#x
 
-use Package := pkg -> if not member(pkg,loadedPackages) then (
-     loadedPackages = prepend(pkg,loadedPackages);
-     dictionaryPath = prepend(pkg.Dictionary,dictionaryPath);
+use Package := pkg -> (
+     a := member(pkg,loadedPackages);
+     b := member(pkg.Dictionary,dictionaryPath);
+     if a and not b then error("use: package ",toString pkg," appears in loadedPackages, but its dictionary is missing from dictionaryPath");
+     if b and not a then error("use: package ",toString pkg," does not appear in loadedPackages, but its dictionary appears in dictionaryPath");
+     if not a and not b then (
+     	  loadedPackages = prepend(pkg,loadedPackages);
+     	  dictionaryPath = prepend(pkg.Dictionary,dictionaryPath);
+	  );
      )
 
 beginDocumentation = () -> (

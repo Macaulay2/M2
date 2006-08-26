@@ -8,6 +8,8 @@ newPackage ("Macaulay2",
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION")
 
+Core#"base packages" = prepend("Macaulay2",Core#"base packages")
+
 beginDocumentation()
 
 load replace("\\.m2$","/loads.m2",toAbsolutePath currentFileName)
