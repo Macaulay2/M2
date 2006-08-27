@@ -1,0 +1,10 @@
+
+i1 : X = Spec QQ
+
+o1 = X
+
+o1 : AffineVariety
+
+i2 : describe X
+
+o2 = X
