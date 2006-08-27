@@ -231,3 +231,7 @@ end
 -- Linux homotopy 2.0.14, NEC Versa E, i486 laptop, DX4/100, 25 mhz
 -- 	Macaulay 2, version 0.8.26
 --      	22.04 seconds
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Benchmark install-one"
+-- End:

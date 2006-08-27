@@ -834,3 +834,7 @@ schur{2,0,0}  % I
 schur{2,1,0} % I
 schur{1,1,1} % I
 exponents oo
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=SchurRings install-one"
+-- End:

@@ -641,3 +641,7 @@ assert(C == {})
 needsPackage "ConvexHulls"
 m = matrix{{1,2,0},{2,1,-3}}
 convexHull m
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=ConvexHulls install-one"
+-- End:

@@ -237,6 +237,7 @@ time eliminate(ideal(f1,f2),a)
 end
 loadPackage "Elimination"
 installPackage Elimination
+
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages Elimination.installed"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Elimination install-one"
 -- End:

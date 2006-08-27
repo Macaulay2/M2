@@ -75,3 +75,7 @@ TEST ///
 	  tangentCone ideal "x3+x2z2,x2y+xz3+z5"
      	  assert( oo === ideal (x^2*y,x^3,x^2*z^3,2*x*y*z^5-x*z^6,x*z^7,y*z^9))
 ///
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=TangentCone install-one"
+-- End:

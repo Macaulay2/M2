@@ -152,5 +152,5 @@ document {
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages CacheFileName.installed"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=CacheFileName install-one"
 -- End:

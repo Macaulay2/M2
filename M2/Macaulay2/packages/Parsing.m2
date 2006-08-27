@@ -497,5 +497,5 @@ document { Key => optP,
 	  
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Parsing install-one"
 -- End:

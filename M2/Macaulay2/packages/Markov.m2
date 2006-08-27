@@ -400,5 +400,5 @@ document {
      }
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages Markov.installed"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Markov install-one"
 -- End:

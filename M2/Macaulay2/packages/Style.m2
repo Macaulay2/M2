@@ -6,5 +6,5 @@ document { Key => "Style",
      }
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages Style.installed"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Style install-one"
 -- End:
