@@ -156,7 +156,12 @@ newPackage(String) := opts -> (title) -> (
      pkgsym <- newpkg;
      loadedPackages = join( if title === "Core" then {} else {newpkg}, {Core} );
      dictionaryPath = join( {newpkg#"private dictionary"}, {Core.Dictionary, OutputDictionary, PackageDictionary});
-     if Core#?"base packages" and not member(title,Core#"base packages") then scan(reverse Core#"base packages", needsPackage);
+     if Core#?"base packages" then (
+	  if member(title,Core#"base packages") then (
+	       if title =!= "Macaulay2" and member("Macaulay2",Core#"base packages") then needsPackage "Macaulay2";
+	       )
+	  else scan(reverse Core#"base packages", needsPackage)
+	  );
      PrintNames#(newpkg.Dictionary) = title | ".Dictionary";
      PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
      debuggingMode = if packageLoadingOptions#?title and packageLoadingOptions#title#DebuggingMode =!= null then packageLoadingOptions#title#DebuggingMode else opts.DebuggingMode;
