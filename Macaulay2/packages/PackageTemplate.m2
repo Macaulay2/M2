@@ -126,3 +126,7 @@ end
 installPackage "PackageTemplate"
 installPackage("PackageTemplate", RemakeAllDocumentation=>true)
 check PackageTemplate
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=PackageTemplate install-one"
+-- End:

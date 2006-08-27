@@ -793,3 +793,7 @@ distinguishedAndMult i
 
 end
 installPackage "ReesAlgebra"
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=ReesAlgebra install-one"
+-- End:

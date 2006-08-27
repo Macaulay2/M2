@@ -65,3 +65,7 @@ needsPackage "GenericInitialIdeal"
 installPackage GenericInitialIdeal
 peek GenericInitialIdeal
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=GenericInitialIdeal install-one"
+-- End:

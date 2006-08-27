@@ -566,3 +566,8 @@ installPackage "FourierMotzkin"
 "Polarity: Find dual polytopes"
 
 "Regular triangulations"
+
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=FourierMotzkin install-one"
+-- End:

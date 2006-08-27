@@ -347,3 +347,6 @@ K = ZZ/32003
 M ** K
 
 
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Points install-one"
+-- End:

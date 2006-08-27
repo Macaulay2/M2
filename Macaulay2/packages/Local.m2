@@ -30,3 +30,7 @@ errorDepth = 0
 R = localRing (QQ[x,y], ideal(x,y))
 M = R^4
 C = res M
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Local install-one"
+-- End:

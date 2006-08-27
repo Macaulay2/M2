@@ -180,3 +180,7 @@ codim IX
 degree IX
 codim singularLocus IX
 ///
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=BGG install-one"
+-- End:

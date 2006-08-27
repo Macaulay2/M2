@@ -67,12 +67,6 @@ install-others ::
 
 clean::; rm -rf tmp *.installed
 
-Dmodules.installed :: @srcdir@/Dmodules/*.m2
-
-# ./tmp is used by examples in CacheFileName.m2
-CacheFileName.installed : tmp
-tmp : ; mkdir tmp
-
 distclean::clean
 clean check distclean ::; $(MAKE) -C ComputationsBook $@
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
