@@ -494,17 +494,13 @@ uninstallPackage String := opts -> pkg -> (
      )
 
 installPackage String := opts -> pkg -> (
-     if pkg =!= "Macaulay2" then (
-     	  needsPackage "Macaulay2";
-	  );
-     if PackageDictionary#?pkg and class value PackageDictionary#pkg === Package 
-     then (
-	  installPackage(value PackageDictionary#pkg, opts)
-	  )
-     else (
-	  pkg = loadPackage(pkg, DebuggingMode => opts.DebuggingMode, LoadDocumentation => opts.MakeDocumentation);
-	  installPackage(pkg, opts);
-	  ))
+     if pkg =!= "Macaulay2" then needsPackage "Macaulay2";  -- load the core documentation
+     -- we load the package even if it's already been loaded, because even if it was loaded with
+     -- its documentation the first time, it might have been loaded at a time when the core documentation
+     -- in the "Macaulay2" package was not yet loaded
+     pkg = loadPackage(pkg, DebuggingMode => opts.DebuggingMode, LoadDocumentation => opts.MakeDocumentation);
+     installPackage(pkg, opts);
+     )
 
 dispatcherMethod := m -> m#-1 === Sequence and (
      f := lookup m;
