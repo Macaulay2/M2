@@ -154,7 +154,9 @@ newPackage(String) := opts -> (title) -> (
      global currentPackage <- newpkg;
      ReverseDictionary#newpkg = pkgsym;
      pkgsym <- newpkg;
-     loadedPackages = join( if title === "Core" then {} else {newpkg}, {Core} );
+     loadedPackages = join( 
+	  -- if title === "Core" then {} else {newpkg}, 
+	  {Core} );
      dictionaryPath = join( {newpkg#"private dictionary"}, {Core.Dictionary, OutputDictionary, PackageDictionary});
      if Core#?"base packages" then (
 	  if member(title,Core#"base packages") then (
