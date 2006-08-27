@@ -45,6 +45,11 @@ install-Macaulay2 ::
 		    -e debugLevel=$(debugLevel) \
 		    -e "installPackage(\"Macaulay2\" $(ARGS1))" \
 		    -e "exit 0"
+
+install-one ::
+	../bin/M2$(EXE) -q --stop -e errorDepth=0 -e debugLevel=$(debugLevel) -e "installPackage(\"$(NAMEOFPACKAGE)\" $(ARGS2))" -e "exit 0"
+
+
 install-others ::
 	@ for i in $(PACKAGES) ; \
 	  do ( \
