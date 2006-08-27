@@ -363,7 +363,7 @@ document {
      Usage => "simplicialComplex I\nsimplicialComplex L",
      Inputs => {
 	  "I" => MonomialIdeal => "the ideal of minimal nonfaces (Stanley-Reisner ideal)",
-	  "L" => List => "a list of monomials representing faces"
+	  "L" => List => "a list of monomials representing the facets"
           },
      Outputs => {
 	  SimplicialComplex => {"the simplicial complex determined by the nonfaces ", TT "I", " 
@@ -378,17 +378,24 @@ document {
      and each subset is represented as a product of the
      corresponding variables.",
      PARA{},
-     "A simplicial complex is determined by either the minimal nonfaces or the facets.  To define the
-      octahedron by the Stanley Reisner ideal:",
-     EXAMPLE {
-	  ///loadPackage "SimplicialComplexes";///
-	  },
+     "A simplicial complex is determined either by its nonfaces or by its faces.
+     The monomials corresponding to the nonfaces are a basis of an ideal,
+     called the Stanley-Reisner ideal, and
+     it suffices to specify the minimal nonfaces, which generate the ideal.
+     The monomials corresponding to the faces do not form the basis of an ideal,
+     but it suffices to specify the maximal faces, which are called 
+     ", EM "facets", ".  The function ", TO "simplicialComplex", " accepts either
+     the ideal of nonfaces or the list of facets as input.",
+     PARA{},
+     "In our first example we construct the octahedron by specfying its
+     ideal of nonfaces.",
      EXAMPLE {
 	  "R = ZZ[a..f];",
 	  "I = monomialIdeal(a*f, b*d, c*e);",
 	  "Octahedron = simplicialComplex I"
           },
-     "We see that there are eight facets to the octahedron.  Alternatively,
+     "Note that ", ofClass SimplicialComplex, " is displayed by showing its
+     facets.  We see that there are eight facets to the octahedron.  Alternatively,
      we could have defined the octahedron by this list of facets.",
      EXAMPLE {
 	  "L = {d*e*f, b*e*f, c*d*f, b*c*f, 
@@ -1235,3 +1242,7 @@ assert(HH_0(C) == S^1/(ideal L))
 assert isHomogeneous C
 C.dd
 ///
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=SimplicialComplexes install-one"
+-- End:
