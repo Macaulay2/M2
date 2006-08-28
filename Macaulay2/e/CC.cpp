@@ -125,8 +125,8 @@ void CC::remove_elem(M2_CC f) const
 ring_elem CC::random() const
 {
   int d = 1000000;
-  long r = Random::random0(2*d);
-  long s = Random::random0(2*d);
+  long r = Random::random0((int32_t)(2*d));
+  long s = Random::random0((int32_t)(2*d));
   double a = (r*1.0)/d - 1.0;
   double b = (s*1.0)/d - 1.0;
   return CC::from_doubles(a, b);

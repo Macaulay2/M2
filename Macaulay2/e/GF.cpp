@@ -148,7 +148,7 @@ static inline int modulus_sub(int a, int b, int p)
 
 ring_elem GF::random() const
 {
-  int exp = Random::random0(Q_);
+  int exp = Random::random0((int32_t)Q_);
   return ring_elem(exp);
 }
 
