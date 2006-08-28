@@ -145,7 +145,7 @@ void F4GB<CoeffRing>::process_column(int c)
   column_elem &ce = mat->columns[c];
   if (ce.gb_divisor >= -1)
     return;
-  int which;
+  int32_t which;
   bool found = lookup->search(ce.monom, which);
   if (found)
     {
@@ -492,8 +492,8 @@ enum ComputationStatusCode F4GB<CoeffRing>::start_computation(StopConditions &st
 #include "memblock.cpp"
 #include "../coeffrings.hpp"
 template class F4GB<CoefficientRingZZp>;
+template class MonomialLookupTable<int32_t>;
 template class MemoryBlock<monomial_word,4092l>;
-
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
