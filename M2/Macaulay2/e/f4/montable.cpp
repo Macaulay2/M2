@@ -521,6 +521,8 @@ void MonomialLookupTable<Key>::text_out(buffer &o) const
 }
 
 template class MonomialLookupTable<int>;
+template class MonomialLookupTable<int32_t>;
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:
