@@ -181,6 +181,209 @@ degree IX
 codim singularLocus IX
 ///
 
+end
+
+randomMap = (F,G) -> (
+     R := ring F;
+     H := Hom(F,G);
+     Hdeg0 := basis(0,H);
+     randomf := Hdeg0 * random(source Hdeg0, R^1);
+     homomorphism randomf)
+
+randomVanishingIdeal = (F,G) -> (
+     randomf := randomMap(F,G);
+     presentIX := presentation cokernel randomf;
+     sz := syz transpose presentIX;
+     if numgens source sz =!= 1 then
+       << "warning: expected syzygy to be a (twisted) ideal" << endl;
+     trim ideal sz)
+
+loadPackage "BGG"
+KK=ZZ/32003
+E=KK[e_0..e_4,SkewCommutative=>true];
+S=KK[x_0..x_4]; 
+
+-- veronese surface in P^4
+F = random(E^{-1},E^{-4,-4,-4})
+G = beilinson(F,S)
+Z = syz transpose presentation cokernel G
+J = trim ideal Z
+res J
+betti oo
+
+-- rat.d7.g4.new
+F = random(E^{-1,0},E^{-4,-4,-4,-4})
+G = beilinson(F,S)
+Z = syz transpose presentation cokernel G
+J = trim ideal Z
+res J
+betti oo
+degree J
+genera comodule J
+
+-- rat.d8.g5.new
+F = random(E^{-1,-1,0,0,0,0,0},E^{-2,-2})
+G = beilinson(F,S)
+Z = syz transpose presentation cokernel G
+J = trim ideal Z
+res J
+betti oo
+degree J
+genera comodule J
+
+-- rat.d10.g9.quart1.new
+F = random(E^{-1,-1,0},E^{-3,-3})
+G = beilinson(F,S)
+Z = syz transpose presentation cokernel G
+J = trim ideal Z
+res J
+betti oo
+degree J
+genera comodule J
+
+-- K3 surface
+F = random(E^{-2,-2,-2},E^{-3,-3,-3,-3,-4})
+G = beilinson(F,S)
+Z = syz transpose presentation cokernel G;
+J = trim ideal Z;
+res J
+betti oo
+degree J
+genera comodule J
+J = randomVanishingIdeal((U(3,S))^4 ++ U(4,S), (U(2,S))^3)
+betti J
+res J
+
+-- k3.d8.g6
+F = S^{-2,-1,-1}
+G = U(1,S)
+J = randomVanishingIdeal(F,G);
+res J
+betti res J
+degree J
+genera J
+--       total: 1 8 11 5 1
+--           0: 1 .  . . .
+--           1: . .  . . .
+--           2: . .  . . .
+--           3: . 8 11 5 1
+
+-- k3.d9.g8
+F = U(4,S) ++ U(3,S)
+G = S^6
+J = randomVanishingIdeal(F,G);
+res J
+betti res J
+degree J
+genera J
+--       total: 1 6 6 1
+--           0: 1 . . .
+4--           1: . . . .
+--           2: . . . .
+--           3: . 6 6 1
+
+-- k3.d11.g12
+F = S^{-1} ++ (U(3,S))^3
+G = (U(2,S))^2 ++ S^2
+J = randomVanishingIdeal(F,G);
+res J
+betti res J
+degree J
+genera J
+
+-- k3.d12.g14
+F = S^{-1} ++ (U(3,S))^4
+G = (U(2,S))^3
+J = randomVanishingIdeal(F,G);
+res J
+betti res J
+degree J
+genera J
+
+-- ell.d7.g6
+F = S^{-2,-2}
+G = S^{-1,-1,1}
+J = randomVanishingIdeal(F,G);
+res J
+betti res J
+degree J
+genera J
+
+-- ell.d8.g7
+F = S^{-1,-1}
+G = S^{0,1,1}
+J = randomVanishingIdeal(F,G);
+res J
+betti res J
+degree J
+genera J
+
+-- ell.d9.g7
+F = S^{-1} ++ (U(2,S))^2
+G = (U(1,S))^3 ++ S^2
+J = randomVanishingIdeal(F,G);
+res J
+betti res J
+degree J
+genera J
+
+-- ell.d10.g10
+F = S^{-1,-1} ++ U(3,S)
+G = U(1,S) ++ S^3
+J = randomVanishingIdeal(F,G);
+res J
+betti res J
+degree J
+genera J
+
+-- ell.d11.g12
+F = S^{-1,-1} ++ (U(3,S))^2
+G = U(2,S) ++ U(1,S) ++ S^1
+J = randomVanishingIdeal(F,G);
+res J
+betti res J
+degree J
+genera J
+
+-- HP of U
+S = ZZ/32003[a..e]
+P0 = hilbertPolynomial(S^1,Projective=>true)
+P1 = hilbertPolynomial(U(1,S) ** S^{-4},Projective=>true)
+P2 = hilbertPolynomial(U(2,S) ** S^{-4},Projective=>true)
+P3 = hilbertPolynomial(U(3,S) ** S^{-4},Projective=>true)
+P4 = hilbertPolynomial(U(4,S) ** S^{-4},Projective=>true)
+
+P0+3*P4-P1
+P0-3*P2+4*P3+P4
+
+matrix{{17,27,19,5}}
+LLL syz oo
+ker ooo
+LLL gens oo
+
+-P1+P2-2*P4
+-P1-2*P2+4*P3-P4
+-2*P1+3*P2-3*P3+2*P4
+
+-- doesn't work (a=b=0, d=11, g=11)
+F = U(1,S) ++ (U(2,S))^2 ++ U(4,S)
+G = (U(3,S))^4
+J = randomVanishingIdeal(F,G);
+res J
+betti res J
+degree J
+genera J
+
+gg = (a,b) -> 
+  {-1,-2,4,-1} + a * {-1, 1, 0, -2} + b * {-2, 3, -3, 2}
+gg(1,1) -- {-4,2,1,-1}
+randomVanishingIdeal((U(2,S))^2 ++ U(3,S), (U(1,S))^4 ++ U(4,S))
+gg(1,2) -- {-6, 5, -2, 1}
+randomVanishingIdeal((U(2,S))^5 ++ U(4,S), (U(1,S))^6 ++ (U(3,S))^2)
+random(E^{-1,-1,-1,-1,-1,-1,-3},E^{-2,-2,-2,-2,-2,-4})
+beilinson(oo,S)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=BGG install-one"
 -- End:
+

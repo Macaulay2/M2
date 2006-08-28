@@ -1,3 +1,17 @@
+restart
+k = QQ
+R=k[x,y,z]/(x*y-z^2)
+P=ideal(x,z)
+J = P^2 
+primaryDecomposition J
+
+S=k[x,y,z]
+P=ideal(x,z)
+J = P^2 + ideal(x*y-z^2)
+primaryDecomposition J
+oo/(J -> trim substitute(J,R))
+end
+
 Date: Sun, 16 Jul 2006 17:01:02 -0500 (CDT)
 Subject: Thanks & some new things to consider
 From: ataylor@stolaf.edu
