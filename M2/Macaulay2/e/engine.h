@@ -7,6 +7,7 @@
    \mainpage Hi, this is my main documentation page.
  */
 #include "../d/M2types.h"
+#include <stdint.h>
 
 #if defined(__cplusplus)
 class Monomial;
@@ -132,7 +133,7 @@ extern "C" {
   /**** Random numbers ******************************/
   /**************************************************/
 
-  int rawSetRandomSeed(M2_Integer seed);
+  int32_t rawSetRandomSeed(M2_Integer seed);
 
   void rawSetRandomMax(M2_Integer maxN);
 

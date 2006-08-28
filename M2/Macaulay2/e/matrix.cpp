@@ -725,7 +725,7 @@ Matrix *Matrix::random(const Ring *R,
 	  {
 	    if (doing_fraction)
 	      {
-		int32_t u = Random::random0(10000);
+		int32_t u = Random::random0((int32_t)10000);
 		if (u > threshold) continue;
 	      }
 	    mat.set_entry(j,i,R->random());
@@ -740,7 +740,7 @@ Matrix *Matrix::random(const Ring *R,
 	    {
 	      if (doing_fraction)
 		{
-		  int32_t u = Random::random0(10000);
+		  int32_t u = Random::random0((int32_t)10000);
 		  if (u > threshold) continue;
 		}
 	      mat.set_entry(j,i,R->random());

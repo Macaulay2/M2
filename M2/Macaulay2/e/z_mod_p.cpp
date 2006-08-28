@@ -332,7 +332,7 @@ ring_elem Z_mod::eval(const RingMap *map, const ring_elem f, int) const
 
 ring_elem Z_mod::random() const
 {
-  int exp = Random::random0(P);
+  int exp = Random::random0((int32_t)P);
   return ring_elem(exp);
 }
 

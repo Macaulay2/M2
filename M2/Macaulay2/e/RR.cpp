@@ -98,7 +98,7 @@ void RingRR::remove_elem(RRelem f) const
 ring_elem RingRR::random() const
 {
   int d = 1000000;
-  long r = Random::random0(2*d);
+  long r = Random::random0((int32_t)(2*d));
   double a = (r*1.0)/d - 1.0;
   return RingRR::from_double(a);
 }
