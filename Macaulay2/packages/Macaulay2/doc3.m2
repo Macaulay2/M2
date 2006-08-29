@@ -1025,11 +1025,7 @@ document { Key => fileDictionaries,
      Usage => "fileDictionaries#fn",
      Inputs => { "fn" => String },
      Outputs => {{"the local dictionary in effect for the scope of the file loaded from the path ", TT "fn"}},
-     EXAMPLE lines ///
-     	  loadedFiles#3
-	  fileDictionaries#oo
-	  keys oo
-     ///}
+     }
 document { Key => fileMode,
      Headline => "set or get file mode"
      }
