@@ -492,7 +492,6 @@ enum ComputationStatusCode F4GB<CoeffRing>::start_computation(StopConditions &st
 #include "memblock.cpp"
 #include "../coeffrings.hpp"
 template class F4GB<CoefficientRingZZp>;
-template class MonomialLookupTable<int32_t>;
 template class MemoryBlock<monomial_word,4092l>;
 
 // Local Variables:
