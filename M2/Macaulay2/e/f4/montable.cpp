@@ -520,7 +520,6 @@ void MonomialLookupTable<Key>::text_out(buffer &o) const
     }
 }
 
-template class MonomialLookupTable<int>;
 template class MonomialLookupTable<int32_t>;
 
 // Local Variables:
