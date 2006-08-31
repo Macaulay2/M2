@@ -1062,7 +1062,7 @@ showTex Thing := o -> x -> (
 ///  
      << close;
      if 0 === run("cd /tmp; latex " | f)
-     then run("(xdvi -s 4 "|f|".dvi; rm -f "|f|".tex "|f|".dvi "|f|".log "|f|".aux)&")
+     then run("(xdvi "|f|".dvi; rm -f "|f|".tex "|f|".dvi "|f|".log "|f|".aux)&")
      else error ("latex failed on input file " | f | ".tex")
      )
 
