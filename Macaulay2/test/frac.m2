@@ -59,6 +59,7 @@ assert(rawGCD(raw f1,raw g1) === raw(x-1))
 R = ZZ[x]
 F = frac R
 f = ((x^3*(x-1)*(1/2))/((x^5-1)))
+f = 1/2 * ((x^3*(x-1))/((x^5-1)))
 g = ((x^3*(x-1))/(2*(x^5-1)))
 assert( f === g )
 assert( numerator f === numerator g )

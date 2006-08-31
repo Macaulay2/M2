@@ -40,7 +40,12 @@ public:
   // is the initial power.
   
   ~MonomialHashTable();
-  
+
+  void reset();
+  // Clear out the hash table, resetting all values to 0, and 
+  // all counting values back to 0 (count,nclashes,max_run_length)
+  // BUT: the size is kept the same.
+
   bool find_or_insert(value m, value &result);
   // return true if the value already exists in the table.
   // otherwise, result is set to the new value.

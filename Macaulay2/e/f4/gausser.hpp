@@ -2,14 +2,22 @@
 #define __gausser_h_
 
 #include "../ring.hpp"
+#include "../z_mod_p.hpp"
+#include "../coeffrings.hpp"
 
 typedef void *F4CoefficientArray;
 
 class Gausser : public our_new_delete
 {
+  enum {ZZp} typ;
+
+  CoefficientRingZZp *Kp;
+
+  Gausser(const Z_mod *K0);
 public:
-  Gausser(const Ring *K);
   ~Gausser() {}
+
+  static Gausser *newGausser(const Ring *K);
 
   F4CoefficientArray from_ringelem_array(int len, ring_elem *elems) const;
 

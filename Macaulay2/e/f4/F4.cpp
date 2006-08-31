@@ -10,15 +10,14 @@ static clock_t clock_sort_columns = 0;
 static clock_t clock_gauss = 0;
 static clock_t clock_make_matrix = 0;
 
-template<typename CoeffRing>
-F4GB<CoeffRing>::F4GB(const Gausser *KK0,
-		      const MonomialInfo *M0,
-		      M2_bool collect_syz, 
-		      int n_rows_to_keep,
-		      M2_arrayint weights0,
-		      int strategy, 
-		      M2_bool use_max_degree,
-		      int max_degree)
+F4GB::F4GB(const Gausser *KK0,
+	   const MonomialInfo *M0,
+	   M2_bool collect_syz, 
+	   int n_rows_to_keep,
+	   M2_arrayint weights0,
+	   int strategy, 
+	   M2_bool use_max_degree,
+	   int max_degree)
   : KK(KK0),
     M(M0),
     weights(weights0),
@@ -37,17 +36,26 @@ F4GB<CoeffRing>::F4GB(const Gausser *KK0,
   // set status
 }
 
-template<typename CoeffRing>
-F4GB<CoeffRing>::~F4GB()
+F4GB::~F4GB()
 {
+}
+
+void F4GB::new_generators(int lo, int hi)
+{
+  for (int i=lo; i<=hi; i++)
+    {
+      gbelem *g = gens[i];
+      if (g->f.len == 0) continue;
+      S->insert_generator(g->deg, g->f.monom_space, i);
+    }
 }
 
 ///////////////////////////////////////////////////
 // Creation of the matrix over K //////////////////
 ///////////////////////////////////////////////////
-template<typename CoeffRing>
-int F4GB<CoeffRing>::new_column(packed_monomial m)
+int F4GB::new_column(packed_monomial m)
 {
+  // m is a packed monomial, unique via the hash table H, B.
   column_elem c;
   int next_column = mat->columns.size();
   m[-1] = next_column;
@@ -59,8 +67,8 @@ int F4GB<CoeffRing>::new_column(packed_monomial m)
   return next_column;
 }
 
-template<typename CoeffRing>
-int F4GB<CoeffRing>::find_or_append_column(packed_monomial m)
+
+int F4GB::find_or_append_column(packed_monomial m)
 {
   packed_monomial new_m;
   if (H->find_or_insert(m, new_m))
@@ -69,8 +77,8 @@ int F4GB<CoeffRing>::find_or_append_column(packed_monomial m)
   return new_column(m);
 }
 
-template<typename CoeffRing>
-int F4GB<CoeffRing>::mult_monomials(packed_monomial m, packed_monomial n)
+
+int F4GB::mult_monomials(packed_monomial m, packed_monomial n)
 {
   // We already have allocated space for a monomial
   // Do the multiply
@@ -82,13 +90,13 @@ int F4GB<CoeffRing>::mult_monomials(packed_monomial m, packed_monomial n)
   if (H->find_or_insert(next_monom, new_m))
     return new_m[-1]; // monom exists, don't save monomial space
   m = next_monom;
-  B.intern(M->monomial_size(m));
-  next_monom = B.reserve(M->max_monomial_size());
+  B->intern(M->monomial_size(m));
+  next_monom = B->reserve(M->max_monomial_size());
   return new_column(m);
 }
 
-template<typename CoeffRing>
-void F4GB<CoeffRing>::load_gen(int which)
+
+void F4GB::load_gen(int which)
 {
   poly &g = gens[which]->f;
 
@@ -110,8 +118,8 @@ void F4GB<CoeffRing>::load_gen(int which)
   mat->rows.push_back(r);
 }
 
-template<typename CoeffRing>
-void F4GB<CoeffRing>::load_row(packed_monomial monom, int which)
+
+void F4GB::load_row(packed_monomial monom, int which)
 {
   poly &g = gb[which]->f;
 
@@ -133,8 +141,8 @@ void F4GB<CoeffRing>::load_row(packed_monomial monom, int which)
   mat->rows.push_back(r);
 }
 
-template<typename CoeffRing>
-void F4GB<CoeffRing>::process_column(int c)
+
+void F4GB::process_column(int c)
 {
   /* If this column has been handled before, return.
      Otherwise, find a GB element whose lead term
@@ -151,8 +159,8 @@ void F4GB<CoeffRing>::process_column(int c)
     {
       packed_monomial n = next_monom;
       M->unchecked_divide(ce.monom, gb[which]->f.monom_space, n);
-      B.intern(M->monomial_size(n));
-      next_monom = B.reserve(M->max_monomial_size());
+      B->intern(M->monomial_size(n));
+      next_monom = B->reserve(M->max_monomial_size());
       M->set_component(which, n);
       ce.gb_divisor = mat->rows.size();
       ce.head = ce.gb_divisor;
@@ -162,8 +170,8 @@ void F4GB<CoeffRing>::process_column(int c)
     ce.gb_divisor = -1;
 }
 
-template<typename CoeffRing>
-void F4GB<CoeffRing>::process_s_pair(spair *p)
+
+void F4GB::process_s_pair(spair *p)
 {
   int c;
 
@@ -183,34 +191,7 @@ void F4GB<CoeffRing>::process_s_pair(spair *p)
   }
 }
 
-template<typename CoeffRing>
-class ColumnsSorter
-{
-  INCLUDE_F4_TYPES;
-public:
-  typedef typename MonomialInfo::value monomial;
-  typedef long value;
-private:
-  const MonomialInfo *M;
-  const coefficient_matrix *mat;
-  long ncmps;
-public:
-  int compare(value a, value b)
-  {
-    ncmps ++;
-    return M->compare_grevlex(mat->columns[a].monom,mat->columns[b].monom);
-  }
-
-  ColumnsSorter(const MonomialInfo *M0, const coefficient_matrix *mat0)
-    : M(M0), mat(mat0), ncmps(0) {}
-
-  long ncomparisons() const { return ncmps; }
-  
-  ~ColumnsSorter() {} 
-};
-
-template<typename CoeffRing>
-void F4GB<CoeffRing>::reorder_columns()
+void F4GB::reorder_columns()
 {
   // Set up to sort the columns.
   // Result is an array 0..ncols-1, giving the new order.
@@ -232,10 +213,10 @@ void F4GB<CoeffRing>::reorder_columns()
 
   fprintf(stderr, "ncomparisons = ");
 
-  // MES  ColumnsSorter<CoeffRing> C(M, mat);
-  // MES  QuickSorter< ColumnsSorter<CoeffRing> >::sort(&C, column_order, ncols);
+  ColumnsSorter C(M, mat);
+  QuickSorter<ColumnsSorter>::sort(&C, column_order, ncols);
 
-  // MES fprintf(stderr, "%ld, ", C.ncomparisons());
+  fprintf(stderr, "%ld, ", C.ncomparisons());
   clock_t end_time = clock();
   clock_sort_columns += end_time - begin_time;
   double nsecs = end_time - begin_time;
@@ -252,7 +233,7 @@ void F4GB<CoeffRing>::reorder_columns()
     }
 
   // Now move the columns into position
-  typename coefficient_matrix::column_array newcols;
+  coefficient_matrix::column_array newcols;
   newcols.reserve(ncols);
   for (long i=0; i<ncols; i++)
     {
@@ -275,8 +256,20 @@ void F4GB<CoeffRing>::reorder_columns()
   std::swap(mat->columns, newcols);
 }
 
-template<typename CoeffRing>
-void F4GB<CoeffRing>::make_matrix()
+void F4GB::reset_matrix()
+{
+  next_col_to_process = 0;
+  mat->rows.clear();
+  mat->columns.clear();
+  mat->column_order.clear();
+
+  H = new MonomialHash(M,18);
+  delete B;
+  B = new MemoryBlock<monomial_word>;
+  next_monom = B->reserve(M->max_monomial_size());
+}
+
+void F4GB::make_matrix()
 {
   /* loop through all spairs, process,
      then while there are any columns to process, do so,
@@ -284,8 +277,7 @@ void F4GB<CoeffRing>::make_matrix()
      Is this the best order to do it in?  Maybe not...
   */
 
-  H = new MonomialHash(M,18);
-  mat = new coefficient_matrix;
+  reset_matrix();
   spair *p;
   while (p = S->get_next_pair())
     {
@@ -308,8 +300,8 @@ void F4GB<CoeffRing>::make_matrix()
 // Extracting new GB elements    //////////////////
 ///////////////////////////////////////////////////
 
-template<typename CoeffRing>
-void F4GB<CoeffRing>::insert_gb_element(row_elem &r)
+
+void F4GB::insert_gb_element(row_elem &r)
 {
   // Insert row as gb element.
   // Actions to do:
@@ -331,18 +323,15 @@ void F4GB<CoeffRing>::insert_gb_element(row_elem &r)
 
   result->f.monom_space = newarray(monomial_word, nlongs);
 
-  // MES: set result->f.monoms too
   monomial_word *nextmonom = result->f.monom_space;
   for (int i=0; i<r.len; i++)
     {
       M->copy(mat->columns[r.comps[i]].monom, nextmonom);
-      // MES: should we keep those pointers here too??
       nextmonom += nslots;
     }
   result->deg = this_degree;
   result->alpha = M->last_exponent(result->f.monom_space);
-  result->is_minimal = true;
-  result->minlevel = ELEM_MIN_GB; // MES: why both is_minimal and minlevel.  Also how do
+  result->minlevel = ELEM_MIN_GB; // MES: How do
                                   // we distinguish between ELEM_MIN_GB, ELEM_POSSIBLE_MINGEN?
 
   int which = gb.size();
@@ -355,8 +344,8 @@ void F4GB<CoeffRing>::insert_gb_element(row_elem &r)
   S->find_new_pairs(gb, true);
 }
 
-template<typename CoeffRing>
-void F4GB<CoeffRing>::new_GB_elements()
+
+void F4GB::new_GB_elements()
 {
   /* After LU decomposition, loop through each
      row of the matrix.  If the corresponding 
@@ -384,8 +373,8 @@ void F4GB<CoeffRing>::new_GB_elements()
 // Top level algorithm logic     //////////////////
 ///////////////////////////////////////////////////
 
-template<typename CoeffRing>
-void F4GB<CoeffRing>::do_spairs()
+
+void F4GB::do_spairs()
 {
   clock_t begin_time = clock();
 
@@ -406,8 +395,8 @@ void F4GB<CoeffRing>::do_spairs()
   next_col_to_process = 0;
 }
 
-template<typename CoeffRing>
-enum ComputationStatusCode F4GB<CoeffRing>::computation_is_complete(StopConditions &stop_)
+
+enum ComputationStatusCode F4GB::computation_is_complete(StopConditions &stop_)
 {
   // This handles everything but stop_.always, stop_.degree_limit
   if (stop_.basis_element_limit > 0 && gb.size() >= stop_.basis_element_limit) 
@@ -431,17 +420,18 @@ enum ComputationStatusCode F4GB<CoeffRing>::computation_is_complete(StopConditio
   return COMP_COMPUTING;
 }
 
-template<typename CoeffRing>
-enum ComputationStatusCode F4GB<CoeffRing>::start_computation(StopConditions &stop_)
+
+enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
 {
   queue<packed_monomial> Q;
   //  lookup = MonomialLookupTable::create<MonomialInfo>(M,Q);
   
-  return COMP_DONE;
   clock_sort_columns = 0;
   clock_gauss = 0;
   clock_make_matrix = 0;
   int npairs;
+
+  return COMP_DONE;
   enum ComputationStatusCode is_done = COMP_COMPUTING;
 
   for (;;)
@@ -491,8 +481,7 @@ enum ComputationStatusCode F4GB<CoeffRing>::start_computation(StopConditions &st
 #include "moninfo.hpp"
 #include "memblock.cpp"
 #include "../coeffrings.hpp"
-template class F4GB<CoefficientRingZZp>;
-template class MemoryBlock<monomial_word,4092l>;
+template class MemoryBlock<monomial_word>;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

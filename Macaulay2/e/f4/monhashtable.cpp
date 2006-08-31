@@ -7,18 +7,24 @@
 #define MONOMIAL_EQUAL(m,n) (M->is_equal(m,n))
 
 template <typename ValueType>
-void MonomialHashTable<ValueType>::initialize(int logsize0)
+void MonomialHashTable<ValueType>::reset()
 {
   count = 0;
   nclashes = 0;
   max_run_length = 0;
+  for (unsigned long i=0; i<size; i++)
+    hashtab[i] = 0;
+}
+
+template <typename ValueType>
+void MonomialHashTable<ValueType>::initialize(int logsize0)
+{
   logsize = logsize0;
   size = (1<<logsize);
   threshold = 2*size/3;
   hashtab = newarray(value, size);
-  for (unsigned long i=0; i<size; i++)
-    hashtab[i] = 0;
   hashmask = size-1;
+  reset();
 }
 
 template <typename ValueType>
