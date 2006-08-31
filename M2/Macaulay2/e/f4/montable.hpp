@@ -11,12 +11,12 @@
 #include "moninfo.hpp"
 
 class buffer;
-template <typename Key> class MonomialLookupTable;
+template <typename Key> class MonomialLookupTableT;
 
 template <typename Key>
 class mi_node : public our_new_delete // monomial ideal internal node ///
 {
-  friend class MonomialLookupTable<Key>;
+  friend class MonomialLookupTableT<Key>;
 protected:
   int                 var;
   int                 exp;		
@@ -52,7 +52,7 @@ public:
 };
 
 template <typename Key>
-class MonomialLookupTable : public our_new_delete
+class MonomialLookupTableT : public our_new_delete
 {
  private:
   typedef mi_node<Key> mi_node;
@@ -74,8 +74,8 @@ private:
   void do_tree(mi_node *p, int depth, int indent, int disp) const;
   int debug_check(mi_node *p, mi_node *up) const;
 public:
-  MonomialLookupTable();
-  virtual ~MonomialLookupTable() { deleteitem(mi); }
+  MonomialLookupTableT();
+  virtual ~MonomialLookupTableT() { deleteitem(mi); }
 
   // Informational
   int length() const { return count; }
@@ -114,10 +114,10 @@ public:
 
   class iterator {
     mi_node *p;
-    const MonomialLookupTable *T;
+    const MonomialLookupTableT *T;
   public:
-    iterator(const MonomialLookupTable *T0) : p(T0->mi), T(T0) {}
-    iterator(const MonomialLookupTable *T0, mi_node *p0) : p(p0), T(T0) {}
+    iterator(const MonomialLookupTableT *T0) : p(T0->mi), T(T0) {}
+    iterator(const MonomialLookupTableT *T0, mi_node *p0) : p(p0), T(T0) {}
     void operator++() { T->next(p); }
     void operator--() { T->prev(p); }
     void operator++(int) { T->next(p); }

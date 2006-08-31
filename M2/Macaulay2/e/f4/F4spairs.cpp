@@ -2,8 +2,8 @@
 
 #include "F4spairs.hpp"
 
-F4SPairSet::F4SPairSet(MonomialSet *H0)
-  : H(H0),
+F4SPairSet::F4SPairSet(MonomialInfo *MI0)
+  : MI(MI0),
     heap(0),
     this_set(0)
 {
@@ -18,16 +18,34 @@ F4SPairSet::~F4SPairSet()
   // TO BE WRITTEN
 }
 
-F4SPairSet::spair *F4SPairSet::make_spair(int deg, 
-				      monomial lcm, 
-				      monomial first_monom,
-				      int first_gb_num,
-				      monomial second_monom,
-				      int second_gb_num)
+spair *F4SPairSet::get_next_pair()
+{
+  return 0;
+}
+
+int F4SPairSet::find_new_pairs(const gb_array &gb,
+			       bool remove_disjoints)
+  // returns the number of new pairs found
+{
+  return 0;
+}
+
+void F4SPairSet::insert_generator(int deg, packed_monomial lcm, int col)
+{
+}
+
+#if 0
+// This all needs to be done .... MES 8/31/06
+spair *F4SPairSet::make_spair(int deg, 
+			      packed_monomial lcm, 
+			      packed_monomial first_monom,
+			      int first_gb_num,
+			      packed_monomial second_monom,
+			      int second_gb_num)
 {
   spair *result = new spair;
   result->next = 0;
-  result->type = SPAIR_SPAIR;
+  result->type = F4_SPAIR_SPAIR;
   result->deg = deg;
   result->lcm = lcm;
   result->s.spair.first_monom = first_monom;
@@ -37,11 +55,11 @@ F4SPairSet::spair *F4SPairSet::make_spair(int deg,
   return result;
 }
 
-F4SPairSet::spair *F4SPairSet::make_spair_gen(int deg, monomial lcm, int col)
+spair *F4SPairSet::make_spair_gen(int deg, packed_monomial lcm, int col)
 {
   spair *result = new spair;
   result->next = 0;
-  result->type = SPAIR_GEN;
+  result->type = F4_SPAIR_GEN;
   result->deg = deg;
   result->lcm = lcm;
   result->s.poly.column = col;
@@ -118,7 +136,7 @@ int F4SPairSet::prepare_next_degree(int max, int &result_number)
   return result_degree;
 }
 
-F4SPairSet::spair *F4SPairSet::get_next_pair()
+spair *F4SPairSet::get_next_pair()
   // get the next pair in this degree (the one 'prepare_next_degree' set up')
   // returns 0 if at the end
 {
@@ -131,26 +149,26 @@ F4SPairSet::spair *F4SPairSet::get_next_pair()
   return result;
 }
 
-void F4SPairSet::insert(F4SPairSet::spair *p)
+void F4SPairSet::insert(spair *p)
 {
   p->next = heap;
   heap = p;
 }
 
-template<typename gb_array>
 int F4SPairSet::find_new_pairs(const gb_array &gb,
-			     bool remove_disjoints)
+			       bool remove_disjoints)
   // returns the number of new pairs found
 {
   remove_unneeded_pairs();
-  int len = SPairConstructor<gb_array>::make(H,this,gb,remove_disjoints);
-  return len;
+  //  int len = SPairConstructor<gb_array>::make(H,this,gb,remove_disjoints);
+  //  return len;
+  return 0;
 }
 
 void F4SPairSet::display_spair(spair *p)
   // A debugging routine which displays an spair
 {
-  if (p->type == SPAIR_SPAIR)
+  if (p->type == F4_SPAIR_SPAIR)
     {
       fprintf(stderr,"[%d %d deg %d lcm ", 
 	      p->s.spair.first_gb_num,
@@ -190,9 +208,8 @@ void F4SPairSet::display()
 // Construction of new spairs //
 ////////////////////////////////
 
-template<typename gb_array>
-typename SPairConstructor<gb_array>::pre_spair *
-SPairConstructor<gb_array>::create_pre_spair(int i)
+SPairConstructor::pre_spair *
+SPairConstructor::create_pre_spair(int i)
 {
   // Construct the pre_spair (gb.size()-1, i)
   monomial m0 = gb[gb.size()-1]->f.monoms[0];
@@ -213,8 +230,7 @@ SPairConstructor<gb_array>::create_pre_spair(int i)
   return result;
 }
 
-template<typename gb_array>
-SPairConstructor<gb_array>::SPairConstructor(MonomialSet* H0,
+SPairConstructor::SPairConstructor(MonomialSet* H0,
 				   F4SPairSet *S0,
 				   const gb_array &gb0,
 				   bool remove_disjoints0)
@@ -225,12 +241,11 @@ SPairConstructor<gb_array>::SPairConstructor(MonomialSet* H0,
 {
 }
 
-template<typename gb_array>
-struct pre_spair_sorter : public std::binary_function<typename SPairConstructor<gb_array>::pre_spair *,
-						 typename SPairConstructor<gb_array>::pre_spair *,
+struct pre_spair_sorter : public std::binary_function<typename SPairConstructor::pre_spair *,
+						 typename SPairConstructor::pre_spair *,
 						 bool>
 {
-  typedef typename SPairConstructor<gb_array>::pre_spair pre_spair;
+  typedef SPairConstructor::pre_spair pre_spair;
   pre_spair_sorter() {}
   bool operator()(pre_spair *a, 
 		  pre_spair *b)
@@ -250,8 +265,7 @@ struct pre_spair_sorter : public std::binary_function<typename SPairConstructor<
   }
 };
 
-template<typename gb_array>
-void SPairConstructor<gb_array>::send_spair(pre_spair *p)
+void SPairConstructor::send_spair(pre_spair *p)
 {
   monomial quot1;
   H->find_or_insert(p->quot, quot1);
@@ -263,14 +277,13 @@ void SPairConstructor<gb_array>::send_spair(pre_spair *p)
   monomial second = MonomialOps::quotient(H,
 					  gb[i]->f.monoms[0],
 					  gb[j]->f.monoms[0]);
-  F4SPairSet::spair *result = F4SPairSet::make_spair(deg, lcm, first, i, second, j);
+  spair *result = F4SPairSet::make_spair(deg, lcm, first, i, second, j);
 
   // Now ship off to the spair set
   S->insert(result);
 }
 
-template<typename gb_array>
-int SPairConstructor<gb_array>::construct_pairs()
+int SPairConstructor::construct_pairs()
 {
   if (gb.size() == 0) return 0; // NOT VALID if quotient ring.
   typedef VECTOR(pre_spair *) spairs;
@@ -339,8 +352,7 @@ int SPairConstructor<gb_array>::construct_pairs()
   ///////////////////////////////////////
 }
 
-template<typename gb_array>
-int SPairConstructor<gb_array>::make(MonomialSet* H0,
+int SPairConstructor::make(MonomialSet* H0,
 			   F4SPairSet *S0,
 			   const gb_array &gb0,
 			   bool remove_disjoints0)
@@ -348,7 +360,7 @@ int SPairConstructor<gb_array>::make(MonomialSet* H0,
   SPairConstructor C(H0,S0,gb0,remove_disjoints0);
   return C.construct_pairs();
 }
-
+#endif
 
 
 // Local Variables:

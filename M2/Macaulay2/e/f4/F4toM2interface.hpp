@@ -5,10 +5,8 @@
 #include "gausser.hpp"
 #define MATTYPE DMat
 
-template<typename CoeffRing>
 class F4toM2Interface
 {
-  INCLUDE_F4_TYPES;
 public:
   static void poly_set_degrees(const Gausser *KK,
 			       const MonomialInfo *MI,
@@ -40,7 +38,6 @@ public:
 			      const FreeModule *F);
 
   static MutableMatrix *to_M2_MutableMatrix(const Gausser *KK,
-					    const RingType *K,
 					    coefficient_matrix *mat);
 
 };
@@ -50,5 +47,3 @@ public:
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 //  End:
-
-

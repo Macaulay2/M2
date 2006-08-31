@@ -2,24 +2,46 @@
 
 #include "gausser.hpp"
 
-Gausser::Gausser(const Ring *K)
+Gausser *Gausser::newGausser(const Ring *K)
+{
+  const Z_mod *Kp = K->cast_to_Z_mod();
+  if (Kp != 0)
+    return new Gausser(Kp);
+  return 0;
+}
+
+Gausser::Gausser(const Z_mod *K)
+  : typ(ZZp), Kp(K->get_CoeffRing())
 {
 }
 
 F4CoefficientArray Gausser::from_ringelem_array(int len, ring_elem *elems) const
 {
-#ifdef DEVELOPMENT
-#warning "to be written"
-#endif
+  int i;
+  switch (typ) {
+  case ZZp:
+    int *result = newarray_atomic(int, len);
+    for (i=0; i<len; i++)
+      result[i] = elems[i].int_val;
+    return result;
+  };
   return 0;
 }
 
-void Gausser::to_ringelem_array(int len, F4CoefficientArray, ring_elem *result) const
+void Gausser::to_ringelem_array(int len, F4CoefficientArray F, ring_elem *result) const
 {
+  int *elems = static_cast<int *>(F);
+  int i;
+  switch (typ) {
+  case ZZp:
+    for (i=0; i<len; i++)
+      result[i].int_val = elems[i];
+  };
 }
 
 void Gausser::remove_array(F4CoefficientArray a) const
 {
+  deletearray(a);
 }
 
 // Local Variables:

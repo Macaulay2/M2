@@ -80,6 +80,9 @@ void QuickSorter<Sorter>::sort(Sorter *M0, value *elems0, long len0)
 }
 
 template class QuickSorter<MSorter>;
+#include "F4types.hpp"
+template class QuickSorter<ColumnsSorter>;
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

@@ -3,10 +3,10 @@
 -------------------------------------------------------
 ## Step 1. Download the desired version of Macaulay2 ##
 # from subversion, supposing the stable version is 4123.
- mkdir M2-build
- cd M2-build
- svn export -r 4123 svn://u123.math.uiuc.edu/Macaulay2/trunk M2
- cd M2
+ cd ~/M2-build
+ mkdir M2-0.9.90
+ cd M2-0.9.90
+ svn co svn://macaulay2.math.uiuc.edu/Macaulay2/stable/2006-08-28-0.9.90 M2
  mkdir installed
  mkdir build
 ## Step 2. Build Macaulay2 ##
@@ -15,12 +15,12 @@
  cd M2
  make
  cd ../build
- ../M2/configure --prefix=/Users/mike/M2-build/M2/installed --with-veclib --enable-altivec CFLAGS=-g CPPFLAGS=-I/capybara/include LDFLAGS=-L/capybara/lib LOADLIBES="-lgcc_s.10.5 -lncurses" --with-gdbmlib=/capybara/lib/libgdbm.a --with-readlinelib=/capybara/lib/libreadline.a --with-historylib=/capybara/lib/libhistory.a --with-gclib=/capybara/lib/libgc.a
+ ../M2/configure --prefix=/Users/mike/M2-build/M2-0.9.90/installed --with-veclib --enable-altivec CFLAGS=-g CPPFLAGS=-I/capybara/include LDFLAGS=-L/capybara/lib LOADLIBES="-lgcc_s.10.5 -lncurses" --with-gdbmlib=/capybara/lib/libgdbm.a --with-readlinelib=/capybara/lib/libreadline.a --with-historylib=/capybara/lib/libhistory.a --with-gclib=/capybara/lib/libgc.a
  make
  make install # this can take awhile (started: 9:33 pm, done at 10:10pm, MBP 2 GZ)
 
 ## Step 3.  Create the disk image
-export VERSION=0.9.10
+export VERSION=0.9.90
 cd ../installed
 cp ../M2/arch/MacOSX/ReadMe-MacOSX.rtf .
 #mv Macaulay2-$VERSION Macaulay2

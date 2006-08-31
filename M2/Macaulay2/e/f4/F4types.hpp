@@ -75,81 +75,74 @@ struct spair : public our_new_delete {
   } s;
 };
 
-template <typename CoeffRing>
-class F4types
-{
-public:
-  typedef typename CoeffRing::elem COEFF_TYPE;
-  
-  // Main types
-
-  //  struct poly : public our_new_delete {
-  //    int len;
-  //    COEFF_TYPE *coeffs;
-  //    packed_monomial *monoms;  // Component is in the monomial.  Where?
-  //    monomial_word *monom_space;
-  //  };
-
-  struct gbelem : public our_new_delete {
-    poly f;
-    int deg;
-    int alpha; // the homogenizing degree
-    unsigned char is_minimal;
-    gbelem_type minlevel;
-  };
-
-  class gb_array : public VECTOR(gbelem *) {};
-
-
-  struct row_elem : public our_new_delete {
-    // Header information
-    packed_monomial monom;
-    int elem;
-
-    // The polynomial itself
-    int len;
-    F4CoefficientArray coeffs;
-    int *comps;
-  };
-
-  struct column_elem : public our_new_delete {
-    packed_monomial monom;
-    int degree;
-    int gb_divisor; // -1 if none, otherwise >= 0.
-    int head; // which row is being used as a pivot for this column
-    int ord; // Set before doing LU decomposition
-  };
-
-  struct coefficient_matrix : public our_new_delete {
-    //  typedef std::map<packed_monomial, int> monomial_map;
-    typedef VECTOR(row_elem) row_array;
-    typedef VECTOR(column_elem) column_array;
-
-    row_array rows;
-    column_array columns;
-    // monomial_map H0; // Hash table (well...  sort of) of
-                         // monomial --> int (column)
-
-    VECTOR(int) column_order; // Inverse to ord values
-  };
-
+struct gbelem : public our_new_delete {
+  poly f;
+  int deg;
+  int alpha; // the homogenizing degree
+  gbelem_type minlevel;
 };
 
-template <typename MonInfo> class MonomialHashTable;
+class gb_array : public VECTOR(gbelem *) {};
 
-#define INCLUDE_F4_TYPES \
-  typedef typename CoeffRing::ring_type RingType; \
-  typedef typename CoeffRing::elem elem; \
-  typedef typename CoeffRing::elem COEFF_TYPE; \
-  typedef typename F4types<CoeffRing>::gbelem gbelem; \
-  typedef typename F4types<CoeffRing>::gb_array gb_array; \
-  typedef typename F4types<CoeffRing>::row_elem row_elem; \
-  typedef typename F4types<CoeffRing>::column_elem column_elem; \
-  typedef typename F4types<CoeffRing>::coefficient_matrix coefficient_matrix; \
-  typedef MonomialLookupTable<int32_t> MonomialLookupTable; \
-
-//  typedef typename F4types<CoeffRing>::poly poly; 
+struct row_elem : public our_new_delete {
+  // Header information
+  packed_monomial monom;
+  int elem;
   
+  // The polynomial itself
+  int len;
+  F4CoefficientArray coeffs;
+  int *comps;
+};
+
+struct column_elem : public our_new_delete {
+  packed_monomial monom;
+  int degree;
+  int gb_divisor; // -1 if none, otherwise >= 0.
+  int head; // which row is being used as a pivot for this column
+  int ord; // Set before doing LU decomposition
+};
+
+struct coefficient_matrix : public our_new_delete {
+  //  typedef std::map<packed_monomial, int> monomial_map;
+  typedef VECTOR(row_elem) row_array;
+  typedef VECTOR(column_elem) column_array;
+  
+  row_array rows;
+  column_array columns;
+  // monomial_map H0; // Hash table (well...  sort of) of
+  // monomial --> int (column)
+  
+  VECTOR(int) column_order; // Inverse to ord values
+};
+
+class ColumnsSorter
+{
+public:
+  typedef MonomialInfo::value monomial;
+  typedef long value;
+private:
+  const MonomialInfo *M;
+  const coefficient_matrix *mat;
+  long ncmps;
+public:
+  int compare(value a, value b)
+  {
+    ncmps ++;
+    return M->compare_grevlex(mat->columns[a].monom,mat->columns[b].monom);
+  }
+
+  ColumnsSorter(const MonomialInfo *M0, const coefficient_matrix *mat0)
+    : M(M0), mat(mat0), ncmps(0) {}
+
+  long ncomparisons() const { return ncmps; }
+  
+  ~ColumnsSorter() {} 
+};
+
+typedef MonomialLookupTableT<int32_t> MonomialLookupTable;
+
+template <typename MonInfo> class MonomialHashTable;
 
 #endif
 

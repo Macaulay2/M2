@@ -11,14 +11,11 @@ class PolynomialRing;
 class FreeModule;
 class RingType;
 
-template<typename CoeffRing>
 class F4Computation : public GBComputation
 {
   // Interface to the F4 linear algebra GB computation
   // Handles: translation of polynomials to/from the correct form
   //          different possible template instantiations
-
-  INCLUDE_F4_TYPES;
 
   const PolynomialRing *originalR;
   const FreeModule *F; // determines whether the monomial order is a 
@@ -28,9 +25,9 @@ class F4Computation : public GBComputation
   const Gausser *KK;
   MonomialInfo *MI;
 
-  F4GB<CoeffRing> *f4;
+  F4GB *f4;
 public:
-  F4Computation(const RingType *K,
+  F4Computation(Gausser *K,
 		const Matrix *m, 
 		M2_bool collect_syz, 
 		int n_rows_to_keep,

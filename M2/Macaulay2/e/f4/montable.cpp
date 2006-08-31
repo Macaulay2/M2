@@ -21,7 +21,7 @@ mi_node<Key>::~mi_node()
 }
 
 template <typename Key>
-MonomialLookupTable<Key>::MonomialLookupTable()
+MonomialLookupTableT<Key>::MonomialLookupTableT()
   : mi(0), count(0)
 {
   size_of_exp = 10;
@@ -30,7 +30,7 @@ MonomialLookupTable<Key>::MonomialLookupTable()
 
 #if 0
 // The following 2 routines should be present, but not as constructors.
-MonomialLookupTable::MonomialLookupTable(VECTOR(tagged_monomial *) &elems, 
+MonomialLookupTableT::MonomialLookupTableT(VECTOR(tagged_monomial *) &elems, 
 					 VECTOR(tagged_monomial *) &rejects)
   : mi(0), count(0)
 {
@@ -65,7 +65,7 @@ MonomialLookupTable::MonomialLookupTable(VECTOR(tagged_monomial *) &elems,
       }
 }
 
-MonomialLookupTable::MonomialLookupTable(VECTOR(tagged_monomial *) &elems)
+MonomialLookupTableT::MonomialLookupTableT(VECTOR(tagged_monomial *) &elems)
   : mi(0), count(0)
 {
   size_of_exp = 10;
@@ -96,7 +96,7 @@ MonomialLookupTable::MonomialLookupTable(VECTOR(tagged_monomial *) &elems)
 #endif
 
 template <typename Key>
-int MonomialLookupTable<Key>::search_expvector(const_ntuple_monomial exp, Key &result_k) const
+int MonomialLookupTableT<Key>::search_expvector(const_ntuple_monomial exp, Key &result_k) const
 {
   if (mi == NULL) return 0;
 
@@ -129,7 +129,7 @@ int MonomialLookupTable<Key>::search_expvector(const_ntuple_monomial exp, Key &r
 }
 
 template <typename Key>
-void MonomialLookupTable<Key>::find_all_divisors(ntuple_monomial exp, VECTOR(Key) &result_k) const
+void MonomialLookupTableT<Key>::find_all_divisors(ntuple_monomial exp, VECTOR(Key) &result_k) const
 {
   if (mi == NULL) return;
 
@@ -161,7 +161,7 @@ void MonomialLookupTable<Key>::find_all_divisors(ntuple_monomial exp, VECTOR(Key
 }
 
 template <typename Key>
-void MonomialLookupTable<Key>::update_exponent_vector(const_varpower_monomial m)
+void MonomialLookupTableT<Key>::update_exponent_vector(const_varpower_monomial m)
 {
   int nvars = topvar() + 1;
   if (*m > 0 && m[1] >= nvars)
@@ -187,7 +187,7 @@ void MonomialLookupTable<Key>::update_exponent_vector(const_varpower_monomial m)
 }
 
 template <typename Key>
-void MonomialLookupTable<Key>::reset_exponent_vector(const_varpower_monomial m)
+void MonomialLookupTableT<Key>::reset_exponent_vector(const_varpower_monomial m)
 {
   int nparts = *m++;
   for (int i=nparts; i>0; i--, m+=2)
@@ -197,9 +197,9 @@ void MonomialLookupTable<Key>::reset_exponent_vector(const_varpower_monomial m)
 }
 
 template <typename Key>
-int MonomialLookupTable<Key>::search(const_varpower_monomial m, Key &b) const
+int MonomialLookupTableT<Key>::search(const_varpower_monomial m, Key &b) const
 {
-  MonomialLookupTable *me = const_cast<MonomialLookupTable *>(this);
+  MonomialLookupTableT *me = const_cast<MonomialLookupTableT *>(this);
   me->update_exponent_vector(m);
   int result = search_expvector(exp0, b);
   me->reset_exponent_vector(m);
@@ -207,7 +207,7 @@ int MonomialLookupTable<Key>::search(const_varpower_monomial m, Key &b) const
 }
 
 template <typename Key>
-mi_node<Key> *MonomialLookupTable<Key>::next(mi_node *p) const
+mi_node<Key> *MonomialLookupTableT<Key>::next(mi_node *p) const
 {
   while (p != NULL) 
     {
@@ -221,7 +221,7 @@ mi_node<Key> *MonomialLookupTable<Key>::next(mi_node *p) const
 }
 
 template <typename Key>
-mi_node<Key> *MonomialLookupTable<Key>::prev(mi_node *p) const
+mi_node<Key> *MonomialLookupTableT<Key>::prev(mi_node *p) const
 {
   while (p != NULL) 
     {
@@ -235,7 +235,7 @@ mi_node<Key> *MonomialLookupTable<Key>::prev(mi_node *p) const
 }
 
 template <typename Key>
-void MonomialLookupTable<Key>::insert1(mi_node *&top, const_varpower_monomial b, Key k)
+void MonomialLookupTableT<Key>::insert1(mi_node *&top, const_varpower_monomial b, Key k)
 {
   count++;
   mi_node **p = &top, *up = NULL;
@@ -308,7 +308,7 @@ void MonomialLookupTable<Key>::insert1(mi_node *&top, const_varpower_monomial b,
 }
 
 template <typename Key>
-void MonomialLookupTable<Key>::remove1(mi_node *p)
+void MonomialLookupTableT<Key>::remove1(mi_node *p)
 {
   assert(p != NULL);
   assert(p->tag == mi_node::leaf);
@@ -362,7 +362,7 @@ void MonomialLookupTable<Key>::remove1(mi_node *p)
 }
 
 template <typename Key>
-int MonomialLookupTable<Key>::remove(Key &result_k)
+int MonomialLookupTableT<Key>::remove(Key &result_k)
 {
   mi_node *p = reinterpret_cast<mi_node *>(next(mi));
   if (p == NULL) return 0;
@@ -372,7 +372,7 @@ int MonomialLookupTable<Key>::remove(Key &result_k)
 }
 
 template <typename Key>
-int MonomialLookupTable<Key>::insert(const_varpower_monomial m, Key k)
+int MonomialLookupTableT<Key>::insert(const_varpower_monomial m, Key k)
         // Insert the monomial 'm' with key 'k', if it
 	// is not already in the monomial ideal.  Return whether the
 	// monomial was actually inserted.  
@@ -391,7 +391,7 @@ static int nnodes = 0;
 static int ndepth = 0;
 
 template <typename Key>
-void MonomialLookupTable<Key>::do_node(mi_node *p, int indent, int disp) const
+void MonomialLookupTableT<Key>::do_node(mi_node *p, int indent, int disp) const
 {
   buffer o;
   int i;
@@ -417,7 +417,7 @@ void MonomialLookupTable<Key>::do_node(mi_node *p, int indent, int disp) const
 }
 
 template <typename Key>
-void MonomialLookupTable<Key>::do_tree(mi_node *p, int depth, int indent, int disp) const
+void MonomialLookupTableT<Key>::do_tree(mi_node *p, int depth, int indent, int disp) const
 {
   if (depth > ndepth) ndepth = depth;
   do_node(p, indent, disp);
@@ -431,8 +431,8 @@ void MonomialLookupTable<Key>::do_tree(mi_node *p, int depth, int indent, int di
 }
 
 template <typename Key>
-void MonomialLookupTable<Key>::debug_out(int disp) const
-     // Display MonomialLookupTable in tree-like form, collect statistics
+void MonomialLookupTableT<Key>::debug_out(int disp) const
+     // Display MonomialLookupTableT in tree-like form, collect statistics
 {
   nlists = 0;
   nnodes = 0;
@@ -448,7 +448,7 @@ void MonomialLookupTable<Key>::debug_out(int disp) const
 }
 
 template <typename Key>
-int MonomialLookupTable<Key>::debug_check(mi_node *p, mi_node *up) const
+int MonomialLookupTableT<Key>::debug_check(mi_node *p, mi_node *up) const
      // Returns the number of leaves at tree with root p.
      // Make sure that the list header is constructed ok, that the 
      // left/right pointers are ok on this level, that the
@@ -493,7 +493,7 @@ int MonomialLookupTable<Key>::debug_check(mi_node *p, mi_node *up) const
 }
 
 template <typename Key>
-void MonomialLookupTable<Key>::debug_check() const
+void MonomialLookupTableT<Key>::debug_check() const
 {
   if (count == 0) 
     {
@@ -505,9 +505,9 @@ void MonomialLookupTable<Key>::debug_check() const
 }
 
 template <typename Key>
-void MonomialLookupTable<Key>::text_out(buffer &o) const
+void MonomialLookupTableT<Key>::text_out(buffer &o) const
 {
-  o << "MonomialLookupTable (";
+  o << "MonomialLookupTableT (";
   o << count << " entries)\n";
   int i = 0;
   for (iterator j = this; j.valid(); j--)
@@ -520,7 +520,7 @@ void MonomialLookupTable<Key>::text_out(buffer &o) const
     }
 }
 
-template class MonomialLookupTable<int32_t>;
+template class MonomialLookupTableT<int32_t>;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

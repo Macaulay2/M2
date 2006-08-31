@@ -72,10 +72,8 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-template <typename CoeffRing>
 class F4GB : public our_new_delete
 {
-  INCLUDE_F4_TYPES;
   typedef MonomialHashTable<MonomialInfo> MonomialHash;
 
   // Basic required information
@@ -101,13 +99,13 @@ class F4GB : public our_new_delete
   gb_array gens;
   gb_array gb;
   MonomialLookupTable *lookup; // (monom,comp) --> index into gb
-  F4SPairSet<CoeffRing> *S;
+  F4SPairSet *S;
   
   // The matrix and its construction
   int next_col_to_process;
   coefficient_matrix *mat;
   MonomialHashTable<MonomialInfo> *H;
-  MemoryBlock<monomial_word> B;
+  MemoryBlock<monomial_word> *B;
   monomial_word *next_monom; // valid while creating the matrix
 
 private:
@@ -118,6 +116,7 @@ private:
 
   void make_matrix();
 
+    void reset_matrix();
     int new_column(packed_monomial m);
     int find_or_append_column(packed_monomial m);
     int mult_monomials(packed_monomial m, packed_monomial n);
@@ -148,6 +147,8 @@ public:
   
   void set_generators(gb_array &new_gens);
   // This grabs these elements, possibly by doing a swap
+
+  void new_generators(int lo, int hi);
 
   const gb_array &get_generators() const { return gens; }
   gb_array &get_generators() { return gens; }
