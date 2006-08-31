@@ -29,7 +29,7 @@ document {
      Key => flagLookup,
      Headline => "flag a symbol",
      TT "flagLookup x", " -- arranges for each subsequent reference to a
-     symbol x to be flagged with a warning message."
+     symbol ", TT "x", " to be flagged with a error message."
      }
 
 document {
