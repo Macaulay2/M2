@@ -400,6 +400,7 @@ lookup(token:Token,forcedef:bool):void := (
 	       token.entry = entry;
 	       if entry.flagLookup then (
 		    printErrorMessage(token,"flagged symbol encountered");
+		    HadError=true;
 		    );
 	       )
      	  else (
