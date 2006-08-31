@@ -191,6 +191,8 @@ void F4GB::process_s_pair(spair *p)
   }
 }
 
+template class QuickSorter<ColumnsSorter>;
+
 void F4GB::reorder_columns()
 {
   // Set up to sort the columns.
