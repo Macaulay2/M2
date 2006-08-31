@@ -1,0 +1,21 @@
+-*- M2 -*-
+
+If we do
+
+	help SimplicialComplexes
+
+in an installed Macaulay2 before the package called Macaulay2 is loaded,
+then it evaluates this string
+
+      new HashTable from {"linenum" => 327, Key => SimplicialComplex, symbol DocumentTag => new DocumentTag from {symbol SimplicialComplex, "SimplicialComplex", SimplicialComplexes,
+      "SimplicialComplexes"}, Description => (TT{"SimplicialComplex"}," -- the class of simplical complexes",PARA{},"Some support routines",UL{LI{TO{new DocumentTag from {symbol support,
+      "support", Macaulay2, "Macaulay2"}}, "(m) -- the support of the monomial m, as a list of integers"}}), "filename" => "../../../../Macaulay2/packages/SimplicialComplexes.m2"}
+
+which contains references to the symbol Macaulay2.  That symbol ends up in the
+User dictionary, too bad!
+
+This is a general problem with having the document tags refer to the package
+itself, rather than having just the string with the name of the package in it.
+
+We should be able to read the documentation of a package without loading all of
+the packages that its documentation refers to.
