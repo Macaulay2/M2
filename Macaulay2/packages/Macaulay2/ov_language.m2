@@ -92,6 +92,7 @@ document {
 	  p == p'
 	  m == m'
 	  M == M'
+	  removeFile f
      ///
      }
 document {

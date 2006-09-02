@@ -17,6 +17,7 @@ document {
 	  realpath q
 	  p << "hi there" << close
 	  realpath q
+	  removeFile q
      ///,
      SeeAlso => {readlink},
      Caveat => "Links going nowhere are not traversed, as the example shows."
