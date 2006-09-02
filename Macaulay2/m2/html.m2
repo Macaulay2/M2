@@ -1180,7 +1180,7 @@ showHtml = show Hypertext := x -> (
 	       x
 	       }} << endl << close;
      show new URL from { fix fn };
-     addEndFunction( () -> run ( "rm " | fn ) );
+     addEndFunction( () -> if fileExists fn then removeFile fn );
      )
 
 show TEX := x -> showTex x
