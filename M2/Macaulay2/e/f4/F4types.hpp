@@ -7,7 +7,7 @@
 #include "../engine.h"
 #include "../stop.hpp"
 #include <vector>
-#include "montable.hpp"
+#include "f4monlookup.hpp"
 
 #define VECTOR(T) std::vector< T, gc_allocator< T > >
 extern char system_interruptedFlag;
@@ -140,8 +140,31 @@ public:
   ~ColumnsSorter() {} 
 };
 
-typedef MonomialLookupTableT<int32_t> MonomialLookupTable;
+typedef F4MonomialLookupTableT<int32_t> MonomialLookupTable;
 
+template <typename Key>
+class F4MonomialLookupTable : public our_new_delete {
+public:
+  F4MonomialLookupTable();
+  ~F4MonomialLookupTable();
+
+  void insert_minimal(const_packed_monomial m, Key k);
+        // It is assumed that 'm' is not already in the monomial ideal.
+
+  bool insert(const_packed_monomial m, Key &k);
+        // If m is already divisible by an element, return false, and set k
+        // to be the key of that element.
+        // If m is not divisible, then insert (m,k), and return true.
+  
+  int search(const_packed_monomial m, Key &result_k) const;
+        // Search.  Return whether a monomial which divides 'm' is
+	// found.  If so, return the key.
+
+  void find_all_divisors(const_packed_monomial m,
+                         VECTOR(Key) &b) const;
+        // Search. Return a list of all elements which divide 'exp'.
+  
+};
 template <typename MonInfo> class MonomialHashTable;
 
 #endif

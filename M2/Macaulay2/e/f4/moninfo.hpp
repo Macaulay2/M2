@@ -87,7 +87,7 @@ public:
     return true;
   }
 
-  void to_varpower_monomial(const_packed_monomial m, varpower_monomial result) {
+  void to_varpower_monomial(const_packed_monomial m, varpower_monomial result) const {
     // 'result' must have enough space allocated for this
     varpower_word *t = result+1;
     for (int i=nvars+1; i>1; i--)

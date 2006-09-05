@@ -200,7 +200,7 @@ ring_elem CC::from_int(mpz_ptr n) const
   return CC::from_double(a);
 }
 
-bool CC::promote(const Ring *, const ring_elem, ring_elem &) const
+bool CC::promote(const Ring *S, const ring_elem f, ring_elem &result) const
 {
   return false;
 }
