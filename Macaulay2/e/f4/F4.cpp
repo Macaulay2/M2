@@ -154,7 +154,7 @@ void F4GB::process_column(int c)
   if (ce.gb_divisor >= -1)
     return;
   int32_t which;
-  bool found = lookup->search(ce.monom, which);
+  bool found = lookup->find_one_divisor_packed(M, ce.monom, which);
   if (found)
     {
       packed_monomial n = next_monom;
@@ -339,9 +339,11 @@ void F4GB::insert_gb_element(row_elem &r)
   int which = gb.size();
   gb.push_back(result);
 
-  // now insert the lead monomial into the lookup table                                
-  lookup->insert(result->f.monom_space, which);
-
+  // now insert the lead monomial into the lookup table
+  varpower_monomial vp = newarray(varpower_word, 2 * M->n_vars() + 1);
+  M->to_varpower_monomial(result->f.monom_space, vp);
+  lookup->insert_minimal_vp(M->get_component(result->f.monom_space), vp, which);
+  deleteitem(vp);
   // now go forth and find those new pairs
   S->find_new_pairs(gb, true);
 }

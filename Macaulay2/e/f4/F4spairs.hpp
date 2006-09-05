@@ -104,7 +104,7 @@ class SPairConstructor : public our_new_delete
   bool remove_disjoints;
 
  public:
-  static int make(MemoryBlock<monomial_word> *H0,
+  static int make(MonomialInfo *MI,
 		  F4SPairSet *S0,
 		  const gb_array &gb,
 		  bool remove_disjoints);

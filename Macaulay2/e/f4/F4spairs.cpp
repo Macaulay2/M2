@@ -18,24 +18,12 @@ F4SPairSet::~F4SPairSet()
   // TO BE WRITTEN
 }
 
-spair *F4SPairSet::get_next_pair()
-{
-  return 0;
-}
-
-int F4SPairSet::find_new_pairs(const gb_array &gb,
-			       bool remove_disjoints)
-  // returns the number of new pairs found
-{
-  return 0;
-}
-
 void F4SPairSet::insert_generator(int deg, packed_monomial lcm, int col)
 {
+  spair *p = make_spair_gen(deg, lcm, col);
+  insert(p);
 }
 
-#if 0
-// This all needs to be done .... MES 8/31/06
 spair *F4SPairSet::make_spair(int deg, 
 			      packed_monomial lcm, 
 			      packed_monomial first_monom,
@@ -160,8 +148,8 @@ int F4SPairSet::find_new_pairs(const gb_array &gb,
   // returns the number of new pairs found
 {
   remove_unneeded_pairs();
-  //  int len = SPairConstructor<gb_array>::make(H,this,gb,remove_disjoints);
-  //  return len;
+  //  int len = SPairConstructor::make(MI,this,gb,remove_disjoints);
+  //return len;
   return 0;
 }
 
@@ -174,11 +162,11 @@ void F4SPairSet::display_spair(spair *p)
 	      p->s.spair.first_gb_num,
 	      p->s.spair.second_gb_num,
 	      p->deg);
-      monomial_elem_text_out(stderr,p->lcm);
+      MI->show(p->lcm);
       fprintf(stderr," first ");
-      monomial_elem_text_out(stderr,p->s.spair.first_monom);
+      MI->show(p->s.spair.first_monom);
       fprintf(stderr," second ");
-      monomial_elem_text_out(stderr,p->s.spair.second_monom);
+      MI->show(p->s.spair.second_monom);
       fprintf(stderr,"\n");
     }
   else
@@ -207,7 +195,7 @@ void F4SPairSet::display()
 ////////////////////////////////
 // Construction of new spairs //
 ////////////////////////////////
-
+#if 0
 SPairConstructor::pre_spair *
 SPairConstructor::create_pre_spair(int i)
 {
@@ -361,8 +349,6 @@ int SPairConstructor::make(MonomialSet* H0,
   return C.construct_pairs();
 }
 #endif
-
-
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 //  End:

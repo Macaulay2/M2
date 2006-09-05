@@ -171,6 +171,16 @@ ring_elem Ring::from_double(double a) const
   return result;
 }
 
+//ring_elem Ring::number_conversion(Ring *S, ring_elem fS)
+//{
+//  //     ZZ  QQ RR CC RRR CCC
+//  // ZZ  id
+//  // QQ  x
+//  // RR  x   x
+//  // CC  x   x  x  id  x
+//  // RRR x   x  x  x   id
+//  // CCC x   x  x  x   x   id
+//}
 
 //ring_elem Ring::from_rational(mpq_ptr q) const
 //{
