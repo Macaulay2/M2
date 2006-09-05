@@ -16,7 +16,7 @@ typedef const varpower_word * const_varpower_monomial;
   // Operations are defined in VarpowerMonomials
 
 class varpower_monomials {
-
+public:
   static long length(const_varpower_monomial m) { return ((*(m))*2+1); }
 
   static varpower_word simple_degree(const_varpower_monomial m);

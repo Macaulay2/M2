@@ -503,141 +503,41 @@ void F4MonomialLookupTableT<Key>::text_out(buffer &o) const
     }
 }
 
-#if 0
-// The following 2 routines should be present, but not as constructors.
-F4MonomialLookupTableT::F4MonomialLookupTableT(VECTOR(tagged_monomial *) &elems, 
-					 VECTOR(tagged_monomial *) &rejects)
-  : mi(0), count(0)
+void
+minimalize_varpower_monomials(
+			      const VECTOR(varpower_monomial) &elems,
+			      VECTOR(int) &result_minimals,
+			      stash *mi_stash)
 {
-  size_of_exp = 10;
-  exp0 = newarray(int,size_of_exp);
-  VECTOR( VECTOR(tagged_monomial *) *) bins;
-  tagged_monomial *b1;
-  for (VECTOR(tagged_monomial *)::iterator j = elems.begin(); j != elems.end(); j++)
+  VECTOR( VECTOR(int) *) bins;
+  for (int j=0; j<elems.size(); j++)
     {
-      tagged_monomial *b = *j;
-      int d = monomial_simple_degree(b->monom);
+      varpower_word d = varpower_monomials::simple_degree(elems[j]);
       if (d >= bins.size())
 	for (int i=bins.size(); i<=d; i++)
 	  bins.push_back(NULL);
       if (bins[d] == NULL)
-	bins[d] = new VECTOR(tagged_monomial *);
-      bins[d]->push_back(b);
+	bins[d] = new VECTOR(int);
+      bins[d]->push_back(j);
     }
+
+  // Now insert these into a lookup table
+  F4MonomialLookupTableT<int> M(mi_stash);
   for (int i=0; i < bins.size(); i++)
     if (bins[i] != NULL)
       {
-	for (vector_tagged_monomials::iterator j = bins[i]->begin(); j != bins[i]->end(); j++)
+	for (VECTOR(int)::iterator j = bins[i]->begin(); j != bins[i]->end(); j++)
 	  {
-	    tagged_monomial *b = *j;
-	    monomial mon = b->monom;
-	    if (search(mon, b1))
-	      rejects.push_back(b);
-	    else
-	      insert_minimal(b);
+	    int k;
+	    if (!M.find_one_divisor_vp(0, elems[*j], k))
+	      {
+		M.insert_minimal_vp(0, elems[*j], 0);
+		result_minimals.push_back(*j);
+	      }
 	  }
 	deleteitem(bins[i]);
       }
 }
-
-F4MonomialLookupTableT::F4MonomialLookupTableT(VECTOR(tagged_monomial *) &elems)
-  : mi(0), count(0)
-{
-  size_of_exp = 10;
-  exp0 = newarray(int,size_of_exp);
-  VECTOR( VECTOR(tagged_monomial *) *) bins;
-  for (VECTOR(tagged_monomial *)::iterator j = elems.begin(); j != elems.end(); j++)
-    {
-      tagged_monomial *b = *j;
-      int d = monomial_simple_degree(b->monom);
-      if (d >= bins.size())
-	for (int i=bins.size(); i<=d; i++)
-	  bins.push_back(NULL);
-      if (bins[d] == NULL)
-	bins[d] = new VECTOR(tagged_monomial *);
-      bins[d]->push_back(b);
-    }
-  for (int i=0; i < bins.size(); i++)
-    if (bins[i] != NULL)
-      {
-	for (vector_tagged_monomials::iterator j = bins[i]->begin(); j != bins[i]->end(); j++)
-	  {
-	    tagged_monomial *b = *j;
-	    insert(b);
-	  }
-	deleteitem(bins[i]);
-      }
-}
-#endif
-
-#if 0
-// Remove this code
-template <typename Key>
-void F4MonomialLookupTableT<Key>::remove1(mi_node *p)
-{
-  assert(p != NULL);
-  assert(p->tag == mi_node::leaf);
-  count--;
-
-  for(;p != NULL;)
-    {
-      p->left->right = p->right;
-      p->right->left = p->left;
-      mi_node *q = p->header;
-      p->left = p->right = NULL;
-      deleteitem(p);
-
-      if (q->right == q->header)  // only the header is left, so delete it
-	{
-	  p = q->down();
-	  q->down() = NULL;
-	  if (p != NULL) p->down() = NULL;
-	  deleteitem(q);
-	  continue;
-	}
-
-      if (q->left != q->right) return;
-
-      if (q->left->exp > 0) return;
-
-      mi_node *dad = q->down();
-      if (q->left->tag == mi_node::leaf)
-	{
-	  // set parent of q to be a leaf with key of q->left
-	  // since this is a leaf, dad should be non null
-	  assert(dad != NULL);
-	  dad->tag = mi_node::leaf;
-	  dad->key() = q->left->key();
-	}
-      else
-	{
-	  // set parent of q to be node pointing to q->left->down
-	  q->left->down()->down() = dad;
-	  if (dad != NULL)  
-	    dad->down() = q->left->down();
-	  else
-	    mi = q->left->down();
-	  q->left->down() = NULL;
-	}
-      q->down() = NULL;
-      deleteitem(q);		// Deletes both nodes q, q->left.
-      return;
-    }
-  if (p == NULL) mi = NULL;
-}
-
-
-template <typename Key>
-int F4MonomialLookupTableT<Key>::remove(Key &result_k)
-{
-  mi_node *p = reinterpret_cast<mi_node *>(next(mi));
-  if (p == NULL) return 0;
-  result_k = p->key();
-  remove1(p);
-  return 1;
-}
-#endif
-
 
 template class F4MonomialLookupTableT<int32_t>;
 
