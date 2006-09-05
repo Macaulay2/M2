@@ -70,10 +70,18 @@ public:
   F4MonomialLookupTableT(stash *mi_stash=0);
   ~F4MonomialLookupTableT();
 
-  void insert_minimal_packed(const MonomialInfo *M, 
-		      const_packed_monomial m, 
-		      Key k);
-        // It is assumed that 'm' is not already in the monomial ideal.
+  //  // Should we write these two routines?
+  //  void insert_minimal_packed(const MonomialInfo *M, 
+  //		      const_packed_monomial m, 
+  //		      Key k);
+  //        // It is assumed that 'm' is not already in the monomial ideal.
+  //
+  //  bool insert_packed(const MonomialInfo *M, 
+  //	      const_packed_monomial m, 
+  //	      Key &k);
+  //        // If m is already divisible by an element, return false, and set k
+  //        // to be the key of that element.
+  //        // If m is not divisible, then insert (m,k), and return true.
 
   void insert_minimal_vp(long comp,
 		     const_varpower_monomial m, 
@@ -82,13 +90,6 @@ public:
   bool insert_vp(long comp,
 	     const_varpower_monomial m, 
 	     Key &k);
-
-  bool insert_packed(const MonomialInfo *M, 
-	      const_packed_monomial m, 
-	      Key &k);
-        // If m is already divisible by an element, return false, and set k
-        // to be the key of that element.
-        // If m is not divisible, then insert (m,k), and return true.
 
   bool find_one_divisor_vp(long comp,
 			const_varpower_monomial m, 
@@ -114,7 +115,6 @@ public:
 
   int length() const { return count; }
 private:
-  // Let's dump these?
   mi_node *next(mi_node *p) const;
   mi_node *prev(mi_node *p) const;
 
@@ -122,33 +122,16 @@ private:
   void do_tree(mi_node *p, int depth, int indent, int disp) const;
   int debug_check(mi_node *p, mi_node *up) const;
 
-
   void debug_out(int disp=1) const;
   void debug_check() const;
-  // Informational
-
-#if 0
-  class iterator;
-  friend class iterator;
-
-  class iterator {
-    mi_node *p;
-    const F4MonomialLookupTableT *T;
-  public:
-    iterator(const F4MonomialLookupTableT *T0) : p(T0->mi), T(T0) {}
-    iterator(const F4MonomialLookupTableT *T0, mi_node *p0) : p(p0), T(T0) {}
-    void operator++() { T->next(p); }
-    void operator--() { T->prev(p); }
-    void operator++(int) { T->next(p); }
-    void operator--(int) { T->prev(p); }
-    bool valid() { return p != 0; }
-    Key operator*() { return p->key(); }
-  };
-
-  iterator first() const { return iterator(this, next(mi)); }
-  iterator last() const { return iterator(this, prev(mi)); }
-#endif  
 };
+
+void
+minimalize_varpower_monomials(
+			      const VECTOR(varpower_monomial) &elems,
+			      VECTOR(int) &result_minimals,
+			      stash *mi_stash=0);
+
 
 #endif
 
