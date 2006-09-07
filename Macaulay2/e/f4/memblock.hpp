@@ -23,11 +23,14 @@ class MemoryBlock : public our_new_delete
   MemoryBlock();
   ~MemoryBlock();
 
-  T * reserve(int len); // returns space for len ints
+  T * reserve(int len); // returns space for len T's.
   void intern(int len); // increments 
+  T * allocate(int len=1); // reserve and intern
 
   int n_slabs() const;
 };
+
+#include "memblock.cpp"
 
 #endif
 

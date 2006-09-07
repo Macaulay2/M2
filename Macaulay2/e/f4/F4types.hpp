@@ -57,6 +57,14 @@ struct poly : public our_new_delete {
   monomial_word *monom_space; // This is all of the monomials written contiguously
 };
 
+struct pre_spair : public our_new_delete {
+  enum spair_type type;
+  int deg1; // simple degree of quot
+  varpower_monomial quot;
+  int first_gb_num;
+  bool are_disjoint;
+};
+
 struct spair : public our_new_delete {
   spair * next;
   spair_type type;
