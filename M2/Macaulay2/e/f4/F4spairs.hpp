@@ -7,19 +7,6 @@
 #include "moninfo.hpp"
 #include "F4types.hpp"
 
-#if 0
-template <typename MonInfo>
-class F4SPairs : public our_new_delete
-{
-  packed_monomial get_lcm(spair *s) const;
-  packed_monomial get_first_monomial(spair *s) const;
-  packed_monomial get_second_monomial(spair *s) const;
-  int get_first(spair *s) const;
-  int get_second(spair *s) const;
-  enum spair_type get_type(spair *s) const;
-  int get_degree(spair *s) const;
-};
-#endif
 
 class F4SPairSet : public our_new_delete
 {
@@ -46,6 +33,13 @@ public:
   void insert_generator(int deg, packed_monomial lcm, int column);
   // The lcm is a pointer to the space in the polynomial itself
 
+  void insert_spair(int deg, 
+		    packed_monomial lcm, 
+		    packed_monomial first_monom,
+		    int first_gb_num,
+		    packed_monomial second_monom,
+		    int second_gb_num);
+
   int find_new_pairs(const gb_array &gb,
 		     bool remove_disjoints);
   // returns the number of new pairs found, using the last element on this list
@@ -60,55 +54,63 @@ public:
   // get the next pair in this degree (the one 'prepare_next_degree' set up')
   // returns 0 if at the end
 
-  void insert(spair *p);  
-
   void display_spair(spair *p);
   // A debugging routine which displays an spair
 
   void display();
   // A debugging routine which displays the spairs in the set
  private:
-  MonomialInfo *MI;
+  MemoryBlock<monomial_word> *P; // for all of the packed monomials in the spairs
+                                 // and also for the spair nodes themselves.
+  MonomialInfo *M;
   spair *heap; // list of pairs
   spair *this_set;
+  spair *free_list; // As long as monomials are fixed length, the corresponding
+                    // packed_monomials stay with each spair.
 };
 
-class SPairConstructor : public our_new_delete
+class F4SPairConstructor : public our_new_delete
 {
- public:
-  struct pre_spair : public our_new_delete {
-    pre_spair * next;
-    int deg1; // simple degree of quot
-    packed_monomial quot;
-    int deg2; // simple degree of lead term of 'first_gb_num'
-    int first_gb_num;
-  };
-
  private:
   void send_spair(pre_spair *p);
 
+  void find_quot(packed_monomial a,
+		 packed_monomial b,
+		 varpower_monomial result,
+		 int & deg,
+		 bool & are_disjoint);
+
   pre_spair *create_pre_spair(int i);
 
-  SPairConstructor(MemoryBlock<monomial_word> *B0,
-		   F4SPairSet *S0,
-		   const gb_array &gb,
-		   bool remove_disjoints);
+  F4SPairConstructor(MonomialInfo *MI,
+		     F4SPairSet *S0,
+		     const gb_array &gb,
+		     bool remove_disjoints);
+
+  void insert_pre_spair(VECTOR(VECTOR(pre_spair *) *) &bins, 
+			pre_spair *p);
 
   int construct_pairs();
 
  private:
-  MemoryBlock<monomial_word> *B;
+  MonomialInfo *M;
   F4SPairSet *S;
-
   const gb_array &gb;
   bool remove_disjoints;
 
+  MemoryBlock<pre_spair> P;
+  MemoryBlock<varpower_word> B;
+  int max_varpower_size;
+  
+  gbelem *me;
+  int me_component;
  public:
   static int make(MonomialInfo *MI,
 		  F4SPairSet *S0,
 		  const gb_array &gb,
 		  bool remove_disjoints);
 };
+
 #endif
 
 // Local Variables:

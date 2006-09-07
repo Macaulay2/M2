@@ -483,10 +483,9 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
 
 
 #include "moninfo.hpp"
-#include "memblock.cpp"
 #include "../coeffrings.hpp"
 template class MemoryBlock<monomial_word>;
-
+template class MemoryBlock<pre_spair>;
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

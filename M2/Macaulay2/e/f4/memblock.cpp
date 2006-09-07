@@ -2,7 +2,7 @@
 // MemoryBlock //
 /////////////////
 
-#include "memblock.hpp"
+// Included by memblock.hpp
 
 template<typename T, long int NSLAB>
 MemoryBlock<T,NSLAB>::MemoryBlock()
@@ -51,6 +51,14 @@ template<typename T, long int NSLAB>
 void MemoryBlock<T,NSLAB>::intern(int len)
 {
   next_free += len;
+}
+
+template<typename T, long int NSLAB>
+T * MemoryBlock<T,NSLAB>::allocate(int len)
+{
+  T * result = reserve(len);
+  next_free += len;
+  return result;
 }
 
 template<typename T, long int NSLAB>
