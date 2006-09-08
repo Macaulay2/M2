@@ -252,7 +252,7 @@ void F4SPairConstructor::send_spair(pre_spair *p)
   int deg = p->deg1 + gb[i]->deg;
 
   packed_monomial first = B.reserve(M->max_monomial_size());
-  //  M->from_varpower_monomial(p->quot, first);
+  M->from_varpower_monomial(p->quot, me_component, first);
   B.intern(M->monomial_size(first));
 
   packed_monomial lcm = B.reserve(M->max_monomial_size());
