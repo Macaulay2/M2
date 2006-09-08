@@ -33,6 +33,7 @@ F4GB::F4GB(const Gausser *KK0,
     H(0)
 {
   lookup = new MonomialLookupTable;
+  S = new F4SPairSet(M, gb);
   // set status
 }
 
@@ -433,6 +434,21 @@ enum ComputationStatusCode F4GB::computation_is_complete(StopConditions &stop_)
   return COMP_COMPUTING;
 }
 
+void F4GB::test_spair_code()
+{
+  // This starts out with taking each generator and placing it into the
+  // gb matrix, and then calling find_new_pairs after each one.
+  // It displays the list of spairs after each generator.
+
+  gb.push_back(gens[0]);
+  for (int i=1; i<gens.size(); i++)
+    {
+      gb.push_back(gens[i]);
+      S->find_new_pairs(true);
+      fprintf(stderr, "---Just inserted element %d---\n", i);
+      S->display();
+    }
+}
 
 enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
 {
@@ -443,6 +459,8 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
   clock_gauss = 0;
   clock_make_matrix = 0;
   int npairs;
+
+  test_spair_code();
 
   return COMP_DONE;
   enum ComputationStatusCode is_done = COMP_COMPUTING;
