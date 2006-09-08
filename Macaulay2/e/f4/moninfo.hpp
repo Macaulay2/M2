@@ -88,7 +88,7 @@ public:
   }
 
   void to_varpower_monomial(const_packed_monomial m, varpower_monomial result) const {
-    // 'result' must have enough space allocated for this
+    // 'result' must have enough space allocated
     varpower_word *t = result+1;
     for (int i=nvars+1; i>1; i--)
       if (m[i] > 0) 
@@ -97,6 +97,20 @@ public:
 	  *t++ = m[i];
 	}
     *result = t-result+1;
+  }
+
+  void from_varpower_monomial(const_varpower_monomial m, long comp, packed_monomial result) const {
+    // 'result' must have enough space allocated
+    result[0] = 0;
+    result[1] = comp;
+    for (int i=0; i<nvars; i++)
+      {
+	result[2+i] = 0;
+      }
+    for (index_varpower_monomial j = m; j.valid(); ++j)
+      {
+	result[2 + j.var()] = j.exponent();
+      }
   }
 
   bool is_equal(const_packed_monomial m, const_packed_monomial n) const {
@@ -153,6 +167,38 @@ public:
     if (cmp < 0) return 1;
     if (cmp > 0) return -1;
     return 0;
+  }
+
+  bool unnecessary(const_packed_monomial m, 
+		   const_packed_monomial p1,
+		   const_packed_monomial p2,
+		   const_packed_monomial lcm)
+    // Returns true if the corresponding pair could be removed
+    // This is essentially the Buchberger-Moeller criterion
+    // Assumptions: lcm(p1,p2) = lcm.
+    // Here is the criterion:
+    //   (a) if component(lcm) != component(m) return false
+    //   (b) if m does not divide lcm, return false
+    //   (c) need that (A) lcm(p1,m) != lcm and that (B) lcm(p2,m) != lcm
+    //       (in these two cases, we will have already removed one of the other
+    //        two pairs: (p1,m), (p2,m).  Note that in any case, 
+    //        if (b) holds, then lcm(p1,m) divides lcm, same with lcm(p2,m).
+    //        if A and B then return true
+  {
+    bool A=false;
+    bool B=false;
+    m += 2;
+    p1 += 2;
+    p2 += 2;
+    lcm += 2;
+    for (int i=0; i<nvars; i++)
+      {
+	if (m[i] > lcm[i]) return false;
+	if (m[i] == lcm[i]) continue;
+	if (!A && p1[i] < lcm[i]) {A = true; continue;}
+	if (!B && p2[i] < lcm[i]) {B = true; }
+      }
+    return (A && B);
   }
 };
 #endif

@@ -40,6 +40,9 @@ public:
 		    packed_monomial second_monom,
 		    int second_gb_num);
 
+  void free_spair(spair *p);
+  // places this p onto the freelist... 
+
   int find_new_pairs(const gb_array &gb,
 		     bool remove_disjoints);
   // returns the number of new pairs found, using the last element on this list
@@ -60,13 +63,15 @@ public:
   void display();
   // A debugging routine which displays the spairs in the set
  private:
-  MemoryBlock<monomial_word> *P; // for all of the packed monomials in the spairs
-                                 // and also for the spair nodes themselves.
+  MemoryBlock<spair> SP;
+  MemoryBlock<monomial_word> P; // for all of the packed monomials in the spairs
+
   MonomialInfo *M;
   spair *heap; // list of pairs
   spair *this_set;
-  spair *free_list; // As long as monomials are fixed length, the corresponding
+  spair *spair_free_list; // As long as monomials are fixed length, the corresponding
                     // packed_monomials stay with each spair.
+  spair *gen_free_list;
 };
 
 class F4SPairConstructor : public our_new_delete
