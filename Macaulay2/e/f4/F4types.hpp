@@ -139,6 +139,27 @@ public:
   ~ColumnsSorter() {} 
 };
 
+class PreSPairSorter
+{
+public:
+  typedef pre_spair * value;
+private:
+  long ncmps;
+public:
+  int compare(value a, value b)
+  {
+    ncmps ++;
+    return varpower_monomials::compare(a->quot, b->quot);
+  }
+
+  PreSPairSorter()
+    : ncmps(0) {}
+
+  long ncomparisons() const { return ncmps; }
+  
+  ~PreSPairSorter() {} 
+};
+
 typedef F4MonomialLookupTableT<int32_t> MonomialLookupTable;
 
 template <typename Key>

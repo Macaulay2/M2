@@ -20,28 +20,24 @@ private:
 
   spair *make_spair_gen(int deg, packed_monomial lcm, int column);
 
-  bool pair_not_needed(spair *p, gbelem *m, const gb_array &gb);
+  bool pair_not_needed(spair *p, gbelem *m);
 
-  int remove_unneeded_pairs(const gb_array &gb);
+  int remove_unneeded_pairs();
   // returns the number of pairs removed, based on the element gb[gb.size()-1]
 
 public:
-  F4SPairSet(MonomialInfo *MI0);
+  F4SPairSet(MonomialInfo *MI0, const gb_array &gb0);
 
   ~F4SPairSet();
 
   void insert_generator(int deg, packed_monomial lcm, int column);
   // The lcm is a pointer to the space in the polynomial itself
 
-  void insert_spair(int deg, 
-		    packed_monomial lcm, 
-		    int i,
-		    int j);
+  void insert_spair(pre_spair *p, int me);
 
   void delete_spair(spair *p);
 
-  int find_new_pairs(const gb_array &gb,
-		     bool remove_disjoints);
+  int find_new_pairs(bool remove_disjoints);
   // returns the number of new pairs found, using the last element on this list
 
   int prepare_next_degree(int max, int &result_number);
@@ -60,9 +56,10 @@ public:
   void display();
   // A debugging routine which displays the spairs in the set
  private:
-  MemoryBlock<monomial_word> P; // for all of the packed monomials in the spairs
+  MemoryBlock<monomial_word> B; // for all of the packed monomials in the spairs
 
   MonomialInfo *M;
+  const gb_array &gb;
   spair *heap; // list of pairs
   spair *this_set;
   stash *spair_stash;
@@ -72,14 +69,6 @@ public:
 class F4SPairConstructor : public our_new_delete
 {
  private:
-  void send_spair(pre_spair *p);
-
-  void find_quot(packed_monomial a,
-		 packed_monomial b,
-		 varpower_monomial result,
-		 int & deg,
-		 bool & are_disjoint);
-
   pre_spair *create_pre_spair(int i);
 
   F4SPairConstructor(MonomialInfo *MI,

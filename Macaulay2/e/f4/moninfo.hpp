@@ -200,6 +200,30 @@ public:
       }
     return (A && B);
   }
+
+  void quotient_as_vp(const_packed_monomial a,
+		      const_packed_monomial b,
+		      varpower_monomial result,
+		      int &deg, 
+		      bool &are_disjoint)
+  {
+    deg = 0;
+    are_disjoint = true;
+    a += 2;
+    b += 2;
+    varpower_word *r = result+1;
+    for (int i=0; i<nvars; i++)
+      {
+	long c = a[i] - b[i];
+	if (c > 0)
+	  {
+	    *r++ = i;
+	    *r++ = c;
+	    result[0]++;
+	  }
+      }
+  }
+
 };
 #endif
 
