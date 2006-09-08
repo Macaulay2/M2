@@ -69,8 +69,8 @@ void QuickSorter<Sorter>::sort(long lo, long hi)
 template<typename Sorter>
 void QuickSorter<Sorter>::sort2(long begin, long end) {
    /*** Use of static here will reduce memory footprint, but will make it thread-unsafe ***/
-   static long pivot;
-   static long t;     /* temporary variable for swap */
+   static value pivot;
+   static value t;     /* temporary variable for swap */
    if (end > begin) {
       long l = begin + 1;
       long r = end;

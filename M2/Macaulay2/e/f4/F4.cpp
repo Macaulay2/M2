@@ -354,7 +354,7 @@ void F4GB::insert_gb_element(row_elem &r)
   lookup->insert_minimal_vp(M->get_component(result->f.monom_space), vp, which);
   deleteitem(vp);
   // now go forth and find those new pairs
-  S->find_new_pairs(gb, true);
+  S->find_new_pairs(true);
 }
 
 

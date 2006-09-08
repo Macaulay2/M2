@@ -1,13 +1,16 @@
 // Copyright 2005 Michael E. Stillman
 
 #include "F4spairs.hpp"
+#include "monsort.hpp"
 
-F4SPairSet::F4SPairSet(MonomialInfo *M0)
+F4SPairSet::F4SPairSet(MonomialInfo *M0, const gb_array &gb0)
   : M(M0),
+    gb(gb0),
     heap(0),
     this_set(0)
 {
   spair_stash = new stash("spairs",sizeof(spair));
+  gen_stash = new stash("generators",sizeof(spair));
 }
 
 F4SPairSet::~F4SPairSet()
@@ -34,14 +37,21 @@ spair *F4SPairSet::make_spair(int deg,
   return result;
 }
 
-void F4SPairSet::insert_spair(int deg, 
-			      packed_monomial lcm, 
-			      int i,
-			      int j)
+void F4SPairSet::insert_spair(pre_spair *p, int me)
 {
-  spair *p = make_spair(deg, lcm, i, j);
-  p->next = heap;
-  heap = p;
+  int j = p->first_gb_num;
+  int deg = p->deg1 + gb[me]->deg;
+  int me_component = M->get_component(gb[me]->f.monom_space);
+
+  packed_monomial lcm = B.reserve(M->max_monomial_size());
+  packed_monomial first = B.reserve(M->max_monomial_size());
+  M->from_varpower_monomial(p->quot, me_component, first);
+  M->unchecked_mult(first, gb[j]->f.monom_space, lcm);
+  B.intern(M->monomial_size(lcm));
+
+  spair *result = make_spair(deg, lcm, me, j);
+  result->next = heap;
+  heap = result;
 }
 
 void F4SPairSet::delete_spair(spair *p)
@@ -70,7 +80,7 @@ void F4SPairSet::insert_generator(int deg, packed_monomial lcm, int col)
   heap = p;
 }
 
-bool F4SPairSet::pair_not_needed(spair *p, gbelem *m, const gb_array &gb)
+bool F4SPairSet::pair_not_needed(spair *p, gbelem *m)
 {
   if (p->type != F4_SPAIR_SPAIR && p->type != F4_SPAIR_RING) return false;
   return M->unnecessary(m->f.monom_space, 
@@ -79,7 +89,7 @@ bool F4SPairSet::pair_not_needed(spair *p, gbelem *m, const gb_array &gb)
 			p->lcm);
 }
 
-int F4SPairSet::remove_unneeded_pairs(const gb_array &gb)
+int F4SPairSet::remove_unneeded_pairs()
 {
   // Loop through every spair, determine if it can be jettisoned
   // and do so.  Return the number removed.
@@ -92,7 +102,7 @@ int F4SPairSet::remove_unneeded_pairs(const gb_array &gb)
 
   head.next = heap;
   while (p->next != 0)
-    if (pair_not_needed(p->next, m, gb))
+    if (pair_not_needed(p->next, m))
       {
 	nremoved++;
 	spair *tmp = p->next;
@@ -175,11 +185,10 @@ spair *F4SPairSet::get_next_pair()
   return result;
 }
 
-int F4SPairSet::find_new_pairs(const gb_array &gb,
-			       bool remove_disjoints)
+int F4SPairSet::find_new_pairs(bool remove_disjoints)
   // returns the number of new pairs found
 {
-  remove_unneeded_pairs(gb);
+  remove_unneeded_pairs();
 
   // Steps:
   //  1. Create an array of varpower_monomial's, which are
@@ -237,14 +246,6 @@ void F4SPairSet::display()
 // Construction of new spairs //
 ////////////////////////////////
 
-void F4SPairConstructor::find_quot(packed_monomial a,
-				   packed_monomial b,
-				   varpower_monomial result,
-				   int & deg,
-				   bool & are_disjoint)
-{
-}
-
 pre_spair *
 F4SPairConstructor::create_pre_spair(int i)
 {
@@ -255,28 +256,13 @@ F4SPairConstructor::create_pre_spair(int i)
   result->quot = B.reserve(max_varpower_size);
   result->first_gb_num = i;
   result->type = F4_SPAIR_SPAIR;
-  find_quot(gb[i]->f.monom_space, 
-	    gb[gb.size()-1]->f.monom_space, 
-	    result->quot, 
-	    result->deg1, 
-	    result->are_disjoint);
+  M->quotient_as_vp(gb[i]->f.monom_space, 
+	       gb[gb.size()-1]->f.monom_space, 
+	       result->quot, 
+	       result->deg1, 
+	       result->are_disjoint);
   B.intern(varpower_monomials::length(result->quot));
   return result;
-}
-
-void F4SPairConstructor::send_spair(pre_spair *p)
-{
-  int i = gb.size()-1;
-  int j = p->first_gb_num;
-  int deg = p->deg1 + gb[i]->deg;
-
-  packed_monomial lcm = B.reserve(M->max_monomial_size());
-  packed_monomial first = B.reserve(M->max_monomial_size());
-  M->from_varpower_monomial(p->quot, me_component, first);
-  M->unchecked_mult(first, gb[j]->f.monom_space, lcm);
-  B.intern(M->monomial_size(lcm));
-
-  S->insert_spair(deg, lcm, i, j);
 }
 
 F4SPairConstructor::F4SPairConstructor(MonomialInfo *M0,
@@ -304,6 +290,8 @@ void F4SPairConstructor::insert_pre_spair(VECTOR(VECTOR(pre_spair *) *) &bins, p
   bins[d]->push_back(p);
 }
 
+template class QuickSorter<PreSPairSorter>;
+
 int F4SPairConstructor::construct_pairs()
 {
   if (gb.size() == 0) return 0; // NOT VALID if quotient ring.
@@ -322,21 +310,17 @@ int F4SPairConstructor::construct_pairs()
       insert_pre_spair(bins, p);
     }
 
-  /////////////////////////////////////////////////////
-  // Sort these so that ones of lowest degree are first, all ones with the
-  // same quot monomial come together, and any disjoint ones come first.
-  /////////////////////////////////////////////////////
-  //  sort(new_set.begin(), new_set.end(), pre_spair_sorter<gb_array>());
-
   ////////////////////////////
   // Now minimalize the set //
   ////////////////////////////
   MonomialLookupTable *montab = new MonomialLookupTable;
 
+  PreSPairSorter C;
   int n_new_pairs = 0;
   for (int i=0; i<bins.size(); i++)
     {
       // First sort the monomials of this degree
+      QuickSorter<PreSPairSorter>::sort(&C, &(*bins[i])[0], bins[i]->size());
 
       // Loop through each degree and potentially insert...
       spairs::iterator first = bins[i]->begin();
@@ -363,7 +347,7 @@ int F4SPairConstructor::construct_pairs()
 	      // The following condition is that gcd is not one
 	      if (!remove_disjoints || !chosen->are_disjoint)
 		{
-		  send_spair(chosen);
+		  S->insert_spair(chosen, gb.size()-1);
 		  n_new_pairs++;
 		}
 	    }
