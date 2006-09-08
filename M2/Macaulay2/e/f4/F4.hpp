@@ -110,6 +110,8 @@ class F4GB : public our_new_delete
 
 private:
 
+  void test_spair_code(); // test routine: probably will be removed
+
   enum ComputationStatusCode computation_is_complete(StopConditions &stop_);
 
   void do_spairs();

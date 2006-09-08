@@ -172,7 +172,7 @@ public:
   bool unnecessary(const_packed_monomial m, 
 		   const_packed_monomial p1,
 		   const_packed_monomial p2,
-		   const_packed_monomial lcm)
+		   const_packed_monomial lcm) const
     // Returns true if the corresponding pair could be removed
     // This is essentially the Buchberger-Moeller criterion
     // Assumptions: lcm(p1,p2) = lcm.
@@ -205,7 +205,7 @@ public:
 		      const_packed_monomial b,
 		      varpower_monomial result,
 		      int &deg, 
-		      bool &are_disjoint)
+		      bool &are_disjoint) const
   {
     deg = 0;
     are_disjoint = true;

@@ -3,7 +3,7 @@
 #include "F4spairs.hpp"
 #include "monsort.hpp"
 
-F4SPairSet::F4SPairSet(MonomialInfo *M0, const gb_array &gb0)
+F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0)
   : M(M0),
     gb(gb0),
     heap(0),
@@ -189,22 +189,8 @@ int F4SPairSet::find_new_pairs(bool remove_disjoints)
   // returns the number of new pairs found
 {
   remove_unneeded_pairs();
-
-  // Steps:
-  //  1. Create an array of varpower_monomial's, which are
-  //     the quotients of gb[i].monom_space by gb[last].monom_space
-  //     BUT: as varpower's.  Only add in the ones corresponding to
-  //     this component.  (But also add in the ones coming from
-  //     quotients and from skew commuting variables.
-  //  2. Sort these by degree, and then by some monomial order in each degree
-  //  3. Minimalize this set.  Don't bother keeping the monomial lookup table...
-  //       However: when considering a monomial, there may be several the same.
-  //       How to choose the best one?
-  //  4. For each of these minimal ones, make an s-pair andplace it into the heap.
-  
-  //  int len = SPairConstructor::make(MI,this,gb,remove_disjoints);
-  //return len;
-  return 0;
+  int len = F4SPairConstructor::make(M,this,gb,remove_disjoints);
+  return len;
 }
 
 void F4SPairSet::display_spair(spair *p)
@@ -257,15 +243,15 @@ F4SPairConstructor::create_pre_spair(int i)
   result->first_gb_num = i;
   result->type = F4_SPAIR_SPAIR;
   M->quotient_as_vp(gb[i]->f.monom_space, 
-	       gb[gb.size()-1]->f.monom_space, 
-	       result->quot, 
-	       result->deg1, 
-	       result->are_disjoint);
+		    gb[gb.size()-1]->f.monom_space, 
+		    result->quot, 
+		    result->deg1, 
+		    result->are_disjoint);
   B.intern(varpower_monomials::length(result->quot));
   return result;
 }
 
-F4SPairConstructor::F4SPairConstructor(MonomialInfo *M0,
+F4SPairConstructor::F4SPairConstructor(const MonomialInfo *M0,
 				       F4SPairSet *S0,
 				       const gb_array &gb0,
 				       bool remove_disjoints0)
@@ -294,7 +280,7 @@ template class QuickSorter<PreSPairSorter>;
 
 int F4SPairConstructor::construct_pairs()
 {
-  if (gb.size() == 0) return 0; // NOT VALID if quotient ring.
+  if (gb.size() == 0) return 0;
   typedef VECTOR(pre_spair *) spairs;
 
   VECTOR( VECTOR(pre_spair *) *) bins;
@@ -305,7 +291,6 @@ int F4SPairConstructor::construct_pairs()
     {
       if (gb[i]->minlevel == ELEM_NON_MIN_GB) continue;
       if (me_component != M->get_component(gb[i]->f.monom_space)) continue;
-      // Normally: need to check the component here
       pre_spair *p = create_pre_spair(i);
       insert_pre_spair(bins, p);
     }
@@ -363,7 +348,7 @@ int F4SPairConstructor::construct_pairs()
   ///////////////////////////////////////
 }
 
-int F4SPairConstructor::make(MonomialInfo *M0,
+int F4SPairConstructor::make(const MonomialInfo *M0,
 			     F4SPairSet *S0,
 			     const gb_array &gb0,
 			     bool remove_disjoints0)

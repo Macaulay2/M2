@@ -26,7 +26,7 @@ private:
   // returns the number of pairs removed, based on the element gb[gb.size()-1]
 
 public:
-  F4SPairSet(MonomialInfo *MI0, const gb_array &gb0);
+  F4SPairSet(const MonomialInfo *MI0, const gb_array &gb0);
 
   ~F4SPairSet();
 
@@ -58,7 +58,7 @@ public:
  private:
   MemoryBlock<monomial_word> B; // for all of the packed monomials in the spairs
 
-  MonomialInfo *M;
+  const MonomialInfo *M;
   const gb_array &gb;
   spair *heap; // list of pairs
   spair *this_set;
@@ -71,7 +71,7 @@ class F4SPairConstructor : public our_new_delete
  private:
   pre_spair *create_pre_spair(int i);
 
-  F4SPairConstructor(MonomialInfo *MI,
+  F4SPairConstructor(const MonomialInfo *MI,
 		     F4SPairSet *S0,
 		     const gb_array &gb,
 		     bool remove_disjoints);
@@ -82,7 +82,7 @@ class F4SPairConstructor : public our_new_delete
   int construct_pairs();
 
  private:
-  MonomialInfo *M;
+  const MonomialInfo *M;
   F4SPairSet *S;
   const gb_array &gb;
   bool remove_disjoints;
@@ -94,7 +94,7 @@ class F4SPairConstructor : public our_new_delete
   gbelem *me;
   int me_component;
  public:
-  static int make(MonomialInfo *MI,
+  static int make(const MonomialInfo *MI,
 		  F4SPairSet *S0,
 		  const gb_array &gb,
 		  bool remove_disjoints);
