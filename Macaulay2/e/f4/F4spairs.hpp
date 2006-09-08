@@ -12,17 +12,17 @@ class F4SPairSet : public our_new_delete
 {
 private:
   int determine_next_degree(int &result_number);
-  
+
   spair *make_spair(int deg, 
-		    packed_monomial lcm, 
-		    packed_monomial first_monom,
-		    int first_gb_num,
-		    packed_monomial second_monom,
-		    int second_gb_num);
+		     packed_monomial lcm, 
+		     int i,
+		     int j);
 
   spair *make_spair_gen(int deg, packed_monomial lcm, int column);
 
-  int remove_unneeded_pairs();
+  bool pair_not_needed(spair *p, gbelem *m, const gb_array &gb);
+
+  int remove_unneeded_pairs(const gb_array &gb);
   // returns the number of pairs removed, based on the element gb[gb.size()-1]
 
 public:
@@ -35,13 +35,10 @@ public:
 
   void insert_spair(int deg, 
 		    packed_monomial lcm, 
-		    packed_monomial first_monom,
-		    int first_gb_num,
-		    packed_monomial second_monom,
-		    int second_gb_num);
+		    int i,
+		    int j);
 
-  void free_spair(spair *p);
-  // places this p onto the freelist... 
+  void delete_spair(spair *p);
 
   int find_new_pairs(const gb_array &gb,
 		     bool remove_disjoints);
@@ -63,15 +60,13 @@ public:
   void display();
   // A debugging routine which displays the spairs in the set
  private:
-  MemoryBlock<spair> SP;
   MemoryBlock<monomial_word> P; // for all of the packed monomials in the spairs
 
   MonomialInfo *M;
   spair *heap; // list of pairs
   spair *this_set;
-  spair *spair_free_list; // As long as monomials are fixed length, the corresponding
-                    // packed_monomials stay with each spair.
-  spair *gen_free_list;
+  stash *spair_stash;
+  stash *gen_stash;
 };
 
 class F4SPairConstructor : public our_new_delete

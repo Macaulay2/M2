@@ -177,14 +177,23 @@ void F4GB::process_s_pair(spair *p)
 
   switch (p->type) {
   case F4_SPAIR_SPAIR:
-    load_row(p->s.spair.first_monom, p->s.spair.first_gb_num);
+    packed_monomial n = next_monom;
+    M->unchecked_divide(p->lcm, gb[p->i]->f.monom_space, n);
+    next_monom = B->reserve(M->max_monomial_size());
+
+    load_row(n, p->i);
     c = mat->rows[mat->rows.size()-1].comps[0];
     mat->columns[c].gb_divisor = mat->rows.size()-1;
     mat->columns[c].head = mat->columns[c].gb_divisor;
-    load_row(p->s.spair.second_monom, p->s.spair.second_gb_num);
+
+    n = next_monom;
+    M->unchecked_divide(p->lcm, gb[p->j]->f.monom_space, n);
+    next_monom = B->reserve(M->max_monomial_size());
+
+    load_row(n, p->j);
     break;
   case F4_SPAIR_GEN:
-    load_gen(p->s.poly.column);
+    load_gen(p->i);
     break;
   default:
     break;
