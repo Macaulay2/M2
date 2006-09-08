@@ -70,17 +70,8 @@ struct spair : public our_new_delete {
   spair_type type;
   int deg; /* sugar degree of this spair */
   packed_monomial lcm;
-  union {
-    struct {
-      packed_monomial first_monom;
-      int first_gb_num;
-      packed_monomial second_monom;
-      int second_gb_num;
-    } spair;
-    struct {
-      int column; // original column
-    } poly;
-  } s;
+  int i;
+  int j;
 };
 
 struct gbelem : public our_new_delete {

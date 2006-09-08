@@ -7,6 +7,7 @@ F4SPairSet::F4SPairSet(MonomialInfo *M0)
     heap(0),
     this_set(0)
 {
+  spair_stash = new stash("spairs",sizeof(spair));
 }
 
 F4SPairSet::~F4SPairSet()
@@ -20,44 +21,45 @@ F4SPairSet::~F4SPairSet()
 
 spair *F4SPairSet::make_spair(int deg, 
 			      packed_monomial lcm, 
-			      packed_monomial first_monom,
-			      int first_gb_num,
-			      packed_monomial second_monom,
-			      int second_gb_num)
+			      int i,
+			      int j)
 {
-  spair *result = new spair;
+  spair *result = reinterpret_cast<spair *>(spair_stash->new_elem());
   result->next = 0;
   result->type = F4_SPAIR_SPAIR;
   result->deg = deg;
   result->lcm = lcm;
-  result->s.spair.first_monom = first_monom;
-  result->s.spair.second_monom = second_monom;
-  result->s.spair.first_gb_num = first_gb_num;
-  result->s.spair.second_gb_num = second_gb_num;
+  result->i = i;
+  result->j = j;
   return result;
 }
 
 void F4SPairSet::insert_spair(int deg, 
 			      packed_monomial lcm, 
-			      packed_monomial first_monom,
-			      int first_gb_num,
-			      packed_monomial second_monom,
-			      int second_gb_num)
+			      int i,
+			      int j)
 {
-  spair *p = make_spair(deg, lcm, first_monom, first_gb_num, second_monom, second_gb_num);
+  spair *p = make_spair(deg, lcm, i, j);
   p->next = heap;
   heap = p;
 }
 
+void F4SPairSet::delete_spair(spair *p)
+{
+  if (p->type == F4_SPAIR_GEN)
+    gen_stash->delete_elem(p);
+  else
+    spair_stash->delete_elem(p);
+}
 
 spair *F4SPairSet::make_spair_gen(int deg, packed_monomial lcm, int col)
 {
-  spair *result = new spair;
+  spair *result = reinterpret_cast<spair *>(gen_stash->new_elem());
   result->next = 0;
   result->type = F4_SPAIR_GEN;
   result->deg = deg;
   result->lcm = lcm;
-  result->s.poly.column = col;
+  result->i = col;
   return result;
 }
 
@@ -68,19 +70,40 @@ void F4SPairSet::insert_generator(int deg, packed_monomial lcm, int col)
   heap = p;
 }
 
+bool F4SPairSet::pair_not_needed(spair *p, gbelem *m, const gb_array &gb)
+{
+  if (p->type != F4_SPAIR_SPAIR && p->type != F4_SPAIR_RING) return false;
+  return M->unnecessary(m->f.monom_space, 
+			gb[p->i]->f.monom_space,
+			gb[p->j]->f.monom_space,
+			p->lcm);
+}
 
-int F4SPairSet::remove_unneeded_pairs()
-  // returns the number of pairs removed
-
+int F4SPairSet::remove_unneeded_pairs(const gb_array &gb)
 {
   // Loop through every spair, determine if it can be jettisoned
   // and do so.  Return the number removed.
 
-  // Check the ones in this_set?
-#ifdef DEVELOPMENT
-#warning "unneeded pairs"
-#endif
-  return 0;
+  // MES: Check the ones in this_set? Probably not needed...
+  spair head;
+  spair *p = &head;
+  gbelem *m = gb[gb.size()-1];
+  int nremoved = 0;
+
+  head.next = heap;
+  while (p->next != 0)
+    if (pair_not_needed(p->next, m, gb))
+      {
+	nremoved++;
+	spair *tmp = p->next;
+	p->next = tmp->next;
+	tmp->next = 0;
+	delete_spair(tmp);
+      }
+  else
+    p = p->next;
+  heap = head.next;
+  return nremoved;
 }
 
 int F4SPairSet::determine_next_degree(int &result_number)
@@ -156,7 +179,7 @@ int F4SPairSet::find_new_pairs(const gb_array &gb,
 			       bool remove_disjoints)
   // returns the number of new pairs found
 {
-  remove_unneeded_pairs();
+  remove_unneeded_pairs(gb);
 
   // Steps:
   //  1. Create an array of varpower_monomial's, which are
@@ -181,14 +204,10 @@ void F4SPairSet::display_spair(spair *p)
   if (p->type == F4_SPAIR_SPAIR)
     {
       fprintf(stderr,"[%d %d deg %d lcm ", 
-	      p->s.spair.first_gb_num,
-	      p->s.spair.second_gb_num,
+	      p->i,
+	      p->j,
 	      p->deg);
       M->show(p->lcm);
-      fprintf(stderr," first ");
-      M->show(p->s.spair.first_monom);
-      fprintf(stderr," second ");
-      M->show(p->s.spair.second_monom);
       fprintf(stderr,"\n");
     }
   else
@@ -251,19 +270,13 @@ void F4SPairConstructor::send_spair(pre_spair *p)
   int j = p->first_gb_num;
   int deg = p->deg1 + gb[i]->deg;
 
+  packed_monomial lcm = B.reserve(M->max_monomial_size());
   packed_monomial first = B.reserve(M->max_monomial_size());
   M->from_varpower_monomial(p->quot, me_component, first);
-  B.intern(M->monomial_size(first));
-
-  packed_monomial lcm = B.reserve(M->max_monomial_size());
   M->unchecked_mult(first, gb[j]->f.monom_space, lcm);
   B.intern(M->monomial_size(lcm));
 
-  packed_monomial second = B.reserve(M->max_monomial_size());
-  M->unchecked_divide(lcm, gb[i]->f.monom_space, second);
-  B.intern(M->monomial_size(second));
-
-  S->insert_spair(deg, lcm, first, i, second, j);
+  S->insert_spair(deg, lcm, i, j);
 }
 
 F4SPairConstructor::F4SPairConstructor(MonomialInfo *M0,
@@ -356,7 +369,7 @@ int F4SPairConstructor::construct_pairs()
 	    }
 	}
     }
-  deleteitem(montab);
+  delete montab;
       
   return n_new_pairs;
   ///////////////////////////////////////
