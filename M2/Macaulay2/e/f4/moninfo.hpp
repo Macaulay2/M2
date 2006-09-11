@@ -208,7 +208,7 @@ public:
 		      bool &are_disjoint) const
   {
     deg = 0;
-    are_disjoint = true;
+    are_disjoint = false; // MES
     a += 2;
     b += 2;
     varpower_word *r = result+1;
@@ -219,6 +219,7 @@ public:
 	  {
 	    *r++ = i;
 	    *r++ = c;
+	    deg += c;
 	    result[0]++;
 	  }
       }

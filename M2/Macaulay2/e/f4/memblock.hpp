@@ -13,8 +13,9 @@ class MemoryBlock : public our_new_delete
   };
 
   slab *first_slab;
+  slab *current_slab;
   slab *last_slab;
-  T *next_free; /* points into last_slab */
+  T *next_free; /* points into current_slab */
   
  private:
   slab *new_slab();
@@ -22,6 +23,8 @@ class MemoryBlock : public our_new_delete
  public:
   MemoryBlock();
   ~MemoryBlock();
+
+  void reset();
 
   T * reserve(int len); // returns space for len T's.
   void intern(int len); // increments 
