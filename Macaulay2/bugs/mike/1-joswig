@@ -1,6 +1,7 @@
 --*- M2 -*-
 
--- This crashes!
+-- This crashes!  Fixed, 9/11/2006
+-- HOWEVER: still doesn't finish...! 9/11/2006
 
 --Date: Sat, 2 Sep 2006 18:14:58 +0200 (CEST)
 --Subject: Groebner basis computation
@@ -48,3 +49,28 @@ I = ideal (
    )
 gbTrace = 3
 gb I
+gb(I, DegreeLimit=>37);
+gb(I, DegreeLimit=>38);
+
+
+-- Using this ring doesn't crash, but doesn't work well either.
+R = QQ[x4,x3,x2,x1,s,t,MonomialOrder=>Eliminate 4]
+
+R = ZZ/32003[x4,x3,x2,x1,s,t]
+
+R = ZZ[s,x1,x2,x3,x4]
+I = ideal (
+   1 + s^2  * x1 * x3 + s^8 * x2 * x3 + s^19 * x1 * x2 * x4,
+   x1 + s^8 * x1 * x2 * x3 + s^19 * x2 * x4,
+   x2 + s^10 * x3 * x4 + s^11 * x1 * x4,
+   x3 + s^4 * x1 * x2 + s^19 * x1 * x3 * x4 + s^24 * x2 * x3 * x4,
+   x4 + s^31 * x1 * x2 * x3 * x4
+   )
+gbTrace = 3
+J = substitute(I,{x4=>0})
+1//(gens J)
+(gens I) * oo
+J = trim J
+
+
+decompose J

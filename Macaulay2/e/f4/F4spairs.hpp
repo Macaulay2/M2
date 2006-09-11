@@ -57,6 +57,8 @@ public:
   // A debugging routine which displays the spairs in the set
  private:
   MemoryBlock<monomial_word> B; // for all of the packed monomials in the spairs
+  MemoryBlock<pre_spair> PS; // passed to constructor routine
+  MemoryBlock<varpower_word> VP; // used for constructing new pairs
 
   const MonomialInfo *M;
   const gb_array &gb;
@@ -73,6 +75,8 @@ class F4SPairConstructor : public our_new_delete
 
   F4SPairConstructor(const MonomialInfo *MI,
 		     F4SPairSet *S0,
+		     MemoryBlock<pre_spair> &PS,
+		     MemoryBlock<varpower_word> &VP,
 		     const gb_array &gb,
 		     bool remove_disjoints);
 
@@ -87,8 +91,8 @@ class F4SPairConstructor : public our_new_delete
   const gb_array &gb;
   bool remove_disjoints;
 
-  MemoryBlock<pre_spair> P;
-  MemoryBlock<varpower_word> B;
+  MemoryBlock<pre_spair> &P;
+  MemoryBlock<varpower_word> &B;
   int max_varpower_size;
   
   gbelem *me;
@@ -96,6 +100,8 @@ class F4SPairConstructor : public our_new_delete
  public:
   static int make(const MonomialInfo *MI,
 		  F4SPairSet *S0,
+		  MemoryBlock<pre_spair> &PS,
+		  MemoryBlock<varpower_word> &VP,
 		  const gb_array &gb,
 		  bool remove_disjoints);
 };

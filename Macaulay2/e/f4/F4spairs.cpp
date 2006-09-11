@@ -189,7 +189,7 @@ int F4SPairSet::find_new_pairs(bool remove_disjoints)
   // returns the number of new pairs found
 {
   remove_unneeded_pairs();
-  int len = F4SPairConstructor::make(M,this,gb,remove_disjoints);
+  int len = F4SPairConstructor::make(M,this,PS,VP,gb,remove_disjoints);
   return len;
 }
 
@@ -253,14 +253,20 @@ F4SPairConstructor::create_pre_spair(int i)
 
 F4SPairConstructor::F4SPairConstructor(const MonomialInfo *M0,
 				       F4SPairSet *S0,
+				       MemoryBlock<pre_spair> &PS0,
+				       MemoryBlock<varpower_word> &VP0,
 				       const gb_array &gb0,
 				       bool remove_disjoints0)
   : M(M0),
     S(S0),
     gb(gb0),
     remove_disjoints(remove_disjoints0),
+    P(PS0),
+    B(VP0),
     me(gb[gb.size()-1])
 {
+  P.reset();
+  B.reset();
   me_component = M->get_component(me->f.monom_space);
   max_varpower_size = 2 * M->n_vars() + 1;
 }
@@ -304,6 +310,7 @@ int F4SPairConstructor::construct_pairs()
   int n_new_pairs = 0;
   for (int i=0; i<bins.size(); i++)
     {
+      if (bins[i] == 0) continue;
       // First sort the monomials of this degree
       QuickSorter<PreSPairSorter>::sort(&C, &(*bins[i])[0], bins[i]->size());
 
@@ -350,10 +357,12 @@ int F4SPairConstructor::construct_pairs()
 
 int F4SPairConstructor::make(const MonomialInfo *M0,
 			     F4SPairSet *S0,
+			     MemoryBlock<pre_spair> &PS0,
+			     MemoryBlock<varpower_word> &VP0,
 			     const gb_array &gb0,
 			     bool remove_disjoints0)
 {
-  F4SPairConstructor C(M0,S0,gb0,remove_disjoints0);
+  F4SPairConstructor C(M0,S0,PS0,VP0,gb0,remove_disjoints0);
   return C.construct_pairs();
 }
 

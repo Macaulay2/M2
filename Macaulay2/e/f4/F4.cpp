@@ -444,7 +444,7 @@ void F4GB::test_spair_code()
   for (int i=1; i<gens.size(); i++)
     {
       gb.push_back(gens[i]);
-      S->find_new_pairs(true);
+      S->find_new_pairs(false);
       fprintf(stderr, "---Just inserted element %d---\n", i);
       S->display();
     }

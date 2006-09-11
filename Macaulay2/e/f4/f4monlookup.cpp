@@ -75,7 +75,7 @@ F4MonomialLookupTableT<Key>::~F4MonomialLookupTableT()
 template <typename Key>
 void F4MonomialLookupTableT<Key>::insert1(mi_node *&top, const_varpower_monomial b, Key k)
 {
-  count++;
+  count += 2;
   mi_node **p = &top, *up = NULL;
   int one_element = 1;
 
@@ -483,14 +483,14 @@ void F4MonomialLookupTableT<Key>::debug_check() const
       if (*i != NULL)
 	nfound += debug_check(*i, NULL);
     }
-  assert(count == nfound);
+  assert(count/2 == nfound);
 }
 
 template <typename Key>
 void F4MonomialLookupTableT<Key>::text_out(buffer &o) const
 {
   o << "F4MonomialLookupTableT (";
-  o << count << " entries)\n";
+  o << count/2 << " entries)\n";
   int a = 0;
   for (typename VECTOR(mi_node *)::const_iterator i = mis.begin(); i != mis.end(); i++)
     {

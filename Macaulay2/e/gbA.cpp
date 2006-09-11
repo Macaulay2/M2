@@ -1090,7 +1090,7 @@ bool gbA::reduce(spair *p)
 	  // If w < 0, then no divisor was found.  Is there a GB element of
 	  // the same degree as this one, and with the same exponent vector?
 	  // If so, use gcdextended to find (g,u,v), 
-	  if (w < 0)
+	  if (w < 0 || alpha > 0)
 	  {
 	    MonomialTableZZ::mon_term *t = lookupZZ->find_exact_monomial(EXP_,
 									 x,
