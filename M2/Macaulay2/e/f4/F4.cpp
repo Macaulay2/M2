@@ -47,7 +47,7 @@ void F4GB::new_generators(int lo, int hi)
     {
       gbelem *g = gens[i];
       if (g->f.len == 0) continue;
-      S->insert_generator(g->deg, g->f.monom_space, i);
+      S->insert_generator(g->deg, g->f.monoms, i);
     }
 }
 
@@ -109,7 +109,7 @@ void F4GB::load_gen(int which)
   r.coeffs = 0; // coefficients are grabbed during gauss().
   r.comps = newarray(int, g.len);
 
-  monomial_word *w = g.monom_space;
+  monomial_word *w = g.monoms;
   for (int i=0; i<g.len; i++)
     {
       r.comps[i] = find_or_append_column(w);
@@ -132,7 +132,7 @@ void F4GB::load_row(packed_monomial monom, int which)
   r.coeffs = 0; // coefficients are grabbed during gauss().
   r.comps = newarray(int, g.len);
 
-  monomial_word *w = g.monom_space;
+  monomial_word *w = g.monoms;
   for (int i=0; i<g.len; i++)
     {
       r.comps[i] = mult_monomials(monom, w);
@@ -159,7 +159,7 @@ void F4GB::process_column(int c)
   if (found)
     {
       packed_monomial n = next_monom;
-      M->unchecked_divide(ce.monom, gb[which]->f.monom_space, n);
+      M->unchecked_divide(ce.monom, gb[which]->f.monoms, n);
       B->intern(M->monomial_size(n));
       next_monom = B->reserve(M->max_monomial_size());
       M->set_component(which, n);
@@ -179,7 +179,7 @@ void F4GB::process_s_pair(spair *p)
   switch (p->type) {
   case F4_SPAIR_SPAIR:
     packed_monomial n = next_monom;
-    M->unchecked_divide(p->lcm, gb[p->i]->f.monom_space, n);
+    M->unchecked_divide(p->lcm, gb[p->i]->f.monoms, n);
     next_monom = B->reserve(M->max_monomial_size());
 
     load_row(n, p->i);
@@ -188,7 +188,7 @@ void F4GB::process_s_pair(spair *p)
     mat->columns[c].head = mat->columns[c].gb_divisor;
 
     n = next_monom;
-    M->unchecked_divide(p->lcm, gb[p->j]->f.monom_space, n);
+    M->unchecked_divide(p->lcm, gb[p->j]->f.monoms, n);
     next_monom = B->reserve(M->max_monomial_size());
 
     load_row(n, p->j);
@@ -333,16 +333,16 @@ void F4GB::insert_gb_element(row_elem &r)
   r.coeffs = result->f.coeffs;
   result->f.coeffs = tmp;
 
-  result->f.monom_space = newarray(monomial_word, nlongs);
+  result->f.monoms = newarray(monomial_word, nlongs);
 
-  monomial_word *nextmonom = result->f.monom_space;
+  monomial_word *nextmonom = result->f.monoms;
   for (int i=0; i<r.len; i++)
     {
       M->copy(mat->columns[r.comps[i]].monom, nextmonom);
       nextmonom += nslots;
     }
   result->deg = this_degree;
-  result->alpha = M->last_exponent(result->f.monom_space);
+  result->alpha = M->last_exponent(result->f.monoms);
   result->minlevel = ELEM_MIN_GB; // MES: How do
                                   // we distinguish between ELEM_MIN_GB, ELEM_POSSIBLE_MINGEN?
 
@@ -351,8 +351,8 @@ void F4GB::insert_gb_element(row_elem &r)
 
   // now insert the lead monomial into the lookup table
   varpower_monomial vp = newarray(varpower_word, 2 * M->n_vars() + 1);
-  M->to_varpower_monomial(result->f.monom_space, vp);
-  lookup->insert_minimal_vp(M->get_component(result->f.monom_space), vp, which);
+  M->to_varpower_monomial(result->f.monoms, vp);
+  lookup->insert_minimal_vp(M->get_component(result->f.monoms), vp, which);
   deleteitem(vp);
   // now go forth and find those new pairs
   S->find_new_pairs(true);

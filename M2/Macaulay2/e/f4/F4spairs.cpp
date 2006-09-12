@@ -9,29 +9,32 @@ F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0)
     heap(0),
     this_set(0)
 {
-  spair_stash = new stash("spairs",sizeof(spair));
-  gen_stash = new stash("generators",sizeof(spair));
+  max_varpower_size = 2 * M->n_vars() + 1;
+
+  spair *used_to_determine_size = 0;
+  size_t spair_size = sizeofspair(used_to_determine_size,M->max_monomial_size());
+  spair_stash = new stash("F4 spairs", spair_size);
 }
 
 F4SPairSet::~F4SPairSet()
 {
-#ifdef DEVELOPMENT
-#warning "write deallocator"
-#endif
-  // Remove the spairs
-  // TO BE WRITTEN
+  // Deleting the stash deletes all memory used here
+  // PS, VP are deleted automatically.
+  M = 0;
+  heap = 0;
+  this_set = 0;
+  delete spair_stash;
 }
 
-spair *F4SPairSet::make_spair(int deg, 
-			      packed_monomial lcm, 
+spair *F4SPairSet::make_spair(spair_type type, 
+			      int deg, 
 			      int i,
 			      int j)
 {
   spair *result = reinterpret_cast<spair *>(spair_stash->new_elem());
   result->next = 0;
-  result->type = F4_SPAIR_SPAIR;
+  result->type = type;
   result->deg = deg;
-  result->lcm = lcm;
   result->i = i;
   result->j = j;
   return result;
@@ -39,43 +42,28 @@ spair *F4SPairSet::make_spair(int deg,
 
 void F4SPairSet::insert_spair(pre_spair *p, int me)
 {
-  int j = p->first_gb_num;
+  int j = p->j;
   int deg = p->deg1 + gb[me]->deg;
-  int me_component = M->get_component(gb[me]->f.monom_space);
+  int me_component = M->get_component(gb[me]->f.monoms);
 
-  packed_monomial lcm = B.reserve(M->max_monomial_size());
-  packed_monomial first = B.reserve(M->max_monomial_size());
-  M->from_varpower_monomial(p->quot, me_component, first);
-  M->unchecked_mult(first, gb[j]->f.monom_space, lcm);
-  B.intern(M->monomial_size(lcm));
+  spair *result = make_spair(F4_SPAIR_SPAIR, deg, me, j);
 
-  spair *result = make_spair(deg, lcm, me, j);
+  M->from_varpower_monomial(p->quot, me_component, result->lcm);
+  M->unchecked_mult(result->lcm, gb[j]->f.monoms, result->lcm);
+
   result->next = heap;
   heap = result;
 }
 
 void F4SPairSet::delete_spair(spair *p)
 {
-  if (p->type == F4_SPAIR_GEN)
-    gen_stash->delete_elem(p);
-  else
-    spair_stash->delete_elem(p);
-}
-
-spair *F4SPairSet::make_spair_gen(int deg, packed_monomial lcm, int col)
-{
-  spair *result = reinterpret_cast<spair *>(gen_stash->new_elem());
-  result->next = 0;
-  result->type = F4_SPAIR_GEN;
-  result->deg = deg;
-  result->lcm = lcm;
-  result->i = col;
-  return result;
+  spair_stash->delete_elem(p);
 }
 
 void F4SPairSet::insert_generator(int deg, packed_monomial lcm, int col)
 {
-  spair *p = make_spair_gen(deg, lcm, col);
+  spair *p = make_spair(F4_SPAIR_GEN, deg, col, -1);
+  M->copy(lcm, p->lcm);
   p->next = heap;
   heap = p;
 }
@@ -83,9 +71,9 @@ void F4SPairSet::insert_generator(int deg, packed_monomial lcm, int col)
 bool F4SPairSet::pair_not_needed(spair *p, gbelem *m)
 {
   if (p->type != F4_SPAIR_SPAIR && p->type != F4_SPAIR_RING) return false;
-  return M->unnecessary(m->f.monom_space, 
-			gb[p->i]->f.monom_space,
-			gb[p->j]->f.monom_space,
+  return M->unnecessary(m->f.monoms, 
+			gb[p->i]->f.monoms,
+			gb[p->j]->f.monoms,
 			p->lcm);
 }
 
@@ -189,7 +177,7 @@ int F4SPairSet::find_new_pairs(bool remove_disjoints)
   // returns the number of new pairs found
 {
   remove_unneeded_pairs();
-  int len = F4SPairConstructor::make(M,this,PS,VP,gb,remove_disjoints);
+  int len = construct_pairs(remove_disjoints);
   return len;
 }
 
@@ -233,45 +221,25 @@ void F4SPairSet::display()
 ////////////////////////////////
 
 pre_spair *
-F4SPairConstructor::create_pre_spair(int i)
+F4SPairSet::create_pre_spair(int j)
 {
   // Steps: 
   //  a. allocate the space for the pre_spair and the varpower monomial
   //  b. compute the quotient and the degree
-  pre_spair *result = P.allocate();
-  result->quot = B.reserve(max_varpower_size);
-  result->first_gb_num = i;
+  pre_spair *result = PS.allocate();
+  result->quot = VP.reserve(max_varpower_size);
+  result->j = j;
   result->type = F4_SPAIR_SPAIR;
-  M->quotient_as_vp(gb[i]->f.monom_space, 
-		    gb[gb.size()-1]->f.monom_space, 
+  M->quotient_as_vp(gb[j]->f.monoms, 
+		    gb[gb.size()-1]->f.monoms, 
 		    result->quot, 
 		    result->deg1, 
 		    result->are_disjoint);
-  B.intern(varpower_monomials::length(result->quot));
+  VP.intern(varpower_monomials::length(result->quot));
   return result;
 }
 
-F4SPairConstructor::F4SPairConstructor(const MonomialInfo *M0,
-				       F4SPairSet *S0,
-				       MemoryBlock<pre_spair> &PS0,
-				       MemoryBlock<varpower_word> &VP0,
-				       const gb_array &gb0,
-				       bool remove_disjoints0)
-  : M(M0),
-    S(S0),
-    gb(gb0),
-    remove_disjoints(remove_disjoints0),
-    P(PS0),
-    B(VP0),
-    me(gb[gb.size()-1])
-{
-  P.reset();
-  B.reset();
-  me_component = M->get_component(me->f.monom_space);
-  max_varpower_size = 2 * M->n_vars() + 1;
-}
-
-void F4SPairConstructor::insert_pre_spair(VECTOR(VECTOR(pre_spair *) *) &bins, pre_spair *p)
+void insert_pre_spair(VECTOR(VECTOR(pre_spair *) *) &bins, pre_spair *p)
 {
   int d = p->deg1;
   if (d >= bins.size())
@@ -284,19 +252,24 @@ void F4SPairConstructor::insert_pre_spair(VECTOR(VECTOR(pre_spair *) *) &bins, p
 
 template class QuickSorter<PreSPairSorter>;
 
-int F4SPairConstructor::construct_pairs()
+int F4SPairSet::construct_pairs(bool remove_disjoints)
 {
   if (gb.size() == 0) return 0;
+
+  VP.reset();
+  PS.reset();
+  gbelem *me = gb[gb.size()-1];
+  int me_component = M->get_component(me->f.monoms);
+
   typedef VECTOR(pre_spair *) spairs;
 
   VECTOR( VECTOR(pre_spair *) *) bins;
-
 
   // Loop through each element of gb, and create the pre_spair
   for (int i=0; i<gb.size()-1; i++)
     {
       if (gb[i]->minlevel == ELEM_NON_MIN_GB) continue;
-      if (me_component != M->get_component(gb[i]->f.monom_space)) continue;
+      if (me_component != M->get_component(gb[i]->f.monoms)) continue;
       pre_spair *p = create_pre_spair(i);
       insert_pre_spair(bins, p);
     }
@@ -339,7 +312,7 @@ int F4SPairConstructor::construct_pairs()
 	      // The following condition is that gcd is not one
 	      if (!remove_disjoints || !chosen->are_disjoint)
 		{
-		  S->insert_spair(chosen, gb.size()-1);
+		  insert_spair(chosen, gb.size()-1);
 		  n_new_pairs++;
 		}
 	    }
@@ -348,22 +321,6 @@ int F4SPairConstructor::construct_pairs()
   delete montab;
       
   return n_new_pairs;
-  ///////////////////////////////////////
-  // Now collect the minimal ones, and //
-  // make spairs out of them           //
-  // Intern all of the monomials       //
-  ///////////////////////////////////////
-}
-
-int F4SPairConstructor::make(const MonomialInfo *M0,
-			     F4SPairSet *S0,
-			     MemoryBlock<pre_spair> &PS0,
-			     MemoryBlock<varpower_word> &VP0,
-			     const gb_array &gb0,
-			     bool remove_disjoints0)
-{
-  F4SPairConstructor C(M0,S0,PS0,VP0,gb0,remove_disjoints0);
-  return C.construct_pairs();
 }
 
 // Local Variables:

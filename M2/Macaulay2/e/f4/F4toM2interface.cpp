@@ -27,9 +27,9 @@ void F4toM2Interface::from_M2_vec(const Gausser *KK,
 
   result.len = n;
   ring_elem *relem_array = newarray(ring_elem, n);
-  result.monom_space = newarray(monomial_word, n * MI->max_monomial_size());
+  result.monoms = newarray(monomial_word, n * MI->max_monomial_size());
   n = 0;
-  monomial_word *nextmonom = result.monom_space;
+  monomial_word *nextmonom = result.monoms;
   for (vec w = v; w != 0; w = w->next)
     {
       for (Nterm *t = w->coeff; t != 0; t = t->next)
@@ -54,7 +54,7 @@ void F4toM2Interface::poly_set_degrees(const Gausser *KK,
 						  int &deg, 
 						  int &alpha)
 {
-  const monomial_word *w = f.monom_space;
+  const monomial_word *w = f.monoms;
   monomial_word leaddeg = MI->monomial_weight(w, wts);
   deg = leaddeg;
   
@@ -108,7 +108,7 @@ vec F4toM2Interface::to_M2_vec(const Gausser *KK,
   ring_elem *relem_array = newarray(ring_elem, f.len);
   KK->to_ringelem_array(f.len, f.coeffs, relem_array);
 
-  const monomial_word *w = f.monom_space;
+  const monomial_word *w = f.monoms;
   for (int i=0; i<f.len; i++)
     {
       long comp;

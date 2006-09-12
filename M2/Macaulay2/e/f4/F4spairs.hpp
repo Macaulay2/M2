@@ -13,18 +13,21 @@ class F4SPairSet : public our_new_delete
 private:
   int determine_next_degree(int &result_number);
 
-  spair *make_spair(int deg, 
-		     packed_monomial lcm, 
-		     int i,
-		     int j);
-
-  spair *make_spair_gen(int deg, packed_monomial lcm, int column);
+  spair *make_spair(spair_type type,
+		    int deg, 
+		    int i,
+		    int j); // CAUTION: lcm is allocated correctly, but is
+                            // NOT initialized.  That is the caller's responsibility!!
 
   bool pair_not_needed(spair *p, gbelem *m);
 
   int remove_unneeded_pairs();
   // returns the number of pairs removed, based on the element gb[gb.size()-1]
 
+  pre_spair *create_pre_spair(int i);
+
+  int construct_pairs(bool remove_disjoints);
+  
 public:
   F4SPairSet(const MonomialInfo *MI0, const gb_array &gb0);
 
@@ -56,54 +59,15 @@ public:
   void display();
   // A debugging routine which displays the spairs in the set
  private:
-  MemoryBlock<monomial_word> B; // for all of the packed monomials in the spairs
   MemoryBlock<pre_spair> PS; // passed to constructor routine
   MemoryBlock<varpower_word> VP; // used for constructing new pairs
+  int max_varpower_size;
 
   const MonomialInfo *M;
   const gb_array &gb;
   spair *heap; // list of pairs
   spair *this_set;
   stash *spair_stash;
-  stash *gen_stash;
-};
-
-class F4SPairConstructor : public our_new_delete
-{
- private:
-  pre_spair *create_pre_spair(int i);
-
-  F4SPairConstructor(const MonomialInfo *MI,
-		     F4SPairSet *S0,
-		     MemoryBlock<pre_spair> &PS,
-		     MemoryBlock<varpower_word> &VP,
-		     const gb_array &gb,
-		     bool remove_disjoints);
-
-  void insert_pre_spair(VECTOR(VECTOR(pre_spair *) *) &bins, 
-			pre_spair *p);
-
-  int construct_pairs();
-
- private:
-  const MonomialInfo *M;
-  F4SPairSet *S;
-  const gb_array &gb;
-  bool remove_disjoints;
-
-  MemoryBlock<pre_spair> &P;
-  MemoryBlock<varpower_word> &B;
-  int max_varpower_size;
-  
-  gbelem *me;
-  int me_component;
- public:
-  static int make(const MonomialInfo *MI,
-		  F4SPairSet *S0,
-		  MemoryBlock<pre_spair> &PS,
-		  MemoryBlock<varpower_word> &VP,
-		  const gb_array &gb,
-		  bool remove_disjoints);
 };
 
 #endif
