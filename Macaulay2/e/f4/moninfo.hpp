@@ -109,7 +109,13 @@ public:
       }
     for (index_varpower_monomial j = m; j.valid(); ++j)
       {
-	result[2 + j.var()] = j.exponent();
+	int v = j.var();
+	int e = j.exponent();
+	result[2 + v] = e;
+	if (e == 1)
+	  result[0] += hashfcn[v];
+	else
+	  result[0] += e * hashfcn[v];
       }
   }
 
@@ -207,13 +213,16 @@ public:
 		      int &deg, 
 		      bool &are_disjoint) const
   {
+    // sets result, deg, are_disjoint
     deg = 0;
-    are_disjoint = false; // MES
+    are_disjoint = true;
     a += 2;
     b += 2;
     varpower_word *r = result+1;
     for (int i=0; i<nvars; i++)
       {
+	if (a[i] != 0 && b[i] != 0)
+	  are_disjoint = false;
 	long c = a[i] - b[i];
 	if (c > 0)
 	  {

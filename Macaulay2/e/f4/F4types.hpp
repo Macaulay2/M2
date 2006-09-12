@@ -3,20 +3,19 @@
 #ifndef _F4types_h_
 #define _F4types_h_
 
+#include <vector>
+#include <stdint.h>
+
 #include "../newdelete.hpp"
 #include "../engine.h"
 #include "../stop.hpp"
-#include <vector>
 #include "f4monlookup.hpp"
 
 #define VECTOR(T) std::vector< T, gc_allocator< T > >
+#define sizeofspair(s,len) (sizeof(*s) - sizeof(s->lcm) + (len)*sizeof(s->lcm[0]))
+
 extern char system_interruptedFlag;
 extern int gbTrace;
-
-// int32_t is defined in stdint.h
-#include <stdint.h>
-
-// The various kinds of monomials
 
 #include "varpower_monomial.hpp"
 #include "ntuple_monomial.hpp"
@@ -26,12 +25,6 @@ extern int gbTrace;
 // is done as a private array.  Note that the length is
 // not encoded: keep that length separately.
 typedef void *F4CoefficientArray;
-
-// routines needed for coefficient arrays:
-// ring_elem_to_coeff_array(K, len, ringelemarray, CoefficientArray)
-// coeff_to_ringelem_array(K,  len, ringelemarray, CoefficientArray)
-// And then we will need in gauss() routine to do arithmetic
-// on them.  However, this can be handled on a ring by ring basis.
 
 enum gbelem_type { 
   ELEM_IN_RING,  // These are ring elements
@@ -54,14 +47,14 @@ enum spair_type {
 struct poly : public our_new_delete {
   int len;
   F4CoefficientArray coeffs;
-  monomial_word *monom_space; // This is all of the monomials written contiguously
+  monomial_word *monoms; // This is all of the monomials written contiguously
 };
 
 struct pre_spair : public our_new_delete {
   enum spair_type type;
   int deg1; // simple degree of quot
   varpower_monomial quot;
-  int first_gb_num;
+  int j;
   bool are_disjoint;
 };
 
@@ -69,9 +62,9 @@ struct spair : public our_new_delete {
   spair * next;
   spair_type type;
   int deg; /* sugar degree of this spair */
-  packed_monomial lcm;
   int i;
   int j;
+  monomial_word lcm[1]; // packed_monomial
 };
 
 struct gbelem : public our_new_delete {
@@ -103,14 +96,11 @@ struct column_elem : public our_new_delete {
 };
 
 struct coefficient_matrix : public our_new_delete {
-  //  typedef std::map<packed_monomial, int> monomial_map;
   typedef VECTOR(row_elem) row_array;
   typedef VECTOR(column_elem) column_array;
   
   row_array rows;
   column_array columns;
-  // monomial_map H0; // Hash table (well...  sort of) of
-  // monomial --> int (column)
   
   VECTOR(int) column_order; // Inverse to ord values
 };
@@ -162,29 +152,6 @@ public:
 
 typedef F4MonomialLookupTableT<int32_t> MonomialLookupTable;
 
-template <typename Key>
-class F4MonomialLookupTable : public our_new_delete {
-public:
-  F4MonomialLookupTable();
-  ~F4MonomialLookupTable();
-
-  void insert_minimal(const_packed_monomial m, Key k);
-        // It is assumed that 'm' is not already in the monomial ideal.
-
-  bool insert(const_packed_monomial m, Key &k);
-        // If m is already divisible by an element, return false, and set k
-        // to be the key of that element.
-        // If m is not divisible, then insert (m,k), and return true.
-  
-  int search(const_packed_monomial m, Key &result_k) const;
-        // Search.  Return whether a monomial which divides 'm' is
-	// found.  If so, return the key.
-
-  void find_all_divisors(const_packed_monomial m,
-                         VECTOR(Key) &b) const;
-        // Search. Return a list of all elements which divide 'exp'.
-  
-};
 template <typename MonInfo> class MonomialHashTable;
 
 #endif
