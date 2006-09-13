@@ -177,7 +177,7 @@ void F4GB::process_s_pair(spair *p)
   int c;
 
   switch (p->type) {
-  case F4_SPAIR_SPAIR:
+  case F4_SPAIR_SPAIR: {
     packed_monomial n = next_monom;
     M->unchecked_divide(p->lcm, gb[p->i]->f.monoms, n);
     next_monom = B->reserve(M->max_monomial_size());
@@ -193,6 +193,7 @@ void F4GB::process_s_pair(spair *p)
 
     load_row(n, p->j);
     break;
+  }
   case F4_SPAIR_GEN:
     load_gen(p->i);
     break;
