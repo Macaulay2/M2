@@ -1,0 +1,26 @@
+test/inhom.m2
+test/inverse.m2
+test/matRR.m2
+
+
+
+To: Dan Grayson <dan@math.uiuc.edu>
+From: Michael Stillman <mike@math.cornell.edu>
+Subject: some tests which fail
+Date: Wed, 13 Sep 2006 10:42:57 -0400
+
+Here are some tests which are potentially easier for you to fix:
+
+clearOutput
+frac
+galois
+inhom
+normal_test  (problem is map(frac R, frac R)  fails...)
+order
+ringmap3, might also be a problem for me...
+subst3
+typicalval
+
+and also:
+
+that D-module example that fails
