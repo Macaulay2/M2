@@ -1,0 +1,1 @@
+there is no reason to have tryHooks, since a function called by runHooks can return a value to the "scan" in runHooks with "break"
