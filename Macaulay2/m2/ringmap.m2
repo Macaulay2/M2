@@ -2,7 +2,7 @@
 
 RingMap = new Type of HashTable
 RingMap.synonym = "ring map"
-matrix RingMap := opts -> (cacheValue symbol matrix) (f -> f vars source f)
+matrix RingMap := opts -> f -> f.matrix
 toString RingMap := f -> concatenate(
      "map(", toString target f, ",", toString source f, ",", toString first entries matrix f, ")"
      )
@@ -45,18 +45,25 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	       ));
      n := 0;
      A := S;
-     while (
+     while true do (
 	  r := numgens source m;
 	  if r === n 
 	  then (
-	       if numgens A > 0 then m = m | vars A ** R;   -- questionable tensor product here
+	       if numgens A > 0 then (
+		    if member(A, R.baseRings) then (
+			 -- we can promote
+		    	 m = m | promote(vars A, R);
+			 )
+		    else (
+			 -- we should look for variables with the same name
+			 m = m | matrix(R, {apply(A.generatorSymbols, s -> if R.?indexSymbols and R.indexSymbols#?s then R.indexSymbols#s else 0_R)})
+			 )
+		    )
 	       )
 	  else if r < n
-	  then error ("encountered values for ", toString r, " variables");
+	  then error ("encountered values for ", toString r, " variables, but expected ", toString n);
 	  n = n + numgens A;
-	  try (coefficientRing A; true) else false)
-     do (
-	  A = coefficientRing A;
+	  try A = coefficientRing A else break
 	  );
      if n != numgens source m 
      then error ("encountered values for ", toString numgens source m," variables");
@@ -70,14 +77,9 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  }
      )
 
-map(Ring,Matrix) := RingMap => options -> (S,m) -> map(ring m,S,m)
+map(Ring,Matrix) := RingMap => opts -> (S,m) -> map(ring m,S,m)
 
-map(Ring,Ring) := RingMap => options -> (S,R) -> if R === S then id_R else (
-     map(S,R,matrix (S,{
-		    if S.?indexStrings 
-		    then apply(allGenerators R, x -> ( x = toString x; if S.indexStrings#?x then S.indexStrings#x else 0_S))
-		    else toList (# allGenerators R : 0_S)
-		    })))
+map(Ring,Ring) := RingMap => opts -> (S,R) -> if R === S then id_R else map(S,R,{})
 
 Ring#id = (R) -> map(R,R,vars R)
 
@@ -264,7 +266,7 @@ sub2 = (S,R,v) -> (
      map(ring f,R,f))
 
 map(Ring,Ring,List) := RingMap => opts -> (S,R,m) -> (
-     if all(m, o -> class o === Option) then sub2(S,R,m)
+     if #m>0 and all(m, o -> class o === Option) then sub2(S,R,m)
      else map(S,R,matrix(S,{m}),opts)
      )
 
