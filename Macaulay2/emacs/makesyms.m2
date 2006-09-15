@@ -53,8 +53,8 @@ add( ",font-lock-constant-face", first \ select(symbols, (nam,sym) -> (
 	       and not (is Type) sym
 	       and (sym === symbol null or value sym =!= null)
 	       and isAlpha nam)))
-f << "         (" << format "///\\(/?/?[^/]\\)*///" << " . (0 font-lock-string-face t))" << endl
-f << "         (" << format "\"[^\"]*\"" << " . (0 font-lock-string-face t))"
+-- f << "         (" << format "///\\(/?/?[^/]\\)*///" << " . (0 font-lock-string-face t))" << endl
+-- f << "         (" << format "\"[^\"]*\"" << " . (0 font-lock-string-face t))"
 f << ")))" << endl << endl
 
 f << "(if (fboundp 'font-lock-add-keywords)
