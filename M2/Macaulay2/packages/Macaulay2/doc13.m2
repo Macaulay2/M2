@@ -55,7 +55,7 @@ document {
      Usage => "addHook(obj,key,hook)",
      Inputs => { "obj", "key", "hook" },
      Consequences => {
-	  { "the function ", TT "hook", " is added to the beginning list (possibly absent) of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key" }
+	  { "the function ", TT "hook", " is added to the beginning of the list (possibly absent) of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key" }
 	  },
      SourceCode => {(addHook,HashTable,Thing,Function), (addHook,MutableHashTable,Thing,Function)},
      SeeAlso => { runHooks, removeHook }
