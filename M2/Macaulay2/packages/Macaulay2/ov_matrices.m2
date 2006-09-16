@@ -391,11 +391,17 @@ document { -- something should be said about the degrees
      Key => "format and display of matrices in Macaulay 2",
      "By default, Macaulay 2 displays matrices in a compact form.",
      EXAMPLE {
-	  "QQ[x];",
-	  "matrix{{x^2 + 3, x^4 + 1},{x^13 - 5, x^7 - 1}}"
+	  "QQ[x,y];",
+	  "f = matrix{{x^2, x*y},{x*y, y^2}}",
+	  "dual f",
+	  "source f",
+	  "target dual f"
 	  },
-     "Note how the exponents of ", TT "x", " have been placed to the
-     right of ", TT "x", " rather than formatted in superscript.  While this
+     "Integers inside braces to the left of the matrix give the degrees of the basis elements of the
+     target of the matrix; they are omitted if the degrees are all zero.",
+     PARA{},
+     "Note how the exponents have been placed to the
+     right of the variables rather than formatted in superscript.  While this
      format is generally considered to be desirable, this can
      be turned off by setting the variable ", TO "compactMatrixForm", " to ", 
      TT "false", ".",
