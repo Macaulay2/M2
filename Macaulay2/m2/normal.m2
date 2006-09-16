@@ -272,7 +272,7 @@ integralClosure Ring := Ring => o -> (R) -> (
       	  if C#"pending"#1 === null 
      	  then normal0 (C) --Compute J defining the NNL.
      	  else idealizer0(C, o.Variable));
-     A := apply(C#"answer",i->minimalPresentation(i_0/i_1));
+     A := apply(C#"answer", i -> i_0 / trim i_1);	    -- minimalPresentation (prune) was used here before, but it could remove ring generators, too!
      if #A == 1 then A#0
      else toSequence A
      )
