@@ -680,8 +680,10 @@ document {
      "We may use ", TO "kernel", " to compute the kernel of f.",
      EXAMPLE "kernel f",
      "The answer comes out as a module which is expressed as the image of
-	  a homomorphism whose matrix is displayed.  In case the matrix itself
-	  is desired, it can be obtained with ", TO "generators", ".",
+	  a homomorphism whose matrix is displayed.  Integers inside braces to
+	  the left of the matrix give the degrees of the basis elements of the
+	  target of the matrix; they are omitted if the degrees are all zero.
+	  In case the matrix itself is desired, it can be obtained with ", TO "generators", ", as follows.",
      EXAMPLE "generators oo",
      "We may use ", TO "poincare", " to compute the Poincare polynomial.",
      EXAMPLE "poincare kernel f",
