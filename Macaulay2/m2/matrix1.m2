@@ -556,7 +556,7 @@ ring Ideal := (I) -> I.ring
 
 Ideal == Ring := (I,R) -> (
      if ring I =!= R
-     then error "expected ideals in the same ring";
+     then error "expected ideal in the given ring";
      1_R % I == 0)
 
 Ring == Ideal := (R,I) -> I == R
