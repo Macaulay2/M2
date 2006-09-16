@@ -114,10 +114,12 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      F.liftDegree = makepromoter degreeLength S;
      F.char = p;
      F.frac = F;
-     F.generators = {};
-     F.generatorSymbols = {};
-     F.generatorExpressions = {};
-     F.indexStrings = new HashTable from {};
+     F.generators = apply(generators S, m -> promote(m,F));
+     if S.?generatorSymbols then F.generatorSymbols = S.generatorSymbols;
+     if S.?generatorExpressions then F.generatorExpressions = S.generatorExpressions;
+     if S.?generators then F.generators = apply(S.generators, r -> promote(r,F));
+     if S.?indexSymbols then F.indexSymbols = applyValues(S.indexSymbols, r -> promote(r,F));
+     if S.?indexStrings then F.indexStrings = applyValues(S.indexStrings, r -> promote(r,F));
      baseName F := y -> (
 	  if F_0 == y then var else error "expected a generator"
 	  );
