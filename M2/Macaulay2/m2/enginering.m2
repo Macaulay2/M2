@@ -21,7 +21,7 @@ promote(QQ,RingElement) := (r,S) -> (
      a := promote(numerator r,S);
      b := promote(denominator r,S);
      if a % b == 0 then a // b
-     else error "promotion of this rational number not possible")
+     else error ("promotion of this rational number to the ring ", toString S, " not possible"))
 
 -- some remnants from lift and promote, version 2
 liftable(RingElement,RingElement) := 
@@ -173,7 +173,7 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
    degreeLength FractionField := F -> degreeLength last F.baseRings
        toString FractionField := F -> if ReverseDictionary#?F then toString ReverseDictionary#F else "frac(" | toString last F.baseRings | ")"
         numgens FractionField := F -> numgens last F.baseRings
-  allGenerators FractionField := F -> allGenerators last F.baseRings
+  allGenerators FractionField := F -> apply(allGenerators last F.baseRings, x -> promote(x,F))
            char FractionField := F -> char last F.baseRings
 	    dim FractionField := F -> 0
             net FractionField := F -> if ReverseDictionary#?F then toString ReverseDictionary#F else net new FunctionApplication from { frac, last F.baseRings }
@@ -205,11 +205,11 @@ frac EngineRing := (stashValue symbol frac) (R -> (
 	  denominator F := (f) -> new R from rawDenominator raw f;
 	  fraction(F,F) := F / F := (x,y) -> x//y;
 	  fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,raw r,raw s);
-     	  F.generators = {};
---	  F.generators = apply(generators R, m -> promote(m,F));
---	  if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
---	  if R.?generatorExpressions then F.generatorExpressions = R.generatorExpressions;
---	  if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
+     	  F % F := (x,y) -> if y == 0 then x else 0_F;	    -- not implemented in the engine, for some reason
+	  F.generators = apply(generators R, m -> promote(m,F));
+	  if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
+	  if R.?generatorExpressions then F.generatorExpressions = R.generatorExpressions;
+	  if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
 	  if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
 	  if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
 	  F))
