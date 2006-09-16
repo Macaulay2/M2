@@ -330,24 +330,14 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 	  row := 0;
 	  piv := new MutableHashTable;
 	  pivColumns := new MutableHashTable;
-	  if debugLevel > 100 then stderr << "f = " << f << endl;
 	  scan(numRows f, row -> (
 	       scan(numColumns f, col -> if not pivColumns#?col and isUnit f_(row,col) then (
 			      piv##piv = (row,col);
 			      pivColumns#col = true;
 			      columnMult(f,col,1//f_(row,col));
 			      scan(numColumns f, j -> if j != col then columnAdd(f,j,-f_(row,j),col));
-			      if debugLevel > 100 then (
-				   stderr << "pivoting at (" << row << "," << col << ")" << endl;
-				   stderr << "f = " << f << endl;
-				   );
 			      break))));
 	  piv = values piv;
-	  if debugLevel > 0 then (
-	       scan(piv,(row,col) -> (
-			 assert ( f_(row,col) == 1 );
-			 scan(numColumns f, j -> if j != col then assert ( f_(row,j) == 0 )))));
-	  if debugLevel > 100 then error "debug me";
 	  f = matrix f;
 	  rows := first \ piv;
 	  cols := last \ piv;
