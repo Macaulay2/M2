@@ -1,6 +1,6 @@
 test/inhom.m2	 -- fixed
-test/inverse.m2
-test/matRR.m2
+test/inverse.m2  -- Mike's problem, for now
+test/matRR.m2	 -- fixed
 
 
 
@@ -11,10 +11,10 @@ Date: Wed, 13 Sep 2006 10:42:57 -0400
 
 Here are some tests which are potentially easier for you to fix:
 
-clearOutput
-frac
-galois
-inhom
+clearOutput	-- fixed
+frac		-- fixed
+galois		-- this is Mike's now, see bugs/mike/1-subst
+inhom		-- fixed
 normal_test  (problem is map(frac R, frac R)  fails...)
 order
 ringmap3, might also be a problem for me...
