@@ -19,6 +19,8 @@ CC.degreeLength = 0
 raw CC := x -> rawFromNumber(raw CC, x)
 new CC from RawRingElement := (CC,n) -> rawToComplex n
 
+promote(RR,CC) := (r,CC) -> newCC(r,0.)
+
 lift(CC,ZZ) := lift(CC,QQ) := (z,R) -> if imaginaryPart z == 0 then lift(realPart z, R)
 lift(CC,RR) := (z,RR) -> if imaginaryPart z == 0 then realPart z
 lift(CCC,RRR):= (z,RRR) -> if imaginaryPart z == 0 then realPart z
