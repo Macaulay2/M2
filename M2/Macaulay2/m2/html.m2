@@ -1202,7 +1202,8 @@ viewHelp = key -> (
 	  scan(prefixes, dir -> if fileExists display (dir|fn) then p = dir|fn);
 	  if p === null then error("html file not found: ",fn)
 	  else show new URL from { fix p }
-	  ))
+	  );
+     )
 viewHelp = new Command from viewHelp
 
 indexHtml = dir -> (
