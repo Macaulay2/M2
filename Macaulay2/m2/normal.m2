@@ -155,7 +155,7 @@ idealizer0 = (C,w) -> (
      	  idJ := mingens ideal generators gb (fR * JR : JR);
      	  if ideal(idJ) == ideal(fR)  then (
 	       -- We have the answer for this ideal!
-	       C#"answer" = append(C#"answer", {ring I,I});
+	       C#"answer" = append(C#"answer", (ring I,I));
 	       if #C#"storing" > 0 then (
 	       	    C#"todo" = {{C#"storing"#0,null}};
 	       	    C#"storing" = drop(C#"storing", 1);
@@ -272,7 +272,7 @@ integralClosure Ring := Ring => o -> (R) -> (
       	  if C#"pending"#1 === null 
      	  then normal0 (C) --Compute J defining the NNL.
      	  else idealizer0(C, o.Variable));
-     A := apply(C#"answer", i -> i_0 / trim i_1);	    -- minimalPresentation (prune) was used here before, but it could remove ring generators, too!
+     A := apply(C#"answer", (S,J) -> S / trim J);	    -- minimalPresentation (prune) was used here before, but it could remove ring generators, too!
      if #A == 1 then A#0
      else toSequence A
      )
@@ -310,7 +310,7 @@ ICfractions(Ring) := RingMap => o-> R -> (
      -- domain was the input into the function.  
      if R#?IIICCC or not isNormal R then (
 	  integralClosure R;
-	  K := (R#IIICCC#"basefield")(monoid [join(flatten R#IIICCC#"newvars",R.generatorSymbols)]);
+	  K := (R#IIICCC#"basefield")(monoid [join(flatten R#IIICCC#"newvars",R.generatorSymbols), Degrees => join(degree \ flatten R#IIICCC#"newvars", degrees R)]);
 	  -- This constructs the new ring using all of the new variables.
 	  KF := frac(K);
 	  M1 := first entries substitute(vars R,KF);  -- puts the vars of R in KF
