@@ -71,3 +71,29 @@ g = map(ZZ,C,{2})
 assert ( g y == 2 )
 assert ( g promote(x,C) == 0 )
 
+-- maps between fraction rings of quotient rings
+
+R = frac(QQ[t])
+S = frac(QQ[x,y]/(x^3-y^2))
+p = map(R, S,{t^2,t^3})
+assert( p S_"x" == t^2 )
+assert( p S_"y" == t^3 )
+
+
+R = frac(QQ[x,y])
+S = frac(QQ[x])
+p = map(R, S)
+assert( p S_"x" == R_"x" )
+
+
+R = frac(QQ[x,y]/(y^2+1))
+S = frac(QQ[x])
+p = map(R, S)
+assert( p S_"x" == R_"x" )
+
+
+R = frac(QQ[x,y]/(x^2+1))
+S = frac(QQ[x]/(x^2+1))
+p = map(R, S)
+assert( p S_"x" == R_"x" )
+
