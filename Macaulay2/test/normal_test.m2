@@ -19,7 +19,7 @@ assert(ICfractions R == substitute(matrix {{(42*y*z)/x^2, x, y, z}},frac R))
 R = ZZ/101[symbol x..symbol z,Degrees=>{{1,2},{1,5},{1,6}}]/(z*y^2-x^5*z-x^8)
 time J = integralClosure (R,Variable=>symbol a) 
 use ring ideal J
-assert(ideal J 
+assert(substitute(ideal J , {a_7 => -a_7})
      == ideal(x^6-a_7*y+x^3*z-11*x*y^2,a_7*x^2+11*x^3*y-y*z,a_7^2+22*a_7*x*y-x^4*z+20*x^2*y^2-x*z^2))
 
 --The reduced not domain examples!! 
