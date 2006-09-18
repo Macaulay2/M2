@@ -114,6 +114,7 @@ EngineRing / Ideal := (R,I) -> (
      if R.?generatorSymbols then S.generatorSymbols = R.generatorSymbols;
      if R.?generatorExpressions then S.generatorExpressions = R.generatorExpressions;
      if R.?indexStrings then S.indexStrings = applyValues(R.indexStrings, x -> promote(x,S));
+     if R.?indexSymbols then S.indexSymbols = applyValues(R.indexSymbols, x -> promote(x,S));
      expression S := lookup(expression,R);
      S.use = x -> (
 --	  try monoid S;
