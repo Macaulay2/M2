@@ -177,7 +177,8 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
            char FractionField := F -> char last F.baseRings
 	    dim FractionField := F -> 0
             net FractionField := F -> if ReverseDictionary#?F then toString ReverseDictionary#F else net new FunctionApplication from { frac, last F.baseRings }
-     expression FractionField := F -> if ReverseDictionary#?F then hold toString ReverseDictionary#F else (expression frac) (expression last F.baseRings)
+     expression FractionField := F -> (expression frac) (expression last F.baseRings)
+       describe FractionField := F -> net expression F
 
 -- freduce := (f) -> (numerator f)/(denominator f)
 
