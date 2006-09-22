@@ -80,21 +80,23 @@ graphIdeal RingMap := Ideal => options -> (f) -> (
 	  ) then error "expected polynomial rings over the same ring";
      if vars k ** R != f (vars k ** S)	  -- vars k isn't really enough...
      then error "expected ring map to be identity on coefficient ring";
-     t := numgens source f.matrix;
-     I := submatrix(f.matrix,,toList(t - numgens S .. t - 1));
+     t := numgens S;
+     h := submatrix(f.matrix,,toList(0 .. t - 1));
      options = new MutableHashTable from options;
      options.Degrees = join((monoid R).degrees, 
-	  apply(degrees source I, d -> if d === {0} then {1} else d)
+	  apply(degrees source h, d -> if d === {0} then {1} else d)
 	  );
      options = new OptionTable from options;
      RS := tensor(R,S,options);
      --RS := tensor(R,S,
-     --             Degrees=>join((monoid R).degrees, degrees source I),
+     --             Degrees=>join((monoid R).degrees, degrees source h),
      --             MonomialOrder=>Eliminate numgens R,
      --             options);
      yvars := (vars RS)_{numgens R .. numgens RS - 1};
      xvars := (vars RS)_{0..numgens R - 1};
-     ideal(yvars - substitute(I, xvars)))
+     I := ideal(yvars - substitute(h, xvars));
+     if debugLevel > 0 and isHomogeneous f then assert isHomogeneous I;
+     I)
 
 graphRing RingMap := QuotientRing => options -> (f) -> (
      if f.cache.?graphRing then f.cache.graphRing else f.cache.graphRing = (
