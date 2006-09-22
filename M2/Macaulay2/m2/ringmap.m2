@@ -47,21 +47,42 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
      A := S;
      while true do (
 	  r := numgens source m;
-	  if r === n 
-	  then (
+	  if r > n then (
+	       if instance(A,GaloisField) then (
+		    -- the engine wants to know where the primitive element will go
+		    A' := ambient A;
+		    p := map(R,A',m_(toList(n .. r-1)));
+		    m' := new MutableMatrix from m;
+		    m'_(0,n) = p A.PrimitiveElement;
+		    m = matrix m';
+		    )
+	       )
+	  else if r == n then (
 	       if numgens A > 0 then (
 		    if member(A, R.baseRings) then (
 			 -- we can promote
-		    	 m = m | promote(vars A, R);
+			 if instance(A,GaloisField) then (
+		    	      -- the engine wants to know where the primitive element will go
+		    	      m = m | promote(A.PrimitiveElement, R);
+			      )
+			 else (
+		    	      m = m | promote(vars A, R);
+			      )
 			 )
 		    else (
 			 -- we should look for variables with the same name
-			 m = m | matrix(R, {apply(A.generatorSymbols, s -> if R.?indexSymbols and R.indexSymbols#?s then R.indexSymbols#s else 0_R)})
+			 mm := matrix(R, {apply(A.generatorSymbols, s -> if R.?indexSymbols and R.indexSymbols#?s then R.indexSymbols#s else 0_R)});
+			 if instance(A,GaloisField) then (
+			      -- the engine wants to know where the primitive element will go
+			      A' = ambient A;
+			      p = map(R,A',mm);
+			      mm = matrix {{p A.PrimitiveElement}};
+			      );
+			 m = m | mm;
 			 )
 		    )
 	       )
-	  else if r < n
-	  then error ("encountered values for ", toString r, " variables, but expected ", toString n);
+	  else if r < n then error ("encountered values for ", toString r, " variables, but expected ", toString n);
 	  n = n + numgens A;
 	  try A = coefficientRing A else break
 	  );
