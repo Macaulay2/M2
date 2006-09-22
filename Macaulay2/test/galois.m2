@@ -16,7 +16,7 @@ k=GF(5,2,Variable=>a)
 R1=k[s,t]
 R2 = k[x,y,z,w]
 assert( substitute(a*x-1,{x=>a}) == a^2 - 1 )
-f = map(R1,R2,{s^4,s^3*t-a*t^2*s^2,s*t^3,t^4})
+f = map(R1,R2,{s^4,s^3*t-a*t^2*s^2,s*t^3,t^4},DegreeMap => v -> 4*v)
 ker f
 assert(f (ker f) == 0)
 P0 = hilbertPolynomial (R2/(x,y,z))
