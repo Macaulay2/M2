@@ -923,6 +923,18 @@ eagonNorthcott Matrix := f -> (
 	       		      (-1)^(s+1)*f_(t,q#0#s)))))));
      chainComplex d);
 
+------ koszul
+
+koszul(ZZ, Matrix) := Matrix => (i,m) -> map(ring m, rawKoszul(i, raw m))
+
+koszul Matrix := ChainComplex => f ->(
+     n := rank source f;
+     chainComplex apply (n+1, i -> koszul(i,f)))
+
+-- this seems not to be useful to the user (yet):
+-- koszul(ZZ, Matrix, Matrix) := Matrix => (i,m,n) -> map(ring m, rawKoszulMonomials(i, raw m, raw n))
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
