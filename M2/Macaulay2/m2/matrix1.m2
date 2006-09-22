@@ -168,8 +168,8 @@ concatBlocks = mats -> (
      	  samering flatten mats;
 	  sources := applyTable(mats,source);
 	  targets := transpose applyTable(mats,target);
-	  if not same sources then error "expected matrices in the same column to have equal sources";
-	  if not same targets then error "expected matrices in the same row to have equal targets";
+	  -- if not same sources then error "expected matrices in the same column to have equal sources";
+	  -- if not same targets then error "expected matrices in the same row to have equal targets";
      	  ggConcatBlocks( Module.directSum first targets, Module.directSum first sources, mats)))
 
 Matrix.matrix = options -> (f) -> concatBlocks f
