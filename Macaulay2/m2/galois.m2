@@ -10,6 +10,7 @@ toString GaloisField := k -> (
 net GaloisField := k -> (
      if ReverseDictionary#?k then toString ReverseDictionary#k
      else net expression k)
+describe GaloisField := F -> net expression F
 
 ambient GaloisField := Ring => R -> last R.baseRings
 coefficientRing GaloisField := Ring => R -> coefficientRing last R.baseRings
@@ -127,6 +128,7 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      F.use = F -> var <- F_0;
      F.use F;
      F / F := (x,y) -> x // y;
+     F % F := (x,y) -> if y == 0 then x else 0_F;
      F))
 
 random GaloisField := opts -> F -> (
