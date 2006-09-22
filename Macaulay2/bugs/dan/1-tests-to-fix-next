@@ -17,9 +17,10 @@ galois		-- this is Mike's now, see bugs/mike/1-subst
 		   okay, I will fix all Galois ring maps -- I give the engine where the primitive element should go
 inhom		-- fixed
 normal_test	-- fixed some things, now it's failing on a reducible example with too few rings returned
-order
-ringmap3, might also be a problem for me...
-subst3
+order		-- factory returns a different factorization the first time, even though I set the random number seeds
+		   we should just sort the anwer
+ringmap3	-- works now
+subst3		-- this will work when we fix ring maps for Galois fields
 typicalval
 
 and also:
