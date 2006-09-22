@@ -96,13 +96,12 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      var := options.Variable;
      if var =!= null then var = baseName var
      else (
-	  if primitiveElement === S_0 
-	  then var = S.generatorSymbols#0
-	  else var = symbol GF$a;
+	  var = S.generatorSymbols#0;
 	  );
      d := p^n-1;
      rF := rawGaloisField raw primitiveElement;
      F := new GaloisField from rF;
+     F.PrimitiveElement = primitiveElement;
      F.isBasic = true;
      toString F := h -> toString expression h;
      net F := h -> net expression h;
