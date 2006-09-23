@@ -557,11 +557,12 @@ installPackage Package := opts -> pkg -> (
 
      -- copy package source subdirectory examples
      exampleDir := buildDirectory|LAYOUT#"packageexamples" pkg#"title";
-     en := realpath(currentSourceDir|buildPackage|"/examples/");
-     if fileExists en then (
-	  stderr << "--copying example files from " << en << endl;
-	  copyDirectory(en, exampleDir, Verbose => debugLevel > 0, excludes, UpdateOnly => true);
-	  );
+---- we do this copying one file at a time below...
+--     en := realpath(currentSourceDir|buildPackage|"/examples/");
+--     if fileExists en then (
+--	  stderr << "--copying example files from " << en << endl;
+--	  copyDirectory(en, exampleDir, Verbose => debugLevel > 0, excludes, UpdateOnly => true);
+--	  );
 
      if opts.MakeDocumentation then (
 	  -- This is a bit of a fiction: we've copied the files for our package into the build directory,
@@ -708,8 +709,18 @@ installPackage Package := opts -> pkg -> (
 		    if not opts.RerunExamples and fileExists outf and fileTime outf >= fileTime inf then (
 			 -- do nothing
 			 )
-		    else if not opts.RerunExamples and inf != inf' and fileExists inf' and fileExists outf' and fileTime outf' >= fileTime inf' and get inf == get inf'
-		    then copyFile(outf',outf)
+		    else if (
+			 not opts.RerunExamples 
+			 and inf != inf' 
+			 and fileExists inf' 
+			 and fileExists outf' 
+			 and fileTime outf' >= fileTime inf' 
+			 and get inf == get inf'
+			 and not fileExists tmpf
+			 )
+		    then (
+			 copyFile(outf',outf);
+			 )
 		    else runFile(inf,outf,tmpf,desc,pkg,changefun,".",opts.UserMode);
 		    -- read, separate, and store example output
 		    if fileExists outf then pkg#"example results"#fkey = drop(separateM2output get outf,-1)
