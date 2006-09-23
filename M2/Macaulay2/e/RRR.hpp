@@ -73,6 +73,7 @@ public:
   virtual bool is_unit(const ring_elem f) const;
   virtual bool is_zero(const ring_elem f) const;
   virtual bool is_equal(const ring_elem f, const ring_elem g) const;
+  virtual int compare_elems(const ring_elem a, const ring_elem b) const;
 
   virtual ring_elem copy(const ring_elem f) const;
   virtual void remove(ring_elem &f) const;

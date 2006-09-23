@@ -70,6 +70,10 @@ public:
     return numerR_->PolyRing::is_equal(f,g); 
   }
 
+  virtual int compare_elems(const ring_elem f, const ring_elem g) const {
+    return numerR_->PolyRing::compare_elems(f,g); 
+  }
+
   virtual ring_elem copy(const ring_elem f) const {
     return numerR_->PolyRing::copy(f);
   }

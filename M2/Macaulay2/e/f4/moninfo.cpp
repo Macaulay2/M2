@@ -20,6 +20,16 @@ MonomialInfo::~MonomialInfo()
   deletearray(hashfcn);
 }
 
+monomial_word MonomialInfo::monomial_weight(const_packed_monomial m, const M2_arrayint wts) const
+{
+    const_packed_monomial m1 = m+2;
+    int top = wts->len;
+    int *n = wts->array;
+    monomial_word sum = 0;
+    for (int j=top; j>0; --j) sum += *m1++ * *n++;
+    return sum;
+  }
+
 void MonomialInfo::show() const
 {
   fprintf(stderr, "monomial info\n");

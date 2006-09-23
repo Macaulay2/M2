@@ -38,7 +38,8 @@ public:
 			      const FreeModule *F);
 
   static MutableMatrix *to_M2_MutableMatrix(const Gausser *KK,
-					    coefficient_matrix *mat);
+					    coefficient_matrix *mat,
+					    gb_array &gb);
 
 };
 

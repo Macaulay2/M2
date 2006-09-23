@@ -72,6 +72,7 @@ F4Computation::F4Computation(
 		max_degree);
   
   F4toM2Interface::from_M2_matrix(KK,MI,m,gb_weights,f4->get_generators());
+  f4->new_generators(0, m->n_cols()-1);
 }
 
 F4Computation::~F4Computation()

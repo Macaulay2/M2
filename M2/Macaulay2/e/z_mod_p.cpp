@@ -182,6 +182,14 @@ bool Z_mod::is_equal(const ring_elem f, const ring_elem g) const
   return f.int_val == g.int_val;
 }
 
+int Z_mod::compare_elems(const ring_elem f, const ring_elem g) const
+{
+  int cmp = f.int_val - g.int_val;
+  if (cmp < 0) return -1;
+  if (cmp == 0) return 0;
+  return 1;
+}
+
 ring_elem Z_mod::copy(const ring_elem f) const
 {
   return f;

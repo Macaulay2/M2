@@ -220,6 +220,17 @@ bool RRR::is_less(const ring_elem f, const ring_elem g) const
   mpf_ptr b = MPF_VAL(g);
   return mpf_cmp(a,b) < 0;
 }
+
+int RRR::compare_elems(const ring_elem f, const ring_elem g) const
+{
+  mpf_ptr a = MPF_VAL(f);
+  mpf_ptr b = MPF_VAL(g);
+  int cmp = mpf_cmp(a,b);
+  if (cmp > 0) return 1;
+  if (cmp == 0) return 0;
+  return -1;
+}
+
 int RRR::is_positive(const ring_elem f) const
 {
   mpf_ptr a = MPF_VAL(f);

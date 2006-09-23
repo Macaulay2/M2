@@ -160,11 +160,14 @@ bool RingZZ::is_equal(const ring_elem f, const ring_elem g) const
 
   return mpz_cmp(a, b) == 0;
 }
-int RingZZ::compare(const ring_elem f, const ring_elem g) const
+int RingZZ::compare_elems(const ring_elem f, const ring_elem g) const
 {
   mpz_ptr a = MPZ_VAL(f);
   mpz_ptr b = MPZ_VAL(g);
-  return mpz_cmp(a,b);
+  int cmp = mpz_cmp(a,b);
+  if (cmp > 0) return 1;
+  if (cmp == 0) return 0;
+  return -1;
 }
 int RingZZ::is_positive(const ring_elem f) const
 {

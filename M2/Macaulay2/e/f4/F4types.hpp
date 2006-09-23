@@ -76,6 +76,19 @@ struct gbelem : public our_new_delete {
 
 class gb_array : public VECTOR(gbelem *) {};
 
+struct dense_row : public our_new_delete {
+  int len; // coeffs is an array 0..len-1
+  F4CoefficientArray coeffs;
+  int first; // the first index for which coeffs is non-zero, if first <= last
+  int last; // any indices after 'last' ARE zero
+};
+
+struct sparse_row : public our_new_delete {
+  int len;
+  F4CoefficientArray coeffs;
+  int *comps;
+};
+
 struct row_elem : public our_new_delete {
   // Header information
   packed_monomial monom;

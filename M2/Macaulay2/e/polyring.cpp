@@ -386,6 +386,29 @@ bool PolyRing::is_equal(const ring_elem f, const ring_elem g) const
     }
 }
 
+int PolyRing::compare_elems(const ring_elem f, const ring_elem g) const
+{
+  int cmp;
+  Nterm *a = f;
+  Nterm *b = g;
+  for ( ;; a = a->next, b = b->next)
+    {
+      if (a == NULL)
+	{
+	  if (b == NULL) return 0;
+	  return -1;
+	}
+      if (b == NULL) return 1;
+      if (nvars_ > 0)
+	{
+	  cmp = M_->compare(a->monom, b->monom);
+	  if (cmp != 0) return cmp;
+	} 
+      cmp = K_->compare_elems(a->coeff, b->coeff);
+      if (cmp != 0) return cmp;
+    }
+}
+
 bool PolyRing::is_homogeneous(const ring_elem f) const
 {
   if (!is_graded()) return false;

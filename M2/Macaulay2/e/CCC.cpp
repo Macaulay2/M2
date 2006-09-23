@@ -265,6 +265,17 @@ bool CCC::is_greater(const ring_elem f, const ring_elem g) const
   return mpf_cmp(&a->re,&b->re) > 0;
 }
 
+int CCC::compare_elems(const ring_elem f, const ring_elem g) const
+{
+  int cmp = mpf_cmp(BIGCC_RE(f), BIGCC_RE(g));
+  if (cmp > 0) return 1;
+  if (cmp < 0) return -1;
+  cmp = mpf_cmp(BIGCC_IM(f),BIGCC_IM(g));
+  if (cmp > 0) return 1;
+  if (cmp < 0) return -1;
+  return 0;
+}
+
 bool CCC::is_real(const ring_elem f) const
 {
   mpf_ptr im = BIGCC_IM(f);

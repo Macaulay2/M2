@@ -183,11 +183,15 @@ bool QQ::is_equal(const ring_elem f, const ring_elem g) const
 
   return mpq_equal(a, b);
 }
-int QQ::compare(const ring_elem f, const ring_elem g) const
+int QQ::compare_elems(const ring_elem f, const ring_elem g) const
 {
   M2_Rational a = MPQ_VAL(f);
   M2_Rational b = MPQ_VAL(g);
-  return mpq_cmp(a,b);
+
+  int cmp = mpq_cmp(a,b);
+  if (cmp > 0) return 1;
+  if (cmp == 0) return 0;
+  return -1;
 }
 int QQ::is_positive(const ring_elem f) const
 {

@@ -5,7 +5,7 @@
 #include "../matrixcon.hpp"
 #include "../matrix.hpp"
 #include "../mat.hpp"
-
+#include "../newdelete.hpp"
 #include "F4toM2interface.hpp"
 
 void F4toM2Interface::from_M2_vec(const Gausser *KK,
@@ -68,10 +68,10 @@ void F4toM2Interface::poly_set_degrees(const Gausser *KK,
 }
 
 void F4toM2Interface::from_M2_matrix(const Gausser *KK,
-						const MonomialInfo *MI,
-						const Matrix *m, 
-						M2_arrayint wts,
-						gb_array &result_polys)
+				     const MonomialInfo *MI,
+				     const Matrix *m, 
+				     M2_arrayint wts,
+				     gb_array &result_polys)
 {
   const FreeModule *F = m->rows();
   for (int i=0; i<m->n_cols(); i++)
@@ -85,9 +85,9 @@ void F4toM2Interface::from_M2_matrix(const Gausser *KK,
 }
 
 vec F4toM2Interface::to_M2_vec(const Gausser *KK,
-						  const MonomialInfo *MI,
-						  const poly &f,
-						  const FreeModule *F)
+			       const MonomialInfo *MI,
+			       const poly &f,
+			       const FreeModule *F)
 {
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
   const Monoid *M = R->getMonoid();
@@ -147,9 +147,9 @@ vec F4toM2Interface::to_M2_vec(const Gausser *KK,
 }
 
 Matrix *F4toM2Interface::to_M2_matrix(const Gausser *KK,
-							 const MonomialInfo *MI,
-							 gb_array &polys, 
-							 const FreeModule *F)
+				      const MonomialInfo *MI,
+				      gb_array &polys, 
+				      const FreeModule *F)
 {
   MatrixConstructor result(F,polys.size());
   for (int i=0; i<polys.size(); i++)
@@ -157,28 +157,35 @@ Matrix *F4toM2Interface::to_M2_matrix(const Gausser *KK,
   return result.to_matrix();
 }
 
-// template<typename CoeffRing>
-// MutableMatrix * F4toM2Interface::to_M2_MutableMatrix(  
-//     const RingType *K,
-//     coefficient_matrix *mat)
-// {
-//   int nrows = mat->rows.size();
-//   int ncols = mat->columns.size();
-//   MutableMat<CoeffRing, MATTYPE<CoeffRing> > *result = 
-//     MutableMat<CoeffRing, MATTYPE<CoeffRing> >::zero_matrix(K,nrows,ncols);
-//   MATTYPE<CoeffRing> *M = result->get_Mat();
-//   for (int r=0; r<nrows; r++)
-//     {
-//       row_elem &row = mat->rows[r];
-//       for (int i=0; i<row.len; i++)
-// 	{
-// 	  int c = row.comps[i];
-// 	  ////	  c = mat->columns[c].ord;
-// 	  M->set_entry(r,c,row.coeffs[i]);
-//	}
-//     }
-//   return result;
-// }
+MutableMatrix * F4toM2Interface::to_M2_MutableMatrix(const Gausser *KK,
+						     coefficient_matrix *mat,
+						     gb_array &gb)
+{
+  int nrows = mat->rows.size();
+  int ncols = mat->columns.size();
+  MutableMatrix *M = IM2_MutableMatrix_make(KK->get_ring(), nrows, ncols, false);
+  for (int r=0; r<nrows; r++)
+    {
+      row_elem &row = mat->rows[r];
+      ring_elem *rowelems = newarray(ring_elem, row.len);
+      if (row.coeffs == 0)
+	{
+	  KK->to_ringelem_array(row.len, gb[row.elem]->f.coeffs, rowelems);
+	}
+      else
+	{
+	  KK->to_ringelem_array(row.len, row.coeffs, rowelems);
+	}
+      for (int i=0; i<row.len; i++)
+ 	{
+ 	  int c = row.comps[i];
+ 	  ////	  c = mat->columns[c].ord;
+ 	  M->set_entry(r,c,rowelems[i]);
+	}
+      deletearray(rowelems);
+    }
+  return M;
+}
 
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

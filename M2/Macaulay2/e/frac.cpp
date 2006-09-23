@@ -326,6 +326,15 @@ bool FractionField::is_equal(const ring_elem a, const ring_elem b) const
     }
 }
 
+int FractionField::compare_elems(const ring_elem a, const ring_elem b) const
+{
+  frac_elem *f = FRAC_VAL(a);
+  frac_elem *g = FRAC_VAL(b);
+  int cmp = R_->compare_elems(f->numer, g->numer);
+  if (cmp != 0) return cmp;
+  return R_->compare_elems(f->denom, g->denom);
+}
+
 ring_elem FractionField::copy(const ring_elem a) const
 {
   frac_elem *f = FRAC_VAL(a);

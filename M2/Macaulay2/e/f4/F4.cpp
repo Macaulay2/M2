@@ -4,7 +4,6 @@
 
 #include "F4.hpp"
 #include "monsort.hpp"
-#include "../queue.hpp"
 
 static clock_t clock_sort_columns = 0;
 static clock_t clock_gauss = 0;
@@ -30,10 +29,11 @@ F4GB::F4GB(const Gausser *KK0,
     S(0),
     next_col_to_process(0),
     mat(0),
-    H(0)
+    H(M0,18)
 {
   lookup = new MonomialLookupTable;
   S = new F4SPairSet(M, gb);
+  mat = new coefficient_matrix;
   // set status
 }
 
@@ -72,7 +72,7 @@ int F4GB::new_column(packed_monomial m)
 int F4GB::find_or_append_column(packed_monomial m)
 {
   packed_monomial new_m;
-  if (H->find_or_insert(m, new_m))
+  if (H.find_or_insert(m, new_m))
     return new_m[-1];
   // At this point, m is a new monomial to be placed as a column
   return new_column(m);
@@ -88,11 +88,11 @@ int F4GB::mult_monomials(packed_monomial m, packed_monomial n)
   // If not, increment our memory block, and insert a new column.
   packed_monomial new_m;
   M->mult(m,n,next_monom);
-  if (H->find_or_insert(next_monom, new_m))
+  if (H.find_or_insert(next_monom, new_m))
     return new_m[-1]; // monom exists, don't save monomial space
   m = next_monom;
-  B->intern(M->monomial_size(m));
-  next_monom = B->reserve(M->max_monomial_size());
+  B.intern(M->monomial_size(m));
+  next_monom = B.reserve(M->max_monomial_size());
   return new_column(m);
 }
 
@@ -160,8 +160,8 @@ void F4GB::process_column(int c)
     {
       packed_monomial n = next_monom;
       M->unchecked_divide(ce.monom, gb[which]->f.monoms, n);
-      B->intern(M->monomial_size(n));
-      next_monom = B->reserve(M->max_monomial_size());
+      B.intern(M->monomial_size(n));
+      next_monom = B.reserve(M->max_monomial_size());
       M->set_component(which, n);
       ce.gb_divisor = mat->rows.size();
       ce.head = ce.gb_divisor;
@@ -180,7 +180,7 @@ void F4GB::process_s_pair(spair *p)
   case F4_SPAIR_SPAIR: {
     packed_monomial n = next_monom;
     M->unchecked_divide(p->lcm, gb[p->i]->f.monoms, n);
-    next_monom = B->reserve(M->max_monomial_size());
+    next_monom = B.reserve(M->max_monomial_size());
 
     load_row(n, p->i);
     c = mat->rows[mat->rows.size()-1].comps[0];
@@ -189,7 +189,7 @@ void F4GB::process_s_pair(spair *p)
 
     n = next_monom;
     M->unchecked_divide(p->lcm, gb[p->j]->f.monoms, n);
-    next_monom = B->reserve(M->max_monomial_size());
+    next_monom = B.reserve(M->max_monomial_size());
 
     load_row(n, p->j);
     break;
@@ -269,6 +269,39 @@ void F4GB::reorder_columns()
   std::swap(mat->columns, newcols);
 }
 
+void F4GB::reorder_rows()
+{
+  long nrows = mat->rows.size();
+  long ncols = mat->columns.size();
+  coefficient_matrix::row_array newrows;
+  VECTOR(long) rowlocs; // 0..nrows-1 of where row as been placed
+
+  newrows.reserve(nrows);
+  rowlocs.reserve(nrows);
+  for (long r = 0; r < nrows; r++)
+    rowlocs.push_back(-1);
+
+  for (long c = 0; c < ncols; c++)
+    {
+      int oldrow = mat->columns[c].head;
+      if (oldrow >= 0)
+	{
+	  // Move the row into place
+	  long newrow = newrows.size();
+	  newrows.push_back(mat->rows[oldrow]);
+	  rowlocs[oldrow] = newrow;
+	  mat->columns[c].head = newrow;
+	  if (mat->columns[c].gb_divisor == oldrow)
+	    mat->columns[c].gb_divisor = newrow;
+	}
+      
+    }
+  for (long r = 0; r < nrows; r++)
+    if (rowlocs[r] < 0)
+      newrows.push_back(mat->rows[r]);
+  std::swap(mat->rows, newrows);
+}
+
 void F4GB::reset_matrix()
 {
   next_col_to_process = 0;
@@ -276,10 +309,9 @@ void F4GB::reset_matrix()
   mat->columns.clear();
   mat->column_order.clear();
 
-  H = new MonomialHash(M,18);
-  delete B;
-  B = new MemoryBlock<monomial_word>;
-  next_monom = B->reserve(M->max_monomial_size());
+  H.reset();
+  B.reset();
+  next_monom = B.reserve(M->max_monomial_size());
 }
 
 void F4GB::make_matrix()
@@ -301,12 +333,69 @@ void F4GB::make_matrix()
     process_column(next_col_to_process++);
 
   // DEBUGGING:
-  fprintf(stderr, "--matrix--%d by %d\n", 
+  fprintf(stderr, "--matrix--%ld by %ld\n", 
 	  mat->rows.size(), mat->columns.size());
+
+  show_row_info();
+  show_column_info();
+  show_matrix();
 
   // Now we reorder the columns, rows?
   reorder_columns();
   reorder_rows();  // This is only here so we can see what we are doing...?
+}
+
+///////////////////////////////////////////////////
+// Gaussian elimination ///////////////////////////
+///////////////////////////////////////////////////
+
+void F4GB::gauss_reduce()
+{
+  // Steps: 1. initialize zero row.
+  // for each row: load row into dense row, reduce it, 
+  //   if result is non-zero: keep it
+  //   if result is zero: for now, ignore it.
+#if 0
+  // being written: Sep 2006 MES
+  KK->allocate_dense_row_zeros(mat->columns.size(), gauss_row);
+  for (int i=0; i<mat->rows.size(); i++)
+    {
+      row_elem &r = mat->rows[i];
+      if (r.len == 0) continue; // should not happen MES?
+      int c = r.comps[0];
+      if (mat->columns[c].head < 0)
+	{
+	  // This is the situation when we reduce this row
+	  F4CoefficientArray sparserow = r.coeffs;
+	  if (sparserow == 0)
+	    sparserow = gens[r.elem]->f.coeffs;
+	  KK->load_dense_row(r.len, sparserow, r.comps, gauss_row);
+	  // Now reduce this row
+	  while (r.first <= r.last)
+	    {
+	      int j = mat->columns[r.first].head;
+	      if (j >= 0)
+		{
+		  row_elem &r2 = mat->rows[j];
+		  KK->cancel_sparse_row(r2.len, r2.coeffs, r2.comps, gauss_row);
+		}
+	      else 
+		{
+		  // What to do here??
+		}
+	    }
+	  if (elem_is_nonzero)
+	    KK->dense_to_sparse_row(gauss_row, r);
+	  else
+	    {
+	      // ??
+	    }
+	  // At this point, we have either zero or a new GB element
+	  KK->clear_dense_row(gauss_row);
+	}
+    }
+  KK->deallocate_dense_row_zeros(gauss_row);
+#endif
 }
 
 ///////////////////////////////////////////////////
@@ -453,17 +542,13 @@ void F4GB::test_spair_code()
 
 enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
 {
-  queue<packed_monomial> Q;
-  //  lookup = MonomialLookupTable::create<MonomialInfo>(M,Q);
-  
   clock_sort_columns = 0;
   clock_gauss = 0;
   clock_make_matrix = 0;
   int npairs;
 
-  test_spair_code();
+  //  test_spair_code();
 
-  return COMP_DONE;
   enum ComputationStatusCode is_done = COMP_COMPUTING;
 
   for (;;)
@@ -507,6 +592,71 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
   fprintf(stderr, "total time for gauss: %f\n", clock_time);
 
   return is_done;
+}
+
+//////////////////////////////////
+// Debugging routines only ///////
+//////////////////////////////////
+
+#include "F4toM2Interface.hpp"
+#include "../text_io.hpp"
+#include "../mat.hpp"
+#include "../freemod.hpp"
+
+static FreeModule *F;
+
+void F4GB::show_gb_array(const gb_array &g) const
+{
+  // Debugging routine
+  // Display the array, and all of the internal information in it too.
+  buffer o;
+  for (int i=0; i<g.size(); i++)
+    {
+      vec v = F4toM2Interface::to_M2_vec(KK, M, g[i]->f, F);
+      o << "element " << i 
+	<< " degree " << g[i]->deg 
+	<< " alpha " << g[i]->alpha 
+	<< newline << "    ";
+      F->get_ring()->vec_text_out(o, v);
+      o << newline;
+    }
+  emit(o.str());
+}
+
+void F4GB::show_row_info() const 
+{
+  // Debugging routine
+  for (int i=0; i<mat->rows.size(); i++)
+    {
+      fprintf(stderr, "%4d ", mat->rows[i].elem);
+      if (mat->rows[i].monom == 0)
+	fprintf(stderr, "generator");
+      else
+	M->show(mat->rows[i].monom);
+      fprintf(stderr, "\n");
+    }
+}
+
+void F4GB::show_column_info() const
+{
+  // Debugging routine
+  for (int i=0; i<mat->columns.size(); i++)
+    {
+      fprintf(stderr, "gbdivisor %4d ord %4d monomial ", 
+	      mat->columns[i].gb_divisor,
+	      mat->columns[i].ord);
+      M->show(mat->columns[i].monom);
+      fprintf(stderr, "\n");
+    }
+}
+
+void F4GB::show_matrix()
+{
+  // Debugging routine
+  MutableMatrix *q = F4toM2Interface::to_M2_MutableMatrix(KK,mat,gens);
+  buffer o;
+  q->text_out(o);
+  emit(o.str());
 }
 
 

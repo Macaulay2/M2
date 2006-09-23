@@ -191,6 +191,14 @@ bool PolyQQ::is_equal(const ring_elem f, const ring_elem g) const
   return numerR_->is_equal(numerator(f), numerator(g));
 }
 
+int PolyQQ::compare_elems(const ring_elem f, const ring_elem g) const
+{
+#ifdef DEVELOPMENT
+#warning "write this"
+#endif
+  return 0;
+}
+
 ring_elem PolyQQ::copy(const ring_elem f) const 
 {
 #ifdef DEVELOPMENT

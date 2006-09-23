@@ -207,6 +207,11 @@ public:
   virtual bool is_zero(const ring_elem f) const = 0;
   virtual bool is_equal(const ring_elem f, const ring_elem g) const = 0;
 
+  virtual int compare_elems(const ring_elem f, const ring_elem g) const = 0;
+  // Returns -1 if f < g, 0 if f and g are either equal, or considered equal, and 1 if f > g.
+  // The specific definition is ring dependent, but for numeric rings it defaults to
+  // the standard order.
+
   virtual ring_elem copy(const ring_elem f) const = 0;
   virtual void remove(ring_elem &f) const = 0;
 

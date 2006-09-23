@@ -104,10 +104,13 @@ class F4GB : public our_new_delete
   // The matrix and its construction
   int next_col_to_process;
   coefficient_matrix *mat;
-  MonomialHashTable<MonomialInfo> *H;
-  MemoryBlock<monomial_word> *B;
+  MonomialHashTable<MonomialInfo> H;
+  MemoryBlock<monomial_word> B;
   monomial_word *next_monom; // valid while creating the matrix
 
+  // Local data for gaussian elimination
+  F4CoefficientArray dense_row;
+  int first, last;
 private:
 
   void test_spair_code(); // test routine: probably will be removed
@@ -127,10 +130,15 @@ private:
     void process_column(int c);
     void process_s_pair(spair *p);
     void reorder_columns();
-    void reorder_rows() { } // MES TO DO
+    void reorder_rows();
 
-    void gauss_reduce() { } // MES: TO DO
+  void gauss_reduce();
   
+    void row_to_dense_row(int r, int &first, int &last);
+    void subtract1(int r, int &first, int &last);
+    void reduce1(int r, int &first, int &last);
+    void dense_row_to_row(int r, int &first, int &last);
+
   void new_GB_elements();
   
     void insert_gb_element(row_elem &r);
@@ -157,6 +165,13 @@ public:
 
   enum ComputationStatusCode start_computation(StopConditions &stop_);
   // ComputationStatusCode is defined in ../engine.h
+
+  // Debugging routines
+  void show_gb_array(const gb_array &g) const;
+  void show_row_info() const;
+  void show_column_info() const;
+  void show_matrix();
+
 };
 
 #endif

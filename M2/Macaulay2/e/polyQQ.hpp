@@ -56,6 +56,8 @@ public:
 
   virtual bool is_equal(const ring_elem f, const ring_elem g) const;
 
+  virtual int compare_elems(const ring_elem f, const ring_elem g) const;
+
   virtual ring_elem copy(const ring_elem f) const;
 
   virtual void remove(ring_elem &f) const;

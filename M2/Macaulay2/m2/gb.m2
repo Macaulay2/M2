@@ -151,7 +151,7 @@ newGB := (f,type,opts) -> (
 	  raw f,
 	  type.Syzygies,
 	  toEngineNat type.SyzygyRows,
-	  checkListOfIntegers {},			    -- later: gb degree list
+	  checkListOfIntegers(if opts.GBDegrees === null then {} else opts.GBDegrees),
 	  opts.HardDegreeLimit =!= computationOptionDefaults.HardDegreeLimit,
 	  if opts.HardDegreeLimit =!= computationOptionDefaults.HardDegreeLimit then opts.HardDegreeLimit else 0,
 	  processAlgorithm(opts.Algorithm,f),

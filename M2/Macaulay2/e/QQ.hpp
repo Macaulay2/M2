@@ -59,12 +59,13 @@ public:
   virtual ring_elem preferred_associate(ring_elem f) const;
   virtual bool lower_associate_divisor(ring_elem &f, ring_elem g) const;
 
-  int compare(const ring_elem a, const ring_elem b) const;
   int is_positive(const ring_elem a) const;
 
   virtual bool is_unit(const ring_elem f) const;
   virtual bool is_zero(const ring_elem f) const;
   virtual bool is_equal(const ring_elem f, const ring_elem g) const;
+  virtual int compare_elems(const ring_elem a, const ring_elem b) const;
+
 
   virtual ring_elem copy(const ring_elem f) const;
   virtual void remove(ring_elem &f) const;

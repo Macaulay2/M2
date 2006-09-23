@@ -4,12 +4,13 @@
 #define _moninfo_h_
 
 #include <cstdio>
+#include <stdint.h>
 #include "../../d/M2types.h"
 
 #include "varpower_monomial.hpp"
 #include "ntuple_monomial.hpp"
 
-#include <stdint.h>
+
 
 typedef int64_t monomial_word; // Used for all types of monomials.  Is this OK?
 typedef monomial_word * packed_monomial; 
@@ -21,7 +22,7 @@ typedef const monomial_word * const_packed_monomial;
   // packing info, hash values, weights are all
   // defined in: PackedMonomials
 
-class MonomialInfo
+class MonomialInfo : public our_new_delete
 {
   int nvars;
   int nslots;
@@ -150,14 +151,7 @@ public:
   // This one requires tricks or unpacking the monomial
   // However, maybe this isn't done so much, so it doesn't matter...
 
-  monomial_word monomial_weight(const_packed_monomial m, const M2_arrayint wts) const {
-    const_packed_monomial m1 = m;
-    int top = wts->len;
-    int *n = wts->array;
-    monomial_word sum = 0;
-    for (int j=top; j>0; --j) sum += *m1++ + *n++;
-    return sum;
-  }
+  monomial_word monomial_weight(const_packed_monomial m, const M2_arrayint wts) const;
 
   void show(const_packed_monomial m) const;
 
@@ -218,6 +212,7 @@ public:
     are_disjoint = true;
     a += 2;
     b += 2;
+    int len = 0;
     varpower_word *r = result+1;
     for (int i=0; i<nvars; i++)
       {
@@ -229,9 +224,10 @@ public:
 	    *r++ = i;
 	    *r++ = c;
 	    deg += c;
-	    result[0]++;
+	    len++;
 	  }
       }
+    result[0] = len;
   }
 
 };
