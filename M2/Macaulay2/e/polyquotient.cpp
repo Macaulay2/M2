@@ -177,37 +177,18 @@ ring_elem PolyRingQuotient::divide(const ring_elem f, const ring_elem g) const
   //  return result;
 }
 
-ring_elem PolyRingQuotient::remainder(const ring_elem f, const ring_elem g) const
-{
-  return ZERO_RINGELEM;
-}
-
-ring_elem PolyRingQuotient::quotient(const ring_elem f, const ring_elem g) const
-{
-  return divide(f,g);
-}
-
-ring_elem PolyRingQuotient::remainderAndQuotient(const ring_elem f, const ring_elem g, 
-						 ring_elem &quot) const
-{
-  return ZERO_RINGELEM;
-}
-
-ring_elem PolyRingQuotient::ann(const ring_elem a, const ring_elem b) const
-  // return an element h such that h*a is in (b).
+GBComputation * PolyRingQuotient::make_gb(const ring_elem g) const
+  // return the GB of g, keep = 0 or 1.
 {
   MatrixConstructor mat(make_FreeModule(1),1);
-  mat.set_entry(0,0,b);
-  Matrix *mb = mat.to_matrix(); // {b}
-  MatrixConstructor mata(make_FreeModule(1),1);
-  mata.set_entry(0,0,a);
-  Matrix *ma = mata.to_matrix(); // {a}
+  mat.set_entry(0,0,g);
+  Matrix *mg = mat.to_matrix(); // {g}
 
   M2_arrayint weights = makearrayint(n_vars());
   for (int i=0; i<n_vars(); i++) weights->array[i] = 1;
-  GBComputation *G = GBComputation::choose_gb(mb, 
+  GBComputation *G = GBComputation::choose_gb(mg, 
 					      false, // collect syz
-					      -1, // keep only the first row
+					      -1,
 					      weights,
 					      false,
 					      -1,
@@ -223,6 +204,75 @@ ring_elem PolyRingQuotient::ann(const ring_elem a, const ring_elem b) const
 			 NULL);
 
   G->start_computation();
+  return G;
+}
+
+ring_elem PolyRingQuotient::remainder(const ring_elem f, const ring_elem g) const
+{
+  MatrixConstructor matf(make_FreeModule(1),1);
+  matf.set_entry(0,0,f);
+  const Matrix *mf = matf.to_matrix();
+
+  GBComputation *G = make_gb(g);
+
+  const Matrix *mrem = G->matrix_remainder(mf);
+  ring_elem result = mrem->elem(0,0);
+
+  delete mrem;
+  delete mf;
+  delete G;
+  return result;
+}
+
+ring_elem PolyRingQuotient::quotient(const ring_elem f, const ring_elem g) const
+{
+  MatrixConstructor matf(make_FreeModule(1),1);
+  matf.set_entry(0,0,f);
+  Matrix *mf = matf.to_matrix();
+
+  GBComputation *G = make_gb(g);
+
+  Matrix *mrem, *mquot;
+  G->matrix_lift(mf, &mrem, &mquot);
+  ring_elem result = mquot->elem(0,0);
+
+  delete mrem;
+  delete mquot;
+  delete mf;
+  delete G;
+  return result;
+}
+
+ring_elem PolyRingQuotient::remainderAndQuotient(const ring_elem f, const ring_elem g, 
+						 ring_elem &quot) const
+{
+  MatrixConstructor matf(make_FreeModule(1),1);
+  matf.set_entry(0,0,f);
+  Matrix *mf = matf.to_matrix();
+
+  GBComputation *G = make_gb(g);
+
+  Matrix *mrem, *mquot;
+  G->matrix_lift(mf, &mrem, &mquot);
+  quot = mquot->elem(0,0);
+  ring_elem result = mrem->elem(0,0);
+
+  delete mrem;
+  delete mquot;
+  delete mf;
+  delete G;
+  return result;
+}
+
+
+ring_elem PolyRingQuotient::ann(const ring_elem a, const ring_elem b) const
+  // return an element h such that h*a is in (b).
+{
+  MatrixConstructor mata(make_FreeModule(1),1);
+  mata.set_entry(0,0,a);
+  Matrix *ma = mata.to_matrix(); // {a}
+
+  GBComputation *G = make_gb(b);
 
   Matrix *mrem, *mquot;
   G->matrix_lift(ma, &mrem, &mquot);

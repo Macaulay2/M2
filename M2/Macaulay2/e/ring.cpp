@@ -155,6 +155,32 @@ void Ring::negate_to(ring_elem &f) const
   f = negate(f);
 }
 
+ring_elem Ring::remainder(const ring_elem f, const ring_elem g) const
+{
+  if (is_zero(g))
+    return f;
+  return g; // 0
+}
+
+ring_elem Ring::quotient(const ring_elem f, const ring_elem g) const
+{
+  if (is_zero(g))
+    return g;
+  return divide(f,g);
+}
+
+ring_elem Ring::remainderAndQuotient(const ring_elem f, const ring_elem g, 
+				     ring_elem &quot) const
+{
+  if (is_zero(g))
+    {
+      quot = g; // zero
+      return f;
+    }
+  quot = divide(f,g);
+  return zero();
+}
+
 int Ring::coerce_to_int(ring_elem) const
 {
   ERROR("cannot coerce given ring element to an integer");

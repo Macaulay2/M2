@@ -340,32 +340,6 @@ ring_elem QQ::divide(const ring_elem f, const ring_elem g) const
   return MPQ_RINGELEM(result);
 }
 
-ring_elem QQ::remainder(const ring_elem f, const ring_elem g) const
-{
-  if (QQ::is_zero(g))
-    return QQ::copy(f);
-  return QQ::from_int(0);
-}
-
-ring_elem QQ::quotient(const ring_elem f, const ring_elem g) const
-{
-  if (QQ::is_zero(g))
-    return QQ::from_int(0);
-  return QQ::divide(f,g);
-}
-
-ring_elem QQ::remainderAndQuotient(const ring_elem f, const ring_elem g, 
-				  ring_elem &quot) const
-{
-  if (QQ::is_zero(g))
-    {
-      quot = QQ::from_int(0);
-      return QQ::copy(f);
-    }
-  quot = QQ::divide(f,g);
-  return QQ::from_int(0);
-}
-
 void QQ::syzygy(const ring_elem a, const ring_elem b,
 	       ring_elem &x, ring_elem &y) const
 {

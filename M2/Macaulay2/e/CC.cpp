@@ -348,43 +348,6 @@ ring_elem CC::divide(const ring_elem f, const ring_elem g) const
   return CC::from_doubles((a*c+b*d)/det, (-b*c+a*d)/det);
 }
 
-ring_elem CC::remainder(const ring_elem f, const ring_elem g) const
-{
-  // If g == 0.0 then rem = f
-  // If g != 0.0 then rem = 0
-  if (CC::is_zero(g))
-    return CC::from_doubles(CC_RE(f), CC_IM(f));
-  else
-    return CC::from_double(0.0);
-}
-
-ring_elem CC::quotient(const ring_elem f, const ring_elem g) const
-{
-  // If g == 0.0 then rem = f, return 0.
-  // If g != 0.0 then rem = 0, return f/g
-  if (CC::is_zero(g))
-    return CC::from_double(0.0);
-  else
-    return CC::divide(f,g);
-}
-
-ring_elem CC::remainderAndQuotient(const ring_elem f, const ring_elem g, 
-				  ring_elem &quot) const
-  // If g == 0.0 then rem = f, quot 0.
-  // If g != 0.0 then rem = 0, quot f/g
-{
-  if (CC::is_zero(g))
-    {
-      quot = CC::from_double(0.0);
-      return CC::from_doubles(CC_RE(f), CC_IM(f));
-    }
-  else
-    {
-      quot = CC::divide(f,g);
-      return CC::from_double(0.0);
-    }
-}
-
 void CC::syzygy(const ring_elem a, const ring_elem b,
 	       ring_elem &x, ring_elem &y) const
 {

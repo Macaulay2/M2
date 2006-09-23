@@ -29,8 +29,6 @@ class RingZZ : public Ring
   mpz_ptr new_elem() const;
   void remove_elem(mpz_ptr f) const;
 
-  ring_elem divide(const ring_elem f, const ring_elem g, ring_elem &rem) const;
-
   CoefficientRingZZ_NTL *coeffR;
 protected:
   virtual ~RingZZ() {}

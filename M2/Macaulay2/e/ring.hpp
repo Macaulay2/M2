@@ -231,11 +231,13 @@ public:
   virtual ring_elem invert(const ring_elem f) const = 0;
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const = 0;
 
-#if 0
-  virtual ring_elem remainder(const ring_elem f, const ring_elem g) const = 0;
-  virtual ring_elem quotient(const ring_elem f, const ring_elem g) const = 0;
+  virtual ring_elem remainder(const ring_elem f, const ring_elem g) const;
+  virtual ring_elem quotient(const ring_elem f, const ring_elem g) const;
   virtual ring_elem remainderAndQuotient(const ring_elem f, const ring_elem g, 
-					 ring_elem &quot) const = 0;
+					 ring_elem &quot) const;
+  // The default version is for a field:
+  //   f % 0 is f, otherwise f % g is 0.
+  //   f // 0 is 0, otherwise f // g is f/g
   // These three routines: remainder, quotient and remainderAndQuotient
   // satisfy these properties:
   // If r = remainder(f,g), q = quotient(f,g), then
@@ -244,7 +246,6 @@ public:
   // (3) If g is invertible, then r = 0, and q = f * g^(-1).
   // (4) If the ring is ZZ, then the remainder is "balanced": -[g/2] < r <= [g/2]
   // remainderAndQuotient combines remainder and quotient into one routine.
-#endif
 
   virtual void syzygy(const ring_elem a, const ring_elem b,
 		      ring_elem &x, ring_elem &y) const = 0;

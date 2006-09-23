@@ -516,43 +516,6 @@ ring_elem FractionField::divide(const ring_elem a, const ring_elem b) const
   return FRAC_RINGELEM(make_elem(top, bottom));
 }
 
-ring_elem FractionField::remainder(const ring_elem f, const ring_elem g) const
-{
-  if (FractionField::is_zero(g)) return FractionField::copy(f);
-  return from_int(0);
-}
-
-ring_elem FractionField::quotient(const ring_elem f, const ring_elem g) const
-{
-  if (FractionField::is_zero(g)) return FractionField::from_int(0);
-  if (FractionField::is_zero(f)) return FractionField::from_int(0);
-
-  frac_elem *a = FRAC_VAL(f);
-  frac_elem *b = FRAC_VAL(g);
-  ring_elem top = R_->mult(a->numer, b->denom);
-  ring_elem bottom = R_->mult(a->denom, b->numer);
-  return FRAC_RINGELEM(make_elem(top, bottom));
-}
-
-ring_elem FractionField::remainderAndQuotient(const ring_elem f, const ring_elem g, 
-				      ring_elem &quot) const
-{
-  if (FractionField::is_zero(g)) 
-    {
-      quot = FractionField::from_int(0);
-      return FractionField::copy(f);
-    }
-  else
-    {
-      frac_elem *a = FRAC_VAL(f);
-      frac_elem *b = FRAC_VAL(g);
-      ring_elem top = R_->mult(a->numer, b->denom);
-      ring_elem bottom = R_->mult(a->denom, b->numer);
-      quot = FRAC_RINGELEM(make_elem(top, bottom));
-      return FractionField::from_int(0);
-    }
-}
-
 void FractionField::syzygy(const ring_elem a, const ring_elem b,
 			   ring_elem &x, ring_elem &y) const
 {

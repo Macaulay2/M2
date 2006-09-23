@@ -26,13 +26,14 @@ class GBComputation : public Computation
 protected:
   friend class GBProxy;
   GBComputation() {}
-  virtual ~GBComputation();
 
   virtual bool stop_conditions_ok() = 0;
   // If the stop conditions in _Stop are inappropriate,
   // return false, and use ERROR(...) to provide an error message.
 
 public:
+  virtual ~GBComputation();
+
   virtual GBComputation * cast_to_GBComputation() { return this;} 
 
   static GBComputation *choose_gb(const Matrix *m,
