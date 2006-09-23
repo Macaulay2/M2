@@ -293,48 +293,10 @@ ring_elem RingZZ::divide(const ring_elem f, const ring_elem g) const
   mpz_div(result, MPZ_VAL(f), MPZ_VAL(g));
   return MPZ_RINGELEM(result);
 }
-ring_elem RingZZ::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
+
+ring_elem RingZZ::remainderAndQuotient(const ring_elem f, const ring_elem g, 
+				  ring_elem &quot) const
 {
-#if 0
-  mpz_ptr result = new_elem();
-  mpz_ptr resultmod = new_elem();
-  mpz_divmod(result, resultmod, MPZ_VAL(f), MPZ_VAL(g));
-  rem = MPZ_RINGELEM(resultmod);
-  return MPZ_RINGELEM(result);
-#endif
-#if 0
-  mpz_ptr result = new_elem();
-  mpz_ptr resultmod = new_elem();
-
-  mpz_tdiv_qr(result, resultmod, MPZ_VAL(f), MPZ_VAL(g));
-  mpz_t ghalf;
-  mpz_init(ghalf);
-  mpz_tdiv_q_2exp(ghalf, MPZ_VAL(g), 1);
-
-  if (mpz_cmp(ghalf,resultmod) == -1)  // ghalf < rem
-    {
-      mpz_add_ui(result, result, 1);
-      mpz_sub(resultmod, resultmod, MPZ_VAL(g));
-    }
-  else 
-    {
-      mpz_neg(ghalf, ghalf);
-      int cmp = mpz_cmp(ghalf,resultmod);
-      int odd = mpz_mod_ui(ghalf, MPZ_VAL(g),2);  // The ghalf is a dummy
-      if (cmp == 1 || (!odd & cmp == 0))
-	{
-	  mpz_sub_ui(result, result, 1);
-	  mpz_add(resultmod, resultmod, MPZ_VAL(g));
-	}
-    }
-  mpz_clear(ghalf);
-  rem = MPZ_RINGELEM(resultmod);
-  return MPZ_RINGELEM(result);
-#endif
-  // Divide f by |g|, to get q, r, where r is non-negative.
-  // If r is > |g|/2 then: r -= |g|, q++.
-  // If g<0 then: q = -q.
-
   mpz_ptr q = new_elem();
   mpz_ptr r = new_elem();
   int gsign = mpz_sgn(MPZ_VAL(g));
@@ -354,34 +316,25 @@ ring_elem RingZZ::divide(const ring_elem f, const ring_elem g, ring_elem &rem) c
 
   mpz_clear(gg);
   mpz_clear(ghalf);
-  rem = MPZ_RINGELEM(r);
-  return MPZ_RINGELEM(q);
+  quot = MPZ_RINGELEM(q);
+  return MPZ_RINGELEM(r);
 }
 
 ring_elem RingZZ::remainder(const ring_elem f, const ring_elem g) const
 {
-  ring_elem rem;
-  ring_elem quot = RingZZ::divide(f,g,rem);
+  ring_elem quot;
+  ring_elem rem = RingZZ::remainderAndQuotient(f,g,quot);
   remove(quot);
   return rem;
 }
 
 ring_elem RingZZ::quotient(const ring_elem f, const ring_elem g) const
 {
-  ring_elem rem;
-  ring_elem quot = RingZZ::divide(f,g,rem);
+  ring_elem quot;
+  ring_elem rem = RingZZ::remainderAndQuotient(f,g,quot);
   remove(rem);
   return quot;
 }
-
-ring_elem RingZZ::remainderAndQuotient(const ring_elem f, const ring_elem g, 
-				  ring_elem &quot) const
-{
-  ring_elem result;
-  quot = RingZZ::divide(f,g,result);
-  return result;
-}
-
 
 ring_elem RingZZ::gcd(const ring_elem f, const ring_elem g) const
 {

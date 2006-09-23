@@ -501,30 +501,13 @@ const RingElement *IM2_RingElement_mult_int(const RingElement *a, int b)
 const RingElementOrNull *IM2_RingElement_div(const RingElement *a, 
 					     const RingElement *b)
 {
-  // What is this exactly??
-  return (*a) / (*b);
-
-#ifdef DEVELOPMENT
-#warning "after Dan changes // in the front end to use GB's, comment out the previous line"
-#endif
   const Ring *R = a->get_ring();
   if (R != b->get_ring())
     {
       ERROR("ring division requires both elements to have the same base ring");
       return 0;
     }
-  if (b->is_zero())
-    {
-      ERROR("ring division: attempt to divide by zero");
-      return 0;
-    }
-  const PolyRing *P = R->cast_to_PolyRing();
-  if (P == 0)
-    {
-      ERROR("expected a polynomial ring");
-      return 0;
-    }
-  ring_elem result = P->quotient(a->get_value(), b->get_value());
+  ring_elem result = R->quotient(a->get_value(), b->get_value());
   if (error()) return 0;
   return RingElement::make_raw(R, result);
 }
@@ -538,18 +521,7 @@ const RingElementOrNull *IM2_RingElement_mod(const RingElement *a,
       ERROR("ring remainder requires both elements to have the same base ring");
       return 0;
     }
-  if (b->is_zero())
-    {
-      ERROR("ring division: attempt to divide by zero");
-      return 0;
-    }
-  const PolyRing *P = R->cast_to_PolyRing();
-  if (P == 0)
-    {
-      ERROR("expected a polynomial ring");
-      return 0;
-    }
-  ring_elem result = P->remainder(a->get_value(), b->get_value());
+  ring_elem result = R->remainder(a->get_value(), b->get_value());
   if (error()) return 0;
   return RingElement::make_raw(R, result);
 }
@@ -563,20 +535,8 @@ const RingElement_pair *IM2_RingElement_divmod(const RingElement *a,
       ERROR("ring remainder requires both elements to have the same base ring");
       return 0;
     }
-  if (b->is_zero())
-    {
-      ERROR("ring division: attempt to divide by zero");
-      return 0;
-    }
-  const PolyRing *P = R->cast_to_PolyRing();
-  if (P == 0)
-    {
-      ERROR("expected a polynomial ring");
-      return 0;
-    }
-
   ring_elem fquot;
-  ring_elem frem = P->remainderAndQuotient(a->get_value(), b->get_value(), fquot);
+  ring_elem frem = R->remainderAndQuotient(a->get_value(), b->get_value(), fquot);
   if (error())  return 0;
 
   RingElement_pair *result = new RingElement_pair;

@@ -267,48 +267,6 @@ ring_elem RingRR::divide(const ring_elem f, const ring_elem g) const
   return RingRR::from_double(RR_VAL(f) / RR_VAL(g));
 }
 
-ring_elem RingRR::remainder(const ring_elem f, const ring_elem g) const
-{
-  // If g == 0.0 then rem = f
-  // If g != 0.0 then rem = 0
-  double b = RR_VAL(f);
-  if (RingRR::is_zero(g))
-    return RingRR::from_double(b);
-  else
-    return RingRR::from_double(0.0);
-}
-
-ring_elem RingRR::quotient(const ring_elem f, const ring_elem g) const
-{
-  // If g == 0.0 then rem = f, return 0.
-  // If g != 0.0 then rem = 0, return f/g
-  double a = RR_VAL(g);
-  double b = RR_VAL(f);
-  if (RingRR::is_zero_RR(a))
-    return RingRR::from_double(0.0);
-  else
-    return RingRR::from_double(b/a);
-}
-
-ring_elem RingRR::remainderAndQuotient(const ring_elem f, const ring_elem g, 
-				  ring_elem &quot) const
-{
-  // If g == 0.0 then rem = f, quot 0.
-  // If g != 0.0 then rem = 0, quot f/g
-  double a = RR_VAL(g);
-  double b = RR_VAL(f);
-  if (RingRR::is_zero_RR(a))
-    {
-      quot = RingRR::from_double(0.0);
-      return RingRR::from_double(b);
-    }
-  else
-    {
-      quot = RingRR::from_double(b/a);
-      return RingRR::from_double(0.0);
-    }
-}
-
 void RingRR::syzygy(const ring_elem a, const ring_elem b,
 	       ring_elem &x, ring_elem &y) const
 {

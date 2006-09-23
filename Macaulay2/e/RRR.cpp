@@ -373,45 +373,6 @@ ring_elem RRR::divide(const ring_elem f, const ring_elem g) const
   mpf_div(result, MPF_VAL(f), MPF_VAL(g));
   return MPF_RINGELEM(result);
 }
-ring_elem RRR::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
-{
-  // If g == 0.0 then rem = f, return 0.
-  // If g != 0.0 then rem = 0, return f/g
-  if (is_zero(g))
-    {
-      rem = copy(f);
-      return from_int(0);
-    }
-  else
-    {
-      rem = from_int(0);
-      return divide(f,g);
-    }
-}
-
-ring_elem RRR::remainder(const ring_elem f, const ring_elem g) const
-{
-  ring_elem rem;
-  ring_elem quot = divide(f,g,rem);
-  remove(quot);
-  return rem;
-}
-
-ring_elem RRR::quotient(const ring_elem f, const ring_elem g) const
-{
-  ring_elem rem;
-  ring_elem quot = RRR::divide(f,g,rem);
-  remove(rem);
-  return quot;
-}
-
-ring_elem RRR::remainderAndQuotient(const ring_elem f, const ring_elem g, 
-				  ring_elem &quot) const
-{
-  ring_elem result;
-  quot = RRR::divide(f,g,result);
-  return result;
-}
 
 void RRR::syzygy(const ring_elem a, const ring_elem b,
 	       ring_elem &x, ring_elem &y) const

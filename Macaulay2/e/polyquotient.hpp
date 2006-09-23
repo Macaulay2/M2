@@ -16,6 +16,7 @@ protected:
   virtual ~PolyRingQuotient();
   PolyRingQuotient() {}
 
+  GBComputation * make_gb(const ring_elem g) const;
   ring_elem ann(const ring_elem a, const ring_elem b) const;
   // return an element h such that h*a is in (b).
 

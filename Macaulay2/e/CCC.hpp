@@ -99,11 +99,6 @@ public:
 
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
 
-  virtual ring_elem remainder(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem quotient(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem remainderAndQuotient(const ring_elem f, const ring_elem g, 
-					 ring_elem &quot) const;
-
   virtual void syzygy(const ring_elem a, const ring_elem b,
 		      ring_elem &x, ring_elem &y) const;
 

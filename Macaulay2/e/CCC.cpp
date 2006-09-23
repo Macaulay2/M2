@@ -454,36 +454,6 @@ ring_elem CCC::divide(const ring_elem f, const ring_elem g) const
   return CCC::mult(f, h);
 }
 
-ring_elem CCC::remainder(const ring_elem f, const ring_elem g) const
-{
-  ring_elem quot;
-  return remainderAndQuotient(f,g,quot);
-}
-
-ring_elem CCC::quotient(const ring_elem f, const ring_elem g) const
-{
-  ring_elem quot;
-  remainderAndQuotient(f,g,quot);
-  return quot;
-}
-
-ring_elem CCC::remainderAndQuotient(const ring_elem f, const ring_elem g, 
-				      ring_elem &quot) const
-{
-  // If g == 0.0 then rem = f, quot 0.
-  // If g != 0.0 then rem = 0, quot f/g
-  if (is_zero(g))
-    {
-      quot = from_int(0);
-      return copy(f);
-    }
-  else
-    {
-      quot = divide(f,g);
-      return from_int(0);
-    }
-}
-
 void CCC::syzygy(const ring_elem a, const ring_elem b,
 	       ring_elem &x, ring_elem &y) const
 {
