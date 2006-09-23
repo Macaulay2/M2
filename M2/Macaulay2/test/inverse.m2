@@ -15,3 +15,12 @@
 R = ZZ/101[x,y,z,w]/ideal{x*y,z*w}
 assert ( 2 * 2_R^-1 == 1 )
 
+k = ZZ/101
+assert(2_k^-1 == -50)
+R=k[x]
+assert(2_R^-1 == -50)
+S = ZZ/101[x,y,z,w]/ideal{x*y,z*w}
+assert(2_S^-1 == -50)
+
+assert(1//x == 0)
+assert try x^-1 else true
