@@ -233,7 +233,7 @@ bool CC::is_equal(const ring_elem f, const ring_elem g) const
 		     0.0) == EQ);
 }
 
-int CC::compare(const ring_elem f, const ring_elem g) const
+int CC::compare_elems(const ring_elem f, const ring_elem g) const
 {
   return compare_CC(CC_NORM(f),CC_NORM(g));
 }

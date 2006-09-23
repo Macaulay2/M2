@@ -84,6 +84,7 @@ public:
   virtual bool is_unit(const ring_elem f) const;
   virtual bool is_zero(const ring_elem f) const;
   virtual bool is_equal(const ring_elem f, const ring_elem g) const;
+  virtual int compare_elems(const ring_elem f, const ring_elem g) const;
 
   virtual bool is_homogeneous(const ring_elem f) const;
   virtual void degree(const ring_elem f, int *d) const;
@@ -153,7 +154,6 @@ public:
   virtual void lead_logical_exponents(int nvars0, const ring_elem f, int * result_exp) const;
 
   ring_elem lead_term(const ring_elem f) const; // copies the lead term
-  int compare(const ring_elem f, const ring_elem g) const; // compares the lead terms
 
   virtual ArrayPairOrNull list_form(const Ring *coeffR, const ring_elem f) const;
 

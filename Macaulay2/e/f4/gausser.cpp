@@ -10,8 +10,8 @@ Gausser *Gausser::newGausser(const Ring *K)
   return 0;
 }
 
-Gausser::Gausser(const Z_mod *K)
-  : typ(ZZp), Kp(K->get_CoeffRing())
+Gausser::Gausser(const Z_mod *K0)
+  : typ(ZZp), K(K0), Kp(K0->get_CoeffRing())
 {
 }
 
