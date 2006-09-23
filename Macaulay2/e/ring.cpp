@@ -68,12 +68,23 @@ ring_elem Ring::var(int v) const
   return zeroV;
 }
 
-ring_elem Ring::power(const ring_elem ff, mpz_t m) const
+ring_elem Ring::power(const ring_elem gg, mpz_t m) const
 {
-  // The exponent 'm' should be > 0 here.
-#ifdef DEVELOPMENT
-#warning "error check: m >= 0"
-#endif
+  bool negated = false;
+  ring_elem ff = gg;
+  int cmp = mpz_sgn(m);
+  if (cmp == 0) return one();
+  if (cmp < 0)
+    {
+      negated = true;
+      mpz_neg(m,m);
+      ff = invert(ff);
+      if (is_zero(ff))
+	{
+	  ERROR("element is not invertible");
+	  return ff;
+	}
+    }
   mpz_t n;
   mpz_init_set(n, m);
   ring_elem prod = from_int(1);
@@ -91,6 +102,7 @@ ring_elem Ring::power(const ring_elem ff, mpz_t m) const
       if (mpz_sgn(n) == 0)
 	{
 	  mpz_clear(n);
+	  if (negated) mpz_neg(m,m);
 	  return prod;
 	}
       else
@@ -99,13 +111,24 @@ ring_elem Ring::power(const ring_elem ff, mpz_t m) const
 	  base = tmp;
 	}
     }
+
 }
 
-ring_elem Ring::power(const ring_elem ff, int n) const
+ring_elem Ring::power(const ring_elem gg, int n) const
 {
-#ifdef DEVELOPMENT
-#warning "error check: n >= 0"
-#endif
+  ring_elem ff = gg;
+  if (n == 0) return one();
+  if (n < 0)
+    {
+      n = -n;
+      ff = invert(ff);
+      if (is_zero(ff))
+	{
+	  ERROR("element is not invertible");
+	  return ff;
+	}
+    }
+
   // The exponent 'n' should be > 0 here.
   ring_elem prod = from_int(1);
   ring_elem base = copy(ff);

@@ -135,36 +135,6 @@ void FractionField::simplify(frac_elem *f) const
       f->numer = y;
       f->denom = x;
     }
-#if 0
-  if (R_->is_zero(f->numer))
-    {
-      R_->remove(f->denom);
-      f->denom = R_->from_int(1);
-      return;
-    }
-  if (R_->has_gcd())
-    {
-      ring_elem g = R_->gcd(f->numer, f->denom);
-      if (!R_->is_unit(g))
-	{
-	  ring_elem tmp1 = R_->divide(f->numer, g); // exact division
-	  ring_elem tmp2 = R_->divide(f->denom, g); // exact division
-	  R_->remove(f->numer);
-	  R_->remove(f->denom);
-	  f->numer = tmp1;
-	  f->denom = tmp2;
-	}
-      R_->remove(g);
-    }
-  if (R_->is_unit(f->denom))
-    {
-      ring_elem tmp = R_->divide(f->numer, f->denom); // exact division
-      R_->remove(f->numer);
-      R_->remove(f->denom);
-      f->numer = tmp;
-      f->denom = R_->from_int(1);
-    }
-#endif
 }
 
 frac_elem *FractionField::make_elem(ring_elem a, ring_elem b) const

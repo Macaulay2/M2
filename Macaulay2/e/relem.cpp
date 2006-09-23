@@ -109,7 +109,7 @@ RingElementOrNull *RingElement::operator/(const RingElement &b) const
 
 RingElementOrNull *RingElement::power(int n) const
 {
-  // What if n is negative?  Does R->power handle that correctly?
+  // n negative is handled.
   ring_elem f = R->power(val,n);
   if (error()) return 0;
   return new RingElement(R, f);
