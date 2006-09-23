@@ -193,7 +193,7 @@ modulo(Matrix,Matrix)  := Matrix => options -> (m,n) -> (
      P := target m;
      Q := target n;
      L := source m;
-     if P =!= Q then error "expected maps with the same target";
+     if P != Q then error "expected maps with the same target";
      if not isFreeModule P or not isFreeModule L or not isFreeModule source n
      then error "expected maps between free modules";
      f := syz(m|n, options, SyzygyRows => numgens L);
@@ -202,7 +202,7 @@ modulo(Matrix,Matrix)  := Matrix => options -> (m,n) -> (
      else f)
 
 quotientRemainder'(Matrix,Matrix) := Matrix => (f,g) -> (
-     if source f =!= source g then error "expected maps with the same source";
+     if source f != source g then error "expected maps with the same source";
      if not isFreeModule source f or not isFreeModule source g or not isFreeModule source g then error "expected maps between free modules";
      (q,r) := quotientRemainder(dual f, dual g);
      (dual q, dual r))
@@ -210,7 +210,7 @@ quotientRemainder'(Matrix,Matrix) := Matrix => (f,g) -> (
 quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
      if ring g =!= ring f then error "expected maps over the same ring";
      M := target f;
-     if M =!= target g then error "expected maps with the same target";
+     if M != target g then error "expected maps with the same target";
      L := source f;
      if not isFreeModule L then error "expected source of map to be lifted to be a free module";
      N := source g;
