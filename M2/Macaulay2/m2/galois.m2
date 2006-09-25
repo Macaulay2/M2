@@ -13,7 +13,10 @@ net GaloisField := k -> (
 describe GaloisField := F -> net expression F
 
 ambient GaloisField := Ring => R -> last R.baseRings
-coefficientRing GaloisField := Ring => R -> coefficientRing last R.baseRings
+
+---- only polynomial rings and quotients of them should have coefficientRings.
+---- a Galois field hides that info
+-- coefficientRing GaloisField := Ring => R -> coefficientRing last R.baseRings
 
 expression GaloisField := F -> new FunctionApplication from { GF, F.order }
 
@@ -140,7 +143,7 @@ dim GaloisField := R -> 0
 isField Ring := R -> R.?isField and R.isField
 
 isAffineRing = method(TypicalValue => Boolean)
-isAffineRing Ring := R -> isField R
+isAffineRing Ring := R -> false
 isAffineRing PolynomialRing := R -> not (options R).Inverses and isAffineRing coefficientRing R
 isAffineRing QuotientRing := R -> isField R or isAffineRing ambient R
 
