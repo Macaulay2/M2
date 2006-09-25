@@ -8,8 +8,8 @@ document {
      "Each module M in Macaulay2 is a quotient, submodule or subquotient of a free
      module, called the ambient free module of M.",
      PARA{},
-     "The ambient ring of a quotient ring R/I is the polynomial ring of which it is a
-     quotient.  The ambient ring of a Galois field is the quotient ring which it was
+     "The ambient ring of a quotient ring R/I is the polynomial ring of that it is a
+     quotient.  The ambient ring of a Galois field is the quotient ring that it was
      constructed from.",
      PARA{},
      SeeAlso => {GF,cover,super}
