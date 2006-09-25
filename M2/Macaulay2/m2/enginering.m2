@@ -190,8 +190,8 @@ frac EngineRing := (stashValue symbol frac) (R -> (
 	  then error "fraction field of non-commutative ring requested";
 	  R.frac = F := new FractionField from rawFractionRing R.RawRing;
 	  F.baseRings = append(R.baseRings,R);
-	  F.promoteDegree = makepromoter 0;
-	  F.liftDegree = makepromoter degreeLength R;
+	  -- F.promoteDegree = makepromoter 0;
+	  -- F.liftDegree = makepromoter degreeLength R;
 	  commonEngineRingInitializations F;
 	  factor F := options -> f -> factor numerator f / factor denominator f;
 	  toString F := x -> toString expression x;
