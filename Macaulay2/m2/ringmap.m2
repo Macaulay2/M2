@@ -195,8 +195,8 @@ kernel RingMap := Ideal => opts -> (cacheValue symbol kernel) (
 			      h),
 			 Strategy => LongPolynomial, opts)))
 	  else if (
-	       isAffineRing R
-	       and isAffineRing F
+	       isAffineRing R and instance(ambient R, PolynomialRing) and isField coefficientRing R
+	       and isAffineRing F and instance(ambient F, PolynomialRing)
 	       and coefficientRing R === coefficientRing F
 	       ) 
 	  then (
@@ -204,7 +204,8 @@ kernel RingMap := Ideal => opts -> (cacheValue symbol kernel) (
 		    MonomialOrder => Eliminate n1, 
 		    MonomialSize => 16,
 		    VariableBaseName => local X);
-	       if isHomogeneous JJ then (
+	       SS := ring JJ;
+	       if isHomogeneous JJ and degreeLength SS == 1 and all(degrees SS, d -> d#0 > 0) then (
 		   hf := poincare (target f)^1;
 		   T := (ring hf)_0;
 		   hf = hf * product(numgens source JJ, i -> (
