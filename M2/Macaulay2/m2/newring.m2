@@ -155,10 +155,9 @@ flattenRing Ring := opts -> R -> (
 
 flattenRing GaloisField := opts -> F -> (
      A := ambient F;
-     a := F.PrimitiveElement;
      (R,p,q) := flattenRing(A, opts);
-     p' := p * map(A,F,{a});
-     q' := map(F,A,{F_0});
+     p' := p * map(A,F);
+     q' := map(F,A) * q;
      (R,p',q'))
 
 flattenRing PolynomialRing := opts -> R -> (
