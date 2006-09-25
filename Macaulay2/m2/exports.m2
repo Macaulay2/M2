@@ -621,6 +621,7 @@ export {
 	symbol fittingIdeal,
 	symbol flagLookup,
 	symbol flatten,
+	symbol flattenRing,
 	symbol flip,
 	symbol floor,
 	symbol flush,
