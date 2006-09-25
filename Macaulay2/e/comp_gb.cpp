@@ -188,6 +188,26 @@ ComputationOrNull *GBComputation::set_hilbert_function(const RingElement *h)
   return 0;
 }
 
+static int nfinalized = 0;
+static int nremoved = 0;
+
+void remove_gb(void *p, void *cd)
+{
+  GBComputation *G = static_cast<GBComputation *>(p);
+  nremoved++;
+  if (gbTrace>=3)
+    fprintf(stderr, "\nremoving gb %d at %p\n",nremoved, G);
+  G->remove_gb();
+}
+
+void intern_GB(GBComputation *G)
+{
+  GC_REGISTER_FINALIZER(G,remove_gb,0,0,0);
+  nfinalized++;
+  if (gbTrace>=3)
+    fprintf(stderr, "\n   -- registering gb %d at %p\n", nfinalized, (void *)G);
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

@@ -117,6 +117,8 @@ private:
   GB_comp() {}
   virtual ~GB_comp();
 
+  virtual void remove_gb() {}
+
   // Adding generators
   void add_gens(int lo, int hi, const Matrix *m);
 

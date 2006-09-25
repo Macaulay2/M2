@@ -50,6 +50,8 @@ public:
   GaussElimComputation(const Matrix *m, int collect_syz, int n_syz);
   ~GaussElimComputation();
 
+  virtual void remove_gb() {}
+
   virtual void start_computation();
 
   virtual int complete_thru_degree() const;

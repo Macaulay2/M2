@@ -26,5 +26,5 @@ ker G1 -- seems OK
 A = frac(QQ[s,t])
 B = QQ[x,y,z]
 G = map(A,B,{s/t, (s^2-1)/(t^2-2), s^3/(t+1)})
-ker G -- not implemented yet
-
+J = ker G -- OK now
+assert(G (J_0) == 0)

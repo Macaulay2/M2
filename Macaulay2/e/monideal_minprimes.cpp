@@ -22,6 +22,7 @@ MinimalPrimes::~MinimalPrimes()
   for (int i=0; i<=nvars+1; i++)
     if (exps[i] != 0) deletearray(exps[i]);
   deletearray(exps);
+  delete mi;
 }
 
 int MinimalPrimes::codimension()
@@ -240,7 +241,9 @@ MonomialIdeal * MinimalPrimes::min_primes(int codim_limit0, int minprime_limit0)
       ass_prime_generator(mi->first_node(), 0);
     }
 
-  return primes;
+  MonomialIdeal *result = primes;
+  primes = 0;
+  return result;
 }
 
 

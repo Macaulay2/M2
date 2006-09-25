@@ -120,6 +120,8 @@ public:
 
   virtual ~LinAlgGB();
 
+  virtual void remove_gb() {}
+
   virtual int kind() { return 231; } // FIX THIS!!
 
   void start_computation();

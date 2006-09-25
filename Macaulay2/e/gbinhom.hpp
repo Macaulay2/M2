@@ -95,6 +95,8 @@ public:
 	       int strategy);
   ~GBinhom_comp();
 
+  virtual void remove_gb() {}
+
   // Performing the computation
   int calc(const int *deg, const intarray &stop_conditions);
 

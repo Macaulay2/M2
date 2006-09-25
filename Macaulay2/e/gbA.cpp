@@ -21,18 +21,6 @@
  * Initialization ********
  *************************/
 
-int nfinalized = 0;
-int nremoved = 0;
-
-extern "C" void remove_gbA(void *p, void *cd)
-{
-  gbA *G = static_cast<gbA *>(p);
-  nremoved++;
-  if (gbTrace>=3)
-    fprintf(stderr, "\nremoving gbA %d at %p\n",nremoved, G);
-  G->remove_gb();
-}
-
 gbA * gbA::create(const Matrix *m,
 		  M2_bool collect_syz,
 		  int n_rows_to_keep,
@@ -43,10 +31,7 @@ gbA * gbA::create(const Matrix *m,
 {
   gbA *result = new gbA;
   result->initialize(m, collect_syz, n_rows_to_keep, gb_weights, strategy);
-  GC_REGISTER_FINALIZER(result,remove_gbA,0,0,0);
-  nfinalized++;
-  if (gbTrace>=3)
-    fprintf(stderr, "\n   -- registering gbA %d at %p\n", nfinalized, (void *)result);
+  intern_GB(result);
   return result;
 }
 
