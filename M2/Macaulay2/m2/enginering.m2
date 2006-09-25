@@ -40,10 +40,8 @@ protect liftDegree
 rk := v -> if instance(v,ZZ) then v else #v
 makepromoter = memoize (
      degreerank -> (
-	  if degreerank === 0 then rk 
-	  else (
      	       zr := toList ( degreerank : 0 );
-	       v -> toList (rk v : zr))))
+	       v -> toList (rk v : zr)))
 
 basicPromoteMatrix = (m,R,p) -> (
      dF := p minus degrees target m;

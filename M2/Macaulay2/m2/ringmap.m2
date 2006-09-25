@@ -215,8 +215,24 @@ kernel RingMap := Ideal => opts -> (cacheValue symbol kernel) (
 	       mapback := map(R, ring JJ, map(R^1, R^n1, 0) | vars R);
 	       ideal mapback selectInSubring(1,generators gb(JJ,opts))
 	       )
-	  else error "not implemented yet"
-	  ))
+	  else (
+	       numsame := 0;
+	       while (
+		    R.baseRings#?numsame and
+		    F.baseRings#?numsame and 
+		    R.baseRings#numsame === F.baseRings#numsame
+		    )
+	       do numsame = numsame + 1;
+	       while not (
+		    isField F.baseRings#(numsame-1)
+		    or
+		    F.baseRings#(numsame-1).?isBasic
+		    )
+	       do numsame = numsame - 1;
+	       k = F.baseRings#(numsame-1);
+	       (R',p,q) := flattenRing(R, CoefficientRing => k);
+	       (F',r,s) := flattenRing(F, CoefficientRing => k);
+	       q kernel (r * f * q))))
 
 coimage RingMap := QuotientRing => f -> f.source / kernel f
 

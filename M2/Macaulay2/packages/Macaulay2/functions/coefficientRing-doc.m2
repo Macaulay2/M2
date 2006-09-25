@@ -5,8 +5,9 @@
 undocumented {
 	  (coefficientRing,FractionField),
 	  (coefficientRing,QuotientRing),
-	  (coefficientRing,PolynomialRing),
-	  (coefficientRing,GaloisField)}
+	  -- (coefficientRing,GaloisField),
+	  (coefficientRing,PolynomialRing)
+	  }
 
 document { 
      Key => {coefficientRing,(coefficientRing,Ring)},
