@@ -479,6 +479,9 @@ isHomogeneous Ideal := (I) -> isHomogeneous generators I
 
 degrees Ideal := I -> degrees source generators I
 
+promote(Ideal,Number) := 
+promote(Ideal,RingElement) := (I,R) -> ideal promote(generators I, R)
+
 comodule Module := Module => M -> cokernel super map(M,M,1)
 comodule Ideal := Module => I -> cokernel generators I
 
@@ -604,7 +607,7 @@ ideal RingElement := Ideal => v -> ideal {v}
 ideal ZZ := v -> ideal {v}
 ideal QQ := v -> ideal {v}
 
-ideal Ring := R -> ideal 0_R
+ideal Ring := R -> ideal map(R^1,R^0,0)
 
 kernel = method(Options => {
 	  SubringLimit => infinity
