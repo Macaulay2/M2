@@ -34,6 +34,8 @@ protected:
 public:
   virtual ~GBComputation();
 
+  virtual void remove_gb() = 0; // Should free all space associated with GB
+
   virtual GBComputation * cast_to_GBComputation() { return this;} 
 
   static GBComputation *choose_gb(const Matrix *m,
@@ -92,6 +94,8 @@ public:
 
 };
 
+extern "C" void remove_gb(void *p, void *cd);
+void intern_GB(GBComputation *G);
 
 #endif
 

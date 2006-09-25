@@ -28,6 +28,8 @@ public:
 
   virtual ~ReducedGB_ZZ();
 
+  virtual void remove_gb() {}
+
   virtual void set_gb(VECTOR(POLY) &polys0);
 
   virtual void minimalize(const VECTOR(POLY) &polys0,

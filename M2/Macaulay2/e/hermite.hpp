@@ -53,6 +53,8 @@ public:
   HermiteComputation(const Matrix *m, int collect_syz, int n_syz);
   ~HermiteComputation();
 
+  virtual void remove_gb() {}
+
   virtual void start_computation();
 
   virtual int complete_thru_degree() const;

@@ -45,6 +45,8 @@ protected:
 public:
   virtual ~ReducedGB_Field_Local();
 
+  virtual void remove_gb() {}
+
   virtual void minimalize(const VECTOR(POLY) &polys0,
 			  bool auto_reduced); // last argument is ignored
 

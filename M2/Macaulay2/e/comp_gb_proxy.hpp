@@ -26,6 +26,8 @@ public:
 
   virtual ~GBProxy();
 
+  virtual void remove_gb() {}
+
   GBComputation *replace_GB(GBComputation *G0) { 
     GBComputation *result = G;
     set_status(G->status());

@@ -36,6 +36,8 @@ public:
 
   virtual ~GBDeclared() {}
 
+  virtual void remove_gb() {}
+
   virtual GBComputation * cast_to_GBComputation() { return this;} 
 
   virtual void start_computation() {  }
