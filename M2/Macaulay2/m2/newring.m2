@@ -153,7 +153,13 @@ flattenRing Ring := opts -> R -> (
      if R.?isBasic or isField R or R === opts.CoefficientRing then triv R
      else unable())
 
-flattenRing GaloisField := opts -> F -> flattenRing(ambient F, opts)
+flattenRing GaloisField := opts -> F -> (
+     A := ambient F;
+     a := F.PrimitiveElement;
+     (R,p,q) := flattenRing(A, opts);
+     p' := p * map(A,F,{a});
+     q' := map(F,A,{F_0});
+     (R,p',q'))
 
 flattenRing PolynomialRing := opts -> R -> (
      A := coefficientRing R;
