@@ -365,6 +365,12 @@ RingMap == RingMap := (f,g) -> (
 	       if m e =!= n e then break false;
 	       e = rotate(1,e))))
 
+RingMap == ZZ := (f,n) -> (
+     if n == 1 then (source f === target f and f == id_(source f))
+     else error "encountered integer other than 1 in comparison with a ring map")
+
+ZZ == RingMap := (n,f) -> f == n
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
