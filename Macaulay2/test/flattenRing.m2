@@ -100,3 +100,12 @@ scan(allGenerators S, x -> assert( p q x == x ) )
 describe S
 use ring ideal S
 assert( ideal S == ideal (5,t^10,c^2+c+1) )
+
+-- now check kernels of ringmaps involving these things
+
+assert ( ker map(k,E) == ideal 0_E )
+assert ( ker map(E,k) == ideal 0_k )
+assert ( ker map(k,E[t]) == ideal t )
+assert ( ker map(E,k[t]) == ideal t )
+assert ( ker map(k[t],E) == ideal 0_E )
+assert ( ker map(E[t],k) == ideal 0_k )
