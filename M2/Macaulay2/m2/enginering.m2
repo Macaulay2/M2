@@ -88,6 +88,7 @@ commonRingInitializations = (F) -> (
      )
 
 commonEngineRingInitializations = (F) -> (
+     F.Engine = true;
      if debugLevel > 5 then (
 	  registerFinalizer(F,"ring");
 	  );
