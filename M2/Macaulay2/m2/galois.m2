@@ -106,12 +106,12 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      toString F := h -> toString expression h;
      net F := h -> net expression h;
      F.baseRings = append(S.baseRings,S);
+     F.promoteDegree = makepromoter 0;			    -- do this before commonEngineRingInitializations
+     F.liftDegree = makepromoter degreeLength S;	    -- do this before commonEngineRingInitializations
      commonEngineRingInitializations F;
      F.isCommutative = true;
      expression F := t -> expression lift(t, S);
      F.degreeLength = 0;
-     F.promoteDegree = makepromoter 0;
-     F.liftDegree = makepromoter degreeLength S;
      F.char = p;
      F.frac = F;
      F.generators = apply(generators S, m -> promote(m,F));
