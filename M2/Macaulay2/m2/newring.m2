@@ -130,6 +130,79 @@ symmetricAlgebra Module := Ring => options -> (M) -> (
      I := symmetricAlgebraIdeal(M,options);
      if I == 0 then ring I else (ring I)/(image I))
 
+-----------------------------------------------------------------------------
+-- flattenRing
+-----------------------------------------------------------------------------
+-- Copyright 2006 by Daniel R. Grayson
+
+-- flattening rings (like (QQ[a,b]/a^3)[x,y]/y^6 --> QQ[a,b,x,y]/(a^3,y^6)
+flattenRing = method(
+     Options => {					    -- return value = (new ring, ring map to it, ring map from it)
+	  CoefficientRing => null			    -- the default is to take the latest (declared) field or basic ring in the list of base rings
+	  })
+
+unable := () -> error "unable to flatten ring over given coefficient ring"
+
+-- in general, fraction fields are not finitely presented over smaller coefficient rings
+-- maybe we'll do something later when we have localization as something more intrinsic
+-- flattenRing FractionField := opts -> F -> ...
+
+triv := R -> ( idR := map(R,R); (R,idR,idR) )
+
+flattenRing Ring := opts -> R -> (
+     if R.?isBasic or isField R or R === opts.CoefficientRing then triv R
+     else unable())
+
+flattenRing GaloisField := opts -> F -> flattenRing(ambient F, opts)
+
+flattenRing PolynomialRing := opts -> R -> (
+     A := coefficientRing R;
+     M2 := monoid R;
+     zerdeg := toList (degreeLength M2 : 0);
+     n2 := numgens M2;
+     if opts.CoefficientRing === A or opts.CoefficientRing === null and (isField A or A.?isBasic) then return triv R;
+     if # generators R === 0 then return flattenRing(A,opts);
+     (S',p,q) := flattenRing(coefficientRing R, opts);
+     I := ideal S';
+     S := ring I;
+     if instance(S,PolynomialRing) then (
+     	  k := coefficientRing S;
+     	  M1 := monoid S;
+     	  n1 := numgens M1;
+     	  M := tensor(M2,M1, Degrees => degrees M2 | toList ( n1 : zerdeg));
+     	  T := k M;
+	  )
+     else (
+	  n1 = 0;
+	  T = S M2;
+	  );
+     inc := map(T,S,(vars T)_(toList (n2 .. n2 + n1 - 1)), DegreeMap => d -> zerdeg);
+     I' := inc I;
+     T' := T/I';
+     inc' := map(T',S', promote(matrix inc,T'), DegreeMap => d -> zerdeg);
+     pr := map(T',T);
+     p' := map(T',R, (vars T')_(toList (0 .. n2-1)) | inc' matrix p);
+     q' := map(R,T', vars R | promote(matrix q,R));
+     (T', p', q'))
+
+flattenRing QuotientRing := opts -> R -> (
+     if instance(ambient R, PolynomialRing) and (
+	  k := coefficientRing R;
+	  opts.CoefficientRing === null and (isField k or k.?isBasic)
+	  or opts.CoefficientRing === k
+	  )
+     then return triv R;
+     I := ideal R;
+     A := ring I;
+     (B',p,q) := flattenRing(A,opts);
+     J := ideal B';
+     B := ring J;
+     J' := lift(p I, B);				    -- adds in J automatically
+     S := B/J';
+     p' := map(S,R, promote( lift( matrix p, B ), S ));
+     q' := map(R,S, promote( matrix q, R ));
+     (S, p', q'))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
