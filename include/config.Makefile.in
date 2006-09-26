@@ -113,6 +113,9 @@ tarsubdir = NONE
 endif
 endif
 
+# in autoconf >= 2.60, @datadir@ is replaced by ${datarootdir}, so we need to get its value here:
+datarootdir = @datarootdir@
+
 ifeq ($(findstring $(prefix),@infodir@),)
 $(error expected infodir @infodir@ to begin with $(prefix))
 endif
