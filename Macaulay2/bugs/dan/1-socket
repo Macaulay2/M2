@@ -1,5 +1,0 @@
-in configure.ac:
-
-	if socket() seems to be absent, try linking with -lsocket!
-
-	if hstrerror() is absent, try linking with -lresolv
