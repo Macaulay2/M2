@@ -1062,7 +1062,6 @@ export {
 	symbol truncate,
 	symbol truncateOutput,
 	symbol try,
-	symbol tryHooks,
 	symbol tutorial,
 	symbol typicalValues,
 	symbol ultimate,
