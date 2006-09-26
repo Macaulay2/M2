@@ -108,8 +108,21 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
      is Boolean do when y is Boolean do equal(x,y) else equalmethod(x,y)
      is Net do when y is Net do equal(x,y) else equalmethod(x,y)
      is string do when y is string do equal(x,y) else equalmethod(x,y)
-     is a:List do when y is b:List do (
-	  if ancestor(a.class,visibleListClass) && ancestor(b.class,visibleListClass) then (
+     is s:Sequence do when y is t:Sequence do (
+	  if length(s) != length(t) then return False;
+	  for i from 0 to length(s)-1 do (
+	       ret := EqualEqualfun(s.i,t.i);
+	       when ret is Error do return ret else nothing;
+	       if ret == False then return False;
+	       );
+	  True
+	  ) else equalmethod(x,y)
+     else equalmethod(x,y));
+listComparison(e:Expr):Expr := (
+     when e 
+     is args:Sequence do if length(args) != 2 then WrongNumArgs(2) else (
+	  when args.0 is a:List do
+	  when args.1 is b:List do (
 	       if a.class != b.class then return False;
 	       s := a.v;
 	       t := b.v;
@@ -121,17 +134,11 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 		    );
 	       True
 	       )
-	  else equalmethod(x,y)) else equalmethod(x,y)
-     is s:Sequence do when y is t:Sequence do (
-	  if length(s) != length(t) then return False;
-	  for i from 0 to length(s)-1 do (
-	       ret := EqualEqualfun(s.i,t.i);
-	       when ret is Error do return ret else nothing;
-	       if ret == False then return False;
-	       );
-	  True
-	  ) else equalmethod(x,y)
-     else equalmethod(x,y));
+	  else WrongArg(2,"a visible list")
+	  else WrongArg(1,"a visible list")
+	  )
+     else WrongNumArgs(2));
+installMethod(EqualEqualS,visibleListClass,visibleListClass,listComparison);
 EqualEqualfun(lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);
      when x is Error do x
