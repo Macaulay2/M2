@@ -450,7 +450,6 @@ export {
 	symbol adjoint1,				    -- adjoint' ?
 	symbol alarm,
 	symbol all,
-	symbol allGenerators,
 	symbol ambient,
 	symbol ancestor,
 	symbol and,

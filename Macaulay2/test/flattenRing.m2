@@ -65,6 +65,8 @@ assert( q * p == 1 )
 describe S
 assert( S === E )
 
+allGenerators := R -> gens(R,CoefficientRing=>ZZ)
+
 k = GF(E,PrimitiveElement => - c - 2)
 (S,p,q) = flattenRing k
 assert( S === target p and k === source p )

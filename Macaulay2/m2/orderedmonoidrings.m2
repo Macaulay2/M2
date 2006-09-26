@@ -81,9 +81,11 @@ degreesRing PolynomialRing := PolynomialRing => R -> (
 
 degreesRing Ring := R -> error "no degreesRing for this ring"
 
-generators PolynomialRing := R -> R.generators
+generators PolynomialRing := opts -> R -> (
+     if opts.CoefficientRing === null then R.generators
+     else if opts.CoefficientRing === R then {}
+     else join(R.generators, generators(coefficientRing R, opts) / (r -> promote(r,R))))
 coefficientRing PolynomialRing := Ring => R -> last R.baseRings
-allGenerators PolynomialRing := (stashValue symbol allGenerators) (R -> join(generators R, apply(allGenerators coefficientRing R, a -> a * 1_R)))
 isHomogeneous PolynomialRing := R -> (
      k := coefficientRing R;
      isField k or isHomogeneous k)

@@ -490,7 +490,7 @@ vars Ring := Matrix => R -> (
      if R.?vars then R.vars else R.vars =
      map(R^1,,{g}))
 
-generators Module := Matrix => M -> (
+generators Module := Matrix => opts -> M -> (
      if M.?generators then M.generators
      else if M.cache.?generators then M.cache.generators
      else M.cache.generators = id_(ambient M))

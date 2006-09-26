@@ -154,15 +154,14 @@ document {
 	  ///,
      PARA{},
      "If the coefficient ring is a polynomial ring, then the
-     numbering matches that of the function ", 
-     TO (allGenerators,Ring), ".",
+     numbering matches that in the list returned by ", TO "generators", ".", 
      EXAMPLE lines ///
 	  S = R[x,y,z]
-	  allGenerators S
+	  generators(S,CoefficientRing=>ZZ)
 	  S_2
 	  S_6
 	  ///,
-     SeeAlso => {allGenerators, (symbol _, Ring, String)}
+     SeeAlso => {generators, (symbol _, Ring, String)}
      }
 document { 
      Key => (symbol _, Ring, String), -- ring variable by name

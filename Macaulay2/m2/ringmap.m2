@@ -205,7 +205,7 @@ kernel RingMap := Ideal => opts -> (cacheValue symbol kernel) (
 		    MonomialSize => 16,
 		    VariableBaseName => local X);
 	       SS := ring JJ;
-	       if isHomogeneous JJ and degreeLength SS == 1 and all(degrees SS, d -> d#0 > 0) then (
+	       if checkHilbertHint JJ then (
 		   hf := poincare (target f)^1;
 		   T := (ring hf)_0;
 		   hf = hf * product(numgens source JJ, i -> (
@@ -254,7 +254,7 @@ isHomogeneous RingMap := (f) -> (
      R := f.source;
      S := f.target;
      isHomogeneous R and isHomogeneous S and
-     all(allGenerators R, r -> (
+     all(generators(R, CoefficientRing=>ZZ), r -> (
 	       s := f r;
 	       s == 0 or degree s === f.DegreeMap degree r
 	       )))

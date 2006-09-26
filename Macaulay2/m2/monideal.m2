@@ -5,7 +5,7 @@ MonomialIdeal.synonym = "monomial ideal"
 monomialIdeal = method(TypicalValue => MonomialIdeal,Dispatch => Thing)
 numgens MonomialIdeal := I -> I.numgens
 raw MonomialIdeal := I -> I.RawMonomialIdeal
-generators MonomialIdeal := (cacheValue symbol generators) ( (I) -> map(ring I, rawMonomialIdealToMatrix raw I) )
+generators MonomialIdeal := opts -> (cacheValue symbol generators) ( (I) -> map(ring I, rawMonomialIdealToMatrix raw I) )
 
 ideal MonomialIdeal := (I) -> ideal generators I
 isIdeal MonomialIdeal := I -> true

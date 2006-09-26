@@ -129,9 +129,9 @@ document {
 	  "C = KA[x,y];",
 	  "numgens C",
 	  },
-     "In this case, use ", TO allGenerators, " to obtain the complete set of generators.",
+     "In this case, use the ", TO "CoefficientRing", " option to ", TO generators, " to obtain the complete set of generators.",
      EXAMPLE {
-     	  "g = allGenerators B",
+     	  "g = generators(B, CoefficientRing=>ZZ)",
 	  "#g"
 	  },
      "Galois fields created using ", TO GF, " have zero generators, but their underlying
@@ -142,7 +142,7 @@ document {
 	  "R = ambient K",
 	  "numgens R"
 	  },
-     SeeAlso => {allGenerators, minPres, GF, ambient}
+     SeeAlso => {generators, minPres, GF, ambient}
      }
 TEST ///
 numgens ZZ
@@ -155,7 +155,6 @@ B = A/a
 numgens B
 C = A[x,y]
 numgens C  -- 2
-#(allGenerators C)
 use A
 D = C/(x-y^2, y-b*c)
 numgens D

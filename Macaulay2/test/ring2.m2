@@ -9,12 +9,12 @@ toExternalString B
 presentation B
 ambient B
 -- how to get B as a poly ring mod an ideal?
-C = QQ[allGenerators B]
-F = map(B, C, allGenerators B)
+C = QQ[generators(B, CoefficientRing=>QQ)]
+F = map(B, C, generators(B, CoefficientRing=>QQ))
 ker F -- BUG: not implemented yet!
 
 D = QQ[gens C, Degrees => {{1,0},{1,0},{0,1},{0,1},{0,1}}]
-G = map(B, D, allGenerators B)
+G = map(B, D, generators(B, CoefficientRing=>ZZ))
 ker G -- BUG: not implemented yet!
 
 -- ring maps with different degrees:

@@ -111,7 +111,7 @@ gb Module := GroebnerBasis => options -> (M) -> (
 	  -- handle the Hilbert numerator later, which might be here:
 	  -- 
 
-checkHilbertHint := f -> (
+checkHilbertHint = f -> (
      R := ring f;
      -- Needed for using Hilbert functions to aid in Groebner basis computation:
      --    Ring is poly ring over a field (or skew commutative, or quotient ring of such, or both)
@@ -123,7 +123,7 @@ checkHilbertHint := f -> (
      and (instance(R,PolynomialRing) or isQuotientOf(PolynomialRing, R))
      and isField coefficientRing R
      and (isCommutative R or isSkewCommutative R)
-     and all(R.Adjust \ degree \ allGenerators R, deg -> deg#0 > 0)
+     and all(R.Adjust \ degree \ generators(R, CoefficientRing => ZZ), deg -> deg#0 > 0)
      )
 
 gbGetHilbertHint := (f,opts) -> (
@@ -205,10 +205,10 @@ syz = method(Options => options gb)			    -- we seem to be ignoring these option
 
 rawsort := m -> rawExtractColumns(m,rawSortColumns(m,1,1))
 
-generators      GroebnerBasis := Matrix =>            (G) -> map(target unbag G.matrix,,rawGBGetMatrix G.RawComputation)
-mingens         GroebnerBasis := Matrix => options -> (G) -> map(target unbag G.matrix,,rawsort rawGBMinimalGenerators G.RawComputation)
+generators      GroebnerBasis := Matrix => opts -> (G) -> map(target unbag G.matrix,,rawGBGetMatrix G.RawComputation)
+mingens         GroebnerBasis := Matrix => opts -> (G) -> map(target unbag G.matrix,,rawsort rawGBMinimalGenerators G.RawComputation)
                 -- rawGBMinimalGenerators doesn't sort its columns, so we do that here
-syz             GroebnerBasis := Matrix => options -> (G) -> map(ring G, rawsort rawGBSyzygies G.RawComputation)
+syz             GroebnerBasis := Matrix => opts -> (G) -> map(ring G, rawsort rawGBSyzygies G.RawComputation)
                 -- rawGBSyzygies doesn't sort its columns, so we do that here
 getChangeMatrix GroebnerBasis := Matrix =>            (G) -> map(ring G, rawGBChangeOfBasis G.RawComputation)
 
