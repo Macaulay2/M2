@@ -179,7 +179,7 @@ engineReady := M -> (
      )
 
 resolution Module := ChainComplex => o -> (M) -> (
-     C := tryHooks(Module,symbol resolution,(o,M));
+     C := runHooks(Module,symbol resolution,(o,M));
      if C =!= null then return C;
      R := ring M;
      if isField R then return chainComplex map(minimalPresentation M,R^0,0);

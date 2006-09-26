@@ -319,7 +319,7 @@ minimalPresentation(Module) := Module => opts -> (cacheValue symbol minimalPrese
      if isFreeModule M then (
 	  M.cache.pruningMap = id_M;
 	  return M);
-     C := tryHooks(Module,symbol minimalPresentation,(opts,M));
+     C := runHooks(Module,symbol minimalPresentation,(opts,M));
      if C =!= null then return C;
      error "minimalPresentation: internal error: no method for this type of module"
      ))
@@ -344,7 +344,7 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 	  f = submatrix'(f,rows,cols);
 	  N := cokernel f;
 	  N.cache.pruningMap = map(M,N,submatrix'(id_(cover M),rows));
-	  N))
+	  break N))
 
 addHook(Module, symbol minimalPresentation, (opts,M) -> (
      	  R := ring M;
@@ -353,7 +353,7 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 	       g := complement f;
 	       N := cokernel modulo(g, f);
 	       N.cache.pruningMap = map(M,N,g);
-	       N)))
+	       break N)))
 
 addHook(Module, symbol minimalPresentation, (opts,M) -> (
      	  R := ring M;
@@ -366,7 +366,7 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 	       (g,ch) = (submatrix'(g,rows,cols),submatrix'(ch,rows,));
 	       N := cokernel g;
 	       N.cache.pruningMap = map(M,N,id_(target ch) // ch);	    -- yuk, taking an inverse here, gb should give inverse change matrices, or the pruning map should go the other way
-	       N)))
+	       break N)))
 
 addHook(Module, symbol minimalPresentation, (opts,M) -> (
      	  R := ring M;
@@ -387,7 +387,7 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 	       (g,ch) = (p' g,p' ch);
 	       N := cokernel g;
 	       N.cache.pruningMap = map(M,N,id_(target ch) // ch);	    -- yuk, taking an inverse here, gb should give inverse change matrices, or the pruning map should go the other way
-	       N)))
+	       break N)))
 
 minimalPresentation(Matrix) := Matrix => opts -> (m) -> (
      M := source m;
