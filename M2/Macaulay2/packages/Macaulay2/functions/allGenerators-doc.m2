@@ -2,6 +2,8 @@
 --- author(s): MES
 --- notes: 
 
+-- this function has been replaced by the CoefficientRing option to "generators"
+
 undocumented {
 	  (allGenerators, PolynomialRing),
 	  (allGenerators, FractionField),

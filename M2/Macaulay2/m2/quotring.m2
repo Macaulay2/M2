@@ -111,6 +111,7 @@ EngineRing / Ideal := (R,I) -> (
      S.relations = gensI;
      S.isCommutative = R.isCommutative;
      if R.?SkewCommutative then S.SkewCommutative = R.SkewCommutative;
+     S.generators = apply(generators S, m -> promote(m,S));
      if R.?generatorSymbols then S.generatorSymbols = R.generatorSymbols;
      if R.?generatorExpressions then S.generatorExpressions = R.generatorExpressions;
      if R.?indexStrings then S.indexStrings = applyValues(R.indexStrings, x -> promote(x,S));
@@ -187,8 +188,9 @@ QuotientRing_String := (S,s) -> if S#?s then S#s else (
      R := ultimate(ambient, S);
      S#s = promote(R_s, S))
 
-generators QuotientRing := (stashValue symbol generators) ((S) -> apply(generators ambient S, m -> promote(m,S)))
-allGenerators QuotientRing := (cacheValue allGenerators) ((S) -> apply(allGenerators ambient S, m -> promote(m,S)))
+generators QuotientRing := opts -> (S) -> (
+     if opts.CoefficientRing === S then {}
+     else apply(generators(ambient S,opts), m -> promote(m,S)))
 char QuotientRing := (stashValue symbol char) ((S) -> (
      p := char ambient S;
      if p == 1 then return 1;

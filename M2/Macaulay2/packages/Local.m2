@@ -5,7 +5,7 @@ export {LocalRing,localRing,ambientRing,maxIdeal}
 LocalRing = new Type of EngineRing
 debug Core
 presentation LocalRing := (R) -> presentation R.ambientRing
-generators LocalRing := (R) -> generators R.ambientRing
+generators LocalRing := opts -> (R) -> generators R.ambientRing
 isCommutative LocalRing := (R) -> isCommutative R.ambientRing
 degreeLength LocalRing := (R) -> degreeLength R.ambientRing
 numgens LocalRing := (R) -> numgens R.ambientRing

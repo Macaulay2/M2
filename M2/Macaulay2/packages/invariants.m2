@@ -46,7 +46,7 @@ document {
    }
 
 length Group := (G) -> G.length
-generators Group := (G) -> G.generators
+generators Group := opts -> (G) -> G.generators
 
 --------------
 -- newGroup --

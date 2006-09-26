@@ -113,7 +113,7 @@ monoid = method(Dispatch => Thing, Options => monoidDefaults, TypicalValue => Ge
 monoid PolynomialRing := o -> R -> R.monoid
 options PolynomialRing := options @@ monoid
 
-generators GeneralOrderedMonoid := M -> M.generators
+generators GeneralOrderedMonoid := opts -> M -> M.generators
 vars GeneralOrderedMonoid := M -> M.generators
 degreesMonoid GeneralOrderedMonoid := Monoid => M -> degreesMonoid degreeLength M
 

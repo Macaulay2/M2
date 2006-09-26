@@ -141,7 +141,7 @@ setupMethods((), {
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
 	  koszul, symmetricPower, coefficientRing, trace, target, source,
 	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,
-	  dual, cokernel, coimage, comodule, image, generators, allGenerators, someTerms, scanKeys, scanValues,
+	  dual, cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
 	  substitute, rank, complete, ambient, topComponents, baseName, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
 	  degree, coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
@@ -157,6 +157,12 @@ use Thing := identity
 random = method(Options => {
 	  MaximalRank => false
 	  })
+
+generators = method(
+     Options => {
+	  CoefficientRing => null			    -- used just for rings, default is most recent coefficient ring, else dig down
+	  }
+     )
 
 minimalPresentation = method(
      Options=>{

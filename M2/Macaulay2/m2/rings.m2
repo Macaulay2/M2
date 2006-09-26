@@ -22,9 +22,11 @@ char Ring := R -> (
      if R.?char then R.char 
      else error("characteristic of ", toString R, " unknown"))
 
-generators Ring := R -> {}
-
-allGenerators Ring := R -> generators R
+errorGenCoeff = () -> error "unable to provide generators for ring over specified coefficient ring"
+generators Ring := opts -> R -> (
+     if opts.CoefficientRing === null or opts.CoefficientRing === R then {}
+     else if opts.CoefficientRing === ZZ and R === QQ then {} -- where should we really stash this special case? (QQ is not in the class FractionField)
+     else errorGenCoeff())
 
 numgens Ring := R -> #generators R
 

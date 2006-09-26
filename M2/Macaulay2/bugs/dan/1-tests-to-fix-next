@@ -1,7 +1,7 @@
-test/ringmap5.m2 --
+test/ringmap5.m2 -- ? where is this file ?
 
 test/inhom.m2	 -- fixed
-test/inverse.m2  -- Mike's problem, for now
+test/inverse.m2  -- fixed
 test/matRR.m2	 -- fixed
 
 To: Dan Grayson <dan@math.uiuc.edu>

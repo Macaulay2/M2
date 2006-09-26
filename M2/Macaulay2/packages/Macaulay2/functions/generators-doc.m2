@@ -132,7 +132,9 @@ document {
      Headline => "the list of generators of a ring",
      Usage => "generators R\ngens R",
      Inputs => {
-	  "R"
+	  "R",
+	  CoefficientRing => Ring => {"the coefficient ring over which to provide the generators of ", TT "R", ", if different
+	       from the most recent one"}
 	  },
      Outputs => {
 	  List => "of generators"
@@ -140,14 +142,9 @@ document {
      EXAMPLE {
 	  "A = QQ[x,y];",
 	  "gens A",
-	  },
-     "If the coefficient ring has variables, then allGenerators gives the
-     list of all of these, whereas generators gives only the newest variables.",
-     EXAMPLE {
 	  "kk = toField(QQ[t]/(t^3-t-1));",
 	  "B = kk[x,y,z];",
 	  "generators B",
-	  "allGenerators B"
-	  },
-     SeeAlso => {allGenerators}
+	  "generators(B, CoefficientRing => QQ)"
+	  }
      }

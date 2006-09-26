@@ -321,7 +321,7 @@ homogenize(Matrix, RingElement, List) := Matrix => (f,v,wts) -> (
      if debugLevel > 0 then << (new FunctionApplication from {rawHomogenize, (f.RawMatrix, index v, wts)}) << endl;
      map(target f, source f, rawHomogenize(f.RawMatrix, index v, wts)))
 
-homogenize(Matrix, RingElement) := Matrix => (f,n) -> homogenize(f,n,apply(allGenerators ring f, degree))
+homogenize(Matrix, RingElement) := Matrix => (f,n) -> homogenize(f,n,apply(generators(ring f, CoefficientRing=>ZZ), degree))
 
 homogenize(Module,RingElement) := Module => (M,z) -> (
      if isFreeModule M then M

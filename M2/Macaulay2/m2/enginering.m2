@@ -172,7 +172,7 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
    degreeLength FractionField := F -> degreeLength last F.baseRings
        toString FractionField := F -> if ReverseDictionary#?F then toString ReverseDictionary#F else "frac(" | toString last F.baseRings | ")"
         numgens FractionField := F -> numgens last F.baseRings
-  allGenerators FractionField := F -> apply(allGenerators last F.baseRings, x -> promote(x,F))
+     generators FractionField := opts -> F -> if opts.CoefficientRing === F then {} else generators(last F.baseRings, opts) / (r -> promote(r,F))
            char FractionField := F -> char last F.baseRings
 	    dim FractionField := F -> 0
             net FractionField := F -> if ReverseDictionary#?F then toString ReverseDictionary#F else net new FunctionApplication from { frac, last F.baseRings }
@@ -227,7 +227,7 @@ use Ring := R -> (
 
 numgens EngineRing := R -> #R.generators
 
-generators EngineRing := R -> R.generators
+generators EngineRing := opts -> R -> if opts.CoefficientRing === null then R.generators else if opts.CoefficientRing === R then {} else errorGenCoeff()
 
 part(ZZ,RingElement) := RingElement => (d,f) -> (
      u := select(terms f, t -> d === sum degree t);
