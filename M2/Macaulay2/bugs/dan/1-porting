@@ -9,3 +9,26 @@ porting machines:
 Here is some information on packaging M2 as a deb file:
 
 http://www.debian.org/doc/devel-manuals#maint-guide
+
+-----------------------------------------------------------------------------
+
+http://www.debian.org/doc/manuals/distribute-deb/distribute-deb.html
+
+says this good way to do it:
+
+    Converting a package from another format to DEB
+
+    If you want to package a product you've already packaged in another format,
+    that might ease your task, especially if the package is simple.
+
+    There's a program called alien which can convert packages between different
+    formats; as of this writing it supports Redhat RPM, Debian DEB, Stampede SLP,
+    Slackware TGZ and Solaris PKG. You can use it to convert your package to DEB,
+    but probably you'll have to do some editing by hand until it works correctly.
+
+    Of course, using alien on a well-working package in another format is no excuse
+    not to test the Debian package you generated and not to read the appropriate
+    documentation; alien is and will always be experimental software.
+
+    Alien was originally written for Debian and is available as Debian package, but
+    it was ported to other platforms too.
