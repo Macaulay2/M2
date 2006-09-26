@@ -451,6 +451,13 @@ cacheValue = key -> f -> x -> (
      if c#?key then c#key else c#key = f x)
 stashValue = key -> f -> x -> if x#?key then x#key else x#key = f x
 
+codeHelper#(functionBody (cacheValue null) null) = g -> {
+     ("-- function f:", value (first localDictionaries g)#"f")
+     }
+codeHelper#(functionBody (stashValue null) null) = g -> {
+     ("-- function f:", value (first localDictionaries g)#"f")
+     }
+
 -----------------------------------------------------------------------------
 -- hypertext conversion
 
