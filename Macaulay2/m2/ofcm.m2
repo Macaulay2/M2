@@ -389,6 +389,7 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
 	  if class w === Option then w = {w};
 	  apply(w, o -> monoidIndex(M,o#0) + bump => monoidIndex(M,o#1) + bump));
      opts.WeylAlgebra = join(wfix(M, Mopts.WeylAlgebra, 0), wfix(N, Nopts.WeylAlgebra, numgens M));
+     if Mopts.Global === false or Nopts.Global === false then opts.Global = false;
      oddp := x -> x#?0 and odd x#0;
      m := numgens M;
      opts.SkewCommutative = join(monoidIndices(M,M.Options.SkewCommutative), apply(monoidIndices(N,N.Options.SkewCommutative), i -> i+m));
