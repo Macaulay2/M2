@@ -180,7 +180,7 @@ status = method (
 
 sopts := 
 Options => {
-     DegreeOrder => Ascending,
+     DegreeOrder => null,				    -- used to be Ascending
      MonomialOrder => Ascending
      }
 
