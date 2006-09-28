@@ -16,8 +16,8 @@ class MatrixSorter
     if (i == j) return 0;
     vec v1 = sort_vecs[i];
     vec v2 = sort_vecs[j];
-    if (v1 == NULL) return -1; 
-    if (v2 == NULL) return 1; 
+    if (v1 == NULL) return 1; 
+    if (v2 == NULL) return -1; 
     if (deg_ascending != 0)
       {
 	int d1 = sort_degs[i];

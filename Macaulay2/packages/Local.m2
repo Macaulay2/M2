@@ -1,4 +1,305 @@
+newPackage(
+	"Local",
+    	Version => "1.0", 
+    	Date => "September 27, 2006",
+    	Authors => {
+	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
+	     {Name => "Mike Stillman", Email => "", HomePage => ""}
+	     },
+    	Headline => "Local rings at the origin",
+    	DebuggingMode => true
+    	)
+
+export {
+     setMaxIdeal,
+     localComplement,
+     localsyz,
+     localMingens,
+     localModulo,
+     localPrune,
+     localResolution,
+     residueMap,
+     maxIdeal
+     }
+
+setMaxIdeal = method()
+setMaxIdeal(Ideal) := (maxI) -> (
+     R := ring maxI;
+     R.residueMap = map(R,R,vars R % maxI);
+     R.maxIdeal = maxI
+     )
+
+localComplement = method()
+localComplement Matrix := Matrix => (m) -> (
+     n := transpose syz transpose ((ring m).residueMap m);
+     id_(target n) // n)
+
+defaultResolutionLength := (R) -> (
+     numgens R + 1 + if ZZ === ultimate(coefficientRing, R) then 1 else 0
+     )
+
+resolutionLength := (R,options) -> (
+     if options.LengthLimit == infinity then defaultResolutionLength R else
+options.LengthLimit
+     )
+
+localsyz = method()
+localsyz(Matrix) := (m) -> (
+     C = res(coker m,LengthLimit=>3);
+     C.dd_2 * localComplement(C.dd_3))
+
+localMingens = method()
+localMingens(Matrix) := Matrix => (m) -> (
+     -- warning: this routine should perhaps take a Module...
+     m * localComplement syz m
+     )
+
+localModulo = method()
+localModulo(Matrix,Matrix) := Matrix => (m,n) -> (
+     P := target m;
+     Q := target n;
+     if P != Q then error "expected maps with the same target";
+     if not isFreeModule P or not isFreeModule Q
+     or not isFreeModule source m or not isFreeModule source n
+     then error "expected maps between free modules";
+     localMingens syz(m|n, SyzygyRows => numgens source m)
+     )
+
+
+localPrune = method()
+localPrune Module := (M) -> (
+     p = presentation M;
+     p1 = localComplement p;
+     p2 = localModulo(p1,p);
+     N := coker(p2);
+     N.cache.pruningMap = map(M,N,p1);
+     N
+     )
+
+localResolution = method(Options => options resolution)
+localResolution Module := options -> (M) -> (
+     R := ring M;
+     maxlength := resolutionLength(R,options);
+     if M.cache.?resolution
+     then (C := M.cache.resolution;
+     C.length = length C)
+     else (
+	  C = new ChainComplex;
+	  C.ring = R;
+	  f := presentation M;
+	  C#0 = target f;
+	  C#1 = source f;
+	  C.dd#1 = f;
+	  M.cache.resolution = C;
+	  C.length = 1;
+	  );
+     i := C.length;
+     while i < maxlength and C.dd#i != 0 do (
+	  g := localsyz C.dd#i;
+	  shield (
+	       i = i+1;
+	       C.dd#i = g;
+	       C#i = source g;
+	       C.length = i;
+	       );
+	  );
+     C)
+
+beginDocumentation()
+
+document { Key => Local,
+     Headline => "Polynomial rings localized at a maximal ideal",
+     EM "Local", " is a package for finding minimal generators, syzygies and resolutions
+     for polynomial rings localized at a maximal ideal.",
+     }
+
+document { 
+     Key => setMaxIdeal,
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+
+document { 
+     Key => localComplement,
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+
+document { 
+     Key => localsyz,
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+
+document { 
+     Key => localMingens,
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+
+document { 
+     Key => localModulo,
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+
+document { 
+     Key => localPrune,
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+
+document { 
+     Key => localResolution,
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+
+end
+-- ###
+restart
+loadPackage "Local"
+kk = ZZ/32003
+R = kk[x,y,z,w,SkewCommutative=>true]
+m = matrix{{x,y*z},{z*w,x}}
+setMaxIdeal(ideal(x,y,z,w))
+C = localResolution(coker m, LengthLimit=>10)
+C = localResolution(coker m)
+C^2
+C.dd_4
+
+kk = QQ
+R = kk[a,b,c,d]
+setMaxIdeal(ideal(a-1,b-2,c-3,d-4))
+R.residueMap
+I = ideal(a*(1+a), a*(1+b))
+I = ideal(a*(a-1), a*(b-2))
+I = ideal((1+a), (1+b))
+localResolution coker gens I
+module I
+localPrune module I
+localMingens gens I
+decompose I
+
+---------------------------------------
+-- MES: tests of local ring routines --
+---------------------------------------
+restart
+R = ZZ/32003[a,b,c,Weights=>{-1,-1,-1},Global=>false]
+I = ideal(a^2-b^3+a*c^4, a*b-c^3-b^4)
+gens gb I
+mingens I
+J = I + ideal((1+a-b^2)*I_0)
+mingens J
+res J
+
+restart
+loadPackage "BGG"
+loadPackage "Local"
+A=ZZ/101[a,Weights=>{-1},Global=>false]/a^2
+S=ZZ/101[a,x,y,Weights=>{-1,1,1},Global=>false,Degrees=>{0,1,1}]/a^2
+F = map(S,A)
+m=matrix"ay,0;x,0;-y,x;0,-y"
+isHomogeneous m
+E=setupBGG(F,{e,f})
+describe E
+F = symmetricToExterior m
+--E = (ZZ/101 [a, e, f, Weights=>{-1,1,1},Global=>false,Degrees => {{0}, {1}, {1}}, SkewCommutative => {1, 2}])/(a^2)
+setMaxIdeal(ideal(a,e,f))
+F = substitute(F,E)
+sF = matrix entries syz F
+sF = localMingens sF
+localResolution(coker sF, LengthLimit=>10)
+
+syz oo
+ker F
+prune F
+res coker oo
+
+A = ZZ/101[a,MonomialOrder=>Weights=>{-1},Global=>false]
+B = A[x,y,z]
+
+----------------------------
+-- below this is possibly:
 -- under development by dan
+--------------------------------
 
 newPackage "Local"
 export {LocalRing,localRing,ambientRing,maxIdeal}
