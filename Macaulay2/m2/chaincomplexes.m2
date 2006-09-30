@@ -612,7 +612,7 @@ regularity ChainComplex := C -> (
 	  select(pairs complete C, (n,F) -> class n === ZZ),
 	  (n,F) -> apply(degrees F, d -> first d - n)))
 
-regularity Module := (M) -> regularity resolution M
+regularity Module := (M) -> regularity resolution minimalPresentation M
 
 regularity Ideal := (I) -> 1 + regularity resolution cokernel generators I
 
