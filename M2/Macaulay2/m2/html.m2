@@ -557,19 +557,8 @@ installPackage Package := opts -> pkg -> (
 
      -- copy package source subdirectory examples
      exampleDir := buildDirectory|LAYOUT#"packageexamples" pkg#"title";
----- we do this copying one file at a time below...
---     en := realpath(currentSourceDir|buildPackage|"/examples/");
---     if fileExists en then (
---	  stderr << "--copying example files from " << en << endl;
---	  copyDirectory(en, exampleDir, Verbose => debugLevel > 0, excludes, UpdateOnly => true);
---	  );
 
      if opts.MakeDocumentation then (
-	  -- This is a bit of a fiction: we've copied the files for our package into the build directory,
-	  -- so let's pretend we loaded the package from there in the first place, thereby allowing "documentation()"
-	  -- to find the example output files the same way it would if the package had been loaded from there.
-	  oldPackagePrefix := pkg#"package prefix";
-	  if oldPackagePrefix === null then oldPackagePrefix = buildDirectory;
 	  pkg#"package prefix" = buildDirectory;
 
 	  -- copy package doc subdirectory if we loaded the package from a distribution
@@ -609,27 +598,6 @@ installPackage Package := opts -> pkg -> (
 			 removeFile fn;
 			 );
 		    ));
-
-     --     -- make test input files
-     --     testsDir := buildDirectory|LAYOUT#"packagetests" pkg#"title";
-     --     infn2  := n -> testsDir|toString n|".m2";
-     --     outfn2 := n -> testsDir|toString n|".out";
-     --     tmpfn2 := n -> testsDir|toString n|".errors";
-     --     stderr << "--making test input files in " << testsDir << endl;
-     --     makeDirectory testsDir;
-     --     testsDir|".linkdir" << close;
-     --     scan(pairs pkg#"test inputs", (key,str) -> if class str === String then (
-     --	       (n,fn) := key;
-     --	       inf := infn2 n;
-     --	       val := str | "\n";
-     --	       if fileExists inf and get inf === val
-     --	       then (
-     --		    if debugLevel > 1 then stderr << "--leaving test input file: " << key << endl;
-     --		    )
-     --	       else (
-     --		    if debugLevel > 1 then stderr << "--making test input file: " << key << endl;
-     --		    inf << val << close;
-     --		    )));
 
 	  -- cache raw documentation in database, and check for changes
 	  rawDocUnchanged := new MutableHashTable;
@@ -691,7 +659,7 @@ installPackage Package := opts -> pkg -> (
 	       );
 
 	  -- make example output files, or else copy them from old package directory tree
-	  exampleDir' := oldPackagePrefix|LAYOUT#"packageexamples" pkg#"title";
+	  exampleDir' := realpath(currentSourceDir|buildPackage|"/examples") | "/";
 	  infn' := fkey -> exampleDir'|toFilename fkey|".m2";
 	  outfn' := fkey -> exampleDir'|toFilename fkey|".out";
 	  stderr << "--making example result files in " << exampleDir << endl;
@@ -721,7 +689,9 @@ installPackage Package := opts -> pkg -> (
 		    then (
 			 copyFile(outf',outf);
 			 )
-		    else runFile(inf,outf,tmpf,desc,pkg,changefun,".",opts.UserMode);
+		    else (
+			 runFile(inf,outf,tmpf,desc,pkg,changefun,".",opts.UserMode);
+			 );
 		    -- read, separate, and store example output
 		    if fileExists outf then pkg#"example results"#fkey = drop(separateM2output get outf,-1)
 		    else (
@@ -731,33 +701,6 @@ installPackage Package := opts -> pkg -> (
 
  	  if not opts.IgnoreExampleErrors 
 	  then if hadExampleError then error(toString numExampleErrors, " error(s) occurred running example files");
-
-     --      -- make test output files, or else copy them from the old package directory tree
-     --      oldTestsDir := oldPackagePrefix|LAYOUT#"packagetests" pkg#"title";
-     --      infn2'  := n -> oldTestsDir|toString n|".m2";
-     --      outfn2' := n -> oldTestsDir|toString n|".out";
-     --      stderr << "--making test result files in " << testsDir << endl;
-     --      hadExampleError = false;
-     --      scan(pairs pkg#"test inputs", (key,inputs) -> (
-     --      	       -- args:
-     -- 	       (n,fn) := key;
-     -- 	       inf := infn2 n;
-     -- 	       outf := outfn2 n;
-     -- 	       tmpf := tmpfn2 n;
-     -- 	       inf' := infn2' n;
-     -- 	       outf' := outfn2' n;
-     -- 	       desc := "test results for " | toString key;
-     --      	       if fileExists outf and fileTime outf >= fileTime inf then (
-     -- 		    -- do nothing
-     -- 		    )
-     -- 	       else if inf != inf' and fileExists inf' and fileExists outf' and fileTime outf' >= fileTime inf' and get inf == get inf'
-     -- 	       then copyFile(outf',outf)
-     -- 	       else (
-     -- 		    -- error "debug me";
-     -- 		    runFile(inf,outf,tmpf,desc,pkg,identity,".");
-     -- 		    );
-     -- 	       ));
-     --      if hadExampleError then error "error(s) occurred running test files";
 
 	  -- process documentation
 	  stderr << "--processing documentation nodes..." << endl;
