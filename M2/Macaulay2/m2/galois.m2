@@ -150,7 +150,7 @@ isField Ring := R -> R.?isField and R.isField
 isAffineRing = method(TypicalValue => Boolean)
 isAffineRing Ring := isField
 isAffineRing PolynomialRing := R -> not (options R).Inverses and isAffineRing coefficientRing R
-isAffineRing QuotientRing := R -> isAffineRing ambient R
+isAffineRing QuotientRing := R -> isField R or isAffineRing ambient R
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
