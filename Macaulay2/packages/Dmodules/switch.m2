@@ -1,4 +1,4 @@
--- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai 
 
 ---------------------------------------------------------------------------------
 -- InfoLevel switch 
