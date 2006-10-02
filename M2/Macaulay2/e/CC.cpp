@@ -202,6 +202,12 @@ ring_elem CC::from_int(mpz_ptr n) const
 
 bool CC::promote(const Ring *S, const ring_elem f, ring_elem &result) const
 {
+  const RingRR *T = S->cast_to_RingRR();
+  if (T)
+    {
+      result = CC::from_double(T->to_double(f));
+      return true;
+    }
   return false;
 }
 
