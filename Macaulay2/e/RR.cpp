@@ -12,16 +12,6 @@
 #include "../d/M2mem.h"
 #include "coeffrings.hpp"
 
-#if 0
-#define RRELEM_VAL(f) (RRelem ((f).poly_val))
-#define RR_VAL(f) ((RRELEM_VAL(f))->val)
-#define RR_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
-#endif
-
-#define RRELEM_VAL(f) (reinterpret_cast<RRelem>((f).poly_val))
-#define RR_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
-#define RR_VAL(f) ((RRELEM_VAL(f))->val)
-
 RingRR::~RingRR()
 {
 }
@@ -73,7 +63,7 @@ ring_elem RingRR::from_double(double a) const
   result->val = a;
   return RR_RINGELEM(result);
 }
-double RingRR::to_double(ring_elem a)
+double RingRR::to_double(ring_elem a) const
 {
   return RR_VAL(a);
 }

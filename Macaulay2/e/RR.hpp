@@ -37,7 +37,7 @@ public:
 
   CoefficientRingRR *get_CoeffRing() const { return coeffR; }
 
-  double to_double(ring_elem a);
+  double to_double(ring_elem a) const;
 
 // The following are all the routines required by 'ring'
   virtual bool is_RR() const { return true; }
@@ -86,6 +86,10 @@ public:
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 };
+
+#define RRELEM_VAL(f) (reinterpret_cast<RingRR::RRelem>((f).poly_val))
+#define RR_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+#define RR_VAL(f) ((RRELEM_VAL(f))->val)
 
 #endif
 
