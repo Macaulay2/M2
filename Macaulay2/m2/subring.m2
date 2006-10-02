@@ -75,7 +75,7 @@ pushtest := options -> (f,M) -> (
 	)
     )
 
-pushlinear := options -> (f,M) -> (
+pushlinear := opts -> (f,M) -> (
     -- assumptions here:
     -- (a) f is homogeneous linear, and the linear forms are independent
     -- 
@@ -98,17 +98,18 @@ pushlinear := options -> (f,M) -> (
         T := (ring hf)_0;
         (cokernel m1).cache.poincare = hf;
         );
-    g := selectInSubring(1, generators gb(m1,options));
+    gbopts := applyPairs(gbDefaults, (k,v) -> if opts#?k and k =!= Strategy then (k,opts#k) else (k,v));
+    g := selectInSubring(1, generators gb(m1,gbopts));
     -- now map the answer back to S = source f.
     mapback := map(S, R1, map(S^1, S^n1, 0) | submatrix(vars S, {0..n-1}));
     mapback g
     )
 
-pushForward1(RingMap, Module) := Matrix => options -> (f,M) -> (
-    if options.Strategy === Linear then
-        (pushlinear options)(f,M)
-    else if options.Strategy === NonLinear then
-        (pushtest options)(f,M)
+pushForward1(RingMap, Module) := Matrix => opts -> (f,M) -> (
+    if opts.Strategy === Linear then
+        (pushlinear opts)(f,M)
+    else if opts.Strategy === NonLinear then
+        (pushtest opts)(f,M)
     else error "unrecognized Strategy"
     )
 
