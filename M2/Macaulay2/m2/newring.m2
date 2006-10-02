@@ -208,6 +208,14 @@ flattenRing QuotientRing := opts -> R -> (
      q' := map(R,S, promote( matrix q, R ));
      (S, p', q'))
 
+isWellDefined RingMap := f -> (
+     R := source f;
+     (S,p,q) := flattenRing(R,CoefficientRing=>ZZ);
+     T := ambient S;
+     I := ideal S;
+     g := f * q * map(S,T);
+     g I == 0)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

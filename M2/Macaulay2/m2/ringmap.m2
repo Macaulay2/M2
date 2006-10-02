@@ -45,6 +45,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	       ));
      n := 0;
      A := S;
+     record := new MutableHashTable;
      while true do (
 	  r := numgens source m;
 	  if r > n then (
@@ -70,8 +71,19 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 			      )
 			 )
 		    else (
-			 -- we should look for variables with the same name
-			 mm := matrix(R, {apply(A.generatorSymbols, s -> if R.?indexSymbols and R.indexSymbols#?s then R.indexSymbols#s else 0_R)});
+			 -- we should look for variables with the same symbol, or failing that, with the same name
+			 justonce := r -> (
+			      if record#?r then error "map: multiple variables would map to the same variable, by name";
+			      record#r = true;
+			      r);
+			 mm := matrix(R, {apply(A.generatorSymbols,
+					s -> (
+					     if R.?indexSymbols and R.indexSymbols#?s then justonce R.indexSymbols#s
+					     else (
+						  nm := toString s;
+						  if R.?indexStrings and R.indexStrings#?nm then justonce R.indexStrings#nm else 0_R
+						  )
+					     ))});
 			 if instance(A,GaloisField) then (
 			      -- the engine wants to know where the primitive element will go
 			      A' = ambient A;
@@ -233,6 +245,7 @@ kernel RingMap := Ideal => opts -> (cacheValue symbol kernel) (
 	       k = F.baseRings#(numsame-1);
 	       (R',p,q) := flattenRing(R, CoefficientRing => k);
 	       (F',r,s) := flattenRing(F, CoefficientRing => k);
+	       if R' === R and F' === F then error "kernel Ringmap: not implemented yet";
 	       q kernel (r * f * q))))
 
 coimage RingMap := QuotientRing => f -> f.source / kernel f

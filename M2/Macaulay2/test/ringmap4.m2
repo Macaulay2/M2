@@ -97,3 +97,43 @@ S = frac(QQ[x]/(x^2+1))
 p = map(R, S)
 assert( p S_"x" == R_"x" )
 
+X = symbol x
+X' = local x
+assert( X =!= X' )
+assert( toString X == toString X' )
+R = QQ[X,X']
+S = QQ[X]
+T = QQ[X']
+f = map(R,S)
+g = map(R,T)
+h = map(S,T)
+k = map(T,S)
+assert( f S_X == R_X )
+assert( g T_X' == R_X' )
+assert( h T_X' == S_X )
+assert( k S_X == T_X' )
+assert try ( map(S,R) ; false ) else true		    -- collision detection should give error
+assert try ( map(T,R) ; false ) else true		    -- collision detection should give error
+
+R = QQ[X][X']
+S = QQ[X]
+T = QQ[X']
+f = map(R,S)
+g = map(R,T)
+h = map(S,T)
+k = map(T,S)
+assert( f S_X == R_X )
+assert( g T_X' == R_X' )
+assert( h T_X' == S_X )
+assert( k S_X == T_X' )
+assert try ( map(S,R) ; false ) else true		    -- collision detection should give error
+assert try ( map(T,R) ; false ) else true		    -- collision detection should give error
+
+
+-- isWellDefined RingMap
+
+k = GF (ZZ/3[a]/(a^2-2))
+R = k[x,y]/x^2
+S = k[t,u]/t^3
+assert isWellDefined map(R,S,{x,y})
+assert not isWellDefined map(S,R,{t,u})
