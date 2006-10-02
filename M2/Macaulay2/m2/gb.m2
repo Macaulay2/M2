@@ -47,7 +47,7 @@ stoppingOptionDefaults = new OptionTable from {
 
 getSomeOptions := (opts,which) -> applyPairs( which, (key,val) -> (key,opts#key) )
 
-gbDefaults := merge(computationOptionDefaults,stoppingOptionDefaults, x -> error "overlap")
+gbDefaults = merge(computationOptionDefaults,stoppingOptionDefaults, x -> error "overlap")
 
 computationIsComplete := (f,type) -> f.cache#?type and f.cache#type.?returnCode and f.cache#type.returnCode === 0
 getComputation := (f,type) -> f.cache#?type
