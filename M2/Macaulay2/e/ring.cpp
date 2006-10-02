@@ -182,7 +182,7 @@ ring_elem Ring::remainder(const ring_elem f, const ring_elem g) const
 {
   if (is_zero(g))
     return f;
-  return g; // 0
+  return zero();
 }
 
 ring_elem Ring::quotient(const ring_elem f, const ring_elem g) const
