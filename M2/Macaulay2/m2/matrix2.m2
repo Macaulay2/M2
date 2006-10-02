@@ -317,6 +317,7 @@ homogenize(RingElement, RingElement, List) := RingElement => (f,v,wts) -> (
 homogenize(Matrix, RingElement, List) := Matrix => (f,v,wts) -> (
      R := ring f;
      wts = flatten wts;
+     wts = apply(wts, i -> if instance(i,InfiniteNumber) then 0 else i);
      homogCheck(f,v,wts);
      if debugLevel > 0 then << (new FunctionApplication from {rawHomogenize, (f.RawMatrix, index v, wts)}) << endl;
      map(target f, source f, rawHomogenize(f.RawMatrix, index v, wts)))
