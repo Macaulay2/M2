@@ -5,7 +5,6 @@ TEST /// input "Dmodules/TST/DHom.tst.m2" ///
 TEST /// input "Dmodules/TST/Dbasic.tst.m2" ///
 TEST /// input "Dmodules/TST/Ddual.tst.m2" ///
 TEST /// input "Dmodules/TST/DeRham.tst.m2" ///
-TEST /// input "Dmodules/TST/Dinputtst.m2" ///
 TEST /// input "Dmodules/TST/Dlocalize.tst.m2" ///
 TEST /// input "Dmodules/TST/Dresolution.tst.m2" ///
 TEST /// input "Dmodules/TST/Drestriction.tst.m2" ///
@@ -86,11 +85,11 @@ document {
 	  TO {"setHomSwitch", " -- toggles use of homogeneous Weyl algebra"}}
      }
 -----------------------------------------------
-document {
+document { -- local?
      Key => ExternalProduct,
      Headline => "external product of modules or complexes"
      }
-document {
+document { -- local?
      Key => [ExternalProduct,TwistMap],
      Headline => "indicates whether TwistMap should be computed"
      }
@@ -275,16 +274,16 @@ document {
      "see ", TO "globalBFunction"
      }
 
-document {
-     Key =>  globalBFunction,
+document { 
+     Key => {(globalBFunction,RingElement), globalBFunction},
      Headline => "global b-function (else known as the Bernstein-Sato polynomial)",
-     Usage => "b = globalBFunction(f)",
+     Usage => "b = globalBFunction f",
      Inputs => {
-	  "f" => {"a polynomial in a Weyl algebra 
-	       (should not contain differential variables)"}
-	       },
+	  "f" => {"a polynomial in a Weyl algebra, that
+	       does not contain differential variables"}
+	  },
      Outputs => {
-	  "b" => {"the b-function ", EM "b(s)",  " in ", EM "Q[s]"}
+	  "b" => RingElement => {"the b-function ", EM "b(s)",  " in ", EM "Q[s]"}
 	  },
      PARA {
 	  BOLD "Definition. ", "Let ", 
@@ -302,18 +301,19 @@ document {
 	  "Let ", EM "B(s) = bFunction(I, {1, 0, ..., 0})", 
 	  " where 1 in the weight that corresponds to ", EM "dt. ", 
 	  "Then the global b-function is ", EM "b_f = B(-s-1)"},
-     EXAMPLE {
-	  "R = QQ[x, dx, WeylAlgebra => {x=>dx}]",
-     	  "f = x^10",
-    	  "globalBFunction f"
-     	  },
+     EXAMPLE lines ///
+	  R = QQ[x, dx, WeylAlgebra => {x=>dx}]
+     	  f = x^10
+    	  b = globalBFunction f
+	  factor b
+     	  ///,
      Caveat => {
 	  "The Weyl algebra should not have any parameters. 
      	  Similarly, it should not be a homogeneous Weyl algebra"
 	  },
-     SeeAlso => { "bFunction", "factorBFunction" }
+     SeeAlso => { "bFunction" }
      }
-               
+
 document {
      Key => (factorBFunction--!!!, RingElement
 	  ),
@@ -348,7 +348,7 @@ document {
      }
 
 document {
-     Key => globalB, 
+     Key => {(globalB, Ideal, RingElement), globalB},
      Headline => "compute global b-function and b-operator 
           for a D-module and a polynomial",
      Usage => "H = globalB(I,f)", 
@@ -358,17 +358,17 @@ document {
 	       (should not contain differential variables)"}
 	       },
      Outputs => {
-	  "H" => {"a hashtable containing the fields ",  
+	  "H" => HashTable => {"containing the keys ",  
 	       TT "Bpolynomial", " and ", TT "Boperator"}
 	  },
      "The algorithm used here is a modification of the original
      algorithm of Oaku for computing Bernstein-Sato polynomials",
-     EXAMPLE {
-	  "R = QQ[x, dx, WeylAlgebra => {x=>dx}]",
-     	  "f = x^7",
-     	  "b = globalB(ideal dx, f)",
-     	  "factorBFunction b.Bpolynomial" 
-     	  },
+     EXAMPLE lines ///
+	  R = QQ[x, dx, WeylAlgebra => {x=>dx}]
+     	  f = x^7
+     	  b = globalB(ideal dx, f)
+     	  factorBFunction b.Bpolynomial 
+     	  ///,
      SeeAlso => { "bFunction", "globalBFunction", "factorBFunction" }
      }  
 document {
@@ -426,7 +426,7 @@ document {
 	       "represents a holonomic D-module ", 
 	       EM {"A", SUB "n", "/I"}
 	       },
-	  "f" => {"an element of Weyl algebra", EM {"A", SUB "n"}}
+	  "f" => {"an element of Weyl algebra ", EM {"A", SUB "n"}}
 	  },
      Outputs => {
 	  "J" => {"the annihilating ideal"}
@@ -1078,7 +1078,7 @@ document {
 
 document {
      Key => createDpairs,
-     Headline => "sorts out the variables in Weyl algebra",
+     Headline => "sorts out the variables in Weyl algebra ",
      TT "createDpairs W", " -- 
      attaches to a Weyl algebra W a pair of keys to help distinguish the
      coordinate variables from the derivation variables.",
@@ -1375,31 +1375,18 @@ document {
      } 
 
 document {
-     Key => Dlocalize,
+     Key => {Dlocalize, (Dlocalize,Ideal,RingElement), (Dlocalize,Module,RingElement)},
      Headline => "localization of a D-module",
-     TT "Dlocalize (M, f)", " -- 
-     compute the localization of the D-module M with respect to the
-     polynomial f",
-     BR{},
-     TT "Dlocalize (I, f)", " -- 
-     compute the localization of the quotient module D/I with respect to the
-     polynomial f",
-     PARA{},
-     TT "DlocalizeMap (M, f)", " -- 
-     compute the localization map M --> M[1/f]",
-     BR{},
-     TT "DlocalizeMap (M, f)", " -- 
-     compute the localization map (D/I) --> (D/I)[1/f]",
-     PARA{},
-     TT "DlocalizeAll (M, f)", " -- 
-     compute the localization of M with respect to f and
-     some auxilary information",
-     BR{},
-     TT "DlocalizeAll (M, f)", " -- 
-     compute the localization of D/I with respect to f and some
-     auxilary information",
-     PARA{},
 
+     Usage => "Dlocalize(M,f), Dlocalize(I,f)",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "f" => RingElement => "a polynomial",
+	  },
+     Outputs => {
+	  Module => {"the localized module ", TEX "M_f = M[f^{-1}]", " as a D-module"}
+	  },
      "One of the nice things about D-modules is that if a finitely
      generated D-module is specializable along ", EM "f", ", then it's localization 
      with respect to ", EM "f", " is also finitely generated.  For instance,
@@ -1413,20 +1400,1021 @@ document {
      'Algorithmic computation of local cohomology modules and the
      cohomological dimension of algebraic varieties' by Walther(1999)",
 
-     PARA{},
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
-     	"M = W^1/(ideal(x*Dx+1, Dy))", 
-     	"f = x^2-y^3",
-     	"Mf = Dlocalize(M, f)"
-	},
-     PARA{},
-     "Other names :",
-     UL{"Dlocalization"},
-     
-     SeeAlso => {"AnnFs", "Dintegration"}
+     EXAMPLE lines ///
+	W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
+     	M = W^1/(ideal(x*Dx+1, Dy))
+     	f = x^2-y^3
+     	Mf = Dlocalize(M, f)
+	///,
+     SeeAlso => {"DlocalizeAll", "DlocalizeMap", "AnnFs", "Dintegration"}
      }
+
+document {
+     Key => {DlocalizeMap, (DlocalizeMap,Ideal,RingElement), (DlocalizeMap,Module,RingElement)},
+     Headline => "localization map from a D-module to its localization",
+     Usage => "DlocalizeMap(M,f), DlocalizeMap(I,f)",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "f" => RingElement => "a polynomial",
+	  },
+     Outputs => {
+	  Matrix => {"which represents the natural map from ", TEX "M", " to ", TEX "M_f = M[f^{-1}]"}
+	  },
+     "A supplementary function for ", TO "Dlocalize", 
+     " that computes the localization map.",
+     EXAMPLE lines ///
+	W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
+     	M = W^1/(ideal(x*Dx+1, Dy))
+     	f = x^2-y^3
+     	DlocalizeMap(M, f)
+	///,
+     SeeAlso => {"Dlocalize", "AnnFs", "Dintegration"}
+     }
+
+
+document {
+     Key => {DlocalizeAll, (DlocalizeAll,Ideal,RingElement), (DlocalizeAll,Module,RingElement)},
+     Headline => "localization of a D-module (extended version)",
+     Usage => "DlocalizeAll(M,f), DlocalizeAll(I,f)",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "f" => RingElement => "a polynomial",
+	  },
+     Outputs => {
+	  HashTable => {"which contains the localized module", TEX "M_f = M[f^{-1}]", 
+	       " and some additional information"}
+	  },
+     "An extension of ", TO "Dlocalize", 
+     " that in addition computes the localization map, 
+     the b-function, and the power ", TEX "s", " of the generator ", TEX "f^s", ".",
+     EXAMPLE lines ///
+	W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
+     	M = W^1/(ideal(x*Dx+1, Dy))
+     	f = x^2-y^3
+     	DlocalizeAll(M, f)
+	///,
+     SeeAlso => {"Dlocalize", "AnnFs", "Dintegration"}
+     }
+
+     TT "DlocalizeAll (M, f)", " -- 
+     compute the localization of M with respect to f and
+     some auxilary information",
+     BR{},
+     TT "DlocalizeAll (M, f)", " -- 
+     compute the localization of D/I with respect to f and some
+     auxilary information",
+     PARA{},
+
+
+document {
+     Key => {Dlocalization, (Dlocalization,Ideal,RingElement), (Dlocalization,Module,RingElement),
+     	  DlocalizationAll, (DlocalizationAll,Ideal,RingElement), (DlocalizationAll,Module,RingElement),
+	  DlocalizationMap, (DlocalizationMap,Ideal,RingElement), (DlocalizationMap,Module,RingElement)},
+     Headline => "Dlocalization* is an OBSOLETE name for Dlocalize*", 
+     "See ", TO "Dlocalize", "."
+     }
+document {
+     Key => LocModule,
+     Headline => "a key created by Dlocalize",
+     "See ", TO "Dlocalize", "."
+     }
+document {
+     Key => GeneratorPower,
+     Headline => "a key created by Dlocalize",
+     "See ", TO "Dlocalize", "."
+     }
+document {
+     Key => LocMap,
+     Headline => "a key created by Dlocalize",
+     "See ", TO "Dlocalize", "."
+     }
+document {
+     Key => annFS,
+     Headline => "a key created by Dlocalize",
+     "See ", TO "Dlocalize", "."
+     }
+document {
+     Key => IntegrateBfunction,
+     Headline => "a key created by Dlocalize",
+     "See ", TO "Dlocalize", "."
+     }
+document {
+     Key => Bfunction,
+     Headline => "a key created by Dlocalize",
+     "See ", TO "Dlocalize", "."
+     }
+
+document {
+     Key => [Dresolution,Strategy],
+     Headline => "strategy for computing a resolution of a D-module",
+     UL { 
+	  {BOLD "Schreyer", 
+	       " -- uses Schreyer method in homogeneous Weyl algebra"},
+	  {BOLD "Vhomogenize", " -- uses V-homogenization method of Oaku"}
+     }
+}
+document {
+     Key => Schreyer,
+     Headline => "strategy for computing a resolution of a D-module"
+     }
+document {
+     Key => Vhomogenize,
+     Headline => "strategy for computing a resolution of a D-module"
+     }
+
+document {
+     Key => Dresolution,
+     Headline => "resolution of a D-module",
+     TT "Dresolution M", " -- 
+     computes a Schreyer resolution of the D-module M",
+     BR{}, TT "Dresolution (I, w)", " -- 
+     computes a Schreyer resolution of the quotient module D/I",
+
+     PARA{},
+     TT "Dresolution (M, w)", "-- 
+     computes a resolution of M adapted to a weight vector w
+     of the form (-u,u)",
+     BR{}, TT "Dresolution (I, w)", "-- 
+     computes a resolution of D/I adapted to a weight vector w
+     of the form (-u,u)",
+     PARA{},
+
+     "This routine computes various resolutions of a D-module.
+     If no weight vector is specified, then the command
+     produces a resolution by using the Schreyer order implemented
+     in the engine.  If a weight vector ", EM "w", " of the form ", EM "(-u,u)", 
+     " is specified, then the command produces a resolution with shifts
+     which is adapted to the weight vector ", EM "w", ".  
+     These ", EM "w", "-adapted resolutions are compatible
+     with b-functions and used in the restriction algorithm.
+     For ordinary resolutions, the user may use the command ", TT "resolution", ".
+     Note that the notion of a minimal resolution is well-defined only in case 
+     of homogenized Weyl algebra.",
+
+     PARA{},
+     "There are two strategies for constructing
+     w-adapted resolutions.   The first strategy is to construct
+     a Schreyer resolution in the homogenized Weyl algebra
+     and then dehomogenize.  The second strategy is to homogenize
+     with respect to the weight vector.
+     These strategies are described in the paper
+     'Algorithims for D-modules'
+     by Oaku-Takayama(1999).",
+
+     PARA {
+	  "A simple example:"
+	  },
+     EXAMPLE {
+	     "R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]",
+	     "I = ideal(x_1*D_1+3*x_2*D_2-1, D_1^3-D_2)", 
+	     "Dresolution(I,{-1,-1,1,1})"
+	     },
+     "Abbreviations :",
+     UL{"Dres"},
+
+     SeeAlso => {"gbw", "Drestriction"}
+     }
+document {
+     Key => Dres,
+     Headline => "abbreviation for Dresolution",
+     SeeAlso =>{"Dresolution"}
+     }	
+
+document {
+     Key => [Drestriction,Strategy],
+	  "Option is passed to Dresolution. See ",
+	  TO [Dresolution,Strategy]
+	  }
+
+document {
+     Key => {Drestriction, (Drestriction,ZZ,Module,List), (Drestriction,Ideal,List), 
+	  (Drestriction,Module,List), (Drestriction,ZZ,Ideal,List)},
+     Headline => "restriction modules of a D-module",
+     Usage => "N = Drestriction(M,w), NI = Drestriction(I,w), Ni = Drestriction(i,M,w),
+     NIi = Drestriction(i,I,w), ",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector",
+	  "i" => ZZ => "nonnegative"  
+	  },
+     Outputs => {
+	  "Ni" => Module => {"the i-th derived integration module of ", EM "M"," with respect
+     to the weight vector ", EM "w"},
+     	  "N" => HashTable => {"contains entries of the form ", TT "i=>Ni"},
+	  "NIi" => Module => {"the i-th derived integration module of ", EM "D/I", " with respect
+     to the weight vector ", EM "w"},
+     	  "NI" => HashTable => {"contains entries of the form ", TT "i=>NIi"}
+	  },
+     "The derived restriction modules of a D-module M are
+     the derived inverse images in the sense of algebraic
+     geometry but in the category of D-modules. 
+     This routine computes restrictions to coordinate subspaces,
+     where the subspace is determined
+     by the strictly positive entries of the weight vector", EM "w", ",
+     e.g., ", EM "{x_i = 0 : w_i > 0}", " if ", 
+     EM "D = ", BOLD "C", EM "<x_1,...,x_n,d_1,...,d_n>", ".
+     The input weight vector should be a list of ", EM "n", " numbers
+     to induce the weight ", EM "(-w,w)", " on ", EM "D", ".",
+
+     PARA {
+	  "The algorithm used appears in the paper 'Algorithims for D-modules'
+	  by Oaku-Takayama(1999).  The method is to compute an adapted resolution
+	  with respect to the weight vector w and use the b-function with respect
+	  to w to truncate the resolution."},
+     EXAMPLE lines ///
+	     R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
+	     I = ideal(x_1, D_2-1) 
+	     Drestriction(I,{1,0})
+	     ///,
+     Caveat =>{"The module ", EM "M", " should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector ", EM "w", " should be a list of ", EM "n",
+	  " numbers if ", EM "M", 
+	  " is a module over the ", EM "n", "-th Weyl algebra."},
+     SeeAlso => {"DrestrictionAll", "DrestrictionClasses", "DrestrictionComplex", 
+	  "DrestrictionIdeal", "Dresolution", "Dintegration"}
+     }
+
+document {
+     Key => {DrestrictionIdeal, (DrestrictionIdeal, Ideal, List)},
+     Headline => "restriction ideal of a D-module",
+     Usage => "DrestrictionIdeal(I,w)",
+     Inputs => {
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector"
+	  },
+     Outputs => {
+     	  Ideal => {"the restriction ideal of ", EM "M", " w.r.t. the weight vector ", EM "w"}
+	  },
+     "A suplementary function for ", TO "Drestriction", 
+     " that computes the restriction ideal.",   
+     EXAMPLE lines ///
+          W = QQ[y,t,Dy,Dt, WeylAlgebra => {y=>Dy, t=>Dt}];
+     	  I = ideal(2*t*Dy+Dt, t*Dt+2*y*Dy+2); -- annihilator of 1/(t^2-y)
+     	  DrestrictionIdeal(I, {1,4})
+	  ///,
+     Caveat =>{"The module M should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector w should be a list of n numbers if M
+	  is a module over the nth Weyl algebra."},
+     SeeAlso =>{"Drestriction", "DrestrictionAll", "Dintegration"}
+}
+
+document {
+     Key => {DrestrictionAll, (DrestrictionAll, Module, List), (DrestrictionAll, Ideal, List)},
+     Headline => "restriction modules of a D-module (extended version)",
+     Usage => "N = DrestrictionAll(M,w), NI = DrestrictionAll(I,w)",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector"
+	  },
+     Outputs => {
+     	  "N" => HashTable, 
+     	  "NI" => HashTable
+	  },
+     "An extension of ", TO "Drestriction", 
+     " that computes the restriction complex, restriction classes, etc.",   
+     EXAMPLE lines ///
+	R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
+    	I = ideal(x_1, D_2-1) 
+     	DrestrictionAll(I,{1,0})
+	///,
+     Caveat =>{"The module M should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector w should be a list of n numbers if M
+	  is a module over the nth Weyl algebra."},
+     SeeAlso =>{"Drestriction", "DrestrictionClasses", "DrestrictionComplex", 
+	  "DrestrictionIdeal", "Dintegration"}
+}
+
+document {
+     Key => {DrestrictionComplex, (DrestrictionComplex, Module, List), (DrestrictionComplex, Ideal, List)},
+     Headline => "derived restriction complex of a D-module",
+     Usage => "N = DrestrictionComplex(M,w), NI = DrestrictionComplex(I,w)",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector"
+	  },
+     Outputs => {
+     	  "N" => HashTable, 
+     	  "NI" => HashTable 
+	  },
+     "An extension of ", TO "Drestriction", 
+     " that computes the derived restriction complex.",   
+     EXAMPLE lines ///
+	R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
+    	I = ideal(x_1, D_2-1) 
+     	DrestrictionComplex(I,{1,0})
+	///,
+     Caveat =>{"The module M should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector w should be a list of n numbers if M
+	  is a module over the nth Weyl algebra."},
+     SeeAlso =>{"Drestriction", "DrestrictionAll", "Dintegration"}
+}
+
+
+document {
+     Key => {DrestrictionClasses, (DrestrictionClasses,ZZ,Module,List), (DrestrictionClasses,Ideal,List), (DrestrictionClasses,Module,List),
+      (DrestrictionClasses,ZZ,Ideal,List)},
+     Headline => "restriction classes of a D-module",
+     Usage => "N = DrestrictionClasses(M,w), NI = DrestrictionClasses(I,w), Ni = DrestrictionClasses(i,M,w),
+     NIi = DrestrictionClasses(i,I,w), ",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector",
+	  "i" => ZZ => "nonnegative"  
+	  },
+     Outputs => {
+	  "Ni" => HashTable,
+     	  "N" => HashTable,
+	  "NIi" => HashTable,
+	  "NI" => HashTable
+	  },
+     "An extension of ", TO "Drestriction", 
+     " that computes the explicit cohomology classes of a derived restriction complex.",        
+     EXAMPLE lines ///
+	R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
+    	I = ideal(x_1, D_2-1) 
+     	DrestrictionClasses(I,{1,0})
+	///,
+     Caveat =>{"The module M should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector w should be a list of n numbers if M
+	  is a module over the nth Weyl algebra."},
+     SeeAlso =>{"Drestriction", "DrestrictionAll", "Dintegration"}
+}
+
+document {
+     Key => {Drestrict, (Drestrict, ZZ, Module, List), (Drestrict, Ideal, List), 
+	  (Drestrict, Module, List), (Drestrict, ZZ, Ideal, List),
+	  DrestrictAll, (DrestrictAll, Module, List), (DrestrictAll, Ideal, List),
+	  DrestrictClasses, (DrestrictClasses,Module,List,ZZ), (DrestrictClasses,Ideal,List), 
+	  (DrestrictClasses,Module,List),(DrestrictClasses,Ideal,List,ZZ),
+	  DrestrictComplex, (DrestrictComplex,Module,List,ZZ), (DrestrictComplex,Ideal,List), 
+	  (DrestrictComplex,Module,List),(DrestrictComplex,Ideal,List,ZZ),
+	  DrestrictIdeal, (DrestrictIdeal,Ideal,List)},
+     Headline => "an (OBSOLETE) abbreviation for Drestriction",
+     SeeAlso =>{"Drestriction"}
+     }	
+
+document {
+     Key => HomologyModules,
+     Headline => "a key in a hashtable; an option of DExt",
+     SeeAlso => {"Drestriction", "Dintegration", "DExt" }
+     }
+document {
+     Key => GenCycles,
+     Headline => "a key in the hashtable created by Drestriction/Dintegration",
+     SeeAlso => {"Drestriction", "Dintegration" }
+     }
+document {
+     Key => Exponents,
+     Headline => "a key in the hashtable created by Drestriction/Dintegration",
+     SeeAlso => {"Drestriction", "Dintegration" }
+     }
+document {
+     Key => Cycles,
+     Headline => "a key in the hashtable created by Drestriction/Dintegration",
+     SeeAlso => {"Drestriction", "Dintegration" }
+     }
+document {
+     Key => Boundaries,
+     Headline => "a key in the hashtable created by Drestriction/Dintegration",
+     SeeAlso => {"Drestriction", "Dintegration" }
+     }
+document {
+     Key => VResolution,
+     Headline => "a key in the hashtable created by Drestriction/Dintegration",
+     SeeAlso => {"Drestriction", "Dintegration" }
+     }
+document {
+     Key => Explicit,
+     Headline => "a key in the hashtable created by Drestriction/Dintegration",
+     SeeAlso => {"Drestriction", "Dintegration" }
+     }
+
+document {
+     Key => IntegrateComplex,
+     Headline => "a key in the hashtable created by Dintegration",
+     SeeAlso => {"Dintegration" }
+     }
+
+document {
+     Key => [Dintegration,Strategy],
+	  "Option is passed to Dresolution. See ",
+	  TO [Dresolution,Strategy]
+}
+
+document {
+     Key => { Dintegration, (Dintegration,ZZ,Module,List), (Dintegration,Ideal,List), 
+	  (Dintegration,Module,List), (Dintegration,ZZ,Ideal,List) },
+     Headline => "integration modules of a D-module",
+     Usage => "N = Dintegration(M,w), NI = Dintegration(I,w), Ni = Dintegration(i,M,w),
+     NIi = Dintegration(i,I,w), ",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector",
+	  "i" => ZZ => "nonnegative"  
+	  },
+     Outputs => {
+	  "Ni" => Module => {"the i-th derived integration module of ", EM "M"," with respect
+     to the weight vector ", EM "w"},
+     	  "N" => HashTable => {"contains entries of the form ", TT "i=>Ni"},
+	  "NIi" => Module => {"the i-th derived integration module of ", EM "D/I", " with respect
+     to the weight vector ", EM "w"},
+     	  "NI" => HashTable => {"contains entries of the form ", TT "i=>NIi"}
+	  },
+     "The derived integration modules of a D-module ", EM "M", " are
+     the derived direct images in the category of D-modules. 
+     This routine computes integration for projection to 
+     coordinate subspaces, where the subspace is determined
+     by the strictly positive entries of the weight vector ", EM "w", ",
+     e.g., ", EM "{x_i = 0 : w_i > 0}", " if ", 
+     EM "D = ", BOLD "C", EM "<x_1,...,x_n,d_1,...,d_n>", ".
+     The input weight vector should be a list of ", EM "n", " numbers	    
+     to induce the weight ", EM "(-w,w)", " on ", EM "D", ".",
+     PARA "",
+     "The algorithm used appears in the paper 'Algorithims for D-modules'
+     by Oaku-Takayama(1999).  The method is to take the Fourier transform
+     of M, then compute the derived restriction, then inverse
+     Fourier transform back.",
+     EXAMPLE lines ///
+	R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
+    	I = ideal(x_1, D_2-1) 
+     	Dintegration(I,{1,0})
+	///,
+     Caveat =>{"The module M should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector w should be a list of n numbers if M
+	  is a module over the nth Weyl algebra."},
+     SeeAlso =>{"DintegrationAll", "DintegrationClasses", "DintegrationComplex", 
+	  "DintegrationIdeal", "Drestriction"}
+ }
+
+document {
+     Key => {DintegrationIdeal, (DintegrationIdeal, Ideal, List)},
+     Headline => "integration ideal of a D-module",
+     Usage => "DintegrationIdeal(I,w)",
+     Inputs => {
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector"
+	  },
+     Outputs => {
+     	  Ideal => {"the integration ideal of ", EM "M", " w.r.t. the weight vector ", EM "w"}
+	  },
+     "A suplementary function for ", TO "Dintegration", 
+     " that computes the integration ideal.",   
+     EXAMPLE lines ///
+          W = QQ[y,t,Dy,Dt, WeylAlgebra => {y=>Dy, t=>Dt}];
+     	  I = ideal(2*t*Dy+Dt, t*Dt+2*y*Dy+2); -- annihilator of 1/(t^2-y)
+     	  DintegrationIdeal(I, {1,4})
+	  ///,
+     Caveat =>{"The module M should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector w should be a list of n numbers if M
+	  is a module over the nth Weyl algebra."},
+     SeeAlso =>{"Dintegration", "DintegrationAll", "Drestriction"}
+}
+
+document {
+     Key => {DintegrationAll, (DintegrationAll, Module, List), (DintegrationAll, Ideal, List)},
+     Headline => "integration modules of a D-module (extended version)",
+     Usage => "N = DintegrationAll(M,w), NI = DintegrationAll(I,w)",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector"
+	  },
+     Outputs => {
+     	  "N" => HashTable, 
+     	  "NI" => HashTable
+	  },
+     "An extension of ", TO "Dintegration", 
+     " that computes the integration complex, integration classes, etc.",   
+     EXAMPLE lines ///
+	R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
+    	I = ideal(x_1, D_2-1) 
+     	DintegrationAll(I,{1,0})
+	///,
+     Caveat =>{"The module M should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector w should be a list of n numbers if M
+	  is a module over the nth Weyl algebra."},
+     SeeAlso =>{"Dintegration", "DintegrationClasses", "DintegrationComplex", 
+	  "DintegrationIdeal", "Drestriction"}
+}
+
+document {
+     Key => {DintegrationComplex, (DintegrationComplex, Module, List), (DintegrationComplex, Ideal, List)},
+     Headline => "derived integration complex of a D-module",
+     Usage => "N = DintegrationComplex(M,w), NI = DintegrationComplex(I,w)",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector"
+	  },
+     Outputs => {
+     	  "N" => HashTable, 
+     	  "NI" => HashTable 
+	  },
+     "An extension of ", TO "Dintegration", 
+     " that computes the derived integration complex.",   
+     EXAMPLE lines ///
+	R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
+    	I = ideal(x_1, D_2-1) 
+     	DintegrationComplex(I,{1,0})
+	///,
+     Caveat =>{"The module M should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector w should be a list of n numbers if M
+	  is a module over the nth Weyl algebra."},
+     SeeAlso =>{"Dintegration", "DintegrationAll", "Drestriction"}
+}
+
+
+document {
+     Key => {DintegrationClasses, (DintegrationClasses,ZZ,Module,List), (DintegrationClasses,Ideal,List), (DintegrationClasses,Module,List),
+      (DintegrationClasses,ZZ,Ideal,List)},
+     Headline => "integration classes of a D-module",
+     Usage => "N = DintegrationClasses(M,w), NI = DintegrationClasses(I,w), Ni = DintegrationClasses(i,M,w),
+     NIi = DintegrationClasses(i,I,w), ",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector",
+	  "i" => ZZ => "nonnegative"  
+	  },
+     Outputs => {
+	  "Ni" => HashTable,
+     	  "N" => HashTable,
+	  "NIi" => HashTable,
+	  "NI" => HashTable
+	  },
+     "An extension of ", TO "Dintegration", 
+     " that computes the explicit cohomology classes of a derived integration complex.",        
+     EXAMPLE lines ///
+	R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
+    	I = ideal(x_1, D_2-1) 
+     	DintegrationClasses(I,{1,0})
+	///,
+     Caveat =>{"The module M should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector w should be a list of n numbers if M
+	  is a module over the nth Weyl algebra."},
+     SeeAlso =>{"Dintegration", "DintegrationAll", "Drestriction"}
+}
+
+document {
+     Key => {
+	  Dintegrate, (Dintegrate,ZZ,Module,List), (Dintegrate,Ideal,List), 
+	  (Dintegrate,Module,List), (Dintegrate,ZZ,Ideal,List),
+	  DintegrateAll, (DintegrateAll,Module,List), (DintegrateAll,Ideal,List),
+	  DintegrateClasses, (DintegrateClasses,ZZ,Module,List), (DintegrateClasses,Ideal,List), 
+	  (DintegrateClasses,Module,List),(DintegrateClasses,ZZ,Ideal,List),
+	  DintegrateComplex, (DintegrateComplex,Module,List), (DintegrateComplex,Ideal,List),
+	  DintegrateIdeal,(DintegrateIdeal, Ideal, List)
+	  },
+     Headline => "Dintegrate* is an (OBSOLETE) abbreviation for Dintegration*",
+     SeeAlso =>{"Dintegration", "DintegrationAll", "DintegrationClasses", 
+	  "DintegrationComplex", "DintegrationIdeal"}
+     }	
+document {
+     Key => [gkz,Vars] }
+document {
+     Key => [AppellF1,Vars] }
+document {
+     Key => Vars }
+document {
+     Key => Local,
+     Headline => "a choice for option Vars" 
+     }
+document {
+     Key => Global,
+     Headline => "a choice for option Vars" 
+     }
+document {
+     Key => {gkz, (gkz, Matrix), (gkz, Matrix, List)},
+     Headline => "GKZ A-hypergeometric ideal",
+     Usage => "gkz A, gkz(A,b)",
+     Inputs => {
+	  "A" => Matrix,
+	  "b" => List 
+	  },
+     Outputs => {
+     	  Ideal => "which represents the Gel'fand-Kapranov-Zelevinsky hypergeometric system
+     associated to the matrix A (and the parameter vector b)"
+	  },
+     "The GKZ hypergeometric system of PDE's associated to a (d x n)
+     integer matrix A consists of the toric ideal I_A in the polynomial
+     subring C[d_1,...,d_n] and Euler relations given by the entries
+     of the vector (A theta - b), where theta is the vector
+     (theta_1,...,theta_n)^t, and theta_i = x_i d_i.
+     See the book 'Groebner deformations of hypergeometric differential 
+     equations' by Saito-Sturmfels-Takayama (1999) for more details.",
+     EXAMPLE lines ///
+	A = matrix{{1,1,1},{0,1,2}}
+     	b = {3,4}
+     	I = gkz (A,b)
+	///,
+     Caveat =>{"gkz always returns a different ring and will use variables
+	  x_1,...,x_n, D_1,...D_n."},
+     SeeAlso => {"AppellF1"}
+     },
+
+document {
+     Key => {(AppellF1, List), AppellF1},
+     Headline => "Appell F1 system of PDE's",
+     Usage => "AppellF1 {a0,a1,a2,a3}",
+     Inputs => {
+	  "{a0,a1,a2,a3}"
+	  },
+     Outputs => {
+	  Ideal => "which represents Appell F1 system of PDE's associated to the
+     	  parameters a0, a1, a2, and a3."
+	  },
+     EXAMPLE lines ///
+	w = {1,4/5,-2,3/2}
+     	I = AppellF1 w
+	///,
+     Caveat =>{"AppellF1 always returns a different ring and will
+	  use variables x and y. Input should be a List of 4
+	  numbers."},
+     SeeAlso => {"gkz"}
+     }
+
+document {
+     Key => {(PolyAnn, RingElement), PolyAnn},
+     Headline => "annihilator of a polynomial in Weyl algebra",
+     Usage => "PolyAnn f",
+     Inputs => {
+     	  "f" => RingElement => "polynomial"
+	  },
+     Outputs => {
+     	  Ideal => {"the annihilating (left) ideal of ", EM "f", "in the Weyl algebra"}
+	  },
+     EXAMPLE lines ///
+	W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx, y=>Dy}]
+     	f = x^2-y^3
+     	I = PolyAnn f
+	///,
+     Caveat =>{"The input f should be an element of a Weyl algebra,
+	  and not an element of a commutative polynomial ring.
+	  However, f should only involve commutative variables."},
+     SeeAlso => {"RatAnn"}
+     }
+
+document {
+     Key => {RatAnn, (RatAnn, RingElement, RingElement), (RatAnn, RingElement)},
+     Headline => "annihilator of a rational function in Weyl algebra",
+     Usage => "RatAnn f, RatAnn(g,f)",
+     Inputs => {
+	  "f" => RingElement => "polynomial",
+	  "g" => RingElement => "polynomial"
+	  },
+     Outputs => {
+     	  Ideal => "left ideal of the Weyl algebra"
+	  },
+     TT "RatAnn f", " computes the annihilator ideal in the Weyl algebra of the rational
+     function 1/f",
+     BR{},
+     TT "RatAnn(g,f)", " computes the annihilator ideal in the Weyl algebra of the rational
+     function g/f",
+     EXAMPLE lines ///
+	W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx, y=>Dy}]
+     	f = x^2-y^3
+     	g = 2*x*y
+     	I = RatAnn (g,f)
+	///,
+     Caveat =>{"The inputs f and g should be elements of a Weyl algebra,
+	  and not elements of a commutative polynomial ring.
+	  However, f and g should only use the commutative variables."},
+     SeeAlso => {"PolyAnn"}
+     }
+
+document {
+     Key => {WeylClosure, (WeylClosure, Ideal), (WeylClosure, Ideal, RingElement)},
+     Headline => "Weyl closure of an ideal",
+     Usage => "WeylClosure I, WeylClosure(I,f)",
+     Inputs => {
+	  "I" => Ideal => "a left ideal of the Weyl Algebra",
+	  "f" => RingElement => "a polynomial"  
+	  },
+     Outputs => {
+	  Ideal => {"the Weyl closure (w.r.t. ", TEX "f", ") of ", TEX "I"}
+	  },
+     "Let ", TEX "R = K(x_1..x_n)", "<", TEX "d_1..d_n", ">", " denote the ring of differential
+     operators with rational function coefficients. The Weyl closure
+     of an ideal ", TEX "I", " in ", TEX "D"," is the intersection of the extended ideal ", 
+     TEX "RI", " with ", TEX "D", ".  It consists of all operators which vanish on the common
+     holomorphic solutions of ", TEX "I", " and is thus analogous to the radical
+     operation on a commutative ideal.",
+     PARA "",
+     "The partial Weyl closure of ", TEX "I", " with respect to a polynomial ", TEX "f",
+     " is the intersection of the extended ideal ", TEX "D[f^{-1}] I", " with ", TEX "D", ".",
+     PARA "",
+     "The Weyl closure is computed by localizing ", TEX "D/I", " with respect to
+     a polynomial f vanishing on the singular locus, and computing
+     the kernel of the map ",  "D --> D/I --> (D/I)[f^{-1}]", ".",
+     EXAMPLE lines ///
+	W = QQ[x,Dx, WeylAlgebra => {x=>Dx}]
+     	I = ideal(x*Dx-2)
+     	WeylClosure I
+	///,
+     Caveat =>{"The ideal I should be finite rank, which can be tested
+	  manually by Drank.", "The Weyl closure of non-finite rank
+	  ideals or arbitrary submodules has not been implemented."},
+     SeeAlso => {"Dlocalize", "singLocus", "Drank"}
+     }
+
+document {
+     Key => [deRham,Strategy],
+	  "Option is passed to Dresolution. See ",
+	  TO [Dresolution,Strategy]
+}
+
+document {
+     Key => [deRhamAll,Strategy],
+	  "Option is passed to Dresolution. See ",
+	  TO [Dresolution,Strategy]
+}
+
+document {
+     Key => {(deRhamAll, RingElement), deRhamAll},
+     Headline => "deRham complex for the complement of a hypersurface",
+     Usage => "deRhamAll f",
+     Inputs => {"f"},
+     Outputs => {
+	  HashTable => {"containing explicit cohomology classes 
+	       in the deRham complex for the complement 
+	       of the hypersurface ",  EM "{f = 0}", " and
+     	       supplementary information"}	       
+	  },
+     "The routine deRhamAll can be used to compute cup product structures
+     as in the paper 'The cup product structure for complements
+     of affine varieties' by Walther(2000).",
+     PARA{},
+     "For a more basic functionality see ", TO "deRham", ".",
+     EXAMPLE lines ///
+	R = QQ[x,y]
+     	f = x^2-y^3 
+     	deRhamAll f
+	///,
+     SeeAlso => {"deRham", "Dlocalization", "Dintegration"}	
+} 
+
+document {
+     Key => {deRham, (deRham, ZZ, RingElement), (deRham, RingElement)},
+     Headline => "deRham cohomology groups for the complement of a hypersurface",
+     Usage => "M = deRham f, Mi = deRham(i,f)",
+     Inputs => {
+	  "i" => ZZ,
+	  "f" => RingElement
+	  },
+     Outputs => {
+	  "Mi" => Module => {"the i-th deRham cohomology group of the complement 
+	  of the hypersurface ",  EM "{f = 0}"},
+	  "M" => HashTable => {"containing the entries of the form ", TT "i=>Mi"}  
+	  },
+     "The algorithm used appears in the paper 'An algorithm for deRham 
+     cohomology groups of the complement of an affine variety via D-module
+     computation' by Oaku-Takayama(1999).  
+     The method is to compute the localization of the polynomial ring 
+     by f, then compute the derived integration of the localization.",
+     EXAMPLE lines ///
+	R = QQ[x,y]
+     	f = x^2-y^3 
+     	deRham f
+	deRham(1,f)
+	///,
+     SeeAlso => {"deRhamAll", "Dlocalization", "Dintegration"}
+     }
+document {
+     Key => TransferCycles,
+     Headline => "a key in the hashtable created by deRham",
+     SeeAlso => "deRham"
+     }
+document {
+     Key => CohomologyGroups,
+     Headline => "a key in the hashtable created by deRham",
+     SeeAlso => "deRham"
+     }
+document {
+     Key => PreCycles,
+     Headline => "a key in the hashtable created by deRham",
+     SeeAlso => "deRham"
+     }
+
+document {
+     Key => OmegaRes,
+     Headline => "a key in the hashtable created by deRham",
+     SeeAlso => "deRham"
+     }
+
+document {
+     Key => {diffOps, (diffOps, RingElement, ZZ), (diffOps, Ideal, ZZ)},
+     Headline => "differential operators of up to the given order 
+     for a quotient polynomial ring",
+     Usage => "diffOps (I, k), diffOps (f, k)",
+     Inputs => {
+	  "I" => Ideal => {"contained in a polynomial ring ", EM "R"},
+	  "f" => RingElement => {"an element of a polynomial ring ", EM "R"},
+	  "k" => ZZ => "which is nonnegative"
+	  },
+     Outputs => {
+     	  HashTable => {"the differential operators of order at most ", EM "k",  
+     	  "of the quotient ring ", EM "R/I", " (or ", EM "R/(f)", ")"}  
+	  },
+     "Given an ideal ", EM "I", " of a polynomial ring ", EM "R", " the set of
+     differential operators of the quotient ring ", EM "R/I", " having order 
+     less than or equal to ", EM "k", " forms a finitely generated module over ", 
+     EM "R/I",". This routine returns its generating set.",     
+     PARA{},
+     "The output is in the form of a hash table.
+     The key ", TT "BasisElts", " is a row vector of basic differential operators.
+     The key ", TT "PolyGens", " is a matrix over ", EM "R", " whose column vectors represent 
+     differential operators of ", EM "R/I", " in the following way.  For each column
+     vector, consider its image in ", TT "R/I", ", then take its dot product with
+     the ", TT "BasisElts", ". This gives a differential operator, and
+     the set of these operators generates the differential operators of ",
+     EM "R/I", " of order ", EM "k", " or less as an ", EM "(R/I)", "-module.",
+     EXAMPLE lines ///
+	R = QQ[x,y,z]
+     	I = ideal(x^2-y*z) 
+     	diffOps(I, 3)
+	///,
+     SeeAlso => {"putWeylAlgebra"}
+     },
+
+document {
+     Key => PolyGens,
+     Headline => "a key of the hashtable generated by diffOps",
+     SeeAlso => "diffOps"
+     }
+
+document {
+     Key => BasisElts,
+     Headline => "a key of the hashtable generated by diffOps",
+     SeeAlso => "diffOps"
+     }
+
+document {
+     Key => {(putWeylAlgebra, HashTable), putWeylAlgebra},
+     Headline => "transforms output of diffOps into elements of Weyl algebra",
+     Usage => "putWeylAlgebra m",
+     Inputs => {
+     	  "the output of diffOps"
+	  },
+     Outputs => {
+	  "the differential operators as elements of the Weyl algebra"
+	  },
+     "If I is an ideal of the polynomial ring R and m is the output of ", 
+     TT "diffOps(I, k)", " then this routine returns elements of the Weyl
+     algebra ", TT "W", " corresponding to ", TT "R", " whose images in ", TT "W/IW", 
+     " are an ", TT "R/I", "-generating set for the differential operators of order at most ", 
+     TT "k", ".",
+     EXAMPLE lines ///
+	R = QQ[x,y,z]
+     	I = ideal(x^2-y*z) 
+     	m = diffOps(I, 3)
+     	putWeylAlgebra m
+	///,
+     SeeAlso => {"diffOps"}
+     }
+
+document {
+     Key => {inw, (inw, Matrix, List), (inw, RingElement, List), (inw, Ideal, List)},
+     Headline => "initial form/ideal w.r.t. a weight",
+     Usage => "inF = inw(F,w), inI = inw(I,w), inM = inw(M,w)",
+     Inputs => {
+	  "F" => RingElement => "an element of the Weyl algebra",
+	  "I" => Ideal => "in the Weyl algebra",
+	  "M" => Matrix => "with entries in the Weyl algebra",
+	  "w" => List => "of weights"
+	  },
+     Outputs => {
+	  "inF" => RingElement => {"the initial form of ", EM "F", " with respect to the weight vector"}, 
+	  "inI" => Ideal => {"the initial ideal of ", EM "I", " with respect to the weight vector"}, 
+	  "inM" => Matrix => {"with the columns generating the initial module of the image of ", EM "M",
+	       " with respect to the weight vector"}
+	  },
+     "This routine computes the initial ideal of a left ideal ", EM "I",  
+     " of the Weyl algebra with respect to a weight vector ", EM "w = (u,v)",
+     " where ", EM "u+v >= 0", ".
+     In the case where u+v > 0, then the ideal lives in the 
+     associated graded ring which is a commutative ring.  In the case
+     where u+v = 0, then the ideal lives in the associated graded
+     ring which is again the Weyl algebra.  In the general case ", 
+     EM "u+v >= 0",
+     " the associated graded ring is somewhere between.  There are
+     two strategies to compute the initial ideal.  One is to homogenize
+     to an ideal of the homogeneous Weyl algebra.  The other is
+     to homogenize with respect to the weight vector ", EM "w", 
+     ".",
+     EXAMPLE lines ///
+	W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
+     	I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy) 
+     	inw(I, {1,3,3,-1})
+     	inw(I, {-1,-3,1,3})
+	///,
+     Caveat =>{"The weight vector ", EM "w = (u,v)", " must have ", 
+	  EM "u+v>=0", "."},
+     SeeAlso => {"gbw", "setHomSwitch"}
+     }
+
+document {
+     Key => {gbw, (gbw, Ideal, List), (gbw, Matrix, List)},
+     Headline => "Groebner basis w.r.t. a weight",
+     Usage => "gbI = gbw(I,w), gbM = gbw(M,w)",
+     Inputs => {
+	  "I" => Ideal => "in the Weyl algebra",
+	  "M" => Matrix => "with entries in the Weyl algebra",
+	  "w" => List => "of weights"
+	  },
+     Outputs => {
+	  "gbI" => Ideal => "with the generators forming a Grobner basis 
+	  of the ideal with respect to the weight vector", 
+	  "gbM" => Matrix => "with the columns forming a Grobner basis
+	  of the submodule generated by the columns of the matrix 
+	  with respect to the weight vector"
+	  },
+     "This routine computes a Groebner basis of a left ideal ", EM "I",  
+     " of the Weyl algebra with respect to a weight vector ", EM "w = (u,v)",
+     " where either ", EM "u+v > 0", " or ", EM "u+v = 0", 
+     ".  In the case where ", EM "u+v > 0",
+     " the ordinary Buchberger algorithm works for any term order
+     refining the weight order. In the case
+     where ", EM "u+v = 0", " the Buchberger algorithm needs to be adapted to
+     guarantee termination.  There are two strategies for doing this.  
+     One is to homogenize
+     to an ideal of the homogeneous Weyl algebra.  The other is
+     to homogenize with respect to the weight vector ", EM "w", ".",
+     EXAMPLE lines ///
+	W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
+     	I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy) 
+     	gbw(I, {1,3,3,-1})
+     	gbw(I, {-1,-3,1,3})
+	///,
+     Caveat =>{"The weight vector ", EM "w = (u,v)", " must have ", 
+	  EM "u+v>=0", "."},
+     SeeAlso => {"inw", "setHomSwitch"}
+     }
+
+document {
+     Key => {pInfo, (pInfo, ZZ, Thing), (pInfo, ZZ, List)},
+     Headline => "prints tracing info",
+     "Prints tracing information according to the print level set by ", 
+	TT "Dtrace", ".",
+     SeeAlso => { "Dtrace" }
+     }
+----------------------------------------------------------------------------
+-- (better docs needed)
+----------------------------------------------------------------------------
+document {
+     Key => {Dprune, (Dprune, Matrix), (Dprune, Module)},
+     Headline => "prunes a matrix over a Weyl algebra",
+     Usage => "Dprune M",
+     Inputs => {
+	  "M" => {ofClass Matrix, " or ", ofClass Module} 
+	  },
+     Outputs => {
+	  {ofClass Matrix, " or ", ofClass Module, " of the same type as ", TT "M"} 
+	  },
+     "description",
+     EXAMPLE lines ///
+       	  XXXXXXXXXXXXXXX  
+	  ///,
+     Caveat => {},
+     SeeAlso => {}
+     }
+document {
+     Key => [Dprune,optGB],
+     Headline => "indicates whether Grobner basis should be computed"
+     }
+document {
+     Key => optGB,
+     Headline => "indicates whether Grobner basis should be computed"
+     }
+document {
+     Key => {
+	  FourierInverse, (FourierInverse,Matrix), (FourierInverse,Ideal), 
+	  (FourierInverse,ChainComplex), (FourierInverse,RingElement),
+      	  (FourierInverse,Module)
+	  },
+     Headline => "Inverse Fourier map (D-modules)",
+     " see ", TO "Fourier" 
+     }
+
+end
+
+
 document {
      Key => Dlocalization,
      "See ", TO "Dlocalize", "."
@@ -1560,58 +2548,27 @@ document {
 	  "Option is passed to Dresolution. See ",
 	  TO [Dresolution,Strategy]
 	  }
+
 document {
-     Key => Drestriction,
+     Key => {Drestriction, (Drestriction,ZZ,Module,List), (Drestriction,Ideal,List), 
+	  (Drestriction,Module,List), (Drestriction,ZZ,Ideal,List)},
      Headline => "restriction modules of a D-module",
-     TT "Drestriction (M, w)", " -- 
-     computes derived restriction modules of M with respect
-     to the weight vector w",
-     BR{},
-     TT "Drestriction (I, w)", " -- 
-     computes derived restriction modules of D/I with respect
-     to the weight vector w",
-     BR{},
-     TT "Drestriction (i, M, w)", " -- 
-     computes i-th derived restriction module of M with respect
-     to the weight vector w",
-     BR{},
-     TT "Drestriction (i, I, w)", " -- 
-     computes i-th derived restriction module of D/I with respect
-     to the weight vector w",
-     PARA{},
-     TT "DrestrictionClasses (M, w)", " -- 
-     computes explicit cohomology classes of a
-     derived restriction complex of M",
-     BR{},
-     TT "DrestrictionClasses (I, w)", " -- 
-     computes explicit cohomology classes of a
-     derived restriction complex of D/I",
-     BR{},
-     TT "DrestrictionClasses (i, M, w)", " -- 
-     computes i-th explicit cohomology classes of
-     a derived restriction complex of M",
-     BR{},
-     TT "DrestrictionClasses (i, I, w)", " -- 
-     computes i-th explicit cohomology classes of
-     a derived restriction complex of D/I",
-     PARA{},
-     TT "DrestrictionComplex (M, w)", " -- 
-     computes derived restriction complex of M with respect
-     to the weight vector w",
-     BR{},
-     TT "DrestrictionComplex (D/I, w)", " -- 
-     computes derived restriction complex of D/I with respect
-     to the weight vector w",
-     PARA{},
-     TT "DrestrictionAll (M, w)", " -- 
-     computes derived restriction of M and outputs various
-     information",
-     BR{},
-     TT "DrestrictionAll (I, w)", " -- 
-     computes derived restriction of D/I and outputs various
-     information",
-     PARA{},
-     
+     Usage => "N = Drestriction(M,w), NI = Drestriction(I,w), Ni = Drestriction(i,M,w),
+     NIi = Drestriction(i,I,w), ",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector",
+	  "i" => ZZ => "nonnegative"  
+	  },
+     Outputs => {
+	  "Ni" => Module => {"the i-th derived integration module of ", EM "M"," with respect
+     to the weight vector ", EM "w"},
+     	  "N" => HashTable => {"contains entries of the form ", TT "i=>Ni"},
+	  "NIi" => Module => {"the i-th derived integration module of ", EM "D/I", " with respect
+     to the weight vector ", EM "w"},
+     	  "NI" => HashTable => {"contains entries of the form ", TT "i=>NIi"}
+	  },
      "The derived restriction modules of a D-module M are
      the derived inverse images in the sense of algebraic
      geometry but in the category of D-modules. 
@@ -1628,61 +2585,145 @@ document {
 	  by Oaku-Takayama(1999).  The method is to compute an adapted resolution
 	  with respect to the weight vector w and use the b-function with respect
 	  to w to truncate the resolution."},
-
-     PARA {
-	  "A simple example:"
-	  },
-     EXAMPLE {
-	     "R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]",
-	     "I = ideal(x_1, D_2-1)", 
-	     "Drestriction(I,{1,0})"
-	     },
+     EXAMPLE lines ///
+	     R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
+	     I = ideal(x_1, D_2-1) 
+	     Drestriction(I,{1,0})
+	     ///,
      Caveat =>{"The module ", EM "M", " should be specializable to the subspace.
 	  This is true for holonomic modules.",
 	  "The weight vector ", EM "w", " should be a list of ", EM "n",
 	  " numbers if ", EM "M", 
 	  " is a module over the ", EM "n", "-th Weyl algebra."},
-     PARA "Abbreviations :",
-     UL{"Drestrict"},
-     SeeAlso => {"Dresolution", "Dintegration"}
+     SeeAlso => {"DrestrictionAll", "DrestrictionClasses", "DrestrictionComplex", 
+	  "DrestrictionIdeal", "Dresolution", "Dintegration"}
      }
+
 document {
-     Key => Drestrict,
-     Headline => "abbreviation for Drestrict",
+     Key => {DrestrictionIdeal, (DrestrictionIdeal, Ideal, List)},
+     Headline => "restriction ideal of a D-module",
+     Usage => "DrestrictionIdeal(I,w)",
+     Inputs => {
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector"
+	  },
+     Outputs => {
+     	  Ideal => {"the restriction ideal of ", EM "M", " w.r.t. the weight vector ", EM "w"}
+	  },
+     "A suplementary function for ", TO "Drestriction", 
+     " that computes the restriction ideal.",   
+     EXAMPLE lines ///
+          W = QQ[y,t,Dy,Dt, WeylAlgebra => {y=>Dy, t=>Dt}];
+     	  I = ideal(2*t*Dy+Dt, t*Dt+2*y*Dy+2); -- annihilator of 1/(t^2-y)
+     	  DrestrictionIdeal(I, {1,4})
+	  ///,
+     Caveat =>{"The module M should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector w should be a list of n numbers if M
+	  is a module over the nth Weyl algebra."},
+     SeeAlso =>{"Drestriction", "DrestrictionAll", "Dintegration"}
+}
+
+document {
+     Key => {DrestrictionAll, (DrestrictionAll, Module, List), (DrestrictionAll, Ideal, List)},
+     Headline => "restriction modules of a D-module (extended version)",
+     Usage => "N = DrestrictionAll(M,w), NI = DrestrictionAll(I,w)",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector"
+	  },
+     Outputs => {
+     	  "N" => HashTable, 
+     	  "NI" => HashTable
+	  },
+     "An extension of ", TO "Drestriction", 
+     " that computes the restriction complex, restriction classes, etc.",   
+     EXAMPLE lines ///
+	R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
+    	I = ideal(x_1, D_2-1) 
+     	DrestrictionAll(I,{1,0})
+	///,
+     Caveat =>{"The module M should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector w should be a list of n numbers if M
+	  is a module over the nth Weyl algebra."},
+     SeeAlso =>{"Drestriction", "DrestrictionClasses", "DrestrictionComplex", 
+	  "DrestrictionIdeal", "Dintegration"}
+}
+
+document {
+     Key => {DrestrictionComplex, (DrestrictionComplex, Module, List), (DrestrictionComplex, Ideal, List)},
+     Headline => "derived restriction complex of a D-module",
+     Usage => "N = DrestrictionComplex(M,w), NI = DrestrictionComplex(I,w)",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector"
+	  },
+     Outputs => {
+     	  "N" => HashTable, 
+     	  "NI" => HashTable 
+	  },
+     "An extension of ", TO "Drestriction", 
+     " that computes the derived restriction complex.",   
+     EXAMPLE lines ///
+	R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
+    	I = ideal(x_1, D_2-1) 
+     	DrestrictionComplex(I,{1,0})
+	///,
+     Caveat =>{"The module M should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector w should be a list of n numbers if M
+	  is a module over the nth Weyl algebra."},
+     SeeAlso =>{"Drestriction", "DrestrictionAll", "Dintegration"}
+}
+
+
+document {
+     Key => {DrestrictionClasses, (DrestrictionClasses,ZZ,Module,List), (DrestrictionClasses,Ideal,List), (DrestrictionClasses,Module,List),
+      (DrestrictionClasses,ZZ,Ideal,List)},
+     Headline => "restriction classes of a D-module",
+     Usage => "N = DrestrictionClasses(M,w), NI = DrestrictionClasses(I,w), Ni = DrestrictionClasses(i,M,w),
+     NIi = DrestrictionClasses(i,I,w), ",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector",
+	  "i" => ZZ => "nonnegative"  
+	  },
+     Outputs => {
+	  "Ni" => HashTable,
+     	  "N" => HashTable,
+	  "NIi" => HashTable,
+	  "NI" => HashTable
+	  },
+     "An extension of ", TO "Drestriction", 
+     " that computes the explicit cohomology classes of a derived restriction complex.",        
+     EXAMPLE lines ///
+	R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
+    	I = ideal(x_1, D_2-1) 
+     	DrestrictionClasses(I,{1,0})
+	///,
+     Caveat =>{"The module M should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector w should be a list of n numbers if M
+	  is a module over the nth Weyl algebra."},
+     SeeAlso =>{"Drestriction", "DrestrictionAll", "Dintegration"}
+}
+
+document {
+     Key => {Drestrict, (Drestrict, ZZ, Module, List), (Drestrict, Ideal, List), 
+	  (Drestrict, Module, List), (Drestrict, ZZ, Ideal, List),
+	  DrestrictAll, (DrestrictAll, Module, List), (DrestrictAll, Ideal, List),
+	  DrestrictClasses, (DrestrictClasses,Module,List,ZZ), (DrestrictClasses,Ideal,List), 
+	  (DrestrictClasses,Module,List),(DrestrictClasses,Ideal,List,ZZ),
+	  DrestrictComplex, (DrestrictComplex,Module,List,ZZ), (DrestrictComplex,Ideal,List), 
+	  (DrestrictComplex,Module,List),(DrestrictComplex,Ideal,List,ZZ),
+	  DrestrictIdeal, (DrestrictIdeal,Ideal,List)},
+     Headline => "an (OBSOLETE) abbreviation for Drestriction",
      SeeAlso =>{"Drestriction"}
      }	
-document {
-     Key => DrestrictionClasses,
-     SeeAlso =>{"Drestriction"}
-     }
-document {
-     Key => DrestrictClasses,
-     SeeAlso =>{"Drestriction"}
-     }
-document {
-     Key => DrestrictIdeal,
-     SeeAlso =>{"Drestriction"}
-     }
-document {
-     Key => DrestrictAll,
-     SeeAlso =>{"Drestriction"}
-     }
-document {
-     Key => DrestrictionComplex,
-     SeeAlso =>{"Drestriction"}
-     }
-document {
-     Key => DrestrictionAll,
-     SeeAlso =>{"Drestriction"}
-     }
-document {
-     Key => DrestrictionIdeal,
-     SeeAlso =>{"Drestriction"}
-     }
-document {
-     Key => DrestrictComplex,
-     SeeAlso =>{"Drestriction"}
-     }
 
 document {
      Key => HomologyModules,
@@ -1731,58 +2772,27 @@ document {
 	  "Option is passed to Dresolution. See ",
 	  TO [Dresolution,Strategy]
 }
-document {
-     Key => Dintegration,
-     Headline => "integration modules of a D-module",
-     TT "Dintegration (M, w)", " -- 
-     computes derived integration modules of M with respect
-     to the weight vector w",
-     BR{},
-     TT "Dintegration (I, w)", " -- 
-     computes derived integration modules of D/I with respect
-     to the weight vector w",
-     BR{},
-     TT "Dintegration (i, M, w)", " -- 
-     computes i-th derived integration module of M with respect
-     to the weight vector w",
-     BR{},
-     TT "Dintegration (i, I, w)", " -- 
-     computes i-th derived integration module of D/I with respect
-     to the weight vector w",
-     PARA "",
-     TT "DintegrationClasses (M, w)", " -- 
-     computes explicit cohomology classes of a
-     derived integration complex of M",
-     BR{},
-     TT "DintegrationClasses (I, w)", " -- 
-     computes explicit cohomology classes of a
-     derived integration complex of D/I",
-     BR{},
-     TT "DintegrationClasses (i, M, w)", " -- 
-     computes i-th explicit cohomology classes of
-     a derived integration complex of M",
-     BR{},
-     TT "DintegrationClasses (i, I, w)", " -- 
-     computes i-th explicit cohomology classes of
-     a derived integration complex of D/I",
-     PARA "",
-     TT "DintegrationComplex (M, w)", " -- 
-     computes derived integration complex of M with respect
-     to the weight vector w",
-     BR{},
-     TT "DintegrationComplex (D/I, w)", " -- 
-     computes derived integration complex of D/I with respect
-     to the weight vector w",
-     PARA "",
-     TT "DintegrationAll (M, w)", " -- 
-     computes derived integration of M and outputs various
-     information",
-     BR{},
-     TT "DintegrationAll (I, w)", " -- 
-     computes derived integration of D/I and outputs various
-     information",
-     PARA{},
 
+document {
+     Key => { Dintegration, (Dintegration,ZZ,Module,List), (Dintegration,Ideal,List), 
+	  (Dintegration,Module,List), (Dintegration,ZZ,Ideal,List) },
+     Headline => "integration modules of a D-module",
+     Usage => "N = Dintegration(M,w), NI = Dintegration(I,w), Ni = Dintegration(i,M,w),
+     NIi = Dintegration(i,I,w), ",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector",
+	  "i" => ZZ => "nonnegative"  
+	  },
+     Outputs => {
+	  "Ni" => Module => {"the i-th derived integration module of ", EM "M"," with respect
+     to the weight vector ", EM "w"},
+     	  "N" => HashTable => {"contains entries of the form ", TT "i=>Ni"},
+	  "NIi" => Module => {"the i-th derived integration module of ", EM "D/I", " with respect
+     to the weight vector ", EM "w"},
+     	  "NI" => HashTable => {"contains entries of the form ", TT "i=>NIi"}
+	  },
      "The derived integration modules of a D-module ", EM "M", " are
      the derived direct images in the category of D-modules. 
      This routine computes integration for projection to 
@@ -1792,71 +2802,155 @@ document {
      EM "D = ", BOLD "C", EM "<x_1,...,x_n,d_1,...,d_n>", ".
      The input weight vector should be a list of ", EM "n", " numbers	    
      to induce the weight ", EM "(-w,w)", " on ", EM "D", ".",
-
      PARA "",
      "The algorithm used appears in the paper 'Algorithims for D-modules'
      by Oaku-Takayama(1999).  The method is to take the Fourier transform
      of M, then compute the derived restriction, then inverse
      Fourier transform back.",
-
-     PARA "",
-     "A simple example:",
-     EXAMPLE {
-	"R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]",
-    	"I = ideal(x_1, D_2-1)", 
-     	"Dintegration(I,{1,0})"
-	},
-     PARA "",
+     EXAMPLE lines ///
+	R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
+    	I = ideal(x_1, D_2-1) 
+     	Dintegration(I,{1,0})
+	///,
      Caveat =>{"The module M should be specializable to the subspace.
 	  This is true for holonomic modules.",
 	  "The weight vector w should be a list of n numbers if M
 	  is a module over the nth Weyl algebra."},
-     PARA "",
-     "Abbreviations :",
-     UL{"Dintegrate"},
-     
-     SeeAlso =>{"Drestriction"}
-     }
-document {
-     Key => Dintegrate,
-     Headline => "abbreviation for Dintegration",
-     SeeAlso =>{"Dintegration"}
-     }	
-document {
-     Key => DintegrateIdeal,
-     SeeAlso =>{"Dintegration"}
-     }	
-document {
-     Key => DintegrationIdeal,
-     SeeAlso =>{"Dintegration"}
-     }	
-document {
-     Key => DintegrationComplex,
-     SeeAlso =>{"Dintegration"}
-     }	
-document {
-     Key => DintegrateClasses,
-     SeeAlso =>{"Dintegration"}
-     }
-document {
-     Key => DintegrateComplex,
-     SeeAlso =>{"Dintegration"}
-     }
-document {
-     Key => DintegrationClasses,
-     SeeAlso =>{"Dintegration"}
-     }
-document {
-     Key => DintegrateAll,
-     SeeAlso =>{"Dintegration"}
-     }
-document {
-     Key => DintegrationAll,
-     SeeAlso =>{"Dintegration"}
-     }
+     SeeAlso =>{"DintegrationAll", "DintegrationClasses", "DintegrationComplex", 
+	  "DintegrationIdeal", "Drestriction"}
+ }
 
 document {
+     Key => {DintegrationIdeal, (DintegrationIdeal, Ideal, List)},
+     Headline => "integration ideal of a D-module",
+     Usage => "DintegrationIdeal(I,w)",
+     Inputs => {
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector"
+	  },
+     Outputs => {
+     	  Ideal => {"the integration ideal of ", EM "M", " w.r.t. the weight vector ", EM "w"}
+	  },
+     "A suplementary function for ", TO "Dintegration", 
+     " that computes the integration ideal.",   
+     EXAMPLE lines ///
+          W = QQ[y,t,Dy,Dt, WeylAlgebra => {y=>Dy, t=>Dt}];
+     	  I = ideal(2*t*Dy+Dt, t*Dt+2*y*Dy+2); -- annihilator of 1/(t^2-y)
+     	  DintegrationIdeal(I, {1,4})
+	  ///,
+     Caveat =>{"The module M should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector w should be a list of n numbers if M
+	  is a module over the nth Weyl algebra."},
+     SeeAlso =>{"Dintegration", "DintegrationAll", "Drestriction"}
+}
+
+document {
+     Key => {DintegrationAll, (DintegrationAll, Module, List), (DintegrationAll, Ideal, List)},
+     Headline => "integration modules of a D-module (extended version)",
+     Usage => "N = DintegrationAll(M,w), NI = DintegrationAll(I,w)",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector"
+	  },
+     Outputs => {
+     	  "N" => HashTable, 
+     	  "NI" => HashTable
+	  },
+     "An extension of ", TO "Dintegration", 
+     " that computes the integration complex, integration classes, etc.",   
+     EXAMPLE lines ///
+	R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
+    	I = ideal(x_1, D_2-1) 
+     	DintegrationAll(I,{1,0})
+	///,
+     Caveat =>{"The module M should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector w should be a list of n numbers if M
+	  is a module over the nth Weyl algebra."},
+     SeeAlso =>{"Dintegration", "DintegrationClasses", "DintegrationComplex", 
+	  "DintegrationIdeal", "Drestriction"}
+}
+
+document {
+     Key => {DintegrationComplex, (DintegrationComplex, Module, List), (DintegrationComplex, Ideal, List)},
+     Headline => "derived integration complex of a D-module",
+     Usage => "N = DintegrationComplex(M,w), NI = DintegrationComplex(I,w)",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector"
+	  },
+     Outputs => {
+     	  "N" => HashTable, 
+     	  "NI" => HashTable 
+	  },
+     "An extension of ", TO "Dintegration", 
+     " that computes the derived integration complex.",   
+     EXAMPLE lines ///
+	R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
+    	I = ideal(x_1, D_2-1) 
+     	DintegrationComplex(I,{1,0})
+	///,
+     Caveat =>{"The module M should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector w should be a list of n numbers if M
+	  is a module over the nth Weyl algebra."},
+     SeeAlso =>{"Dintegration", "DintegrationAll", "Drestriction"}
+}
+
+
+document {
+     Key => {DintegrationClasses, (DintegrationClasses,ZZ,Module,List), (DintegrationClasses,Ideal,List), (DintegrationClasses,Module,List),
+      (DintegrationClasses,ZZ,Ideal,List)},
+     Headline => "integration classes of a D-module",
+     Usage => "N = DintegrationClasses(M,w), NI = DintegrationClasses(I,w), Ni = DintegrationClasses(i,M,w),
+     NIi = DintegrationClasses(i,I,w), ",
+     Inputs => {
+	  "M" => Module => {"over the Weyl algebra ", EM "D"},
+	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "w" => List => "a weight vector",
+	  "i" => ZZ => "nonnegative"  
+	  },
+     Outputs => {
+	  "Ni" => HashTable,
+     	  "N" => HashTable,
+	  "NIi" => HashTable,
+	  "NI" => HashTable
+	  },
+     "An extension of ", TO "Dintegration", 
+     " that computes the explicit cohomology classes of a derived integration complex.",        
+     EXAMPLE lines ///
+	R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
+    	I = ideal(x_1, D_2-1) 
+     	DintegrationClasses(I,{1,0})
+	///,
+     Caveat =>{"The module M should be specializable to the subspace.
+	  This is true for holonomic modules.",
+	  "The weight vector w should be a list of n numbers if M
+	  is a module over the nth Weyl algebra."},
+     SeeAlso =>{"Dintegration", "DintegrationAll", "Drestriction"}
+}
+
+document {
+     Key => {
+	  Dintegrate, (Dintegrate,ZZ,Module,List), (Dintegrate,Ideal,List), 
+	  (Dintegrate,Module,List), (Dintegrate,ZZ,Ideal,List),
+	  DintegrateAll, (DintegrateAll,Module,List), (DintegrateAll,Ideal,List),
+	  DintegrateClasses, (DintegrateClasses,ZZ,Module,List), (DintegrateClasses,Ideal,List), 
+	  (DintegrateClasses,Module,List),(DintegrateClasses,ZZ,Ideal,List),
+	  DintegrateComplex, (DintegrateComplex,Module,List), (DintegrateComplex,Ideal,List),
+	  DintegrateIdeal,(DintegrateIdeal, Ideal, List)
+	  },
+     Headline => "Dintegrate* is an (OBSOLETE) abbreviation for Dintegration*",
+     SeeAlso =>{"Dintegration", "DintegrationAll", "DintegrationClasses", 
+	  "DintegrationComplex", "DintegrationIdeal"}
+     }	
+document {
      Key => [gkz,Vars] }
+document {
+     Key => [AppellF1,Vars] }
 document {
      Key => Vars }
 document {
@@ -1868,17 +2962,17 @@ document {
      Headline => "a choice for option Vars" 
      }
 document {
-     Key => gkz,
+     Key => {gkz, (gkz, Matrix), (gkz, Matrix, List)},
      Headline => "GKZ A-hypergeometric ideal",
-     TT "gkz (A,b)", " -- 
-     computes the Gel'fand-Kapranov-Zelevinsky hypergeometric ideal
-     associated to the matrix A and parameter b",
-     BR{},
-     TT "gkz A", " -- 
-     computes parametric Gel'fand-Kapranov-Zelevinsky hypergeometric ideal
-     associated to the matrix A",
-     PARA{},
-
+     Usage => "gkz A, gkz(A,b)",
+     Inputs => {
+	  "A" => Matrix,
+	  "b" => List 
+	  },
+     Outputs => {
+     	  Ideal => "which represents the Gel'fand-Kapranov-Zelevinsky hypergeometric system
+     associated to the matrix A (and the parameter vector b)"
+	  },
      "The GKZ hypergeometric system of PDE's associated to a (d x n)
      integer matrix A consists of the toric ideal I_A in the polynomial
      subring C[d_1,...,d_n] and Euler relations given by the entries
@@ -1886,173 +2980,182 @@ document {
      (theta_1,...,theta_n)^t, and theta_i = x_i d_i.
      See the book 'Groebner deformations of hypergeometric differential 
      equations' by Saito-Sturmfels-Takayama (1999) for more details.",
-
-     PARA "",
-     "A simple example:",
-     EXAMPLE {
-	"A = matrix{{1,1,1},{0,1,2}}",
-     	"b = {3,4}", 
-     	"I = gkz (A,b)"
-	},
-
+     EXAMPLE lines ///
+	A = matrix{{1,1,1},{0,1,2}}
+     	b = {3,4}
+     	I = gkz (A,b)
+	///,
      Caveat =>{"gkz always returns a different ring and will use variables
 	  x_1,...,x_n, D_1,...D_n."},
-
      SeeAlso => {"AppellF1"}
      },
 
 document {
-     Key => (AppellF1),
+     Key => {(AppellF1, List), AppellF1},
      Headline => "Appell F1 system of PDE's",
-     TT "AppellF1 {a0,a1,a2,a3}", " -- 
-     compute the Appell F1 system of PDE's associated to the
-     parameters a0, a1, a2, and a3.",
-     PARA{},
-
-     "A simple example:",
-     EXAMPLE {
-	"w = {1,4/5,-2,3/2}",
-     	"I = AppellF1(w)"
-	},
-     PARA "",
+     Usage => "AppellF1 {a0,a1,a2,a3}",
+     Inputs => {
+	  "{a0,a1,a2,a3}"
+	  },
+     Outputs => {
+	  Ideal => "which represents Appell F1 system of PDE's associated to the
+     	  parameters a0, a1, a2, and a3."
+	  },
+     EXAMPLE lines ///
+	w = {1,4/5,-2,3/2}
+     	I = AppellF1 w
+	///,
      Caveat =>{"AppellF1 always returns a different ring and will
 	  use variables x and y. Input should be a List of 4
 	  numbers."},
-
      SeeAlso => {"gkz"}
      }
 
 document {
-     Key => PolyAnn,
+     Key => {(PolyAnn, RingElement), PolyAnn},
      Headline => "annihilator of a polynomial in Weyl algebra",
-     TT "PolyAnn f", " -- 
-     compute the annihilator ideal in the Weyl algebra of the polynomial f",
-     PARA{},
-
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx, y=>Dy}]",
-     	"f = x^2-y^3",
-     	"I = PolyAnn f"
-	},
-     PARA "",
+     Usage => "PolyAnn f",
+     Inputs => {
+     	  "f" => RingElement => "polynomial"
+	  },
+     Outputs => {
+     	  Ideal => {"the annihilating (left) ideal of ", EM "f", "in the Weyl algebra"}
+	  },
+     EXAMPLE lines ///
+	W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx, y=>Dy}]
+     	f = x^2-y^3
+     	I = PolyAnn f
+	///,
      Caveat =>{"The input f should be an element of a Weyl algebra,
 	  and not an element of a commutative polynomial ring.
 	  However, f should only involve commutative variables."},
-
      SeeAlso => {"RatAnn"}
      }
 
 document {
-     Key => RatAnn,
+     Key => {RatAnn, (RatAnn, RingElement, RingElement), (RatAnn, RingElement)},
      Headline => "annihilator of a rational function in Weyl algebra",
-     TT "RatAnn f", " -- 
-     compute the annihilator ideal in the Weyl algebra of the rational
+     Usage => "RatAnn f, RatAnn(g,f)",
+     Inputs => {
+	  "f" => RingElement => "polynomial",
+	  "g" => RingElement => "polynomial"
+	  },
+     Outputs => {
+     	  Ideal => "left ideal of the Weyl algebra"
+	  },
+     TT "RatAnn f", " computes the annihilator ideal in the Weyl algebra of the rational
      function 1/f",
      BR{},
-     TT "RatAnn (g,f)", " -- 
-     compute the annihilator ideal in the Weyl algebra of the rational
+     TT "RatAnn(g,f)", " computes the annihilator ideal in the Weyl algebra of the rational
      function g/f",
-     PARA{},
-
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx, y=>Dy}]",
-     	"f = x^2-y^3",
-     	"g = 2*x*y",
-     	"I = RatAnn (g,f)"
-	},
-     PARA "",
+     EXAMPLE lines ///
+	W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx, y=>Dy}]
+     	f = x^2-y^3
+     	g = 2*x*y
+     	I = RatAnn (g,f)
+	///,
      Caveat =>{"The inputs f and g should be elements of a Weyl algebra,
 	  and not elements of a commutative polynomial ring.
 	  However, f and g should only use the commutative variables."},
-
      SeeAlso => {"PolyAnn"}
      }
+
 document {
-     Key => WeylClosure,
+     Key => {WeylClosure, (WeylClosure, Ideal), (WeylClosure, Ideal, RingElement)},
      Headline => "Weyl closure of an ideal",
-     TT "WeylClosure I", " -- computes the Weyl closure of a finite rank
-     ideal I",
-     BR{},
-     TT "WeylClosure (I, f)", " -- 
-     compute the partial Weyl closure of a finite rank ideal I with
-     respect to f",
-     PARA{},
-
-     "Let R = K(x_1..x_n)<d_1..d_n> denote the ring of differential
+     Usage => "WeylClosure I, WeylClosure(I,f)",
+     Inputs => {
+	  "I" => Ideal => "a left ideal of the Weyl Algebra",
+	  "f" => RingElement => "a polynomial"  
+	  },
+     Outputs => {
+	  Ideal => {"the Weyl closure (w.r.t. ", TEX "f", ") of ", TEX "I"}
+	  },
+     "Let ", TEX "R = K(x_1..x_n)", "<", TEX "d_1..d_n", ">", " denote the ring of differential
      operators with rational function coefficients. The Weyl closure
-     of an ideal I in D, is the intersection of the extended ideal RI
-     with D.  It consists of all operators which vanish on the common
-     holomorphic solutions of I, and is thus analogous to the radical
+     of an ideal ", TEX "I", " in ", TEX "D"," is the intersection of the extended ideal ", 
+     TEX "RI", " with ", TEX "D", ".  It consists of all operators which vanish on the common
+     holomorphic solutions of ", TEX "I", " and is thus analogous to the radical
      operation on a commutative ideal.",
-     
      PARA "",
-     "The partial Weyl closure of I with respect to a polynomial f
-     is the intersection of the extended ideal D[f^{-1}]I with D.",
-
+     "The partial Weyl closure of ", TEX "I", " with respect to a polynomial ", TEX "f",
+     " is the intersection of the extended ideal ", TEX "D[f^{-1}] I", " with ", TEX "D", ".",
      PARA "",
-     "The Weyl closure is computed by localizing D/I with respect to
+     "The Weyl closure is computed by localizing ", TEX "D/I", " with respect to
      a polynomial f vanishing on the singular locus, and computing
-     the kernel of the map D --> D/I --> (D/I)[f^{-1}].",
-     
-     PARA "",
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x,Dx, WeylAlgebra => {x=>Dx}]",
-     	"I = ideal(x*Dx-2)",
-     	"WeylClosure I"
-	},
-     PARA "",
+     the kernel of the map ",  "D --> D/I --> (D/I)[f^{-1}]", ".",
+     EXAMPLE lines ///
+	W = QQ[x,Dx, WeylAlgebra => {x=>Dx}]
+     	I = ideal(x*Dx-2)
+     	WeylClosure I
+	///,
      Caveat =>{"The ideal I should be finite rank, which can be tested
 	  manually by Drank.", "The Weyl closure of non-finite rank
 	  ideals or arbitrary submodules has not been implemented."},
-	  
      SeeAlso => {"Dlocalize", "singLocus", "Drank"}
      }
+
 document {
      Key => [deRham,Strategy],
 	  "Option is passed to Dresolution. See ",
 	  TO [Dresolution,Strategy]
 }
+
 document {
-     Key => deRham,
-     Headline => "deRham cohomology groups",
-     TT "deRham f", "-- 
-     computes the deRham cohomology groups of the complement of the
-     hypersurface {f = 0} ",
-     BR{},
-     TT "deRham (i, f)", "-- 
-     computes i-th deRham cohomology group of the complement of the
-     hypersurface {f = 0} ",
-     BR{},
-     TT "deRhamAll f", "-- 
-     returns explicit cohomology classes in the deRham complex and
-     supplementary information",
+     Key => [deRhamAll,Strategy],
+	  "Option is passed to Dresolution. See ",
+	  TO [Dresolution,Strategy]
+}
+
+document {
+     Key => {(deRhamAll, RingElement), deRhamAll},
+     Headline => "deRham complex for the complement of a hypersurface",
+     Usage => "deRhamAll f",
+     Inputs => {"f"},
+     Outputs => {
+	  HashTable => {"containing explicit cohomology classes 
+	       in the deRham complex for the complement 
+	       of the hypersurface ",  EM "{f = 0}", " and
+     	       supplementary information"}	       
+	  },
+     "The routine deRhamAll can be used to compute cup product structures
+     as in the paper 'The cup product structure for complements
+     of affine varieties' by Walther(2000).",
      PARA{},
-	  
-     PARA "",
+     "For a more basic functionality see ", TO "deRham", ".",
+     EXAMPLE lines ///
+	R = QQ[x,y]
+     	f = x^2-y^3 
+     	deRhamAll f
+	///,
+     SeeAlso => {"deRham", "Dlocalization", "Dintegration"}	
+} 
+
+document {
+     Key => {deRham, (deRham, ZZ, RingElement), (deRham, RingElement)},
+     Headline => "deRham cohomology groups for the complement of a hypersurface",
+     Usage => "M = deRham f, Mi = deRham(i,f)",
+     Inputs => {
+	  "i" => ZZ,
+	  "f" => RingElement
+	  },
+     Outputs => {
+	  "Mi" => Module => {"the i-th deRham cohomology group of the complement 
+	  of the hypersurface ",  EM "{f = 0}"},
+	  "M" => HashTable => {"containing the entries of the form ", TT "i=>Mi"}  
+	  },
      "The algorithm used appears in the paper 'An algorithm for deRham 
      cohomology groups of the complement of an affine variety via D-module
      computation' by Oaku-Takayama(1999).  
      The method is to compute the localization of the polynomial ring 
-     by f, then compute the derived integration of the localization.
-     The routine deRhamAll can be used to compute cup product structures
-     as in the paper 'The cup product structure for complements
-     of affine varities' by Walther(2000).",
-
-     PARA "",
-     "A simple example:",
-     EXAMPLE {
-	"R = QQ[x,y]",
-     	"f = x^2-y^3", 
-     	"deRham f"
-	},
-     SeeAlso => {"Dlocalization", "Dintegration"}
-     }
-document {
-     Key => deRhamAll,
-     "see ", TO "deRham"
+     by f, then compute the derived integration of the localization.",
+     EXAMPLE lines ///
+	R = QQ[x,y]
+     	f = x^2-y^3 
+     	deRham f
+	deRham(1,f)
+	///,
+     SeeAlso => {"deRhamAll", "Dlocalization", "Dintegration"}
      }
 document {
      Key => TransferCycles,
@@ -2069,6 +3172,7 @@ document {
      Headline => "a key in the hashtable created by deRham",
      SeeAlso => "deRham"
      }
+
 document {
      Key => OmegaRes,
      Headline => "a key in the hashtable created by deRham",
@@ -2076,43 +3180,38 @@ document {
      }
 
 document {
-     Key => diffOps,
-     Headline => "differential operators of specified order 
+     Key => {diffOps, (diffOps, RingElement, ZZ), (diffOps, Ideal, ZZ)},
+     Headline => "differential operators of up to the given order 
      for a quotient polynomial ring",
-     TT "diffOps (I, k)", " -- 
-     compute differential operators of order less than or equal to k 
-     of the quotient ring R/I",
-     BR{},
-     TT "diffOps (f, k)", " -- 
-     compute differential operators of order less than or equal to k 
-     of the quotient ring R/(f)",
+     Usage => "diffOps (I, k), diffOps (f, k)",
+     Inputs => {
+	  "I" => Ideal => {"contained in a polynomial ring ", EM "R"},
+	  "f" => RingElement => {"an element of a polynomial ring ", EM "R"},
+	  "k" => ZZ => "which is nonnegative"
+	  },
+     Outputs => {
+     	  HashTable => {"the differential operators of order at most ", EM "k",  
+     	  "of the quotient ring ", EM "R/I", " (or ", EM "R/(f)", ")"}  
+	  },
+     "Given an ideal ", EM "I", " of a polynomial ring ", EM "R", " the set of
+     differential operators of the quotient ring ", EM "R/I", " having order 
+     less than or equal to ", EM "k", " forms a finitely generated module over ", 
+     EM "R/I",". This routine returns its generating set.",     
      PARA{},
-
-     "Given an ideal I of a polynomial ring R, the set of
-     differential operators of the quotient ring R/I having order 
-     less than or equal to k forms a finitely generated module over R/I.  
-     This routine returns a generating set.",
-     
-     PARA "",
      "The output is in the form of a hash table.
-     The key 'BasisElts' is a row vector of basic differential operators.
-     The key 'PolyGens' is a matrix over R whose column vectors represent 
-     differential operators of R/I in the following way.  For each column
-     vector, consider its image in R/I, then take its dot product with
-     the 'BasisElts' row vector.  This gives a differential operator, and
-     the set of these operators generates the differential operators of
-     R/I of order k or less as an (R/I)-module.",
-
-     PARA "",
-     "A simple example:",
-     EXAMPLE {
-	"R = QQ[x,y,z]",
-     	"I = ideal(x^2-y*z)", 
-     	"diffOps(I, 3)"
-	},
-     PARA "",
+     The key ", TT "BasisElts", " is a row vector of basic differential operators.
+     The key ", TT "PolyGens", " is a matrix over ", EM "R", " whose column vectors represent 
+     differential operators of ", EM "R/I", " in the following way.  For each column
+     vector, consider its image in ", TT "R/I", ", then take its dot product with
+     the ", TT "BasisElts", ". This gives a differential operator, and
+     the set of these operators generates the differential operators of ",
+     EM "R/I", " of order ", EM "k", " or less as an ", EM "(R/I)", "-module.",
+     EXAMPLE lines ///
+	R = QQ[x,y,z]
+     	I = ideal(x^2-y*z) 
+     	diffOps(I, 3)
+	///,
      SeeAlso => {"putWeylAlgebra"}
-
      },
 
 document {
@@ -2120,6 +3219,7 @@ document {
      Headline => "a key of the hashtable generated by diffOps",
      SeeAlso => "diffOps"
      }
+
 document {
      Key => BasisElts,
      Headline => "a key of the hashtable generated by diffOps",
@@ -2127,48 +3227,45 @@ document {
      }
 
 document {
-     Key => putWeylAlgebra,
-     Headline => "the output of diffOps => elements of Weyl algebra",
-     TT "putWeylAlgebra m", " -- 
-     given the output m of diffOps, represents
-     the differential operators as elements of a Weyl algebra.",
-     PARA{},
-
-     PARA "",
-     "If I is an ideal of the polynomial ring R and m is the output of 
-     diffOps(I, k), then this routine returns elements of the Weyl
-     algebra W corresponding to R whose images in W/IW are an
-     R/I-generating set for the order k or less differential operators.",
-
-     PARA "",
-     "A simple example:",
-     EXAMPLE {
-	"R = QQ[x,y,z]",
-     	"I = ideal(x^2-y*z)", 
-     	"m = diffOps(I, 3)",
-     	"putWeylAlgebra m"
-	},
-     PARA "",
+     Key => {(putWeylAlgebra, HashTable), putWeylAlgebra},
+     Headline => "transforms output of diffOps into elements of Weyl algebra",
+     Usage => "putWeylAlgebra m",
+     Inputs => {
+     	  "the output of diffOps"
+	  },
+     Outputs => {
+	  "the differential operators as elements of the Weyl algebra"
+	  },
+     "If I is an ideal of the polynomial ring R and m is the output of ", 
+     TT "diffOps(I, k)", " then this routine returns elements of the Weyl
+     algebra ", TT "W", " corresponding to ", TT "R", " whose images in ", TT "W/IW", 
+     " are an ", TT "R/I", "-generating set for the differential operators of order at most ", 
+     TT "k", ".",
+     EXAMPLE lines ///
+	R = QQ[x,y,z]
+     	I = ideal(x^2-y*z) 
+     	m = diffOps(I, 3)
+     	putWeylAlgebra m
+	///,
      SeeAlso => {"diffOps"}
-
      }
 
 document {
-     Key => inw,
+     Key => {inw, (inw, Matrix, List), (inw, RingElement, List), (inw, Ideal, List)},
      Headline => "initial form/ideal w.r.t. a weight",
-     TT "inw (L, w)", " -- 
-     computes the initial form of an element L
-     with respect to a weight vector w.",
-     BR{},
-     TT "inw (I, w)", " -- 
-     computes the initial ideal of an ideal I
-     with respect to a weight vector w.",
-     BR{},
-     TT "inw (m, w)", " -- 
-     computes the initial matrix of a matrix m
-     with respect to a weight vector w.",
-     PARA{},
-
+     Usage => "inF = inw(F,w), inI = inw(I,w), inM = inw(M,w)",
+     Inputs => {
+	  "F" => RingElement => "an element of the Weyl algebra",
+	  "I" => Ideal => "in the Weyl algebra",
+	  "M" => Matrix => "with entries in the Weyl algebra",
+	  "w" => List => "of weights"
+	  },
+     Outputs => {
+	  "inF" => RingElement => {"the initial form of ", EM "F", " with respect to the weight vector"}, 
+	  "inI" => Ideal => {"the initial ideal of ", EM "I", " with respect to the weight vector"}, 
+	  "inM" => Matrix => {"with the columns generating the initial module of the image of ", EM "M",
+	       " with respect to the weight vector"}
+	  },
      "This routine computes the initial ideal of a left ideal ", EM "I",  
      " of the Weyl algebra with respect to a weight vector ", EM "w = (u,v)",
      " where ", EM "u+v >= 0", ".
@@ -2182,33 +3279,33 @@ document {
      to an ideal of the homogeneous Weyl algebra.  The other is
      to homogenize with respect to the weight vector ", EM "w", 
      ".",
-
-     PARA "",
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
-     	"I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
-     	"inw(I, {1,3,3,-1})",
-     	"inw(I, {-1,-3,1,3})"
-	},
-     PARA "",
+     EXAMPLE lines ///
+	W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
+     	I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy) 
+     	inw(I, {1,3,3,-1})
+     	inw(I, {-1,-3,1,3})
+	///,
      Caveat =>{"The weight vector ", EM "w = (u,v)", " must have ", 
 	  EM "u+v>=0", "."},
      SeeAlso => {"gbw", "setHomSwitch"}
-     },
+     }
 
 document {
-     Key => gbw,
+     Key => {gbw, (gbw, Ideal, List), (gbw, Matrix, List)},
      Headline => "Groebner basis w.r.t. a weight",
-     TT "gbw (I, w)", " -- 
-     computes a Groebner basis of an ideal with respect
-     to a weight vector w.",
-     BR{}, 
-     TT "gbw (m, w)", " -- 
-     computes a Groebner basis of a matrix with respect
-     to a weight vector w.",
-     PARA{},
-
+     Usage => "gbI = gbw(I,w), gbM = gbw(M,w)",
+     Inputs => {
+	  "I" => Ideal => "in the Weyl algebra",
+	  "M" => Matrix => "with entries in the Weyl algebra",
+	  "w" => List => "of weights"
+	  },
+     Outputs => {
+	  "gbI" => Ideal => "with the generators forming a Grobner basis 
+	  of the ideal with respect to the weight vector", 
+	  "gbM" => Matrix => "with the columns forming a Grobner basis
+	  of the submodule generated by the columns of the matrix 
+	  with respect to the weight vector"
+	  },
      "This routine computes a Groebner basis of a left ideal ", EM "I",  
      " of the Weyl algebra with respect to a weight vector ", EM "w = (u,v)",
      " where either ", EM "u+v > 0", " or ", EM "u+v = 0", 
@@ -2216,28 +3313,25 @@ document {
      " the ordinary Buchberger algorithm works for any term order
      refining the weight order. In the case
      where ", EM "u+v = 0", " the Buchberger algorithm needs to be adapted to
-     guarantee termination.  There are two strategies to do this.  
+     guarantee termination.  There are two strategies for doing this.  
      One is to homogenize
      to an ideal of the homogeneous Weyl algebra.  The other is
      to homogenize with respect to the weight vector ", EM "w", ".",
-     PARA "",
-     "A simple example:",
-     EXAMPLE {
-	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
-     	"I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
-     	"gbw(I, {1,3,3,-1})",
-     	"gbw(I, {-1,-3,1,3})"
-	},
-     PARA "",
+     EXAMPLE lines ///
+	W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
+     	I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy) 
+     	gbw(I, {1,3,3,-1})
+     	gbw(I, {-1,-3,1,3})
+	///,
      Caveat =>{"The weight vector ", EM "w = (u,v)", " must have ", 
 	  EM "u+v>=0", "."},
      SeeAlso => {"inw", "setHomSwitch"}
      }
 
 document {
-     Key => pInfo,
+     Key => {pInfo, (pInfo, ZZ, Thing), (pInfo, ZZ, List)},
      Headline => "prints tracing info",
-     "Prints tracing information according to the level set by ", 
+     "Prints tracing information according to the print level set by ", 
 	TT "Dtrace", ".",
      SeeAlso => { "Dtrace" }
      }
@@ -2245,16 +3339,21 @@ document {
 -- (better docs needed)
 ----------------------------------------------------------------------------
 document {
-     Key => reduceCompress,
-     Headline => "simplify sparse matrix"
-     }
-document {
-     Key => Dprune,
-     Headline => "prunes a matrix over a Weyl algebra"
-     }
-document {
-     Key => (Dprune2),
-     Headline => "prunes a matrix over a Weyl algebra (phased out)"
+     Key => {Dprune, (Dprune, Matrix), (Dprune, Module)},
+     Headline => "prunes a matrix over a Weyl algebra",
+     Usage => "Dprune M",
+     Inputs => {
+	  "M" => {ofClass Matrix, " or ", ofClass Module} 
+	  },
+     Outputs => {
+	  {ofClass Matrix, " or ", ofClass Module, " of the same type as ", TT "M"} 
+	  },
+     "description",
+     EXAMPLE lines ///
+       	  XXXXXXXXXXXXXXX  
+	  ///,
+     Caveat => {},
+     SeeAlso => {}
      }
 document {
      Key => [Dprune,optGB],
@@ -2265,8 +3364,13 @@ document {
      Headline => "indicates whether Grobner basis should be computed"
      }
 document {
-     Key => FourierInverse,
+     Key => {
+	  FourierInverse, (FourierInverse,Matrix), (FourierInverse,Ideal), 
+	  (FourierInverse,ChainComplex), (FourierInverse,RingElement),
+      	  (FourierInverse,Module)
+	  },
      Headline => "Inverse Fourier map (D-modules)",
      " see ", TO "Fourier" 
      }
 
+end
