@@ -21,11 +21,14 @@ assert (singLocus h.AnnG == singLocus cokernel M)
 -- R^1 / dx^3  
 -------------------------
 use R
-M = presentation prune image map( R^1/ideal dx^3, R^3, matrix{{1, x, x^2}} )
-h = makeCyclic M
+M = presentation image map( R^1/ideal dx^3, R^3, matrix{{1, x, x^2}} )
+h = makeCyclic M 
 b1 = bFunction(ideal dx^3, {1})
 b2 = bFunction(cokernel M, {1}, {0,-1,-2})
 assert (listForm b1 == listForm b2)
+b2 = bFunction(cokernel M, {1}, {2,1,0})
+b3 = bFunction(h.AnnG, {1})
+assert (listForm b3 == listForm b2)
 
 
 

@@ -23,11 +23,11 @@ b = {3,2};
 I = gkz(A,b, Vars=>Local);
 F1 = Dres(I, {-1,-2,-21,1,2,21});
 F2 = Dres(I, {-1,-2,-20,1,2,20});
-assert all(toList(0..length F1), i -> zeroize F1.dd#i == zeroize F2.dd#i);
+assert all(toList(0..length F1), i -> F1.dd#i - F2.dd#i == 0);
 
 F3 = Dres(I, {-1,-2,-21,1,2,21}, Strategy => Vhomogenize);
 F4a = Dres(I, {-1,-2,-20,1,2,20}, Strategy => Vhomogenize);
-assert all(toList(0..length F3), i -> zeroize F3.dd#i == zeroize F4a.dd#i);
+assert all(toList(0..length F3), i -> F3.dd#i - F4a.dd#i == 0);
 
 F5 = Dres(I, {-3,-1,-3,3,1,3});
-assert(zeroize F5.dd#1 == zeroize gbw(gens I, {-3,-1,-3,3,1,3}));
+assert(F5.dd#1 - gbw(gens I, {-3,-1,-3,3,1,3}) == 0);

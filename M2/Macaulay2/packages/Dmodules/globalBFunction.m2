@@ -97,13 +97,6 @@ globalRB (RingElement,Boolean) := RingElement => (f,isRed) -> (
 --------------------------------------------------------------------------------
 globalB = method()
 
-globalB(Module, Matrix, RingElement) := HashTable => (M, u, f) -> (
-     W := ring M;
-     F := map(M, W^1, u);
-     tempI := ideal kernel F;
-     globalB(tempI,f)
-     )
-
 globalB(Ideal, RingElement) := HashTable => (I, f) -> (
      W := ring I;
      AnnI := AnnIFs (I,f);
