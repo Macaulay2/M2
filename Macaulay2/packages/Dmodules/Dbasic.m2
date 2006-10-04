@@ -1,7 +1,6 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
 local GBprune
-local makeWA 
 -- Basic D-routines
 
 ----------------------------------------------------------------

@@ -68,7 +68,8 @@ gkz(Matrix, List) := options -> (A, b) -> (
 	  );
      out)
 
-gkz Matrix := A -> (
+///
+gkz Matrix := options -> A -> (
      d := numgens target A;     
      n := numgens source A;
      y := symbol y;
@@ -112,6 +113,7 @@ gkz Matrix := A -> (
 	  i = i+1;
 	  );     
      (StoR J) + ideal(tempList))
+///
 
 -- Appell F1 system --
 AppellF1 = method(Options => {Vars => Global})
