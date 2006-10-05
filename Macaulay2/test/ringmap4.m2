@@ -139,4 +139,5 @@ assert isWellDefined map(R,S,{x,y})
 assert not isWellDefined map(S,R,{t,u})
 assert isWellDefined map(R,S,{x,y,a})
 assert isWellDefined map(R,S,{x,y,-a})
+assert not isWellDefined map(R,S,{x,y,a+1})
 
