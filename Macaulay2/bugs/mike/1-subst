@@ -1,6 +1,6 @@
 --*- M2 -*-
 
--- Mike, this is yours!
+-- Mike, this is yours! FIXED.
 
 k = GF(5,2,Variable=>a)
 R = k[x,y,z,w]
