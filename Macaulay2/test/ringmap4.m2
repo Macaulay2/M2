@@ -137,3 +137,6 @@ R = k[x,y]/x^2
 S = k[t,u]/t^3
 assert isWellDefined map(R,S,{x,y})
 assert not isWellDefined map(S,R,{t,u})
+assert isWellDefined map(R,S,{x,y,a})
+assert isWellDefined map(R,S,{x,y,-a})
+
