@@ -32,3 +32,19 @@ says this good way to do it:
 
     Alien was originally written for Debian and is available as Debian package, but
     it was ported to other platforms too.
+
+-----------------------------------------------------------------------------
+Date: Tue, 03 Oct 2006 12:44:35 -0500
+From: Matt Proud <matt@ima.umn.edu>
+Reply-To: sys@ima.umn.edu
+To: mike@math.cornell.edu, dan@math.uiuc.edu
+Subject: Macaulay2 Debianization
+
+Hello,
+
+I will forward more details to you when I have them---along with
+instructions and explanation---when I have some time.
+
+The debianization is available
+http://www.ima.umn.edu/~matt/macaulay2-debianization.tar.bz2 I would
+e-mail it, but it is quite large.
