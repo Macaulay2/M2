@@ -16,3 +16,19 @@ ideas from cocoa lib:
 	Implement real numbers as a pair of floats, initially with a small difference.  Perform
 		computations in parallel, gauge accuracy by the difference.
 
+put a link on each html doc page to ~/.Macaulay2/index.html
+
+singular uses slibgb (Brickenstein).
+
+official refereeing of packages (recognition for contributors)
+
+use the processed doc db better
+
+TeXmacs -- get hooked up again.  It has a new graphics engine we can use
+
+produce doc in TeXmacs format!  Use it to make the book, instead of tex.
+
+small computers: Sharp SLC 760, 1 kg, (Hammada has one)
+
+Need an icon for M2 so it can be on a live Knoppix CD.  The accelerated version
+	boots in 1 minute.
