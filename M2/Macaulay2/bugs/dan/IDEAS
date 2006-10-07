@@ -1,0 +1,18 @@
+ideas:
+
+introduce a new Type called Constant with instances pi, e, etc.
+
+Granlund says gmp doesn't put pointers in memory it allocates, so we could use gc_static for it always
+
+n-th root code in gmp is slow.  Perhaps Brent's method would be faster?
+
+mpsolve is a package that finds roots of univariate polynomials quickly, use it?
+	http://www.dm.unipi.it/cluster-pages/mpsolve/index.htm
+
+use Noro's alg for gb over alg no flds?  See p. 99 in the ICMS book.
+
+ideas from cocoa lib:
+	Precompute a bit m mask for each monomial M with the property that M|M' implies m&~m'=0
+	Implement real numbers as a pair of floats, initially with a small difference.  Perform
+		computations in parallel, gauge accuracy by the difference.
+
