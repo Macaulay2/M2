@@ -10,7 +10,7 @@ export {ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,bFunctio
 	AnnFs,AnnIFs,Dtrace,getDtrace,setHomSwitch,getHomSwitch,localCohom,Walther,OaTa,LocStrategy,
 	OaTaWa,pruneLocalCohom,paramBpoly,GroundField,makeCyclic,Generator,AnnG,isHolonomic,DHom,DExt,Special,
 	None,Info,PolySols,Alg,GD,Duality,PolyExt,RatSols,RatExt,createDpairs,dpairInds,
-	dpairVars,Fourier,Dtransposition,singLocus,charIdeal,Drank,Ddim,makeWeylAlgebra,Ddual,Dlocalize,
+	dpairVars,Fourier,Dtransposition,singLocus,charIdeal,Drank,Ddim,makeWeylAlgebra,makeWA,Ddual,Dlocalize,
 	Oaku,OTW,Dlocalization,DlocalizationAll,DlocalizeMap,LocModule,GeneratorPower,LocMap,annFS,
 	DlocalizeAll,IntegrateBfunction,Bfunction,DlocalizationMap,Dresolution,Schreyer,Vhomogenize,Dres,
 	Drestriction,Drestrict,DrestrictionClasses,DrestrictClasses,DrestrictIdeal,DrestrictAll,
@@ -19,15 +19,13 @@ export {ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,bFunctio
 	Dintegrate,DintegrateIdeal,DintegrationIdeal,DintegrationComplex,DintegrateClasses,DintegrateComplex,
 	DintegrationClasses,DintegrateAll,DintegrationAll,gkz,Vars,AppellF1,PolyAnn,
 	RatAnn,WeylClosure,deRham,deRhamAll,TransferCycles,CohomologyGroups,PreCycles,OmegaRes,
-	diffOps,PolyGens,BasisElts,putWeylAlgebra,inw,gbw,pInfo,
-	Dprune,Dprune2,optGB,FourierInverse,Output,
-	reduceCompress,zeroize,
-	stafford,makeWA
+	diffOps,PolyGens,BasisElts,putWeylAlgebra,inw,gbw,
+	Dprune,pInfo,optGB,FourierInverse,Output,stafford,BMM,pruneCechComplexCC,populateCechComplexCC
 	}
    
 scan({"Local", "Global"}, nm -> assert (isGlobalSymbol nm and value getGlobalSymbol nm === getGlobalSymbol nm))
 
-load "Dloadfile.m2"
+load "Dmodules/Dloadfile.m2"
 
 addHook(Module, symbol resolution, (o,M) -> (
 	  R := ring M;
@@ -36,4 +34,8 @@ addHook(Module, symbol resolution, (o,M) -> (
 	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then Dresolution(o',M)))
 
 beginDocumentation()
-load "DMODdoc.m2"
+load "Dmodules/DMODdoc.m2"
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Dmodules install-one"
+-- End:
