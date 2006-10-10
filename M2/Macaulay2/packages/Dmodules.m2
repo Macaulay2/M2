@@ -21,7 +21,8 @@ export {ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,bFunctio
 	RatAnn,WeylClosure,deRham,deRhamAll,TransferCycles,CohomologyGroups,PreCycles,OmegaRes,
 	diffOps,PolyGens,BasisElts,putWeylAlgebra,inw,gbw,pInfo,
 	Dprune,Dprune2,optGB,FourierInverse,Output,
-	reduceCompress,zeroize
+	reduceCompress,zeroize,
+	stafford,makeWA
 	}
    
 scan({"Local", "Global"}, nm -> assert (isGlobalSymbol nm and value getGlobalSymbol nm === getGlobalSymbol nm))
