@@ -572,14 +572,40 @@ C = directImageComplex((Mstrict**S^{-3*{1,1}}), RegularityBound=>5)
 C = directImageComplex((Mtotal**S^{2*{1,1}}), RegularityBound=>2)
 C = directImageComplex((Mstrict**S^{2*{1,1}}), RegularityBound=>2)
 
+-------------------------------------------------------------------
 -- The following lines are tests for Mike to speed this up --------
-d=4
+-- or fix localPrune...
+restart
+loadPackage "Local"
+loadPackage "BGG"
+debug BGG
+kk=ZZ/101
+A1=kk[a,b,c,Degrees=>{3:{1,0}}]
+
+--I=ideal{a^3+b^3+c^3+c^4}
+I=ideal{a*b*c+a^4+b^4+c^4}
+
+A=A1/I
+setMaxIdeal(ideal(a,b,c))
+S1=kk[a,b,c,x_0,x_1,x_2,Degrees=>{3:{1,0},3:{1,1}}]
+S=S1/substitute(I,S1)
+setMaxIdeal(ideal(a,b,c,x_0,x_1,x_2))
+
+Itotal=minors(2,matrix{{a,x_0},{b,x_1},{c,x_2}})
+Istrict= saturate(Itotal,ideal(a,b,c))
+
+Mstrict = coker gens Istrict
+Mtotal = coker gens Itotal
+F = map(S,A)
+E = setupBGG(F,e)
+setMaxIdeal(ideal(a,b,c,e_0,e_1,e_2))
+d=5
 truncateForLastDegree(d,Mtotal)
 M7 = localPrune oo
 M7 = M7 ** S^{{d,d}}
 N = ker symmetricToExterior(presentation M7)
 N = N ** E^{{d,d}}
-N = localPrune image N
+N = localPrune N
 C = localResolution(N, LengthLimit=>8) -- This is bad...
 C0 = degreeZeroPart C
 prune HH((map(kk,A,{0,0,0})) C0)
