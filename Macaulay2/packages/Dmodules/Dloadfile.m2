@@ -29,6 +29,7 @@ load "localCohom.m2"
 load "paramBpoly.m2"
 load "makeCyclic.m2"
 load "stafford.m2"
+load "CC.m2"
 
 
 
