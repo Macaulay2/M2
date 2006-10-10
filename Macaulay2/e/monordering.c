@@ -238,23 +238,59 @@ static MonomialOrdering *M2_mo_offset(MonomialOrdering *mo, int offset)
   return result;
 }
 
+static int is_good(mon_part p)
+{
+  switch (p->type) {
+  case MO_LEX:
+  case MO_LEX2:
+  case MO_LEX4:
+  case MO_GREVLEX:
+  case MO_GREVLEX2:
+  case MO_GREVLEX4:
+  case MO_GREVLEX_WTS:
+  case MO_GREVLEX2_WTS:
+  case MO_GREVLEX4_WTS:
+  case MO_LAURENT:
+  case MO_NC_LEX:
+  case MO_LAURENT_REVLEX:
+  case MO_REVLEX:
+  case MO_WEIGHTS:
+    return (p->nvars > 0);
+  case MO_POSITION_UP:
+  case MO_POSITION_DOWN:
+    return 1;
+  }
+  return 0;
+}
+
 MonomialOrdering *rawJoinMonomialOrdering(MonomialOrdering_array M)
 {
-  MonomialOrdering *result;
+  MonomialOrdering *result, *mo;
   int i,j,sum,next;
   int nvars_so_far = 0;
+
+  //  sum = 0;
+  //  for (i=0; i<M->len; i++)
+  //    sum += M->array[i]->len;
+
   sum = 0;
   for (i=0; i<M->len; i++)
-    sum += M->array[i]->len;
+    {
+      mo = M->array[i];
+      for (j=0; j<mo->len; j++)
+	if (is_good(mo->array[j]))
+	    sum++;
+    }
 
   result = make_mon_order(sum);
   next = 0;
   for (i=0; i<M->len; i++)
     {
-      MonomialOrdering *mo = M->array[i];
+      mo = M->array[i];
       for (j=0; j<mo->len; j++)
 	{
 	  mon_part p = mo->array[j];
+	  if (!is_good(p)) continue;
 	  if (p->type != MO_WEIGHTS)
 	    nvars_so_far += p->nvars;
 	  else
