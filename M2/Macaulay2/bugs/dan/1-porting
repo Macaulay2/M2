@@ -93,3 +93,22 @@ Here's how to get rid of the cached data file that dpkg refuses to remove.
 Where should we put it?
 
     rm -rf /usr/lib/Macaulay2
+
+See also
+
+    deb-control
+
+for the contents of the control file.  The one alien makes is:
+
+    Package: macaulay2-0.9.91
+    Version: i686-Linux-usr-2
+    Section: alien
+    Priority: extra
+    Architecture: all
+    Depends: libc6 (>= 2.3.4-1), libgcc1 (>= 1:4.0.2)
+    Installed-Size: 45652
+    Maintainer: root <root@ytterbium.math.uiuc.edu>
+    Description: Converted Slackware tgz package
+     Converted Slackware tgz package
+     .
+     (Converted from a tgz package by alien version 8.64.)
