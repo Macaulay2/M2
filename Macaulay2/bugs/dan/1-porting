@@ -56,3 +56,40 @@ instructions and explanation---when I have some time.
 The debianization is available
 http://www.ima.umn.edu/~matt/macaulay2-debianization.tar.bz2 I would
 e-mail it, but it is quite large.
+
+=============================================================================
+
+Here's how to make a debian package from our tar file:
+
+    tar xzf Macaulay2-0.9.91-i686-Linux.tgz
+    mv Macaulay2-0.9.91 usr
+    fakeroot chown -R root usr
+    tar cfz Macaulay2-0.9.91-i686-Linux-usr.tgz usr
+    fakeroot alien --to-deb Macaulay2-0.9.91-i686-Linux-usr.tgz 
+
+Here's how to fix the deb file so it doesn't have *.gz files inside it:
+
+    mkdir contents
+    cd contents
+    ar x ../macaulay2-0.9.91_i686-Linux-usr-2_all.deb
+    tar xzfp data.tar.gz
+    find usr -name \*.gz | xargs gunzip
+    tar czf data.tar.gz usr
+    ar r ../macaulay2-0.9.91_i686-Linux-usr-2_all.deb debian-binary control.tar.gz data.tar.gz
+
+Here's how to upload it to the M2 download site:
+
+    scp macaulay2-0.9.91_i686-Linux-usr-2_all.deb ssh.math.uiuc.edu:~/local/to/Macaulay2/Downloads/
+
+Here's how to install it, as root:
+
+    dpkg -i macaulay2-0.9.91_i686-Linux-usr-2_all.deb
+
+Here's how to remove it:
+
+    dpkg -r macaulay2-0.9.91
+
+Here's how to get rid of the cached data file that dpkg refuses to remove.
+Where should we put it?
+
+    rm -rf /usr/lib/Macaulay2
