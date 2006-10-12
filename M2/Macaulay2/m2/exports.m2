@@ -583,6 +583,7 @@ export {
 	symbol edit,
 	symbol eigenvalues,
 	symbol eigenvectors,
+	symbol elapsedTime,
 	symbol elements,
 	symbol else,
 	symbol end,
