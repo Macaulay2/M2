@@ -619,6 +619,14 @@ pseudocode(e:Expr):Expr := (
      else WrongArg("a function closure derived from Macaulay 2 code")
      );
 setupfun("pseudocode", pseudocode);
+
+elapsedTime(e:Expr):Expr := (
+     when e
+     is s:Sequence do if length(s) == 0 then Expr(Real(etime()))
+     else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("elapsedTime",elapsedTime);
+
 timefun(a:Code):Expr := (
      v := etime();
      ret := eval(a);
