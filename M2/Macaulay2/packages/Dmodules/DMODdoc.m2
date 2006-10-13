@@ -87,39 +87,6 @@ document {
 	  TO {"setHomSwitch", " -- toggles use of homogeneous Weyl algebra"}}
      }
 -----------------------------------------------
-document { -- local?
-     Key => {ExternalProduct, (ExternalProduct,ChainComplex,ChainComplex), (ExternalProduct,Module,Module)},
-     Headline => "external product of modules or complexes"
-     }
-document { -- local?
-     Key => [ExternalProduct,TwistMap],
-     Headline => "indicates whether TwistMap should be computed"
-     }
-document {
-     Key => TwistMap,
-     Headline => "indicates whether TwistMap should be computed"
-     }
-
-document {
-     Key => twistMap,
-     Headline => "a key attached by ExternalProduct",
-     "see ", TO "ExternalProduct"
-     }
-document {
-     Key => twistInvMap,
-     Headline => "a key attached by ExternalProduct",
-     "see ", TO "ExternalProduct"
-     }
-document {
-     Key => (projMap1),
-     Headline => "a key attached by ExternalProduct",
-     "see ", TO "ExternalProduct"
-     }
-document {
-     Key => (projMap2),
-     Headline => "a key attached by ExternalProduct",
-     "see ", TO "ExternalProduct"
-     }
 
 document {
      Key => bFunction,
@@ -2549,5 +2516,41 @@ scan(keys B, k->print (k=>B#k)) -- CCs of Cech complex BEFORE pruning
      SeeAlso => {BMM,pruneCechComplexCC}
      }
 
+document { -- local?
+     Key => {ExternalProduct, (ExternalProduct,ChainComplex,ChainComplex), (ExternalProduct,Module,Module)},
+     Headline => "external product of modules or complexes"
+     }
+document { -- local?
+     Key => [ExternalProduct,TwistMap],
+     Headline => "indicates whether TwistMap should be computed"
+     }
+document {
+     Key => TwistMap,
+     Headline => "indicates whether TwistMap should be computed"
+     }
+
+document {
+     Key => twistMap,
+     Headline => "a key attached by ExternalProduct",
+     "see ", TO "ExternalProduct"
+     }
+document {
+     Key => twistInvMap,
+     Headline => "a key attached by ExternalProduct",
+     "see ", TO "ExternalProduct
+     }
+document {
+     Key => (projMap1),
+     Headline => "a key attached by ExternalProduct",
+     "see ", TO "ExternalProduct"
+     }
+document {
+     Key => (projMap2),
+     Headline => "a key attached by ExternalProduct",
+     "see ", TO "ExternalProduct"
+     }
+
 end
+------------------------------------------------------------------------------------------------------------
+THE END
 
