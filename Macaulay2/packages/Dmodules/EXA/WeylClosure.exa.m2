@@ -1,5 +1,4 @@
-path = join(path, {"../"})
-load "Dloadfile.m2"
+needsPackage "Dmodules"
 
 -- example 1: annihilator of a rational function 1/f
 W = QQ[x,t,Dx,Dt, WeylAlgebra => {x=>Dx, t=>Dt}]
@@ -13,7 +12,7 @@ ClI == I + ideal (-2*t*Dx^2*Dt^3 + Dx^2*Dt^3 + Dx*Dt^4 - 6*Dx^2*Dt^2)
 W = QQ[x,y,z,Dx,Dy,Dz, WeylAlgebra => {x=>Dx, y=>Dy, z=>Dz}]
 f = (x^3-y^2*z^2)
 I = ideal(f^2*Dx+3*x^2, f^2*Dy-2*y*z^2, f^2*Dz-2*y^2*z)
-ClI = WeylClosure(I))
+ClI = WeylClosure I
 ClI == I
 ClI == I + ideal(y*Dy-z*Dz, y^2*z^3*Dz-(2/3)*x^4*Dx-2*x^3*z*Dz-2)
 

@@ -5,7 +5,8 @@ newPackage("Dmodules", Version => "1.0",
 	  {Name => "Harrison Tsai"}
 	  }
      )
-export {ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,bFunction,NonGeneric,TryGeneric,IntRing,
+export {ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,
+        bFunction,NonGeneric,TryGeneric,IntRing,
         globalB,globalBFunction,ViaAnnFs,ReducedB,factorBFunction,getIntRoots,Boperator,Bpolynomial,globalBoperator,
 	AnnFs,AnnIFs,Dtrace,getDtrace,setHomSwitch,getHomSwitch,localCohom,Walther,OaTa,LocStrategy,
 	OaTaWa,pruneLocalCohom,paramBpoly,GroundField,makeCyclic,Generator,AnnG,isHolonomic,DHom,DExt,Special,
@@ -27,11 +28,19 @@ scan({"Local", "Global"}, nm -> assert (isGlobalSymbol nm and value getGlobalSym
 
 load "Dmodules/Dloadfile.m2"
 
+-- HOOKS
+
 addHook(Module, symbol resolution, (o,M) -> (
 	  R := ring M;
 	  op := options R;
 	  o' := applyPairs(options Dresolution, (key,val) -> (key, o#key));
 	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then Dresolution(o',M)))
+
+addHook(Module, symbol dim, M -> (
+	  R := ring M;
+	  op := options R;
+	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then Ddim M))
+
 
 beginDocumentation()
 load "Dmodules/DMODdoc.m2"
