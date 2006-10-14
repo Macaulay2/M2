@@ -157,6 +157,17 @@ Other common libraries that we assume are on your system already:
 	GNU readline (provides libreadline.so and libhistory.so)
 	GNU ncurses (provides libcurses.so)
 
+---------
+Programs
+---------
+
+Here are programs you may have to install on your system to build Macaulay 2.
+
+   program: fakeroot
+    get at: http://ftp.debian.org/debian/pool/main/f/fakeroot
+     notes: You need this only if you intend to make a debian distribution
+            package for Macaulay2.
+
 ----------------------
 Getting the source code
 ----------------------
