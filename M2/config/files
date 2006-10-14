@@ -1,5 +1,11 @@
 GNUmakefile
 include/config.Makefile
+debian/Makefile
+debian/control
+debian/postrm
+debian/postinst
+debian/prerm
+debian/preinst
 Macaulay2/Makefile
 Macaulay2/basictests/Makefile
 Macaulay2/bin/Makefile
