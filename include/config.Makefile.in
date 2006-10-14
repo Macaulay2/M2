@@ -21,6 +21,10 @@ ARCH    = @ARCH@
 OS      = @OS@
 REL     = @REL@
 
+PKG_TGZ = $(package)-$(ARCH)-$(OS).tgz
+PKG_TBZ = $(package)-$(ARCH)-$(OS).tar.bz2
+PKG_DEB = $(package)-$(ARCH)-$(OS).deb
+
 DESC    = @PACKAGE_VERSION@-@host_cpu@-@OS@-@REL@
 # we used to use @ ARCH @ instead of @ host_cpu @ here, but for DEC alphas,
 # and perhaps other machines, it gives more information.  The script
