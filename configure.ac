@@ -1,4 +1,4 @@
-AC_INIT(Macaulay 2, 0.9.92, Macaulay2@math.uiuc.edu, Macaulay2)
+AC_INIT(Macaulay 2, 0.9.93, Macaulay2@math.uiuc.edu, Macaulay2)
 
 case "$0" in
   *" "*) CONFIG_ARG0="\"$0\"" ;;
