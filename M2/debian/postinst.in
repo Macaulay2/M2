@@ -1,0 +1,12 @@
+#!/bin/sh
+set -e
+case "$1" in
+    configure)
+	/usr/bin/M2 --dumpdata
+        ;;
+    abort-upgrade|abort-remove|abort-deconfigure)
+	;;
+    *)
+	echo "postinst called with unknown argument \`$1'" >&2
+	;;
+esac

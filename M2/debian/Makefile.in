@@ -1,0 +1,34 @@
+# @configure_input@
+include ../include/config.Makefile
+VPATH = @srcdir@
+DEPENDS = yes
+############################## main targets
+all :: $(PKG_DEB) tidy
+#################################
+# notice that fakeroot is required, get it here: http://ftp.debian.org/debian/pool/main/f/fakeroot
+$(PKG_DEB) : debian-binary control.tar.gz data.tar.gz
+	rm -f $@
+	ar r $@ $^
+control.tar.gz : control md5sums postinst postrm
+	tar cfz $@ $^
+prepare : ../$(PKG_TGZ)
+	rm -rf $(package) usr
+	tar xzfp $^
+	for i in $(package)/* ; do if [ -f "$$i" ] ; then rm "$$i" ; fi ; done
+	mv $(package) usr
+	fakeroot chown -R root usr
+data.tar.gz : prepare
+	fakeroot tar cfz $@ usr
+md5sums : prepare
+	find usr -type f | xargs md5sum > $@
+tidy :
+	rm -rf usr control.tar.gz data.tar.gz md5sums
+clean ::
+	rm -rf $(package) usr debian-binary control.tar.gz data.tar.gz md5sums 
+	rm -rf $(PKG_DEB)
+distclean : clean; rm -f Makefile control
+Makefile : Makefile.in; cd ..; ./config.status debian/Makefile
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/debian "
+# End:

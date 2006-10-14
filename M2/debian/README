@@ -1,0 +1,37 @@
+A debian archive is an archive made with the "ar" program, with three files in it, in a certain order:
+
+    % ar tv /home/25/dan/local/to/Macaulay2/Downloads/macaulay2-0.9.91_i686-Linux-usr-2_all.deb
+    rw-r--r-- 1000/1000       4 Oct 11 21:07 2006 debian-binary
+    rw-r--r-- 1000/1000  216297 Oct 11 21:07 2006 control.tar.gz
+    rw-r--r-- 1000/1000 7790785 Oct 11 21:08 2006 data.tar.gz
+
+The file data.tar.gz is a simple tar file of the files of the package, with the right user name
+and protections, based at /.
+
+    % cat debian-binary 
+    2.0
+
+    % ls -lR control
+    control:
+    total 756
+    -rw-r--r--  1 dan academic    357 Oct 11 21:03 control
+    -rw-r--r--  1 dan academic 765066 Oct 11 21:03 md5sums
+
+    % cat control/control
+    Package: macaulay2-0.9.91
+    Version: i686-Linux-usr-2
+    Section: alien
+    Priority: extra
+    Architecture: all
+    Depends: libc6 (>= 2.3.4-1), libgcc1 (>= 1:4.0.2)
+    Installed-Size: 45652
+    Maintainer: root <root@ytterbium.math.uiuc.edu>
+    Description: Converted Slackware tgz package
+     Converted Slackware tgz package
+     .
+     (Converted from a tgz package by alien version 8.64.)
+
+    % head -3 control/md5sums 
+    2dcea6f20f8510c260961b488ac3704f  usr/share/doc/macaulay2-0.9.91/copyright
+    9bdb9840293f1678182fee9c720dc562  usr/share/doc/macaulay2-0.9.91/changelog.Debian.gz
+    a8a4c861d958f437bcb7ea7a8a050273  usr/share/doc/Macaulay2/Core/LAYOUT.gz
