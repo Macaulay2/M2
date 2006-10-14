@@ -2537,7 +2537,7 @@ document {
 document {
      Key => twistInvMap,
      Headline => "a key attached by ExternalProduct",
-     "see ", TO "ExternalProduct
+     "see ", TO "ExternalProduct"
      }
 document {
      Key => (projMap1),
