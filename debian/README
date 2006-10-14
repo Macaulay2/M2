@@ -1,3 +1,9 @@
+See
+  http://www.debian.org/doc/debian-policy 
+for info about the components of a debian package
+
+=============================================================================
+
 A debian archive is an archive made with the "ar" program, with three files in it, in a certain order:
 
     % ar tv /home/25/dan/local/to/Macaulay2/Downloads/macaulay2-0.9.91_i686-Linux-usr-2_all.deb

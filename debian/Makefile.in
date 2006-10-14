@@ -9,8 +9,16 @@ all :: $(PKG_DEB) tidy
 $(PKG_DEB) : debian-binary control.tar.gz data.tar.gz
 	rm -f $@
 	ar r $@ $^
-control.tar.gz : control md5sums postinst prerm
-	tar cfz $@ $^
+CONTROLFILES := control
+# CONTROLFILES += md5sums
+# CONTROLFILES += preinst
+CONTROLFILES += postinst
+CONTROLFILES += prerm
+# CONTROLFILES += postrm
+control.tar.gz : $(CONTROLFILES)
+	chmod a+x prerm preinst postrm postinst
+	fakeroot chown root $(CONTROLFILES)
+	fakeroot tar cfz $@ $^
 prepare : ../$(PKG_TGZ)
 	rm -rf $(package) usr
 	tar xzfp $^
@@ -27,7 +35,13 @@ clean ::
 	rm -rf $(package) usr debian-binary control.tar.gz data.tar.gz md5sums 
 	rm -rf $(PKG_DEB)
 distclean : clean; rm -f Makefile control
+
 Makefile : Makefile.in; cd ..; ./config.status debian/Makefile
+control : control.in; cd ..; ./config.status debian/control
+prerm : prerm.in; cd ..; ./config.status debian/prerm
+preinst : preinst.in; cd ..; ./config.status debian/preinst
+postrm : postrm.in; cd ..; ./config.status debian/postrm
+postinst : postinst.in; cd ..; ./config.status debian/postinst
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/debian "
