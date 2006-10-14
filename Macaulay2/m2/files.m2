@@ -283,7 +283,7 @@ dotemacsFix = ///
 
 bashtempl := ///
 case "$VAR" in 
-     "/PREFIX/DIR"|"/PREFIX/DIR:*"|"*:/PREFIX/DIR"|"*:/PREFIX/DIR:*") ;;
+     "/PREFIX/DIR"|"/PREFIX/DIR:"*|*":/PREFIX/DIR"|*":/PREFIX/DIR:"*) ;;
      "") VAR="/PREFIX/DIR" ; export VAR ;;
      *) VAR="/PREFIX/DIR:$VAR" ; export VAR ;;
 esac
