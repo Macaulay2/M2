@@ -9,7 +9,7 @@ all :: $(PKG_DEB) tidy
 $(PKG_DEB) : debian-binary control.tar.gz data.tar.gz
 	rm -f $@
 	ar r $@ $^
-control.tar.gz : control md5sums postinst postrm
+control.tar.gz : control md5sums postinst prerm
 	tar cfz $@ $^
 prepare : ../$(PKG_TGZ)
 	rm -rf $(package) usr

@@ -1,0 +1,116 @@
+DEB-CONTROL(5)                                                                        dpkg utilities                                                                       DEB-CONTROL(5)
+
+NAME
+       deb-control - Debian packages' master control file format
+
+SYNOPSIS
+       control
+
+DESCRIPTION
+       Each  Debian package contains the master `control' file, which contains a number of fields.  Each field begins with a tag, such as Package or Version (case insensitive), followed
+       by a colon, and the body of the field.  Fields are delimited only by field tags.  In other words, field text may be multiple lines in length, but the installation tools will gen-
+       erally join lines when processing the body of the field (except in the case of the Description field, see below).
+
+REQUIRED FIELDS
+       Package: <package name>
+              The value of this field determines the package name, and is used to generate file names by most installation tools.
+
+       Version: <version string>
+              Typically,  this  is  the  original package's version number in whatever form the program's author uses. It may also include a Debian revision number (for non-native pack-
+              ages). If both version and revision are supplied, they are seperated by a hyphen, `-'. For this reason, the original version may not have a hyphen in its version number.
+
+       Maintainer: <fullname email>
+              Should be in the format `Joe Bloggs <jbloggs@foo.com>', and is typically the person who created the package, as opposed to the author of the software that was packaged.
+
+       Description: <short description>
+               <long description>
+              The format for the package description is a short brief summary on the first line (after the "Description" field). The following lines  can  be  used  as  a  longer,  more
+              detailed description. Each line of the long description must be preceded by a space, and blank lines in the long desription must contain a single '.' following the preced-
+              ing space.
+
+OPTIONAL FIELDS
+       Section: <section>
+              This is a general field that gives the package a category based on the software that it installs. Some common sections are `utils', `net', `mail', `text', `x11' etc.
+
+       Priority: <priority>
+              Sets the importance of this package in relation to the system as a whole.  Common priorities are `required', `standard', `optional', `extra' etc.
+
+       In Debian, the Section and Priority fields have a defined set of accepted values based on the Policy Manual.  They are used to decide how  the  packages  are  layed  out  in  the
+       archive.  A list of these can be obtained from the latest version of debian-policy package.
+
+       Essential: <yes|no>
+              This  field  is usually only needed when the answer is `yes'. It denotes a package that is required for proper operation of the system. Dpkg or any other installation tool
+              will not allow an Essential package to be removed (at least not without using one of the force options).
+
+       Architecture: <arch|all>
+              The architecture specifies which type of hardware this package was compiled for. Common architectures are `i386', `m68k', `sparc', `alpha', `powerpc' etc.  Note  that  the
+              all option is meant for packages that are architecture independent. Some examples of this are shell or Perl scripts, or documentation.
+
+       Source: <source name>
+              The name of the source package that this binary package came from, if different than the name of the package itself.
+
+       Depends: <package list>
+              List  of  packages  that  are  required for this package to provide a non-trivial amount of functionality.  The package maintenance software will not allow a package to be
+              installed if the packages listed in its Depends field aren't installed (at least not without using the force options), and will run the postinst scripts of packages listed
+              in Depends: fields before those of the packages which depend on them, and run prerm scripts before.
+
+       Pre-Depends: <package list>
+              List  of  packages that must be installed and configured before this one can be installed. This is usually used in the case where this package requires another package for
+              running its preinst script.
+
+       Recommends: <package list>
+              Lists packages that would be found together with this one in all but unusual installations.  The package maintenance software will warn the user if they install a  package
+              without those listed in its Recommends field.
+
+       Suggests: <package list>
+              Lists packages that are related to this one and can perhaps enhance its usefulness, but without which installing this package is perfectly reasonable.
+
+       The  syntax of Depends , Pre-Depends , Recommends and Suggests fields is a list of groups of alternative packages.  Each group is a list of packages separated by vertical bar (or
+       `pipe') symbols, `|'.  The groups are separated by commas.  Commas are to be read as `AND', and pipes as `OR', with pipes binding more tightly.   Each  item  is  a  package  name
+       optionally followed by a version number specification in parentheses.
+
+       A  version  number may start with a `>>', in which case any later version will match, and may specify or omit the Debian packaging revision (separated by a hyphen). Accepted ver-
+       sion relationships are ">>" for greater than, "<<" for less than, ">=" for greater than or equal to, "<=" for less than or equal to, and "=" for equal to.
+
+       Conflicts: <package list>
+              Lists packages that conflict with this one, for example by containing files with the same names. The package maintenance software will not allow conflicting packages to be
+              installed at the same time. Two conflicting packages should each include a Conflicts line mentioning the other.
+
+       Replaces: <package list>
+              List  of  packages  files  from which this one replaces. This is used for allowing this package to overwrite the files of another package and is usually used with the Con-
+              flicts field to force removal of the other package, if this one also has the same files as the conflicted package.
+
+       Provides: <package list>
+              This is a list of virtual packages that this one provides. Usually this is used in the case of several packages all providing the same service.  For example, sendmail  and
+              exim can serve as a mail server, so they provide a common package (`mail-transport-agent') on which other packages can depend. This will allow sendmail or exim to serve as
+              a valid option to satisy the dependency. This prevents the packages that depend on a mail server from having to know the package names for all of them, and  using  `|'  to
+              separate the list.
+
+       The  syntax  of  Conflicts , Replaces and Provides is a list of package names, separated by commas (and optional whitespace).  In the Conflicts field, the comma should be read as
+       `OR'. An optional version can also be given with the same syntax as above for the Conflicts and Replaces fields.
+
+EXAMPLE
+       Package: grep
+       Essential: yes
+       Priority: required
+       Section: base
+       Maintainer: Wichert Akkerman <wakkerma@debian.org>
+       Architecture: sparc
+       Version: 2.4-1
+       Pre-Depends: libc6 (>= 2.0.105)
+       Provides: rgrep
+       Conflicts: rgrep
+       Description: GNU grep, egrep and fgrep.
+        The GNU family of grep utilities may be the "fastest grep in the west".
+        GNU grep is based on a fast lazy-state deterministic matcher (about
+        twice as fast as stock Unix egrep) hybridized with a Boyer-Moore-Gosper
+        search for a fixed string that eliminates impossible text from being
+        considered by the full regexp matcher without necessarily having to
+        look at every character. The result is typically many times faster
+        than Unix grep or egrep. (Regular expressions containing backreferencing
+        will run more slowly, however.)
+
+SEE ALSO
+       deb(5), dpkg(8), dpkg-deb(1).
+
+Debian Project                                                                         January 2000                                                                        DEB-CONTROL(5)
