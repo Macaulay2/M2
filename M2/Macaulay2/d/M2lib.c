@@ -17,7 +17,8 @@ extern int libfac_interruptflag; /* extracted from libfac's factor.h */
 #include "types.h"
 #include "debug.h"
 
-char *config_args[] = { CONFIG_ARGS 0 };
+/* char *config_args[] = { CONFIG_ARGS 0 }; */
+char *config_args = CONFIG_ARGS ;
 
 void trap(void) {}		/* we don't put it in debug.c, or it will get optimized away! */
 
@@ -537,7 +538,8 @@ char **argv;
      system_envp = tostrings(envc,saveenvp);
      system_argv = tostrings(argc,saveargv);
      system_args = tostrings(argc == 0 ? 0 : argc - 1, saveargv + 1);
-     actors5_configargs = tostrings(sizeof(config_args)/sizeof(char *) - 1, config_args);
+     /*     actors5_configargs = tostrings(sizeof(config_args)/sizeof(char *) - 1, config_args); */
+     actors5_configargs = tostring(config_args);
 
 #ifdef includeX11
      display = XOpenDisplay(NULL);
