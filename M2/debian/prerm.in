@@ -3,8 +3,8 @@ case "$1" in
     remove|deconfigure|upgrade)
 	rm -f /usr/lib/Macaulay2/Core/cache/*
 	for p in /usr/share/Macaulay2/*.m2
-	do f=/usr/share/info/`basename $p .m2`.info
-	   if [ -f $f ] ; then install-info --remove --quiet $f ; fi
+	do f="/usr/share/info/`basename $p .m2`.info"
+	   if [ -f $f ] ; then install-info --remove --quiet --info-dir="/usr/share/info" "$f" ; fi
 	done ;;
     failed-upgrade) ;;
     *) echo "prerm called with unknown argument \`$1'" >&2

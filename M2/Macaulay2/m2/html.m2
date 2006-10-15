@@ -883,7 +883,7 @@ installPackage Package := opts -> pkg -> (
 	  << ///#! /bin/sh -e/// << endl
 	  << fix ///cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info/" || exit 0/// << endl
 	  << ///for i in *.info/// << endl
-	  << fix ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" "$i")/// << endl
+	  << fix ///do (set -x ; install-info --info-dir="$ENCAP_TARGET/info/" "$i")/// << endl
 	  << ///done/// << endl;
 	  if version#"dumpdata" and pkg#"title" == "Macaulay2" then (
 	       f << endl << fix "(set -x ; \"$ENCAP_TARGET\"/bin/" << version#"M2 name" << " --stop --dumpdata)" << endl;
@@ -893,9 +893,9 @@ installPackage Package := opts -> pkg -> (
 	  -- preremove
      	  f = buildDirectory | "preremove"
 	  << ///#! /bin/sh -x/// << endl
-	  << ///cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info" || exit 0/// << endl
+	  << fix ///cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info/" || exit 0/// << endl
 	  << ///for i in *.info/// << endl
-	  << fix ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" --delete "$i")/// << endl
+	  << fix ///do (set -x ; install-info --info-dir="$ENCAP_TARGET/info/" --remove "$i")/// << endl
 	  << ///done/// << endl;
 	  fileMode(octal "755",f);
  	  f << close;
