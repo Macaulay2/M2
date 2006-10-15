@@ -189,6 +189,7 @@ frac EngineRing := (stashValue symbol frac) (R -> (
 	  if o.WeylAlgebra =!= {} or R.?SkewCommutative
 	  then error "fraction field of non-commutative ring requested";
 	  R.frac = F := new FractionField from rawFractionRing R.RawRing;
+	  F.frac = F;
 	  F.baseRings = append(R.baseRings,R);
 	  -- F.promoteDegree = makepromoter 0;
 	  -- F.liftDegree = makepromoter degreeLength R;
@@ -203,7 +204,7 @@ frac EngineRing := (stashValue symbol frac) (R -> (
 	  expression F := (f) -> expression numerator f / expression denominator f;
 	  numerator F := (f) -> new R from rawNumerator raw f;
 	  denominator F := (f) -> new R from rawDenominator raw f;
-	  fraction(F,F) := F / F := (x,y) -> x//y;
+	  fraction(F,F) := F / F := (x,y) -> if y != 0 then x//y else error "division by 0";
 	  fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,raw r,raw s);
      	  F % F := (x,y) -> if y == 0 then x else 0_F;	    -- not implemented in the engine, for some reason
 	  F.generators = apply(generators R, m -> promote(m,F));
