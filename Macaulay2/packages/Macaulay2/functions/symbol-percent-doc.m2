@@ -74,13 +74,13 @@ document {
      PARA{},
      "Here is an example involving rational functions.",
      EXAMPLE lines ///
-     	  kk = toField(frac(ZZ[a,b]))
+     	  kk = frac(ZZ[a,b])
 	  B = kk[x,y,z]
 	  I = ideal(a*x^2-b*x-y-1, 1/b*y^2-z-1)
 	  gens gb I
 	  x^2*y^2 % I
      ///,
-     SeeAlso => {symbol %, "Groebner bases", generators, toField,(symbol %, Matrix, GroebnerBasis)},
+     SeeAlso => {symbol %, "Groebner bases", generators, (symbol %, Matrix, GroebnerBasis)},
      }
 
 document { 
