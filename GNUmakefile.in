@@ -24,7 +24,7 @@ all :: include/config.h
 	@echo '#  exiting so you can run it again the same way you did before'
 	@echo '#  here is the way you ran it before:'
 	@echo '#'
-	@echo '     $(CONFIG_CMD)'
+	@echo "     $(CONFIG_CMD)"
 	@echo '#'
 	@echo '#  type "make reconfigure" to run it that way again'
 	@echo '#'
@@ -34,7 +34,7 @@ status : @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
 	@echo '#  here is the way you ran $^ before:'
 	@echo '#'
-	@echo '     $(CONFIG_CMD)'
+	@echo "     $(CONFIG_CMD)"
 	@echo '#'
 	@echo '#  type "make reconfigure" to run it that way again'
 	@echo '#'
@@ -45,7 +45,7 @@ config.status : @srcdir@/configure
 	@echo '#  exiting so you can run $^ the same way you did before'
 	@echo '#  here is the way you ran it before:'
 	@echo '#'
-	@echo '     $(CONFIG_CMD)'
+	@echo "     $(CONFIG_CMD)"
 	@echo '#'
 	@echo '#  type "make reconfigure" to run it that way again'
 	@echo '#'

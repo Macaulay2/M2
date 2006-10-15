@@ -1,10 +1,12 @@
 AC_INIT(Macaulay 2, 0.9.93, Macaulay2@math.uiuc.edu, Macaulay2)
+AC_CONFIG_HEADERS(include/config.h)
 
 case "$0" in
   *" "*) CONFIG_ARG0="\"$0\"" ;;
   *) CONFIG_ARG0="$0" ;;
 esac
-for i in "$@"
+
+for i in $ac_configure_args
 do case "$i" in
      "--no-create"|"--no-recursion") ;;
      *"$"*" "*|*" "*"$"*)
@@ -18,13 +20,10 @@ do case "$i" in
 done
 CONFIG_CMD="$CONFIG_ARG0 $CONFIG_ARGS"
 echo "# invocation: $CONFIG_CMD" >&5
-
-AC_CONFIG_HEADERS(include/config.h)
-
 AC_SUBST(CONFIG_ARG0)
 AC_SUBST(CONFIG_ARGS)
 AC_SUBST(CONFIG_CMD)
-AC_DEFINE_UNQUOTED(CONFIG_ARGS,$CONFIG_ARGS_C,arguments used for configure)
+AC_DEFINE_UNQUOTED(CONFIG_ARGS,"$CONFIG_ARGS",arguments used for configure)
 
 define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
