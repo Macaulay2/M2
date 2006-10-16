@@ -42,7 +42,7 @@ document {
 	  TO {"RatAnn", " -- annihilator of a rational function"}},
      HEADER3 "Basic invariants of D-modules:",
      UL{TO {"Ddim", " -- dimension"}, 
-	  TO {"Drank"," -- holonomic rank"}, 
+	  TO {"holonomicRank"," -- holonomic rank"}, 
 	  TO {"charIdeal", " -- characteristic ideal"},
 	  TO {"singLocus", " -- singular locus"}},
      HEADER3 "B-functions:",
@@ -755,7 +755,7 @@ document {
           I = gkz(A,b)
      	  isHolonomic I     	  	  
      	  ///,
-     SeeAlso => {"Ddim", "Drank"}
+     SeeAlso => {"Ddim", "holonomicRank"}
      } 
 
 document {
@@ -1191,7 +1191,7 @@ document {
 	     I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)
 	     singLocus I
 	     ///,
-     SeeAlso => {"charIdeal", "Drank", "Ddim"}
+     SeeAlso => {"charIdeal", "holonomicRank", "Ddim"}
      },
 
 document {
@@ -1230,13 +1230,19 @@ document {
 	     I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)
 	     charIdeal I
 	     ///,
-     SeeAlso => {"Ddim", "singLocus", "Drank"}
+     SeeAlso => {"Ddim", "singLocus", "holonomicRank"}
      },
 
 document {
-     Key => {Drank,(Drank,Module), (Drank,Ideal) },
+     Key => {Drank, (Drank,Module), (Drank,Ideal) },
+     Headline => "an old name of holonomicRank",
+     SeeAlso => {"holonomicRank"}
+}
+
+document {
+     Key => {holonomicRank, (holonomicRank,Module), (holonomicRank,Ideal) },
      Headline => "rank of a D-module",
-     Usage => "Drank M, Drank I",
+     Usage => "holonomicRank M, holonomicRank I",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
 	  "I" => Ideal => {"which represents the module ", EM "M = D/I"}
@@ -1263,7 +1269,7 @@ document {
      EXAMPLE lines ///
 	     W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
 	     I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy) 
-	     Drank I
+	     holonomicRank I
 	     ///,
      SeeAlso => {"charIdeal", "singLocus", "Ddim"}
      },
@@ -1288,7 +1294,7 @@ document {
 	     I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy) 
 	     Ddim I
 	     ///,
-     SeeAlso => {"charIdeal", "Drank", "singLocus"}
+     SeeAlso => {"charIdeal", "holonomicRank", "singLocus"}
      },
 
 document {
@@ -2117,10 +2123,10 @@ document {
      	I = ideal(x*Dx-2)
      	WeylClosure I
 	///,
-     Caveat =>{"The ideal I should be finite rank, which can be tested
-	  manually by Drank.", "The Weyl closure of non-finite rank
+     Caveat =>{"The ideal I should be finite holonomic rank, which can be tested
+	  manually by holonomicRank.", "The Weyl closure of non-finite rank
 	  ideals or arbitrary submodules has not been implemented."},
-     SeeAlso => {"Dlocalize", "singLocus", "Drank"}
+     SeeAlso => {"Dlocalize", "singLocus", "holonomicRank"}
      }
 
 document {
