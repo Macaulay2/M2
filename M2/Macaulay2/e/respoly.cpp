@@ -17,6 +17,7 @@ res_poly::res_poly(PolynomialRing *RR)
 
 res_poly::~res_poly()
 {
+  delete resterm_stash;
 }
 
 inline int res_poly::compare(const resterm *a, const resterm *b) const

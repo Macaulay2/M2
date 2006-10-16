@@ -24,6 +24,8 @@ protected:
 public:
   virtual ResolutionComputation * cast_to_ResolutionComputation() { return this;} 
 
+  virtual void remove_res();
+
   static ResolutionComputation *choose_res(const Matrix *m,
 					   M2_bool resolve_cokernel,
 					   int max_level,
@@ -58,6 +60,9 @@ public:
   // gbTrace value.
 
 };
+
+extern "C" void remove_res(void *p, void *cd);
+void intern_res(ResolutionComputation *G);
 
 
 #endif
