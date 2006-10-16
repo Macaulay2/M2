@@ -4,8 +4,8 @@
 ## Step 1. Download the desired version of Macaulay2 ##
 # from subversion, supposing the stable version is 4123.
  cd ~/M2-build
- mkdir M2-0.9.90
- cd M2-0.9.90
+ mkdir M2-0.9.93
+ cd M2-0.9.93
  svn co svn://macaulay2.math.uiuc.edu/Macaulay2/stable/2006-08-28-0.9.90 M2
  mkdir installed
  mkdir build

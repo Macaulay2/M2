@@ -6,12 +6,37 @@
 #include "res2.hpp"
 #include "gb2.hpp"
 
+static int nfinalized = 0;
+static int nremoved = 0;
+
+void remove_res(void *p, void *cd)
+{
+  ResolutionComputation *G = static_cast<ResolutionComputation *>(p);
+  nremoved++;
+  if (gbTrace>=3)
+    fprintf(stderr, "\nremoving res %d at %p\n",nremoved, G);
+  G->remove_res();
+}
+
+void intern_res(ResolutionComputation *G)
+{
+  GC_REGISTER_FINALIZER(G,remove_res,0,0,0);
+  nfinalized++;
+  if (gbTrace>=3)
+    fprintf(stderr, "\n   -- registering res %d at %p\n", nfinalized, (void *)G);
+}
+
 ResolutionComputation::ResolutionComputation()
 {
 }
 
 ResolutionComputation::~ResolutionComputation()
 {
+}
+
+void ResolutionComputation::remove_res()
+{
+  // This is the default behavior: doing nothing 
 }
 
 ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
@@ -23,6 +48,7 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
 							 int strategy
 							 )
 {
+  ResolutionComputation *C = 0;
   int origsyz;
   switch (algorithm) {
   case 1 : 
@@ -32,7 +58,8 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
 	return 0;
       }
     if (gbTrace > 0) emit_line("resolution Strategy=>1");
-    return new res_comp(m, max_level, strategy);
+    C = new res_comp(m, max_level, strategy);
+    break;
   case 0: 
     if (!resolve_cokernel)
       {
@@ -40,20 +67,27 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
 	return 0;
       }
     if (gbTrace > 0) emit_line("resolution Strategy=>0");
-    return new res2_comp(m, max_level, use_max_slanted_degree, max_slanted_degree, strategy);
+    C = new res2_comp(m, max_level, use_max_slanted_degree, max_slanted_degree, strategy);
+    break;
   case 2 : 
     origsyz = m->n_cols();
     if (gbTrace > 0) emit_line("resolution Strategy=>2");
-    return new gbres_comp(m, max_level+1, origsyz, strategy);
+    C = new gbres_comp(m, max_level+1, origsyz, strategy);
+    break;
   case 3: 
     origsyz = m->n_cols();
     if (gbTrace > 0) emit_line("resolution Strategy=>3");
-    return new gbres_comp(m, max_level+1, origsyz, strategy | STRATEGY_USE_HILB);
-
+    C = new gbres_comp(m, max_level+1, origsyz, strategy | STRATEGY_USE_HILB);
+    break;
   }
 
-  ERROR("unknown resolution algorithm");
-  return 0;
+  if (C == 0)
+    {
+      ERROR("unknown resolution algorithm");
+      return 0;
+    }
+  intern_res(C);
+  return C;
 }
 
 void ResolutionComputation::betti_init(int lo, int hi, int len, int *&bettis) const

@@ -156,12 +156,15 @@ void res_comp::remove_res_level(res_level *lev)
   deleteitem(lev);
 }
 
-res_comp::~res_comp()
+void res_comp::remove_res()
 {
   int i;
   for (i=0; i<resn.length(); i++)
     remove_res_level(resn[i]);
 
+  delete res_pair_stash;
+  delete mi_stash;
+  delete R;
   deletearray(REDUCE_exp);
   M->remove(REDUCE_mon);
   M->remove(PAIRS_mon);
@@ -169,9 +172,8 @@ res_comp::~res_comp()
 
   // base_components have all been removed by this point
   // Since they appear in resn[0].
-
-  deleteitem(R);
 }
+
 //////////////////////////////////////////////
 //  Data structure insertion and access  /////
 //////////////////////////////////////////////
