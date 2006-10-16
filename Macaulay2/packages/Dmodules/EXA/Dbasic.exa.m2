@@ -8,14 +8,14 @@ b = {1,2}
 I = gkz(A,b,Vars=>Local)
 
 Ddim I -- check it's holoomic
-Drank I  -- holonomic rank
+holonomicRank I  -- holonomic rank
 singLocus I -- singular locus
 charIdeal I -- characteristic ideal
 
 -- Appell F1
 I = AppellF1 ({2,4,-1,3/2}, Vars=>Local)
 
-Drank I
+holonomicRank I
 singLocus I
 charIdeal I
 
@@ -24,7 +24,7 @@ W = QQ[x,y,z,Dx,Dy,Dz, WeylAlgebra => {x=>Dx, y=>Dy, z=>Dz}]
 f = x^3-y^2*z^2
 I = PolyAnn f
 
-Drank I
+holonomicRank I
 singLocus I
 charIdeal I
 
@@ -33,7 +33,7 @@ W = QQ[x,y,z,Dx,Dy,Dz, WeylAlgebra => {x=>Dx, y=>Dy, z=>Dz}]
 f = x^3-y^2*z^2
 I = RatAnn f
 
-Drank I
+holonomicRank I
 singLocus I
 charIdeal I
 
@@ -41,7 +41,7 @@ f = x^2-y^3
 g = y-2*z
 J = RatAnn (g,f)
 
-Drank J
+holonomicRank J
 singLocus J
 charIdeal J
 
@@ -55,7 +55,7 @@ I' = substitute(gkz(A',b',Vars=>Local), ring I)
 M = directSum(cokernel gens I, cokernel gens I')
 
 Ddim M
-Drank M
+holonomicRank M
 singLocus M
 charIdeal M
 

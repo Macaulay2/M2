@@ -22,13 +22,13 @@ WeylClosure(Ideal, RingElement) := (I, f) -> (
      ideal gens gb J
      )
      
-WeylClosure(Ideal) := (I) -> (
+WeylClosure Ideal := I -> (
      W := ring I;
      outputList :={};
      if W.monoid.Options.WeylAlgebra === {} then
      error "Expected a Weyl algebra" ;
 
-     if Drank(I) === infinity then
+     if holonomicRank I === infinity then
      error "Weyl closure only currently implemented for finite rank ideals.";
      
      --<< "Computing singular locus" << endl;

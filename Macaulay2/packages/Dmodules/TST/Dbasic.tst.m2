@@ -9,8 +9,8 @@ I0 = ideal (0_W);
 I1 = ideal (1_W);
 assert (Ddim I0 == 2);
 assert (Ddim I1 == -1);
-assert (Drank I0 == infinity);
-assert (Drank I1 ==  0);
+assert (holonomicRank I0 == infinity);
+assert (holonomicRank I1 ==  0);
 assert (singLocus I0 == 0);
 assert (singLocus I1 == ideal(1_W));
 assert (charIdeal I0 == 0);
@@ -21,8 +21,8 @@ M = directSum(cokernel gens I0, cokernel gens I1);
 N = directSum(cokernel gens I1, cokernel gens I1);
 assert (Ddim M == 2);
 assert (Ddim N == -1);
-assert (Drank M == infinity);
-assert (Drank N == 0);
+assert (holonomicRank M == infinity);
+assert (holonomicRank N == 0);
 assert (singLocus M == 0);
 assert (singLocus N == ideal 1_W);
 assert (charIdeal M == 0);
@@ -33,11 +33,11 @@ I = AppellF1 ({2,4,-1,3/2});
 J = substitute (AppellF1 ({3,-1,7/3,-5}), ring I);
 K = directSum(cokernel gens I, cokernel gens J);
 assert (Ddim I == Ddim J);
-assert (Drank I == Drank J);
+assert (holonomicRank I == holonomicRank J);
 assert (singLocus I == singLocus J);
 assert (charIdeal I == charIdeal J);
 assert (isHolonomic K);
-assert (Drank K == Drank I + Drank J);
+assert (holonomicRank K == holonomicRank I + holonomicRank J);
 assert (singLocus K == singLocus I);
 
 w' = {0,0,1,1}
@@ -45,8 +45,8 @@ assert (inw(I,w') == inw(J,w'));
 
 -- Ranks of gkz systems
 A = matrix{{1,1,1,1},{0,1,3,4}};
-assert (Drank(gkz(A, {1,3})) == 4);
-assert (Drank(gkz(A, {1,2})) == 5);
+assert (holonomicRank(gkz(A, {1,3})) == 4);
+assert (holonomicRank(gkz(A, {1,2})) == 5);
 assert (isHolonomic gkz(A,{-1/2, 5/3}));
 
 -- Polynomial and Rational annihilators
@@ -60,10 +60,10 @@ assert ( isHolonomic I );
 assert ( isHolonomic J );
 assert ( isHolonomic K );
 assert ( isHolonomic L );
-assert ( Drank I == 1 );
-assert ( Drank J == 1 );
-assert ( Drank K == 1 );
-assert ( Drank L == 2 );
+assert ( holonomicRank I == 1 );
+assert ( holonomicRank J == 1 );
+assert ( holonomicRank K == 1 );
+assert ( holonomicRank L == 2 );
 assert ( singLocus I == ideal(1_W) );
 assert ( singLocus J == ideal(f) );
 assert ( singLocus K == ideal(f) );

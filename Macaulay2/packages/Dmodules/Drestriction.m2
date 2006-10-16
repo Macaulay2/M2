@@ -52,10 +52,14 @@ findExps := (w, k0, k1) -> (
 --------------------------------------------------------------------------------
 
 Drestrict = method( Options => {Strategy => Schreyer} )
-Drestrict(Ideal,List)  := options -> (I,w) -> (Drestriction(I,w,options))
-Drestrict(Module,List) := options -> (M,w) -> (Drestriction(M,w,options))
-Drestrict(ZZ,Ideal,List) := options->(k,I,w)->(Drestriction(k,I,w,options))
-Drestrict(ZZ,Module,List) := options->(k,M,w)->(Drestriction(k,M,w,options))
+Drestrict(Ideal,List)  := options -> (I,w) -> (     print("WARNING! Drestrict is an obsolete name for Drestriction");
+Drestriction(I,w,options))
+Drestrict(Module,List) := options -> (M,w) -> (     print("WARNING! Drestrict is an obsolete name for Drestriction");
+Drestriction(M,w,options))
+Drestrict(ZZ,Ideal,List) := options->(k,I,w)->(     print("WARNING! Drestrict is an obsolete name for Drestriction");
+Drestriction(k,I,w,options))
+Drestrict(ZZ,Module,List) := options->(k,M,w)->(     print("WARNING! Drestrict is an obsolete name for Drestriction");
+Drestriction(k,M,w,options))
 
 Drestriction = method( Options => {Strategy => Schreyer} )
 Drestriction(Ideal,List) := options -> (I,w) -> (
@@ -90,15 +94,19 @@ Drestriction(ZZ,Module,List) := options -> (k,M,w) -> (
 
 DrestrictClasses = method( Options => {Strategy => Schreyer} )
 DrestrictClasses(Ideal,List)  := options -> (I,w) -> (
+     print("WARNING! Drestrict is an obsolete name for Drestriction");
      DrestrictionClasses(I,w,options))
 
 DrestrictClasses(Module,List) := options -> (M,w) -> (
+     print("WARNING! Drestrict is an obsolete name for Drestriction");
      DrestrictionClasses(M,w,options))
 
 DrestrictClasses(Ideal,List,ZZ) := options->(I,w,k)->(
+     print("WARNING! Drestrict is an obsolete name for Drestriction");
      DrestrictionClasses(I,w,k,options))
 
 DrestrictClasses(Module,List,ZZ) := options->(M,w,k)->(
+     print("WARNING! Drestrict is an obsolete name for Drestriction");
      DrestrictionClasses(M,w,k,options))
 
 
@@ -153,15 +161,19 @@ DrestrictionClasses(ZZ,Module,List) := options -> (k,M,w) -> (
 
 DrestrictComplex = method( Options => {Strategy => Schreyer} )
 DrestrictComplex(Ideal,List)  := options -> (I,w) -> (
+     print("WARNING! Drestrict is an obsolete name for Drestriction");
      DrestrictionComplex(I,w,options))
 
 DrestrictComplex(Module,List) := options -> (M,w) -> (
+     print("WARNING! Drestrict is an obsolete name for Drestriction");
      DrestrictionComplex(M,w,options))
 
 DrestrictComplex(Ideal,List,ZZ) := options->(I,w,k)->(
+     print("WARNING! Drestrict is an obsolete name for Drestriction");
      DrestrictionComplex(I,w,k,options))
 
 DrestrictComplex(Module,List,ZZ) := options->(M,w,k)->(
+     print("WARNING! Drestrict is an obsolete name for Drestriction");
      DrestrictionComplex(M,w,k,options))
 
 
@@ -181,6 +193,7 @@ DrestrictionComplex(Module, List) := options -> (M,w) -> (
 
 DrestrictIdeal = method( Options => {Strategy => Schreyer} )
 DrestrictIdeal(Ideal,List)  := options -> (I,w) -> (
+     print("WARNING! Drestrict is an obsolete name for Drestriction");
      DrestrictionIdeal(I,w,options))
 
 DrestrictionIdeal = method( Options => {Strategy => Schreyer} )
@@ -202,9 +215,11 @@ DrestrictionIdeal(Ideal,List) := options -> (I,w) -> (
 
 DrestrictAll = method( Options => {Strategy => Schreyer} )
 DrestrictAll(Ideal,List)  := options -> (I,w) -> (
+     print("WARNING! Drestrict is an obsolete name for Drestriction");
      DrestrictionAll(I,w,options))
 
 DrestrictAll(Module,List) := options -> (M,w) -> (
+     print("WARNING! Drestrict is an obsolete name for Drestriction");
      DrestrictionAll(M,w,options))
 
 DrestrictionAll = method( Options => {Strategy => Schreyer} )
@@ -236,10 +251,14 @@ DrestrictionAll(Module, List) := options -> (M,w) -> (
 --------------------------------------------------------------------------------
 
 Dintegrate = method( Options => {Strategy => Schreyer} )
-Dintegrate(Ideal,List)  := options -> (I,w) -> (Dintegration(I,w,options))
-Dintegrate(Module,List) := options -> (M,w) -> (Dintegration(M,w,options))
-Dintegrate(ZZ,Ideal,List)  := options -> (k,I,w) -> (Dintegration(k,I,w,options))
-Dintegrate(ZZ,Module,List) := options -> (k,M,w) -> (Dintegration(k,M,w,options))
+Dintegrate(Ideal,List)  := options -> (I,w) -> (     print("WARNING! Dintegrate is an obsolete name for Dintegration");
+Dintegration(I,w,options))
+Dintegrate(Module,List) := options -> (M,w) -> (     print("WARNING! Dintegrate is an obsolete name for Dintegration");
+     Dintegration(M,w,options))
+Dintegrate(ZZ,Ideal,List)  := options -> (k,I,w) -> (     print("WARNING! Dintegrate is an obsolete name for Dintegration");
+     Dintegration(k,I,w,options))
+Dintegrate(ZZ,Module,List) := options -> (k,M,w) -> (     print("WARNING! Dintegrate is an obsolete name for Dintegration");
+     Dintegration(k,M,w,options))
 
 Dintegration = method( Options => {Strategy => Schreyer} )
 Dintegration(Ideal,List) := options -> (I,w) -> (
@@ -291,12 +310,16 @@ Dintegration(ZZ, Module, List) := options -> (k,M,w)  -> (
 
 DintegrateClasses = method( Options => {Strategy => Schreyer} )
 DintegrateClasses(Ideal,List)  := options -> (I,w) -> (
+     print("WARNING! Dintegrate is an obsolete name for Dintegration");
      DintegrationClasses(I,w,options))
 DintegrateClasses(Module,List) := options -> (M,w) -> (
+     print("WARNING! Dintegrate is an obsolete name for Dintegration");
      DintegrationClasses(M,w,options))
 DintegrateClasses(ZZ,Ideal,List) := options->(k,I,w)->(
+     print("WARNING! Dintegrate is an obsolete name for Dintegration");
      DintegrationClasses(I,w,k,options))
 DintegrateClasses(ZZ,Module,List) := options->(k,M,w)->(
+     print("WARNING! Dintegrate is an obsolete name for Dintegration");
      DintegrationClasses(M,w,k,options))
 
 DintegrationClasses = method( Options => {Strategy => Schreyer} )
@@ -382,8 +405,10 @@ DintegrationClasses(ZZ,Module,List) := options -> (k,M,w) -> (
 
 DintegrateComplex = method( Options => {Strategy => Schreyer} )
 DintegrateComplex(Ideal,List)  := options -> (I,w) -> (
+     print("WARNING! Dintegrate is an obsolete name for Dintegration");
      DintegrationComplex(I,w,options))
 DintegrateComplex(Module,List) := options -> (M,w) -> (
+     print("WARNING! Dintegrate is an obsolete name for Dintegration");
      DintegrationComplex(M,w,options))
 
 
@@ -409,6 +434,7 @@ DintegrationComplex(Module, List) := options -> (M,w) -> (
 
 DintegrateIdeal = method( Options => {Strategy => Schreyer} )
 DintegrateIdeal(Ideal,List)  := options -> (I,w) -> (
+     print("WARNING! Dintegrate is an obsolete name for Dintegration");
      DintegrationIdeal(I,w,options))
 
 DintegrationIdeal = method( Options => {Strategy => Schreyer} )
@@ -436,9 +462,11 @@ DintegrationIdeal(Ideal,List) := options -> (I,w) -> (
 
 DintegrateAll = method( Options => {Strategy => Schreyer} )
 DintegrateAll(Ideal,List)  := options -> (I,w) -> (
+     print("WARNING! Dintegrate is an obsolete name for Dintegration");
      DintegrationAll(I,w,options))
 
 DintegrateAll(Module,List) := options -> (M,w) -> (
+     print("WARNING! Dintegrate is an obsolete name for Dintegration");
      DintegrationAll(M,w,options))
 
 DintegrationAll = method( Options => {Strategy => Schreyer} )

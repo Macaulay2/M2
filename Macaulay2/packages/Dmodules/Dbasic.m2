@@ -293,10 +293,20 @@ isHolonomic Module := M -> (
 -- QUESTION: this changes the current ring?
 Drank = method()
 Drank Ideal := I -> (
-     Drank ((ring I)^1/I)
+     print("WARNING! The function Drank is phased out, use holonomicRank.");
+     holonomicRank I
+     )
+Drank Module := M -> (
+     print("WARNING! The function Drank is phased out, use holonomicRank.");
+     holonomicRank M
      )
 
-Drank Module := M -> (
+holonomicRank = method()
+holonomicRank Ideal := I -> (
+     holonomicRank ((ring I)^1/I)
+     )
+
+holonomicRank Module := M -> (
      W := ring M;
      createDpairs W;
      n := #(W.dpairInds#0);
