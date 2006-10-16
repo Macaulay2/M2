@@ -68,15 +68,14 @@ the earlier ones.
     install: configure with NTL_GMP_LIP=on NTL_STD_CXX=on NTL_NO_INIT_TRANS=on NTL_CXX_ONLY=on CC=c++
 
     library: Singular-factory (libcf libcfmem)
-    release: factory-2.0.5
+    release: factory-3.0.2
      author: G-M. Greuel <greuel@mathematik.uni-kl.de>
 	     R. Stobbe <stobbe@mathematik.uni-kl.de>
 	     J. Schmidt
 	     G. Pfister <pfister@mathematik.uni-kl.de>
 	     H. Schoenemann <hannes@mathematik.uni-kl.de>
   home page: http://www.singular.uni-kl.de/
-     get at: ftp://www.mathematik.uni-kl.de/pub/Math/Singular/SOURCES/
-	     Precompiled linux version available at http://www.math.uiuc.edu/Macaulay2/ftp-site/factory-2.0.5.tar.gz
+     get at: ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory/
       email: 
     license: GPL
  depends on: ntl gmp
@@ -87,11 +86,10 @@ the earlier ones.
 	     for good debugging: configure with option --enable-assertions and with environment CFLAGS='-O0 -g' CXXFLAGS='-g -O0 --no-rtti --no-exceptions'
 
     library: Singular-libfac
-    release: libfac-2.0.5
+    release: libfac-3.0.2
      author: Michael Messollen <mmessollen@web.de>
   home page: http://www.singular.uni-kl.de/
-     get at: ftp://www.mathematik.uni-kl.de/pub/Math/Singular/SOURCES/
-	     Precompiled linux version available at http://www.math.uiuc.edu/Macaulay2/ftp-site/libfac-2.0.5.tar.gz
+     get at: ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac/
       email: 
     license: GPL
       notes: ./configure --with-NOSTREAMIO
