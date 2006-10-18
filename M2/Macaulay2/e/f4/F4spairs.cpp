@@ -303,7 +303,7 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
 	    }
 	  /* At this point: [first,next) is the range of equal monomials */
 
-	  int junk;
+	  int32_t junk;
 	  bool inideal = montab->find_one_divisor_vp(0, chosen->quot, junk);
 	  if (!inideal)
 	    {
