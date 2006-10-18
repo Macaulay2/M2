@@ -1,5 +1,7 @@
 we need a new port to CYGWIN!
 
+we have to get rid of util/overlay.h if we are to do a cross-compile
+
 =============================================================================
 
 porting machines:
