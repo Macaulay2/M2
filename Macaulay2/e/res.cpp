@@ -126,6 +126,7 @@ res_comp::res_comp(const Matrix *m,
 void res_comp::remove_res_pair(res_pair *p)
 {
   if (p == NULL) return;
+  delete p->mi;
   R->remove(p->syz);
   R->remove(p->stripped_syz);
   M->remove(p->base_monom);
@@ -161,6 +162,9 @@ void res_comp::remove_res()
   int i;
   for (i=0; i<resn.length(); i++)
     remove_res_level(resn[i]);
+
+  for (i=0; i<search_mi.length(); i++)
+    delete search_mi[i];
 
   delete res_pair_stash;
   delete mi_stash;
