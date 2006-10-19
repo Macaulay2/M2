@@ -1,4 +1,8 @@
-we need a new port to CYGWIN!
+we need a port to CYGWIN!
+	also, look at http://www.commalg.org/m2win.shtml
+	  it includes emacs
+	  make M2 compatible with the emacs there, which uses _emacs instead
+	   of .emacs as the name of its init file
 
 we have to get rid of util/overlay.h if we are to do a cross-compile
 
