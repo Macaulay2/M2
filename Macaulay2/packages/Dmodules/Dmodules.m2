@@ -34,13 +34,12 @@ addHook(Module, symbol resolution, (o,M) -> (
 	  R := ring M;
 	  op := options R;
 	  o' := applyPairs(options Dresolution, (key,val) -> (key, o#key));
-	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then Dresolution(o',M)))
+	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then break Dresolution(o',M)))
 
-addHook(Module, symbol dim, M -> (
+addHook(Module, symbol codim, M -> (
 	  R := ring M;
 	  op := options R;
-	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then Ddim M))
-
+	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then break (dim R - Ddim M)))
 
 beginDocumentation()
 load "Dmodules/DMODdoc.m2"

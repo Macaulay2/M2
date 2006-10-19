@@ -19,7 +19,9 @@ newMonomialIdeal = (R,rawI) -> new MonomialIdeal from {
 
 monomialIdealOfRow := (i,m) -> newMonomialIdeal(ring m,rawMonomialIdeal(raw m, i))
 
-codim Module := M -> if M.cache.?codim then M.cache.codim else M.cache.codim = (
+codim Module := (cacheValue symbol codim) (M -> runHooks(Module, symbol codim, M))
+
+addHook(Module, symbol codim, M -> break (
      R := ring M;
      if M == 0 then infinity
      else if isField R then 0
@@ -29,8 +31,7 @@ codim Module := M -> if M.cache.?codim then M.cache.codim else M.cache.codim = (
 	  n := rank target p;
 	  c := infinity;
 	  for i from 0 to n-1 when c > 0 do c = min(c,codim monomialIdealOfRow(i,p));
-	  c - codim R)
-     )
+	  c - codim R)))
 
 MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> SimplePowerMethod(I,n)
 
