@@ -134,7 +134,6 @@ html TEX := str -> (
      f(///\\int\> *///,///&int;///);
      f(///\\it\> *///,//////);
      f(///\\lambda\> *///,///&lambda;///);
-     f(///\\lbrace\> *///,///{///);
      f(///\\ldots\> *///,///...///);
      f(///\\leftarrow\> *///,///&larr;///);
      f(///\\leq?\> *///,///&le;///);
@@ -157,7 +156,6 @@ html TEX := str -> (
      f(///\\prime\> *///,///&prime;///);
      f(///\\prod\> *///,///&prod;///);
      f(///\\psi\> *///,///&psi;///);
-     f(///\\rbrace\> *///,///}///);
      f(///\\rho\> *///,///&rho;///);
      f(///\\rightarrow\> *///,///&rarr;///);
      f(///\\rm\> *///,//////);
@@ -182,12 +180,14 @@ html TEX := str -> (
      f(///\\zeta\> *///,///&zeta;///);
      f(///Macaulay2///,///<i>Macaulay2</i>///);
      f(///Macaulay 2///,///<i>Macaulay 2</i>///);
-     r := unique sort select("\\\\(.|[a-zA-Z]+)?",str);
-     if #r > 0 then error("in conversion to html, unknown TeX control sequence(s): ",concatenate between(", ",r)," in string ",abbrev());
      while (
 	  oldstr = str;
      	  f(///\{([^{}]*)\}///,///\1///);
 	  oldstr != str) do null;
+     f(///\\lbrace\> *///,///{///);
+     f(///\\rbrace\> *///,///}///);
+     r := unique sort select("\\\\(.|[a-zA-Z]+)?",str);
+     if #r > 0 then error("in conversion to html, unknown TeX control sequence(s): ",concatenate between(", ",r)," in string ",abbrev());
      str)
 
 -- Local Variables:
