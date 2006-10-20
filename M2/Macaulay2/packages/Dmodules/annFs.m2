@@ -38,6 +38,7 @@ AnnIFs(Ideal, RingElement) := Ideal => (I, f) -> (
      WTUV := (coefficientRing W)[ u, v, t, dt, (entries vars W)#0,
 	  WeylAlgebra => WAopts,
 	  MonomialOrder => Eliminate 2 ];
+     WTUVtoWT := map(WT,WTUV,{0,0} | flatten entries vars WT);     
      createDpairs WTUV;
      WtoWTUV := map(WTUV, W, (vars WTUV)_{4..n+3});
      -- twist generators of I into generators of KI
@@ -55,8 +56,8 @@ AnnIFs(Ideal, RingElement) := Ideal => (I, f) -> (
 		    WTUV.dpairVars#0#i * WTUV.dpairVars#1#i
 		    )) + (first degree f - 1)*t*dt + (first degree f)}
      else {};
-     preGens := flatten entries substitute(
-	  selectInSubring(1, gens gb ideal g), WT);
+     preGens := apply(flatten entries selectInSubring(1, gens gb ideal g), 
+	  a->WTUVtoWT a) ;
      use WT;
      s := symbol s;
      WS := (coefficientRing W)[(entries vars W)#0, s,
