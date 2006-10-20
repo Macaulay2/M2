@@ -15,6 +15,7 @@ TEST /// input "Dmodules/TST/localCohom.tst.m2" ///
 TEST /// input "Dmodules/TST/makeCyclic.tst.m2" ///
 TEST /// input "Dmodules/TST/paramBpoly.tst.m2" ///
 TEST /// input "Dmodules/TST/stafford.tst.m2" ///
+TEST /// input "Dmodules/TST/CC.tst.m2" ///
 
 needs "Dmodules/Dloadfile.m2";
 document {
@@ -79,7 +80,9 @@ document {
 	  TO {"deRham", " -- deRham cohomology"},
 	  TO {"PolySols", " -- polynomial solutions of finite rank systems"},
 	  TO {"RatSols", " -- rational solutions of finite rank systems"},
-	  TO {"diffOps", " -- differential operators on affine varieties"}
+	  TO {"diffOps", " -- differential operators on affine varieties"},
+	  {TO "populateCechComplexCC", ", ", TO "pruneCechComplexCC", 
+	       " -- characteristic cycles of local cohomology"}
 	  },
      HEADER3 "Programming aids:",
      UL{TO {"createDpairs", " -- tags coordinate and derivation variables"},
@@ -313,6 +316,13 @@ document {
 document {
      Key => {(getIntRoots, RingElement), getIntRoots},
      Headline => "get integer roots of a b-function",
+     Usage => "getIntRoots b",
+     Inputs => {
+     	  "b" => "the output of one of the b-function routines" 
+	  },
+     Outputs => {
+	  List => {"the list of the integer roots of ", TT "b"}   
+	  },
      SeeAlso => {"globalBFunction", "bFunction"}
      }
 
