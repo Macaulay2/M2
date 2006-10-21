@@ -395,7 +395,7 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> ( -- retur
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
      ldpkg := if pkgname != "Macaulay2" then "-e 'needsPackage \""|pkgname|"\"'" else "";
-     args := "--silent --print-width 77 --stop --int -e errorDepth=0" | (if usermode then "" else " -q") | " " | ldpkg;
+     args := "--silent --print-width 77 --stop --int" | (if usermode then "" else " -q") | " " | ldpkg;
      cmdname := commandLine#0;
      if ulimit === null then (
 	  ulimit = utest " -t 80" | utest " -m 200000"| utest " -v 200000";
