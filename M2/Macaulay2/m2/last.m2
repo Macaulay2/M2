@@ -30,6 +30,14 @@ addStartFunction( () -> if sourceHomeDirectory =!= null then Core#"source direct
 
 addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then makePackageIndex() )
 
+addStartFunction( () -> if not noinitfile then (
+	  -- remove empty directories and dead symbolic links from the local application directory
+	  apply(drop(findFiles (applicationDirectory() | "local/"),1),
+	       fn -> (
+		    if isDirectory fn and # readDirectory fn == 2 then removeDirectory fn else
+		    if readlink fn =!= null and not fileExists fn then removeFile fn
+		    ))))
+
 addStartFunction( () -> if dumpdataFile =!= null and fileExists dumpdataFile then (
 	  dumptime := fileTime dumpdataFile;
 	  newfiles := select(values loadedFiles, fn -> dumptime < fileTime fn);
