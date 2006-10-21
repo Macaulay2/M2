@@ -32,11 +32,23 @@ addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then make
 
 addStartFunction( () -> if not noinitfile then (
 	  -- remove empty directories and dead symbolic links from the local application directory
-	  apply(drop(findFiles (applicationDirectory() | "local/"),1),
-	       fn -> (
+	  dir := applicationDirectory() | "local/";
+	  apply(findFiles dir,
+	       fn -> if fn =!= dir then (
 		    if isDirectory fn and # readDirectory fn == 2 then removeDirectory fn else
 		    if readlink fn =!= null and not fileExists fn then removeFile fn
 		    ))))
+
+addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then (
+	  if debugLevel > 0 then stderr << "make symbolic links from the local application documentation directory to our installed documentation" << endl;
+	  loc := applicationDirectory() | "local/";
+	  ins := prefixDirectory;
+	  scan(readDirectory (ins|LAYOUT#"docpackages"), fn -> if fn =!= "." and fn =!= ".." then (
+		    tar := loc|LAYOUT#"docpackages"|fn;
+		    src := ins|LAYOUT#"docpackages"|fn;
+		    if isDirectory realpath src and readlink tar =!= src then (
+			 if readlink tar =!= null then removeFile tar;
+			 if not fileExists tar then symlinkFile(src,tar))))))
 
 addStartFunction( () -> if dumpdataFile =!= null and fileExists dumpdataFile then (
 	  dumptime := fileTime dumpdataFile;
