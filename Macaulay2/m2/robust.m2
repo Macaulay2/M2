@@ -20,10 +20,10 @@ robustNet := y -> (
 truncNet := (wid,ht,s) -> (
      if wid > 0 and width s > wid then (
 	  s = stack apply( unstack s, l -> if width l > wid then substring(l,0,wid-1) else l);
-	  s = s | (stack ( height s + depth s : "$" ))^(height s - 1));
+	  s = s | (stack ( height s + depth s : "." ))^(height s - 1));
      if ht > 0 and height s + depth s  > ht then (
 	  s = stack take(unstack s,ht-1);
-	  s = s || concatenate(width s : "$"));
+	  s = s || concatenate(width s : "."));
      s)
 truncString := (wid,s) -> if wid > 0 and width s > wid then concatenate(substring(s,0,wid-1),"$") else s
 checkNet    := n -> if instance(n, Net   ) then n else error "didn't format correctly"
