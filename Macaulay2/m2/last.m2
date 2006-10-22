@@ -40,7 +40,6 @@ addStartFunction( () -> if not noinitfile then (
 		    ))))
 
 addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then (
-	  if debugLevel > 0 then stderr << "make symbolic links from the local application documentation directory to our installed documentation" << endl;
 	  loc := applicationDirectory() | "local/";
 	  ins := prefixDirectory;
 	  scan(readDirectory (ins|LAYOUT#"docpackages"), fn -> if fn =!= "." and fn =!= ".." then (
