@@ -64,7 +64,7 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      then printErrorMessageE(f,"no method for '" + methodname.symbol.word.name + "'")
      else applyEE(method,g)
      );
-readeval4(file:TokenFile,printout:bool,stopIfError:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool):Expr := (
+readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool):Expr := (
      lastvalue := nullE;
      while true do (
      	  if printout then setLineNumber(lineNumber + 1);
@@ -164,7 +164,7 @@ readeval3(file:TokenFile,printout:bool,stopIfError:bool,dc:DictionaryClosure,ret
 	setGlobalVariable(currentFileName,Expr(file.posFile.file.filename));
 	setGlobalVariable(currentFileDirectory,Expr(dirname(file.posFile.file.filename)));
         currentPosFile = file.posFile;
-	ret := readeval4(file,printout,stopIfError,dc.dictionary,returnLastvalue,stopIfBreakReturnContinue);
+	ret := readeval4(file,printout,dc.dictionary,returnLastvalue,stopIfBreakReturnContinue);
       setGlobalVariable(currentFileDirectory,savecd);
       setGlobalVariable(currentFileName,savecf);
       currentPosFile = savepf;
@@ -199,7 +199,7 @@ topLevelPrompt():string := (
      else "\n<--bad prompt--> : " -- unfortunately, we are not printing the error message!
      );
 
-loadprintstdin(stopIfError:bool,dc:DictionaryClosure,stopIfBreakReturnContinue:bool):Expr := (
+loadprintstdin(dc:DictionaryClosure,stopIfBreakReturnContinue:bool):Expr := (
      when openTokenFile("-")
      is e:errmsg do buildErrorPacket(e.message)
      is file:TokenFile do (
@@ -353,7 +353,7 @@ debugger(f:Frame,c:Code):Expr := (
 		r := applyES(debuggerHook,emptySequence);
 		when r is Error do return r else nothing;
 		);
-	   ret := loadprintstdin(stopIfError, newStaticLocalDictionaryClosure(localDictionaryClosure(f)),true);
+	   ret := loadprintstdin(newStaticLocalDictionaryClosure(localDictionaryClosure(f)),true);
 	 decrementInterpreterDepth();
        setGlobalVariable(errorCodeS,oldDebuggerCode);
      setDebuggingMode(true);
