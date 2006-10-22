@@ -1,0 +1,6 @@
+netTable
+
+- change name to netList
+- change default for Boxes to true
+- allow any list - if an element is a list, its elements go into a row of boxes
+		 - else, it goes into the first box of the row
