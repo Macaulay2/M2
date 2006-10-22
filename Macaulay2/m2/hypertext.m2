@@ -212,8 +212,11 @@ info TABLE := x -> (
 
 net TABLE :=  x -> (
      (op,ag) := override(options TABLE, toSequence x);
-     netTable(Boxes => op#"class" === "examples", toList \ toList ag)
-     )
+     save := printWidth;
+     printWidth = printWidth - 2;
+     r := netTable(Boxes => op#"class" === "examples", toList \ toList ag);
+     printWidth = save;
+     r)
 
 shorten := s -> (
      while #s > 0 and s#-1 == "" do s = drop(s,-1);
