@@ -126,7 +126,9 @@ symlinkDirectory(String,String) := opts -> (src,dst) -> (
 	       tarf := transform srcf;
 	       if tarf#-1 === "/" 
 	       then (
-		    if not isDirectory tarf then mkdir tarf 
+		    tarf' := substring(tarf, 0, #tarf-1);
+		    if readlink tarf' =!= null then removeFile tarf'; -- don't traverse symbolic links in the target: and remove them.
+		    if not isDirectory tarf then mkdir tarf;
 		    )
 	       else (
      		    if not isRegularFile srcf 
