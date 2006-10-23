@@ -44,8 +44,8 @@ document {
      ideal of the Schubert variety indexed by sigma in the Grassmannian of projective 
      $k$-planes in $P^n$.///,
      PARA {
-     	  "For example, the ideal of the Schubert variety indexed by ", TT "(1,3,4)", 
-     	  " in the Grassmannian of projective planes in ", TT "P^5", " is displayed in the following example."
+     	  TEX ///For example, the ideal of the Schubert variety indexed by $\{1,2,4\}$ in the
+	  Grassmannian of projective planes in $P^4$ is displayed in the following example.///
      	  },
      EXAMPLE lines ///
 	  I = Schubert(2,4,{1,2,4},CoefficientRing => QQ)
