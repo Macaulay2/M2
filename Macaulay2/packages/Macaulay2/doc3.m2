@@ -840,9 +840,9 @@ document { Key => {(searchPath, List, String), searchPath},
      Inputs => { "pa" => {"a list of strings giving paths to directories.  Each one ends with a slash."}, "fn" },
      Outputs => {{"a list of those directories in ", TT "pa", " containing files named ", TT "fn" }}}
 
-document { Key => {(netTable, List),netTable},
+document { Key => {(netList, List),netList},
      Headline => "a table of boxes",
-     Usage => "netTable v",
+     Usage => "netList v",
      Inputs => { 
 	  "v" => {"a list of lists of things to be converted to nets and displayed as a table in a net"},
 	  Boxes => Boolean => {"whether to draw boxes around the individual nets"},
@@ -856,11 +856,11 @@ document { Key => {(netTable, List),netTable},
 	       options"}},
      EXAMPLE lines ///
 	  f = {{"hi there","foo"},{-3, 2^40}}
-	  netTable f
-	  netTable(f,Boxes=>true)
-	  netTable(f,Boxes=>true,HorizontalSpace=>1,VerticalSpace=>1)
-	  netTable(f,Boxes=>true,Alignment=>Center)
-	  netTable(f,Boxes=>true,BaseRow=>1)
+	  netList f
+	  netList(f,Boxes=>false)
+	  netList(f,Boxes=>true,HorizontalSpace=>1,VerticalSpace=>1)
+	  netList(f,Boxes=>true,Alignment=>Center)
+	  netList(f,Boxes=>true,BaseRow=>1)
      ///}
 
 document { Key => cache,
