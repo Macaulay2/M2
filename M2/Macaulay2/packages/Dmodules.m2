@@ -1,3 +1,11 @@
+newPackage("Dmodules", Version => "1.0",
+     Headline => "functions for computations with D-modules",
+     Authors => {
+	  {Name => "Anton Leykin", Email => "leykin@math.uic.edu"},
+	  {Name => "Harrison Tsai"}
+	  }
+     )
+
 load "Dmodules/Dmodules.m2"
 
 -- Local Variables:
