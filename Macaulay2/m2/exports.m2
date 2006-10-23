@@ -828,7 +828,7 @@ export {
 	symbol needsPackage,
 	symbol net,
 	symbol netRows,
-	symbol netTable,
+	symbol netList,
 	symbol new,
 	symbol newClass,
 	symbol newCoordinateSystem,

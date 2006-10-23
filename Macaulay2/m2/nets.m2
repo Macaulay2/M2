@@ -203,8 +203,8 @@ texMath Net := n -> concatenate (
 
 -----------------------------------------------------------------------------
 
-netTable = method(Options => {
-	  Boxes => false,
+netList = method(Options => {
+	  Boxes => true,
 	  BaseRow => 0,
 	  HorizontalSpace => 0,
 	  VerticalSpace => 0,
@@ -219,11 +219,11 @@ alignmentFunctions := new HashTable from {
      Center => centerString
      }
 
-netTable List := o -> (x) -> (
-     if not all(x, row -> instance(row,List)) then error "netTable: expected a list of lists";
+netList List := o -> (x) -> (
+     x = apply(x, row -> if instance(row,List) then row else {row});
      (br,hs,vs,bx,algn) := (o.BaseRow,o.HorizontalSpace,o.VerticalSpace,o.Boxes,splice o.Alignment);
      if #x == 0 then return if bx then stack(2 : "++") else stack();
-     if br < 0 or br >= #x then error "netTable: base row out of bounds";
+     if br < 0 or br >= #x then error "netList: base row out of bounds";
      x = apply(x, row->apply(row, net));
      n := maxN(length \ x);
      if n == 0 then return if bx then stack(2 : "++") else stack();

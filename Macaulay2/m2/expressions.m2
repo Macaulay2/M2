@@ -739,7 +739,7 @@ net SparseMonomialVectorExpression := v -> (
 	  )
      )
 
-net Table := x -> netTable (toList x, HorizontalSpace=>2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center)
+net Table := x -> netList (toList x, HorizontalSpace=>2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center)
 
 net MatrixExpression := x -> (
      if # x === 0 or # (x#0) === 0 then "|  |"
