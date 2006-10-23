@@ -206,7 +206,7 @@ texMath TABLE := x -> concatenate (
 info TABLE := x -> (
      s := printWidth;
      if printWidth > 2 then printWidth = printWidth - 2;
-     ret := netTable(Boxes=>true, applyTable(toList \ noopts \\ toList x,info));
+     ret := netList(Boxes=>true, applyTable(toList \ noopts \\ toList x,info));
      printWidth = s;
      ret)
 
@@ -214,7 +214,7 @@ net TABLE :=  x -> (
      (op,ag) := override(options TABLE, toSequence x);
      save := printWidth;
      printWidth = printWidth - 2;
-     r := netTable(Boxes => op#"class" === "examples", toList \ toList ag);
+     r := netList(Boxes => op#"class" === "examples", toList \ toList ag);
      printWidth = save;
      r)
 

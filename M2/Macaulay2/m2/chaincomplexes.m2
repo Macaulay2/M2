@@ -651,7 +651,7 @@ net BettiTally := v -> (
      v = applyTable(v, bt -> if bt === 0 then "." else toString bt);
      v = prepend(toString \ toList (mincol .. maxcol), v);
      v = apply(leftside,v,prepend);
-     netTable(v, Alignment => Right, HorizontalSpace => 1, BaseRow => 1))
+     netList(v, Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false))
 
 betti = method(TypicalValue => BettiTally)
      -- returns a hash table with pairs of the form (i,d) => n

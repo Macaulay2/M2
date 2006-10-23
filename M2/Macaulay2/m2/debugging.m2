@@ -145,7 +145,7 @@ abbreviate := x -> (
 listSymbols = method()
 listSymbols Dictionary := d -> listSymbols values d
 listSymbols List := x -> (
-     netTable(HorizontalSpace => 1, prepend(
+     netList(Boxes=>false, HorizontalSpace => 1, prepend(
 	  {"symbol" || "------","", "class" || "-----", "", "value" || "-----", "location of symbol" || "------------------"},
 	  apply (x, s -> {toString s,":", robust class value s, "--", abbreviate value s, symbolLocation s}))))
 
