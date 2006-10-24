@@ -125,8 +125,8 @@ document {
 	form of $f$.///,
      PARA{},
      "For an example, consider symmetric polynomials.  The normal form of the
-     symmetric polynomial f with respect
-     to the ideal I below writes f in terms of the elementary symmetric functions a,b,c.",
+     symmetric polynomial ", TT "f", " with respect
+     to the ideal ", TT "I", " below writes ", TT "f", " in terms of the elementary symmetric functions ", TT "a,b,c", ".",
      EXAMPLE lines ///
        R = QQ[x,y,z,a,b,c,MonomialOrder=>Eliminate 3];
        I = ideal(a-(x+y+z), b-(x*y+x*z+y*z), c-x*y*z)
