@@ -18,7 +18,7 @@ o5 = {x, y, z}
 
 o5 : List
 
-i6 : allGenerators B
+i6 : generators(B, CoefficientRing => QQ)
 
 o6 = {x, y, z, t}
 

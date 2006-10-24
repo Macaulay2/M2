@@ -21,8 +21,8 @@ o3 : R-module, subquotient of R
 
 i4 : H1 = prune H
 
-o4 = cokernel {0} | 0  -y |
-              {1} | -y x  |
+o4 = cokernel | x2 -y |
+              | -y x  |
 
                             2
 o4 : R-module, quotient of R

@@ -34,7 +34,7 @@ i7 : S = ZZ[a][b,c];
 
 i8 : h = map(S,S,matrix {{b,c,2*a}})
 
-o8 = map(S,S,{b, c})
+o8 = map(S,S,{b, c, 2a})
 
 o8 : RingMap S <--- S
 
@@ -47,7 +47,7 @@ o9 : S
 
 i10 : k = map(S,S,matrix {{c,b}})
 
-o10 = map(S,S,{c, b})
+o10 = map(S,S,{c, b, a})
 
 o10 : RingMap S <--- S
 

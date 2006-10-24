@@ -14,7 +14,7 @@ o4 : RingMap B <--- A
 
 i5 : map(A,B)
 
-o5 = map(A,B,{0, 0})
+o5 = map(A,B,{0, 0, a, b, c, d, e})
 
 o5 : RingMap A <--- B
 
@@ -26,19 +26,19 @@ o6 : RingMap B <--- C
 
 i7 : G = map(C,B)
 
-o7 = map(C,B,{x, y})
+o7 = map(C,B,{x, y, a, b, c, d, e})
 
 o7 : RingMap C <--- B
 
 i8 : F*G
 
-o8 = map(B,B,{x, y})
+o8 = map(B,B,{x, y, a, b, c, d, e})
 
 o8 : RingMap B <--- B
 
 i9 : oo == id_B
 
-o9 = true
+o9 = false
 
 i10 : G*F
 
@@ -48,7 +48,7 @@ o10 : RingMap C <--- C
 
 i11 : oo == id_C
 
-o11 = true
+o11 = false
 
 i12 : D = QQ[x,y,z];
 
@@ -62,7 +62,7 @@ o14 : RingMap E <--- D
 
 i15 : G = map(D,E)
 
-o15 = map(D,E,{x, 0, z})
+o15 = map(D,E,{x, y, z})
 
 o15 : RingMap D <--- E
 

@@ -4,7 +4,7 @@ i1 : S = ZZ/2[x,y,z];
 
 i2 : ideal S
 
-o2 = ideal 0
+o2 = 0
 
 o2 : Ideal of S
 

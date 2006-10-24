@@ -2,6 +2,6 @@
 
 i1 : homeDirectory
 
-o1 = /home/dan/
+o1 = /home/25/dan/
 
 i2 : 

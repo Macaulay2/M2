@@ -3,4 +3,4 @@ gens A
 kk = toField(QQ[t]/(t^3-t-1));
 B = kk[x,y,z];
 generators B
-allGenerators B
+generators(B, CoefficientRing => QQ)

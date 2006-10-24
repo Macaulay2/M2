@@ -18,7 +18,7 @@ o3 = S
 
 o3 : PolynomialRing
 
-i4 : allGenerators S
+i4 : generators(S,CoefficientRing=>ZZ)
 
 o4 = {x, y, z, a, b, c, d}
 
