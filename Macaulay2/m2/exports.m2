@@ -1104,10 +1104,10 @@ export {
 	symbol ~
 }
 
+exportMutable toList (a .. Z)
+
 exportMutable {
 	symbol GF$a,
-	symbol S,
-	symbol T,
 	symbol applicationDirectorySuffix,
 	symbol backtrace,
 	symbol backupFileRegexp,
@@ -1125,7 +1125,6 @@ exportMutable {
 	symbol fileExitHooks,
 	symbol gbTrace,
 	symbol homeDirectory,
-	symbol i,
 	symbol interpreterDepth,
 	symbol lineNumber,
 	symbol loadDepth,
@@ -1134,17 +1133,14 @@ exportMutable {
 	symbol oo,
 	symbol ooo,
 	symbol oooo,
-	symbol p,
 	symbol path,
 	symbol prefixDirectory,
 	symbol printWidth,
 	symbol printingPrecision,
 	symbol recursionLimit,
 	symbol sourceHomeDirectory,
-	symbol stopIfError,
-	symbol w
+	symbol stopIfError
 	}
-   
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
