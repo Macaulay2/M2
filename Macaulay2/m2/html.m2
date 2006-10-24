@@ -1072,7 +1072,8 @@ makePackageIndex List := path -> (
 	  BODY { 
 	       -- buttonBar tag, HR{},
 	       PARA {
-		    "This is the top level documentation page for Macaulay 2 and its packages."
+		    "This is the top level documentation page for Macaulay 2 and its packages.
+		    Bookmark this page for future reference."
 		    },
 	       HEADER3 "Documentation",
 	       UL splice {
