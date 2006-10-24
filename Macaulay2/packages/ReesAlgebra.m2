@@ -519,12 +519,12 @@ document {
 
  
 document {
-     Key => {distinguished, (distinguished,Ideal)},
+     Key => {(distinguished,Ideal), distinguished},
      Headline => "compute the distinguished subvarieties of a variety",
      Usage => "distinguished I" ,
      Inputs =>  {"I" => {"an ", ofClass Ideal, "over a ", 
 	  ofClass PolynomialRing}},
-     Outputs => {{"a ", ofClass List, " of ideals defining the components 
+     Outputs => {{"a ", ofClass List, " of ideals defining the components
 	  of the support of the normal cone over ", TT "I"}},
      "Stuff."
      }
