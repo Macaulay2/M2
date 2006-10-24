@@ -6,20 +6,20 @@ o1 = {{hi there, foo}, {-3, 1099511627776}}
 
 o1 : List
 
-i2 : netTable f
-
-o2 = hi therefoo          
-     -3      1099511627776
-
-i3 : netTable(f,Boxes=>true)
+i2 : netList f
 
      +--------+-------------+
-o3 = |hi there|foo          |
+o2 = |hi there|foo          |
      +--------+-------------+
      |-3      |1099511627776|
      +--------+-------------+
 
-i4 : netTable(f,Boxes=>true,HorizontalSpace=>1,VerticalSpace=>1)
+i3 : netList(f,Boxes=>false)
+
+o3 = hi therefoo          
+     -3      1099511627776
+
+i4 : netList(f,Boxes=>true,HorizontalSpace=>1,VerticalSpace=>1)
 
      +----------+---------------+
      |          |               |
@@ -31,7 +31,7 @@ o4 = | hi there | foo           |
      |          |               |
      +----------+---------------+
 
-i5 : netTable(f,Boxes=>true,Alignment=>Center)
+i5 : netList(f,Boxes=>true,Alignment=>Center)
 
      +--------+-------------+
 o5 = |hi there|     foo     |
@@ -39,7 +39,7 @@ o5 = |hi there|     foo     |
      |   -3   |1099511627776|
      +--------+-------------+
 
-i6 : netTable(f,Boxes=>true,BaseRow=>1)
+i6 : netList(f,Boxes=>true,BaseRow=>1)
 
      +--------+-------------+
      |hi there|foo          |
