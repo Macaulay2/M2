@@ -71,19 +71,12 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 			      )
 			 )
 		    else (
-			 -- we should look for variables with the same symbol, or failing that, with the same name
+			 -- we should look for variables with the same symbol
 			 justonce := r -> (
 			      if record#?r then error "map: multiple variables would map to the same variable, by name";
 			      record#r = true;
 			      r);
-			 mm := matrix(R, {apply(A.generatorSymbols,
-					s -> (
-					     if R.?indexSymbols and R.indexSymbols#?s then justonce R.indexSymbols#s
-					     else (
-						  nm := toString s;
-						  if R.?indexStrings and R.indexStrings#?nm then justonce R.indexStrings#nm else 0_R
-						  )
-					     ))});
+			 mm := matrix(R, {apply(A.generatorSymbols, s -> if R.?indexSymbols and R.indexSymbols#?s then justonce R.indexSymbols#s)});
 			 if instance(A,GaloisField) then (
 			      -- the engine wants to know where the primitive element will go
 			      A' = ambient A;
