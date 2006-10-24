@@ -40,8 +40,9 @@ addStartFunction( () -> if not noinitfile then (
 		    ))))
 
 addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then (
-	  loc := applicationDirectory() | "local/";
-	  ins := prefixDirectory;
+	  ins := prefixDirectory;			    -- installed doc
+	  loc := applicationDirectory() | "local/";	    -- user's "local" application directory doc
+	  makeDirectory(loc|LAYOUT#"docpackages");
 	  scan(readDirectory (ins|LAYOUT#"docpackages"), fn -> if fn =!= "." and fn =!= ".." then (
 		    tar := loc|LAYOUT#"docpackages"|fn;
 		    src := ins|LAYOUT#"docpackages"|fn;
