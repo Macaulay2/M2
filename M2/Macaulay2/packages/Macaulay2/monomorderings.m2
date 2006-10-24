@@ -467,7 +467,7 @@ document {
 	  "try a^(2^15-1) else \"failed\"",
 	  "a^(2^7-1)"
 	  },
-     "Any of these versions of ", TT "Lex", " order may be combined with
+     "Any of these versions of ", TT "Lex", " order may be combined, for example, with
      a weight order given by a weight vector: x^A > x^B if
      weight(x^A) > weight(x^B) or if weight(x^A) = weight(x^B)
      and if the FIRST non-zero entry of the vector of integers A-B is POSITIVE.",
@@ -517,8 +517,9 @@ document {
      EXAMPLE {
 	  "leadTerm(1,ideal(f))"
 	  },
-     "The weight order may be combined with further weight vectors,
-     or with ", TT "Lex", ".",
+     "The weight order may be combined with further ordering elements to break ties.
+     In the following example, we use a second weight vector to break
+     ties under first weight vector.",
      EXAMPLE {
 	  "R = QQ[a..d,MonomialOrder=>{Weights => {1,2,3,4}, Weights => {2,4,2,1}}];",
 	  "f = a^6 + b^3+ c^2",
@@ -761,11 +762,11 @@ document {
      and also for Groebner basis computations.",
      PARA{},
      "In the most general setting, a monomial ordering is given by a list of
-     permissible elements, listed and described below.  Monomials are compared 
-     using the first element of the list.  If they are indistinguishable using this
-     first element, they are compared using the second element, and so on.  At the
-     end, if necessary, the graded reverse lexicographic order is used to compare the
-     monomials.  For examples, see below, or see ", TO "monomial orderings", ".",
+     ", EM "ordering tests", ", of various types listed and described below, each of which provides a partial ordering
+     on the monomials.  The ordering tests are applied sequentially, starting with the first one, until 
+     one monomial is judged greater than the other.
+     At the end, if necessary, the graded reverse lexicographic order is used to compare the monomials.
+     For examples, see below, or see ", TO "monomial orderings", ".",
      PARA{},
      "Permissible elements:",
      UL {
