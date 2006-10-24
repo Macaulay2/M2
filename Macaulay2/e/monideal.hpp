@@ -84,7 +84,7 @@ private:
 
 public:
   MonomialIdeal(const PolynomialRing *RR, stash *mi_stash=0);
-  virtual ~MonomialIdeal() { delete_mi_node(mi); if ((count % 2) == 1) delete mi_stash; }
+  virtual ~MonomialIdeal() { remove_MonomialIdeal(); }
   int length_of() const { return count/2; }
 
   MonomialIdeal(const PolynomialRing *R, queue<Bag *> &elems, stash *mi_stash=0);
@@ -92,6 +92,7 @@ public:
 
   MonomialIdeal * copy() const;
 
+  void remove_MonomialIdeal(); // frees all of the internal things
   const int *first_elem() const; // returns varpower
   const int *second_elem() const; // returns varpower
 

@@ -78,6 +78,7 @@ void partition_table::reset(int nvars)
     }
 }
 void partition_table::partition(MonomialIdeal * &I, array<MonomialIdeal *> &result)
+  // consumes and frees I
 {
   int k;
   reset(I->topvar()+1);
@@ -122,6 +123,8 @@ void partition_table::partition(MonomialIdeal * &I, array<MonomialIdeal *> &resu
       int loc = -1-dad[representative(v)];
       result[first+loc]->insert_minimal(b);
     }
+
+  delete I;
 }
 
 static int popular_var(const MonomialIdeal &I, 
@@ -247,7 +250,7 @@ static void iquotient_and_sum(MonomialIdeal &I,
     if (bins[j] != NULL)
       {
 	while (bins[j]->remove(b)) quot->insert(b);
-	deleteitem(bins[j]);
+	delete bins[j];
       }
 }
 
@@ -350,7 +353,9 @@ hilb_comp::~hilb_comp()
       
       R->remove(p->h0);
       R->remove(p->h1);
-      deleteitem(p);			// This will wipe out the monomial ideals
+      for (int i=0; i<p->monids.length(); i++)
+	delete p->monids[i];
+      delete p;
     }
 
   R->remove(result_poincare);
@@ -456,9 +461,9 @@ void hilb_comp::recurse(MonomialIdeal *&I, const int *pivot_vp)
   current->h0 = R->from_int(0);
   M->degree_of_varpower(pivot_vp, LOCAL_deg1);
   current->h1 = R->make_flat_term(one, LOCAL_deg1); // t^(deg vp)
-  MonomialIdeal *quot = new MonomialIdeal(S, mi_stash);
-  MonomialIdeal *sum = new MonomialIdeal(S, mi_stash);
+  MonomialIdeal *quot, *sum;
   iquotient_and_sum(*I, pivot_vp, quot, sum, mi_stash);
+  delete I;
   part_table.partition(sum, current->monids);
   current->first_sum = current->monids.length() - 1;
   part_table.partition(quot, current->monids);
@@ -493,6 +498,7 @@ void hilb_comp::do_ideal(MonomialIdeal *I)
 	  G = R->make_flat_term(one, LOCAL_deg1);
 	  R->add_to(F,G);
 	}
+      delete I;
     }
   else 
     {
@@ -526,6 +532,7 @@ void hilb_comp::do_ideal(MonomialIdeal *I)
 		R->remove(H);
 	      }
 	  R->subtract_to(F, G);
+	  delete I;
 	}
       else
 	{
@@ -611,7 +618,7 @@ RingElement *hilb_comp::hilbertNumerator(const Matrix *M)
   int retval = hf->calc(-1);
   if (retval != COMP_DONE) return 0;
   RingElement *result = hf->value();
-  deleteitem(hf);
+  delete hf;
   return result;
 }
 
@@ -634,7 +641,7 @@ RingElementOrNull *hilb_comp::hilbertNumerator(const MonomialIdeal *I)
   int retval = hf->calc(-1);
   if (retval != COMP_DONE) return 0;
   RingElement *result = hf->value();
-  deleteitem(hf);
+  delete hf;
   return result;
 }
 

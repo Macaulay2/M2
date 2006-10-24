@@ -22,6 +22,7 @@ MinimalPrimes::~MinimalPrimes()
   for (int i=0; i<=nvars+1; i++)
     if (exps[i] != 0) deletearray(exps[i]);
   deletearray(exps);
+  delete primes;
   delete mi;
 }
 
