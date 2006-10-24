@@ -6,6 +6,16 @@
 
 extern int gbTrace;
 
+static long nmonideals_alloc = 0;
+static long nmonideals_freed = 0;
+
+void MonomialIdeal::remove_MonomialIdeal()
+{
+  nmonideals_freed++;
+  delete_mi_node(mi); 
+  if ((count % 2) == 1) delete mi_stash;
+}
+
 Nmi_node *MonomialIdeal::new_mi_node(int v, int e, Nmi_node *d)
 {
   Nmi_node *p = reinterpret_cast<Nmi_node *>(mi_stash->new_elem());
@@ -48,6 +58,7 @@ void MonomialIdeal::delete_mi_node(Nmi_node *p)
 MonomialIdeal::MonomialIdeal(const PolynomialRing *RR, stash *mi_stash0) 
   : R(RR), mi(0), count(0), mi_stash(mi_stash0)
 {
+  nmonideals_alloc++;
   if (mi_stash == 0)
     {
       count = 1;
@@ -58,6 +69,7 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *RR, stash *mi_stash0)
 MonomialIdeal::MonomialIdeal(const PolynomialRing *R0, queue<Bag *> &elems, queue<Bag *> &rejects, stash *mi_stash0)
   : R(R0), mi(0), count(0), mi_stash(mi_stash0)
 {
+  nmonideals_alloc++;
   if (mi_stash == 0)
     {
       count = 1;
@@ -96,6 +108,7 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0, queue<Bag *> &elems, queu
 MonomialIdeal::MonomialIdeal(const PolynomialRing *R0, queue<Bag *> &elems, stash *mi_stash0)
   : R(R0), mi(0), count(0), mi_stash(mi_stash0)
 {
+  nmonideals_alloc++;
   if (mi_stash == 0)
     {
       count = 1;

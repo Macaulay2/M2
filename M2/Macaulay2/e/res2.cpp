@@ -267,15 +267,6 @@ enum ComputationStatusCode res2_comp::do_pairs_by_degree(int level, int degree)
                   if (result != COMP_COMPUTING) \
 		     {set_status(result); return;}}
 
-#if 0
-int res2_comp::calc(const int *DegreeLimit, 
-		   int LengthLimit, 
-		   int ArgSyzygyLimit,
-		   int ArgPairLimit,
-		   int /*SyzLimitValue*/,
-		   int /*SyzLimitLevel*/,
-		   int /*SyzLimitDegree*/)
-#endif
 void res2_comp::start_computation()
 {
   int n, level;
@@ -445,6 +436,9 @@ void res2_comp::initialize(const Matrix *mat,
   K = P->Ncoeffs();
   generator_matrix = mat;
 
+  res2_pair_stash = new stash("res2pair", sizeof(res2_pair));
+  mi_stash = new stash("res2 minodes", sizeof(Nmi_node));
+
   length_limit = -3;  // The resolution is always kept at least in range
                       // 0 .. length_limit + 2.
   increase_level(LengthLimit);
@@ -587,6 +581,7 @@ void res2_comp::remove_res2_pair(res2_pair *p)
 {
   if (p == NULL) return;
   R->remove(p->syz);
+  delete p->mi;
   deleteitem(p);
 }
 
@@ -602,7 +597,7 @@ void res2_comp::remove_res2_level(res2_level *lev)
   deleteitem(lev);
 }
 
-res2_comp::~res2_comp()
+void res2_comp::remove_res()
 {
   int i;
   for (i=0; i<resn.length(); i++)
@@ -612,7 +607,14 @@ res2_comp::~res2_comp()
   M->remove(REDUCE_mon);
   M->remove(PAIRS_mon);
   M->remove(MINIMAL_mon);
-  deleteitem(R);
+  delete res2_pair_stash;
+  delete mi_stash;
+  delete R;
+}
+
+res2_comp::~res2_comp()
+{
+  remove_res();
 }
 //////////////////////////////////////////////
 //  Data structure insertion and access  /////
@@ -636,7 +638,7 @@ res2_pair *res2_comp::new_res2_pair(res2_pair *first,
   if (second != NULL)
     p->syz->next = R->new_term(K->from_int(-1), basemon, second);
 #endif
-  p->mi = new MonomialIdeal(P);
+  p->mi = new MonomialIdeal(P, mi_stash);
   p->pivot_term = NULL;
 
   return p;
@@ -655,7 +657,7 @@ res2_pair *res2_comp::new_base_res2_pair(int i)
   int *m = M->make_one();
   p->syz = R->new_term(K->from_int(1), m, p); // circular link...
   M->remove(m);
-  p->mi = new MonomialIdeal(P);
+  p->mi = new MonomialIdeal(P, mi_stash);
   p->pivot_term = NULL;
   return p;
 }
@@ -671,7 +673,7 @@ res2_pair *res2_comp::new_res2_pair(int i)
   p->degree = generator_matrix->cols()->primary_degree(i) - 1 - lodegree;
   p->compare_num = 0;
   p->syz = R->from_vector(base_components, (*generator_matrix)[i]);
-  p->mi = new MonomialIdeal(P);
+  p->mi = new MonomialIdeal(P, mi_stash);
   p->pivot_term = NULL;
   return p;
 }

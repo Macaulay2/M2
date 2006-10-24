@@ -93,6 +93,9 @@ class res2_comp : public ResolutionComputation
   const Ring *K;
   const Matrix *generator_matrix;	// Input matrix of generators, needs to be a GB.
 
+  stash *res2_pair_stash;
+  stash *mi_stash;
+
   array<res2_level *> resn;	// The resolution itself
 
   // Degree and length limits, monomial size limit
@@ -202,6 +205,7 @@ public:
 	    int SlantedDegreeLimit,
 	    int SortStrategy);
 
+  virtual void remove_res();
   virtual ~res2_comp();
 
   void resize(const Ring *new_ring);
