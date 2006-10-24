@@ -192,11 +192,11 @@ i27 : T
 
 o27 = T
 
-o27 : A
+o27 : k
 
 i28 : substitute(T,k)
 
-o28 = 0
+o28 = T
 
 o28 : k
 
@@ -204,14 +204,12 @@ i29 : lift(k_0, ring T)
 
 o29 = T
 
-o29 : A
+o29 : k
 
 i30 : lift(k_0, ambient ring T)
 
 o30 = T
 
-      ZZ
-o30 : -- [T]
-       2
+o30 : A
 
 i31 : 

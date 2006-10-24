@@ -118,7 +118,7 @@ o17 = 0
               1       2
 o17 : Matrix A  <--- A
 
-i18 : kk = toField(frac(ZZ[a,b]))
+i18 : kk = frac(ZZ[a,b])
 
 o18 = kk
 

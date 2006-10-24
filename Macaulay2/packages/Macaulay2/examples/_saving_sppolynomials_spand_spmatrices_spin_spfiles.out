@@ -29,11 +29,11 @@ o4 : R-module, submodule of R
 
 i5 : f = temporaryFileName()
 
-o5 = /tmp/M2-29029-1
+o5 = /tmp/M2-17186-1
 
 i6 : f << toString (p,m,M) << close
 
-o6 = /tmp/M2-29029-1
+o6 = /tmp/M2-17186-1
 
 o6 : File
 
@@ -63,4 +63,6 @@ i11 : M == M'
 
 o11 = true
 
-i12 : 
+i12 : removeFile f
+
+i13 : 

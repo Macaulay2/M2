@@ -9,3 +9,4 @@ get f
 p == p'
 m == m'
 M == M'
+removeFile f

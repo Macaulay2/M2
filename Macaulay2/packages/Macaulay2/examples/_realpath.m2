@@ -6,3 +6,4 @@ readlink q
 realpath q
 p << "hi there" << close
 realpath q
+removeFile q

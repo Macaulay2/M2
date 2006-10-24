@@ -15,7 +15,7 @@ A = QQ[x,y,z]/(x^3-y^2-3)
 I = ideal(x^4, y^4)
 J = ideal(x^3*y^2, x^2*y^3)
 (gens J) % I
-kk = toField(frac(ZZ[a,b]))
+kk = frac(ZZ[a,b])
 B = kk[x,y,z]
 I = ideal(a*x^2-b*x-y-1, 1/b*y^2-z-1)
 gens gb I

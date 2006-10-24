@@ -32,7 +32,7 @@ i9 : numgens C
 
 o9 = 2
 
-i10 : g = allGenerators B
+i10 : g = generators(B, CoefficientRing=>ZZ)
 
 o10 = {x, y, a, b, c}
 

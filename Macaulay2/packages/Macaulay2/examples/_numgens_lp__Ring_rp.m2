@@ -7,7 +7,7 @@ B = A[x,y];
 numgens B
 C = KA[x,y];
 numgens C
-g = allGenerators B
+g = generators(B, CoefficientRing=>ZZ)
 #g
 K = GF(9,Variable=>a)
 numgens K
