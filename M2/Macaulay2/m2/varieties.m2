@@ -286,10 +286,10 @@ genus CoherentSheaf := F -> (
      if class variety F =!= ProjectiveVariety then error "expected a projective variety";
      genus module F)
 
-degree CoherentSheaf := F -> (
+degree CoherentSheaf := opts -> F -> (
      if class variety F =!= ProjectiveVariety then error "expected a projective variety";
-     degree F.module)
-degree ProjectiveVariety := X -> degree ring X
+     degree(F.module, opts))
+degree ProjectiveVariety := opts -> X -> degree(ring X, opts)
 
 pdim CoherentSheaf := F -> pdim module F
 

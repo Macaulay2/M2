@@ -478,6 +478,7 @@ isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I
 
 degrees Ideal := I -> degrees source generators I
+degreeLength Ideal := I -> degreeLength ring I
 
 promote(Ideal,Number) := 
 promote(Ideal,RingElement) := (I,R) -> ideal promote(generators I, R)
@@ -535,7 +536,7 @@ dim Ideal := I -> dim cokernel generators I
 codim Ideal := I -> codim cokernel generators I
 Ideal + Ideal := Ideal => (I,J) -> ideal (generators I | generators J)
 Ideal + RingElement := (I,r) -> I + ideal r
-degree Ideal := I -> degree cokernel generators I
+degree Ideal := opts -> I -> degree(cokernel generators I, opts)
 trim Ideal := Ideal => options -> (cacheValue symbol trim) ((I) -> ideal trim(module I, options))
 Ideal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
 Matrix % Ideal := Matrix => (f,I) -> f % gb I
@@ -680,7 +681,7 @@ getshift := (f) -> (
      R := ring f;
      if R.?Repair then R.Repair d else d)
 
-degree Matrix := List => (f) -> (
+degree Matrix := List => opts -> (f) -> (
      M := source f;
      N := target f;
      d := getshift f;

@@ -1,7 +1,7 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 ring Number := class
-degree Number := i -> {}
+degree Number := opts -> i -> {}
 conjugate Number := identity
 toExternalString Number := simpleToString
 

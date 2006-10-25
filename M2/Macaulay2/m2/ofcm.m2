@@ -168,7 +168,7 @@ makeit1 := (opts) -> (
      n := # varlist;
      externalDegrees := opts.Degrees;
      M.degrees = externalDegrees;
-     M.degreeLength = if externalDegrees#?0 then # externalDegrees#0 else 0;
+     degrk := M.degreeLength = if externalDegrees#?0 then # externalDegrees#0 else 0;
      internalDegrees := apply(externalDegrees,opts.Adjust);
      order := transpose internalDegrees;
 --     primaryDegrees := if #order === 0 then toList(n:1) else order#0;
@@ -203,7 +203,7 @@ makeit1 := (opts) -> (
      M.index = new MutableHashTable;
      scan(#varlist, i -> M.index#(varlist#i) = i);
      M.internalDegrees = internalDegrees;
-     M.internalDegreeLength = internalDegreeLength := if internalDegrees#?0 then #internalDegrees#0 else 0;
+     M.internalDegreeLength = internalDegreeLength := # opts.Adjust toList ( degrk : 0 );
      (MOopts,rawMO) := makeMonomialOrdering (
      	  opts.MonomialSize,
 	  opts.Inverses,
@@ -346,8 +346,17 @@ makeMonoid := (opts) -> (
 	  opts.Repair = x -> drop(x,1);		      -- to external degree
 	  scan(degs, d -> (
 		    if degrk =!= length heft then error ("expect Heft option to be a list of length ",toString degrk, " to match the degree rank");
-		    if not first opts.Adjust d > 0 then error "Heft option doesn't yield a positive value for each variable";
 		    )));
+     scan(degs, d -> if not first opts.Adjust d > 0 then (
+	       if heft === null
+	       then (
+		    stderr << "-- warning: some variables have non-positive first component of degree" << endl;
+		    stderr << "--          use Heft option to specify a positive form" << endl;
+		    if opts.Adjust === identity and opts.Repair === identity then
+		    stderr << "--          or use Adjust and Repair to set up degrees internally" << endl;
+		    )
+	       else error "Heft option doesn't yield a positive value for each variable"
+	       ));
 
      opts = new OptionTable from opts;
      makeit1 opts)
