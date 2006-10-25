@@ -148,7 +148,10 @@ toString EngineRing := R -> if ReverseDictionary#?R then toString ReverseDiction
 ZZ _ EngineRing := 
 RR _ EngineRing := RingElement => (i,R) -> new R from i_(R.RawRing)
 
-new RingElement from RawRingElement := (R, f) -> new R from {f};
+new RingElement from RawRingElement := (R, f) -> (
+     -- this might take too much time:
+     -- if R.RawRing =!= rawRing f then error "internal error: raw ring mismatch encountered";
+     new R from {f})
 
 new EngineRing from RawRing := (EngineRing,R) -> (
      S := new EngineRing of RingElement;
@@ -286,7 +289,7 @@ leadCoefficient RingElement := RingElement => (f) -> (
      k := coefficientRing ring f;
      new k from rawLeadCoefficient(raw k, raw f))
 
-degree RingElement := f -> if f == 0 then -infinity else (
+degree RingElement := opts -> f -> if f == 0 then -infinity else (
      d := rawMultiDegree raw f;
      R := ring f;
      if R.?Repair then R.Repair d else d

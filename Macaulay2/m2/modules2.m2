@@ -71,43 +71,35 @@ Ring ** Matrix := Matrix => (R,f) -> (
      )
 
 -----------------------------------------------------------------------------       
+repairMap = (cacheValue symbol repairMap) (
+     R -> (
+	  repair := R.Repair;
+	  n := degreeLength R;
+	  ZZn  := degreesRing n;
+     	  n' := (monoid R).internalDegreeLength;
+	  ZZn' := degreesRing n';
+	  f := i -> (
+	       ei := apply(n', j -> if j === i then 1 else 0);
+	       ZZn_(repair ei));
+	  map(ZZn, ZZn', toList apply(n', f))))
+
 poincare Module := (cacheValue symbol poincare) (
      M -> (
+	  if not isHomogeneous M then error "expected a homogeneous module"; -- we had this commented out before, why?
 	  R := ring M;
-	  n := degreeLength R;
-	  if n == 0 then error "expected nonzero degree length"; -- return the rank?
+	  ZZn' := degreesRing (monoid R).internalDegreeLength;
 	  M = cokernel presentation M;
-	  -- if not isHomogeneous M then error "expected a homogeneous module";
-	  if M.cache.?poincare then M.cache.poincare else M.cache.poincare = (
-	       ZZn := degreesRing R;
-	       g := leadTerm gb presentation M;
-	       p := new ZZn from rawHilbert raw g;
-	       assert( raw ring p === rawRing raw p );	    -- fix this!
-	       if R.?Repair and R.Repair =!= identity then (
-		    repair := R.Repair;
-		    p = substitute(p,
-			 toList apply( 0 .. n-1, 
-			      i -> ZZn_i => ZZn_(
-				   repair toList apply( 0 .. n-1,  -- should just have the matrix of Repair available! 
-					j -> if j === i then 1 else 0 ) ) ) ) );
-	       p)))
+	  p := new ZZn' from rawHilbert raw leadTerm gb presentation M;
+	  if R.?Repair and R.Repair =!= identity then p = (repairMap R) p;
+	  p))
 
-hilbertFunction(ZZ,Module) :=
-hilbertFunction(ZZ,Ring) :=
-hilbertFunction(ZZ,Ideal) := (d,M) -> (
-     f := hilbertSeries(M, Order => d+1);
-     U := monoid ring f;
-     u := U_0;
-     f_(u^d))
-
-hilbertFunction(List,Ring) := 
-hilbertFunction(List,Ideal) := 
-hilbertFunction(List,Module) := (d,M) -> (
+hilbertFunction(ZZ,Module) := hilbertFunction(ZZ,Ring) := hilbertFunction(ZZ,Ideal) := (d,M) -> hilbertFunction({d},M)
+hilbertFunction(List,Ring) := hilbertFunction(List,Ideal) := hilbertFunction(List,Module) := (d,M) -> (
      if not all(d,i->class i === ZZ) then error "expected degree to be an integer or list of integers";
-     -- hilbertSeries to finite order doesn't work yet for multi-degrees
-     -- we need more flexible power-series handling functions
-     rank source basis(d,M)
-     )
+     if degreeLength M =!= #d then error "degree length mismatch";
+     f := hilbertSeries(M, Order => sum d+1);
+     U := monoid ring f;
+     coefficient(U_d,f))
 
 geometricSeries := (x,n) -> sum(n, i -> x^i)
 
@@ -192,7 +184,7 @@ ProjectiveHilbertPolynomial + ProjectiveHilbertPolynomial := ProjectiveHilbertPo
 ProjectiveHilbertPolynomial - ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (h,k) -> h + -k
 ProjectiveHilbertPolynomial == ProjectiveHilbertPolynomial := (h,k) -> h === k
 dim ProjectiveHilbertPolynomial := (P) -> if #P === 0 then -1 else max keys P
-degree ProjectiveHilbertPolynomial := (P) -> if #P === 0 then 0 else P#(dim P)
+degree ProjectiveHilbertPolynomial := opts -> (P) -> if #P === 0 then 0 else P#(dim P)
 ZZ * ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (b,h) -> (
      if b === 1 then h 
      else if b === 0 then new ProjectiveHilbertPolynomial from {}
@@ -296,14 +288,26 @@ dim Module := M -> (
      if c === infinity then -1 else dim ring M - c
      )
 
-degree Ring := R -> degree R^1
-degree Module := M -> (
-  hf := poincare M;
-  T := (ring hf)_0;
-  if hf == 0 then 0
-  else (
-       while substitute(hf,{T=>1}) == 0 do hf = hf // (1-T);
-       substitute(hf,{T=>1})))
+degree Ring := opts -> R -> degree(R^1, opts)
+degree Module := opts -> M -> (
+     hs := reduceHilbert hilbertSeries M;
+     hn := numerator hs;
+     if hn == 0 then return 0;
+     n := degreeLength M;
+     if n === 0 then return lift(hn,ZZ);
+     ZZ1 := degreesRing 1;
+     T := ZZ1_0;
+     ZZn := degreesRing n;
+     wt := opts.Weights;
+     p := map(ZZ1, ZZn, 
+	  if wt === null
+	  then apply(n, i -> if i === 1 then T else 1_ZZ1)
+	  else apply(n, i -> T^(wt#i)));
+     if value denominator hs == 1 then return (map(ZZ,ring hn, toList ( n : 1 ))) hn;
+     hn = p hn;
+     while hn % (1-T) == 0 do hn = hn // (1-T);
+     q := map(ZZ,ZZ1,{1});
+     q hn)
 
 -----------------------------------------------------------------------------
 
@@ -610,7 +614,7 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
      if hi === infinity and dim M > 0 then error "basis: expected a finite dimensional module";
      k := coefficientRing A;
      pres := generators gb presentation M;
-     heft := splice(1, degreeLength R - 1 : 0);
+     heft := 1 : 1;
      M.cache#"rawBasis log" = log := FunctionApplication { rawBasis, (raw pres, lo, hi, heft, var, opts.Truncate, opts.Limit) };
      map(M,,value log))
 

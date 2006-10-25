@@ -114,7 +114,7 @@ sum ChainComplexMap := Matrix => f -> (
 	       map(tar, src, matrix table(t,s,
 		    	 (j,i) -> if j == i+d then f_i else map(T_j,S_i,0))))))
 
-degree ChainComplexMap := f -> f.degree
+degree ChainComplexMap := opts -> f -> f.degree
 
 net ChainComplexMap := f -> (
      complete f;
@@ -607,14 +607,9 @@ Hom(Module, ChainComplexMap) := ChainComplexMap => (N,f) -> (
 
 transpose ChainComplexMap := dual ChainComplexMap := ChainComplexMap => f -> Hom(f, (ring f)^1)
 
-regularity ChainComplex := C -> (
-     max flatten apply(
-	  select(pairs complete C, (n,F) -> class n === ZZ),
-	  (n,F) -> apply(degrees F, d -> first d - n)))
-
-regularity Module := (M) -> regularity resolution minimalPresentation M
-
-regularity Ideal := (I) -> 1 + regularity resolution cokernel generators I
+regularity ChainComplex := opts -> C -> regularity betti(C,opts)
+regularity Module := opts -> (M) -> regularity betti(resolution minimalPresentation M,opts)
+regularity Ideal := opts -> (I) -> 1 + regularity betti(resolution cokernel generators I,opts)
 
 BettiTally = new Type of Tally
 BettiTally.synonym = "Betty tally"
@@ -622,6 +617,9 @@ BettiTally == BettiTally := (C,D) -> C === D
 BettiTally ++ BettiTally := (C,D) -> merge(C,D,plus)
 BettiTally ** BettiTally := (C,D) -> combine(C,D,(j,k)->apply(j,k,plus),times,plus)
 dual BettiTally := (C) -> applyKeys(C,j -> apply(j,minus))
+regularity BettiTally := opts -> (C) -> (
+     if opts.Weights =!= null then C = betti(C,opts);
+     max apply(keys C, (i,h,d) -> h-i))
 BettiTally Array := (C,A) -> (
       if # A =!= 1 then error "expected array of length 1";
       n := A#0;
@@ -639,7 +637,7 @@ net BettiTally := v -> (
      v = v';
      k := keys v;
      fi := first \ k;
-     la := last  \ k;
+     la := (s -> s#1) \ k;
      mincol := min la;
      maxcol := max la;
      minrow := min fi;
@@ -653,15 +651,15 @@ net BettiTally := v -> (
      v = apply(leftside,v,prepend);
      netList(v, Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false))
 
-betti = method(TypicalValue => BettiTally)
-     -- returns a hash table with pairs of the form (i,d) => n
-     -- where d is the multi-degree, i is the homological degree, and 
-     -- n is the betti number.
-
-betti Matrix := f -> betti chainComplex f
-betti GroebnerBasis := G -> betti generators G
-betti Ideal := I -> betti generators I
-betti Module := M -> betti presentation M
+betti = method(TypicalValue => BettiTally, Options => { Weights => null })
+heftfun := wt -> if wt === null then d -> d#0 else d -> sum( min(#wt, #d), i -> wt#i * d#i )
+betti BettiTally := opts -> t -> (
+     heft := heftfun opts.Weights;
+     applyKeys(t, (i,h,d) -> (i,heft d,d)))
+betti Matrix := opts -> f -> betti(chainComplex f, opts)
+betti GroebnerBasis := opts -> G -> betti(generators G, opts)
+betti Ideal := opts -> I -> betti(generators I, opts)
+betti Module := opts -> M -> betti(presentation M, opts)
 
 rawBetti = (computation, type) -> (
      w := rawGBBetti(computation, type);
@@ -676,17 +674,18 @@ rawBetti = (computation, type) -> (
      new BettiTally from w)
 
 undocumented' (betti,Resolution)
-betti Resolution := X -> rawBetti(X.RawComputation, 0)
+betti Resolution := opts -> X -> rawBetti(X.RawComputation, 0) -- the raw version ignores the Weight option
 
-betti ChainComplex := C -> (
+betti ChainComplex := opts -> C -> (
+     heft := heftfun opts.Weights;
      if C.?Resolution and degreeLength ring C === 1 then (
      	  repair := (ring C).Repair;
-     	  applyKeys(betti C.Resolution, (i,d) -> (i,repair d)))
+     	  applyKeys(betti C.Resolution, (i,d) -> ( d = repair d; (i,heft d,d) )))
      else (
 	  complete C;
 	  new BettiTally from flatten apply(
 	       select(pairs C, (i,F) -> class i === ZZ), 
-	       (i,F) -> apply(pairs tally degrees F, (d,n) -> (i,d) => n))))
+	       (i,F) -> apply(pairs tally degrees F, (d,n) -> (i,heft d,d) => n))))
 
 -----------------------------------------------------------------------------
 syzygyScheme = (C,i,v) -> (

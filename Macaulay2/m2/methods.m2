@@ -143,7 +143,7 @@ setupMethods((), {
 	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,
 	  dual, cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
 	  substitute, rank, complete, ambient, topComponents, baseName, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
-	  degree, coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
+	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, assign, numgens, conjugate,
 	  autoload, minprimes, relations, cone, standardForm, inverse,
@@ -153,6 +153,8 @@ setupMethods((), {
 
 use = method()
 use Thing := identity
+
+degree = method ( TypicalValue => ZZ, Options => { Weights => null } )
 
 random = method(Options => {
 	  MaximalRank => false
@@ -202,11 +204,13 @@ setupMethods(TypicalValue => Boolean,
 	  isSubset,isHomogeneous, isIsomorphism, isPrime, isField, isConstant
 	  })
 setupMethods(TypicalValue => ZZ,
-     {length,codim,binomial,degreeLength,height,char,pdim,dim,depth,width,regularity,euler,genus})
+     {length,codim,binomial,degreeLength,height,char,pdim,dim,depth,width,euler,genus})
 setupMethods(TypicalValue => List,
      {eulers, genera})
 
 radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null } )
+
+regularity = method( TypicalValue => ZZ, Options => { Weights => null } )
 
 primaryDecomposition = method( TypicalValue => List, Options => { Strategy => null } )
 associatedPrimes = method( TypicalValue => List, Options =>{ Strategy => 1 } )
@@ -450,7 +454,7 @@ protect QuotientRingHook
 -- stashing or caching computed values for future reference in functions that take a mutable hash table as input
 
 cacheValue = key -> f -> x -> (
-     c := x.cache;
+     c := try x.cache else x.cache = new CacheTable;
      if c#?key then c#key else c#key = f x)
 stashValue = key -> f -> x -> if x#?key then x#key else x#key = f x
 

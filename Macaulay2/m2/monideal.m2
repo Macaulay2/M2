@@ -225,7 +225,7 @@ ZZ // MonomialIdeal := (r,I) -> r_(ring I) // forceGB generators I
 
 dim MonomialIdeal := I -> dim ring I - codim I
 
-degree MonomialIdeal := I -> degree cokernel generators I   -- maybe it's faster with 'poincare'
+degree MonomialIdeal := opts -> I -> degree(cokernel generators I, opts)   -- maybe it's faster with 'poincare'
 
 jacobian MonomialIdeal := Matrix => (I) -> jacobian generators I
 
