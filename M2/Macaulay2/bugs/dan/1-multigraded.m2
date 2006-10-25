@@ -45,17 +45,9 @@ poincare I
 hilbertFunction({1,6},R)				    -- I've sped this up
 codim I
 dim I
-degree I -- fixed
+degree I -- fixed, almost -- check that the weight vector give positive values!!!
 degree J -- fixed
 degree J' -- fixed
-
-h = hilbertSeries J
-n = numerator h
-d = value denominator h
-n%d
-n' = n//d
-
-
 
 regularity I -- probably wrong
 -- degree should require a Weight vector and compute it with a singly graded ring.
