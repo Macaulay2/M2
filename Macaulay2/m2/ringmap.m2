@@ -76,7 +76,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 			      if record#?r then error "map: multiple variables would map to the same variable, by name";
 			      record#r = true;
 			      r);
-			 mm := matrix(R, {apply(A.generatorSymbols, s -> if R.?indexSymbols and R.indexSymbols#?s then justonce R.indexSymbols#s)});
+			 mm := matrix(R, {apply(A.generatorSymbols, s -> if R.?indexSymbols and R.indexSymbols#?s then justonce R.indexSymbols#s else 0_R)});
 			 if instance(A,GaloisField) then (
 			      -- the engine wants to know where the primitive element will go
 			      A' = ambient A;
