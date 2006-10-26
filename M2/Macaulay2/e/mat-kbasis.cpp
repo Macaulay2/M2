@@ -320,7 +320,7 @@ MatrixOrNull *KBasis::k_basis(const Matrix *bottom,
   for (int i=0; i<vars->len; i++)
     if (KB.var_wts[i] <= 0)
       {
-	ERROR("expected given degree vector to produce positive weights");
+	ERROR("basis: non-positive heft form encountered (consider using Heft option or Adjust and Repair)");
 	return 0;
       }
   KB.compute();
