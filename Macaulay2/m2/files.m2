@@ -53,7 +53,7 @@ findFiles String := opts -> name -> (
 	  );
      bn := baseFilename name;
      if any(excludes, pattern -> match(pattern, bn)) then return {};
-     -- if not fileExists name then return {};
+     if not fileExists name and readlink name === null then return {};
      if not (isDirectory name or opts.FollowLinks and isDirectory realpath name) then return {name};
      if not name#-1 === "/" then name = name | "/";
      prepend(name,flatten apply(readDirectory name, 
