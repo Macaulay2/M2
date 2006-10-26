@@ -870,6 +870,7 @@ export {
 	symbol pairs,
 	symbol parent,
 	symbol part,
+	symbol partition,
 	symbol partitions,
 	symbol pdim,
 	symbol peek',
