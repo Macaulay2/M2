@@ -94,6 +94,16 @@ permutations = method()
 permutations VisibleList := VisibleList => x -> if #x <= 1 then {x} else flatten apply(#x, i -> apply(permutations drop(x,{i,i}), t -> prepend(x#i,t)))
 permutations ZZ := List => n -> permutations toList (0 .. n-1)
 
+partition = method()
+partition(Function,Tally) := (f,s) -> (
+     p := new MutableHashTable;
+     scanPairs(s, (x,n) -> ( y := f x; if p#?y then if p#y#?x then p#y#x = p#y#x + n else p#y#x = n else (p#y = new MutableHashTable)#x = n; ));
+     applyValues(new HashTable from p, px -> new class s from px))
+partition(Function,VisibleList) := (f,s) -> (
+     p := new MutableHashTable;
+     scan(s, x -> ( y := f x; if p#?y then p#y = (p#y,x) else p#y = x; ));
+     applyValues(new HashTable from p, px -> new class s from deepSplice px))
+
 -----------------------------------------------------------------------------
 -- a first use of sets:
 
