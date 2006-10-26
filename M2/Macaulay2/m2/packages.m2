@@ -323,6 +323,40 @@ debug Package := pkg -> (
 	  );
      checkShadow())
 
+body := response -> replace("^(.|.\r\n)*\r\n\r\n","",response)
+chkwww := url -> (
+     www := getWWW url;
+     if www === null then error("web page not found: ", url);
+     body www)
+packageRepository = "http://www.math.uiuc.edu/Macaulay2/Packages/"
+getPackage = method(Options => { Version => null })
+getPackage String := opts -> pkgname -> (
+     url := packageRepository | pkgname | "/";
+     versions := sort lines chkwww (url | "versions");
+     if #versions == 0 then error "no versions available from repository";
+     if opts.Version === null then (
+     	  vers := last versions;
+	  )
+     else (
+	  vers = opts.Version;
+	  if not member(vers,versions) then error("requested version among those available: ",concatenate between(", ",versions));
+	  );
+     stderr << "-- fetching package " << pkgname << ", version " << vers << endl;
+     file := chkwww(url | vers | "/" | pkgname | ".m2");
+     tmp := temporaryFileName();
+     makeDirectory tmp;
+     tmp = tmp | "/";
+     fn := tmp | pkgname | ".m2";
+     fn << file << close;
+     oldpath := path;
+     path = prepend(tmp,path);				    -- how to undo this if the next line has an error?
+     try installPackage(pkgname, IgnoreExampleErrors => true)
+     else (
+     	  path = oldpath;
+	  error "failed to install package";
+	  );
+     path = oldpath;
+     )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -652,6 +652,7 @@ export {
 	symbol getGlobalSymbol,
 	symbol getNetFile,
 	symbol getNonUnit,
+	symbol getPackage,
 	symbol getWWW,
 	symbol getc,
 	symbol getenv,
