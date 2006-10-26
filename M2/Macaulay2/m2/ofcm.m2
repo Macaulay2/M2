@@ -347,9 +347,12 @@ makeMonoid := (opts) -> (
 	  scan(degs, d -> (
 		    if degrk =!= length heft then error ("expect Heft option to be a list of length ",toString degrk, " to match the degree rank");
 		    )));
+     warned := false;
      scan(degs, d -> if not first opts.Adjust d > 0 then (
 	       if heft === null
 	       then (
+		    if warned then return;
+		    warned = true;
 		    stderr << "-- warning: some variables have non-positive first component of degree" << endl;
 		    stderr << "--          use Heft option to specify a positive form" << endl;
 		    if opts.Adjust === identity and opts.Repair === identity then
