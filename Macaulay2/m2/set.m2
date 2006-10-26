@@ -101,7 +101,7 @@ partition(Function,Tally) := (f,s) -> (
      applyValues(new HashTable from p, px -> new class s from px))
 partition(Function,VisibleList) := (f,s) -> (
      p := new MutableHashTable;
-     scan(s, x -> ( y := f x; if p#?y then p#y = (p#y,x) else p#y = x; ));
+     scan(s, x -> ( y := f x; if p#?y then p#y = (p#y,x) else p#y = 1:x; ));
      applyValues(new HashTable from p, px -> new class s from deepSplice px))
 
 -----------------------------------------------------------------------------
