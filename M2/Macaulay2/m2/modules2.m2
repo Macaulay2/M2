@@ -126,7 +126,7 @@ hilbertSeries Module := options -> (M) -> (
      A := ring M;
      num := poincare M;
      T := degreesRing A;
-     denom := tally (degree \ generators A);
+     denom := tally (degree \ select(generators A, x -> x != 0));
      if ord === infinity then (
 	  y := apply(pairs denom, (i,e) -> {1 - T_i,e});
 	  y = sort y;
@@ -288,26 +288,36 @@ dim Module := M -> (
      if c === infinity then -1 else dim ring M - c
      )
 
+fixZZ := x -> if liftable(x,ZZ) then lift(x,ZZ) else x
+
 degree Ring := opts -> R -> degree(R^1, opts)
 degree Module := opts -> M -> (
      hs := reduceHilbert hilbertSeries M;
      hn := numerator hs;
+     hd := value denominator hs;
      if hn == 0 then return 0;
      n := degreeLength M;
      if n === 0 then return lift(hn,ZZ);
      ZZ1 := degreesRing 1;
      T := ZZ1_0;
      ZZn := degreesRing n;
+     g := map(ZZ,ring hn, toList ( n : 1 ));
+     hd1 := g hd;
+     if hd1 != 0 then return fixZZ(g hn / hd1);
      wt := opts.Weights;
-     p := map(ZZ1, ZZn, 
-	  if wt === null
-	  then apply(n, i -> if i === 1 then T else 1_ZZ1)
-	  else apply(n, i -> T^(wt#i)));
-     if value denominator hs == 1 then return (map(ZZ,ring hn, toList ( n : 1 ))) hn;
-     hn = p hn;
-     while hn % (1-T) == 0 do hn = hn // (1-T);
+     if wt === null then wt = toList (n:1) else (
+	  if class wt =!= List
+	  or #wt =!= n
+	  or not all(wt, i -> instance(i,ZZ))
+	  then error ("degree: expected weights to be a list of integers of length ",toString n));
+     if n > 1 then notImplemented();
+     if hd == 0 then error "degree: hilbert Series not defined for given weight vector";
+     H := 1 - ZZ1_wt;
+     h := 1 - T;
+     Hh := H//h;
+     while hd % h == 0 do (hd = hd // h; hn = hn * Hh;);
      q := map(ZZ,ZZ1,{1});
-     q hn)
+     fixZZ(q hn/q hd))
 
 -----------------------------------------------------------------------------
 
