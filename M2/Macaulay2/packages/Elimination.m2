@@ -13,8 +13,6 @@ export {eliminate, sylvesterMatrix, discriminant, resultant}
 
 getIndices = (R,v) -> unique apply(v, index)
 
-degree (RingElement, RingElement) := (f,x) -> first max degrees source first coefficients(f,Variables=>x)
-
 ------------------------------
 -- Elimination of variables --
 ------------------------------
@@ -61,8 +59,8 @@ sylvesterMatrix(RingElement,RingElement,RingElement) := (f,g,x) -> (
      if f == 0 or g == 0 
      then map(R^1,R^1,0)
      else (
-       degf := degree(f,x);
-       degg := degree(g,x);
+       degf := degree(x,f);
+       degg := degree(x,g);
        if degf === 0 or degg === 0 
        then matrix {{1_R}}
        else (
@@ -219,7 +217,7 @@ time eliminate(I,{b})
 
 R = ZZ[a,b,c,d,e]
 f1 = a^4 + b*a + c
-degree(f1,a)
+degree(a,f1)
 f2 = a^2 + d*a + e
 time sylvesterMatrix(f1,f2,a)
 time resultant(f1,f2,a)
