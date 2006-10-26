@@ -34,7 +34,7 @@ FreeModule::FreeModule(const Ring *RR, int n, bool has_schreyer_order)
       const PolynomialRing *P = RR->cast_to_PolynomialRing();
       assert(P != 0);
       assert(n == 0);
-      schreyer = new SchreyerOrder(P->Nmonoms());
+      schreyer = SchreyerOrder::create(P->Nmonoms());
     }
   else
     schreyer = 0;

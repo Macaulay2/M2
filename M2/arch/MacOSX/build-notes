@@ -4,8 +4,8 @@
 ## Step 1. Download the desired version of Macaulay2 ##
 # from subversion, supposing the stable version is 4123.
  cd ~/M2-build
- mkdir M2-0.9.93
- cd M2-0.9.93
+ mkdir M2-0.9.94
+ cd M2-0.9.94
  svn co svn://macaulay2.math.uiuc.edu/Macaulay2/stable/2006-08-28-0.9.90 M2
  svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
  mkdir installed
@@ -16,20 +16,25 @@
  cd M2
  make
  cd ../build
- ../M2/configure --prefix=/Users/mike/M2-build/M2-0.9.93/installed --with-veclib --enable-altivec CFLAGS=-g CPPFLAGS=-I/capybara/include LDFLAGS=-L/capybara/lib LOADLIBES="-lgcc_s.10.5 -lncurses" --with-gdbmlib=/capybara/lib/libgdbm.a --with-readlinelib=/capybara/lib/libreadline.a --with-historylib=/capybara/lib/libhistory.a --with-gclib=/capybara/lib/libgc.a
+ ../M2/configure --prefix=/Users/mike/M2-build/M2-0.9.94/installed \
+              --with-veclib \
+              --enable-altivec \
+	      CFLAGS=-g \
+	      CPPFLAGS=-I/capybara/include  \
+	      LDFLAGS=-L/capybara/lib LOADLIBES="-lgcc_s.10.5 -lncurses" \
+	      --with-gdbmlib=/capybara/lib/libgdbm.a \
+	      --with-readlinelib=/capybara/lib/libreadline.a \
+	      --with-historylib=/capybara/lib/libhistory.a \
+	      --with-gclib=/capybara/lib/libgc.a \
+	      --with-gmplib=/capybara/lib/libgmp.a
  make
  make install # this can take awhile (started: 9:33 pm, done at 10:10pm, MBP 2 GZ)
 
 ## Step 3.  Create the disk image
-export VERSION=0.9.93
+export VERSION=0.9.94
 cd ../installed
 cp ../M2/arch/MacOSX/ReadMe-MacOSX.rtf .
-#mv Macaulay2-$VERSION Macaulay2
 cp ./ReadMe-MacOSX.rtf Macaulay2-$VERSION/
-#cp ../M2/arch/MacOSX/setup Macaulay2-$VERSION/
-#rm Macaulay2-$VERSION/bin/M2-emacs
-#rm Macaulay2-$VERSION/bin/M2-load-libs
-#rm Macaulay2-$VERSION/bin/M2-help
 cd .. # to original directory
 echo "about to do hdiutil"
 # comment one of these out

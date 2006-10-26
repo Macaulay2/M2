@@ -35,7 +35,9 @@ public:
 	}
     }
 
-  ~intarray() { doubles->delete_elem(entries); }
+  ~intarray() { doubles->delete_elem(entries); entries = 0; }
+
+  void remove() { doubles->delete_elem(entries); entries = 0; }
 
   void expand(int newtop);
 
