@@ -65,7 +65,7 @@ document {
 
 document { 
      Key => (select,HashTable,Function),
-     Headline => "select pairs from a hash table",
+     Headline => "select part of a hash table",
      Usage => "select(v,f)",
      Inputs => { "v", "f" },
      Outputs => {
