@@ -324,16 +324,19 @@ debug Package := pkg -> (
      checkShadow())
 
 body := response -> replace("^(.|.\r\n)*\r\n\r\n","",response)
-chkwww := url -> (
+getwww := url -> (
      www := getWWW url;
+     if www === null or match("^[^ ]+ 404\\b",www) then null else body www)
+chkwww := url -> (
+     www := getwww url;
      if www === null then error("web page not found: ", url);
-     body www)
+     www)
 packageRepository = "http://www.math.uiuc.edu/Macaulay2/Packages/"
 getPackage = method(Options => { Version => null })
 getPackage String := opts -> pkgname -> (
      url := packageRepository | pkgname | "/";
      versions := sort lines chkwww (url | "versions");
-     if #versions == 0 then error "no versions available from repository";
+     if #versions == 0 then error "getPackage: no versions available from repository";
      if opts.Version === null then (
      	  vers := last versions;
 	  )
@@ -341,21 +344,38 @@ getPackage String := opts -> pkgname -> (
 	  vers = opts.Version;
 	  if not member(vers,versions) then error("requested version among those available: ",concatenate between(", ",versions));
 	  );
-     stderr << "-- fetching package " << pkgname << ", version " << vers << endl;
-     file := chkwww(url | vers | "/" | pkgname | ".m2");
+     stderr << "--fetching package " << pkgname << ", version " << vers << " from " << url << endl;
      tmp := temporaryFileName();
+     unwind := arg -> scan(reverse findFiles tmp, fn -> if isDirectory fn then removeDirectory fn else removeFile fn);
      makeDirectory tmp;
      tmp = tmp | "/";
-     fn := tmp | pkgname | ".m2";
-     fn << file << close;
-     oldpath := path;
-     path = prepend(tmp,path);				    -- how to undo this if the next line has an error?
+     fn := pkgname | ".m2";
+     m2file := getwww(url | vers | "/" | fn);
+     m2filenm := tmp | pkgname | ".m2";
+     if m2file === null then (
+	  fn = pkgname | ".tgz";
+	  tgzfile := getwww(url | vers | "/" | fn);
+	  if tgzfile === null then error "failed to download package";
+	  stderr << "--file downloaded: " << fn << endl;
+	  tfn := pkgname | ".tgz";
+	  tgzfilenm := tmp | tfn;
+	  tgzfilenm << tgzfile << close;
+	  cmd := concatenate("cd ",tmp,"; tar xzf ",tfn);
+	  stderr << "--- " << cmd << endl;
+	  if 0 != run cmd then error("getPackage: failed to untar ",tfn);
+	  if not fileExists m2filenm then error("package file ",m2filenm," missing");
+	  )
+     else (
+	  stderr << "--file downloaded: " << fn << endl;
+	  m2filenm << m2file << close;
+	  );
+     oldpath := path; unwind = (arg -> path = oldpath) @@ unwind; path = prepend(tmp,path); -- how better to undo this if the next line has an error?
      try installPackage(pkgname, IgnoreExampleErrors => true)
      else (
-     	  path = oldpath;
+     	  unwind();
 	  error "failed to install package";
 	  );
-     path = oldpath;
+     unwind();
      )
 
 -- Local Variables:
