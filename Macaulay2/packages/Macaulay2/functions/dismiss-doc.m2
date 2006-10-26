@@ -19,17 +19,17 @@ document {
 	  },
      EXAMPLE lines ///
      	  newPackage "P"
-	  export x
-	  x=3
+	  export x1
+	  x1=3
 	  endPackage "P"
 	  dictionaryPath
-	  x
+	  x1
 	  dismiss P
 	  dictionaryPath
-	  x
+	  x1
 	  values PackageDictionary
      	  use P
-	  x
+	  x1
      ///,
      SeeAlso => { "dictionaryPath", "PackageDictionary", "use" }
      }

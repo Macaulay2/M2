@@ -2,10 +2,10 @@
 -- Building a binary disk image for ppc or i386 mac ---
 -------------------------------------------------------
 ## Step 1. Download the desired version of Macaulay2 ##
-# from subversion, supposing the stable version is 4123.
+# from subversion,
  cd ~/M2-build
- mkdir M2-0.9.94
- cd M2-0.9.94
+ mkdir M2-0.9.95
+ cd M2-0.9.95
  svn co svn://macaulay2.math.uiuc.edu/Macaulay2/stable/2006-08-28-0.9.90 M2
  svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
  mkdir installed
@@ -16,12 +16,13 @@
  cd M2
  make
  cd ../build
- ../M2/configure --prefix=/Users/mike/M2-build/M2-0.9.94/installed \
+ ../M2/configure --prefix=/Users/mike/M2-build/M2-0.9.95/installed \
               --with-veclib \
               --enable-altivec \
 	      CFLAGS=-g \
 	      CPPFLAGS=-I/capybara/include  \
-	      LDFLAGS=-L/capybara/lib LOADLIBES="-lgcc_s.10.5 -lncurses" \
+	      LDFLAGS=-L/capybara/lib \
+	      LOADLIBES="-lgcc_s.10.5 -lncurses" \
 	      --with-gdbmlib=/capybara/lib/libgdbm.a \
 	      --with-readlinelib=/capybara/lib/libreadline.a \
 	      --with-historylib=/capybara/lib/libhistory.a \
@@ -31,7 +32,7 @@
  make install # this can take awhile (started: 9:33 pm, done at 10:10pm, MBP 2 GZ)
 
 ## Step 3.  Create the disk image
-export VERSION=0.9.94
+export VERSION=0.9.95
 cd ../installed
 cp ../M2/arch/MacOSX/ReadMe-MacOSX.rtf .
 cp ./ReadMe-MacOSX.rtf Macaulay2-$VERSION/
