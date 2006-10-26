@@ -40,9 +40,9 @@ QQ.Engine = true
 assert (hash ZZ < hash QQ)
 
 lift(QQ,ZZ) := (r,o) -> if denominator r === 1 then numerator r else error "rational number is not an integer"
-liftable'(QQ,ZZ) := (r,o) -> denominator r === 1
+liftable(QQ,ZZ) := (r,o) -> denominator r === 1
 lift(QQ,QQ) := promote(QQ,QQ) := (r,QQ) -> r
-liftable'(QQ,QQ) := (QQ,QQ) -> true
+liftable(QQ,QQ) := (QQ,QQ) -> true
 
 QQ.degreeLength = 0
 isUnit Number := x -> x != 0
