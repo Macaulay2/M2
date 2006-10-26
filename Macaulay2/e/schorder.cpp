@@ -4,6 +4,19 @@
 #include "polyring.hpp"
 #include "Eschreyer.hpp"
 
+SchreyerOrder *SchreyerOrder::create(const Monoid *M)
+{
+  SchreyerOrder *S = new SchreyerOrder(M);
+  S->intern();
+  return S;
+}
+
+void SchreyerOrder::remove()
+{
+  _order.remove();
+}
+
+
 void SchreyerOrder::append(int compare_num0, const int *baseMonom)
 {
   int *me = _order.alloc(_nslots);
@@ -54,6 +67,7 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
       result->append(ties[i], base);
     }
 
+  result->intern();
   M->remove(base);
   deletearray(tiebreaks);
   deletearray(ties);
@@ -107,6 +121,7 @@ SchreyerOrder *SchreyerOrder::create(const GBMatrix *m)
       result->append(ties[i], base);
     }
 
+  result->intern();
   M->remove(base);
   deletearray(tiebreaks);
   deletearray(ties);
@@ -316,6 +331,28 @@ int SchreyerOrder::schreyer_compare_encoded(const int *m,
   if (cmp > 0) return GT;
   return EQ;
 }
+
+extern int gbTrace;
+static int nfinalized_SchreyerOrder = 0;
+static int nremoved_SchreyerOrder = 0;
+
+extern "C" void remove_SchreyerOrder(void *p, void *cd)
+{
+  SchreyerOrder *G = static_cast<SchreyerOrder *>(p);
+  nremoved_SchreyerOrder++;
+  if (gbTrace>=3)
+    fprintf(stderr, "\nremoving SchreyerOrder %d at %p\n",nremoved_SchreyerOrder, G);
+  G->remove();
+}
+
+void SchreyerOrder::intern()
+{
+  GC_REGISTER_FINALIZER(this,remove_SchreyerOrder,0,0,0);
+  nfinalized_SchreyerOrder++;
+  if (gbTrace>=3)
+    fprintf(stderr, "\n   -- registering SchreyerOrder %d at %p\n", nfinalized_SchreyerOrder, (void *)this);
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:
