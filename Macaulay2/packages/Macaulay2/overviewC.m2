@@ -545,19 +545,29 @@ document {
      algebra can be constructed with ", TO "symmetricAlgebra", ".",
      EXAMPLE {
 	  "R = QQ[a..d];",
-      	  "S = symmetricAlgebra R^3",
-      	  "describe S",
+      	  "symmetricAlgebra R^3"
 	  },
+     "Until the ring is used with ", TO "use", " or assigned to a global variable, its
+     generators are not assigned to global variables.",
      EXAMPLE {
-	  "S_0+S_4",
-      	  ///S_"x_0"///,
+	  "a",
+	  "X_0",
+	  "S = o2;",
+	  "a",
+	  "X_0"
 	  },
      "To specify the names of the variables when creating the ring, use the 
-     ", TO "Variables", " option.",
-     EXAMPLE "S = symmetricAlgebra(R^3, Variables => {t,u,v})",
+     ", TO "Variables", " option or the ", TO "VariableBaseName", " option.",
+     EXAMPLE {
+	  "symmetricAlgebra(R^3, Variables => {t,u,v})",
+	  "symmetricAlgebra(R^3, VariableBaseName => t)"
+	  },
      "We can construct the symmetric algebra of a module that isn't
      necessarily free.",
-     EXAMPLE "symmetricAlgebra(R^1/(R_0,R_1^3), Variables => {t})"
+     EXAMPLE {
+	  "use R",
+	  "symmetricAlgebra(R^1/(a,b^3))"
+	  }
      }
 
 document {
