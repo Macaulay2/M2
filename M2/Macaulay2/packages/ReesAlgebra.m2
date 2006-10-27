@@ -12,25 +12,30 @@
 -- PROGRAMMERs : Rees algebra code written by David Eisenbud and edited and 
 --               maintained by Amelia Taylor.  Ideal integral closure 
 --		 code written and maintained by Amelia Taylor
--- UPDATE HISTORY : 26 October 2006
+-- UPDATE HISTORY : 27 October 2006
+--
+-- Missing documentation and most examples are now at the end of the file
+-- waiting to be included in the documentation -- more fixes to come
 ---------------------------------------------------------------------------
 newPackage(
-	"ReesAlgebraNew",
-    	Version => "0.51", 
-    	Date => "October 26, 2006",
+	"ReesAlgebra",
+    	Version => "0.1", 
+    	Date => "October 27, 2006",
     	Authors => {{
 		  Name => "David Eisenbud",
 		  Email => "de@msri.org"},
 	     {Name => "Amelia Taylor",
 	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor",
-   	     Email => "amelia.taylor@coloradocollege.edu"}},
+   	     Email => "amelia.taylor@coloradocollege.edu"},
+             {Name => "Sorin Popescu",
+	      Email => "sorin@math.sunysb.edu"}},  
     	Headline => "Rees algebras",
     	DebuggingMode => true
     	)
 
-export{ symmetricKernel, universalEmbedding, reesAlgebra, distinguished, 
+export{ symmetricKernel, universalEmbedding, reesAlgebra, reesIdeal, distinguished, 
      distinguishedAndMult, specialFiber, analyticSpread, isLinearType, 
-     idealIntegralClosure, multiplicity, reesIdeal}
+     idealIntegralClosure, multiplicity}
 
 
 
@@ -67,8 +72,11 @@ symmetricKernel(Matrix,Ideal) := Ideal => o -> (f, I) -> (
      -- first four lines set up constructing key rings.
      S := ring f;
      if (monoid S).Options.DegreeRank =!= 1 then (
-	  R := (coefficientRing(S))(monoid[gens S, DegreeRank => 1, MonomialOrder => GRevLex]);
-     	  G := map(R,S);
+	  -- foldedDegs := apply((monoid S).Options.Degrees, i -> sum(i));
+	  -- R := (coefficientRing(S))(monoid[gens S, Degrees => foldedDegs, MonomialOrder => GRevLex]);
+	  -- Caveat: folded degrees is just a hack till towers of multigraded rings will work. Fix me!
+     	  R := (coefficientRing(S))(monoid[gens S, DegreeRank => 1, MonomialOrder => GRevLex]);
+	  G := map(R,S);
 	  f = G(f);
 	  I = G(I);
 	  )
@@ -240,9 +248,9 @@ reesAlgebra(Module) := QuotientRing => o -> (M) -> (
      (ring J)/J)
 reesAlgebra(Ideal) := QuotientRing => o -> (J) -> (
      if Strategy == Saturate then (
-	  J = reesSaturate(J,J_0, Variable => o.Variable);
-	  (ring J)/J)
-     else (J = reesIdeal(J, Variable => o.Variable))
+	  J = reesSaturate(J,J_0, Variable => o.Variable))
+     else (J = reesIdeal(J, Variable => o.Variable));
+     (ring J)/J
      )
           
           
@@ -289,13 +297,19 @@ distinguishedAndMult = method(Options => {Variable => null})
 distinguishedAndMult(Ideal) := List => o -> i -> (
      R := ring i;
      J := reesIdeal(i, Variable => o.Variable); -- the ideal of the Rees algebra
-     I := J+substitute(i, ring J); -- the ideal of the normal cone
+     oldDegs := (monoid (ring J)).Options.Degrees;
+     newDegs := apply(oldDegs, i -> first entries (matrix{i}*matrix{{1},{1}}));
+     S := (coefficientRing (ring J))(monoid[gens (ring J), Degrees => newDegs, MonomialOrder => GRevLex]);
+     mapToSfromRees:= map(S, (ring J));
+     mapToSfromR := map(S, R);
+     I := mapToSfromR(i)+mapToSfromRees(J);    
      Itop := top I; -- we only need the irreducibles of codim 1 mod J.
      L := decompose (I); -- find its irred components
      apply(L,P->(Pcomponent := Itop:(saturate(Itop,P)); 
 	       --the P-primary component. The multiplicity is
-	       --(degree Pcomponent)/(degree P)
-       	  {(degree Pcomponent)/(degree P), kernel(map((ring P)/P, R))})))
+	       --computed as (degree Pcomponent)/(degree P)
+       	  {(degree Pcomponent)/(degree P), kernel(map(S/P, R))})))
+
 
 -- PURPOSE : Core code of the special fiber of the rees algebra 
 --           over a quotient ring. For use, see front end. 
@@ -450,10 +464,10 @@ document {
      ma",
      Usage => "symmetricKernel(f, I)",
      Inputs => {"f" => {ofClass Matrix}},
-     Outputs => {{ofClass Ideal, "defining the rees ring of 
+     Outputs => {{ofClass Ideal, "defining the Rees ring of 
 	       the ", ofClass Matrix, TT "f"}},
 	       
-     PARA{}, "This function is the workhorse of all of the Rees algebra 
+     PARA{}, "This function is the workhorse of all/most of the Rees algebra 
      functions.  Most users will prefer to use one of the front 
      end commands ", TO "reesAlgebra", ".",
      
@@ -476,13 +490,13 @@ document {
     quotient ring, or by giving the quotient ideal as an optional argument."},
     
     EXAMPLE { 
-     	  " R = QQ[x,y,z]/ideal(x*y^2-z^9)",
+     	  "R = QQ[x,y,z]/ideal(x*y^2-z^9)",
 	  "J = ideal(x,y,z)",
 	  "symmetricKernel(gens J)"
 	  },
      " or ",
      EXAMPLE {
-	  " R = QQ[x,y,z]",
+	  "R = QQ[x,y,z]",
 	  "I = ideal(x*y^2-z^9)",
 	  "J = ideal(x,y,z)",
 	  "symmetricKernel(gens J)"
@@ -550,7 +564,7 @@ document {
 
 document {
      Key => reesAlgebra, 
-     Headline => "compute the rees algebra"
+     Headline => "compute the Rees algebra"
      }
 
 document {
@@ -570,7 +584,7 @@ document {
 
 document {
      Key => (reesAlgebra,Module), 
-     Headline => "compute the rees algebra of a module over a quotient ring",
+     Headline => "compute the Rees algebra of a module over a quotient ring",
      Usage =>  "reesAlgebra(M)",
      Inputs => {"M"},
      Outputs => {{" defining the Rees algebra of  
@@ -580,7 +594,7 @@ document {
 
 document { 
      Key => (reesAlgebra,Ideal),
-     Headline => "compute the rees algebra of an ideal over a quotient ring",
+     Headline => "compute the Rees algebra of an ideal over a quotient ring",
      Usage =>  "reesAlgebra(J)",
      Inputs =>  {"J"},
      Outputs => {{" defining the Rees algebra of 
@@ -590,10 +604,10 @@ document {
 
 document {
      Key => {distinguished, (distinguished,Ideal)},
-     Headline => "compute the distinguished subvarieties of a variety",
+     Headline => "computes the distinguished subvarieties of a scheme",
      Usage => "distinguished I" ,
      Inputs =>  {"I" => {ofClass Ideal, " in ", ofClass PolynomialRing}},
-     Outputs => {{ofClass List, " of ideals defining the components 
+     Outputs => {{ofClass List, " of prime ideals defining the components 
 	  of the support of the normal cone over ", TT "I"}},
      "Stuff."
      }
@@ -757,10 +771,10 @@ restart
 loadPackage "ReesAlgebraNew"
 R=QQ[a..e]
 j=monomialCurveIdeal(R, {1,2,3,5})
-IS = symmetricKernel(gens j)
+IS = symmetricKernel(j)
 time L = reesAlgebra(j)
 M = coker gens j
-IM = rees(M)
+IM = reesAlgebra(M)
 IR= time rees(j)
 betti gens IR
 degrees source vars ring IR
@@ -768,7 +782,7 @@ specialFiber(j, Strategy => I)
 analyticSpread(j, Strategy => I)
 ----
 restart
-load( "rees_eisenbud_me.m2")
+loadPackage "ReesAlgebraNew"
 --kk=ZZ/32003
 R=QQ[x_1..x_8]
 m1=genericMatrix(R,x_1,2,2)
@@ -803,24 +817,10 @@ fu=universalEmbedding(I,f)   -- f = ????
 betti symmetricKernel(I,fu)
 betti symmetricKernel(I,f)
 ///
+
 ///
 restart
-load "rees_eisenbud_me.m2"
---kk=ZZ/32003
-x = symbol x
-R=ZZ/32003[x,y,z]
-i=intersect(ideal(x),(ideal(x,y))^2, (ideal(x,y,z))^3)
-distinguished i
-use R
-i
-distinguishedAndMult i
-///
-///
-R = ZZ/101[x,y]/ideal(x^2-y^3)
-J = ideal(x,y)
-reesAlgebra(J)
-///
-///
+loadPackage "ReesAlgebraNew"
 R = ZZ/32003[x,y,z]
 I = ideal(x,y)
 cusp = ideal(x^2*z-y^3)
@@ -838,6 +838,8 @@ saturate(SL, ideal(w_0,w_1)) -- we get 1 so it is smooth.
 degree(D_0+D_1)/(degree radical(D_0+D_1))
 ///
 ///
+restart
+loadPackage "ReesAlgebraNew"
 R = ZZ/32003[x,y,z]
 I = ideal(x,y)
 tacnode = ideal(x^2*z^2-x^4-y^4)
@@ -914,8 +916,34 @@ D = 4
 P = product(D, i -> random(1,T))
 R = ZZ/101[a,b,c,d]
 I = ideal(a^2, a*b*(substitute(P,R)), b^2)
+ass I -- there is one minimal associated prime (a thick line in PP^3) and D embedded primes (points on the line) 
 primaryDecomposition I
-distinguished(I)
+distinguished(I) -- only the minimal prime is a distinguished component
+K = distinguishedAndMult(I) -- get multiplicity 2 
+intersect apply(K, i-> i_1^(i_0)) -- checks the Geometric Nullstellensatz on Ein-Lazarsfeld
+
 ///
+
+///
+R=ZZ/32003[x,y,z]
+I=intersect(ideal(x),(ideal(x,y))^2, (ideal(x,y,z))^3)
+ass I
+distinguished I
+K = distinguishedAndMult I
+intersect apply(K, i-> i_1^(i_0)) 
+///
+
+
+
+/// 
+-- Check multiplicities of the distinguished components versus the effective Nullstellenstaz
+
+n = 5
+S = ZZ/101[u,v]
+R = ZZ/101[x_0..x_3]
+f=map(S, R, matrix {{u^n, u^2, u*v,v}})
+I = kernel f
+///
+
 end
 installPackage "ReesAlgebra"
