@@ -16,7 +16,7 @@
 ---------------------------------------------------------------------------
 newPackage(
 	"ReesAlgebraNew",
-    	Version => "0.5", 
+    	Version => "0.51", 
     	Date => "October 26, 2006",
     	Authors => {{
 		  Name => "David Eisenbud",
