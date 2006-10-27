@@ -242,24 +242,19 @@ document {
 document { 
      Key => (degree,RingElement,RingElement),
      Headline => "degree with respect to a variable",
-     Usage => "degree(f,x)",
+     Usage => "degree(x,f)",
      Inputs => {
-	  "f" => {"in a polynomial ring ", TT "R"},
 	  "x" => {"a variable in the same ring"},
+	  "f" => {"in a polynomial ring ", TT "R"}
 	  },
      Outputs => {
 	  ZZ => {"highest power of ", TT "x", " occuring in ", TT "f"}
 	  },
      EXAMPLE {
 	  "R = QQ[a..d];",
-	  "degree(a*b^5+b^7-3*a^10-3, b)"
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "degree(b, a*b^5+b^7-3*a^10-3)"
+	  }
      }
-
-
-
 
 ///
 R = QQ[a..d,Degrees=>{{0,1},{1,0},{-1,1},{-2,1}}]
