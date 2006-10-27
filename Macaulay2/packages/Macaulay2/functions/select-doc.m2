@@ -4,7 +4,8 @@
 
 document { 
      Key => select,
-     Headline => "select from a list, hash table, or string"
+     Headline => "select from a list, hash table, or string",
+     SeeAlso => {partition}
      }
 
 document {
@@ -60,7 +61,7 @@ document {
      EXAMPLE {
 	  ///select(4,0..10,even)///
 	  },
-     SeeAlso => {(select,BasicList,Function)}
+     SeeAlso => {(select,BasicList,Function),partition}
      }
 
 document { 
@@ -77,7 +78,8 @@ document {
      EXAMPLE {
 	  "x = new HashTable from { x => 1, y => 2, z => 3 }",
 	  "select(x,odd)"
-	  }
+	  },
+     SeeAlso => {partition}
      }
 
 document { 
@@ -96,7 +98,7 @@ document {
 	  "x = new HashTable from { x => 1, y => 2, z => 3 }",
 	  "select(1,x,odd)"
 	  },
-     SeeAlso => {(select,HashTable,Function)}
+     SeeAlso => {(select,HashTable,Function), partition}
      }
 
 document { 
@@ -117,5 +119,5 @@ document {
 	  "select({1,2,3,4,5}, odd)",
 	  "select([1,2,3,4,5], odd)",
 	  },
-     SeeAlso => {(select,ZZ,BasicList,Function)}
+     SeeAlso => {(select,ZZ,BasicList,Function), partition}
      }

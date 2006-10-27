@@ -220,7 +220,7 @@ fourierMotzkin(Matrix, Matrix) := (Z, H) -> (
      -- successive projections eliminate the remaining variables 'T'
      if (A =!= {}) then
      scan(T, t -> (
-	       << "FM: elim " << t << " " << #A << " " << #V << endl;
+	       --<< "FM: elim " << t << " " << #A << " " << #V << endl;
 	       D := fourierMotzkinElimination(A, V, t);
 	       A = D#0;
 	       V = D#1));
