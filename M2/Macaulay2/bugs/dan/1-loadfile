@@ -1,0 +1,9 @@
+Make the second version look *only* in the directory (currentFileDirectory) containing the file containing the load command.
+
+    i10 : load "FirstPackage.m2"
+
+    i11 : load "./FirstPackage.m2"
+
+    i12 : currentDirectory 
+
+    o12 = /home/dan/src/M2/BUILD/normal/
