@@ -144,12 +144,15 @@ if firstTime then (
 	  -- this is the way execvp(3) decides whether to search the path for an executable
 	  match("/", filename)
 	  );
-     isAbsolutePathRegexp := (
-	  -- this is the way execvp decides whether to search the path for a Macaulay 2 source file
-	  if version#"operating system" === "Windows-95-98-NT" then "^(.:/|/)"
-	  else "^/"
-	  );
+     re := "/";						    -- /foo/bar
+     if version#"operating system" === "Windows-95-98-NT" 
+     then re = re | "|.:/";				    -- "C:/FOO/BAR"
+     isAbsolutePathRegexp := "^(" | re | ")";		    -- whether the path will work from any directory
+     re = re | "|\\./";					    -- ./foo/bar
+     re = re | "|\\.\\./";				    -- ../foo/bar
+     isStablePathRegexp := "^(" | re | ")";		    -- whether we should search along the path
      isAbsolutePath = filename -> match(isAbsolutePathRegexp, filename);
+     isStablePath = filename -> match(isStablePathRegexp, filename);
      concatPath = (a,b) -> if isAbsolutePath b then b else a|b;
 
      toAbsolutePath = pth -> if pth =!= "stdio" and not isAbsolutePath pth then "/" | relativizeFilename("/", pth) else pth;
