@@ -85,7 +85,9 @@ repairMap = (cacheValue symbol repairMap) (
 
 poincare Module := (cacheValue symbol poincare) (
      M -> (
-	  if not isHomogeneous M then error "expected a homogeneous module"; -- we had this commented out before, why?
+	  -- some examples compute degrees of inhomogeneous modules, so we can't refuse to compute when the module is not homogeneous.
+	  -- is it guaranteed to work in some sense?
+	  -- if not isHomogeneous M then error "expected a homogeneous module";
 	  R := ring M;
 	  ZZn' := degreesRing (monoid R).internalDegreeLength;
 	  M = cokernel presentation M;
@@ -110,7 +112,9 @@ trimm := (f,n) -> (
 hilbertSeries PolynomialRing := options -> (R) -> hilbertSeries(R^1, options)
 hilbertSeries Ring := options -> (R) -> error "no method for computing hilbert series for this ring"
 hilbertSeries Module := options -> (M) -> (
-     if not isHomogeneous M then error "expected a homogeneous module";
+     -- some examples compute degrees of inhomogeneous modules, so we can't refuse to compute when the module is not homogeneous.
+     -- is it guaranteed to work in some sense?
+     -- if not isHomogeneous M then error "expected a homogeneous module";
      ord := options.Order;
      if ord === infinity then (
 	  if M.cache#?"exact hilbertSeries" then return M.cache#"exact hilbertSeries";
