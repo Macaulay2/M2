@@ -73,23 +73,29 @@ Thing.NoPrint = x -> (
      -- do nothing
      )
 
-isSpecial := filename -> match( ///^(\$|!)///, filename )
-
 pathdo := (loadfun,path,filename,reportfun) -> (
      ret := null;
      if class filename =!= String then error "expected a string";
-     if null === scan(
-	  if isStablePath filename or isSpecial filename then {""}
-	  else if currentFileDirectory == "--startupString--/" then path
-	  else prepend(currentFileDirectory, path),
-	  dir -> (
+     newpath := (
+	  if isStablePath filename then {
+	       singledir :=
+	       if isAbsolutePath filename
+	       then ""
+	       else if currentFileDirectory != "--startupString--/" then currentFileDirectory
+	       else "./"
+	       }
+	  else path
+	  );
+     if null === scan(newpath, dir -> (
 	       if class dir =!= String then error "member of 'path' not a string";
 	       fullfilename := dir | filename;
 	       if fileExists fullfilename then (
 		    ret = loadfun fullfilename;
 		    reportfun fullfilename;
 		    break true)))
-     then error("file not found on path: \"", toString filename, "\"");
+     then error splice("file not found",
+	  if singledir =!= null then (" in \"",singledir,"\"") else " on path",
+	  ": \"", toString filename, "\"");
      ret)
 
 tryload := (filename,loadfun,notify) -> pathdo(loadfun,path,filename, fullfilename -> markLoaded(fullfilename,filename,notify))

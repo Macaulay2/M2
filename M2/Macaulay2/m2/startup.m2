@@ -150,6 +150,8 @@ if firstTime then (
      isAbsolutePathRegexp := "^(" | re | ")";		    -- whether the path will work from any directory
      re = re | "|\\./";					    -- ./foo/bar
      re = re | "|\\.\\./";				    -- ../foo/bar
+     -- re = re | "|\$";					    -- $www.uiuc.edu:80
+     -- re = re | "|\!";					    -- !date
      isStablePathRegexp := "^(" | re | ")";		    -- whether we should search along the path
      isAbsolutePath = filename -> match(isAbsolutePathRegexp, filename);
      isStablePath = filename -> match(isStablePathRegexp, filename);
