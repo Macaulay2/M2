@@ -288,7 +288,7 @@ Tr^6 == I * (Tr^6 // I) + (Tr^6 % I)
 -- clear the earlier meaning of {\tt x} to make it
 -- into a subscripted variable
 
-erase global x
+x = global x
 
 -- and then set
 
@@ -317,7 +317,7 @@ pideal = ideal(x_0+x_3, x_1, x_2)
 -- We want the new ring to have an ``elimination
 -- order'' for the first variable.
 
-erase global y
+y = global y
 S = KK[y_0..y_3,MonomialOrder=> Eliminate 1]
 
 -- Here is one way to make the substitution
