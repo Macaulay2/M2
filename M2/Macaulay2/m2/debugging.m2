@@ -158,7 +158,7 @@ userSymbols = type -> (
 listUserSymbols = Command ( type -> listSymbols userSymbols type )
 
 clearOutput = Command (() -> scan(join({global oo, global ooo, global oooo}, values OutputDictionary), s -> s <- s ))
-clearAll = Command (() -> ( clearOutput(); scan(values User#"private dictionary", i -> i <- i) ) )
+clearAll = Command (() -> ( clearOutput(); scan(values User#"private dictionary", i -> erase i <- i) ) )
 
 generateAssertions = method(TypicalValue => Net)
 generateAssertions String := s -> generateAssertions select(lines s, x -> not match("^[[:space:]]*(--.*)?$",x))
