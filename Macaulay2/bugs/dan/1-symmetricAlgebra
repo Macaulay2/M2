@@ -1,0 +1,2 @@
+fix symmetricAlgebra so it provides a Heft option to the variables
+fix symmetricAlgebra so it returns a tower ?
