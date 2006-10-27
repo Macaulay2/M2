@@ -19,7 +19,7 @@ export {ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,
    
 scan({"Local", "Global"}, nm -> assert (isGlobalSymbol nm and value getGlobalSymbol nm === getGlobalSymbol nm))
 
-load "Dmodules/Dloadfile.m2"
+load "./Dloadfile.m2"
 
 -- HOOKS
 

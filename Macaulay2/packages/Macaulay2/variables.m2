@@ -1,2 +1,2 @@
-load "variables/commandLine-doc.m2"
+load "./variables/commandLine-doc.m2"
 
