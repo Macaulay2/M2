@@ -12,27 +12,25 @@
 -- PROGRAMMERs : Rees algebra code written by David Eisenbud and edited and 
 --               maintained by Amelia Taylor.  Ideal integral closure 
 --		 code written and maintained by Amelia Taylor
--- UPDATE HISTORY : 14 June 2006
+-- UPDATE HISTORY : 26 October 2006
 ---------------------------------------------------------------------------
 newPackage(
-	"ReesAlgebra",
+	"ReesAlgebraNew",
     	Version => "0.5", 
-    	Date => "June 14, 2006",
+    	Date => "October 26, 2006",
     	Authors => {{
-		  Name => "David Eisenbud", 
-		  HomePage => "",
-		  Email => "de@msri.org"}},
+		  Name => "David Eisenbud",
+		  Email => "de@msri.org"},
+	     {Name => "Amelia Taylor",
+	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor",
+   	     Email => "amelia.taylor@coloradocollege.edu"}},
     	Headline => "Rees algebras",
     	DebuggingMode => true
     	)
 
---	     {Name => "Amelia Taylor",
---	     HomePage => "http://www.stolaf.edu/people/ataylor",
---   	     Email => "ataylor@stolaf.edu"}
-
-export{symmetricKernel, universalEmbedding, rees, reesClassic, distinguished, 
+export{ symmetricKernel, universalEmbedding, reesAlgebra, distinguished, 
      distinguishedAndMult, specialFiber, analyticSpread, isLinearType, 
-     idealIntegralClosure, multiplicity}
+     idealIntegralClosure, multiplicity, reesIdeal}
 
 
 
@@ -49,147 +47,205 @@ export{symmetricKernel, universalEmbedding, rees, reesClassic, distinguished,
  
 -- PURPOSE : Compute the rees ring of the image of a 
 --           a matrix regarded as over a quotient ring.  
--- INPUT : 'f' a matrix over a ring R
--- Options : The ring R can be a quotient ring, or, the user can define 
---           f over a polynomial ring R and an ideal I can be given 
---           as the option Strategy and the special fiber is then computed 
---           over the quotient ring R/I.
+-- INPUT : 'f' a matrix and 'I' and an ideal over a polynomial ring OR 
+--         a module over a polynomial or quotient ring. 
 -- OUTPUT : an Ideal defining the Rees algebra of the image of f regarded 
---          as a matrix over the ring R, or if option is given, R/I.
-w := local w;
-symmetricKernel = method(Options=>{Strategy => null,Variable => null})
-symmetricKernel(Matrix) := Ideal => o -> (f) -> (
+--          as a matrix over the ring of I mod I if f is a versal embedding 
+--          For the module or if f is not a versal embedding it naively computes 
+--          the defining ideal of the Rees algebra and the output may be correct 
+--          and it may be nonsense.
+-- COMMENT : If I is the zero ideal and f is the generators of an ideal then 
+--           the ideal is this is the usual
+--           defining ideal of the usual Rees Algebra. Otherwise f 
+--           corresponds to the versal embedding as defined in Eisenbud, 
+--           Huneke, and Ulrich.  Also the Module version just sets up 
+--           the input to use symmetric Kernel on a Module.  See "OUTPUT" 
+--           for caution.
+w := global w;
+symmetricKernel = method(Options=>{Variable => null})
+symmetricKernel(Matrix,Ideal) := Ideal => o -> (f, I) -> (
      -- first four lines set up constructing key rings.
-     R := ring f;
-     F := f;
-     kk := coefficientRing(R);      
-     oldvarlist := flatten entries vars R;   
-     nR := rank source vars R;
-     -- Set up the key map from R to R/I.
-     mtar := -(min flatten degrees target f)+1;
-     msource := -(min flatten degrees source f)+1;
-     ntarf := rank target f;
-     nsouf := rank source f;
-     tardeglist := degrees target (f**R^{-mtar}) | degrees source vars R;
-     Rtar1 := kk[Y_1..Y_(ntarf),oldvarlist,Degrees=>tardeglist];
-     if o.Strategy === null and class R === PolynomialRing then Rtar := Rtar1
-     else (if o.Strategy =!= null then (
-	       I := o.Strategy;
-     	       Rtar = Rtar1/substitute(I, Rtar1))
-	  else (Rtar = Rtar1/substitute(ideal ring f, Rtar1));
-	  );
-     oldvars := (vars Rtar)_{0..nR-1};
-     RtoRtar := map(Rtar, R, oldvars);
-     -- g builds key elements y_j*f_i to make the map R[y_j*f_i] to R/I
-     -- desired answer is the kernel of this map given as i.  
-     g := ((vars Rtar)_{nR..(nR+ntarf-1)})*(RtoRtar(f**R^{-mtar}))|oldvars;
- --     << "--map" << g << endl;
-      if o.Variable === null then (
-     	   Rsource := kk[w_1..w_(nsouf),oldvarlist,
-	  Degrees=>degrees source g])
-     else (
-	  Rsource = kk[(o.Variable)_1..(o.Variable)_(nsouf),oldvarlist,
-	  Degrees=>degrees source g]);
-     i := ideal mingens ker map(Rtar, Rsource, g);
---     << "--Rsource" << Rsource << endl;
---     << "--Rtar" << Rtar << endl;
-     -- Degrees are set to desired multidegree of the rees algebra.
-     newdegs1 := apply(degrees source oldvars, i -> append(i,0));
-     newdegs2 := apply(degrees source f, i -> append(i, 1));
-     if o.Variable === null then (
-     	  Ranswer := kk[w_1..w_(nsouf),oldvarlist, 
-	       MonomialOrder => {nsouf, #oldvarlist},
-	       Degrees=>join(newdegs2,newdegs1)])
-     else (Ranswer = kk[(o.Variable)_1..(o.Variable)_(nsouf),oldvarlist, 
-	       MonomialOrder => {nsouf, #oldvarlist},
-	       Degrees=>join(newdegs2,newdegs1)]);
-     substitute(i, Ranswer)
+     S := ring f;
+     if (monoid S).Options.DegreeRank =!= 1 then (
+	  R := (coefficientRing(S))(monoid[gens S, DegreeRank => 1, MonomialOrder => GRevLex]);
+     	  G := map(R,S);
+	  f = G(f);
+	  I = G(I);
+	  )
+     else (R = S);
+	  kk := coefficientRing(R);           
+     	  oldvarlist := flatten entries vars R;   
+     	  nR := rank source vars R;
+     	  -- Set up the key map from R to R/I.
+     	  mtar := -(min flatten degrees target f)+1;
+     	  msource := -(min flatten degrees source f)+1;
+     	  ntarf := rank target f;
+     	  nsouf := rank source f;
+--	  error "debug me";
+     	  tardeglist :=  degrees source vars R | degrees target (f**R^{-mtar});
+	  Rtar1 := kk(monoid [oldvarlist,Y_1..Y_(ntarf),Degrees=>tardeglist]);
+     	  F := map(Rtar1, R);
+     	  Rtar = Rtar1/F(I);
+     	  oldvars := (vars Rtar)_{0..nR-1};
+     	  RtoRtar := map(Rtar, R, oldvars);
+     	  -- g builds key elements y_j*f_i to make the map R[y_j*f_i] to R/I
+     	  -- desired answer is the kernel of this map given as i.
+     	  g := oldvars|((vars Rtar)_{nR..(nR+ntarf-1)})*(RtoRtar(f**R^{-mtar}));  
+     	  if o.Variable === null then (
+     	       Rsource := kk(monoid [oldvarlist, w_0..w_(nsouf-1), Degrees=>degrees source g]))
+     	  else (Rsource = kk(monoid [oldvarlist, (o.Variable)_0..(o.Variable)_(nsouf-1),
+	       		 Degrees=>degrees source g]));
+     	  i := ideal mingens ker map(Rtar, Rsource, g);
+     	  -- Degrees are set to desired multidegree of the rees algebra.
+     	  newdegs1 := apply(degrees source oldvars, i -> append(i,0));
+     	  newdegs2 := apply(degrees source f, i -> append(i, 1));
+      	  if o.Variable === null then (
+     	       Ranswer := kk(monoid [oldvarlist, w_0..w_(nsouf-1),
+	       		 MonomialOrder => { #oldvarlist, nsouf},
+	       		 Degrees=>join(newdegs1,newdegs2)]))
+     	  else (Ranswer = kk(monoid [oldvarlist, (o.Variable)_0..(o.Variable)_(nsouf-1),
+	       		 MonomialOrder => { #oldvarlist, nsouf},
+	       		 Degrees=>join(newdegs1,newdegs2)]));
+     	  (map(Ranswer, Rsource))(i)
      )
+
+
+symmetricKernel(Module) := Ideal => o-> (M) ->(
+     S := ring M;
+     I := ideal S;
+     R := ring I;
+     symmetricKernel(lift(presentation M, R), I)
+     )    	      	   
+symmetricKernel(Ideal) := Ideal => o -> (J) -> (
+     symmetricKernel(coker gens J))
+     
      
 -- PURPOSE: Core code for the universal embedding of the image of f**R/I.
 --          For more information, see below.
-universalEmbeddingCore = (I,f) ->(
-     if I =!= null then (
-	  R := ring f; 
-	  Rbar := R/I; 
-	  fbar := substitute(f, Rbar)
-	  )
-     else fbar = f;
+universalEmbeddingCore = (f,I) ->(
+     R := ring f;
+     S := R/I;
+     F := map(S, R);
+     fbar := F(f);
      fres := res(image fbar, LengthLimit=>2);
      ftres := res(image transpose fres.dd_1, LengthLimit=>2);
-     if I === null then transpose ftres.dd_1
-     else (fnew := transpose ftres.dd_1;
-	  substitute(fnew, R))
+     fnew := transpose ftres.dd_1;
+     lift(fnew, R)
      )
 
 -- PURPOSE: Front end code for the universal (or versal) embedding of the 
 --          image of f, or of M or of J over a quotient ring.  
--- INPUT : 'f' a matrix OR
---         'M' a module OR
---         'J' an ideal 
--- Options : The ring R can be a quotient ring, or, the user can define 
---           f, M or J over a polynomial ring R and an ideal I can be given 
---           as the option Strategy and the special fiber is then computed 
---           over the quotient ring R/I.
--- OUTPUT : a map that is a versal embedding of the image of f, M or J 
---          over the ring R, or if option is given, R/I.
+-- INPUT : 'M' a matrix and 'I' an ideal defined over a polynomial ring.
+-- OUTPUT : a map that is a versal embedding of the image of M over the 
+--          ring of M mod I.  
 -- COMMENT : The purpose is to compute a versal embedding to be used in 
---           symmetricKernel in order to compute a Rees Algebra. This allows 
---           as input any algebraic object we might want a rees algebra for.
-universalEmbedding = method(Options=>{Strategy => null})
-universalEmbedding(Matrix) := Matrix => o -> (f) -> universalEmbeddingCore(o.Strategy, f)
-universalEmbedding(Module) := Matrix => o -> (M) -> universalEmbeddingCore(o.Strategy, presentation M)
-universalEmbedding(Ideal) := Matrix => o -> (J) -> universalEmbeddingCore(o.Strategy, gens J)
+--           symmetricKernel in order to compute a Rees Algebra in the most 
+--           general case possible at this time as defined in Eisenbud, Huneke 
+--           and Ulrich. 
+universalEmbedding = method()
+universalEmbedding(Matrix,Ideal) := Matrix => (M, I) -> universalEmbeddingCore(M,I)
 
 
--- PURPOSE : Front end for computing the Rees ring of a module, the image 
---           of a matrix, or an ideal each regarded as being in/over a 
+-- PURPOSE :  Simply compute the rees ring of an ideal over a polynomial ring.
+-- INPUT : 'J' an Ideal and 'a' a RingElement. 
+-- OUTPUT : an Ideal defining the Rees algebra of an ideal saturated using the 
+--          ring element given.   
+-- COMMENT : Can be used independently or as a strategy for reesIdeal and reesAlgebra.  
+--           Goal is for this to be only a local routine for reesIdeal and 
+--           reesAlgebra as soon as we can find a way to enter the ring 
+--           element for that strategy.
+
+reesSaturate = method(Options => {Variable => null})     
+reesSaturate (Ideal, RingElement)  := Ideal => o -> (J, a) -> (
+     R := ring J;
+     j := syz gens J;
+     oldvarlist := flatten entries vars R;
+     numnew := numgens J;
+     newdegs1 := apply(degrees source oldvars, i -> append(i,0));
+     newdegs2 := apply(numnew, i -> flatten{degree(I_i),1});
+     if o.Variable === null then (
+     	  Ranswer := (coefficientRing R)(monoid [oldvarlist, w_0..w_(numnew-1),
+	       MonomialOrder => { #oldvarlist, numnew},
+	       Degrees=>join(newdegs1,newdegs2)]))
+     else (Ranswer = (coefficientRing R)(monoid [oldvarlist, (o.Variable)_0..(o.Variable)_(numnew-1),
+	       MonomialOrder => { #oldvarlist, numnew},
+	       Degrees=>join(newdegs1,newdegs2)])); 
+     F := map(Ranswer, R); -- uses that oldvars are first.
+     symm := ideal(matrix{{Ranswer_n..Ranswer_(numgens R + numnew -1)}}*F(j));
+     saturate(symm,F(a))
+     )
+
+-- PURPOSE : Front end for computing the defining ideal of the Rees algebra 
+--           of a module, or an ideal defined over a polynomial ring or a 
 --           quotient ring.
--- INPUT : 'f' a matrix OR
---         'M' a module OR
+-- INPUT : 'M' a module OR
 --         'J' an ideal 
--- Options : The ring R can be a quotient ring, or, the user can define 
---           f, M or J over a polynomial ring R and an ideal I can be given 
---           as the option Strategy and the special fiber is then computed 
---           over the quotient ring R/I.
--- OUTPUT : an Ideal defining the Rees algebra of the image of f, of M, 
---          or of J each considered as being in/over over the ring R, 
---          or if option is given, R/I..
+-- Options : The computation requires additional variables.  The user 
+--           can use Variable => to specify the letter used for the 
+--           new indexed variable.  The default is the letter w.  The 
+--           default algorithm is symmetricKernel, but in the case of 
+--           an ideal over a polynomial ring the user might want to use 
+--           the algorithm in reesSaturate specified by Strategy => Saturate.
+-- OUTPUT : an Ideal defining the Rees algebra of the module M or of the ideal J.
 -- COMMENT : Uses proposition 1.3 in Eisenbud, Huneke, Ulrich and computes 
 --           the rees algebra of a versal embedding of the 
---           Matrix/Module/ideal over R/I.
-rees = method(Options=>{Strategy => null,Variable => null})
-rees(Matrix) := Ideal => o -> (f) -> (
-     if o.Strategy === null then symmetricKernel(universalEmbedding(f),Variable => o.Variable)
-     else (I := o.Strategy;
-	  symmetricKernel(universalEmbedding(f,Strategy => I), Strategy => I, Variable => o.Variable)
+--           Module regardless of the ring and for an ideal over a quotient ring. 
+--           In the case of an ideal over a polynomial ring the process is slightly 
+--           streamlined, skipping the unneccessary versal computation as in that 
+--           case the inclusion map is a versal map.
+reesIdeal = method(Options=>{Variable => null, Strategy => null})
+reesIdeal(Module) := Ideal => o -> (M) -> (
+     S := ring M;
+     I := ideal S;
+     R := ring I;
+     symmetricKernel(universalEmbedding(lift(presentation M, R),I), I, 
+	  Variable => o.Variable)
 	  )
-     )
-rees(Module) := Ideal => o -> (M) -> (
-     if o.Strategy === null then symmetricKernel(universalEmbedding(M), Variable => o.Variable)
-     else (I := o.Strategy;
-	  symmetricKernel(universalEmbedding(M,Strategy => I), Strategy => I, Variable => o.Variable)
-	  )
-     )
- rees(Ideal) := Ideal => o-> (J) -> (
-      if o.Strategy === null then symmetricKernel(universalEmbedding(J), Variable => o.Variable)
-      else (I := o.Strategy;
-	   symmetricKernel(universalEmbedding(J,Strategy => I), Strategy => I, Variable => o.Variable)
+reesIdeal(Ideal) := Ideal => o-> (J) -> (
+     S := ring J;
+     if instance(S, PolynomialRing) == true then(
+     	  if Strategy == Saturate then (
+	       reesSaturate(J,J_0, Variable => o.Variable))
+     	  else symmetricKernel(gens J, ideal(0_S), Variable => o.Variable))
+     else (
+	  I := ideal S;
+     	  symmetricKernel(universalEmbedding(lift(gens J, ring I), I), I, Variable => o.Variable)
 	  )
      )
 
--- PURPOSE : Quick computation of the basic computation of the Rees ring of 
---           an ideal.
--- INPUT : 'J' an ideal.
--- OUTPUT : Defining ideal for the Rees ring R[Jt] where R is the ring of J.
--- COMMENT : in the computations above, this corresponds to the special case 
---           where I is 0, so that we are still over R and the versal map, 
---           in this case is given by gens J. 
---           The point is that for large ideals, skipping the versal 
---           computation can save important time. 
-reesClassic = method(Options => {Variable => null})
-reesClassic(Ideal) := Ideal => o -> J -> symmetricKernel(gens J,Variable => o.Variable)
-
+-- PURPOSE : Front end for computing the defining Rees algebra 
+--           of a module, or an ideal defined over a polynomial ring or a 
+--           quotient ring.
+-- INPUT : 'M' a module OR
+--         'J' an ideal 
+-- Options : The computation requires additional variables.  The user 
+--           can use Variable => to specify the letter used for the 
+--           new indexed variable.  The default is the letter w.  The 
+--           default algorithm is symmetricKernel, but in the case of 
+--           an ideal over a polynomial ring the user might want to use 
+--           the algorithm in reesSaturate specified by Strategy => Saturate.
+-- OUTPUT : A quotient ring isomorphic to the Rees Algebra.
+-- COMMENT : This is IDENTICAL to reesIdeal, but returns the quotient ring 
+--           rather than the ideal.  
+--           Uses proposition 1.3 in Eisenbud, Huneke, Ulrich and computes 
+--           the rees algebra of a versal embedding of the 
+--           Module regardless of the ring and for an ideal over a quotient ring. 
+--           In the case of an ideal over a polynomial ring the process is slightly 
+--           streamlined, skipping the unneccessary versal computation as in that 
+--           case the inclusion map is a versal map.
+     
+reesAlgebra = method(Options=>{Variable => null, Strategy => null})
+reesAlgebra(Module) := QuotientRing => o -> (M) -> (
+     J := reesIdeal(M, Variable => o.Variable);
+     (ring J)/J)
+reesAlgebra(Ideal) := QuotientRing => o -> (J) -> (
+     if Strategy == Saturate then (
+	  J = reesSaturate(J,J_0, Variable => o.Variable);
+	  (ring J)/J)
+     else (J = reesIdeal(J, Variable => o.Variable))
+     )
+          
+          
 --We can use this to compute the distinguished subvarieties of
 --a variety (components of the support of the normal cone).
 --In the following routine i must be an ideal of a polynomial ring, not a 
@@ -207,10 +263,14 @@ reesClassic(Ideal) := Ideal => o -> J -> symmetricKernel(gens J,Variable => o.Va
 distinguished = method(Options => {Variable => null})
 distinguished(Ideal) := List => o -> i -> (
      R := ring i;
-     J := reesClassic(i, Variable => o.Variable); -- the ideal of the Rees algebra
-     II := substitute(i, ring J);
-     L := decompose (II+J);                 
-     apply(L,P->kernel(map((ring J)/P, R))) 
+     J := reesIdeal(i, Variable => o.Variable); -- the ideal of the Rees algebra
+     oldDegs := (monoid (ring J)).Options.Degrees;
+     newDegs := apply(oldDegs, i -> first entries (matrix{i}*matrix{{1},{1}}));
+     S := (coefficientRing (ring J))(monoid[gens (ring J), Degrees => newDegs, MonomialOrder => GRevLex]);
+     mapToSfromRees:= map(S, (ring J));
+     mapToSfromR := map(S, R);
+     L := decompose (mapToSfromR(i)+mapToSfromRees(J));                 
+     apply(L,P->kernel(map(S/P, R)))
      )
 
 -- PURPOSE : Compute the distinguised subvarieties of a variety  
@@ -228,7 +288,7 @@ distinguished(Ideal) := List => o -> i -> (
 distinguishedAndMult = method(Options => {Variable => null})
 distinguishedAndMult(Ideal) := List => o -> i -> (
      R := ring i;
-     J := reesClassic(i, Variable => o.Variable); -- the ideal of the Rees algebra
+     J := reesIdeal(i, Variable => o.Variable); -- the ideal of the Rees algebra
      I := J+substitute(i, ring J); -- the ideal of the normal cone
      Itop := top I; -- we only need the irreducibles of codim 1 mod J.
      L := decompose (I); -- find its irred components
@@ -239,8 +299,8 @@ distinguishedAndMult(Ideal) := List => o -> i -> (
 
 -- PURPOSE : Core code of the special fiber of the rees algebra 
 --           over a quotient ring. For use, see front end. 
-specialFiberCore = (I,f,V) -> (
-     J := rees(f, Strategy => I,Variable => V);
+specialFiberCore = (f,V) -> (
+     J := reesAlgebra(f, Variable => V);
      R := ring f;
      S := ring J;
      nR := (rank source vars S) - (rank source vars R);
@@ -260,15 +320,13 @@ specialFiberCore = (I,f,V) -> (
 --           over the quotient ring R/I.
 -- OUTPUT : an ideal defining the special fiber of the rees algebra over 
 --          a quotient ring, in a NEW polynomial ring. 
-specialFiber = method(Options=>{Strategy => null, Variable => null})
-specialFiber(Matrix) := o -> (f) -> specialFiberCore(o.Strategy, f,o.Variable)
-specialFiber(Module) := o-> (M) -> specialFiberCore(o.Strategy, presentation M,o.Variable)
-specialFiber(Ideal) :=  o -> (J) -> specialFiberCore(o.Strategy, gens J,o.Variable)
+specialFiber = method(Options=>{Variable => null})
+specialFiber(Module) := Ideal => o-> (M) -> specialFiberCore(M, o.Variable)
+specialFiber(Ideal) :=  Ideal => o -> (J) -> specialFiberCore(J, o.Variable)
 
 -- PURPOSE : Analytic spread of a module as defined in M2 by a matrix, 
 --           a module or ideal over a quotient ring R/I.
--- INPUT : 'f' a matrix OR
---         'M' a module OR
+-- INPUT : 'M' a module OR
 --         'J' an ideal  
 -- Options : The ring R can be a quotient ring, or, the user can define 
 --           f, M or J over a polynomial ring R and an ideal I can be given 
@@ -276,27 +334,13 @@ specialFiber(Ideal) :=  o -> (J) -> specialFiberCore(o.Strategy, gens J,o.Variab
 --           over the quotient ring R/I.
 -- OUTPUT : The analytic spread of f/M/or J over over the ring R, or if 
 --          the option is given, R/I.
-analyticSpread = method(Options=>{Strategy => null})
-analyticSpread(Matrix) := ZZ => o -> (f) -> (
-     if o.Strategy === null then dim specialFiber(f)
-     else (I := o.Strategy;
-	  dim specialFiber(f, Strategy => I))
-     )
-analyticSpread(Module) := ZZ => o -> (M) -> (
-     if o.Strategy === null then dim specialFiber(M)
-     else (I := o.Strategy;
-	  dim specialFiber(M, Strategy => I))
-     )
-
-analyticSpread(Ideal) := ZZ => o -> (J) -> (
-     if o.Strategy === null then dim specialFiber(J)
-     else (I := o.Strategy;
-	  dim specialFiber(J, Strategy => I))
-     )
+analyticSpread = method()
+analyticSpread(Module) := ZZ => (M) -> dim specialFiber(M)
+analyticSpread(Ideal) := ZZ => (J) ->  dim specialFiber(J)
  
 -- PURPOSE : Core code for isLinearType.  For more information, see below.
-isLinearTypeCore = (I,f) -> ( 
-     K := rees(f,Strategy => I);
+isLinearTypeCore = (f) -> ( 
+     K := reesAlgebra(f);
      T := ring K;
      oldvars := substitute(vars ring I, T);
      newvars := compress ((vars T)%oldvars);
@@ -305,8 +349,7 @@ isLinearTypeCore = (I,f) -> (
      )
 
 -- PURPOSE : Test if a module is of linear type.
--- INPUT : 'f' a matrix OR
---         'M' a module OR
+-- INPUT : 'M' a module OR
 --         'J' an ideal 
 -- Options : The ring R can be a quotient ring, or, the user can define 
 --           f, M or J over a polynomial ring R and an ideal I can be given 
@@ -317,29 +360,45 @@ isLinearTypeCore = (I,f) -> (
 -- COMMENT : Tests whether the rees relations are linear forms in the 
 --           new variables.
 isLinearType = method(Options=>{Strategy => null})
-isLinearType(Matrix) := Boolean => o -> (f) -> isLinearTypeCore(o.Strategy, f)
-isLinearType(Module) := Boolean => o -> (M) -> isLinearTypeCore(o.Strategy, presentation M)
-isLinearType(Ideal) := Boolean => o -> (J) -> isLinearTypeCore(o.Strategy, gens J)
+isLinearType(Module) := Boolean => o -> (M) -> isLinearTypeCore(M)
+isLinearType(Ideal) := Boolean => o -> (J) -> isLinearTypeCore(J)
 
 
--- Last updated May 4, 2005
-
--- PURPOSE : Compute the multipicity of I, the normalized leading 
---           coefficient of the hilbert polynomial of the associated 
---           graded ring with respect to I.
--- INPUT : 'I' an Ideal.
--- OUTPUT : 
--- COMMENT : Done as classically as possible.  
+-- PURPOSE : Compute the multipicity e_I(M) and e(I) = e_I(R), 
+--           the normalized leading coefficient of the corresponding 
+--           associated graded ring.  
+-- INPUT : 'I' an Ideal, for e(I) or 'I' and 'M' for e_I(M)
+-- OUTPUT : the Hilbert-Samuel multiplicity
+-- COMMENT : The associated graded ring is computed using the Rees algebra.
 -- WARNING : Computing a quotient like R[It]/IR[It] requires a 
 --           Groebner basis computation and thus can quickly take all of your
 --           memory and time (most likely memory).   
 multiplicity = method()
 multiplicity(Ideal) := ZZ => (I) -> (  
      R := ring I;
-     J1 := reesClassic(I);  --defining ideal of Rees algebra
-     degree coker gens J1
-   --- 17 June 2006 multigraded degree is not implemented 
-   --- according to the documentation.  So what am I getting???
+     J1 := reesAlgebra(I);  --defining ideal of Rees algebra
+     SJ1 := ring J1;
+     S := coefficientRing(SJ1)[gens SJ1];
+	       --Degrees => apply(degrees SJ1, i -> first i)]);
+     F := map(S, SJ1);
+     BS := S/F(J1);  -- The Rees algebra
+     G := map(BS, R);
+     -- coker gens G(I) is the associated graded ring.
+     degree coker gens G(I)
+     )
+
+multiplicity(Module,Ideal) := ZZ => (M, I) -> (  
+     R := ring M;
+     J1 := reesAlgebra(I);  --defining ideal of Rees algebra
+     SJ1 := ring J1;
+     S := coefficientRing(SJ1)[gens SJ1];
+	       --Degrees => apply(degrees SJ1, i -> first i)]);
+     F := map(S, SJ1);
+     BS := S/F(J1);  -- the Rees algebra
+     G := map(BS, R);
+     AssGI := minimalPresentation(BS/G(I)); -- the associated graded ring.
+     H := map(AssGI, R);
+     degree (H**M)
      )
 
 -- PURPOSE : Compute the integral closure of an ideal.
@@ -354,10 +413,10 @@ idealIntegralClosure = method()
 idealIntegralClosure(Ideal) := Ideal => (I) -> (
      R := ring I;
      n1 := numgens R;
-     J1 := reesClassic(I);  --defining ideal of Rees algebra
+     J1 := reesAlgebra(I);  --defining ideal of Rees algebra
      R2 := ring J1;
      n2 := numgens R2;
-     NewVars := take(gens R2,{0,n2-n1-1});
+     NewVars := take(gens R2,{n1,n2-1});
      S := R2/J1;  -- the rees algebra.
      Sfrac1 := first entries (ICfractionsLong S);  -- The slow part is this! 
      Sfrac2 := apply(#Sfrac1-n1, i-> Sfrac1#i);
@@ -374,94 +433,135 @@ beginDocumentation()
 
 document {
      Key => ReesAlgebra,
-     Headline => "for rees algebra and integral closure of ideals",
-     " Stuff"
+     Headline => "compute Rees algebras and integral closure 
+     of ideals",
+     " The goal of this package is to provide commands to compute the 
+     Rees algebra of a module as it is defined in the paper ", EM "What is 
+     the Rees algebra of a module?", " by Craig Huneke, David Eisenbud and 
+     Bernd Ulrich. It also includes functions for computing many of 
+     the structures that require a Rees algebra.  The included functions are 
+     listed below. Examples of the use of each of the functions are included 
+     with their documentation."
      }
 
--- OUTPUT : an Ideal defining the Rees algebra of the image of f regarded 
---          as a matrix over R/I.
 document {
-     Key => {symmetricKernel, (symmetricKernel,Matrix)},
-     Headline => "compute the rees ring for a matrix f over a quotient ring",
-     Usage => "symmetricKernel(f)",
-     Inputs => {"f"},
-     Outputs => {{"an ",  ofClass Ideal, " defining the rees ring of 
+     Key => symmetricKernel,
+     Headline => "compute the defining ideal of the rees algebra for a 
+     ma",
+     Usage => "symmetricKernel(f, I)",
+     Inputs => {"f" => {ofClass Matrix}},
+     Outputs => {{ofClass Ideal, "defining the rees ring of 
 	       the ", ofClass Matrix, TT "f"}},
-     "Stuff"
+	       
+     PARA{}, "This function is the workhorse of all of the Rees algebra 
+     functions.  Most users will prefer to use one of the front 
+     end commands ", TO "reesAlgebra", ".",
+     
+     EXAMPLE {
+	  "R = QQ[a..e]",
+	  "J = monomialCurveIdeal(R, {1,2,3,4})",
+	  "symmetricKernel(gens J)"
+     },
+    
+    "Let the ideal returned be ", TT "I", " and the ring it lives in 
+    (also printed) ", TT "S", ", then ", TT "S/I", " is isomorphic to 
+    the Rees algebra ", TT "R[Jt]",  "We can get the same information 
+    using ", TT "reesAlgebra(J)", ", see ", TO "reesAlgebra", ".  Also 
+    note that ", TT "S", " is multigraded allowing Macaulay2 to correctly 
+    see that the variables of R now live in degree 0 and the new variables 
+    needed to describe ", TT "R[Jt]", "as a k-algebra are in degree 1.",
+    
+    PARA{ TT "symmetricKernel", " can also be computed over a quotient 
+    ring by either initially defining the ring ", TT "R", " as a 
+    quotient ring, or by giving the quotient ideal as an optional argument."},
+    
+    EXAMPLE { 
+     	  " R = QQ[x,y,z]/ideal(x*y^2-z^9)",
+	  "J = ideal(x,y,z)",
+	  "symmetricKernel(gens J)"
+	  },
+     " or ",
+     EXAMPLE {
+	  " R = QQ[x,y,z]",
+	  "I = ideal(x*y^2-z^9)",
+	  "J = ideal(x,y,z)",
+	  "symmetricKernel(gens J)"
+	  },
+     "These many ways of working with the function allows the system 
+     to compute both the classic Rees algebra of an ideal over a ring 
+     (polynomial or quotient) and to compute the the Rees algebra of a 
+     module or ideal using a universal embedding as described in the paper 
+     of Eisenbud, Huneke and Ulrich.  It also allows different ways of 
+     setting up the quotient ring.",
+     SeeAlso => {reesAlgebra, universalEmbedding},
+     }
+
+
+document {
+     Key => (symmetricKernel,Matrix,Ideal),
      }
 
 document {
-     Key => [symmetricKernel, Strategy],
-     Headline=> "Allows the user to define the matrix, ideal, or module over 
-     a polynomial ring and then set an ideal to compute the symmetric kernel 
-     over a quotient ring defined by Strategy"
-     }
+     Key => (symmetricKernel,Module),
+	  }
 
 document {
      Key => [symmetricKernel, Variable],
      Headline=> "symmetricKernel introduces new variables and the option 
      Variable allows the user to specify a variable name for this purpose, 
-     the default is", TT  "w"     
+     the default variable is", TT  "w", "but the default value of the option 
+     is null."     
      }
 
 document { 
-     Key => universalEmbedding,
-     Headline => "Compute the universal embedding" 
+     Key => {universalEmbedding, (universalEmbedding,Matrix, Ideal)},
+     Headline => "Compute the universal embedding",
+     Usage =>  "universalEmbedding(M,I)", 
+     Inputs => {"M" => {ofClass Matrix, " in ", ofClass PolynomialRing}, 
+	  "I" => {ofClass Ideal, " in ", ofClass PolynomialRing}},
+     Outputs => {{ofClass Matrix, "defining the universal embedding 
+	       of the module given over a quotient ring defined by ", TT "I",
+	       " into a free module over the polynomial ring for ", TT "I",
+	       " where ", TT "M", " is the lift of a presentation of the module to 
+	       the polynomial ring"}},
+      PARA{}, "The main purpose of this function is to compute the embedding 
+     needed to compute the ReesAlgebra of a module following ", EM "What 
+     is the Rees algebra of a module?", " written by Eisenbud, Huneke, and 
+     Ulrich ", ". The function is incorporated in ", TO "reesAlgebra", " but the 
+     interested user can use this function to see the map or use it for 
+     something else. ", 
+     EXAMPLE { 
+	  "R=QQ[x_1..x_8];",
+	  "m1=genericMatrix(R,x_1,2,2); m2=genericMatrix(R,x_5,2,2);",
+	  "m=m1*m2",
+	  "i= ideal flatten m",
+	  "d1=minors(2,m1); d2=minors(2,m2);",
+	  "j=i+d1+d2",
+	  "M=matrix{{0,d1_0,m_(0,0),m_(0,1)},
+               {0,0,m_(1,0),m_(1,1)},
+	       {0,0,0,d2_0},
+	       {0,0,0,0}}",
+	  "M=M-(transpose M)",
+	  "N=transpose (res coker transpose M).dd_2",
+	  "uN=universalEmbedding(N)"
+	  }
      }
 
-document {
-     Key => [universalEmbedding, Strategy],
-     Headline=> "Allows the user to define the matrix, ideal, or module over 
-     a polynomial ring and then set an ideal to compute a the univeral 
-     embedding over a quotient ring defined by Strategy"
-     }
 
 document {
-     Key => (universalEmbedding,Matrix),
-     Headline => "compute the universal embedding of a matrix",
-     Usage =>  "universalEmbedding(f)", 
-     Inputs => {"f" => {ofClass Matrix}},
-     Outputs => {{"a ", ofClass Matrix, " defining the universal embedding 
-	       of  the image of ", ofClass Matrix, TT "f", "into a free 
-	       module over the ring of ", TT "f"}},
-     	       "Stuff."
-     }
-
-document {
-     Key => (universalEmbedding,Module),
-     Headline => "compute the universal embedding of a matrix",
-     Usage =>  "universalEmbedding(f)", 
-     Inputs => {"M" => {ofClass Module}},
-     Outputs => {{"a ", ofClass Matrix, " defining the universal embedding 
-	       of the ", ofClass Module, TT "M", "into a free module over 
-	       the ring of ", TT "M"}},
-     	       "Stuff."
-     }
-
-document {
-     Key => (universalEmbedding,Ideal),
-     Headline => "compute the universal embedding of an ideal",
-     Usage =>  "universalEmbedding(I,J)", 
-     Inputs => {"J" => {ofClass Ideal}},
-     Outputs => {{"a ", ofClass Matrix, " defining the universal embedding 
-	       of the ", ofClass Ideal, TT "J", "into a free module over 
-	       the ring of ", TT "J"}},
-     	       "Stuff."
-     }
-
-document {
-     Key => rees, 
+     Key => reesAlgebra, 
      Headline => "compute the rees algebra"
      }
 
 document {
-     Key => [rees,Strategy],
-     Headline=> "Allows the user to define the matrix, ideal, or module over 
-     a polynomial ring and then set an ideal to compute the rees algebra 
-     over a quotient ring defined by Strategy"
+     Key => [reesAlgebra, Variable],
+     Headline=> "rees introduces new variables and the option 
+     Variable allows the user to specify a variable name for this purpose, 
+     the default is", TT  "w"     
      }
+
 document {
-     Key => [rees, Variable],
+     Key => [reesAlgebra, Strategy],
      Headline=> "rees introduces new variables and the option 
      Variable allows the user to specify a variable name for this purpose, 
      the default is", TT  "w"     
@@ -469,62 +569,31 @@ document {
 
 
 document {
-     Key => (rees,Matrix), 
-     Headline => "compute the rees algebra of the image of a 
-     matrix over a quotient ring" ,
-     Usage =>  "rees(f)",
-     Inputs =>  {"f" => {"a ", ofClass Matrix}},
-     Outputs => {{"an ", ofClass Ideal, " defining the Rees algebra of  
-	       the image of ", ofClass Matrix, TT "f"}},
-     "Stuff."
-     }
-
-document {
-     Key => (rees,Module), 
+     Key => (reesAlgebra,Module), 
      Headline => "compute the rees algebra of a module over a quotient ring",
-     Usage =>  "rees(M)",
-     Inputs => {"M" => {"a ", ofClass Module}},
-     Outputs => {{"an ", ofClass Ideal, " defining the Rees algebra of  
-	       the ", ofClass Module, TT "M"}},
+     Usage =>  "reesAlgebra(M)",
+     Inputs => {"M"},
+     Outputs => {{" defining the Rees algebra of  
+	       the ", ofClass Module, " ", TT "M"}},
      "Stuff."
      }
 
 document { 
-     Key => (rees,Ideal),
+     Key => (reesAlgebra,Ideal),
      Headline => "compute the rees algebra of an ideal over a quotient ring",
-     Usage =>  "rees(J)",
-     Inputs =>  {"J" => {"a ", ofClass Ideal}},
-     Outputs => {{"an ", ofClass Ideal, " defining the Rees algebra of 
+     Usage =>  "reesAlgebra(J)",
+     Inputs =>  {"J"},
+     Outputs => {{" defining the Rees algebra of 
 	       the ", ofClass Ideal, " ", TT "J"}},
      "Stuff."
      }
 
 document {
-     Key => {reesClassic, (reesClassic,Ideal)},
-     Headline => "compute the classic Rees algebra of an ideal",
-     Usage =>  "reesClassic(I)",
-     Inputs =>  {"I" => {"an ", ofClass Ideal, " in a ", 
-	  ofClass  PolynomialRing}},
-     Outputs => {{"The defining ", ofClass Ideal, "for the rees algebra ",
-	       "of the ", ofClass Ideal, TT "I"}},
-     "Stuff."
-     }
-
-document {
-     Key => [reesClassic, Variable],
-     Headline=> "reesClassic introduces new variables and the option 
-     Variable allows the user to specify a variable name for this purpose, 
-     the default is", TT  "w"     
-     }
-
- 
-document {
-     Key => {(distinguished,Ideal), distinguished},
+     Key => {distinguished, (distinguished,Ideal)},
      Headline => "compute the distinguished subvarieties of a variety",
      Usage => "distinguished I" ,
-     Inputs =>  {"I" => {"an ", ofClass Ideal, "over a ", 
-	  ofClass PolynomialRing}},
-     Outputs => {{"a ", ofClass List, " of ideals defining the components
+     Inputs =>  {"I" => {ofClass Ideal, " in ", ofClass PolynomialRing}},
+     Outputs => {{ofClass List, " of ideals defining the components 
 	  of the support of the normal cone over ", TT "I"}},
      "Stuff."
      }
@@ -536,15 +605,13 @@ document {
      the default is", TT  "w"     
      }
 
-
 document {
      Key => {distinguishedAndMult, (distinguishedAndMult,Ideal)},
      Headline => "compute the distinguished subvarieties of a variety along 
      with their multiplicities",
      Usage => "distinguishedAndMult I" ,
-     Inputs => { "I" => {"an ", ofClass Ideal, " over a ", 
-	  ofClass PolynomialRing}},
-     Outputs => {{"a ", ofClass List, " of pairs where the first entry 
+     Inputs => {"I" => {ofClass Ideal, " in ", ofClass PolynomialRing}},
+     Outputs => {{ofClass List, " of pairs where the first entry 
 	       is the multiplicity of the second entry which is one 
 	       of the ideals defining a component of the support of 
 	       the normal cone over ", TT "I"}},
@@ -558,17 +625,9 @@ document {
      the default is", TT  "w"     
      }
 
- 
 document {
      Key => specialFiber, 
      Headline => "compute the special fiber"
-     }
-
-document {
-     Key => [specialFiber, Strategy],
-     Headline=> "Allows the user to define the matrix, ideal, or module over 
-     a polynomial ring and then set an ideal to compute the special fiber 
-     over a quotient ring defined by Strategy"
      }
 
 document {
@@ -578,24 +637,13 @@ document {
      the default is", TT  "w"     
      }
 
-
-document {
-     Key => (specialFiber,Matrix),
-     Headline => "compute the special fiber of the image of a matrix over 
-     a quotient ring",
-     Usage =>  "specialFiber(f)",
-     Inputs =>  {"f" => {"a ", ofClass Matrix}},
-     Outputs => {{"an ", ofClass Ideal, " defining the special fiber of the 
-	       image of ", TT "f"}},
-     "Stuff."
-     }
 document { 
      Key => (specialFiber,Module), 
      Headline => "compute the special fiber of the image of a matrix over a", 
      "a quotient ring",
      Usage =>  "specialFiber(M)",
-     Inputs =>  {"f" => {"a ", ofClass Module}},
-     Outputs => {{"an ", ofClass Ideal, " defining the special fiber"}},
+     Inputs =>  {"M"},
+     Outputs => {{"defining the special fiber of ", TT "M"}},
      "Stuff."
      }
 
@@ -604,8 +652,8 @@ document {
      Headline => "compute the special fiber of the image of a matrix over 
      a quotient ring",
      Usage =>  "specialFiber(J)",
-     Inputs =>  {"f" => {"a ", ofClass Ideal}},
-     Outputs => {{"an ", ofClass Ideal, " defining the special fiber"}},
+     Inputs =>  {"J"},
+     Outputs => {{"defining the special fiber of ", TT "J"}},
      "Stuff."
      }
 
@@ -615,32 +663,12 @@ document {
      }
 
 document {
-     Key => [analyticSpread, Strategy],
-     Headline=> "Allows the user to define the matrix, ideal, or module over 
-     a polynomial ring and then set an ideal to compute the analytic spread 
-     over a quotient ring defined by Strategy"
-     }
-
-document {
-     Key => (analyticSpread,Matrix), 
-     Headline => "compute the analytic spread of the image of a matrix 
-     over a quotient ring",
-     Usage => "analyticSpread(f)",
-     Inputs =>  {"f" => {"a ", ofClass Matrix}},
-     Outputs => {{"the dimension of the special fiber of the image  
-	  of ", TT "f", " over ", TT "R/I", " and is an element 
-	   of ", ofClass ZZ}},
-     "Stuff."
-     }
-
-document {
      Key => (analyticSpread,Module), 
      Headline => "compute the analytic spread of a module over a 
      quotient ring",
      Usage => "analyticSpread(M)",
-     Inputs => {"M" => {"a ", ofClass Module}},
-     Outputs => {{"the dimension, an element of ", ofClass ZZ, " of the 
-	       special fiber of the ideal ", TT "M"}},
+     Inputs => {"M"},
+     Outputs => {{"the dimension of the special fiber of ", TT "M"}},
                "Stuff."
      }	   
 
@@ -649,9 +677,9 @@ document {
      Headline => "compute the analytic spread of an ideal over a 
      quotient ring",
      Usage => "analyticSpread(J)",
-     Inputs =>  {"J" => {"an ", ofClass Ideal}},
-     Outputs => {{"the dimension, an element of ", ofClass ZZ, " of the 
-	       special fiber of the ideal", TT "J"}},
+     Inputs =>  {"J"},
+     Outputs => {{"the dimension of the 
+	       special fiber of the ideal ", TT "J"}},
      "Stuff."
      }
 
@@ -661,28 +689,11 @@ document {
      }
 
 document {
-     Key => [isLinearType, Strategy],
-     Headline=> "Allows the user to define the matrix, ideal, or module over 
-     a polynomial ring and then set an ideal to compute test if it is linear 
-     type over a quotient ring defined by Strategy"
-     }
-
-document {
-     Key => (isLinearType,Matrix), 
-     Headline => "determine if the image of a matrix is of linear type",
-     Usage =>  "isLinearType(f)",
-     Inputs =>  {"f" => {"a ", ofClass Matrix}},
-     Outputs => {{"a ", ofClass Boolean, "; true if the image of ", 
-	       TT "f", " is of linear type and false otherwise"}},
-     "Stuff."
-     }
-
-document {
      Key => (isLinearType,Module), 
      Headline => "determine if the image of a matrix is of linear type",
      Usage =>  "isLinearType(M)",
-     Inputs =>  {"M" => {"a ", ofClass Matrix}},
-     Outputs => {{"a ", ofClass Boolean, "true if the module is of linear 
+     Inputs =>  {"M"},
+     Outputs => {{"true if the module is of linear 
 	  type and false otherwise."}},
      "Stuff."
      }
@@ -691,8 +702,8 @@ document {
      Key => (isLinearType,Ideal),
      Headline => "determine if the image of a matrix is of linear type",
      Usage =>  "isLinearType(J)",
-     Inputs =>  {"f" => {"a ", ofClass Matrix}},
-     Outputs => {{"a ", ofClass Boolean, "true if the ideal is of linear 
+     Inputs =>  {"J"},
+     Outputs => {{"true if the ideal is of linear 
 	  type and false otherwise."}},
      "Stuff."
      }
@@ -702,24 +713,40 @@ document {
      Key => {idealIntegralClosure, (idealIntegralClosure,Ideal)},
      Headline => "compute the integral closure of an ideal",
      Usage =>  " idealIntegralClosure(I)",
-     Inputs =>  {"I" => {"an ", ofClass Ideal, " over a ", 
-	  ofClass PolynomialRing}},
-     Outputs => {{"an ", ofClass Ideal, " computed as the degree 1 piece of 
-	  the integral closure of the Rees algebra of ", TT "I"}},
+     Inputs =>  {"I" => {ofClass Ideal, " in ", ofClass PolynomialRing}},
+     Outputs => {{ofClass Ideal, " that is the integral closure of ", TT "I"}},
+     "Computed as the degree 1 piece of 
+	  the integral closure of the Rees algebra of ", TT "I", "."
+     }
+
+document {
+     Key => multiplicity, 
+     Headline => "compute the multiplicity of an ideal or module"
+     }
+
+document {
+     Key => (multiplicity,Ideal),
+     Headline => "compute the Hilbert-Samuel multiplicty of an ideal",
+     Usage =>  "multiplicity I",
+     Inputs =>  {"I"},
+     Outputs => {{"  that is the normalized leading 
+	  coefficient of the associated graded ring of ", TT "R", 
+	  " with respect to ", TT "I"}},
      "Stuff."
      }
 
 document {
-     Key => {multiplicity,(multiplicity,Ideal)},
-     Headline => "compute the multiplicty of an ideal",
-     Usage =>  "multiplicity I",
-     Inputs =>  {"I" => {"an ", ofClass Ideal, "over a ", 
-     ofClass PolynomialRing}},
-     Outputs => {{"an integer in ", ofClass ZZ, " that is the classical 
-	  multiplicity of ", TT "I", " that is the normalized leading 
-	  coefficient of the Rees algebra of", TT "I"}},
+     Key => (multiplicity,Module,Ideal),
+     Headline => "compute the Hilbert-Samule multiplicity of a module with 
+     respect to an ideal",
+     Usage =>  "multiplicity(M,I)",
+     Inputs =>  {"M", "I"},
+     Outputs => {{" that is the normalized leading coefficient of 
+	       the associated graded module of ", TT "M", " with 
+	       respect to ", TT "I"}},
      "Stuff."
      }
+
 
 -- symmetricKernel, rees, reesClassic, analyticSpread, 
 -- distinguishedAndMult, specialFiber, distinguished, universalEmbedding, 
@@ -727,12 +754,11 @@ document {
 
 ///
 restart
-load "rees_eisenbud_me.m2"
+loadPackage "ReesAlgebraNew"
 R=QQ[a..e]
-j=monomialCurveIdeal(R, {1,2,3,4})
-I=ideal(0_R)
+j=monomialCurveIdeal(R, {1,2,3,5})
 IS = symmetricKernel(gens j)
-reesClassic(j)
+time L = reesAlgebra(j)
 M = coker gens j
 IM = rees(M)
 IR= time rees(j)
@@ -789,11 +815,107 @@ use R
 i
 distinguishedAndMult i
 ///
+///
+R = ZZ/101[x,y]/ideal(x^2-y^3)
+J = ideal(x,y)
+reesAlgebra(J)
+///
+///
+R = ZZ/32003[x,y,z]
+I = ideal(x,y)
+cusp = ideal(x^2*z-y^3)
+RI = reesIdeal(I)
+S = ring RI
+totalTransform = substitute(cusp, S) + RI
+D = decompose totalTransform -- the components are the proper transform of the cuspidal curve and the exceptional curve 
+L = primaryDecomposition totalTransform 
+apply(L, i -> (degree i)/(degree radical i))
+-- the total transform of the cusp contains the exceptional with multiplicity two 
+-- the proper transform of the cusp is a smooth curve but tangent to the exceptional curve 
+singular = ideal(singularLocus(L_0));
+SL = saturate(singular, ideal(x,y,z));
+saturate(SL, ideal(w_0,w_1)) -- we get 1 so it is smooth.
+degree(D_0+D_1)/(degree radical(D_0+D_1))
+///
+///
+R = ZZ/32003[x,y,z]
+I = ideal(x,y)
+tacnode = ideal(x^2*z^2-x^4-y^4)
+RI = reesIdeal(I)
+S = ring RI
+totalTransform = substitute(tacnode, S) + RI
+D = decompose totalTransform -- the components are the proper transform of the cuspidal curve and the exceptional curve 
+L = primaryDecomposition totalTransform 
+apply(L, i -> (degree i)/(degree radical i))
+-- the total transform of the tacnode contains the exceptional with multiplicity two 
+-- the proper transform of the tacnode is not yet smooth.  We compute the singular point of the proper 
+-- transform and blow up again. 
+singular = ideal(singularLocus(L_0));
+SL = saturate(singular, ideal(x,y,z));
+J = saturate(SL, ideal(w_0,w_1)) -- we get 1 so it is smooth.
+RJ = reesIdeal(J,Variable => v)
+SJ = ring RJ
+totalTransform = substitute(L_0, SJ) + RJ
+D = decompose totalTransform -- the components are the proper transform of the cuspidal curve and the exceptional curve 
+L = primaryDecomposition totalTransform 
+(degree L_1)/(degree radical L_1) -- multiplicity of the second exceptional curve is 1
+-- the second blow-up desingularizes the tacnode. 
+singular = ideal(singularLocus(L_0));
+SL = saturate(singular, ideal(x,y,z));
+J = saturate(SL, ideal(w_0,w_1))
+J2 = saturate(J, ideal(v_0,v_1, v_2))
 
 
+-- however blowing-up (x^2,y) desingularlizes the tacnode x^2-y^4 in a single step.
+R = ZZ/32003[x,y,z]
+I = ideal(x^2,y)
+tacnode = ideal(x^2*z^2-y^4)
+RI = reesIdeal(I)
+S = ring RI
+totalTransform = substitute(tacnode, S) + RI
+D = decompose totalTransform -- the components are the proper transform of the cuspidal curve and the exceptional curve 
+L = primaryDecomposition totalTransform 
+singular = ideal(singularLocus(D_0));
+SL = saturate(singular, ideal(x,y,z));
+saturate(SL, ideal(w_0,w_1)) -- we get 1 so it is smooth.
+
+
+-- two singularities (x^2+y^2-3x*z)^2 -4*x^2*(2z-x)*z -- blowup both singularities
+R = ZZ/32003[x,y,z]
+curve = ideal((x^2+y^2-3*x*z)^2 -4*x^2*(2*z-x)*z)
+sings = radical saturate(ideal(singularLocus(curve)), ideal (vars R))
+decompose sings -- there is a tacnode at (0:0:1) and a cusp at (1:0:1) 
+-- we blow up P2 at both points. 
+RI = reesIdeal(sings) 
+S = ring RI
+totalTransform = substitute(curve, S) + RI
+D = decompose totalTransform -- the components are the proper transform of the curve and two exceptional curves
+singular = ideal(singularLocus(D_0));
+SL = saturate(singular, ideal(x,y,z));
+J = saturate(SL, ideal(w_0,w_1))
+
+-- we resolved the cusp, but need a second blow-up to resolve the tacnode (at a point on the exceptional divisor). 
+ 
+RJ = reesIdeal(J, Variable => v)
+SJ = ring RJ
+totalTransform = substitute(D_0, SJ) + RJ
+D = decompose totalTransform -- the components are the next proper transform and the new exceptional curve.
+-- the second blow-up desingularizes the original curve.
+singular = ideal(singularLocus(D_0));
+SL = saturate(singular, ideal(x,y,z));
+J = saturate(SL, ideal(w_0,w_1))
+J2 = saturate(J, ideal(v_0,v_1, v_2))
+
+///
+///
+--- Example of non-distinguished components to test distinguished code.
+T=ZZ/101[c,d]
+D = 4
+P = product(D, i -> random(1,T))
+R = ZZ/101[a,b,c,d]
+I = ideal(a^2, a*b*(substitute(P,R)), b^2)
+primaryDecomposition I
+distinguished(I)
+///
 end
 installPackage "ReesAlgebra"
-
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=ReesAlgebra install-one"
--- End:
