@@ -73,13 +73,13 @@ Thing.NoPrint = x -> (
      -- do nothing
      )
 
-isSpecial := filename -> match( "^(\\$|!)", filename )
+isSpecial := filename -> match( ///^(\$|!)///, filename )
 
 pathdo := (loadfun,path,filename,reportfun) -> (
      ret := null;
      if class filename =!= String then error "expected a string";
      if null === scan(
-	  if isAbsolutePath filename or isSpecial filename then {""}
+	  if isStablePath filename or isSpecial filename then {""}
 	  else if currentFileDirectory == "--startupString--/" then path
 	  else prepend(currentFileDirectory, path),
 	  dir -> (
