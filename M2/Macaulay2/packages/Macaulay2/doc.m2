@@ -1,5 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+undocumented toList (a .. Z)
+
 document {
      Key => "length",
      Headline => "length"
