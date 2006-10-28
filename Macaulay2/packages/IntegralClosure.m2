@@ -51,7 +51,7 @@ isNormal(Ring) := Boolean => (R) -> (
      M := cokernel generators I;
      n := codim I;
      m := dim ring I;    
-          m2:= dim R;         -
+          m2:= dim R;
      S2 := apply (m-n-1, i-> codim Ext^(i+n+1)(M,ring M));
      test := apply(m-n-1,i->i+n+3);
      if all(S2, test, (i,j) -> i>=j) then (
@@ -704,5 +704,3 @@ TEST "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4)
 F = ICmap R
 assert(conductor F == ideal((R_2)^3, (R_0)*(R_2)^2, (R_0)^3*(R_2), (R_0)^4))"
 
-end
-installPackage "ReesAlgebra"
