@@ -1,0 +1,47 @@
+-*- M2 -*-
+
+-- new option called Configuration to newPackage, loadPackage, and
+-- needsPackage, containing options for the package itself
+
+newPackage( "Foo",
+     Configuration => {
+     	  "filename" => "bar",
+	  "precision" => 30
+	  },
+     ...
+     }
+
+-- The value of the option should be a list of options, not involving symbols
+-- private to the package, since it's provided before.
+
+-- The configuration provided will be stashed in the file
+
+     applicationDirectory() | "init-Foo.m2"
+
+-- if the package is run and the file does not exist.  That file may look like
+-- this: 
+
+     opts := new OptionTable from {
+     	  "filename" => "barter",
+	  "precision" => 300
+	  }
+
+     stderr << "--loading " << currentFileName << endl
+     stderr << "--  current configuration: " << x << endl
+     opts
+
+-- the newPackage function will read that file this way:
+
+     value get (applicationDirectory() | "init-Foo.m2")
+
+-- the values there will be overriden by the values presented to loadPackage or
+-- needsPackage, and they both override the default values presented to
+-- newPackage.  (All keys provided must be present in newPackage.)
+
+-- the user and the code in the package can access the configuration options
+-- this way:
+
+     (options Foo).Configuration
+
+-- newPackage() will arrange for it to be present while the package is loading!
+
