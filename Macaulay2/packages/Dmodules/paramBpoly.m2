@@ -984,8 +984,8 @@ paramGB = I -> (
 	 );
     newMonomialOrder := ord -> (
 	 append(ord, GRevLex=>np));
-    Rgens := R.generatorSymbols;
-    Lgens := L.generatorSymbols;
+    Rgens := (options R).Variables;
+    Lgens := (options L).Variables;
     
     -- make a new ring with parameters
     -- !!! The only point of using "xxx", "mmm" was the fact 

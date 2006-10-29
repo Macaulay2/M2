@@ -152,14 +152,15 @@ document {
 
 document {
      Key => {(newPackage,String), newPackage, Date, [newPackage,Date], Authors, [newPackage,Authors], Version, [newPackage, Version],
-	  [newPackage,Headline],HomePage, [newPackage,HomePage],[newPackage,DebuggingMode],Email,Name,
+	  [newPackage,Headline],HomePage, [newPackage,HomePage],[newPackage,DebuggingMode],Email,Name,[newPackage,Configuration],
 	  InfoDirSection, [newPackage,InfoDirSection]
 	  }, 
      Headline => "package item: start a new package",
      Usage => "newPackage ( title )",
      Inputs => {
 	  "title" => "the name of the new package",
-	  Version => String => "the version number of the package",
+	  Version => String => {"the version number of the package.  A version number less than 1.0 indicates that the package is under
+	       development, and the user interface may change."},
 	  Date => String => "the date of this version of the package",
 	  InfoDirSection => String => {"the title of the section in the info page directory where the menu entry for this package should be made"},
 	  Headline => String => {"a brief (5-10 words) description of the package"},
@@ -168,13 +169,26 @@ document {
 	       },
 	  HomePage => String => "the URI pointing to the home page of the package, if any",
 	  DebuggingMode => Boolean => {"whether ", TO "debuggingMode", " should be true during package loading"},
+	  Configuration => List => {"a list of configuration options for the package.  The keys and values should be constant expressions,
+	       such as strings and integers, not incorporating symbols to be exported by the package (and not yet defined).
+	       The first time the package is loaded by the user, these options will be stored in a file in the user's application
+	       directory (see ", TO "applicationDirectory", ").  The user can change the configuration permanently by editing the file.  
+	       The user can override the configuration settings when loading the package; see ", TO "[loadPackage,Configuration]", " and 
+	       ", TO "[needsPackage,Configuration]", ".  The file will be overwritten when a newer version of the package 
+	       with different configuration options is loaded, but a backup will be made and the user's settings for the surviving options will be retained.
+	       "
+	       },
 	  },
      Consequences => {"a package is created"},
-     EXAMPLE lines ///
-     	  newPackage("Foo", Version => "1.1", Headline => "making Foo")
-	  endPackage "Foo"
-     ///,
-     "The options used when the package was created can be recovered with ", TO "options", ".",
+     EXAMPLE { 
+///newPackage("Foo", 
+     Version => "1.1", 
+     Headline => "making Foo",
+     Configuration => { "foo" => 42, "bar" => "x" }
+     )///,
+          ///endPackage "Foo"///
+     	  },
+     "The options can be recovered with ", TO "options", " as follows.",
      EXAMPLE lines ///
      	  options Foo
 	  oo.Headline
@@ -183,34 +197,18 @@ document {
      PARA { "Here is a template for a typical ", TT "newPackage", " entry in a package."},
      PRE ///newPackage("PACKAGENAME",
     Headline => "one line description",
-    Version => 1.0,
+    Version => 0.1,
     Date => "month XX, 20XX",
     Authors => {
 	 {Name => "author1", Email => "email1", HomePage => "url1"}
 	 {Name => "author2", Email => "email2", HomePage => "url2"},
 	 },
-    DebuggingMode => true
+    DebuggingMode => true,
+    HomePage => "http://univ.edu/~user/PACKAGENAME/",
+    Configuration => {}
     )///,
 	SeeAlso => {"packages"}
   }
-
---error: option has no documentation: Macaulay2 :: installPackage(..., PackagePrefix => ...), key: [installPackage, PackagePrefix]
---error: option has no documentation: Macaulay2 :: installPackage(..., Encapsulate => ...), key: [installPackage, Encapsulate]
---error: option has no documentation: Macaulay2 :: installPackage(..., InstallPrefix => ...), key: [installPackage, InstallPrefix]
---error: option has no documentation: Macaulay2 :: installPackage(..., AbsoluteLinks => ...), key: [installPackage, AbsoluteLinks]
---error: option has no documentation: Macaulay2 :: installPackage(..., MakeLinks => ...), key: [installPackage, MakeLinks]
---error: symbol has no documentation: Macaulay2 :: uninstallPackage
---error: method has no documentation: Macaulay2 :: uninstallPackage Package, key: (uninstallPackage, Package)
---error: method has no documentation: Macaulay2 :: uninstallPackage String, key: (uninstallPackage, String)
---error: option has no documentation: Macaulay2 :: uninstallPackage(..., PackagePrefix => ...), key: [uninstallPackage, PackagePrefix]
---error: option has no documentation: Macaulay2 :: uninstallPackage(..., Encapsulate => ...), key: [uninstallPackage, Encapsulate]
---error: option has no documentation: Macaulay2 :: uninstallPackage(..., InstallPrefix => ...), key: [uninstallPackage, InstallPrefix]
---error: option has no documentation: Macaulay2 :: uninstallPackage(..., MakeLinks => ...), key: [uninstallPackage, MakeLinks]
---error: option has no documentation: Macaulay2 :: newPackage(..., InfoDirSection => ...), key: [newPackage, InfoDirSection]
---error: option has no documentation: Macaulay2 :: newPackage(..., Headline => ...), key: [newPackage, Headline]
---error: option has no documentation: Macaulay2 :: newPackage(..., HomePage => ...), key: [newPackage, HomePage]
---error: option has no documentation: Macaulay2 :: newPackage(..., Date => ...), key: [newPackage, Date]
---error: option has no documentation: Macaulay2 :: newPackage(..., DebuggingMode => ...), key: [newPackage, DebuggingMode]
      
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
