@@ -6,12 +6,14 @@ indices := new MutableHashTable
 
 vars ZZ := i -> (
      if indeterminates#?i then indeterminates#i else (
-	  x := value (
-	       "global " |
-	       if 0 <= i and i < 26 then ascii(97 + i)
-	       else if 26 <= i and i < 52 then ascii(65 + i - 26)
-	       else if i < 0 then "X" | toString(-i)
-	       else "x" | toString(i-52)
+	  x := (
+	       if 0 <= i and i < 26 then getGlobalSymbol ascii(97 + i)
+	       else if 26 <= i and i < 52 then getGlobalSymbol ascii(65 + i - 26)
+	       else 
+	       value (
+		    if i < 0 then "global X" | toString(-i)
+	       	    else "global x" | toString(i-52)
+		    )
 	       );
 	  indeterminates#i = x;
 	  indices#x = i;
