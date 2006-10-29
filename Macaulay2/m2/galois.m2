@@ -28,7 +28,7 @@ expression GaloisField := F -> new FunctionApplication from { GF, F.order }
 GF = method (
      Options => { 
 	  PrimitiveElement => FindOne,
-	  Variable => null
+	  Variable => global a				    -- used to be GF$a
 	  }
      )
 
@@ -74,7 +74,7 @@ GF(ZZ,ZZ) := GaloisField => options -> (p,n) -> (
      if n <= 0 then error "expected positive exponent";
      if n === 1 then ZZ/p
      else (
-	  x := if options.Variable === null then symbol GF$a else baseName options.Variable;
+	  x := baseName options.Variable;
 	  R := (ZZ/p) (monoid [x]);
 	  t := R_0;
 	  while ( f := t^n + sum(n, i-> random p * t^i); not isPrime f) do ();
