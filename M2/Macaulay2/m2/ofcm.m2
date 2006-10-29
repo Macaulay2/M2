@@ -87,8 +87,8 @@ degreesMonoid ZZ := memoize(
 
 monoidDefaults = (
      new OptionTable from {
-	  VariableBaseName => null,
 	  Variables => null,
+	  VariableBaseName => global p,			    -- would be overridden by Variables => {...}
 	  Global => true,				    -- means that all variables are > 1
 	  Degrees => null,
 	  Weights => {},
@@ -106,7 +106,10 @@ monoidDefaults = (
      )
 
 tensorDefaults = merge(monoidDefaults, 
-     new OptionTable from {MonomialOrder => null},
+     new OptionTable from {
+	  MonomialOrder => null,
+	  VariableBaseName => null			    -- monoids being tensored already have variable names
+	  },
      (x,y) -> y)
 
 monoid = method(Dispatch => Thing, Options => monoidDefaults, TypicalValue => GeneralOrderedMonoid)
@@ -306,7 +309,7 @@ makeMonoid := (opts) -> (
      -- First check the variable names
      if class opts.Variables === ZZ 
      then (
-	  x := global X;					    -- this used to be local x
+	  x := baseName opts.VariableBaseName;
           opts.Variables = toList (x_0 .. x_(opts.Variables - 1)))
      else (
 	  v := flatten toList apply(opts.Variables, x->if class x === MutableList then toList x else x);
