@@ -33,7 +33,8 @@ dismiss String := title -> if PackageDictionary#?title and class value PackageDi
 loadPackage = method(
      Options => {
 	  DebuggingMode => null,
-	  LoadDocumentation => false
+	  LoadDocumentation => false,
+	  Configuration => {}
 	  } )
 packageLoadingOptions := new MutableHashTable
 loadPackage String := opts -> pkgtitle -> (
@@ -75,7 +76,31 @@ newPackage = method(
 	  Headline => null,
 	  Authors => {}, -- e.g., Authors => { {Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"} }
 	  HomePage => null,
-	  Date => null } )
+	  Date => null,
+	  Configuration => {}
+	  })
+
+configFileString =
+///--Configuration file for package "PKG", automatically generated
+
+-- This print statement may be commented out:
+stderr << "--loading configuration for package \"PKG\" from file " << currentFileName << endl
+
+-- This file will be overwritten if a future version of the package has 
+-- different options, but the values will be retained and a backup file
+-- will be made.
+
+-- Look at 
+--         options PKG
+-- to see the values of the configuration options after loading the package.
+
+{
+     -- The values to the right of the double arrows may be changed
+     -- by editing this file:
+     VALUES
+}
+///
+
 newPackage(String) := opts -> (title) -> (
      originalTitle := title;
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
@@ -94,12 +119,49 @@ newPackage(String) := opts -> (title) -> (
 	       );
 	  fileExitHooks = prepend(hook, fileExitHooks);
 	  );
+     fix := o -> if instance(o,OptionTable) then o else new OptionTable from o;
+     defaultConfiguration := opts.Configuration;
+     if not instance(defaultConfiguration, List) or not all(defaultConfiguration, x -> instance(x,Option) and #x == 2)
+     then error("expected Configuration option to be a list of options");
+     defaultConfiguration = new OptionTable from defaultConfiguration;
+     if not noinitfile then (
+	  configfilename := concatenate(applicationDirectory(), "init-",title,".m2");
+	  userConfiguration := if fileExists configfilename then simpleLoad configfilename else {};
+	  if not instance(userConfiguration, List) or not all(userConfiguration, x -> instance(x,Option) and #x == 2)
+	  then error("expected value provided by ",configfilename," to be a list of options");
+	  userConfiguration = new OptionTable from userConfiguration;
+	  toOptions := op -> apply(pairs op,(k,v) -> k=>v);
+	  combinedConfiguration := applyPairs(defaultConfiguration, (k,v) -> (k, if userConfiguration#?k then userConfiguration#k else v));
+	  if set keys defaultConfiguration =!= set keys userConfiguration then (
+	       if fileExists configfilename then stderr << "--new configuration options for package " << title << endl;
+	       s := replace("PKG",title,configFileString);
+	       s = replace("VALUES",concatenate between_(","|newline|"     ") (toExternalString \ toOptions combinedConfiguration),s);
+	       moveFile(configfilename,Verbose=>true);	    -- move file out of way
+	       stderr << "--storing configuration for package " << title << " in " << configfilename << endl;
+	       configfilename << s << close;
+	       );
+	  opts = merge(opts, new OptionTable from {Configuration => combinedConfiguration},last);
+	  );
+     if packageLoadingOptions#?title then (
+	  loadOptions := packageLoadingOptions#title;
+	  if loadOptions.?Configuration then (
+	       -- now the Configuration options specified by arguments to loadPackage or needsPackage override the others
+	       loadConfig := loadOptions.Configuration;
+	       if not instance(loadConfig, List) or not all(loadConfig, x -> instance(x,Option) and #x == 2)
+	       then error("expected Configuration option to be a list of options");
+	       opts = merge(opts, new OptionTable from {Configuration => first override(fix opts.Configuration,toSequence loadConfig)},last);
+	       );
+	  if loadOptions.?DebuggingMode and loadOptions.DebuggingMode =!= null then (
+	       opts = merge(opts, new OptionTable from {DebuggingMode => loadOptions.DebuggingMode},last);
+	       );
+	  );
      newpkg := new Package from {
           "title" => title,
 	  symbol Options => opts,
      	  symbol Dictionary => new Dictionary, -- this is the global one
      	  "private dictionary" => if title === "Core" then first dictionaryPath else new Dictionary, -- this is the local one
      	  "close hook" => hook,
+	  "configuration file name" => configfilename,
 	  "previous currentPackage" => currentPackage,
 	  "previous dictionaries" => saveD,
 	  "previous packages" => saveP,
@@ -166,7 +228,7 @@ newPackage(String) := opts -> (title) -> (
 	  );
      PrintNames#(newpkg.Dictionary) = title | ".Dictionary";
      PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
-     debuggingMode = if packageLoadingOptions#?title and packageLoadingOptions#title#DebuggingMode =!= null then packageLoadingOptions#title#DebuggingMode else opts.DebuggingMode;
+     debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
      newpkg)
 
 export = method(Dispatch => Thing)
