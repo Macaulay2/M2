@@ -187,7 +187,7 @@ newICnode = (R) -> (
      C#"degrees" = degrees source vars ring I;
      C#"blocks" = {numgens ring I};
      C#"basefield" = coefficientRing ring I;
-     C#"vars" = toSequence (ring I).generatorSymbols;
+     C#"vars" = toSequence (options ring I).Variables;
      R#"IC" = C;
      C)
 

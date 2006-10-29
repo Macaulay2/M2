@@ -355,7 +355,7 @@ ICfractions(Ring) := Matrix => o-> R -> (
      -- and the matrix is in the fraction field of the original ring.
      if R#?IIICCC or not isNormal R then (
 	  integralClosure R;
-	  K := (R#IIICCC#"basefield")(monoid [join(flatten R#IIICCC#"newvars",R.generatorSymbols)]);
+	  K := (R#IIICCC#"basefield")(monoid [join(flatten R#IIICCC#"newvars",(options R).Variables)]);
 	  -- This constructs the new ring using all of the new variables.
 	  KF := frac(K);
 	  M1 := first entries substitute(vars R,KF);  -- puts the vars of R in KF
@@ -369,7 +369,7 @@ ICfractions(Ring) := Matrix => o-> R -> (
 	       while done == false do (
 		    G := map(KF,KF,matrix{join(M3,M1)});
 	       	    L2 = G(L2);
-	       	    done = isSubset(ideal apply(first entries L2,i->numerator i), ideal take(generators K , {#(generators K)-#(R.generatorSymbols),#(generators K)}));
+	       	    done = isSubset(ideal apply(first entries L2,i->numerator i), ideal take(generators K , {#(generators K)-#((options R).Variables),#(generators K)}));
 	       	    );
 	       K2 := frac R;
 	       substitute(L2,K2)
@@ -380,7 +380,7 @@ ICfractions(Ring) := Matrix => o-> R -> (
      	  	    done = false;
 	  	    while done == false do (
 	       		 G2 = Map(G2);
-	       		 done = isSubset(ideal apply(first entries G2,i->numerator i), ideal take(generators K , {#(generators K)-#(R.generatorSymbols),#(generators K)}));
+	       		 done = isSubset(ideal apply(first entries G2,i->numerator i), ideal take(generators K , {#(generators K)-#((options R).Variables),#(generators K)}));
 	       		 );
 	  	    K2 = frac R;
 	  	    substitute(G2,K2)
