@@ -473,17 +473,7 @@ document {
      or name service to statically linked programs like this one.",
      PARA{},
      "Accessing a secure web site (whose URL begins with ", TT "https:", ")
-     depends on your having installed ", TT "openssl", " on your system.",
-     PARA{},
-     "In this example we show how to use ", TO "regex", " to separate the header lines in the response from the content.",
-     EXAMPLE lines ///
-         p = getWWW "http://www.math.uiuc.edu/Macaulay2/Makefile"
-	 r = regex("\r\n\r\n",p)
-	 substring(p,r#0#0+4)
-	 peek oo
-	 substring(p,0,r#0#0+2)
-	 peek oo
-     ///
+     depends on your having installed ", TT "openssl", " on your system."
      }
 
 document {
