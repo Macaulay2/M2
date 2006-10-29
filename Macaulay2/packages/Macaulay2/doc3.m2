@@ -632,12 +632,16 @@ document { Key => {(copyFile, String, String),copyFile,[copyFile, UpdateOnly],[c
      ///,
      SeeAlso => { copyDirectory, symlinkDirectory }
      }
-document { Key => {(moveFile, String, String),moveFile},
+document { Key => {(moveFile, String, String),(moveFile, String),moveFile},
      Usage => "moveFile(src,dst)",
      Inputs => {
 	  "src" => "the filename or path to an existing file",
-	  "dst" => "the new filename or path to a location (on the same file system)",
+	  "dst" => "the new filename or path to a location (on the same file system).
+	            Omit this argument and an appropriately numbered backup filename will be invented.",
 	  Verbose => Boolean => {"whether to report individual file operations"}
+	  },
+     Outputs => {
+	  {"the name of the backup file if one was created, or ", TO "null"}
 	  },
      Consequences => {
 	  "the file will be moved by creating a new link to the file and removing the old one"
@@ -648,7 +652,8 @@ document { Key => {(moveFile, String, String),moveFile},
 	  src << "hi there" << close
 	  moveFile(src,dst,Verbose=>true)
 	  get dst
-	  removeFile dst
+	  bak = moveFile(dst,Verbose=>true)
+	  removeFile bak
      ///,
      SeeAlso => { copyFile }
      }
