@@ -35,7 +35,12 @@ signOfShuffle := (a,b) -> (
      	  else (ct = ct + m-i; j = j+1));
      (-1)^ct);
      
-Grassmannian = method(TypicalValue => Ideal, Options => { CoefficientRing => ZZ, Variable => global p });
+Grassmannian = method(
+     TypicalValue => Ideal, 
+     Options => { 
+	  CoefficientRing => ZZ, 
+	  Variable => monoidDefaults.VariableBaseName
+	  });
 Grassmannian(ZZ,ZZ):= o -> (k,n) -> Schubert(k,n,n-k..n,o)
 Grassmannian(ZZ,ZZ,PolynomialRing) := o -> (k,n,R) -> (
      I := Grassmannian(k,n,o);
@@ -44,7 +49,7 @@ Grassmannian(ZZ,ZZ,PolynomialRing) := o -> (k,n,R) -> (
      f := map(R,S,apply(numgens S, i -> R_i));
      f I)
 
-Schubert = method(TypicalValue => Ideal, Options => { CoefficientRing => ZZ, Variable => global p });
+Schubert = method(TypicalValue => Ideal, Options => options Grassmannian);
 Schubert(ZZ, ZZ, VisibleList) := o -> (k,n,sigma) -> (
      L := toSequence \ subsets(n+1,k+1);
      R := o.CoefficientRing (monoid [apply(L, i -> new IndexedVariable from {baseName o.Variable,unsequence i})]);
