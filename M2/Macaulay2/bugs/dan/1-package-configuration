@@ -11,28 +11,19 @@ newPackage( "Foo",
      ...
      }
 
--- The value of the option should be a list of options, not involving symbols
--- private to the package, since it's provided before.
+-- The value of the option should be a list or option table of options, not
+-- involving symbols private to the package, since it's provided before.
 
--- The configuration provided will be stashed in the file
+-- The configuration provided (if it's nonempty) will be stashed in the file
 
      applicationDirectory() | "init-Foo.m2"
 
--- if the package is run and the file does not exist.  That file may look like
--- this: 
+-- its name is stored in the package object under the key "configuration file name"
+-- if the package is run and the file does not exist.
 
-     opts := new OptionTable from {
-     	  "filename" => "barter",
-	  "precision" => 300
-	  }
-
-     stderr << "--loading " << currentFileName << endl
-     stderr << "--  current configuration: " << x << endl
-     opts
-
--- the newPackage function will read that file this way:
-
-     value get (applicationDirectory() | "init-Foo.m2")
+-- This file will be overwritten if a future version of the package has 
+-- different options, but the values will be retained and a backup file
+-- will be made.
 
 -- the values there will be overriden by the values presented to loadPackage or
 -- needsPackage, and they both override the default values presented to
@@ -43,5 +34,8 @@ newPackage( "Foo",
 
      (options Foo).Configuration
 
--- newPackage() will arrange for it to be present while the package is loading!
+-- newPackage() will arrange for it to be present while the package is loading.
+
+if -q is on commandLine don't load user's configuration settings, and don't
+create a file!
 
