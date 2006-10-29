@@ -39,6 +39,18 @@ moveFile(String,String) := opts -> (src,tar) -> (
      removeFile src;
      )
 
+moveFile String := opts -> src -> if fileExists src or readlink src =!= null then (
+     bak := src | ".bak";
+     for i from 1 do (
+	  try linkFile(src,bak) else ( 
+	       if not fileExists bak then error("failed to create backup file: ", bak);
+	       bak = src | ".bak-" | toString i;
+	       continue
+	       );
+	  if opts.Verbose then stderr << "--backup file created: " << bak << endl;
+     	  removeFile src;
+	  return bak))
+
 baseFilename = fn -> (
      fn = separate("/",fn);
      while #fn > 0 and fn#-1 === "" do fn = drop(fn,-1);
@@ -243,20 +255,12 @@ mungeFile = (filename, headerline, trailerline, text) -> (
      else (
 	  newcontents = oldcontents | newline | insert; 
 	  );
-     filename = realpath filename;
+     filename = realpath filename;			    -- no other editor does this, but it seems like a good idea...
      tmp := filename | ".Macaulay2.tmp";
      tmp << newcontents << close;
      if fileExists filename then (
 	  stderr << "--initialization text about to be added to file: " << filename << endl;
-	  bak := filename | ".bak";
-	  for i from 1 do (
-	       try linkFile(filename,bak) else ( 
-		    if not fileExists bak then error("failed to create backup file: ", bak);
-		    bak = filename | ".bak-" | toString i;
-		    continue );
-	       stderr << "--backup file created: " << bak << endl;
-	       break);
-	  removeFile filename;
+	  moveFile(filename,Verbose=>true);		    -- move file out of way
 	  )
      else (
 	  stderr << "--file about to be created for initialization text: " << filename << endl;
