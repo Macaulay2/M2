@@ -551,10 +551,10 @@ document {
      generators are not assigned to global variables.",
      EXAMPLE {
 	  "a",
-	  "X_0",
+	  "p_0",
 	  "S = o2;",
 	  "a",
-	  "X_0"
+	  "p_0"
 	  },
      "To specify the names of the variables when creating the ring, use the 
      ", TO "Variables", " option or the ", TO "VariableBaseName", " option.",
