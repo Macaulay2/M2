@@ -171,7 +171,7 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      if isListOfListsOfIntegers weights then null
      else if isListOfIntegers weights then weights = {weights}
      else error "Weights: expected a list of integers or a list of lists of small integers";
-     scan(weights, wt -> if # wt != nvars then error("Weights: expected weight vector of length ",toString nvars," but got ",toString #wt));
+     scan(weights, wt -> if # wt != nvars then error("Weights: expected weight vector of length ",toString nvars," but got ",toString (#wt)));
      if class ordering =!= List then ordering = {ordering};
      ordering = join(weights / (i -> Weights => i), ordering);
      t := toList splice nonnull fixup ordering;
