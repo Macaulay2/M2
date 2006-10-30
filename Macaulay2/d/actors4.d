@@ -30,8 +30,7 @@ use objects;
 
 internalName(s:string):string := (
      -- was "$" + s in 0.9.2
-     -- was s through 0.9.94
-     "$" + s
+     s
      );
 
 sleepfun(e:Expr):Expr := (
