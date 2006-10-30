@@ -278,7 +278,7 @@ concatCols = mats -> (
      if # mats === 1 then return mats#0;
      samering mats;
      sources := apply(mats,source);
-     if not all(sources, F -> isFreeModule F) then error "expected sources to be free modules";
+     -- if not all(sources, F -> isFreeModule F) then error "expected sources to be free modules";
      targets := apply(mats,target);
      -- if not same targets then error "expected matrices in the same row to have equal targets";
      ggConcatCols(targets#0, Module.directSum sources, mats))
