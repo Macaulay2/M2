@@ -1363,7 +1363,9 @@ f = matrix {
      {13650502, 198662, -1514226}, {-528389638951, -7688266050, 58613349522}, {1819050, 26473, -201784},
      {-34721130542, -505205335, 3851555009}, {13943863165, 202888407, -1546768644}, {112371429966, 1635046125, -12465168534}}
 h = hermite f
-assert(gens gb h == h)
+b = gens gb h
+-- hermite and gb used to do the same thing, but now gb reduces off-diagonal elements to a range of -d/2...d/2 instead of 0..d:
+assert(b * matrix {{1,1,1},{0,1,0},{0,0,1}} == h)
 assert isIsomorphism map(coker f, coker h, id_(target f))
 (k,c) = hermite(f,ChangeMatrix => true)
 assert( k == h )
