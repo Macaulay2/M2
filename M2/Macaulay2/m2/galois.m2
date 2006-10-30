@@ -28,13 +28,13 @@ expression GaloisField := F -> new FunctionApplication from { GF, F.order }
 GF = method (
      Options => { 
 	  PrimitiveElement => FindOne,
-	  Variable => global a				    -- used to be GF$a
+	  Variable => null
 	  }
      )
 
 lastp := 2
 
-unpack := (S,cont) -> (			  -- a quotient ring
+unpack := (S) -> (			  -- a quotient ring
      if class S =!= QuotientRing
      then error("expected ",toString S," to be a quotient ring");
      R := ultimate(ambient, S);			  -- original poly ring
@@ -59,26 +59,24 @@ unpack := (S,cont) -> (			  -- a quotient ring
      then error("expected ",toString S," to be a quotient ring by a principal ideal");
      f := I_(0,0);
      n := first degree f;
-     cont(R,p,n,f))
+     (R,p,n,f))
 
-isPrimitive = (g) -> (
-     g != 0 and
-     unpack(ring g,
-	  (R,p,n,f) -> (
-     	       q := p^n;
-     	       all(factor (q-1), v -> 1 != g ^ ((q-1)//v#0))
-     	       )))
+isPrimitive = (g) -> g != 0 and (
+     (R,p,n,f) := unpack ring g;
+     q := p^n;
+     all(factor (q-1), v -> 1 != g ^ ((q-1)//v#0)))
 
-GF(ZZ,ZZ) := GaloisField => options -> (p,n) -> (
+GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> (
      if not isPrime p then error "expected a prime number as base";
      if n <= 0 then error "expected positive exponent";
      if n === 1 then ZZ/p
      else (
-	  x := baseName options.Variable;
+	  x := opts.Variable;
+	  x = if x === null then global a else baseName x;
 	  R := (ZZ/p) (monoid [x]);
 	  t := R_0;
 	  while ( f := t^n + sum(n, i-> random p * t^i); not isPrime f) do ();
-	  GF(R/f,options,Variable => x)))
+	  GF(R/f,opts,Variable => x)))
 
 GF(ZZ) := GaloisField => options -> (q) -> (
      factors := factor q;
@@ -86,10 +84,11 @@ GF(ZZ) := GaloisField => options -> (q) -> (
      then error "expected a power of a prime";
      GF(factors#0#0,factors#0#1,options))
 
-GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
+GF(Ring) := GaloisField => opts -> (S) -> (
+     (R,p,n,f) := unpack S;
      if not isPrime f
      then error("expected ",toString S," to be a quotient ring by an irreducible polynomial");
-     primitiveElement := options.PrimitiveElement;
+     primitiveElement := opts.PrimitiveElement;
      if primitiveElement === FindOne then (
 	  t := S_0;
 	  if isPrimitive t then primitiveElement = t
@@ -101,7 +100,7 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
 	  if ring primitiveElement =!= S then error "expected primitive element in the right ring";
      	  if not isPrimitive primitiveElement then error "expected ring element to be primitive";
      	  );
-     var := options.Variable;
+     var := opts.Variable;
      if var =!= null then var = baseName var
      else (
 	  var = S.generatorSymbols#0;
@@ -136,7 +135,7 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      F.use F;
      F / F := (x,y) -> x // y;
      F % F := (x,y) -> if y == 0 then x else 0_F;
-     F))
+     F)
 
 random GaloisField := opts -> F -> (
      i := random F.order;
