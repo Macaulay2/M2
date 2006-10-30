@@ -69,7 +69,7 @@ minorsIdeal = (m,n,k) -> (
      forceGB gens I;
      I);
 apply(2..8, i -> time codim monomialIdeal minorsIdeal(i,2*i,2))
-erase symbol x;
+x -- erase symbol x;
 stdPairs = I -> (
      S := ring I;
      X := gens S;
