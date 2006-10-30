@@ -347,9 +347,9 @@ makeMonoid := (opts) -> (
      	  if opts.Adjust =!= identity or opts.Repair =!= identity then error "encountered both Heft and Adjust or Repair options";
 	  opts.Adjust = x -> prepend(sum(heft,x,times),x); -- to internal degree
 	  opts.Repair = x -> drop(x,1);		      -- to external degree
-	  scan(degs, d -> (
-		    if degrk =!= length heft then error ("expect Heft option to be a list of length ",toString degrk, " to match the degree rank");
-		    )));
+	  if not instance(heft,List) or not all(heft,i -> instance(i,ZZ)) then error "expected Heft option to be a list of integers";
+	  if #heft != degrk then error("expected Heft option to be of length ", degrk, " to match the degree rank");
+	  );
      warned := false;
      scan(degs, d -> if not first opts.Adjust d > 0 then (
 	       if heft === null
@@ -377,6 +377,18 @@ monoid Array := opts -> args -> (
 tensor = method( Options => tensorDefaults)
 
 Monoid ** Monoid := Monoid => (M,N) -> tensor(M,N)
+
+tensoradj := (f,g,m,n) -> (
+     if f === identity then (
+	  if g === identity 
+	  then identity
+     	  else x -> join(take(x,m), g take(x,-n))
+	  )
+     else (
+	  if g === identity 
+	  then x -> join(f take(x,m), take(x,-n))
+     	  else x -> join(f take(x,m), g take(x,-n))
+	  ))
 
 tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
      Mopts := M.Options;
@@ -408,6 +420,8 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
      oddp := x -> x#?0 and odd x#0;
      m := numgens M;
      opts.SkewCommutative = join(monoidIndices(M,M.Options.SkewCommutative), apply(monoidIndices(N,N.Options.SkewCommutative), i -> i+m));
+     opts.Adjust = tensoradj(Mopts.Adjust,Nopts.Adjust,M.degreeLength,N.degreeLength);
+     opts.Repair = tensoradj(Mopts.Repair,Nopts.Repair,M.internalDegreeLength,N.internalDegreeLength);
      makeMonoid new OptionTable from opts)
 
 -- delayed installation of methods for monoid elements
