@@ -359,10 +359,12 @@ cone ChainComplexMap := ChainComplex => f -> (
      scan(union(spots C /( i -> i+1 ), spots D), i -> E#i = D_i ++ C_(i-1));
      complete C.dd;
      complete D.dd;
-     scan(union(spots C.dd /( i -> i+1 ), spots D.dd), i -> E.dd#i = 
-	       D.dd_i	      	       |      f_(i-1)    ||
-	       map(C_(i-2),D_i,0)      |   - C.dd_(i-1)
-	       );
+     bump := x -> apply(x, i -> i+1);
+     scan(keys(set bump spots C.dd + set spots D.dd + set bump spots f),
+	  i -> E.dd#i = 
+          D.dd_i                  |      f_(i-1)    ||
+          map(C_(i-2),D_i,0)      |   - C.dd_(i-1)
+          );
      E)
 
 nullhomotopy ChainComplexMap := ChainComplexMap => f -> (
