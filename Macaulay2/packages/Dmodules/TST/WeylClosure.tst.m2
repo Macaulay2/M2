@@ -1,6 +1,6 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
-needs "Dmodules.m2"
+needsPackage "Dmodules"
 
 -- test 1: annihilator 1/t-t^2-x
 x = symbol x; Dx = symbol Dx; 
