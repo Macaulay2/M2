@@ -153,8 +153,7 @@ fixup Option := o -> (
 makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      -- 'monsize' is the old MonomialSize option, usually 8 or 16, or 'null' if unset
      -- 'inverses' is true or false, and tells whether the old "Inverses => true" option was used.
-     -- 'nvars' tells the total number of variables, as a minimum, meaning it could be 0 if
-     --      you don't know.  Any extra variables will be ordered with GRevLex or GroupLex.
+     -- 'nvars' tells the total number of variables.  Any extra variables will be ordered with GRevLex or GroupLex.
      -- 'degs' is a list of integers, the first components of the multi-degrees of the variables
      --      if it's too short, additional degrees are taken to be 1.  Could be an empty list.
      -- 'weights' is the list of integers or the list of lists of integers provided by the user under
