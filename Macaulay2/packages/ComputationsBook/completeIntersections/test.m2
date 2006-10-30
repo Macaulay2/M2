@@ -148,7 +148,7 @@ C' = res(B'^1/(x,y,z), LengthLimit => 6)
 M' = coker transpose C'.dd_5
 poincareSeries2 M'
 p = poincareSeries1 M
-load "simplify.m2"
+load "./simplify.m2"
 simplify p
 T' = QQ[t,Inverses=>true,MonomialOrder=>RevLex];
 expansion = (n,q) -> (
