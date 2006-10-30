@@ -98,8 +98,8 @@ monoidDefaults = (
 	  SkewCommutative => {},
 	  -- VariableOrder => null,		  -- not implemented yet
 	  WeylAlgebra => {},
-	  Adjust => identity,
-	  Repair => identity,
+	  Adjust => null,				    -- default is identity
+	  Repair => null,				    -- default is identity
      	  Heft => null,
 	  DegreeRank => null
 	  }
@@ -207,6 +207,7 @@ makeit1 := (opts) -> (
      scan(#varlist, i -> M.index#(varlist#i) = i);
      M.internalDegrees = internalDegrees;
      M.internalDegreeLength = internalDegreeLength := # opts.Adjust toList ( degrk : 0 );
+     if # opts.Repair toList (internalDegreeLength : 0) != degrk then error "expected Repair and Adjust functions to be inverse";
      (MOopts,rawMO) := makeMonomialOrdering (
      	  opts.MonomialSize,
 	  opts.Inverses,
@@ -340,15 +341,21 @@ makeMonoid := (opts) -> (
 			 else try baseName i else error("SkewCommutative option: expected base name for: ",toString i)
 			 ))));
 
-     if not instance(opts.Adjust, Function) then error("expected 'Adjust' option to be a function");
-     if not instance(opts.Repair, Function) then error("expected 'Repair' option to be a function");
      heft := opts.Heft;
      if heft =!= null then (
-     	  if opts.Adjust =!= identity or opts.Repair =!= identity then error "encountered both Heft and Adjust or Repair options";
+     	  if opts.Adjust =!= null or opts.Repair =!= null then error "encountered both Heft and Adjust or Repair options";
 	  opts.Adjust = x -> prepend(sum(heft,x,times),x); -- to internal degree
 	  opts.Repair = x -> drop(x,1);		      -- to external degree
 	  if not instance(heft,List) or not all(heft,i -> instance(i,ZZ)) then error "expected Heft option to be a list of integers";
 	  if #heft != degrk then error("expected Heft option to be of length ", degrk, " to match the degree rank");
+	  )
+     else (
+     	  if opts.Adjust === null 
+	  then opts.Adjust = identity
+     	  else if not instance(opts.Adjust, Function) then error("expected 'Adjust' option to be a function");
+     	  if opts.Repair === null 
+	  then opts.Repair = identity
+     	  else if not instance(opts.Repair, Function) then error("expected 'Repair' option to be a function");
 	  );
      warned := false;
      scan(degs, d -> if not first opts.Adjust d > 0 then (
@@ -420,8 +427,10 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
      oddp := x -> x#?0 and odd x#0;
      m := numgens M;
      opts.SkewCommutative = join(monoidIndices(M,M.Options.SkewCommutative), apply(monoidIndices(N,N.Options.SkewCommutative), i -> i+m));
-     opts.Adjust = tensoradj(Mopts.Adjust,Nopts.Adjust,M.degreeLength,N.degreeLength);
-     opts.Repair = tensoradj(Mopts.Repair,Nopts.Repair,M.internalDegreeLength,N.internalDegreeLength);
+     if opts.Adjust === null and opts.Repair === null and opts.Heft === null then (
+     	  opts.Adjust = tensoradj(Mopts.Adjust,Nopts.Adjust,M.degreeLength,N.degreeLength);
+     	  opts.Repair = tensoradj(Mopts.Repair,Nopts.Repair,M.internalDegreeLength,N.internalDegreeLength);
+	  );
      makeMonoid new OptionTable from opts)
 
 -- delayed installation of methods for monoid elements
