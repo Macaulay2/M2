@@ -29,8 +29,8 @@ makeMonomialOrdering( null, false, 0, {1,2,3,4,5,6,7,8}, {}, {GRevLex => 3, 5, W
 makeMonomialOrdering( null, false, 14, {1,2}, {}, {GRevLex => 3, Weights => {3,4}, GRevLexTiny => 2} )
 makeMonomialOrdering( null, false, 0, {1,2,3,4,5,6,7,8}, {}, {Eliminate 4} )
 makeMonomialOrdering( null, false, 0, {1,2,3,4,5,6,7,8}, {}, {ProductOrder{4,5,6}} )
-makeMonomialOrdering( null, false, 0, {1,2,3,4,5,6,7,8}, {3,4,5}, {LexTiny => 3, GRevLexSmall => 3} )
-makeMonomialOrdering( null, false, 20, {1,2,3,4,5,6,7,8}, {{3,4,5},{6,7}}, {LexSmall => 3} )
+makeMonomialOrdering( null, false, 6, {1,2,3,4,5,6,7,8}, {3,4,5,0,0,0}, {LexTiny => 3, GRevLexSmall => 3} )
+makeMonomialOrdering( null, false, 3, {1,2,3,4,5,6,7,8}, {{3,4,5},{6,7,0}}, {LexSmall => 3} )
 
 
 
