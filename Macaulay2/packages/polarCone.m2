@@ -346,7 +346,7 @@ polarCone(Matrix) := (Z) -> (
 -- DOCUMENTATION
 ------------------------------------------------------------
 document {
-     Key => polarCone
+     Key => polarCone,
      Headline => "find the polar dual of a rational convex polyhedral cone",
      Usage => {
 	  TT "polarCone(A, B)", " -- find the polar cone"
