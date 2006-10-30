@@ -49,11 +49,11 @@ testmTorsion = method();
 testmTorsion Ideal := (L) -> (
      LL = ideal generators gb L;
      n = numgens (ring (LL)) // 2;
-     LLL = ideal select(first entries gens LL, f->(
+     LLLL = ideal select(first entries gens LL, f->(
                l = apply(listForm f, t->drop(t#0,n));
                all(l, t->t==toList(n:0))       
                ));
-     if dim inw(LLL,toList(apply(1..2*n,t -> 1))) == n
+     if dim inw(LLLL,toList(apply(1..2*n,t -> 1))) == n
      then true
      else false);
 testmTorsion(JH3)
