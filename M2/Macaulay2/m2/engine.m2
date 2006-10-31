@@ -99,7 +99,7 @@ intOption := (key,n) -> (
      checkCount n;
      bump n;
      key => n)
-ensurePositiveWeights := i -> if i <= 0 then 1 else i
+ensurePositiveWeights := i -> if i <= 0 then error "GRevLex option mixed with non-positive degrees" else i
 grevOption := (key,v) -> (
      key = fix fix1 key;
      if class v === ZZ then grevOption (key,ensurePositiveWeights \ getdegs(varcount, varcount+v-1))
