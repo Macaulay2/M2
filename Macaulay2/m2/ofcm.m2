@@ -79,7 +79,7 @@ degreesMonoid ZZ := memoize(
      (n) -> (
 	  T := global T;
 	  Zn := monoid [if n === 1 then T else T_0 .. T_(n-1),
-	       Degrees => {}, 
+	       Degrees => {n : {}}, 
 	       MonomialOrder => RevLex,
 	       Global => false,
 	       Inverses=>true];
@@ -163,12 +163,11 @@ makeit1 := (opts) -> (
      M#"original options" = opts;
      M.Engine = true;
      varlist := baseName \ opts.Variables;
-     n := # varlist;
-     externalDegrees := opts.Degrees;
-     M.degrees = externalDegrees;
-     degrk := M.degreeLength = if externalDegrees#?0 then # externalDegrees#0 else 0;
-     order := transpose externalDegrees;
-     variableOrder := toList (0 .. n-1);
+     numvars := # varlist;
+     vardegs := M.degrees = opts.Degrees;
+     degrk := M.degreeLength = if vardegs#?0 then # vardegs#0 else 0;
+     order := transpose vardegs;
+     variableOrder := toList (0 .. numvars-1);
      M.generatorSymbols = varlist;
      M.generatorExpressions = apply(varlist,
 	  x -> if instance(x, Symbol) then x else expression x
@@ -179,8 +178,8 @@ makeit1 := (opts) -> (
 	  rawSparseListFormMonomial x.RawMonomial,
 	  (k,v) -> if v =!= 1 then Power{M.generatorExpressions#k, v} else M.generatorExpressions#k );
      w := reverse applyTable(order, minus);
-     w = if # w === 0 then apply(n,i -> {}) else transpose w;
-     w = apply(w, x -> apply(makeSparse x, (k,v) -> (k + n, v)));
+     w = if # w === 0 then apply(numvars,i -> {}) else transpose w;
+     w = apply(w, x -> apply(makeSparse x, (k,v) -> (k + numvars, v)));
      if #w =!= #varlist then error "expected same number of degrees as variables";
      M.vars = M.generators = apply(# varlist, i -> new M from rawVarMonomial(i,1));
      M.indexSymbols = hashTable apply(M.generatorSymbols,M.generators,(v,x) -> v => x);
@@ -190,7 +189,7 @@ makeit1 := (opts) -> (
      	  opts.MonomialSize,
 	  opts.Inverses,
      	  #varlist,
-	  if degreeLength M > 0 then externalDegrees/first else {},
+	  if degreeLength M > 0 then vardegs/first else {},
 	  opts.Weights,
 	  opts.MonomialOrder
 	  );
@@ -200,23 +199,23 @@ makeit1 := (opts) -> (
      M.Options = new OptionTable from opts;
      toString M := toExternalString M := x -> toString expression x;
      M.RawMonoid = (
-	  if n == 0 and not madeTrivialMonoid then (
+	  if numvars == 0 and not madeTrivialMonoid then (
 	       madeTrivialMonoid = true;
 	       rawMonoid())
 	  else rawMonoid(
 	       M.RawMonomialOrdering,
 	       toSequence M.generators / toString,
 	       raw degreesRing degrk,
-	       flatten externalDegrees));
+	       flatten vardegs));
      raw M := x -> x.RawMonomial;
      net M := x -> net expression x;
      M ? M := (x,y) -> rawCompareMonomial(raw M, raw x, raw y);
      M Array := (m,x) -> (
-	  if # x != n then error (
-	       "expected a list of length ", toString n
+	  if # x != numvars then error (
+	       "expected a list of length ", toString numvars
 	       );
 	  x = flatten toList x;
-	  product(m, (k,v) -> if k < n then x#k^v else 1)
+	  product(m, (k,v) -> if k < numvars then x#k^v else 1)
 	  );
      M == ZZ := (m,i) -> (
 	  if i === 1
@@ -266,6 +265,7 @@ processDegrees := (degs,degrk,nvars) -> (
 	       )
 	  else scan(degs, d -> if #d =!= degrk then error("expected degree of rank ",degrk));
 	  );
+     if nvars != #degs then error "expected length of list of degrees to equal the number of variables";
      (degs,degrk));
 
 monoidIndex = (M,x) -> if class x === ZZ then x else (
