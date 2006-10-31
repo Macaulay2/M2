@@ -7,44 +7,40 @@
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-Dlocalize = method( Options => {Strategy => OTW})
-Dlocalize(Ideal, RingElement) := options -> (I, f) -> (Dlocalization(I,f,options))
-Dlocalize(Module, RingElement) := options -> (M, f) -> (Dlocalization(M,f,options))
-     
 Dlocalization = method( Options => {Strategy => OTW})
-Dlocalization(Ideal, RingElement) := options -> (I, f) -> (
-     print("WARNING! Dlocalization is an obsolete name for Dlocalize");
+Dlocalization(Ideal, RingElement) := options -> (I, f) -> (print("WARNING! Dlocalization is an obsolete name for Dlocalize"); Dlocalize(I,f,options))
+Dlocalization(Module, RingElement) := options -> (M, f) -> (print("WARNING! Dlocalization is an obsolete name for Dlocalize"); Dlocalize(M,f,options))
+     
+Dlocalize = method( Options => {Strategy => OTW})
+Dlocalize(Ideal, RingElement) := options -> (I, f) -> (
      Dlocalize((ring I)^1/I, f, options) )
-Dlocalization(Module, RingElement) := options -> (M, f) -> (
-     print("WARNING! Dlocalization is an obsolete name for Dlocalize");
+Dlocalize(Module, RingElement) := options -> (M, f) -> (
      outputRequest := {LocModule};
      outputTable := computeLocalization(M, f, outputRequest, options);
      outputTable#LocModule )
 
-DlocalizeMap = method( Options => {Strategy => OTW})
-DlocalizeMap(Ideal, RingElement) := options -> (I, f) -> (DlocalizationMap(I,f,options))
-DlocalizeMap(Module, RingElement) := options -> (M, f) -> (DlocalizationMap(M,f,options))
-     
 DlocalizationMap = method( Options => {Strategy => OTW})
-DlocalizationMap(Ideal, RingElement) := options -> (I, f) -> (
-     print("WARNING! Dlocalization is an obsolete name for Dlocalize");
+DlocalizationMap(Ideal, RingElement) := options -> (I, f) -> (print("WARNING! Dlocalization is an obsolete name for Dlocalize"); DlocalizeMap(I,f,options))
+DlocalizationMap(Module, RingElement) := options -> (M, f) -> (print("WARNING! Dlocalization is an obsolete name for Dlocalize"); DlocalizeMap(M,f,options))
+     
+DlocalizeMap = method( Options => {Strategy => OTW})
+DlocalizeMap(Ideal, RingElement) := options -> (I, f) -> (
      DlocalizeMap((ring I)^1/I, f, options) )
-DlocalizationMap(Module, RingElement) := options -> (M, f) -> (
-     print("WARNING! Dlocalization is an obsolete name for Dlocalize");
+DlocalizeMap(Module, RingElement) := options -> (M, f) -> (
      outputRequest := {LocMap};
      outputTable := computeLocalization(M, f, outputRequest, options);
      outputTable#LocMap )
 
-DlocalizeAll = method( Options => {Strategy => OTW})
-DlocalizeAll(Ideal, RingElement) := options -> (I, f) -> (DlocalizationAll(I,f,options))
-DlocalizeAll(Module, RingElement) := options -> (M, f) -> (DlocalizationAll(M,f,options))
-     
 DlocalizationAll = method( Options => {Strategy => OTW})
-DlocalizationAll(Ideal, RingElement) := options -> (I, f) -> (
-     print("WARNING! Dlocalization is an obsolete name for Dlocalize");
+DlocalizationAll(Ideal, RingElement) := options -> (I, f) -> 
+(print("WARNING! Dlocalization is an obsolete name for Dlocalize"); DlocalizeAll(I,f,options))
+DlocalizationAll(Module, RingElement) := options -> (M, f) -> 
+(print("WARNING! Dlocalization is an obsolete name for Dlocalize"); DlocalizeAll(M,f,options))
+     
+DlocalizeAll = method( Options => {Strategy => OTW})
+DlocalizeAll(Ideal, RingElement) := options -> (I, f) -> (
      DlocalizeAll((ring I)^1/I, f, options) )
-DlocalizationAll(Module, RingElement) := options -> (M, f) -> (
-     print("WARNING! Dlocalization is an obsolete name for Dlocalize");
+DlocalizeAll(Module, RingElement) := options -> (M, f) -> (
      outputRequest := {LocModule, LocMap, Bfunction, 
 	  IntegrateBfunction, Boperator, GeneratorPower, annFS};
      computeLocalization(M, f, outputRequest, options) )
