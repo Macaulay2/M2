@@ -38,7 +38,6 @@ I2 = monomialIdeal matrix{{c^2,b^3,d^4, b*c*d}}
 I3 = monomialIdeal matrix{{a,b}}
 I4 = monomialIdeal matrix{{a^3,b^3,c^3,d^3}}
 I = intersect(intersect(I1,I2),intersect(I3,I4))
-topComponents MonomialIdeal := m -> saturate(m, minprimes m)
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test monideal.out"

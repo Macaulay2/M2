@@ -10,7 +10,7 @@ newPackage(
     	)
 
 export {
-     gfan, wtvec, inw
+     gfan, wtvec, inw, readGfanIdeals, writeGfanIdeal
      }
 
 exportMutable {
@@ -40,16 +40,9 @@ inw = (w,I) -> (
      I' := substitute(I,R1);
      substitute(leadTerm gens gb I', R))
 
-gfan = method()
-gfan Ideal := (I) -> (
-     R := ring I;
-     p := char R;
-     if p === 0 and R =!= QQ then 
-     error "expected prime field or QQ";
-     -- Create the input file
-     f := temporaryFileName();
-     << "using temporary file " << f << endl;
-     F := openOut f;
+writeGfanIdeal = method()
+writeGfanIdeal(String,Ideal) := (filename,I) -> (
+     F := openOut filename;
      -- Now make the list of the gens of I
      F << "{";
      n := numgens I - 1;
@@ -59,20 +52,38 @@ gfan Ideal := (I) -> (
 	  F << endl;
 	  );
      F << close;
+     )
+
+readGfanIdeals = method()
+readGfanIdeals String := (f) -> (
+     -- Reads using the current ring
+     s := get f;
+     G := separate("\n,",s);
+     H := apply(G, t -> replace(///[\{\}]*///,"",t));
+     apply(H, s -> value("{"|s|"}")))
+
+
+gfan = method()
+gfan Ideal := (I) -> (
+     R := ring I;
+     p := char R;
+     if p === 0 and R =!= QQ then 
+     error "expected prime field or QQ";
+     -- Create the input file
+     f := temporaryFileName();
+     << "using temporary file " << f << endl;
+     writeGfanIdeal(f, I);
+
      ex := if p > 0 then 
        options'gfan#"path"| "gfan --mod" | p | "  <" | f | " >" | f | ".out"
      else
        options'gfan#"path"| "gfan <" | f | " >" | f | ".out";
      run ex;
-     -- Now grab the list of ideals, and lead term ideals
-     output = get (f | ".out");
-     L = value output;
-     M = lines output;
-     M = apply(M, s -> if #s == 0 or s#0 == "{" or s#0 == "}" or s#0 == "," 
-	  then s
-          else (p := regex("^[a-zA-Z0-9\\^\\*]*",s); 
-	        substring(s,p#0#0,p#0#1) | s#(#s-1)));
-     M = value concatenate M;
+     ex2 := options'gfan#"path"| "gfan_leadingterms -m <" | f | ".out >" | f | ".lt";
+     run ex2;
+
+     L = readGfanIdeals(f | ".out");
+     M = readGfanIdeals(f | ".lt");
      (M,L)
      )
 
@@ -174,3 +185,18 @@ gfan_tropicalstartingcone
   #gfan_tropicaltraverse		
 
 gfan_weightvector 
+
+F = get "/tmp/M2-2675-1.out"
+G = separate("\n,",F);
+H = for i from 0 to #G-1 list if i === 0 then substring(1,G#0) else if i === #G-1 then substring(0,(#G#-1)-1,G#-1) else G#i
+apply(H, value)
+
+class output
+split
+separate("\n,",output)
+replace
+viewHelp replace
+oo/print;
+
+
+/Users/mike/local/software/sage/sage-1.4.1.2/local/bin/gfan_

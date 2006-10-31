@@ -736,7 +736,7 @@ gbRemove Module := (M) -> remove((generators M).cache, {false,0})
 gbRemove Ideal := (I) -> remove((generators I).cache, {false,0})
   -- PROBLEM: what about the other GB
   
-R = QQ[a..d,Weights=>{-1,0,0,0}]
+R = QQ[a..d,Weights=>{-1,0,0,0},Global=>false]
 f = a+b^2+c^3-2*d^4+1+a*b*c*d
 leadTerm f
 leadCoefficient f

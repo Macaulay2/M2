@@ -42,6 +42,10 @@ monomialIdeal MonomialIdeal := I -> (
 
 monomialIdeal Matrix := MonomialIdeal => f -> (
      if numgens target f =!= 1 then error "expected a matrix with 1 row";
+     if not isCommutative ring f 
+       then error "expected a commutative ring";
+     if not isPolynomialRing ring f 
+       then error "expected a polynomial ring without quotient elements";
      monomialIdealOfRow(0,f))
 
 monomialIdeal List := MonomialIdeal => v -> monomialIdeal matrix {splice v}
@@ -137,10 +141,6 @@ poincare MonomialIdeal := M -> (
          M.cache.poincare = new ZZn from rawHilbert rawMonomialIdealToMatrix M.RawMonomialIdeal; 
      M.cache.poincare
      )
-
--- OBSOLETE
---minprimes MonomialIdeal := MonomialIdeal => m -> (
---     newMonomialIdeal(ring m, rawAssociatedPrimes m.RawMonomialIdeal))
 
 independentSets = method(Options => { Limit => infinity })
 independentSets MonomialIdeal := o -> (M) -> (

@@ -106,7 +106,7 @@ R = K[y]
 checkremquot(1_R,x*1_R)
 checkremquot(y^2+1, y-x)
 
-R = QQ[x,y]/(x^3+x+1) -- ALL THESE ARE WRONG
+R = QQ[x,y]/(x^3+x+1)
 checkremquot(1_R,x)
 checkremquot((x+y)^3,x)
 checkremquot((y^2+x)^3,y+x)
