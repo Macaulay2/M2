@@ -368,6 +368,10 @@ tensoradj := (f,g,m,n) -> (
      	  else x -> join(f take(x,m), g take(x,-n))
 	  ))
 
+trimMO := o -> (
+     numseen := 0;
+     select(o, x -> not instance(x,Option) or x#0 =!= Position or 1 == (numseen = numseen + 1)))
+
 tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
      Mopts := M.Options;
      Nopts := N.Options;
@@ -380,7 +384,7 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
 	  opts.Variables = apply(#opts.Variables, i -> x_i);
 	  );
      if opts.MonomialOrder === null 
-     then opts.MonomialOrder = join(Mopts.MonomialOrder,Nopts.MonomialOrder); -- product order
+     then opts.MonomialOrder = trimMO join(Mopts.MonomialOrder,Nopts.MonomialOrder); -- product order
      processDegrees(opts.Degrees, opts.DegreeRank, length opts.Variables);	-- just for the error messages
      if opts.Degrees === null and opts.DegreeRank === null then (
 	  M0 := apply(Mopts.DegreeRank, i -> 0);
