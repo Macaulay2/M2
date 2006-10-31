@@ -110,21 +110,27 @@ assert( ideal S == ideal (5,t^10,c^2+c+1) )
 -- happen.
 -- 
 --     i14 : R = QQ[x..z, MonomialOrder => Eliminate 2];
--- 
+
+R = QQ[x..z, MonomialOrder => Eliminate 2];
+
 --     i16 : selectInSubring(0,vars R)
 -- 
 --     o16 = | x y z |
 -- 
 -- 		     1       3
 --     o16 : Matrix R  <--- R
--- 
+
+p = selectInSubring(1,vars R)
+
 --     i17 : selectInSubring(1,vars R)
 -- 
 --     o17 = | z |
 -- 
 -- 		     1       1
 --     o17 : Matrix R  <--- R
--- 
+
+assert( entries p == {{z}} )
+
 --     i18 : selectInSubring(2,vars R)
 -- 
 --     o18 = 0
@@ -144,7 +150,7 @@ R = QQ[x..z, MonomialOrder => Eliminate 2, Degrees => {1,0,1}];
 -- 		     1       3
 --     o20 : Matrix R  <--- R
 
-p = selectInSubring(1,vars R)
+p' = selectInSubring(1,vars R)
 
 --     i21 : selectInSubring(1,vars R)
 -- 
@@ -153,7 +159,7 @@ p = selectInSubring(1,vars R)
 -- 		     1       2
 --     o21 : Matrix R  <--- R
 
-assert( entries p == {{z}} )
+assert( entries p' == {{z}} )
 
 --     i22 : selectInSubring(2,vars R)
 -- 
