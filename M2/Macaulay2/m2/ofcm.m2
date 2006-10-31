@@ -186,7 +186,7 @@ makeit1 := (opts) -> (
      M.indexSymbols = hashTable apply(M.generatorSymbols,M.generators,(v,x) -> v => x);
      M.index = new MutableHashTable;
      scan(#varlist, i -> M.index#(varlist#i) = i);
-     (MOopts,rawMO) := makeMonomialOrdering (
+     (MOopts,rawMO,logMO) := makeMonomialOrdering (
      	  opts.MonomialSize,
 	  opts.Inverses,
      	  #varlist,
@@ -195,6 +195,7 @@ makeit1 := (opts) -> (
 	  opts.MonomialOrder
 	  );
      M.RawMonomialOrdering = rawMO;
+     M#"raw creation log" = new Bag from {logMO};
      opts = new MutableHashTable from opts;
      opts.MonomialOrder = MOopts;			    -- these are exactly the arguments given to rawMonomialOrdering!
      M.Options = new OptionTable from opts;
@@ -386,6 +387,7 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
      if opts.MonomialOrder === null 
      then opts.MonomialOrder = trimMO join(Mopts.MonomialOrder,Nopts.MonomialOrder); -- product order
      processDegrees(opts.Degrees, opts.DegreeRank, length opts.Variables);	-- just for the error messages
+     if opts.Heft === null and opts.Degrees === null then opts.Heft = join(Mopts.Heft,Nopts.Heft);
      if opts.Degrees === null and opts.DegreeRank === null then (
 	  M0 := apply(Mopts.DegreeRank, i -> 0);
 	  N0 := apply(Nopts.DegreeRank, i -> 0);
@@ -402,7 +404,6 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
      oddp := x -> x#?0 and odd x#0;
      m := numgens M;
      opts.SkewCommutative = join(monoidIndices(M,M.Options.SkewCommutative), apply(monoidIndices(N,N.Options.SkewCommutative), i -> i+m));
-     if opts.Heft === null then opts.Heft = join(Mopts.Heft,Nopts.Heft);
      makeMonoid new OptionTable from opts)
 
 -- delayed installation of methods for monoid elements
