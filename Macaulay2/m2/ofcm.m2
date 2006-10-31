@@ -43,7 +43,7 @@ parts := (M) -> (
 	  if M.?generatorExpressions then M.generatorExpressions else {},
 	  if any(o.Degrees, i -> i =!= {1}) then {Degrees => o.Degrees} else {},
 	  select(
-	       { MonomialOrder, MonomialSize, WeylAlgebra, SkewCommutative, Inverses }
+	       { MonomialOrder, MonomialSize, WeylAlgebra, SkewCommutative, Inverses, Heft }
 	       / (key -> if o#key =!= O#key then key => o#key),
 	       i -> i =!= null)))
 
@@ -55,6 +55,7 @@ toString GeneralOrderedMonoid := M -> (
 net GeneralOrderedMonoid := M -> (
      if ReverseDictionary#?M then return toString ReverseDictionary#M;
      net expression M)
+describe GeneralOrderedMonoid := M -> net expression M
 
 -- this implementation is for sparse monomials, but it might
 -- make sense to have a dense implementation
@@ -329,16 +330,17 @@ makeMonoid := (opts) -> (
 	  if #heft != degrk then error("expected Heft option to be of length ", degrk, " to match the degree rank");
 	  );
      warned := false;
-     scan(degs, d -> if not sum(min(#heft,#d),i->heft#i * d#i) > 0 then (
-	       if opts.Heft === null
-	       then (
-		    if warned then return;
-		    warned = true;
-		    stderr << "-- warning: some variables have non-positive resulting heft" << endl;
-		    stderr << "--          use Heft option to specify a positive form" << endl;
-		    )
-	       else error "Heft option doesn't yield a positive value for each variable"
-	       ));
+--  these warning message are boring:
+--      scan(degs, d -> if not sum(min(#heft,#d),i->heft#i * d#i) > 0 then (
+-- 	       if opts.Heft === null
+-- 	       then (
+-- 		    if warned then return;
+-- 		    warned = true;
+-- 		    stderr << "-- warning: some variables have non-positive resulting heft" << endl;
+-- 		    stderr << "--          use Heft option to specify a positive form" << endl;
+-- 		    )
+-- 	       else error "Heft option doesn't yield a positive value for each variable"
+-- 	       ));
      opts.Heft = heft;
      opts = new OptionTable from opts;
      makeit1 opts)
