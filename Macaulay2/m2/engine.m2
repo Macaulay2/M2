@@ -59,9 +59,11 @@ getdegs := (m,n) -> (
      )
 numvars := 0						    -- re-initialized below each time
 varcount := 0						    -- re-initialized below each time
+varcount' := 0						    -- re-initialized below each time, this one is for elimination weights
 MonSize := 32						    -- re-initialized below each time
 invert := false	    					    -- re-initialized below each time
 bump := n -> varcount = varcount + n
+bump' := n -> varcount' = varcount' + n
 
 processMonSize := monsize -> (
      if monsize =!= null then (
@@ -139,7 +141,17 @@ symbolFixes := hashTable {
 fixup Thing := err
 fixup List := v -> toSequence v / fixup
 fixup Sequence := v -> v / fixup
-fixup Eliminate := e -> Weights => getdegs(0, e#0-1)
+
+-- we were using degrees as weights before, but this wasn't right, because some degrees could be 0
+-- also it wasn't right, because there was no prefix on the second Eliminate!
+--    fixup Eliminate := e -> Weights => getdegs(0, e#0-1)
+-- so now we use 1..1 as weights for an elimination order:
+fixup Eliminate := e -> (
+     n := e#0;
+     r := Weights => toList splice (varcount' : 0, n : 1);
+     bump' n;
+     r)
+
 fixup ProductOrder := o -> fixup(toSequence o / (i -> GRevLex => i))
 fixup Symbol := o -> if symbolFixes#?o then symbolFixes#o o else err o
 fixup ZZ := n -> fixup( GRevLex => n )
@@ -165,6 +177,7 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      if not isListOfIntegers degs then error "expected a list of integers";
      deglist = degs;
      varcount = 0;
+     varcount' = 0;
      numvars = nvars;
      weights = splice \ splice weights;
      if isListOfListsOfIntegers weights then null
@@ -176,6 +189,7 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      t := toList splice nonnull fixup ordering;
      if varcount < nvars then t = append(t,fixup(GRevLex => nvars - varcount));
      if not any(t, x -> class x === Option and x#0 === Position) then t = append(t, Position => Up);
+     if varcount' > varcount then error "more eliminations specified than variables present";
      (t,rawMonomialOrdering t))
 
 RawMonomialOrdering ** RawMonomialOrdering := RawMonomialOrdering => rawProductMonomialOrdering
