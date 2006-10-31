@@ -110,11 +110,19 @@ h = map(S,T)
 k = map(T,S)
 assert( f S_X == R_X )
 assert( g T_X' == R_X' )
-assert( h T_X' == S_X )
-assert( k S_X == T_X' )
-assert try ( map(S,R) ; false ) else true		    -- collision detection should give error
-assert try ( map(T,R) ; false ) else true		    -- collision detection should give error
 
+-- assert( h T_X' == S_X ) -- only if we match by name, too
+assert( h T_X' == 0 )
+
+-- assert( k S_X == T_X' ) -- only if we match by name, too
+assert( k S_X == 0 )
+
+map(S,R)						    -- no collision, no error
+-- assert try ( map(S,R) ; false ) else true		    -- collision detection should give error
+map(T,R)						    -- no collision, no error
+-- assert try ( map(T,R) ; false ) else true		    -- collision detection should give error
+
+-- use different symbols
 R = QQ[X][X']
 S = QQ[X]
 T = QQ[X']
@@ -124,11 +132,25 @@ h = map(S,T)
 k = map(T,S)
 assert( f S_X == R_X )
 assert( g T_X' == R_X' )
-assert( h T_X' == S_X )
-assert( k S_X == T_X' )
-assert try ( map(S,R) ; false ) else true		    -- collision detection should give error
-assert try ( map(T,R) ; false ) else true		    -- collision detection should give error
+assert( h T_X' == 0 )
+assert( k S_X == 0 )
+map(S,R)
+map(T,R)
 
+-- now use the same symbols
+R = QQ[X][X]
+S = QQ[X]
+T = QQ[X]
+f = map(R,S)
+g = map(R,T)
+h = map(S,T)
+k = map(T,S)
+assert( f S_X == R_X )
+assert( g T_X == R_X )
+assert( h T_X == S_X )
+assert( k S_X == T_X)
+assert try ( map(T,R) ; false ) else true		    -- collision detection should give error
+assert try ( map(S,R) ; false ) else true		    -- collision detection should give error
 
 -- isWellDefined RingMap
 
