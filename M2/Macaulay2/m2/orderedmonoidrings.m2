@@ -63,8 +63,6 @@ degreesRing ZZ := PolynomialRing => memoize(
 	       ZZn.flatmonoid = ZZn.monoid = monoid[];
 	       ZZn.numallvars = 0;
 	       ZZn.baseRings = {ZZ};
-	       ZZn.Adjust = identity;
-	       ZZn.Repair = identity;
 	       ZZn.degreesRing = ZZn;
 	       ZZn.isCommutative = true;
 	       ZZn.generatorSymbols = {};
@@ -144,8 +142,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    R.basering, 
 		    tensor(M, R.flatmonoid,
 			 Degrees => degrees M | toList ( numgens R.flatmonoid : toList (degreeLength M : 0)),
-			 Adjust => M.Options.Adjust,
-			 Repair => M.Options.Repair
+			 Heft => M.Options.Heft
 			 ),
 		    num + R.numallvars)
 	       else if instance(R,FractionField) then (R,M,num)
@@ -221,8 +218,6 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.baseRings = append(R.baseRings,R);
 	  commonEngineRingInitializations RM;
 	  RM.monoid = M;
-	  RM.Adjust = (options M).Adjust;
-	  RM.Repair = (options M).Repair;
 	  RM.degreesRing = degRing;
 	  RM.isCommutative = not Weyl and not RM.?SkewCommutative;
      	  ONE := RM#1;

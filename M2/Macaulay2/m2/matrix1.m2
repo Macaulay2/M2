@@ -58,7 +58,6 @@ degreeCheck := (d,R) -> (
      and all(d,i -> class i === ZZ) 
      and #d === degreeLength R
      then (
-	  if R.?Adjust then d = R.Adjust d;
 	  )
      else (
 	  if degreeLength R === 1
@@ -678,10 +677,7 @@ entries Matrix := (m) -> (
      applyTable ( entries m, r -> new R from r )
      )
 
-getshift := (f) -> (
-     d := rawMultiDegree f.RawMatrix;
-     R := ring f;
-     if R.?Repair then R.Repair d else d)
+getshift := (f) -> rawMultiDegree f.RawMatrix
 
 degree Matrix := List => opts -> (f) -> (
      M := source f;

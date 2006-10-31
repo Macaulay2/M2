@@ -112,8 +112,7 @@ Ext(Module,Module) := Module => (M,N) -> (
         apply(0 .. c-1, i -> {-2, - first degree f_i}),
 	apply(0 .. n-1, j -> { 0,   first degree A_j})
         },
-      Adjust => v -> {- fudge * v#0 + v#1, - v#0},
-      Repair => w -> {- w#1, - fudge * w#1 + w#0}
+      Heft => {-fudge, 1}
       ]);
     -- make a monoid whose monomials can be used as indices
     Rmon := monoid [X_1 .. X_c,Degrees=>{c:{2}}];
@@ -164,9 +163,6 @@ Ext(Module,Module) := Module => (M,N) -> (
     assert(DeltaBar * DeltaBar == 0);
     -- now compute the total Ext as a single homology module
     minimalPresentation homology(DeltaBar,DeltaBar)))
-
-Adjust					  -- just use it again
-Repair					  -- just use it again
 
 Ext(Module, Ring) := (M,R) -> Ext(M,R^1)
 Ext(Module, Ideal) := (M,J) -> Ext(M,module J)

@@ -103,8 +103,6 @@ EngineRing / Ideal := (R,I) -> (
      S.basering = R.basering;
      S.flatmonoid = R.flatmonoid;
      S.numallvars = R.numallvars;
-     if R.?Adjust then S.Adjust = R.Adjust;
-     if R.?Repair then S.Repair = R.Repair;
      S.ideal = I;
      S.baseRings = append(R.baseRings,R);
      commonEngineRingInitializations S;

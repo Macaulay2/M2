@@ -71,29 +71,12 @@ Ring ** Matrix := Matrix => (R,f) -> (
      )
 
 -----------------------------------------------------------------------------       
-repairMap = (cacheValue symbol repairMap) (
-     R -> (
-	  repair := R.Repair;
-	  n := degreeLength R;
-	  ZZn  := degreesRing n;
-     	  n' := (monoid R).internalDegreeLength;
-	  ZZn' := degreesRing n';
-	  f := i -> (
-	       ei := apply(n', j -> if j === i then 1 else 0);
-	       ZZn_(repair ei));
-	  map(ZZn, ZZn', toList apply(n', f))))
-
 poincare Module := (cacheValue symbol poincare) (
      M -> (
 	  -- some examples compute degrees of inhomogeneous modules, so we can't refuse to compute when the module is not homogeneous.
 	  -- is it guaranteed to work in some sense?
 	  -- if not isHomogeneous M then error "expected a homogeneous module";
-	  R := ring M;
-	  ZZn' := degreesRing (monoid R).internalDegreeLength;
-	  M = cokernel presentation M;
-	  p := new ZZn' from rawHilbert raw leadTerm gb presentation M;
-	  if R.?Repair and R.Repair =!= identity then p = (repairMap R) p;
-	  p))
+	  new degreesRing M from rawHilbert raw leadTerm gb presentation cokernel presentation M))
 
 hilbertFunction(ZZ,Module) := hilbertFunction(ZZ,Ring) := hilbertFunction(ZZ,Ideal) := (d,M) -> hilbertFunction({d},M)
 hilbertFunction(List,Ring) := hilbertFunction(List,Ideal) := hilbertFunction(List,Module) := (d,M) -> (
@@ -614,7 +597,6 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
 				else if instance(v,ZZ) then v
 				else error "expected list of ring variables or integers"))
      else error "expected list of ring variables or integers";
-     if R.?Adjust then ( lo = R.Adjust lo; hi = R.Adjust hi; );
      A := ultimate(ambient,R);
      if not (
 	  isAffineRing A 
@@ -628,7 +610,9 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
      if hi === infinity and dim M > 0 then error "basis: expected a finite dimensional module";
      k := coefficientRing A;
      pres := generators gb presentation M;
-     heft := 1 : 1;
+     optR := options R;
+     heft := optR.Heft;
+     heft = if heft === null then 1:1 else toSequence heft;
      M.cache#"rawBasis log" = log := FunctionApplication { rawBasis, (raw pres, lo, hi, heft, var, opts.Truncate, opts.Limit) };
      map(M,,value log))
 

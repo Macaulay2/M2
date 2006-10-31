@@ -681,8 +681,7 @@ betti Resolution := opts -> X -> rawBetti(X.RawComputation, 0) -- the raw versio
 betti ChainComplex := opts -> C -> (
      heft := heftfun opts.Weights;
      if C.?Resolution and degreeLength ring C === 1 then (
-     	  repair := (ring C).Repair;
-     	  applyKeys(betti C.Resolution, (i,d) -> ( d = repair d; (i,heft d,d) )))
+     	  applyKeys(betti C.Resolution, (i,d) -> (i,heft d,d)))
      else (
 	  complete C;
 	  new BettiTally from flatten apply(
