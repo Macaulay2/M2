@@ -5,7 +5,7 @@ m = matrix{{x,y,z}};
 assert(gens gbi m == matrix{{z,y,x}});
 assert(0 == x % m);
 syz1 = syzi m;
-assert(syz1 - matrix {{0, -z, -y}, {-z, 0, x}, {y, x, 0}} == 0);
+assert(gens gb syz1 - matrix {{0, -y, -z}, {-z, x, 0}, {y, 0, x}} == 0);
 syz2 = syzi syz1;
 syz3 = syzi syz2;
 assert(syz1 * syz2 == 0);
@@ -28,7 +28,7 @@ first first entries((gens I) * (y^3 // (gens I))) == y^3;
 assert((x*y) % I == y^2);
 status gbi I
 --assert(status gbi I == "status: done; S-pairs encountered up to degree 3");
-peek gbi I;
+peek gbi I
 ------------------- d
 R = ZZ/101[symbol x, symbol y, symbol z];
 I = ideal(x*y-y^2, x^2, y^4);
@@ -64,14 +64,4 @@ if crit I then (
      gens gbi I;
      );
 end
-------------------- j
--- This one is too hard?
-R = ZZ[symbol a .. symbol f];
-I = ideal((5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10-1);
-if alg === Inhomogeneous or alg === Sugarless or alg === Homogeneous2 or alg = Faugere then (
-     stderr << "skipping: GB over ZZ not " << endl;
-     ) else
-if crit I then (
-     gens gbi I;
-     );
 ------------------- done;
