@@ -30,7 +30,7 @@ assert (chN = charIdeal N; chN == ideal(1_(ring chN)) );
 
 -- Properties of AppellF1
 I = AppellF1 ({2,4,-1,3/2});
-J = substitute (AppellF1 ({3,-1,7/3,-5}), ring I);
+J = substitute (AppellF1 ({3,-1,7/3,-5}), vars ring I);
 K = directSum(cokernel gens I, cokernel gens J);
 assert (Ddim I == Ddim J);
 assert (holonomicRank I == holonomicRank J);

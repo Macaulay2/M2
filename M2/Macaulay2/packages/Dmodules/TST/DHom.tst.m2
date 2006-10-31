@@ -47,6 +47,6 @@ assert( all (keys BE, i -> BE#i == BE'#i) );
 --Example 2: small GKZ -- takes a while
 A = matrix{{1,2}};
 I = gkz(A, {2});
-J = substitute(gkz(A, {1}), ring I);
+J = substitute(gkz(A, {1}), vars ring I);
 B = DHom(I,J);
 assert( (matrix{{B#0_(0,0)}})*(gens I)%(gens J) == 0 )
