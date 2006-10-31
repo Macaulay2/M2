@@ -98,8 +98,6 @@ monoidDefaults = (
 	  SkewCommutative => {},
 	  -- VariableOrder => null,		  -- not implemented yet
 	  WeylAlgebra => {},
-	  Adjust => null,				    -- default is identity
-	  Repair => null,				    -- default is identity
      	  Heft => null,
 	  DegreeRank => null
 	  }
@@ -158,9 +156,6 @@ RingElement _ Ring := RingElement => (x,R) -> (
      else error "failed to interpret ring element in ring"
      )
 
-protect internalDegreeLength
-protect internalDegrees
-
 madeTrivialMonoid := false
 
 makeit1 := (opts) -> (
@@ -172,21 +167,7 @@ makeit1 := (opts) -> (
      externalDegrees := opts.Degrees;
      M.degrees = externalDegrees;
      degrk := M.degreeLength = if externalDegrees#?0 then # externalDegrees#0 else 0;
-     internalDegrees := apply(externalDegrees,opts.Adjust);
-     order := transpose internalDegrees;
---     primaryDegrees := if #order === 0 then toList(n:1) else order#0;
---     if not all(primaryDegrees, d -> d>0) then (
---	  if all(primaryDegrees, d -> d<0) then (
---	       -- I wonder whether this attempt at an easy adjustment was ever used
---	       adjust := if opts.Adjust === identity then minus else minus @@ opts.Adjust;
---	       repair := if opts.Repair === identity then minus else minus @@ opts.Repair;
---	       opts = new OptionTable from join ( pairs opts, {Adjust => adjust, Repair => repair} );
---	       internalDegrees = apply(externalDegrees,opts.Adjust);
---	       order = transpose internalDegrees;
---	       primaryDegrees = order#0;
---	       )
---	  else error "first component of each degree should be positive" -- this error message will go away
---	  );
+     order := transpose externalDegrees;
      variableOrder := toList (0 .. n-1);
      M.generatorSymbols = varlist;
      M.generatorExpressions = apply(varlist,
@@ -205,14 +186,11 @@ makeit1 := (opts) -> (
      M.indexSymbols = hashTable apply(M.generatorSymbols,M.generators,(v,x) -> v => x);
      M.index = new MutableHashTable;
      scan(#varlist, i -> M.index#(varlist#i) = i);
-     M.internalDegrees = internalDegrees;
-     M.internalDegreeLength = internalDegreeLength := # opts.Adjust toList ( degrk : 0 );
-     if # opts.Repair toList (internalDegreeLength : 0) != degrk then error "expected Repair and Adjust functions to be inverse";
      (MOopts,rawMO) := makeMonomialOrdering (
      	  opts.MonomialSize,
 	  opts.Inverses,
      	  #varlist,
-	  if degreeLength M > 0 then internalDegrees/first else {},
+	  if degreeLength M > 0 then externalDegrees/first else {},
 	  opts.Weights,
 	  opts.MonomialOrder
 	  );
@@ -228,8 +206,8 @@ makeit1 := (opts) -> (
 	  else rawMonoid(
 	       M.RawMonomialOrdering,
 	       toSequence M.generators / toString,
-	       raw degreesRing internalDegreeLength,
-	       flatten internalDegrees));
+	       raw degreesRing degrk,
+	       flatten externalDegrees));
      raw M := x -> x.RawMonomial;
      net M := x -> net expression x;
      M ? M := (x,y) -> rawCompareMonomial(raw M, raw x, raw y);
@@ -342,31 +320,22 @@ makeMonoid := (opts) -> (
 			 ))));
 
      heft := opts.Heft;
-     if heft =!= null then (
-     	  if opts.Adjust =!= null or opts.Repair =!= null then error "encountered both Heft and Adjust or Repair options";
-	  opts.Adjust = x -> prepend(sum(heft,x,times),x); -- to internal degree
-	  opts.Repair = x -> drop(x,1);		      -- to external degree
-	  if not instance(heft,List) or not all(heft,i -> instance(i,ZZ)) then error "expected Heft option to be a list of integers";
-	  if #heft != degrk then error("expected Heft option to be of length ", degrk, " to match the degree rank");
+     if heft === null then (
+	  -- ... how to choose it in this case? ...
+	  heft = {1};
 	  )
      else (
-     	  if opts.Adjust === null 
-	  then opts.Adjust = identity
-     	  else if not instance(opts.Adjust, Function) then error("expected 'Adjust' option to be a function");
-     	  if opts.Repair === null 
-	  then opts.Repair = identity
-     	  else if not instance(opts.Repair, Function) then error("expected 'Repair' option to be a function");
+	  if not instance(heft,List) or not all(heft,i -> instance(i,ZZ)) then error "expected Heft option to be a list of integers";
+	  if #heft != degrk then error("expected Heft option to be of length ", degrk, " to match the degree rank");
 	  );
      warned := false;
-     scan(degs, d -> if not first opts.Adjust d > 0 then (
-	       if heft === null
+     scan(degs, d -> if not sum(min(#heft,#d),i->heft#i * d#i) > 0 then (
+	       if opts.Heft === null
 	       then (
 		    if warned then return;
 		    warned = true;
-		    stderr << "-- warning: some variables have non-positive first component of degree" << endl;
+		    stderr << "-- warning: some variables have non-positive resulting heft" << endl;
 		    stderr << "--          use Heft option to specify a positive form" << endl;
-		    if opts.Adjust === identity and opts.Repair === identity then
-		    stderr << "--          or use Adjust and Repair to set up degrees internally" << endl;
 		    )
 	       else error "Heft option doesn't yield a positive value for each variable"
 	       ));
@@ -427,10 +396,6 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
      oddp := x -> x#?0 and odd x#0;
      m := numgens M;
      opts.SkewCommutative = join(monoidIndices(M,M.Options.SkewCommutative), apply(monoidIndices(N,N.Options.SkewCommutative), i -> i+m));
-     if opts.Adjust === null and opts.Repair === null and opts.Heft === null then (
-     	  opts.Adjust = tensoradj(Mopts.Adjust,Nopts.Adjust,M.degreeLength,N.degreeLength);
-     	  opts.Repair = tensoradj(Mopts.Repair,Nopts.Repair,M.internalDegreeLength,N.internalDegreeLength);
-	  );
      makeMonoid new OptionTable from opts)
 
 -- delayed installation of methods for monoid elements
