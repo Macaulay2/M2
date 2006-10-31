@@ -9,3 +9,10 @@ sortColumns f
 f = f _ oo
 sortColumns f
 assert( sortColumns f === toList ( 0 .. 2) )
+
+R = ZZ[a..d]
+m = matrix{{a,0,0,d},{0,0,c,0},{b^2,b^2,2*b^2,0}}
+sortColumns m
+m = m_oo
+sortColumns m
+assert( sortColumns m === toList ( 0 .. 3) )

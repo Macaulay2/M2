@@ -85,6 +85,25 @@ bool Ring::is_equal(const vecterm * a, const vecterm * b) const
     }
 }
 
+int Ring::compare_vecs(vec v, vec w) const
+{
+  for ( ;; v = v->next, w = w->next)
+    {
+      if (v == NULL)
+	{
+	  if (w == NULL) return 0;
+	  return -1;
+	}
+      if (w == NULL) return 1;
+      int cmp = v->comp - w->comp;
+      if (cmp > 0) return cmp;
+      if (cmp < 0) return cmp;
+      cmp = this->compare_elems(v->coeff, w->coeff);
+      if (cmp > 0) return cmp;
+      if (cmp < 0) return cmp;
+    }
+}
+
 bool Ring::get_entry(const vecterm * v, int r, ring_elem &result) const
 {
   for (const vecterm *p = v; p != 0; p = p->next)
