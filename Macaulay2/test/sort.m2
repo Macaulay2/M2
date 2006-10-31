@@ -64,7 +64,7 @@ x  = {symbol generators, symbol size, symbol symmetricPower, symbol SPACE, symbo
       truncateOutput, symbol pseudoRemainder, Inputs, symbol columnSwap, symbol edit, symbol restart, symbol pdim, symbol then, symbol homology, symbol GeneralOrderedMonoid, symbol vars,
       symbol ITALIC, symbol sum, symbol WrapperType, symbol Ring, symbol substring, symbol isInputFile, symbol gradedModuleMap, symbol poincareN, symbol to, NewMethod, symbol applyKeys,
       symbol newPackage, symbol deepSplice, symbol stdio, symbol cohomology, symbol RingElement, symbol ooo, symbol sinh, symbol subsets, SyzygyMatrix, symbol InfiniteNumber, symbol
-      genericSkewMatrix, symbol minprimes, symbol mathML, symbol maxPosition, symbol saturate, symbol EmptyMarkUpType, symbol isNormal, Ascending, symbol Expression, argument, symbol
+      genericSkewMatrix, symbol mathML, symbol maxPosition, symbol saturate, symbol EmptyMarkUpType, symbol isNormal, Ascending, symbol Expression, argument, symbol
       currentFileName, symbol degree, symbol ChainComplex, symbol syz, Syzygies, GlobalAssignHook, symbol sleep, symbol isPrimitive, symbol seeParsing, symbol echoOn, symbol isSurjective,
       symbol Subscript, symbol drop, symbol showStructure, symbol dictionaryPath, symbol lines, symbol gcd, symbol lift, subscript, symbol printWidth, symbol presentation, symbol
       append, symbol extend, symbol cone, symbol Hypertext, symbol openDatabaseOut, symbol LAYOUT, symbol ModuleMap, symbol addStartFunction, symbol help, symbol pushForward1, symbol

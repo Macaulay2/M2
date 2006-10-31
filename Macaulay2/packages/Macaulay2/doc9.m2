@@ -274,9 +274,8 @@ document {
 	 independentSets I
 	 dual I
      ///,
-     "Monomial ideals over quotient rings are considered modulo the lead terms,
-     and monomial ideals over skew-commuting rings are considered modulo the
-     squares of such variables."
+     "The ring of a monomial ideal must be a commutative polynomial ring.  This ring must
+     not be a skew commuting ring, and/or a quotient ring.",
      }
 
 document {
@@ -460,14 +459,6 @@ assert(
 document {
      Key => {isBorel,(isBorel, MonomialIdeal)},
      Headline => "whether an ideal is fixed by upper triangular changes of coordinates"
-     }
-
-document {
-     Key => minprimes,
-     Headline => "compute the minimal primes",
-     TT "minprimes I", " -- compute the minimal primes of a monomial ideal I.",
-     PARA{},
-     "Not working yet."
      }
 
 document {

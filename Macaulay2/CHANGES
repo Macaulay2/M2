@@ -14,6 +14,13 @@ Changes made, most recent ones first:
 
 -----------------------------------------------------------------------------
 
+New in 0.9.95:
+
+MonomialIdeal is now restricted to commutative polynomial rings (no
+skew commuting variables, and no quotient elements in the ring).
+
+-----------------------------------------------------------------------------
+
 New in 0.9.91:
 
 New option "CoefficientRing" to "generators"; replaces the function

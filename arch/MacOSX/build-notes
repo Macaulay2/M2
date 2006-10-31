@@ -45,31 +45,55 @@ hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-i386 Macaulay2-$
 ls -l
 
 -------------------------------------------------------
+-- In my development versions, I use:
+-- tmp-opt (optimized version)
+ ../configure --prefix=/capybara/encap \
+              --enable-experimental-code \
+	      --enable-encap \
+              --with-veclib \
+              --enable-altivec \
+	      CFLAGS=-g \
+	      CPPFLAGS=-I/capybara/include  \
+	      LDFLAGS=-L/capybara/lib \
+	      LOADLIBES="-lgcc_s.10.5 -lncurses" \
+	      --with-gdbmlib=/capybara/lib/libgdbm.a \
+	      --with-readlinelib=/capybara/lib/libreadline.a \
+	      --with-historylib=/capybara/lib/libhistory.a \
+	      --with-gclib=/capybara/lib/libgc.a \
+	      --with-gmplib=/capybara/lib/libgmp.a
 
-../configure  --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib --enable-altivec CFLAGS=-g CPPFLAGS=-I/capybara/include LDFLAGS=-L/capybara/lib LOADLIBES="-lgcc_s.10.5 -lncurses" --with-gdbmlib=/capybara/lib/libgdbm.a --with-readlinelib=/capybara/lib/libreadline.a --with-historylib=/capybara/lib/libhistory.a --with-gclib=/capybara/lib/libgc.a
+-- tmp (debug version)
+ ../configure  \
+              --disable-strip \
+	      --enable-debug \
+	      --disable-optimize \
+              --enable-experimental-code \
+              --with-veclib \
+              --enable-altivec \
+	      CFLAGS=-g \
+	      CPPFLAGS=-I/capybara/include  \
+	      LDFLAGS=-L/capybara/lib \
+	      LOADLIBES="-lgcc_s.10.5 -lncurses" \
+	      --with-gdbmlib=/capybara/lib/libgdbm.a \
+	      --with-readlinelib=/capybara/lib/libreadline.a \
+	      --with-historylib=/capybara/lib/libhistory.a \
+	      --with-gclib=/capybara/lib/libgc.a \
+	      --with-gmplib=/capybara/lib/libgmp.a
 
-
-# debug version
-env LOADLIBES="-lgcc_s.10.5" CPPFLAGS="-I/capybara/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --enable-debug --disable-optimize --with-veclib --enable-altivec
-
-#optimized version, for binary distribution
-env LOADLIBES="-lgcc_s.10.5 -lncurses" CPPFLAGS="-I/capybara/include" CFLAGS="-g" CXX="g++" LDFLAGS="-L/capybara/lib" ../configure --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --enable-altivec --with-gdbmlib=/capybara/lib/libgdbm.a --with-readlinelib=/capybara/lib/libreadline.a --with-historylib=/capybara/lib/libhistory.a
-
-#optimized version, for binary distribution
-# this one links correctly
-../configure  --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib --enable-altivec CFLAGS=-g CPPFLAGS=-I/capybara/include LDFLAGS=-L/capybara/lib LOADLIBES=-lgcc_s.10.5 
-
-
-# this one gives lazy symbol error
-env LOADLIBES="-lgcc_s.10.5" CPPFLAGS="-I/capybara/include" CFLAGS="-g" CXX="g++" LDFLAGS="-L/capybara/lib" ../configure --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --enable-altivec
-
-env CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" CXX="g++" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --enable-altivec --enable-profile
-
-
-
-
-env CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --enable-debug --disable-optimize --with-veclib --enable-altivec
-
-env CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" CXX="g++" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --enable-altivec
-
-env CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" CXX="g++" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --enable-altivec --enable-profile
+-- tmp-profile (profiled version)
+-- the file Macaulay2/regex/regex.o must be built without -pg
+-- as M2 crashes otherwise...
+ ../configure \
+      	      --enable-profile \
+              --enable-experimental-code \
+              --with-veclib \
+              --enable-altivec \
+	      CFLAGS=-g \
+	      CPPFLAGS=-I/capybara/include  \
+	      LDFLAGS=-L/capybara/lib \
+	      LOADLIBES="-lgcc_s.10.5 -lncurses" \
+	      --with-gdbmlib=/capybara/lib/libgdbm.a \
+	      --with-readlinelib=/capybara/lib/libreadline.a \
+	      --with-historylib=/capybara/lib/libhistory.a \
+	      --with-gclib=/capybara/lib/libgc.a \
+	      --with-gmplib=/capybara/lib/libgmp.a
