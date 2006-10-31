@@ -1,6 +1,6 @@
 document {
      Key => {monoid,(monoid, Array),(monoid, PolynomialRing),(monoid, QuotientRing), [monoid,DegreeRank], DegreeRank,Heft,[monoid,Heft],
-	  Adjust,[monoid,Adjust],Repair,[monoid,Repair],Inverses,[monoid,Inverses],MonomialSize,[monoid,MonomialSize],VariableBaseName,[monoid,VariableBaseName],
+	  Inverses,[monoid,Inverses],MonomialSize,[monoid,MonomialSize],VariableBaseName,[monoid,VariableBaseName],
 	  WeylAlgebra,[monoid,WeylAlgebra],[monoid,Degrees],Degrees,SkewCommutative,[monoid,SkewCommutative]},
      Headline => "make or retrieve a monoid",
      Usage => "monoid [a,b,c,...]",
@@ -28,12 +28,8 @@ document {
 	       vectors is prepended to the list of orderings provided by the ", TO "MonomialOrder", " option."},
 	  WeylAlgebra => List => {"a list of options of the form ", TT "x=>dx", ", which specifies that ", TT "dx", " plays the role of the derivative
 	       with respect to ", TT "x", " in the resulting Weyl algebra when this monoid is made into a polynomial ring."},
-	  Heft => List => {"a list of integers: its dot product (presumably positive) with the multidegrees of the variables will be prefixed to the multidegrees of
-	       the variables, as an internal adjustment"},
-	  Adjust => Function => {"a linear function for transforming the externally visible multidegrees of the variables
-     	       into multidegrees whose first component is positive" },
-	  Repair => Function => {"a linear function for transforming internally used multidegrees (whose first component is positive) 
-	       of variables into the externally visible multidegrees.  This function must be the inverse of the ", TO "Adjust", " function." },
+	  Heft => List => {"a list of integers: its dot product (presumably positive) with the multidegrees of the variables will be used as a computational aid
+	       in certain routines"},
 	  },
      Outputs => {
 	  {"a new monoid"}
@@ -61,10 +57,10 @@ document {
      "The variables listed may be symbols or indexed variables. The values assigned to these variables are the corresponding monoid generators.  
      The function ", TO "baseName", " may be used to recover the original symbol or indexed variable.",
      PARA{
-     	  "The ", TO "Adjust", " and ", TO "Repair", " options are used in particular by ", TO (Ext,Module,Module), ".",
+     	  "The ", TO "Heft", " option is used in particular by ", TO (Ext,Module,Module), ".",
      	  },
      EXAMPLE lines ///
-	  R = ZZ[x,y, Degrees => {-1,-2}, Repair => d -> -d, Adjust => d -> -d]
+	  R = ZZ[x,y, Degrees => {-1,-2}, Heft => {-1}]
      	  degree \ gens R
 	  transpose vars R
      ///,

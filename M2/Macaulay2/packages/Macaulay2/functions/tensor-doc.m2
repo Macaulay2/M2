@@ -286,36 +286,4 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
-document { 
-     Key => [tensor, Repair],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [tensor, Adjust],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc6.m2:782:     Key => tensor,
- -- doc8.m2:1638:     Key => (symbol **, Ring, Ring), Headline => "tensor product",
- -- doc9.m2:1913:     Key => tensorAssociativity,
- -- overviewC.m2:993:     Key => "tensor products of rings",
- -- overviewC.m2:1394:     Key => "tensor products of modules",
+

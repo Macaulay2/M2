@@ -174,32 +174,4 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
-document { 
-     Key => [modifyRing, Repair],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [modifyRing, Adjust],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc8.m2:1623:     Key => modifyRing,
+

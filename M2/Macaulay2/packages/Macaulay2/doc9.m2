@@ -38,7 +38,7 @@ document {
 	  },
      PARA{},
      "The result of the computation is cached for future reference.",
-     SeeAlso =>{"ScriptedFunctor", "Adjust", "Repair"}
+     SeeAlso =>{"ScriptedFunctor"}
      }
 
 document {
