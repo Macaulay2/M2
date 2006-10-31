@@ -339,7 +339,7 @@ makeMonoid := (opts) -> (
 		    )
 	       else error "Heft option doesn't yield a positive value for each variable"
 	       ));
-
+     opts.Heft = heft;
      opts = new OptionTable from opts;
      makeit1 opts)
 
@@ -396,6 +396,7 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
      oddp := x -> x#?0 and odd x#0;
      m := numgens M;
      opts.SkewCommutative = join(monoidIndices(M,M.Options.SkewCommutative), apply(monoidIndices(N,N.Options.SkewCommutative), i -> i+m));
+     if opts.Heft === null then opts.Heft = join(Mopts.Heft,Nopts.Heft);
      makeMonoid new OptionTable from opts)
 
 -- delayed installation of methods for monoid elements
