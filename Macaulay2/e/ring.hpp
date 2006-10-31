@@ -301,6 +301,8 @@ protected:
 public:
   void vec_sort(vecterm *&f) const;
 
+  int compare_vecs(vec v, vec w) const;
+
   vec e_sub_i(int r) const;
   vec make_vec(int r, ring_elem a) const;
   vec copy_vec(const vecterm * v) const;

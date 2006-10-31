@@ -19,9 +19,10 @@ document {
 	  are sorted in increasing order"}
 	  },
      PARA{},
-     "The default monomial order is to sort the columns in ascending degree first,
-     and within each degree, sort in ascending monomial order in the target free
-     module.",
+     "The default order is to sort the columns in ascending degree first,
+     and within each degree, first compare ring elements in the highest non-zero component, 
+     breaking ties by going to the next lower component.  
+     Zero is considered earlier in the order than other elements",
      EXAMPLE {
 	  "R = ZZ/32003[a..d,MonomialOrder=>Lex];",
 	  "m = matrix{{a*d, b^2, b^100, b^50*d^50, c^2*d}}",
@@ -30,7 +31,7 @@ document {
      PARA{},
      "The two optional arguments can modify this default order.
      The value of ", TO DegreeOrder, " is considered first (Ascending,
-	  Descending, or null), and after that the monomial order
+	  Descending, or null), and after that the monomial (or ring) order
      is used to break ties, either ascending or descending, depending on the
      value of ", TO MonomialOrder, ".",
      PARA{},

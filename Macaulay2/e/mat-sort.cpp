@@ -2,10 +2,9 @@
 
 class MatrixSorter
 {
-  const PolynomialRing *R;
-  const Monoid *M;
+  const Ring *R;
   int deg_ascending;
-  int monorder_ascending;
+  int ringorder_ascending;
   int * sort_vals;
   vec * sort_vecs;
   int * sort_degs;
@@ -25,33 +24,9 @@ class MatrixSorter
 	if (d1 > d2) return -deg_ascending;
 	if (d1 < d2) return deg_ascending;
       }
-    int cmp;
-    if (M != 0)
-      {
-	const int *m1 = R->lead_flat_monomial(v1->coeff);
-	const int *m2 = R->lead_flat_monomial(v2->coeff);
-	cmp = M->compare(m1,v1->comp,m2,v2->comp);
-      }
-    else
-      cmp = v1->comp - v2->comp;
-    if (cmp > 0) return -monorder_ascending;
-    if (cmp < 0) return monorder_ascending;  
-#if 0
-    if (K->is_ZZ())
-      {
-	// Compare coeficients as well.
-	cmp = K->cast_to_Z()->compare(v1->coeff, v2->coeff);
-	buffer o;
-	o << "comparing ";
-	K->elem_text_out(o, v1->coeff);
-	o << " and ";
-	K->elem_text_out(o, v2->coeff);
-	o << " result = " << cmp << newline;
-	emit(o.str());
-	if (cmp < 0) return 1;
-	if (cmp > 0) return -1;
-      }
-#endif
+    int cmp = R->compare_vecs(v1, v2);
+    if (cmp > 0) return -ringorder_ascending;
+    if (cmp < 0) return ringorder_ascending;  
     return 0;
   }
 
@@ -89,21 +64,16 @@ class MatrixSorter
   }
   
 public:
-  MatrixSorter(const Matrix *m, int degorder, int monorder);
+  MatrixSorter(const Matrix *m, int degorder, int ringorder);
 
   M2_arrayint_OrNull value();
 };
 
-MatrixSorter::MatrixSorter(const Matrix *m, int degorder, int monorder)
+MatrixSorter::MatrixSorter(const Matrix *m, int degorder, int ringorder)
   : deg_ascending(degorder),
-    monorder_ascending(monorder)
+    ringorder_ascending(ringorder)
 {
-  const Ring *R0 = m->get_ring();
-  R = R0->cast_to_PolynomialRing();
-  if (R == 0)
-    M = 0;
-  else
-    M = R->getMonoid();
+  R = m->get_ring();
 
   int nelems = m->n_cols();
   
@@ -131,13 +101,13 @@ M2_arrayint_OrNull MatrixSorter::value()
   return result;
 }
 
-M2_arrayint Matrix::sort(int degorder, int monorder) const
+M2_arrayint Matrix::sort(int degorder, int ringorder) const
   // Sort the columns of 'this': Place the column indices into 'result'.
   // If degorder < 0, sort in descending degree order, if >0 ascending degree
   // If ==0, or in the event that two columns have the same (simple) degree,
-  // use the monomial order: monorder > 0 means ascending, <0 means descending.
+  // use the ring order: ringorder > 0 means ascending, <0 means descending.
 {
-  MatrixSorter sorter(this, degorder, monorder);
+  MatrixSorter sorter(this, degorder, ringorder);
   return sorter.value();
 }
 
