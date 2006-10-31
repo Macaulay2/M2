@@ -42,7 +42,6 @@ genericSymmetricMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
      matrix table(n,n, (i,j) -> if i>j then vars#(j,i) else vars#(i,j)))
 
 randommat := (R,r,c) -> (
-     if R.?Adjust then c = R.Adjust c;
      map(R, rawMatrixRandom(R.RawRing, r, c, 1.0, 0, 0)))
 
 random(List,Ring) := RingElement => opts -> (deg,R) -> (

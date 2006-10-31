@@ -289,11 +289,7 @@ leadCoefficient RingElement := RingElement => (f) -> (
      k := coefficientRing ring f;
      new k from rawLeadCoefficient(raw k, raw f))
 
-degree RingElement := opts -> f -> if f == 0 then -infinity else (
-     d := rawMultiDegree raw f;
-     R := ring f;
-     if R.?Repair then R.Repair d else d
-     )
+degree RingElement := opts -> f -> if f == 0 then -infinity else rawMultiDegree raw f
 
 leadTerm RingElement := RingElement => (f) -> someTerms(f,0,1)
 

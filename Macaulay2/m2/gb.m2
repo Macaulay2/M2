@@ -123,7 +123,7 @@ checkHilbertHint = f -> (
      and (instance(R,PolynomialRing) or isQuotientOf(PolynomialRing, R))
      and isField coefficientRing R
      and (isCommutative R or isSkewCommutative R)
-     and all(R.Adjust \ degree \ generators(R, CoefficientRing => ZZ), deg -> deg#0 > 0)
+     and all(degree \ generators(R, CoefficientRing => ZZ), deg -> deg#0 > 0)
      )
 
 gbGetHilbertHint := (f,opts) -> (

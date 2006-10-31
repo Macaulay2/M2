@@ -111,7 +111,6 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	       then (degree m + degree n + dif#0)
  	       else toList (degreeLength R:0)
 	       );
-	  if R.?Adjust then deg = R.Adjust deg;
 	  f := m.RawMatrix * n.RawMatrix;
 	  f = rawMatrixRemake2(rawTarget f, rawSource f, deg, f, 0);
 	  map(M,N,reduce(M,f))))

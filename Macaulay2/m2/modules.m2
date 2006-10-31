@@ -302,12 +302,8 @@ degrees Module := N -> if N.?degrees then N.cache.degrees else N.cache.degrees =
      rk := numgens N;
      R := ring N;
      nd := degreeLength R;
-     ind := if R.?monoid then ind = R.monoid.internalDegreeLength else nd;
      if nd == 0 then toList (rk : {})
-     else (
-       	  d := pack(ind,rawMultiDegree N.RawFreeModule);
-       	  if R.?Repair then d = apply(d,R.Repair);
-       	  d))
+     else pack(nd,rawMultiDegree N.RawFreeModule))
 
 Module ^ ZZ := Module => (M,i) -> directSum (i:M)
 
@@ -332,7 +328,6 @@ Ring ^ List := Module => (
 			      then error "expected each multidegree to be a list of integers")))
 	       else error "expected a list of integers or a list of lists of integers";
 	       -- then adjust the args
-	       if R.?Adjust then degs = apply(degs,R.Adjust);
 	       fdegs := flatten degs;
 	       -- then do it
 	       if # fdegs === 0 
