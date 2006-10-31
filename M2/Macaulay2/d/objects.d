@@ -384,7 +384,11 @@ export storeInHashTableMustClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr :
 	       p.value = value; 
 	       return value);
 	  p = p.next);
-     buildErrorPacket("encountered an unknown key or option"));
+     buildErrorPacket("encountered an unknown key or option"
+	  + when key is s:SymbolClosure do ": " + s.symbol.word.name 
+	  is s:string do ": " + s
+	  else ""
+	  ));
 export storeInHashTableMustClobber(x:HashTable,key:Expr,value:Expr):Expr := (
      storeInHashTableMustClobber(x,key,hash(key),value)
      );
