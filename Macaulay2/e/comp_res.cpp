@@ -48,6 +48,7 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
 							 int strategy
 							 )
 {
+  const Ring *R = m->get_ring();
   ResolutionComputation *C = 0;
   int origsyz;
   switch (algorithm) {
@@ -57,6 +58,11 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
 	ERROR("resolution Strategy=>1 cannot resolve a cokernel with a given presentation: use Strategy=>2 or Strategy=>3 instead");
 	return 0;
       }
+    if (!R->is_commutative_ring())
+      {
+	ERROR("use resolution Strategy=>2 or Strategy=>3 for non commutative polynomial rings");
+	return 0;
+      }
     if (gbTrace > 0) emit_line("resolution Strategy=>1");
     C = new res_comp(m, max_level, strategy);
     break;
@@ -64,6 +70,11 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
     if (!resolve_cokernel)
       {
 	ERROR("resolution Strategy=>0 cannot resolve a cokernel with a given presentation: use Strategy=>2 or Strategy=>3 instead");
+	return 0;
+      }
+    if (!R->is_commutative_ring())
+      {
+	ERROR("use resolution Strategy=>2 or Strategy=>3 for non commutative polynomial rings");
 	return 0;
       }
     if (gbTrace > 0) emit_line("resolution Strategy=>0");
