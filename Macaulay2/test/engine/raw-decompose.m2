@@ -81,20 +81,8 @@ L1 = ideal gens gb L
 assert(L == L1)
 
 stderr << "The following decompose takes too long, so it is commented out" << endl
-time decompose ideal mingens L1 -- ouch!
+time C = decompose ideal mingens L1 -- ouch!
+assert(set(C/(I -> flatten entries gens gb I)) === set({I,J}/(i -> flatten entries gens gb i)))
 
-time irreducibleCharacteristicSeries L1
-time irreducibleCharacteristicSeries ideal mingens L1
-
--- decompose interrupt bug
-R = ZZ/32003[symbol a..symbol d]
-I = ideal(a*d-b^2-b-1, c^3-c-a)
-J = ideal(a*b*c-3*a-1, b^3-a*d-a-1)
-L = intersect(I,J);
-L1 = ideal gens gb L
-C1 = irreducibleCharacteristicSeries ideal(a,b)
-M = L1^3; -- NOW interrupt this
-C2 = irreducibleCharacteristicSeries ideal(a,b)
-C1#0 == C2#0
 
 
