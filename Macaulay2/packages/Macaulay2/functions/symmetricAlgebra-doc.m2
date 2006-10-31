@@ -169,32 +169,4 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
-document { 
-     Key => [symmetricAlgebra, Repair],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [symmetricAlgebra, Adjust],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc8.m2:1659:     Key => symmetricAlgebra,
+
