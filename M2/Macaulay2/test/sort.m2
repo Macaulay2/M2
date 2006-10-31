@@ -13,7 +13,7 @@ x  = {symbol generators, symbol size, symbol symmetricPower, symbol SPACE, symbo
       symbol last, symbol ambient, symbol expression, SeeAlso, symbol SparseVectorExpression, symbol erase, symbol print, symbol first, symbol realPart, symbol documentation, symbol time,
       symbol globalReleaseFunction, symbol reverse, symbol isPolynomialRing, symbol integralClosure, symbol endl, Degrees, symbol binomial, symbol autoload, symbol components, symbol
       toExternalString, symbol separate, symbol Macaulay2, NewOfMethod, symbol HashTable, GroupLex, symbol log, symbol assert, SortStrategy, symbol char, symbol Type, symbol hashTable,
-      UseHilbertFunction, symbol apply, symbol HeaderType, symbol regularity, symbol global, symbol numgens, symbol TABLE, Adjust, symbol EngineRing, symbol export, symbol lookupCount,
+      UseHilbertFunction, symbol apply, symbol HeaderType, symbol regularity, symbol global, symbol numgens, symbol TABLE, symbol EngineRing, symbol export, symbol lookupCount,
       symbol cover, VariableBaseName, symbol newClass, symbol openInOut, symbol oooo, symbol IndeterminateNumber, symbol hilbertFunction, symbol buckets, symbol setRandomSeed, symbol
       Matrix, symbol part, symbol flagLookup, symbol TEX, symbol Boolean, symbol floor, symbol VisibleList, InverseMethod, symbol det, TotalPairs, symbol trim, symbol path, DegreeLimit,
       symbol merge, symbol !=, symbol Set, symbol ultimate, MinimalGenerators, symbol stderr, SkewCommutative, symbol content, symbol #?, symbol columnPermute, symbol take, symbol dim,
@@ -50,7 +50,7 @@ x  = {symbol generators, symbol size, symbol symmetricPower, symbol SPACE, symbo
       Homogeneous, symbol isAffineRing, symbol MutableHashTable, symbol inducesWellDefinedMap, symbol flush, symbol numeric, symbol degrees, symbol while, symbol monoid, symbol ZZ, symbol
       HEADER1, Linear, symbol HEADER2, symbol HEADER3, symbol HEADER4, symbol HEADER5, symbol HEADER6, symbol number, symbol kill, symbol compress, symbol MinorsComputation, symbol
       Equation, symbol horizontalJoin, symbol \\, symbol prepend, symbol Manipulator, symbol unstack, Limit, symbol isInjective, symbol IMG, symbol exponents, symbol leadMonomial,
-      symbol indices, symbol collectGarbage, Repair, symbol Table, symbol methods, incomparable, symbol ProductOrder, symbol ^^, symbol override, symbol getc, symbol table, symbol unique,
+      symbol indices, symbol collectGarbage, symbol Table, symbol methods, incomparable, symbol ProductOrder, symbol ^^, symbol override, symbol getc, symbol table, symbol unique,
       symbol topCoefficients, symbol Spec, symbol Fano, symbol PARA, symbol Sequence, symbol symmetricAlgebra, symbol isListener, symbol fold, NewOfFromMethod, symbol diff, symbol between,
       generatorExpressions, symbol ProjectiveVariety, AfterNoPrint, symbol clearAll, symbol Hom, symbol Package, symbol rank, symbol String, PrimitiveElement, symbol OptionTable, symbol
       kernel, symbol examples, symbol eigenvalues, symbol tensor, symbol GradedModule, symbol sortColumns, symbol set, symbol positions, symbol youngest, AfterEval, dd,
