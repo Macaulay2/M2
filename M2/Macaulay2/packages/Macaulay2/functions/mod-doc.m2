@@ -25,7 +25,7 @@ document {
  -- doc7.m2:1375:     Key => (module, Ideal),
  -- doc8.m2:264:     Key => "Monomial orders in free modules",
  -- doc8.m2:991:     Key => modulo,
- -- doc8.m2:1623:     Key => modifyRing,
+ -- doc8.m2:1623:     Key => newRing,
  -- doc9.m2:642:document { Key => extend, Headline => "extend a module map to a chain map, if possible" }
  -- overview2.m2:8:     Key => "ideals and modules",
  -- overview2.m2:31:     Key => "free modules",

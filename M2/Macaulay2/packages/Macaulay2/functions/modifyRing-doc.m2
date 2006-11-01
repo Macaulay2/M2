@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => modifyRing,
+     Key => newRing,
      Headline => "",
      Usage => "",
      Inputs => {
@@ -19,7 +19,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (modifyRing,Ring),
+     Key => (newRing,Ring),
      Headline => "",
      Usage => "",
      Inputs => {
@@ -35,7 +35,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [modifyRing, Variables],
+     Key => [newRing, Variables],
      Headline => "",
      Usage => "",
      Inputs => {
@@ -49,7 +49,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [modifyRing, Degrees],
+     Key => [newRing, Degrees],
      Headline => "",
      Usage => "",
      Inputs => {
@@ -63,7 +63,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [modifyRing, MonomialSize],
+     Key => [newRing, MonomialSize],
      Headline => "",
      Usage => "",
      Inputs => {
@@ -77,7 +77,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [modifyRing, MonomialOrder],
+     Key => [newRing, MonomialOrder],
      Headline => "",
      Usage => "",
      Inputs => {
@@ -91,7 +91,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [modifyRing, Inverses],
+     Key => [newRing, Inverses],
      Headline => "",
      Usage => "",
      Inputs => {
@@ -105,7 +105,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [modifyRing, WeylAlgebra],
+     Key => [newRing, WeylAlgebra],
      Headline => "",
      Usage => "",
      Inputs => {
@@ -119,7 +119,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [modifyRing, SkewCommutative],
+     Key => [newRing, SkewCommutative],
      Headline => "",
      Usage => "",
      Inputs => {
@@ -133,7 +133,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [modifyRing, VariableBaseName],
+     Key => [newRing, VariableBaseName],
      Headline => "",
      Usage => "",
      Inputs => {
@@ -147,7 +147,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [modifyRing, Weights],
+     Key => [newRing, Weights],
      Headline => "",
      Usage => "",
      Inputs => {
@@ -161,7 +161,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [modifyRing, DegreeRank],
+     Key => [newRing, DegreeRank],
      Headline => "",
      Usage => "",
      Inputs => {

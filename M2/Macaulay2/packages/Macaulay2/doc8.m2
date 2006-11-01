@@ -919,9 +919,9 @@ document {
 
 
 document {
-     Key => {modifyRing,(modifyRing, Ring)},
+     Key => {newRing,(newRing, Ring)},
      Headline => "make a copy of a ring, with some features changed",
-     TT "modifyRing(R,options)", " -- yields a ring similar to R, with 
+     TT "newRing(R,options)", " -- yields a ring similar to R, with 
      certain features changed.",
      PARA{},
      "Bug: doesn't work yet."
@@ -929,8 +929,8 @@ document {
 
 TEST "
     R = ZZ/101[a..d,Degrees=>{1,2,3,4}]
-    S = modifyRing(R,Degrees=>{1,1,1,1})
-    S1 = modifyRing(R,MonomialOrder=>Eliminate 2,Degrees=>{1,1,1,1})
+    S = newRing(R,Degrees=>{1,1,1,1})
+    S1 = newRing(R,MonomialOrder=>Eliminate 2,Degrees=>{1,1,1,1})
 "
 
 document {
