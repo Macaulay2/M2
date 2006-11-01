@@ -1,8 +1,8 @@
 -- Code for Simplicial Complexes
 newPackage(
 	"SimplicialComplexes",
-    	Version => "1.0", 
-    	Date => "July 13, 2005",
+    	Version => "1.1", 
+    	Date => "November 1, 2006",
     	Authors => {
 	     {Name => "Sorin Popescu", Email => "sorin@math.sunysb.edu", HomePage => "http://www.math.sunysb.edu/~sorin/"},
 	     {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"},
@@ -17,7 +17,9 @@ export {SimplicialComplex,
      boundary,fVector,isPure,label,
      faces,facets,link,
      simplicialChainComplex,
-     buchbergerComplex}
+     buchbergerComplex,
+     lyubeznikComplex,
+     superficialComplex}
 
 
 complement := local complement
@@ -136,7 +138,7 @@ boundary (ZZ,SimplicialComplex) := (r,D) -> (
      	  b1 = faces(r,D);
      	  b2 = faces(r-1,D);
      	  ones = map(coefficientRing R,R, toList(numgens R:1));
-     	  ones map(R, rawKoszulMonomials(0,raw b2,raw b1))
+     	  ones map(R, rawKoszulMonomials(numgens R,raw b2,raw b1))
      	  )
      )
 
@@ -232,20 +234,23 @@ isPure SimplicialComplex := Boolean => (D) -> (
      #L <= 1
      )
 
---------------------------------------------
--- Buchberger complex of a monomial ideal --
---------------------------------------------
+
+--------------------------------------------------------------------------
+-- Buchberger complex of a monomial ideal (aka improved Taylor complex) --
+-- (see Eisenbud-Hosten-Popescu)          
+--------------------------------------------------------------------------
+
 lcmMRed = method()
 lcmMRed (List) := (L) -> (
--- lcmM finds the reduced lcm of a list of monomials; the quickest method I know
+-- lcmMRed finds the reduced lcm of a list of monomials
     m := intersect toSequence (L/(i -> monomialIdeal(i)));
     m_0//(product support m_0))
 
 faceBuchberger = (m, L) -> (
-     -- true iff the monomial m (in #L vars) is in the Buchberger complex
+-- true iff the monomial m (in #L vars) is in the Buchberger complex
      x := rawIndices raw m;
-     m = lcmMRed(L_x);
-     all(L, n -> m//n == 0))
+     mon := lcmMRed(L_x);
+     all(L, n -> mon//n == 0))
 
 buchbergerComplex = method()
 buchbergerComplex(List,Ring) := (L,R) -> (
@@ -262,6 +267,81 @@ buchbergerComplex(List,Ring) := (L,R) -> (
           );
      simplicialComplex monomialIdeal nonfaces
      )
+
+buchbergerComplex(MonomialIdeal) := (I) -> (
+     buchbergerComplex(flatten entries gens I, ring I))
+
+--------------------------------------------------------------------------
+-- Lyubeznik/Superficial type resolutions                               --
+-- (see Eisenbud-Hosten-Popescu)                                        --
+--------------------------------------------------------------------------
+
+isSuperficial = method()
+isSuperficial List := (L) -> (
+-- isSuperficial cheks if a list of monomials is already superficially oredred
+-- that is every monomial in the list does not strictly divide the lcm of the previous ones
+     R := ring(L_0);
+     all(1..#L-1, i-> (previous:=lcmMonomials(take(L,i)); 
+	       (previous//product(support previous))//(L_i) == 0))
+     )
+
+faceLyubeznik = (m,L) -> (
+-- true iff the monomial m (in #L vars) defines a face in the Lyubeznik complex
+     x := rawIndices raw m;
+     all(0..#L-1, i -> (L1:=L_(select(x, j->j>i));
+	       if (#L1==0) then true else lcmMonomials(L1)//L_i == 0)))
+
+lyubeznikComplex = method()
+lyubeznikComplex(List,Ring) := (L,R) -> (
+     if not isSuperficial(L) then error "expected a superficially ordered list of monomials";
+     P := ideal apply(gens R, x -> x^2);
+     nonfaces := {};
+     d := 1;
+     while (L1 = flatten entries basis(d,coker gens P); #L1 > 0) do (
+	  L1 = select(L1, m -> not faceLyubeznik(m,L));
+	  << "new nonfaces in degree " << d << ": " << L1 << endl;	  
+	  nonfaces = join(nonfaces,L1);
+	  if #nonfaces > 0 then
+	      P = P + ideal nonfaces;
+	  d = d+1;
+          );
+     simplicialComplex monomialIdeal nonfaces
+     )
+
+lyubeznikComplex(MonomialIdeal) := (I) -> (
+     lyubeznikComplex(flatten entries gens I, ring I))
+
+
+faceSuperficial = (m,L) -> (
+-- true iff the monomial m (in #L vars) defines a face in the Superficial complex
+     x := rawIndices raw m;
+     R := ring(L_0);
+     all(0..#L-1, n -> (smallerMons := L_(select(x, j->j<n+1)); 
+	                largerMons := L_(select(x, j->j>n));
+	                smallerLcmRed := if (#smallerMons==0) then 1_R else lcmMRed(smallerMons);
+			lcmMonomials(join({smallerLcmRed}, largerMons))//L_n==0)))
+   
+
+
+superficialComplex = method()
+superficialComplex(List, Ring) := (L,R) -> (
+     if not isSuperficial(L) then error "expected a superficially ordered list of monomials";
+     P := ideal apply(gens R, x -> x^2);
+     nonfaces := {};
+     d := 1;
+     while (L1 = flatten entries basis(d,coker gens P); #L1 > 0) do (
+	  L1 = select(L1, m -> not faceSuperficial(m,L));
+	  << "new nonfaces in degree " << d << ": " << L1 << endl;	  
+	  nonfaces = join(nonfaces,L1);
+	  if #nonfaces > 0 then
+	      P = P + ideal nonfaces;
+	  d = d+1;
+          );
+     simplicialComplex monomialIdeal nonfaces
+     )
+
+superficialComplex(MonomialIdeal) := (I) -> (
+     superficialComplex(flatten entries gens I, ring I))
 
 beginDocumentation()
 
@@ -299,10 +379,12 @@ document { Key => SimplicialComplexes,
 	  TO (ideal,SimplicialComplex),
 	  TO isPure,
 	  TO label,
+	  TO lyubeznikComplex,
 	  TO (monomialIdeal,SimplicialComplex),
 	  TO (ring,SimplicialComplex),
 	  TO simplicialComplex,
-	  TO simplicialChainComplex
+	  TO simplicialChainComplex,
+	  TO superficialComplex
 	  }
 --	  (TO "chainComplex", "(D) -- the chain complex of D"),
 --	  (TO "boundary", "(r,D) -- the boundary map from r faces to r-1 faces"),
@@ -527,6 +609,63 @@ document {
      SeeAlso => {SimplicialComplexes, fVector, isPure, facets}
      }
 
+
+document { 
+     Key => {buchbergerComplex, (buchbergerComplex,List,Ring), (buchbergerComplex,MonomialIdeal)},
+     Headline => "Buchberger complex of a monomial ideal",
+     Usage => "buchbergerComplex(L,R)\nbuchbergerComplex I",
+     Inputs => {
+          },
+     Outputs => {
+          },
+     Consequences => {
+          },     
+     "description",
+     EXAMPLE {
+          },
+     Caveat => {},
+ 
+     SeeAlso => {SimplicialComplexes}
+     }
+
+
+document { 
+     Key => {lyubeznikComplex, (lyubeznikComplex,List,Ring), (lyubeznikComplex,MonomialIdeal)},
+     Headline => "Simplicial complex supporting the Lyubeznik resolution of a  monomial ideal",
+     Usage => "lyubeznikComplex(L,R)\nlyubeznikComplex I",
+     Inputs => {
+          },
+     Outputs => {
+          },
+     Consequences => {
+          },     
+     "description",
+     EXAMPLE {
+          },
+     Caveat => {},
+
+     SeeAlso => {SimplicialComplexes}
+     }
+
+document { 
+     Key => {superficialComplex, (superficialComplex,List,Ring), (superficialComplex,MonomialIdeal)},
+     Headline => "Simplicial complex supporting a superficial resolution of a monomial ideal",
+     Usage => "superficialComplex(L,R)\nsuperficialComplex I",
+     Inputs => {
+          },
+     Outputs => {
+          },
+     Consequences => {
+          },     
+     "description",
+     EXAMPLE {
+          },
+     Caveat => {},
+
+     SeeAlso => {SimplicialComplexes}
+     }
+
+
 document { 
      Key => {fVector,(fVector,SimplicialComplex)},
      Headline => "the f-vector of a simplicial complex",
@@ -677,8 +816,8 @@ document {
 	  boundary}
      }
 document { 
-     Key => label,
-     Headline => "",
+     Key => {label, (label,SimplicialComplex,List)},
+     Headline => "labels with monomials the faces of simplicial complex",
      Usage => "",
      Inputs => {
           },
@@ -1221,9 +1360,9 @@ assert(link(D,a) == simplicialComplex{c*d,d*e})
 assert(link(D,a*d) == simplicialComplex{c,e})
 assert(link(D,c*d) == simplicialComplex{a})
 ///
---------------------------------------------
--- Buchberger complex of a monomial ideal --
---------------------------------------------
+------------------------------------------------------------------
+-- Buchberger/Lyubeznik/Superficial complexes of a monomial ideal --
+------------------------------------------------------------------
 TEST ///
 debug SimplicialComplexes
 S=ZZ/32003[x,y,z]
@@ -1231,7 +1370,7 @@ L={x^3,x*y,x*z,y^2,y*z,z^2}
 R = ZZ/32003[a..f]
 D = buchbergerComplex(L,R)
 label(D,L)
-peek D.cache.labels
+-- peek D.cache.labels
 boundary(0,D)
 boundary(1,D)
 C = chainComplex D
@@ -1241,7 +1380,48 @@ scan(0..dim D, i -> assert(HH_(i+1)(C) == 0))
 assert(HH_0(C) == S^1/(ideal L))
 assert isHomogeneous C
 C.dd
+----
+E = lyubeznikComplex(L,R)
+label(E,L)
+B = chainComplex E
+assert(B.dd^2 == 0)
+betti B
+prune(HH B)
+scan(0..dim E, i -> assert(HH_(i+1)(B) == 0))
+assert(HH_0(B) == S^1/(ideal L))
+assert isHomogeneous B
+----
+F = superficialComplex(L,R)
+label(F,L)
+A = chainComplex F
+betti A
+prune(HH A)
+scan(0..dim F, i -> assert(HH_(i+1)(A) == 0))
+assert(HH_0(A) == S^1/(ideal L))
+assert isHomogeneous A
 ///
+
+--------------------------------------------------------------------------------
+-- A generic monomial ideal (Buchberger complex supports the minimal resolution)
+--------------------------------------------------------------------------------
+TEST ///
+debug SimplicialComplexes
+S=ZZ/32003[x,y,z]
+L={y*z,x^2*z^2,x^2*y^2}
+R = ZZ/32003[a..c]
+D = buchbergerComplex(L,R)
+label(D,L)
+C = chainComplex D
+assert(C.dd^2 == 0)
+betti C
+prune(HH C)
+E = superficialComplex(L,R)
+label(E,L)
+betti chainComplex E
+///
+
+
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=SimplicialComplexes install-one"
