@@ -29,7 +29,6 @@ export {
      sheafCohomology,
      beilinson1,
      beilinson,
-     U,
      RegularityBound}
 
 setupBGG = method()
