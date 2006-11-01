@@ -92,13 +92,13 @@ install all::
 	@echo "************************************************"
 
 everything: all
-	$(MAKE) RerunExamples=true install
 	@echo "************************************************"
 	@echo "*                                              *"
 	@echo "*    running 'make -k check'                   *"
 	@echo "*                                              *"
 	@echo "************************************************"
 	$(MAKE) -k check
+	$(MAKE) RerunExamples=true install
 
 help :
 	@ echo "usage: make [option...] [target...]"
