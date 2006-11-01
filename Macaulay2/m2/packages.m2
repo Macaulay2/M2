@@ -250,7 +250,11 @@ export List := v -> (
 		    nam = toString sym;
 		    );
 	       if not instance(sym,Symbol) then error ("expected a symbol: ", sym);
-	       if not pd#?(toString sym) or pd#(toString sym) =!= sym then error ("symbol ",sym," defined elsewhere, not in current package: ", currentPackage);
+	       if not pd#?(toString sym) or pd#(toString sym) =!= sym 
+	       then (
+		    -- error ("symbol ",sym," defined elsewhere, not in current package: ", currentPackage);
+		    sym = getGlobalSymbol(pd,nam);	    -- replace sym by one in the current package's private dictionary
+		    );
 	       syn := title | "$" | nam;
 	       d#syn = d#nam = sym;
 	       ));
