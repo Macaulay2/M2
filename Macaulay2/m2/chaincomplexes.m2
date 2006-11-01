@@ -621,19 +621,19 @@ BettiTally ** BettiTally := (C,D) -> combine(C,D,(j,k)->apply(j,k,plus),times,pl
 dual BettiTally := (C) -> applyKeys(C,j -> apply(j,minus))
 regularity BettiTally := opts -> (C) -> (
      if opts.Weights =!= null then C = betti(C,opts);
-     max apply(keys C, (i,h,d) -> h-i))
+     max apply(keys C, (i,d,h) -> h-i))
 BettiTally Array := (C,A) -> (
       if # A =!= 1 then error "expected array of length 1";
       n := A#0;
-      applyKeys(C,(i,d) -> (i-n,d)))
+      applyKeys(C,(i,d,h) -> (i-n,d,h)))
 
 net BettiTally := v -> (
      v' := new MutableHashTable;
      scan(pairs v, (key,n) -> (
-	       (i,d) := key;
-	       d = if d#?0 then d#0 else 0;   -- just use the first component of the degree
-	       d = d-i;			      -- skew the degrees in the usual way
-	       key = (d,i);
+	       (i,d,h) := key;
+	       if h === null then h = d#0; -- the raw version may produce no heft here
+	       h = h-i;				       -- skew in the usual way
+	       key = (h,i);
 	       if v'#?key then v'#key = v'#key + n else v'#key = n;
 	       ));
      v = v';
@@ -657,7 +657,7 @@ betti = method(TypicalValue => BettiTally, Options => { Weights => null })
 heftfun := wt -> if wt === null then d -> d#0 else d -> sum( min(#wt, #d), i -> wt#i * d#i )
 betti BettiTally := opts -> t -> (
      heft := heftfun opts.Weights;
-     applyKeys(t, (i,h,d) -> (i,heft d,d)))
+     applyKeys(t, (i,d,h) -> (i,d,heft d)))
 betti Matrix := opts -> f -> betti(chainComplex f, opts)
 betti GroebnerBasis := opts -> G -> betti(generators G, opts)
 betti Ideal := opts -> I -> betti(generators I, opts)
@@ -670,23 +670,27 @@ rawBetti = (computation, type) -> (
      len := w#2;
      w = drop(w,3);
      w = pack(len+1,w);
-     w = table(lo .. hi, 0 .. len, (i,j) -> (j,{i+j}) => w#(i-lo)#j);
+     w = table(lo .. hi, 0 .. len, (i,j) -> (j,{i+j},i+j) => w#(i-lo)#j); -- no weight option used here
      w = toList splice w;
-     w = select(w, pair -> pair#-1 != 0);
+     w = select(w, option -> option#1 != 0);
      new BettiTally from w)
 
 undocumented' (betti,Resolution)
-betti Resolution := opts -> X -> rawBetti(X.RawComputation, 0) -- the raw version ignores the Weight option
+betti Resolution := opts -> X -> (
+     -- this version works only for rings of degree length 1
+     b := rawBetti(X.RawComputation, 0); -- the raw version takes no weight option
+     heft := heftfun opts.Weights;
+     b = applyKeys(b, (i,d,h) -> (i,d,heft d));
+     b)
 
 betti ChainComplex := opts -> C -> (
      heft := heftfun opts.Weights;
-     if C.?Resolution and degreeLength ring C === 1 then (
-     	  applyKeys(betti C.Resolution, (i,d) -> (i,heft d,d)))
+     if C.?Resolution and degreeLength ring C === 1 then betti(C.Resolution,opts)
      else (
 	  complete C;
 	  new BettiTally from flatten apply(
 	       select(pairs C, (i,F) -> class i === ZZ), 
-	       (i,F) -> apply(pairs tally degrees F, (d,n) -> (i,heft d,d) => n))))
+	       (i,F) -> apply(pairs tally degrees F, (d,n) -> (i,d,heft d) => n))))
 
 -----------------------------------------------------------------------------
 syzygyScheme = (C,i,v) -> (

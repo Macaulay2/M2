@@ -220,7 +220,7 @@ status Resolution := options -> (r) -> (
      if options#Monomials      === true then f("monomials",3);
      numops := # lab;
      if numops === 0 then error "expected at least one option to be true";
-     b = applyKeys( b, (i,d) -> (first d - i, i)); -- skew the degrees in the usual way; this way the Koszul complex occupies a horizontal line instead of a diagonal line
+     b = applyKeys( b, (i,d,h) -> (h - i, i)); -- skew the degrees in the usual way; this way the Koszul complex occupies a horizontal line instead of a diagonal line
      k := keys b;
      fi := first \ k;
      la := last  \ k;
