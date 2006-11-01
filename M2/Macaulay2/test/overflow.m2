@@ -13,6 +13,13 @@ R = QQ[x,MonomialSize => 8]
 assert ( degree x^15^15 == {15*15} )
 assert ( degree x^16^16 == {16*16} )
 
+R = QQ[x,Weights=>{2^16}]
+assert( x^(2^13) > x^40 )
+assert( x^(2^14) > x^40 )
+assert( x^(2^15) > x^40 )
+assert( x^(2^16) > x^40 )
+assert( x^(2^17) > x^40 )
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test overflow.out"
