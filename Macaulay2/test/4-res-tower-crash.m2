@@ -3,17 +3,7 @@ B = A/(u^2-v^2,u*v)
 C = B[x,y,z]
 I = ideal(u*x+v*y+z)
 E = C/I
-gbTrace=3
-errorDepth=0
-C = res(coker vars E, LengthLimit=>5)
+lim = 5
+C = res(coker vars E, LengthLimit=>lim)
 betti C
-assert ( betti C === applyPairs(
-	  new BettiTally from {(0,{0}) => 1, (1,{1}) => 3, (2,{1}) => 2, (2,{2}) => 6, 
-	       (3,{1}) => 3, (4,{1}) => 5, (2,{3}) => 1, (3,{2}) => 15, (5,{1}) => 7,
-	       (4,{2}) => 27, (3,{3}) => 14,
-	       (5,{2}) => 42, (4,{3}) => 51, (3,{4}) => 3, (5,{3}) => 121, (4,{4}) => 32, 
-	       (5,{4}) => 152, (4,{5}) => 9, (5,{5}) => 89, (4,{6}) => 1, (5,{6}) => 26, (5,{7}) => 3},
-	  (k,v) -> ((k#0,k#1#0,k#1),v)))
-
-     
-
+scan(1 .. lim-1, i -> assert( HH_i C == 0 ))
