@@ -7,4 +7,5 @@ j=gens (t*substitute(i,T))
 degrees j
 f=map(T,S,(vars T)_{0..2}|j)
 use S
-assert( kernel f == ideal (-u,y*z*u-x*w,x^2*u-z*v,-w,-v,-u^2,y*z^2*v-x^3*w,x*y*u^2-v*w,-u^3,-y*u^4,-y^2*u^6))
+assert( kernel f == ideal (y*z*u-x*w,x^2*u-z*v,y*z^2*v-x^3*w,x*y*u^2-v*w))
+-- was: ideal (-u,y*z*u-x*w,x^2*u-z*v,-w,-v,-u^2,y*z^2*v-x^3*w,x*y*u^2-v*w,-u^3,-y*u^4,-y^2*u^6))
