@@ -804,7 +804,7 @@ export {
 	symbol minus,
 	symbol mkdir,
 	symbol mod,
-	symbol modifyRing,
+	symbol newRing,
 	symbol module,
 	symbol modulo,
 	symbol monoid,

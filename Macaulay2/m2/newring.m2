@@ -6,9 +6,9 @@
 
 nothing := symbol nothing
 mergeOptions := (x,y) -> merge(x, y, (a,b) -> if b === nothing then a else b)
-modifyRing = method( Options => applyValues(monoidDefaults, x -> nothing) )
+newRing = method( Options => applyValues(monoidDefaults, x -> nothing) )
 
-modifyRing Ring := Ring => opts -> (R) -> (
+newRing Ring := Ring => opts -> (R) -> (
      -- First check the type of ring of R
      -- The following is for the case when R is a polynomial ring,
      -- or a quotient of a polynomial ring
@@ -20,7 +20,7 @@ modifyRing Ring := Ring => opts -> (R) -> (
      then
          error "cannot change the number of variables using 'modifyRing'";
          
-     if opts.DegreeRank =!= null then opts = first override(opts, Degrees => null);
+     if opts.DegreeRank =!= nothing and opts.Degrees === nothing then opts = first override(opts, Degrees => null);
      opts = mergeOptions((monoid R).Options,opts);
      f := presentation R;
      A := ring f;

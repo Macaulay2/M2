@@ -71,7 +71,7 @@ bFunction2(Module, List, List) := o -> (M, w, m) -> (
 		    )  
 	       ));
 
-     --R' := modifyRing(R, Weights => w');
+     --R' := newRing(R, Weights => w');
      --N = substitute(N, R');
      row := symbol row;
      h := symbol h;
