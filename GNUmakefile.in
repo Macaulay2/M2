@@ -3,7 +3,7 @@ include include/config.Makefile
 VPATH = @srcdir@
 
 .PRECIOUS: @srcdir@/configure config.status
-.PHONY: install all clean distclean reconfigure configure-help install-others install-Macaulay2
+.PHONY: install all clean distclean reconfigure configure-help install-others install-Macaulay2 everything
 
 CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
 
@@ -90,6 +90,16 @@ install all::
 	@echo "*    don't forget to run 'make -k check'       *"
 	@echo "*                                              *"
 	@echo "************************************************"
+
+everything: all
+	$(MAKE) RerunExamples=true install
+	@echo "************************************************"
+	@echo "*                                              *"
+	@echo "*    running 'make -k check'                   *"
+	@echo "*                                              *"
+	@echo "************************************************"
+	$(MAKE) -k check
+
 help :
 	@ echo "usage: make [option...] [target...]"
 	@ echo ""
@@ -99,6 +109,7 @@ help :
 	@ echo "    install-Macaulay2         install just the Macaulay2 package"
 	@ echo "    install-others            install just the other packages"
 	@ echo "  check                       run the tests"
+	@ echo "  everything                  install (rerunning examples) and run the tests"
 	@ echo "  tarball                     generate tar file (assuming encap is enabled)"
 	@ echo "  clean                       remove all generated files except makefiles"
 	@ echo "  distclean                   remove all generated files"
