@@ -100,7 +100,7 @@ monoidDefaults = (
 	  -- VariableOrder => null,		  -- not implemented yet
 	  WeylAlgebra => {},
      	  Heft => null,
-	  DegreeRank => null				    -- why is this an option??
+	  DegreeRank => null				    -- specifying DegreeRank=>3 and no Degrees means degrees {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 1}, ...}
 	  }
      )
 
@@ -304,7 +304,10 @@ makeMonoid := (opts) -> (
 			 error (msg,newline,toString (preX | silentRobustNetWithClass(pw - width  preX, 5, 3, v#i)))))));
      -- if length unique opts.Variables < length opts.Variables then error "at least one variable listed twice";
 
-     (degs,degrk) := processDegrees(opts.Degrees,null,length opts.Variables);
+     (degs,degrk) := processDegrees(
+	  opts.Degrees,
+	  if opts.Degrees === null then opts.DegreeRank else null, -- let the Degrees option override the DegreeRank option
+	  length opts.Variables);
      opts.Degrees = degs;
      opts.DegreeRank = degrk;
 
@@ -328,7 +331,7 @@ makeMonoid := (opts) -> (
 	  )
      else (
 	  if not instance(heft,List) or not all(heft,i -> instance(i,ZZ)) then error "expected Heft option to be a list of integers";
-	  if #heft != degrk then error("expected Heft option to be of length ", degrk, " to match the degree rank");
+	  -- if #heft != degrk then error("expected Heft option to be of length ", degrk, " to match the degree rank");
 	  );
      warned := false;
 --  these warning message are boring:
@@ -388,7 +391,7 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
      then opts.MonomialOrder = trimMO join(Mopts.MonomialOrder,Nopts.MonomialOrder); -- product order
      processDegrees(opts.Degrees, null, length opts.Variables);	-- just for the error messages
      if opts.Heft === null and opts.Degrees === null then opts.Heft = join(Mopts.Heft,Nopts.Heft);
-     if opts.Degrees === null then (
+     if opts.Degrees === null and opts.DegreeRank === null then (
 	  M0 := apply(Mopts.DegreeRank, i -> 0);
 	  N0 := apply(Nopts.DegreeRank, i -> 0);
           opts.Degrees = join(
