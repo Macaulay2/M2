@@ -23,7 +23,7 @@
 newPackage(
 	"IntegralClosure",
     	Version => "0.5", 
-    	Date => "October 27, 2006",
+    	Date => "October 31, 2006",
     	Authors => {
 	     {Name => "Amelia Taylor",
 	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor",
@@ -32,7 +32,7 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export{ integralClosure, isNormal, ICmap, ICfractions, conductor}
+export{isNormal, integralClosure, ICmap, ICfractions, conductor}
 
 -- PURPOSE: check if an affine domain is normal.  
 -- INPUT: any quotient ring.  
@@ -51,7 +51,7 @@ isNormal(Ring) := Boolean => (R) -> (
      M := cokernel generators I;
      n := codim I;
      m := dim ring I;    
-          m2:= dim R;
+     m2:= dim R;         
      S2 := apply (m-n-1, i-> codim Ext^(i+n+1)(M,ring M));
      test := apply(m-n-1,i->i+n+3);
      if all(S2, test, (i,j) -> i>=j) then (
@@ -613,8 +613,7 @@ document {
 -- integrally closed test
 TEST " R = QQ[u,v]/ideal(u+2)
 time J = integralClosure (R,Variable => symbol a) 
-use ring ideal J
-assert(ideal J == ideal(u+2))"
+assert(ideal J == substitute(ideal(0),J))"
 
 -- degrees greater than 1 test
 TEST " 
@@ -704,3 +703,5 @@ TEST "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4)
 F = ICmap R
 assert(conductor F == ideal((R_2)^3, (R_0)*(R_2)^2, (R_0)^3*(R_2), (R_0)^4))"
 
+end
+installPackage "IntegralClosure"
