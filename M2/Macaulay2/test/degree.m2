@@ -5,7 +5,7 @@ r = h %(1-t)
 assert( h == q*(1-t)+r )
 assert( r == 0 )
 
-S = ZZ[t,Degrees=>{}, Inverses=>true, MonomialOrder=>RevLex]
+S = ZZ[t,Degrees=>{{}}, Inverses=>true, MonomialOrder=>RevLex]
 h = 1-3*t^3+3*t^6-t^9
 q = h//(1-t)
 r = h %(1-t)
