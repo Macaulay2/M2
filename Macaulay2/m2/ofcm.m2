@@ -100,7 +100,7 @@ monoidDefaults = (
 	  -- VariableOrder => null,		  -- not implemented yet
 	  WeylAlgebra => {},
      	  Heft => null,
-	  DegreeRank => null
+	  DegreeRank => null				    -- why is this an option??
 	  }
      )
 
@@ -304,7 +304,7 @@ makeMonoid := (opts) -> (
 			 error (msg,newline,toString (preX | silentRobustNetWithClass(pw - width  preX, 5, 3, v#i)))))));
      -- if length unique opts.Variables < length opts.Variables then error "at least one variable listed twice";
 
-     (degs,degrk) := processDegrees(opts.Degrees,opts.DegreeRank,length opts.Variables);
+     (degs,degrk) := processDegrees(opts.Degrees,null,length opts.Variables);
      opts.Degrees = degs;
      opts.DegreeRank = degrk;
 
@@ -386,9 +386,9 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
 	  );
      if opts.MonomialOrder === null 
      then opts.MonomialOrder = trimMO join(Mopts.MonomialOrder,Nopts.MonomialOrder); -- product order
-     processDegrees(opts.Degrees, opts.DegreeRank, length opts.Variables);	-- just for the error messages
+     processDegrees(opts.Degrees, null, length opts.Variables);	-- just for the error messages
      if opts.Heft === null and opts.Degrees === null then opts.Heft = join(Mopts.Heft,Nopts.Heft);
-     if opts.Degrees === null and opts.DegreeRank === null then (
+     if opts.Degrees === null then (
 	  M0 := apply(Mopts.DegreeRank, i -> 0);
 	  N0 := apply(Nopts.DegreeRank, i -> 0);
           opts.Degrees = join(
