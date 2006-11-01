@@ -34,6 +34,9 @@ expression PolynomialRing := R -> (
 describe PolynomialRing := R -> (
      k := last R.baseRings;
      net ((expression if ReverseDictionary#?k then ReverseDictionary#k else k) (expression monoid R)))
+toExternalString PolynomialRing := R -> (
+     k := last R.baseRings;
+     toString ((expression if ReverseDictionary#?k then ReverseDictionary#k else k) (expression monoid R)))
 
 tex PolynomialRing := R -> "$" | texMath R | "$"	    -- silly!
 
@@ -49,7 +52,6 @@ net PolynomialRing := R -> (
 toString PolynomialRing := R -> (
      if ReverseDictionary#?R then toString ReverseDictionary#R
      else toString expression R)
-toExternalString PolynomialRing := R -> toString expression R
 
 degreeLength PolynomialRing := (RM) -> degreeLength monoid RM
 
