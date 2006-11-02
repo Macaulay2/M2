@@ -278,33 +278,30 @@ dim Module := M -> (
 fixZZ := x -> if liftable(x,ZZ) then lift(x,ZZ) else x
 
 degree Ring := opts -> R -> degree(R^1, opts)
-degree Module := opts -> M -> (
-     hs := reduceHilbert hilbertSeries M;
-     hn := numerator hs;
-     hd := value denominator hs;
-     if hn == 0 then return 0;
-     n := degreeLength M;
-     if n === 0 then return lift(hn,ZZ);
-     ZZ1 := degreesRing 1;
-     T := ZZ1_0;
-     ZZn := degreesRing n;
-     g := map(ZZ,ring hn, toList ( n : 1 ));
-     hd1 := g hd;
-     if hd1 != 0 then return fixZZ(g hn / hd1);
-     wt := opts.Weights;
-     if wt === null then wt = toList (n:1) else (
-	  if class wt =!= List
-	  or #wt =!= n
-	  or not all(wt, i -> instance(i,ZZ))
-	  then error ("degree: expected weights to be a list of integers of length ",toString n));
-     if n > 1 then notImplemented();
-     if hd == 0 then error "degree: hilbert Series not defined for given weight vector";
-     H := 1 - ZZ1_wt;
-     h := 1 - T;
-     Hh := H//h;
-     while hd % h == 0 do (hd = hd // h; hn = hn * Hh;);
-     q := map(ZZ,ZZ1,{1});
-     fixZZ(q hn/q hd))
+degree Module := (
+     () -> (
+     	  -- constants:
+	       ZZ1 := degreesRing 1;
+	       T := ZZ1_0;
+	       h := 1 - T;
+	  opts -> M -> (				    -- ignoring Weights option; the user can adjust afterward
+	       ev := map(ZZ,ZZ1,{1});			    -- ring maps are defined later
+	       hs := hilbertSeries M;
+	       hn := numerator hs;
+	       hd := value denominator hs;
+	       if hn == 0 then return 0;
+	       n := degreeLength M;
+	       if n === 0 then return lift(hn,ZZ);		    -- assert( hd == 1 );
+	       if n > 1 then (
+		    ZZn := degreesRing n;
+		    to1 := map(ZZ1,ZZn,toList(n:T));
+		    hn = to1 hn;
+	       	    if hn == 0 then return 0;
+		    hd = to1 hd;
+		    );
+	       while hn % h == 0 do hn = hn // h;
+	       while hd % h == 0 do hd = hd // h;
+	       fixZZ(ev hn/ev hd))))()
 
 -----------------------------------------------------------------------------
 
