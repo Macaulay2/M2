@@ -35,7 +35,7 @@ OLDM2CMD := time nice -18 $(OLDM2) -s -q -e'path = prepend("./",path)'
 capture: test.oldout test.oldvalues
 test.oldvalues test.oldout : chapter.m2 ../capture.m2 ../Makefile.chapter
 	@ set -xe ; \
-	  $(ULIMIT); $(OLDM2CMD) -e'input "$<"; load "$(chapter_srcdir)/../capture.m2"; exit 0'  >test.oldout.tmp; \
+	  $(ULIMIT); $(OLDM2CMD) -e'load "$(chapter_srcdir)/../capture.m2"; input "$<"; exit 0'  >test.oldout.tmp </dev/null; \
 	  mv test.oldout.tmp test.oldout
 
 # Local Variables:
