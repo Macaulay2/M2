@@ -27,7 +27,7 @@ else
 EXIT = 
 endif
 
-check ::
+capture check ::
 	set -x ; for d in $(CHAPTERS) ; do $(MAKE) -C $$d $@ $(EXIT) ; done
 
 changes:
