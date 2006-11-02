@@ -122,6 +122,7 @@ newICnode = (R) -> (
      C#"storing" = {};
      C#"answer" = {};
      C#"degrees" = degrees source vars ring I;
+     C#"deglong" = degrees source vars ring I;
      C#"blocks" = {numgens ring I};
      C#"basefield" = coefficientRing ring I;
      C#"vars" = toSequence (ring I).gens;
@@ -196,6 +197,7 @@ idealizer0 = (C,w) -> (
 	       n := numgens source H;
 	       newdegs := degrees source H - toList(n:degree fR);
 	       C#"degrees" = join(newdegs, C#"degrees");
+	       C#"deglong" = join(newdegs, C#"deglong");
      	       C#"blocks" = prepend(n, C#"blocks");
 	       C#"numgens" = C#"numgens" + n;   	    	      	   	     
       	       varsA := w_(C#"numgens" - n) .. w_(C#"numgens" -1);  
@@ -309,7 +311,7 @@ integralClosure Ring := Ring => o -> (R) -> (
       	  if C#"pending"#1 === null 
      	  then normal0 (C) --Compute J defining the NNL.
      	  else idealizer0(C, o.Variable));
-     A := apply(C#"answer",i->minimalPresentation(i_0/i_1));
+     A := apply(C#"answer",i-> i_0/ trim i_1);
      if #A == 1 then A#0
      else toSequence A
      )
@@ -355,7 +357,8 @@ ICfractions(Ring) := Matrix => o-> R -> (
      -- and the matrix is in the fraction field of the original ring.
      if R#?IIICCC or not isNormal R then (
 	  integralClosure R;
-	  K := (R#IIICCC#"basefield")(monoid [join(flatten R#IIICCC#"newvars",(options R).Variables)]);
+	  K := (R#IIICCC#"basefield")(monoid [join(flatten R#IIICCC#"newvars",
+			 (options R).Variables), Degrees => R#IIICCC#"deglong"]);
 	  -- This constructs the new ring using all of the new variables.
 	  KF := frac(K);
 	  M1 := first entries substitute(vars R,KF);  -- puts the vars of R in KF
@@ -574,7 +577,22 @@ document {
      fractions respectively.  The program currently also returns the original 
      variables as part of the matrix.  In this way the user can see if any are 
      simplified out of the ring during the process of computing the integral
-     closure."
+     closure.",
+     PARA{},
+     "The fractions returned correspond to the variables returned by the function 
+     integralClosure.  The function integralClosure eliminates redundant fractions 
+     during its iteration.  If the user would like to see all fractions generated 
+     during the computation, use the optional argument ", TT "Strategy => Long", " as 
+     illustrated here.",
+     EXAMPLE {
+	  "ICfractions(R, Strategy => Long)"
+	  },
+     }
+
+document {
+     Key => [ICfractions,Strategy],
+     Headline=> "Allows the user to obtain all of the fractions considered in the 
+     process of building the integral closure",
      }
 
 document {
@@ -611,9 +629,11 @@ document {
      }
 
 -- integrally closed test
-TEST " R = QQ[u,v]/ideal(u+2)
+TEST " 
+R = QQ[u,v]/ideal(u+2)
 time J = integralClosure (R,Variable => symbol a) 
-assert(ideal J == substitute(ideal(0),J))"
+use ring ideal J
+assert(ideal J == ideal(u+2))"
 
 -- degrees greater than 1 test
 TEST " 
