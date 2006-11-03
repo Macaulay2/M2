@@ -380,7 +380,7 @@ I = ideal flatten entries gens I;
 mingens I; -- works now
 
 I = ideal flatten entries gens I;
-trim I -- this fails...  It should stop after mingens are known to be computed.
+trim I -- It should stop after mingens are known to be computed.
 
 I = ideal flatten entries gens I;
 G = gb(I, DegreeLimit=>3); -- this one works
@@ -392,7 +392,7 @@ G = gb(I, BasisElementLimit=>3); -- does the first 3, as it should
 G = gb(I, BasisElementLimit=>7); -- does 4 more.
 
 I = ideal flatten entries gens I;
-G = gb(I, PairLimit=>3); -- this doesn't stop
+G = gb(I, PairLimit=>3); -- 
 
 I = ideal flatten entries gens I;
 hf = poincare ideal apply(7, i -> R_i^2)
@@ -400,9 +400,9 @@ G = gb(I, Hilbert=>hf); -- this works, it seems
 
 Rlex = ZZ/32003[a..j,MonomialOrder=>Lex]
 IL = substitute(I,Rlex);
-G = gb(IL, SubringLimit=>1, Hilbert=>hf, DegreeLimit=>2); -- SubringLimit seems to not work
+G = gb(IL, SubringLimit=>1, Hilbert=>hf, DegreeLimit=>2); -- SubringLimit now seems OK
 G = gb(IL, SubringLimit=>1, Hilbert=>hf, DegreeLimit=>4); 
-
+assert(numgens source selectInSubring(1,gens G) == 1)
 I = ideal flatten entries gens I;
 G = gb(I, DegreeLimit=>1); 
 G = gb(I, CodimensionLimit=>3); -- this isn't implemented yet, and is ignored...

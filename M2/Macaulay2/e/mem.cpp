@@ -13,6 +13,7 @@ int slab::n_slabs = 0;
 
 stash *stash::stash_list = NULL;
 slab *stash::slab_freelist = NULL;
+long stash::n_new_slabs = 0;
 
 doubling_stash *doubles = NULL;
 
@@ -26,6 +27,14 @@ stash::stash(char *s, size_t len)
   n_per_slab = (slab_size - sizeof(void *)) / element_size;
   this->next = stash_list;
   stash_list = this;
+
+  //  if (n_new_slabs == 0)
+  //    for ( ; n_new_slabs < 855; n_new_slabs++)
+  //      {
+  //	slab *p = new slab;
+  //	p->next = slab_freelist;
+  //	slab_freelist = p;
+  //      }
 }
 
 stash::~stash()
@@ -36,6 +45,7 @@ stash::~stash()
       slabs = slabs->next;
       p->next = slab_freelist;
       slab_freelist = p;
+      //printf("removed %p\n", p);
     }
   assert(stash_list != NULL);
   if (stash_list == this)
@@ -62,12 +72,19 @@ void stash::chop_slab()
   slab *new_slab;
   if (slab_freelist == NULL)
     {
+      n_new_slabs++;
       new_slab = new slab;
+      //      printf("new %p\n", new_slab);
+      //new_slab = new slab;
+      //printf("new %p\n", new_slab);
+      //new_slab = new slab;
+      //printf("new %p\n", new_slab);
     }
   else
     {
       new_slab = slab_freelist;
       slab_freelist = new_slab->next;
+      //printf("reused %p\n", new_slab);
     }
   
   new_slab->next = slabs;
@@ -112,6 +129,9 @@ void stash::stats(buffer &o)
 //  o << "number of global delete's  = " << engine_dealloc << endl;
   int n = (slab::n_slabs*slab_size)/1024 + 
     (allocated_amount - deleted_amount)/1024;
+  o << "number of slabs = " << n_new_slabs << newline;
+  o << "size of each slabs = " << sizeof(slab) << newline;
+  o << "total allocated = " << n_new_slabs * sizeof(slab) << newline;
   o << "total engine space allocated = " 
     << n << "k" << newline;
 

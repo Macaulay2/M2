@@ -1,3 +1,9 @@
+-*- M2 -*-
+
+QQ[x,Weights=>{2^30}]
+sum(10,i->x^i)
+
+
 weight = (5,7,13,17)
 A = QQ[x, y, p, n, d, q, 
      MonomialOrder=>{
@@ -11,7 +17,6 @@ A = QQ[x, y, p, n, d, q,
 I = ideal(p - x*y, n - x*y^5, d - x*y^10, q - x*y^25);
 
 
--*- M2 -*-
 
 weight = (5,7,13,17)
 T = QQ[x, y, p, n, d, q, 

@@ -25,7 +25,7 @@ typedef int * exponents;
 
 class MonomialTable : public our_new_delete {
 public:
-  struct mon_term : our_new_delete {
+  struct mon_term {
     mon_term  *_next;
     mon_term  *_prev;
     exponents _lead;		/* Who owns this? */
@@ -80,11 +80,12 @@ public:
   void show(FILE *fil); /* Only for debugging */
 
 private:
+  stash *mon_term_stash;
   int _nvars;
   int _count;
   VECTOR(mon_term *) _head; /* One per component */
 
-  static mon_term *make_list_head();
+  mon_term *make_list_head();
 };
  
 

@@ -10,8 +10,8 @@
 #include "montableZZ.hpp"
 #include "reducedgb.hpp"
 
-#include "linalgGB/memblock.hpp"
-#include "linalgGB/MonomialTable.hpp"
+//#include "linalgGB/memblock.hpp"
+//#include "linalgGB/MonomialTable.hpp"
 
 class GBWeight;
 
@@ -25,7 +25,7 @@ public:
     ELEM_NON_MIN_GB // These are elements which are not minimal GB elements
   };
 
-  struct gbelem : public our_new_delete {
+  struct gbelem {
     POLY g;
     int deg;
     int alpha; // the homogenizing degree
@@ -48,7 +48,7 @@ private:
 
 public:
   // This is only public to allow spair_sorter to use it!!
-  struct spair : public our_new_delete {
+  struct spair {
     spair *next;
     spair_type type; /* SPAIR_SPAIR, SPAIR_GCD_ZZ, 
 			SPAIR_GEN, SPAIR_ELEM, SPAIR_RING, SPAIR_SKEW */
@@ -88,6 +88,11 @@ private:
   };
   
 private:
+  // Stashes
+  stash *spair_stash;
+  stash *gbelem_stash;
+  stash *lcm_stash;
+
   // Data
   const PolynomialRing *originalR;
   GBRing *R;
@@ -116,6 +121,7 @@ private:
   exponents EXP_; // Used in 'remainder'
 
   SPairSet *S;
+
   VECTOR(gbvector *) _syz;
 
   int _strategy;
@@ -139,6 +145,7 @@ private:
     STATE_DONE
   } state;
   int this_degree;
+  int npairs;  // in this_degree
   int np_i;
   int ar_i;
   int ar_j;
@@ -174,6 +181,8 @@ private:
   long divisor_previous;
   long divisor_previous_comp;
 private:
+  exponents exponents_make();
+
   bool over_ZZ() const { return _coeff_type == Ring::COEFF_ZZ; }
   
   /* initialization */
@@ -231,6 +240,7 @@ private:
   int spair_set_determine_next_degree(int &nextdegree);
   int spair_set_prepare_next_degree(int &nextdegree);
     /* Finds the next degree to consider, returning the number of spairs in that degree */
+  void spair_set_show_mem_usage();
 
   void spairs_sort(int len, spair *& list);
   void spairs_reverse(spair *&ps);
@@ -361,6 +371,8 @@ public:
   void debug_spairs(spair *spairlist);
   void debug_spair_array(spairs &spairlist);
   void showgb();
+
+  void show_mem_usage();
 };  
 
 #endif

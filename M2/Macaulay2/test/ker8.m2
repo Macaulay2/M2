@@ -26,8 +26,16 @@
 -- the precompiled binaries for linux.)
 -- 
 -- 
+
+-- This actually runs in 0.9.8 on my intel mac MBP under rosetta in
+-- about 19 minutes, and using virtual memory 1.43 G
+-- Answer: three cubics, a CI.
+
 R = ZZ/2003[x11,x12,x13,x21,x22,x23,x31,x32,x33,
             y11,y12,y13,y21,y22,y23,y31,y32,y33];
+
+R = ZZ/2003[x11,x12,x13,x21,x22,x23,x31,x32,x33,
+            y11,y12,y13,y21,y22,y23,y31,y32,y33, MonomialSize=>8];
 
 f = map(R,R,{x11*y11+x12*y21, x11*y12+x12*y22, 
       x11*y13+x12*y23, x21*y11+x22*y21, x21*y12+x22*y22, 
@@ -43,7 +51,8 @@ f = map(R,R,{x11*y11+x12*y21, x11*y12+x12*y22,
       x33*y12+x32*y22+x33*y22+x31*y32+x32*y32+x33*y32,
       x33*y13+x32*y23+x33*y23+x31*y33+x32*y33+x33*y33});
 
-kernel(f)
+time kernel(f);
+
 -- 
 -- 
 -- 
@@ -52,3 +61,687 @@ kernel(f)
 -- 
 -- You can respond by visiting: 
 -- https://sourceforge.net/tracker/?func=detail&atid=740753&aid=1571662&group_id=138417
+
+end
+R = ZZ/32003[X_0..X_35, Degrees=>{18:1, 18:2}, MonomialOrder=>Eliminate 18, MonomialSize=>8]
+I = ideal (-X_0*X_9-X_1*X_12+X_18,
+     -X_0*X_10-X_1*X_13+X_19,
+     -X_0*X_11-X_1*X_14+X_20,
+     -X_3*X_9-X_4*X_12+X_21,
+     -X_3*X_10-X_4*X_13+X_22,
+     -X_3*X_11-X_4*X_14+X_23,
+     -X_6*X_9-X_7*X_12+X_24,
+     -X_6*X_10-X_7*X_13+X_25,
+     -X_6*X_11-X_7*X_14+X_26,
+     -X_2*X_9-X_1*X_12-X_2*X_12-X_0*X_15-X_1*X_15-X_2*X_15+X_27,
+     -X_2*X_10-X_1*X_13-X_2*X_13-X_0*X_16-X_1*X_16-X_2*X_16+X_28,
+     -X_2*X_11-X_1*X_14-X_2*X_14-X_0*X_17-X_1*X_17-X_2*X_17+X_29,
+     -X_5*X_9-X_4*X_12-X_5*X_12-X_3*X_15-X_4*X_15-X_5*X_15+X_30,
+     -X_5*X_10-X_4*X_13-X_5*X_13-X_3*X_16-X_4*X_16-X_5*X_16+X_31,
+     -X_5*X_11-X_4*X_14-X_5*X_14-X_3*X_17-X_4*X_17-X_5*X_17+X_32,
+     -X_8*X_9-X_7*X_12-X_8*X_12-X_6*X_15-X_7*X_15-X_8*X_15+X_33,
+     -X_8*X_10-X_7*X_13-X_8*X_13-X_6*X_16-X_7*X_16-X_8*X_16+X_34,
+     -X_8*X_11-X_7*X_14-X_8*X_14-X_6*X_17-X_7*X_17-X_8*X_17+X_35)
+gbTrace=3
+hf = poincare ideal(X_18..X_35)
+gb(I, Hilbert=>hf, DegreeLimit=>10);
+
+end
+-- Here is the log (gbTrace=3) on 0.9.8, under rosetta.
+i4 : kernel(f)
+{2}(18,18)mmmmmmmmmmmmmmmmmm{3}(63,63)mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+   -- mmmmmmmmmmmmmmmmmmmmmmmmmmm{4}(189,453)mmmmmmmoommoomommmooooooooooooooommm
+   -- mmommmmmoommooommmommoomoooommoommmmmmmmoooooooommmmmmmmmooooooooooooooommm
+   -- mmoomommmmmmooooooooooooooooooooommmooooooooooooooommmooommmmmommmmmoommooo
+   -- mmmommoomooomomomoooommmmmmmmommmmmoommooommmmomoommmmommmommmomomomooooomm
+   -- omommmmmmmoooooooommmmmmmmmooooooooooooooommmoooooommmmmmmmmmmmoooooooooooo
+   -- oooooommmooommmmmoomommmmmmmmmooooooooooooooooooooommmooooooooooooooommmooo
+   -- oooooooooooommmooooooooooooooommmooommm{5}(261,1629)mmmmmmmmmmmmmmmmmmmmoom
+   -- mmmommmmoooooommommmmmmomomooomommmmomooooooooooooooooooommmmmmmmoommmommmo
+   -- momooooooooooooooooooooooooooooooommmmoooooooooooooooomoommmmommmmmmmmmmmmm
+   -- mmmmmmmmmmmmooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- oooooooooooooooommmmmmooooooooooooooooooooooooooooooooooooooooooooooooooomm
+   -- mmmmmommoommoooomommmomoommmoommmmmmmmmmmmooommmmmmomommmmmommmmmmoommommmm
+   -- omoommoooooooooooooooommomomooomomoooooooooooommmoooooooooooooooooooooooooo
+   -- oooooommmmooommmomooooooooooooooooommooooooooomoommmmomoooooommmmmmoooommmo
+   -- ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- ooooooooooooooooooooommmmmmmmmmmmooooooommmoooooooooooooooooooooooooooooooo
+   -- ooooooooommmooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- oooooooooooooooooooooooooooooooommmoooooooooooooooooooooooooooooooooooooooo
+   -- ooooooooooooooommmoooooooooooooooooooooooooooooooooommoommomomooooooooooooo
+   -- oooooooooooooooooooooooooooooommmmmmooooooooooooooooooooooooooooooooooooooo
+   -- ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooommmoooooooomoo
+   -- mmmmomooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- ooooooooooooooooooooooooooooooooooooooooooooomomomooooooooooooooooooooooooo
+   -- ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- oooooooooooooooooooooooooooooooooooooooommmoooooooooooooooooooooooooooooomm
+   -- mmmmmmmoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- ooooooooooooooooooooooooooooommmooooooooooooooooooooooooooooooooooooooooooo
+   -- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooom
+   -- mmmmm{6}(316,3067)mmmmmmoooooommmoooooooooooooooooooooooooooooooooooooooooo
+   -- oooooommooooooommmoomoommooooooooooooooooooooooooooooooooommooooooooDomoooo
+   -- mommoommDmooommoooomomoooooomDmDommoooommoooommmommoooooooooooooooooooooooo
+   -- oooooooooooooooooomoooomoooommmomooomomooooommoooooooomooooooooooomooomomoo
+   -- ooooooooooommooomoooooooooooooomooooooooooooooooooooooommoooooooooooooooooo
+   -- oooooooooooooooooooooooooooooommomoooommmmmmoooooomooommoooooommmmmmooooooo
+   -- ooommoommmmmmoooooooooooooommommoooooomoomoooomoomoooooooooDoDooooooooooooo
+   -- ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- oooooooooooooooooooooooooooooooooooooooommmoooooooooooooooooooooooooooooooo
+   -- ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- DDoDoDoooooooommmmmmoooooooooooooooooooooooooDooomoooommooomooooomDoomoommo
+   -- ooooooooooooooooooooooooooooooooomooooDDoooooommoomoooooDomooooooooooommooo
+   -- oomoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- ooooooooooooooooooooooooooooommmmmmoooooooooomoommooomoooooooomoooooooooooo
+   -- moooooooomooooooooooomoooooooooooooooooooooooooooooommoommmooomomoooooooomo
+   -- mmmoooooooooooommoommoooooomooDmoooomDDoomooooDDDDoooooDoDooooooDooooommmmm
+   -- mooooooooooooooooooooooooooooooooooDooooooooooooooooomoooooooommooomooooooo
+   -- ooooooooooooooooooooooooooooooommmmooommooooooooomoommoooooomommmooommmmmmo
+   -- ooooooooooommoooomooomoooDoDooooooooooooooooooooooooommmooooooooooooooooooo
+   -- oooooooooooooooooooooooooooooooooooooooooooooooooooooooDooooooooooooooooooo
+   -- ooooooooooooooooooooooDoooDoooooooooooooooooooooooooDDDDoooDoDooDooooommomo
+   -- oooooooooommmmmmoooooooooooooooooooooooooooooooooooooooommooooomooommmmmmoo
+   -- oooooooooooooooooooooDoDoooommmooooooooooooooooooooooooooommmmmmooooooooooo
+   -- oooooooooooooooDooooooooooooooooomooooooooommoomooDoooooooooooooooooooooooo
+   -- ooooooooooooooooooooooooooooooooooooooooooooooommooomooommomooooooooooooooo
+   -- oooooooomoooooooommoomooooDDoooooooooooooooooooooooooooooooooommomooooooooo
+   -- ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooDooooooDooooooooo
+   -- ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooommommo
+   -- oommoommomooooooooooooooommmooooooooooooooooooooooooooooooooooooooooooDommo
+   -- oooooooomooooooomooooooDDoDoooooooooooommomoooooooooooooooooooooooooooooooo
+   -- ooooooooooooooooooooooooooooooooooooooooommoDDoooomooDooooooooooDDoooDoDmoo
+   -- DDommooooooooooooooooooommoooomooomoooDoooooooooooooooooooooooooooooooooooo
+   -- mmmoooooommmooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- ooooooooooooomoomooooooooooooooooooommooooooomooooooooooooooooooooomooooomm
+   -- oooooooooooooooooooooooooooooooooommooomooooooooomoommoooommmoommomooommmoo
+   -- oooooooooooooooooooooomoooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- ooooooooooooooooooooooooooooooDoooooooooooooooooooooooooooDDoDooooooooooooo
+   -- ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- ooDooooooooooooDoooooooooooooooooooooooooooooooDDDoDDDoooooooooooooooooommo
+   -- mmmmooooooooooooooooooooooooooooommomooooooooooooooommmmmmooooooooooooooooD
+   -- DDoDDDooooooooooooooooooooooooooooooooooooommmooooooooooooooooooooooooooooo
+   -- oooommmmmm{7}(334,4783)moomoomooooooooooooooooooooooooooooooooooooooooooooo
+   -- ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooommmoooooooooo
+   -- oomoomoomoooooooooooooooDoooooDoooDoomDooooooDDooDoDoDooDDDmDDooooDDoommoDD
+   -- oDoDDmomomDmDomooooDooDDoDoDDoooDooDDoDoDDooDooDDDoDoDDoDDDDoDooooooooooooo
+   -- ooooooomoooooomommooooomomooomooomooooomoooooomooommooooommmooooomomomoommo
+   -- ommmooDoooooooDoooomooooooooommomoomoommomooommomomoooomoooooooDoDooooooooo
+   -- ooooooooooooooooooooooooooooooooommmmomomomoomoommmmoomomooooommmomooomoooo
+   -- omooommoooommooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooom
+   -- mmmmmmmmooomommomommoommmmmmmmmmmmmmmmmoomoomooDDoommooDmoDoooooooDDomooooo
+   -- oooDoDoDDDoDoooDDDDDDDDooDDDDDDDDDoDooooooooooooooooooooooooooooooooooooooo
+   -- DoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooDoooooooooo
+   -- ooooooooooooooooooooooooooooooooooooDooooooooommmooommmmmmmmmoooooooomomooo
+   -- moooooooDooDooDoooooooDoooooooooooDoDoooDoDoooDDDDDDDDooDDDDDDDDooooooooooo
+   -- oooooooooDDoDoDooooooooooooDDoDoDooooooooooooooooDoDoooDDoDoDoDDDDoommooooo
+   -- ooooDoDoooooooooDoDoooooDoDoooooDDDDooooooooooooooooooooooomooooooommoDomoo
+   -- ooooooooooooomooooooooooooooooooooooooooooooooDooomooomooommmmmooommmomommm
+   -- mmmooooooooooooooooooooooooooooooooooooooooDoooooooooooooooooooooooDooooooo
+   -- oommoooooooomoomoooDooooooooooooooooooooooooooooooooooooooooooooooomomooooo
+   -- moooooommmoooooooooooooDoooooooooooooooooooomoomomoooooDooooooooooooooooooo
+   -- ooommoommomoooomooooooooooooooommmmomommmmmoomoomoDoooooDmomooDmmmommoooooo
+   -- mooooooooDooDoDDDoooDDDDDDDDooDDDDDDDoooDDooDDoDooooooooooooooooooooooooooo
+   -- oooooooooooooDooDooooooooooooooooooooooooooDoooooooooooooooooooooDooooooooo
+   -- moooooommmooooDoooooooooooooooooooooooooDoooooooooommmmmmmmmmmmoooooomooooo
+   -- oooooDoDDooDDDDoDDDDDoooooomooommooomoooDoDoDoooDooooooDooooooooooooooooooo
+   -- oDoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooom
+   -- mmooommmmmmmmmoooooooooooooomomoooooDoooooDoDooDooooooooooooooDoDoDDDDDDooD
+   -- DDDDDDDoDDDDDDDDDooDDoDoooooooooDooDDDDooDoDDoDoooooDoDooDoDDDDDDDDDDDDDDDD
+   -- DDooooooomoommomooooooooooommmmoooooooooDoooooooDoooooooooooooooomDoooooooo
+   -- oDooDooDDDDoDDDDooooooooooooooooooDDDoDDDoooDooooooDooDDDDoDoDDoDooDoDooDoD
+   -- DDDDDoDDDDDDoDDDDoooooDDoDmmmomooooooDDmomooooDoooooooooommmmmmoooDoDoooooo
+   -- DoDooooooooooooooooooooDDooDooooooooooooooooooooooooooooooooooooooooooooooo
+   -- oooooooDDDoooooooooooooooooooooDoooooooooooooooooooooooooDDDoooomoDDomooooo
+   -- ommoomooommmoomoooooooooooooooDDDoooooooooooooooooooooDooooooDooooooooooooo
+   -- oooooooDooooDooooooooooooooooooooooooooooooooooooooooooooooooooooDoooooooDD
+   -- oooDoooooooooooooooooDoooooDDoooooooooooomooooooooDDDooDooDomoDooDomoommmom
+   -- omoooooooooooooooooooomoommomoooooooooooooooooooooooooooooooooooooooooooooo
+   -- oooooooooooooooooooooooooDooooooooooDDoooooooooooooooooooooDooooooommoooooo
+   -- oommooooooooDooooDooDooDoooooooooooooooooooooooooooooooooooooooomoommomoooo
+   -- ooooooooooooooooooooooooooooommomoooooooooooooooooooooooooooooooooooooooooo
+   -- ooooooooooooooooooooooooooooooooooooooooooooomoooooooDoooooooooomoooooooooo
+   -- oooooooooooDoDoooooDDDDDDDDooDDDDDDDDDoooooooooooooooooooDDoooooooooooooooo
+   -- ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- oooooooooooooooooooooooooooooooooooooooooooomoooomoooooooDoDooooDDDDoDDDDoo
+   -- ooooDDooDDDoDDDoDDDDDDDDDoooooDooooooooooooooooDoooooooooooooooooooDoDDoooo
+   -- oooDooooDoooooooooooooooooooooooDoooooooooooooooooooooooooooooooooooooooooo
+   -- oooooooooooooDooooooooDoooooooooooooooooooooooooooooooooooooooooooDoooooooo
+   -- oooooooooooooooooooooooooooooooommommmmoooooooooomoommomoooooommmmooooooooo
+   -- oooooooDooooDDomooooDDDommooDDDoomooDDooDDDDoDDoDDDoDooooooooooooooooomooom
+   -- mooomoooDoDoDoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- oooooooooooooooooooooooooooooooooooomoooooooommomooooooooooooooooooooooDooo
+   -- ooooooooooooooooooooooDoDoDDDDDDooDDDDDDDDooDDDDDDDDDoooooooooooooDoDDooDDo
+   -- oDooDDooDooooooooooDDDDDDDDDDDDDDDDDDooooooooooooooooooooooooommmmoooDooooo
+   -- ooooooooDoooooooooooooooooooooooooooDoDDDoDDDDoDDDDoooooooooooDooDoooDDDDDD
+   -- DDDooooooooDDDDDDDooDoDoDDDDoooDDooDooooDoDDDDDDDDDDDDDDDDDDooooooooooooooo
+   -- ooooooooDDoDDooooDooDoooooooooooooooooooDooDoooooooDDDDDDDDDooooooooooooooo
+   -- oDDDoDDDoDDDDDDDDDoooooooooooooooooooooooooooooooommomooooooooooooooooooooo
+   -- Dooooooooooooooooooooooooooooooooooooooooooooooooooooooommomooooooooooooooo
+   -- oooooooooooooooDooooooDoooooooDDDDDDDDoDDDDDDoDoooooooooooooDDoDoDooooooooD
+   -- DDDDDDDDDDDDDDDDDoooooooooooooooooooooooooooDDDoDDDDDooooooooooooooDDoDDooo
+   -- oDooDooooooooooooooooooooooooDoDooooDDDDDDDDDooooooooooooooooooDDDDDDDDDDDD
+   -- DDDDDDDDDooooooooooommooDDooomoDommoooooomoooooooooooooommomooommm
+   -- {8}(474,5965)oooooooooooooooooooooooooooooommooooooooooooooomoomoooooooooomooooooomDooo
+   -- ommooooooooooooooooooooooooooooooooooooooooooooooooooooooooommooooooooooooo
+   -- oomoomooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- ooooooooooooooooooooooooooooDooooooDoooDoooooDoDoDoooooooooomooooooDooooooD
+   -- DooDooDooDoDoDooooooooooooooDooDooDoooooDDDoooooooooooomommoommoooooommmooo
+   -- mooommmmmmoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooom
+   -- oooooooomoomoooooooooDDDoooooooomooooooooooooooooooommooomoooooooooooomoooo
+   -- ooooooooooooDDDoDDoDoDDDDDooDoDDDooDoooDoooooooooooDDDoDDDDDDDDoDDDDDoDDDDD
+   -- DDoDoooooDoDoDDoDoooDoDDoDDDDoDDooooooDDooDoDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDD
+   -- DDDDDoooDDDDDDDDDooooooDooooooooooooooooooooooooooooooooooooooooooooooooooo
+   -- oooooooooooooooooooooooooooooooooooDDDoooooooooooooooooooooooooooooooooooDo
+   -- DDoDoDoDDDooDoDDDooooooDoooooooooooDDDoDDDDDDDDoDoDDDoDDDDDDDoDoooooDoDooDo
+   -- DoooDoDDoDDDDoDDooooooDDooDoDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDooDDDDDDDD
+   -- DmmmmmmmmmmmmmmmmoooooooooDDoDDDDoDDoDoDDoDooDDoDoooooooooooooooooooooooooo
+   -- oDoooooooDDDoooooooooooooooooooooooooooooooooooommoooooooommooooooooomooooo
+   -- oDommomooooooooooooooooooooooooooooooooooooooooooooooooooooooDoooooooDDoooo
+   -- ooDDDDDDooooooooooooooooooooooooooooooooooooommmoomooommmoomooommmooooomooo
+   -- oDDooooooooooooooooooomoommooooooomDooomoommoooooommoooooooDDoooooooooooooo
+   -- oooooDDDoooooooooDoooooooooooooooooDooDoDDDoDDooDDoDDDooooomoomoomDDmDomoDD
+   -- mmomomDDommmommmmoooomDoomDDmmDDDmmDDoomommmmDDmDDmDoDoooooDmDooDmmmooooDmm
+   -- mmmmmmmooomommDmDmmoooooDDmmDDDDmmmmmDDmDooooooooDDoooDDDDDDDmDDDDmDoooooDm
+   -- mDooooooDDDDDDooDmooooooDDmmDmoooooooooooooooooooooooooooooommoooooooommooo
+   -- ooooDooooooooooooDoooooooooDDoooDooDDDDDDoooommmmmmmmmmmmmmmmoooooooooooooo
+   -- ooooooooooommmmmmmmmmmmmmmmoDDoooDoooDDooDDDDooooDDDoDDDDooooDoDooooDDDDoDD
+   -- DDoDDDDooooooooDDoomoommoDDooDDomoDooDoDDDoDDDDDDDDDDDDommmmoDooomoooommoom
+   -- ooDDDDoooooooooooooooooooooooooooooooooooooDDDoooooooooooooooooooooooDooooo
+   -- ooooDDDoDDoDoDooDDmoDomDDooDDommmooooooDoooDDooDDoDoDDooDoDDmmDDDDmDDoDoooo
+   -- oDoDooDDDmooDoDmmmmmmmmmooomommDmDmmDDDDDDDDDDDDDDDDooDDDDDDDDDDDDDDDDDDooo
+   -- DooDDDDDDooDDoooDooDDDDDDoooooooDDDDoDDDDoDDDDDDDDDDoDDoDDDooDDooooooDDDDDD
+   -- ooommmmmmmmmmmmmmmmoooooDoDDoooooooooooooooDDooooooooooDooooooooDDoDooooooo
+   -- oooooommmooommmmmmmmmoooooooooooooooDoooDDooDDDDooooDDDoDDDDooooDoDoooDDDDD
+   -- oDDDDoDDDDooooooooDDoomoommDDDooDDomDoDoDDDDDDDDDDDDDDDDDDommmmoooomoomoomD
+   -- DDDoooDooDoDDmDDDDmoDDooDmoDDDDooooommmmoooooDooDDoooooDoDooooDDDDDDDDDoooD
+   -- oDoDooDDDDDDDDDooooooooooooooooooooDDoooooDoDDDooooooooDDDoooooooooooooooDo
+   -- ooooooooooooooDoooooooooooooooooooooooooooooooooDDoDoDomoooooooommomooooooo
+   -- DoooooooooooooooooooooooooooooDoDoDDoooooDooDooDDooDDoDDoooomommmmmooommmmm
+   -- mooooooooooooooooooooooooooooooooDoDDoooDDoDmDoooommomDooooooommmooooommmmm
+   -- mmmommmmmoomoooooooooooooooooooooooommmmmmmmmooomomoomooooooooommmmmmmmmooo
+   -- momoomooooooooommmmmmmmmoooooooooooomomoomooooooooooooDDDoDDDoDoooooooooooo
+   -- ooooooooooooooooooooommmoooomomommmmoooDooooooooooooomDomDoooomooooooomomom
+   -- oooooommmmmmoooooooooooooooomomommmmoooDoDoooooooooDDooDooDoDoooooooooooooo
+   -- oooooooDoooooooooooooooooooooooooooooooooooooDDDDooooooooooDooDoDDoooooDooo
+   -- oooooooooooooooooooooooooooDoDDDoDDDDoDDDoDDDDDDDDDDDDooDDDDDDDDoDooDDDDDDD
+   -- DoDDDDDDDDDDoooooooooooomDDoooDoDDomoDomDDoDDmoDDmooooooooomDDDoDoDDDDDooDo
+   -- oommDDDDmmoooooooDDooooDoomoooooDDDDDmmDmoooDDDDDmoDmDoDDooDDDDooDDoDDoDDDm
+   -- DDDDDDDDmmDmooooooooooooDDooDDDoDooDDDDooooDDDDooDDDDDDDDDDDmoooooooooooooo
+   -- oDDDmoooDDDDooooooDoooooDDDDoooooooooooooooooooooooooooooDoDDDoDDDooDooooDo
+   -- ooDoooDDDooDDDooDDDoDooooooooooooooooDDooDoooooDoDDooooDDDDDDoDoooDDmoooDDD
+   -- DDmmDmooDoDooDooDDoDDoDoDDDDDDDDDoooooDDDDooooooDDDDDDoDoDDDDDDDDDooooooooo
+   -- oooooooooDooooDDDoDDDDmDDmomDDDDmmmDDmmDmmooomommmmomooDoDooooDoDooooooommm
+   -- mooooooooooooooDDooooooDooooDDoooDDoDDmoooooooooooooDoomooooooooooDoooooooD
+   -- ooDDooDooooDDDDDDDDDDDDDDDDDDDDDoooommoooooooommmmommDDDDooooooooDoooomDmmo
+   -- DooooooooooooooooooooooooooooooooDDDDDDDooDoDooDoooooDooooooooDoooooooDDDDo
+   -- oooooooooDDDDoooDDoDoooooooooooooooDoooooooomDoDoooomoooDooDommomooooooooDo
+   -- oooooooooommmmooooooooooooooooooooooooDoooooooooooooooooooooooooooooooooooo
+   -- ooooooooooooooooooooomoooooooommomommmmoooooDDDoDDDoDDDDDDDDDDDDDDDDDDooooo
+   -- oDDDDDoDoooooooDoooDoDoooDDoDDDDoooooooooooooooooooooDooooooDooDoooooDooooo
+   -- oooooDDDoooDDDoDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDoooDoDDDoDoooooooooooooooooo
+   -- oooooooDoDDooDooooDooooooDooDoDDDoDDDDDDDDDDDDooooDDDDDDDDoooooooDooooDooom
+   -- oooommoomooooooDoDoooooooooooooooooDDDoooooooooooooooooooooooooDDoooDooDooo
+   -- DoDDooooooDDmooooooooooDDDoDooDDDDooDoDooooDDoDDDoooooooDooooooooooooDDDDDD
+   -- mmDmoooDDDDDmoDmDDDDDDDDDDDDDDDDoDDoDDDDDDDDDDDDDDDDoooDDDDDDoDooDDooooDDDD
+   -- DDoDooooooooDDDDoDDDDoDDoDoDDoDooDDoDoooDDooooDDDDDooDoooooooooooooDoooDDDD
+   -- DDDooooooooooDDooDDooDoooooooDooooooooDDoDooooooooDooooooDooooooDoDDoDooooo
+   -- oooooDoDoDDDDoDDooDoDDDomoDDooooDooooommmmomDDDDDDoDDDDDDoooooooooDDDoDDooD
+   -- DoDDooDDoDooDoDDDDDDDDDDDDDDDDDDoDDDDoDoooooooomDDDDoDDDDoDDDDoDDDDDoDDoDDo
+   -- oooooDooooooDoDDDooDoDDDDooDoooooooDDoDDooooooooDDDooDDoDooooDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDoooooooooooooooDDDDDDDoooDDDDDDDDooooooooomoooooooommomommmmo
+   -- oooooooooooooooDoDoDoDDoDDDDooooooooooooooooooooooooooooooooooooooooooooDDo
+   -- oDDooooooooooooooooooooooooooooooooooooooooooooooooooooooooooomoooooooommom
+   -- oooooooooooooooooooooommmmoooooooooooooooooooooooooooooooooooooooooooooDooo
+   -- DoDoooDDoDDDDooDDDDoooooooooooooooDooooDoDooDooDoooooooooooooooDDooDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDoooooDooooooooooomDDoooDoDDoDooDooDooooDooooooo
+   -- oDoDDooDooooDoooooooDoDDDDDDDDDDDDDDDDDDooooDDDDDDDDoooooDoDooooooom
+   -- {9}(429,7965)oooooooooomoommmoommmooomoooooooooomoommmoommmmmmmooooooooooooooooooomooom
+   -- moommmmmmmoooommmmoooooooommmmooooooooooooooooooooooooooooooooooDooooooooDD
+   -- ooooDoDDDooooooooooooommoommmmmDoDDDDoDDDDDDDDDDoooooooooooommoommmmmDoDDmo
+   -- oDoDDDDoooDomomDooomomoooooDoooDDDoooooDDooDDoDoDoDDDDDooooooooDDDooDoooooo
+   -- oooooooooooDDDDDDDooDoooooDoDoDoooooooooooooommoommmmmDoDDDDoDDDDDDoooDDDDD
+   -- ooooooooooDDDDDoooDDooDDoooDoDDDDDDoooooooDDDooooooooooooooooooooDooDDDDooD
+   -- oooooDoooooooDDDDoDDDDDDDDDDooooDDoDoDDDDDDDDDDDDDDDDDDDooDoDDDDDDDDDDDDDDD
+   -- DooooooDDooDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDooooDDDDDDDDDD
+   -- DDDDDDDDDDDDDDoDDoDoooDDooooooDDDDDDoooooomDDDmmmDDDDmmmooommooooomomoooDoo
+   -- ommmDomooooDDooooDooDDDooommooooomomoooooooooooooooooooooooooooDoooooDooooo
+   -- DoooooooooooDooooooDooooooooDDmooDmoooDDommDoDmoomoomoooooDDooooooooooooooo
+   -- oomooomoooooomooooooooooooomoooooooooooooooooooooDoDDDoomoooooomDDooooooooD
+   -- ooooooooDooDoooDoooooooooooooooooooooooDoDoDoooooooDDoooooooooooooooooDoooD
+   -- oDoooooooooooooDDoooooooDDDDDooooooooooDoooooDoooooDoDDDooDooDDDDDDooDDDDDD
+   -- DDDDDDDDDDDDmmDomomDomommommmmDDmmomDDmDDDDmmoommommoooomoommmommmoomDDmmmm
+   -- DmDmmDoDDomoDDmmoDDmooooooooooooooDooooDDDDDDDDoDDoDDDoDooDDooooooooooooooD
+   -- DoooDDDDDDDDDDDoDDDDDoooooooDDooooooDDDDDDoooooooooooooomoooommmmmmDDoDDoDD
+   -- oDDoooDooDDDDoooDDDDooDooDDDDoDDDoDDoDoDDoDDDDDDDDDDDDDooDomoooDDDDDDDDDDDD
+   -- DDDmmmDDDoDmDDDDDDDmDDDDDmmDDDoDDDDDDooooDDDDDDoDoDDDDDDDDDoDDoDDDDDooDoDDo
+   -- DooDDoDDDDDDDoDDDDDDDDDoooDDoDoDDDDDoDDDDDDDooooDDDDDDDDDDDDDDDDDooDDDDDDDD
+   -- DDDDDoooDooDDDDDDDDDDDDDDDDoooDoooDooDDDDDDDDDDDDDDDDoooDoooDooDDDooooDooDD
+   -- DDDoDDDDDDooDDDooooooDDoooDoooomomDooommoDmDmDDmmomDDmDDDDoooommomDoooomoom
+   -- mmooomoooDDmmmmDDmDmDoDDomoDDmmoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDooDDooooooDDDDDDooDDoooDooDDDDDDooooDoooDDooooooooooooooooooooooDo
+   -- oDooDDoDDDDDoDDDooDDoooDooDDDDDDooooooooooDDoooooooooooDooooDDoDDDDoooDDDoo
+   -- oDooDDDDoDDDoDDDDooooDDDDDDDDDDDDDooDooooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDooooDDDDDDoDoDDDDDDDDDDoDDDDDDDooDoDDDoooDDoDDDDDDDoDDDDDDD
+   -- DDooooDoDoDDDDDDDDDDDDDoDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDo
+   -- DDDDDDooDDoooDDDDDDommmDoDmmmmmmmmmoDomommDmDmmDDDDDDDDDDDDDDDDDDDDDDDDDoDo
+   -- DDDDDDDDDDDDDDDDDoDDDDooooooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDooDoooDooDDDooDDoooDooDDDDDDmomoommmmmooommDoDomoommmmmmoooooooooooo
+   -- oooooooooooooommmmmmmmmmmmmmmmDDDDoDDoDDDDooDDDoDoooDDDDDDDDDDoDDDDoooooooD
+   -- DDoomoommDDDDoDDomDoooooooDDDoomoommDDDDoDDomDommmmDDDDDDDDooDoDDDoDDDDDDDo
+   -- DDDooooooDDDDDDDDDDDDoDDDDDDDDDoDDDDoDDDooooooDDDDDDDDDDDDoooooDoooooDDDooo
+   -- ooommmmmmmmooDoDDDDDDDoDDDDDDoooDDDoooooDoDmDDoommmmmmDDDDDDDDDDDDooooommmm
+   -- oooooooDooDDooooooooooooooooDoDDoDDooDDDDDDDooooooDDDoooDDDDDDDDDoDooDDDDDD
+   -- oDDDDDDoooooooooooDooomDmmmmmDDDDDmmmmooooooooomDmoooooooomomooooDoDoooooDD
+   -- DDDooooDooooDDoooDooooooDooooooomomoooooooooomooooooooooooooooDooooDooooooo
+   -- ooooooooooooooooooDDoooooooooooooooooooDoooooooDooooDoooooooooooooooooooooo
+   -- oooomooooDoomDoooDooooomomooomoooooooooooooooooooooooooomooooDoomoooooooooo
+   -- momooooooooooooooooooooomoooooooooooooooooooooDooooDoooooooooomDooooooooomo
+   -- moooooooooooooooooooooooooooooooooooooooDooooooooDDDDoDoDooDDDDDDoooooooooo
+   -- ooooooooDoDDDDoDDooooooooooDooooooDoooooooooooooooooooooDooDDDooDDooDDDDoDo
+   -- DDooooooooooooDooooooooooooooDooooooDDDoDDDDoDDooooDoooooooooooDDDDDDDDDDDD
+   -- DDDDoooooooooooooDoooooooooDDoooooooDDoooooDDoDoDooooDooooooooooooooDDDDDDD
+   -- DDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoooooooDDoDomoomoo
+   -- DooooDoDmoDooooooooooDooDoooDommomoooooooooooDDDDDDoooomoDDoooooooooooooDDD
+   -- DDDooooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDoDDDDooooDoDDDoDDDooo
+   -- DoDDoooooooooooooDooooooooDDDDDDDDooooooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDD
+   -- oDDDDDDDDDDDDDDDDooooooooDDooooDDDDDooDooooooooDmDDDDDDDoDmDDmmDDDDDmmDDDmD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDooooooDoooDoDoooDDDDoDDDDDDDDDDDooDooDo
+   -- DDoDDDDDDDDDDDDDDDDoDooDDoooDDDDDDDDDDDDDDooooDDDmDDmmoDDoDDDDDmDDDDDoDDDDD
+   -- DDDDDDDDDDDDDDDDDDmDmDDDoDDDDDDDDoooDDDDmDmDDDmoDDDDDDDDDDDoooDDDDDDDooooDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDooDoDDDDooDDDDDDDDDDDDDDDDDDDDoooDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDoooDDDDDDmmm
+   -- mDDDDDDDDDDDDDDoDDoooDDDDDDoDoDDDoDDoDDDooooooooooDooooDoDDoDDDDDDDDDDDoooo
+   -- oooomDDDDDDDoDmDDDmDDDDDDmDDDmDDDDDDDDDDDDDoDDDDoDDDDDDDDDDDDDDDoDDoooooooo
+   -- ooooooooDDDoooDDDDDDDDDoDooDDDDDDoDDDDDDoooooooDooooooDooDDDDDDDDDDDDDooooD
+   -- oooDooDDDooDmmmmoDDDmmmmmmooooooooooooommoooDoooDmDommmmmDDmmmmommDDDoDoDDo
+   -- DDDDDoDDoDDDDDDoooDDDDDDDooooooDDDDDDoDDDDDDoooooooooooooooooooooooDDDoDDDo
+   -- oooooooDDDDoDDDDDoDoDDoooDoDooDoDoDDDDoDDDDDDDoDDoDDDoooDDDDDDoooDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDoooDooDDDoooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDmDDmmmmmDDDDDDDDDoooDDDmDmDDDDDDDDDDDDDDDDDDDDmDDmDDDDDDDDDDDDD
+   -- DDmDmDmmDDDDDDDDDDooDDDDDDDDDDDDDDDDDDDoooooDoooDDDDDDDDDDDDDDDDoDDoDDDDDDo
+   -- DDDoDDDDDDDDDDDDoooooooooooooDDDDDDDDDDDDDDDDDDoDDDDDDDDDooooDDDDDDDDDoDooo
+   -- DDDDDDDDDDoooDDDoDoDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDoDoDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoooDDooooDDDDDDoDoDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDooDoDDooooDDDDDDoDoDDDDDDDDDDDDoooDDDDDDooDDDDDDDDDDDDoooD
+   -- DDoDDDDoDooDDDoDDDDDDoDDDDDoooDooDDDDooooDDDDDDDDDDDDDDDDDDDDDDooDDDDDDDDDD
+   -- DDDDDDDDDoooooomoooDooDommomoDooDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDoooo
+   -- ooooooooooDoDoooooDooDooooooooooooooooooooooDDoDomoooooDooooDoDDoDooooooooo
+   -- oDooDoooDommooomoooooooooDoDDDDoooomoDDooooooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDoooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDoDDooooDDDDDooDooDDDoooDDDDDDDDDooooDooooooooooooooooooo
+   -- oooooDooDDoDDoDDoDDDDDDDDDoDDDoooDDDDDDDDDooooDooDDoDDoooooooooooDooooDDooD
+   -- oDoooDDDooDDDDDDDDDDDooDooDooDoDDDDDDDDDDDDDDDDoDooDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDooDoDDDDDDDDDDDDDDDDDDDDDDDDDDDooDDDoDDooDDDDDDDD
+   -- DDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDoDDoooDDDDDDDDDmDDDDDDDDmmDmDDDDDDDDmDDmDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDoDDoooDDDDDDoooDDDDDooooooDDoDDoDDDDDDDDDDDDoDoDDomoooDDDo
+   -- oDDDDoDDDomDoDDDDDDDoDDDDDDooooooooooDoooooDooooooooDDoDDDDDDDDDDDDDDDDDDDD
+   -- oDDDDDDDDDDooDDDDDDDDDDDDDDDDDDDoooooooDDDoDDDoDDDDDDoDDoDDooooooDooDoooooo
+   -- oooDDDDDDDDDDDDDDoDDDDDoooDDDoooDooDDDDDDDDDooooooDDooooDDDDDDoDoDDDDDDoDDD
+   -- DDDooooooooooooooommommDoommmmmmooDooooooooooooooooooooooDDooDDDoooDooDDDoD
+   -- ooooDDDoDoDDoDDDDDoDDDDDDDDDoooDDDDDDDDooDDooooDDDDDDoDoooooDDDDDDoDDDDDDoo
+   -- oooooDoooooDDDDDDoDDDDDDoooDooooDDDoooomDmmmmmDDDmmmmmmooDooooooooooooooooo
+   -- oooooooooooooooDDDDDDoooooooooooooooooooooooooooooooooDDDDoDDDDDoooDooDoDDD
+   -- ooDoDoDDDDoDDDDDDDoDDoDDDoooDDoooooooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDooDooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDoooooDDooDDDDDDDDDDDDDDDDoDDoDDDDDDoDoooDDDDDDDDDDDDooooooooDDoo
+   -- oDDDDDDDDDDDDDDDDDDoDDDDDDDDDooooDDDDDDDoDoDoDoDDDDDDDDDDDooDDDDDoDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDD
+   -- DDDDDDooDoDDDoooDDDDDDDDDoDDmDoDDDDDDmmDmoDoDDDoDmoDmDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDoDDDDooDDDDDDDDDDDDDDDDDDDDDDoDDDDDoooDDDooooooDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDooooDDDDDDoDooDDooooDDDDDDoDoDD
+   -- DDDDDDDDDDoooDDDDDDooDDDDoDDDDDDDoooDDDoDDDDooooDDDoDDDDDDDDDDDDDDoDooDDDDo
+   -- oooDoDooooooooDoDDooDooDDoDDDDDDDDDDDDDDDDDDDDDDDoooDDDDDDDDDDDDDDDDDDooooo
+   -- oDoooDooDoDDoDoooDoooDooDoDDoDDDDDmmmmmomDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDD
+   -- DDoDDDDDDDDDDDDoDDDDoooDDDDDDDDDDDDDDDoooooooDDDDDDDDDDDDDDoDDDDDoooDoooDoo
+   -- ooDDoDoooooooDDDDDDDDDDDDDDoDDDDDooDDmDoooDDDDDDmmDDmDoDooooDoooooDomoooooD
+   -- oooDDooDoommDoooomoooDmDoDDDmmDDDomDoooooooooooooooooooooooooooooooDDoDoDoo
+   -- oooooooooooooooooooooDomoooDDDoommomooooommmm{10}(217,8085)oooooDoooDoDDDDo
+   -- ooooDooDooooDoDDooooDooDooooooooooooooooooDoooooooooooooDooDDoooooooooDoooo
+   -- DoooooooDooDooDDoooooooooooooDooooDoooooooDooDoooooooooooooooooooooDooooooo
+   -- oooooooooooooooooooDooooooooooooooooooooooooooooooooooooooooooDDDDoDooooDoD
+   -- DDDoooDDDDoDDoDDDDDDDDDDDDDDDomoDoDmDmoomomoooomDmoomDDDDoooooDDDDDDDDoDDDD
+   -- DmomooDDDDDDoooDoDDDDooooooooooDooooDDDDooooDDDDDDDDDDDDDDDDDDDDDDDDDooDDDD
+   -- DDDooDDDoDDoDoDDDDDDDDooooDoDDDDDoDoDoDDoDDDDDooDoDoDDDDDDDooDDDooDDoDoDDoo
+   -- ooooDDDoDDooDDDDoDoDDoDDoDooooDooDDDoDDooDoDDoDoDDoDDoDooDDDDDDDDDDDDDDDmmm
+   -- DDoDDDDDDDDDDDDDDDoDDmDmmoooooDoDoDDoDDooooDoDDooooomDDDommmooDoDomooDoDmmm
+   -- mmooooooooooooooooooooooooooommDDDooooooooooooooooooooDooooooDoooooooooooom
+   -- DmmomooooomooooooooooooDooooooooDoooooooooDmoooDoooooDoooooooooommooooDDooD
+   -- ooDDDDDmDDoooDDoooDoDooDDooooDoooooomoooDoDDoooooDomooDoooooDoooooooooooooo
+   -- oooooooDoooooDoooDoDDDoDDDDDooooooDoDDooDoDDoDDmDDDDoooDoooooooDooDDooDDooo
+   -- DDooDoDooDDDDoooDDDDDDDDDDDoooDDooooooDoooooDooooooooooDDooooooooDooDDoDooD
+   -- DDDmDDDooooooooooooooooooooooooooooooDooooooooomDoooooooooDDoDDoDDDDDDooooo
+   -- oDDDDoDooDoDDooooDoooooDooooDooooDooooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoooooo
+   -- oDmDmDmDDDDoDooDDDDDDDDDDDDoooooooooooDoooDooDoDDDoDDDDDDDDDDDDDDDDDoDDDoDD
+   -- DDoooooooommmoDmmmmmmmmommmmmDDoDDDoooDDDDDooDooDoDDDoDDDDDDDDDDDDDoDDDDDoo
+   -- oDDDoDDDDDDDDDDDDDDDoDDDDDDDDDDDooDDDoDDDDDDDDDmmoDDDDDomDDDDDDooDDDooooDDo
+   -- DDDDoDDDDDDDDDDoDDDDDDmDDDDDDDDDDDDooDDDDmmmDDDDmmDDDDoDDDDDDDoDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDmmDDDDDDDmDDDDDDDDDDDDDDmmDDDDDDmmDoDDDDDDDDDDDDDoooDD
+   -- DDoooDDDooooooDDDDDDDDDDDDDDDDDDoooDooooDDDoDooooooDoDDDoDoDDDDDDDDDDDDDooo
+   -- DDDDDDDDDDDDDDDDDDDoDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDoooooDDDoDDooDDD
+   -- DoDoDDoDDoooooooooooDoooooooooooooooooooooDDDooooDDDoooooooooDooDoDDDDDDDDo
+   -- DDDoooooooooDooooooDoooooooooooDDDmDmDoDDoDDDDDDDDDoDDDDDDDDoDDDDDDDDooooDD
+   -- DDDDDoDDDooDDDDDDDooDDDDDDDDDDDDoDDDDoDDDDoDDDooooooooooooooDooooomoDooDDoo
+   -- ooDDooooooooooooooooDDDoooooDDDoooDDoDooDDooDooDoDDDoDDDDDDDDDDDDDoDDDDDooo
+   -- DDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDooDDDoDDDDDDDDDDDoDDDDDomDDDDDDooDDDooooDooo
+   -- DDDDDDDDDDDDDDoDDDDDDmDDDDDDDDDDDDooDDDDDDDDDDDDDDDDDoDDDDDDDoDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDoooDDD
+   -- DoooDDDooooooDDDDDDDDDDDDDDDDDDoooDooooDDDoDooooooDoDDoDDoDDDDDDDDDDDDDoooD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDmmDomomDDoDmmommDmDDmmDmDDmDDDDmmoommomD
+   -- ooDomoDmmmDmDmDomDDmmmmDDmDmDDDDDmoDDmmDDDDDDDDDDDDDDDDDDDoDDDDDDDooooooooo
+   -- ooooooooDoooooooDDDDDDDoDDDDoDDDooDoDoooDoDDDoDDDDoDDoDooDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDooDDDDDDDDDDDDDooooooDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDooDDDDDDDDDD
+   -- DDDDooDooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDoooDDDDDDDDDDDDoDDoooDDD
+   -- DDDoDDoooDDDDDDoDoDDDDoooDDDooDDDDoDDDDDDDDDoDDDDDDDDDDDDDDDDDooDooooDoDDDo
+   -- ooooooooDoooooooDoDoooooooooooDoDDoooooooooooDDmmDDDDDmmmmmmDmmDmmDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoooooooooooDDDoooooDDDDooDDDDDDooooooooDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoooooDDDooooooooooooDoDDDoDDooDDDDooDDDDDDDDD
+   -- DDDoDDDooDDDDDDoDDoooDDDDDDoooooooooooooooooooooooooooooooooDooooDDoDDoDooo
+   -- DDDDDoooDDDDDmmmDDooDoDDoDooDoooDDooDDDDoDDDDoooooDDooooooooDooDoooDoooDmmm
+   -- oooooDoooDDoooDoooommmoDDoDoooooDDooooooDDDDooooooooDDDDooooDDoooDDoooooooo
+   -- ooooDDoDDDoDooDDDDDDoooDDoooDDDoDoDooooooooooooooDDDDDDDDoooDooDoDoDoDoooDo
+   -- oDDooooDDooooooooooDoooDDoDDDoDDooDDDDDoooDDoooDDDDooDooDDDDoooDDDDoooooDoo
+   -- oooooooooooDDoooooooooDDDoDoooDDooooooooooooooooooooooooDDDDoDDDoooDooDoDoo
+   -- ooooooooDooooooDooooooooooooooooooDDoooDoooDooooooooooooooooooDDDooooDDoooo
+   -- ooooooooDDDDDDDDDDDDDDDDDDDDDDDDDDoDDmDDDDDDDDDDDoDDDoDDDDDDDoooooooooooooD
+   -- oooooooooooooDDDDDDoDDDDDDDDDDDDDDooooooDDmDDDDmDDDmDDDDDDDDDDDDDDDDooDooDo
+   -- DDDoDDDDDDDDDDDDDoDDDDDoooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoooDDDDDDDDDDDDDmmD
+   -- DDDDDoDDDDDDDooDDDooooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoooDDDDmmDDDoDmm
+   -- DDDDoDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmmDDDDDoDDDDooDDDDDDDDD
+   -- DooDoDDDDDDoDDooDDmmDDoDooDDDmmDDDDDDDDDDDDDDDoooDDDDoooDDDoDooooDDmDDDDDDD
+   -- DDDDDDDDoooDoooDDDooDoooDooDoDDDomoDDDDDDDDmDDDDoooDDDDDDDDDDDDDDDDDDDoDDDD
+   -- DDDDoDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDoDoDDDoDDooDDDDooDDDDDDoooooooDDoDDmDoDm
+   -- mDDDDDDDDoDoooooooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDooooooooooooooooDDDDDDoDDDoDDDDooDDDDDDDDDDDDoDDDoDDDDooDDDDDDooDDDDDD
+   -- oDDDooDDDDDDoDDoooDDDDDDmommmoDmmmDDmmmmmommooooooooommmoooooDmmDooDDDDDDoo
+   -- ooooooDDoDoDDDooooooDDoooDDDDoDoDDDmDDDmDDooDmDmDDDDoDoDoDDoooDDDDDDoDoDDDD
+   -- DooDoDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDoDoooDDDDoDDooDDDDooDDDDoDDDDDomDmDo
+   -- DoDoDoooDomooooDDDoDDDDDDDoDDDDDoDDDDoDDDDDoDDDDoDoDoDDDDoooDDDoooDDoDDDDDD
+   -- DDDoDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDoooDDDDoooDDDDDoooD
+   -- oooDDoDDDoDDDDDoDDDoooooDoDDDooDoooDooooooooooDDooDDDDmDDDDDooooDDoDDoooDDD
+   -- DDDDDDDDDDDDDDDDDDoDDDDDDoDDDDDDDDDDDDDDDDDDomDooomDDDoDDDDDDoDDDDDDDDDDDDD
+   -- DDDDDoDDDDoomDDoDDoDDoDDoDDDDDDDDDDDDDDDoDmDDDDoDDDDDDDDDDDDDDDDDDDDDoDDDDD
+   -- DoDDDDDDDDDDDDDDDDDDoooooooDDDDDDDDoooooDDDDDDooDDDDDDDDDDooDDDoDDDDDDDDDDD
+   -- DDooooDDDDDDDDDDDDooooDDDoooDoDDDDDDDDDDDDDDooDDDDDDooDooDooDDDooDDooooDooo
+   -- oooDDoooooDoooDDDoooooDDDDooDDDDDDDDooDDoDoDDDoDDDDDDDDDDDDDoDDDDDoooDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDooDDDDDDDDDDDDDDDDDDDDDoDDDDDDDooDDDooooDDoDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDooDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoooDDDDoooDD
+   -- DoDooooDDDDDDDDDDDDDDDDDDoooDoooDDDDoDoooDooDoDDDDDoDDDDDDDDmDDDDoooDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDoDDDDDDDomDoooDDDDDDmoDmDDDDDmDDDDDDDDDooDoooDDDDoDooo
+   -- DommoomDoooDDDDmmDDDmmDDDDomoDDDmDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDoDDDoDDDD
+   -- ooDDDDDDooDDDDDDDoDDDDoDDDDDDoDooDDDDDDDDDDDDoDDDoDDDDDDDDDDooDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDooD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDoooDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDoDDDDoooDDDooDDDDoDDDDDDDDDDDDDDooDoooDoo
+   -- DDDooDoooDooDDDoDommmoDoooDmmDooDDDDDDDDDDDDoDDoooDDDDDDoDDoooDDDDDDDDDDoDo
+   -- oooDDmmDooooooooooooooooooooooDDDDDDoDDDoDDDDooDDDDDDDDDDDDoDDDoDDDDooDDDDD
+   -- DDDDDDDoDDoooDDDDDDoDDoooDDDDDDoooooooooooDDDoDoDDoDDDoDooooDDoDoDDDDDoooDD
+   -- DoooDDDDoDDDDDDDDDDDDooDDDDDDDDDDDDoDDoooDDDDDDoDoDDDDDDoDDDDDoDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDoDoDoooDDDDDDDoDDDDDDoDDDDoDDDDDoDDDDDDoDoDoooDDDooooDDDoDD
+   -- DDDDDoDDDDDDDDDDoDDDDDDDDDDoDoDoDDDDDooDDDoooDDoDDDDDDDDDoDDDDDDDDDDDDDDDDD
+   -- DoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDoooDDDDoooDDDDDoooDDooDDoDDDoDDoDDoDDDoo
+   -- oooDoDDoooDoooDooooooooooDDooDDDDDDDDDoooooDDoDDoDoDDDDDDDDDDDDDDDDDDDDDoDD
+   -- DDDDoDDDDDDDDDDDDDDDDDDooDDooDDDDDomomoooDDoDDDoDDDDDDoooooooDDooDoooDommoo
+   -- omoooDDooDDDDDDDDDooom{11}(208,5444)mooooooooooooooooooomoooooooooooooooooo
+   -- ooDDDDooDDDDDDDDDDDDDmoooooooooooooooooooooDoDooDDDooDDDDDDDoDDDDDooDDDDDDD
+   -- DDDDDDooDoDooDDDoDDDDDDoDoDDDDmmDoDDmDoDDoooooooooooooooooooDDooooooooooooo
+   -- ooooooDDoooDDoDDoDDoDoDDooDoDoooooDDDoommomomooooDooDoooooooDoooooooooooDDo
+   -- oommomomDDooooDooDDDoooooooooDoDDDmooooooDDoDDDDoDDDooDooooDDoDDDDDDooDDDDD
+   -- oDDDDDDooDooooooooooooooDDooDDDDomDDoDDDDDooooooDmooooooooooDoooooDoDDDDooo
+   -- oooooooooooooDoooooooDDooooooooooooDDooooooooooooDooooooooooooooooooDDoDmoo
+   -- oooooooooooooooooooooooDDoDDDDDDDoDDoDDDDDoDooDDDDDDDDDoDDoDoooDmoooDooooDD
+   -- DoDDDDDDDDDDDDDDDDDDDDDDDDDDmmmDDDDDooDDDDDDDDDooooDDoooDDDDDDDoDDDDDDDDDDD
+   -- DooDDDDoDDDmmmmmmmmmommmmmmmmommmmmmDDoDooDoooDooDDoDDDDoDDDoooDDDDDDDDDDDD
+   -- DDDDDDDDoooooooDDoooDDDooDoDDDDDDoDDDmooDDoDDDoDDDDDDDDDDDDDDDDDDDDDDDDoooD
+   -- ooooooDDoDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoooooooooooooooooooDDmmmDmDmDommmom
+   -- mommommmmmommooommmooommmDDDoDoDDDoDDDoooDDDoDDoDoooDooDDoDDDDoDDDoooDDDDDD
+   -- DDDDDDDDDDDDDDoooooooDDoooDDDooDDDDDDDDoDDDmooDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDoooDDoDDoDDDoDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDmDDooDDDoooDDDDDDDDDoDDDDDD
+   -- DDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDmDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDoDDDDDDDDDDDDDDDooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- oooDDDDooDDDDoDDDDDDDDDDDDDDDDDDDDDDoooDoDoDDDDDDDoDDDoDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDooDDDDooDDDDoDDDDDDDDDDDDDDDDDDDDDDoooDoDoDDDDDDDoDoDoDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDmmmmmDmmmommmmmmmmmmmmmmDD
+   -- DoDDDooDDDDDDDDDDDDDDoDDDDDDDDDDoDDDDDDDooDDoooDDDDDDoDoDDDoDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDoDDDoDDDDooDooDooDoooooooDDDoDDooooDDoDDoooDoDoDDDDDooooDo
+   -- oDDoDoDooooDDDmmmommmmmDmmoDooooooooDDoDooooooooooooooooooDoooooooooooooooo
+   -- ooooDoommmommmmmommDDDDDDDoooooDooooooDoDoooooDooooooooooooDoooooooooooDDDo
+   -- ooooDDDooooooooooDooDDDDoooooooooooDoooooooooooooooDDDDooooooDDDDDDDDoDDDDD
+   -- ooDDDDDDDDDDDDDDDoDDDooDDDDDDDDDDDDDDDDDDDDDDDDDDoDDmDDDDDDDDDDDDDDDDDDoooD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDoDDDDDDDDDDDDDDommoDoDmmomDDmDDDDDDDDDDoD
+   -- DoDooooooDDDDDDDooDoooooDDoDDDDoDDDDDDDoDDDoooooooDDoooDDoooDoDDDDDDmDDDDoo
+   -- oDoDoooDDDDDDoDDDDDDDDDDDDDDDDDoooDDommmmDmmDDDDDDoDDDDDoDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDooDoDDooDoD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDmmDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDommoDDmmmomDDDDDDDDDDDDDDDDDoo
+   -- DDDDDDDDDDDDDDooDDooDDDDDDDoDoDoDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDooDDDD
+   -- DDDDDDDoDDDDDDDoooomommoomommDmmmDDDDDDDDDmDDDDDmmmDDDDmmDDDDooooooooooDDDo
+   -- ooooDDoooooooooooooDDoDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDoDDDDoooDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmmDDDDDDDDDDDDDDDD
+   -- DDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDmmmDDDDDDDmDmmmDDDDoDDDoDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDooooDDDm
+   -- DommmommoooomoooooooooommmooommmDDDoDDDDDoDDDDDoDDDoDDoDoooDooDDDDDDDooDooo
+   -- ooDDoDDDDoDDDDDDDoDDDoooooooDDoooDDooDDoDDDDDDDDDDDoooDoDoooDDDDDooDDDDDDDD
+   -- DDDDDDDDDoooDDoDDDDDDDDDDDDDoDoDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDooD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDoooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoooDoDDDDDDDDDDD
+   -- DooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DoooDoDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoD
+   -- DDDDDDooDDDDDDDDDDDDDDDDDDDDDDoDDDoDDDooDDDmDmmDDDDoooooooomommDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDoDDDoooDDooDDDDDooooooo
+   -- oooooooooooooooDDDDooooDDDooDoooooooDDDDDoDoDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDoooDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDoooDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDoooDoDDDDDDDDDDDDooDDDDDDmoDDDD
+   -- DDDDmDDDDDDoDDDDDDDDDDDDDDooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoooDDDDDDDDDDD
+   -- DDDDoDDDDDDDDDDDDDDDDmDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDoDDDDDDoDDDDDDDo
+   -- oDDDDDDDDmmmoDDDmDmmoooDmmmDDDDoooooooDooDoooDDDmmmoDDDmDmmom{12}(185,4313)
+   -- DDDoDoDooooooDoDDDDDDDDDDDDDDoDoDDDDDDDDDmDDDDDDDDDDDDoDDDDDDmDmooooomDDooo
+   -- oooDooooDDmoDDoDoooooooDoooooDooooooooomoooooooooDDDooommmoooomommoooooooDo
+   -- ooooooooooooDooooooooomomooooooooooooooooDoooooooooooDDDDoDDDDDDDDDDDDDoDDo
+   -- DDDDDDDDoDDDDoDoDooDoDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDoDDDDDDommmooDDDDDDoDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDoDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDoDooDDDDDDDDDDDDoD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDooooooDDDDDDDDDDDDDDDDDDDDDDDDmDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDmDDDmDmDDmDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDooooooDoooooooDDDDooo
+   -- oDDoooooDDDDDoDDoDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDoooDooDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDooooooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmmmDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDmmmmmmmmmDmmmmmmmmDmmmmmDDDDoDooDDDoDDoDDDDDDDDoDDDDDDDDDDD
+   -- DDDDDDDDDDDoooDDDoDDoooDDDoDDDDDDDDDDDDDmDDDDDDDDDDDDDDDoDDoDDDDDDDDDDDDDDD
+   -- DoDmmDDDDDooDDDDDoooooDDDDDDDDDDDDDoDDDDDDDDDDDDDDmmDDDDmmDDDDDoooooooooooo
+   -- ooooooooooooooooooooooooooooooooooooooooDDmDDDDmoDDmDDDDDDoDDoDDDDDDDDoDDDD
+   -- DDoDDDDDDDDDDDoDDoDDDDDDDDDoDDDoDDDDDDDDDDDDDoDDDDDDDDoDDDDDDDDooDDoDDDDDDD
+   -- DDDDDoDoDDoDDDDDDDDDDDooDDDoooooooDDoDoDDDDDDDoDDoooooDDDoDDDoooooDDoDDDDDD
+   -- DoooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDoDDDoDoDDDDDDDDDDDmDDDDDDDDDDDDDDDDDDDDDDmmDDDDmmDD
+   -- DDDDDDDDDDDDDDDDDDoDDDDDDDDDDDoDDDDDDDDDDDDDDDoDoDmDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDmoooDooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDoDDDDDooooooDDDDDDDD
+   -- DDDmDDDDDDDDDDDDDDmDDDooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmoDDDoDomoDoDoDomD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmmDDDDmmDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDmmmmmDmDDDDDmmmmmmmmmmmmDDDDDDDDDDDDDDDDomommoo
+   -- mommooooooooooooomDmmmmmmommmmmmmmmmmmmmDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDD
+   -- DDDDDDoDoDDDDDDoDDDDDDDDDDoooooooDoDmmDDDDDDDDDDDDDDoDDDDDDDDDoDoDDDDDoDDDD
+   -- DDDDDDDDDDDDoooDDDDDDDDDDDDDDDDDDoooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDmDDDDDmDmmDDDDDDoDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DooDoDDDoDooDDDDDoDDDDmoDDDmmDDoooDooooDooooDDDDDDDDDDDDDDmDDDDDDDDDoDDmmmD
+   -- DooDDDDDoooDDDmmmmDmmDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDD
+   -- DooDoDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDoDDDDDDDDDDDDDDoDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDoooDooDDDDDDDDDDDooDDDDDDDoDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDo
+   -- oooooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDoDDDoDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDoDooDooDDoooDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDoooDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDoDommmoooooDoommmooDmmmDDDDDDDooooDoooooDDDoDDoooo
+   -- ooDoDDDDooooooDDDDDDDDDDDDDmmmmmmmmmommmmmmmmmmmmmmDDooooooooooooDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDoDoDDDDDDoDDDDDDDDDDooooooooDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDoDDDDDoDDDDDDDDDDDDDDDDoDoDDDDDDDDDDDDDDDDDDoooDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDooDD
+   -- DDDDDDDDDDDDDDDDDDDDooDDDDDDDDDDDDDDDDDDooDoDDDoDooDDDDDoDDDDDoDDDDDDDooDDo
+   -- oooDDoooDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDooDDDDDoooDDoDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmmDDDDmDDDDDDDD
+   -- DDDDDDDDDDoDoooDDoDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDoooooooDDDomDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDmDDDDoooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDoomommommomm{13}(110,3801)ooooooooooooooooooooooDDDDoooDDDDDDDDDDDoDDDDDD
+   -- DmDmDoDoDoooDDDDoDDoooooDDDoooomomooDDDDDDDDDDDDDDDmmmDoDDoDDDDDDDDoDDDoDDD
+   -- DDoDDDDDDDDDDDDDDDDoooooooooDDDDDDoDooDDoDDDDoooDooDDoDDDDDDDDoDoDDDDDDDDoD
+   -- DoooooooooDDmoDDDDDDDDDDoDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoooommo
+   -- mooDDDDDoDDDDDDDDoDDDoDDDDDoDDDDDDDDDDDDDDDDDooooDoooDDDDDDoDooDDoDDDDDooDo
+   -- oDDoDDDDDDDDoDoDDDDDDDDoDDDDoooooooDDmoDDDDDDDDDDoDDDDoDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDoDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDmD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDooDommmmDoomoooommmmooomoDDooDDDDDDDDDDDDDDDmo
+   -- DooDomoomoooooDoomommDooDDoDDDDDoooDoomoDoooomDomoooooooomommDDDDDDDDDDDDDD
+   -- DoDomDDDDDDDDDDoDDDDoooDDoDoooooooooDDDDDDDDoDoDoooDooooooDoDooDDoooDDooDDo
+   -- oDDooDoooooooooDDDooooooooooooDooooooDoDooooooooooooDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDooDDDDDDDmDDDomDDDDooDDD
+   -- DDDDDDDDmmDDoooooooooDDDDDDmmmoDDoDmmmDoooooDDDDDDDDDDoooooDDoDDDDoDDmomooo
+   -- oooDDooDoDDDDDDDDDDDDoooDDDDDDDDDDDDDDDDDDDoDDoDDDDDDooooDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDooooooooooomDDDDmooDDoDooooo
+   -- ooooDDDDDDDDDDDDDDDDooooooDoDooDDoooDDooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoomDDDDDDDoDDDDDDDDmDDDomDDD
+   -- DooDDDDDDDDDDDDmDDoooooooooDDDDDDmmmoDDomDmmoooDooDDDDDDDDDDooooDDDoDDDDoDD
+   -- momooooooDDooDoDDDDDDDDDDDDoooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDoooooooooooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoo
+   -- ooDooooooooDoooooooooDooooooooooDDoDoooooooooDDDDDDDDDDDDDDDDDDoDDoDoDooDDo
+   -- ooDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDoDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDmDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDmDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDmDmmmmmmommmmmmmmmmmmmmDDDoooooDoooooooDDooooooDDoDDDoooDDDDmDm
+   -- mmmmmommmmmmmmmmmmmm{14}(79,2618)mooDoomooooDmoooooDoooDoDDDDDDDoDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDmmDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDoDD
+   -- DDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmoDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDmmDDoooDommoDmoDDoDDmoDDoooooooooDmmoDmommDDDmmmooDoommoooooooo
+   -- DommmDooooDDmoooDDoDDmDDDomDDDDDDDDoDDDDDoDDDDDDDDDDDDDDDDDDDDooDDDDDDoDDoo
+   -- DDDDDDDooDDDDDDDDDDDDoooooDoDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDooDDDDDDoooooo
+   -- DDoDDDDoDDDDDDoDDDDDDooDDoDDDoDDooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDmDmDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDooDDDDDDDDDDDDDmDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDmmmommmmmmDmmmmmDDDDoDDooooDmmmDDDDoDDDDoooDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDoooooomDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDooDDDDDDDD
+   -- DoDDDDDDDDDDDoDDDDDDDDooDDoDDDDDDDDDDDDDDDDDmmmDDDmDmDDDDDmmDDmDmmmDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoooDDDDDDDDoDDDoDDDDDooDDDDDDDDDDDmDDDoooo
+   -- oooooDDDDDDoooDDDoDDDDoooDooDDDDDDDDDDooooDDDoDDDDoDDoooooooooDDDDoDDDDDDDD
+   -- DDDDDoooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDoDDDooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDooDDDDDmDDDDDDD
+   -- DDDDDDDDDDDDDDDommDDDmDDDDDDDDDDDDDDDDDDDDDDDDDDmDmoooooooooooDDDDDDoDDDDoo
+   -- oDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDooooooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDoDDDDDDDDDDDDDDDoDDDDDDDDDDDDDoDoDDDDDoDDoDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDD
+   -- DoDDDDDooDDDDDDDDDDDDDDDDDDooooooDDDDDDoDoDDDoDDDDoooDooDDDDDDDDDDooDoDDDoD
+   -- DDDoDDoooooooooDDDDDoDDDDDDDDDDDDoooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- mDDDomDDDDDDDDDDDDDDDDDDmDDDooooooooDDDDDDmmmDDDoDmmmDDoDDoDDDDDDDDDDDDDDDD
+   -- DDDDDDoDDmom{15}(55,1837)DDDDDDooooDDDDDmDDDDDoDDDDDDDDDDDDDDDDmDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDDDDDoDDoDDDDDDDDDDDDoDoooD
+   -- DooDoDDDDDDDoDoDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- ooooooDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDo
+   -- oDDDDoDooDDDDDDDDDDDoDDDDoDDDoDDDDDDDDDoDooooooDDDoDDDDoDDDoDooDooDDoDDDDDo
+   -- oDDoooDoDDDDooooDoooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDmmmDmmDDDDDDDDDDDomDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDDDD
+   -- DDDDmmmDmmDDDDDDDDDmommmmommmmmoomoommmmmDDDDDDDDDooDDDDDDDDDDDDDDDDDDDoDoo
+   -- ooooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDoDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDomDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDmmmmDmmmmmDDmDDmmmmD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDooDoooDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDmmmomDDDDoDDDoooDDDDmmm{16}(24,1249)DDDDooooDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDmDDDDDDDDDDDDDDDDDDDDDDDDDDDoooDDDDDDDDDDDDDDoDDDDDDDDoooDDDoDDDDDDDDDDDo
+   -- DDDDDDDDoDDooDDDDDDDoooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDoooDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+   -- mmmDmDDDDDDDDDDDmDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDmDmmmmDmmmmmDDmDmmmmm
+   -- {17}(0,600){18}(0,124){19}(0,8)
+o4 = ideal (x33*y12*y21 - x32*y13*y21 - x33*y11*y22 + x31*y13*y22 + x32*y11*y23 - x31*y12*y23 - x23*y12*y31 + x22*y13*y31 + x13*y22*y31 - y13*y22*y31 - x12*y23*y31 + y12*y23*y31 + x23*y11*y32 - x21*y13*y32 - x13*y21*y32 + y13*y21*y32 + x11*y23*y32 - y11*y23*y32 - x22*y11*y33 + x21*y12*y33 + x12*y21*y33 - y12*y21*y33 - x11*y22*y33 + y11*y22*y33, x23*x32*y11 - x22*x33*y11 - x23*x31*y12 + x21*x33*y12 + x22*x31*y13 - x21*x32*y13 - x13*x32*y21 + x12*x33*y21 + x13*x31*y22 - x11*x33*y22 - x12*x31*y23 + x11*x32*y23 + x13*x22*y31 - x12*x23*y31 + y13*y22*y31 - y12*y23*y31 - x13*x21*y32 + x11*x23*y32 - y13*y21*y32 + y11*y23*y32 + x12*x21*y33 - x11*x22*y33 + y12*y21*y33 - y11*y22*y33, x13*x22*x31 - x12*x23*x31 - x13*x21*x32 + x11*x23*x32 + x12*x21*x33 - x11*x22*x33)
+
+o4 : Ideal of R
+
+i5 : betti oo
+
+o5 = generators: total: 1 3
+                     0: 1 .
+                     1: . .
+                     2: . 3
+
+i6 : codim o4
+{3}(3)mmm
+o6 = 3
+
+i7 : transpose gens o4
+
+o7 = {-3} | x33y12y21-x32y13y21-x33y11y22+x31y13y22+x32y11y23-x31y12y23-x23y12y31+x22y13y31+x13y22y31-y13y22y31-x12y23y31+y12y23y31+x23y11y32-x21y13y32-x13y21y32+y13y21y32+x11y23y32-y11y23y32-x22y11y33+x21y12y33+x12y21y33-y12y21y33-x11y22y33+y11y22y33 |
+     {-3} | x23x32y11-x22x33y11-x23x31y12+x21x33y12+x22x31y13-x21x32y13-x13x32y21+x12x33y21+x13x31y22-x11x33y22-x12x31y23+x11x32y23+x13x22y31-x12x23y31+y13y22y31-y12y23y31-x13x21y32+x11x23y32-y13y21y32+y11y23y32+x12x21y33-x11x22y33+y12y21y33-y11y22y33 |
+     {-3} | x13x22x31-x12x23x31-x13x21x32+x11x23x32+x12x21x33-x11x22x33                                                                                                                                                                                     |
+
+             3       1
+o7 : Matrix R  <--- R
+
+i8 : 

@@ -2165,8 +2165,6 @@ vec PolyRing::translate_gbvector_to_vec(const FreeModule *F, const gbvector *v) 
     return translate_gbvector_to_vec_QQ(F,v,globalZZ->one());
   GBRing *GR = get_gb_ring();
 
-  if (gbTrace>=3)
-    emit_wrapped(".");
   int firstcomp = v->comp;
   int lastcomp = firstcomp;
   for (const gbvector *t = v->next; t != 0; t=t->next)

@@ -7,19 +7,20 @@
 #define monomial monomial0
 extern int comp_printlevel;
 
+
 /////////////////////////////
 // Monomials and binomials //
 /////////////////////////////
 
-binomial_ring::binomial_ring(const Ring *RR, 
+binomial_ring::binomial_ring(const PolynomialRing *RR, 
 			     int *wts,
-			     bool revlex)
+			     bool revlex0)
   : R(RR),
     F(RR->make_FreeModule(1)),
     nvars(RR->n_vars()),
     have_weights(wts != NULL),
     weights(NULL),
-    revlex(revlex)
+    revlex(revlex0)
 {
   int i;
 
@@ -38,7 +39,7 @@ binomial_ring::binomial_ring(const Ring *RR,
   monstash = new stash("monomials", sizeof(int)*nslots);
 }
 
-binomial_ring::binomial_ring(const Ring * /* RR */)
+binomial_ring::binomial_ring(const PolynomialRing * /* RR */)
 {
   ERROR("MES: not implemented yet");
 }

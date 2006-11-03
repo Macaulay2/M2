@@ -3,8 +3,7 @@
 #ifndef _gbbinom_hh_
 #define _gbbinom_hh_
 
-#include "comp.hpp"
-#include "gb_comp.hpp"
+#include "comp_gb.hpp"
 #include "matrix.hpp"
 
 /////////////////////
@@ -19,7 +18,7 @@ struct binomial {
   monomial0 tail;
 
   binomial() : lead(NULL), tail(NULL) {}
-  binomial(monomial0 lead, monomial0 tail) : lead(lead), tail(tail) {}
+  binomial(monomial0 lead0, monomial0 tail0) : lead(lead0), tail(tail0) {}
 };
 
 struct binomial_gb_elem {
@@ -37,8 +36,8 @@ struct binomial_s_pair {
   binomial_gb_elem *f2;		// f2 is NULL for generators...
   monomial0 lcm;
   binomial_s_pair() {}
-  binomial_s_pair(binomial_gb_elem *f1, binomial_gb_elem *f2, monomial0 lcm)
-    : f1(f1), f2(f2), lcm(lcm) {}
+  binomial_s_pair(binomial_gb_elem *ff1, binomial_gb_elem *ff2, monomial0 lcm0)
+    : f1(ff1), f2(ff2), lcm(lcm0) {}
 };
 
 /////////////////////////////
@@ -49,7 +48,7 @@ class binomial_ring
 // First implementation: exponent vectors
 {
   friend class binomialGB_comp;
-  const Ring *R;
+  const PolynomialRing *R;
   const FreeModule *F;		// rank 1 free R-module
 
   // exponent vector: [e0, ..., e(nvars-1), -deg, -wt] (the last slot is only there, if there
@@ -67,10 +66,10 @@ class binomial_ring
   void set_weights(monomial0 m) const;
   
 public:
-  binomial_ring(const Ring *RR);
-  binomial_ring(const Ring *RR, 
+  binomial_ring(const PolynomialRing *RR);
+  binomial_ring(const PolynomialRing *RR, 
 		int *wts,
-		bool revlex);
+		bool revlex0);
   ~binomial_ring();
 
   // monomial operations
@@ -145,7 +144,7 @@ class binomial_s_pair_set
     s_pair_elem *next;
     binomial_gb_elem *f1;
     binomial_gb_elem *f2;
-    s_pair_elem(binomial_gb_elem *f1, binomial_gb_elem *f2) : next(NULL), f1(f1), f2(f2) {}
+    s_pair_elem(binomial_gb_elem *ff1, binomial_gb_elem *ff2) : next(NULL), f1(ff1), f2(ff2) {}
   };
 
   const binomial_ring *R;
@@ -186,7 +185,7 @@ class binomialGB
     binomial_gb_elem *elem;
     int mask;
     gbmin_elem() {}  // For list header
-    gbmin_elem(binomial_gb_elem *f, int mask) : elem(f), mask(mask) {}
+    gbmin_elem(binomial_gb_elem *f, int mask0) : elem(f), mask(mask0) {}
   };
 
   struct monomial_list {
@@ -194,7 +193,7 @@ class binomialGB
     monomial0 m;
     int mask;
     gbmin_elem *tag;  // This is a list
-    monomial_list(monomial0 m, int mask, gbmin_elem *val) : m(m), mask(mask), tag(val) {}
+    monomial_list(monomial0 m0, int mask0, gbmin_elem *val) : m(m0), mask(mask0), tag(val) {}
   };
 
   const binomial_ring *R;
@@ -242,7 +241,7 @@ public:
 #define GB_FLAG_IS_NONDEGENERATE 2
 #define GB_FLAG_BIGCELL 4
 
-class binomialGB_comp : public gb_comp
+class binomialGB_comp
 {
   binomial_ring *R;
   binomial_s_pair_set *Pairs;		// Pairs and Generators
@@ -286,7 +285,7 @@ public:
   // creation
   binomialGB_comp(const Ring *R, int *wts, bool revlex, 
 		  unsigned int options);
-  ~binomialGB_comp();
+  virtual ~binomialGB_comp();
 
   void enlarge(const Ring *R, int *wts);
   void add_generators(const Matrix *m);
@@ -299,7 +298,6 @@ public:
   Matrix *reduce(const Matrix *m, Matrix *&lift);
 
   virtual int contains(const Matrix *m);
-  virtual bool is_equal(const gb_comp *q);
   
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
   Matrix *min_gens_matrix();
