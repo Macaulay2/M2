@@ -832,9 +832,8 @@ document { Key => {BettiTally,(symbol ++,BettiTally,BettiTally), (symbol **,Bett
      and ", TT "h", " is the result of applying a weight covector to ", TT "d", ".
      Only ", TT "i", " and ", TT "h", " are used in printing.",
      EXAMPLE lines ///
-          t = new BettiTally from { (0,{0}) => 1, (1,{1}) => 2, (2,{3}) => 3, (2,{4}) => 4 }
+          t = new BettiTally from { (0,{0},0) => 1, (1,{1},1) => 2, (2,{3},3) => 3, (2,{4},4) => 4 }
 	  peek oo
-	  t#(2,{4})
      ///,
      "For convenience, the operations of direct sum (", TO "++", "), tensor product (", TO "**", "), ", TO "dual", ", and degree shifting (numbers in brackets), have
      been implemented for Betti tallies.  These operations mimic the corresponding operations on chain complexes.",
