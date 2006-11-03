@@ -94,7 +94,7 @@ findLength Ideal := (I) -> (
           I = I + ideal s;);
      l);
 findLength JH3
-erase symbol x; erase symbol Dx;
+x = symbol x; Dx = symbol Dx;
 D = QQ[x_1..x_5, Dx_1..Dx_5, WeylAlgebra =>
      apply(toList(1..5), i -> x_i => Dx_i)];
 f = x_1^2 + x_2^2 + x_3^2 + x_4^2 +x_5^2;
@@ -108,7 +108,7 @@ Rg = DlocalizeAll(R,g,Strategy => Oaku);
 Bg = Rg.Bfunction
 Rgf = DlocalizeAll(Rg.LocModule,f,Strategy => Oaku);
 Bgf = Rgf.Bfunction
-erase symbol x;
+x = symbol x;
 R = QQ[x,y,z];
 f=x^3+y^3+z^3;
 H=deRhamAll(f);
