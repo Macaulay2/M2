@@ -94,7 +94,7 @@ install all::
 	@echo "************************************************"
 
 everything: all
-	$(MAKE) RerunExamples=true install
+	$(MAKE) RerunExamples=$(RerunExamples) install
 	$(MAKE) tarball debian
 	@echo "************************************************"
 	@echo "*                                              *"
