@@ -179,11 +179,11 @@ projection = I -> (
 polarization = I -> (
      n := numgens ring I;
      u := apply(numgens I, i -> first exponents I_i);
-     I.lcm = max \ transpose u;
-     Z := flatten apply(n, i -> apply(I.lcm#i, j -> z_{i,j}));
+     I.cache.lcm = max \ transpose u;
+     Z := flatten apply(n, i -> apply(I.cache.lcm#i, j -> z_{i,j}));
      R := QQ(monoid[Z]);
      Z = gens R;
-     p := apply(n, i -> sum((I.lcm)_{0..i-1}));
+     p := apply(n, i -> sum((I.cache.lcm)_{0..i-1}));
      monomialIdeal apply(u, e -> product apply(n, i -> 
                product(toList(0..e#i-1), j -> Z#(p#i+j)))));
 distraction = I -> (
@@ -191,7 +191,7 @@ distraction = I -> (
      n := numgens S;
      X := gens S;
      J := polarization I;
-     W := flatten apply(n, i -> flatten apply(I.lcm#i, 
+     W := flatten apply(n, i -> flatten apply(I.cache.lcm#i, 
                j -> X#i));
      section := map(S, ring J, apply(W, r -> r - 
                random(500)*X#(n-2) - random(500)*X#(n-1)));     
