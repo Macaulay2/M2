@@ -267,7 +267,7 @@ isHomogeneous RingMap := (f) -> (
      R := f.source;
      S := f.target;
      isHomogeneous R and isHomogeneous S and
-     all(generators(R, CoefficientRing=>ZZ), r -> (
+     all(generators(R, CoefficientRing=>ZZ), r -> r == 0 or (
 	       s := f r;
 	       s == 0 or isHomogeneous s and degree s === f.DegreeMap degree r
 	       )))
