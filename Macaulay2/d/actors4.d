@@ -1027,6 +1027,13 @@ toBigReal(e:Expr):Expr := (
      );
 setupfun("toRRR",toBigReal);
 
+toRR(e:Expr):Expr := (
+     when e
+     is x:RRR do Expr(Real(toDouble(x)))
+     else WrongArg("a big real number")
+     );
+setupfun("toRR",toRR);
+
 precision(e:Expr):Expr := (
      when e 
      is x:RRR do Expr(toInteger(precision(x)))
