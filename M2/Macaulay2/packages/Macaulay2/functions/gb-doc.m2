@@ -398,14 +398,13 @@ I = ideal flatten entries gens I;
 hf = poincare ideal apply(7, i -> R_i^2)
 G = gb(I, Hilbert=>hf); -- this works, it seems
 
-Rlex = ZZ/32003[a..j,MonomialOrder=>Lex]
+Rlex = ZZ/32003[a..j,MonomialOrder=>Eliminate 1]
 IL = substitute(I,Rlex);
 G = gb(IL, SubringLimit=>1, Hilbert=>hf, DegreeLimit=>2); -- SubringLimit now seems OK
 G = gb(IL, SubringLimit=>1, Hilbert=>hf, DegreeLimit=>4); 
 assert(numgens source selectInSubring(1,gens G) == 1)
 I = ideal flatten entries gens I;
 G = gb(I, DegreeLimit=>1); 
-G = gb(I, CodimensionLimit=>3); -- this isn't implemented yet, and is ignored...
+--G = gb(I, CodimensionLimit=>3); -- this isn't implemented yet, and is ignored...
 
--- also, the final "minimalization" is VERY annoying...
 ///
