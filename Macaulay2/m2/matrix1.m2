@@ -605,27 +605,18 @@ ideal Module := Ideal => (M) -> (
      else error "expected a submodule of a free module of rank 1"
      )
 ideal List := ideal Sequence := Ideal => v -> ideal matrix {toList v}
-ideal RingElement := Ideal => v -> ideal {v}
-ideal ZZ := v -> ideal {v}
-ideal QQ := v -> ideal {v}
-
+ideal RingElement := ideal Number := Ideal => v -> ideal {v}
 ideal Ring := R -> ideal map(R^1,R^0,0)
 
-kernel = method(Options => {
-	  SubringLimit => infinity
-	  })
-
-kernel Matrix := Module => options -> (g) -> if g.cache.?kernel then g.cache.kernel else g.cache.kernel = (
-     N := source g;
-     P := target g;
-     g = matrix g;
-     if P.?generators then g = P.generators * g;
-     h := modulo(g, if P.?relations then P.relations
-	  -- DegreeLimit => options.DegreeLimit
-	  );
-     if N.?generators then h = N.generators * h;
-     subquotient( h, if N.?relations then N.relations))
-
+kernel = method(Options => { SubringLimit => infinity })
+kernel Matrix := Module => opts -> (cacheValue symbol kernel) ((g) -> (
+	  N := source g;
+	  P := target g;
+	  g = matrix g;
+	  if P.?generators then g = P.generators * g;
+	  h := modulo(g, if P.?relations then P.relations);
+	  if N.?generators then h = N.generators * h;
+	  subquotient( h, if N.?relations then N.relations)))
 kernel RingElement := Module => options -> (g) -> kernel (matrix {{g}},options)
 
 homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
