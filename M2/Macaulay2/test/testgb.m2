@@ -18,7 +18,7 @@ strat = LongPolynomial;
     assert(generators gb(m, Strategy=>strat) == matrix {{b*c-c*d, a*c-d^2, a*b-c^2, b*d^2-d^3, c^3-d^3, c^2*d^2-a*d^3, a^2*d^3-c*d^4}})
     assert(image m == image matrix ( {{b*c-c*d, a*c-d^2, a*b-c^2, b*d^2-d^3, c^3-d^3, c^2*d^2-a*d^3, a^2*d^3-c*d^4}}))
 
-    R = ZZ/101[a,b,c,d, Degrees => {1,2,3,4}];
+    R = ZZ/101[a,b,c,d, Degrees => {1,2,3,4}, MonomialOrder=>GRevLex=>{1,2,3,4}];
     m = matrix{{a^4*b - c^2, a*c - b^2, c^3 - a*d^2}};
     assert ( generators gb(m, Strategy => strat) == sort matrix {{b^2-a*c, a^4*b-c^2, a^5*c-b*c^2, c^3-a*d^2, a^6*d^2-a*b*c*d^2}} )
 
