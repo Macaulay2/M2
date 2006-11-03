@@ -78,8 +78,9 @@ ZZquotient := (R,I) -> (
 	  lift(S,QQ) := liftZZmodQQ;
 	  S))
 
-Ring / Ideal := QuotientRing => (R,I) -> (
+Ring / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
      if ring I =!= R then error "expected ideal of the same ring";
+     if I.cache.?QuotientRing then return I.cache.QuotientRing;
      if I == 0 then return R;
      if R === ZZ then return ZZquotient(R,I);
      error "can't form quotient of this ring";
@@ -89,9 +90,9 @@ predecessors := method()
 predecessors Ring := R -> {R}
 predecessors QuotientRing := R -> append(predecessors last R.baseRings, R)
 
-EngineRing / Ideal := (R,I) -> I.cache.QuotientRing = (
-     if I.cache.?QuotientRing then return I.cache.QuotientRing;
+EngineRing / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
      if ring I =!= R then error "expected ideal of the same ring";
+     if I.cache.?QuotientRing then return I.cache.QuotientRing;
      if I == 0 then return R;
      -- recall that ZZ is NOT an engine ring.
      A := R;
