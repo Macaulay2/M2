@@ -8,6 +8,7 @@
 #include "matrixcon.hpp"
 
 void gb2_comp::setup(FreeModule *FFsyz,
+		     stash *mi_stash0,
 		     gb_node *ggens,
 		     int lodeg,
 		     int origsyz, 
@@ -25,6 +26,8 @@ void gb2_comp::setup(FreeModule *FFsyz,
   GR = originalR->get_gb_ring();
   M = GR->get_flattened_monoid();
   K = GR->get_flattened_coefficients();
+
+  mi_stash = mi_stash0;
 
   F = const_cast<FreeModule *>(ggens->output_free_module());
 
@@ -52,7 +55,7 @@ void gb2_comp::setup(FreeModule *FFsyz,
   monideals.append(0);
   for (i=0; i<F->rank(); i++)
     {
-      monideal_pair *p = new monideal_pair(originalR);
+      monideal_pair *p = new monideal_pair(originalR,mi_stash);
       monideals.append(p);
     }
 
@@ -68,13 +71,14 @@ void gb2_comp::setup(FreeModule *FFsyz,
 }
 
 gb2_comp::gb2_comp(FreeModule *Fsyz0,
+		   stash *mi_stash0,
 		   gb_node *gens0,
 		   int lodegree,
 		   int origsyz,
 		   int level0,
 		   int strat)
 {
-  setup(Fsyz0,gens0,lodegree,origsyz,level0,strat);
+  setup(Fsyz0,mi_stash,gens0,lodegree,origsyz,level0,strat);
 }
 void gb2_comp::set_output(gb_node *p) 
 {
@@ -613,7 +617,7 @@ bool gb2_comp::receive_generator(gbvector *f, int n, const ring_elem denom)
 
   for (int i=monideals.length(); i<=F->rank(); i++)
     {
-      monideal_pair *p = new monideal_pair(originalR);
+      monideal_pair *p = new monideal_pair(originalR,mi_stash);
       monideals.append(p);
     }
 

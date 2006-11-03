@@ -171,6 +171,9 @@ struct monideal_pair : public our_new_delete
   
   monideal_pair(const PolynomialRing *R) : mi(new MonomialIdeal(R)), 
     mi_search(new MonomialIdeal(R)) {}
+
+  monideal_pair(const PolynomialRing *R, stash *mi_stash) : mi(new MonomialIdeal(R,mi_stash)), 
+    mi_search(new MonomialIdeal(R,mi_stash)) {}
 };
 
 //-----------------------------------------------------------------

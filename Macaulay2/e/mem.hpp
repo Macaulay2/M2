@@ -7,8 +7,8 @@
 
 const int NDOUBLES = 25;
 //const int slab_size = 2040;
-//const int slab_size = 2032;
-const int slab_size = 262134;
+const int slab_size = 2032;
+//const int slab_size = 262134;
 const char bad_pattern = '\245';
 const int word_size = sizeof(void *);
 

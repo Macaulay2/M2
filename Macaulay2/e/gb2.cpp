@@ -102,6 +102,7 @@ void gbres_comp::setup(const Matrix *m,
   originalR = m->get_ring()->cast_to_PolynomialRing();
   if (originalR == NULL) assert(0);
   GR = originalR->get_gb_ring();
+  mi_stash = new stash("res mi nodes", sizeof(Nmi_node));
 
   FreeModule *Fsyz = originalR->make_Schreyer_FreeModule();
   if (length <= 0)
@@ -140,7 +141,7 @@ void gbres_comp::setup(const Matrix *m,
   nodes = newarray(gb_node_ptr,n_nodes);
 
   nodes[0] = new gb_emitter(m);
-  nodes[1] = new gb2_comp(Fsyz,nodes[0],lo_degree,origsyz,1,strategy);
+  nodes[1] = new gb2_comp(Fsyz,mi_stash,nodes[0],lo_degree,origsyz,1,strategy);
   nodes[0]->set_output(nodes[1]);
   if (n_nodes == 2)
     {
@@ -156,11 +157,11 @@ void gbres_comp::setup(const Matrix *m,
       for (i=2; i<n_nodes-1; i++)
 	{
 	  FreeModule *F = originalR->make_Schreyer_FreeModule();
-	  nodes[i] = new gb2_comp(F,nodes[i-1],deg++,-1,i,strategy);
+	  nodes[i] = new gb2_comp(F,mi_stash,nodes[i-1],deg++,-1,i,strategy);
 	  nodes[i-1]->set_output(nodes[i]);
 	}
       FreeModule *F = originalR->make_Schreyer_FreeModule();
-      nodes[n_nodes-1] = new gb2_comp(F,nodes[n_nodes-2],deg++,0,n_nodes-1,strategy);
+      nodes[n_nodes-1] = new gb2_comp(F,mi_stash,nodes[n_nodes-2],deg++,0,n_nodes-1,strategy);
       nodes[n_nodes-1]->set_output(NULL);      
     }
   strategy_flags = strategy;
@@ -186,6 +187,8 @@ gbres_comp::~gbres_comp()
       nodes[i]->set_output(NULL);
       deleteitem(nodes[i]);
     }
+
+  delete mi_stash;
 }
 
 
