@@ -67,36 +67,32 @@ tensor(QuotientRing, QuotientRing) := optns -> (R,S) -> (
 graphIdeal = method( Options => apply( {MonomialOrder, MonomialSize, VariableBaseName}, o -> o => monoidDefaults#o ))
 graphRing = method( Options => options graphIdeal )
 
-graphIdeal RingMap := Ideal => options -> (f) -> (
+graphIdeal RingMap := Ideal => opts -> (f) -> (
      -- return the ideal in the tensor product of the graph of f.
      -- if f is graded, then set the degrees correctly in the tensor ring.
      -- return the ideal (y_i - f_i : all i) in this ring.
      S := source f;
      R := target f;
+     m := numgens R;
+     n := numgens S;
      k := coefficientRing R;
      if not (
 	  isAffineRing R
 	  and isAffineRing S
 	  and k === coefficientRing S
 	  ) then error "expected polynomial rings over the same ring";
-     if vars k ** R != f (vars k ** S)	  -- vars k isn't really enough...
-     then error "expected ring map to be identity on coefficient ring";
-     t := numgens S;
-     h := submatrix(f.matrix,,toList(0 .. t - 1));
-     options = new MutableHashTable from options;
-     options.Degrees = join((monoid R).degrees, 
-	  apply(degrees source h, d -> if d === {0} then {1} else d)
-	  );
-     options = new OptionTable from options;
-     RS := tensor(R,S,options);
-     --RS := tensor(R,S,
-     --             Degrees=>join((monoid R).degrees, degrees source h),
-     --             MonomialOrder=>Eliminate numgens R,
-     --             options);
-     yvars := (vars RS)_{numgens R .. numgens RS - 1};
-     xvars := (vars RS)_{0..numgens R - 1};
-     I := ideal(yvars - substitute(h, xvars));
-     if debugLevel > 0 and isHomogeneous f then assert isHomogeneous I;
+     gensk := generators(k, CoefficientRing => ZZ);
+     if not all(gensk, x -> promote(x,R) == f promote(x,S)) then error "expected ring map to be identity on coefficient ring";
+     RS := tensor(R,S,
+	  opts,
+	  MonomialOrder => Eliminate m,
+	  Degrees => join(degrees R, apply(degrees S, f.DegreeMap)));
+     v := vars RS;
+     yv := v_{m .. m+n-1};
+     xv := v_{0 .. m-1};
+     h := f.matrix_{0 .. n - 1};
+     I := ideal(yv - substitute(h, xv));
+     assert(not isHomogeneous f or isHomogeneous I);
      I)
 
 graphRing RingMap := QuotientRing => options -> (f) -> (
