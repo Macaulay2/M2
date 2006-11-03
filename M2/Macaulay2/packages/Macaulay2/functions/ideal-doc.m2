@@ -52,7 +52,7 @@ document {
      SeeAlso => {entries, flatten}
      }
 document { 
-     Key => {(ideal,RingElement), (ideal,ZZ), (ideal,QQ)},
+     Key => {(ideal,RingElement), (ideal,Number)},
      Usage => "ideal r",
      Inputs => {
 	  "r"
