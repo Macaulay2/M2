@@ -269,7 +269,7 @@ isHomogeneous RingMap := (f) -> (
      isHomogeneous R and isHomogeneous S and
      all(generators(R, CoefficientRing=>ZZ), r -> (
 	       s := f r;
-	       s == 0 or degree s === f.DegreeMap degree r
+	       s == 0 or isHomogeneous s and degree s === f.DegreeMap degree r
 	       )))
 
 substitute(Power,Thing) := (v,s) -> Power{substitute(v#0,s),v#1}
