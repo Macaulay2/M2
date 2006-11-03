@@ -107,9 +107,7 @@ changeRing = H -> (
    K := coefficientRing S;
    degs := select(degrees source vars S,
         d -> 0 != first d);
-   R := K[X_1 .. X_#degs, Degrees => degs,
-        -- Repair => S.Repair, Adjust => S.Adjust
-	];
+   R := K[X_1 .. X_#degs, Degrees => degs];
    phi := map(R,S,join(gens R,(numgens S - numgens R):0));
    prune (phi ** H)
    );
