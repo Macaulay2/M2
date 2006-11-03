@@ -49,14 +49,12 @@ isNormal(Ring) := Boolean => (R) -> (
      --the codimensions are >= i+2 then return true.
      I := ideal (R);
      M := cokernel generators I;
-     n := codim I;
-     m := dim ring I;    
-     m2:= dim R;         
-     S2 := apply (m-n-1, i-> codim Ext^(i+n+1)(M,ring M));
-     test := apply(m-n-1,i->i+n+3);
-     if all(S2, test, (i,j) -> i>=j) then (
+     n := codim I;         
+     test := apply((dim ring I)-n-1,i->i);
+     if all(test, j -> (codim Ext^(j+n+1)(M,ring M)) >= j+n+3) 
+     then ( 
 	  Jac := minors(n,jacobian R);  
-	  m2-dim Jac >=2)
+	  dim R - dim Jac >=2)
      else false
      )
 
@@ -269,7 +267,7 @@ normal0 = (C) -> (
 	  SIdets := minors(codim I, SIR);
 	   -- the codimension of the singular locus.
 	  cs := codim SIdets + codim R;  -- codim of SIdets in poly ring. 
-	  if cs === dim ring I or SIdets == ideal (1_R)
+	  if cs === dim ring I or SIdets == 1
 	  -- i.e. the sing locus is empty.
 	  then (J = ideal vars ring I;)
 	  else (J = radical0(lift(ideal SIdets_0,ring I)));
@@ -280,7 +278,7 @@ normal0 = (C) -> (
 	  while det1 == ideal (0_R) do (
 	       det1 = minors(codim I, SIR, Limit=>n);
 	       n = n+1);
-	     if det1 == ideal (1_R)
+	     if det1 == 1
 	     -- i.e. the sing locus is empty.
 	     then (J = ideal vars ring I;)
 	     else (J = radical0(lift(ideal det1_0,ring I)))
@@ -369,11 +367,12 @@ ICfractions(Ring) := Matrix => o-> R -> (
 	       L1 := apply(R#IIICCC#"fractions", i->matrix{{i}});
 	       L2 := matrix{flatten apply(apply(L1, i->substitute(i,KF)), j-> first entries j)};
 	       done := false;
-	       while done == false do (
+	       while (
 		    G := map(KF,KF,matrix{join(M3,M1)});
 	       	    L2 = G(L2);
-	       	    done = isSubset(ideal apply(first entries L2,i->numerator i), ideal take(generators K , {#(generators K)-#((options R).Variables),#(generators K)}));
-	       	    );
+	       	    not isSubset(ideal apply(first entries L2,i->numerator i), ideal take(generators K , {#(generators K)-#((options R).Variables),#(generators K)}))
+	       	    )	  
+	       do ();
 	       K2 := frac R;
 	       substitute(L2,K2)
 	       )
@@ -381,10 +380,11 @@ ICfractions(Ring) := Matrix => o-> R -> (
 		    G2 := matrix{join(M3,M1)};
      	  	    Map := map(KF,KF,G2);
      	  	    done = false;
-	  	    while done == false do (
+	  	    while (
 	       		 G2 = Map(G2);
-	       		 done = isSubset(ideal apply(first entries G2,i->numerator i), ideal take(generators K , {#(generators K)-#((options R).Variables),#(generators K)}));
-	       		 );
+	       		 not isSubset(ideal apply(first entries G2,i->numerator i), ideal take(generators K , {#(generators K)-#((options R).Variables),#(generators K)}))
+	       		 )
+		    do ();
 	  	    K2 = frac R;
 	  	    substitute(G2,K2)
 		    )
@@ -399,7 +399,7 @@ ICfractions(Ring) := Matrix => o-> R -> (
 -- have to kill the multigrading in this case at the very beginning.
 isSinglyGraded := (R) -> (
      n := numgens (ring presentation R).degreesRing;
-     if n===1 then true else false)     
+      n===1)     
 
 --------------------------------------------------------------------
 conductor = method()
@@ -640,7 +640,7 @@ TEST "
 R = ZZ/101[symbol x..symbol z,Degrees=>{2,5,6}]/(z*y^2-x^5*z-x^8)
 time J = integralClosure (R,Variable => symbol b) 
 use ring ideal J
-assert(ideal J == ideal(b_1*x^2-42*y*z, x^6+12*b_1*y+x^3*z, b_1^2-47*x^4*z-47*x*z^2))
+assert(ideal J == ideal(b_1*x^2-y*z, x^6-b_1*y+x^3*z, -b_1^2+x^4*z+x*z^2))
 assert(ICfractions R == substitute(matrix {{(42*y*z)/x^2, x, y, z}},frac R))"
 
 -- multigraded test
