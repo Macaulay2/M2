@@ -1,4 +1,5 @@
 #! /bin/sh -e
+prefix=@FINALPREFIX@
 case "$1" in
     install|upgrade)
     ;;
