@@ -99,10 +99,10 @@ randL = (R, n, r, l) ->
           matrix table(n-r+1-l, n, (i, j) -> random(0, R));
 testTransverse = F -> (
       R := F[apply(subsets(6, 3), i -> q_i )];
-      continue := true;
+      Continue := true;
       j := 0;  
       limit := 5;
-      while continue and (j < limit) do (
+      while Continue and (j < limit) do (
            j = j + 1;
            I := fold((J, i) -> J + 
                      spSchub(3, randL(R, 6, 3, 1), q) +
@@ -113,11 +113,11 @@ testTransverse = F -> (
            if (dim I == 0) and (degree I == 6) then (
            lin := promote(random(1, R), (R/I));
            g := charPoly(lin, Z);
-           continue = not(1 == gcd(g, diff(Z, g)));
+           Continue = not(1 == gcd(g, diff(Z, g)));
            ));
-      if continue then << "Failed for the prime " << char F << 
+      if Continue then << "Failed for the prime " << char F << 
          " with " << j << " iterations" << endl;
-      if not continue then << "Succeeded for the prime " <<
+      if not Continue then << "Succeeded for the prime " <<
           char F << " in " << j << " iteration(s)" << endl;
       );
 testTransverse(ZZ/2);
