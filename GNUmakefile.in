@@ -94,13 +94,13 @@ install all::
 	@echo "************************************************"
 
 everything: all
+	$(MAKE) RerunExamples=true install
+	$(MAKE) tarball debian
 	@echo "************************************************"
 	@echo "*                                              *"
 	@echo "*    running 'make -k check'                   *"
 	@echo "*                                              *"
 	@echo "************************************************"
-	$(MAKE) RerunExamples=true install
-	$(MAKE) tarball debian
 	$(MAKE) -k check
 
 help :
