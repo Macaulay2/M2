@@ -69,7 +69,7 @@ minorsIdeal = (m,n,k) -> (
      forceGB gens I;
      I);
 apply(2..8, i -> time codim monomialIdeal minorsIdeal(i,2*i,2))
-x -- erase symbol x;
+x = symbol x;
 stdPairs = I -> (
      S := ring I;
      X := gens S;
@@ -110,7 +110,7 @@ permutohedronIdeal = n -> (
           (i,r) -> r^(i+1)));
 L = apply({2,3,4,5}, j -> standardPairs(permutohedronIdeal(j)));
 apply(L, i -> #i)
-erase symbol x; erase symbol z;
+x = symbol x; z = symbol z;
 toBinomial = (b, S) -> (
      pos := 1_S;
      neg := 1_S;
