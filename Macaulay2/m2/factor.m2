@@ -1,20 +1,30 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
-gcd(RingElement,RingElement) := RingElement => (r,s) -> new ring r from rawGCD(raw r, raw s)
----- old way:
---  							(
---      if r == 0 then s
---      else if s == 0 then r
---      else (
--- 	  z := syz( matrix{{r,s}}, SyzygyLimit => 1 );
--- 	  a := z_(0,0);
--- 	  if s%a != 0 then error "can't find gcd in this ring";
--- 	  t := s // a;
--- 	  if isField coefficientRing ring t then (
--- 	       c := leadCoefficient t;
--- 	       t = t // c;
--- 	       );
--- 	  t))
+good := k -> k === QQ or k === ZZ or instance(k,GaloisField) and char k === k.order;
+monic := t -> (
+     c := leadCoefficient t;
+     c' := 1 // c;
+     if c * c' == 1 then t = t * c';
+     t)
+
+gcd(RingElement,RingElement) := RingElement => (r,s) -> (
+     R := ring r;
+     if ring s =!= R then error "gcd: expected elements in the same ring";
+     if isField R then if r == 0 and s == 0 then 0_R else 1_R
+     else if instance(R,PolynomialRing) and good coefficientRing R then (
+	  -- use factory for this
+     	  new ring r from rawGCD(raw r, raw s)
+	  )
+     else if instance(R,PolynomialRing) and numgens R == 1 and isField coefficientRing R then monic (
+	  -- does this depend on the monomial order in R, too?
+	  -- would this code work for more than one variable?
+	  if r == 0 then s
+	  else if s == 0 then r
+	  else (
+	       a := (syz( matrix{{r,s}}, SyzygyLimit => 1 ))_(0,0);
+	       if s%a != 0 then error "can't find gcd in this ring";
+	       s // a))
+     else notImplemented())
 
 gcdCoefficients(RingElement,RingElement) := (f,g) -> (	    -- ??
      R := ring f;
