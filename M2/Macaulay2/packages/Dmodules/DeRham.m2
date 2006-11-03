@@ -23,7 +23,7 @@ deRham RingElement := options -> f -> (
 	  WeylAlgebra => apply(toList(1..n), i -> x_i => D_i)];
      RtoWA := map(WA, R, (vars WA)_(toList(0..n-1)));
      M := cokernel matrix{{D_1 .. D_n}};
-     locMod := Dlocalization(M, RtoWA f, Strategy => Oaku);
+     locMod := Dlocalize(M, RtoWA f, Strategy => Oaku);
      w := toList(n:1);
      integrateTable := Dintegration(locMod, w, options);
      homologyTable := hashTable apply(toList(0..n),
@@ -47,7 +47,7 @@ deRham (ZZ, RingElement) := options -> (k, f) -> (
 	  WeylAlgebra => apply(toList(1..n), i -> x_i => D_i)];
      RtoWA := map(WA, R, (vars WA)_(toList(0..n-1)));
      M := cokernel matrix{{D_1 .. D_n}};
-     locMod := Dlocalization(M, RtoWA f, Strategy => Oaku);
+     locMod := Dlocalize(M, RtoWA f, Strategy => Oaku);
      w := toList(n:1);
      homologyModule := Dintegration(n-k, locMod, w, options);
      homologyModule
@@ -70,7 +70,7 @@ deRhamAll RingElement := options -> f -> (
      RtoWA := map(WA, R, (vars WA)_(toList(0..n-1)));
      M := cokernel matrix{{D_1 .. D_n}};
      WAf := RtoWA f;
-     LocMap := DlocalizationMap(M, WAf, Strategy => Oaku);
+     LocMap := DlocalizeMap(M, WAf, Strategy => Oaku);
      Mf := target LocMap;
      w := toList(n:1);
      

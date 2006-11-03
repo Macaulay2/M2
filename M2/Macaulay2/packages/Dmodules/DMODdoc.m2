@@ -2172,7 +2172,7 @@ document {
      	f = x^2-y^3 
      	deRhamAll f
 	///,
-     SeeAlso => {"deRham", "Dlocalization", "Dintegration"}	
+     SeeAlso => {"deRham", "Dlocalize", "Dintegration"}	
 } 
 
 document {
@@ -2199,7 +2199,7 @@ document {
      	deRham f
 	deRham(1,f)
 	///,
-     SeeAlso => {"deRhamAll", "Dlocalization", "Dintegration"}
+     SeeAlso => {"deRhamAll", "Dlocalize", "Dintegration"}
      }
 document {
      Key => TransferCycles,
