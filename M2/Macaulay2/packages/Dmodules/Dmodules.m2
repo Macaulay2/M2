@@ -1,5 +1,5 @@
 export {ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,
-        bFunction,NonGeneric,TryGeneric,IntRing,
+        bFunction,NonGeneric,TryGeneric,IntRing,LocalizeMap,
         globalB,globalBFunction,ViaAnnFs,ReducedB,factorBFunction,getIntRoots,Boperator,Bpolynomial,globalBoperator,
 	AnnFs,AnnIFs,Dtrace,getDtrace,setHomSwitch,getHomSwitch,localCohom,Walther,OaTa,LocStrategy,
 	OaTaWa,pruneLocalCohom,paramBpoly,GroundField,makeCyclic,Generator,AnnG,isHolonomic,DHom,DExt,Special,
