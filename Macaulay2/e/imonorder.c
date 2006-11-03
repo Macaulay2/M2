@@ -422,6 +422,22 @@ static bool MO_pack2(int nvars, const int *expon, int *slots)
   return true;
 }
 #endif
+
+//static int MO_checksize(int n, const int *a, int leftmask)
+//{
+//  for ( ; n > 0; --n)
+//    if (*a++ & leftmask) return 0;
+//  return 1;
+//}
+//static long MO_packit4(int nvars, const int *a)
+//{
+//  long result = ((*a++) & rightmask);
+//  result = (result << 8) | ((*a++) & 0x07f);
+//  result = (result << 8) | ((*a++) & 0x07f);
+//  result = (result << 8) | ((*a++) & 0x07f);
+//  return result;
+//}
+
 static void MO_pack4(int nvars, const int *expon, int *slots)
 {
   union pack4 w;

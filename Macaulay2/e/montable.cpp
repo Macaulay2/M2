@@ -52,7 +52,7 @@ static unsigned long monomial_mask(int nvars, exponents exp)
 
 MonomialTable::mon_term *MonomialTable::make_list_head()
 {
-  mon_term *t = new mon_term;
+  mon_term *t = reinterpret_cast<mon_term *>(mon_term_stash->new_elem());
   t->_next = t->_prev = t;
   t->_val = -1;
   t->_lead = 0;
@@ -63,6 +63,7 @@ MonomialTable *MonomialTable::make(int nvars)
 {
   MonomialTable *result;
   result = new MonomialTable;
+  result->mon_term_stash = new stash("montable terms", sizeof(mon_term));
   result->_nvars = nvars;
   result->_count = 0;
   /* The first entry is a dummy entry.  Components 
@@ -83,10 +84,11 @@ MonomialTable::~MonomialTable()
 	  mon_term *tmp = t->_next;
 	  tmp->_prev->_next = tmp->_next;
 	  tmp->_next->_prev = t;
-	  deleteitem(tmp);
+	  mon_term_stash->delete_elem(tmp);
 	}
       _head[i] = 0;
     }
+  delete mon_term_stash;
   _count = 0;
 }
 
@@ -201,7 +203,7 @@ void MonomialTable::insert(exponents exp, int comp, int id)
   mon_term *t;
 
   /* Make a new mon_term including exp */
-  mon_term *newterm = new mon_term;
+  mon_term *newterm = reinterpret_cast<mon_term *>(mon_term_stash->new_elem());
   newterm->_lead = exp;
   newterm->_mask = monomial_mask(_nvars,exp);
   newterm->_val = id;

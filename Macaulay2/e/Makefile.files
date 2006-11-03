@@ -4,6 +4,7 @@
 
 
 #	points \
+#	gbbinom \
 
 INTERFACE = \
 	monideal_minprimes \
@@ -93,7 +94,7 @@ STILLTOCOMPILE = \
 	newspair \
 	termideal \
 	gbZZ \
-	gbbinom
+
 
 COMMANDS = \
 	mat-kbasis \

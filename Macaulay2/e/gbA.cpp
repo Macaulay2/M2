@@ -21,6 +21,12 @@
  * Initialization ********
  *************************/
 
+exponents gbA::exponents_make()
+{
+  exponents result = reinterpret_cast<exponents>(lcm_stash->new_elem());
+  return result;
+}
+
 gbA * gbA::create(const Matrix *m,
 		  M2_bool collect_syz,
 		  int n_rows_to_keep,
@@ -37,7 +43,11 @@ gbA * gbA::create(const Matrix *m,
 
 void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights0, int strat)
 {
-  max_reduction_count = 100;
+  max_reduction_count = 10; 
+     // 1 is best possible for 3-anderbuch!
+     // 5 is: (114.64 sec, 494 MB)
+     // 10 is best so far (125.33 sec, 527 MB virtual).  
+     // 50 is faster/smaller than 100, and 1000 was awful, on 3-andersbuch
   const PolynomialRing *origR = m->get_ring()->cast_to_PolynomialRing();
   if (origR == NULL)
     {
@@ -53,6 +63,10 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
   _nvars = R->get_flattened_monoid()->n_vars();
   _coeff_type = origR->coefficient_type();
   n_fraction_vars = origR->n_fraction_vars();
+
+  spair_stash = new stash("gbA spairs", sizeof(spair));
+  gbelem_stash = new stash("gbA elems", sizeof(gbelem));
+  lcm_stash = new stash("gbA lead monoms", sizeof(int) * (R->n_vars()+2));
 
   if (nsyz < 0 || nsyz > m->n_cols())
     nsyz = m->n_cols();
@@ -82,6 +96,7 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
   hf_diff = 0;
 
   this_degree = _F->lowest_primary_degree() - 1;
+  npairs = 0;
   complete_thru_this_degree = this_degree;
   set_status(COMP_NOT_STARTED);
 
@@ -106,7 +121,7 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
 
   minimal_gb = ReducedGB::create(originalR,_F,_Fsyz);
   minimal_gb_valid = true;
-  EXP_ = R->exponents_make();
+  EXP_ = exponents_make();
 
   if (originalR->is_quotient_ring())
     {
@@ -180,7 +195,12 @@ void gbA::remove_gb()
     {
       R->gbvector_remove(gb[i]->g.f);
       R->gbvector_remove(gb[i]->g.fsyz);
-      gb[i] = 0; // gb[i] was allocated via gc, so it will be collected
+    }
+  for (int i=0; i<gb.size(); i++)
+    {
+      lcm_stash->delete_elem(gb[i]->lead);
+      gbelem_stash->delete_elem(gb[i]);
+      gb[i] = 0;
     }
   delete minimal_gb; // will free its own gbvector's.
   for (int i=0; i<_syz.size(); i++)
@@ -190,6 +210,9 @@ void gbA::remove_gb()
     }
   delete lookup;
   delete lookupZZ;
+  delete spair_stash;
+  delete gbelem_stash;
+  delete lcm_stash;
   // Also remove the SPAirSet...
 }
 
@@ -258,10 +281,10 @@ static bool exponents_less_than(int nvars, exponents a, exponents b)
 gbA::gbelem *gbA::gbelem_ring_make(gbvector *f)
 {
   int f_leadweight;
-  gbelem *g = new gbelem;
+  gbelem *g = reinterpret_cast<gbelem *>(gbelem_stash->new_elem());
   g->g.f = f;
   g->g.fsyz = 0;
-  g->lead = R->exponents_make();
+  g->lead = exponents_make();
   R->gbvector_get_lead_exponents(_F, f, g->lead);
   g->deg = weightInfo_->gbvector_weight(f, f_leadweight);
   g->alpha = g->deg - f_leadweight;
@@ -277,10 +300,10 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
 			      int deg)
 {
   int f_wt, f_leadweight;
-  gbelem *g = new gbelem;
+  gbelem *g = reinterpret_cast<gbelem *>(gbelem_stash->new_elem());
   g->g.f = f;
   g->g.fsyz = fsyz;
-  g->lead = R->exponents_make();
+  g->lead = exponents_make();
   R->gbvector_get_lead_exponents(_F, f, g->lead);
   g->deg = deg;
   f_wt = weightInfo_->gbvector_weight(f, f_leadweight);
@@ -297,7 +320,7 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
 
 gbA::spair *gbA::spair_node()
 {
-  spair *result = new spair;
+  spair *result = reinterpret_cast<spair *>(spair_stash->new_elem());
   result->next = 0;
   return result;
 }
@@ -305,7 +328,14 @@ gbA::spair *gbA::spair_node()
 void gbA::spair_delete(spair *&p)
 {
   // MES: delete the exponent first?
-  deleteitem(p);
+  if (p == 0) return;
+  if (p->type == SPAIR_GEN || p->type == SPAIR_ELEM)
+    {
+      R->gbvector_remove(p->x.f.f);
+      R->gbvector_remove(p->x.f.fsyz);
+    }
+  lcm_stash->delete_elem(p->lcm);
+  spair_stash->delete_elem(p);
 }
 
 gbA::spair *gbA::spair_make(int i, int j)
@@ -317,7 +347,7 @@ gbA::spair *gbA::spair_make(int i, int j)
   spair *result = spair_node();
   result->next = 0;
   result->type = SPAIR_SPAIR;
-  result->lcm = R->exponents_make();
+  result->lcm = exponents_make();
     exponents_lcm(_nvars, g1->deg, exp1, exp2, result->lcm, gb_weights, result->deg);
     if (g2->alpha > g1->alpha)
       result->deg += g2->alpha - g1->alpha;
@@ -337,7 +367,7 @@ gbA::spair *gbA::spair_make_gcd_ZZ(int i, int j)
 gbA::spair *gbA::spair_make_gen(POLY f)
 {
   assert(f.f != 0);
-  exponents exp1 = R->exponents_make();
+  exponents exp1 = exponents_make();
   R->gbvector_get_lead_exponents(_F, f.f, exp1);
   int deg = weightInfo_->gbvector_weight(f.f);
   spair *result = spair_node();
@@ -356,7 +386,7 @@ gbA::spair *gbA::spair_make_skew(int i, int v)
   int j;
   gbelem *g1 = gb[i];
   exponents exp1 = g1->lead;
-  exponents exp2 = R->exponents_make();
+  exponents exp2 = exponents_make();
   int vvar = R->skew_variable(v);
   for (j=0; j<_nvars; j++)
     exp2[j] = 0;
@@ -617,7 +647,7 @@ void gbA::minimalize_pairs_non_ZZ(spairs &new_set)
 	}
     }
 
-  deleteitem(montab);
+  delete montab;
   for (spairs::iterator i = new_set.begin(); i != new_set.end(); i++)
     spair_delete(*i);
 }
@@ -937,6 +967,10 @@ int gbA::spair_set_prepare_next_degree(int &nextdegree)
   //  G->spairs_reverse(S->spair_list);
   //  G->spairs_reverse(S->gen_list);
   return len;
+}
+
+void gbA::spair_set_show_mem_usage()
+{
 }
 
 void gbA::spairs_reverse(spair *&ps)
@@ -1937,6 +1971,8 @@ bool gbA::s_pair_step()
       if (p->type == SPAIR_GEN)
 	n_gens_left--;
       POLY f = p->x.f;
+      p->x.f.f = 0;
+      p->x.f.fsyz = 0;
       spair_delete(p);
 
       handle_elem(f,minlevel);
@@ -2030,6 +2066,8 @@ bool gbA::process_spair(spair *p)
   gbelem_type minlevel = (p->type == SPAIR_GEN ? ELEM_POSSIBLE_MINGEN : ELEM_MIN_GB);
   if (p->type == SPAIR_GEN) n_gens_left--;
   POLY f = p->x.f;
+  p->x.f.f = 0;
+  p->x.f.fsyz = 0;
   spair_delete(p);
 
 
@@ -2052,7 +2090,6 @@ bool gbA::process_spair(spair *p)
 	  if (gbTrace == 3) emit_wrapped("o");
 	}
     }
-
   return true;
 }
 
@@ -2106,7 +2143,6 @@ Matrix *gbA::make_lead_term_matrix()
 void gbA::do_computation()
 {
   enum ComputationStatusCode ret;
-  int npairs;
   spair *p;
 
   // initial state is STATE_NEWDEGREE
@@ -2217,6 +2253,8 @@ void gbA::do_computation()
 	    while ((p = spair_set_next()) != 0)
 	      {
 		process_spair(p);
+		npairs--;
+		n_pairs_computed++;
 
 		if ((ret = computation_is_complete()) != COMP_COMPUTING)
 		  {
@@ -2277,96 +2315,8 @@ void gbA::do_computation()
 void gbA::start_computation()
 {
   do_computation();
-
-  // debugging
-  // R->memstats();
-
+  if (gbTrace >= 1) show_mem_usage();
   return;
-  int npairs;
-  enum ComputationStatusCode is_done = COMP_COMPUTING;
-
-  if (stop_.always_stop) return;
-
-  if (stop_.stop_after_degree && this_degree > stop_.degree_limit->array[0])
-    {
-      // Break out now if we don't have anything else to compute in this degree.
-      set_status(COMP_DONE_DEGREE_LIMIT);
-      return;
-    }
-
-  for (;;)
-    {
-      if (system_interruptedFlag) 
-	{
-	  is_done = COMP_INTERRUPTED;
-	  break;
-	}
-
-      is_done = computation_is_complete();
-      if (is_done != COMP_COMPUTING) break;
-
-      /* If we need to move to the next degree, do it. */
-      if (S->n_in_degree  == 0)
-	{
-	  if (hilb_new_elems)
-	    {
-	      // Recompute h, hf_diff
-	      Matrix *hf = make_lead_term_matrix();
-	      RingElement *h = hilb_comp::hilbertNumerator(hf);
-	      if (h == 0)
-		{
-		  is_done = COMP_INTERRUPTED;
-		  break;
-		}
-	      hf_diff = (*h) - (*hf_orig);
-	      hilb_new_elems = false;
-	    }
-
-	  int old_degree = this_degree;
-	  npairs = spair_set_prepare_next_degree(this_degree); // sets this_degree
-	  if (old_degree < this_degree)
-	    first_in_degree = gb.size();
-	  complete_thru_this_degree = this_degree-1;
-	  if (npairs == 0)
-	    {
-	      is_done = COMP_DONE;
-	      break;
-	    }
-	  if (stop_.stop_after_degree && this_degree > stop_.degree_limit->array[0])
-	    {
-	      is_done = COMP_DONE_DEGREE_LIMIT;
-	      break;
-	    }
-
-	  if (use_hilb)
-	    {
-	      hilb_n_in_degree = hilb_comp::coeff_of(hf_diff, this_degree);
-	      if (hilb_n_in_degree == 0) flush_pairs();
-	    }
-
-	  if (gbTrace >= 1)
-	    {
-	      buffer o;
-	      o << '{' << this_degree << '}';
-	      o << '(';
-	      if (use_hilb) 
-		o << hilb_n_in_degree << ',';
-	      o << npairs << ')';
-	      emit_wrapped(o.str());
-	    }
-#if 0
-	  if (gbTrace >= 1)
-	    {
-	      char s[100];
-	      sprintf(s, "%sDEGREE %d (npairs %d)\n%s", wrapping_prefix, this_degree, npairs,wrapping_prefix);
-	      emit(s);
-	    }
-#endif
-	}
-
-      s_pair_step();
-    }
-  set_status(is_done);
 }
 
 
@@ -2548,6 +2498,18 @@ void gbA::showgb()
       R->gbvector_text_out(o, _F, gb[i]->g.f);
       emit_line(o.str()); o.reset();
     }
+}
+
+void gbA::show_mem_usage()
+{
+  long nmonoms = 0;
+  for (int i=0; i<gb.size(); i++)
+    {
+      nmonoms += R->gbvector_n_terms(gb[i]->g.f);
+      nmonoms += R->gbvector_n_terms(gb[i]->g.fsyz);
+    }
+  printf("number of (nonminimal) gb elements = %ld\n", gb.size());
+  printf("number of monomials                = %ld\n", nmonoms);
 }
 
 // Local Variables:

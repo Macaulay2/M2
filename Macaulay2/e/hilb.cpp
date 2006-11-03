@@ -6,6 +6,8 @@
 extern char system_interruptedFlag;
 extern int gbTrace;
 
+long n_bag_allocs = 0;
+
 int partition_table::representative(int x)
 {
   int i = x;
@@ -219,17 +221,20 @@ static void iquotient_and_sum(MonomialIdeal &I,
   array< queue<Bag *> *> bins;
   sum = new MonomialIdeal(I.get_ring(), mi_stash);
   quot = new MonomialIdeal(I.get_ring(), mi_stash);
+  n_bag_allocs++;
   Bag *bmin = new Bag();
   varpower::copy(m, bmin->monom());
   sum->insert_minimal(bmin);
   for (Index<MonomialIdeal> i = I.first(); i.valid(); i++)
     {
+      n_bag_allocs++;
       Bag *b = new Bag();
       varpower::quotient(I[i]->monom().raw(), m, b->monom());
       if (varpower::divides(m, I[i]->monom().raw()))
 	quot->insert_minimal(b);
       else
 	{
+	  n_bag_allocs++;
 	  sum->insert_minimal(new Bag(0,I[i]->monom()));
 	  int d = varpower::simple_degree(b->monom().raw());
 	  if (d >= bins.length())
