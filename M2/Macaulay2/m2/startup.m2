@@ -162,10 +162,12 @@ if firstTime then (
      copyright = (
 	  "Macaulay 2, version " | version#"VERSION" | newline
 	  | "--Copyright 1993-2006, D. R. Grayson and M. E. Stillman" | newline
-	  | "--Singular-Factory " | version#"factory version" | ", copyright 1993-2001, G.-M. Greuel, et al." | newline
-	  | "--Singular-Libfac " | version#"libfac version" | ", copyright 1996-2001, M. Messollen" | newline
-	  | "--NTL Library " | version#"ntl version" | ", copyright, Victor Shoup" | newline
-     	  | "--GNU MP Library " | version#"gmp version"
+	  | "--GC " | version#"gc version" | ", by Hans Boehm and Alan J. Demers" | newline
+	  | "--Singular-Factory " | version#"factory version" | ", by G.-M. Greuel et al." | newline
+	  | "--Singular-Libfac " | version#"libfac version" | ", by M. Messollen" | newline
+	  | "--NTL " | version#"ntl version" | ", by Victor Shoup" | newline
+     	  | "--GNU MP " | version#"gmp version" | ", by Torbjörn Granlund et al." | newline
+	  | "--BLAS and LAPACK 3.0" | ", by J. Dongarra et al."
 	  );
 
      use = identity;				  -- temporary, until methods.m2
