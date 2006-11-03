@@ -20,7 +20,7 @@ strat = LongPolynomial;
 
     R = ZZ/101[a,b,c,d, Degrees => {1,2,3,4}];
     m = matrix{{a^4*b - c^2, a*c - b^2, c^3 - a*d^2}};
-    assert ( generators gb(m, Strategy => strat) == matrix {{b^2-a*c, a^4*b-c^2, a^5*c-b*c^2, c^3-a*d^2, a^6*d^2-a*b*c*d^2}} )
+    assert ( generators gb(m, Strategy => strat) == sort matrix {{b^2-a*c, a^4*b-c^2, a^5*c-b*c^2, c^3-a*d^2, a^6*d^2-a*b*c*d^2}} )
 
     R = ZZ/101[symbol r,symbol s,symbol t,symbol a..symbol f,
               Degrees=>{1,1,1,3,3,3,3,3,3},
