@@ -101,7 +101,7 @@ everything: all
 	@echo "************************************************"
 	$(MAKE) RerunExamples=true install
 	$(MAKE) tarball debian
-	$(MAKE) -k check || true
+	$(MAKE) -k check
 
 help :
 	@ echo "usage: make [option...] [target...]"
