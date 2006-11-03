@@ -93,6 +93,9 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  );
      if n != numgens source m 
      then error ("encountered values for ", toString numgens source m," variables");
+     if not all(degrees target m, d -> all(d, i -> i === 0))
+     or not all(degrees source m, d -> all(d, i -> i === 0))
+     then m = map(R^(numgens target m), R^(numgens source m), m); -- the degrees carry no useful information for us
      new RingMap from {
 	  symbol source => S,
 	  symbol target => R,
