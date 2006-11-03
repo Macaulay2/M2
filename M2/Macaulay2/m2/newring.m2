@@ -95,11 +95,10 @@ graphIdeal RingMap := Ideal => opts -> (f) -> (
      assert(not isHomogeneous f or isHomogeneous I);
      I)
 
-graphRing RingMap := QuotientRing => options -> (f) -> (
-     if f.cache.?graphRing then f.cache.graphRing else f.cache.graphRing = (
-     	  I := graphIdeal(f,options);
-     	  R := ring I;
-     	  R/I))
+graphRing RingMap := QuotientRing => opts -> (f) -> (
+     I := graphIdeal(f,opts);
+     R := ring I;
+     R/I)
 
 -----------------------
 -- Symmetric Algebra --
