@@ -212,8 +212,10 @@ kernel RingMap := Ideal => opts -> (cacheValue symbol kernel) (
 		    MonomialOrder => Eliminate n1, 
 		    MonomialSize => 16,
 		    VariableBaseName => local X);
+	       assert( not isHomogeneous f or isHomogeneous JJ );
 	       SS := ring JJ;
-	       if checkHilbertHint JJ then (
+	       chh := checkHilbertHint JJ;
+	       if chh then (
 		   hf := poincare (target f)^1;
 		   T := (ring hf)_0;
 		   hf = hf * product(numgens source JJ, i -> (
@@ -222,7 +224,9 @@ kernel RingMap := Ideal => opts -> (cacheValue symbol kernel) (
 		   (cokernel JJ).cache.poincare = hf;
 		   );
 	       mapback := map(R, ring JJ, map(R^1, R^n1, 0) | vars R);
-	       ideal mapback selectInSubring(1,generators gb(JJ,opts))
+	       G := gb(JJ,opts);
+	       assert (not chh or G#?"rawGBSetHilbertFunction log"); -- ensure the Hilbert function hint was actually used in gb.m2
+	       ideal mapback selectInSubring(1,generators G)
 	       )
 	  else (
 	       numsame := 0;
