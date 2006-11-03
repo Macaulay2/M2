@@ -14,3 +14,22 @@ D = frac C
 toExternalString D
 
 toExternalString (C^4)
+
+-- and this one is worthless:
+
+    i13 : QQ[x]
+
+    o13 = QQ [x]
+
+    o13 : PolynomialRing
+
+    i14 : map(oo^1,,{{x}})
+
+    o14 = | x |
+
+			 1              1
+    o14 : Matrix (QQ [x])  <--- (QQ [x])
+
+    i15 : toExternalString oo
+
+    o15 = map(QQ [x]^{{0}}, QQ [x]^{{-1}}, {{x}})
