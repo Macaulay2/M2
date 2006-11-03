@@ -99,9 +99,9 @@ everything: all
 	@echo "*    running 'make -k check'                   *"
 	@echo "*                                              *"
 	@echo "************************************************"
-	$(MAKE) -k check
 	$(MAKE) RerunExamples=true install
 	$(MAKE) tarball debian
+	$(MAKE) -k check || true
 
 help :
 	@ echo "usage: make [option...] [target...]"
