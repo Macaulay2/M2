@@ -78,10 +78,12 @@ distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile
 tarball: tarball.$(COMPRESS)
 tarballs: tarball.bz2 tarball.tgz
 tarball.bz2 :; tar cfhz $(PKG_TBZ) --bzip --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir)
-tarball.gz  :; tar cfhz $(PKG_TGZ) --gzip --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir)
+tarball.tgz  :; tar cfhz $(PKG_TGZ) --gzip --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir)
 ifeq "$(CYGWIN)" "yes"
 install :: tarball
 endif
+
+debian : tarball.tgz ; $(MAKE) -C debian install
 
 install install-others install-Macaulay2 all clean distclean::; @echo "-------- done making '$@' --------"
 install all::
@@ -99,6 +101,7 @@ everything: all
 	@echo "************************************************"
 	$(MAKE) -k check
 	$(MAKE) RerunExamples=true install
+	$(MAKE) tarball debian
 
 help :
 	@ echo "usage: make [option...] [target...]"
@@ -111,6 +114,7 @@ help :
 	@ echo "  check                       run the tests"
 	@ echo "  everything                  install (rerunning examples) and run the tests"
 	@ echo "  tarball                     generate tar file (assuming encap is enabled)"
+	@ echo "  debian                      generate debian file (assuming encap is enabled)"
 	@ echo "  clean                       remove all generated files except makefiles"
 	@ echo "  distclean                   remove all generated files"
 	@ echo "  help                        show this help"

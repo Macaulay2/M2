@@ -150,6 +150,7 @@ AC_PROG_CC()
 AC_SUBST(GCC)
 AC_PROG_CXX()
 AC_PROG_YACC()
+AC_PROG_MKDIR_P()
 
 AC_MSG_CHECKING([whether linking C++ programs with gcc works])
 cat >unwindtest-main.cpp <<EOF
@@ -267,6 +268,9 @@ dnl AC_LINK_IFELSE([int main() {}],LIBDL=-ldl;AC_MSG_RESULT(yes), LIBDL=; AC_MSG
 dnl LIBS=-lpthread
 dnl AC_MSG_CHECKING(whether libpthread exists (-lpthread))
 dnl AC_LINK_IFELSE([int main() {}],LIBPTHREAD=-lpthread;AC_MSG_RESULT(yes), LIBPTHREAD=; AC_MSG_RESULT(no))
+
+AC_SUBST(FINALPREFIX)
+AC_ARG_WITH(final-prefix, AS_HELP_STRING(--with-final-prefix=...,final installation prefix (/usr) (used by debian installation scripts)), FINALPREFIX="$withval", FINALPREFIX="/usr")
 
 GCLIB="-lgc"
 AC_SUBST(GCLIB)

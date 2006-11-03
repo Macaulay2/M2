@@ -2,8 +2,11 @@
 include ../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
+finalprefix=@FINALPREFIX@
+prefixtail=$(shell echo $(finalprefix) | sed 's=^/==')
+prefixdir=$(shell dirname $(finalprefix))
 ############################## main targets
-all :: $(PKG_DEB) tidy
+install all :: $(PKG_DEB) tidy
 #################################
 # notice that fakeroot is required, get it here: http://ftp.debian.org/debian/pool/main/f/fakeroot
 $(PKG_DEB) : debian-binary control.tar.gz data.tar.gz
@@ -20,19 +23,20 @@ control.tar.gz : $(CONTROLFILES)
 	fakeroot chown root $(CONTROLFILES)
 	fakeroot tar cfz $@ $^
 prepare : ../$(PKG_TGZ)
-	rm -rf $(package) usr
+	rm -rf $(package) $(prefixtail)
+	$(MKDIR_P) $(prefixtail)
 	tar xzfp $^
 	for i in $(package)/* ; do if [ -f "$$i" ] ; then rm "$$i" ; fi ; done
-	mv $(package) usr
-	fakeroot chown -R root usr
+	mv $(package) $(prefixtail)
+	fakeroot chown -R root $(prefixtail)
 data.tar.gz : prepare
-	fakeroot tar cfz $@ usr
+	fakeroot tar cfz $@ $(prefixtail)
 md5sums : prepare
-	find usr -type f | xargs md5sum > $@
+	find $(prefixtail) -type f | xargs md5sum > $@
 tidy :
-	rm -rf usr control.tar.gz data.tar.gz md5sums
+	rm -rf $(prefixtail) control.tar.gz data.tar.gz md5sums
 clean ::
-	rm -rf $(package) usr debian-binary control.tar.gz data.tar.gz md5sums 
+	rm -rf $(package) $(prefixtail) debian-binary control.tar.gz data.tar.gz md5sums 
 	rm -rf $(PKG_DEB)
 distclean : clean; rm -f Makefile control
 
