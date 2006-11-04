@@ -84,14 +84,13 @@ pushlinear := opts -> (f,M) -> (
     m := presentation M;    
     R := target f;
     S := source f;
-    Rbase := ultimate(ambient, R);
-    fmat := substitute(f.matrix,Rbase);
+    Rbase := ring m;
+    fmat := lift(f.matrix,Rbase);
     n := numgens source f.matrix;
     n1 := numgens R - n;
     R1 := (coefficientRing Rbase)[Variables => numgens R, MonomialOrder => Eliminate n1];
-    fg := newCoordinateSystem(R1, fmat);
-    Fto := fg#0;  -- we don't need to go back, so we ignore fg#1
-    m1 := Fto substitute(m,Rbase);
+    (Fto,Ffrom) := newCoordinateSystem(R1, fmat);
+    m1 := Fto m;
     m1 = presentation (cokernel m1 ** cokernel Fto presentation R);
     if isHomogeneous f and isHomogeneous m then (
         hf := poincare cokernel m;
