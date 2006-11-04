@@ -72,7 +72,8 @@ A = QQ [x, y, z, w, s, t, Degrees => {{1}, {1}, {1}, {1}, {0}, {0}},
      MonomialOrder => {GRevLex => {1, 1, 1, 1}, 
 	  Position => Up, GRevLex => {1, 1}}, Heft => {1}]
 I = ideal (y^2*s-y*s*t-s^2,x^2-y*s-t^2,-x^3*s+z*w,-t^3+s^2)
-primaryDecomposition I
+p = primaryDecomposition I
+assert( I == intersect p )
 
 -- example 2
 
