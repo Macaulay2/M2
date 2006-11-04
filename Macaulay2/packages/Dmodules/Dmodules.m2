@@ -35,7 +35,7 @@ addHook(Module, symbol codim, M -> (
 	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then break (dim R - Ddim M)))
 
 beginDocumentation()
-load "Dmodules/DMODdoc.m2"
+load "./DMODdoc.m2"
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Dmodules install-one"
