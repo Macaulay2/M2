@@ -75,10 +75,10 @@ isConstant RRR := i -> true
 new RRR from RawRingElement := (RRR,x) -> rawToRRR x
 
 promote(RRR,RRR) := (i,RRR) -> i
-promote(RR,RRR) := 
-promote(QQ,RRR) := 
-promote(ZZ,RRR) := (i,RRR) -> toRRR i
-promote(RRR,RR) := (i,RR) -> toRR i
+
+promote(QQ,RRR) := promote(ZZ,RRR) := (i,RRR) -> toRRR i
+promote(RRR,RR) := (i,RR) -> toRR i	    -- which should it be?
+lift(RR,RRR) := (i,RRR) -> toRRR i
 
 lift(RRR,ZZ) := (r,ZZ) -> if r == floor r then floor r else error("can't lift ",toString r, " to ZZ")
 liftable'(RRR,ZZ) := (r,ZZ) -> r == floor r
