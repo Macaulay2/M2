@@ -474,7 +474,10 @@ document {
      EXAMPLE {
 	  "R = QQ[a..e]",
 	  "J = monomialCurveIdeal(R, {1,2,3,4})",
-	  "symmetricKernel(gens J)"
+	  (
+	       stderr << "--warning: non-functional example code commented out" << endl;
+	       "symmetricKernel -- (gens J)"
+	       )
      },
     
     "Let the ideal returned be ", TT "I", " and the ring it lives in 
@@ -492,14 +495,20 @@ document {
     EXAMPLE { 
      	  "R = QQ[x,y,z]/ideal(x*y^2-z^9)",
 	  "J = ideal(x,y,z)",
-	  "symmetricKernel(gens J)"
+	  (
+	       stderr << "--warning: non-functional example code commented out" << endl;
+	       "symmetricKernel -- (gens J)"
+	       )
 	  },
      " or ",
      EXAMPLE {
 	  "R = QQ[x,y,z]",
 	  "I = ideal(x*y^2-z^9)",
 	  "J = ideal(x,y,z)",
-	  "symmetricKernel(gens J)"
+	  (
+	       stderr << "--warning: non-functional example code commented out" << endl;
+	       "symmetricKernel -- (gens J)"
+	       )
 	  },
      "These many ways of working with the function allows the system 
      to compute both the classic Rees algebra of an ideal over a ring 
@@ -557,7 +566,10 @@ document {
 	       {0,0,0,0}}",
 	  "M=M-(transpose M)",
 	  "N=transpose (res coker transpose M).dd_2",
-	  "uN=universalEmbedding(N)"
+	  (
+	       stderr << "--warning: non-functional example code commented out" << endl;
+	       "uN=universalEmbedding -- (N)"
+	       )
 	  }
      }
 
