@@ -21,9 +21,11 @@ ARCH    = @ARCH@
 OS      = @OS@
 REL     = @REL@
 
-PKG_TGZ = $(package)-$(ARCH)-$(OS).tgz
+COMPRESS = @COMPRESS@
+PKG_TGZ = $(package)-$(ARCH)-$(OS).tar.gz
 PKG_TBZ = $(package)-$(ARCH)-$(OS).tar.bz2
 PKG_DEB = $(package)-$(ARCH)-$(OS).deb
+PKG_TZ  = $(package)-$(ARCH)-$(OS).tar.$(COMPRESS)
 
 DESC    = @PACKAGE_VERSION@-@host_cpu@-@OS@-@REL@
 # we used to use @ ARCH @ instead of @ host_cpu @ here, but for DEC alphas,
@@ -44,6 +46,9 @@ VERBOSE = @VERBOSE@
 STATIC = @STATIC@
 CYGWIN = @CYGWIN@
 TARLIBS = @TARLIBS@
+DEBIAN = @DEBIAN@
+TARFILE = @TARFILE@
+TAR_COMPRESS_OPTION = @TAR_COMPRESS_OPTION@
 
 CC = @CC@
 GCC = @GCC@
@@ -76,7 +81,6 @@ ENCAP = @ENCAP@
 M2SUFFIX = @M2SUFFIX@
 EXEEXT = @EXEEXT@
 EXE = $(M2SUFFIX)$(EXEEXT)
-COMPRESS = @COMPRESS@
 CONFIG_ARG0 = @CONFIG_ARG0@
 CONFIG_ARGS = @CONFIG_ARGS@
 CONFIG_CMD = @CONFIG_CMD@
