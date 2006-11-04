@@ -13,9 +13,10 @@ source RingMap := f -> f.source
 target RingMap := f -> f.target
 raw RingMap := f -> f.RawRingMap
 
-
 expression RingMap := f -> new FunctionApplication from {
      map, expression (target f, source f, matrix f)}
+
+degmap0 := n -> ( d := toList ( n : 0 ); e -> d )
 
 map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
      if not isFreeModule target m or not isFreeModule source m
@@ -39,10 +40,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	       opts.DegreeMap
 	       )
 	  else if degreeLength R === degreeLength S then identity
-	  else (
-	       d := toList ( degreeLength R : 0 );
-	       e -> d
-	       ));
+	  else degmap0 degreeLength R);
      n := 0;
      A := S;
      record := new MutableHashTable;
