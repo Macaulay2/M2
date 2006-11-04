@@ -175,6 +175,7 @@ fi
 
 AC_HEADER_TIME() dnl # time.h sys/time.h
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h sys/wait.h sys/resource.h io.h linux/personality.h stdint.h)
+AC_CHECK_HEADERS(sys/types.h gmp.h gdbm.h factoryconf.h)
 AC_CHECK_LIB(socket, socket)
 AC_CHECK_LIB(resolv, hstrerror)
 AC_CHECK_FUNCS([personality somesillyfunction sys_errlist herror error socket gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
@@ -182,6 +183,9 @@ AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([sys_errlist,sys_nerr,herror,gnu_get_libc_version])
 AC_FUNC_ALLOCA()
 
+AC_LANG(C++)
+AC_CHECK_HEADERS(NTL/tools.h)
+AC_LANG(C)
 
 AC_SUBST(HAVE_PERSONALITY)  HAVE_PERSONALITY=$ac_cv_func_personality
 
