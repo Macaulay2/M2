@@ -523,7 +523,7 @@ newCoordinateSystem(PolynomialRing, Matrix) := (S,x) -> (
      -- (b) what if R,S, are quotient rings
   m := contract(transpose vars R, x);
   n := complement m | m;
-  { map(S,R,vars S * substitute(n, S)), map(R,S,vars R * n^(-1))}
+  ( map(S,R,vars S * substitute(n, S)), map(R,S,vars R * n^(-1)) )
   )
 
 lift(Ideal,RingElement) := Ideal => (I,S) -> (
