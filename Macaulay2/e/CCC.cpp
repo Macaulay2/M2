@@ -1,7 +1,8 @@
 // Copyright 1995 Michael E. Stillman
 
-#include "CCC.hpp"
 #include "ZZ.hpp"
+#include "RRR.hpp"
+#include "CCC.hpp"
 #include "text_io.hpp"
 #include "monoid.hpp"
 #include "relem.hpp"
@@ -204,12 +205,20 @@ mpf_ptr CCC::to_BigReal(ring_elem f) const
   return BIGCC_RE(f);
 }
 
-bool CCC::promote(const Ring *, const ring_elem, ring_elem &) const
+bool CCC::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
+  if (Rf == globalRRR)
+    {
+      M2_CCC g = new_elem();
+      mpf_set(&g->re, MPF_VAL(f));
+      mpf_init(&g->im);
+      
+      result = BIGCC_RINGELEM(g);
+    }
   return false;
 }
 
-bool CCC::lift(const Ring *, const ring_elem, ring_elem &) const
+bool CCC::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
 {
   return false;
 }

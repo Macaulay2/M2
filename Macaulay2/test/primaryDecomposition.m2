@@ -17,6 +17,7 @@ c = set primaryDecomposition J / trim
 
 assert( #b == #c )
 
+
 clearAll
 kk = QQ
 A = kk[s,t]/(s^2-t^3)
@@ -27,4 +28,52 @@ B' = ring presentation A
 J' = lift(F J,B')
 C = primaryDecomposition J'
 assert( intersect C == J')
+
+
+kk = QQ
+A = kk[s,t]/(s^2-t^3)
+B = A[symbol x,y,z,w]/(x^2-s*y-t^2, w*z-s*x^3)
+J = ideal(s*y^2-t*x^2)
+time C = primaryDecomposition J
+assert(intersect C == J)
+
+R = ZZ/32003[b,s,t,u,v,w,x,y,z]
+I = ideal(
+    b*v+s*u,
+    b*w+t*u,
+    s*w+t*v,
+    b*y+s*x,
+    b*z+t*x,
+    s*z+t*y,
+    u*y+v*x,
+    u*z+w*x,
+    v*z+w*y)
+T = R/I
+time primaryDecomposition(ideal(0_T))
+assert(intersect oo == 0)
+
+end
+
+kk = QQ
+A = kk[s,t]/(s^2-t^3)
+B = A[x,y,z,w]/(x^2-s*y-t^2, w*z-s*x^3)
+J = ideal(s*y^2-t*x^2)
+
+J -- an ideal in R
+R = ring J
+(A,F,G) = flattenRing R
+B = ring presentation A
+J' = lift(F J,B)
+
+C = primaryDecomposition J'
+
+
+A = QQ [x, y, z, w, s, t, Degrees => {{1}, {1}, {1}, {1}, {0}, {0}}, 
+     MonomialOrder => {GRevLex => {1, 1, 1, 1}, 
+	  Position => Up, GRevLex => {1, 1}}, Heft => {1}]
+I = ideal (y^2*s-y*s*t-s^2,x^2-y*s-t^2,-x^3*s+z*w,-t^3+s^2)
+primaryDecomposition I
+
+-- example 2
+
 

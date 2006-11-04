@@ -1,7 +1,8 @@
 // Copyright 1995 Michael E. Stillman
 
-#include "RRR.hpp"
 #include "ZZ.hpp"
+#include "QQ.hpp"
+#include "RRR.hpp"
 #include "text_io.hpp"
 #include "monoid.hpp"
 #include "relem.hpp"
@@ -169,12 +170,29 @@ ring_elem RRR::from_BigReal(mpf_ptr r) const
   return MPF_RINGELEM(result);
 }
 
-bool RRR::promote(const Ring *, const ring_elem, ring_elem &) const
+bool RRR::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
+  if (Rf == globalZZ)
+    {
+      result = RRR::from_int(MPZ_VAL(f));
+      return true;
+    }
+  if (Rf == globalQQ)
+    {
+      mpf_ptr g = new_elem();
+      mpf_set_q(g, MPQ_VAL(f));
+      result = MPF_RINGELEM(g);
+      return true;
+    }
+  if (Rf == globalRR)
+    {
+      result = from_double(RR_VAL(f));
+      return true;
+    }
   return false;
 }
 
-bool RRR::lift(const Ring *, const ring_elem, ring_elem &) const
+bool RRR::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
 {
   return false;
 }

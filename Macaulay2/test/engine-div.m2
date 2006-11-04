@@ -128,7 +128,11 @@ rem(g,1-x)
 checkremquot(f,1-x^-1)
 checkremquot(f,1-x^-1-y^-1) -- HANGS
 
-R = QQ[t,u,Inverses => true]
+f % (1-x^-1)
+f == (1-x^-1) * (f // (1-x^-1))
+f % (1-x^-1-y^-1)
+
+R = QQ[t,u,Inverses => true, MonomialOrder=>RevLex]
 
 -- (1 - t^4) / (1 - t^2)
 -- (1 + t^4) / (1 - t^2)
@@ -136,6 +140,7 @@ R = QQ[t,u,Inverses => true]
 -- (1 + t^-4) / (1 - t^-2)
 -- (1 - t^-4 * u^-4) / (1 - t^-2 * u^-2)
 remquot((1 + t + t^-4 * u^-4), (1 - t^-2 * u^-2))
+checkremquot((1 + t + t^-4 * u^-4), (1 - t^-2 * u^-2))
 
 -- Polynomials in a skew commutative polynomial ring
 R = QQ[symbol a..symbol d,SkewCommutative=>true]
@@ -148,7 +153,7 @@ checkremquot(f,g)
 
 -- ZZ[vars]/I
 -- These shouldn't work, but they do...
-R = ZZ[x,y,z]/(x^2+y^2+2*z^2,134)
+R = ZZ[x,y,z]/ideal(x^2+y^2+2*z^2,134)
 f = x^2+1
 g = x+1
 checkremquot(f,g)
@@ -157,8 +162,6 @@ g = (x-y-1)
 checkremquot(f,g)
 checkremquot(x^2,y^2+2*z^2)
 
--- NOT CONSIDERED YET (11/13/00 MES)
--- rings of the form A[x,y,z].
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test engine-div.out"
