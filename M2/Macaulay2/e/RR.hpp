@@ -11,11 +11,12 @@ class RingRR : public Ring
 // Elements of this ring are real numbers: 'double's
 {
   friend class CoefficientRingRR;
+public:
   struct RRelem_rec {
     double val;
   };
   typedef RRelem_rec *RRelem;
-
+private:
   double _epsilon;  // Elements closer than this are considered identical.
 
   RRelem new_elem() const;

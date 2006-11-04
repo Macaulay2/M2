@@ -1,5 +1,6 @@
 // Copyright 2001 Michael E. Stillman
 
+#include "ZZ.hpp"
 #include "CC.hpp"
 #include <stdio.h>
 #include <math.h>
@@ -12,12 +13,6 @@
 #include "../d/M2mem.h"
 #include "coeffrings.hpp"
 
-#define CCELEM_VAL(f) (reinterpret_cast<M2_CC>((f).poly_val))
-#define CC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
-
-#define CC_IM(f) ((CCELEM_VAL(f))->im)
-#define CC_RE(f) ((CCELEM_VAL(f))->re)
-#define CC_NORM(f) (sqrt(CC_RE(f)*CC_RE(f) + CC_IM(f)*CC_IM(f)))
 
 extern "C" M2_CC make_M2_Complex(double re, double im)
 {

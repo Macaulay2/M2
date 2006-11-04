@@ -34,7 +34,7 @@ load "PrimaryDecomposition/Eisenbud-Huneke-Vasconcelos.m2"
 binomialCD = (I) -> error "Binomial strategy not implemented yet"
 
 Hybrid = new SelfInitializingType of BasicList
-
+///
 primaryDecomposition Ideal := List => o -> (I) -> (
      -- Determine the strategy to use.
      opt := SY;
@@ -64,6 +64,54 @@ primaryDecomposition Ideal := List => o -> (I) -> (
 	  HprimaryDecomposition ( I, assStrategy, localizeStrategy )
 	  )
      )
+///
+primedecomp = (I,strategy) -> (
+     -- Determine the strategy to use.
+     opt := SY;
+     if strategy =!= null then (
+	  opt = strategy;
+	  if opt === Monomial and not isMonomialIdeal I
+	  then error "cannot use 'Monomial' strategy on non monomial ideal";
+	  )
+     else (
+	  -- if we have a monomial ideal: use Monomial
+	  if isMonomialIdeal I then 
+	     opt = Monomial;
+	  );
+     -- Now call the correct algorithm
+     if opt === Monomial then (
+	  C := primaryDecomposition monomialIdeal I;
+	  I.cache#"AssociatedPrimes" = apply(C, I -> ideal radical I);
+	  C/ideal
+	  )
+     else if opt === Binomial then binomialCD I
+     else if opt === EHV then EHVprimaryDecomposition I
+     else if opt === SY then SYprimaryDecomposition I
+     else if class opt === Hybrid then (
+	  if #opt =!= 2 then error "the Hybrid strategy requires 2 arguments";
+	  assStrategy := opt#0;
+	  localizeStrategy := opt#1;
+	  HprimaryDecomposition ( I, assStrategy, localizeStrategy )
+	  )
+     )
+
+primaryDecomposition Ideal := List => o -> (J) -> (
+     R := ring J;
+     if isPolynomialRing R 
+     then primedecomp(J, o.Strategy)
+     else (
+	  (A,F,G) := flattenRing R;
+	  B := ring presentation A;
+	  J' := lift(F J,B);
+	  -- if B is suitable, then B1 is not needed
+	  B1 := (coefficientRing B)[gens B];
+	  toB1 := map(B1,B,vars B1);
+	  fromB1 := map(B,B1,vars B);
+	  J' = toB1 J';
+	  C := primedecomp(J', o.Strategy);
+	  J.cache#"AssociatedPrimes" = apply(associatedPrimes J', P -> trim G promote(fromB1 P,A));
+	  apply(C, Q -> trim G promote(fromB1 Q,A))
+	  ))
 
 beginDocumentation()
 

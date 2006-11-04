@@ -7,13 +7,26 @@
 #include <gmp.h>
 class CoefficientRingZZ_NTL;
 
-#if 0
-#define MPZ_VAL(f) (mpz_ptr ((f).poly_val))
-#define MPZ_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
-#endif
-
 #define MPZ_VAL(f) (reinterpret_cast<mpz_ptr>((f).poly_val))
 #define MPZ_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+
+#define MPQ_VAL(f) (reinterpret_cast<M2_Rational>((f).poly_val))
+#define MPQ_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+
+#define CCELEM_VAL(f) (reinterpret_cast<M2_CC>((f).poly_val))
+#define CC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+#define CC_IM(f) ((CCELEM_VAL(f))->im)
+#define CC_RE(f) ((CCELEM_VAL(f))->re)
+#define CC_NORM(f) (sqrt(CC_RE(f)*CC_RE(f) + CC_IM(f)*CC_IM(f)))
+
+#define MPF_VAL(f) (reinterpret_cast<mpf_ptr>((f).poly_val))
+#define MPF_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+
+#define BIGCC_VAL(f) (reinterpret_cast<M2_CCC>((f).poly_val))
+#define BIGCC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+#define BIGCC_RE(f) (&BIGCC_VAL(f)->re)  // returns actual value, not copy
+#define BIGCC_IM(f) (&BIGCC_VAL(f)->im)
+
 
 // The following lines are here only to remove complaints about old style casts from gmp
 extern "C" inline int mask_mpz_cmp_si(mpz_t x, long int i) { return mpz_cmp_si(x,i); }

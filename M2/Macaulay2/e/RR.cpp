@@ -1,5 +1,6 @@
 // Copyright 2001 Michael E. Stillman
 
+#include "ZZ.hpp"
 #include "RR.hpp"
 #include <stdio.h>
 #include <math.h>
