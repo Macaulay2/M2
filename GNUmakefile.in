@@ -77,12 +77,20 @@ distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile
 
 tarball: tarball.$(COMPRESS)
 tarballs: tarball.bz2 tarball.tgz
-tarball.bz2 :; tar cfhz $(PKG_TBZ) --bzip --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir)
-tarball.tgz  :; tar cfhz $(PKG_TGZ) --gzip --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir)
-ifeq "$(CYGWIN)" "yes"
+
+tarball.bz2 : $(PKG_TBZ)
+$(PKG_TBZ)  :; tar cfh $(PKG_TBZ) --bzip --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir)
+
+tarball.tgz  : $(PKG_TGZ)
+$(PKG_TGZ)  :; tar cfh $(PKG_TGZ) --gzip --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir)
+
+ifeq "$(TARFILE)" "yes"
 install :: tarball
 endif
 
+ifeq "$(DEBIAN)" "yes"
+install :: debian
+endif
 debian : tarball.tgz ; $(MAKE) -C debian install
 
 install install-others install-Macaulay2 all clean distclean::; @echo "-------- done making '$@' --------"

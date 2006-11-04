@@ -197,6 +197,7 @@ AC_SUBST(ALTIVEC)    AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,comp
 AC_SUBST(PROFILING)  AC_ARG_ENABLE(profile, AS_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING="$enableval", PROFILING=no)
 AC_SUBST(COMPRESS)   AC_ARG_ENABLE(compress, AS_HELP_STRING([--enable-compress=[gz|bz2]],compression method for tarball), COMPRESS="$enableval", COMPRESS=gz)
 AC_SUBST(EXPERIMENT) AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-experimental-code,enable experimental code), EXPERIMENT="$enableval", EXPERIMENT=no)
+AC_SUBST(TARFILE)    AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare a binary package as a compressed tar file), TARFILE="$enableval", TARFILE==no)
 AC_SUBST(TARLIBS)    AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS="$enableval", TARLIBS=no)
 
 AC_SUBST(DUMPDATA)   AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA="$enableval")
@@ -212,10 +213,18 @@ else case "$DUMPDATA" in
      esac
 fi
 
-test "$COMPRESS" != "gz" -a "$COMPRESS" != "bz2" && AC_MSG_ERROR(unrecognized option for enable-compress)
+AC_SUBST(TAR_COMPRESS_OPTION)
+case "$COMPRESS" in
+   gz) TAR_COMPRESS_OPTION=--gzip ;;
+  bz2) TAR_COMPRESS_OPTION=--bzip ;;
+    *) AC_MSG_ERROR(unrecognized option for enable-compress) ;;
+esac
 
 AC_SUBST(CYGWIN)    AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin (disables encap and enables strip)), CYGWIN="$enableval", CYGWIN=no)
-if test "$CYGWIN" = yes ; then ENCAP=no ; STRIP=yes ; fi
+if test "$CYGWIN" = yes ; then ENCAP=no ; STRIP=yes ; TARFILE=yes ; fi
+
+AC_SUBST(DEBIAN)    AC_ARG_ENABLE(debian,  AS_HELP_STRING(--enable-debian,prepare a binary package for debian (enables encap)), DEBIAN="$enableval", DEBIAN=no)
+if test "$DEBIAN" = yes ; then ENCAP=yes ; TARFILE=yes ; fi
 
 AC_SUBST(M2SUFFIX)
 test "$program_suffix" != NONE && M2SUFFIX="$program_suffix"

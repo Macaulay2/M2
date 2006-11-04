@@ -6,12 +6,12 @@ finalprefix=@FINALPREFIX@
 prefixtail=$(shell echo $(finalprefix) | sed 's=^/==')
 prefixdir=$(shell dirname $(finalprefix))
 ############################## main targets
-install all :: $(PKG_DEB) tidy
+all install :: ../$(PKG_DEB) tidy
 #################################
 # notice that fakeroot is required, get it here: http://ftp.debian.org/debian/pool/main/f/fakeroot
-$(PKG_DEB) : debian-binary control.tar.gz data.tar.gz
+../$(PKG_DEB) : debian-binary control.tar.gz data.tar.gz
 	rm -f $@
-	ar r $@ $^
+	ar rc $@ $^
 CONTROLFILES := control
 # CONTROLFILES += md5sums
 # CONTROLFILES += preinst
@@ -22,10 +22,10 @@ control.tar.gz : $(CONTROLFILES)
 	chmod a+x prerm preinst postrm postinst
 	fakeroot chown root $(CONTROLFILES)
 	fakeroot tar cfz $@ $^
-prepare : ../$(PKG_TGZ)
+prepare : ../$(PKG_TZ)
 	rm -rf $(package) $(prefixtail)
 	$(MKDIR_P) $(prefixtail)
-	tar xzfp $^
+	tar xfp $^ $(TAR_COMPRESS_OPTION)
 	for i in $(package)/* ; do if [ -f "$$i" ] ; then rm "$$i" ; fi ; done
 	mv $(package) $(prefixtail)
 	fakeroot chown -R root $(prefixtail)
@@ -37,7 +37,7 @@ tidy :
 	rm -rf $(prefixtail) control.tar.gz data.tar.gz md5sums
 clean ::
 	rm -rf $(package) $(prefixtail) debian-binary control.tar.gz data.tar.gz md5sums 
-	rm -rf $(PKG_DEB)
+	rm -rf ../$(PKG_DEB)
 distclean : clean; rm -f Makefile control
 
 Makefile : Makefile.in; cd ..; ./config.status debian/Makefile
