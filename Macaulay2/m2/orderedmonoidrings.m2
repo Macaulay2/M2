@@ -227,27 +227,6 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.isCommutative = not Weyl and not RM.?SkewCommutative;
      	  ONE := RM#1;
 	  if R.?char then RM.char = R.char;
--- monomial arithmetic is getting deprecated
---	  R * M := (r,m) -> new RM from rawTerm(RM.RawRing,raw r,m.RawMonomial);
---	  M * R := (m,r) -> new RM from rawTerm(RM.RawRing,raw r,m.RawMonomial);
---	  RM * M := (p,m) -> p * (R#1 * m);
---	  M * RM := (m,p) -> (R#1 * m) * p;
---	  M / RM := (m,f) -> (m * ONE) / f;
---	  M / R := (m,r) -> (m * ONE) / (r * ONE);
---	  RM / M := (f,m) -> f / (m * ONE);
---	  R / M := (r,m) -> (r * ONE) / (m * ONE);
---	  M % RM := (m,f) -> (m * ONE) % f;
---	  M % R := (m,r) -> (m * ONE) % (r * ONE);
---	  RM % M := (f,m) -> f % (m * ONE);
---	  R % M := (r,m) -> (r * ONE) % (m * ONE);
---	  R + M := (r,m) -> r * M#1 + R#1 * m;
---	  M + R := (m,r) -> r * M#1 + R#1 * m;
---	  RM + M := (p,m) -> p + R#1 * m;
---	  M + RM := (m,p) -> p + R#1 * m;
---	  R - M := (r,m) -> r * M#1 - R#1 * m;
---	  M - R := (m,r) -> R#1 * m - r * M#1;
---	  RM - M := (p,m) -> p - R#1 * m;
---	  M - RM := (m,p) -> R#1 * m - p;
 	  RM _ M := (f,m) -> new R from rawCoefficient(R.RawRing, raw f, raw m);
 	  expression RM := f -> (
 	       (coeffs,monoms) -> (
@@ -257,11 +236,12 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    )
 	       ) rawPairs(raw R, raw f);
 	  toString RM := toExternalString RM := x -> toString expression x;
-	  factor RM := options -> f -> (
+	  factor RM := opts -> f -> (
 	       c := 1;
 	       (facs,exps) := rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
      	       facs = apply(facs, p -> new RM from p);
-	       if degree facs#0 === {0} then (
+	       if liftable(facs#0,R) then (
+		    -- factory returns the possible constant factor in front
 	       	    assert(exps#0 == 1);
 		    c = facs#0;
 		    facs = drop(facs,1);
@@ -269,7 +249,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    );
 	       if #facs != 0 then (facs,exps) = toSequence transpose sort transpose {toList facs, toList exps};
 	       if c != 1 then (
-		    -- c = lift(c,R); -- this is a bad idea, because code depends now on even the constant factor being in the poly ring
+		    -- we put the possible constant factor at the end
 		    facs = append(facs,c);
 		    exps = append(exps,1);
 		    );
@@ -288,28 +268,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       apply(num, i -> M.generatorSymbols#i => RM_i)
 	       );
      	  RM.indexStrings = applyKeys(RM.indexSymbols, toString);
-	  RM.use = x -> (
---	       M + M := (m,n) -> R#1 * m + R#1 * n;
---	       M - M := (m,n) -> R#1 * m - R#1 * n;
---	       - M := (n) -> - R#1 * n;
---	       scan(RM.baseRings, A -> (
---		    if A =!= R then (
---		    	 A * M := (i,m) -> (i * R#1) * m;
---		    	 M * A := (m,i) -> m * (i * R#1);
---			 );
---		    A + M := (i,m) -> i * ONE + m * ONE;
---		    M + A := (m,i) -> m * ONE + i * ONE;
---		    A - M := (i,m) -> i * ONE - m * ONE;
---		    M - A := (m,i) -> m * ONE - i * ONE;
---		    M / A := (m,r) -> (m * ONE) / (r * ONE);
---		    A / M := (r,m) -> (r * ONE) / (m * ONE);
---		    M % A := (m,r) -> (m * ONE) % (r * ONE);
---		    A % M := (r,m) -> (r * ONE) % (m * ONE);
---		    ));
-	       RM);
-	  RM
-	  )
-     )
+	  RM))
 
 samering := (f,g) -> (
      if ring f =!= ring g then error "expected elements from the same ring";
