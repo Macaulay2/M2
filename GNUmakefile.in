@@ -76,6 +76,7 @@ $(DIRS) :; $(INSTALL) -d $@
 distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile
 
 tarball: tarball.$(COMPRESS)
+tarball.gz: tarball.tgz
 tarballs: tarball.bz2 tarball.tgz
 
 tarball.bz2 : $(PKG_TBZ)
