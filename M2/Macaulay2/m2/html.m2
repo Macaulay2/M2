@@ -481,6 +481,12 @@ uninstallPackage = method(Options => {
 uninstallPackage String := opts -> pkg -> (
      if not opts.Encapsulate then error "uninstallPackage: can't uninstall with Encapsulate => false";
      if not match("^[a-zA-Z0-9]+$",pkg) then error( "package title not alphanumeric: ",pkg);
+     if PackageDictionary#?pkg and instance(Pkg := value PackageDictionary#pkg, Package) then (
+	  scan(
+	       { "raw documentation database", "processed documentation database"},
+	       key -> if Pkg#?key then ( close Pkg#key; remove(Pkg,key) )
+	       );
+	  );
      buildDirectory := minimizeFilename(runfun opts.PackagePrefix | "/");
      installDirectory := minimizeFilename(runfun opts.InstallPrefix | "/");
      rex := "^" | pkg | "-";
