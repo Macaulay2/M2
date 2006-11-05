@@ -24,6 +24,8 @@ isPolynomialRing = method(TypicalValue => Boolean)
 isPolynomialRing Thing := x -> false
 isPolynomialRing PolynomialRing := (R) -> true
 
+degrees PolynomialRing := R -> degrees monoid R
+
 exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
 
 expression PolynomialRing := R -> (

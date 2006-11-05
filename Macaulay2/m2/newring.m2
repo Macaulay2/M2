@@ -76,17 +76,10 @@ graphIdeal RingMap := Ideal => opts -> (f) -> (
      m := numgens R;
      n := numgens S;
      k := coefficientRing R;
-     if not (
-	  isAffineRing R
-	  and isAffineRing S
-	  and k === coefficientRing S
-	  ) then error "expected polynomial rings over the same ring";
+     if not ( isAffineRing R and isAffineRing S and k === coefficientRing S ) then error "expected polynomial rings over the same ring";
      gensk := generators(k, CoefficientRing => ZZ);
      if not all(gensk, x -> promote(x,R) == f promote(x,S)) then error "expected ring map to be identity on coefficient ring";
-     RS := tensor(R,S,
-	  opts,
-	  MonomialOrder => Eliminate m,
-	  Degrees => join(degrees R, apply(degrees S, f.DegreeMap)));
+     RS := tensor(R,S, opts, MonomialOrder => Eliminate m, Degrees => join(degrees R, apply(degrees S, f.DegreeMap)));
      v := vars RS;
      yv := v_{m .. m+n-1};
      xv := v_{0 .. m-1};
@@ -95,10 +88,7 @@ graphIdeal RingMap := Ideal => opts -> (f) -> (
      assert(not isHomogeneous f or isHomogeneous I);
      I)
 
-graphRing RingMap := QuotientRing => opts -> (f) -> (
-     I := graphIdeal(f,opts);
-     R := ring I;
-     R/I)
+graphRing RingMap := QuotientRing => opts -> (f) -> ( I := graphIdeal(f,opts); (ring I)/I )
 
 -----------------------
 -- Symmetric Algebra --
@@ -107,7 +97,6 @@ graphRing RingMap := QuotientRing => opts -> (f) -> (
 symmetricAlgebraIdeal := method( Options => monoidDefaults )
 
 symmetricAlgebra = method( Options => monoidDefaults )
-
 
 symmetricAlgebraIdeal Module := Ideal => opts -> (M) -> (
      R := ring M;

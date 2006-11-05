@@ -41,59 +41,49 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	       )
 	  else if degreeLength R === degreeLength S then identity
 	  else degmap0 degreeLength R);
+     mdegs := {};
      n := 0;
      A := S;
-     record := new MutableHashTable;
+     record := new MutableHashTable; -- we should look for variables with the same symbol
+     justonce := s -> (
+	  if record#?s then error "map: multiple variables would map to the same variable, by name";
+	  record#s = true;
+	  R.indexSymbols#s);
      while true do (
+	  mdegs = join(mdegs, promote(degrees A,A,S) / degmap);
 	  r := numgens source m;
 	  if r > n then (
 	       if instance(A,GaloisField) then (
 		    -- the engine wants to know where the primitive element will go
-		    A' := ambient A;
-		    p := map(R,A',m_(toList(n .. r-1)));
+		    p := map(R,ambient A,m_(toList(n .. r-1)));
 		    m' := new MutableMatrix from m;
 		    m'_(0,n) = p A.PrimitiveElement;
-		    m = matrix m';
-		    )
-	       )
+		    m = matrix m';))
+	  else if r < n then error ("encountered values for ", toString r, " variables, but expected ", toString n)
 	  else if r == n then (
 	       if numgens A > 0 then (
+		    m = m |
 		    if member(A, R.baseRings) then (
 			 -- we can promote
 			 if instance(A,GaloisField) then (
 		    	      -- the engine wants to know where the primitive element will go
-		    	      m = m | promote(A.PrimitiveElement, R);
+		    	      promote(A.PrimitiveElement, R)
 			      )
-			 else (
-		    	      m = m | promote(vars A, R);
-			      )
+			 else promote(vars A, R)
 			 )
 		    else (
-			 -- we should look for variables with the same symbol
-			 justonce := s -> (
-			      if record#?s then error "map: multiple variables would map to the same variable, by name";
-			      record#s = true;
-			      R.indexSymbols#s);
 			 mm := matrix(R, {apply(A.generatorSymbols, s -> if R.?indexSymbols and R.indexSymbols#?s then justonce s else 0_R)});
 			 if instance(A,GaloisField) then (
 			      -- the engine wants to know where the primitive element will go
-			      A' = ambient A;
-			      p = map(R,A',mm);
-			      mm = matrix {{p A.PrimitiveElement}};
-			      );
-			 m = m | mm;
-			 )
-		    )
-	       )
-	  else if r < n then error ("encountered values for ", toString r, " variables, but expected ", toString n);
+			      matrix {{(map(R,ambient A,mm)) A.PrimitiveElement}}
+			      )
+			 else mm)));
 	  n = n + numgens A;
 	  try A = coefficientRing A else break
 	  );
-     if n != numgens source m 
-     then error ("encountered values for ", toString numgens source m," variables");
-     mdegs := degmap \ degrees S;
-     zdeg  := {toList ( degreeLength R : 0 )};
-     if degrees target m =!= zdeg or degrees source m =!= mdegs then m = map(R^(-zdeg), R^(-mdegs), m);
+     if n != numgens source m then error ("encountered values for ", toString numgens source m," variables");
+     zdeg  := toList ( degreeLength R : 0 );
+     if degrees target m =!= {zdeg} or degrees source m =!= mdegs or degree m =!= zdeg then m = map(R^{zdeg}, R^-mdegs, m, Degree => zdeg);
      new RingMap from {
 	  symbol source => S,
 	  symbol target => R,
@@ -206,23 +196,19 @@ kernel RingMap := Ideal => opts -> (cacheValue symbol kernel) (
 	       and coefficientRing R === coefficientRing F
 	       ) 
 	  then (
-	       JJ := generators graphIdeal(f,
-		    MonomialOrder => Eliminate n1, 
-		    MonomialSize => 16,
-		    VariableBaseName => local X);
-	       assert( not isHomogeneous f or isHomogeneous JJ );
-	       SS := ring JJ;
-	       chh := checkHilbertHint JJ;
+	       graph := generators graphIdeal f;
+	       assert( not isHomogeneous f or isHomogeneous graph );
+	       SS := ring graph;
+	       chh := checkHilbertHint graph;
 	       if chh then (
 		   hf := poincare (target f)^1;
 		   T := (ring hf)_0;
-		   hf = hf * product(numgens source JJ, i -> (
-			     d := (degrees source JJ)#i#0; 
-			     1 - T^d));
-		   (cokernel JJ).cache.poincare = hf;
+		   degs := degrees source graph;
+		   hf = hf * product(numgens source graph, i -> 1 - T^(degs#i#0));
+		   (cokernel graph).cache.poincare = hf;
 		   );
-	       mapback := map(R, ring JJ, map(R^1, R^n1, 0) | vars R);
-	       G := gb(JJ,opts);
+	       mapback := map(R, ring graph, map(R^1, R^n1, 0) | vars R);
+	       G := gb(graph,opts);
 	       assert (not chh or G#?"rawGBSetHilbertFunction log"); -- ensure the Hilbert function hint was actually used in gb.m2
 	       ideal mapback selectInSubring(1,generators G)
 	       )

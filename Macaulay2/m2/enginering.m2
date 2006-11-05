@@ -80,7 +80,9 @@ promote(ZZ,RingElement) := (n,R) -> new R from rawFromNumber(R,n)
 commonRingInitializations = (F) -> (
      promote(F,F) := lift(F,F) := (f,F) -> f;
      liftable'(F,F) := (f,F) -> true;
+     promote(List,F,F) := (m,F,G) -> m;
      promote(Matrix,F,F) := (m,F,G) -> m;
+     lift(List,F,F) := (m,F,G) -> m;
      lift(Matrix,F,F) := (m,F,G) -> m;
      liftable'(Matrix,F,F) := (f,F,G) -> true;
      )
