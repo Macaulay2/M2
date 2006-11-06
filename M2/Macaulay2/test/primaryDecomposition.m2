@@ -68,6 +68,9 @@ J' = lift(F J,B)
 C = primaryDecomposition J'
 
 
+A = QQ[s,z,Degrees=>{{0},{0}}]
+factor(s^3*z^3)
+
 A = QQ [x, y, z, w, s, t, Degrees => {{1}, {1}, {1}, {1}, {0}, {0}}, 
      MonomialOrder => {GRevLex => {1, 1, 1, 1}, 
 	  Position => Up, GRevLex => {1, 1}}, Heft => {1}]
