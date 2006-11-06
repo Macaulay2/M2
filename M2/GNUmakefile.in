@@ -80,10 +80,12 @@ tarball.gz: tarball.tgz
 tarballs: tarball.bz2 tarball.tgz
 
 tarball.bz2 : $(PKG_TBZ)
-$(PKG_TBZ)  :; tar cfh $(PKG_TBZ) --bzip --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir)
+$(PKG_TBZ)  : always; tar cfh $(PKG_TBZ) --bzip --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir)
 
 tarball.tgz  : $(PKG_TGZ)
-$(PKG_TGZ)  :; tar cfh $(PKG_TGZ) --gzip --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir)
+$(PKG_TGZ)  : always; tar cfh $(PKG_TGZ) --gzip --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir)
+
+always :
 
 ifeq "$(TARFILE)" "yes"
 install :: tarball
