@@ -11,14 +11,14 @@ S=ZZ/101[t]
 f = map(S,R,{t^4,t^5,t^6})
 assert isHomogeneous f
 assert( ker f == ideal matrix {{b^2-a*c, a^3-c^2}} )
-assert checkHilbertHint generators graphIdeal(f, MonomialOrder => Eliminate numgens target f, MonomialSize => 16, VariableBaseName => local X)
+assert checkHilbertHint generators graphIdeal f
 
 R=ZZ/101[a,b,c,DegreeRank=>3]
 S=ZZ/101[t]
 f = map(S,R,{t^4,t^5,t^6},DegreeMap => d -> {4*d#0 + 5*d#1 + 6*d#2})
 assert isHomogeneous f
 assert( ker f == ideal matrix {{b^2-a*c, a^3-c^2}} )
-assert checkHilbertHint generators graphIdeal(f, MonomialOrder => Eliminate numgens target f, MonomialSize => 16, VariableBaseName => local X)
+assert checkHilbertHint generators graphIdeal f
 
 end
 -- Local Variables:
