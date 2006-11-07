@@ -2508,7 +2508,7 @@ void gbA::show_mem_usage()
       nmonoms += R->gbvector_n_terms(gb[i]->g.f);
       nmonoms += R->gbvector_n_terms(gb[i]->g.fsyz);
     }
-  printf("\nnumber of (nonminimal) gb elements = %ld\n", gb.size());
+  printf("\nnumber of (nonminimal) gb elements = %d\n", (int)gb.size());
   printf("number of monomials                = %ld\n", nmonoms);
 }
 
