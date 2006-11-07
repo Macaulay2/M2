@@ -1,0 +1,277 @@
+## This file consists of my (MES) notes for quickly getting the Macaulay2
+## development environment setup on a computer.
+## These steps change over time.  If you wish to use this to get a source
+## distribution set up so that you can help develop Macaulay2, please
+## email us! (macaulay2@math.uiuc.edu)
+
+svn co svn://macaulay2.math.uiuc.edu/mike/home-dir
+svn co svn://macaulay2.math.uiuc.edu/capybara/trunk/capybara capybara
+svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+
+#######################################################
+# step 0:
+#  on mac: install darwin ports, get wget, subversion
+#          and/or install fink
+#          make sure autoconf is >= 2.60
+# step 1: set up my stuff
+# step 2: set up capybara
+#   its location: ~/capybara
+#                 ~/capybara/encap
+# step 3: build all of the libraries we need for M2
+# step 4A: build M2 for making distributions
+# step 4B: make tmp, tmp-opt, tmp-profile trees for development
+#######################################################
+
+##########################################################################
+### get the machine ready ################################################
+##########################################################################
+# create a version of make that knows about capybara, and where you will put it
+mkdir ~/bin
+echo 'exec /usr/bin/make -I ~/capybara/include "$@"' > ~/bin/make
+chmod u+x ~/bin/make
+
+# files from home-dir copied to ~, possibly modifed
+# .emacs, .profile, .bashrc: copied to ~ (possibly modified: .profile)
+# now log off, back on.
+
+##########################################################################
+### installing capybara ##################################################
+### these are taken from the INSTALL file in the capybara distribution ###
+##########################################################################
+export ENCAPDIR=$HOME/capybara/encap
+export FINALDESTINATION=$HOME/capybara
+cd
+mkdir capybara
+mkdir capybara/encap
+mv ~/capy-M2/capybara $ENCAPDIR/capybara
+
+mkdir $FINALDESTINATION/include
+cd $ENCAPDIR/capybara/include/
+ln -s ~/capybara/encap/capybara/include/capybara $FINALDESTINATION/include/.
+
+# set up the local-overrides file
+cp $ENCAPDIR/capybara/include/capybara/local-overrides.sample $ENCAPDIR/capybara/include/capybara/local-overrides
+# edit local-overrides,  make sure: (these cannot have ~ in them, as configure complains)
+#  FINALDESTINATION = /Users/mike/capybara
+#  ENCAPDIR = /Users/mike/capybara/encap
+#  (optional) AUTOCLEAN = no
+
+# create epkg and capybara
+cd $ENCAPDIR/capybara/share/capybara/packages/epkg
+make PREREQ=
+rm $FINALDESTINATION/include/capybara
+epkg capybara
+
+# fix info file: This doesn't seem to be needed any more.
+mkdir $M2TEMP/local/info
+mkdir $M2TEMP/local/info/dir
+
+#########################################################################
+### compile packages ####################################################
+#########################################################################
+ln -s $ENCAPDIR/capybara/share/capybara/packages ~
+#export PACKAGES=$ENCAPDIR/capybara/share/capybara/packages
+cd ~/packages/texinfo; make
+cd ~/packages/readline; make
+cd ~/packages/gdbm; make
+cd ~/packages/gc; make
+cd ~/packages/gmp; make
+cd ~/packages/ntl; make
+cd ~/packages/factory; make
+cd ~/packages/libfac; make
+cd ~/packages/bison; make
+#cd ~/packages/atlas; make # not needed anywhere?
+cd ~/packages/lapack; make # not needed on macosx
+cd ~/packages/subversion; make
+cd ~/packages/autoconf; make
+
+############################################################################
+#### build M2 ##############################################################
+#### on octopus.math.cornell.edu ## x86_64 redhat linux ####################
+############################################################################
+  ## problems encountered:
+  ## LD_LIBRARY_PATH can't contain ~, at least for nfs mounted directories.
+  ## the copyright notice in d/startup.c (line 201) contains characters that gcc 3.4 can't deal with
+  ## two tests fail that didn't fail before: res9, gbZZbug3
+mkdir ~/M2-build
+cd ~/M2-build
+mkdir M2-0.9.95
+cd M2-0.9.95
+# choose one of the following:
+  tar zxf ~/capy-M2/M2-0.9.95-stable.tgz
+  svn co svn://macaulay2.math.uiuc.edu/Macaulay2/stable/2006-11-05-0.9.95 M2
+  svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+# if you grab from svn, also do this:
+(cd M2; make) ## needs autoconf >= 2.60
+mkdir installed
+mkdir build
+cd build
+  ../M2/configure  \
+    --disable-dumpdata \
+    --prefix=/nfs/homes4/mike/capybara/encap \
+    LDFLAGS=-L/nfs/homes4/mike/capybara/lib \
+    CPPFLAGS=-I/nfs/homes4/mike/capybara/include \
+    CC=gcc \
+    --enable-static
+make
+make install
+make -k check
+
+############################################################################
+#### build M2 ## macosx G5, 32 bit #########################################
+############################################################################
+  ## problems encountered:
+  ## on gmp: need to configure with ABI=32, otherwise it builds in 64 bit.
+  ##         and had to remove the configure option --enable-FAT
+  ##  there might be a problem for G4's too: it uses -mcpu=970
+  ## had trouble with configure recognizing libgc.a: maybe it has to do with using ~mike??
+mkdir ~/M2-build
+cd ~/M2-build
+mkdir M2-0.9.95
+cd M2-0.9.95
+# choose one of the following:
+  svn co svn://macaulay2.math.uiuc.edu/Macaulay2/stable/2006-11-05-0.9.95 M2
+  svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+# if you grab from svn, also do this:
+(cd M2; make) ## needs autoconf >= 2.60
+mkdir installed
+mkdir build
+cd build
+
+ ../M2/configure --prefix=/Users/mike/M2-build/M2-0.9.95/installed \
+              --with-veclib \
+              --enable-altivec \
+	      CFLAGS=-g \
+	      CPPFLAGS=-I/Users/mike/capybara/include  \
+	      LDFLAGS=-L/Users/mike/capybara/lib \
+	      LOADLIBES="-lgcc_s.10.5 -lncurses" \
+	      --with-gdbmlib=~/capybara/lib/libgdbm.a \
+	      --with-readlinelib=~/capybara/lib/libreadline.a \
+	      --with-historylib=~/capybara/lib/libhistory.a \
+	      --with-gclib=/Users/mike/capybara/lib/libgc.a \
+	      --with-gmplib=~/capybara/lib/libgmp.a
+make
+make install
+make -k check
+  ## Create the disk image on macosx
+  export VERSION=0.9.95
+  cd ../installed
+  cp ../M2/arch/MacOSX/ReadMe-MacOSX.rtf .
+  cp ./ReadMe-MacOSX.rtf Macaulay2-$VERSION/
+  cd .. # to original directory
+  # comment one of these out
+  hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-ppc Macaulay2-$VERSION-macosx-ppc.dmg
+  #hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-i386 Macaulay2-$VERSION-macosx-i386.dmg
+
+epkg Macaulay2
+
+###########################################################################################
+### Users set up their .profile, .bashrc, .emacs files (and corresponding csh versions) ###
+###########################################################################################
+M2
+# inside M2
+setup()
+
+###########################################################################################
+## Build my tmp, tmp-opt, tmp-profile directories #########################################
+## for x86_64 #############################################################################
+###########################################################################################
+svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+
+export LD_LIBRARY_PATH=/nfs/homes4/mike/capybara/lib
+cd ~/M2
+mkdir tmp
+cd tmp
+  ../configure  \
+    --enable-debug \
+    --disable-optimize \
+    --enable-experimental-code \
+    --disable-dumpdata \
+    --prefix=/nfs/homes4/mike/capybara/encap \
+    LDFLAGS=-L/nfs/homes4/mike/capybara/lib \
+    CPPFLAGS=-I/nfs/homes4/mike/capybara/include \
+    CC=gcc \
+    --enable-static
+
+cd ~/M2
+mkdir tmp-opt
+cd tmp-opt
+  ../configure  \
+    --enable-experimental-code \
+    --disable-dumpdata \
+    --prefix=/nfs/homes4/mike/capybara/encap \
+    LDFLAGS=-L/nfs/homes4/mike/capybara/lib \
+    CPPFLAGS=-I/nfs/homes4/mike/capybara/include \
+    CC=gcc \
+    --enable-static
+
+cd ~/M2
+mkdir tmp-profile
+cd tmp-profile
+  ../configure  \
+    --enable-profile \
+    --enable-experimental-code \
+    --disable-dumpdata \
+    --prefix=/nfs/homes4/mike/capybara/encap \
+    LDFLAGS=-L/nfs/homes4/mike/capybara/lib \
+    CPPFLAGS=-I/nfs/homes4/mike/capybara/include \
+    CC=gcc \
+    --enable-static
+
+###########################################################################################
+## Build my tmp, tmp-opt, tmp-profile directories #########################################
+## for mac (i386) #########################################################################
+###########################################################################################
+svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+
+cd ~/M2
+mkdir tmp
+cd tmp
+ ../configure \
+	      --enable-debug \
+              --disable-optimize \
+              --enable-experimental-code \
+              --with-veclib \
+              --enable-altivec \
+	      CPPFLAGS=-I/Users/mike/capybara/include  \
+	      LDFLAGS=-L/Users/mike/capybara/lib \
+	      LOADLIBES="-lgcc_s.10.5 -lncurses" \
+	      --with-gdbmlib=~/capybara/lib/libgdbm.a \
+	      --with-readlinelib=~/capybara/lib/libreadline.a \
+	      --with-historylib=~/capybara/lib/libhistory.a \
+	      --with-gclib=/Users/mike/capybara/lib/libgc.a \
+	      --with-gmplib=~/capybara/lib/libgmp.a
+
+cd ~/M2
+mkdir tmp-opt
+cd tmp-opt
+ ../configure \
+	      --prefix=/Users/mike/capybara/encap \
+              --enable-experimental-code \
+              --with-veclib \
+              --enable-altivec \
+	      CPPFLAGS=-I/Users/mike/capybara/include  \
+	      LDFLAGS=-L/Users/mike/capybara/lib \
+	      LOADLIBES="-lgcc_s.10.5 -lncurses" \
+	      --with-gdbmlib=~/capybara/lib/libgdbm.a \
+	      --with-readlinelib=~/capybara/lib/libreadline.a \
+	      --with-historylib=~/capybara/lib/libhistory.a \
+	      --with-gclib=/Users/mike/capybara/lib/libgc.a \
+	      --with-gmplib=~/capybara/lib/libgmp.a
+
+cd ~/M2
+mkdir tmp-profile
+cd tmp-profile
+ ../configure \
+	      --enable-profile \
+              --enable-experimental-code \
+              --with-veclib \
+              --enable-altivec \
+	      CPPFLAGS=-I/Users/mike/capybara/include  \
+	      LDFLAGS=-L/Users/mike/capybara/lib \
+	      LOADLIBES="-lgcc_s.10.5 -lncurses" \
+	      --with-gdbmlib=~/capybara/lib/libgdbm.a \
+	      --with-readlinelib=~/capybara/lib/libreadline.a \
+	      --with-historylib=~/capybara/lib/libhistory.a \
+	      --with-gclib=/Users/mike/capybara/lib/libgc.a \
+	      --with-gmplib=~/capybara/lib/libgmp.a
