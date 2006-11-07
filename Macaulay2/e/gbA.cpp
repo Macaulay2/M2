@@ -1,4 +1,4 @@
-/* Copyright 2003, Michael E. Stillman */
+/* Copyright 2003-2006, Michael E. Stillman */
 
 #include "gbA.hpp"
 #include "text_io.hpp"
