@@ -170,6 +170,8 @@ if firstTime then (
 	  | "--BLAS and LAPACK 3.0" | ", by J. Dongarra et al."
 	  );
 
+     scan( { ("factory version", "3.0.2"), ("libfac version", "3.0.1") }, (k,v) -> if version#k < v then stderr << "--warning: old " << k << ": " << v << endl);
+
      use = identity;				  -- temporary, until methods.m2
 
      ReverseDictionary = new MutableHashTable;		    -- values are symbols
