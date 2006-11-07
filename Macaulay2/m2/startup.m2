@@ -166,7 +166,7 @@ if firstTime then (
 	  | "--Singular-Factory " | version#"factory version" | ", by G.-M. Greuel et al." | newline
 	  | "--Singular-Libfac " | version#"libfac version" | ", by M. Messollen" | newline
 	  | "--NTL " | version#"ntl version" | ", by Victor Shoup" | newline
-     	  | "--GNU MP " | version#"gmp version" | ", by Torbjörn Granlund et al." | newline
+     	  | "--GNU MP " | version#"gmp version" | ", by T. Granlund et al." | newline
 	  | "--BLAS and LAPACK 3.0" | ", by J. Dongarra et al."
 	  );
 
