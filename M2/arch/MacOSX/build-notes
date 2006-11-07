@@ -6,8 +6,8 @@
  cd ~/M2-build
  mkdir M2-0.9.95
  cd M2-0.9.95
- svn co svn://macaulay2.math.uiuc.edu/Macaulay2/stable/2006-08-28-0.9.90 M2
- svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+ svn co svn://macaulay2.math.uiuc.edu/Macaulay2/stable/2006-11-05-0.9.95 M2
+ #svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
  mkdir installed
  mkdir build
 ## Step 2. Build Macaulay2 ##
