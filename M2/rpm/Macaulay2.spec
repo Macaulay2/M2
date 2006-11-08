@@ -11,7 +11,7 @@ Buildroot: /home/dan/src/M2/BUILD/normal/rpm/macaulay2-0.9.95
 
 %define _rpmdir ../../
 %define _rpmfilename %%{NAME}-%%{VERSION}-%%{ARCH}-Linux.rpm
-%define _unpackaged_files_terminate_build 0
+%define _unpackaged_files_terminate_build 1
 
 %post
 #!/bin/sh -e
@@ -7760,3 +7760,7 @@ modules.
 %dir "/usr/local/Macaulay2-0.9.95/bin/"
 "/usr/local/Macaulay2-0.9.95/bin/personality"
 "/usr/local/Macaulay2-0.9.95/bin/M2"
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/rpm "
+# End:
