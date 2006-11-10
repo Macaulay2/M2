@@ -20,9 +20,11 @@ time for i from 1 to 1000 do H();
 collectGarbage()
 -- at  590.22 MB, #slabs = 66781 (debug version) -- 105.52 sec
 -- at  626.66 MB, #slabs = ?? (optimized version) -- 51.17  sec
+-- on octopus, optimized: 849 MB, 51.76 sec
 
 -- start over --
 time for i from 1 to 1000 do H1();
 collectGarbage()
 -- at 124.72 MB, #slabs = 1324 (debug version) -- 211.79 sec
 -- at 125.41 MB, #slabs = ?? (debug version) -- 121.61 sec
+-- on octopus: killed it after 450 seconds, it was using over 600 MB
