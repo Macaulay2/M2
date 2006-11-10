@@ -163,7 +163,7 @@ search splice (randomBinomialFcn(
   )
      
 -- ideal (2*b*e+2*c*f,-e*h+i*j,-2*e^2-2*g^2,-c*e-g*h,-2*d*j,a*g-c*i)
-load "/nfs/homes4/mike/foo2.m2"
+load "/nfs/homes4/mike/M2/Macaulay2/packages/RandomSearch.m2"
 
 -- regularity 12 ideal (2*f*h+e*i,-2*b^2-d*i,-a*g-2*i^2,2*e*g-2*d*h,-2*a*b-a*g,-2*d^2+a*i,-2*f^2-b*g)
 
