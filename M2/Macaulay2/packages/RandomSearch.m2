@@ -65,6 +65,7 @@ handleBad = (i) -> (
 
 doLoop = (niterations) ->
   for i from 1 to niterations do (
+     collectGarbage();
      --if i % 10 === 0 then collectGarbage();
      if currentTime() - lastdone > searchOpts.AnnounceTime then (
 	  << "doing i = " << i << endl;
@@ -167,60 +168,42 @@ load "/nfs/homes4/mike/M2/Macaulay2/packages/RandomSearch.m2"
 
 -- regularity 12 ideal (2*f*h+e*i,-2*b^2-d*i,-a*g-2*i^2,2*e*g-2*d*h,-2*a*b-a*g,-2*d^2+a*i,-2*f^2-b*g)
 
--- Below this is MES test for memory leak, 10 Nov 2006
---load "/Users/mike/M2/Macaulay2/packages/RandomSearch.m2"
+-- What about 5 quadrics?
+load "/Users/mike/M2/Macaulay2/packages/RandomSearch.m2"
+R = ZZ/5[vars(0..7)]
+B = flatten entries basis(2,R)
+H = () -> randomSparseIdeal(B,2,5)
+time Is = for i from 1 to 10000 list (J := trim H(); if numgens J < 5 then continue else toString J);
+#Is
+time reglist = tally apply(Is, s -> regularity value s)
+select(Is, s -> regularity value s >= 7)
+Bs = partition(s -> betti res value s, Is);
+#(keys Bs)
+netList keys Bs
 
-kk = ZZ/5
-R = kk[vars(0..10-1)];
-B = flatten entries basis(2,R);
-J = ideal (h*i-2*d*j,g*i+2*i^2,d*g+2*h*j,f^2+2*a*i,b*f-2*g^2,c^2+h*j,b*c+2*c*f)
---betti res(J = randomSparseIdeal(B,2,7))
-G = () -> (
-     I := ideal flatten entries gens J;
-     r := regularity I;
-     if codim I < 7 and r >= 10
-     then << (" regularity "|r|" "|toExternalString I|"\n")
-     else null
-     )
+time Is = for i from 1 to 100000 list (J := trim H(); if numgens J < 5 or regularity  J < 7 then continue else toString J);
+#Is
+time reglist = tally apply(Is, s -> regularity value s)
+Is/print;
+Is/(s -> betti res value s)
 
-G1 = () -> (
-     collectGarbage();
-     I := ideal flatten entries gens J;
-     r := regularity I;
-     if codim I < 7 and r >= 10
-     then << (" regularity "|r|" "|toExternalString I|"\n")
-     else null
-     )
 
-H = () -> (
-     I := ideal flatten entries gens J;
-     C := res I;
-     )
+-- regularity 7 -- codim ideal (b*g-e*h,d*f-e*h,c*e+2*f*h,d^2+2*d*h,b^2+2*c^2)
+-- ideal (c*f+d*h,a*f-e*g,e^2,b*c-2*f*g,b^2+h^2)
+-- ideal (h^2,g^2,d*f+e*g,b*e-c*h,b*c+a*f), 
+-- ideal (f^2-2*b*g,d*f+2*a*g,a*e+2*d*g,b^2-b*f,a*b-c*e)
+-- ideal (b*g-e*h,d*f-e*h,c*e+2*f*h,d^2+2*d*h,b^2+2*c^2)
+-- ideal (c*f+d*h,a*f-e*g,e^2,b*c-2*f*g,b^2+h^2)
+-- ideal (h^2,g^2,d*f+e*g,b*e-c*h,b*c+a*f)
+-- ideal (f^2-2*b*g,d*f+2*a*g,a*e+2*d*g,b^2-b*f,a*b-c*e)
 
-collectGarbage()
--- look at stash (4 slabs, 124.72 MB virtual) (amounts are in debug version)
-
-time for i from 1 to 100 do (x := G(); if x =!= null then << x << flush)
-collectGarbage()
--- at 274.59 MB, #slabs = 23566, gbvector alloc 221k
-
-time for i from 1 to 1000 do (x := G(); if x =!= null then << x << flush)
-collectGarbage()
--- at 590.84 MB, #slabs = 66731, gbvector alloc 624k
-
-time for i from 1 to 1000 do (x := G(); if x =!= null then << x << flush)
-collectGarbage()
--- at 723.59 MB, #slabs = 84449, gbvector alloc 788k
-
---------------------------------------
--- G1
-collectGarbage()
--- look at stash (4 slabs, 124.72 MB virtual) (amounts are in debug version)
-
-time for i from 1 to 100 do (x := G1(); if x =!= null then << x << flush)
-collectGarbage()
--- at 124.84 MB, #slabs = 1348, gbvector alloc 13k
-
-time for i from 1 to 1000 do (x := G1(); if x =!= null then << x << flush)
-collectGarbage()
--- at 124.84 MB, #slabs = 1348, gbvector alloc 13k
+J = ideal (h^2,g^2,d*f-e*g,b*e-c*h,b*c-a*f)
+betti res J
+ideal(J_2,J_3,J_4)
+res oo
+decompose J
+L = intersect oo
+I = ideal((super basis(2,L)) * (random(R^18, R^5)))
+betti res I
+J = ideal (h^2,g^2,d^2-e*g,b*e-c*h,b*c-a^2)
+betti res J
