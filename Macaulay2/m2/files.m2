@@ -25,7 +25,7 @@ copyFile(String,String) := opts -> (src,tar) -> (
      else (
      	  if opts.Verbose then stderr << "--copying: " << src << " -> " << tar << endl;
      	  tar << get src << close;
-     	  fileTime(tar,fileTime src);
+     	  fileTime(fileTime src,tar);
      	  fileMode(fileMode src,tar);
 	  )
      )
