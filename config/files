@@ -1,5 +1,6 @@
 GNUmakefile
 include/config.Makefile
+rpm/Makefile
 debian/Makefile
 debian/control
 debian/postrm
