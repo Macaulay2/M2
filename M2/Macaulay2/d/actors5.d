@@ -1363,17 +1363,17 @@ fileTime(e:Expr):Expr := (
 	  else Expr(toInteger(r))
 	  )
      is args:Sequence do if length(args) != 2 then WrongNumArgs(2) else (
-	  when args.0 is name:string do (
-	       when args.1 is modtime:Integer do if !isInt(modtime) then WrongArgSmallInteger(2) else (
+	  when args.0 is modtime:Integer do if !isInt(modtime) then WrongArgSmallInteger(2) else (
+	       when args.1 is name:string do (
 		    r := setFileTime(name,toInt(modtime));
 		    if r == -1 then buildErrorPacket("can't set modification time of file '" + name + "' : " + syserrmsg())
 	  	    else nullE
 		    )
-	       else WrongArgInteger(2)
+	       else WrongArgString(1)
 	       )
-	  else WrongArgString(1)
+	  else WrongArgInteger(2)
 	  )
-     else WrongArg("string, or string and integer"));
+     else WrongArg("string, or integer and string"));
 setupfun("fileTime",fileTime);
 
 currentTime(e:Expr):Expr := (
