@@ -1,6 +1,12 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
-good := k -> k === QQ or k === ZZ or instance(k,GaloisField) and char k === k.order;
+good := k -> (
+     k === QQ or
+     k === ZZ or
+     instance(k,QuotientRing) and ambient k === ZZ and isPrime char k or
+     instance(k,GaloisField) and char k === k.order
+     )
+
 monic := t -> (
      c := leadCoefficient t;
      c' := 1 // c;

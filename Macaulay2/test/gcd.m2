@@ -1,3 +1,8 @@
+R = ZZ/32003[x,y]
+f = (x+y)^3*(x-y^2)
+g = (x+y)^2*(x^3-x*y+y^3)^4
+assert ( gcd(f,g) == (x+y)^2 )
+
 R = (GF 25)[x]
 -- one of the book chapters depends on this feature
 assert(gcd((x^3+x-a)*(x^5+x-1),(x^3+x-a)*(x^6-a*x-1)) == x^3+x-a)
