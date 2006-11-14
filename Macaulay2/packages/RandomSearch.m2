@@ -23,23 +23,19 @@ export {search,
      randomSparseIdeal     
      }
 
-seed := null;
-header := null;
-exampleFcn := null;
-searchOpts := null;
-lastdone := null;
-lastemail := 0;
+lastemail = 0
 
 -- We must be careful to not send too many emails!
 -- So we limit the number to one per searchOpts.MailInterval seconds.
-appendToFile = (filename, str) -> ("!cat >>"|filename) << str << close
+appendToFile = (filename, str) -> openOutAppend filename << str << close
 
 emailString = (str, subject, address) -> (
      if address =!= null then (
      	  appendToFile(tempfilename, str);
 	  if currentTime() - lastemail >= searchOpts.MailInterval
 	  then (
-     	       run ("mail -s "|subject|" "|address|" <"|tempfilename);
+     	       if 0 != run ("mail -v -s "|subject|" "|address|" <"|tempfilename)
+	       then error "failed to send email";
      	       tempfilename << header << close;
 	       lastemail = currentTime();
 	       );
