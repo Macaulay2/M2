@@ -442,6 +442,15 @@ openOut(filename:Expr):Expr := (
      is Error do filename
      else WrongArgString());
 setupfun("openOut",openOut);
+openOutAppend(filename:Expr):Expr := (
+     when filename
+     is f:string do (
+	  when openOutAppend(f)
+	  is g:file do Expr(g)
+	  is m:errmsg do buildErrorPacket(m.message))
+     is Error do filename
+     else WrongArgString());
+setupfun("openOutAppend",openOutAppend);
 openInOut(filename:Expr):Expr := (
      when filename
      is f:file do (

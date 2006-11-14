@@ -250,6 +250,15 @@ export openOut(filename:string):(file or errmsg) := (
 		    false, NOFD,NOFD,0,
 		    false, NOFD, false,           "",          0, 0, false,false,noprompt,true,false,0,
 		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList,0,-1,false)))));
+export openOutAppend(filename:string):(file or errmsg) := (
+     fd := openoutappend(filename);
+     if fd == ERROR
+     then (file or errmsg)(errmsg(syscallErrorMessage("opening output (append) file '"+filename+"'")))
+     else (file or errmsg)(addfile(file(nextHash(), filename, 0, 
+	       false, "",
+	       false, NOFD,NOFD,0,
+	       false, NOFD, false,           "",          0, 0, false,false,noprompt,true,false,0,
+	       true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList,0,-1,false))));
 export openInOut(filename:string):(file or errmsg) := (
      if filename === "-"
      then (file or errmsg)(stdIO)
