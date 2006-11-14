@@ -111,6 +111,15 @@ M2_string filename;
      return fd;
      }
 
+int system_openoutappend(filename)
+M2_string filename;
+{
+     char *fname = tocharstar(filename);
+     int fd = open(fname, O_BINARY | O_CREAT | O_WRONLY | O_APPEND, 0644);
+     GC_FREE(fname);
+     return fd;
+     }
+
 int system_pipe(fildes)
 M2_arrayint fildes;
 {

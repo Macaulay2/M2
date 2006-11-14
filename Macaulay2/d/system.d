@@ -18,6 +18,7 @@ import symlink(oldfilename:string,newfilename:string):int;
 import unlink(filename:string):int;
 import openin(filename:string):int;
 import openout(filename:string):int;
+import openoutappend(filename:string):int;
 import opensocket(host:string,serv:string):int;
 import openlistener(serv:string):int;
 import acceptBlocking(sd:int):int;

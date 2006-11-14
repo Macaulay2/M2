@@ -852,6 +852,7 @@ export {
 	symbol openInOut,
 	symbol openListener,
 	symbol openOut,
+	symbol openOutAppend,
 	symbol operatorAttributes,
 	symbol options,
 	symbol or,
