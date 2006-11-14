@@ -1,0 +1,15 @@
+Date: Wed, 1 Nov 2006 15:26:21 -0600
+From: Dan Grayson <dan@math.uiuc.edu>
+To: Michael Stillman <mike@math.cornell.edu>
+CC: dan@math.uiuc.edu
+In-reply-to: <200611012122.kA1LMhLC010244@u123.math.uiuc.edu> (message from
+        Dan Grayson on Wed, 1 Nov 2006 15:22:43 -0600)
+Subject: Re:
+Reply-to: dan@math.uiuc.edu
+
+
+PS: In the interest of preserving homogeneity of ideals, flattenRing should
+probably make a flat ring with the same multi-degrees for variables as before
+the flattening, but it doesn't do that.
+
+(or does it?)
