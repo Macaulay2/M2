@@ -986,6 +986,10 @@ method1234c(e:Expr,env:Sequence):Expr := (
 	       f := lookupQuaternaryMethod(a0,a1,a2,a3,env.0);
 	       if f == nullE then applyES(env.1, args)
 	       else if haveopts then applyEOS(f,opt,args) else applyES(f, args))
+	  else if length(args) == 0 then (
+	       f := lookup(env.0);
+	       if f == nullE then f = env.1;
+	       applyES(f, emptySequence))
 	  else applyES(env.1, args)			    -- it's too long!
 	  else (
 	       a0 := (
