@@ -320,8 +320,13 @@ fix := (var,dir,templ) -> replace_("VAR",var) replace_("DIR",stripdir dir) templ
 dotprofileFix = dotbashrcFix = concatenate apply(fixes, (var,dir) -> fix(var,dir,bashtempl))
 dotloginFix = dotcshrcFix = concatenate apply(fixes, (var,dir) -> fix(var,dir,cshtempl))
 
-setup = method( Dispatch => Thing, Options => { } )
-setup Sequence := o -> () -> (
+setupEmacs = method()
+setup = method()
+installMethod(setupEmacs, () -> (
+     if prefixDirectory === null then error "can't determine Macaulay 2 prefix (prefixDirectory not set)";
+     mungeFile( homeDirectory | ".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", dotemacsFix );
+     ))
+installMethod(setup, () -> (
      if prefixDirectory === null then error "can't determine Macaulay 2 prefix (prefixDirectory not set)";
      ---- from bash info:
      -- After reading that file, it looks for `~/.bash_profile',
@@ -335,8 +340,8 @@ setup Sequence := o -> () -> (
      -- tcsh reads .tcshrc, or, if that doesn't exists, .cshrc
      if fileExists(homeDirectory | ".tcshrc"  ) then mungeFile( homeDirectory | ".tcshrc"  , "## Macaulay 2 start", "## Macaulay 2 end", dotcshrcFix );
      mungeFile( homeDirectory | ".bashrc", "## Macaulay 2 start", "## Macaulay 2 end", dotbashrcFix );
-     mungeFile( homeDirectory | ".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", dotemacsFix );
-     )
+     setupEmacs();
+     ))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
