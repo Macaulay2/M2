@@ -969,6 +969,7 @@ export {
 	symbol setPrecision,
 	symbol setRandomSeed,
 	symbol setup,
+	symbol setupEmacs,
 	symbol sheaf,
 	symbol sheafExt,
 	symbol sheafHom,
