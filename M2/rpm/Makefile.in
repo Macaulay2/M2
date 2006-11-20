@@ -7,9 +7,8 @@ prefixtail=$(shell echo $(finalprefix) | sed 's=^/==')
 prefixdir=$(shell dirname $(finalprefix))
 ############################## main targets
 all install :: ../$(PKG_RPM)
-../$(PKG_RPM) : tmp tmp/Macaulay2.spec ; cd tmp ; rpmbuild -bb Macaulay2.spec
-tmp:; mkdir $@
-tmp/Macaulay2.spec : Macaulay2.spec ; cp $^ $@
+../$(PKG_RPM) : Macaulay2.spec ; cd tmp ; rpmbuild -bb Macaulay2.spec
+Macaulay2.spec : Macaulay2.spec.in ; cp $^ $@
 try-alien : ../$(PKG_DEB) ; fakeroot alien --generate --scripts --to-rpm $^
 clean ::
 distclean : clean; rm -f Makefile

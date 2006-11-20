@@ -3,11 +3,8 @@ Version: 0.9.95
 Release: 2
 Summary: Macaulay 2 is a software system for algebraic geometry research.
 License: GNU General Public License, version 2
-# Distribution: Debian
 Group: Mathematics
-#Group: Converted/math
-Buildroot: /home/dan/src/M2/BUILD/normal/rpm/macaulay2-0.9.95
-# BuildRoot: /capybara/encap/%{Name}-%{Version}
+Buildroot: /home/dan/src/M2/BUILD/normal/rpm/files
 
 %define _rpmdir ../../
 %define _rpmfilename %%{NAME}-%%{VERSION}-%%{ARCH}-Linux.rpm
@@ -65,7 +62,7 @@ modules.
 "/usr/local/Macaulay2-0.9.95/share/doc/Macaulay2/Core/emacs/emacs.m2"
 "/usr/local/Macaulay2-0.9.95/share/doc/Macaulay2/Core/emacs/README"
 %dir "/usr/local/Macaulay2-0.9.95/share/doc/Macaulay2/Macaulay2/"
-%dir "/usr/local/Macaulay2-0.9.95/share/doc/Macaulay2/Macaulay2/examples/"
+# %dir "/usr/local/Macaulay2-0.9.95/share/doc/Macaulay2/Macaulay2/examples/"
 "/usr/local/Macaulay2-0.9.95/share/doc/Macaulay2/Macaulay2/examples/.linkdir"
 "/usr/local/Macaulay2-0.9.95/share/doc/Macaulay2/Macaulay2/examples/_random_lp__R__R_rp.m2"
 "/usr/local/Macaulay2-0.9.95/share/doc/Macaulay2/Macaulay2/examples/_betti_lp__Matrix_rp.m2"
