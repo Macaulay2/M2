@@ -3,12 +3,21 @@ include ../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
 finalprefix=@FINALPREFIX@
-prefixtail=$(shell echo $(finalprefix) | sed 's=^/==')
+prefixtail=$(shell basename $(finalprefix))
 prefixdir=$(shell dirname $(finalprefix))
 ############################## main targets
 all install :: ../$(PKG_RPM)
-../$(PKG_RPM) : Macaulay2.spec ; cd tmp ; rpmbuild -bb Macaulay2.spec
-Macaulay2.spec : Macaulay2.spec.in ; cp $^ $@
+../$(PKG_RPM) : Macaulay2.spec files ; rpmbuild -bb Macaulay2.spec
+files : ../$(PKG_TGZ) Makefile
+	rm -rf files
+	mkdir files
+	$(MKDIR_P) files$(prefixdir)
+	tar xzf ../$(PKG_TGZ) -C files$(prefixdir)
+	mv files$(prefixdir)/$(package) files$(prefixdir)/$(prefixtail)
+	cd files$(finalprefix) && rm -f INSTALL encapinfo postinstall preremove
+Macaulay2.spec : Macaulay2.spec.in Makefile files
+	cp "$<" "$@"
+	(cd files && find ./$(finalprefix) -type f) | sed -e 's=^./="=' -e 's=$$="=' >>"$@"
 try-alien : ../$(PKG_DEB) ; fakeroot alien --generate --scripts --to-rpm $^
 clean ::
 distclean : clean; rm -f Makefile
