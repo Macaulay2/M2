@@ -7,7 +7,7 @@ License: GNU General Public License, version 2
 Group: Mathematics
 Buildroot: /home/dan/src/M2/BUILD/normal/rpm/files
 
-%define _rpmdir ../../
+%define _rpmdir ../
 %define _rpmfilename %%{NAME}-%%{VERSION}-%%{ARCH}-Linux.rpm
 %define _unpackaged_files_terminate_build 1
 
