@@ -407,3 +407,19 @@ seems to have proceeded in stages.  If one of them works, you may prefer to run
 the personality is inherited by child processes, and you may save "M2" a little
 time at startup.
 
+-------------------------------------------------------
+10. Note on 64-bit Red Hat Enterpise Linux systems
+-------------------------------------------------------
+
+If M2 doesn't run (at all), try the command
+
+   ldd M2
+
+on the Macaulay 2 binary.  If you see a message like
+
+   /usr/bin/M2: /pkgs/gcc/lib64/libgcc_s.so.1: version `GCC_4.2.0' not found (required by /usr/bin/M2)
+
+If the file libgcc_s.so.1 that ldd complains about is not lib64/libgcc_s.so.1,
+then check to see why that libgcc_s.so.1 is found before lib64/libgcc_s.so.1.
+
+Thanks to Brad Lucier for this tip.  [November, 2006]
