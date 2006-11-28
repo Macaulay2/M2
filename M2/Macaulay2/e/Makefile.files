@@ -7,6 +7,7 @@
 #	gbbinom \
 
 INTERFACE = \
+	sagbi \
 	gbbinom \
 	monideal_minprimes \
 	dmat-LU \
@@ -91,7 +92,6 @@ INTERFACE = \
 	z_mod_p
 
 STILLTOCOMPILE = \
-	sagbi \
 	newspair \
 	termideal \
 	gbZZ \

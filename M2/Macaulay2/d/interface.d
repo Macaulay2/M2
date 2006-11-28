@@ -2994,6 +2994,18 @@ export rawHermiteNormalForm(e:Expr):Expr := (
      else WrongArgMutableMatrix());
 setupfun("rawHermiteNormalForm",rawHermiteNormalForm);
 
+export rawSubduction(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
+     when s.0 is M:RawMatrix do
+     when s.1 is F:RawRingMap do 
+     when s.2 is G:RawComputation do toExpr(
+	  Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawSubduction(", "(Matrix *)", M, ", (RingMap *)", F, ", (Computation *)", G, ")" ))
+     else WrongArg(3,"a raw computation")
+     else WrongArgMatrix(2)
+     else WrongArgMutableMatrix(1)
+     else WrongNumArgs(3));
+setupfun("rawSubduction",rawSubduction);
+
 -----------------------------------------------------------------------------
 -- LAPACK 
 -----------------------------------------------------------------------------
