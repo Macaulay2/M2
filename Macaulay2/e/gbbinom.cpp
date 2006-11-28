@@ -4,8 +4,10 @@
 #include "ntuple.hpp"
 #include "text_io.hpp"
 
+#include "matrixcon.hpp"
+
 #define monomial monomial0
-extern int comp_printlevel;
+extern int gbTrace;
 
 
 /////////////////////////////
@@ -147,7 +149,7 @@ monomial binomial_ring::quotient(monomial m, monomial n) const
   return result;
 }
 
-monomial binomial_ring::lcm(monomial m, monomial n) const
+monomial binomial_ring::monomial_lcm(monomial m, monomial n) const
   // return lcm(m,n)
 {
   monomial result = new_monomial();
@@ -315,16 +317,15 @@ void binomial_ring::translate_binomial(const binomial_ring *old_ring, binomial &
 vec binomial_ring::monomial_to_vector(monomial m) const
 {
   if (m == NULL) return NULL;
-  intarray vp;
-  varpower::from_ntuple(nvars, m, vp);
-  return F->from_varpower(vp.raw(),0);
+  ring_elem f = R->make_logical_term(R->getCoefficients(), R->getCoefficients()->one(), m);
+  return R->make_vec(0,f);
 }
 
 vec binomial_ring::binomial_to_vector(binomial f) const
 {
   vec v1 = monomial_to_vector(f.lead);
   vec v2 = monomial_to_vector(f.tail);
-  F->subtract_to(v1,v2);
+  R->subtract_vec_to(v1,v2);
   return v1;
 }
 vec binomial_ring::binomial_to_vector(binomial f, int n) const
@@ -342,7 +343,7 @@ vec binomial_ring::binomial_to_vector(binomial f, int n) const
   if (include_tail)
     {
       vec v2 = monomial_to_vector(f.tail);
-      F->subtract_to(v1,v2);
+      R->subtract_vec_to(v1,v2);
     }
   return v1;
 }
@@ -351,13 +352,15 @@ bool binomial_ring::vector_to_binomial(vec f, binomial &result) const
   // result should already have both monomials allocated
   // returns false if f is not a binomial, otherwise result is set.
 {
-  if (f == NULL || f->next == NULL || f->next->next != NULL) 
+  if (f == NULL) return false;
+  Nterm *t = f->coeff;
+  if (t == NULL || t->next == NULL || t->next->next != NULL) 
     return false;
 
-  R->Nmonoms()->to_expvector(f->monom, result.lead);
+  R->getMonoid()->to_expvector(t->monom, result.lead);
   set_weights(result.lead);
 
-  R->Nmonoms()->to_expvector(f->next->monom, result.tail);
+  R->getMonoid()->to_expvector(t->next->monom, result.tail);
   set_weights(result.tail);
 
   normalize(result);
@@ -375,7 +378,7 @@ void binomial_ring::intvector_to_binomial(vec f, binomial &result) const
 
   for ( ; f != NULL; f = f->next)
     {
-      int e = ZZ->coerce_to_int(f->coeff);
+      int e = globalZZ->coerce_to_int(f->coeff);
       if (e > 0)
 	result.lead[f->comp] = e;
       else if (e < 0)
@@ -664,8 +667,8 @@ void binomial_s_pair_set::stats() const
 ///////////////////////
 // Binomial GB table //
 ///////////////////////
-binomialGB::binomialGB(const binomial_ring *R, bool bigcell,bool homogprime)
-  : R(R), first(NULL), _max_degree(0),
+binomialGB::binomialGB(const binomial_ring *R0, bool bigcell,bool homogprime)
+  : R(R0), first(NULL), _max_degree(0),
     use_bigcell(bigcell),
     is_homogeneous_prime(homogprime)
 {
@@ -986,9 +989,8 @@ void binomialGB::debug_display() const
 // Binomial GB computation //
 /////////////////////////////
 
-binomialGB_comp::binomialGB_comp(const Ring *RR, int *wts, bool revlex,
+binomialGB_comp::binomialGB_comp(const PolynomialRing *RR, int *wts, bool revlex,
 				 unsigned int options)
-  : gb_comp(2)
 {
   // set the flags and options
   is_homogeneous = (options & GB_FLAG_IS_HOMOGENEOUS) != 0;
@@ -1025,9 +1027,9 @@ binomialGB_comp::~binomialGB_comp()
 // Incremental routines //
 //////////////////////////
 
-void binomialGB_comp::enlarge(const Ring *newR, int *wts)
+void binomialGB_comp::enlarge(const PolynomialRing *newR, int *wts)
 {
-  const binomial_ring *old_ring = R;
+  binomial_ring *old_ring = R;
   R = new binomial_ring(newR, wts, old_ring->revlex);
 
   // We need to change all of the monomials in sight.
@@ -1104,7 +1106,7 @@ void binomialGB_comp::process_pair(binomial_s_pair s)
 	    }
 	}
 
-      if (comp_printlevel >= 5)
+      if (gbTrace >= 5)
 	{
 	  buffer o;
 	  o << "pair [";
@@ -1125,7 +1127,7 @@ void binomialGB_comp::process_pair(binomial_s_pair s)
 
   if (Gmin->reduce(f))
     {
-      if (comp_printlevel >= 5)
+      if (gbTrace >= 5)
 	{
 	  buffer o;
 	  o << "  reduced to ";
@@ -1171,23 +1173,24 @@ int binomialGB_comp::calc(const int *deg, const intarray &stop_conditions)
 Matrix *binomialGB_comp::subring()
 {
   // Subsequent calls will not receive duplicate elements
-  Matrix *result = new Matrix(R->F);
+
+  MatrixConstructor result(R->F, 0);
   for (int i=0; i<mingens_subring.length(); i++)
     {
-      result->append(R->binomial_to_vector(mingens_subring[i]->f));
+      result.append(R->binomial_to_vector(mingens_subring[i]->f));
       mingens_subring[i] = NULL;
     }
   mingens_subring.shrink(0);
-  return result;
+  return result.to_matrix();
 }
 
 Matrix *binomialGB_comp::subringGB()
 {
-  Matrix *result = new Matrix(R->F);
+  MatrixConstructor result(R->F, 0);
   for (binomialGB::iterator p = Gmin->begin(); p != Gmin->end(); p++)
     if (R->weight((*p)->f.lead) == 0)
-      result->append(R->binomial_to_vector((*p)->f));
-  return result;
+      result.append(R->binomial_to_vector((*p)->f));
+  return result.to_matrix();
 }
 
 Matrix *binomialGB_comp::reduce(const Matrix *m, Matrix *&/*lift*/)
@@ -1202,45 +1205,54 @@ int binomialGB_comp::contains(const Matrix */*m*/)
   return 0;
 }
 
-bool binomialGB_comp::is_equal(const gb_comp * /*q*/)
+const Matrix *binomialGB_comp::get_mingens()
 {
-  ERROR("MES: not implemented yet");
-  return false;
-}
-  
-Matrix *binomialGB_comp::min_gens_matrix()
-{
-  Matrix *result = new Matrix(R->F);
+  MatrixConstructor result(R->F, 0);
   for (int i=0; i<mingens.length(); i++)
-    result->append(R->binomial_to_vector(mingens[i]->f));
-  return result;
+    result.append(R->binomial_to_vector(mingens[i]->f));
+  return result.to_matrix();
 }
 
-Matrix *binomialGB_comp::initial_matrix(int n)
+const Matrix *binomialGB_comp::get_initial(int n)
 {
-  Matrix *result = new Matrix(R->F);
+  MatrixConstructor result(R->F, 0);
   for (binomialGB::iterator p = Gmin->begin(); p != Gmin->end(); p++)
-      result->append(R->binomial_to_vector((*p)->f, n));
-  return result;
+      result.append(R->binomial_to_vector((*p)->f, n));
+  return result.to_matrix();
 }
 
-Matrix *binomialGB_comp::gb_matrix()
+const Matrix *binomialGB_comp::get_gb()
 {
-  Matrix *result = new Matrix(R->F);
+  MatrixConstructor result(R->F, 0);
   for (binomialGB::iterator p = Gmin->begin(); p != Gmin->end(); p++)
-      result->append(R->binomial_to_vector((*p)->f));
-  return result;
+      result.append(R->binomial_to_vector((*p)->f));
+  return result.to_matrix();
 }
 
-Matrix *binomialGB_comp::change_matrix()
+const Matrix *binomialGB_comp::get_change()
 {
   return 0;
 }
 
-Matrix *binomialGB_comp::syz_matrix()
+const Matrix *binomialGB_comp::get_syzygies()
 {
   return 0;
 }
+
+const MatrixOrNull *binomialGB_comp::matrix_remainder(const Matrix *m)
+  // likely not planned to be implemented
+{
+  return 0;
+}
+void binomialGB_comp::matrix_lift(const Matrix *m,
+				  MatrixOrNull **result_remainder,
+				  MatrixOrNull **result_quotient
+				  )
+  //not planned to be implemented
+{
+  // intentially left blank
+}
+
 
 void binomialGB_comp::stats() const
 {
@@ -1261,7 +1273,7 @@ void binomialGB_comp::stats() const
   o << Gmin->n_masks() << newline;
   emit(o.str());
 
-  if (comp_printlevel >= 3)
+  if (gbTrace >= 3)
     Gmin->debug_display();
 }
 

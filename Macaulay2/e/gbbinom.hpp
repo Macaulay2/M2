@@ -85,7 +85,7 @@ public:
   monomial0 quotient(monomial0 m, monomial0 n) const;
   monomial0 divide(monomial0 m, monomial0 n) const;
   monomial0 mult(monomial0 m, monomial0 n) const;
-  monomial0 lcm(monomial0 m, monomial0 n) const;
+  monomial0 monomial_lcm(monomial0 m, monomial0 n) const;
   monomial0 spair(monomial0 lcm, monomial0 m, monomial0 n) const; // returns lcm - m + n.
   void spair_to(monomial0 a, monomial0 b, monomial0 c) const;
   // spair_to: a = a - b + c
@@ -241,7 +241,7 @@ public:
 #define GB_FLAG_IS_NONDEGENERATE 2
 #define GB_FLAG_BIGCELL 4
 
-class binomialGB_comp
+class binomialGB_comp : public GBComputation
 {
   binomial_ring *R;
   binomial_s_pair_set *Pairs;		// Pairs and Generators
@@ -281,13 +281,14 @@ class binomialGB_comp
 
   void process_pair(binomial_s_pair p);
   int gb_done(const intarray &stop_condtions) const;
+
 public:
   // creation
-  binomialGB_comp(const Ring *R, int *wts, bool revlex, 
+  binomialGB_comp(const PolynomialRing *R, int *wts, bool revlex, 
 		  unsigned int options);
   virtual ~binomialGB_comp();
 
-  void enlarge(const Ring *R, int *wts);
+  void enlarge(const PolynomialRing *R, int *wts);
   void add_generators(const Matrix *m);
   int calc(const int *deg, const intarray &stop_conditions);
 
@@ -297,19 +298,65 @@ public:
   // reduction: these elements do not need to be binomials?
   Matrix *reduce(const Matrix *m, Matrix *&lift);
 
-  virtual int contains(const Matrix *m);
-  
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
   Matrix *min_gens_matrix();
-  Matrix *initial_matrix(int n);
-  Matrix *gb_matrix();
   Matrix *change_matrix();
   Matrix *syz_matrix();
   void stats() const;
 
 public:
-  binomialGB_comp * cast_to_binomialGB_comp() { return this; }
-  const binomialGB_comp * cast_to_binomialGB_comp() const { return this; }
+  //////////////////////////
+  // Computation routines //
+  //////////////////////////
+
+  static binomialGB_comp * create(const Matrix *m, 
+		      M2_bool collect_syz, 
+		      int n_rows_to_keep,
+		      M2_arrayint gb_weights,
+		      int strategy, 
+		      M2_bool use_max_degree,
+		      int max_degree);
+
+  void remove_gb() { /* to do */ }
+
+  void start_computation() { /* to do */ }
+
+  virtual const MatrixOrNull *get_gb();
+
+  virtual const MatrixOrNull *get_mingens();
+
+  virtual const MatrixOrNull *get_initial(int nparts);
+
+  virtual void text_out(buffer &o) { /* to do */ }
+  /* This displays statistical information, and depends on the
+     gbTrace value */
+
+  virtual int complete_thru_degree() const { /* to do */ }
+  // The computation is complete up through this degree.
+
+  ////////////////////////////////////////////////////////
+  // The following are here because they need to be.
+  // But they are not implemented... and there is no plan to implement them
+  ////////////////////////////////////////////////////////
+
+  virtual const MatrixOrNull *get_change();
+  // not planned to be implemented
+
+  virtual const MatrixOrNull *get_syzygies();
+  //not planned to be implemented
+
+  virtual const MatrixOrNull *matrix_remainder(const Matrix *m);
+  // likely not planned to be implemented
+
+  virtual void matrix_lift(const Matrix *m,
+			   MatrixOrNull **result_remainder,
+			   MatrixOrNull **result_quotient
+			   );
+  //not planned to be implemented
+
+  virtual int contains(const Matrix *m);
+  //not planned to be implemented
+
 };
 #endif
 
