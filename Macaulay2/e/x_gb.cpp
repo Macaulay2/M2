@@ -6,6 +6,7 @@
 #include "comp_res.hpp"
 #include "comp_gb_declared.hpp"
 #include "text_io.hpp"
+#include "sagbi.hpp"
 
 const RingElementOrNull * IM2_Matrix_Hilbert(const Matrix *M)
   /* This routine computes the numerator of the Hilbert series
@@ -311,6 +312,18 @@ unsigned long IM2_GB_hash(const Computation *C)
   return C->get_hash_value();
 }
 
+MatrixOrNull * rawSubduction(const Matrix *M,
+			     const RingMap *F,
+			     Computation *C)
+{
+  GBComputation *G = C->cast_to_GBComputation();
+  if (G == 0)
+    {
+      ERROR("expected a Groebner basis computation");
+      return 0;
+    }
+  return sagbi::subduct(M,F,G);
+}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

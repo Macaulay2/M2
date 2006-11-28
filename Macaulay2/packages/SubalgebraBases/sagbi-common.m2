@@ -72,12 +72,12 @@ rowReduce = (elems, d) -> (
 
 subalgebraBasis = method(Options => {
 	  Strategy => null,
-	  DegreeLimit => 100,
+	  Limit => 100,
 	  PrintLevel => 0})
 
 subalgebraBasis Matrix := opts -> (M) -> (
      if opts.Strategy =!= null then
-       sagbiEngine(M, opts.DegreeLimit, opts.PrintLevel)
+       sagbiEngine(M, opts.Limit, opts.PrintLevel)
      else
-       sagbiToplevel(M, opts.DegreeLimit, opts.PrintLevel)     
+       sagbiToplevel(M, opts.Limit, opts.PrintLevel)     
      )

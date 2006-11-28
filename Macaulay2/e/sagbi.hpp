@@ -3,27 +3,27 @@
 #ifndef _sagbi_hh_
 #define _sagbi_hh_
 
-#ifdef DEVELOPMENT
-#warning "sagbi code commented out"
-#endif
-#if 0
-
 #include "matrix.hpp"
-#include "comp.hpp"
-#include "gb_comp.hpp"
+#include "comp_gb.hpp"
 
 class sagbi
 {
 public:
-  static vec subduct(const FreeModule *F,
-		     vec f,
+  static ring_elem subduct(const PolyRing *R,
+		     ring_elem f,
 		     const RingMap *phi,
-		     gb_comp *J);
+		     GBComputation *J);
 
   static Matrix *subduct(const Matrix *m, 
 			 const RingMap *phi, 
-			 gb_comp *J);
+			 GBComputation *J);
 };
+
+#if 0
+#include "matrix.hpp"
+#include "comp.hpp"
+#include "gb_comp.hpp"
+
 
 class pending_list
 {
