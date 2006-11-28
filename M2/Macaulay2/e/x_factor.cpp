@@ -312,7 +312,7 @@ static CanonicalForm convertToFactory(const mpz_ptr p) {
 }
 
 //#define FRAC_VAL(f) ((frac_elem *) (f).poly_val)
-#define MPQ_VAL(f) (M2_Rational ((f).poly_val))
+//#define MPQ_VAL(f) (M2_Rational ((f).poly_val))
 
 static CanonicalForm convertToFactory(const RingElement &g) {
      const Ring *R = g.get_ring();

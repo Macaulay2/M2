@@ -166,9 +166,10 @@ load "/nfs/homes4/mike/M2/Macaulay2/packages/RandomSearch.m2"
 
 -- What about 5 quadrics?
 load "/Users/mike/M2/Macaulay2/packages/RandomSearch.m2"
-R = ZZ/5[vars(0..7)]
+R = ZZ/5[vars(0..9)]
 B = flatten entries basis(2,R)
 H = () -> randomSparseIdeal(B,2,5)
+
 time Is = for i from 1 to 10000 list (J := trim H(); if numgens J < 5 then continue else toString J);
 #Is
 time reglist = tally apply(Is, s -> regularity value s)
@@ -177,29 +178,51 @@ Bs = partition(s -> betti res value s, Is);
 #(keys Bs)
 netList keys Bs
 
-time Is = for i from 1 to 100000 list (J := trim H(); if numgens J < 5 or regularity  J < 7 then continue else toString J);
+seed = currentTime()
+setRandomSeed seed
+time Is = for i from 1 to 100000 list (J := trim H(); 
+     if numgens J < 5 or regularity  J < 7 then 
+     continue 
+     else (<< toString J << endl; toString J));
 #Is
 time reglist = tally apply(Is, s -> regularity value s)
 Is/print;
 Is/(s -> betti res value s)
-
-
--- regularity 7 -- codim ideal (b*g-e*h,d*f-e*h,c*e+2*f*h,d^2+2*d*h,b^2+2*c^2)
+Is/(s -> codim value s)
+tally(Is/(s -> poincare value s))
+-- regularity 7
+-- ideal (b*g-e*h,d*f-e*h,c*e+2*f*h,d^2+2*d*h,b^2+2*c^2)
 -- ideal (c*f+d*h,a*f-e*g,e^2,b*c-2*f*g,b^2+h^2)
 -- ideal (h^2,g^2,d*f+e*g,b*e-c*h,b*c+a*f), 
 -- ideal (f^2-2*b*g,d*f+2*a*g,a*e+2*d*g,b^2-b*f,a*b-c*e)
--- ideal (b*g-e*h,d*f-e*h,c*e+2*f*h,d^2+2*d*h,b^2+2*c^2)
--- ideal (c*f+d*h,a*f-e*g,e^2,b*c-2*f*g,b^2+h^2)
--- ideal (h^2,g^2,d*f+e*g,b*e-c*h,b*c+a*f)
--- ideal (f^2-2*b*g,d*f+2*a*g,a*e+2*d*g,b^2-b*f,a*b-c*e)
+-- ideal (e*f-2*c*h,c*f-d*h,d^2,a*b+2*e*h,a^2)
+-- ideal (g^2,a*f-g*h,d^2,a*d+c*e,a*c-e*f)
+-- ideal (g^2,b*f+2*f^2,e^2+f^2,a*e+b*h,b^2+e*g)
+-- ideal (g^2+2*h^2,a*g,a*e-2*b*h,c*d-e*g,a*c-d*f)
+-- ideal (c*g,d*f-b*g,a*f+d*h,a*c+2*g^2,a^2)
+-- ideal (f^2-2*a*h,e^2+2*f*h,c*e-d*h,a*b-2*h^2,a^2-2*a*h)
+-- ideal (f*g+2*e*h,d*f+2*h^2,c*f-2*b*g,d^2,b*c-2*a*d)
+-- ideal (b*g+2*d*g,d^2+2*b*h,c^2+2*a*g,a*c+2*d*h,b^2-2*g^2)
+-- ideal (e*f-2*a*g,d*e,d^2+2*e^2,b*c+a*d,a*c+g*h)
+-- ideal (i^2,b*e+2*d*f,b*d-2*f*i,c^2-2*e^2,a*c+d*g)
+-- ideal (a*g-f*h,d^2-2*d*f,a*d-g*i,c^2,b*c-a*f)
+-- ideal (b*j,f^2,c*d+2*a*f,a*c-2*b*i,b^2+2*f*j)
+-- ideal (g^2+h^2,e*g-2*d*j,c*d+h*i,a*c-f*g,a^2)
+-- ideal (f^2-2*j^2,e*f+2*h*i,a*d+2*c*j,a*b-2*d*h,a^2+2*h^2)
+-- ideal (a*i-2*j^2,g*h-2*b*j,a*g+i*j,a*c-2*d*g,a^2+2*g^2)
+-- ideal (c*h-g*j,e*g+d*j,d*g+2*h^2,b*d-2*a*j,a^2)
+-- ideal (g*h+a*i,g^2+2*i^2,d*g-2*f*j,f^2+b*i,b*f)
 
-J = ideal (h^2,g^2,d*f-e*g,b*e-c*h,b*c-a*f)
-betti res J
-ideal(J_2,J_3,J_4)
-res oo
-decompose J
-L = intersect oo
-I = ideal((super basis(2,L)) * (random(R^18, R^5)))
-betti res I
-J = ideal (h^2,g^2,d^2-e*g,b*e-c*h,b*c-a^2)
-betti res J
+restart
+load "/Users/mike/M2/Macaulay2/packages/RandomSearch.m2"
+R = ZZ/5[vars(0..9)]
+B0 = ideal(a,b,c)
+B = flatten entries super basis(2,B0)
+
+H = () -> randomSparseIdeal(B,2,4)
+seed = currentTime()
+setRandomSeed seed
+time Is = for i from 1 to 100000 list (J := trim H(); 
+     if numgens J < 4 or regularity  J < 6 then 
+     continue 
+     else (<< toString J << endl; toString J));

@@ -1879,6 +1879,7 @@ vec PolyRing::vec_lead_term(int nparts, const FreeModule *F, vec v) const
 {
   // The first step is to find the lead monomial.
 
+  if (v == 0) return 0;
   const vecterm * lead = vec_locate_lead_term(F,v);
 
   // Now that we have the lead term, use the first n parts of the monomial

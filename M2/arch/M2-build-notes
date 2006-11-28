@@ -275,3 +275,24 @@ cd tmp-profile
 	      --with-historylib=~/capybara/lib/libhistory.a \
 	      --with-gclib=/Users/mike/capybara/lib/libgc.a \
 	      --with-gmplib=~/capybara/lib/libgmp.a
+
+
+svn export svn://macaulay2.math.uiuc.edu/Macaulay2/stable/2006-11-05-0.9.95 Macaulay2-0.9.95-src
+cd Macaulay2-0.9.95-src
+make
+# for now: copy the file ReadMe-fink to arch/MacOSX/  # this won't be needed from 0.9.96 on.
+
+###########################################################################################
+## Build capybara libs and M2 for x86_64 mac ##############################################
+###########################################################################################
+# download http://www.math.jmu.edu/~martin/gmp-4.2.1-core2-port.tar.gz
+# install as suggested there...
+# actually: I did:
+#  export CFLAGS='-m64 -fast'
+#  make configure
+#  ** copied the files suggested
+#  make
+#  make check -- failed, but it seems to be with mem alloc...
+
+
+svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
