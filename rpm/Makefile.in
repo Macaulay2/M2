@@ -5,6 +5,17 @@ DEPENDS = yes
 finalprefix=@FINALPREFIX@
 prefixtail=$(shell basename $(finalprefix))
 prefixdir=$(shell dirname $(finalprefix))
+
+# notice that fakeroot is required, get it here: http://ftp.debian.org/debian/pool/main/f/fakeroot
+
+# commands for testing the rpm file:
+#  install:
+#    rpm -i -v --nodeps *.rpm
+#  remove:
+#	Version: 0.9.95
+#	Release: 2
+#    rpm -e -v --noscripts Macaulay2-0.9.95-2
+
 ############################## main targets
 all install :: ../$(PKG_RPM)
 ../$(PKG_RPM) : Macaulay2.spec ../$(PKG_TGZ) Makefile
@@ -14,11 +25,10 @@ all install :: ../$(PKG_RPM)
 	tar xzf ../$(PKG_TGZ) -C files$(prefixdir)
 	mv files$(prefixdir)/$(package) files$(prefixdir)/$(prefixtail)
 	cd files$(finalprefix) && rm -f INSTALL encapinfo postinstall preremove
-	rpmbuild -bb Macaulay2.spec
+	( cat @srcdir@/Macaulay2.spec.in; (cd files && find ./$(finalprefix) -type f) | sed -e 's=^./="=' -e 's=$$="=' ) >Macaulay2.spec
+	fakeroot chown -R root files/*
+	fakeroot rpmbuild -bb Macaulay2.spec
 	rm -rf files
-Macaulay2.spec : Macaulay2.spec.in Makefile files
-	cp "$<" "$@"
-	(cd files && find ./$(finalprefix) -type f) | sed -e 's=^./="=' -e 's=$$="=' >>"$@"
 try-alien : ../$(PKG_DEB) ; fakeroot alien --generate --scripts --to-rpm $^
 clean ::
 distclean : clean; rm -f Makefile
