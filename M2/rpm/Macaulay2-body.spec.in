@@ -1,6 +1,6 @@
 #! /bin/rpm
 Name: Macaulay2
-Version: 0.9.95
+Version: @PACKAGE_VERSION@
 Release: 1
 Summary: Macaulay 2 is a software system for algebraic geometry research.
 License: GNU General Public License, version 2
