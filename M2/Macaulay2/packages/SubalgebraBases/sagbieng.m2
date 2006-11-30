@@ -114,6 +114,7 @@ sagbiEngine = (Gens, maxnloops, printlevel) -> (
 	    << "    gb comp done in " << timegbJ << " seconds" << endl;
 	  -- spairs = time mingens ideal selectInSubring(1, gens gbJ);
 	  spairs = submatrixByDegrees(selectInSubring(1, gens gbJ), d);
+	  << "spairs = " << transpose spairs << endl;
 	  tGmap = timing Gmap(spairs);
 	  spairs = tGmap#1;
 	  timeGmap = tGmap#0;
@@ -147,7 +148,7 @@ sagbiEngine = (Gens, maxnloops, printlevel) -> (
 	       timeapp = 0;
 	       numnewsagbi = 0;
 	       ngens := sum apply(toList Pending,i -> #i);
-	       if ngens === 0 and gbIsDone gbJ === 0 and d>Gensmaxdeg then (
+	       if ngens === 0 and gbDone gbJ and d>Gensmaxdeg then (
 	           isdone = true;
 		   if printlevel > 0 then 
 		     << "    SAGBI basis is FINITE!" << endl;

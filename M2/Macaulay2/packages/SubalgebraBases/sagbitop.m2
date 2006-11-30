@@ -242,9 +242,10 @@ sagbiquo(Matrix,Ideal,ZZ,ZZ) := (Gens, I, maxnloops, printlevel) -> (
 	  nloops = nloops+1;
 	  if printlevel > 0 then 
 	    << "--- degree " << d << " ----" << endl;
-	  gbJquo = gb(Jquo, DegreeLimit=>d);
+	  time gbJquo = gb(Jquo, DegreeLimit=>d);
 	  mtemp = gens gbJquo;
 	  spairs = submatrixByDegrees(split2(mtemp,RStoS mtemp),d);
+	  << "spairs = " << transpose spairs << endl;
 	  spairs = compress Gmap(spairs);
 	  if Pending#d != {} then (
 	       if MOflag == 3 then (newgens = matrix{Pending#d})
@@ -254,7 +255,7 @@ sagbiquo(Matrix,Ideal,ZZ,ZZ) := (Gens, I, maxnloops, printlevel) -> (
 	  if numgens source spairs > 0 then (
 	       if MOflag == 3 then (
 		    newguys = subductquo(spairs, Gmap, Jquo, I, d))
-	       else (newguys = autosubductionquo(spairs));
+	       else (newguys = time autosubductionquo(spairs));
 	       stopcriteria = numgens source newguys)
 	  else stopcriteria = 0;
           if stopcriteria > 0 then (
@@ -281,8 +282,3 @@ sagbiquo(Matrix,Ideal,ZZ,ZZ) := (Gens, I, maxnloops, printlevel) -> (
 	  d = d+1;
 	  );
      G)
-
-
-
-
-
