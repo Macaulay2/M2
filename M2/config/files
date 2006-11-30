@@ -1,6 +1,7 @@
 GNUmakefile
 include/config.Makefile
 rpm/Makefile
+rpm/Macaulay2-body.spec
 debian/Makefile
 debian/control
 debian/postrm
