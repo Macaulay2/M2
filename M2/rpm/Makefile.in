@@ -7,14 +7,15 @@ prefixtail=$(shell basename $(finalprefix))
 prefixdir=$(shell dirname $(finalprefix))
 ############################## main targets
 all install :: ../$(PKG_RPM)
-../$(PKG_RPM) : Macaulay2.spec files ; rpmbuild -bb Macaulay2.spec
-files : ../$(PKG_TGZ) Makefile
+../$(PKG_RPM) : Macaulay2.spec ../$(PKG_TGZ) Makefile
 	rm -rf files
 	mkdir files
 	$(MKDIR_P) files$(prefixdir)
 	tar xzf ../$(PKG_TGZ) -C files$(prefixdir)
 	mv files$(prefixdir)/$(package) files$(prefixdir)/$(prefixtail)
 	cd files$(finalprefix) && rm -f INSTALL encapinfo postinstall preremove
+	rpmbuild -bb Macaulay2.spec
+	rm -rf files
 Macaulay2.spec : Macaulay2.spec.in Makefile files
 	cp "$<" "$@"
 	(cd files && find ./$(finalprefix) -type f) | sed -e 's=^./="=' -e 's=$$="=' >>"$@"
