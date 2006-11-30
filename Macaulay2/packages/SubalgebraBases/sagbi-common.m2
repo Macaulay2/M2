@@ -70,6 +70,13 @@ rowReduce = (elems, d) -> (
      	  elemsH = homogenize(RtoRH elems, RH_n););
      RHtoR gens gb(elemsH, DegreeLimit=>d))
 
+rowReduce0 = (elems, d) -> (
+     << "rowReduce(" << d << "): " << transpose elems << endl;
+     result := rowReduce0(elems,d);
+     << "  result: " << transpose result << endl;
+     result
+     )
+
 subalgebraBasis = method(Options => {
 	  Strategy => null,
 	  Limit => 100,

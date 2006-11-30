@@ -17,6 +17,10 @@ R = kk[a,b,c]
 F = matrix{{a+b+c-1, a^2+b^2+c^2-a, a^3+b^3+c^3-b}}
 ans = matrix {{a+b+c-1, a*b+a*c+b*c+50*b+50*c, a*b*c+50*b^2+50*b*c+50*c^2-9*b+25*c}}
 assert(
+     time sagbi(F,Limit=>3)
+     ==
+     ans)
+assert(
      time sagbi(F,Limit=>3,Strategy=>Engine)
      ==
      ans)
@@ -31,6 +35,10 @@ invariantsSn = (n) -> (
 
 F = invariantsSn 3
 ans = matrix {{x_0+x_1+x_2, x_0*x_1+x_0*x_2+x_1*x_2, x_0*x_1*x_2}}
+assert(
+     time sagbi(F,Limit=>10)
+     ==
+     ans)
 assert(
      time sagbi(F,Limit=>10,Strategy=>Engine)
      ==
@@ -49,6 +57,10 @@ ans = matrix {{x_0+x_1+x_2+x_3,
 	  x_0*x_1+x_0*x_2+x_1*x_2+x_0*x_3+x_1*x_3+x_2*x_3, 
 	  x_0*x_1*x_2+x_0*x_1*x_3+x_0*x_2*x_3+x_1*x_2*x_3, 
 	  x_0*x_1*x_2*x_3}}
+assert(
+     time sagbi(F,Limit=>10)
+     ==
+     ans)
 assert(
      time sagbi(F,Limit=>10,Strategy=>Engine)
      ==
@@ -110,6 +122,10 @@ ans = matrix {{x_17*x_18-x_16*x_19,
         x_1*x_4-x_0*x_5,
         x_1*x_2-x_0*x_3}}
 assert(
+     time sagbi(F,Limit=>100)
+     ==
+     ans)
+assert(
      time sagbi(F,Limit=>100,Strategy=>Engine)
      ==
      ans)
@@ -136,6 +152,10 @@ ans = matrix {{x_5*x_7-x_4*x_8,
         x_2*x_4*x_6*x_8-x_1*x_5*x_6*x_8-x_2*x_3*x_7*x_8+x_0*x_5*x_7*x_8+x_1*x_3*x_8^2-x_0*x_4*x_8^2,
         x_0*x_2*x_4*x_6-x_0*x_1*x_5*x_6-x_0*x_2*x_3*x_7+x_0^2*x_5*x_7+x_0*x_1*x_3*x_8-x_0^2*x_4*x_8}}
 assert(
+     time sagbi(F,Limit=>100)
+     ==
+     ans)
+assert(
      time sagbi(F,Limit=>100,Strategy=>Engine)
      ==
      ans)
@@ -152,12 +172,18 @@ genericminors = (minorsize,rowsize,colsize) -> (
 F = genericminors(2,3,4)
 ans = matrix {{x_8*x_10-x_7*x_11, x_5*x_10-x_4*x_11, x_2*x_10-x_1*x_11, x_8*x_9-x_6*x_11, x_7*x_9-x_6*x_10, x_5*x_9-x_3*x_11, x_4*x_9-x_3*x_10, x_2*x_9-x_0*x_11, x_1*x_9-x_0*x_10, x_5*x_7-x_4*x_8, x_2*x_7-x_1*x_8, x_5*x_6-x_3*x_8, x_4*x_6-x_3*x_7, x_2*x_6-x_0*x_8, x_1*x_6-x_0*x_7, x_2*x_4-x_1*x_5, x_2*x_3-x_0*x_5, x_1*x_3-x_0*x_4, x_5*x_7*x_9*x_11-x_4*x_8*x_9*x_11-x_5*x_6*x_10*x_11+x_3*x_8*x_10*x_11+x_4*x_6*x_11^2-x_3*x_7*x_11^2, x_2*x_7*x_9*x_11-x_1*x_8*x_9*x_11-x_2*x_6*x_10*x_11+x_0*x_8*x_10*x_11+x_1*x_6*x_11^2-x_0*x_7*x_11^2, x_2*x_4*x_9*x_11-x_1*x_5*x_9*x_11-x_2*x_3*x_10*x_11+x_0*x_5*x_10*x_11+x_1*x_3*x_11^2-x_0*x_4*x_11^2, x_2*x_4*x_6*x_11-x_1*x_5*x_6*x_11-x_2*x_3*x_7*x_11+x_0*x_5*x_7*x_11+x_1*x_3*x_8*x_11-x_0*x_4*x_8*x_11, x_3*x_5*x_7*x_9-x_3*x_4*x_8*x_9-x_3*x_5*x_6*x_10+x_3^2*x_8*x_10+x_3*x_4*x_6*x_11-x_3^2*x_7*x_11, x_0*x_5*x_7*x_9-x_0*x_4*x_8*x_9-x_0*x_5*x_6*x_10+x_0*x_3*x_8*x_10+x_0*x_4*x_6*x_11-x_0*x_3*x_7*x_11, x_0*x_2*x_7*x_9-x_0*x_1*x_8*x_9-x_0*x_2*x_6*x_10+x_0^2*x_8*x_10+x_0*x_1*x_6*x_11-x_0^2*x_7*x_11, x_0*x_2*x_4*x_9-x_0*x_1*x_5*x_9-x_0*x_2*x_3*x_10+x_0^2*x_5*x_10+x_0*x_1*x_3*x_11-x_0^2*x_4*x_11, x_2*x_4*x_6*x_8-x_1*x_5*x_6*x_8-x_2*x_3*x_7*x_8+x_0*x_5*x_7*x_8+x_1*x_3*x_8^2-x_0*x_4*x_8^2, x_0*x_2*x_4*x_6-x_0*x_1*x_5*x_6-x_0*x_2*x_3*x_7+x_0^2*x_5*x_7+x_0*x_1*x_3*x_8-x_0^2*x_4*x_8}}
 assert(
+     time sagbi(F,Limit=>100)
+     ==
+     ans)
+assert(
      time sagbi(F,Limit=>100,Strategy=>Engine)
      ==
      ans)
 ///
---------------------------------------------
-TEST ///
+---------------------------------------------
+-- Commented out: takes too long right now --
+---------------------------------------------
+///
 --generic minors(2,3,5)
 genericminors = (minorsize,rowsize,colsize) -> (
     -- k by k minors of a generic m by n matrix
@@ -184,11 +210,11 @@ R = kk[symbol a..symbol f]
 F = mingens ((ideal(a,b,c))^2 + (ideal(d,e,f))^2 + (ideal(a+d,b+e,c+f))^2)
 ans = matrix {{f^2, e*f, d*f, c*f, e^2, d*e, c*e+b*f, b*e, d^2, c*d+a*f, b*d+a*e, a*d, c^2, b*c, a*c, b^2, a*b, a^2, b*f^3, a*f^3, a*e*f^2, a*e^2*f, b^3*f, a*b^2*f, a^2*b*f, a^3*f, a*e^3, a^3*e}}
 assert(
-     time sagbi(F,Limit=>100)
+     time sagbi(F,Limit=>100,PrintLevel=>1)
      ==
      ans)
 assert(
-     time sagbi(F,Limit=>100,Strategy=>Engine)
+     time sagbi(F,Limit=>100,Strategy=>Engine, PrintLevel=>1)
      ==
      ans)
 ///
@@ -200,7 +226,7 @@ R = kk[symbol x,symbol y]   -- x>y gives infinite, y>x gives finite
 F = matrix{{x, x*y-y^2, x*y^2}}
 ans = matrix {{x, x*y-y^2, x*y^2, x*y^3+50*y^4, x*y^4, x*y^5-34*y^6, x*y^6, x*y^7+25*y^8, x*y^8, x*y^9+20*y^10, x*y^10, x*y^11-17*y^12, x*y^12, x*y^13-29*y^14, x*y^14, x*y^15-38*y^16, x*y^16, x*y^17-45*y^18, x*y^18, x*y^19+10*y^20, x*y^20, x*y^21-46*y^22, x*y^22, x*y^23+42*y^24, x*y^24, x*y^25+31*y^26, x*y^26, x*y^27+36*y^28, x*y^28, x*y^29-27*y^30}}
 assert(
-     time sagbi(F,Limit=>30)
+     time sagbi(F,Limit=>30,PrintLevel=>1)
      ==
      ans)
 assert(
@@ -208,6 +234,7 @@ assert(
      ==
      ans)
 
+--     time sagbi(F,Limit=>100,PrintLevel=>1)
 ///
 --------------------------------------------
 TEST ///
@@ -218,6 +245,10 @@ F = matrix{{x, x*y-y^2, x*y^2}}
 ans = matrix {{x, y^2-y*x, y*x^2}}
 assert(
      time sagbi(F,Limit=>1000)
+     ==
+     ans)
+assert(
+     time sagbi(F,Limit=>1000,Strategy=>Engine)
      ==
      ans)
 ///
@@ -236,6 +267,10 @@ assert(
      time sagbi(F,Limit=>30)
      ==
      ans)
+assert(
+     time sagbi(F,Limit=>30, Strategy=>Engine)
+     ==
+     ans)
 ///
 --------------------------------------------
 TEST ///
@@ -249,6 +284,10 @@ ans = matrix {{a+b+c, a*b+a*c+b*c, a*b*c, a*b^2+a^2*c+b*c^2, a*b^3+a^3*c+b*c^3, 
 F = matrix{{a+b+c, a*b+b*c+c*a, a*b*c, a^2*b+b^2*c+c^2*a}}
 assert(
      time sagbi(F,Limit=>15)
+     ==
+     ans)
+assert(
+     time sagbi(F,Limit=>15, Strategy=>Engine)
      ==
      ans)
 ///
@@ -284,6 +323,10 @@ assert(
      time sagbi(F,Limit=>30)
      ==
      ans)
+assert(
+     time sagbi(F,Limit=>30,Strategy=>Engine)
+     ==
+     ans)
 ///
 --------------------------------------------
 TEST ///
@@ -299,6 +342,10 @@ F = matrix{{x_3,
 	  t^2*x_3+2*t*x_2+2*x_1}} 
 assert(
      time sagbi(F,Limit=>200)
+     ==
+     ans)
+assert(
+     time sagbi(F,Limit=>200,Strategy=>Engine)
      ==
      ans)
 ///
@@ -318,6 +365,10 @@ F = matrix{{u_2*v_1-u_1*v_2,
 	  2*s_0*u_2*v_2+2*s_2*u_1*v_1-s_1*(u_2*v_1+u_1*v_2)}}
 assert(
      time sagbi(F,Limit=>30)
+     ==
+     ans)
+assert(
+     time sagbi(F,Limit=>30,Strategy=>Engine)
      ==
      ans)
 ///
