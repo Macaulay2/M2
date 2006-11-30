@@ -11,7 +11,7 @@ Buildroot: /home/dan/src/M2/BUILD/normal/rpm/files
 %define _unpackaged_files_terminate_build 1
 %post
 #!/bin/sh -e
-prefix=/usr/local
+prefix=@FINALPREFIX@
 $prefix/bin/M2 --dumpdata
 for p in $prefix/share/Macaulay2/*.m2
 do f="$prefix/share/info/`basename $p .m2`.info"
@@ -19,7 +19,7 @@ do f="$prefix/share/info/`basename $p .m2`.info"
 done
 %preun
 #! /bin/sh -e
-prefix=/usr/local
+prefix=@FINALPREFIX@
 rm -f $prefix/lib/Macaulay2/Core/cache/*
 for p in $prefix/share/Macaulay2/*.m2
 do f="$prefix/share/info/`basename $p .m2`.info"
