@@ -26,6 +26,11 @@ setMonomialOrderFlag = (R) -> (
      else if temp === RevLex then (tempflag = 5);
      tempflag)
 
+appendElimination = (monorder, nold, nnew) -> (
+     -- returns a monomial order
+     append(monorder, Weights=>nold:1)
+     )
+
 submatrixByDegrees = (m,d) -> (
     want := positions(0..numgens source m - 1, 
 	             i -> (degrees source m)_i === {d});
