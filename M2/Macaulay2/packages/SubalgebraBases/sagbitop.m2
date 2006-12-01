@@ -282,3 +282,9 @@ sagbiquo(Matrix,Ideal,ZZ,ZZ) := (Gens, I, maxnloops, printlevel) -> (
 	  d = d+1;
 	  );
      G)
+
+end
+R = QQ[a..f,MonomialOrder=>Eliminate 3]
+(monoid R).Options
+S = (coefficientRing R)[Variables=>10, MonomialOrder=>prepend(Weights=>6:1, (monoid R).Options.MonomialOrder)]
+(monoid S).Options
