@@ -27,7 +27,8 @@ prepare : ../$(PKG_TZ)
 	$(MKDIR_P) $(prefixtail)
 	tar xfp $^ $(TAR_COMPRESS_OPTION)
 	for i in $(package)/* ; do if [ -f "$$i" ] ; then rm "$$i" ; fi ; done
-	mv $(package) $(prefixtail)
+	mv $(package)/* $(prefixtail)
+	rmdir $(package)
 	fakeroot chown -R root $(prefixtail)
 data.tar.gz : prepare
 	fakeroot tar cfz $@ $(prefixtail)
