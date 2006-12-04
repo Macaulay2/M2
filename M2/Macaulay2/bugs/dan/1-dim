@@ -1,0 +1,7 @@
+--- wrong answers (Bart Snapp)
+A = ZZ[x]
+dim (A/ideal(2))
+two = promote(2,A)
+dim (A/ideal(two))
+dim (A/ideal(2,x))
+dim (A/ideal(two,x))
