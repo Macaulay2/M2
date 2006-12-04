@@ -736,7 +736,7 @@ char *name;
 #if HAVE_SOCKET
      if ('0' <= name[0] && name[0] <= '9') {
      	  int s;
-	  s = inet_addr(name);	/* this function is obsolete, replaced by inet_aton() */
+	  s = inet_addr(name);	/* this function is obsolete, replaced by inet_aton(); we use it only if getaddrinfo is not available */
 	  if (s == ERROR) {
 	       hostname_error_message = "IP address translation failed";
 	       return ERROR;
@@ -744,7 +744,14 @@ char *name;
 	  return s;
 	  }
      else {
-	  struct hostent *t = gethostbyname(name); /* this function is obsolete because it doesn't handle IPv6 */
+	  struct hostent *t;
+	  if (sigsetjmp(interrupt_jump,TRUE)) {
+	       interrupt_jump_set = FALSE;
+	       return ERROR;
+	  }
+	  else interrupt_jump_set = TRUE;
+	  t = gethostbyname(name); /* this function is obsolete because it doesn't handle IPv6; we use it only if getaddrinfo is not available */
+	  interrupt_jump_set = FALSE;
 	  if (t == NULL) {
 	       hostname_error_message = hstrerror(h_errno);
 	       return ERROR;
@@ -842,10 +849,16 @@ int opensocket(char *host, char *service) {
 #if HAVE_GETADDRINFO && GETADDRINFO_WORKS
   struct addrinfo *addr;
   int so;
+  if (sigsetjmp(interrupt_jump,TRUE)) {
+       interrupt_jump_set = FALSE;
+       return ERROR;
+  }
+  else interrupt_jump_set = TRUE;
   if (0 != set_addrinfo(&addr,NULL,host,service)) return ERROR;
   so = socket(addr->ai_family,SOCK_STREAM,0);
   if (ERROR == so) return ERROR;
   if (ERROR == connect(so,addr->ai_addr,addr->ai_addrlen)) { close(so); return ERROR; }
+  interrupt_jump_set = FALSE;
   return so;
 #else
   int sd = socket(AF_INET,SOCK_STREAM,0);
@@ -929,6 +942,7 @@ char const *system_strerror(void) {
 	  errno = 0;
 	  return msg;
      }
+     if (system_interruptedFlag) return "interrupted";
      return "no system error indication found";
 }
 
