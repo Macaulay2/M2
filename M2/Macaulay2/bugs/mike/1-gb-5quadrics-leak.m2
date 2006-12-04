@@ -29,25 +29,16 @@ doit = () -> (
      )
 
 end
-restart
-time load "1-gb-5quadrics-leak.m2"
-time doit()
-collectGarbage()
-time doit()
 
--- keep some of g,c,b: (before loading file: real mem usage is 60.73 MB)
--- (none): real: 106.18 MB
--- b: real: 137 MB
--- g: 106.21 MB
--- c: 106.23 MB
--- bg: 166.74 MB
--- cg: 106.23 MB
--- bc: 244.67 MB
--- bcg: 228.78 MB
 
+-- first comment out the lines "b", "c", or "g" in H() above
+-- and then run the following
 restart
 time load "1-gb-5quadrics-leak.m2"
 time for i from 1 to 10 do time (doit(); collectGarbage())
+
+-- Here, e.g. bg means comment out only the "c" line:
+
 -- bcg: 745.30 MB (154.29 sec)
 -- c: 121.92 MB (51.16 sec)
 -- g: 106.31 MB (42.74 sec)
@@ -56,12 +47,3 @@ time for i from 1 to 10 do time (doit(); collectGarbage())
 -- bc: 760.95 MB (150.13 sec)
 -- gc: 121.36 MB (55.0 sec)
 -- (none): 106.18 MB (28.12 sec)
-
--- export GC_free_space_divisor=10
---  i=550, real mem 657 MB
---  i=825, real mem 940 MB
--- export GC_free_space_divisor=2
---  i= 326, real mem 1.02 GB
--- export GC_free_space_divisor=6
---  i= 550, real mem 723 GB
---  i = 825, real mem 1.01 GB
