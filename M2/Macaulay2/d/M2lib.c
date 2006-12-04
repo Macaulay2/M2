@@ -141,6 +141,9 @@ static sigjmp_buf loaddata_jump;
 static sigjmp_buf abort_jump;
 static bool abort_jump_set = FALSE;
 
+sigjmp_buf interrupt_jump;
+bool interrupt_jump_set = FALSE;
+
 #undef ABORT
 
 static void interrupt_handler(int sig)
@@ -209,6 +212,7 @@ static void interrupt_handler(int sig)
 #if FACTORY
 	       libfac_interruptflag = TRUE;
 #endif
+	       if (interrupt_jump_set) siglongjmp(interrupt_jump,1);
 	       }
 	  }
      signal(SIGINT,interrupt_handler);
@@ -259,7 +263,7 @@ M2_bool actors5_MP;
 M2_stringarray system_envp;
 M2_stringarray system_argv;
 M2_stringarray system_args;
-M2_stringarray actors5_configargs;
+M2_string actors5_configargs;
 int system_loadDepth;
 
 int system_randomint(void) {
