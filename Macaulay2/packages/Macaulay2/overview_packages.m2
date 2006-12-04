@@ -37,7 +37,9 @@ document { Key => "packages",
 	  TO installPackage,
 	  TO "loadedPackages",
      "Creating new packages",
-     	  TO "creating a package"
+     	  TO "creating a package",
+     "Downloading packages",
+     	  TO "getPackage"
 	  }
      }
 
@@ -68,6 +70,7 @@ document { Key => "using packages",
      }
 
 document { Key => "loadedPackages",
+     Headline => "the list of loaded packages",
      "The value of the variable ", TT "loadedPackages", " is a list of the packages that have been loaded.",
      EXAMPLE "loadedPackages"
      }

@@ -397,18 +397,22 @@ chkwww := url -> (
      www := getwww url;
      if www === null then error("web page not found: ", url);
      www)
-packageRepository = "http://www.math.uiuc.edu/Macaulay2/Packages/"
-getPackage = method(Options => { Version => null })
+getPackage = method(Options => { 
+	  Repository => "http://www.math.uiuc.edu/Macaulay2/Packages/",
+	  Version => null, 
+	  CurrentVersion => null
+	  })
 getPackage String := opts -> pkgname -> (
-     url := packageRepository | pkgname | "/";
+     url := opts.Repository | pkgname | "/";
      versions := sort lines chkwww (url | "versions");
      if #versions == 0 then error "getPackage: no versions available from repository";
      if opts.Version === null then (
      	  vers := last versions;
+	  if opts.CurrentVersion =!= null and not vers > opts.CurrentVersion then return;
 	  )
      else (
 	  vers = opts.Version;
-	  if not member(vers,versions) then error("requested version among those available: ",concatenate between(", ",versions));
+	  if not member(vers,versions) then error("requested version not among those available: ",concatenate between(", ",versions));
 	  );
      stderr << "--fetching package " << pkgname << ", version " << vers << " from " << url << endl;
      tmp := temporaryFileName();
