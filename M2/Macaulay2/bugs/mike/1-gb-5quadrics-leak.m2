@@ -16,9 +16,9 @@ setRandomSeed seed
 
 H = () -> (
      J := trim randomSparseIdeal(B,2,5);
-     g := gens gb J;
-     c := codim J;
-     b := res J;
+--     g := gens gb J;
+--     c := codim J;
+--     b := res J;
      )
 
 doit = () -> (
@@ -34,8 +34,9 @@ end
 -- first comment out the lines "b", "c", or "g" in H() above
 -- and then run the following
 restart
-time load "1-gb-5quadrics-leak.m2"
+load "1-gb-5quadrics-leak.m2"
 time for i from 1 to 10 do time (doit(); collectGarbage())
+run ("ps u "|processID())
 
 -- Here, e.g. bg means comment out only the "c" line:
 
@@ -47,3 +48,16 @@ time for i from 1 to 10 do time (doit(); collectGarbage())
 -- bc: 760.95 MB (150.13 sec)
 -- gc: 121.36 MB (55.0 sec)
 -- (none): 106.18 MB (28.12 sec)
+
+end
+
+on rhodium -- Linux rhodium 2.6.18.1 #1 SMP PREEMPT Sat Nov 11 02:11:17 CET 2006 i686 pentium4 i386 GNU/Linux
+
+-- bcg: 651520K (390.976 seconds)
+-- c:    60140K (128.652 seconds)
+-- g:    37360K (109.199 seconds)
+-- b:   103484K (214.065 seconds)
+-- bg:  224316K (287.994 seconds)
+-- bc:  669M    (393.985 seconds)
+-- gc:   59884K (156.442 seconds)
+-- :     37360K ( 74.1686 seconds)
