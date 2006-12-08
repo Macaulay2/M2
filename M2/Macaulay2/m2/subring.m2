@@ -88,7 +88,9 @@ pushlinear := opts -> (f,M) -> (
     fmat := lift(f.matrix,Rbase);
     n := numgens source f.matrix;
     n1 := numgens R - n;
-    R1 := (coefficientRing Rbase)[Variables => numgens R, MonomialOrder => Eliminate n1];
+    k := coefficientRing Rbase;
+    N := monoid [Variables => numgens R, MonomialOrder => Eliminate n1];
+    R1 := k N;
     (Fto,Ffrom) := newCoordinateSystem(R1, fmat);
     m1 := Fto m;
     m1 = presentation (cokernel m1 ** cokernel Fto presentation R);

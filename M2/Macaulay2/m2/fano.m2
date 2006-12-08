@@ -62,7 +62,8 @@ Fano(ZZ, Ideal) := Ideal => (k,X) -> (
   r := (numgens ring X) - 1;
   -- We can specify a private ring with binomial(r+1,k+1)
   -- variables as follows
-  GR := KK[Variables => binomial(r+1,k+1)];
+  M := monoid [Variables => binomial(r+1,k+1)];
+  GR := KK M;
   -- the work is done by
   Fano(k,X,GR)
 )

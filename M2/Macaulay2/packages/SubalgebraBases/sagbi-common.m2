@@ -52,10 +52,10 @@ rowReduce = (elems, d) -> (
      n := numgens R;
      M := monoid R;
      moFlag := setMonomialOrderFlag R;
+     k := coefficientRing R;
      if moFlag == 5 then (
-	  RH = (coefficientRing R)[Variables=>n+1, 
-	       MonomialOrder => RevLex,
-	       Degrees => prepend({1},M.Options.Degrees)];
+	  N := monoid [Variables=>n+1, MonomialOrder => RevLex, Degrees => prepend({1},M.Options.Degrees)];
+	  RH = k N;
 	  RtoRH = map(RH,R,(vars RH)_{1..n});
      	  RHtoR = map(R,RH,matrix{{1_R}} | vars R);
           elemsH = homogenize(RtoRH elems, RH_0);)
@@ -63,13 +63,15 @@ rowReduce = (elems, d) -> (
 	  if moFlag == 2 then (
 	       << "WARNING: GLex is an unstable order for rowReduce" << endl)
 	  else if moFlag == 4 then (
-     	       RH = (coefficientRing R)[Variables=>n+1, 
+	       N = monoid [Variables=>n+1, 
 	       	    MonomialOrder => append(M.Options.MonomialOrder,1),
-	       	    Degrees => append(M.Options.Degrees,{1})])
+	       	    Degrees => append(M.Options.Degrees,{1})];
+     	       RH = k)
 	  else (
-     	       RH = (coefficientRing R)[Variables=>n+1, 
+	       N = monoid [Variables=>n+1, 
 	       	    MonomialOrder => M.Options.MonomialOrder,
-	       	    Degrees => append(M.Options.Degrees,{1})]);
+	       	    Degrees => append(M.Options.Degrees,{1})];
+     	       RH = k N);
      	  RtoRH = map(RH,R,(vars RH)_{0..n-1});
      	  RHtoR = map(R,RH,vars R | matrix{{1_R}});
      	  elemsH = homogenize(RtoRH elems, RH_n););

@@ -31,10 +31,12 @@ sagbiEngine = (Gens, maxnloops, printlevel) -> (
 	  nR = numgens R;
 	  nG = numgens source G;
 	  NewOrder = appendElimination(M.Options.MonomialOrder, nR, nG);
-	  RS = (coefficientRing R)[
+	  k := coefficientRing R;
+	  N := monoid [
 	       Variables => nR + nG,
 	       Degrees=>join(degrees source vars R, degrees source G),
 	       MonomialOrder => NewOrder];
+	  RS = k N;
 	  RtoRS = map(RS,R,(vars RS)_{0..nR-1});
 	  RStoS = map(RS,RS, matrix {toList(nR:0_RS)} |
 	       (vars RS)_{nR .. nR+nG-1});

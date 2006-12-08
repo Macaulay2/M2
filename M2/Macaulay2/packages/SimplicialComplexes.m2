@@ -173,7 +173,8 @@ label(SimplicialComplex, List) := (D,L) -> (
      else (
 	  D.cache.labels = new MutableHashTable;
 	  S := ring(L#0);
-	  Sext := S[Variables=>#L];
+	  M := monoid [Variables=>#L]; 
+	  Sext := S M;
 	  D.cache.labels.ring = Sext;
      	  L = apply(#L, i -> L_i * Sext_i);
 	  D.cache.labels.L = L;
