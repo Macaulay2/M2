@@ -11,8 +11,11 @@ monomialCurveIdeal = (S, a) -> (
     s := symbol s;
     t := symbol t;
     monsize := (options S).MonomialSize;
-    R1 := (coefficientRing S)[s,t,MonomialSize=>monsize];
-    R2 := (coefficientRing S)[Variables=>n+1,MonomialSize=>monsize];
+    k := coefficientRing S;
+    M1 := monoid [s,t,MonomialSize=>monsize];
+    M2 := monoid [Variables=>n+1,MonomialSize=>monsize];
+    R1 := k M1;
+    R2 := k M2;
     mm := matrix table(1, n+1, (j,i) -> s^(a#i) * t^(topa - a#i));
     j := generators kernel map(R1, R2, mm);
     ideal substitute(j, submatrix(vars S, {0..n}))

@@ -239,7 +239,9 @@ satideal3 := opts -> (I,f) -> (
      n := numgens R;
      f = f_0;
      degs := append((monoid R).degrees, degree f);
-     R1 := (coefficientRing R)[Variables=>n+1,Degrees=>degs,MonomialSize=>16];
+     k := coefficientRing R;
+     M := monoid [Variables=>n+1,Degrees=>degs,MonomialSize=>16];
+     R1 := k M;
      i := map(R1,R,(vars R1)_{0..n-1});
      f1 := i f;
      I1 := ideal (i generators I);
@@ -255,7 +257,9 @@ satideal4 := opts -> (I,f) -> (
      f = f_0;
      R := ring I;
      n := numgens R;
-     R1 := (coefficientRing R)[Variables=>n+1,MonomialOrder=>Eliminate 1,MonomialSize=>16];
+     k := coefficientRing R;
+     M := monoid [Variables=>n+1,MonomialOrder=>Eliminate 1,MonomialSize=>16];
+     R1 := k M;
      fto := map(R1,R,genericMatrix(R1,R1_1,1,n));
      f1 := fto f;
      R2 := R1/(f1*R1_0-1);

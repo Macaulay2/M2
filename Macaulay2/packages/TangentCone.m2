@@ -21,12 +21,14 @@ tangentCone Ideal := (opts) -> (i) -> (
      n := numgens R;
      k := coefficientRing R;
      if opts.Strategy === Local then (
-	  SS := k[Variables=>n,MonomialOrder=>Weights=>splice{n:-1},Global=>false];
+	  M := monoid [Variables=>n,MonomialOrder=>Weights=>splice{n:-1},Global=>false];
+	  SS := k M;
 	  toSS := map(SS, R, vars SS);
 	  fromSS := map(R, SS, vars R);
 	  ideal mingens fromSS ideal leadTerm(1, gens gb toSS i))
      else if opts.Strategy === Global then (
-	  SS = k[Variables=>n+1,MonomialOrder=>{1,n}];
+	  M = monoid [Variables=>n+1,MonomialOrder=>{1,n}];
+	  SS = k M;
 	  toSS = map(SS, R, (vars SS)_{1..n});
 	  fromSS = map(R, SS, 1_R|vars R);
 	  ideal mingens fromSS ideal leadTerm(1, gens gb homogenize(toSS i, SS_0)))

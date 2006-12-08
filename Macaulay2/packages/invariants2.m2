@@ -53,7 +53,9 @@ randomPermutation = (n) -> (
 subAlgebraBasis = (m,d) -> (
      R := ring m;
      n := numgens source m;
-     R1 := (coefficientRing R)[Variables=>n,Degrees => degrees source m];
+     k := coefficientRing R;
+     M := monoid [Variables=>n,Degrees => degrees source m];
+     R1 := k M;
      m1 := basis(d,R1);
      ideal substitute(m1, m))
 

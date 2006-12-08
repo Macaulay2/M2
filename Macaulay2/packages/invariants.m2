@@ -598,8 +598,9 @@ kemper = (G, P, S) -> (
      s1 = syz M1;
      -- Step 3. Compute the elimination
      R = ring P;
-     A = (coefficientRing R)[Variables=>numgens source P,
-	                     Degrees=>degrees source P];
+     k := coefficientRing R;
+     M := monoid [Variables=>numgens source P, Degrees=>degrees source P];
+     A = k M;
      phi = map(R,A,P);
      inv = pushforward1(phi,coker s1);
      -- Step 4. Recompute the answer: multiply this by S.
@@ -620,7 +621,9 @@ TEST ///
 derkson = (G) -> (
      R := ring G;
      n := numgens R;
-     S := (coefficientRing R)[Variables=>2*n];
+     k := coefficientRing R;
+     M := monoid [Variables=>2*n];
+     S := k M;
      v0 := genericMatrix(S,S_0, 1, n);
      v1 := genericMatrix(S,S_(n), 1, n);
      gelem := (F) -> ideal(v1 - substitute(F vars R, v0));

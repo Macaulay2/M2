@@ -33,8 +33,9 @@ eliminate (List, Ideal) := (v,I) -> (
      invperm := inversePermutation perm;
      degs := (monoid R).Options.Degrees;
      degs = apply(perm, i -> degs_i);
-     R1 := (coefficientRing R)[Variables=>numgens R,MonomialOrder=>ProductOrder{#varlist,#others},
-	  Degrees=>degs, MonomialSize=>16];
+     M := monoid [Variables=>numgens R,MonomialOrder=>ProductOrder{#varlist,#others}, Degrees=>degs, MonomialSize=>16];
+     k := coefficientRing R;
+     R1 := k M;
      toR1 := map(R1,R,apply(invperm,i->R1_i));
      toR := map(R,R1,apply(perm,i->R_i));
      J := toR1 I;

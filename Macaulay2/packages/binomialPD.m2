@@ -9,7 +9,9 @@ axisSaturate = (m,i) -> (
      R := ring m;
      n := numgens R;
      if i < 0 or i >= n then error "variable out of range";
-     R1 = (coefficientRing R)[Variables=>n,MonomialSize=>16];
+     k := coefficientRing R;
+     M := monoid [Variables=>n,MonomialSize=>16];
+     R1 = k M;
      if i === n-1 then (
 	 perm1 = map(R1,R,vars R1);
 	 perm2 = map(R,R1,vars R);)

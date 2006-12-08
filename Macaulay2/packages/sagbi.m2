@@ -125,9 +125,11 @@ rowReduce = (elems, d) -> (
      R := ring elems;
      n := numgens R;
      M := monoid R;
-     RH := (coefficientRing R)[Variables=>n+1, 
+     k := coefficientRing R;
+     N := monoid [Variables=>n+1, 
 	  MonomialOrder => M.Options.MonomialOrder,
 	  Degrees => append(M.Options.Degrees,{1})];
+     RH := k N;
      RtoRH := map(RH,R,(vars RH)_{0..n-1});
      RHtoR := map(R,RH,vars R | matrix{{1_R}});
      elemsH := homogenize(RtoRH elems, RH_n);
@@ -171,8 +173,10 @@ sagbi(Matrix,ZZ) := (Gens, maxnloops) -> (
      appendToBasis := (m) -> (
 	  R := ring m;
 	  G = G | m;
-          S = (coefficientRing R)[Variables=>numgens source G, 
+	  k := coefficientRing R;
+	  M := monoid [Variables=>numgens source G, 
 	         Degrees=>degrees source G];
+          S = k M;
 	  Gmap = map(R,S,G);
 	  inGmap = map(R,S,leadTerm G);
 	  -- nvars := numgens R + numgens S;
