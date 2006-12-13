@@ -1797,6 +1797,11 @@ document {
      SeeAlso => {"Drestriction", "Dintegration" }
      }
 document {
+     Key => BFunction,
+     Headline => "a key in the hashtable created by Drestriction/Dintegration",
+     SeeAlso => {"Drestriction", "Dintegration" }
+     }
+document {
      Key => Explicit,
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
      SeeAlso => {"Drestriction", "Dintegration" }
