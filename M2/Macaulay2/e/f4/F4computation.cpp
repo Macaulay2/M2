@@ -64,6 +64,7 @@ F4Computation::F4Computation(
 
   f4 = new F4GB(KK,
 		MI,
+		m->rows(),
 		collect_syz,
 		n_rows_to_keep,
 		gb_weights,

@@ -453,6 +453,7 @@ void binomial_ring::elem_text_out(buffer &o, const binomial &f) const
 binomial_s_pair_set::binomial_s_pair_set(const binomial_ring *RR)
   : R(RR),
     _prev_lcm(NULL),
+    _n_elems(0),
     _max_degree(0)
 {
   _pairs = new s_pair_degree_list; // list header
@@ -581,7 +582,7 @@ void binomial_s_pair_set::insert(binomial_s_pair s)
   q->n_elems++;
 }
 
-bool binomial_s_pair_set::next(const int *d, binomial_s_pair &result)
+bool binomial_s_pair_set::next(const int *d, binomial_s_pair &result, int &result_deg)
   // returns next pair in degrees <= *d, if any.
   // the caller should not free any of the three fields of the
   // s_pair!!
@@ -591,6 +592,7 @@ bool binomial_s_pair_set::next(const int *d, binomial_s_pair &result)
   s_pair_degree_list *thisdeg = _pairs->next;
   s_pair_lcm_list *thislcm = thisdeg->pairs;
   s_pair_elem *s = thislcm->pairs;
+  result_deg = thisdeg->deg;
 
   thisdeg->n_elems--;
   _n_elems--;
@@ -1002,9 +1004,37 @@ binomialGB_comp::binomialGB_comp(const PolynomialRing *RR, int *wts, bool revlex
   R = new binomial_ring(RR, wts, revlex);
   Pairs = new binomial_s_pair_set(R);
   Gmin = new binomialGB(R, use_bigcell, is_homogeneous && is_nondegenerate && !use_bigcell);
+
+  top_degree = -1;
+  set_status(COMP_NOT_STARTED);
 }
 
-binomialGB_comp::~binomialGB_comp()
+binomialGB_comp * binomialGB_comp::create(const Matrix *m,
+					  M2_bool collect_syz,
+					  int n_rows_to_keep,
+					  M2_arrayint gb_weights,
+					  int strategy,
+					  M2_bool use_max_degree_limit,
+					  int max_degree_limit)
+{
+  if (collect_syz || n_rows_to_keep > 0)
+    {
+      ERROR("Groebner basis Algorithm=>Toric cannot keep syzygies");
+      return 0;
+    }
+  const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
+  if (R == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  binomialGB_comp *result = new binomialGB_comp(R,0,true,strategy);
+  result->add_generators(m);
+  intern_GB(result);
+  return result;
+}
+
+void binomialGB_comp::remove_gb()
 {
   int i;
   deleteitem(Gmin);
@@ -1021,6 +1051,11 @@ binomialGB_comp::~binomialGB_comp()
   for (i=0; i<mingens_subring.length(); i++)
     mingens_subring[i] = NULL;
   deleteitem(R);
+}
+
+binomialGB_comp::~binomialGB_comp()
+{
+  remove_gb();
 }
 
 //////////////////////////
@@ -1146,24 +1181,37 @@ void binomialGB_comp::process_pair(binomial_s_pair s)
     R->remove_binomial(f);
 }
 
-int binomialGB_comp::gb_done(const intarray &/*stop_condtions*/) const
+bool binomialGB_comp::stop_conditions_ok() 
+{
+  return true;
+}
+
+ComputationStatusCode binomialGB_comp::gb_done() const
 {
   return COMP_COMPUTING;
 }
 
-int binomialGB_comp::calc(const int *deg, const intarray &stop_conditions)
+void binomialGB_comp::start_computation()
 {
   binomial_s_pair s;
-  while (Pairs->next(deg, s))
+  int *deg = 0;
+  if (stop_.always_stop) return; // don't change status
+  if (stop_.stop_after_degree) deg = &stop_.degree_limit->array[0];
+  while (Pairs->next(deg, s, top_degree))
     {
-      int ret = gb_done(stop_conditions);
-      if (ret != COMP_COMPUTING) return ret;
+      ComputationStatusCode ret = gb_done();
+      if (ret != COMP_COMPUTING) return;
       process_pair(s);		// consumes 's'.
-      if (system_interruptedFlag) return COMP_INTERRUPTED;
+      if (system_interruptedFlag) 
+	{
+	  set_status(COMP_INTERRUPTED);
+	  return;
+	}
     }
   if (Pairs->n_elems() == 0)
-    return COMP_DONE;
-  return COMP_DONE_DEGREE_LIMIT;
+    set_status(COMP_DONE);
+  else
+    set_status(COMP_DONE_DEGREE_LIMIT);
 }
 
 ///////////////////////

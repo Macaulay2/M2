@@ -21,10 +21,16 @@ H = () -> (
 --     b := res J;
      )
 
+H = () -> (
+     J := ideal (l^2,a*k+f*l,g*i,b*c-2*e*f,a*b+g*k);
+     --c := codim J;
+     b := res J;
+     )
+
 doit = () -> (
      for i from 1 to 30 do (
-	  << "i = " << i << flush;
-	  time for j from 1 to 100 do H();
+	  --<< "i = " << i << flush;
+	  for j from 1 to 100 do H();
 	  )
      )
 
@@ -37,6 +43,11 @@ restart
 load "1-gb-5quadrics-leak.m2"
 time for i from 1 to 10 do time (doit(); collectGarbage())
 run ("ps u "|processID())
+
+-- with trim: 472.13 MB / 527.64 MB
+-- w/o trim: 293.78 MB / 344.89 MB
+-- only trim: 106.24 MB / 143.64 MB
+-- only res, no trim, no codim: 167.05 / 210.39 MB
 
 -- Here, e.g. bg means comment out only the "c" line:
 

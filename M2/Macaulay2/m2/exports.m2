@@ -399,6 +399,7 @@ export {
 	symbol Thing,
 	symbol Time,
 	symbol Tor,
+	symbol Toric,
 	symbol TotalPairs,
 	symbol TreeNode,
 	symbol Truncate,

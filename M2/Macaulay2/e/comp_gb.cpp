@@ -4,6 +4,7 @@
 
 #include "gb.hpp"
 #include "gbinhom.hpp"
+#include "gbbinom.hpp"
 #include "gauss.hpp"
 #include "hermite.hpp"
 #include "gbA.hpp"
@@ -101,6 +102,15 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
      break;
   case 6: 
     result = createF4GB(m, 
+			collect_syz, 
+			n_rows_to_keep,
+			gb_weights,
+			strategy,
+			use_max_degree,
+			max_degree);
+    break;
+  case 7: 
+    result = binomialGB_comp::create(m, 
 			collect_syz, 
 			n_rows_to_keep,
 			gb_weights,

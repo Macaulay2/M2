@@ -12,6 +12,9 @@ void MonomialHashTable<ValueType>::reset()
   count = 0;
   nclashes = 0;
   max_run_length = 0;
+  monequal_count = 0;
+  monequal_fails = 0;
+  //  bzero(hashtab, sizeof(value) * size);
   for (unsigned long i=0; i<size; i++)
     hashtab[i] = 0;
 }
@@ -89,8 +92,11 @@ bool MonomialHashTable<ValueType>::find_or_insert(value m, value &result)
       // or a free spot, whichever comes first.
       long mhash = HASHVALUE(m);
       value *hashtop = hashtab + size;
-      for (value *i = hashtab + hashval; ; i++)
+      long run_len = 1;
+      for (value *i = hashtab + hashval; ; i++, run_len++)
 	{
+	  if (run_len > max_run_length)
+	    max_run_length = run_len;
 	  if (i == hashtop) i = hashtab;
 	  if (!(*i)) 
 	    {
@@ -101,10 +107,16 @@ bool MonomialHashTable<ValueType>::find_or_insert(value m, value &result)
 	      if (count > threshold) grow();
 	      return false;
 	    }
-	  if (HASHVALUE(*i) == mhash && MONOMIAL_EQUAL(m, *i))
+	  if (HASHVALUE(*i) == mhash)
 	    {
-	      result = *i;
-	      return true;
+	      monequal_count++;
+	      if (MONOMIAL_EQUAL(m, *i))
+		{
+		  monequal_count++;
+		  result = *i;
+		  return true;
+		}
+	      monequal_fails++;
 	    }
 	  nclashes++;
 	}
@@ -118,6 +130,8 @@ void MonomialHashTable<ValueType>::dump() const
   fprintf(stderr, "  number of monoms  = %ld\n",count);
   fprintf(stderr, "  number of clashes = %ld\n",nclashes);
   fprintf(stderr, "  max run length    = %ld\n",max_run_length);
+  fprintf(stderr, "  monequal calls    = %ld\n",monequal_count);
+  fprintf(stderr, "  monequal false    = %ld\n",monequal_fails);
 }
 
 template <typename ValueType>

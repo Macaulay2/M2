@@ -14,7 +14,8 @@
 
 // CAVEAT: NO overflow checking is done with this class.
 
-typedef int64_t ntuple_word;
+//typedef int64_t ntuple_word;
+typedef long ntuple_word;
 typedef ntuple_word * ntuple_monomial;
 typedef const ntuple_word * const_ntuple_monomial;
 

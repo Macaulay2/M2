@@ -29,6 +29,8 @@ private:
   unsigned long count;
   unsigned long nclashes;
   unsigned long max_run_length;
+  unsigned long monequal_count;
+  unsigned long monequal_fails;
 
   void insert(value m);
   void grow(); // Increase logsize by 1, remake hashtab.

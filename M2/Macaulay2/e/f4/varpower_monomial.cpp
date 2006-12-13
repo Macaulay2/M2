@@ -297,11 +297,11 @@ void varpower_monomials::elem_text_out(FILE *fil, const_varpower_monomial m)
     } else if (v < 52) {
       int c = 'A'+v;
       fprintf(fil, "%c", c);
-    } else fprintf(fil, "x[%lld]",v);
+    } else fprintf(fil, "x[%ld]",v);
     if (e > 1)
-      fprintf(fil, "%lld", e);
+      fprintf(fil, "%ld", e);
     else if (e < 0)
-      fprintf(fil, "^(%lld)", e);
+      fprintf(fil, "^(%ld)", e);
   }
 }
 

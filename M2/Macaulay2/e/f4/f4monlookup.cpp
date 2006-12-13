@@ -318,7 +318,6 @@ void F4MonomialLookupTableT<Key>::insert_minimal_vp(long comp,
 	mis.push_back(0);
     }
   insert1(mis[comp],m,k);
-  count += 2; // recall that the low order bit tells us if we own mi_stash...
 }
 
 template <typename Key>

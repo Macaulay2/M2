@@ -39,6 +39,7 @@ public:
 
   static MutableMatrix *to_M2_MutableMatrix(const Gausser *KK,
 					    coefficient_matrix *mat,
+					    gb_array &gens,
 					    gb_array &gb);
 
 };

@@ -7,6 +7,11 @@
 
 typedef void *F4CoefficientArray;
 
+struct dense_row : public our_new_delete {
+  int len; // coeffs is an array 0..len-1
+  F4CoefficientArray coeffs;
+};
+
 class Gausser : public our_new_delete
 {
   enum {ZZp} typ;
@@ -26,6 +31,8 @@ public:
 
   void to_ringelem_array(int len, F4CoefficientArray, ring_elem *result) const;
 
+  F4CoefficientArray copy_F4CoefficientArray(int len, F4CoefficientArray F) const;
+
   // other routines:
   void remove_array(F4CoefficientArray a) const;
 
@@ -39,36 +46,38 @@ public:
 
   // evaluation of multivariate poly's or fcn's.
 
-#if 0
-  // Not ready yet.
-  void allocate_dense_row_zero(int nelems, dense_row &r);
-#endif
+  void dense_row_allocate(dense_row &r, long nelems) const;
   // create a row of 0's (over K).
 
-  void fill_from_sparse(F4CoefficientArray dense, 
-			F4CoefficientArray sparse,
-			int len,
-			int *comps,
-			int &first,
-			int &last);
-  // Fills 'dense' from 'sparse' (and 'comps'), setting first and last.
+  void dense_row_clear(dense_row &r, int first, int last) const;
 
-  void subtract_sparse(F4CoefficientArray dense, 
-		       F4CoefficientArray sparse,
-		       int len,
-		       int *comps,
-		       int &pivot,
-		       int &last);
+  void dense_row_deallocate(dense_row &r) const;
+
+  int dense_row_next_nonzero(dense_row &r, int first) const;
+
+  void dense_row_fill_from_sparse(dense_row &r,
+				  int len,
+				  F4CoefficientArray sparse,
+				  int *comps) const;
+  // Fills 'r' from 'sparse' (and 'comps')
+
+  void dense_row_cancel_sparse(dense_row &r,
+			       int len,
+			       F4CoefficientArray sparse,
+			       int *comps) const;
   // dense += c * sparse, where c is chosen to cancel column comps[0].
   // There should also be a version of this routine which records this value c
   // into a F4CoefficientArray.
 
-  void to_sparse_array(F4CoefficientArray dense,
-		       F4CoefficientArray &result_sparse,
-		       int &result_len,
-		       int *&result_comps);
+  void dense_row_to_sparse_row(dense_row &r,
+			       int &result_len,
+			       F4CoefficientArray &result_sparse,
+			       int *&result_comps,
+			       int first,
+			       int last) const;
 
-  
+  void sparse_row_make_monic(int len,
+			     F4CoefficientArray sparse) const;
 };
 
 #endif
