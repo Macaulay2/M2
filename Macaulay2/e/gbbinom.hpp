@@ -13,7 +13,8 @@
 class binomialGB_comp;
 typedef int *monomial0;
   
-struct binomial {
+struct binomial  : public our_new_delete
+{
   monomial0 lead;
   monomial0 tail;
 
@@ -21,7 +22,8 @@ struct binomial {
   binomial(monomial0 lead0, monomial0 tail0) : lead(lead0), tail(tail0) {}
 };
 
-struct binomial_gb_elem {
+struct binomial_gb_elem  : public our_new_delete
+{
   binomial_gb_elem *next;
   binomial_gb_elem *smaller;		// NULL if this is a minimal GB element, otherwise
 				// points to a GB element whose lead term divides 
@@ -31,7 +33,8 @@ struct binomial_gb_elem {
   binomial_gb_elem(binomial ff) : next(NULL), smaller(NULL), f(ff) {}
 };
 
-struct binomial_s_pair {
+struct binomial_s_pair  : public our_new_delete
+{
   binomial_gb_elem *f1;
   binomial_gb_elem *f2;		// f2 is NULL for generators...
   monomial0 lcm;
@@ -44,7 +47,7 @@ struct binomial_s_pair {
 // Monomials and binomials //
 /////////////////////////////
 
-class binomial_ring
+class binomial_ring : public our_new_delete
 // First implementation: exponent vectors
 {
   friend class binomialGB_comp;
@@ -134,13 +137,13 @@ class binomial_s_pair_set
     int n_elems;
   };
 
-  struct s_pair_lcm_list {
+  struct s_pair_lcm_list  : public our_new_delete{
     s_pair_lcm_list *next;
     monomial0 lcm;
     s_pair_elem *pairs;		// List of pairs with this lcm.
   };
 
-  struct s_pair_elem {
+  struct s_pair_elem  : public our_new_delete{
     s_pair_elem *next;
     binomial_gb_elem *f1;
     binomial_gb_elem *f2;
@@ -168,7 +171,7 @@ public:
   void insert(binomial_gb_elem *p);  // Insert a generator
   void insert(binomial_s_pair p);   // Insert an s-pair.
 
-  bool next(const int *d, binomial_s_pair &result);
+  bool next(const int *d, binomial_s_pair &result, int &result_deg);
   // returns false if no more pairs in degrees <= *d. (NULL represents
   // infinity).  
 
@@ -180,7 +183,7 @@ public:
 
 class binomialGB
 {
-  struct gbmin_elem {
+  struct gbmin_elem  : public our_new_delete{
     gbmin_elem *next;
     binomial_gb_elem *elem;
     int mask;
@@ -188,7 +191,7 @@ class binomialGB
     gbmin_elem(binomial_gb_elem *f, int mask0) : elem(f), mask(mask0) {}
   };
 
-  struct monomial_list {
+  struct monomial_list  : public our_new_delete{
     monomial_list *next;
     monomial0 m;
     int mask;
@@ -249,6 +252,8 @@ class binomialGB_comp : public GBComputation
   array <binomial_gb_elem *> Gens;       // All of the generators
   array <binomial_gb_elem *> G;		// All of the binomial_gb_elem's in one place.
 
+  int top_degree;
+
   ///////////////////////
   // Flags and options //
   ///////////////////////
@@ -280,7 +285,7 @@ class binomialGB_comp : public GBComputation
   array<binomial_gb_elem *> mingens_subring;  // Same comment applies here!
 
   void process_pair(binomial_s_pair p);
-  int gb_done(const intarray &stop_condtions) const;
+  ComputationStatusCode gb_done() const;
 
 public:
   // creation
@@ -288,9 +293,10 @@ public:
 		  unsigned int options);
   virtual ~binomialGB_comp();
 
+  virtual bool stop_conditions_ok();
+
   void enlarge(const PolynomialRing *R, int *wts);
   void add_generators(const Matrix *m);
-  int calc(const int *deg, const intarray &stop_conditions);
 
   Matrix *subring();
   Matrix *subringGB();
@@ -298,10 +304,6 @@ public:
   // reduction: these elements do not need to be binomials?
   Matrix *reduce(const Matrix *m, Matrix *&lift);
 
-  // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
-  Matrix *min_gens_matrix();
-  Matrix *change_matrix();
-  Matrix *syz_matrix();
   void stats() const;
 
 public:
@@ -317,9 +319,9 @@ public:
 		      M2_bool use_max_degree,
 		      int max_degree);
 
-  void remove_gb() { /* to do */ }
+  void remove_gb();
 
-  void start_computation() { /* to do */ }
+  void start_computation();
 
   virtual const MatrixOrNull *get_gb();
 
@@ -331,7 +333,7 @@ public:
   /* This displays statistical information, and depends on the
      gbTrace value */
 
-  virtual int complete_thru_degree() const { /* to do */ }
+  virtual int complete_thru_degree() const { return top_degree; }
   // The computation is complete up through this degree.
 
   ////////////////////////////////////////////////////////

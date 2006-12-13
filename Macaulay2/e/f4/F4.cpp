@@ -11,6 +11,7 @@ static clock_t clock_make_matrix = 0;
 
 F4GB::F4GB(const Gausser *KK0,
 	   const MonomialInfo *M0,
+	   const FreeModule *F0,
 	   M2_bool collect_syz, 
 	   int n_rows_to_keep,
 	   M2_arrayint weights0,
@@ -19,6 +20,7 @@ F4GB::F4GB(const Gausser *KK0,
 	   int max_degree)
   : KK(KK0),
     M(M0),
+    F(F0),
     weights(weights0),
     component_degrees(0), // need to put this in
     n_pairs_computed(0),
@@ -29,12 +31,13 @@ F4GB::F4GB(const Gausser *KK0,
     S(0),
     next_col_to_process(0),
     mat(0),
-    H(M0,18)
+    H(M0,17)
 {
   lookup = new MonomialLookupTable;
   S = new F4SPairSet(M, gb);
   mat = new coefficient_matrix;
   // set status
+  M->show();
 }
 
 F4GB::~F4GB()
@@ -75,6 +78,10 @@ int F4GB::find_or_append_column(packed_monomial m)
   if (H.find_or_insert(m, new_m))
     return new_m[-1];
   // At this point, m is a new monomial to be placed as a column
+  m = next_monom;
+  B.intern(1+M->monomial_size(m));
+  next_monom = B.reserve(1+M->max_monomial_size());
+  next_monom++;
   return new_column(m);
 }
 
@@ -87,12 +94,13 @@ int F4GB::mult_monomials(packed_monomial m, packed_monomial n)
   // If it is there, return its column
   // If not, increment our memory block, and insert a new column.
   packed_monomial new_m;
-  M->mult(m,n,next_monom);
+  M->unchecked_mult(m,n,next_monom);
   if (H.find_or_insert(next_monom, new_m))
     return new_m[-1]; // monom exists, don't save monomial space
   m = next_monom;
-  B.intern(M->monomial_size(m));
-  next_monom = B.reserve(M->max_monomial_size());
+  B.intern(1+M->monomial_size(m));
+  next_monom = B.reserve(1+M->max_monomial_size());
+  next_monom++;
   return new_column(m);
 }
 
@@ -112,7 +120,8 @@ void F4GB::load_gen(int which)
   monomial_word *w = g.monoms;
   for (int i=0; i<g.len; i++)
     {
-      r.comps[i] = find_or_append_column(w);
+      M->copy(w, next_monom);
+      r.comps[i] = find_or_append_column(next_monom);
       w += M->monomial_size(w);
     }
 
@@ -160,9 +169,10 @@ void F4GB::process_column(int c)
     {
       packed_monomial n = next_monom;
       M->unchecked_divide(ce.monom, gb[which]->f.monoms, n);
-      B.intern(M->monomial_size(n));
-      next_monom = B.reserve(M->max_monomial_size());
-      M->set_component(which, n);
+      B.intern(1+M->monomial_size(n));
+      next_monom = B.reserve(1+M->max_monomial_size());
+      next_monom++;
+      //M->set_component(which, n);
       ce.gb_divisor = mat->rows.size();
       ce.head = ce.gb_divisor;
       load_row(n,which);
@@ -180,7 +190,9 @@ void F4GB::process_s_pair(spair *p)
   case F4_SPAIR_SPAIR: {
     packed_monomial n = next_monom;
     M->unchecked_divide(p->lcm, gb[p->i]->f.monoms, n);
-    next_monom = B.reserve(M->max_monomial_size());
+    B.intern(1+M->monomial_size(n));
+    next_monom = B.reserve(1+M->max_monomial_size());
+    next_monom++;
 
     load_row(n, p->i);
     c = mat->rows[mat->rows.size()-1].comps[0];
@@ -189,7 +201,9 @@ void F4GB::process_s_pair(spair *p)
 
     n = next_monom;
     M->unchecked_divide(p->lcm, gb[p->j]->f.monoms, n);
-    next_monom = B.reserve(M->max_monomial_size());
+    B.intern(1+M->monomial_size(n));
+    next_monom = B.reserve(1+M->max_monomial_size());
+    next_monom++;
 
     load_row(n, p->j);
     break;
@@ -311,7 +325,8 @@ void F4GB::reset_matrix()
 
   H.reset();
   B.reset();
-  next_monom = B.reserve(M->max_monomial_size());
+  next_monom = B.reserve(1+M->max_monomial_size());
+  next_monom++;
 }
 
 void F4GB::make_matrix()
@@ -349,15 +364,16 @@ void F4GB::make_matrix()
 // Gaussian elimination ///////////////////////////
 ///////////////////////////////////////////////////
 
+#if 0
+// older code, non functioning
 void F4GB::gauss_reduce()
 {
   // Steps: 1. initialize zero row.
   // for each row: load row into dense row, reduce it, 
   //   if result is non-zero: keep it
   //   if result is zero: for now, ignore it.
-#if 0
-  // being written: Sep 2006 MES
-  KK->allocate_dense_row_zeros(mat->columns.size(), gauss_row);
+
+  KK->dense_row_allocate(gauss_row, mat->columns.size());
   for (int i=0; i<mat->rows.size(); i++)
     {
       row_elem &r = mat->rows[i];
@@ -368,34 +384,102 @@ void F4GB::gauss_reduce()
 	  // This is the situation when we reduce this row
 	  F4CoefficientArray sparserow = r.coeffs;
 	  if (sparserow == 0)
-	    sparserow = gens[r.elem]->f.coeffs;
-	  KK->load_dense_row(r.len, sparserow, r.comps, gauss_row);
+	    sparserow = (r.monom ? gb[r.elem]->f.coeffs : gens[r.elem]->f.coeffs);
+	  KK->dense_row_fill_from_sparse(gauss_row, r.len, sparserow, r.comps);
 	  // Now reduce this row
-	  while (r.first <= r.last)
+	  while (gauss_row.first <= gauss_row.last)
 	    {
-	      int j = mat->columns[r.first].head;
+	      int j = mat->columns[gauss_row.first].head;
 	      if (j >= 0)
 		{
 		  row_elem &r2 = mat->rows[j];
-		  KK->cancel_sparse_row(r2.len, r2.coeffs, r2.comps, gauss_row);
+		  KK->dense_row_cancel_sparse(gauss_row, r2.len, r2.coeffs, r2.comps);
 		}
 	      else 
 		{
-		  // What to do here??
+		  // Make this a head node...
+		  mat->columns[gauss_row.first].head = i;
+		  break;
 		}
 	    }
-	  if (elem_is_nonzero)
-	    KK->dense_to_sparse_row(gauss_row, r);
+	  if (gauss_row.first <= gauss_row.last) // nonzero element
+	    KK->dense_row_to_sparse_row(gauss_row, r.len, r.coeffs, r.comps);
 	  else
 	    {
-	      // ??
+	      // At this point the element has reduced to zero
+	      // So until we implement syzygies for this type
+	      // we don't have to do much here.
+	      // Except: set the row to zero
+	      r.len = 0;
+	      r.coeffs = 0;
+	      deletearray(r.comps);
+	      r.comps = 0;
 	    }
 	  // At this point, we have either zero or a new GB element
-	  KK->clear_dense_row(gauss_row);
+	  KK->dense_row_clear(gauss_row);
 	}
     }
-  KK->deallocate_dense_row_zeros(gauss_row);
+  KK->dense_row_deallocate(gauss_row);
+}
 #endif
+void F4GB::gauss_reduce()
+  // This is the one I am working on...
+{
+  int first, last;
+  KK->dense_row_allocate(gauss_row, mat->columns.size());
+  for (int i=0; i<mat->rows.size(); i++)
+    {
+      row_elem &r = mat->rows[i];
+      if (r.len == 0) continue; // should not happen MES?
+      int c = r.comps[0];
+      int r1 = mat->columns[c].head;
+      // If r1 is i, then don't do anything.
+      // If r1 is >= 0, then reduce it
+      // If r1 < 0, then the lead term will not reduce.
+      if (r1 == i) continue;
+      if (r1 >= 0)
+	{
+	  // This is the situation when we reduce this row
+	  F4CoefficientArray sparserow = r.coeffs;
+	  if (sparserow == 0)
+	    sparserow = (r.monom ? gb[r.elem]->f.coeffs : gens[r.elem]->f.coeffs);
+	  KK->dense_row_fill_from_sparse(gauss_row, r.len, sparserow, r.comps);
+	  first = r.comps[0];
+	  last = r.comps[r.len-1];
+	  // Now reduce this row
+	  while (first <= last)
+	    {
+	      r1 = mat->columns[first].head;
+	      if (r1 >= 0)
+		{
+		  row_elem &r2 = mat->rows[r1];
+		  KK->dense_row_cancel_sparse(gauss_row, r2.len, r2.coeffs, r2.comps);
+		}
+	      else 
+		{
+		  // Make this a head node...
+		  mat->columns[first].head = i;
+		  break;
+		}
+	    }
+	  if (first <= last) // nonzero element
+	    KK->dense_row_to_sparse_row(gauss_row, r.len, r.coeffs, r.comps, first, last);
+	  else
+	    {
+	      // At this point the element has reduced to zero
+	      // So until we implement syzygies for this type
+	      // we don't have to do much here.
+	      // Except: set the row to zero
+	      r.len = 0;
+	      r.coeffs = 0;
+	      deletearray(r.comps);
+	      r.comps = 0;
+	    }
+	  // At this point, we have either zero or a new GB element
+	  KK->dense_row_clear(gauss_row, first, last);
+	}
+    }
+  KK->dense_row_deallocate(gauss_row);
 }
 
 ///////////////////////////////////////////////////
@@ -417,6 +501,20 @@ void F4GB::insert_gb_element(row_elem &r)
 
   gbelem *result = new gbelem;
   result->f.len = r.len;
+
+  // If the coeff array is null, then that means the coeffs come from the original array
+  // Here we copy it over.
+
+  if (r.coeffs == 0)
+    {
+      if (r.monom == 0) // i.e. a generator
+	r.coeffs = KK->copy_F4CoefficientArray(r.len,gens[r.elem]->f.coeffs);
+      else
+	r.coeffs = KK->copy_F4CoefficientArray(r.len,gb[r.elem]->f.coeffs);
+    }
+
+  // Now normalize this array of coefficients so the lead term is 1.
+  KK->sparse_row_make_monic(r.len, r.coeffs);
 
   // grab coeffs from the row itself
   F4CoefficientArray tmp = r.coeffs;
@@ -490,7 +588,11 @@ void F4GB::do_spairs()
   nsecs /= CLOCKS_PER_SEC;
   fprintf(stderr, " make matrix time = %f\n", nsecs);
 
+  H.dump();
+
   gauss_reduce();
+  show_matrix();
+
   new_GB_elements();
   
   // reset rows and columns and other matrix aspects
@@ -603,8 +705,6 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
 #include "../mat.hpp"
 #include "../freemod.hpp"
 
-static FreeModule *F;
-
 void F4GB::show_gb_array(const gb_array &g) const
 {
   // Debugging routine
@@ -653,7 +753,7 @@ void F4GB::show_column_info() const
 void F4GB::show_matrix()
 {
   // Debugging routine
-  MutableMatrix *q = F4toM2Interface::to_M2_MutableMatrix(KK,mat,gens);
+  MutableMatrix *q = F4toM2Interface::to_M2_MutableMatrix(KK,mat,gens,gb);
   buffer o;
   q->text_out(o);
   emit(o.str());

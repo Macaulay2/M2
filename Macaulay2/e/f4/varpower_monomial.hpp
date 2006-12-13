@@ -6,7 +6,8 @@
 #include <cstdio>
 #include "../../d/M2types.h"
 
-typedef int64_t varpower_word;
+//typedef int64_t varpower_word;
+typedef long varpower_word;
 typedef varpower_word * varpower_monomial;
 typedef const varpower_word * const_varpower_monomial;
   // format: [length, v1, e1, ..., vr, er]

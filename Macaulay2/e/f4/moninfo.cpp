@@ -35,10 +35,10 @@ void MonomialInfo::show() const
   fprintf(stderr, "monomial info\n");
   fprintf(stderr, "  nvars  = %d",nvars);
   fprintf(stderr, "  nslots = %d",nslots);
-  fprintf(stderr, "  mask   = %lld",mask);
+  fprintf(stderr, "  mask   = %ld",mask);
   fprintf(stderr, "  hash values for each variable\n");
   for (int i=0; i<nvars; i++)
-    fprintf(stderr, "    %lld\n",hashfcn[i]);
+    fprintf(stderr, "    %ld\n",hashfcn[i]);
 }
 
 void MonomialInfo::show(const_packed_monomial m) const
@@ -47,7 +47,7 @@ void MonomialInfo::show(const_packed_monomial m) const
   for (int v=1; v<monomial_size(m); v++)
     {
       if (v > 1) fprintf(stderr, " ");
-      fprintf(stderr, "%lld", m[v]);
+      fprintf(stderr, "%ld", m[v]);
     }
   fprintf(stderr, "]");
 }

@@ -49,7 +49,7 @@ void F4SPairSet::insert_spair(pre_spair *p, int me)
   spair *result = make_spair(F4_SPAIR_SPAIR, deg, me, j);
 
   M->from_varpower_monomial(p->quot, me_component, result->lcm);
-  M->unchecked_mult(result->lcm, gb[j]->f.monoms, result->lcm);
+  M->unchecked_mult(result->lcm, gb[me]->f.monoms, result->lcm);
 
   result->next = heap;
   heap = result;

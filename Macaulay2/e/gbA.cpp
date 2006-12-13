@@ -2093,7 +2093,7 @@ bool gbA::process_spair(spair *p)
   return true;
 }
 
-enum ComputationStatusCode gbA::computation_is_complete()
+ComputationStatusCode gbA::computation_is_complete()
 {
   // This handles everything but stop_.always, stop_.degree_limit
   if (stop_.basis_element_limit > 0 && gb.size() >= stop_.basis_element_limit) 
@@ -2142,12 +2142,12 @@ Matrix *gbA::make_lead_term_matrix()
 // new code
 void gbA::do_computation()
 {
-  enum ComputationStatusCode ret;
+  ComputationStatusCode ret;
   spair *p;
 
   // initial state is STATE_NEWDEGREE
 
-  if (stop_.always_stop) return; // set_status to what?
+  if (stop_.always_stop) return; // don't change status
 
   if ((ret = computation_is_complete()) != COMP_COMPUTING)
     {

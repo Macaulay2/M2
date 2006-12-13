@@ -159,6 +159,7 @@ Matrix *F4toM2Interface::to_M2_matrix(const Gausser *KK,
 
 MutableMatrix * F4toM2Interface::to_M2_MutableMatrix(const Gausser *KK,
 						     coefficient_matrix *mat,
+						     gb_array &gens,
 						     gb_array &gb)
 {
   int nrows = mat->rows.size();
@@ -170,7 +171,10 @@ MutableMatrix * F4toM2Interface::to_M2_MutableMatrix(const Gausser *KK,
       ring_elem *rowelems = newarray(ring_elem, row.len);
       if (row.coeffs == 0)
 	{
-	  KK->to_ringelem_array(row.len, gb[row.elem]->f.coeffs, rowelems);
+	  if (row.monom == 0)
+	    KK->to_ringelem_array(row.len, gens[row.elem]->f.coeffs, rowelems);
+	  else
+	    KK->to_ringelem_array(row.len, gb[row.elem]->f.coeffs, rowelems);
 	}
       else
 	{

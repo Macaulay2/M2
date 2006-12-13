@@ -113,7 +113,7 @@ public:
 
   void text_out(buffer &o) const;
 
-  int length() const { return count; }
+  int length() const { return count/2; }
 private:
   mi_node *next(mi_node *p) const;
   mi_node *prev(mi_node *p) const;

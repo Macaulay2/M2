@@ -10,9 +10,8 @@
 #include "varpower_monomial.hpp"
 #include "ntuple_monomial.hpp"
 
-
-
-typedef int64_t monomial_word; // Used for all types of monomials.  Is this OK?
+//typedef int64_t monomial_word; // Used for all types of monomials.  Is this OK?
+typedef long monomial_word; // Used for all types of monomials.  Is this OK?
 typedef monomial_word * packed_monomial; 
 typedef const monomial_word * const_packed_monomial; 
   // format: [hash,component,e1,...,envars],
@@ -91,13 +90,18 @@ public:
   void to_varpower_monomial(const_packed_monomial m, varpower_monomial result) const {
     // 'result' must have enough space allocated
     varpower_word *t = result+1;
-    for (int i=nvars+1; i>1; i--)
-      if (m[i] > 0) 
-	{
-	  *t++ = i;
-	  *t++ = m[i];
-	}
-    *result = t-result+1;
+    const_packed_monomial m1 = m + 2 + nvars;
+    int len = 0;
+    for (int i=nvars-1; i>=0; i--)
+      {
+	if (*--m1 > 0)
+	  {
+	    *t++ = i;
+	    *t++ = *m1;
+	    len++;
+	  }
+      }
+    *result = len;
   }
 
   void from_varpower_monomial(const_varpower_monomial m, long comp, packed_monomial result) const {
@@ -156,10 +160,10 @@ public:
   void show(const_packed_monomial m) const;
 
   int compare_grevlex(const_packed_monomial m, const_packed_monomial n) const {
-    const_packed_monomial m1 = m+2;
-    const_packed_monomial n1 = n+2;
+    const_packed_monomial m1 = m+nslots;
+    const_packed_monomial n1 = n+nslots;
     for (int i=nslots-2; i>=0; i--) {
-      int cmp = *m1++ - *n1++;
+      int cmp = *--m1 - *--n1;
       if (cmp < 0) return -1;
       if (cmp > 0) return 1;
     }

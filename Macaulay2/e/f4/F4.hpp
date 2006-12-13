@@ -79,6 +79,7 @@ class F4GB : public our_new_delete
   // Basic required information
   const Gausser *KK;
   const MonomialInfo *M;
+  const FreeModule *F;  // used for debugging only...
   M2_arrayint weights; // The length of this is the number of variables, each entry is positive.
   M2_arrayint component_degrees; // Degree of each free module element.
   // Also need Schreyer order info sometimes
@@ -109,8 +110,7 @@ class F4GB : public our_new_delete
   monomial_word *next_monom; // valid while creating the matrix
 
   // Local data for gaussian elimination
-  F4CoefficientArray dense_row;
-  int first, last;
+  dense_row gauss_row;
 private:
 
   void test_spair_code(); // test routine: probably will be removed
@@ -146,6 +146,7 @@ private:
 public:
   F4GB(const Gausser *KK0,
        const MonomialInfo *MI,
+       const FreeModule *F, // used for debugging only...
        M2_bool collect_syz, 
        int n_rows_to_keep,
        M2_arrayint gb_weights,
