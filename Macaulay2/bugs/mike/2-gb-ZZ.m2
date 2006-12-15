@@ -48,7 +48,7 @@ time gens gb M2;
 
 -- The GB over ZZ code is much better
 M = random(ZZ^70, ZZ^40);
--- time gens gb M; -- This one is very bad...
+--time gens gb M; -- This one is very bad...
 T = ZZ[x,MonomialOrder=>Position=>Up]
 M1 = substitute(M,T);
 gbM1 = time gens gb M1;
@@ -86,5 +86,5 @@ as in Hermite normal form, i.e., it should be the same.
     o15 : Matrix ZZ  <--- ZZ
 
 -- Local Variables:
--- M2-send-to-buffer: "*gud*"
+-- M2-send-to-buffer: "*M2*"
 -- End:
