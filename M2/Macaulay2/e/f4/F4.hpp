@@ -164,6 +164,9 @@ public:
   const gb_array &get_generators() const { return gens; }
   gb_array &get_generators() { return gens; }
 
+  const gb_array &get_gb() const { return gb; }
+  gb_array &get_gb() { return gb; }
+
   enum ComputationStatusCode start_computation(StopConditions &stop_);
   // ComputationStatusCode is defined in ../engine.h
 

@@ -53,7 +53,7 @@ public:
 
   void dense_row_deallocate(dense_row &r) const;
 
-  int dense_row_next_nonzero(dense_row &r, int first) const;
+  int dense_row_next_nonzero(dense_row &r, int first, int last) const;
 
   void dense_row_fill_from_sparse(dense_row &r,
 				  int len,

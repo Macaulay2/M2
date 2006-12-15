@@ -97,11 +97,11 @@ F4Computation::set_hilbert_function(const RingElement *hf)
 
 const MatrixOrNull *F4Computation::get_gb()
 {
-  const gb_array &gens = f4->get_generators();
+  const gb_array &gb = f4->get_gb();
   MatrixConstructor result(F,0);
-  for (int i=0; i<gens.size(); i++)
+  for (int i=0; i<gb.size(); i++)
     {
-      vec v = F4toM2Interface::to_M2_vec(KK,MI,gens[i]->f, F);
+      vec v = F4toM2Interface::to_M2_vec(KK,MI,gb[i]->f, F);
       result.append(v);
     }
   return result.to_matrix();

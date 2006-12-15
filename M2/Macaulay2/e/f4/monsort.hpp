@@ -100,7 +100,7 @@ template<typename Sorter>
 void QuickSorter<Sorter>::sort(Sorter *M0, value *elems0, long len0)
 {
   QuickSorter S(M0,elems0,len0);
-  S.sort2(0,len0-1);
+  S.sort2(0,len0);
 }
 #endif
 

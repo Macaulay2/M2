@@ -96,13 +96,14 @@ void Gausser::dense_row_fill_from_sparse(dense_row &r,
 
 }
 
-int Gausser::dense_row_next_nonzero(dense_row &r, int first) const
+int Gausser::dense_row_next_nonzero(dense_row &r, int first, int last) const
 {
   int *elems = static_cast<int *>(r.coeffs);
   elems += first;
-  for (int i=first; i<r.len; i++)
+  for (int i=first; i<=last; i++)
     if (!Kp->is_zero(*elems++))
       return i;
+  return last+1;
 }
 
 void Gausser::dense_row_cancel_sparse(dense_row &r,
@@ -153,7 +154,7 @@ void Gausser::sparse_row_make_monic(int len,
   int lead = *elems;
   // invert lead:
   Kp->invert(lead,lead);
-  for (int i=0; i<len; i++)
+  for (int i=0; i<len; i++, elems++)
     {
       // multiply the non-zero value *elems by lead.
       Kp->mult(*elems, *elems, lead);
