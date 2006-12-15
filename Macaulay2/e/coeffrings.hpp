@@ -57,19 +57,6 @@ public:
       result = p - 1 - a;
   }
 
-  void subtract_multiple(elem &result, elem a, elem b)
-  {
-    // we assume: a, b are NONZERO!!
-    // result -= a*b
-    elem ab = modulus_add(a,b,p1);
-    if (result==zero)
-      result = ab;
-    else
-      {
-	int n = modulus_sub(exp_table[result], exp_table[ab], p);
-	result = log_table[n];
-      }
-  }
 
   void add(elem &result, elem a, elem b) const
   {
@@ -89,6 +76,22 @@ public:
     else
       {
 	int n = modulus_sub(exp_table[a], exp_table[b], p);
+	result = log_table[n];
+      }
+  }
+
+  void subtract_multiple(elem &result, elem a, elem b)
+  {
+    // we assume: a, b are NONZERO!!
+    // result -= a*b
+    elem ab = modulus_add(a,b,p1);
+    subtract(result, result, ab);
+    return;
+    if (result==zero)
+      result = ab;
+    else
+      {
+	int n = modulus_sub(exp_table[result], exp_table[ab], p);
 	result = log_table[n];
       }
   }

@@ -114,7 +114,7 @@ void F4GB::load_gen(int which)
   r.elem = which;
   
   r.len = g.len;
-  r.coeffs = 0; // coefficients are grabbed during gauss().
+  r.coeffs = g.coeffs; // we don't "own" these elements??
   r.comps = newarray(int, g.len);
 
   monomial_word *w = g.monoms;
@@ -138,7 +138,7 @@ void F4GB::load_row(packed_monomial monom, int which)
   r.elem = which;
 
   r.len = g.len;
-  r.coeffs = 0; // coefficients are grabbed during gauss().
+  r.coeffs = g.coeffs; // We do not own this array
   r.comps = newarray(int, g.len);
 
   monomial_word *w = g.monoms;
@@ -351,9 +351,9 @@ void F4GB::make_matrix()
   fprintf(stderr, "--matrix--%ld by %ld\n", 
 	  mat->rows.size(), mat->columns.size());
 
-  show_row_info();
-  show_column_info();
-  show_matrix();
+  //  show_row_info();
+  //  show_column_info();
+  //  show_matrix();
 
   // Now we reorder the columns, rows?
   reorder_columns();
@@ -364,128 +364,56 @@ void F4GB::make_matrix()
 // Gaussian elimination ///////////////////////////
 ///////////////////////////////////////////////////
 
-#if 0
-// older code, non functioning
-void F4GB::gauss_reduce()
-{
-  // Steps: 1. initialize zero row.
-  // for each row: load row into dense row, reduce it, 
-  //   if result is non-zero: keep it
-  //   if result is zero: for now, ignore it.
-
-  KK->dense_row_allocate(gauss_row, mat->columns.size());
-  for (int i=0; i<mat->rows.size(); i++)
-    {
-      row_elem &r = mat->rows[i];
-      if (r.len == 0) continue; // should not happen MES?
-      int c = r.comps[0];
-      if (mat->columns[c].head < 0)
-	{
-	  // This is the situation when we reduce this row
-	  F4CoefficientArray sparserow = r.coeffs;
-	  if (sparserow == 0)
-	    sparserow = (r.monom ? gb[r.elem]->f.coeffs : gens[r.elem]->f.coeffs);
-	  KK->dense_row_fill_from_sparse(gauss_row, r.len, sparserow, r.comps);
-	  // Now reduce this row
-	  while (gauss_row.first <= gauss_row.last)
-	    {
-	      int j = mat->columns[gauss_row.first].head;
-	      if (j >= 0)
-		{
-		  row_elem &r2 = mat->rows[j];
-		  KK->dense_row_cancel_sparse(gauss_row, r2.len, r2.coeffs, r2.comps);
-		}
-	      else 
-		{
-		  // Make this a head node...
-		  mat->columns[gauss_row.first].head = i;
-		  break;
-		}
-	    }
-	  if (gauss_row.first <= gauss_row.last) // nonzero element
-	    KK->dense_row_to_sparse_row(gauss_row, r.len, r.coeffs, r.comps);
-	  else
-	    {
-	      // At this point the element has reduced to zero
-	      // So until we implement syzygies for this type
-	      // we don't have to do much here.
-	      // Except: set the row to zero
-	      r.len = 0;
-	      r.coeffs = 0;
-	      deletearray(r.comps);
-	      r.comps = 0;
-	    }
-	  // At this point, we have either zero or a new GB element
-	  KK->dense_row_clear(gauss_row);
-	}
-    }
-  KK->dense_row_deallocate(gauss_row);
-}
-#endif
 void F4GB::gauss_reduce()
   // This is the one I am working on...
 {
+  int nrows = mat->rows.size();
+  int ncols = mat->columns.size();
+  
   int first, last;
-  KK->dense_row_allocate(gauss_row, mat->columns.size());
-  for (int i=0; i<mat->rows.size(); i++)
+  int pivotrow, pivotcol;
+
+  KK->dense_row_allocate(gauss_row, ncols);
+  for (int i=0; i<nrows; i++)
     {
       row_elem &r = mat->rows[i];
       if (r.len == 0) continue; // should not happen MES?
-      int c = r.comps[0];
-      int r1 = mat->columns[c].head;
-      // If r1 is i, then don't do anything.
-      // If r1 is >= 0, then reduce it
-      // If r1 < 0, then the lead term will not reduce.
-      if (r1 == i) continue;
-      if (r1 >= 0)
+      pivotcol = r.comps[0];
+      pivotrow = mat->columns[pivotcol].head;
+      if (pivotrow == i) continue; // this is the pivot row, so leave it alone
+      if (pivotrow < 0)
 	{
-	  // This is the situation when we reduce this row
-	  F4CoefficientArray sparserow = r.coeffs;
-	  if (sparserow == 0)
-	    sparserow = (r.monom ? gb[r.elem]->f.coeffs : gens[r.elem]->f.coeffs);
-	  KK->dense_row_fill_from_sparse(gauss_row, r.len, sparserow, r.comps);
-	  first = r.comps[0];
-	  last = r.comps[r.len-1];
-	  // Now reduce this row
-	  while (first <= last)
-	    {
-	      r1 = mat->columns[first].head;
-	      if (r1 >= 0)
-		{
-		  row_elem &r2 = mat->rows[r1];
-		  KK->dense_row_cancel_sparse(gauss_row, r2.len, r2.coeffs, r2.comps);
-		}
-	      else 
-		{
-		  // Make this a head node...
-		  mat->columns[first].head = i;
-		  break;
-		}
-	    }
-	  if (first <= last) // nonzero element
-	    KK->dense_row_to_sparse_row(gauss_row, r.len, r.coeffs, r.comps, first, last);
-	  else
-	    {
-	      // At this point the element has reduced to zero
-	      // So until we implement syzygies for this type
-	      // we don't have to do much here.
-	      // Except: set the row to zero
-	      r.len = 0;
-	      r.coeffs = 0;
-	      deletearray(r.comps);
-	      r.comps = 0;
-	    }
-	  // At this point, we have either zero or a new GB element
-	  KK->dense_row_clear(gauss_row, first, last);
+	  // In this case the element canot be reduced at all
+	  KK->sparse_row_make_monic(r.len, r.coeffs);
+	  mat->columns[pivotcol].head = i;
+	  continue;
+	}
+      KK->dense_row_fill_from_sparse(gauss_row, r.len, r.coeffs, r.comps);
+      first = r.comps[0];
+      last = r.comps[r.len-1];
+      do {
+	row_elem &pivot_rowelem = mat->rows[pivotrow];
+	KK->dense_row_cancel_sparse(gauss_row, pivot_rowelem.len, pivot_rowelem.coeffs, pivot_rowelem.comps);
+	int last1 = pivot_rowelem.comps[pivot_rowelem.len-1];
+	if (last1 > last) last = last1;
+	first = KK->dense_row_next_nonzero(gauss_row, first, last);
+	if (first > last) break;
+	pivotrow = mat->columns[first].head;
+      } while (pivotrow >= 0);
+      KK->dense_row_to_sparse_row(gauss_row, r.len, r.coeffs, r.comps, first, last); 
+        // the above line leavs gauss_row zero, and also handles the case when r.len is 0
+        // it also potentially frees the old r.coeffs and r.comps
+      if (r.len > 0)
+	{
+	  KK->sparse_row_make_monic(r.len, r.coeffs);
+	  mat->columns[r.comps[0]].head = i;
 	}
     }
-  KK->dense_row_deallocate(gauss_row);
 }
 
 ///////////////////////////////////////////////////
 // Extracting new GB elements    //////////////////
 ///////////////////////////////////////////////////
-
 
 void F4GB::insert_gb_element(row_elem &r)
 {
@@ -512,9 +440,6 @@ void F4GB::insert_gb_element(row_elem &r)
       else
 	r.coeffs = KK->copy_F4CoefficientArray(r.len,gb[r.elem]->f.coeffs);
     }
-
-  // Now normalize this array of coefficients so the lead term is 1.
-  KK->sparse_row_make_monic(r.len, r.coeffs);
 
   // grab coeffs from the row itself
   F4CoefficientArray tmp = r.coeffs;
@@ -590,8 +515,11 @@ void F4GB::do_spairs()
 
   H.dump();
 
+  begin_time = clock();
   gauss_reduce();
-  show_matrix();
+  end_time = clock();
+  clock_gauss += end_time - begin_time;
+  //  show_matrix();
 
   new_GB_elements();
   
