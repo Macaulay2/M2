@@ -16,6 +16,8 @@ monomialCurveIdeal = (S, a) -> (
     M2 := monoid [Variables=>n+1,MonomialSize=>monsize];
     R1 := k M1;
     R2 := k M2;
+    s = R1_0;
+    t = R1_1;
     mm := matrix table(1, n+1, (j,i) -> s^(a#i) * t^(topa - a#i));
     j := generators kernel map(R1, R2, mm);
     ideal substitute(j, submatrix(vars S, {0..n}))
