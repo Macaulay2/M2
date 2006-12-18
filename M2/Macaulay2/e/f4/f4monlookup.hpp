@@ -44,7 +44,7 @@ class F4MonomialLookupTableT : public our_new_delete
   VECTOR(mi_node *) mis;
   int count;
 
-  int size_of_exp; // in ints
+  int size_of_exp; // in ints, size of exp0
   ntuple_word *exp0; // Always set to be all zeros, except during searches, inserts?
 private:
   mi_node *new_mi_node(int v, int e, mi_node *d);
@@ -67,7 +67,7 @@ private:
   void insert1(mi_node *&p, const_varpower_monomial m, Key k);
 
 public:
-  F4MonomialLookupTableT(stash *mi_stash=0);
+  F4MonomialLookupTableT(int nvars, stash *mi_stash=0);
   ~F4MonomialLookupTableT();
 
   //  // Should we write these two routines?

@@ -120,4 +120,21 @@ time gens gb(J1, Algorithm=>F4, GBDegrees=>toList(18:1))
 
 time gens gb ideal(m1^4);
 time gens gb(ideal(m1^4), Algorithm=>F4, GBDegrees=>toList(18:1));
+------------------------------
+R = ZZ/5[a..d,MonomialSize=>16];
+I = ideal{a^3-2*a^2*b-a*b^2-2*b^3+a*b*c-2*b^2*c+2*a*c^2-2*b*c^2-c^3+2*a*b*d
+	  -2*b^2*d-a*c*d-2*b*c*d-2*c^2*d+a*d^2+c*d^2-d^3, a^25, b^25, c^25, d^25}
 
+time gens gb(I, Algorithm=>F4, GBDegrees=>toList(4:1));
+time gens gb(I, Algorithm=>LinearAlgebra);
+I = ideal flatten entries gens I;
+gbTrace=3
+time gens gb(I);
+
+
+R = ZZ/5[a..d,MonomialSize=>16];
+R = ZZ/5[a..d];
+I = ideal{a^3-2*a^2*b-a*b^2-2*b^3+a*b*c-2*b^2*c+2*a*c^2-2*b*c^2-c^3+2*a*b*d
+	  -2*b^2*d-a*c*d-2*b*c*d-2*c^2*d+a*d^2+c*d^2-d^3, a^125, b^125, c^125, d^125}
+gbTrace=3
+time gb I;

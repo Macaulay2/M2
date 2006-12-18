@@ -33,7 +33,7 @@ F4GB::F4GB(const Gausser *KK0,
     mat(0),
     H(M0,17)
 {
-  lookup = new MonomialLookupTable;
+  lookup = new MonomialLookupTable(M->n_vars());
   S = new F4SPairSet(M, gb);
   mat = new coefficient_matrix;
   // set status

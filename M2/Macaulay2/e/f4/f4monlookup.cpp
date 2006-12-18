@@ -50,7 +50,7 @@ void F4MonomialLookupTableT<Key>::delete_mi_node(mi_node *p)
 }
 
 template <typename Key>
-F4MonomialLookupTableT<Key>::F4MonomialLookupTableT(stash *mi_stash0)
+F4MonomialLookupTableT<Key>::F4MonomialLookupTableT(int nvars, stash *mi_stash0)
 {
   count = 0;
   mi_stash = mi_stash0;
@@ -60,7 +60,7 @@ F4MonomialLookupTableT<Key>::F4MonomialLookupTableT(stash *mi_stash0)
       mi_stash = new stash("mi_node", sizeof(mi_node));
     }
 
-  size_of_exp = 10;
+  size_of_exp = nvars;
   exp0 = newarray(ntuple_word,size_of_exp);
 }
 
@@ -521,7 +521,7 @@ minimalize_varpower_monomials(
     }
 
   // Now insert these into a lookup table
-  F4MonomialLookupTableT<int> M(mi_stash);
+  F4MonomialLookupTableT<int> M(10, mi_stash); // The 10 is simply a suggested start value
   for (int i=0; i < bins.size(); i++)
     if (bins[i] != NULL)
       {
