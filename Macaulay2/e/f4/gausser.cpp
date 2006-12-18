@@ -67,7 +67,7 @@ void Gausser::dense_row_allocate(dense_row &r, long nelems) const
   int *elems = newarray_atomic(int, nelems);
   r.coeffs = elems;
   r.len = nelems;
-  for (int i=0; i<=nelems; i++)
+  for (int i=0; i<nelems; i++)
     Kp->set_zero(elems[i]);
 }
 

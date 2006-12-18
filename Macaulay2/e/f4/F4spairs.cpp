@@ -277,7 +277,7 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
   ////////////////////////////
   // Now minimalize the set //
   ////////////////////////////
-  MonomialLookupTable *montab = new MonomialLookupTable;
+  MonomialLookupTable *montab = new MonomialLookupTable(M->n_vars());
 
   PreSPairSorter C;
   int n_new_pairs = 0;

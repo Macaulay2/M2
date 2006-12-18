@@ -218,7 +218,7 @@ public:
     b += 2;
     int len = 0;
     varpower_word *r = result+1;
-    for (int i=0; i<nvars; i++)
+    for (int i=nvars-1; i>=0; --i)
       {
 	if (a[i] != 0 && b[i] != 0)
 	  are_disjoint = false;
