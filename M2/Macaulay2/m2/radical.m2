@@ -105,7 +105,7 @@ unmixedradical := (I) -> (
 	       dR := jacobian R;
       	       J := minors(size,dR);
 
-	       g1 := leadTerm presentation R;
+	       g1 := leadTerm generators gb presentation R;
 	       g1 = g1 | lift(leadTerm J, B);
 
       	       if codim ideal g1 > c
