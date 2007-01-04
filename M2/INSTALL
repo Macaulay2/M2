@@ -155,6 +155,47 @@ Other common libraries that we assume are on your system already:
 	GNU readline (provides libreadline.so and libhistory.so)
 	GNU ncurses (provides libcurses.so)
 
+
+
+-----------------------
+Compiling the libraries
+-----------------------
+
+If multiple machine architectures are supported by your hardware and
+operating system, a good way to specify which one to use is to use the
+build option to autoconf's configure script with an architecture in
+config.guess format.  This will work with gmp, for example, as it
+knows how to produce the additional options to the compilers.
+
+Example:
+
+   ../configure --build=x86_64-apple-darwin
+
+Another way to do it is to specify names for the compilers that
+include the additional options for the architecture to be used.  That
+will almost always work.
+
+Example:
+
+   ../configure CC="gcc -m64" CXX="g++ -m64"
+
+Yet another way to do it is to add the architecture option to CFLAGS
+and to CXXFLAGS.  The disadvantage of that approach is that the
+package might have its own idea about what other options to use, which
+would be ignored.
+
+Example:
+
+   ../configure CFLAGS="-O2 -m64" CXXFLAGS="-O2 -m64"
+
+When using "capybara", you can take advantage of both good ways of
+doing it, by putting something like the following code into the file
+include/capybara/local-overrides.
+
+    ARCHOPT = -m64
+    ARCHITECTURE = x86_64-apple-darwin
+    CONFIGOPTIONS += --build=$(ARCHITECTURE) CC="gcc $(ARCHOPT)" CXX="g++ $(ARCHOPT)"
+
 ---------
 Programs
 ---------
