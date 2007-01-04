@@ -21,7 +21,7 @@ intersection List := o -> L -> (
 -- spairs that are not used...
 end
 restart
-load "intersection.m2"
+load "2-intersect-degreelimit.m2"
 
 R = ZZ/32003[a..d]
 I = (ideal random(R^1, R^{-2,-3,-5}))
