@@ -157,9 +157,9 @@ Other common libraries that we assume are on your system already:
 
 
 
------------------------
-Compiling the libraries
------------------------
+-------------------------------------------
+Compiling on multiple machine architectures
+-------------------------------------------
 
 If multiple machine architectures are supported by your hardware and
 operating system, a good way to specify which one to use is to use the
@@ -315,7 +315,7 @@ Example:
 
 	../configure LIBS=-lfoo ...
 
-To see descriptions of all the environement variables that influence
+To see descriptions of all the environment variables that influence
 configuration, run this command and look at the section of the output
 entitled "Some influential environment variables":
 
@@ -366,93 +366,49 @@ Linux notes
 ----------------------
 MacOS X notes
 ----------------------
+
 There are several methods for installing Macaulay2 under Mac OS X.
+
 (1) Download the ppc or i386 disk images and follow the directions in
-the read me file.
+    the read me file.
 
 (2) Use the fink system (http://fink.sourceforge.net).
-Follow the instructions at the Fink website
-to install Fink itself, add unstable/main to the appropriate line in
-/sw/etc/fink.conf, and then install Fink's "macaulay2" package.  You can
-choose the binary installation method or the source installation method
-(which will download the source files and compile them on your machine).  You
-may also wish to install emacs or xemacs using Fink, for the best interface
-to Macaulay2.
 
-Fink can also be used to install other software of interest to
-mathematicians, and is highly recommended. 
+    Follow the instructions at the Fink website to install Fink itself,
+    add unstable/main to the appropriate line in /sw/etc/fink.conf, and
+    then install Fink's "macaulay2" package.  You can choose the binary
+    installation method or the source installation method (which will
+    download the source files and compile them on your machine).  You may
+    also wish to install emacs or xemacs using Fink, for the best
+    interface to Macaulay2.
 
-Issues remaining:
-  the fink ".info" file needs to be improved
-  post install:
-      the M2, M2-help, and emacs/M2-init.el files need to be patched
+    Fink can also be used to install other software of interest to
+    mathematicians, and is highly recommended. 
 
-Each user needs to do the following after installation:
-  add to .emacs file
-    (load "/sw/lib/Macaulay2-0.9.2/emacs/M2-init.el")
+(3) Build from source yourself.  
 
-(3) Build from source yourself.  The following are the steps we take
-to build a binary disk image for Macaulay2.  First, the libraries mentioned above must have been built.
-This assumes that the library files are in /capybara/lib and the include files are in /capybara/include.
+    The following are the steps we take to build a binary disk image for
+    Macaulay2.  First, the libraries mentioned above must have been built.
+    The code below assumes that the library files are in /capybara/lib and the
+    include files are in /capybara/include.
 
- svn export svn://u123.math.uiuc.edu/Macaulay2/trunk M2
- cd M2/M2
- mkdir tmp-opt
- cd tmp-opt
+	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2
+	  cd M2
+	  mkdir tmp-opt
+	  cd tmp-opt
+	  ../configure \
+	      --prefix=../../M2-installed \
+	      --with-veclib \
+	      --enable-altivec \
+	      LOADLIBES=-lgcc_s.10.5 \
+	      CPPFLAGS="-I/capybara/include" \
+	      LDFLAGS="-L/capybara/lib" 
+	  make
+	  make install
 
- LOADLIBES=-lgcc_s.10.5 CPPFLAGS="-I/capybara/include" LDFLAGS="-L/capybara/lib" ../configure --prefix=../../M2-installed --with-veclib --enable-altivec
- make
- make install
-
- # assuming that that compile and install had no errors (warnings are fine), then now we build
- # a binary disk image
-
-
-(4) 
-Here are the configure line I have used that works:
-
-    mkdir tmp
-    cd tmp
-    CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/sw --enable-debug --disable-optimize --with-veclib  --with-libgmp=/sw/lib/libgmp.a --enable-altivec
-    LOADLIBES=-lgcc_s.10.5 CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --enable-debug --disable-optimize --with-veclib  --with-libgmp=/sw/lib/libgmp.a --enable-altivec
-    CPPFLAGS="-I/capybara/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --enable-debug --disable-optimize --with-veclib --enable-altivec
-
-    mkdir tmp-opt
-    cd tmp-opt
-    CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --with-gmplib=/capybara/lib/libgmp.a --with-gclib=/capybara/lib/libgc.a --with-gdbmlib=/sw/lib/libgdbm.a --with-readlinelib=/sw/lib/libreadline.a --with-historylib="/sw/lib/libhistory.a /usr/lib/libncurses.5.dylib" --enable-altivec
-    CPPFLAGS="-I/capybara/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib --enable-altivec
-
-    mkdir tmp-profile
-    cd tmp-profile
-    LOADLIBES=-lgcc_s.10.5 CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib --with-libgmp=/sw/lib/libgmp.a --enable-altivec --enable-profile
-    CPPFLAGS=-I/sw/include CFLAGS="-g" LDFLAGS="-L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/sw --with-veclib  --with-libgmp=/sw/lib/libgmp.a --enable-altivec --enable-profile
-    CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --enable-debug --disable-optimize --with-veclib  --with-libgmp=/sw/lib/libgmp.a --enable-altivec --enable-profile
-    CPPFLAGS="-I/capybara/include -I/sw/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib  --with-libgmp=/sw/lib/libgmp.a --enable-altivec --enable-profile
-    CPPFLAGS="-I/capybara/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap --enable-encap --with-veclib --enable-altivec --enable-profile
-    LOADLIBES=-lgcc_s.10.5 CPPFLAGS="-I/capybara/include" CFLAGS="-g" LDFLAGS="-L/capybara/lib" ../configure --disable-strip --disable-dumpdata --prefix=/capybara/encap  --with-veclib --enable-altivec --enable-profile
-Further notes:
-
-  Dynamic linking:
-
-    The gc library, version 6.1, doesn't support dynamic linking, so it is
-    important to link libgmp in statically, otherwise you'll get weird and
-    horrible errors when the garbage collector reclaims memory that's
-    actually in use.  To see whether you got it right, use 'otool -L
-    libexec/Macaulay2': you shouldn't see libgmp on the list.  There seems to
-    be *no* linker option which will tell it to use the static library -- one
-    way is to delete (or move aside temporarily) the dynamic libraries
-    (libgmp*.dylib, libgmp*.la) for gmp in /sw/lib.  Another way is to
-    replace -lgmp on the command line by a reference to /sw/lib/libgmp.a.
-    
-  Stack size:
-
-    The default stack size seems to be small under Mac OS X.  If you
-    get a segmentation fault while building the html version of the
-    documentation, it's probably because of a stack overflow.  Under bash try
-    running
-	     ulimit -s 16000
-    and then recompile (in the same shell) to see whether that will fix the
-    problem.
+    For compiling a 64-bit version, add
+	  CC='gcc -m64' CXX='g++ -m64'
+    to the configure command line above.
 
 ----------------------
 HPUX notes
