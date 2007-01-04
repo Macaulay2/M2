@@ -196,6 +196,24 @@ include/capybara/local-overrides.
     ARCHITECTURE = x86_64-apple-darwin
     CONFIGOPTIONS += --build=$(ARCHITECTURE) CC="gcc $(ARCHOPT)" CXX="g++ $(ARCHOPT)"
 
+Even that doesn't quite work when compiling a package, such as "gc",
+that uses "libtool".  Unfortunately, libtool doesn't understand the
+-m64 option, so it drops it.  The work-around is to create shell
+scripts on your path called gcc-m64 and g++-m64 that can be used as
+the compilers, and to use this instead:
+
+    ARCHOPT = -m64
+    ARCHITECTURE = x86_64-apple-darwin
+    CONFIGOPTIONS += --build=$(ARCHITECTURE) CC="gcc$(ARCHOPT)" CXX="g++$(ARCHOPT)"
+
+In the shell script gcc-m64 put this single line:
+
+     exec gcc -m64 "$@"
+
+In the shell script g++-m64 put this single line:
+
+     exec g++ -m64 "$@"
+
 ---------
 Programs
 ---------
