@@ -1,0 +1,10 @@
+silly distinction:
+
+ii10 : isDirectory "/tmp"
+
+oo10 = false
+
+ii11 : isDirectory "/tmp/"
+
+oo11 = true
+
