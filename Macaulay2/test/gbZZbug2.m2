@@ -14,7 +14,7 @@ b*c*s*t^3*u^2*v^2*y^4+2*b^2*t^4*v^4*y^4-b*c*t^4*v^4*y^4+2*c^2*t^4*v^4*y^4;
 f0=ff*f1*f2*f3;
 
 I = ideal(4, f1^3, f2^3, f3^3)
-gbTrace=10
+gbTrace=3
 gens gb I;
 f0 % I
 
