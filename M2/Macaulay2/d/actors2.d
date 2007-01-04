@@ -684,7 +684,7 @@ registerFinalizer(e:Expr):Expr := (
  	  when s.1 is msg:string do (
 	       msg = "[" + tostring(finalizerCount) + "]: " + msg;
 	       finalizerCount = finalizerCount + 1;
-	       Ccode(void, "GC_register_finalizer((GC_PTR)",e,".ptr_,(GC_finalization_proc)",finalizer,",",msg,",0,0)");
+	       Ccode(void, "GC_register_finalizer((void *)",e,".ptr_,(GC_finalization_proc)",finalizer,",",msg,",0,0)");
 	       toExpr(finalizerCount))
      	  else WrongArgString(2))
      else WrongNumArgs(2));
