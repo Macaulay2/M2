@@ -1634,7 +1634,7 @@ document {
     --(symbol**, Module, Ring),
     (symbol**, ChainComplex, Ring),
     --(symbol**, Matrix, Module),
-    (symbol**, Module, Matrix),
+    --(symbol**, Module, Matrix),
     (symbol**, Module, ChainComplex),
     --(symbol**, ChainComplex, ChainComplex),
     --(symbol**, ChainComplexMap, ChainComplex),

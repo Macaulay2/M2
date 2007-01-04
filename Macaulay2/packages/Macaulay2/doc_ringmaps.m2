@@ -9,13 +9,33 @@ document {
      Outputs => {
 	  { "the tensor product of ", TT "M", " with ", TT "S", " over ", TT "R" }
 	  },
-     EXAMPLE {
-	  "R = QQ[x,y];",
-	  "S = QQ[t];",
-	  "f = map(S,R,{t^2,t^3})",
-	  "f ** coker vars R",
-	  "f ** image vars R"
+     EXAMPLE lines ///
+	  R = QQ[x,y];
+	  S = QQ[t];
+	  f = map(S,R,{t^2,t^3})
+	  f ** coker vars R
+	  f ** image vars R
+	  ///,
+     SeeAlso => { (symbol SPACE, RingMap, Module) }
+     }
+
+document {
+     Key => (symbol **, RingMap, Matrix),
+     Headline => "tensor product of a module map via a ring map",
+     Usage => "f ** g",
+     Inputs => {
+	  "f" => { "from ", TT "R", " to ", TT "S" },
+	  "g" => { "a map of ", TT "R", "-modules" }
 	  },
+     Outputs => {
+	  { "the tensor product of ", TT "g", " with ", TT "S", " over ", TT "R" }
+	  },
+     EXAMPLE lines ///
+	  R = QQ[x,y];
+	  S = QQ[t];
+	  f = map(S,R,{t^2,t^3})
+	  f ** vars R
+	  ///,
      SeeAlso => { (symbol SPACE, RingMap, Module) }
      }
 

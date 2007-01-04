@@ -945,11 +945,67 @@ document {
 	  f * (u ** v) === v ** u
      ///}
 document {
-     Key => (symbol **, Matrix, Matrix),
-     Headline => "tensor product of matrices",
-     TT "f ** g", " -- computes the tensor product of two matrices.",
+     Key => (symbol**,Module,Module),
+     Headline => "tensor product",
+     Usage => "M ** N",
+     Inputs => {"M", "N"},
+     Outputs => {
+	       Module => {"the tensor product of M and N"}
+	       },
+     "If M has generators m1, m2, ..., mr, and N has generators n1, n2, ..., ns,
+     then M ** N has generators: m1**n1, m1**n2, ..., m2**n1, ..., mr**ns.",
+     EXAMPLE lines ///
+          R = ZZ[a..d];
+	  M = image matrix {{a,b}}
+	  N = image matrix {{c,d}}
+	  M ** N
+	  N ** M
+     ///,
      PARA{},
-     SeeAlso => "Matrix"
+     "Use ", TO trim, " or ", TO minimalPresentation, " if a more compact presentation
+     is desired.",
+     PARA{},
+     "Use ", TO (flip,Module,Module), " to produce the isomorphism M ** N --> N ** M.",
+     SeeAlso => {flip, (symbol**,Module,Matrix),(symbol**,Matrix,Matrix)}
+     }
+document {
+     Key => (symbol**,Matrix,Matrix),
+     Headline => "tensor product",
+     Usage => "f ** g",
+     Inputs => {"f", "g"},
+     Outputs => {
+	       Matrix => {"the tensor product of maps f and g"}
+	       },
+     "Other names for the tensor product include: the outer product, or the Kronecker product 
+     of two matrices.",
+     EXAMPLE lines ///
+          R = ZZ[a..d];
+	  f = matrix {{a,b}}
+	  g = transpose matrix {{c,d}}
+	  f ** g
+     ///,
+     PARA{},
+     SeeAlso => {flip, (symbol**,Module,Module),(symbol**,Matrix,Module)}
+     }
+document {
+     Key => (symbol**,Vector,Vector),
+     Headline => "tensor product",
+     Usage => "v ** w",
+     Inputs => {"v", "w"},
+     Outputs => {
+	       Vector => {"the tensor product of v and w"}
+	       },
+     "If ", TT "v", " is in the module ", TT "M", ", and ", TT "w", " is in the module ", TT "N", ", then ", TT "v**w", " is in
+     the module ", TT "M**N", ".",
+     EXAMPLE lines ///
+          R = ZZ[a..d];
+	  F = R^3
+	  G = coker vars R
+	  v = (a-37)*F_1
+	  v ** G_0
+     ///,
+     PARA{},
+     SeeAlso => {(symbol**,Module,Module)}
      }
 
 TEST "
@@ -1329,19 +1385,6 @@ document {
      PARA{},
      "The two modules should be submodules of the same module."
      }
-document {
-     Key => (symbol **, Module, Module),
-     Headline => "tensor product of modules",
-     TT "M ** N", " -- produce the tensor product of two modules.",
-     PARA{},
-     "Since M and N may be provided as submodules or subquotient modules, it
-     may be necessary to replace them by quotient modules in the course of the
-     computation, but the generators provided in the resulting tensor product 
-     will correspond to the tensor products of the generators, i.e., the modules
-     ", TT "cover M ** cover N", " and ", TT "cover(M ** N)", " are equal.
-     This makes it easier to make ", TT "M ** N", " into a functor."
-     -- i.e., we don't use 'prune'!
-     }
 TEST ///
     R = ZZ[x,y,z]
     modules = {
@@ -1353,21 +1396,29 @@ TEST ///
     table(modules, modules, (P,Q) -> assert(cover P ** cover Q == cover (P ** Q)));
 ///
 document {
-     Key => (symbol **, Matrix, Module),
+     Key => {(symbol **, Matrix, Module),
+	  (symbol **, Module, Matrix)},
      Headline => "tensor product",
-     TT "f ** N", " -- tensor product of a matrix ", TT "f", " and a module ", TT "N", ".",
-     PARA{},
-     "This is the same as tensoring ", TT "f", " with the identity map of ", TT "N", ".",
-     PARA{},
+     Usage => "f ** M\nM ** f",
+     Inputs => {
+	  "f", "M"},
+     Outputs => {
+	  Matrix => {"formed by tensoring ", TT "f", " with the identity map of ", TT "M"},
+	  },
+     EXAMPLE lines ///
+	  R = ZZ/101[x,y];
+      	  R^2 ** vars R
+	  (vars R) ** R^2
+	  ///,
      "When ", TT "N", " is a free module of rank 1 the net effect of the
      operation is to shift the degrees of ", TT "f", ".",
-     EXAMPLE {
-	  "R = ZZ/101[t]",
-      	  "f = matrix {{t}}",
-      	  "degrees source f",
-      	  "degrees source (f ** R^{-3})",
-	  },
-     SeeAlso => {"Matrix", "Module"}
+     EXAMPLE lines ///
+	  R = ZZ/101[t];
+      	  f = matrix {{t}}
+      	  degrees source f
+      	  degrees source (f ** R^{-3})
+	  ///,
+     SeeAlso => {(symbol**,Module,Module),(symbol**,Matrix,Matrix)}
      }
 document {
      Key => {(symbol **, Module, Ring),
