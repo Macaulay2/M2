@@ -1,0 +1,13 @@
+//&C Oct 9, 2006. Generating universal binaries for MacOS X.
+  	 
+  	   Reference: http://macwiki.sourceforge.jp/cgi-bin/wiki.cgi?UniversalBinary
+  	 */
+  	 /*&C
+  	  Example:
+  	   gcc -arch i386 -arch ppc -isysroot /Developer/SDKs/MacOSX10.4u.sdk ox.c -o ox
+  	  or
+  	   gcc -arch i386 -isysroot /Developer/SDKs/MacOSX10.4u.sdk ox.c -o ox-i386
+  	   gcc -arch ppc -isysroot /Developer/SDKs/MacOSX10.4u.sdk ox.c -o ox-ppc
+  	   lipo -create ox-i386 ox-ppc -output ox
+  	 */
+  	
