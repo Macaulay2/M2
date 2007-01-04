@@ -659,7 +659,6 @@ undocumented {
     (symbol*,  Minus, Expression),
     (symbol*,  Product, Holder),
     (symbol*,  Holder, Holder),
-    (symbol*,  RingElement, Vector),
     (symbol*,  ZZ, CC),
     (symbol*,  ZZ, Matrix),
     (symbol*,  Matrix, ZZ),
@@ -695,7 +694,8 @@ undocumented {
     (symbol*,  ZZ, ChainComplexMap),
     (symbol*,  Expression, ZeroExpression),
     (symbol*,  Expression, OneExpression),
-    (symbol*,  OneExpression, Expression)
+    (symbol*,  OneExpression, Expression),
+    (symbol*,  Number, Vector)
     }
 
      
@@ -728,7 +728,8 @@ document {
     (symbol*,  ChainComplexMap, ChainComplexMap),
     (symbol*,  RingElement, RingElement),
     (symbol*,  Thing, List),
-    (symbol*,  ZZ, ProjectiveHilbertPolynomial)
+    (symbol*,  ZZ, ProjectiveHilbertPolynomial),
+    (symbol*,  RingElement, Vector)
 	  },
      Headline => "a binary operator, usually used for multiplication",
      Usage => "x * y",
@@ -1477,7 +1478,9 @@ undocumented {
          (symbol==, Net, String),
          (symbol==, Module, Ideal),
          (symbol==, Ideal, Module),
-         (symbol==, Ring, Ideal)
+         (symbol==, Ring, Ideal),
+	 (symbol==, RingMap, ZZ),
+	 (symbol==, ZZ, RingMap)
 	  }
 
 document {
@@ -1490,7 +1493,10 @@ document {
          (symbol==, Ideal, Ideal),
          (symbol==, MutableMatrix, MutableMatrix),
          (symbol==, Module, Module),
-	 (symbol==, RingMap, RingMap)
+	 (symbol==, Vector, Vector),
+	 (symbol==, RingMap, RingMap),
+	 (symbol==, BettiTally, BettiTally),
+	 (symbol==, VisibleList, VisibleList)
 	  },
      Headline => "equality",
      Usage => "x == y",

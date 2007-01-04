@@ -557,7 +557,7 @@ document {
      Headline => "length, or access to elements",
      "The precedence of ", TT "#", " when used as a binary operator is high,
      as high as ", TT ".", ", but the precedence when used as a unary operator
-     lower, as low as adjacency or function application.",
+     is lower, as low as adjacency or function application.",
      SeeAlso =>{ "#?" }
      }
 document {

@@ -23,7 +23,7 @@ exampleM = (kk) -> (
       -a3c+ab3,
       -ac3d+ad4+bc4-bcd3,
       -bc3d2+bd5+c6-c3d3,
-      ac4-ac2d3-b2c3d+b2d4,
+      ac5-ac2d3-b2c3d+b2d4,
       -a3d3+a2c4-a2cd3+b3d3,
       -a3d3+b3c3,
       -a3cd2+ab2c3-ab2d3+b3cd2,

@@ -223,7 +223,7 @@ toField Ring := R -> (
 toField FractionField := F -> error "toField: fraction field is already a field"
 
 getNonUnit = R -> if R.?Engine and R.Engine then (
-     r := rawGetNonUnit R;
+     r := rawGetNonUnit raw R;
      if r != 0 then new R from r)
 
 -- Local Variables:

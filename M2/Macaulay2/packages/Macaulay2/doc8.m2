@@ -879,46 +879,6 @@ document {
      PARA{},
      SeeAlso => "GaloisField"
      }
-document {
-     Key => toField,
-     Headline => "declare that a ring is a field",
-     Usage => "toField R",
-     Inputs => {
-	  "R" => "a ring"
-	  },
-     Consequences => {
-	  { "The ring ", TT "R", " is declared to be a field." }
-	  },
-     "The declaration is accomplished by setting ", TT "R.isField", " to be ", TT "true", ",
-     and, in case the ring is a ring handled by the engine, informing the
-     engine.  Polynomial rings over rings declared to be fields support
-     Groebner basis operations.",
-     PARA{},
-     "If the engine eventually discovers that some nonzero element of ", TT "R", "
-     is not a unit, an error will be signalled.  The user may then use
-     ", TO "getNonUnit", " to obtain a non-invertible element of ", TT "R", ".
-     If a ring is probably a field, it can be used as a field until a
-     contradiction is found, and this may be a good way of discovering
-     whether a ring is a field."
-     }
-
-document {
-     Key => getNonUnit,
-     Headline => "retrieve a previously discovered non-unit",
-     Usage => "getNonUnit R",
-     Inputs => {
-	  "R" => "a ring in which division by a non-unit has been attempted"
-	  },
-     Outputs => {
-	  "the non-unit"
-	  },
-     "Warning: this function does not work yet for divisions attempted in the course
-     of computing a Groebner basis or resolution.",
-     SeeAlso => { "toField" }
-     }
-
-
-
 
 document {
      Key => {newRing,(newRing, Ring)},
