@@ -26,7 +26,7 @@ CPPFLAGS += -I@srcdir@
 scc1 : $(OFILES)
 	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 $(OFILES) : $(HFILES)
-grammar.o : grammar.c; $(CC) $(CPPFLAGS) -c $< $(OUTPUT_OPTION)
+grammar.o : grammar.c; $(CC) $(CPPFLAGS) $(CFLAGS) -c $< $(OUTPUT_OPTION)
 ############################## tags
 all :: tags
 tags : @srcdir@/TAGS
