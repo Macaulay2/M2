@@ -790,16 +790,18 @@ document { Key => SumOfTwists,
      ///
      }
 
-document { Key => (symbol (*),CoherentSheaf),
+document { Key => {(symbol (*),CoherentSheaf),
+	  (symbol (*),SheafOfRings)},
      Headline => "sum of twists",
      Usage => "F(*)",
-     Inputs => {"F"},
+     Inputs => {"F" => {" or a ", ofClass SheafOfRings}},
      Outputs => {{"a symbolic representation of the graded object consisting of the twists ", TT "F(n)", ", for all integers ", TT "n"}},
      EXAMPLE lines ///
-     	  R = QQ[x,y,z]
+     	  R = QQ[x,y,z];
      	  X = Proj R
 	  Ext^0(OO_X^1, OO_X^1)
 	  Ext^0(OO_X^1, OO_X^1(*))
+	  Ext^0(OO_X^1, OO_X(*))	  
      ///}
 
 document { Key => Wrap,
@@ -828,7 +830,7 @@ document { Key => {BettiTally,(symbol ++,BettiTally,BettiTally), (symbol **,Bett
      Headline => "the class of all Betti tallies",
      "A Betti tally is a special type of ", TO "Tally", " that is printed as a display of graded Betti numbers.  The class was created
      so the function ", TO "betti", " could return something that both prints nicely and from which information can be extracted.  The keys
-     are triples ", TT "(i,h,d)", ", where ", TT "i", " is the homological degree, ", TT "d", " is a list of integers giving a multidegree,
+     are triples ", TT "(i,d,h)", ", where ", TT "i", " is the homological degree, ", TT "d", " is a list of integers giving a multidegree,
      and ", TT "h", " is the result of applying a weight covector to ", TT "d", ".
      Only ", TT "i", " and ", TT "h", " are used in printing.",
      EXAMPLE lines ///

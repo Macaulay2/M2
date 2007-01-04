@@ -117,22 +117,23 @@ getMinimalPoly(Ideal,RingElement,RingElement) := (I,u,x) -> (
      ux := u*x;
      elimvars := select(gens ring I, y -> ux % y != 0);
      J := eliminate(I,elimvars);
-     d := min apply(numgens J, i -> degree(J_i, x));
+     d := min apply(numgens J, i -> degree(x, J_i));
      --error "getminpoly";
-     fs := select(1, flatten entries gens J, f -> degree(f,x) === d);
+     fs := select(1, flatten entries gens J, f -> degree(x,f) === d);
      fs#0
      )
 
 getSeparablePart = method()
 getSeparablePart(RingElement,RingElement,RingElement) := (f,u,x) -> (
      g := factors f;
-     product select(g, g1 -> degree(g1,x) > 0))
+     product select(g, g1 -> degree(x,g1) > 0))
      
 
 radical00 = method()     
 radical00(Ideal,RingElement) := (I,u) -> (
      -- For each variable not in u, compute the 
      -- squarefree part (separable part)
+     error "debug me";
      v := select(gens ring I, x -> u % x != 0);
      newelems := {};
      time scan(v, x -> (

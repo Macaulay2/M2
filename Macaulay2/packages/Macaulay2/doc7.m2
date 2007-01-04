@@ -1370,31 +1370,43 @@ document {
      SeeAlso => {"Matrix", "Module"}
      }
 document {
-     Key => (symbol **, Module, Ring),
+     Key => {(symbol **, Module, Ring),
+	  (symbol **, Ring, Module)},
      Headline => "tensor product",
-     TT "M ** R", " -- form the tensor product of a module ", TT "M", " with a ring ", TT "R", ".",
-     PARA{},
-     "The ring of ", TT "M", " should be a base ring of ", TT "R", ".",
-     EXAMPLE {
-	  "R = ZZ/101[x,y];",
-      	  "M = coker vars R",
-      	  "M ** R[t]"
+     Usage => "M ** R\nR ** M",
+     Inputs => {
+	  "M", "R"},
+     Outputs => {
+	  Module => {"over ", TT "R", ", obtained by forming the tensor product of
+	  the module ", TT "M", " with ", TT "R"}
 	  },
+     "The ring of ", TT "M", " should be a base ring of ", TT "R", ".",
+     EXAMPLE lines ///
+	  R = ZZ/101[x,y];
+      	  M = coker vars R
+      	  M ** R[t]
+	  ///,
      }
 document {
-     Key => (symbol **, Matrix, Ring),
+     Key => {(symbol **, Matrix, Ring),
+	  (symbol **, Ring, Matrix)},
      Headline => "tensor product",
-     TT "f ** R", " -- form the tensor product of a module map ", TT "f", " with 
-     a ring ", TT "R", ".",
+     Usage => "f ** R\nR ** f",
+     Inputs => {
+	  "f", "R"},
+     Outputs => {
+	  Matrix => {"over ", TT "R", ", obtained by forming the tensor product of
+	  the module map ", TT "f", " with ", TT "R"}
+	  },
      PARA{},
      "The ring of ", TT "f", " should be a base ring of ", TT "R", ".  The degree 
      of the map is preserved.",
-     EXAMPLE {
-	  "R = ZZ[a..c];",
-	  "S = R/(a+b+c);",
-      	  "f = vars R",
-	  "f ** S",
-	  },
+     EXAMPLE lines ///
+	  R = ZZ[a..c];
+	  S = R/(a+b+c);
+      	  f = vars R
+	  f ** S
+	  ///
      }
 document {
      Key => Order,
