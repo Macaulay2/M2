@@ -1,3 +1,8 @@
+flattenRing fails to give an error message when the desired coefficient ring is not found in the chain
+also, what should it do if the requested coefficient ring k appears in the chain this way: (k/I)[a]?
+
+--
+
 Date: Wed, 1 Nov 2006 15:26:21 -0600
 From: Dan Grayson <dan@math.uiuc.edu>
 To: Michael Stillman <mike@math.cornell.edu>
