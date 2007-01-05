@@ -4,19 +4,19 @@ echo -- loading .gdbinit\n
 # so we send a message to the loaddata routine to ignore that
 set environment LOADDATA_IGNORE_CHECKSUMS yes
 
-directory /usr/tmp/gdbm-build/1.8.3/gdbm-1.8.3/
-directory /usr/tmp/readline-build/5.1/readline-5.1/
-directory /usr/tmp/factory-build/3.0.1.3/factory/
-directory /usr/tmp/libfac-build/3.0.1.3/libfac/
-directory /usr/tmp/libfac-build/3.0.1.3/libfac/factor/
-directory /usr/tmp/libfac-build/3.0.1.3/libfac/charset/
-directory /usr/tmp/gmp-build/4.2.1/gmp-4.2.1/
-directory /usr/tmp/gmp-build/4.2.1/gmp-4.2.1/mpn/
-directory /usr/tmp/gmp-build/4.2.1/gmp-4.2.1/mpz/
-directory /usr/tmp/gmp-build/4.2.1/gmp-4.2.1/mpq/
-directory /usr/tmp/gmp-build/4.2.1/gmp-4.2.1/mpf/
-directory /usr/tmp/gc-build/6.7/gc6.7/
-directory /usr/tmp/ntl-build/5.4/ntl-5.4/src/
+directory /home/dan/aux/builds/gdbm-build/1.8.3/gdbm-1.8.3/
+directory /home/dan/aux/builds/readline-build/5.1/readline-5.1/
+directory /home/dan/aux/builds/factory-build/3.0.2/factory/
+directory /home/dan/aux/builds/libfac-build/3.0.2/libfac/
+directory /home/dan/aux/builds/libfac-build/3.0.2/libfac/factor/
+directory /home/dan/aux/builds/libfac-build/3.0.2/libfac/charset/
+directory /home/dan/aux/builds/gmp-build/4.2.1/gmp-4.2.1/
+directory /home/dan/aux/builds/gmp-build/4.2.1/gmp-4.2.1/mpn/
+directory /home/dan/aux/builds/gmp-build/4.2.1/gmp-4.2.1/mpz/
+directory /home/dan/aux/builds/gmp-build/4.2.1/gmp-4.2.1/mpq/
+directory /home/dan/aux/builds/gmp-build/4.2.1/gmp-4.2.1/mpf/
+directory /home/dan/aux/builds/gc-build/6.7/gc6.7/
+directory /home/dan/aux/builds/ntl-build/5.4/ntl-5.4/src/
 source .gdb-files
 b fatalarrayindex
 # b GC_default_warn_proc
