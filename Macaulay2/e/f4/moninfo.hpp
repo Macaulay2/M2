@@ -4,7 +4,17 @@
 #define _moninfo_h_
 
 #include <cstdio>
+
+#include "config.h"
+#include <stdio.h>
+#if HAVE_STDINT_H
 #include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#else
+#error integer type definitions not available
+#endif
+
 #include "../../d/M2types.h"
 
 #include "varpower_monomial.hpp"

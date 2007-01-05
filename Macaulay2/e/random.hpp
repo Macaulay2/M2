@@ -3,7 +3,16 @@
 // Mike, I replaced all uses of "long" by "int32_t", defined in targettypes.h, to make it work
 // on machines where long can be longer.
 #include "../d/M2types.h"
+
+#include "config.h"
+#include <stdio.h>
+#if HAVE_STDINT_H
 #include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#else
+#error integer type definitions not available
+#endif
 
 #define Random RandomFoo
 
