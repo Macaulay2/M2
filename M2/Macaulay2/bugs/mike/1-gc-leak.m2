@@ -5,20 +5,25 @@ R = kk[vars(0..10-1)];
 B = flatten entries basis(2,R);
 J = ideal (h*i-2*d*j,g*i+2*i^2,d*g+2*h*j,f^2+2*a*i,b*f-2*g^2,c^2+h*j,b*c+2*c*f)
 --betti res(J = randomSparseIdeal(B,2,7))
+dot = () -> stderr << "." << flush
 H = () -> (
      I := ideal flatten entries gens J;
      C := res I;
+     dot();
      )
 
 H1 = () -> (
      I := ideal flatten entries gens J;
      C := res I;
      collectGarbage();
+     dot();
      )
 
 run "ulimit -v"
 
 trial = 1
+
+<< "trial = " << trial << endl
 
 if trial == 1 then (
 
