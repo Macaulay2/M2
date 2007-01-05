@@ -174,12 +174,12 @@ trim Module := Module => options -> (cacheValue symbol trim) ((M) -> (
 	  N.cache.trim = N;
 	  N))
 
-syz Matrix := Matrix => options -> (f) -> (
+syz Matrix := Matrix => opts -> (f) -> (
      if not isFreeModule target f or not isFreeModule source f
      then error "expected map between free modules";
      if ring f === ZZ or not isHomogeneous f
-     then syz gb (f, options, Syzygies=>true)
-     else mingens image syz gb (f, options, Syzygies=>true)
+     then syz gb (f, opts, Syzygies=>true)
+     else mingens image syz gb (f, opts, Syzygies=>true)
      )
 
 modulo = method(
