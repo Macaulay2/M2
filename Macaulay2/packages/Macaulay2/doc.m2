@@ -877,7 +877,8 @@ document {
 	  (symbol -, Matrix),
 	  (symbol -, RingElement, Matrix),
 	  (symbol -, ChainComplexMap, RingElement),
-	  (symbol -, Holder)
+	  (symbol -, Holder),
+	  (symbol -, Vector, Vector)
 	  },
      Headline => "a unary or binary operator, usually used for negation or subtraction",
      Usage => "-y \n x-y",

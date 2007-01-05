@@ -264,17 +264,13 @@ document {
      Headline => "the class of hash tables for optional arguments",
      SeeAlso => ">>" }
 document {
-     Key => (symbol >>, List, Function),
-     Headline => "attaching options to a function",
-     "See ", TO (symbol >>, OptionTable, Function), " for details."
-     }
-document {
-     Key => (symbol >>, OptionTable, Function),
+     Key => {(symbol >>, OptionTable, Function),
+	  (symbol >>, List, Function)},
      Headline => "attaching options to a function",
      Usage => "g = defs >> fun",
      Inputs => {
-	  "defs" => { 
-	       "a hash table whose keys are the names of the optional arguments, and whose values are the
+	  "defs" => { "(or ", ofClass List, " of option pairs), 
+	       whose keys are the names of the optional arguments, and whose values are the
 	       corresponding default values"},
 	  "fun" => { "a function that expects optional arguments" }
 	  },
@@ -295,12 +291,12 @@ document {
      PARA {
      	  "In the following example we use a simple definition for ", TT "fun", "
      	  so we can see everything that ", TT "fun", " receives."},
-     EXAMPLE {
-	  "g = {a=>1, b=>2} >> opts -> args -> {args, opts}",
-	  "g x",
-	  "g(x,y,b=>66)",
-	  "g(t,u,a=>44,b=>77)",
-	  },
+     EXAMPLE lines ///
+	  g = {a=>1, b=>2} >> opts -> args -> {args, opts}
+	  g x
+	  g(x,y,b=>66)
+	  g(t,u,a=>44,b=>77)
+	  ///,
      SeeAlso => {"making new functions with optional arguments", "OptionTable", "Option", "=>"}
      }
 

@@ -133,15 +133,15 @@ radical00 = method()
 radical00(Ideal,RingElement) := (I,u) -> (
      -- For each variable not in u, compute the 
      -- squarefree part (separable part)
-     error "debug me";
      v := select(gens ring I, x -> u % x != 0);
      newelems := {};
-     time scan(v, x -> (
+     scan(v, x -> (
 	       -- there are THREE problems here!
 	       -- (a) use linear algebra
 	       -- (b) char p
 	       -- (c) f might not be the smallest eqn in var v_i.
-	       f := getMinimalPoly(I,u,x);
+	       << "about to get minpoly " << toString I << " u = " << toString u << " x = " << toString x << endl;
+	       time f := getMinimalPoly(I,u,x);
 	       g := getSeparablePart(f,u,x);
 	       if f != g then newelems = append(newelems,g)));
      --error "in radical00";
