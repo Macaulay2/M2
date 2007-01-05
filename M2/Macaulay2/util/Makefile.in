@@ -2,7 +2,7 @@
 include ../../include/config.Makefile
 VPATH = @srcdir@
 EXES := echoout timestmp restart update
-CFLAGS += -I.
+CFLAGS += -I. -I../../include
 
 ifeq ($(OS),Linux)
 EXES += screen
