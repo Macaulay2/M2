@@ -18,7 +18,20 @@ GradedModule _ ZZ := Module => (M,i) -> if M#?i then M#i else (ring M)^0
 net GradedModule := C -> (
      s := sort spots C;
      if # s === 0 then "0"
-     else stack between("", apply(s, i -> horizontalJoin (net i," : ",net C_i))))
+     else (
+	  ind := apply(s,toString);
+	  sep := " : ";
+	  wid := max apply(ind,length) + length sep;
+	  savePW := printWidth;
+	  printWidth = printWidth - wid;
+	  tr := M -> if printWidth > 6 then wrap net M else net M;
+	  res := netList( 
+	       apply(s, i -> {i, sep, tr C_i}),
+	       Boxes =>false, 
+	       Alignment => {Right,Center,Left}, 
+	       VerticalSpace => 1);
+	  printWidth = savePW;
+	  res))
 length GradedModule := (M) -> (
      s := spots M;
      if #s === 0 then 0 else max s - min s)
