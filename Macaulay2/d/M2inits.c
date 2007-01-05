@@ -22,10 +22,7 @@ void arginits(int argc, char **argv) { progname = argv[0]; }
 
 static void init_gc(void) {
 #include "gc_fixes.h"
-     GC_all_interior_pointers = TRUE; /* gc is now compiled by default with this on */
-#if 0 /* commented out, because we haven't tested this value lately */
-     GC_free_space_divisor = 2;
-#endif
+     GC_all_interior_pointers = FALSE;
      GC_INIT();
      if (getenv("GC_free_space_divisor")) {
 	  GC_free_space_divisor = atoi(getenv("GC_free_space_divisor"));
@@ -34,10 +31,6 @@ static void init_gc(void) {
 		    progname, GC_free_space_divisor);
 	       exit (1);
 	       }
-	  }
-     if (getenv("GC_enable_incremental") && atoi(getenv("GC_enable_incremental"))==1) {
-	  GC_enable_incremental();
-	  fprintf(stderr,"GC_enable_incremental()\n");
 	  }
      if (getenv("GC_expand_hp")) {
 	  GC_expand_hp(atoi(getenv("GC_expand_hp")));
@@ -101,7 +94,7 @@ void enterFactory() {
   if (!done) {
     done = 1;
     initializeGMP_Cwrapper();
-    if (__gmp_allocate_func == (void (*)(size_t)) getmem) {
+    if (__gmp_allocate_func == (void * (*)(size_t)) getmem) {
       fprintf(stderr, "internal error: gmp initialized before enterFactory called\n");
       exit(1);
     }
