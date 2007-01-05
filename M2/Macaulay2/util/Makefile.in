@@ -10,8 +10,11 @@ endif
 
 .PHONY : all clean distclean
 
-all:: $(EXES) overlay.h
-overlay.h : overlay ; ./$< >$@
+all:: $(EXES)
+
+# overlay.h is no longer needed
+#  all:: overlay.h
+#  overlay.h : overlay ; ./$< >$@
 
 # all :: targettypes.h
 #  we don't need targettypes.h any more

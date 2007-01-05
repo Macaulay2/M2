@@ -338,8 +338,17 @@ extern void monomialOrderFree(MonomialOrder *mo)
 {
 }
 
-#include "overlay.h"
-#if OVERLAY == 0x04030201
+#ifdef HAVE_STDDEF_H
+/* we include this because on suns it includes <sys/isa_defs.h> */
+#include <stddef.h>
+#endif
+
+#ifdef HAVE_ENDIAN_H
+#include <endian.h>
+#endif
+
+#if defined(__BYTE_ORDER) && defined(__LITTLE_ENDIAN) && __BYTE_ORDER == __LITTLE_ENDIAN || defined(_LITTLE_ENDIAN)
+
 union pack4 {
   int32_t i;
   struct {
