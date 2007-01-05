@@ -242,8 +242,8 @@ M2_string s,t;
 	  if (isdigit(c) && isdigit(d)) {
 		 if (!innumber) {
 		      int sn, tn;
-		      sn=i+1; while(sn<slen && isdigit(sarray[sn])) sn++;
-		      tn=i+1; while(tn<tlen && isdigit(tarray[tn])) tn++;
+		      sn=i+1; while(sn<slen && isdigit((int)sarray[sn])) sn++;
+		      tn=i+1; while(tn<tlen && isdigit((int)tarray[tn])) tn++;
 		      if (sn > tn) return  1;
 		      if (sn < tn) return -1;
 		      innumber = TRUE;
@@ -1109,7 +1109,7 @@ M2_string system_regexreplace(M2_string pattern, M2_string replacement, M2_strin
 	      char *q = p;
 	      while (TRUE) {
 		   q = memchr(q,'\\',plen-(q-p));
-		   if (q==NULL || isdigit(q[1])) break;
+		   if (q==NULL || isdigit((int)q[1])) break;
 		   q++;
 	      }
 	      if (q==NULL) break;
@@ -1184,7 +1184,7 @@ M2_stringarray system_regexselect(M2_string pattern, M2_string replacement, M2_s
 	      char *q = p;
 	      while (TRUE) {
 		   q = memchr(q,'\\',plen-(q-p));
-		   if (q==NULL || isdigit(q[1])) break;
+		   if (q==NULL || isdigit((int)q[1])) break;
 		   q++;
 	      }
 	      if (q==NULL) break;
