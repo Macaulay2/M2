@@ -174,8 +174,8 @@ document {
 	       The first time the package is loaded by the user, unless the ", TT "-q", " option is specified on the ", TT "M2", " command
 	       line, these options will be stored in a file in the user's application
 	       directory (see ", TO "applicationDirectory", ").  The user can change the configuration by editing the file.  
-	       The user can override the configuration settings when loading the package; see ", TO "[loadPackage,Configuration]", " and 
-	       ", TO "[needsPackage,Configuration]", ".  The file will be overwritten when a newer version of the package 
+	       The user can override the configuration settings when loading the package; see ", TO [loadPackage,Configuration], " and 
+	       ", TO [needsPackage,Configuration], ".  The file will be overwritten when a newer version of the package 
 	       with different configuration options is loaded, but a backup will be made and the user's settings for the surviving options will be retained.
 	       "
 	       },
