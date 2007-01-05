@@ -1161,7 +1161,7 @@ document {
       	  "t",
       	  "code globalAssignFunction",
 	  },
-     SeeAlso => { "name", "symbol", "SelfInitializingType" }
+     SeeAlso => { "symbol", "SelfInitializingType" }
      }
 
 document {
