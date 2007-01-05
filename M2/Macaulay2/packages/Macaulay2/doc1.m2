@@ -1,5 +1,5 @@
 scan((
-	  FollowLinks,Hilbert,UserMode,RerunExamples,MakeDocumentation,IgnoreExampleErrors,MakeInfo,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate,
+	  FollowLinks,Hilbert,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate,
 	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing,Undo,SourceCode,Description,Variables,
 	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize
 	  ),
