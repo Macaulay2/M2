@@ -714,12 +714,6 @@ document {
      }
 
 document {
-     Key => (degrees, CoherentSheaf),
-     TT "degrees F", " -- produce a list of the degrees of the generators of the module
-     defining a coherent sheaf ", TT "F", "."
-     }
-
-document {
      Key => {(symbol >=, ZZ),(symbol >=,InfiniteNumber)},
      Usage => "(>= d)",
      Inputs => { "d" },

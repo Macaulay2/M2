@@ -424,22 +424,30 @@ document {
 --     If no result is non-null, then it returns null."
 --     }
 
-
 document {
-     Key => {describe,(describe, PolynomialRing),(describe, QuotientRing),(describe, Thing)},
+     Key => {describe,
+	  (describe, PolynomialRing),
+	  (describe, QuotientRing),
+	  (describe, FractionField),
+	  (describe, GaloisField),
+	  (describe, GeneralOrderedMonoid),
+	  (describe, Variety),
+	  (describe, Thing)
+	  },
      Headline => "real description",
      TT "describe x", " -- returns ", ofClass Net, " containing the 
      real description of ", TT "x", ", bypassing the feature which causes
      certain types of things to acquire, for brevity, the names of global variables to which
      they are assigned.",
      PARA{},
-     EXAMPLE {
-	  "R = ZZ/101[a,b,c_1,c_2];",
-      	  "R",
-      	  "describe R",
-	  "toString describe R",
-	  },
-     SeeAlso => "toString"
+     EXAMPLE lines ///
+	  R = ZZ/101[a,b,c_1,c_2];
+      	  R
+      	  describe R
+	  toString describe R
+	  toExternalString R
+	  ///,
+     SeeAlso => {"toString", "toExternalString"}
      }
 
 document {

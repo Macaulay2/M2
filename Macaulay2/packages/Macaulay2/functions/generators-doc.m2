@@ -4,6 +4,8 @@
 
 undocumented {
 	  (generators, EngineRing),
+	  (generators, FractionField),
+	  (generators, GaloisField),
 	  (generators, PolynomialRing),
 	  (generators, QuotientRing)}
 

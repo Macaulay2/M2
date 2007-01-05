@@ -328,23 +328,6 @@ document {
      monoid or polynomial ring is based."
      }
 document {
-     Key => {degreeLength,
-	  (degreeLength,PolynomialRing), (degreeLength,QuotientRing),
-	  (degreeLength,Module), (degreeLength,OrderedMonoid), (degreeLength,FractionField),
-     	  (degreeLength,GeneralOrderedMonoid), (degreeLength,Ring)},
-     Headline => "the number of degrees",
-     Usage => "degreeLength X",
-     Inputs => {"X" => {"a ring, module, or monoid"}},
-     Outputs => { ZZ => {"the length of a multidegree vector used as a degree of an element of ", TT "X"}},
-     EXAMPLE lines ///
-     	  degreeLength ZZ
-     	  degreeLength (ZZ[x])
-     	  degreeLength (ZZ[x, Degrees => {{1,2,3}}])
-     	  degreeLength (GF 9)
-     ///,
-     SeeAlso => "degree"
-     }
-document {
      Key => {isIsomorphism,(isIsomorphism, Matrix)},
      Headline => "whether a map is an isomorphism",
      TT "isIsomorphism f", " -- whether the map f of modules is an isomorphism."
