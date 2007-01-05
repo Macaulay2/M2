@@ -2,107 +2,58 @@
 --- author(s): 
 --- notes: 
 
-document { 
-     Key => degrees,
-     Headline => "",
-     Usage => "",
-     Inputs => {
+undocumented {
+     (degrees, PolynomialRing),
+     (degrees, QuotientRing)
+     }
+document { Key => degrees,
+     Headline => "degrees of generators" }
+document {
+     Key => {(degrees, Ring),
+	  (degrees, GeneralOrderedMonoid),
+	  (degrees, Module),
+	  (degrees, Ideal),
+	  (degrees, CoherentSheaf)
+	  },
+     Headline => "degrees of generators",
+     Usage => "degrees A",
+     Inputs => {"A" => {ofClass Ideal, ", ", ofClass Module, ", ", ofClass CoherentSheaf, ", or ", ofClass Monoid }
 	  },
      Outputs => {
+	  List => { "the list of multi-degrees for the generators of ", TT "A"}
 	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
+     EXAMPLE lines ///
+	  R = ZZ/101[x,y,z];
+      	  degrees R
+	  S = ZZ/101[x,y,z,Degrees => {{2,3},{1,2},{2,0}}];
+      	  degrees S
+      ///,
+     "This function also applies to ideals, modules, and sheaves.",
+     EXAMPLE lines ///
+          I = ideal"xy2,xyz,y3"
+	  degrees I
+      ///,
+     EXAMPLE lines ///
+      	  degrees R^5
+      	  degrees R^{1,2,3,4}
+	  ///,
+      SeeAlso => {degreeLength, degreesRing}
+      }
 document { 
      Key => (degrees,Matrix),
-     Headline => "",
-     Usage => "",
+     Headline => "degrees of target and source",
+     Usage => "degrees f",
      Inputs => {
+	  "f"
 	  },
      Outputs => {
+	  { "a list ", TT "{x,y}", " where ", TT "x", " is the list
+	       of degrees of the target of ", TT "f", " and ", TT "y", " is the
+	       list of degrees of the source of ", TT "f", "." }
 	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     EXAMPLE lines ///
+     	  S = ZZ/101[x,y,z,Degrees => {{2,3},{1,2},{2,0}}];
+	  degrees vars S
+	  ///,
+     SeeAlso => {degreeLength, degreesRing}
      }
-document { 
-     Key => (degrees,CoherentSheaf),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (degrees,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (degrees,Module),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (degrees,Ideal),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc10.m2:916:     Key => (degrees, CoherentSheaf),
- -- doc6.m2:361:     Key => degreesRing,
- -- doc6.m2:572:     Key => degreesMonoid,
- -- doc6.m2:1063:document { Key => degrees, Headline => "degrees of generators" }
- -- doc6.m2:1065:     Key => (degrees, Ideal),
- -- doc6.m2:1070:     Key => (degrees, Matrix),
- -- doc6.m2:1077:     Key => (degrees, Module),
- -- doc6.m2:1088:     Key => (degrees, Ring),

@@ -472,45 +472,6 @@ document {
      module over ", TT "R", ", then M is a subclass of Vector.",
      PARA{},
      SeeAlso => {"engine", "Module"}}
-document { Key => degrees,
-     Headline => "degrees of generators" }
-document {
-     Key => (degrees, Ideal),
-     Usage => "degrees I",
-     Inputs => {"I"},
-     Outputs => {{ "the list of multi-degrees for the generators of the module ", TT "I" }}}
-document {
-     Key => (degrees, Matrix),
-     Usage => "degrees f",
-     Inputs => {"f"},
-     Outputs => {{ "a list ", TT "{x,y}", " where ", TT "x", " is the list
-	       of degrees of the target of ", TT "f", " and ", TT "y", " is the
-	       list of degrees of the source of ", TT "f", "." }}}
-document {
-     Key => (degrees, Module),
-     Usage => "degrees M",
-     Inputs => {"M"},
-     Outputs => {{ "the list of multi-degrees for the generators of the module ", TT "M" }},
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-      	  "E = R^5",
-      	  "degrees E",
-      	  "F = R^{1,2,3,4}",
-      	  "degrees F" } }
-document {
-     Key => {(degrees, Ring),(degrees, GeneralOrderedMonoid)},
-     Usage => "degrees R",
-     Inputs => {"R"},
-     Outputs => {},
-     Consequences => {{ "the list of multi-degrees for the generators (variables) of the ring (or monoid) ", TT "R"}},
-     EXAMPLE lines ///
-	  R = ZZ/101[x,y,z]
-      	  degrees R
-	  monoid R
-	  degrees oo
-	  S = ZZ/101[x,y,z,Degrees => {{2,3},{1,2},{2,0}}]
-      	  degrees S
-      ///}
 document {
      Key => (symbol ^, Ring, List),
      Headline => "make a free module",
