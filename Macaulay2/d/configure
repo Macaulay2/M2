@@ -11,9 +11,10 @@ cat <<EOF >compat.h
 #include <string.h>
 #include <gmp.h>
 #define  DCODE 1
-#define const
+
+#define NO_CONST
 #include "../e/engine.h"
-#undef const
+
 #include "gmp_aux.h"
 #include "memdebug.h"
 #include "config.h"

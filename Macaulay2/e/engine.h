@@ -59,6 +59,11 @@ typedef struct M2_Integer_pair M2_Integer_pair;
 #define BASECLASS
 #endif
 
+#if defined(NO_CONST)
+  /* we must do this after including system *.h files above */
+# define const
+#endif
+
 struct Monomial_pair BASECLASS { Monomial *a; Monomial *b; };
 struct RingElement_pair BASECLASS { RingElement *a; RingElement *b; };
 struct M2_Integer_pair BASECLASS { M2_Integer a; M2_Integer b; };
