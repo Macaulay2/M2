@@ -501,17 +501,38 @@ assert ( toString x === \"set {1, 2, 3}\" )
 document {
      Key => (symbol ^**, Module, ZZ),
      Headline => "tensor power",
-     Usage => "N = M^**i",
+     Usage => "M^**i",
      Inputs => { "M", "i" },
-     Outputs => {"N" => { "the i-th tensor power of M" }}
+     Outputs => {Module => { "the ", TT "i", "-th tensor power of ", TT "M"}},
+     "The second symmetric power of the canonical module of the
+     rational quartic:",
+     EXAMPLE lines ///
+         R = QQ[a..d];
+         I = monomialCurveIdeal(R,{1,3,4})
+	 M = Ext^1(I,R^{-4})
+	 M^**2
+	 ///
      }
 
 document {
      Key => (symbol ^**, CoherentSheaf, ZZ),
      Headline => "tensor power",
-     Usage => "N = M^**i",
+     Usage => "M^**i",
      Inputs => {"M" , "i" },
-     Outputs => {"N" => { "the i-th tensor power of M" }}
+     Outputs => {CoherentSheaf => { "the ", TT "i", "-th tensor power of ", TT "M"}},
+     "The second symmetric power of the canonical sheaf of the
+     rational quartic:",
+     EXAMPLE lines ///
+         R = QQ[a..d];
+         I = monomialCurveIdeal(R,{1,3,4})
+	 X = variety I
+	 KX = sheaf(Ext^1(I,R^{-4}) ** ring X)
+	 K2 = KX^**2
+	 prune K2
+	 ///,
+     "Notice that the resulting sheaf is not always presented in the most
+     economical manner.  Use ", TO prune, " to improve the presentation.",
+     SeeAlso => {monomialCurveIdeal, Ext, variety, sheaf, prune}
      }    
 
 document {

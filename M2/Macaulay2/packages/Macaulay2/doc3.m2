@@ -183,6 +183,29 @@ document {
      }
 
 document {
+     Key => { (symbol /,Ideal,Function),
+	  (symbol \,Function,Ideal)},
+     Headline => "apply a function to generators of an ideal",
+     Usage => "I/f\nf\\I",
+     Inputs => { "I","f"},
+     Outputs => {List => { "obtained by applying the function ", TT "f", " to each generator of ", TT "I"}},
+     PARA {
+     	  "The operator ", TO "/", " is left associative, which means that ", TT "w / f / g", " is interpreted as ", TT "(w / f) / g", ".
+     	  The operator ", TO "\\", " is right associative, so ", TT ///g \ f \ w///, " is interpreted as ", TT ///g \ (f \ w)///, ".
+	  Both operators have parsing precedence lower than that of ", TO "@@", ", which means that the previous two expressions are 
+	  equivalent to ", TT "w / g @@ f", "
+	  and ", TT "g @@ f \\ w", ", respectively. See ", TO "precedence of operators", "."
+	  },
+     EXAMPLE lines ///
+     	  R = ZZ[a..d];
+	  I = ideal"abc-d3,ab-d-1,a2+b2+c3-14d-3"
+     	  I/size
+	  (f->f+a*b-1)\I
+	  I/leadTerm/support/set//sum
+     ///,
+     }
+
+document {
      Key => {(symbol //,Thing,Function),(symbol \\,Function,Thing),
 	  (symbol //,Thing,Command),(symbol \\,Command,Thing),
 	  (symbol //,Thing,SelfInitializingType),(symbol \\,SelfInitializingType,Thing)

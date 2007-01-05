@@ -15,7 +15,10 @@ undocumented {
      (symbol _, PolynomialRing, List),
      (symbol _, RingElement, List),    -- replaced
      (symbol _, RingElement, ZZ),      -- obsolete
-     (symbol _, RingElement, RingElement) --coeff of monomials in polynomial -- deprecate or obsolete
+     (symbol _, RingElement, RingElement), --coeff of monomials in polynomial -- deprecate or obsolete
+     (symbol _, Holder, Holder),
+     (symbol _, Ring, Symbol), -- maybe should be deprecated?
+     (symbol _, Ring, IndexedVariable) -- this should be deprecated?
      }
 
 document {
@@ -358,6 +361,36 @@ document {
 	       ///,
      	  Caveat => {"Fewer methods exist for manipulating vectors than other types, such as modules and matrices"},
      	  SeeAlso => {"_"}
+     }
+document { 
+     Key => {(symbol _, Matrix, Sequence),
+	  (symbol _, MutableMatrix, Sequence)},
+     Headline => "get entry of matrix",
+     Usage => "M_(i,j)",
+     Inputs => {
+	  "M" => {"or ", ofClass MutableMatrix},
+	  "i" => "both integers"
+	  },
+     Outputs => {
+	  RingElement => "the (i,j)-th entry of the matrix M, where M_(0,0) is the 
+	   top left entry"
+	  },
+     "All indexing in Macaulay2 is zero-based, so the indices start at zero.",
+     EXAMPLE lines ///
+     	  M = matrix{{1,2,3},{0,5,6}}
+	  M_(1,2)
+	  ///,
+     "The matrix may be a ", ofClass MutableMatrix, " too:",
+     EXAMPLE lines ///
+	  N = mutableMatrix M
+	  N_(1,0)
+          ///,
+     "Entries of mutable matrices can be changed:",
+     EXAMPLE lines ///
+	  N_(1,0) = 37
+	  N
+	  ///,
+     SeeAlso => {Matrix, MutableMatrix}
      }
 end
 document { 
