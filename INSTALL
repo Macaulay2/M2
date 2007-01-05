@@ -155,8 +155,6 @@ Other common libraries that we assume are on your system already:
 	GNU readline (provides libreadline.so and libhistory.so)
 	GNU ncurses (provides libcurses.so)
 
-
-
 -------------------------------------------
 Compiling on multiple machine architectures
 -------------------------------------------
@@ -409,6 +407,10 @@ There are several methods for installing Macaulay2 under Mac OS X.
     For compiling a 64-bit version, add
 	  CC='gcc -m64' CXX='g++ -m64'
     to the configure command line above.
+
+    Warning: it seems to be a bad idea to link with dynamic libraries,
+    for memory allocation errors may occur, at least for 64 bit intel
+    mac darwin.
 
 ----------------------
 HPUX notes
