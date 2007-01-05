@@ -5,8 +5,6 @@ newPackage (
 
 export runBenchmark
 
-exportMutable (a,Z)
-
 runBenchmark = () -> (
      << "-- beginning computation " << get "!date";
      << "-- " << first lines get "!uname -a" << endl;
@@ -34,6 +32,13 @@ runBenchmark = () -> (
 end
 
 -- Results:
+
+-- beginning computation Thu Jan  4 20:25:24 EST 2007
+-- Darwin bayer.math.columbia.edu 8.8.1 Darwin Kernel Version 8.8.1: Mon Sep 25 19:42:00 PDT 2006; root:xnu-792.13.8.obj~1/RELEASE_I386 i386 i386 iMac5,1 Darwin
+-- Macaulay2 0.9.96, compiled with gcc 4.0.1
+-- res39: 0.21 seconds
+-- resG25: 2.51 seconds
+
 -- beginning computation Tue Apr 11 20:14:38 EDT 2006
 -- Linux mathvader1.math.cornell.edu 2.6.9-34.ELsmp #1 SMP Fri Feb 24 16:56:28 EST 2006 x86_64 x86_64 x86_64 GNU/Linux
 -- Macaulay2 0.9.8, compiled with gcc 3.4.5
