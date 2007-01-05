@@ -203,7 +203,9 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
      f.cache#type = G;
      G)
 
-syz = method(Options => options gb)			    -- we seem to be ignoring these options!!
+syz = method(
+     Options => select(pairs options gb, (k,v) -> k =!= Syzygies)
+     )
 
 rawsort := m -> rawExtractColumns(m,rawSortColumns(m,1,1))
 
