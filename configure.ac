@@ -231,6 +231,9 @@ if test "$CYGWIN" = yes ; then ENCAP=no ; STRIP=yes ; TARFILE=yes ; fi
 AC_SUBST(DEBIAN)    AC_ARG_ENABLE(debian,  AS_HELP_STRING(--enable-debian,prepare a binary package for debian (enables encap)), DEBIAN="$enableval", DEBIAN=no)
 if test "$DEBIAN" = yes ; then ENCAP=yes ; TARFILE=yes ; fi
 
+AC_SUBST(RPM)    AC_ARG_ENABLE(rpm,  AS_HELP_STRING(--enable-rpm,prepare a binary rpm package (enables encap)), RPM="$enableval", RPM=no)
+if test "$RPM" = yes ; then ENCAP=yes ; TARFILE=yes ; fi
+
 AC_SUBST(M2SUFFIX)
 test "$program_suffix" != NONE && M2SUFFIX="$program_suffix"
 AC_ARG_ENABLE(dummy, AS_HELP_STRING(--program-suffix=...,suffix to append to executable name M2))
