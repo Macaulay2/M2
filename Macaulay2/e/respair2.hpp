@@ -36,16 +36,16 @@ struct res2_pair : public our_new_delete
 
   MonomialIdeal * mi;
 #if 0
-  union {
-    MonomialIdeal mi;		// Monomial ideal of total monomials
-    struct {			// Maybe: want a pointer to this...?
-      res2_pair *mi2;		// List of res_pairs having this as lead term
-      res2_pair *next_mi;	// If this is part of a list of mi2, this is the
-				// next-link.
-      int monomial_mask;	// Do we really want this?  If so: should probably
-				// refer to the non-total monomial.
-    }
-  } monideal;
+//   union {
+//     MonomialIdeal mi;		// Monomial ideal of total monomials
+//     struct {			// Maybe: want a pointer to this...?
+//       res2_pair *mi2;		// List of res_pairs having this as lead term
+//       res2_pair *next_mi;	// If this is part of a list of mi2, this is the
+// 				// next-link.
+//       int monomial_mask;	// Do we really want this?  If so: should probably
+// 				// refer to the non-total monomial.
+//     }
+//   } monideal;
 #endif
   // The following are used only for minimalization of the resolution
   res2term *pivot_term;		// SYZ2_NOT_MINIMAL: Points into 'syz', to the 

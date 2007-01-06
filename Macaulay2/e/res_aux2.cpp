@@ -146,17 +146,17 @@ void res2_comp::text_out(buffer &o, const res2_pair *p) const
   }
 
 #if 0
-  if (p->mi_exists)
+//   if (p->mi_exists)
 #endif
     o << "[mi: " << p->mi->length() << "]";
 #if 0
-  else
-    {
-      res2_pair *q = p->next_div;
-      int n = 0;
-      while (q != NULL) { n++; q = q->next_div; }
-      o << "[midiv: " << n << "]";
-    }
+//   else
+//     {
+//       res2_pair *q = p->next_div;
+//       int n = 0;
+//       while (q != NULL) { n++; q = q->next_div; }
+//       o << "[midiv: " << n << "]";
+//     }
 #endif
   M->elem_text_out(o, p->syz->monom);
   o << " [" << R->n_terms(p->syz) << "] ";
@@ -339,221 +339,221 @@ Matrix *res2_comp::make_minimal(int i) const
 ///////////////////////////////////////////////////////
 
 #if 0
-Matrix res2_comp::reduce_mod_vars(int level) const
-{
-  // Set all variables to 0, but only take columns marked
-  // as SZ or GB, not NO.  The matrix returned is over K.
-
-  // Set 'me' values for level 'level' and 'level-1'.
-  
-  FreeModule *rows = K->make_FreeModule();
-  FreeModule *cols = K->make_FreeModule();
-  Matrix result(rows, cols);
-  for (res_pair *p = resn[level]->pairs; p != NULL; p = p->next)
-    {
-      if (p->syz_type == SYZ2_MINIMAL || SYZ2_NOT_MINIMAL)
-	{
-	  result[next++] = reduce_mod_vars(result.rows(), p->syz);
-	}
-    }
-  return result;
-}
-void res2_comp::set_pivots(int level)
-{
-  // Determines the status of each element (SZ, GB, NO)
-  // (given the status of each element of higher level).
-  // Also this sets the pivot_term of each element at this level
-  
-  // m = reduce_mod_vars(level)
-  // now reduce this matrix, using change of basis.
-  // for each column of this matrix, we will set a column to SYZ2_NOT_MINIMAL,
-  // a row to SYZ2_NOT_NEEDED, and the columns pivot_term to the chosen pivot.
-}
-
-void res2_comp::pivot(int level, int r, int c)
-{
-  res2_pair *p;
-
-  // First find the specific pivot column
-  for (p = resn[level]->pairs; p!=NULL; p=p->next)
-    if (p->me == c)
-      {
-	pivot_pair = p;
-	break;
-      }
-
-  // Now find the pivot ring element
-  term head;
-  term *f = &head;
-  for (tm = pivot_pair->syz; tm != NULL; tm=tm->next)
-    {
-      if (tm->comp->me == r)
-	{
-	  pivot_row = tm->comp;
-
-	  // Grab this element
-	  f->next = P->term(tm->coeff, tm->monom);
-	  f = f->next;
-	  M->divide(f->monom, pivot_row->syz->monom, f->monom);
-	}
-    }
-  f->next = NULL;
-  f = head.next;
-
-  // Now loop through the columns of the level th matrix,
-  // replacing each column (other than column c) with 
-  // elem(level,i) = f*elem(level,i) - c*v,
-  // where c = elem(level,r,i).
-  for (res2_pair *p = resn[level]->pairs; p!=NULL; p=p->next)
-    {
-      if (p == pivot_pair) continue;
-      res2term *w = p->syz;
-      if (R->get_coefficient(w, pivot_row, g))
-	{
-	  P->negate_to(g);
-	  res2term *h1 = R->mult(f,w);
-	  res2term *h2 = R->mult(g,pivot_pair->syz);
-	  R->add_to(h1,h2);
-	  P->remove(g);
-	  R->remove(p->syz);
-	  p->syz = h1;
-	}
-    }
-
-  // Remove every occurrence of row 'c' in level 'level+1'.
-  // We save these up, to remove all at once, using 'strip_matrix'.
-  pivot_pair->syz_type = SYZ2_NOT_MINIMAL;
-  pivot_row->syz_type = SYZ2_NOT_NEEDED;
-
-  // We will never use this column again, so remove it:
-  R->remove(pivot_pair->syz);
-  pivot_pair->syz = NULL;    // This is a bit dangerous, since
-			     // many routines use this as if it must be nonNULL...
-}
-
-void res2_comp::strip_matrix(int level)
-{
-  // Remove all rows which are marked as SYZ2_NOT_MINIMAL
-  for (res2_pair *p = resn[level]->pairs; p != NULL; p=p->next)
-    {
-      res2term *f = strip(p->syz);
-      R->remove(p->syz);
-      p->syz = f;
-    }
-}
+// Matrix res2_comp::reduce_mod_vars(int level) const
+// {
+//   // Set all variables to 0, but only take columns marked
+//   // as SZ or GB, not NO.  The matrix returned is over K.
+// 
+//   // Set 'me' values for level 'level' and 'level-1'.
+//   
+//   FreeModule *rows = K->make_FreeModule();
+//   FreeModule *cols = K->make_FreeModule();
+//   Matrix result(rows, cols);
+//   for (res_pair *p = resn[level]->pairs; p != NULL; p = p->next)
+//     {
+//       if (p->syz_type == SYZ2_MINIMAL || SYZ2_NOT_MINIMAL)
+// 	{
+// 	  result[next++] = reduce_mod_vars(result.rows(), p->syz);
+// 	}
+//     }
+//   return result;
+// }
+// void res2_comp::set_pivots(int level)
+// {
+//   // Determines the status of each element (SZ, GB, NO)
+//   // (given the status of each element of higher level).
+//   // Also this sets the pivot_term of each element at this level
+//   
+//   // m = reduce_mod_vars(level)
+//   // now reduce this matrix, using change of basis.
+//   // for each column of this matrix, we will set a column to SYZ2_NOT_MINIMAL,
+//   // a row to SYZ2_NOT_NEEDED, and the columns pivot_term to the chosen pivot.
+// }
+// 
+// void res2_comp::pivot(int level, int r, int c)
+// {
+//   res2_pair *p;
+// 
+//   // First find the specific pivot column
+//   for (p = resn[level]->pairs; p!=NULL; p=p->next)
+//     if (p->me == c)
+//       {
+// 	pivot_pair = p;
+// 	break;
+//       }
+// 
+//   // Now find the pivot ring element
+//   term head;
+//   term *f = &head;
+//   for (tm = pivot_pair->syz; tm != NULL; tm=tm->next)
+//     {
+//       if (tm->comp->me == r)
+// 	{
+// 	  pivot_row = tm->comp;
+// 
+// 	  // Grab this element
+// 	  f->next = P->term(tm->coeff, tm->monom);
+// 	  f = f->next;
+// 	  M->divide(f->monom, pivot_row->syz->monom, f->monom);
+// 	}
+//     }
+//   f->next = NULL;
+//   f = head.next;
+// 
+//   // Now loop through the columns of the level th matrix,
+//   // replacing each column (other than column c) with 
+//   // elem(level,i) = f*elem(level,i) - c*v,
+//   // where c = elem(level,r,i).
+//   for (res2_pair *p = resn[level]->pairs; p!=NULL; p=p->next)
+//     {
+//       if (p == pivot_pair) continue;
+//       res2term *w = p->syz;
+//       if (R->get_coefficient(w, pivot_row, g))
+// 	{
+// 	  P->negate_to(g);
+// 	  res2term *h1 = R->mult(f,w);
+// 	  res2term *h2 = R->mult(g,pivot_pair->syz);
+// 	  R->add_to(h1,h2);
+// 	  P->remove(g);
+// 	  R->remove(p->syz);
+// 	  p->syz = h1;
+// 	}
+//     }
+// 
+//   // Remove every occurrence of row 'c' in level 'level+1'.
+//   // We save these up, to remove all at once, using 'strip_matrix'.
+//   pivot_pair->syz_type = SYZ2_NOT_MINIMAL;
+//   pivot_row->syz_type = SYZ2_NOT_NEEDED;
+// 
+//   // We will never use this column again, so remove it:
+//   R->remove(pivot_pair->syz);
+//   pivot_pair->syz = NULL;    // This is a bit dangerous, since
+// 			     // many routines use this as if it must be nonNULL...
+// }
+// 
+// void res2_comp::strip_matrix(int level)
+// {
+//   // Remove all rows which are marked as SYZ2_NOT_MINIMAL
+//   for (res2_pair *p = resn[level]->pairs; p != NULL; p=p->next)
+//     {
+//       res2term *f = strip(p->syz);
+//       R->remove(p->syz);
+//       p->syz = f;
+//     }
+// }
 #endif
 
 #if 0
-void cmd_res2_calc(object &op, object &odeg, object &oargs)
-{
-  res2_comp *p = op->cast_to_res2_comp();
-  intarray *deg = odeg->intarray_of();
-  intarray *args = oargs->intarray_of();
-  if (args->length() != 6)
-    {
-      gError << "res: expected 5 elements in parameter array";
-      return;
-    }
-  int *d;
-  if (deg->length() == 0)
-    d = NULL;
-  else 
-    d = deg->raw();
-
-  //args[0] = LengthLimit
-  //args[1] = SyzygyLimit
-  //args[2] = PairLimit
-  //args[3..5] = SyzygyLimit(nSyz, Level, Degree)
-  gStack.insert(make_object_int(p->calc(d, (*args)[0], 
-					(*args)[1], (*args)[2],
-					(*args)[3], (*args)[4],
-					(*args)[5])));
-}
-void cmd_res2_stats(object &op)
-{
-  res2_comp *p = op->cast_to_res2_comp();
-  p->stats();
-}
-void cmd_res2_pairs(object &op)
-{
-  res2_comp *p = op->cast_to_res2_comp();
-  object_intarray *result = new object_intarray;
-  p->betti_skeleton(*result->intarray_of());
-  gStack.insert(result);
-}
-void cmd_res2_remaining(object &op)
-{
-  res2_comp *p = op->cast_to_res2_comp();
-  object_intarray *result = new object_intarray;
-  p->betti_remaining(*result->intarray_of());
-  gStack.insert(result);
-}
-void cmd_res2_minimal(object &op)
-{
-  res2_comp *p = op->cast_to_res2_comp();
-  object_intarray *result = new object_intarray;
-  p->betti_minimal(*result->intarray_of());
-  gStack.insert(result);
-}
-void cmd_res2_nmonoms(object &op)
-{
-  res2_comp *p = op->cast_to_res2_comp();
-  object_intarray *result = new object_intarray;
-  p->betti_nmonoms(*result->intarray_of());
-  gStack.insert(result);
-}
-
-void cmd_res2_Nmap(object &op, object &on)
-{
-  res2_comp *p = op->cast_to_res2_comp();
-  gStack.insert(p->make(on->int_of()));
-}
-
-void cmd_res2_map(object &op, object &on)
-{
-  res2_comp *p = op->cast_to_res2_comp();
-  gStack.insert(p->make_minimal(on->int_of()));
-}
-
-void cmd_res2_Nmodule(object &op, object &on)
-{
-  res2_comp *p = op->cast_to_res2_comp();
-  gStack.insert(p->free_of(on->int_of()));
-}
-
-void cmd_res2_module(object &op, object &on)
-{
-  res2_comp *p = op->cast_to_res2_comp();
-  gStack.insert(p->minimal_free_of(on->int_of()));
-}
-
-void cmd_res2_skeleton(object &op, object &on)
-{
-  res2_comp *p = op->cast_to_res2_comp();
-  int strategy = on->int_of();
-  p->skeleton(strategy);
-}
-
-int i_res2_cmds()
-{
-  // Resolutions
-  //install(ggres, cmd_res2, TY_MATRIX, TY_INT, TY_INT);
-  install(ggcalc, cmd_res2_calc, TY_RES2_COMP, TY_INTARRAY, TY_INTARRAY);
-
-  install(ggstats, cmd_res2_stats, TY_RES2_COMP);
-  install(ggpairs, cmd_res2_pairs, TY_RES2_COMP);
-  install(ggremaining, cmd_res2_remaining, TY_RES2_COMP);
-  install(ggbetti, cmd_res2_minimal, TY_RES2_COMP);
-  install(ggnmonoms, cmd_res2_nmonoms, TY_RES2_COMP);
-
-  install(ggresmap, cmd_res2_map, TY_RES2_COMP, TY_INT);
-  install(ggresNmap, cmd_res2_Nmap, TY_RES2_COMP, TY_INT);
-  install(ggresmodule, cmd_res2_module, TY_RES2_COMP, TY_INT);
-  install(ggresNmodule, cmd_res2_Nmodule, TY_RES2_COMP, TY_INT);
-
-  install(ggskeleton, cmd_res2_skeleton, TY_RES2_COMP, TY_INT);
-  return 1;
-}
+// void cmd_res2_calc(object &op, object &odeg, object &oargs)
+// {
+//   res2_comp *p = op->cast_to_res2_comp();
+//   intarray *deg = odeg->intarray_of();
+//   intarray *args = oargs->intarray_of();
+//   if (args->length() != 6)
+//     {
+//       gError << "res: expected 5 elements in parameter array";
+//       return;
+//     }
+//   int *d;
+//   if (deg->length() == 0)
+//     d = NULL;
+//   else 
+//     d = deg->raw();
+// 
+//   //args[0] = LengthLimit
+//   //args[1] = SyzygyLimit
+//   //args[2] = PairLimit
+//   //args[3..5] = SyzygyLimit(nSyz, Level, Degree)
+//   gStack.insert(make_object_int(p->calc(d, (*args)[0], 
+// 					(*args)[1], (*args)[2],
+// 					(*args)[3], (*args)[4],
+// 					(*args)[5])));
+// }
+// void cmd_res2_stats(object &op)
+// {
+//   res2_comp *p = op->cast_to_res2_comp();
+//   p->stats();
+// }
+// void cmd_res2_pairs(object &op)
+// {
+//   res2_comp *p = op->cast_to_res2_comp();
+//   object_intarray *result = new object_intarray;
+//   p->betti_skeleton(*result->intarray_of());
+//   gStack.insert(result);
+// }
+// void cmd_res2_remaining(object &op)
+// {
+//   res2_comp *p = op->cast_to_res2_comp();
+//   object_intarray *result = new object_intarray;
+//   p->betti_remaining(*result->intarray_of());
+//   gStack.insert(result);
+// }
+// void cmd_res2_minimal(object &op)
+// {
+//   res2_comp *p = op->cast_to_res2_comp();
+//   object_intarray *result = new object_intarray;
+//   p->betti_minimal(*result->intarray_of());
+//   gStack.insert(result);
+// }
+// void cmd_res2_nmonoms(object &op)
+// {
+//   res2_comp *p = op->cast_to_res2_comp();
+//   object_intarray *result = new object_intarray;
+//   p->betti_nmonoms(*result->intarray_of());
+//   gStack.insert(result);
+// }
+// 
+// void cmd_res2_Nmap(object &op, object &on)
+// {
+//   res2_comp *p = op->cast_to_res2_comp();
+//   gStack.insert(p->make(on->int_of()));
+// }
+// 
+// void cmd_res2_map(object &op, object &on)
+// {
+//   res2_comp *p = op->cast_to_res2_comp();
+//   gStack.insert(p->make_minimal(on->int_of()));
+// }
+// 
+// void cmd_res2_Nmodule(object &op, object &on)
+// {
+//   res2_comp *p = op->cast_to_res2_comp();
+//   gStack.insert(p->free_of(on->int_of()));
+// }
+// 
+// void cmd_res2_module(object &op, object &on)
+// {
+//   res2_comp *p = op->cast_to_res2_comp();
+//   gStack.insert(p->minimal_free_of(on->int_of()));
+// }
+// 
+// void cmd_res2_skeleton(object &op, object &on)
+// {
+//   res2_comp *p = op->cast_to_res2_comp();
+//   int strategy = on->int_of();
+//   p->skeleton(strategy);
+// }
+// 
+// int i_res2_cmds()
+// {
+//   // Resolutions
+//   //install(ggres, cmd_res2, TY_MATRIX, TY_INT, TY_INT);
+//   install(ggcalc, cmd_res2_calc, TY_RES2_COMP, TY_INTARRAY, TY_INTARRAY);
+// 
+//   install(ggstats, cmd_res2_stats, TY_RES2_COMP);
+//   install(ggpairs, cmd_res2_pairs, TY_RES2_COMP);
+//   install(ggremaining, cmd_res2_remaining, TY_RES2_COMP);
+//   install(ggbetti, cmd_res2_minimal, TY_RES2_COMP);
+//   install(ggnmonoms, cmd_res2_nmonoms, TY_RES2_COMP);
+// 
+//   install(ggresmap, cmd_res2_map, TY_RES2_COMP, TY_INT);
+//   install(ggresNmap, cmd_res2_Nmap, TY_RES2_COMP, TY_INT);
+//   install(ggresmodule, cmd_res2_module, TY_RES2_COMP, TY_INT);
+//   install(ggresNmodule, cmd_res2_Nmodule, TY_RES2_COMP, TY_INT);
+// 
+//   install(ggskeleton, cmd_res2_skeleton, TY_RES2_COMP, TY_INT);
+//   return 1;
+// }
 #endif
 
 // Local Variables:

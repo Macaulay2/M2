@@ -301,30 +301,30 @@ mon_order *mon_order::product(const mon_order *m1, const mon_order *m2)
 {
   emit_line("mon_order::product called");
 #if 0
-  intarray degs;
-  degs.copy(m1->n_vars(), m1->inv_degs);
-  degs.copy(m2->n_vars(), m2->inv_degs);
-  intarray weights;
-  mon_order *result = new mon_order(MO1_PRODUCT, degs, weights);
-  int n = degs->len;
-  int n1 = m1->n_vars();
-
-  int r, c;
-  for (r=0; r<n1; r++)
-    for (c=0; c<n1; c++)
-      {
-	result->order[r][c] = m1->order[r][c];
-	result->inv_order[r][c] = m1->inv_order[r][c];
-      }
-
-  for (r=n1; r<n; r++)
-    for (c=n1; c<n; c++)
-      {
-	result->order[r][c] = m2->order[r-n1][c-n1];
-	result->inv_order[r][c] = m2->inv_order[r-n1][c-n1];
-      }
-
-  return result;
+//   intarray degs;
+//   degs.copy(m1->n_vars(), m1->inv_degs);
+//   degs.copy(m2->n_vars(), m2->inv_degs);
+//   intarray weights;
+//   mon_order *result = new mon_order(MO1_PRODUCT, degs, weights);
+//   int n = degs->len;
+//   int n1 = m1->n_vars();
+// 
+//   int r, c;
+//   for (r=0; r<n1; r++)
+//     for (c=0; c<n1; c++)
+//       {
+// 	result->order[r][c] = m1->order[r][c];
+// 	result->inv_order[r][c] = m1->inv_order[r][c];
+//       }
+// 
+//   for (r=n1; r<n; r++)
+//     for (c=n1; c<n; c++)
+//       {
+// 	result->order[r][c] = m2->order[r-n1][c-n1];
+// 	result->inv_order[r][c] = m2->inv_order[r-n1][c-n1];
+//       }
+// 
+//   return result;
 #endif
   INTERNAL_ERROR("mon_order::product called");
   return NULL;
@@ -349,23 +349,23 @@ mon_order *mon_order::general_order(M2_arrayint degs,
 {
   emit_line("general_order called");
 #if 0
-  if (degs->len == 0) return trivial();
-  int n = invdegs->len;
-  if (order->len != n*n || invorder->len != n*n || n <= 0)
-    return NULL;
-
-  intarray weights;
-  mon_order *result = new mon_order(MO1_GENERAL, degs, weights);
-  
-  int r,c;
-  for (r=0; r<n; r++) result->inv_degs[r] = invdegs->array[r];
-  for (r=0; r<n; r++)
-    for (c=0; c<n; c++)
-      {
-	result->order[r][c] = order->array[n*c+r];
-	result->inv_order[r][c] = invorder->array[n*c+r];
-      }
-  return result;
+//   if (degs->len == 0) return trivial();
+//   int n = invdegs->len;
+//   if (order->len != n*n || invorder->len != n*n || n <= 0)
+//     return NULL;
+// 
+//   intarray weights;
+//   mon_order *result = new mon_order(MO1_GENERAL, degs, weights);
+//   
+//   int r,c;
+//   for (r=0; r<n; r++) result->inv_degs[r] = invdegs->array[r];
+//   for (r=0; r<n; r++)
+//     for (c=0; c<n; c++)
+//       {
+// 	result->order[r][c] = order->array[n*c+r];
+// 	result->inv_order[r][c] = invorder->array[n*c+r];
+//       }
+//   return result;
 #endif
   INTERNAL_ERROR("mon_order::general_order called");
   return NULL;

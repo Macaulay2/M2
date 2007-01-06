@@ -26,20 +26,20 @@ s_pair_heap::~s_pair_heap()
   // do anything here.
 }
 #if 0
-int s_pair_heap::compare(s_pair *f, s_pair *g) const
-{
-  int cmp = f->degree - g->degree;
-  if (cmp < 0) return -1;
-  if (cmp > 0) return 1;
-  cmp = M->compare(f->lcm, g->lcm);
-  if (cmp != 0) return cmp;
-  if (f->first == NULL || g->first == NULL)
-    return 0;
-  cmp = f->first->me - g->first->me;
-  if (cmp > 0) return 1;
-  if (cmp < 0) return -1;
-  return 0;
-}
+// int s_pair_heap::compare(s_pair *f, s_pair *g) const
+// {
+//   int cmp = f->degree - g->degree;
+//   if (cmp < 0) return -1;
+//   if (cmp > 0) return 1;
+//   cmp = M->compare(f->lcm, g->lcm);
+//   if (cmp != 0) return cmp;
+//   if (f->first == NULL || g->first == NULL)
+//     return 0;
+//   cmp = f->first->me - g->first->me;
+//   if (cmp > 0) return 1;
+//   if (cmp < 0) return -1;
+//   return 0;
+// }
 #endif
 int s_pair_heap::compare(s_pair *f, s_pair *g) const
 {

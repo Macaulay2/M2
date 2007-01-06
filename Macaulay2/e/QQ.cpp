@@ -16,7 +16,7 @@ bool QQ::initialize_QQ()
   _elem_size = sizeof(mpq_t);
   _zero_elem = new_elem();// this sets the element to 0.
 #if 0
-  trans_one = globalZZ->from_int(1);
+//   trans_one = globalZZ->from_int(1);
 #endif
   declare_field();
   zeroV = from_int(0);
@@ -207,7 +207,7 @@ ring_elem QQ::copy(const ring_elem f) const
 void QQ::remove(ring_elem &f) const
 {
 #if 0
-  f = MPQ_RINGELEM(NULL);
+//   f = MPQ_RINGELEM(NULL);
 #endif
 }
 
@@ -353,56 +353,56 @@ ring_elem QQ::eval(const RingMap *map, const ring_elem a, int) const
   const Ring *S = map->get_ring();
   return S->from_rational(MPQ_VAL(a));
 #if 0
-  const PolynomialRing *SP = S->cast_to_PolynomialRing();
-  M2_Rational f = MPQ_VAL(a);
-  if (S == globalQQ || (SP != 0 && SP->getCoefficients() == globalQQ))
-    {
-      return S->from_QQ(a);
-    }
-  ring_elem top = globalZZ->eval(map, MPZ_RINGELEM(mpq_numref(f)));
-  if (S->is_zero(top)) return top;
-  ring_elem bottom = globalZZ->eval(map, MPZ_RINGELEM(mpq_denref(f)));
-  if (S->is_zero(bottom))
-    {
-      ERROR("division by zero!");
-      S->remove(bottom);
-      bottom = S->from_int(1);
-    }
-  ring_elem result = S->divide(top, bottom);
-  S->remove(top);
-  S->remove(bottom);
-  return result;
+//   const PolynomialRing *SP = S->cast_to_PolynomialRing();
+//   M2_Rational f = MPQ_VAL(a);
+//   if (S == globalQQ || (SP != 0 && SP->getCoefficients() == globalQQ))
+//     {
+//       return S->from_QQ(a);
+//     }
+//   ring_elem top = globalZZ->eval(map, MPZ_RINGELEM(mpq_numref(f)));
+//   if (S->is_zero(top)) return top;
+//   ring_elem bottom = globalZZ->eval(map, MPZ_RINGELEM(mpq_denref(f)));
+//   if (S->is_zero(bottom))
+//     {
+//       ERROR("division by zero!");
+//       S->remove(bottom);
+//       bottom = S->from_int(1);
+//     }
+//   ring_elem result = S->divide(top, bottom);
+//   S->remove(top);
+//   S->remove(bottom);
+//   return result;
 #endif
 }
 
 #if 0
-///////////////////////////////////
-// translation gbvector <--> vec //
-///////////////////////////////////
-ring_elem QQ::trans_to_ringelem(ring_elem coeff, 
-				const int *exp) const
-{
-  ring_elem a = globalZZ->trans_to_ringelem(coeff,exp);
-  return this->fraction(a, trans_one);
-}
-
-ring_elem QQ::trans_to_ringelem_denom(ring_elem coeff, 
-				      ring_elem denom, 
-				      int *exp) const
-{
-  ring_elem a = globalZZ->trans_to_ringelem(coeff,exp);
-  return this->fraction(a, denom);
-}
-
-void QQ::trans_from_ringelem(gbvectorHeap &H, 
-			     ring_elem coeff, 
-			     int comp, 
-			     int *exp,
-			     int firstvar) const
-{
-  ring_elem a = this->numerator(coeff);
-  globalZZ->trans_from_ringelem(H, a, comp, exp, firstvar);
-}
+// ///////////////////////////////////
+// // translation gbvector <--> vec //
+// ///////////////////////////////////
+// ring_elem QQ::trans_to_ringelem(ring_elem coeff, 
+// 				const int *exp) const
+// {
+//   ring_elem a = globalZZ->trans_to_ringelem(coeff,exp);
+//   return this->fraction(a, trans_one);
+// }
+// 
+// ring_elem QQ::trans_to_ringelem_denom(ring_elem coeff, 
+// 				      ring_elem denom, 
+// 				      int *exp) const
+// {
+//   ring_elem a = globalZZ->trans_to_ringelem(coeff,exp);
+//   return this->fraction(a, denom);
+// }
+// 
+// void QQ::trans_from_ringelem(gbvectorHeap &H, 
+// 			     ring_elem coeff, 
+// 			     int comp, 
+// 			     int *exp,
+// 			     int firstvar) const
+// {
+//   ring_elem a = this->numerator(coeff);
+//   globalZZ->trans_from_ringelem(H, a, comp, exp, firstvar);
+// }
 #endif
 
 // Local Variables:

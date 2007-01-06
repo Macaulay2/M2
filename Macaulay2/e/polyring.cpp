@@ -110,34 +110,34 @@ const PolyRing *PolyRing::create(const Ring *K, const Monoid *M)
 }
 
 #if 0
-const PolyRing *PolyRing::create(const Ring *K, const Monoid *M)
-  // Create the ring K[M].  
-  // K must be either a basic ring, or an ambient polynomial ring,
-  //  possibly non-commutative of some sort.
-{
-  const PolynomialRing *A = K->cast_to_PolynomialRing();
-  if (A == 0 || K->is_basic_ring())
-    {
-      // K is a basic ring
-      return create_poly_ring(K,M);
-    }
-  const PolyRing *B = A->getAmbientRing();
-  return B->createPolyRing(M);
-}
-
-
-const PolyRing *PolyRing::createPolyRing(const Monoid *M) const
-  // creates this[M], which is commutative in M variables, but possible skew or Weyl
-  // commutative in (some of) the variables of this
-{
-  const Monoid *newM = Monoid::tensor_product(M, getMonoid());
-  if (newM == 0) return 0;
-
-  return create_poly_ring(getCoefficients(),
-			  newM,
-			  this,
-			  M);
-}
+// const PolyRing *PolyRing::create(const Ring *K, const Monoid *M)
+//   // Create the ring K[M].  
+//   // K must be either a basic ring, or an ambient polynomial ring,
+//   //  possibly non-commutative of some sort.
+// {
+//   const PolynomialRing *A = K->cast_to_PolynomialRing();
+//   if (A == 0 || K->is_basic_ring())
+//     {
+//       // K is a basic ring
+//       return create_poly_ring(K,M);
+//     }
+//   const PolyRing *B = A->getAmbientRing();
+//   return B->createPolyRing(M);
+// }
+// 
+// 
+// const PolyRing *PolyRing::createPolyRing(const Monoid *M) const
+//   // creates this[M], which is commutative in M variables, but possible skew or Weyl
+//   // commutative in (some of) the variables of this
+// {
+//   const Monoid *newM = Monoid::tensor_product(M, getMonoid());
+//   if (newM == 0) return 0;
+// 
+//   return create_poly_ring(getCoefficients(),
+// 			  newM,
+// 			  this,
+// 			  M);
+// }
 #endif
 
 void PolyRing::text_out(buffer &o) const
@@ -899,8 +899,8 @@ ring_elem PolyRing::gcd(const ring_elem ff, const ring_elem gg) const
       g = rem;
     }
 #if 0
-#warning commented out make monic in gcd
-  make_monic(f);
+// #warning commented out make monic in gcd
+//   make_monic(f);
 #endif
   return f;
 }
@@ -1039,60 +1039,60 @@ void PolyRing::syzygy(const ring_elem a, const ring_elem b,
   else
     {
 #if 0
-// MES Aug 2002 ifdef'ed because gb_comp is not back yet
-      intarray syzygy_stop_conditions;
-      syzygy_stop_conditions.append(0); // ngb
-      syzygy_stop_conditions.append(1); // nsyz
-      syzygy_stop_conditions.append(0); // npairs
-      syzygy_stop_conditions.append(0);
-      syzygy_stop_conditions.append(0); 
-      syzygy_stop_conditions.append(0); // subring limit
-      syzygy_stop_conditions.append(0);
-      
-      const FreeModule *F = make_FreeModule(1);
-      Matrix *m = new Matrix(F);
-      m->append(F->raw_term(a,0));
-      m->append(F->raw_term(b,0));
-#if 0  
-  buffer o;
-  o << "constructing syzygy on ";
-  elem_text_out(o,a);
-  o << " and ";
-  elem_text_out(o,b);
-  emit_line(o.str());
-  o.reset();
-  o << "matrix is" << newline;
-  m->text_out(o);
-  emit_line(o.str());
-  o.reset();
-#endif
-
-      gb_comp *g = gb_comp::make(m,true,-1,0);
-      g->calc(0, syzygy_stop_conditions);
-      Matrix *s = g->syz_matrix();
-
-#if 0
-  if (s.n_cols() != 1)
-    {
-      o << "found " << s.n_cols() << " syzygies";
-      emit_line(o.str());
-    }
-#endif
-      x = s->elem(0,0);
-      y = s->elem(1,0);
-      ring_elem c = preferred_associate(x);
-      ring_elem x1 = mult(c,x);
-      ring_elem y1 = mult(c,y);
-      x = x1;
-      y = y1;
-#if 0
-  o << "result: x = ";
-  elem_text_out(o,x);
-  o << " and y = ";
-  elem_text_out(o,y);
-  emit_line(o.str());
-#endif
-      deleteitem(g);
+// // MES Aug 2002 ifdef'ed because gb_comp is not back yet
+//       intarray syzygy_stop_conditions;
+//       syzygy_stop_conditions.append(0); // ngb
+//       syzygy_stop_conditions.append(1); // nsyz
+//       syzygy_stop_conditions.append(0); // npairs
+//       syzygy_stop_conditions.append(0);
+//       syzygy_stop_conditions.append(0); 
+//       syzygy_stop_conditions.append(0); // subring limit
+//       syzygy_stop_conditions.append(0);
+//       
+//       const FreeModule *F = make_FreeModule(1);
+//       Matrix *m = new Matrix(F);
+//       m->append(F->raw_term(a,0));
+//       m->append(F->raw_term(b,0));
+// #if 0  
+// //   buffer o;
+// //   o << "constructing syzygy on ";
+// //   elem_text_out(o,a);
+// //   o << " and ";
+// //   elem_text_out(o,b);
+// //   emit_line(o.str());
+// //   o.reset();
+// //   o << "matrix is" << newline;
+// //   m->text_out(o);
+// //   emit_line(o.str());
+// //   o.reset();
+// #endif
+// 
+//       gb_comp *g = gb_comp::make(m,true,-1,0);
+//       g->calc(0, syzygy_stop_conditions);
+//       Matrix *s = g->syz_matrix();
+// 
+// #if 0
+// //   if (s.n_cols() != 1)
+// //     {
+// //       o << "found " << s.n_cols() << " syzygies";
+// //       emit_line(o.str());
+// //     }
+// #endif
+//       x = s->elem(0,0);
+//       y = s->elem(1,0);
+//       ring_elem c = preferred_associate(x);
+//       ring_elem x1 = mult(c,x);
+//       ring_elem y1 = mult(c,y);
+//       x = x1;
+//       y = y1;
+// #if 0
+// //   o << "result: x = ";
+// //   elem_text_out(o,x);
+// //   o << " and y = ";
+// //   elem_text_out(o,y);
+// //   emit_line(o.str());
+// #endif
+//       deleteitem(g);
 #endif      
     }
 }

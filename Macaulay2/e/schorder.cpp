@@ -115,8 +115,8 @@ SchreyerOrder *SchreyerOrder::create(const GBMatrix *m)
 #warning "Schreyer unencoded case not handled here"
 #endif
 #if 0
-      else
-	M->mult(v->monom, S->base_monom(i), base);
+//       else
+// 	M->mult(v->monom, S->base_monom(i), base);
 #endif
       result->append(ties[i], base);
     }

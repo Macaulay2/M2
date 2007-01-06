@@ -198,25 +198,25 @@ int RingElement::is_homogeneous() const
 }
 
 #if 0
-intarray RingElement::degree() const
-{
-  // This should return an M2_arrayint?
-  intarray result;
-
-  int *mon = newarray_atomic(int,R->degree_monoid()->monomial_size());
-  int *d = result.alloc(R->degree_monoid()->n_vars());
-
-  if (is_zero()) 
-    ERROR("the zero element has no degree");
-  else
-    {
-      R->degree(get_value(), mon);
-      R->degree_monoid()->to_expvector(mon, d);
-    }
-
-  deletearray(mon);
-  return result;
-}
+// intarray RingElement::degree() const
+// {
+//   // This should return an M2_arrayint?
+//   intarray result;
+// 
+//   int *mon = newarray_atomic(int,R->degree_monoid()->monomial_size());
+//   int *d = result.alloc(R->degree_monoid()->n_vars());
+// 
+//   if (is_zero()) 
+//     ERROR("the zero element has no degree");
+//   else
+//     {
+//       R->degree(get_value(), mon);
+//       R->degree_monoid()->to_expvector(mon, d);
+//     }
+// 
+//   deletearray(mon);
+//   return result;
+// }
 #endif
 
 void RingElement::degree_weights(M2_arrayint wts, int &lo, int &hi) const

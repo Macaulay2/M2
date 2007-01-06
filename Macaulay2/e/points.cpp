@@ -70,16 +70,16 @@ Matrix *PointsComputation<CoeffRing>::points(const PolynomialRing *R,
 
   // The main loop
 #if 0
-  while (monoms_todo.remove(old,x,vp))
-    {
-      // First, see if this monomial is in inG, if so, continue.
-
-      // Place this monomial as the 'next_col' column of P, PLU.
-
-      // LU1
-
-      // 
-    }
+//   while (monoms_todo.remove(old,x,vp))
+//     {
+//       // First, see if this monomial is in inG, if so, continue.
+// 
+//       // Place this monomial as the 'next_col' column of P, PLU.
+// 
+//       // LU1
+// 
+//       // 
+//     }
 #endif  
   return 0;
 }

@@ -118,11 +118,11 @@ const Ring *IM2_Ring_trivial_polyring()
 const RingOrNull *IM2_Ring_polyring(const Ring *K, const Monoid *M)
 {
 #if 0
-  if (K == globalQQ)
-    {
-      const PolyRing *P = PolyRing::create(globalZZ,M);
-      return PolyQQ::create(P);
-    }
+//   if (K == globalQQ)
+//     {
+//       const PolyRing *P = PolyRing::create(globalZZ,M);
+//       return PolyQQ::create(P);
+//     }
 #endif
   return PolyRing::create(K,M);
 }
@@ -131,14 +131,14 @@ const RingOrNull *IM2_Ring_skew_polyring(const Ring *R,
 					 M2_arrayint skewvars)
 {
 #if 0
-  const PolyQQ *RQ = R->cast_to_PolyQQ();
-  if (RQ != 0)
-    {
-      const PolyRing *P = SkewPolynomialRing::create(globalZZ,
-						     RQ->getMonoid(),
-						     skewvars);
-      return PolyQQ::create(P);
-    }
+//   const PolyQQ *RQ = R->cast_to_PolyQQ();
+//   if (RQ != 0)
+//     {
+//       const PolyRing *P = SkewPolynomialRing::create(globalZZ,
+// 						     RQ->getMonoid(),
+// 						     skewvars);
+//       return PolyQQ::create(P);
+//     }
 #endif
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0) 
@@ -157,16 +157,16 @@ const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,
 					int homog_var)
 {
 #if 0
-  const PolyQQ *RQ = R->cast_to_PolyQQ();
-  if (RQ != 0)
-    {
-      const WeylAlgebra *P = WeylAlgebra::create(globalZZ,
-						 RQ->getMonoid(),
-						 diff_vars, 
-						 comm_vars, 
-						 homog_var);
-      return PolyQQ::create(P);
-    }
+//   const PolyQQ *RQ = R->cast_to_PolyQQ();
+//   if (RQ != 0)
+//     {
+//       const WeylAlgebra *P = WeylAlgebra::create(globalZZ,
+// 						 RQ->getMonoid(),
+// 						 diff_vars, 
+// 						 comm_vars, 
+// 						 homog_var);
+//       return PolyQQ::create(P);
+//     }
 #endif
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0) 
@@ -214,7 +214,7 @@ const RingOrNull *IM2_Ring_localization(const Ring *R, const Matrix *Prime)
       return 0;
     }
 #if 0
-  return P->create_FractionRing(Prime);
+//   return P->create_FractionRing(Prime);
 #endif
   /* TODO */
 #ifdef DEVELOPMENT
@@ -341,10 +341,10 @@ M2_string IM2_RingElement_to_string(const RingElement *f)
 }
 
 #if 0
-const RingElement *IM2_RingElement_from_int(const Ring *R, int d)
-{
-  return new RingElement(R, R->from_int(d));
-}
+// const RingElement *IM2_RingElement_from_int(const Ring *R, int d)
+// {
+//   return new RingElement(R, R->from_int(d));
+// }
 #endif
 const RingElement *IM2_RingElement_from_Integer(const Ring *R, M2_Integer d)
 {
@@ -493,10 +493,10 @@ const RingElementOrNull *IM2_RingElement_mult(const RingElement *a,
 }
 
 #if 0
-const RingElement *IM2_RingElement_mult_int(const RingElement *a, int b)
-{
-  return (*a) * b;
-}
+// const RingElement *IM2_RingElement_mult_int(const RingElement *a, int b)
+// {
+//   return (*a) * b;
+// }
 #endif
 const RingElementOrNull *IM2_RingElement_div(const RingElement *a, 
 					     const RingElement *b)

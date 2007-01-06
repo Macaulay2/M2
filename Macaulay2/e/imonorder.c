@@ -387,59 +387,59 @@ union pack2 {
 #endif
 	
 #if 0  
-static bool MO_pack4(int nvars, const int *expon, int *slots)
-// return false if any of the non-negative exponents are >= 128.
-{
-  int x;
-  union pack4 w;
-  while (nvars > 0)
-    {
-      w.i = 0;
-      if (--nvars >= 0) {
-	x = *expon++;
-	if (x >= 128) return false;
-	w.ch.d = x;
-	if (--nvars >= 0) {
-	  x = *expon++;
-	  if (x >= 128) return false;
-	  w.ch.c = x;
-	  if (--nvars >= 0) {
-	    x = *expon++;
-	    if (x >= 128) return false;
-	    w.ch.b = x;
-	    if (--nvars >= 0) {
-	      x = *expon++;
-	      if (x >= 128) return false;
-	      w.ch.a = x;
-	    }
-	  }}}
-      *slots++ = w.i;
-    }
-  return true;
-}
-
-static bool MO_pack2(int nvars, const int *expon, int *slots)
-// return false if any of the non-negative exponents are >= (1<<15) == 32768
-{
-  int x;
-  union pack2 w;
-  while (nvars > 0)
-    {
-      w.i = 0;
-      if (--nvars >= 0) {
-	x = *expon++;
-	if (x >= 32768) return false;
-	w.ch.b = x;
-	if (--nvars >= 0) {
-	  x = *expon++;
-	  if (x >= 32768) return false;
-	  w.ch.a = *expon++;
-	}
-      }
-      *slots++ = w.i;
-    }
-  return true;
-}
+// static bool MO_pack4(int nvars, const int *expon, int *slots)
+// // return false if any of the non-negative exponents are >= 128.
+// {
+//   int x;
+//   union pack4 w;
+//   while (nvars > 0)
+//     {
+//       w.i = 0;
+//       if (--nvars >= 0) {
+// 	x = *expon++;
+// 	if (x >= 128) return false;
+// 	w.ch.d = x;
+// 	if (--nvars >= 0) {
+// 	  x = *expon++;
+// 	  if (x >= 128) return false;
+// 	  w.ch.c = x;
+// 	  if (--nvars >= 0) {
+// 	    x = *expon++;
+// 	    if (x >= 128) return false;
+// 	    w.ch.b = x;
+// 	    if (--nvars >= 0) {
+// 	      x = *expon++;
+// 	      if (x >= 128) return false;
+// 	      w.ch.a = x;
+// 	    }
+// 	  }}}
+//       *slots++ = w.i;
+//     }
+//   return true;
+// }
+// 
+// static bool MO_pack2(int nvars, const int *expon, int *slots)
+// // return false if any of the non-negative exponents are >= (1<<15) == 32768
+// {
+//   int x;
+//   union pack2 w;
+//   while (nvars > 0)
+//     {
+//       w.i = 0;
+//       if (--nvars >= 0) {
+// 	x = *expon++;
+// 	if (x >= 32768) return false;
+// 	w.ch.b = x;
+// 	if (--nvars >= 0) {
+// 	  x = *expon++;
+// 	  if (x >= 32768) return false;
+// 	  w.ch.a = *expon++;
+// 	}
+//       }
+//       *slots++ = w.i;
+//     }
+//   return true;
+// }
 #endif
 
 //static int MO_checksize(int n, const int *a, int leftmask)

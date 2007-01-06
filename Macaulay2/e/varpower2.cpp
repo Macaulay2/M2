@@ -76,78 +76,78 @@ static bool check_var(int v, int e)
 
 // TO REMOVE
 #if 0
-int varpower::var(int n)
-{
-  return n >> 16;
-}
-
-// TO REMOVE
-int varpower::exponent(int n)
-{
-  int e = 0x0000ffff & n;
-  if (e >= 0x00008000) e |= 0xffff0000;
-  return e;
-//  int res = n % (1 << 16);
-//  return (res > (1 << 15) ? -(res - (1 << 15)) : res);
-}
-
-// TO REMOVE
-int check_exponent_pair(int v, int e)
-{
-  if (e > MAX_EXP || e < MIN_EXP)
-    ERROR("monomial overflow");
-  return (v << 16) | (0x0000ffff & e);
-}
-
-// TO REMOVE
-int checked_pair(int v, int e)
-{
-  if (e > MAX_EXP || e < MIN_EXP)
-    ERROR("monomial overflow");
-  return (v << 16) | (0x0000ffff & e);
-}
-
-// TO REMOVE
-int varpower::pair(int v, int e)
-{
-  return (v << 16) | (0x0000ffff & e);
-}
-
-int varpower::degree_of(int n, const int *a)
-{
-  int len = *a++;
-  for (int i=0; i<len; i++)
-    if (var(a[i]) == n) return exponent(a[i]);
-  return 0;
-}
-
-int varpower::compare(const int *a, const int *b)
-    // return EQ, LT, or GT for a == b, a < b, or a > b.
-{
-  int alen = *a++ - 1;
-  int blen = *b++ - 1;
-  if (alen > blen)
-    {
-      for (int i=0; i<blen; i++)
-	{
-	  int c = *a++ - *b++;
-	  if (c == 0) continue;
-	  if (c > 0) return GT;
-	  return LT;
-	}
-      return GT;
-    }
-  for (int i=0; i<alen; i++)
-    {
-      int c = *a++ - *b++;
-      if (c == 0) continue;
-      if (c > 0) return GT;
-      return LT;
-    }
-  if (alen == blen)
-    return EQ;
-  return LT;
-}  
+// int varpower::var(int n)
+// {
+//   return n >> 16;
+// }
+// 
+// // TO REMOVE
+// int varpower::exponent(int n)
+// {
+//   int e = 0x0000ffff & n;
+//   if (e >= 0x00008000) e |= 0xffff0000;
+//   return e;
+// //  int res = n % (1 << 16);
+// //  return (res > (1 << 15) ? -(res - (1 << 15)) : res);
+// }
+// 
+// // TO REMOVE
+// int check_exponent_pair(int v, int e)
+// {
+//   if (e > MAX_EXP || e < MIN_EXP)
+//     ERROR("monomial overflow");
+//   return (v << 16) | (0x0000ffff & e);
+// }
+// 
+// // TO REMOVE
+// int checked_pair(int v, int e)
+// {
+//   if (e > MAX_EXP || e < MIN_EXP)
+//     ERROR("monomial overflow");
+//   return (v << 16) | (0x0000ffff & e);
+// }
+// 
+// // TO REMOVE
+// int varpower::pair(int v, int e)
+// {
+//   return (v << 16) | (0x0000ffff & e);
+// }
+// 
+// int varpower::degree_of(int n, const int *a)
+// {
+//   int len = *a++;
+//   for (int i=0; i<len; i++)
+//     if (var(a[i]) == n) return exponent(a[i]);
+//   return 0;
+// }
+// 
+// int varpower::compare(const int *a, const int *b)
+//     // return EQ, LT, or GT for a == b, a < b, or a > b.
+// {
+//   int alen = *a++ - 1;
+//   int blen = *b++ - 1;
+//   if (alen > blen)
+//     {
+//       for (int i=0; i<blen; i++)
+// 	{
+// 	  int c = *a++ - *b++;
+// 	  if (c == 0) continue;
+// 	  if (c > 0) return GT;
+// 	  return LT;
+// 	}
+//       return GT;
+//     }
+//   for (int i=0; i<alen; i++)
+//     {
+//       int c = *a++ - *b++;
+//       if (c == 0) continue;
+//       if (c > 0) return GT;
+//       return LT;
+//     }
+//   if (alen == blen)
+//     return EQ;
+//   return LT;
+// }  
 #endif
 
 

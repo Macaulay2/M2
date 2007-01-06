@@ -721,12 +721,12 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg)
 	  h = (*h) - (*hF);
 
 #if 0
-	  o1 << "\nhf   = "; hf1->text_out(o1);
-	  o1 << "\nhF   = "; hF->text_out(o1);
-	  o1 << "\nh    = "; h->text_out(o1);
-	  o1 << "\n";
-	  emit(o1.str());
-	  o1.reset();
+// 	  o1 << "\nhf   = "; hf1->text_out(o1);
+// 	  o1 << "\nhF   = "; hF->text_out(o1);
+// 	  o1 << "\nh    = "; h->text_out(o1);
+// 	  o1 << "\n";
+// 	  emit(o1.str());
+// 	  o1.reset();
 #endif
 	  if (gbTrace >= 1 && n_gb_syz != 0)
 	    {

@@ -15,83 +15,83 @@ PolyRingQuotient::~PolyRingQuotient()
 }
 
 #if 0
-PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R, 
-					   VECTOR(Nterm *) &elems)
-  // Grabs 'elems'.  Each element of 'elems' should be in the ring R.
-  // They should also form a GB.
-{
-  PolyRingQuotient *result = new PolyRingQuotient;
-  result->initialize_ring(R->charac(),
-			  R->get_degree_ring());
-  result->R_ = R;
-
-  result->overZZ_ = R->getCoefficients()->is_ZZ();
-  if (result->overZZ_)
-    result->setQuotientInfo(new QRingInfo_ZZ(R,elems));
-  else
-    result->setQuotientInfo(new QRingInfo_field_basic(R,elems));
-
-  for (int i=0; i<result->n_quotients(); i++)
-    {
-      if (!R->is_homogeneous(result->quotient_element(i)))
-	{
-	  result->setIsGraded(false);
-	  break;
-	}
-    }
-
-  result->zeroV = result->from_int(0);
-  result->oneV = result->from_int(1);
-  result->minus_oneV = result->from_int(-1);
-  
-  return result;
-}
-
-
-PolyRingQuotient *PolyRingQuotient::create(const PolynomialRing *R, 
-					   const Matrix *M)
-{
-  if (M->get_ring() != R)
-    {
-      ERROR("quotient elements not in the expected polynomial ring");
-      return 0;
-    }
-  VECTOR(Nterm *) elems;
-  for (int i=0; i<R->n_quotients(); i++)
-    elems.push_back(R->quotient_element(i));
-  for (int i=0; i<M->n_cols(); i++)
-    elems.push_back(M->elem(0,i));
-
-  return create(R->getAmbientRing(),elems);
-}
-
-PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R, 
-					   const PolynomialRing *B)
-  // R should be an ambient poly ring
-  // B should have: ambient of B is the logical coeff ring of R
-  //   i.e. R = A[x], B = A/I
-  // return A[x]/I.
-{
-  VECTOR(Nterm *) elems;
-
-  for (int i=0; i<B->n_quotients(); i++)
-    {
-      ring_elem f;
-      R->promote(B->getAmbientRing(), B->quotient_element(i), f);
-      elems.push_back(f);
-    }
-  return create(R,elems);
-}
-
-Matrix * PolyRingQuotient::getPresentation() const
-{
-  const PolyRing *R = getAmbientRing();
-
-  MatrixConstructor mat(R->make_FreeModule(1), 0);
-  for (int i=0; i<n_quotients(); i++)
-    mat.append(R->make_vec(0, quotient_element(i)));
-  return mat.to_matrix();
-}
+// PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R, 
+// 					   VECTOR(Nterm *) &elems)
+//   // Grabs 'elems'.  Each element of 'elems' should be in the ring R.
+//   // They should also form a GB.
+// {
+//   PolyRingQuotient *result = new PolyRingQuotient;
+//   result->initialize_ring(R->charac(),
+// 			  R->get_degree_ring());
+//   result->R_ = R;
+// 
+//   result->overZZ_ = R->getCoefficients()->is_ZZ();
+//   if (result->overZZ_)
+//     result->setQuotientInfo(new QRingInfo_ZZ(R,elems));
+//   else
+//     result->setQuotientInfo(new QRingInfo_field_basic(R,elems));
+// 
+//   for (int i=0; i<result->n_quotients(); i++)
+//     {
+//       if (!R->is_homogeneous(result->quotient_element(i)))
+// 	{
+// 	  result->setIsGraded(false);
+// 	  break;
+// 	}
+//     }
+// 
+//   result->zeroV = result->from_int(0);
+//   result->oneV = result->from_int(1);
+//   result->minus_oneV = result->from_int(-1);
+//   
+//   return result;
+// }
+// 
+// 
+// PolyRingQuotient *PolyRingQuotient::create(const PolynomialRing *R, 
+// 					   const Matrix *M)
+// {
+//   if (M->get_ring() != R)
+//     {
+//       ERROR("quotient elements not in the expected polynomial ring");
+//       return 0;
+//     }
+//   VECTOR(Nterm *) elems;
+//   for (int i=0; i<R->n_quotients(); i++)
+//     elems.push_back(R->quotient_element(i));
+//   for (int i=0; i<M->n_cols(); i++)
+//     elems.push_back(M->elem(0,i));
+// 
+//   return create(R->getAmbientRing(),elems);
+// }
+// 
+// PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R, 
+// 					   const PolynomialRing *B)
+//   // R should be an ambient poly ring
+//   // B should have: ambient of B is the logical coeff ring of R
+//   //   i.e. R = A[x], B = A/I
+//   // return A[x]/I.
+// {
+//   VECTOR(Nterm *) elems;
+// 
+//   for (int i=0; i<B->n_quotients(); i++)
+//     {
+//       ring_elem f;
+//       R->promote(B->getAmbientRing(), B->quotient_element(i), f);
+//       elems.push_back(f);
+//     }
+//   return create(R,elems);
+// }
+// 
+// Matrix * PolyRingQuotient::getPresentation() const
+// {
+//   const PolyRing *R = getAmbientRing();
+// 
+//   MatrixConstructor mat(R->make_FreeModule(1), 0);
+//   for (int i=0; i<n_quotients(); i++)
+//     mat.append(R->make_vec(0, quotient_element(i)));
+//   return mat.to_matrix();
+// }
 #endif
 
 void PolyRingQuotient::text_out(buffer &o) const

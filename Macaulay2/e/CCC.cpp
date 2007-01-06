@@ -331,9 +331,9 @@ ring_elem CCC::copy(const ring_elem f) const
 void CCC::remove(ring_elem &f) const
 {
 #if 0
-  M2_CCC z = BIGCC_VAL(f);
-  remove_elem(z); // does nothing... get rid of this code?
-  f = BIGCC_RINGELEM(NULL);
+//   M2_CCC z = BIGCC_VAL(f);
+//   remove_elem(z); // does nothing... get rid of this code?
+//   f = BIGCC_RINGELEM(NULL);
 #endif
 }
 

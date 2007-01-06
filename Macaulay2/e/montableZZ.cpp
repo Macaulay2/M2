@@ -8,12 +8,12 @@
 /********************/
 
 #if 0
-static bool exponents_equal(int nvars, exponents a, exponents b)
-{
-  for (int i=0; i<nvars; i++)
-    if (a[i] != b[i]) return false;
-  return true;
-}
+// static bool exponents_equal(int nvars, exponents a, exponents b)
+// {
+//   for (int i=0; i<nvars; i++)
+//     if (a[i] != b[i]) return false;
+//   return true;
+// }
 #endif
 
 static bool exponents_greater(int nvars, exponents a, exponents b)
@@ -78,20 +78,20 @@ MonomialTableZZ *MonomialTableZZ::make(int nvars)
 MonomialTableZZ::~MonomialTableZZ()
 {
 #if 0
-  /* Loop through each component, and remove all mon_terms */
-  for (unsigned int i=1; i<_head.size(); i++)
-    {
-      mon_term *t = _head[i];
-      while (t->_next != t)
-	{
-	  mon_term *tmp = t->_next;
-	  tmp->_prev->_next = tmp->_next;
-	  tmp->_next->_prev = t;
-	  deleteitem(tmp);
-	}
-      _head[i] = 0;
-    }
-  _count = 0;
+//   /* Loop through each component, and remove all mon_terms */
+//   for (unsigned int i=1; i<_head.size(); i++)
+//     {
+//       mon_term *t = _head[i];
+//       while (t->_next != t)
+// 	{
+// 	  mon_term *tmp = t->_next;
+// 	  tmp->_prev->_next = tmp->_next;
+// 	  tmp->_next->_prev = t;
+// 	  deleteitem(tmp);
+// 	}
+//       _head[i] = 0;
+//     }
+//   _count = 0;
 #endif
 }
 
@@ -396,22 +396,22 @@ struct montable_sorter_ZZ : public std::binary_function<int,int,bool> {
   }
 
 #if 0
-  bool operator()(int x, int y) {
-    int result = 0; // -1 is false, 1 is true
-    exponents xx = exps[x];
-    exponents yy = exps[y];
-    for (int i=0; i<nvars; i++)
-      if (xx[i] < yy[i]) {result = 1; break;}
-      else if (xx[i] > yy[i]) {result = -1; break;}
-    if (result == 0)
-      if (comps[x] < comps[y]) result = 1;
-      else if (comps[x] > comps[y]) result = -1;
-    if (result == 0)
-    // Now order them in ascending order on the coeff (which should always be POSITIVE).
-      result = (mpz_cmp(coeffs[x],coeffs[y]) > 0);
-    fprintf(stderr, "comparing %d and %d.  Result: %d\n",x,y,result);
-    if (result > 0) return true; else return false;
-  }
+//   bool operator()(int x, int y) {
+//     int result = 0; // -1 is false, 1 is true
+//     exponents xx = exps[x];
+//     exponents yy = exps[y];
+//     for (int i=0; i<nvars; i++)
+//       if (xx[i] < yy[i]) {result = 1; break;}
+//       else if (xx[i] > yy[i]) {result = -1; break;}
+//     if (result == 0)
+//       if (comps[x] < comps[y]) result = 1;
+//       else if (comps[x] > comps[y]) result = -1;
+//     if (result == 0)
+//     // Now order them in ascending order on the coeff (which should always be POSITIVE).
+//       result = (mpz_cmp(coeffs[x],coeffs[y]) > 0);
+//     fprintf(stderr, "comparing %d and %d.  Result: %d\n",x,y,result);
+//     if (result > 0) return true; else return false;
+//   }
 #endif
 };
 
@@ -441,10 +441,10 @@ void MonomialTableZZ::find_weak_generators(int nvars,
   sort(positions.begin(), positions.end(), montable_sorter_ZZ(nvars,coeffs,exps,comps));
 
 #if 0
-  fprintf(stderr, "sorted terms: ");
-  for (int i=0; i<positions.size(); i++)
-    fprintf(stderr, "%d ", positions[i]);
-  fprintf(stderr, "\n");
+//   fprintf(stderr, "sorted terms: ");
+//   for (int i=0; i<positions.size(); i++)
+//     fprintf(stderr, "%d ", positions[i]);
+//   fprintf(stderr, "\n");
 #endif
 
   MonomialTableZZ *T = MonomialTableZZ::make(nvars);
@@ -477,10 +477,10 @@ void MonomialTableZZ::find_strong_generators(int nvars,
   sort(positions.begin(), positions.end(), montable_sorter_ZZ(nvars,coeffs,exps,comps));
 
 #if 0
-  fprintf(stderr, "sorted terms: ");
-  for (int i=0; i<positions.size(); i++)
-    fprintf(stderr, "%d ", positions[i]);
-  fprintf(stderr, "\n");
+//   fprintf(stderr, "sorted terms: ");
+//   for (int i=0; i<positions.size(); i++)
+//     fprintf(stderr, "%d ", positions[i]);
+//   fprintf(stderr, "\n");
 #endif
 
   MonomialTableZZ *T = MonomialTableZZ::make(nvars);

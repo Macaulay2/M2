@@ -101,14 +101,14 @@ bool GF::initialize_GF(const RingElement *prim)
 GF::GF() {}
 
 #if 0
-GF::GF(const RingElement *prim)
-: Ring(prim->get_ring()->charac(),
-	1,1,this /* Visual C WARNING */,Monoid::get_trivial_monoid(), 
-	prim->get_ring()->degree_monoid()),
-  K(prim->get_ring()->cast_to_PolynomialRing()),
-  primitive_element(prim)
-{
-}
+// GF::GF(const RingElement *prim)
+// : Ring(prim->get_ring()->charac(),
+// 	1,1,this /* Visual C WARNING */,Monoid::get_trivial_monoid(), 
+// 	prim->get_ring()->degree_monoid()),
+//   K(prim->get_ring()->cast_to_PolynomialRing()),
+//   primitive_element(prim)
+// {
+// }
 #endif
 
 GF::~GF()

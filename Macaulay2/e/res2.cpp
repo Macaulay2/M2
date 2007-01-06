@@ -392,26 +392,26 @@ void res2_comp::start_computation()
 	}
     }
 #if 0
-  //This is the older, working version...
-  // Now do all of the reductions
-  for (int deg=0; deg<=hidegree; deg++)
-    {
-      if (DegreeLimit != NULL && deg > *DegreeLimit - lodegree)
-	{
-	  set_status(COMP_DONE_DEGREE_LIMIT);
-	  return;
-	}
-      if (gbTrace >= 1)
-	{
-	  buffer o;
-	  o << '{' << deg+lodegree << '}';
-	  emit(o.str());
-	}
-      for (level=1; level<=length_limit+1; level++)
-	{
-	  DO(do_pairs(level,deg));
-	}
-    }
+//   //This is the older, working version...
+//   // Now do all of the reductions
+//   for (int deg=0; deg<=hidegree; deg++)
+//     {
+//       if (DegreeLimit != NULL && deg > *DegreeLimit - lodegree)
+// 	{
+// 	  set_status(COMP_DONE_DEGREE_LIMIT);
+// 	  return;
+// 	}
+//       if (gbTrace >= 1)
+// 	{
+// 	  buffer o;
+// 	  o << '{' << deg+lodegree << '}';
+// 	  emit(o.str());
+// 	}
+//       for (level=1; level<=length_limit+1; level++)
+// 	{
+// 	  DO(do_pairs(level,deg));
+// 	}
+//     }
 #endif
   set_status(COMP_DONE);
 }
@@ -635,8 +635,8 @@ res2_pair *res2_comp::new_res2_pair(res2_pair *first,
   p->compare_num = 0;		// Will be set after pairs are done
   p->syz = R->new_term(K->from_int(1), basemon, first);
 #if 0
-  if (second != NULL)
-    p->syz->next = R->new_term(K->from_int(-1), basemon, second);
+//   if (second != NULL)
+//     p->syz->next = R->new_term(K->from_int(-1), basemon, second);
 #endif
   p->mi = new MonomialIdeal(P, mi_stash);
   p->pivot_term = NULL;
@@ -1112,12 +1112,12 @@ int res2_comp::find_divisor(const MonomialIdeal *mi,
 	  result = p;
 	}
 #if 0
-      int nt = R->n_terms(p->syz);
-      if (nt < n) 
-	{
-	  n = nt;
-	  result = p;
-	}
+//       int nt = R->n_terms(p->syz);
+//       if (nt < n) 
+// 	{
+// 	  n = nt;
+// 	  result = p;
+// 	}
 #endif
     }
   return 1;

@@ -67,16 +67,16 @@ unsigned long MonomialSet::hash(uninterned_monomial m)
   
   return result;
 #if 0
-  int len = 2*(*m++);
-  unsigned long result = len;
-  int a = 1013746461;
-  for (int i=1; i<=len;i++)
-    {
-      result += a*(*m++);
-      a += 13;
-    }
-  
-  return result;
+//   int len = 2*(*m++);
+//   unsigned long result = len;
+//   int a = 1013746461;
+//   for (int i=1; i<=len;i++)
+//     {
+//       result += a*(*m++);
+//       a += 13;
+//     }
+//   
+//   return result;
 #endif
 }
 

@@ -31,7 +31,7 @@ struct MonomialOrder_rec {
   int nslots_before_component;
   int component_up; /* bool */
 #if 0
-  int component_slot; /* < 0 means that there is no component (or, it is assumed to be 0) */
+//   int component_slot; /* < 0 means that there is no component (or, it is assumed to be 0) */
 #endif
   double *degs; /* 0..nvars: heuristic degree of each variable.  degs[nvars] = 1.
 		   Assumption: degs[i] >= 1, for all i, and should be an integer.
@@ -39,9 +39,9 @@ struct MonomialOrder_rec {
   struct mo_block *blocks; /* 0..nblocks-1 with each entry a struct mo_block */
   int *is_laurent; /* 0..nvars-1: 0 or 1: 1 means negative exponents allowed */
 #if 0
-  int *max_exponent; /* 0..nvars-1: maximum value for this exponent */
-  int *min_exponent; /* 0..nvars-1: minimum value for this exponent (often 0) */
-  int *slot_kind;    /* 0..nslots-1: 0 means normal int, 1 means packed 2, 2 means packed 4. */
+//   int *max_exponent; /* 0..nvars-1: maximum value for this exponent */
+//   int *min_exponent; /* 0..nvars-1: minimum value for this exponent (often 0) */
+//   int *slot_kind;    /* 0..nslots-1: 0 means normal int, 1 means packed 2, 2 means packed 4. */
 #endif
 };
 

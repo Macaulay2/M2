@@ -857,20 +857,20 @@ void binomialGB::remove_monomial_list(monomial_list *mm) const
 }
 
 #if 0
-binomial_gb_elem *binomialGB::find_divisor(monomial m) const
-{
-  unsigned int mask = ~(R->mask(m));
-  int d = R->degree(m);
-  for (iterator p = begin(); p != end(); ++p)
-    {
-      binomial_gb_elem *g = *p;
-      if (R->degree(g->f.lead) > d) return NULL;
-      if (mask & p.this_elem()->mask) continue;
-      if (R->divides(g->f.lead, m))
-	return g;
-    }
-  return NULL;
-}
+// binomial_gb_elem *binomialGB::find_divisor(monomial m) const
+// {
+//   unsigned int mask = ~(R->mask(m));
+//   int d = R->degree(m);
+//   for (iterator p = begin(); p != end(); ++p)
+//     {
+//       binomial_gb_elem *g = *p;
+//       if (R->degree(g->f.lead) > d) return NULL;
+//       if (mask & p.this_elem()->mask) continue;
+//       if (R->divides(g->f.lead, m))
+// 	return g;
+//     }
+//   return NULL;
+// }
 #endif
 
 static int nfind = 0;
@@ -921,36 +921,36 @@ bool binomialGB::reduce(binomial &f) const
     }
 }
 #if 0
-bool binomialGB::reduce(binomial &f) const
-{
-  while (true)
-    {
-      binomial_gb_elem *p = find_divisor(f.lead);
-      if (p == NULL)
-	{
-	  reduce_monomial(f.tail);
-	  // The following should also check homog_prime, bigcell:
-	  // 
-	  return R->normalize(f);
-	}
-      else 
-	{
-	  // Do the division:
-	  if (!R->one_reduction_step(f,p->f))  // Modifies 'f'.
-	    return false;
-
-	  if (is_homogeneous_prime)
-	    {
-	      if (!gcd_is_one(f)) return false;
-	    }
-	  else if (use_bigcell)
-	    {
-	      // if 'f' is divisible by a monomial, then we can strip this monomial.
-	      remove_monomial_content(f);
-	    }
-	}
-    }
-}
+// bool binomialGB::reduce(binomial &f) const
+// {
+//   while (true)
+//     {
+//       binomial_gb_elem *p = find_divisor(f.lead);
+//       if (p == NULL)
+// 	{
+// 	  reduce_monomial(f.tail);
+// 	  // The following should also check homog_prime, bigcell:
+// 	  // 
+// 	  return R->normalize(f);
+// 	}
+//       else 
+// 	{
+// 	  // Do the division:
+// 	  if (!R->one_reduction_step(f,p->f))  // Modifies 'f'.
+// 	    return false;
+// 
+// 	  if (is_homogeneous_prime)
+// 	    {
+// 	      if (!gcd_is_one(f)) return false;
+// 	    }
+// 	  else if (use_bigcell)
+// 	    {
+// 	      // if 'f' is divisible by a monomial, then we can strip this monomial.
+// 	      remove_monomial_content(f);
+// 	    }
+// 	}
+//     }
+// }
 #endif
 int binomialGB::n_masks() const
 {

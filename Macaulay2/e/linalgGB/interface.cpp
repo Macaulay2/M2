@@ -164,83 +164,83 @@ MonomialLookupTable *make_monideal(const Matrix *M, MonomialSet &H)
 }
 
 #if 0
-  const PolynomialRing *R = M->get_ring()->cast_to_PolynomialRing();
-  const Monoid *MF = R->getMonoid();
-  MonomialSet H;
-
-  gb_array pols;
-
-  from_M2_matrix(M,&H,NULL,pols);
-  H.dump();
-  spair_testing(&H,pols);
-  return to_M2_matrix(pols,M->rows());
+//   const PolynomialRing *R = M->get_ring()->cast_to_PolynomialRing();
+//   const Monoid *MF = R->getMonoid();
+//   MonomialSet H;
+// 
+//   gb_array pols;
+// 
+//   from_M2_matrix(M,&H,NULL,pols);
+//   H.dump();
+//   spair_testing(&H,pols);
+//   return to_M2_matrix(pols,M->rows());
 #endif
 
 #if 0
-  intarray vp;
-  for (int i=0; i<M->n_cols(); i++)
-    {
-      ring_elem f = M->elem(0,i);
-      Nterm *t = f; // numerator of f
-      for ( ; t != 0; t=t->next)
-	{
-	  monomial m;
-	  vp.shrink(0);
-	  MF->to_varpower(t->monom, vp);
-	  vp[0] = (vp[0]-1)/2;
-	  H.find_or_insert(vp.raw(), m);
-	}
-    }
-  H.dump();
-
-  // Now make a MonomialTable
-  MonomialLookupTable *T = make_monideal(M,H);
-
-  buffer o;
-  o << "Number of elements in MonomialTable = " << T->length() << newline;
-  emit(o.str());
+//   intarray vp;
+//   for (int i=0; i<M->n_cols(); i++)
+//     {
+//       ring_elem f = M->elem(0,i);
+//       Nterm *t = f; // numerator of f
+//       for ( ; t != 0; t=t->next)
+// 	{
+// 	  monomial m;
+// 	  vp.shrink(0);
+// 	  MF->to_varpower(t->monom, vp);
+// 	  vp[0] = (vp[0]-1)/2;
+// 	  H.find_or_insert(vp.raw(), m);
+// 	}
+//     }
+//   H.dump();
+// 
+//   // Now make a MonomialTable
+//   MonomialLookupTable *T = make_monideal(M,H);
+// 
+//   buffer o;
+//   o << "Number of elements in MonomialTable = " << T->length() << newline;
+//   emit(o.str());
 #endif
   
 #if 0
-  // Now make a MonomialHeap
-  MonomialHeap H1;
-  for (int i=0; i<M->n_cols(); i++)
-    {
-      ring_elem f = M->elem(0,i);
-      Nterm *t = f; // numerator of f
-      for ( ; t != 0; t=t->next)
-	{
-	  monomial m;
-	  vp.shrink(0);
-	  MF->to_varpower(t->monom, vp);
-	  vp[0] = (vp[0]-1)/2;
-	  H.find_or_insert(vp.raw(), m);
-	  H1.insert(vp.raw(), m);
-	}
-    }
-  H1.dump(stderr);
+//   // Now make a MonomialHeap
+//   MonomialHeap H1;
+//   for (int i=0; i<M->n_cols(); i++)
+//     {
+//       ring_elem f = M->elem(0,i);
+//       Nterm *t = f; // numerator of f
+//       for ( ; t != 0; t=t->next)
+// 	{
+// 	  monomial m;
+// 	  vp.shrink(0);
+// 	  MF->to_varpower(t->monom, vp);
+// 	  vp[0] = (vp[0]-1)/2;
+// 	  H.find_or_insert(vp.raw(), m);
+// 	  H1.insert(vp.raw(), m);
+// 	}
+//     }
+//   H1.dump(stderr);
 #endif
 
 
 #if 0
-void spair_testing(MonomialSet *H,
-		   gb_array &polys)
-{
-  SPairSet *S = new SPairSet(H);
-  gb_array gb;
-  for (int i=0; i<polys.size(); i++)
-    {
-      // First make a gbelem, and insert it into gb
-      gbelem *g;
-      *g = *(polys[i]);
-      g->is_minimal = 1;
-      gb.push_back(g);
-
-      // Now call spair update
-      S->find_new_pairs(gb, false);
-      S->display();
-    }
-}
+// void spair_testing(MonomialSet *H,
+// 		   gb_array &polys)
+// {
+//   SPairSet *S = new SPairSet(H);
+//   gb_array gb;
+//   for (int i=0; i<polys.size(); i++)
+//     {
+//       // First make a gbelem, and insert it into gb
+//       gbelem *g;
+//       *g = *(polys[i]);
+//       g->is_minimal = 1;
+//       gb.push_back(g);
+// 
+//       // Now call spair update
+//       S->find_new_pairs(gb, false);
+//       S->display();
+//     }
+// }
 #endif
 
 template<typename CoeffRing>

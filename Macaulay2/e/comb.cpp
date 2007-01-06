@@ -29,12 +29,12 @@ void comb::expand(int nn, int dd)
   tab[0][0] = 1;
 
 #if 0
-  // This is, I believe, the buggy version...
-  for (n = tab.length(); n<=nn; n++) 
-    tab[0][n] = 1;
-  for (d = tab[0].length(); d<=dd; d++)
-    tab[d][0] = 0;
-  tab[0][0] = 1;
+//   // This is, I believe, the buggy version...
+//   for (n = tab.length(); n<=nn; n++) 
+//     tab[0][n] = 1;
+//   for (d = tab[0].length(); d<=dd; d++)
+//     tab[d][0] = 0;
+//   tab[0][0] = 1;
 #endif
 
   for(d = 1; d<=dd; d++)

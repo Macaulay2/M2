@@ -39,30 +39,30 @@ int MinimalPrimes::codimension()
 }
 
 #if 0
-MonomialIdeal * MinimalPrimes::min_primes(int codim_limit0, int minprime_limit0)
-    // Place the associated primes of minimal codimension 
-    // into a monomial ideal where each monomial corresponds to the prime
-    // monomial ideal which is its support.
-{
-  codim_limit = codim_limit0;
-  minprime_limit = minprime_limit0;
-  state = do_primes;
-  n_minprimes = 0;
-
-  if (exps[0] == 0) exps[0] = newarray_atomic(int,nvars);
-  for (int i=0; i<nvars; i++) exps[0][i] = 0;
-  ass_prime_generator(mi->first_node(), 0);
-
-  buffer o;
-  o << "number of tentative minprimes is " << Q.length();
-
-  MonomialIdeal *result = new MonomialIdeal(mi->get_ring() , Q);
-
-  o << " actual number is " << result->length() << newline;
-  emit(o.str());
-
-  return result;
-}
+// MonomialIdeal * MinimalPrimes::min_primes(int codim_limit0, int minprime_limit0)
+//     // Place the associated primes of minimal codimension 
+//     // into a monomial ideal where each monomial corresponds to the prime
+//     // monomial ideal which is its support.
+// {
+//   codim_limit = codim_limit0;
+//   minprime_limit = minprime_limit0;
+//   state = do_primes;
+//   n_minprimes = 0;
+// 
+//   if (exps[0] == 0) exps[0] = newarray_atomic(int,nvars);
+//   for (int i=0; i<nvars; i++) exps[0][i] = 0;
+//   ass_prime_generator(mi->first_node(), 0);
+// 
+//   buffer o;
+//   o << "number of tentative minprimes is " << Q.length();
+// 
+//   MonomialIdeal *result = new MonomialIdeal(mi->get_ring() , Q);
+// 
+//   o << " actual number is " << result->length() << newline;
+//   emit(o.str());
+// 
+//   return result;
+// }
 #endif
 
 static void to_prime_ideal(int n, int *exp)

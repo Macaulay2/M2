@@ -356,12 +356,12 @@ void GBKernelComputation::wipe_unneeded_terms(gbvector * & f)
 	}
     }
 #if 0
-  if (gbTrace >= 5) 
-    {
-      buffer o;
-      o << "[" << nterms << ",s" << nsaved << "]";
-      emit_wrapped(o.str());
-    }
+//   if (gbTrace >= 5) 
+//     {
+//       buffer o;
+//       o << "[" << nterms << ",s" << nsaved << "]";
+//       emit_wrapped(o.str());
+//     }
 #endif
 }
 

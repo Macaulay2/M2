@@ -110,13 +110,13 @@ const MatrixOrNull *F4Computation::get_gb()
 const MatrixOrNull *F4Computation::get_mingens()
 {
 #if 0
-  MatrixConstructor mat(_F,0);
-  for (VECTOR(gbelem *)::iterator i = gb.begin(); 
-       i != gb.end(); 
-       i++)
-    if ((*i)->minlevel == ELEM_POSSIBLE_MINGEN)
-      mat.append(originalR->translate_gbvector_to_vec(_F, (*i)->g.f));
-  return mat.to_matrix();
+//   MatrixConstructor mat(_F,0);
+//   for (VECTOR(gbelem *)::iterator i = gb.begin(); 
+//        i != gb.end(); 
+//        i++)
+//     if ((*i)->minlevel == ELEM_POSSIBLE_MINGEN)
+//       mat.append(originalR->translate_gbvector_to_vec(_F, (*i)->g.f));
+//   return mat.to_matrix();
 #endif
   return 0;
 }

@@ -171,13 +171,13 @@ public:
 };
 
 #if 0
-// These will become the unsafe versions, I guess, if they are still
-// needed...
-inline void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
-    { for (int i=0; i<monomial_size_; i++) *result++ = *m++ + *n++; }
-
-inline void Monoid::power(const_monomial m, int n, monomial result) const
-    { for (int i=0; i<monomial_size_; i++) *result++ = *m++ * n; }
+// // These will become the unsafe versions, I guess, if they are still
+// // needed...
+// inline void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
+//     { for (int i=0; i<monomial_size_; i++) *result++ = *m++ + *n++; }
+// 
+// inline void Monoid::power(const_monomial m, int n, monomial result) const
+//     { for (int i=0; i<monomial_size_; i++) *result++ = *m++ * n; }
 #endif
 
 // WARNING!! 'divide' assumes that division is possible
