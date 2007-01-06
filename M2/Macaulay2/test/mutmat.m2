@@ -27,8 +27,6 @@ rowAdd
 columnAdd
 -- 2by2's?
 -- 
-rowDivide
-columnDivide
 rowPermute
 columnPermute
 

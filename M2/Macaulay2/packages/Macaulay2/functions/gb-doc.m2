@@ -10,7 +10,8 @@ document {
      Headline => "compute a Groebner basis",
      Usage => "gb I",
      Inputs => {
-		"I" => "an ideal, module, or matrix"
+	  "I" => "an ideal, module, or matrix",
+	  
 	  },
      Outputs => {
 	  GroebnerBasis => "a Groebner basis computation object"

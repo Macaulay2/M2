@@ -12,7 +12,9 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export {schurRing, SchurRing, symmRing, plethysmMap, jacobiTrudiE, plethysm, cauchy, bott}
+export {schurRing, SchurRing}
+-- Improve the names/interface of the following:
+--, symmRing, plethysmMap, jacobiTrudiE, plethysm, cauchy, bott}
 
 debug Core
 

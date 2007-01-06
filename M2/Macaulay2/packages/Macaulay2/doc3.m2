@@ -491,7 +491,8 @@ document { Key => {(randomMutableMatrix, ZZ, ZZ, RR, ZZ),randomMutableMatrix},
 	  "nrows",
 	  "ncols",
 	  "zerof" => { "between 0 and 1" },
-	  "max"
+	  "max",
+	  Dense => {"whether the encoding of the matrix should be dense or not: see ", TO MutableMatrix}
 	  },
      Outputs => {
 	  {"a random mutable ", TT "nrows", " by ", TT "ncols", " matrix of integers.  The absolute value of the entries is bounded by ", TT "max", ", and
@@ -505,24 +506,34 @@ document { Key => {(randomMutableMatrix, ZZ, ZZ, RR, ZZ),randomMutableMatrix},
 document { Key => {(mutableZero, Ring, ZZ, ZZ),mutableZero},
      Headline => "make a mutable matrix filled with zeroes",
      Usage => "mutableZero(R,nrows,ncols)",
-     Inputs => { "R","nrows","ncols" },
+     Inputs => { "R",
+	          "nrows",
+		  "ncols",
+	  	  Dense => {"whether the encoding of the matrix should be dense or not: see ", TO MutableMatrix}
+		  },
      Outputs => {{"an ", TT "nrows", " by ", TT "ncols", " mutable matrix filled with zeroes from the ring ", TT "R" }},
      EXAMPLE lines ///
          m = mutableZero(QQ,10,20)
 	 m_(5,5) = 11/13
 	 m
-     ///
+     ///,
+     SeeAlso => {mutableIdentity, mutableMatrix}
      }
 document { Key => {(mutableIdentity, Ring, ZZ),mutableIdentity},
      Headline => "make a mutable identity matrix",
      Usage => "mutableIdentity(R,nrows)",
-     Inputs => { "R","nrows" },
-     Outputs => {{"an ", TT "nrows", " by ", TT "nrows", " mutable identity matrix filled elements of the ring ", TT "R" }},
+     Inputs => { "R",
+	  "nrows",
+	  Dense => {"whether the encoding of the matrix should be dense or not: see ", TO MutableMatrix}
+	  },
+     Outputs => {
+	  MutableMatrix => {"an ", TT "nrows", " by ", TT "nrows", " mutable identity matrix filled with elements of the ring ", TT "R" }},
      EXAMPLE lines ///
          m = mutableIdentity(QQ,10)
 	 m_(5,5) = 11/13
 	 m
-     ///
+     ///,
+     SeeAlso => {mutableZero, mutableMatrix}
      }
 
 undocumented (pretty, Thing)
