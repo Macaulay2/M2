@@ -349,7 +349,7 @@ void F4GB::make_matrix()
 
   // DEBUGGING:
   fprintf(stderr, "--matrix--%ld by %ld\n", 
-	  mat->rows.size(), mat->columns.size());
+	  (long)mat->rows.size(), (long)mat->columns.size());
 
   //  show_row_info();
   //  show_column_info();
