@@ -58,6 +58,18 @@ char *getmem_malloc(unsigned int n)
   return p;
 }
 
+char *getmem_atomic_clear(unsigned int n)
+{
+  char *p;
+  p = GC_MALLOC_ATOMIC(n);
+  if (p == NULL) outofmem();
+#ifdef DEBUG
+  trapchk(p);
+#endif
+  bzero(p,n);
+  return p;
+}
+
 /*
  Local Variables:
  compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
