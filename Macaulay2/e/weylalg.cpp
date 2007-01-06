@@ -40,8 +40,8 @@ bool WeylAlgebra::initialize_weyl(
   this->_homogeneous_weyl_algebra = (homog_var >= 0);
   this->_homog_var = homog_var;
 
-  this->_derivative = newarray(int,_nderivatives);
-  this->_commutative = newarray(int,_nderivatives);
+  this->_derivative = newarray_atomic(int,_nderivatives);
+  this->_commutative = newarray_atomic(int,_nderivatives);
   for (int i=0; i<_nderivatives; i++)
     {
       this->_derivative[i] = derivs->array[i];
@@ -162,7 +162,7 @@ void WeylAlgebra::initialize1()
 
       binomtable = newarray(int *,binomtop+1);
       for (i=0; i<=binomtop; i++)
-	binomtable[i] = newarray(int,i+1);
+	binomtable[i] = newarray_atomic(int,i+1);
       binomtable[0][0] = 1;
       binomtable[1][0] = 1;
       binomtable[1][1] = 1;
@@ -176,7 +176,7 @@ void WeylAlgebra::initialize1()
 
       diffcoeffstable = newarray(int *,diffcoeffstop+1);
       for (i=0; i<=diffcoeffstop; i++)
-	diffcoeffstable[i] = newarray(int,i+1);
+	diffcoeffstable[i] = newarray_atomic(int,i+1);
       diffcoeffstable[0][0] = 1;
       diffcoeffstable[1][0] = 1;
       diffcoeffstable[1][1] = 1;
@@ -335,9 +335,9 @@ Nterm * WeylAlgebra::weyl_diff(
   Nterm *result = &head;
 
   int i;
-  int *exp = newarray(int,_nderivatives);
-  int *deriv_exp = newarray(int,nvars_);
-  int *result_exp = newarray(int,nvars_);
+  int *exp = newarray_atomic(int,_nderivatives);
+  int *deriv_exp = newarray_atomic(int,nvars_);
+  int *result_exp = newarray_atomic(int,nvars_);
   for (i=0; i<nvars_; i++)
     deriv_exp[i] = 0;
   if (_homogeneous_weyl_algebra)
@@ -401,9 +401,9 @@ ring_elem WeylAlgebra::mult_by_term(const ring_elem f,
 			       const ring_elem c, const int *m) const
   // Computes c*m*f
 {
-  int *top_derivative = newarray(int,_nderivatives);
-  int *current_derivative = newarray(int,_nderivatives);
-  int *expf = newarray(int,nvars_);
+  int *top_derivative = newarray_atomic(int,_nderivatives);
+  int *current_derivative = newarray_atomic(int,_nderivatives);
+  int *expf = newarray_atomic(int,nvars_);
   polyheap result(this);
 
   M_->to_expvector(m, expf);
@@ -452,9 +452,9 @@ gbvector * WeylAlgebra::gbvector_weyl_diff(
   gbvector *result = &head;
 
   int i;
-  int *exp = newarray(int,_nderivatives);
-  int *deriv_exp = newarray(int,nvars_);
-  int *result_exp = newarray(int,nvars_);
+  int *exp = newarray_atomic(int,_nderivatives);
+  int *deriv_exp = newarray_atomic(int,nvars_);
+  int *result_exp = newarray_atomic(int,nvars_);
   for (i=0; i<nvars_; i++)
     deriv_exp[i] = 0;
   if (_homogeneous_weyl_algebra)
@@ -521,9 +521,9 @@ gbvector * WeylAlgebra::gbvector_mult_by_term(
 					      int comp) const // comp is either 0 or a real component.
   // Computes c*m*f*e_comp  (where components of f and e_comp add).
 {
-  int *top_derivative = newarray(int,_nderivatives);
-  int *current_derivative = newarray(int,_nderivatives);
-  int *expf = newarray(int,nvars_);
+  int *top_derivative = newarray_atomic(int,_nderivatives);
+  int *current_derivative = newarray_atomic(int,_nderivatives);
+  int *expf = newarray_atomic(int,nvars_);
 
   GBRing *GR = result.get_gb_ring();
   const FreeModule *F = result.get_freemodule();

@@ -9,7 +9,7 @@ MonomialInfo::MonomialInfo(int nvars0)
 {
   nvars = nvars0;
   nslots = 2 + nvars;
-  hashfcn = newarray(long,nvars);
+  hashfcn = newarray_atomic(long,nvars);
   for (int i=0; i<nvars; i++)
     hashfcn[i] = rand();
   mask = 0x10000000;

@@ -88,7 +88,7 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0, queue<Bag *> &elems, queu
       bins[d]->insert(b);
     }
   int n = get_ring()->n_vars();
-  int *exp = newarray(int,n);
+  int *exp = newarray_atomic(int,n);
   for (int i=0; i < bins.length(); i++)
     if (bins[i] != NULL)
       {
@@ -236,7 +236,7 @@ void MonomialIdeal::find_all_divisors(const int *exp, array<Bag *> &b) const
 
 int MonomialIdeal::search(const int *m, Bag *&b) const
 {
-  int *exp = newarray(int, get_ring()->n_vars());
+  int *exp = newarray_atomic(int, get_ring()->n_vars());
   varpower::to_ntuple(get_ring()->n_vars(), m, exp);
   int result = search_expvector(exp, b);
   deletearray(exp);
@@ -768,7 +768,7 @@ MonomialIdeal *MonomialIdeal::borel() const
     // Return the smallest borel monomial ideal containing 'this'.
 {
   queue<Bag *> new_elems;
-  int *bexp = newarray(int,get_ring()->n_vars());
+  int *bexp = newarray_atomic(int,get_ring()->n_vars());
   for (Index<MonomialIdeal> i = first(); i.valid(); i++)
     {
       Bag *b = operator[](i);
@@ -783,7 +783,7 @@ MonomialIdeal *MonomialIdeal::borel() const
 
 int MonomialIdeal::is_borel() const
 {
-  int *bexp = newarray(int,get_ring()->n_vars());
+  int *bexp = newarray_atomic(int,get_ring()->n_vars());
   for (Index<MonomialIdeal> i = first(); i.valid(); i++)
     {
       Bag *b = operator[](i);

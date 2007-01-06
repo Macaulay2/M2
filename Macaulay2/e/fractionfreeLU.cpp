@@ -16,8 +16,8 @@ FF_LUComputation::FF_LUComputation(MutableMatrix *M0)
     need_div(0)
 {
   int ncols = M->n_cols();
-  col_perm = newarray(int,ncols);
-  need_div = newarray(bool,ncols);
+  col_perm = newarray_atomic(int,ncols);
+  need_div = newarray_atomic(bool,ncols);
   pivot_col = ncols;  // Will be decremented before use
   for (int i=0; i<ncols; i++)
     {

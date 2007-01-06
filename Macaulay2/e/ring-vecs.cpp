@@ -1060,7 +1060,7 @@ vec Ring::vec_remove_monomial_factors(vec f, bool make_squarefree_only) const
   if (PR == 0) return copy_vec(f);
   if (f == 0) return 0;
 
-  int *exp = newarray(int,PR->n_vars());
+  int *exp = newarray_atomic(int,PR->n_vars());
 
   Nterm *t = f->coeff;
   PR->getMonoid()->to_expvector(t->monom, exp); // Get the process started

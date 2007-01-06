@@ -87,9 +87,9 @@ void PolyRing::initialize_poly_ring(const Ring *K, const Monoid *M,
   else
     this->setIsGraded(deg_ring->getMonoid()->n_vars() > 0);
 
-  _EXP1 = newarray(int,nvars_);
-  _EXP2 = newarray(int,nvars_);
-  _EXP3 = newarray(int,nvars_);
+  _EXP1 = newarray_atomic(int,nvars_);
+  _EXP2 = newarray_atomic(int,nvars_);
+  _EXP3 = newarray_atomic(int,nvars_);
 
   zeroV = from_int(0);
   oneV = from_int(1);
@@ -289,7 +289,7 @@ bool PolyRing::promote(const Ring *Rf, const ring_elem f, ring_elem &result) con
       result = copy(f);
       return true;
     }
-  int *exp = newarray(int,nvars0);
+  int *exp = newarray_atomic(int,nvars0);
   result = make_logical_term(Rf,f,exp);
   return true;
 }
@@ -311,7 +311,7 @@ bool PolyRing::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
   int nvars0 = n_vars();
   if (Rg1 != 0)
     nvars0 -= Rg1->n_vars();
-  int *exp = newarray(int,nvars0);
+  int *exp = newarray_atomic(int,nvars0);
   lead_logical_exponents(nvars0,f,exp);
   if (!ntuple::is_one(nvars0,exp))
     return false;
@@ -483,7 +483,7 @@ ring_elem PolyRing::homogenize(const ring_elem f,
   // assert(wts[v] != 0);
   // If an error occurs, then return 0, and set gError.
 
-  int *exp = newarray(int, nvars_);
+  int *exp = newarray_atomic(int, nvars_);
   int maxlen = (wts->len < nvars_ ? wts->len : nvars_);
   Nterm head;
   Nterm *result = &head;
@@ -1420,8 +1420,8 @@ ring_elem PolyRing::get_logical_coeff(const Ring *coeffR, const Nterm *&f) const
   Nterm head;
   Nterm *inresult = &head;
   inresult->next = 0;
-  int *exp = newarray(int, n_vars());
-  int *exp2 = newarray(int, n_vars());
+  int *exp = newarray_atomic(int, n_vars());
+  int *exp2 = newarray_atomic(int, n_vars());
   int nvars = n_vars() - K->n_vars();
   M_->to_expvector(f->monom, exp);
   ntuple::copy(n_vars(), exp, exp2);
@@ -1444,7 +1444,7 @@ void PolyRing::lead_logical_exponents(int nvars0, const ring_elem f, int * resul
 {
   Nterm *g = f;
   assert(g != NULL);
-  int *exp = newarray(int,n_vars());
+  int *exp = newarray_atomic(int,n_vars());
   M_->to_expvector(g->monom, exp);
   ntuple::copy(nvars0,exp,result_exp);
 }
@@ -1461,8 +1461,8 @@ int PolyRing::n_logical_terms(int nvars0, const ring_elem f) const
   if (nvars0 == n_vars()) return n_terms(f);
   Nterm *t = f;
   if (t == 0) return 0;
-  int *exp1 = newarray(int,n_vars());
-  int *exp2 = newarray(int,n_vars());
+  int *exp1 = newarray_atomic(int,n_vars());
+  int *exp2 = newarray_atomic(int,n_vars());
   M_->to_expvector(t->monom, exp1);
   int result = 1;
   for ( ; t != 0; t = t->next)
@@ -1495,7 +1495,7 @@ ArrayPairOrNull PolyRing::list_form(const Ring *coeffR, const ring_elem f) const
   result->monoms = monoms;
   result->coeffs = coeffs;
 
-  int *exp = newarray(int, n_vars());
+  int *exp = newarray_atomic(int, n_vars());
   intarray resultvp;
   const Nterm *t = f;
   for (int next = 0; next < n; next++)
@@ -1530,7 +1530,7 @@ ring_elem PolyRing::make_logical_term(const Ring *coeffR, const ring_elem a, con
 
   Nterm head;
   Nterm *inresult = &head;
-  int *exp = newarray(int,M_->n_vars());
+  int *exp = newarray_atomic(int,M_->n_vars());
   ntuple::copy(nvars0, exp0, exp); // Sets the first part of exp
   for (Nterm *f = a; f != 0; f = f->next)
     {
@@ -1556,8 +1556,8 @@ ring_elem PolyRing::get_terms(int nvars0, const ring_elem f, int lo, int hi) con
   Nterm head;
   Nterm *result = &head;
 
-  int *exp1 = newarray(int,n_vars());
-  int *exp2 = newarray(int,n_vars());
+  int *exp1 = newarray_atomic(int,n_vars());
+  int *exp2 = newarray_atomic(int,n_vars());
   M_->to_expvector(t->monom, exp1);
   int n = 0;
   while (t != NULL)
@@ -1622,8 +1622,8 @@ ring_elem PolyRing::get_coeff(const Ring *coeffR, const ring_elem f, const int *
   if (coeffR1 != 0)
     nvars0 -= coeffR1->n_vars();
 
-  int *exp = newarray(int, nvars0);
-  int *exp2 = newarray(int, n_vars()); // FLAT number of variables
+  int *exp = newarray_atomic(int, nvars0);
+  int *exp2 = newarray_atomic(int, n_vars()); // FLAT number of variables
   varpower::to_ntuple(nvars0, vp, exp);
 
   // Now loop thru f until exponents match up.
@@ -1781,7 +1781,7 @@ ring_elem PolyRing::divide_by_var(int n, int d, const ring_elem a) const
   if (d == 0) return a;
   Nterm head;
   Nterm *result = &head;
-  int *exp = newarray(int,n_vars());
+  int *exp = newarray_atomic(int,n_vars());
   for (Nterm *t = a; t != 0; t = t->next)
     {
       M_->to_expvector(t->monom, exp);
@@ -1802,7 +1802,7 @@ ring_elem PolyRing::divide_by_var(int n, int d, const ring_elem a) const
 ring_elem PolyRing::divide_by_expvector(const int *exp, const ring_elem a) const
 {
   Nterm * result = 0;
-  int *exp0 = newarray(int,n_vars());
+  int *exp0 = newarray_atomic(int,n_vars());
   for (Nterm *t = a; t != 0; t = t->next)
     {
       M_->to_expvector(t->monom, exp0);
@@ -1930,7 +1930,7 @@ vec PolyRing::vec_top_coefficient(const vec v, int &x, int &e) const
       return NULL;
     }
 
-  int *exp = newarray(int, n_vars());
+  int *exp = newarray_atomic(int, n_vars());
   for (vec t = v; t != 0; t = t->next)
     for (Nterm *f = t->coeff; f != 0; f = f->next)
       {

@@ -45,7 +45,7 @@ void TermIdeal::from_list(queue<tagged_term *> &elems)
   tagged_term *p;
   array<tagged_term *> divs;
 
-  int *exp = newarray(int,M->n_vars());
+  int *exp = newarray_atomic(int,M->n_vars());
   // Place these elements into an array
   int n = elems.length();
   if (n == 0) return;
@@ -168,7 +168,7 @@ mon_term *TermIdeal::new_mon_term(tagged_term *t) const
   mon_term *result = new mon_term;
   result->t = t;
   result->next = result->prev = NULL;
-  result->_lead_exp = newarray(int,M->n_vars());
+  result->_lead_exp = newarray_atomic(int,M->n_vars());
   M->to_expvector(t->monom(), result->_lead_exp);
 
   result->coeff_is_one = (K->is_equal(result->coeff(), one));
@@ -422,7 +422,7 @@ void TermIdeal::insert_w_deletions(tagged_term *t, queue<tagged_term *> &deletio
   // Since the elements are stored in increasing degree order, we may 
   // insert 't', and then look for deletions from this point on
   mon_term *monterm_t, *s;
-  int *exp = newarray(int,nvars);
+  int *exp = newarray_atomic(int,nvars);
   M->to_expvector(t->monom(), exp);
   tagged_term *old_t = insert_minimal(t, monterm_t);
   if (old_t != NULL) deletions.insert(old_t);
@@ -615,7 +615,7 @@ int TermIdeal::search(const int *m, ring_elem &result_gcd,
   // undefined, and result_gsyz is a null pointer.  Caveat: there may be more divisors
   // than the ones actually found, if the gcd becomes 1 earlier.
 {
-  int *exp = newarray(int,nvars);
+  int *exp = newarray_atomic(int,nvars);
   array<tagged_term *> divs;
   M->to_expvector(m,exp);
   find_all_divisors(exp, divs);

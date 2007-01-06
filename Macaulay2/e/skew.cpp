@@ -19,14 +19,14 @@ SkewMultiplication::SkewMultiplication(int nvars, int nskew, int * skew_list)
     _SKEW1(0),
     _SKEW2(0)
 {
-  _skew_exp = newarray(bool,nvars);
+  _skew_exp = newarray_atomic(bool,nvars);
   for (int i=0; i<nvars; i++)
     _skew_exp[i] = false;
   for (int v=0; v<nskew; v++)
     _skew_exp[skew_list[v]] = true;
 
-  _SKEW1 = newarray(int,nskew);
-  _SKEW2 = newarray(int,nskew);
+  _SKEW1 = newarray_atomic(int,nskew);
+  _SKEW2 = newarray_atomic(int,nskew);
 }
 
 static int sort_sign(int a, int *v1, int b, int *v2)

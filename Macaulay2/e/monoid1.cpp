@@ -122,10 +122,10 @@ Monoid::Monoid(monoid_info *moninf,  int nb)
   if (moninfo->degree_monoid == NULL)
     moninfo->degree_monoid = const_cast<Monoid *>(this);
 
-  EXP1 = newarray(int,nvars);
-  EXP2 = newarray(int,nvars);
-  EXP3 = newarray(int,nvars);
-  MONlocal = newarray(int,nvars + monomial_size()); // MES: should be total number of words of result...
+  EXP1 = newarray_atomic(int,nvars);
+  EXP2 = newarray_atomic(int,nvars);
+  EXP3 = newarray_atomic(int,nvars);
+  MONlocal = newarray_atomic(int,nvars + monomial_size()); // MES: should be total number of words of result...
 }
 
 Monoid::~Monoid()
@@ -544,14 +544,14 @@ int Monoid::compare(int nslots, const_monomial m1, const_monomial m2) const
 monomial Monoid::make_new(const_monomial d) const
 {
   if (nvars == 0) return NULL;
-  monomial result = newarray(int,monomial_size());
+  monomial result = newarray_atomic(int,monomial_size());
   copy(d, result);
   return result;
 }
 monomial Monoid::make_one() const
 {
   if (nvars == 0) return NULL;
-  monomial result = newarray(int,monomial_size());
+  monomial result = newarray_atomic(int,monomial_size());
   one(result);
   return result;
 }

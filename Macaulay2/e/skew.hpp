@@ -77,8 +77,8 @@ public:
     }
   else
     {
-      skew_vars = newarray(int,nvars);
-      skew_list = newarray(int,nvars);
+      skew_vars = newarray_atomic(int,nvars);
+      skew_list = newarray_atomic(int,nvars);
       n_skew = skewvariables->len;
       for (int j=0; j<nvars; j++)
 	{
@@ -101,8 +101,8 @@ public:
 	}
     }
 
-  skew_mvars = newarray(int,nvars);
-  skew_nvars = newarray(int,nvars);
+  skew_mvars = newarray_atomic(int,nvars);
+  skew_nvars = newarray_atomic(int,nvars);
 
   deletearray(skew_mvars);
   deletearray(skew_nvars);

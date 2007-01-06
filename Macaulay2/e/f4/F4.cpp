@@ -115,7 +115,7 @@ void F4GB::load_gen(int which)
   
   r.len = g.len;
   r.coeffs = g.coeffs; // we don't "own" these elements??
-  r.comps = newarray(int, g.len);
+  r.comps = newarray_atomic(int, g.len);
 
   monomial_word *w = g.monoms;
   for (int i=0; i<g.len; i++)
@@ -139,7 +139,7 @@ void F4GB::load_row(packed_monomial monom, int which)
 
   r.len = g.len;
   r.coeffs = g.coeffs; // We do not own this array
-  r.comps = newarray(int, g.len);
+  r.comps = newarray_atomic(int, g.len);
 
   monomial_word *w = g.monoms;
   for (int i=0; i<g.len; i++)
@@ -230,7 +230,7 @@ void F4GB::reorder_columns()
 
   // sort the columns
 
-  long *column_order = newarray(long, ncols);
+  long *column_order = newarray_atomic(long, ncols);
 
   clock_t begin_time = clock();
   for (long i=0; i<ncols; i++)
@@ -446,7 +446,7 @@ void F4GB::insert_gb_element(row_elem &r)
   r.coeffs = result->f.coeffs;
   result->f.coeffs = tmp;
 
-  result->f.monoms = newarray(monomial_word, nlongs);
+  result->f.monoms = newarray_atomic(monomial_word, nlongs);
 
   monomial_word *nextmonom = result->f.monoms;
   for (int i=0; i<r.len; i++)
@@ -463,7 +463,7 @@ void F4GB::insert_gb_element(row_elem &r)
   gb.push_back(result);
 
   // now insert the lead monomial into the lookup table
-  varpower_monomial vp = newarray(varpower_word, 2 * M->n_vars() + 1);
+  varpower_monomial vp = newarray_atomic(varpower_word, 2 * M->n_vars() + 1);
   M->to_varpower_monomial(result->f.monoms, vp);
   lookup->insert_minimal_vp(M->get_component(result->f.monoms), vp, which);
   deleteitem(vp);

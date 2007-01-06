@@ -31,7 +31,7 @@ int MinimalPrimes::codimension()
   minprime_limit = -1;
 
   codim_limit = min_codim;
-  exps[0] = newarray(int,nvars);
+  exps[0] = newarray_atomic(int,nvars);
   for (int i=0; i<nvars; i++) exps[0][i] = 0;
   ass_prime_generator(mi->first_node(), 0);
   state = do_primes;
@@ -49,7 +49,7 @@ MonomialIdeal * MinimalPrimes::min_primes(int codim_limit0, int minprime_limit0)
   state = do_primes;
   n_minprimes = 0;
 
-  if (exps[0] == 0) exps[0] = newarray(int,nvars);
+  if (exps[0] == 0) exps[0] = newarray_atomic(int,nvars);
   for (int i=0; i<nvars; i++) exps[0][i] = 0;
   ass_prime_generator(mi->first_node(), 0);
 
@@ -180,7 +180,7 @@ MonomialIdeal * MinimalPrimes::alg1_min_primes(int maxcodim, int count)
 
   len += mi->length();
   len += mi->length();
-  monoms = newarray(int, len);
+  monoms = newarray_atomic(int, len);
 
   int next_monom = 0;
 
@@ -197,10 +197,10 @@ MonomialIdeal * MinimalPrimes::alg1_min_primes(int maxcodim, int count)
     }
   monoms[next_monom] = 0;
 
-  exp = newarray(int,nvars+1);
+  exp = newarray_atomic(int,nvars+1);
   for (int i=0; i<nvars+1; i++)
     exp[i] = 0;
-  exp2 = newarray(int,nvars);
+  exp2 = newarray_atomic(int,nvars);
   for (int i=0; i<nvars; i++)
     exp[i] = 0;
 
@@ -233,7 +233,7 @@ MonomialIdeal * MinimalPrimes::min_primes(int codim_limit0, int minprime_limit0)
   state = do_primes;
   n_minprimes = 0;
 
-  if (exps[0] == 0) exps[0] = newarray(int,nvars);
+  if (exps[0] == 0) exps[0] = newarray_atomic(int,nvars);
   for (int i=0; i<nvars; i++) exps[0][i] = 0;
 
   while (codim_limit < codim_limit0)
@@ -273,7 +273,7 @@ void MinimalPrimes::ass_prime_generator(Nmi_node *p, int codim)
 {
   int i=codim+1;
   if (exps[i] == 0)
-    exps[i] = newarray(int,nvars);
+    exps[i] = newarray_atomic(int,nvars);
   int *exp0 = exps[i];
   for (int j=0; j<nvars; j++) exp0[j] = exps[codim][j];
   for (;;)

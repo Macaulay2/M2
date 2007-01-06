@@ -187,8 +187,8 @@ void gb2_comp::find_pairs(gb_elem *p)
   intarray vplcm;
   int *find_pairs_m = M->make_one();
   int *f_m = M->make_one();
-  int *find_pairs_exp = newarray(int,M->n_vars());
-  int *find_pairs_lcm = newarray(int,M->n_vars());
+  int *find_pairs_exp = newarray_atomic(int,M->n_vars());
+  int *find_pairs_lcm = newarray_atomic(int,M->n_vars());
 
   GR->gbvector_get_lead_monomial(F, p->f, f_m);
   if (GR->is_skew_commutative())
@@ -327,8 +327,8 @@ void gb2_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
   gbvector *result = &head;
   result->next = 0;
 
-  int *div_totalexp = newarray(int,M->n_vars());
-  int *reduce_ndiv = newarray(int,M->n_vars());
+  int *div_totalexp = newarray_atomic(int,M->n_vars());
+  int *reduce_ndiv = newarray_atomic(int,M->n_vars());
   int count = 0;
   if (gbTrace == 10)
     {
@@ -392,8 +392,8 @@ void gb2_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
   gbvector *result = &head;
   result->next = 0;
 
-  int *div_totalexp = newarray(int,M->n_vars());
-  int *reduce_ndiv = newarray(int,M->n_vars());
+  int *div_totalexp = newarray_atomic(int,M->n_vars());
+  int *reduce_ndiv = newarray_atomic(int,M->n_vars());
   int count = 0;
 
   gbvectorHeap fb(GR,F);

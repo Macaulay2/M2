@@ -42,22 +42,22 @@ mon_order::mon_order(mon_order_types t, M2_arrayint d,M2_arrayint wts)
     INTERNAL_ERROR("mon_order received null pointer");
 
   nweights = wts->len / n;
-  weights = newarray(int,wts->len);
+  weights = newarray_atomic(int,wts->len);
   for (unsigned int i=0; i<wts->len; i++)
     weights[i] = wts->array[i];
 
-  degs = newarray(int,n);
+  degs = newarray_atomic(int,n);
   order = newarray(ptr_to_int,n);
   inv_order = newarray(ptr_to_int,n);
-  inv_degs = newarray(int,n);
+  inv_degs = newarray_atomic(int,n);
   for (int r=0; r<n; r++)
     {
       degs[r] = d->array[r];
       inv_degs[r] = d->array[r];
       assert(d->array[r] > 0); // MES: this should be checked higher up?
 
-      order[r] = newarray(int,n);
-      inv_order[r] = newarray(int,n);
+      order[r] = newarray_atomic(int,n);
+      inv_order[r] = newarray_atomic(int,n);
       for (int c=0; c<n; c++)
 	{
 	  order[r][c] = 0;
@@ -474,7 +474,7 @@ product_mon_order::product_mon_order(M2_arrayint degs0, M2_arrayint blk,
 				     M2_arrayint weights0)
 : mon_order(MO1_PRODUCT, degs0, weights0),
   nblocks(blk->len),
-  blocks(newarray(int,blk->len))
+  blocks(newarray_atomic(int,blk->len))
 {
   for (int i=0; i<nblocks; i++)
     blocks[i] = blk->array[i];

@@ -62,7 +62,7 @@ GBKernelComputation::GBKernelComputation(const GBMatrix *m)
 
   PAIRS_mon = M->make_one();
   REDUCE_mon = M->make_one();
-  REDUCE_exp = newarray(int,M->n_vars());
+  REDUCE_exp = newarray_atomic(int,M->n_vars());
 
   // Set 'gb'.
   strip_gb(m);
@@ -137,7 +137,7 @@ void GBKernelComputation::strip_gb(const GBMatrix *m)
 {
   const VECTOR(gbvector *) &g = m->elems;
   int i;
-  int *components = newarray(int,F->rank());
+  int *components = newarray_atomic(int,F->rank());
   for (i=0; i<F->rank(); i++)
     components[i] = 0;
   for (i=0; i<g.size(); i++)
@@ -186,7 +186,7 @@ void GBKernelComputation::new_pairs(int i)
 
   if (R->is_skew_commutative())
     {
-      int * find_pairs_exp = newarray(int, M->n_vars());
+      int * find_pairs_exp = newarray_atomic(int, M->n_vars());
 
       varpower::to_ntuple(M->n_vars(), vp.raw(), find_pairs_exp);
       for (int w=0; w<R->n_skew_commutative_vars(); w++)
@@ -330,7 +330,7 @@ void GBKernelComputation::wipe_unneeded_terms(gbvector * & f)
 {
   // Remove every term of f (except the lead term)
   // which is NOT divisible by an element of mi.
-  int *exp = newarray(int,GR->n_vars());
+  int *exp = newarray_atomic(int,GR->n_vars());
   int nterms = 1;
   int nsaved = 0;
   gbvector *g = f;

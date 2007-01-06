@@ -22,12 +22,12 @@ void F4toM2Interface::from_M2_vec(const Gausser *KK,
       for (Nterm *t = w->coeff; t != 0; t = t->next)
 	n++;
     }
-  int *exp = newarray(int, M->n_vars()+1);
-  ntuple_word *lexp = newarray(ntuple_word, M->n_vars()+1);
+  int *exp = newarray_atomic(int, M->n_vars()+1);
+  ntuple_word *lexp = newarray_atomic(ntuple_word, M->n_vars()+1);
 
   result.len = n;
   ring_elem *relem_array = newarray(ring_elem, n);
-  result.monoms = newarray(monomial_word, n * MI->max_monomial_size());
+  result.monoms = newarray_atomic(monomial_word, n * MI->max_monomial_size());
   n = 0;
   monomial_word *nextmonom = result.monoms;
   for (vec w = v; w != 0; w = w->next)
@@ -102,8 +102,8 @@ vec F4toM2Interface::to_M2_vec(const Gausser *KK,
       last[i] = 0;
     }
 
-  int *exp = newarray(int, M->n_vars()+1);
-  ntuple_word *lexp = newarray(ntuple_word, M->n_vars()+1);
+  int *exp = newarray_atomic(int, M->n_vars()+1);
+  ntuple_word *lexp = newarray_atomic(ntuple_word, M->n_vars()+1);
 
   ring_elem *relem_array = newarray(ring_elem, f.len);
   KK->to_ringelem_array(f.len, f.coeffs, relem_array);

@@ -17,7 +17,7 @@ class buffer : public our_new_delete
 public:
   buffer() : _size(0), 
     _capacity(BUFFER_INITIAL_CAPACITY), 
-    _buf(newarray(char,BUFFER_INITIAL_CAPACITY)) {}
+    _buf(newarray_atomic(char,BUFFER_INITIAL_CAPACITY)) {}
   ~buffer() { deletearray(_buf); }
   
   void reset() { _size = 0; }

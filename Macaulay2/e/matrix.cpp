@@ -453,7 +453,7 @@ MatrixOrNull *Matrix::sub_matrix(M2_arrayint r, M2_arrayint c) const
   if (F == NULL || G == NULL)
     return 0;
 
-  int *trans = newarray(int,n_rows());
+  int *trans = newarray_atomic(int,n_rows());
   for (int i=0; i<n_rows(); i++)
     trans[i] = -1;
 
@@ -1031,7 +1031,7 @@ MatrixOrNull *Matrix::koszul(int p) const
   const Ring *R = get_ring();
   MatrixConstructor mat(F,G,degree_shift());
   if (p <= 0 || p > n_cols()) return mat.to_matrix();
-  int *a = newarray(int,p);
+  int *a = newarray_atomic(int,p);
   for (int c=0; c < G->rank(); c++)
     {
       comb::decode(c, a,p);
@@ -1115,16 +1115,16 @@ MatrixOrNull *Matrix::koszul_monomials(int nskew, const Matrix *r, const Matrix 
   MatrixConstructor mat(F, c->cols(), 0);
   
   int nvars = M->n_vars();
-  int *skew_list = newarray(int,nskew);
+  int *skew_list = newarray_atomic(int,nskew);
   for (int j=0; j<nskew; j++)
     skew_list[j] = j;
   SkewMultiplication skew(nvars, nskew, skew_list);
   int ncols = c->n_cols();
   const int *a; // a monomial
 
-  int *aexp = newarray(int,nvars);
-  int *bexp = newarray(int,nvars);
-  int *result_exp = newarray(int,nvars);
+  int *aexp = newarray_atomic(int,nvars);
+  int *bexp = newarray_atomic(int,nvars);
+  int *result_exp = newarray_atomic(int,nvars);
   int *m = M->make_one();
   array<Bag *> divisors;
   for (int i=0; i<ncols; i++)
@@ -1173,9 +1173,9 @@ MatrixOrNull *Matrix::koszul(const Matrix *r, const Matrix *c)
   int nrows = r->n_cols();
   int ncols = c->n_cols();
   const int *a, *b; // monomials
-  int *aexp = newarray(int,nvars);
-  int *bexp = newarray(int,nvars);
-  int *result_exp = newarray(int,nvars);
+  int *aexp = newarray_atomic(int,nvars);
+  int *bexp = newarray_atomic(int,nvars);
+  int *result_exp = newarray_atomic(int,nvars);
   for (int i=0; i<ncols; i++)
     {
       if (c->elem(i) == 0) continue;
@@ -1223,9 +1223,9 @@ Matrix *Matrix::wedge_product(int p, int q, const FreeModule *F)
       return mat.to_matrix();
     }
 
-  int *a = newarray(int,p);
-  int *b = newarray(int,q);
-  int *c = newarray(int,p+q);
+  int *a = newarray_atomic(int,p);
+  int *b = newarray_atomic(int,q);
+  int *c = newarray_atomic(int,p+q);
   int col = 0;
 
   for (int i=0; i<Fp->rank(); i++)
@@ -1331,8 +1331,8 @@ vec Matrix::strip_vector(vec &f, const int *vars,
     }
   // At this point, we know that we have a polynomial ring
   int nvars = get_ring()->n_vars();
-  int *exp = newarray(int,nvars);
-  int *scratch_exp = newarray(int,nvars);
+  int *exp = newarray_atomic(int,nvars);
+  int *scratch_exp = newarray_atomic(int,nvars);
   const Monoid *M = get_ring()->Nmonoms();
 
   M->to_expvector(f->monom, exp);
@@ -1548,7 +1548,7 @@ MatrixOrNull *Matrix::monomials(M2_arrayint vars) const
 
   // Now collect all of the monomials
   int *mon = M->make_one();
-  int *exp = newarray(int,M->n_vars());
+  int *exp = newarray_atomic(int,M->n_vars());
   ring_elem one = K->from_int(1);
   exponent_table *E = exponent_table_new(50000, vars->len);
 
@@ -1559,7 +1559,7 @@ MatrixOrNull *Matrix::monomials(M2_arrayint vars) const
 	{
 	  for (Nterm *t = v->coeff; t != 0; t = t->next)
 	    {
-	      int *exp1 = newarray(int,vars->len);
+	      int *exp1 = newarray_atomic(int,vars->len);
 	      M->to_expvector(t->monom, exp);
 	      for (unsigned int i=0; i<vars->len; i++)
 		exp1[i] = exp[vars->array[i]];
@@ -1628,8 +1628,8 @@ static vec coeffs_of_vec(exponent_table *E, M2_arrayint vars,
 
   // At this point, we know that we have a polynomial ring
   int nvars = M->n_vars();
-  int *exp = newarray(int,nvars);
-  int *scratch_exp = newarray(int,1+vars->len);
+  int *exp = newarray_atomic(int,nvars);
+  int *scratch_exp = newarray_atomic(int,1+vars->len);
 
   vec result = 0;
   for (vec g = f ; g != 0; g = g->next)
@@ -1693,7 +1693,7 @@ MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const Matrix *monoms) const
 
   // The extra size in monomial refers to the component:
   exponent_table *E = exponent_table_new(nelements, 1 + vars->len); 
-  exponent EXP = newarray(int,nvars);
+  exponent EXP = newarray_atomic(int,nvars);
   for (int i=0; i<nelements; i++)
     {
       vec v = monoms->elem(i);
@@ -1707,7 +1707,7 @@ MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const Matrix *monoms) const
       P->getMonoid()->to_expvector(m, EXP);
 
       // grab only that part of the monomial we need
-      exponent e = newarray(int, 1 + vars->len);
+      exponent e = newarray_atomic(int, 1 + vars->len);
       get_part_of_expvector(vars, EXP, v->comp, e);
       exponent_table_put(E, e, i+1);
     }
@@ -1798,7 +1798,7 @@ int Matrix::dimension() const
     {
       // This handles the case when the coefficients are a field, or ZZ
       int i,j;
-      int *dims = newarray(int,n_rows());
+      int *dims = newarray_atomic(int,n_rows());
       for (i=0; i<n_rows(); i++)
 	dims[i] = base;
       for (j=0; j<n_cols(); j++)

@@ -148,7 +148,7 @@ ring_elem PolyQQ::var(int v) const
 
 bool PolyQQ::promote(const Ring *R, const ring_elem f, ring_elem &result) const 
 {
-  int *exp = newarray(int,n_vars()); // Actually, possibly smaller number is needed.
+  int *exp = newarray_atomic(int,n_vars()); // Actually, possibly smaller number is needed.
   result = make_logical_term(R,f,exp);
   return true;
 }

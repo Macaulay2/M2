@@ -62,8 +62,8 @@ DetComputation::DetComputation(const Matrix *M0, int p0,
   done = false;
 
 
-  row_set = newarray(int,p);
-  col_set = newarray(int,p);
+  row_set = newarray_atomic(int,p);
+  col_set = newarray_atomic(int,p);
 
   for (int i=0; i<p; i++) 
     {
