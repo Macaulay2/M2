@@ -16,7 +16,7 @@ gb_emitter::gb_emitter(const Matrix *m)
   GR = originalR->get_gb_ring();
   this_degree = m->cols()->lowest_primary_degree() - 1;
   n_gens = 0;			// Also needs to be set at that time.
-  these = newarray_atomic(int,m->n_cols());
+  these = newarray_atomic_clear(int,m->n_cols());
 }
 
 gb_emitter::~gb_emitter()

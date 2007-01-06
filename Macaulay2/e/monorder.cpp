@@ -56,13 +56,8 @@ mon_order::mon_order(mon_order_types t, M2_arrayint d,M2_arrayint wts)
       inv_degs[r] = d->array[r];
       assert(d->array[r] > 0); // MES: this should be checked higher up?
 
-      order[r] = newarray_atomic(int,n);
-      inv_order[r] = newarray_atomic(int,n);
-      for (int c=0; c<n; c++)
-	{
-	  order[r][c] = 0;
-	  inv_order[r][c] = 0;
-	}
+      order[r] = newarray_atomic_clear(int,n);
+      inv_order[r] = newarray_atomic_clear(int,n);
     }
 }
 

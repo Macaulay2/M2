@@ -34,8 +34,7 @@ AssociatedPrimes::~AssociatedPrimes()
 
 int AssociatedPrimes::codimension()
 {
-  exps[0] = newarray_atomic(int,nvars);
-  for (int i=0; i<nvars; i++) exps[0][i] = 0;
+  exps[0] = newarray_atomic_clear(int,nvars);
   ass_prime_generator(mi->first_node(), 0);
   state = do_primes;
   return min_codim;
@@ -53,8 +52,7 @@ MonomialIdeal * AssociatedPrimes::associated_primes(int count)
     }
   minprime_limit = count;
   n_minprimes = 0;
-  if (exps[0] == 0) exps[0] = newarray_atomic(int,nvars);
-  for (int i=0; i<nvars; i++) exps[0][i] = 0;
+  if (exps[0] == 0) exps[0] = newarray_atomic_clear(int,nvars);
   ass_prime_generator(mi->first_node(), 0);
   return ass_primes;
 }

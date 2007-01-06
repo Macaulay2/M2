@@ -187,12 +187,12 @@ void gb2_comp::find_pairs(gb_elem *p)
   intarray vplcm;
   int *find_pairs_m = M->make_one();
   int *f_m = M->make_one();
-  int *find_pairs_exp = newarray_atomic(int,M->n_vars());
   int *find_pairs_lcm = newarray_atomic(int,M->n_vars());
 
   GR->gbvector_get_lead_monomial(F, p->f, f_m);
   if (GR->is_skew_commutative())
     {
+      int *find_pairs_exp = newarray_atomic(int,M->n_vars());
       M->to_expvector(f_m, find_pairs_exp);
 
       for (int v=0; v<GR->n_skew_commutative_vars(); v++)
@@ -209,6 +209,7 @@ void gb2_comp::find_pairs(gb_elem *p)
 	  s_pair *q = new_ring_pair(p, find_pairs_lcm);
 	  elems.insert(new Bag(q, vplcm));
 	}
+      deletearray(find_pairs_exp);
     }
 
   // Add in syzygies arising from a base ring
@@ -290,7 +291,6 @@ void gb2_comp::find_pairs(gb_elem *p)
   // Remove the local variables
   M->remove(find_pairs_m);
   M->remove(f_m);
-  deletearray(find_pairs_exp);
   deletearray(find_pairs_lcm);
 }
 
@@ -328,7 +328,6 @@ void gb2_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
   result->next = 0;
 
   int *div_totalexp = newarray_atomic(int,M->n_vars());
-  int *reduce_ndiv = newarray_atomic(int,M->n_vars());
   int count = 0;
   if (gbTrace == 10)
     {
@@ -383,7 +382,6 @@ void gb2_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
     }
   f = head.next;
   deletearray(div_totalexp);
-  deletearray(reduce_ndiv);
 }
 
 void gb2_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
@@ -393,7 +391,6 @@ void gb2_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
   result->next = 0;
 
   int *div_totalexp = newarray_atomic(int,M->n_vars());
-  int *reduce_ndiv = newarray_atomic(int,M->n_vars());
   int count = 0;
 
   gbvectorHeap fb(GR,F);
@@ -443,7 +440,6 @@ void gb2_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 
   fsyz = fsyzb.value();
   deletearray(div_totalexp);
-  deletearray(reduce_ndiv);
 }
 
 void gb2_comp::reduce(gbvector * &f, gbvector * &fsyz)

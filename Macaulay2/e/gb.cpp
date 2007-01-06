@@ -403,7 +403,6 @@ void GB_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
   result->next = 0;
 
   int *div_totalexp = newarray_atomic(int,_M->n_vars());
-  int *reduce_ndiv = newarray_atomic(int,_M->n_vars());
   int count = 0;
   if (gbTrace == 10)
     {
@@ -460,7 +459,6 @@ void GB_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
     }
   f = head.next;
   deletearray(div_totalexp);
-  deletearray(reduce_ndiv);
 }
 
 void GB_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
@@ -470,7 +468,6 @@ void GB_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
   result->next = 0;
 
   int *div_totalexp = newarray_atomic(int,_M->n_vars());
-  int *reduce_ndiv = newarray_atomic(int,_M->n_vars());
   int count = 0;
 
   gbvectorHeap fb(_GR,_F);
@@ -520,7 +517,6 @@ void GB_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 
   fsyz = fsyzb.value();
   deletearray(div_totalexp);
-  deletearray(reduce_ndiv);
 }
 
 void GB_comp::flush_pairs(int deg)
