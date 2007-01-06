@@ -107,9 +107,7 @@ KBasis::KBasis(const Matrix *bottom,
     }
 
   // Set the recursion variables
-  kb_exp = newarray_atomic(int, P->n_vars());
-  for (int i=0; i<P->n_vars(); i++)
-    kb_exp[i] = 0;
+  kb_exp = newarray_atomic_clear(int, P->n_vars());
   kb_exp_weight = 0;
 
   if (lo_degree != 0) kb_target_lo_weight = weight(lo_degree);

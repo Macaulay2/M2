@@ -137,9 +137,7 @@ void GBKernelComputation::strip_gb(const GBMatrix *m)
 {
   const VECTOR(gbvector *) &g = m->elems;
   int i;
-  int *components = newarray_atomic(int,F->rank());
-  for (i=0; i<F->rank(); i++)
-    components[i] = 0;
+  int *components = newarray_atomic_clear(int,F->rank());
   for (i=0; i<g.size(); i++)
     if (g[i] != 0)
       components[g[i]->comp-1]++;

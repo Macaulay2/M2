@@ -71,6 +71,7 @@ void RRR::elem_text_out(buffer &o, const ring_elem ap) const
   mp_exp_t expptr;
 
   // size_t size = 1000;
+#warning this all looks wrong
   char *s = newarray_atomic(char,1000);
   char *str;
 

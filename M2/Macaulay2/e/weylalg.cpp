@@ -402,13 +402,12 @@ ring_elem WeylAlgebra::mult_by_term(const ring_elem f,
   // Computes c*m*f
 {
   int *top_derivative = newarray_atomic(int,_nderivatives);
-  int *current_derivative = newarray_atomic(int,_nderivatives);
+  int *current_derivative = newarray_atomic_clear(int,_nderivatives);
   int *expf = newarray_atomic(int,nvars_);
   polyheap result(this);
 
   M_->to_expvector(m, expf);
   extractDerivativePart(expf, top_derivative);
-  for (int i=0; i<_nderivatives; i++) current_derivative[i] = 0;
   // Loop over each current_derivative <= top_derivative.
   do {
       ring_elem d = multinomial(c, top_derivative, current_derivative);
@@ -453,10 +452,8 @@ gbvector * WeylAlgebra::gbvector_weyl_diff(
 
   int i;
   int *exp = newarray_atomic(int,_nderivatives);
-  int *deriv_exp = newarray_atomic(int,nvars_);
+  int *deriv_exp = newarray_atomic_clear(int,nvars_);
   int *result_exp = newarray_atomic(int,nvars_);
-  for (i=0; i<nvars_; i++)
-    deriv_exp[i] = 0;
   if (_homogeneous_weyl_algebra)
     {
       int sum = 0;
@@ -522,14 +519,13 @@ gbvector * WeylAlgebra::gbvector_mult_by_term(
   // Computes c*m*f*e_comp  (where components of f and e_comp add).
 {
   int *top_derivative = newarray_atomic(int,_nderivatives);
-  int *current_derivative = newarray_atomic(int,_nderivatives);
+  int *current_derivative = newarray_atomic_clear(int,_nderivatives);
   int *expf = newarray_atomic(int,nvars_);
 
   GBRing *GR = result.get_gb_ring();
   const FreeModule *F = result.get_freemodule();
   M_->to_expvector(m, expf);
   extractDerivativePart(expf, top_derivative);
-  for (int i=0; i<_nderivatives; i++) current_derivative[i] = 0;
   // Loop over each current_derivative <= top_derivative.
   do {
     ring_elem d = multinomial(c, top_derivative, current_derivative);// in K_

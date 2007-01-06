@@ -19,9 +19,7 @@ SkewMultiplication::SkewMultiplication(int nvars, int nskew, int * skew_list)
     _SKEW1(0),
     _SKEW2(0)
 {
-  _skew_exp = newarray_atomic(bool,nvars);
-  for (int i=0; i<nvars; i++)
-    _skew_exp[i] = false;
+  _skew_exp = newarray_atomic_clear(bool,nvars);
   for (int v=0; v<nskew; v++)
     _skew_exp[skew_list[v]] = true;
 

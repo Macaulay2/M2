@@ -1272,10 +1272,7 @@ void res_comp::skeleton_stats(const array<res_pair *> &reslevel)
   int level, i;
   int maxlevel = reslevel.length()-1;
   int maxdegree = skeleton_maxdegree(reslevel); // max slanted degree
-  int *bettis = newarray_atomic(int,(maxlevel+1)*(maxdegree+1));
-  for (i=(maxlevel+1)*(maxdegree+1)-1; i>=0; i--)
-    bettis[i] = 0;
-
+  int *bettis = newarray_atomic_clear(int,(maxlevel+1)*(maxdegree+1));
   for (level=0; level < reslevel.length(); level++)
     {
       for (res_pair *p = reslevel[level]; p != NULL; p = p->next)

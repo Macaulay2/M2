@@ -84,8 +84,7 @@ bool SchurRing::initialize_schur()
   _SMresult = 0;
   
   _EXP1 = newarray_atomic(int,nvars_);
-  _SMtab.p = newarray_atomic(int,nvars_+1);
-  for (int i=0; i<nvars_+1; i++) _SMtab.p[i] = 0;
+  _SMtab.p = newarray_atomic_clear(int,nvars_+1);
   return true;
 }
 

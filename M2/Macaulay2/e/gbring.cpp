@@ -161,9 +161,7 @@ GBRingSkew::GBRingSkew(const Ring *K0,
   _is_skew = true;
   _skew = skew0;
   int ** skew_monoms = newarray(int *, _skew.n_skew_vars());
-  int *exp = newarray_atomic(int, M0->n_vars());
-  for (int i=0; i<M0->n_vars(); i++)
-    exp[i] = 0;
+  int *exp = newarray_atomic_clear(int, M0->n_vars());
   for (int v=0; v<_skew.n_skew_vars(); v++)
     {
       exp[_skew.skew_variable(v)] ++;

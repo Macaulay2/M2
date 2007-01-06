@@ -104,9 +104,7 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
 void ResolutionComputation::betti_init(int lo, int hi, int len, int *&bettis) const
 {
   int z = (hi-lo+1) * (len+1);
-  bettis = newarray_atomic(int,z);
-  for (int i=0; i<z; i++)
-    bettis[i] = 0;
+  bettis = newarray_atomic_clear(int,z);
 }
 
 M2_arrayint ResolutionComputation::betti_make(int lo, int hi, int len, int *bettis) const

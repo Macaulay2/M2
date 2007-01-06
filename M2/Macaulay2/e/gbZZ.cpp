@@ -234,18 +234,17 @@ void GBZZ_comp::find_pairs(int me)
   queue<tagged_term *> elems;
   int j;
   intarray vplcm;
-  int *find_pairs_m = M->make_one();
-  int *find_pairs_exp = newarray_atomic(int,M->n_vars());
-  int *find_pairs_lcm = newarray_atomic(int,M->n_vars());
 
   if (M->is_skew())
     {
       int *skewvars = newarray_atomic(int,M->n_vars());
+      int *find_pairs_exp = newarray_atomic(int,M->n_vars());
       M->to_expvector(p->f->monom, find_pairs_exp);
       int nskew = M->exp_skew_vars(find_pairs_exp, skewvars);
       for (int i=0; i<M->n_vars(); i++) 
 	find_pairs_exp[i] = 0;
       // Add in syzygies arising from exterior variables
+      int *find_pairs_lcm = newarray_atomic(int,M->n_vars());
       for (int v=0; v < nskew; v++)
 	{
 	  int w = skewvars[v];
@@ -261,6 +260,8 @@ void GBZZ_comp::find_pairs(int me)
 				       vsyz));
 	}
       deletearray(skewvars);
+      deletearray(find_pairs_exp);
+      deletearray(find_pairs_lcm);
     }
 
   // Add in syzygies arising from a base ring
@@ -340,9 +341,6 @@ void GBZZ_comp::find_pairs(int me)
     }
   deleteitem(ti);
   // Remove the local variables
-  M->remove(find_pairs_m);
-  deletearray(find_pairs_exp);
-  deletearray(find_pairs_lcm);
 }
 
 //////////////////////////////////////////////
