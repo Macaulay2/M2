@@ -5,6 +5,7 @@ extern "C" {
   extern char *getmem(unsigned int);
   extern char *getmem_atomic(unsigned int);
   extern char *getmem_malloc(unsigned int);
+  extern char *getmem_atomic_clear(unsigned int);
 #if defined(__cplusplus)
 }
 #endif
