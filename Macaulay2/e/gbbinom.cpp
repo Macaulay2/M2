@@ -62,7 +62,7 @@ void binomial_ring::remove_monomial(monomial &m) const
 
 monomial binomial_ring::new_monomial() const
 {
-  return (monomial)((binomial_ring *) this)->monstash->new_elem();
+  return (monomial)((const binomial_ring *) this)->monstash->new_elem();
 }
 
 monomial binomial_ring::copy_monomial(monomial m) const
