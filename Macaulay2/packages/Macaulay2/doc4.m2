@@ -166,11 +166,22 @@ document {
      }
 
 document {
-     Key => Manipulator,
+     Key => {
+	  Manipulator,
+	  (symbol SPACE, Manipulator, Database),
+	  (symbol SPACE, Manipulator, File),
+	  (symbol SPACE, Manipulator, Nothing),
+	  (NewFromMethod, Manipulator, Function)
+	  },
      Headline => "the class of all file manipulators",
      "A file manipulator is a type of list which, when put out to
      a file with ", TO "<<", " causes a chosen function to be applied
-     to the file.",
+     to the file.  Alternatively, a manipulator can be used the way a function is used.",
+     EXAMPLE lines ///
+     	  f = new Manipulator from identity
+	  stdio << f
+	  f stdio
+     ///
      }
 
 document {
