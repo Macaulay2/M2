@@ -252,9 +252,9 @@ ring_elem CC::copy(const ring_elem f) const
 void CC::remove(ring_elem &f) const
 {
 #if 0
-  M2_CC a = CCELEM_VAL(f);
-  remove_elem(a);
-  f = CC_RINGELEM(NULL);
+//   M2_CC a = CCELEM_VAL(f);
+//   remove_elem(a);
+//   f = CC_RINGELEM(NULL);
 #endif
 }
 

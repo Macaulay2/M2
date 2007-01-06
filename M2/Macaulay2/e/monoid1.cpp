@@ -274,14 +274,14 @@ Monoid *Monoid::create(MonomialOrdering *mo,
     }
 
 #if 0
-  // Check that the first degree for each variable is positive
-  if (eachdeg > 0)
-    for (unsigned int i=0; i<nvars; i++)
-      if (degs->array[i * eachdeg] <= 0)
-	{
-	  ERROR("All primary (first) degrees should be positive");
-	  return 0;
-	}
+//   // Check that the first degree for each variable is positive
+//   if (eachdeg > 0)
+//     for (unsigned int i=0; i<nvars; i++)
+//       if (degs->array[i * eachdeg] <= 0)
+// 	{
+// 	  ERROR("All primary (first) degrees should be positive");
+// 	  return 0;
+// 	}
 #endif
 
   // create internal monomial order
@@ -457,19 +457,19 @@ void Monoid::to_expvector(const_monomial m, exponents result_exp) const
 void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
 {
 #if 0
-  for (int i=0; i<monomial_size(); i++, m++, n++)
-    {
-      *result++ = *m + *n;
-      if (*m < 0)
-	{
-	  if (*n < 0 && *result > *m)
-	    ERROR("monomial overflow");
-	}
-      else if (*m >= 0 && *n > 0 && *m < *result)
-	{
-	  ERROR("monomial overflow");
-	}
-    }
+//   for (int i=0; i<monomial_size(); i++, m++, n++)
+//     {
+//       *result++ = *m + *n;
+//       if (*m < 0)
+// 	{
+// 	  if (*n < 0 && *result > *m)
+// 	    ERROR("monomial overflow");
+// 	}
+//       else if (*m >= 0 && *n > 0 && *m < *result)
+// 	{
+// 	  ERROR("monomial overflow");
+// 	}
+//     }
 #endif
   for (int w=0; w<nweights; w++)
     *result++ = *m++ + *n++;
@@ -558,7 +558,7 @@ monomial Monoid::make_one() const
 void Monoid::remove(monomial d) const
 {
 #if 0
-  deletearray(d);
+//   deletearray(d);
 #endif
 }
 
@@ -588,14 +588,14 @@ bool Monoid::divides(const_monomial m, const_monomial n) const
 }
 
 #if 0
-void Monoid::divide(const_monomial m, const_monomial n, monomial result) const
-{
-  if (nvars == 0) return;
-  to_expvector(m, EXP1);
-  to_expvector(n, EXP2);
-  ntuple::divide(nvars, EXP1, EXP2, EXP1);
-  from_expvector(EXP1, result);
-}
+// void Monoid::divide(const_monomial m, const_monomial n, monomial result) const
+// {
+//   if (nvars == 0) return;
+//   to_expvector(m, EXP1);
+//   to_expvector(n, EXP2);
+//   ntuple::divide(nvars, EXP1, EXP2, EXP1);
+//   from_expvector(EXP1, result);
+// }
 #endif
 
 void Monoid::power(const_monomial m, int n, monomial result) const

@@ -12,9 +12,9 @@
 #include "coeffrings.hpp"
 
 #if 0
-#include "gmp.h"
-#define MPZ_VAL(f) (mpz_ptr ((f).poly_val))
-#define MPZ_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
+// #include "gmp.h"
+// #define MPZ_VAL(f) (mpz_ptr ((f).poly_val))
+// #define MPZ_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 #endif
 
 bool RingZZ::initialize_ZZ(const PolynomialRing *deg_ring) 
@@ -187,9 +187,9 @@ ring_elem RingZZ::copy(const ring_elem f) const
 void RingZZ::remove(ring_elem &f) const
 {
 #if 0
-  mpz_ptr a = MPZ_VAL(f);
-  remove_elem(a);
-  f = MPZ_RINGELEM(NULL);
+//   mpz_ptr a = MPZ_VAL(f);
+//   remove_elem(a);
+//   f = MPZ_RINGELEM(NULL);
 #endif
 }
 

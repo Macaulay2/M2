@@ -36,25 +36,25 @@ void SkewPolynomialRing::text_out(buffer &o) const
 
 
 #if 0
-const SkewPolynomialRing *SkewPolynomialRing::createPolyRing(const Monoid *M) const
-  // creates this[M], which is commutative in M variables, but skew commutative in
-  // (some of) the variables of this
-{
-  const Monoid *newM = Monoid::tensor_product(M, getMonoid());
-  if (newM == 0) return 0;
-  
-  int nskew = n_skew_commutative_vars();
-  int nvars = M->n_vars();
-  M2_arrayint newskewvars = makearrayint(nskew);
-  for (int i=0; i<nskew; i++)
-    newskewvars->array[i] = nvars + skew_variable(i);
-
-  return create(getCoefficients(),
-		newM,
-		this,
-		M,
-		newskewvars);
-}
+// const SkewPolynomialRing *SkewPolynomialRing::createPolyRing(const Monoid *M) const
+//   // creates this[M], which is commutative in M variables, but skew commutative in
+//   // (some of) the variables of this
+// {
+//   const Monoid *newM = Monoid::tensor_product(M, getMonoid());
+//   if (newM == 0) return 0;
+//   
+//   int nskew = n_skew_commutative_vars();
+//   int nvars = M->n_vars();
+//   M2_arrayint newskewvars = makearrayint(nskew);
+//   for (int i=0; i<nskew; i++)
+//     newskewvars->array[i] = nvars + skew_variable(i);
+// 
+//   return create(getCoefficients(),
+// 		newM,
+// 		this,
+// 		M,
+// 		newskewvars);
+// }
 #endif
 
 ring_elem SkewPolynomialRing::mult_by_term(const ring_elem f, 

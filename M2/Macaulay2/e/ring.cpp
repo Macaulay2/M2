@@ -367,36 +367,36 @@ M2_arrayint Ring::support(const ring_elem a) const
 ////////////////////////////////////////////
 // This version is valid ONLY for base rings (not QQ!)
 #if 0
-#include "gbring.hpp"
-Ring::trans_tag Ring::trans_type() const { return BASE; }
-
-ring_elem Ring::trans_to_ringelem(ring_elem coeff, 
-				  const int *exp) const
-{
-  return coeff;
-}
-
-ring_elem Ring::trans_to_ringelem_denom(ring_elem coeff, 
-					ring_elem denom, 
-					int *exp) const
-{
-  // To use this, the corresponding ring MUST have division defined
-  return this->divide(coeff, denom);
-}
-
-void Ring::trans_from_ringelem(gbvectorHeap &H, 
-				    ring_elem coeff, 
-				    int comp, 
-				    int *exp,
-				    int firstvar) const
-{
-  GBRing *GR = H.get_gb_ring();
-  const FreeModule *F = H.get_freemodule();
-  
-  gbvector *g = GR->gbvector_term_exponents(F, coeff, exp, comp);
-
-  H.add(g);
-}
+// #include "gbring.hpp"
+// Ring::trans_tag Ring::trans_type() const { return BASE; }
+// 
+// ring_elem Ring::trans_to_ringelem(ring_elem coeff, 
+// 				  const int *exp) const
+// {
+//   return coeff;
+// }
+// 
+// ring_elem Ring::trans_to_ringelem_denom(ring_elem coeff, 
+// 					ring_elem denom, 
+// 					int *exp) const
+// {
+//   // To use this, the corresponding ring MUST have division defined
+//   return this->divide(coeff, denom);
+// }
+// 
+// void Ring::trans_from_ringelem(gbvectorHeap &H, 
+// 				    ring_elem coeff, 
+// 				    int comp, 
+// 				    int *exp,
+// 				    int firstvar) const
+// {
+//   GBRing *GR = H.get_gb_ring();
+//   const FreeModule *F = H.get_freemodule();
+//   
+//   gbvector *g = GR->gbvector_term_exponents(F, coeff, exp, comp);
+// 
+//   H.add(g);
+// }
 #endif
 
 ////////////////////////////////////////////

@@ -588,14 +588,14 @@ void LinAlgGB<CoeffRing>::LU_decompose()
   fflush(stderr);
 
 #if 0
-  // Dense LU code to make sure everything is working OK
-  MATTYPE<CoeffRing> *A = M2Interface<CoeffRing>::to_M2_Mat(K,mat);
-  MATTYPE<CoeffRing> *L = new MATTYPE<CoeffRing>(K,0,0);
-  MATTYPE<CoeffRing> *U = new MATTYPE<CoeffRing>(K,0,0);
-  M2_arrayint P = DMatLU<CoeffRing>::LU(A,L,U);
-  new_GB_elements_dmat(U,P);
-  show_gb_array(gb);
-  ////// end denseLU code
+//   // Dense LU code to make sure everything is working OK
+//   MATTYPE<CoeffRing> *A = M2Interface<CoeffRing>::to_M2_Mat(K,mat);
+//   MATTYPE<CoeffRing> *L = new MATTYPE<CoeffRing>(K,0,0);
+//   MATTYPE<CoeffRing> *U = new MATTYPE<CoeffRing>(K,0,0);
+//   M2_arrayint P = DMatLU<CoeffRing>::LU(A,L,U);
+//   new_GB_elements_dmat(U,P);
+//   show_gb_array(gb);
+//   ////// end denseLU code
 #endif
 
   // DEBUGGING:
@@ -800,12 +800,12 @@ ComputationOrNull *
 LinAlgGB<CoeffRing>::set_hilbert_function(const RingElement *hf)
 {
 #if 0
-  _hf_orig = hf;
-  _hf_diff = RingElement::make_raw(hf->get_ring(), ZERO_RINGELEM);
-  _use_hilb = true;
-  _hilb_new_elems = true;
-
-  return this;
+//   _hf_orig = hf;
+//   _hf_diff = RingElement::make_raw(hf->get_ring(), ZERO_RINGELEM);
+//   _use_hilb = true;
+//   _hilb_new_elems = true;
+// 
+//   return this;
 #endif
   return 0;
 }
@@ -821,8 +821,8 @@ const MatrixOrNull *LinAlgGB<CoeffRing>::get_gb()
     }
   return result.to_matrix();
 #if 0
-  minimalize_gb();
-  return minimal_gb->get_gb();
+//   minimalize_gb();
+//   return minimal_gb->get_gb();
 #endif
   return 0;
 }
@@ -831,13 +831,13 @@ template<typename CoeffRing>
 const MatrixOrNull *LinAlgGB<CoeffRing>::get_mingens()
 {
 #if 0
-  MatrixConstructor mat(_F,0);
-  for (VECTOR(gbelem *)::iterator i = gb.begin(); 
-       i != gb.end(); 
-       i++)
-    if ((*i)->minlevel == ELEM_POSSIBLE_MINGEN)
-      mat.append(originalR->translate_gbvector_to_vec(_F, (*i)->g.f));
-  return mat.to_matrix();
+//   MatrixConstructor mat(_F,0);
+//   for (VECTOR(gbelem *)::iterator i = gb.begin(); 
+//        i != gb.end(); 
+//        i++)
+//     if ((*i)->minlevel == ELEM_POSSIBLE_MINGEN)
+//       mat.append(originalR->translate_gbvector_to_vec(_F, (*i)->g.f));
+//   return mat.to_matrix();
 #endif
   return 0;
 }
@@ -846,8 +846,8 @@ template<typename CoeffRing>
 const MatrixOrNull *LinAlgGB<CoeffRing>::get_change()
 {
 #if 0
-  minimalize_gb();
-  return minimal_gb->get_change();
+//   minimalize_gb();
+//   return minimal_gb->get_change();
 #endif
   return 0;
 }
@@ -856,15 +856,15 @@ template<typename CoeffRing>
 const MatrixOrNull *LinAlgGB<CoeffRing>::get_syzygies()
 {
 #if 0
-  // The (non-minimal) syzygy matrix
-  MatrixConstructor mat(_Fsyz, 0);
-  for (VECTOR(gbvector *)::iterator i = _syz.begin(); 
-       i != _syz.end(); 
-       i++)
-    {
-      mat.append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
-    }
-  return mat.to_matrix();
+//   // The (non-minimal) syzygy matrix
+//   MatrixConstructor mat(_Fsyz, 0);
+//   for (VECTOR(gbvector *)::iterator i = _syz.begin(); 
+//        i != _syz.end(); 
+//        i++)
+//     {
+//       mat.append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
+//     }
+//   return mat.to_matrix();
 #endif
   return 0;
 }
@@ -873,8 +873,8 @@ template<typename CoeffRing>
 const MatrixOrNull *LinAlgGB<CoeffRing>::get_initial(int nparts)
 {
 #if 0
-  minimalize_gb();
-  return minimal_gb->get_initial(nparts);
+//   minimalize_gb();
+//   return minimal_gb->get_initial(nparts);
 #endif
   return 0;
 }
@@ -883,8 +883,8 @@ template<typename CoeffRing>
 const MatrixOrNull *LinAlgGB<CoeffRing>::matrix_remainder(const Matrix *m)
 {
 #if 0
-  minimalize_gb();
-  return minimal_gb->matrix_remainder(m);
+//   minimalize_gb();
+//   return minimal_gb->matrix_remainder(m);
 #endif
   return 0;
 }
@@ -896,8 +896,8 @@ void LinAlgGB<CoeffRing>::matrix_lift(const Matrix *m,
 		 )
 {
 #if 0
-  minimalize_gb();
-  minimal_gb->matrix_lift(m, result_remainder, result_quotient);
+//   minimalize_gb();
+//   minimal_gb->matrix_lift(m, result_remainder, result_quotient);
 #endif
 }
 
@@ -908,8 +908,8 @@ int LinAlgGB<CoeffRing>::contains(const Matrix *m)
   // does not reduce to zero.
 {
 #if 0
-  minimalize_gb();
-  return minimal_gb->contains(m);
+//   minimalize_gb();
+//   return minimal_gb->contains(m);
 #endif
   return 0;
 }

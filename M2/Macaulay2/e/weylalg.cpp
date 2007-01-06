@@ -101,43 +101,43 @@ WeylAlgebra *WeylAlgebra::create(const Ring *K,
 }
 
 #if 0
-const WeylAlgebra *WeylAlgebra::createPolyRing(const Monoid *M) const
-  // creates this[M], which is commutative in M variables, but skew commutative in
-  // (some of) the variables of this
-{
-  const Monoid *newM = Monoid::tensor_product(M, getMonoid());
-  if (newM == 0) return 0;
-  
-  int nvars = M->n_vars();
-  M2_arrayint new_derivs = makearrayint(_nderivatives);
-  M2_arrayint new_comms = makearrayint(_nderivatives);
-
-  int new_homog_var;
-  if (_homog_var >= 0)
-    new_homog_var = _homog_var + nvars;
-  else 
-    new_homog_var = -1;
-
-  for (int i=0; i<_nderivatives; i++)
-    {
-      new_derivs->array[i] = (_derivative[i] >= 0 ?
-			      nvars + _derivative[i]
-			      :
-			      -1);
-      new_comms->array[i]  = (_commutative[i] >= 0 ?
-			      nvars + _commutative[i]
-			      :
-			      -1);
-    }
-
-  return create(getCoefficients(),
-		newM,
-		this,
-		M,
-		new_derivs,
-		new_comms,
-		new_homog_var);
-}
+// const WeylAlgebra *WeylAlgebra::createPolyRing(const Monoid *M) const
+//   // creates this[M], which is commutative in M variables, but skew commutative in
+//   // (some of) the variables of this
+// {
+//   const Monoid *newM = Monoid::tensor_product(M, getMonoid());
+//   if (newM == 0) return 0;
+//   
+//   int nvars = M->n_vars();
+//   M2_arrayint new_derivs = makearrayint(_nderivatives);
+//   M2_arrayint new_comms = makearrayint(_nderivatives);
+// 
+//   int new_homog_var;
+//   if (_homog_var >= 0)
+//     new_homog_var = _homog_var + nvars;
+//   else 
+//     new_homog_var = -1;
+// 
+//   for (int i=0; i<_nderivatives; i++)
+//     {
+//       new_derivs->array[i] = (_derivative[i] >= 0 ?
+// 			      nvars + _derivative[i]
+// 			      :
+// 			      -1);
+//       new_comms->array[i]  = (_commutative[i] >= 0 ?
+// 			      nvars + _commutative[i]
+// 			      :
+// 			      -1);
+//     }
+// 
+//   return create(getCoefficients(),
+// 		newM,
+// 		this,
+// 		M,
+// 		new_derivs,
+// 		new_comms,
+// 		new_homog_var);
+// }
 #endif
 
 void WeylAlgebra::text_out(buffer &o) const
@@ -187,21 +187,21 @@ void WeylAlgebra::initialize1()
 	    diffcoeffstable[i][j] = i * diffcoeffstable[i-1][j-1];
 	}
 #if 0
-      // Display the binomial tables:
-      cout << "---binom table---" << endl;
-      for (i=0; i<=binomtop; i++)
-	{
-	  for (j=0; j<=i; j++)
-	    cout << "  " << binomtable[i][j];
-	  cout << endl;
-	}
-      cout << "---diff table---" << endl;
-      for (i=0; i<=diffcoeffstop; i++)
-	{
-	  for (j=0; j<=i; j++)
-	    cout << "  " << diffcoeffstable[i][j];
-	  cout << endl;
-	}
+//       // Display the binomial tables:
+//       cout << "---binom table---" << endl;
+//       for (i=0; i<=binomtop; i++)
+// 	{
+// 	  for (j=0; j<=i; j++)
+// 	    cout << "  " << binomtable[i][j];
+// 	  cout << endl;
+// 	}
+//       cout << "---diff table---" << endl;
+//       for (i=0; i<=diffcoeffstop; i++)
+// 	{
+// 	  for (j=0; j<=i; j++)
+// 	    cout << "  " << diffcoeffstable[i][j];
+// 	  cout << endl;
+// 	}
 #endif
     }
 }

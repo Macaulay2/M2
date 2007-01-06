@@ -35,19 +35,19 @@ PolyQQ *PolyQQ::create(const PolyRing *P)
 }
 
 #if 0
-PolyQQ *PolyQQ::create_quotient(const PolyQQ *P, const Matrix *I)
-  // I should be be a one row matrix, and a GB in P.
-  // These facts are NOT checked.
-  // Any quotient elements of P are ignored?
-{
-}
-
-PolyQQ *PolyQQ::create_quotient(const PolyQQ *P, const PolyQQ *B)
-  // B should be a logical coeff ring of P.
-  // All quotient elements of B are extended up to P.
-  // and a new ring is made.
-{
-}
+// PolyQQ *PolyQQ::create_quotient(const PolyQQ *P, const Matrix *I)
+//   // I should be be a one row matrix, and a GB in P.
+//   // These facts are NOT checked.
+//   // Any quotient elements of P are ignored?
+// {
+// }
+// 
+// PolyQQ *PolyQQ::create_quotient(const PolyQQ *P, const PolyQQ *B)
+//   // B should be a logical coeff ring of P.
+//   // All quotient elements of B are extended up to P.
+//   // and a new ring is made.
+// {
+// }
 #endif
 
 void PolyQQ::text_out(buffer &o) const

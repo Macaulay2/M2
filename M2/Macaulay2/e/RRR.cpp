@@ -12,9 +12,9 @@
 #include "../d/M2mem.h"
 
 #if 0
-#include "gmp.h"
-#define MPF_VAL(f) (mpf_ptr ((f).poly_val))
-#define MPF_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
+// #include "gmp.h"
+// #define MPF_VAL(f) (mpf_ptr ((f).poly_val))
+// #define MPF_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 #endif
 
 mpf_ptr RRR::_epsilon = NULL;
@@ -288,9 +288,9 @@ ring_elem RRR::copy(const ring_elem f) const
 void RRR::remove(ring_elem &f) const
 {
 #if 0
-  mpf_ptr a = MPF_VAL(f);
-  remove_elem(a);  // does nothing... remove this code?
-  f = MPF_RINGELEM(NULL);
+//   mpf_ptr a = MPF_VAL(f);
+//   remove_elem(a);  // does nothing... remove this code?
+//   f = MPF_RINGELEM(NULL);
 #endif
 }
 

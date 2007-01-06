@@ -531,18 +531,18 @@ bool DMat<CoeffRing>::set_submatrix(M2_arrayint rows,
 #warning "set_submatrix"
 #endif
 #if 0
-  elem *first = array_ + first_row + nrows_ * first_col;
-  long ncols = M->n_cols();
-  for (long c=0; c<ncols; c++)
-    {
-      for (i->set(c); i->valid(); i->next())
-	{
-	  ring_elem a;
-	  i->copy_ring_elem(a);
-	  coeffR->from_ring_elem(*(first + i->row()), a);
-	}
-      first += nrows_;
-    }
+//   elem *first = array_ + first_row + nrows_ * first_col;
+//   long ncols = M->n_cols();
+//   for (long c=0; c<ncols; c++)
+//     {
+//       for (i->set(c); i->valid(); i->next())
+// 	{
+// 	  ring_elem a;
+// 	  i->copy_ring_elem(a);
+// 	  coeffR->from_ring_elem(*(first + i->row()), a);
+// 	}
+//       first += nrows_;
+//     }
 #endif
   delete i;
   return true;

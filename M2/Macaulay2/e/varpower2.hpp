@@ -10,9 +10,9 @@ class varpower
 {
   friend class index_varpower;
 #if 0
-  static int var(int n);
-  static int exponent(int n);
-  static int pair(int v, int e);
+//   static int var(int n);
+//   static int exponent(int n);
+//   static int pair(int v, int e);
 #endif
 
   static int degree_of(int n, const int *a);

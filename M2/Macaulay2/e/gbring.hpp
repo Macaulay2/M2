@@ -225,19 +225,19 @@ public:
   int gbvector_n_terms(const gbvector *f) const;
 
 #if 0
-  // Degrees, using the weight vector _degrees.
-  int exponents_weight(const int *e) const;
-
-  int gbvector_term_weight(const FreeModule *F, 
-			   const gbvector *f);
-
-  void gbvector_weight(const FreeModule *F, const gbvector *f,
-		       int &result_lead,
-		       int &result_lo,
-		       int &result_hi);
-
-  int gbvector_degree(const FreeModule *F, 
-		      const gbvector *f);
+//   // Degrees, using the weight vector _degrees.
+//   int exponents_weight(const int *e) const;
+// 
+//   int gbvector_term_weight(const FreeModule *F, 
+// 			   const gbvector *f);
+// 
+//   void gbvector_weight(const FreeModule *F, const gbvector *f,
+// 		       int &result_lead,
+// 		       int &result_lo,
+// 		       int &result_hi);
+// 
+//   int gbvector_degree(const FreeModule *F, 
+// 		      const gbvector *f);
 #endif
 
   void gbvector_multidegree(const FreeModule *F, 

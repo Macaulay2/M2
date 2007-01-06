@@ -841,17 +841,17 @@ bool SMat<CoeffRing>::set_submatrix(M2_arrayint rows,
   return false;
   MutableMatrix::iterator *i = M->begin();
 #if 0
-  long ncols = M->n_cols();
-  for (long c=0; c<ncols; c++)
-    {
-      for (i->set(c); i->valid(); i->next())
-	{
-	  ring_elem a;
-	  i->copy_ring_elem(a);
-	  coeffR->from_ring_elem(*(first + i->row()), a);
-	}
-      first += nrows_;
-    }
+//   long ncols = M->n_cols();
+//   for (long c=0; c<ncols; c++)
+//     {
+//       for (i->set(c); i->valid(); i->next())
+// 	{
+// 	  ring_elem a;
+// 	  i->copy_ring_elem(a);
+// 	  coeffR->from_ring_elem(*(first + i->row()), a);
+// 	}
+//       first += nrows_;
+//     }
 #endif
   delete i;
   return true;
@@ -881,27 +881,27 @@ SMat<CoeffRing> * SMat<CoeffRing>::submatrix(M2_arrayint rows,
   return result;
 
 #if 0
-  // 6/1/2005: the following is faulty, if rows has duplicate entries.
-  int *trans = newarray_atomic(int,nrows_);
-  for (int i=0; i<nrows_; i++)
-    trans[i] = -1;
-
-  for (unsigned j=0; j<r->len; j++)
-    if (r->array[j] >= 0 && r->array[j] < nrows_)
-      trans[r->array[j]] = j;
-
-  for (unsigned int i=0; i<c->len; i++)
-    {
-      result->columns_[i] = subvector(trans, columns_[i]);
-    }
-  deletearray(trans);
-  return result;
-
-      vec v = elem(c->array[i]);
-      for ( ; v != NULL; v = v->next)
-	if (trans[v->comp] != -1)
-	  mat.set_entry(trans[v->comp], i, v->coeff);
-    }
+//   // 6/1/2005: the following is faulty, if rows has duplicate entries.
+//   int *trans = newarray_atomic(int,nrows_);
+//   for (int i=0; i<nrows_; i++)
+//     trans[i] = -1;
+// 
+//   for (unsigned j=0; j<r->len; j++)
+//     if (r->array[j] >= 0 && r->array[j] < nrows_)
+//       trans[r->array[j]] = j;
+// 
+//   for (unsigned int i=0; i<c->len; i++)
+//     {
+//       result->columns_[i] = subvector(trans, columns_[i]);
+//     }
+//   deletearray(trans);
+//   return result;
+// 
+//       vec v = elem(c->array[i]);
+//       for ( ; v != NULL; v = v->next)
+// 	if (trans[v->comp] != -1)
+// 	  mat.set_entry(trans[v->comp], i, v->coeff);
+//     }
 #endif
 }
 

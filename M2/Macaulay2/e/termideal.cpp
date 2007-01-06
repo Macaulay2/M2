@@ -268,84 +268,84 @@ TermIdeal *TermIdeal::make_termideal(GBRing *GR,
 
 // MES Aug 2002: this needs to be done too
 #if 0
-TermIdeal *TermIdeal::make_ring_termideal(const PolynomialRing *R,
-					  const array<ring_elem> &elems1,
-					  const array<ring_elem> &elems2,
-					  array<ring_elem> &result)
-{
-  // R should be the polynomial ring, NOT a quotient.
-  int i;
-  array<ring_elem> all;
-  queue<tagged_term *> guys;
-  int n = elems1.length();
-  for (i=0; i<n; i++)
-    all.append(R->copy(elems1[i]));
-  for (i=0; i<elems2.length(); i++)
-    all.append(R->copy(elems2[i]));
-  FreeModule *G = R->make_FreeModule(all.length());
-
-  for (i=0; i<all.length(); i++)
-    {
-      Nterm *f = all[i];
-      tagged_term *t = new 
-	tagged_term(R->Ncoeffs()->copy(f->coeff),
-		    R->Nmonoms()->make_new(f->monom),
-		    G->e_sub_i(i));
-      guys.insert(t);
-    }
-  TermIdeal *ti = make_termideal(R,G,guys);
-
-  // Now we loop through ti, adding to 'result', and resetting the 'gsyz'
-  // field of 'ti'.  We then place the entire list in 'ring_terms'.
-  mon_term *p;
-  for (p = ti->terms->next; p != ti->terms; p = p->next)
-    {
-      tagged_term *t = p->t;
-      Nterm *f = R->from_int(0);
-      R->apply_ring_elements(f, t->gsyz(), all);
-      result.append(f);
-    }
-  const FreeModule *RRsyz = R->make_FreeModule(result.length());
-  ti->Rsyz = RRsyz;
-  i = 0;
-  for (p = ti->terms->next; p != ti->terms; p = p->next)
-    {
-      tagged_term *t = p->t;
-      G->remove(t->_gsyz);
-      t->_gsyz = NULL;
-      t->_rsyz = ti->Rsyz->e_sub_i(i++);
-      ti->Rsyz->negate_to(t->_rsyz);
-    }
-
-  ti->ring_terms = ti->terms;
-  ti->terms = ti->new_mon_term_head();
-  ti->count = 0;
-  return ti;
-}
+// TermIdeal *TermIdeal::make_ring_termideal(const PolynomialRing *R,
+// 					  const array<ring_elem> &elems1,
+// 					  const array<ring_elem> &elems2,
+// 					  array<ring_elem> &result)
+// {
+//   // R should be the polynomial ring, NOT a quotient.
+//   int i;
+//   array<ring_elem> all;
+//   queue<tagged_term *> guys;
+//   int n = elems1.length();
+//   for (i=0; i<n; i++)
+//     all.append(R->copy(elems1[i]));
+//   for (i=0; i<elems2.length(); i++)
+//     all.append(R->copy(elems2[i]));
+//   FreeModule *G = R->make_FreeModule(all.length());
+// 
+//   for (i=0; i<all.length(); i++)
+//     {
+//       Nterm *f = all[i];
+//       tagged_term *t = new 
+// 	tagged_term(R->Ncoeffs()->copy(f->coeff),
+// 		    R->Nmonoms()->make_new(f->monom),
+// 		    G->e_sub_i(i));
+//       guys.insert(t);
+//     }
+//   TermIdeal *ti = make_termideal(R,G,guys);
+// 
+//   // Now we loop through ti, adding to 'result', and resetting the 'gsyz'
+//   // field of 'ti'.  We then place the entire list in 'ring_terms'.
+//   mon_term *p;
+//   for (p = ti->terms->next; p != ti->terms; p = p->next)
+//     {
+//       tagged_term *t = p->t;
+//       Nterm *f = R->from_int(0);
+//       R->apply_ring_elements(f, t->gsyz(), all);
+//       result.append(f);
+//     }
+//   const FreeModule *RRsyz = R->make_FreeModule(result.length());
+//   ti->Rsyz = RRsyz;
+//   i = 0;
+//   for (p = ti->terms->next; p != ti->terms; p = p->next)
+//     {
+//       tagged_term *t = p->t;
+//       G->remove(t->_gsyz);
+//       t->_gsyz = NULL;
+//       t->_rsyz = ti->Rsyz->e_sub_i(i++);
+//       ti->Rsyz->negate_to(t->_rsyz);
+//     }
+// 
+//   ti->ring_terms = ti->terms;
+//   ti->terms = ti->new_mon_term_head();
+//   ti->count = 0;
+//   return ti;
+// }
 #endif
 
 #if 0
-// MES Aug 2002: this needs to be done too
-void TermIdeal::append_to_matrix(Matrix *m, int i) const
-{
-  // Should check: i is in range, m has same ring as this.
-  if (i < 0 || i >= m->n_rows())
-    {
-      ERROR("index out of range");
-      return;
-    }
-  if (m->get_ring() != R)
-    {
-      ERROR("incorrect base ring");
-      return;
-    }
-  for (mon_term *p = terms->next; p != terms; p = p->next)
-    {
-      ring_elem r = R->term(p->coeff(), p->monom());
-      vec v = m->rows()->raw_term(r,i);
-      if (v != NULL) m->append(v);
-    }
-}
+// // MES Aug 2002: this needs to be done too
+// void TermIdeal::append_to_matrix(Matrix *m, int i) const
+// {
+//   // Should check: i is in range, m has same ring as this.
+//   if (i < 0 || i >= m->n_rows())
+//     {
+//       ERROR("index out of range");
+//       return;
+//     }
+//   if (m->get_ring() != R)
+//     {
+//       ERROR("incorrect base ring");
+//       return;
+//     }
+//   for (mon_term *p = terms->next; p != terms; p = p->next)
+//     {
+//       ring_elem r = R->term(p->coeff(), p->monom());
+//       vec v = m->rows()->raw_term(r,i);
+//       if (v != NULL) m->append(v);
+//     }
+// }
 #endif
 
 Matrix *TermIdeal::change_matrix() const
@@ -360,17 +360,17 @@ Matrix *TermIdeal::change_matrix() const
 }
 
 #if 0
-// MES Aug 2002: this needs to be done too
-Matrix *TermIdeal::ring_change_matrix() const
-{
-  Matrix *result = new Matrix(Rsyz);
-  for (mon_term *p = terms->next; p != terms; p = p->next)
-    {
-      vec vsyz = Rsyz->copy(p->t->_rsyz);
-      result->append(vsyz);
-    }
-  return result;
-}
+// // MES Aug 2002: this needs to be done too
+// Matrix *TermIdeal::ring_change_matrix() const
+// {
+//   Matrix *result = new Matrix(Rsyz);
+//   for (mon_term *p = terms->next; p != terms; p = p->next)
+//     {
+//       vec vsyz = Rsyz->copy(p->t->_rsyz);
+//       result->append(vsyz);
+//     }
+//   return result;
+// }
 #endif
 
 tagged_term *TermIdeal::insert_minimal(tagged_term *tt)

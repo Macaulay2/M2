@@ -278,11 +278,11 @@ IM2_Resolution_status_level(Computation *C,
   ERROR("not re-implemented yet");
   return COMP_ERROR;
 #if 0
-  ResolutionComputation *G = C->cast_to_ResolutionComputation();
-  if (G != 0)
-    return G->status_level(level, complete_up_through_this_degree);
-  ERROR("expected resolution computation type");
-  return 0;
+//   ResolutionComputation *G = C->cast_to_ResolutionComputation();
+//   if (G != 0)
+//     return G->status_level(level, complete_up_through_this_degree);
+//   ERROR("expected resolution computation type");
+//   return 0;
 #endif
 }
 

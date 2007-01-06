@@ -132,62 +132,62 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 
 
 #if 0
-  if (is_graded)
-    return GB_comp::create(m, 
-			   collect_syz, 
-			   n_rows_to_keep,
-			   strategy,
-			   use_max_degree,
-			   max_degree);
-  
-  return 0;
+//   if (is_graded)
+//     return GB_comp::create(m, 
+// 			   collect_syz, 
+// 			   n_rows_to_keep,
+// 			   strategy,
+// 			   use_max_degree,
+// 			   max_degree);
+//   
+//   return 0;
 #endif
 #if 0
-  if (base_is_ZZ)
-    {
-      if (ring_is_base)
-	{
-
-	  return HermiteComputation::create(m, 
-					    collect_syz, 
-					    collect_change, 
-					    n_rows_to_keep);
-	  return 0;
-	}
-      // Question: should we separate between the graded, nongraded versions?
-      return GBZZ::create(m, 
-			  collect_syz, 
-			  collect_change, 
-			  n_rows_to_keep);
-      return 0;
-    }
-  else
-    {
-      // Base is a field
-      if (ring_is_base)
-	{
-	  return GaussElimComputation::create(m, 
-					      collect_syz, 
-					      collect_change, 
-					      n_rows_to_keep); 
-	  // This should be fraction free
-	  return 0;
-	}
-      // Also allow the user to choose between them.
-      if (is_graded)
-	return GB_comp::create(m, 
-			       collect_syz, 
-			       n_rows_to_keep,
-			       strategy,
-			       use_max_degree,
-			       max_degree);
-      return GB_inhom_comp::create(m, 
-				   collect_syz, 
-				   collect_change, 
-				   n_rows_to_keep,
-				   stategy);
-      return 0;
-    }
+//   if (base_is_ZZ)
+//     {
+//       if (ring_is_base)
+// 	{
+// 
+// 	  return HermiteComputation::create(m, 
+// 					    collect_syz, 
+// 					    collect_change, 
+// 					    n_rows_to_keep);
+// 	  return 0;
+// 	}
+//       // Question: should we separate between the graded, nongraded versions?
+//       return GBZZ::create(m, 
+// 			  collect_syz, 
+// 			  collect_change, 
+// 			  n_rows_to_keep);
+//       return 0;
+//     }
+//   else
+//     {
+//       // Base is a field
+//       if (ring_is_base)
+// 	{
+// 	  return GaussElimComputation::create(m, 
+// 					      collect_syz, 
+// 					      collect_change, 
+// 					      n_rows_to_keep); 
+// 	  // This should be fraction free
+// 	  return 0;
+// 	}
+//       // Also allow the user to choose between them.
+//       if (is_graded)
+// 	return GB_comp::create(m, 
+// 			       collect_syz, 
+// 			       n_rows_to_keep,
+// 			       strategy,
+// 			       use_max_degree,
+// 			       max_degree);
+//       return GB_inhom_comp::create(m, 
+// 				   collect_syz, 
+// 				   collect_change, 
+// 				   n_rows_to_keep,
+// 				   stategy);
+//       return 0;
+//     }
 #endif
 }
 

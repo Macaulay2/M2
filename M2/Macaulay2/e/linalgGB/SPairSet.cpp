@@ -204,10 +204,10 @@ SPairConstructor<gb_array>::create_pre_spair(int i)
   monomial m1 = gb[i]->f.monoms[0];
   uninterned_monomial m = MonomialOps::quotient(B, m1, m0);
 #if 0
-  int len = MONOMIAL_LENGTH(m1);
-  monomial m = B.reserve(len);
-  monomial_quotient(m1, m0, m);
-  B.intern(MONOMIAL_LENGTH(m));
+//   int len = MONOMIAL_LENGTH(m1);
+//   monomial m = B.reserve(len);
+//   monomial_quotient(m1, m0, m);
+//   B.intern(MONOMIAL_LENGTH(m));
 #endif
   pre_spair *result = new pre_spair;
   result->next = 0;

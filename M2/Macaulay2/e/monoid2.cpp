@@ -310,22 +310,22 @@ void Monoid::to_expvector(const_monomial m, exponents result_exp) const
 }
 
 #if 0
-void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
-{
-  for (int i=0; i<monomial_size_; i++)
-    {
-      int x = *m++;
-      int y = *n++;
-      int z = x+y;
-      *result++ = z;
-      // Check for overflow
-      if ((x < 0) == (y < 0) && (x < 0) != (z < 0))
-	{
-	  ERROR("monomial overflow");
-	  fprintf(stderr, "monomial overflow has occurred\n");
-	}
-    }
-}
+// void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
+// {
+//   for (int i=0; i<monomial_size_; i++)
+//     {
+//       int x = *m++;
+//       int y = *n++;
+//       int z = x+y;
+//       *result++ = z;
+//       // Check for overflow
+//       if ((x < 0) == (y < 0) && (x < 0) != (z < 0))
+// 	{
+// 	  ERROR("monomial overflow");
+// 	  fprintf(stderr, "monomial overflow has occurred\n");
+// 	}
+//     }
+// }
 #endif
 
 void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
@@ -364,21 +364,21 @@ void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
 }
 
 #if 0
-mult is called:
-  respoly2.cpp
-  res2.cpp
-  res.cpp
-  respoly.cpp
-  schorder.cpp
-  freemod.cpp
-  gbring.cpp
-  matrix.cpp
-  polyring.cpp
-  ringmap.cpp
-  skewpoly.cpp
-  weylalg.cpp
-  mat-kbasis.cpp
-  freemod2.cpp
+// mult is called:
+//   respoly2.cpp
+//   res2.cpp
+//   res.cpp
+//   respoly.cpp
+//   schorder.cpp
+//   freemod.cpp
+//   gbring.cpp
+//   matrix.cpp
+//   polyring.cpp
+//   ringmap.cpp
+//   skewpoly.cpp
+//   weylalg.cpp
+//   mat-kbasis.cpp
+//   freemod2.cpp
 #endif
 int Monoid::num_parts() const
 {
@@ -472,7 +472,7 @@ monomial Monoid::make_one() const
 void Monoid::remove(monomial d) const
 {
 #if 0
-  deletearray(d);
+//   deletearray(d);
 #endif
 }
 
@@ -497,14 +497,14 @@ bool Monoid::divides(const_monomial m, const_monomial n) const
 }
 
 #if 0
-void Monoid::divide(const_monomial m, const_monomial n, monomial result) const
-{
-  if (nvars_ == 0) return;
-  to_expvector(m, EXP1_);
-  to_expvector(n, EXP2_);
-  ntuple::divide(nvars_, EXP1_, EXP2_, EXP1_);
-  from_expvector(EXP1_, result);
-}
+// void Monoid::divide(const_monomial m, const_monomial n, monomial result) const
+// {
+//   if (nvars_ == 0) return;
+//   to_expvector(m, EXP1_);
+//   to_expvector(n, EXP2_);
+//   ntuple::divide(nvars_, EXP1_, EXP2_, EXP1_);
+//   from_expvector(EXP1_, result);
+// }
 #endif
 
 void Monoid::power(const_monomial m, int n, monomial result) const

@@ -38,9 +38,9 @@ public:
 
   RingElement *operator/(const RingElement &b) const;
 #if 0
-  RingElement *operator%(const RingElement &b) const;
-  RingElement *divide(const RingElement &b, 
-		      RingElement * &rem) const;
+//   RingElement *operator%(const RingElement &b) const;
+//   RingElement *divide(const RingElement &b, 
+// 		      RingElement * &rem) const;
 #endif
   RingElement *invert() const;
 

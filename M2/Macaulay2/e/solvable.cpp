@@ -34,22 +34,22 @@ SolvableAlgebra *SolvableAlgebra::create(const PolynomialRing *R,
 }
 
 #if 0
-const SolvableAlgebra *SolvableAlgebra::createPolyRing(const Monoid *M) const
-  // creates this[M], which is commutative in M variables, but skew commutative in
-  // (some of) the variables of this
-{
-  const Monoid *newM = Monoid::tensor_product(M, getMonoid());
-  if (newM == 0) return 0;
-
-  // Somehow generate a new matrix Q?
-  const Matrix *Q = Q_;
-
-  return create(getCoefficients(),
-		newM,
-		this,
-		M,
-		Q);
-}
+// const SolvableAlgebra *SolvableAlgebra::createPolyRing(const Monoid *M) const
+//   // creates this[M], which is commutative in M variables, but skew commutative in
+//   // (some of) the variables of this
+// {
+//   const Monoid *newM = Monoid::tensor_product(M, getMonoid());
+//   if (newM == 0) return 0;
+// 
+//   // Somehow generate a new matrix Q?
+//   const Matrix *Q = Q_;
+// 
+//   return create(getCoefficients(),
+// 		newM,
+// 		this,
+// 		M,
+// 		Q);
+// }
 #endif
 
 ring_elem SolvableAlgebra::mult_by_term(const ring_elem f, 

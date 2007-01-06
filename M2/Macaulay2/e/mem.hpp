@@ -17,15 +17,15 @@ extern unsigned int engine_highwater;
 
 // Each type should include something like the following:
 #if 0
-// in .hpp file:
-friend void i_stashes();
-static stash *mystash;
-void *operator new(size_t size) { return mystash->new_elem(); }
-void operator delete(void *p) { mystash->delete_elem(p); }
-// in .cc file
-stash *matrix_rec::mystash;
-// in object.cc in i_stashes:
-matrix_rec::mystash = new stash("matrix", sizeof(matrix_rec));
+// // in .hpp file:
+// friend void i_stashes();
+// static stash *mystash;
+// void *operator new(size_t size) { return mystash->new_elem(); }
+// void operator delete(void *p) { mystash->delete_elem(p); }
+// // in .cc file
+// stash *matrix_rec::mystash;
+// // in object.cc in i_stashes:
+// matrix_rec::mystash = new stash("matrix", sizeof(matrix_rec));
 #endif
 
 class slab : public our_new_delete

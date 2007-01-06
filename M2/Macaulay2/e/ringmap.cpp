@@ -134,9 +134,9 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
 			     int nvars_in_source) const
 {
 #if 0
-  // I think that this is removable MES 1/5/04
-  assert(sourceK->total_n_vars() <= nvars);
-  int first_var = sourceK->total_n_vars();
+//   // I think that this is removable MES 1/5/04
+//   assert(sourceK->total_n_vars() <= nvars);
+//   int first_var = sourceK->total_n_vars();
 #endif
   for (index_varpower i = vp; i.valid(); ++i)
     {

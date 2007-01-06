@@ -595,12 +595,12 @@ void gbA::minimalize_pairs_non_ZZ(spairs &new_set)
      /* new_set: array of spair*  */
 {
 #if 0
-  spairs keep_for_now;
-  emit("--minimalize pairs--\n");
-  for (int i=0; i<new_set.size(); i++) {
-    keep_for_now.push_back(new_set[i]);
-    debug_spair(new_set[i]);
-  }
+//   spairs keep_for_now;
+//   emit("--minimalize pairs--\n");
+//   for (int i=0; i<new_set.size(); i++) {
+//     keep_for_now.push_back(new_set[i]);
+//     debug_spair(new_set[i]);
+//   }
 #endif
   sort(new_set.begin(), new_set.end(), spair_sorter(_nvars));
   MonomialTable *montab = MonomialTable::make(_nvars);
@@ -1333,114 +1333,114 @@ int gbA::find_good_term_divisor_ZZ(
 }
 
 #if 0
-int gbA::find_good_divisor(exponents e,
-			   int x,
-			   int degf, 
-			   int &result_alpha)
-  // Returns an integer w.
-  // if w >=0: gb[w]'s lead term divides [e,x].
-  // if w<0: no gb[w] has lead term dividing [e,x].
-{
-  int alpha, newalpha, ealpha;
-  int n = 0;
-
-  VECTOR(MonomialTable::mon_term *) divisors;
-  ealpha = degf - weightInfo_->exponents_weight(e,x);
-
-#ifdef DEVELOPMENT
-#warning "previous divisor code might not work with alpha..."
-#endif
-  if (divisor_previous >= 0 && x == divisor_previous_comp)
-    {
-      gbelem *tg = gb[divisor_previous];
-      alpha = tg->alpha - ealpha;
-      if (alpha <= 0 && exponents_divide(_nvars, tg->lead, e))
-	{
-	  result_alpha = 0;
-	  return divisor_previous;
-	}
-    }
-  /* First search for ring divisors */
-  if (ringtable)
-    n += ringtable->find_divisors(-1, e, 1, &divisors);
-
-  /* Next search for GB divisors */
-  n += lookup->find_divisors(-1, e, x, &divisors);
-
-  if (gbTrace >= 4 && n >= 2)
-    {
-      gbelem *tg = gb[divisors[n-1]->_val];
-      gbvector *f = tg->g.f;
-      int sz = tg->size;
-      if (sz >= 3)
-	{
-	  buffer o;
-	  o << "\nndivisors " << n;
-	  o << "\n  choices:";
-	  for (int j=0; j<n; j++)
-	    {
-	      f = gb[divisors[j]->_val]->g.f;
-	      o << "\n    size " << R->gbvector_n_terms(f);
-	      o << " lead ";
-	      f = R->gbvector_lead_term(-1,_F,f);
-	      R->gbvector_text_out(o,_F,f);
-	    }
-	  o << "\n";
-	  emit_wrapped(o.str());
-	}
-    }
-  /* Now find the minimal alpha value */
-  if (n == 0) 
-    {
-      result_alpha = 0;
-      return -1;
-    }
-  int result = divisors[n-1]->_val;
-  gbelem *tg = gb[result];
-  alpha = tg->alpha - ealpha;
-  if (alpha <= 0) 
-    {
-      alpha = 0;
-      int minsz = R->gbvector_n_terms(tg->g.f);
-      for (int i=n-2; i>=0; i--)
-	{
-	  int new_val = divisors[i]->_val;
-	  tg = gb[new_val];
-	  int sz = R->gbvector_n_terms(tg->g.f);
-	  if (sz < minsz)
-	    {
-	      if (tg->alpha <= ealpha)
-		{
-		  minsz = sz;
-		  result = new_val;
-		}
-	    }
-	}
-    }
-  else
-    //    for (i=1; i<n; i++)
-    for (int i=n-2; i>=0; i--)
-      {
-	int new_val = divisors[i]->_val;
-	tg = gb[new_val];
-
-
-	newalpha = tg->alpha - ealpha;
-	if (newalpha <= 0) {
-	  alpha = 0;
-	  result = new_val;
-	  break;
-	} else if (newalpha < alpha) 
-	  {
-	    result = new_val;
-	    alpha = newalpha;
-	  }
-      }
-  divisor_previous = result;
-  divisor_previous_comp = x;
-  result_alpha = alpha;
-  return result;
-}
+// int gbA::find_good_divisor(exponents e,
+// 			   int x,
+// 			   int degf, 
+// 			   int &result_alpha)
+//   // Returns an integer w.
+//   // if w >=0: gb[w]'s lead term divides [e,x].
+//   // if w<0: no gb[w] has lead term dividing [e,x].
+// {
+//   int alpha, newalpha, ealpha;
+//   int n = 0;
+// 
+//   VECTOR(MonomialTable::mon_term *) divisors;
+//   ealpha = degf - weightInfo_->exponents_weight(e,x);
+// 
+// #ifdef DEVELOPMENT
+// #warning "previous divisor code might not work with alpha..."
+// #endif
+//   if (divisor_previous >= 0 && x == divisor_previous_comp)
+//     {
+//       gbelem *tg = gb[divisor_previous];
+//       alpha = tg->alpha - ealpha;
+//       if (alpha <= 0 && exponents_divide(_nvars, tg->lead, e))
+// 	{
+// 	  result_alpha = 0;
+// 	  return divisor_previous;
+// 	}
+//     }
+//   /* First search for ring divisors */
+//   if (ringtable)
+//     n += ringtable->find_divisors(-1, e, 1, &divisors);
+// 
+//   /* Next search for GB divisors */
+//   n += lookup->find_divisors(-1, e, x, &divisors);
+// 
+//   if (gbTrace >= 4 && n >= 2)
+//     {
+//       gbelem *tg = gb[divisors[n-1]->_val];
+//       gbvector *f = tg->g.f;
+//       int sz = tg->size;
+//       if (sz >= 3)
+// 	{
+// 	  buffer o;
+// 	  o << "\nndivisors " << n;
+// 	  o << "\n  choices:";
+// 	  for (int j=0; j<n; j++)
+// 	    {
+// 	      f = gb[divisors[j]->_val]->g.f;
+// 	      o << "\n    size " << R->gbvector_n_terms(f);
+// 	      o << " lead ";
+// 	      f = R->gbvector_lead_term(-1,_F,f);
+// 	      R->gbvector_text_out(o,_F,f);
+// 	    }
+// 	  o << "\n";
+// 	  emit_wrapped(o.str());
+// 	}
+//     }
+//   /* Now find the minimal alpha value */
+//   if (n == 0) 
+//     {
+//       result_alpha = 0;
+//       return -1;
+//     }
+//   int result = divisors[n-1]->_val;
+//   gbelem *tg = gb[result];
+//   alpha = tg->alpha - ealpha;
+//   if (alpha <= 0) 
+//     {
+//       alpha = 0;
+//       int minsz = R->gbvector_n_terms(tg->g.f);
+//       for (int i=n-2; i>=0; i--)
+// 	{
+// 	  int new_val = divisors[i]->_val;
+// 	  tg = gb[new_val];
+// 	  int sz = R->gbvector_n_terms(tg->g.f);
+// 	  if (sz < minsz)
+// 	    {
+// 	      if (tg->alpha <= ealpha)
+// 		{
+// 		  minsz = sz;
+// 		  result = new_val;
+// 		}
+// 	    }
+// 	}
+//     }
+//   else
+//     //    for (i=1; i<n; i++)
+//     for (int i=n-2; i>=0; i--)
+//       {
+// 	int new_val = divisors[i]->_val;
+// 	tg = gb[new_val];
+// 
+// 
+// 	newalpha = tg->alpha - ealpha;
+// 	if (newalpha <= 0) {
+// 	  alpha = 0;
+// 	  result = new_val;
+// 	  break;
+// 	} else if (newalpha < alpha) 
+// 	  {
+// 	    result = new_val;
+// 	    alpha = newalpha;
+// 	  }
+//       }
+//   divisor_previous = result;
+//   divisor_previous_comp = x;
+//   result_alpha = alpha;
+//   return result;
+// }
 #endif
 
 int gbA::find_good_divisor(exponents e,

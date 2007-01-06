@@ -350,29 +350,29 @@ void GBZZ_comp::find_pairs(int me)
 //////////////////////////////////////////////
 
 #if 0
-// MES Aug 2002: this will be put into GBRing.
-void GBZZ_comp::apply_gb_elements(vec &f, vec &fsyz, vec gsyz) const
-{
-  // f in F
-  // fsyz in Fsyz
-  // gsyz in Gsyz
-  // Modify f, fsyz using the GB elements in gsyz.
-  //int *s = M->make_one();
-  for (vec t = gsyz; t != NULL; t = t->next)
-    {
-      GB_elem *g = gb[t->comp];
-      //M->divide(t->monom, g->f->monom, s);
-      int *s = t->monom;
-      ring_elem c = K->negate(t->coeff);
-      vec f1 = F->imp_mult_by_term(c, s, g->f);
-      vec fsyz1 = Fsyz->mult_by_term(c, s, g->fsyz);
-      if (Fsyz->is_quotient_ring) Fsyz->normal_form(fsyz1);
-      F->add_to(f, f1);
-      Fsyz->add_to(fsyz, fsyz1);
-      K->remove(c);
-    }
-  //M->remove(s);
-}
+// // MES Aug 2002: this will be put into GBRing.
+// void GBZZ_comp::apply_gb_elements(vec &f, vec &fsyz, vec gsyz) const
+// {
+//   // f in F
+//   // fsyz in Fsyz
+//   // gsyz in Gsyz
+//   // Modify f, fsyz using the GB elements in gsyz.
+//   //int *s = M->make_one();
+//   for (vec t = gsyz; t != NULL; t = t->next)
+//     {
+//       GB_elem *g = gb[t->comp];
+//       //M->divide(t->monom, g->f->monom, s);
+//       int *s = t->monom;
+//       ring_elem c = K->negate(t->coeff);
+//       vec f1 = F->imp_mult_by_term(c, s, g->f);
+//       vec fsyz1 = Fsyz->mult_by_term(c, s, g->fsyz);
+//       if (Fsyz->is_quotient_ring) Fsyz->normal_form(fsyz1);
+//       F->add_to(f, f1);
+//       Fsyz->add_to(fsyz, fsyz1);
+//       K->remove(c);
+//     }
+//   //M->remove(s);
+// }
 #endif
 
 void GBZZ_comp::compute_s_pair(vec gsyz,
@@ -386,11 +386,11 @@ void GBZZ_comp::compute_s_pair(vec gsyz,
 bool GBZZ_comp::gb_reduce(vec &f, vec &fsyz) const
 {
 #if 0
-  if (((strategy & STRATEGY_LONGPOLYNOMIALS) != 0) && !M->is_skew())
-    {
-      // gb_geo_reduce(f,fsyz);
-      return true;
-    }
+//   if (((strategy & STRATEGY_LONGPOLYNOMIALS) != 0) && !M->is_skew())
+//     {
+//       // gb_geo_reduce(f,fsyz);
+//       return true;
+//     }
 #endif
   vecterm head;
   vecterm *result = &head;
@@ -550,143 +550,143 @@ bool GBZZ_comp::insert_syzygy(vec fsyz)
 //////////////////////////////////////////////
 
 #if 0
-void GBZZ_comp::handle_element(vec f, vec fsyz, bool maybe_minimal)
-{
-  while (true)
-    {
-      gb_reduce(f, fsyz);
-      if (f == NULL) break;
-      // The following sees whether f->monom() itself already is a GB
-      // lead monomial.  If it is, it returns the integer location of this,
-      // and resets the coefficient for this monomial to be the given one.
-      // If a negative value is returned, then this means that the lead monomial
-      // is not already a GB lead term.
-      if (!ZZ->is_positive(f->coeff))
-	{
-	  F->negate_to(f);
-	  Fsyz->negate_to(fsyz);
-	}
-
-      int i = termideals[f->comp]->replace_minimal(f->coeff, f->monom);
-      if (i < 0) break;
-      // At this point, we have a new lead coefficient for this monomial.
-      // We need to replace gb[i] with (f,fsyz,maybe_minimal), and then
-      // re-reduce the element we just took out of the GB.
-
-      if (comp_printlevel >= 5)
-	{
-	  buffer o;
-	  o << "replaced " << i << " with ";
-	  Gsyz->elem_text_out(o, f);
-	  o << newline;
-	  emit(o.str());
-	}
-
-      swap(gb[i]->f, f);
-      swap(gb[i]->fsyz,fsyz);
-      swap(gb[i]->is_min, maybe_minimal);
-    }
-  
-  if (f != NULL)
-    {
-      insert_gb_element(f, fsyz, maybe_minimal);
-      if (comp_printlevel >= 3) emit_wrapped("m");
-    }
-  else if (insert_syzygy(fsyz))
-    {
-      if (comp_printlevel >= 3) emit_wrapped("z");
-    }
-  else if (comp_printlevel >= 3) emit_wrapped("o");
-}
+// void GBZZ_comp::handle_element(vec f, vec fsyz, bool maybe_minimal)
+// {
+//   while (true)
+//     {
+//       gb_reduce(f, fsyz);
+//       if (f == NULL) break;
+//       // The following sees whether f->monom() itself already is a GB
+//       // lead monomial.  If it is, it returns the integer location of this,
+//       // and resets the coefficient for this monomial to be the given one.
+//       // If a negative value is returned, then this means that the lead monomial
+//       // is not already a GB lead term.
+//       if (!ZZ->is_positive(f->coeff))
+// 	{
+// 	  F->negate_to(f);
+// 	  Fsyz->negate_to(fsyz);
+// 	}
+// 
+//       int i = termideals[f->comp]->replace_minimal(f->coeff, f->monom);
+//       if (i < 0) break;
+//       // At this point, we have a new lead coefficient for this monomial.
+//       // We need to replace gb[i] with (f,fsyz,maybe_minimal), and then
+//       // re-reduce the element we just took out of the GB.
+// 
+//       if (comp_printlevel >= 5)
+// 	{
+// 	  buffer o;
+// 	  o << "replaced " << i << " with ";
+// 	  Gsyz->elem_text_out(o, f);
+// 	  o << newline;
+// 	  emit(o.str());
+// 	}
+// 
+//       swap(gb[i]->f, f);
+//       swap(gb[i]->fsyz,fsyz);
+//       swap(gb[i]->is_min, maybe_minimal);
+//     }
+//   
+//   if (f != NULL)
+//     {
+//       insert_gb_element(f, fsyz, maybe_minimal);
+//       if (comp_printlevel >= 3) emit_wrapped("m");
+//     }
+//   else if (insert_syzygy(fsyz))
+//     {
+//       if (comp_printlevel >= 3) emit_wrapped("z");
+//     }
+//   else if (comp_printlevel >= 3) emit_wrapped("o");
+// }
 #endif
 
 #if 0
-void GBZZ_comp::handle_element(vec f, vec fsyz, bool maybe_minimal)
-{
-  ring_elem g, u, v, c1, c2, termgcd;
-  vec p,psyz,q,qsyz;
-  int count = 0;
-  while (f != 0)
-    {
-      vec gsyz, rsyz;
-      vec h = 0;
-      vec hsyz = 0;
-      int reduces = termideals[f->comp]->search(f->coeff, f->monom,
-						termgcd, gsyz, rsyz);
-      if (rsyz != NULL)	
-	{
-	  F->apply_quotient_ring_elements(h, f->comp, rsyz);
-	  Rsyz->remove(rsyz);
-	}
-      if (gsyz != NULL) 
-	{
-	  apply_gb_elements(h,hsyz, gsyz);
-	  Gsyz->remove(gsyz);
-	}
-      switch (reduces) {
-      case TI_TERM:
-	// Subtract f -= h, fsyz -= hsyz
-	K->remove(termgcd);
-	F->add_to(f,h);
-	Fsyz->add_to(fsyz,hsyz);
-	count++;
-	break;
-      case TI_MONOMIAL:
-	// Here we need to do some work.
-	// Compute (g,u,v) gcd of lc(f), lc(h).
-	// compute u*f + v*h, insert into GB. (possibly replaces element there)
-	// f = c1*f - c2*h, where c1 = lc(h)/g, c2 = lc(f)/g.
-	// fsyz = c1*fsyz - c2*hsyz.
-	// NOTE: apply_gb_elements effectively computes -h, -hsyz.
-	g = K->gcd_extended(f->coeff, termgcd, u, v);
-	c1 = K->divide(termgcd, g); //exact division
-	c2 = K->divide(f->coeff, g); // exact division
-	p = F->mult_by_coeff(u,f);
-	psyz = Fsyz->mult_by_coeff(u,fsyz);
-	q = F->mult_by_coeff(v,h);
-	qsyz = Fsyz->mult_by_coeff(v,hsyz);
-	F->add_to(p,q);
-	Fsyz->add_to(psyz,qsyz);
-	replace_or_insert_gb_element(p, psyz, maybe_minimal);
-	// Now recompute f, fsyz.  Reuse p,q,psyz,qsyz
-	p = F->mult_by_coeff(c1,f);
-	psyz = Fsyz->mult_by_coeff(c1,fsyz);
-	q = F->mult_by_coeff(c2,h);
-	qsyz = Fsyz->mult_by_coeff(c2,hsyz);
-	F->add_to(p,q);
-	Fsyz->add_to(psyz,qsyz);
-	F->remove(f);
-	F->remove(fsyz);
-	K->remove(g);
-	K->remove(c1);
-	K->remove(c2);
-	K->remove(u);
-	K->remove(v);
-	K->remove(termgcd);
-	f = p;
-	fsyz = psyz;
-	count++;
-	break;
-      case TI_NONE:
-	// Here we have a new monomial: insert into the GB.
-	insert_gb_element(f,fsyz,maybe_minimal);
-	if (comp_printlevel >= 3) emit_wrapped("m");
-	return;
-      }
-    }
-  // Here we have a potential syzygy
-  if (insert_syzygy(fsyz))
-    {
-      if (comp_printlevel >= 3) emit_wrapped("z");
-    }
-  else if (comp_printlevel >= 3) emit_wrapped("o");
-  if (comp_printlevel >= 4)
-    {
-      buffer o;
-      o << "." << count;
-      emit_wrapped(o.str());
-    }
-}
+// void GBZZ_comp::handle_element(vec f, vec fsyz, bool maybe_minimal)
+// {
+//   ring_elem g, u, v, c1, c2, termgcd;
+//   vec p,psyz,q,qsyz;
+//   int count = 0;
+//   while (f != 0)
+//     {
+//       vec gsyz, rsyz;
+//       vec h = 0;
+//       vec hsyz = 0;
+//       int reduces = termideals[f->comp]->search(f->coeff, f->monom,
+// 						termgcd, gsyz, rsyz);
+//       if (rsyz != NULL)	
+// 	{
+// 	  F->apply_quotient_ring_elements(h, f->comp, rsyz);
+// 	  Rsyz->remove(rsyz);
+// 	}
+//       if (gsyz != NULL) 
+// 	{
+// 	  apply_gb_elements(h,hsyz, gsyz);
+// 	  Gsyz->remove(gsyz);
+// 	}
+//       switch (reduces) {
+//       case TI_TERM:
+// 	// Subtract f -= h, fsyz -= hsyz
+// 	K->remove(termgcd);
+// 	F->add_to(f,h);
+// 	Fsyz->add_to(fsyz,hsyz);
+// 	count++;
+// 	break;
+//       case TI_MONOMIAL:
+// 	// Here we need to do some work.
+// 	// Compute (g,u,v) gcd of lc(f), lc(h).
+// 	// compute u*f + v*h, insert into GB. (possibly replaces element there)
+// 	// f = c1*f - c2*h, where c1 = lc(h)/g, c2 = lc(f)/g.
+// 	// fsyz = c1*fsyz - c2*hsyz.
+// 	// NOTE: apply_gb_elements effectively computes -h, -hsyz.
+// 	g = K->gcd_extended(f->coeff, termgcd, u, v);
+// 	c1 = K->divide(termgcd, g); //exact division
+// 	c2 = K->divide(f->coeff, g); // exact division
+// 	p = F->mult_by_coeff(u,f);
+// 	psyz = Fsyz->mult_by_coeff(u,fsyz);
+// 	q = F->mult_by_coeff(v,h);
+// 	qsyz = Fsyz->mult_by_coeff(v,hsyz);
+// 	F->add_to(p,q);
+// 	Fsyz->add_to(psyz,qsyz);
+// 	replace_or_insert_gb_element(p, psyz, maybe_minimal);
+// 	// Now recompute f, fsyz.  Reuse p,q,psyz,qsyz
+// 	p = F->mult_by_coeff(c1,f);
+// 	psyz = Fsyz->mult_by_coeff(c1,fsyz);
+// 	q = F->mult_by_coeff(c2,h);
+// 	qsyz = Fsyz->mult_by_coeff(c2,hsyz);
+// 	F->add_to(p,q);
+// 	Fsyz->add_to(psyz,qsyz);
+// 	F->remove(f);
+// 	F->remove(fsyz);
+// 	K->remove(g);
+// 	K->remove(c1);
+// 	K->remove(c2);
+// 	K->remove(u);
+// 	K->remove(v);
+// 	K->remove(termgcd);
+// 	f = p;
+// 	fsyz = psyz;
+// 	count++;
+// 	break;
+//       case TI_NONE:
+// 	// Here we have a new monomial: insert into the GB.
+// 	insert_gb_element(f,fsyz,maybe_minimal);
+// 	if (comp_printlevel >= 3) emit_wrapped("m");
+// 	return;
+//       }
+//     }
+//   // Here we have a potential syzygy
+//   if (insert_syzygy(fsyz))
+//     {
+//       if (comp_printlevel >= 3) emit_wrapped("z");
+//     }
+//   else if (comp_printlevel >= 3) emit_wrapped("o");
+//   if (comp_printlevel >= 4)
+//     {
+//       buffer o;
+//       o << "." << count;
+//       emit_wrapped(o.str());
+//     }
+// }
 #endif
 
 void GBZZ_comp::handle_element(vec f, vec fsyz)
@@ -1111,11 +1111,11 @@ Matrix *GBZZ_comp::min_gens_matrix()
 {
   return mingens;
 #if 0
-  Matrix *result = new Matrix(F);
-  for (int i=0; i<gb.length(); i++)
-    if (gb[i]->is_min)
-      result->append(F->copy(gb[i]->f));
-  return result;
+//   Matrix *result = new Matrix(F);
+//   for (int i=0; i<gb.length(); i++)
+//     if (gb[i]->is_min)
+//       result->append(F->copy(gb[i]->f));
+//   return result;
 #endif
 }
 
@@ -1168,135 +1168,135 @@ void GBZZ_comp::stats() const
 
 
 #if 0
-void GBZZ_comp::remove_pair(S_pair *& p)
-{
-  Gsyz->remove(p->fsyz);
-  p->next = NULL;
-  deleteitem(p);
-  p = NULL;
-}
-
-void GBZZ_comp::remove_gen(gen_pair *& p)
-{
-  F->remove(p->f);
-  Fsyz->remove(p->fsyz);
-  p->next = NULL;
-  deleteitem(p);
-  p = NULL;
-}
-
-void GBZZ_comp::gb_reduce(vec &f, vec &fsyz)
-{
-  if (((strategy & STRATEGY_LONGPOLYNOMIALS) != 0) && !M->is_skew())
-    {
-      gb_geo_reduce(f,fsyz);
-      return;
-    }
-  vecterm head;
-  vecterm *result = &head;
-  ring_elem coeff;
-
-  // REDUCE_EXP (exponent vector), REDUCE_DIV (element of M) are 
-  // set in GBZZ_comp::GBZZ_comp.
-
-  int count = 0;
-  while (f != NULL)
-    {
-      Bag *b;
-      M->to_expvector(f->monom, REDUCE_EXP);
-      if (F->is_quotient_ring && R->Rideal.search_expvector(REDUCE_EXP, b))
-	{
-	  Nterm *g = (Nterm *) b->basis_ptr();
-	  F->imp_ring_cancel_lead_term(f, g, coeff, REDUCE_DIV);
-	  R->Ncoeffs()->remove(coeff);
-	  count++;
-	}
-      else if (monideals[f->comp]->mi_search.search_expvector(REDUCE_EXP, b))
-	{
-	  GB_elem *q = (GB_elem *) b->basis_ptr();
-	  F->imp_cancel_lead_term(f, q->f, coeff, REDUCE_DIV);
-	  Fsyz->subtract_multiple_to(fsyz, coeff, REDUCE_DIV, q->fsyz);
-	  R->Ncoeffs()->remove(coeff);
-	  count++;
-	}
-      else
-	{
-	  result->next = f;
-	  f = f->next;
-	  result = result->next;
-	}
-    }
-
-  if (comp_printlevel >= 4)
-    {
-      buffer o;
-      o << "." << count;
-      emit_wrapped(o.str());
-    }
-  result->next = NULL;
-  f = head.next;
-}
-
-void GBZZ_comp::gb_geo_reduce(vec &f, vec &fsyz)
-{
-  vecterm head;
-  vecterm *result = &head;
-
-  // REDUCE_EXP (exponent vector), REDUCE_DIV (element of M) are 
-  // set in GBZZ_comp::GBZZ_comp.
-  int count = 0;
-
-  vecHeap fb(F);
-  vecHeap fsyzb(Fsyz);
-  fb.add(f);
-  fsyzb.add(fsyz);
-  vecterm *lead;
-  while ((lead = fb.remove_lead_term()) != NULL)
-    {
-      Bag *b;
-      M->to_expvector(lead->monom, REDUCE_EXP);
-      if (F->is_quotient_ring && R->Rideal.search_expvector(REDUCE_EXP, b))
-	{
-	  Nterm *g = (Nterm *) b->basis_ptr();
-	  M->divide(lead->monom, g->monom, REDUCE_DIV);
-	  ring_elem c = R->Ncoeffs()->negate(lead->coeff);
-	  vecterm *h = F->imp_ring_mult_by_term(g->next, c, REDUCE_DIV, lead->comp);
-	  F->remove(lead);
-	  R->Ncoeffs()->remove(c);
-	  fb.add(h);
-	  count++;
-	}
-      else if (monideals[lead->comp]->mi_search.search_expvector(REDUCE_EXP, b))
-	{
-	  GB_elem *q = (GB_elem *) b->basis_ptr();
-	  ring_elem c = R->Ncoeffs()->negate(lead->coeff);
-	  M->divide(lead->monom, q->f->monom, REDUCE_DIV);
-	  vecterm *h = F->imp_mult_by_term(c, REDUCE_DIV, q->f->next);
-	  vecterm *hsyz = Fsyz->imp_mult_by_term(c, REDUCE_DIV, q->fsyz);
-	  F->remove(lead);
-	  R->Ncoeffs()->remove(c);
-	  fb.add(h);		// Eats h
-	  fsyzb.add(hsyz);	// Eats hsyz
-	  count++;
-	}
-      else
-	{
-	  result->next = lead;
-	  result = result->next;
-	}
-    }
-
-  if (comp_printlevel >= 4)
-    {
-      buffer o;
-      o << "." << count;
-      emit_wrapped(o.str());
-    }
-  result->next = NULL;
-  f = head.next;
-
-  fsyz = fsyzb.value();
-}
+// void GBZZ_comp::remove_pair(S_pair *& p)
+// {
+//   Gsyz->remove(p->fsyz);
+//   p->next = NULL;
+//   deleteitem(p);
+//   p = NULL;
+// }
+// 
+// void GBZZ_comp::remove_gen(gen_pair *& p)
+// {
+//   F->remove(p->f);
+//   Fsyz->remove(p->fsyz);
+//   p->next = NULL;
+//   deleteitem(p);
+//   p = NULL;
+// }
+// 
+// void GBZZ_comp::gb_reduce(vec &f, vec &fsyz)
+// {
+//   if (((strategy & STRATEGY_LONGPOLYNOMIALS) != 0) && !M->is_skew())
+//     {
+//       gb_geo_reduce(f,fsyz);
+//       return;
+//     }
+//   vecterm head;
+//   vecterm *result = &head;
+//   ring_elem coeff;
+// 
+//   // REDUCE_EXP (exponent vector), REDUCE_DIV (element of M) are 
+//   // set in GBZZ_comp::GBZZ_comp.
+// 
+//   int count = 0;
+//   while (f != NULL)
+//     {
+//       Bag *b;
+//       M->to_expvector(f->monom, REDUCE_EXP);
+//       if (F->is_quotient_ring && R->Rideal.search_expvector(REDUCE_EXP, b))
+// 	{
+// 	  Nterm *g = (Nterm *) b->basis_ptr();
+// 	  F->imp_ring_cancel_lead_term(f, g, coeff, REDUCE_DIV);
+// 	  R->Ncoeffs()->remove(coeff);
+// 	  count++;
+// 	}
+//       else if (monideals[f->comp]->mi_search.search_expvector(REDUCE_EXP, b))
+// 	{
+// 	  GB_elem *q = (GB_elem *) b->basis_ptr();
+// 	  F->imp_cancel_lead_term(f, q->f, coeff, REDUCE_DIV);
+// 	  Fsyz->subtract_multiple_to(fsyz, coeff, REDUCE_DIV, q->fsyz);
+// 	  R->Ncoeffs()->remove(coeff);
+// 	  count++;
+// 	}
+//       else
+// 	{
+// 	  result->next = f;
+// 	  f = f->next;
+// 	  result = result->next;
+// 	}
+//     }
+// 
+//   if (comp_printlevel >= 4)
+//     {
+//       buffer o;
+//       o << "." << count;
+//       emit_wrapped(o.str());
+//     }
+//   result->next = NULL;
+//   f = head.next;
+// }
+// 
+// void GBZZ_comp::gb_geo_reduce(vec &f, vec &fsyz)
+// {
+//   vecterm head;
+//   vecterm *result = &head;
+// 
+//   // REDUCE_EXP (exponent vector), REDUCE_DIV (element of M) are 
+//   // set in GBZZ_comp::GBZZ_comp.
+//   int count = 0;
+// 
+//   vecHeap fb(F);
+//   vecHeap fsyzb(Fsyz);
+//   fb.add(f);
+//   fsyzb.add(fsyz);
+//   vecterm *lead;
+//   while ((lead = fb.remove_lead_term()) != NULL)
+//     {
+//       Bag *b;
+//       M->to_expvector(lead->monom, REDUCE_EXP);
+//       if (F->is_quotient_ring && R->Rideal.search_expvector(REDUCE_EXP, b))
+// 	{
+// 	  Nterm *g = (Nterm *) b->basis_ptr();
+// 	  M->divide(lead->monom, g->monom, REDUCE_DIV);
+// 	  ring_elem c = R->Ncoeffs()->negate(lead->coeff);
+// 	  vecterm *h = F->imp_ring_mult_by_term(g->next, c, REDUCE_DIV, lead->comp);
+// 	  F->remove(lead);
+// 	  R->Ncoeffs()->remove(c);
+// 	  fb.add(h);
+// 	  count++;
+// 	}
+//       else if (monideals[lead->comp]->mi_search.search_expvector(REDUCE_EXP, b))
+// 	{
+// 	  GB_elem *q = (GB_elem *) b->basis_ptr();
+// 	  ring_elem c = R->Ncoeffs()->negate(lead->coeff);
+// 	  M->divide(lead->monom, q->f->monom, REDUCE_DIV);
+// 	  vecterm *h = F->imp_mult_by_term(c, REDUCE_DIV, q->f->next);
+// 	  vecterm *hsyz = Fsyz->imp_mult_by_term(c, REDUCE_DIV, q->fsyz);
+// 	  F->remove(lead);
+// 	  R->Ncoeffs()->remove(c);
+// 	  fb.add(h);		// Eats h
+// 	  fsyzb.add(hsyz);	// Eats hsyz
+// 	  count++;
+// 	}
+//       else
+// 	{
+// 	  result->next = lead;
+// 	  result = result->next;
+// 	}
+//     }
+// 
+//   if (comp_printlevel >= 4)
+//     {
+//       buffer o;
+//       o << "." << count;
+//       emit_wrapped(o.str());
+//     }
+//   result->next = NULL;
+//   f = head.next;
+// 
+//   fsyz = fsyzb.value();
+// }
 #endif
 
 // Local Variables:

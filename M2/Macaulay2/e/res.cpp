@@ -903,13 +903,13 @@ int res_comp::complete_thru_degree() const
 		     {set_status(result); return;}}
 
 #if 0
-int res_comp::calc(const int *DegreeLimit, 
-		   int LengthLimit, 
-		   int ArgSyzygyLimit,
-		   int ArgPairLimit,
-		   int /*SyzLimitValue*/,
-		   int /*SyzLimitLevel*/,
-		   int /*SyzLimitDegree*/)
+// int res_comp::calc(const int *DegreeLimit, 
+// 		   int LengthLimit, 
+// 		   int ArgSyzygyLimit,
+// 		   int ArgPairLimit,
+// 		   int /*SyzLimitValue*/,
+// 		   int /*SyzLimitLevel*/,
+// 		   int /*SyzLimitDegree*/)
 #endif
 void res_comp::start_computation()
 {
@@ -1094,30 +1094,30 @@ void res_comp::handle_pair(res_pair *p)
     }
 }
 #if 0
-void res_comp::skeleton()
-  // Compute the skeleton of the resolution
-  // Currently: this is just used for debugging
-{
-  int level, deg;
-
-  for (level=1; level < resn.length(); level++)
-    {
-      n_level = level+1;
-      for (deg=0; deg < resn[level]->bin.length(); deg++)
-	{
-	  deg += lodegree;
-	  res_degree *p = get_degree_set(level, deg);
-	  if (p == NULL) continue;
-	  if (level == 1)
-	    {
-	      // Get the generators back into the game
-	      p->first = p->next_gen;
-	      p->next_gen = NULL;
-	    }
-	  pairs(level, deg);
-	}
-    }
-}
+// void res_comp::skeleton()
+//   // Compute the skeleton of the resolution
+//   // Currently: this is just used for debugging
+// {
+//   int level, deg;
+// 
+//   for (level=1; level < resn.length(); level++)
+//     {
+//       n_level = level+1;
+//       for (deg=0; deg < resn[level]->bin.length(); deg++)
+// 	{
+// 	  deg += lodegree;
+// 	  res_degree *p = get_degree_set(level, deg);
+// 	  if (p == NULL) continue;
+// 	  if (level == 1)
+// 	    {
+// 	      // Get the generators back into the game
+// 	      p->first = p->next_gen;
+// 	      p->next_gen = NULL;
+// 	    }
+// 	  pairs(level, deg);
+// 	}
+//     }
+// }
 #endif
 
 #include "res_aux.cpp"

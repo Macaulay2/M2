@@ -678,16 +678,16 @@ Matrix *Matrix::module_tensor(const Matrix *m) const
 }
 
 #if 0
-// REMOVE THIS ONE??
-Matrix *Matrix::random(const Ring *R, int r, int c)
-{
-  FreeModule *F = R->make_FreeModule(r);
-  FreeModule *G = R->make_FreeModule(c);
-  Matrix *result = new Matrix(F,G);
-  for (int i=0; i<c; i++)
-    (*result)[i] = F->random();
-  return result;
-}
+// // REMOVE THIS ONE??
+// Matrix *Matrix::random(const Ring *R, int r, int c)
+// {
+//   FreeModule *F = R->make_FreeModule(r);
+//   FreeModule *G = R->make_FreeModule(c);
+//   Matrix *result = new Matrix(F,G);
+//   for (int i=0; i<c; i++)
+//     (*result)[i] = F->random();
+//   return result;
+// }
 #endif
 
 Matrix *Matrix::random(const Ring *R, 
@@ -819,114 +819,114 @@ Matrix *Matrix::lead_term(int nparts) const
 }
 
 #if 0
-void Matrix::minimal_lead_terms_ZZ(intarray &result) const
-{
-  int x;
-  M2_arrayint indices;
-  array<TermIdeal *> mis;
-  const array<vec> vecs = _entries;
-  indices = rows()->sort(vecs, NULL, 0, 1);
-  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  const FreeModule *Rsyz = P->get_Rsyz(); // NULL if not a quotient ring.
-  FreeModule *Gsyz = P->make_FreeModule(vecs.length());
-  for (x=0; x<n_cols(); x++)
-    mis.append(new TermIdeal(P,Gsyz));
-  for (int i=0; i<vecs.length(); i++)
-    {
-      vec v = vecs[indices->array[i]];
-      vec gsyz, rsyz;
-      if (v == NULL) continue;
-      if (TI_TERM != mis[v->comp]->search(v->coeff, v->monom, gsyz, rsyz))
-	{
-	  mis[v->comp]->insert_minimal(
-				       new tagged_term(P->Ncoeffs()->copy(v->coeff),
-						       P->Nmonoms()->make_new(v->monom),
-						       NULL,
-						       NULL));
-	  result.append(indices->array[i]);
-	}
-      Gsyz->remove(gsyz);
-      if (rsyz != NULL) Rsyz->remove(rsyz);
-    }
-  for (x=0; x<n_cols(); x++)
-    deleteitem(mis[x]);
-}
+// void Matrix::minimal_lead_terms_ZZ(intarray &result) const
+// {
+//   int x;
+//   M2_arrayint indices;
+//   array<TermIdeal *> mis;
+//   const array<vec> vecs = _entries;
+//   indices = rows()->sort(vecs, NULL, 0, 1);
+//   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
+//   const FreeModule *Rsyz = P->get_Rsyz(); // NULL if not a quotient ring.
+//   FreeModule *Gsyz = P->make_FreeModule(vecs.length());
+//   for (x=0; x<n_cols(); x++)
+//     mis.append(new TermIdeal(P,Gsyz));
+//   for (int i=0; i<vecs.length(); i++)
+//     {
+//       vec v = vecs[indices->array[i]];
+//       vec gsyz, rsyz;
+//       if (v == NULL) continue;
+//       if (TI_TERM != mis[v->comp]->search(v->coeff, v->monom, gsyz, rsyz))
+// 	{
+// 	  mis[v->comp]->insert_minimal(
+// 				       new tagged_term(P->Ncoeffs()->copy(v->coeff),
+// 						       P->Nmonoms()->make_new(v->monom),
+// 						       NULL,
+// 						       NULL));
+// 	  result.append(indices->array[i]);
+// 	}
+//       Gsyz->remove(gsyz);
+//       if (rsyz != NULL) Rsyz->remove(rsyz);
+//     }
+//   for (x=0; x<n_cols(); x++)
+//     deleteitem(mis[x]);
+// }
 #endif
 #if 0
-// OLDER THAN THE PREVIOUS VERSION!!
-Matrix Matrix::minimal_lead_terms_ZZ() const
-{
-  int x;
-  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  FreeModule *Gsyz = P->make_FreeModule(n_cols());
-  bump_up(Gsyz);
-  array< queue<tagged_term *> > allterms;
-  for (int i=0; i<n_cols(); i++)
-    {
-      vec v = elem(i);
-      if (v == NULL) continue;
-      allterms[v->comp].insert(
-			       new tagged_term(P->Ncoeffs()->copy(v->coeff),
-					       P->Nmonoms()->make_new(v->monom),
-					       Gsyz->e_sub_i(i),
-					       NULL));
-    }
-  Matrix result(rows());
-  for (x=0; x<n_cols(); x++)
-    {
-      if (allterms[x].length() > 0)
-	{
-	  TermIdeal *ti = TermIdeal::make_termideal(P,Gsyz,allterms[x]);
-	  // Loop through and add the corresponding elements in...
-	  for (cursor_TermIdeal k(ti); k.valid(); ++k)
-	    {
-	      tagged_term *t = *k;
-	      vec gsyz = t->_gsyz;
-	      vec v = NULL;
-	      rows()->apply_map(v, gsyz, entries);
-	      rows()->negate_to(v);
-	      result.append(v);
-	    }
-	  deleteitem(ti);
-	}
-    }
-  bump_down(Gsyz);
-  return result;
-}
+// // OLDER THAN THE PREVIOUS VERSION!!
+// Matrix Matrix::minimal_lead_terms_ZZ() const
+// {
+//   int x;
+//   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
+//   FreeModule *Gsyz = P->make_FreeModule(n_cols());
+//   bump_up(Gsyz);
+//   array< queue<tagged_term *> > allterms;
+//   for (int i=0; i<n_cols(); i++)
+//     {
+//       vec v = elem(i);
+//       if (v == NULL) continue;
+//       allterms[v->comp].insert(
+// 			       new tagged_term(P->Ncoeffs()->copy(v->coeff),
+// 					       P->Nmonoms()->make_new(v->monom),
+// 					       Gsyz->e_sub_i(i),
+// 					       NULL));
+//     }
+//   Matrix result(rows());
+//   for (x=0; x<n_cols(); x++)
+//     {
+//       if (allterms[x].length() > 0)
+// 	{
+// 	  TermIdeal *ti = TermIdeal::make_termideal(P,Gsyz,allterms[x]);
+// 	  // Loop through and add the corresponding elements in...
+// 	  for (cursor_TermIdeal k(ti); k.valid(); ++k)
+// 	    {
+// 	      tagged_term *t = *k;
+// 	      vec gsyz = t->_gsyz;
+// 	      vec v = NULL;
+// 	      rows()->apply_map(v, gsyz, entries);
+// 	      rows()->negate_to(v);
+// 	      result.append(v);
+// 	    }
+// 	  deleteitem(ti);
+// 	}
+//     }
+//   bump_down(Gsyz);
+//   return result;
+// }
 #endif
 
 #if 0
-void Matrix::minimal_lead_terms(intarray &result) const
-{
-  if (get_ring()->Ncoeffs()->is_ZZ())
-    {
-      minimal_lead_terms_ZZ(result);
-      return;
-    }
-  M2_arrayint indices;
-  intarray vp;
-  array<MonomialIdeal *> mis;
-  const array<vec> vecs = _entries;
-  indices = rows()->sort(vecs, NULL, 0, 1);
-  for (int x=0; x<n_rows(); x++)
-    mis.append(new MonomialIdeal(get_ring()));
-  for (int i=0; i<vecs.length(); i++)
-    {
-      vec v = vecs[indices->array[i]];
-      if (v == NULL) continue;
-      // Reduce each one in turn, and replace.
-      Bag *junk_bag;
-      vp.shrink(0);
-      rows()->lead_varpower(v, vp);
-      if (!mis[v->comp]->search(vp.raw(),junk_bag))
-	{
-	  Bag *b = new Bag(indices->array[i], vp);
-	  mis[v->comp]->insert(b);
-	  result.append(indices->array[i]);
-	}
-    }
-}
-
+// void Matrix::minimal_lead_terms(intarray &result) const
+// {
+//   if (get_ring()->Ncoeffs()->is_ZZ())
+//     {
+//       minimal_lead_terms_ZZ(result);
+//       return;
+//     }
+//   M2_arrayint indices;
+//   intarray vp;
+//   array<MonomialIdeal *> mis;
+//   const array<vec> vecs = _entries;
+//   indices = rows()->sort(vecs, NULL, 0, 1);
+//   for (int x=0; x<n_rows(); x++)
+//     mis.append(new MonomialIdeal(get_ring()));
+//   for (int i=0; i<vecs.length(); i++)
+//     {
+//       vec v = vecs[indices->array[i]];
+//       if (v == NULL) continue;
+//       // Reduce each one in turn, and replace.
+//       Bag *junk_bag;
+//       vp.shrink(0);
+//       rows()->lead_varpower(v, vp);
+//       if (!mis[v->comp]->search(vp.raw(),junk_bag))
+// 	{
+// 	  Bag *b = new Bag(indices->array[i], vp);
+// 	  mis[v->comp]->insert(b);
+// 	  result.append(indices->array[i]);
+// 	}
+//     }
+// }
+// 
 #endif
 Matrix *Matrix::top_coefficients(Matrix *&monoms) const
 {
@@ -1295,85 +1295,85 @@ Matrix *Matrix::compress() const
 
 
 #if 0
-int Matrix::moneq(const int *exp, int *m, const int *vars, int *exp2) const
-    // Internal private routine for 'coeffs'.
-    // exp2 is a scratch value.  It is a paramter so we only have to allocate 
-    // it once...
-{
-  get_ring()->Nmonoms()->to_expvector(m, exp2);
-  int nvars = get_ring()->n_vars();
-  for (int i=0; i<nvars; i++)
-    {
-      if (vars[i] == 0) continue;
-      if (exp[i] != exp2[i]) 
-	return 0;
-      else 
-	exp2[i] = 0;
-    }
-  get_ring()->Nmonoms()->from_expvector(exp2, m);
-  return 1;
-}
-vec Matrix::strip_vector(vec &f, const int *vars, 
-			      const FreeModule *F, vec &vmonom) const
-    // private routine for 'coeffs'
-{
-  if (f == NULL) 
-    {
-      vmonom = NULL;
-      return NULL;
-    }
-  if (get_ring()->Nmonoms() == NULL)
-    {
-      vmonom = F->e_sub_i(0);
-      vec result = f;
-      f = NULL;
-      return result;
-    }
-  // At this point, we know that we have a polynomial ring
-  int nvars = get_ring()->n_vars();
-  int *exp = newarray_atomic(int,nvars);
-  int *scratch_exp = newarray_atomic(int,nvars);
-  const Monoid *M = get_ring()->Nmonoms();
-
-  M->to_expvector(f->monom, exp);
-  for (int i=0; i<nvars; i++)
-    if (vars[i] == 0) exp[i] = 0;
-
-  // the following two lines do NOT work if 'F' is a Schreyer free module,
-  // but this routine is private to 'coeffs', where this is not the case.
-  vmonom = F->e_sub_i(0);
-  M->from_expvector(exp, vmonom->monom);
-
-  vecterm head;
-  vecterm *newf = &head;
-  vec result = NULL;
-
-  // Loop through f: if monomial matches 'exp', strip and add to result,
-  // otherwise leave alone, and place on head list.
-  while (f != NULL)
-    {
-      if (moneq(exp, f->monom, vars, scratch_exp))
-	{
-	  vec temp = f;
-	  f = f->next;
-	  temp->next = NULL;
-	  rows()->add_to(result, temp);
-	}
-      else
-	{
-	  newf->next = f;
-	  f = f->next;
-	  newf = newf->next;
-	  newf->next = NULL;
-	}
-    }
-  newf->next = NULL;
-  f = head.next;
-
-  deletearray(exp);
-  deletearray(scratch_exp);
-  return result;
-}
+// int Matrix::moneq(const int *exp, int *m, const int *vars, int *exp2) const
+//     // Internal private routine for 'coeffs'.
+//     // exp2 is a scratch value.  It is a paramter so we only have to allocate 
+//     // it once...
+// {
+//   get_ring()->Nmonoms()->to_expvector(m, exp2);
+//   int nvars = get_ring()->n_vars();
+//   for (int i=0; i<nvars; i++)
+//     {
+//       if (vars[i] == 0) continue;
+//       if (exp[i] != exp2[i]) 
+// 	return 0;
+//       else 
+// 	exp2[i] = 0;
+//     }
+//   get_ring()->Nmonoms()->from_expvector(exp2, m);
+//   return 1;
+// }
+// vec Matrix::strip_vector(vec &f, const int *vars, 
+// 			      const FreeModule *F, vec &vmonom) const
+//     // private routine for 'coeffs'
+// {
+//   if (f == NULL) 
+//     {
+//       vmonom = NULL;
+//       return NULL;
+//     }
+//   if (get_ring()->Nmonoms() == NULL)
+//     {
+//       vmonom = F->e_sub_i(0);
+//       vec result = f;
+//       f = NULL;
+//       return result;
+//     }
+//   // At this point, we know that we have a polynomial ring
+//   int nvars = get_ring()->n_vars();
+//   int *exp = newarray_atomic(int,nvars);
+//   int *scratch_exp = newarray_atomic(int,nvars);
+//   const Monoid *M = get_ring()->Nmonoms();
+// 
+//   M->to_expvector(f->monom, exp);
+//   for (int i=0; i<nvars; i++)
+//     if (vars[i] == 0) exp[i] = 0;
+// 
+//   // the following two lines do NOT work if 'F' is a Schreyer free module,
+//   // but this routine is private to 'coeffs', where this is not the case.
+//   vmonom = F->e_sub_i(0);
+//   M->from_expvector(exp, vmonom->monom);
+// 
+//   vecterm head;
+//   vecterm *newf = &head;
+//   vec result = NULL;
+// 
+//   // Loop through f: if monomial matches 'exp', strip and add to result,
+//   // otherwise leave alone, and place on head list.
+//   while (f != NULL)
+//     {
+//       if (moneq(exp, f->monom, vars, scratch_exp))
+// 	{
+// 	  vec temp = f;
+// 	  f = f->next;
+// 	  temp->next = NULL;
+// 	  rows()->add_to(result, temp);
+// 	}
+//       else
+// 	{
+// 	  newf->next = f;
+// 	  f = f->next;
+// 	  newf = newf->next;
+// 	  newf->next = NULL;
+// 	}
+//     }
+//   newf->next = NULL;
+//   f = head.next;
+// 
+//   deletearray(exp);
+//   deletearray(scratch_exp);
+//   return result;
+// }
 #endif
 
 Matrix *Matrix::remove_scalar_multiples() const
@@ -1415,114 +1415,114 @@ Matrix *Matrix::remove_monomial_factors(bool make_squarefree_only) const
 }
 
 #if 0
-// MES Aug 2002
-Matrix *Matrix::simplify(int n) const
-{
-  int i,j, keep;
-  Matrix *result = new Matrix(rows());
-
-  switch (n) {
-  case 1:
-    for (i=0; i<n_cols(); i++)
-      {
-	vec f = elem(i);
-	if (f == NULL) continue;
-	result->append(rows()->copy(f));
-      }
-    break;
-    //  case SIMP_SCALAR_MULTIPLES:
-  case 2:
-    for (i=0; i<n_cols(); i++)
-      {
-	vec f = elem(i);
-	if (f == NULL) continue;
-	keep = 1;
-	for (j=i+1; j<n_cols(); j++)
-	  {
-	    vec g = elem(j);
-	    if (g == NULL) continue;
-	    if (rows()->is_scalar_multiple(f, g))
-	      {
-		keep = 0;
-		break;
-	      }
-	  }
-	if (keep) result->append(rows()->copy(f));
-      }
-    break;
-  case 3:
-    // Remove multiple monomial divisors (i.e. x^2*f --> x*f)
-    for (i=0; i<n_cols(); i++)
-      {
-	vec f = elem(i);
-	if (f == NULL) continue;
-	result->append(rows()->monomial_squarefree(f));
-      }
-    break;
-  case 4:
-    // Remove monomial divisors (i.e. x*f --> f)
-    for (i=0; i<n_cols(); i++)
-      {
-	vec f = elem(i);
-	if (f == NULL) continue;
-	result->append(rows()->remove_monomial_divisors(f));
-      }
-    break;
-#if 0
-  case SIMP_ZEROS:
-    break;
-  case SIMP_MULTIPLES:
-    break;
-  case SIMP_AUTO_REDUCE:
-    break;
-  case SIMP_SQUAREFREE:
-    break;
-  case SIMP_MONOMIAL_DIVISORS:
-    break;
+// // MES Aug 2002
+// Matrix *Matrix::simplify(int n) const
+// {
+//   int i,j, keep;
+//   Matrix *result = new Matrix(rows());
+// 
+//   switch (n) {
+//   case 1:
+//     for (i=0; i<n_cols(); i++)
+//       {
+// 	vec f = elem(i);
+// 	if (f == NULL) continue;
+// 	result->append(rows()->copy(f));
+//       }
+//     break;
+//     //  case SIMP_SCALAR_MULTIPLES:
+//   case 2:
+//     for (i=0; i<n_cols(); i++)
+//       {
+// 	vec f = elem(i);
+// 	if (f == NULL) continue;
+// 	keep = 1;
+// 	for (j=i+1; j<n_cols(); j++)
+// 	  {
+// 	    vec g = elem(j);
+// 	    if (g == NULL) continue;
+// 	    if (rows()->is_scalar_multiple(f, g))
+// 	      {
+// 		keep = 0;
+// 		break;
+// 	      }
+// 	  }
+// 	if (keep) result->append(rows()->copy(f));
+//       }
+//     break;
+//   case 3:
+//     // Remove multiple monomial divisors (i.e. x^2*f --> x*f)
+//     for (i=0; i<n_cols(); i++)
+//       {
+// 	vec f = elem(i);
+// 	if (f == NULL) continue;
+// 	result->append(rows()->monomial_squarefree(f));
+//       }
+//     break;
+//   case 4:
+//     // Remove monomial divisors (i.e. x*f --> f)
+//     for (i=0; i<n_cols(); i++)
+//       {
+// 	vec f = elem(i);
+// 	if (f == NULL) continue;
+// 	result->append(rows()->remove_monomial_divisors(f));
+//       }
+//     break;
+// #if 0
+// //   case SIMP_ZEROS:
+// //     break;
+// //   case SIMP_MULTIPLES:
+// //     break;
+// //   case SIMP_AUTO_REDUCE:
+// //     break;
+// //   case SIMP_SQUAREFREE:
+// //     break;
+// //   case SIMP_MONOMIAL_DIVISORS:
+// //     break;
+// #endif
+//   default:
+//     ERROR("bad simplification type");
+//     return 0;
+//   }
+// 
+//   return result;
+// }
 #endif
-  default:
-    ERROR("bad simplification type");
-    return 0;
-  }
-
-  return result;
-}
-#endif
 #if 0
-// MES Aug 2002
-Matrix *Matrix::auto_reduce() const
-{
-  array<vec> vecs;
-  int i;
-  for (i=0; i<n_cols(); i++)
-    vecs.append(rows()->copy(elem(i)));
-  rows()->auto_reduce(vecs);
-  Matrix *result = new Matrix(rows());
-  for (i=0; i<vecs.length(); i++)
-    result->append(vecs[i]);
-  return result;
-}
+// // MES Aug 2002
+// Matrix *Matrix::auto_reduce() const
+// {
+//   array<vec> vecs;
+//   int i;
+//   for (i=0; i<n_cols(); i++)
+//     vecs.append(rows()->copy(elem(i)));
+//   rows()->auto_reduce(vecs);
+//   Matrix *result = new Matrix(rows());
+//   for (i=0; i<vecs.length(); i++)
+//     result->append(vecs[i]);
+//   return result;
+// }
 #endif
 
 #if 0
-Matrix *Matrix::coeffs(const int *vars, Matrix * &result_monoms) const
-{
-  Matrix *result_coeffs = new Matrix(rows());
-  result_monoms = new Matrix(get_ring()->make_FreeModule(1));	// One row matrix
-  for (int j=0; j<n_cols(); j++)
-    {
-      vec f = rows()->copy(elem(j));
-      vec vmonom;
-      while (f != NULL)
-	{
-	  vec g = strip_vector(f, vars, result_monoms->rows(), vmonom);
-	  result_coeffs->append(g);
-	  result_monoms->append(vmonom);
-	}
-    }
-  // MES: now sort both matrices...
-  return result_coeffs;
-}
+// Matrix *Matrix::coeffs(const int *vars, Matrix * &result_monoms) const
+// {
+//   Matrix *result_coeffs = new Matrix(rows());
+//   result_monoms = new Matrix(get_ring()->make_FreeModule(1));	// One row matrix
+//   for (int j=0; j<n_cols(); j++)
+//     {
+//       vec f = rows()->copy(elem(j));
+//       vec vmonom;
+//       while (f != NULL)
+// 	{
+// 	  vec g = strip_vector(f, vars, result_monoms->rows(), vmonom);
+// 	  result_coeffs->append(g);
+// 	  result_monoms->append(vmonom);
+// 	}
+//     }
+//   // MES: now sort both matrices...
+//   return result_coeffs;
+// }
 #endif
 
 MatrixOrNull *Matrix::monomials(M2_arrayint vars) const
