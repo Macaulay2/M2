@@ -440,6 +440,8 @@ runString := (x,pkg,rundir,usermode) -> (
 
 check = method()
 check Package := pkg -> (
+     use pkg;
+     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"title", LoadDocumentation => true);
      usermode := false;					    -- fix this later as an option to "check" or something!
      hadExampleError = false;
      numExampleErrors = 0;
