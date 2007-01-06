@@ -7,9 +7,9 @@
 #include "../d/debug.h"
 
 // this replaces all uses of the construction "new T[n]":
-#define newarray(T,len) reinterpret_cast<T*>(safe_gc_malloc((len) * sizeof(T)))
+#define newarray(T,len) reinterpret_cast<T*>(getmem((len) * sizeof(T)))
 // this replaces all uses of the construction "new T":
-#define newitem(T) reinterpret_cast<T*>(safe_gc_malloc(sizeof(T)))
+#define newitem(T) reinterpret_cast<T*>(getmem(sizeof(T)))
 // this replaces all uses of the construction "delete [] x":
 #ifdef DEBUG
 #define deletearray(x) (trapchk(x), GC_FREE(x))
@@ -32,13 +32,6 @@
 // Caution: this uses the pointer type, not the struct type.
 #define GETMEM(T,size) reinterpret_cast<T>(getmem(size))
 #define GETMEM_ATOMIC(T,size) reinterpret_cast<T>(getmem_atomic(size))
-
-static inline void *safe_gc_malloc(size_t len) {
-  void *p = GC_MALLOC(len);
-  if (p == 0) outofmem();
-  TRAPCHK(p);
-  return p;
-}
 
 struct our_new_delete {
   static inline void* operator new    ( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem(); TRAPCHK(p); return p; }

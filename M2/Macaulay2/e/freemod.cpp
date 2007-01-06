@@ -300,7 +300,7 @@ FreeModule *FreeModule::exterior(int p) const
     result = new_free();
   if (p > rk || p < 0) return result;
 
-  int *a = newarray(int,p);
+  int *a = newarray_atomic(int,p);
   for (int i=0; i<p; i++)
     a[i] = i;
 

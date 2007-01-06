@@ -109,10 +109,10 @@ Monoid::Monoid(MonomialOrdering *mo,
       nslots_.push_back(total);
     }
 
-  EXP1_ = newarray(int,nvars_);
-  EXP2_ = newarray(int,nvars_);
-  EXP3_ = newarray(int,nvars_);
-  MONlocal_ = newarray(int,nvars_ + monomial_size()); // MES: should be total number of words of result...
+  EXP1_ = newarray_atomic(int,nvars_);
+  EXP2_ = newarray_atomic(int,nvars_);
+  EXP3_ = newarray_atomic(int,nvars_);
+  MONlocal_ = newarray_atomic(int,nvars_ + monomial_size()); // MES: should be total number of words of result...
 
   n_invertible_vars_ = rawNumberOfInvertibleVariables(mo_);
 
@@ -166,7 +166,7 @@ void Monoid::set_degrees()
 void Monoid::set_overflow_flags()
 {
   int j;
-  overflow_ = newarray(enum overflow_type, monomial_size_);
+  overflow_ = newarray_atomic(enum overflow_type, monomial_size_);
   for (int i=0; i<monomial_size_; i++)
     overflow_[i] = OVER;
 
@@ -458,14 +458,14 @@ int Monoid::compare(const_monomial m, int mcomp, const_monomial n, int ncomp) co
 monomial Monoid::make_new(const_monomial d) const
 {
   if (nvars_ == 0) return NULL;
-  monomial result = newarray(int,monomial_size());
+  monomial result = newarray_atomic(int,monomial_size());
   copy(d, result);
   return result;
 }
 monomial Monoid::make_one() const
 {
   if (nvars_ == 0) return NULL;
-  monomial result = newarray(int,monomial_size());
+  monomial result = newarray_atomic(int,monomial_size());
   one(result);
   return result;
 }

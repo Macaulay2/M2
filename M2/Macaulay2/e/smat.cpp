@@ -882,7 +882,7 @@ SMat<CoeffRing> * SMat<CoeffRing>::submatrix(M2_arrayint rows,
 
 #if 0
   // 6/1/2005: the following is faulty, if rows has duplicate entries.
-  int *trans = newarray(int,nrows_);
+  int *trans = newarray_atomic(int,nrows_);
   for (int i=0; i<nrows_; i++)
     trans[i] = -1;
 

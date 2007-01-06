@@ -110,7 +110,7 @@ void res_comp::initialize(const Matrix *mat,
       p->compare_num = i;
     }
 
-  REDUCE_exp = newarray(int,P->n_vars());
+  REDUCE_exp = newarray_atomic(int,P->n_vars());
   REDUCE_mon = M->make_one();
   PAIRS_mon = M->make_one();
   MINIMAL_mon = M->make_one();
@@ -640,7 +640,7 @@ void res_comp::new_pairs(res_pair *p)
 
   if (P->is_skew_commutative())
     {
-      int *exp = newarray(int, M->n_vars());
+      int *exp = newarray_atomic(int, M->n_vars());
       varpower::to_ntuple(M->n_vars(), vp.raw(), exp);
 
       int nskew = P->n_skew_commutative_vars();
@@ -1175,7 +1175,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
 
   if (P->is_skew_commutative())
     {
-      int *exp = newarray(int, M->n_vars());
+      int *exp = newarray_atomic(int, M->n_vars());
       varpower::to_ntuple(M->n_vars(), vp.raw(), exp);
 
       int nskew = P->n_skew_commutative_vars();
@@ -1272,7 +1272,7 @@ void res_comp::skeleton_stats(const array<res_pair *> &reslevel)
   int level, i;
   int maxlevel = reslevel.length()-1;
   int maxdegree = skeleton_maxdegree(reslevel); // max slanted degree
-  int *bettis = newarray(int,(maxlevel+1)*(maxdegree+1));
+  int *bettis = newarray_atomic(int,(maxlevel+1)*(maxdegree+1));
   for (i=(maxlevel+1)*(maxdegree+1)-1; i>=0; i--)
     bettis[i] = 0;
 

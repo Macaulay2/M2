@@ -44,11 +44,11 @@ GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0)
 	}
     }
 
-  EXP_ = newarray(int, nvars_);
+  EXP_ = newarray_atomic(int, nvars_);
 
   if (use_component_degrees_)
     {
-      Fdegs_ = newarray(long, F->rank()+1);
+      Fdegs_ = newarray_atomic(long, F->rank()+1);
       Fdegs_[0] = 0;
       for (int j=0; j<F->rank(); j++)
 	Fdegs_[j+1] = F->primary_degree(j);

@@ -25,7 +25,7 @@ void bignum_text_out(buffer &o, mpz_t a)
   char *str;
 
   int size = mpz_sizeinbase(a, 10) + 2;
-  char *allocstr = (size > 1000 ? newarray(char,size) : s);
+  char *allocstr = (size > 1000 ? newarray_atomic(char,size) : s);
 
   str = mpz_get_str(allocstr, 10, a);
   o << str;

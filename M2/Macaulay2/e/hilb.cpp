@@ -657,7 +657,7 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
   // up the small integer values of the coefficients of those that have exp[0]=deg.
   const PolynomialRing *P = h->get_ring()->cast_to_PolynomialRing();
 
-  int *exp = newarray(int,P->n_vars());
+  int *exp = newarray_atomic(int,P->n_vars());
   int result = 0;
   for (Nterm *f = h->get_value(); f!=NULL; f=f->next)
     {

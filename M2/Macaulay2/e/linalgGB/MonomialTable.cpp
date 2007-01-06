@@ -23,7 +23,7 @@ MonomialLookupTable::MonomialLookupTable(queue<tagged_monomial *> &elems, queue<
   : mi(0), count(0)
 {
   size_of_exp = 10;
-  exp0 = newarray(int,size_of_exp);
+  exp0 = newarray_atomic(int,size_of_exp);
   VECTOR( queue<tagged_monomial *> *) bins;
   tagged_monomial *b, *b1;
   while (elems.remove(b)) 
@@ -55,7 +55,7 @@ MonomialLookupTable::MonomialLookupTable(queue<tagged_monomial *> &elems)
   : mi(0), count(0)
 {
   size_of_exp = 10;
-  exp0 = newarray(int,size_of_exp);
+  exp0 = newarray_atomic(int,size_of_exp);
   VECTOR( queue<tagged_monomial *> *) bins;
   tagged_monomial *b;
   while (elems.remove(b)) 
@@ -171,7 +171,7 @@ void MonomialLookupTable::update_exponent_vector(monomial m)
       else
 	size_of_exp *= 2;
 
-      exp0 = newarray(int,size_of_exp);
+      exp0 = newarray_atomic(int,size_of_exp);
       for (int i=0; i<size_of_exp; i++) exp0[i] = 0;
     }
 

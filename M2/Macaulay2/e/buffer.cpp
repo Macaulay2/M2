@@ -6,7 +6,7 @@ void buffer::expand(int newcap)
 {
   int n = 2 * _capacity;
   if (newcap > n) n = newcap;
-  char *newbuf = newarray(char,n);
+  char *newbuf = newarray_atomic(char,n);
   _capacity = n;
   memcpy(newbuf, _buf, _size);
   deletearray(_buf);

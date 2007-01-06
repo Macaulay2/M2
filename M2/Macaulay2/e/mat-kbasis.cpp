@@ -100,14 +100,14 @@ KBasis::KBasis(const Matrix *bottom,
   
   // Compute the (positive) weights of each of the variables in 'vars'.
 
-  var_wts = newarray(int, vars->len);
+  var_wts = newarray_atomic(int, vars->len);
   for (int i=0; i<vars->len; i++)
     {
       var_wts[i] = weight_of_monomial(M->degree_of_var(vars->array[i]));
     }
 
   // Set the recursion variables
-  kb_exp = newarray(int, P->n_vars());
+  kb_exp = newarray_atomic(int, P->n_vars());
   for (int i=0; i<P->n_vars(); i++)
     kb_exp[i] = 0;
   kb_exp_weight = 0;
@@ -134,7 +134,7 @@ KBasis::KBasis(const Matrix *bottom,
 
 int KBasis::weight_of_monomial(const int *deg) const
 {
-  int *exp = newarray(int,D->n_vars());
+  int *exp = newarray_atomic(int,D->n_vars());
   D->to_expvector(deg, exp);
   int result = ntuple::weight(wt_vector->len, exp, wt_vector);
   deletearray(exp);

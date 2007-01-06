@@ -27,14 +27,14 @@ binomial_ring::binomial_ring(const PolynomialRing *RR,
   int i;
 
   nslots = nvars + 1;
-  degrees = newarray(int,nvars);
+  degrees = newarray_atomic(int,nvars);
   for (i=0; i<nvars; i++) 
     degrees[i] = - R->Nmonoms()->primary_degree_of_var(i);
 
   if (have_weights)
     {
       nslots++;
-      weights = newarray(int,nvars);
+      weights = newarray_atomic(int,nvars);
       for (i=0; i<nvars; i++) weights[i] = -wts[i];
     }
 
@@ -954,7 +954,7 @@ bool binomialGB::reduce(binomial &f) const
 #endif
 int binomialGB::n_masks() const
 {
-  int *masks = newarray(int,100000);
+  int *masks = newarray_atomic(int,100000);
   buffer o;
   unsigned int nmasks = 1;
   masks[0] = first->mask;

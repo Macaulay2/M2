@@ -37,8 +37,8 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
   int rk = m->n_cols();
   if (rk == 0) return result;
   int *base = M->make_one();
-  int *tiebreaks = newarray(int,rk);
-  int *ties = newarray(int,rk);
+  int *tiebreaks = newarray_atomic(int,rk);
+  int *ties = newarray_atomic(int,rk);
   for (i=0; i<rk; i++)
     {
       vec v = (*m)[i];
@@ -90,8 +90,8 @@ SchreyerOrder *SchreyerOrder::create(const GBMatrix *m)
   if (rk == 0) return result;
 
   int *base = M->make_one();
-  int *tiebreaks = newarray(int,rk);
-  int *ties = newarray(int,rk);
+  int *tiebreaks = newarray_atomic(int,rk);
+  int *ties = newarray_atomic(int,rk);
   for (i=0; i<rk; i++)
     {
       gbvector *v = m->elems[i];
@@ -227,7 +227,7 @@ SchreyerOrder *SchreyerOrder::exterior(int p) const
 
   int rk = rank();
 
-  int *a = newarray(int,p);
+  int *a = newarray_atomic(int,p);
   for (int i=0; i<p; i++) a[i] = i;
 
   int *base = M->make_one();

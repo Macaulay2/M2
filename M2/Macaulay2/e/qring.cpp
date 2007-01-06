@@ -16,8 +16,8 @@ void QRingInfo::appendQuotientElement(Nterm *f, gbvector *g)
 QRingInfo::QRingInfo(const PolyRing *ambientR)
   : R(ambientR)
 {
-  EXP1_ = newarray(int, R->n_vars());
-  EXP2_ = newarray(int, R->n_vars());
+  EXP1_ = newarray_atomic(int, R->n_vars());
+  EXP2_ = newarray_atomic(int, R->n_vars());
   MONOM1_ = R->getMonoid()->make_one();
 }
 
@@ -42,7 +42,7 @@ QRingInfo_field::QRingInfo_field(const PolyRing *ambientR,
   Rideal = new MonomialIdeal(R);
   ringtable = MonomialTable::make(R->n_vars());
   intarray vp;
-  int *exp = newarray(int,R->n_vars());
+  int *exp = newarray_atomic(int,R->n_vars());
   for (int i=0; i<quotients.size(); i++)
     {
       // Make a varpower element.  See if it is in Rideal.
@@ -64,7 +64,7 @@ QRingInfo_field::QRingInfo_field(const PolyRing *ambientR,
 	  Bag *b = new Bag(index, vp);
 	  Rideal->insert(b);
 	  ringtable->insert(exp, 1, index); // consumes exp
-	  exp = newarray(int,R->n_vars());
+	  exp = newarray_atomic(int,R->n_vars());
 	}
     }
   deletearray(exp);
@@ -259,7 +259,7 @@ QRingInfo_ZZ::QRingInfo_ZZ(const PolyRing *ambientR,
   : QRingInfo(ambientR)
 {
   ringtableZZ = MonomialTableZZ::make(R->n_vars());
-  int *exp = newarray(int,R->n_vars());
+  int *exp = newarray_atomic(int,R->n_vars());
   for (int i=0; i<quotients.size(); i++)
     {
       // Make a varpower element.  See if it is in Rideal.
@@ -276,7 +276,7 @@ QRingInfo_ZZ::QRingInfo_ZZ(const PolyRing *ambientR,
 	  ringtableZZ->insert(MPZ_VAL(f->coeff), exp, 1, index);
 	  gbvector *g = R->translate_gbvector_from_ringelem(f);
 	  appendQuotientElement(f, g);
-	  exp = newarray(int,R->n_vars());
+	  exp = newarray_atomic(int,R->n_vars());
 
 	  if (f->next == 0 && R->getMonoid()->is_one(f->monom))
 	    {

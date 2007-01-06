@@ -70,7 +70,7 @@ M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F)
   const Monoid *D = R->degree_monoid();
   M2_arrayint result = makearrayint(F->rank() * D->n_vars());
   int next = 0;
-  int *exp = newarray(int,D->n_vars());
+  int *exp = newarray_atomic(int,D->n_vars());
   for (int i=0; i<F->rank(); i++)
     {
       D->to_expvector(F->degree(i), exp);

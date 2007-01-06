@@ -235,12 +235,12 @@ void GBZZ_comp::find_pairs(int me)
   int j;
   intarray vplcm;
   int *find_pairs_m = M->make_one();
-  int *find_pairs_exp = newarray(int,M->n_vars());
-  int *find_pairs_lcm = newarray(int,M->n_vars());
+  int *find_pairs_exp = newarray_atomic(int,M->n_vars());
+  int *find_pairs_lcm = newarray_atomic(int,M->n_vars());
 
   if (M->is_skew())
     {
-      int *skewvars = newarray(int,M->n_vars());
+      int *skewvars = newarray_atomic(int,M->n_vars());
       M->to_expvector(p->f->monom, find_pairs_exp);
       int nskew = M->exp_skew_vars(find_pairs_exp, skewvars);
       for (int i=0; i<M->n_vars(); i++) 

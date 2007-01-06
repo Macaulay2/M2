@@ -114,7 +114,7 @@ void LinAlgGB<CoeffRing>::allocate_sparse_row(row_elem &result, size_t len)
 {
   result.len = len;
   result.coeffs = newarray(COEFF_TYPE, len);
-  result.comps = newarray(int, len);
+  result.comps = newarray_atomic(int, len);
 }
 
 template<typename CoeffRing>

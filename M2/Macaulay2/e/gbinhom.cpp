@@ -295,12 +295,12 @@ void GBinhom_comp::find_pairs(gb_elem *p)
   int nvars = M->n_vars();
   int *f_m = M->make_one();
   int *f_m2 = M->make_one();
-  int *find_pairs_exp = newarray(int,nvars);
-  int *find_pairs_lcm = newarray(int,nvars);
+  int *find_pairs_exp = newarray_atomic(int,nvars);
+  int *find_pairs_lcm = newarray_atomic(int,nvars);
   int *find_pairs_mon = M->make_one();
-  int *pi = newarray(int ,nvars);
-  int *pj = newarray(int ,nvars);
-  int *pij = newarray(int ,nvars);
+  int *pi = newarray_atomic(int ,nvars);
+  int *pj = newarray_atomic(int ,nvars);
+  int *pij = newarray_atomic(int ,nvars);
 
   GR->gbvector_get_lead_monomial(F, p->f, f_m);
   if (GR->is_skew_commutative())
@@ -482,8 +482,8 @@ int GBinhom_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
   result->next = 0;
   gb_elem *q;
 
-  int *div_totalexp = newarray(int,M->n_vars());
-  int *reduce_ndiv = newarray(int,M->n_vars());
+  int *div_totalexp = newarray_atomic(int,M->n_vars());
+  int *reduce_ndiv = newarray_atomic(int,M->n_vars());
   int count = 0;
   if (gbTrace == 10)
     {
@@ -540,8 +540,8 @@ int GBinhom_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
   gbvector head;
   gbvector *result = &head;
   result->next = 0;
-  int *div_totalexp = newarray(int,M->n_vars());
-  int *reduce_ndiv = newarray(int,M->n_vars());
+  int *div_totalexp = newarray_atomic(int,M->n_vars());
+  int *reduce_ndiv = newarray_atomic(int,M->n_vars());
   int count = 0;
 
   gbvectorHeap fb(GR,F);
@@ -637,7 +637,7 @@ void GBinhom_comp::gb_insert(gbvector * f, gbvector * fsyz, int minlevel)
   minlevel = (minlevel == 0 ? MINGB_MASK : MINGEN_MASK | MINGB_MASK);
   gb_elem *p = new gb_elem(f, fsyz, minlevel);
   p->me = last_gb_num++;
-  p->lead_exp = newarray(int,M->n_vars());
+  p->lead_exp = newarray_atomic(int,M->n_vars());
 
   GR->gbvector_get_lead_monomial(F,p->f,f_m);
   GR->gbvector_remove_content(p->f, p->fsyz);

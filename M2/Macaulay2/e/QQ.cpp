@@ -78,7 +78,7 @@ void QQ::elem_text_out(buffer &o, const ring_elem ap) const
   int size = mpz_sizeinbase (mpq_numref(a), 10)
     + mpz_sizeinbase (mpq_denref(a), 10) + 3;
 
-  char *allocstr = (size > 1000 ? newarray(char,size) : s);
+  char *allocstr = (size > 1000 ? newarray_atomic(char,size) : s);
 
   if (!is_neg && p_plus) o << '+';
   if (is_one) 

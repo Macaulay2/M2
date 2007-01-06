@@ -40,7 +40,7 @@ gbvector * GBRing::new_raw_term()
 
 exponents GBRing::exponents_make()
 {
-  int *e = newarray(int,_nvars+2); // length is nvars
+  int *e = newarray_atomic(int,_nvars+2); // length is nvars
   return e;
 }
 
@@ -86,17 +86,17 @@ GBRing::GBRing(const Ring *K0, const Monoid *M0)
     solvable(0),
     _one(K->from_int(1))
 {
-  _EXP1 = newarray(int,_nvars+2);
-  _EXP2 = newarray(int,_nvars+2);
-  _EXP3 = newarray(int,_nvars+2);
-  _EXP4 = newarray(int,_nvars+2);
-  _SKEW1 = newarray(int,_nvars);
-  _SKEW2 = newarray(int,_nvars);
+  _EXP1 = newarray_atomic(int,_nvars+2);
+  _EXP2 = newarray_atomic(int,_nvars+2);
+  _EXP3 = newarray_atomic(int,_nvars+2);
+  _EXP4 = newarray_atomic(int,_nvars+2);
+  _SKEW1 = newarray_atomic(int,_nvars);
+  _SKEW2 = newarray_atomic(int,_nvars);
   _MONOM1 = M->make_one();
   _MONOM2 = M->make_one();
   MONOMlead_exp1_ = M->make_one();
-  EXPskew_mult1_ = newarray(int,_nvars+2);
-  EXPskew_mult2_ = newarray(int,_nvars+2);
+  EXPskew_mult1_ = newarray_atomic(int,_nvars+2);
+  EXPskew_mult2_ = newarray_atomic(int,_nvars+2);
 
   gbvector *used_to_determine_size = 0;
   gbvector_size = sizeofgbvector(used_to_determine_size,M->monomial_size());
@@ -161,7 +161,7 @@ GBRingSkew::GBRingSkew(const Ring *K0,
   _is_skew = true;
   _skew = skew0;
   int ** skew_monoms = newarray(int *, _skew.n_skew_vars());
-  int *exp = newarray(int, M0->n_vars());
+  int *exp = newarray_atomic(int, M0->n_vars());
   for (int i=0; i<M0->n_vars(); i++)
     exp[i] = 0;
   for (int v=0; v<_skew.n_skew_vars(); v++)

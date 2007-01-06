@@ -71,7 +71,7 @@ void RRR::elem_text_out(buffer &o, const ring_elem ap) const
   mp_exp_t expptr;
 
   // size_t size = 1000;
-  char *s = newarray(char,1000);
+  char *s = newarray_atomic(char,1000);
   char *str;
 
   bool is_neg = (mpf_cmp_si(a, 0) == -1);

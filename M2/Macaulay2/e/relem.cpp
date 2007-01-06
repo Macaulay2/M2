@@ -186,7 +186,7 @@ Monomial *RingElement::lead_monom(int nvars) const
   intarray resultvp;
   Nterm *t = get_value();
 
-  int *exp = newarray(int,nvars);
+  int *exp = newarray_atomic(int,nvars);
   P->lead_logical_exponents(nvars,t,exp);
   varpower::from_ntuple(nvars,exp,resultvp);
   return Monomial::make(resultvp.raw());
@@ -203,7 +203,7 @@ intarray RingElement::degree() const
   // This should return an M2_arrayint?
   intarray result;
 
-  int *mon = newarray(int,R->degree_monoid()->monomial_size());
+  int *mon = newarray_atomic(int,R->degree_monoid()->monomial_size());
   int *d = result.alloc(R->degree_monoid()->n_vars());
 
   if (is_zero()) 
@@ -243,7 +243,7 @@ M2_arrayint RingElement::multi_degree() const
       return 0;
     }
 
-  int *mon = newarray(int,R->degree_monoid()->monomial_size());
+  int *mon = newarray_atomic(int,R->degree_monoid()->monomial_size());
   R->degree(get_value(), mon);
   M2_arrayint result = R->degree_monoid()->to_arrayint(mon);
 
