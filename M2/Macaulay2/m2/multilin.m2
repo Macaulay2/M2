@@ -2,9 +2,6 @@
 
 symmetricPower(ZZ, Matrix) := Matrix => (i,m) -> map(ring m, rawSymmetricPower(i, raw m))
 
-MinorsComputation = new SelfInitializingType of BasicList
-MinorsComputation.synonym = "minors computation"
-
 getMinorsStrategy := (R,options) -> (
      bareiss := 0;  -- WARNING: these must match the engine!!
      cofactor := 1;

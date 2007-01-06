@@ -22,7 +22,10 @@ document {
      PARA "Intended for internal use only."
      }
 document {
-     Key => MarkUpType,
+     Key => {MarkUpType,
+	  (symbol SPACE, MarkUpType, String),
+	  (symbol SPACE, MarkUpType, Net),
+	  (symbol SPACE, MarkUpType, Hypertext)},
      Headline => "the class of mark-up types used with hypertext", 
      PARA "Intended for internal use only."
      }

@@ -1,4 +1,8 @@
-document { Key => {(Grassmannian, ZZ, ZZ), Grassmannian, (Grassmannian, ZZ, ZZ, PolynomialRing)},
+document { Key => {(Grassmannian, ZZ, ZZ), 
+	  Grassmannian, 
+	  (Grassmannian, ZZ, ZZ, PolynomialRing),
+	  [Grassmannian, CoefficientRing],
+	  [Grassmannian, Variable]},
      Headline => "the Grassmannian of linear subspaces of a vector space",
      Usage => "Grassmannian(k,r)\nGrassmannian(k,r,R)",
      Inputs => { 
@@ -28,7 +32,10 @@ document { Key => {(Grassmannian, ZZ, ZZ), Grassmannian, (Grassmannian, ZZ, ZZ, 
      }
 
 document { 
-     Key => {(Schubert,ZZ,ZZ,VisibleList), Schubert},
+     Key => {(Schubert,ZZ,ZZ,VisibleList), 
+	  Schubert,
+	  [Schubert,CoefficientRing],
+	  [Schubert,Variable]},
      Headline => "find the Pluecker ideal of a Schubert variety",
      Usage => "Schubert(k,n,sigma)",
      Inputs => { 

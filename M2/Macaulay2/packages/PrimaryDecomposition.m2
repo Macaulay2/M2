@@ -8,15 +8,15 @@ export {
      Increment,
      GTZ,
      SY,
-     binomialCD,
-     extract,
-     findNonMember,
-     flattener,
+--     binomialCD,
+--     extract,
+--     findNonMember,
+--     flattener,
      localize,
-     minSat,
-     primaryComponent,
-     quotMin,
-     radicalContainment
+--     minSat,
+     primaryComponent
+--     quotMin,
+--     radicalContainment
      }
 
 

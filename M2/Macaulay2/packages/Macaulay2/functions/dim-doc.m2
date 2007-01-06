@@ -153,5 +153,5 @@ document {
           "dim D",
 	  "dim I"
 	  },
-     SeeAlso => {ideal, monomialIdeal, "SimplicialComplexes"}
+     SeeAlso => {ideal, monomialIdeal, "SimplicialComplexes::SimplicialComplexes"}
      }

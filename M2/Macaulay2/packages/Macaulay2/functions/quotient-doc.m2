@@ -24,8 +24,9 @@ document {
 	  },
      Headline => "ideal or submodule quotient",
      Usage => "quotient(I,J)\nI:J",
-     Inputs => {"I" => {ofClass Ideal, ", or ", ofClass Module, ", a submodule"},
-	        "J" => {ofClass Ideal, ", ", ofClass RingElement, ", or ", ofClass Module, ", a submodule"},
+     Inputs => {
+	  "I" => {ofClass Ideal, ", or ", ofClass Module, ", a submodule"},
+	  "J" => {ofClass Ideal, ", ", ofClass RingElement, ", or ", ofClass Module, ", a submodule"},
 	  },
      Outputs => {
 	  {TEX ///the ideal or submodule $I:J = \{f | fJ\subset I\}$///}
@@ -59,7 +60,7 @@ document {
 	  (I++I) : (J++J)
 	  (I++I) : x+y+z
 	  quotient(I,J)
-	  quotient(gens I, gens J)
+	  quotient(gens I, gens J)	  
           ///,
      "Ideal quotients and saturations are useful for manipulating components of ideals.
      For example, ",

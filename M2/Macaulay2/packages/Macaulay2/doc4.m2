@@ -150,7 +150,8 @@ document {
      }
 
 document {
-     Key => SelfInitializingType,
+     Key => {SelfInitializingType,
+	  (symbol SPACE, SelfInitializingType, Thing)},
      Headline => "the class of all self initializing types",
      "A self initializing type ", TT "X", " will produce an instance of X from
      initial data ", TT "v", " with the expression ", TT "X v", ".",
@@ -591,7 +592,11 @@ document {
      }
 
 document {
-     Key => {(smithNormalForm,Matrix), smithNormalForm},
+     Key => {(smithNormalForm,Matrix), 
+	  smithNormalForm,
+	  [smithNormalForm,ChangeMatrix],
+	  [smithNormalForm,KeepZeroes]
+	  },
      Headline => "smith normal form for a matrix over ZZ or a PID",
      Usage => "(D,P,Q) = smithNormalForm M\n(D,P) = smithNormalForm(M,ChangeMatrix=>{true,false})\n(D,Q) = smithNormalForm(M,ChangeMatrix=>{false,true})\nD = smithNormalForm(M,ChangeMatrix=>{false,false})\n",
      Inputs => {

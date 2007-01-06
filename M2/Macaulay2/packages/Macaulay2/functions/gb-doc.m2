@@ -6,12 +6,14 @@ document {
      Key => {gb,
 	  (gb,Ideal),
 	  (gb,Matrix),
-	  (gb,Module)},
+	  (gb,Module),
+	  [gb, BasisElementLimit]
+	  },
      Headline => "compute a Groebner basis",
      Usage => "gb I",
      Inputs => {
 	  "I" => "an ideal, module, or matrix",
-	  
+     	  BasisElementLimit => ZZ => "the limit on how many (nonminimal) Groebner basis elements to find"
 	  },
      Outputs => {
 	  GroebnerBasis => "a Groebner basis computation object"
@@ -151,20 +153,6 @@ document {
      }
 document { 
      Key => [gb, PairLimit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "See ", TO "Groebner bases", " for examples.",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [gb, BasisElementLimit],
      Headline => "",
      Usage => "",
      Inputs => {

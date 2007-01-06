@@ -64,7 +64,7 @@ document {
      module ", TT "M", " with respect to the maximal irrelevant ideal 
      (the ideal of variables in the base ring of ", TT "M", ").",
      PARA{},
-     "The package ", TO "Dmodules", " has alternative code to
+     "The package ", TO "Dmodules::Dmodules", " has alternative code to
      compute local cohomology (even in the non homogeneous case)",
      PARA{},
      "A very simple example:",
@@ -85,7 +85,7 @@ document {
 	  },
      Caveat => {"There is no check made if the given module 
 	  is graded over the base polynomial ring"},
-     SeeAlso => {"Dmodules",(cohomology,ZZ,SumOfTwists),(cohomology,ZZ,CoherentSheaf)}
+     SeeAlso => {"Dmodules::Dmodules",(cohomology,ZZ,SumOfTwists),(cohomology,ZZ,CoherentSheaf)}
      }
 document { 
      Key => (cohomology,ZZ,SumOfTwists),

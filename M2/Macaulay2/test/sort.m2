@@ -48,7 +48,7 @@ x  = {symbol generators, symbol size, symbol symmetricPower, symbol SPACE, symbo
       symbol run, symbol nextkey, LongPolynomial, symbol STRONG, symbol UL, symbol member, symbol needs, symbol koszul, symbol AssociativeExpression, symbol chainComplex, symbol
       Schubert, symbol depth, symbol hilbertPolynomial, symbol betti, symbol partitions, NewFromMethod, symbol demark, DegreeMap, symbol not, symbol FilePosition, symbol length, Degree,
       Homogeneous, symbol isAffineRing, symbol MutableHashTable, symbol inducesWellDefinedMap, symbol flush, symbol numeric, symbol degrees, symbol while, symbol monoid, symbol ZZ, symbol
-      HEADER1, Linear, symbol HEADER2, symbol HEADER3, symbol HEADER4, symbol HEADER5, symbol HEADER6, symbol number, symbol kill, symbol compress, symbol MinorsComputation, symbol
+      HEADER1, Linear, symbol HEADER2, symbol HEADER3, symbol HEADER4, symbol HEADER5, symbol HEADER6, symbol number, symbol kill, symbol compress, symbol
       Equation, symbol horizontalJoin, symbol \\, symbol prepend, symbol Manipulator, symbol unstack, Limit, symbol isInjective, symbol IMG, symbol exponents, symbol leadMonomial,
       symbol indices, symbol collectGarbage, symbol Table, symbol methods, incomparable, symbol ProductOrder, symbol ^^, symbol override, symbol getc, symbol table, symbol unique,
       symbol topCoefficients, symbol Spec, symbol Fano, symbol PARA, symbol Sequence, symbol symmetricAlgebra, symbol isListener, symbol fold, NewOfFromMethod, symbol diff, symbol between,

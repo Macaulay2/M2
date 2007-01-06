@@ -9,7 +9,10 @@ undocumented {
      }
 
 document { 
-     Key => {(flattenRing, Ring),flattenRing},
+     Key => {(flattenRing, Ring),
+	  flattenRing,
+	  [flattenRing,CoefficientRing]
+	  },
      Headline => "write a ring as a (quotient) of a polynomial ring over the ZZ or a prime field",
      Usage => "(S,F,G) = flattenRing R",
      Inputs => {
