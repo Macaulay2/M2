@@ -1311,12 +1311,6 @@ document {
      SeeAlso => {(exteriorPower,ZZ,Matrix)}
      }
 document {
-     Key => MinorsComputation,
-     Headline => "the class of all minors computations",
-     TT "MinorsComputation", " -- a type of self initializing list used
-     internally by ", TO "minors", "."
-     }
-document {
      Key => exteriorPower,
      Headline => "exterior power",
      SeeAlso => {"minors", "det", "wedgeProduct"}

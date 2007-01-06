@@ -626,7 +626,7 @@ document {
 	  },
      "All Groebner basis and related computations work over this ring.  For an extensive
      collection of D-module routines (A D-module is a module over a Weyl algebra), see ",
-     TO "Dmodules", "."
+     TO "Dmodules::Dmodules", "."
      }
 
 document {

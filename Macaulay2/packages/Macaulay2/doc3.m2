@@ -469,10 +469,16 @@ document { Key => {(numRows, MutableMatrix),numRows},
 document { Key => {(numColumns, MutableMatrix),numColumns},
      Headline => "number of columns in a mutable matrix",
      Usage => "numColumns m", Inputs => { "m" }, Outputs => {{ "the number of columns in ", TT "m" }}}
-document { Key => {mutableMatrix,(mutableMatrix, MutableMatrix),(mutableMatrix, Matrix),(mutableMatrix, List)},
+document { Key => {mutableMatrix,
+	  (mutableMatrix, MutableMatrix),
+	  (mutableMatrix, Matrix),
+	  (mutableMatrix, List),
+	  [mutableMatrix, Dense]},
      Headline => "make a mutable matrix",
      Usage => "mutableMatrix m",
-     Inputs => { "m" => {ofClass{Matrix, MutableMatrix, List}}},
+     Inputs => { "m" => {ofClass{Matrix, MutableMatrix, List}},
+	  Dense => {"whether the encoding of the matrix should be dense or not: see ", TO MutableMatrix}
+	  },
      Outputs => {{ "a new mutable matrix whose entries are obtained from ", TT "m", ".  If ", TT "m", " is a list, it should
 	       be a doubly nested list (table) of ring elements, all from the same ring." }},
      EXAMPLE lines ///
@@ -484,7 +490,9 @@ document { Key => {mutableMatrix,(mutableMatrix, MutableMatrix),(mutableMatrix, 
 	  mutableMatrix genericMatrix(R,3,3)
      ///
      }
-document { Key => {(randomMutableMatrix, ZZ, ZZ, RR, ZZ),randomMutableMatrix},
+document { Key => {(randomMutableMatrix, ZZ, ZZ, RR, ZZ),
+	  [randomMutableMatrix,Dense],
+	  randomMutableMatrix},
      Headline => "a random mutable matrix of integers",
      Usage => "randomMutableMatrix(nrows,ncols,zerof,max)",
      Inputs => {
@@ -502,8 +510,10 @@ document { Key => {(randomMutableMatrix, ZZ, ZZ, RR, ZZ),randomMutableMatrix},
           randomMutableMatrix(10,15,.9,100)
      ///
      }
-
-document { Key => {(mutableZero, Ring, ZZ, ZZ),mutableZero},
+document { Key => {(mutableZero, Ring, ZZ, ZZ),
+	  [mutableZero,Dense],
+	  mutableZero
+	  },
      Headline => "make a mutable matrix filled with zeroes",
      Usage => "mutableZero(R,nrows,ncols)",
      Inputs => { "R",
@@ -519,7 +529,9 @@ document { Key => {(mutableZero, Ring, ZZ, ZZ),mutableZero},
      ///,
      SeeAlso => {mutableIdentity, mutableMatrix}
      }
-document { Key => {(mutableIdentity, Ring, ZZ),mutableIdentity},
+document { Key => {(mutableIdentity, Ring, ZZ),
+	  [mutableIdentity,Dense],
+	  mutableIdentity},
      Headline => "make a mutable identity matrix",
      Usage => "mutableIdentity(R,nrows)",
      Inputs => { "R",

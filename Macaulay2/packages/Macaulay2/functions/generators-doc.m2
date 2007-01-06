@@ -13,7 +13,8 @@ document {
      Key => generators,
      Headline => "provide matrix or list of generators",
      Usage => "generators x\ngens x",
-     Inputs => { "x"  },
+     Inputs => { "x",
+	  CoefficientRing => {"only used if ", TT "x", " is a ring"}  },
      Outputs => { {"provides the generators of ", TT "x", 
 	       " in a convenient form, as a list or a matrix, depending on the type"} },
      PARA{},
@@ -35,7 +36,7 @@ document {
      Key => {generator,(generator,Ideal),(generator,Module)},
      Headline => "provide a single generator",
      Usage => "generator I",
-     Inputs => { "I" => {ofClass{Ideal,Module}} },
+     Inputs => { "I" => {ofClass{Ideal,Module}}},
      Outputs => {{"the single generator of ", TT "I", ", if it has just one"}},
      PARA {"If the number of apparent generators is greater than 1, then ", TO "trim", " will be called."},
      EXAMPLE lines ///
@@ -51,7 +52,8 @@ document {
      Key => (generators,GroebnerBasis),
      Headline => "the generator matrix of a Groebner basis",
      Usage => "generators g\ngens g",
-     Inputs => { "g" },
+     Inputs => { "g",	  
+	  CoefficientRing => "unused option" },
      Outputs => {Matrix => {"whose columns are the generators of the Groebner basis ", TT "g"}},
      "The following ideal defines a set of 18 points over the complex numbers.  We compute a
      lexicographic Groebner basis of the ideal.",
@@ -66,7 +68,9 @@ document {
      Key => (generators,Module),
      Headline => "the generator matrix of a module",     
      Usage => "generators M\ngens M",
-     Inputs => { "M" },
+     Inputs => { "M",
+	  CoefficientRing => "unused option" 
+	  },
      Outputs => {
 	  {"the matrix of generators of ", TT "M", "."}
 	  },
@@ -92,7 +96,8 @@ document {
      Headline => "list of generators",
      Usage => "generators M\ngens M",
      Inputs => {
-	  "M"
+	  "M",
+	  CoefficientRing => "unused option"
 	  },
      Outputs => {
 	  List => "of generators"
@@ -109,7 +114,9 @@ document {
 	  (generators, MonomialIdeal)},
      Headline => "the generator matrix of an ideal",
      Usage => "generators I\ngens I",
-     Inputs => {"I"},
+     Inputs => {"I",
+	  CoefficientRing => "unused option"
+	  },
      Outputs => { Matrix => {"the one-row matrix whose entries are the generators of ", TT "I"} },
      "Each ideal in ", EM "Macaulay 2", " comes equipped with a one-row
      matrix with the generators of the ideal.
@@ -130,7 +137,9 @@ document {
 	  }
      }
 document { 
-     Key => (generators,Ring),
+     Key => {(generators,Ring),
+	  [generators,CoefficientRing]
+	  },
      Headline => "the list of generators of a ring",
      Usage => "generators R\ngens R",
      Inputs => {

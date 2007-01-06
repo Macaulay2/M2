@@ -264,7 +264,6 @@ export {
 	symbol MinimalGenerators,
 	symbol MinimalMatrix,
 	symbol Minimize,
-	symbol MinorsComputation,
 	symbol Minus,
 	symbol Module,
 	symbol ModuleMap,

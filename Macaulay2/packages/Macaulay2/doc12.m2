@@ -591,6 +591,7 @@ document {
 
 undocumented {
      (symbol SPACE,Expression,Thing), (symbol SPACE,Thing,Expression),
+     (symbol SPACE,Holder,Holder),
      (symbol *,Expression,Thing), (symbol *,Thing,Expression),
      (symbol **,Expression,Thing), (symbol **,Thing,Expression),
      (symbol +,Expression,Thing), (symbol +,Thing,Expression),
@@ -863,7 +864,10 @@ document {
      }
 
 document {
-     Key => ScriptedFunctor,
+     Key => {ScriptedFunctor,
+	  (symbol^, ScriptedFunctor, Thing),
+	  (symbol_, ScriptedFunctor, Thing),
+	  (symbol SPACE, ScriptedFunctor, Thing)},
      Headline => "the class of all scripted functors",
      "A scripted functor accepts a subscript or a superscript:
      the primary example is ", TO "HH", ".",
