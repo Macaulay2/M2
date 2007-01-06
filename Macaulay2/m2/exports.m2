@@ -1107,7 +1107,6 @@ export {
 exportMutable toList (a .. Z)
 
 exportMutable {
-	symbol GF$a,
 	symbol applicationDirectorySuffix,
 	symbol backtrace,
 	symbol backupFileRegexp,

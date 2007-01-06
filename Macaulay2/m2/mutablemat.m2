@@ -1,6 +1,7 @@
 --		Copyright 2005 by Daniel R. Grayson
 
 MutableMatrix = new Type of HashTable
+MutableMatrix.synonym = "mutable matrix"
 raw MutableMatrix := m -> m.RawMutableMatrix
 ring MutableMatrix := m -> m.Ring
 MutableMatrix == ZZ := (m,i) -> raw m == i
@@ -23,18 +24,18 @@ map(Ring,RawMutableMatrix) := opts -> (R,m) -> (
 new Matrix from MutableMatrix := (typeofMatrix       ,m) -> map(ring m,rawMatrix        raw m)
 new MutableMatrix from Matrix := (typeofMutableMatrix,m) -> map(ring m,rawMutableMatrix raw m)
 
-mutableMatrix = method(Options => {Dense => true})
+mutableMatrix = method(Options => {Dense => true}, TypicalValue=>MutableMatrix)
 mutableMatrix Matrix := o -> m -> map(ring m, rawMutableMatrix(raw m, o.Dense))
 mutableMatrix List := o -> m -> (m1 := matrix m; map(ring m1, rawMutableMatrix(raw m1, o.Dense)))
 mutableMatrix MutableMatrix := o -> (m) -> map(ring m, rawMutableMatrix(raw m, o.Dense))
 
 matrix MutableMatrix := o -> m -> map(ring m, rawMatrix raw m)
 
-mutableZero = method(Options => {Dense => true})
+mutableZero = method(Options => {Dense => true}, TypicalValue=>MutableMatrix)
 mutableZero(Ring,ZZ,ZZ) := o -> (R,nrows,ncols) -> 
   map(R,rawMutableMatrix(raw R,nrows,ncols,o.Dense))
 
-mutableIdentity = method(Options => {Dense => true})
+mutableIdentity = method(Options => {Dense => true}, TypicalValue=>MutableMatrix)
 mutableIdentity(Ring,ZZ) := o -> (R,nrows) -> 
   map(R,rawMutableIdentity(raw R,nrows,o.Dense))
 
@@ -106,7 +107,7 @@ columnAdd(MutableMatrix,ZZ,QQ,ZZ) := (A,r,f,i) -> (rawMatrixColumnChange(raw A,r
 columnAdd(MutableMatrix,ZZ,RR,ZZ) := (A,r,f,i) -> (rawMatrixColumnChange(raw A,r,raw f,i,false);A)
 columnAdd(MutableMatrix,ZZ,CC,ZZ) := (A,r,f,i) -> (rawMatrixColumnChange(raw A,r,raw f,i,false);A)
 
-randomMutableMatrix = method(Options=>{Dense=>false})
+randomMutableMatrix = method(Options=>{Dense=>false}, TypicalValue=>MutableMatrix)
 
 randomMutableMatrix(ZZ,ZZ,RR,ZZ) := options -> (n,m,percentagezero,maxentry) -> (
     M := mutableZero(ZZ,n,m,options);

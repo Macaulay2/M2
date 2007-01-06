@@ -7,12 +7,10 @@ document {
 	  TO rowSwap,
 	  TO rowPermute,
 	  TO rowMult,
-	  TO "rowDivide",
 	  TO columnAdd,
 	  TO columnSwap,
 	  TO columnPermute,
 	  TO columnMult,
-	  TO "columnDivide"
 	  },
      }
 
@@ -71,21 +69,21 @@ document {
 	  TO mutableZero,
 	  ", ", 
 	  TO mutableIdentity,
-     ").  Certain operations on (dense) matrices over RR or CC (e.g., eigenvalues,
-     eigenvectors, LU decomposition, SVD decomposition, and solving) 
-     are performed using the lapack library.",
+     ").  
+     Certain operations over RR or CC are performed using the lapack library
+     and require dense encoding of matrices: ",
+     TO "LU", ", ", TO "SVD", ", ", TO "solve", ", ", TO "eigenvalues", ", ", TO "eigenvectors", ".",
+     
      HEADER3 "row and column operations",
      UL {
 	  TO rowAdd,
 	  TO rowSwap,
 	  TO rowPermute,
 	  TO rowMult,
-	  TO "rowDivide",
 	  TO columnAdd,
 	  TO columnSwap,
 	  TO columnPermute,
 	  TO columnMult,
-	  TO "columnDivide"
 	  },
      HEADER3 "matrix arithmetic",
      "Many matrix arithmetic routines are only available for immutabie 

@@ -207,6 +207,33 @@ document {
      PARA{},
      "Intended for internal use only."
      }
+undocumented {
+     (NewFromMethod, Command, String),
+     (NewFromMethod, Command, Function),
+     (NewFromMethod, BR, List),
+     (NewFromMethod, DocumentTag, List),
+     (NewFromMethod, HR, List),
+     (NewFromMethod, HREF, List),
+     (NewFromMethod, MarkUpType, List),
+     (NewFromMethod, Module, List),
+     (NewFromMethod, TO, List),
+     (NewFromMethod, TO2, List),
+     (NewFromMethod, TOH, List),
+     (NewFromMethod, CC, Sequence),
+     (NewFromMethod, MarkUpType, Sequence),
+     (NewFromMethod, Module, Sequence),
+     (NewFromMethod, TO2, Sequence),
+     (NewFromMethod, Manipulator, Function),
+     (NewFromMethod, TO, Hypertext),
+     (NewFromMethod, TOH, Hypertext),
+     (NewFromMethod, MarkUpType, Thing),
+     (NewFromMethod, Matrix, MutableMatrix),
+     (NewFromMethod, Matrix, Vector),
+     (NewFromMethod, MutableMatrix, Matrix),
+     (NewFromMethod, Vector, Matrix),
+     (NewFromMethod, Eliminate, ZZ),
+     (NewFromMethod, UL, VisibleList)
+     }
 document {
      Key => NewOfFromMethod,
      TT "NewOfFromMethod", " -- a symbol used as a method name in conjunction with

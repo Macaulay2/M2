@@ -3,6 +3,7 @@
 --- notes: 
 
 undocumented {
+     (tex, COMMENT),
      (tex, IMG),
      (tex, TO2),
      (tex, TO),

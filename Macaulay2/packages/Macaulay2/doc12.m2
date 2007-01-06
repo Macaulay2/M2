@@ -522,7 +522,10 @@ document {
      }
 
 document {
-     Key => HeaderType,
+     Key => {HeaderType,
+	  (symbol SPACE, HeaderType, List),
+	  (symbol SPACE, HeaderType, Sequence)
+	  },
      Headline => "a class of lists with abbreviated constructors",
      "These are the types ", TT "X", " of lists which can be constructed
      by expressions of the form ", TT "X {a,b,c,...}", ".  They also
@@ -536,7 +539,11 @@ document {
      }
 
 document {
-     Key => WrapperType,
+     Key => {WrapperType,
+	  (symbol SPACE, WrapperType, List),
+	  (symbol SPACE, WrapperType, Sequence),
+	  (symbol SPACE, WrapperType, Thing)
+	  },
      Headline => "a class of lists with abbreviated constructors",
      "These are the types ", TT "X", " of lists which can be constructed
      by expressions of the form ", TT "X {a,b,c,...}", ", or, for lists of
