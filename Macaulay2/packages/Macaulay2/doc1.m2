@@ -223,7 +223,6 @@ undocumented {
      (NewFromMethod, MarkUpType, Sequence),
      (NewFromMethod, Module, Sequence),
      (NewFromMethod, TO2, Sequence),
-     (NewFromMethod, Manipulator, Function),
      (NewFromMethod, TO, Hypertext),
      (NewFromMethod, TOH, Hypertext),
      (NewFromMethod, MarkUpType, Thing),
