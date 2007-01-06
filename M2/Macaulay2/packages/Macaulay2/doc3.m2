@@ -898,7 +898,13 @@ document { Key => {(searchPath, List, String), searchPath},
      Inputs => { "pa" => {"a list of strings giving paths to directories.  Each one ends with a slash."}, "fn" },
      Outputs => {{"a list of those directories in ", TT "pa", " containing files named ", TT "fn" }}}
 
-document { Key => {(netList, List),netList},
+document { Key => {(netList, List),
+	  netList,
+	  [netList, Boxes],
+	  [netList, BaseRow],
+	  [netList, HorizontalSpace],
+	  [netList, VerticalSpace],
+	  [netList, Alignment]},
      Headline => "a table of boxes",
      Usage => "netList v",
      Inputs => { 
