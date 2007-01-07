@@ -6,11 +6,12 @@
 
 template <class T> class array;
 
+const int init_array_size = 16;
+
 template<class T>
 class array : public our_new_delete
 {
   T    *entries;
-  static const int init_array_size = 16;
   int  len;
   int  max;
   void expand(int newtop) {
@@ -109,7 +110,6 @@ public:
 template <class T>
 class array_class : public our_new_delete {
   T    *entries;
-  static const int init_array_size = 16;
   int  len;
   int  max;
   void expand(int newtop)
