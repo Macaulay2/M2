@@ -432,7 +432,7 @@ void MonomialLookupTable::debug_out(int disp) const
   emit(o.str());
 }
 
-int MonomialLookupTable::debug_check(const mi_node * const p, const mi_node * const up) const
+int MonomialLookupTable::debug_check(mi_node * const p, const mi_node * const up) const
      // Returns the number of leaves at tree with root p.
      // Make sure that the list header is constructed ok, that the 
      // left/right pointers are ok on this level, that the

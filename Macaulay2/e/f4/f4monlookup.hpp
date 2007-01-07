@@ -120,7 +120,7 @@ private:
 
   void do_node(mi_node *p, int indent, int disp) const;
   void do_tree(mi_node *p, int depth, int indent, int disp) const;
-  int debug_check(const mi_node *p, const mi_node *up) const;
+  int debug_check(mi_node *p, const mi_node *up) const;
 
   void debug_out(int disp=1) const;
   void debug_check() const;

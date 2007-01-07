@@ -428,7 +428,7 @@ void F4MonomialLookupTableT<Key>::debug_out(int disp) const
 }
 
 template <typename Key>
-int F4MonomialLookupTableT<Key>::debug_check(const mi_node * const p, const mi_node * const up) const
+int F4MonomialLookupTableT<Key>::debug_check(mi_node * const p, const mi_node * const up) const
      // Returns the number of leaves at tree with root p.
      // Make sure that the list header is constructed ok, that the 
      // left/right pointers are ok on this level, that the
