@@ -33,11 +33,11 @@ ARGS += --no-debug --print-width 140
 # ARGS += -e 'gbTrace=5'
 
 status :: $(TESTFILES)
-	@ egrep -n '^--status:' $(TESTFILES) || true
+	@ egrep -n '^--status:' $(TESTFILES) /dev/null || true
 
 %.out : %.m2
 	@ echo testing: $<
-	@ egrep -n '^--status:' $< || true
+	@ egrep -n '^--status:' $< /dev/null || true
 	@ $(LIMIT); \
 		echo "--*- compilation -*-" >$*.errors; \
 		if (echo 'input "$<"'; echo 'collectGarbage()'; echo exit 0) | \
@@ -50,7 +50,7 @@ status :: $(TESTFILES)
 		fi
 %.out : %.m2-input
 	@ echo testing: $<
-	@ egrep -n '^--status:' $< || true
+	@ egrep -n '^--status:' $< /dev/null || true
 	@ $(LIMIT); \
 		echo "--*- compilation -*-" >$*.errors; \
 		if time $(DOTS)/bin/M2$(EXE) $(ARGS) <$< >>$*.errors 2>&1 ; \

@@ -75,7 +75,8 @@ HH = new ScriptedFunctor from {
      }
 
 f :=
-  homology(Nothing,Sequence) := 
+  ---- the following line seems not to be used, so we try commenting it out:
+  -- homology(Nothing,Sequence) := 
   homology(ZZ,Sequence) := opts -> (i,X) -> homology prepend(i,X)
 
 g :=
