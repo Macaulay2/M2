@@ -107,8 +107,8 @@ ring_elem QQ::denominator(ring_elem q) const
 ring_elem QQ::fraction(ring_elem top, ring_elem bottom) const
 {
   M2_Rational result = QQ::new_elem();
-  mpz_set(mpq_numref(result),MPZ_VAL(top));
-  mpz_set(mpq_denref(result),MPZ_VAL(bottom));
+  mpz_set(mpq_numref(result),top.get_mpz());
+  mpz_set(mpq_denref(result),bottom.get_mpz());
   mpq_canonicalize(result);
   return MPQ_RINGELEM(result);
 }
@@ -141,7 +141,7 @@ bool QQ::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
   // Rf = ZZ ---> QQ
   if (Rf->is_ZZ())
     {
-      result = QQ::from_int(MPZ_VAL(f));
+      result = QQ::from_int(f.get_mpz());
       return true;
     }
   return false;

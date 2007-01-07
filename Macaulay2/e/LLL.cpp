@@ -12,8 +12,8 @@ bool LLLoperations::checkThreshold(ring_elem num, ring_elem den)
 {
   // Makes sure that 1/4 < num/den <= 1
   // Assumed: num, den are elements of ZZ.
-  mpz_ptr a = MPZ_VAL(num);
-  mpz_ptr b = MPZ_VAL(den);
+  mpz_ptr a = num.get_mpz();
+  mpz_ptr b = den.get_mpz();
   if (mpz_sgn(a) < 0) return false;
   if (mpz_sgn(b) < 0) return false;
   if (mpz_cmp(a,b) > 0) return false;  // return false if a>b.
@@ -82,23 +82,23 @@ bool LLLoperations::Lovasz(MutableMatrix *lambda,
   lambda->get_entry(k,k,D);
   bool Lnotzero = lambda->get_entry(k-1,k,L);
   if (k == 1)
-    mpz_init_set(a,MPZ_VAL(D));
+    mpz_init_set(a,D.get_mpz());
   else
     {
       mpz_init(a);
       lambda->get_entry(k-2,k-2,D2);
-      mpz_mul(a,MPZ_VAL(D2),MPZ_VAL(D));
+      mpz_mul(a,D2.get_mpz(),D.get_mpz());
     }
   mpz_init(b);
   if (Lnotzero)
     {
-      mpz_mul(b,MPZ_VAL(L),MPZ_VAL(L));
+      mpz_mul(b,L.get_mpz(),L.get_mpz());
       mpz_add(a,a,b);
     }
-  mpz_mul(a,a,MPZ_VAL(alphaBottom));  // This is the LHS.
+  mpz_mul(a,a,alphaBottom.get_mpz());  // This is the LHS.
   
-  mpz_mul(b,MPZ_VAL(D1),MPZ_VAL(D1));
-  mpz_mul(b,MPZ_VAL(alphaTop),b); // RHS
+  mpz_mul(b,D1.get_mpz(),D1.get_mpz());
+  mpz_mul(b,alphaTop.get_mpz(),b); // RHS
   int cmp = mpz_cmp(a,b);
   mpz_clear(a);
   mpz_clear(b);
@@ -115,8 +115,8 @@ void LLLoperations::REDI(int k, int ell,
   ring_elem Dl, mkl, q;
   if (!lambda->get_entry(ell,k,mkl)) return;
   lambda->get_entry(ell,ell,Dl);
-  mpz_ptr a = MPZ_VAL(mkl);
-  mpz_ptr b = MPZ_VAL(Dl);  // b = D#ell
+  mpz_ptr a = mkl.get_mpz();
+  mpz_ptr b = Dl.get_mpz();  // b = D#ell
   mpz_t c, d;
   mpz_init(c);
   mpz_init(d);
@@ -126,7 +126,7 @@ void LLLoperations::REDI(int k, int ell,
   mpz_mul_2exp(d,b,1); // d = 2*D#ell
   mpz_fdiv_q(c,c,d);   // c = (almost) final q
   mpz_neg(c,c);
-  q = MPZ_RINGELEM(c);
+  q = c;
 
   //A->addColumnMultiple(ell,q,k);
   //lambda->addColumnMultiple(ell,q,k);
@@ -159,11 +159,11 @@ void LLLoperations::SWAPI(int k, int kmax,
 
   lambda->get_entry(k-1,k-1,rD1);
   lambda->get_entry(k,k,rD);
-  mpz_init_set(D1,MPZ_VAL(rD1));
-  mpz_init_set(D,MPZ_VAL(rD));
+  mpz_init_set(D1,rD1.get_mpz());
+  mpz_init_set(D,rD.get_mpz());
 
   if (lambda->get_entry(k-1,k,rlam))
-    mpz_init_set(lam,MPZ_VAL(rlam));
+    mpz_init_set(lam,rlam.get_mpz());
   else
     mpz_init(lam);
 
@@ -184,7 +184,7 @@ void LLLoperations::SWAPI(int k, int kmax,
     {
       ring_elem rD2;
       lambda->get_entry(k-2,k-2,rD2);
-      mpz_mul(a,MPZ_VAL(rD2),D);
+      mpz_mul(a,rD2.get_mpz(),D);
     }
   mpz_mul(b,lam,lam);
   mpz_add(a,a,b);
@@ -201,12 +201,12 @@ void LLLoperations::SWAPI(int k, int kmax,
       bool s_notzero = lambda->get_entry(k-1,i,s);
       bool t_notzero = lambda->get_entry(k,i,t);
       if (s_notzero)
-	mpz_mul(a,D, MPZ_VAL(s));
+	mpz_mul(a,D, s.get_mpz());
       else
 	mpz_set_ui(a,0);
       // lambda#(i,k) = (D#k * lambda#(i,k-1) - lam * t) // D#(k-1);
       if (t_notzero)
-	mpz_mul(b,lam,MPZ_VAL(t));
+	mpz_mul(b,lam,t.get_mpz());
       else
 	mpz_set_ui(b,0);
       mpz_sub(a,a,b);
@@ -215,7 +215,7 @@ void LLLoperations::SWAPI(int k, int kmax,
       // lambda#(i,k-1) = (B*t + lam*lambda#(i,k))//(D#k);));
       mpz_mul(b,lam,C1);
       if (t_notzero)
-	mpz_mul(a,B,MPZ_VAL(t));
+	mpz_mul(a,B,t.get_mpz());
       else
 	mpz_set_ui(a,0);
 

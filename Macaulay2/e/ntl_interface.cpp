@@ -22,7 +22,7 @@ mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrix *M)
 	ring_elem a;
 	if (A->get_entry(i,j,a))
 	  {
-	    mat_ZZ_set_entry(X,j,i,MPZ_VAL(a));
+	    mat_ZZ_set_entry(X,j,i,a.get_mpz());
 	  }
       }
 
@@ -45,7 +45,7 @@ MutableMatrix *mutableMatrix_from_NTL_mat_ZZ(const mat_ZZ *A)
 	if ((*A)(i+1,j+1) != 0)
 	  {
 	    mat_ZZ_get_entry(A,i,j,a);
-	    B->set_entry(j,i,MPZ_RINGELEM(a));
+	    B->set_entry(j,i,ring_elem(a));
 	  }
       }
 

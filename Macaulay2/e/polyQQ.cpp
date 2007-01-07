@@ -106,7 +106,7 @@ Nterm *PolyQQ::mult_by_coeff(mpz_ptr c, Nterm *f) const
   // Copies f first!
 {
   Nterm *g = getNumeratorRing()->copy(f);
-  ring_elem cr = MPZ_RINGELEM(c);
+  ring_elem cr = ring_elem(c);
   for (Nterm *t = g; t != 0; t = t->next)
     {
       // Multiply by c
@@ -362,7 +362,7 @@ void PolyQQ::syzygy(const ring_elem a, const ring_elem b,
 
 ring_elem PolyQQ::random() const 
 {
-  mpz_ptr a = MPZ_VAL(globalZZ->random());
+  mpz_ptr a = globalZZ->random().get_mpz();
   elem *result = make_fraction(numerR_->random(), a);
   simplify(result);
   return FRAC_RINGELEM(result);
@@ -377,7 +377,7 @@ void PolyQQ::elem_text_out(buffer &o, const ring_elem f) const
   numerR_->elem_text_out(o,numerator(f));
   if (use_denom)
     o << ")/";
-  globalZZ->elem_text_out(o,MPZ_RINGELEM(denom(f)));
+  globalZZ->elem_text_out(o,ring_elem(denom(f)));
 }
 
 ring_elem PolyQQ::eval(const RingMap *map, const ring_elem f,int first_var) const 
@@ -479,11 +479,11 @@ ArrayPairOrNull PolyQQ::list_form(const Ring *coeffR, const ring_elem f) const
       ArrayPairOrNull result = numerR_->list_form(globalZZ,f1);
       if (result == 0) return 0;
       // Now go through each coeff and divide by denominator of f.
-      ring_elem fbottom = MPZ_RINGELEM(denom(f));
+      ring_elem fbottom = ring_elem(denom(f));
       for (int i=0; i<result->coeffs->len; i++)
 	  {
-	    mpz_ptr a = MPZ_VAL(result->coeffs->array[i]->get_value());
-	    ring_elem b = globalQQ->fraction(MPZ_RINGELEM(a), fbottom);
+	    mpz_ptr a = result->coeffs->array[i]->get_value().get_mpz();
+	    ring_elem b = globalQQ->fraction(ring_elem(a), fbottom);
 	    result->coeffs->array[i] = RingElement::make_raw(globalQQ,b);
 	  }
       return result;
@@ -523,7 +523,7 @@ ring_elem PolyQQ::make_logical_term(const Ring *coeffR, const ring_elem a, const
     {
       // a is an element of QQ
       ring_elem atop = globalQQ->numerator(a);
-      fbottom = MPZ_VAL(globalQQ->denominator(a));
+      fbottom = globalQQ->denominator(a).get_mpz();
       f = numerR_->make_logical_term(globalZZ,atop,exp);
     }
   else

@@ -1149,7 +1149,7 @@ void GBRing::gbvector_replace_2by2_ZZ(
   mpz_init(u);
   mpz_init(v);
   mpz_init(gd);
-  mpz_gcdext(gd,u,v,MPZ_VAL(f->coeff), MPZ_VAL(g->coeff));
+  mpz_gcdext(gd,u,v,f->coeff.get_mpz(), g->coeff.get_mpz());
 
   gbvector *new_g = 0;
   gbvector *g2 = 0;
@@ -1158,26 +1158,26 @@ void GBRing::gbvector_replace_2by2_ZZ(
 
   if (mpz_sgn(v) != 0)
     {
-      g2 = gbvector_mult_by_coeff(g,MPZ_RINGELEM(v));
-      gsyz2 = gbvector_mult_by_coeff(gsyz,MPZ_RINGELEM(v));
+      g2 = gbvector_mult_by_coeff(g,ring_elem(v));
+      gsyz2 = gbvector_mult_by_coeff(gsyz,ring_elem(v));
     }
   if (mpz_sgn(u) != 0)
     {
-      new_g = gbvector_mult_by_coeff(f,MPZ_RINGELEM(u));
-      new_gsyz = gbvector_mult_by_coeff(fsyz,MPZ_RINGELEM(u));
+      new_g = gbvector_mult_by_coeff(f,ring_elem(u));
+      new_gsyz = gbvector_mult_by_coeff(fsyz,ring_elem(u));
     }
 
   gbvector_add_to(F,new_g,g2);
   gbvector_add_to(Fsyz,new_gsyz,gsyz2);
 
-  mpz_div(u,MPZ_VAL(g->coeff),gd);
-  mpz_div(v,MPZ_VAL(f->coeff),gd);
+  mpz_div(u,g->coeff.get_mpz(),gd);
+  mpz_div(v,f->coeff.get_mpz(),gd);
   mpz_neg(v,v);
 
-  gbvector *new_f = gbvector_mult_by_coeff(f,MPZ_RINGELEM(u));
-  gbvector *new_fsyz = gbvector_mult_by_coeff(fsyz,MPZ_RINGELEM(u));
-  gbvector *f2 = gbvector_mult_by_coeff(g,MPZ_RINGELEM(v));
-  gbvector *fsyz2 = gbvector_mult_by_coeff(gsyz,MPZ_RINGELEM(v));
+  gbvector *new_f = gbvector_mult_by_coeff(f,ring_elem(u));
+  gbvector *new_fsyz = gbvector_mult_by_coeff(fsyz,ring_elem(u));
+  gbvector *f2 = gbvector_mult_by_coeff(g,ring_elem(v));
+  gbvector *fsyz2 = gbvector_mult_by_coeff(gsyz,ring_elem(v));
 
   gbvector_add_to(F,new_f,f2);
   gbvector_add_to(Fsyz,new_fsyz,fsyz2);
@@ -1216,9 +1216,9 @@ void GBRing::gbvector_combine_lead_terms_ZZ(
   mpz_init(gab);
   mpz_init(u1);
   mpz_init(v1);
-  mpz_gcdext(gab,u1,v1,MPZ_VAL(a),MPZ_VAL(b));
-  ring_elem u = MPZ_RINGELEM(u1);
-  ring_elem v = MPZ_RINGELEM(v1);
+  mpz_gcdext(gab,u1,v1,a.get_mpz(),b.get_mpz());
+  ring_elem u = ring_elem(u1);
+  ring_elem v = ring_elem(v1);
   if (globalZZ->is_zero(u) || globalZZ->is_zero(v))
     {
       result = 0;
@@ -1306,7 +1306,7 @@ void GBRing::divide_coeff_exact_to_ZZ(gbvector * f, M2_Integer u) const
   mpz_init(a);
   for ( ; f != 0; f=f->next)
     {
-      mpz_divexact(a, MPZ_VAL(f->coeff), u);
+      mpz_divexact(a, f->coeff.get_mpz(), u);
       f->coeff = globalZZ->RingZZ::from_int(a);
     }
   mpz_clear(a);
@@ -1319,7 +1319,7 @@ void GBRing::lower_content_ZZ(gbvector *f, M2_Integer content) const
   if (f == 0) return;
   for ( ; f != 0; f=f->next)
     {
-      mpz_gcd(content,content,MPZ_VAL(f->coeff));
+      mpz_gcd(content,content,f->coeff.get_mpz());
       if (mask_mpz_cmp_si(content,1) == 0)
 	return;
     }
@@ -1340,14 +1340,14 @@ void GBRing::gbvector_remove_content_ZZ(gbvector *f,
   int leadsign;
   if (g != 0)
     {
-      leadsign = mpz_sgn(MPZ_VAL(g->coeff));
-      mpz_init_set(content, MPZ_VAL(g->coeff));
+      leadsign = mpz_sgn(g->coeff.get_mpz());
+      mpz_init_set(content, g->coeff.get_mpz());
       g = g->next;
     }
   else if (gsyz != 0)
     {
-      leadsign = mpz_sgn(MPZ_VAL(gsyz->coeff));
-      mpz_init_set(content, MPZ_VAL(gsyz->coeff));
+      leadsign = mpz_sgn(gsyz->coeff.get_mpz());
+      mpz_init_set(content, gsyz->coeff.get_mpz());
       gsyz = gsyz->next;
     }
   else
@@ -1375,7 +1375,7 @@ void GBRing::gbvector_remove_content_ZZ(gbvector *f,
   divide_coeff_exact_to_ZZ(fsyz,content);
   if (use_denom)
     {
-      denom = globalZZ->mult(denom, MPZ_RINGELEM(content));
+      denom = globalZZ->mult(denom, ring_elem(content));
     }
   mpz_clear(content);
 }

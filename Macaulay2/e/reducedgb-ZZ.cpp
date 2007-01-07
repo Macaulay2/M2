@@ -41,7 +41,7 @@ struct ReducedGB_ZZ_sorter : public std::binary_function<int,int,bool> {
     if (cmp == LT) return true;
     if (cmp == GT) return false;
     // Now order them in ascending order on the coeff (which should always be POSITIVE).
-    return (mpz_cmp(MPZ_VAL(x->coeff),MPZ_VAL(y->coeff)) < 0);
+    return (mpz_cmp(x->coeff.get_mpz(),y->coeff.get_mpz()) < 0);
   }
 };
 
@@ -68,8 +68,8 @@ void ReducedGB_ZZ::minimalize(const VECTOR(POLY) &polys0,
       gbvector *f = polys0[*i].f;
       exponents e = R->exponents_make();
       R->gbvector_get_lead_exponents(F,f,e);
-      if ((!ringtableZZ || !ringtableZZ->find_term_divisors(1, MPZ_VAL(f->coeff), e, 1))
-	  && T->find_term_divisors(1, MPZ_VAL(f->coeff), e, f->comp) == 0)
+      if ((!ringtableZZ || !ringtableZZ->find_term_divisors(1, f->coeff.get_mpz(), e, 1))
+	  && T->find_term_divisors(1, f->coeff.get_mpz(), e, f->comp) == 0)
 	{
 	  // Keep this element
 	  
@@ -82,13 +82,13 @@ void ReducedGB_ZZ::minimalize(const VECTOR(POLY) &polys0,
 	      if (auto_reduced)
 		remainder(h,false,junk); // This auto-reduces h.
 
-	      if (h.f != 0 && mpz_sgn(MPZ_VAL(h.f->coeff)) < 0)
+	      if (h.f != 0 && mpz_sgn(h.f->coeff.get_mpz()) < 0)
 		{
 		  R->gbvector_mult_by_coeff_to(h.f, globalZZ->minus_one());
 		  R->gbvector_mult_by_coeff_to(h.fsyz, globalZZ->minus_one());
 		}
 	      
-	      T->insert(MPZ_VAL(h.f->coeff), e, h.f->comp, polys.size());
+	      T->insert(h.f->coeff.get_mpz(), e, h.f->comp, polys.size());
 	      polys.push_back(h);
 	}
       else
@@ -117,8 +117,8 @@ ReducedGB_ZZ::find_divisor(exponents exp, int comp, int &result_loc)
       return DIVISOR_RING;
     }
   // r >= 0, w >= 0
-  mpz_ptr rc = MPZ_VAL(originalR->quotient_gbvector(r)->coeff);
-  mpz_ptr wc = MPZ_VAL(polys[w].f->coeff);
+  mpz_ptr rc = originalR->quotient_gbvector(r)->coeff.get_mpz();
+  mpz_ptr wc = polys[w].f->coeff.get_mpz();
   if (mpz_cmpabs(rc, wc) > 0)
     {
       result_loc = w;

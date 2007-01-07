@@ -175,7 +175,7 @@ bool RRR::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
   if (Rf == globalZZ)
     {
-      result = RRR::from_int(MPZ_VAL(f));
+      result = RRR::from_int(f.get_mpz());
       return true;
     }
   if (Rf == globalQQ)

@@ -677,7 +677,7 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
       /* Now get the coefficient */
       /* This is the lcm divided by the lead coeff, but it depends on the kind of spair */
       if (a->type == SPAIR_SKEW)
-	coeffs.push_back(MPZ_VAL(globalZZ->one()));
+	coeffs.push_back(globalZZ->one().get_mpz());
       else 
 	{
 	  /* */
@@ -685,8 +685,8 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
 	  gbvector *f2 = gb[a->x.pair.j]->g.f;
 	  ring_elem u,v;
 	  globalZZ->syzygy(f1->coeff, f2->coeff, u, v);
-	  coeffs.push_back(MPZ_VAL(u));
-	  coeffs2.push_back(MPZ_VAL(v));
+	  coeffs.push_back(u.get_mpz());
+	  coeffs2.push_back(v.get_mpz());
 	}
     }  
 
@@ -1103,7 +1103,7 @@ bool gbA::reduce(spair *p)
       int x = p->f()->comp;
       if (over_ZZ())
 	{
-	  mpz_ptr c = MPZ_VAL(p->f()->coeff);
+	  mpz_ptr c = p->f()->coeff.get_mpz();
 	  w = find_good_term_divisor_ZZ(c,EXP_,x,this_degree,alpha);
 
 	  // If w < 0, then no divisor was found.  Is there a GB element of
@@ -1137,7 +1137,7 @@ bool gbA::reduce(spair *p)
 		R->gbvector_replace_2by2_ZZ(_F, _Fsyz, p->f(), p->fsyz(), g->g.f, g->g.fsyz);
 		// Before continuing, do remainder of g->g
 		tail_remainder_ZZ(g->g, this_degree);
-		lookupZZ->change_coefficient(t, MPZ_VAL(g->g.f->coeff));
+		lookupZZ->change_coefficient(t, g->g.f->coeff.get_mpz());
 		auto_reduce_by(t->_val);
 		if (gbTrace >= 10)
 		  {
@@ -1572,7 +1572,7 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
       int alpha;
       R->gbvector_get_lead_exponents(_F, h.f, EXP_);
       int x = h.f->comp;
-      int w = find_good_monomial_divisor_ZZ(MPZ_VAL(h.f->coeff),EXP_,x,degf,  alpha);
+      int w = find_good_monomial_divisor_ZZ(h.f->coeff.get_mpz(),EXP_,x,degf,  alpha);
         // replaced alpha, g.
       if (w < 0 || alpha > 0)
 	{
@@ -1610,7 +1610,7 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
     }
   h.f = head.next;
   // Negate these if needed
-  if (h.f != 0 && mpz_sgn(MPZ_VAL(h.f->coeff)) < 0)
+  if (h.f != 0 && mpz_sgn(h.f->coeff.get_mpz()) < 0)
     {
       R->gbvector_mult_by_coeff_to(h.f, globalZZ->minus_one());
       R->gbvector_mult_by_coeff_to(h.fsyz, globalZZ->minus_one());
@@ -1648,7 +1648,7 @@ void gbA::tail_remainder_ZZ(POLY &f, int degf)
       int alpha;
       R->gbvector_get_lead_exponents(_F, h.f, EXP_);
       int x = h.f->comp;
-      int w = find_good_monomial_divisor_ZZ(MPZ_VAL(h.f->coeff),EXP_,x,degf,  alpha);
+      int w = find_good_monomial_divisor_ZZ(h.f->coeff.get_mpz(),EXP_,x,degf,  alpha);
         // replaced alpha, g.
       if (w < 0 || alpha > 0)
 	{
@@ -1686,7 +1686,7 @@ void gbA::tail_remainder_ZZ(POLY &f, int degf)
     }
   h.f = head.next;
   // Negate these if needed
-  if (h.f != 0 && mpz_sgn(MPZ_VAL(h.f->coeff)) < 0)
+  if (h.f != 0 && mpz_sgn(h.f->coeff.get_mpz()) < 0)
     {
       R->gbvector_mult_by_coeff_to(h.f, globalZZ->minus_one());
       R->gbvector_mult_by_coeff_to(h.fsyz, globalZZ->minus_one());
@@ -1831,93 +1831,6 @@ void gbA::auto_reduce_by(int id)
     }
 }
 
-void gbA::insert(POLY f, gbelem_type minlevel)
-{
-  /* Reduce this element as far as possible.  This either removes content, 
-     makes it monic, or at least negates it so the lead coeff is positive. */
-  ring_elem junk;
-
-  //DEBUG BLOCK  int fwt;
-  //  int fdeg = weightInfo_->gbvector_weight(f.f, fwt);
-  //  fprintf(stderr, "inserting GB element %d, thisdeg %d deg %d alpha %d\n", 
-  //	  gb.size(), 
-  //	  this_degree,
-  //	  fdeg,
-  //	  fdeg-fwt);
-
-  remainder(f,this_degree,false,junk);
-
-  //  fdeg = weightInfo_->gbvector_weight(f.f, fwt);
-  //  fprintf(stderr, "    after remainder deg %d alpha %d\n", 
-  //	  fdeg,
-  //	  fdeg-fwt);
-
-  stats_ngb++;
-
-  gbelem *g = gbelem_make(f.f, f.fsyz, minlevel, this_degree);
-  minimal_gb_valid = false;
-  int me = gb.size();
-  gb.push_back(g);
-
-  // In a encoded Schreyer order, the following line might miss subring elements.
-  // But it at least won't be incorrect...
-  if (R->get_flattened_monoid()->in_subring(1,f.f->monom))
-    n_subring++;
-  
-  int x = g->g.f->comp;
-
-  if (over_ZZ())
-    lookupZZ->insert(MPZ_VAL(g->g.f->coeff),g->lead,x,me);
-  else
-    lookup->insert(g->lead, x, me);
-
-  if (gbTrace >= 5)
-    {
-      char s[100];
-      buffer o;
-      sprintf(s, "inserting element %d (minimal %d): ",me,minlevel);
-      o << s;
-      R->gbvector_text_out(o,_F,g->g.f);
-      emit_line(o.str()); o.reset();
-      o << "                          syzygy : ";
-      R->gbvector_text_out(o,_Fsyz,g->g.fsyz);
-      emit_line(o.str());
-    }
-  if (minlevel != ELEM_NON_MIN_GB)
-    update_pairs(me);
-
-  auto_reduce_by(me);
-
-  //  for (int i=0; i<gb.size(); i++)
-  //    {
-  //      fdeg = weightInfo_->gbvector_weight(gb[i]->g.f, fwt);
-  //      fprintf(stderr, "    after auto reduce gb %d deg %d actualdeg %d alpha %d\n", 
-  //	      i, 
-  //	      gb[i]->deg,
-  //	      fdeg,
-  //	      fdeg-fwt);
-  //    }
-
-  if (use_hilb)
-    {
-      hilb_new_elems = true;
-      if (--hilb_n_in_degree == 0) flush_pairs();
-    }
-  else
-    {
-#ifdef DEVELOPMENT
-#warning "todo: codimension stop condition"
-#endif
-      // codim test is set.  Compute the codimension now.
-    }
-
-  if (gbTrace >= 10)
-    {
-      //      lookupZZ->showmontable();
-      showgb();
-    }
-}
-
 void gbA::collect_syzygy(gbvector *f)
 {
   _syz.push_back(f);
@@ -1936,7 +1849,7 @@ void gbA::handle_elem(POLY f, gbelem_type minlevel)
 {
   if (!R->gbvector_is_zero(f.f))
     {
-      insert(f,minlevel);
+      new_insert(f,minlevel);
       if (gbTrace == 3)
 	emit_wrapped("m");
     }
@@ -2018,7 +1931,7 @@ void gbA::new_insert(POLY f, gbelem_type minlevel)
     n_subring++;
 
   if (over_ZZ())
-    lookupZZ->insert(MPZ_VAL(g->g.f->coeff),g->lead,x,me);
+    lookupZZ->insert(g->g.f->coeff.get_mpz(),g->lead,x,me);
   else
     lookup->insert(g->lead, x, me);
 
@@ -2026,7 +1939,7 @@ void gbA::new_insert(POLY f, gbelem_type minlevel)
     {
       char s[100];
       buffer o;
-      sprintf(s, "inserting element %d (minimal %d): ",me,minlevel);
+      sprintf(s, "new-inserting element %d (minimal %d): ",me,minlevel);
       o << s;
       R->gbvector_text_out(o,_F,g->g.f);
       emit_line(o.str()); o.reset();

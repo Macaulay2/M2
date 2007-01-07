@@ -24,7 +24,7 @@ hm_elem *HermiteComputation::new_gen(int i)
     }
   else
     {
-      mpz_abs(result->lead, MPZ_VAL((*gens)[i]->coeff));
+      mpz_abs(result->lead, (*gens)[i]->coeff.get_mpz());
       result->f = globalZZ->copy_vec(gens->elem(i));
     }
   if (i < n_comps_per_syz)
@@ -140,7 +140,7 @@ hm_elem *HermiteComputation::merge(hm_elem *f, hm_elem *g)
 	break;
       case 0:
 	// In this case, we remove one, and re-insert:
-	if (mpz_cmp(MPZ_VAL(f->f->coeff), MPZ_VAL(g->f->coeff)) == 0)
+	if (mpz_cmp(f->f->coeff.get_mpz(), g->f->coeff.get_mpz()) == 0)
 	  {
 	    vec f1 = globalZZ->copy_vec(f->f);
 	    vec f2 = globalZZ->copy_vec(f->fsyz);
@@ -158,7 +158,7 @@ hm_elem *HermiteComputation::merge(hm_elem *f, hm_elem *g)
 	h = g;
 	// We need to reset the lead term
 	if (g->f != NULL)
-	  mpz_abs(h->lead, MPZ_VAL(g->f->coeff));
+	  mpz_abs(h->lead, g->f->coeff.get_mpz());
 	g = g->next;
 	insert(h);
 	if (g == NULL)
@@ -247,12 +247,12 @@ void HermiteComputation::reduce(hm_elem *&p, hm_elem *q)
   // Now that the arithmetic has been done, put back into 'p', 'q':
   p->f = p1;
   p->fsyz = syz1;
-  mpz_set(p->lead, MPZ_VAL(p->f->coeff));
+  mpz_set(p->lead, p->f->coeff.get_mpz());
 
   q->f = q1;
   q->fsyz = qsyz1;
   if (q->f != NULL)
-    mpz_abs(q->lead, MPZ_VAL(q->f->coeff));
+    mpz_abs(q->lead, q->f->coeff.get_mpz());
 
   insert(q);
 }

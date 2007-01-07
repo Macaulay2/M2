@@ -7,8 +7,8 @@
 #include <gmp.h>
 class CoefficientRingZZ_NTL;
 
-#define MPZ_VAL(f) (reinterpret_cast<mpz_ptr>((f).poly_val))
-#define MPZ_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+// #define MPZ_VAL(f) (reinterpret_cast<mpz_ptr>((f).poly_val))
+// #define MPZ_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
 
 #define MPQ_VAL(f) (reinterpret_cast<M2_Rational>((f).poly_val))
 #define MPQ_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
@@ -73,8 +73,8 @@ public:
   static bool get_si(int &result, mpz_t n);
 
   // If the base ring of a is ZZ:
-  // To get a bignum from a RingElement a, use: MPZ_VAL(a.get_value())
-  // To get a bignum from an ring_elem  a, use: MPZ_VAL(a)
+  // To get a bignum from a RingElement a, use: a.get_value().get_mpz()
+  // To get a bignum from an ring_elem  a, use: a.get_mpz()
 
   virtual int coerce_to_int(ring_elem a) const;
 

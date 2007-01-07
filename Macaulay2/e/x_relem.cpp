@@ -768,7 +768,7 @@ M2_IntegerOrNull rawSchurDimension(const RingElement *f)
       return 0;
     }
   ring_elem result = S->dimension(f->get_value());
-  return MPZ_VAL(result);
+  return result.get_mpz();
 }
 
 // Local Variables:

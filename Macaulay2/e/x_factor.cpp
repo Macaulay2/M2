@@ -333,9 +333,9 @@ static CanonicalForm convertToFactory(const RingElement &g) {
        M->to_varpower(t->monom,vp);
        CanonicalForm m = (
 			  foo.mode == modeZn ? CanonicalForm(foo.Zn->to_int(t->coeff)) :
-			  foo.mode == modeZZ ? convertToFactory(MPZ_VAL(t->coeff)) :
+			  foo.mode == modeZZ ? convertToFactory(t->coeff.get_mpz()) :
 			  foo.mode == modeQQ ? convertToFactory(mpq_numref(MPQ_VAL(t->coeff))) / convertToFactory(mpq_denref(MPQ_VAL(t->coeff)))
-			  // old way : convertToFactory(MPZ_VAL(FRAC_VAL(t->coeff)->numer)) / convertToFactory(MPZ_VAL(FRAC_VAL(t->coeff)->denom))
+			  // old way : convertToFactory(FRAC_VAL(t->coeff)->numer.get_mpz()) / convertToFactory(FRAC_VAL(t->coeff)->denom.get_mpz())
 			  : CanonicalForm(0) // shouldn't happen
 			  );
        for (index_varpower l = vp.raw(); l.valid(); ++l)
