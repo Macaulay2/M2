@@ -45,6 +45,7 @@ public:
   ~array() { 
     engine_dealloc(len * sizeof(T)); 
     deletearray(entries);
+    entries = NULL;
     }
 
   int  length() const { return max; }
@@ -53,8 +54,6 @@ public:
        assert( newmax >= 0 );
        if (newmax < max) max = newmax;
   }
-
-  T * get_raw_array() { return entries; }
 
   T &operator[](int i)
     {
@@ -135,8 +134,6 @@ public:
        if (newmax < max) max = newmax;
   }
 
-  T * get_raw_array() { return entries; }
-
   T &operator[](int i)
     {
       assert(i >= 0);
@@ -189,6 +186,7 @@ public:
     { 
       engine_dealloc(len * sizeof(T)); 
       delete[] entries; 
+      entries = NULL;
     }
   array_class<T> &operator=(const array<T> &a)
     {
