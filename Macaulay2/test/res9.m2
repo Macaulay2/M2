@@ -1,3 +1,5 @@
+-- this test takes 40 seconds and 220MB with my debug version, so perhaps we want to move it to the slow test directory
+
 ----------------------------------
 -- Koszul complex on 3 elements --
 -- Algorithm 3                  --
