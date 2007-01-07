@@ -14,8 +14,6 @@ INTERFACE = \
 	lapack \
 	LLL \
 	fractionfreeLU \
-	ntl_debugio \
-	ntl_internal \
 	ntl_interface \
 	mat \
 	dmat \
@@ -98,6 +96,8 @@ STILLTOCOMPILE = \
 
 
 COMMANDS = \
+	ntl_internal \
+	ntl_debugio \
 	mat-kbasis \
 	mat-symm \
 	mat-sort \
@@ -149,6 +149,7 @@ FILES := $(CC_FILES) $(C_FILES)
 LOFILES := $(addsuffix .lo,$(CC_FILES) $(C_FILES))
 ENGINE_CCFILES := $(addsuffix .cpp,$(CC_FILES))
 ENGINE_CFILES := $(addsuffix .c,$(C_FILES))
+ENGINE_SRCFILES := $(ENGINE_CCFILES) $(ENGINE_CFILES)
 ENGINE_OFILES := $(addsuffix .o,$(C_FILES) $(CC_FILES))
 
 ifeq "$(SHARED)" "yes"
@@ -158,3 +159,4 @@ ENGINE_OBJFILES := $(ENGINE_OFILES)
 endif
 
 HHFILES := $(addsuffix .hpp, $(NAMES_H) $(NAMES) $(INTERFACE)) $(E_H)
+ENGINE_SRCFILES := $(ENGINE_CCFILES) $(ENGINE_CFILES) $(HHFILES)
