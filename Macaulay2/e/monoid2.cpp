@@ -28,7 +28,7 @@ Monoid::Monoid()
      degree_monoid_(0), // will be set later
      mo_(0),
      monorder_(0),
-     overflow_(0),
+     overflow(0),
      monomial_size_(0),
      monomial_bound_(0),
      n_invertible_vars_(0),
@@ -166,17 +166,11 @@ void Monoid::set_degrees()
 void Monoid::set_overflow_flags()
 {
   int j;
-  overflow_ = newarray_atomic(enum overflow_type, monomial_size_);
-  for (int i=0; i<monomial_size_; i++)
-    overflow_[i] = OVER;
-
+  overflow = newarray_atomic(enum overflow_type, monomial_size_);
   for (int i=0; i<monorder_->nblocks; i++)
     {
       mo_block *b = &monorder_->blocks[i];
       switch (monorder_->blocks[i].typ) {
-      case MO_LEX:
-      case MO_GREVLEX:
-      case MO_GREVLEX_WTS:
       case MO_REVLEX:
       case MO_WEIGHTS:
       case MO_LAURENT:
@@ -184,20 +178,32 @@ void Monoid::set_overflow_flags()
       case MO_NC_LEX:
       case MO_POSITION_UP:
       case MO_POSITION_DOWN:
-	// No need to do anything 
+	for (j = b->first_slot; j<b->nslots; j++)
+	  overflow[j] = OVER;
+	break;
+      case MO_LEX:
+      case MO_GREVLEX:
+      case MO_GREVLEX_WTS:
+	for (j = b->first_slot; j<b->nslots; j++)
+	  overflow[j] = OVER1;
 	break;
       case MO_LEX2:
       case MO_GREVLEX2:
       case MO_GREVLEX2_WTS:
 	for (j = b->first_slot; j<b->nslots; j++)
-	  overflow_[j] = OVER2;
+	  overflow[j] = OVER2;
 	break;
       case MO_LEX4:
       case MO_GREVLEX4:
       case MO_GREVLEX4_WTS:
 	for (j = b->first_slot; j<b->nslots; j++)
-	  overflow_[j] = OVER4;
+	  overflow[j] = OVER4;
 	break;
+#ifndef NDEBUG
+      default:
+	   ERROR("internal error - missing case");
+	   assert(0);
+#endif
       }
     }
 }
@@ -330,37 +336,39 @@ void Monoid::to_expvector(const_monomial m, exponents result_exp) const
 
 void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
 {
-  overflow_type *check = overflow_;
-  bool error = false;
-  for (int i=0; i<monomial_size_; i++)
+  overflow_type *check = overflow;
+  int i,x,y,z;
+  for (i = monomial_size_; i != 0; i--)
     {
-      int x = *m++;
-      int y = *n++;
-      int z = x+y;
-      *result++ = z;
-      // Check for overflow
+      x = *m++;
+      y = *n++;
+      *result++ = z = x+y;
       switch (*check++) {
       case OVER:
-	if ((x < 0) == (y < 0) && (x < 0) != (z < 0))
-	  error = true;
+	if ((x < 0) != (z < 0) && (x < 0) == (y < 0)) goto overflow;
+	break;
+      case OVER1:
+	if (z < 0) goto overflow;
 	break;
       case OVER2:
-	if ((z & 0x80008000) != 0)
-	  error = true;
+	if ((z & 0x80008000) != 0) goto overflow;
 	break;
       case OVER4:
-	if ((z & 0x80808080) != 0)
-	  error = true;
+	if ((z & 0x80808080) != 0) goto overflow;
 	break;
-      }
-      if (error)
-	{
-	  ERROR("monomial overflow");
 #ifndef NDEBUG
-	  fprintf(stderr, "monomial overflow has occurred\n");
+      default:
+	   ERROR("internal error - missing case");
+	   assert(0);
 #endif
-	}
+      }
     }
+  return;
+ overflow:
+  ERROR("monomial overflow");
+#ifndef NDEBUG
+  fprintf(stderr, "monomial overflow has occurred\n");
+#endif
 }
 
 #if 0
@@ -411,29 +419,78 @@ int Monoid::compare(int nslots, const_monomial m, const_monomial n) const
       if (*m < *n) return LT;
       if (--i == 0) return EQ;
       m++, n++;
-    }
-}
 
-int Monoid::compare(const_monomial m, const_monomial n) const
-{
-  int i = monomial_size_;
-  if (i == 0) return EQ;
-  while (1)
-    {
       if (*m > *n) return GT;
       if (*m < *n) return LT;
       if (--i == 0) return EQ;
       m++, n++;
+
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
+      if (--i == 0) return EQ;
+      m++, n++;
+
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
+      if (--i == 0) return EQ;
+      m++, n++;
+
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
+      if (--i == 0) return EQ;
+      m++, n++;
+
     }
 }
 
+// int Monoid::compare(const_monomial m, const_monomial n) const
+// {
+//   int i = monomial_size_;
+//   if (i == 0) return EQ;
+//   while (1)
+//     {
+//       if (*m > *n) return GT;
+//       if (*m < *n) return LT;
+//       if (--i == 0) return EQ;
+//       m++, n++;
+//     }
+// }
+
 int Monoid::compare(const_monomial m, int mcomp, const_monomial n, int ncomp) const
 {
-  for (int i= n_before_component_; i>0; --i)
+  int i = n_before_component_;
+  while (1)
     {
+      if (i == 0) break;
       if (*m > *n) return GT;
       if (*m < *n) return LT;
       m++, n++;
+      --i;
+
+      if (i == 0) break;
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
+      m++, n++;
+      --i;
+
+      if (i == 0) break;
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
+      m++, n++;
+      --i;
+
+      if (i == 0) break;
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
+      m++, n++;
+      --i;
+
+      if (i == 0) break;
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
+      m++, n++;
+      --i;
+
     }
   bool up = component_up_;
   if (up)
@@ -446,11 +503,39 @@ int Monoid::compare(const_monomial m, int mcomp, const_monomial n, int ncomp) co
       if (mcomp < ncomp) return GT;
       if (mcomp > ncomp) return LT;
     }
-  for (int i= n_after_component_; i>0; --i)
+  i= n_after_component_;
+  while (1)
     {
+      if (i==0) break;
       if (*m > *n) return GT;
       if (*m < *n) return LT;
       m++, n++;
+      --i;
+
+      if (i==0) break;
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
+      m++, n++;
+      --i;
+
+      if (i==0) break;
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
+      m++, n++;
+      --i;
+
+      if (i==0) break;
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
+      m++, n++;
+      --i;
+
+      if (i==0) break;
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
+      m++, n++;
+      --i;
+
     }
   return EQ;
 }
