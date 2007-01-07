@@ -1,6 +1,5 @@
 -- this is a hard example from John Harrison
 -- can we do it without running out of memory?
--- maybe it ought to be moved to the slow test directory.
 
   A = ZZ[x0,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13]
   f0 = ((x3 * x0) - (1))
