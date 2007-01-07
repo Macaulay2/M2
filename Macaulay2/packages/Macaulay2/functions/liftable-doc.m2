@@ -2,7 +2,9 @@
 --- author(s): MES
 --- notes: 
 
-undocumented {(liftable, Number, Number), (liftable, Number, RingElement), (liftable, RingElement, Number), (liftable, RingElement, RingElement)}
+undocumented {(liftable, Number, Number), (liftable, Number, RingElement), 
+     (liftable, RingElement, Number), (liftable, RingElement, RingElement),
+     (liftable, QQ, QQ), (liftable, QQ, ZZ)}
 
 document { 
      Key => {liftable},
@@ -17,10 +19,15 @@ document {
 	  },
      "The ring ", TT "R", " should be one of the base rings associated with the
      ring of ", TT "f", ".",
-     EXAMPLE {
-	  "R = ZZ[x]",
-	  "liftable ((x-1)*(x+1)-x^2, ZZ)",
-	  },
+     EXAMPLE lines ///
+	  R = ZZ[x]
+	  liftable ((x-1)*(x+1)-x^2, ZZ)
+	  ///,
+     EXAMPLE lines ///
+     	  liftable(.342,RR)
+     	  liftable(3/4,ZZ)
+	  liftable((3/4)*4,ZZ)
+          ///,
      SeeAlso => {lift, baseRings}
      }
 

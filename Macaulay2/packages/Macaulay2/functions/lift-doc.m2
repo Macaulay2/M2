@@ -2,21 +2,6 @@
 --- author(s): MES
 --- notes: BUG to fix
 
-///
-(lift, Ideal, RingElement)
-(lift, Matrix, ZZ, ZZ)
-(lift, Matrix, RRR, ZZ)
-(lift, Matrix, RRR, QQ)
-(lift, Matrix, RRR, RRR)
-(lift, Matrix, RR, ZZ)
-(lift, Matrix, RR, QQ)
-
-(lift, Matrix, RRR, RR)
-(lift, Matrix, RR, RR)
-(lift, Matrix, Number)
-(lift, Matrix, RingElement)
-///
-
 undocumented {(lift,Matrix,CC,CC), 
      (lift,Matrix,Number), 
      (lift,Matrix,ZZ,ZZ), (lift,Matrix,QQ,ZZ), (lift,Matrix,RRR,ZZ), 
@@ -31,6 +16,7 @@ undocumented {(lift,Matrix,CC,CC),
      (lift, RRR, RRR),
      (lift, RR, QQ),
      (lift, RRR, RR),
+     (lift, RR, RRR),
      (lift, RR, RR),
      (lift, QQ, ZZ),
      (lift, QQ, QQ),
@@ -104,8 +90,17 @@ document {
           substitute(3,RR)
 	  lift(3.0,ZZ)
 	  lift(3.0,QQ)
+	  ///,
+     PARA{
+	  "A continued fraction method is used to lift a real number to a rational number.",
+	  },
+     EXAMPLE lines ///
 	  12/127.
 	  lift(oo,QQ)
+          ///,
+     EXAMPLE lines ///
+	  setPrecision 15
+          z = lift(.2341124,RRR)
           ///,
      SeeAlso => {baseRings,liftable
 	  -- ,promote

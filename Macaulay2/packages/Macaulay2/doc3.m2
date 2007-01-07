@@ -462,6 +462,7 @@ document { Key => MethodFunctionWithOptions,
      Headline => "a type of method function", "Functions of this type are created by ", TO "method", "." }
 undocumented (methodOptions, MethodFunctionWithOptions)
 undocumented (methodOptions, MethodFunction)
+undocumented (methodOptions, Symbol)
 document { Key => {(methodOptions, Function),(methodOptions, ScriptedFunctor),methodOptions},
      Headline => "recover the options used when a method function was created",
      Usage => "methodOptions f",
