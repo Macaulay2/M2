@@ -476,7 +476,7 @@ void MonomialIdeal::debug_out(int disp) const
   emit(o.str());
 }
 
-int MonomialIdeal::debug_check(Nmi_node *p, Nmi_node *up) const
+int MonomialIdeal::debug_check(const Nmi_node * const p, const Nmi_node * const up) const
      // Returns the number of leaves at tree with root p.
      // Make sure that the list header is constructed ok, that the 
      // left/right pointers are ok on this level, that the
@@ -486,10 +486,8 @@ int MonomialIdeal::debug_check(Nmi_node *p, Nmi_node *up) const
   Nmi_node *q;
   // First check the node 'p' itself
   assert(p != NULL);
-  int v = p->var;
-  assert(v >= 0);
-  if (up != NULL) 
-    assert(v < up->var);
+  assert(p->var >= 0);
+  if (up != NULL) assert(p->var < up->var);
   assert(p->header == p);
   assert(p->tag == Nmi_node::node);
   assert(p->down() == up);
@@ -505,7 +503,7 @@ int MonomialIdeal::debug_check(Nmi_node *p, Nmi_node *up) const
       assert(q->header == p);
       assert(q->right->left == q);
       assert(q->left->right == q);
-      assert(q->var == v);
+      assert(q->var == p->var);
       assert((q->right == p) || (q->exp < q->right->exp));
       assert(q->exp >= 0);
     }

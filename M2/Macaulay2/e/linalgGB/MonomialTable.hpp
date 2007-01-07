@@ -83,7 +83,7 @@ private:
   void remove1(mi_node *p);
   void do_node(mi_node *p, int indent, int disp) const;
   void do_tree(mi_node *p, int depth, int indent, int disp) const;
-  int debug_check(mi_node *p, mi_node *up) const;
+  int debug_check(const mi_node *p, const mi_node *up) const;
 
   void k_basis1(int topvar) const;
 
