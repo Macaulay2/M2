@@ -629,12 +629,12 @@ pseudocode(e:Expr):Expr := (
      );
 setupfun("pseudocode", pseudocode);
 
-elapsedTime(e:Expr):Expr := (
+cpuTime(e:Expr):Expr := (
      when e
      is s:Sequence do if length(s) == 0 then Expr(Real(etime()))
      else WrongNumArgs(0)
      else WrongNumArgs(0));
-setupfun("elapsedTime",elapsedTime);
+setupfun("cpuTime",cpuTime);
 
 timefun(a:Code):Expr := (
      v := etime();

@@ -73,6 +73,9 @@ undocumented(map,Module,Module)
 monomialIdeal Ring := MonomialIdeal => R -> error "method for 'monomialIdeal(R)' has been removed: use 'monomialIdeal(0_R)' instead"
 undocumented(monomialIdeal,Ring)
 
+undocumented elapsedTime
+elapsedTime = x -> error "function 'elapsedTime' has been renamed to 'cpuTime'"
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
