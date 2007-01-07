@@ -78,7 +78,7 @@ private:
   void remove1(Nmi_node *p);
   void do_node(Nmi_node *p, int indent, int disp) const;
   void do_tree(Nmi_node *p, int depth, int indent, int disp) const;
-  int debug_check(const Nmi_node *p, const Nmi_node *up) const;
+  int debug_check(Nmi_node *p, const Nmi_node *up) const;
 
   void k_basis1(int topvar) const;
 
