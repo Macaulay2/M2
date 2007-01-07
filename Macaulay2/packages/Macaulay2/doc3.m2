@@ -690,7 +690,7 @@ document { Key => {(copyFile, String, String),copyFile,[copyFile, UpdateOnly],[c
      ///,
      SeeAlso => { copyDirectory, symlinkDirectory }
      }
-document { Key => {(moveFile, String, String),(moveFile, String),moveFile},
+document { Key => {(moveFile, String, String),(moveFile, String),moveFile,[moveFile,Verbose]},
      Usage => "moveFile(src,dst)",
      Inputs => {
 	  "src" => "the filename or path to an existing file",
