@@ -165,9 +165,9 @@ void Monoid::set_degrees()
 
 void Monoid::set_overflow_flags()
 {
-  int j;
   overflow = newarray_atomic(enum overflow_type, monomial_size_);
-  for (int i=0; i<monorder_->nblocks; i++)
+  enum overflow_type flag;
+  for (int i=0, k=0; i<monorder_->nblocks; i++)
     {
       mo_block *b = &monorder_->blocks[i];
       switch (monorder_->blocks[i].typ) {
@@ -176,34 +176,39 @@ void Monoid::set_overflow_flags()
       case MO_LAURENT:
       case MO_LAURENT_REVLEX:
       case MO_NC_LEX:
+	   flag = OVER;
+	   goto fillin;
       case MO_POSITION_UP:
       case MO_POSITION_DOWN:
-	for (j = b->first_slot; j<b->nslots; j++)
-	  overflow[j] = OVER;
-	break;
+	   ERROR("internal error - MO_POSITION_DOWN or MO_POSITION_UP encountered");
+	   assert(0);
+	   break;
       case MO_LEX:
       case MO_GREVLEX:
       case MO_GREVLEX_WTS:
-	for (j = b->first_slot; j<b->nslots; j++)
-	  overflow[j] = OVER1;
-	break;
+	   flag = OVER1;
+	   goto fillin;
       case MO_LEX2:
       case MO_GREVLEX2:
       case MO_GREVLEX2_WTS:
-	for (j = b->first_slot; j<b->nslots; j++)
-	  overflow[j] = OVER2;
-	break;
+	   flag = OVER2;
+	   goto fillin;
       case MO_LEX4:
       case MO_GREVLEX4:
       case MO_GREVLEX4_WTS:
-	for (j = b->first_slot; j<b->nslots; j++)
-	  overflow[j] = OVER4;
-	break;
-#ifndef NDEBUG
+	   flag = OVER4;
+	   goto fillin;
+      fillin:
+	   assert(b->first_slot == k);
+	   for (int p=b->nslots; p>0; p--) {
+		assert(k < monomial_size_);
+		overflow[k++] = flag;
+	   }
+	   break;
       default:
 	   ERROR("internal error - missing case");
 	   assert(0);
-#endif
+	   break;
       }
     }
 }
