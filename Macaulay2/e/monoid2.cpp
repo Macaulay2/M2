@@ -211,6 +211,7 @@ void Monoid::set_overflow_flags()
 	   break;
       }
     }
+  assert(k == monomial_size_);
 }
 
 Monoid *Monoid::tensor_product(const Monoid *M1, const Monoid *M2)

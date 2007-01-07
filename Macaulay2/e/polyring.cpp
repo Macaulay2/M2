@@ -1979,9 +1979,7 @@ ring_elem PolyRing::get_denominator_QQ(ring_elem f) const
   // over ZZ: c is the content, leadmonomial(g) is positive.
   // over a basic field: leadmonomial(g) is 1.
 {
-  Nterm *t = f;
-
-  assert(t != 0);
+  assert(tpoly(f) != 0);
   assert(getCoefficients() == globalQQ);
 
   mpz_t denom;
