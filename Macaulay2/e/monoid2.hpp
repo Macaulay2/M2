@@ -39,7 +39,7 @@ class Monoid : public mutable_object
 
   MonomialOrdering *mo_;
   MonomialOrder *monorder_; // Internal version, with encoding information
-  enum overflow_type { OVER, OVER2, OVER4 } *overflow_;
+  enum overflow_type { OVER, OVER1, OVER2, OVER4 } *overflow;
 
   int monomial_size_;  // in ints
   int monomial_bound_;
@@ -137,7 +137,17 @@ public:
 
   void mult(const_monomial m, const_monomial n, monomial result) const;
   void power(const_monomial m, int n, monomial result) const;
-  int compare(const_monomial m, const_monomial n) const;
+  inline int compare(const_monomial m, const_monomial n) const {
+	  int i = monomial_size_;
+	  if (i == 0) return EQ;
+	  while (1)
+	    {
+	      if (*m > *n) return GT;
+	      if (*m < *n) return LT;
+	      if (--i == 0) return EQ;
+	      m++, n++;
+	    }
+     }
   int compare(const_monomial m, int mcomp, const_monomial n, int ncomp) const;
   bool divides(const_monomial m, const_monomial n) const;
   void divide(const_monomial m, const_monomial n, monomial result) const;
