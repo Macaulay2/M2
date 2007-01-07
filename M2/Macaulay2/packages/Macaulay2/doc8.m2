@@ -820,40 +820,6 @@ document {
 document {
      Key => GaloisField,
      Headline => "the class of all Galois fields" }
-document {
-     Key => GF,
-     Headline => "make a finite field" }
-document {
-     Key => (GF,Ring),
-     Headline => "make a finite field from a ring",
-     TT "GF R", " -- make a Galois field from a quotient ring R which happens
-     to be isomorphic to a finite field.",
-     EXAMPLE {
-	  "k = GF(ZZ/2[t]/(t^3+t+1))",
-	  "t+t^2"
-	  }
-     }
-document {
-     Key => (GF,ZZ,ZZ),
-     Headline => "make a finite field of a given prime power order",
-     TT "GF(p,n)", " -- make a Galois field with ", TT "p^n", " elements, where 
-     ", TT "p", " is a prime.",
-     EXAMPLE {
-	  "k = GF(2,3,Variable=>x)",
-	  "x+x^2"
-	  }
-     }
-document {
-     Key => (GF,ZZ),
-     Headline => "make a finite field of a given order",
-     TT "GF(q)", " -- make a Galois field with ", TT "q", " elements, where 
-     ", TT "q", " is a power of a prime.",
-     EXAMPLE {
-	  "k = GF(8)",
-	  "x = k_0",
-	  "x+x^2"
-	  }
-     }
 
 document {
      Key => isPrimitive,
