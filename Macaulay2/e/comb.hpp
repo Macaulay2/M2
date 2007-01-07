@@ -27,7 +27,7 @@ class comb
 
   static void text_out(buffer &o);
 public:
-  static array<array<int> > tab;
+  static array_class<array<int> > tab;
 
   static int fast_binom(int n, int p)
     { return tab.rawelem(p).rawelem(n); }

@@ -3,7 +3,7 @@
 #include "comb.hpp"
 #include "text_io.hpp"
 
-array< array<int> > comb::tab;
+array_class < array<int> > comb::tab;
 
 typedef unsigned long int ulong;
 

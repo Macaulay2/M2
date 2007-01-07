@@ -20,3 +20,10 @@ end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test 4a.out"
 -- End:
+
+restart
+R = QQ[a]
+f = id_(QQ^1)
+debug Core
+rawPromote(raw (R^1), raw f)
+

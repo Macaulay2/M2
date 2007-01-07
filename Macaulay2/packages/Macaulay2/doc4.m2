@@ -619,7 +619,6 @@ document {
      	 D == P * M * Q
 	 (D,P) = smithNormalForm(M, ChangeMatrix=>{true,false})
 	 D = smithNormalForm(M, ChangeMatrix=>{false,false}, KeepZeroes=>true)
-	 prune coker M
      ///,
      PARA{
 	  "This function is the underlying routine used by ", TO minimalPresentation, 

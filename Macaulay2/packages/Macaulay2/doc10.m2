@@ -727,14 +727,20 @@ document {
      Outputs => { { "a special object of class ", TT "LowerBound", " used to represent the set of natural numbers larger than ", TT "d" } }
      }
 
-
-
 document {
-     Key => OO,
+     Key => {(OO,Variety), OO},
      Headline => "the structure sheaf",
      Usage => "OO_X",
      Inputs => { "X" => "a variety" },
-     Outputs => { { "the structure sheaf of ", TT "X", "." } }
+     Outputs => { { "the structure sheaf of ", TT "X", "." } },
+     EXAMPLE lines ///
+         R = QQ[x,y,z]/(y^2*z-x*(x-z)*(x-37*z));
+	 X = Proj R
+	 OO_X
+	 HH^1(OO_X)
+	 HH^0(OO_X(3))
+     ///,
+     SeeAlso => {CoherentSheaf, cohomology}
      }
 
 

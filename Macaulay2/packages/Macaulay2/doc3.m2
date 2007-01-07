@@ -299,7 +299,19 @@ document {
      Key => File,
      Headline => "the class of all files",
      "Files may be input files, output files, pipes, or sockets.
-     A list of currently open files may be obtained with ", TO "openFiles", "."
+     A list of currently open files may be obtained with ", TO "openFiles", ".",
+     DIV {
+	  "class" => "waystouse",
+	  SUBSECTION {"Functions operating on path names:"},
+	  UL {
+	       TO minimizeFilename,
+	       TO "path",
+	       TO relativizeFilename,
+	       TO searchPath,
+	       TO temporaryFileName,
+	       TO toAbsolutePath
+	       }
+	  }
      }
 
 document {
@@ -861,42 +873,61 @@ document { Key => Wrap,
      ///
      }
 
-document { Key => baseFilename,
-     Headline => "the base part of a filename or path",
-     Usage => "baseFilename fn",
-     Inputs => { "fn" => String => "a filename or path" },
-     Outputs => { "the last component of the path" },
-     EXAMPLE lines ///
-     	  baseFilename "/a/b/dir/"
-     	  baseFilename "/a/b/file"
-     ///
-     }
-
-document { Key => {BettiTally,(symbol ++,BettiTally,BettiTally), (symbol **,BettiTally,BettiTally), (symbol SPACE,BettiTally,Array), (dual,BettiTally)},
+document { Key => {BettiTally,
+	  (symbol ++,BettiTally,BettiTally), 
+	  (symbol **,BettiTally,BettiTally), 
+	  (symbol SPACE,BettiTally,Array), 
+	  (dual,BettiTally),
+	  (regularity,BettiTally)},
      Headline => "the class of all Betti tallies",
-     "A Betti tally is a special type of ", TO "Tally", " that is printed as a display of graded Betti numbers.  The class was created
-     so the function ", TO "betti", " could return something that both prints nicely and from which information can be extracted.  The keys
-     are triples ", TT "(i,d,h)", ", where ", TT "i", " is the homological degree, ", TT "d", " is a list of integers giving a multidegree,
+     "A Betti tally is a special type of ", TO "Tally", " that is printed as a display of 
+     graded Betti numbers.  The class was created
+     so the function ", TO "betti", " could return something that both prints nicely and 
+     from which information can be extracted.  The keys
+     are triples ", TT "(i,d,h)", ", where ", TT "i", " is the homological degree, ", 
+     TT "d", " is a list of integers giving a multidegree,
      and ", TT "h", " is the result of applying a weight covector to ", TT "d", ".
      Only ", TT "i", " and ", TT "h", " are used in printing.",
      EXAMPLE lines ///
           t = new BettiTally from { (0,{0},0) => 1, (1,{1},1) => 2, (2,{3},3) => 3, (2,{4},4) => 4 }
 	  peek oo
      ///,
-     "For convenience, the operations of direct sum (", TO "++", "), tensor product (", TO "**", "), ", TO "dual", ", and degree shifting (numbers in brackets), have
+     "For convenience, the operations of direct sum (", TO "++", "), tensor product (", TO "**", "), ", 
+     TO "dual", ", ", TO regularity, ", and degree shifting (numbers in brackets), have
      been implemented for Betti tallies.  These operations mimic the corresponding operations on chain complexes.",
      EXAMPLE lines ///
      	  t ++ t[-5]
 	  t ** t
 	  dual t
+	  regularity t
+     ///,
+     "Different combinations of the degree vectors can be displayed by using ", TO (betti,BettiTally), "."
+     }
+document { Key => (betti,BettiTally),
+     Headline => "view and set the weights of a betti display",
+     Usage => "betti(t, Weights=>w)",
+     Inputs => { 
+	  "t",
+	  Weights => List => { "w is a list with the same degree length as that of t" }
+	  },
+     Outputs => { BettiTally => {"different from the input only in its degree weights.  If ", 
+	       TT "w", " is
+	       non-null, then a new betti tally with new weight values is returned"} },
+     EXAMPLE lines ///
+     	  R = ZZ/101[a..d,Degrees=>{2:{1,0},2:{0,1}},Heft=>{1,1}];
+	  I = ideal random(R^1, R^{2:{-2,-2},2:{-3,-3}});
+	  t = betti res I
+	  peek t
+	  ///,
+     "The following three displays display the first degree, the second degree, and the total
+     degree, respectively.",
+     EXAMPLE lines ///
+	  betti(t,Weights=>{1,0})
+	  betti(t,Weights=>{0,1})
+	  t1 = betti(t,Weights=>{1,1})
+	  peek t1
      ///
      }
-
-document { Key => {(searchPath, List, String), searchPath},
-     Headline => "search a path for a file",
-     Usage => "searchPath(pa,fn)",
-     Inputs => { "pa" => {"a list of strings giving paths to directories.  Each one ends with a slash."}, "fn" },
-     Outputs => {{"a list of those directories in ", TT "pa", " containing files named ", TT "fn" }}}
 
 document { Key => {(netList, List),
 	  netList,
@@ -1223,6 +1254,37 @@ document { Key => globalAssignment,
 	  S^3
      ///}
 
+document { Key => toAbsolutePath,
+     Headline => "the absolute path version of a file name",
+     Usage => "toAbsolutePath filename",
+     Inputs => { "filename" => String },
+     Outputs => {
+	  String => {"the absolute path name of ", TT "filename"}
+	  },
+     EXAMPLE lines ///
+         toAbsolutePath "a/b.m2"
+     ///,
+     SeeAlso => {File,minimizeFilename, relativizeFilename, baseFilename, "path"}     
+     }
+document { Key => baseFilename,
+     Headline => "the base part of a filename or path",
+     Usage => "baseFilename fn",
+     Inputs => { "fn" => String => "a filename or path" },
+     Outputs => { "the last component of the path" },
+     EXAMPLE lines ///
+     	  baseFilename "/a/b/dir/"
+     	  baseFilename "/a/b/file"
+     ///,
+     SeeAlso => {File,minimizeFilename, relativizeFilename, toAbsolutePath, searchPath, "path"}
+     }
+document { Key => {(searchPath, List, String), (searchPath, String), searchPath},
+     Headline => "search a path for a file",
+     Usage => "searchPath(pa,fn)\nsearchPath fn",
+     Inputs => { "pa" => {"a list of strings giving paths to directories.  Each one ends with a slash.
+	  If omitted, then ", TO "path", " is used"}, "fn" },
+     Outputs => {{"a list of those directories in ", TT "pa", " containing files named ", TT "fn" }},
+     SeeAlso => {File,minimizeFilename, relativizeFilename, baseFilename, toAbsolutePath, "path"}     
+     }
 document { Key => minimizeFilename,
      Headline => "minimize a file name",
      Usage => "minimizeFilename fn",
@@ -1231,8 +1293,9 @@ document { Key => minimizeFilename,
      EXAMPLE lines ///
          minimizeFilename "a/b/c/../d"
 	 minimizeFilename "../../../../../../"
-     ///}
-
+     ///,
+     SeeAlso => {File,relativizeFilename, baseFilename, toAbsolutePath, searchPath, "path"}
+     }
 document { Key => relativizeFilename,
      Headline => "relativize a file name",
      Usage => "relativizeFilename(dir,fn)",
@@ -1242,7 +1305,27 @@ document { Key => relativizeFilename,
          relativizeFilename("a/b/","a/b/c/d")
          relativizeFilename("a/b/c/d","a/b/")
          relativizeFilename("a/b/c/d","a/b/e/f")
-     ///}
+     ///,
+     SeeAlso => {File,minimizeFilename, baseFilename, toAbsolutePath, searchPath, "path"}
+     }
+document {
+     Key => temporaryFileName,
+     Headline => "make a temporary file name",
+     Usage => "temporaryFileName()",
+     Outputs => { "a unique temporary file name." },
+     "The file name is so unique that even with various suffixes
+     appended, no collision with existing files should occur.  But
+     no check is done to see whether such files are present.",
+     EXAMPLE {
+	  ///temporaryFileName () | ".tex"///,
+     	  ///temporaryFileName () | ".html"///,
+	  },
+     PARA{},
+     "This function will work under Unix, and also under Windows
+     if you have a directory on the same drive called ", TT "/tmp", ".",
+     SeeAlso => {File}
+     }
+
 
 document { Key => info,
      Headline => "convert hypertext to info format",

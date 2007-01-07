@@ -284,6 +284,7 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
   /* Now fix the first_exp, first_slot values, and also result->{nslots,nvars}; */
   nv = 0;
   result->nslots = 0;
+  result->nslots_before_component = 0;
   for (i=0; i<nblocks; i++)
     {
       enum MonomialOrdering_type typ = result->blocks[i].typ;
@@ -338,184 +339,65 @@ extern void monomialOrderFree(MonomialOrder *mo)
 {
 }
 
-#ifdef HAVE_STDDEF_H
-/* we include this because on suns it includes <sys/isa_defs.h> */
-#include <stddef.h>
-#endif
-
-#ifdef HAVE_ENDIAN_H
-#include <endian.h>
-#endif
-
-#if defined(__BYTE_ORDER) && defined(__LITTLE_ENDIAN) && __BYTE_ORDER == __LITTLE_ENDIAN || defined(_LITTLE_ENDIAN)
-
-union pack4 {
-  int32_t i;
-  struct {
-    uint8_t a;
-    uint8_t b;
-    uint8_t c;
-    uint8_t d;
-  } ch;
-};
-
-union pack2 {
-  int32_t i;
-  struct {
-    uint16_t a;
-    uint16_t b;
-  } ch;
-};
-#else
-union pack4 {
-  int32_t i;
-  struct {
-    uint8_t d;
-    uint8_t c;
-    uint8_t b;
-    uint8_t a;
-  } ch;
-};
-
-union pack2 {
-  int32_t i;
-  struct {
-    uint16_t b;
-    uint16_t a;
-  } ch;
-};
-#endif
-	
-#if 0  
-// static bool MO_pack4(int nvars, const int *expon, int *slots)
-// // return false if any of the non-negative exponents are >= 128.
-// {
-//   int x;
-//   union pack4 w;
-//   while (nvars > 0)
-//     {
-//       w.i = 0;
-//       if (--nvars >= 0) {
-// 	x = *expon++;
-// 	if (x >= 128) return false;
-// 	w.ch.d = x;
-// 	if (--nvars >= 0) {
-// 	  x = *expon++;
-// 	  if (x >= 128) return false;
-// 	  w.ch.c = x;
-// 	  if (--nvars >= 0) {
-// 	    x = *expon++;
-// 	    if (x >= 128) return false;
-// 	    w.ch.b = x;
-// 	    if (--nvars >= 0) {
-// 	      x = *expon++;
-// 	      if (x >= 128) return false;
-// 	      w.ch.a = x;
-// 	    }
-// 	  }}}
-//       *slots++ = w.i;
-//     }
-//   return true;
-// }
-// 
-// static bool MO_pack2(int nvars, const int *expon, int *slots)
-// // return false if any of the non-negative exponents are >= (1<<15) == 32768
-// {
-//   int x;
-//   union pack2 w;
-//   while (nvars > 0)
-//     {
-//       w.i = 0;
-//       if (--nvars >= 0) {
-// 	x = *expon++;
-// 	if (x >= 32768) return false;
-// 	w.ch.b = x;
-// 	if (--nvars >= 0) {
-// 	  x = *expon++;
-// 	  if (x >= 32768) return false;
-// 	  w.ch.a = *expon++;
-// 	}
-//       }
-//       *slots++ = w.i;
-//     }
-//   return true;
-// }
-#endif
-
-//static int MO_checksize(int n, const int *a, int leftmask)
-//{
-//  for ( ; n > 0; --n)
-//    if (*a++ & leftmask) return 0;
-//  return 1;
-//}
-//static long MO_packit4(int nvars, const int *a)
-//{
-//  long result = ((*a++) & rightmask);
-//  result = (result << 8) | ((*a++) & 0x07f);
-//  result = (result << 8) | ((*a++) & 0x07f);
-//  result = (result << 8) | ((*a++) & 0x07f);
-//  return result;
-//}
-
 static void MO_pack4(int nvars, const int *expon, int *slots)
 {
-  union pack4 w;
-  while (nvars > 0)
+  int32_t i;
+  while (1)
     {
-      w.i = 0;
-      if (--nvars >= 0) {
-	w.ch.d = *expon++;
-	if (--nvars >= 0) {
-	  w.ch.c = *expon++;
-	  if (--nvars >= 0) {
-	    w.ch.b = *expon++;
-	    if (--nvars >= 0) w.ch.a = *expon++;
-	  }}}
-      *slots++ = w.i;
+	 if (nvars == 0) break;
+	 i = *expon++ << 24;
+	 if (--nvars == 0) break;
+	 i |= *expon++ << 16;
+	 if (--nvars == 0) break;
+	 i |= *expon++ << 8;
+	 if (--nvars == 0) break;
+	 *slots++ = i | *expon++ ;
+	 --nvars;
     }
 }
 
 static void MO_pack2(int nvars, const int *expon, int *slots)
 {
-  union pack2 w;
-  while (nvars > 0)
+  int32_t i;
+  while (1)
     {
-      w.i = 0;
-      if (--nvars >= 0) {
-	w.ch.b = *expon++;
-	if (--nvars >= 0) w.ch.a = *expon++;
-      }
-      *slots++ = w.i;
+	 if (nvars == 0) break;
+	 i = *expon++ << 16;
+	 if (--nvars == 0) break;
+	 *slots++ = i | *expon++ ;
+	 --nvars;
     }
 }
 
 static void MO_unpack4(int nvars, const int *slots, int *expon)
 {
-  union pack4 w;
-  while (nvars > 0)
+  int32_t i;
+  while (1)
     {
-      w.i = *slots++;
-      if (--nvars >= 0) {
-	*expon++ = w.ch.d;
-	if (--nvars >= 0) {
-	  *expon++ = w.ch.c;
-	  if (--nvars >= 0) {
-	    *expon++ = w.ch.b;
-	    if (--nvars >= 0) *expon++ = w.ch.a;
-	  }}}
+	 if (nvars == 0) break;
+	 i = *slots++;
+	 *expon++ = i >> 24;
+	 if (--nvars == 0) break;
+	 *expon++ = (i >> 16) & 0xff;
+	 if (--nvars == 0) break;
+	 *expon++ = (i >> 8) & 0xff;
+	 if (--nvars == 0) break;
+	 *expon++ = i & 0xff;
+	 --nvars;
     }
 }
 
 static void MO_unpack2(int nvars, const int *slots, int *expon)
 {
-  union pack2 w;
-  while (nvars > 0)
+  int32_t i;
+  while (1)
     {
-      w.i = *slots++;
-      if (--nvars >= 0) {
-	*expon++ = w.ch.b;
-	if (--nvars >= 0) *expon++ = w.ch.a;
-      }
+	 if (nvars == 0) break;
+	 i = *slots++;
+	 *expon++ = i >> 16;
+	 if (--nvars == 0) break;
+	 *expon++ = i & 0xffff;
+	 --nvars;
     }
 }
 

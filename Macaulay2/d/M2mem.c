@@ -31,6 +31,23 @@ char *getmem(unsigned int n)
   p = GC_MALLOC(n);
   if (p == NULL) outofmem();
 #ifdef DEBUG
+  memset(p,0xbe,n);
+  trapchk(p);
+#endif
+  return p;
+}
+
+char *getmem_clear(unsigned int n)
+{
+  char *p;
+  p = GC_MALLOC(n);
+  if (p == NULL) outofmem();
+  /* 
+     note: GC_MALLOC clears memory before returning.
+     If you switch to another memory allocator, you must clear it explicitly:
+  bzero(p,n);
+  */
+#ifdef DEBUG
   trapchk(p);
 #endif
   return p;
@@ -42,6 +59,7 @@ char *getmem_atomic(unsigned int n)
   p = GC_MALLOC_ATOMIC(n);
   if (p == NULL) outofmem();
 #ifdef DEBUG
+  memset(p,0xac,n);
   trapchk(p);
 #endif
   return p;
@@ -53,6 +71,7 @@ char *getmem_malloc(unsigned int n)
   p = malloc(n);
   if (p == NULL) outofmem();
 #ifdef DEBUG
+  memset(p,0xca,n);
   trapchk(p);
 #endif
   return p;
@@ -63,10 +82,10 @@ char *getmem_atomic_clear(unsigned int n)
   char *p;
   p = GC_MALLOC_ATOMIC(n);
   if (p == NULL) outofmem();
+  bzero(p,n);
 #ifdef DEBUG
   trapchk(p);
 #endif
-  bzero(p,n);
   return p;
 }
 

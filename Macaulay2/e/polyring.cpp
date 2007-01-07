@@ -289,7 +289,7 @@ bool PolyRing::promote(const Ring *Rf, const ring_elem f, ring_elem &result) con
       result = copy(f);
       return true;
     }
-  int *exp = newarray_atomic(int,nvars0);
+  int *exp = newarray_atomic_clear(int,nvars0);
   result = make_logical_term(Rf,f,exp);
   return true;
 }

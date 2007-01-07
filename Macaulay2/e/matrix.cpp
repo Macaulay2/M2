@@ -1257,7 +1257,7 @@ void Matrix::text_out(buffer &o) const
   int nrows = n_rows();
   int ncols = n_cols();
 
-  buffer *p = newarray(buffer,nrows);
+  buffer *p = new buffer[nrows];
   //  buffer *p = new buffer[nrows];
   int r;
   for (int c=0; c<ncols; c++)
@@ -1281,7 +1281,7 @@ void Matrix::text_out(buffer &o) const
       char *s = p[r].str();
       o << s << newline;
     }
-  deletearray(p);
+  delete[] p;
 }
 
 Matrix *Matrix::compress() const

@@ -6,17 +6,20 @@
 #include <gc.h>
 #include "../d/debug.h"
 
-// this replaces all uses of the construction "new T[n]":
+// these replace all uses of the construction "new T[n]" (unless constructors have to be run!):
 #define newarray(T,len) reinterpret_cast<T*>(getmem((len) * sizeof(T)))
+#define newarray_clear(T,len) reinterpret_cast<T*>(getmem_clear((len) * sizeof(T)))
 // this replaces all uses of the construction "new T":
 #define newitem(T) reinterpret_cast<T*>(getmem(sizeof(T)))
-// this replaces all uses of the construction "delete [] x":
+#define newitem_clear(T) reinterpret_cast<T*>(getmem_clear(sizeof(T)))
+// this replaces all uses of the construction "delete [] x",
+// except it doesn't delete the individual elements for you, if they happen to be pointers
 #ifdef DEBUG
 #define deletearray(x) (trapchk(x), GC_FREE(x))
 #else
 #define deletearray(x) GC_FREE(x)
 #endif
-// this replaces all uses of the construction "delete x":
+// this replaces all uses of the construction "delete x" (unless a destructor has to be run!):
 #ifdef DEBUG
 #define deleteitem(x) (TRAPCHK(x), GC_FREE(x))
 #else

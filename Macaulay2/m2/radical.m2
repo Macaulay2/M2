@@ -114,7 +114,7 @@ unmixedradical := (I) -> (
 		    -- we would like the next line to read:
 		    -- I = annihilator J;
 		    I = ideal syz(transpose mingens J, 
-		                  SyzygyRows=>1, Syzygies=>true);
+		                  SyzygyRows=>1);
 		    I = lift(I,B); 
 		    );
       	       );

@@ -913,7 +913,10 @@ document {
      SeeAlso => {directSum, (symbol |, Matrix, Matrix), (symbol ||, Matrix, Matrix)}}
 
 document {
-     Key => {directSum,(directSum, Module),(directSum, ChainComplex),(directSum, GradedModule),(directSum, List),(directSum, Matrix),(directSum, Option),(directSum, Sequence)},
+     Key => {directSum,
+	  (directSum, Module),(directSum, ChainComplex),(directSum, GradedModule),
+	  (directSum, List),(directSum, Matrix),(directSum, Option),(directSum, Sequence),
+	  (symbol++, Option, Option)},
      Headline => "direct sum of modules or maps",
      TT "directSum(M,N,...)", " -- forms the direct sum of matrices or modules.",
      PARA{},
