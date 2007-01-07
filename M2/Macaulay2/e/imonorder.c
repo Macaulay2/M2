@@ -342,62 +342,50 @@ extern void monomialOrderFree(MonomialOrder *mo)
 static void MO_pack4(int nvars, const int *expon, int *slots)
 {
   int32_t i;
-  while (1)
-    {
-	 if (nvars == 0) break;
-	 i = *expon++ << 24;
-	 if (--nvars == 0) break;
-	 i |= *expon++ << 16;
-	 if (--nvars == 0) break;
-	 i |= *expon++ << 8;
-	 if (--nvars == 0) break;
-	 *slots++ = i | *expon++ ;
-	 --nvars;
-    }
+  if (nvars == 0) return;
+  while (1) {
+	 i  = *expon++ << 24;	 if (--nvars == 0) break;
+	 i |= *expon++ << 16;	 if (--nvars == 0) break;
+	 i |= *expon++ <<  8;	 if (--nvars == 0) break;
+	 i |= *expon++ ;	 if (--nvars == 0) break;
+	 *slots++ = i;
+  }
+  *slots++ = i;
 }
 
 static void MO_pack2(int nvars, const int *expon, int *slots)
 {
   int32_t i;
-  while (1)
-    {
-	 if (nvars == 0) break;
-	 i = *expon++ << 16;
-	 if (--nvars == 0) break;
-	 *slots++ = i | *expon++ ;
-	 --nvars;
-    }
+  if (nvars == 0) return;
+  while (1) {
+	 i  = *expon++ << 16;	if (--nvars == 0) break;
+	 i |= *expon++ 	    ;	if (--nvars == 0) break;
+	 *slots++ = i;
+  }
+  *slots++ = i;
 }
 
 static void MO_unpack4(int nvars, const int *slots, int *expon)
 {
   int32_t i;
-  while (1)
-    {
-	 if (nvars == 0) break;
+  if (nvars == 0) return;
+  while (1) {
 	 i = *slots++;
-	 *expon++ = i >> 24;
-	 if (--nvars == 0) break;
-	 *expon++ = (i >> 16) & 0xff;
-	 if (--nvars == 0) break;
-	 *expon++ = (i >> 8) & 0xff;
-	 if (--nvars == 0) break;
-	 *expon++ = i & 0xff;
-	 --nvars;
+	 *expon++ = (i >> 24)       ;	if (--nvars == 0) break;
+	 *expon++ = (i >> 16) & 0xff;	if (--nvars == 0) break;
+	 *expon++ = (i >>  8) & 0xff;	if (--nvars == 0) break;
+	 *expon++ =  i        & 0xff; 	if (--nvars == 0) break;
     }
 }
 
 static void MO_unpack2(int nvars, const int *slots, int *expon)
 {
   int32_t i;
-  while (1)
-    {
-	 if (nvars == 0) break;
+  if (nvars == 0) return;
+  while (1) {
 	 i = *slots++;
-	 *expon++ = i >> 16;
-	 if (--nvars == 0) break;
-	 *expon++ = i & 0xffff;
-	 --nvars;
+	 *expon++ = i >> 16       ;	if (--nvars == 0) break;
+	 *expon++ = i       & 0xff; 	if (--nvars == 0) break;
     }
 }
 
