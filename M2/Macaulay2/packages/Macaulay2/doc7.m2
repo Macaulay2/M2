@@ -67,7 +67,7 @@ document {
 	  (submatrix, Matrix, Nothing, VisibleList),
 	  (submatrix, Matrix, VisibleList, Nothing)},
      Headline => "select part of a matrix",
-     Usage => "submatrix(f, rows, cols) or submatrix(f,,cols) or submatrix(f,rows,)",
+     Usage => "submatrix(f, rows, cols)\nsubmatrix(f,,cols)\nsubmatrix(f,rows,)",
      Inputs => { "f" => "a map between free modules",
 	  "rows" => "a list of integers denoting the choice of rows.  
 	            If omitted, use all rows",
@@ -101,6 +101,7 @@ document {
 	  "f_{0,1}"
 	  },
      SeeAlso => {
+	  submatrix',
 	  (symbol_,Matrix,List),
 	  (symbol^,Matrix,List),
 	  (submatrix,Matrix,VisibleList),
@@ -132,6 +133,7 @@ document {
       	  "submatrix(f, {1..3,0})",
 	  },
      SeeAlso => {
+	  submatrix',
 	  (symbol_,Matrix,List),
 	  (symbol^,Matrix,List),
 	  (symbol_,Matrix,Array),
@@ -139,8 +141,52 @@ document {
 	  },
      }
 document {
-     Key => submatrix
+     Key => submatrix,
+     SeeAlso => {
+	  submatrix',
+	  (symbol_,Matrix,List),
+	  (symbol^,Matrix,List),
+	  (symbol_,Matrix,Array),
+	  (symbol^,Matrix,Array)
+	  },
      }
+document {
+     Key => {submatrix',
+	  (submatrix',Matrix,VisibleList,VisibleList),
+	  (submatrix', Matrix, Nothing, VisibleList),
+	  (submatrix', Matrix, VisibleList, Nothing),
+	  (submatrix', Matrix, VisibleList)},
+     Headline => "exclude rows and/or columns of a matrix",
+     Usage => "submatrix'(f, rows, cols)\nsubmatrix'(f,,cols)\nsubmatrix'(f,cols)\nsubmatrix'(f,rows,)",
+     Inputs => { "f" => "a map between free modules",
+	  "rows" => VisibleList => "a list of integers denoting the choice of rows to exclude.  
+	            If omitted, exclude no rows",
+	  "cols" => VisibleList => "a list of integers denoting the choice of columns to exclude.
+	            If omitted, exclude no columns"},
+     Outputs => {Matrix => {"the submatrix of ", TT "f", " with ", TT "rows", 
+	  " and ", TT "cols", " left out"}},
+     PARA{},
+     "Each list of integers may contain ranges and repetitions, as in ", 
+     TT "{3, 5..7, 3:0}", ".  Excluding a row or column more than once is allowed but has no
+     extra effect.",
+     PARA{},
+     EXAMPLE lines ///
+	  R = ZZ/101[a .. o];
+      	  f = genericMatrix(R, a, 3, 5)
+      	  submatrix'(f, {1}, {2})
+	  submatrix'(f, {1}, {2,3,3,2,2})
+	  ///,
+     PARA{},
+     EXAMPLE lines ///
+          submatrix'(f, {1,3}, )
+          submatrix'(f, , {1,3} )
+          submatrix'(f, {1,3} )
+	  ///,
+     SeeAlso => {
+	  submatrix
+	  },
+     }
+
 document {
      Key => (diff,RingElement,RingElement),
      Headline => "differentiation",

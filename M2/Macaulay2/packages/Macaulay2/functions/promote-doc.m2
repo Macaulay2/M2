@@ -10,6 +10,7 @@ undocumented {(promote,Matrix,ZZ,RR), (promote,Matrix,RRR,RRR), (promote,Matrix,
      (promote,MonoidElement,RingElement), (promote,ZZ,ZZ), (promote,ZZ,QQ), 
      (promote,ZZ,RRR), (promote,QQ,QQ), (promote,QQ,RRR), (promote,ZZ,CCC), 
      (promote,Matrix,Number),
+     (promote,RRR,RR),
      (promote,RRR,RRR), (promote,QQ,CCC), (promote,ZZ,RR), (promote,ZZ,CC), 
      (promote,RRR,CCC), (promote,QQ,RR), (promote,QQ,CC), (promote,CCC,CCC), 
      (promote,RR,RRR), (promote,RR,CCC),
@@ -37,7 +38,9 @@ undocumented {(promote,Matrix,ZZ,RR), (promote,Matrix,RRR,RRR), (promote,Matrix,
      (promote, List, RR, CCC),
      (promote, List, RR, RR),
      (promote, List, RR, CC),     
-     (promote, QQ, RingElement)
+     (promote, QQ, RingElement),
+     (promote, Ideal, RingElement),
+     (promote, Ideal, Number)
      }
 
 document { 
@@ -45,7 +48,7 @@ document {
      Headline => "promote to another ring",
      Usage => "promote(f,R)",
      Inputs => {
-	  "f" => RingElement => {"or ", ofClass Matrix, " over some base ring of R"},
+	  "f" => {ofClass{RingElement, Ideal, Matrix}, " over some base ring of R"},
 	  "R" => Ring
 	  },
      Outputs => {
@@ -64,15 +67,17 @@ document {
 	  G = map(S,R); G(f)
 	  ///,
      PARA{},
-     "If you wish to promote an ideal or module to another ring, either
+     "If you wish to promote a module to another ring, either
      promote the corresponding matrices,
      use the natural ring map, or use tensor product of matrices or modules.",
      EXAMPLE lines ///
 	  use R;
-	  m = gens ideal(a^2,a^3,a^4)
+	  I = ideal(a^2,a^3,a^4)
+     	  promote(I,S)
+	  m = image matrix{{a^2,a^3,a^4}}
+	  promote(gens m,S)
 	  G m
 	  m ** S
-	  ideal promote(m, S)
 	  ///,
      "A special feature is that if ", TT "f", " is rational, and ", TT "R", " is not
      an algebra over ", TO "QQ", ", then an element of ", TT "R", " is provided

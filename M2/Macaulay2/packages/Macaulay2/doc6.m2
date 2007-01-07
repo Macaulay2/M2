@@ -834,9 +834,6 @@ document {
 	  TO (homology, Matrix, Matrix),
 	  }}
 document {
-     Key => {isWellDefined,(isWellDefined, Matrix)},
-     Headline => "whether a map is well defined" }
-document {
      Key => {isDirectSum,(isDirectSum, ChainComplex),(isDirectSum, GradedModule),(isDirectSum, Module)},
      Headline => "whether something is a direct sum",
      "Works for modules, graded modules, etc.  The components of the sum
