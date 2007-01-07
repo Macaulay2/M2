@@ -2070,7 +2070,7 @@ gbvector * PolyRing::translate_gbvector_from_vec_QQ(const FreeModule *F,
 	{
 	  // make a gbvector node.
 	  mpq_ptr b = MPQ_VAL(t->coeff);
-	  mpz_mul(a, MPZ_VAL(result_denominator), mpq_numref(b));
+	  mpz_mul(a, result_denominator.get_mpz(), mpq_numref(b));
 	  mpz_divexact(a, a, mpq_denref(b));
 	  gbvector *g = GR->gbvector_term(F, globalZZ->RingZZ::from_int(a), t->monom, comp);
 	  inresult->next = g;

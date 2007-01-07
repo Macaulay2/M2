@@ -268,12 +268,12 @@ QRingInfo_ZZ::QRingInfo_ZZ(const PolyRing *ambientR,
       Nterm *f = quotients[i];
       R->getMonoid()->to_expvector(f->monom, exp);
 
-      if (!ringtableZZ->is_strong_member(MPZ_VAL(f->coeff), exp, 1))
+      if (!ringtableZZ->is_strong_member(f->coeff.get_mpz(), exp, 1))
 	{
 	  // The element is part of a minimal GB
 	  // Also, this grabs exp.
 	  int index = n_quotients();
-	  ringtableZZ->insert(MPZ_VAL(f->coeff), exp, 1, index);
+	  ringtableZZ->insert(f->coeff.get_mpz(), exp, 1, index);
 	  gbvector *g = R->translate_gbvector_from_ringelem(f);
 	  appendQuotientElement(f, g);
 	  exp = newarray_atomic(int,R->n_vars());

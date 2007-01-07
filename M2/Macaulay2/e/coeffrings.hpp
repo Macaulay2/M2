@@ -378,12 +378,12 @@ public:
   {
     mpz_ptr r = globalZZ->new_elem();
     ntl_ZZ_to_mpz(r, a);
-    result = MPZ_RINGELEM(r);
+    result = r;
   }
 
   void from_ring_elem(elem &result, const ring_elem &a) const
   {
-    result = ntl_ZZ_from_mpz(MPZ_VAL(a));
+    result = ntl_ZZ_from_mpz(a.get_mpz());
   }
 
   void swap(elem &a, elem &b) const

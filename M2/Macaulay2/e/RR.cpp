@@ -137,7 +137,7 @@ bool RingRR::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
   if (Rf->is_ZZ())
     {
-      result = RingRR::from_int(MPZ_VAL(f));
+      result = RingRR::from_int(f.get_mpz());
       return true;
     }
   return false;

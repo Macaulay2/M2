@@ -150,7 +150,7 @@ bool Z_mod::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
   // Rf = Z ---> Z/p
   if (Rf == globalZZ)
     {
-      result = from_int(MPZ_VAL(f));
+      result = from_int(f.get_mpz());
       return true;
     }
   return false;
