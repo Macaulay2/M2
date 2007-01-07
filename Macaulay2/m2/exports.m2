@@ -580,7 +580,8 @@ export {
 	symbol edit,
 	symbol eigenvalues,
 	symbol eigenvectors,
-	symbol elapsedTime,
+	symbol elapsedTime,				    -- obsolete
+	symbol cpuTime,
 	symbol elements,
 	symbol else,
 	symbol end,
