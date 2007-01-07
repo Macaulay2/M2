@@ -167,7 +167,8 @@ void Monoid::set_overflow_flags()
 {
   overflow = newarray_atomic(enum overflow_type, monomial_size_);
   enum overflow_type flag;
-  for (int i=0, k=0; i<monorder_->nblocks; i++)
+  int i=0, k=0;
+  for (; i<monorder_->nblocks; i++)
     {
       mo_block *b = &monorder_->blocks[i];
       switch (monorder_->blocks[i].typ) {
