@@ -1,3 +1,5 @@
+--status: Mike is working on changing the algorithm to make this work in a reasonable amount of time
+
 kk = ZZ/101
 S=kk[vars(0..11)]
 

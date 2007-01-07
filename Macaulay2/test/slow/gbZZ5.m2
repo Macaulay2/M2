@@ -1,3 +1,5 @@
+--status: sometimes this just needs a bit more memory...
+
 -- this is a hard example from John Harrison
 -- can we do it without running out of memory?
 

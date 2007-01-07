@@ -27,6 +27,12 @@ docStructure.out : docStructure.m2
 
 Makefile : Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/test/Makefile
 
+status ::
+	$(MAKE) -C engine $@
+	$(MAKE) -C slow $@
+	: $(MAKE) -C goals $@
+	: $(MAKE) -C gigantic $@
+
 # Local Variables:
 # compile-command: "make -k -C $M2BUILDDIR/Macaulay2/test "
 # End:

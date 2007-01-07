@@ -113,7 +113,6 @@ checkremquot((y^2+x)^3,y+x)
 checkremquot((y^2+x)^3,y^2+x)
 
 -- Polynomials in a Laurent polynomial ring
-R = ZZ[x,y,z,Inverses=>true] -- ERROR
 R = ZZ[x,y,z,Inverses=>true, MonomialOrder=>RevLex]
 f = 1 - x^-1
 g = x-1
