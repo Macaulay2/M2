@@ -3,9 +3,17 @@
 # rules used by the Makefiles in various test directories
 
 DOTS ?= ..
+ifeq "$(DEBUG)" "no"
 TLIMIT ?= 40
 MLIMIT ?= 90000
 VLIMIT ?= 90000
+else
+# give the debug version more time and space
+TLIMIT ?= 60
+MLIMIT ?= 140000
+VLIMIT ?= 140000
+endif
+
 LIMIT  = ulimit -t $(TLIMIT) -m $(MLIMIT) -v $(VLIMIT) 2>/dev/null
 
 RESULTS := $(notdir $(patsubst %.m2, %.out, $(wildcard $(SRCDIR)/*.m2))) \
