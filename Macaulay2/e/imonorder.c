@@ -384,8 +384,8 @@ static void MO_unpack2(int nvars, const int *slots, int *expon)
   if (nvars == 0) return;
   while (1) {
 	 i = *slots++;
-	 *expon++ = i >> 16       ;	if (--nvars == 0) break;
-	 *expon++ = i       & 0xff; 	if (--nvars == 0) break;
+	 *expon++ = i >> 16         ;	if (--nvars == 0) break;
+	 *expon++ = i       & 0xffff; 	if (--nvars == 0) break;
     }
 }
 
