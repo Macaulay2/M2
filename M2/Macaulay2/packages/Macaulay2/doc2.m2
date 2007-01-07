@@ -192,7 +192,7 @@ document {
      }
 
 document {
-     Key => {openListener,(openListener, String)},
+     Key => {(openListener, String),openListener},
      Headline => "open a port for listening",
      TT "f = openListener \"$:service\"", "  opens a listener on the local
      host at the specified service port.",
@@ -205,25 +205,32 @@ document {
      ", TT "isReady", " can be used to determine whether an incoming connection has
      arrived, without blocking."
      }
-
 document {
-     Key => {openIn,(openIn, String)},
+     Key => {(openIn, String),openIn},
      Headline => "open an input file",
      TT "openIn \"fff\"", " opens an input file whose filename is ", TT "fff", ".",
      PARA{},
      "Other options are available.  For details, see ", TO "openInOut", "."
      }
-
 document {
-     Key => {openOut,(openOut, String)},
+     Key => {(openOut, String),openOut},
      Headline => "open an output file",
      TT "openOut \"fff\"", " opens an output file whose filename is ", TT "fff", ".",
      PARA{},
      "Other options are available.  For details, see ", TO "openInOut", "."
      }
-
+document { Key => {(openOutAppend,String), openOutAppend},
+     Headline => "open an output file for appending",
+     Usage => "openOutAppend fn",
+     Inputs => { "fn" => String => "a filename" },
+     Outputs => { File },
+     "An output file whose name is ", TT "fn", " is opened for appending.
+     The current contents of that file remain, and anything written to the file will
+     be appended to the end.",
+     SeeAlso => {File, openIn, openOut, openInOut}
+     }
 document {
-     Key => {openInOut,(openInOut, String)},
+     Key => {(openInOut, String),openInOut},
      Headline => "open an input output file",
      TT "openInOut \"fff\"", " opens an input output file whose 
      filename is ", TT "fff", ".",

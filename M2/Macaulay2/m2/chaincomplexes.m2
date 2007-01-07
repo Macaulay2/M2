@@ -614,7 +614,7 @@ regularity Module := opts -> (M) -> regularity betti(resolution minimalPresentat
 regularity Ideal := opts -> (I) -> 1 + regularity betti(resolution cokernel generators I,opts)
 
 BettiTally = new Type of Tally
-BettiTally.synonym = "Betty tally"
+BettiTally.synonym = "Betti tally"
 BettiTally == BettiTally := (C,D) -> C === D
 BettiTally ++ BettiTally := (C,D) -> merge(C,D,plus)
 BettiTally ** BettiTally := (C,D) -> combine(C,D,(j,k)->apply(j,k,plus),times,plus)

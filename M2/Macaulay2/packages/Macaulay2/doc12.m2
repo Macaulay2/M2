@@ -262,23 +262,6 @@ document {
      }
 
 document {
-     Key => temporaryFileName,
-     Headline => "make a temporary file name",
-     Usage => "temporaryFileName()",
-     Outputs => { "a unique temporary file name." },
-     "The file name is so unique that even with various suffixes
-     appended, no collision with existing files should occur.  But
-     no check is done to see whether such files are present.",
-     EXAMPLE {
-	  ///temporaryFileName () | ".tex"///,
-     	  ///temporaryFileName () | ".html"///,
-	  },
-     PARA{},
-     "This function will work under Unix, and also under Windows
-     if you have a directory on the same drive called ", TT "/tmp", "."
-     }
-
-document {
      Key => subsets,
      Headline => "produce all the subsets",
      TT "subsets", " -- a function for computing a list of subsets

@@ -177,7 +177,8 @@ document {
      Headline => "provide tracing output during various computations in the 	 engine.",
      TT "gbTrace = n", " -- set the tracing level for the ", TO "engine", " to
      level ", TT "n", ".  Meaningful values for the user ", TT "n", " are
-     0, 1, 2, and 3.",
+     0, 1, 2, and 3.  Meaningful values for the developers are 4, 5, 8, 10, 11, and 100; the
+     parity also has an effect when the value is at least 5.",
      PARA{},
      "The notations used in tracing are :",
      UL {

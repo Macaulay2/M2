@@ -135,7 +135,7 @@ void MutableMatrix::text_out(buffer &o) const
   const Ring *R = get_ring();
   int nrows = n_rows();
   int ncols = n_cols();
-  buffer *p = newarray(buffer,nrows);
+  buffer *p = new buffer[nrows];
   int r;
   for (int c=0; c<ncols; c++)
     {
@@ -161,7 +161,7 @@ void MutableMatrix::text_out(buffer &o) const
       char *s = p[r].str();
       o << s << newline;
     }
-  deletearray(p);
+  delete[] p;
 }
 
 bool MutableMatrix::set_values(M2_arrayint rows,
