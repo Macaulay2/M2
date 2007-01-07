@@ -79,50 +79,60 @@ M2_bool system_interruptShield = FALSE;
 M2_bool system_alarmedFlag = FALSE;
 
 #if __GNUC__
+
+static sigjmp_buf stack_trace_jump;
+
 void segv_handler2(int sig) {
-     signal(SIGSEGV,SIG_DFL);
-     fprintf(stderr,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
-     *(int *)0 = 1;
+     fprintf(stderr,"--SIGSEGV during stack trace\n");
+     longjmp(stack_trace_jump,1);
+}
+
+void stack_trace() {
+     void (*old)(int) = signal(SIGSEGV,segv_handler2); /* in case traversing the stack below causes a segmentation fault */
+     fprintf(stderr,"-- stack trace:\n");
+     if (0 == sigsetjmp(stack_trace_jump,TRUE)) {
+#	  define D fprintf(stderr,"level %d -- return addr: 0x%08lx -- frame: 0x%08lx\n",i,(long)__builtin_return_address(i),(long)__builtin_frame_address(i))
+#	  define i 0
+	  D;
+#	  undef i
+#	  define i 1
+	  D;
+#	  undef i
+#	  define i 2
+	  D;
+#	  undef i
+#	  define i 3
+	  D;
+#	  undef i
+#	  define i 4
+	  D;
+#	  undef i
+#	  define i 5
+	  D;
+#	  undef i
+#	  define i 6
+	  D;
+#	  undef i
+#	  define i 7
+	  D;
+#	  undef i
+#	  define i 8
+	  D;
+#	  undef i
+#	  define i 9
+	  D;
+#	  undef i
+     }
+     fprintf(stderr,"-- end stack trace\n");
+     signal(SIGSEGV,old);
 }
 
 void segv_handler(int sig) {
-     signal(SIGSEGV,segv_handler2);
-     fprintf(stderr,"=============================================================================\n");
-     fprintf(stderr,"SIGSEGV -- back trace\n");
-#define D fprintf(stderr,"level %d -- return addr: 0x%08lx -- frame: 0x%08lx\n",i,(long)__builtin_return_address(i),(long)__builtin_frame_address(i))
-#define i 0
-     D;
-#undef i
-#define i 1
-     D;
-#undef i
-#define i 2
-     D;
-#undef i
-#define i 3
-     D;
-#undef i
-#define i 4
-     D;
-#undef i
-#define i 5
-     D;
-#undef i
-#define i 6
-     D;
-#undef i
-#define i 7
-     D;
-#undef i
-#define i 8
-     D;
-#undef i
-#define i 9
-     D;
-#undef i
-     fprintf(stderr,"-----------------------------------------------------------------------------\n");
+     fprintf(stderr,"-- SIGSEGV\n");
+     stack_trace();
      abort();
 }
+
 #endif
 
 static void alarm_handler(int sig)
