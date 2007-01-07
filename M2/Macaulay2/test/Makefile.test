@@ -16,7 +16,9 @@ endif
 
 LIMIT  = ulimit -t $(TLIMIT) -m $(MLIMIT) -v $(VLIMIT) 2>/dev/null
 
-RESULTS := $(notdir $(patsubst %.m2, %.out, $(wildcard $(SRCDIR)/*.m2))) \
+TESTFILES := $(wildcard $(SRCDIR)/*.m2)
+
+RESULTS := $(notdir $(patsubst %.m2, %.out, $(TESTFILES))) \
 	   $(notdir $(patsubst %.m2-input, %.out, $(wildcard $(SRCDIR)/*.m2-input)))
 
 PAT := 'internal error|:[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):|^GC|^0x|^out of mem|non-zero status|^Command terminated|user.*system.*elapsed|^[0-9]+\.[0-9]+user'
@@ -30,8 +32,12 @@ ARGS += --no-debug --print-width 140
 # ARGS += -e 'errorDepth=0'
 # ARGS += -e 'gbTrace=5'
 
+status :: $(TESTFILES)
+	@ egrep -n '^--status:' $(TESTFILES) || true
+
 %.out : %.m2
 	@ echo testing: $<
+	@ egrep -n '^--status:' $< || true
 	@ $(LIMIT); \
 		echo "--*- compilation -*-" >$*.errors; \
 		if (echo 'input "$<"'; echo 'collectGarbage()'; echo exit 0) | \
@@ -44,6 +50,7 @@ ARGS += --no-debug --print-width 140
 		fi
 %.out : %.m2-input
 	@ echo testing: $<
+	@ egrep -n '^--status:' $< || true
 	@ $(LIMIT); \
 		echo "--*- compilation -*-" >$*.errors; \
 		if time $(DOTS)/bin/M2$(EXE) $(ARGS) <$< >>$*.errors 2>&1 ; \

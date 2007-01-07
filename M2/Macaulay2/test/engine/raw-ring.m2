@@ -73,6 +73,7 @@ b = rawRingVar(R,1)
 c = rawRingVar(R,2)
 d = rawRingVar(R,3)
 e = rawRingVar(R,4)
+--status: Dan will fix this
 a*a
 a+b
 a*b^3

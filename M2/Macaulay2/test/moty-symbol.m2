@@ -1,3 +1,4 @@
+--status: unexpected segmentation fault on rhodium, Dan will fix
 twiddle = (A,B,e,p) ->(
 R:=ring(A);
 F:=coefficientRing(R);

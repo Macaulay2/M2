@@ -1,3 +1,5 @@
+--status: Mike has been working again to improve the choice of algorithm to get this to work (it uses too much memory)
+
 -- To: noreply@sourceforge.net
 -- From: "SourceForge.net" <noreply@sourceforge.net>
 -- Subject: [ macaulay2-Bugs-1571662 ] Memory leak in 0.9.20
