@@ -90,8 +90,8 @@ runBenchmark3 = () -> (
 		-p_(1,2,1,1,2)*p_(1,2,2,2,1)-p_(1,2,2,1,2)*p_(1,2,2,2,1)
 		+p_(1,1,1,1,1)*p_(1,2,2,2,2)+p_(1,1,2,1,1)*p_(1,2,2,2,2)
 		+p_(1,2,1,1,1)*p_(1,2,2,2,2)+p_(1,2,2,1,1)*p_(1,2,2,2,2));
-     assert ( rank source gens gb J == 3626 );
      ti = first timing gens gb J;
+     assert ( rank source gens gb J == 3626 );
      << "-- resB148: " <<  toString ti << " seconds" << endl;
      )
 
@@ -135,16 +135,8 @@ end
 -- Linux rhodium 2.6.18.1 #1 SMP PREEMPT Sat Nov 11 02:11:17 CET 2006 i686 pentium4 i386 GNU/Linux
 -- Macaulay2 0.9.96, compiled with gcc 4.1.1
 -- res39: 0.48003 seconds
-
--- beginning computation Mon Jan  8 11:44:18 EST 2007
--- Linux rhodium 2.6.18.1 #1 SMP PREEMPT Sat Nov 11 02:11:17 CET 2006 i686 pentium4 i386 GNU/Linux
--- Macaulay2 0.9.96, compiled with gcc 4.1.1
 -- resG25: 6.56441 seconds
-
--- beginning computation Mon Jan  8 11:44:25 EST 2007
--- Linux rhodium 2.6.18.1 #1 SMP PREEMPT Sat Nov 11 02:11:17 CET 2006 i686 pentium4 i386 GNU/Linux
--- Macaulay2 0.9.96, compiled with gcc 4.1.1
--- resB148: 0.372023 seconds
+-- resB148: 59.9957 seconds
 
 --   this one is a dual G5 2.5 Mhz in 32 bit mode
 --   the new engine code is rather new not manually optimized yet
