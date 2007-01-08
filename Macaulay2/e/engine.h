@@ -65,7 +65,7 @@ typedef struct M2_Integer_pair M2_Integer_pair;
 #endif
 
 struct Monomial_pair BASECLASS { Monomial *a; Monomial *b; };
-typedef struct Monomial_pair *Monomial_pairOrNull;
+typedef struct Monomial_pair MonomialPairOrNull;
 
 struct RingElement_pair BASECLASS { RingElement *a; RingElement *b; };
 struct M2_Integer_pair BASECLASS { M2_Integer a; M2_Integer b; };
@@ -216,7 +216,7 @@ extern "C" {
   const Monomial *rawRadicalMonomial(const Monomial *a); /* drg: connected rawRadical */
   /* return the monomial whose i th exponent is 1 if ai != 0 */
 
-  Monomial_pairOrNull rawSyzygy(const Monomial *a, 
+  const MonomialPairOrNull *rawSyzygy(const Monomial *a, 
 					const Monomial *b); /* drg: connected rawSyzygy */
   /* */
 
@@ -861,8 +861,8 @@ extern "C" {
 
   M2_bool IM2_Matrix_is_zero(const Matrix *M); /* drg: connected rawIsZero*/
 
-  M2_bool IM2_Matrix_is_equal(const Matrix *M, 
-				    const Matrix *N); /* drg: connected === and to rawIsEqual for use with == */
+  int IM2_Matrix_is_equal(const Matrix *M, const Matrix *N); /* drg: connected === and to rawIsEqual for use with == */
+	// 1 = true, 0 = false, -1 = error
     /* This checks that the entries of M,N are the same, as well as
        that the source and target are the same (as graded free modules).
        Therefore, it can happen that M-N == 0, but M != N.
@@ -1403,8 +1403,9 @@ extern "C" {
 
   unsigned long IM2_MonomialIdeal_hash(const MonomialIdeal *I);/* TODO */
 
-  M2_bool IM2_MonomialIdeal_is_equal(const MonomialIdeal *I1, 
+  int IM2_MonomialIdeal_is_equal(const MonomialIdeal *I1, 
 				     const MonomialIdeal *I2); /* drg: connected === */
+	// 1 = true, 0 = false, -1 = error
 
   int IM2_MonomialIdeal_n_gens(const MonomialIdeal *I); /* drg: connected rawNumgens*/
   /* Returns the number of minimal generators of I */

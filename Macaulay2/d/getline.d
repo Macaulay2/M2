@@ -8,7 +8,7 @@ use varstrin;
 use ctype;
 
 tokenbuf := newvarstring(100);
-export getline(o:file):(string or errmsg) := (
+export getLine(o:file):(string or errmsg) := (
      ch := 0;
      while (
 	  ch = getc(o);

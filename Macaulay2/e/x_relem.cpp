@@ -675,7 +675,7 @@ int rawRingElementCompare(const RingElement *a,
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
-	  return NULL;
+	  return -2;
      }
 }
 

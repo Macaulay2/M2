@@ -652,7 +652,7 @@ readfun(e:Expr):Expr := (
 	  readprompt = p;
 	  oldprompt := stdin.prompt;
 	  stdin.prompt = readpromptfun;
-	  r := getline(stdin);
+	  r := getLine(stdin);
 	  when r is e:errmsg do buildErrorPacket(e.message)
 	  is s:string do (
 	       stdin.prompt = oldprompt;

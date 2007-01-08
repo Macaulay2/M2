@@ -71,7 +71,8 @@ int IM2_MonomialIdeal_n_gens(const MonomialIdeal *I)
   return I->length();
 }
 
-M2_bool IM2_MonomialIdeal_is_equal(const MonomialIdeal *I, const MonomialIdeal *J)
+int IM2_MonomialIdeal_is_equal(const MonomialIdeal *I, const MonomialIdeal *J)
+	// 1 = true, 0 = false, -1 = error
 {
      try {
 	  if (I->get_ring() != J->get_ring())
@@ -80,8 +81,7 @@ M2_bool IM2_MonomialIdeal_is_equal(const MonomialIdeal *I, const MonomialIdeal *
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
-#warning how should we signal an error to the front end?
-	  return false;
+	  return -1;
      }
 }
 

@@ -1175,7 +1175,9 @@ export rawCompare(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is x:RawRingElement do 
-     when a.1 is y:RawRingElement do Expr(toInteger(Ccode(int, "rawRingElementCompare(", "(RingElement *)", x, ",", "(RingElement *)", y, ")" )))
+     when a.1 is y:RawRingElement do (
+	  c := Ccode(int, "rawRingElementCompare(", "(RingElement *)", x, ",", "(RingElement *)", y, ")" );
+	  if c == -2 then engineErrorMessage() else Expr(toInteger(c)))
      else WrongArg(2,"a raw ring element")
      else WrongArg(1,"a raw ring element")
      else WrongNumArgs(2)
@@ -1347,8 +1349,9 @@ setupfun("rawSubmodule",rawSubmodule);
 export rawIsEqual(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawMatrix do
-     when s.1 is y:RawMatrix do
-     toExpr(Ccode(bool, "IM2_Matrix_is_equal((Matrix *)",x,",(Matrix *)",y,")"))
+     when s.1 is y:RawMatrix do (
+	  r := Ccode(int, "IM2_Matrix_is_equal((Matrix *)",x,",(Matrix *)",y,")");
+	  if r == -1 then engineErrorMessage() else toExpr(r == 1))
      else WrongArgMatrix(2)
      else
      when s.0 is x:RawMutableMatrix do

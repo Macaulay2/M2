@@ -210,7 +210,8 @@ M2_bool IM2_Matrix_is_zero(const Matrix *M)
   return M->is_zero();
 }
 
-M2_bool IM2_Matrix_is_equal(const Matrix *M, 
+int				// 1 = true, 0 = false, -1 = error
+IM2_Matrix_is_equal(const Matrix *M, 
 				  const Matrix *N)
 {
      try {
@@ -222,8 +223,7 @@ M2_bool IM2_Matrix_is_equal(const Matrix *M,
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
-#warning how do we signal an error to the fron end here?
-	  return false;
+	  return -1;
      }
 }
 
