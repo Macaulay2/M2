@@ -323,25 +323,6 @@ void Monoid::to_expvector(const_monomial m, exponents result_exp) const
   monomialOrderToActualExponents(monorder_, MONlocal_, result_exp);
 }
 
-#if 0
-// void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
-// {
-//   for (int i=0; i<monomial_size_; i++)
-//     {
-//       int x = *m++;
-//       int y = *n++;
-//       int z = x+y;
-//       *result++ = z;
-//       // Check for overflow
-//       if ((x < 0) == (y < 0) && (x < 0) != (z < 0))
-// 	{
-// 	  ERROR("monomial overflow");
-// 	  fprintf(stderr, "monomial overflow has occurred\n");
-// 	}
-//     }
-// }
-#endif
-
 void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
 {
   overflow_type *check = overflow;
@@ -352,29 +333,15 @@ void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
       y = *n++;
       *result++ = z = x+y;
       switch (*check++) {
-      case OVER:
-	if ((x < 0) != (z < 0) && (x < 0) == (y < 0)) goto overflow;
-	break;
-      case OVER1:
-	if (z < 0) goto overflow;
-	break;
-      case OVER2:
-	if ((z & 0x80008000) != 0) goto overflow;
-	break;
-      case OVER4:
-	if ((z & 0x80808080) != 0) goto overflow;
-	break;
-#ifndef NDEBUG
-      default:
-	   ERROR("internal error - missing case");
-	   assert(0);
-#endif
+      case OVER:  if ((x < 0) != (z < 0) && (x < 0) == (y < 0)) goto overflow; break;
+      case OVER1: if (z < 0)                                    goto overflow; break;
+      case OVER2: if ((z & 0x80008000) != 0)                    goto overflow; break;
+      case OVER4: if ((z & 0x80808080) != 0)                    goto overflow; break;
+      overflow: throw(exc::overflow_error("monomial overflow"));
+      default: throw(exc::internal_error("missing case"));
       }
     }
   return;
- overflow:
-  // ERROR("monomial overflow");
-  throw(exc::overflow("Monoid::mult: monomial overflow"));
 }
 
 #if 0

@@ -492,7 +492,7 @@ const RingElementOrNull *IM2_RingElement_mult(const RingElement *a,
      try {
 	  return (*a) * (*b);
      }
-     catch (exc::overflow e) {
+     catch (exc::engine_error e) {
 	  ERROR(e.what());
 	  return NULL;
      }
