@@ -326,9 +326,9 @@ void Monoid::to_expvector(const_monomial m, exponents result_exp) const
 void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
 {
   static char err[] = "monomial overflow";
-  overflow_type *check = overflow;
+  overflow_type *t = overflow;
   for (int i = monomial_size_; i != 0; i--)
-      switch (*check++) {
+      switch (*t++) {
       case OVER:   *result++ = safe::    add  (*m++,*n++,err); break;
       case OVER1:  *result++ = safe::pos_add  (*m++,*n++,err); break;
       case OVER2:  *result++ = safe::pos_add_2(*m++,*n++,err); break;

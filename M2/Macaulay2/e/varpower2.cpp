@@ -2,6 +2,7 @@
 
 #include "varpower.hpp"
 #include "text_io.hpp"
+#include "overflow.hpp"
 
 struct varpower_monomial
 {
@@ -410,17 +411,7 @@ void varpower::power(const int *a, int n, intarray &result)
   for (index_varpower i = a; i.valid(); ++i)
     {
       pairs->var = i.var();
-#ifdef DEVELOPMENT
-#warning "check overflow"
-#endif
-      long e = i.exponent();
-      long long e1 = e;
-      e *= n;
-      e1 *= n;
-      if (e != e1)
-	ERROR("monomial overflow");
-      pairs->exponent = e;
-      pairs++;
+      pairs++->exponent = safe::mult(i.exponent(),n);
     }
   copy_to(staticVP, pairs - staticVP->pairs, result);
 }

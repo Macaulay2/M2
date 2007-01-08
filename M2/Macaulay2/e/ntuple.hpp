@@ -138,27 +138,22 @@ void ntuple::copy(int nvars, const int *a, int *result)
   memcpy(result, a, nvars*sizeof(int));
 }
 
-
-inline
-int ntuple::weight(int nvars, const int *a, M2_arrayint wt)
+inline int ntuple::weight(int nvars, const int *a, M2_arrayint wt)
 {
-  int sum = 0;
   int top = wt->len;
   if (nvars < top) top = nvars;
-  for (int i=0; i<top; i++)
-       //warning: check for overflow here
-    sum += a[i] * wt->array[i];
+  if (top == 0) return 0;
+  int sum = safe::mult(a[0],wt->array[0]);
+  for (int i=1; i<top; i++) sum = safe::add(sum, safe::mult(a[i],wt->array[i]),"weight overflow");
   return sum;
 }
 
-inline
-int ntuple::degree(int nvars, const int *a)
+inline int ntuple::degree(int nvars, const int *a)
 {
-  int sum = 0;
-  for (int i=0; i<nvars; i++)
-       //warning: check for overflow here
-    sum += a[i];
-  return sum;
+     if (nvars == 0) return 0;
+     int sum = a[0];
+     for (int i=1; i<nvars; i++) sum = safe::add(sum,a[i],"degree overflow");
+     return sum;
 }
 
 inline

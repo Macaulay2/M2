@@ -7,6 +7,7 @@
 #include "comp_gb_declared.hpp"
 #include "text_io.hpp"
 #include "sagbi.hpp"
+#include "exceptions.hpp"
 
 const RingElementOrNull * IM2_Matrix_Hilbert(const Matrix *M)
   /* This routine computes the numerator of the Hilbert series
@@ -27,8 +28,9 @@ ComputationOrNull *IM2_GB_make(const Matrix *m,
 			       int strategy) /* drg: connected rawGB */
 {
   // Choose the correct computation here.
-  clear_emit_size();
-  return GBComputation::choose_gb(
+     try {
+	  clear_emit_size();
+	  return GBComputation::choose_gb(
 				  m,
 				  collect_syz,
 				  n_rows_to_keep,
@@ -37,6 +39,11 @@ ComputationOrNull *IM2_GB_make(const Matrix *m,
 				  max_degree,
 				  algorithm,
 				  strategy);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 ComputationOrNull *IM2_res_make(
@@ -49,15 +56,21 @@ ComputationOrNull *IM2_res_make(
 	   int strategy
 	   )
 {
-  // Choose the correct computation here.
-  clear_emit_size();
-  return ResolutionComputation::choose_res(m,
+     try {
+	  // Choose the correct computation here.
+	  clear_emit_size();
+	  return ResolutionComputation::choose_res(m,
 				 resolve_cokernel,
 				 max_level,
 				 use_max_slanted_degree,
 				 max_slanted_degree,
 				 algorithm,
 				 strategy);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 ComputationOrNull *
@@ -111,9 +124,15 @@ ComputationOrNull*
 rawStartComputation(Computation *C)
   /* start or continue the computation */
 {
-  clear_emit_size();
-  C->start_computation();
-  return error() ? 0 : C;
+     try {
+	  clear_emit_size();
+	  C->start_computation();
+	  return error() ? 0 : C;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 enum ComputationStatusCode rawStatus1(Computation *C)
@@ -130,12 +149,18 @@ const MatrixOrNull *rawGBGetMatrix(Computation *C)
   /* Get the minimal, auto-reduced GB of a GB computation.
      Each call to this will produce a different raw matrix */
 {
-  clear_emit_size();
-  GBComputation *G = C->cast_to_GBComputation();
-  if (G != 0)
-    return G->get_gb();
-  ERROR("computation type unknown or not implemented");
-  return 0;
+     try {
+	  clear_emit_size();
+	  GBComputation *G = C->cast_to_GBComputation();
+	  if (G != 0)
+	       return G->get_gb();
+	  ERROR("computation type unknown or not implemented");
+	  return 0;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull *rawGBMinimalGenerators(Computation *C)
@@ -144,12 +169,18 @@ const MatrixOrNull *rawGBMinimalGenerators(Computation *C)
      inhomogeneous case, this yields a generating set which is
      sometimes smaller than the entire Groebner basis. */
 {
-  clear_emit_size();
-  GBComputation *G = C->cast_to_GBComputation();
-  if (G != 0)
-    return G->get_mingens();
-  ERROR("computation type unknown or not implemented");
-  return 0;
+     try {
+	  clear_emit_size();
+	  GBComputation *G = C->cast_to_GBComputation();
+	  if (G != 0)
+	    return G->get_mingens();
+	  ERROR("computation type unknown or not implemented");
+	  return 0;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull *rawGBChangeOfBasis(Computation *C)
@@ -159,23 +190,35 @@ const MatrixOrNull *rawGBChangeOfBasis(Computation *C)
      computation has run to completion, should satisfy:
      (original matrix) = (GB matrix) * (change of basis matrix). */
 {
-  clear_emit_size();
-  GBComputation *G = C->cast_to_GBComputation();
-  if (G != 0)
-    return G->get_change();
-  ERROR("computation type unknown or not implemented");
-  return 0;
+     try {
+	  clear_emit_size();
+	  GBComputation *G = C->cast_to_GBComputation();
+	  if (G != 0)
+	    return G->get_change();
+	  ERROR("computation type unknown or not implemented");
+	  return 0;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull *
 rawGBGetLeadTerms(Computation *C, int nparts)
 {
-  clear_emit_size();
-  GBComputation *G = C->cast_to_GBComputation();
-  if (G != 0)
-    return G->get_initial(nparts);
-  ERROR("computation type unknown or not implemented");
-  return 0;
+     try {
+	  clear_emit_size();
+	  GBComputation *G = C->cast_to_GBComputation();
+	  if (G != 0)
+	    return G->get_initial(nparts);
+	  ERROR("computation type unknown or not implemented");
+	  return 0;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull *rawGBSyzygies(Computation *C)
@@ -185,24 +228,36 @@ const MatrixOrNull *rawGBSyzygies(Computation *C)
      set to a non-negative integer, then only that many rows of each
      syzygy are kept. */
 {
-  clear_emit_size();
-  GBComputation *G = C->cast_to_GBComputation();
-  if (G != 0)
-    return G->get_syzygies();
-  ERROR("computation type unknown or not implemented");
-  return 0;
+     try {
+	  clear_emit_size();
+	  GBComputation *G = C->cast_to_GBComputation();
+	  if (G != 0)
+	    return G->get_syzygies();
+	  ERROR("computation type unknown or not implemented");
+	  return 0;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull *
 rawGBMatrixRemainder(Computation *C, 
 		     const Matrix *m)
 {
-  clear_emit_size();
-  GBComputation *G = C->cast_to_GBComputation();
-  if (G != 0)
-    return G->matrix_remainder(m);
-  ERROR("computation type unknown or not implemented");
-  return 0;
+     try {
+	  clear_emit_size();
+	  GBComputation *G = C->cast_to_GBComputation();
+	  if (G != 0)
+	    return G->matrix_remainder(m);
+	  ERROR("computation type unknown or not implemented");
+	  return 0;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 void IM2_GB_matrix_lift(Computation *C,
@@ -211,47 +266,71 @@ void IM2_GB_matrix_lift(Computation *C,
 			MatrixOrNull **result_quotient
 			)
 {
-  clear_emit_size();
-  GBComputation *G = C->cast_to_GBComputation();
-  if (G != 0)
-    G->matrix_lift(m, result_remainder, result_quotient);
-  else ERROR("computation type unknown or not implemented");
+     try {
+	  clear_emit_size();
+	  GBComputation *G = C->cast_to_GBComputation();
+	  if (G != 0)
+	    G->matrix_lift(m, result_remainder, result_quotient);
+	  else ERROR("computation type unknown or not implemented");
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return;
+     }
 }
 
 int 
 IM2_GB_contains(Computation *C, 
 		const Matrix *m)
 {
-  clear_emit_size();
-  GBComputation *G = C->cast_to_GBComputation();
-  if (G != 0)
-    return G->contains(m);
-  ERROR("computation type unknown or not implemented");
-  return -2;
+     try {
+	  clear_emit_size();
+	  GBComputation *G = C->cast_to_GBComputation();
+	  if (G != 0)
+	    return G->contains(m);
+	  ERROR("computation type unknown or not implemented");
+	  return -2;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return -2;
+     }
 }
 
 const MatrixOrNull *
 rawResolutionGetMatrix(Computation *C, 
 		       int level)
 {
-  clear_emit_size();
-  ResolutionComputation *G = C->cast_to_ResolutionComputation();
-  if (G != 0)
-    return G->get_matrix(level);
-  ERROR("expected resolution computation type");
-  return 0;
+     try {
+	  clear_emit_size();
+	  ResolutionComputation *G = C->cast_to_ResolutionComputation();
+	  if (G != 0)
+	    return G->get_matrix(level);
+	  ERROR("expected resolution computation type");
+	  return 0;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const FreeModuleOrNull *
 rawResolutionGetFree(Computation *C, 
 		     int level)
 {
-  clear_emit_size();
-  ResolutionComputation *G = C->cast_to_ResolutionComputation();
-  if (G != 0)
-    return G->get_free(level);
-  ERROR("expected resolution computation type");
-  return 0;
+     try {
+	  clear_emit_size();
+	  ResolutionComputation *G = C->cast_to_ResolutionComputation();
+	  if (G != 0)
+	    return G->get_free(level);
+	  ERROR("expected resolution computation type");
+	  return 0;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 int IM2_Resolution_status(Computation *C,
