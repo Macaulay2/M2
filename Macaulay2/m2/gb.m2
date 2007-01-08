@@ -54,7 +54,9 @@ getComputation := (f,type) -> f.cache#?type
 
 toEngineNat  := n -> if n === infinity then -1 else n
 
-gbTypeCode   := opts    -> new OptionTable from { 
+GroebnerBasisOptions = new Type of OptionTable
+
+gbTypeCode   := opts    -> new GroebnerBasisOptions from { 
      SyzygyRows => if opts.Syzygies or opts.ChangeMatrix then opts.SyzygyRows else 0,
      Syzygies => opts.Syzygies,
      HardDegreeLimit => opts.HardDegreeLimit }
@@ -294,8 +296,10 @@ gbSnapshot = method()
 gbSnapshot Module := gbSnapshot Ideal := gbSnapshot Matrix := M -> generators gb(M,StopBeforeComputation => true)
 
 gbRemove = method()
-gbRemove Module := (M) -> remove((generators M).cache, {false,0})
-gbRemove Ideal := (I) -> remove((generators I).cache, {false,0})
+gbRemove Module := gbRemove Ideal := (M) -> (
+     c := (generators M).cache;
+     scan(keys c, o -> if instance(o,GroebnerBasisOptions) then remove(c,o));
+     )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
