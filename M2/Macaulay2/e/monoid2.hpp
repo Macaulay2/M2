@@ -9,7 +9,7 @@
 #include "hash.hpp"
 #include "intarray.hpp"
 #include <vector>
-#include "imonorder.h"
+#include "imonorder.hpp"
 
 class PolynomialRing;
 
