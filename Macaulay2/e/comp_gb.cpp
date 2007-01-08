@@ -73,7 +73,7 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
   GBComputation *result;
 
   switch (algorithm) {
-  case 3: // LinearAlgebraGB.  Must match value in m2/gb.m2
+  case 3: // LinearAlgebraGB.  Must match value in function processAlgorithm() in m2/gb.m2
     result = createLinearAlgebraGB(m, 
 			 collect_syz, 
 			 n_rows_to_keep,

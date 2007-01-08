@@ -25,7 +25,7 @@
 #include "matrix.hpp"
 #include "../d/M2mem.h"
 #include "random.hpp"
-
+#include "exceptions.hpp"
 
 int32_t rawSetRandomSeed(M2_Integer seed)
 {
@@ -489,7 +489,13 @@ const RingElementOrNull *IM2_RingElement_subtract(const RingElement *a,
 const RingElementOrNull *IM2_RingElement_mult(const RingElement *a, 
 					      const RingElement *b)
 {
-  return (*a) * (*b);
+     try {
+	  return (*a) * (*b);
+     }
+     catch (exc::overflow e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 #if 0
