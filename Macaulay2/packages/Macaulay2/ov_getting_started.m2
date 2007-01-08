@@ -73,6 +73,26 @@ document {
      PARA {
 	  "Backup files are made carefully, and if a mangled initialization file is detected, it will not be modified.
 	  The lines added are bracketed by comment lines containing the phrases ", TT "Macaulay 2 start", " and ", TT "Macaulay 2 end", "."
+	  },
+     SeeAlso => {
+	  setupEmacs
+	  }
+     }
+
+document {
+     Key => setupEmacs,
+     Usage => "setupEmacs()",
+     Consequences => {
+	  {"the initialization file for emacs (.emacs in your home directory) will have lines added to allow the Macaulay 2 emacs mode to operate" }
+	  },
+     PARA {
+	  "A backup files is made carefully, and if a mangled initialization file is detected, it will not be modified.
+	  The lines added are bracketed by comment lines containing the phrases ", TT "Macaulay 2 start", " and ", TT "Macaulay 2 end", "."
+	  },
+     SeeAlso => {
+	  setup,
+	  "setting up the Macaulay2 emacs interface",
+	  "using Macaulay2 with emacs"	  
 	  }
      }
 
@@ -373,7 +393,8 @@ document {
 	  " in the Macaulay2 distribution tree.  If you're lucky, then your system administrator has installed Macaulay 2 so
 	  that directory ends up in the same place where emacs looks for its files, as listed by the emacs variable ", TT "loadpath", ".
 	  If not, then in order for emacs to be able to find these files, place the following lines
-	  in the ", TT ".emacs", " file in your home directory, creating the file if necessary.",
+	  in the ", TT ".emacs", " file in your home directory, creating the file if necessary.  Alternatively, 
+	  and much simpler, run M2, and let the ", TO setupEmacs,  " function do it for you.",
 	  },
 PRE///    ;; .emacs file in your home directory
     (load "M2-init")

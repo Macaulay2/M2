@@ -109,7 +109,8 @@ document {
 	  (substitute, Vector, Matrix),
 	  (substitute, RingElement, List),
 	  (substitute, Power, Thing),
-	  (substitute, RingElement, Ring)},
+	  (substitute, RingElement, Ring),
+	  (substitute, Number, Ring)},
      Headline => "substituting values for variables",
      Usage => "substitute(f,v)\nsub(f,v)",
      Inputs => {
