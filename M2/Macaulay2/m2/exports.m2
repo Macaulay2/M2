@@ -313,7 +313,6 @@ export {
 	symbol Postfix,
 	symbol Power,
 	symbol Prefix,
-	symbol Primary,
 	symbol PrimaryTag,				    -- so toExternalString can be used to save documentation tags in an external database
 	symbol PrimitiveElement,
 	symbol Print,

@@ -5,7 +5,7 @@
 -- 
 
 strat = LongPolynomial;
---strat = Primary;
+
 
 -- Easy first case
 

@@ -31,8 +31,8 @@ M = fnt.dd_2;
 gbTrace = 3
 gens gb M
 gens gb (M, Strategy => Inhomogeneous)
---gens gb (M, Strategy=>Primary)
---bb = betti syz (M, Strategy=>Primary) -- wrong if return cmp;
+--gens gb (M)
+--bb = betti syz (M) -- wrong if return cmp;
 bb = betti syz (M) -- wrong if return cmp;
 bb = betti syz (M, Strategy=>Inhomogeneous) -- wrong if return cmp;
 M1 = map(E^(- degrees target M), E^(- degrees source M), M);

@@ -297,15 +297,6 @@ document {
      }
 
 document {
-     Key => Primary,
-     TT "Primary", " -- a strategy used with the keyword ", TO "Strategy", ".",
-     PARA{},
-     "This is a new Groebner basis algorithm, that works in the homogeneous and
-     inhomogeneous cases, and is often faster than the default algorithms.  This 
-     feature is currently under development."
-     }
-
-document {
      Key => Homogeneous,
      TT "Homogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
      PARA{},
@@ -415,92 +406,6 @@ v = apply(7, i -> numgens source generators gb(k,DegreeLimit => i) )
 assert (v  === {0, 0, 8, 20, 25, 26, 26} )
 "
 
-document {
-     Key => [syz,StopWithMinimalGenerators],
-     Headline => "stop when minimal generators have been determined",
-     TT "StopWithMinimalGenerators => true", " -- an optional argument used 
-     with ", TO "syz", " that specifies that the computation should stop as soon as a
-     complete list of minimal generators for the submodule or ideal has been
-     determined.",
-     PARA{},
-     "The value provided is simply passed on to ", TO "gb", ": see 
-     ", TO [gb,StopWithMinimalGenerators], " for details."
-     }
-
-document {
-     Key => [syz,Strategy],
-     Headline => "specify the strategy used to compute the Groebner basis",
-     TT "syz(f,Strategy => v)", " -- an option for ", TO "syz", " which can
-     be used to specify the strategy to be used in the computation.",
-     PARA{},
-     "The value of the option is simply passed to ", TO "gb", ", so see the
-     documentation there for details."
-     }
-
-document {
-     Key => [syz,CodimensionLimit],
-     Headline => "stop when this codimension is reached",
-     TT "CodimensionLimit => n", " -- keyword for an optional argument used with
-     ", TO "syz", " which specifies that the computation should stop when
-     the codimension of the zero set of the ideal (or submodule) generated
-     by the leading terms of the Groebner basis elements found so far reaches 
-     a certain limit.",
-     PARA{},
-     "This option has not been implemented yet.",
-     PARA{},
-     "Eventually the codimension of the ideal of leading terms is the
-     codimension of the original ideal.",
-     }
-
-document {
-     Key => syz,
-     Headline => "the syzygy matrix"
-     }
-
-document {
-     Key => (syz, GroebnerBasis),
-     Headline => "retrieve the syzygy matrix",
-     Usage => "syz G",
-     Inputs => {
-	  "G" => {"the Groebner basis of a matrix ", TT "h"}
-	  },
-     Outputs => {
-	  {"the matrix of syzygies among the columns of ", TT "h"}
-	  },
-     "Warning: the result may be zero if syzygies were not to be retained 
-     during the calculation, or if the computation was not continued to a
-     high enough degree.",
-     }
-
-document {
-     Key => (syz, Matrix),
-     Headline => "compute the syzygy matrix",
-     Usage => "syz h",
-     Inputs => {
-	  "h" => {"a matrix"}
-	  },
-     Outputs => {
-	  {"the matrix of minimal generators for the syzygies among the columns of ", TT "h"}
-	  }
-     }
-
-document {
-     Key => [syz,StopBeforeComputation],
-     Headline => "whether to stop the computation immediately",
-     TT "StopBeforeComputation => true", " -- an optional argument used with ", TO "gb", ".",
-     PARA{},
-     "Tells whether not to start the computation, with the default value
-     being ", TT "false", ".  This can be useful when you want to obtain
-     the partially computed Groebner basis contained in an interrupted
-     computation."
-     }
-
-document {
-     Key => [syz,ChangeMatrix],
-     Headline => "whether to produce the change of basis matrix",
-     TT "ChangeMatrix => true", " -- an optional argument for ", TO "syz", " which
-     specifies whether to compute the change of basis matrix."
-     }
 
 document {
      Key => {modulo,(modulo, Matrix, Matrix),(modulo, Matrix, Nothing),(modulo, Nothing, Matrix)},
