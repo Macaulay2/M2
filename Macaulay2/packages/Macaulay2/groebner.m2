@@ -67,7 +67,7 @@ document {
 	by selecting only the first part of the monomial order while finding the lead term matrix:",
         EXAMPLE "leadTerm(1,I)",
      SUBSECTION "Groebner basis over the integers",
-     TEX ///A strong Groebner basis of an ideal $I \subset ZZ[x_1,...,x_n]$ is a set $G$
+     TEX ///A strong Groebner basis of an ideal $I \subset{} ZZ[x_1,...,x_n]$ is a set $G$
      of elements of $I$ such that,
      if $cm$ is any lead term of $I$ ($c$ a coefficient, and $m$ a monomial), 
      then there is an element of $G$ whose lead term divides

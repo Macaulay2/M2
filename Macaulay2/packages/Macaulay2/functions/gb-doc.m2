@@ -7,28 +7,53 @@ document {
 	  (gb,Ideal),
 	  (gb,Matrix),
 	  (gb,Module),
+	  [gb,Algorithm],
 	  [gb, BasisElementLimit],
 	  [gb,ChangeMatrix],
-	  [gb,CodimensionLimit]
+	  [gb,CodimensionLimit],
+	  [gb,DegreeLimit],
+     	  [gb,GBDegrees],
+	  [gb,HardDegreeLimit],
+	  [gb,Hilbert],
+	  [gb,PairLimit],
+	  [gb,StopBeforeComputation],
+	  [gb,StopWithMinimalGenerators],
+     	  [gb,Strategy],
+	  [gb,SubringLimit],
+	  [gb,Syzygies],
+	  [gb,SyzygyLimit],
+	  [gb,SyzygyRows],
+	  F4,
+	  Faugere,
+	  Homogeneous2,
+	  Sugarless,
+	  LinearAlgebra
 	  },
      Headline => "compute a Groebner basis",
      Usage => "gb I",
      Inputs => {
 	  "I" => "an ideal, module, or matrix",
-     	  BasisElementLimit => ZZ => "the limit on how many (nonminimal) Groebner basis elements to find",
-	  ChangeMatrix => Boolean => "whether to compute the change of basis matrix from GB elements to original generators",
+	  Algorithm => Symbol => {"possible values: ", TT "Homogeneous", ", ", TT "Inhomogeneous", ", ", TT "Sugarless", ".  Experimental options
+	   include ", TT "Homogeneous2", ", ", TT "F4", ", ", TT "Faugere", " and ", TT "LinearAlgebra"},
+     	  BasisElementLimit => ZZ => "stop when this number of (nonminimal) Groebner basis elements has been found",
+	  ChangeMatrix => Boolean => "whether to compute the change of basis matrix from Groebner basis elements to original generators.  Intended for internal use only",
 	  CodimensionLimit => ZZ => "stop computation once codimension of submodule of lead terms reaches this value (not functional yet)",
-	  DegreeLimit => List => "top (single) degree to compute to",
-	  GBDegrees => List => "good question!",
-	  HardDegreeLimit => "allow the computation to throw away spairs in degrees larger than this one",
-     	  Hilbert => {"informs Macaulay2 that this is the ", TO poincare, " polynomial, and can be used to aid in the computation of the Groebner basis (Hilbert driven)"},
-	  PairLimit => ZZ => "limit on the number of spairs to consider",
-	  StopBeforeComputation => Boolean => "stop immediately.  Useful for getting and viewing partial results",
-	  StopWithMinimalGenerators => Boolean => "stop as soon as the minimal set (or a trimmed set, if not homogeneous or local) of generators is known",
-	  Strategy => "good question",
+	  DegreeLimit => List => "stop after the Groebner basis in this degree has been computed",
+	  GBDegrees => List => "a list of positive integer weights, one for each variable in the ring, to be used for
+	   organizing the computation by degrees (the 'sugar' ecart vector)",
+	  HardDegreeLimit => "throws away all S-pairs of degrees beyond the limit. The computation
+	    will be re-initialized if higher degrees are required.",
+     	  Hilbert => {"informs Macaulay2 that this is the ", TO poincare, 
+	   " polynomial, and can be used to aid in the computation of the Groebner basis (Hilbert driven)"},
+	  PairLimit => ZZ => "stop after this number of spairs has been considered",
+	  StopBeforeComputation => Boolean => "initializes the Groebner basis engine but return before doing any computation (useful for 
+	    using or viewing partially computed Groebner bases)",
+	  StopWithMinimalGenerators => Boolean => "stop as soon as the minimal set (or a trimmed set, if not homogeneous or local) of generators is known.  Intended for internal use only",
+	  Strategy => {"either ", TT "LongPolynomial", ", ", TT "Sort", ", or a list of these.  ", TT "LongPolynomial", ": use a geobucket data structure while reducing polynomials;
+	   ", TT "Sort", ": sort the S-pairs.  Usually S-pairs are processed degree by degree in the order that they were constructed."},
 	  SubringLimit => ZZ => "stop after this number of elements of the Groebner basis lie in the first subring",
-	  Syzygies => Boolean => "whether to collect syzygies on the original generators during the computation",
-	  SyzygyLimit => ZZ => "number of syzygies to find before stopping",
+	  Syzygies => Boolean => "whether to collect syzygies on the original generators during the computation.  Intended for internal use only",
+	  SyzygyLimit => ZZ => "stop when this number of non-zero syzygies has been found",
 	  SyzygyRows => ZZ => "for each syzygy and change of basis element, keep only this many rows of each syzygy"
 	  },
      Outputs => {
@@ -50,132 +75,15 @@ document {
 	  },
      SeeAlso => {
 	  "Groebner bases",
-	  (generators,GroebnerBasis)
+	  (generators,GroebnerBasis),
+	  "gbTrace",
+	  installHilbertFunction,
+	  installGroebner,
+	  gbSnapshot,
+	  gbRemove
 	  }
      }
 
-document { 
-     Key => [gb, SyzygyLimit],
-     Headline => "stop when this number of syzygies is obtained",
-     Usage => "gb(..., SyzygyLimit => true)",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-	"This option is meaningful only with ", TT "Syzygies => true", ".",
-     Caveat => {
-	"More useful with the ", TT "syz", " command than with ", TT "gb", "."
-	},
-     SeeAlso => {}
-     }
-document { 
-     Key => [gb, StopBeforeComputation],
-     Headline => "do not actually compute a Groebner basis",
-     Usage => "gb(..., StopBeforeComputation => true)",
-     TT "StopBeforeComputation => true", " initialises the Groebner basis
-     engine and returns a ", TT "GroebnerBasis", " object without actually
-     computing the basis.",
-     Caveat => {"This feature has not been implemented yet"},
-     SeeAlso => {"Groebner bases"}
-     }
-document { 
-     Key => {[gb, Strategy]},
-     Headline => "set the Groebner basis strategy",
-     Usage => "gb(...,Strategy => s)",
-     Inputs => { "s" => Symbol => { "one of the symbols ", TT "LongPolynomial", ", ", TT "Sort", ", or ", TT "UseHilbertFunction" } },
-     "See ", TO "Groebner bases", " for examples."
-     }
-document { 
-     Key => {[gb, Algorithm],F4,Faugere,Homogeneous2,LinearAlgebra,Sugarless}, -- also: Homogeneous,Inhomogeneous
-     Headline => "set the Groebner basis algorithm",
-     Usage => "gb(...,Algorithm => s)",
-     Inputs => { "s" => Symbol => { "one of the symbols ", TT "F4", ", ", TT "Faugere", ", ", TT "Homogeneous", ", ", TT "Homogeneous2", ", ",
-	       TT "Inhomogeneous", ", ", TT "LinearAlgebra", ", or ", TT "Sugarless" }}
-     }
-document { 
-     Key => [gb, HardDegreeLimit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-	  "Throws away all S-pairs of degrees beyond the limit. The computation
-	  will be re-initialized if higher degrees are required.",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-
- -- doc8.m2:479:     Key => symbol gbTrace,
- -- doc8.m2:503:     Key => gb,
- -- doc8.m2:523:     Key => [gb,StopBeforeComputation],
- -- doc8.m2:542:     Key => [gb,DegreeLimit], 
- -- doc8.m2:571:     Key => [gb,SyzygyLimit], 
- -- doc8.m2:602:     Key => [gb,PairLimit], 
- -- doc8.m2:637:     Key => [gb,CodimensionLimit], 
- -- doc8.m2:668:     Key => [gb,StopWithMinimalGenerators], 
- -- doc8.m2:693:     Key => [gb,Strategy], 
- -- doc8.m2:772:     Key => [gb,ChangeMatrix], 
-
-
-
--- document {
---      Key => [gb,ChangeMatrix], 
---      Headline => "whether to produce the change of basis matrix",
---      TT "ChangeMatrix => true", " -- an optional argument for ", TO "gb", " which
---      specifies whether to compute the change of basis matrix from the basis to
---      the original generators.",
---      PARA{},
---      "Intended for internal use only."
---      }
--- document {
---      Key => [gb,Strategy], 
---      Headline => "specify the strategy used to compute Groebner bases",
---      TT "gb(f,Strategy => v)", " -- an option for ", TO "gb", " which can
---      be used to specify the strategy to be used in the computation.",
---      PARA{},
---      "The strategy option value ", TT "v", " should be one of the following.",
---      UL {
--- 	  TO "Primary",
---      	  TO "Homogeneous",
--- 	  TO "Inhomogeneous",
--- 	  TO "LongPolynomial",
--- 	  TO "Sort"
--- 	  }
---      }
--- document {
---      Key => [gb,StopWithMinimalGenerators], 
---      Headline => "stop when minimal generators have been determined",
---      TT "StopWithMinimalGenerators", " -- keyword for an optional argument used 
---      with ", TO "gb", ", which, if the value provided is ", TT "true", "
---      indicates that the computation should stop as
---      soon as a complete list of minimal generators for the submodule
---      or ideal has been determined, even if the entire Groebner basis
---      has not yet been determined.",
---      PARA{},
---      "Currently this option is implemented by stopping the computation
---      as soon as the S-polynomials and generators of the same 
---      degree as the generator of highest degree have been processed.",
---      PARA{},
---      "This option is for internal use only.  Use ", TO "mingens", "
---      instead."
---      }
--- document {
---      Key => [gb,CodimensionLimit], 
---      Headline => "stop when this codimension is reached",
---      TT "CodimensionLimit => n", " -- keyword for an optional argument used with
---      ", TO "gb", " which specifies that the computation should stop when
---      the codimension of the zero set of the ideal (or submodule) generated
---      by the leading terms of the Groebner basis elements found so far reaches 
---      a certain limit.",
---      PARA{},
---      "This option has not been implemented yet.",
---      PARA{},
---      "Eventually the codimension of the ideal of leading terms is the
---      codimension of the original ideal."
---      }
 -- document {
 --      Key => [gb,PairLimit], 
 --      Headline => "stop when this number of pairs is handled",
@@ -191,43 +99,6 @@ document {
 --       	  "gb(I, PairLimit => 3)"
 -- 	  }
 --      }
--- 
-
--- document {
---      Key => [gb,DegreeLimit], 
---      TT "DegreeLimit => n", " -- keyword for an optional argument used with
---      ", TO "gb", " which specifies that the computation should halt after 
---      dealing S-polynomials up to degree ", TT "n", ".",
---      PARA{},
---      "This option is relevant only for homogeneous matrices.",
---      PARA{},
---      "For an example, see ", TO "Groebner bases", "."
---      }
--- 
--- document {
---      Key => [gb,StopBeforeComputation],
---      Headline => "whether to stop the computation immediately",
---      TT "StopBeforeComputation => true", " -- an optional argument used with ", TO "gb", ".",
---      PARA{},
---      "Tells whether not to start the computation, with the default value
---      being ", TT "false", ".  This can be useful when you want to obtain
---      the partially computed Groebner basis contained in an interrupted
---      computation."
---      }
--- 
--- 
--- document {
---      Key => gb,
---      Headline => "compute a Groebner basis",
---      TT "gb f", " -- compute the Groebner basis for the image of a ", TO "Matrix", " ", TT "f", ".",
---      PARA{},
---      "If the computation is interrupted, then the partially completed
---      Groebner basis is available as ", TT "f#{t,i}", ", where ", TT "t", " is true or
---      false depending on whether syzygies or the change of basis matrix are 
---      to be computed, and ", TT "i", " is the number of rows of the syzygy matrix to 
---      be retained.  The computation can be continued by repeating the 
---      ", TT "gb", " command with the same options."
---      }
 
 TEST ///
 -- Test of various stopping conditions for GB's
@@ -237,36 +108,46 @@ gbTrace=3
 --time gens gb I;
 I = ideal flatten entries gens I;
 G = gb(I, StopBeforeComputation=>true); -- now works
+m = gbSnapshot I
+assert(m == 0)
 
 I = ideal flatten entries gens I;
-mingens I; -- works now
+mI = mingens I; -- works now
+assert(numgens source mI == 7)
 
 I = ideal flatten entries gens I;
-trim I -- It should stop after mingens are known to be computed.
+mI = trim I; -- It should stop after mingens are known to be computed.
+assert(numgens source mI == 7)
 
 I = ideal flatten entries gens I;
 G = gb(I, DegreeLimit=>3); -- this one works
+assert(numgens source gbSnapshot I == 18)
 G = gb(I, DegreeLimit=>4); -- this one works
+assert(numgens source gbSnapshot I == 32)
 G = gb(I, DegreeLimit=>3); -- this one stops right away, as it should
+assert(numgens source gbSnapshot I == 32)
+G = gb(I, DegreeLimit=>5);
+assert(numgens source gbSnapshot I == 46)
 
 I = ideal flatten entries gens I;
 G = gb(I, BasisElementLimit=>3); -- does the first 3, as it should
+assert(numgens source gbSnapshot I == 3)
 G = gb(I, BasisElementLimit=>7); -- does 4 more.
+assert(numgens source gbSnapshot I == 7)
 
 I = ideal flatten entries gens I;
-G = gb(I, PairLimit=>3); -- 
+G = gb(I, PairLimit=>23); -- 
+assert(numgens source gbSnapshot I == 16) -- ?? is this right??
 
 I = ideal flatten entries gens I;
 hf = poincare ideal apply(7, i -> R_i^2)
 G = gb(I, Hilbert=>hf); -- this works, it seems
+assert(numgens source G == 67)
 
 Rlex = ZZ/32003[a..j,MonomialOrder=>Eliminate 1]
 IL = substitute(I,Rlex);
 G = gb(IL, SubringLimit=>1, Hilbert=>hf, DegreeLimit=>2); -- SubringLimit now seems OK
 G = gb(IL, SubringLimit=>1, Hilbert=>hf, DegreeLimit=>4); 
 assert(numgens source selectInSubring(1,gens G) == 1)
-I = ideal flatten entries gens I;
-G = gb(I, DegreeLimit=>1); 
---G = gb(I, CodimensionLimit=>3); -- this isn't implemented yet, and is ignored...
 
 ///

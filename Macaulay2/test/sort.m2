@@ -23,7 +23,7 @@ x  = {symbol generators, symbol size, symbol symmetricPower, symbol SPACE, symbo
       forceGB, symbol openIn, symbol TO2, symbol openListener, symbol intersect, symbol gbTrace, symbol TOH, symbol difference, PairsRemaining, symbol **, StopWithMinimalGenerators,
       symbol map, BasisElementLimit, symbol ++, symbol accumulate, symbol max, symbol columnAdd, symbol recursionLimit, symbol loadDepth, symbol OneExpression, symbol null, symbol use,
       symbol subtable, symbol true, DebuggingMode, symbol toDual, symbol symbol, symbol Database, symbol sort, symbol directSum, GRevLex, symbol delete, Consequences, symbol ->, symbol
-      getNonUnit, symbol atEndOfFile, symbol profileSummary, symbol .., symbol Keyword, symbol isUnit, symbol .?, symbol commandLine, symbol //, symbol HEAD, Primary, symbol CODE,
+      getNonUnit, symbol atEndOfFile, symbol profileSummary, symbol .., symbol Keyword, symbol isUnit, symbol .?, symbol commandLine, symbol //, symbol HEAD, symbol CODE,
       symbol frac, symbol selectInSubring, symbol relations, symbol submatrix, symbol getChangeMatrix, GlobalReleaseHook, symbol BLOCKQUOTE, symbol clearEcho, symbol ^**, symbol
       complement, symbol eulers, symbol MonomialIdeal, symbol Sum, symbol closeOut, Key, symbol GradedModuleMap, symbol monomialIdeal, symbol min, symbol debug, Engine, symbol homomorphism,
       symbol LISTING, symbol MutableMatrix, symbol IndexedVariable, symbol addEndFunction, symbol modulo, symbol isRing, symbol splice, symbol scan, CompleteIntersection, symbol PRE, symbol

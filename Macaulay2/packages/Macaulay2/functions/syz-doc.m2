@@ -1,287 +1,77 @@
---- status: TODO
---- author(s): 
+--- status: Draft
+--- author(s): MES
 --- notes: 
 
 document { 
      Key => syz,
-     Headline => "",
-     Usage => "",
+     Headline => "the syzygy matrix"
+     }
+document {
+     Key => (syz, GroebnerBasis),
+     Headline => "retrieve the syzygy matrix",
+     Usage => "syz G",
      Inputs => {
+	  "G" => {"the Groebner basis of a matrix ", TT "h"}
 	  },
      Outputs => {
+	  {"the matrix of syzygies among the columns of ", TT "h"}
 	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
+     PARA{
+     	  "Warning: the result may be zero if syzygies were not to be retained 
+     	  during the calculation, or if the computation was not continued to a
+     	  high enough degree."
+          },
+     PARA {
+	  "The matrix of syzygies is returned without removing non-minimal syzygies.",
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     EXAMPLE lines ///
+     	  R = QQ[a..g];
+	  I = ideal"ab2-c3,abc-def,ade-bfg"
+	  G = gb(I, Syzygies=>true);
+	  syz G
+	  ///,
+     "There appear to be 4 syzygies, but the last one is a combination of the first three:",
+     EXAMPLE lines ///
+	  syz gens I
+     	  mingens image syz G
+         ///,
+     SeeAlso => {gb,mingens}
      }
 document { 
-     Key => (syz,GroebnerBasis),
-     Headline => "",
-     Usage => "",
+     Key => {(syz,Matrix),
+	  [syz,Algorithm],
+	  [syz,BasisElementLimit],
+	  [syz,DegreeLimit],
+	  [syz,GBDegrees],
+	  [syz,HardDegreeLimit],
+	  [syz,PairLimit],
+	  [syz,StopBeforeComputation],
+	  [syz,Strategy],
+	  [syz,SyzygyLimit],
+	  [syz,SyzygyRows]},
+     Headline => "compute the syzygy matrix",
+     Usage => "syz h",
      Inputs => {
+	  "h" => {"a matrix"},
+	  Algorithm => {"see ", TO [gb,Algorithm]},
+	  BasisElementLimit => {"see ", TO [gb,BasisElementLimit]},
+	  DegreeLimit => {"see ", TO [gb,DegreeLimit]},
+	  GBDegrees => {"see ", TO [gb,GBDegrees]},
+	  HardDegreeLimit => {"see ", TO [gb,HardDegreeLimit]},
+	  PairLimit => {"see ", TO [gb,PairLimit]},
+	  StopBeforeComputation => {"see ", TO [gb,StopBeforeComputation]},
+	  Strategy => {"see ", TO [gb,Strategy]},
+	  SyzygyLimit => {"see ", TO [gb,SyzygyLimit]},
+	  SyzygyRows => {"see ", TO [gb,SyzygyRows]}
 	  },
      Outputs => {
+	  Matrix => {"the matrix of minimal or trimmed generators for the syzygies among the columns of ", TT "h"}
 	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     EXAMPLE lines ///
+     	  R = QQ[a..g];
+	  I = ideal"ab2-c3,abc-cef,ade-cfg"
+     	  syz gens I     	       
+	  ///,
+     SeeAlso => {gb}
      }
-document { 
-     Key => (syz,Matrix),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [syz, SyzygyLimit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [syz, SyzygyRows],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [syz, StopBeforeComputation],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [syz, Strategy],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [syz, Syzygies],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [syz, HardDegreeLimit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [syz, DegreeLimit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [syz, ChangeMatrix],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [syz, Algorithm],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [syz, PairLimit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [syz, BasisElementLimit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [syz, CodimensionLimit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [syz, GBDegrees],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [syz, StopWithMinimalGenerators],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [syz, Hilbert],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [syz, SubringLimit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc8.m2:904:     Key => [syz,StopWithMinimalGenerators],
- -- doc8.m2:916:     Key => [syz,Strategy],
- -- doc8.m2:926:     Key => [syz,CodimensionLimit],
- -- doc8.m2:941:     Key => syz,
- -- doc8.m2:946:     Key => (syz, GroebnerBasis),
- -- doc8.m2:961:     Key => (syz, Matrix),
- -- doc8.m2:973:     Key => [syz,StopBeforeComputation],
- -- doc8.m2:984:     Key => [syz,ChangeMatrix],
- -- doc9.m2:1773:     Key => syzygyScheme,
- -- overview4.m2:687:     Key => "computing syzygies",
- -- overviewC.m2:1472:     Key => "syzygies",
+

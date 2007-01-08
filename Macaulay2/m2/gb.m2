@@ -290,6 +290,8 @@ installHilbertFunction(Module,RingElement) := (M,hf) -> (
      hf = substitute(hf,degreesRing M);
      M.cache.poincare = hf;
      )
+installHilbertFunction(Ideal,RingElement) := (I,hf) -> installHilbertFunction(comodule I,hf)
+installHilbertFunction(Matrix,RingElement) := (f,hf) -> installHilbertFunction(cokernel f,hf)
 
 installGroebner = method()
 
