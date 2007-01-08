@@ -16,6 +16,7 @@ use common;
 use struct;
 use binding;
 use ctype;
+use util;
 
 enlarge(object:HashTable):void := (
      oldTable := object.table;
@@ -270,9 +271,8 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is x:RawMonomialIdeal do (
 	  when rhs
 	  is y:RawMonomialIdeal do (
-	       if Ccode(bool, "IM2_MonomialIdeal_is_equal((MonomialIdeal *)",x,",(MonomialIdeal *)",y,")")
-	       then True else False
-	       )
+	       r := Ccode(int, "IM2_MonomialIdeal_is_equal((MonomialIdeal *)",x,",(MonomialIdeal *)",y,")");
+	       if r == -1 then engineErrorMessage() else toExpr(r == 1))
 	  else False
 	  )
      is x:RawRingElement do (

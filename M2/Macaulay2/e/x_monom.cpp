@@ -133,7 +133,7 @@ const Monomial *rawRadicalMonomial(const Monomial *a)
   return a->radical();
 }
 
-Monomial_pairOrNull rawSyzygy(const Monomial *a, const Monomial *b)
+const MonomialPairOrNull *rawSyzygy(const Monomial *a, const Monomial *b)
 {
      try {
 	  a->monsyz(*b, Monomial_pair_ret.a, Monomial_pair_ret.b);

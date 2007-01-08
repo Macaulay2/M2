@@ -4,6 +4,8 @@ use C;
 use system;
 use strings;
 use stdio;
+use varstrin;
+use ctype;
 use getline;
 use tokens;
 use objects;
@@ -19,7 +21,7 @@ export topLevelTexmacs():bool := (
      unsetprompt(stdin);
      while true do (
 	  stdin.bol = false;				    -- sigh, prevent a possible prompt
-	  r := getline(stdin);
+	  r := getLine(stdin);
 	  when r is e:errmsg do (
 	       flush(stdout);
      	       endLine(stderr);
