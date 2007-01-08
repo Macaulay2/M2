@@ -23,7 +23,7 @@
 static int iserror = 0;
 static char errmsg[MAXERROR] = {'\0'};
 
-void ERROR(char *s,...)
+void ERROR(const char *s,...)
 {
   va_list ap;
   if (iserror) fprintf(stderr, "--error message bumped: %s\n",errmsg);
@@ -33,7 +33,7 @@ void ERROR(char *s,...)
   va_end(ap);
 }
 
-void INTERNAL_ERROR(char *s,...)
+void INTERNAL_ERROR(const char *s,...)
 {
   char buf[MAXERROR];
   buf[0] = 0;

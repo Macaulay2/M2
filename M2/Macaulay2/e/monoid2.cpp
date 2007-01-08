@@ -8,6 +8,7 @@
 #include "../d/M2mem.h"
 
 #include "polyring.hpp"
+#include "exceptions.hpp"
 
 Monoid *Monoid::trivial_monoid = 0;
 
@@ -372,10 +373,8 @@ void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
     }
   return;
  overflow:
-  ERROR("monomial overflow");
-#ifndef NDEBUG
-  fprintf(stderr, "monomial overflow has occurred\n");
-#endif
+  // ERROR("monomial overflow");
+  throw(exc::overflow("Monoid::mult: monomial overflow"));
 }
 
 #if 0

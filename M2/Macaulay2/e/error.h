@@ -7,8 +7,8 @@
 extern "C" {
 #endif
 
-  void ERROR(char *s,...);
-  void INTERNAL_ERROR(char *s, ...); /* Exits the program with an error code */
+  void ERROR(const char *s,...);
+  void INTERNAL_ERROR(const char *s, ...); /* Exits the program with an error code */
   int error(); /* returns 0 for false, 1 for true */
   char *error_message();
 
