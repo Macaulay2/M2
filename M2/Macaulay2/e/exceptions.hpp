@@ -3,9 +3,16 @@
 using namespace std;
 
 namespace exc {
-     struct overflow : public overflow_error {
-	  explicit overflow(const string &msg) : overflow_error(msg) {}
+     struct engine_error : public runtime_error {
+	  explicit engine_error(const string &msg) : runtime_error(msg) {}
      };
+     struct overflow_error : public engine_error {
+	  explicit overflow_error(const string &msg) : engine_error(msg) {}
+     };
+     struct internal_error : public engine_error {
+	  explicit internal_error(const string &msg) : engine_error(msg) {}
+     };
+
 }
 
 // Local Variables:
