@@ -412,6 +412,7 @@ export {
 	symbol UpdateOnly,
 	symbol Usage,
 	symbol UseHilbertFunction,
+	symbol GroebnerBasisOptions,
 	symbol installHilbertFunction,
 	symbol installGroebner,
 	symbol gbSnapshot,
