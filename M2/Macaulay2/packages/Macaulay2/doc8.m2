@@ -256,8 +256,7 @@ document {
      "Eventually the codimension of the ideal of leading terms is the
      codimension of the original ideal.",
      UL {
-	  TO [gb,CodimensionLimit],
-	  TO [syz,CodimensionLimit],
+	  TO [gb,CodimensionLimit]
 	  }
      }
 
@@ -273,8 +272,7 @@ document {
      UL {
 	  TO [gb,StopWithMinimalGenerators],
 	  TO [pushForward,StopWithMinimalGenerators],
-	  TO [pushForward1,StopWithMinimalGenerators],
-	  TO [syz,StopWithMinimalGenerators],
+	  TO [pushForward1,StopWithMinimalGenerators]
 	  }
      }
 

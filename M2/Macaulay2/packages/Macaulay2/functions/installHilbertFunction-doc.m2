@@ -34,7 +34,7 @@ document {
 	  gbTrace=3
 	  time poincare I
 	  time gens gb I;
-          ///
+          ///,
      "In this case, the savings is minimal, but often it can be dramatic.",
      PARA {
 	  "Another important situation is
@@ -47,8 +47,6 @@ document {
 	  time hf = poincare I
 	  S = QQ[a..d,MonomialOrder=>Eliminate 2]
 	  J = substitute(I,S)
-	  --time gens gb J;
-	  J = substitute(I,S)	  
 	  installHilbertFunction(J, hf)
 	  gbTrace=3
 	  time gens gb J;
@@ -57,3 +55,36 @@ document {
      SeeAlso =>{selectInSubring, "Elimination::Elimination"}
      }
 
+TEST ///
+R = QQ[a..d];
+I = ideal random(R^1, R^{3:-3});
+time hf = poincare I
+S = QQ[a..d,MonomialOrder=>Eliminate 2]
+J = substitute(I,S)
+installHilbertFunction(J, hf)
+gbTrace=3
+time gens gb J;
+selectInSubring(1,gens gb J)
+
+-- Now check it for matrices
+R = QQ[a..d];
+I = ideal random(R^1, R^{3:-3});
+time hf = poincare I
+S = QQ[a..d,MonomialOrder=>Eliminate 2]
+J = substitute(I,S)
+installHilbertFunction(gens J, hf)
+gbTrace=3
+time gens gb gens J;
+selectInSubring(1,gens gb J)
+
+-- Now check it for modules
+R = QQ[a..d];
+I = image random(R^1, R^{3:-3});
+time hf = poincare I
+S = QQ[a..d,MonomialOrder=>Eliminate 2]
+J = substitute(I,S)
+installHilbertFunction(J, hf)
+gbTrace=3
+time gens gb J
+selectInSubring(1,gens gb J)
+///
