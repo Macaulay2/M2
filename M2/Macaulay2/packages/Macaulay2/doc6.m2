@@ -380,39 +380,6 @@ document {
      ", TT "M", ".",
      SeeAlso => "polynomial rings"}
 document {
-     Key => (symbol **, Monoid, Monoid),
-     Headline => "tensor product of monoids",
-     TT "M ** N", " -- tensor product of monoids.",
-     PARA{},
-     "For complete documentation, see ", TO "tensor", "."}
-
-undocumented {}
-document {
-     Key => {tensor,(tensor, Ring, Ring),(tensor, QuotientRing, QuotientRing),(tensor, PolynomialRing, PolynomialRing),(tensor, Module, Module),
-	  (tensor, QuotientRing, PolynomialRing),(tensor, PolynomialRing, QuotientRing),(tensor, Monoid, Monoid),(tensor, CoherentSheaf, CoherentSheaf)},
-     Headline => "tensor product",
-     TT "tensor(M,N)", " -- tensor product of rings or monoids.",
-     PARA{},
-     "This method allows all of the options available for monoids, see
-     ", TO "monoid", " for details.  This routine essentially combines the 
-     variables of M and N into one monoid.",
-     PARA{},
-     "For rings, the rings should be quotient rings of polynomial rings over the same
-     base ring.",
-     PARA{},
-     "Here is an example with monoids.",
-     EXAMPLE {
-	  "M = monoid[a..d, MonomialOrder => Eliminate 1]",
-	  "N = monoid[e,f,g, Degrees => {1,2,3}]",
-	  "P = tensor(M,N,MonomialOrder => GRevLex)",
-	  "describe P",
-	  "tensor(M,M,Variables => {t_0 .. t_7}, MonomialOrder => ProductOrder{4,4})",
-	  "describe oo",
-	  },
-     "Here is a similar example with rings.",
-     EXAMPLE "tensor(ZZ/101[x,y], ZZ/101[r,s], MonomialOrder => Eliminate 2)",
-     SeeAlso => "**"}
-document {
      Key => table,
      Headline => "make a table (nested list)",
      TT "table(u,v,f)", " -- yields a table m in which m_i_j is f(u_i,v_j).",

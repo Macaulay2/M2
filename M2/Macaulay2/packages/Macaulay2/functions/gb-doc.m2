@@ -7,13 +7,29 @@ document {
 	  (gb,Ideal),
 	  (gb,Matrix),
 	  (gb,Module),
-	  [gb, BasisElementLimit]
+	  [gb, BasisElementLimit],
+	  [gb,ChangeMatrix],
+	  [gb,CodimensionLimit]
 	  },
      Headline => "compute a Groebner basis",
      Usage => "gb I",
      Inputs => {
 	  "I" => "an ideal, module, or matrix",
-     	  BasisElementLimit => ZZ => "the limit on how many (nonminimal) Groebner basis elements to find"
+     	  BasisElementLimit => ZZ => "the limit on how many (nonminimal) Groebner basis elements to find",
+	  ChangeMatrix => Boolean => "whether to compute the change of basis matrix from GB elements to original generators",
+	  CodimensionLimit => ZZ => "stop computation once codimension of submodule of lead terms reaches this value (not functional yet)",
+	  DegreeLimit => List => "top (single) degree to compute to",
+	  GBDegrees => List => "good question!",
+	  HardDegreeLimit => "allow the computation to throw away spairs in degrees larger than this one",
+     	  Hilbert => {"informs Macaulay2 that this is the ", TO poincare, " polynomial, and can be used to aid in the computation of the Groebner basis (Hilbert driven)"},
+	  PairLimit => ZZ => "limit on the number of spairs to consider",
+	  StopBeforeComputation => Boolean => "stop immediately.  Useful for getting and viewing partial results",
+	  StopWithMinimalGenerators => Boolean => "stop as soon as the minimal set (or a trimmed set, if not homogeneous or local) of generators is known",
+	  Strategy => "good question",
+	  SubringLimit => ZZ => "stop after this number of elements of the Groebner basis lie in the first subring",
+	  Syzygies => Boolean => "whether to collect syzygies on the original generators during the computation",
+	  SyzygyLimit => ZZ => "number of syzygies to find before stopping",
+	  SyzygyRows => ZZ => "for each syzygy and change of basis element, keep only this many rows of each syzygy"
 	  },
      Outputs => {
 	  GroebnerBasis => "a Groebner basis computation object"
@@ -53,22 +69,6 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [gb, SyzygyRows],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-	"This option is meaningful only with ", TT "Syzygies => true", ".",
-     EXAMPLE {
-	  },
-     Caveat => {
-	"More useful with the ", TT "syz", " command than with ", TT "gb", "."
-	},
-     SeeAlso => {}
-     }
-document { 
      Key => [gb, StopBeforeComputation],
      Headline => "do not actually compute a Groebner basis",
      Usage => "gb(..., StopBeforeComputation => true)",
@@ -93,22 +93,6 @@ document {
 	       TT "Inhomogeneous", ", ", TT "LinearAlgebra", ", or ", TT "Sugarless" }}
      }
 document { 
-     Key => [gb, Syzygies],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-	"This option can take values ", TT "true", " or ", TT "false", ".",
-     EXAMPLE {
-	  },
-     Caveat => {
-	"More useful with the ", TT "syz", " command than with ", TT "gb", "."
-	},
-     SeeAlso => {}
-     }
-document { 
      Key => [gb, HardDegreeLimit],
      Headline => "",
      Usage => "",
@@ -123,118 +107,7 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
-document { 
-     Key => [gb, DegreeLimit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "See ", TO "Groebner bases", " for examples.",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [gb, ChangeMatrix],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "See ", TO "Groebner bases", " for examples.",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [gb, PairLimit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "See ", TO "Groebner bases", " for examples.",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [gb, CodimensionLimit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "See ", TO "Groebner bases", " for examples.",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [gb, GBDegrees],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "See ", TO "Groebner bases", " for examples.",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [gb, StopWithMinimalGenerators],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "See ", TO "Groebner bases", " for examples.",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [gb, Hilbert],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "See ", TO "Groebner bases", " for examples.",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [gb, SubringLimit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "See ", TO "Groebner bases", " for examples.",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
+
  -- doc8.m2:479:     Key => symbol gbTrace,
  -- doc8.m2:503:     Key => gb,
  -- doc8.m2:523:     Key => [gb,StopBeforeComputation],
