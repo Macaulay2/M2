@@ -22,8 +22,8 @@ struct GBMatrix : public our_new_delete {
 class GBKernelComputation : public Computation
 {
      // these three were virtual in class Computation
-  bool stop_conditions_ok() {}
-  int complete_thru_degree() const {}
+  bool stop_conditions_ok() { return true; }
+  int complete_thru_degree() const { return 0; }
   void start_computation() {}
 
   const PolynomialRing *R;
