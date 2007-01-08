@@ -2,6 +2,7 @@
 
 #include "comp.hpp"
 #include "buffer.hpp"
+#include "exceptions.hpp"
 
 ComputationOrNull *
 Computation::set_stop_conditions(M2_bool always_stop,
@@ -58,9 +59,14 @@ void Computation::text_out(buffer &o) const
   o << "-- computation --";
 }
 
-void Computation::set_status(enum ComputationStatusCode c)
+enum ComputationStatusCode Computation::set_status(enum ComputationStatusCode c)
 {
-  computation_status = c;
+     switch (computation_status) {
+     case COMP_OVERFLOWED:
+	  // if (computation_status == COMP_NEED_RESIZE) break;
+	  throw(exc::internal_error("attempted to reset status of a computation that overflowed"));
+     default: return computation_status = c;
+     }
 }
 
 // Local Variables:
