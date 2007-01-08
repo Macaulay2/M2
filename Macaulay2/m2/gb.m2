@@ -72,8 +72,7 @@ gb = method( TypicalValue => GroebnerBasis, Options => gbDefaults )
 
 strategyCodes := new HashTable from { -- must match values in e/engine.h
      LongPolynomial => 1,
-     Sort => 2,
-     UseHilbertFunction => 4
+     Sort => 2
      }
 
 processStrategy := (v) -> (
@@ -279,6 +278,24 @@ RingElement % GroebnerBasis := RingElement =>
 ZZ % GroebnerBasis := (r,g) -> ((r * id_(target g)) % g)_(0,0)
 
 leadTerm GroebnerBasis := (g) -> map(ring g, rawGBGetLeadTerms(raw g,-1))
+
+-- new functions from Mike, needing a bit of development
+
+installHilbertFunction = method()
+installHilbertFunction(Module,RingElement) := (M,hf) -> (
+     -- we need to place hf into the degree ring of M.
+     hf = substitute(hf,degreesRing M);
+     M.cache.poincare = hf;
+     )
+
+installGroebner = method()
+
+gbSnapshot = method()
+gbSnapshot Module := gbSnapshot Ideal := gbSnapshot Matrix := M -> generators gb(M,StopBeforeComputation => true)
+
+gbRemove = method()
+gbRemove Module := (M) -> remove((generators M).cache, {false,0})
+gbRemove Ideal := (I) -> remove((generators I).cache, {false,0})
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
