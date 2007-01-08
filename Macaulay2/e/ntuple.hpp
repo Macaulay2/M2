@@ -6,6 +6,7 @@
 #include "style.hpp"
 #include "engine.h"
 #include "exceptions.hpp"
+#include "overflow.hpp"
 
 typedef int *exponents;
 
@@ -51,51 +52,19 @@ bool ntuple::is_one(int nvars, int *a)
   return true;
 }
 
-inline
-void ntuple::mult(int nvars, const int *a, const int *b, int *result)
+inline void ntuple::mult(int nvars, const int *a, const int *b, int *result)
 {
-  for (int i=0; i<nvars; i++)
-    {
-      long x = *a++;
-      long y = *b++;
-      long z = x+y;
-      if ((x < 0) == (y < 0) && (x < 0) != (z < 0))
-	{
-	  throw(exc::overflow_error("monomial overflow"));
-	}
-      *result++ = z;
-    }
+  for (int i=0; i<nvars; i++) *result++ = safe::add(*a++,*b++,"monomial overflow");
 }
 
-inline
-void ntuple::power(int nvars, const int *a, int n, int *result)
+inline void ntuple::power(int nvars, const int *a, int n, int *result)
 {
-  for (int i=0; i<nvars; i++)
-    {
-      long e = *a++;
-      long long e1 = e;
-      e *= n;
-      e1 *= n;
-      if (e != e1)
-	   throw(exc::overflow_error("monomial overflow"));
-      *result++ = e1;
-    }
+  for (int i=0; i<nvars; i++) *result++ = safe::mult(*a++, n,"monomial overflow");
 }
 
-inline
-void ntuple::divide(int nvars, const int *a, const int *b, int *result)
+inline void ntuple::divide(int nvars, const int *a, const int *b, int *result)
 {
-  for (int i=0; i<nvars; i++)
-    {
-      long x = *a++;
-      long y = *b++;
-      long z = x-y;
-      if ((x < 0) == (y > 0) && (x < 0) != (z < 0))
-	{
-	  throw(exc::overflow_error("monomial overflow"));
-	}
-      *result++ = z;
-    }
+  for (int i=0; i<nvars; i++) *result++ = safe::sub(*a++,*b++,"monomial overflow");
 }
 
 inline
@@ -103,18 +72,8 @@ void ntuple::quotient(int nvars, const int *a, const int *b, int *result)
 {
   for (int i=0; i<nvars; i++)
     {
-      long x = *a++;
-      long y = *b++;
-      assert(x >= 0 && y > 0);		// Dan thinks this routine wouldn't ever be called with negative exponents!  Or in that case it should/could always return 0.
-      long z;
-      if (x <= y) z = 0;
-      else
-	{
-	  z = x-y;
-	  if (z < 0)
-	       throw(exc::overflow_error("monomial overflow"));
-	}
-      *result++ = z;
+      assert(*a >= 0 && *b >= 0); // Dan thinks this routine wouldn't ever be called with negative exponents!  Or in that case it should/could always return 0.
+      *result++ = safe::sub_pos(*a++,*b++); // if so, there would never be an overflow
     }
 }
 
@@ -203,14 +162,12 @@ int ntuple::degree(int nvars, const int *a)
 }
 
 inline
-void ntuple::syz(int nvars, const int *a, const int *b,
-		 int *a1, int *b1)
+void ntuple::syz(int nvars, const int *a, const int *b, int *a1, int *b1)
 {
      for (int i=0; i<nvars; i++) {
 	  if ((a[i] < 0 || b[i] < 0) && !(a[i] < 0 && b[i] < 0)) {
 	       a1[i] = -a[i];
 	       b1[i] = -b[i];
-	       //warning: check better for overflow here
 	       //warning: Mike: does this routine ever get called with negative exponents?
 	       if (a1[i] == a[i] && a[i] < 0 || b1[i] == b[i] && b[i] < 0) { // yes, we overflow a bit too often here
 		    throw(exc::overflow_error("monomial overflow"));
