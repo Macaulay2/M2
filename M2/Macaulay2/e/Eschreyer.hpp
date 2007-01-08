@@ -6,6 +6,7 @@
 #include "gbring.hpp"
 #include "schorder.hpp"
 #include "matrix.hpp"
+#include "comp.hpp"
 
 struct GBMatrix : public our_new_delete {
   const FreeModule *F; // target
@@ -18,8 +19,13 @@ struct GBMatrix : public our_new_delete {
   Matrix *to_matrix();
 };
 
-class GBKernelComputation : public object
+class GBKernelComputation : public Computation
 {
+     // these three were virtual in class Computation
+  bool stop_conditions_ok() {}
+  int complete_thru_degree() const {}
+  void start_computation() {}
+
   const PolynomialRing *R;
   const Ring *K;
   GBRing *GR;
