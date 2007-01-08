@@ -132,7 +132,12 @@ checkHilbertHint = f -> (
 gbGetHilbertHint := (f,opts) -> (
      if opts.Hilbert =!= null then opts.Hilbert
      else if f.cache.?cokernel and f.cache.cokernel.cache.?poincare and checkHilbertHint f then f.cache.cokernel.cache.poincare
-     )
+     else (
+	  if f.?generators then (
+	       g := f.generators.cache;
+	       if g.?image then (
+		    g = g.image.cache;
+	            if g.?poincare and checkHilbertHint f then  poincare target f.generators - g.poincare))))
 
 ifSomething := method()
 ifSomething(Thing  ,Function) := (x,f) -> f x
@@ -303,6 +308,7 @@ gbRemove Module := gbRemove Ideal := (M) -> (
      c := (generators M).cache;
      scan(keys c, o -> if instance(o,GroebnerBasisOptions) then remove(c,o));
      )
+gbRemove Matrix := (M) -> gbRemove generators M
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
