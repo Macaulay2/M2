@@ -130,7 +130,9 @@ export - (rhs:Expr) : Expr := (
      is x:RRR do Expr(-x)
      is x:Rational do Expr(-x)
      is x:RawRingElement do Expr(-x)
-     is x:RawMatrix do Expr(-x)
+     is x:RawMatrix do (
+	  when -x is y:RawMatrix do Expr(y) else buildErrorPacket(EngineError("polynomial minus failed"))
+	  )
      is x:RawMutableMatrix do Expr(-x)
      is Error do rhs
      else (

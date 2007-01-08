@@ -41,6 +41,7 @@ export RawArrayPair := { monoms:array(RawMonomial), coeffs:array(RawRingElement)
 export RawArrayPairOrNull := RawArrayPair or null;
 export RawMonomialPair := { a:RawMonomial, b:RawMonomial };
 export RawRingElementPair := { a:RawRingElement, b:RawRingElement };
+export RawMonomialPairOrNull := RawMonomialPair or null;
 export RawRingElementPairOrNull := RawRingElementPair or null;
 export RawMatrixAndInt := { M:RawMatrix, i:int };
 export RawComputation := {RawComputation:void};
@@ -97,8 +98,8 @@ export (x:RawMutableMatrix) + (y:RawMutableMatrix) : RawMutableMatrixOrNull := (
      Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)IM2_MutableMatrix_add(", "(MutableMatrix *)", x, ",(MutableMatrix *)", y, ")" )
      );
 -- matrix arithmetic
-export - (y:RawMatrix) : RawMatrix := (
-     Ccode(RawMatrix, "(engine_RawMatrix)IM2_Matrix_negate(", "(Matrix *)", y, ")" ) 
+export - (y:RawMatrix) : RawMatrixOrNull := (
+     Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_negate(", "(Matrix *)", y, ")" ) 
      );
 export - (y:RawMutableMatrix) : RawMutableMatrix := (
      Ccode(RawMutableMatrix, "(engine_RawMutableMatrix)IM2_MutableMatrix_negate(", "(MutableMatrix *)", y, ")" ) 

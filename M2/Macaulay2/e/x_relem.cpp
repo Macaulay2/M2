@@ -85,7 +85,13 @@ const RingOrNull *rawGaloisField(const RingElement *f)
   // Check that f has degree >= 2
   // Check that f is monic
   // If any of these fail, then return 0.
-  return GF::create(f);
+     try {
+	  return GF::create(f);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingOrNull *IM2_Ring_RR(double precision)
@@ -117,6 +123,7 @@ const Ring *IM2_Ring_trivial_polyring()
 
 const RingOrNull *IM2_Ring_polyring(const Ring *K, const Monoid *M)
 {
+     try {
 #if 0
 //   if (K == globalQQ)
 //     {
@@ -124,12 +131,18 @@ const RingOrNull *IM2_Ring_polyring(const Ring *K, const Monoid *M)
 //       return PolyQQ::create(P);
 //     }
 #endif
-  return PolyRing::create(K,M);
+	  return PolyRing::create(K,M);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingOrNull *IM2_Ring_skew_polyring(const Ring *R,
 					 M2_arrayint skewvars)
 {
+     try {
 #if 0
 //   const PolyQQ *RQ = R->cast_to_PolyQQ();
 //   if (RQ != 0)
@@ -140,15 +153,20 @@ const RingOrNull *IM2_Ring_skew_polyring(const Ring *R,
 //       return PolyQQ::create(P);
 //     }
 #endif
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0) 
-    {
-      ERROR("expected a polynomial ring");
-      return 0;
-    }
-  return SkewPolynomialRing::create(P->getCoefficients(),
-				    P->getMonoid(),
-				    skewvars);
+	  const PolynomialRing *P = R->cast_to_PolynomialRing();
+	  if (P == 0) 
+	    {
+	      ERROR("expected a polynomial ring");
+	      return 0;
+	    }
+	  return SkewPolynomialRing::create(P->getCoefficients(),
+					    P->getMonoid(),
+					    skewvars);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,
@@ -156,6 +174,7 @@ const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,
 					M2_arrayint diff_vars,
 					int homog_var)
 {
+     try {
 #if 0
 //   const PolyQQ *RQ = R->cast_to_PolyQQ();
 //   if (RQ != 0)
@@ -168,80 +187,109 @@ const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,
 //       return PolyQQ::create(P);
 //     }
 #endif
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0) 
-    {
-      ERROR("expected a polynomial ring");
-      return 0;
-    }
-  return WeylAlgebra::create(P->getCoefficients(),
-			     P->getMonoid(),
-			     diff_vars, 
-			     comm_vars, 
-			     homog_var);
+	  const PolynomialRing *P = R->cast_to_PolynomialRing();
+	  if (P == 0) 
+	    {
+	      ERROR("expected a polynomial ring");
+	      return 0;
+	    }
+	  return WeylAlgebra::create(P->getCoefficients(),
+				     P->getMonoid(),
+				     diff_vars, 
+				     comm_vars, 
+				     homog_var);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingOrNull *IM2_Ring_solvable_algebra(const Ring *R,
 					    const Matrix *Q)
 {
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0) 
-    {
-      ERROR("expected a polynomial ring");
-      return 0;
-    }
-  return SolvableAlgebra::create(P, Q);
+     try {
+	  const PolynomialRing *P = R->cast_to_PolynomialRing();
+	  if (P == 0) 
+	    {
+	      ERROR("expected a polynomial ring");
+	      return 0;
+	    }
+	  return SolvableAlgebra::create(P, Q);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingOrNull *IM2_Ring_frac(const Ring *R)
 {
-  if (R == globalZZ) return globalQQ;
-  const PolyRingFlat *P = R->cast_to_PolyRingFlat();
-  if (P == 0)
-    {
-      ERROR("expected polynomial ring");
-      return 0;
-    }
-  return FractionField::create(P);
+     try {
+	  if (R == globalZZ) return globalQQ;
+	  const PolyRingFlat *P = R->cast_to_PolyRingFlat();
+	  if (P == 0)
+	    {
+	      ERROR("expected polynomial ring");
+	      return 0;
+	    }
+	  return FractionField::create(P);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingOrNull *IM2_Ring_localization(const Ring *R, const Matrix *Prime)
 {
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0) 
-    {
-      ERROR("expected a polynomial ring");
-      return 0;
-    }
+     try {
+	  const PolynomialRing *P = R->cast_to_PolynomialRing();
+	  if (P == 0) 
+	    {
+	      ERROR("expected a polynomial ring");
+	      return 0;
+	    }
 #if 0
-//   return P->create_FractionRing(Prime);
+	  //   return P->create_FractionRing(Prime);
 #endif
-  /* TODO */
+	  /* TODO */
 #ifdef DEVELOPMENT
 #warning "implement IM2_Ring_localization"
 #endif
-  return 0;
+	  return 0;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingOrNull * IM2_Ring_quotient(const Ring *R, 
 				     const Matrix *I)
 {
-  if (I->get_ring() != R)
-    {
-      ERROR("expected matrix to be over the same ring");
-    }
-  if (I->n_rows() != 1)
-    {
-      ERROR("expected a one row matrix of quotient elements");
-      return 0;
-    }
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0) 
-    {
-      ERROR("expected a polynomial ring");
-      return 0;
-    }
-  return PolynomialRing::create_quotient(P,I);
+     try {
+	  if (I->get_ring() != R)
+	    {
+	      ERROR("expected matrix to be over the same ring");
+	    }
+	  if (I->n_rows() != 1)
+	    {
+	      ERROR("expected a one row matrix of quotient elements");
+	      return 0;
+	    }
+	  const PolynomialRing *P = R->cast_to_PolynomialRing();
+	  if (P == 0) 
+	    {
+	      ERROR("expected a polynomial ring");
+	      return 0;
+	    }
+	  return PolynomialRing::create_quotient(P,I);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingOrNull * IM2_Ring_quotient1(const Ring *R, 
@@ -250,30 +298,42 @@ const RingOrNull * IM2_Ring_quotient1(const Ring *R,
 /* if R is a polynomial ring of the form A[x]/J, and B = A/I (where A is a poly ring)
    then form the quotient ring B[x]/J. */
 {
-  const PolynomialRing *R1 = R->cast_to_PolynomialRing();
-  const PolynomialRing *B1 = B->cast_to_PolynomialRing();
-  if (R1 == 0 || B1 == 0) 
-    {
-      ERROR("expected a polynomial ring");
-      return 0;
-    }
-  if (R1->n_quotients() > 0)
-    {
-      ERROR("encountered quotient polynomial ring");
-      return 0;
-    }
-  return PolyRingQuotient::create_quotient(R1,B1);
+     try {
+	  const PolynomialRing *R1 = R->cast_to_PolynomialRing();
+	  const PolynomialRing *B1 = B->cast_to_PolynomialRing();
+	  if (R1 == 0 || B1 == 0) 
+	    {
+	      ERROR("expected a polynomial ring");
+	      return 0;
+	    }
+	  if (R1->n_quotients() > 0)
+	    {
+	      ERROR("encountered quotient polynomial ring");
+	      return 0;
+	    }
+	  return PolyRingQuotient::create_quotient(R1,B1);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingOrNull *IM2_Ring_schur(const Ring *R)
 {
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0) 
-    {
-      ERROR("Schur ring construction: expected a polynomial ring");
-      return 0;
-    }
-  return SchurRing::create(P);
+     try {
+	  const PolynomialRing *P = R->cast_to_PolynomialRing();
+	  if (P == 0) 
+	    {
+	      ERROR("Schur ring construction: expected a polynomial ring");
+	      return 0;
+	    }
+	  return SchurRing::create(P);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 M2_bool IM2_Ring_is_field(const Ring *K)
@@ -525,48 +585,66 @@ const RingElementOrNull *IM2_RingElement_mult(const RingElement *a,
 const RingElementOrNull *IM2_RingElement_div(const RingElement *a, 
 					     const RingElement *b)
 {
-  const Ring *R = a->get_ring();
-  if (R != b->get_ring())
-    {
-      ERROR("ring division requires both elements to have the same base ring");
-      return 0;
-    }
-  ring_elem result = R->quotient(a->get_value(), b->get_value());
-  if (error()) return 0;
-  return RingElement::make_raw(R, result);
+     try {
+	  const Ring *R = a->get_ring();
+	  if (R != b->get_ring())
+	    {
+	      ERROR("ring division requires both elements to have the same base ring");
+	      return 0;
+	    }
+	  ring_elem result = R->quotient(a->get_value(), b->get_value());
+	  if (error()) return 0;
+	  return RingElement::make_raw(R, result);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingElementOrNull *IM2_RingElement_mod(const RingElement *a, 
 					     const RingElement *b)
 {
-  const Ring *R = a->get_ring();
-  if (R != b->get_ring())
-    {
-      ERROR("ring remainder requires both elements to have the same base ring");
-      return 0;
-    }
-  ring_elem result = R->remainder(a->get_value(), b->get_value());
-  if (error()) return 0;
-  return RingElement::make_raw(R, result);
+     try {
+	  const Ring *R = a->get_ring();
+	  if (R != b->get_ring())
+	    {
+	      ERROR("ring remainder requires both elements to have the same base ring");
+	      return 0;
+	    }
+	  ring_elem result = R->remainder(a->get_value(), b->get_value());
+	  if (error()) return 0;
+	  return RingElement::make_raw(R, result);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingElement_pair *IM2_RingElement_divmod(const RingElement *a, 
 					       const RingElement *b)
 {
-  const Ring *R = a->get_ring();
-  if (R != b->get_ring())
-    {
-      ERROR("ring remainder requires both elements to have the same base ring");
-      return 0;
-    }
-  ring_elem fquot;
-  ring_elem frem = R->remainderAndQuotient(a->get_value(), b->get_value(), fquot);
-  if (error())  return 0;
+     try {
+	  const Ring *R = a->get_ring();
+	  if (R != b->get_ring())
+	    {
+	      ERROR("ring remainder requires both elements to have the same base ring");
+	      return 0;
+	    }
+	  ring_elem fquot;
+	  ring_elem frem = R->remainderAndQuotient(a->get_value(), b->get_value(), fquot);
+	  if (error())  return NULL;
 
-  RingElement_pair *result = new RingElement_pair;
-  result->a = RingElement::make_raw(R, fquot);
-  result->b = RingElement::make_raw(R, frem);
-  return result;
+	  RingElement_pair *result = new RingElement_pair;
+	  result->a = RingElement::make_raw(R, fquot);
+	  result->b = RingElement::make_raw(R, frem);
+	  return result;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingElementOrNull *IM2_RingElement_power(const RingElement *a, 
@@ -584,35 +662,53 @@ const RingElementOrNull *IM2_RingElement_power(const RingElement *a,
 int rawRingElementCompare(const RingElement *a,
 			  const RingElement *b)
 {
-  const Ring *R = a->get_ring();
-  if (R != b->get_ring()) return 0;
-  //  if (a->is_zero())
-  //    {
-  //      if (b->is_zero()) return 0;
-  //      return 1;
-  //    }
-  //  if (b->is_zero()) return -1;
-  return R->compare_elems(a->get_value(), b->get_value());
+     try {
+	  const Ring *R = a->get_ring();
+	  if (R != b->get_ring()) return 0;
+	  //  if (a->is_zero())
+	  //    {
+	  //      if (b->is_zero()) return 0;
+	  //      return 1;
+	  //    }
+	  //  if (b->is_zero()) return -1;
+	  return R->compare_elems(a->get_value(), b->get_value());
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingElement *IM2_RingElement_promote(const Ring *S, 
 					   const RingElement *f)
 {
-  const RingElement *result;
-  if (f->promote(S,result))
-    return result;
-  ERROR("cannot promote given ring element");
-  return 0;
+     try {
+	  const RingElement *result;
+	  if (f->promote(S,result))
+	    return result;
+	  ERROR("cannot promote given ring element");
+	  return 0;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingElement *IM2_RingElement_lift(const Ring *S, 
 					const RingElement *f)
 {
-  const RingElement *result;
-  if (f->lift(S,result))
-    return result;
-  ERROR("cannot lift given ring element");
-  return 0;
+     try {
+	  const RingElement *result;
+	  if (f->lift(S,result))
+	    return result;
+	  ERROR("cannot lift given ring element");
+	  return 0;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 M2_bool IM2_RingElement_is_graded(const RingElement *a)
@@ -622,7 +718,13 @@ M2_bool IM2_RingElement_is_graded(const RingElement *a)
 
 M2_arrayint IM2_RingElement_multidegree(const RingElement *a)
 {
-  return a->multi_degree();
+     try {
+	  return a->multi_degree();
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 M2_Integer_pair_OrNull *rawWeightRange(M2_arrayint wts, 
@@ -633,15 +735,21 @@ M2_Integer_pair_OrNull *rawWeightRange(M2_arrayint wts,
      then (0,0) is returned.
   */
 {
-  int lo,hi;
-  a->degree_weights(wts,lo,hi);
-  if (error()) return 0;
-  M2_Integer_pair *p = new M2_Integer_pair;
-  p->a = newitem(__mpz_struct);
-  p->b = newitem(__mpz_struct);
-  mpz_init_set_si(p->a, static_cast<long>(lo));
-  mpz_init_set_si(p->b, static_cast<long>(hi));
-  return p;
+     try {
+	  int lo,hi;
+	  a->degree_weights(wts,lo,hi);
+	  if (error()) return 0;
+	  M2_Integer_pair *p = new M2_Integer_pair;
+	  p->a = newitem(__mpz_struct);
+	  p->b = newitem(__mpz_struct);
+	  mpz_init_set_si(p->a, static_cast<long>(lo));
+	  mpz_init_set_si(p->b, static_cast<long>(hi));
+	  return p;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingElementOrNull *IM2_RingElement_homogenize_to_degree(const RingElement *a,
@@ -649,14 +757,26 @@ const RingElementOrNull *IM2_RingElement_homogenize_to_degree(const RingElement 
 							      int deg,
 							      M2_arrayint wts)
 {
-  return a->homogenize(v,deg,wts);
+     try {
+	  return a->homogenize(v,deg,wts);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingElementOrNull *IM2_RingElement_homogenize(const RingElement *a,
 						    int v,
 						    M2_arrayint wts)
 {
-  return a->homogenize(v,wts);
+     try {
+	  return a->homogenize(v,wts);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 						
 const RingElementOrNull *IM2_RingElement_term(const Ring *R,
@@ -666,21 +786,27 @@ const RingElementOrNull *IM2_RingElement_term(const Ring *R,
      coefficient ring of R.  Returns a*m, if this is a valid
      element of R.  Returns NULL if not (with an error message). */
 {
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("requires a polynomial ring");
-      return 0;
-    }
+     try {
+	  const PolynomialRing *P = R->cast_to_PolynomialRing();
+	  if (P == 0)
+	    {
+	      ERROR("requires a polynomial ring");
+	      return 0;
+	    }
 
-  int nvars0 = P->n_vars();
-  const PolynomialRing *K = a->get_ring()->cast_to_PolynomialRing();
-  if (K != 0)
-    nvars0 -= K->n_vars();
-  int *exp = newarray_atomic(int,nvars0);
-  varpower::to_ntuple(nvars0, m->ints(), exp);
-  ring_elem val = P->make_logical_term(a->get_ring(), a->get_value(), exp);
-  return RingElement::make_raw(R,val);
+	  int nvars0 = P->n_vars();
+	  const PolynomialRing *K = a->get_ring()->cast_to_PolynomialRing();
+	  if (K != 0)
+	    nvars0 -= K->n_vars();
+	  int *exp = newarray_atomic(int,nvars0);
+	  varpower::to_ntuple(nvars0, m->ints(), exp);
+	  ring_elem val = P->make_logical_term(a->get_ring(), a->get_value(), exp);
+	  return RingElement::make_raw(R,val);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingElement *IM2_RingElement_get_terms(
@@ -704,41 +830,71 @@ const RingElementOrNull *IM2_RingElement_get_coeff(
        of the monomial 'm'. 
     */
 {
-  return a->get_coeff(coeffRing,m);
+     try {
+	  return a->get_coeff(coeffRing,m);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingElementOrNull *IM2_RingElement_lead_coeff(
            const Ring * coeffRing, /* ring of the result */
 	   const RingElement *a)
 {
-  return a->lead_coeff(coeffRing);
+     try {
+	  return a->lead_coeff(coeffRing);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MonomialOrNull *IM2_RingElement_lead_monomial(
-           int nvars, /* number of vaariables in an outermost monoid */
+           int nvars, /* number of variables in an outermost monoid */
 	   const RingElement *a)
 {
-  return a->lead_monom(nvars);
+     try {
+	  return a->lead_monom(nvars);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 int IM2_RingElement_n_terms(
-          int nvars, /* number of vaariables in an outermost monoid */
+          int nvars, /* number of variables in an outermost monoid */
           const RingElement *a)
 {
-  return a->n_terms(nvars);
+     try {
+	  return a->n_terms(nvars);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return 0;
+     }
 }
 
 ArrayPairOrNull IM2_RingElement_list_form(
           const Ring * coeffRing, /* ring of the result coefficients */
           const RingElement *f)
 {
-  const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("expected a polynomial");
-      return 0;
-    }
-  return P->list_form(coeffRing, f->get_value());
+     try {
+	  const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
+	  if (P == 0)
+	    {
+	      ERROR("expected a polynomial");
+	      return 0;
+	    }
+	  return P->list_form(coeffRing, f->get_value());
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 int IM2_RingElement_index_if_var(const RingElement *f)
@@ -758,47 +914,77 @@ M2_arrayint IM2_RingElement_indices(const RingElement *f)
 
 const RingElementOrNull * rawAssociateDivisor(const RingElement *f)
 {
-  const PolyRing *P = f->get_ring()->cast_to_PolyRing();
-  if (P == 0)
-    {
-      ERROR("expected an element of a polynomial ring");
-      return 0;
-    }
-  if (!P->getCoefficients()->has_associate_divisors())
-    {
-      ERROR("cannot find preferred associates for this ring");
-      return 0;
-    }
-  return RingElement::make_raw(P->getCoefficients(), P->preferred_associate_divisor(f->get_value()));
+     try {
+	  const PolyRing *P = f->get_ring()->cast_to_PolyRing();
+	  if (P == 0)
+	    {
+	      ERROR("expected an element of a polynomial ring");
+	      return 0;
+	    }
+	  if (!P->getCoefficients()->has_associate_divisors())
+	    {
+	      ERROR("cannot find preferred associates for this ring");
+	      return 0;
+	    }
+	  return RingElement::make_raw(P->getCoefficients(), P->preferred_associate_divisor(f->get_value()));
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingElementOrNull *IM2_RingElement_numerator(const RingElement *a)
 {
-  return a->numerator();
+     try {
+	  return a->numerator();
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingElementOrNull *IM2_RingElement_denominator(const RingElement *a)
 {
-  return a->denominator();
+     try {
+	  return a->denominator();
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingElementOrNull *IM2_RingElement_fraction(const Ring *R,
 						  const RingElement *a,
 						  const RingElement *b)
 {
-  return a->fraction(R,b);
+     try {
+	  return a->fraction(R,b);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 M2_IntegerOrNull rawSchurDimension(const RingElement *f)
 {
-  const SchurRing *S = f->get_ring()->cast_to_SchurRing();
-  if (S == 0)
-    {
-      ERROR("expected a polynomial over a Schur ring");
-      return 0;
-    }
-  ring_elem result = S->dimension(f->get_value());
-  return result.get_mpz();
+     try {
+	  const SchurRing *S = f->get_ring()->cast_to_SchurRing();
+	  if (S == 0)
+	    {
+	      ERROR("expected a polynomial over a Schur ring");
+	      return 0;
+	    }
+	  ring_elem result = S->dimension(f->get_value());
+	  return result.get_mpz();
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 // Local Variables:

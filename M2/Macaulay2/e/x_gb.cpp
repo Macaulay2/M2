@@ -15,7 +15,13 @@ const RingElementOrNull * IM2_Matrix_Hilbert(const Matrix *M)
      NULL is returned if the ring is not appropriate for
      computing Hilbert series, or the computation was interrupted. */
 {
-  return hilb_comp::hilbertNumerator(M);
+     try {
+	  return hilb_comp::hilbertNumerator(M);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 ComputationOrNull *IM2_GB_make(const Matrix *m,
@@ -77,12 +83,18 @@ ComputationOrNull *
 IM2_GB_set_hilbert_function(Computation *C,
 			    const RingElement *h)
 {
-  clear_emit_size();
-  GBComputation *G = C->cast_to_GBComputation();
-  if (G != 0)
-    return G->set_hilbert_function(h);
-  ERROR("computation type unknown or not implemented");
-  return 0;
+     try {
+	  clear_emit_size();
+	  GBComputation *G = C->cast_to_GBComputation();
+	  if (G != 0)
+	    return G->set_hilbert_function(h);
+	  ERROR("computation type unknown or not implemented");
+	  return 0;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 ComputationOrNull *
@@ -91,7 +103,13 @@ IM2_GB_force(const Matrix *m, /* trimmed or minimal gens, may be the same as gb 
 	     const Matrix *change, /* same number of columns as 'gb', if not 0 */
 	     const Matrix *syz) /* possibly 0 too, otherwise same rows as change */
 {
-  return GBDeclared::create(m,gb,change,syz);
+     try {
+	  return GBDeclared::create(m,gb,change,syz);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 ComputationOrNull* 
@@ -108,16 +126,22 @@ IM2_Computation_set_stop(Computation *G,
   /* LongPolynomial, Sort, Primary, Inhomogeneous, Homogeneous */
   /* Res: SortStrategy, 0, 1, 2, 3 ?? */
 {
-  clear_emit_size();
-  return  G->set_stop_conditions(always_stop,
-				 degree_limit,
-				 basis_element_limit,
-				 syzygy_limit,
-				 pair_limit,
-				 codim_limit,
-				 subring_limit,
-				 just_min_gens,
-				 length_limit);
+     try {
+	  clear_emit_size();
+	  return  G->set_stop_conditions(always_stop,
+					 degree_limit,
+					 basis_element_limit,
+					 syzygy_limit,
+					 pair_limit,
+					 codim_limit,
+					 subring_limit,
+					 just_min_gens,
+					 length_limit);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 ComputationOrNull* 
@@ -370,20 +394,32 @@ rawResolutionBetti(Computation *C,
 	     int type)
   /* see engine.h for description of what 'type' should be */
 {
-  ResolutionComputation *G = C->cast_to_ResolutionComputation();
-  if (G != 0)
-    return G->get_betti(type);
-  ERROR("expected resolution computation type");
-  return 0;
+     try {
+	  ResolutionComputation *G = C->cast_to_ResolutionComputation();
+	  if (G != 0)
+	    return G->get_betti(type);
+	  ERROR("expected resolution computation type");
+	  return NULL;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 M2_string
 IM2_GB_to_string(Computation *C)
   /* TODO */
 {
-  buffer o;
-  C->text_out(o);
-  return o.to_string();
+     buffer o;
+     try {
+	  C->text_out(o);
+	  return o.to_string();
+     }
+     catch (exc::engine_error e) {
+	  o << "[unprintable gb]";
+	  return o.to_string();
+     }
 }
 
 unsigned long IM2_GB_hash(const Computation *C)
@@ -395,13 +431,19 @@ MatrixOrNull * rawSubduction(const Matrix *M,
 			     const RingMap *F,
 			     Computation *C)
 {
-  GBComputation *G = C->cast_to_GBComputation();
-  if (G == 0)
-    {
-      ERROR("expected a Groebner basis computation");
-      return 0;
-    }
-  return sagbi::subduct(M,F,G);
+     try {
+	  GBComputation *G = C->cast_to_GBComputation();
+	  if (G == 0)
+	    {
+	      ERROR("expected a Groebner basis computation");
+	      return 0;
+	    }
+	  return sagbi::subduct(M,F,G);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 // Local Variables:
