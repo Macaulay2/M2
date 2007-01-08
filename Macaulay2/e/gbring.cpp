@@ -10,6 +10,7 @@
 #include "weylalg.hpp"
 #include "skewpoly.hpp"
 #include "solvable.hpp"
+#include "overflow.hpp"
 
 #define sizeofgbvector(s,len) (sizeof(*s) - sizeof(s->monom) + (len)*sizeof(s->monom[0]))
 
@@ -23,7 +24,7 @@ void GBRing::memstats()
 static void mult_monomials(int len, const_monomial m, const_monomial n, monomial result)
 {
   for (int i=len; i>0; --i)
-    *result++ = *m++ + *n++;
+    *result++ = safe::add(*m++, *n++,"monomial multiplication overflow in gb");
 }
 
 gbvector * GBRing::new_raw_term()

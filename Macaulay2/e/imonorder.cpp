@@ -10,6 +10,7 @@
 #endif
 
 #include "imonorder.hpp"
+#include "overflow.hpp"
 #include "../d/M2mem.h"
 /* TODO:
    -- negative exponent versions need to be included (at least for MO_LEX)
@@ -494,8 +495,7 @@ int monomialOrderFromActualExponents(const MonomialOrder *mo,
   int result = 1;
   for (i=0; i<mo->nvars; i++)
     {
-#     warning must check for overflow here
-      result_exp[i] = expon[i] * mo->degs[i];
+      result_exp[i] = safe::mult(expon[i],mo->degs[i]);
       if (expon[i] < 0)
 	{
 	  if (!mo->is_laurent[i])

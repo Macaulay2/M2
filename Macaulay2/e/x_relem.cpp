@@ -572,7 +572,13 @@ const RingElement_pair *IM2_RingElement_divmod(const RingElement *a,
 const RingElementOrNull *IM2_RingElement_power(const RingElement *a, 
 					       M2_Integer n)
 {
-  return a->power(n);
+     try {
+	  return a->power(n);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 int rawRingElementCompare(const RingElement *a,
