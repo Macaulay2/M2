@@ -204,8 +204,9 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
      f.cache#type = G;
      G)
 
+notForSyz := set { Syzygies, ChangeMatrix, CodimensionLimit, Hilbert, StopWithMinimalGenerators, SubringLimit }
 syz = method(
-     Options => select(pairs options gb, (k,v) -> k =!= Syzygies)
+     Options => select(pairs options gb, (k,v) -> not notForSyz#?k)
      )
 
 rawsort := m -> rawExtractColumns(m,rawSortColumns(m,1,1))
