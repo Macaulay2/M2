@@ -43,6 +43,7 @@ runBenchmark2 = () -> (
 runBenchmark3 = () -> (
      banner();
      -- Bayesian graph ideal #148
+     p = symbol p;
      R = ZZ/32003[reverse(p_(1,1,1,1,1)..p_(2,2,2,2,2)), MonomialSize=>8];
      J = ideal(
 	      -p_(1,1,2,1,1)*p_(2,1,1,1,1)+p_(1,1,1,1,1)*p_(2,1,2,1,1),
@@ -129,6 +130,21 @@ end
 -- Macaulay2 0.9.2, compiled with gcc 3.2
 -- res39: 0.37 seconds
 -- resG25: 6.1 seconds
+
+-- beginning computation Mon Jan  8 11:44:18 EST 2007
+-- Linux rhodium 2.6.18.1 #1 SMP PREEMPT Sat Nov 11 02:11:17 CET 2006 i686 pentium4 i386 GNU/Linux
+-- Macaulay2 0.9.96, compiled with gcc 4.1.1
+-- res39: 0.48003 seconds
+
+-- beginning computation Mon Jan  8 11:44:18 EST 2007
+-- Linux rhodium 2.6.18.1 #1 SMP PREEMPT Sat Nov 11 02:11:17 CET 2006 i686 pentium4 i386 GNU/Linux
+-- Macaulay2 0.9.96, compiled with gcc 4.1.1
+-- resG25: 6.56441 seconds
+
+-- beginning computation Mon Jan  8 11:44:25 EST 2007
+-- Linux rhodium 2.6.18.1 #1 SMP PREEMPT Sat Nov 11 02:11:17 CET 2006 i686 pentium4 i386 GNU/Linux
+-- Macaulay2 0.9.96, compiled with gcc 4.1.1
+-- resB148: 0.372023 seconds
 
 --   this one is a dual G5 2.5 Mhz in 32 bit mode
 --   the new engine code is rather new not manually optimized yet
