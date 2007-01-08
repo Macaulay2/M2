@@ -8,6 +8,7 @@
 
 INTERFACE = \
 	exceptions \
+	imonorder \
 	sagbi \
 	gbbinom \
 	monideal_minprimes \
@@ -136,7 +137,7 @@ NAMES_H = ringelem \
 	monoid1 \
 	monoid2
 
-C_FILES = error table exptable monordering imonorder
+C_FILES = error table exptable monordering 
 
 ##############################
 ## end of source code files ##

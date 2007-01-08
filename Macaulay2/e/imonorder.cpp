@@ -9,7 +9,7 @@
 #error integer type definitions not available
 #endif
 
-#include "imonorder.h"
+#include "imonorder.hpp"
 #include "../d/M2mem.h"
 /* TODO:
    -- negative exponent versions need to be included (at least for MO_LEX)
