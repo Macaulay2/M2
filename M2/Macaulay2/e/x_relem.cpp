@@ -471,19 +471,37 @@ M2_bool IM2_RingElement_is_equal(const RingElement *a,
 
 const RingElement *IM2_RingElement_negate(const RingElement *a)
 {
-  return -(*a);
+     try {
+	  return -(*a);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingElementOrNull *IM2_RingElement_add(const RingElement *a, 
 					     const RingElement *b)
 {
-  return (*a) + (*b);
+     try {
+	  return (*a) + (*b);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingElementOrNull *IM2_RingElement_subtract(const RingElement *a, 
 						  const RingElement *b)
 {
-  return (*a) - (*b);
+     try {
+	  return (*a) - (*b);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const RingElementOrNull *IM2_RingElement_mult(const RingElement *a, 
