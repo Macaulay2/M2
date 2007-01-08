@@ -395,6 +395,7 @@ void monomialOrderEncode(const MonomialOrder *mo,
      /* Given 'expon', compute the encoded partial sums value */
 {
   if (mo == 0) return;
+#warning check for overflow here
   int i,j,nvars,s;
   int *p1;
   struct mo_block *b = mo->blocks;
@@ -493,6 +494,7 @@ int monomialOrderFromActualExponents(const MonomialOrder *mo,
   int result = 1;
   for (i=0; i<mo->nvars; i++)
     {
+#     warning must check for overflow here
       result_exp[i] = expon[i] * mo->degs[i];
       if (expon[i] < 0)
 	{

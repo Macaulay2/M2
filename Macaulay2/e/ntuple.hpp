@@ -5,6 +5,7 @@
 
 #include "style.hpp"
 #include "engine.h"
+#include "exceptions.hpp"
 
 typedef int *exponents;
 
@@ -60,7 +61,7 @@ void ntuple::mult(int nvars, const int *a, const int *b, int *result)
       long z = x+y;
       if ((x < 0) == (y < 0) && (x < 0) != (z < 0))
 	{
-	  ERROR("monomial overflow");
+	  throw(exc::overflow_error("monomial overflow"));
 	}
       *result++ = z;
     }
@@ -76,7 +77,7 @@ void ntuple::power(int nvars, const int *a, int n, int *result)
       e *= n;
       e1 *= n;
       if (e != e1)
-	ERROR("monomial overflow");
+	   throw(exc::overflow_error("monomial overflow"));
       *result++ = e1;
     }
 }
@@ -91,7 +92,7 @@ void ntuple::divide(int nvars, const int *a, const int *b, int *result)
       long z = x-y;
       if ((x < 0) == (y > 0) && (x < 0) != (z < 0))
 	{
-	  ERROR("monomial overflow");
+	  throw(exc::overflow_error("monomial overflow"));
 	}
       *result++ = z;
     }
@@ -104,15 +105,14 @@ void ntuple::quotient(int nvars, const int *a, const int *b, int *result)
     {
       long x = *a++;
       long y = *b++;
+      assert(x >= 0 && y > 0);		// Dan thinks this routine wouldn't ever be called with negative exponents!  Or in that case it should/could always return 0.
       long z;
       if (x <= y) z = 0;
       else
 	{
 	  z = x-y;
 	  if (z < 0)
-	    {
-	      ERROR("monomial overflow");
-	    }
+	       throw(exc::overflow_error("monomial overflow"));
 	}
       *result++ = z;
     }
@@ -187,6 +187,7 @@ int ntuple::weight(int nvars, const int *a, M2_arrayint wt)
   int top = wt->len;
   if (nvars < top) top = nvars;
   for (int i=0; i<top; i++)
+       //warning: check for overflow here
     sum += a[i] * wt->array[i];
   return sum;
 }
@@ -196,6 +197,7 @@ int ntuple::degree(int nvars, const int *a)
 {
   int sum = 0;
   for (int i=0; i<nvars; i++)
+       //warning: check for overflow here
     sum += a[i];
   return sum;
 }
@@ -204,20 +206,22 @@ inline
 void ntuple::syz(int nvars, const int *a, const int *b,
 		 int *a1, int *b1)
 {
-  for (int i=0; i<nvars; i++)
-    {
-      int c = a[i] - b[i];
-      if (c >= 0)
-	{
-	  a1[i] = 0;
-	  b1[i] = c;
-	}
-      else
-	{
-	  a1[i] = -c;
-	  b1[i] = 0;
-	}
-    }
+     for (int i=0; i<nvars; i++) {
+	  if ((a[i] < 0 || b[i] < 0) && !(a[i] < 0 && b[i] < 0)) {
+	       a1[i] = -a[i];
+	       b1[i] = -b[i];
+	       //warning: check better for overflow here
+	       //warning: Mike: does this routine ever get called with negative exponents?
+	       if (a1[i] == a[i] && a[i] < 0 || b1[i] == b[i] && b[i] < 0) { // yes, we overflow a bit too often here
+		    throw(exc::overflow_error("monomial overflow"));
+	       }
+	  }
+	  else {
+	       int c = a[i] - b[i];
+	       if (c >= 0) a1[i] = 0, b1[i] = c;
+	       else a1[i] = -c, b1[i] = 0;
+	  }
+     }
 }
 
 #endif

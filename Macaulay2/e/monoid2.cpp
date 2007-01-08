@@ -6,9 +6,9 @@
 #include "varpower.hpp"
 #include "ntuple.hpp"
 #include "../d/M2mem.h"
-
 #include "polyring.hpp"
 #include "exceptions.hpp"
+#include "overflow.hpp"
 
 Monoid *Monoid::trivial_monoid = 0;
 
@@ -325,23 +325,16 @@ void Monoid::to_expvector(const_monomial m, exponents result_exp) const
 
 void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
 {
+  static char err[] = "monomial overflow";
   overflow_type *check = overflow;
-  int i,x,y,z;
-  for (i = monomial_size_; i != 0; i--)
-    {
-      x = *m++;
-      y = *n++;
-      *result++ = z = x+y;
+  for (int i = monomial_size_; i != 0; i--)
       switch (*check++) {
-      case OVER:  if ((x < 0) != (z < 0) && (x < 0) == (y < 0)) goto overflow; break;
-      case OVER1: if (z < 0)                                    goto overflow; break;
-      case OVER2: if ((z & 0x80008000) != 0)                    goto overflow; break;
-      case OVER4: if ((z & 0x80808080) != 0)                    goto overflow; break;
-      overflow: throw(exc::overflow_error("monomial overflow"));
+      case OVER:   *result++ = safe::    add  (*m++,*n++,err); break;
+      case OVER1:  *result++ = safe::pos_add  (*m++,*n++,err); break;
+      case OVER2:  *result++ = safe::pos_add_2(*m++,*n++,err); break;
+      case OVER4:  *result++ = safe::pos_add_4(*m++,*n++,err); break;
       default: throw(exc::internal_error("missing case"));
       }
-    }
-  return;
 }
 
 #if 0
@@ -549,6 +542,7 @@ bool Monoid::divides(const_monomial m, const_monomial n) const
 // Does m divide n?
 {
   if (nvars_ == 0) return true;
+  // can we speed this up by not unpacking ??
   to_expvector(m, EXP1_);
   to_expvector(n, EXP2_);
   return ntuple::divides(nvars_, EXP1_, EXP2_);

@@ -1,3 +1,6 @@
+#ifndef _exceptions_h_
+#define _exceptions_h_
+
 #include <stdexcept>
 
 using namespace std;
@@ -15,6 +18,7 @@ namespace exc {
 
 }
 
+#endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:
