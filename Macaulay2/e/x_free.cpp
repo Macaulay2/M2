@@ -4,6 +4,7 @@
 
 #include "freemod.hpp"
 #include "matrix.hpp"
+#include "exceptions.hpp"
 
 const Ring *IM2_FreeModule_ring(const FreeModule *F)
 {
@@ -26,42 +27,60 @@ unsigned long int IM2_FreeModule_hash(const FreeModule *F); /* TODO */
 
 const FreeModuleOrNull *IM2_FreeModule_make(const Ring *R, int rank)
 {
-  if (rank < 0)
-    {
-      ERROR("freemodule rank must be non-negative");
-      return 0;
-    }
-  return R->make_FreeModule(rank);
+     try {
+	  if (rank < 0)
+	    {
+	      ERROR("freemodule rank must be non-negative");
+	      return 0;
+	    }
+	  return R->make_FreeModule(rank);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const FreeModuleOrNull *IM2_FreeModule_make_degs(const Ring *R, 
 						 M2_arrayint degs)
 {
-  const Monoid *D = R->degree_monoid();
-  unsigned int eachdeg = D->n_vars();
-  if (eachdeg == 0) {
-       ERROR("rawFreeModule: degree rank 0, but sequence of degrees given");
-       return NULL;
-  }
-  unsigned int rank = degs->len / eachdeg;
-  if (rank * eachdeg != degs->len)
-    {
-      ERROR("inappropriate number of degrees");
-      return 0;
-    }
-  int *deg = D->make_one();
-  FreeModule *F = R->make_FreeModule();
-  for (unsigned int i=0; i<rank; i++)
-    {
-      D->from_expvector(degs->array + i*eachdeg, deg);
-      F->append(deg);
-    }
-  return F;
+     try {
+	  const Monoid *D = R->degree_monoid();
+	  unsigned int eachdeg = D->n_vars();
+	  if (eachdeg == 0) {
+	       ERROR("rawFreeModule: degree rank 0, but sequence of degrees given");
+	       return NULL;
+	  }
+	  unsigned int rank = degs->len / eachdeg;
+	  if (rank * eachdeg != degs->len)
+	    {
+	      ERROR("inappropriate number of degrees");
+	      return 0;
+	    }
+	  int *deg = D->make_one();
+	  FreeModule *F = R->make_FreeModule();
+	  for (unsigned int i=0; i<rank; i++)
+	    {
+	      D->from_expvector(degs->array + i*eachdeg, deg);
+	      F->append(deg);
+	    }
+	  return F;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const FreeModuleOrNull *IM2_FreeModule_make_schreyer(const Matrix *m)
 {
-  return FreeModule::make_schreyer(m);
+     try {
+	  return FreeModule::make_schreyer(m);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F)
@@ -105,28 +124,58 @@ const FreeModuleOrNull * IM2_FreeModule_sum(const FreeModule *F,
 const FreeModuleOrNull * IM2_FreeModule_tensor(const FreeModule *F,
 					       const FreeModule *G)
 {
-  return F->tensor(G);
+     try {
+	  return F->tensor(G);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
-const FreeModule * IM2_FreeModule_dual(const FreeModule *F)
+const FreeModuleOrNull *IM2_FreeModule_dual(const FreeModule *F)
 {
-  return F->transpose();
+     try {
+	  return F->transpose();
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const FreeModule * IM2_FreeModule_symm(int n, const FreeModule *F)
 {
-  return F->symm(n);
+     try {
+	  return F->symm(n);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const FreeModule * IM2_FreeModule_exterior(int n, const FreeModule *F)
 {
-  return F->exterior(n);
+     try {
+	  return F->exterior(n);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const FreeModule * IM2_FreeModule_submodule(const FreeModule *F, 
 					    M2_arrayint selection)
 {
-  return F->sub_space(selection);
+     try {
+	  return F->sub_space(selection);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 // Local Variables:

@@ -6,6 +6,7 @@
 #include "LLL.hpp"
 #include "fractionfreeLU.hpp"
 #include "text_io.hpp"
+#include "exceptions.hpp"
 
 extern Matrix_int_pair global_Matrix_int_pair;
 
@@ -36,9 +37,15 @@ M2_arrayint IM2_Matrix_get_degree(const Matrix *M)
 
 M2_string IM2_Matrix_to_string(const Matrix *M)
 {
-  buffer o;
-  M->text_out(o);
-  return o.to_string();
+     buffer o;
+     try {
+	  M->text_out(o);
+	  return o.to_string();
+     }
+     catch (exc::engine_error e) {
+	  o << "[unprintable matrix]";
+	  return o.to_string();
+     }
 }
 
 unsigned long IM2_Matrix_hash(const Matrix *M)
@@ -48,19 +55,25 @@ unsigned long IM2_Matrix_hash(const Matrix *M)
 
 const RingElementOrNull * IM2_Matrix_get_entry(const Matrix *M, int r, int c)
 {
-  if (r < 0 || r >= M->n_rows())
-    {
-      ERROR("matrix row index %d out of range 0 .. %d", r, M->n_rows()-1);
-      return 0;
-    }
-  if (c < 0 || c >= M->n_cols())
-    {
-      ERROR("matrix column index %d out of range 0 .. %d", c, M->n_cols()-1);
-      return 0;
-    }
-  ring_elem result;
-  result = M->elem(r,c);
-  return RingElement::make_raw(M->get_ring(), result);
+     try {
+	  if (r < 0 || r >= M->n_rows())
+	    {
+	      ERROR("matrix row index %d out of range 0 .. %d", r, M->n_rows()-1);
+	      return 0;
+	    }
+	  if (c < 0 || c >= M->n_cols())
+	    {
+	      ERROR("matrix column index %d out of range 0 .. %d", c, M->n_cols()-1);
+	      return 0;
+	    }
+	  ring_elem result;
+	  result = M->elem(r,c);
+	  return RingElement::make_raw(M->get_ring(), result);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const Matrix * IM2_Matrix_identity(const FreeModule *F,
@@ -167,10 +180,16 @@ const MatrixOrNull * IM2_Matrix_remake1(const FreeModule *target,
      columns of the matrix.
   */
 {
+     try {
 #ifdef DEVELOPMENT
 #warning prefer_dense not yet used
 #endif
-  return M->remake(target);
+	  return M->remake(target);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 MatrixOrNull *IM2_Matrix_random(const Ring *R, 
@@ -194,11 +213,18 @@ M2_bool IM2_Matrix_is_zero(const Matrix *M)
 M2_bool IM2_Matrix_is_equal(const Matrix *M, 
 				  const Matrix *N)
 {
-  /* This checks that the entries of M,N are the same, as well as
-     that the source and target are the same (as graded free modules).
-     Therefore, it can happen that M-N == 0, but M != N.
-  */
-  return M->is_equal(*N);
+     try {
+	  /* This checks that the entries of M,N are the same, as well as
+	     that the source and target are the same (as graded free modules).
+	     Therefore, it can happen that M-N == 0, but M != N.
+	  */
+	  return M->is_equal(*N);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+#warning how do we signal an error to the fron end here?
+	  return false;
+     }
 }
 
 M2_bool IM2_Matrix_is_graded(const Matrix *M)
@@ -211,125 +237,197 @@ const MatrixOrNull * IM2_Matrix_add(const Matrix *M, const Matrix *N)
      the addition is performed, and the source,target,degree are taken from the
      first matrix. */
 {
-  return (*M) + (*N);
+     try {
+	  return *M + *N;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull * IM2_Matrix_subtract(const Matrix *M, const Matrix *N)
 {
-  return (*M) - (*N);
+     try {
+	  return *M - *N;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const Matrix * IM2_Matrix_negate(const Matrix *M)
 {
-  return - (*M);
+     try {
+	  return - *M;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull * IM2_Matrix_mult(const Matrix *M, 
 				     const Matrix *N, 
 				     M2_bool opposite_mult)
 {
-  return M->mult(N, opposite_mult);
+     try {
+	  return M->mult(N, opposite_mult);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull * IM2_Matrix_scalar_mult(const RingElement *f,
 					    const Matrix *M,
 					    M2_bool opposite_mult)
 {
-  if (f->get_ring() != M->get_ring())
-    {
-      ERROR("ring element and matrix should have the same base ring");
-      return 0;
-    }
-  return M->scalar_mult(f->get_value(), opposite_mult);
+     try {
+	  if (f->get_ring() != M->get_ring())
+	    {
+	      ERROR("ring element and matrix should have the same base ring");
+	      return 0;
+	    }
+	  return M->scalar_mult(f->get_value(), opposite_mult);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull * IM2_Matrix_concat(const Matrix_array *Ms)
 {
-  unsigned int n = Ms->len;
-  if (n == 0)
-    {
-      ERROR("matrix concat: expects at least one matrix");
-      return 0;
-    }
-  const FreeModule *F = Ms->array[0]->rows();
-  const Ring *R = F->get_ring();
-  MatrixConstructor mat(Ms->array[0]->rows(), 0);
-  int next=0;
-  for (unsigned int i=0; i<n; i++)
-    {
-      const Matrix *M = Ms->array[i];
-      if (F->get_ring() != M->get_ring())
-	{
-	  ERROR("matrix concat: different base rings");
-	  return 0;
-	}
-      if (F->rank() != M->n_rows())
-	{
-	  ERROR("matrix concat: row sizes are not equal");
-	  return 0;
-	}
-      for (int j=0; j<M->n_cols(); j++)
-	{
-	  mat.append(R->copy_vec(M->elem(j)));
-	  mat.set_column_degree(next++, M->cols()->degree(j));
-	}
-    }
-  return mat.to_matrix();
+     try {
+	  unsigned int n = Ms->len;
+	  if (n == 0)
+	    {
+	      ERROR("matrix concat: expects at least one matrix");
+	      return 0;
+	    }
+	  const FreeModule *F = Ms->array[0]->rows();
+	  const Ring *R = F->get_ring();
+	  MatrixConstructor mat(Ms->array[0]->rows(), 0);
+	  int next=0;
+	  for (unsigned int i=0; i<n; i++)
+	    {
+	      const Matrix *M = Ms->array[i];
+	      if (F->get_ring() != M->get_ring())
+		{
+		  ERROR("matrix concat: different base rings");
+		  return 0;
+		}
+	      if (F->rank() != M->n_rows())
+		{
+		  ERROR("matrix concat: row sizes are not equal");
+		  return 0;
+		}
+	      for (int j=0; j<M->n_cols(); j++)
+		{
+		  mat.append(R->copy_vec(M->elem(j)));
+		  mat.set_column_degree(next++, M->cols()->degree(j));
+		}
+	    }
+	  return mat.to_matrix();
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull * IM2_Matrix_direct_sum(const Matrix_array *Ms)
 {
-  // Check that the matrices all have the same ring, and that there is
-  // at least one matrix.
-  unsigned int n = Ms->len;
-  if (n == 0)
-    {
-      ERROR("matrix direct sum: expects at least one matrix");
-      return 0;
-    }
-  const Matrix *result = Ms->array[0];
-  const Ring *R = result->get_ring();
-  for (unsigned int i=1; i<n; i++)
-    if (R != Ms->array[i]->get_ring())
-      {
-	ERROR("matrix direct sum: different base rings");
-	return 0;
-      }
-  for (unsigned int i=1; i<n; i++)
-    result = result->direct_sum(Ms->array[i]);
+     try {
+	  // Check that the matrices all have the same ring, and that there is
+	  // at least one matrix.
+	  unsigned int n = Ms->len;
+	  if (n == 0)
+	    {
+	      ERROR("matrix direct sum: expects at least one matrix");
+	      return 0;
+	    }
+	  const Matrix *result = Ms->array[0];
+	  const Ring *R = result->get_ring();
+	  for (unsigned int i=1; i<n; i++)
+	    if (R != Ms->array[i]->get_ring())
+	      {
+		ERROR("matrix direct sum: different base rings");
+		return 0;
+	      }
+	  for (unsigned int i=1; i<n; i++)
+	    result = result->direct_sum(Ms->array[i]);
 
-  return result;
+	  return result;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull * IM2_Matrix_tensor(const Matrix *M,
 				       const Matrix *N)
 {
-  return M->tensor(N);
+     try {
+	  return M->tensor(N);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 
 const MatrixOrNull * rawModuleTensor(const Matrix *M,
 				     const Matrix *N)
 {
-  return M->module_tensor(N);
+     try {
+	  return M->module_tensor(N);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
-const Matrix * IM2_Matrix_transpose(const Matrix *M)
+const MatrixOrNull * IM2_Matrix_transpose(const Matrix *M)
 {
-  return M->transpose();
+     try {
+	  return M->transpose();
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull * IM2_Matrix_reshape(const Matrix *M,
 					const FreeModule *F,
 					const FreeModule *G)
 {
-  return M->reshape(F,G);
+     try {
+	  return M->reshape(F,G);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull * IM2_Matrix_flip(const FreeModule *F,
 				     const FreeModule *G)
 {
-  return Matrix::flip(F,G);
+     try {
+	  return Matrix::flip(F,G);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull * rawWedgeProduct(int p,
@@ -339,25 +437,49 @@ const MatrixOrNull * rawWedgeProduct(int p,
      exterior(p,F) ** exterior(q,F) --> exterior(p+q,F)
   */
 {
-  return Matrix::wedge_product(p,q,F);
+     try {
+	  return Matrix::wedge_product(p,q,F);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull * IM2_Matrix_submatrix(const Matrix *M,
 					  M2_arrayint rows,
 					  M2_arrayint cols)
 {
-  return M->sub_matrix(rows,cols);
+     try {
+	  return M->sub_matrix(rows,cols);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull * IM2_Matrix_submatrix1(const Matrix *M,
 					   M2_arrayint cols)
 {
-  return M->sub_matrix(cols);
+     try {
+	  return M->sub_matrix(cols);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull * IM2_Matrix_koszul(int p, const Matrix *M)
 {
-  return M->koszul(p);
+     try {
+	  return M->koszul(p);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull * 
@@ -365,20 +487,32 @@ rawKoszulMonomials(int nskew,
 		     const Matrix *M,
 		     const Matrix *N)
 {
+     try {
 #ifdef DEVELOPMENT
 #warning "check with 0.9.2 about what this should even do"
 #endif
-  if (M->get_ring() != N->get_ring())
-    {
-      ERROR("expected same ring");
-      return 0;
-    }
-  return Matrix::koszul_monomials(nskew,M,N);
+	  if (M->get_ring() != N->get_ring())
+	    {
+	      ERROR("expected same ring");
+	      return 0;
+	    }
+	  return Matrix::koszul_monomials(nskew,M,N);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const MatrixOrNull * IM2_Matrix_symm(int p, const Matrix *M)
 {
-  return M->symm(p);
+     try {
+	  return M->symm(p);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const Matrix * IM2_Matrix_exterior(int p, const Matrix *M, int strategy)
@@ -390,7 +524,13 @@ M2_arrayint_OrNull IM2_Matrix_sort_columns(const Matrix *M,
 						 int deg_order, 
 						 int mon_order)
 {
-  return M->sort(deg_order, mon_order);
+     try {
+	  return M->sort(deg_order, mon_order);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 
@@ -552,46 +692,58 @@ const MatrixOrNull *IM2_Matrix_remove_content(const Matrix *M) {
      return NULL;
 }
 
-const Matrix *IM2_Matrix_promote(const FreeModule *newTarget,
+const MatrixOrNull *IM2_Matrix_promote(const FreeModule *newTarget,
 				 const Matrix *f)
 {
-  ring_elem a;
-  const Ring *R = f->get_ring();
-  const Ring *S = newTarget->get_ring();
-  MatrixConstructor mat(newTarget,f->n_cols());
-  Matrix::iterator i(f);
-  for (int c=0; c<f->n_cols(); c++)
-    for (i.set(c); i.valid(); i.next())
-      if (S->promote(R,i.entry(),a))
-	mat.set_entry(i.row(), c, a);
-      else
-	{
-	  ERROR("cannot promote given matrix");
-	  return 0;
-	}
-  mat.compute_column_degrees();
-  return mat.to_matrix();
+     try {
+	  ring_elem a;
+	  const Ring *R = f->get_ring();
+	  const Ring *S = newTarget->get_ring();
+	  MatrixConstructor mat(newTarget,f->n_cols());
+	  Matrix::iterator i(f);
+	  for (int c=0; c<f->n_cols(); c++)
+	    for (i.set(c); i.valid(); i.next())
+	      if (S->promote(R,i.entry(),a))
+		mat.set_entry(i.row(), c, a);
+	      else
+		{
+		  ERROR("cannot promote given matrix");
+		  return 0;
+		}
+	  mat.compute_column_degrees();
+	  return mat.to_matrix();
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
-const Matrix *IM2_Matrix_lift(const FreeModule *newTarget, 
+const MatrixOrNull *IM2_Matrix_lift(const FreeModule *newTarget, 
 			      const Matrix *f)
 {
-  ring_elem a;
-  const Ring *R = f->get_ring();
-  const Ring *S = newTarget->get_ring();
-  MatrixConstructor mat(newTarget,f->n_cols());
-  Matrix::iterator i(f);
-  for (int c=0; c<f->n_cols(); c++)
-    for (i.set(c); i.valid(); i.next())
-      if (R->lift(S,i.entry(),a))
-	mat.set_entry(i.row(), c, a);
-      else
-	{
-	  ERROR("cannot lift given matrix");
-	  return 0;
-	}
-  mat.compute_column_degrees();
-  return mat.to_matrix();
+     try {
+	  ring_elem a;
+	  const Ring *R = f->get_ring();
+	  const Ring *S = newTarget->get_ring();
+	  MatrixConstructor mat(newTarget,f->n_cols());
+	  Matrix::iterator i(f);
+	  for (int c=0; c<f->n_cols(); c++)
+	    for (i.set(c); i.valid(); i.next())
+	      if (R->lift(S,i.entry(),a))
+		mat.set_entry(i.row(), c, a);
+	      else
+		{
+		  ERROR("cannot lift given matrix");
+		  return 0;
+		}
+	  mat.compute_column_degrees();
+	  return mat.to_matrix();
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 // Local Variables:

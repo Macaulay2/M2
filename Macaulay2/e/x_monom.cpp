@@ -2,17 +2,30 @@
 
 #include "monomial.hpp"
 #include "engine.h"
+#include "exceptions.hpp"
 
 Monomial_pair Monomial_pair_ret;
 
 const MonomialOrNull *rawVarMonomial(int v, int e)
 {
-  return Monomial::make(v,e);
+     try {
+	  return Monomial::make(v,e);
+     }
+     catch (exc::engine_error m) {
+	  ERROR(m.what());
+	  return NULL;
+     }
 }
 
 const MonomialOrNull *rawMakeMonomial(M2_arrayint m)
 {
-  return Monomial::make(m);
+     try {
+	  return Monomial::make(m);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 M2_bool IM2_Monomial_is_equal(const Monomial *a, const Monomial *b)
@@ -27,7 +40,7 @@ M2_bool rawMonomialIsOne(const Monomial *a)
 
 int rawCompareMonomial(const Monoid *M, const Monomial *a, const Monomial *b)
 {
-  return a->compare(M,*b);
+  return a->compare(M,*b);	// check for exceptions here?
 }
 
 M2_bool rawMonomialDivides(const Monoid *M, const Monomial *a, const Monomial *b)
@@ -37,30 +50,61 @@ M2_bool rawMonomialDivides(const Monoid *M, const Monomial *a, const Monomial *b
 
 MonomialOrNull *rawMonomialDivide(const Monoid *M, const Monomial *a, const Monomial *b)
 {
-  if (a->divides(M,*b))
-    return (*a)/(*b);
-  else
-    return 0;
+     try {
+	  if (a->divides(M,*b))
+	    return (*a)/(*b);
+	  else
+	    return 0;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 int IM2_Monomial_degree(const Monomial *a)
 {
-  return a->simple_degree();
+     try {
+	  return a->simple_degree();
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+# warning : how do we signal an error to the front end here?
+	  return 0;
+     }
 }
 
-const Monomial *IM2_Monomial_mult(const Monomial *a, const Monomial *b)
+const MonomialOrNull *IM2_Monomial_mult(const Monomial *a, const Monomial *b)
 {
-  return (*a) * (*b);
+     try {
+	  return (*a) * (*b);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
-const Monomial *rawColonMonomial(const Monomial *a, const Monomial *b)
+const MonomialOrNull *rawColonMonomial(const Monomial *a, const Monomial *b)
 {
-  return (*a) / (*b);
+     try {
+	  return (*a) / (*b);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
-const Monomial *IM2_Monomial_power(const Monomial *a, int n)
+const MonomialOrNull *IM2_Monomial_power(const Monomial *a, int n)
 {
-  return a->power(n);
+     try {
+	  return a->power(n);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const Monomial *rawLCM(const Monomial *a, const Monomial *b)
@@ -73,9 +117,15 @@ const Monomial *rawGCD(const Monomial *a, const Monomial *b)
   return a->gcd(*b);
 }
 
-const Monomial *rawSaturateMonomial(const Monomial *a, const Monomial *b)
+const MonomialOrNull *rawSaturateMonomial(const Monomial *a, const Monomial *b)
 {
-  return a->erase(*b);
+     try {
+	  return a->erase(*b);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 const Monomial *rawRadicalMonomial(const Monomial *a)
@@ -83,17 +133,29 @@ const Monomial *rawRadicalMonomial(const Monomial *a)
   return a->radical();
 }
 
-const Monomial_pair *rawSyzygy(const Monomial *a, const Monomial *b)
+Monomial_pairOrNull rawSyzygy(const Monomial *a, const Monomial *b)
 {
-  a->monsyz(*b, Monomial_pair_ret.a, Monomial_pair_ret.b);
-  return &Monomial_pair_ret;
+     try {
+	  a->monsyz(*b, Monomial_pair_ret.a, Monomial_pair_ret.b);
+	  return &Monomial_pair_ret;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 M2_string IM2_Monomial_to_string(const Monomial *a)
 {
-  buffer o;
-  a->text_out(o);
-  return o.to_string();
+     buffer o;
+     try {
+	  a->text_out(o);
+	  return o.to_string();
+     }
+     catch (exc::engine_error e) {
+	  o << "[unprintable monomial]";
+	  return o.to_string();
+     }
 }
 
 M2_arrayint rawSparseListFormMonomial(const Monomial *a)

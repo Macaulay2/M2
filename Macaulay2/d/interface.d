@@ -168,7 +168,7 @@ setupfun("rawMonomialDivide",rawMonomialDivides);
 export rawRadical(e:Expr):Expr := (
      when e
      is x:RawMonomial do Expr(Ccode(RawMonomial, "(engine_RawMonomial)", "rawRadicalMonomial(", "(Monomial*)", x, ")" ) )
-     is I:RawMonomialIdeal do Expr( Ccode(RawMonomialIdeal, "(engine_RawMonomialIdeal)", "rawRadicalMonomialIdeal(", "(MonomialIdeal *)", I, ")" ) )
+     is I:RawMonomialIdeal do toExpr( Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)", "rawRadicalMonomialIdeal(", "(MonomialIdeal *)", I, ")" ) )
      else WrongArg("a raw monomial or monomial ideal"));
 setupfun("rawRadical",rawRadical);
 
@@ -225,13 +225,13 @@ export rawSaturate(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawMonomial do
-     when s.1 is y:RawMonomial do Expr(
-	       Ccode(RawMonomial, "(engine_RawMonomial)rawSaturateMonomial((Monomial*)",x,",","(Monomial*)",y,")"))
+     when s.1 is y:RawMonomial do toExpr(
+	       Ccode(RawMonomialOrNull, "(engine_RawMonomialOrNull)rawSaturateMonomial((Monomial*)",x,",","(Monomial*)",y,")"))
      else WrongArg(2,"a raw monomial")
      else when s.0 is I:RawMonomialIdeal do 
      when s.1
-     is y:RawMonomial do Expr(
-	  Ccode(RawMonomialIdeal, "(engine_RawMonomialIdeal)rawSaturateMonomialIdeal1(",
+     is y:RawMonomial do toExpr(
+	  Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)rawSaturateMonomialIdeal1(",
 	       "(MonomialIdeal *)", I, ",", "(Monomial *)", y, ")" ))
      is J:RawMonomialIdeal do toExpr(
 	  Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)rawSaturateMonomialIdeal2(",
@@ -246,9 +246,7 @@ export rawSyzygy(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawMonomial do
-     when s.1 is y:RawMonomial do (
-	  r := Ccode(RawMonomialPair, "(engine_RawMonomialPair)rawSyzygy((Monomial*)", x,",","(Monomial*)",y, ")");
-	  Expr(Sequence(Expr(r.a), Expr(r.b))))
+     when s.1 is y:RawMonomial do toExpr(Ccode(RawMonomialPairOrNull, "(engine_RawMonomialPairOrNull)rawSyzygy((Monomial*)", x,",","(Monomial*)",y, ")"))
      else WrongArg(2,"a raw monomial")
      else WrongArg(1,"a raw monomial")
      else WrongArg("a pair of raw monomials")
@@ -263,7 +261,7 @@ export rawColon(e:Expr):Expr := (
      else WrongArg(2,"a raw monomial")
      else when a.0 is I:RawMonomialIdeal do 
      when a.1
-     is y:RawMonomial do Expr( Ccode(RawMonomialIdeal, "(engine_RawMonomialIdeal)rawColonMonomialIdeal1(", "(MonomialIdeal *)", I, ",", "(Monomial *)", y, ")" ))
+     is y:RawMonomial do toExpr( Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)rawColonMonomialIdeal1(", "(MonomialIdeal *)", I, ",", "(Monomial *)", y, ")" ))
      is J:RawMonomialIdeal do toExpr( Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)rawColonMonomialIdeal2(", "(MonomialIdeal *)", I, ",", "(MonomialIdeal *)", J, ")" ))
      else WrongArg(2,"a raw monomial or monomial ideal")
      else WrongArg(1,"a raw monomial or monomial ideal")
@@ -1306,10 +1304,8 @@ setupfun("rawSymmetricPower",rawSymmetricPower);
 
 export rawDual(e:Expr):Expr := (
      when e
-     is F:RawFreeModule do Expr(Ccode(RawFreeModule, "(engine_RawFreeModule)",
-	       "IM2_FreeModule_dual(", "(FreeModule *)", F, ")" ))
-     is M:RawMatrix do Expr(Ccode(RawMatrix, "(engine_RawMatrix)",
-	       "IM2_Matrix_transpose(", "(Matrix *)", M, ")" ))
+     is F:RawFreeModule do toExpr(Ccode(RawFreeModuleOrNull, "(engine_RawFreeModuleOrNull)", "IM2_FreeModule_dual(", "(FreeModule *)", F, ")" ))
+     is M:RawMatrix do toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)", "IM2_Matrix_transpose(", "(Matrix *)", M, ")" ))
      else WrongArg("a raw free module or matrix"));
 setupfun("rawDual",rawDual);
 
@@ -2296,7 +2292,7 @@ setupfun("rawKernelOfGB",rawKernelOfGB);
 
 export rawMonomialIdealToMatrix(e:Expr):Expr := (
      when e
-     is I:RawMonomialIdeal do Expr(Ccode(RawMatrix, "(engine_RawMatrix)", "IM2_MonomialIdeal_to_matrix(", "(MonomialIdeal *)", I, ")" ))
+     is I:RawMonomialIdeal do toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)", "IM2_MonomialIdeal_to_matrix(", "(MonomialIdeal *)", I, ")" ))
      else WrongArg("a raw monomial ideal")
      );
 setupfun("rawMonomialIdealToMatrix",rawMonomialIdealToMatrix);
@@ -2339,8 +2335,8 @@ export rawIntersect(e:Expr):Expr := (
 setupfun("rawIntersect",rawIntersect);
 
 export rawStronglyStableClosure(e:Expr):Expr := (
-     when e is I:RawMonomialIdeal do Expr(
-	  Ccode(RawMonomialIdeal,"(engine_RawMonomialIdeal)",
+     when e is I:RawMonomialIdeal do toExpr(
+	  Ccode(RawMonomialIdealOrNull,"(engine_RawMonomialIdealOrNull)",
 	       "IM2_MonomialIdeal_borel(", "(MonomialIdeal *)", I, ")" ) )
      else WrongArg("a raw monomial ideal"));
 setupfun("rawStronglyStableClosure",rawStronglyStableClosure);

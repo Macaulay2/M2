@@ -83,7 +83,7 @@ M2_bool system_alarmedFlag = FALSE;
 static sigjmp_buf stack_trace_jump;
 
 void segv_handler2(int sig) {
-     fprintf(stderr,"--SIGSEGV during stack trace\n");
+     // fprintf(stderr,"--SIGSEGV during stack trace\n");
      longjmp(stack_trace_jump,1);
 }
 
@@ -120,6 +120,39 @@ void stack_trace() {
 	  D;
 #	  undef i
 #	  define i 9
+	  D;
+#	  undef i
+#	  define i 10
+	  D;
+#	  undef i
+#	  define i 11
+	  D;
+#	  undef i
+#	  define i 12
+	  D;
+#	  undef i
+#	  define i 13
+	  D;
+#	  undef i
+#	  define i 14
+	  D;
+#	  undef i
+#	  define i 15
+	  D;
+#	  undef i
+#	  define i 16
+	  D;
+#	  undef i
+#	  define i 17
+	  D;
+#	  undef i
+#	  define i 18
+	  D;
+#	  undef i
+#	  define i 19
+	  D;
+#	  undef i
+#	  define i 20
 	  D;
 #	  undef i
      }

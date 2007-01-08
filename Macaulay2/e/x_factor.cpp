@@ -1,7 +1,7 @@
 // copyright Daniel R. Grayson, 1995
 
 #include "../d/M2inits.h"
-
+#include "exceptions.hpp"
 #include "config.h"
 #include <assert.h>
 #include <iostream>
@@ -463,136 +463,154 @@ void rawFactor(const RingElement *g,
 	       RingElement_array_OrNull **result_factors, 
 	       M2_arrayint_OrNull *result_powers)
 {
+     try {
 #if FACTORY
-  const PolynomialRing *P = g->get_ring()->cast_to_PolynomialRing();
-  *result_factors = 0;
-  *result_powers = 0;
-  if (P == 0) {
-       ERROR("expected polynomial ring");
-       return;
-  }
-  struct enter_factory foo(P);
-  if (foo.mode == modeError) return;
-  CanonicalForm h = convertToFactory(*g);
-  // displayCF(P,h);
-  CFFList q;
-  init_seeds();
-  if (P->charac() == 0) {
-    q = factorize(h);		// suitable for k = QQ, comes from libcf (factory)
-  }
-  else {
-    q = Factorize(h);		// suitable for k = ZZ/p, comes from libfac
-  }
-  int nfactors = q.length();
+	  const PolynomialRing *P = g->get_ring()->cast_to_PolynomialRing();
+	  *result_factors = 0;
+	  *result_powers = 0;
+	  if (P == 0) {
+	       ERROR("expected polynomial ring");
+	       return;
+	  }
+	  struct enter_factory foo(P);
+	  if (foo.mode == modeError) return;
+	  CanonicalForm h = convertToFactory(*g);
+	  // displayCF(P,h);
+	  CFFList q;
+	  init_seeds();
+	  if (P->charac() == 0) {
+	    q = factorize(h);		// suitable for k = QQ, comes from libcf (factory)
+	  }
+	  else {
+	    q = Factorize(h);		// suitable for k = ZZ/p, comes from libfac
+	  }
+	  int nfactors = q.length();
 
-  *result_factors = reinterpret_cast<RingElement_array *>(getmem(sizeofarray((*result_factors),nfactors)));
-  (*result_factors)->len = nfactors;
+	  *result_factors = reinterpret_cast<RingElement_array *>(getmem(sizeofarray((*result_factors),nfactors)));
+	  (*result_factors)->len = nfactors;
 
-  *result_powers = makearrayint(nfactors);
+	  *result_powers = makearrayint(nfactors);
 
-  int next = 0;
-  for (CFFListIterator i = q; i.hasItem(); i++) {
-    (*result_factors)->array[next] = convertToM2(P,i.getItem().factor());
-    (*result_powers)->array[next++] = i.getItem().exp();
-  }
+	  int next = 0;
+	  for (CFFListIterator i = q; i.hasItem(); i++) {
+	    (*result_factors)->array[next] = convertToM2(P,i.getItem().factor());
+	    (*result_powers)->array[next++] = i.getItem().exp();
+	  }
 #else
-  ERROR("'factory' library not installed");
+	  ERROR("'factory' library not installed");
 #endif
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return;
+     }
 }
 
 M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 {
+     try {
 #if FACTORY
-  init_seeds();
-  const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("expected polynomial ring");
-      return 0;
-    }
-     const int N = P->n_vars();
+	  init_seeds();
+	  const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
+	  if (P == 0)
+	    {
+	      ERROR("expected polynomial ring");
+	      return 0;
+	    }
+	     const int N = P->n_vars();
 
-     CFList I;
-     int i;
-     for (i = 0; i < M->n_rows(); i++) {
-	  for (int j=0; j < M->n_cols(); j++) {
-	    const RingElement *g = RingElement::make_raw(P, M->elem(i,j));
-	    I.append(convertToFactory(*g));
-	  }
-     }
+	     CFList I;
+	     int i;
+	     for (i = 0; i < M->n_rows(); i++) {
+		  for (int j=0; j < M->n_cols(); j++) {
+		    const RingElement *g = RingElement::make_raw(P, M->elem(i,j));
+		    I.append(convertToFactory(*g));
+		  }
+	     }
 
-     struct enter_factory foo(P);
-     if (foo.mode == modeError) return NULL;
+	     struct enter_factory foo(P);
+	     if (foo.mode == modeError) return NULL;
 
-     List<int> t = neworderint(I);
+	     List<int> t = neworderint(I);
 
-     int n = t.length();
-     intarray u(N);
-     ListIterator<int> ii(t);
-     for (i=0; ii.hasItem(); ii++, i++) u.append(
-					      (n-1)-(ii.getItem()-1) // REVERSE!
-					      );
-     if (n>0) for (i=(n-1)/2; i>=0; i--) { // REVERSE!
-	  int tmp = u[n-1-i];
-	  u[n-1-i] = u[i];
-	  u[i] = tmp;
-     }
-     for (i=n; i<N; i++) u.append(i);
+	     int n = t.length();
+	     intarray u(N);
+	     ListIterator<int> ii(t);
+	     for (i=0; ii.hasItem(); ii++, i++) u.append(
+						      (n-1)-(ii.getItem()-1) // REVERSE!
+						      );
+	     if (n>0) for (i=(n-1)/2; i>=0; i--) { // REVERSE!
+		  int tmp = u[n-1-i];
+		  u[n-1-i] = u[i];
+		  u[i] = tmp;
+	     }
+	     for (i=n; i<N; i++) u.append(i);
 
-     M2_arrayint result = makearrayint(N);
-     for (i=0; i<N; i++)
-       result->array[i] = u[i];
-     return result;
+	     M2_arrayint result = makearrayint(N);
+	     for (i=0; i<N; i++)
+	       result->array[i] = u[i];
+	     return result;
 #else
-  ERROR("'factory' library not installed");
-  return NULL;
+	  ERROR("'factory' library not installed");
+	  return NULL;
 #endif
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }    
 
 Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 {
+     try {
 #if FACTORY
-     const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
-     if (P == 0) {
-	  ERROR("expected polynomial ring");
-	  return 0;
-     }
+	     const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
+	     if (P == 0) {
+		  ERROR("expected polynomial ring");
+		  return 0;
+	     }
 
-     CFList I;
-     for (int i = 0; i < M->n_rows(); i++) {
-	  for (int j=0; j < M->n_cols(); j++) {
-	    const RingElement *g = RingElement::make_raw(P, M->elem(i,j));
-	    I.append(convertToFactory(*g));
-	  }
-     }
+	     CFList I;
+	     for (int i = 0; i < M->n_rows(); i++) {
+		  for (int j=0; j < M->n_cols(); j++) {
+		    const RingElement *g = RingElement::make_raw(P, M->elem(i,j));
+		    I.append(convertToFactory(*g));
+		  }
+	     }
 
-     struct enter_factory foo(P);
-     if (foo.mode == modeError) return NULL;
-     init_seeds();
+	     struct enter_factory foo(P);
+	     if (foo.mode == modeError) return NULL;
+	     init_seeds();
 
-     List<CFList> t = IrrCharSeries(I);
+	     List<CFList> t = IrrCharSeries(I);
 
-     Matrix_array *result = reinterpret_cast<Matrix_array *>(getmem(sizeofarray(result,t.length())));
-     result->len = t.length();
-     
-     int next = 0;
-     for (ListIterator<List<CanonicalForm> > ii = t; ii.hasItem(); ii++) {
-	  CFList u = ii.getItem();
-	  RingElement_array *result1 = reinterpret_cast<RingElement_array *>(getmem(sizeofarray(result1,u.length())));
-	  result1->len = u.length();
-	  int next1 = 0;
-	  for (ListIterator<CanonicalForm> j = u; j.hasItem(); j++) {
-	    result1->array[next1++] = convertToM2(P,j.getItem());
-	  }
-	  struct enter_M2 b;
-	  result->array[next++] = IM2_Matrix_make1(M->rows(), u.length(), result1, false);
-     }
-     
-     return result;
+	     Matrix_array *result = reinterpret_cast<Matrix_array *>(getmem(sizeofarray(result,t.length())));
+	     result->len = t.length();
+
+	     int next = 0;
+	     for (ListIterator<List<CanonicalForm> > ii = t; ii.hasItem(); ii++) {
+		  CFList u = ii.getItem();
+		  RingElement_array *result1 = reinterpret_cast<RingElement_array *>(getmem(sizeofarray(result1,u.length())));
+		  result1->len = u.length();
+		  int next1 = 0;
+		  for (ListIterator<CanonicalForm> j = u; j.hasItem(); j++) {
+		    result1->array[next1++] = convertToM2(P,j.getItem());
+		  }
+		  struct enter_M2 b;
+		  result->array[next++] = IM2_Matrix_make1(M->rows(), u.length(), result1, false);
+	     }
+
+	     return result;
 #else
-  ERROR("'factory' library not installed");
-  return NULL;
+	  ERROR("'factory' library not installed");
+	  return NULL;
 #endif
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
 
 // Local Variables:
