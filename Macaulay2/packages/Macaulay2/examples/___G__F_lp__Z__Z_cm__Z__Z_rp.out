@@ -1,16 +1,46 @@
 -- -*- M2-comint -*-
 
-i1 : k = GF(2,3,Variable=>x)
+i1 : A = GF(3,2,Variable=>b);
 
-o1 = k
+i2 : ambient A
 
-o1 : GaloisField
-
-i2 : x+x^2
-
+       ZZ
+       -- [b]
+        3
+o2 = ----------
       2
-o2 = x  + x
+     b  + b - 1
 
-o2 : k
+o2 : QuotientRing
 
-i3 : 
+i3 : b^8
+
+o3 = 1
+
+o3 : A
+
+i4 : b^4
+
+o4 = -1
+
+o4 : A
+
+i5 : K = GF 8
+
+o5 = K
+
+o5 : GaloisField
+
+i6 : x = K_0
+
+o6 = a
+
+o6 : K
+
+i7 : x^3+x
+
+o7 = 1
+
+o7 : K
+
+i8 : 

@@ -2,7 +2,7 @@
 
 i1 : R = QQ[a..d];
 
-i2 : degree(a*b^5+b^7-3*a^10-3, b)
+i2 : degree(b, a*b^5+b^7-3*a^10-3)
 
 o2 = 7
 

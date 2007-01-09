@@ -3,7 +3,7 @@
 i1 : code(prune, Matrix)
 
 o1 = -- code for method: minimalPresentation(Matrix)
-     -- ../../../../Macaulay2/m2/modules2.m2:378-383
+     -- ../../../../Macaulay2/m2/modules2.m2:390-395
      minimalPresentation(Matrix) := Matrix => opts -> (m) -> (
           M := source m;
           if not M.cache.?pruningMap then m = m * (minimalPresentation M).cache.pruningMap;

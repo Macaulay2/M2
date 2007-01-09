@@ -1,0 +1,21 @@
+-- -*- M2-comint -*-
+
+i1 : f = new Manipulator from identity
+
+o1 = new Manipulator from {identity}
+
+o1 : Manipulator
+
+i2 : stdio << f
+
+o2 = stdio
+
+o2 : File
+
+i3 : f stdio
+
+o3 = stdio
+
+o3 : File
+
+i4 : 

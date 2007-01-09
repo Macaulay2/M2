@@ -47,8 +47,8 @@ o8 : Ideal of S
 
 i9 : (I++I) : x+y+z
 
-o9 = image | z 0 y 0 x 0 |
-           | 0 z 0 y 0 x |
+o9 = image | z y x 0 0 0 |
+           | 0 0 0 z y x |
 
                              2
 o9 : S-module, submodule of S
@@ -59,7 +59,7 @@ o10 = ideal (z, y, x)
 
 o10 : Ideal of S
 
-i11 : quotient(gens I, gens J)
+i11 : quotient(gens I, gens J)        
 
 o11 = {1} | x y z 0 0 0 |
       {1} | 0 0 0 y z 0 |

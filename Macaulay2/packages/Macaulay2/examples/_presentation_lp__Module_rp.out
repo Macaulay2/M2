@@ -20,8 +20,8 @@ o3 : R-module, subquotient of R
 
 i4 : presentation M
 
-o4 = {2} | a 0 b2 0  |
-     {3} | 0 a 0  b2 |
+o4 = {2} | a b2 0 0  |
+     {3} | 0 0  a b2 |
 
              2       4
 o4 : Matrix R  <--- R

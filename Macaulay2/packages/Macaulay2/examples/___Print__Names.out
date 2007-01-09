@@ -10,6 +10,8 @@ o1 = HashTable{-infinity => InfiniteNumber                                  }
                Elimination#"private dictionary" => GlobalDictionary
                Elimination.Dictionary => GlobalDictionary
                infinity => InfiniteNumber
+               IntegralClosure#"private dictionary" => GlobalDictionary
+               IntegralClosure.Dictionary => GlobalDictionary
                LLLBases#"private dictionary" => GlobalDictionary
                LLLBases.Dictionary => GlobalDictionary
                Parsing#"private dictionary" => GlobalDictionary

@@ -2,11 +2,13 @@
 
 i1 : copyright
 
-o1 = Macaulay 2, version 0.9.20
-     --Copyright 1993-2004, D. R. Grayson and M. E. Stillman
-     --Singular-Factory 3.0.2, copyright 1993-2001, G.-M. Greuel, et al.
-     --Singular-Libfac 3.0.1, copyright 1996-2001, M. Messollen
-     --NTL Library 5.4, copyright, Victor Shoup
-     --GNU MP Library 4.2.1
+o1 = Macaulay 2, version 0.9.95
+     --Copyright 1993-2006, D. R. Grayson and M. E. Stillman
+     --GC 6.7, by Hans Boehm and Alan J. Demers
+     --Singular-Factory 3.0.2, by G.-M. Greuel et al.
+     --Singular-Libfac 3.0.1, by M. Messollen
+     --NTL 5.4, by Victor Shoup
+     --GNU MP 4.2.1, by Torbjörn Granlund et al.
+     --BLAS and LAPACK 3.0, by J. Dongarra et al.
 
 i2 : 

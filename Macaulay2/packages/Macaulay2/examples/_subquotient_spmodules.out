@@ -131,16 +131,16 @@ o21 : R-module, subquotient of R
 
 i22 : minimalPresentation M
 
-o22 = cokernel {1} | y 0 x 0 z4 0  |
-               {1} | 0 y 0 x 0  z4 |
+o22 = cokernel {1} | y x 0 0 z4 0  |
+               {1} | 0 0 y x 0  z4 |
 
                              2
 o22 : R-module, quotient of R
 
 i23 : prune M
 
-o23 = cokernel {1} | y 0 x 0 z4 0  |
-               {1} | 0 y 0 x 0  z4 |
+o23 = cokernel {1} | y x 0 0 z4 0  |
+               {1} | 0 0 y x 0  z4 |
 
                              2
 o23 : R-module, quotient of R

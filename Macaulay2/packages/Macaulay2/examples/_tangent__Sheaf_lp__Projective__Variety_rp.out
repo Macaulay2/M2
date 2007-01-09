@@ -8,9 +8,9 @@ o1 : ProjectiveVariety
 
 i2 : TP = tangentSheaf(P)
 
-o2 = image {-2} | 0 -c b |
-           {-2} | b a  0 |
-           {-2} | c 0  a |
+o2 = image {-2} | a  b 0 |
+           {-2} | -c 0 b |
+           {-2} | 0  c a |
 
                                          3
 o2 : coherent sheaf on P, subsheaf of OO  (2)

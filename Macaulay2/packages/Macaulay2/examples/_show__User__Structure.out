@@ -20,7 +20,6 @@ o3 : Type
 
 i4 : showUserStructure
 
-o4 = Thing : BasicList : VisibleList : List : X : Y
-                                                  Z
+o4 = 
 
 i5 : 

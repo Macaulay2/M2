@@ -22,18 +22,18 @@ o3 : Matrix R  <--- R
 
 i4 : K1 = ker g1
 
-o4 = image {1} | 0  -y -z |
-           {1} | -z x  0  |
-           {1} | y  0  x  |
+o4 = image {1} | -y 0  -z |
+           {1} | x  -z 0  |
+           {1} | 0  y  x  |
 
                              3
 o4 : R-module, submodule of R
 
 i5 : K2 = ker g2
 
-o5 = image {2} | 0   -y2 -z2 |
-           {2} | -z2 x2  0   |
-           {2} | y2  0   x2  |
+o5 = image {2} | -y2 0   -z2 |
+           {2} | x2  -z2 0   |
+           {2} | 0   y2  x2  |
 
                              3
 o5 : R-module, submodule of R
@@ -49,25 +49,25 @@ o6 : Matrix R  <--- R
 
 i7 : h = inducedMap(K1,K2,f)
 
-o7 = {2} | yz 0  0  |
-     {2} | 0  xy 0  |
+o7 = {2} | xy 0  0  |
+     {2} | 0  yz 0  |
      {2} | 0  0  xz |
 
 o7 : Matrix
 
 i8 : h1 = inducedMap(target f,K2,f)
 
-o8 = {1} | 0    -xy2 -xz2 |
-     {1} | -yz2 x2y  0    |
-     {1} | y2z  0    x2z  |
+o8 = {1} | -xy2 0    -xz2 |
+     {1} | x2y  -yz2 0    |
+     {1} | 0    y2z  x2z  |
 
 o8 : Matrix
 
 i9 : h2 = inducedMap(,K2,f)
 
-o9 = {1} | 0    -xy2 -xz2 |
-     {1} | -yz2 x2y  0    |
-     {1} | y2z  0    x2z  |
+o9 = {1} | -xy2 0    -xz2 |
+     {1} | x2y  -yz2 0    |
+     {1} | 0    y2z  x2z  |
 
 o9 : Matrix
 

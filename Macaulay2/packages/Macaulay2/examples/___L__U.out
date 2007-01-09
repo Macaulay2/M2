@@ -93,6 +93,6 @@ o14 : MutableMatrix
 i15 : for i from 1 to 10000 do A_(random 1000, random 900) = random 1.0 + ii * random 1.0;
 
 i16 : time (P,L,U) = LU A;
-     -- used 2.40815 seconds
+     -- used 2.53616 seconds
 
 i17 : 

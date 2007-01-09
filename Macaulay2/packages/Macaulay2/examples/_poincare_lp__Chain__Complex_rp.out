@@ -40,6 +40,6 @@ i4 : poincare C
            2     4    6
 o4 = 1 - 3T  + 3T  - T
 
-o4 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o4 : ZZ [T]
 
 i5 : 

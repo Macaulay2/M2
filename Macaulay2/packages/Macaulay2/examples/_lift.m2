@@ -18,3 +18,5 @@ lift(3.0,ZZ)
 lift(3.0,QQ)
 12/127.
 lift(oo,QQ)
+setPrecision 15
+z = lift(.2341124,RRR)

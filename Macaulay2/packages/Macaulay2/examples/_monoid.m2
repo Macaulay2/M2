@@ -5,7 +5,7 @@ a
 use M
 a * b^6
 options M
-R = ZZ[x,y, Degrees => {-1,-2}, Repair => d -> -d, Adjust => d -> -d]
+R = ZZ[x,y, Degrees => {-1,-2}, Heft => {-1}]
 degree \ gens R
 transpose vars R
 R = ZZ/101[x,dx,y,dy,WeylAlgebra => {x=>dx, y=>dy}]

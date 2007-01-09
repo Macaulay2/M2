@@ -2,7 +2,7 @@
 
 i1 : code Thing.NoPrint
 
-o1 = -- ../../../../Macaulay2/m2/setup.m2:72
+o1 = -- ../../../../Macaulay2/m2/setup.m2:75
      Thing.NoPrint = x -> (
 
 i2 : 

@@ -66,13 +66,13 @@ o13 : Ideal of R
 
 i14 : gb(I,PairLimit => 2)
 
-o14 = GroebnerBasis[status: done; S-pairs encountered up to degree 4]
+o14 = GroebnerBasis[status: PairLimit; all S-pairs handled up to degree 1]
 
 o14 : GroebnerBasis
 
 i15 : gb(I,PairLimit => 3)
 
-o15 = GroebnerBasis[status: done; S-pairs encountered up to degree 4]
+o15 = GroebnerBasis[status: PairLimit; all S-pairs handled up to degree 2]
 
 o15 : GroebnerBasis
 
@@ -134,7 +134,7 @@ o23 : Ideal of ---- [x, y, z, w]
 
 i24 : gb I
 
-registering gbA 6 at 0xd2abb0
+   -- registering gb 6 at 0xf69000
 
    -- {2}(2)mm{3}(1)m{4}(2)om{5}(1)o
 o24 = GroebnerBasis[status: done; S-pairs encountered up to degree 4]
@@ -170,7 +170,7 @@ i31 : T = (degreesRing R)_0
 
 o31 = T
 
-o31 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o31 : ZZ [T]
 
 i32 : f = random(R^1,R^{-3,-3,-5,-6});
 
@@ -178,7 +178,7 @@ i32 : f = random(R^1,R^{-3,-3,-5,-6});
 o32 : Matrix R  <--- R
 
 i33 : time betti gb f
-     -- used 0.584036 seconds
+     -- used 0.64004 seconds
 
              0  1
 o33 = total: 1 53
@@ -206,10 +206,10 @@ i35 : (cokernel f).cache.poincare = (1-T^3)*(1-T^3)*(1-T^5)*(1-T^6)
             3    5     8     9    12     14    17
 o35 = 1 - 2T  - T  + 2T  + 2T  - T   - 2T   + T
 
-o35 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o35 : ZZ [T]
 
 i36 : time betti gb f
-     -- used 0.100006 seconds
+     -- used 0.020002 seconds
 
              0  1
 o36 = total: 1 53
@@ -231,3 +231,6 @@ o36 = total: 1 53
 o36 : BettiTally
 
 i37 : 
+
+number of (nonminimal) gb elements = 4
+number of monomials                = 8

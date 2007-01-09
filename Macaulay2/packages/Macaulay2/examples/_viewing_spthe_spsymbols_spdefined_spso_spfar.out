@@ -8,27 +8,25 @@ o3 : Symbol
 
 i4 : listUserSymbols
 
-o4 = symbol class     value                                                  location of symbol
-     ------ -----     -----                                                  ------------------
-     ff    :Sequence--(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,$stdio:1:0-1:0     
-     h     :Boolean --true                                                   stdio:1:11-1:11   
-     kk    :Symbol  --kk                                                     stdio:1:21-1:21   
+o4 = symbol   class       value                                                   location of symbol
+     ------   -----       -----                                                   ------------------
+     ff     : Sequence -- (4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,. stdio:1:0-1:0     
+     kk     : Symbol   -- kk                                                      stdio:1:21-1:21   
 
 i5 : clearOutput
 
 i6 : listUserSymbols
 
-o6 = symbol class     value                                                  location of symbol
-     ------ -----     -----                                                  ------------------
-     ff    :Sequence--(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,$stdio:1:0-1:0     
-     h     :Boolean --true                                                   stdio:1:11-1:11   
-     kk    :Symbol  --kk                                                     stdio:1:21-1:21   
+o6 = symbol   class       value                                                   location of symbol
+     ------   -----       -----                                                   ------------------
+     ff     : Sequence -- (4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,. stdio:1:0-1:0     
+     kk     : Symbol   -- kk                                                      stdio:1:21-1:21   
 
 i7 : clearAll
 
 i8 : listUserSymbols
 
-o8 = symbolclassvaluelocation of symbol
-     ----------------------------------
+o8 = symbol  class  value location of symbol
+     ------  -----  ----- ------------------
 
 i9 : 

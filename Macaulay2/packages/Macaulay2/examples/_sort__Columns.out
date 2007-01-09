@@ -11,13 +11,13 @@ o2 : Matrix R  <--- R
 
 i3 : p = sortColumns m
 
-o3 = {1, 0, 4, 3, 2}
+o3 = {4, 1, 3, 2, 0}
 
 o3 : List
 
 i4 : m_p
 
-o4 = | b2 ad c2d b50d50 b100 |
+o4 = | c2d b2 b50d50 b100 ad |
 
              1       5
 o4 : Matrix R  <--- R

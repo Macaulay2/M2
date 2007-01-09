@@ -1,10 +1,6 @@
 -- -*- M2-comint -*-
 
-i1 : R = ZZ/101[x,y,z]
-
-o1 = R
-
-o1 : PolynomialRing
+i1 : R = ZZ/101[x,y,z];
 
 i2 : degrees R
 
@@ -12,28 +8,37 @@ o2 = {{1}, {1}, {1}}
 
 o2 : List
 
-i3 : monoid R
+i3 : S = ZZ/101[x,y,z,Degrees => {{2,3},{1,2},{2,0}}];
 
-o3 = [x, y, z]
+i4 : degrees S
 
-o3 : GeneralOrderedMonoid
-
-i4 : degrees oo
-
-o4 = {{1}, {1}, {1}}
+o4 = {{2, 3}, {1, 2}, {2, 0}}
 
 o4 : List
 
-i5 : S = ZZ/101[x,y,z,Degrees => {{2,3},{1,2},{2,0}}]
+i5 : I = ideal"xy2,xyz,y3"
 
-o5 = S
+               2          3
+o5 = ideal (x*y , x*y*z, y )
 
-o5 : PolynomialRing
+o5 : Ideal of S
 
-i6 : degrees S
+i6 : degrees I
 
-o6 = {{2, 3}, {1, 2}, {2, 0}}
+o6 = {{4, 7}, {5, 5}, {3, 6}}
 
 o6 : List
 
-i7 : 
+i7 : degrees R^5
+
+o7 = {{0}, {0}, {0}, {0}, {0}}
+
+o7 : List
+
+i8 : degrees R^{1,2,3,4}
+
+o8 = {{-1}, {-2}, {-3}, {-4}}
+
+o8 : List
+
+i9 : 

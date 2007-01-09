@@ -8,7 +8,7 @@ o2 : Ideal of R
 
 i3 : hilbertFunction({2,2}, I)
 
-o3 = 3
+o3 = 18
 
 i4 : S = R/I;
 

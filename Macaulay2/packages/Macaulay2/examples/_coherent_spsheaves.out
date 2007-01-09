@@ -10,12 +10,12 @@ o2 : ProjectiveVariety
 
 i3 : Omega = cotangentSheaf X
 
-o3 = cokernel {2} | b  a  0  0  0  0   -d3 c3 |
-              {2} | d  0  a  0  0  -c3 b3  0  |
-              {2} | -c 0  0  a  0  -d3 0   b3 |
-              {2} | 0  0  c  d  b3 a3  0   0  |
-              {2} | 0  d  -b 0  c3 0   a3  0  |
-              {2} | 0  -c 0  -b d3 0   0   a3 |
+o3 = cokernel {2} | c  0  0  d  0   a3  b3 0  |
+              {2} | a  d  0  0  b3  -c3 0  0  |
+              {2} | -b 0  d  0  a3  0   c3 0  |
+              {2} | 0  b  a  0  -d3 0   0  c3 |
+              {2} | 0  -c 0  a  0   -d3 0  b3 |
+              {2} | 0  0  -c -b 0   0   d3 a3 |
 
                                          6
 o3 : coherent sheaf on X, quotient of OO  (-2)

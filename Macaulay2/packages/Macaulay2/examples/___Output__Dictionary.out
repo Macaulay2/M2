@@ -16,15 +16,15 @@ o3 : List
 
 i4 : dictionaryPath
 
-o4 = {User#"private dictionary", Parsing.Dictionary, TangentCone.Dictionary,
+o4 = {Elimination.Dictionary, LLLBases.Dictionary,
      ------------------------------------------------------------------------
-     SchurRings.Dictionary, Classic.Dictionary,
+     IntegralClosure.Dictionary, PrimaryDecomposition.Dictionary,
      ------------------------------------------------------------------------
-     PrimaryDecomposition.Dictionary, LLLBases.Dictionary,
+     Classic.Dictionary, SchurRings.Dictionary, TangentCone.Dictionary,
      ------------------------------------------------------------------------
-     Elimination.Dictionary, Core.Dictionary, OutputDictionary,
+     Parsing.Dictionary, User#"private dictionary", Core.Dictionary,
      ------------------------------------------------------------------------
-     PackageDictionary}
+     OutputDictionary, PackageDictionary}
 
 o4 : List
 

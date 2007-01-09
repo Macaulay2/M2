@@ -32,7 +32,7 @@ o5 : R-module, subquotient of R
 
 i6 : minimalPresentation N
 
-o6 = cokernel {1} | 81 27d 3c-5d 3b-18 a+b-9 9d2 bd-6d b2-b-30 3d3 d4 |
+o6 = cokernel | 3c-5d 3b-18 21b+36 a+10b+18 b2-4b-12 |
 
                             1
 o6 : R-module, quotient of R

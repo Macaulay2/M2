@@ -109,9 +109,9 @@ o18 : ChainComplex
 
 i19 : Ires.dd_2
 
-o19 = {3} | 0   y2/xuv  |
-      {3} | -v2 -y2/xu2 |
-      {4} | u   -v      |
+o19 = {3} | 0  u2   |
+      {3} | u2 -xv2 |
+      {4} | -v -y2u |
 
               3       2
 o19 : Matrix S  <--- S

@@ -33,10 +33,9 @@ o6 : Matrix R  <--- R
 
 i7 : syz f
 
-registering gbA 1 at 0x69e330
+   -- registering gb 1 at 0xf69730
 
    -- {2}(1)m{3}(1)m{4}(1)m{5}(1)z{6}(1)z{7}(1)z
-   -- ...
 o7 = {2} | -y3+1 -z4+2 0     |
      {3} | x2-3  0     -z4+2 |
      {4} | 0     x2-3  y3-1  |
@@ -46,7 +45,6 @@ o7 : Matrix R  <--- R
 
 i8 : kernel f
 
-   -- ...
 o8 = image {2} | -y3+1 -z4+2 0     |
            {3} | x2-3  0     -z4+2 |
            {4} | 0     x2-3  y3-1  |
@@ -55,3 +53,9 @@ o8 = image {2} | -y3+1 -z4+2 0     |
 o8 : R-module, submodule of R
 
 i9 : 
+
+number of (nonminimal) gb elements = 3
+number of monomials                = 9
+
+number of (nonminimal) gb elements = 3
+number of monomials                = 9

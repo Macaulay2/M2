@@ -24,9 +24,9 @@ o4 : R-module
 
 i5 : Ext^2(M,R)
 
-o5 = cokernel {-3} | c 0  b a 0  |
-              {-3} | d c  0 b a  |
-              {-3} | 0 -d c 0 -b |
+o5 = cokernel {-3} | c  a  0 b 0 |
+              {-3} | -d -b c 0 a |
+              {-3} | 0  0  d c b |
 
                             3
 o5 : R-module, quotient of R
@@ -40,9 +40,9 @@ o6 : R-module, quotient of R
 
 i7 : Ext^1(I,R)
 
-o7 = cokernel {-3} | c b 0  a 0  |
-              {-3} | 0 c -d 0 -b |
-              {-3} | d 0 c  b a  |
+o7 = cokernel {-3} | c 0 -d 0 -b |
+              {-3} | b c 0  a 0  |
+              {-3} | 0 d c  b a  |
 
                             3
 o7 : R-module, quotient of R

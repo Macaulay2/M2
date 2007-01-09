@@ -20,9 +20,9 @@ o3 : A-module, quotient of A
 
 i4 : N = prune (M**R)
 
-o4 = cokernel | -16x2+43xy-27y2 32x2-35xy+42y2 x2y-19xy2+5y3 42xy2+42y3 x3 y4
-              | x2-11xy-45y2    34xy+42y2      20xy2-13y3    49xy2-39y3 0  0 
-              | -30xy+27y2      x2-24xy+39y2   -y3           xy2+10y3   0  0 
+o4 = cokernel | -16x2+43xy-27y2 32x2-35xy+42y2 x3 x2y-19xy2+5y3 42xy2+42y3 y4
+              | x2-11xy-45y2    34xy+42y2      0  20xy2-13y3    49xy2-39y3 0 
+              | -30xy+27y2      x2-24xy+39y2   0  -y3           xy2+10y3   0 
      ------------------------------------------------------------------------
      0  0  |
      y4 0  |

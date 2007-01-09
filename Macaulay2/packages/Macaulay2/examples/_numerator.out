@@ -29,6 +29,6 @@ i6 : numerator hf
            2    3    4     5    7
 o6 = 1 - 2T  - T  + T  + 2T  - T
 
-o6 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o6 : ZZ [T]
 
 i7 : 

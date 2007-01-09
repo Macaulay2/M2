@@ -11,14 +11,14 @@ o2 : Matrix R  <--- R
 
 i3 : sort m
 
-o3 = | b2 ad c2d b50d50 b100 |
+o3 = | c2d b2 b50d50 b100 ad |
 
              1       5
 o3 : Matrix R  <--- R
 
 i4 : options sort
 
-o4 = OptionTable{DegreeOrder => Ascending  }
+o4 = OptionTable{DegreeOrder =>            }
                  MonomialOrder => Ascending
 
 o4 : OptionTable

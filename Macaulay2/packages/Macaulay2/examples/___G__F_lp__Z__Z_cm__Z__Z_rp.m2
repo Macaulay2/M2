@@ -1,2 +1,7 @@
-k = GF(2,3,Variable=>x)
-x+x^2
+A = GF(3,2,Variable=>b);
+ambient A
+b^8
+b^4
+K = GF 8
+x = K_0
+x^3+x

@@ -3,4 +3,4 @@ M = kernel vars R ++ cokernel vars R
 generators M
 relations M
 M === subquotient(generators M, relations M)
-prune M
+prune M,

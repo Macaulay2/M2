@@ -2,9 +2,9 @@
 
 i1 : loadedPackages
 
-o1 = {Parsing, TangentCone, SchurRings, Classic, PrimaryDecomposition,
+o1 = {Elimination, LLLBases, IntegralClosure, PrimaryDecomposition, Classic,
      ------------------------------------------------------------------------
-     LLLBases, Elimination, User, Core}
+     SchurRings, TangentCone, Parsing, Core}
 
 o1 : List
 

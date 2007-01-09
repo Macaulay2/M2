@@ -13,8 +13,7 @@ i3 : M ** R[t]
 
 o3 = cokernel | x y |
 
-       ZZ                                   ZZ            1
-o3 : (--- [x, y])[t]-module, quotient of ((--- [x, y])[t])
-      101                                  101
+                                      1
+o3 : R [t]-module, quotient of (R [t])
 
 i4 : 

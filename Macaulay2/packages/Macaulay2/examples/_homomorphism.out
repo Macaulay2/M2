@@ -37,8 +37,8 @@ o5 : R-module, free
 i6 : 
                H1 = prune H
 
-o6 = cokernel {0} | -y x2 |
-              {1} | x  -y |
+o6 = cokernel | x2 -y |
+              | -y x  |
 
                             2
 o6 : R-module, quotient of R

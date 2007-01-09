@@ -380,7 +380,11 @@ i43 : Tr^6 == I * (Tr^6 // I) + (Tr^6 % I)
 
 o43 = true
 
-i44 : erase global x
+i44 : x = global x
+
+o44 = x
+
+o44 : Symbol
 
 i45 : R = KK[x_0..x_3] 
 
@@ -410,7 +414,11 @@ o48 = ideal (x  + x , x , x )
 
 o48 : Ideal of R
 
-i49 : erase global y
+i49 : y = global y
+
+o49 = y
+
+o49 : Symbol
 
 i50 : S = KK[y_0..y_3,MonomialOrder=> Eliminate 1]
 

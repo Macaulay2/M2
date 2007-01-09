@@ -1,0 +1,7 @@
+-- -*- M2-comint -*-
+
+i1 : toAbsolutePath "a/b.m2"
+
+o1 = /home/dan/src/M2/BUILD/normal/Macaulay2/packages/a/b.m2
+
+i2 : 

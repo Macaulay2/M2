@@ -8,7 +8,7 @@ I = image symmetricPower(2,vars S)
 (I++I) : (J++J)
 (I++I) : x+y+z
 quotient(I,J)
-quotient(gens I, gens J)
+quotient(gens I, gens J)        
 I = ideal(x^2-y^2, y^3)
 J = ideal((x+y+z)^3, z^2)
 L = intersect(I,J)

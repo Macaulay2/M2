@@ -37,7 +37,7 @@ o6 : Matrix 0 <--- 0
 
 i7 : g = Ext^2(f,R)
 
-o7 = {-5} | -d2 cd c2 |
+o7 = {-5} | -d2 -cd c2 |
 
 o7 : Matrix
 

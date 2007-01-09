@@ -1,0 +1,32 @@
+-- -*- M2-comint -*-
+
+i1 : R = QQ[x,y,z]/(y^2*z-x*(x-z)*(x-37*z));
+
+i2 : X = Proj R
+
+o2 = X
+
+o2 : ProjectiveVariety
+
+i3 : OO_X
+
+o3 = OO
+       X
+
+o3 : SheafOfRings
+
+i4 : HH^1(OO_X)
+
+       1
+o4 = QQ
+
+o4 : QQ-module, free
+
+i5 : HH^0(OO_X(3))
+
+       9
+o5 = QQ
+
+o5 : QQ-module, free
+
+i6 : 

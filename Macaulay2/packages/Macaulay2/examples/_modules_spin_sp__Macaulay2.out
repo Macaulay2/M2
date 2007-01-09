@@ -28,10 +28,10 @@ o4 : R-module, submodule of R
 
 i5 : K = kernel m
 
-o5 = image {1} | 0      e2-df  cd-be  ce-bf  |
-           {1} | e2-df  0      -bd+ae -be+af |
-           {1} | -ce+bf -be+af b2-ac  0      |
-           {1} | cd-be  bd-ae  0      b2-ac  |
+o5 = image {1} | cd-be  0      e2-df  ce-bf  |
+           {1} | -bd+ae e2-df  0      -be+af |
+           {1} | b2-ac  -ce+bf -be+af 0      |
+           {1} | 0      cd-be  bd-ae  b2-ac  |
 
                              4
 o5 : R-module, submodule of R
@@ -46,10 +46,10 @@ o6 : Matrix R  <--- R
 
 i7 : presentation N -- this one requires computation
 
-o7 = {1} | 0      e2-df  cd-be  ce-bf  |
-     {1} | e2-df  0      -bd+ae -be+af |
-     {1} | -ce+bf -be+af b2-ac  0      |
-     {1} | cd-be  bd-ae  0      b2-ac  |
+o7 = {1} | cd-be  0      e2-df  ce-bf  |
+     {1} | -bd+ae e2-df  0      -be+af |
+     {1} | b2-ac  -ce+bf -be+af 0      |
+     {1} | 0      cd-be  bd-ae  b2-ac  |
 
              4       4
 o7 : Matrix R  <--- R
@@ -585,10 +585,10 @@ o80 : A-module, submodule of A
 
 i81 : H = Hom(M,M)
 
-o81 = subquotient ({0}  | 1 0 |, {0}  | 0  y  0  x2 |)
-                   {1}  | 0 1 |  {1}  | 0  -x 0  -y |
-                   {-1} | 0 x |  {-1} | y  0  x2 0  |
-                   {0}  | 1 0 |  {0}  | -x 0  -y 0  |
+o81 = subquotient ({0}  | 1 0 x |, {0}  | 0  -y 0  x2 |)
+                   {1}  | 0 1 0 |  {1}  | 0  x  0  -y |
+                   {-1} | 0 x y |  {-1} | -y 0  x2 0  |
+                   {0}  | 1 0 0 |  {0}  | x  0  -y 0  |
 
                                 4
 o81 : A-module, subquotient of A
@@ -687,10 +687,10 @@ o93 : A-module, quotient of A
 
 i94 : M2 = prune(M ** M)
 
-o94 = cokernel | 0  -x y x x 0 |
-               | -x 0  x y 0 x |
-               | x  0  0 0 y 0 |
-               | 0  x  0 0 0 y |
+o94 = cokernel | x y 0  y -y 0 |
+               | y x -y 0 0  y |
+               | 0 0 y  x 0  0 |
+               | 0 0 0  0 y  x |
 
                              4
 o94 : A-module, quotient of A
@@ -703,11 +703,7 @@ o95 : PolynomialRing
 
 i96 : A ** A
 
-o96 = QQ [a, b, c, a, b, c, Degrees => {{1, 0}, {1, 0}, {1, 0}, {0, 1}, {0,
-      -----------------------------------------------------------------------
-      1}, {0, 1}}, MonomialOrder => {GRevLex => {1, 1, 1}, Position => Up,
-      -----------------------------------------------------------------------
-      GRevLex => {1, 1, 1}, Position => Up}]
+o96 = QQ [a, b, c, a, b, c]
 
 o96 : PolynomialRing
 
@@ -727,11 +723,7 @@ o99 = false
 
 i100 : tensor(A,A,Variables=>{a,b,c,d,e,f})
 
-o100 = QQ [a, b, c, d, e, f, Degrees => {{1, 0}, {1, 0}, {1, 0}, {0, 1}, {0,
-       ----------------------------------------------------------------------
-       1}, {0, 1}}, MonomialOrder => {GRevLex => {1, 1, 1}, Position => Up,
-       ----------------------------------------------------------------------
-       GRevLex => {1, 1, 1}, Position => Up}]
+o100 = QQ [a, b, c, d, e, f]
 
 o100 : PolynomialRing
 

@@ -2,22 +2,22 @@
 
 i1 : currentTime()
 
-o1 = 1152938924
+o1 = 1162740012
 
 i2 : currentTime() /( (365 + 97./400) * 24 * 60 * 60 )
 
-o2 = 36.5352
+o2 = 36.8458
 
 o2 : RR
 
 i3 : 12 * (oo - floor oo)
 
-o3 = 6.42216
+o3 = 10.1492
 
 o3 : RR
 
 i4 : run "date"
-Fri Jul 14 23:48:44 CDT 2006
+Sun Nov  5 09:20:12 CST 2006
 
 o4 = 0
 

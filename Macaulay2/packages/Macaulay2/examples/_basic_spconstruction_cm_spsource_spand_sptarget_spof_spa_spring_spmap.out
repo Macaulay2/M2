@@ -73,7 +73,7 @@ i15 : source H.matrix
        3
 o15 = U
 
-o15 : U-module, free, degrees {{2, 4}, {3, 3}, {4, 12}}
+o15 : U-module, free
 
 i16 : target H.matrix
 

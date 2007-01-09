@@ -56,15 +56,19 @@ o8 : ChainComplex
 
 i9 : HH_2 C
 
-o9 = image 0
+o9 = image | -1 |
+           | 1  |
+           | -1 |
+           | 1  |
 
                                4
 o9 : QQ-module, submodule of QQ
 
 i10 : prune oo
 
-o10 = 0
+        1
+o10 = QQ
 
-o10 : QQ-module
+o10 : QQ-module, free
 
 i11 : 

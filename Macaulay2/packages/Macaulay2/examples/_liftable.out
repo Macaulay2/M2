@@ -10,4 +10,16 @@ i2 : liftable ((x-1)*(x+1)-x^2, ZZ)
 
 o2 = true
 
-i3 : 
+i3 : liftable(.342,RR)
+
+o3 = true
+
+i4 : liftable(3/4,ZZ)
+
+o4 = false
+
+i5 : liftable((3/4)*4,ZZ)
+
+o5 = true
+
+i6 : 

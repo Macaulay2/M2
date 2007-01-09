@@ -12,7 +12,7 @@ o3 = R
 
 i4 : toExternalString R
 
-o4 = QQ [x_1, x_2, x_3, x_4, x_5]
+o4 = QQ [x_1, x_2, x_3, x_4, x_5, Heft => {1}]
 
 i5 : toString(QQ[a])
 

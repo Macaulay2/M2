@@ -4,20 +4,20 @@ i1 : R = QQ[a..d];
 
 i2 : M = ker vars R
 
-o2 = image {1} | 0  0  0  -b -c -d |
-           {1} | 0  -c -d a  0  0  |
-           {1} | -d b  0  0  a  0  |
-           {1} | c  0  b  0  0  a  |
+o2 = image {1} | -b 0  -c 0  0  -d |
+           {1} | a  -c 0  0  -d 0  |
+           {1} | 0  b  a  -d 0  0  |
+           {1} | 0  0  0  c  b  a  |
 
                              4
 o2 : R-module, submodule of R
 
 i3 : generators M
 
-o3 = {1} | 0  0  0  -b -c -d |
-     {1} | 0  -c -d a  0  0  |
-     {1} | -d b  0  0  a  0  |
-     {1} | c  0  b  0  0  a  |
+o3 = {1} | -b 0  -c 0  0  -d |
+     {1} | a  -c 0  0  -d 0  |
+     {1} | 0  b  a  -d 0  0  |
+     {1} | 0  0  0  c  b  a  |
 
              4       6
 o3 : Matrix R  <--- R
