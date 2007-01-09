@@ -1,3 +1,6 @@
+#define MOVE_UP_JUST_ONE
+#define INSERT_AT_END
+
 #include "montable.hpp"
 #include "ntuple.hpp"
 #include <functional>
@@ -15,6 +18,7 @@ static bool exponents_equal(int nvars, exponents a, exponents b)
   return true;
 }
 
+#ifndef INSERT_AT_END
 static bool exponents_greater(int nvars, exponents a, exponents b)
 {
   for (int i=0; i<nvars; i++)
@@ -24,6 +28,7 @@ static bool exponents_greater(int nvars, exponents a, exponents b)
     }
   return false;
 }
+#endif
 
 static void exponents_show(FILE *fil, exponents exp, int nvars)
   /* This is only for debugging */
@@ -107,6 +112,27 @@ void MonomialTable::move_up(mon_term * const y,mon_term * const head) {
      y->_next = x; 
      y->_prev = w;
 }
+
+void MonomialTable::remove(mon_term * const y) {
+     mon_term * const x = y->_prev;
+     mon_term * const z = y->_next;
+     x->_next = z;
+     z->_prev = x;
+}
+
+void MonomialTable::insert_before(mon_term * const y, mon_term * const z) {
+     mon_term * const x = z->_prev;
+     x->_next = y;
+     y->_next = z;
+     y->_prev = x;
+     z->_prev = y;
+}
+
+#ifdef MOVE_UP_JUST_ONE
+#define MOVE_UP(t,head) move_up(t,head)
+#else
+#define MOVE_UP(t,head) (remove(t), insert_before(t,head->_next))
+#endif
 
 int MonomialTable::find_divisor(exponents exp, int comp)
 {
@@ -209,7 +235,7 @@ void MonomialTable::insert(exponents exp, int comp, int id)
   _count++;
 
   /* Find where to put it */
-#if 1
+#ifdef INSERT_AT_END
   // put it at the end
   t = head->_prev;
 #else
