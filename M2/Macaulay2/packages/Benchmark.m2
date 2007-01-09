@@ -137,6 +137,27 @@ end
 -- res39: 0.48003 seconds
 -- resG25: 6.56441 seconds
 -- resB148: 59.9957 seconds
+-- beginning computation Tue Jan  9 06:57:58 EST 2007
+-- res39: 0.520033 seconds
+-- resG25: 6.66042 seconds
+-- resB148: 63.472 seconds
+-- res39: 0.532033 seconds
+-- resG25: 6.65642 seconds
+-- resB148: 64.004 seconds
+-- size BUILD/normal/Macaulay2/bin/M2
+--    text	   data	    bss	    dec	    hex	filename
+-- 3866759	  58872	 108832	4034463	 3d8f9f	BUILD/normal/Macaulay2/bin/M2
+--  now with -O2 instead of -O3 (the default):
+-- res39: 0.520032 seconds
+-- resG25: 6.74842 seconds
+-- resB148: 65.0321 seconds
+-- res39: 0.524033 seconds
+-- resG25: 6.74042 seconds
+-- resB148: 64.9561 seconds
+-- size Macaulay2/bin/M2
+--    text	   data	    bss	    dec	    hex	filename
+-- 3780296	  58872	 108832	3948000	 3c3de0	Macaulay2/bin/M2
+
 
 --   this one is a dual G5 2.5 Mhz in 32 bit mode
 --   the new engine code is rather new not manually optimized yet
