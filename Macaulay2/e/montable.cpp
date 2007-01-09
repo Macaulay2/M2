@@ -35,15 +35,13 @@ static void exponents_show(FILE *fil, exponents exp, int nvars)
 
 static unsigned long monomial_mask(int nvars, exponents exp)
 {
-  unsigned long result = 0;
-  int i,j;
-  for (i=0, j=0; i<nvars; i++, j++)
-    {
-      if (j == 8*sizeof(long)) j=0;
-      if (exp[i] > 0)
-	result |= (1 << j);
-    }
-  return result;
+     unsigned long result = 0, bit = 1;
+     for (int i = nvars-1; i>=0; i--) {
+	  if (exp[i] > 0) result |= bit;
+	  bit <<= 1;
+	  if (bit == 0) bit = 1;
+     }
+     return result;
 }
 
 /********************/
@@ -127,38 +125,36 @@ int MonomialTable::find_divisors(int max,
 				 VECTOR(mon_term *) *result) const
 {
   assert(comp >= 1);
+  assert(_nvars >= 0);
   if (comp >= static_cast<int>(_head.size())) return 0;
   mon_term *head = _head[comp];
   mon_term *t;
-  int i;
 
   int nmatches = 0;
   unsigned long expmask = ~(monomial_mask(_nvars, exp));
 
-  //DEBUG long nviewed = 0;
-  //DEBUG long nmasked = 0;
+  //*DEBUG*/ long nviewed = 0;
+  //*DEBUG*/ long nmasked = 0;
 
   for (t = head->_next; t != head; t = t->_next)
     if ((expmask & t->_mask) == 0)
       {
-	//DEBUG	nviewed++;
-	bool is_div = 1;
-	for (i=0; i<_nvars; i++)
-	  if (exp[i] < t->_lead[i])
-	    {
-	      is_div = 0;
-	      break;
-	    }
-	if (is_div)
-	  {
-	    nmatches++;
-	    if (result != 0) result->push_back(t);
-	    if (max >= 0 && nmatches >= max) break;
-	  }
+	   //*DEBUG*/	nviewed++;
+	   int i = _nvars;
+	   while (1) {
+		if (i == 0) {
+		     nmatches++; // this doesn't happen very often
+		     if (result != 0) result->push_back(t);
+		     if (max >= 0 && nmatches >= max) return nmatches;
+		     break;
+		}
+		i--;
+		if (exp[i] < t->_lead[i]) break;
+	   }
       }
-  //DEBUG    else
-  //DEBUG      nmasked++;
-  //DEBUG  fprintf(stderr, "nviewed %d nmasked %d nfound %d\n", nviewed, nmasked, nmatches);
+  //*DEBUG*/    else
+  //*DEBUG*/      nmasked++;
+  //*DEBUG*/  fprintf(stderr, "nviewed %d nmasked %ld max %d nfound %ld\n", nviewed, nmasked, max, nmatches);
   return nmatches;
 }
 
