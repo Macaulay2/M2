@@ -228,6 +228,7 @@ export {
 	symbol InverseMethod,
 	symbol Inverses,
 	symbol MaximalRank,
+	symbol MaxReductionCount,
 	symbol Iterate,
 	symbol KeepZeroes,
 	symbol Key,

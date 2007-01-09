@@ -28,7 +28,8 @@ computationOptionDefaults := new OptionTable from {
      Algorithm => Inhomogeneous,		    -- Homogeneous (1) or Inhomogeneous (2)
      Strategy => {},				    -- strategy
      GBDegrees => null,				    -- positive integers
-     Hilbert => null				    -- also obtainable from f.cache.cokernel.poincare
+     Hilbert => null,				    -- also obtainable from f.cache.cokernel.poincare
+     MaxReductionCount => 10			    -- max_reduction_count in gbA.cpp (for a stubborn S-polynomial)
      };
 
 stoppingOptionDefaults = new OptionTable from {
@@ -155,7 +156,7 @@ newGB := (f,type,opts) -> (
      G.matrix = Bag{f};
      G.ring = ring f;
      G.target = target f;
-     G.RawComputation = rawGB (
+     G.RawComputation = rawGB(
 	  raw f,
 	  type.Syzygies,
 	  toEngineNat type.SyzygyRows,
@@ -163,7 +164,8 @@ newGB := (f,type,opts) -> (
 	  opts.HardDegreeLimit =!= computationOptionDefaults.HardDegreeLimit,
 	  if opts.HardDegreeLimit =!= computationOptionDefaults.HardDegreeLimit then opts.HardDegreeLimit else 0,
 	  processAlgorithm(opts.Algorithm,f),
-	  processStrategy opts.Strategy
+	  processStrategy opts.Strategy,
+	  opts.MaxReductionCount
 	  );
      f.cache#type = G;			  -- do this last, in case of an interrupt
      G)
