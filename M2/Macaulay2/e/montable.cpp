@@ -58,6 +58,10 @@ MonomialTable::mon_term *MonomialTable::make_list_head()
   return t;
 }
 
+MonomialTable::MonomialTable() {
+  _last_match = NULL;
+}
+
 MonomialTable *MonomialTable::make(int nvars)
 {
   MonomialTable *result;
@@ -91,59 +95,47 @@ MonomialTable::~MonomialTable()
   _count = 0;
 }
 
-int MonomialTable::find_divisor(exponents exp,
-				int comp) const
+int MonomialTable::find_divisor(exponents exp, int comp)
 {
   assert(comp >= 1);
   if (comp >= static_cast<int>(_head.size())) return -1;
-  mon_term *head = _head[comp];
-  mon_term *t;
-  int i;
-
+  if (_last_match != NULL && ntuple::divides(_nvars,_last_match->_lead,exp)) return _last_match->_val;
   unsigned long expmask = ~(monomial_mask(_nvars, exp));
-
-  for (t = head->_next; t != head; t = t->_next)
+  mon_term *head = _head[comp];
+  for (mon_term *t = head->_next; t != head; t = t->_next)
     if ((expmask & t->_mask) == 0)
-      {
-	bool is_div = 1;
-	for (i=0; i<_nvars; i++)
-	  if (exp[i] < t->_lead[i])
-	    {
-	      is_div = 0;
-	      break;
-	    }
-	if (is_div)
-	  {
-	    return t->_val;
-	  }
-      }
+	 if (ntuple::divides(_nvars,t->_lead,exp)) {
+	      _last_match = t;
+	      return t->_val;
+	 }
   return -1;
 }
 
 int MonomialTable::find_divisors(int max,
 				 exponents exp,
 				 int comp,
-				 VECTOR(mon_term *) *result) const
+				 VECTOR(mon_term *) *result)
 {
   assert(comp >= 1);
-  assert(_nvars >= 0);
+  assert(max >= 1);
   if (comp >= static_cast<int>(_head.size())) return 0;
+  if (max == 1 && _last_match != NULL && ntuple::divides(_nvars,_last_match->_lead,exp)) {
+       if (result != NULL) result->push_back(_last_match);
+       return 1;
+  }
   mon_term *head = _head[comp];
-  mon_term *t;
-
   int nmatches = 0;
   unsigned long expmask = ~(monomial_mask(_nvars, exp));
-
   //*DEBUG*/ long nviewed = 0;
   //*DEBUG*/ long nmasked = 0;
-
-  for (t = head->_next; t != head; t = t->_next)
+  for (mon_term *t = head->_next; t != head; t = t->_next)
     if ((expmask & t->_mask) == 0)
       {
 	   //*DEBUG*/	nviewed++;
 	   if (ntuple::divides(_nvars,t->_lead,exp)) {
 		nmatches++; // this doesn't happen very often
-		if (result != 0) result->push_back(t);
+		_last_match = t;
+		if (result != NULL) result->push_back(t);
 		if (max >= 0 && nmatches >= max) break;
 	   }
       }
@@ -291,7 +283,7 @@ void MonomialTable::minimalize(int nvars,
 	  if (comp != comps[*next]) break;
 	  next++;
 	}
-      if (T->find_divisors(1, this_exp, comp) == 0)
+      if (T->find_divisor(this_exp, comp) == -1)
 	{
 	  /* We have a minimal element */
 
@@ -343,7 +335,7 @@ MonomialTable *MonomialTable::make_minimal(int nvars,
 	  rejects.push_back(*next);
 	  next++;
 	}
-      if (T->find_divisors(1, this_exp, comp) == 0)
+      if (T->find_divisor(this_exp, comp) == -1)
 	{
 	  /* We have a minimal element */
 

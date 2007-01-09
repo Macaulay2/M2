@@ -24,6 +24,7 @@
 typedef int * exponents;
 
 class MonomialTable : public our_new_delete {
+  MonomialTable();		// the public must use "make" below
 public:
   struct mon_term {
     mon_term  *_next;
@@ -33,7 +34,7 @@ public:
     int       _val;
   };
 
-  static MonomialTable *make(int nvars);
+  static MonomialTable *make(int nvars); // this function serves as the constructor
   /* Create a zero element table */
 
   static MonomialTable *make_minimal(int nvars, 
@@ -50,15 +51,14 @@ public:
      inserted.  If that is not desired, use find_divisors.
   */
 
-  int find_divisor(exponents exp, int comp) const;
+  int find_divisor(exponents exp, int comp);
   /* returns the integer 'val' of the first divisor of exp*comp found,
      or, returns -1 if none is found. */
-
 
   int find_divisors(int max,
 		    exponents exp, 
 		    int comp,
-		    VECTOR(mon_term *) *result = 0) const;
+		    VECTOR(mon_term *) *result = 0);
   /* max: the max number of divisors to find. 
      exp: the monomial whose divisors we seek.
      result: an array of mon_term's.
@@ -84,7 +84,7 @@ private:
   int _nvars;
   int _count;
   VECTOR(mon_term *) _head; /* One per component */
-
+  mon_term *_last_match; 	// optimization cache for find_divisors
   mon_term *make_list_head();
 };
  

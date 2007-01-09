@@ -44,7 +44,7 @@ public:
   virtual const MonomialIdeal *  get_quotient_monomials() const { return 0; }
   // Each bag value is an "Nterm *".
 
-  virtual const MonomialTable * get_quotient_MonomialTable() const { return 0; }
+  virtual MonomialTable * get_quotient_MonomialTable() const { return 0; }
   // Each id is an index into quotient_ideal_
 
   virtual const MonomialTableZZ * get_quotient_MonomialTableZZ() const { return 0; }
@@ -64,7 +64,7 @@ public:
   virtual const MonomialIdeal *  get_quotient_monomials() const { return Rideal; }
   // Each bag value is an "Nterm *".
 
-  virtual const MonomialTable * get_quotient_MonomialTable() const { return ringtable; }
+  virtual MonomialTable * get_quotient_MonomialTable() const { return ringtable; }
   // Each id is an index into quotient_ideal_
 };
 
