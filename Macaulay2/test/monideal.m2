@@ -40,11 +40,11 @@ I4 = monomialIdeal matrix{{a^3,b^3,c^3,d^3}}
 I = intersect(intersect(I1,I2),intersect(I3,I4))
 
 -- codim over ZZ
-R = ZZ[x]
-assert(1 == codim monomialIdeal matrix {{x}})
 
---status: codim monomialIdeal over ZZ will return the wrong answer, so it should be disabled
-assert(2 == codim monomialIdeal matrix {{2,x}})
+
+--codim monomialIdeal over ZZ will return the wrong answer, so we have disabled it:
+R = ZZ[x]
+assert try ( codim monomialIdeal matrix {{2,x}} ; false ) else true
 
 end
 -- Local Variables:

@@ -1,4 +1,5 @@
---status: unexpected segmentation fault on rhodium, Dan will fix
+--status: unexpected segmentation fault on rhodium, but it happens only occasionally, 
+--status:   and not in the debugger, so it is hard to fix
 twiddle = (A,B,e,p) ->(
 R:=ring(A);
 F:=coefficientRing(R);
