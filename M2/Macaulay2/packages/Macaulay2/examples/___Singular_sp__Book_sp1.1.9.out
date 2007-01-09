@@ -44,6 +44,6 @@ o10 : D
 
 i11 : describe D
 
-o11 = ZZ [x, y, z]
+o11 = ZZ [x, y, z, Heft => {1}]
 
 i12 : 

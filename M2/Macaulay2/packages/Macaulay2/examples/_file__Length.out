@@ -2,7 +2,7 @@
 
 i1 : f = temporaryFileName() << "hi there"
 
-o1 = /tmp/M2-29692-1
+o1 = /tmp/M2-21211-1
 
 o1 : File
 
@@ -12,13 +12,13 @@ o2 = 8
 
 i3 : close f
 
-o3 = /tmp/M2-29692-1
+o3 = /tmp/M2-21211-1
 
 o3 : File
 
 i4 : filename = toString f
 
-o4 = /tmp/M2-29692-1
+o4 = /tmp/M2-21211-1
 
 i5 : fileLength filename
 

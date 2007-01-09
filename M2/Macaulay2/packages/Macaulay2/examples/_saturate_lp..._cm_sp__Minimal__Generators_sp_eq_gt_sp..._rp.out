@@ -11,18 +11,18 @@ i2 : I = truncate(8, monomialCurveIdeal(R,{1,4,5,9}));
 o2 : Ideal of R
 
 i3 : time gens gb I;
-     -- used 0.188012 seconds
+     -- used 0.076005 seconds
 
              1       428
 o3 : Matrix R  <--- R
 
 i4 : time J1 = saturate(I);
-     -- used 0.436027 seconds
+     -- used 0.356022 seconds
 
 o4 : Ideal of R
 
 i5 : time J = saturate(I, MinimalGenerators=>false);
-     -- used 0.508032 seconds
+     -- used 0.264017 seconds
 
 o5 : Ideal of R
 

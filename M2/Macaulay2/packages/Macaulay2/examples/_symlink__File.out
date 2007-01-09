@@ -2,7 +2,7 @@
 
 i1 : fn = temporaryFileName()
 
-o1 = /tmp/M2-28885-1
+o1 = /tmp/M2-20403-1
 
 i2 : symlinkFile("qwert", fn)
 

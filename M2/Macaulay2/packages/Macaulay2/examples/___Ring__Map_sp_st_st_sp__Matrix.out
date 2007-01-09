@@ -1,0 +1,21 @@
+-- -*- M2-comint -*-
+
+i1 : R = QQ[x,y];
+
+i2 : S = QQ[t];
+
+i3 : f = map(S,R,{t^2,t^3})
+
+               2   3
+o3 = map(S,R,{t , t })
+
+o3 : RingMap S <--- R
+
+i4 : f ** vars R
+
+o4 = | t2 t3 |
+
+             1       2
+o4 : Matrix S  <--- S
+
+i5 : 

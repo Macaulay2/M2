@@ -50,12 +50,12 @@ o9 : ChainComplex
 
 i10 : F = syz transpose C.dd_4
 
-o10 = {-8} | a 0 0 de  ce bd  bc  0   0   0  0   |
+o10 = {-8} | 0 0 a de  ce bd  bc  0   0   0  0   |
       {-8} | 0 b 0 df  cf 0   0   ad  ac  0  0   |
-      {-8} | 0 0 c -ef 0  -bf 0   -ae 0   ab 0   |
-      {-8} | 0 0 d 0   ef 0   bf  0   ae  0  ab  |
+      {-8} | c 0 0 -ef 0  -bf 0   -ae 0   ab 0   |
+      {-8} | d 0 0 0   ef 0   bf  0   ae  0  ab  |
       {-8} | 0 e 0 0   0  -df -cf 0   0   ad -ac |
-      {-8} | f 0 0 0   0  0   0   -de -ce bd -bc |
+      {-8} | 0 0 f 0   0  0   0   -de -ce bd -bc |
 
               6       11
 o10 : Matrix S  <--- S

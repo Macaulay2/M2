@@ -34,7 +34,7 @@ i7 : poincare M
                  4      5     6
 o7 = 3 - 6T + 15T  - 18T  + 6T
 
-o7 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o7 : ZZ [T]
 
 i8 : hf = hilbertSeries M
 
@@ -71,7 +71,7 @@ i11 : poincare' M
                  2
 o11 = 3 + 6T + 6T
 
-o11 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o11 : ZZ [T]
 
 i12 : C = resolution M
 

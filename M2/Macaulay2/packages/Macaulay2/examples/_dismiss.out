@@ -1,74 +1,74 @@
 -- -*- M2-comint -*-
 
-i1 : newPackage "P"
+i1 : newPackage "PKG"
 
-o1 = P
+o1 = PKG
 
 o1 : Package
 
-i2 : export x
+i2 : export x1
 
-i3 : x=3
+i3 : x1=3
 
 o3 = 3
 
-i4 : endPackage "P"
+i4 : endPackage "PKG"
 
-o4 = P
+o4 = PKG
 
 o4 : Package
 
 i5 : dictionaryPath
 
-o5 = {P.Dictionary, User#"private dictionary", Parsing.Dictionary,
+o5 = {PKG.Dictionary, Elimination.Dictionary, LLLBases.Dictionary,
      ------------------------------------------------------------------------
-     TangentCone.Dictionary, SchurRings.Dictionary, Classic.Dictionary,
+     IntegralClosure.Dictionary, PrimaryDecomposition.Dictionary,
      ------------------------------------------------------------------------
-     PrimaryDecomposition.Dictionary, LLLBases.Dictionary,
+     Classic.Dictionary, SchurRings.Dictionary, TangentCone.Dictionary,
      ------------------------------------------------------------------------
-     Elimination.Dictionary, Core.Dictionary, OutputDictionary,
+     Parsing.Dictionary, User#"private dictionary", Core.Dictionary,
      ------------------------------------------------------------------------
-     PackageDictionary}
+     OutputDictionary, PackageDictionary}
 
 o5 : List
 
-i6 : x
+i6 : x1
 
 o6 = 3
 
-i7 : dismiss P
+i7 : dismiss PKG
 
 i8 : dictionaryPath
 
-o8 = {User#"private dictionary", Parsing.Dictionary, TangentCone.Dictionary,
+o8 = {Elimination.Dictionary, LLLBases.Dictionary,
      ------------------------------------------------------------------------
-     SchurRings.Dictionary, Classic.Dictionary,
+     IntegralClosure.Dictionary, PrimaryDecomposition.Dictionary,
      ------------------------------------------------------------------------
-     PrimaryDecomposition.Dictionary, LLLBases.Dictionary,
+     Classic.Dictionary, SchurRings.Dictionary, TangentCone.Dictionary,
      ------------------------------------------------------------------------
-     Elimination.Dictionary, Core.Dictionary, OutputDictionary,
+     Parsing.Dictionary, User#"private dictionary", Core.Dictionary,
      ------------------------------------------------------------------------
-     PackageDictionary}
+     OutputDictionary, PackageDictionary}
 
 o8 : List
 
-i9 : x
+i9 : x1
 
-o9 = x
+o9 = x1
 
 o9 : Symbol
 
 i10 : values PackageDictionary
 
-o10 = {P, Parsing, Classic, Elimination, LLLBases, PrimaryDecomposition,
+o10 = {Parsing, Classic, Elimination, LLLBases, PrimaryDecomposition,
       -----------------------------------------------------------------------
-      TangentCone, User, SchurRings, Core}
+      TangentCone, User, PKG, SchurRings, IntegralClosure, Core}
 
 o10 : List
 
-i11 : use P
+i11 : use PKG
 
-i12 : x
+i12 : x1
 
 o12 = 3
 

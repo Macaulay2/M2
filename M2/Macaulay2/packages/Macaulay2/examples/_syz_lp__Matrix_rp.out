@@ -1,0 +1,21 @@
+-- -*- M2-comint -*-
+
+i1 : R = QQ[a..g];
+
+i2 : I = ideal"ab2-c3,abc-cef,ade-cfg"
+
+               2    3
+o2 = ideal (a*b  - c , a*b*c - c*e*f, a*d*e - c*f*g)
+
+o2 : Ideal of R
+
+i3 : syz gens I                   
+
+o3 = {3} | -abc+cef 0        -ade+cfg de2f-bcfg  |
+     {3} | ab2-c3   -ade+cfg 0        -c2de+b2fg |
+     {3} | 0        abc-cef  ab2-c3   bc3-b2ef   |
+
+             3       4
+o3 : Matrix R  <--- R
+
+i4 : 

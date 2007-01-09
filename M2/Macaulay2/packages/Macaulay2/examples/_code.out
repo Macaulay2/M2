@@ -2,11 +2,8 @@
 
 i1 : code methods use
 
-o1 = -- code for method: use(Thing)
-     function 'identity': source code not available
-     ---------------------------------
-     -- code for method: use(Ring)
-     -- ../../../../Macaulay2/m2/enginering.m2:220-225
+o1 = -- code for method: use(Ring)
+     -- ../../../../Macaulay2/m2/enginering.m2:227-232
      use Ring := R -> (
           if R.?ring then use R.ring;                            -- I'm not sure what this is for.  Which rings have this key?
           generators R;
@@ -19,10 +16,19 @@ o1 = -- code for method: use(Thing)
      use Monoid := x -> ( if x.?use then x.use x; x)
      ---------------------------------
      -- code for method: use(Package)
-     -- ../../../../Macaulay2/m2/packages.m2:295-298
-     use Package := pkg -> if not member(pkg,loadedPackages) then (
-          loadedPackages = prepend(pkg,loadedPackages);
-          dictionaryPath = prepend(pkg.Dictionary,dictionaryPath);
+     -- ../../../../Macaulay2/m2/packages.m2:361-370
+     use Package := pkg -> (
+          a := member(pkg,loadedPackages);
+          b := member(pkg.Dictionary,dictionaryPath);
+          if a and not b then error("use: package ",toString pkg," appears in loadedPackages, but its dictionary is missing from dictionaryPath");
+          if b and not a then error("use: package ",toString pkg," does not appear in loadedPackages, but its dictionary appears in dictionaryPath");
+          if not a and not b then (
+               loadedPackages = prepend(pkg,loadedPackages);
+               dictionaryPath = prepend(pkg.Dictionary,dictionaryPath);
+               );
           )
+     ---------------------------------
+     -- code for method: use(Thing)
+     function 'identity': source code not available
 
 i2 : 

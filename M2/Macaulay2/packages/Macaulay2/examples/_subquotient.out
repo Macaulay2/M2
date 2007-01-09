@@ -8,10 +8,10 @@ o1 : PolynomialRing
 
 i2 : M = kernel vars R ++ cokernel vars R
 
-o2 = subquotient ({1} | 0  0  0  -b -c -d 0 |, {1} | 0 0 0 0 |)
-                  {1} | 0  -c -d a  0  0  0 |  {1} | 0 0 0 0 |
-                  {1} | -d b  0  0  a  0  0 |  {1} | 0 0 0 0 |
-                  {1} | c  0  b  0  0  a  0 |  {1} | 0 0 0 0 |
+o2 = subquotient ({1} | -b 0  -c 0  0  -d 0 |, {1} | 0 0 0 0 |)
+                  {1} | a  -c 0  0  -d 0  0 |  {1} | 0 0 0 0 |
+                  {1} | 0  b  a  -d 0  0  0 |  {1} | 0 0 0 0 |
+                  {1} | 0  0  0  c  b  a  0 |  {1} | 0 0 0 0 |
                   {0} | 0  0  0  0  0  0  1 |  {0} | a b c d |
 
                                5
@@ -19,10 +19,10 @@ o2 : R-module, subquotient of R
 
 i3 : generators M
 
-o3 = {1} | 0  0  0  -b -c -d 0 |
-     {1} | 0  -c -d a  0  0  0 |
-     {1} | -d b  0  0  a  0  0 |
-     {1} | c  0  b  0  0  a  0 |
+o3 = {1} | -b 0  -c 0  0  -d 0 |
+     {1} | a  -c 0  0  -d 0  0 |
+     {1} | 0  b  a  -d 0  0  0 |
+     {1} | 0  0  0  c  b  a  0 |
      {0} | 0  0  0  0  0  0  1 |
 
              5       7
@@ -43,17 +43,16 @@ i5 : M === subquotient(generators M, relations M)
 
 o5 = true
 
-i6 : prune M
+i6 : prune M,
 
-o6 = cokernel {2} | 0 0 0 0 b  a  0  0  |
-              {2} | 0 0 0 0 d  0  a  0  |
-              {2} | 0 0 0 0 -c 0  0  a  |
-              {2} | 0 0 0 0 0  0  c  d  |
-              {2} | 0 0 0 0 0  d  -b 0  |
-              {2} | 0 0 0 0 0  -c 0  -b |
-              {0} | d c b a 0  0  0  0  |
+o6 = (cokernel {2} | 0 0 0 0 c  0  0  d  |, )
+               {2} | 0 0 0 0 a  d  0  0  |
+               {2} | 0 0 0 0 -b 0  d  0  |
+               {2} | 0 0 0 0 0  b  a  0  |
+               {2} | 0 0 0 0 0  -c 0  a  |
+               {2} | 0 0 0 0 0  0  -c -b |
+               {0} | d c b a 0  0  0  0  |
 
-                            7
-o6 : R-module, quotient of R
+o6 : Sequence
 
 i7 : 

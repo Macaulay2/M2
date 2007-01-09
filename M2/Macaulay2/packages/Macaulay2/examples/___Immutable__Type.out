@@ -25,8 +25,7 @@ o4 = Thing : HashTable : ImmutableType : Module
 
 i5 : showStructure F
 
-                                    3
-o5 = Thing : BasicList : Vector : ZZ
+o5 = Thing : BasicList : Vector : F
 
 i6 : v = F_0 + 3*F_2
 

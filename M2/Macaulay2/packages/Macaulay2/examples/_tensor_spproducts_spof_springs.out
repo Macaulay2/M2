@@ -2,22 +2,12 @@
 
 i1 : ZZ/101[x,y]/(x^2-y^2) ** ZZ/101[a,b]/(a^3+b^3)
 
-      ZZ
-     --- [x, y, a, b, Degrees => {{1, 0}, {1, 0}, {0, 1}, {0, 1}}, MonomialOr
-     101
-o1 = ------------------------------------------------------------------------
-                                                                         2   
-                                                                       (x  - 
-     ------------------------------------------------------------------------
-     der => {GRevLex => {1, 1}, Position => Up, GRevLex => {1, 1}, Position =
-
-     ------------------------------------------------------------------------
-      2   3    3
-     y , a  + b )
-     ------------------------------------------------------------------------
-     > Up}]
-
-     ------
+       ZZ
+      --- [x, y, a, b]
+      101
+o1 = ------------------
+       2    2   3    3
+     (x  - y , a  + b )
 
 o1 : QuotientRing
 
@@ -29,15 +19,13 @@ o2 : PolynomialRing
 
 i3 : options tensor
 
-o3 = OptionTable{Adjust => identity   }
-                 DegreeRank => 
+o3 = OptionTable{DegreeRank =>        }
                  Degrees => 
                  Global => true
                  Heft => 
                  Inverses => false
                  MonomialOrder => 
                  MonomialSize => 32
-                 Repair => identity
                  SkewCommutative => {}
                  VariableBaseName => 
                  Variables => 

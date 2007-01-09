@@ -20,7 +20,7 @@ i3 : numerator s
 
 o3 = 1
 
-o3 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o3 : ZZ [T]
 
 i4 : R = QQ[a..h];
 
@@ -50,6 +50,6 @@ i8 : numerator s
                 2    3
 o8 = 1 + 3T + 3T  + T
 
-o8 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o8 : ZZ [T]
 
 i9 : 

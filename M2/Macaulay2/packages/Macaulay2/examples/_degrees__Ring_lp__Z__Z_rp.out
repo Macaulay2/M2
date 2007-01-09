@@ -2,7 +2,7 @@
 
 i1 : degreesRing 3
 
-o1 = ZZ [T , T , T , MonomialOrder => RevLex, Inverses => true]
+o1 = ZZ [T , T , T ]
           0   1   2
 
 o1 : PolynomialRing
@@ -16,7 +16,7 @@ o2 : IndexedVariable
 
 i3 : use degreesRing 3
 
-o3 = ZZ [T , T , T , MonomialOrder => RevLex, Inverses => true]
+o3 = ZZ [T , T , T ]
           0   1   2
 
 o3 : PolynomialRing
@@ -26,7 +26,7 @@ i4 : T_0
 o4 = T
       0
 
-o4 : ZZ [T , T , T , MonomialOrder => RevLex, Inverses => true]
+o4 : ZZ [T , T , T ]
           0   1   2
 
 i5 : 

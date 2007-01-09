@@ -1,6 +1,10 @@
 -- -*- M2-comint -*-
 
-i1 : newPackage("Foo", Version => "1.1", Headline => "making Foo")
+i1 : newPackage("Foo", 
+          Version => "1.1", 
+          Headline => "making Foo",
+          Configuration => { "foo" => 42, "bar" => "x" }
+          )
 
 o1 = Foo
 
@@ -15,6 +19,7 @@ o2 : Package
 i3 : options Foo
 
 o3 = OptionTable{Authors => {}                                }
+                 Configuration => {foo => 42, bar => x}
                  Date => 
                  DebuggingMode => false
                  Headline => making Foo
@@ -30,6 +35,6 @@ o4 = making Foo
 
 i5 : (options Core).Version
 
-o5 = 0.9.20
+o5 = 0.9.95
 
 i6 : 

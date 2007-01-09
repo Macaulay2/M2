@@ -9,14 +9,14 @@ i3 : poincare M
       2     3     4    5
 o3 = T  + 3T  - 4T  + T
 
-o3 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o3 : ZZ [T]
 
 i4 : numerator reduceHilbert hilbertSeries M
 
       2     3     4    5
 o4 = T  + 3T  - 4T  + T
 
-o4 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o4 : ZZ [T]
 
 i5 : R=ZZ/101[x, Degrees => {{1,1}}];
 
@@ -28,7 +28,7 @@ i7 : poincare M
 o7 = T T
       0 1
 
-o7 : ZZ [T , T , MonomialOrder => RevLex, Inverses => true]
+o7 : ZZ [T , T ]
           0   1
 
 i8 : numerator reduceHilbert hilbertSeries M
@@ -37,7 +37,7 @@ i8 : numerator reduceHilbert hilbertSeries M
 o8 = T T
       0 1
 
-o8 : ZZ [T , T , MonomialOrder => RevLex, Inverses => true]
+o8 : ZZ [T , T ]
           0   1
 
 i9 : 

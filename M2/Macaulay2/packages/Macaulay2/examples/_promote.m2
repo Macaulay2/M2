@@ -5,7 +5,9 @@ F = map(R,QQ);  F(2/3)
 promote(f,S)
 G = map(S,R); G(f)
 use R;
-m = gens ideal(a^2,a^3,a^4)
+I = ideal(a^2,a^3,a^4)
+promote(I,S)
+m = image matrix{{a^2,a^3,a^4}}
+promote(gens m,S)
 G m
 m ** S
-ideal promote(m, S)

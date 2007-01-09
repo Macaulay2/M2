@@ -10,7 +10,7 @@ o2 : PolynomialRing
 
 i3 : describe R
 
-o3 = QQ [x, y, z]
+o3 = QQ [x, y, z, Heft => {1}]
 
 i4 : 0_R
 

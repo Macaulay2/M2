@@ -19,7 +19,7 @@ o3 : R
 i4 : S = factor f
 
                          2
-o4 = (a + 405)(a - 402)(a  + 3a - 2301)(16)
+o4 = (a - 402)(a + 405)(a  + 3a - 2301)(16)
 
 o4 : Expression of class Product
 

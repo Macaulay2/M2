@@ -3,14 +3,16 @@
 i1 : options Core
 
 o1 = OptionTable{Authors => {{Name => Daniel R. Grayson, Email => dan@math.
+                 Configuration => {}
                  Date => 
                  DebuggingMode => false
                  Headline => A computer algebra system designed to support 
                  HomePage => http://www.math.uiuc.edu/Macaulay2/
                  InfoDirSection => Macaulay 2 and its packages
-                 Version => 0.9.20
+                 Version => 0.9.95
      ------------------------------------------------------------------------
      uiuc.edu, HomePage => http://www.math.uiuc.edu/~dan/}, {Name => Michael
+
 
 
      algebraic geometry

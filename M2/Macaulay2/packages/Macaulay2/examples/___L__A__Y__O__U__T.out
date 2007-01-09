@@ -13,7 +13,7 @@ o1 = HashTable{bin => bin/                                           }
                emacs => share/emacs/site-lisp/
                emacsdoc => share/doc/Macaulay2/Core/emacs/
                images => share/doc/Macaulay2/Core/images/
-               info => info/
+               info => share/info/
                lib => lib/
                libm2 => lib/Macaulay2/Core/
                m2 => share/Macaulay2/Core/m2/
@@ -46,7 +46,7 @@ o2 = HashTable{bin => bin/                                         }
                emacs => share/emacs/site-lisp/
                emacsdoc => share/doc/Macaulay2/Core/emacs/
                images => share/doc/Macaulay2/Core/images/
-               info => info/
+               info => share/info/
                lib => lib/
                libm2 => lib/Macaulay2/Core/
                m2 => share/Macaulay2/Core/m2/

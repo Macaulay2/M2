@@ -2,11 +2,11 @@
 
 i1 : version
 
-o1 = HashTable{architecture => i686                             
+o1 = HashTable{architecture => i686                              
                compile node name => rhodium
-               compile time => Jul 14 2006, 23:08:20
+               compile time => Nov  4 2006, 13:27:34
                compiler => gcc 4.1.1
-               configure arguments => {--prefix=/capybara/encap,
+               configure arguments =>  '--prefix=/capybara/encap'
                dumpdata => true
                executable extension => 
                factory version => 3.0.2
@@ -17,27 +17,27 @@ o1 = HashTable{architecture => i686
                M2 suffix => 
                ntl version => 5.4
                operating system => Linux
-               operating system release => 2.6.16
+               operating system release => 2.6.18.1
                readline version => 5.1
-               VERSION => 0.9.20
+               VERSION => 0.9.95
      ------------------------------------------------------------------------
-                                                                
+                                                         
 
 
 
-     --with-lapacklibs=-llapack -lcblas -lf77blas -lg2c, CC=gcc,
+     '--with-lapacklibs=-llapack -lcblas -lf77blas -lg2c'
      ------------------------------------------------------------------------
-                                                                        
+                                                                      
 
 
 
-     CPPFLAGS=-I/capybara/include, LDFLAGS=-L/capybara/lib, LDLIBS=-ldl,
+     'CPPFLAGS=-I/capybara/include' 'LDFLAGS=-L/capybara/lib' 'CC=gcc'
      ------------------------------------------------------------------------
-                     }
+                                     }
 
 
 
-     --enable-static}
+     '--with-final-prefix=/usr/local'
 
 o1 : HashTable
 

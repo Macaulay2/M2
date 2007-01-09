@@ -38,32 +38,48 @@ o9 : S
 
 i10 : use R;
 
-i11 : m = gens ideal(a^2,a^3,a^4)
+i11 : I = ideal(a^2,a^3,a^4)
 
-o11 = | a2 a3 a4 |
+              2   3   4
+o11 = ideal (a , a , a )
 
-              1       3
-o11 : Matrix R  <--- R
+o11 : Ideal of R
 
-i12 : G m
-
-o12 = | b+1 ab+a b2+2b+1 |
-
-              1       3
-o12 : Matrix S  <--- S
-
-i13 : m ** S
-
-o13 = | b+1 ab+a b2+2b+1 |
-
-              1       3
-o13 : Matrix S  <--- S
-
-i14 : ideal promote(m, S)
+i12 : promote(I,S)
 
                               2
-o14 = ideal (b + 1, a*b + a, b  + 2b + 1)
+o12 = ideal (b + 1, a*b + a, b  + 2b + 1)
 
-o14 : Ideal of S
+o12 : Ideal of S
 
-i15 : 
+i13 : m = image matrix{{a^2,a^3,a^4}}
+
+o13 = image | a2 a3 a4 |
+
+                              1
+o13 : R-module, submodule of R
+
+i14 : promote(gens m,S)
+
+o14 = | b+1 ab+a b2+2b+1 |
+
+              1       3
+o14 : Matrix S  <--- S
+
+i15 : G m
+
+o15 = image | b+1 ab+a b2+2b+1 |
+
+                              1
+o15 : S-module, submodule of S
+
+i16 : m ** S
+
+o16 = cokernel {2} | a  0  |
+               {3} | -1 a  |
+               {4} | 0  -1 |
+
+                             3
+o16 : S-module, quotient of S
+
+i17 : 

@@ -11,9 +11,9 @@ o2 : Ideal of R
 
 i3 : M = Ext^2(R^1/J, R)
 
-o3 = cokernel {-3} | c 0  b a 0  |
-              {-3} | d c  0 b a  |
-              {-3} | 0 -d c 0 -b |
+o3 = cokernel {-3} | c  a  0 b 0 |
+              {-3} | -d -b c 0 a |
+              {-3} | 0  0  d c b |
 
                             3
 o3 : R-module, quotient of R

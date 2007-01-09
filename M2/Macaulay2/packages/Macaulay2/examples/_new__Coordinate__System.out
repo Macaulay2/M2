@@ -12,12 +12,18 @@ o2 = S
 
 o2 : PolynomialRing
 
-i3 : newCoordinateSystem(S,matrix{{a+2*b,3*c-d}})
+i3 : (f,g) = newCoordinateSystem(S,matrix{{a+2*b,3*c-d}});
 
-o3 = {map(S,R,{50p, 3r, p + 2q, 3r - s}), map(R,S,{-2a, a - 50c, 34b, b -
-     ------------------------------------------------------------------------
-     d})}
+i4 : f
 
-o3 : List
+o4 = map(S,R,{50p, 3r, p + 2q, 3r - s})
 
-i4 : 
+o4 : RingMap S <--- R
+
+i5 : g
+
+o5 = map(R,S,{-2a, a - 50c, 34b, b - d})
+
+o5 : RingMap R <--- S
+
+i6 : 

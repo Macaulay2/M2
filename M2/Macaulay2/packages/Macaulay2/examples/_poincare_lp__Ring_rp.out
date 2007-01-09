@@ -7,14 +7,14 @@ i2 : poincare R
           2
 o2 = 1 - T
 
-o2 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o2 : ZZ [T]
 
 i3 : numerator hilbertSeries R
 
           2
 o3 = 1 - T
 
-o3 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o3 : ZZ [T]
 
 i4 : R=ZZ/101[x, Degrees => {{1,1}}]/ideal(x^2);
 
@@ -24,7 +24,7 @@ i5 : poincare R
 o5 = 1 - T T
           0 1
 
-o5 : ZZ [T , T , MonomialOrder => RevLex, Inverses => true]
+o5 : ZZ [T , T ]
           0   1
 
 i6 : numerator hilbertSeries R
@@ -33,7 +33,7 @@ i6 : numerator hilbertSeries R
 o6 = 1 - T T
           0 1
 
-o6 : ZZ [T , T , MonomialOrder => RevLex, Inverses => true]
+o6 : ZZ [T , T ]
           0   1
 
 i7 : 

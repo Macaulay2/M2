@@ -63,17 +63,17 @@ o8 : Expression of class Divide
 i9 : code(factor,F)
 
 o9 = -- code for method: factor(F)
-     -- ../../../../Macaulay2/m2/enginering.m2:196
+     -- ../../../../Macaulay2/m2/enginering.m2:202
                factor F := options -> f -> factor numerator f / factor denominator f;
-     | symbol class           value                                                  location of symbol                                  
-     | ------ -----           -----                                                  ------------------
-     |                         ZZ                                                    
-     | R     :PolynomialRing----- [t]                                                ../../../../Macaulay2/m2/enginering.m2:186:45-186:45
-     |                        101
-     | o     :OptionTable   --OptionTable{Adjust => identity                        $../../../../Macaulay2/m2/enginering.m2:187:10-187:10
-     |                                    DegreeRank => 1                           $
-     |                                    Degrees => {{1}}                          $
-     |                        $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-     | F     :FractionField --F                                                      ../../../../Macaulay2/m2/enginering.m2:191:19-191:19
+     | symbol   class             value                                                   location of symbol
+     | ------   -----             -----                                                   ------------------                                  
+     |                             ZZ
+     | R      : PolynomialRing -- --- [t]                                                 ../../../../Macaulay2/m2/enginering.m2:191:45-191:45
+     |                            101                                                    
+     | o      : OptionTable    -- OptionTable{DegreeRank => 1                           . ../../../../Macaulay2/m2/enginering.m2:192:10-192:10
+     |                                        Degrees => {{1}}                          .
+     |                                        Global => true                            .
+     |                            .......................................................
+     | F      : FractionField  -- F                                                       ../../../../Macaulay2/m2/enginering.m2:196:19-196:19
 
 i10 : 

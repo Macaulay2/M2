@@ -1,28 +1,42 @@
 -- -*- M2-comint -*-
 
-i1 : R = ZZ/101[t]
+i1 : R = ZZ/101[x,y];
 
-o1 = R
+i2 : R^2 ** vars R
 
-o1 : PolynomialRing
+o2 = | x y 0 0 |
+     | 0 0 x y |
 
-i2 : f = matrix {{t}}
-
-o2 = | t |
-
-             1       1
+             2       4
 o2 : Matrix R  <--- R
 
-i3 : degrees source f
+i3 : (vars R) ** R^2
 
-o3 = {{1}}
+o3 = | x 0 y 0 |
+     | 0 x 0 y |
 
-o3 : List
+             2       4
+o3 : Matrix R  <--- R
 
-i4 : degrees source (f ** R^{-3})
+i4 : R = ZZ/101[t];
 
-o4 = {{4}}
+i5 : f = matrix {{t}}
 
-o4 : List
+o5 = | t |
 
-i5 : 
+             1       1
+o5 : Matrix R  <--- R
+
+i6 : degrees source f
+
+o6 = {{1}}
+
+o6 : List
+
+i7 : degrees source (f ** R^{-3})
+
+o7 = {{4}}
+
+o7 : List
+
+i8 : 

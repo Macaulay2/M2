@@ -53,6 +53,6 @@ o9 : PolynomialRing
 
 i10 : describe ring f
 
-o10 = QQ [x, y, z]
+o10 = QQ [x, y, z, Heft => {1}]
 
 i11 : 

@@ -38,7 +38,7 @@ o8 : RingMap B <--- B
 
 i9 : oo == id_B
 
-o9 = false
+o9 = true
 
 i10 : G*F
 
@@ -48,7 +48,7 @@ o10 : RingMap C <--- C
 
 i11 : oo == id_C
 
-o11 = false
+o11 = true
 
 i12 : D = QQ[x,y,z];
 

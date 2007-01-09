@@ -59,25 +59,25 @@ o2 : Ideal of R
 
 i3 : gens gb(I,PairLimit=>7);
 
-             1       11
+             1       7
 o3 : Matrix R  <--- R
 
 i4 : g = gb(I,StopBeforeComputation => true);
 
 i5 : leadTerm gens g
 
-o5 = | ab2 a2b a3 b3c b4 b2c3 abc3 a2c3 bc5 ac5 c7 |
+o5 = | ab2 a2b a3 b3c b4 abc3 a2c3 |
 
-             1       11
+             1       7
 o5 : Matrix R  <--- R
 
 i6 : gbSnapshot = (I) -> gens gb(I,StopBeforeComputation => true);
 
 i7 : leadTerm gbSnapshot(I)
 
-o7 = | ab2 a2b a3 b3c b4 b2c3 abc3 a2c3 bc5 ac5 c7 |
+o7 = | ab2 a2b a3 b3c b4 abc3 a2c3 |
 
-             1       11
+             1       7
 o7 : Matrix R  <--- R
 
 i8 : 

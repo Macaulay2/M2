@@ -21,12 +21,12 @@ o3 : A-module, quotient of A
 
 i4 : H = Hom(M,N)
 
-o4 = subquotient (| 1  0  |, | x 0 0 y 0 0 |)
-                  | 0  1  |  | z 0 0 0 0 0 |
-                  | -2 0  |  | 0 x 0 0 y 0 |
-                  | 0  -2 |  | 0 z 0 0 0 0 |
-                  | 1  0  |  | 0 0 x 0 0 y |
-                  | 0  1  |  | 0 0 z 0 0 0 |
+o4 = subquotient (| 1  0  |, | y x 0 0 0 0 |)
+                  | 0  1  |  | 0 z 0 0 0 0 |
+                  | -2 0  |  | 0 0 y x 0 0 |
+                  | 0  -2 |  | 0 0 0 z 0 0 |
+                  | 1  0  |  | 0 0 0 0 y x |
+                  | 0  1  |  | 0 0 0 0 0 z |
 
                                6
 o4 : A-module, subquotient of A

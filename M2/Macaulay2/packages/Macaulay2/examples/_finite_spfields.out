@@ -92,13 +92,13 @@ o12 : GaloisField
 
 i13 : k_0
 
-o13 = GF$a
+o13 = a
 
 o13 : k
 
 i14 : a = k_0
 
-o14 = GF$a
+o14 = a
 
 o14 : k
 
@@ -110,31 +110,31 @@ o15 : k
 
 i16 : ambient k
 
-              ZZ
-              -- [GF$a]
-               3
-o16 = ------------------------
-          4       2
-      GF$a  + GF$a  + GF$a + 1
+           ZZ
+           -- [a]
+            3
+o16 = ---------------
+       4    2
+      a  + a  + a + 1
 
 o16 : QuotientRing
 
 i17 : ideal oo
 
-                4       2
-o17 = ideal(GF$a  + GF$a  + GF$a + 1)
+             4    2
+o17 = ideal(a  + a  + a + 1)
 
                ZZ
-o17 : Ideal of -- [GF$a]
+o17 : Ideal of -- [a]
                 3
 
 i18 : oo_0
 
-          4       2
-o18 = GF$a  + GF$a  + GF$a + 1
+       4    2
+o18 = a  + a  + a + 1
 
       ZZ
-o18 : -- [GF$a]
+o18 : -- [a]
        3
 
 i19 : F = GF(16, Variable => b)

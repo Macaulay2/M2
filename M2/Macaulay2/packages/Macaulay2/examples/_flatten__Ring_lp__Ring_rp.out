@@ -1,0 +1,130 @@
+-- -*- M2-comint -*-
+
+i1 : A = ZZ[a]/(a^2-3)
+
+o1 = A
+
+o1 : QuotientRing
+
+i2 : B = A[x,y,z]/(a*x^2-y^2-z^2, y^3, z^3)
+
+o2 = B
+
+o2 : QuotientRing
+
+i3 : (D,F,G) = flattenRing B
+
+o3 = (D, map(D,B,{x, y, z, a}), map(B,D,{x, y, z, a}))
+
+o3 : Sequence
+
+i4 : describe D      
+
+             ZZ [x, y, z, a]
+o4 = -------------------------------
+       2     2    2   3   3   2
+     (x a - y  - z , y , z , a  - 3)
+
+i5 : K = frac(ZZ[a])
+
+o5 = K
+
+o5 : FractionField
+
+i6 : B = K[x,y,z]/(a*x^2-y^2-z^2, y^3, z^3)
+
+o6 = B
+
+o6 : QuotientRing
+
+i7 : (D,F,G) = flattenRing B
+
+o7 = (B, map(B,B,{x, y, z, a}), map(B,B,{x, y, z, a}))
+
+o7 : Sequence
+
+i8 : describe D      
+
+            K [x, y, z]
+o8 = ------------------------
+         2    2    2   3   3
+     (a*x  - y  - z , y , z )
+
+i9 : L = toField A
+
+o9 = A
+
+o9 : QuotientRing
+
+i10 : B = L[x,y,z]/(a*x^2-y^2-z^2, y^3, z^3)
+
+o10 = B
+
+o10 : QuotientRing
+
+i11 : (D,F,G) = flattenRing(B[s,t])
+
+o11 = (D, map(D,B [s, t],{s, t, x, y, z, a}), map(B [s, t],D,{s, t, x, y, z,
+      -----------------------------------------------------------------------
+      a}))
+
+o11 : Sequence
+
+i12 : describe D      
+
+          A [s, t, x, y, z]
+o12 = ------------------------
+          2    2    2   3   3
+      (a*x  - y  - z , y , z )
+
+i13 : use L
+
+o13 = A
+
+o13 : QuotientRing
+
+i14 : C1 = L[s,t];
+
+i15 : C2 = C1/(a*s-t^2);
+
+i16 : C3 = C2[p_0..p_4]/(a*s*p_0)[q]/(q^2-a*p_1);
+
+i17 : (D,F,G) = flattenRing(C3, CoefficientRing=>C2)
+
+o17 = (D, map(D,C3,{q, p , p , p , p , p , s, t, a}), map(C3,D,{q, p , p ,
+                        0   1   2   3   4                           0   1 
+      -----------------------------------------------------------------------
+      p , p , p , s, t, a}))
+       2   3   4
+
+o17 : Sequence
+
+i18 : describe D
+
+      C2 [q, p , p , p , p , p ]
+              0   1   2   3   4
+o18 = --------------------------
+            2
+          (q  - a*p , a*s*p )
+                   1       0
+
+i19 : (D,F,G) = flattenRing(C3, CoefficientRing=>ZZ)
+
+o19 = (D, map(D,C3,{q, p , p , p , p , p , s, t, a}), map(C3,D,{q, p , p ,
+                        0   1   2   3   4                           0   1 
+      -----------------------------------------------------------------------
+      p , p , p , s, t, a}))
+       2   3   4
+
+o19 : Sequence
+
+i20 : describe D
+
+       ZZ [q, p , p , p , p , p , s, t, a]
+               0   1   2   3   4
+o20 = -------------------------------------
+        2                  2         2
+      (q  - p a, p s*a, - t  + s*a, a  - 3)
+             1    0
+
+i21 : 

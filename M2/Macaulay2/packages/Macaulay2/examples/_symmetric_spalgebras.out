@@ -2,46 +2,70 @@
 
 i1 : R = QQ[a..d];
 
-i2 : S = symmetricAlgebra R^3
+i2 : symmetricAlgebra R^3
 
-o2 = S
+o2 = QQ [p , p , p , p , p , p , p ]
+          0   1   2   3   4   5   6
 
 o2 : PolynomialRing
 
-i3 : describe S
+i3 : a
 
-o3 = QQ [x , x , x , a, b, c, d, Degrees => {{1, 0}, {1, 0}, {1, 0}, {0, 1},
-          0   1   2
-     ------------------------------------------------------------------------
-     {0, 1}, {0, 1}, {0, 1}}]
+o3 = a
 
-i4 : S_0+S_4
+o3 : R
 
-o4 = x  + b
+i4 : p_0
+
+o4 = p
       0
 
-o4 : S
+o4 : IndexedVariable
 
-i5 : S_"x_0"
+i5 : S = o2;
 
-o5 = x
+i6 : a
+
+o6 = a
+
+o6 : R
+
+i7 : p_0
+
+o7 = p
       0
 
-o5 : S
+o7 : S
 
-i6 : S = symmetricAlgebra(R^3, Variables => {t,u,v})
+i8 : symmetricAlgebra(R^3, Variables => {t,u,v})
 
-o6 = S
+o8 = QQ [p , p , p , p , p , p , p ]
+          0   1   2   3   4   5   6
 
-o6 : PolynomialRing
+o8 : PolynomialRing
 
-i7 : symmetricAlgebra(R^1/(R_0,R_1^3), Variables => {t})
+i9 : symmetricAlgebra(R^3, VariableBaseName => t)
 
-     QQ [t, a, b, c, d, Degrees => {{1, 0}, {0, 1}, {0, 1}, {0, 1}, {0, 1}}]
-o7 = -----------------------------------------------------------------------
-                                            3
-                                   (t*a, t*b )
+o9 = QQ [t , t , t , t , t , t , t ]
+          0   1   2   3   4   5   6
 
-o7 : QuotientRing
+o9 : PolynomialRing
 
-i8 : 
+i10 : use R
+
+o10 = R
+
+o10 : PolynomialRing
+
+i11 : symmetricAlgebra(R^1/(a,b^3))
+
+      QQ [p , p , p , p , p ]
+           0   1   2   3   4
+o11 = -----------------------
+                      3
+            (p p , p p )
+              0 1   0 2
+
+o11 : QuotientRing
+
+i12 : 

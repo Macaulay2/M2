@@ -1,12 +1,12 @@
-newPackage "P"
-export x
-x=3
-endPackage "P"
+newPackage "PKG"
+export x1
+x1=3
+endPackage "PKG"
 dictionaryPath
-x
-dismiss P
+x1
+dismiss PKG
 dictionaryPath
-x
+x1
 values PackageDictionary
-use P
-x
+use PKG
+x1

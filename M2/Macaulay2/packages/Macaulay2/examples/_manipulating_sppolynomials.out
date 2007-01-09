@@ -285,7 +285,7 @@ o39 = false
 i40 : sort {b^2-1,a*b,a+1,a,b}
 
                      2
-o40 = {b, a + 1, a, b  - 1, a*b}
+o40 = {b, a, a + 1, b  - 1, a*b}
 
 o40 : List
 

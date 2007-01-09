@@ -43,10 +43,10 @@ o8 : Matrix A  <--- A
 
 i9 : minimalPresentation C
 
-     QQ [a, b, c, d, MonomialOrder => GRevLex => 4]
-o9 = ----------------------------------------------
-                   2   2
-                 (b , a , b*c*d, a*b*c)
+         QQ [a, b, c, d]
+o9 = ----------------------
+       2   2
+     (b , a , b*c*d, a*b*c)
 
 o9 : QuotientRing
 

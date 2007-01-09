@@ -2,25 +2,30 @@
 
 i1 : src = temporaryFileName()
 
-o1 = /tmp/M2-28102-1
+o1 = /tmp/M2-19617-1
 
 i2 : dst = temporaryFileName()
 
-o2 = /tmp/M2-28102-2
+o2 = /tmp/M2-19617-2
 
 i3 : src << "hi there" << close
 
-o3 = /tmp/M2-28102-1
+o3 = /tmp/M2-19617-1
 
 o3 : File
 
 i4 : moveFile(src,dst,Verbose=>true)
---moving: /tmp/M2-28102-1 -> /tmp/M2-28102-2
+--moving: /tmp/M2-19617-1 -> /tmp/M2-19617-2
 
 i5 : get dst
 
 o5 = hi there
 
-i6 : removeFile dst
+i6 : bak = moveFile(dst,Verbose=>true)
+--backup file created: /tmp/M2-19617-2.bak
 
-i7 : 
+o6 = /tmp/M2-19617-2.bak
+
+i7 : removeFile bak
+
+i8 : 

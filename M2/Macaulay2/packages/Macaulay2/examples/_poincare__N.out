@@ -26,12 +26,12 @@ i4 : p = poincareN C
 o4 = 1 + 2S*T  + S*T  + S T  + 2S T  + S T
              0      0      0       0      0
 
-o4 : ZZ [S, T , MonomialOrder => RevLex, Inverses => true]
+o4 : ZZ [S, T ]
              0
 
 i5 : use ring p
 
-o5 = ZZ [S, T , MonomialOrder => RevLex, Inverses => true]
+o5 = ZZ [S, T ]
              0
 
 o5 : PolynomialRing
@@ -42,7 +42,7 @@ i6 : substitute(p, {S=>-1})
 o6 = 1 - 2T  + 2T  - T
            0     0    0
 
-o6 : ZZ [S, T , MonomialOrder => RevLex, Inverses => true]
+o6 : ZZ [S, T ]
              0
 
 i7 : 

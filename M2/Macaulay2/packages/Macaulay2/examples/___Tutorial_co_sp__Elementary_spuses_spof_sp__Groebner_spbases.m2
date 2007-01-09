@@ -41,12 +41,12 @@ Tr^6 % I
 Tr^7 % I
 Tr^6 // I
 Tr^6 == I * (Tr^6 // I) + (Tr^6 % I)
-erase global x
+x = global x
 R = KK[x_0..x_3] 
 M = map(R^2, 3, (i,j)->x_(i+j))
 I = gens minors(2,M)
 pideal = ideal(x_0+x_3, x_1, x_2)
-erase global y
+y = global y
 S = KK[y_0..y_3,MonomialOrder=> Eliminate 1]
 I1 = substitute(I, matrix{{y_0,y_1,y_2,y_3-y_0}})
 J = selectInSubring(1,gens gb I1)

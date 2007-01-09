@@ -2,15 +2,15 @@
 
 i1 : dictionaryPath
 
-o1 = {User#"private dictionary", Parsing.Dictionary, TangentCone.Dictionary,
+o1 = {Elimination.Dictionary, LLLBases.Dictionary,
      ------------------------------------------------------------------------
-     SchurRings.Dictionary, Classic.Dictionary,
+     IntegralClosure.Dictionary, PrimaryDecomposition.Dictionary,
      ------------------------------------------------------------------------
-     PrimaryDecomposition.Dictionary, LLLBases.Dictionary,
+     Classic.Dictionary, SchurRings.Dictionary, TangentCone.Dictionary,
      ------------------------------------------------------------------------
-     Elimination.Dictionary, Core.Dictionary, OutputDictionary,
+     Parsing.Dictionary, User#"private dictionary", Core.Dictionary,
      ------------------------------------------------------------------------
-     PackageDictionary}
+     OutputDictionary, PackageDictionary}
 
 o1 : List
 
@@ -18,7 +18,7 @@ i2 : values PackageDictionary
 
 o2 = {Parsing, Classic, Elimination, LLLBases, PrimaryDecomposition,
      ------------------------------------------------------------------------
-     TangentCone, User, SchurRings, Core}
+     TangentCone, User, SchurRings, IntegralClosure, Core}
 
 o2 : List
 

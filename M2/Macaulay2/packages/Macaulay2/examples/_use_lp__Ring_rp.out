@@ -47,7 +47,7 @@ i8 : hf = poincare ideal vars S
                 2     3    4
 o8 = 1 - 4T + 6T  - 4T  + T
 
-o8 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o8 : ZZ [T]
 
 i9 : T
 
@@ -57,7 +57,7 @@ o9 : Symbol
 
 i10 : use ring hf
 
-o10 = ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o10 = ZZ [T]
 
 o10 : PolynomialRing
 
@@ -65,6 +65,6 @@ i11 : T
 
 o11 = T
 
-o11 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o11 : ZZ [T]
 
 i12 : 

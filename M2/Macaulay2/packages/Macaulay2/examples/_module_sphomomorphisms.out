@@ -72,7 +72,7 @@ o14 = false
 
 i15 : prune coker G
 
-o15 = cokernel {1} | y x |
+o15 = cokernel | y x |
 
                              1
 o15 : R-module, quotient of R

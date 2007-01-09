@@ -17,7 +17,7 @@ i3 : hilbertSeries(R/x^3, Order =>5)
                 2     3     4
 o3 = 1 + 2T + 3T  + 3T  + 3T
 
-o3 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o3 : ZZ [T]
 
 i4 : R = ZZ/101[x,y, Degrees=>{{1,2},{2,3}}];
 
@@ -27,7 +27,7 @@ i5 : hilbertSeries(R/x^3, Order =>5)
 o5 = 1 + T T  + T T  + T T  + T T  + T T  + T T
           0 1    0 1    0 1    0 1    0 1    0 1
 
-o5 : ZZ [T , T , MonomialOrder => RevLex, Inverses => true]
+o5 : ZZ [T , T ]
           0   1
 
 i6 : 

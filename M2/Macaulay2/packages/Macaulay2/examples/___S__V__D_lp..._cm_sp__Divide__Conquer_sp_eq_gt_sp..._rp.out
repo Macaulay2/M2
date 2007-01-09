@@ -6,9 +6,9 @@ i1 : M = random(RR^200, RR^200);
 o1 : Matrix RR    <--- RR
 
 i2 : time SVD(M);
-     -- used 0.392025 seconds
+     -- used 0.940059 seconds
 
 i3 : time SVD(M, DivideConquer=>true);
-     -- used 0.192012 seconds
+     -- used 0.224014 seconds
 
 i4 : 

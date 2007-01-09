@@ -14,7 +14,7 @@ i3 : removeFile "junk"
 
 i4 : get "!date"
 
-o4 = Fri Jul 14 23:48:22 CDT 2006
+o4 = Sun Nov  5 09:19:45 CST 2006
 
 
 i5 : 

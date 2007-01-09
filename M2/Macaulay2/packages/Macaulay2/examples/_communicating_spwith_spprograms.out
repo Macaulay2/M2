@@ -1,7 +1,7 @@
 -- -*- M2-comint -*-
 
 i1 : run "uname -a"
-Linux rhodium 2.6.16 #3 SMP PREEMPT Mon Jun 12 11:56:50 CDT 2006 i686 unknown unknown GNU/Linux
+Linux rhodium 2.6.18.1 #1 SMP PREEMPT Mon Oct 30 07:49:46 CST 2006 i686 unknown unknown GNU/Linux
 
 o1 = 0
 
@@ -15,7 +15,7 @@ o2 : File
 
 i3 : peek get "!uname -a"
 
-o3 = "Linux rhodium 2.6.16 #3 SMP PREEMPT Mon Jun 12 11:56:50 CDT 2006 i686
+o3 = "Linux rhodium 2.6.18.1 #1 SMP PREEMPT Mon Oct 30 07:49:46 CST 2006 i686
      unknown unknown GNU/Linux\n"
 
 i4 : f = openInOut "!egrep '^in'"
@@ -40,7 +40,6 @@ o7 = interpreterDepth
      inducedMap
      installPackage
      installMethod
-     integralClosure
      instance
      info
      intersect

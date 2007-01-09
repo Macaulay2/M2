@@ -149,7 +149,7 @@ o33 : PolynomialRing
 i34 : describe R
 
       ZZ
-o34 = -- [x, y, z]
+o34 = -- [x, y, z, Heft => {1}]
        5
 
 i35 : F = R^3
@@ -209,18 +209,18 @@ o41 : Ideal of R
 
 i42 : kernel f
 
-o42 = image {1} | 0  -y -z |
-            {1} | -z x  0  |
-            {1} | y  0  x  |
+o42 = image {1} | -y 0  -z |
+            {1} | x  -z 0  |
+            {1} | 0  y  x  |
 
                               3
 o42 : R-module, submodule of R
 
 i43 : generators oo
 
-o43 = {1} | 0  -y -z |
-      {1} | -z x  0  |
-      {1} | y  0  x  |
+o43 = {1} | -y 0  -z |
+      {1} | x  -z 0  |
+      {1} | 0  y  x  |
 
               3       3
 o43 : Matrix R  <--- R
@@ -230,7 +230,7 @@ i44 : poincare kernel f
         2    3
 o44 = 3T  - T
 
-o44 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o44 : ZZ [T]
 
 i45 : rank kernel f
 
@@ -238,8 +238,8 @@ o45 = 2
 
 i46 : presentation kernel f
 
-o46 = {2} | x  |
-      {2} | z  |
+o46 = {2} | z  |
+      {2} | x  |
       {2} | -y |
 
               3       1
@@ -254,9 +254,9 @@ o47 : R-module, quotient of R
 
 i48 : N = kernel f ++ cokernel f
 
-o48 = subquotient ({1} | 0  -y -z 0 |, {1} | 0 0 0 |)
-                   {1} | -z x  0  0 |  {1} | 0 0 0 |
-                   {1} | y  0  x  0 |  {1} | 0 0 0 |
+o48 = subquotient ({1} | -y 0  -z 0 |, {1} | 0 0 0 |)
+                   {1} | x  -z 0  0 |  {1} | 0 0 0 |
+                   {1} | 0  y  x  0 |  {1} | 0 0 0 |
                    {0} | 0  0  0  1 |  {0} | x y z |
 
                                 4
@@ -264,9 +264,9 @@ o48 : R-module, subquotient of R
 
 i49 : generators N
 
-o49 = {1} | 0  -y -z 0 |
-      {1} | -z x  0  0 |
-      {1} | y  0  x  0 |
+o49 = {1} | -y 0  -z 0 |
+      {1} | x  -z 0  0 |
+      {1} | 0  y  x  0 |
       {0} | 0  0  0  1 |
 
               4       4
@@ -284,8 +284,8 @@ o50 : Matrix R  <--- R
 
 i51 : prune N
 
-o51 = cokernel {2} | 0 0 0 x  |
-               {2} | 0 0 0 z  |
+o51 = cokernel {2} | 0 0 0 z  |
+               {2} | 0 0 0 x  |
                {2} | 0 0 0 -y |
                {0} | z y x 0  |
 
@@ -358,7 +358,7 @@ o58 = cokernel | a d g j m p |
 o58 : R-module, quotient of R
 
 i59 : time C = resolution M
-     -- used 0.008001 seconds
+     -- used 0.008 seconds
 
        3      6      15      18      6
 o59 = R  <-- R  <-- R   <-- R   <-- R  <-- 0

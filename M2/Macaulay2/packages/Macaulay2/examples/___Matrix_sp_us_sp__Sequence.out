@@ -1,0 +1,37 @@
+-- -*- M2-comint -*-
+
+i1 : M = matrix{{1,2,3},{0,5,6}}
+
+o1 = | 1 2 3 |
+     | 0 5 6 |
+
+              2        3
+o1 : Matrix ZZ  <--- ZZ
+
+i2 : M_(1,2)
+
+o2 = 6
+
+i3 : N = mutableMatrix M
+
+o3 = | 1 2 3 |
+     | . 5 6 |
+
+o3 : MutableMatrix
+
+i4 : N_(1,0)
+
+o4 = 0
+
+i5 : N_(1,0) = 37
+
+o5 = 37
+
+i6 : N
+
+o6 = | 1  2 3 |
+     | 37 5 6 |
+
+o6 : MutableMatrix
+
+i7 : 

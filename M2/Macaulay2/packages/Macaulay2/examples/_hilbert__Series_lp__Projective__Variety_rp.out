@@ -19,6 +19,6 @@ i3 : numerator s
 
 o3 = 1
 
-o3 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+o3 : ZZ [T]
 
 i4 : 

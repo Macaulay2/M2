@@ -11,13 +11,17 @@ o2 : PolynomialRing
 i3 : describe R
 
       ZZ
-o3 = --- [a, b, c , c ]
+o3 = --- [a, b, c , c , Heft => {1}]
      101         1   2
 
 i4 : toString describe R
 
 o4 =  ZZ
-     --- [a, b, c , c ]
+     --- [a, b, c , c , Heft => {1}]
      101         1   2
 
-i5 : 
+i5 : toExternalString R
+
+o5 = ZZ/101 [a, b, c_1, c_2, Heft => {1}]
+
+i6 : 

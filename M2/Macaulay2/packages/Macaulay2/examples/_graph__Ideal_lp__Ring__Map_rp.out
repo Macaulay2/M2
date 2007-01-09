@@ -21,9 +21,11 @@ o3 : RingMap R <--- S
 
 i4 : graphIdeal f
 
-               2                    2
-o4 = ideal (- x  + s, - x*y + t, - y  + u)
+               2                       2
+o4 = ideal (- p  + p , - p p  + p , - p  + p )
+               0    2     0 1    3     1    4
 
-o4 : Ideal of QQ [x, y, s, t, u, Degrees => {{1}, {1}, {2}, {2}, {2}}]
+o4 : Ideal of QQ [p , p , p , p , p ]
+                   0   1   2   3   4
 
 i5 : 

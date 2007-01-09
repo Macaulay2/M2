@@ -8,7 +8,7 @@ i2 : R = QQ[x_1..x_5];
 
 i3 : toExternalString R
 
-o3 = QQ [x_1, x_2, x_3, x_4, x_5]
+o3 = QQ [x_1, x_2, x_3, x_4, x_5, Heft => {1}]
 
 i4 : x_1^3-3/4*x_5*x_3
 
