@@ -17,6 +17,8 @@
    -- non-commutative blocks should be added in
 */
 
+static char mom[] = "monomial overflow";
+
 static int ntmpexp = 0;
 static int *tmpexp = 0; /* Set to an array 0..ntmpexp-1 of ints */
 
@@ -302,7 +304,7 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
 
 	  /* divide the wt vector by the degree vector */
 	  for (j=0; j<result->blocks[i].nvars; j++)
-	    safe::div_by(result->blocks[i].weights[j],result->degs[j],wom);;
+	    safe::div_by(result->blocks[i].weights[j],result->degs[j],mom);;
 	}
       else if (typ == MO_GREVLEX_WTS || typ == MO_GREVLEX2_WTS || typ == MO_GREVLEX4_WTS)
 	{
@@ -339,8 +341,6 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
 extern void monomialOrderFree(MonomialOrder *mo)
 {
 }
-
-static char mom[] = "monomial overflow";
 
 static void MO_pack4(int nvars, const int *expon, int *slots)
 {
