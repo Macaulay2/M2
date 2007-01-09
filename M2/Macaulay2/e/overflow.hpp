@@ -147,12 +147,12 @@ namespace safe {
      }
 
      static inline int32_t div_by(int32_t &x, int32_t y, const char *msg) {
-	  if (y == 0) throw(exc::div_byision_by_zero_error(msg));
+	  if (y == 0) throw(exc::division_by_zero_error(msg));
 	  if (x == -x && x < 0 && y == -1) throw(exc::overflow_error(msg));
 	  return x = x/y;
      }
      static inline int32_t div_by(int32_t &x, int32_t y) {
-	  if (y == 0) throw(exc::div_byision_by_zero_error("div_byision by zero"));
+	  if (y == 0) throw(exc::division_by_zero_error("div_byision by zero"));
 	  if (x == -x && x < 0 && y == -1) throw(exc::overflow_error("overflow: int32 / int32"));
 	  return x/y;
      }
