@@ -111,24 +111,6 @@ document {
      }
 
 document {
-     Key => {(symbol _,Module,Array),(symbol _,ChainComplex,Array)},
-     Headline => "get inclusion map into direct sum",
-     TT "M_[i,j,k]", " -- get inclusion map of blocks from a module ", TT "M", ".",
-     PARA{},
-     "The module ", TT "M", " should be a direct sum, and the result is the matrix
-     obtained by inclusion from the sum of the components numbered
-     ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
-     PARA{},
-     "This method works also for chain complexes.",
-     EXAMPLE {
-	  "M = ZZ^2 ++ ZZ^3",
-      	  "M_[0]",
-      	  "M_[1]",
-      	  "M_[1,0]",
-	  },
-     SeeAlso => {submatrix, (symbol _,Matrix,Array), (symbol ^,Module,Array),(symbol _,Module,List)}
-     }
-document {
      Key => (symbol ^, Module, List),
      Headline => "projection onto summand",
      TT "M^{i,j,k,...}", " -- provides the projection map from a free module

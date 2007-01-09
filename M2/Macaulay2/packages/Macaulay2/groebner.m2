@@ -473,20 +473,15 @@ document {
 	       EXAMPLE {
 		    "g = gb(I,StopBeforeComputation => true);",
 	       	    "leadTerm gens g"},
-	       "We can make a Groebner basis snapshot by using StopBeforeComputation:",
-	       EXAMPLE {
-		    "gbSnapshot = (I) -> gens gb(I,StopBeforeComputation => true);",
-	            "leadTerm gbSnapshot(I)"}
---	  SUBSECTION ""
+	       "We can make a Groebner basis snapshot by using StopBeforeComputation, or ", TO gbSnapshot, ":",
+	       EXAMPLE lines ///
+		    gens gb(I,StopBeforeComputation => true)
+	            leadTerm gbSnapshot(I)
+		    ///
      }
 
 ///
 
-gbRemove = method()
-gbRemove Module := (M) -> remove((generators M).cache, {false,0})
-gbRemove Ideal := (I) -> remove((generators I).cache, {false,0})
-  -- PROBLEM: what about the other GB
-  
 R = QQ[a..d,Weights=>{-1,0,0,0},Global=>false]
 f = a+b^2+c^3-2*d^4+1+a*b*c*d
 leadTerm f
@@ -497,8 +492,5 @@ M = image vars R
 gbSnapshot(M)
 gb(M,PairLimit=>2)
 m1 = gbSnapshot(M)
---gb(M,PairLimit=>4)
---m1  -- This has changed!  We probably don't want that
-    -- BUG: segmentation fault!!
-
+gens gb M
 ///
