@@ -518,7 +518,8 @@ int monomialOrderToActualExponents(const MonomialOrder *mo,
   int i;
   for (i=0; i<mo->nvars; i++)
     {
-      result_exp[i] = safe::div(expon[i],mo->degs[i],mom);
+	 assert( mo->degs[i] > 0 ); // no overflow in division is possible in this case
+	 result_exp[i] = expon[i] / mo->degs[i]; // ... so we don't have to use safe::div here
     }
   return 1;
 }
