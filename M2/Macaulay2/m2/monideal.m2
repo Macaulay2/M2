@@ -132,7 +132,9 @@ intersect(Sequence) := args -> (
 
 borel MonomialIdeal := MonomialIdeal => (I) -> newMonomialIdeal(ring I, rawStronglyStableClosure raw I)
 isBorel MonomialIdeal := Boolean => m -> rawIsStronglyStable raw m
-codim MonomialIdeal := m -> rawCodimension raw m
+codim MonomialIdeal := m -> (
+     if not isAffineRing ring m then error "codim MonomialIdeal: expected an affine ring";
+     rawCodimension raw m)
 
 poincare MonomialIdeal := M -> (
      R := ring M;
