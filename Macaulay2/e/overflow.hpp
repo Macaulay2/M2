@@ -18,7 +18,6 @@
 namespace safe {
 
      void ov(const char *msg);
-     void dz(const char *msg);
 
      static inline int32_t fits_7(int32_t x,const char *msg) {
 	  if ((x & ~0x7f) != 0) ov(msg);
@@ -131,7 +130,7 @@ namespace safe {
      }
 
      static inline int32_t mult_by(int32_t &x, int32_t y, const char *msg) {
-	  int64_t z = x*(int64_t)y;
+	  int64_t z = x * (int64_t)y;
 	  int32_t w = z;
 	  if (z != (int64_t)w) ov(msg);
 	  return x=w;
@@ -141,25 +140,19 @@ namespace safe {
      }
 
      static inline int32_t div(int32_t x, int32_t y, const char *msg) {
-	  if (y == 0) dz(msg);
 	  if (x == -x && x < 0 && y == -1) ov(msg);
-	  return x/y;
+	  return x / y;
      }
      static inline int32_t div(int32_t x, int32_t y) {
-	  if (y == 0) dz("division by zero");
-	  if (x == -x && x < 0 && y == -1) ov("overflow: int32 / int32");
-	  return x/y;
+	  return div(x,y,"overflow: int32 / int32");
      }
 
      static inline int32_t div_by(int32_t &x, int32_t y, const char *msg) {
-	  if (y == 0) dz(msg);
 	  if (x == -x && x < 0 && y == -1) ov(msg);
-	  return x = x/y;
+	  return x /= y;
      }
      static inline int32_t div_by(int32_t &x, int32_t y) {
-	  if (y == 0) dz("division by zero");
-	  if (x == -x && x < 0 && y == -1) ov("overflow: int32 / int32");
-	  return x/y;
+	  return div_by(x,y,"overflow: int32 / int32");
      }
 
 };
