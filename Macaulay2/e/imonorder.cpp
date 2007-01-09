@@ -474,7 +474,7 @@ void monomialOrderEncode(const MonomialOrder *mo,
       }
       else {
 	   s = safe::mult(b->weights[0],expon[0],mom);
-	   for (j=1; j<b->nweights; j++) s = safe::add(s,safe::add(b->weights[j],expon[j],mom),mom);
+	   for (j=1; j<b->nweights; j++) s = safe::add(s,safe::mult(b->weights[j],expon[j],mom),mom);
       }
       *p++ = s;
       break;
