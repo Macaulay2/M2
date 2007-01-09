@@ -135,7 +135,7 @@ export rawCompareMonomial(e:Expr):Expr := (
      when s.1 is x:RawMonomial do
      when s.2 is y:RawMonomial do (
 	  r := Ccode(int, "rawCompareMonomial((Monoid *)", M,",(Monomial *)", x, ",(Monomial *)", y, ")");
-	  if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	  if r == -1 then LessE else if r == 1 then GreaterE else if r == 0 then EqualEqualE else if r == -2 then engineErrorMessage() else Expr(toInteger(r))
 	  )
      else WrongArg(3,"a raw monomial")
      else WrongArg(2,"a raw monomial")
@@ -147,7 +147,9 @@ export rawMonomialDivides(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMonoid do
      when s.1 is x:RawMonomial do
-     when s.2 is y:RawMonomial do toExpr(Ccode(bool, "rawMonomialDivides((Monoid *)", M,",(Monomial *)", x, ",(Monomial *)", y, ")"))
+     when s.2 is y:RawMonomial do (
+	  r := Ccode(int, "rawMonomialDivides((Monoid *)", M,",(Monomial *)", x, ",(Monomial *)", y, ")");
+	  if r == 0 then False else if r == 1 then True else if r == -2 then engineErrorMessage() else Expr(toInteger(r)) )
      else WrongArg(3,"a raw monomial")
      else WrongArg(2,"a raw monomial")
      else WrongArg(1,"a raw monoid")

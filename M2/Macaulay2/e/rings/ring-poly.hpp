@@ -60,7 +60,7 @@ private:
     return v;
   }
 
-  enum {LT, EQ, GT} poly_compare(const poly *f, const poly *g);
+  enum {LT =-1, EQ = 0, GT = 1} poly_compare(const poly *f, const poly *g);
 
   int (PolyRing<CoeffRing,Monoid>::*compare_fcn)(poly *f, poly *g);
 

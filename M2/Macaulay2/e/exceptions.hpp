@@ -12,6 +12,9 @@ namespace exc {
      struct overflow_error : public engine_error {
 	  explicit overflow_error(const string &msg) : engine_error(msg) {}
      };
+     struct division_by_zero_error : public engine_error {
+	  explicit division_by_zero_error(const string &msg) : engine_error(msg) {}
+     };
      struct internal_error : public engine_error {
 	  explicit internal_error(const string &msg) : engine_error(msg) {}
      };
