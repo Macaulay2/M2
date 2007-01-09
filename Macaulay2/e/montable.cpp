@@ -95,6 +95,19 @@ MonomialTable::~MonomialTable()
   _count = 0;
 }
 
+void MonomialTable::move_up(mon_term * const y,mon_term * const head) {
+     if (head->_next == y) return;
+     mon_term * const x = y->_prev;
+     mon_term * const w = x->_prev;
+     mon_term * const z = y->_next;
+     w->_next = y;
+     z->_prev = x;
+     x->_next = z; 
+     x->_prev = y;
+     y->_next = x; 
+     y->_prev = w;
+}
+
 int MonomialTable::find_divisor(exponents exp, int comp)
 {
   assert(comp >= 1);
@@ -106,6 +119,7 @@ int MonomialTable::find_divisor(exponents exp, int comp)
     if ((expmask & t->_mask) == 0)
 	 if (ntuple::divides(_nvars,t->_lead,exp)) {
 	      _last_match = t;
+	      move_up(t,head);
 	      return t->_val;
 	 }
   return -1;
@@ -128,13 +142,14 @@ int MonomialTable::find_divisors(int max,
   unsigned long expmask = ~(monomial_mask(_nvars, exp));
   //*DEBUG*/ long nviewed = 0;
   //*DEBUG*/ long nmasked = 0;
-  for (mon_term *t = head->_next; t != head; t = t->_next)
+  for (mon_term *t = head->_next, *tnext = t->_next; t != head; t = tnext, tnext = t->_next)
     if ((expmask & t->_mask) == 0)
       {
 	   //*DEBUG*/	nviewed++;
 	   if (ntuple::divides(_nvars,t->_lead,exp)) {
 		nmatches++; // this doesn't happen very often
 		_last_match = t;
+		move_up(t,head);
 		if (result != NULL) result->push_back(t);
 		if (max >= 0 && nmatches >= max) break;
 	   }
@@ -194,6 +209,11 @@ void MonomialTable::insert(exponents exp, int comp, int id)
   _count++;
 
   /* Find where to put it */
+#if 1
+  // put it at the end
+  t = head->_prev;
+#else
+  // insert it in sequence (stupid ordering, though)
   for (t=head; t->_next != head; t = t->_next)
     {
       if (exponents_greater(_nvars, newterm->_lead, t->_next->_lead))
@@ -202,6 +222,7 @@ void MonomialTable::insert(exponents exp, int comp, int id)
 	  break;
 	}
     }	  
+#endif
 
   /* The actual insertion */
   newterm->_next = t->_next;
