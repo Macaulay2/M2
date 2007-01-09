@@ -2,6 +2,9 @@
 
 #include "monorder.hpp"
 #include "text_io.hpp"
+#include "overflow.hpp"
+
+static char wom[] = "weights overflow";
 
 void mon_order::set_weights(const int *exp, int *m) const
 {
@@ -10,7 +13,7 @@ void mon_order::set_weights(const int *exp, int *m) const
     {
       int val = 0;
       for (int j=0; j<n; j++)
-	val += *wts++ * exp[j];
+	val = safe::add(val,safe::mult(*wts++,exp[j],"weights overflow"),wom);
       *m++ = val;
     }
 }
@@ -58,6 +61,11 @@ mon_order::mon_order(mon_order_types t, M2_arrayint d,M2_arrayint wts)
 
       order[r] = newarray_atomic_clear(int,n);
       inv_order[r] = newarray_atomic_clear(int,n);
+      for (int c=0; c<n; c++)
+	{
+	  order[r][c] = 0;
+	  inv_order[r][c] = 0;
+	}
     }
 }
 
@@ -375,7 +383,7 @@ void mon_order::encode(const int *exp, int *m) const
       int val = 0;
       int *wt = order[i];
       for (int j=0; j<n; j++)
-	val += exp[j] * wt[j];
+	val = safe::add(val,safe::mult(exp[j],wt[j],wom),wom);
       m[i] = val;
     }
 }
@@ -387,8 +395,8 @@ void mon_order::decode(const int *m, int *exp) const
       int val = 0;
       int *wt = inv_order[i];
       for (int j=0; j<n; j++)
-	val += m[j] * wt[j];
-      exp[i] = val / inv_degs[i];
+	val = safe::add(val,safe::mult(m[j],wt[j],wom),wom);
+      exp[i] = safe::div(val,inv_degs[i],wom);
     }
 }
 
@@ -416,7 +424,7 @@ void grlex_mon_order::encode(const int *exp, int *m) const
   int sum = 0;
   for (int i=0; i<n; i++)
     {
-      sum += exp[i] * degs[i];
+      sum = safe::add(sum,safe::mult(exp[i],degs[i],wom),wom);
       m[n-i-1] = sum;
     }
 }
@@ -425,7 +433,7 @@ void grlex_mon_order::decode(const int *m, int *exp) const
 {
   exp[0] = m[n-1] / degs[0];
   for (int i=n-1; i>=1; i--)
-    exp[i] = (m[n-i-1] - m[n-i]) / degs[i];
+    exp[i] = safe::div(safe::sub(m[n-i-1],m[n-i],wom),degs[i],wom);
 }
 
 grlex1_mon_order::grlex1_mon_order(M2_arrayint degs0, M2_arrayint weights0)
@@ -451,7 +459,7 @@ void grlex1_mon_order::encode(const int *exp, int *m) const
   int sum = 0;
   for (int i=0; i<n; i++)
     {
-      sum += exp[i];
+      sum = safe::add(sum,exp[i],wom);
       m[n-i-1] = sum;
     }
 }
@@ -460,7 +468,7 @@ void grlex1_mon_order::decode(const int *m, int *exp) const
 {
   exp[0] = m[n-1];
   for (int i=n-1; i>=1; i--)
-    exp[i] = (m[n-i-1] - m[n-i]);
+    exp[i] = safe::sub(m[n-i-1],m[n-i],wom);
 }
 
 //---- Product order of several rev lex blocks ---//
@@ -503,7 +511,7 @@ void product_mon_order::encode(const int *exp, int *m) const
       int r = blocks[i];
       for (int j=0; j<r; j++)
 	{
-	  sum += exp[j] * d[j];
+	  sum = safe::add(sum,safe::mult(exp[j],d[j],wom),wom);
 	  m[r-j-1] = sum;
 	}
 
@@ -519,10 +527,9 @@ void product_mon_order::decode(const int *m, int *exp) const
   for (int i=0; i<nblocks; i++)
     {
       int r = blocks[i];
-      exp[0] = m[r-1] / d[0];
+      exp[0] = safe::div(m[r-1],d[0],wom);
       for (int j=r-1; j>=1; j--)
-	exp[j] = (m[r-j-1] - m[r-j]) / d[j];
-      
+	exp[j] = safe::div(safe::sub(m[r-j-1],m[r-j],wom),d[j],wom);
       exp += r;
       d += r;
       m += r;
@@ -561,14 +568,14 @@ void elim_mon_order::encode(const int *exp, int *m) const
 
   for (i=0; i<nelim-1; i++)
     {
-      sum += exp[i] * d[i];
+      sum = safe::add(sum,safe::mult(exp[i],d[i],wom),wom);
       m[n-i-1] = sum;
     }
-  m[0] = sum + exp[nelim-1] * d[nelim-1];
+  m[0] = safe::add(sum,safe::mult(exp[nelim-1],d[nelim-1],wom),wom);
   sum = 0;
   for (i=nelim; i<n; i++)
     {
-      sum += exp[i] * d[i];
+      sum = safe::add(sum,safe::mult(exp[i],d[i],wom),wom);
       m[n-i] = sum;
     }
 }
@@ -578,18 +585,18 @@ void elim_mon_order::decode(const int *m, int *exp) const
   const int *d = degs;
   int i;
 
-  exp[nelim] = m[n-nelim] / d[nelim];
+  exp[nelim] = safe::div(m[n-nelim],d[nelim],wom);
   for (i=n-1; i>nelim; i--)
-    exp[i] = (m[n-i] - m[n-i+1]) / d[i];
+    exp[i] = safe::div(safe::sub(m[n-i],m[n-i+1],wom),d[i],wom);
 
   if (nelim == 1) 
-    exp[0] = m[0] / degs[0];
+    exp[0] = safe::div(m[0],degs[0],wom);
   else
     {
-      exp[0] = m[n-1] / degs[0];
+      exp[0] = safe::div(m[n-1],degs[0],wom);
       for (i=nelim-2; i>=1; i--)
-	exp[i] = (m[n-i-1] - m[n-i]) / d[i];
-      exp[nelim-1] = (m[0] - m[n-nelim+1]) / d[nelim-1];
+	exp[i] = safe::div(safe::sub(m[n-i-1],m[n-i],wom),d[i],wom);
+      exp[nelim-1] = safe::div(safe::sub(m[0],m[n-nelim+1],wom),d[nelim-1],wom);
     }
 }
 

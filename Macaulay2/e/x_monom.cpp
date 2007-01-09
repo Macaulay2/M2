@@ -40,12 +40,24 @@ M2_bool rawMonomialIsOne(const Monomial *a)
 
 int rawCompareMonomial(const Monoid *M, const Monomial *a, const Monomial *b)
 {
-  return a->compare(M,*b);	// check for exceptions here?
+     try {
+	  return a->compare(M,*b);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return EXCEPTION;
+     }
 }
 
-M2_bool rawMonomialDivides(const Monoid *M, const Monomial *a, const Monomial *b)
+int rawMonomialDivides(const Monoid *M, const Monomial *a, const Monomial *b)
 {
-  return a->divides(M,*b);
+     try {
+	  return a->divides(M,*b);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return -2;
+     }
 }
 
 MonomialOrNull *rawMonomialDivide(const Monoid *M, const Monomial *a, const Monomial *b)
@@ -62,17 +74,18 @@ MonomialOrNull *rawMonomialDivide(const Monoid *M, const Monomial *a, const Mono
      }
 }
 
-int IM2_Monomial_degree(const Monomial *a)
-{
-     try {
-	  return a->simple_degree();
-     }
-     catch (exc::engine_error e) {
-	  ERROR(e.what());
-# warning : how do we signal an error to the front end here?
-	  return 0;
-     }
-}
+// int IM2_Monomial_degree(const Monomial *a, int *exception) // this function isn't called by anything!
+// {
+//      exception = 0;
+//      try {
+// 	  return a->simple_degree();
+//      }
+//      catch (exc::engine_error e) {
+// 	  ERROR(e.what());
+// 	  exception = 1;
+// 	  return 0;
+//      }
+// }
 
 const MonomialOrNull *IM2_Monomial_mult(const Monomial *a, const Monomial *b)
 {

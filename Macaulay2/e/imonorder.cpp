@@ -152,7 +152,7 @@ static void mo_block_group_revlex(struct mo_block *b, int nvars)
   b->weights = 0;
 }
 
-static void mo_block_wt_function(struct mo_block *b, int nvars, double *wts)
+static void mo_block_wt_function(struct mo_block *b, int nvars, int *wts)
 {
   b->typ = MO_WEIGHTS;
   b->nvars = 0;
@@ -167,7 +167,7 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
 {
   MonomialOrder *result;
   int i,j,nv,this_block;
-  double *wts = NULL;
+  int *wts = NULL;
   /* Determine the number of variables, the number of blocks, and the location
      of the component */
   int nblocks = 0;
@@ -192,8 +192,8 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
   result->nvars = nvars;
   result->nslots = 0;
   result->nblocks = nblocks;
-  result->blocks = (struct mo_block *) getmem(nblocks * sizeof(struct mo_block));
-  result->degs = (double *) getmem_atomic(nvars * sizeof(double));
+  result->blocks = (struct mo_block *) getmem(nblocks * sizeof(result->blocks[0]));
+  result->degs = (int32_t *) getmem_atomic(nvars * sizeof(result->degs[0]));
   if (hascomponent == 0)
     result->nblocks_before_component = nblocks;
 
@@ -213,7 +213,7 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
 	}
       else
 	{
-	  wts = (double *) getmem_atomic(t->nvars * sizeof(double));
+	  wts = (int *) getmem_atomic(t->nvars * sizeof(wts[0]));
 	  for (j=0; j<t->nvars; j++)
 	    wts[j] = t->wts[j];
 	}
@@ -302,7 +302,7 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
 
 	  /* divide the wt vector by the degree vector */
 	  for (j=0; j<result->blocks[i].nvars; j++)
-	    result->blocks[i].weights[j] /= result->degs[j];
+	    safe::div_by(result->blocks[i].weights[j],result->degs[j],wom);;
 	}
       else if (typ == MO_GREVLEX_WTS || typ == MO_GREVLEX2_WTS || typ == MO_GREVLEX4_WTS)
 	{
@@ -340,15 +340,17 @@ extern void monomialOrderFree(MonomialOrder *mo)
 {
 }
 
+static char mom[] = "monomial overflow";
+
 static void MO_pack4(int nvars, const int *expon, int *slots)
 {
   int32_t i;
   if (nvars == 0) return;
   while (1) {
-	 i  = *expon++ << 24;	 if (--nvars == 0) break;
-	 i |= *expon++ << 16;	 if (--nvars == 0) break;
-	 i |= *expon++ <<  8;	 if (--nvars == 0) break;
-	 i |= *expon++ ;	 if (--nvars == 0) break;
+	 i  = safe::fits_7(*expon++,mom) << 24;	if (--nvars == 0) break;
+	 i |= safe::fits_7(*expon++,mom) << 16;	if (--nvars == 0) break;
+	 i |= safe::fits_7(*expon++,mom) <<  8;	if (--nvars == 0) break;
+	 i |= safe::fits_7(*expon++,mom) ;	if (--nvars == 0) break;
 	 *slots++ = i;
   }
   *slots++ = i;
@@ -359,8 +361,8 @@ static void MO_pack2(int nvars, const int *expon, int *slots)
   int32_t i;
   if (nvars == 0) return;
   while (1) {
-	 i  = *expon++ << 16;	if (--nvars == 0) break;
-	 i |= *expon++ 	    ;	if (--nvars == 0) break;
+	 i  = safe::fits_15(*expon++,mom) << 16;	if (--nvars == 0) break;
+	 i |= safe::fits_15(*expon++,mom)      ;	if (--nvars == 0) break;
 	 *slots++ = i;
   }
   *slots++ = i;
@@ -373,9 +375,9 @@ static void MO_unpack4(int nvars, const int *slots, int *expon)
   while (1) {
 	 i = *slots++;
 	 *expon++ = (i >> 24)       ;	if (--nvars == 0) break;
-	 *expon++ = (i >> 16) & 0xff;	if (--nvars == 0) break;
-	 *expon++ = (i >>  8) & 0xff;	if (--nvars == 0) break;
-	 *expon++ =  i        & 0xff; 	if (--nvars == 0) break;
+	 *expon++ = (i >> 16) & 0x7f;	if (--nvars == 0) break;
+	 *expon++ = (i >>  8) & 0x7f;	if (--nvars == 0) break;
+	 *expon++ =  i        & 0x7f; 	if (--nvars == 0) break;
     }
 }
 
@@ -386,7 +388,7 @@ static void MO_unpack2(int nvars, const int *slots, int *expon)
   while (1) {
 	 i = *slots++;
 	 *expon++ = i >> 16         ;	if (--nvars == 0) break;
-	 *expon++ = i       & 0xffff; 	if (--nvars == 0) break;
+	 *expon++ = i       & 0x7fff; 	if (--nvars == 0) break;
     }
 }
 
@@ -396,7 +398,6 @@ void monomialOrderEncode(const MonomialOrder *mo,
      /* Given 'expon', compute the encoded partial sums value */
 {
   if (mo == 0) return;
-#warning check for overflow here
   int i,j,nvars,s;
   int *p1;
   struct mo_block *b = mo->blocks;
@@ -415,7 +416,7 @@ void monomialOrderEncode(const MonomialOrder *mo,
     case MO_LAURENT_REVLEX:
       nvars = b->nvars;
       for (j=0; j<nvars; j++)
-	*p++ = - *e++;
+	*p++ = safe::minus(*e++,mom);
       break;
     case MO_GREVLEX:
     case MO_GREVLEX_WTS:
@@ -426,7 +427,7 @@ void monomialOrderEncode(const MonomialOrder *mo,
       for (j=1; j<nvars; j++)
 	{
 	  --p1;
-	  *p1 = *e++ + p1[1];              // check overflow here?
+	  *p1 = safe::add(*e++,p1[1],mom);
 	}
       break;
     case MO_GREVLEX4:
@@ -437,7 +438,7 @@ void monomialOrderEncode(const MonomialOrder *mo,
       for (j=1; j<nvars; j++)
 	{
 	  --p1;
-	  *p1 = *e++ + p1[1];
+	  *p1 = safe::add(*e++,p1[1],mom);
 	}
       MO_pack4(nvars,p1,p);
       p += b->nslots;
@@ -450,27 +451,31 @@ void monomialOrderEncode(const MonomialOrder *mo,
       for (j=1; j<nvars; j++)
 	{
 	  --p1;
-	  *p1 = *e++ + p1[1];
+	  *p1 = safe::add(*e++,p1[1],mom);
 	}
-      MO_pack2(nvars,p1,p);             // check overflow here?
+      MO_pack2(nvars,p1,p);
       p += b->nslots;
       break;
     case MO_LEX4:
       nvars = b->nvars;
-      MO_pack4(nvars,e,p);             // check overflow here?
+      MO_pack4(nvars,e,p);
       p += b->nslots;
       e += nvars;
       break;
     case MO_LEX2:
       nvars = b->nvars;
-      MO_pack2(nvars,e,p);             // check overflow here?
+      MO_pack2(nvars,e,p);
       p += b->nslots;
       e += nvars;
       break;
     case MO_WEIGHTS:
-      s = 0;
-      for (j=0; j<b->nweights; j++)
-	s += b->weights[j] * expon[j];             // check overflow here?
+      if (b->nweights == 0) {
+	   s = 0;
+      }
+      else {
+	   s = safe::mult(b->weights[0],expon[0],mom);
+	   for (j=1; j<b->nweights; j++) s = safe::add(s,safe::add(b->weights[j],expon[j],mom),mom);
+      }
       *p++ = s;
       break;
     case MO_POSITION_UP:
@@ -495,7 +500,7 @@ int monomialOrderFromActualExponents(const MonomialOrder *mo,
   int result = 1;
   for (i=0; i<mo->nvars; i++)
     {
-      result_exp[i] = safe::mult(expon[i],mo->degs[i]);
+      result_exp[i] = safe::mult(expon[i],mo->degs[i],mom);
       if (expon[i] < 0)
 	{
 	  if (!mo->is_laurent[i])
@@ -513,7 +518,7 @@ int monomialOrderToActualExponents(const MonomialOrder *mo,
   int i;
   for (i=0; i<mo->nvars; i++)
     {
-      result_exp[i] = expon[i] / mo->degs[i];
+      result_exp[i] = safe::div(expon[i],mo->degs[i],mom);
     }
   return 1;
 }
@@ -542,7 +547,7 @@ void monomialOrderDecode(const MonomialOrder *mo, const_monomial psums, exponent
       p = psums + b->first_slot;
       e = expon + b->first_exp;
       for (j=0; j<nvars; j++)
-	*e++ = - *p++;
+	*e++ = safe::minus(*p++,mom);
       break;
     case MO_GREVLEX:
     case MO_GREVLEX_WTS:
@@ -551,7 +556,7 @@ void monomialOrderDecode(const MonomialOrder *mo, const_monomial psums, exponent
       e = expon + b->first_exp;
       *e++ = *p--;
       for (j=nvars-1; j>=1; --j, --p)
-	*e++ = *p - p[1];
+	*e++ = safe::sub(*p,p[1]);
       break;
     case MO_GREVLEX4:
     case MO_GREVLEX4_WTS:
@@ -561,7 +566,7 @@ void monomialOrderDecode(const MonomialOrder *mo, const_monomial psums, exponent
       e = expon + b->first_exp;
       *e++ = *p--;
       for (j=nvars-1; j>=1; --j, --p)
-	*e++ = *p - p[1];
+	*e++ = safe::sub(*p,p[1]);
       break;
     case MO_GREVLEX2:
     case MO_GREVLEX2_WTS:
@@ -571,7 +576,7 @@ void monomialOrderDecode(const MonomialOrder *mo, const_monomial psums, exponent
       e = expon + b->first_exp;
       *e++ = *p--;
       for (j=nvars-1; j>=1; --j, --p)
-	*e++ = *p - p[1];
+	*e++ = safe::sub(*p,p[1]);
       break;
     case MO_LEX4:
       nvars = b->nvars;

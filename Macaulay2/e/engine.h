@@ -182,11 +182,12 @@ extern "C" {
 
   int rawCompareMonomial(const Monoid *M, const Monomial *a, const Monomial *b); /* drg: connected to rawCompareMonomial */
   /* returns -1, 0, or 1, if a < b, a==b, a > b respectively, in the monomial ordering
+     returns -2 for an exception
    * in the monoid M 
    */
 
-  M2_bool rawMonomialDivides(const Monoid *M, const Monomial *a, const Monomial *b); /* drg : connected to rawMonomialDivides */
-  /* returns true if in the monoid M, there is a monomial c such that a*c === b */
+  int rawMonomialDivides(const Monoid *M, const Monomial *a, const Monomial *b); /* drg : connected to rawMonomialDivides */
+  /* returns 1 if in the monoid M, there is a monomial c such that a*c === b, 0 if not, -2 if exception occurred */
 
   MonomialOrNull *rawMonomialDivide(const Monoid *M, const Monomial *a, const Monomial *b); /* drg : connected to rawMonomialDivide */
   /* returns a/b if b divides a in the monoid M, and null otherwise. */

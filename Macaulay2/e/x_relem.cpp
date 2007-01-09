@@ -507,14 +507,18 @@ const RingElementOrNull *rawRRRFromString(M2_string s)
   return 0;
 }
 
-
 const RingElementOrNull *IM2_RingElement_make_var(const Ring *R, int v)
 {
-  ring_elem a = R->var(v);
-  if (error()) return 0;
-  return RingElement::make_raw(R, a);
+     try {
+	  ring_elem a = R->var(v);
+	  if (error()) return 0;
+	  return RingElement::make_raw(R, a);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
 }
-
 
 M2_bool IM2_RingElement_is_zero(const RingElement *a)
 {

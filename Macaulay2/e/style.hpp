@@ -38,6 +38,7 @@ const int LT = -1;
 const int EQ = 0;
 const int GT = 1;
 const int INCOMPARABLE = 2;
+const int EXCEPTION = -2;
 
 // Used for all of the heap types: polynomial, vector, resolution vectors.
 #define GEOHEAP_SIZE 15

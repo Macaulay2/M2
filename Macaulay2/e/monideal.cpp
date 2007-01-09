@@ -490,8 +490,7 @@ int MonomialIdeal::debug_check(Nmi_node * const p, const Nmi_node * const up) co
   if (up != NULL) assert(p->var < up->var);
   assert(p->header == p);
   assert(p->tag == Nmi_node::node);
-#warning Dan, what did you change here?
-  //  assert(p->down() == up);
+  assert(p->down() == up);
   assert(p->left != NULL);
   assert(p->right != NULL);
 
