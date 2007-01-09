@@ -510,20 +510,6 @@ int monomialOrderFromActualExponents(const MonomialOrder *mo,
   return result;
 }
 
-int monomialOrderToActualExponents(const MonomialOrder *mo, 
-				      const_exponents expon, 
-				      exponents result_exp)
-{
-  if (mo == 0) return 1;
-  int i;
-  for (i=0; i<mo->nvars; i++)
-    {
-	 assert( mo->degs[i] > 0 ); // no overflow in division is possible in this case
-	 result_exp[i] = expon[i] / mo->degs[i]; // ... so we don't have to use safe::div here
-    }
-  return 1;
-}
-
 void monomialOrderDecode(const MonomialOrder *mo, const_monomial psums, exponents expon)
 {
   if (mo == 0) return;
