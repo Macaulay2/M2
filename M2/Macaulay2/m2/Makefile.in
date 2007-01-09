@@ -79,6 +79,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		@srcdir@/../packages/*/*.m2 \
 		@srcdir@/../test/*.m2 \
 		@srcdir@/../test/engine/*.m2 \
+		@srcdir@/../bugs/*/*.m2 \
 		loadsequence \
 		Makefile.in \
 		Makefile.tests \
