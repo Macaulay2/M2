@@ -143,6 +143,7 @@ radical1 := (I) -> (
         then J 
         else intersect(J, radical1 I1))
 
+protect Decompose
 radical Ideal := Ideal => options -> (I) -> (
      if isMonomialIdeal I then
           radical monomialIdeal I
@@ -150,7 +151,11 @@ radical Ideal := Ideal => options -> (I) -> (
           unmixedradical2(I,options.CompleteIntersection)
      else if options.Unmixed then 
           unmixedradical I
-     else radical1 I
+     else if options.Strategy === Decompose then 
+          intersect minimalPrimes I
+     else if options.Strategy === Unmixed then
+          radical1 I
+     else error "radical Ideal: unrecognized strategy"
      )
 
 

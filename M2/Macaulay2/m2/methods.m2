@@ -208,7 +208,7 @@ setupMethods(TypicalValue => ZZ,
 setupMethods(TypicalValue => List,
      {eulers, genera})
 
-radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null } )
+radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null, Strategy => Decompose } )
 
 regularity = method( TypicalValue => ZZ, Options => { Weights => null } )
 

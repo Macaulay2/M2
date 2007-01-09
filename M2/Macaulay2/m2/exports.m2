@@ -121,6 +121,7 @@ export {
 	symbol Database,
 	symbol Date,
 	symbol DebuggingMode,
+	symbol Decompose,
 	symbol Degree,
 	symbol DegreeLimit,
 	symbol DegreeMap,
