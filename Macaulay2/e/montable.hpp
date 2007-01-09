@@ -87,6 +87,8 @@ private:
   mon_term *_last_match; 	// optimization cache for find_divisors
   mon_term *make_list_head();
   static void move_up(mon_term * const y,mon_term * const head);
+  static void insert_before(mon_term * const y, mon_term * const z);
+  static void remove(mon_term * const y);
 };
  
 
