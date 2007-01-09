@@ -133,7 +133,7 @@ public:
   // Both Ncoeffs and Nmonoms need to be totally removed.
 
   // Quotient ring information
-  const MonomialTable * get_quotient_MonomialTable() const 
+  MonomialTable * get_quotient_MonomialTable() const 
   { return qinfo_->get_quotient_MonomialTable(); }
   
   const MonomialIdeal *  get_quotient_monomials() const 

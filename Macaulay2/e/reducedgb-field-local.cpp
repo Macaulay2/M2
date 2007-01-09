@@ -62,7 +62,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
   h_alpha = h_deg - wt->exponents_weight(h_exp,h_comp);
   int min_alpha = h_deg;
 
-  const MonomialTable *ringtable = originalR->get_quotient_MonomialTable();
+  MonomialTable *ringtable = originalR->get_quotient_MonomialTable();
   if (ringtable)
     {
       n = ringtable->find_divisors(-1, h_exp, 1, &divisors);

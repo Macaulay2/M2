@@ -112,7 +112,7 @@ private:
   ReducedGB *minimal_gb;
   bool minimal_gb_valid;
 
-  const MonomialTable *ringtable;    // At most one of these two will be non-NULL.
+  MonomialTable *ringtable;    // At most one of these two will be non-NULL.
   const MonomialTableZZ *ringtableZZ;
 
   MonomialTable *lookup;
