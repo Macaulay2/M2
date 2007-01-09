@@ -96,7 +96,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 
 map(Ring,Matrix) := RingMap => opts -> (S,m) -> map(ring m,S,m)
 
-map(Ring,Ring) := RingMap => opts -> (S,R) -> if R === S then id_R else map(S,R,{})
+map(Ring,Ring) := RingMap => opts -> (S,R) -> map(S,R,{},opts)
 
 Ring#id = (R) -> map(R,R,vars R)
 
