@@ -322,17 +322,18 @@ document {
      Key => {"generators of ideals and modules",
 	  (symbol _, Ideal, ZZ),
 	  (symbol _, MonomialIdeal, ZZ),
-	  (symbol _, Module, ZZ)},
+	  (symbol _, Module, ZZ),
+	  (symbol _, Matrix, ZZ)},
      Headline => "",
      SYNOPSIS {
 	  Heading => "Synopsis",
      	  Usage => "L_i",
      	  Inputs => {
-	       "L" => ofClass{Ideal,MonomialIdeal,Module},
+	       "L" => ofClass{Ideal,MonomialIdeal,Module,Matrix},
 	       "i" => ZZ
 	       },
      	  Outputs => {
-	       {ofClass{RingElement,Vector}, " the ", TT "i", "-th generator of ", TT "L"}
+	       {ofClass{RingElement,Vector}, " the ", TT "i", "-th generator or column of ", TT "L"}
 	       },
 	  },
      	  "As usual in Macaulay2, the first generator has index zero.",
@@ -359,8 +360,15 @@ document {
 	       N = M/(a*M + R*M_0)
      	       N_0 == 0_N
 	       ///,
-     	  Caveat => {"Fewer methods exist for manipulating vectors than other types, such as modules and matrices"},
-     	  SeeAlso => {"_"}
+	  "Columns of matrices may also be used as vectors in the target module.",
+	  EXAMPLE lines ///
+	       M = matrix{{a,b,c},{c,d,a},{a-1,b-3,c-13}}
+	       M_0
+	       prune((image M_{1,2})/(R*M_1))
+	       ///,
+     	  Caveat => {"Fewer methods exist for manipulating vectors 
+	       than other types, such as modules and matrices"},
+     	  SeeAlso => {}
      }
 document { 
      Key => {(symbol _, Matrix, Sequence),
@@ -392,39 +400,246 @@ document {
 	  ///,
      SeeAlso => {Matrix, MutableMatrix}
      }
+
+document {
+     Key => (symbol _,Function,Thing),
+     Headline => "attach the first argument to a function of two or more arguments",
+     Usage => "g = f_x",
+     Inputs => {
+	  "f" => Function => "a function of two or more arguments",
+	  "x" => Thing
+	  },
+     Outputs => {
+	  "g" => Function => {
+	       "a new function with the property that ", TT "g(y)", "
+	       returns the value of  ", TT "f(x,y)", ", that
+	       ", TT "g(y,z)", " returns the value of ", TT "f(x,y,z)", ", and
+	       so on."
+	       }
+	  },
+     PARA {
+     	  "This abbreviation allows us to save a bit of typing, and in some
+     	  cases, agrees with standard mathematical notation."},
+     EXAMPLE lines ///
+	  R = ZZ[a .. i];
+	  f = genericMatrix(R,a,3,3)
+	  exteriorPower(2,f)
+	  exteriorPower_2 f
+	  p = prepend_7
+	  p {8,9,10}
+	  ///
+     }
+
+document {
+     Key => {(symbol _, Module, List), (symbol _, Ideal, List)},
+     Headline => "map from free module to some generators",
+     Usage => "M_p",
+     Inputs => {
+	  "M" => {"or ", ofClass Ideal},
+	  "p" => "of integers"
+	  },
+     Outputs => {
+	  "f" => { "a map from a free module to the module ", TT "M", "
+	       which sends the basis vectors to the generators of ", TT "M", "
+     	       whose index numbers are listed."
+	       }
+	  },
+     "If ", TT "M", " is an ideal, then the map maps to ", TT "module M", ".",
+     EXAMPLE lines ///
+	  R = QQ[x,y,z]
+	  I = ideal vars R
+	  f = I_{0,2}
+	  image f
+	  M = image syz vars R
+	  g = M_{1}
+	  source g
+	  target g
+	  ///,
+     SeeAlso => { (module, Ideal), (symbol _, Module, ZZ) }
+     }
+
+document { 
+     Key => {(symbol _, ZZ, Ring),(symbol _, ZZ, Module)},
+     Headline => "integers or zero element",
+     Usage => "n_R\n0_M",
+     TT "n_R", " promotes the integer ", TT "n", " to the ring ", TT "R", ".",
+     BR{},
+     TT "1_R", " provides the unit element of the ring ", TT "R", ".",
+     BR{},
+     TT "0_R", " provides the zero element of the ring ", TT "R", ".",
+     BR{},
+     TT "0_M", " provides the zero element of the module ", TT "M", ".",
+     PARA{
+	  "The return value is either ", ofClass RingElement, ", or ", ofClass Vector, "."
+	  },
+     EXAMPLE lines ///
+     	  R = QQ[a..d];
+     	  1_R
+     	  100_(ZZ/101)
+	  0_(ZZ^3)
+	  ///
+     }
+
+document {
+     Key => ((symbol _,symbol =),ChainComplex,ZZ),
+     Headline => "install component of chain complex",
+     Usage => "C_i = M",
+     Inputs => { "C" , "i", "M" },
+     Outputs => {{"install ", TT "M", " as the ", TT "i", "-th module of the chain complex ", TT "C"}},
+     EXAMPLE lines ///
+	  R = ZZ[x..z]
+	  C = chainComplex R
+	  C_2 = R^11
+	  C_4 = R^13
+	  C
+     ///,
+     SeeAlso => {((symbol _,symbol =),ChainComplexMap,ZZ)}}
+
+document {
+     Key => ((symbol _,symbol =),ChainComplexMap,ZZ),
+     Headline => "install component of chain complex map",
+     Usage => "f_i = g",
+     Inputs => { "f" , "i", "g" },
+     Outputs => {{"install ", TT "g", " as the ", TT "i", "-th module of the chain complex map ", TT "f"}},
+     EXAMPLE lines ///
+	  R = ZZ[x..z]
+	  C = chainComplex R
+	  C.dd
+	  C.dd_1 = vars R
+	  C.dd_3 = transpose vars R
+	  C.dd
+	  C
+	  HH C
+	  prune HH C
+     ///,
+     SeeAlso => {((symbol _,symbol =),ChainComplex,ZZ)}}
+
+document {
+     Key => {(symbol _,Module,Array),
+       (symbol _,ChainComplex,Array)},
+     Headline => "inclusion from summand",
+     Usage => "M_[i,j,...,k]",
+     Inputs => {"M" => {"or ", ofClass ChainComplex},
+	  Nothing => {TT "[i,j,...,k]", ", an array of indices"}},
+     Outputs => {
+     	  Nothing => {ofClass Matrix, ", or ", ofClass ChainComplexMap}
+	  },
+     PARA{},
+     "The module or chain complex ", TT "M", " should be a direct sum, and the result is the map
+     corresponding to inclusion from the sum of the components numbered or named
+     ", TT "i, j, ..., k", ".  Free modules are regarded as direct sums of modules.",
+     PARA{},
+     EXAMPLE lines ///
+	  M = ZZ^2 ++ ZZ^3
+      	  M_[0]
+      	  M_[1]
+      	  M_[1,0]
+	  ///,
+     PARA{},
+     "If the components have been given names (see ", TO directSum, "), use those instead.",
+     EXAMPLE lines ///
+	  R = QQ[a..d];
+	  M = (a => image vars R) ++ (b => coker vars R)
+	  M_[a]
+	  isWellDefined oo
+	  M_[b]
+	  isWellDefined oo
+	  ///,
+     PARA{},
+     "This works the same way for chain complexes.",
+     EXAMPLE lines ///
+	  C = res coker vars R
+	  D = (a=>C) ++ (b=>C)
+	  D_[a]
+	  ///,
+     SeeAlso => {directSum, (symbol ^,Matrix,Array), (symbol ^,Module,Array),(symbol _,Module,List)}
+     }
+
 end
 document { 
-     Key => {},
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Key => {
+	  (symbol ^, Matrix, Array),
+	  (symbol ^, ChainComplexMap, Array),
+	  (symbol ^, GradedModuleMap, Array),
 	  },
+     Headline => "component of map corresponding to summand of target"
+     Usage => "F^[i,j,...,k]",
+     Inputs => {"F" => {"or ", ofClass{ChainComplex,GradedModuleMap},
+	  Nothing => {TT "[i,j,...,k]", ", an array of indices"}},
      Outputs => {
+     	  Nothing => ofClass{Matrix, ChainComplexMap, GradedModuleMap}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "The target of the module or chain complex ", TT "F", " should be a 
+     direct sum, and the result is the component of this map 
+     corresponding to the sum of the components numbered or named
+     ", TT "i, j, ..., k", ".  Free modules are regarded as direct sums of modules.
+     In otherwords, this routine returns the map given by certain blocks of rows.",
      EXAMPLE lines ///
+     	  R = ZZ[a..d]
+	  C = koszul vars R
+	  F = (a => C.dd) ++ (b=>C.dd)
 	  ///,
      Caveat => {},
      SeeAlso => {}
      }
+
 document { 
-     Key => {},
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Key => {
+	  (symbol _, Matrix, Array),
+	  (symbol _, ChainComplexMap, Array),
+	  (symbol _, GradedModuleMap, Array)
 	  },
+     Headline => "component of map corresponding to summand of source"
+     Usage => "F_[i,j,...,k]",
+     Inputs => {"F" => {"or ", ofClass{ChainComplex,GradedModuleMap},
+	  Nothing => {TT "[i,j,...,k]", ", an array of indices"}},
      Outputs => {
+     	  Nothing => ofClass{Matrix, ChainComplexMap, GradedModuleMap}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "The source of      
      EXAMPLE lines ///
+     	  R = ZZ[a..d]
+	  C = koszul vars R
+	  F = C.dd
+	  
 	  ///,
      Caveat => {},
      SeeAlso => {}
      }
+
+document {
+     Key => {(symbol _,Module,Array),(symbol _,ChainComplex,Array)},
+     Headline => "get inclusion map into direct sum",
+     TT "M_[i,j,k]", " -- get inclusion map of blocks from a module ", TT "M", ".",
+     PARA{},
+     "The module ", TT "M", " should be a direct sum, and the result is the matrix
+     obtained by inclusion from the sum of the components numbered
+     ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
+     PARA{},
+     "This method works also for chain complexes.",
+     EXAMPLE {
+	  "M = ZZ^2 ++ ZZ^3",
+      	  "M_[0]",
+      	  "M_[1]",
+      	  "M_[1,0]",
+	  },
+     SeeAlso => {submatrix, (symbol _,Matrix,Array), (symbol ^,Module,Array),(symbol _,Module,List)}
+     }
+
+--warning: tag has no documentation: Macaulay2 :: ChainComplex _ ZZ = Thing, key ((symbol _,symbol =),ChainComplex,ZZ)
+--warning: tag has no documentation: Macaulay2 :: ChainComplexMap _ ZZ = Thing, key ((symbol _,symbol =),ChainComplexMap,ZZ)
+--warning: tag has no documentation: Macaulay2 :: Symbol _ Thing, key (symbol _,Symbol,Thing)
+
+--warning: tag has no documentation: Macaulay2 :: Function _ Thing, key (symbol _,Function,Thing)
+--warning: tag has no documentation: Macaulay2 :: Ideal _ List, key (symbol _,Ideal,List)
+--warning: tag has no documentation: Macaulay2 :: Module _ List, key (symbol _,Module,List)
+--warning: tag has no documentation: Macaulay2 :: Matrix _ ZZ, key (symbol _,Matrix,ZZ)
+--warning: tag has no documentation: Macaulay2 :: ZZ _ Module, key (symbol _,ZZ,Module)
+--warning: tag has no documentation: Macaulay2 :: ZZ _ Ring, key (symbol _,ZZ,Ring)
+--warning: tag has no documentation: Macaulay2 :: ChainComplexMap ^ Array, key (symbol ^,ChainComplexMap,Array)
+--warning: tag has no documentation: Macaulay2 :: ChainComplexMap _ Array, key (symbol _,ChainComplexMap,Array)
+--warning: tag has no documentation: Macaulay2 :: GradedModuleMap ^ Array, key (symbol ^,GradedModuleMap,Array)
+--warning: tag has no documentation: Macaulay2 :: GradedModuleMap _ Array, key (symbol _,GradedModuleMap,Array)
 document { 
      Key => {},
      Headline => "",
@@ -473,102 +688,8 @@ document {
 	  },
      }
 
-document {
-     Key => ((symbol _,symbol =),ChainComplex,ZZ),
-     Headline => "install component of chain complex",
-     Usage => "C_i = M",
-     Inputs => { "C" , "i", "M" },
-     Outputs => {{"install ", TT "M", " as the ", TT "i", "-th module of the chain complex ", TT "C"}},
-     EXAMPLE lines ///
-	  R = ZZ[x..z]
-	  C = chainComplex R
-	  C_2 = R^11
-	  C_4 = R^13
-	  C
-     ///,
-     SeeAlso => {((symbol _,symbol =),ChainComplexMap,ZZ)}}
 
-document {
-     Key => ((symbol _,symbol =),ChainComplexMap,ZZ),
-     Headline => "install component of chain complex map",
-     Usage => "f_i = g",
-     Inputs => { "f" , "i", "g" },
-     Outputs => {{"install ", TT "g", " as the ", TT "i", "-th module of the chain complex map ", TT "f"}},
-     EXAMPLE lines ///
-	  R = ZZ[x..z]
-	  C = chainComplex R
-	  C.dd
-	  C.dd_1 = vars R
-	  C.dd_3 = transpose vars R
-	  C.dd
-	  C
-	  HH C
-	  prune HH C
-     ///,
-     SeeAlso => {((symbol _,symbol =),ChainComplex,ZZ)}}
 
-document {
-     Key => (symbol _,Function,Thing),
-     Headline => "attach the first argument to a function of two or more arguments",
-     Usage => "g = f_x",
-     Inputs => {
-	  "f" => Function => "a function of two or more arguments",
-	  "x" => Thing
-	  },
-     Outputs => {
-	  "g" => Function => {
-	       "a new function with the property that ", TT "g(y)", "
-	       returns the value of  ", TT "f(x,y)", ", that
-	       ", TT "g(y,z)", " returns the value of ", TT "f(x,y,z)", ", and
-	       so on."
-	       }
-	  },
-     PARA {
-     	  "This abbreviation allows us to save a bit of typing, and in some
-     	  cases, agrees with standard mathematical notation."},
-     EXAMPLE {
-	  "R = ZZ[a .. i];",
-	  "f = genericMatrix(R,a,3,3)",
-	  "exteriorPower(2,f)",
-	  "exteriorPower_2 f",
-	  "p = prepend_7",
-	  "p {8,9,10}"
-	  }
-     }
-
-document {
-     Key => (symbol _, Module, List),
-     Headline => "map from free module to some generators",
-     TT "M_{i,j,k,...}", " -- provides a map from a free module to the module
-     ", TT "M", " which sends the basis vectors to the generators of ", TT "M", "
-     whose index numbers are listed.",
-     PARA{},
-     EXAMPLE "(ZZ^5)^{2,3}",
-     SeeAlso => {"^", Module, List}
-     }
-
-document {
-     Key => (symbol _, Ideal, List),
-     Headline => "map from free module to some generators",
-     Usage => "I_{i,j,k,...}",
-     Inputs => {
-	  "I",
-	  { TT "{i,j,k,...}", ", a list of integers" }
-	  },
-     Outputs => {
-	  "f" => { "a map from a free module to the module ", TT "module I", "
-	       which sends the basis vectors to the generators of ", TT "I", "
-     	       whose index numbers are listed."
-	       }
-	  },
-     EXAMPLE {
-	  "R = QQ[x,y,z]",
-	  "I = ideal vars R",
-	  "f = I_{0,2}",
-	  "image f"
-	  },
-     SeeAlso => { (module, Ideal) }
-     }
 document {
      Key => (symbol _, RingElement, RingElement),
      Headline => "get a coefficient",
@@ -605,14 +726,6 @@ document {
      "Vectors are disparaged, so we may do away with this function in the future.",
      SeeAlso => "_"}
 
-document {
-     Key => (symbol _, ZZ, Ring),
-     TT "1_R", " provides the unit element of the ring ", TT "R", ".",
-     BR{},
-     TT "0_R", " provides the zero element of the ring ", TT "R", ".",
-     BR{},
-     TT "n_R", " promotes the integer ", TT "n", " to the ring ", TT "R", ".",
-     }
 
 document {
      Key => (symbol _, ZZ, Monoid),
