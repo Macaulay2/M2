@@ -46,27 +46,23 @@ struct MonomialOrder_rec {
 };
 
 typedef struct MonomialOrder_rec MonomialOrder;
+MonomialOrder *monomialOrderMake(const MonomialOrdering *mo);
+void monomialOrderFree(MonomialOrder *mo);
+void monomialOrderEncode(const MonomialOrder *mo, const_exponents a, monomial b);
+void monomialOrderDecode(const MonomialOrder *mo, const_monomial a, exponents b);
+int monomialOrderFromActualExponents(const MonomialOrder *mo, const_exponents expon, exponents result_exp);
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-  MonomialOrder *monomialOrderMake(const MonomialOrdering *mo);
-  void monomialOrderFree(MonomialOrder *mo);
-  void monomialOrderEncode(const MonomialOrder *mo, const_exponents a, monomial b);
-  void monomialOrderDecode(const MonomialOrder *mo, const_monomial a, exponents b);
+#include <assert.h>
 
-  int monomialOrderFromActualExponents(const MonomialOrder *mo, 
-				       const_exponents expon, 
-				       exponents result_exp);
-
-  int monomialOrderToActualExponents(const MonomialOrder *mo, 
-				     const_exponents expon, 
-				     exponents result_exp);
-  
-#if defined(__cplusplus)
+static inline void monomialOrderToActualExponents(const MonomialOrder *mo, const_exponents expon, exponents result_exp)
+{
+  if (mo == 0) return;
+  for (int i = mo->nvars-1; i>=0; i--)
+    {
+	 assert( mo->degs[i] > 0 ); // no overflow in division is possible in this case
+	 result_exp[i] = expon[i] / mo->degs[i]; // ... so we don't have to use safe::div here
+    }
 }
-#endif
-
 
 #endif
 
