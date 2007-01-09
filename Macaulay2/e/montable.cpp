@@ -1,4 +1,5 @@
 #include "montable.hpp"
+#include "ntuple.hpp"
 #include <functional>
 #include <algorithm>
 #include <assert.h>
@@ -140,16 +141,10 @@ int MonomialTable::find_divisors(int max,
     if ((expmask & t->_mask) == 0)
       {
 	   //*DEBUG*/	nviewed++;
-	   int i = _nvars;
-	   while (1) {
-		if (i == 0) {
-		     nmatches++; // this doesn't happen very often
-		     if (result != 0) result->push_back(t);
-		     if (max >= 0 && nmatches >= max) return nmatches;
-		     break;
-		}
-		i--;
-		if (exp[i] < t->_lead[i]) break;
+	   if (ntuple::divides(_nvars,t->_lead,exp)) {
+		nmatches++; // this doesn't happen very often
+		if (result != 0) result->push_back(t);
+		if (max >= 0 && nmatches >= max) break;
 	   }
       }
   //*DEBUG*/    else
