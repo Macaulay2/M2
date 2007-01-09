@@ -92,7 +92,7 @@ runBenchmark3 = () -> (
 		+p_(1,2,1,1,1)*p_(1,2,2,2,2)+p_(1,2,2,1,1)*p_(1,2,2,2,2));
      ti = first timing gens gb J;
      assert ( rank source gens gb J == 3626 );
-     << "-- resB148: " <<  toString ti << " seconds" << endl;
+     << "-- gbB148: " <<  toString ti << " seconds" << endl;
      )
 
 end
@@ -136,32 +136,29 @@ end
 -- Macaulay2 0.9.96, compiled with gcc 4.1.1
 -- res39: 0.48003 seconds
 -- resG25: 6.56441 seconds
--- resB148: 59.9957 seconds
+-- gbB148: 59.9957 seconds
 -- beginning computation Tue Jan  9 06:57:58 EST 2007
 -- res39: 0.520033 seconds
 -- resG25: 6.66042 seconds
--- resB148: 63.472 seconds
+-- gbB148: 63.472 seconds
 -- res39: 0.532033 seconds
 -- resG25: 6.65642 seconds
--- resB148: 64.004 seconds
--- size BUILD/normal/Macaulay2/bin/M2
---    text	   data	    bss	    dec	    hex	filename
--- 3866759	  58872	 108832	4034463	 3d8f9f	BUILD/normal/Macaulay2/bin/M2
---  now with -O2 instead of -O3 (the default):
--- res39: 0.520032 seconds
--- resG25: 6.74842 seconds
--- resB148: 65.0321 seconds
--- res39: 0.524033 seconds
--- resG25: 6.74042 seconds
--- resB148: 64.9561 seconds
--- size Macaulay2/bin/M2
---    text	   data	    bss	    dec	    hex	filename
--- 3780296	  58872	 108832	3948000	 3c3de0	Macaulay2/bin/M2
+-- gbB148: 64.004 seconds
+----- a bit of optimization to find_divisors:
+-- res39: 0.504031 seconds
+-- resG25: 6.72442 seconds
+-- gbB148: 62.4079 seconds
+-- res39: 0.516032 seconds
+-- resG25: 6.81643 seconds
+-- gbB148: 61.9039 seconds
+-- res39: 0.528033 seconds
+-- resG25: 6.76842 seconds
+-- gbB148: 61.6319 seconds
+---- start letting the matches percolate up, and insert new ones at the end
+-- res39: 0.536033 seconds
+-- resG25: 6.89243 seconds
+-- gbB148: 57.1316 seconds
 
-
---   this one is a dual G5 2.5 Mhz in 32 bit mode
---   the new engine code is rather new not manually optimized yet
--- beginning computation Wed Jan 12 21:50:29 EST 2005
 -- Darwin habanero.local 7.7.0 Darwin Kernel Version 7.7.0: Sun Nov  7 16:06:51 PST 2004; root:xnu/xnu-517.9.5.obj~1/RELEASE_PPC  Power Macintosh powerpc
 -- Macaulay2 0.9.5, compiled with gcc 3.3.0
 -- res39: 0.72 seconds

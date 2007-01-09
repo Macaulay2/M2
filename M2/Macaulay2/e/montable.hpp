@@ -86,6 +86,7 @@ private:
   VECTOR(mon_term *) _head; /* One per component */
   mon_term *_last_match; 	// optimization cache for find_divisors
   mon_term *make_list_head();
+  static void move_up(mon_term * const y,mon_term * const head);
 };
  
 
