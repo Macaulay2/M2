@@ -37,7 +37,8 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 					  M2_bool use_max_degree,
 					  int max_degree,
 					  int algorithm,
-					  int strategy)
+					  int strategy,
+					  int max_reduction_count)
 {
   const Ring *R1 = m->get_ring();
   const PolynomialRing *R2 = R1->cast_to_PolynomialRing();
@@ -125,7 +126,8 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 			 gb_weights,
 			 strategy,
 			 use_max_degree,
-			 max_degree);
+			 max_degree,
+			 max_reduction_count);
     break;
   }
   return result != NULL ? new GBProxy(result) : NULL;

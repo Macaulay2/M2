@@ -151,8 +151,8 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
   ring_elem result = sourceK->eval(this, a, first_var+nvars_in_source);
   if (R->is_zero(result)) return result;
 
-  int *result_monom;
-  int *temp_monom;
+  int *result_monom = NULL;
+  int *temp_monom = NULL;
   ring_elem result_coeff = K->from_int(1);
 
   if (P != 0)

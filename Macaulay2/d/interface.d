@@ -2573,16 +2573,16 @@ setupfun("rawStatusResolution", rawStatusResolution);
 
 export rawGB(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) != 8 then WrongNumArgs(8) else
+     if length(s) != 9 then WrongNumArgs(9) else
      when s.0 is m:RawMatrix do
      when s.1 is collectSyz:Boolean do
      when s.2 is nRowsToKeep:Integer do if !isInt(nRowsToKeep) then WrongArgSmallInteger(3) else
      if isSequenceOfSmallIntegers(s.3) then
      when s.4 is useMaxDegree:Boolean do
-     when s.5 is maxDegree:Integer do if !isInt(maxDegree) then WrongArgSmallInteger(5) else
-     when s.6 is algorithm:Integer do if !isInt(algorithm) then WrongArgSmallInteger(6) else
-     when s.7 is strategy:Integer do if !isInt(strategy) then WrongArgSmallInteger(7) else
-     if !isInt(algorithm) then WrongArgSmallInteger(8) else
+     when s.5 is maxDegree:Integer do if !isInt(maxDegree) then WrongArgSmallInteger(6) else
+     when s.6 is algorithm:Integer do if !isInt(algorithm) then WrongArgSmallInteger(7) else
+     when s.7 is strategy:Integer do if !isInt(strategy) then WrongArgSmallInteger(8) else
+     when s.8 is maxReductionCount:Integer do if !isInt(maxReductionCount) then WrongArgSmallInteger(9) else
      toExpr(
 	  Ccode(RawComputationOrNull,
 	       "(engine_RawComputationOrNull)IM2_GB_make(",
@@ -2593,10 +2593,12 @@ export rawGB(e:Expr):Expr := (
 		   isTrue(useMaxDegree),",",
 		   toInt(maxDegree),",",
 		   toInt(algorithm),",",
-		   toInt(strategy),
+		   toInt(strategy),",",
+		   toInt(maxReductionCount),
 	       ")"
 	       )
 	  )
+     else WrongArgInteger(9)
      else WrongArgInteger(8)
      else WrongArgInteger(7)
      else WrongArgInteger(6)

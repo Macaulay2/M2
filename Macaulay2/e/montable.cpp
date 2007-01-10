@@ -157,7 +157,7 @@ int MonomialTable::find_divisors(int max,
 				 VECTOR(mon_term *) *result)
 {
   assert(comp >= 1);
-  assert(max >= 1);
+  assert(max != 0);
   if (comp >= static_cast<int>(_head.size())) return 0;
   if (max == 1 && _last_match != NULL && ntuple::divides(_nvars,_last_match->_lead,exp)) {
        if (result != NULL) result->push_back(_last_match);

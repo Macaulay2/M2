@@ -696,7 +696,7 @@ Matrix *Matrix::random(const Ring *R,
 		       int special_type) // 0: general, 1:upper triangular, others?
 {
   bool doing_fraction = false;
-  int threshold;
+  int threshold = 0;
 
   FreeModule *F = R->make_FreeModule(r);
   FreeModule *G = R->make_FreeModule(c);

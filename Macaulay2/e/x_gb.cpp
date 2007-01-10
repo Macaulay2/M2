@@ -31,7 +31,8 @@ ComputationOrNull *IM2_GB_make(const Matrix *m,
 			       M2_bool use_max_degree,
 			       int max_degree,
 			       int algorithm,
-			       int strategy) /* drg: connected rawGB */
+			       int strategy,
+			       int max_reduction_count) /* drg: connected rawGB */
 {
   // Choose the correct computation here.
      try {
@@ -44,7 +45,8 @@ ComputationOrNull *IM2_GB_make(const Matrix *m,
 				  use_max_degree,
 				  max_degree,
 				  algorithm,
-				  strategy);
+				  strategy,
+				  max_reduction_count);
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());

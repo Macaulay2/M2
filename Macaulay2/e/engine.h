@@ -1557,7 +1557,8 @@ enum gbTraceValues
 				 M2_bool use_max_degree,
 				 int max_degree,
 				 int algorithm,
-				 int strategy); /* drg: connected rawGB */
+				 int strategy,
+				 int max_reduction_count); /* drg: connected rawGB */
 
   ComputationOrNull *IM2_GB_force(const Matrix *m,
 				  const Matrix *gb,

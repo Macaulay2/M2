@@ -23,9 +23,9 @@ runBenchmarks = () -> (
 
 runBenchmark1 = () -> (
      banner();
-     rr = ZZ/101[a..Z, MonomialSize => 16];
-     ti = first timing (re = res coker genericMatrix(rr,a,3,9));
-     vv = apply(8,i->rank re_i);
+     rr := ZZ/101[Variables => 52, MonomialSize => 16];
+     ti := first timing (re = res coker genericMatrix(rr,3,9));
+     vv := apply(8,i->rank re_i);
      assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} );
      << "-- res39: " <<  toString ti << " seconds" << endl;
      )
@@ -90,12 +90,52 @@ runBenchmark3 = () -> (
 		-p_(1,2,1,1,2)*p_(1,2,2,2,1)-p_(1,2,2,1,2)*p_(1,2,2,2,1)
 		+p_(1,1,1,1,1)*p_(1,2,2,2,2)+p_(1,1,2,1,1)*p_(1,2,2,2,2)
 		+p_(1,2,1,1,1)*p_(1,2,2,2,2)+p_(1,2,2,1,1)*p_(1,2,2,2,2));
-     ti = first timing gens gb J;
+     ti = first timing gens gb (J,MaxReductionCount => 3000);
      assert ( rank source gens gb J == 3626 );
      << "-- gbB148: " <<  toString ti << " seconds" << endl;
      )
 
 end
+
+insert this one:
+
+R = ZZ/101[a..h,MonomialSize=>8]
+I = ideal random(R^1, R^{-3,-4,-4,-5});
+J = ideal"a3,b4,c4,d5"
+installHilbertFunction(I, poincare J)
+time I = gens gb(I);
+
+
+and this one:
+
+R = ZZ/101[vars(0..31),MonomialOrder=>ProductOrder{8,12,12},MonomialSize=>8]
+I = ideal(
+     -j*o+i*p-v*A+u*B-x*C+w*D,
+          -a*p+b*o+c*p-d*o+k*B-l*A+m*D-n*C,
+          -a*B+b*A+e*B-f*A+p*q-o*r-z*C+y*D,
+          -a*D+b*C+g*D-h*C+p*s-o*t+B*E-A*F,
+          a*j-b*i-c*j+d*i-q*v+r*u-s*x+t*w,
+          j*o-i*p-l*q+k*r-n*s+m*t,
+          -c*r+d*q+e*r-f*q-i*B+j*A-s*z+t*y,
+          -c*t+d*s+g*t-h*s-i*D+j*C-q*F+r*E,
+          a*v-b*u-e*v+f*u-j*k+i*l-x*E+w*F,
+          c*l-d*k-e*l+f*k+m*F-n*E+o*v-p*u,
+          l*q-k*r+v*A-u*B-z*E+y*F,
+          -e*F+f*E+g*F-h*E+l*s-k*t+v*C-u*D,
+          a*x-b*w-g*x+h*w-j*m+i*n-v*y+u*z,
+          c*n-d*m-g*n+h*m+k*z-l*y+o*x-p*w,
+          e*z-f*y-g*z+h*y+n*q-m*r+x*A-w*B,
+          n*s-m*t+x*C-w*D+z*E-y*F)
+time gens gb(I, Strategy => LongPolynomial, Algorithm => Homogeneous2);
+
+but not this one, because it doesn't work yet
+
+R = ZZ/5[a..d,MonomialSize=>16];
+I = ideal{a^3-2*a^2*b-a*b^2-2*b^3+a*b*c-2*b^2*c+2*a*c^2-2*b*c^2-c^3+2*a*b*d
+          -2*b^2*d-a*c*d-2*b*c*d-2*c^2*d+a*d^2+c*d^2-d^3, a^125, b^125,
+	  c^125, d^125}
+time gb I;
+
 
 -- Results:
 
@@ -158,6 +198,12 @@ end
 -- res39: 0.536033 seconds
 -- resG25: 6.89243 seconds
 -- gbB148: 57.1316 seconds
+-- res39: 0.532034 seconds
+-- resG25: 7.17245 seconds
+-- gbB148: 51.5232 seconds
+-- res39: 0.540033 seconds
+-- resG25: 7.08444 seconds
+-- gbB148: 52.1673 seconds
 
 -- Darwin habanero.local 7.7.0 Darwin Kernel Version 7.7.0: Sun Nov  7 16:06:51 PST 2004; root:xnu/xnu-517.9.5.obj~1/RELEASE_PPC  Power Macintosh powerpc
 -- Macaulay2 0.9.5, compiled with gcc 3.3.0

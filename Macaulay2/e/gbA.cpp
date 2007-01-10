@@ -33,21 +33,25 @@ gbA * gbA::create(const Matrix *m,
 		  M2_arrayint gb_weights,
 		  int strategy,
 		  M2_bool use_max_degree_limit,
-		  int max_degree_limit)
+		  int max_degree_limit,
+		  int max_reduction_count)
 {
   gbA *result = new gbA;
-  result->initialize(m, collect_syz, n_rows_to_keep, gb_weights, strategy);
+  result->initialize(m, collect_syz, n_rows_to_keep, gb_weights, strategy, max_reduction_count);
   intern_GB(result);
   return result;
 }
 
-void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights0, int strat)
+void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights0, int strat, int max_reduction_count0)
 {
-  max_reduction_count = 10; 
+     // max_reduction_count: default was 10
      // 1 is best possible for 3-anderbuch!
      // 5 is: (114.64 sec, 494 MB)
      // 10 is best so far (125.33 sec, 527 MB virtual).  
      // 50 is faster/smaller than 100, and 1000 was awful, on 3-andersbuch
+
+  max_reduction_count = max_reduction_count0;
+
   const PolynomialRing *origR = m->get_ring()->cast_to_PolynomialRing();
   if (origR == NULL)
     {

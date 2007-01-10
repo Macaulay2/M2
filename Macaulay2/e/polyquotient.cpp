@@ -192,7 +192,10 @@ GBComputation * PolyRingQuotient::make_gb(const ring_elem g) const
 					      weights,
 					      false,
 					      -1,
-					      0,0);
+					      0,
+					      0
+					      /* , max_reduction_count */
+					      );
   G->set_stop_conditions(false,
 			 NULL,
 			 -1,
@@ -296,7 +299,9 @@ void PolyRingQuotient::syzygy(const ring_elem a, const ring_elem b,
 					      weights,
 					      false,
 					      -1,
-					      0,0);
+					      0,0
+					      /* , max_reduction_count */
+					      );
   G->set_stop_conditions(false,
 			 NULL,
 			 -1,

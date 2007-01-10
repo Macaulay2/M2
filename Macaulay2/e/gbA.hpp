@@ -186,7 +186,7 @@ private:
   bool over_ZZ() const { return _coeff_type == Ring::COEFF_ZZ; }
   
   /* initialization */
-  void initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights, int strat);
+  void initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights, int strat, int max_reduction_count0);
   spair *new_gen(int i, gbvector *f, ring_elem denom);
 
   int gbelem_COMPONENT(gbelem *g) { return g->g.f->comp; }
@@ -323,7 +323,8 @@ public:
 		      M2_arrayint gb_weights,
 		      int strategy, 
 		      M2_bool use_max_degree,
-		      int max_degree);
+		      int max_degree,
+		      int max_reduction_count);
 
   static gbA * create_forced(const Matrix *m, 
 				 const Matrix *gb, 

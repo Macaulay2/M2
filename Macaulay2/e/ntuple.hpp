@@ -104,6 +104,7 @@ bool ntuple::divides(int nvars, const int *a, const int *b)
   // Does a divide b?
 {
   for (int i=0; i<nvars; i++)
+//  for (int i=nvars-1; i>=0; i--)
     if (a[i] > b[i]) return false;
   return true;
 }

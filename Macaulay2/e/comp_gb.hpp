@@ -45,7 +45,8 @@ public:
 				  M2_bool use_max_degree,
 				  int max_degree,
 				  int algorithm,
-				  int strategy);
+				  int strategy,
+				  int max_reduction_count = 10);
   // Values for algorithm and strategy are documented in engine.h
   // Returns NULL if an error occurs
 
