@@ -42,7 +42,6 @@ INTERFACE = \
 	comp_gb \
 	comp_gb_proxy \
 	comp_gb_declared \
-	gbA \
 	montable \
 	montableZZ \
 	schorder \
@@ -60,6 +59,7 @@ INTERFACE = \
 	det \
 	frac \
 	freemod \
+	gb \
 	gb-homog2 \
 	gb-sugarless \
 	gb-toric \
