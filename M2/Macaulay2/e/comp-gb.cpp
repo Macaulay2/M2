@@ -1,6 +1,6 @@
 // Copyright 2004 Michael E. Stillman.
 
-#include "comp_gb.hpp"
+#include "comp-gb.hpp"
 
 #include "gb-homog2.hpp"
 #include "gb-sugarless.hpp"
@@ -9,7 +9,7 @@
 #include "hermite.hpp"
 #include "gb-default.hpp"
 #include "gbweight.hpp"
-#include "comp_gb_proxy.hpp"
+#include "comp-gb-proxy.hpp"
 #include "text_io.hpp"
 
 GBComputation *createF4GB(const Matrix *m,

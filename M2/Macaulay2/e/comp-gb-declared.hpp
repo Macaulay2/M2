@@ -1,47 +1,46 @@
 // Copyright 2004 Michael E. Stillman.
 
-#ifndef _comp_gb_proxy_hpp_
-#define _comp_gb_proxy_hpp_
+#ifndef _comp_gb_declared_hpp_
+#define _comp_gb_declared_hpp_
 
-#include "comp_gb.hpp"
+#include "comp-gb.hpp"
+#include "reducedgb.hpp"
 
-class GBProxy : public GBComputation
+class GBDeclared : public GBComputation
 // This contains a GBComputation, which can be changed.
 // For example, we can start with a computation, and then
 // after it is done, we can jettison it, and consider only
 // the GB object itself.
 {
-  GBComputation *G;
+  ReducedGB *G;
+  const Matrix *trimmed_gens;
+  const Matrix *syz;
 protected:
 
-  virtual bool stop_conditions_ok() {
-    G->stop_ = stop_;
-    return G->stop_conditions_ok(); }
+  virtual bool stop_conditions_ok() { return true; }
   // If the stop conditions in _Stop are inappropriate,
   // return false, and use ERROR(...) to provide an error message.
 
 
 public:
-  GBProxy(GBComputation *G0) : G(G0) {}
+  GBDeclared(const Matrix *m0,
+	     const Matrix *gb,
+	     const Matrix *change,
+	     const Matrix *syz0);
 
-  virtual ~GBProxy();
+  static GBComputation *create(const Matrix *m,
+			       const Matrix *gb,
+			       const Matrix *change,
+			       const Matrix *syz);
+  // Possibly returns NULL, if an error message is reported
+
+  virtual ~GBDeclared() {}
 
   virtual void remove_gb() {}
 
-  GBComputation *replace_GB(GBComputation *G0) { 
-    GBComputation *result = G;
-    set_status(G->status());
-    G = G0;
-    return result;
-  }
-
   virtual GBComputation * cast_to_GBComputation() { return this;} 
 
-  virtual ComputationOrNull *set_hilbert_function(const RingElement *h)
-  { return G->set_hilbert_function(h); }
-  // The default version returns an error saying that Hilbert functions cannot be used.
-
-  virtual void start_computation() { G->start_computation(); set_status(G->status()); }
+  virtual void start_computation() {  }
 
   virtual int complete_thru_degree() const { return G->complete_thru_degree(); }
   // The computation is complete up through this degree.
@@ -53,11 +52,11 @@ public:
   ////////////////////////////////
   virtual const MatrixOrNull *get_gb() { return G->get_gb(); }
 
-  virtual const MatrixOrNull *get_mingens() { return G->get_mingens(); }
+  virtual const MatrixOrNull *get_mingens() { return trimmed_gens; }
 
   virtual const MatrixOrNull *get_change() { return G->get_change(); }
 
-  virtual const MatrixOrNull *get_syzygies() { return G->get_syzygies(); }
+  virtual const MatrixOrNull *get_syzygies() { return syz; }
 
   virtual const MatrixOrNull *get_initial(int nparts) { return G->get_initial(nparts); }
 
@@ -82,7 +81,7 @@ public:
   // Statistics and spair information //
   //////////////////////////////////////
 
-  virtual void text_out(buffer &o) { G->text_out(o); }
+  virtual void text_out(buffer &o) { o << "declared GB"; }
   // This displays statistical information, and depends on the
   // gbTrace value.
 };

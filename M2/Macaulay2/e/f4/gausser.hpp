@@ -2,7 +2,7 @@
 #define __gausser_h_
 
 #include "../ring.hpp"
-#include "../z_mod_p.hpp"
+#include "../ZZp.hpp"
 #include "../coeffrings.hpp"
 
 typedef void *F4CoefficientArray;

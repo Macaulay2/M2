@@ -1,6 +1,6 @@
 // Copyright 1995 Michael E. Stillman
 
-#include "z_mod_p.hpp"
+#include "ZZp.hpp"
 #include "text_io.hpp"
 #include "monoid.hpp"
 #include "ringmap.hpp"

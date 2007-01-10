@@ -3,7 +3,7 @@
 #ifndef _F4Computation_h_
 #define _F4Computation_h_
 
-#include "../comp_gb.hpp"
+#include "../comp-gb.hpp"
 #include "F4.hpp"
 #include "gausser.hpp"
 

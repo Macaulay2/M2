@@ -1,4 +1,4 @@
-#include "comp_gb_declared.hpp"
+#include "comp-gb-declared.hpp"
 #include "matrix.hpp"
 #include "reducedgb.hpp"
 #include "poly.hpp"

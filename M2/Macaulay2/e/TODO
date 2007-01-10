@@ -1,3 +1,8 @@
+-- 1/10/2007:
+changed comp_* to comp-*
+z_mod_p --> ZZp
+int_bag --> int-bag
+
 -- General speedup
 
   -- added gbvector stash: this made big difference

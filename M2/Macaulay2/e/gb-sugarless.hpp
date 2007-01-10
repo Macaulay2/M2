@@ -5,7 +5,7 @@
 #include "relem.hpp"
 #include "matrix.hpp"
 #include "polyring.hpp"
-#include "comp_gb.hpp"
+#include "comp-gb.hpp"
 #include "reducedgb.hpp"
 
 #include "spair.hpp"

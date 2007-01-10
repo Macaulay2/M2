@@ -26,7 +26,11 @@ INTERFACE = \
 	polyquotient \
 	poly \
 	debug \
-	comp_res \
+	comp \
+	comp-gb \
+	comp-gb-proxy \
+	comp-gb-declared \
+	comp-res \
 	res-a0 \
 	res-a0-poly \
 	res-a1 \
@@ -37,10 +41,6 @@ INTERFACE = \
 	reducedgb-field-local \
 	reducedgb-ZZ \
 	matrixcon \
-	comp \
-	comp_gb \
-	comp_gb_proxy \
-	comp_gb_declared \
 	montable \
 	montableZZ \
 	schorder \

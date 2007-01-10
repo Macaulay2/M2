@@ -1,6 +1,6 @@
 // Copyright 2004 Michael E. Stillman.
 
-#include "comp_gb_proxy.hpp"
+#include "comp-gb-proxy.hpp"
 
 GBProxy::~GBProxy()
 {

@@ -4,7 +4,7 @@
 #define _sagbi_hh_
 
 #include "matrix.hpp"
-#include "comp_gb.hpp"
+#include "comp-gb.hpp"
 
 class sagbi
 {

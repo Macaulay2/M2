@@ -1,8 +1,8 @@
 // Copyright 2005 Michael E. Stillman.
 
 #include "../../include/config.h"
-#include "../comp_gb.hpp"
-#include "../z_mod_p.hpp"
+#include "../comp-gb.hpp"
+#include "../ZZp.hpp"
 #include "../poly.hpp"
 #include "../coeffrings.hpp"
 #include "../matrix.hpp"

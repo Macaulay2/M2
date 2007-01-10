@@ -6,7 +6,7 @@
 #include "matrix.hpp"
 #include "polyring.hpp"
 
-#include "comp_gb.hpp"
+#include "comp-gb.hpp"
 
 #include "spair.hpp"
 #include "gbweight.hpp"

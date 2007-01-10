@@ -1,7 +1,7 @@
 // Copyright 2004 Michael E. Stillman.
 
 #include "text_io.hpp"
-#include "comp_res.hpp"
+#include "comp-res.hpp"
 #include "res-a1.hpp"
 #include "res-a0.hpp"
 #include "res-a2.hpp"

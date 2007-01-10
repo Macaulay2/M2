@@ -4,7 +4,7 @@
 #define _smat_hpp_
 
 union ring_elem;
-#include "z_mod_p.hpp"
+#include "ZZp.hpp"
 // This is the low level dense matrix class.
 // The only reason "RingType" is present is to more easily
 //   communicate with the rest of Macaulay2

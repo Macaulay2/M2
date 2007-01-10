@@ -3,7 +3,7 @@
 #ifndef _gbA_h_
 #define _gbA_h_
 
-#include "comp_gb.hpp"
+#include "comp-gb.hpp"
 
 #include "gbring.hpp"
 #include "montable.hpp"

@@ -7,7 +7,7 @@
 #include "matrix.hpp"
 #include "montableZZ.hpp"
 #include "montable.hpp"
-#include "comp_gb.hpp"
+#include "comp-gb.hpp"
 #include "relem.hpp"
 
 PolyRingQuotient::~PolyRingQuotient()
