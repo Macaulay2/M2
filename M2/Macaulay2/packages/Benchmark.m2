@@ -208,6 +208,9 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- res39: 0.516033 seconds
 -- resG25: 6.85243 seconds
 -- gbB148: 51.8792 seconds
+-- res39: 0.548034 seconds
+-- resG25: 6.83643 seconds
+-- gbB148: 52.0313 seconds
 
 -- Darwin habanero.local 7.7.0 Darwin Kernel Version 7.7.0: Sun Nov  7 16:06:51 PST 2004; root:xnu/xnu-517.9.5.obj~1/RELEASE_PPC  Power Macintosh powerpc
 -- Macaulay2 0.9.5, compiled with gcc 3.3.0
