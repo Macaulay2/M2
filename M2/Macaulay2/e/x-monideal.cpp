@@ -6,7 +6,7 @@
 #include "engine.h"
 #include "hilb.hpp"
 #include "assprime.hpp"
-#include "monideal_minprimes.hpp"
+#include "monideal-minprimes.hpp"
 #include "exceptions.hpp"
 
 static int monideals_nfinalized = 0;

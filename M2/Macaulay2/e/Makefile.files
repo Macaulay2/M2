@@ -10,7 +10,7 @@ INTERFACE = \
 	exceptions \
 	imonorder \
 	sagbi \
-	monideal_minprimes \
+	monideal-minprimes \
 	dmat-LU \
 	lapack \
 	LLL \
@@ -66,7 +66,7 @@ INTERFACE = \
 	gauss \
 	hermite \
 	hilb \
-	int_bag \
+	int-bag \
 	intarray \
 	matrix \
 	mem \
