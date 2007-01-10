@@ -23,7 +23,6 @@ INTERFACE = \
 	Eschreyer \
 	gbweight \
 	qring \
-	polyQQ \
 	polyquotient \
 	poly \
 	debug \
