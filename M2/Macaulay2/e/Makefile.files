@@ -91,12 +91,6 @@ INTERFACE = \
 	weylalg \
 	z_mod_p
 
-STILLTOCOMPILE = \
-	newspair \
-	termideal \
-	gbZZ \
-
-
 COMMANDS = \
 	ntl_internal \
 	ntl_debugio \

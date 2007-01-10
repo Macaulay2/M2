@@ -6,7 +6,6 @@
 #include "matrix.hpp"
 #include "comb.hpp"
 #include "polyring.hpp"
-#include "termideal.hpp"
 #include "assprime.hpp"
 #include "monideal.hpp"
 #include "relem.hpp"
@@ -850,48 +849,6 @@ Matrix *Matrix::lead_term(int nparts) const
 //     }
 //   for (x=0; x<n_cols(); x++)
 //     deleteitem(mis[x]);
-// }
-#endif
-#if 0
-// // OLDER THAN THE PREVIOUS VERSION!!
-// Matrix Matrix::minimal_lead_terms_ZZ() const
-// {
-//   int x;
-//   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-//   FreeModule *Gsyz = P->make_FreeModule(n_cols());
-//   bump_up(Gsyz);
-//   array< queue<tagged_term *> > allterms;
-//   for (int i=0; i<n_cols(); i++)
-//     {
-//       vec v = elem(i);
-//       if (v == NULL) continue;
-//       allterms[v->comp].insert(
-// 			       new tagged_term(P->Ncoeffs()->copy(v->coeff),
-// 					       P->Nmonoms()->make_new(v->monom),
-// 					       Gsyz->e_sub_i(i),
-// 					       NULL));
-//     }
-//   Matrix result(rows());
-//   for (x=0; x<n_cols(); x++)
-//     {
-//       if (allterms[x].length() > 0)
-// 	{
-// 	  TermIdeal *ti = TermIdeal::make_termideal(P,Gsyz,allterms[x]);
-// 	  // Loop through and add the corresponding elements in...
-// 	  for (cursor_TermIdeal k(ti); k.valid(); ++k)
-// 	    {
-// 	      tagged_term *t = *k;
-// 	      vec gsyz = t->_gsyz;
-// 	      vec v = NULL;
-// 	      rows()->apply_map(v, gsyz, entries);
-// 	      rows()->negate_to(v);
-// 	      result.append(v);
-// 	    }
-// 	  deleteitem(ti);
-// 	}
-//     }
-//   bump_down(Gsyz);
-//   return result;
 // }
 #endif
 
