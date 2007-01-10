@@ -1,6 +1,6 @@
 // Copyright 1997 Michael E. Stillman
 
-#include "gbbinom.hpp"
+#include "gb-toric.hpp"
 #include "ntuple.hpp"
 #include "text_io.hpp"
 

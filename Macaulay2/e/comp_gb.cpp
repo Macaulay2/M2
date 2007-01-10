@@ -4,7 +4,7 @@
 
 #include "gb-homog2.hpp"
 #include "gb-sugarless.hpp"
-#include "gbbinom.hpp"
+#include "gb-toric.hpp"
 #include "gauss.hpp"
 #include "hermite.hpp"
 #include "gbA.hpp"
