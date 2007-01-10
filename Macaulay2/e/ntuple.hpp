@@ -54,23 +54,23 @@ bool ntuple::is_one(int nvars, int *a)
 
 inline void ntuple::mult(int nvars, const int *a, const int *b, int *result)
 {
-  for (int i=0; i<nvars; i++) *result++ = safe::add(*a++,*b++,"monomial overflow");
+  for (int i=nvars; i>0; i--) *result++ = safe::add(*a++,*b++,"monomial overflow");
 }
 
 inline void ntuple::power(int nvars, const int *a, int n, int *result)
 {
-  for (int i=0; i<nvars; i++) *result++ = safe::mult(*a++, n,"monomial overflow");
+  for (int i=nvars; i>0; i--) *result++ = safe::mult(*a++, n,"monomial overflow");
 }
 
 inline void ntuple::divide(int nvars, const int *a, const int *b, int *result)
 {
-  for (int i=0; i<nvars; i++) *result++ = safe::sub(*a++,*b++,"monomial overflow");
+  for (int i=nvars; i>0; i--) *result++ = safe::sub(*a++,*b++,"monomial overflow");
 }
 
 inline
 void ntuple::quotient(int nvars, const int *a, const int *b, int *result)
 {
-  for (int i=0; i<nvars; i++)
+  for (int i=nvars; i>0; i--)
     {
       assert(*a >= 0 && *b >= 0); // Dan thinks this routine wouldn't ever be called with negative exponents!  Or in that case it should/could always return 0.
       *result++ = safe::sub_pos(*a++,*b++); // if so, there would never be an overflow
@@ -80,7 +80,7 @@ void ntuple::quotient(int nvars, const int *a, const int *b, int *result)
 inline
 void ntuple::lcm(int nvars, const int *a, const int *b, int *result)
 {
-  for (int i=0; i<nvars; i++)
+  for (int i=nvars; i>0; i--)
     {
       int c = *a++;
       int d = *b++;
@@ -91,7 +91,7 @@ void ntuple::lcm(int nvars, const int *a, const int *b, int *result)
 inline
 void ntuple::gcd(int nvars, const int *a, const int *b, int *result)
 {
-  for (int i=0; i<nvars; i++)
+  for (int i=nvars; i>0; i--)
     {
       int c = *a++;
       int d = *b++;
@@ -103,8 +103,7 @@ inline
 bool ntuple::divides(int nvars, const int *a, const int *b)
   // Does a divide b?
 {
-  for (int i=0; i<nvars; i++)
-//  for (int i=nvars-1; i>=0; i--)
+  for (int i=0; i<nvars; i++)	// we go upward, because some rings have unused variables at the end
     if (a[i] > b[i]) return false;
   return true;
 }
