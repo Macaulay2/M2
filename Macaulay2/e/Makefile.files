@@ -2,10 +2,8 @@
 ## Source code ###
 ##################
 
-
-#	points \
-
 INTERFACE = \
+	points \
 	overflow \
 	exceptions \
 	imonorder \
