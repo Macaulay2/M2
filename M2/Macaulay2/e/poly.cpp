@@ -2,7 +2,6 @@
 #include "ring.hpp"
 #include "monoid.hpp"
 #include "qring.hpp"
-#include "polyQQ.hpp"
 #include "polyquotient.hpp"
 #include "matrix.hpp"
 #include "matrixcon.hpp"

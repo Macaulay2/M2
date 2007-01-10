@@ -14,7 +14,6 @@
 #include "CCC.hpp"
 #include "GF.hpp"
 #include "polyring.hpp"
-#include "polyQQ.hpp"
 #include "schur.hpp"
 #include "frac.hpp"
 #include "weylalg.hpp"
