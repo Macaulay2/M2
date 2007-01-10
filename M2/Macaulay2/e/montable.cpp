@@ -65,6 +65,7 @@ MonomialTable::mon_term *MonomialTable::make_list_head()
 
 MonomialTable::MonomialTable() {
   _last_match = NULL;
+  _last_match_comp = -1;
 }
 
 MonomialTable *MonomialTable::make(int nvars)
@@ -138,13 +139,14 @@ int MonomialTable::find_divisor(exponents exp, int comp)
 {
   assert(comp >= 1);
   if (comp >= static_cast<int>(_head.size())) return -1;
-  if (_last_match != NULL && ntuple::divides(_nvars,_last_match->_lead,exp)) return _last_match->_val;
+  if (comp == _last_match_comp && _last_match != NULL && ntuple::divides(_nvars,_last_match->_lead,exp)) return _last_match->_val;
   unsigned long expmask = ~(monomial_mask(_nvars, exp));
   mon_term *head = _head[comp];
   for (mon_term *t = head->_next; t != head; t = t->_next)
     if ((expmask & t->_mask) == 0)
 	 if (ntuple::divides(_nvars,t->_lead,exp)) {
 	      _last_match = t;
+	      _last_match_comp = comp;
 	      move_up(t,head);
 	      return t->_val;
 	 }
@@ -159,7 +161,7 @@ int MonomialTable::find_divisors(int max,
   assert(comp >= 1);
   assert(max != 0);
   if (comp >= static_cast<int>(_head.size())) return 0;
-  if (max == 1 && _last_match != NULL && ntuple::divides(_nvars,_last_match->_lead,exp)) {
+  if (max == 1 && comp == _last_match_comp && _last_match != NULL && ntuple::divides(_nvars,_last_match->_lead,exp)) {
        if (result != NULL) result->push_back(_last_match);
        return 1;
   }
@@ -175,6 +177,7 @@ int MonomialTable::find_divisors(int max,
 	   if (ntuple::divides(_nvars,t->_lead,exp)) {
 		nmatches++; // this doesn't happen very often
 		_last_match = t;
+		_last_match_comp = comp;
 		move_up(t,head);
 		if (result != NULL) result->push_back(t);
 		if (max >= 0 && nmatches >= max) break;
