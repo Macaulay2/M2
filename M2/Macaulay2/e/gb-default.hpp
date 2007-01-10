@@ -10,9 +10,6 @@
 #include "montableZZ.hpp"
 #include "reducedgb.hpp"
 
-//#include "linalgGB/memblock.hpp"
-//#include "linalgGB/MonomialTable.hpp"
-
 class GBWeight;
 
 class gbA : public GBComputation {
