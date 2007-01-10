@@ -1,6 +1,6 @@
 // (c) 1994-2005 Michael E. Stillman
 
-#include "monideal_minprimes.hpp"
+#include "monideal-minprimes.hpp"
 #include "text_io.hpp"
 
 MinimalPrimes::MinimalPrimes(const MonomialIdeal * const &I)
