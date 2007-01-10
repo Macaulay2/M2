@@ -1135,40 +1135,6 @@ TEST "
      assert( dim singularLocus ideal { a^2 + b^2 + c^2 + d^2, a^2 + 5*b^2 + 3*c^2 + 2*d^2 } === 0 )
      "
 document {
-     Key => (symbol ^,Matrix,Array),
-     Headline => "select rows of blocks",
-     TT "f^[i,j,k]", " -- extract some rows of blocks from a matrix ", TT "f", ".",
-     PARA{},
-     "The target of ", TT "f", " should be a direct sum, and the result is obtained by
-     composition with the projection onto the sum of the components numbered
-     ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
-     PARA{},
-     EXAMPLE {
-	  "f = map(ZZ^2 ++ ZZ^2, ZZ^2, {{1,2},{3,4},{5,6},{7,8}})",
-      	  "f^[0]",
-      	  "f^[1]",
-      	  "f^[1,0]",
-	  },
-     SeeAlso => {submatrix, (symbol ^,Module,Array), (symbol _,Matrix,Array)}
-     }
-document {
-     Key => (symbol _, Matrix, Array),
-     Headline => "select columns of blocks",
-     TT "f_[i,j,k]", " -- extract some columns of blocks from a matrix ", TT "f", ".",
-     PARA{},
-     "The source of ", TT "f", " should be a direct sum, and the result is obtained by
-     composition with the inclusion into the sum of the components numbered
-     ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
-     PARA{},
-     EXAMPLE {
-	  "f = map(ZZ^2 ++ ZZ^2, ZZ^2, {{1,2},{3,4},{5,6},{7,8}})",
-      	  "f^[0]",
-      	  "f^[1]",
-      	  "f^[1,0]",
-	  },
-     SeeAlso => {submatrix, (symbol _,Module,Array), (symbol ^,Matrix,Array)}
-     }
-document {
      Key => {isSurjective,(isSurjective, Matrix)},
      Headline => "whether a map is surjective",
      SeeAlso => "isInjective"

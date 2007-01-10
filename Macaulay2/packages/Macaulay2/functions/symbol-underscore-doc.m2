@@ -555,107 +555,65 @@ document {
      SeeAlso => {directSum, (symbol ^,Matrix,Array), (symbol ^,Module,Array),(symbol _,Module,List)}
      }
 
-end
-document { 
-     Key => {
-	  (symbol ^, Matrix, Array),
-	  (symbol ^, ChainComplexMap, Array),
-	  (symbol ^, GradedModuleMap, Array),
-	  },
-     Headline => "component of map corresponding to summand of target"
-     Usage => "F^[i,j,...,k]",
-     Inputs => {"F" => {"or ", ofClass{ChainComplex,GradedModuleMap},
-	  Nothing => {TT "[i,j,...,k]", ", an array of indices"}},
-     Outputs => {
-     	  Nothing => ofClass{Matrix, ChainComplexMap, GradedModuleMap}
-	  },
-     "The target of the module or chain complex ", TT "F", " should be a 
-     direct sum, and the result is the component of this map 
-     corresponding to the sum of the components numbered or named
-     ", TT "i, j, ..., k", ".  Free modules are regarded as direct sums of modules.
-     In otherwords, this routine returns the map given by certain blocks of rows.",
-     EXAMPLE lines ///
-     	  R = ZZ[a..d]
-	  C = koszul vars R
-	  F = (a => C.dd) ++ (b=>C.dd)
-	  ///,
-     Caveat => {},
-     SeeAlso => {}
-     }
-
 document { 
      Key => {
 	  (symbol _, Matrix, Array),
 	  (symbol _, ChainComplexMap, Array),
 	  (symbol _, GradedModuleMap, Array)
 	  },
-     Headline => "component of map corresponding to summand of source"
+     Headline => "component of map corresponding to summand of source",
      Usage => "F_[i,j,...,k]",
-     Inputs => {"F" => {"or ", ofClass{ChainComplex,GradedModuleMap},
+     Inputs => {"F" => {"or ", ofClass{ChainComplexMap,GradedModuleMap}},
 	  Nothing => {TT "[i,j,...,k]", ", an array of indices"}},
      Outputs => {
      	  Nothing => ofClass{Matrix, ChainComplexMap, GradedModuleMap}
 	  },
-     "The source of      
+     "The source of the module or chain complex ", TT "F", " should be a 
+     direct sum, and the result is the component of this map 
+     corresponding to the sum of the components numbered or named
+     ", TT "i, j, ..., k", ".  Free modules are regarded as direct sums of modules.
+     In otherwords, this routine returns the map given by certain blocks of columns.",
      EXAMPLE lines ///
-     	  R = ZZ[a..d]
-	  C = koszul vars R
-	  F = C.dd
-	  
+          R = ZZ[a..d];
+          F = (vars R) ++ ((vars R) ++ matrix{{a-1,b-3}})
+	  F_[1]
+	  F_[1]^[1]
+          ///,
+     PARA{"If the components have been given names (see ", TO directSum, "), use those instead."},
+     EXAMPLE lines ///
+	  N = (a=>vars R) ++ (b=>vars R)
+	  N_[a]
+     	  N = directSum(x1 => matrix{{a,b-1}}, x2 => matrix{{a-3,b-17,c-35}}, x3 => vars R)
+	  N_[x1,x3]
 	  ///,
-     Caveat => {},
-     SeeAlso => {}
+     PARA {"This works the same way for maps between chain complexes."},
+     SeeAlso => {(symbol^,Matrix,Array),(symbol_,Module,Array),directSum}
      }
 
-document {
-     Key => {(symbol _,Module,Array),(symbol _,ChainComplex,Array)},
-     Headline => "get inclusion map into direct sum",
-     TT "M_[i,j,k]", " -- get inclusion map of blocks from a module ", TT "M", ".",
-     PARA{},
-     "The module ", TT "M", " should be a direct sum, and the result is the matrix
-     obtained by inclusion from the sum of the components numbered
-     ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
-     PARA{},
-     "This method works also for chain complexes.",
-     EXAMPLE {
-	  "M = ZZ^2 ++ ZZ^3",
-      	  "M_[0]",
-      	  "M_[1]",
-      	  "M_[1,0]",
-	  },
-     SeeAlso => {submatrix, (symbol _,Matrix,Array), (symbol ^,Module,Array),(symbol _,Module,List)}
-     }
-
---warning: tag has no documentation: Macaulay2 :: ChainComplex _ ZZ = Thing, key ((symbol _,symbol =),ChainComplex,ZZ)
---warning: tag has no documentation: Macaulay2 :: ChainComplexMap _ ZZ = Thing, key ((symbol _,symbol =),ChainComplexMap,ZZ)
---warning: tag has no documentation: Macaulay2 :: Symbol _ Thing, key (symbol _,Symbol,Thing)
-
---warning: tag has no documentation: Macaulay2 :: Function _ Thing, key (symbol _,Function,Thing)
---warning: tag has no documentation: Macaulay2 :: Ideal _ List, key (symbol _,Ideal,List)
---warning: tag has no documentation: Macaulay2 :: Module _ List, key (symbol _,Module,List)
---warning: tag has no documentation: Macaulay2 :: Matrix _ ZZ, key (symbol _,Matrix,ZZ)
---warning: tag has no documentation: Macaulay2 :: ZZ _ Module, key (symbol _,ZZ,Module)
---warning: tag has no documentation: Macaulay2 :: ZZ _ Ring, key (symbol _,ZZ,Ring)
---warning: tag has no documentation: Macaulay2 :: ChainComplexMap ^ Array, key (symbol ^,ChainComplexMap,Array)
---warning: tag has no documentation: Macaulay2 :: ChainComplexMap _ Array, key (symbol _,ChainComplexMap,Array)
---warning: tag has no documentation: Macaulay2 :: GradedModuleMap ^ Array, key (symbol ^,GradedModuleMap,Array)
---warning: tag has no documentation: Macaulay2 :: GradedModuleMap _ Array, key (symbol _,GradedModuleMap,Array)
 document { 
-     Key => {},
-     Headline => "",
-     Usage => "",
+     Key => (symbol_,Symbol,Thing),
+     Headline => "index variable",
+     Usage => "s_v",
      Inputs => {
+	  "s", "v"
 	  },
      Outputs => {
+	  IndexedVariable
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "The subscript can be anything, even a mutable object.  Often, the subscripts are numbers or sequences.
+     Sequences usually print nicer than lists.",
      EXAMPLE lines ///
-	  ///,
-     Caveat => {},
-     SeeAlso => {}
+          x_(1,3)
+	  x_{1,3}
+          ///,
+     "Indexed variables can be used for ring variables.",
+     EXAMPLE lines ///
+	  R = ZZ[x_(1,1)..x_(2,3),y_a..y_f]
+	  gens R
+	  ///
      }
+
+end
 document { 
      Key => {},
      Headline => "",
