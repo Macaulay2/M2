@@ -2,9 +2,11 @@
 
 #include "points.hpp"
 #include "error.h"
-#include "mutablemat.hpp"
+#include "mat.hpp"
 #include "matrixcon.hpp"
 #include "dmat.hpp"
+#include "polyring.hpp"
+#include "monideal.hpp"
 
 M2_bool rawIdealOfPoints(const Ring *R,
 			 const MutableMatrix *Pts,
@@ -43,8 +45,8 @@ public:
   monom_int_list(const PolynomialRing *R) {}
   ~monom_int_list() {}
 
-  void add(int old, int x, int *vp) {}
-  bool remove(int &old, int &x, int * &vp) {}
+  void add(int old, int x, int *vp) { /* TO BE WRITTEN */ }
+  bool remove(int &old, int &x, int * &vp) { /* TO BE WRITTEN */ return false;}
 };
 
 template <typename CoeffRing>
@@ -81,10 +83,9 @@ Matrix *PointsComputation<CoeffRing>::points(const PolynomialRing *R,
 //       // 
 //     }
 #endif  
+  // THIS STILL NEEDS TO BE WRITTEN!!
   return 0;
 }
-
-
 
 #include "coeffrings.hpp"
 template class PointsComputation<CoefficientRingRR>;
