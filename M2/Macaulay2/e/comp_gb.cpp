@@ -2,7 +2,7 @@
 
 #include "comp_gb.hpp"
 
-#include "gb.hpp"
+#include "gb-homog2.hpp"
 #include "gbinhom.hpp"
 #include "gbbinom.hpp"
 #include "gauss.hpp"
