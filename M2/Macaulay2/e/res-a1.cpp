@@ -2,7 +2,7 @@
 
 #include "res-a1-poly.hpp"
 #include "res-a1.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 
 extern char system_interruptedFlag;
 extern int gbTrace;

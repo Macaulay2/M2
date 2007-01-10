@@ -4,7 +4,7 @@
 #include "RR.hpp"
 #include <stdio.h>
 #include <math.h>
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "monoid.hpp"
 #include "relem.hpp"
 #include "ringmap.hpp"

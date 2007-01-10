@@ -3,7 +3,7 @@
 #include "style.hpp"
 #include "res-a2.hpp"
 #include "hilb.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "comp-gb.hpp"
 #include "matrixcon.hpp"
 

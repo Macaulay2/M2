@@ -4,7 +4,7 @@
 #include "relem.hpp"
 #include "matrix.hpp"
 #include "frac.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 
 extern char system_interruptedFlag;
 

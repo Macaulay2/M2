@@ -4,7 +4,7 @@
 #include "gbring.hpp"
 
 #include "geopoly.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 
 bool WeylAlgebra::initialize_weyl(
 	M2_arrayint derivs,

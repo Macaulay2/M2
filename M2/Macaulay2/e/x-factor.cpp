@@ -26,7 +26,7 @@ using std::endl;
 #include "relem.hpp"
 #include "../d/M2mem.h"
 
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "buffer.hpp"
 
 #include <NTL/ZZ.h>

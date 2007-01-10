@@ -1,7 +1,7 @@
 // Copyright 1995 Michael E. Stillman.
 
 #include "monorder.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "overflow.hpp"
 
 static char wom[] = "weights overflow";

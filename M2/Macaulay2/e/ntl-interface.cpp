@@ -1,6 +1,6 @@
 // Copyright 2005, Michael Stillman
 
-#include "ntl_interface.hpp"
+#include "ntl-interface.hpp"
 #include "mat.hpp"
 
 mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrix *M)

@@ -1,6 +1,6 @@
 // (c) 1994-2006 Michael E. Stillman
 
-#include "../text_io.hpp"
+#include "../text-io.hpp"
 
 #include "varpower_monomial.hpp"
 #include "f4monlookup.hpp"

@@ -2,7 +2,7 @@
 
 #include "monideal.hpp"
 #include "monoid.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 
 extern int gbTrace;
 

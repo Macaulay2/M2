@@ -1,7 +1,7 @@
 // Copyright 1996 Michael E. Stillman.
 
 #include "det.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 
 extern char system_interruptedFlag;
 extern int gbTrace;

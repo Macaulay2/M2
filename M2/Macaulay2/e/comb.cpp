@@ -1,7 +1,7 @@
 // Copyright 1997 by Michael E. Stillman
 
 #include "comb.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 
 array_class < array<int> > comb::tab;
 

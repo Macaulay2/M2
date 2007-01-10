@@ -5,7 +5,7 @@
 #include "matrixcon.hpp"
 #include "LLL.hpp"
 #include "fractionfreeLU.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "exceptions.hpp"
 
 extern Matrix_int_pair global_Matrix_int_pair;

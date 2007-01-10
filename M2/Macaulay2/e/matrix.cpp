@@ -1,7 +1,7 @@
 // Copyright 1995-2004 Michael E. Stillman
 
 #include "style.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "ring.hpp"
 #include "matrix.hpp"
 #include "comb.hpp"

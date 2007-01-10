@@ -15,7 +15,7 @@ INTERFACE = \
 	lapack \
 	LLL \
 	fractionfreeLU \
-	ntl_interface \
+	ntl-interface \
 	mat \
 	dmat \
 	smat \
@@ -85,14 +85,14 @@ INTERFACE = \
 	skewpoly \
 	solvable \
 	spair \
-	text_io \
+	text-io \
 	varpower \
 	weylalg \
-	z_mod_p
+	ZZp
 
 COMMANDS = \
-	ntl_internal \
-	ntl_debugio \
+	ntl-internal \
+	ntl-debugio \
 	mat-kbasis \
 	mat-symm \
 	mat-sort \

@@ -2,7 +2,7 @@
 
 #include "ZZ.hpp"
 #include "GF.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "monoid.hpp"
 #include "ringmap.hpp"
 #include "polyring.hpp"

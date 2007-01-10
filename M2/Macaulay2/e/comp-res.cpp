@@ -1,6 +1,6 @@
 // Copyright 2004 Michael E. Stillman.
 
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "comp-res.hpp"
 #include "res-a1.hpp"
 #include "res-a0.hpp"

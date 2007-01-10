@@ -1,7 +1,7 @@
 // Copyright 1996 Michael E. Stillman
 
 #include <ctype.h>
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "monoid.hpp"
 #include "varpower.hpp"
 #include "ntuple.hpp"

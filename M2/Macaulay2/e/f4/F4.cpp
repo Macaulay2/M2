@@ -629,7 +629,7 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
 //////////////////////////////////
 
 #include "F4toM2interface.hpp"
-#include "../text_io.hpp"
+#include "../text-io.hpp"
 #include "../mat.hpp"
 #include "../freemod.hpp"
 
