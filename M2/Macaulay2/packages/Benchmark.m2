@@ -1,51 +1,37 @@
 newPackage (
      "Benchmark",
-     Headline => "a standard Macaulay 2 benchmark"
+     Headline => "a standard Macaulay 2 benchmark",
+     Authors => {
+	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
+	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
+	  },
+     HomePage => "http://www.math.uiuc.edu/Macaulay2/",
+     Version => "1.0"
      )
 
-export {runBenchmark1,runBenchmark2,runBenchmark3,runBenchmarks}
+-- we should remove the dependence of this on the unix "date" command!
 
-banner = () -> (
-     << "-- beginning computation " << get "!date";
-     << "-- " << first lines get "!uname -a" << endl;
-     << "-- Macaulay2 " << version#"VERSION";
-     << ", compiled with " << version#"compiler";
-     << endl;
-     )
+export {runBenchmarks}
 
-runBenchmarks = () -> (
-     runBenchmark1();
-     << endl;
-     runBenchmark2();
-     << endl;
-     runBenchmark3();
-     )
-
-runBenchmark1 = () -> (
-     banner();
-     rr := ZZ/101[Variables => 52, MonomialSize => 16];
-     ti := first timing (re = res coker genericMatrix(rr,3,9));
-     vv := apply(8,i->rank re_i);
-     assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} );
-     << "-- res39: " <<  toString ti << " seconds" << endl;
-     )
-
-runBenchmark2 = () -> (
-     banner();
-     SS = ZZ/101[a..t, MonomialSize => 16];
-     MM = SS^1/Grassmannian(2,5,SS);
-     ti = first timing (re = res MM);
-     vv = apply(11,i->rank re_i);
-     assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} );
-     << "-- resG25: " <<  toString ti << " seconds" << endl;
-     )
-
-runBenchmark3 = () -> (
-     banner();
-     -- Bayesian graph ideal #148
-     p = symbol p;
-     R = ZZ/32003[reverse(p_(1,1,1,1,1)..p_(2,2,2,2,2)), MonomialSize=>8];
-     J = ideal(
+benchmarks = new MutableHashTable from {
+     1 => "res39" => () -> (
+	  rr := ZZ/101[Variables => 52, MonomialSize => 16];
+	  (ti,re) := toSequence timing res coker genericMatrix(rr,3,9);
+	  vv := apply(8,i->rank re_i);
+	  assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} );
+	  ti),
+     2 => "resG25" => () -> (
+	  SS := ZZ/101[Variables => 20, MonomialSize => 16];
+	  MM := SS^1/Grassmannian(2,5,SS);
+	  (ti,re) := toSequence timing res MM;
+	  vv := apply(11,i->rank re_i);
+	  assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} );
+	  ti),
+     3 => "gbB148" => () -> (
+	  -- Bayesian graph ideal #148
+	  p := local p;
+	  R := ZZ/32003[reverse(p_(1,1,1,1,1)..p_(2,2,2,2,2)), MonomialSize=>8];
+	  J := ideal(
 	      -p_(1,1,2,1,1)*p_(2,1,1,1,1)+p_(1,1,1,1,1)*p_(2,1,2,1,1),
 	      -p_(1,1,2,1,2)*p_(2,1,1,1,2)+p_(1,1,1,1,2)*p_(2,1,2,1,2),
 	      -p_(1,1,2,2,1)*p_(2,1,1,2,1)+p_(1,1,1,2,1)*p_(2,1,2,2,1),
@@ -90,52 +76,60 @@ runBenchmark3 = () -> (
 		-p_(1,2,1,1,2)*p_(1,2,2,2,1)-p_(1,2,2,1,2)*p_(1,2,2,2,1)
 		+p_(1,1,1,1,1)*p_(1,2,2,2,2)+p_(1,1,2,1,1)*p_(1,2,2,2,2)
 		+p_(1,2,1,1,1)*p_(1,2,2,2,2)+p_(1,2,2,1,1)*p_(1,2,2,2,2));
-     ti = first timing gens gb (J,MaxReductionCount => 3000);
-     assert ( rank source gens gb J == 3626 );
-     << "-- gbB148: " <<  toString ti << " seconds" << endl;
+	  (ti,re) := toSequence timing gens gb (J,MaxReductionCount => 3000);
+	  assert ( rank source re == 3626 );
+	  ti),
+     4 => "gb3445" => ()  -> (
+	  R := ZZ/101[a..h,MonomialSize=>8];
+	  I := ideal random(R^1, R^{-3,-4,-4,-5});
+	  J := ideal "a3,b4,c4,d5";
+	  installHilbertFunction(I, poincare J);
+	  (ti,re) := toSequence timing gens gb(I);
+	  assert( tally degrees source re === new Tally from { {12} => 3, {13} => 1, {3} => 1, {4} => 2, {5} => 3, {6} => 5, {7} => 6, {8} => 8, {9} => 10, {10} => 9, {11} => 6} );
+	  ti),
+     5 => "gb4by4comm" => () -> (
+	  R = ZZ/101[vars(0..31),MonomialOrder=>ProductOrder{8,12,12},MonomialSize=>8];
+	  I = ideal( -j*o+i*p-v*A+u*B-x*C+w*D, -a*p+b*o+c*p-d*o+k*B-l*A+m*D-n*C, -a*B+b*A+e*B-f*A+p*q-o*r-z*C+y*D, -a*D+b*C+g*D-h*C+p*s-o*t+B*E-A*F,
+	       a*j-b*i-c*j+d*i-q*v+r*u-s*x+t*w, j*o-i*p-l*q+k*r-n*s+m*t, -c*r+d*q+e*r-f*q-i*B+j*A-s*z+t*y, -c*t+d*s+g*t-h*s-i*D+j*C-q*F+r*E,
+	       a*v-b*u-e*v+f*u-j*k+i*l-x*E+w*F, c*l-d*k-e*l+f*k+m*F-n*E+o*v-p*u, l*q-k*r+v*A-u*B-z*E+y*F, -e*F+f*E+g*F-h*E+l*s-k*t+v*C-u*D,
+	       a*x-b*w-g*x+h*w-j*m+i*n-v*y+u*z, c*n-d*m-g*n+h*m+k*z-l*y+o*x-p*w, e*z-f*y-g*z+h*y+n*q-m*r+x*A-w*B, n*s-m*t+x*C-w*D+z*E-y*F);
+	  (ti,re) := toSequence timing gens gb(I, Strategy => LongPolynomial, Algorithm => Homogeneous2);
+	  assert( tally degrees source re === new Tally from {{2} => 15, {3} => 23, {4} => 22, {5} => 67, {6} => 72, {7} => 85, {8} => 10} );
+	  ti)
+     }
+
+runBenchmark = n -> (
+     ti := benchmarks#n#1();
+     << "-- " << benchmarks#n#0 << ": " <<  toString ti << " seconds" << endl;
      )
+
+runBenchmarks = method()
+runBenchmarks List := x -> (
+     << "-- beginning computation " << get "!date";
+     << "-- " << first lines get "!uname -a" << endl;
+     << "-- Macaulay2 " << version#"VERSION";
+     << ", compiled with " << version#"compiler";
+     << endl;
+     scan(x,runBenchmark))
+
+installMethod(runBenchmarks, () -> runBenchmarks {1,2,3})
+
+runBenchmarks = Command runBenchmarks
+
+<< "Benchmark: type 'runBenchmarks' to run the first three benchmarks (standard test)." << endl
+<< "Benchmark: type 'runBenchmarks {m,n,...}' to run benchmarks m,n,..." << endl
+<< "Benchmarks available:" << endl
+scan(pairs benchmarks, (n,x) -> << "       " << n << ": " << x#0 << endl)
 
 end
 
-insert this one:
+Here is another possible benchmark, but it doesn't work for us yet:
 
-R = ZZ/101[a..h,MonomialSize=>8]
-I = ideal random(R^1, R^{-3,-4,-4,-5});
-J = ideal"a3,b4,c4,d5"
-installHilbertFunction(I, poincare J)
-time I = gens gb(I);
-
-
-and this one:
-
-R = ZZ/101[vars(0..31),MonomialOrder=>ProductOrder{8,12,12},MonomialSize=>8]
-I = ideal(
-     -j*o+i*p-v*A+u*B-x*C+w*D,
-          -a*p+b*o+c*p-d*o+k*B-l*A+m*D-n*C,
-          -a*B+b*A+e*B-f*A+p*q-o*r-z*C+y*D,
-          -a*D+b*C+g*D-h*C+p*s-o*t+B*E-A*F,
-          a*j-b*i-c*j+d*i-q*v+r*u-s*x+t*w,
-          j*o-i*p-l*q+k*r-n*s+m*t,
-          -c*r+d*q+e*r-f*q-i*B+j*A-s*z+t*y,
-          -c*t+d*s+g*t-h*s-i*D+j*C-q*F+r*E,
-          a*v-b*u-e*v+f*u-j*k+i*l-x*E+w*F,
-          c*l-d*k-e*l+f*k+m*F-n*E+o*v-p*u,
-          l*q-k*r+v*A-u*B-z*E+y*F,
-          -e*F+f*E+g*F-h*E+l*s-k*t+v*C-u*D,
-          a*x-b*w-g*x+h*w-j*m+i*n-v*y+u*z,
-          c*n-d*m-g*n+h*m+k*z-l*y+o*x-p*w,
-          e*z-f*y-g*z+h*y+n*q-m*r+x*A-w*B,
-          n*s-m*t+x*C-w*D+z*E-y*F)
-time gens gb(I, Strategy => LongPolynomial, Algorithm => Homogeneous2);
-
-but not this one, because it doesn't work yet
-
-R = ZZ/5[a..d,MonomialSize=>16];
-I = ideal{a^3-2*a^2*b-a*b^2-2*b^3+a*b*c-2*b^2*c+2*a*c^2-2*b*c^2-c^3+2*a*b*d
-          -2*b^2*d-a*c*d-2*b*c*d-2*c^2*d+a*d^2+c*d^2-d^3, a^125, b^125,
-	  c^125, d^125}
-time gb I;
-
+    R = ZZ/5[a..d,MonomialSize=>16];
+    I = ideal{a^3-2*a^2*b-a*b^2-2*b^3+a*b*c-2*b^2*c+2*a*c^2-2*b*c^2-c^3+2*a*b*d
+	      -2*b^2*d-a*c*d-2*b*c*d-2*c^2*d+a*d^2+c*d^2-d^3, a^125, b^125,
+	      c^125, d^125}
+    time gb I;
 
 -- Results:
 
