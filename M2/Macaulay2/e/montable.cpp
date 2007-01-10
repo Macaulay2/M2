@@ -39,17 +39,6 @@ static void exponents_show(FILE *fil, exponents exp, int nvars)
   fprintf(fil, "]");
 }
 
-static unsigned long monomial_mask(int nvars, exponents exp)
-{
-     unsigned long result = 0, bit = 1;
-     for (int i = nvars-1; i>=0; i--) {
-	  if (exp[i] > 0) result |= bit;
-	  bit <<= 1;
-	  if (bit == 0) bit = 1;
-     }
-     return result;
-}
-
 /********************/
 /* MonomialTable ****/
 /********************/
@@ -140,7 +129,7 @@ int MonomialTable::find_divisor(exponents exp, int comp)
   assert(comp >= 1);
   if (comp >= static_cast<int>(_head.size())) return -1;
   if (comp == _last_match_comp && _last_match != NULL && ntuple::divides(_nvars,_last_match->_lead,exp)) return _last_match->_val;
-  unsigned long expmask = ~(monomial_mask(_nvars, exp));
+  unsigned long expmask = ~ntuple::mask(_nvars, exp);
   mon_term *head = _head[comp];
   for (mon_term *t = head->_next; t != head; t = t->_next)
     if ((expmask & t->_mask) == 0)
@@ -167,7 +156,7 @@ int MonomialTable::find_divisors(int max,
   }
   mon_term *head = _head[comp];
   int nmatches = 0;
-  unsigned long expmask = ~(monomial_mask(_nvars, exp));
+  unsigned long expmask = ~ntuple::mask(_nvars, exp);
   //*DEBUG*/ long nviewed = 0;
   //*DEBUG*/ long nmasked = 0;
   for (mon_term *t = head->_next, *tnext = t->_next; t != head; t = tnext, tnext = t->_next)
@@ -196,7 +185,7 @@ MonomialTable::mon_term *MonomialTable::find_exact(exponents exp, int comp) cons
   mon_term *t;
   int i;
 
-  unsigned long expmask = monomial_mask(_nvars, exp);
+  unsigned long expmask = ntuple::mask(_nvars, exp);
 
   for (t = head->_next; t != head; t = t->_next)
     if (expmask == t->_mask)
@@ -232,7 +221,7 @@ void MonomialTable::insert(exponents exp, int comp, int id)
   /* Make a new mon_term including exp */
   mon_term *newterm = reinterpret_cast<mon_term *>(mon_term_stash->new_elem());
   newterm->_lead = exp;
-  newterm->_mask = monomial_mask(_nvars,exp);
+  newterm->_mask = ntuple::mask(_nvars,exp);
   newterm->_val = id;
 
   _count++;
