@@ -34,6 +34,7 @@ INTERFACE = \
 	res-a0-poly \
 	res-a1 \
 	res-a1-poly \
+	res-a2 \
 	reducedgb \
 	reducedgb-field \
 	reducedgb-field-local \
@@ -64,7 +65,6 @@ INTERFACE = \
 	gb \
 	gbinhom \
 	gbring \
-	gb2 \
 	gauss \
 	hermite \
 	hilb \
@@ -105,7 +105,7 @@ COMMANDS = \
 	mat-symm \
 	mat-sort \
 	ring-vecs \
-        gbnod \
+        res-a2-gb \
 	engine \
 	factor \
 	x_monom \
