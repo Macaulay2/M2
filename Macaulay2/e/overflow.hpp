@@ -1,6 +1,8 @@
 #ifndef _overflow_h_
 #define _overflow_h_
 
+#define TRYLONGLONG
+
 // methods for detecting arithmetic overflows
 
 #include "exceptions.hpp"
@@ -36,38 +38,78 @@ namespace safe {
      static inline int32_t over_2(int32_t x) { return (0x80008000 & x) != 0 ; }
      static inline int32_t over_4(int32_t x) { return (0x80808080 & x) != 0 ; }
 
+#ifdef TRYLONGLONG
+     static inline int32_t add(int32_t x, int32_t y, const char *msg) {
+	  int32_t z = x+y;
+	  int64_t w = (int64_t)x+y;
+	  if (w != (int64_t)z) ov(msg);
+	  return z;
+     }
+#else
      static inline int32_t add(int32_t x, int32_t y, const char *msg) {
 	  int32_t z = x+y;
 	  if ((x < 0) != (z < 0) && (x < 0) == (y < 0)) ov(msg);
 	  return z;
      }
+#endif
+
      static inline int32_t add(int32_t x, int32_t y) { 
 	  return add(x,y,"overflow: int32_t + int32_t"); 
      }
 
+#ifdef TRYLONGLONG
+     static inline int32_t add_to(int32_t &x, int32_t y, const char *msg) {
+	  int32_t z = x+y;
+	  int64_t w = (int64_t)x+y;
+	  if (w != (int64_t)z) ov(msg);
+	  return x=z;
+     }
+#else
      static inline int32_t add_to(int32_t &x, int32_t y, const char *msg) {
 	  int32_t z = x+y;
 	  if ((x < 0) != (z < 0) && (x < 0) == (y < 0)) ov(msg);
 	  return x=z;
      }
+#endif
+
      static inline int32_t add_to(int32_t &x, int32_t y) { 
 	  return add_to(x,y,"overflow: int32_t + int32_t"); 
      }
 
+#ifdef TRYLONGLONG
+     static inline int32_t sub(int32_t x, int32_t y, const char *msg) {
+	  int32_t z = x-y;
+	  int64_t w = (int64_t)x-y;
+	  if (w != (int64_t)z) ov(msg);
+	  return z;
+     }
+#else
      static inline int32_t sub(int32_t x, int32_t y, const char *msg) {
 	  int32_t z = x-y;
 	  if ((x < 0) != (z < 0) && (x < 0) != (y < 0)) ov(msg);
 	  return z;
      }
+#endif
+
      static inline int32_t sub(int32_t x, int32_t y) { 
 	  return sub(x,y,"overflow: int32_t - int32_t"); 
      }
 
+#ifdef TRYLONGLONG
+     static inline int32_t sub_from(int32_t &x, int32_t y, const char *msg) {
+	  int64_t z = (int64_t)x-y;
+	  int32_t w = x-y;
+	  if (z != (int64_t)w) ov(msg);
+	  return x=w;
+     }
+#else
      static inline int32_t sub_from(int32_t &x, int32_t y, const char *msg) {
 	  int32_t z = x-y;
 	  if ((x < 0) != (z < 0) && (x < 0) != (y < 0)) ov(msg);
 	  return x=z;
      }
+#endif
+
      static inline int32_t sub_from(int32_t &x, int32_t y) { 
 	  return sub_from(x,y,"overflow: int32_t - int32_t"); 
      }
@@ -120,7 +162,7 @@ namespace safe {
      }
 
      static inline int32_t mult(int32_t x, int32_t y, const char *msg) {
-	  int64_t z = x*(int64_t)y;
+	  int64_t z = (int64_t)x * y;
 	  int32_t w = z;
 	  if (z != (int64_t)w) ov(msg);
 	  return w;
@@ -130,7 +172,7 @@ namespace safe {
      }
 
      static inline int32_t mult_by(int32_t &x, int32_t y, const char *msg) {
-	  int64_t z = x * (int64_t)y;
+	  int64_t z = (int64_t)x * y;
 	  int32_t w = z;
 	  if (z != (int64_t)w) ov(msg);
 	  return x=w;
