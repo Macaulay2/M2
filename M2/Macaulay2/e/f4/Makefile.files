@@ -1,8 +1,17 @@
-F4_CCFILES := ntuple_monomial varpower_monomial moninfo \
-        f4monlookup monhashtable monsort \
-        F4 F4types F4computation F4spairs F4toM2interface gausser
-# memblock.cpp is included in F4.cpp.
-# F4spairs 
+F4_CCFILES := \
+  f4 \
+  f4-monlookup \
+  f4-types \
+  f4-computation \
+  f4-spairs \
+  f4-m2-interface \
+  monhashtable \
+  monsort \
+  moninfo \
+  ntuple-monomial \
+  varpower-monomial \
+  gausser
+
 F4_CFILES := 
 F4_FILES := $(F4_CCFILES) $(F4_CFILES)
 F4_OBJECT_FILES :=  $(addsuffix .o, $(F4_FILES))

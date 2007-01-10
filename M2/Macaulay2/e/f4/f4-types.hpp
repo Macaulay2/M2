@@ -18,7 +18,7 @@
 #include "../newdelete.hpp"
 #include "../engine.h"
 #include "../stop.hpp"
-#include "f4monlookup.hpp"
+#include "f4-monlookup.hpp"
 
 #define VECTOR(T) std::vector< T, gc_allocator< T > >
 #define sizeofspair(s,len) (sizeof(*s) - sizeof(s->lcm) + (len)*sizeof(s->lcm[0]))
@@ -26,8 +26,8 @@
 extern char system_interruptedFlag;
 extern int gbTrace;
 
-#include "varpower_monomial.hpp"
-#include "ntuple_monomial.hpp"
+#include "varpower-monomial.hpp"
+#include "ntuple-monomial.hpp"
 #include "moninfo.hpp"
 
 // Coefficients.  The implementation of arrays of coeffs

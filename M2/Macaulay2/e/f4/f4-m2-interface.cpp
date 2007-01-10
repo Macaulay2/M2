@@ -6,7 +6,7 @@
 #include "../matrix.hpp"
 #include "../mat.hpp"
 #include "../newdelete.hpp"
-#include "F4toM2interface.hpp"
+#include "f4-m2-interface.hpp"
 
 void F4toM2Interface::from_M2_vec(const Gausser *KK,
 				  const MonomialInfo *MI,

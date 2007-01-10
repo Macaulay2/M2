@@ -2,7 +2,7 @@
 
 #include <ctime>
 
-#include "F4.hpp"
+#include "f4.hpp"
 #include "monsort.hpp"
 
 static clock_t clock_sort_columns = 0;
@@ -628,7 +628,7 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
 // Debugging routines only ///////
 //////////////////////////////////
 
-#include "F4toM2interface.hpp"
+#include "f4-m2-interface.hpp"
 #include "../text-io.hpp"
 #include "../mat.hpp"
 #include "../freemod.hpp"

@@ -17,8 +17,8 @@
 
 #include "../../d/M2types.h"
 
-#include "varpower_monomial.hpp"
-#include "ntuple_monomial.hpp"
+#include "varpower-monomial.hpp"
+#include "ntuple-monomial.hpp"
 
 //typedef int64_t monomial_word; // Used for all types of monomials.  Is this OK?
 typedef long monomial_word; // Used for all types of monomials.  Is this OK?

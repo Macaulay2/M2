@@ -1,6 +1,6 @@
 // Copyright 2005 Michael E. Stillman
 
-#include "F4spairs.hpp"
+#include "f4-spairs.hpp"
 #include "monsort.hpp"
 
 F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0)

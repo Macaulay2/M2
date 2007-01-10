@@ -1,7 +1,7 @@
 #ifndef __F4toM2interface_h_
 #define __F4toM2interface_h_
 
-#include "F4types.hpp"
+#include "f4-types.hpp"
 #include "gausser.hpp"
 #define MATTYPE DMat
 
