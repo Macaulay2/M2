@@ -82,7 +82,7 @@ run-overflow-test : overflow-test
 	./$^ mul 2>/dev/null || echo test succeeded
 	./$^ div 2>/dev/null || echo test succeeded
 	./$^ add 2>/dev/null || echo test succeeded
-&&overflow-test : overflow.o
+overflow-test : overflow.o
 
 # the target 'initialize' is used by the Makefile in the parent directory
 initialize all :: $(addsuffix .hpp, $(GENERATED_H))
