@@ -15,7 +15,7 @@ struct res2_pair;
 class res2_comp;
 class res2_poly;
 
-#include "respoly2.hpp"
+#include "res-a0-poly.hpp"
 
 // States of the resolution computation
 enum
