@@ -77,11 +77,11 @@ all tags:: @srcdir@/TAGS @srcdir@/TAGS.src
 # overflows
 all :: run-overflow-test
 run-overflow-test : overflow-test
-	./$^ sub || echo test succeeded
-	./$^ minus || echo test succeeded
-	./$^ mul || echo test succeeded
-	./$^ div || echo test succeeded
-	./$^ add || echo test succeeded
+	./$^ sub 2>/dev/null || echo test succeeded
+	./$^ minus 2>/dev/null || echo test succeeded
+	./$^ mul 2>/dev/null || echo test succeeded
+	./$^ div 2>/dev/null || echo test succeeded
+	./$^ add 2>/dev/null || echo test succeeded
 &&overflow-test : overflow.o
 
 # the target 'initialize' is used by the Makefile in the parent directory
