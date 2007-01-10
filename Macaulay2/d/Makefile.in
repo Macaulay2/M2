@@ -25,14 +25,11 @@ SRCFILES :=
 
 ## engine object files
 include @srcdir@/../e/Makefile.files
-include @srcdir@/../e/linalgGB/Makefile.files
 include @srcdir@/../e/f4/Makefile.files
 tmp_init.o : @srcdir@/../e/Makefile.files
-tmp_init.o : @srcdir@/../e/linalgGB/Makefile.files
 tmp_init.o : @srcdir@/../e/f4/Makefile.files
 EFILES := $(ENGINE_OFILES:%=../e/%) 
 EFILES += $(F4_OBJECT_FILES:%=../e/f4/%) 
-EFILES += $(LINALGGB_OBJECT_FILES:%=../e/linalgGB/%) 
 
 ## *.c files
 
