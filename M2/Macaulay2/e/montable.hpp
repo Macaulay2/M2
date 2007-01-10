@@ -24,6 +24,19 @@
 typedef int * exponents;
 
 class MonomialTable : public our_new_delete {
+  static MonomialTable *make_minimal(int nvars, 
+				     const VECTOR(exponents) &exps,
+				     const VECTOR(int) &comps,
+				     const VECTOR(int) &vals,
+				     VECTOR(int) &rejects);
+
+  static void minimalize(int nvars,
+			 const VECTOR(exponents) &exps, 
+			 const VECTOR(int) &comps,
+			 bool keep_duplicates, 
+			 VECTOR(int) &result_positions
+			 );
+
   MonomialTable();		// the public must use "make" below
 public:
   struct mon_term {
@@ -36,12 +49,6 @@ public:
 
   static MonomialTable *make(int nvars); // this function serves as the constructor
   /* Create a zero element table */
-
-  static MonomialTable *make_minimal(int nvars, 
-				     const VECTOR(exponents) &exps,
-				     const VECTOR(int) &comps,
-				     const VECTOR(int) &vals,
-				     VECTOR(int) &rejects);
 
   ~MonomialTable();
 
@@ -68,12 +75,6 @@ public:
   /* If this returns non-NULL, it is valid to grab the 'val' field, and/or to assign to it.
      All other fields should be considered read only */
 
-  static void minimalize(int nvars,
-			 const VECTOR(exponents) &exps, 
-			 const VECTOR(int) &comps,
-			 bool keep_duplicates, 
-			 VECTOR(int) &result_positions
-			 );
 
   /* Need a way of looping through the elements? */
 
