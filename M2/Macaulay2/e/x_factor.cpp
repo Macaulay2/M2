@@ -91,7 +91,25 @@ struct enter_factory {
   void *(*save_gmp_allocate_atomic_func  )(size_t);
   void *(*save_gmp_reallocate_atomic_func)(void *, size_t, size_t);
   void  (*save_gmp_free_func      )(void *, size_t);
-  void enter() {
+  void enter();
+  void exit();
+
+  enter_factory() : 
+       mode(modeUnknown),
+       Zn(NULL)
+     { enter(); }
+
+  enter_factory(const PolynomialRing *P) :
+       mode(coeffMode(P)),
+       newcharac(mode == modeZn ? P->charac() : 0),
+       Zn(mode == modeZn ? P->Ncoeffs()->cast_to_Z_mod() : NULL)
+     { enter(); }
+
+  ~enter_factory() { exit(); }
+
+};
+
+void enter_factory::enter() {
       if (debugging) advertise();
       save_gmp_allocate_func = __gmp_allocate_func;
       save_gmp_reallocate_func = __gmp_reallocate_func;
@@ -130,7 +148,8 @@ struct enter_factory {
 	   if (oldcharac != newcharac) printf("--changing factory characteristic from %d to %d\n",oldcharac,newcharac);
       }
   }
-  void exit() {
+
+void enter_factory::exit() {
        if (oldRatlState) On(SW_RATIONAL); else Off(SW_RATIONAL);
        setCharacteristic(oldcharac);
        if (debugging) advertise();
@@ -146,28 +165,19 @@ struct enter_factory {
        }
   }
 
-  enter_factory() : 
-       mode(modeUnknown),
-       Zn(NULL)
-     { enter(); }
-
-  enter_factory(const PolynomialRing *P) :
-       mode(coeffMode(P)),
-       newcharac(mode == modeZn ? P->charac() : 0),
-       Zn(mode == modeZn ? P->Ncoeffs()->cast_to_Z_mod() : NULL)
-     { enter(); }
-
-  ~enter_factory() { exit(); }
-
-};
-
 struct enter_M2 { 
   void *(*save_gmp_allocate_func  )(size_t);
   void *(*save_gmp_reallocate_func)(void *, size_t, size_t);
   void *(*save_gmp_allocate_atomic_func  )(size_t);
   void *(*save_gmp_reallocate_atomic_func)(void *, size_t, size_t);
   void  (*save_gmp_free_func      )(void *, size_t);
-  void enter() {
+  void enter();
+  void exit();
+  enter_M2() { enter(); }
+  ~enter_M2() { exit(); }
+};
+
+void enter_M2::enter() {
     if (debugging) advertise();
     save_gmp_allocate_func = __gmp_allocate_func;
     save_gmp_reallocate_func = __gmp_reallocate_func;
@@ -177,7 +187,8 @@ struct enter_M2 {
     enterM2();
     if (debugging) advertise();
   }
-  void exit() {
+
+void enter_M2::exit() {
     if (debugging) advertise();
     __gmp_allocate_func = save_gmp_allocate_func;
     __gmp_reallocate_func = save_gmp_reallocate_func;
@@ -186,9 +197,6 @@ struct enter_M2 {
     __gmp_free_func = save_gmp_free_func;
     if (debugging) advertise();
   }
-  enter_M2() { enter(); }
-  ~enter_M2() { exit(); }
-};
 
 static MP_INT toInteger(CanonicalForm h) {
 //// we don't have access to int_cf.h and int_int.h from factory, so the following commented-out code won't compile; but it might have worked.
