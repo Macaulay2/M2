@@ -3,7 +3,7 @@
 #include "text_io.hpp"
 #include "comp_res.hpp"
 #include "res-a1.hpp"
-#include "res2.hpp"
+#include "res-a0.hpp"
 #include "gb2.hpp"
 
 static int nfinalized = 0;

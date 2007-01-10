@@ -29,9 +29,9 @@ INTERFACE = \
 	polyquotient \
 	poly \
 	debug \
-	respoly2 \
-	res2 \
 	comp_res \
+	res-a0 \
+	res-a0-poly \
 	res-a1 \
 	res-a1-poly \
 	reducedgb \
@@ -134,7 +134,7 @@ NAMES_H = ringelem \
 	newdelete \
 	hash \
 	index \
-	respair2 
+	res-a0-pair
 
 
 C_FILES = error table exptable monordering 

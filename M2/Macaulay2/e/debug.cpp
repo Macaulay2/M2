@@ -3,7 +3,7 @@
 #include "relem.hpp"
 #include "gbring.hpp"
 #include "res-a1-poly.hpp"
-#include "respoly2.hpp"
+#include "res-a0-poly.hpp"
 #include "hermite.hpp"
 #include "mat.hpp"
 #include "monideal.hpp"

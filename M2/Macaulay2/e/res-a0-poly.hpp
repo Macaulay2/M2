@@ -4,7 +4,7 @@
 #define _respoly2_hh_
 
 #include "monideal.hpp"
-#include "respair2.hpp"
+#include "res-a0-pair.hpp"
 struct res2term;
 
 struct res2term : public our_new_delete
