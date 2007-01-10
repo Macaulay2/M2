@@ -110,18 +110,15 @@ bool ntuple::divides(int nvars, const int *a, const int *b)
 }
 
 inline
-unsigned int ntuple::mask(int nvars, const int *a)
+unsigned int ntuple::mask(int nvars, const int *exp)
 {
-  unsigned int result = 0;
-  int i;
-  unsigned int j;
-  for (i=0, j=0; i<nvars; i++, j++)
-    {
-      if (j == 8*sizeof(unsigned int)) j=0;
-      if (a[i] > 0)
-	result |= (1 << j);
-    }
-  return result;
+     unsigned int result = 0, bit = 1;
+     for (int i = nvars-1; i>=0; i--) {
+	  if (exp[i] > 0) result |= bit;
+	  bit <<= 1;
+	  if (bit == 0) bit = 1;
+     }
+     return result;
 }
 
 inline
