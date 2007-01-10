@@ -87,10 +87,10 @@ Matrix *PointsComputation<CoeffRing>::points(const PolynomialRing *R,
   return 0;
 }
 
-#include "coeffrings.hpp"
-template class PointsComputation<CoefficientRingRR>;
-template class PointsComputation<CoefficientRingCC>;
-template class PointsComputation<CoefficientRingZZp>;
+//#include "coeffrings.hpp"
+//template class PointsComputation<CoefficientRingRR>;
+//template class PointsComputation<CoefficientRingCC>;
+//template class PointsComputation<CoefficientRingZZp>;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
