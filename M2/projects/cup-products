@@ -1,0 +1,25 @@
+-*- M2 -*-
+
+Title: Cup products on Ext modules
+
+Description:
+
+An M2 package computing the cup product maps Ext^i(M,M) x Ext^j(M,M) ->
+Ext^(i+j)(M,M) where the module M is given by its presentation matrix.  This
+involves computing the min free resolution for M so might not be very effective
+if the number of vars is large, but would allow some M2 users to play with
+deformation theory.
+
+=============================================================================
+
+Proposed by: Sorin Popescu <sorin@math.sunysb.edu>
+Potential Advisor: 
+Project assigned to: 
+Current status:
+
+=============================================================================
+
+Progress log:
+
+
+

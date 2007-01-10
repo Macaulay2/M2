@@ -1,0 +1,23 @@
+-*- M2 -*-
+
+Title: Generic Groebner walk
+
+Description:
+
+An M2 implementation of the generic Groebner Walk algorithm of
+Fukuda-Jensen-Lauritzen-Thomas. This will probably not require to implement
+anything new in M2 for convexity computations and this would be independent of
+gfan... Perhaps (?) implement also the FGLM (Faugere-Gianni-Lazard-Mora)
+algorithm/walk for the zero-dimensional case...
+
+=============================================================================
+
+Proposed by: Sorin Popescu <sorin@math.sunysb.edu>
+Potential Advisor: 
+Project assigned to: 
+Current status:
+
+=============================================================================
+
+Progress log:
+
