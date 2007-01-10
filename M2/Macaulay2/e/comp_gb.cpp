@@ -7,7 +7,7 @@
 #include "gb-toric.hpp"
 #include "gauss.hpp"
 #include "hermite.hpp"
-#include "gb.hpp"
+#include "gb-default.hpp"
 #include "gbweight.hpp"
 #include "comp_gb_proxy.hpp"
 #include "linalgGB/m2interface.hpp"

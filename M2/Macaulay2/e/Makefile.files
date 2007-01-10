@@ -59,7 +59,7 @@ INTERFACE = \
 	det \
 	frac \
 	freemod \
-	gb \
+	gb-default \
 	gb-homog2 \
 	gb-sugarless \
 	gb-toric \

@@ -1,6 +1,6 @@
 /* Copyright 2003-2006, Michael E. Stillman */
 
-#include "gb.hpp"
+#include "gb-default.hpp"
 #include "text_io.hpp"
 #include <functional>
 #include <algorithm>
