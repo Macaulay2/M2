@@ -88,7 +88,7 @@ INTERFACE = \
 	solvable \
 	spair \
 	text_io \
-	varpower2 \
+	varpower \
 	weylalg \
 	z_mod_p
 
