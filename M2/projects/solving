@@ -1,0 +1,263 @@
+-*- M2 -*-
+
+Solving Equations
+
+Solving equations can be done with Groebner bases, provided we choose a
+monomial ordering adapted to elimination of variables (not the default
+ordering).  Engineers and others could use Macaulay2 if it could solve
+equations.
+
+Here is a simple example:
+
+    i4 : R = QQ[x,y,MonomialOrder=>Lex]
+
+    o4 = R
+
+    o4 : PolynomialRing
+
+    i7 : compactMatrixForm = false
+
+    o7 = false
+
+    i9 : I = ideal ( x^2-y^2+11+y, x^3 - x*y^2 +12 )
+
+		 2    2            3      2
+    o9 = ideal (x  - y  + y + 11, x  - x*y  + 12)
+
+    o9 : Ideal of R
+
+    i10 : gens gb I
+
+	  |  4      3      2                       3      2             |
+    o10 = | y  + 21y  + 88y  - 363y - 1475  12x - y  - 10y  + 22y + 121 |
+
+		  1       2
+    o10 : Matrix R  <--- R
+
+    i11 : transpose oo
+
+	  |  4      3      2               |
+    o11 = | y  + 21y  + 88y  - 363y - 1475 |
+	  |                                |
+	  |          3      2              |
+	  |   12x - y  - 10y  + 22y + 121  |
+
+		  2       1
+    o11 : Matrix R  <--- R
+
+The new system of equations in line o11 is simpler than the original system,
+because it is "triangular".  The first equation is involves just y and is monic
+in y, with 4 roots.  The second equation involves x and y, and as a polynomial
+in x with coefficients that are polynomials in y, it is monic (of degree 1 in
+x).  We conclude easily that the system has 4 solutions, which could be found
+numerically, if desired.
+
+Not all gb's lead immediately to triangular systems, and the main problem with
+using gb's is that they easily suffer a combinatorial explosion that leads to
+unusable answers.  The main tool in that case it to compute for a while (our gb
+function will stop after various criteria are satisfied and provide the gb
+generators it has found so far).  Examination of the generators will often
+suggest an auxiliary polynomial g, which, if only it were invertible modulo I,
+woulc lead to the discovery of a monic equation in the frirst (next) variable.
+For example, we may have an equation h=h(x,y) including a g = g(y) times a high
+(highest) power of x.
+
+Having chosen g, we observe that at every solution P of our system has either
+g(P)=0 or g(P)!=0.  So, it is enough to solve two new systems: one where g=0 is
+appended to the list of equations, and one where g!=0 is appended (actually, we
+add a new variable u and append a new equation ug=1.)  In the system with g=0
+our equation h reduces its degree in x.  In the system with ug=1, provided we
+choose the new monomial ordering properly, the next gb computation will quickly
+replace h by something monic in x by trading it off against the equation ug=1,
+and that will hasten total progress.
+
+Here is an example.  We consider the generic linear equation in two variables,
+x and y.  We choose an elmination ordering where the variables are preferred to
+the coefficients.
+
+    i10 : R = ZZ[a,b,c,d,p,q][x,y]
+
+    o10 = R
+
+    o10 : PolynomialRing
+
+    i11 : I = ideal(a*x+b*y-p,c*x+d*y-q)
+
+    o11 = ideal (a*x + b*y - p, c*x + d*y - q)
+
+    o11 : Ideal of R
+
+    i15 : transpose gens gb I
+
+    o15 = | (b*c - a*d)y - c*p + a*q |
+	  |                          |
+	  |       c*x + d*y - q      |
+	  |                          |
+	  |       a*x + b*y - p      |
+
+		  3       1
+    o15 : Matrix R  <--- R
+
+Notice that the coefficient of y in the top equation is the determinant, and
+inverting it leads to a monic linear equation in y, i.e., a formula for y.
+
+Here is an example involving the discriminant of a polynomial.
+
+    i16 : R = ZZ[p,q][x]
+
+    o16 = R
+
+    o16 : PolynomialRing
+
+    i17 : f = x^3 + p*x + q
+
+	   3
+    o17 = x  + p*x + q
+
+    o17 : R
+
+    i19 : I = ideal(f, diff_x f)
+
+		  3              2
+    o19 = ideal (x  + p*x + q, 3x  + p)
+
+    o19 : Ideal of R
+
+    i20 : transpose gens gb I
+
+	  |       3      2     |
+    o20 = |     4p  + 27q      |
+	  |                    |
+	  |              2     |
+	  |     9q*x - 2p      |
+	  |                    |
+	  |      2p*x + 3q     |
+	  |                    |
+	  |           3      2 |
+	  | p*q*x + 2p  + 15q  |
+	  |                    |
+	  |         2          |
+	  |       3x  + p      |
+	  |                    |
+	  |     2           2  |
+	  |  p*x  - 3q*x + p   |
+	  |                    |
+	  |     3              |
+	  |    x  + p*x + q    |
+
+		  7       1
+    o20 : Matrix R  <--- R
+
+Notice that the top equation (generator) does not involve x.  Let's set it
+equal to zero and see what happens:
+
+    i24 : S = (ZZ[p,q]/(4*p^3+27*q^2))[x]
+
+    o24 = S
+
+    o24 : PolynomialRing
+
+    i25 : f = x^3 + p*x + q
+
+	   3
+    o25 = x  + p*x + q
+
+    o25 : S
+
+    i26 : J = ideal(f, diff_x f)
+
+		  3              2
+    o26 = ideal (x  + p*x + q, 3x  + p)
+
+    o26 : Ideal of S
+
+    i27 : transpose gens gb J
+
+	  |              2     |
+    o27 = |     9q*x - 2p      |
+	  |                    |
+	  |      2p*x + 3q     |
+	  |                    |
+	  |           3      2 |
+	  | p*q*x + 2p  + 15q  |
+	  |                    |
+	  |         2          |
+	  |       3x  + p      |
+	  |                    |
+	  |     2           2  |
+	  |  p*x  - 3q*x + p   |
+	  |                    |
+	  |     3              |
+	  |    x  + p*x + q    |
+
+		  6       1
+    o27 : Matrix S  <--- S
+
+We see from the top equation that inverting q and 3 would give a monic equation
+for x, and from the second equation that inverting p and 2 would, too.  And so
+on.
+
+Alternatively, we may invert the discriminant:
+
+    i41 : T = (ZZ[p,q,u]/(u*(4*p^3+27*q^2)-1))[x]
+
+    o41 = T
+
+    o41 : PolynomialRing
+
+    i42 : f = x^3 + p*x + q
+
+	   3
+    o42 = x  + p*x + q
+
+    o42 : T
+
+    i43 : J = ideal(f, diff_x f)
+
+		  3              2
+    o43 = ideal (x  + p*x + q, 3x  + p)
+
+    o43 : Ideal of T
+
+    i44 : transpose gens gb J
+
+    o44 = | 1 |
+
+		  1       1
+    o44 : Matrix T  <--- T
+
+We get the equation 1==0, which has no solutions.  Hence, when the disriminant
+is invertible, f(x)=f'(x)==0 has no solutions, a standard fact.
+
+Here is an example involving good and bad reduction of elliptic curves.  We
+take an (affine) elliptic curve f==0 and seek its singular points.
+
+    i45 : R = ZZ[x,y]
+
+    o45 = R
+
+    o45 : PolynomialRing
+
+    i54 : f = y^2 + y - x^3 + x^2
+
+	     3    2    2
+    o54 = - x  + x  + y  + y
+
+    o54 : R
+
+    i55 : transpose gens gb ideal(f, diff_x f, diff_y f)
+
+    o55 = |   11  |
+	  |       |
+	  | y - 5 |
+	  |       |
+	  | x + 3 |
+
+		  3       1
+    o55 : Matrix R  <--- R
+
+The system is completely solved: there is one singular point at x=-3 y=5 11=0.
+The number 11 is a prime of bad reduction for the curve.
+
+A good heuristic algorithm can be developed by experimentation with
+computations such as those above.
