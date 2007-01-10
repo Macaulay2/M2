@@ -1,7 +1,7 @@
 #ifndef _overflow_h_
 #define _overflow_h_
 
-#define TRYLONGLONG
+// #define TRYLONGLONG
 
 // methods for detecting arithmetic overflows
 
