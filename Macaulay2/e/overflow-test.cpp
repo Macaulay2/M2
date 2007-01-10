@@ -1,7 +1,7 @@
-#define outer 10000
+#define outer 20000
 #define inner 5000
+
 #include <stdio.h>
-#undef TRYLONGLONG
 #include "overflow.hpp"
 #include "assert.h"
 
@@ -11,10 +11,25 @@
 // this pair of timings shows that there is virtually no loop overhead
 #define stmt x = 1, x = 1	// 0m8.973s/5000000000 repetitions, no power
 #define stmt x = 1		// 0m4.488s/5000000000 repetitions, no power
-#endif
-#define stmt x = j+s		// 0m4.368s/5000000000
 
-volatile int s0 = 100, x;
+#define stmt y = j + x		// 0m 9.065s/10000000000
+#define stmt y = safe::add(j,x) // 0m18.569s/10000000000, no long long, pretty good!
+#define TRYLONGLONG
+#define stmt y = safe::add(j,x) // 1m46.455s/10000000000, long long, too slow
+
+#define stmt y = j * x		//   0m2.408s/1000000000
+#define stmt y = safe::mult(j,x) // 0m15.361s/1000000000, no long long
+#define TRYLONGLONG
+#define stmt y = safe::mult(j,x) // 0m15.369s/1000000000, long long
+
+#define stmt y = - x		//  0m9.057s/10000000000
+#define stmt y = safe::minus(x) // 0m15.205s/10000000000, no long long
+
+#endif
+
+//=============================================================================
+
+volatile int s0 = 100, x = 200, y;
 
 int main () {
      int i,j;
