@@ -5,7 +5,7 @@
 
 #include "memblock.hpp"
 #include "moninfo.hpp"
-#include "F4types.hpp"
+#include "f4-types.hpp"
 
 
 class F4SPairSet : public our_new_delete

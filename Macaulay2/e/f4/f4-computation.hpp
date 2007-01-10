@@ -4,7 +4,7 @@
 #define _F4Computation_h_
 
 #include "../comp-gb.hpp"
-#include "F4.hpp"
+#include "f4.hpp"
 #include "gausser.hpp"
 
 class PolynomialRing;

@@ -2,8 +2,8 @@
 
 #include "../text-io.hpp"
 
-#include "varpower_monomial.hpp"
-#include "f4monlookup.hpp"
+#include "varpower-monomial.hpp"
+#include "f4-monlookup.hpp"
 
 extern int gbTrace;
 

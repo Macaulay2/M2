@@ -63,11 +63,11 @@
 //      Hilbert function use
 //      
 
-#include "F4types.hpp"
+#include "f4-types.hpp"
 #include "monhashtable.hpp"
 #include "memblock.hpp"
 #include "monsort.hpp"
-#include "F4spairs.hpp"
+#include "f4-spairs.hpp"
 #include "gausser.hpp"
 
 /////////////////////////////////////////////////////////////////////////////

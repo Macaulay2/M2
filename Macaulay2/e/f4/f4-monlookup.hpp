@@ -6,8 +6,8 @@
 #include <vector>
 
 #include "../style.hpp"
-#include "varpower_monomial.hpp"
-#include "ntuple_monomial.hpp"
+#include "varpower-monomial.hpp"
+#include "ntuple-monomial.hpp"
 #include "moninfo.hpp"
 
 class buffer;

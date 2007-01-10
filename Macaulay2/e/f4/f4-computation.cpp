@@ -8,9 +8,9 @@
 #include "../matrix.hpp"
 #include "../matrixcon.hpp"
 
-#include "F4computation.hpp"
-#include "F4toM2interface.hpp"
-#include "F4.hpp"
+#include "f4-computation.hpp"
+#include "f4-m2-interface.hpp"
+#include "f4.hpp"
 #include "moninfo.hpp"
 
 GBComputation *createF4GB(const Matrix *m,
