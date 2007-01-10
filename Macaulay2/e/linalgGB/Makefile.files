@@ -1,4 +1,0 @@
-LINALGGB_CCFILES := memblock MonomialOps Monomials MonomialSet MonomialTable interface lingb
-LINALGGB_CFILES := monoms
-LINALGGB_FILES := $(LINALGGB_CCFILES) $(LINALGGB_CFILES)
-LINALGGB_OBJECT_FILES :=  $(addsuffix .o, $(LINALGGB_FILES))

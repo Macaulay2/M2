@@ -68,8 +68,6 @@ all tags:: @srcdir@/TAGS @srcdir@/TAGS.src
 @srcdir@/TAGS.src: $(ENGINE_SRCFILES)
 	cd @srcdir@ && etags -o TAGS.src $(patsubst @srcdir@/%, %, $^)
 @srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c \
-		 @srcdir@/linalgGB/*.h @srcdir@/linalgGB/*.c \
-		 @srcdir@/linalgGB/*.hpp @srcdir@/linalgGB/*.cpp \
 		 @srcdir@/f4/*.hpp @srcdir@/f4/*.cpp \
 		 statuscodes
 	cd @srcdir@ && etags -o TAGS $(patsubst @srcdir@/%, %, $^)
@@ -77,7 +75,6 @@ all tags:: @srcdir@/TAGS @srcdir@/TAGS.src
 # the target 'initialize' is used by the Makefile in the parent directory
 initialize all :: $(addsuffix .hpp, $(GENERATED_H))
 
-all::; $(MAKE) -C linalgGB
 all::; $(MAKE) -C f4
 
 ifeq "$(SHARED)" "yes"
@@ -104,7 +101,6 @@ geogbvec.hpp: geoT.hpp; sed $(GBVEC) $^ >$@
 geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
 
 clean::; rm -f *.lo *.o TAGS LOGFILE $(addsuffix .hpp, $(GENERATED_H))
-clean::; $(MAKE) -C linalgGB $@
 clean::; $(MAKE) -C f4 $@
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
 clean::; rm -f *.dep dep-*.tmp
