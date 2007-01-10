@@ -4,7 +4,7 @@
 #include "matrix.hpp"
 #include "text-io.hpp"
 #include "gbring.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 
 GBMatrix::GBMatrix(const FreeModule *F0)
   : F(F0)

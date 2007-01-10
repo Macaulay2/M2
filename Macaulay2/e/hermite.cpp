@@ -3,7 +3,7 @@
 #include "style.hpp"
 #include "hermite.hpp"
 #include "text-io.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 
 extern RingZZ *globalZZ;
 

@@ -2,7 +2,7 @@
 
 #include "relem.hpp"
 #include "matrix.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 #include "LLL.hpp"
 #include "fractionfreeLU.hpp"
 #include "text-io.hpp"

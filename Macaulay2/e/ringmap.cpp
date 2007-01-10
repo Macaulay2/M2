@@ -2,7 +2,7 @@
 
 #include "ringmap.hpp"
 #include "matrix.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 #include "polyring.hpp"
 #include "relem.hpp"
 

@@ -6,7 +6,7 @@
 #include <algorithm>
 
 #include "matrix.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 #include "polyring.hpp"
 #include "newdelete.hpp"
 #include "relem.hpp"

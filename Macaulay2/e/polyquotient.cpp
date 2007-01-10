@@ -3,7 +3,7 @@
 #include "intarray.hpp"
 #include "polyring.hpp"
 #include "polyquotient.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 #include "matrix.hpp"
 #include "montableZZ.hpp"
 #include "montable.hpp"

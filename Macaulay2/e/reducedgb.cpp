@@ -1,6 +1,6 @@
 #include "reducedgb.hpp"
 
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 #include "poly.hpp"
 #include "matrix.hpp"
 

@@ -5,7 +5,7 @@
 
 #include "matrix.hpp"
 #include "comb.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 
 class MatrixConstructor;
 

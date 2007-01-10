@@ -1,4 +1,4 @@
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 #include "matrix.hpp"
 
 MatrixConstructor::MatrixConstructor()

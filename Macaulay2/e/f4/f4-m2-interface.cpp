@@ -2,7 +2,7 @@
 #include <vector>
 #include "../polyring.hpp"
 #include "../freemod.hpp"
-#include "../matrixcon.hpp"
+#include "../matrix-con.hpp"
 #include "../matrix.hpp"
 #include "../mat.hpp"
 #include "../newdelete.hpp"

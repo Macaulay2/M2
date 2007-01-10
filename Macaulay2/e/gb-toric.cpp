@@ -4,7 +4,7 @@
 #include "ntuple.hpp"
 #include "text-io.hpp"
 
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 
 #define monomial monomial0
 extern int gbTrace;

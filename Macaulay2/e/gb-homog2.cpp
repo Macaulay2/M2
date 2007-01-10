@@ -18,7 +18,7 @@
 #include "gb-homog2.hpp"
 #include "hilb.hpp"
 #include "text-io.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 
 int gbTrace = 0;
 

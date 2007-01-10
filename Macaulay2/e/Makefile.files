@@ -38,7 +38,6 @@ INTERFACE = \
 	reducedgb-field \
 	reducedgb-field-local \
 	reducedgb-ZZ \
-	matrixcon \
 	montable \
 	montableZZ \
 	schorder \
@@ -67,6 +66,7 @@ INTERFACE = \
 	int-bag \
 	intarray \
 	matrix \
+	matrix-con \
 	mem \
 	monideal \
 	monoid \
@@ -91,9 +91,9 @@ INTERFACE = \
 COMMANDS = \
 	ntl-internal \
 	ntl-debugio \
-	mat-kbasis \
-	mat-symm \
-	mat-sort \
+	matrix-kbasis \
+	matrix-symm \
+	matrix-sort \
 	ring-vecs \
         res-a2-gb \
 	engine \
