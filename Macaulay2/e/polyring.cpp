@@ -7,7 +7,6 @@
 #include "matrix.hpp"
 #include "ZZ.hpp"
 #include "ntuple.hpp"
-#include "termideal.hpp"
 #include "gbring.hpp"
 #include "frac.hpp"
 #include "geopoly.hpp"
