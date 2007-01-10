@@ -1,6 +1,7 @@
 # @configure_input@
 include ../../include/config.Makefile
 VPATH = @srcdir@
+SRCDIR = @srcdir@
 DEPENDS = yes
 
 %.o : %.cpp
@@ -99,6 +100,8 @@ RES =   -e "s/geobucket/respolyHeap/g"  -e "s/FREEMODULETYPE/const res2_poly/g" 
 #geovec.hpp  : geoT.hpp; sed $(VEC)   $^ >$@
 geogbvec.hpp: geoT.hpp; sed $(GBVEC) $^ >$@
 geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
+
+overflow-test : overflow.o
 
 clean::; rm -f *.lo *.o TAGS LOGFILE $(addsuffix .hpp, $(GENERATED_H))
 clean::; $(MAKE) -C f4 $@
