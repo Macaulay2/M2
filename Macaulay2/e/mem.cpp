@@ -2,7 +2,7 @@
 
 #include "style.hpp"
 #include "mem.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 
 static int allocated_amount = 0;
 static int deleted_amount = 0;

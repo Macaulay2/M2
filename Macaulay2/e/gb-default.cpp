@@ -1,7 +1,7 @@
 /* Copyright 2003-2006, Michael E. Stillman */
 
 #include "gb-default.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include <functional>
 #include <algorithm>
 

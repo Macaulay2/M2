@@ -2,7 +2,7 @@
 // Copyright 1995 Michael E. Stillman
 
 #include "QQ.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "monoid.hpp"
 #include "relem.hpp"
 #include "ringmap.hpp"

@@ -327,7 +327,7 @@ public:
 };
 
 #include "ZZ.hpp"
-#include "ntl_interface.hpp"
+#include "ntl-interface.hpp"
 
 class CoefficientRingZZ_NTL : public our_new_delete
 {

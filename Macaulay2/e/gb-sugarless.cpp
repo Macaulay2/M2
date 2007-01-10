@@ -2,7 +2,7 @@
 
 #include "style.hpp"
 #include "gb-sugarless.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "matrixcon.hpp"
 #include "gbweight.hpp"
 

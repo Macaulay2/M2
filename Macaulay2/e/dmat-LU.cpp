@@ -1,7 +1,7 @@
 #include "mat.hpp"
 #include "dmat-LU.hpp"
 
-#include "text_io.hpp"
+#include "text-io.hpp"
 
 template <typename CoeffRing>
 void ddmat(const DMat<CoeffRing> *A)

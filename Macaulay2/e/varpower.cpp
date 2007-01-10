@@ -1,7 +1,7 @@
 // (c) 1995 Michael E. Stillman
 
 #include "varpower.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "overflow.hpp"
 
 struct varpower_monomial

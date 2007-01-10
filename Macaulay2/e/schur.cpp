@@ -2,7 +2,7 @@
 
 #include "schur.hpp"
 #include <stdio.h>
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "ZZ.hpp"
 
 void tableau::initialize(int nvars)

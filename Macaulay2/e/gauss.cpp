@@ -2,7 +2,7 @@
 
 #include "style.hpp"
 #include "gauss.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "matrixcon.hpp"
 #include "newdelete.hpp"
 

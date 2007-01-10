@@ -1,7 +1,7 @@
 // Copyright 1996 Michael E. Stillman
 
 #include "polyring.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "monoid.hpp"
 #include "ringmap.hpp"
 #include "matrix.hpp"

@@ -2,7 +2,7 @@
 
 #include "res-a2.hpp"
 #include "hilb.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "matrixcon.hpp"
 
 extern ring_elem hilb(const Matrix &M, const Ring *RR);

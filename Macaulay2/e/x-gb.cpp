@@ -5,7 +5,7 @@
 #include "comp-gb.hpp"
 #include "comp-res.hpp"
 #include "comp-gb-declared.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "sagbi.hpp"
 #include "exceptions.hpp"
 

@@ -3,7 +3,7 @@
 #include "ZZ.hpp"
 #include "QQ.hpp"
 #include "RRR.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "monoid.hpp"
 #include "relem.hpp"
 #include "ringmap.hpp"

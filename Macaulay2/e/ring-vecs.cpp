@@ -1,7 +1,7 @@
 // Copyright 2003  Michael E. Stillman
 
 #include "ring.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include <vector>
 #include "matrix.hpp"
 #include "geovec.hpp"

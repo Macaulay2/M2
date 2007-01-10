@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <gc.h>
 #include <gmp.h>
-#include "ntl_interface.hpp"
+#include "ntl-interface.hpp"
 
 #define ALLOC(p) (((long *) (p))[0])
 #define SIZE(p) (((long *) (p))[1])

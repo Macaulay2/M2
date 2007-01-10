@@ -2,7 +2,7 @@
 
 #include "gb-toric.hpp"
 #include "ntuple.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 
 #include "matrixcon.hpp"
 

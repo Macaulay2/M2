@@ -4,7 +4,7 @@
 #include "res-a0.hpp"
 #include "geores.hpp"
 #include "buffer.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 
 extern char system_interruptedFlag;
 extern int gbTrace;

@@ -4,7 +4,7 @@
 #include "monideal.hpp"
 #include <functional>
 #include <algorithm>
-#include "text_io.hpp"
+#include "text-io.hpp"
 ReducedGB_ZZ::~ReducedGB_ZZ()
 {
   delete T;

@@ -1,7 +1,7 @@
 // Copyright 1995 Michael E. Stillman
 
 #include "frac.hpp"
-#include "text_io.hpp"
+#include "text-io.hpp"
 #include "monoid.hpp"
 #include "ringmap.hpp"
 #include "gbring.hpp"
