@@ -1,6 +1,6 @@
 // Copyright 1997  Michael E. Stillman
 
-#include "gb2.hpp"
+#include "res-a2.hpp"
 #include "hilb.hpp"
 #include "text_io.hpp"
 #include "matrixcon.hpp"

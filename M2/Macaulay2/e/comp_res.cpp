@@ -4,7 +4,7 @@
 #include "comp_res.hpp"
 #include "res-a1.hpp"
 #include "res-a0.hpp"
-#include "gb2.hpp"
+#include "res-a2.hpp"
 
 static int nfinalized = 0;
 static int nremoved = 0;
