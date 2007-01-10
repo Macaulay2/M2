@@ -103,8 +103,8 @@ runBenchmark = n -> (
      << "-- " << benchmarks#n#0 << ": " <<  toString ti << " seconds" << endl;
      )
 
-runBenchmarks = method()
-runBenchmarks List := x -> (
+runBenchmarks0 = method()
+runBenchmarks0 List := x -> (
      << "-- beginning computation " << get "!date";
      << "-- " << first lines get "!uname -a" << endl;
      << "-- Macaulay2 " << version#"VERSION";
@@ -112,9 +112,9 @@ runBenchmarks List := x -> (
      << endl;
      scan(x,runBenchmark))
 
-installMethod(runBenchmarks, () -> runBenchmarks {1,2,3})
+installMethod(runBenchmarks0, () -> runBenchmarks {1,2,3})
 
-runBenchmarks = Command runBenchmarks
+runBenchmarks = Command runBenchmarks0
 
 << "Benchmark: type 'runBenchmarks' to run the first three benchmarks (standard test)." << endl
 << "Benchmark: type 'runBenchmarks {m,n,...}' to run benchmarks m,n,..." << endl
@@ -198,6 +198,16 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- res39: 0.540033 seconds
 -- resG25: 7.08444 seconds
 -- gbB148: 52.1673 seconds
+-- res39: 0.528033 seconds
+-- resG25: 6.94443 seconds
+-- gbB148: 52.2953 seconds
+---- safe::add using long long
+-- res39: 0.500032 seconds
+-- resG25: 6.74442 seconds
+-- gbB148: 51.5032 seconds
+-- res39: 0.516033 seconds
+-- resG25: 6.85243 seconds
+-- gbB148: 51.8792 seconds
 
 -- Darwin habanero.local 7.7.0 Darwin Kernel Version 7.7.0: Sun Nov  7 16:06:51 PST 2004; root:xnu/xnu-517.9.5.obj~1/RELEASE_PPC  Power Macintosh powerpc
 -- Macaulay2 0.9.5, compiled with gcc 3.3.0
