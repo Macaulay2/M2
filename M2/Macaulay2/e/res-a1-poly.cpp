@@ -1,6 +1,6 @@
 // Copyright 1996 Michael E. Stillman
 
-#include "respoly.hpp"
+#include "res-a1-poly.hpp"
 #include "text_io.hpp"
 #include "polyring.hpp"
 #include "freemod.hpp"

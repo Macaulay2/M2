@@ -3,7 +3,7 @@
 #include "ring.hpp"
 #include "monoid.hpp"
 #include "monideal.hpp"
-#include "respoly.hpp"
+#include "res-a1-poly.hpp"
 #include "polyring.hpp"
 
 #include "freemod.hpp"
