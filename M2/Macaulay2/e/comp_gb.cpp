@@ -3,7 +3,7 @@
 #include "comp_gb.hpp"
 
 #include "gb-homog2.hpp"
-#include "gbinhom.hpp"
+#include "gb-sugarless.hpp"
 #include "gbbinom.hpp"
 #include "gauss.hpp"
 #include "hermite.hpp"
