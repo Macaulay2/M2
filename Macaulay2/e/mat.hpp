@@ -554,6 +554,7 @@ public:
      returns -1 if the column is 0 */
   {
     elem b;
+    mat.get_CoeffRing()->set_zero(b);
     long ret = mat.lead_row(col, b);
     if (ret >= 0)
       mat.get_CoeffRing()->to_ring_elem(result, b);
@@ -567,6 +568,7 @@ public:
     if (r >= 0 && r < n_rows() && c >= 0 && c < n_cols())
       {
 	elem a;
+	mat.get_CoeffRing()->set_zero(a);
 	if (mat.get_entry(r,c,a))
 	  {
 	    mat.get_CoeffRing()->to_ring_elem(result,a);
@@ -735,6 +737,7 @@ public:
     if (error_column_bound(c1,ncols) || error_column_bound(c2,ncols))
       return false;
     elem a;
+    mat.get_CoeffRing()->set_zero(a);
     mat.dot_product(c1,c2,a);
     mat.get_CoeffRing()->to_ring_elem(result,a);
     return true;
