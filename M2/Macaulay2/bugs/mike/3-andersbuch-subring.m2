@@ -48,6 +48,7 @@ R = ZZ/2003 [X_0..X_35, Degrees => {{1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1},
 	                        {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}}, 
 	MonomialOrder => Eliminate{18}, 
 	MonomialSize => 8]
+-- this one might be the example referred to in gbA.cpp
 J = ideal (-X_0*X_9-X_1*X_12+X_18,
      -X_0*X_10-X_1*X_13+X_19,
      -X_0*X_11-X_1*X_14+X_20,-X_3*X_9-X_4*X_12+X_21,-X_3*X_10-X_4*X_13+X_22,-X_3*X_11-X_4*X_14+X_23,-X_6*X_9-X_7*X_12+X_24,
