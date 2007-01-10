@@ -73,7 +73,7 @@ INTERFACE = \
 	matrix \
 	mem \
 	monideal \
-	monoid2 \
+	monoid \
 	monomial \
 	ntuple \
 	polyring \
@@ -134,9 +134,8 @@ NAMES_H = ringelem \
 	newdelete \
 	hash \
 	index \
-	respair2 \
-	monoid1 \
-	monoid2
+	respair2 
+
 
 C_FILES = error table exptable monordering 
 

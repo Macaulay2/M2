@@ -1,7 +1,7 @@
 // Copyright 2004.  Michael E. Stillman
 
-#ifndef _monoid2_hpp_
-#define _monoid2_hpp_
+#ifndef _monoid_hpp_
+#define _monoid_hpp_
 
 #include "monordering.h"
 #include "array.hpp"
