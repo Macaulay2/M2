@@ -2,7 +2,7 @@
 #include "matrix.hpp"
 #include "relem.hpp"
 #include "gbring.hpp"
-#include "respoly.hpp"
+#include "res-a1-poly.hpp"
 #include "respoly2.hpp"
 #include "hermite.hpp"
 #include "mat.hpp"

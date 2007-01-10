@@ -11,7 +11,7 @@
 #include "polyring.hpp"
 #include "comp_res.hpp"
 
-#include "respoly.hpp"
+#include "res-a1-poly.hpp"
 
 class res_pair;
 class res_degree;

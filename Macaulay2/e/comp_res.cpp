@@ -2,7 +2,7 @@
 
 #include "text_io.hpp"
 #include "comp_res.hpp"
-#include "res.hpp"
+#include "res-a1.hpp"
 #include "res2.hpp"
 #include "gb2.hpp"
 

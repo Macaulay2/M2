@@ -32,8 +32,8 @@ INTERFACE = \
 	respoly2 \
 	res2 \
 	comp_res \
-	res \
-	respoly \
+	res-a1 \
+	res-a1-poly \
 	reducedgb \
 	reducedgb-field \
 	reducedgb-field-local \
