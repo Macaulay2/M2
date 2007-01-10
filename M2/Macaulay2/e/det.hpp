@@ -5,7 +5,7 @@
 
 #include "matrix.hpp"
 #include "comb.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 
 const int DET_BAREISS = 0;
 const int DET_COFACTOR = 1;

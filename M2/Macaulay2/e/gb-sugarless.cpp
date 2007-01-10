@@ -3,7 +3,7 @@
 #include "style.hpp"
 #include "gb-sugarless.hpp"
 #include "text-io.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 #include "gbweight.hpp"
 
 extern char system_interruptedFlag;

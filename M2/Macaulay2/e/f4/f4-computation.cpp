@@ -6,7 +6,7 @@
 #include "../poly.hpp"
 #include "../coeffrings.hpp"
 #include "../matrix.hpp"
-#include "../matrixcon.hpp"
+#include "../matrix-con.hpp"
 
 #include "f4-computation.hpp"
 #include "f4-m2-interface.hpp"

@@ -1,6 +1,6 @@
 #include "polyring.hpp"
 #include "matrix.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 #include "ntuple.hpp"
 
 class KBasis

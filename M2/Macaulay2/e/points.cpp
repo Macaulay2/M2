@@ -3,7 +3,7 @@
 #include "points.hpp"
 #include "error.h"
 #include "mat.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 #include "dmat.hpp"
 #include "polyring.hpp"
 #include "monideal.hpp"

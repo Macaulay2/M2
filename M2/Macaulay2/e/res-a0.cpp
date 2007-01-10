@@ -1794,7 +1794,7 @@ void res2_comp::handle_pair_by_degree(res2_pair *p)
 }
 
 //////////// res-a0-aux /////////////////////
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 
 M2_arrayint res2_comp::betti_skeleton() const
 {

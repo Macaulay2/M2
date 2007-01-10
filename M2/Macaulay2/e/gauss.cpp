@@ -3,7 +3,7 @@
 #include "style.hpp"
 #include "gauss.hpp"
 #include "text-io.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 #include "newdelete.hpp"
 
 extern RingZZ *globalZZ;

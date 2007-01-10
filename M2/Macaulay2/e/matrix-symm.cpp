@@ -1,5 +1,5 @@
 #include "matrix.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 
 class SymmMatrix
 {

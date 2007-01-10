@@ -4,7 +4,7 @@
 #include "qring.hpp"
 #include "polyquotient.hpp"
 #include "matrix.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 
 PolynomialRing::~PolynomialRing()
 {

@@ -5,7 +5,7 @@
 #include "hilb.hpp"
 #include "text-io.hpp"
 #include "comp-gb.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 
 void gb2_comp::setup(FreeModule *FFsyz,
 		     stash *mi_stash0,

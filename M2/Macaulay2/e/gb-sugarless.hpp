@@ -9,7 +9,7 @@
 #include "reducedgb.hpp"
 
 #include "spair.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 class GBWeight;
 
 class GBinhom_comp : public GBComputation

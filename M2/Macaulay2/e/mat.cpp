@@ -5,7 +5,7 @@
 #include "mat.hpp"
 
 #include "coeffrings.hpp"
-#include "matrixcon.hpp"
+#include "matrix-con.hpp"
 #include "matrix.hpp"
 
 #include "lapack.hpp"
