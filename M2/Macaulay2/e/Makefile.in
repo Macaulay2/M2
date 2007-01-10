@@ -73,6 +73,17 @@ all tags:: @srcdir@/TAGS @srcdir@/TAGS.src
 		 statuscodes
 	cd @srcdir@ && etags -o TAGS $(patsubst @srcdir@/%, %, $^)
 
+
+# overflows
+all :: run-overflow-test
+run-overflow-test : overflow-test
+	./$^ sub || echo test succeeded
+	./$^ minus || echo test succeeded
+	./$^ mul || echo test succeeded
+	./$^ div || echo test succeeded
+	./$^ add || echo test succeeded
+&&overflow-test : overflow.o
+
 # the target 'initialize' is used by the Makefile in the parent directory
 initialize all :: $(addsuffix .hpp, $(GENERATED_H))
 
@@ -100,8 +111,6 @@ RES =   -e "s/geobucket/respolyHeap/g"  -e "s/FREEMODULETYPE/const res2_poly/g" 
 #geovec.hpp  : geoT.hpp; sed $(VEC)   $^ >$@
 geogbvec.hpp: geoT.hpp; sed $(GBVEC) $^ >$@
 geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
-
-overflow-test : overflow.o
 
 clean::; rm -f *.lo *.o TAGS LOGFILE $(addsuffix .hpp, $(GENERATED_H))
 clean::; $(MAKE) -C f4 $@
