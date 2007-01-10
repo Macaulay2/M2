@@ -1,6 +1,0 @@
--- gbelem_from_poly
--- SPairSet::display_spair
--- SPairSet::display
--- routine: take a std::vector<poly,gc_allocator<poly> >
---   and create an SPairSet of all of the successive
---   quotients

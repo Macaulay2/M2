@@ -10,7 +10,6 @@
 #include "gb-default.hpp"
 #include "gbweight.hpp"
 #include "comp_gb_proxy.hpp"
-#include "linalgGB/m2interface.hpp"
 #include "text_io.hpp"
 
 GBComputation *createF4GB(const Matrix *m,
@@ -74,15 +73,6 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
   GBComputation *result;
 
   switch (algorithm) {
-  case 3: // LinearAlgebraGB.  Must match value in function processAlgorithm() in m2/gb.m2
-    result = createLinearAlgebraGB(m, 
-			 collect_syz, 
-			 n_rows_to_keep,
-			 gb_weights,
-			 strategy,
-			 use_max_degree,
-			 max_degree);
-    break;
   case 4:
     result = GBinhom_comp::create(m, 
 				  collect_syz, 
