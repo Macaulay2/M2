@@ -1,6 +1,6 @@
 -*- M2 -*-
 
-Title: 
+Title: Schubert
 
 Description:
 
@@ -9,10 +9,17 @@ could recover/expand in M2 Stein Arild Stromme's and Sheldon Katz's Schubert
 Maple package. Or at least just have implemented Schubert calculus in a
 Grassmannian, for starters.
 
+I do not how much time such a project would take but porting Schubert to M2
+might be rather involved for a (single) student.
+
+[Sorin]
+
 =============================================================================
 
-Proposed by: Sorin Popescu <sorin@math.sunysb.edu>
-Potential Advisor: 
+Proposed by: Sorin Popescu <sorin@math.sunysb.edu>,
+	     Wolfram Decker <decker@math.uni-sb.de>,
+	     Frank Schreyer <schreyer@math.uni-sb.de>
+Potential Advisor: Sorin Popescu <sorin@math.sunysb.edu>
 Project assigned to: 
 Current status:
 
