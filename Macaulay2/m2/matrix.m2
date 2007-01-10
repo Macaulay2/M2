@@ -245,17 +245,19 @@ Option ++ Option := directSum
 directSum Option := o -> directSum(1 : o)
 Option.directSum = args -> (
      if #args === 0 then error "expected more than 0 arguments";
-     modules := apply(args,last);
-     y := youngest modules;
+     objects := apply(args,last);
+     y := youngest objects;
      key := (directSum, args);
      if y =!= null and y#?key then y#key else (
-	  type := single apply(modules, class);
+	  type := single apply(objects, class);
 	  if not type.?directSum then error "no method for direct sum";
-	  M := type.directSum modules;
-	  if y =!= null then y#key = M;
-     	  keys := M.cache.indices = toList args/first;
-     	  M.cache.indexComponents = new HashTable from apply(#keys, i -> keys#i => i);
-	  M))
+	  X := type.directSum objects;
+	  if y =!= null then y#key = X;
+     	  keys := X.cache.indices = toList args/first;
+     	  ic := X.cache.indexComponents = new HashTable from apply(#keys, i -> keys#i => i);
+	  if X.?source then X.source.cache.indexComponents = ic;
+	  if X.?target then X.target.cache.indexComponents = ic;
+	  X))
 Matrix ++ Matrix := Matrix => directSum
 Module ++ Module := Module => directSum
 
