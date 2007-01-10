@@ -108,26 +108,16 @@ COMMANDS = \
         res-a2-gb \
 	engine \
 	factor \
-	x_monom \
-	x_monoid \
-	x_relem \
-	x_factor \
-	x_free \
-	x_mat \
-	x_monideal \
-	x_gb \
-	x_ringmap \
-	x_mutablemat
-
-COMMANDS_REDO = \
-	x_monoid \
-	x_monom \
-	x_system \
-	x_free \
-	x_mat \
-	x_relem \
-	x_gb \
-	x_borel \
+	x-monom \
+	x-monoid \
+	x-relem \
+	x-factor \
+	x-free \
+	x-mat \
+	x-monideal \
+	x-gb \
+	x-ringmap \
+	x-mutablemat
 
 NAMES_H = ringelem \
 	style \
@@ -135,7 +125,6 @@ NAMES_H = ringelem \
 	hash \
 	index \
 	res-a0-pair
-
 
 C_FILES = error table exptable monordering 
 
