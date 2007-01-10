@@ -5,7 +5,7 @@
 #include "queue.hpp"
 #include "index.hpp"
 #include "varpower.hpp"
-#include "int_bag.hpp"
+#include "int-bag.hpp"
 #include "ring.hpp"
 #include "polyring.hpp"
 

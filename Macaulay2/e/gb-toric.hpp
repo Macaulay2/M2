@@ -3,7 +3,7 @@
 #ifndef _gbbinom_hh_
 #define _gbbinom_hh_
 
-#include "comp_gb.hpp"
+#include "comp-gb.hpp"
 #include "matrix.hpp"
 
 /////////////////////

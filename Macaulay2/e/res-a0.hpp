@@ -9,7 +9,7 @@
 #include "matrix.hpp"
 #include "monideal.hpp"
 #include "polyring.hpp"
-#include "comp_res.hpp"
+#include "comp-res.hpp"
 
 struct res2_pair;
 class res2_comp;

@@ -18,7 +18,7 @@ using std::endl;
 #endif
 
 #include "matrix.hpp"
-#include "z_mod_p.hpp"
+#include "ZZp.hpp"
 #include "ZZ.hpp"
 #include "frac.hpp"
 #include "polyring.hpp"

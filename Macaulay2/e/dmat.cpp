@@ -1,7 +1,7 @@
 // Copyright 2005  Michael E. Stillman
 
 #include "coeffrings.hpp"
-#include "z_mod_p.hpp"
+#include "ZZp.hpp"
 #include "dmat.hpp"
 #include "mat.hpp"
 

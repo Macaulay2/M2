@@ -2,7 +2,7 @@
 #include "text_io.hpp"
 #include "ZZ.hpp"
 #include "QQ.hpp"
-#include "z_mod_p.hpp"
+#include "ZZp.hpp"
 #include "freemod.hpp"
 #include "geovec.hpp"
 #include "frac.hpp"

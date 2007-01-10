@@ -5,7 +5,7 @@
 #include "monoid.hpp"
 #include "monomial.hpp"
 #include "relem.hpp"
-#include "z_mod_p.hpp"
+#include "ZZp.hpp"
 #include "ZZ.hpp"
 #include "QQ.hpp"
 #include "RR.hpp"
