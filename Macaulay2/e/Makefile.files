@@ -62,7 +62,7 @@ INTERFACE = \
 	det \
 	frac \
 	freemod \
-	gb \
+	gb-homog2 \
 	gbinhom \
 	gbring \
 	gauss \
