@@ -1,0 +1,38 @@
+-*- M2 -*-
+
+Title: Intersection theory on moduli spaces of curves
+
+Description:
+
+An M2 package for some intersection theory on Mbar(g,n), the Deligne-Mumford
+compactification of the moduli spaces of n-pointed genus g curves. This
+probably would/should be based on the old Maple Worksheets (Maple 8 and 7 if I
+remember correctly; they definitely don't run anymore with the current version
+of Maple) by Carel Faber computing intersection numbers of the various kappa,
+lambda and psi classes. Carel used them initially to test his conjectures, but
+the worksheets have also been used by number of other people (while they
+work(ed) with Maple...)
+
+The ideas behind the Maple worksheets are explained in Carel's paper:
+"Algorithms for  computing intersection numbers on moduli  spaces of
+curves ..."  I've attached to this email a tar.gz file with all of 
+Carel's  Maple files and his paper (the version that I had).
+
+-----------------------------------------------------------------------------
+
+See also http://arxiv.org/ps/alg-geom/9706006, for an earlier version of the
+paper of Faber. --dan
+
+=============================================================================
+
+Proposed by: Sorin Popescu <sorin@math.sunysb.edu>
+Potential Advisor: 
+Project assigned to: 
+Current status:
+
+=============================================================================
+
+Progress log:
+
+
+

@@ -1,0 +1,26 @@
+-*- M2 -*-
+
+Title: Posets
+
+Description:
+
+An M2 package for working with posets. This would also link nicely with the
+SimplicialComplexes.m2 package. For instance, from the point of view of an M2
+user, a poset would be input/displayed by a list of pairs giving the covering
+relations in the Hasse diagram, and the package would also have a number of
+predefined posets (Boolean, Chains, etc) and be able to do some basic
+operations on them (e.g. product, closure, etc). Also compute the Moebius
+function, check if the poset is a lattice, compute the atomic complex, order
+complex, etc
+
+=============================================================================
+
+Proposed by: Sorin Popescu <sorin@math.sunysb.edu>
+Potential Advisor: 
+Project assigned to: 
+Current status:
+
+=============================================================================
+
+Progress log:
+

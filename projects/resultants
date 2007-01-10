@@ -1,0 +1,23 @@
+-*- M2 -*-
+
+Title: Resultants, discriminants, and Chow forms
+
+Description:
+
+An M2 package on resultants/discriminants/Chow forms.  As far as I'm aware there
+is a rather old M2 code by Laurent Bus\'e (on his web page) computing
+Bezoutians, Macaulay resultants, etc but one could probably try to salvage it
+and mainly add lots of new things to it, and do things better now (use BGG,
+A-discriminants, etc)
+
+=============================================================================
+
+Proposed by: Sorin Popescu <sorin@math.sunysb.edu>
+Potential Advisor: 
+Project assigned to: 
+Current status:
+
+=============================================================================
+
+Progress log:
+

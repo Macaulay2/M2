@@ -1,6 +1,8 @@
 -*- M2 -*-
 
-Solving Equations
+Title: Solving Equations
+
+Description:
 
 Solving equations can be done with Groebner bases, provided we choose a
 monomial ordering adapted to elimination of variables (not the default
@@ -264,6 +266,7 @@ computations such as those above.
 
 =============================================================================
 
+Proposed by: Dan Graysonn
 Potential Advisor: Dan Graysonn
 Project assigned to: 
 Current status:

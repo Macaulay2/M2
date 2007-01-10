@@ -1,0 +1,27 @@
+-*- M2 -*-
+
+Title: Schur polynomials
+
+Description:
+
+An M2 package for the ring of symmetric polynomials: Elementary symmetric,
+Schur polynomials, complete symmetric, Jacobi-Trudi formula, Kostka numbers,
+Hall-Littlewood functions, zonal polynomials, or Jack symmetric polynomials,
+etc. So essentially different orthogonal bases (for the various scalar
+products) for the ring of symmetric functions, and their algebra
+(e.g. conversion from one basis to another, compute coefficients). Part of this
+might already exist in the Schur.m2 M2 package, and the whole would
+duplicate/port to some extent what is available from Stembridge's package in
+Maple. It would also be useful for the Schubert project above...
+
+=============================================================================
+
+Proposed by: Sorin Popescu <sorin@math.sunysb.edu>
+Potential Advisor: 
+Project assigned to: 
+Current status:
+
+=============================================================================
+
+Progress log:
+
