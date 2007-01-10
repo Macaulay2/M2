@@ -63,7 +63,7 @@ INTERFACE = \
 	frac \
 	freemod \
 	gb-homog2 \
-	gbinhom \
+	gb-sugarless \
 	gbring \
 	gauss \
 	hermite \

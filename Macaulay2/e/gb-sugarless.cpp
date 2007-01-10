@@ -1,7 +1,7 @@
 // Copyright 1996  Michael E. Stillman
 
 #include "style.hpp"
-#include "gbinhom.hpp"
+#include "gb-sugarless.hpp"
 #include "text_io.hpp"
 #include "matrixcon.hpp"
 #include "gbweight.hpp"
