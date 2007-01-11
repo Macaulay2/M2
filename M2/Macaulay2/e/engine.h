@@ -1546,7 +1546,7 @@ enum gbTraceValues
 
   extern int gbTrace;
 
-  void rawShowComputation(const Computation *C); /* Dan: please connect */
+  void rawShowComputation(const Computation *C); /* Dan: connected to rawShowComputation */
   /*******************************************
    * Computation routines for Groebner bases *
    *******************************************/

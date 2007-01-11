@@ -30,8 +30,6 @@ extern unsigned int engine_highwater;
 
 class slab : public our_new_delete
 {
-  slab(const slab&) : next(0) {assert(0);}
-  void operator=(const slab&) {assert(0);}
   friend class stash;
   static int n_slabs;
   slab *next;
@@ -46,9 +44,6 @@ class stash : public our_new_delete
 public:
   stash(char *s, size_t len);
   ~stash();
-
-  stash(const stash&) : next(0), name(0), element_size(0), n_per_slab(0), slabs(0), free_list(0), n_allocs(0), n_inuse(0), highwater(0), n_frees(0) {assert(0);}
-  void operator=(const stash&){assert(0);}
 
   void *new_elem();
   void delete_elem(void *p);
@@ -76,6 +71,7 @@ private:
 
   static stash *stash_list;
   static slab *slab_freelist;
+  static int num_slab_freelist();
   static long n_new_slabs;
 
   // private routines
@@ -124,6 +120,7 @@ inline void stash::delete_elem(void *p)
       deletearray(q);
       return;
     }
+  bzero(p,element_size);	// we clear this element because it's free, and it may contain words that look like pointers to gc
   *(reinterpret_cast<void **>(p)) = free_list;
   free_list = p;
 }

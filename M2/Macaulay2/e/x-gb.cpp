@@ -171,7 +171,7 @@ int rawStatus2(Computation *C)
   return C->complete_thru_degree();
 }
 
-void rawShowComputation(Computation *C)
+void rawShowComputation(const Computation *C)
 {
   C->show();
 }
