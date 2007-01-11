@@ -2556,6 +2556,13 @@ export rawStartComputation(e:Expr):Expr := (
      else WrongArg("a raw computation"));
 setupfun("rawStartComputation",rawStartComputation);
 
+export rawShowComputation(e:Expr):Expr := (
+     when e is c:RawComputation do (
+	  Ccode(void, "rawShowComputation(", "(Computation *)", c, ")");
+	  nullE)
+     else WrongArg("a raw computation"));
+setupfun("rawShowComputation",rawShowComputation);
+
 export rawStatusResolution(e:Expr):Expr := (
      when e is G:RawComputation do (
 	  completionDegree := 0;
