@@ -1874,7 +1874,7 @@ void gbA::new_insert(POLY f, gbelem_type minlevel)
   if (gbTrace >= 10)
     {
       //      lookupZZ->showmontable();
-      showgb();
+      show();
     }
 }
 
@@ -2306,7 +2306,7 @@ void gbA::debug_spair_array(spairs &spairlist)
     debug_spair(spairlist[i]);
 }
 
-void gbA::show()
+void gbA::show() const
 {
   buffer o;
   o << "Groebner basis, " << gb.size() << " elements";
