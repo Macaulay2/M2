@@ -85,6 +85,8 @@ public:
   virtual void text_out(buffer &o) const { G->text_out(o); }
   // This displays statistical information, and depends on the
   // gbTrace value.
+
+  virtual void show() const { G->show(); }
 };
 
 
