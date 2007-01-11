@@ -16,7 +16,7 @@ G = z^4*t^3*y + t^7
 H = x^5 + y^4
 M = matrix{{F,G,H}}
 gbTrace=10
-time gens gb M;
+time gens(G = gb M);
 
 
 kk = ZZ/101
