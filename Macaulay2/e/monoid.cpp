@@ -375,53 +375,6 @@ bool Monoid::in_subring(int nslots, const_monomial m) const
   return true;
 }
 
-int Monoid::compare(int nslots, const_monomial m, const_monomial n) const
-{
-  int i = nslots;
-  if (i == 0) return EQ;
-  while (1)
-    {
-      if (*m > *n) return GT;
-      if (*m < *n) return LT;
-      if (--i == 0) return EQ;
-      m++, n++;
-
-      if (*m > *n) return GT;
-      if (*m < *n) return LT;
-      if (--i == 0) return EQ;
-      m++, n++;
-
-      if (*m > *n) return GT;
-      if (*m < *n) return LT;
-      if (--i == 0) return EQ;
-      m++, n++;
-
-      if (*m > *n) return GT;
-      if (*m < *n) return LT;
-      if (--i == 0) return EQ;
-      m++, n++;
-
-      if (*m > *n) return GT;
-      if (*m < *n) return LT;
-      if (--i == 0) return EQ;
-      m++, n++;
-
-    }
-}
-
-// int Monoid::compare(const_monomial m, const_monomial n) const
-// {
-//   int i = monomial_size_;
-//   if (i == 0) return EQ;
-//   while (1)
-//     {
-//       if (*m > *n) return GT;
-//       if (*m < *n) return LT;
-//       if (--i == 0) return EQ;
-//       m++, n++;
-//     }
-// }
-
 int Monoid::compare(const_monomial m, int mcomp, const_monomial n, int ncomp) const
 {
   int i = n_before_component_;
@@ -432,34 +385,8 @@ int Monoid::compare(const_monomial m, int mcomp, const_monomial n, int ncomp) co
       if (*m < *n) return LT;
       m++, n++;
       --i;
-
-      if (i == 0) break;
-      if (*m > *n) return GT;
-      if (*m < *n) return LT;
-      m++, n++;
-      --i;
-
-      if (i == 0) break;
-      if (*m > *n) return GT;
-      if (*m < *n) return LT;
-      m++, n++;
-      --i;
-
-      if (i == 0) break;
-      if (*m > *n) return GT;
-      if (*m < *n) return LT;
-      m++, n++;
-      --i;
-
-      if (i == 0) break;
-      if (*m > *n) return GT;
-      if (*m < *n) return LT;
-      m++, n++;
-      --i;
-
     }
-  bool up = component_up_;
-  if (up)
+  if (component_up_)
     {
       if (mcomp < ncomp) return LT;
       if (mcomp > ncomp) return GT;
@@ -477,31 +404,6 @@ int Monoid::compare(const_monomial m, int mcomp, const_monomial n, int ncomp) co
       if (*m < *n) return LT;
       m++, n++;
       --i;
-
-      if (i==0) break;
-      if (*m > *n) return GT;
-      if (*m < *n) return LT;
-      m++, n++;
-      --i;
-
-      if (i==0) break;
-      if (*m > *n) return GT;
-      if (*m < *n) return LT;
-      m++, n++;
-      --i;
-
-      if (i==0) break;
-      if (*m > *n) return GT;
-      if (*m < *n) return LT;
-      m++, n++;
-      --i;
-
-      if (i==0) break;
-      if (*m > *n) return GT;
-      if (*m < *n) return LT;
-      m++, n++;
-      --i;
-
     }
   return EQ;
 }
