@@ -99,7 +99,7 @@ public:
       int n = (init_array_size > a.max ? init_array_size : a.max);
       max = a.max;
       len = n;
-      entries = newarray(T,len);
+      entries = newarray(T,len); // the constructors for the entries are not run here
       engine_alloc(len * sizeof(T));
       for (int i=0; i<max; i++) entries[i] = a.entries[i];
       return *this;
@@ -115,12 +115,17 @@ class array_class : public our_new_delete {
    {
      int newlen = (len > 1 ? len : 1);
      for (; newtop>=newlen; newlen *= 2);
-     T *tmp = new T[newlen];
+     // T *tmp = new T[newlen];
+     T *tmp = newarray(T,len);
      engine_alloc(newlen * sizeof(T));
 
-     for (int j = 0; j<max; j++) tmp[j] = entries[j];
+     int j;
+     for (j = 0; j<max; j++) tmp[j] = entries[j];
+     for (     ; j<len; j++) new(&tmp[j]) T;      // run the constructors for the new ones explicitly
      engine_dealloc(len * sizeof(T));
-     delete[] entries;
+     // delete[] entries;
+     for (int i=0; i<len; i++) entries[i].~T(); // run the destructors explicitly
+     deletearray(entries);
      entries = tmp;
      len = newlen;
    }
@@ -173,32 +178,45 @@ public:
     : max(0)
     {
       len = (init_array_size > i_size ? init_array_size : i_size);
-      entries = new T[len];
+      // entries = new T[len];
+      entries = newarray(T,len);
+      for (int i=0; i<len; i++) new(&entries[i]) T; // run the constructors explicitly
       engine_alloc(len * sizeof(T));
     }
   array_class(const array_class<T> &a) : len(a.len), max(a.max)
     {
-      entries = new T[len];
+      // entries = new T[len];
+      entries = newarray(T,len);
       engine_alloc(len * sizeof(T));
-      for (int i=0; i<max; i++) entries[i] = a.entries[i];
+      int i;
+      for (i=0; i<max; i++) entries[i] = a.entries[i];
+      for (   ; i<len; i++) new(&entries[i]) T; // run the constructors explicitly (we could also have assigned the old ones)
     }
  ~array_class()
     { 
       engine_dealloc(len * sizeof(T)); 
-      delete[] entries; 
+      // delete[] entries; 
+      for (int i=0; i<len; i++) entries[i].~T(); // run the destructors explicitly
+      deletearray(entries);
       entries = NULL;
     }
   array_class<T> &operator=(const array<T> &a)
     {
       if (&a == this) return *this;
       engine_dealloc(len * sizeof(T));
-      delete[] entries;
+      // delete[] entries;
+      for (int i=0; i<len; i++) entries[i].~T(); // run the destructors explicitly
+      deletearray(entries);
+
       int n = (init_array_size > a.max ? init_array_size : a.max);
       max = a.max;
       len = n;
-      entries = new T[len];
+      // entries = new T[len];
+      entries = newarray(T,len);
       engine_alloc(len * sizeof(T));
-      for (int i=0; i<max; i++) entries[i] = a.entries[i];
+      int i;
+      for (i=0; i<max; i++) entries[i] = a.entries[i];
+      for (   ; i<len; i++) new(&entries[i]) T; // run the constructors explicitly (we could also have assigned the old ones)
       return *this;
     }
 };
