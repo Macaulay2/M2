@@ -14,21 +14,20 @@ newPackage (
 export {runBenchmarks}
 
 benchmarks = new MutableHashTable from {
-     1 => "res39" => () -> (
+     1 => "res39: res of a generic 3 by 9 matrix over ZZ/101" => () -> (
 	  rr := ZZ/101[Variables => 52, MonomialSize => 16];
 	  (ti,re) := toSequence timing res coker genericMatrix(rr,3,9);
 	  vv := apply(8,i->rank re_i);
 	  assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} );
 	  ti),
-     2 => "resG25" => () -> (
+     2 => "resG25: res of the coordinate ring of Grassmannian(2,5)" => () -> (
 	  SS := ZZ/101[Variables => 20, MonomialSize => 16];
 	  MM := SS^1/Grassmannian(2,5,SS);
 	  (ti,re) := toSequence timing res MM;
 	  vv := apply(11,i->rank re_i);
 	  assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} );
 	  ti),
-     3 => "gbB148" => () -> (
-	  -- Bayesian graph ideal #148
+     3 => "gbB148: gb of Bayesian graph ideal #148" => () -> (
 	  p := local p;
 	  R := ZZ/32003[reverse(p_(1,1,1,1,1)..p_(2,2,2,2,2)), MonomialSize=>8];
 	  J := ideal(
@@ -79,7 +78,7 @@ benchmarks = new MutableHashTable from {
 	  (ti,re) := toSequence timing gens gb (J,MaxReductionCount => 3000);
 	  assert ( rank source re == 3626 );
 	  ti),
-     4 => "gb3445" => ()  -> (
+     4 => "gb3445: gb of a random ideal with elements of degree 3,4,4,5 in 8 variables" => ()  -> (
 	  R := ZZ/101[a..h,MonomialSize=>8];
 	  I := ideal random(R^1, R^{-3,-4,-4,-5});
 	  J := ideal "a3,b4,c4,d5";
@@ -87,7 +86,7 @@ benchmarks = new MutableHashTable from {
 	  (ti,re) := toSequence timing gens gb(I);
 	  assert( tally degrees source re === new Tally from { {12} => 3, {13} => 1, {3} => 1, {4} => 2, {5} => 3, {6} => 5, {7} => 6, {8} => 8, {9} => 10, {10} => 9, {11} => 6} );
 	  ti),
-     5 => "gb4by4comm" => () -> (
+     5 => "gb4by4comm: gb of the ideal of generic commuting 4 by 4 matrices over ZZ/101" => () -> (
 	  R = ZZ/101[vars(0..31),MonomialOrder=>ProductOrder{8,12,12},MonomialSize=>8];
 	  I = ideal( -j*o+i*p-v*A+u*B-x*C+w*D, -a*p+b*o+c*p-d*o+k*B-l*A+m*D-n*C, -a*B+b*A+e*B-f*A+p*q-o*r-z*C+y*D, -a*D+b*C+g*D-h*C+p*s-o*t+B*E-A*F,
 	       a*j-b*i-c*j+d*i-q*v+r*u-s*x+t*w, j*o-i*p-l*q+k*r-n*s+m*t, -c*r+d*q+e*r-f*q-i*B+j*A-s*z+t*y, -c*t+d*s+g*t-h*s-i*D+j*C-q*F+r*E,
@@ -211,6 +210,10 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- res39: 0.548034 seconds
 -- resG25: 6.83643 seconds
 -- gbB148: 52.0313 seconds
+---- safe: back to not using long long
+-- res39: 0.508031 seconds
+-- resG25: 6.86843 seconds
+-- gbB148: 52.3553 seconds
 
 -- Darwin habanero.local 7.7.0 Darwin Kernel Version 7.7.0: Sun Nov  7 16:06:51 PST 2004; root:xnu/xnu-517.9.5.obj~1/RELEASE_PPC  Power Macintosh powerpc
 -- Macaulay2 0.9.5, compiled with gcc 3.3.0
