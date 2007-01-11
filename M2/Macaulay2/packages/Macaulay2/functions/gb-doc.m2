@@ -36,7 +36,7 @@ document {
 	  Algorithm => Symbol => {"possible values: ", TT "Homogeneous", ", ", TT "Inhomogeneous", ", ", TT "Sugarless", ".  Experimental options
 	   include ", TT "Homogeneous2", ", ", TT "F4", ", ", TT "Faugere", " and ", TT "LinearAlgebra"},
      	  BasisElementLimit => ZZ => "stop when this number of (nonminimal) Groebner basis elements has been found",
-	  ChangeMatrix => Boolean => "whether to compute the change of basis matrix from Groebner basis elements to original generators.  Intended for internal use only",
+	  ChangeMatrix => Boolean => "whether to compute the change of basis matrix from Groebner basis elements to original generators.",
 	  CodimensionLimit => ZZ => "stop computation once codimension of submodule of lead terms reaches this value (not functional yet)",
 	  DegreeLimit => List => "stop after the Groebner basis in this degree has been computed",
 	  GBDegrees => List => "a list of positive integer weights, one for each variable in the ring, to be used for
