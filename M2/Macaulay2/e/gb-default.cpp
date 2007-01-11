@@ -2306,7 +2306,7 @@ void gbA::debug_spair_array(spairs &spairlist)
     debug_spair(spairlist[i]);
 }
 
-void gbA::showgb()
+void gbA::show()
 {
   buffer o;
   o << "Groebner basis, " << gb.size() << " elements";

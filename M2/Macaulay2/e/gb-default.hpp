@@ -369,7 +369,7 @@ public:
   void debug_spair(spair *p);
   void debug_spairs(spair *spairlist);
   void debug_spair_array(spairs &spairlist);
-  void showgb();
+  void show() const;
 
   void show_mem_usage();
 };  
