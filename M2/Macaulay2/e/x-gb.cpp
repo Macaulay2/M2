@@ -171,6 +171,11 @@ int rawStatus2(Computation *C)
   return C->complete_thru_degree();
 }
 
+void rawShowComputation(Computation *C)
+{
+  C->show();
+}
+
 const MatrixOrNull *rawGBGetMatrix(Computation *C)
   /* Get the minimal, auto-reduced GB of a GB computation.
      Each call to this will produce a different raw matrix */

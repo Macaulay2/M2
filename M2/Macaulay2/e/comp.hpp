@@ -62,6 +62,8 @@ public:
   virtual ResolutionComputation * cast_to_ResolutionComputation() { return 0; }
 
   virtual void text_out(buffer &o) const;
+
+  virtual void show() const; // debug display of some computations
 };
 
 #endif

@@ -59,6 +59,11 @@ void Computation::text_out(buffer &o) const
   o << "-- computation --";
 }
 
+void Computation::show() const
+{
+  printf("No show method available for this computation type\n");
+}
+
 enum ComputationStatusCode Computation::set_status(enum ComputationStatusCode c)
 {
      switch (computation_status) {
