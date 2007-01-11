@@ -65,9 +65,7 @@ include @srcdir@/Makefile.files
 
 all :: initialize
 
-all tags:: @srcdir@/TAGS @srcdir@/TAGS.src
-@srcdir@/TAGS.src: $(ENGINE_SRCFILES)
-	cd @srcdir@ && etags -o TAGS.src $(patsubst @srcdir@/%, %, $^)
+all tags:: @srcdir@/TAGS
 @srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c \
 		 @srcdir@/f4/*.hpp @srcdir@/f4/*.cpp \
 		 statuscodes
