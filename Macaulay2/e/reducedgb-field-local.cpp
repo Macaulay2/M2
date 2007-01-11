@@ -233,6 +233,7 @@ void ReducedGB_Field_Local::remainder(gbvector *&f, bool use_denom, ring_elem &d
   frem->next = 0;
   POLY h;
   h.f = f;
+  h.fsyz = NULL;
   exponents h_exp = R->exponents_make();
   int h_alpha, g_alpha;
   int h_deg = wt->gbvector_weight(f);
@@ -257,7 +258,6 @@ void ReducedGB_Field_Local::remainder(gbvector *&f, bool use_denom, ring_elem &d
 	      // place h into T1, and store its (value,deg,alpha) values.
 	      POLY h_copy;
 	      h_copy.f = R->gbvector_copy(h.f);
-	      h_copy.fsyz = R->gbvector_copy(h.fsyz);
 	      store_in_table(h_copy, h_exp, h_comp, h_alpha);
 	      h_deg += g_alpha - h_alpha;
 	      h_exp = R->exponents_make();
