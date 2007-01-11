@@ -43,8 +43,13 @@ stash::~stash()
     {
       slab *p = slabs;
       slabs = slabs->next;
+#if 1
+      GC_FREE(p);		// this dramatically improves our memory usage
+#else
+      bzero(p,sizeof(*p));      // we clear the slab because it's free, and it may contain words that look like pointers to gc
       p->next = slab_freelist;
       slab_freelist = p;
+#endif
       //printf("removed %p\n", p);
     }
   assert(stash_list != NULL);
@@ -123,6 +128,12 @@ void stash::text_out(buffer &o) const
 unsigned int engine_allocated = 0;
 unsigned int engine_highwater = 0;
 
+int stash::num_slab_freelist() {
+     int i=0;
+     for (slab *p = stash::slab_freelist; p != NULL; p=p->next) i++;
+     return i;
+}
+
 void stash::stats(buffer &o)
 {
 //  o << "total space allocated from system = " << engine_allocated << endl;
@@ -134,6 +145,8 @@ void stash::stats(buffer &o)
   o << "total allocated = " << n_new_slabs * sizeof(slab) << newline;
   o << "total engine space allocated = " 
     << n << "k" << newline;
+  int m = num_slab_freelist();
+  o << "number of free slabs = " << m << " containing " << m*slab_size << " bytes" << newline;
 
   char s[200];
   sprintf(s, "%16s %10s %10s %10s %10s %10s %10s %10s%s",
