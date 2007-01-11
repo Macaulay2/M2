@@ -2,6 +2,9 @@
 --------------------------
 -- singular example #18 --
 --------------------------
+
+
+
 needs "raw-util.m2"
 
 mo = rawMonomialOrdering{Weights=>4:-1, GRevLex=>4:1}

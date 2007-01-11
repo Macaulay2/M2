@@ -5,7 +5,7 @@
 #ifndef _CCC_hh_
 #define _CCC_hh_
 
-#include "ZZ.hpp"
+#include "ring.hpp"
 
 class CCC : public Ring
 {

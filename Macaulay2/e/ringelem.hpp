@@ -32,9 +32,11 @@ union ring_elem
   Nterm * get_poly() const { return poly_val; }
   mpz_ptr get_mpz() const { return mpz_val; }
 
+#if 0
   ring_elem &operator=(int a) { int_val = a; return *this; }
   ring_elem &operator=(Nterm *a) { poly_val = a; return *this; }
   // ring_elem &operator=(mpz_t a) { mpz_val = a; return *this; }
+#endif
 
 };
 

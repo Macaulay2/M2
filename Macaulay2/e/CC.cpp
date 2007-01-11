@@ -1,16 +1,11 @@
 // Copyright 2001 Michael E. Stillman
 
-#include "ZZ.hpp"
-#include "CC.hpp"
 #include <stdio.h>
 #include <math.h>
+#include "CC.hpp"
 #include "text-io.hpp"
-#include "monoid.hpp"
-#include "relem.hpp"
 #include "ringmap.hpp"
 #include "random.hpp"
-#include "gbring.hpp"
-#include "../d/M2mem.h"
 #include "coeffrings.hpp"
 
 

@@ -83,7 +83,7 @@ public:
   ~res_poly();
 
   const res_pair *lead_component(const resterm *f) const;
-  int lead_coefficient(const resterm *f) const;
+  //  int lead_coefficient(const resterm *f) const;
   const int *lead_monomial(const resterm *f) const; // Lead TOTAL monomial
 
   resterm *new_term(ring_elem c, const int *m, res_pair *comp) const;
@@ -117,7 +117,7 @@ public:
 };
 
 inline const res_pair *res_poly::lead_component(const resterm *f) const { return f->comp; }
-inline int res_poly::lead_coefficient(const resterm *f) const { return f->coeff; }
+//inline int res_poly::lead_coefficient(const resterm *f) const { return f->coeff; }
 inline const int *res_poly::lead_monomial(const resterm *f) const
     { return f->monom; }
 
