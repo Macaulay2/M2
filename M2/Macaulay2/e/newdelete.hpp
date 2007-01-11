@@ -50,7 +50,7 @@ struct our_new_delete {
 #ifndef __GNUC__
   virtual ~our_new_delete() = 0; // see Scott Meyers, Effective C++, item 14!  This avoids something really bad in the c++ standard.
      // ... but it slows down destuctors in every class inheriting from this one
-     // gnu cc does it right, running all the destuctors
+     // gnu cc does it right, running all the destructors, so we don't bother with this.
 #endif
 
 };
@@ -58,6 +58,34 @@ struct our_new_delete {
 #ifndef __GNUC__
 inline our_new_delete::~our_new_delete() {}
 #endif
+
+struct our_new_delete_atomic {
+     // warning:
+     //   a class that inherits from this one and has pointers to areas of memory allocated with gc will cause premature collection of those areas
+     //   the compiler can't enforce this
+     // suggestion:
+     //   every class that inherits from this one should have "atomic" in its name
+  static inline void* operator new    ( size_t size ) { void *p = GC_MALLOC_ATOMIC( size ); if (p == NULL) outofmem(); TRAPCHK(p); return p; }
+  static inline void* operator new [] ( size_t size ) { void *p = GC_MALLOC_ATOMIC( size ); if (p == NULL) outofmem(); TRAPCHK(p); return p; }
+
+  static inline void* operator new    ( size_t size, void *existing_memory ) { return existing_memory; }
+  static inline void* operator new [] ( size_t size, void *existing_memory ) { return existing_memory; }
+
+  static inline void operator delete    ( void* obj ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
+  static inline void operator delete [] ( void* obj ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
+
+#ifndef __GNUC__
+  virtual ~our_new_delete() = 0; // see Scott Meyers, Effective C++, item 14!  This avoids something really bad in the c++ standard.
+     // ... but it slows down destuctors in every class inheriting from this one
+     // gnu cc does it right, running all the destructors, so we don't bother with this.
+#endif
+
+};
+
+#ifndef __GNUC__
+inline our_new_delete::~our_new_delete() {}
+#endif
+
 
 #include <gc/gc_allocator.h>
 
