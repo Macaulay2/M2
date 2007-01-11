@@ -6,7 +6,6 @@
 #include "engine.h"
 #include "varpower.hpp"
 #include "hash.hpp"
-#include "engine.h"
 
 class Monomial : public immutable_object
 {

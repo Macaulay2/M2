@@ -154,7 +154,7 @@ ring_elem GF::random() const
 
 void GF::elem_text_out(buffer &o, const ring_elem a) const
 {
-  if (a == _ZERO) 
+  if (a.get_int() == _ZERO) 
     {
       o << "0";
       return;
@@ -246,22 +246,22 @@ bool GF::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
 
 bool GF::is_unit(const ring_elem f) const
 {
-  return (f != _ZERO);
+  return (f.get_int() != _ZERO);
 }
 
 bool GF::is_zero(const ring_elem f) const
 {
-  return (f == _ZERO);
+  return (f.get_int() == _ZERO);
 }
 
 bool GF::is_equal(const ring_elem f, const ring_elem g) const
 {
-  return f.int_val == g.int_val;
+  return f.get_int() == g.get_int();
 }
 
 int GF::compare_elems(const ring_elem f, const ring_elem g) const
 {
-  int cmp = f.int_val - g.int_val;
+  int cmp = f.get_int() - g.get_int();
   if (cmp < 0) return -1;
   if (cmp == 0) return 0;
   return 1;
@@ -279,8 +279,8 @@ void GF::remove(ring_elem &) const
 
 void GF::internal_negate_to(ring_elem &f) const
 {
-  if (f != _ZERO)
-    f = modulus_add(f, _MINUS_ONE, Q1_);
+  if (f.get_int() != _ZERO)
+    f = modulus_add(f.get_int(), _MINUS_ONE, Q1_);
 }
 
 void GF::internal_add_to(ring_elem &f, ring_elem &g) const

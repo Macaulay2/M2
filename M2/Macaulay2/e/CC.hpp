@@ -3,7 +3,6 @@
 #ifndef _CC_hh_
 #define _CC_hh_
 
-#include "engine.h"
 #include "ring.hpp"
 
 class CoefficientRingCC;

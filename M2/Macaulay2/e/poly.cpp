@@ -100,12 +100,8 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
     result = new PolyRingQuotient;
     break;
   case COEFF_QQ:
-#ifdef DEVELOPMENT
-#warning "QQ[...]/I uses PolyRingQuotient"
-#endif
     qrinfo = new QRingInfo_field_QQ(R->getNumeratorRing(),elems);
     result = new PolyRingQuotient;
-    //    result = new PolyQQ;
     break;
   case COEFF_ZZ:
     QRingInfo_ZZ *qrinfoZZ = new QRingInfo_ZZ(R->getNumeratorRing(),elems);

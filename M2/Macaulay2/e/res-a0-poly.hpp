@@ -32,7 +32,7 @@ public:
   ~res2_poly();
 
   const res2_pair *lead_component(const res2term *f) const;
-  int lead_coefficient(const res2term *f) const;
+  //  int lead_coefficient(const res2term *f) const;
   const int *lead_monomial(const res2term *f) const; // Lead TOTAL monomial
 
   res2term *new_term(ring_elem c, const int *m, res2_pair *comp) const;
@@ -68,7 +68,7 @@ public:
 };
 
 inline const res2_pair *res2_poly::lead_component(const res2term *f) const { return f->comp; }
-inline int res2_poly::lead_coefficient(const res2term *f) const { return f->coeff; }
+//inline int res2_poly::lead_coefficient(const res2term *f) const { return f->coeff; }
 inline const int *res2_poly::lead_monomial(const res2term *f) const
     { return f->monom; }
 
