@@ -1136,7 +1136,7 @@ int GB_comp::complete_thru_degree() const
   return _this_degree - 1;
 }
 
-void GB_comp::text_out(buffer &o)
+void GB_comp::text_out(buffer &o) const
   /* This displays statistical information, and depends on the
      gbTrace value */
 {

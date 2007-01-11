@@ -162,7 +162,7 @@ int F4Computation::complete_thru_degree() const
   return 0;
 }
 
-void F4Computation::text_out(buffer &o)
+void F4Computation::text_out(buffer &o) const
   /* This displays statistical information, and depends on the
      gbTrace value */
 {

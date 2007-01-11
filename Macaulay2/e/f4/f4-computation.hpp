@@ -69,7 +69,7 @@ public:
 
   virtual int contains(const Matrix *m);
 
-  virtual void text_out(buffer &o); 
+  virtual void text_out(buffer &o) const; 
   /* This displays statistical information, and depends on the
      gbTrace value */
 

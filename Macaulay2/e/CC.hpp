@@ -22,7 +22,7 @@ class CC : public Ring
   CoefficientRingCC *coeffR;
 protected:
   CC() {}
-  virtual ~CC();
+ ~CC() {}
   bool initialize_CC(double epsilon);
 public:
   static CC * create(double epsilon);

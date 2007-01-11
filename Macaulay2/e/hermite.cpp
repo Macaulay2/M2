@@ -355,7 +355,7 @@ const MatrixOrNull *HermiteComputation::get_initial(int nparts)
   return mat.to_matrix();
 }
 
-void HermiteComputation::text_out(buffer &o)
+void HermiteComputation::text_out(buffer &o) const
   /* This displays statistical information, and depends on the
      gbTrace value */
 {

@@ -46,7 +46,18 @@ struct our_new_delete {
 
   static inline void operator delete    ( void* obj ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
   static inline void operator delete [] ( void* obj ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
+
+#ifndef __GNUC__
+  virtual ~our_new_delete() = 0; // see Scott Meyers, Effective C++, item 14!  This avoids something really bad in the c++ standard.
+     // ... but it slows down destuctors in every class inheriting from this one
+     // gnu cc does it right, running all the destuctors
+#endif
+
 };
+
+#ifndef __GNUC__
+inline our_new_delete::~our_new_delete() {}
+#endif
 
 #include <gc/gc_allocator.h>
 

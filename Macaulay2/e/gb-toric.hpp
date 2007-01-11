@@ -329,7 +329,7 @@ public:
 
   virtual const MatrixOrNull *get_initial(int nparts);
 
-  virtual void text_out(buffer &o) { /* to do */ }
+  virtual void text_out(buffer &o) const { /* to do */ }
   /* This displays statistical information, and depends on the
      gbTrace value */
 

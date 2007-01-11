@@ -2254,7 +2254,7 @@ int gbA::complete_thru_degree() const
   return complete_thru_this_degree;
 }
 
-void gbA::text_out(buffer &o)
+void gbA::text_out(buffer &o) const
   /* This displays statistical information, and depends on the
      gbTrace value */
 {

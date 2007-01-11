@@ -287,7 +287,7 @@ const Matrix *GaussElimComputation::get_syzygies()
   return mat.to_matrix();
 }
 
-void GaussElimComputation::text_out(buffer &o)
+void GaussElimComputation::text_out(buffer &o) const
 {
   for (int i=0; i<gens->n_rows(); i++) {
     if (gb_list[i] != NULL)

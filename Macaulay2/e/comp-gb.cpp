@@ -24,7 +24,7 @@ GBComputation::~GBComputation()
 {
 }
 
-void GBComputation::text_out(buffer &o)
+void GBComputation::text_out(buffer &o) const
 {
   o << "-- a raw Groebner basis computation --";
 }
