@@ -2,7 +2,11 @@
 --------------------------
 -- singular example #18 --
 --------------------------
-
+kk = ZZ/101
+R = kk[t,x,y,z,MonomialOrder=>Weights=>4:-1,Global=>false]
+I = ideal(x-x^2)
+gens gb I
+x % I
 
 restart
 kk = ZZ/101
@@ -11,7 +15,7 @@ F = 4*t^2*z+6*z^3*t+3*z^3+t*z
 G = 5*t^2*z^7*y^3*x + 5*x^2*z^4*t^3*y + 3*t^7
 H = 6*z*t^2*y + 2*x^8 + 6*z^2*y^2*t + 2*y^5
 M = matrix{{F,G,H}}
-gbTrace=10
+gbTrace=3
 time gens gb(M);
 gb1 = gb(M,DegreeLimit=>27);
 gbs = reverse flatten entries gens gb1

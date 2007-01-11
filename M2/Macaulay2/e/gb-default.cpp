@@ -68,6 +68,9 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
   _coeff_type = origR->coefficient_type();
   n_fraction_vars = origR->n_fraction_vars();
 
+  M2_arrayint localvars = origR->getMonoid()->getNonTermOrderVariables();
+  is_local_gb = (localvars->len > 0);
+
   spair_stash = new stash("gbA spairs", sizeof(spair));
   gbelem_stash = new stash("gbA elems", sizeof(gbelem));
   lcm_stash = new stash("gbA lead monoms", sizeof(int) * (R->n_vars()+2));
@@ -644,6 +647,14 @@ void gbA::minimalize_pairs_non_ZZ(spairs &new_set)
 	    }
 	  else
 	    {
+	      if (gbTrace >= 4)
+		{
+		  buffer o;
+		  o << "new spair ";
+		  spair_text_out(o,p);
+		  o << newline;
+		  emit(o.str());
+		}
 	      spair_set_insert(p);
 	      montab->insert(p->lcm, 1, 0);
 	    }
@@ -1370,7 +1381,7 @@ int gbA::find_good_divisor(exponents e,
   /* Next search for GB divisors */
   n += lookup->find_divisors(-1, e, x, &divisors);
 
-  if (gbTrace >= 4 && n >= 2)
+  if (gbTrace >= 6 && n >= 2)
     {
       gbelem *tg = gb[divisors[n-1]->_val];
       gbvector *f = tg->g.f;
@@ -1802,7 +1813,10 @@ void gbA::new_insert(POLY f, gbelem_type minlevel)
   //	  fdeg,
   //	  fdeg-fwt);
 
-  remainder(f,this_degree,false,junk);
+  if (is_local_gb)
+    R->gbvector_remove_content(f.f,f.fsyz,false,junk);
+  else
+    remainder(f,this_degree,false,junk);
 
   //  fdeg = weightInfo_->gbvector_weight(f.f, fwt);
   //  fprintf(stderr, "    after remainder deg %d alpha %d\n", 
@@ -1841,7 +1855,8 @@ void gbA::new_insert(POLY f, gbelem_type minlevel)
       emit_line(o.str());
     }
 
-  auto_reduce_by(me);
+  if (!is_local_gb)
+    auto_reduce_by(me);
 
   if (use_hilb)
     {
@@ -2080,8 +2095,8 @@ void gbA::do_computation()
       case STATE_AUTOREDUCE:
 	// This is still possibly best performed when inserting a new element
 	// Perform the necessary or desired auto-reductions
-
-	    while (ar_i < n_gb)
+	if (!is_local_gb)
+	while (ar_i < n_gb)
 	      {
 		while (ar_j < n_gb)
 		  {

@@ -60,7 +60,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
   VECTOR(MonomialTable::mon_term *) divisors;
 
   h_alpha = h_deg - wt->exponents_weight(h_exp,h_comp);
-  int min_alpha = h_deg;
+  int min_alpha = -1;
 
   MonomialTable *ringtable = originalR->get_quotient_MonomialTable();
   if (ringtable)
@@ -83,7 +83,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
 		  result_g_alpha = g_alpha;
 		  return true;
 		}
-	      if (g_alpha < min_alpha)
+	      if (min_alpha < 0 || g_alpha < min_alpha)
 		{
 		  min_alpha = g_alpha;
 		  result_g = p;
@@ -111,7 +111,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
 	      result_g_alpha = g_alpha;
 	      return true;
 	    }
-	  if (g_alpha < min_alpha)
+	  if (min_alpha < 0 || g_alpha < min_alpha)
 	    {
 	      min_alpha = g_alpha;
 	      result_g = p;
@@ -138,7 +138,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
 	      result_g_alpha = g_alpha;
 	      return true;
 	    }
-	  if (g_alpha < min_alpha)
+	  if (min_alpha < 0 ||  g_alpha < min_alpha)
 	    {
 	      min_alpha = g_alpha;
 	      result_g = p;
@@ -147,7 +147,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
 	}
     }
 
-  return (min_alpha < h_deg);
+  return (min_alpha >= 0);
 }
 
 void ReducedGB_Field_Local::reset_table()
