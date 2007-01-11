@@ -122,7 +122,18 @@ public:
   M2_arrayint to_arrayint(const_monomial monom) const; /* Returns an exponent vector representation 
 						      of the monomial */
   bool in_subring(int nslots, const_monomial m) const;
-  int compare(int nslots, const_monomial m, const_monomial n) const;
+  inline int compare(int nslots, const_monomial m, const_monomial n) const
+     {
+	int i = nslots;
+	if (i == 0) return EQ;
+	while (1)
+	  {
+	    if (*m > *n) return GT;
+	    if (*m < *n) return LT;
+	    if (--i == 0) return EQ;
+	    m++, n++;
+	  }
+      }
 
   monomial make_new(const_monomial d) const;
   monomial make_one() const;
