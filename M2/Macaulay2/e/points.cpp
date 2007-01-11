@@ -87,6 +87,8 @@ Matrix *PointsComputation<CoeffRing>::points(const PolynomialRing *R,
   return 0;
 }
 
+template class PointsComputation<CoefficientRingZZp>;
+
 //#include "coeffrings.hpp"
 //template class PointsComputation<CoefficientRingRR>;
 //template class PointsComputation<CoefficientRingCC>;

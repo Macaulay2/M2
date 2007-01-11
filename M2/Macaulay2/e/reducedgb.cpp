@@ -103,7 +103,7 @@ const MatrixOrNull *ReducedGB::get_initial(int nparts)
   return mat.to_matrix();
 }
 
-void ReducedGB::text_out(buffer &o)
+void ReducedGB::text_out(buffer &o) const
 {
 }
 

@@ -1,6 +1,10 @@
 #ifndef _overflow_h_
 #define _overflow_h_
 
+#ifdef SIGNAL_ERROR
+#error SIGNAL_ERROR
+#endif
+
 // #define TRYLONGLONG
 
 // methods for detecting arithmetic overflows

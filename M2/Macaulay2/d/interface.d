@@ -2353,8 +2353,9 @@ export rawIsStronglyStable(e:Expr):Expr := (
 setupfun("rawIsStronglyStable",rawIsStronglyStable);
 
 export rawCodimension(e:Expr):Expr := (
-     when e is I:RawMonomialIdeal do toExpr(
-	  Ccode(int, "IM2_MonomialIdeal_codim(", "(MonomialIdeal *)", I, ")" ) )
+     when e is I:RawMonomialIdeal do (
+	  r := Ccode(int, "IM2_MonomialIdeal_codim(", "(MonomialIdeal *)", I, ")" );
+	  if r == -1 then engineErrorMessage() else toExpr(r))
      else WrongArg("a raw monomial ideal"));
 setupfun("rawCodimension",rawCodimension);
 

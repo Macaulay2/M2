@@ -11,6 +11,7 @@
 #include "skewpoly.hpp"
 #include "solvable.hpp"
 #include "overflow.hpp"
+#include "ntuple.hpp"
 
 #define sizeofgbvector(s,len) (sizeof(*s) - sizeof(s->monom) + (len)*sizeof(s->monom[0]))
 
@@ -19,12 +20,6 @@ void GBRing::memstats()
   buffer o; 
   mem->stats(o); 
   emit(o.str()); 
-}
-
-static void mult_monomials(int len, const_monomial m, const_monomial n, monomial result)
-{
-  for (int i=len; i>0; --i)
-    *result++ = safe::add(*m++, *n++,"monomial multiplication overflow in gb");
 }
 
 gbvector * GBRing::new_raw_term()
@@ -142,7 +137,7 @@ gbvector *GBRingPoly::mult_by_term1(const FreeModule *F,
       t->next = 0;
       t->comp = s->comp + comp;
       t->coeff = K->mult(u, s->coeff);
-      mult_monomials(monlen, monom, s->monom, t->monom);
+      ntuple::mult(monlen, monom, s->monom, t->monom);
       inresult->next = t;
       inresult = inresult->next;
     }

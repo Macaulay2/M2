@@ -17,10 +17,6 @@ extern "C" M2_CC make_M2_Complex(double re, double im)
   return z;
 }
 
-CC::~CC()
-{
-}
-
 bool CC::initialize_CC(double epsilon) 
 {
   initialize_ring(0);

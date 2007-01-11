@@ -21,7 +21,7 @@
 
 #include "ring.hpp"
 #include "skew.hpp"
-#include "ntuple.hpp"
+// #include "ntuple.hpp"
 #include "coeffrings.hpp"
 
 struct gbvector {

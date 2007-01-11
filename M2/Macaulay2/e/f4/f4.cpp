@@ -27,11 +27,17 @@ F4GB::F4GB(const Gausser *KK0,
     n_gens_left(0),
     n_subring(0),
     complete_thru_this_degree(-1), // need to reset this in the body
+    this_degree(), 
+    gens(), 
+    gb(), 
     lookup(0),
     S(0),
     next_col_to_process(0),
     mat(0),
-    H(M0,17)
+    H(M0,17),
+    B(), 
+    next_monom(), 
+    gauss_row()
 {
   lookup = new MonomialLookupTable(M->n_vars());
   S = new F4SPairSet(M, gb);
@@ -693,5 +699,5 @@ void F4GB::show_matrix()
 template class MemoryBlock<monomial_word>;
 template class MemoryBlock<pre_spair>;
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/f4 f4.o "
 // End:

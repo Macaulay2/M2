@@ -83,7 +83,7 @@ struct gbelem : public our_new_delete {
   gbelem_type minlevel;
 };
 
-class gb_array : public VECTOR(gbelem *) {};
+typedef VECTOR(gbelem *) gb_array;
 
 struct sparse_row : public our_new_delete {
   int len;

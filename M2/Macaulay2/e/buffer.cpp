@@ -1,6 +1,7 @@
 #include "buffer.hpp"
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 
 void buffer::expand(int newcap)
 {

@@ -30,6 +30,8 @@ extern unsigned int engine_highwater;
 
 class slab : public our_new_delete
 {
+  slab(const slab&) : next(0) {assert(0);}
+  void operator=(const slab&) {assert(0);}
   friend class stash;
   static int n_slabs;
   slab *next;
@@ -44,6 +46,9 @@ class stash : public our_new_delete
 public:
   stash(char *s, size_t len);
   ~stash();
+
+  stash(const stash&) : next(0), name(0), element_size(0), n_per_slab(0), slabs(0), free_list(0), n_allocs(0), n_inuse(0), highwater(0), n_frees(0) {assert(0);}
+  void operator=(const stash&){assert(0);}
 
   void *new_elem();
   void delete_elem(void *p);
@@ -125,6 +130,8 @@ inline void stash::delete_elem(void *p)
 
 class doubling_stash : public our_new_delete
 {
+  doubling_stash(const doubling_stash&){assert(0);}
+  void operator=(const doubling_stash&){assert(0);}
 public:
   doubling_stash();
   ~doubling_stash();

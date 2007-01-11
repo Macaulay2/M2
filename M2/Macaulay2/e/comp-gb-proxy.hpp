@@ -82,7 +82,7 @@ public:
   // Statistics and spair information //
   //////////////////////////////////////
 
-  virtual void text_out(buffer &o) { G->text_out(o); }
+  virtual void text_out(buffer &o) const { G->text_out(o); }
   // This displays statistical information, and depends on the
   // gbTrace value.
 };

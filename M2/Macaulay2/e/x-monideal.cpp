@@ -256,8 +256,7 @@ int IM2_MonomialIdeal_codim(const MonomialIdeal *I)
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
-# warning how do we signal an error the front end here?
-	  return 0;
+	  return -1;		// -1 is not a valid codimension, and interface.d knows it
      }
 }
 
