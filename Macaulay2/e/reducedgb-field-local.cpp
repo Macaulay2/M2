@@ -6,6 +6,7 @@
 #include "poly.hpp"
 #include <functional>
 #include <algorithm>
+#include "text-io.hpp"
 
 ReducedGB_Field_Local::~ReducedGB_Field_Local()
 {
@@ -239,12 +240,25 @@ void ReducedGB_Field_Local::remainder(gbvector *&f, bool use_denom, ring_elem &d
   int h_deg = wt->gbvector_weight(f);
   while (!R->gbvector_is_zero(h.f))
     {
+      if (gbTrace >= 3)
+	emit_wrapped(".");
       POLY g;
       R->gbvector_get_lead_exponents(F, h.f, h_exp);
       int h_comp = h.f->comp;
       if (find_good_divisor(h_exp,h_comp,h_deg,
 			    h_alpha,g,g_alpha)) // sets these three values
 	{
+	  if (gbTrace >= 5)
+	    {
+	      buffer o;
+	      o << "reducing ";
+	      R->gbvector_text_out(o,F,h.f);
+	      o << newline;
+	      o << "  h_alpha " << h_alpha << " g_alpha " << g_alpha << " reducing using ";
+	      R->gbvector_text_out(o,F,g.f);
+	      o << newline;
+	      emit(o.str());
+	    }
 	  if (g_alpha > h_alpha)
 	    {
 	      if (head.next != 0)
@@ -258,7 +272,9 @@ void ReducedGB_Field_Local::remainder(gbvector *&f, bool use_denom, ring_elem &d
 	      // place h into T1, and store its (value,deg,alpha) values.
 	      POLY h_copy;
 	      h_copy.f = R->gbvector_copy(h.f);
+	      h_copy.fsyz = 0;
 	      store_in_table(h_copy, h_exp, h_comp, h_alpha);
+	      if (gbTrace >= 3) emit_wrapped("x");
 	      h_deg += g_alpha - h_alpha;
 	      h_exp = R->exponents_make();
 	    }
