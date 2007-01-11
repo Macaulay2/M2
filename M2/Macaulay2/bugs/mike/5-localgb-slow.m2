@@ -149,3 +149,12 @@ gens gb I
 A = QQ[x,y,MonomialOrder=>Weights=>2:-1,Global=>false]
 I = ideal"x10+x9y2,y8-x2y7"
 gens gb I
+
+end
+
+-- dan's simple one:
+gbTrace=3
+debug Core
+R = ZZ/103[t,x,z,MonomialOrder=>Weights=>3:-1,Global=>false]
+show raw(G=gb(M=ideal"tz+z3+tz3,t3x+z5,t2z3-xz4-tx3z2",BasisElementLimit=>60))
+transpose gens G
