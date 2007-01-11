@@ -103,6 +103,7 @@ private:
   int _nvars;
   Ring::CoefficientType _coeff_type;
   int n_fraction_vars;
+  bool is_local_gb;
 
   VECTOR(gbelem *) gb; // Contains any quotient ring elements
 
