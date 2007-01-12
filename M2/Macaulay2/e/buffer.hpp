@@ -8,6 +8,13 @@
 
 const int BUFFER_INITIAL_CAPACITY = 100;
 
+
+struct indent {
+     int n ;
+     indent(int n0) : n(n0) {}
+} ;
+
+
 class buffer : public our_new_delete
 {
   int _size;
@@ -64,6 +71,14 @@ public:
   buffer &operator<<(int n) { put(n); return *this; }
   buffer &operator<<(char c) { put(c); return *this; }
   buffer &operator<<(unsigned char c) { put(static_cast<char>(c)); return *this; }
+  buffer &operator<<(indent s) {
+       buffer &o = *this;
+       const int &n = s.n;
+       if (n < 10) o << "  "; 
+       else if (n < 100) o << " ";
+       o << n;
+       return o;
+  }
 };
 
 #endif
