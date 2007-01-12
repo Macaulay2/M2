@@ -9,9 +9,13 @@ many of the very useful properties of generic initial ideals.
 
 See also:
 
-Green, Mark; Stillman, Michael A tutorial on generic initial ideals.  Gröbner
-bases and applications (Linz, 1998), 90--108, London Math. Soc. Lecture Note
-Ser., 251, Cambridge Univ. Press, Cambridge, 1998.
+    Green, Mark; Stillman, Michael A tutorial on generic initial ideals.  Gröbner
+    bases and applications (Linz, 1998), 90--108, London Math. Soc. Lecture Note
+    Ser., 251, Cambridge Univ. Press, Cambridge, 1998.
+
+    Bermejo, Isabel; Gimenez, Philippe; Morales, Marcel Castelnuovo-Mumford
+    regularity of projective monomial varieties of codimension two.  J. Symbolic
+    Comput.  41 (2006), no. 10, 1105-1124.
 
 This is a good "getting started" project.  One way to
 probabilisitically compute the generic initial ideal of an ideal (with
