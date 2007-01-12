@@ -1112,7 +1112,6 @@ browserMethods := hashTable {
      }
 URL = new SelfInitializingType of BasicList
 new URL from String := (URL,str) -> new URL from {str}
-show = method()
 show URL := x -> (
      url := x#0;
      browser := getenv "WWWBROWSER";

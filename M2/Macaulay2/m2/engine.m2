@@ -321,7 +321,9 @@ RawComputation_ZZ := (C,i) -> rawResolutionGetMatrix(C,i)
 
 -- Groebner bases
 
+show = method()
 RawMatrix % RawComputation := (m,g) -> rawGBMatrixRemainder(g,m)
+show RawComputation := C -> rawShowComputation C
 
 -- ring maps
 
