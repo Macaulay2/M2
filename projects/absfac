@@ -5,7 +5,32 @@ Title: Absolute Factorization
 Description:
 
 Absolute factorization and absolute primary decomposition (starting from Trager
-and GTZ)
+and GTZ).
+
+--dan:
+
+[Trager] ?? what paper is this ??
+
+[GTZ] Gianni, Patrizia; Trager, Barry; Zacharias, Gail Gröbner bases and
+primary decomposition of polynomial ideals. Computational aspects of
+commutative algebra.  J. Symbolic Comput.  6 (1988), no. 2-3, 149--167.
+
+--mike:
+
+see LeCerf's papers at
+
+   http://www.math.uvsq.fr/~lecerf/publications/ 
+
+for
+
+    G. Chèze and G. Lecerf. Lifting and recombination techniques for absolute
+    factorization. Extended abstract. In Proceedings of International Conference on
+    Polynomial System Solving. In honor of Daniel Lazard, pages 56-57, 2004.
+
+and perhaps other papers on the same web site on that topic.
+
+Perhaps we can use or look at other people's code.  This is implemented in
+Singular, already.
 
 =============================================================================
 

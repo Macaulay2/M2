@@ -7,8 +7,21 @@ Description:
 An M2 implementation of the generic Groebner Walk algorithm of
 Fukuda-Jensen-Lauritzen-Thomas. This will probably not require to implement
 anything new in M2 for convexity computations and this would be independent of
-gfan... Perhaps (?) implement also the FGLM (Faugere-Gianni-Lazard-Mora)
-algorithm/walk for the zero-dimensional case...
+gfan.
+
+    http://front.math.ucdavis.edu/math.AC/0501345
+    math.AC/0501345
+    Title: The generic Groebner walk
+    Authors: K. Fukuda, A. N. Jensen, N. Lauritzen, R. Thomas 
+
+    Faugère, J. C.(F-PARIS6-C); Gianni, P.(I-PISA); Lazard, D.(F-PARIS6-C); Mora, T.(I-GENO)
+    Efficient computation of zero-dimensional Gröbner bases by change of ordering.
+    J. Symbolic Comput. 16 (1993), no. 4, 329--344. 
+
+Perhaps (?) implement also the FGLM (Faugere-Gianni-Lazard-Mora) algorithm/walk
+for the zero-dimensional case.
+
+-- Mike: the FGLM should be implemented as part of the M2 engine, in C++.
 
 =============================================================================
 

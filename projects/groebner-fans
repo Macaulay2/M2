@@ -4,13 +4,33 @@ Title: Groebner fans
 
 Description:
 
-G-FAN (Jensen)
+The program is available from
+
+    http://home.imf.au.dk/ajensen/software/gfan/gfan.html
+
+Here is the abstract:
+
+Gfan is a software package whose main function is to enumerate all reduced
+Gröbner bases of a polynomial ideal. The reduced Gröbner bases yield the
+maximal cones in the Gröbner fan of the ideal. Several subcomputations can be
+issued and additional tools are included. Among these the highlights are:
+
+    * commands for computing tropical varieties,
+    * gfan_interactive which allows interactive walks on the edge graph of the state polytope of an ideal,
+    * commands for graphical renderings of Gröbner fans and monomial ideals.
+
+Mike started writing an interface to the gfan program, which we could
+distribute with M2.  See his half written M2 package in
+M2/Macaulay2/packages/gfanInterface.m2.
+
+Dan should be involved in planning for making interfaces to other programs
+consistent.
 
 =============================================================================
 
 Proposed by: Wolfram Decker <decker@math.uni-sb.de>,
 	     Frank Schreyer <schreyer@math.uni-sb.de>
-Potential Advisor: 
+Potential Advisor: Mike Stillman <mike@math.cornell.edu>
 Project assigned to: 
 Current status:
 

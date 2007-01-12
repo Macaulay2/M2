@@ -4,14 +4,15 @@ Title: Points over small fields
 
 Description:
 
--- An M2 package for counting or finding, via brute force, points
-over a small base field in a given algebraic set. This would
-probably work well only over F2 or F3.
+An M2 package for counting or finding, via brute force, points over a small
+base field in a given algebraic set. This would probably work well only over F2
+or F3.
 
+--Mike: more details would be good...
 
 =============================================================================
 
-Proposed by: 
+Proposed by: Sorin Popescu <sorin@math.sunysb.edu>
 Potential Advisor: 
 Project assigned to: 
 Current status:

@@ -6,6 +6,16 @@ Description:
 
 invariant theory of finite groups (Kemper etc)
 
+-- see M2/Macaulay2/packages/invariants*.m2, for some old code that is no
+-- longer distributed and needs updating
+
+    Kemper, Gregor Computing invariants of reductive groups in positive
+    characteristic.  Transform. Groups 8 (2003), no. 2, 159--176.
+
+    Derksen, Harm; Kemper, Gregor Computational invariant theory. Invariant Theory
+    and Algebraic Transformation Groups, I. Encyclopaedia of Mathematical Sciences,
+    130. Springer-Verlag, Berlin, 2002. x+268 pp. ISBN: 3-540-43476-3
+
 =============================================================================
 
 Proposed by: Wolfram Decker <decker@math.uni-sb.de>,
