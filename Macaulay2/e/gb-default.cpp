@@ -294,7 +294,7 @@ gbA::gbelem *gbA::gbelem_ring_make(gbvector *f)
   g->lead = exponents_make();
   R->gbvector_get_lead_exponents(_F, f, g->lead);
   g->deg = weightInfo_->gbvector_weight(f, f_leadweight);
-  g->alpha = g->deg - f_leadweight;
+  g->gap = g->deg - f_leadweight;
   g->size = R->gbvector_n_terms(f);
   g->minlevel = ELEM_IN_RING;
   return g;
@@ -314,8 +314,8 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
   R->gbvector_get_lead_exponents(_F, f, g->lead);
   g->deg = deg;
   f_wt = weightInfo_->gbvector_weight(f, f_leadweight);
-  //g->alpha = f_wt - f_leadweight; // DOESN"T PRODUCE CORRECT DEGREES
-  g->alpha = deg - weightInfo_->gbvector_term_weight(f);
+  //g->gap = f_wt - f_leadweight; // DOESN"T PRODUCE CORRECT DEGREES
+  g->gap = deg - weightInfo_->gbvector_term_weight(f);
   g->size = R->gbvector_n_terms(f);
   g->minlevel = minlevel;
   return g;
@@ -356,8 +356,8 @@ gbA::spair *gbA::spair_make(int i, int j)
   result->type = SPAIR_SPAIR;
   result->lcm = exponents_make();
     exponents_lcm(_nvars, g1->deg, exp1, exp2, result->lcm, gb_weights, result->deg);
-    if (g2->alpha > g1->alpha)
-      result->deg += g2->alpha - g1->alpha;
+    if (g2->gap > g1->gap)
+      result->deg += g2->gap - g1->gap;
   result->x.pair.i = i;
   result->x.pair.j = j;
 
@@ -1113,18 +1113,18 @@ bool gbA::reduce(spair *p)
 	    }
 	}
 
-      int alpha,w;
+      int gap,w;
       R->gbvector_get_lead_exponents(_F, p->f(), EXP_);
       int x = p->f()->comp;
       if (over_ZZ())
 	{
 	  mpz_ptr c = p->f()->coeff.get_mpz();
-	  w = find_good_term_divisor_ZZ(c,EXP_,x,this_degree,alpha);
+	  w = find_good_term_divisor_ZZ(c,EXP_,x,this_degree,gap);
 
 	  // If w < 0, then no divisor was found.  Is there a GB element of
 	  // the same degree as this one, and with the same exponent vector?
 	  // If so, use gcdextended to find (g,u,v), 
-	  if (w < 0 || alpha > 0)
+	  if (w < 0 || gap > 0)
 	  {
 	    MonomialTableZZ::mon_term *t = lookupZZ->find_exact_monomial(EXP_,
 									 x,
@@ -1169,13 +1169,13 @@ bool gbA::reduce(spair *p)
 	}
       else
 	{
-	  w = find_good_divisor(EXP_,x,this_degree, alpha); 
+	  w = find_good_divisor(EXP_,x,this_degree, gap); 
 	}
 
 	
-      // replaced alpha, g.
+      // replaced gap, g.
       if (w < 0) break;
-      if (alpha > 0)
+      if (gap > 0)
 	{
 	  POLY h;
 	  h.f = R->gbvector_copy(p->x.f.f);
@@ -1216,13 +1216,13 @@ bool gbA::reduce(spair *p)
 	  emit_line(o.str());
 	}
       if (R->gbvector_is_zero(p->f())) break;
-      if (alpha > 0)
+      if (gap > 0)
 	{
-	  p->deg += alpha;
+	  p->deg += gap;
 	  if (gbTrace >= 10)
 	    {
 	      buffer o;
-	      o << "deferring B spair old deg " << p->deg-alpha << " new deg " << p->deg << " ";
+	      o << "deferring B spair old deg " << p->deg-gap << " new deg " << p->deg << " ";
 	      spair_text_out(o,p);
 	      emit_line(o.str());
 	    }
@@ -1248,15 +1248,15 @@ int gbA::find_good_monomial_divisor_ZZ(
 				       exponents e,
 				       int x,
 				       int degf, 
-				       int &result_alpha)
+				       int &result_gap)
 {
   // Get all of the term divisors.
-  // Choose one with the smallest alpha.
-  int i, alpha, newalpha, ealpha;
+  // Choose one with the smallest gap.
+  int i, gap, newgap, egap;
   int n = 0;
 
   VECTOR(MonomialTableZZ::mon_term *) divisors;
-  ealpha = degf - weightInfo_->exponents_weight(e,x);
+  egap = degf - weightInfo_->exponents_weight(e,x);
 
 
   /* First search for ring divisors */
@@ -1266,31 +1266,31 @@ int gbA::find_good_monomial_divisor_ZZ(
   /* Next search for GB divisors */
   n += lookupZZ->find_monomial_divisors(-1, e, x, &divisors);
 
-  /* Now find the minimal alpha value */
+  /* Now find the minimal gap value */
   if (n == 0) 
     return -1;
   int result = divisors[0]->_val;
   gbelem *tg = gb[result];
-  alpha = tg->alpha - ealpha;
-  if (alpha <= 0) 
-    alpha = 0;
+  gap = tg->gap - egap;
+  if (gap <= 0) 
+    gap = 0;
   else
     for (i=1; i<n; i++)
       {
 	int new_val = divisors[i]->_val;
 	tg = gb[new_val];
-	newalpha = tg->alpha - ealpha;
-	if (newalpha <= 0) {
-	  alpha = 0;
+	newgap = tg->gap - egap;
+	if (newgap <= 0) {
+	  gap = 0;
 	  result = new_val;
 	  break;
-	} else if (newalpha < alpha) 
+	} else if (newgap < gap) 
 	  {
 	    result = new_val;
-	    alpha = newalpha;
+	    gap = newgap;
 	  }
       }
-  result_alpha = alpha;
+  result_gap = gap;
   return result;
 }
 
@@ -1299,15 +1299,15 @@ int gbA::find_good_term_divisor_ZZ(
 				   exponents e,
 				   int x,
 				   int degf, 
-				   int &result_alpha)
+				   int &result_gap)
 {
   // Get all of the term divisors.
-  // Choose one with the smallest alpha.
-  int i, alpha, newalpha, ealpha;
+  // Choose one with the smallest gap.
+  int i, gap, newgap, egap;
   int n = 0;
 
   VECTOR(MonomialTableZZ::mon_term *) divisors;
-  ealpha = degf - weightInfo_->exponents_weight(e,x);
+  egap = degf - weightInfo_->exponents_weight(e,x);
 
   /* First search for ring divisors */
   if (ringtableZZ)
@@ -1316,64 +1316,62 @@ int gbA::find_good_term_divisor_ZZ(
   /* Next search for GB divisors */
   n += lookupZZ->find_term_divisors(-1, c, e, x, &divisors);
 
-  /* Now find the minimal alpha value */
+  /* Now find the minimal gap value */
   if (n == 0) 
     {
-      result_alpha = 0;
+      result_gap = 0;
       return -1;
     }
   int result = divisors[n-1]->_val;
   gbelem *tg = gb[result];
-  alpha = tg->alpha - ealpha;
-  if (alpha <= 0) 
-    alpha = 0;
+  gap = tg->gap - egap;
+  if (gap <= 0) 
+    gap = 0;
   else
     for (i=n-2; i>=0; i--)
       {
 	int new_val = divisors[i]->_val;
 	tg = gb[new_val];
-	newalpha = tg->alpha - ealpha;
-	if (newalpha <= 0) {
-	  alpha = 0;
+	newgap = tg->gap - egap;
+	if (newgap <= 0) {
+	  gap = 0;
 	  result = new_val;
 	  break;
-	} else if (newalpha < alpha) 
+	} else if (newgap < gap) 
 	  {
 	    result = new_val;
-	    alpha = newalpha;
+	    gap = newgap;
 	  }
       }
-  result_alpha = alpha;
+  result_gap = gap;
   return result;
 }
 
 int gbA::find_good_divisor(exponents e,
 			   int x,
 			   int degf, 
-			   int &result_alpha)
+			   int &result_gap)
   // Returns an integer w.
   // if w >=0: gb[w]'s lead term divides [e,x].
   // if w<0: no gb[w] has lead term dividing [e,x].
 {
-  int alpha, newalpha, ealpha;
   int n = 0;
+  int gap;
+  int egap = degf - weightInfo_->exponents_weight(e,x);
 
   VECTOR(MonomialTable::mon_term *) divisors;
-  ealpha = degf - weightInfo_->exponents_weight(e,x);
 
-#ifdef DEVELOPMENT
-#warning "previous divisor code might not work with alpha..."
-#endif
-  if (divisor_previous >= 0 && x == divisor_previous_comp)
+  if (!is_local_gb && divisor_previous >= 0 && x == divisor_previous_comp)
     {
       gbelem *tg = gb[divisor_previous];
-      alpha = tg->alpha - ealpha;
-      if (alpha <= 0 && exponents_divide(_nvars, tg->lead, e))
+      gap = tg->gap - egap;
+      if (gap <= 0 && exponents_divide(_nvars, tg->lead, e))
 	{
-	  result_alpha = 0;
+	  result_gap = 0;
 	  return divisor_previous;
 	}
     }
+
   /* First search for ring divisors */
   if (ringtable)
     n += ringtable->find_divisors(-1, e, 1, &divisors);
@@ -1403,57 +1401,99 @@ int gbA::find_good_divisor(exponents e,
 	  emit_wrapped(o.str());
 	}
     }
-  /* Now find the minimal alpha value */
+  /* Now find the minimal gap value */
   if (n == 0) 
     {
-      result_alpha = 0;
+      result_gap = 0;
       return -1;
     }
-  int result = divisors[n-1]->_val;
-  gbelem *tg = gb[result];
-  alpha = tg->alpha - ealpha;
-  if (alpha <= 0) 
-    {
-      alpha = 0;
-      int minsz = tg->size;
+
+  if (is_local_gb) {
+    // new version, under development
+    int i = 0;
+    int j = divisors[i]->_val;
+    //// these assignments are repeated verbatim below, sigh
+    gap = gb[j]->gap;
+    int minlevel = gb[j]->minlevel;
+    int deg  = gb[j]->deg;
+    int size  = gb[j]->size;
+    ////
+    while (true) {
+	 int mingap = gap;
+	 int maxminlevel = minlevel;
+	 int mindeg = deg;
+	 int minsize  = size;
+	 int best = j;
+	 do {
+	      if (++i == n) {
+		   divisor_previous = best;
+		   divisor_previous_comp = x;
+		   result_gap = gap - egap; // a difference between two gaps is no longer a "gap"...
+		   if (result_gap < 0) result_gap = 0; // I'm not sure this is needed.
+		   return best;
+	      }
+	      j = divisors[i]->_val;
+	      gap = gb[j]->gap;
+	      minlevel = gb[j]->minlevel;
+	      deg   = gb[j]->deg;
+	      size  = gb[j]->size;
+	 } while (!
+		  ( gap < mingap || gap == mingap && 
+		    ( minlevel > maxminlevel || minlevel == maxminlevel && 
+		      ( deg < mindeg || deg == mindeg &&
+			( size < minsize || size == minsize && 
+			  false
+			  )))));
+    }
+  }
+  else {
+    int newgap;
+    int result = divisors[n-1]->_val;
+    gbelem *tg = gb[result];
+    gap = tg->gap - egap;
+    if (gap <= 0) 
+      {
+	gap = 0;
+	int minsz = tg->size;
+	for (int i=n-2; i>=0; i--)
+	  {
+	    int new_val = divisors[i]->_val;
+	    tg = gb[new_val];
+	    int sz = tg->size;
+	    if (sz < minsz)
+	      {
+		if (tg->gap <= egap)
+		  {
+		    minsz = sz;
+		    result = new_val;
+		  }
+	      }
+	  }
+      }
+    else
+      //    for (i=1; i<n; i++)
       for (int i=n-2; i>=0; i--)
 	{
 	  int new_val = divisors[i]->_val;
 	  tg = gb[new_val];
-	  int sz = tg->size;
-	  if (sz < minsz)
+
+
+	  newgap = tg->gap - egap;
+	  if (newgap <= 0) {
+	    gap = 0;
+	    result = new_val;
+	    break;
+	  } else if (newgap < gap) 
 	    {
-	      if (tg->alpha <= ealpha)
-		{
-		  minsz = sz;
-		  result = new_val;
-		}
+	      result = new_val;
+	      gap = newgap;
 	    }
 	}
-    }
-  else
-    //    for (i=1; i<n; i++)
-    for (int i=n-2; i>=0; i--)
-      {
-	int new_val = divisors[i]->_val;
-	tg = gb[new_val];
-
-
-	newalpha = tg->alpha - ealpha;
-	if (newalpha <= 0) {
-	  alpha = 0;
-	  result = new_val;
-	  break;
-	} else if (newalpha < alpha) 
-	  {
-	    result = new_val;
-	    alpha = newalpha;
-	  }
-      }
-  divisor_previous = result;
-  divisor_previous_comp = x;
-  result_alpha = alpha;
-  return result;
+    divisor_previous = result;
+    divisor_previous_comp = x;
+    result_gap = gap;
+    return result;
+  }
 }
 
 void gbA::remainder(POLY &f, int degf, bool use_denom, ring_elem &denom)
@@ -1473,12 +1513,12 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
   POLY h = f;
   while (!R->gbvector_is_zero(h.f))
     {
-      int alpha;
+      int gap;
       R->gbvector_get_lead_exponents(_F, h.f, EXP_);
       int x = h.f->comp;
-      int w = find_good_monomial_divisor_ZZ(h.f->coeff.get_mpz(),EXP_,x,degf,  alpha);
-        // replaced alpha, g.
-      if (w < 0 || alpha > 0)
+      int w = find_good_monomial_divisor_ZZ(h.f->coeff.get_mpz(),EXP_,x,degf,  gap);
+        // replaced gap, g.
+      if (w < 0 || gap > 0)
 	{
 	  frem->next = h.f;
 	  frem = frem->next;
@@ -1549,12 +1589,12 @@ void gbA::tail_remainder_ZZ(POLY &f, int degf)
 
   while (!R->gbvector_is_zero(h.f))
     {
-      int alpha;
+      int gap;
       R->gbvector_get_lead_exponents(_F, h.f, EXP_);
       int x = h.f->comp;
-      int w = find_good_monomial_divisor_ZZ(h.f->coeff.get_mpz(),EXP_,x,degf,  alpha);
-        // replaced alpha, g.
-      if (w < 0 || alpha > 0)
+      int w = find_good_monomial_divisor_ZZ(h.f->coeff.get_mpz(),EXP_,x,degf,  gap);
+        // replaced gap, g.
+      if (w < 0 || gap > 0)
 	{
 	  frem->next = h.f;
 	  frem = frem->next;
@@ -1644,12 +1684,12 @@ void gbA::remainder_non_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
   POLY h = f;
   while (!R->gbvector_is_zero(h.f))
     {
-      int alpha;
+      int gap;
       R->gbvector_get_lead_exponents(_F, h.f, EXP_);
       int x = h.f->comp;
-      int w = find_good_divisor(EXP_,x,degf,  alpha);
-        // replaced alpha, g.
-      if (w < 0 || alpha > 0)
+      int w = find_good_divisor(EXP_,x,degf,  gap);
+        // replaced gap, g.
+      if (w < 0 || gap > 0)
 	{
 	  frem->next = h.f;
 	  frem = frem->next;
@@ -1706,14 +1746,14 @@ void gbA::auto_reduce_by(int id)
   /* Loop backwards while degree doesn't change */
   /* Don't change quotient ring elements */
   gbelem *me = gb[id];
-  int a = me->alpha;  // Only auto reduce those that are of the same degree
-                      // and not a higher alpha level
+  int a = me->gap;  // Only auto reduce those that are of the same degree
+                      // and not a higher gap level
   for (int i=gb.size()-1; i>=first_gb_element; i--)
     {
       if (i == id) continue;
       gbelem *g = gb[i];
       if (g->deg < me->deg) return;
-      if (g->alpha < a) continue;
+      if (g->gap < a) continue;
       if (gbTrace >= 10)
 	{
 	  buffer o;
@@ -1807,7 +1847,7 @@ void gbA::new_insert(POLY f, gbelem_type minlevel)
 
   //DEBUG BLOCK  int fwt;
   //  int fdeg = weightInfo_->gbvector_weight(f.f, fwt);
-  //  fprintf(stderr, "inserting GB element %d, thisdeg %d deg %d alpha %d\n", 
+  //  fprintf(stderr, "inserting GB element %d, thisdeg %d deg %d gap %d\n", 
   //	  gb.size(), 
   //	  this_degree,
   //	  fdeg,
@@ -1819,7 +1859,7 @@ void gbA::new_insert(POLY f, gbelem_type minlevel)
     remainder(f,this_degree,false,junk);
 
   //  fdeg = weightInfo_->gbvector_weight(f.f, fwt);
-  //  fprintf(stderr, "    after remainder deg %d alpha %d\n", 
+  //  fprintf(stderr, "    after remainder deg %d gap %d\n", 
   //	  fdeg,
   //	  fdeg-fwt);
 
@@ -2313,9 +2353,12 @@ void gbA::show() const
   emit_line(o.str()); o.reset();
   for (unsigned int i=0; i<gb.size(); i++)
     {
-      o << "    " << i << '\t' << "deg " << gb[i]->deg << '\t' 
-        << "alpha " << gb[i]->alpha << '\t'
-        << "min " << gb[i]->minlevel << '\t';
+      o << indent(i)
+        << "  gap " << indent(gb[i]->gap)
+	<< "  size " << indent(gb[i]->size)
+	<< "  deg "  << indent(gb[i]->deg)
+        << "  min "  << indent(gb[i]->minlevel) 
+	<< "  ";
       R->gbvector_text_out(o, _F, gb[i]->g.f);
       emit_line(o.str()); o.reset();
     }
@@ -2334,5 +2377,5 @@ void gbA::show_mem_usage()
 }
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e gb-default.o"
 // End:

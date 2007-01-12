@@ -25,7 +25,7 @@ public:
   struct gbelem {
     POLY g;
     int deg;
-    int alpha; // the homogenizing degree
+    int gap; // the homogenizing degree, called "alpha", or the "écart".  It is deg g - deg lead term of g.
     int size; // number of monomials, when the element is first inserted.  After 
               // auto reduction, the number can change.  It is not yet clear if we should change this value...
     exponents lead; // -1..nvars-1, the -1 part is the component
@@ -284,21 +284,21 @@ private:
   int find_good_divisor(exponents e,
 			int x,
 			int degf, 
-			int &result_alpha);
+			int &result_gap);
 
   int find_good_monomial_divisor_ZZ(
 				    mpz_ptr c,
 				    exponents e,
 				    int x,
 				    int degf, 
-				    int &result_alpha);
+				    int &result_gap);
 
   int find_good_term_divisor_ZZ(
 				mpz_ptr c,
 				exponents e,
 				int x,
 				int degf, 
-				int &result_alpha);
+				int &result_gap);
 
   void remainder(POLY &f, int degf, bool use_denom, ring_elem &denom);
   // denom must start out as an element of the base R->getCoefficients().
