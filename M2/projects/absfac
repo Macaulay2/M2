@@ -7,13 +7,12 @@ Description:
 Absolute factorization and absolute primary decomposition (starting from Trager
 and GTZ).
 
---dan:
-
-[Trager] ?? what paper is this ??
+[Trager]  Trager, B. M. (1976): Algebraic factoring and rational function
+   integration.  In: R. D. Jenks (ed.), Proc. SYMSAC '76, 196-208, ACM press.
 
 [GTZ] Gianni, Patrizia; Trager, Barry; Zacharias, Gail Gröbner bases and
-primary decomposition of polynomial ideals. Computational aspects of
-commutative algebra.  J. Symbolic Comput.  6 (1988), no. 2-3, 149--167.
+   primary decomposition of polynomial ideals. Computational aspects of
+   commutative algebra.  J. Symbolic Comput.  6 (1988), no. 2-3, 149--167.
 
 --mike:
 
