@@ -4,7 +4,24 @@ Title: Nöther Normalization
 
 Description:
 
+Implement Noether normalization for quotients of polynomial rings over
+fields.  This is another good "getting started" project, and one which
+would be useful to many people.
 
+The result might be a ring map from a polynomial ring, but Dan should
+be consulted about a good interface.  Issues to think about: (1) doing
+this with a change of variables which is as sparse as possible, (2)
+What about characteristic p > 0, in small characteristic.
+ 
+See:
+
+Eisenbud, Commutative Algebra
+
+Eisenbud + Sturmfels
+
+Bermejo and ...
+
+There is code in Singular for this too, which might be worth consulting.
 
 =============================================================================
 
