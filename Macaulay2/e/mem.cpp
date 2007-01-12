@@ -47,6 +47,7 @@ stash::~stash()
       GC_FREE(p);		// this dramatically improves our memory usage
 #else
       bzero(p,sizeof(*p));      // we clear the slab because it's free, and it may contain words that look like pointers to gc
+      // ... but I don't know why this doesn't work as well!  See bugs/mike/1-gc-leak.m2
       p->next = slab_freelist;
       slab_freelist = p;
 #endif
