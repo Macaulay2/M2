@@ -10,6 +10,8 @@ involves computing the min free resolution for M so might not be very effective
 if the number of vars is large, but would allow some M2 users to play with
 deformation theory.
 
+--mike: this would be a nice one to do.
+
 =============================================================================
 
 Proposed by: Sorin Popescu <sorin@math.sunysb.edu>

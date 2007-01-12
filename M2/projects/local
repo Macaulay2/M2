@@ -10,9 +10,11 @@ computations in local rings (Buchberger-Mora)
 
 Proposed by: Wolfram Decker <decker@math.uni-sb.de>,
 	     Frank Schreyer <schreyer@math.uni-sb.de>
-Potential Advisor: 
-Project assigned to: 
-Current status:
+
+Project assigned to: Dan and Mike
+
+Current status: Engine code is being developed.  We also need to write code for
+   minimalization of resolutions. 
 
 =============================================================================
 

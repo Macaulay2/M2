@@ -6,6 +6,23 @@ Description:
 
 resolution of singularities (Villamayor)
 
+--
+
+    Villamayor U., Orlando On constructive desingularization.  J. Symbolic Comput.
+    39 (2005), no. 3-4, 465--491.
+
+    http://front.math.ucdavis.edu/math.AG/0103120
+    math.AG/0103120
+    Title: Notes on the inductive algorithm of resolution of singularities by S. Encinas and O. Villamayor
+    Author: Kenji Matsuki 
+
+This algorithm has been implemented in Singular by Frühbis:
+
+    Frühbis-Krüger, G. Pfister: Algorithmic Resolution of Singularities. In:
+    C. Lossen and G. Pfister (eds.), Singularities and Computer Algebra. Lecture
+    Notes of LMS, Cambridge University Press, to appear (2005/06).
+    http://www.singular.uni-kl.de/publications.html
+
 =============================================================================
 
 Proposed by: Wolfram Decker <decker@math.uni-sb.de>,
