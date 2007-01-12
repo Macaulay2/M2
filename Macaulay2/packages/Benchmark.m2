@@ -115,8 +115,8 @@ installMethod(runBenchmarks0, () -> runBenchmarks {1,2,3})
 
 runBenchmarks = Command runBenchmarks0
 
-<< "Benchmark: type 'runBenchmarks' to run the first three benchmarks (standard test)." << endl
-<< "Benchmark: type 'runBenchmarks {m,n,...}' to run benchmarks m,n,..." << endl
+<< "Benchmark: type \"runBenchmarks\" to run the first three benchmarks (standard test)." << endl
+<< "Benchmark: type \"runBenchmarks {m,n,...}\" to run benchmarks m,n,..." << endl
 << "Benchmarks available:" << endl
 scan(pairs benchmarks, (n,x) -> << "       " << n << ": " << x#0 << endl)
 
@@ -214,6 +214,24 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- res39: 0.508031 seconds
 -- resG25: 6.86843 seconds
 -- gbB148: 52.3553 seconds
+-- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.524033 seconds
+-- resG25: res of the coordinate ring of Grassmannian(2,5): 6.84043 seconds
+-- gbB148: gb of Bayesian graph ideal #148: 51.9993 seconds
+-- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.532034 seconds
+-- resG25: res of the coordinate ring of Grassmannian(2,5): 6.86843 seconds
+-- gbB148: gb of Bayesian graph ideal #148: 52.1553 seconds
+--   rework gb-default.cpp for local orderings
+-- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.552035 seconds
+-- resG25: res of the coordinate ring of Grassmannian(2,5): 7.42846 seconds
+-- gbB148: gb of Bayesian graph ideal #148: 151.697 seconds
+--   oops, re-enable the use of the previous divisor during reduction
+-- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.532033 seconds
+-- resG25: res of the coordinate ring of Grassmannian(2,5): 7.74848 seconds
+-- gbB148: gb of Bayesian graph ideal #148: 84.3813 seconds
+--   use the old code in the global case
+-- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.544034 seconds
+-- resG25: res of the coordinate ring of Grassmannian(2,5): 7.68448 seconds
+-- gbB148: gb of Bayesian graph ideal #148: 54.1754 seconds <-- not quite as good
 
 -- Darwin habanero.local 7.7.0 Darwin Kernel Version 7.7.0: Sun Nov  7 16:06:51 PST 2004; root:xnu/xnu-517.9.5.obj~1/RELEASE_PPC  Power Macintosh powerpc
 -- Macaulay2 0.9.5, compiled with gcc 3.3.0
