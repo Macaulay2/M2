@@ -39,6 +39,26 @@ but it has not been written yet.
 
 Many people would like to see this in M2!
 
+-- remarks from David Eisenbud:
+
+Giulio Caviglia <caviglia@math.berkeley.edu> had some interesting ideas on
+implementing generic initial ideals (or was it initial ideals with the same
+useful properties?) by "generalizing" one variable at a time, and using a test
+for a given one to be general enough -- I'm afraid I don't now remember the
+details. Giulio, please fill us in!
+
+If I give you an ideal and assert that the (revlex, say) initial ideal in the
+given coords is generic, is there any test to say whether this is so? This
+would be a good research project, if not!
+
+A related set of ideas is in an old paper of mine with Bernd Sturmfels: we were
+looking for sparse Noether Normalizations -- very similar to looking for sparse
+changes of coordinates that would lead to generic, or sufficiently generic,
+initial ideals. The reference, for what it's worth, is
+
+MR1282836 (95i:13020) Eisenbud, David ; Sturmfels, Bernd . Finding sparse
+systems of parameters.  J. Pure Appl. Algebra 94 (1994), no. 2, 143-15.
+
 =============================================================================
 
 Proposed by: Mike Stillman <mike@math.cornell.edu> 
