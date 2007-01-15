@@ -114,7 +114,7 @@ endif
 
 %.ii: %.cpp; $(PRE.cc)        $< $(OUTPUT_OPTION)
 %.s : %.cpp; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
-%-demangled.s : %.s; demangle <$< >$@
+%-demangled.s : %.s; demangle <$< | egrep -v '\.loc|^\.LBB|^\.LCF|^\.LBE|^\.LBE|^\.LVL|^\.LFB' >$@
 
 %.lo : %.c  ; $(COMPILE.c)  -fPIC $< $(OUTPUT_OPTION)
 %.lo : %.cc ; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
