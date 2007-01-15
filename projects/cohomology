@@ -6,8 +6,6 @@ Description:
 
 cohomology and direct image sheaves
 
---mike:
-
 see
 
     http://front.math.ucdavis.edu/math.AG/0506391
@@ -15,12 +13,8 @@ see
     Title: Relative Beilinson Monad and Direct Image for Families of Coherent Sheaves
     Author: David Eisenbud, Frank-Olaf Schreyer 
 
-see 
-
     Eisenbud, Floystad, Schreyer: Sheaf cohomology and resolutions over the
     exterior algebra , Trans. Amer. Math. Soc. 355 (2003), 4397-4426,
-
-see
 
     Sheaf Algorithms Using the Exterior Algebra, by Wolfram Decker and David Eisenbud
     http://www.math.uiuc.edu/Macaulay2/Book/
