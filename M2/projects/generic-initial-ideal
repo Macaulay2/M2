@@ -33,8 +33,10 @@ variables (if the original polynomial ring has n variables), and to
 make the "generic" change of coordinates.  Unfortunately, this is often
 computationally prohibitive.
 
-There is a rough template for this package already, at:
-M2/Macaulay2/packages/GenericInitialIdeals.m2,
+There is a rough template for this package already, at
+
+    M2/Macaulay2/packages/GenericInitialIdeals.m2,
+
 but it has not been written yet.
 
 Many people would like to see this in M2!
