@@ -4,17 +4,34 @@ VPATH = @srcdir@
 SRCDIR = @srcdir@
 DEPENDS = yes
 
+COMPILE.cpp = $(COMPILE.cc) -frepo -fno-rtti
+
 %.o : %.cpp
+	@ echo '$(COMPILE.cpp) $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** compiling $<"
+	@ $(COMPILE.cpp) $(OUTPUT_OPTION) $<
+
+%.s : %.cpp
+	@ echo '$(COMPILE.cpp) $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** compiling $< to assembly code, making $@"
+	@ $(COMPILE.cpp) -S $(OUTPUT_OPTION) $<
+
+%.E : %.cpp
+	@ echo '$(COMPILE.cpp) $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** preprocessing $<, making $@"
+	@ $(COMPILE.cpp) -E $(OUTPUT_OPTION) $<
+
+%.o : %.cc
 	@ echo '$(COMPILE.cc) $(OUTPUT_OPTION) $<' >> LOGFILE
 	@ echo " ** compiling $<"
 	@ $(COMPILE.cc) $(OUTPUT_OPTION) $<
 
-%.s : %.cpp
+%.s : %.cc
 	@ echo '$(COMPILE.cc) $(OUTPUT_OPTION) $<' >> LOGFILE
 	@ echo " ** compiling $< to assembly code, making $@"
 	@ $(COMPILE.cc) -S $(OUTPUT_OPTION) $<
 
-%.E : %.cpp
+%.E : %.cc
 	@ echo '$(COMPILE.cc) $(OUTPUT_OPTION) $<' >> LOGFILE
 	@ echo " ** preprocessing $<, making $@"
 	@ $(COMPILE.cc) -E $(OUTPUT_OPTION) $<
@@ -42,6 +59,7 @@ ntl_interface.o : ntl_interface.cpp
 
 
 M2CPPFLAGS  = -I../../include
+M2CPPFLAGS += -I@srcdir@/../../include
 M2CPPFLAGS += -I../util
 M2CPPFLAGS += -I.
 CPPFLAGS := $(M2CPPFLAGS) $(CPPFLAGS)
@@ -141,6 +159,10 @@ initialize :: statuscodes.h
 statuscodes.h : statuscodes
 	sed 's/\(.*\):\(.*\):\(.*\)/  \2 = \1,/' <$< >$@
 clean::; rm -f statuscodes.h
+
+pi.s pi.E pi.o : pi.h
+pi-masks.h : pi-genmask
+	./$^ >$@
 
 all::; @ echo "LOGFILE: `wc -l LOGFILE` entries `wc -c LOGFILE` bytes."
 
