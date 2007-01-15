@@ -33,11 +33,11 @@ public:
      operator T() { return i; }
      pi operator+(pi &y) {
 	  T s = i + y.i;
-	  if expect_false (s & (masks<T>::himask(bits))) safe::ov("overflow: pi + pi");
+	  if expect_false (0 != (s & (masks<T>::himask(bits)))) safe::ov("overflow: pi + pi");
 	  return s; }
      pi operator+=(pi &y) {
 	  T s = i += y.i;
-	  if expect_false (s & (masks<T>::himask(bits))) safe::ov("overflow: pi += pi");
+	  if expect_false (0 != (s & (masks<T>::himask(bits)))) safe::ov("overflow: pi += pi");
 	  return s; }
 };
 template <typename T,int bits,int len> class piv { 
@@ -46,6 +46,6 @@ public:
      piv &operator += (piv &y) {
 	  T o=0;
 	  for (int j=0; j<len; j++) o |= i[j] += y.i[j];
-	  if expect_false(o & (masks<T>::himask(bits))) safe::ov("overflow: piv += piv");
+	  if expect_false(0 != (o & (masks<T>::himask(bits)))) safe::ov("overflow: piv += piv");
 	  return *this; }
 };
