@@ -12,11 +12,21 @@ See M2/Macaulay2/packages/invariants*.m2, for some old code that is no
 longer distributed and needs updating.
 
     Kemper, Gregor Computing invariants of reductive groups in positive
-    characteristic.  Transform. Groups 8 (2003), no. 2, 159--176.
+    characteristic.  Transform. Groups 8 (2003), no. 2, 159-176.
 
     Derksen, Harm; Kemper, Gregor Computational invariant theory. Invariant Theory
     and Algebraic Transformation Groups, I. Encyclopaedia of Mathematical Sciences,
     130. Springer-Verlag, Berlin, 2002. x+268 pp. ISBN: 3-540-43476-3
+
+    Kemper, G.; Steel, A. (1999): Some algorithms in invariant theory of finite
+    groups.  In: P. Draexler et al (eds.), Computational methods for
+    representations of groups and algebras. Proceedings of the Euroconference in
+    Essen, Germany, April 1-5, 1997, 267-285. Birkhaeuser, Basel.
+
+    Chapter 8 in:
+    Computing in Algebraic Geometry A Quick Start using SINGULAR Series:
+    Algorithms and Computation in Mathematics, Vol. 16 Decker, Wolfram,
+    Lossen, Christoph 2006, XVI, 327 p., Hardcover ISBN: 978-3-540-28992-0
 
 This one also perhaps:
 

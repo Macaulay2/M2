@@ -18,6 +18,13 @@ gfan.
     Efficient computation of zero-dimensional Gröbner bases by change of ordering.
     J. Symbolic Comput. 16 (1993), no. 4, 329--344. 
 
+    Amrhein, B.; Gloor, O. (1998): The Fractal Walk. In: B.~Buchberger and
+    F. Winkler (eds.): Groebner Bases and Applications, 305-322, LNS 251, CUP,
+    Cambridge.
+
+    Tran, Q.-N. (2000): A Fast Algorithm for Groebner Basis Conversion and its
+    Applications.  J. Symb. Comput. 30, 451-467.
+
 Perhaps (?) implement also the FGLM (Faugere-Gianni-Lazard-Mora) algorithm/walk
 for the zero-dimensional case.
 
