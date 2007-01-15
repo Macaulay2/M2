@@ -8,13 +8,30 @@ parametrization of rational surfaces and curves (Boehm for curves)
 
 --Mike: we need some references to algorithms for this...
 
+Surfaces:
+
+    Decker, Ein, Schreyer: Construction of surfaces in P4. J. Alg. Geom. 2
+    (1993), 185-237
+
+    Decker, Schreyer: Non-general Type Surfaces in P4: Some remarks on bounds and
+    constructions, J. Symbolic Computation 29 (2000), 545-585
+
+    W. A. de Graaf, M. Harrison, J. Pilnikova, J. Schicho. A Lie algebra method for
+    rational parametrization of Severi-Brauer surfaces. Journal of Algebra 303(2),
+    pp. 514-529. 2006. ISSN 0021-8693.
+
+curves: 
+
+    Janko Boehm: Parametrisierung rationaler Kurven, Diplomarbeit, Bayreuth
+    1999. and stuff quoted there.
+
 =============================================================================
 
 Proposed by: Wolfram Decker <decker@math.uni-sb.de>,
 	     Frank Schreyer <schreyer@math.uni-sb.de>
-Potential Advisor: 
+Potential Advisors: Schreyer, Decker, Boehm
 Project assigned to: 
-Current status:
+Current status: Magma is working on this.
 
 =============================================================================
 
