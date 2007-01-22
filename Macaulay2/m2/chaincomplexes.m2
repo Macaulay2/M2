@@ -941,7 +941,7 @@ koszul(ZZ, Matrix) := Matrix => (i,m) -> map(ring m, rawKoszul(i, raw m))
 
 koszul Matrix := ChainComplex => f ->(
      n := rank source f;
-     chainComplex apply (n+1, i -> koszul(i,f)))
+     chainComplex toList apply(1 .. n, i -> koszul(i,f)))
 
 -- this seems not to be useful to the user (yet):
 -- koszul(ZZ, Matrix, Matrix) := Matrix => (i,m,n) -> map(ring m, rawKoszulMonomials(i, raw m, raw n))
