@@ -477,30 +477,33 @@ if firstTime and not noloaddata and version#"dumpdata" then (
 	  )
      )
 
-path = {}
 scan(commandLine, arg -> if arg === "-q" or arg === "--dumpdata" then noinitfile = true)
-
 homeDirectory = getenv "HOME" | "/"
 
-if not noinitfile then (
-     path = join(
-	  {applicationDirectory() | "local/" | LAYOUT#"datam2", applicationDirectory() | "code/"},
-	  path);
-     )
+path = (x -> select(x, i -> i =!= null)) deepSplice {
+	  if not noinitfile then (
+	       applicationDirectory() | "local/" | LAYOUT#"packages", 
+	       applicationDirectory() | "local/" | LAYOUT#"datam2",
+	       applicationDirectory() | "code/"
+	       ),
+	  if prefixDirectory =!= null then (
+	       prefixDirectory | LAYOUT#"packages",
+	       prefixDirectory | LAYOUT#"m2", 
+	       prefixDirectory | LAYOUT#"datam2"),
+	  if sourceHomeDirectory =!= null then (
+	       sourceHomeDirectory|"m2/",
+	       sourceHomeDirectory|"packages/"
+	       ),
+	  if buildHomeDirectory =!= null then (
+	       buildHomeDirectory|"tutorial/final/",
+	       if buildHomeDirectory =!= sourceHomeDirectory then (
+		    buildHomeDirectory|"m2/",
+		    buildHomeDirectory|"packages/")),
+	  if sourceHomeDirectory =!= null then (
+	       sourceHomeDirectory|"test/", 
+	       sourceHomeDirectory|"test/engine/")
+	  }
 
-if prefixDirectory =!= null then path = prepend(prefixDirectory | LAYOUT#"packages", path)
-
-if not noinitfile then path = prepend(applicationDirectory() | "local/" | LAYOUT#"packages", path)
-if sourceHomeDirectory  =!= null then path = join(path, {sourceHomeDirectory|"m2/",sourceHomeDirectory|"packages/"})
-if buildHomeDirectory   =!= null then (
-     path = join(path, {buildHomeDirectory|"tutorial/final/"});
-     if buildHomeDirectory =!= sourceHomeDirectory then path = join(path, {buildHomeDirectory|"m2/",buildHomeDirectory|"packages/"})
-     )
-if prefixDirectory      =!= null then (
-     path = join(path, {prefixDirectory | LAYOUT#"m2", prefixDirectory | LAYOUT#"datam2"});
-     )
-if sourceHomeDirectory  =!= null then path = join(path, {sourceHomeDirectory|"test/", sourceHomeDirectory|"test/engine/"})
--- path = select(path, fileExists)
 if firstTime then normalPrompts()
 
 printWidth = fileWidth stdio
