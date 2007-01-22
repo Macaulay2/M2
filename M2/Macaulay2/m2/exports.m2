@@ -155,6 +155,7 @@ export {
 	symbol Fano,
 	symbol Faugere,
 	symbol File,
+	symbol FileName,
 	symbol FilePosition,
 	symbol FindOne,
 	symbol First,
