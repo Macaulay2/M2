@@ -394,7 +394,7 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> ( -- retur
      stderr << "--making " << desc << " in file " << outf << endl;
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
-     ldpkg := if pkgname != "Macaulay2" then "-e 'needsPackage \""|pkgname|"\"'" else "";
+     ldpkg := if pkgname != "Macaulay2" then concatenate("-e 'loadPackage(\"",pkgname,"\", FileName => \"",pkg#"source file","\")'") else "";
      args := "--silent --print-width 77 --stop --int" | (if usermode then "" else " -q") | " " | ldpkg;
      cmdname := commandLine#0;
      if ulimit === null then (
@@ -465,6 +465,7 @@ installPackage = method(Options => {
 	  UserMode => false,
 	  Encapsulate => true,
 	  IgnoreExampleErrors => false,
+	  FileName => null,
 	  CheckDocumentation => true,
 	  MakeDocumentation => true,
 	  MakeInfo => true,
@@ -500,7 +501,7 @@ installPackage String := opts -> pkg -> (
      -- we load the package even if it's already been loaded, because even if it was loaded with
      -- its documentation the first time, it might have been loaded at a time when the core documentation
      -- in the "Macaulay2" package was not yet loaded
-     pkg = loadPackage(pkg, DebuggingMode => opts.DebuggingMode, LoadDocumentation => opts.MakeDocumentation);
+     pkg = loadPackage(pkg, DebuggingMode => opts.DebuggingMode, LoadDocumentation => opts.MakeDocumentation, FileName => opts.FileName);
      installPackage(pkg, opts);
      )
 
@@ -513,7 +514,7 @@ installPackage Package := opts -> pkg -> (
      chkdoc = opts.CheckDocumentation;			    -- oops, this will have a lingering effect...
 
      if opts.MakeDocumentation and pkg#?"documentation not loaded"
-     then pkg = loadPackage(pkg#"title", DebuggingMode => opts.DebuggingMode, LoadDocumentation => true);
+     then pkg = loadPackage(pkg#"title", DebuggingMode => opts.DebuggingMode, LoadDocumentation => true, FileName => opts.FileName);
 
      absoluteLinks = opts.AbsoluteLinks;
      if class absoluteLinks =!= Boolean then error "expected true or false for option AbsoluteLinks"; 

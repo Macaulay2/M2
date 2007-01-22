@@ -32,13 +32,14 @@ dismiss String := title -> if PackageDictionary#?title and class value PackageDi
 
 loadPackage = method(
      Options => {
+	  FileName => null,
 	  DebuggingMode => null,
 	  LoadDocumentation => false,
 	  Configuration => {}
 	  } )
 packageLoadingOptions := new MutableHashTable
 loadPackage String := opts -> pkgtitle -> (
-     filename := pkgtitle | ".m2";
+     filename := if opts.FileName === null then pkgtitle | ".m2" else opts.FileName;
      packageLoadingOptions#pkgtitle = opts;
      -- if opts.DebuggingMode =!= true then loadDepth = loadDepth - 1;
      -- this was bad, because loadDepth might become negative, and then it gets converted to 255 in the pseudocode
@@ -174,6 +175,7 @@ newPackage(String) := opts -> (title) -> (
 	  "exported mutable symbols" => {},
 	  "example results" => new MutableHashTable,
 	  "source directory" => currentFileDirectory,
+	  "source file" => currentFileName,
 	  "undocumented keys" => new MutableHashTable,
 	  "package prefix" => (
 	       m := regex("(/|^)" | LAYOUT#"packages" | "$", currentFileDirectory);
@@ -395,7 +397,7 @@ getwww := url -> (
      if www === null or match("^[^ ]+ 404\\b",www) then null else body www)
 chkwww := url -> (
      www := getwww url;
-     if www === null then error("web page not found: ", url);
+     if www === null then error("web page not found: \"", url, "\"");
      www)
 getPackage = method(Options => { 
 	  Repository => "http://www.math.uiuc.edu/Macaulay2/Packages/",
@@ -421,7 +423,7 @@ getPackage String := opts -> pkgname -> (
      tmp = tmp | "/";
      fn := pkgname | ".m2";
      m2file := getwww(url | vers | "/" | fn);
-     m2filenm := tmp | pkgname | ".m2";
+     filename := tmp | pkgname | ".m2";
      if m2file === null then (
 	  fn = pkgname | ".tgz";
 	  tgzfile := getwww(url | vers | "/" | fn);
@@ -433,19 +435,13 @@ getPackage String := opts -> pkgname -> (
 	  cmd := concatenate("cd ",tmp,"; tar xzf ",tfn);
 	  stderr << "--- " << cmd << endl;
 	  if 0 != run cmd then error("getPackage: failed to untar ",tfn);
-	  if not fileExists m2filenm then error("package file ",m2filenm," missing");
+	  if not fileExists filename then error("package file ",filename," missing");
 	  )
      else (
 	  stderr << "--file downloaded: " << fn << endl;
-	  m2filenm << m2file << close;
+	  filename << m2file << close;
 	  );
-     oldpath := path; unwind = (arg -> path = oldpath) @@ unwind; path = prepend(tmp,path); -- how better to undo this if the next line has an error?
-     try installPackage(pkgname, IgnoreExampleErrors => true)
-     else (
-     	  unwind();
-	  error "failed to install package";
-	  );
-     unwind();
+     installPackage(pkgname, IgnoreExampleErrors => true, FileName => filename);
      )
 
 -- Local Variables:
