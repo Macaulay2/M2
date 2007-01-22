@@ -28,11 +28,20 @@ There is code in Singular for this too, which might be worth consulting.
 =============================================================================
 
 Proposed by: Mike Stillman <mike@math.cornell.edu>
-Potential Advisor: Mike Stillman <mike@math.cornell.edu>
-Project assigned to: 
+Advisor: Mike Stillman <mike@math.cornell.edu>
+Project assigned to: Bart Snapp <snapp@math.uiuc.edu>,
+                     Nathaniel Stapleton <nstaple2@math.uiuc.edu>
 Current status:
 
 =============================================================================
 
 Progress log:
 
+We found two very helpful resources:
+
+Brumatti, P.; Simis, A.; Vasconcelos, W. V. Normal Rees algebras.  J.  Algebra
+112 (1988), no. 1, 26-48.
+
+Logar, Alessandro(I-TRST) A computational proof of the Noether normalization
+lemma. Applied algebra, algebraic algorithms and error-correcting codes (Rome,
+1988), 259-273, Lecture Notes in Comput. Sci., 357, Springer, Berlin, 1989.
