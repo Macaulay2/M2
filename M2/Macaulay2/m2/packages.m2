@@ -402,7 +402,8 @@ chkwww := url -> (
 getPackage = method(Options => { 
 	  Repository => "http://www.math.uiuc.edu/Macaulay2/Packages/",
 	  Version => null, 
-	  CurrentVersion => null
+	  CurrentVersion => null,
+	  DebuggingMode => false
 	  })
 getPackage String := opts -> pkgname -> (
      url := opts.Repository | pkgname | "/";
@@ -441,7 +442,7 @@ getPackage String := opts -> pkgname -> (
 	  stderr << "--file downloaded: " << fn << endl;
 	  filename << m2file << close;
 	  );
-     installPackage(pkgname, IgnoreExampleErrors => true, FileName => filename);
+     installPackage(pkgname, IgnoreExampleErrors => true, FileName => filename, DebuggingMode => opts.DebuggingMode);
      )
 
 -- Local Variables:
