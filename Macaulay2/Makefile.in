@@ -71,6 +71,9 @@ initialize ::; $(MAKE) DEPENDS=no -C d compat.h
 ### util/restart and util/update cooperate here:
 justM2 all ::; util/restart d/restart.tmp $(MAKE) -C d all
 distclean clean ::; $(MAKE) DEPENDS=no -C d $@
+################################# bin
+install distclean clean ::; $(MAKE) -C bin $@
+install-others install-Macaulay2 ::; $(MAKE) -C bin "install"
 ################################# basictests
 check ::; $(MAKE) -C basictests -k
 distclean clean ::; $(MAKE) -C basictests $@
@@ -92,9 +95,6 @@ distclean clean ::; $(MAKE) -C book $@
 all ::;  $(MAKE) -C emacs all
 install distclean clean ::; $(MAKE) -C emacs $@
 install-others install-Macaulay2  ::;  $(MAKE) -C emacs "install"
-################################# bin
-install distclean clean ::; $(MAKE) -C bin $@
-install-others install-Macaulay2 ::; $(MAKE) -C bin "install"
 ################################# man
 all install :: ; $(MAKE) -C man $@
 install-others install-Macaulay2 :: ; $(MAKE) -C man "install"
