@@ -64,7 +64,7 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      then printErrorMessageE(f,"no method for '" + methodname.symbol.word.name + "'")
      else applyEE(method,g)
      );
-readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool):Expr := (
+readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
      lastvalue := nullE;
      while true do (
      	  if printout then setLineNumber(lineNumber + 1);
@@ -84,14 +84,14 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	  if equal(parsed,wordEOF) then return if returnLastvalue then lastvalue else nullE;
 	  if parsed == errorTree then (
 	       if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
-	       if stopIfError then return buildErrorPacket("--backtrace: parse error--");
+	       if stopIfError || returnIfError then return buildErrorPacket("--backtrace: parse error--");
 	       )
 	  else (
 	       s := gettoken(file,true);  -- get the semicolon
 	       if !(s.word == SemicolonW || s.word == NewlineW)
 	       then (
 		    printErrorMessage(s,"syntax error");
-		    if stopIfError then return Expr(Error(position(s),"syntax error",nullE,false,dummyFrame));
+		    if stopIfError || returnIfError then return Expr(Error(position(s),"syntax error",nullE,false,dummyFrame));
 		    )
 	       else (
 		    if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols
@@ -112,7 +112,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 				   if !err.printed then (
 					printErrorMessage(err.position,"warning: unprinted error message: " + err.message);
 					);
-			      	   if stopIfError then return lastvalue;
+			      	   if stopIfError || returnIfError then return lastvalue;
 				   );
 			      )
 			 else (
@@ -122,7 +122,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 				   when g is err:Error
 				   do (
 					g = update(err,"after eval",f); 
-					if stopIfError then return g;
+					if stopIfError || returnIfError then return g;
 					lastvalue = nullE;
 					) 
 				   else lastvalue = g;
@@ -130,14 +130,14 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 				   printvalue := nullE;
 				   g = runmethod(BeforePrint,lastvalue,f);
 				   when g is err:Error
-				   do ( g = update(err,"before print",f); if stopIfError then return g; )
+				   do ( g = update(err,"before print",f); if stopIfError || returnIfError then return g; )
 				   else printvalue = g;
 				   -- result of Print is ignored
 				   g = runmethod(if s.word == SemicolonW then NoPrint else Print,printvalue,f);
-				   when g is err:Error do ( g = update(err,"at print",f); if stopIfError then return g; ) else nothing;
+				   when g is err:Error do ( g = update(err,"at print",f); if stopIfError || returnIfError then return g; ) else nothing;
 				   -- result of AfterPrint is ignored
 				   g = runmethod(if s.word == SemicolonW then AfterNoPrint else AfterPrint,lastvalue,f);
-				   when g is err:Error do ( g = update(err,"after print",f); if stopIfError then return g; ) else nothing;
+				   when g is err:Error do ( g = update(err,"after print",f); if stopIfError || returnIfError then return g; ) else nothing;
 				   )
 			      )
 			 )
@@ -155,7 +155,7 @@ decrementInterpreterDepth():void := (
      setGlobalVariable(interpreterDepthS,toExpr(interpreterDepth)));
 
 
-readeval3(file:TokenFile,printout:bool,stopIfError:bool,dc:DictionaryClosure,returnLastvalue:bool,stopIfBreakReturnContinue:bool):Expr := (
+readeval3(file:TokenFile,printout:bool,dc:DictionaryClosure,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
      saveLocalFrame := localFrame;
      localFrame = dc.frame;
       savecf := getGlobalVariable(currentFileName);
@@ -164,16 +164,16 @@ readeval3(file:TokenFile,printout:bool,stopIfError:bool,dc:DictionaryClosure,ret
 	setGlobalVariable(currentFileName,Expr(file.posFile.file.filename));
 	setGlobalVariable(currentFileDirectory,Expr(dirname(file.posFile.file.filename)));
         currentPosFile = file.posFile;
-	ret := readeval4(file,printout,dc.dictionary,returnLastvalue,stopIfBreakReturnContinue);
+	ret := readeval4(file,printout,dc.dictionary,returnLastvalue,stopIfBreakReturnContinue,returnIfError);
       setGlobalVariable(currentFileDirectory,savecd);
       setGlobalVariable(currentFileName,savecf);
       currentPosFile = savepf;
      localFrame = saveLocalFrame;
      ret);
-readeval(file:TokenFile,returnLastvalue:bool):Expr := (
+readeval(file:TokenFile,returnLastvalue:bool,returnIfError:bool):Expr := (
      savefe := getGlobalVariable(fileExitHooks);
      setGlobalVariable(fileExitHooks,emptyList);
-     ret := readeval3(file,false,true,newStaticLocalDictionaryClosure(file.posFile.file.filename),returnLastvalue,false);
+     ret := readeval3(file,false,newStaticLocalDictionaryClosure(file.posFile.file.filename),returnLastvalue,false,returnIfError);
      haderror := when ret is Error do True else False;
      hadexiterror := false;
      hook := getGlobalVariable(fileExitHooks);
@@ -199,22 +199,22 @@ topLevelPrompt():string := (
      else "\n<--bad prompt--> : " -- unfortunately, we are not printing the error message!
      );
 
-loadprintstdin(dc:DictionaryClosure,stopIfBreakReturnContinue:bool):Expr := (
+loadprintstdin(dc:DictionaryClosure,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
      when openTokenFile("-")
      is e:errmsg do buildErrorPacket(e.message)
      is file:TokenFile do (
 	  setprompt(file,topLevelPrompt);
-	  r := readeval3(file,true,stopIfError,dc,false,stopIfBreakReturnContinue);
+	  r := readeval3(file,true,dc,false,stopIfBreakReturnContinue,returnIfError);
 	  file.posFile.file.eof = false; -- erase eof indication so we can try again (e.g., recursive calls to topLevel)
 	  r));
 
-loadprint(filename:string,stopIfError:bool,dc:DictionaryClosure):Expr := (
+loadprint(filename:string,dc:DictionaryClosure,returnIfError:bool):Expr := (
      when openTokenFile(filename)
      is errmsg do False
      is file:TokenFile do (
 	  if file.posFile.file != stdin then file.posFile.file.echo = true;
 	  setprompt(file,topLevelPrompt);
-	  r := readeval3(file,true,stopIfError,dc,false,false);
+	  r := readeval3(file,true,dc,false,false,returnIfError);
 	  t := (
 	       if filename === "-"			 -- whether it's stdin
 	       then (
@@ -234,7 +234,7 @@ load(filename:string):Expr := (
      when openTokenFile(filename)
      is e:errmsg do buildErrorPacket(e.message)
      is file:TokenFile do (
-	  r := readeval(file,true);
+	  r := readeval(file,true,true);
 	  t := if !(filename==="-") then close(file) else 0;
 	  when r is err:Error do (
 	       if err.message == returnMessage || err.message == continueMessage || err.message == continueMessageWithArg
@@ -263,7 +263,7 @@ input(e:Expr):Expr := (
      is filename:string do (
 	  -- we should have a way of setting normal prompts while inputting
      	  incrementInterpreterDepth();
-	  ret := loadprint(filename,true,newStaticLocalDictionaryClosure(filename));
+	  ret := loadprint(filename,newStaticLocalDictionaryClosure(filename),true);
      	  decrementInterpreterDepth();
 	  previousLineNumber = -1;
 	  ret)
@@ -309,14 +309,14 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	  NULL));
 
 export topLevel():bool := (
-     when loadprint("-",stopIfError,newStaticLocalDictionaryClosure()) 
+     when loadprint("-",newStaticLocalDictionaryClosure(),false)
      is err:Error do (
 	  -- printErrorMessage(err);		    -- this message may not have been printed before (?)
 	  false)
      else true
      );
 
-commandInterpreter(dc:DictionaryClosure):Expr := loadprint("-",stopIfError,dc);
+commandInterpreter(dc:DictionaryClosure):Expr := loadprint("-",dc,false);
 commandInterpreter(f:Frame):Expr := commandInterpreter(newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
 commandInterpreter(e:Expr):Expr := (
      saveLoadDepth := loadDepth;
@@ -324,7 +324,7 @@ commandInterpreter(e:Expr):Expr := (
      incrementInterpreterDepth();
        ret := 
        when e is s:Sequence do (
-	    if length(s) == 0 then loadprint("-",stopIfError,newStaticLocalDictionaryClosure())
+	    if length(s) == 0 then loadprint("-",newStaticLocalDictionaryClosure(),false)
 	    else WrongNumArgs(0,1)
 	    )
        is x:DictionaryClosure do commandInterpreter(x)
@@ -353,7 +353,7 @@ debugger(f:Frame,c:Code):Expr := (
 		r := applyES(debuggerHook,emptySequence);
 		when r is Error do return r else nothing;
 		);
-	   ret := loadprintstdin(newStaticLocalDictionaryClosure(localDictionaryClosure(f)),true);
+	   ret := loadprintstdin(newStaticLocalDictionaryClosure(localDictionaryClosure(f)),true,false);
 	 decrementInterpreterDepth();
        setGlobalVariable(errorCodeS,oldDebuggerCode);
      setDebuggingMode(true);
@@ -369,7 +369,7 @@ value(e:Expr):Expr := (
      is s:string do (
       	  savecs := getGlobalVariable(currentString);
 	  setGlobalVariable(currentString,Expr(s));
-	  r := readeval(stringTokenFile("a string", s+newline),true);
+	  r := readeval(stringTokenFile("a string", s+newline),true,true);
 	  setGlobalVariable(currentString,savecs);
 	  when r 
 	  is err:Error do (
@@ -402,7 +402,7 @@ internalCapture(e:Expr):Expr := (
 	  previousLineNumber = -1;
 	  setLineNumber(0);
 	  setprompt(stringFile,topLevelPrompt);
-	  r := readeval3(stringFile,true,true,newStaticLocalDictionaryClosure(),false,false);
+	  r := readeval3(stringFile,true,newStaticLocalDictionaryClosure(),false,false,true);
 	  out := substr(stdIO.outbuffer,0,stdIO.outindex);
 	  stdIO.outfd = oldfd;
 	  stdIO.outbuffer = oldbuf;
@@ -436,7 +436,7 @@ export process():void := (
      setstopIfError(false);				    -- this is usually true after loaddata(), we want to reset it
      setLoadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
      everytimeRun();
-     ret := readeval(stringTokenFile("layout.m2",startupString1),false); -- we don't know the right directory!
+     ret := readeval(stringTokenFile("layout.m2",startupString1),false,false); -- we don't know the right directory!
      when ret is err:Error do (
 	  if !err.printed then printError(err);		    -- just in case
 	  if stopIfError
@@ -444,7 +444,7 @@ export process():void := (
 	  else if !topLevel()				    -- give a prompt for debugging
 	  then Exit(err))
      else nothing;
-     ret = readeval(stringTokenFile("startup.m2",startupString2),false); -- startup.m2 calls commandInterpreter and eventually returns -- we don't know the right directory!
+     ret = readeval(stringTokenFile("startup.m2",startupString2),false,false); -- startup.m2 calls commandInterpreter and eventually returns -- we don't know the right directory!
      when ret is err:Error do (
 	  if !err.printed then printError(err);		    -- just in case
 	  if stopIfError 
