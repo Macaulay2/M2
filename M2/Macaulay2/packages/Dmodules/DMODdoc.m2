@@ -692,9 +692,9 @@ document {
      Outputs => {
 	  List => {"all possible Bernstein-Sato polynomials"}
 	  },
-     Consequences => { "Creates  the file <filename.tex> that contains the list of 
-     the Bernstein-Sato polynomials and the corresponding constructible sets."
-	  },     
+--     Consequences => { "Creates  the file <filename.tex> that contains the list of 
+--     the Bernstein-Sato polynomials and the corresponding constructible sets."
+--	  },     
      EXAMPLE lines ///
 	  A =  (QQ [a,b,c]) [x, y, Dx, Dy, WeylAlgebra => {x=>Dx, y=>Dy}]
      	  paramBpoly(a*x^2 + b*x*y + c*y^2, "quadratic")
