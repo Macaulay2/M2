@@ -25,7 +25,7 @@ check_it : $(F4_OBJECT_FILES) check_it.o
 %.s : %.c; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
 
 Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/e/f4/Makefile
-clean ::; rm -f *.o
+clean ::; rm -f *.o *.rpo
 distclean: clean; rm -f Makefile
 
 clean::; rm -f *.dep dep-*.tmp LOGFILE
