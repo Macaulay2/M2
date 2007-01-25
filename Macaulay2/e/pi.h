@@ -42,6 +42,10 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
 	  switch(type) {
 	  case SIGNED: case UNSIGNED: return false;
 	  case SIGNED_REVERSED: case UNSIGNED_REVERSED: return true; } }
+     static bool is_signed() {
+	  switch(type) {
+	  case UNSIGNED: case UNSIGNED_REVERSED: return false;
+	  case   SIGNED: case   SIGNED_REVERSED: return true; } }
      static int bits_per_bin() { return bits_per_byte * sizeof(T); }
      static int bits_per_U() { return bits_per_byte * sizeof(U); }
      static int fldbits_per_bin() { return bits_per_fld * flds_per_bin(); }
@@ -63,7 +67,6 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
 	  case SIGNED: return himask();
 	  case SIGNED_REVERSED: return mask_all_fields() ^ himask(); }}
      static U field_at_bit(T t, int i) { 
-	  if (flds_per_bin() == 1) return t;
 	  U u;
 	  if (flds_per_bin() > 1) {
 	       u = t >> i;
@@ -115,7 +118,8 @@ public:
 		    if (reversed()) u = -u;
 		    u = u + encoded_zero();
 		    checkfit(u);
-		    t |= u << j;
+		    if expect_false (bits_per_fld == bits_per_bin() && u<0) safe::ov("overflow: pui"); 
+		    t |= (T)u << j;
 		    if expect_false (--numfields == 0) {
 			 if (flds_per_bin() > 1) {
 			      // we have to fill in the rest of the fields with encoded zeroes, to prevent spurious packed overflows later
