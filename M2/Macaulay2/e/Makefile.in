@@ -108,7 +108,9 @@ statuscodes.h : statuscodes
 	sed 's/\(.*\):\(.*\):\(.*\)/  \2 = \1,/' <$< >$@
 clean::; rm -f statuscodes.h
 
-pi.s pi.E pi.o : pi.h
+pi-test.s pi-test.o pi.s pi.E pi.o : pi.h pi-masks.h
+pi-test : exceptions.o overflow.o
+pi-test-run : pi-test ; ./pi-test
 pi-masks.h : pi-genmask
 	./$^ >$@
 
