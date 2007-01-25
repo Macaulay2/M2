@@ -5,18 +5,18 @@ template <typename T> T himask(int bits) { if (bits==0) return 0; T n=1, r=0; n<
 
 int main() {
 
-     printf("const static int32_t ovmask32[] = {\n");
-     for (int bits=0; bits<=32; bits++) printf("  0x%08x,\n",ovmask<int32_t>(bits));
+     printf("const static uint32_t ovmask32[] = {\n");
+     for (int bits=0; bits<=32; bits++) printf("  0x%08x,\n",ovmask<uint32_t>(bits));
      printf("};\n");
-     printf("const static int32_t himask32[] = {\n");
-     for (int bits=0; bits<=32; bits++) printf("  0x%08x,\n",himask<int32_t>(bits));
+     printf("const static uint32_t himask32[] = {\n");
+     for (int bits=0; bits<=32; bits++) printf("  0x%08x,\n",himask<uint32_t>(bits));
      printf("};\n");
 
-     printf("const static int64_t ovmask64[] = {\n");
-     for (int bits=0; bits<=64; bits++) printf("  0x%016LxLL,\n",ovmask<int64_t>(bits));
+     printf("const static uint64_t ovmask64[] = {\n");
+     for (int bits=0; bits<=64; bits++) printf("  0x%016LxLL,\n",ovmask<uint64_t>(bits));
      printf("};\n");
-     printf("const static int64_t himask64[] = {\n");
-     for (int bits=0; bits<=64; bits++) printf("  0x%016LxLL,\n",himask<int64_t>(bits));
+     printf("const static uint64_t himask64[] = {\n");
+     for (int bits=0; bits<=64; bits++) printf("  0x%016LxLL,\n",himask<uint64_t>(bits));
      printf("};\n");
 
      return 0;
