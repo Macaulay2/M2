@@ -3,6 +3,7 @@ include ../../../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
 include @srcdir@/../make.include
+include @srcdir@/../Makefile.common
 
 %.dep: %.cpp
 	@ echo "$(CXX) -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
