@@ -19,6 +19,38 @@ export{} -- if the new routines which you are adding have new
 -- exported
         
 --=========================================================================--
+-- experiments:
+
+-- need good and extreme examples of NNL. 
+
+clearAll
+installPackage "NoetherNormalization"
+
+B = ZZ/7[x,y]/(y^2)
+k = coefficientRing B
+A = k[flatten entries vars B]
+dim(B) -- may be useful in constructing a for loop
+V = ideal vars A
+V = ideal vars B
+G = ideal B -- identify monic or make monic elements
+V = eliminate(y,V) -- remove y terms Does it only work for poly rings???
+
+
+B = ZZ/7[x,y]/(x*y+x+2)
+k = coefficientRing B
+A = k[flatten entries vars B]
+dim(B) -- may be useful in constructing a for loop
+V = ideal vars A
+G = ideal B -- identify monic or make monic elements
+gens G
+V = eliminate(y,V) -- r
+
+
+
+--=========================================================================--
+	
+	
+--=========================================================================--
 
 --code
 
