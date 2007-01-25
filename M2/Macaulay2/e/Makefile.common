@@ -1,0 +1,53 @@
+
+COMPILE.cpp = $(COMPILE.cc) -frepo -fno-rtti
+
+%.o : %.cpp
+	@ echo '$(COMPILE.cpp) $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** compiling $<"
+	@ $(COMPILE.cpp) $(OUTPUT_OPTION) $<
+
+%.s : %.cpp
+	@ echo '$(COMPILE.cpp) $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** compiling $< to assembly code, making $@"
+	@ $(COMPILE.cpp) -S $(OUTPUT_OPTION) $<
+
+%.E : %.cpp
+	@ echo '$(COMPILE.cpp) $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** preprocessing $<, making $@"
+	@ $(COMPILE.cpp) -E $(OUTPUT_OPTION) $<
+
+%.o : %.cc
+	@ echo '$(COMPILE.cc) $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** compiling $<"
+	@ $(COMPILE.cc) $(OUTPUT_OPTION) $<
+
+%.s : %.cc
+	@ echo '$(COMPILE.cc) $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** compiling $< to assembly code, making $@"
+	@ $(COMPILE.cc) -S $(OUTPUT_OPTION) $<
+
+%.E : %.cc
+	@ echo '$(COMPILE.cc) $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** preprocessing $<, making $@"
+	@ $(COMPILE.cc) -E $(OUTPUT_OPTION) $<
+
+ntl_interface.o : ntl_interface.cpp
+	@ echo '$(COMPILE.cc) $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** compiling $<"
+	@ $(COMPILE.cc) $(OUTPUT_OPTION) $< -Wno-old-style-cast
+
+%.o : %.c
+	@ echo '$(COMPILE.c) $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** compiling $<"
+	@ $(COMPILE.c) $(OUTPUT_OPTION) $<
+
+%.dep: %.cpp
+	@ echo "$(CXX) -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
+	@ echo " ** creating $@ from $<"
+	@ $(CXX) -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+
+%.dep: %.c
+	@ echo "$(CC)  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
+	@ echo " ** creating $@ from $<"
+	@ $(CC)  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+

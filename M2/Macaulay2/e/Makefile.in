@@ -21,6 +21,7 @@ endif
 PRE.cc   = $(COMPILE.cc) -E 
 
 include @srcdir@/Makefile.files
+include @srcdir@/Makefile.common
 
 .PHONY : all clean distclean install tar check tags
 
