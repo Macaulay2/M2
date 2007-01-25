@@ -46,16 +46,16 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
      static int bits_per_U() { return bits_per_byte * sizeof(U); }
      static int fldbits_per_bin() { return bits_per_fld * flds_per_bin(); }
      static int extrabits_per_bin() { return bits_per_bin() - fldbits_per_bin() ; }
-     static U mask_one_field() { return (~(U)0) >> (bits_per_U() - bits_per_fld); }
      static T mask_all_fields() { return (~(T)0) >> extrabits_per_bin(); }
      static T himask() { return masks<T>::himask(bits_per_fld); }
      static T ovmask() { return himask() << 1; }
      static U encoded_zero() {
 	  switch(type) {
-	  case SIGNED: return 1 << (bits_per_fld-1);
+	  case SIGNED: return (U)1 << (bits_per_fld-1);
 	  case UNSIGNED: return 0;
-	  case SIGNED_REVERSED: return (1 << (bits_per_fld-1)) - 1;
-	  case UNSIGNED_REVERSED: return mask_one_field(); }}
+	  case SIGNED_REVERSED: return ((U)1 << (bits_per_fld - 1)) - 1;
+	  case UNSIGNED_REVERSED: return mask_one_field();
+	  }}
      static T encoded_zeroes() {
 	  switch(type) {
 	  case UNSIGNED: return 0;
@@ -70,16 +70,18 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
 	       u &= mask_one_field();
 	  }
 	  else u = t;
-	  u = u - encoded_zero();
+	  u -= encoded_zero();
 	  if (reversed()) u = -u;
 	  return u; }
      static U field(T t, int i) { return field_at_bit(t, bits_per_fld * (flds_per_bin() - 1 - i)); }
      static U checkfit(U u) { 
-	  if expect_false (0 != (u & mask_one_field())) safe::ov("overflow: pui"); 
+	  if expect_false (0 != (u & ~ mask_one_field())) safe::ov("overflow: pui"); 
 	  return u ; }
      static T add(T x, T y, T &carries) {
 	  T sum = x + y - encoded_zeroes();
-	  carries |= bool_neq(bool_add(x,y),sum);	// ?????
+	  T newcarries = bool_neq(bool_add(x,y),sum);
+	  if (0 != (encoded_zero() & 1)) newcarries = ~newcarries;
+	  carries |= newcarries;
 	  if expect_false (extrabits_per_bin() == 0 && sum<x) safe::ov("overflow: pui + pui");
 	  return sum; }
      static void add_final(T &carries) {
@@ -87,13 +89,22 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
 	  if expect_false (0 != oflows) safe::ov("overflow: pui + pui"); }
      static T sub(T x, T y, T &borrows) {
 	  T dif = x - y + encoded_zeroes();
-	  borrows |= bool_neq(bool_sub(x,y),dif);	// ?????
+	  T newborrows = bool_neq(bool_sub(x,y),dif);
+	  if (0 != (encoded_zero() & 1)) newborrows = ~newborrows;
+	  borrows |= newborrows;
 	  if expect_false (extrabits_per_bin() == 0 && x<y) safe::ov("overflow: pui - pui");
 	  return dif; }
      static void sub_final(T &borrows) {
 	  T oflows = borrows & ovmask();
 	  if expect_false (0 != oflows) safe::ov("overflow: pui - pui"); }
 public:
+     static U random_U() { 
+	  U u = (U)rand() & mask_one_field();
+	  u -= encoded_zero();
+	  if (reversed()) u = -u;
+	  return u;
+     }
+     static U mask_one_field() { return (((U)1 << bits_per_fld - 1) << 1) - 1; }
      static int flds_per_bin() { return bits_per_bin() / bits_per_fld; }
      static void pack(T *dest, U *src, int numfields) {
 	  if (numfields == 0) return;

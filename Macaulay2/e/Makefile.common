@@ -1,3 +1,4 @@
+# -*- Makefile -*-
 
 COMPILE.cpp = $(COMPILE.cc) -frepo -fno-rtti
 
@@ -40,6 +41,11 @@ ntl_interface.o : ntl_interface.cpp
 	@ echo '$(COMPILE.c) $(OUTPUT_OPTION) $<' >> LOGFILE
 	@ echo " ** compiling $<"
 	@ $(COMPILE.c) $(OUTPUT_OPTION) $<
+
+% : %.o
+	@ echo '$(LINK.cc) $^ $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** linking $^ to get $@"
+	@ $(LINK.cc) $^ $(OUTPUT_OPTION)
 
 %.dep: %.cpp
 	@ echo "$(CXX) -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
