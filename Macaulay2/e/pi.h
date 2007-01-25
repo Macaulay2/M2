@@ -1,14 +1,7 @@
 /* pi.cc -- routines for packed integers and monomials -*- c++ -*- */
 // pi = packed integer
-// piv = packed integer vector
-// pui = packed unsigned integer
-// puiv = packed unsigned integer vector
-// pgi = packed integer, with one extra guard bit per field
-// pgiv = packed integer vector, with one extra guard bit per field
-// pgui = packed unsigned integer, with one extra guard bit per field
-// pguiv = packed unsigned integer vector, with one extra guard bit per field
 // nbits = number of bits per subfield
-// T = type of int to pack them into, either int32_t or int64_t
+// "fields" of type U are packed into "bins" of type T, either int32_t or int64_t
 #include "overflow.hpp"
 #ifdef __GNUC__
 #define expect_false(x) (__builtin_expect(x,0))
@@ -35,6 +28,9 @@ template <typename T, typename U, int nbits> class pui { // U is an unsigned int
      static T lomask() { return masks<T>::lomask(nbits); }
      static T himask() { return masks<T>::himask(nbits); }
      static U field_mask() { return ((U)1 << nbits) - 1; }
+     static U field       (T t, int i) { return (U)(t >> (nbits * (numfields() - 1 - i))) & field_mask(); }
+     static U field_at_bit(T t, int i) { return (U)(t >> i                              ) & field_mask(); }
+     static U checkfit(U u) { if (0 != (u & field_mask())) safe::ov("overflow: pui"); return u ; }
      static T add(T x, T y, T &carries) {
 	  T sum = x + y;
 	  carries |= bool_neq(bool_add(x,y),sum);
@@ -53,16 +49,13 @@ template <typename T, typename U, int nbits> class pui { // U is an unsigned int
 	  if expect_false (0 != oflows) safe::ov("overflow: pui - pui"); }
 public:
      static int numfields() { return numbits() / nbits; }
-     static U field       (T t, int i) { return (U)(t >> (nbits * (numfields() - 1 - i))) & field_mask(); }
-     static U field_at_bit(T t, int i) { return (U)(t >> i                              ) & field_mask(); }
-     static U checkfit(U u) { if (0 != (u & field_mask())) safe::ov("overflow: pui"); return u ; }
-     static void pack(T *dest, U *src, int len) {
-	  if (len == 0) return;
+     static void pack(T *dest, U *src, int numfields) {
+	  if (numfields == 0) return;
 	  while (1) {
 	       T t = 0;
 	       for (int j = (numfields()-1)*nbits; j >= 0; j -= nbits) {
 		    t |= checkfit(*src++) << j;
-		    if (--len == 0) {
+		    if expect_false (--numfields == 0) {
 			 *dest++ = t;
 			 return;
 		    }
@@ -70,25 +63,25 @@ public:
 	       *dest++ = t;
 	  }
      }
-     static void unpack(U *dest, T *src, int len) {
-	  if (len == 0) return;
+     static void unpack(U *dest, T *src, int numfields) {
+	  if (numfields == 0) return;
 	  while (1) {
 	       T t = *src++;
 	       for (int bit = (numfields()-1)*nbits; bit >= 0; bit -= nbits) {
 		    *dest++ = field_at_bit(t,bit);
-		    if (--len == 0) return;
+		    if expect_false (--numfields == 0) return;
 	       }
 	  }
      }
-     static int scan(T *x, T *y, int len, int (*f)(U,U)) {
-	  if (len == 0) return 0;
+     static int scan(T *x, T *y, int numfields, int (*f)(U,U)) {
+	  if (numfields == 0) return 0;
 	  while (1) {
 	       T a = *x++;
 	       T b = *y++;
 	       for (int j = (numfields()-1)*nbits; j >= 0; j -= nbits) {
 		    int r = f(field_at_bit(a,j), field_at_bit(b,j));
-		    if (r != 0) return r;
-		    if (--len == 0) return 0;
+		    if expect_false (r != 0) return r;
+		    if expect_false (--numfields == 0) return 0;
 	       }
 	  }
      }
@@ -97,17 +90,15 @@ public:
 	  T res = add(x,y,carries);
 	  add_final(carries);
 	  return res; }
-     static void add(T res[], T x[], T y[], int len) {
+     static void add(T res[], T x[], T y[], int numbins) {
 	  T carries = 0;
-	  for (int j=0; j<len; j++) res[j] = add(x[j], y[j], carries);
+	  for (int j=0; j<numbins; j++) res[j] = add(x[j], y[j], carries);
 	  add_final(carries); }
      static T cmp_lex(T x, T y) { return x > y ? 1 : x < y ? -1 : 0 ; }
-     static T cmp_lex(T *x, T *y, int len) { 
-	  for (; len >= 0; len -= numfields()) {
-	       T a = *x++;
-	       T b = *y++;
-	       if (a > b) return 1;
-	       if (a < b) return -1;
+     static T cmp_lex(T *x, T *y, int numbins) { 
+	  for (int j = 0; j < numbins; j++) {
+	       if expect_false (x[j] > y[j]) return  1; else
+	       if expect_false (x[j] < y[j]) return -1;
 	  }
 	  return 0;
      }
@@ -124,16 +115,16 @@ public:
 	  T res = sub(x,y,borrows);
 	  sub_final(borrows);
 	  return res; }
-     static void sub(T res[], T x[], T y[], int len) {
+     static void sub(T res[], T x[], T y[], int numbins) {
 	  T borrows = 0;
-	  for (int j=0; j<len; j++) res[j] = sub(x[j], y[j], borrows);
+	  for (int j=0; j<numbins; j++) res[j] = sub(x[j], y[j], borrows);
 	  sub_final(borrows); } 
 };
+
 template <typename T, typename U, int nbits, int len> class puiv {
      static void sub(T res[], T x[], T y[]) {
 	  pui<T,U,nbits>::sub(res,x,y,len); }
 };     
-
 
 
 // Local Variables:
