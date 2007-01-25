@@ -62,18 +62,6 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
 	  case UNSIGNED_REVERSED: return mask_all_fields();
 	  case SIGNED: return himask();
 	  case SIGNED_REVERSED: return mask_all_fields() ^ himask(); }}
-     static T encode_packed(T x) {
-	  switch(type) {
-	  case UNSIGNED: return x;
-	  case SIGNED: return x+encoded_zeroes();
-	  case SIGNED_REVERSED: case UNSIGNED_REVERSED: return encoded_zeroes()-x; // ?????? what about borrows?
-	  }}
-     static T decode_packed(T x) {
-	  switch(type) {
-	  case UNSIGNED: return x;
-	  case SIGNED: return x-encoded_zeroes();
-	  case SIGNED_REVERSED: case UNSIGNED_REVERSED: return encoded_zeroes()-x; // ??????
-	  }}
      static U field_at_bit(T t, int i) { 
 	  if (flds_per_bin() == 1) return t;
 	  U u;
@@ -91,7 +79,7 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
 	  return u ; }
      static T add(T x, T y, T &carries) {
 	  T sum = x + y - encoded_zeroes();
-	  carries |= bool_neq(bool_add(x - encoded_zeroes(),y - encoded_zeroes()),sum);	// ?????
+	  carries |= bool_neq(bool_add(x,y),sum);	// ?????
 	  if expect_false (extrabits_per_bin() == 0 && sum<x) safe::ov("overflow: pui + pui");
 	  return sum; }
      static void add_final(T &carries) {
@@ -99,7 +87,7 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
 	  if expect_false (0 != oflows) safe::ov("overflow: pui + pui"); }
      static T sub(T x, T y, T &borrows) {
 	  T dif = x - y + encoded_zeroes();
-	  borrows |= bool_neq(bool_sub(x - encoded_zeroes(),y - encoded_zeroes()),dif);	// ?????
+	  borrows |= bool_neq(bool_sub(x,y),dif);	// ?????
 	  if expect_false (extrabits_per_bin() == 0 && x<y) safe::ov("overflow: pui - pui");
 	  return dif; }
      static void sub_final(T &borrows) {
@@ -118,6 +106,8 @@ public:
 		    checkfit(u);
 		    t |= u << j;
 		    if expect_false (--numfields == 0) {
+			 //// we have to fill in the rest of the fields with encoded zeroes, to prevent spurious packed overflows later
+			 t |= encoded_zeroes() & ((1 << j) - 1);
 			 *dest++ = t;
 			 return;
 		    }
