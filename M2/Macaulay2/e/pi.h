@@ -106,8 +106,10 @@ public:
 		    checkfit(u);
 		    t |= u << j;
 		    if expect_false (--numfields == 0) {
-			 //// we have to fill in the rest of the fields with encoded zeroes, to prevent spurious packed overflows later
-			 t |= encoded_zeroes() & ((1 << j) - 1);
+			 if (flds_per_bin() > 1) {
+			      // we have to fill in the rest of the fields with encoded zeroes, to prevent spurious packed overflows later
+			      t |= encoded_zeroes() & ((1 << j) - 1);
+			 }
 			 *dest++ = t;
 			 return;
 		    }
