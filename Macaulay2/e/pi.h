@@ -29,12 +29,12 @@ template <typename T> static T bool_eq(T x, T y) { return ~(x^y); }
 template <typename T> static T bool_neq(T x, T y) { return x^y; }
 template <typename T> static T bool_imp(T x, T y) { return (~x) | y; }
 template <typename T> static T bool_nimp(T x, T y) { return x & ~y; }
-template <typename T, int nbits> class pui {
+template <typename T, typename U, int nbits> class pui { // U is an unsigned integer type holding at least nbits; we pack them into the integer type T
      static int numbits() { return 8 * sizeof(T); }
-     static int numfields() { return numbits() / nbits; }
      static int extrabits() { return numbits() - nbits * numfields(); }
      static T lomask() { return masks<T>::lomask(nbits); }
      static T himask() { return masks<T>::himask(nbits); }
+     static U field_mask() { return ((U)1 << nbits) - 1; }
      static T add(T x, T y, T &carries) {
 	  T sum = x + y;
 	  carries |= bool_neq(bool_add(x,y),sum);
@@ -52,15 +52,65 @@ template <typename T, int nbits> class pui {
 	  T oflows = borrows & lomask();
 	  if expect_false (0 != oflows) safe::ov("overflow: pui - pui"); }
 public:
+     static int numfields() { return numbits() / nbits; }
+     static U field       (T t, int i) { return (U)(t >> (nbits * (numfields() - 1 - i))) & field_mask(); }
+     static U field_at_bit(T t, int i) { return (U)(t >> i                              ) & field_mask(); }
+     static U checkfit(U u) { if (0 != (u & field_mask())) safe::ov("overflow: pui"); return u ; }
+     static void pack(T *dest, U *src, int len) {
+	  if (len == 0) return;
+	  while (1) {
+	       T t = 0;
+	       for (int j = (numfields()-1)*nbits; j >= 0; j -= nbits) {
+		    t |= checkfit(*src++) << j;
+		    if (--len == 0) {
+			 *dest++ = t;
+			 return;
+		    }
+	       }
+	       *dest++ = t;
+	  }
+     }
+     static void unpack(U *dest, T *src, int len) {
+	  if (len == 0) return;
+	  while (1) {
+	       T t = *src++;
+	       for (int bit = (numfields()-1)*nbits; bit >= 0; bit -= nbits) {
+		    *dest++ = field_at_bit(t,bit);
+		    if (--len == 0) return;
+	       }
+	  }
+     }
+     static int scan(T *x, T *y, int len, int (*f)(U,U)) {
+	  if (len == 0) return 0;
+	  while (1) {
+	       T a = *x++;
+	       T b = *y++;
+	       for (int j = (numfields()-1)*nbits; j >= 0; j -= nbits) {
+		    int r = f(field_at_bit(a,j), field_at_bit(b,j));
+		    if (r != 0) return r;
+		    if (--len == 0) return 0;
+	       }
+	  }
+     }
      static T add(T x, T y) {
 	  T carries = 0;
 	  T res = add(x,y,carries);
 	  add_final(carries);
 	  return res; }
-     static void add(int len, T res[], T x[], T y[]) {
+     static void add(T res[], T x[], T y[], int len) {
 	  T carries = 0;
 	  for (int j=0; j<len; j++) res[j] = add(x[j], y[j], carries);
-	  add_final(carries); } 
+	  add_final(carries); }
+     static T cmp_lex(T x, T y) { return x > y ? 1 : x < y ? -1 : 0 ; }
+     static T cmp_lex(T *x, T *y, int len) { 
+	  for (; len >= 0; len -= numfields()) {
+	       T a = *x++;
+	       T b = *y++;
+	       if (a > b) return 1;
+	       if (a < b) return -1;
+	  }
+	  return 0;
+     }
      static T geq_each(T x, T y) {
 	  if expect_true (extrabits() == 0 && x<y) return false;
 	  T dif = x - y;
@@ -74,15 +124,16 @@ public:
 	  T res = sub(x,y,borrows);
 	  sub_final(borrows);
 	  return res; }
-     static void sub(int len, T res[], T x[], T y[]) {
+     static void sub(T res[], T x[], T y[], int len) {
 	  T borrows = 0;
 	  for (int j=0; j<len; j++) res[j] = sub(x[j], y[j], borrows);
 	  sub_final(borrows); } 
 };
-template <typename T, int nbits, int len> class puiv {
+template <typename T, typename U, int nbits, int len> class puiv {
      static void sub(T res[], T x[], T y[]) {
-	  pui<T,nbits>::sub(len,res,x,y); }
+	  pui<T,U,nbits>::sub(res,x,y,len); }
 };     
+
 
 
 // Local Variables:
