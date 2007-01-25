@@ -26,10 +26,9 @@
 #define expect_true(x)  (x)
 #endif
 #include "pi-masks.h"
-template <typename T> struct masks { static inline T ovmask(int bits_per_fld), himask(int bits_per_fld); };
-template <> inline uint32_t masks<uint32_t>::ovmask(int bits_per_fld) { return ovmask32[bits_per_fld]; }
+static const int bits_per_byte = 8;
+template <typename T> struct masks { static inline T himask(int bits_per_fld); };
 template <> inline uint32_t masks<uint32_t>::himask(int bits_per_fld) { return himask32[bits_per_fld]; }
-template <> inline uint64_t masks<uint64_t>::ovmask(int bits_per_fld) { return ovmask64[bits_per_fld]; }
 template <> inline uint64_t masks<uint64_t>::himask(int bits_per_fld) { return himask64[bits_per_fld]; }
 template <typename T> static T bool_add(T x, T y) { return x^y; }
 template <typename T> static T bool_sub(T x, T y) { return x^y; }
@@ -43,43 +42,44 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
 	  switch(type) {
 	  case SIGNED: case UNSIGNED: return false;
 	  case SIGNED_REVERSED: case UNSIGNED_REVERSED: return true; } }
-     static int bits_per_bin() { return 8 * sizeof(T); }
+     static int bits_per_bin() { return bits_per_byte * sizeof(T); }
+     static int bits_per_U() { return bits_per_byte*sizeof(U); }
      static int fldbits_per_bin() { return bits_per_fld * flds_per_bin(); }
-     static T mask_fields() { return (1 << fldbits_per_bin()) - 1; }
+     static int extrabits_per_bin() { return bits_per_bin() - fldbits_per_bin() ; }
+     static U mask_one_field() { return (~(U)0) >> (bits_per_U() - bits_per_fld); }
+     static T mask_all_fields() { return (~(T)0) >> extrabits_per_bin(); }
+     static T himask() { return masks<T>::himask(bits_per_fld); }
+     static T ovmask() { return himask() << 1; }
      static U encoded_zero() {
 	  switch(type) {
 	  case SIGNED: return 1 << (bits_per_fld-1);
 	  case UNSIGNED: return 0;
 	  case SIGNED_REVERSED: return (1 << (bits_per_fld-1)) - 1;
-	  case UNSIGNED_REVERSED: return (1 << bits_per_fld) - 1; }}
-     static int extrabits() { return bits_per_bin() - bits_per_fld * flds_per_bin(); }	// to determine whether the overflow mask includes a bit for the highest field
-     static T ovmask() { return masks<T>::ovmask(bits_per_fld); }
-     static T himask() { return masks<T>::himask(bits_per_fld); }
+	  case UNSIGNED_REVERSED: return mask_one_field(); }}
      static T encoded_zeroes() {
 	  switch(type) {
 	  case UNSIGNED: return 0;
-	  case UNSIGNED_REVERSED: return mask_fields();
+	  case UNSIGNED_REVERSED: return mask_all_fields();
 	  case SIGNED: return himask();
-	  case SIGNED_REVERSED: return mask_fields() ^ himask();
+	  case SIGNED_REVERSED: return mask_all_fields() ^ himask();
 	  }}
-     static U field_mask() { return ((U)1 << bits_per_fld) - 1; }
      static U field(T t, int i) { 
 	  if (flds_per_bin() == 1) return t;
-	  return (U)(t >> (bits_per_fld * (flds_per_bin() - 1 - i))) & field_mask();}
+	  return (U)(t >> (bits_per_fld * (flds_per_bin() - 1 - i))) & mask_one_field();}
      static U field_at_bit(T t, int i) { 
 	  if (flds_per_bin() == 1) return t;
 	  U u = t >> i;
-	  u &= field_mask();
+	  u &= mask_one_field();
 	  u = u - encoded_zero();
 	  if (reversed()) u = -u;
 	  return u; }
      static U checkfit(U u) { 
-	  if expect_false (0 != (u & field_mask())) safe::ov("overflow: pui"); 
+	  if expect_false (0 != (u & mask_one_field())) safe::ov("overflow: pui"); 
 	  return u ; }
      static T add(T x, T y, T &carries) {
 	  T sum = x + y - encoded_zeroes();
 	  carries |= bool_neq(bool_add(x,y),sum); // ???
-	  if expect_false (extrabits() == 0 && sum<x) safe::ov("overflow: pui + pui");
+	  if expect_false (extrabits_per_bin() == 0 && sum<x) safe::ov("overflow: pui + pui");
 	  return sum; }
      static void add_final(T &carries) {
 	  T oflows = carries & ovmask();
@@ -87,7 +87,7 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
      static T sub(T x, T y, T &borrows) {
 	  T dif = x - y + encoded_zeroes();
 	  borrows |= bool_neq(bool_sub(x,y),dif); // ???
-	  if expect_false (extrabits() == 0 && x<y) safe::ov("overflow: pui - pui");
+	  if expect_false (extrabits_per_bin() == 0 && x<y) safe::ov("overflow: pui - pui");
 	  return dif; }
      static void sub_final(T &borrows) {
 	  T oflows = borrows & ovmask();
@@ -152,7 +152,7 @@ public:
 	  return 0;
      }
      static T geq_each(T x, T y) {
-	  if expect_true (extrabits() == 0 && x<y) return false;
+	  if expect_true (extrabits_per_bin() == 0 && x<y) return false;
 	  T dif = x - y;
 	  T borrows = bool_neq(bool_sub(x,y),dif);
 	  T oflows = borrows & ovmask();
