@@ -1,7 +1,22 @@
 /* pi.cc -- routines for packed integers and monomials -*- c++ -*- */
 // pi = packed integer
-// nbits = number of bits per subfield
-// "fields" of type U are packed into "bins" of type T, either int32_t or int64_t
+// bits_per_fld = number of bits per subfield
+// "fields" of type U are packed into "bins" of unsigned type T, either uint32_t or uint64_t
+// the type U is either signed or unsigned
+// encoding from type U to an unsigned field is done in such a way that the ordering is either preserved or reversed
+
+// example:
+//   n=3 bits per field
+//   unsigned           :  0  1  2  3  4  5  6  7    ui      x -> 0+x    0
+//   signed             : -4 -3 -2 -1  0  1  2  3    i       x -> 4+x    4 == 1 << (n-1)
+//   unsigned, reversed :  7  6  5  4  3  2  1  0    ru      x -> 7-x    7 == (1 << n) - 1
+//   signed, reversed   :  3  2  1  0 -1 -2 -3 -4    rui     x -> 3-x    3 == (1 << (n-1)) - 1
+
+// an "area" will consist of a sequence of bins, each with the same number of bits per field; some fields in the last bin may be unused
+// routines operating on an area will update references to pointers, so the next area can continue processing; thus area routines need not know their offset, just their length
+// an "encoded monomial" will consist of a sequence of areas
+// comparison of encoded monomials is always unsigned and lexicographic
+// routines for monomial arithmetic have to take the type of conversion into account
 #include "overflow.hpp"
 #ifdef __GNUC__
 #define expect_false(x) (__builtin_expect(x,0))
@@ -11,26 +26,43 @@
 #define expect_true(x)  (x)
 #endif
 #include "pi-masks.h"
-template <typename T> struct masks { static inline T ovmask(int nbits), himask(int nbits); };
-template <> inline int32_t masks<int32_t>::ovmask(int nbits) { return ovmask32[nbits]; }
-template <> inline int32_t masks<int32_t>::himask(int nbits) { return himask32[nbits]; }
-template <> inline int64_t masks<int64_t>::ovmask(int nbits) { return ovmask64[nbits]; }
-template <> inline int64_t masks<int64_t>::himask(int nbits) { return himask64[nbits]; }
+template <typename T> struct masks { static inline T ovmask(int bits_per_fld), himask(int bits_per_fld); };
+template <> inline uint32_t masks<uint32_t>::ovmask(int bits_per_fld) { return ovmask32[bits_per_fld]; }
+template <> inline uint32_t masks<uint32_t>::himask(int bits_per_fld) { return himask32[bits_per_fld]; }
+template <> inline uint64_t masks<uint64_t>::ovmask(int bits_per_fld) { return ovmask64[bits_per_fld]; }
+template <> inline uint64_t masks<uint64_t>::himask(int bits_per_fld) { return himask64[bits_per_fld]; }
 template <typename T> static T bool_add(T x, T y) { return x^y; }
 template <typename T> static T bool_sub(T x, T y) { return x^y; }
 template <typename T> static T bool_eq(T x, T y) { return ~(x^y); }
 template <typename T> static T bool_neq(T x, T y) { return x^y; }
 template <typename T> static T bool_imp(T x, T y) { return (~x) | y; }
 template <typename T> static T bool_nimp(T x, T y) { return x & ~y; }
-template <typename T, typename U, int nbits> class pui { // U is an unsigned integer type holding at least nbits; we pack them into the integer type T
+typedef enum { SIGNED, UNSIGNED, SIGNED_REVERSED, UNSIGNED_REVERSED } field_type;
+template <typename T, typename U, int bits_per_fld, field_type type> class pui {
+     static bool reversed() {
+	  switch(type) {
+	  case SIGNED: case UNSIGNED: return false;
+	  case SIGNED_REVERSED: case UNSIGNED_REVERSED: return true; } }
+     static U encoded_zero() {
+	  switch(type) {
+	  case SIGNED: return 1 << (bits_per_fld-1);
+	  case UNSIGNED: return 0;
+	  case SIGNED_REVERSED: return (1 << (bits_per_fld-1)) - 1;
+	  case UNSIGNED_REVERSED: return (1 << bits_per_fld) - 1; }}
      static int bits_per_bin() { return 8 * sizeof(T); }
-     static int extrabits() { return bits_per_bin() - nbits * flds_per_bin(); }	// to determine whether the overflow mask includes a bit for the highest field
-     static T ovmask() { return masks<T>::ovmask(nbits); }
-     static T himask() { return masks<T>::himask(nbits); }
-     static U field_mask() { return ((U)1 << nbits) - 1; }
-     static U field       (T t, int i) { return (U)(t >> (nbits * (flds_per_bin() - 1 - i))) & field_mask(); }
-     static U field_at_bit(T t, int i) { return (U)(t >> i                                 ) & field_mask(); }
-     static U checkfit(U u) { if (0 != (u & field_mask())) safe::ov("overflow: pui"); return u ; }
+     static int extrabits() { return bits_per_bin() - bits_per_fld * flds_per_bin(); }	// to determine whether the overflow mask includes a bit for the highest field
+     static T ovmask() { return masks<T>::ovmask(bits_per_fld); }
+     static T himask() { return masks<T>::himask(bits_per_fld); }
+     static U field_mask() { return ((U)1 << bits_per_fld) - 1; }
+     static U field(T t, int i) { 
+	  if (flds_per_bin() == 1) return t;
+	  return (U)(t >> (bits_per_fld * (flds_per_bin() - 1 - i))) & field_mask();}
+     static U field_at_bit(T t, int i) { 
+	  if (flds_per_bin() == 1) return t;
+	  return (U)(t >> i) & field_mask(); }
+     static U checkfit(U u) { 
+	  if expect_false (0 != (u & field_mask())) safe::ov("overflow: pui"); 
+	  return u ; }
      static T add(T x, T y, T &carries) {
 	  T sum = x + y;
 	  carries |= bool_neq(bool_add(x,y),sum);
@@ -48,13 +80,17 @@ template <typename T, typename U, int nbits> class pui { // U is an unsigned int
 	  T oflows = borrows & ovmask();
 	  if expect_false (0 != oflows) safe::ov("overflow: pui - pui"); }
 public:
-     static int flds_per_bin() { return bits_per_bin() / nbits; }
+     static int flds_per_bin() { return bits_per_bin() / bits_per_fld; }
      static void pack(T *dest, U *src, int numfields) {
 	  if (numfields == 0) return;
 	  while (1) {
 	       T t = 0;
-	       for (int j = (flds_per_bin()-1)*nbits; j >= 0; j -= nbits) {
-		    t |= checkfit(*src++) << j;
+	       for (int j = (flds_per_bin()-1)*bits_per_fld; j >= 0; j -= bits_per_fld) {
+		    U u = *src++;
+		    if (reversed()) u = -u;
+		    u = u + encoded_zero();
+		    checkfit(u);
+		    t |= u << j;
 		    if expect_false (--numfields == 0) {
 			 *dest++ = t;
 			 return;
@@ -67,8 +103,11 @@ public:
 	  if (numfields == 0) return;
 	  while (1) {
 	       T t = *src++;
-	       for (int bit = (flds_per_bin()-1)*nbits; bit >= 0; bit -= nbits) {
-		    *dest++ = field_at_bit(t,bit);
+	       for (int bit = (flds_per_bin()-1)*bits_per_fld; bit >= 0; bit -= bits_per_fld) {
+		    U u = field_at_bit(t,bit);
+		    u = u - encoded_zero();
+		    if (reversed()) u = -u;
+		    *dest++ = u;
 		    if expect_false (--numfields == 0) return;
 	       }
 	  }
@@ -78,7 +117,7 @@ public:
 	  while (1) {
 	       T a = *x++;
 	       T b = *y++;
-	       for (int j = (flds_per_bin()-1)*nbits; j >= 0; j -= nbits) {
+	       for (int j = (flds_per_bin()-1)*bits_per_fld; j >= 0; j -= bits_per_fld) {
 		    int r = f(field_at_bit(a,j), field_at_bit(b,j));
 		    if expect_false (r != 0) return r;
 		    if expect_false (--numfields == 0) return 0;
@@ -94,8 +133,8 @@ public:
 	  T carries = 0;
 	  for (int j=0; j<numbins; j++) res[j] = add(x[j], y[j], carries);
 	  add_final(carries); }
-     static T cmp_lex(T x, T y) { return x > y ? 1 : x < y ? -1 : 0 ; }
-     static T cmp_lex(T *x, T *y, int numbins) { 
+     static int cmp_lex(T x, T y) { return x > y ? 1 : x < y ? -1 : 0 ; }
+     static int cmp_lex(T *x, T *y, int numbins) { 
 	  for (int j = 0; j < numbins; j++) {
 	       if expect_false (x[j] > y[j]) return  1; else
 	       if expect_false (x[j] < y[j]) return -1;
@@ -121,9 +160,9 @@ public:
 	  sub_final(borrows); } 
 };
 
-template <typename T, typename U, int nbits, int len> class puiv {
+template <typename T, typename U, int bits_per_fld, int len, field_type type> class puiv {
      static void sub(T res[], T x[], T y[]) {
-	  pui<T,U,nbits>::sub(res,x,y,len); }
+	  pui<T,U,bits_per_fld,type>::sub(res,x,y,len); }
 };     
 
 
