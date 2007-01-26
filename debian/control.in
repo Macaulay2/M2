@@ -1,4 +1,4 @@
-Package: Macaulay2
+Package: macaulay2
 Version: @PACKAGE_VERSION@
 Section: math
 Priority: extra
