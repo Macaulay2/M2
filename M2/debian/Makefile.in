@@ -29,11 +29,17 @@ prepare : ../$(PKG_TZ)
 	for i in $(package)/* ; do if [ -f "$$i" ] ; then rm "$$i" ; fi ; done
 	mv $(package)/* $(prefixtail)
 	rmdir $(package)
+	chmod -R og-w,a+r $(prefixtail)
+	find $(prefixtail) -name .linkdir | xargs rm -f
+	find $(prefixtail) -name \*.info | while read x ; do gzip --best "$$x" ; done
+	find $(prefixtail) -name \*.1 | while read x ; do gzip --best "$$x" ; done
 	fakeroot chown -R root $(prefixtail)
 data.tar.gz : prepare
 	fakeroot tar cfz $@ $(prefixtail)
 md5sums : prepare
 	find $(prefixtail) -type f | xargs md5sum > $@
+check-with-lintian : ../$(PKG_DEB)
+	lintian -c ../$(PKG_DEB)
 tidy :
 	rm -rf $(prefixtail) control.tar.gz data.tar.gz md5sums
 clean ::
