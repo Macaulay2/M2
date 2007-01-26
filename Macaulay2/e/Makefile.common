@@ -1,6 +1,7 @@
 # -*- Makefile -*-
 
-COMPILE.cpp = $(COMPILE.cc) -frepo -fno-rtti
+COMPILE.cc += -frepo -fno-rtti
+COMPILE.cpp = $(COMPILE.cc)
 
 %.o : %.cpp
 	@ echo '$(COMPILE.cpp) $(OUTPUT_OPTION) $<' >> LOGFILE

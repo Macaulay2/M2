@@ -66,6 +66,15 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
 	  case UNSIGNED_REVERSED: return mask_all_fields();
 	  case SIGNED: return himask();
 	  case SIGNED_REVERSED: return mask_all_fields() ^ himask(); }}
+     static T top_encoded_zero() { // only used if there are no extra bits
+	  return (T)encoded_zero() << (bits_per_bin() - bits_per_fld);
+     }
+     static T top_encoded_one() { // only used if there are no extra bits
+	  return (T)(encoded_zero() + (reversed() ? -1 : 1)) << (bits_per_bin() - bits_per_fld);
+     }
+     static T top_encoded_minus_one() { // only used if there are no extra bits
+	  return (T)(encoded_zero() + (reversed() ? 1 : -1)) << (bits_per_bin() - bits_per_fld);
+     }
      static U field_at_bit(T t, int i) { 
 	  U u;
 	  if (flds_per_bin() > 1) {
@@ -85,7 +94,15 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
 	  T newcarries = bool_neq(bool_add(x,y),sum);
 	  if (0 != (encoded_zero() & 1)) newcarries = ~newcarries;
 	  carries |= newcarries;
-	  if expect_false (extrabits_per_bin() == 0 && sum<x) safe::ov("overflow: pui + pui");
+	  if (extrabits_per_bin() == 0) {
+	       switch(type) {
+	       ov: safe::ov("overflow: pui + pui");
+	       case UNSIGNED         : if expect_false (sum < x) goto ov; break;
+	       case UNSIGNED_REVERSED: if expect_false (sum > x) goto ov; break;
+	       case SIGNED           : if expect_false (y <= top_encoded_minus_one() && sum > x || y >= top_encoded_one() && sum < x) goto ov; break;
+	       case SIGNED_REVERSED  : if expect_false (y >= top_encoded_minus_one() && sum < x || y <= top_encoded_one() && sum > x) goto ov; break;
+	       }
+	  }
 	  return sum; }
      static void add_final(T &carries) {
 	  T oflows = carries & ovmask();
@@ -95,21 +112,29 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
 	  T newborrows = bool_neq(bool_sub(x,y),dif);
 	  if (0 != (encoded_zero() & 1)) newborrows = ~newborrows;
 	  borrows |= newborrows;
-	  if expect_false (extrabits_per_bin() == 0 && x<y) safe::ov("overflow: pui - pui");
+	  if (extrabits_per_bin() == 0) {
+	       switch(type) {
+	       ov: safe::ov("overflow: pui + pui");
+	       case UNSIGNED         : if expect_false (dif < x) goto ov; break;
+	       case UNSIGNED_REVERSED: if expect_false (dif > x) goto ov; break;
+	       case SIGNED           : if expect_false (y <= top_encoded_minus_one() && dif < x || y >= top_encoded_one() && dif > x) goto ov; break;
+	       case SIGNED_REVERSED  : if expect_false (y >= top_encoded_minus_one() && dif > x || y <= top_encoded_one() && dif < x) goto ov; break;
+	       }
+	  }
 	  return dif; }
      static void sub_final(T &borrows) {
 	  T oflows = borrows & ovmask();
 	  if expect_false (0 != oflows) safe::ov("overflow: pui - pui"); }
 public:
-     static U random_U() { 
+     static U random_U() __attribute__((noinline)) { 
 	  U u = (U)rand() & mask_one_field();
 	  u -= encoded_zero();
 	  if (reversed()) u = -u;
 	  return u;
      }
-     static U mask_one_field() { return (((U)1 << bits_per_fld - 1) << 1) - 1; }
+     static U mask_one_field() { return (((U)1 << (bits_per_fld - 1)) << 1) - 1; }
      static int flds_per_bin() { return bits_per_bin() / bits_per_fld; }
-     static void pack(T *dest, U *src, int numfields) {
+     static void pack(T *dest, U *src, int numfields) __attribute__((noinline)) {
 	  if (numfields == 0) return;
 	  while (1) {
 	       T t = 0;
@@ -132,7 +157,7 @@ public:
 	       *dest++ = t;
 	  }
      }
-     static void unpack(U *dest, T *src, int numfields) {
+     static void unpack(U *dest, T *src, int numfields) __attribute__((noinline)) {
 	  if (numfields == 0) return;
 	  while (1) {
 	       T t = *src++;
@@ -159,12 +184,14 @@ public:
 	  T res = add(x,y,carries);
 	  add_final(carries);
 	  return res; }
-     static void add(T res[], T x[], T y[], int numbins) {
+     static void add(T res[], T x[], T y[], int numflds) {
+	  int numbins = (numflds + flds_per_bin() - 1) / flds_per_bin();
 	  T carries = 0;
 	  for (int j=0; j<numbins; j++) res[j] = add(x[j], y[j], carries);
 	  add_final(carries); }
      static int cmp_lex(T x, T y) { return x > y ? 1 : x < y ? -1 : 0 ; }
-     static int cmp_lex(T *x, T *y, int numbins) { 
+     static int cmp_lex(T *x, T *y, int numflds) { 
+	  int numbins = (numflds + flds_per_bin() - 1) / flds_per_bin();
 	  for (int j = 0; j < numbins; j++) {
 	       if expect_false (x[j] > y[j]) return  1; else
 	       if expect_false (x[j] < y[j]) return -1;
@@ -184,7 +211,8 @@ public:
 	  T res = sub(x,y,borrows);
 	  sub_final(borrows);
 	  return res; }
-     static void sub(T res[], T x[], T y[], int numbins) {
+     static void sub(T res[], T x[], T y[], int numflds) {
+	  int numbins = (numflds + flds_per_bin() - 1) / flds_per_bin();
 	  T borrows = 0;
 	  for (int j=0; j<numbins; j++) res[j] = sub(x[j], y[j], borrows);
 	  sub_final(borrows); } 
