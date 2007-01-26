@@ -110,6 +110,7 @@ clean::; rm -f statuscodes.h
 
 pi-test.s pi-test.o pi.s pi.E pi.o : pi.h pi-masks.h
 pi-test : exceptions.o overflow.o
+# check :: pi-test-run
 pi-test-run : pi-test ; ./pi-test
 pi-masks.h : pi-genmask
 	./$^ >$@
