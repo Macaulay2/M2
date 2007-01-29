@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#ifdef DEBUG
+void trap () {}
+#endif
+
 int (*g)(int64_t *, int64_t *, int) = pui<int64_t,int,7,UNSIGNED>::cmp_lex;
 
 template class pui<uint32_t,int,7,UNSIGNED>;
