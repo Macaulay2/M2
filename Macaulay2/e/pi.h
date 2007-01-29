@@ -26,6 +26,11 @@
 #define expect_true(x)  (x)
 #endif
 #include "pi-masks.h"
+
+#ifdef DEBUG
+extern void trap ();
+#endif
+
 static const int bits_per_byte = 8;
 template <typename T> struct masks { static inline T himask(int bits_per_fld); };
 template <> inline uint32_t masks<uint32_t>::himask(int bits_per_fld) { return himask32[bits_per_fld]; }
@@ -91,9 +96,10 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
 	  return u ; }
      static T add(T x, T y, T &carries) {
 	  T sum = x + y - encoded_zeroes();
-	  T newcarries = bool_neq(bool_add(x,y),sum);
-	  if (0 != (encoded_zero() & 1)) newcarries = ~newcarries;
-	  carries |= newcarries;
+	  carries |= bool_neq(bool_sub(bool_add(x,y),encoded_zeroes()&ovmask()),sum);
+#ifdef DEBUG
+	  if (0 != (carries & ovmask())) trap();
+#endif
 	  if (extrabits_per_bin() == 0) {
 	       switch(type) {
 	       ov: safe::ov("overflow: pui + pui");
