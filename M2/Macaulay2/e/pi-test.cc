@@ -42,6 +42,14 @@ template <typename T, typename U, int bits_per_fld, field_type type, int numflds
 	       A::add(dest,dest2,dest3,numflds);
 	       A::unpack(src,dest,numflds);
 	       for (int i = 0; i < numflds; i++) assert(src[i] == src2[i] + src3[i]);
+
+	       for (int i = 0; i <= numflds; i++) src3[i] = random2(), src2[i] = random2() + src3[i];
+	       A::pack(dest2,src2,numflds);
+	       A::pack(dest3,src3,numflds);
+	       A::sub(dest,dest2,dest3,numflds);
+	       A::unpack(src,dest,numflds);
+	       for (int i = 0; i < numflds; i++) assert(src[i] == src2[i] - src3[i]);
+
 	  }
 	  catch (exc::overflow_error e) {
 	       printf("pi-test: error: %s\n",e.what());
@@ -67,8 +75,10 @@ template <typename T, typename U, int bits_per_fld> struct tester3 {
 	       tester2<T,U,bits_per_fld,SIGNED>::run();
 	       tester2<T,U,bits_per_fld,SIGNED_REVERSED>::run();
 	  }
-	  tester2<T,U,bits_per_fld,UNSIGNED>::run();
-	  tester2<T,U,bits_per_fld,UNSIGNED_REVERSED>::run();
+	  else {
+	       tester2<T,U,bits_per_fld,UNSIGNED>::run();
+	       tester2<T,U,bits_per_fld,UNSIGNED_REVERSED>::run();
+	  }
      }
 };
 

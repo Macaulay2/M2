@@ -72,13 +72,17 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
 	  case SIGNED: return himask();
 	  case SIGNED_REVERSED: return mask_all_fields() ^ himask(); }}
      static T top_encoded_zero() { // only used if there are no extra bits
-	  return (T)encoded_zero() << (bits_per_bin() - bits_per_fld);
+	  return to_T(encoded_zero()) << (bits_per_bin() - bits_per_fld);
+     }
+     static T to_T(U u) {
+	  // here we convert to unsigned first, to prevent sign extension
+	  return sizeof(u) == 8 ? (T)(uint64_t)u : (T)(uint32_t)u ; 
      }
      static T top_encoded_one() { // only used if there are no extra bits
-	  return (T)(encoded_zero() + (reversed() ? -1 : 1)) << (bits_per_bin() - bits_per_fld);
+	  return to_T(encoded_zero() + (reversed() ? -1 : 1)) << (bits_per_bin() - bits_per_fld);
      }
      static T top_encoded_minus_one() { // only used if there are no extra bits
-	  return (T)(encoded_zero() + (reversed() ? 1 : -1)) << (bits_per_bin() - bits_per_fld);
+	  return to_T(encoded_zero() + (reversed() ? 1 : -1)) << (bits_per_bin() - bits_per_fld);
      }
      static U field_at_bit(T t, int i) { 
 	  U u;
@@ -115,14 +119,15 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
 	  if expect_false (0 != oflows) safe::ov("overflow: pui + pui"); }
      static T sub(T x, T y, T &borrows) {
 	  T dif = x - y + encoded_zeroes();
-	  T newborrows = bool_neq(bool_sub(x,y),dif);
-	  if (0 != (encoded_zero() & 1)) newborrows = ~newborrows;
-	  borrows |= newborrows;
+	  borrows |= bool_neq(bool_add(bool_sub(x,y),encoded_zeroes()&ovmask()),dif);
+#ifdef DEBUG
+	  if (0 != (borrows & ovmask())) trap();
+#endif
 	  if (extrabits_per_bin() == 0) {
 	       switch(type) {
 	       ov: safe::ov("overflow: pui + pui");
-	       case UNSIGNED         : if expect_false (dif < x) goto ov; break;
-	       case UNSIGNED_REVERSED: if expect_false (dif > x) goto ov; break;
+	       case UNSIGNED         : if expect_false (dif > x) goto ov; break;
+	       case UNSIGNED_REVERSED: if expect_false (dif < x) goto ov; break;
 	       case SIGNED           : if expect_false (y <= top_encoded_minus_one() && dif < x || y >= top_encoded_one() && dif > x) goto ov; break;
 	       case SIGNED_REVERSED  : if expect_false (y >= top_encoded_minus_one() && dif > x || y <= top_encoded_one() && dif < x) goto ov; break;
 	       }
@@ -150,11 +155,11 @@ public:
 		    u = u + encoded_zero();
 		    checkfit(u);
 		    if expect_false (bits_per_fld == bits_per_bin() && u<0) safe::ov("overflow: pui"); 
-		    t |= (T)u << j;
+		    t |= to_T(u) << j;
 		    if expect_false (--numfields == 0) {
 			 if (flds_per_bin() > 1) {
 			      // we have to fill in the rest of the fields with encoded zeroes, to prevent spurious packed overflows later
-			      t |= encoded_zeroes() & ((1 << j) - 1);
+			      t |= encoded_zeroes() & (((T)1 << j) - 1);
 			 }
 			 *dest++ = t;
 			 return;
