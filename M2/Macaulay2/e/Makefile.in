@@ -47,7 +47,7 @@ run-overflow-test : overflow-test
 	./$^ div 2>/dev/null || echo test succeeded
 	./$^ add 2>/dev/null || echo test succeeded
 	touch $@
-overflow-test : overflow.o
+pi overflow-test : overflow.o pi.h
 
 # the target 'initialize' is used by the Makefile in the parent directory
 initialize all :: $(addsuffix .hpp, $(GENERATED_H))
@@ -108,7 +108,7 @@ statuscodes.h : statuscodes
 	sed 's/\(.*\):\(.*\):\(.*\)/  \2 = \1,/' <$< >$@
 clean::; rm -f statuscodes.h
 
-pi-test.s pi-test.o pi.s pi.E pi.o : pi.h pi-masks.h
+pi-demangled.s pi-test.s pi-test.o pi.s pi.E pi.o : pi.h pi-masks.h
 pi-test : exceptions.o overflow.o
 # check :: pi-test-run
 pi-test-run : pi-test ; ./pi-test

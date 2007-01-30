@@ -6,13 +6,6 @@
 void trap () {}
 #endif
 
-int (*g)(int64_t *, int64_t *, int) = pui<int64_t,int,7,UNSIGNED>::cmp_lex;
-
-template class pui<uint32_t,int,7,UNSIGNED>;
-template class pui<uint32_t,int,32,UNSIGNED>;
-template class pui<uint32_t,unsigned,32,UNSIGNED>;
-template class puiv<uint32_t,int,7,10,UNSIGNED>;
-
 template <typename T, typename U, int bits_per_fld, field_type type, int numflds> struct tester1 {
      typedef pui<T,U,bits_per_fld,type> A;
      static U random2() {
@@ -39,14 +32,14 @@ template <typename T, typename U, int bits_per_fld, field_type type, int numflds
 	       for (int i = 0; i <= numflds; i++) src2[i] = random2(), src3[i] = random2();
 	       A::pack(dest2,src2,numflds);
 	       A::pack(dest3,src3,numflds);
-	       A::add(dest,dest2,dest3,numflds);
+	       A::add(dest,dest2,dest3,A::numbins(numflds));
 	       A::unpack(src,dest,numflds);
 	       for (int i = 0; i < numflds; i++) assert(src[i] == src2[i] + src3[i]);
 
 	       for (int i = 0; i <= numflds; i++) src3[i] = random2(), src2[i] = random2() + src3[i];
 	       A::pack(dest2,src2,numflds);
 	       A::pack(dest3,src3,numflds);
-	       A::sub(dest,dest2,dest3,numflds);
+	       A::sub(dest,dest2,dest3,A::numbins(numflds));
 	       A::unpack(src,dest,numflds);
 	       for (int i = 0; i < numflds; i++) assert(src[i] == src2[i] - src3[i]);
 
