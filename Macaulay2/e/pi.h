@@ -195,26 +195,41 @@ public:
 	  T res = add(x,y,carries);
 	  add_final(carries);
 	  return res; }
-     static void add(T res[], T x[], T y[], int numflds) {
-	  int numbins = (numflds + flds_per_bin() - 1) / flds_per_bin();
+     static int numbins(int numflds) { return (numflds + flds_per_bin() - 1) / flds_per_bin(); }
+     static void add(T res[], T x[], T y[], int numbins) {
 	  T carries = 0;
 	  for (int j=0; j<numbins; j++) res[j] = add(x[j], y[j], carries);
 	  add_final(carries); }
      static int cmp_lex(T x, T y) { return x > y ? 1 : x < y ? -1 : 0 ; }
-     static int cmp_lex(T *x, T *y, int numflds) { 
-	  int numbins = (numflds + flds_per_bin() - 1) / flds_per_bin();
-	  for (int j = 0; j < numbins; j++) {
+     static int cmp_lex(T x[], T y[], int numbins) {
+	  int j = 0;
+	  while (1) {
 	       if expect_false (x[j] > y[j]) return  1; else
 	       if expect_false (x[j] < y[j]) return -1;
+	       j++;
+	       numbins--;
+	       if expect_false (numbins == 0) return 0;
 	  }
-	  return 0;
+     }
+     static int cmp_lex_rev(T x[], T y[], int numbins) {
+	  int j = numbins-1;
+	  while (1) {
+	       if expect_false (x[j] > y[j]) return  1; else
+	       if expect_false (x[j] < y[j]) return -1;
+	       if expect_false (j-- == 0) return 0;
+	  }
      }
      static T geq_each(T x, T y) {
-	  if expect_true (extrabits_per_bin() == 0 && x<y) return false;
+	  if expect_false (extrabits_per_bin() == 0 && x<y) return false;
 	  T dif = x - y;
 	  T borrows = bool_neq(bool_sub(x,y),dif);
 	  T oflows = borrows & ovmask();
-	  if expect_true (0 != oflows) return false;
+	  if expect_false (0 != oflows) return false;
+	  return true;
+     }
+     static T geq_each(T x[], T y[], int numbins) {
+	  for (int j=0; j<numbins; j++)
+	       if expect_false (! geq_each(x[j], y[j])) return false;
 	  return true;
      }
      static T sub(T x, T y) {
@@ -222,18 +237,11 @@ public:
 	  T res = sub(x,y,borrows);
 	  sub_final(borrows);
 	  return res; }
-     static void sub(T res[], T x[], T y[], int numflds) {
-	  int numbins = (numflds + flds_per_bin() - 1) / flds_per_bin();
+     static void sub(T res[], T x[], T y[], int numbins) {
 	  T borrows = 0;
 	  for (int j=0; j<numbins; j++) res[j] = sub(x[j], y[j], borrows);
 	  sub_final(borrows); } 
 };
-
-template <typename T, typename U, int bits_per_fld, int len, field_type type> class puiv {
-     static void sub(T res[], T x[], T y[]) {
-	  pui<T,U,bits_per_fld,type>::sub(res,x,y,len); }
-};     
-
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e pi-demangled.s"
