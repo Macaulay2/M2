@@ -66,17 +66,17 @@ varPrep(GroebnerBasis) := List => (G) -> (
      X := flatten entries vars ring G;
      U := {};
      V := {};
-     for j from 0 to dim ring G - 1 do (
+     for j from 0 to numgens ring G - 1 do (
 	  isempty := true;
      	  for i from 0 to numgens source gens G - 1 do ( -- going from zero to the number of gens of the gb - 1	   
 	       if isempty == false then break;
 	       if regex(toString X_j,toString((gens G)_{i})) =!= null then ( -- check to see if X_j is in the ith term, goto next X_j term 
-	       	    if j == dim ring G - 1 then (
+	       	    if j == numgens ring G - 1 then (
 	   	    	 isempty = false;
 		    	 break);
-	       	    for k from 1 to dim ring G - j - 1 do (-- checking to see if no higher degree vars in the poly 
+	       	    for k from 1 to numgens ring G - j - 1 do (-- checking to see if no higher degree vars in the poly 
 		    	 if regex(toString X_(j+k),toString((gens G)_{i})) =!= null then break; --if higher degree vars appear in the poly then break
-	       	    	 if j+k === dim ring G - 1 then isempty = false -- if we make it through all the higher degree vars and none of them are in the poly then the intersection is not empty
+	       	    	 if j+k === numgens ring G - 1 then isempty = false -- if we make it through all the higher degree vars and none of them are in the poly then the intersection is not empty
 	       	    	 );
 		    );
 	       );
@@ -87,16 +87,18 @@ varPrep(GroebnerBasis) := List => (G) -> (
 X = varPrep(G) -- note varPrep is basically Tp together with the first part of step 2 of the algorithm
 -- what we might really want is varPrep to produce a list that will give the correct new monomial ordering
 -- you can construct this list in a similar way to how X is constructed
-A = k[flatten entries vars R, MonomialOrder => {Weights => splice {1,3,2,4}, Lex}]
 
-f = map(R,matrix{varPrep(G)}) -- a map that allows to look at gb with new ordering
+
+
+A = k[flatten entries vars R, MonomialOrder => {Weights => splice {1,3,2,4}, Lex}]
+f = map(A,R,matrix{{x_1,x_3,x_2,x_4}})
 G = gb f(p) -- now we put the gb in the correct ring
 gens G -- check it out.
 
 -- now an attempt to get A, which we should call M, as we already have A as a ring.
 -- so for this to work, our varPrep algorithm should output 1 less than the var number.
 -- *or* maybe we should start indexing our variables starting with 0.
-M = mutableMatrix id_(R^4)
+M = mutableMatrix id_(A^(numgens A))
 M = rowPermute(M,0,{0,2,1,3})
 
 
@@ -115,7 +117,20 @@ for i from 0 to numgens source gens G - 1 do ( -- check the gens of G to see if 
      if # support leadMonomial (gens G)_(0,i) === 1 then J = J | {support leadMonomial (gens G)_(0,i)} --checks how many vars are in the lead
      );
 J = unique flatten J
+-- note according to the algorithm, J is not x_3 but infact 3.
 
+
+M_(1,3) = x_1
+M
+ring x_1
+ring M
+-- now for step 4:
+-- note that here we actually need the "U" part of Tp
+-- I will continue on as if varPrep works right
+-- in this case d = 2.
+V = {x_1, x_3} -- note at this point the ring will be wrong.
+Mtemp = mutableMatrix{{mutableMatrix id_(A^(#V)),0},{mutableMatrix id_(A^(3-#V))
+     
 
 
 
