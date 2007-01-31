@@ -47,7 +47,8 @@ run-overflow-test : overflow-test
 	./$^ div 2>/dev/null || echo test succeeded
 	./$^ add 2>/dev/null || echo test succeeded
 	touch $@
-pi overflow-test : overflow.o pi.h
+pi overflow-test : overflow.o
+pi : pi.h
 
 # the target 'initialize' is used by the Makefile in the parent directory
 initialize all :: $(addsuffix .hpp, $(GENERATED_H))
