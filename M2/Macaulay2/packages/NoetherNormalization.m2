@@ -90,6 +90,15 @@ A = k[flatten entries vars R, MonomialOrder => {Weights => splice {1,3,2,4}, Lex
 -- pretending that varPrep (aka Tp) does everything to work
 -- Now we need to figure out the lambda_i's
 
+--lambda_i's need to be chosen so that none are the root of a specific polynomial that we should be able to work out.
+--But first we need to figure out "J" which is the set of integral variables (see prop 3.1, 3.2), use support(leadMonomial(f))===x_i?
+
+--This Computes J, have tested it against the example and it appears to do what we want
+J = {}
+for i from 0 to numgens source gens G - 1 do ( -- check the gens of G to see if their leadMonomial is in a single variable
+     if # support leadMonomial (gens G)_(0,i) === 1 then J = J | {support leadMonomial (gens G)_(0,i)} --checks how many vars are in the lead
+     );
+J = unique flatten J
 
 --=========================================================================--
 	
