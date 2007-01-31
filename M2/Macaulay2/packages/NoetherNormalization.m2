@@ -57,6 +57,7 @@ R = QQ[x_1..x_4, MonomialOrder => {Weights => {1,2,3,4}, Lex}] -- trying to make
 k = coefficientRing R
 p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1)
 G = gb p -- so far so good
+gens G
 -- now we'll define our varPrep function, a function like Tp in the paper -- how do we hide this from the users?
 -- Goal: Simplify this code - can we get rid of "isempty"? 
 -- Also check this with more examples!
@@ -87,18 +88,36 @@ X = varPrep(G) -- note varPrep is basically Tp together with the first part of s
 -- what we might really want is varPrep to produce a list that will give the correct new monomial ordering
 -- you can construct this list in a similar way to how X is constructed
 A = k[flatten entries vars R, MonomialOrder => {Weights => splice {1,3,2,4}, Lex}]
--- pretending that varPrep (aka Tp) does everything to work
+
+f = map(R,matrix{varPrep(G)}) -- a map that allows to look at gb with new ordering
+G = gb f(p) -- now we put the gb in the correct ring
+gens G -- check it out.
+
+-- now an attempt to get A, which we should call M, as we already have A as a ring.
+-- so for this to work, our varPrep algorithm should output 1 less than the var number.
+-- *or* maybe we should start indexing our variables starting with 0.
+M = mutableMatrix id_(R^4)
+M = rowPermute(M,0,{0,2,1,3})
+
+
+
+
 -- Now we need to figure out the lambda_i's
 
 --lambda_i's need to be chosen so that none are the root of a specific polynomial that we should be able to work out.
 --But first we need to figure out "J" which is the set of integral variables (see prop 3.1, 3.2), use support(leadMonomial(f))===x_i?
 
+
 --This Computes J, have tested it against the example and it appears to do what we want
+
 J = {}
 for i from 0 to numgens source gens G - 1 do ( -- check the gens of G to see if their leadMonomial is in a single variable
      if # support leadMonomial (gens G)_(0,i) === 1 then J = J | {support leadMonomial (gens G)_(0,i)} --checks how many vars are in the lead
      );
 J = unique flatten J
+
+
+
 
 --=========================================================================--
 	
