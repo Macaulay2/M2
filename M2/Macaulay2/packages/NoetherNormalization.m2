@@ -94,6 +94,8 @@ A = k[flatten entries vars R, MonomialOrder => {Weights => splice {1,3,2,4}, Lex
 f = map(A,R,matrix{{x_1,x_3,x_2,x_4}})
 G = gb f(p) -- now we put the gb in the correct ring
 gens G -- check it out.
+-- now I wondering if this is really doing what I want it to...
+
 
 -- now an attempt to get A, which we should call M, as we already have A as a ring.
 -- so for this to work, our varPrep algorithm should output 1 less than the var number.
@@ -120,18 +122,30 @@ J = unique flatten J
 -- note according to the algorithm, J is not x_3 but infact 3.
 
 
-M_(1,3) = x_1
-M
-ring x_1
-ring M
--- now for step 4:
--- note that here we actually need the "U" part of Tp
--- I will continue on as if varPrep works right
--- in this case d = 2.
-V = {x_1, x_3} -- note at this point the ring will be wrong.
-Mtemp = mutableMatrix{{mutableMatrix id_(A^(#V)),0},{mutableMatrix id_(A^(3-#V))
-     
 
+-- now for step 4:
+-- this is written much more complicated than it has to be. 
+-- Note that we may start with an identity matrix.
+--We do need to know how many elements are in "U" above though
+
+U = {x_1, x_3} -- note at this point the ring will be wrong.
+Mtemp = mutableMatrix id_(A^(numgens A))
+for i from 0 to #U - 1 do(
+     Mtemp_(i,numgens A - 1) = promote(random k,A);
+     )
+-- ok we've made our matrix (A2 in the paper). Now what we need to do is a change of variables again.
+-- to do this, I don't want to follow the algoritm given. Instead, I want to pull the coeffs
+-- directly from Mtemp.
+-- on second thought, maybe making these matricies is a waste of time.
+
+Mtemp
+g = map(A,A,matrix{{x_1 + Mtemp_(0,numgens A-1)*x_4,x_3 + Mtemp_(1,numgens A-1)*x_4,x_2,x_4}})
+gens gb g(f(p))
+
+
+matrix Mtemp * matrix M
+
+ Mtemp_(1,numgens A-1)
 
 
 --=========================================================================--
