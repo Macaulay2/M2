@@ -17,6 +17,30 @@
 // an "encoded monomial" will consist of a sequence of areas
 // comparison of encoded monomials is always unsigned and lexicographic
 // routines for monomial arithmetic have to take the type of conversion into account
+
+/// From: Michael Stillman <mike@math.cornell.edu>
+/// Subject: Re: Re: 
+/// Date: Thu, 1 Feb 2007 09:59:53 -0500
+/// 
+/// The following orders are the ones that we would like to be really fast:
+/// 
+/// 1. grevlex -- and perhaps weighted grevlex
+/// 2. an elimination order (again perhaps weighted), or an order which  
+/// is given first by the value of a weight vector, with ties broken by  
+/// grevlex (or revlex).
+/// 3. lex
+/// 4. a product order, with grevlex in each block (2 blocks is the most  
+/// important here).
+/// 
+/// Other orders are a convenience, but the ones above are the most  
+/// heavily used.
+/// 
+/// As for different sizes in different blocks, if it is simpler and  
+/// faster to not allow that, I would be fine with that.
+/// 
+/// Finally, I don't mind writing several "polynomial add" routines with  
+/// different inlined calls to comparison, depending on the order.
+
 #include "overflow.hpp"
 #ifdef __GNUC__
 #define expect_false(x) (__builtin_expect(x,0))
