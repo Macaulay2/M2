@@ -19,8 +19,6 @@ export{} -- if the new routines which you are adding have new
 -- exported
         
 --=========================================================================--
--- experiments:
--- Moved our code to the bottom of the page: trying to keep stuff organized.
 
 --=========================================================================
 --Methods: integralSet, varPrep
@@ -65,11 +63,17 @@ varPrep(GroebnerBasis) := List => (G) -> (
      return {U,V});
 --=======================================================================
 clearAll
+
+assert(#(varPrep gb p)_0 >= dim p) -- this is for us. Something is wrong if this is not the case.
+if #(varPrep gb p)_0 > dim p then 
+-- hmm  we need to decide the outputs.... I'll think about that.
+
+
 --this is essentially the order the final program should go in
 
 R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex] --the same ordering as in the paper
 k = coefficientRing R
-p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1)
+p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1)-- experiments:
 G = gb p -- so far so good
 U = (varPrep G)_0 
 V = (varPrep G)_1
@@ -83,6 +87,7 @@ U = apply(U, i -> i + sum(V - set J)) --m2 magic. make sure V and J jive so that
 g = map(R,R,reverse(U|V))
 gens gb g f p --What should we return in the final program? An ideal in the proper position? a variable transformation? both? what does singular give?
 -- still need to build in a check to see if this is the basis is correct, ie. step 6 of the paper.
+apply(x_1..x_4, i -> g f i)
 
 
 --this idea, though not written out all of the way yet will allow us to put in different random numbers if we want to, but it's probably slower
@@ -99,8 +104,12 @@ g x_1
 
 gens gb g f p
 
-
-
+---------------------------------------------------
+-- here is the singular code for the example above:
+ring R=0,(x_4,x_3,x_2,x_1),lp;
+ideal I = x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1;
+noetherNormal(I);
+---------------------------------------------------
 
 --=========================================================================--
 	
