@@ -20,18 +20,25 @@ export{} -- if the new routines which you are adding have new
         
 --=========================================================================--
 -- experiments:
-
-
 -- Moved our code to the bottom of the page: trying to keep stuff organized.
 
-clearAll
-R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex] --the same ordering as in the paper
-k = coefficientRing R
-p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1)
-G = gb p -- so far so good
-gens G
-X = flatten entries vars ring G
-
+--=========================================================================
+--Methods: integralSet, varPrep
+--=========================================================================
+--The method integralSet - computes and returns J as in the paper
+integralSet = method();
+integralSet(GroebnerBasis) := List => (G) -> (
+     J = {};
+     for i from 0 to numgens source gens G - 1 do ( -- check the gens of G to see if their leadMonomial is in a single variable
+     	  if # support leadMonomial (gens G)_(0,i) === 1 then J = J | {support leadMonomial (gens G)_(0,i)} --checks how many vars are in the lead
+     	  );
+     J = unique flatten J; --note that according to the algorithm J is a set of integers (in fact indices), we choose to return the variables
+     return J);
+--=========================================================================
+--The method varPrep - computes and returns T_p and it's complement as in the paper
+--we will beautify this by using support on the polys and <= for subset on the resulting lists
+--here's what we're going to do:
+--replace "regex(toString X_j,toString((gens G)_{i})) =!= null" with "{X_j} <= support (gens g)_(0,i)"
 varPrep = method();
 varPrep(GroebnerBasis) := List => (G) -> (
      X := flatten entries vars ring G; -- doesn't work because variables are backwards
@@ -56,25 +63,40 @@ varPrep(GroebnerBasis) := List => (G) -> (
 	  else V = V | {X_j};
      	  );
      return {U,V});
-X = (varPrep G)_0 | (varPrep G)_1
+--=======================================================================
+clearAll
+--this is essentially the order the final program should go in
 
-f = map(R,R,{x_4,x_2,x_3,x_1})
-G = gb f(p)
+R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex] --the same ordering as in the paper
+k = coefficientRing R
+p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1)
+G = gb p -- so far so good
+U = (varPrep G)_0 
+V = (varPrep G)_1
+X = U | V
+f = map(R,R,reverse X)
+G = gb f(p) --we should not need to do this gb computation
+J = integralSet(G)
+V = apply(V, i -> f(i)) --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
+U = apply(U, i -> f(i)) -- might be faster to do U = {x_0..x_(#U-1)}
+U = apply(U, i -> i + sum(V - set J)) --m2 magic. make sure V and J jive so that this makes sense, also in later version multiply the sum by a random in k
+g = map(R,R,reverse(U|V))
+gens gb g f p --What should we return in the final program? An ideal in the proper position? a variable transformation? both? what does singular give?
+-- still need to build in a check to see if this is the basis is correct, ie. step 6 of the paper.
 
-J = {}
-for i from 0 to numgens source gens G - 1 do ( -- check the gens of G to see if their leadMonomial is in a single variable
-     if # support leadMonomial (gens G)_(0,i) === 1 then J = J | {support leadMonomial (gens G)_(0,i)} --checks how many vars are in the lead
-     );
-J = unique flatten J
--- note according to the algorithm, J is not x_3 but infact 3.
 
+--this idea, though not written out all of the way yet will allow us to put in different random numbers if we want to, but it's probably slower
+--for s from 0 to #V-1 do (
+--     if not {V#s} <= J then U = U + {pro
 
 V = (varPrep G)_1
 U = (varPrep G)_0
 --reverse((U + {promote(random k,R)*last V, promote(random k, R)*last V})|V)
 --g = map(R,R,(U + {promote(random k,R)*last V, promote(random k, R)*last V})|V)
-g = map(R,R,(reverse ((U + {last V, last V})|V)))
+g = map(R,R,(((U + {last V, last V})|V)))
 --g = map(R,R,(U + {last V, last V})|V)
+g x_1
+
 gens gb g f p
 
 
@@ -148,6 +170,18 @@ g = map(R,R,{x_4,x_3,x_2+x_4,x_1+x_4})
 h = map(R,R,{x_4,x_2+x_4,x_3,x_1+x_4})
 gens gb g f(p)
 gens gb h p
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -229,14 +263,15 @@ for i from 0 to #U - 1 do(
      Mtemp_(i,numgens R - 1) = promote(random k,R);
      )
 
+
 V = {x_2,x_4}
 U = {x_1, x_3} -- note at this point the ring will be wrong.
 reverse((U + {promote(random k,R)*last V, promote(random k, R)*last V})|V)
 g = map(R,R,(U + {promote(random k,R)*last V, promote(random k, R)*last V})|V)
 reverse ((U + {last V, last V})|V)
-g = map(R,R,(U + {last V, last V})|V)
+g = map(R,R,reverse((U + {last V, last V})|V))
 
-gens gb g(f(p))
+gens gb g(p)
 
 g = map(R,R,matrix{{x_1 + Mtemp_(0,numgens R-1)*x_4,x_3 + Mtemp_(1,numgens R-1)*x_4,x_2,x_4}})
 M = matrix Mtemp * matrix M
