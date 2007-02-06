@@ -36,7 +36,8 @@ integralSet(GroebnerBasis) := List => (G) -> (
 --The method varPrep - computes and returns T_p and it's complement as in the paper
 --we will beautify this by using support on the polys and <= for subset on the resulting lists
 --here's what we're going to do:
---replace "regex(toString X_j,toString((gens G)_{i})) =!= null" with "{X_j} <= support (gens g)_(0,i)"
+--replace "regex(toString X_j,toString((gens G)_{i})) =!= null" with "{X_j} <= support (gens G)_(0,i)"
+
 varPrep = method();
 varPrep(GroebnerBasis) := List => (G) -> (
      X := flatten entries vars ring G; -- doesn't work because variables are backwards
@@ -47,12 +48,12 @@ varPrep(GroebnerBasis) := List => (G) -> (
 	  isempty := true;
      	  for i from 0 to numgens source gens G - 1 do ( -- going from zero to the number of gens of the gb - 1	   
 	       if isempty == false then break;
-	       if regex(toString X_j,toString((gens G)_{i})) =!= null then ( -- check to see if X_j is in the ith term, goto next X_j term 
+	       if {X_j} <= support (gens G)_(0,i) then ( -- check to see if X_j is in the ith term, goto next X_j term 
 	       	    if j == numgens ring G - 1 then (
 	   	    	 isempty = false;
 		    	 break);
 	       	    for k from 1 to numgens ring G - j - 1 do (-- checking to see if no higher degree vars in the poly 
-		    	 if regex(toString X_(j+k),toString((gens G)_{i})) =!= null then break; --if higher degree vars appear in the poly then break
+		    	 if {X_(j+k)} <= support (gens G)_(0,i) then break; --if higher degree vars appear in the poly then break
 	       	    	 if j+k === numgens ring G - 1 then isempty = false -- if we make it through all the higher degree vars and none of them are in the poly then the intersection is not empty
 	       	    	 );
 		    );
@@ -112,7 +113,32 @@ noetherNormal(I);
 ---------------------------------------------------
 
 --=========================================================================--
-	
+--backup as I make changes
+--this is our original unpretty method for varprep
+varPrep = method();
+varPrep(GroebnerBasis) := List => (G) -> (
+     X := flatten entries vars ring G; -- doesn't work because variables are backwards
+     X = reverse X;
+     U := {};
+     V := {};
+     for j from 0 to numgens ring G - 1 do (
+	  isempty := true;
+     	  for i from 0 to numgens source gens G - 1 do ( -- going from zero to the number of gens of the gb - 1	   
+	       if isempty == false then break;
+	       if regex(toString X_j,toString((gens G)_{i})) =!= null then ( -- check to see if X_j is in the ith term, goto next X_j term 
+	       	    if j == numgens ring G - 1 then (
+	   	    	 isempty = false;
+		    	 break);
+	       	    for k from 1 to numgens ring G - j - 1 do (-- checking to see if no higher degree vars in the poly 
+		    	 if regex(toString X_(j+k),toString((gens G)_{i})) =!= null then break; --if higher degree vars appear in the poly then break
+	       	    	 if j+k === numgens ring G - 1 then isempty = false -- if we make it through all the higher degree vars and none of them are in the poly then the intersection is not empty
+	       	    	 );
+		    );
+	       );
+     	  if isempty == true then U = U | {X_j} --if the intersection is empty then add the var to the list
+	  else V = V | {X_j};
+     	  );
+     return {U,V});	
 	
 --=========================================================================--
 
