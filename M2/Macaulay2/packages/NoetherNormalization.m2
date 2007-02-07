@@ -25,36 +25,40 @@ export{} -- if the new routines which you are adding have new
 --=========================================================================
 --The method integralSet - computes and returns J as in the paper
 integralSet = method();
-integralSet(GroebnerBasis) := List => (G) -> (
+integralSet(GroebnerBasis) := List => G -> (
      J = {};
-     for i from 0 to numgens source gens G - 1 do ( -- check the gens of G to see if their leadMonomial is in a single variable
-     	  if # support leadMonomial (gens G)_(0,i) === 1 then J = J | {support leadMonomial (gens G)_(0,i)} --checks how many vars are in the lead
+     M := gens G;
+     for i from 0 to numgens source M - 1 do ( -- check the gens of G to see if their leadMonomial is in a single variable
+     	  if # support leadMonomial (M)_(0,i) === 1 then J = J | {support leadMonomial (M)_(0,i)} --checks how many vars are in the lead
      	  );
      J = unique flatten J; --note that according to the algorithm J is a set of integers (in fact indices), we choose to return the variables
      return J);
+
+benchmark "integralSet G"
+benchmark "integralSetf G"
 --=========================================================================
 --The method varPrep - computes and returns T_p and it's complement as in the paper
 --we will beautify this by using support on the polys and <= for subset on the resulting lists
 --here's what we're going to do:
 --replace "regex(toString X_j,toString((gens G)_{i})) =!= null" with "{X_j} <= support (gens G)_(0,i)"
-
 varPrep1 = method();
-varPrep1(GroebnerBasis) := List => (G) -> (
+varPrep1(GroebnerBasis) := List => G -> (
      X := flatten entries vars ring G; -- doesn't work because variables are backwards
      X = reverse X;
+     M := gens G;
      U := {};
      V := {};
-     for j from 0 to numgens ring G - 1 do (
+     for j from 0 to #X - 1 do (
 	  isempty := true;
-     	  for i from 0 to numgens source gens G - 1 do ( -- going from zero to the number of gens of the gb - 1	   
+     	  for i from 0 to numgens source M - 1 do ( -- going from zero to the number of gens of the gb - 1	   
 	       if isempty == false then break;
-	       if {X_j} <= support (gens G)_(0,i) then ( -- check to see if X_j is in the ith term, goto next X_j term 
-	       	    if j == numgens ring G - 1 then (
+	       if {X_j} <= support (M)_(0,i) then ( -- check to see if X_j is in the ith term, goto next X_j term 
+	       	    if j == #X - 1 then (
 	   	    	 isempty = false;
 		    	 break);
-	       	    for k from 1 to numgens ring G - j - 1 do (-- checking to see if no higher degree vars in the poly 
-		    	 if {X_(j+k)} <= support (gens G)_(0,i) then break; --if higher degree vars appear in the poly then break
-	       	    	 if j+k === numgens ring G - 1 then isempty = false -- if we make it through all the higher degree vars and none of them are in the poly then the intersection is not empty
+	       	    for k from 1 to #X - j - 1 do (-- checking to see if no higher degree vars in the poly 
+		    	 if {X_(j+k)} <= support (M)_(0,i) then break; --if higher degree vars appear in the poly then break
+	       	    	 if j+k === #X - 1 then isempty = false -- if we make it through all the higher degree vars and none of them are in the poly then the intersection is not empty
 	       	    	 );
 		    );
 	       );
@@ -62,51 +66,66 @@ varPrep1(GroebnerBasis) := List => (G) -> (
 	  else V = V | {X_j};
      	  );
      return {U,V});
---=======================================================================
---here's my rewrite of varprep trying to get it real short.
-varPrep2 = method();
-varPrep2(GroebnerBasis) := List => (G) -> (
-     X := flatten entries vars ring G; -- doesn't work because variables are backwards
-     X = reverse X;
-     U := {};
-     V := {};
-     for j from 0 to numgens ring G - 1 do (
-	  for i from 0 to numgens source gens G - 1 do ( -- going from zero to the number of gens of the gb - 1	   
-     	       if (set support (gens G)_(0,i)) * (set toList(X_0..X_j)) === set support (gens G)_(0,i) and {X_j} <= support (gens G)_(0,i) then (
-		    V = V | {X_j};
-		    print V;
-		    print U;
-		    break;    
-     	       	    );
-	       );	 
-     	  if not {X_j} <= V then U = U | {X_j};
-	  );
-     return{U,V}
-     );
+benchmark "varPrep1f G"
 
--- Nat, here is my fix.
+--=======================================================================
+-- started implemnting some of the changes, but not all of them.
+
 varPrep = method();
-varPrep(GroebnerBasis) := List => (G) -> (
-     X := flatten entries vars ring G; -- doesn't work because variables are backwards
+varPrep(GroebnerBasis) := Sequence => G -> (
+     X := gens ring G; -- doesn't work because variables are backwards
      X = reverse X;
+     M := gens G;
      U := {};
      V := {};
-     for j from 0 to numgens ring G - 1 do (
-	  for i from 0 to numgens source gens G - 1 do ( -- going from zero to the number of gens of the gb - 1	   
-     	       if (set support (gens G)_(0,i)) * (set toList(X_0..X_j)) === set support (gens G)_(0,i) and isSubset({X_j}, support (gens G)_(0,i)) then (
-		    V = V | {X_j};
-		    print V;
-		    print U;
+     -- use "select" instead of "for"
+     for j from 0 to #X - 1 do (
+	  for i from 0 to numgens source M - 1 do ( -- going from zero to the number of gens of the gb - 1	   
+     	       if isSubset(support (M)_(0,i),take(X,j+1)) and isSubset({X_j}, support (M)_(0,i)) then (
+     	       	    -- use <= or isSubset(List,List) here instead
+		    V = V | {X_j};			    -- repeatedly appending could be slow, try for ... list or while ... list
 		    break;    
      	       	    );
 	       );	 
      	  if not isSubset({X_j},V) then U = U | {X_j};
 	  );
-     return{U,V}
-     );
-
-
+     (U,V)					    -- (x,y) = (U,V) ; (x,y) := (U,V) can be used by the caller if you return a sequence
+     );							    -- ; not needed
+varPrep(G)
+X = gens ring G
+M = gens G
+take(X,2)
+X_2
+support (M)_(0,1)
+benchmark "varPrep(G)"
 --======================================================================
+
+--
+-- Here I'm trying to fix the append part of the code. for ... when ... list seems like a good idea.
+--
+
+varPrepB = method();
+varPrepB(GroebnerBasis) := Sequence => G -> (
+     X := gens ring G; -- doesn't work because variables are backwards
+     X = reverse X;
+     M := gens G;
+     --V := {};
+     -- use "select" instead of "for"
+     U := for j from 0 to #X - 1 when (
+	  V := for i from 0 to numgens source M - 1 when ( -- going from zero to the number of gens of the gb - 1	   
+     	       isSubset(support (M)_(0,i),take(X,j+1)) and isSubset({X_j}, support (M)_(0,i))
+	       ) list X_j; 
+     	  not isSubset({X_j},V)) list X_j;
+     (U,V)					    -- (x,y) = (U,V) ; (x,y) := (U,V) can be used by the caller if you return a sequence
+     );							    -- ; not needed
+varPrepB(G)
+X = gens ring G
+M = gens G
+take(X,2)
+X_2
+support (M)_(0,1)
+
+
 
 
 clearAll
@@ -118,12 +137,32 @@ if #(varPrep gb p)_0 > dim p then
 
 --this is essentially the order the final program should go in
 
+noetherNormalization = method();
+noetherNormalization(Ideal) := RingMap => I -> (
+     R := ring I;     
+     G := gb I; -- so far so good
+     U := (varPrep G)_0; -- this seems to run the varPrep twice, lets figure out how to get the output with only one run
+     V := (varPrep G)_1;
+     X := U | V;
+     f := map(R,R,reverse X);
+     G = gb f(I); --we should not need to do this gb computation
+     J := integralSet(G);
+     V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
+     U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
+     U = apply(U, i -> i + sum(V - set J)); --m2 magic. make sure V and J jive so that this makes sense, also in later version multiply the sum by a random in k
+     g := map(R,R,reverse(U|V));
+     h = g f
+
+gens gb g f p --What should we return in the final program? An ideal in the proper position? a variable transformation? both? what does singular give?
+-- still need to build in a check to see if this is the basis is correct, ie. step 6 of the paper.
+apply(x_1..x_4, i -> g f i)     
+
+
+clearAll
 R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex] --the same ordering as in the paper
 k = coefficientRing R
 p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1)-- experiments:
 G = gb p -- so far so good
-varPrep1 G
-varPrep2 G
 U = (varPrep G)_0 -- this seems to run the varPrep twice, lets figure out how to get the output with only one run
 V = (varPrep G)_1
 X = U | V
@@ -136,7 +175,19 @@ U = apply(U, i -> i + sum(V - set J)) --m2 magic. make sure V and J jive so that
 g = map(R,R,reverse(U|V))
 gens gb g f p --What should we return in the final program? An ideal in the proper position? a variable transformation? both? what does singular give?
 -- still need to build in a check to see if this is the basis is correct, ie. step 6 of the paper.
-apply(x_1..x_4, i -> g f i)
+g*f -- part of the output?
+-- is there an easy way to compose these???
+
+-- see update:
+-- maybe output triple:
+-- (R <- R', I', R' <- k[x_1..x_d])
+
+-- need g*f inverse, also cache g*f inverse as the inverse of g*f. 
+-- see source code of inverse of a ring map. 
+-- search for cache in source code.
+-- f := (cacheValue f)(x -> (...))
+-- search for cacheValue
+
 
 
 --this idea, though not written out all of the way yet will allow us to put in different random numbers if we want to, but it's probably slower
@@ -153,11 +204,15 @@ g x_1
 
 gens gb g f p
 
+
+
 ---------------------------------------------------
 -- here is the singular code for the example above:
+LIB "algebra.lib";
 ring R=0,(x_4,x_3,x_2,x_1),lp;
 ideal I = x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1;
 noetherNormal(I);
+
 ---------------------------------------------------
 
 --=========================================================================--
