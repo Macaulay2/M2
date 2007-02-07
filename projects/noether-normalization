@@ -25,6 +25,16 @@ Comput.  41 (2006), no. 10, 1105-1124.
 
 There is code in Singular for this too, which might be worth consulting.
 
+Amir Hashemi
+    ``Efficient Computation of Castelnuovo-Mumford Regularity and Satiety'' 
+    Submitted to: International Symposium on Symbolic and Algebraic Computation (ISSAC) 2007. 
+    http://www-calfor.lip6.fr/~hashemi/pub.html
+
+Amir Hashemi
+    ``Efficient Algorithms for Computing Noether Normalization'' 
+    Submitted to: Special Issue of Mathematics in Computer Science on Symbolic and Numeric Computation. 
+    http://www-calfor.lip6.fr/~hashemi/pub.html
+
 =============================================================================
 
 Proposed by: Mike Stillman <mike@math.cornell.edu>
