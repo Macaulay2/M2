@@ -63,6 +63,30 @@ varPrep(GroebnerBasis) := List => (G) -> (
      	  );
      return {U,V});
 --=======================================================================
+--here's my rewrite of varprep trying to get it real short.
+varPrep = method();
+varPrep(GroebnerBasis) := List => (G) -> (
+     X := flatten entries vars ring G; -- doesn't work because variables are backwards
+     X = reverse X;
+     U := {};
+     V := {};
+     for j from 0 to numgens ring G - 1 do (
+	  for i from 0 to numgens source gens G - 1 do ( -- going from zero to the number of gens of the gb - 1	   
+     	       if (set support (gens G)_(0,i)) * (set toList(X_0..X_j)) === set support (gens G)_(0,i) and {X_j} <= support (gens G)_(0,i) then (
+		    V = V | {X_j};
+		    print V;
+		    print U;
+		    break;    
+     	       	    );
+	       );	 
+     	  if not {X_j} <= V then U = U | {X_j};
+	  );
+     return{U,V}
+     );
+
+--======================================================================
+
+
 clearAll
 
 assert(#(varPrep gb p)_0 >= dim p) -- this is for us. Something is wrong if this is not the case.
@@ -76,7 +100,7 @@ R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex] --the same ordering as in the pape
 k = coefficientRing R
 p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1)-- experiments:
 G = gb p -- so far so good
-U = (varPrep G)_0 
+U = (varPrep G)_0 -- this seems to run the varPrep twice, lets figure out how to get the output with only one run
 V = (varPrep G)_1
 X = U | V
 f = map(R,R,reverse X)
