@@ -35,6 +35,11 @@ Amir Hashemi
     Submitted to: Special Issue of Mathematics in Computer Science on Symbolic and Numeric Computation. 
     http://www-calfor.lip6.fr/~hashemi/pub.html
 
+It might be good to incorporate Hashemi's explicit examples of ideals into a
+package.
+
+We might need two routines, "noetherPosition" and "noetherNormalization".
+
 =============================================================================
 
 Proposed by: Mike Stillman <mike@math.cornell.edu>
