@@ -14,20 +14,20 @@ newPackage (
 export {runBenchmarks}
 
 benchmarks = new HashTable from {
-     1 => "res39: res of a generic 3 by 9 matrix over ZZ/101" => () -> (
+     "res39" => "res of a generic 3 by 9 matrix over ZZ/101" => () -> (
 	  rr := ZZ/101[Variables => 52, MonomialSize => 16];
 	  (ti,re) := toSequence timing res coker genericMatrix(rr,3,9);
 	  vv := apply(8,i->rank re_i);
 	  assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} );
 	  ti),
-     2 => "resG25: res of the coordinate ring of Grassmannian(2,5)" => () -> (
+     "resG25" => "res of the coordinate ring of Grassmannian(2,5)" => () -> (
 	  SS := ZZ/101[Variables => 20, MonomialSize => 16];
 	  MM := SS^1/Grassmannian(2,5,SS);
 	  (ti,re) := toSequence timing res MM;
 	  vv := apply(11,i->rank re_i);
 	  assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} );
 	  ti),
-     3 => "gbB148: gb of Bayesian graph ideal #148" => () -> (
+     "gbB148" => "gb of Bayesian graph ideal #148" => () -> (
 	  p := local p;
 	  R := ZZ/32003[reverse(p_(1,1,1,1,1)..p_(2,2,2,2,2)), MonomialSize=>8];
 	  J := ideal(
@@ -78,7 +78,7 @@ benchmarks = new HashTable from {
 	  (ti,re) := toSequence timing gens gb (J,MaxReductionCount => 3000);
 	  assert ( rank source re == 3626 );
 	  ti),
-     4 => "gb3445: gb of a random ideal with elements of degree 3,4,4,5 in 8 variables" => ()  -> (
+     "gb3445" => "gb of a random ideal with elements of degree 3,4,4,5 in 8 variables" => ()  -> (
 	  R := ZZ/101[a..h,MonomialSize=>8];
 	  I := ideal random(R^1, R^{-3,-4,-4,-5});
 	  J := ideal "a3,b4,c4,d5";
@@ -86,7 +86,7 @@ benchmarks = new HashTable from {
 	  (ti,re) := toSequence timing gens gb(I);
 	  assert( tally degrees source re === new Tally from { {12} => 3, {13} => 1, {3} => 1, {4} => 2, {5} => 3, {6} => 5, {7} => 6, {8} => 8, {9} => 10, {10} => 9, {11} => 6} );
 	  ti),
-     5 => "gb4by4comm: gb of the ideal of generic commuting 4 by 4 matrices over ZZ/101" => () -> (
+     "gb4by4comm" => "gb of the ideal of generic commuting 4 by 4 matrices over ZZ/101" => () -> (
 	  R = ZZ/101[vars(0..31),MonomialOrder=>ProductOrder{8,12,12},MonomialSize=>8];
 	  I = ideal( -j*o+i*p-v*A+u*B-x*C+w*D, -a*p+b*o+c*p-d*o+k*B-l*A+m*D-n*C, -a*B+b*A+e*B-f*A+p*q-o*r-z*C+y*D, -a*D+b*C+g*D-h*C+p*s-o*t+B*E-A*F,
 	       a*j-b*i-c*j+d*i-q*v+r*u-s*x+t*w, j*o-i*p-l*q+k*r-n*s+m*t, -c*r+d*q+e*r-f*q-i*B+j*A-s*z+t*y, -c*t+d*s+g*t-h*s-i*D+j*C-q*F+r*E,
@@ -99,7 +99,7 @@ benchmarks = new HashTable from {
 
 runBenchmark = n -> (
      ti := benchmarks#n#1();
-     << "-- " << benchmarks#n#0 << ": " <<  toString ti << " seconds" << endl;
+     << "-- " << n << ": " << benchmarks#n#0 << ": " <<  toString ti << " seconds" << endl;
      )
 
 runBenchmarks0 = method()
@@ -111,14 +111,14 @@ runBenchmarks0 List := x -> (
      << endl;
      scan(x,runBenchmark))
 
-installMethod(runBenchmarks0, () -> runBenchmarks {1,2,3})
+installMethod(runBenchmarks0, () -> runBenchmarks {"res39","resG25","gbB148"})
 
 runBenchmarks = Command runBenchmarks0
 
-<< "Benchmark: type \"runBenchmarks\" to run the first three benchmarks (standard test)." << endl
+<< "Benchmark: type \"runBenchmarks\" to run the three standard benchmarks" << endl
 << "Benchmark: type \"runBenchmarks {m,n,...}\" to run benchmarks m,n,..." << endl
 << "Benchmarks available:" << endl
-scan(pairs benchmarks, (n,x) -> << "       " << n << ": " << x#0 << endl)
+scan(pairs benchmarks, (n,x) -> << "       " << toExternalString n << ": " << x#0 << endl)
 
 end
 
