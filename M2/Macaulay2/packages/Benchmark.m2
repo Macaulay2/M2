@@ -13,7 +13,7 @@ newPackage (
 
 export {runBenchmarks}
 
-benchmarks = new MutableHashTable from {
+benchmarks = new HashTable from {
      1 => "res39: res of a generic 3 by 9 matrix over ZZ/101" => () -> (
 	  rr := ZZ/101[Variables => 52, MonomialSize => 16];
 	  (ti,re) := toSequence timing res coker genericMatrix(rr,3,9);
