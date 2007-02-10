@@ -133,7 +133,7 @@ document { Key => (separateRegexp, String, String),
 document { Key => (separateRegexp, String, ZZ, String),
      Usage => "separateRegexp(sep,n,str)",
      Inputs => { "sep" => "a regular expression" , "n", "str" => "a string to be separated" },
-     Outputs => { { "a list of substrings consecutively extracted from ", TT "str", ", with separators recognized by the ", TT "n", "-th parenthesized subexpression of", TT "sep" } },
+     Outputs => { { "a list of substrings consecutively extracted from ", TT "str", ", with separators recognized by the ", TT "n", "-th parenthesized subexpression of ", TT "sep" } },
      EXAMPLE { ///separateRegexp("f(-)", 1, "asdf-qwer-dfadf")/// }}
 document { Key => tutorial,
      Headline => "convert documentation from tutorial format",

@@ -5,9 +5,13 @@
 separateRegexp = method()
 separateRegexp(String,String) := (re,s) -> separateRegexp(re,0,s)
 separateRegexp(String,ZZ,String) := (re,n,s) -> (
-     m := regex(re,s);
-     if m#?n then prepend(substring(s,0,m#n#0), separateRegexp(re,n,substring(m#n#0+m#n#1,s))) else {s}	-- this is slow on large things!
-     )
+     offset := 0;
+     while offset < #s
+     list (
+	  m := regex(re,offset,s);
+	  if m#?n
+	  then first (substring(s,offset,m#n#0-offset), offset = m#n#0+m#n#1)
+	  else first (substring(s,offset), offset = #s)))
 
 selectRegexp = method()
 selectRegexp(String,String) := (re,s) -> selectRegexp(re,0,s)
