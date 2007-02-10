@@ -1,8 +1,8 @@
 -- Workaround for codim bug
-codim Ideal := (I) -> (
-     mi := monomialIdeal leadTerm I;
-     sendgg(ggPush mi, ggcodim);
-     eePopInt())
+--codim Ideal := (I) -> (
+--     mi := monomialIdeal leadTerm I;
+--     sendgg(ggPush mi, ggcodim);
+--     eePopInt())
 
 -- gcd extended work around:
 -- the ring R should have a single variable, otherwise this will
@@ -23,8 +23,8 @@ isCompleteIntersection Ideal := (I) -> (
      n === 0 or (
      m := map(R^1, n, (i,j) -> R_j^((degree I_j)#0));
      (coker gens I).cache.poincare = poincare coker m;
-     gb (gens I, Strategy=>LongPolynomial);
-     remove(coker gens I, symbol poincare);
+     gb (gens I, Strategy=>LongPolynomial, Hilbert => poincare coker m);
+     --OLD: remove(coker gens I, symbol poincare);
      codim I === n
      ))
 
@@ -65,7 +65,8 @@ expandPowerSeries = (a,n) -> (
      A := ring num;
      z := A_0;
      -- use extended gcd algorithm in A:
-     ret := gcdExtended(den, z^n);
+     ret := gcdCoefficients(den, z^n);
+     --ret := gcdExtended(den, z^n);
      (num * (ret#1)) % z^n)
 
 -- New simplify routine
