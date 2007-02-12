@@ -288,7 +288,7 @@ compare(left:Expr,right:Expr):Expr := (
 		    else if i == lt then return GreaterE
 		    else (
 			 c := compare(s.i,t.i);
-			 if c != EqualEqualE then return c);
+			 if !(c === EqualEqualS) then return c);
 		    i = i+1);
 	       nullE)
 	  else binarymethod(left,right,QuestionS))
