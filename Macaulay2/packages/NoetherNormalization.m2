@@ -70,9 +70,10 @@ benchmark "varPrep1f G"
 
 --=======================================================================
 -- started implemnting some of the changes, but not all of them.
+-- seems to be the quickest
 
-varPrep = method();
-varPrep(GroebnerBasis) := Sequence => G -> (
+varPrepa = method();
+varPrepa(GroebnerBasis) := Sequence => G -> (
      X := gens ring G; -- doesn't work because variables are backwards
      X = reverse X;
      M := gens G;
@@ -86,7 +87,7 @@ varPrep(GroebnerBasis) := Sequence => G -> (
 		    V = V | {X_j};			    -- repeatedly appending could be slow, try for ... list or while ... list
 		    break;    
      	       	    );
-	       );	 
+	       );	  
      	  if not isSubset({X_j},V) then U = U | {X_j};
 	  );
      (U,V)					    -- (x,y) = (U,V) ; (x,y) := (U,V) can be used by the caller if you return a sequence
@@ -99,11 +100,33 @@ X_2
 support (M)_(0,1)
 benchmark "varPrep(G)"
 --======================================================================
-
---
+-- real short one, this one takes three times as much longer
+varPrep4 = method();
+varPrep4(GroebnerBasis) := List => (G) -> (
+     X := reverse gens ring G;
+     U := {};
+     V := {};
+     M := gens G;
+     V = unique flatten for j to #X-1 list (for i to numgens source M - 1 list (if isSubset(support (gens G)_(0,i),toList(X_0..X_j)) and isSubset({X_j}, support (gens G)_(0,i)) then X_j));
+     U = X - set V;
+     (U,V)
+     );
+          
+--=======================================================================================
 -- Here I'm trying to fix the append part of the code. for ... when ... list seems like a good idea.
---
+-- general garbage
+benchmark "varPrepf(G)"
+benchmark "varPrep(G)"
+     select(X,select(support gens G,
 
+     unique flatten for j to 5 list (for i to 3 list if i ==2 then j)
+     for j to 5 list j
+     J := {0,1,2,3};
+     select(J)
+--========================================================================================     
+
+--======================================================================
+--This is the fastest as far as I can tell, however it doesn't quite work.
 varPrepB = method();
 varPrepB(GroebnerBasis) := Sequence => G -> (
      X := gens ring G; -- doesn't work because variables are backwards
@@ -125,8 +148,33 @@ take(X,2)
 X_2
 support (M)_(0,1)
 
-
-
+--==============================================================================
+-- Method: last check
+-- I want this to do the last check that we've found a good normalization, step 6 of Logar.
+lastCheck = method();
+lastCheck(GroebnerBasis) := List => (G) -> (
+     X := reverse gens ring G;
+     M := gens G;
+     d := dim ring G;
+     i := 0; while i < d and not isSubset(support M_(0,i),toList(X_0..X_(d-1))) do
+     	  i = i+1;
+     	  );
+     if i != d then false
+     else(
+     	  for j from d to #X-1 do (	   
+     	       for p from 0 to numgens source M - 1 do (
+      	       	    if {X_j} == support leadTerm M_(0,p) then break;
+	       	    if p == numgens source M - 1 then false;
+		    );
+	       );
+	  true
+     );
+     
+     
+more = method();
+method(ZZ) :=
+J := {1,2,3,4,5,6};
+select(J,more)
 
 clearAll
 
@@ -157,6 +205,7 @@ gens gb g f p --What should we return in the final program? An ideal in the prop
 -- still need to build in a check to see if this is the basis is correct, ie. step 6 of the paper.
 apply(x_1..x_4, i -> g f i)     
 
+benchmark "varPrep G"
 
 clearAll
 R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex] --the same ordering as in the paper
