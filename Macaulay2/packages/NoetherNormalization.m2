@@ -66,7 +66,7 @@ varPrep1(GroebnerBasis) := List => G -> (
 	  else V = V | {X_j};
      	  );
      return {U,V});
-benchmark "varPrep1f G"
+benchmark "varPrep1 G"
 
 --=======================================================================
 -- started implemnting some of the changes, but not all of them.
@@ -98,7 +98,7 @@ M = gens G
 take(X,2)
 X_2
 support (M)_(0,1)
-benchmark "varPrep(G)"
+benchmark "varPrepa(G)"
 --======================================================================
 -- real short one, this one takes three times as much longer
 varPrep4 = method();
@@ -111,7 +111,8 @@ varPrep4(GroebnerBasis) := List => (G) -> (
      U = X - set V;
      (U,V)
      );
-          
+benchmark "varPrep4(G)"          
+
 --=======================================================================================
 -- Here I'm trying to fix the append part of the code. for ... when ... list seems like a good idea.
 -- general garbage
@@ -125,28 +126,6 @@ benchmark "varPrep(G)"
      select(J)
 --========================================================================================     
 
---======================================================================
---This is the fastest as far as I can tell, however it doesn't quite work.
-varPrepB = method();
-varPrepB(GroebnerBasis) := Sequence => G -> (
-     X := gens ring G; -- doesn't work because variables are backwards
-     X = reverse X;
-     M := gens G;
-     --V := {};
-     -- use "select" instead of "for"
-     U := for j from 0 to #X - 1 when (
-	  V := for i from 0 to numgens source M - 1 when ( -- going from zero to the number of gens of the gb - 1	   
-     	       isSubset(support (M)_(0,i),take(X,j+1)) and isSubset({X_j}, support (M)_(0,i))
-	       ) list X_j; 
-     	  not isSubset({X_j},V)) list X_j;
-     (U,V)					    -- (x,y) = (U,V) ; (x,y) := (U,V) can be used by the caller if you return a sequence
-     );							    -- ; not needed
-varPrepB(G)
-X = gens ring G
-M = gens G
-take(X,2)
-X_2
-support (M)_(0,1)
 
 --==============================================================================
 -- Method: last check
@@ -199,7 +178,7 @@ noetherNormalization(Ideal) := RingMap => I -> (
      U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
      U = apply(U, i -> i + sum(V - set J)); --m2 magic. make sure V and J jive so that this makes sense, also in later version multiply the sum by a random in k
      g := map(R,R,reverse(U|V));
-     h = g f
+     h = g*f
 
 gens gb g f p --What should we return in the final program? An ideal in the proper position? a variable transformation? both? what does singular give?
 -- still need to build in a check to see if this is the basis is correct, ie. step 6 of the paper.
