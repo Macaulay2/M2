@@ -127,35 +127,51 @@ benchmark "varPrep(G)"
 --========================================================================================     
 
 
+
+
+stupid = method();
+stupid(ZZ) := Boolean => i -> (
+     for j to i do(
+     	  if j == 0 then return false;
+	  return true
+     	  );
+     );
+stupid(3)
 --==============================================================================
 -- Method: last check
 -- I want this to do the last check that we've found a good normalization, step 6 of Logar.
 lastCheck = method();
-lastCheck(GroebnerBasis) := List => (G) -> (
+lastCheck(GroebnerBasis) := Boolean => (G) -> (
      X := reverse gens ring G;
      M := gens G;
-     d := dim ring G;
-     i := 0; while i < d and not isSubset(support M_(0,i),toList(X_0..X_(d-1))) do
+     d := 2;
+     i := 0; 
+     while i < min(d,numgens source M) and not isSubset(support M_(0,i),toList(X_0..X_(d-1))) do (
      	  i = i+1;
      	  );
-     if i != d then false
+     if i != d then return false
      else(
      	  for j from d to #X-1 do (	   
      	       for p from 0 to numgens source M - 1 do (
       	       	    if {X_j} == support leadTerm M_(0,p) then break;
-	       	    if p == numgens source M - 1 then false;
+	       	    if p == numgens source M - 1 then false
 		    );
 	       );
-	  true
+     	  );
+     true
      );
-     
-     
+lastCheck(G)     
 more = method();
 method(ZZ) :=
 J := {1,2,3,4,5,6};
 select(J,more)
 
 clearAll
+
+
+
+
+
 
 assert(#(varPrep gb p)_0 >= dim p) -- this is for us. Something is wrong if this is not the case.
 if #(varPrep gb p)_0 > dim p then 
@@ -168,8 +184,7 @@ noetherNormalization = method();
 noetherNormalization(Ideal) := RingMap => I -> (
      R := ring I;     
      G := gb I; -- so far so good
-     U := (varPrep G)_0; -- this seems to run the varPrep twice, lets figure out how to get the output with only one run
-     V := (varPrep G)_1;
+     (U,V) := varPrepa G -- this seems to run the varPrep twice, lets figure out how to get the output with only one run
      X := U | V;
      f := map(R,R,reverse X);
      G = gb f(I); --we should not need to do this gb computation
@@ -191,8 +206,8 @@ R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex] --the same ordering as in the pape
 k = coefficientRing R
 p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1)-- experiments:
 G = gb p -- so far so good
-U = (varPrep G)_0 -- this seems to run the varPrep twice, lets figure out how to get the output with only one run
-V = (varPrep G)_1
+U = (varPrep1 G)_0 -- this seems to run the varPrep twice, lets figure out how to get the output with only one run
+V = (varPrep1 G)_1
 X = U | V
 f = map(R,R,reverse X)
 G = gb f(p) --we should not need to do this gb computation
@@ -202,10 +217,11 @@ U = apply(U, i -> f(i)) -- might be faster to do U = {x_0..x_(#U-1)}
 U = apply(U, i -> i + sum(V - set J)) --m2 magic. make sure V and J jive so that this makes sense, also in later version multiply the sum by a random in k
 g = map(R,R,reverse(U|V))
 gens gb g f p --What should we return in the final program? An ideal in the proper position? a variable transformation? both? what does singular give?
+G = gb g f p
 -- still need to build in a check to see if this is the basis is correct, ie. step 6 of the paper.
 g*f -- part of the output?
 -- is there an easy way to compose these???
-
+lastCheck(G)
 -- see update:
 -- maybe output triple:
 -- (R <- R', I', R' <- k[x_1..x_d])
@@ -216,6 +232,11 @@ g*f -- part of the output?
 -- f := (cacheValue f)(x -> (...))
 -- search for cacheValue
 
+
+{x_4} < {x_4, x_3}
+{x_4} < support(x_4+x_3)
+{x_4} < {x_4,x_3}
+support(x_4+x_3) === {x_4,x_3}
 
 
 --this idea, though not written out all of the way yet will allow us to put in different random numbers if we want to, but it's probably slower
