@@ -12,6 +12,10 @@ newPackage(
      DebuggingMode => true
      )
 
+-- The algorithm given here is based on A. Loger's algorithm as given
+-- in "A Computational Proof of the Noether Normalization Lemma" LNCS
+-- 357.
+
 --=========================================================================--
      
 export{noetherNormalization} -- if the new routines which you are adding have new
@@ -19,11 +23,6 @@ export{noetherNormalization} -- if the new routines which you are adding have ne
 -- exported
         
 --=========================================================================--
-
--- We should give info up here about the algorithm etc.
---
---
-
 
 integralSet := method();
 integralSet(GroebnerBasis) := List => G -> (
@@ -74,14 +73,36 @@ lastCheck(GroebnerBasis, ZZ) := Boolean => (G,d) -> (
      true
      );
 --==============================================
-noetherNormalization := method();
-noetherNormalization(Ideal) := Sequence => I -> (
-     R := ring I;    
-     G := gb I; -- so far so good
+
+
+noetherPrime := method();
+noetherPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
+     R := ring I;
      done := false;
-     --the purpose for q is to run lastcheck as few times as possible
      while done == false do ( --use of #U=dimI here and below must be replaced if I is not prime
-	  (U,V) := varPrep G;
+	  X := U | V;
+	  f := map(R,R,reverse X);
+--	  G = gb f(I); --we should not need to do this gb computation
+	  J := integralSet(G);
+	  V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
+	  U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
+	  U = apply(U, i -> i + sum(V - set J)); --make sure V and J jive so that this makes sense, also in later version multiply the sum by a random in k
+      	  --note that right now we can get stuck in an infinite loop as we aren't multiplying by a random
+	  g := map(R,R,reverse(U|V));
+	  h = g*f;
+	  done = lastCheck(gb h I, #U);
+	  if done then return((gens gb h I,h));
+	  (U,V) = varPrep G;
+      	  );
+     );
+
+
+
+noetherNotPrime := method();
+noetherNotPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
+     R := ring I;
+     done := false;
+     while done == false do ( --use of #U=dimI here and below must be replaced if I is not prime
 	  X := U | V;
 	  f := map(R,R,reverse X);
 	  G = gb f(I); --we should not need to do this gb computation
@@ -93,9 +114,25 @@ noetherNormalization(Ideal) := Sequence => I -> (
 	  g := map(R,R,reverse(U|V));
 	  h = g*f;
 	  done = lastCheck(gb h I, #U);
-	  if done then return((gens gb h I,h));      	  
+	  if done then return((gens gb h I,h));
+	  (U,V) = varPrep G;
       	  );
      );
+
+
+noetherDecider := method();
+noetherDecider(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
+     if dim I == #U then noetherPrime(I,G,U,V) else noetherNotPrime(I,G,U,V)
+     );
+
+noetherNormalization := method();
+noetherNormalization(Ideal) := Sequence => I -> (
+     G := gb I;
+     (U,V) :=varPrep G;
+     noetherDecider(I,G,U,V)
+     );     
+
+
 
 --========================================================
 --Examples:
@@ -113,6 +150,51 @@ noetherNormalization(p)
 -- clear up output
 -- get randomness
 -- implement for nonprime ideals
+
+-- Ok as far as the not prime case is concerned, let's write it as follows:
+-- 
+-- We'll do it with 3 routines.
+-- 
+-- noetherDecider
+--         Will output T, and decided with algoritm to use.
+--
+-- noetherPrime
+--        Will utilize the T being outputted
+--
+-- noetherNotPrime
+--     	  Will also use T being outputted.
+
+
+
+-- Older NN
+
+noetherNormalization := method();
+noetherNormalization(Ideal) := Sequence => I -> (
+     R := ring I;    
+     G := gb I; -- so far so good
+     done := false;
+     while done == false do ( --use of #U=dimI here and below must be replaced if I is not prime
+	  (U,V) := varPrep G;
+	  X := U | V;
+	  f := map(R,R,reverse X);
+	  G = gb f(I); --we should not need to do this gb computation
+	  J := integralSet(G);
+	  V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
+	  U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
+	  U = apply(U, i -> i + sum(V - set J)); --make sure V and J jive so that this makes sense, also in later version multiply the sum by a random in k
+      	  --note that right now we can get stuck in an infinite loop as we aren't multiplying by a random
+	  g := map(R,R,reverse(U|V));
+	  h = g*f;
+	  done = lastCheck(gb h I, #U);
+	  if done then return((gens gb h I,h));      	  
+      	  );
+     );
+
+
+
+
+
+
 
 
 --=========================================================================--
