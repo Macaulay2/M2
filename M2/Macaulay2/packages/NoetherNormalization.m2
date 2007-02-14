@@ -24,7 +24,7 @@ export{noetherNormalization} -- if the new routines which you are adding have ne
         
 --=========================================================================--
 
-integralSet := method();
+integralSet = method();
 integralSet(GroebnerBasis) := List => G -> (
      J = {};
      M := gens G;
@@ -34,7 +34,7 @@ integralSet(GroebnerBasis) := List => G -> (
      J = unique flatten J; --note that according to the algorithm J is a set of integers (in fact indices), we choose to return the variables
      return J);
 --=========================================
-varPrep := method();
+varPrep = method();
 varPrep(GroebnerBasis) := Sequence => G -> (
      X := gens ring G; -- doesn't work because variables are backwards
      X = reverse X;
@@ -53,7 +53,7 @@ varPrep(GroebnerBasis) := Sequence => G -> (
      (U,V)                        -- (x,y) = (U,V) ; (x,y) := (U,V) can be used by the caller if you return a sequence
      );       
 --==================================================
-lastCheck := method();
+lastCheck = method();
 lastCheck(GroebnerBasis, ZZ) := Boolean => (G,d) -> (
      X := reverse gens ring G;
      M := gens G;
@@ -75,7 +75,7 @@ lastCheck(GroebnerBasis, ZZ) := Boolean => (G,d) -> (
 --==============================================
 
 
-noetherPrime := method();
+noetherPrime = method();
 noetherPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
      R := ring I;
      done := false;
@@ -98,7 +98,7 @@ noetherPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
 
 
 
-noetherNotPrime := method();
+noetherNotPrime = method();
 noetherNotPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
      R := ring I;
      done := false;
@@ -120,12 +120,12 @@ noetherNotPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
      );
 
 
-noetherDecider := method();
+noetherDecider = method();
 noetherDecider(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
      if dim I == #U then noetherPrime(I,G,U,V) else noetherNotPrime(I,G,U,V)
      );
 
-noetherNormalization := method();
+noetherNormalization = method();
 noetherNormalization(Ideal) := Sequence => I -> (
      G := gb I;
      (U,V) :=varPrep G;
@@ -140,6 +140,7 @@ clearAll
 R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
 p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
 noetherNormalization(p)
+benchmark "noetherNormalization(p)"
 R = QQ[x_2,x_1]
 p = ideal(x_2*x_1+1)
 noetherNormalization(p)
@@ -168,7 +169,7 @@ noetherNormalization(p)
 
 -- Older NN
 
-noetherNormalization := method();
+noetherNormalization = method();
 noetherNormalization(Ideal) := Sequence => I -> (
      R := ring I;    
      G := gb I; -- so far so good
