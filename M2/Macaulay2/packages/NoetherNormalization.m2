@@ -96,8 +96,11 @@ noetherPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
       	  );
      );
 
-X = {x_1,x_2,x_3,x_4}
-XP = (permutations X)_0
+
+
+
+
+-- If just running, skip this one.
 
 noetherNotPrime = method();
 noetherNotPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
@@ -139,6 +142,12 @@ varPrep gb m I -- not any different
 	  (U,V) = varPrep G;
       	  );
      );
+
+-- end skip
+
+
+
+
 
 
 noetherDecider = method();
