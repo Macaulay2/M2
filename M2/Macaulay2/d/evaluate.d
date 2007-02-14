@@ -133,13 +133,8 @@ dbmstore(f:Database,KEY:Code,CONTENT:Code):Expr := (
 	  when Content
 	  is Error do Content
 	  is content:string do dbmstore(f,key,content)
-	  is Nothing do (
-	       if !f.isopen then return buildErrorPacket("database closed");
-	       if !f.mutable then return buildErrorPacket("database not mutable");
-	       if 0 == dbmdelete(f.handle,key)
-	       then nullE
-	       else buildErrorPacket(dbmstrerror() + " : " + f.filename))
-	  else printErrorMessageE(CONTENT,"expected a string or null"))
+	  is Nothing do buildErrorPacket("storing null database record, use 'remove' to remove records")
+	  else printErrorMessageE(CONTENT,"expected a string"))
      else printErrorMessageE(KEY,"expected a string"));
 
 assignelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
