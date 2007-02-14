@@ -79,7 +79,7 @@ noetherPrime = method();
 noetherPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
      R := ring I;
      done := false;
-     while done == false do ( --use of #U=dimI here and below must be replaced if I is not prime
+     while done == false do ( 
 	  X := U | V;
 	  f := map(R,R,reverse X);
 --	  G = gb f(I); --we should not need to do this gb computation
@@ -105,7 +105,7 @@ noetherNotPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
      while done == false do ( --use of #U=dimI here and below must be replaced if I is not prime
 	  X := U | V;
 	  f := map(R,R,reverse X);
-	  G = gb f(I); --we should not need to do this gb computation
+--	  G = gb f(I); --we should not need to do this gb computation
 	  J := integralSet(G);
 	  V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
 	  U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
