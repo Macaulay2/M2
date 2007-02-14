@@ -56,7 +56,9 @@ export lines(s:string):array(string) := (
 	  if j == -1 then (
 	       break;
 	       );
-	  i = j + if j+1 < length(s) && s.j == '\r' && s.(j+1) == '\n' then 2 else 1;
+	  -- let's stick to newlines only now
+	  -- i = j + if j+1 < length(s) && s.j == '\r' && s.(j+1) == '\n' then 2 else 1;
+	  i = j + 1;
 	  nlines = nlines + 1;	    -- count the bit after the last newline even if it's empty
 	  );
      i = 0;
