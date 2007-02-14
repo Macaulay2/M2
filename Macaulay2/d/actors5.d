@@ -714,10 +714,17 @@ removefun(e:Expr):Expr := (
 		    when args.1 is i:Integer do
 		    if isInt(i) then Expr(remove(x,toInt(i))) else WrongArgSmallInteger(2)
 		    else WrongArgInteger(2))
+	       is f:Database do (
+		    when args.1 is key:string do (
+	       		 if !f.isopen then return buildErrorPacket("database closed");
+	       		 if !f.mutable then return buildErrorPacket("database not mutable");
+	       		 if 0 == dbmdelete(f.handle,key) then nullE
+	       		 else buildErrorPacket(dbmstrerror() + " : " + f.filename))
+		    else WrongArgString(2))
 	       is o:HashTable do (
 		    ret := remove(o,args.1);
 		    when ret is Error do ret else nullE)
-	       else WrongArg(1,"a hash table")))
+	       else WrongArg(1,"a hash table or database")))
      else WrongNumArgs(2));
 setupfun("remove",removefun);
 
