@@ -79,8 +79,7 @@ noetherPrime = method();
 noetherPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
      R := ring I;
      done := false;
-     X := U | V;
-     f := map(R,R,reverse X);
+     f := map(R,R,reverse(U|V));
      while done == false do ( 
 --	  G = gb f(I); --we should not need to do this gb computation
 	  J := integralSet(G);
@@ -99,15 +98,14 @@ noetherPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
 
 
 
-
+-----------------------------------
 -- If just running, skip this one.
-
+-------------------------------------
 noetherNotPrime = method();
 noetherNotPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
      R := ring I;
      done := false;
-     X := U | V;
-     f := map(R,R,reverse X);
+     f := map(R,R,reverse(U|V));
      XP := permutations gens R;
 -- Some experimental code:
 -- the problem is that the map doesn't seem to be really changing the vars...
@@ -124,9 +122,6 @@ m
 varPrep gb I   -- not any different
 varPrep gb m I -- not any different
 -- this may be a problem with varPrep.....
-
-
-
 -- end experiment
      while done == false do ( --use of #U=dimI here and below must be replaced if I is not prime
 --	  G = gb f(I); --we should not need to do this gb computation
@@ -142,9 +137,9 @@ varPrep gb m I -- not any different
 	  (U,V) = varPrep G;
       	  );
      );
-
+------------------
 -- end skip
-
+------------------
 
 
 
@@ -168,17 +163,6 @@ noetherNormalization(Ideal) := Sequence => I -> (
 --Examples:
 clearAll
 R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
-XP = permutations gens R
-I =ideal(x_3^3+x_2^2+1)
-(U,V) = varPrep(gb I)
-for i from 1 to #XP-1 do (
-     m = map(R,R,XP_i);
-     (U,V) = varPrep(gb m I);
-     if #U == dim I then break);
-
-
-
-
 p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
 noetherNormalization(p)
 benchmark "noetherNormalization(p)"
