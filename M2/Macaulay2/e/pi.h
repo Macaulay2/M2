@@ -13,7 +13,8 @@
 //   signed, reversed   :  3  2  1  0 -1 -2 -3 -4    rui     x -> 3-x    3 == (1 << (n-1)) - 1
 
 // an "area" will consist of a sequence of bins, each with the same number of bits per field; some fields in the last bin may be unused
-// routines operating on an area will update references to pointers, so the next area can continue processing; thus area routines need not know their offset, just their length
+// routines operating on an area will update references to pointers, so the next area can continue processing; thus area routines 
+//   need not know their offset, just their length
 // an "encoded monomial" will consist of a sequence of areas
 // comparison of encoded monomials is always unsigned and lexicographic
 // routines for monomial arithmetic have to take the type of conversion into account

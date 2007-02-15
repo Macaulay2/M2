@@ -219,6 +219,7 @@ poly G = 5*t^2*z^7*y^3*x + 5*x^2*z^4*t^3*y + 3*t^7;
 poly H = 6*z*t^2*y + 2*x^8 + 6*z^2*y^2*t + 2*y^5;
 ideal I = F,G,H;
 timer=1;
+option(prot);
 std(I);
 
 poly F = 4*t^2*z+6*z^3*t+3*z^3+t*z;
