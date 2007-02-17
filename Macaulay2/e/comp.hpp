@@ -4,7 +4,9 @@
 #define _comp_hpp_
 
 extern char system_interruptedFlag;
-extern int gbTrace;
+extern "C" {
+     extern int gbTrace;
+};
 
 #include "engine.h"
 /* engine.h includes definitions of the stop conditions
