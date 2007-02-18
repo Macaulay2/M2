@@ -32,26 +32,33 @@ integralSet(GroebnerBasis) := List => G -> (
            if # support leadMonomial (M)_(0,i) === 1 then J = J | {support leadMonomial (M)_(0,i)} --checks how many vars are in the lead
            );
      J = unique flatten J; --note that according to the algorithm J is a set of integers (in fact indices), we choose to return the variables
-     return J);
+     J);
 --=========================================
 varPrep = method();
 varPrep(GroebnerBasis) := Sequence => G -> (
-     X := gens ring G; -- doesn't work because variables are backwards
-     X = reverse X;
+     X := gens ring G; 
      M := gens G;
-     U := {};
      V := {};
      for j from 0 to #X - 1 do (
       	  for i from 0 to numgens source M - 1 do ( -- going from zero to the number of gens of the gb - 1      
-	       if isSubset(support (M)_(0,i),take(X,j+1)) and isSubset({X_j}, support (M)_(0,i)) then (
+	       if isSubset({X_j}, support (M)_(0,i)) -- checks to see if the there is a term of the desired index
+	       and isSubset(support (M)_(0,i),take(X,j+1)) -- checks to see if there is a higher indexed term
+	       then (
             	    V = V | {X_j};                -- repeatedly appending could be slow, try for ... list or while ... list
             	    break;   
 		    );
                );     
-	  if not isSubset({X_j},V) then U = U | {X_j};
       	  );
-     (U,V)                        -- (x,y) = (U,V) ; (x,y) := (U,V) can be used by the caller if you return a sequence
-     );       
+     (X-set(V),V)                        -- (x,y) = (U,V) ; (x,y) := (U,V) can be used by the caller if you return a sequence
+     );
+R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
+q = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
+R = QQ[x_1..x_4]
+p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
+gens p
+varPrep gb p
+integralSet gb p
+       
 --==================================================
 lastCheck = method();
 lastCheck(GroebnerBasis, ZZ) := Boolean => (G,d) -> (
@@ -79,7 +86,8 @@ noetherPrime = method();
 noetherPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
      R := ring I;
      done := false;
-     f := map(R,R,reverse(U|V));
+--     f := map(R,R,reverse(U|V));
+     f := map(R,R,U|V);
      while done == false do ( 
 --	  G = gb f(I); --we should not need to do this gb computation
 	  J := integralSet(G);
@@ -87,7 +95,8 @@ noetherPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
 	  U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
 	  U = apply(U, i -> i + sum(V - set J)); --make sure V and J jive so that this makes sense, also in later version multiply the sum by a random in k
       	  --note that right now we can get stuck in an infinite loop as we aren't multiplying by a random
-	  g := map(R,R,reverse(U|V));
+--	  g := map(R,R,reverse(U|V));
+	  g := map(R,R,U|V);
 	  h = g*f;
 	  done = lastCheck(gb h I, #U);
 	  if done then return((gens gb h I,h));
@@ -142,19 +151,11 @@ varPrep gb m I -- not any different
 ------------------
 
 
-
-
-
-noetherDecider = method();
-noetherDecider(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
-     if dim I == #U then noetherPrime(I,G,U,V) else noetherNotPrime(I,G,U,V)
-     );
-
 noetherNormalization = method();
 noetherNormalization(Ideal) := Sequence => I -> (
      G := gb I;
-     (U,V) :=varPrep G;
-     noetherDecider(I,G,U,V)
+     (U,V) := varPrep G;
+     if dim I == #U then noetherPrime(I,G,U,V) else noetherNotPrime(I,G,U,V)
      );     
 
 
@@ -162,8 +163,12 @@ noetherNormalization(Ideal) := Sequence => I -> (
 --========================================================
 --Examples:
 clearAll
-R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
+--R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
+R = QQ[x_1..x_4]
 p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
+G = gb p
+gens G
+varPrep G
 noetherNormalization(p)
 benchmark "noetherNormalization(p)"
 R = QQ[x_2,x_1]
@@ -219,6 +224,25 @@ noetherNormalization(Ideal) := Sequence => I -> (
 
 
 
+--old varPrep
+varPrep = method();
+varPrep(GroebnerBasis) := Sequence => G -> (
+     X := gens ring G; -- doesn't work because variables are backwards
+--     X = reverse X;
+     M := gens G;
+     U := {};
+     V := {};
+     for j from 0 to #X - 1 do (
+      	  for i from 0 to numgens source M - 1 do ( -- going from zero to the number of gens of the gb - 1      
+	       if isSubset(support (M)_(0,i),take(X,j+1)) and isSubset({X_j}, support (M)_(0,i)) then (
+            	    V = V | {X_j};                -- repeatedly appending could be slow, try for ... list or while ... list
+            	    break;   
+		    );
+               );     
+	  if not isSubset({X_j},V) then U = U | {X_j};
+      	  );
+     (U,V)                        -- (x,y) = (U,V) ; (x,y) := (U,V) can be used by the caller if you return a sequence
+     );       
 
 
 
