@@ -24,8 +24,9 @@ export{noetherNormalization} -- if the new routines which you are adding have ne
         
 --=========================================================================--
 
-integralSet = method();
-integralSet(GroebnerBasis) := List => G -> (
+--integralSet = method();
+--integralSet(GroebnerBasis) := List => G -> (
+integralSet = G -> (
      J = {};
      M := gens G;
      for i from 0 to numgens source M - 1 do ( -- check the gens of G to see if their leadMonomial is in a single variable
@@ -34,8 +35,9 @@ integralSet(GroebnerBasis) := List => G -> (
      J = unique flatten J; --note that according to the algorithm J is a set of integers (in fact indices), we choose to return the variables
      J);
 --=========================================
-varPrep = method();
-varPrep(GroebnerBasis) := Sequence => G -> (
+--varPrep = method();
+--varPrep(GroebnerBasis) := Sequence => G -> (
+varPrep = G -> (
      X := gens ring G; 
      M := gens G;
      V := {};
@@ -60,8 +62,9 @@ varPrep gb p
 integralSet gb p
        
 --==================================================
-lastCheck = method();
-lastCheck(GroebnerBasis, ZZ) := Boolean => (G,d) -> (
+--lastCheck = method();
+--lastCheck(GroebnerBasis, ZZ) := Boolean => (G,d) -> (
+lastCheck = (G,d) -> (
      X := reverse gens ring G;
      M := gens G;
      i := 0;
@@ -82,8 +85,9 @@ lastCheck(GroebnerBasis, ZZ) := Boolean => (G,d) -> (
 --==============================================
 
 
-noetherPrime = method();
-noetherPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
+--noetherPrime = method();
+--noetherPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
+noetherPrime = (I,G,U,V) -> (
      R := ring I;
      done := false;
 --     f := map(R,R,reverse(U|V));
@@ -110,8 +114,29 @@ noetherPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
 -----------------------------------
 -- If just running, skip this one.
 -------------------------------------
-noetherNotPrime = method();
-noetherNotPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
+maxAlg = (X,G,d) -> (
+     S := subsets(X,d);
+     M := gens G;
+     for j to # S - 1 do (
+     	  for i to numgens source M - 1 do (
+     	       if isSubset(support leadTerm M_(0,i),S_j) then break;
+     	       if i == (numgens source M - 1) then return S_j
+	       );
+     	  );
+     );
+maxAlg(X,G,2)
+G
+gens G
+d = dim p
+X = gens R
+
+isSubset(support leadTerm M_(0,1), S_4) isSubset(support
+
+
+
+--noetherNotPrime = method();
+--noetherNotPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
+noetherNotPrime = (I,G,U,V) -> (
      R := ring I;
      done := false;
      f := map(R,R,reverse(U|V));
@@ -119,6 +144,7 @@ noetherNotPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
 -- Some experimental code:
 -- the problem is that the map doesn't seem to be really changing the vars...
 R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
+R = QQ[x_1..x_4]
 XP = permutations gens R
 I =ideal(x_3^3*x_2^2)
 (U,V) = varPrep(gb I)
@@ -154,8 +180,9 @@ varPrep gb m I -- not any different
 noetherNormalization = method();
 noetherNormalization(Ideal) := Sequence => I -> (
      G := gb I;
+     d := dim I;
      (U,V) := varPrep G;
-     if dim I == #U then noetherPrime(I,G,U,V) else noetherNotPrime(I,G,U,V)
+     if d == #U then noetherPrime(I,G,U,V) else noetherNotPrime(I,G,U,V)
      );     
 
 
@@ -163,10 +190,13 @@ noetherNormalization(Ideal) := Sequence => I -> (
 --========================================================
 --Examples:
 clearAll
---R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
+R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
 R = QQ[x_1..x_4]
 p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
 G = gb p
+benchmark "dim p"
+benchmark "dim ideal(G)"
+peek p
 gens G
 varPrep G
 noetherNormalization(p)
