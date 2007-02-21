@@ -158,6 +158,12 @@ np = map(R,R,maxAlg(X,G,d))
 varPrep gb np p
 
 
+
+--Example of p killing gb
+R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
+p = ideal(x_5^3 + x_5*x_4 - x_3, x_4^3-x_2+x_3, x_5^2*x_4+x_5*x_4^2 - x_1)
+G = gb p
+
 -- now we take this example and we try the 
 -- non prime alg on it.
 
