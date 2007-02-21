@@ -38,7 +38,7 @@ integralSet = G -> (
 --varPrep = method();
 --varPrep(GroebnerBasis) := Sequence => G -> (
 varPrep = G -> (
-     X := gens ring G; 
+     X := sort gens ring G; 
      M := gens G;
      V := {};
      for j from 0 to #X - 1 do (
@@ -53,19 +53,14 @@ varPrep = G -> (
       	  );
      (X-set(V),V)                        -- (x,y) = (U,V) ; (x,y) := (U,V) can be used by the caller if you return a sequence
      );
-R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
-q = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
-R = QQ[x_1..x_4]
-p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
-gens p
-varPrep gb p
-integralSet gb p
+
        
 --==================================================
 --lastCheck = method();
 --lastCheck(GroebnerBasis, ZZ) := Boolean => (G,d) -> (
 lastCheck = (G,d) -> (
-     X := reverse gens ring G;
+  --   X := reverse gens ring G;
+     X := sort gens ring G;
      M := gens G;
      i := 0;
      while i < min(d,numgens source M) and not isSubset(support M_(0,i),toList(X_0..X_(d-1))) do (
@@ -90,91 +85,47 @@ lastCheck = (G,d) -> (
 noetherPrime = (I,G,U,V) -> (
      R := ring I;
      done := false;
---     f := map(R,R,reverse(U|V));
-     f := map(R,R,U|V);
+     f := map(R,R,reverse(U|V));
      while done == false do ( 
 --	  G = gb f(I); --we should not need to do this gb computation
-	  J := integralSet(G);
+	  J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
 	  V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
 	  U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
 	  U = apply(U, i -> i + sum(V - set J)); --make sure V and J jive so that this makes sense, also in later version multiply the sum by a random in k
       	  --note that right now we can get stuck in an infinite loop as we aren't multiplying by a random
---	  g := map(R,R,reverse(U|V));
-	  g := map(R,R,U|V);
+	  g := map(R,R,reverse(U|V));
+--	  g := map(R,R,U|V);
 	  h = g*f;
-	  done = lastCheck(gb h I, #U);
-	  if done then return((gens gb h I,h));
+	  G = gb h I;
+	  done = lastCheck(G, #U);
+	  if done then return((gens G,h));
 	  (U,V) = varPrep G;
       	  );
      );
 
 
-
-
------------------------------------
--- If just running, skip this one.
--------------------------------------
-maxAlg = (X,G,d) -> (
+maxAlg = (X,G,d) -> ( -- may need a sort or reverse...
      S := subsets(X,d);
      M := gens G;
      for j to # S - 1 do (
      	  for i to numgens source M - 1 do (
      	       if isSubset(support leadTerm M_(0,i),S_j) then break;
-     	       if i == (numgens source M - 1) then return S_j
+     	       if i == (numgens source M - 1) then return S_j|(X-set(S_j))
 	       );
      	  );
      );
-maxAlg(X,G,2)
-G
-gens G
-d = dim p
-X = gens R
 
-isSubset(support leadTerm M_(0,1), S_4) isSubset(support
+
+
 
 
 
 --noetherNotPrime = method();
 --noetherNotPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
 noetherNotPrime = (I,G,U,V) -> (
-     R := ring I;
-     done := false;
-     f := map(R,R,reverse(U|V));
-     XP := permutations gens R;
--- Some experimental code:
--- the problem is that the map doesn't seem to be really changing the vars...
-R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
-R = QQ[x_1..x_4]
-XP = permutations gens R
-I =ideal(x_3^3*x_2^2)
-(U,V) = varPrep(gb I)
-for i from 1 to #XP-1 do (
-     m = map(R,R,XP_i);
-     (U,V) = varPrep(m gb I);
-     if #U == dim I then break);
-U
-m
-varPrep gb I   -- not any different
-varPrep gb m I -- not any different
--- this may be a problem with varPrep.....
--- end experiment
-     while done == false do ( --use of #U=dimI here and below must be replaced if I is not prime
---	  G = gb f(I); --we should not need to do this gb computation
-	  J := integralSet(G);
-	  V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
-	  U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
-	  U = apply(U, i -> i + sum(V - set J)); --make sure V and J jive so that this makes sense, also in later version multiply the sum by a random in k
-      	  --note that right now we can get stuck in an infinite loop as we aren't multiplying by a random
-	  g := map(R,R,reverse(U|V));
-	  h = g*f;
-	  done = lastCheck(gb h I, #U);
-	  if done then return((gens gb h I,h));
-	  (U,V) = varPrep G;
-      	  );
-     );
-------------------
--- end skip
-------------------
+
+
+);
 
 
 noetherNormalization = method();
@@ -189,21 +140,28 @@ noetherNormalization(Ideal) := Sequence => I -> (
 
 --========================================================
 --Examples:
-clearAll
+
+
 R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
-R = QQ[x_1..x_4]
 p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
+noetherNormalization(p)
+
+
+--Examples of not so good p
+R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
+p = ideal(x_1^3 + x_1*x_2, x_2^3-x_4+x_3, x_1^2*x_2+x_1*x_2^2)
 G = gb p
-benchmark "dim p"
-benchmark "dim ideal(G)"
-peek p
-gens G
+d = dim p
 varPrep G
-noetherNormalization(p)
-benchmark "noetherNormalization(p)"
-R = QQ[x_2,x_1]
-p = ideal(x_2*x_1+1)
-noetherNormalization(p)
+X = gens R
+np = map(R,R,maxAlg(X,G,d))
+varPrep gb np p
+
+
+-- now we take this example and we try the 
+-- non prime alg on it.
+
+
 
 
 
