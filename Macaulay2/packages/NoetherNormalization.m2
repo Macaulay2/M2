@@ -23,7 +23,7 @@ export{noetherNormalization} -- if the new routines which you are adding have ne
 -- exported
         
 --=========================================================================--
-
+--We are not using the power of lemma 3.2 when we do this, only lemma 3.1 so we can currently apply this to all ideals
 --integralSet = method();
 --integralSet(GroebnerBasis) := List => G -> (
 integralSet = G -> (
@@ -84,6 +84,7 @@ lastCheck = (G,d) -> (
 --noetherPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
 noetherPrime = (I,G,U,V) -> (
      R := ring I;
+     k := coefficientRing R;
      done := false;
      f := map(R,R,reverse(U|V));
      while done == false do ( 
@@ -91,7 +92,7 @@ noetherPrime = (I,G,U,V) -> (
 	  J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
 	  V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
 	  U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
-	  U = apply(U, i -> i + sum(V - set J)); --make sure V and J jive so that this makes sense, also in later version multiply the sum by a random in k
+	  U = apply(U, i -> i + random(k)*sum(V - set J)); --make sure V and J jive so that this makes sense, also in later version multiply the sum by a random in k
       	  --note that right now we can get stuck in an infinite loop as we aren't multiplying by a random
 	  g := map(R,R,reverse(U|V));
 --	  g := map(R,R,U|V);
@@ -102,7 +103,6 @@ noetherPrime = (I,G,U,V) -> (
 	  (U,V) = varPrep G;
       	  );
      );
-
 
 maxAlg = (X,G,d) -> ( -- may need a sort or reverse...
      S := subsets(X,d);
@@ -122,9 +122,29 @@ maxAlg = (X,G,d) -> ( -- may need a sort or reverse...
 
 --noetherNotPrime = method();
 --noetherNotPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
-noetherNotPrime = (I,G,U,V) -> (
-
-
+noetherNotPrime = (I,G,d) -> ( --do i need I here?
+     X := sort gens ring G;
+     R := ring G;
+     k := coefficientRing R;
+     np := map(R,R,maxAlg(X,G,d));
+     G := gb np I;
+     (U,V) := varPrep G;
+     f := map(R,R,reverse(U|V));
+     while done == false do ( 
+--   	  G = gb f(I); --we should not need to do this gb computation
+	  J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
+	  V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
+	  U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
+	  U = apply(U, i -> i + random(k)*sum(V - set J)); --make sure V and J jive so that this makes sense, also in later version multiply the sum by a random in k
+      	  --note that right now we can get stuck in an infinite loop as we aren't multiplying by a random
+	  g := map(R,R,reverse(U|V));
+--	  g := map(R,R,U|V);
+	  h = g*f;
+	  G = gb h I;
+	  done = lastCheck(G, #U);
+	  if done then return((gens G,h));
+	  (U,V) = varPrep G;
+      	  );
 );
 
 
@@ -133,7 +153,7 @@ noetherNormalization(Ideal) := Sequence => I -> (
      G := gb I;
      d := dim I;
      (U,V) := varPrep G;
-     if d == #U then noetherPrime(I,G,U,V) else noetherNotPrime(I,G,U,V)
+     if d == #U then noetherPrime(I,G,U,V) else noetherNotPrime(I,G,d)
      );     
 
 
@@ -145,11 +165,12 @@ noetherNormalization(Ideal) := Sequence => I -> (
 R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
 p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
 noetherNormalization(p)
-
+q:= x_4^2+x_3^5+x_2*x_1
+leadMonomial(q)
 
 --Examples of not so good p
 R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
-p = ideal(x_1^3 + x_1*x_2, x_2^3-x_4+x_3, x_1^2*x_2+x_1*x_2^2)
+I = ideal(x_1^3 + x_1*x_2, x_2^3-x_4+x_3, x_1^2*x_2+x_1*x_2^2)
 G = gb p
 d = dim p
 varPrep G
