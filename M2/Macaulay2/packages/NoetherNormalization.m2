@@ -104,13 +104,13 @@ noetherPrime = (I,G,U,V) -> (
       	  );
      );
 
-maxAlg = (X,G,d) -> ( -- may need a sort or reverse...
+maxAlgPerm = (R,X,G,d) -> ( -- may need a sort or reverse...
      S := subsets(X,d);
      M := gens G;
      for j to # S - 1 do (
      	  for i to numgens source M - 1 do (
      	       if isSubset(support leadTerm M_(0,i),S_j) then break;
-     	       if i == (numgens source M - 1) then return S_j|(X-set(S_j))
+     	       if i == (numgens source M - 1) then return map(R,R,S_j|(X-set(S_j)))
 	       );
      	  );
      );
@@ -126,16 +126,18 @@ noetherNotPrime = (I,G,d) -> ( --do i need I here?
      X := sort gens ring G;
      R := ring G;
      k := coefficientRing R;
-     np := map(R,R,maxAlg(X,G,d));
+     np := maxAlgPerm(R,X,G,d);
      G := gb np I;
      (U,V) := varPrep G;
      f := map(R,R,reverse(U|V));
+     done := false;
      while done == false do ( 
 --   	  G = gb f(I); --we should not need to do this gb computation
 	  J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
 	  V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
 	  U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
-	  U = apply(U, i -> i + random(k)*sum(V - set J)); --make sure V and J jive so that this makes sense, also in later version multiply the sum by a random in k
+	  U = apply(U, i -> i + random(k)*sum(V - set J)); --make sure V and J jive so that this makes sense, 
+	                                                   --also in later version multiply the sum by a random in k
       	  --note that right now we can get stuck in an infinite loop as we aren't multiplying by a random
 	  g := map(R,R,reverse(U|V));
 --	  g := map(R,R,U|V);
@@ -168,20 +170,21 @@ noetherNormalization(p)
 q:= x_4^2+x_3^5+x_2*x_1
 leadMonomial(q)
 
---Examples of not so good p
+--Examples of not so good I
 R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
 I = ideal(x_1^3 + x_1*x_2, x_2^3-x_4+x_3, x_1^2*x_2+x_1*x_2^2)
-G = gb p
-d = dim p
+G = gb I
+d = dim I
 varPrep G
 X = gens R
-np = map(R,R,maxAlg(X,G,d))
-varPrep gb np p
+maxAlgPerm(R,X,G,d)
+noetherNormalization I
 
 
 
 --Example of p killing gb
-R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
+R = QQ[x_1..x_5,MonomialOrder => RevLex,Global=>false]
+R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => RevLex,Global=>false]
 p = ideal(x_5^3 + x_5*x_4 - x_3, x_4^3-x_2+x_3, x_5^2*x_4+x_5*x_4^2 - x_1)
 G = gb p
 
