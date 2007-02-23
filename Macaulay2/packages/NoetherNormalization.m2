@@ -176,8 +176,10 @@ I = ideal(x_1^3 + x_1*x_2, x_2^3-x_4+x_3, x_1^2*x_2+x_1*x_2^2)
 G = gb I
 d = dim I
 varPrep G
-X = gens R
-maxAlgPerm(R,X,G,d)
+np = maxAlgPerm(R,X,G,d)
+G = gb np I
+(U,V) = varPrep G
+     
 noetherNormalization I
 
 
