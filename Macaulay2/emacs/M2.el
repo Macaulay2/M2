@@ -84,12 +84,13 @@
 (mapcar
  (function 
   (lambda (mode-map)
-    (define-key mode-map [ f12 ] 'M2)
+    (define-key mode-map [ f12 ] 'M2) ; the user may want to make this one global
+    (define-key mode-map [ f11 ] 'M2-send-to-program) ; the user may want to make this one global
     (define-key mode-map [ (meta f12) ] 'M2-demo)
     (define-key mode-map [ (control f11) ] 'M2-switch-to-demo-buffer)
-    (define-key mode-map [ f11 ] 'M2-send-to-program)
     (define-key mode-map [ (meta f11) ] 'M2-set-demo-buffer)
     (define-key mode-map "\^C\t" 'M2-dynamic-complete-symbol)
+    (define-key mode-map [(meta tab)] 'M2-dynamic-complete-symbol)
     (define-key mode-map [ f10 ] 'M2-match-next-bracketed-input)
     (define-key mode-map [ (meta f10) ] 'M2-match-previous-bracketed-input)))
  (list M2-mode-map M2-comint-mode-map))
