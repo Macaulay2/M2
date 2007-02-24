@@ -127,7 +127,8 @@ noetherNotPrime = (I,G,d) -> ( --do i need I here?
      R := ring G;
      k := coefficientRing R;
      np := maxAlgPerm(R,X,G,d);
-     G := gb np I;
+     I = np I;
+     G := gb I;
      (U,V) := varPrep G;
      f := map(R,R,reverse(U|V));
      done := false;
@@ -171,6 +172,9 @@ q:= x_4^2+x_3^5+x_2*x_1
 leadMonomial(q)
 
 --Examples of not so good I
+--We need to worry about this guy some. The basis we get out does not quite exhibit the integrality of the variables that we want
+--I get x_4x_1^3+x_4x_1^2, x_4^2x_1+x_4x_1^2, x_4^3+x_4x_1, x_5-x_3+x_1^3, We should see that x_4 and x_5 are integral
+--x_4 is almost integral, x_5 is integral.
 R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
 I = ideal(x_1^3 + x_1*x_2, x_2^3-x_4+x_3, x_1^2*x_2+x_1*x_2^2)
 G = gb I
@@ -179,7 +183,8 @@ varPrep G
 np = maxAlgPerm(R,X,G,d)
 G = gb np I
 (U,V) = varPrep G
-     
+
+clearAll     
 noetherNormalization I
 
 
