@@ -13,8 +13,6 @@
 ;; M2 command interpreter
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq process-coding-system-alist (cons '("M2" . raw-text) process-coding-system-alist))
-
 (defun m2-mode() 
   "Macaulay 2 editing mode, name in lower case"
   (M2-mode))
