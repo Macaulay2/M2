@@ -24,8 +24,7 @@ export{noetherNormalization} -- if the new routines which you are adding have ne
         
 --=========================================================================--
 --We are not using the power of lemma 3.2 when we do this, only lemma 3.1 so we can currently apply this to all ideals
---integralSet = method();
---integralSet(GroebnerBasis) := List => G -> (
+
 integralSet = G -> (
      J = {};
      M := gens G;
@@ -34,11 +33,10 @@ integralSet = G -> (
            );
      J = unique flatten J; --note that according to the algorithm J is a set of integers (in fact indices), we choose to return the variables
      J);
+
 --=========================================
---varPrep = method();
---varPrep(GroebnerBasis) := Sequence => G -> (
-varPrep = G -> (
-     X := sort gens ring G; 
+
+varPrep = (X,G) -> (
      M := gens G;
      V := {};
      for j from 0 to #X - 1 do (
@@ -56,11 +54,8 @@ varPrep = G -> (
 
        
 --==================================================
---lastCheck = method();
---lastCheck(GroebnerBasis, ZZ) := Boolean => (G,d) -> (
-lastCheck = (G,d) -> (
-  --   X := reverse gens ring G;
-     X := sort gens ring G;
+
+lastCheck = (X,G,d) -> (
      M := gens G;
      i := 0;
      while i < min(d,numgens source M) and not isSubset(support M_(0,i),toList(X_0..X_(d-1))) do (
@@ -80,9 +75,7 @@ lastCheck = (G,d) -> (
 --==============================================
 
 
---noetherPrime = method();
---noetherPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
-noetherPrime = (I,G,U,V) -> (
+noetherPrime = (X,I,G,U,V) -> (
      R := ring I;
      k := coefficientRing R;
      done := false;
@@ -98,7 +91,7 @@ noetherPrime = (I,G,U,V) -> (
 --	  g := map(R,R,U|V);
 	  h = g*f;
 	  G = gb h I;
-	  done = lastCheck(G, #U);
+	  done = lastCheck(X,G, #U);
 	  if done then return((gens G,h));
 	  (U,V) = varPrep G;
       	  );
@@ -119,17 +112,13 @@ maxAlgPerm = (R,X,G,d) -> ( -- may need a sort or reverse...
 
 
 
-
---noetherNotPrime = method();
---noetherNotPrime(Ideal,GroebnerBasis,List,List) := Sequence => (I,G,U,V) -> (
-noetherNotPrime = (I,G,d) -> ( --do i need I here?
-     X := sort gens ring G;
+noetherNotPrime = (X,I,G,d) -> (
      R := ring G;
      k := coefficientRing R;
      np := maxAlgPerm(R,X,G,d);
      I = np I;
-     G := gb I;
-     (U,V) := varPrep G;
+     G = gb I;
+     (U,V) := varPrep(X,G);
      f := map(R,R,reverse(U|V));
      done := false;
      while done == false do ( 
@@ -144,7 +133,7 @@ noetherNotPrime = (I,G,d) -> ( --do i need I here?
 --	  g := map(R,R,U|V);
 	  h = g*f;
 	  G = gb h I;
-	  done = lastCheck(G, #U);
+	  done = lastCheck(X,G, #U);
 	  if done then return((gens G,h));
 	  (U,V) = varPrep G;
       	  );
@@ -155,8 +144,9 @@ noetherNormalization = method();
 noetherNormalization(Ideal) := Sequence => I -> (
      G := gb I;
      d := dim I;
-     (U,V) := varPrep G;
-     if d == #U then noetherPrime(I,G,U,V) else noetherNotPrime(I,G,d)
+     X := sort gens ring G;
+     (U,V) := varPrep(X,G);
+     if d == #U then noetherPrime(X,I,G,U,V) else noetherNotPrime(X,I,G,d)
      );     
 
 
@@ -167,38 +157,24 @@ noetherNormalization(Ideal) := Sequence => I -> (
 
 R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
 p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
-noetherNormalization(p)
+benchmark "noetherNormalization(p)"
 q:= x_4^2+x_3^5+x_2*x_1
 leadMonomial(q)
 
 --Examples of not so good I
 --We need to worry about this guy some. The basis we get out does not quite exhibit the integrality of the variables that we want
 --I get x_4x_1^3+x_4x_1^2, x_4^2x_1+x_4x_1^2, x_4^3+x_4x_1, x_5-x_3+x_1^3, We should see that x_4 and x_5 are integral
---x_4 is almost integral, x_5 is integral.
+--x_4 is integral, x_5 is integral.
 R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
 I = ideal(x_1^3 + x_1*x_2, x_2^3-x_4+x_3, x_1^2*x_2+x_1*x_2^2)
 G = gb I
 d = dim I
-varPrep G
+X = sort gens R -- note that this "sort" is very important
+varPrep(X,G)
 np = maxAlgPerm(R,X,G,d)
 G = gb np I
-(U,V) = varPrep G
-
-clearAll     
+(U,V) = varPrep(X,G)
 noetherNormalization I
-
-
-
---Example of p killing gb
-R = QQ[x_1..x_5,MonomialOrder => RevLex,Global=>false]
-R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => RevLex,Global=>false]
-p = ideal(x_5^3 + x_5*x_4 - x_3, x_4^3-x_2+x_3, x_5^2*x_4+x_5*x_4^2 - x_1)
-G = gb p
-
--- now we take this example and we try the 
--- non prime alg on it.
-
-
 
 
 
@@ -220,54 +196,6 @@ G = gb p
 -- noetherNotPrime
 --     	  Will also use T being outputted.
 
-
-
--- Older NN
-
-noetherNormalization = method();
-noetherNormalization(Ideal) := Sequence => I -> (
-     R := ring I;    
-     G := gb I; -- so far so good
-     done := false;
-     while done == false do ( --use of #U=dimI here and below must be replaced if I is not prime
-	  (U,V) := varPrep G;
-	  X := U | V;
-	  f := map(R,R,reverse X);
-	  G = gb f(I); --we should not need to do this gb computation
-	  J := integralSet(G);
-	  V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
-	  U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
-	  U = apply(U, i -> i + sum(V - set J)); --make sure V and J jive so that this makes sense, also in later version multiply the sum by a random in k
-      	  --note that right now we can get stuck in an infinite loop as we aren't multiplying by a random
-	  g := map(R,R,reverse(U|V));
-	  h = g*f;
-	  done = lastCheck(gb h I, #U);
-	  if done then return((gens gb h I,h));      	  
-      	  );
-     );
-
-
-
-
---old varPrep
-varPrep = method();
-varPrep(GroebnerBasis) := Sequence => G -> (
-     X := gens ring G; -- doesn't work because variables are backwards
---     X = reverse X;
-     M := gens G;
-     U := {};
-     V := {};
-     for j from 0 to #X - 1 do (
-      	  for i from 0 to numgens source M - 1 do ( -- going from zero to the number of gens of the gb - 1      
-	       if isSubset(support (M)_(0,i),take(X,j+1)) and isSubset({X_j}, support (M)_(0,i)) then (
-            	    V = V | {X_j};                -- repeatedly appending could be slow, try for ... list or while ... list
-            	    break;   
-		    );
-               );     
-	  if not isSubset({X_j},V) then U = U | {X_j};
-      	  );
-     (U,V)                        -- (x,y) = (U,V) ; (x,y) := (U,V) can be used by the caller if you return a sequence
-     );       
 
 
 
