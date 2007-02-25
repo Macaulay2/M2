@@ -97,13 +97,15 @@ noetherPrime = (X,I,G,U,V) -> (
       	  );
      );
 
+-- 
+-- this alg follows from: Thm 2.3 Kredel-Weispfenning 1988 J. Symbolic Computation.
 maxAlgPerm = (R,X,G,d) -> ( -- may need a sort or reverse...
      S := subsets(X,d);
      M := gens G;
      for j to # S - 1 do (
      	  for i to numgens source M - 1 do (
      	       if isSubset(support leadTerm M_(0,i),S_j) then break;
-     	       if i == (numgens source M - 1) then return map(R,R,S_j|(X-set(S_j)))
+     	       if i == (numgens source M - 1) then return map(R,R,(X-set(S_j)|S_j)) -- we switched this.
 	       );
      	  );
      );
@@ -177,6 +179,41 @@ G = gb np I
 noetherNormalization I
 
 
+
+R = QQ[x_1,x_2,x_3,MonomialOrder => Lex]
+I = ideal(x_1*x_2,x_1*x_3)
+G = gb I
+gens G
+d = dim I
+X = sort gens R -- note that this "sort" is very important
+varPrep(X,G)
+noetherNormalization(I)
+
+
+R = QQ[x_3,x_2,x_1,MonomialOrder => Lex]
+I = ideal(x_1*x_2, x_1*x_3)
+G = gb I
+gens G
+d = dim I
+X = sort gens R -- note that this "sort" is very important
+varPrep(X,G)
+
+
+
+
+
+R = QQ[x_1..x_6,MonomialOrder => Lex]
+R = QQ[x_6,x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
+I = ideal(x_1*x_2,x_1*x_3, x_2*x_3,x_2*x_4,x_2*x_5,x_3*x_4,x_3*x_5,x_4*x_5, x_4*x_6, x_5*x_6)
+G = gb I
+d = dim I
+X = sort gens R -- note that this "sort" is very important
+varPrep(X,G)
+np = maxAlgPerm(R,X,G,d)
+G = gb np I
+(U,V) = varPrep(X,G)
+noetherNormalization I
+x_5<x_4
 
 -- TO DO:
 -- clear up output
