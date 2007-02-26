@@ -110,14 +110,30 @@ maxAlgPerm = (R,X,G,d) -> ( -- may need a sort or reverse...
      	  );
      );
 
-
+maxAlgPerm2 = (R,X,G,d,S) -> (
+     M := gens G;
+     if #S == d then return S;
+     for j to #X - 1 do (
+      
+	  print j;
+	  for i to numgens source M -1 do (
+	       print i;
+	       if isSubset(support leadTerm M_(0,i),S|{X_j}) then break;
+     	       if i == (numgens source M - 1) then ( 
+		    S = maxAlgPerm(R,X - set({X_j}),G,d,S|{X_j});
+		    return S;
+		    ); 
+	       );
+	  );
+     );	    
+		    
 
 
 
 noetherNotPrime = (X,I,G,d) -> (
      R := ring G;
      k := coefficientRing R;
-     np := maxAlgPerm(R,X,G,d);
+     np := maxAlgPerm(R,X,G,d,{});
      I = np I;
      G = gb I;
      (U,V) := varPrep(X,G);
