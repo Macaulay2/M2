@@ -125,6 +125,21 @@ maxAlgPermB = (R,X,G,d,S) -> (
 	       );
 	  );
      );	    
+
+
+maxAlgPermC = (R,X,G,d) -> (
+     M := gens G;
+     S := {};
+     for j to #X - 1 do (
+	  for i to numgens source M-1 do (
+	       if isSubset(support leadTerm M_(0,i),S|{X_j}) then break;
+     	       if i == (numgens source M - 1) then ( 
+		    S = S|{X_j};
+		    if #S == d then return S; 
+	    	    ); 
+	       );
+      	   );
+     );	         
 		    
 
 noetherNotPrime = (X,I,G,d) -> (
@@ -171,13 +186,17 @@ noetherNormalization(Ideal) := Sequence => I -> (
 --Examples:
 
 --maxAlgPermB testing area...
-G := gb I;
-X := sort gens ring G;
-d := dim I;
+R = QQ[x_1..x_15, MonomialOrder => Lex]; --the same ordering as in the paper
+I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1,x_7*x_4 -x_11, x_15^8);
+G = gb I
+X = sort gens ring G
+d = dim I
 maxAlgPerm(R,X,G,d)
+maxAlgPermC(R,X,G,d) 
 maxAlgPermB(R,X,G,d,{}) 
-benchmark "maxAlgPerm(R, X, G, d)" --why isn't benchmark working?
-benchmark "maxalgPermB(R,X,G,d,{})"
+benchmark "maxAlgPerm(R, X, G, d)"
+benchmark "maxAlgPermB(R,X,G,d,{})"
+benchmark "maxAlgPermC(R,X,G,d)" --<-- fastest!
 
 --Ex#1
 R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
