@@ -105,35 +105,33 @@ maxAlgPerm = (R,X,G,d) -> ( -- may need a sort or reverse...
      for j to # S - 1 do (
      	  for i to numgens source M - 1 do (
      	       if isSubset(support leadTerm M_(0,i),S_j) then break;
-     	       if i == (numgens source M - 1) then return map(R,R,(X-set(S_j)|S_j)) -- we switched this.
+     	       if i == (numgens source M - 1) then return S_j        --map(R,R,(X-set(S_j)|S_j)) -- we switched this.
 	       );
      	  );
      );
 
-maxAlgPerm2 = (R,X,G,d,S) -> (
+--maxAlgPermB is a recursive version of maxAlgPerm that for large #X and medium d should be far faster, it appears to be working.
+maxAlgPermB = (R,X,G,d,S) -> (
      M := gens G;
      if #S == d then return S;
      for j to #X - 1 do (
-      
-	  print j;
 	  for i to numgens source M -1 do (
-	       print i;
 	       if isSubset(support leadTerm M_(0,i),S|{X_j}) then break;
      	       if i == (numgens source M - 1) then ( 
-		    S = maxAlgPerm(R,X - set({X_j}),G,d,S|{X_j});
-		    return S;
+		    S = maxAlgPermB(R,X - set({X_j}),G,d,S|{X_j});
+		    if not instance(S,List) then S = {};
+		    if #S == d then return S; 
 		    ); 
 	       );
 	  );
      );	    
 		    
 
-
-
 noetherNotPrime = (X,I,G,d) -> (
      R := ring G;
      k := coefficientRing R;
-     np := maxAlgPerm(R,X,G,d,{});
+     S := maxAlgPermB(R,X,G,d,{});
+     np := map(R,R,(X-set(S)|S));
      I = np I;
      G = gb I;
      (U,V) := varPrep(X,G);
@@ -172,17 +170,25 @@ noetherNormalization(Ideal) := Sequence => I -> (
 --========================================================
 --Examples:
 
+--maxAlgPermB testing area...
+G := gb I;
+X := sort gens ring G;
+d := dim I;
+maxAlgPerm(R,X,G,d)
+maxAlgPermB(R,X,G,d,{}) 
+benchmark "maxAlgPerm(R, X, G, d)" --why isn't benchmark working?
+benchmark "maxalgPermB(R,X,G,d,{})"
 
+--Ex#1
 R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
-p = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
-benchmark "noetherNormalization(p)"
+I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
+noetherNormalization(I)
+benchmark "noetherNormalization(I)"
 q:= x_4^2+x_3^5+x_2*x_1
 leadMonomial(q)
 
 --Examples of not so good I
---We need to worry about this guy some. The basis we get out does not quite exhibit the integrality of the variables that we want
---I get x_4x_1^3+x_4x_1^2, x_4^2x_1+x_4x_1^2, x_4^3+x_4x_1, x_5-x_3+x_1^3, We should see that x_4 and x_5 are integral
---x_4 is integral, x_5 is integral.
+--Ex#2
 R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
 I = ideal(x_1^3 + x_1*x_2, x_2^3-x_4+x_3, x_1^2*x_2+x_1*x_2^2)
 G = gb I
@@ -195,7 +201,7 @@ G = gb np I
 noetherNormalization I
 
 
-
+--Ex#3
 R = QQ[x_1,x_2,x_3,MonomialOrder => Lex]
 I = ideal(x_1*x_2,x_1*x_3)
 G = gb I
@@ -205,7 +211,7 @@ X = sort gens R -- note that this "sort" is very important
 varPrep(X,G)
 noetherNormalization(I)
 
-
+--Ex#4
 R = QQ[x_3,x_2,x_1,MonomialOrder => Lex]
 I = ideal(x_1*x_2, x_1*x_3)
 G = gb I
@@ -217,7 +223,7 @@ varPrep(X,G)
 
 
 
-
+--Ex#5
 R = QQ[x_1..x_6,MonomialOrder => Lex]
 R = QQ[x_6,x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
 I = ideal(x_1*x_2,x_1*x_3, x_2*x_3,x_2*x_4,x_2*x_5,x_3*x_4,x_3*x_5,x_4*x_5, x_4*x_6, x_5*x_6)
