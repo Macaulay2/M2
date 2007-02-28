@@ -75,8 +75,7 @@ lastCheck = (X,G,d) -> (
 --==============================================
 
 
-noetherPrime = (X,I,G,U,V) -> (
-     R := ring I;
+noetherPrime = (R,X,I,G,U,V) -> (
      k := coefficientRing R;
      done := false;
      f := map(R,R,reverse(U|V));
@@ -99,7 +98,7 @@ noetherPrime = (X,I,G,U,V) -> (
 
 -- 
 -- this alg follows from: Thm 2.3 Kredel-Weispfenning 1988 J. Symbolic Computation.
-maxAlgPerm = (R,X,G,d) -> ( -- may need a sort or reverse...
+maxAlgPermOLD = (R,X,G,d) -> ( -- may need a sort or reverse...
      S := subsets(X,d);
      M := gens G;
      for j to # S - 1 do (
@@ -110,15 +109,15 @@ maxAlgPerm = (R,X,G,d) -> ( -- may need a sort or reverse...
      	  );
      );
 
---maxAlgPermB is a recursive version of maxAlgPerm that for large #X and medium d should be far faster, it appears to be working.
-maxAlgPermB = (R,X,G,d,S) -> (
+--maxAlgPerm is a recursive version of maxAlgPerm that for large #X and medium d should be far faster, it appears to be working.
+maxAlgPerm = (R,X,G,d,S) -> (
      M := gens G;
      if #S == d then return S;
      for j to #X - 1 do (
 	  for i to numgens source M -1 do (
 	       if isSubset(support leadTerm M_(0,i),S|{X_j}) then break;
      	       if i == (numgens source M - 1) then ( 
-		    S = maxAlgPermB(R,X - set({X_j}),G,d,S|{X_j});
+		    S = maxAlgPerm(R,X - set({X_j}),G,d,S|{X_j});
 		    if not instance(S,List) then S = {};
 		    if #S == d then return S; 
 		    ); 
@@ -127,7 +126,7 @@ maxAlgPermB = (R,X,G,d,S) -> (
      );	    
 
 
-maxAlgPermC = (R,X,G,d) -> (
+maxAlgPermC = (R,X,G,d) -> ( --doesn't work see eg 4
      M := gens G;
      S := {};
      for j to #X - 1 do (
@@ -142,10 +141,9 @@ maxAlgPermC = (R,X,G,d) -> (
      );	         
 		    
 
-noetherNotPrime = (X,I,G,d) -> (
-     R := ring G;
+noetherNotPrime = (R,X,I,G,d) -> (
      k := coefficientRing R;
-     S := maxAlgPermB(R,X,G,d,{});
+     S := maxAlgPerm(R,X,G,d,{});
      np := map(R,R,(X-set(S)|S));
      I = np I;
      G = gb I;
@@ -171,32 +169,25 @@ noetherNotPrime = (X,I,G,d) -> (
 );
 
 
-noetherNormalization = method();
-noetherNormalization(Ideal) := Sequence => I -> (
+noetherNormalization = method()
+noetherNormalization(Ideal) := Sequence => (I) -> (
+     R := ring I;
      G := gb I;
      d := dim I;
-     X := sort gens ring G;
+     X := sort gens R;
      (U,V) := varPrep(X,G);
-     if d == #U then noetherPrime(X,I,G,U,V) else noetherNotPrime(X,I,G,d)
+     if d == #U then noetherPrime(R,X,I,G,U,V) else noetherNotPrime(R,X,I,G,d)
      );     
 
 
 
 --========================================================
---Examples:
 
---maxAlgPermB testing area...
-R = QQ[x_1..x_15, MonomialOrder => Lex]; --the same ordering as in the paper
-I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1,x_7*x_4 -x_11, x_15^8);
-G = gb I
-X = sort gens ring G
-d = dim I
-maxAlgPerm(R,X,G,d)
-maxAlgPermC(R,X,G,d) 
-maxAlgPermB(R,X,G,d,{}) 
-benchmark "maxAlgPerm(R, X, G, d)"
-benchmark "maxAlgPermB(R,X,G,d,{})"
-benchmark "maxAlgPermC(R,X,G,d)" --<-- fastest!
+
+--Examples:
+clearAll
+installPackage "NoetherNormalization"
+methods noetherNormalization
 
 --Ex#1
 R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
@@ -205,6 +196,15 @@ noetherNormalization(I)
 benchmark "noetherNormalization(I)"
 q:= x_4^2+x_3^5+x_2*x_1
 leadMonomial(q)
+--alg dependent vars, ideal, map
+
+          p       s
+I < k[x] <= k[y] <- k[t]
+            J<
+	    
+we take I we currently return p^-1, we want p,s,J
+don't compute the inverse asking for it. 
+
 
 --Examples of not so good I
 --Ex#2
@@ -215,6 +215,7 @@ d = dim I
 X = sort gens R -- note that this "sort" is very important
 varPrep(X,G)
 np = maxAlgPerm(R,X,G,d)
+maxAlgPermC(R,X,G,d)
 G = gb np I
 (U,V) = varPrep(X,G)
 noetherNormalization I
@@ -227,6 +228,10 @@ G = gb I
 gens G
 d = dim I
 X = sort gens R -- note that this "sort" is very important
+np = maxAlgPerm(R,X,G,d)
+maxAlgPermC(R,X,G,d)
+
+
 varPrep(X,G)
 noetherNormalization(I)
 
@@ -238,8 +243,9 @@ gens G
 d = dim I
 X = sort gens R -- note that this "sort" is very important
 varPrep(X,G)
-
-
+np = maxAlgPerm(R,X,G,d)
+maxAlgPermC(R,X,G,d)
+maxAlgPermB(R,X,G,d,{})
 
 
 --Ex#5
@@ -273,6 +279,7 @@ x_5<x_4
 --
 -- noetherNotPrime
 --     	  Will also use T being outputted.
+
 
 
 
