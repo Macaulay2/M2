@@ -1084,6 +1084,7 @@ export {
 	symbol unstack,
 	symbol use,
 	symbol userSymbols,
+	symbol utf8,
 	symbol validate,
 	symbol value,
 	symbol values,

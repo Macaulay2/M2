@@ -18,6 +18,7 @@ use err;
 use stdiop;
 use ctype;
 use stdio;
+use vararray;
 use varstrin;
 use getline;
 use strings;
@@ -291,6 +292,66 @@ ascii(e:Expr):Expr := (
 	  else WrongArgSmallInteger(1))
      else buildErrorPacket("expects a string, a small integer, or an array of small integers"));
 setupfun("ascii",ascii);
+
+utf8(v:array(int)):Expr := (
+     w := newvarstring(length(v)+10);
+     foreach i in v do (
+	  if (i &     ~0x7f) == 0 then w << char(i) else
+	  if (i &    ~0x7ff) == 0 then w << char(0xc0 | (i >> 6)) << char(0x80 | (i & 0x3f)) else
+	  if (i &   ~0xffff) == 0 then w << char(0xe0 | (i >> 12)) << char(0x80 | ((i >> 6) & 0x3f)) << char(0x80 | (i & 0x3f)) else
+	  if (i & ~0x1fffff) == 0 then w << char(0xf0 | (i >> 18)) << char(0x80 | ((i >> 12) & 0x3f)) << char(0x80 | ((i >> 6) & 0x3f)) << char(0x80 | (i & 0x3f))
+	  else ( return buildErrorPacket("encountered integer too large for utf-8 encoding"); w));
+     Expr(takestring(w)));
+
+erru():Expr := buildErrorPacket("string ended unexpectedly during utf-8 decoding");
+utf8(y:Expr):Expr := (
+     if isIntArray(y) then utf8(toIntArray(y))
+     else when y is s:string do (
+	  n := length(s);
+	  x := newvararrayint(n+10);
+	  i := 0;
+	  while i < n do (
+	       c := int(uchar(s.i));
+	       if (c & 0x80) == 0 then (
+		    x << c;
+		    i = i+1;
+		    )
+	       else if (c & 0xe0) == 0xc0 then (
+		    if i+1 < n then (
+		    	 d := int(uchar(s.(i+1)));
+		    	 x << (((c & ~0xe0) << 6) | (d & ~0xc0));
+			 i = i+2;
+	       		 )
+		    else return erru();
+		    )
+	       else if (c & 0xf0) == 0xe0 then (
+		    if i+2 < n then (
+		    	 d := int(uchar(s.(i+1)));
+		    	 e := int(uchar(s.(i+2)));
+		    	 x << (((c & ~0xf0) << 12) | ((d & ~0xc0) << 6) | (e & ~0xc0));
+			 i = i+3;
+			 )
+		    else return erru();
+		    )
+	       else if (c & 0xf8) == 0xf0 then (
+		    if i+3 < n then (
+		    	 d := int(uchar(s.(i+1)));
+		    	 e := int(uchar(s.(i+2)));
+		    	 f := int(uchar(s.(i+3)));
+		    	 x << (((c & ~0xf8) << 18) | ((d & ~0xc0) << 12) | ((e & ~0xc0) << 6) | (f & ~0xc0));
+			 i = i+4;
+			 )
+		    else return erru();
+		    )
+	       else return buildErrorPacket("unexpected byte encountered in utf-8 decoding");
+	       );
+	  a := takearrayint(x);
+     	  Expr(list(new Sequence len length(a) do foreach i in a do provide Expr(toInteger(i)))))
+     is i:Integer do (
+	  if !isInt(i) then return WrongArgSmallInteger();
+	  Expr(utf8(array(int)(toInt(i)))))
+     else buildErrorPacket("expects a string, a small integer, or an array of small integers"));
+setupfun("utf8",utf8);
 
 export checknoargs(e:Expr):Expr := (
      when e
