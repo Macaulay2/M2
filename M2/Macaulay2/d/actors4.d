@@ -304,6 +304,7 @@ utf8(v:array(int)):Expr := (
      Expr(takestring(w)));
 
 erru():Expr := buildErrorPacket("string ended unexpectedly during utf-8 decoding");
+errb():Expr := buildErrorPacket("unexpected byte encountered in utf-8 decoding");
 utf8(y:Expr):Expr := (
      if isIntArray(y) then utf8(toIntArray(y))
      else when y is s:string do (
@@ -319,6 +320,7 @@ utf8(y:Expr):Expr := (
 	       else if (c & 0xe0) == 0xc0 then (
 		    if i+1 < n then (
 		    	 d := int(uchar(s.(i+1)));
+			 if (d & 0xc0) != 0x80 then return errb();
 		    	 x << (((c & ~0xe0) << 6) | (d & ~0xc0));
 			 i = i+2;
 	       		 )
@@ -327,7 +329,9 @@ utf8(y:Expr):Expr := (
 	       else if (c & 0xf0) == 0xe0 then (
 		    if i+2 < n then (
 		    	 d := int(uchar(s.(i+1)));
+			 if (d & 0xc0) != 0x80 then return errb();
 		    	 e := int(uchar(s.(i+2)));
+			 if (e & 0xc0) != 0x80 then return errb();
 		    	 x << (((c & ~0xf0) << 12) | ((d & ~0xc0) << 6) | (e & ~0xc0));
 			 i = i+3;
 			 )
@@ -336,14 +340,17 @@ utf8(y:Expr):Expr := (
 	       else if (c & 0xf8) == 0xf0 then (
 		    if i+3 < n then (
 		    	 d := int(uchar(s.(i+1)));
+			 if (d & 0xc0) != 0x80 then return errb();
 		    	 e := int(uchar(s.(i+2)));
+			 if (e & 0xc0) != 0x80 then return errb();
 		    	 f := int(uchar(s.(i+3)));
+			 if (f & 0xc0) != 0x80 then return errb();
 		    	 x << (((c & ~0xf8) << 18) | ((d & ~0xc0) << 12) | ((e & ~0xc0) << 6) | (f & ~0xc0));
 			 i = i+4;
 			 )
 		    else return erru();
 		    )
-	       else return buildErrorPacket("unexpected byte encountered in utf-8 decoding");
+	       else return errb();
 	       );
 	  a := takearrayint(x);
      	  Expr(list(new Sequence len length(a) do foreach i in a do provide Expr(toInteger(i)))))
