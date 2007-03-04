@@ -1306,7 +1306,7 @@ StopWithMinimalGenerators.
 GeneratorLimit has been changed to BasisElementLimit
 
 Bug fixed in code for projective resolutions of inohomogeneous modules.  This
-includes modules over inhomgeneous rings.  Previous results may have been
+includes modules over inhomogeneous rings.  Previous results may have been
 wrong, so should be rerun.  We don't actually have any examples of wrong
 results, though - the old code seems to go into an infinite loop instead.
 

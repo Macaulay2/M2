@@ -177,7 +177,7 @@ document {
 	  },
      "The function ", TO "betti", " can be used to display the ranks of the
      free modules in ", TT "C", ", together with the distribution of the basis 
-     elements by degree, at least for resolutions of homgeneous modules.",
+     elements by degree, at least for resolutions of homogeneous modules.",
      EXAMPLE {
 	  "betti C"
 	  },
