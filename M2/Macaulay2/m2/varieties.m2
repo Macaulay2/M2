@@ -33,7 +33,7 @@ Spec Ring := AffineVariety => (R) -> if R.?Spec then R.Spec else R.Spec = (
 Proj = method()
 expression ProjectiveVariety := (X) -> new FunctionApplication from { Proj, ring X }
 Proj Ring := ProjectiveVariety => (R) -> if R.?Proj then R.Proj else R.Proj = (
-     if not isHomogeneous R then error "expected a homgeneous ring";
+     if not isHomogeneous R then error "expected a homogeneous ring";
      new ProjectiveVariety from {
      	  symbol ring => R,
 	  symbol cache => new CacheTable

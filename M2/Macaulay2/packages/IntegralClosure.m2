@@ -416,7 +416,7 @@ conductor(RingMap) := Ideal => (F) -> (
      	       intersect apply((numgens P)-1, i->(
 	       m:=matrix{P_(i+1)};
 	       I:=ideal modulo(m,matrix{P_0}|M))))
-	  else error "conductor: expected a homgeneous ideal in a singly graded ring"
+	  else error "conductor: expected a homogeneous ideal in a singly graded ring"
      )
 
 --------------------------------------------------------------------
