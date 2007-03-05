@@ -61,8 +61,9 @@ lastCheck = (X,G,d) -> (
      while i < min(d,numgens source M) and not isSubset(support M_(0,i),toList(X_0..X_(d-1))) do (
 	  i = i+1;
 	  );
-     if i != d then return false
+     if i != min(d,numgens source M) then return false
      else(
+	  print 2;
 	  for j from d to #X-1 do (      
 	       for p from 0 to numgens source M - 1 do (
 		    if {X_j} == support leadTerm M_(0,p) then break;
@@ -75,7 +76,7 @@ lastCheck = (X,G,d) -> (
 --==============================================
 
 
-noetherPrime = (R,X,I,G,U,V) -> (
+noetherPrime = (R,X,I,G,U,V,homogeneous) -> (
      k := coefficientRing R;
      done := false;
      f := map(R,R,reverse(U|V));
@@ -89,10 +90,13 @@ noetherPrime = (R,X,I,G,U,V) -> (
 	  g := map(R,R,reverse(U|V));
 --	  g := map(R,R,U|V);
 	  h = g*f;
-	  G = gb h I;
+	  if homogeneous then (
+	       G = gb( h I, Algorithm => Homogeneous2);
+	       )
+	  else G = gb h I;
 	  done = lastCheck(X,G, #U);
 	  if done then return((gens G,h));
-	  (U,V) = varPrep G;
+	  (U,V) = varPrep(X,G);
       	  );
      );
 
@@ -107,6 +111,7 @@ maxAlgPermOLD = (R,X,G,d) -> ( -- may need a sort or reverse...
      	       if i == (numgens source M - 1) then return S_j        --map(R,R,(X-set(S_j)|S_j)) -- we switched this.
 	       );
      	  );
+
      );
 
 --maxAlgPerm is a recursive version of maxAlgPerm that for large #X and medium d should be far faster, it appears to be working.
@@ -141,7 +146,7 @@ maxAlgPermC = (R,X,G,d) -> ( --doesn't work see eg 4
      );	         
 		    
 
-noetherNotPrime = (R,X,I,G,d) -> (
+noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
      k := coefficientRing R;
      S := maxAlgPerm(R,X,G,d,{});
      np := map(R,R,(X-set(S)|S));
@@ -161,7 +166,10 @@ noetherNotPrime = (R,X,I,G,d) -> (
 	  g := map(R,R,reverse(U|V));
 --	  g := map(R,R,U|V);
 	  h = g*f;
-	  G = gb h I;
+	  if homogeneous then (
+	       G = gb( h I, Algorithm => Homogeneous2);
+	       )
+	  else G = gb h I;
 	  done = lastCheck(X,G, #U);
 	  if done then return((gens G,h));
 	  (U,V) = varPrep G;
@@ -172,14 +180,26 @@ noetherNotPrime = (R,X,I,G,d) -> (
 noetherNormalization = method()
 noetherNormalization(Ideal) := Sequence => (I) -> (
      R := ring I;
-     G := gb I;
+     homogeneous := (isHomogeneous(R) and isHomogeneous(I));
+     if homogeneous then G = gb(I, Algorithm => Homogeneous2);
+     if not homogeneous then G = gb I;
+     print gens G;
      d := dim I;
      X := sort gens R;
      (U,V) := varPrep(X,G);
-     if d == #U then noetherPrime(R,X,I,G,U,V) else noetherNotPrime(R,X,I,G,d)
+     if d == #U then noetherPrime(R,X,I,G,U,V,homogeneous) else noetherNotPrime(R,X,I,G,d,homogeneous)
      );     
 
 
+--homogeneous stuff
+--do we have an input option for the homogeneous case or do we always use the homogeneous program on homogeneous ideals?
+--can we just dehomogenize wrt to one variable and then rehomogenize at the end?
+--how do we do the linear change of variables if they have some weird weighting on the variables?
+
+--isHomogeneous works on rings and ideals and elements
+--use gb(...,Algorithm => Homogeneous2)
+--homogenize(m,v) m ring element, v variable
+--degree(v,m) v variable, m ring element, degree of m with respect to v
 
 --========================================================
 
@@ -188,6 +208,24 @@ noetherNormalization(Ideal) := Sequence => (I) -> (
 clearAll
 installPackage "NoetherNormalization"
 methods noetherNormalization
+
+--Homogeneous example
+R = QQ[x_5,x_4,x_3,x_2,x_1, MonomialOrder => Lex];
+p = x_2^2+x_1*x_2+1
+homogenize(p,x_5)
+I = ideal(x_2^2+x_1*x_2+x_5^2, x_1*x_2*x_3*x_4+x_5^4);
+noetherNormalization I
+isHomogeneous I
+g = gb(I, Algorithm => Homogeneous2)
+gens g
+dim I
+    R := ring I;
+     G := gb I;
+     d := dim I;
+     X := sort gens R;
+     (U,V) := varPrep(X,G)
+
+
 
 --Ex#1
 R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
