@@ -58,16 +58,15 @@ varPrep = (X,G) -> (
 lastCheck = (X,G,d) -> (
      M := gens G;
      i := 0;
-     while i < min(d,numgens source M) and not isSubset(support M_(0,i),toList(X_0..X_(d-1))) do (
+     while i < numgens source M and not isSubset(support M_(0,i),toList(X_0..X_(d-1))) do ( 
 	  i = i+1;
 	  );
-     if i != min(d,numgens source M) then return false
+     if i != numgens source M then return false
      else(
-	  print 2;
 	  for j from d to #X-1 do (      
 	       for p from 0 to numgens source M - 1 do (
 		    if {X_j} == support leadTerm M_(0,p) then break;
-                    if p == numgens source M - 1 then false
+                    if p == numgens source M - 1 then return false;
             	    );
                );
 	  );
@@ -75,8 +74,11 @@ lastCheck = (X,G,d) -> (
      );
 --==============================================
 
+--tricky = (U,next)
+
 
 noetherPrime = (R,X,I,G,U,V,homogeneous) -> (
+     counter := 0; --counts the number of times lastCheck is called
      k := coefficientRing R;
      done := false;
      f := map(R,R,reverse(U|V));
@@ -92,10 +94,11 @@ noetherPrime = (R,X,I,G,U,V,homogeneous) -> (
 	  h = g*f;
 	  if homogeneous then (
 	       G = gb( h I, Algorithm => Homogeneous2);
-	       )
-	  else G = gb h I;
+	       );
+	  if not homogeneous then G = gb h I;
 	  done = lastCheck(X,G, #U);
-	  if done then return((gens G,h));
+	  counter = counter + 1;
+	  if done then return((counter,gens G,h));
 	  (U,V) = varPrep(X,G);
       	  );
      );
@@ -129,24 +132,10 @@ maxAlgPerm = (R,X,G,d,S) -> (
 	       );
 	  );
      );	    
-
-
-maxAlgPermC = (R,X,G,d) -> ( --doesn't work see eg 4
-     M := gens G;
-     S := {};
-     for j to #X - 1 do (
-	  for i to numgens source M-1 do (
-	       if isSubset(support leadTerm M_(0,i),S|{X_j}) then break;
-     	       if i == (numgens source M - 1) then ( 
-		    S = S|{X_j};
-		    if #S == d then return S; 
-	    	    ); 
-	       );
-      	   );
-     );	         
 		    
 
 noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
+     counter := 0; --counts the number of times lastCheck is called
      k := coefficientRing R;
      S := maxAlgPerm(R,X,G,d,{});
      np := map(R,R,(X-set(S)|S));
@@ -171,7 +160,8 @@ noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
 	       )
 	  else G = gb h I;
 	  done = lastCheck(X,G, #U);
-	  if done then return((gens G,h));
+	  counter = counter + 1;
+	  if done then return((counter,gens G,h));
 	  (U,V) = varPrep G;
       	  );
 );
@@ -183,13 +173,11 @@ noetherNormalization(Ideal) := Sequence => (I) -> (
      homogeneous := (isHomogeneous(R) and isHomogeneous(I));
      if homogeneous then G = gb(I, Algorithm => Homogeneous2);
      if not homogeneous then G = gb I;
-     print gens G;
      d := dim I;
      X := sort gens R;
      (U,V) := varPrep(X,G);
      if d == #U then noetherPrime(R,X,I,G,U,V,homogeneous) else noetherNotPrime(R,X,I,G,d,homogeneous)
      );     
-
 
 --homogeneous stuff
 --do we have an input option for the homogeneous case or do we always use the homogeneous program on homogeneous ideals?
@@ -202,7 +190,18 @@ noetherNormalization(Ideal) := Sequence => (I) -> (
 --degree(v,m) v variable, m ring element, degree of m with respect to v
 
 --========================================================
+--dan example
+-- 1. use information about variables integral, algebraic, and other and put them in this ordering and then try it.
+-- 2. is lex only used for varprep
+-- 3. ps, man ps or top tells how long it takes, shell command called time also
+-- 4. or just stop singular from printing
+xy(x+y)
+(xy-1)(x+y)
+x^2*y+x*y^2+1
 
+R = ZZ/2[x,y, MonomialOrder => Lex];
+I = ideal((x^2*y+x*y^2+1))
+noetherNormalization I
 
 --Examples:
 clearAll
@@ -216,19 +215,10 @@ homogenize(p,x_5)
 I = ideal(x_2^2+x_1*x_2+x_5^2, x_1*x_2*x_3*x_4+x_5^4);
 noetherNormalization I
 isHomogeneous I
-g = gb(I, Algorithm => Homogeneous2)
-gens g
-dim I
-    R := ring I;
-     G := gb I;
-     d := dim I;
-     X := sort gens R;
-     (U,V) := varPrep(X,G)
-
 
 
 --Ex#1
-R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
+R = ZZ/2[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
 I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
 noetherNormalization(I)
 benchmark "noetherNormalization(I)"
@@ -260,8 +250,9 @@ noetherNormalization I
 
 
 --Ex#3
-R = QQ[x_1,x_2,x_3,MonomialOrder => Lex]
+R = ZZ/2[x_1,x_2,x_3,MonomialOrder => Lex]
 I = ideal(x_1*x_2,x_1*x_3)
+noetherNormalization I
 G = gb I
 gens G
 d = dim I
