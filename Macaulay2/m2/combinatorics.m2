@@ -4,6 +4,9 @@ subsets(ZZ,ZZ) := List => (n,j) -> (
      if j < 0 then return {};
      if j == 0 then return {{}};
      if j == 1 then return toList apply(0 .. n-1, i -> {i});
+     if 2*j > n then return (
+	  y := toList (0 .. n-1);
+	  apply(reverse subsets(n,n-j), s -> y - set s));
      x := join apply(1 .. n-1, j -> apply(0 .. j-1, i -> (i,j)));
      scan(j-2, i -> x = join apply(x, s -> apply(0 .. s#0 - 1, i -> prepend(i,s))));
      toList apply(x,toList))
