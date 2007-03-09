@@ -74,8 +74,7 @@ orP = x -> (
 
 Parser | String := (p,s) -> p | constParser s
 String | Parser := (s,p) -> constParser s | p
-Parser | Parser := (p,q) -> new Parser from (
-     c -> (
+Parser | Parser := (p,q) -> new Parser from ( c -> (
 	  p' := p c;
 	  q' := q c;
 	  if p' === null then q'
