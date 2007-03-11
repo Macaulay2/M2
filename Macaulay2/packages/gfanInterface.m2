@@ -13,7 +13,7 @@ newPackage(
     	)
 
 export {
-     gfan, weightVector, inw, groebnerCone, Symmetries
+     gfan, weightVector, inw, groebnerCone, Symmetries, Tracing
      }
 
 gfan'path = gfanInterface#Options#Configuration#"path"
@@ -43,20 +43,23 @@ weightVector(List,List) := (inL,L) -> (
 	  if min h <= 0 then error "need to try harder to find a weight vector";
      	  while min w <= 0 do w = w + h;
      	  w)
-     else null
+     -- other cases should return null
      )
 
-groebnerCone = method(TypicalValue=>Matrix)
+groebnerCone = method()
 groebnerCone(List,List) := (inL,L) -> (
      (w,W',H,W) := wtvec(inL,L);
      (W',H)
      )
 
-inw = (w,I) -> (
+inw = method(TypicalValue=>Ideal)
+inw(List,Ideal) := (w,I) -> (
      R := ring I;
-     R1 := (coefficientRing R)[gens R, Weights=>w];
+     R1 := (coefficientRing R)[gens R, 
+	      Degrees=>(monoid R).Options.Degrees, 
+	      MonomialOrder=>Weights=>w];
      I' := substitute(I,R1);
-     substitute(leadTerm gens gb I', R))
+     ideal substitute(leadTerm(1, gens gb I'), R))
 
 writeGfanIdeal = method()
 writeGfanIdeal(String,Ideal,List) := (filename,I,symms) -> (
@@ -69,6 +72,7 @@ writeGfanIdeal(String,Ideal,List) := (filename,I,symms) -> (
 	  if i < n then F << "," else F << "}";
 	  F << endl;
 	  );
+     symms = apply(symms, x -> apply(x,index));
      -- If any symmetries, write them here
      if #symms > 0 then (
 	  F << toString symms << endl;
@@ -85,7 +89,7 @@ readGfanIdeals String := (f) -> (
      apply(H, s -> value("{"|s|"}")))
 
 
-gfan = method(Options=>{Symmetries=>{}})
+gfan = method(Options=>{Symmetries=>{}, Tracing => 0})
 gfan Ideal := opts -> (I) -> (
      R := ring I;
      p := char R;
@@ -106,7 +110,6 @@ gfan Ideal := opts -> (I) -> (
      run ex;
      ex2 := gfan'path| "gfan_leadingterms -m <" | f | ".out >" | f | ".lt";
      run ex2;
-
      L = readGfanIdeals(f | ".out");
      M = readGfanIdeals(f | ".lt");
      (M,L)
@@ -119,27 +122,50 @@ document {
 	Headline => "a Macaulay2 interface to gfan",
 	EM "gfanInterface", " is an interface to Anders Jenssen's gfan package, which is a C++
 	program to compute the Groebner fan (i.e. all the initial ideals) of an ideal.",
-	PARA{},
-	
+	PARA{
+	"The main function in this package is ", TO gfan, ", which computes all of the Groebner bases and initial ideals
+	of a given ideal.  A useful
+	feature of this function is that it can handle symmetries in the ideal."},
+	PARA{"There are other functions in the gfan package.  If you wish to use
+	one whose interface is not included here, you have two options: either write the interface yourself, and then send it
+	to the package author, so it can be included for others, or ask the package author to write it."},
 	}
 document {
 	Key => {gfan, (gfan, Ideal)},
 	Headline => "all initial monomial ideals of an ideal",
 	Usage => "(M,L) = gfan I",
 	Inputs => { "I" => Ideal,
-	     Symmetries => List => "of permutations of the variables leaving the ideal invariant"
+	     Symmetries => List => "of permutations of the variables leaving the ideal invariant",
+	     Tracing => Boolean => "0 means as quiet as possible, larger numbers give more display"
 	     },
 	Outputs => {
 	     "M" => List => "of lists of monomials",
 	     "L" => List => "of all of the initial ideals of I"
 	     },
 	EXAMPLE lines ///
-	  R = ZZ/32003[symbol a..symbol d]
+	  R = ZZ/32003[symbol a..symbol d];
 	  I = monomialCurveIdeal(R,{1,3,4})
 	  time (M,L) = gfan I
 	  M/toString/print;
 	  L/toString/print;
      	///,
+	PARA{},
+	"If the ideal is invariant under some permutation of the variables, then gfan can compute
+	all initial ideals up to this equivalence, which can change an intractible problem to a doable one.",
+	PARA{},
+	"The cyclic group of order 4 a --> b --> c --> d --> a leaves the following ideal fixed.",
+	EXAMPLE lines ///
+	   S = ZZ/32003[a..e];
+	   I = ideal"a+b+c+d,ab+bc+cd+da,abc+bcd+cda+dab,abcd-e4"
+	   (inL,L) = gfan I;
+	   #inL
+	   ///,
+	PARA{},
+	"There are 96 initial ideals of this ideal.  Let's use the symmetry:",
+	EXAMPLE lines ///
+	   (inL1, L1) = gfan(I, Symmetries=>{(b,c,d,a,e)});
+	   #inL1
+	   ///,
 	Caveat => {""},
 	SeeAlso => {"weightVector", "inw", "groebnerCone"}
 	}
@@ -148,13 +174,49 @@ document {
 	Key => {weightVector, (weightVector, List,List)},
 	Headline => "weight vector of a marked set of polynomials",
 	Usage => "weightVector(inL,L)",
-	Inputs => { "inL" => {"of monomials which are to be the lead terms of the elements of ", TT "L"},
-	     "L" => "of polynomials"
+	Inputs => { "inL" => List => {"of monomials which are to be the lead terms of the elements of ", TT "L"},
+	     "L" => List => "of polynomials"
 	     },
 	Outputs => {
-	     {"a list of positive integers giving a weight vector under which ", TT "inL", " are the lead terms of ", TT "L"}
+	     {"of positive integers giving a weight vector under which ", TT "inL", " are the lead terms of ", TT "L"}
 	     },
 	"If there is no weight vector, then ", TT "null", " is returned.",
+	EXAMPLE lines ///
+	  R = ZZ/32003[symbol a..symbol d]
+	  inL = {c^4, b*d^2, b*c, b^2*d, b^3}
+	  L = {c^4-a*d^3, -c^3+b*d^2, b*c-a*d, -a*c^2+b^2*d, b^3-a^2*c}
+	  weightVector(inL,L)
+	  groebnerCone(inL,L)
+	  ///,
+        PARA{"Now we construct all of the initial ideals of the rational quartic curve in P^3,
+	     then compute weight vectors for each, and then verify that the initial ideals that
+	     gfan returned are the initial ideals using these weight vectors."},
+	EXAMPLE lines ///
+	  I = monomialCurveIdeal(R,{1,3,4})
+	  time (inLs,Ls) = gfan I
+     	  wtvecs = apply(#inLs, i -> weightVector(inLs#i, Ls#i));
+	  wtvecs/print;
+     	  inL1 = wtvecs/(w -> inw(w,I));
+	  inL1/toString/print;
+	  assert(inL1 == inLs/ideal)
+     	///,
+	Caveat => {"In the current implementation, it might be possible that a positive vector exists, but the algorithm fails to find it.  In this 
+	     case, use groebnerCone and find one by hand.  You might want to email the package author to complain too!"},
+	SeeAlso => {"gfan", "inw", "groebnerCone"}
+	}
+
+
+document {
+	Key => {groebnerCone, (groebnerCone, List,List)},
+	Headline => "the cone whose interior weight vectors give the given initial ideal",
+	Usage => "(C,H) = groebnerCone(inL,L)",
+	Inputs => { "inL" => List => {"of monomials which are to be the lead terms of the elements of ", TT "L"},
+	     "L" => List => "of polynomials"
+	     },
+	Outputs => {
+     	     "C" => {ofClass Matrix, ", the columns are the extremal rays of the Groebner cone"},
+	     "H" => {ofClass Matrix, ", the columns generate the largest linear space contained in the cone"},
+	     },
 	EXAMPLE lines ///
 	  R = ZZ/32003[symbol a..symbol d]
 	  inL = {c^4, b*d^2, b*c, b^2*d, b^3}
@@ -167,8 +229,33 @@ document {
      	  scan(#inLs, i -> print weightVector(inLs#i, Ls#i));
      	  scan(#inLs, i -> print groebnerCone(inLs#i, Ls#i));
      	///,
-	Caveat => {""},
+	Caveat => {"In the current implementation, it might be possible that a positive vector exists, but the algorithm fails to find it.  In this 
+	     case, use groebnerCone and find one by hand.  You might want to email the package author to complain too!"},
 	SeeAlso => {"gfan", "inw", "groebnerCone"}
+	}
+
+document {
+	Key => {inw, (inw, List,Ideal)},
+	Headline => "initial ideal with respect to a weight vector",
+	Usage => "inw(w,I)",
+	Inputs => { "w" => List => {"a positive weight vector"},
+	     "I" => Ideal => "in a polynomial ring (not a quotient ring)"
+	     },
+	Outputs => {
+	     {"the ideal of lead polynomials under this weight vector"}
+	     },
+        "The weight vector should be totally positive, even in the homogeneous case.  
+	The result may or may not be a monomial ideal.",
+	EXAMPLE lines ///
+	  R = ZZ/32003[symbol a..symbol d]
+	  inL = {c^4, b*d^2, b*c, b^2*d, b^3}
+	  L = {c^4-a*d^3, -c^3+b*d^2, b*c-a*d, -a*c^2+b^2*d, b^3-a^2*c}
+	  weightVector(inL,L)
+	  groebnerCone(inL,L)
+	  inw({8,8,3,1},ideal L)
+	  inw({5,5,2,1},ideal L)
+	  ///,
+	SeeAlso => {"gfan", "weightVector", "groebnerCone"}
 	}
 
 end
