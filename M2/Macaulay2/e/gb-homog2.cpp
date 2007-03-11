@@ -1025,7 +1025,7 @@ const MatrixOrNull *GB_comp::get_syzygies()
 const MatrixOrNull *GB_comp::get_initial(int nparts)
 {
   start_computation();
-  MatrixConstructor mat(_Fsyz, 0);
+  MatrixConstructor mat(_F, 0);
   for (int i=0; i<_gb.length(); i++)
     {
       gbvector *f = _GR->gbvector_lead_term(nparts, _F, _gb[i]->f);
