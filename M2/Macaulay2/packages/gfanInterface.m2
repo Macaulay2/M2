@@ -6,7 +6,7 @@ newPackage(
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => ""}
 	     },
     	Headline => "Interface to A. Jensen's gfan package",
-	Configuration => { "path" => "",
+	Configuration => { "path" => "/Users/mike/local/software/sage/sage-1.4.1.2/local/bin/",
 	     "keep files" => true
 	      },
     	DebuggingMode => true
@@ -19,16 +19,6 @@ export {
 gfan'path = gfanInterface#Options#Configuration#"path"
 
 needs "FourierMotzkin.m2"
-wtvec = (I,inI) -> (
-  W = flatten apply(numgens I, i -> (
-    f := inI_i;
-    g := I_i;
-    m = first exponents(f);
-    apply(exponents(g-f), e -> m-e)));
-  W = transpose matrix W;
-  W' = - (fourierMotzkin W)_0;
-  w := sum entries transpose W';
-  (w, W',W))
 
 wtvec = (inL,L) -> (
   W := flatten apply(#inL, i -> (
@@ -47,7 +37,13 @@ weightVector(List,List) := (inL,L) -> (
      (w,W',H,W) := wtvec(inL,L);
      --(W',H) is the "cone": W' are the positive edges, and H is contained inside.
      -- we need to find a positive element in here
-     w
+     if min w > 0 then w else
+     if numgens source H > 0 then (
+	  h := sum entries transpose H;
+	  if min h <= 0 then error "need to try harder to find a weight vector";
+     	  while min w <= 0 do w = w + h;
+     	  w)
+     else null
      )
 
 groebnerCone = method(TypicalValue=>Matrix)
