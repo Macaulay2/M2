@@ -1,26 +1,22 @@
 newPackage(
 	"gfanInterface",
-    	Version => "1.0", 
-    	Date => "October 26, 2006",
+    	Version => "0.1", 
+    	Date => "March 11, 2007",
     	Authors => {
-	     {Name => "Mike Stillman", Email => "", HomePage => ""}
+	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => ""}
 	     },
-    	Headline => "Interface to the gfan package",
+    	Headline => "Interface to A. Jensen's gfan package",
+	Configuration => { "path" => "",
+	     "keep files" => true
+	      },
     	DebuggingMode => true
     	)
 
 export {
-     gfan, wtvec, inw, readGfanIdeals, writeGfanIdeal
+     gfan, weightVector, inw, groebnerCone, Symmetries
      }
 
-exportMutable {
-     options'gfan
-     }
-
-options'gfan = new MutableHashTable from {
-     "path" => "/Users/mike/local/software/sage/sage-1.4.1.2/local/bin/",
-     "keep files" => true
-     }
+gfan'path = gfanInterface#Options#Configuration#"path"
 
 needs "FourierMotzkin.m2"
 wtvec = (I,inI) -> (
@@ -34,6 +30,32 @@ wtvec = (I,inI) -> (
   w := sum entries transpose W';
   (w, W',W))
 
+wtvec = (inL,L) -> (
+  W := flatten apply(#inL, i -> (
+    f := inL#i;
+    g := L#i;
+    m = first exponents(f);
+    apply(exponents(g-f), e -> m-e)));
+  W = transpose matrix W;
+  F := fourierMotzkin W;
+  W' := - F_0;
+  w := sum entries transpose W';
+  (w, W',F_1,W))
+
+weightVector = method(TypicalValue=>List)
+weightVector(List,List) := (inL,L) -> (
+     (w,W',H,W) := wtvec(inL,L);
+     --(W',H) is the "cone": W' are the positive edges, and H is contained inside.
+     -- we need to find a positive element in here
+     w
+     )
+
+groebnerCone = method(TypicalValue=>Matrix)
+groebnerCone(List,List) := (inL,L) -> (
+     (w,W',H,W) := wtvec(inL,L);
+     (W',H)
+     )
+
 inw = (w,I) -> (
      R := ring I;
      R1 := (coefficientRing R)[gens R, Weights=>w];
@@ -41,7 +63,7 @@ inw = (w,I) -> (
      substitute(leadTerm gens gb I', R))
 
 writeGfanIdeal = method()
-writeGfanIdeal(String,Ideal) := (filename,I) -> (
+writeGfanIdeal(String,Ideal,List) := (filename,I,symms) -> (
      F := openOut filename;
      -- Now make the list of the gens of I
      F << "{";
@@ -50,6 +72,10 @@ writeGfanIdeal(String,Ideal) := (filename,I) -> (
      	  F << toExternalString(I_i);
 	  if i < n then F << "," else F << "}";
 	  F << endl;
+	  );
+     -- If any symmetries, write them here
+     if #symms > 0 then (
+	  F << toString symms << endl;
 	  );
      F << close;
      )
@@ -63,8 +89,8 @@ readGfanIdeals String := (f) -> (
      apply(H, s -> value("{"|s|"}")))
 
 
-gfan = method()
-gfan Ideal := (I) -> (
+gfan = method(Options=>{Symmetries=>{}})
+gfan Ideal := opts -> (I) -> (
      R := ring I;
      p := char R;
      if p === 0 and R =!= QQ then 
@@ -72,14 +98,17 @@ gfan Ideal := (I) -> (
      -- Create the input file
      f := temporaryFileName();
      << "using temporary file " << f << endl;
-     writeGfanIdeal(f, I);
-
-     ex := if p > 0 then 
-       options'gfan#"path"| "gfan --mod" | p | "  <" | f | " >" | f | ".out"
-     else
-       options'gfan#"path"| "gfan <" | f | " >" | f | ".out";
+     ex := if p > 0 then "--mod "|p else "";
+     if opts.Symmetries =!= {}
+     then (
+	  if not instance(opts.Symmetries, VisibleList)
+	  then error "Symmetries value should be a list of permutations (list of lists of integers)";
+	  ex = ex|" --symmetry";
+	  );
+     ex = gfan'path| "gfan " | ex | "  <" | f | " >" | f | ".out";
+     writeGfanIdeal(f, I, opts.Symmetries);
      run ex;
-     ex2 := options'gfan#"path"| "gfan_leadingterms -m <" | f | ".out >" | f | ".lt";
+     ex2 := gfan'path| "gfan_leadingterms -m <" | f | ".out >" | f | ".lt";
      run ex2;
 
      L = readGfanIdeals(f | ".out");
@@ -92,14 +121,18 @@ beginDocumentation()
 document { 
 	Key => "gfanInterface",,
 	Headline => "a Macaulay2 interface to gfan",
-	EM "gfanInterface", " is an interface to Anders Jenssen's gfan package, which can compute all
-	of the initial ideals of an ideal."
+	EM "gfanInterface", " is an interface to Anders Jenssen's gfan package, which is a C++
+	program to compute the Groebner fan (i.e. all the initial ideals) of an ideal.",
+	PARA{},
+	
 	}
 document {
 	Key => {gfan, (gfan, Ideal)},
 	Headline => "all initial monomial ideals of an ideal",
 	Usage => "(M,L) = gfan I",
-	Inputs => { "I" => Ideal },
+	Inputs => { "I" => Ideal,
+	     Symmetries => List => "of permutations of the variables leaving the ideal invariant"
+	     },
 	Outputs => {
 	     "M" => List => "of lists of monomials",
 	     "L" => List => "of all of the initial ideals of I"
@@ -111,7 +144,35 @@ document {
 	  M/toString/print;
 	  L/toString/print;
      	///,
-	Caveat => {""}
+	Caveat => {""},
+	SeeAlso => {"weightVector", "inw", "groebnerCone"}
+	}
+
+document {
+	Key => {weightVector, (weightVector, List,List)},
+	Headline => "weight vector of a marked set of polynomials",
+	Usage => "weightVector(inL,L)",
+	Inputs => { "inL" => {"of monomials which are to be the lead terms of the elements of ", TT "L"},
+	     "L" => "of polynomials"
+	     },
+	Outputs => {
+	     {"a list of positive integers giving a weight vector under which ", TT "inL", " are the lead terms of ", TT "L"}
+	     },
+	"If there is no weight vector, then ", TT "null", " is returned.",
+	EXAMPLE lines ///
+	  R = ZZ/32003[symbol a..symbol d]
+	  inL = {c^4, b*d^2, b*c, b^2*d, b^3}
+	  L = {c^4-a*d^3, -c^3+b*d^2, b*c-a*d, -a*c^2+b^2*d, b^3-a^2*c}
+	  weightVector(inL,L)
+	  groebnerCone(inL,L)
+	  I = monomialCurveIdeal(R,{1,3,4})
+	  time (inLs,Ls) = gfan I
+	  weightVector(inLs#0, Ls#0)
+     	  scan(#inLs, i -> print weightVector(inLs#i, Ls#i));
+     	  scan(#inLs, i -> print groebnerCone(inLs#i, Ls#i));
+     	///,
+	Caveat => {""},
+	SeeAlso => {"gfan", "inw", "groebnerCone"}
 	}
 
 end
@@ -144,6 +205,12 @@ unique L2
 L3 = L2/(I -> flatten entries gens gb ideal I)
 unique L3
 #oo
+
+-- an example with symmetries
+R = ZZ/32003[symbol a..symbol d,symbol e]
+I = ideal"a+b+c+d,ab+bc+cd+da,abc+bcd+cda+dab,abcd-e4"
+(M1,L1) = gfan I;
+(M2,L2) = gfan(I, Symmetries=>{(1,2,3,0,4)});
 
 -- veronese in general coordinates
 R = ZZ/32003[symbol a..symbol f]

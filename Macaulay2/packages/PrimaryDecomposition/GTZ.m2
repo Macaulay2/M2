@@ -1,3 +1,79 @@
+-------------------------------------------------------
+-- GTZ algorithm for computing primary decomposition --
+-------------------------------------------------------
+
+-- saturation
+-- 
+
+primaryDecompositionGTZ = method()
+primaryDecompositionGTZ Ideal := (I) -> (
+     -- if homogeneous, find the Hilbert function
+     -- compute codimension
+     -- handle some specific cases
+     -- switch to lex order
+     -- compute independent sets, maybe alot of them
+     primarycomps := {};
+     primecomps := {};
+     -- loop thru these sets, until ...
+     --    R1 := product order ring
+     --    R2 := k(u)[x\u];
+     --    move I to R1, compute a gb
+     --    h := compute a flattener element
+     --    J := move gb(I) to R2
+     --    call zeroDimensionalPD(J,...)
+     --    for each (P,Q), 
+     --     intersect back with the polynomial ring
+     )
+
+PD = method(Options=>{AnswerToDate => null})
+PD Ideal := opt -> (I) -> (
+     result := {}; -- a list of pairs (Q,P).
+     indep := independentSets I; -- a list
+     -- Now we loop through each one, or as many as we wish
+     --  once the codimension of I increases, then we are done with
+     --  this part
+     c := codim I;
+     while #indep > 0 and c === codim I do (
+	  );
+     -- at this point
+     join(result, PD(I, AnswerToDate => ans))    
+     )
+
+toFractionField = (I,u) -> (
+     R := ring u;
+     n := numgens R;
+     vars1 := support u;
+     d := #vars1;
+     vars2 := support ((product gens R)//u);
+     K := frac((coefficientRing R) (monoid[vars1]));
+     S := K (monoid [vars2,MonomialSize=>8]);
+     substitute(I,S)     
+     )
+
+gbdim0 = (I,u) -> (
+     -- compute a gb of IK[x\u], but with no fractions
+     K := frac ring I;
+     IK := toFractionField(I,u);
+     gbIK = ideal apply(flatten entries substitute(gens gb IK, K), numerator);
+     substitute(gbIK,ring IK)
+     )
+
+PDstep = (I,u) -> (
+     -- returns: I : h, h
+     H := time flatt(I,u);
+     h := time intersect values H;
+     h = h_0;
+     X := time minSat(I,h);
+     (X#0, X#2)
+     )
+
+PD1 = (I) -> (
+     time gb I;
+     time u := independentSets(I, Limit=>1);
+     (J,h) := PDstep(I,u#0);
+     (J, time trim(I + ideal(h)))
+     )
+-------------------------------------------------------
 debug PrimaryDecomposition
 
 factors = (F) -> (
@@ -172,6 +248,89 @@ rad Ideal := (I) -> (
      radI
      )
 
+end
+-- Bayes example #138
+loadPackage "ExampleIdeals"
+time H = examplesBayes();
+I = example(H,138);
+R = (coefficientRing ring I)[gens ring I, MonomialSize=>8]
+K = frac R
+I = substitute(I,R)
+load "toric.m2"
+
+time Isat = sat I;
+Irest = I : Isat;
+Irest = trim Irest;
+betti Irest
+time intersect(Irest,Isat);
+oo == I -- true
+betti Irest
+codim Irest
+degree Irest
+Z1 = PD1 Irest;
+time Za = Irest : Z1#0;
+intersect(Za,Z1#0) == Irest
+
+Iwork = Irest;
+Qs = {}
+time (Q,Iwork) = PD1 Iwork; Qs = append(Qs,Q);
+time scan(30, i -> (time (Q,Iwork) = PD1 Iwork; Qs = append(Qs,Q)))
+Qs/codim
+Qs/degree
+degree Iwork
+codim Iwork
+time (Q,Iwork) = PD1 Iwork;
+time (Q,Iwork) = PD1 Iwork;
+time (Q,Iwork) = PD1 Iwork;
+time (Q,Iwork) = PD1 Iwork;
+
+I14 = intersect select(Qs, I -> codim I === 14);
+I15g = Irest : I14;
+intersect(I14,I15g);
+oo == Irest -- false
+gbTrace=0
+
+indep = independentSets Irest;
+(Q1, h1) = PDstep(Irest,indep#0)
+h1
+Iwork = Irest
+Iwork = trim(Iwork + ideal(h1))
+(Q2, h2) = PDstep(Iwork,indep#1)
+transpose mingens Q2
+degree Q1
+degree Q2
+Iwork = trim(Iwork + ideal(h2))
+time indep = independentSets Iwork;
+(Q3, h3) = PDstep(Iwork,indep#0)
+Iwork = trim(Iwork + ideal(h3))
+(Q4, h) = PDstep(Iwork,indep#1)
+codim Q4
+codim Iwork
+(I1,h1) = PDstep(I,indep#0)
+degree I1
+I2 = I + ideal(h)
+(I11, h2) = PDstep(I2,indep#1)
+-time indep = independentSets I;
+time flatt(I,indep#0);
+hi = intersect values oo
+h = hi_0
+saturate(I,h)
+factors oo_0
+
+S = makeProductRing indep#0
+IS = substitute(I,S)
+time gens gb IS;
+indep#0
+debug PrimaryDecomposition
+H = flatt(I,indep#0)
+peek H
+intersect values H
+apply(indep, u -> (
+  IK = toFractionField(I,u);
+  gbIK = ideal apply(flatten entries substitute(gens gb IK, K), numerator);
+  print toString gbIK;
+  gbIK))
+time gens gb IK
 ///
 restart
 load "PrimaryDecomposition/GTZ.m2"
