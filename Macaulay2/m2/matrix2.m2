@@ -297,7 +297,7 @@ support = method()
 support RingElement := (f) -> (
      x := rawIndices raw f;
      apply(x, i -> (ring f)_i))
-
+support Ideal := (I) -> rsort toList sum apply(flatten entries generators I, f -> set support f)
 --------------------
 -- homogenization --
 --------------------

@@ -247,7 +247,9 @@ lcmOfGens := (I) -> if I.cache#?lcmgens then I.cache#lcmgens else I.cache#lcmgen
  -- free monomial -- ideals.
 
 -- The following is not exported directly (it is a subroutine for minimalPrimes, dual).
-squarefreeDual = (J) -> if J == 0 then monomialIdeal 1_(ring J) else intersect (monomialIdeal @@ support \ first entries generators J)
+squarefreeDual = (J) -> (if J == 0 
+  then monomialIdeal 1_(ring J) 
+  else intersect (monomialIdeal @@ support \ first entries generators J))
 
 dual(MonomialIdeal, List) := (I,a) -> ( -- Alexander dual
      R := ring I;

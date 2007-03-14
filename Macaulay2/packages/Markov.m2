@@ -5,7 +5,7 @@ newPackage("Markov",
 	  },
      DebuggingMode => false,
      Headline => "Markov ideals, arising from Bayesian networks in statistics",
-     Version => "1.0"
+     Version => "1.1"
      )
 
 
@@ -38,9 +38,16 @@ newPackage("Markov",
 
 export {makeGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
        markovRing, marginMap, markovMatrices, markovIdeal, writeDotFile, removeRedundants, bayesBall, prob,
-       hideMap}
+       hideMap, minimize,
+       gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal, Graph
+       }
 exportMutable {dotBinary,jpgViewer}
 
+IndependenceStatement = new Type of List
+  -- the canonical form is S = {set{A, B}, C}
+  -- where A, B, C are lists of increasing integers (or empty lists).
+  -- toList S --> {A,B,C}
+  
 -------------------------
 -- Graph visualization --
 -------------------------
@@ -143,6 +150,15 @@ parents(Graph,ZZ) := (G,v) -> set select(1..#G, i -> member(v, G#i))
 children = method()
 children(Graph,ZZ) := (G,v) -> G#v
 
+removeNodes = method()
+removeNodes(Graph,List) := (G,v) -> (
+     v = set v;
+     G = select(pairs G, x -> not member(x#0,v));
+     G = apply(G, x -> (x#0, x#1 - v));
+     new Graph from G
+     )
+removeNodes(Graph,ZZ) := (G,v) -> removeNodes(G, {v})
+
 --------------------------
 -- Statement calculus ----
 --------------------------
@@ -157,6 +173,60 @@ children(Graph,ZZ) := (G,v) -> G#v
 -- If S and T represent exactly the same dependency, return true.
 
 equivStmts = (S,T) -> S#2 === T#2 and set{S#0,S#1} === set{T#0,T#1}
+
+
+-- More serious removal of redundancies.  This was taken from MES's indeps.m2
+setit = (d) -> {set{d#0,d#1},d#2}
+
+under = (d) -> (
+     d01 := toList d_0;
+     d0 := toList d01_0;
+     d1 := toList d01_1;
+     d2 := toList d_1;
+     e0 := subsets d0;
+     e1 := subsets d1;
+     z1 := flatten apply(e0, x -> apply(e1, y -> (
+		    {set{d01_0 - set x, d01_1 - set y}, set x + set y + d_1})));
+     z2 := flatten apply(e0, x -> apply(e1, y -> (
+		    {set{d01_0 - set x, d01_1 - set y}, d_1})));
+     z = join(z1,z2);
+     z = select(z, z0 -> not member(set{}, z0_0));
+     set z
+     )
+
+-- input: ds
+-- first make list where each element is {-a*b, set{A,B}, set C}
+-- sort the list
+-- remove the first element
+sortdeps = Ds -> (
+     i := 0;
+     ds := apply(Ds, d -> (x := toList d#0; i=i+1; { - #x#0 * #x#1, i, d#0, d#1}));
+     ds = sort ds;
+     apply(ds, d -> {d#2, d#3})
+     )
+
+normalizeStmt = (D) -> (
+     -- D has the form: {set{set{A},set{B}},set{C}}
+     -- output is {A,B,C}, where A,B,C are sorted in increasing order
+     --  and A#0 < B#0
+     D0 := sort apply(toList(D#0), x -> sort toList x);
+     D1 := toList(D#1);
+     {D0#0, D0#1, D1}
+     )
+minimize = (Ds) -> (
+     -- each element of Ds should be a list {A,B,C}
+     answer := {};
+     -- step 1: first make the first two elements of each set a set
+     Ds = Ds/setit;
+     while #Ds > 0 do (
+	  Ds = sortdeps Ds;
+	  f := Ds_0;
+	  funder := under f;
+	  answer = append(answer, f);
+	  Ds = set Ds - funder;
+	  Ds = toList Ds;
+	  );
+     apply(answer, normalizeStmt))
 
 removeRedundants = (Ds) -> (
      -- Ds is a list of triples of sets {A,B,C}
@@ -174,7 +244,7 @@ removeRedundants = (Ds) -> (
 	       a := Ds_i;
 	       D0 := drop(Ds,{i,i});
 	       all(D0, b -> not test1(a,b))));
-     Ds_c)
+     minimize(Ds_c))
 
 --------------------------
 -- Bayes ball algorithm --
@@ -393,11 +463,267 @@ markovIdeal = (R,Stmts) -> (
      sum apply(M, m -> minors(2,m))
      )
 
+gaussRing = method(Options=>{CoefficientRing=>QQ, Variable=>symbol s})
+gaussRing ZZ := opts -> (n) -> (
+     x := opts.Variable;
+     kk := opts.CoefficientRing;
+     v := flatten apply(1..n, i -> apply(i..n, j -> x_(i,j)));
+     R := kk[v, MonomialSize=>16];
+     R#gaussRing = n;
+     R
+     )
+
+gaussMinors = method()
+gaussMinors(Matrix,List) := (M,D) -> (
+     -- M should be an n by n symmetric matrix, D mentions variables 1..n (at most)
+     rows := join(D#0, D#2);
+     rows = rows/(i -> i-1);
+     cols := join(D#1, D#2);
+     cols = cols/(i -> i-1);
+     M1 = submatrix(M,rows,cols);
+     minors(#D#2 + 1, M1)
+     )
+gaussIdeal = method()
+gaussIdeal(Ring, List) := (R,Stmts) -> (
+     -- for each statement, we take a set of minors
+     if not R#?gaussRing then error "expected a ring created with gaussRing";
+     M = genericSymmetricMatrix(R, R#gaussRing);
+     sum apply(Stmts, D -> gaussMinors(M,D))     
+     )
+gaussIdeal(Ring,Graph) := (R,G) -> gaussIdeal(R,globalMarkovStmts G)
+
+gaussTrekIdeal = method()
+gaussTrekIdeal(Ring, Graph) := (R,G) -> (
+     n := max keys G;
+     P := toList apply(1..n, i -> toList parents(G,i));
+     nv := max(P/(p -> #p));
+     t := local t;
+     S := (coefficientRing R)[generators R, t_1 .. t_nv];
+     newvars := toList apply(1..nv, i -> t_i);
+     I := trim ideal(0_S);
+     sp := (i,j) -> if i > j then s_(j,i) else s_(i,j);
+     for i from 1 to n-1 do (
+	  J := ideal apply(1..i, j -> s_(j,i+1) 
+	              - sum apply(#P#i, k -> S_(k + numgens R) * sp(j,P#i#k)));
+	  I = eliminate(newvars, I + J);
+	  );
+     substitute(I,R)
+     )
 beginDocumentation()
 
 document {
      Key => "Markov"
      }
+
+document { 
+     Key => {gaussRing, (gaussRing,ZZ)},
+     Headline => "ring of gaussian correlations on n random variables",
+     Usage => "gaussRing n",
+     Inputs => { 
+	  "n" => ZZ => "the number of random variables",
+	  CoefficientRing => "a coefficient field or ring",
+	  Variable => "a symbol, the variables in the ring will be s_(1,1),..."
+	   },
+     Outputs => {
+	  Ring => "a ring with indeterminates s_(i,j), 1 <= i <= j <= n"
+	  },
+     "The routines ", TO "gaussMinors", ", ", TO "gaussIdeal", ", ", TO "gaussTrekIdeal", 
+     " all require that the ring
+     be created by this function.",
+     PARA{},
+     EXAMPLE lines ///
+     	  R = gaussRing 5;
+	  gens R
+	  genericSymmetricMatrix(R,5)
+          ///,
+     SeeAlso => {"gaussMinors", "gaussIdeal", "gaussTrekIdeal"}
+     }
+
+document { 
+     Key => {gaussIdeal, (gaussIdeal,Ring,Graph), (gaussIdeal,Ring,List)},
+     Headline => "correlation ideal of a Bayesian network of joint Gaussian variables",
+     Usage => "gaussIdeal(R,G)",
+     Inputs => { 
+	  "R" => Ring => {"created with ", TO  "gaussRing", ""},
+	  "G" => {ofClass Graph, " or ", ofClass List}
+	   },
+     Outputs => {
+	  "the ideal in R of the relations in the correlations of the random variables implied by the
+	  independence statements of the graph G or the list of independence statements G"
+	  },
+     "These ideals were first written down by Seth Sullivant, in \"Algebraic geometry of Gaussian Bayesian networks\". 
+     The routines in this package involving Gaussian variables are all based on that paper.",
+     EXAMPLE lines ///
+          R = gaussRing 5;
+	  G = makeGraph {{2},{3},{4,5},{5},{}}
+	  (globalMarkovStmts G)/print;
+	  J = gaussIdeal(R,G)
+          ///,
+     PARA{},
+     "A list of independence statments (as for example returned by globalMarkovStmts)
+     can be provided instead of a graph.",
+     PARA{},
+     "The ideal corresponding to a conditional independence statement {A,B,C} (where A,B,C,
+     are disjoint lists of integers in the range 1..n (n is the number of random variables)
+     is the #C+1 x #C+1 minors of the submatrix of the generic symmetric matrix M = (s_(i,j)), whose
+     rows are in A union C, and whose columns are in B union C.  In general, this does not need to
+     be a prime ideal.",
+     EXAMPLE lines ///
+          I = gaussIdeal(R,{{{1,2},{4,5},{3}}, {{1},{2},{3,4,5}}})
+	  codim I
+          ///,
+     SeeAlso => {"makeGraph", "globalMarkovStmts", "localMarkovStmts", "gaussRing", "gaussMinors", "gaussTrekIdeal"}
+     }
+
+end
+document { 
+     Key => {},
+     Headline => "",
+     Usage => "",
+     Inputs => { 
+	   },
+     Outputs => {
+	  },
+     EXAMPLE lines ///
+     ///,
+     Caveat => ""
+     SeeAlso => ""
+     }
+
+end
+restart
+loadPackage "Markov"
+installPackage "Markov"
+G = makeGraph{{},{1},{1},{2,3},{2,3}}
+S = globalMarkovStmts G
+
+R = markovRing(2,2,2,2,2)
+markovIdeal(R,S)
+
+R = gaussRing(5)
+
+M = genericSymmetricMatrix(R,5)
+describe R
+gaussMinors(M,S_0)
+J = trim gaussIdeal(R,S)
+J1 = ideal drop(flatten entries gens J,1)
+res J1
+support J1
+
+globalMarkovStmts G
+minimize oo
+
+G = makeGraph{{2,3},{4},{4},{}}
+G1 = makeGraph{{},{1},{1},{2,3}}
+globalMarkovStmts G
+globalMarkovStmts G1
+
+G4 = {{},{1},{1},{2,3}}
+
+restart
+loadPackage "Markov"
+G4 = makeGraph{{2,3},{4},{4},{}}
+R = gaussRing 4
+I = gaussTrekIdeal(R,G4)
+J = gaussIdeal(R,G4)
+I == J
+
+G4 = makeGraph{{2,3},{4},{4,5},{},{}}
+
+G = makeGraph{{3},{3,4},{4},{}}
+R = gaussRing 4
+I = gaussTrekIdeal(R,G)
+J = gaussIdeal(R,G)
+I == J
+
+load "/Users/mike/local/src/M2-mike/markov/dags5.m2"
+D5s
+D5s = apply(D5s, g -> (
+	  G := reverse g;
+	  G = apply(G, s -> sort apply(s, si -> 6-si));
+	  G))
+R = gaussRing 5
+apply(D5s, g -> (
+	  G := makeGraph g;
+	  I := gaussTrekIdeal(R,G);
+	  J := gaussIdeal(R,G);
+	  if I != J then << "NOT EQUAL on " << g << endl;
+	  I != J))
+
+Gs = select(D5s, g -> (
+	  G := makeGraph g;
+	  I := gaussTrekIdeal(R,G);
+	  J := gaussIdeal(R,G);
+	  if I != J then << "NOT EQUAL on " << g << endl;
+	  I != J))
+Gs/print;
+Gs = {
+{{4}, {4}, {4, 5}, {5}, {}},
+{{3, 5}, {3}, {4}, {5}, {}},
+{{2, 4}, {4}, {4, 5}, {5}, {}},
+{{2, 4}, {3, 5}, {4}, {5}, {}},
+{{3, 5}, {3, 4}, {4}, {5}, {}},
+{{2, 3, 5}, {4}, {4}, {5}, {}},
+{{2, 4}, {3, 5}, {4, 5}, {5}, {}},
+{{2, 3, 5}, {4}, {4, 5}, {5}, {}},
+{{2, 4, 5}, {3, 5}, {4}, {5}, {}}
+}
+
+Gs/(g -> globalMarkovStmts makeGraph g)
+scan(oo, s -> (s/print; print "-----------"));
+G = makeGraph {{4}, {4}, {4, 5}, {5}, {}}
+G = makeGraph {{3, 5}, {3}, {4}, {5}, {}}
+G = makeGraph {{2, 4}, {4}, {4, 5}, {5}, {}}
+G = makeGraph {{2, 4}, {3, 5}, {4}, {5}, {}}
+
+G = makeGraph {{3, 5}, {3, 4}, {4}, {5}, {}}
+G = makeGraph {{2, 3, 5}, {4}, {4}, {5}, {}}
+
+G = makeGraph {{2, 4}, {3, 5}, {4, 5}, {5}, {}}
+G = makeGraph {{2, 3, 5}, {4}, {4, 5}, {5}, {}}
+G = makeGraph {{2, 4, 5}, {3, 5}, {4}, {5}, {}}
+
+(globalMarkovStmts G)/print;
+J = gaussIdeal(R,G)
+I = gaussTrekIdeal(R,G)
+J : I
+res ideal select(flatten entries gens trim J, f -> first degree f > 1)
+betti oo
+
+i = 0
+G = makeGraph D5s#i
+I = gaussTrekIdeal(R,G)
+J = gaussIdeal(R,G)
+I == J
+	  
+removeNodes(G4,4)
+G3 = drop(G4,-1)
+G2 = drop(G3,-1)
+debug Markov
+G4 = makeGraph G4
+parents(G4, 1)
+parents(G4, 2)
+parents(G4, 3)
+parents(G4, 4)
+
+-- We need a method to create all of the dags of size 6,7,8 (maybe not 8?)
+- By hand let's do 6:
+X = select(partitions 13, p -> #p <= 5)
+X = select(X, p ->  p#0 <= 5)
+X = select(X, p ->  #p <= 1 or p#1 <= 4)
+X = select(X, p ->  #p <= 2 or p#2 <= 3)
+X = select(X, p ->  #p <= 3 or p#3 <= 2)
+X = select(X, p ->  #p <= 4 or p#4 <= 1)
+
+X = select(partitions 11, p -> #p <= 6);
+X = select(X, p ->  p#0 <= 6);
+X = select(X, p ->  #p <= 1 or p#1 <= 5);
+X = select(X, p ->  #p <= 2 or p#2 <= 4);
+X = select(X, p ->  #p <= 3 or p#3 <= 3);
+X = select(X, p ->  #p <= 4 or p#4 <= 2);
+X = select(X, p ->  #p <= 5 or p#5 <= 1)
+
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Markov install-one"

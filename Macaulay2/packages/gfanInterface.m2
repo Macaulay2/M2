@@ -6,7 +6,7 @@ newPackage(
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => ""}
 	     },
     	Headline => "Interface to A. Jensen's gfan package",
-	Configuration => { "path" => "/Users/mike/local/software/sage/sage-1.4.1.2/local/bin/",
+	Configuration => { "path" => "",
 	     "keep files" => true
 	      },
     	DebuggingMode => true
@@ -18,7 +18,8 @@ export {
 
 gfan'path = gfanInterface#Options#Configuration#"path"
 
-needs "FourierMotzkin.m2"
+--needs "FourierMotzkin.m2"
+needsPackage "FourierMotzkin"
 
 wtvec = (inL,L) -> (
   W := flatten apply(#inL, i -> (

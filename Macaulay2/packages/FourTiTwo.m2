@@ -1,29 +1,26 @@
 newPackage(
 	"FourTiTwo",
-    	Version => "1.0", 
-    	Date => "October 10, 2006",
+    	Version => "0.1", 
+    	Date => "March 11, 2007",
     	Authors => {
-	     {Name => "Mike Stillman", Email => "", HomePage => ""}
+	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => ""}
 	     },
     	Headline => "Interface to the 4ti2 package",
+	Configuration => { "path" => "",
+	     "keep files" => true
+	      },
     	DebuggingMode => true
     	)
 
 export {
-     }
-
-exportMutable {
-     options'4ti2,
      toBinomial,
      getMatrix,
      putMatrix,
-     markov
+     markovBasis,
+     toricGB
      }
 
-options'4ti2 = new MutableHashTable from {
-     "path" => "/Users/mike/local/software/4ti2/4ti2/",
-     "keep files" => true
-     }
+path'4ti2 = FourTiTwo#Options#Configuration#"path"
 
 getFilename = () -> (
      filename := temporaryFileName();
@@ -62,8 +59,8 @@ toBinomial(Matrix,Ring) := (M,S) -> (
      ideal apply(entries M, toBinom)
      )
 
-markov = method(Options=>{Weights=>null})
-markov Matrix := o -> (A) -> (
+markovBasis = method(Options=>{Weights=>null})
+markovBasis Matrix := o -> (A) -> (
      filename := getFilename();
      F := openOut(filename);
      putMatrix(F,A);
@@ -72,12 +69,12 @@ markov Matrix := o -> (A) -> (
 	  cost = concatenate apply(o.Weights, x -> (x|" "));
 	  (filename|".cost") << "1 " << #o.Weights << endl << cost << endl  << close;
 	  );
-     execstr = options'4ti2#"path"|"markov -q "|filename;
+     execstr = path'4ti2|"markov -q "|filename;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing external program 4ti2: markov";
      getMatrix(filename|".mar")
      )
-markov(Matrix,Ring) := o -> (A,S) -> toBinomial(markov(A,o), S)
+markovBasis(Matrix,Ring) := o -> (A,S) -> toBinomial(markovBasis(A,o), S)
 
 toricGB = method(Options=>{Weights=>null})
 toricGB Matrix := o -> (A) -> (
@@ -89,7 +86,7 @@ toricGB Matrix := o -> (A) -> (
 	  cost = concatenate apply(o.Weights, x -> (x|" "));
 	  (filename|".cost") << "1 " << #o.Weights << endl << cost << endl  << close;
 	  );
-     execstr = options'4ti2#"path"|"groebner -q "|filename;
+     execstr = path'4ti2|"groebner -q "|filename;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing external program 4ti2: groebner";
      getMatrix(filename|".gro")
@@ -103,15 +100,15 @@ beginDocumentation()
 end
 restart
 load "4ti2.m2"
+
 debug FourTiTwo
-peek options'4ti2
 
 A = matrix{{1,1,1,1},{0,1,3,4}}
 B = syz A
-matrix markov A
+time markovBasis A
 R = QQ[a..d]
-markov(A,R,Weights=>{1,2,3,4})
-time markov(A,R)
+time markovBasis(A,R,Weights=>{1,2,3,4})
+time markovBasis(A,R)
 time toricGB(A,R)
 
 7 9
@@ -124,7 +121,7 @@ A = matrix"
 0,1,1, 0,-1, 0, 0, 0,-1;
 1,1,0, 0,-1, 0,-1, 0, 0"
 transpose A
-markov transpose A
+markovBasis transpose A
 
 
 27 27
@@ -156,4 +153,8 @@ A = matrix"
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0;
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0;
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1"
-markov A
+markovBasis A
+R = QQ[x_1..x_27]
+markovBasis(A,R)
+toricGB(A,R)
+gens gb oo
