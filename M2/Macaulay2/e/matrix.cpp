@@ -537,11 +537,8 @@ Matrix *Matrix::transpose() const
 {
   const FreeModule *F = cols()->transpose();
   const FreeModule *G = rows()->transpose();
-  int *deg = degree_monoid()->make_one();
-  degree_monoid()->divide(deg, degree_shift(), deg);
 
-  MatrixConstructor mat(F,G,deg);
-  degree_monoid()->remove(deg);
+  MatrixConstructor mat(F,G,degree_shift());
 
   // The efficiency of this code relies on the way of ordering
   // the sparse vectors (lead term has largest component)
