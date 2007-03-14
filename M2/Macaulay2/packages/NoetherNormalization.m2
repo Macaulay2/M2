@@ -76,20 +76,53 @@ lastCheck = (X,G,d) -> (
 
 --tricky = (U,next)
 
+--maxAlgPerm is a recursive version of maxAlgPerm that for large #X and medium d should be far faster, it appears to be working.
+maxAlgPerm = (R,X,G,d,S) -> (
+     M := gens G;
+     if #S == d then return S;
+     for j to #X - 1 do (
+	  for i to numgens source M -1 do (
+	       if isSubset(support leadTerm M_(0,i),S|{X_j}) then break;
+     	       if i == (numgens source M - 1) then ( 
+		    S = maxAlgPerm(R,X - set({X_j}),G,d,S|{X_j});
+		    if not instance(S,List) then S = {};
+		    if #S == d then return S; 
+		    ); 
+	       );
+	  );
+     );	    
+
+--quick fix, this does need to be done at some point but I suspect that it can be returned with varPrep even and then we don't have to do this extra looping.		    
+inverseSequence = (U,X) -> (
+     N = {};
+     for i to #X - 1 do (
+	  for j to #U - 1 do (
+	       if X_i == U_j then (
+		    N = N|{X_j};
+		    break;
+		    );
+	       );
+	  );
+     return N;
+     );
 
 noetherPrime = (R,X,I,G,U,V,homogeneous) -> (
      counter := 0; --counts the number of times lastCheck is called
      k := coefficientRing R;
      done := false;
-     f := map(R,R,reverse(U|V));
+     J = integralSet(G);
+     Y = V - set J;
+     f := map(R,R,reverse inverseSequence(U|Y|J,X));
+     J = apply(J, i -> f(i));
+     Y = apply(Y, i -> f(i));
+     V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
+     U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
+
      while done == false do ( 
 --	  G = gb f(I); --we should not need to do this gb computation
-	  J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
-	  V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
-	  U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
-	  U = apply(U, i -> i + random(k)*sum(V - set J)); --make sure V and J jive so that this makes sense, also in later version multiply the sum by a random in k
-      	  --note that right now we can get stuck in an infinite loop as we aren't multiplying by a random
-	  g := map(R,R,reverse(U|V));
+      	  --J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
+	  U = apply(U, i -> i + random(k)*sum(Y)); --used to be V - set J
+	  g := map(R,R,reverse(U|Y|J));
 --	  g := map(R,R,U|V);
 	  h = g*f;
 	  if homogeneous then (
@@ -117,23 +150,6 @@ maxAlgPermOLD = (R,X,G,d) -> ( -- may need a sort or reverse...
 
      );
 
---maxAlgPerm is a recursive version of maxAlgPerm that for large #X and medium d should be far faster, it appears to be working.
-maxAlgPerm = (R,X,G,d,S) -> (
-     M := gens G;
-     if #S == d then return S;
-     for j to #X - 1 do (
-	  for i to numgens source M -1 do (
-	       if isSubset(support leadTerm M_(0,i),S|{X_j}) then break;
-     	       if i == (numgens source M - 1) then ( 
-		    S = maxAlgPerm(R,X - set({X_j}),G,d,S|{X_j});
-		    if not instance(S,List) then S = {};
-		    if #S == d then return S; 
-		    ); 
-	       );
-	  );
-     );	    
-		    
-
 noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
      counter := 0; --counts the number of times lastCheck is called
      k := coefficientRing R;
@@ -142,7 +158,7 @@ noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
      I = np I;
      G = gb I;
      (U,V) := varPrep(X,G);
-     f := map(R,R,reverse(U|V));
+     f := map(R,R,reverse inverseSequence(U|V,X)); --can build the reverse into inverseSequence by doing {X_j}|N
      done := false;
      while done == false do ( 
 --   	  G = gb f(I); --we should not need to do this gb computation
@@ -157,14 +173,14 @@ noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
 	  h = g*f;
 	  if homogeneous then (
 	       G = gb( h I, Algorithm => Homogeneous2);
-	       )
-	  else G = gb h I;
+	       );
+	  if not homogeneous then G = gb h I;
 	  done = lastCheck(X,G, #U);
 	  counter = counter + 1;
 	  if done then return((counter,gens G,h));
-	  (U,V) = varPrep G;
+	  (U,V) = varPrep(X,G);
       	  );
-);
+     );
 
 
 noetherNormalization = method()
@@ -181,7 +197,6 @@ noetherNormalization(Ideal) := Sequence => (I) -> (
 
 --homogeneous stuff
 --do we have an input option for the homogeneous case or do we always use the homogeneous program on homogeneous ideals?
---can we just dehomogenize wrt to one variable and then rehomogenize at the end?
 --how do we do the linear change of variables if they have some weird weighting on the variables?
 
 --isHomogeneous works on rings and ideals and elements
@@ -210,15 +225,13 @@ methods noetherNormalization
 
 --Homogeneous example
 R = QQ[x_5,x_4,x_3,x_2,x_1, MonomialOrder => Lex];
-p = x_2^2+x_1*x_2+1
-homogenize(p,x_5)
 I = ideal(x_2^2+x_1*x_2+x_5^2, x_1*x_2*x_3*x_4+x_5^4);
 noetherNormalization I
 isHomogeneous I
 
 
 --Ex#1
-R = ZZ/2[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
+R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
 I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
 noetherNormalization(I)
 benchmark "noetherNormalization(I)"
@@ -238,6 +251,7 @@ don't compute the inverse asking for it.
 --Ex#2
 R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
 I = ideal(x_1^3 + x_1*x_2, x_2^3-x_4+x_3, x_1^2*x_2+x_1*x_2^2)
+noetherNormalization I
 G = gb I
 d = dim I
 X = sort gens R -- note that this "sort" is very important
@@ -250,7 +264,7 @@ noetherNormalization I
 
 
 --Ex#3
-R = ZZ/2[x_1,x_2,x_3,MonomialOrder => Lex]
+R = QQ[x_1,x_2,x_3,MonomialOrder => Lex]
 I = ideal(x_1*x_2,x_1*x_3)
 noetherNormalization I
 G = gb I
@@ -267,6 +281,7 @@ noetherNormalization(I)
 --Ex#4
 R = QQ[x_3,x_2,x_1,MonomialOrder => Lex]
 I = ideal(x_1*x_2, x_1*x_3)
+noetherNormalization I
 G = gb I
 gens G
 d = dim I
