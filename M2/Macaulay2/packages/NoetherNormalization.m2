@@ -74,8 +74,6 @@ lastCheck = (X,G,d) -> (
      );
 --==============================================
 
---tricky = (U,next)
-
 --maxAlgPerm is a recursive version of maxAlgPerm that for large #X and medium d should be far faster, it appears to be working.
 maxAlgPerm = (R,X,G,d,S) -> (
      M := gens G;
@@ -131,9 +129,13 @@ noetherPrime = (R,X,I,G,U,V,homogeneous) -> (
 	  done = lastCheck(X,G, #U);
 	  counter = counter + 1;
 	  if done then return((counter,gens G,h));
-	  (U,V) = varPrep(X,G);
+--	  (U,V) = varPrep(X,G);
       	  );
      );
+
+
+-- 
+-- this alg follows from: Thm 2.3 Kredel-Weispfenning 1988 J. Symbolic Computation.
 
 noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
      counter := 0; --counts the number of times lastCheck is called
@@ -275,7 +277,7 @@ varPrep(X,G)
 np = maxAlgPerm(R,X,G,d)
 maxAlgPermC(R,X,G,d)
 maxAlgPermB(R,X,G,d,{})
-
+noetherNormalization I
 
 --Ex#5
 R = QQ[x_1..x_6,MonomialOrder => Lex]
