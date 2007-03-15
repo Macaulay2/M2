@@ -117,7 +117,6 @@ noetherPrime = (R,X,I,G,U,V,homogeneous) -> (
      Y = apply(Y, i -> f(i));
      V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
      U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
-
      while done == false do ( 
 --	  G = gb f(I); --we should not need to do this gb computation
       	  --J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
@@ -134,20 +133,6 @@ noetherPrime = (R,X,I,G,U,V,homogeneous) -> (
 	  if done then return((counter,gens G,h));
 	  (U,V) = varPrep(X,G);
       	  );
-     );
-
--- 
--- this alg follows from: Thm 2.3 Kredel-Weispfenning 1988 J. Symbolic Computation.
-maxAlgPermOLD = (R,X,G,d) -> ( -- may need a sort or reverse...
-     S := subsets(X,d);
-     M := gens G;
-     for j to # S - 1 do (
-     	  for i to numgens source M - 1 do (
-     	       if isSubset(support leadTerm M_(0,i),S_j) then break;
-     	       if i == (numgens source M - 1) then return S_j        --map(R,R,(X-set(S_j)|S_j)) -- we switched this.
-	       );
-     	  );
-
      );
 
 noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
