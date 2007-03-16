@@ -118,7 +118,7 @@ document {
        "For example, the hypertext list",
 
        PRE///{ 
-  hr,
+  HR{},
   "When referring to a ", 
   EM "Macaulay 2", 
   " identifier such as ",
@@ -131,7 +131,7 @@ document {
   TO (installPackage,String), 
   ") as illustrated here.",
   EXAMPLE "matrix{{1,2},{3,4}}",
-  hr
+  HR{}
  }///,
 
   PARA{},
@@ -139,7 +139,7 @@ document {
   "when used in a ", TO "document", " node, produces",PARA{},
 
 { 
-  hr,
+  HR{},
   "When referring to a ", 
   EM "Macaulay 2", 
   " identifier such as ",
@@ -152,7 +152,7 @@ document {
   TO (installPackage,String), 
   ") as illustrated here.",
   EXAMPLE "matrix{{1,2},{3,4}}",
-  hr
+  HR{}
 },
 
 SeeAlso => {

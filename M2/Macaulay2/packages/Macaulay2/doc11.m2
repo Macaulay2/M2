@@ -94,24 +94,9 @@ document {
      }
 
 document {
-     Key => br,
-     Headline => "line break",
-     Usage => "br",
-     "This is a ", TO "hypertext", " line break."
-     }
-
-
-document {
      Key => BR,
      Headline => "line break",
      Usage => "BR{}",
-     }
-
-document {
-     Key => hr,
-     Headline => "horizontal rule",
-     Usage => "hr",
-     TT "hr", " a ", TO "hypertext", " horizontal rule."
      }
 
 document {
