@@ -688,8 +688,9 @@ floor(e:Expr):Expr := (
 	  )
      is x:RRR do Expr(floor(x))
      is x:Rational do Expr(floor(x))
+     is Integer do e
      is x:Error do Expr(x)
-     else buildErrorPacket("expected a number")
+     else buildErrorPacket("expected a real number")
      );
 setupfun("floor",floor);
 
