@@ -190,14 +190,14 @@ document {
      EXAMPLE {
 	  "diff(matrix {{x},{y}}, matrix {{x^2, x*y, y^2}})",
 	  },
-     hr,
+     HR{},
      "We can also compute the Hessian matrix of a quadratic form using ", TO "diff", ",
      as follows.",
      EXAMPLE {
 	  "v = matrix {{x,y}}",
 	  "diff(v ** transpose v, 3*x^2 + 5*x*y + 11*y^2)"
 	  },
-     hr,
+     HR{},
      "As another example, we show how to compute the Wronskian of a
      polynomial ", TT "f", ".",
      EXAMPLE {
@@ -205,7 +205,7 @@ document {
       	  "v = matrix {{x,y,z}}",
       	  "det diff(transpose v * v, f)",
 	  },
-     hr,
+     HR{},
      "The function ", TO "contract", " is the same as ", TO "diff", ",
      except the multiplication by integers that occurs during
      differentiation is omitted.",
@@ -221,7 +221,7 @@ document {
 	  "v3 = symmetricPower(3,matrix{{x,y,z}})",
 	  "contract(v3, f)",
 	  },
-     hr,
+     HR{},
      "As an example, the Sylvester resultant between homogeneous polynomials
      ", TT "f(x,y)", " and ", TT "g(x,y)", " can be found in the following way.",
      EXAMPLE {
@@ -244,7 +244,7 @@ document {
           --       ideal(- a  - a b  - a b - a b  + 2a*b  - b  + a  - 3a b + 3a*b  - b )
           --   
 	  },
-     hr,
+     HR{},
      "The function ", TO "diff'", " is the same as ", TO "diff", ",
      except that the first argument is differentiated by the second;
      the shape of the first argument still plays the major role.",
@@ -259,7 +259,7 @@ document {
 	  "contract'(m, matrix {{x,x^2,x^3,x^4}})",
 	  "contract'(m, matrix {{x,x^2},{x^3,x^4}})",
 	  },
-     hr,
+     HR{},
      "All four of these operators are engineered so that the result is
      a homogeneous matrix if the arguments are.  The operations ", TO "diff", "
      and ", TO "contract", " are essentially partially defined division operations,

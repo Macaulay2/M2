@@ -470,7 +470,7 @@ document {
 	  using the mouse, then pressing f11 will present the entire selection to
 	  Macaulay2.  Try this on some of these lines."
 	  },
-     hr,
+     HR{},
 "Now go to the very end of the ", TT "*M2*", " buffer with ", TT "M->", " and 
 experiment with keyword completion.  Type ", TT "reso", " and then press the 
 ", TT "TAB", " key.  Notice how the word is completed to ", TT "resolution", "
@@ -481,14 +481,14 @@ completion, select it with the ", TT "RETURN", " key, and then return to the
 ", TT "*M2*", " buffer with ", TT "C-x o", ".  Alternatively, if you have a
 mouse, use the middle button to select the desired completion. (On the mac, hold down the
      option key while clicking the mouse)",
-hr,
+HR{},
 PARA{},
 "Experiment with command line history in the ", TT "*M2*", " buffer.  Position 
 your cursor at the end of the buffer, and then use ", TT "M-p", " and ", TT "M-n", " 
 to move to the previous and next line of input remembered in the history.  When you 
 get to one you'd like to run again, simply press return to do so.  Or edit it
 slightly to change it before pressing return.",
-     hr,
+     HR{},
      PARA{},
      "Now let's see how we can handle wide and tall Macaulay 2 output.  Execute the
      following line of code (put it in your foo.m2 buffer, and then press f11)",
