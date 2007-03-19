@@ -1,0 +1,32 @@
+From: "Daniel R. Grayson" <dan@math.uiuc.edu>
+To: Michael Stillman <mike@math.cornell.edu>
+CC: dan
+In-reply-to: <2D2B09CC-34AC-4026-8448-8D7AC73BDC2C@math.cornell.edu> (message
+	from Michael Stillman on Sat, 17 Mar 2007 20:23:42 -0400)
+Subject: Re: doc bug?
+Reply-to: dan@math.uiuc.edu
+References:  <2D2B09CC-34AC-4026-8448-8D7AC73BDC2C@math.cornell.edu>
+--text follows this line--
+
+It must be because we redirect the documentation for merge to a different page,
+i.e., it's a bug:
+
+    document {
+	 Key => {(merge, HashTable, HashTable, Function),merge},
+	 Headline => "merge hash tables",
+	 ...
+
+> To: Dan Grayson <dan@math.uiuc.edu>
+> From: Michael Stillman <mike@math.cornell.edu>
+> Subject: doc bug?
+> Date: Sat, 17 Mar 2007 20:23:42 -0400
+> 
+> For some pages, I get the following.  Is this a problem with  
+> my .Macaulay2 directory, or an M2 bug?
+> 
+> 
+> i17 : viewHelp merge
+> /Users/mike/Library/Application Support/Macaulay2/local/share/doc/Macaulay2/Macaulay2/html/_merge.html
+> /capybara/share/doc/Macaulay2/Macaulay2/html/_merge.html
+> stdio:17:1:(1):[0]: html file not found: share/doc/Macaulay2/Macaulay2/html/_merge.html
+> 
