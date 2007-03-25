@@ -22,10 +22,24 @@ don't compute the inverse asking for it.
 
 --========================================================
 
+
+
 --Examples:
 clearAll
-installPackage "NoetherNormalization"
+installPackage "../NoetherNormalization"
 methods noetherNormalization
+
+--Nat's examples
+
+R = QQ[x_7,x_6,x_5,x_4,x_3,x_2,x_1, MonomialOrder => Lex];
+I = ideal(x_2^2+x_1*x_2+x_5^2+1, x_1*x_2*x_3*x_4+x_5^4, x_6^4*x_3+x_4^2+8, x_7*x_6*x_5^2+x_5*x_2^2+12);
+gens gb I
+noetherNormalization I
+
+
+
+
+
 
 --Ex#1
 -- this is the example from the paper
@@ -74,6 +88,13 @@ G = gb np I
 noetherNormalization I
 x_5<x_4
 
+--Dan's finite field killing examples
+xy(x+y)
+(xy-1)(x+y)
+x^2*y+x*y^2+1
 
+R = ZZ/2[x,y, MonomialOrder => Lex];
+I = ideal((x^2*y+x*y^2+1))
+noetherNormalization I
 
 -- we need more complex examples.

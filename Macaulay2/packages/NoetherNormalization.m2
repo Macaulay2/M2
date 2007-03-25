@@ -24,7 +24,7 @@ export{noetherNormalization} -- if the new routines which you are adding have ne
         
 --=========================================================================--
 --We are not using the power of lemma 3.2 when we do this, only lemma 3.1 so we can currently apply this to all ideals
-
+--However, lemma 3.2 only works if the ideal is prime and we never actually test for this (and probably shouldn't).
 integralSet = G -> (
      J = {};
      M := gens G;
@@ -35,7 +35,7 @@ integralSet = G -> (
      J);
 
 --=========================================
-
+--finds algebraically independent variables
 varPrep = (X,G) -> (
      M := gens G;
      V := {};
@@ -52,9 +52,8 @@ varPrep = (X,G) -> (
      (X-set(V),V)                        -- (x,y) = (U,V) ; (x,y) := (U,V) can be used by the caller if you return a sequence
      );
 
-       
 --==================================================
-
+--makes sure that the that the transformation has put the ideal in noether position
 lastCheck = (X,G,d) -> (
      M := gens G;
      i := 0;
@@ -72,9 +71,11 @@ lastCheck = (X,G,d) -> (
 	  );
      true
      );
---==============================================
 
+--==============================================
 --maxAlgPerm is a recursive version of maxAlgPerm that for large #X and medium d should be far faster, it appears to be working.
+--when an ideal is not good (not prime and varPrep does not give the dimension) then maxAlgPerm permutes
+--the variables into a guaranteed good position (note: this algorithm is not from logar but was referenced by him)
 maxAlgPerm = (R,X,G,d,S) -> (
      M := gens G;
      if #S == d then return S;
@@ -88,9 +89,11 @@ maxAlgPerm = (R,X,G,d,S) -> (
 		    ); 
 	       );
 	  );
-     );	    
-
---quick fix, this does need to be done at some point but I suspect that it can be returned with varPrep even and then we don't have to do this extra looping.		    
+     );
+	    
+--======================================================
+--quick fix, this does need to be done at some point but I suspect that it can be returned with varPrep even and then we don't have to do this extra looping.
+--merely finds the inverse permutation
 inverseSequence = (U,X) -> (
      N = {};
      for i to #X - 1 do (
@@ -103,39 +106,29 @@ inverseSequence = (U,X) -> (
 	  );
      return N;
      );
+--========================================================
 
-noetherPrime = (R,X,I,G,U,V,homogeneous) -> (
+noetherPrime = (R,X,I,G,U,V,d,homogeneous) -> (
      counter := 0; --counts the number of times lastCheck is called
      k := coefficientRing R;
-     done := false;
-     J = integralSet(G);
-     Y = V - set J;
-     f := map(R,R,reverse inverseSequence(U|Y|J,X));
-     J = apply(J, i -> f(i));
-     Y = apply(Y, i -> f(i));
+     f := map(R,R,reverse inverseSequence(U|V,X));
+     J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
      V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
      U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
+     done := false;
      while done == false do ( 
---	  G = gb f(I); --we should not need to do this gb computation
-      	  --J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
-	  U = apply(U, i -> i + random(k)*sum(Y)); --used to be V - set J
-	  g := map(R,R,reverse(U|Y|J));
---	  g := map(R,R,U|V);
+	  U = apply(U, i -> i + random(k)*sum(V - set J)); 
+	  g := map(R,R,reverse(U|V));
 	  h = g*f;
 	  if homogeneous then (
 	       G = gb( h I, Algorithm => Homogeneous2);
 	       );
-	  if not homogeneous then G = gb h I;
-	  done = lastCheck(X,G, #U);
+	  if not homogeneous then G = gb(h I, DegreeLimit => 40, BasisElementLimit => 30);
+	  done = lastCheck(X,G, d);
 	  counter = counter + 1;
-	  if done then return((counter,gens G,h));
---	  (U,V) = varPrep(X,G);
+	  if done or (counter == 100) then return((counter,transpose gens G,h));
       	  );
      );
-
-
--- 
--- this alg follows from: Thm 2.3 Kredel-Weispfenning 1988 J. Symbolic Computation.
 
 noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
      counter := 0; --counts the number of times lastCheck is called
@@ -146,29 +139,24 @@ noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
      G = gb I;
      (U,V) := varPrep(X,G);
      f := map(R,R,reverse inverseSequence(U|V,X)); --can build the reverse into inverseSequence by doing {X_j}|N
+     V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
+     U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
+     J := apply(integralSet(G),i -> f i);
      done := false;
-     while done == false do ( 
---   	  G = gb f(I); --we should not need to do this gb computation
-	  J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
-	  V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
-	  U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
-	  U = apply(U, i -> i + random(k)*sum(V - set J)); --make sure V and J jive so that this makes sense, 
-	                                                   --also in later version multiply the sum by a random in k
-      	  --note that right now we can get stuck in an infinite loop as we aren't multiplying by a random
+     while done == false do (
+	  U = apply(U, i -> i + random(k)*sum(V - set J));
 	  g := map(R,R,reverse(U|V));
---	  g := map(R,R,U|V);
 	  h = g*f;
 	  if homogeneous then (
 	       G = gb( h I, Algorithm => Homogeneous2);
 	       );
-	  if not homogeneous then G = gb h I;
-	  done = lastCheck(X,G, #U);
+	  if not homogeneous then G = gb( h I, DegreeLimit => 10, BasisElementLimit => 7);
+	  done = lastCheck(X,G,d);
 	  counter = counter + 1;
-	  if done then return((counter,gens G,h));
-	  (U,V) = varPrep(X,G);
+	  if done or (counter == 100) then return((counter,transpose gens G,h));
+	  J = integralSet(G);
       	  );
      );
-
 
 noetherNormalization = method()
 noetherNormalization(Ideal) := Sequence => (I) -> (
@@ -179,7 +167,7 @@ noetherNormalization(Ideal) := Sequence => (I) -> (
      d := dim I;
      X := sort gens R;
      (U,V) := varPrep(X,G);
-     if d == #U then noetherPrime(R,X,I,G,U,V,homogeneous) else noetherNotPrime(R,X,I,G,d,homogeneous)
+     if d == #U then noetherPrime(R,X,I,G,U,V,d,homogeneous) else noetherNotPrime(R,X,I,G,d,homogeneous)
      );     
 
 --homogeneous stuff
@@ -197,101 +185,8 @@ noetherNormalization(Ideal) := Sequence => (I) -> (
 -- 2. is lex only used for varprep
 -- 3. ps, man ps or top tells how long it takes, shell command called time also
 -- 4. or just stop singular from printing
-xy(x+y)
-(xy-1)(x+y)
-x^2*y+x*y^2+1
+-- gbTrace
 
-R = ZZ/2[x,y, MonomialOrder => Lex];
-I = ideal((x^2*y+x*y^2+1))
-noetherNormalization I
-
---Examples:
-clearAll
-installPackage "NoetherNormalization"
-methods noetherNormalization
-
---Homogeneous example
-R = QQ[x_5,x_4,x_3,x_2,x_1, MonomialOrder => Lex];
-I = ideal(x_2^2+x_1*x_2+x_5^2, x_1*x_2*x_3*x_4+x_5^4);
-noetherNormalization I
-isHomogeneous I
-
-
---Ex#1
-R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
-I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
-noetherNormalization(I)
-benchmark "noetherNormalization(I)"
-q:= x_4^2+x_3^5+x_2*x_1
-leadMonomial(q)
---alg dependent vars, ideal, map
-
-          p       s
-I < k[x] <= k[y] <- k[t]
-            J<
-	    
-we take I we currently return p^-1, we want p,s,J
-don't compute the inverse asking for it. 
-
-
---Examples of not so good I
---Ex#2
-R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
-I = ideal(x_1^3 + x_1*x_2, x_2^3-x_4+x_3, x_1^2*x_2+x_1*x_2^2)
-noetherNormalization I
-G = gb I
-d = dim I
-X = sort gens R -- note that this "sort" is very important
-varPrep(X,G)
-np = maxAlgPerm(R,X,G,d)
-maxAlgPermC(R,X,G,d)
-G = gb np I
-(U,V) = varPrep(X,G)
-noetherNormalization I
-
-
---Ex#3
-R = QQ[x_1,x_2,x_3,MonomialOrder => Lex]
-I = ideal(x_1*x_2,x_1*x_3)
-noetherNormalization I
-G = gb I
-gens G
-d = dim I
-X = sort gens R -- note that this "sort" is very important
-np = maxAlgPerm(R,X,G,d)
-maxAlgPermC(R,X,G,d)
-
-
-varPrep(X,G)
-noetherNormalization(I)
-
---Ex#4
-R = QQ[x_3,x_2,x_1,MonomialOrder => Lex]
-I = ideal(x_1*x_2, x_1*x_3)
-noetherNormalization I
-G = gb I
-gens G
-d = dim I
-X = sort gens R -- note that this "sort" is very important
-varPrep(X,G)
-np = maxAlgPerm(R,X,G,d)
-maxAlgPermC(R,X,G,d)
-maxAlgPermB(R,X,G,d,{})
-noetherNormalization I
-
---Ex#5
-R = QQ[x_1..x_6,MonomialOrder => Lex]
-R = QQ[x_6,x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
-I = ideal(x_1*x_2,x_1*x_3, x_2*x_3,x_2*x_4,x_2*x_5,x_3*x_4,x_3*x_5,x_4*x_5, x_4*x_6, x_5*x_6)
-G = gb I
-d = dim I
-X = sort gens R -- note that this "sort" is very important
-varPrep(X,G)
-np = maxAlgPerm(R,X,G,d)
-G = gb np I
-(U,V) = varPrep(X,G)
-noetherNormalization I
-x_5<x_4
 
 -- TO DO:
 -- clear up output
