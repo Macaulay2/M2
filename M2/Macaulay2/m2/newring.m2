@@ -18,7 +18,7 @@ newRing Ring := Ring => opts -> (R) -> (
         or (instance(opts.Variables,ZZ) 
               and opts.Variables =!= numgens R)
      then
-         error "cannot change the number of variables using 'modifyRing'";
+         error "cannot change the number of variables using 'newRing'";
          
      if opts.DegreeRank =!= nothing and opts.Degrees === nothing then opts = first override(opts, Degrees => null);
      opts = mergeOptions((monoid R).Options,opts);
