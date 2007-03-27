@@ -26,7 +26,8 @@ don't compute the inverse asking for it.
 
 --Examples:
 clearAll
-installPackage "../NoetherNormalization"
+uninstallPackage "NoetherNormalization"
+installPackage "NoetherNormalization"
 methods noetherNormalization
 
 --Nat's examples
@@ -46,7 +47,9 @@ noetherNormalization I
 -- this makes it a good first example
 R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
 I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
-noetherNormalization(I)
+
+
+
 
 
 --Examples of not so good I
@@ -65,7 +68,8 @@ noetherNormalization(I)
 R = QQ[x_3,x_2,x_1,MonomialOrder => Lex]
 I = ideal(x_1*x_2, x_1*x_3)
 G = gb I
-gens G
+
+prune ideal gens G
 d = dim I
 X = sort gens R -- note that this "sort" is very important
 varPrep(X,G)

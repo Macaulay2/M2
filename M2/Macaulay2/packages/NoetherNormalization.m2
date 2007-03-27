@@ -126,9 +126,22 @@ noetherPrime = (R,X,I,G,U,V,d,homogeneous) -> (
 	  if not homogeneous then G = gb(h I, DegreeLimit => 40, BasisElementLimit => 30);
 	  done = lastCheck(X,G, d);
 	  counter = counter + 1;
-	  if done or (counter == 100) then return((counter,transpose gens G,h));
+	  if done or (counter == 100) then return((counter,U,transpose gens G,h));
       	  );
      );
+
+
+-- alg dependent vars, ideal, map
+
+--          p       s
+--I >-> k[x] <=< k[y] <- k[t]
+--            J<
+	    
+--we take I we currently return p^-1, we want p,s,J
+--don't compute the inverse asking for it. 
+
+
+
 
 noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
      counter := 0; --counts the number of times lastCheck is called
@@ -153,7 +166,7 @@ noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
 	  if not homogeneous then G = gb( h I, DegreeLimit => 10, BasisElementLimit => 7);
 	  done = lastCheck(X,G,d);
 	  counter = counter + 1;
-	  if done or (counter == 100) then return((counter,transpose gens G,h));
+	  if done or (counter == 100) then return((counter,U,transpose gens G,h));
 	  J = integralSet(G);
       	  );
      );
