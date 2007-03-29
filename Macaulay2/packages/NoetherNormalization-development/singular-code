@@ -1,0 +1,19 @@
+LIB "algebra.lib";
+ring R=0,(x_4,x_3,x_2,x_1),lp;
+ideal I = x_4*x_3, x_2*x_1;
+noetherNormal(I);
+
+
+
+system("--ticks-per-sec",100);
+timer=1; // The time of each command is printed
+  int t=timer; // initialize t by timer
+noetherNormal(I);
+  // timer as int_expression:
+  t=timer-t;
+  t; 
+
+
+ring a=0,(x,y,z,t,u),dp;
+ideal i = x3+xy-z,y3-t+z,x2y+xy2-u;
+noetherNormal(i);
