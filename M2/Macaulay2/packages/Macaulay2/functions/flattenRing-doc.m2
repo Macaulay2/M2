@@ -13,7 +13,7 @@ document {
 	  flattenRing,
 	  [flattenRing,CoefficientRing]
 	  },
-     Headline => "write a ring as a (quotient) of a polynomial ring over the ZZ or a prime field",
+     Headline => "write a ring as a (quotient) of a polynomial ring over ZZ or a prime field",
      Usage => "(S,F,G) = flattenRing R",
      Inputs => {
 	  "R",
