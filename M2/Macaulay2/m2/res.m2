@@ -20,7 +20,8 @@ resolutionByHomogenization := options -> (M) -> (
      A    := ring p;
      k    := coefficientRing A;
      n    := numgens A;
-     N    := monoid [Variables => n+1, MonomialOrder => GRevLex];
+     X    := local X;
+     N    := monoid [X_0 .. X_n, MonomialOrder => GRevLex];
      A'   := k N;
      toA' := map(A',A,(vars A')_{0 .. n-1});
      p'   := toA' p;
