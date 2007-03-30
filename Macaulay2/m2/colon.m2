@@ -240,7 +240,8 @@ satideal3 := opts -> (I,f) -> (
      f = f_0;
      degs := append((monoid R).degrees, degree f);
      k := coefficientRing R;
-     M := monoid [Variables=>n+1,Degrees=>degs,MonomialSize=>16];
+     X := local X;
+     M := monoid [X_0 .. X_n,Degrees=>degs,MonomialSize=>16];
      R1 := k M;
      i := map(R1,R,(vars R1)_{0..n-1});
      f1 := i f;
@@ -258,7 +259,8 @@ satideal4 := opts -> (I,f) -> (
      R := ring I;
      n := numgens R;
      k := coefficientRing R;
-     M := monoid [Variables=>n+1,MonomialOrder=>Eliminate 1,MonomialSize=>16];
+     X := local X;
+     M := monoid [X_0 .. X_n,MonomialOrder=>Eliminate 1,MonomialSize=>16];
      R1 := k M;
      fto := map(R1,R,genericMatrix(R1,R1_1,1,n));
      f1 := fto f;

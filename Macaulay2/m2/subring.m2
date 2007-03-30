@@ -89,7 +89,8 @@ pushlinear := opts -> (f,M) -> (
     n := numgens source f.matrix;
     n1 := numgens R - n;
     k := coefficientRing Rbase;
-    N := monoid [Variables => numgens R, MonomialOrder => Eliminate n1];
+    X := local X;
+    N := monoid [VariableBaseName => X, Variables => numgens R, MonomialOrder => Eliminate n1];
     R1 := k N;
     (Fto,Ffrom) := newCoordinateSystem(R1, fmat);
     m1 := Fto m;
