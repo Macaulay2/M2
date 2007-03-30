@@ -108,25 +108,35 @@ inverseSequence = (U,X) -> (
      );
 --========================================================
 
+--I can make these smaller.
 noetherPrime = (R,X,I,G,U,V,d,homogeneous) -> (
      counter := 0; --counts the number of times lastCheck is called
      k := coefficientRing R;
+     done := false;
      f := map(R,R,reverse inverseSequence(U|V,X));
+     finverse := map(R,R, reverse(U|V));
      J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
+     --take away J and put in U = apply(U, i -> i + randomm * sum(V - set integralSet(G)...
      V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
      U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
-     done := false;
      while done == false do ( 
-	  U = apply(U, i -> i + random(k)*sum(V - set J)); 
-	  g := map(R,R,reverse(U|V));
-	  h = g*f;
+     	  --J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
+     	  stuff = U;
+     	  if counter == 0 then U = apply(U, i -> i + random(k)*sum(V - set J)); 	  
+	  if counter >= 1 then U = apply(U, i -> i + random(k)*sum(V - set integralSet(G))); --should I union J with G here? probably.
+	  stuff = stuff + (stuff - U);
+    	  g := map(R,R,reverse(U|V));
+	  ginverse := map(R,R,reverse(stuff|V));
+--	  g := map(R,R,U|V);
+	  f = g*f;
+	  finverse = finverse*ginverse;
 	  if homogeneous then (
-	       G = gb( h I, Algorithm => Homogeneous2);
+	       G = gb( f I, Algorithm => Homogeneous2);
 	       );
-	  if not homogeneous then G = gb(h I, DegreeLimit => 40, BasisElementLimit => 30);
+	  if not homogeneous then G = gb(f I);
 	  done = lastCheck(X,G, d);
 	  counter = counter + 1;
-	  if done or (counter == 100) then return((counter,U,transpose gens G,h));
+	  if done or (counter == 100) then return((counter,U,transpose gens G,f));
       	  );
      );
 
@@ -152,21 +162,26 @@ noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
      G = gb I;
      (U,V) := varPrep(X,G);
      f := map(R,R,reverse inverseSequence(U|V,X)); --can build the reverse into inverseSequence by doing {X_j}|N
+     done := false;
      V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
      U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
-     J := apply(integralSet(G),i -> f i);
-     done := false;
+     J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
      while done == false do (
-	  U = apply(U, i -> i + random(k)*sum(V - set J));
+	  stuff = U;
+     	  if counter == 0 then U = apply(U, i -> i + random(k)*sum(V - set J)); 	  
+	  if counter >= 1 then U = apply(U, i -> i + random(k)*sum(V - set integralSet(G))); --should I union J with G here? probably.
+     	  stuff = stuff + (stuff - U);
 	  g := map(R,R,reverse(U|V));
-	  h = g*f;
+	  ginverse := map(R,R,reverse(stuff|V));
+	  f = g*f;
+	  finverse = finverse*ginverse;
 	  if homogeneous then (
-	       G = gb( h I, Algorithm => Homogeneous2);
+	       G = gb(f I, Algorithm => Homogeneous2);
 	       );
-	  if not homogeneous then G = gb( h I, DegreeLimit => 10, BasisElementLimit => 7);
-	  done = lastCheck(X,G,d);
+	  if not homogeneous then G = gb(f I);
+	  done = lastCheck(X,G, #U);
 	  counter = counter + 1;
-	  if done or (counter == 100) then return((counter,U,transpose gens G,h));
+	  if done or (counter == 100) then return((counter,U,transpose gens G,f));
 	  J = integralSet(G);
       	  );
      );
