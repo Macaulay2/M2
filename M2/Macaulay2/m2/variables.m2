@@ -41,7 +41,11 @@ value IndexedVariable := v -> (
      t := valueTable x;
      if t#?i then t#i else v)
 
-Symbol _ Thing = (x,i,e) -> ( x <- x; (valueTable x)#i = e )
+Symbol _ Thing = (x,i,e) -> ( 
+     if value x =!= x then stderr << "--warning: clearing value of symbol " << x << " to allow access to subscripted variables based on it" << endl << flush;
+     x <- x; 
+     (valueTable x)#i = e 
+     )
 installMethod(symbol <-, IndexedVariable, (xi,e) -> ((x,i) -> x_i = e) toSequence xi) -- assignment operators don't dispatch on the type of the value to be assigned
 
 IndexedVariable .. IndexedVariable := Sequence => (v,w) -> (
