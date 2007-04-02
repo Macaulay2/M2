@@ -108,38 +108,43 @@ inverseSequence = (U,X) -> (
      );
 --========================================================
 
---I can make these smaller.
-noetherPrime = (R,X,I,G,U,V,d,homogeneous) -> (
+noetherPrime = (R,X,I,G,U,V,d,homogeneous,np,npinverse) -> (
      counter := 0; --counts the number of times lastCheck is called
      k := coefficientRing R;
      done := false;
-     f := map(R,R,reverse inverseSequence(U|V,X));
+     f := map(R,R,inverseSequence(U|V,X));
      finverse := map(R,R, reverse(U|V));
      J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
-     --take away J and put in U = apply(U, i -> i + randomm * sum(V - set integralSet(G)...
      V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
      U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
      while done == false do ( 
-     	  --J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
      	  stuff = U;
      	  if counter == 0 then U = apply(U, i -> i + random(k)*sum(V - set J)); 	  
 	  if counter >= 1 then U = apply(U, i -> i + random(k)*sum(V - set integralSet(G))); --should I union J with G here? probably.
 	  stuff = stuff + (stuff - U);
     	  g := map(R,R,reverse(U|V));
 	  ginverse := map(R,R,reverse(stuff|V));
---	  g := map(R,R,U|V);
 	  f = g*f;
 	  finverse = finverse*ginverse;
 	  if homogeneous then (
-	       G = gb( f I, Algorithm => Homogeneous2);
+	       G = gb(f I, Algorithm => Homogeneous2);
 	       );
 	  if not homogeneous then G = gb(f I);
 	  done = lastCheck(X,G, d);
 	  counter = counter + 1;
-	  if done or (counter == 100) then return((counter,U,transpose gens G,f));
+	  if done or (counter == 100) then return((counter,V,transpose gens G,f*np)); --if returning the inverse map then npinverse*finverse
       	  );
      );
-
+ 
+noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
+     S := maxAlgPerm(R,X,G,d,{});
+     np := map(R,R, inverseSequence(reverse(X-set(S)|S),X));
+     npinverse := map(R,R,(X-set(S)|S));
+     I = np I;
+     G = gb I;
+     (U,V) := varPrep(X,G);
+     noetherPrime(R,X,I,G,U,V,d,homogeneous,np,npinverse)
+     );
 
 -- alg dependent vars, ideal, map
 
@@ -150,42 +155,6 @@ noetherPrime = (R,X,I,G,U,V,d,homogeneous) -> (
 --we take I we currently return p^-1, we want p,s,J
 --don't compute the inverse asking for it. 
 
-
-
-
-noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
-     counter := 0; --counts the number of times lastCheck is called
-     k := coefficientRing R;
-     S := maxAlgPerm(R,X,G,d,{});
-     np := map(R,R,(X-set(S)|S));
-     I = np I;
-     G = gb I;
-     (U,V) := varPrep(X,G);
-     f := map(R,R,reverse inverseSequence(U|V,X)); --can build the reverse into inverseSequence by doing {X_j}|N
-     done := false;
-     V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
-     U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
-     J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
-     while done == false do (
-	  stuff = U;
-     	  if counter == 0 then U = apply(U, i -> i + random(k)*sum(V - set J)); 	  
-	  if counter >= 1 then U = apply(U, i -> i + random(k)*sum(V - set integralSet(G))); --should I union J with G here? probably.
-     	  stuff = stuff + (stuff - U);
-	  g := map(R,R,reverse(U|V));
-	  ginverse := map(R,R,reverse(stuff|V));
-	  f = g*f;
-	  finverse = finverse*ginverse;
-	  if homogeneous then (
-	       G = gb(f I, Algorithm => Homogeneous2);
-	       );
-	  if not homogeneous then G = gb(f I);
-	  done = lastCheck(X,G, #U);
-	  counter = counter + 1;
-	  if done or (counter == 100) then return((counter,U,transpose gens G,f));
-	  J = integralSet(G);
-      	  );
-     );
-
 noetherNormalization = method()
 noetherNormalization(Ideal) := Sequence => (I) -> (
      R := ring I;
@@ -195,7 +164,7 @@ noetherNormalization(Ideal) := Sequence => (I) -> (
      d := dim I;
      X := sort gens R;
      (U,V) := varPrep(X,G);
-     if d == #U then noetherPrime(R,X,I,G,U,V,d,homogeneous) else noetherNotPrime(R,X,I,G,d,homogeneous)
+     if d == #U then noetherPrime(R,X,I,G,U,V,d,id_R,id_R,homogeneous) else noetherNotPrime(R,X,I,G,d,homogeneous)
      );     
 
 --homogeneous stuff
