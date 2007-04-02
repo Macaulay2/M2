@@ -613,7 +613,7 @@ installPackage Package := opts -> pkg -> (
 	  rawdocDatabase := openDatabaseOut rawdbnametmp;
 	  rawDoc := pkg#"raw documentation";
 	  -- remove any keys from the processed database no longer used
-	  scan(keys rawdocDatabase - set keys rawDoc, key -> rawdocDatabase#key = null);
+	  scan(keys rawdocDatabase - set keys rawDoc, key -> remove(rawdocDatabase,key));
 	  scan(nodes, tag -> (
 		    fkey := DocumentTag.FormattedKey tag;
 		    if rawDoc#?fkey then (
