@@ -4,6 +4,11 @@ ideal I = x_4*x_3, x_2*x_1;
 noetherNormal(I);
 
 
+ring R=0,(x_5,x_4,x_3,x_2,x_1),lp;
+ideal I = (x_2*x_1-x_5^3, x_5*x_1^3);
+noetherNormal(I);
+
+
 
 LIB "algebra.lib";
 ring R=0,(x_5,x_4,x_3,x_2,x_1),lp;
