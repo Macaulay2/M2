@@ -343,6 +343,26 @@ installMethod(setup, () -> (
      setupEmacs();
      ))
 
+
+scanLines = method()
+ifbrk := x -> if x =!= null then break x
+scanLines(Function,String) := (p,inf) -> (		    -- the function p can use "break x" with a non-null value for x to return prematurely, with x as value
+     inf = openIn inf;
+     tail := "";
+     ret := while not atEndOfFile inf do (
+	  r := separate read inf;
+	  front := concatenate(tail,r#0);
+	  if #r === 1 then tail = front
+	  else (
+	       p front;
+ 	       ifbrk for i from 1 to #r-2 do p r#i;
+	       );
+	  tail = if #r > 1 then r#-1 else front
+	  );
+     close inf;
+     if #tail > 0 then p tail;
+     ret)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

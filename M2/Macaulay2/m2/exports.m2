@@ -963,6 +963,7 @@ export {
 	symbol saturate,
 	symbol scan,
 	symbol scanKeys,
+        symbol scanLines,
 	symbol scanPairs,
 	symbol scanValues,
 	symbol schreyerOrder,
