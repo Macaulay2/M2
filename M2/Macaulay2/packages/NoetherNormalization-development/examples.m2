@@ -59,10 +59,14 @@ I = ideal(x_1^3 + x_1*x_2, x_2^3-x_4+x_3, x_1^2*x_2+x_1*x_2^2)
 noetherNormalization I
 
 R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
-I = ideal(x_4^7*x_3*x_2-x_4, x_2*x_1-x_5^7, x_5*x_1^8)
+I = ideal(x_2*x_1-x_5^3, x_5*x_1^3)
 gens gb I
 noetherNormalization I
 
+R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
+I = ideal(x_4^3*x_3*x_2-x_4, x_2*x_1-x_5^3, x_5*x_1^3)
+gens gb I
+noetherNormalization I
 
 
 
@@ -110,3 +114,6 @@ I = ideal((x^2*y+x*y^2+1))
 noetherNormalization I
 
 -- we need more complex examples.
+
+
+

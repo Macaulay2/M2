@@ -108,7 +108,7 @@ inverseSequence = (U,X) -> (
      );
 --========================================================
 
-noetherPrime = (R,X,I,G,U,V,d,homogeneous,np,npinverse) -> (
+noetherPrime = (R,X,I,G,U,V,d,np,npinverse,homogeneous) -> (
      counter := 0; --counts the number of times lastCheck is called
      k := coefficientRing R;
      done := false;
@@ -143,7 +143,7 @@ noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
      I = np I;
      G = gb I;
      (U,V) := varPrep(X,G);
-     noetherPrime(R,X,I,G,U,V,d,homogeneous,np,npinverse)
+     noetherPrime(R,X,I,G,U,V,d,np,npinverse,homogeneous)
      );
 
 -- alg dependent vars, ideal, map
