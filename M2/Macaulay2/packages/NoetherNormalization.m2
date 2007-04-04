@@ -99,12 +99,20 @@ inverseSequence = (U,X) -> (
      for i to #X - 1 do (
 	  for j to #U - 1 do (
 	       if X_i == U_j then (
-		    N = N|{X_j};
+		    N = {x_j}|N;
 		    break;
 		    );
 	       );
 	  );
      return N;
+     );
+--========================================================
+
+randomSum = (U,V,k) -> (
+     for j to #V - 1 do (
+	  U = apply(U, i -> i + random(k)*V_j);
+	  );
+     return U;
      );
 --========================================================
 
@@ -119,8 +127,8 @@ noetherPrime = (R,X,I,G,U,V,d,np,npinverse,homogeneous) -> (
      U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
      while done == false do ( 
      	  stuff = U;
-     	  if counter == 0 then U = apply(U, i -> i + random(k)*sum(V - set J)); 	  
-	  if counter >= 1 then U = apply(U, i -> i + random(k)*sum(V - set integralSet(G))); --should I union J with G here? probably.
+     	  if counter == 0 then U = randomSum(U,V-set J,k);
+	  if counter >= 1 then U = randomSum(U,V-set integralSet(G),k);
 	  stuff = stuff + (stuff - U);
     	  g := map(R,R,reverse(U|V));
 	  ginverse := map(R,R,reverse(stuff|V));
