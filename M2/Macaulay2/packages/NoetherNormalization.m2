@@ -99,7 +99,7 @@ inverseSequence = (U,X) -> (
      for i to #X - 1 do (
 	  for j to #U - 1 do (
 	       if X_i == U_j then (
-		    N = {x_j}|N;
+		    N = {X_j}|N;
 		    break;
 		    );
 	       );
