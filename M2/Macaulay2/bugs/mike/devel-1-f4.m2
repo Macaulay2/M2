@@ -80,4 +80,11 @@ time gens gb(I, Algorithm=>F4, GBDegrees=>toList(4:1));
 
 gbTrace=3
 time gb I;
+time gb(I, Algorithm=>Homogeneous2);
 
+
+-------------------------------
+loadPackage "ExampleIdeals"
+
+I = cyclicRootsHomogeneous(8,ZZ/23)
+time gens gb(I, Algorithm=>F4, GBDegrees=>toList(numgens ring I:1));

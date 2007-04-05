@@ -85,6 +85,7 @@ class F4GB : public our_new_delete
   // Also need Schreyer order info sometimes
   
   // Options and information about the computation
+  int n_lcmdups;
   int n_pairs_computed;
   int n_gens_left;
   int n_subring;

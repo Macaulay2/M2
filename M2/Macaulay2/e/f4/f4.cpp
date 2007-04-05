@@ -202,6 +202,8 @@ void F4GB::process_s_pair(spair *p)
 
     load_row(n, p->i);
     c = mat->rows[mat->rows.size()-1].comps[0];
+    if (mat->columns[c].gb_divisor != -2)
+      n_lcmdups++;
     mat->columns[c].gb_divisor = mat->rows.size()-1;
     mat->columns[c].head = mat->columns[c].gb_divisor;
 
@@ -511,6 +513,7 @@ void F4GB::do_spairs()
 {
   clock_t begin_time = clock();
 
+  n_lcmdups = 0;
   make_matrix();
 
   clock_t end_time = clock();
@@ -525,6 +528,12 @@ void F4GB::do_spairs()
   gauss_reduce();
   end_time = clock();
   clock_gauss += end_time - begin_time;
+
+  nsecs = end_time - begin_time;
+  nsecs /= CLOCKS_PER_SEC;
+  fprintf(stderr, " gauss time          = %f\n", nsecs);
+
+  fprintf(stderr, " lcm dups            = %d\n", n_lcmdups);
   //  show_matrix();
 
   new_GB_elements();

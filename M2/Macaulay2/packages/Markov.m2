@@ -723,7 +723,32 @@ X = select(X, p ->  #p <= 3 or p#3 <= 3);
 X = select(X, p ->  #p <= 4 or p#4 <= 2);
 X = select(X, p ->  #p <= 5 or p#5 <= 1)
 
+-- n=7 examples
+restart
+loadPackage "Markov"
+load "/Users/mike/local/src/M2-mike/markov/dags5.m2"
+F = lines get "dags7-part";
+R = gaussRing 7
 
+
+scan(F, g -> (
+	  g = value g;
+	  G := makeGraph g;
+	  I := gaussTrekIdeal(R,G);
+	  J := gaussIdeal(R,G);
+	  << g;
+	  if I != J then << " NOT EQUAL" << endl else << " equal" << endl;
+	  ))
+
+scan(F, g -> (
+	  g = value g;
+	  G := makeGraph g;
+	  --I := gaussTrekIdeal(R,G);
+	  J := trim gaussIdeal(R,G);
+	  linears = ideal select(flatten entries gens J, f -> first degree f == 1);
+	  J = trim ideal(gens J % linears);
+	  << g << codim J << ", " << betti res J << endl;
+	  ))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Markov install-one"
