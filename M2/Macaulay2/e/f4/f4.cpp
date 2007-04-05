@@ -202,18 +202,21 @@ void F4GB::process_s_pair(spair *p)
 
     load_row(n, p->i);
     c = mat->rows[mat->rows.size()-1].comps[0];
+
     if (mat->columns[c].gb_divisor != -2)
       n_lcmdups++;
-    mat->columns[c].gb_divisor = mat->rows.size()-1;
-    mat->columns[c].head = mat->columns[c].gb_divisor;
+    else {
+      // In this situation, we load the other half as a reducer
+      n = next_monom;
+      M->unchecked_divide(p->lcm, gb[p->j]->f.monoms, n);
+      B.intern(1+M->monomial_size(n));
+      next_monom = B.reserve(1+M->max_monomial_size());
+      next_monom++;
+      load_row(n, p->j);
 
-    n = next_monom;
-    M->unchecked_divide(p->lcm, gb[p->j]->f.monoms, n);
-    B.intern(1+M->monomial_size(n));
-    next_monom = B.reserve(1+M->max_monomial_size());
-    next_monom++;
-
-    load_row(n, p->j);
+      mat->columns[c].gb_divisor = mat->rows.size()-1;
+      mat->columns[c].head = mat->columns[c].gb_divisor;
+    }
     break;
   }
   case F4_SPAIR_GEN:
