@@ -374,6 +374,16 @@ void F4GB::make_matrix()
 ///////////////////////////////////////////////////
 // Gaussian elimination ///////////////////////////
 ///////////////////////////////////////////////////
+bool F4GB::is_new_GB_row(int row)
+// returns true if the r-th row has its lead term not in the current GB
+// This can be used to determine which elements should be reduced in the first place
+// and also to determine if an element (row) needs to be tail reduced
+{
+  row_elem &r = mat->rows[row];
+  if (r.len == 0) return false;
+  int pivotcol = r.comps[0];
+  return(mat->columns[pivotcol].gb_divisor < 0);
+}
 
 void F4GB::gauss_reduce()
   // This is the one I am working on...
@@ -414,6 +424,100 @@ void F4GB::gauss_reduce()
       KK->dense_row_to_sparse_row(gauss_row, r.len, r.coeffs, r.comps, first, last); 
         // the above line leavs gauss_row zero, and also handles the case when r.len is 0
         // it also potentially frees the old r.coeffs and r.comps
+      if (r.len > 0)
+	{
+	  KK->sparse_row_make_monic(r.len, r.coeffs);
+	  mat->columns[r.comps[0]].head = i;
+	}
+    }
+}
+
+void F4GB::gauss_reduce_triangular(bool diagonalize)
+  // This reduces the matrix to a triangular form
+  // It seems that gauss_reduce does NOT do that?
+{
+  // For each row which is a non-pivot row:
+  //  note that the row must be reducible, since the lead term corresponds to an spair cancellation
+  //   actually: not true: generators will often not be reducible...
+  //  also each such row must be non-zero, for the same reason
+  int nrows = mat->rows.size();
+  int ncols = mat->columns.size();
+  
+  KK->dense_row_allocate(gauss_row, ncols);
+  for (int i=0; i<nrows; i++)
+    {
+      row_elem &r = mat->rows[i];
+      if (r.len == 0) continue; // could happen once we include syzygies...
+      int pivotcol = r.comps[0];
+      int pivotrow = mat->columns[pivotcol].head;
+      if (pivotrow == i) continue; // this is a pivot row, so leave it alone
+
+      KK->dense_row_fill_from_sparse(gauss_row, r.len, r.coeffs, r.comps);
+      int firstnonzero = ncols;
+      int first = r.comps[0];
+      int last = r.comps[r.len-1];
+      do {
+	pivotrow = mat->columns[first].head;
+	if (pivotrow >= 0)
+	  {
+	    row_elem &pivot_rowelem = mat->rows[pivotrow];
+	    KK->dense_row_cancel_sparse(gauss_row, pivot_rowelem.len, pivot_rowelem.coeffs, pivot_rowelem.comps);
+	    int last1 = pivot_rowelem.comps[pivot_rowelem.len-1];
+	    if (last1 > last) last = last1;
+	  }
+	else if (firstnonzero == ncols)
+	  firstnonzero = first;
+	first = KK->dense_row_next_nonzero(gauss_row, first+1, last);
+      } while (first <= last);
+      KK->dense_row_to_sparse_row(gauss_row, r.len, r.coeffs, r.comps, firstnonzero, last); 
+      // the above line leavs gauss_row zero, and also handles the case when r.len is 0
+      // it also potentially frees the old r.coeffs and r.comps
+      if (r.len > 0)
+	{
+	  KK->sparse_row_make_monic(r.len, r.coeffs);
+	  mat->columns[r.comps[0]].head = i;
+	}
+    }
+
+  if (diagonalize)
+    tail_reduce();
+}
+
+void F4GB::tail_reduce()
+{
+  int nrows = mat->rows.size();
+  int ncols = mat->columns.size();
+  
+  KK->dense_row_allocate(gauss_row, ncols);
+  for (int i=nrows-1; i>=0; i--)
+    {
+      row_elem &r = mat->rows[i];
+      if (r.len <= 1) continue; // row reduced to zero, ignore it.
+      int pivotcol = r.comps[0];
+      int g = mat->columns[pivotcol].gb_divisor;
+      if (g >= 0) continue;
+      // At this point, we should have an element to reduce
+
+      KK->dense_row_fill_from_sparse(gauss_row, r.len, r.coeffs, r.comps);
+      int firstnonzero = r.comps[0];
+      int first = (r.len == 1 ? ncols :  r.comps[1]);
+      int last = r.comps[r.len-1];
+      while (first <= last) {
+	int pivotrow = mat->columns[first].head;
+	if (pivotrow >= 0)
+	  {
+	    row_elem &pivot_rowelem = mat->rows[pivotrow];
+	    KK->dense_row_cancel_sparse(gauss_row, pivot_rowelem.len, pivot_rowelem.coeffs, pivot_rowelem.comps);
+	    int last1 = pivot_rowelem.comps[pivot_rowelem.len-1];
+	    if (last1 > last) last = last1;
+	  }
+	else if (firstnonzero == ncols)
+	  firstnonzero = first;
+	first = KK->dense_row_next_nonzero(gauss_row, first+1, last);
+      };
+      KK->dense_row_to_sparse_row(gauss_row, r.len, r.coeffs, r.comps, firstnonzero, last); 
+      // the above line leavs gauss_row zero, and also handles the case when r.len is 0
+      // it also potentially frees the old r.coeffs and r.comps
       if (r.len > 0)
 	{
 	  KK->sparse_row_make_monic(r.len, r.coeffs);
@@ -499,12 +603,8 @@ void F4GB::new_GB_elements()
      we don't need to loop through all of these */
      
   for (int r=0; r<mat->rows.size(); r++)
-    {
-      if (mat->rows[r].len == 0) continue;
-      int c = mat->rows[r].comps[0];
-      if (mat->columns[c].gb_divisor < 0)
-	insert_gb_element(mat->rows[r]);
-    }
+    if (is_new_GB_row(r))
+      insert_gb_element(mat->rows[r]);
 }
 
 ///////////////////////////////////////////////////
@@ -527,8 +627,10 @@ void F4GB::do_spairs()
 
   H.dump();
 
+  //  show_matrix();
   begin_time = clock();
-  gauss_reduce();
+  gauss_reduce_triangular(true);
+  //  gauss_reduce();
   end_time = clock();
   clock_gauss += end_time - begin_time;
 
@@ -537,9 +639,13 @@ void F4GB::do_spairs()
   fprintf(stderr, " gauss time          = %f\n", nsecs);
 
   fprintf(stderr, " lcm dups            = %d\n", n_lcmdups);
-  //  show_matrix();
+  //show_matrix();
+  //  show_new_rows_matrix();
 
+  //  int ngb = gb.size();
   new_GB_elements();
+  //  int ngb1 = gb.size();
+  //  fprintf(stderr, " # new GB elements   = %d\n", ngb1 - ngb);
   
   // reset rows and columns and other matrix aspects
   mat->rows.clear();
@@ -705,6 +811,46 @@ void F4GB::show_matrix()
   emit(o.str());
 }
 
+void F4GB::show_new_rows_matrix()
+{
+  int ncols = mat->columns.size();
+
+  int nrows = 0;
+  for (int nr=0; nr<mat->rows.size(); nr++)
+    if (is_new_GB_row(nr)) nrows++;
+
+  MutableMatrix *gbM = IM2_MutableMatrix_make(KK->get_ring(), nrows, ncols, false);
+
+  int r = -1;
+  for (int nr=0; nr<mat->rows.size(); nr++)
+    if (is_new_GB_row(nr))
+      {
+	r++;
+	row_elem &row = mat->rows[nr];
+	ring_elem *rowelems = newarray(ring_elem, row.len);
+	if (row.coeffs == 0)
+	  {
+	    if (row.monom == 0)
+	      KK->to_ringelem_array(row.len, gens[row.elem]->f.coeffs, rowelems);
+	    else
+	      KK->to_ringelem_array(row.len, gb[row.elem]->f.coeffs, rowelems);
+	  }
+	else
+	  {
+	    KK->to_ringelem_array(row.len, row.coeffs, rowelems);
+	  }
+	for (int i=0; i<row.len; i++)
+	  {
+	    int c = row.comps[i];
+	    gbM->set_entry(r,c,rowelems[i]);
+	  }
+	deletearray(rowelems);
+      }
+
+  buffer o;
+  gbM->text_out(o);
+  emit(o.str());
+}
 
 #include "moninfo.hpp"
 #include "../coeffrings.hpp"
