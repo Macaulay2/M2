@@ -80,11 +80,38 @@ time gens gb(I, Algorithm=>F4, GBDegrees=>toList(4:1));
 
 gbTrace=3
 time gb I;
-time gb(I, Algorithm=>Homogeneous2);
+time gb(I, Algorithm=>Homogeneous2, Strategy=>LongPolynomial);
 
 
 -------------------------------
+restart
 loadPackage "ExampleIdeals"
-
 I = cyclicRootsHomogeneous(8,ZZ/23)
+time gens gb(I, Algorithm=>F4, GBDegrees=>toList(numgens ring I:1));
+
+describe R
+R1 = (coefficientRing R)[i, a..h]
+I = substitute(I,R1)
+R1 = (coefficientRing R)[reverse gens R]
+I = substitute(I,R1)
+R1 = (coefficientRing R)[i,reverse(a..h)]
+I = substitute(I,R1)
+R1 = (coefficientRing R)[reverse(a..h),i]
+I = substitute(I,R1)
+
+R = (coefficientRing R)[gens R, MonomialSize=>8]
+I = substitute(I,R)
+
+I = cyclicRootsHomogeneous(8,ZZ/32003)
+time gens gb(I, Algorithm=>F4, GBDegrees=>toList(numgens ring I:1));
+gbTrace=3
+time gens gb I;
+time gens gb(I, Algorithm=>Homogeneous2, Strategy=>LongPolynomial);
+
+I = cyclicRootsHomogeneous(9,ZZ/23)
+R1 = (coefficientRing R)[j, a..i]
+I = substitute(I,R1)
+time gens gb(I, Algorithm=>F4, GBDegrees=>toList(numgens ring I:1));
+
+I = katsura(8,ZZ/23)
 time gens gb(I, Algorithm=>F4, GBDegrees=>toList(numgens ring I:1));

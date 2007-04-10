@@ -134,6 +134,14 @@ private:
     void reorder_rows();
 
   void gauss_reduce();
+
+    bool is_new_GB_row(int row);
+    // returns true if the r-th row has its lead term not in the current GB
+    // This can be used to determine which elements should be reduced in the first place
+    // and also to determine if an element (row) needs to be tail reduced
+
+    void gauss_reduce_triangular(bool diagonalize);
+    void tail_reduce();
   
     void row_to_dense_row(int r, int &first, int &last);
     void subtract1(int r, int &first, int &last);
@@ -176,6 +184,7 @@ public:
   void show_row_info() const;
   void show_column_info() const;
   void show_matrix();
+  void show_new_rows_matrix();
 
 };
 
