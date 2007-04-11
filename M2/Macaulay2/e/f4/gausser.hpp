@@ -78,6 +78,10 @@ public:
 
   void sparse_row_make_monic(int len,
 			     F4CoefficientArray sparse) const;
+  int coeff_to_int(int f) const //anton
+  {
+    return Kp->to_int(f);
+  }
 };
 
 #endif

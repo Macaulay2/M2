@@ -37,11 +37,17 @@ F4GB::F4GB(const Gausser *KK0,
     H(M0,17),
     B(), 
     next_monom(), 
+    syz_next_col_to_process(0),
+    syz(0),
+    syzH(M0,17),
+    syzB(), 
+    syz_next_monom(), 
     gauss_row()
 {
   lookup = new MonomialLookupTable(M->n_vars());
   S = new F4SPairSet(M, gb);
   mat = new coefficient_matrix;
+  syz = new coefficient_matrix;
   // set status
   M->show();
 }
@@ -77,6 +83,20 @@ int F4GB::new_column(packed_monomial m)
   return next_column;
 }
 
+int F4GB::syz_new_column(packed_monomial m)
+{
+  // m is a packed monomial (with component), 
+  // unique via the hash table syzH, syzB.
+  column_elem c;
+  int next_column = syz->columns.size();
+  m[-1] = next_column;
+  c.monom = m;
+  c.gb_divisor = -2;
+  c.head = -1;
+  c.ord = 0;
+  syz->columns.push_back(c);
+  return next_column;
+}
 
 int F4GB::find_or_append_column(packed_monomial m)
 {
@@ -89,6 +109,19 @@ int F4GB::find_or_append_column(packed_monomial m)
   next_monom = B.reserve(1+M->max_monomial_size());
   next_monom++;
   return new_column(m);
+}
+
+int F4GB::syz_find_or_append_column(packed_monomial m)
+{
+  packed_monomial new_m;
+  if (syzH.find_or_insert(m, new_m))
+    return new_m[-1];
+  m = syz_next_monom;
+  // At this point, m is a new monomial to be placed as a column
+  syzB.intern(1+M->monomial_size(m));
+  syz_next_monom = B.reserve(1+M->max_monomial_size());
+  syz_next_monom++;
+  return syz_new_column(m);
 }
 
 
@@ -155,6 +188,28 @@ void F4GB::load_row(packed_monomial monom, int which)
     }
 
   mat->rows.push_back(r);
+  
+  // Append a new row to the syzygy matrix
+  M->unchecked_mult(monom, gb[which]->f.monoms, syz_next_monom);  
+  M->set_component(which, syz_next_monom);
+  packed_monomial m;
+  if (!H.find_or_insert(syz_next_monom, m)) //use the old copy if already there
+    {
+      m = syz_next_monom;
+      syzB.intern(1+M->monomial_size(m));
+      syz_next_monom = syzB.reserve(1+M->max_monomial_size());
+      syz_next_monom++;     
+    }
+  row_elem syz_r;
+  syz_r.monom = m;
+  syz_r.elem = which; // here info is duplicated: which == M->get_component(m)
+
+  syz_r.len = 1;
+  syz_r.coeffs = newarray_atomic(int, 1); 
+  static_cast<int *>(syz_r.coeffs)[0] = 0; // this represents 1 in the coefficient field 
+  syz_r.comps = newarray_atomic(int, 1);
+  static_cast<int *>(syz_r.comps)[0] = syz_find_or_append_column(m);
+  syz->rows.push_back(syz_r);
 }
 
 
@@ -294,8 +349,73 @@ void F4GB::reorder_columns()
   std::swap(mat->columns, newcols);
 }
 
+void F4GB::syz_reorder_columns()
+{
+  // Same as reorder_columns(), but for syzygy matrix
+
+  long nrows = syz->rows.size();
+  long ncols = syz->columns.size();
+
+  // sort the columns
+
+  long *column_order = newarray_atomic(long, ncols);
+
+  clock_t begin_time = clock();
+  for (long i=0; i<ncols; i++)
+    {
+      column_order[i] = i;
+    }
+
+  fprintf(stderr, "ncomparisons = ");
+
+  ColumnsSorter C(M, syz);
+  QuickSorter<ColumnsSorter>::sort(&C, column_order, ncols);
+
+  fprintf(stderr, "%ld, ", C.ncomparisons());
+  clock_t end_time = clock();
+  clock_sort_columns += end_time - begin_time;
+  double nsecs = end_time - begin_time;
+  nsecs /= CLOCKS_PER_SEC;
+  fprintf(stderr, " time = %f\n", nsecs);
+  //  fprintf(stdout, "column order: ");
+  //  for (int i=0; i<column_order.size(); i++)
+  //      fprintf(stdout, "%d ", column_order[i]);
+  //    fprintf(stdout, "\n");
+
+  for (long i=0; i<ncols; i++)
+    {
+      syz->columns[column_order[i]].ord = i;
+    }
+
+  // Now move the columns into position
+  coefficient_matrix::column_array newcols;
+  newcols.reserve(ncols);
+  for (long i=0; i<ncols; i++)
+    {
+      long newc = column_order[i];
+      newcols.push_back(syz->columns[newc]);
+    }
+
+  // Now reset the components in each row
+  for (long r=0; r<nrows; r++)
+    {
+      row_elem &row = syz->rows[r];
+      for (long i=0; i<row.len; i++)
+	{
+	  long oldcol = row.comps[i];
+	  long newcol = syz->columns[oldcol].ord;
+	  row.comps[i] = newcol;
+	}
+    }
+
+  std::swap(syz->columns, newcols);
+}
+
+
 void F4GB::reorder_rows()
 {
+  //??? reorder rows in <mat> and <syz> simultaneously?
+
   long nrows = mat->rows.size();
   long ncols = mat->columns.size();
   coefficient_matrix::row_array newrows;
@@ -329,6 +449,7 @@ void F4GB::reorder_rows()
 
 void F4GB::reset_matrix()
 {
+  // mat 
   next_col_to_process = 0;
   mat->rows.clear();
   mat->columns.clear();
@@ -338,6 +459,17 @@ void F4GB::reset_matrix()
   B.reset();
   next_monom = B.reserve(1+M->max_monomial_size());
   next_monom++;
+  
+  // syz
+  syz_next_col_to_process = 0;
+  syz->rows.clear();
+  syz->columns.clear();
+  syz->column_order.clear();
+
+  syzH.reset();
+  syzB.reset();
+  syz_next_monom = syzB.reserve(1+M->max_monomial_size());
+  syz_next_monom++;
 }
 
 void F4GB::make_matrix()
@@ -361,6 +493,8 @@ void F4GB::make_matrix()
   // DEBUGGING:
   fprintf(stderr, "--matrix--%ld by %ld\n", 
 	  (long)mat->rows.size(), (long)mat->columns.size());
+  fprintf(stderr, "-syzygies-%ld by %ld\n", 
+	  (long)syz->rows.size(), (long)syz->columns.size());
 
   //  show_row_info();
   //  show_column_info();
@@ -368,7 +502,8 @@ void F4GB::make_matrix()
 
   // Now we reorder the columns, rows?
   reorder_columns();
-  reorder_rows();  // This is only here so we can see what we are doing...?
+  syz_reorder_columns();
+  //reorder_rows();  // This is only here so we can see what we are doing...?
 }
 
 ///////////////////////////////////////////////////
@@ -388,6 +523,8 @@ bool F4GB::is_new_GB_row(int row)
 void F4GB::gauss_reduce()
   // This is the one I am working on...
 {
+  // gauss_reduce_linbox(); //dump <mat> in a file
+  
   int nrows = mat->rows.size();
   int ncols = mat->columns.size();
   
@@ -811,10 +948,70 @@ void F4GB::show_matrix()
   emit(o.str());
 }
 
+//////////////////// LINBOX includes //////////////////////////////////////
+//#include <linbox/field/modular.h>
+//#include <linbox/blackbox/sparse.h>
+//#include <linbox/solutions/rank.h>
+//#include <linbox/util/timer.h>
+//using namespace LinBox;
+
+/////////////////// linbox ////////////////////////////////////
+
+
+void F4GB::gauss_reduce_linbox()
+  // dumps the current matrix into a file in the linbox sparse matrix format
+{
+  // dump the matrix in a file
+  char fname[30];      
+  sprintf(fname, "tmp.%i.matrix", this_degree);
+  FILE* mfile = fopen(fname, "w");  
+  int nrows = mat->rows.size();
+  int ncols = mat->columns.size();
+  
+  fprintf(mfile, "%i %i M\n", nrows, ncols);
+  for (int i=0; i<nrows; i++)
+    {
+      row_elem &r = mat->rows[i];
+      int *sparseelems = static_cast<int *>(r.coeffs);
+      for (int j=0; j<r.len; j++) {
+	fprintf(mfile, "%i %i %i\n",i+1,r.comps[j]+1,KK->coeff_to_int(*sparseelems++)); //is *sparseelems integer? 
+      }
+    }  
+  fprintf(mfile, "0 0 0\n");
+  fclose(mfile);
+
+  /*
+  typedef Modular<short> Field;
+  
+  // Ring& ZP = KK->get_ring();
+  int P = 23; // how go I get the characteristic of a ring?
+  Field FF(P);
+  Field::Element v;
+  int nrows = mat->rows.size();
+  int ncols = mat->columns.size();
+  
+  SparseMatrix<Field> BB(FF,nrows,ncols); //in
+  SparseMatrix<Field> E(FF,nrows,ncols); //out
+  
+  for (int i=0; i<nrows; i++)
+    {
+      row_elem &r = mat->rows[i];
+      int *sparseelems = static_cast<int *>(r.coeffs);
+      int* comps = r.comps; 
+      for (int j=0; j<r.len; j++) {
+	FF.init(v, *sparseelems++); //ZP.coerce_to_int? What is *sparseelems? 
+	BB.setEntry(i, *comps++, v);  // put v in i,j position.
+      }
+    }  
+  long unsigned int r;
+  rank (r, BB);*/
+}
+
+/////////////////// end linbox ///////////////////////////////
+
 void F4GB::show_new_rows_matrix()
 {
   int ncols = mat->columns.size();
-
   int nrows = 0;
   for (int nr=0; nr<mat->rows.size(); nr++)
     if (is_new_GB_row(nr)) nrows++;
@@ -859,3 +1056,4 @@ template class MemoryBlock<pre_spair>;
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/f4 f4.o "
 // End:
+
