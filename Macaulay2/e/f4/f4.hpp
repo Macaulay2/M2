@@ -109,10 +109,21 @@ class F4GB : public our_new_delete
   MonomialHashTable<MonomialInfo> H;
   MemoryBlock<monomial_word> B;
   monomial_word *next_monom; // valid while creating the matrix
+  
+  // The syzygy matrix and its construction
+  //??? reuse the construction structures from above?
+  int syz_next_col_to_process;
+  coefficient_matrix *syz;
+  MonomialHashTable<MonomialInfo> syzH;
+  MemoryBlock<monomial_word> syzB;
+  monomial_word *syz_next_monom; // valid while creating the matrix
 
   // Local data for gaussian elimination
   dense_row gauss_row;
 private:
+
+
+  void gauss_reduce_linbox(); // dumps matrices in linbox format 
 
   void test_spair_code(); // test routine: probably will be removed
 
@@ -124,13 +135,16 @@ private:
 
     void reset_matrix();
     int new_column(packed_monomial m);
+    int syz_new_column(packed_monomial m);
     int find_or_append_column(packed_monomial m);
+    int syz_find_or_append_column(packed_monomial m);
     int mult_monomials(packed_monomial m, packed_monomial n);
     void load_gen(int which);
     void load_row(packed_monomial monom, int which);
     void process_column(int c);
     void process_s_pair(spair *p);
     void reorder_columns();
+    void syz_reorder_columns();
     void reorder_rows();
 
   void gauss_reduce();
