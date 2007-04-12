@@ -51,8 +51,8 @@ notImplemented = x -> error "not implemented yet"
 benchmark = (s) -> (
      n := 1;
      while (
-	  s1 := concatenate("timing scan(",toString n,", i -> (",s,";null;null))");
-	  s2 := concatenate("timing scan(",toString n,", i -> (      null;null))");
+	  s1 := concatenate("timing scan(",toString n,", iBenchmark -> (",s,";null;null))");
+	  s2 := concatenate("timing scan(",toString n,", iBenchmark -> (      null;null))");
 	  collectGarbage();
 	  value s1;
 	  value s2;
