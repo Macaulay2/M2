@@ -27,10 +27,11 @@ R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
 I = ideal(x_4^3*x_3*x_2-x_4, x_2*x_1-x_5^3, x_5*x_1^3)
 gens gb I
 noetherNormalization I
+--this guys a problem, what to do?
 
-
-
-
+R = QQ[x_1..x_4,MonomialOrder => Lex];
+I = ideal((4/7)*x_3^2*x_4-(4/3)*x_4^2-(3/7)*x_3,(5/4)*x_2*x_4^2+(7/8)*x_1+(7/2),-(10/9)*x_1^2*x_4-(7/9)*x_2^2+(7/4)*x_4+(3/2))
+noetherNormalization I
 
 
 
@@ -48,16 +49,20 @@ installPackage "NoetherNormalization"
 methods noetherNormalization
 
 
+R = QQ[x_3,x_3,x_2,x_1, MonomialOrder => Lex];
+I = ideal(-(3/2)*x_3^3*x_2-(4/5)*x_2^2+4*x_1^5-x_1,x_3^3*x_1-(5/8)*x_3^2*x_2*x_1^2+(2/5)*x_2+(8/3)*x_1^3)
 
 
 
 --Ex#1
 -- this is the example from the paper
 -- this makes it a good first example
+R = QQ[x_1..x_4,MonomialOrder => Lex];
 R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex]; --the same ordering as in the paper
+R = QQ[x_2,x_3,x_4,x_1, MonomialOrder => Lex];
 I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
-
-
+noetherNormalization I
+I = ideal((6/5)*x_4*x_1-(8/7)*x_1^3-(9/4),(3/7)*x_4*x_3+(7/8)*x_3*x_2^2+x_1-(5/3),-(5/6)*x_4*x_2-(5/6)*x_3^2*x_1)
 
 
 
