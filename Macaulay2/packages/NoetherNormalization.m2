@@ -118,6 +118,8 @@ randomSum = (U,V,k) -> (
 
 noetherPrime = (R,X,I,G,U,V,d,np,npinverse,homogeneous) -> (
      counter := 0; --counts the number of times lastCheck is called
+     limitsequence = {5,20,40,60,80,infinity};
+     seqindex = 0;
      k := coefficientRing R;
      done := false;
      f := map(R,R,inverseSequence(U|V,X));
@@ -134,11 +136,14 @@ noetherPrime = (R,X,I,G,U,V,d,np,npinverse,homogeneous) -> (
 	  ginverse := map(R,R,reverse(stuff|V));
 	  f = g*f;
 	  finverse = finverse*ginverse;
-	  if homogeneous then (
-	       G = gb(f I, Algorithm => Homogeneous2);
+     	  while (done == false and seqindex < #limitsequence) do (
+	       if homogeneous then (
+	       	    G = gb(f I, Algorithm => Homogeneous2, BasisElementLimit => limitsequence_seqindex);
+	       	    );     
+	       if not homogeneous then G = gb(f I, BasisElementLimit => limitsequence_seqindex);
+	       done = lastCheck(X,G, d);
+     	       seqindex = seqindex + 1;
 	       );
-	  if not homogeneous then G = gb(f I);
-	  done = lastCheck(X,G, d);
 	  counter = counter + 1;
 	  if done or (counter == 100) then return((counter,V,transpose gens G,f*np)); --if returning the inverse map then npinverse*finverse
       	  );

@@ -1,7 +1,15 @@
+type ESingular to get singular to open in emacs
+
 LIB "algebra.lib";
 ring R=0,(x_4,x_3,x_2,x_1),lp;
 ideal I = x_4*x_3, x_2*x_1;
 noetherNormal(I);
+
+
+ring R=0,(x_1,x_2,x_3,x_4),lp;
+ideal I = (-(3/2)*x_3^3*x_2-(4/5)*x_2^2+4*x_1^5-x_1,x_3^3*x_1-(5/8)*x_3^2*x_2*x_1^2+(2/5)*x_2+(8/3)*x_1^3)
+noetherNormal(I);
+
 
 
 ring R=0,(x_5,x_4,x_3,x_2,x_1),lp;
