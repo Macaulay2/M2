@@ -34,7 +34,7 @@ public:
   F4CoefficientArray copy_F4CoefficientArray(int len, F4CoefficientArray F) const;
 
   // other routines:
-  void remove_array(F4CoefficientArray a) const;
+  void deallocate_F4CCoefficientArray(F4CoefficientArray &F, int len) const;
 
   // reduce mod p. (QQ --> ZZ/p) (place in double's??)
 
