@@ -43,6 +43,13 @@ public:
       minus_one = (p-1)/2;
   }
 
+  int to_int(int f) const
+  {
+    int n = exp_table[f];
+    if (n > p/2) n -= p;
+    return n;
+  }
+
   void init_set(elem &result, elem a) const { result = a; }
 
   void set_zero(elem &result) const { result = zero; }

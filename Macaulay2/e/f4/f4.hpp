@@ -64,6 +64,7 @@
 //      
 
 #include "f4-types.hpp"
+#include "f4-mem.hpp"
 #include "monhashtable.hpp"
 #include "memblock.hpp"
 #include "monsort.hpp"
@@ -134,6 +135,7 @@ private:
   void make_matrix();
 
     void reset_matrix();
+    void clear_matrix();
     int new_column(packed_monomial m);
     int syz_new_column(packed_monomial m);
     int find_or_append_column(packed_monomial m);
@@ -147,14 +149,16 @@ private:
     void syz_reorder_columns();
     void reorder_rows();
 
-  void gauss_reduce();
+    F4CoefficientArray get_coeffs_array(row_elem &r);
+    // If r.coeffs is set, returns that, otherwise returns the coeffs array from
+    // the generator or GB element.  The resulting value should not be modified.
 
-    bool is_new_GB_row(int row);
+    bool is_new_GB_row(int row) const;
     // returns true if the r-th row has its lead term not in the current GB
     // This can be used to determine which elements should be reduced in the first place
     // and also to determine if an element (row) needs to be tail reduced
 
-    void gauss_reduce_triangular(bool diagonalize);
+    void gauss_reduce(bool diagonalize);
     void tail_reduce();
   
     void row_to_dense_row(int r, int &first, int &last);

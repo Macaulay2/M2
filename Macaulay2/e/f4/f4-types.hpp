@@ -104,10 +104,9 @@ struct row_elem : public our_new_delete {
 
 struct column_elem : public our_new_delete {
   packed_monomial monom;
-  int degree;
   int gb_divisor; // -1 if none, otherwise >= 0.
-  int head; // which row is being used as a pivot for this column
-  int ord; // Set before doing LU decomposition
+  int head; // which row is being used as a pivot for this column.  
+            // -1 means none, -2 means not set yet
 };
 
 struct coefficient_matrix : public our_new_delete {
@@ -116,15 +115,13 @@ struct coefficient_matrix : public our_new_delete {
   
   row_array rows;
   column_array columns;
-  
-  VECTOR(int) column_order; // Inverse to ord values
 };
 
 class ColumnsSorter
 {
 public:
   typedef MonomialInfo::value monomial;
-  typedef long value;
+  typedef int value;
 private:
   const MonomialInfo *M;
   const coefficient_matrix *mat;

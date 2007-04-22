@@ -33,9 +33,9 @@ gens gb(I, Algorithm=>F4)
 ------------------------------
 R = ZZ/101[a..h]
 I = ideal random(R^1, R^{-3,-3,-3})
-I = gens gb I;
+time I = gens gb I;
 gbTrace=3
-gens gb(I, Algorithm=>F4, GBDegrees=>{1,1,1,1,1,1,1,1});
+time gens gb(I, Algorithm=>F4, GBDegrees=>{1,1,1,1,1,1,1,1});
 ------------------------------
 R = ZZ/101[a..h,MonomialSize=>8]
 I = ideal random(R^1, R^{-3,-4,-4,-5});
@@ -77,6 +77,11 @@ R = ZZ/5[a..d,MonomialSize=>16];
 I = ideal{a^3-2*a^2*b-a*b^2-2*b^3+a*b*c-2*b^2*c+2*a*c^2-2*b*c^2-c^3+2*a*b*d
 	  -2*b^2*d-a*c*d-2*b*c*d-2*c^2*d+a*d^2+c*d^2-d^3, a^125, b^125, c^125, d^125}
 time gens gb(I, Algorithm=>F4, GBDegrees=>toList(4:1));
+time gens gb(I, Algorithm=>F4, GBDegrees=>toList(4:1), DegreeLimit=>180);
+time gens gb(I, Algorithm=>F4, GBDegrees=>toList(4:1), DegreeLimit=>191);
+
+-- interrupted in degree 191, used 58.43 seconds, space: 1.07 GB real, 1.16 GB virtual
+
 
 gbTrace=3
 time gb I;
@@ -88,7 +93,7 @@ restart
 loadPackage "ExampleIdeals"
 I = cyclicRootsHomogeneous(8,ZZ/23)
 time gens gb(I, Algorithm=>F4, GBDegrees=>toList(numgens ring I:1));
-
+time gens gb(I, Algorithm=>F4, GBDegrees=>toList(numgens ring I:1), Strategy=>15);
 describe R
 R1 = (coefficientRing R)[i, a..h]
 I = substitute(I,R1)
@@ -114,4 +119,23 @@ I = substitute(I,R1)
 time gens gb(I, Algorithm=>F4, GBDegrees=>toList(numgens ring I:1));
 
 I = katsura(8,ZZ/23)
+time gens gb(I, Algorithm=>F4, GBDegrees=>toList(numgens ring I:1));
+
+R = ZZ/101[a..e];
+I = ideal random(R^1, R^{-2,-2,-2})
+L = flatten entries gens I;
+scan(1000, i -> time gens gb(ideal L, Algorithm=>F4, GBDegrees=>{1,1,1,1,1}))
+
+
+restart
+loadPackage "ExampleIdeals"
+I = commuting4by4grevlex(ZZ/101)
+time gens gb(I, Algorithm=>F4, GBDegrees=>toList(numgens ring I:1));
+
+-- Inhomogeneous GB's don't work yet:
+R = ZZ/101[a..d]
+I = ideal"ab-4,ac-3c-d,d3-5"
+gbI = matrix"bc+34bd-35c,ac-3c-d,ab-4,d3-5"
+gens gb I  == gbI
+gbTrace = 10
 time gens gb(I, Algorithm=>F4, GBDegrees=>toList(numgens ring I:1));

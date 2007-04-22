@@ -26,6 +26,7 @@ export {
      cyclicRoots,
      cyclicRootsHomogeneous,
      commuting4by4,
+     commuting4by4grevlex,
      PellikaanJaworski,
      bayes
      }
@@ -129,6 +130,27 @@ cyclicRootsHomogeneous = (n,kk) -> (
 commuting4by4 = (kk) -> (
   R = kk[vars(0..31),
          MonomialOrder=>{8, 12, 12}, 
+	 MonomialSize=>8];
+  I = ideal"
+          -jo+ip-vA+uB-xC+wD, 
+	  -ap+bo+cp-do+kB-lA+mD-nC, 
+	  -aB+bA+eB-fA+pq-or-zC+yD, 
+	  -aD+bC+gD-hC+ps-ot+BE-AF, 
+	  aj-bi-cj+di-qv+ru-sx+tw, 
+	  jo-ip-lq+kr-ns+mt, 
+	  -cr+dq+er-fq-iB+jA-sz+ty, 
+	  -ct+ds+gt-hs-iD+jC-qF+rE, 
+	  av-bu-ev+fu-jk+il-xE+wF, 
+	  cl-dk-el+fk+mF-nE+ov-pu, 
+	  lq-kr+vA-uB-zE+yF, 
+	  -eF+fE+gF-hE+ls-kt+vC-uD, 
+	  ax-bw-gx+hw-jm+in-vy+uz, 
+	  cn-dm-gn+hm+kz-ly+ox-pw, 
+	  ez-fy-gz+hy+nq-mr+xA-wB, 
+	  ns-mt+xC-wD+zE-yF")
+
+commuting4by4grevlex = (kk) -> (
+  R = kk[vars(0..31),
 	 MonomialSize=>8];
   I = ideal"
           -jo+ip-vA+uB-xC+wD, 
