@@ -19,6 +19,11 @@ noetherNormal(I);
 
 
 LIB "algebra.lib";
+ring R=0,(x_6,x_5,x_4,x_3,x_2,x_1),lp;
+ideal I = (x_6^3 + x_5^3*x_3^3*x_4^3-2,x_4^4*x_3^2+x_1,x_2*x_1^3);
+noetherNormal(I);
+
+LIB "algebra.lib";
 ring R=0,(x_5,x_4,x_3,x_2,x_1),lp;
 ideal I = x_4^3*x_3*x_2-x_4, x_2*x_1-x_5^3, x_5*x_1^3;
 noetherNormal(I);
@@ -43,3 +48,8 @@ noetherNormal(I);
 ring a=0,(x,y,z,t,u),dp;
 ideal i = x3+xy-z,y3-t+z,x2y+xy2-u;
 noetherNormal(i);
+
+LIB "algebra.lib";
+ring R=0, (x_1,x_2,x_3,x_4),lp;
+ideal I =((6/5)*x_4*x_1-(8/7)*x_1^3-(9/4), (3/7)*x_4*x_3+(7/8)*x_3*x_2^2+x_1-(5/3),-(5/6)*x_4*x_2-(5/6)*x_3^2*x_1);
+groebner(I);
