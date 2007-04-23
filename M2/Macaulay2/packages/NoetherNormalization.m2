@@ -8,7 +8,7 @@ newPackage(
 	  {Name => "Nathaniel Stapleton", Email => "nstaple2@math.uiuc.edu"},
 	  {Name => "Bart Snapp", Email => "snapp@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~snapp/"}
 	  },
-     Headline => "computes Noether Normalization",
+     Headline => "place an ideal in Noether normal position",
      DebuggingMode => true
      )
 
@@ -53,7 +53,7 @@ varPrep = (X,G) -> (
      );
 
 --==================================================
---makes sure that the that the transformation has put the ideal in noether position
+--makes sure that the that the transformation has put the ideal in Noether position
 lastCheck = (X,G,d) -> (
      M := gens G;
      i := 0;
@@ -197,37 +197,47 @@ noetherNormalization(Ideal) := Sequence => (I) -> (
 -- 4. or just stop singular from printing
 -- gbTrace
 
-
--- TO DO:
--- clear up output
--- get randomness
--- implement for nonprime ideals
-
--- Ok as far as the not prime case is concerned, let's write it as follows:
--- 
--- We'll do it with 3 routines.
--- 
--- noetherDecider
---         Will output T, and decided with algoritm to use.
---
--- noetherPrime
---        Will utilize the T being outputted
---
--- noetherNotPrime
---     	  Will also use T being outputted.
-
-
-
-
-
-
 --=========================================================================--
 
 beginDocumentation() -- the start of the documentation
 
 -----------------------------------------------------------------------------
 
---docs
+document { 
+     Key => NoetherNormalization,
+     Headline => "place an ideal in Noether normal position",
+     EM "NoetherNormalization", " is a package for computing ring homomorphisms 
+     which will place ideals in Noether normal position.
+     ."
+     }
+()
+-----------------------------------------------------------------------------
+document {
+     Key => (noetherNormalization, Ideal),
+     Headline => "places an ideal in Noether normal position",
+     Usage => "noetherNormalization(I)",
+     Inputs => {
+	  "I" => {}
+	  },
+     Outputs => {
+	  Sequence => {}
+	  },
+     "The function ", TT "noetherNormalization(I)", "outputs a sequence 
+     consisting of the following items: the list of algebraically independent 
+     variables in the ring of ", TT "I", ", and a map from ", TT "R", " to ", 
+     TT"R", " which will place the original ideal into Noether normal position.",  
+     EXAMPLE {
+	  "A = QQ[x_1..x_3]/ideal(x_1^2, x_1*x_2);",
+	  "x_1+x_2"
+	  },
+     EXAMPLE {
+	  "1+1"
+	  },
+     "Give some details of the algorithm.",
+     PARA {
+     "This symbol is provided by the package ", TO NoetherNormalization, "."
+     }
+     }
 
 --=========================================================================--
 

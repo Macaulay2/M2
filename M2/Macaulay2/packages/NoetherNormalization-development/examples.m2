@@ -13,11 +13,10 @@ I < k[x] <= k[y] <- k[t]
 we take I we currently return p^-1, we want p,s,J
 don't compute the inverse asking for it. 
 
-
 -- Singular is better...
 
-R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex] -- this is a nice example...
-I = ideal(x_2*x_1-x_5^3, x_5*x_1^3)              -- compare with the same example in singular. 
+R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex] 
+I = ideal(x_2*x_1-x_5^3, x_5*x_1^3)              
 gens gb I
 noetherNormalization I
 
@@ -47,7 +46,7 @@ clearAll
 uninstallPackage "NoetherNormalization"
 installPackage "NoetherNormalization"
 methods noetherNormalization
-
+help noetherNormalization
 
 R = QQ[x_3,x_3,x_2,x_1, MonomialOrder => Lex];
 I = ideal(-(3/2)*x_3^3*x_2-(4/5)*x_2^2+4*x_1^5-x_1,x_3^3*x_1-(5/8)*x_3^2*x_2*x_1^2+(2/5)*x_2+(8/3)*x_1^3)
