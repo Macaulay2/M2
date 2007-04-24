@@ -23,6 +23,15 @@ export{noetherNormalization} -- if the new routines which you are adding have ne
 -- exported
         
 --=========================================================================--
+--initial comments: noetherNormalization takes in an ideal I of a ring R over a field k such that the dimension of I in R is d
+--(fix these symbols for all comments) and returns a linear transformation that puts the ideal in noether position (as well as...).
+
+
+--comments:The procedure integralSet takes a Grobner basis G (ie. a list of polynomials) and returns the variables that already
+--have an integral relation. It does this by taking the lead monomial of each polynomial and checking whether or not it consists 
+--of a power of a single variable. We are assuming that the ring is over a field and thus we don't check the lead coefficient.
+
+
 --We are not using the power of lemma 3.2 when we do this, only lemma 3.1 so we can currently apply this to all ideals
 --However, lemma 3.2 only works if the ideal is prime and we never actually test for this (and probably shouldn't).
 integralSet = G -> (
@@ -35,6 +44,11 @@ integralSet = G -> (
      J);
 
 --=========================================
+--comments: varPrep is the initial function we run on the groebner basis of the inputed ideal I. For all prime ideals it returns a maximal algebraically
+--independent set of variables whose cardinality is equal to d. If the set returned by varPrep is smaller than d (it should never be larger) then the 
+--ideal is not prime. varPrep is proven to work in this way in Logar's paper. In case varPrep returns a set smaller than d the ideal is sent to
+--maxAlgPerm. What it does:
+
 --finds algebraically independent variables
 varPrep = (X,G) -> (
      M := gens G;
@@ -53,7 +67,11 @@ varPrep = (X,G) -> (
      );
 
 --==================================================
---makes sure that the that the transformation has put the ideal in Noether position
+--comments: We use lastCheck to check that our final groebner basis witnesses the integrality of each variable that should be integral.
+--It checks that each variable that should be integral after the linear transformation is integral and some more...
+
+
+--makes sure that the that the transformation has put the ideal in noether position
 lastCheck = (X,G,d) -> (
      M := gens G;
      i := 0;
@@ -73,6 +91,10 @@ lastCheck = (X,G,d) -> (
      );
 
 --==============================================
+--comments: The purpose of maxAlgPerm is to take an ideal that varPrep failed on and make a change of variables in order for varPrep to succeed.
+--It essentially takes the offending groebner basis and returns a maximal alg. independent set of variables which are then moved to the 
+--highest valued variables in the lex ordering via a permutation. The algorithm can be found in.... 
+
 --maxAlgPerm is a recursive version of maxAlgPerm that for large #X and medium d should be far faster, it appears to be working.
 --when an ideal is not good (not prime and varPrep does not give the dimension) then maxAlgPerm permutes
 --the variables into a guaranteed good position (note: this algorithm is not from logar but was referenced by him)
@@ -92,6 +114,10 @@ maxAlgPerm = (R,X,G,d,S) -> (
      );
 	    
 --======================================================
+--comments: inverseSequence is used to give the inverse of a ring map. A ring map is given by a sequence explaining where each of the
+--ring's  variables should go. If the ring map is just a permutation of the variables then it is obviously an isomorphism and inverseSequence
+--returns the sequence that give the inverse morphism.
+
 --quick fix, this does need to be done at some point but I suspect that it can be returned with varPrep even and then we don't have to do this extra looping.
 --merely finds the inverse permutation
 inverseSequence = (U,X) -> (
@@ -107,7 +133,8 @@ inverseSequence = (U,X) -> (
      return N;
      );
 --========================================================
-
+--comments: radomSum is used to make the random linear transformations which are candidates for putting I in noetherPosition. It takes in two lists
+--and and adds the second to the first with random coefficients.
 randomSum = (U,V,k) -> (
      for j to #V - 1 do (
 	  U = apply(U, i -> i + random(k)*V_j);
@@ -115,11 +142,17 @@ randomSum = (U,V,k) -> (
      return U;
      );
 --========================================================
+--comments: noetherPrime is where the action happens. It takes the ideal (which may have been fixed by maxAlgPerm) and does a random linear transformation
+--adding to the independent variables the dependent ones that are not initially integral. It then checks that the transformation put the ideal in 
+--noether position. It does this bye partially computing a groebner basis for the ideal until the partially computed groebner basis witnesses
+--the integrality of all of the dependent variables. If the entire groebner basis is computed and the integrality is never witnessed then we apply
+--another random linear transformation and start the process again. While doing all this we keep track of the maps and the inverses of the maps that 
+--we use. 
+
 
 noetherPrime = (R,X,I,G,U,V,d,np,npinverse,homogeneous) -> (
      counter := 0; --counts the number of times lastCheck is called
-     limitsequence = {5,20,40,60,80,infinity};
-     seqindex = 0;
+     limitsequence := {5,20,40,60,80,infinity}; -- this is for the basiselementlimit setting for computing gb and is based on experience (and nothing else)
      k := coefficientRing R;
      done := false;
      f := map(R,R,inverseSequence(U|V,X));
@@ -128,7 +161,8 @@ noetherPrime = (R,X,I,G,U,V,d,np,npinverse,homogeneous) -> (
      V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
      U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
      while done == false do ( 
-     	  stuff = U;
+	  seqindex := 0;
+     	  stuff := U;
      	  if counter == 0 then U = randomSum(U,V-set J,k);
 	  if counter >= 1 then U = randomSum(U,V-set integralSet(G),k);
 	  stuff = stuff + (stuff - U);
@@ -145,9 +179,11 @@ noetherPrime = (R,X,I,G,U,V,d,np,npinverse,homogeneous) -> (
      	       seqindex = seqindex + 1;
 	       );
 	  counter = counter + 1;
-	  if done or (counter == 100) then return((counter,V,transpose gens G,f*np)); --if returning the inverse map then npinverse*finverse
+	  if done or (counter == 100) then return((counter,limitsequence_{seqindex - 1},U,f*np)); --U is the algebraically independent vars, if returning the inverse map then npinverse*finverse
       	  );
      );
+
+--comments: noetherNotPrime is where the ideals that fail varPrep go. There they are fixed by maxAlgPerm and then send to noetherPrime. 
  
 noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
      S := maxAlgPerm(R,X,G,d,{});
@@ -168,6 +204,9 @@ noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
 --we take I we currently return p^-1, we want p,s,J
 --don't compute the inverse asking for it. 
 
+--comments: noetherNormalization is the main method. I is passed to it by the user and it's groebner basis is immediately computed. Using this
+--it checks if varPrep returns a maximal alg. independent set and decides to send it to noetherPrime if it does and to noetherNotPrime if it
+--doesn't. 
 noetherNormalization = method()
 noetherNormalization(Ideal) := Sequence => (I) -> (
      R := ring I;
