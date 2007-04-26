@@ -414,6 +414,7 @@ export {
 	symbol UpdateOnly,
 	symbol Usage,
 	symbol UseHilbertFunction,
+	symbol UseSyzygies,
 	symbol GroebnerBasisOptions,
 	symbol installHilbertFunction,
 	symbol installGroebner,
