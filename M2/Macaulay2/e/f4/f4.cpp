@@ -5,8 +5,6 @@
 #include "f4.hpp"
 #include "monsort.hpp"
 
-static const bool doing_syz = false;
-
 static clock_t clock_sort_columns = 0;
 static clock_t clock_gauss = 0;
 static clock_t clock_make_matrix = 0;
@@ -57,6 +55,8 @@ F4GB::F4GB(const Gausser *KK0,
   // set status
   if (gbTrace >= 2)
     M->show();
+
+  using_syz = strategy & STRATEGY_USE_SYZ;
 }
 
 F4GB::~F4GB()
@@ -192,7 +192,7 @@ void F4GB::load_row(packed_monomial monom, int which)
 
   mat->rows.push_back(r);
 
-  if (doing_syz)
+  if (using_syz)
     {  
       // Append a new row to the syzygy matrix
       M->unchecked_mult(monom, gb[which]->f.monoms, syz_next_monom);  
@@ -527,7 +527,7 @@ void F4GB::make_matrix()
   // Now we reorder the columns, possibly rows?
   reorder_columns();
 
-  if (doing_syz)
+  if (using_syz)
     syz_reorder_columns();
 
   //reorder_rows();  // This is only here so we can see what we are doing...?

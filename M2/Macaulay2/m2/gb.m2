@@ -73,9 +73,10 @@ gbGetSuitable := (f,type) -> (
 
 gb = method( TypicalValue => GroebnerBasis, Options => gbDefaults )
 
-strategyCodes := new HashTable from { -- must match values in e/engine.h
+strategyCodes := new HashTable from { -- must match values in e/engine.h in enum StrategyValues
      LongPolynomial => 1,
-     Sort => 2
+     Sort => 2,
+     UseSyzygies => 8
      }
 
 processStrategy := (v) -> (

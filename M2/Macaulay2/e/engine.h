@@ -1502,7 +1502,8 @@ enum StrategyValues
   {
     STRATEGY_LONGPOLYNOMIALS = 1,
     STRATEGY_SORT = 2,
-    STRATEGY_USE_HILB = 4
+    STRATEGY_USE_HILB = 4,
+    STRATEGY_USE_SYZ = 8
   };
 
 enum Algorithms
