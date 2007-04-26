@@ -104,7 +104,6 @@ struct row_elem : public our_new_delete {
 
 struct column_elem : public our_new_delete {
   packed_monomial monom;
-  int gb_divisor; // -1 if none, otherwise >= 0.
   int head; // which row is being used as a pivot for this column.  
             // -1 means none, -2 means not set yet
 };

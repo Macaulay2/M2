@@ -22,7 +22,7 @@ F4CoefficientArray Gausser::from_ringelem_array(int len, ring_elem *elems) const
   int i;
   switch (typ) {
   case ZZp:
-    int *result = f4mem_coeffs.allocate(len);//F4Mem::allocate_coeff_array(len);
+    int *result = F4Mem::coefficients.allocate(len);//F4Mem::allocate_coeff_array(len);
     for (i=0; i<len; i++)
       result[i] = elems[i].int_val;
     return result;
@@ -47,7 +47,7 @@ F4CoefficientArray Gausser::copy_F4CoefficientArray(int len, F4CoefficientArray 
   int i;
   switch (typ) {
   case ZZp:
-    int *result = f4mem_coeffs.allocate(len); //F4Mem::allocate_coeff_array(len);
+    int *result = F4Mem::coefficients.allocate(len); //F4Mem::allocate_coeff_array(len);
     for (i=0; i<len; i++)
       result[i] = elems[i];
     return result;
@@ -60,7 +60,7 @@ void Gausser::deallocate_F4CCoefficientArray(F4CoefficientArray &F, int len) con
   int *elems = static_cast<int *>(F);
   switch (typ) {
   case ZZp:
-    f4mem_coeffs.deallocate(elems);//F4Mem::deallocate_coeff_array(elems, len);
+    F4Mem::coefficients.deallocate(elems);//F4Mem::deallocate_coeff_array(elems, len);
     F = 0;
   };
 }
@@ -71,7 +71,7 @@ void Gausser::deallocate_F4CCoefficientArray(F4CoefficientArray &F, int len) con
 void Gausser::dense_row_allocate(dense_row &r, long nelems) const
 {
   //  int *elems = newarray_atomic(int, nelems);
-  int *elems = f4mem_coeffs.allocate(nelems);//F4Mem::allocate_coeff_array(nelems);
+  int *elems = F4Mem::coefficients.allocate(nelems);//F4Mem::allocate_coeff_array(nelems);
   r.coeffs = elems;
   r.len = nelems;
   for (int i=0; i<nelems; i++)
@@ -140,8 +140,8 @@ void Gausser::dense_row_to_sparse_row(dense_row &r,
   int len = 0;
   for (int i=first; i<=last; i++)
     if (!Kp->is_zero(elems[i])) len++;
-  int *in_sparse = f4mem_coeffs.allocate(len);//F4Mem::allocate_coeff_array(len);
-  int *in_comps = f4mem_comps.allocate(len);
+  int *in_sparse = F4Mem::coefficients.allocate(len);//F4Mem::allocate_coeff_array(len);
+  int *in_comps = F4Mem::components.allocate(len);
   result_len = len;
   result_sparse = in_sparse;
   result_comps = in_comps;
