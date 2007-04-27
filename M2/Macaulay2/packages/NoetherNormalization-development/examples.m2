@@ -7,6 +7,8 @@ clearAll
 uninstallPackage "NoetherNormalization"
 installPackage "NoetherNormalization"
 methods noetherNormalization
+help NoetherNormalization
+
 
 --Example 1
 R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex] --the same ordering as in the paper
@@ -42,6 +44,14 @@ noetherNormalization I
 R = QQ[x_6,x_5,x_4,x_3,x_2,x_1, MonomialOrder => Lex];
 I = ideal(x_6^2+x_5*x_3*x_4-2,x_4^4*x_3^2+x_1,x_2*x_1^3);
 noetherNormalization I
+p = {}
+for i to 100 do (
+     u = noetherNormalization I;
+     print u_1;
+     if {5} == u_1 then print u_3; 
+     );
+p
+          
 
 --Example 8
 R = QQ[x_6,x_5,x_4,x_3,x_2,x_1, MonomialOrder => Lex];
