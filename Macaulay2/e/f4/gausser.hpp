@@ -27,11 +27,19 @@ public:
 
   const Ring * get_ring() const { return K; }
 
+  const CoefficientRingZZp* get_coeff_ring() const { return Kp; }
+
   F4CoefficientArray from_ringelem_array(int len, ring_elem *elems) const;
 
   void to_ringelem_array(int len, F4CoefficientArray, ring_elem *result) const;
 
   F4CoefficientArray copy_F4CoefficientArray(int len, F4CoefficientArray F) const;
+
+  // leading coefficient
+  int lead_coeff(F4CoefficientArray coeffs) const
+  { 
+    return (static_cast<int *>(coeffs))[0]; 
+  }
 
   // other routines:
   void deallocate_F4CCoefficientArray(F4CoefficientArray &F, int len) const;
