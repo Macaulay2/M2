@@ -4,9 +4,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <gmp.h>
-#include <gc.h>
-#include <string.h>
+
 #include "config.h"
+#if defined(HAVE_GC_GC_H)
+#include <gc/gc.h>
+#elif defined(HAVE_GC_H)
+#include <gc.h>
+#else
+#error missing include file gc.h
+#endif
+
+#include <string.h>
 #include "M2types.h"
 #include "M2inits.h"
 #include "M2mem.h"

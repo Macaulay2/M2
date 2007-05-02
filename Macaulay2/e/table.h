@@ -7,7 +7,15 @@
 
 /******************************************************/
 /*these next lines added by MES, July 2002, to use our gc routines..*/
+#include "config.h"
+#if defined(HAVE_GC_GC_H)
+#include <gc/gc.h>
+#elif defined(HAVE_GC_H)
 #include <gc.h>
+#else
+#error missing include file gc.h
+#endif
+
 #include "../d/M2mem.h"
 #define ALLOC getmem
 #define  NEW(p) ((p) = (void *) ALLOC((long)sizeof *(p)))

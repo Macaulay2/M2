@@ -3,7 +3,16 @@
 
 // get declarations of outofmem and getmem
 #include "../d/M2mem.h"
+
+#include "config.h"
+#if defined(HAVE_GC_GC_H)
+#include <gc/gc.h>
+#elif defined(HAVE_GC_H)
 #include <gc.h>
+#else
+#error missing include file gc.h
+#endif
+
 #include "../d/debug.h"
 
 // these replace all uses of the construction "new T[n]" (unless constructors have to be run!):

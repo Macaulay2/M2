@@ -1,6 +1,13 @@
-#include <gc.h>
-#include "gmp_init.h"
 #include "config.h"
+#if defined(HAVE_GC_GC_H)
+#include <gc/gc.h>
+#elif defined(HAVE_GC_H)
+#include <gc.h>
+#else
+#error missing include file gc.h
+#endif
+
+#include "gmp_init.h"
 
 extern int initializeGMP();
 

@@ -1,7 +1,16 @@
 #ifndef GETMEM_H
 #define GETMEM_H
 #include <string.h>
+
+#include "config.h"
+#if defined(HAVE_GC_GC_H)
+#include <gc/gc.h>
+#elif defined(HAVE_GC_H)
 #include <gc.h>
+#else
+#error missing include file gc.h
+#endif
+
 extern void outofmem() __attribute__ ((noreturn));
 static inline char *getmem(unsigned n) {
   char *x = GC_malloc(n);

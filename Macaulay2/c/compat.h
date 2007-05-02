@@ -64,7 +64,14 @@ extern char errfmtnc[];
 #include <varargs.h>
 #endif
 
+#if defined(HAVE_GC_GC_H)
+#include <gc/gc.h>
+#elif defined(HAVE_GC_H)
 #include <gc.h>
+#else
+#error missing include file gc.h
+#endif
+
 #define malloc(n) GC_MALLOC(n)
 #define free(n) GC_FREE(n)
 

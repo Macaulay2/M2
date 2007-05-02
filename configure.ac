@@ -304,6 +304,12 @@ AC_MSG_CHECKING([whether gc library (-lgc) is installed (using $LIBS)])
 AC_LANG(C)
 AC_LINK_IFELSE( [int main () { GC_malloc(1); }], HAVE_LIBGC=yes;AC_MSG_RESULT(yes), HAVE_LIBGC=no;AC_MSG_RESULT(no))
 
+HAVE_GC_H=no
+AC_CHECK_HEADERS(gc/gc.h gc.h,HAVE_GC_H=yes)
+if test "$HAVE_GC_H" = no
+then AC_MSG_ERROR([missing library include files: gc.h and gc/gc.h])
+fi
+
 HAVE_LIBGC_PG=no
 if test "$PROFILING" = yes -a "$GCLIB" = "-lgc"
 then AC_MSG_CHECKING([whether gc library, profiling version, is installed (-lgc-pg)])
