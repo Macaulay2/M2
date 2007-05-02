@@ -139,3 +139,11 @@ gbI = matrix"bc+34bd-35c,ac-3c-d,ab-4,d3-5"
 gens gb I  == gbI
 gbTrace = 10
 time gens gb(I, Algorithm=>F4, GBDegrees=>toList(numgens ring I:1));
+
+-------------------------
+R = ZZ/23[x,y,z,h];
+I = ideal{x^2*y-z^2*h, x*z^2-y^2*h, y*z^3-x^2*h}
+gbTrace = 3
+time G =  gens gb(I, Algorithm=>F4, GBDegrees=>toList(numgens ring I:1)
+    , Strategy=>UseSyzygies
+    )
