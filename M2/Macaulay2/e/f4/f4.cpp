@@ -1047,9 +1047,9 @@ void F4GB::syzygy_row_record_reduction(int i, int j, int li, int lj)
     syzF4Vec.grow(r.comps, 1);
     int* cf = rcoeffs + ++r.len;
     int* cp = r.comps + r.len;    
-    for (int ii=r.len; ii>after_comp; ii--){
-      *cf = *(cf-- - 1);
-      *cp = *(cp-- - 1);
+    for (int ii=r.len; ii>after_comp; ii--,cf--,cp--){
+      *cf = *(cf - 1);
+      *cp = *(cp - 1);
     }
     *cf = a;
     *cp = lead_j_comp;
