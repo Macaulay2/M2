@@ -37,9 +37,9 @@ GBComputation *createF4GB(const Matrix *m,
 			collect_syz,
 			n_rows_to_keep,
 			gb_weights,
+			strategy,
 			use_max_degree,
-			max_degree,
-			strategy);
+			max_degree);
   return G;
 #else
   ERROR("not implemented yet: Strategy => F4");

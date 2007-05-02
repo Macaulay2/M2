@@ -1,7 +1,7 @@
 kk = ZZ/101
 R = kk[a..c]
 I = ideal random(R^1, R^{-2,-2})
-time gens gb(I, Algorithm=>F4, GBDegrees=>{1,1,1})
+time gens gb(I, Algorithm=>F4, GBDegrees=>{1,1,1}, Strategy=>UseSyzygies)
 collectGarbage()
 
 -----------------------------------
