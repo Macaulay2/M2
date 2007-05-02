@@ -58,7 +58,6 @@ F4GB::F4GB(const Gausser *KK0,
     M->show();
 
   using_syz = strategy & STRATEGY_USE_SYZ;
-  using_syz = 1; // !!! something is wrong with <strategy>
   if (gbTrace >= 2)
     fprintf(stderr, "SYZ: using_syz = %i\n", using_syz);
 }
