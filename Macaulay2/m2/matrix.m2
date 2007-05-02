@@ -119,10 +119,11 @@ Matrix ^ ZZ := Matrix => (f,n) -> (
      if n === 0 then id_(target f)
      else SimplePowerMethod (f,n))
 
-transpose Matrix := Matrix => (m) -> if m.cache.?transpose then m.cache.transpose else m.cache.transpose = (
-     if not (isFreeModule source m and isFreeModule target m) 
-     then error "expected a map between free modules";
-     map(ring m, rawDual m.RawMatrix))
+transpose Matrix := Matrix => (cacheValue symbol transpose) (
+     (m) -> (
+     	  if not (isFreeModule source m and isFreeModule target m) 
+     	  then error "expected a map between free modules";
+     	  map(ring m, rawDual m.RawMatrix)))
 
 ring(Matrix) := m -> m.target.ring
 
