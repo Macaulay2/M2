@@ -127,9 +127,9 @@ private:
 
   // Syzygy matrix manipulations:
   // record "reduce row <i> (w/leading coeff <li>) with row <j> (...<lj>)" 
-  void F4GB::syzygy_row_record_reduction(int i, int j, int li, int lj); 
+  void syzygy_row_record_reduction(int i, int j, int li, int lj); 
   // divide row <i> with coefficient <c>
-  void F4GB::syzygy_row_divide(int i, int c);
+  void syzygy_row_divide(int i, int c);
 
   void gauss_reduce_linbox(); // dumps matrices in linbox format 
 
