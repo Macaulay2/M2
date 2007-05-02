@@ -7,7 +7,16 @@ cat <<EOF >compat.h
 /* It is included in each C file produced by the D compiler, scc1. */
 #include <stdlib.h>
 #include <math.h>
+
+#include "config.h"
+#if defined(HAVE_GC_GC_H)
+#include <gc/gc.h>
+#elif defined(HAVE_GC_H)
 #include <gc.h>
+#else
+#error missing include file gc.h
+#endif
+
 #include <string.h>
 #include <gmp.h>
 #define  DCODE 1
@@ -17,7 +26,6 @@ cat <<EOF >compat.h
 
 #include "gmp_aux.h"
 #include "memdebug.h"
-#include "config.h"
 EOF
 
 exit 0 # experiment with doing without all the junk below, inlcuding compat.c
