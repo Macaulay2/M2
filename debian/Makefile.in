@@ -18,9 +18,9 @@ CONTROLFILES := control
 CONTROLFILES += postinst
 CONTROLFILES += prerm
 # CONTROLFILES += postrm
-control.tar.gz : $(CONTROLFILES)
-	chmod a+x prerm preinst postrm postinst
-	fakeroot chown root $(CONTROLFILES)
+control.tar.gz : $(CONTROLFILES) control
+	chmod a+x,g-w $(CONTROLFILES)
+	fakeroot chown root $(CONTROLFILES) control
 	fakeroot tar cfz $@ $^
 prepare : ../$(PKG_TZ)
 	rm -rf $(package) $(prefixtail)
@@ -48,11 +48,21 @@ clean ::
 distclean : clean; rm -f Makefile control
 
 Makefile : Makefile.in; cd ..; ./config.status debian/Makefile
-control : control.in; cd ..; ./config.status debian/control
-prerm : prerm.in; cd ..; ./config.status debian/prerm
-preinst : preinst.in; cd ..; ./config.status debian/preinst
-postrm : postrm.in; cd ..; ./config.status debian/postrm
-postinst : postinst.in; cd ..; ./config.status debian/postinst
+control : control.in
+	cd ..; ./config.status debian/control
+	chmod 0755 $@
+prerm : prerm.in
+	cd ..; ./config.status debian/prerm
+	chmod 0755 $@
+preinst : preinst.in
+	cd ..; ./config.status debian/preinst
+	chmod 0755 $@
+postrm : postrm.in
+	cd ..; ./config.status debian/postrm
+	chmod 0755 $@
+postinst : postinst.in
+	cd ..; ./config.status debian/postinst
+	chmod 0755 $@
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/debian "
