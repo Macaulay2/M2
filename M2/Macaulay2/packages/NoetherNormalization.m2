@@ -19,6 +19,11 @@ newPackage(
 -- Lemma. In: Proceedings 6th AAEEC, Lecture Notes in Computer Science
 -- 357, Springer, 1989, 259--273.
 
+-- an additional algorithm was implement from:
+
+-- H. Kredel and V. Weispfenning. Computing dimension and independent
+-- set for polynomial ideals. 1986.
+
 
 --=========================================================================--
      
@@ -34,7 +39,7 @@ export{noetherNormalization} -- if the new routines which you are adding have ne
 -- that puts the ideal in Noether position as well as the independent
 -- variables of R.
 
--- comments:The procedure integralSet takes a Grobner basis G (ie. a
+-- comments: The procedure integralSet takes a Grobner basis G (ie. a
 -- list of polynomials) and returns the variables that already have an
 -- integral relation. It does this by taking the lead monomial of each
 -- polynomial and checking whether or not it consists of a power of a
@@ -183,6 +188,7 @@ noetherPrime = (R,X,I,G,U,V,d,np,npinverse,homogeneous) -> (
      limitsequence := {5,20,40,60,80,infinity}; -- this is for the basiselementlimit setting for computing gb and is based on experience (and nothing else)
      k := coefficientRing R;
      done := false;
+     indep := U;
      f := map(R,R,inverseSequence(U|V,X));
      finverse := map(R,R, reverse(U|V));
      J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
@@ -207,7 +213,7 @@ noetherPrime = (R,X,I,G,U,V,d,np,npinverse,homogeneous) -> (
      	       seqindex = seqindex + 1;
 	       );
 	  counter = counter + 1;
-	  if done or (counter == 100) then return((counter,limitsequence_{seqindex - 1},U,f*np)); --U is the algebraically independent vars, if returning the inverse map then npinverse*finverse
+	  if done or (counter == 100) then return((counter,limitsequence_{seqindex - 1},indep,f*np)); --U is the algebraically independent vars, if returning the inverse map then npinverse*finverse
       	  );
      );
 --========================================================================================================================
@@ -250,7 +256,6 @@ noetherNormalization(Ideal) := Sequence => (I) -> (
 noetherNormalization(QuotientRing) := Sequence => (R) -> (
      noetherNormalization(ideal R)
      );
-
 --======================================================================================================================
 -- alg dependent vars, ideal, map
 
