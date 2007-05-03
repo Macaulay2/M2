@@ -11,9 +11,13 @@ help NoetherNormalization
 
 
 --Example 1
-R = QQ[x_4,x_3,x_2,x_1, MonomialOrder => Lex] --the same ordering as in the paper
+R = QQ[x_4,x_3,x_2,x_1] --the same ordering as in the paper
 I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1)
 noetherNormalization(I)
+
+A = coefficientRing ring I [gens ring I,MonomialOrder =>Lex];
+     I = ideal gens I;
+
 
 --Example 2
 R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex] -- this is a nice example...

@@ -1,14 +1,5 @@
 --=========================================================================--
 
--- TODO:
--- Make the alg force the ordering
--- Get output correct, this will be the last thing we'll do
--- accept R/I as input
-
-
-
-
-
 newPackage(
      "NoetherNormalization",
      Version => "0.1", 
@@ -22,8 +13,12 @@ newPackage(
      )
 
 -- The algorithm given here is based on A. Loger's algorithm as given
--- in "A Computational Proof of the Noether Normalization Lemma" LNCS
--- 357.
+-- in:
+
+-- A. Logar. A Computational Proof of the Noether Normalization
+-- Lemma. In: Proceedings 6th AAEEC, Lecture Notes in Computer Science
+-- 357, Springer, 1989, 259--273.
+
 
 --=========================================================================--
      
@@ -32,13 +27,21 @@ export{noetherNormalization} -- if the new routines which you are adding have ne
 -- exported
         
 --=========================================================================--
---initial comments: noetherNormalization takes in an ideal I of a ring R over a field k such that the dimension of I in R is d
---(fix these symbols for all comments) and returns a linear transformation that puts the ideal in Noether position as well as the 
---independent variables of R.
 
---comments:The procedure integralSet takes a Grobner basis G (ie. a list of polynomials) and returns the variables that already
---have an integral relation. It does this by taking the lead monomial of each polynomial and checking whether or not it consists 
---of a power of a single variable. We are assuming that the ring is over a field and thus we don't check the lead coefficient.
+-- initial comments: noetherNormalization takes in an ideal I of a
+-- ring R over a field k such that the dimension of I in R is d (fix
+-- these symbols for all comments) and returns a linear transformation
+-- that puts the ideal in Noether position as well as the independent
+-- variables of R.
+
+-- comments:The procedure integralSet takes a Grobner basis G (ie. a
+-- list of polynomials) and returns the variables that already have an
+-- integral relation. It does this by taking the lead monomial of each
+-- polynomial and checking whether or not it consists of a power of a
+-- single variable. We are assuming that the ring is over a field and
+-- thus we don't check the lead coefficient.
+
+
 integralSet = G -> (
      J = {};
      M := gens G;
@@ -49,10 +52,19 @@ integralSet = G -> (
      J);
 
 --=========================================
---comments: varPrep is the initial function we run on the Grobner basis of the inputted ideal I. For all prime ideals it returns a maximal algebraically
---independent set of variables whose cardinality is equal to d. If the set returned by varPrep is smaller than d (it should never be larger) then the 
---ideal is not prime. varPrep is proven to work in this way in Logar's paper. In case varPrep returns a set smaller than d the ideal is sent to
---maxAlgPerm. What it does:
+--comments: 
+
+-- varPrep is the initial function we run on the Grobner basis of the
+-- inputted ideal I. It returns sets U and V, with U being
+-- algebraically independent and V being algebracially dependent. For
+-- all prime ideals it returns a maximal algebraically independent set
+-- of variables whose cardinality is equal to d. If the set returned
+-- by varPrep is smaller than d (it should never be larger) then the
+-- ideal is not prime. varPrep is proven to work in this way in
+-- Logar's paper. In case varPrep returns a set smaller than d the
+-- ideal is sent to maxAlgPerm. What it does:
+
+
 varPrep = (X,G) -> (
      M := gens G;
      V := {};
@@ -69,11 +81,15 @@ varPrep = (X,G) -> (
      (X-set(V),V)                        -- (x,y) = (U,V) ; (x,y) := (U,V) can be used by the caller if you return a sequence
      );
 
---==================================================
---comments: We use lastCheck to check that our final Grobner basis (the gb of the ideal after the change of variables)
---witnesses the integrality of each variable that should be integral. It first checks that there are no elements of the 
---Grobner basis with support in the independent variables and then that each variable that should be integral after the 
---linear transformation is integral. 
+--================================================== 
+
+-- comments: We use lastCheck to check that our final Grobner basis
+-- (the gb of the ideal after the change of variables) witnesses the
+-- integrality of each variable that should be integral. It first
+-- checks that there are no elements of the Grobner basis with support
+-- in the independent variables and then that each variable that
+-- should be integral after the linear transformation is integral.
+
 lastCheck = (X,G,d) -> (
      M := gens G;
      i := 0;
@@ -87,10 +103,17 @@ lastCheck = (X,G,d) -> (
      true
      );
 --==============================================
---comments: The purpose of maxAlgPerm is to take an ideal that varPrep failed on (ie. varPrep(I)<d) and make a change of variables in order for 
---varPrep to succeed. It essentially takes the offending Grobner basis and returns a maximal alg. independent set of variables which are then moved to the 
---highest valued variables in the lex ordering via a permutation. The algorithm is referenced
---by Logar and can be found in Kredel and Weispfenning, "Computing dimension and independent sets for polynomial ideals"
+
+
+-- comments: The purpose of maxAlgPerm is to take an ideal that
+-- varPrep failed on (ie. varPrep(I)<d) and make a change of variables
+-- in order for varPrep to succeed. It essentially takes the offending
+-- Grobner basis and returns a maximal alg. independent set of
+-- variables which are then moved to the highest valued variables in
+-- the lex ordering via a permutation. The algorithm is referenced by
+-- Logar and can be found in Kredel and Weispfenning, "Computing
+-- dimension and independent sets for polynomial ideals"
+
 maxAlgPerm = (R,X,G,d,S) -> (
      M := gens G;
      if #S == d then return S;
@@ -106,9 +129,14 @@ maxAlgPerm = (R,X,G,d,S) -> (
 	  );
      );
 --======================================================
---comments: inverseSequence is used to give the inverse of a ring map. A ring map is given by a list explaining where each of the
---ring's  variables should go. If the ring map is just a permutation of the variables then it is obviously an isomorphism and inverseSequence
---returns the sequence that give the inverse morphism.
+
+-- comments: inverseSequence is used to give the inverse of a ring
+-- map. A ring map is given by a list explaining where each of the
+-- ring's variables should go. If the ring map is just a permutation
+-- of the variables then it is obviously an isomorphism and
+-- inverseSequence returns the sequence that give the inverse
+-- morphism.
+
 inverseSequence = (U,X) -> (
      N = {};
      for i to #X - 1 do (
@@ -122,8 +150,13 @@ inverseSequence = (U,X) -> (
      return N;
      );
 --========================================================
---comments: randomSum is used to make the random linear transformations which are candidates for putting I in noetherPosition. It takes in two lists
---and adds the second to the first with random coefficients.
+
+-- comments: randomSum is used to make the random linear
+-- transformations which are candidates for putting I in
+-- noetherPosition. It takes in two lists and adds the second to the
+-- first with random coefficients.
+
+
 randomSum = (U,V,k) -> (
      for j to #V - 1 do (
 	  U = apply(U, i -> i + random(k)*V_j);
@@ -131,12 +164,20 @@ randomSum = (U,V,k) -> (
      return U;
      );
 --========================================================
---comments: noetherPrime is where the action happens. It takes the ideal (which may have been fixed by maxAlgPerm) and does a random linear transformation
---adding to the independent variables the dependent ones that are not initially integral. It then checks that the transformation put the ideal in 
---noether position. It does this bye partially computing a Grobner basis for the ideal until the partially computed Grobner basis witnesses
---the integrality of all of the dependent variables. If the entire Grobner basis is computed and the integrality is never witnessed then we apply
---another random linear transformation and start the process again. While doing all this we keep track of the maps and the inverses of the maps that 
---we use. 
+
+-- comments: noetherPrime is where the action happens. It takes the
+-- ideal (which may have been fixed by maxAlgPerm) and does a random
+-- linear transformation adding to the independent variables the
+-- dependent ones that are not initially integral. It then checks that
+-- the transformation put the ideal in noether position. It does this
+-- bye partially computing a Grobner basis for the ideal until the
+-- partially computed Grobner basis witnesses the integrality of all
+-- of the dependent variables. If the entire Grobner basis is computed
+-- and the integrality is never witnessed then we apply another random
+-- linear transformation and start the process again. While doing all
+-- this we keep track of the maps and the inverses of the maps that we
+-- use.
+
 noetherPrime = (R,X,I,G,U,V,d,np,npinverse,homogeneous) -> (
      counter := 0; --counts the number of times lastCheck is called
      limitsequence := {5,20,40,60,80,infinity}; -- this is for the basiselementlimit setting for computing gb and is based on experience (and nothing else)
@@ -170,8 +211,11 @@ noetherPrime = (R,X,I,G,U,V,d,np,npinverse,homogeneous) -> (
       	  );
      );
 --========================================================================================================================
---comments: noetherNotPrime is where the ideals that fail varPrep go. They are fixed by maxAlgPerm and then send to noetherPrime along with
---the appropriate maps. 
+
+-- comments: noetherNotPrime is where the ideals that fail varPrep
+-- go. They are fixed by maxAlgPerm and then send to noetherPrime
+-- along with the appropriate maps.
+
 noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
      S := maxAlgPerm(R,X,G,d,{});
      np := map(R,R, inverseSequence(reverse(X-set(S)|S),X));
@@ -182,12 +226,18 @@ noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
      noetherPrime(R,X,I,G,U,V,d,np,npinverse,homogeneous)
      );
 --=======================================================================================================================
---comments: noetherNormalization is the main method. I is passed to it by the user and it's Grobner basis is immediately computed. Using this
---it checks if varPrep returns a maximal alg. independent set and decides to send it to noetherPrime if it does and to noetherNotPrime if it
---doesn't. 
+
+-- comments: noetherNormalization is the main method. I is passed to
+-- it by the user and it's Grobner basis is immediately
+-- computed. Using this it checks if varPrep returns a maximal
+-- alg. independent set and decides to send it to noetherPrime if it
+-- does and to noetherNotPrime if it doesn't.
+
 noetherNormalization = method()
 noetherNormalization(Ideal) := Sequence => (I) -> (
-     R := ring I;
+     R := coefficientRing ring I [gens ring I,MonomialOrder => Lex];
+     f := map(R,ring I,gens R);
+     I = f(I);
      homogeneous := (isHomogeneous(R) and isHomogeneous(I));
      if homogeneous then G = gb(I, Algorithm => Homogeneous2);
      if not homogeneous then G = gb I;
@@ -196,6 +246,11 @@ noetherNormalization(Ideal) := Sequence => (I) -> (
      (U,V) := varPrep(X,G);
      if d == #U then noetherPrime(R,X,I,G,U,V,d,id_R,id_R,homogeneous) else noetherNotPrime(R,X,I,G,d,homogeneous)
      );
+--======================================================================================================================
+noetherNormalization(QuotientRing) := Sequence => (R) -> (
+     noetherNormalization(ideal R)
+     );
+
 --======================================================================================================================
 -- alg dependent vars, ideal, map
 
@@ -234,7 +289,10 @@ document {
      Headline => "place an ideal in Noether normal position",
      EM "NoetherNormalization", " is a package for computing ring homomorphisms 
      which will place ideals in Noether normal position. The algorithms
-     used are based on algorithms found in Logar's paper: CITE PAPER."
+     used are based on algorithms found in A. Logar's paper: A
+     Computational Proof of the Noether Normalization Lemma. In:
+     Proceedings 6th AAEEC, Lecture Notes in Computer Science 357,
+     Springer, 1989, 259-273. However, there are some important differences."
      }
 
 -----------------------------------------------------------------------------
@@ -243,7 +301,7 @@ document {
      Headline => "places an ideal in Noether normal position",
      Usage => "noetherNormalization(I)",
      Inputs => {
-	  "I" => {}
+	  "I" => {"an ideal over a polynomial ring"}
 	  },
      Outputs => {
 	  Sequence => {}
