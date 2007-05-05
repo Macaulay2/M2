@@ -495,8 +495,7 @@ document {
 document {
      Key => {hashTable,(hashTable, List)},
      Headline => "make a hash table",
-     TT "hashTable v", " -- produce a hash table from a list ", TT "v", " of key-value
-     pairs.",
+     TT "hashTable(h,v)", " -- produce a hash table from a list ", TT "v", " of key-value pairs, with an optional collision handler function ", TT "h", ".",
      PARA{},
      "The pairs may be of the form ", TT "a=>b", ", ", TT "{a,b}", ",
      or ", TT "(a,b)", ".",
@@ -506,7 +505,8 @@ document {
      PARA{},
      EXAMPLE {
 	  "x = hashTable {a=>b, c=>d, }",
-      	  "x#a"
+      	  "x#a",
+     	  "hashTable(plus, {(a,3),(b,4),(a,10)})"
 	  },
      }
 
