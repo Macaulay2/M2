@@ -18,7 +18,7 @@ use binding;
 use ctype;
 use util;
 
-enlarge(object:HashTable):void := (
+export enlarge(object:HashTable):void := (
      oldTable := object.table;
      newlen := 2*length(oldTable);
      mask := newlen - 1;
@@ -949,9 +949,9 @@ export lookupfun(e:Expr):Expr := (
      else nullE);
 setupfun("lookup",lookupfun);	  
 
-toHashTableError(i:int):Expr := buildErrorPacket(
+export toHashTableError(i:int):Expr := buildErrorPacket(
      "expected element at position "+tostring(i)+" to be a pair");
-toHashTable(v:Sequence):Expr := (
+export toHashTable(v:Sequence):Expr := (
      o := newHashTable(hashTableClass,nothingClass);
      foreach e at i in v do (
 	  when e
@@ -968,11 +968,6 @@ toHashTable(v:Sequence):Expr := (
 	  else return toHashTableError(i));
      sethash(o,false);
      Expr(o));
-toHashTable(e:Expr):Expr := (
-     when e
-     is w:List do toHashTable(w.v)
-     else WrongArg("a list"));
-setupfun("hashTable",toHashTable);
 
 newtypeof(parent:HashTable):HashTable := newHashTable(typeClass,parent);
 export Tally := newtypeof(hashTableClass);

@@ -1229,6 +1229,57 @@ locate(e:Expr):Expr := (
      else WrongArg("a function, symbol, sequence, or null"));
 setupfun("locate",locate);
 
+export storeInHashTableWithCollisionHandler(x:HashTable,key:Expr,value:Expr,handler:Expr):Expr := (
+     if !x.mutable then return buildErrorPacket("attempted to modify an immutable hash table");
+     h := hash(key);
+     hmod := int(h & (length(x.table)-1));
+     p := x.table.hmod;
+     while p != p.next do (
+	  if p.key == key || equal(p.key,key)==True 
+	  then (
+	       ret := applyEEE(handler,p.value,value);
+	       return when ret is Error do ret else (p.value = ret; ret));
+	  p = p.next);
+     if 4 * x.numEntries == 3 * length(x.table) -- SEE ABOVE
+     then (
+	  enlarge(x);
+	  hmod = int(h & (length(x.table)-1));
+	  );
+     x.numEntries = x.numEntries + 1;
+     x.table.hmod = KeyValuePair(key,h,value,x.table.hmod);
+     value);
+toHashTableWithCollisionHandler(v:Sequence,handler:Expr):Expr := (
+     o := newHashTable(hashTableClass,nothingClass);
+     foreach e at i in v do (
+	  when e
+	  is Nothing do nothing
+	  is pair:Sequence do (
+	       if length(pair) == 2 
+	       then (storeInHashTableWithCollisionHandler(o,pair.0,pair.1,handler);)
+	       else return toHashTableError(i))
+	  is z:List do (
+	       pair := z.v;
+	       if length(pair) == 2 
+	       then (storeInHashTableWithCollisionHandler(o,pair.0,pair.1,handler);)
+	       else return toHashTableError(i))
+	  else return toHashTableError(i));
+     sethash(o,false);
+     Expr(o));
+toHashTable(e:Expr):Expr := (
+     when e
+     is w:List do toHashTable(w.v)
+     is s:Sequence do (
+	  if length(s) != 2 then return WrongNumArgs(1,2);
+	  when s.0
+	  is FunctionClosure do nothing
+	  is CompiledFunction do nothing
+	  is CompiledFunctionClosure do nothing
+	  else return WrongArg(1,"a function");
+	  when s.1 is w:List do toHashTableWithCollisionHandler(w.v,s.0)
+	  else WrongArg(2,"a list"))
+     else WrongArg("a list"));
+setupfun("hashTable",toHashTable);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:
