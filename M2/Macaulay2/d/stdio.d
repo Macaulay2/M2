@@ -530,37 +530,18 @@ export present(c:char):string := (
      else string(c)
      );
 export present(x:string):string := (
-     needsfixing := false;
-     foreach cc in x do (
-	  c := cc;
-	  if c < char(32) || c == '\"' || c == char(127) || c == '\\'
-	  then (
-	       needsfixing = true;
-	       break;
-	       );
-	  );
-     if needsfixing then (
-	  v := newvarstring(length(x)+12);
-	  foreach cc in x do (
+     fixesneeded := 0;
+     foreach cc in x do (c := cc; if c == '\t' || c == '\r' || c == '\"' || c == '\\' then fixesneeded = fixesneeded + 1 );
+     if fixesneeded != 0 then (
+	  new string len length(x)+fixesneeded do foreach cc in x do (
 	       c := cc;
-	       -- warning : c is a signed char
-	       if c == '\r' then v << "\\r" 
-	       else if c == '\f' then v << "\\f" 
-	       else if c == '\t' then v << "\\t" 
-	       else if c == '\n' then v << "\\n" 
-	       else if c == '\"' then v << "\\\"" 
-	       else if c == '\\' then v << "\\\\" 
-	       else if c == char(127) then v << "\\177"
-	       else if c < char(32) then (
-		    v << '\\';
-		    i := int(c) & 0xff;
-		    if i < 8 then v << '0'+i
-		    else if i < 64 then v << '0'+i/8 << '0'+i%8
-		    else v << '0'+i/64 << '0'+(i/8)%8 << '0'+i%8
+	       if c == '\r' then (provide '\\'; provide 'r';)
+	       else if c == '\t' then (provide '\\'; provide 't';)
+	       else (
+		    if c == '\"' || c == '\\' then provide '\\';
+	       	    provide c;
 		    )
-	       else v << c
-	       );
-	  tostring(v))
+	       ))
      else x);
 export tostring(i:int):string := (
      if i==0 then return "0";
