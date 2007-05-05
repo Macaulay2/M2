@@ -531,11 +531,12 @@ export present(c:char):string := (
      );
 export present(x:string):string := (
      fixesneeded := 0;
-     foreach cc in x do (c := cc; if c == '\t' || c == '\r' || c == '\"' || c == '\\' then fixesneeded = fixesneeded + 1 );
+     foreach cc in x do (c := cc; if c == char(0) || c == '\t' || c == '\r' || c == '\"' || c == '\\' then fixesneeded = fixesneeded + 1 );
      if fixesneeded != 0 then (
 	  new string len length(x)+fixesneeded do foreach cc in x do (
 	       c := cc;
-	       if c == '\r' then (provide '\\'; provide 'r';)
+	       if c == char(0) then (provide '\\'; provide '0';)
+	       else if c == '\r' then (provide '\\'; provide 'r';)
 	       else if c == '\t' then (provide '\\'; provide 't';)
 	       else (
 		    if c == '\"' || c == '\\' then provide '\\';
