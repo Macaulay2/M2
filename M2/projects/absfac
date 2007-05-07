@@ -1,4 +1,4 @@
--*- M2 -*-
+-*- M2; coding: utf-8 -*-
 
 Title: Absolute Factorization
 
@@ -10,7 +10,7 @@ and GTZ).
 [Trager]  Trager, B. M. (1976): Algebraic factoring and rational function
    integration.  In: R. D. Jenks (ed.), Proc. SYMSAC '76, 196-208, ACM press.
 
-[GTZ] Gianni, Patrizia; Trager, Barry; Zacharias, Gail Gröbner bases and
+[GTZ] Gianni, Patrizia; Trager, Barry; Zacharias, Gail, GrÃ¶bner bases and
    primary decomposition of polynomial ideals. Computational aspects of
    commutative algebra.  J. Symbolic Comput. 6 (1988), no. 2-3, 149-167.
 
@@ -22,7 +22,7 @@ see LeCerf's papers at
 
 for
 
-    G. Chèze and G. Lecerf. Lifting and recombination techniques for absolute
+    G. ChÃ¨ze and G. Lecerf. Lifting and recombination techniques for absolute
     factorization. Extended abstract. In Proceedings of International Conference on
     Polynomial System Solving. In honor of Daniel Lazard, pages 56-57, 2004.
 
