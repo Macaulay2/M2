@@ -82,7 +82,7 @@ public:
       }
   }
 
-  void subtract_multiple(elem &result, elem a, elem b)
+  void subtract_multiple(elem &result, elem a, elem b) const
   {
     // we assume: a, b are NONZERO!!
     // result -= a*b
@@ -152,7 +152,7 @@ public:
     result = 1/a;
   }
 
-  void subtract_multiple(elem &result, elem a, elem b);
+  void subtract_multiple(elem &result, elem a, elem b) const;
     // result -= a*b
 
   void add(elem &result, elem a, elem b) const
@@ -215,7 +215,7 @@ public:
     result.im = -a.im/c;
   }
 
-  void subtract_multiple(elem &result, elem a, elem b);
+  void subtract_multiple(elem &result, elem a, elem b) const;
     // result -= a*b
 
   void add(elem &result, elem a, elem b) const
@@ -287,7 +287,7 @@ public:
     result = R->invert(a);
   }
 
-  void subtract_multiple(elem &result, elem a, elem b);
+  void subtract_multiple(elem &result, elem a, elem b) const;
     // result -= a*b
 
   void add(elem &result, elem a, elem b) const
@@ -353,7 +353,7 @@ public:
       result = 0;
   }
 
-  void subtract_multiple(elem &result, elem a, elem b);
+  void subtract_multiple(elem &result, elem a, elem b) const;
     // result -= a*b
 
   void add(elem &result, const elem &a, const elem &b) const
