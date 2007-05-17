@@ -161,10 +161,6 @@ public:
     return check_monomial(result);
   }
 
-  void quotient(const_packed_monomial m, const_packed_monomial n, packed_monomial result) const;
-  // This one requires tricks or unpacking the monomial
-  // However, maybe this isn't done so much, so it doesn't matter...
-
   monomial_word monomial_weight(const_packed_monomial m, const M2_arrayint wts) const;
 
   void show(const_packed_monomial m) const;

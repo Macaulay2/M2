@@ -581,8 +581,9 @@ debug BGG
 kk=ZZ/101
 A1=kk[a,b,c,Degrees=>{3:{1,0}}]
 
---I=ideal{a^3+b^3+c^3+c^4}
+I=ideal{a^3+b^3+c^3+c^4}
 I=ideal{a*b*c+a^4+b^4+c^4}
+I=ideal{a^3+b^3+c^3}
 
 A=A1/I
 setMaxIdeal(ideal(a,b,c))

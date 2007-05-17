@@ -796,6 +796,10 @@ void F4GB::do_spairs()
   n_lcmdups = 0;
   make_matrix();
 
+  fprintf(stderr, "---------\n");
+  show_matrix();
+  fprintf(stderr, "---------\n");
+
   clock_t end_time = clock();
   clock_make_matrix += end_time - begin_time;
   double nsecs = end_time - begin_time;
@@ -818,8 +822,8 @@ void F4GB::do_spairs()
       fprintf(stderr, " gauss time          = %f\n", nsecs);
 
       fprintf(stderr, " lcm dups            = %d\n", n_lcmdups);
-      //show_matrix();
-      show_syz_matrix();
+      show_matrix();
+      //show_syz_matrix();
       //  show_new_rows_matrix();
     }
   new_GB_elements();
@@ -986,7 +990,7 @@ void F4GB::show_column_info() const
 void F4GB::show_matrix()
 {
   // Debugging routine
-  MutableMatrix *q = F4toM2Interface::to_M2_MutableMatrix(KK,syz,gens,gb);
+  MutableMatrix *q = F4toM2Interface::to_M2_MutableMatrix(KK,mat,gens,gb);
   buffer o;
   q->text_out(o);
   emit(o.str());
