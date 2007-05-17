@@ -122,12 +122,20 @@ class F4GB : public our_new_delete
   F4Vec syzF4Vec; // optimized vector manager 
   
   // Local data for gaussian elimination
-  dense_row gauss_row;
+  dense_row gauss_row, syz_row;
 private:
 
   // Syzygy matrix manipulations:
-  // record "reduce row <i> (w/leading coeff <li>) with row <j> (...<lj>)" 
-  void syzygy_row_record_reduction(int i, int j, int li, int lj); 
+  
+  // fill syz_row from syz->row[i]
+  void syz_dense_row_fill_from_sparse(int i);
+
+  // convert dense <syz_row> into sparse <s>
+  void F4GB::syz_dense_row_to_sparse_row(row_elem& s);
+  
+  // record "reduce current row (w/leading coeff <li>) with row[pivot] (...<lj>)" 
+  void syzygy_row_record_reduction(int pivot, int li, int lj); 
+  
   // divide row <i> with coefficient <c>
   void syzygy_row_divide(int i, int c);
 

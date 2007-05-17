@@ -157,6 +157,39 @@ void F4GB::load_gen(int which)
     }
 
   mat->rows.push_back(r);
+
+  if (using_syz)
+    {  
+      // Append a new row to the syzygy matrix
+      // Idea: module-monomial $m e_i$ is represented by pair (monom=m*lm(f_i), comp=i)
+      // This forces the already coded module-monomial comparison function to impose 
+      // Schreyer order. Should be changed eventually.
+      M->copy(gens[which]->f.monoms /*lead monom*/, syz_next_monom);  
+      M->set_component(which, syz_next_monom); 
+      packed_monomial m;
+      if (syzH.find_or_insert(syz_next_monom, m)) // this should not happen
+	error();
+      m = syz_next_monom;
+      syzB.intern(1+M->monomial_size(m));
+      syz_next_monom = syzB.reserve(1+M->max_monomial_size());
+      syz_next_monom++;
+      // the matrix being created is diagonal, therefore...
+      int newcol = syz_new_column(m); // this inserts a new monomial in syzH
+
+      row_elem syz_r;
+      syz_r.monom = m;
+      syz_r.elem = which; // here info is duplicated: which == M->get_component(m)
+      
+      syz_r.len = 1;
+      syz_r.coeffs = F4Mem::coefficients.allocate(1);
+      // syzF4Vec.allocate(1); 
+      static_cast<int *>(syz_r.coeffs)[0] = 0; // this represents 1 in the coefficient field 
+      syz_r.comps = F4Mem::components.allocate(1);
+      // syzF4Vec.allocate(1); 
+      static_cast<int *>(syz_r.comps)[0] = newcol;
+      syz->rows.push_back(syz_r);
+    }
+  
 }
 
 
@@ -204,9 +237,11 @@ void F4GB::load_row(packed_monomial monom, int which)
       syz_r.elem = which; // here info is duplicated: which == M->get_component(m)
       
       syz_r.len = 1;
-      syz_r.coeffs = syzF4Vec.allocate(1); 
+      syz_r.coeffs = F4Mem::coefficients.allocate(1);
+      // syzF4Vec.allocate(1); 
       static_cast<int *>(syz_r.coeffs)[0] = 0; // this represents 1 in the coefficient field 
-      syz_r.comps = syzF4Vec.allocate(1); 
+      syz_r.comps = F4Mem::components.allocate(1);
+      // syzF4Vec.allocate(1); 
       static_cast<int *>(syz_r.comps)[0] = newcol;
       syz->rows.push_back(syz_r);
     }
@@ -508,12 +543,12 @@ void F4GB::make_matrix()
     process_column(next_col_to_process++);
 
   // DEBUGGING:
-  if (gbTrace >= 2)
+  if (gbTrace >= 2) {
     fprintf(stderr, "--matrix--%ld by %ld\n", 
 	    (long)mat->rows.size(), (long)mat->columns.size());
-  fprintf(stderr, "-syzygies-%ld by %ld\n", 
-	  (long)syz->rows.size(), (long)syz->columns.size());
-
+    fprintf(stderr, "-syzygies-%ld by %ld\n", 
+	    (long)syz->rows.size(), (long)syz->columns.size());
+  }
   //  show_row_info();
   //  show_column_info();
   //  show_matrix();
@@ -563,6 +598,7 @@ void F4GB::gauss_reduce(bool diagonalize)
   int ncols = mat->columns.size();
 
   KK->dense_row_allocate(gauss_row, ncols);
+  if (using_syz) KK->dense_row_allocate(syz_row, nrows);  
   for (int i=0; i<nrows; i++)
     {
       row_elem &r = mat->rows[i];
@@ -572,7 +608,9 @@ void F4GB::gauss_reduce(bool diagonalize)
       if (pivotrow == i) continue; // this is a pivot row, so leave it alone
 
       F4CoefficientArray rcoeffs = get_coeffs_array(r);
-      KK->dense_row_fill_from_sparse(gauss_row, r.len, rcoeffs, r.comps);
+      KK->dense_row_fill_from_sparse(gauss_row, r.len, rcoeffs, r.comps); 
+      syz_dense_row_fill_from_sparse(i); // fill syz_row from row[i]
+    
       int firstnonzero = ncols;
       int first = r.comps[0];
       int last = r.comps[r.len-1];
@@ -582,7 +620,7 @@ void F4GB::gauss_reduce(bool diagonalize)
 	  {
 	    row_elem &pivot_rowelem = mat->rows[pivotrow];
 	    F4CoefficientArray pivot_coeffs = get_coeffs_array(pivot_rowelem);
-	    syzygy_row_record_reduction(i, pivotrow, 
+	    syzygy_row_record_reduction(pivotrow, 
 					KK->lead_coeff(rcoeffs), KK->lead_coeff(pivot_coeffs));    
 	    KK->dense_row_cancel_sparse(gauss_row, pivot_rowelem.len, pivot_coeffs, pivot_rowelem.comps);
 	    int last1 = pivot_rowelem.comps[pivot_rowelem.len-1];
@@ -598,13 +636,27 @@ void F4GB::gauss_reduce(bool diagonalize)
       KK->dense_row_to_sparse_row(gauss_row, r.len, r.coeffs, r.comps, firstnonzero, last); 
       // the above line leaves gauss_row zero, and also handles the case when r.len is 0
       // it also potentially frees the old r.coeffs and r.comps
+      if (using_syz) {
+	row_elem& s = syz->rows[i];
+	if (s.len>0) // the opposite should not happen
+	  {
+	    int* scoeffs = static_cast<int *>(s.coeffs);
+	    F4Mem::coefficients.deallocate(scoeffs);
+	    F4Mem::components.deallocate(s.comps);
+	    s.len = 0;
+	  }
+	syz_dense_row_to_sparse_row(syz->rows[i]);
+	// the above line leaves syz_row zero
+      }
       if (r.len > 0)
 	{
+	  syzygy_row_divide(i, static_cast<int*>(r.coeffs)[0]);
 	  KK->sparse_row_make_monic(r.len, r.coeffs);
 	  mat->columns[r.comps[0]].head = i;
 	}
     }
   KK->dense_row_deallocate(gauss_row);
+  if (using_syz) KK->dense_row_deallocate(syz_row);    
 
   if (diagonalize)
     tail_reduce();
@@ -632,7 +684,7 @@ void F4GB::tail_reduce()
 	  {
 	    anychange = true;
 	    row_elem &pivot_rowelem = mat->rows[pivotrow]; // pivot_rowelems.coeffs is set at this point
-	    syzygy_row_record_reduction(i, pivotrow, 
+	    syzygy_row_record_reduction(pivotrow, 
 					KK->lead_coeff(r.coeffs), KK->lead_coeff(pivot_rowelem.coeffs));
 	    KK->dense_row_cancel_sparse(gauss_row, pivot_rowelem.len, pivot_rowelem.coeffs, pivot_rowelem.comps);
 	    int last1 = pivot_rowelem.comps[pivot_rowelem.len-1];
@@ -943,7 +995,7 @@ void F4GB::show_matrix()
 void F4GB::show_syz_matrix()
 {
   // Debugging routine                                                                                                          
-  MutableMatrix *q = F4toM2Interface::to_M2_MutableMatrix(KK,mat,gens,gb);
+  MutableMatrix *q = F4toM2Interface::to_M2_MutableMatrix(KK,syz,gens,gb);
   buffer o;
   q->text_out(o);
   emit(o.str());
@@ -1025,35 +1077,32 @@ void F4GB::show_new_rows_matrix()
 }
 
 //////// syzygy manipulations //////////////
-void F4GB::syzygy_row_record_reduction(int i, int j, int li, int lj)
+
+////////////////////////////////////////////////////////////////////
+// create dense vector from syz->row[i]
+void F4GB::syz_dense_row_fill_from_sparse(int i)
 {
   if (!using_syz) return;
-  const CoefficientRingZZp* R = KK->get_coeff_ring();
-  row_elem &r = syz->rows[i];
-  f4vec rcoeffs = static_cast<int *>(get_coeffs_array(r));
+  row_elem& r = syz->rows[i];
+  KK->dense_row_fill_from_sparse(syz_row, r.len, r.coeffs, r.comps);
+}
+ 
+/////////////////////////////////////////////////////////////////////
+// record the reduction of current row with respect to row[pivot] 
+// ( <li> and <lj> are the leading terms of <i> and <j> )  
+void F4GB::syzygy_row_record_reduction(int pivot, int li, int lj)
+{
+  if (!using_syz) return;
+  row_elem& r = syz->rows[pivot];
+  int *elems = static_cast<int *>(syz_row.coeffs);
+  int *sparseelems = static_cast<int *>(r.coeffs);
+  int *comps = static_cast<int *>(r.comps);
 
-  int a, zero; R->set_zero(zero);
-  R->divide(a,li,lj); R->subtract(a,0,a); // a = -li/lj
-
-  int lead_j_comp = syz->rows[i].comps[0];
-  int after_comp; // index of the component following lead_j_comp in row i 
-  for( after_comp=0; 
-       after_comp<r.len && r.comps[after_comp]<lead_j_comp; 
-       after_comp++ );
-  if ( r.comps[after_comp] == lead_j_comp ) 
-    R->add(rcoeffs[after_comp], rcoeffs[after_comp], a);
-  else { // (?write a new function?) syzF4Vec.insert(rcoeffs, aftercomp, a);
-    syzF4Vec.grow(rcoeffs, 1);
-    syzF4Vec.grow(r.comps, 1);
-    int* cf = rcoeffs + ++r.len;
-    int* cp = r.comps + r.len;    
-    for (int ii=r.len; ii>after_comp; ii--,cf--,cp--){
-      *cf = *(cf - 1);
-      *cp = *(cp - 1);
-    }
-    *cf = a;
-    *cp = lead_j_comp;
-  }
+  int a;                               
+  const CoefficientRingZZp* R = KK->get_coeff_ring();                             
+  R->divide(a,li,lj); // a = li/lj 
+  for (int i=0; i<r.len; i++)
+    R->subtract_multiple(elems[*comps++], a, *sparseelems++);
 }
 
 void F4GB::syzygy_row_divide(int i, int c)
@@ -1061,9 +1110,36 @@ void F4GB::syzygy_row_divide(int i, int c)
   if (!using_syz) return;
   const CoefficientRingZZp* R = KK->get_coeff_ring();
   row_elem &r = syz->rows[i];
-  f4vec elems = static_cast<int *>(get_coeffs_array(r));
+  f4vec elems = static_cast<int *>(r.coeffs);
   for (int j=0; j<r.len; j++)
     R->divide(elems[j],elems[j],c);
+}
+
+void F4GB::syz_dense_row_to_sparse_row(row_elem& s)
+{
+  const CoefficientRingZZp* Kp = KK->get_coeff_ring();
+  int &result_len = s.len;
+  F4CoefficientArray &result_sparse = s.coeffs;
+  int *&result_comps = s.comps;
+  int first = 0;
+  int last = syz->columns.size()-1; 
+  
+  int *elems = static_cast<int *>(syz_row.coeffs);
+  int len = 0;
+  for (int i=first; i<=last; i++)
+    if (!Kp->is_zero(elems[i])) len++;
+  int *in_sparse = F4Mem::coefficients.allocate(len);
+  int *in_comps = F4Mem::components.allocate(len);
+  result_len = len;
+  result_sparse = in_sparse;
+  result_comps = in_comps;
+  for (int i=first; i<=last; i++)
+    if (!Kp->is_zero(elems[i]))
+      {
+        *in_sparse++ = elems[i];
+        *in_comps++ = i;
+        Kp->set_zero(elems[i]);
+      }
 }
 
 
