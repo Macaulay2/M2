@@ -489,6 +489,10 @@ void F4GB::reset_matrix()
   next_col_to_process = 0;
   next_monom = B.reserve(1+M->max_monomial_size());
   next_monom++;
+  
+  syz_next_col_to_process = 0;
+  syz_next_monom = B.reserve(1+M->max_monomial_size());
+  syz_next_monom++;
 }
 
 void F4GB::clear_matrix()
