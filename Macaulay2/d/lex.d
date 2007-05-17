@@ -187,7 +187,10 @@ getstring(o:PosFile):(null or Word) := (
      s := takestring(tokenbuf);
      Word(s,TCstring,0,parseWORD));
 lookingatcomment(file:PosFile):bool := (
-     peek(file,0) == int('-') && peek(file,1) == int('-')
+     c := peek(file,0);
+     c == int('-') && peek(file,1) == int('-')
+     ||
+     c == int('#') && file.pos.line == ushort(1) && file.pos.column == ushort(0) && peek(file,1) == int('!')
      );
 skipwhite(file:PosFile):void := (
      while true do (
