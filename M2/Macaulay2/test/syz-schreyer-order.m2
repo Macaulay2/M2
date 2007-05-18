@@ -1,23 +1,14 @@
 A = ZZ/101[x]/x^2
 F = res(coker vars A, LengthLimit => 5 )
 peek F.dd_3
-syz gb (matrix entries F.dd_3, Syzygies => true)
-syz gb (F.dd_3, Syzygies => true)
+M1 = syz gb (matrix entries F.dd_3, Syzygies => true)
+M = syz gb (F.dd_3, Syzygies => true)
+assert(entries M == {{x}})
+assert(entries M1 == {{x}})
 
 end
--- Fixed: now test/syz-schreyer-order.m2
 
--- Date: Thu, 17 May 2007 15:40:47 -0500
--- From: "Daniel R. Grayson" <dan@math.uiuc.edu>
--- To: mike@math.cornell.edu
--- CC: dan@math.uiuc.edu, snapp@math.uiuc.edu
--- Subject: bug in res
--- Reply-to: dan@math.uiuc.edu
--- 
--- 
--- Bart reported the (serious) bug that appears in the last line below.  I can't
--- figure it out.
--- 
+-- Bart Snapp found this bug, 5/17/07
     Macaulay 2, version 0.9.96
     with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, TangentCone
 
@@ -60,4 +51,3 @@ end
 
 		 1
     o5 : Matrix A  <--- 0
-

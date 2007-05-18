@@ -134,13 +134,12 @@ void QRingInfo_field_basic::normal_form(ring_elem& f) const
 void QRingInfo_field_basic::gbvector_normal_form(const FreeModule *F, gbvector *&f) const
 {
   GBRing *GR = R->get_gb_ring();
-  const Monoid *M = R->getMonoid();
   gbvector head;
   gbvector *result = &head;
   gbvector *t = f;
   while (t != NULL)
     {
-      M->to_expvector(t->monom, EXP1_);
+      GR->gbvector_get_lead_exponents(F, f, EXP1_);
       int x = ringtable->find_divisor(EXP1_, 1);
       if (x >= 0)
 	{
@@ -224,14 +223,13 @@ void QRingInfo_field_QQ::normal_form(ring_elem& f) const
 void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F, gbvector *&f) const
 {
   GBRing *GR = R->get_gb_ring();
-  const Monoid *M = R->getMonoid();
   gbvector head;
   gbvector *result = &head;
   result->next = NULL;
   gbvector *t = f;
   while (t != NULL)
     {
-      M->to_expvector(t->monom, EXP1_);
+      GR->gbvector_get_lead_exponents(F, f, EXP1_);
       int x = ringtable->find_divisor(EXP1_, 1);
       if (x >= 0)
 	{
@@ -353,13 +351,12 @@ void QRingInfo_ZZ::gbvector_normal_form(const FreeModule *F, gbvector * &f) cons
 // It must handle skew multiplication too
 {
   GBRing *GR = R->get_gb_ring();
-  const Monoid *M = R->getMonoid();
   gbvector head;
   gbvector *result = &head;
   gbvector *t = f;
   while (t != NULL)
     {
-      M->to_expvector(t->monom, EXP1_);
+      GR->gbvector_get_lead_exponents(F, f, EXP1_);
       int w = ringtableZZ->find_smallest_coeff_divisor(EXP1_, 1);
       if (w >= 0)
 	{
