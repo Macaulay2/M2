@@ -131,7 +131,7 @@ private:
   void syz_dense_row_fill_from_sparse(int i);
 
   // convert dense <syz_row> into sparse <s>
-  void F4GB::syz_dense_row_to_sparse_row(row_elem& s);
+  void syz_dense_row_to_sparse_row(row_elem& s);
   
   // record "reduce current row (w/leading coeff <li>) with row[pivot] (...<lj>)" 
   void syzygy_row_record_reduction(int pivot, int li, int lj); 
