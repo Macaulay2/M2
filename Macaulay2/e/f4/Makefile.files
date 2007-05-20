@@ -1,5 +1,6 @@
 F4_CCFILES := \
   f4 \
+  f4-syz \
   f4-mem \
   f4-monlookup \
   f4-types \
