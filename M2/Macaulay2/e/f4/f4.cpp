@@ -91,19 +91,6 @@ int F4GB::new_column(packed_monomial m)
   return next_column;
 }
 
-int F4GB::syz_new_column(packed_monomial m)
-{
-  // m is a packed monomial (with component), 
-  // unique via the hash table syzH, syzB.
-  column_elem c;
-  int next_column = syz->columns.size();
-  m[-1] = next_column;
-  c.monom = m;
-  c.head = -2;
-  syz->columns.push_back(c);
-  return next_column;
-}
-
 int F4GB::find_or_append_column(packed_monomial m)
 {
   packed_monomial new_m;
@@ -135,7 +122,6 @@ int F4GB::mult_monomials(packed_monomial m, packed_monomial n)
   return new_column(m);
 }
 
-
 void F4GB::load_gen(int which)
 {
   poly &g = gens[which]->f;
@@ -157,39 +143,8 @@ void F4GB::load_gen(int which)
     }
 
   mat->rows.push_back(r);
-
-  if (using_syz)
-    {  
-      // Append a new row to the syzygy matrix
-      // Idea: module-monomial $m e_i$ is represented by pair (monom=m*lm(f_i), comp=i)
-      // This forces the already coded module-monomial comparison function to impose 
-      // Schreyer order. Should be changed eventually.
-      M->copy(gens[which]->f.monoms /*lead monom*/, syz_next_monom);  
-      M->set_component(which, syz_next_monom); 
-      packed_monomial m;
-      if (syzH.find_or_insert(syz_next_monom, m)) // this should not happen
-	error();
-      m = syz_next_monom;
-      syzB.intern(1+M->monomial_size(m));
-      syz_next_monom = syzB.reserve(1+M->max_monomial_size());
-      syz_next_monom++;
-      // the matrix being created is diagonal, therefore...
-      int newcol = syz_new_column(m); // this inserts a new monomial in syzH
-
-      row_elem syz_r;
-      syz_r.monom = m;
-      syz_r.elem = which; // here info is duplicated: which == M->get_component(m)
-      
-      syz_r.len = 1;
-      syz_r.coeffs = F4Mem::coefficients.allocate(1);
-      // syzF4Vec.allocate(1); 
-      static_cast<int *>(syz_r.coeffs)[0] = 0; // this represents 1 in the coefficient field 
-      syz_r.comps = F4Mem::components.allocate(1);
-      // syzF4Vec.allocate(1); 
-      static_cast<int *>(syz_r.comps)[0] = newcol;
-      syz->rows.push_back(syz_r);
-    }
   
+  //!!! syz_load_gen(which);
 }
 
 
@@ -213,40 +168,9 @@ void F4GB::load_row(packed_monomial monom, int which)
     }
 
   mat->rows.push_back(r);
-
-  if (using_syz)
-    {  
-      // Append a new row to the syzygy matrix
-      // Idea: module-monomial $m e_i$ is represented by pair (monom=m*lm(f_i), comp=i)
-      // This forces the already coded module-monomial comparison function to impose 
-      // Schreyer order. Should be changed eventually.
-      M->unchecked_mult(monom, gb[which]->f.monoms /*lead monom*/, syz_next_monom);  
-      M->set_component(which, syz_next_monom); 
-      packed_monomial m;
-      if (syzH.find_or_insert(syz_next_monom, m)) // this should not happen
-	error();
-      m = syz_next_monom;
-      syzB.intern(1+M->monomial_size(m));
-      syz_next_monom = syzB.reserve(1+M->max_monomial_size());
-      syz_next_monom++;
-      // the matrix being created is diagonal, therefore...
-      int newcol = syz_new_column(m); // this inserts a new monomial in syzH
-
-      row_elem syz_r;
-      syz_r.monom = m;
-      syz_r.elem = which; // here info is duplicated: which == M->get_component(m)
-      
-      syz_r.len = 1;
-      syz_r.coeffs = F4Mem::coefficients.allocate(1);
-      // syzF4Vec.allocate(1); 
-      static_cast<int *>(syz_r.coeffs)[0] = 0; // this represents 1 in the coefficient field 
-      syz_r.comps = F4Mem::components.allocate(1);
-      // syzF4Vec.allocate(1); 
-      static_cast<int *>(syz_r.comps)[0] = newcol;
-      syz->rows.push_back(syz_r);
-    }
+  
+  syz_load_row(monom, which);
 }
-
 
 void F4GB::process_column(int c)
 {
@@ -384,70 +308,6 @@ void F4GB::reorder_columns()
   F4Mem::components.deallocate(ord);
 }
 
-void F4GB::syz_reorder_columns()
-{
-  // Same as reorder_columns(), but for syzygy matrix
-
-  int nrows = syz->rows.size();
-  int ncols = syz->columns.size();
-
-  // sort the columns
-
-  int *column_order = F4Mem::components.allocate(ncols);
-  int *ord = F4Mem::components.allocate(ncols);
-
-  clock_t begin_time = clock();
-  for (int i=0; i<ncols; i++)
-    {
-      column_order[i] = i;
-    }
-
-  if (gbTrace >= 2)
-    fprintf(stderr, "ncomparisons = ");
-
-  ColumnsSorter C(M, syz);
-  QuickSorter<ColumnsSorter>::sort(&C, column_order, ncols);
-
-  if (gbTrace >= 2)
-    fprintf(stderr, "%ld, ", C.ncomparisons());
-  clock_t end_time = clock();
-  clock_sort_columns += end_time - begin_time;
-  double nsecs = end_time - begin_time;
-  nsecs /= CLOCKS_PER_SEC;
-  if (gbTrace >= 2)
-    fprintf(stderr, " time = %f\n", nsecs);
-
-  for (int i=0; i<ncols; i++)
-    {
-      ord[column_order[i]] = i;
-    }
-
-  // Now move the columns into position
-  coefficient_matrix::column_array newcols;
-  newcols.reserve(ncols);
-  for (int i=0; i<ncols; i++)
-    {
-      long newc = column_order[i];
-      newcols.push_back(syz->columns[newc]);
-    }
-
-  // Now reset the components in each row
-  for (int r=0; r<nrows; r++)
-    {
-      row_elem &row = syz->rows[r];
-      for (int i=0; i<row.len; i++)
-	{
-	  int oldcol = row.comps[i];
-	  int newcol = ord[oldcol];
-	  row.comps[i] = newcol;
-	}
-    }
-
-  std::swap(syz->columns, newcols);
-  F4Mem::components.deallocate(column_order);
-  F4Mem::components.deallocate(ord);
-}
-
 void F4GB::reorder_rows()
 {
   //??? reorder rows in <mat> and <syz> simultaneously?
@@ -489,10 +349,6 @@ void F4GB::reset_matrix()
   next_col_to_process = 0;
   next_monom = B.reserve(1+M->max_monomial_size());
   next_monom++;
-  
-  syz_next_col_to_process = 0;
-  syz_next_monom = B.reserve(1+M->max_monomial_size());
-  syz_next_monom++;
 }
 
 void F4GB::clear_matrix()
@@ -517,16 +373,6 @@ void F4GB::clear_matrix()
       F4Mem::coefficients.show();
       F4Mem::show();
     }
-  
-  // syz
-  syz_next_col_to_process = 0;
-  syz->rows.clear(); //!!! are coeffs and comps killed here? 
-  syz->columns.clear();
-
-  syzH.reset();
-  syzB.reset();
-  syz_next_monom = syzB.reserve(1+M->max_monomial_size());
-  syz_next_monom++;
 }
 
 void F4GB::make_matrix()
@@ -550,8 +396,9 @@ void F4GB::make_matrix()
   if (gbTrace >= 2) {
     fprintf(stderr, "--matrix--%ld by %ld\n", 
 	    (long)mat->rows.size(), (long)mat->columns.size());
-    fprintf(stderr, "-syzygies-%ld by %ld\n", 
-	    (long)syz->rows.size(), (long)syz->columns.size());
+    if (using_syz) 
+      fprintf(stderr, "-syzygies-%ld by %ld\n", 
+	      (long)syz->rows.size(), (long)syz->columns.size());
   }
   //  show_row_info();
   //  show_column_info();
@@ -560,8 +407,7 @@ void F4GB::make_matrix()
   // Now we reorder the columns, possibly rows?
   reorder_columns();
 
-  if (using_syz)
-    syz_reorder_columns();
+  syz_reorder_columns();
 
   //reorder_rows();  // This is only here so we can see what we are doing...?
 
@@ -613,7 +459,8 @@ void F4GB::gauss_reduce(bool diagonalize)
 
       F4CoefficientArray rcoeffs = get_coeffs_array(r);
       KK->dense_row_fill_from_sparse(gauss_row, r.len, rcoeffs, r.comps); 
-      syz_dense_row_fill_from_sparse(i); // fill syz_row from row[i]
+      if (syz->rows.size()==nrows)//!!! 
+	syz_dense_row_fill_from_sparse(i); // fill syz_row from row[i]
     
       int firstnonzero = ncols;
       int first = r.comps[0];
@@ -624,8 +471,9 @@ void F4GB::gauss_reduce(bool diagonalize)
 	  {
 	    row_elem &pivot_rowelem = mat->rows[pivotrow];
 	    F4CoefficientArray pivot_coeffs = get_coeffs_array(pivot_rowelem);
-	    syzygy_row_record_reduction(pivotrow, 
-					KK->lead_coeff(rcoeffs), KK->lead_coeff(pivot_coeffs));    
+	    if (syz->rows.size()==nrows)//!!! 
+	      syzygy_row_record_reduction(pivotrow, 
+					  KK->lead_coeff(rcoeffs), KK->lead_coeff(pivot_coeffs));    
 	    KK->dense_row_cancel_sparse(gauss_row, pivot_rowelem.len, pivot_coeffs, pivot_rowelem.comps);
 	    int last1 = pivot_rowelem.comps[pivot_rowelem.len-1];
 	    if (last1 > last) last = last1;
@@ -640,6 +488,7 @@ void F4GB::gauss_reduce(bool diagonalize)
       KK->dense_row_to_sparse_row(gauss_row, r.len, r.coeffs, r.comps, firstnonzero, last); 
       // the above line leaves gauss_row zero, and also handles the case when r.len is 0
       // it also potentially frees the old r.coeffs and r.comps
+      if (syz->rows.size()==nrows)//!!! 
       if (using_syz) {
 	row_elem& s = syz->rows[i];
 	if (s.len>0) // the opposite should not happen
@@ -651,10 +500,11 @@ void F4GB::gauss_reduce(bool diagonalize)
 	  }
 	syz_dense_row_to_sparse_row(syz->rows[i]);
 	// the above line leaves syz_row zero
-      }
+	}
       if (r.len > 0)
 	{
-	  syzygy_row_divide(i, static_cast<int*>(r.coeffs)[0]);
+	  if (syz->rows.size()==nrows)//!!! 
+	    syzygy_row_divide(i, static_cast<int*>(r.coeffs)[0]);
 	  KK->sparse_row_make_monic(r.len, r.coeffs);
 	  mat->columns[r.comps[0]].head = i;
 	}
@@ -795,14 +645,17 @@ void F4GB::new_GB_elements()
 void F4GB::do_spairs()
 {
   reset_matrix();
+  reset_syz_matrix();
   clock_t begin_time = clock();
 
   n_lcmdups = 0;
   make_matrix();
 
-  fprintf(stderr, "---------\n");
-  show_matrix();
-  fprintf(stderr, "---------\n");
+  if (gbTrace >= 2) {
+    fprintf(stderr, "---------\n");
+    show_matrix();
+    fprintf(stderr, "---------\n");
+  }
 
   clock_t end_time = clock();
   clock_make_matrix += end_time - begin_time;
@@ -826,8 +679,10 @@ void F4GB::do_spairs()
       fprintf(stderr, " gauss time          = %f\n", nsecs);
 
       fprintf(stderr, " lcm dups            = %d\n", n_lcmdups);
+      fprintf(stderr, "---------\n");
       show_matrix();
-      //show_syz_matrix();
+      fprintf(stderr, "---------\n");
+      show_syz_matrix();
       //  show_new_rows_matrix();
     }
   new_GB_elements();
@@ -836,8 +691,8 @@ void F4GB::do_spairs()
     fprintf(stderr, " # GB elements   = %d\n", ngb);
 
   clear_matrix();
+  clear_syz_matrix();
 }
-
 
 enum ComputationStatusCode F4GB::computation_is_complete(StopConditions &stop_)
 {
@@ -1000,14 +855,6 @@ void F4GB::show_matrix()
   emit(o.str());
 }
 
-void F4GB::show_syz_matrix()
-{
-  // Debugging routine                                                                                                          
-  MutableMatrix *q = F4toM2Interface::to_M2_MutableMatrix(KK,syz,gens,gb);
-  buffer o;
-  q->text_out(o);
-  emit(o.str());
-}
 
 //////////////////// LINBOX includes //////////////////////////////////////
 //#include <linbox/field/modular.h>
@@ -1083,73 +930,6 @@ void F4GB::show_new_rows_matrix()
   gbM->text_out(o);
   emit(o.str());
 }
-
-//////// syzygy manipulations //////////////
-
-////////////////////////////////////////////////////////////////////
-// create dense vector from syz->row[i]
-void F4GB::syz_dense_row_fill_from_sparse(int i)
-{
-  if (!using_syz) return;
-  row_elem& r = syz->rows[i];
-  KK->dense_row_fill_from_sparse(syz_row, r.len, r.coeffs, r.comps);
-}
- 
-/////////////////////////////////////////////////////////////////////
-// record the reduction of current row with respect to row[pivot] 
-// ( <li> and <lj> are the leading terms of <i> and <j> )  
-void F4GB::syzygy_row_record_reduction(int pivot, int li, int lj)
-{
-  if (!using_syz) return;
-  row_elem& r = syz->rows[pivot];
-  int *elems = static_cast<int *>(syz_row.coeffs);
-  int *sparseelems = static_cast<int *>(r.coeffs);
-  int *comps = static_cast<int *>(r.comps);
-
-  int a;                               
-  const CoefficientRingZZp* R = KK->get_coeff_ring();                             
-  R->divide(a,li,lj); // a = li/lj 
-  for (int i=0; i<r.len; i++)
-    R->subtract_multiple(elems[*comps++], a, *sparseelems++);
-}
-
-void F4GB::syzygy_row_divide(int i, int c)
-{
-  if (!using_syz) return;
-  const CoefficientRingZZp* R = KK->get_coeff_ring();
-  row_elem &r = syz->rows[i];
-  f4vec elems = static_cast<int *>(r.coeffs);
-  for (int j=0; j<r.len; j++)
-    R->divide(elems[j],elems[j],c);
-}
-
-void F4GB::syz_dense_row_to_sparse_row(row_elem& s)
-{
-  const CoefficientRingZZp* Kp = KK->get_coeff_ring();
-  int &result_len = s.len;
-  F4CoefficientArray &result_sparse = s.coeffs;
-  int *&result_comps = s.comps;
-  int first = 0;
-  int last = syz->columns.size()-1; 
-  
-  int *elems = static_cast<int *>(syz_row.coeffs);
-  int len = 0;
-  for (int i=first; i<=last; i++)
-    if (!Kp->is_zero(elems[i])) len++;
-  int *in_sparse = F4Mem::coefficients.allocate(len);
-  int *in_comps = F4Mem::components.allocate(len);
-  result_len = len;
-  result_sparse = in_sparse;
-  result_comps = in_comps;
-  for (int i=first; i<=last; i++)
-    if (!Kp->is_zero(elems[i]))
-      {
-        *in_sparse++ = elems[i];
-        *in_comps++ = i;
-        Kp->set_zero(elems[i]);
-      }
-}
-
 
 #include "moninfo.hpp"
 #include "../coeffrings.hpp"

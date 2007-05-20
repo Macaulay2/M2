@@ -70,6 +70,9 @@
 #include "monsort.hpp"
 #include "f4-spairs.hpp"
 #include "gausser.hpp"
+#include "f4-m2-interface.hpp"
+#include "../mat.hpp"
+#include "../text-io.hpp"
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -150,7 +153,9 @@ private:
   void make_matrix();
 
     void reset_matrix();
+    void reset_syz_matrix();
     void clear_matrix();
+    void clear_syz_matrix();
     int new_column(packed_monomial m);
     int syz_new_column(packed_monomial m);
     int find_or_append_column(packed_monomial m);
@@ -158,6 +163,8 @@ private:
     int mult_monomials(packed_monomial m, packed_monomial n);
     void load_gen(int which);
     void load_row(packed_monomial monom, int which);
+    void syz_load_gen(int which);
+    void syz_load_row(packed_monomial monom, int which);
     void process_column(int c);
     void process_s_pair(spair *p);
     void reorder_columns();
