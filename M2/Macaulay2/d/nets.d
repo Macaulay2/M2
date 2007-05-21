@@ -238,11 +238,24 @@ blankcolumn(i:int, t:Net):bool := (
      );
 
 splitcolumn(i:int, t:Net):bool := (			    -- whether we can split between column i and column i-1
+                                                            -- we don't want to split: identifiers; M2 operators
      if i <= 0 then return false;			    -- shouldn't happen!
      foreach s in t.body do if length(s) > i && (
-	  a := isalnum(s.(i-1));     c := !a && s.(i-1) != ' ';
-	  b := isalnum(s.i);	     d := !b && s.i     != ' ';
-	  a && b || c && d ) then return false;
+          x := s.(i-1);	    	     y := s.i;
+	  a := isalnum(x);           b := isalnum(y);
+	  a && b
+	  ||
+	  (!a && x != ' ') && (!b && y != ' ')
+	  ) then return false;
+     true);
+
+splitcolumnUTF(i:int, t:Net):bool := (			    -- whether we can split between column i and column i-1
+                                                            -- we don't want to split: unicode characters encoded in utf-8
+     if i <= 0 then return false;			    -- shouldn't happen!
+     foreach s in t.body do if length(s) > i && (
+          x := s.(i-1);	    	     y := s.i;
+	  ((int(x) & 0x80) != 0) && ((int(y) & 0xc0) == 0x80)
+	  ) then return false;
      true);
 
 verticalTrim(t:Net):Net := (
@@ -272,8 +285,6 @@ export wrap(wid:int, sep:char, t:Net):Net := (
      leftbkpt := 0;
      nextleftbkpt := 0;
      rightbkpt := 0;
-     nextleftbkpt2 := 0;
-     rightbkpt2 := 0;
      while true do (
 	  breaks << leftbkpt;
 	  n := leftbkpt + wid;
@@ -300,33 +311,61 @@ export wrap(wid:int, sep:char, t:Net):Net := (
 		    break;
 		    ));
 	  while rightbkpt>leftbkpt && blankcolumn(rightbkpt-1,t) do rightbkpt = rightbkpt-1;
-     	  -- find a good break point where we don't split any identifiers or any operators
-	  nextleftbkpt2 = n;
-	  rightbkpt2 = n;
-	  found2 := false;
-	  if n >= t.width then (
-	       found2 = true;
-	       rightbkpt2 = t.width;
-	       nextleftbkpt2 = t.width;
-	       )
-	  else if splitcolumn(n,t)
-	  then (
-	       found2 = true;
-	       rightbkpt2 = n;
-	       nextleftbkpt2 = n;
-	       )
-	  else for i from n to leftbkpt + minwid by -1 do (
-	       if splitcolumn(i,t) then (
-	       	    found2 = true;
-		    rightbkpt2 = i;
-		    nextleftbkpt2 = i;
-		    break;
-		    ));
-	  while rightbkpt2>leftbkpt && blankcolumn(rightbkpt2-1,t) do rightbkpt2 = rightbkpt2-1;
-     	  -- choose the best one
-     	  if !found then ( 
-	       rightbkpt = rightbkpt2;
-	       nextleftbkpt = nextleftbkpt2;
+	  if !found then (
+	       -- find a good break point where we don't split any identifiers or any operators
+	       nextleftbkpt2 := n;
+	       rightbkpt2 := n;
+	       found2 := false;
+	       if n >= t.width then (
+		    found2 = true;
+		    rightbkpt2 = t.width;
+		    nextleftbkpt2 = t.width;
+		    )
+	       else if splitcolumn(n,t)
+	       then (
+		    found2 = true;
+		    rightbkpt2 = n;
+		    nextleftbkpt2 = n;
+		    )
+	       else for i from n to leftbkpt + minwid by -1 do (
+		    if splitcolumn(i,t) then (
+			 found2 = true;
+			 rightbkpt2 = i;
+			 nextleftbkpt2 = i;
+			 break;
+			 ));
+	       while rightbkpt2>leftbkpt && blankcolumn(rightbkpt2-1,t) do rightbkpt2 = rightbkpt2-1;
+	       if found2 then (
+	       	    rightbkpt = rightbkpt2;
+	       	    nextleftbkpt = nextleftbkpt2;
+		    )
+	       else (
+		    -- find a good break point where we don't split any utf8 characters, which is always possible within about 4 bytes
+		    nextleftbkpt3 := n;
+		    rightbkpt3 := n;
+		    -- found3 := false;
+		    if n >= t.width then (
+			 -- found3 = true;
+			 rightbkpt3 = t.width;
+			 nextleftbkpt3 = t.width;
+			 )
+		    else if splitcolumnUTF(n,t)
+		    then (
+			 -- found3 = true;
+			 rightbkpt3 = n;
+			 nextleftbkpt3 = n;
+			 )
+		    else for i from n to leftbkpt + minwid by -1 do (
+			 if splitcolumnUTF(i,t) then (
+			      -- found3 = true;
+			      rightbkpt3 = i;
+			      nextleftbkpt3 = i;
+			      break;
+			      ));
+		    while rightbkpt3>leftbkpt && blankcolumn(rightbkpt3-1,t) do rightbkpt3 = rightbkpt3-1;
+	       	    rightbkpt = rightbkpt3;
+	       	    nextleftbkpt = nextleftbkpt3;
+		    );
 	       );
 	  -- record the break point for future use
 	  breaks << rightbkpt;
