@@ -129,6 +129,15 @@ flexibleOperators = sort flexibleOperators
 fixedOperators = sort fixedOperators
 allOperators = sort allOperators
 
+random List := opts -> s -> (
+     n := #s;
+     if n <= 1 then return s;
+     s = new MutableList from s;
+     for i from 0 to n-1 do (
+	  j := random n;
+	  t := s#i ; s#i = s#j ; s#j = t;
+	  );
+     new List from s)
 -----------------------------------------------------------------------------
 -- sublists
 -----------------------------------------------------------------------------
