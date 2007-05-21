@@ -127,7 +127,7 @@ document { Key => Betti,
      EM "Betti", " is a package designed to help with the investigation of 
      the Boij-Soderberg conjectures.  For the definitions and conjectures, see
      math.AC/0611081, \"Graded Betti numbers of Cohen-Macaulay modules and 
-     the Multiplicity conjecture\", ", by Mats Boij, Jonas Soderberg."
+     the Multiplicity conjecture\", by Mats Boij, Jonas Soderberg."
      }
 
 end
