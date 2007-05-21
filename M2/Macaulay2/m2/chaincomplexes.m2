@@ -613,11 +613,12 @@ regularity ChainComplex := opts -> C -> regularity betti(C,opts)
 regularity Module := opts -> (M) -> regularity betti(resolution minimalPresentation M,opts)
 regularity Ideal := opts -> (I) -> 1 + regularity betti(resolution cokernel generators I,opts)
 
-BettiTally = new Type of Tally
+BettiTally = new Type of VirtualTally
 BettiTally.synonym = "Betti tally"
 BettiTally == BettiTally := (C,D) -> C === D
 BettiTally ++ BettiTally := (C,D) -> merge(C,D,plus)
 BettiTally ** BettiTally := (C,D) -> combine(C,D,(j,k)->apply(j,k,plus),times,plus)
+BettiTally ZZ := (C,n) -> applyKeys(C, (i,d,h) -> (i,d,h-n))
 dual BettiTally := (C) -> applyKeys(C,j -> apply(j,minus))
 regularity BettiTally := opts -> (C) -> (
      if opts.Weights =!= null then C = betti(C,opts);
@@ -692,6 +693,53 @@ betti ChainComplex := opts -> C -> (
 	       select(pairs C, (i,F) -> class i === ZZ), 
 	       (i,F) -> apply(pairs tally degrees F, (d,n) -> (i,d,heft d) => n))))
 
+-----------------------------------------------------------------------------
+-- some extra betti tally routines by David Eisenbud and Mike :
+lift(BettiTally, ZZ) := (B,R) -> applyValues(B, v -> lift(v,ZZ))
+QQ * BettiTally := (d,B) -> applyValues(B, v -> d*v)
+ZZ * BettiTally := (d,B) -> applyValues(B, v -> d*v)
+pdim BettiTally := (B) -> max apply ((keys B), i->i_0)
+poincare BettiTally := (B) -> (
+     if #B === 0 then return 0;				    -- yes, it's not in a degree ring, but that should be okay
+     K := keys B;
+     R := degreesRing (#K#0#1);				    -- it doesn't matter which key we inspect
+     sum apply(K, k -> (-1)^(k#0) * B#k * R_(k#1)))
+hilbertPolynomial(ZZ,BettiTally) := o -> (nvars,B) -> (
+     f := poincare B;
+     if f == 0 then return (
+	  if o.Projective
+	  then new ProjectiveHilbertPolynomial from {}
+	  else 0_hilbertFunctionRing
+	  );
+     T := (ring f)_0;
+     p := pairs standardForm f;
+     n := nvars - 1;
+     if o.Projective 
+     then sum(p, (d,c) -> (
+	       if #d === 0 then d = 0 else d = d#0;
+	       c * projectiveHilbertPolynomial(n,-d)))
+     else sum(p, (d,c) -> (
+	       if #d === 0 then d = 0 else d = d#0;
+	       c * hilbertFunctionQ(n,-d))))
+degree BettiTally := o -> (B) -> (
+     f := poincare B;
+     if f === 0 then return 0;
+     T := (ring f)_0;
+     while f % (1-T) == 0 do f = f//(1-T);
+     substitute(f, T=>1))
+codim BettiTally := (B) -> (
+     f := poincare B;
+     if f === 0 then return infinity;
+     T := (ring f)_0;
+     c := 0;
+     while f % (1-T) == 0 do (c = c+1; f = f//(1-T));
+     c)
+hilbertSeries(ZZ,BettiTally) := o -> (n,B) -> (
+     num := poincare B;
+     if num === 0 then return 0;
+     T := (ring num)_0;
+     denom := Product{Power{(1-T),n}};
+     Divide{num, denom})
 -----------------------------------------------------------------------------
 syzygyScheme = (C,i,v) -> (
      -- this doesn't work any more because 'resolution' replaces the presentation of a cokernel
