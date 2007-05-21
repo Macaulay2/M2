@@ -431,6 +431,7 @@ export {
 	symbol Version,
 	symbol VerticalList,
 	symbol VerticalSpace,
+	symbol VirtualTally,
 	symbol VisibleList,
 	symbol Weights,
 	symbol WeylAlgebra,
