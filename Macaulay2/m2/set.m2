@@ -32,6 +32,10 @@ Tally ? Tally := (x,y) -> (
 
 Tally + Tally := Tally => (x,y) -> merge(x,y,plus)
 Tally - Tally := Tally => (x,y) -> select(merge(x,applyValues(y,minus),plus),i -> i > 0)
+
+VirtualTally = new Type of Tally
+VirtualTally.synonym = "virtual tally"
+VirtualTally - VirtualTally := VirtualTally => (x,y) -> select(merge(x,applyValues(y,minus),plus),i -> i != 0)
      
 sum(Tally) := (w) -> sum(pairs w, (k,v) -> v * k)
 product(Tally) := (w) -> product(pairs w, (k,v) -> k^v)
