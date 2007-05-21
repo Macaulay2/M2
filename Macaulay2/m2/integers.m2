@@ -34,6 +34,7 @@ gcd = method(Binary => true)
 gcd List := x -> gcd toSequence x
 gcd(ZZ,ZZ) := ZZ => (x,y) -> oldgcd(x,y)
 gcd(ZZ,QQ) := QQ => (x,y) -> gcd(x * denominator y, numerator y) / denominator y
+gcd(QQ,ZZ) := QQ => (y,x) -> gcd(x * denominator y, numerator y) / denominator y
 gcd(QQ,QQ) := QQ => (x,y) -> (
      d := denominator x * (denominator y // gcd(denominator x, denominator y));
      gcd(numerator (x * d), numerator (y * d)) / d)
