@@ -207,7 +207,7 @@ hilbertFunctionRing <- QQ(monoid [global i])
 i := hilbertFunctionRing_0
 assert(value global i === global i)
 
-hilbertFunctionQ := method()
+hilbertFunctionQ = method()
 hilbertFunctionQ(ZZ) := (n) -> (
      if n === 0 then 1_hilbertFunctionRing
      else (1/n) * (n+i) * hilbertFunctionQ(n-1))
