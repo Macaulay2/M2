@@ -1147,7 +1147,7 @@ viewHelp = key -> (
 	       if not member("-q",commandLine) then applicationDirectory()|"local/",
 	       prefixDirectory
 	       };
-	  fn := htmlFilename key;
+	  fn := htmlFilename DocumentTag.FormattedKey getPrimary makeDocumentTag key;
 	  p := null;
 	  display := x -> (print x; x);
 	  scan(prefixes, dir -> if fileExists display (dir|fn) then p = dir|fn);
