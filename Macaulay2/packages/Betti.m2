@@ -19,15 +19,16 @@ export {
 --"Peskine-Szpiro" equations
 pureBetti = method()
 pureBetti List := (Degs) -> (
-     c:= # Degs;
-     p:=1;
-     for i from 1 to c-1 do (for j from 0 to i-1 do p=p*(Degs_i-Degs_j));
-     if p <= 0 then error "pureBetti: expected an increasing list of integers";
-     D:=for i from 0 to c-1 list(
-         (-1)^i* product(i, j->Degs_j-Degs_i)*product(i+1..c-1, j->Degs_j-Degs_i));
-     Bettis :=for i from 0 to c-1 list (p/D_i);
-     Bettis = Bettis/(gcd Bettis);
-     Bettis = apply(Bettis, x -> lift(x,ZZ)))
+     c := # Degs;
+     p := 1;
+     for i from 1 to c-1 do (
+	  if Degs#i <= Degs#(i-1) then error "pureBetti: expected an increasing list of integers";
+	  for j from 0 to i-1 do p=p*(Degs_i-Degs_j)
+	  );
+     D := for i from 0 to c-1 list (-1)^i * product(i, j->Degs_j-Degs_i) * product(i+1..c-1, j->Degs_j-Degs_i);
+     Bettis := for i from 0 to c-1 list (p/D_i);
+     Bettis = Bettis / gcd Bettis;
+     apply(Bettis, x -> lift(x,ZZ)))
 
 pureBettiDiagram = method()
 pureBettiDiagram List := (degs) -> (
@@ -51,71 +52,6 @@ highestDegrees BettiTally := (B) -> (
 	  max apply(B1, k -> k#2)
 	  ))
 
-pdim BettiTally := (B) -> (
-     max apply ((keys B), i->i_0)
-     )
-
-BettiTally + BettiTally := (B,C) -> merge(B,C,(i,j) -> i+j)
-BettiTally - BettiTally := (B,C) -> merge(B,C,(i,j) -> i-j)
-
-lift(BettiTally, ZZ) := (B,R) -> 
-     applyPairs(B, (k,v) -> (k,lift(v,ZZ)))
-     
-QQ * BettiTally := (d,B) -> applyPairs(B, (k,v) -> (k, d*v))
-ZZ * BettiTally := (d,B) -> applyPairs(B, (k,v) -> (k, d*v))
-
----- The following routines need to be written with Dan to be more general
----- and also placed in the Macaulay2 core.
-poincare BettiTally := (B) -> (
-     K := keys B;
-     -- we really need that B is not 0, otherwise we cannot 
-     -- determine what ring we should be in.  Perhaps we should insist
-     -- that a ring be passed in too...
-     ndegrees := #K#0#1;
-     R := degreesRing ndegrees;
-     sum apply(K, k -> (-1)^(k#0) * B#k * R_(k#1))
-     )
-
-debug Core
-hilbertPolynomial(BettiTally,ZZ) := o -> (B,nvars) -> (
-     n := nvars - 1;
-     f := poincare B;
-     T := (ring f)_0;
-     p := pairs standardForm f;
-     if o.Projective 
-     then (
-	  if #p===0 
-	  then new ProjectiveHilbertPolynomial from {}
-	  else sum(p, (d,c) -> (
-		    if #d === 0 then d = 0 else d = d#0;
-		    c * projectiveHilbertPolynomial(n,-d))))
-     else (
-	  if #p===0
-	  then 0_hilbertFunctionRing
-	  else sum(p, (d,c) -> (
-		    if #d === 0 then d = 0 else d = d#0;
-		    c * hilbertFunctionQ(n,-d)))))
-
-degree BettiTally := o -> (B) -> (
-     f := poincare B;
-     T := (ring f)_0;
-     while f % (1-T) == 0 do f = f//(1-T);
-     abs substitute(f, T=>1))
-
-codim BettiTally := (B) -> (
-     f := poincare B;
-     T := (ring f)_0;
-     c := 0;
-     while f % (1-T) == 0 do (c = c+1; f = f//(1-T));
-     c
-     )
-
-hilbertSeries(BettiTally,ZZ) := o -> (B,n) -> (
-     num := poincare B;
-     T := (ring num)_0;
-     denom := Product{Power{(1-T),n}};
-     Divide{num, denom})
-
 --input: a BettiTally or a similar hash table
 --output: a triple, 
 --First element: the first summand in the (conjectural) Boij-Soderberg decomposition
@@ -130,7 +66,7 @@ decompose1= B->(
 
 scale = method()
 scale BettiTally := (B) -> (
-     g := gcd apply(values B, x -> if instance(x,ZZ) then x/1 else x);
+     g := gcd values B;
      lift(1/g * B, ZZ)
      )
 
@@ -147,6 +83,42 @@ decomposeBetti BettiTally := (B) -> (
 	  Bs = append(Bs, scale C);
 	  );
      Bs)
+
+randL = (d,b1,b2,R) -> (
+     betti res coker random(R^b1, R^{b2:-d})
+     )
+
+randR = (d,b1,b2,R) -> (
+     B := (betti dual res coker random(R^b1, R^{b2:-d}))[-numgens R];
+     d := min lowestDegrees B;
+     applyKeys(B, 
+	  k -> (k#0, 
+	       k#1 + {-d}, 				    -- warning: asssumption here that the degreeLength is 1 (the multi-degree here is k#1)
+	       k#2 - d)))
+
+doPure = (d) -> (
+     b := pureBetti d;
+     B := pureBettiDiagram d;
+     left := randL(d#1-d#0,b#0,b#1,R);
+     right := randR(d#-1-d#-2,b#-1,b#-2,R);
+     (d,B,left,right)
+     )
+
+doPure2 = (d) -> (
+     b := 2 * pureBetti d;
+     B := 2 * pureBettiDiagram d;
+     left := randL(d#1-d#0,b#0,b#1,R);
+     right := randR(d#-1-d#-2,b#-1,b#-2,R);
+     (d,B,left,right)
+     )
+
+dopure = (d,multiple) -> (
+     b := multiple * pureBetti d;
+     B := multiple * pureBettiDiagram d;
+     left := randL(d#1-d#0,b#0,b#1,R);
+     right := randR(d#-1-d#-2,b#-1,b#-2,R);
+     (d,B,left,right)
+     )
 
 beginDocumentation()
 
@@ -191,7 +163,7 @@ lowestDegrees B
 highestDegrees B
 degree B
 pdim B
-hilbertSeries(B,3)
+hilbertSeries(3,B)
 poincare B
 
 
@@ -216,10 +188,10 @@ I = ideal borel monomialIdeal"b2,bc2,,c4"
 degree B
 poincare B
 codim B
-P = hilbertPolynomial(B,7)
+P = hilbertPolynomial(7,B)
 1-P(0)
 
-hilbertSeries(B,5)
+hilbertSeries(5,B)
 reduceHilbert oo
 
 R = ZZ/32003[a,b,c]
@@ -256,40 +228,6 @@ for d from 21 to 30 list (
 -----------------------------------------
 C1 = apply(subsets({1,2,3,4,5,6,7,8},3), x -> prepend(0,x))
 C2 = apply(C1,pureBettiDiagram)
-
-randL = (d,b1,b2,R) -> (
-     betti res coker random(R^b1, R^{b2:-d})
-     )
-
-randR = (d,b1,b2,R) -> (
-     B := (betti dual res coker random(R^b1, R^{b2:-d}))[-numgens R];
-     d := min lowestDegrees B;
-     applyPairs(B, (k,v) -> ((k#0, k#1+{-d},k#2 - d), v))
-     )
-
-doPure = (d) -> (
-     b := pureBetti d;
-     B := pureBettiDiagram d;
-     left := randL(d#1-d#0,b#0,b#1,R);
-     right := randR(d#-1-d#-2,b#-1,b#-2,R);
-     (d,B,left,right)
-     )
-
-doPure2 = (d) -> (
-     b := 2 * pureBetti d;
-     B := 2 * pureBettiDiagram d;
-     left := randL(d#1-d#0,b#0,b#1,R);
-     right := randR(d#-1-d#-2,b#-1,b#-2,R);
-     (d,B,left,right)
-     )
-
-dopure = (d,multiple) -> (
-     b := multiple * pureBetti d;
-     B := multiple * pureBettiDiagram d;
-     left := randL(d#1-d#0,b#0,b#1,R);
-     right := randR(d#-1-d#-2,b#-1,b#-2,R);
-     (d,B,left,right)
-     )
 
 doPure C1#10
 
