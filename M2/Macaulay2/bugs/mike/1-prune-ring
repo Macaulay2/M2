@@ -1,3 +1,9 @@
+A = QQ[a,b,c,d,Degrees=>{1,2,1,2}]
+f = (1+a+b)*(1+c+d)-1
+A/(part_1 f, part_2 f, part_3 f, part_4 f)
+prune oo
+
+
 The answer below is wrong, because "prune" didn't eliminate the variable "a".
 
     i6 : A = QQ[a,b,c,d,Degrees=>{1,2,1,2}]
