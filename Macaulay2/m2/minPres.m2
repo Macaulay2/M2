@@ -184,6 +184,51 @@ minimalPresentation Ring := o -> (R) -> (
 --     )
 
 
+isReductor = (f) -> (
+     inf := leadTerm f;
+     part(1,f) != 0 and
+     (set support(inf) * set support(f - inf)) === set{})
+
+findReductor = (L) -> (
+     L1 := select(L, isReductor);
+     L2 := sort apply(L1, f -> (size f,f));
+     if #L2 > 0 then L2#0#1)
+
+reduceIdeal = (L) -> (
+     L1 := select(L, isReductor);
+     L2 := sort apply(L1, f -> (size f,f));
+     if #L2 > 0 then (
+	  g := L2#0#1;
+	  << "reducing with " << g << endl << endl;
+	  L = apply(L, f -> f % g))
+     else (
+	  print "cannot reduce ideal further";
+	  L))
+
+reduceLinears = method(Options => {Limit=>infinity})
+reduceLinears Ideal := o -> (I) -> (
+     -- returns (J,L), where J is an ideal,
+     -- and L is a list of: (variable x, poly x+g)
+     -- where x+g is in I, and x doesn't appear in J.
+     -- also x doesn't appear in any poly later in the L list
+     R := ring I;
+     -- make sure that R is a polynomial ring, no quotients
+     S := (coefficientRing R)[gens R, Weights=>{numgens R:-1}, Global=>false];
+     IS := substitute(I,S);
+     L := flatten entries gens IS;
+     count := o.Limit;
+     M := while count > 0 list (
+       count = count - 1;
+       g := findReductor L;
+       if g === null then break;
+       ing := leadTerm g;
+       << "reducing using " << ing << endl << endl;
+       L = apply(L, f -> f % g);
+       (substitute(leadTerm g, R), substitute(-g+leadTerm g,R))
+       );
+     (substitute(ideal L,R), M)
+     )
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
