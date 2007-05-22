@@ -58,7 +58,7 @@ validate Hypertext := x -> (
 	  scan(x,validate))
      else noqname p;
      validate2 x;
-     )
+     x)
 chk := (valid,p,c) -> (
      if not c.?qname then noqname c
      else if not valid#?(c.qname) and c.qname =!= "comment"
