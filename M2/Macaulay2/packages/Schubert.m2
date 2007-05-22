@@ -14,8 +14,18 @@ newPackage(
 export {AbstractVariety, AbstractVarietyMap, AbstractSheaf, flagVariety, intersectionRing, cc, ch, ChernClass, chernClass, point}
 
 AbstractVariety = new Type of MutableHashTable
+AbstractVariety.synonym = "abstract variety"
+globalAssignment AbstractVariety
+net AbstractVariety := X -> (
+     if ReverseDictionary#?X then toString ReverseDictionary#X
+     else net expression X)
+
 AbstractVarietyMap = new Type of MutableHashTable
+AbstractVarietyMap.synonym = "abstract variety map"
+
 AbstractSheaf = new Type of MutableHashTable
+AbstractSheaf.synonym = "abstract sheaf"
+
 intersectionRing = method()
 intersectionRing AbstractVariety := X -> X.intersectionRing
 
@@ -52,14 +62,15 @@ flagVariety(AbstractVariety,AbstractSheaf,List,List) := (X,E,bundleNames,bundleR
      A := (intersectionRing X)[flatten vrs,Degrees=>dgs];
      rlns := product apply(vrs, x -> 1+sum(x,value)) - promote(chernClass E,A);
      rlns = apply(1 .. first degree rlns, i -> part_i rlns);
-     B := A/rlns;
-     use B;
-     B)
+     new AbstractVariety from {
+	  symbol intersectionRing => use (A/rlns)
+	  }
+     )
 
 beginDocumentation()
 
 end
 
 loadPackage "Schubert"
-errorDepth = 0
-flagVariety(point,OO_point^4,{Q,R},{2,2})
+G24 = flagVariety(point,OO_point^4,{Q,R},{2,2})
+intersectionRing G24
