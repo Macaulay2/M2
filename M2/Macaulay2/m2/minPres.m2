@@ -9,7 +9,7 @@
 -- checkpoly, finishmap, monOrder and coreProgram are called 
 -- in the top-level program minimalPresentation.  
 
-checkpoly := (f)->(
+checkpoly = (f)->(
      -- 1 Argument:  A polynomial.
      -- Return:      A list of the index of the first 
      --              (by index in the ring) variable that occurs 
@@ -28,7 +28,7 @@ checkpoly := (f)->(
 	  )
      )
 
-finishMap := (A,L,xmap) -> (
+finishMap = (A,L,xmap) -> (
      -- 2 Arguments:  A matrix and a new mutable list.
      -- Return:       a map from the ring corresponding to 
      --               entries in the matix to itself given by 
@@ -79,7 +79,7 @@ monOrder := (Ord, l) -> (
 
 monOrder = (Ord, l) -> GRevLex=>#l
 
-coreProgram := (I, newvar) -> (
+coreProgram = (I, newvar) -> (
      -- 2 Arguments:  An ideal and a variable, or null.
      -- Return:       A list consisting of an ideal, a 
      --               quotient ring, a polynomial ring, 
@@ -95,8 +95,9 @@ coreProgram := (I, newvar) -> (
      -- terms is complete.  Now build desired rings, ideals 
      -- and maps through this map.
      LF := flatten entries F.matrix;
-     l1 := apply(LF, f -> sum(exponents f));
-     l := positions(l1,f -> if f===0 then false else (sum f) === 1);
+     l := toList select(0..#LF-1, i -> LF#i == R_i);
+     --MES--l1 := apply(LF, f -> sum(exponents f));
+     --MES--l := positions(l1,f -> if f===0 then false else (sum f) === 1);
      -- l contains the indices for the variables remaining in 
      -- the minimal presentation.  l is used to set new rings, 
      -- including getting the correct monomial order.
@@ -213,9 +214,9 @@ reduceLinears Ideal := o -> (I) -> (
      -- also x doesn't appear in any poly later in the L list
      R := ring I;
      -- make sure that R is a polynomial ring, no quotients
-     S := (coefficientRing R)[gens R, Weights=>{numgens R:-1}, Global=>false];
+     S := (coefficientRing R)[generators R, Weights=>{numgens R:-1}, Global=>false];
      IS := substitute(I,S);
-     L := flatten entries gens IS;
+     L := flatten entries generators IS;
      count := o.Limit;
      M := while count > 0 list (
        count = count - 1;
