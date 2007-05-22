@@ -64,6 +64,16 @@ getWWW (String,Nothing) := (url,body) -> (
 	       else false));
      ret)
 
+httpHeaders = method()
+httpHeaders String := s -> concatenate(
+///HTTP/1.0 200 OK
+Server: Macaulay 2
+Connection: close
+Content-Length: ///, toString length s, ///
+Content-type: text/html
+
+///, s)
+
 -----------------------------------------------------------------------------
 
 -- test POST method like this:
