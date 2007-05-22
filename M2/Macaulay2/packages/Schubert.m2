@@ -11,13 +11,16 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export {AbstractVariety, AbstractVarietyMap, AbstractSheaf, flagVariety, intersectionRing, cc, ch, ChernClass, point}
+export {AbstractVariety, AbstractVarietyMap, AbstractSheaf, flagVariety, intersectionRing, cc, ch, ChernClass, chernClass, point}
 
 AbstractVariety = new Type of MutableHashTable
 AbstractVarietyMap = new Type of MutableHashTable
 AbstractSheaf = new Type of MutableHashTable
 intersectionRing = method()
 intersectionRing AbstractVariety := X -> X.intersectionRing
+
+chernClass = method()
+chernClass AbstractSheaf := F -> F.ChernClass
 
 chernClassValues = new MutableHashTable
 ChernClass = new Type of BasicList
@@ -38,16 +41,19 @@ AbstractSheaf ^ ZZ := (E,n) -> new AbstractSheaf from {
      symbol ChernClass => E.ChernClass ^ n
      }
 
-
 point = new AbstractVariety
 point.intersectionRing = QQ
 
 flagVariety = method()
 flagVariety(AbstractVariety,AbstractSheaf,List,List) := (X,E,bundleNames,bundleRanks) -> (
-     vrs := splice apply(bundleNames, bundleRanks, (E,r) -> apply(1 .. r, i -> cc_i E));
-     A := (intersectionRing X)[vrs];
-     A							    -- preliminary
-     )
+     vrs := apply(bundleNames, bundleRanks, (E,r) -> apply(toList(1 .. r), i -> cc_i E));
+     dgs := flatten apply(bundleRanks, r -> 1 .. r);
+     A := (intersectionRing X)[flatten vrs,Degrees=>dgs];
+     rlns := product apply(vrs, x -> 1+sum(x,value)) - promote(chernClass E,A);
+     rlns = apply(1 .. first degree rlns, i -> part_i rlns);
+     B := A/rlns;
+     use B;
+     B)
 
 beginDocumentation()
 
