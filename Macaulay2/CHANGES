@@ -319,7 +319,7 @@ after doing something like bZZ[t_5 .. t_10] the symbol t is itself
 completely unaffected.  If you then do ZZ[t], the ring element t_5 will
 still be available as (symbol t)_5.
 
-the function 'assign(x,y)' has been replace by x<-y, for which methods
+the function 'assign(x,y)' has been replaced by x<-y, for which methods
 are now installable
 
 changed SEEALSO to SeeAlso, and now it's an option to "document" instead
