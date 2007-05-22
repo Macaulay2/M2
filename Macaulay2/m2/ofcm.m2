@@ -173,7 +173,7 @@ makeit1 := (opts) -> (
      M.generatorExpressions = apply(varlist,
 	  x -> if instance(x, Symbol) then x else expression x
 	  );
-     scan(varlist, sym -> if not instance(sym,Symbol) and not instance(sym,IndexedVariable) then error "expected variable or symbol");
+     scan(varlist, sym -> if not (instance(sym,Symbol) or null =!= lookup(symbol <-, class sym)) then error "expected variable or symbol");
      M.standardForm = somethingElse;
      expression M := x -> new Product from apply( 
 	  rawSparseListFormMonomial x.RawMonomial,
