@@ -30,6 +30,7 @@ value ChernClass := c -> if chernClassValues#?c then chernClassValues#c else c
 cc = method()
 cc(ZZ,Symbol) := (n,E) -> value new ChernClass from {n,E}
 expression ChernClass := c -> new FunctionApplication from {new Subscript from {cc,c#0}, c#1}
+net ChernClass := net @@ expression
 
 OO(AbstractVariety) := X -> new AbstractSheaf from {
      symbol AbstractVariety => X,
