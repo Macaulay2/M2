@@ -73,13 +73,13 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      if rank E =!= sum bundleRanks then error "expected rank of bundle to equal sum of bundle ranks";
      vrs := apply(bundleNames, bundleRanks, (E,r) -> apply(toList(1 .. r), i -> new ChernClass from {i,E}));
      dgs := flatten apply(bundleRanks, r -> 1 .. r);
-     A := (intersectionRing X)[flatten vrs,Degrees=>dgs];
+     A := (intersectionRing X)[flatten vrs,Degrees=>dgs,MonomialOrder => ProductOrder bundleRanks];
      rlns := product apply(vrs, x -> 1+sum(x,value)) - promote(chernClass E,A);
      rlns = apply(1 .. first degree rlns, i -> part_i rlns);
      B := A/rlns;
      B.DIM = (intersectionRing X).DIM + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
      use B;
-     point := (basis_(B.DIM) B)_(0,0);
+     point := (basis_(B.DIM) B)_(0,0);			    -- not right, sign could be wrong!
      B.point = point;
      new AbstractVariety from {
 	  global intersectionRing => B,
@@ -108,6 +108,7 @@ Proj(3,{Q,R})
 P3 = Proj(3,{Q,R})
 A = intersectionRing P3
 prune oo
+basis A
 P3.point
 
 G24 = Grassmannian(2,4,{Q,R})
@@ -117,13 +118,12 @@ transpose presentation C
 F22 = flagVariety(4,{Q,R},{2,2})
 A = intersectionRing F22
 transpose presentation A
-A.DIM
-basis_(A.DIM) A
+basis A
+
 F222 = flagVariety(6,{Q,R,S},{2,2,2})
 B = intersectionRing F222
 transpose presentation B
-B.DIM
-basis_(B.DIM) B
+transpose basis B
 (c_1 Q)^3 * (c_1 R)^5 * (c_1 S)^4
 integral ((c_1 Q)^3 * (c_1 R)^5 * (c_1 S)^4)
 F222.point
