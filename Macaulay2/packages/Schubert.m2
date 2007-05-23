@@ -24,6 +24,7 @@ export {
      ToddClass,
      abstractSheaf,
      abstractVariety,
+     adams,
      ch,
      chernClass,
      expp,
@@ -191,6 +192,7 @@ expp RingElement := (A) -> (
      )
 
 todd = method()
+todd AbstractSheaf := E -> todd ch E
 todd RingElement := (A) -> (
      -- A is the chern character
      -- the (total) todd class is returned
@@ -212,10 +214,21 @@ todd RingElement := (A) -> (
      expp A1
      )
 
+nonnull = x -> select(x, i -> i =!= null)
+
 AbstractSheaf ++ AbstractSheaf :=
 AbstractSheaf + AbstractSheaf := (F,G) -> (
      if variety F =!= variety G then error "expected abstract sheaves on the same variety";
-     abstractSheaf(variety F, rank F + rank G, ChernCharacter => ch F + ch G))
+     abstractSheaf nonnull (variety F, rank F + rank G, ChernCharacter => ch F + ch G,
+	  if F.cache.?ChernClass and G.cache.?ChernClass then ChernClass => F.cache.ChernClass * G.cache.ChernClass
+	  ))
+
+adams = method()
+adams(ZZ,RingElement) := (k,ch) -> (
+     d := first degree ch;
+     sum(0 .. d, i -> k^i * part_i ch))
+adams(ZZ,AbstractSheaf) := (k,E) -> abstractSheaf(variety E, rank E, ChernCharacter => adams(k, ch E))
+dual AbstractSheaf := - AbstractSheaf := E -> adams(-1,E)
 
 AbstractSheaf ** AbstractSheaf :=
 AbstractSheaf * AbstractSheaf := (F,G) -> (
