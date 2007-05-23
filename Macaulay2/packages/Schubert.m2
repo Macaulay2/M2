@@ -11,7 +11,9 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export {AbstractVariety, AbstractVarietyMap, AbstractSheaf, flagVariety, intersectionRing, cc, ch, ChernClass, chernClass, point, DIM, logg, expp}
+export {AbstractVariety, AbstractVarietyMap, AbstractSheaf, flagVariety, intersectionRing, ch, 
+     ChernClass, chernClass, point, DIM, logg, expp,
+     toppart, integral}
 
 AbstractVariety = new Type of MutableHashTable
 AbstractVariety.synonym = "abstract variety"
@@ -37,9 +39,9 @@ ChernClass = new Type of BasicList
 baseName ChernClass := identity
 installMethod(symbol <-, ChernClass, (c,x) -> chernClassValues#c = x)
 value ChernClass := c -> if chernClassValues#?c then chernClassValues#c else c
-cc = method()
-cc(ZZ,Symbol) := (n,E) -> value new ChernClass from {n,E}
-expression ChernClass := c -> new FunctionApplication from {new Subscript from {cc,c#0}, c#1}
+c = method()
+c(ZZ,Symbol) := (n,E) -> value new ChernClass from {n,E}
+expression ChernClass := c -> new FunctionApplication from {new Subscript from {symbol c,c#0}, c#1}
 net ChernClass := net @@ expression
 
 OO(AbstractVariety) := X -> new AbstractSheaf from {
@@ -57,6 +59,9 @@ rank AbstractSheaf := E -> E.rank
 
 point = new AbstractVariety
 point.intersectionRing = QQ
+
+toppart = f -> part((ring f).DIM, f)
+integral = f -> if f == 0 then 0 else (last coefficients toppart f)_(0,0)
 
 flagVariety = method()
 flagVariety(AbstractVariety,AbstractSheaf,List,List) := (X,E,bundleNames,bundleRanks) -> (
@@ -83,8 +88,12 @@ end
 loadPackage "Schubert"
 compactMatrixForm = false
 F22 = flagVariety(point,OO_point^4,{Q,R},{2,2})
-transpose presentation intersectionRing F22
-(intersectionRing F22).DIM
+A = intersectionRing F22
+transpose presentation A
+A.DIM
+basis_(A.DIM) A
 F222 = flagVariety(point,OO_point^6,{Q,R,S},{2,2,2})
-transpose presentation intersectionRing F222
-(intersectionRing F222).DIM
+B = intersectionRing F222
+transpose presentation B
+B.DIM
+basis_(B.DIM) B
