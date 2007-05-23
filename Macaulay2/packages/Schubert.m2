@@ -259,6 +259,9 @@ AbstractSheaf * AbstractSheaf := (F,G) -> (
 Hom(AbstractSheaf, AbstractSheaf) := (F,G) -> dual F ** G
 End AbstractSheaf := (F) -> Hom(F,F)
 
+det AbstractSheaf := opts -> (F) -> abstractSheaf(variety F, 1, ChernCharacter => 1 + part(1,ch F))
+
+
 beginDocumentation()
 
 end
@@ -310,3 +313,4 @@ c = 1 + sum gens R
 a = logg c
 expp a
 todd a
+det F
