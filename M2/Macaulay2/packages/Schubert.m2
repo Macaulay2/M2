@@ -50,7 +50,7 @@ OO(AbstractVariety) := X -> new AbstractSheaf from {
      }
 
 AbstractSheaf ^ ZZ := (E,n) -> new AbstractSheaf from {
-     symbol AbstractVariety => X,
+     symbol AbstractVariety => E.AbstractVariety,
      symbol ChernClass => E.ChernClass ^ n,
      symbol rank => E.rank * n
      }
@@ -64,7 +64,10 @@ point = new AbstractVariety from {
      }
 
 flagVariety = method()
-flagVariety(AbstractVariety,AbstractSheaf,List,List) := (X,E,bundleNames,bundleRanks) -> (
+flagVariety(ZZ,List,List) := (rk,bundleNames,bundleRanks) -> flagVariety(point,rk,bundleNames,bundleRanks)
+flagVariety(AbstractVariety,ZZ,List,List) := (X,rk,bundleNames,bundleRanks) -> flagVariety(OO_X^rk,bundleNames,bundleRanks)
+flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
+     X := E.AbstractVariety;
      n := #bundleRanks;
      if n =!= #bundleNames then error "name list and rank list should have same length";
      if rank E =!= sum bundleRanks then error "expected rank of bundle to equal sum of bundle ranks";
@@ -84,6 +87,10 @@ flagVariety(AbstractVariety,AbstractSheaf,List,List) := (X,E,bundleNames,bundleR
 	  }
      )
 
+Grassmannian(ZZ,AbstractSheaf,List) := opts -> (k,E,bundleNames) -> flagVariety(E,bundleNames,{k,rank E-k})
+Grassmannian(ZZ,ZZ,AbstractVariety,List) := opts -> (k,n,X,bundleNames) -> Grassmannian(k,OO_X^n,bundleNames)
+Grassmannian(ZZ,ZZ,List) := opts -> (k,n,bundleNames) -> Grassmannian(k,n,point,bundleNames)
+
 integral = f -> coefficient((ring f).point, f)
 
 beginDocumentation()
@@ -91,13 +98,17 @@ beginDocumentation()
 end
 
 loadPackage "Schubert"
-compactMatrixForm = false
-F22 = flagVariety(point,OO_point^4,{Q,R},{2,2})
+-- compactMatrixForm = false
+G24 = Grassmannian(2,4,{Q,R})
+C = intersectionRing G24
+transpose presentation C
+
+F22 = flagVariety(4,{Q,R},{2,2})
 A = intersectionRing F22
 transpose presentation A
 A.DIM
 basis_(A.DIM) A
-F222 = flagVariety(point,OO_point^6,{Q,R,S},{2,2,2})
+F222 = flagVariety(6,{Q,R,S},{2,2,2})
 B = intersectionRing F222
 transpose presentation B
 B.DIM
