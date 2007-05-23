@@ -11,8 +11,35 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export {AbstractVariety, AbstractVarietyMap, AbstractSheaf, flagVariety, intersectionRing, ch, 
-     ChernClass, point, DIM, logg, expp, todd, integral, ct}
+export {
+     AbstractSheaf,
+     AbstractVariety,
+     AbstractVarietyMap,
+     ChernCharacter,
+     ChernClass,
+     ChernClassSymbol,
+     DIM,
+     IntersectionRing,
+     abstractSheaf,
+     abstractVariety,
+     ch,
+     chernClass,
+     expp,
+     flagVariety,
+     integral,
+     intersectionRing,
+     logg,
+     point,
+     symm,
+     todd,
+     wedge
+     }
+
+protect ChernClass
+protect ChernCharacter
+
+symm = symmetricPower
+wedge = exteriorPower
 
 AbstractVariety = new Type of MutableHashTable
 AbstractVariety.synonym = "abstract variety"
@@ -27,22 +54,56 @@ AbstractVarietyMap.synonym = "abstract variety map"
 AbstractSheaf = new Type of MutableHashTable
 AbstractSheaf.synonym = "abstract sheaf"
 
-intersectionRing = method()
-intersectionRing AbstractVariety := X -> X.intersectionRing
+abstractSheaf = method(Options => {
+	  ChernClass => null,
+	  ChernCharacter => null
+	  })
+abstractSheaf(AbstractVariety,ZZ) := opts -> (X,rk) -> (
+     if opts.ChernClass === null and opts.ChernCharacter === null then error "abstractSheaf: expected Chern character or Chern class";
+     if opts.ChernClass =!= null and opts.ChernCharacter =!= null then error "abstractSheaf: expected just one of Chern character and Chern class";
+     new AbstractSheaf from {
+     	  global AbstractVariety => X,
+     	  global rank => rk,
+	  ChernCharacter => if opts.ChernCharacter =!= null then opts.ChernCharacter else logg opts.ChernClass,
+	  global cache => new CacheTable from {
+	       if opts.ChernClass =!= null then ChernClass => opts.ChernClass
+	       }
+     	  }
+     )
 
-ct = method()
-ct AbstractSheaf := F -> F.ChernClass
+abstractVariety = method()
+abstractVariety(ZZ,Ring) := (DIM,A) -> (
+     if A.?DIM and A.DIM =!= DIM then error "intersection ring corresponds to a variety of a different dimension";
+     A.DIM = DIM;
+     new AbstractVariety from {
+     	  global intersectionRing => A
+     	  }
+     )
+abstractVariety(Ring) := (A) -> (
+     if not A.?DIM then error "intersection ring provided doesn't specify DIM";
+     new AbstractVariety from {
+     	  global intersectionRing => A
+     	  }
+     )
+dim AbstractVariety := X -> X.IntersectionRing.DIM
+
+intersectionRing = method()
+intersectionRing AbstractVariety := X -> X.IntersectionRing
+
+chernClass = method()
+chernClass AbstractSheaf := (cacheValue ChernClass) (F -> expp F.ChernCharacter)
 
 chernClassValues = new MutableHashTable
-ChernClass = new Type of BasicList
-baseName ChernClass := identity
-installMethod(symbol <-, ChernClass, (c,x) -> chernClassValues#c = x)
-value ChernClass := c -> if chernClassValues#?c then chernClassValues#c else c
+ChernClassSymbol = new Type of BasicList
+baseName ChernClassSymbol := identity
+installMethod(symbol <-, ChernClassSymbol, (c,x) -> chernClassValues#c = x)
+value ChernClassSymbol := c -> if chernClassValues#?c then chernClassValues#c else c
+expression ChernClassSymbol := c -> new FunctionApplication from {new Subscript from {symbol c,c#0}, c#1}
+net ChernClassSymbol := net @@ expression
+
 c = method()
-c(ZZ,Symbol) := (n,E) -> value new ChernClass from {n,E}
-c(ZZ,AbstractSheaf) := (n,E) -> part(n,E.ChernClass)
-expression ChernClass := c -> new FunctionApplication from {new Subscript from {symbol c,c#0}, c#1}
-net ChernClass := net @@ expression
+c(ZZ,Symbol) := (n,E) -> value new ChernClassSymbol from {n,E}
+c(ZZ,AbstractSheaf) := (n,E) -> part(n,chernClass E)
 
 OO(AbstractVariety) := X -> new AbstractSheaf from {
      symbol AbstractVariety => X,
@@ -72,11 +133,11 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      n := #bundleRanks;
      if n =!= #bundleNames then error "name list and rank list should have same length";
      if rank E =!= sum bundleRanks then error "expected rank of bundle to equal sum of bundle ranks";
-     vrs := apply(bundleNames, bundleRanks, (E,r) -> apply(toList(1 .. r), i -> new ChernClass from {i,E}));
+     vrs := apply(bundleNames, bundleRanks, (E,r) -> apply(toList(1 .. r), i -> new ChernClassSymbol from {i,E}));
      dgs := flatten apply(bundleRanks, r -> 1 .. r);
      T := (intersectionRing X)[flatten vrs,Degrees=>dgs,MonomialOrder => ProductOrder bundleRanks];
      (A,F,G) := flattenRing T;
-     rlns := F (product apply(vrs, x -> 1+sum(x,value)) - promote(ct E,T));
+     rlns := F (product apply(vrs, x -> 1+sum(x,value)) - promote(chernClass E,T));
      rlns = apply(1 .. first degree rlns, i -> part_i rlns);
      B := A/rlns;
      B.DIM = (intersectionRing X).DIM + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
@@ -182,17 +243,10 @@ B.point
 
 compactMatrixForm = false
 loadPackage "Schubert"
-X = new AbstractVariety from {
-     global intersectionRing => QQ[e1,e2,Degrees=>{1,2}]/(e1^4,e2^2,e1^2*e2)
-     }
-X.intersectionRing.DIM = 3
-E = new AbstractSheaf from {
-     global AbstractVariety => X,
-     global rank => 2,
-     global ChernClass => 1 + e1 + e2
-     }
+X = abstractVariety(3,use (QQ[e1,e2,Degrees=>{1,2}]/(e1^4,e2^2,e1^2*e2)))
+E = abstractSheaf(X,2,ChernClass => 1 + e1 + e2)
 c_0 E,c_1 E,c_2 E,c_3 E
-P1 = Proj(E,{Q,R})
+P1 = Proj(E,{Q,R})					    -- working on this now ...
 A = intersectionRing P1
 x = c_1 Q
 y = c_1 R
