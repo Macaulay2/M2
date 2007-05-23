@@ -12,7 +12,7 @@ newPackage(
     	)
 
 export {AbstractVariety, AbstractVarietyMap, AbstractSheaf, flagVariety, intersectionRing, ch, 
-     ChernClass, chernClass, point, DIM, logg, expp, integral}
+     ChernClass, point, DIM, logg, expp, integral, ct}
 
 AbstractVariety = new Type of MutableHashTable
 AbstractVariety.synonym = "abstract variety"
@@ -30,8 +30,8 @@ AbstractSheaf.synonym = "abstract sheaf"
 intersectionRing = method()
 intersectionRing AbstractVariety := X -> X.intersectionRing
 
-chernClass = method()
-chernClass AbstractSheaf := F -> F.ChernClass
+ct = method()
+ct AbstractSheaf := F -> F.ChernClass
 
 chernClassValues = new MutableHashTable
 ChernClass = new Type of BasicList
@@ -40,6 +40,7 @@ installMethod(symbol <-, ChernClass, (c,x) -> chernClassValues#c = x)
 value ChernClass := c -> if chernClassValues#?c then chernClassValues#c else c
 c = method()
 c(ZZ,Symbol) := (n,E) -> value new ChernClass from {n,E}
+c(ZZ,AbstractSheaf) := (n,E) -> part(n,E.ChernClass)
 expression ChernClass := c -> new FunctionApplication from {new Subscript from {symbol c,c#0}, c#1}
 net ChernClass := net @@ expression
 
@@ -56,7 +57,7 @@ AbstractSheaf ^ ZZ := (E,n) -> new AbstractSheaf from {
      }
 rank AbstractSheaf := E -> E.rank
 
-pointRing := QQ[]
+pointRing := QQ						    --  or QQ[] ?
 pointRing.DIM = 0;
 
 point = new AbstractVariety from {
@@ -73,8 +74,9 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      if rank E =!= sum bundleRanks then error "expected rank of bundle to equal sum of bundle ranks";
      vrs := apply(bundleNames, bundleRanks, (E,r) -> apply(toList(1 .. r), i -> new ChernClass from {i,E}));
      dgs := flatten apply(bundleRanks, r -> 1 .. r);
-     A := (intersectionRing X)[flatten vrs,Degrees=>dgs,MonomialOrder => ProductOrder bundleRanks];
-     rlns := product apply(vrs, x -> 1+sum(x,value)) - promote(chernClass E,A);
+     T := (intersectionRing X)[flatten vrs,Degrees=>dgs,MonomialOrder => ProductOrder bundleRanks];
+     (A,F,G) := flattenRing T;
+     rlns := F (product apply(vrs, x -> 1+sum(x,value)) - promote(ct E,T));
      rlns = apply(1 .. first degree rlns, i -> part_i rlns);
      B := A/rlns;
      B.DIM = (intersectionRing X).DIM + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
@@ -102,8 +104,8 @@ beginDocumentation()
 end
 
 compactMatrixForm = false
-
 loadPackage "Schubert"
+
 Proj(3,{Q,R})
 P3 = Proj(3,{Q,R})
 A = intersectionRing P3
@@ -128,3 +130,21 @@ transpose basis B
 integral ((c_1 Q)^3 * (c_1 R)^5 * (c_1 S)^4)
 F222.point
 B.point
+
+compactMatrixForm = false
+loadPackage "Schubert"
+X = new AbstractVariety from {
+     global intersectionRing => QQ[e1,e2,Degrees=>{1,2}]/(e1^4,e2^2,e1^2*e2)
+     }
+X.intersectionRing.DIM = 3
+E = new AbstractSheaf from {
+     global AbstractVariety => X,
+     global rank => 2,
+     global ChernClass => 1 + e1 + e2
+     }
+c_0 E,c_1 E,c_2 E,c_3 E
+P1 = Proj(E,{Q,R})
+A = intersectionRing P1
+x = c_1 Q
+y = c_1 R
+x*y
