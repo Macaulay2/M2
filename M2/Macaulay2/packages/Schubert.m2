@@ -140,21 +140,20 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      if n =!= #bundleNames then error "name list and rank list should have same length";
      if rank E =!= sum bundleRanks then error "expected rank of bundle to equal sum of bundle ranks";
      vrs := apply(bundleNames, bundleRanks, (E,r) -> apply(toList(1 .. r), i -> new ChernClassSymbol from {i,E}));
-     dgs := flatten apply(bundleRanks, r -> 1 .. r);
-     T := (intersectionRing X)[flatten vrs,Degrees=>dgs,MonomialOrder => ProductOrder bundleRanks];
+     dgs := splice apply(bundleRanks, r -> 1 .. r);
+     T := (intersectionRing X)[flatten vrs, Degrees => dgs, Global => false, MonomialOrder => apply(bundleRanks, n -> RevLex => n)];
      (A,F,G) := flattenRing T;
-     rlns := F (product apply(vrs, x -> 1+sum(x,value)) - promote(chernClass E,T));
-     rlns = apply(1 .. first degree rlns, i -> part_i rlns);
+     chclasses := apply(vrs, x -> F (1 + sum(x,value)));
+     rlns := product chclasses - F promote(chernClass E,T);
+     rlns = apply(1 .. sum bundleRanks, i -> part_i rlns);
      B := A/rlns;
-     B.DIM = (intersectionRing X).DIM + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
      use B;
-     point := (basis_(B.DIM) B)_(0,0);			    -- not right, sign could be wrong!
-     B.point = point;
-     new AbstractVariety from {
-	  IntersectionRing => B,
-	  global point => point
-	  }
-     )
+     DIM := (intersectionRing X).DIM + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
+     -- point := (basis_(B.DIM) B)_(0,0);			    -- not right, sign could be wrong!
+     -- B.point = point;
+     FV := abstractVariety(DIM,B);
+     scan(n, i -> bundleNames#i <- abstractSheaf(FV,bundleRanks#i, ChernClass => promote(chclasses#i,B)));
+     FV)
 
 Grassmannian(ZZ,AbstractSheaf,List) := opts -> (k,E,bundleNames) -> flagVariety(E,bundleNames,{k,rank E-k})
 Grassmannian(ZZ,ZZ,AbstractVariety,List) := opts -> (k,n,X,bundleNames) -> Grassmannian(k,OO_X^n,bundleNames)
@@ -268,7 +267,6 @@ P3 = Proj(3,{Q,R})
 A = intersectionRing P3
 prune oo
 basis A
-P3.point
 
 G24 = Grassmannian(2,4,{Q,R})
 C = intersectionRing G24
@@ -285,8 +283,6 @@ transpose presentation B
 transpose basis B
 (c_1 Q)^3 * (c_1 R)^5 * (c_1 S)^4
 integral ((c_1 Q)^3 * (c_1 R)^5 * (c_1 S)^4)
-F222.point
-B.point
 
 compactMatrixForm = false
 loadPackage "Schubert"
