@@ -12,8 +12,7 @@ newPackage(
     	)
 
 export {AbstractVariety, AbstractVarietyMap, AbstractSheaf, flagVariety, intersectionRing, ch, 
-     ChernClass, chernClass, point, DIM, logg, expp,
-     toppart, integral}
+     ChernClass, chernClass, point, DIM, logg, expp, integral}
 
 AbstractVariety = new Type of MutableHashTable
 AbstractVariety.synonym = "abstract variety"
@@ -57,11 +56,12 @@ AbstractSheaf ^ ZZ := (E,n) -> new AbstractSheaf from {
      }
 rank AbstractSheaf := E -> E.rank
 
-point = new AbstractVariety
-point.intersectionRing = QQ
+pointRing := QQ[]
+pointRing.DIM = 0;
 
-toppart = f -> part((ring f).DIM, f)
-integral = f -> if f == 0 then 0 else (last coefficients toppart f)_(0,0)
+point = new AbstractVariety from {
+     global intersectionRing => pointRing
+     }
 
 flagVariety = method()
 flagVariety(AbstractVariety,AbstractSheaf,List,List) := (X,E,bundleNames,bundleRanks) -> (
@@ -74,12 +74,17 @@ flagVariety(AbstractVariety,AbstractSheaf,List,List) := (X,E,bundleNames,bundleR
      rlns := product apply(vrs, x -> 1+sum(x,value)) - promote(chernClass E,A);
      rlns = apply(1 .. first degree rlns, i -> part_i rlns);
      B := A/rlns;
-     B.DIM = sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
+     B.DIM = (intersectionRing X).DIM + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
      use B;
+     point := (basis_(B.DIM) B)_(0,0);
+     B.point = point;
      new AbstractVariety from {
-	  symbol intersectionRing => B
+	  global intersectionRing => B,
+	  global point => point
 	  }
      )
+
+integral = f -> coefficient((ring f).point, f)
 
 beginDocumentation()
 
@@ -97,3 +102,7 @@ B = intersectionRing F222
 transpose presentation B
 B.DIM
 basis_(B.DIM) B
+(c_1 Q)^3 * (c_1 R)^5 * (c_1 S)^4
+integral ((c_1 Q)^3 * (c_1 R)^5 * (c_1 S)^4)
+F222.point
+B.point
