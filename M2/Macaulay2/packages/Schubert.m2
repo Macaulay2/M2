@@ -33,6 +33,8 @@ export {
      intersectionRing,
      logg,
      point,
+     reciprocal,
+     segre,
      symm,
      todd,
      wedge
@@ -164,6 +166,19 @@ Proj(ZZ,List) := (n,bundleNames) -> Proj(OO_point^(n+1),bundleNames)
 
 integral = f -> coefficient((ring f).point, f)		    -- not right, sign could be wrong!
 
+reciprocal = method()
+reciprocal RingElement := (A) -> (
+     -- computes 1/A (mod degree >=(d+1)
+     -- ASSUMPTION: part(0,A) == 1.
+     d := (ring A).DIM;
+     a := for i from 0 to d list part_i(A);
+     recip := new MutableList from splice{d+1:0};
+     recip#0 = 1_(ring A);
+     for n from 1 to d do
+       recip#n = - sum(1..n, i -> a#i * recip#(n-i));
+     sum toList recip
+     )
+
 logg = method()
 logg RingElement := (C) -> (
      -- C is the total chern class in an intersection ring
@@ -213,6 +228,9 @@ todd RingElement := (A) -> (
      A1 := sum for i from 0 to d list i! * td#i * part(i,A);
      expp A1
      )
+
+segre = method()
+segre AbstractSheaf := E -> reciprocal chernClass dual E
 
 nonnull = x -> select(x, i -> i =!= null)
 
@@ -287,6 +305,7 @@ X = abstractVariety(4,R)
 F = abstractSheaf(X, 4, ChernClass=>1+sum gens R)
 peek F
 peek(F ++ F)
+segre F
 c = 1 + sum gens R
 a = logg c
 expp a
