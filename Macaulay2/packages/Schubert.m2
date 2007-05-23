@@ -94,6 +94,9 @@ intersectionRing AbstractVariety := X -> X.IntersectionRing
 chernClass = method()
 chernClass AbstractSheaf := (cacheValue ChernClass) (F -> expp F.ChernCharacter)
 
+ch = method()
+ch AbstractSheaf := (F) -> F.ChernCharacter
+
 chernClassValues = new MutableHashTable
 ChernClassSymbol = new Type of BasicList
 baseName ChernClassSymbol := identity
@@ -205,6 +208,19 @@ todd RingElement := (A) -> (
      expp A1
      )
 
+AbstractSheaf ++ AbstractSheaf :=
+AbstractSheaf + AbstractSheaf := (F,G) -> (
+     if variety F =!= variety G then error "expected abstract sheaves on the same variety";
+     abstractSheaf(variety F, rank F + rank G, ChernCharacter => ch F + ch G))
+
+AbstractSheaf ** AbstractSheaf :=
+AbstractSheaf * AbstractSheaf := (F,G) -> (
+     if variety F =!= variety G then error "expected abstract sheaves on the same variety";
+     abstractSheaf(variety F, rank F * rank G, ChernCharacter => ch F * ch G))
+
+Hom(AbstractSheaf, AbstractSheaf) := (F,G) -> dual F ** G
+End AbstractSheaf := (F) -> Hom(F,F)
+
 beginDocumentation()
 
 end
@@ -250,6 +266,10 @@ x*y
 
 R = QQ[c1,c2,c3,c4,Degrees=>{1,2,3,4},MonomialOrder=>GRevLex=>{1,2,3,4}]
 R.DIM = 4
+X = abstractVariety(4,R)
+F = abstractSheaf(X, 4, ChernClass=>1+sum gens R)
+peek F
+peek(F ++ F)
 c = 1 + sum gens R
 a = logg c
 expp a
