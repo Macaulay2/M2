@@ -12,7 +12,7 @@ newPackage(
     	)
 
 export {AbstractVariety, AbstractVarietyMap, AbstractSheaf, flagVariety, intersectionRing, ch, 
-     ChernClass, point, DIM, logg, expp, integral, ct}
+     ChernClass, point, DIM, logg, expp, todd, integral, ct}
 
 AbstractVariety = new Type of MutableHashTable
 AbstractVariety.synonym = "abstract variety"
@@ -98,6 +98,52 @@ Proj(ZZ,AbstractVariety,List) := (n,X,bundleNames) -> Proj(OO_X^(n+1),bundleName
 Proj(ZZ,List) := (n,bundleNames) -> Proj(OO_point^(n+1),bundleNames)
 
 integral = f -> coefficient((ring f).point, f)		    -- not right, sign could be wrong!
+
+logg = method()
+logg RingElement := (C) -> (
+     -- C is the total chern class in an intersection ring
+     -- The chern character of C is returned.
+     d := (ring C).DIM;
+     p := new MutableList from splice{d+1:0}; -- p#i is (-1)^i * (i-th power sum of chern roots)
+     e := for i from 0 to d list part(i,C); -- elem symm functions in the chern roots
+     for n from 1 to d do
+         p#n = -n*e#n - sum for j from 1 to n-1 list e#j * p#(n-j);
+     sum for i from 1 to d list 1/i! * (-1)^i * p#i
+     )
+
+expp = method()
+expp RingElement := (A) -> (
+     -- A is the chern character
+     -- the total chern class of A is returned
+     d := (ring A).DIM;
+     p := for i from 0 to d list (-1)^i * i! * part(i,A);
+     e := new MutableList from splice{d+1:0};
+     e#0 = 1;
+     for n from 1 to d do
+	  e#n = - 1/n * sum for j from 1 to n list p#j * e#(n-j);
+     sum toList e
+     )
+
+todd = method()
+todd RingElement := (A) -> (
+     -- A is the chern character
+     -- the (total) todd class is returned
+     d := (ring A).DIM;
+     -- step 1: find the first part of the Taylor series for t/(1-exp(-t))
+     denom := for i from 0 to d list (-1)^i /(i+1)!;
+     invdenom := new MutableList from splice{d+1:0};
+     invdenom#0 = 1;
+     for n from 1 to d do 
+       invdenom#n = - sum for i from 1 to n list denom#i * invdenom#(n-i);
+     -- step 2.  logg.  This is more complicated than desired.
+     R := QQ (monoid[t]);
+     R.DIM = d;
+     td := logg sum for i from 0 to d list invdenom#i * R_0^i;
+     td = for i from 0 to d list coefficient(R_0^i,td);
+     -- step 3.  exp
+     A1 := sum for i from 0 to d list i! * td#i * part(i,A);
+     expp A1
+     )
 
 beginDocumentation()
 
