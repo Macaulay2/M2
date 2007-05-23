@@ -19,7 +19,7 @@ AbstractVariety.synonym = "abstract variety"
 globalAssignment AbstractVariety
 net AbstractVariety := X -> (
      if ReverseDictionary#?X then toString ReverseDictionary#X
-     else net expression X)
+     else "--an abstract variety--")
 
 AbstractVarietyMap = new Type of MutableHashTable
 AbstractVarietyMap.synonym = "abstract variety map"
@@ -91,14 +91,25 @@ Grassmannian(ZZ,AbstractSheaf,List) := opts -> (k,E,bundleNames) -> flagVariety(
 Grassmannian(ZZ,ZZ,AbstractVariety,List) := opts -> (k,n,X,bundleNames) -> Grassmannian(k,OO_X^n,bundleNames)
 Grassmannian(ZZ,ZZ,List) := opts -> (k,n,bundleNames) -> Grassmannian(k,n,point,bundleNames)
 
-integral = f -> coefficient((ring f).point, f)
+Proj(AbstractSheaf,List) := (E,bundleNames) -> Grassmannian(E.rank - 1,E,bundleNames)
+Proj(ZZ,AbstractVariety,List) := (n,X,bundleNames) -> Proj(OO_X^(n+1),bundleNames)
+Proj(ZZ,List) := (n,bundleNames) -> Proj(OO_point^(n+1),bundleNames)
+
+integral = f -> coefficient((ring f).point, f)		    -- not right, sign could be wrong!
 
 beginDocumentation()
 
 end
 
+compactMatrixForm = false
+
 loadPackage "Schubert"
--- compactMatrixForm = false
+Proj(3,{Q,R})
+P3 = Proj(3,{Q,R})
+A = intersectionRing P3
+prune oo
+P3.point
+
 G24 = Grassmannian(2,4,{Q,R})
 C = intersectionRing G24
 transpose presentation C
