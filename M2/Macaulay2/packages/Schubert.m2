@@ -103,6 +103,7 @@ logg = method()
 logg RingElement := (C) -> (
      -- C is the total chern class in an intersection ring
      -- The chern character of C is returned.
+     if not (ring C).?DIM then error "expected a ring with DIM set";
      d := (ring C).DIM;
      p := new MutableList from splice{d+1:0}; -- p#i is (-1)^i * (i-th power sum of chern roots)
      e := for i from 0 to d list part(i,C); -- elem symm functions in the chern roots
@@ -115,6 +116,7 @@ expp = method()
 expp RingElement := (A) -> (
      -- A is the chern character
      -- the total chern class of A is returned
+     if not (ring A).?DIM then error "expected a ring with DIM set";
      d := (ring A).DIM;
      p := for i from 0 to d list (-1)^i * i! * part(i,A);
      e := new MutableList from splice{d+1:0};
@@ -128,6 +130,7 @@ todd = method()
 todd RingElement := (A) -> (
      -- A is the chern character
      -- the (total) todd class is returned
+     if not (ring A).?DIM then error "expected a ring with DIM set";
      d := (ring A).DIM;
      -- step 1: find the first part of the Taylor series for t/(1-exp(-t))
      denom := for i from 0 to d list (-1)^i /(i+1)!;
@@ -194,3 +197,10 @@ A = intersectionRing P1
 x = c_1 Q
 y = c_1 R
 x*y
+
+R = QQ[c1,c2,c3,c4,Degrees=>{1,2,3,4},MonomialOrder=>GRevLex=>{1,2,3,4}]
+R.DIM = 4
+c = 1 + sum gens R
+a = logg c
+expp a
+todd a
