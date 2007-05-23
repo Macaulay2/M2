@@ -87,17 +87,23 @@ abstractSheaf(AbstractVariety,ZZ) := opts -> (X,rk) -> (
 	       }
      	  }
      )
+abstractSheaf(AbstractVariety) := opts -> X -> (
+     if opts.ChernCharacter === null then error "abstractSheaf: expected rank or Chern character";
+     abstractSheaf(X,lift(part(0,opts.ChernCharacter),ZZ),opts))
+abstractSheaf(RingElement) := opts -> f -> abstractSheaf((ring f).AbstractVariety, ChernCharacter => f)
 
 abstractVariety = method(Options => {
 	  -- TangentBundle => null
 	  })
 abstractVariety(Ring) := opts -> (A) -> (
      if not A.?DIM then error "intersection ring provided doesn't specify DIM";
-     new AbstractVariety from {
+     if A.?AbstractVariety then error "intersection ring provided already associate with an abstract variety";
+     X := new AbstractVariety from {
 	  -- if opts.TangentBundle =!= null then TangentBundle => opts.TangentBundle,
      	  IntersectionRing => A
-     	  }
-     )
+     	  };
+     A.AbstractVariety = X;
+     X)
 abstractVariety(ZZ,Ring) := opts -> (DIM,A) -> (
      if A.?DIM and A.DIM =!= DIM then error "intersection ring corresponds to a variety of a different dimension";
      A.DIM = DIM;
@@ -152,22 +158,21 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      if n =!= #bundleNames then error "name list and rank list should have same length";
      if rank E =!= sum bundleRanks then error "expected rank of bundle to equal sum of bundle ranks";
      bundleNames = apply(bundleNames, n -> if ReverseDictionary#?n then ReverseDictionary#n else n);
-     vrs := apply(bundleNames, bundleRanks, (E,r) -> apply(reverse toList(1 .. r), i -> new ChernClassSymbol from {i,E}));
-     dgs := splice apply(bundleRanks, r -> 1 .. r);
-     T := (intersectionRing X)[flatten vrs, Degrees => dgs, Global => false, MonomialOrder => apply(bundleRanks, n -> RevLex => n)];
+     vrs := apply(reverse bundleNames, reverse bundleRanks, (E,r) -> apply(reverse toList(1 .. r), i -> new ChernClassSymbol from {i,E}));
+     dgs := splice apply(reverse bundleRanks, r -> 1 .. r);
+     T := (intersectionRing X)[flatten vrs, Degrees => dgs, Global => false, MonomialOrder => apply(reverse bundleRanks, n -> RevLex => n)];
      (A,F,G) := flattenRing T;
      chclasses := apply(vrs, x -> F (1 + sum(x,value)));
      rlns := product chclasses - F promote(chernClass E,T);
      rlns = apply(1 .. sum bundleRanks, i -> part_i rlns);
      B := A/rlns;
-     use B;
+     (C,H,I) := flattenRing B;
+     use C;
      DIM := (intersectionRing X).DIM + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
-     -- point := (basis_(B.DIM) B)_(0,0);			    -- not right, sign could be wrong!
-     -- B.point = point;
-     FV := abstractVariety(DIM,B);
+     FV := abstractVariety(DIM,C);
      scan(n, i -> (
 	       nm := bundleNames#i;
-	       bdl := abstractSheaf(FV,bundleRanks#i, ChernClass => promote(chclasses#i,B));
+	       bdl := abstractSheaf(FV,bundleRanks#i, ChernClass => H promote(chclasses#i,B));
 	       globalReleaseFunction(nm,value nm);
 	       globalAssignFunction(nm,bdl);
 	       nm <- bdl;
@@ -290,7 +295,7 @@ loadPackage "Schubert"
 Proj(3,{Q,R})
 P3 = Proj(3,{Q,R})
 A = intersectionRing P3
-prune oo
+prune A
 basis A
 
 G24 = Grassmannian(2,4,{Q,R})
@@ -307,7 +312,6 @@ B = intersectionRing F222
 transpose presentation B
 transpose basis B
 (c_1 Q)^3 * (c_1 R)^5 * (c_1 S)^4
-integral ((c_1 Q)^3 * (c_1 R)^5 * (c_1 S)^4)
 
 compactMatrixForm = false
 loadPackage "Schubert"
@@ -316,9 +320,10 @@ E = abstractSheaf(X,2,ChernClass => 1 + e1 + e2)
 c_0 E,c_1 E,c_2 E,c_3 E
 P1 = Proj(E,{Q,R})					    -- working on this now ...
 A = intersectionRing P1
+describe A
 x = c_1 Q
 y = c_1 R
-x*y
+x*y							    -- expect e2 ?
 
 R = QQ[c1,c2,c3,c4,Degrees=>{1,2,3,4},MonomialOrder=>GRevLex=>{1,2,3,4}]
 R.DIM = 4
