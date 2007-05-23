@@ -100,6 +100,8 @@ intersectionRing AbstractVariety := X -> X.IntersectionRing
 
 chernClass = method()
 chernClass AbstractSheaf := (cacheValue ChernClass) (F -> expp F.ChernCharacter)
+chernClass(ZZ, AbstractSheaf) := (p,F) -> part(p,chernClass F)
+chernClass(ZZ, ZZ, AbstractSheaf) := (p,q,F) -> toList apply(p..q, i -> chernClass(i,F))
 
 ch = method()
 ch AbstractSheaf := (F) -> F.ChernCharacter
@@ -230,6 +232,8 @@ todd RingElement := (A) -> (
 
 segre = method()
 segre AbstractSheaf := E -> reciprocal chernClass dual E
+segre(ZZ, AbstractSheaf) := (p,F) -> part(p,segre F)
+segre(ZZ, ZZ, AbstractSheaf) := (p,q,F) -> (s := segre F; toList apply(p..q, i -> part(i,s)))
 
 nonnull = x -> select(x, i -> i =!= null)
 
