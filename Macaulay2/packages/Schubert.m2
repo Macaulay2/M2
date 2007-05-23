@@ -11,7 +11,7 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export {AbstractVariety, AbstractVarietyMap, AbstractSheaf, flagVariety, intersectionRing, cc, ch, ChernClass, chernClass, point}
+export {AbstractVariety, AbstractVarietyMap, AbstractSheaf, flagVariety, intersectionRing, cc, ch, ChernClass, chernClass, point, DIM, logg, expp}
 
 AbstractVariety = new Type of MutableHashTable
 AbstractVariety.synonym = "abstract variety"
@@ -44,26 +44,35 @@ net ChernClass := net @@ expression
 
 OO(AbstractVariety) := X -> new AbstractSheaf from {
      symbol AbstractVariety => X,
-     symbol ChernClass => 1_(intersectionRing X)
+     symbol ChernClass => 1_(intersectionRing X),
+     symbol rank => 1     
      }
 
 AbstractSheaf ^ ZZ := (E,n) -> new AbstractSheaf from {
      symbol AbstractVariety => X,
-     symbol ChernClass => E.ChernClass ^ n
+     symbol ChernClass => E.ChernClass ^ n,
+     symbol rank => E.rank * n
      }
+rank AbstractSheaf := E -> E.rank
 
 point = new AbstractVariety
 point.intersectionRing = QQ
 
 flagVariety = method()
 flagVariety(AbstractVariety,AbstractSheaf,List,List) := (X,E,bundleNames,bundleRanks) -> (
-     vrs := apply(bundleNames, bundleRanks, (E,r) -> apply(toList(1 .. r), i -> cc_i E));
+     n := #bundleRanks;
+     if n =!= #bundleNames then error "name list and rank list should have same length";
+     if rank E =!= sum bundleRanks then error "expected rank of bundle to equal sum of bundle ranks";
+     vrs := apply(bundleNames, bundleRanks, (E,r) -> apply(toList(1 .. r), i -> new ChernClass from {i,E}));
      dgs := flatten apply(bundleRanks, r -> 1 .. r);
      A := (intersectionRing X)[flatten vrs,Degrees=>dgs];
      rlns := product apply(vrs, x -> 1+sum(x,value)) - promote(chernClass E,A);
      rlns = apply(1 .. first degree rlns, i -> part_i rlns);
+     B := A/rlns;
+     B.DIM = sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
+     use B;
      new AbstractVariety from {
-	  symbol intersectionRing => use (A/rlns)
+	  symbol intersectionRing => B
 	  }
      )
 
@@ -72,5 +81,10 @@ beginDocumentation()
 end
 
 loadPackage "Schubert"
-G24 = flagVariety(point,OO_point^4,{Q,R},{2,2})
-intersectionRing G24
+compactMatrixForm = false
+F22 = flagVariety(point,OO_point^4,{Q,R},{2,2})
+transpose presentation intersectionRing F22
+(intersectionRing F22).DIM
+F222 = flagVariety(point,OO_point^6,{Q,R,S},{2,2,2})
+transpose presentation intersectionRing F222
+(intersectionRing F222).DIM
