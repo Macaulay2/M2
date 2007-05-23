@@ -20,6 +20,8 @@ export {
      ChernClassSymbol,
      DIM,
      IntersectionRing,
+     TangentBundle,
+     ToddClass,
      abstractSheaf,
      abstractVariety,
      ch,
@@ -35,6 +37,8 @@ export {
      wedge
      }
 
+protect TangentBundle
+protect ToddClass
 protect ChernClass
 protect ChernCharacter
 protect IntersectionRing
@@ -64,27 +68,27 @@ abstractSheaf(AbstractVariety,ZZ) := opts -> (X,rk) -> (
      new AbstractSheaf from {
      	  global AbstractVariety => X,
      	  global rank => rk,
-	  ChernCharacter => if opts.ChernCharacter =!= null then opts.ChernCharacter else logg opts.ChernClass,
+	  ChernCharacter => if opts.ChernCharacter =!= null then opts.ChernCharacter else rk + logg opts.ChernClass,
 	  global cache => new CacheTable from {
 	       if opts.ChernClass =!= null then ChernClass => opts.ChernClass
 	       }
      	  }
      )
 
-abstractVariety = method()
-abstractVariety(ZZ,Ring) := (DIM,A) -> (
-     if A.?DIM and A.DIM =!= DIM then error "intersection ring corresponds to a variety of a different dimension";
-     A.DIM = DIM;
-     new AbstractVariety from {
-     	  IntersectionRing => A
-     	  }
-     )
-abstractVariety(Ring) := (A) -> (
+abstractVariety = method(Options => {
+	  -- TangentBundle => null
+	  })
+abstractVariety(Ring) := opts -> (A) -> (
      if not A.?DIM then error "intersection ring provided doesn't specify DIM";
      new AbstractVariety from {
+	  -- if opts.TangentBundle =!= null then TangentBundle => opts.TangentBundle,
      	  IntersectionRing => A
      	  }
      )
+abstractVariety(ZZ,Ring) := opts -> (DIM,A) -> (
+     if A.?DIM and A.DIM =!= DIM then error "intersection ring corresponds to a variety of a different dimension";
+     A.DIM = DIM;
+     abstractVariety(A,opts))
 point = abstractVariety(0,QQ)
 dim AbstractVariety := X -> X.IntersectionRing.DIM
 
