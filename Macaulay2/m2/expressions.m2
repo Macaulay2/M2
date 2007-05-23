@@ -512,14 +512,20 @@ toString Adjacent := toString FunctionApplication := m -> (
 net Adjacent := net FunctionApplication := m -> (
      p := precedence m;
      fun := m#0;
+     netfun := net fun;
      args := m#1;
+     netargs := net args;
      if precedence args >= p
      then if precedence fun > p
-     then horizontalJoin (net fun, " ", net args)
-     else horizontalJoin ("(", net fun, ")", net args)
+     then (
+	  if netfun#?0 and width netfun > width netfun#0
+	  then horizontalJoin (netfun, netargs)
+	  else horizontalJoin (netfun, " ", netargs)
+	  )
+     else horizontalJoin ("(", netfun, ")", netargs)
      else if precedence fun > p
-     then horizontalJoin (net fun, "(", net args, ")")
-     else horizontalJoin ("(",net fun,")(", net args, ")")
+     then horizontalJoin (netfun, "(", netargs, ")")
+     else horizontalJoin ("(",netfun,")(", netargs, ")")
      )
 texMath Adjacent := texMath FunctionApplication := m -> (
      p := precedence m;
