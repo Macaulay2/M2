@@ -19,6 +19,14 @@ endsWithIdentifier := s -> (
      letters#?c)
 
 -----------------------------------------------------------------------------
+bigParenthesize = n -> (
+     h := height n;
+     d := depth n;
+     if h <= 1 and d === 0 then return "(" | n | ")";
+     if h+d <= 1 then return "("^-d | n | ")"^-d;
+     (stack("/",h+d-2:"|","\\"))^(h-1) | n | (stack("\\",h+d-2:"|","/"))^(h-1)
+     )
+-----------------------------------------------------------------------------
 
 HeaderType = new Type of Type
 HeaderType.synonym = "header type"
@@ -122,7 +130,7 @@ net Equation := v -> (
      else (
 	  p := precedence v;
 	  horizontalJoin toList between(" == ", 
-	       apply(toList v, e -> if precedence e <= p then "(" | net e | ")" else net e))))
+	       apply(toList v, e -> if precedence e <= p then bigParenthesize net e else net e))))
 toString Equation := v -> (
      n := # v;
      if n === 0 then "Equation{}"
@@ -522,10 +530,10 @@ net Adjacent := net FunctionApplication := m -> (
 	  then horizontalJoin (netfun, netargs)
 	  else horizontalJoin (netfun, " ", netargs)
 	  )
-     else horizontalJoin ("(", netfun, ")", netargs)
+     else horizontalJoin (bigParenthesize netfun, netargs)
      else if precedence fun > p
-     then horizontalJoin (netfun, "(", netargs, ")")
-     else horizontalJoin ("(",netfun,")(", netargs, ")")
+     then horizontalJoin (netfun, bigParenthesize netargs)
+     else horizontalJoin (bigParenthesize netfun, bigParenthesize netargs)
      )
 texMath Adjacent := texMath FunctionApplication := m -> (
      p := precedence m;
@@ -596,14 +604,14 @@ nopars := x -> if class x === Sequence then nopar x else net x
 net Subscript := x -> (
      n := nopars x#1;
      if precedence x#0 < PowerPrecedence
-     then horizontalJoin( "(", net x#0, ")", n^-(height n) )
+     then horizontalJoin( bigParenthesize net x#0, n^-(height n) )
      else net x#0 | n^-(height n)
      )
 
 net Superscript := x -> (
      n := net x#1;
      if precedence x#0 < PowerPrecedence
-     then horizontalJoin( "(", net x#0, ")", n^(1+depth n))
+     then horizontalJoin( bigParenthesize net x#0, n^(1+depth n))
      else net x#0 | n^(1+depth n)
      )
 
@@ -618,15 +626,15 @@ net Power := v -> (
 	       t := stack(nety,"",nopars x#1);
 	       horizontalJoin (
 		    if precedence x < PowerPrecedence
-		    then ( "(" , net x#0 , ")" , t)
-		    else (       net x#0 ,       t)
+		    then ( bigParenthesize net x#0, t)
+		    else (                 net x#0, t)
 		    )
 	       )
 	  else (
 	       horizontalJoin (
 		    if precedence x < PowerPrecedence
-		    then ( "(" , net x , ")" , nety)
-		    else (       net x ,       nety)
+		    then ( bigParenthesize net x, nety)
+		    else (            	   net x, nety)
 		    )
 	       )
 	  )
@@ -647,8 +655,8 @@ net Sum := v -> (
 	  horizontalJoin splice mingle(seps, 
 	       apply(n, i -> 
 		    if precedence v#i <= p 
-		    then ("(", net v#i, ")")
-		    else net v#i))))
+		    then bigParenthesize net v#i
+		    else      	   	 net v#i))))
 
 isNumber := method(TypicalValue => Boolean)
 isNumber Thing := i -> false
@@ -678,7 +686,7 @@ net Product := v -> (
 		    nterm := net term;
 	       	    if precedence term <= p then (
 			 seps#i = seps#(i+1) = "";
-			 nterm = ("(", nterm, ")");
+			 nterm = bigParenthesize nterm;
 			 );
 		    if class term === Power
 		    and not (term#1 === 1 or term#1 === ONE)
@@ -699,7 +707,7 @@ net NonAssociativeProduct := v -> (
      	  boxes := apply(#v,
 	       i -> (
 		    term := v#i;
-	       	    if precedence term <= p then ("(", net term, ")")
+	       	    if precedence term <= p then bigParenthesize net term
 	       	    else net term
 	       	    )
 	       );
@@ -709,7 +717,7 @@ net NonAssociativeProduct := v -> (
 net Minus := x -> (
      term := x#0;
      horizontalJoin if precedence term < precedence x 
-     then ("-", "(", net term, ")")
+     then ("-", bigParenthesize net term)
      else (if class term === Divide then "- " else "-", net term))
 
 net Divide := x -> (
