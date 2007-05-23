@@ -37,6 +37,7 @@ export {
 
 protect ChernClass
 protect ChernCharacter
+protect IntersectionRing
 
 symm = symmetricPower
 wedge = exteriorPower
@@ -60,7 +61,6 @@ abstractSheaf = method(Options => {
 	  })
 abstractSheaf(AbstractVariety,ZZ) := opts -> (X,rk) -> (
      if opts.ChernClass === null and opts.ChernCharacter === null then error "abstractSheaf: expected Chern character or Chern class";
-     if opts.ChernClass =!= null and opts.ChernCharacter =!= null then error "abstractSheaf: expected just one of Chern character and Chern class";
      new AbstractSheaf from {
      	  global AbstractVariety => X,
      	  global rank => rk,
@@ -76,15 +76,16 @@ abstractVariety(ZZ,Ring) := (DIM,A) -> (
      if A.?DIM and A.DIM =!= DIM then error "intersection ring corresponds to a variety of a different dimension";
      A.DIM = DIM;
      new AbstractVariety from {
-     	  global intersectionRing => A
+     	  IntersectionRing => A
      	  }
      )
 abstractVariety(Ring) := (A) -> (
      if not A.?DIM then error "intersection ring provided doesn't specify DIM";
      new AbstractVariety from {
-     	  global intersectionRing => A
+     	  IntersectionRing => A
      	  }
      )
+point = abstractVariety(0,QQ)
 dim AbstractVariety := X -> X.IntersectionRing.DIM
 
 intersectionRing = method()
@@ -105,25 +106,20 @@ c = method()
 c(ZZ,Symbol) := (n,E) -> value new ChernClassSymbol from {n,E}
 c(ZZ,AbstractSheaf) := (n,E) -> part(n,chernClass E)
 
-OO(AbstractVariety) := X -> new AbstractSheaf from {
-     symbol AbstractVariety => X,
-     symbol ChernClass => 1_(intersectionRing X),
-     symbol rank => 1     
-     }
+OO(AbstractVariety) := X -> (
+     A := intersectionRing X;
+     abstractSheaf(X,1,ChernClass => 1_A,ChernCharacter => 1_A))
 
 AbstractSheaf ^ ZZ := (E,n) -> new AbstractSheaf from {
-     symbol AbstractVariety => E.AbstractVariety,
-     symbol ChernClass => E.ChernClass ^ n,
-     symbol rank => E.rank * n
+     global AbstractVariety => E.AbstractVariety,
+     ChernCharacter => n * E.ChernCharacter,
+     symbol rank => E.rank * n,
+     symbol cache => new CacheTable from {
+	  if E.cache.?ChernClass then ChernClass => E.cache.ChernClass ^ n
+	  }
      }
 rank AbstractSheaf := E -> E.rank
-
-pointRing := QQ						    --  or QQ[] ?
-pointRing.DIM = 0;
-
-point = new AbstractVariety from {
-     global intersectionRing => pointRing
-     }
+variety AbstractSheaf := E -> E.AbstractVariety
 
 flagVariety = method()
 flagVariety(ZZ,List,List) := (rk,bundleNames,bundleRanks) -> flagVariety(point,rk,bundleNames,bundleRanks)
@@ -145,7 +141,7 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      point := (basis_(B.DIM) B)_(0,0);			    -- not right, sign could be wrong!
      B.point = point;
      new AbstractVariety from {
-	  global intersectionRing => B,
+	  IntersectionRing => B,
 	  global point => point
 	  }
      )
