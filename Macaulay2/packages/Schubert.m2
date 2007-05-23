@@ -54,13 +54,23 @@ AbstractVariety.synonym = "abstract variety"
 globalAssignment AbstractVariety
 net AbstractVariety := X -> (
      if ReverseDictionary#?X then toString ReverseDictionary#X
-     else "--an abstract variety--")
+     else "an abstract variety")
 
 AbstractVarietyMap = new Type of MutableHashTable
 AbstractVarietyMap.synonym = "abstract variety map"
 
 AbstractSheaf = new Type of MutableHashTable
 AbstractSheaf.synonym = "abstract sheaf"
+globalAssignment AbstractSheaf
+net AbstractSheaf := X -> (
+     if ReverseDictionary#?X then toString ReverseDictionary#X
+     else "an abstract sheaf")
+AbstractSheaf.AfterPrint = E -> (
+     << endl;				  -- double space
+     n := rank E;
+     << concatenate(interpreterDepth:"o") << lineNumber << " : "
+     << "an abstract sheaf of rank " << rank E << " on " << variety E << endl;
+     )
 
 abstractSheaf = method(Options => {
 	  ChernClass => null,
@@ -141,7 +151,8 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      n := #bundleRanks;
      if n =!= #bundleNames then error "name list and rank list should have same length";
      if rank E =!= sum bundleRanks then error "expected rank of bundle to equal sum of bundle ranks";
-     vrs := apply(bundleNames, bundleRanks, (E,r) -> apply(toList(1 .. r), i -> new ChernClassSymbol from {i,E}));
+     bundleNames = apply(bundleNames, n -> if ReverseDictionary#?n then ReverseDictionary#n else n);
+     vrs := apply(bundleNames, bundleRanks, (E,r) -> apply(reverse toList(1 .. r), i -> new ChernClassSymbol from {i,E}));
      dgs := splice apply(bundleRanks, r -> 1 .. r);
      T := (intersectionRing X)[flatten vrs, Degrees => dgs, Global => false, MonomialOrder => apply(bundleRanks, n -> RevLex => n)];
      (A,F,G) := flattenRing T;
@@ -154,7 +165,14 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      -- point := (basis_(B.DIM) B)_(0,0);			    -- not right, sign could be wrong!
      -- B.point = point;
      FV := abstractVariety(DIM,B);
-     scan(n, i -> bundleNames#i <- abstractSheaf(FV,bundleRanks#i, ChernClass => promote(chclasses#i,B)));
+     scan(n, i -> (
+	       nm := bundleNames#i;
+	       bdl := abstractSheaf(FV,bundleRanks#i, ChernClass => promote(chclasses#i,B));
+	       globalReleaseFunction(nm,value nm);
+	       globalAssignFunction(nm,bdl);
+	       nm <- bdl;
+	       )
+	  );
      FV)
 
 Grassmannian(ZZ,AbstractSheaf,List) := opts -> (k,E,bundleNames) -> flagVariety(E,bundleNames,{k,rank E-k})
