@@ -148,6 +148,11 @@ OneExpression = new Type of Holder
 OneExpression.synonym = "one expression"
 ONE := new OneExpression from {1}
 -----------------------------------------------------------------------------
+Parenthesize = new WrapperType of Expression
+Parenthesize.synonym = "possibly parenthesized expression"
+net Parenthesize := net @@ first
+toString Parenthesize := toString @@ first
+-----------------------------------------------------------------------------
 Sum = new WrapperType of AssociativeExpression
 Sum.synonym = "sum expression"
 
@@ -549,6 +554,7 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      )
 -----------------------------------------------------------------------------
 	      precedence Sequence := x -> if #x === 0 then 70 else if #x === 1 then 40 else 70
+     	  precedence Parenthesize := x ->  0
 	      precedence Equation := x -> 10
 	     precedence HashTable := x -> 20		    -- some things might print out as symbols though...
 		 precedence Thing := x -> 20
