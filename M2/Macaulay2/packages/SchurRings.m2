@@ -168,6 +168,23 @@ symmRing = (n) -> (
 	  );
      symmRings#n)
 
+symmRing0 = (n) -> (
+     if not symmRings#?n then (
+     	  e := global e;
+     	  h := global h;
+     	  p := global p;
+	  Se := QQ[e_1..e_n,Degrees=>toList(1..n)];
+	  Sp := QQ[p_1..p_n,Degrees=>toList(1..n)];
+     	  Ss := schurRing(symbol s, n);
+     	  R.Schur = S;
+     	  R.dim = n;
+     	  R.mapToE = map(Se,Sp,flatten splice {apply(n, i -> PtoE(i+1,R))});
+     	  R.mapToP = map(Sp,Se,flatten splice {apply(n, i -> EtoP(i+1,R))});
+     	  R.plethysmMaps = new MutableHashTable;
+	  symmRings#n = R;
+	  );
+     symmRings#n)
+
 plethysmMap = (d,R) -> (
      -- d is an integer
      -- R is symmRing n
@@ -588,7 +605,12 @@ loadPackage "SchurRings"
 debug SchurRings
 R = symmRing 4
 describe R
-f = jacobiTrudiE({4,1},R)
+toS(e_1*e_2*e_3)
+toSf = map(ring oo, R, apply(gens R, x -> toS x))
+toSf(e_1*e_2*e_3)
+
+f = jacobiTrudiE(new Partition from {4,1},R)
+toSf f
 toS f
 f = jacobiTrudiE({2,1},R)
 toE toP f
