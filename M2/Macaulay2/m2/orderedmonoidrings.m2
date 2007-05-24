@@ -148,7 +148,16 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       then ( 
 		    R.basering, 
 		    tensor(M, R.flatmonoid,
-			 Degrees => degrees M | toList ( numgens R.flatmonoid : toList (degreeLength M : 0)),
+			 Degrees => (
+			      degrees M
+			      |
+			      if M.Options.ConstantCoefficients
+			      then toList ( numgens R.flatmonoid : toList (degreeLength M : 0))
+			      else (
+				   if degreeLength R.flatmonoid =!= degreeLength M then error "expected coefficient ring to have the same degree length";
+				   degrees R.flatmonoid
+				   )
+			      ),
 			 Heft => M.Options.Heft
 			 ),
 		    num + R.numallvars)
@@ -287,6 +296,7 @@ weightRange = method()
 weightRange(List,RingElement) := (w,f) -> rawWeightRange(w,raw f)
 weightRange RingElement := f -> weightRange(first \ degrees ring f, f)
 parts = method()
+stderr << "--warning: rewrite 'parts RingElement', it's too slow, and it's notion of part is incorrect" << endl
 parts RingElement := f -> sum(select(apply(((i,j) -> i .. j) weightRange f, n -> part_n f), p -> p != 0), p -> new Parenthesize from {p})
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

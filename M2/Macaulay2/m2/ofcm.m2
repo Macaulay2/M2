@@ -100,7 +100,8 @@ monoidDefaults = (
 	  -- VariableOrder => null,		  -- not implemented yet
 	  WeylAlgebra => {},
      	  Heft => null,
-	  DegreeRank => null				    -- specifying DegreeRank=>3 and no Degrees means degrees {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 1}, ...}
+	  DegreeRank => null,				    -- specifying DegreeRank=>3 and no Degrees means degrees {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 1}, ...}
+     	  ConstantCoefficients => true			    -- whether to set the coefficient variables to degree 0 in the new polynomial ring
 	  }
      )
 
