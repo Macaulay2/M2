@@ -13,8 +13,12 @@ static clock_t syz_clock_sort_columns = 0;
 ////////////////////////////////////////////////////////////////
 // Append rows to the syzygy matrix
 //
-// Idea: module-monomial $m e_i$ is represented by pair (monom=m*lm(f_i), comp=i)
-// This forces the already coded module-monomial comparison function to impose 
+// Idea: module-monomial $m e_i$ is represented by pair 
+//   (monom=m*lm(g_i), comp=i), 
+// where either g_i = gens[i] if i<gens.size(), 
+//       or     g_i = gb[i+gens.size()], otherwise.
+// "monom=m*lm(g_i)" forces the already coded module-monomial 
+// comparison function to impose 
 // Schreyer order. Should be changed eventually.
 
 void F4GB::syz_load_gen(int which)
@@ -32,10 +36,8 @@ void F4GB::syz_load_gen(int which)
   syz_r.elem = which; // here info is duplicated: which == M->get_component(m)
   syz_r.len = 1;
   syz_r.coeffs = F4Mem::coefficients.allocate(1);
-  // syzF4Vec.allocate(1); 
   static_cast<int *>(syz_r.coeffs)[0] = 0; // this represents 1 in the coefficient field 
   syz_r.comps = F4Mem::components.allocate(1);
-  // syzF4Vec.allocate(1); 
   static_cast<int *>(syz_r.comps)[0] = newcol;
   syz->rows.push_back(syz_r);
 }
@@ -45,21 +47,18 @@ void F4GB::syz_load_row(packed_monomial monom, int which)
   if (!using_syz) return;
   
   M->unchecked_mult(monom, gb[which]->f.monoms /*lead monom*/, syz_next_monom);  
-  M->set_component(which, syz_next_monom); 
+  M->set_component(which+gens.size(), syz_next_monom); 
   
   packed_monomial m = syz_next_monom;
   int newcol = syz_new_column(m); // this inserts a new monomial in syzH
 
-  
   row_elem syz_r;
   syz_r.monom = m;
-  syz_r.elem = which; // here info is duplicated: which == M->get_component(m)      
+  syz_r.elem = M->get_component(m); // .elem is not used at the monoment 
   syz_r.len = 1;
   syz_r.coeffs = F4Mem::coefficients.allocate(1);
-  // syzF4Vec.allocate(1); 
   static_cast<int *>(syz_r.coeffs)[0] = 0; // this represents 1 in the coefficient field 
   syz_r.comps = F4Mem::components.allocate(1);
-  // syzF4Vec.allocate(1); 
   static_cast<int *>(syz_r.comps)[0] = newcol;
   syz->rows.push_back(syz_r);
 }
@@ -113,8 +112,10 @@ void F4GB::reset_syz_matrix()
 int F4GB::syz_new_column(packed_monomial m)
 {
   packed_monomial mm;
-  if (syzH.find_or_insert(m, mm)) // this should not happen
+  if (syzH.find_or_insert(m, mm)) {// this should not happen
+    fprintf(stderr, "syz_new_column: monomial not expected in syzH\n");
     error();
+  }
   // the above line insures that
   // m is a packed monomial (with component), 
   // unique via the hash table syzH, syzB.
