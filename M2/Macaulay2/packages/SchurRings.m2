@@ -12,9 +12,9 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export {schurRing, SchurRing, symmRing, toS, toE, toP}
+export {schurRing, SchurRing, symmRing, toS, toE, toP, jacobiTrudi}
 -- Improve the names/interface of the following:
---, symmRing, plethysmMap, jacobiTrudiE, plethysm, cauchy, bott}
+--, symmRing, plethysmMap, jacobiTrudi, plethysm, cauchy, bott}
 
 debug Core
 
@@ -198,10 +198,11 @@ plethysmMap = (d,R) -> (
      R.plethysmMaps#d
      )
 
-jacobiTrudiE = (lambda, R) -> (
+jacobiTrudi = (lambda, R) -> (
      -- lambda is a partition of d
      -- R is a "symmRing n", some n.
      -- returns: s[lambda] as an element of R, in e variables
+     lambda = new Partition from lambda;
      lambda' := conjugate lambda;
      n := #lambda';
      det map(R^n, n, (i,j) -> (
@@ -225,7 +226,7 @@ etos = (d,R) -> (
      if not R.toSchur#?d then (
      	  n := R.dim;
      	  P := parts(d,n);
-     	  S := matrix {apply(P, x -> jacobiTrudiE(x,R)) };
+     	  S := matrix {apply(P, x -> jacobiTrudi(x,R)) };
 	  v := ideal varlist(n,2*n-1,R);
      	  E := transpose matrix basis(d,coker gens v);
      	  B := transpose contract(E,S);
@@ -325,7 +326,7 @@ plethysm(RingElement,RingElement) := (f,g) -> (
 plethysm(List,RingElement) := (lambda,g) -> (
      d := sum lambda;
      Rf := symmRing d;
-     f := jacobiTrudiE(lambda,Rf);
+     f := jacobiTrudi(lambda,Rf);
      plethysm(f,g))
 
 beginDocumentation()
@@ -604,20 +605,26 @@ restart
 loadPackage "SchurRings"
 debug SchurRings
 R = symmRing 4
+toE s_{2}
 describe R
 toS(e_1*e_2*e_3)
 toSf = map(ring oo, R, apply(gens R, x -> toS x))
 toSf(e_1*e_2*e_3)
 
-f = jacobiTrudiE(new Partition from {4,1},R)
+f = jacobiTrudi({2},R)
+plethysm(f,e_1)
+f = jacobiTrudi({2,1},R)
+f = jacobiTrudi({2,2},R)
+f = jacobiTrudi({3,2,1},R)
+
 toSf f
 toS f
-f = jacobiTrudiE({2,1},R)
+f = jacobiTrudi({2,1},R)
 toE toP f
 
-toP jacobiTrudiE({2},R)
-toP jacobiTrudiE({1,1,1,1},R)
-toP jacobiTrudiE({4,4,4,4},R)
+toP jacobiTrudi({2},R)
+toP jacobiTrudi({1,1,1,1},R)
+toP jacobiTrudi({4,4,4,4},R)
 toP e_4
 
 R = symmRing 5
@@ -648,14 +655,14 @@ toS toE toP PtoE(4,R)
 toS PtoE(4,R)
 PtoE(4,R)
 
-toS (jacobiTrudiE({2,1},R))^2
+toS (jacobiTrudi({2,1},R))^2
 R.Schur_{2,1}^2
 
-f = toS plethysm(jacobiTrudiE({2},R), jacobiTrudiE({2},R)) -- assert(f == {({4}, 1), ({2, 2}, 1)})
-f = toS plethysm(jacobiTrudiE({3},R), jacobiTrudiE({2},R)) -- assert(f == 
-f = toS plethysm(jacobiTrudiE({2,1},R), jacobiTrudiE({2},R)) -- assert(f == 
-f = toS plethysm(jacobiTrudiE({1,1,1},R), jacobiTrudiE({2},R)) -- assert(f == 
-toS (jacobiTrudiE({1},R))^3
+f = toS plethysm(jacobiTrudi({2},R), jacobiTrudi({2},R)) -- assert(f == {({4}, 1), ({2, 2}, 1)})
+f = toS plethysm(jacobiTrudi({3},R), jacobiTrudi({2},R)) -- assert(f == 
+f = toS plethysm(jacobiTrudi({2,1},R), jacobiTrudi({2},R)) -- assert(f == 
+f = toS plethysm(jacobiTrudi({1,1,1},R), jacobiTrudi({2},R)) -- assert(f == 
+toS (jacobiTrudi({1},R))^3
 ps2 = plethysm(e_2, e_1^2 - e_2)
 toP ps2
 toS ps2
@@ -679,11 +686,11 @@ plethysmMap(3,R)
 
 R10 = symmRing 10
 R = symmRing 3
-f = toS plethysm(jacobiTrudiE({10},R10), jacobiTrudiE({2},R)) -- assert(f == {({4}, 1), ({2, 2}, 1)})
+f = toS plethysm(jacobiTrudi({10},R10), jacobiTrudi({2},R)) -- assert(f == {({4}, 1), ({2, 2}, 1)})
 
 R = symmRing 5
-f = toS plethysm(jacobiTrudiE({1,1},R), jacobiTrudiE({2},R)) -- {3,1}
-f = toS plethysm(jacobiTrudiE({1,1},R), jacobiTrudiE({3},R)) -- {5,1} + {3,3}
+f = toS plethysm(jacobiTrudi({1,1},R), jacobiTrudi({2},R)) -- {3,1}
+f = toS plethysm(jacobiTrudi({1,1},R), jacobiTrudi({3},R)) -- {5,1} + {3,3}
 
 
 --------------------
@@ -692,15 +699,15 @@ f = toS plethysm(jacobiTrudiE({1,1},R), jacobiTrudiE({3},R)) -- {5,1} + {3,3}
 restart
 load "schur.m2"
 R1 = symmRing 5
-f = jacobiTrudiE({2},R1)
-g = jacobiTrudiE({1},R1)
+f = jacobiTrudi({2},R1)
+g = jacobiTrudi({1},R1)
 cauchy(2,f,g)
 cauchy(3,f,g)
 R1 = symmRing 1
 R2 = symmRing 2
-cauchy(2,jacobiTrudiE({1},R1),jacobiTrudiE({2},R2))
+cauchy(2,jacobiTrudi({1},R1),jacobiTrudi({2},R2))
 toS oo_0_1
-cauchy(3,1_R1,jacobiTrudiE({3},R2))
+cauchy(3,1_R1,jacobiTrudi({3},R2))
 toS oo_0_1
 --------------------
 -- test of bott ----
@@ -721,9 +728,9 @@ restart
 load "schur.m2"
 R1 = symmRing 1
 R2 = symmRing 2
-L = {{(1_R1, jacobiTrudiE({3},R2))}, 
-     {(jacobiTrudiE({1},R1), jacobiTrudiE({2},R2))}, 
-     {(jacobiTrudiE({2},R1), jacobiTrudiE({1},R2))}}
+L = {{(1_R1, jacobiTrudi({3},R2))}, 
+     {(jacobiTrudi({1},R1), jacobiTrudi({2},R2))}, 
+     {(jacobiTrudi({2},R1), jacobiTrudi({1},R2))}}
 pairProduct L
 L1 = drop(L,1)
 pairProduct L1
@@ -745,9 +752,9 @@ L/(v -> (toS v#0#1))
 restart
 load "schur.m2"
 R = symmRing 2
-plethysm({1,1},jacobiTrudiE({2},R))
+plethysm({1,1},jacobiTrudi({2},R))
 toS oo
-plethysm({1,1,1},jacobiTrudiE({4},R))
+plethysm({1,1,1},jacobiTrudi({4},R))
 toS oo
 --------------------
 -- test of wedge
@@ -756,9 +763,9 @@ restart
 load "schur.m2"
 R1 = symmRing 1
 R2 = symmRing 2
-L = {{(1_R1, jacobiTrudiE({3},R2))}, 
-     {(jacobiTrudiE({1},R1), jacobiTrudiE({2},R2))}, 
-     {(jacobiTrudiE({2},R1), jacobiTrudiE({1},R2))}}
+L = {{(1_R1, jacobiTrudi({3},R2))}, 
+     {(jacobiTrudi({1},R1), jacobiTrudi({2},R2))}, 
+     {(jacobiTrudi({2},R1), jacobiTrudi({1},R2))}}
 wedge({3,2,0},L)
 wedge({3,0,0},L)
 z = preBott(1,L,{4,3,2})
@@ -778,10 +785,10 @@ restart
 load "schur.m2"
 R1 = symmRing 1
 R2 = symmRing 3
-L = {{(1_R1, jacobiTrudiE({4},R2))}, 
-     {(jacobiTrudiE({1},R1), jacobiTrudiE({3},R2))}, 
-     {(jacobiTrudiE({2},R1), jacobiTrudiE({2},R2))},
-     {(jacobiTrudiE({3},R1), jacobiTrudiE({1},R2))}}
+L = {{(1_R1, jacobiTrudi({4},R2))}, 
+     {(jacobiTrudi({1},R1), jacobiTrudi({3},R2))}, 
+     {(jacobiTrudi({2},R1), jacobiTrudi({2},R2))},
+     {(jacobiTrudi({3},R1), jacobiTrudi({1},R2))}}
 wedge({3,2,0},L)
 wedge({3,0,0},L)
 z = preBott(1,L,{4,3,2})
@@ -828,13 +835,13 @@ end
 restart
 load "schur.m2"
 (H,E,P,S) = symmRings 4
-f = jacobiTrudiE({4,1},E)
+f = jacobiTrudi({4,1},E)
 tos f 
 tos f == S_{4,1}
-f = jacobiTrudiE({2,1},E)
+f = jacobiTrudi({2,1},E)
 tos f
 tos f == S_{2,1}
-f = jacobiTrudiE({7,4,2},E)
+f = jacobiTrudi({7,4,2},E)
 tos f
 tos f == S_{2,1}
 

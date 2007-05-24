@@ -34,6 +34,7 @@ export {
      logg,
      point,
      reciprocal,
+     schur,
      segre,
      symm,
      todd,
@@ -281,9 +282,52 @@ AbstractSheaf * AbstractSheaf := (F,G) -> (
 Hom(AbstractSheaf, AbstractSheaf) := (F,G) -> dual F ** G
 End AbstractSheaf := (F) -> Hom(F,F)
 
-det AbstractSheaf := opts -> (F) -> abstractSheaf(variety F, 1, ChernCharacter => 1 + part(1,ch F))
+det AbstractSheaf := opts -> (F) -> abstractSheaf(variety F, 1, ChernClass => 1 + part(1,ch F))
 
+computeWedges = (n,A) -> (
+     -- compute the chern characters of wedge(i,A), for i = 0..n, given a chern character
+     wedge := new MutableList from splice{0..n};
+     wedge#0 = 1_(ring A);
+     wedge#1 = A;
+     for p from 2 to n do
+	  wedge#p = 1/p * sum for m from 0 to p-1 list (-1)^(p-m+1) * wedge#m * adams(p-m,A);
+     toList wedge
+     )
 
+exteriorPower(ZZ, AbstractSheaf) := opts -> (n,E) -> (
+     -- wedge is an array 0..n of the chern characters of the exerior powers of E.  The last one is what we want.
+     if 2*n > rank E then return det(E) ** dual exteriorPower(rank E - n, E);
+     wedge := computeWedges(n,ch E);
+     abstractSheaf(variety E, ChernCharacter => wedge#n)
+     )
+
+symmetricPower(ZZ, AbstractSheaf) := (n,E) -> (
+     A := ch E;
+     wedge := computeWedges(n,A);
+     symms := new MutableList from splice{0..n};
+     symms#0 = 1_(ring A);
+     symms#1 = A;
+     for p from 2 to n do (
+	  r := min(p, rank E);
+	  symms#p = sum for m from 1 to r list (-1)^(m+1) * wedge#m * symms#(p-m);
+	  );
+     abstractSheaf(variety E, ChernCharacter => symms#n)
+     )
+
+schur = method()
+schur(List, AbstractSheaf) := (p,E) -> (
+     -- Make sure that p is a monotone descending sequence of non-negative integers
+     --q := conjugate new Partition from p;
+     q := p;
+     n := sum p;
+     R := symmRing n;
+     wedges := computeWedges(n,ch E);
+     J := jacobiTrudi(q,R); -- so the result will be a poly in the wedge powers
+     F := map(ring ch E, R, join(apply(splice{0..n-1}, i -> R_i => wedges#(i+1)), 
+	                         apply(splice{n..2*n-1}, i -> R_i => 0)));
+     ans := F J;
+     abstractSheaf(variety E, ChernCharacter => ans)
+     )
 beginDocumentation()
 
 end
@@ -353,11 +397,23 @@ todd a
 parts oo
 netList toList oo
 det F
-
+schur({2},F)
+restart
 loadPackage "Schubert"
 R = QQ[c3,c2,c1,Degrees=>{3,2,1},MonomialOrder=>RevLex,Global=>false]
-X = abstractVariety(3, R)
+A = R/truncate(4,ideal vars R)
+X = abstractVariety(3, A)
 F = abstractSheaf(X,3,ChernClass => 1+c1+c2+c3)
+F2 = wedge(2,F)
+F3 = wedge(3,F)
+symm(1,F)
+symm(2,F)
+symm(3,F)
+G = F**F**F
+H = wedge(20,G)
+time symm(20,G)
+chernClass H
+ch H
 chernClass F
 segre F
 segre(3,F)
@@ -373,3 +429,94 @@ TEST /// -- segre
   assert(segre(3,F) == c1^3-2*c1*c2+c3)
   netList segre(0,3,F)
 ///
+
+restart
+loadPackage "Schubert"
+R = QQ[c4,c3,c2,c1,Degrees=>{4,3,2,1},MonomialOrder=>RevLex,Global=>false]
+A = R/truncate(10,ideal vars R)
+X = abstractVariety(9, A)
+F = abstractSheaf(X,4,ChernClass => 1+c1+c2+c3+c4)
+F2 = wedge(2,F)
+F3 = wedge(3,F)
+symm(1,F)
+symm(2,F)
+symm(3,F)
+G = F**F**F
+H = wedge(20,G)
+time symm(20,G)
+chernClass H
+ch H
+chernClass F
+segre F
+segre(3,F)
+parts segre F
+netList toList parts segre F
+
+restart
+loadPackage "Schubert"
+
+-- ## # conics on a quintic 3-fold
+-- grass(3,5,c,all);
+G = Grassmannian(3,5,{Sc,Qc})
+AG = intersectionRing G
+ch Qc
+symm(2,Qc)
+netList toList parts chernClass oo
+-- Proj(X,dual(symm(2,Qc)),z,f);
+-- totalspace(X,Gc);
+-- B := symm(5,Qc) - symm(3,Qc) * o(-z);
+-- rank(B);
+-- chern(11,B);
+-- integral(chern(11,B));
+
+-- test wedge, symm for small cases
+restart
+R = QQ[a,b,c,d,e1,e2,e3,e4,t,MonomialOrder=>Eliminate 4]
+I = ideal(e1-(a+b+c+d), e2-(a*b+a*c+a*d+b*c+b*d+c*d), e3-(a*b*c+b*c*d+a*c*d+a*b*d),e4-a*b*c*d)
+F = product(1..4, i -> (1+R_(i-1)*t))
+F % I
+F = product apply(subsets(0..3,2), x -> (1 + (R_(x#0) + R_(x#1)) * t))
+F % I
+coefficients(oo,Variables=>t)
+
+F = product apply(subsets(0..3,3), x -> (1 + sum(#x, i -> R_(x#i)) * t))
+F % I
+
+F = product apply(flatten for i from 0 to 3 list for j from i to 3 list {i,j}, x -> (
+	  (1 + sum(#x, i -> R_(x#i))*t)))
+F % I
+
+-- Testing schur functions of bundles
+restart
+loadPackage "Schubert"
+R = QQ[c4,c3,c2,c1,Degrees=>{4,3,2,1},MonomialOrder=>RevLex,Global=>false]
+A = R/truncate(5,ideal vars R)
+X = abstractVariety(4, A)
+F = abstractSheaf(X,4,ChernClass => 1+c1+c2+c3+c4)
+ch F
+
+-- Check that wedge 2, symm 2, work correctly
+S2F = ch symm(2,F)
+W2F = ch wedge(2,F)
+R = symmRing 4
+jacobiTrudi({2},R)
+ch wedge(2,F) == (ch F)^2 - ch symm(2,F)
+ch wedge(2,F) == (ch F)^2 - ch symm(2,F)
+ch schur({2},F) == ch symm(2,F)
+ch schur({1,1},F) == ch wedge(2,F)
+
+-- Now let's try 3 parts
+debug SchurRings
+R = symmRing 4
+S = R.Schur
+s
+s_{1}^3 -- s_3+2*s_(2,1)+s_(1,1,1)
+S3 = ch symm(3,F)
+W3 = ch wedge(3,F)
+
+ch schur({2,1},F)
+L21 = ((ch F)*(ch wedge(2,F)) - W3)
+oo == ooo
+0 == (ch F)^3 - S3 - W3 - 2*L21
+ch wedge(3,F) == ch schur({1,1,1},F)
+ch symm(3,F) == ch schur({3},F)
