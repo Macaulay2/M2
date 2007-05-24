@@ -210,7 +210,7 @@ jacobiTrudiE = (lambda, R) -> (
 	       else if p == 0 then 1_R else R_(p-1))) -- R_(p-1) IS e_p
      )
 
-parts = (d, n) -> (
+parts := (d, n) -> (
      -- d is an integer >= 0
      -- n is an integer >= 1
      -- returns a list of all of the partitions of d
