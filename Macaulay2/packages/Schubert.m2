@@ -337,3 +337,13 @@ a = logg c
 expp a
 todd a
 det F
+
+TEST /// -- segre
+  loadPackage "Schubert"
+  X = abstractVariety(3, use (QQ[c1,c2,c3,Degrees=>{1,2,3},MonomialOrder=>GRevLex=>{1,2,3}]))
+  F = abstractSheaf(X,3,ChernClass => 1+c1+c2+c3)
+  assert(chernClass F == 1+c1+c2+c3)
+  assert(toString segre F == "c1^3-2*c1*c2+c3+c1^2-c2+c1+1")
+  assert(segre(3,F) == c1^3-2*c1*c2+c3)
+  netList segre(0,3,F)
+///
