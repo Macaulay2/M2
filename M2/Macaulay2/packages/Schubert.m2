@@ -336,15 +336,22 @@ x*y							    -- expect e2 ?
 
 -- Mike's demo
 
+loadPackage "Schubert"
 R = QQ[c1,c2,c3,c4,Degrees=>{1,2,3,4},MonomialOrder=>GRevLex=>{1,2,3,4}]
 X = abstractVariety(4,R)
 F = abstractSheaf(X, 4, ChernClass=>1+c1+c2+c3+c4)
 segre F
+parts oo
 chernClass F
+parts oo
 ch F
+parts oo
+netList toList oo
 a = logg chernClass F
 expp a
 todd a
+parts oo
+netList toList oo
 det F
 
 loadPackage "Schubert"
