@@ -253,6 +253,13 @@ public:
   virtual int n_logical_terms(int nvars0, const ring_elem f) const = 0;
 
   virtual ArrayPairOrNull list_form(const Ring *coeffR, const ring_elem f) const = 0;
+  virtual ring_elem * get_parts(const M2_arrayint wts, const ring_elem f, long &result_len) const = 0;
+  virtual ring_elem get_part(const M2_arrayint wts, 
+			     const ring_elem f,
+			     bool lobound_given,
+			     bool hibound_given,
+			     long lobound,
+			     long hibound) const = 0;
 
   int n_terms(const ring_elem f) const { return n_flat_terms(f); }
   // This is here mainly because geopoly requires n_terms.
