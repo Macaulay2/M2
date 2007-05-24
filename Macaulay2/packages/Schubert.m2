@@ -258,7 +258,8 @@ todd RingElement := (A) -> (
 segre = method()
 segre AbstractSheaf := E -> reciprocal chernClass dual E
 segre(ZZ, AbstractSheaf) := (p,F) -> part(p,segre F)
-segre(ZZ, ZZ, AbstractSheaf) := (p,q,F) -> (s := segre F; toList apply(p..q, i -> part(i,s)))
+-- we don't need this one:
+-- segre(ZZ, ZZ, AbstractSheaf) := (p,q,F) -> (s := segre F; toList apply(p..q, i -> part(i,s)))
 
 nonnull = x -> select(x, i -> i =!= null)
 
@@ -345,6 +346,16 @@ a = logg chernClass F
 expp a
 todd a
 det F
+
+loadPackage "Schubert"
+R = QQ[c3,c2,c1,Degrees=>{3,2,1},MonomialOrder=>RevLex,Global=>false]
+X = abstractVariety(3, R)
+F = abstractSheaf(X,3,ChernClass => 1+c1+c2+c3)
+chernClass F
+segre F
+segre(3,F)
+parts segre F
+netList toList parts segre F
 
 TEST /// -- segre
   loadPackage "Schubert"
