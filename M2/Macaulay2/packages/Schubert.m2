@@ -97,7 +97,7 @@ abstractVariety = method(Options => {
 	  })
 abstractVariety(Ring) := opts -> (A) -> (
      if not A.?DIM then error "intersection ring provided doesn't specify DIM";
-     if A.?AbstractVariety then error "intersection ring provided already associate with an abstract variety";
+     if A.?AbstractVariety then error "intersection ring provided already associated with an abstract variety";
      X := new AbstractVariety from {
 	  -- if opts.TangentBundle =!= null then TangentBundle => opts.TangentBundle,
      	  IntersectionRing => A
@@ -131,6 +131,7 @@ expression ChernClassSymbol := c -> new FunctionApplication from {new Subscript 
 net ChernClassSymbol := net @@ expression
 
 c = method()
+protect symbol c
 c(ZZ,Symbol) := (n,E) -> value new ChernClassSymbol from {n,E}
 c(ZZ,AbstractSheaf) := (n,E) -> part(n,chernClass E)
 
@@ -159,8 +160,9 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      if rank E =!= sum bundleRanks then error "expected rank of bundle to equal sum of bundle ranks";
      bundleNames = apply(bundleNames, n -> if ReverseDictionary#?n then ReverseDictionary#n else n);
      vrs := apply(reverse bundleNames, reverse bundleRanks, (E,r) -> apply(reverse toList(1 .. r), i -> new ChernClassSymbol from {i,E}));
-     dgs := splice apply(reverse bundleRanks, r -> 1 .. r);
-     T := (intersectionRing X)[flatten vrs, Degrees => dgs, Global => false, MonomialOrder => apply(reverse bundleRanks, n -> RevLex => n)];
+     dgs := splice apply(reverse bundleRanks, r -> reverse (1 .. r));
+     S := intersectionRing X;
+     T := S[flatten vrs, Degrees => dgs, Global => false, MonomialOrder => apply(reverse bundleRanks, n -> RevLex => n)];
      (A,F,G) := flattenRing T;
      chclasses := apply(vrs, x -> F (1 + sum(x,value)));
      rlns := product chclasses - F promote(chernClass E,T);
@@ -313,27 +315,33 @@ transpose presentation B
 transpose basis B
 (c_1 Q)^3 * (c_1 R)^5 * (c_1 S)^4
 
+-- end of demo
+
 compactMatrixForm = false
 loadPackage "Schubert"
-X = abstractVariety(3,use (QQ[e1,e2,Degrees=>{1,2}]/(e1^4,e2^2,e1^2*e2)))
+A = QQ[e1,e2,Degrees=>{1,2}]
+B = A/truncate(4,ideal vars A)
+describe B
+X = abstractVariety(3,B)
 E = abstractSheaf(X,2,ChernClass => 1 + e1 + e2)
 c_0 E,c_1 E,c_2 E,c_3 E
 P1 = Proj(E,{Q,R})					    -- working on this now ...
-A = intersectionRing P1
-describe A
+C = intersectionRing P1
+degree \ gens C					    -- wrong!
+describe C
 x = c_1 Q
 y = c_1 R
 x*y							    -- expect e2 ?
 
+-- Mike's demo
+
 R = QQ[c1,c2,c3,c4,Degrees=>{1,2,3,4},MonomialOrder=>GRevLex=>{1,2,3,4}]
-R.DIM = 4
 X = abstractVariety(4,R)
-F = abstractSheaf(X, 4, ChernClass=>1+sum gens R)
-peek F
-peek(F ++ F)
+F = abstractSheaf(X, 4, ChernClass=>1+c1+c2+c3+c4)
 segre F
-c = 1 + sum gens R
-a = logg c
+chernClass F
+ch F
+a = logg chernClass F
 expp a
 todd a
 det F
