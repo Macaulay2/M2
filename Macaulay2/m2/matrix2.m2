@@ -446,9 +446,17 @@ monomials(Matrix) := o -> (f) -> (
 --     if any(vrs,i -> i === null) then error "expected a list of variables";
 --     map(target f,,rawMonomials(vrs, m)))
 
-terms RingElement := f -> (
-     (m,c) := flatten \ entries \ coefficients f;
-     apply(m,c,times))
+-- old way, not versatile enough:
+--terms RingElement := f -> (
+--     (m,c) := flatten \ entries \ coefficients f;
+--     apply(m,c,times))
+
+terms RingElement := f -> terms(coefficientRing ring f, f)
+terms(Ring,RingElement) := (k,f) -> (
+     R := ring f;
+     rawR := raw R;
+     (cc,mm) := rawPairs(raw k, raw f);
+     toList apply(cc, mm, (c,m) -> new R from rawTerm(rawR, c, m)))
 
 sortColumns Matrix := o -> (f) -> toList rawSortColumns(
 	  raw f,
