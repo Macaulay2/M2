@@ -161,7 +161,7 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
       temp_monom = M->make_one();
     }
 
-  if (!R->is_commutative_ring())
+  if (!R->is_commutative_ring() || R->cast_to_SchurRing())
     {
       // This is the only non-commutative case so far
       for (index_varpower i = vp; i.valid(); ++i)
