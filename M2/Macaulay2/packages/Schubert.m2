@@ -131,7 +131,6 @@ expression ChernClassSymbol := c -> new FunctionApplication from {new Subscript 
 net ChernClassSymbol := net @@ expression
 
 c = method()
-protect symbol c
 c(ZZ,Symbol) := (n,E) -> value new ChernClassSymbol from {n,E}
 c(ZZ,AbstractSheaf) := (n,E) -> part(n,chernClass E)
 
