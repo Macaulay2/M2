@@ -159,17 +159,27 @@ flattenRing PolynomialRing := opts -> R -> (
      	  k := coefficientRing S;
      	  M1 := monoid S;
      	  n1 := numgens M1;
-     	  M := tensor(M2,M1, Degrees => degrees M2 | toList ( n1 : zerdeg));
+     	  M := tensor(M2,M1, Degrees => (
+		    degrees M2
+		    |
+		    if M2.Options.ConstantCoefficients
+		    then toList ( n1 : zerdeg)
+		    else (
+			 if degreeLength M1 =!= degreeLength M2 then error "expected coefficient ring to have the same degree length";
+			 degrees M1
+			 )
+		    ));
      	  T := k M;
 	  )
      else (
 	  n1 = 0;
 	  T = S M2;
 	  );
-     inc := map(T,S,(vars T)_(toList (n2 .. n2 + n1 - 1)), DegreeMap => d -> zerdeg);
+     degmap := if M2.Options.ConstantCoefficients then d -> zerdeg else identity;
+     inc := map(T,S,(vars T)_(toList (n2 .. n2 + n1 - 1)), DegreeMap => degmap);
      I' := inc I;
      T' := T/I';
-     inc' := map(T',S', promote(matrix inc,T'), DegreeMap => d -> zerdeg);
+     inc' := map(T',S', promote(matrix inc,T'), DegreeMap => degmap);
      pr := map(T',T);
      p' := map(T',R, (vars T')_(toList (0 .. n2-1)) | inc' matrix p);
      q' := map(R,T', vars R | promote(matrix q,R));

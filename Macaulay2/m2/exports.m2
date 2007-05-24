@@ -112,6 +112,7 @@ export {
 	symbol CompleteIntersection,
 	symbol Configuration,
 	symbol Consequences,
+	symbol ConstantCoefficients,
 	symbol CurrentVersion,
 	symbol DD,
 	symbol DIV,
