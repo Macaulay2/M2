@@ -114,10 +114,11 @@ dim AbstractVariety := X -> X.IntersectionRing.DIM
 intersectionRing = method()
 intersectionRing AbstractVariety := X -> X.IntersectionRing
 
-chernClass = method()
+c = chernClass = method()
 chernClass AbstractSheaf := (cacheValue ChernClass) (F -> expp F.ChernCharacter)
 chernClass(ZZ, AbstractSheaf) := (p,F) -> part(p,chernClass F)
 chernClass(ZZ, ZZ, AbstractSheaf) := (p,q,F) -> toList apply(p..q, i -> chernClass(i,F))
+chernClass(ZZ,Symbol) := (n,E) -> value new ChernClassSymbol from {n,E}
 
 ch = method()
 ch AbstractSheaf := (F) -> F.ChernCharacter
@@ -129,10 +130,6 @@ installMethod(symbol <-, ChernClassSymbol, (c,x) -> chernClassValues#c = x)
 value ChernClassSymbol := c -> if chernClassValues#?c then chernClassValues#c else c
 expression ChernClassSymbol := c -> new FunctionApplication from {new Subscript from {symbol c,c#0}, c#1}
 net ChernClassSymbol := net @@ expression
-
-c = method()
-c(ZZ,Symbol) := (n,E) -> value new ChernClassSymbol from {n,E}
-c(ZZ,AbstractSheaf) := (n,E) -> part(n,chernClass E)
 
 OO(AbstractVariety) := X -> (
      A := intersectionRing X;
@@ -294,26 +291,30 @@ end
 compactMatrixForm = false
 loadPackage "Schubert"
 
-Proj(3,{Q,R})
-P3 = Proj(3,{Q,R})
+Proj(3,{R,Q})
+P3 = Proj(3,{R,Q})
 A = intersectionRing P3
-prune A
+c_1 R
+c_1 Q
+c_2 R
+c_2 Q
+transpose presentation A
 basis A
 
-G24 = Grassmannian(2,4,{Q,R})
+G24 = Grassmannian(2,4,{R,Q})
 C = intersectionRing G24
 transpose presentation C
 
-F22 = flagVariety(4,{Q,R},{2,2})
+F22 = flagVariety(4,{R,Q},{2,2})
 A = intersectionRing F22
 transpose presentation A
 basis A
 
-F222 = flagVariety(6,{Q,R,S},{2,2,2})
+F222 = flagVariety(6,{P,R,S},{2,2,2})
 B = intersectionRing F222
 transpose presentation B
 transpose basis B
-(c_1 Q)^3 * (c_1 R)^5 * (c_1 S)^4
+(c_1 P)^3 * (c_1 R)^5 * (c_1 S)^4
 
 -- end of demo
 
