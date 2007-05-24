@@ -236,7 +236,7 @@ numgens EngineRing := R -> #R.generators
 generators EngineRing := opts -> R -> if opts.CoefficientRing === null then R.generators else if opts.CoefficientRing === R then {} else errorGenCoeff()
 
 part(ZZ,RingElement) := RingElement => (d,f) -> (
-     u := select(terms f, t -> d === sum degree t);
+     u := select(terms f, t -> d === first degree t);
      if #u === 0 then 0_(ring f)
      else sum u
      )
@@ -248,6 +248,7 @@ part(List,RingElement) := RingElement => (d,f) -> (
      if #u === 0 then 0_(ring f)
      else sum u
      )
+part(Sequence,RingElement) := Sequence => (s,f) -> apply(s,d->part(d,f))
 
 Ring _ ZZ := RingElement => (R,i) -> (generators R)#i
 
