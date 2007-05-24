@@ -885,19 +885,73 @@ ArrayPairOrNull IM2_RingElement_list_form(
           const Ring * coeffRing, /* ring of the result coefficients */
           const RingElement *f)
 {
-     try {
-	  const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
-	  if (P == 0)
-	    {
-	      ERROR("expected a polynomial");
-	      return 0;
-	    }
-	  return P->list_form(coeffRing, f->get_value());
-     }
-     catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
-     }
+  try {
+    const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
+    if (P == 0)
+      {
+	ERROR("expected a polynomial");
+	return 0;
+      }
+    return P->list_form(coeffRing, f->get_value());
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+const RingElement_array *rawGetParts(const M2_arrayint wts,
+				     const RingElement *f)
+/* Return an array of RingElement's, each having pure weight, and sorted by
+   strictly increasing weight value.  The wt vector values must fit into 
+   a word length integer.  */
+{
+  try {
+    const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
+    if (P == 0)
+      {
+	ERROR("expected a polynomial");
+	return 0;
+      }
+    long relems_len;
+    ring_elem *relems = P->get_parts(wts, f->get_value(), relems_len);
+    // MES: now construct the result array
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+const RingElementOrNull *rawGetPart(const M2_arrayint wts,
+				   const RingElement *f,
+				   bool lobound_given,
+				   bool hibound_given,
+				   long lobound,
+				   long hibound)
+/* Return the sum of all of the terms t of f, which satisfy: lobound <= wt.t <= hibound,
+   where, if lobound_given is false, then lobound is -infinity, and if hibound_given
+   is false, then hibound is infinity. */
+{
+  try {
+    const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
+    if (P == 0)
+      {
+	ERROR("expected a polynomial");
+	return 0;
+      }
+    ring_elem g = P->get_part(wts, 
+			      f->get_value(),
+			      lobound_given,
+			      hibound_given,
+			      lobound,
+			      hibound);
+    return RingElement::make_raw(P,g);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
 int IM2_RingElement_index_if_var(const RingElement *f)

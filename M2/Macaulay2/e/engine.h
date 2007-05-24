@@ -574,6 +574,22 @@ extern "C" {
             const Ring * coeffRing, /* ring of the result coefficients */
             const RingElement *f); /* drg: connected rawPairs */
 
+  const RingElement_array *rawGetParts(const M2_arrayint wts,
+				const RingElement *f);
+  /* Return an array of RingElement's, each having pure weight, and sorted by
+     strictly increasing weight value.  The wt vector values must fit into 
+     a word length integer.  */
+
+  const RingElementOrNull * rawGetPart(const M2_arrayint wts,
+				     const RingElement *f,
+				     M2_bool lobound_given,
+				     M2_bool hibound_given,
+				     long lobound,
+				     long hibound);
+  /* Return the sum of all of the terms t of f, which satisfy: lobound <= wt.t <= hibound,
+     where, if lobound_given is false, then lobound is -infinity, and if hibound_given
+     is false, then hibound is infinity. */
+  
   int IM2_RingElement_index_if_var(const RingElement *f); /* drg: connected rawIndexIfVariable */
   /* if f is a variable of its ring, then the index of that variable is returned.
      If f is not a variable, then -1 is returned. */

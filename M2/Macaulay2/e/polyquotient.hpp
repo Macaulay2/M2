@@ -192,6 +192,19 @@ public:
     return numerR_->PolyRing::list_form(coeffR,f);
   }
 
+  virtual ring_elem * get_parts(const M2_arrayint wts, const ring_elem f, long &result_len) const {
+    return numerR_->PolyRing::get_parts(wts,f,result_len);
+  }
+
+  virtual ring_elem get_part(const M2_arrayint wts, 
+			      const ring_elem f,
+			      bool lobound_given,
+			      bool hibound_given,
+			      long lobound,
+			      long hibound) const {
+    return numerR_->PolyRing::get_part(wts,f,lobound_given,hibound_given,lobound,hibound);
+  }
+
   virtual ring_elem make_flat_term(const ring_elem a, const int *m) const {
     ring_elem result = numerR_->PolyRing::make_flat_term(a,m);
     normal_form(result);

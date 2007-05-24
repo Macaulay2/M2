@@ -156,6 +156,13 @@ public:
   ring_elem lead_term(const ring_elem f) const; // copies the lead term
 
   virtual ArrayPairOrNull list_form(const Ring *coeffR, const ring_elem f) const;
+  virtual ring_elem * get_parts(const M2_arrayint wts, const ring_elem f, long &result_len) const;
+  virtual ring_elem get_part(const M2_arrayint wts, 
+			      const ring_elem f,
+			      bool lobound_given,
+			      bool hibound_given,
+			      long lobound,
+			      long hibound) const;
 
   virtual void mult_coeff_to(ring_elem a, ring_elem &f) const;
 

@@ -1513,6 +1513,24 @@ ArrayPairOrNull PolyRing::list_form(const Ring *coeffR, const ring_elem f) const
   return result;
 }
 
+ring_elem * PolyRing::get_parts(const M2_arrayint wts, const ring_elem f, long &result_len) const
+{
+  // MES: being written
+  return NULL;
+}
+
+ring_elem PolyRing::get_part(const M2_arrayint wts, 
+			      const ring_elem f,
+			      bool lobound_given,
+			      bool hibound_given,
+			      long lobound,
+			      long hibound) const
+{
+  // MES: being written
+  Nterm *t = 0;
+  return t;
+}
+
 ring_elem PolyRing::make_logical_term(const Ring *coeffR, const ring_elem a, const int *exp0) const
 {
   const PolynomialRing *logicalK = coeffR->cast_to_PolynomialRing();
