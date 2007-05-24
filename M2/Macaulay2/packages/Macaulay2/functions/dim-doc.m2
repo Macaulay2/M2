@@ -40,13 +40,6 @@ document {
           "R = ZZ/101[x,dx,y,dy,WeylAlgebra => {x=>dx, y=>dy}];",
 	  "dim R"
 	  },
-     "An example over ", TO ZZ, ":",
-     EXAMPLE {
-	  "R = ZZ[a,b]/(a*b-1)",
-	  "dim R",
-	  "S = R[x,y]",
-	  "dim S"
-	  },
      SeeAlso => {codim, (dim,AffineVariety)}
      }
 document { 
