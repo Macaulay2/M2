@@ -285,7 +285,7 @@ numgens PolynomialRing := R -> numgens monoid R
 isSkewCommutative PolynomialRing := R -> isSkewCommutative coefficientRing R or 0 < #(options R).SkewCommutative
 weightRange = method()
 weightRange(List,RingElement) := (w,f) -> rawWeightRange(w,raw f)
-weightRange RingElement := f -> weightRange(first degrees ring f, f)
+weightRange RingElement := f -> weightRange(first \ degrees ring f, f)
 parts = method()
 parts RingElement := f -> sum(select(apply(((i,j) -> i .. j) weightRange f, n -> part_n f), p -> p != 0), p -> new Parenthesize from {p})
 -- Local Variables:
