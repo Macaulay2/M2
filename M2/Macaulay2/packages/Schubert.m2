@@ -151,26 +151,31 @@ flagVariety = method()
 flagVariety(ZZ,List,List) := (rk,bundleNames,bundleRanks) -> flagVariety(point,rk,bundleNames,bundleRanks)
 flagVariety(AbstractVariety,ZZ,List,List) := (X,rk,bundleNames,bundleRanks) -> flagVariety(OO_X^rk,bundleNames,bundleRanks)
 flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
+     Ord := GRevLex;
+     switch := identity;
+     -- bundleNames = reverse bundleNames; bundleRanks = reverse bundleRanks; Ord = RevLex; switch = reverse;
      X := E.AbstractVariety;
      n := #bundleRanks;
      if n =!= #bundleNames then error "name list and rank list should have same length";
      if rank E =!= sum bundleRanks then error "expected rank of bundle to equal sum of bundle ranks";
      bundleNames = apply(bundleNames, n -> if ReverseDictionary#?n then ReverseDictionary#n else n);
-     vrs := apply(reverse bundleNames, reverse bundleRanks, (E,r) -> apply(reverse toList(1 .. r), i -> new ChernClassSymbol from {i,E}));
-     dgs := splice apply(reverse bundleRanks, r -> reverse (1 .. r));
+     vrs := apply(bundleNames, bundleRanks, (E,r) -> apply(switch toList(1 .. r), i -> new ChernClassSymbol from {i,E}));
+     dgs := splice apply(bundleRanks, r -> switch (1 .. r));
      S := intersectionRing X;
-     T := S[flatten vrs, Degrees => dgs, Global => false, MonomialOrder => apply(reverse bundleRanks, n -> RevLex => n)];
-     (A,F,G) := flattenRing T;
+     T := S[flatten vrs, Degrees => dgs, Global => false, MonomialOrder => apply(bundleRanks, n -> Ord => n), ConstantCoefficients => false];
+     -- (A,F,G) := flattenRing T;
+     A := T; F := identity;
      chclasses := apply(vrs, x -> F (1 + sum(x,value)));
      rlns := product chclasses - F promote(chernClass E,T);
-     rlns = apply(1 .. sum bundleRanks, i -> part_i rlns);
+     rlns = sum @@ last \ sort pairs partition(degree,terms(QQ,rlns));
      B := A/rlns;
-     (C,H,I) := flattenRing B;
+     -- (C,H,I) := flattenRing B;
+     C := B; H := identity;
      use C;
      DIM := (intersectionRing X).DIM + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
      FV := abstractVariety(DIM,C);
      scan(n, i -> (
-	       nm := bundleNames#i;
+	       nm := bundleNames#i;		    -- a reversal here, too!
 	       bdl := abstractSheaf(FV,bundleRanks#i, ChernClass => H promote(chclasses#i,B));
 	       globalReleaseFunction(nm,value nm);
 	       globalAssignFunction(nm,bdl);
@@ -362,24 +367,27 @@ transpose basis B
 
 -- end of demo
 
-compactMatrixForm = false
+-- Dan's development section:
 loadPackage "Schubert"
-A = QQ[e1,e2,Degrees=>{1,2}]
+compactMatrixForm = false
+A = QQ[e1,e2,e3,Degrees=>{1,2,3}]
 B = A/truncate(4,ideal vars A)
 describe B
 X = abstractVariety(3,B)
-E = abstractSheaf(X,2,ChernClass => 1 + e1 + e2)
-c_0 E,c_1 E,c_2 E,c_3 E
-P1 = Proj(E,{Q,R})					    -- working on this now ...
-C = intersectionRing P1
-degree \ gens C					    -- wrong!
+E = abstractSheaf(X,3,ChernClass => 1 + e1 + e2 + e3)
+P = Proj(E,{W,Q})
+C = intersectionRing P
+gens C
+degree \ gens C
 describe C
-x = c_1 Q
-y = c_1 R
-x*y							    -- expect e2 ?
+c_1 Q
+c_1 W
+c_2 W
+rank Q
+c_1 det Q
+promote(e1,C)
 
 -- Mike's demo
-
 loadPackage "Schubert"
 R = QQ[c1,c2,c3,c4,Degrees=>{1,2,3,4},MonomialOrder=>GRevLex=>{1,2,3,4}]
 X = abstractVariety(4,R)
