@@ -1,0 +1,37 @@
+Macaulay 2, version 0.9.96
+with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, TangentCone
+--loading /home/dan/.Macaulay2/init.m2
+
+i1 : debug Core
+
+i2 : QQ[x]
+
+o2 = QQ[x]
+
+o2 : PolynomialRing
+
+i3 : rawPairs(raw ZZ, raw x)
+-- SIGSEGV
+-- stack trace:
+level 0 -- return addr: 0x080521b2 -- frame: 0xbfffccd8
+level 1 -- return addr: 0xffffe420 -- frame: 0xbfffccf8
+level 2 -- return addr: 0x081b7f34 -- frame: 0xbfffd018
+level 3 -- return addr: 0x081d3fee -- frame: 0xbfffd068
+level 4 -- return addr: 0x08079127 -- frame: 0xbfffd0a8
+level 5 -- return addr: 0x080c4558 -- frame: 0xbfffd0f8
+level 6 -- return addr: 0x08065458 -- frame: 0xbfffd528
+level 7 -- return addr: 0x0806653a -- frame: 0xbfffd668
+level 8 -- return addr: 0x0806712e -- frame: 0xbfffd6c8
+level 9 -- return addr: 0x080c4558 -- frame: 0xbfffd758
+level 10 -- return addr: 0x080c363b -- frame: 0xbfffdb88
+level 11 -- return addr: 0x08065458 -- frame: 0xbfffdfb8
+level 12 -- return addr: 0x08065f53 -- frame: 0xbfffe0f8
+level 13 -- return addr: 0x08066c32 -- frame: 0xbfffe178
+level 14 -- return addr: 0x08052989 -- frame: 0xbfffe1e8
+level 15 -- return addr: 0x08053782 -- frame: 0xbffff2f8
+level 16 -- return addr: 0x40732e14 -- frame: 0xbffff318
+level 17 -- return addr: 0x0804de61 -- frame: 0xbffff388
+/bin/sh: line 1:  8402 Segmentation fault      M2 --no-readline --print-width 189
+
+Process M2 exited abnormally with code 139
+
