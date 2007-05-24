@@ -2,8 +2,8 @@
 
 newPackage(
 	"SchurRings",
-    	Version => "1.0", 
-    	Date => "March 11, 2005",
+    	Version => "0.2", 
+    	Date => "May 23, 2007",
     	Authors => {
 	     {Name => "Michael Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"},
 	     {Name => "Hal Schenck"}
@@ -12,7 +12,7 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export {schurRing, SchurRing}
+export {schurRing, SchurRing, symmRing, toS, toE, toP}
 -- Improve the names/interface of the following:
 --, symmRing, plethysmMap, jacobiTrudiE, plethysm, cauchy, bott}
 
@@ -146,81 +146,6 @@ schurRing(Symbol,ZZ) := SchurRing => (p,n) -> (
      S.use S;
      S)
 
-beginDocumentation()
-
-document {
-     Key => "SchurRings",
-     Headline => "rings representing irreducible representations of GL(n)",
-     "This package make computations in the representation ring of GL(n) possible.",
-     PARA{},
-     "Given a positive integer ", TT "n", ", 
-     we may define a polynomial ring over ", TO "ZZ", " in ", TT "n", " variables, whose
-     monomials correspond to the irreducible representations of GL(n), and where 
-     multiplication is given by the decomposition of the tensor product of representations",
-     PARA{},
-     "We create such a ring in Macaulay 2 using the ", TO schurRing, " function:",
-     EXAMPLE "R = schurRing(s,4);",
-     "A monomial represents the irreducible representation with a given highest weight. 
-     The standard 4 dimensional representation is",
-     EXAMPLE "V = s_{1}",
-     "We may see the dimension of the corresponding irreducible representation using ", TO "dim",
-     ":",
-     EXAMPLE "dim V",
-     "The third symmetric power of V is obtained by",
-     EXAMPLE {
-	  "W = s_{3}",
-     	  "dim W"},
-     "and the third exterior power of V can be obtained using",
-     EXAMPLE {
-	  "U = s_{1,1,1}",
-	  "dim U"},
-     "Multiplication of elements corresponds to tensor product of representations.  The 
-     value is computed using a variant of the Littlewood-Richardson rule.",
-     EXAMPLE {
-	  "V * V",
-	  "V^3"},
-     "One cannot make quotients of this ring, and Groebner bases and related computations
-     do not work, but I'm not sure what they would mean..."
-     }
-
-document {
-     Key => {schurRing,(schurRing,Symbol,ZZ)},
-     Headline => "make a Schur ring",
-     TT "schurRing(s,n)", " -- creates a Schur ring of degree n with variables based on the symbol s",
-     PARA{},
-     "This is the representation ring for the general linear group of n by n matrices.",
-     PARA{},
-     SeeAlso => {"SchurRing"}}
-
-document {
-     Key => {SchurRing, (degreeLength,SchurRing), (coefficientRing, SchurRing), (monoid, SchurRing)},
-     Headline => "the class of all Schur rings",
-     "A Schur ring is the representation ring for the general linear group of 
-     n by n matrices, and one can be constructed with ", TO schurRing, ".",
-     EXAMPLE "R = schurRing(s, 4)",
-     "The element corresponding to the Young diagram ", TT "{3,2,1}", " is
-     obtained as follows.",
-     EXAMPLE "s_{3,2,1}",
-     "The dimension of the underlying virtual representation can be obtained
-     with ", TO "dim", ".",
-     EXAMPLE "dim s_{3,2,1}",
-     "Multiplication in the ring comes from tensor product of representations.",
-     EXAMPLE "s_{3,2,1} * s_{1,1}",
-     SeeAlso => {schurRing}}
-
--- document {
---      Key => (symbol _, SchurRing, List),
---      Headline => "make an element of a Schur ring",
---      TT "S_v", " -- produce the element of the Schur ring ", TT "S", " corresponding
---      to the Young diagram whose rows have lengths as in the list ", TT "v", ".",
---      PARA{},
---      "The row lengths should be in decreasing order.",
---      SeeAlso => "SchurRing"}
-
------------------------------------------------------------------------------
--- the rest of this file used to be schur.m2
------------------------------------------------------------------------------
-
 -- BUG in M2: R_0 .. R_n does not always give elements in the ring R!!
 -- workaround:
 varlist = (i,j,R) -> apply(i..j, p -> R_p)
@@ -292,7 +217,7 @@ etos = (d,R) -> (
      R.toSchur#d
      )     
 
-toS = (f) -> (
+toSold = (f) -> (
      -- f is a homogeneous polynomial in 'symmRing n', of degree d
      d := first degree f;
      R := ring f;
@@ -307,6 +232,19 @@ toS = (f) -> (
      --result := sum apply(v, w -> lift(w#1,ZZ) * S_(w#0));
      --result
      apply(v, v1 -> (v1#0, lift(v1#1,ZZ)))
+     )
+
+toS = (f) -> (
+     -- f is a homogeneous polynomial in 'symmRing n', of degree d
+     d := first degree f;
+     R := ring f;
+     (E,C,P) = etos(d,R);
+     C = substitute(C, coefficientRing R);
+     P = transpose matrix {apply(P, p -> s_p)};
+     Ef = contract(E, matrix{{f}});
+     Xf = transpose substitute(Ef,coefficientRing R);
+     XfC = substitute(Xf*C,ring P);
+     (XfC * P)_(0,0)
      )
 
 toE = (f) -> (ring f).mapToE f
@@ -372,6 +310,82 @@ plethysm(List,RingElement) := (lambda,g) -> (
      Rf := symmRing d;
      f := jacobiTrudiE(lambda,Rf);
      plethysm(f,g))
+
+beginDocumentation()
+
+document {
+     Key => "SchurRings",
+     Headline => "rings representing irreducible representations of GL(n)",
+     "This package make computations in the representation ring of GL(n) possible.",
+     PARA{},
+     "Given a positive integer ", TT "n", ", 
+     we may define a polynomial ring over ", TO "ZZ", " in ", TT "n", " variables, whose
+     monomials correspond to the irreducible representations of GL(n), and where 
+     multiplication is given by the decomposition of the tensor product of representations",
+     PARA{},
+     "We create such a ring in Macaulay 2 using the ", TO schurRing, " function:",
+     EXAMPLE "R = schurRing(s,4);",
+     "A monomial represents the irreducible representation with a given highest weight. 
+     The standard 4 dimensional representation is",
+     EXAMPLE "V = s_{1}",
+     "We may see the dimension of the corresponding irreducible representation using ", TO "dim",
+     ":",
+     EXAMPLE "dim V",
+     "The third symmetric power of V is obtained by",
+     EXAMPLE {
+	  "W = s_{3}",
+     	  "dim W"},
+     "and the third exterior power of V can be obtained using",
+     EXAMPLE {
+	  "U = s_{1,1,1}",
+	  "dim U"},
+     "Multiplication of elements corresponds to tensor product of representations.  The 
+     value is computed using a variant of the Littlewood-Richardson rule.",
+     EXAMPLE {
+	  "V * V",
+	  "V^3"},
+     "One cannot make quotients of this ring, and Groebner bases and related computations
+     do not work, but I'm not sure what they would mean..."
+     }
+
+document {
+     Key => {schurRing,(schurRing,Symbol,ZZ)},
+     Headline => "make a Schur ring",
+     TT "schurRing(s,n)", " -- creates a Schur ring of degree n with variables based on the symbol s",
+     PARA{},
+     "This is the representation ring for the general linear group of n by n matrices.",
+     PARA{},
+     SeeAlso => {"SchurRing"}}
+
+document {
+     Key => {SchurRing, (degreeLength,SchurRing), (coefficientRing, SchurRing), (monoid, SchurRing)},
+     Headline => "the class of all Schur rings",
+     "A Schur ring is the representation ring for the general linear group of 
+     n by n matrices, and one can be constructed with ", TO schurRing, ".",
+     EXAMPLE "R = schurRing(s, 4)",
+     "The element corresponding to the Young diagram ", TT "{3,2,1}", " is
+     obtained as follows.",
+     EXAMPLE "s_{3,2,1}",
+     "The dimension of the underlying virtual representation can be obtained
+     with ", TO "dim", ".",
+     EXAMPLE "dim s_{3,2,1}",
+     "Multiplication in the ring comes from tensor product of representations.",
+     EXAMPLE "s_{3,2,1} * s_{1,1}",
+     SeeAlso => {schurRing}}
+
+-- document {
+--      Key => (symbol _, SchurRing, List),
+--      Headline => "make an element of a Schur ring",
+--      TT "S_v", " -- produce the element of the Schur ring ", TT "S", " corresponding
+--      to the Young diagram whose rows have lengths as in the list ", TT "v", ".",
+--      PARA{},
+--      "The row lengths should be in decreasing order.",
+--      SeeAlso => "SchurRing"}
+
+end
+-----------------------------------------------------------------------------
+-- the rest of this file used to be schur.m2
+-----------------------------------------------------------------------------
 
 -- cauchy = (i,f,g) -> (
 --      -- f and g are elements of symmRing's (possibly different)
@@ -571,6 +585,7 @@ end
 
 restart
 loadPackage "SchurRings"
+debug SchurRings
 R = symmRing 4
 describe R
 f = jacobiTrudiE({4,1},R)
