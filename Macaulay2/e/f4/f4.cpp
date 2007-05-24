@@ -522,6 +522,7 @@ void F4GB::tail_reduce()
   int ncols = mat->columns.size();
   
   KK->dense_row_allocate(gauss_row, ncols);
+  if (using_syz) KK->dense_row_allocate(syz_row, nrows);  
   for (int i=nrows-1; i>=0; i--)
     {
       row_elem &r = mat->rows[i];
@@ -529,6 +530,8 @@ void F4GB::tail_reduce()
       // At this point, we should have an element to reduce
       bool anychange = false;
       KK->dense_row_fill_from_sparse(gauss_row, r.len, r.coeffs, r.comps);
+      if (syz->rows.size()==nrows)//!!! 
+	syz_dense_row_fill_from_sparse(i); // fill syz_row from row[i]
       int firstnonzero = r.comps[0];
       int first = (r.len == 1 ? ncols :  r.comps[1]);
       int last = r.comps[r.len-1];
@@ -538,8 +541,9 @@ void F4GB::tail_reduce()
 	  {
 	    anychange = true;
 	    row_elem &pivot_rowelem = mat->rows[pivotrow]; // pivot_rowelems.coeffs is set at this point
-	    syzygy_row_record_reduction(pivotrow, 
-					KK->lead_coeff(r.coeffs), KK->lead_coeff(pivot_rowelem.coeffs));
+	    if (syz->rows.size()==nrows)//!!! 
+	      syzygy_row_record_reduction(pivotrow, 
+					  KK->lead_coeff(r.coeffs), KK->lead_coeff(pivot_rowelem.coeffs));    
 	    KK->dense_row_cancel_sparse(gauss_row, pivot_rowelem.len, pivot_rowelem.coeffs, pivot_rowelem.comps);
 	    int last1 = pivot_rowelem.comps[pivot_rowelem.len-1];
 	    if (last1 > last) last = last1;
@@ -554,14 +558,35 @@ void F4GB::tail_reduce()
 	  KK->deallocate_F4CCoefficientArray(r.coeffs, r.len); // the coeff array is owned by the row here
 	  r.len = 0;
 	  KK->dense_row_to_sparse_row(gauss_row, r.len, r.coeffs, r.comps, firstnonzero, last); 
+	  if (syz->rows.size()==nrows)//!!! 
+	    if (using_syz) {
+	      row_elem& s = syz->rows[i];
+	      if (s.len>0) // the opposite should not happen
+		{
+		  int* scoeffs = static_cast<int *>(s.coeffs);
+		  F4Mem::coefficients.deallocate(scoeffs);
+		  F4Mem::components.deallocate(s.comps);
+		  s.len = 0;
+		}
+	      syz_dense_row_to_sparse_row(syz->rows[i]);
+	      // the above line leaves syz_row zero
+	    }
 	}
       else
-	KK->dense_row_clear(gauss_row, firstnonzero, last);
+	{
+	  KK->dense_row_clear(gauss_row, firstnonzero, last);
+	  KK->dense_row_clear(gauss_row, 0, syz->columns.size()-1); //!!!lazy
+	}
       if (r.len > 0)
-	KK->sparse_row_make_monic(r.len, r.coeffs);
+	{
+	  if (syz->rows.size()==nrows)//!!! 
+	    syzygy_row_divide(i, static_cast<int*>(r.coeffs)[0]);
+	  KK->sparse_row_make_monic(r.len, r.coeffs);	  
+	}
     }
 
   KK->dense_row_deallocate(gauss_row);
+  if (using_syz) KK->dense_row_deallocate(syz_row);    
 }
 
 ///////////////////////////////////////////////////
