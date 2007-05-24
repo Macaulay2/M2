@@ -621,6 +621,8 @@ net Superscript := x -> (
      else net x#0 | n^(1+depth n)
      )
 
+expectExponent = n -> if height n < 2 then n = (stack( 2 - height n : "", n))^1 else n
+
 net Power := v -> (
      x := v#0;
      y := v#1;
@@ -632,14 +634,14 @@ net Power := v -> (
 	       t := stack(nety,"",nopars x#1);
 	       horizontalJoin (
 		    if precedence x < PowerPrecedence
-		    then ( bigParenthesize net x#0, t)
+		    then ( bigParenthesize expectExponent net x#0, t)
 		    else (                 net x#0, t)
 		    )
 	       )
 	  else (
 	       horizontalJoin (
 		    if precedence x < PowerPrecedence
-		    then ( bigParenthesize net x, nety)
+		    then ( bigParenthesize expectExponent net x, nety)
 		    else (            	   net x, nety)
 		    )
 	       )
