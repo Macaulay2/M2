@@ -896,6 +896,44 @@ export rawPairs(e:Expr):Expr := (
      );
 setupfun("rawPairs",rawPairs);
 
+export rawGetParts(e:Expr):Expr := (
+     when e
+     is args:Sequence do
+     if length(args) == 2 then 
+     if !isSequenceOfSmallIntegers(args.0) then WrongArg(1,"a sequence of small integers") else
+     when args.1 is x:RawRingElement do toExpr( 
+	  Ccode( RawMatrixArrayOrNull, "(engine_RawMatrixArrayOrNull)rawGetParts(",
+	       "(M2_arrayint)", getSequenceOfSmallIntegers(args.0), ",",
+	       "(RingElement*)", x, 
+	       ")" ))
+     else WrongArg(2,"a raw ring element")
+     else WrongNumArgs(2)
+     else WrongNumArgs(2)
+     );
+setupfun("rawGetParts",rawGetParts);
+
+export rawGetPart(e:Expr):Expr := (
+     when e
+     is args:Sequence do
+     if length(args) != 4 then WrongNumArgs(4) else
+     if !isSequenceOfSmallIntegers(args.0) then WrongArg(1,"a sequence of small integers") else
+     when args.1 is x:RawRingElement do
+     if !isNullOrSmallInt(args.2) then WrongArg(3,"null or a small integer") else
+     if !isNullOrSmallInt(args.3) then WrongArg(4,"null or a small integer") else
+     toExpr( 
+	  Ccode( RawRingElementOrNull, "(engine_RawRingElementOrNull)rawGetPart(",
+	       "(M2_arrayint)", getSequenceOfSmallIntegers(args.0), ",",
+	       "(RingElement*)", x, ",",
+	       args.2 != nullE, ",",
+	       args.3 != nullE, ",",
+     	       if args.2 != nullE then toInt(args.2) else 0, ",",
+     	       if args.3 != nullE then toInt(args.3) else 0,
+	       ")" ))
+     else WrongArg(2,"a raw ring element")
+     else WrongNumArgs(4)
+     );
+setupfun("rawGetPart",rawGetPart);
+
 export ringElementMod(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
