@@ -1513,9 +1513,20 @@ ArrayPairOrNull PolyRing::list_form(const Ring *coeffR, const ring_elem f) const
   return result;
 }
 
+struct part_elem : our_new_delete{
+  part_elem *next;
+  long wt;
+  Nterm head;
+  Nterm *inresult;
+};
+
 ring_elem * PolyRing::get_parts(const M2_arrayint wts, const ring_elem f, long &result_len) const
 {
-  // MES: being written
+  // (1) Make a hashtable: keys are weight values, values are indices into an array
+  // (2) Loop over all terms, inserting a copy of each term at the correct weight value
+  // (3) Sort the array, by increasing weight values.
+  // (4) Make an array, copy the elems to it.
+
   return NULL;
 }
 
@@ -1541,6 +1552,7 @@ ring_elem PolyRing::get_part(const M2_arrayint wts,
       inresult = inresult->next;
     }
 
+  inresult->next = 0;
   deletearray(exp);
   return head.next;
 }
