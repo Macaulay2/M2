@@ -10,7 +10,10 @@ document {
 	  "x" => {"an argument for ", TT "f", " that has ", ofClass CacheTable, " stored in it under ", TT "x.cache"}
 	  },
      Outputs => {
-	  { TT "f x", " is returned, but the value is saved in ", TT "x.cache#KEY", " and not recomputed later" }
+	  { TT "f x", " is returned, but the value is saved in ", TT "x.cache#KEY", " and not recomputed later.
+	       However, if the value found in ", TT "x.cache#KEY", " is ", ofClass CacheFunction, ", such as is
+	       returned by ", TT "(stashValue KEY) f", ", then the value of ", TT "x.cache#KEY x", " is returned instead, after
+	       first removing ", TT "x.cache#KEY", " from ", TT "x.cache", "." }
 	  },
      EXAMPLE {
 	  "x = new HashTable from { val => 1000, cache => new CacheTable }",
@@ -34,7 +37,11 @@ document {
 	  "x" => MutableHashTable => { "an argument for ", TT "f" }
 	  },
      Outputs => {
-	  { TT "f x", " is returned, but the value is saved in ", TT "x#KEY", " and not recomputed later" }
+	  { "The value of ", TT "f x", " is returned, but the value is saved in ", TT "x#KEY", " and not recomputed later.
+	       However, if the value found in ", TT "x#KEY", " is ", ofClass CacheFunction, ", such as is
+	       returned by ", TT "(stashValue KEY) f", ", then the value of ", TT "x#KEY x", " is returned instead, after
+	       first removing ", TT "x#KEY", " from ", TT "x", "."
+	       }
 	  },
      EXAMPLE {
 	  "x = new MutableHashTable from { val => 1000 }",
