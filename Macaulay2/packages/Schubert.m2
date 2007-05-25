@@ -221,11 +221,11 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
 	  };
      (FV,p))
 
-Grassmannian(ZZ,AbstractSheaf,List) := opts -> (k,E,bundleNames) -> flagVariety(E,bundleNames,{k,rank E-k})
+Grassmannian(ZZ,AbstractSheaf,List) := opts -> (k,E,bundleNames) -> flagVariety(E,bundleNames,{rank E-k,k})
 Grassmannian(ZZ,ZZ,AbstractVariety,List) := opts -> (k,n,X,bundleNames) -> Grassmannian(k,OO_X^n,bundleNames)
 Grassmannian(ZZ,ZZ,List) := opts -> (k,n,bundleNames) -> Grassmannian(k,n,point,bundleNames)
 
-Proj(AbstractSheaf,List) := (E,bundleNames) -> Grassmannian(E.rank - 1,E,bundleNames)
+Proj(AbstractSheaf,List) := (E,bundleNames) -> Grassmannian(1,E,bundleNames)
 Proj(ZZ,AbstractVariety,List) := (n,X,bundleNames) -> Proj(OO_X^(n+1),bundleNames)
 Proj(ZZ,List) := (n,bundleNames) -> Proj(OO_point^(n+1),bundleNames)
 
@@ -533,15 +533,14 @@ loadPackage "Schubert"
 AG = intersectionRing Gc
 -- Proj(X,dual(symm(2,Qc)),z,f);
 -- totalspace(X,Gc);
-(X,q) = Proj(dual symm(2,Qc),{K,L})
+(X,q) = Proj(dual symm_2 Qc,{K,L})
 AX = intersectionRing X
 -- B := symm(5,Qc) - symm(3,Qc) * o(-z);
 B = abstractSheaf(X,q^* ch symm(5,Qc) - q^* ch symm(3,Qc) * ch dual L)
--- rank(B);
-rank B
 -- chern(11,B);
 c_11 B
 -- integral(chern(11,B));
+p_* q_* c_11 B
 -- Ans: 609250
 
 -- test wedge, symm for small cases
