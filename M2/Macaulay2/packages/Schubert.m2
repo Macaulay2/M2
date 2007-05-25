@@ -542,6 +542,22 @@ loadPackage "Schubert"
 B = abstractSheaf(X,q^* ch symm(5,Qc) - q^* ch symm(3,Qc) * ch dual L)
 integral c_11 B
 
+(Gc,p) = Grassmannian(3,5,{Sc,Qc})
+(X,q) = Proj(dual symm_2 Qc,{K,L})
+B = abstractSheaf(X,q^* ch symm(5,Qc) - q^* ch symm(3,Qc) * ch dual L)
+c_11 B
+p_* q_* c_11 B
+-- Ans: 609250
+
+restart
+loadPackage "Schubert"
+(Gc,p) = Grassmannian(3,5,{Sc,Qc})
+(X,q) = Proj(dual symm_7 Qc,{K,L})
+time B = abstractSheaf(X,q^* ch symm(15,Qc) - q^* ch symm(3,Qc) * ch dual L)
+rank B -- 126
+time p_* q_* c_41 B
+assert( 99992296084705144978200 == oo)
+       
 -- test wedge, symm for small cases
 restart
 R = QQ[a,b,c,d,e1,e2,e3,e4,t,MonomialOrder=>Eliminate 4]
