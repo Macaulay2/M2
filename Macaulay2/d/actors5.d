@@ -298,6 +298,12 @@ setuppostfix(TildeS,Tildefun);
 ParenStarParenfun(rhs:Code):Expr := unarymethod(rhs,ParenStarParenS);
 setuppostfix(ParenStarParenS,ParenStarParenfun);
 
+UnderscoreStarfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreStarS);
+setuppostfix(UnderscoreStarS,UnderscoreStarfun);
+
+PowerStarfun(rhs:Code):Expr := unarymethod(rhs,PowerStarS);
+setuppostfix(PowerStarS,PowerStarfun);
+
 underscorefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreS);
 setup(UnderscoreS,underscorefun);
 
