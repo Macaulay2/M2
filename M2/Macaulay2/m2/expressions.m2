@@ -152,6 +152,7 @@ Parenthesize = new WrapperType of Expression
 Parenthesize.synonym = "possibly parenthesized expression"
 net Parenthesize := net @@ first
 toString Parenthesize := toString @@ first
+value' Parenthesize := first
 -----------------------------------------------------------------------------
 Sum = new WrapperType of AssociativeExpression
 Sum.synonym = "sum expression"
