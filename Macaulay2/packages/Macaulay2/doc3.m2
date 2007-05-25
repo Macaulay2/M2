@@ -74,6 +74,16 @@ document {
      }
 
 document {
+     Key => symbol ^*,
+     Headline => "a unary postfix operator, used for indicating pullback maps"
+     }
+
+document {
+     Key => symbol _*,
+     Headline => "a unary postfix operator, used for indicating pushforward maps"
+     }
+
+document {
      Key => symbol <==>,
      Headline => "a binary operator"
      }
