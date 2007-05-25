@@ -12,37 +12,37 @@ newPackage(
     	)
 
 export {
-     sectionClass,
      AbstractSheaf,
-     AbstractVariety,
-     AbstractVarietyMap,
-     ChernCharacter,
-     ChernClass,
-     ChernClassSymbol,
-     DIM,
-     IntersectionRing,
-     PullBack,
-     PushForward,
-     SectionClass,
-     TangentBundle,
-     ToddClass,
      abstractSheaf,
+     AbstractVariety,
      abstractVariety,
+     AbstractVarietyMap,
      adams,
      ch,
+     ChernCharacter,
+     ChernClass,
      chernClass,
+     ChernClassSymbol,
      ctop,
+     DIM,
      expp,
      flagVariety,
      integral,
+     IntersectionRing,
      intersectionRing,
      logg,
      point,
+     PullBack,
+     PushForward,
      reciprocal,
      schur,
+     SectionClass,
+     sectionClass,
      segre,
      symm,
+     TangentBundle,
      todd,
+     ToddClass,
      wedge
      }
 
@@ -131,6 +131,10 @@ abstractVariety(ZZ,Ring) := opts -> (DIM,A) -> (
 	  if opts.TangentBundle =!= null then TangentBundle => opts.TangentBundle
      	  }
      )
+
+integral = method()
+integral QQ := identity
+
 point = abstractVariety(0,QQ)
 dim AbstractVariety := X -> X.DIM
 
@@ -219,6 +223,7 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
 	       if ring r =!= S then error "pullback expected element of correct ring";
 	       H promote(F promote(r,T), B))
 	  };
+     integral C := r -> integral p_* r;
      (FV,p))
 
 Grassmannian(ZZ,AbstractSheaf,List) := opts -> (k,E,bundleNames) -> flagVariety(E,bundleNames,{rank E-k,k})
@@ -228,8 +233,6 @@ Grassmannian(ZZ,ZZ,List) := opts -> (k,n,bundleNames) -> Grassmannian(k,n,point,
 Proj(AbstractSheaf,List) := (E,bundleNames) -> Grassmannian(1,E,bundleNames)
 Proj(ZZ,AbstractVariety,List) := (n,X,bundleNames) -> Proj(OO_X^(n+1),bundleNames)
 Proj(ZZ,List) := (n,bundleNames) -> Proj(OO_point^(n+1),bundleNames)
-
-integral = f -> coefficient((ring f).point, f)		    -- not right, sign could be wrong!
 
 reciprocal = method()
 reciprocal RingElement := (A) -> (
@@ -529,19 +532,15 @@ loadPackage "Schubert"
 
 -- conics on a quintic 3-fold, a schubert-classic example from Rahul:
 -- grass(3,5,c,all);
-(Gc,p) = Grassmannian(3,5,{Sc,Qc})
-AG = intersectionRing Gc
 -- Proj(X,dual(symm(2,Qc)),z,f);
 -- totalspace(X,Gc);
-(X,q) = Proj(dual symm_2 Qc,{K,L})
-AX = intersectionRing X
 -- B := symm(5,Qc) - symm(3,Qc) * o(-z);
-B = abstractSheaf(X,q^* ch symm(5,Qc) - q^* ch symm(3,Qc) * ch dual L)
--- chern(11,B);
-c_11 B
 -- integral(chern(11,B));
-p_* q_* c_11 B
 -- Ans: 609250
+(Gc,p) = Grassmannian(3,5,{Sc,Qc})
+(X,q) = Proj(dual symm_2 Qc,{K,L})
+B = abstractSheaf(X,q^* ch symm(5,Qc) - q^* ch symm(3,Qc) * ch dual L)
+integral c_11 B
 
 -- test wedge, symm for small cases
 restart
