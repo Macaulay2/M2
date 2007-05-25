@@ -453,10 +453,27 @@ protect QuotientRingHook
 -----------------------------------------------------------------------------
 -- stashing or caching computed values for future reference in functions that take a mutable hash table as input
 
-cacheValue = key -> f -> x -> (
-     c := try x.cache else x.cache = new CacheTable;
-     if c#?key then c#key else c#key = f x)
-stashValue = key -> f -> x -> if x#?key then x#key else x#key = f x
+CacheFunction = new Type of FunctionClosure
+net CacheFunction := f -> "--a cache function--"
+cacheValue = key -> f -> new CacheFunction from (x -> (
+     	  c := try x.cache else x.cache = new CacheTable;
+     	  if c#?key then (
+	       val := c#key;
+	       if class val === CacheFunction then (
+		    remove(c,key);
+		    c#key = val x)
+	       else val
+	       )
+	  else c#key = f x))
+stashValue = key -> f -> new CacheFunction from (x -> (
+     	  if x#?key then (
+	       val := x#key;
+	       if class val === CacheFunction then (
+		    remove(x,key);
+		    x#key = val x)
+	       else val
+	       )
+	  else x#key = f x))
 
 codeHelper#(functionBody (cacheValue null) null) = g -> {
      ("-- function f:", value (first localDictionaries g)#"f")
