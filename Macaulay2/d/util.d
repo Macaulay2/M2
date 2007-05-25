@@ -101,7 +101,7 @@ export isNullOrSequenceOfSmallIntegers(e:Expr) : bool := (
      is s:Sequence do isSequenceOfSmallIntegers(s)
      is l:List do isSequenceOfSmallIntegers(l.v)
      else false);
-
+export isNullOrSmallInt(e:Expr) : bool := (e == nullE || isSmallInt(e));
 export getSequenceOfSmallIntegers(s:Sequence) : array(int) := (
      new array(int) len length(s) do (
 	  foreach i in s do 
