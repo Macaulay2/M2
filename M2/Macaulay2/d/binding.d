@@ -251,6 +251,8 @@ bump();
      export AtAtS := makeKeyword(binaryleft("@@"));
 bump();
      export TildeS := makeKeyword(postfix("~"));
+     export UnderscoreStarS := makeKeyword(postfix("_*"));
+     export PowerStarS := makeKeyword(postfix("^*"));
 bump();
      export PowerS := makeKeyword(binaryleft("^"));
      export PowerStarStarS := makeKeyword(binaryleft("^**"));
@@ -465,7 +467,7 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
      AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS);
 export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, PlusS, LessLessS, notS, DeductionS, QuestionS,LessS,GreaterS,LessEqualS,GreaterEqualS);
-export opsWithPostfixMethod := array(SymbolClosure)( TildeS, ParenStarParenS );
+export opsWithPostfixMethod := array(SymbolClosure)( TildeS, ParenStarParenS, UnderscoreStarS, PowerStarS );
 
 -- ":=" "=" "<-" "->"  "=>" "===" "=!=" "!=" "#" "#?" "." ".?" ";" "," "<" ">" "<=" ">="
 export fixedBinaryOperators := array(SymbolClosure)(ColonEqualS,EqualS,LeftArrowS,RightArrowS,DoubleArrowS,EqualEqualEqualS,NotEqualEqualEqualS,NotEqualS,SharpS,SharpQuestionS,
