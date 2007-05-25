@@ -1526,9 +1526,23 @@ ring_elem PolyRing::get_part(const M2_arrayint wts,
 			      long lobound,
 			      long hibound) const
 {
-  // MES: being written
-  Nterm *t = 0;
-  return t;
+  Nterm head;
+  Nterm *inresult = &head;
+
+  int *exp = newarray_atomic(int,M_->n_vars());
+
+  for (Nterm *t = f; t != 0; t=t->next)
+    {
+      M_->to_expvector(t->monom, exp);
+      long wt = ntuple::weight(M_->n_vars(), exp, wts);
+      if (lobound_given && wt < lobound) continue;
+      if (hibound_given && wt > hibound) continue;
+      inresult->next = copy_term(t);
+      inresult = inresult->next;
+    }
+
+  deletearray(exp);
+  return head.next;
 }
 
 ring_elem PolyRing::make_logical_term(const Ring *coeffR, const ring_elem a, const int *exp0) const

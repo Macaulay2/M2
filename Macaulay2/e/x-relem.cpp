@@ -915,7 +915,13 @@ const RingElement_array *rawGetParts(const M2_arrayint wts,
       }
     long relems_len;
     ring_elem *relems = P->get_parts(wts, f->get_value(), relems_len);
-    // MES: now construct the result array
+    RingElement_array *result = reinterpret_cast<RingElement_array *>(
+				    getmem(sizeofarray((result),relems_len)));
+    result->len = relems_len;
+    for (int i=0; i<relems_len; i++)
+      result->array[i] = RingElement::make_raw(P,relems[i]);
+    deletearray(relems);
+    return result;
   }
   catch (exc::engine_error e) {
     ERROR(e.what());
