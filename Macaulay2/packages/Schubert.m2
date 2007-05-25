@@ -19,9 +19,9 @@ export {
      AbstractVarietyMap,
      adams,
      ch,
+     chern,
      ChernCharacter,
      ChernClass,
-     chernClass,
      ChernClassSymbol,
      ctop,
      DIM,
@@ -39,6 +39,7 @@ export {
      SectionClass,
      sectionClass,
      segre,
+     StructureMap,
      symm,
      TangentBundle,
      todd,
@@ -141,11 +142,11 @@ dim AbstractVariety := X -> X.DIM
 intersectionRing = method()
 intersectionRing AbstractVariety := X -> X.IntersectionRing
 
-c = chernClass = method()
-chernClass AbstractSheaf := (cacheValue ChernClass) (F -> expp F.ChernCharacter)
-chernClass(ZZ, AbstractSheaf) := (p,F) -> part(p,chernClass F)
-chernClass(ZZ, ZZ, AbstractSheaf) := (p,q,F) -> toList apply(p..q, i -> chernClass(i,F))
-chernClass(ZZ,Symbol) := (n,E) -> value new ChernClassSymbol from {n,E}
+c = chern = method()
+chern AbstractSheaf := (cacheValue ChernClass) (F -> expp F.ChernCharacter)
+chern(ZZ, AbstractSheaf) := (p,F) -> part(p,chern F)
+chern(ZZ, ZZ, AbstractSheaf) := (p,q,F) -> toList apply(p..q, i -> chern(i,F))
+chern(ZZ,Symbol) := (n,E) -> value new ChernClassSymbol from {n,E}
 
 ctop = method()
 ctop AbstractSheaf := F -> c_(rank F) F
@@ -195,7 +196,7 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      -- (A,F,G) := flattenRing T;
      A := T; F := identity;
      chclasses := apply(vrs, x -> F (1 + sum(x,value)));
-     rlns := product chclasses - F promote(chernClass E,T);
+     rlns := product chclasses - F promote(chern E,T);
      rlns = sum @@ last \ sort pairs partition(degree,terms(QQ,rlns));
      B := A/rlns;
      -- (C,H,I) := flattenRing B;
@@ -210,19 +211,25 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
 	       globalAssignFunction(nm,bdl);
 	       nm <- bdl));
      sec := product(1 .. n-1, i -> (ctop bundles#i)^(sum(i, j -> rank bundles#j)));
+     pullback := method();
+     pushforward := method();
+     pullback ZZ := pullback QQ := r -> pullback promote(r,S);
+     pullback S := r -> H promote(F promote(r,T), B);
+     pushforward C := r -> coefficient(sec,r);
+     pullback AbstractSheaf := E -> (
+	  if variety E =!= X then "pullback: variety mismatch";
+	  abstractSheaf(FV,pullback ch E));
+     pushforward AbstractSheaf := E -> (
+	  if variety E =!= FV then "pushforward: variety mismatch";
+	  abstractSheaf(X,pushforward ch E));
      p := new AbstractVarietyMap from {
 	  global target => X,
 	  global source => FV,
 	  SectionClass => sec,
-	  PushForward => r -> (
-	       if ring r =!= C then try r = promote(r,C);
-	       if ring r =!= C then error "pushforward expected element of correct ring";
-	       coefficient(sec,r)),
-	  PullBack => r -> (
-	       if ring r =!= S then try r = promote(r,S);
-	       if ring r =!= S then error "pullback expected element of correct ring";
-	       H promote(F promote(r,T), B))
+	  PushForward => pushforward,
+	  PullBack => pullback
 	  };
+     FV.StructureMap = p;
      integral C := r -> integral p_* r;
      (FV,p))
 
@@ -298,33 +305,47 @@ todd RingElement := (A) -> (
      )
 
 segre = method()
-segre AbstractSheaf := E -> reciprocal chernClass dual E
+segre AbstractSheaf := E -> reciprocal chern dual E
 segre(ZZ, AbstractSheaf) := (p,F) -> part(p,segre F)
 -- we don't need this one:
 -- segre(ZZ, ZZ, AbstractSheaf) := (p,q,F) -> (s := segre F; toList apply(p..q, i -> part(i,s)))
 
 nonnull = x -> select(x, i -> i =!= null)
 
+coerce := (F,G) -> (
+     X := variety F;
+     Y := variety G;
+     if X === Y then return (F,G);
+     if X.?StructureMap and target X.StructureMap === Y then return (F, X.StructureMap^* G);
+     if Y.?StructureMap and target Y.StructureMap === X then return (Y.StructureMap^* F, G);
+     error "expected abstract sheaves on compatible or equal varieties";
+     )
+
 AbstractSheaf ++ AbstractSheaf :=
-AbstractSheaf + AbstractSheaf := (F,G) -> (
-     if variety F =!= variety G then error "expected abstract sheaves on the same variety";
-     abstractSheaf nonnull (variety F, rank F + rank G, ChernCharacter => ch F + ch G,
+AbstractSheaf + AbstractSheaf := (
+     (F,G) -> abstractSheaf nonnull (
+	  variety F, rank F + rank G,
+	  ChernCharacter => ch F + ch G,
 	  if F.cache.?ChernClass and G.cache.?ChernClass then ChernClass => F.cache.ChernClass * G.cache.ChernClass
-	  ))
+	  )) @@ coerce
 
 adams = method()
 adams(ZZ,RingElement) := (k,ch) -> (
      d := first degree ch;
      sum(0 .. d, i -> k^i * part_i ch))
-adams(ZZ,AbstractSheaf) := (k,E) -> abstractSheaf(variety E, rank E, ChernCharacter => adams(k, ch E))
-dual AbstractSheaf := - AbstractSheaf := E -> adams(-1,E)
+adams(ZZ,AbstractSheaf) := (k,E) -> abstractSheaf nonnull (variety E, rank E, 
+     ChernCharacter => adams(k, ch E),
+     if E.cache.?ChernClass then ChernClass => adams(k, E.cache.ChernClass)
+     )
+dual AbstractSheaf := E -> adams(-1,E)
+
+- AbstractSheaf := E -> abstractSheaf(variety E, - rank E, ChernCharacter => - ch E)
+AbstractSheaf - AbstractSheaf := (F,G) -> F + -G
 
 AbstractSheaf ** AbstractSheaf :=
-AbstractSheaf * AbstractSheaf := (F,G) -> (
-     if variety F =!= variety G then error "expected abstract sheaves on the same variety";
-     abstractSheaf(variety F, rank F * rank G, ChernCharacter => ch F * ch G))
+AbstractSheaf * AbstractSheaf := AbstractSheaf => ((F,G) -> abstractSheaf(variety F, rank F * rank G, ChernCharacter => ch F * ch G)) @@ coerce
 
-Hom(AbstractSheaf, AbstractSheaf) := (F,G) -> dual F ** G
+Hom(AbstractSheaf, AbstractSheaf) := ((F,G) -> dual F ** G) @@ coerce
 End AbstractSheaf := (F) -> Hom(F,F)
 
 det AbstractSheaf := opts -> (F) -> abstractSheaf(variety F, 1, ChernClass => 1 + part(1,ch F))
@@ -450,12 +471,12 @@ X = abstractVariety(4,R)
 F = abstractSheaf(X, 4, ChernClass=>1+c1+c2+c3+c4)
 segre F
 parts oo
-chernClass F
+chern F
 parts oo
 ch F
 parts oo
 netList toList oo
-a = logg chernClass F
+a = logg chern F
 expp a
 todd a
 parts oo
@@ -476,9 +497,9 @@ symm(3,F)
 G = F**F**F
 H = wedge(20,G)
 time symm(20,G)
-chernClass H
+chern H
 ch H
-chernClass F
+chern F
 segre F
 segre(3,F)
 parts segre F
@@ -488,7 +509,7 @@ TEST /// -- segre
   loadPackage "Schubert"
   X = abstractVariety(3, use (QQ[c1,c2,c3,Degrees=>{1,2,3},MonomialOrder=>GRevLex=>{1,2,3}]))
   F = abstractSheaf(X,3,ChernClass => 1+c1+c2+c3)
-  assert(chernClass F == 1+c1+c2+c3)
+  assert(chern F == 1+c1+c2+c3)
   assert(toString segre F == "c1^3-2*c1*c2+c3+c1^2-c2+c1+1")
   assert(segre(3,F) == c1^3-2*c1*c2+c3)
   netList segre(0,3,F)
@@ -508,9 +529,9 @@ symm(3,F)
 G = F**F**F
 H = wedge(20,G)
 time symm(20,G)
-chernClass H
+chern H
 ch H
-chernClass F
+chern F
 segre F
 segre(3,F)
 parts segre F
@@ -527,8 +548,13 @@ loadPackage "Schubert"
 -- c18:=chern(rank(A),A):
 -- lowerstar(X,c18):
 -- integral(Gc,%);
--- 
 -- Ans =  2734099200
+(Gc,p) = Grassmannian(3,6,{Sc,Qc});
+B = symm_3 Qc;
+(X,q) = Proj(dual B,{K,L});
+A = symm(6,Qc) - symm(3,Qc) * dual L;
+time integral chern A
+assert( oo == 2734099200 )
 
 -- conics on a quintic 3-fold, a schubert-classic example from Rahul:
 -- grass(3,5,c,all);
@@ -537,25 +563,16 @@ loadPackage "Schubert"
 -- B := symm(5,Qc) - symm(3,Qc) * o(-z);
 -- integral(chern(11,B));
 -- Ans: 609250
-(Gc,p) = Grassmannian(3,5,{Sc,Qc})
-(X,q) = Proj(dual symm_2 Qc,{K,L})
-B = abstractSheaf(X,q^* ch symm(5,Qc) - q^* ch symm(3,Qc) * ch dual L)
-integral c_11 B
+(Gc,p) = Grassmannian(3,5,{Sc,Qc});
+(X,q) = Proj(dual symm_2 Qc,{K,L});
+B = symm(5,Qc) - symm(3,Qc) * dual L;
+integral chern B
+assert( oo == 609250 )
 
-(Gc,p) = Grassmannian(3,5,{Sc,Qc})
-(X,q) = Proj(dual symm_2 Qc,{K,L})
-B = abstractSheaf(X,q^* ch symm(5,Qc) - q^* ch symm(3,Qc) * ch dual L)
-c_11 B
-p_* q_* c_11 B
--- Ans: 609250
-
-restart
-loadPackage "Schubert"
-(Gc,p) = Grassmannian(3,5,{Sc,Qc})
-(X,q) = Proj(dual symm_7 Qc,{K,L})
-time B = abstractSheaf(X,q^* ch symm(15,Qc) - q^* ch symm(3,Qc) * ch dual L)
-rank B -- 126
-time p_* q_* c_41 B
+(Gc,p) = Grassmannian(3,5,{Sc,Qc});
+(X,q) = Proj(dual symm_7 Qc,{K,L});
+time B = symm(15,Qc) - symm(3,Qc) * dual L
+time integral chern B
 assert( 99992296084705144978200 == oo)
        
 -- test wedge, symm for small cases
