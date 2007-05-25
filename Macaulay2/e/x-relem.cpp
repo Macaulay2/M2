@@ -931,8 +931,8 @@ const RingElement_array *rawGetParts(const M2_arrayint wts,
 
 const RingElementOrNull *rawGetPart(const M2_arrayint wts,
 				   const RingElement *f,
-				   bool lobound_given,
-				   bool hibound_given,
+				   M2_bool lobound_given,
+				   M2_bool hibound_given,
 				   long lobound,
 				   long hibound)
 /* Return the sum of all of the terms t of f, which satisfy: lobound <= wt.t <= hibound,
