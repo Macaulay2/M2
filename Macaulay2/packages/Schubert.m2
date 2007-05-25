@@ -359,6 +359,18 @@ A = intersectionRing F22
 transpose presentation A
 basis A
 
+A = QQ[e_1 .. e_4,Degrees=>{1,2,3,4}]
+B = A/(e_1^5,e_2^3,e_3^2,e_4^2)
+X = abstractVariety(4,B)
+E = abstractSheaf(X,4,ChernClass => 1 + sum(1 .. 4, i -> e_i))
+F22 = flagVariety(E,{R,Q},{2,2})
+C = intersectionRing F22
+(c_2 R)
+(c_2 R)^2
+lowerstar = r -> coefficient((c_2 Q)^2,r)
+(c_1 Q)^8
+lowerstar oo
+
 F222 = flagVariety(6,{P,R,S},{2,2,2})
 B = intersectionRing F222
 transpose presentation B
@@ -371,7 +383,7 @@ transpose basis B
 loadPackage "Schubert"
 compactMatrixForm = false
 A = QQ[e1,e2,e3,Degrees=>{1,2,3}]
-B = A/truncate(4,ideal vars A)
+B = A/(e1^4,e2^2,e3^2)
 describe B
 X = abstractVariety(3,B)
 E = abstractSheaf(X,3,ChernClass => 1 + e1 + e2 + e3)
@@ -381,8 +393,12 @@ gens C
 degree \ gens C
 describe C
 c_1 Q
+c_1 symbol W
 c_1 W
-c_2 W
+assert( c_1 symbol W == c_1 W )
+c_1 W + c_1 Q
+assert( c_1 W + c_1 Q == e1 )
+(c_2 W)^2
 rank Q
 c_1 det Q
 promote(e1,C)
