@@ -12,6 +12,7 @@ newPackage(
     	)
 
 export {
+     sectionClass,
      AbstractSheaf,
      AbstractVariety,
      AbstractVarietyMap,
@@ -22,7 +23,7 @@ export {
      IntersectionRing,
      PullBack,
      PushForward,
-     Section,
+     SectionClass,
      TangentBundle,
      ToddClass,
      abstractSheaf,
@@ -73,6 +74,7 @@ AbstractVarietyMap _* := f -> f.PushForward
 globalAssignment AbstractVarietyMap
 source AbstractVarietyMap := f -> f.source
 target AbstractVarietyMap := f -> f.target
+dim AbstractVarietyMap := f -> dim source f - dim target f
 net AbstractVarietyMap := X -> (
      if ReverseDictionary#?X then toString ReverseDictionary#X
      else "an abstract variety map")
@@ -81,6 +83,9 @@ AbstractVarietyMap.AfterPrint = f -> (
      << concatenate(interpreterDepth:"o") << lineNumber << " : "
      << "a map to " << target f << " from " << source f << endl;
      )
+
+sectionClass = method()
+sectionClass AbstractVarietyMap := f -> f.SectionClass
 
 AbstractSheaf = new Type of MutableHashTable
 AbstractSheaf.synonym = "abstract sheaf"
@@ -112,7 +117,7 @@ abstractSheaf(AbstractVariety,ZZ) := opts -> (X,rk) -> (
 abstractSheaf(AbstractVariety) := opts -> X -> (
      if opts.ChernCharacter === null then error "abstractSheaf: expected rank or Chern character";
      abstractSheaf(X,lift(part(0,opts.ChernCharacter),ZZ),opts))
-abstractSheaf(AbstractVariety,RingElement) := opts -> f -> abstractSheaf(X, ChernCharacter => f)
+abstractSheaf(AbstractVariety,RingElement) := opts -> (X,f) -> abstractSheaf(X, ChernCharacter => f)
 
 abstractVariety = method(Options => {
 	  TangentBundle => null
@@ -200,15 +205,15 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
 	       globalReleaseFunction(nm,value nm);
 	       globalAssignFunction(nm,bdl);
 	       nm <- bdl));
-     classOfSection := product(1 .. n-1, i -> (ctop bundles#i)^(sum(i, j -> rank bundles#j)));
+     sec := product(1 .. n-1, i -> (ctop bundles#i)^(sum(i, j -> rank bundles#j)));
      p := new AbstractVarietyMap from {
 	  global target => X,
 	  global source => FV,
-	  Section => classOfSection,
+	  SectionClass => sec,
 	  PushForward => r -> (
 	       if ring r =!= C then try r = promote(r,C);
 	       if ring r =!= C then error "pushforward expected element of correct ring";
-	       coefficient(classOfSection,r)),
+	       coefficient(sec,r)),
 	  PullBack => r -> (
 	       if ring r =!= S then try r = promote(r,S);
 	       if ring r =!= S then error "pullback expected element of correct ring";
@@ -383,11 +388,11 @@ p^* 11
 transpose presentation A
 basis A
 
-G24 = Grassmannian(2,4,{R,Q})
+(G24,q) = Grassmannian(2,4,{R,Q})
 C = intersectionRing G24
 transpose presentation C
 
-F22 = flagVariety(4,{R,Q},{2,2})
+(F22,r) = flagVariety(4,{R,Q},{2,2})
 A = intersectionRing F22
 transpose presentation A
 basis A
@@ -396,31 +401,27 @@ A = QQ[e_1 .. e_4,Degrees=>{1,2,3,4}]
 B = A/(e_1^5,e_2^3,e_3^2,e_4^2)
 X = abstractVariety(4,B)
 E = abstractSheaf(X,4,ChernClass => 1 + sum(1 .. 4, i -> e_i))
-F22 = flagVariety(E,{R,Q},{2,2})
+(F22,p) = flagVariety(E,{R,Q},{2,2})
 C = intersectionRing F22
 (c_2 R)
 (c_2 R)^2
-lowerstar = r -> coefficient((c_2 Q)^2,r)
 (c_1 Q)^8
-lowerstar oo
+p_* (c_1 Q)^8
 
-F222 = flagVariety(6,{P,R,S},{2,2,2})
+(F222,p) = flagVariety(6,{P,R,S},{2,2,2})
+dim p
 B = intersectionRing F222
 transpose presentation B
 transpose basis B
 (c_1 P)^3 * (c_1 R)^5 * (c_1 S)^4
+p_* oo
 
--- end of demo
-
--- Dan's development section:
-loadPackage "Schubert"
-compactMatrixForm = false
 A = QQ[e1,e2,e3,Degrees=>{1,2,3}]
 B = A/(e1^4,e2^2,e3^2)
 describe B
 X = abstractVariety(3,B)
 E = abstractSheaf(X,3,ChernClass => 1 + e1 + e2 + e3)
-P = Proj(E,{W,Q})
+(P,p) = Proj(E,{W,Q})
 C = intersectionRing P
 gens C
 degree \ gens C
@@ -435,6 +436,9 @@ assert( c_1 W + c_1 Q == e1 )
 rank Q
 c_1 det Q
 promote(e1,C)
+dim p
+p_* (c_1 W)^2
+-- end of Dan's stuff
 
 -- Mike's demo
 loadPackage "Schubert"
@@ -512,19 +516,33 @@ netList toList parts segre F
 restart
 loadPackage "Schubert"
 
--- ## # conics on a quintic 3-fold
+-- # of elliptic cubics on a sextic 4 fold, a schubert-classic example from Rahul:
+-- grass(3,6,c):
+-- B:=Symm(3,Qc):
+-- Proj(X,dual(B),z):
+-- A:=Symm(6,Qc)-Symm(3,Qc)&@o(-z):
+-- c18:=chern(rank(A),A):
+-- lowerstar(X,c18):
+-- integral(Gc,%);
+-- 
+-- Ans =  2734099200
+
+-- conics on a quintic 3-fold, a schubert-classic example from Rahul:
 -- grass(3,5,c,all);
-G = Grassmannian(3,5,{Sc,Qc})
-AG = intersectionRing G
-ch Qc
-symm(2,Qc)
-netList toList parts chernClass oo
+(Gc,p) = Grassmannian(3,5,{Sc,Qc})
+AG = intersectionRing Gc
 -- Proj(X,dual(symm(2,Qc)),z,f);
 -- totalspace(X,Gc);
+(X,q) = Proj(dual symm(2,Qc),{K,L})
+AX = intersectionRing X
 -- B := symm(5,Qc) - symm(3,Qc) * o(-z);
+B = abstractSheaf(X,q^* ch symm(5,Qc) - q^* ch symm(3,Qc) * ch dual L)
 -- rank(B);
+rank B
 -- chern(11,B);
+c_11 B
 -- integral(chern(11,B));
+-- Ans: 609250
 
 -- test wedge, symm for small cases
 restart
