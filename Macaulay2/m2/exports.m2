@@ -22,6 +22,8 @@ export {
 	symbol %,
 	symbol &,
 	symbol (*),
+	symbol _*,
+	symbol ^*,
 	symbol (,
 	symbol ),
 	symbol **,
