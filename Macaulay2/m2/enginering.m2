@@ -235,11 +235,7 @@ numgens EngineRing := R -> #R.generators
 
 generators EngineRing := opts -> R -> if opts.CoefficientRing === null then R.generators else if opts.CoefficientRing === R then {} else errorGenCoeff()
 
-part(ZZ,RingElement) := RingElement => (d,f) -> (
-     u := select(terms f, t -> d === first degree t);
-     if #u === 0 then 0_(ring f)
-     else sum u
-     )
+part(ZZ,RingElement) := RingElement => (d,f) -> new ring f from rawGetPart(first \ (options ring f).Degrees, raw f, d, d)
 
 part(List,RingElement) := RingElement => (d,f) -> (
      if degreeLength ring f =!= #d
