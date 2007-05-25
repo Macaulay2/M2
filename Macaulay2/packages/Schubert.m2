@@ -20,6 +20,9 @@ export {
      ChernClassSymbol,
      DIM,
      IntersectionRing,
+     PullBack,
+     PushForward,
+     Section,
      TangentBundle,
      ToddClass,
      abstractSheaf,
@@ -27,6 +30,7 @@ export {
      adams,
      ch,
      chernClass,
+     ctop,
      expp,
      flagVariety,
      integral,
@@ -56,9 +60,27 @@ globalAssignment AbstractVariety
 net AbstractVariety := X -> (
      if ReverseDictionary#?X then toString ReverseDictionary#X
      else "an abstract variety")
+AbstractVariety.AfterPrint = X -> (
+     << endl;				  -- double space
+     << concatenate(interpreterDepth:"o") << lineNumber << " : "
+     << "an abstract variety of dimension " << dim X << endl;
+     )
 
 AbstractVarietyMap = new Type of MutableHashTable
 AbstractVarietyMap.synonym = "abstract variety map"
+AbstractVarietyMap ^* := f -> f.PullBack
+AbstractVarietyMap _* := f -> f.PushForward
+globalAssignment AbstractVarietyMap
+source AbstractVarietyMap := f -> f.source
+target AbstractVarietyMap := f -> f.target
+net AbstractVarietyMap := X -> (
+     if ReverseDictionary#?X then toString ReverseDictionary#X
+     else "an abstract variety map")
+AbstractVarietyMap.AfterPrint = f -> (
+     << endl;				  -- double space
+     << concatenate(interpreterDepth:"o") << lineNumber << " : "
+     << "a map to " << target f << " from " << source f << endl;
+     )
 
 AbstractSheaf = new Type of MutableHashTable
 AbstractSheaf.synonym = "abstract sheaf"
@@ -68,7 +90,6 @@ net AbstractSheaf := X -> (
      else "an abstract sheaf")
 AbstractSheaf.AfterPrint = E -> (
      << endl;				  -- double space
-     n := rank E;
      << concatenate(interpreterDepth:"o") << lineNumber << " : "
      << "an abstract sheaf of rank " << rank E << " on " << variety E << endl;
      )
@@ -91,26 +112,22 @@ abstractSheaf(AbstractVariety,ZZ) := opts -> (X,rk) -> (
 abstractSheaf(AbstractVariety) := opts -> X -> (
      if opts.ChernCharacter === null then error "abstractSheaf: expected rank or Chern character";
      abstractSheaf(X,lift(part(0,opts.ChernCharacter),ZZ),opts))
-abstractSheaf(RingElement) := opts -> f -> abstractSheaf((ring f).AbstractVariety, ChernCharacter => f)
+abstractSheaf(AbstractVariety,RingElement) := opts -> f -> abstractSheaf(X, ChernCharacter => f)
 
 abstractVariety = method(Options => {
-	  -- TangentBundle => null
+	  TangentBundle => null
 	  })
-abstractVariety(Ring) := opts -> (A) -> (
-     if not A.?DIM then error "intersection ring provided doesn't specify DIM";
-     if A.?AbstractVariety then error "intersection ring provided already associated with an abstract variety";
-     X := new AbstractVariety from {
-	  -- if opts.TangentBundle =!= null then TangentBundle => opts.TangentBundle,
-     	  IntersectionRing => A
-     	  };
-     A.AbstractVariety = X;
-     X)
 abstractVariety(ZZ,Ring) := opts -> (DIM,A) -> (
      if A.?DIM and A.DIM =!= DIM then error "intersection ring corresponds to a variety of a different dimension";
      A.DIM = DIM;
-     abstractVariety(A,opts))
+     new AbstractVariety from {
+	  global DIM => DIM,
+     	  IntersectionRing => A,
+	  if opts.TangentBundle =!= null then TangentBundle => opts.TangentBundle
+     	  }
+     )
 point = abstractVariety(0,QQ)
-dim AbstractVariety := X -> X.IntersectionRing.DIM
+dim AbstractVariety := X -> X.DIM
 
 intersectionRing = method()
 intersectionRing AbstractVariety := X -> X.IntersectionRing
@@ -120,6 +137,9 @@ chernClass AbstractSheaf := (cacheValue ChernClass) (F -> expp F.ChernCharacter)
 chernClass(ZZ, AbstractSheaf) := (p,F) -> part(p,chernClass F)
 chernClass(ZZ, ZZ, AbstractSheaf) := (p,q,F) -> toList apply(p..q, i -> chernClass(i,F))
 chernClass(ZZ,Symbol) := (n,E) -> value new ChernClassSymbol from {n,E}
+
+ctop = method()
+ctop AbstractSheaf := F -> c_(rank F) F
 
 ch = method()
 ch AbstractSheaf := (F) -> F.ChernCharacter
@@ -172,17 +192,29 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      -- (C,H,I) := flattenRing B;
      C := B; H := identity;
      use C;
-     DIM := (intersectionRing X).DIM + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
+     DIM := dim X + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
      FV := abstractVariety(DIM,C);
-     scan(n, i -> (
-	       nm := bundleNames#i;		    -- a reversal here, too!
+     bundles := apply(n, i -> (
+	       nm := bundleNames#i;
 	       bdl := abstractSheaf(FV,bundleRanks#i, ChernClass => H promote(chclasses#i,B));
 	       globalReleaseFunction(nm,value nm);
 	       globalAssignFunction(nm,bdl);
-	       nm <- bdl;
-	       )
-	  );
-     FV)
+	       nm <- bdl));
+     classOfSection := product(1 .. n-1, i -> (ctop bundles#i)^(sum(i, j -> rank bundles#j)));
+     p := new AbstractVarietyMap from {
+	  global target => X,
+	  global source => FV,
+	  Section => classOfSection,
+	  PushForward => r -> (
+	       if ring r =!= C then try r = promote(r,C);
+	       if ring r =!= C then error "pushforward expected element of correct ring";
+	       coefficient(classOfSection,r)),
+	  PullBack => r -> (
+	       if ring r =!= S then try r = promote(r,S);
+	       if ring r =!= S then error "pullback expected element of correct ring";
+	       H promote(F promote(r,T), B))
+	  };
+     (FV,p))
 
 Grassmannian(ZZ,AbstractSheaf,List) := opts -> (k,E,bundleNames) -> flagVariety(E,bundleNames,{k,rank E-k})
 Grassmannian(ZZ,ZZ,AbstractVariety,List) := opts -> (k,n,X,bundleNames) -> Grassmannian(k,OO_X^n,bundleNames)
@@ -337,16 +369,17 @@ beginDocumentation()
 
 end
 
-compactMatrixForm = false
 loadPackage "Schubert"
+compactMatrixForm = false
 
-Proj(3,{R,Q})
-P3 = Proj(3,{R,Q})
+(P3,p) = Proj(3,{R,Q})
 A = intersectionRing P3
 c_1 R
 c_1 Q
 c_2 R
 c_2 Q
+p_* c_3 Q
+p^* 11
 transpose presentation A
 basis A
 
