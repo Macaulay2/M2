@@ -12,6 +12,9 @@ newPackage(
     	)
 
 export {
+     Bundles,
+     FlagBundle,
+     CanonicalLineBundle,
      AbstractSheaf,
      abstractSheaf,
      AbstractVariety,
@@ -23,10 +26,11 @@ export {
      ChernCharacter,
      ChernClass,
      ChernClassSymbol,
+     BundleRanks,
      ctop,
      DIM,
      expp,
-     flagVariety,
+     flagBundle,
      integral,
      IntersectionRing,
      intersectionRing,
@@ -61,11 +65,23 @@ AbstractVariety.synonym = "abstract variety"
 globalAssignment AbstractVariety
 net AbstractVariety := X -> (
      if ReverseDictionary#?X then toString ReverseDictionary#X
-     else "an abstract variety")
+     else "a variety")
 AbstractVariety.AfterPrint = X -> (
      << endl;				  -- double space
      << concatenate(interpreterDepth:"o") << lineNumber << " : "
      << "an abstract variety of dimension " << dim X << endl;
+     )
+
+FlagBundle = new Type of AbstractVariety
+FlagBundle.synonym = "abstract flag bundle"
+globalAssignment FlagBundle
+net FlagBundle := X -> (
+     if ReverseDictionary#?X then toString ReverseDictionary#X
+     else "a flag bundle")
+FlagBundle.AfterPrint = X -> (
+     << endl;				  -- double space
+     << concatenate(interpreterDepth:"o") << lineNumber << " : "
+     << "a flag bundle with ranks " << X.BundleRanks << endl;
      )
 
 AbstractVarietyMap = new Type of MutableHashTable
@@ -78,7 +94,7 @@ target AbstractVarietyMap := f -> f.target
 dim AbstractVarietyMap := f -> dim source f - dim target f
 net AbstractVarietyMap := X -> (
      if ReverseDictionary#?X then toString ReverseDictionary#X
-     else "an abstract variety map")
+     else "a variety map")
 AbstractVarietyMap.AfterPrint = f -> (
      << endl;				  -- double space
      << concatenate(interpreterDepth:"o") << lineNumber << " : "
@@ -93,7 +109,7 @@ AbstractSheaf.synonym = "abstract sheaf"
 globalAssignment AbstractSheaf
 net AbstractSheaf := X -> (
      if ReverseDictionary#?X then toString ReverseDictionary#X
-     else "an abstract sheaf")
+     else "a sheaf")
 AbstractSheaf.AfterPrint = E -> (
      << endl;				  -- double space
      << concatenate(interpreterDepth:"o") << lineNumber << " : "
@@ -133,6 +149,12 @@ abstractVariety(ZZ,Ring) := opts -> (DIM,A) -> (
      	  }
      )
 
+AbstractSheaf ZZ := (F,n) -> (
+     X := variety F;
+     if X.?CanonicalLineBundle then return F ** X.CanonicalLineBundle^**n;
+     error "expected a variety with an ample line bundle"
+     )     
+
 integral = method()
 integral QQ := identity
 
@@ -142,7 +164,7 @@ dim AbstractVariety := X -> X.DIM
 intersectionRing = method()
 intersectionRing AbstractVariety := X -> X.IntersectionRing
 
-c = chern = method()
+symbol c <- chern = method()
 chern AbstractSheaf := (cacheValue ChernClass) (F -> expp F.ChernCharacter)
 chern(ZZ, AbstractSheaf) := (p,F) -> part(p,chern F)
 chern(ZZ, ZZ, AbstractSheaf) := (p,q,F) -> toList apply(p..q, i -> chern(i,F))
@@ -174,13 +196,19 @@ AbstractSheaf ^ ZZ := (E,n) -> new AbstractSheaf from {
 	  if E.cache.?ChernClass then ChernClass => E.cache.ChernClass ^ n
 	  }
      }
+AbstractSheaf ^** ZZ := (E,n) -> new AbstractSheaf from {
+     global AbstractVariety => E.AbstractVariety,
+     ChernCharacter => E.ChernCharacter^n,
+     symbol rank => E.rank ^ n,
+     symbol cache => new CacheTable
+     }
 rank AbstractSheaf := E -> E.rank
 variety AbstractSheaf := E -> E.AbstractVariety
 
-flagVariety = method()
-flagVariety(ZZ,List,List) := (rk,bundleNames,bundleRanks) -> flagVariety(point,rk,bundleNames,bundleRanks)
-flagVariety(AbstractVariety,ZZ,List,List) := (X,rk,bundleNames,bundleRanks) -> flagVariety(OO_X^rk,bundleNames,bundleRanks)
-flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
+flagBundle = method()
+flagBundle(ZZ,List,List) := (rk,bundleNames,bundleRanks) -> flagBundle(point,rk,bundleNames,bundleRanks)
+flagBundle(AbstractVariety,ZZ,List,List) := (X,rk,bundleNames,bundleRanks) -> flagBundle(OO_X^rk,bundleNames,bundleRanks)
+flagBundle(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      Ord := GRevLex;
      switch := identity;
      -- bundleNames = reverse bundleNames; bundleRanks = reverse bundleRanks; Ord = RevLex; switch = reverse;
@@ -188,7 +216,7 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      n := #bundleRanks;
      if n =!= #bundleNames then error "name list and rank list should have same length";
      if rank E =!= sum bundleRanks then error "expected rank of bundle to equal sum of bundle ranks";
-     bundleNames = apply(bundleNames, n -> if ReverseDictionary#?n then ReverseDictionary#n else n);
+     bundleNames = apply(bundleNames, n -> if n =!= null and ReverseDictionary#?n then ReverseDictionary#n else n);
      vrs := apply(bundleNames, bundleRanks, (E,r) -> apply(switch toList(1 .. r), i -> new ChernClassSymbol from {i,E}));
      dgs := splice apply(bundleRanks, r -> switch (1 .. r));
      S := intersectionRing X;
@@ -203,13 +231,15 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      C := B; H := identity;
      use C;
      DIM := dim X + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
-     FV := abstractVariety(DIM,C);
-     bundles := apply(n, i -> (
+     FV := C.Variety = new FlagBundle from abstractVariety(DIM,C);
+     FV.BundleRanks = bundleRanks;
+     bundles := FV.Bundles = apply(n, i -> (
 	       nm := bundleNames#i;
 	       bdl := abstractSheaf(FV,bundleRanks#i, ChernClass => H promote(chclasses#i,B));
 	       globalReleaseFunction(nm,value nm);
 	       globalAssignFunction(nm,bdl);
 	       nm <- bdl));
+     if bundleRanks#-1 == 1 then FV.CanonicalLineBundle = last bundles;
      sec := product(1 .. n-1, i -> (ctop bundles#i)^(sum(i, j -> rank bundles#j)));
      pullback := method();
      pushforward := method();
@@ -233,7 +263,7 @@ flagVariety(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      integral C := r -> integral p_* r;
      (FV,p))
 
-Grassmannian(ZZ,AbstractSheaf,List) := opts -> (k,E,bundleNames) -> flagVariety(E,bundleNames,{rank E-k,k})
+Grassmannian(ZZ,AbstractSheaf,List) := opts -> (k,E,bundleNames) -> flagBundle(E,bundleNames,{rank E-k,k})
 Grassmannian(ZZ,ZZ,AbstractVariety,List) := opts -> (k,n,X,bundleNames) -> Grassmannian(k,OO_X^n,bundleNames)
 Grassmannian(ZZ,ZZ,List) := opts -> (k,n,bundleNames) -> Grassmannian(k,n,point,bundleNames)
 
@@ -416,7 +446,7 @@ basis A
 C = intersectionRing G24
 transpose presentation C
 
-(F22,r) = flagVariety(4,{R,Q},{2,2})
+(F22,r) = flagBundle(4,{R,Q},{2,2})
 A = intersectionRing F22
 transpose presentation A
 basis A
@@ -425,14 +455,14 @@ A = QQ[e_1 .. e_4,Degrees=>{1,2,3,4}]
 B = A/(e_1^5,e_2^3,e_3^2,e_4^2)
 X = abstractVariety(4,B)
 E = abstractSheaf(X,4,ChernClass => 1 + sum(1 .. 4, i -> e_i))
-(F22,p) = flagVariety(E,{R,Q},{2,2})
+(F22,p) = flagBundle(E,{R,Q},{2,2})
 C = intersectionRing F22
 (c_2 R)
 (c_2 R)^2
 (c_1 Q)^8
 p_* (c_1 Q)^8
 
-(F222,p) = flagVariety(6,{P,R,S},{2,2,2})
+(F222,p) = flagBundle(6,{P,R,S},{2,2,2})
 dim p
 B = intersectionRing F222
 transpose presentation B
