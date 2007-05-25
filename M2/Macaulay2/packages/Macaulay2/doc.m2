@@ -1,6 +1,6 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-undocumented toList (a .. Z)
+undocumented toList (symbol a .. symbol Z)
 
 document {
      Key => "length",
