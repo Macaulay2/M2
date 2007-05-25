@@ -296,7 +296,7 @@ weightRange = method()
 weightRange(List,RingElement) := (w,f) -> rawWeightRange(w,raw f)
 weightRange RingElement := f -> weightRange(first \ degrees ring f, f)
 parts = method()
-stderr << "--warning: rewrite 'parts RingElement', it's too slow, and it's notion of part is incorrect" << endl
+stderr << "--warning: rewrite 'parts RingElement', it's too slow, and its notion of part is incorrect" << endl
 parts RingElement := f -> sum(select(apply(((i,j) -> i .. j) weightRange f, n -> part_n f), p -> p != 0), p -> new Parenthesize from {p})
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
