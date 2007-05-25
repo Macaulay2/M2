@@ -230,6 +230,9 @@ flagBundle(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      -- (C,H,I) := flattenRing B;
      C := B; H := identity;
      use C;
+     oldnet := lookup(net,C);
+     -- put this in when "parts" is working, and fix the minus signs, too!
+     -- net C := f -> sum(select(apply(((i,j) -> i .. j) weightRange f, n -> part_n f), p -> p != 0), p -> new Parenthesize from {oldnet p});
      DIM := dim X + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
      FV := C.Variety = new FlagBundle from abstractVariety(DIM,C);
      FV.BundleRanks = bundleRanks;
