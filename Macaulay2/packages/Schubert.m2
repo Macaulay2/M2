@@ -89,7 +89,8 @@ abstractSheaf(AbstractVariety) := opts -> X -> (
      local ch; local rk;
      if opts.ChernCharacter =!= null then (
 	  ch = opts.ChernCharacter;
-     	  rk = lift(part(0,opts.ChernCharacter),ZZ);
+	  rk = part(0,opts.ChernCharacter);
+	  try rk = lift(rk,ZZ) else try rk = lift(rk,QQ);
      	  if opts.Rank =!= null and rk != opts.Rank then error "abstractSheaf: expected rank and Chern character to be compatible";
 	  )
      else (
@@ -127,17 +128,35 @@ tangentBundle AbstractVarietyMap := f -> (
      if not f.?TangentBundle then error "variety map has no relative tangent bundle";
      f.TangentBundle)
 
-AbstractSheaf ZZ := (F,n) -> (
+AbstractSheaf QQ := AbstractSheaf ZZ := (F,n) -> (
+     if n == 0 then return F;
      X := variety F;
      if X.?CanonicalLineBundle then return F ** X.CanonicalLineBundle^**n;
-     error "expected a variety with an ample line bundle"
+     error "expected a variety with a canonical line bundle";
+     )
+AbstractSheaf RingElement := (F,n) -> (
+     if n == 0 then return F;
+     X := variety F;
+     A := intersectionRing X;
+     try n = promote(n,A);
+     if not instance(n,A) then error "expected an element in the intersection ring of the variety";
+     if not isHomogeneous n then error "expected homogeneous element of degree 0 or 1";
+     d := first degree n;
+     if d == 0 then (
+     	  if X.?CanonicalLineBundle 
+	  then F ** abstractSheaf(X, Rank => 1, ChernClass => n * chern_1 X.CanonicalLineBundle)
+     	  else error "expected a variety with an ample line bundle"
+	  )
+     else if d == 1 then (
+	  F ** abstractSheaf(X, Rank => 1, ChernClass => 1 + n)
+	  )
+     else error "expected element of degree 0 or 1"
      )     
 
 integral = method()
-integral QQ := identity
-
-point = abstractVariety(0,QQ)
+point = abstractVariety(0,use(QQ[n,Degrees=>{0}]))
 point.TangentBundle = abstractSheaf(point,Rank => 0)
+integral intersectionRing point := identity
 dim AbstractVariety := X -> X.DIM
 part(ZZ,QQ) := (n,r) -> if n === 0 then r else 0_QQ
 
@@ -152,6 +171,7 @@ ctop AbstractSheaf := F -> c_(rank F) F
 
 ch = method()
 ch AbstractSheaf := (F) -> F.ChernCharacter
+ch(ZZ,AbstractSheaf) := (n,F) -> part_n ch F
 
 chernClassValues = new MutableHashTable
 ChernClassSymbol = new Type of BasicList
@@ -173,12 +193,7 @@ AbstractSheaf ^ ZZ := (E,n) -> new AbstractSheaf from {
 	  if E.cache.?ChernClass then ChernClass => E.cache.ChernClass ^ n
 	  }
      }
-AbstractSheaf ^** ZZ := (E,n) -> new AbstractSheaf from {
-     global AbstractVariety => E.AbstractVariety,
-     ChernCharacter => E.ChernCharacter^n,
-     symbol rank => E.rank ^ n,
-     symbol cache => new CacheTable
-     }
+AbstractSheaf ^** ZZ := (E,n) -> abstractSheaf(E.AbstractVariety, ChernCharacter => (ch E)^n)
 rank AbstractSheaf := E -> E.rank
 variety AbstractSheaf := E -> E.AbstractVariety
 
@@ -485,6 +500,13 @@ c_1 det Q
 promote(e1,C)
 dim p
 p_* (c_1 W)^2
+
+-- parameters
+(P3,p) = Proj(3,{R,Q});
+AP3 = intersectionRing P3;
+factor chi OO_P3(n)
+todd P3
+
 -- end of Dan's stuff
 
 -- Mike's demo
