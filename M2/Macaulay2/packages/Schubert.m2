@@ -11,56 +11,10 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export {
-     AbstractSheaf,
-     abstractSheaf,
-     AbstractVariety,
-     abstractVariety,
-     AbstractVarietyMap,
-     adams,
-     Base,
-     BundleRanks,
-     Bundles,
-     CanonicalLineBundle,
-     ch,
-     chern,
-     ChernCharacter,
-     ChernClass,
-     ChernClassSymbol,
-     chi,
-     ctop,
-     DIM,
-     expp,
-     FlagBundle,
-     flagBundle,
-     FlagBundleStructureMap,
-     integral,
-     IntersectionRing,
-     intersectionRing,
-     logg,
-     point,
-     PullBack,
-     PushForward,
-     Rank,
-     reciprocal,
-     schur,
-     SectionClass,
-     sectionClass,
-     segre,
-     StructureMap,
-     symm,
-     TangentBundle,
-     tangentBundle,
-     todd,
-     ToddClass,
-     wedge
-     }
-
-protect TangentBundle
-protect ToddClass
-protect ChernClass
-protect ChernCharacter
-protect IntersectionRing
+export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, AbstractVarietyMap, adams, Base, BundleRanks, Bundles, CanonicalLineBundle, ch, chern, 
+     protect ChernCharacter, protect ChernClass, ChernClassSymbol, chi, ctop, DIM, expp, FlagBundle, flagBundle, FlagBundleStructureMap, integral, protect IntersectionRing,
+     intersectionRing, logg, point, PullBack, PushForward, Rank, reciprocal, schur, SectionClass, sectionClass, segre, StructureMap, symm, protect TangentBundle,
+     tangentBundle, todd, protect ToddClass, wedge }
 
 symm = symmetricPower
 wedge = exteriorPower
@@ -371,6 +325,7 @@ todd RingElement := (A) -> (
      )
 
 chi = method()
+chi AbstractSheaf := F -> integral(todd variety F * ch F)
 
 segre = method()
 segre AbstractSheaf := E -> reciprocal chern dual E
