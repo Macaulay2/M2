@@ -40,14 +40,6 @@ transpose basis B
 (c_1 P)^3 * (c_1 R)^5 * (c_1 S)^4
 p_* oo
 
-(G24,p) = Grassmannian(2,4,{R,Q});
-chi symm(n,Q)						    -- doesn't work yet
-chi OO_G24(n*c_1 Q)
-chi (det Q)^**n
-factor oo
-p_* (det Q)^**n
-assert( (n-2)*(n^3-18*n^2+71*n-6)*(1/12) == chi (det Q)^**n )
-
 E = bundle(3, 3, e)
 (P,p) = Proj(E,{W,Q})
 C = intersectionRing P
