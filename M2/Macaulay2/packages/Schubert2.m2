@@ -14,7 +14,7 @@ newPackage(
 export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, AbstractVarietyMap, adams, Base, BundleRanks, Bundles, CanonicalLineBundle, ch, chern, 
      protect ChernCharacter, protect ChernClass, ChernClassSymbol, chi, ctop, DIM, expp, FlagBundle, flagBundle, FlagBundleStructureMap, integral, protect IntersectionRing,
      intersectionRing, logg, point, PullBack, PushForward, Rank, reciprocal, schur, SectionClass, sectionClass, segre, StructureMap, symm, protect TangentBundle,
-     tangentBundle, todd, protect ToddClass, wedge, bundle, grass, totalspace }
+     tangentBundle, todd, protect ToddClass, wedge, bundle, grass, totalspace, proj, BundleNames, VariableNames }
 
 symm = symmetricPower
 wedge = exteriorPower
@@ -245,10 +245,17 @@ variety Ring := R -> R.Variety
 
 tangentBundle FlagBundle := (stashValue TangentBundle) (FV -> tangentBundle FV.Base + tangentBundle FV.StructureMap)
 
-flagBundle = method()
-flagBundle(ZZ,List,List) := (rk,bundleNames,bundleRanks) -> flagBundle(point,rk,bundleNames,bundleRanks)
-flagBundle(AbstractVariety,ZZ,List,List) := (X,rk,bundleNames,bundleRanks) -> flagBundle(OO_X^rk,bundleNames,bundleRanks)
-flagBundle(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
+flagBundle = method(Options => {
+	  Name => null,
+	  BundleNames => null,
+	  VariableNames => null
+	  })
+flagBundle(ZZ,List,List) := opts -> (rk,bundleNames,bundleRanks) -> (
+     if opts.BundleNames =!= null then error "bundle names given more than once";
+     if opts.BundleRanks =!= null then error "bundle ranks given more than once";
+     flagBundle(point, rk, BundleNames => bundleNames, BundleRanks => bundleRanks))
+flagBundle(AbstractVariety,ZZ,List,List) := opts -> (X,rk,bundleNames,bundleRanks) -> flagBundle(OO_X^rk,bundleNames,bundleRanks)
+flagBundle(AbstractSheaf,List,List) := opts -> (E,bundleNames,bundleRanks) -> (
      Ord := GRevLex;
      switch := identity;
      -- bundleNames = reverse bundleNames; bundleRanks = reverse bundleRanks; Ord = RevLex; switch = reverse;
@@ -316,6 +323,20 @@ Grassmannian(ZZ,ZZ,List) := opts -> (k,n,bundleNames) -> Grassmannian(k,n,point,
 Proj(AbstractSheaf,List) := (E,bundleNames) -> Grassmannian(1,E,bundleNames)
 Proj(ZZ,AbstractVariety,List) := (n,X,bundleNames) -> Proj(OO_X^(n+1),bundleNames)
 Proj(ZZ,List) := (n,bundleNames) -> Proj(OO_point^(n+1),bundleNames)
+
+o = method()
+o(RingElement) := h -> OO_(variety ring h) (h)
+
+proj = method()	-- an attempt at total compatibility with Schubert classic, not ready yet!
+proj(ZZ,RingElement) := (n,h) -> proj_n try baseName h else error "ring element not usable here as name"
+proj(ZZ,IndexedVariable) := (n,h) -> error "indexed variable not usable here as name"
+proj(ZZ,Thing,Thing) := (n,h,option) -> proj(n,h)
+proj(ZZ,Symbol) := (n,h) -> (
+     Phsym := getSymbol("P" | toString h);
+     (Ph,p) := Proj(n,{local S, local Q});
+     Phsym <- Ph;
+     h <- chern_1 Q;
+     Ph)
 
 reciprocal = method()
 reciprocal RingElement := (A) -> (
