@@ -77,7 +77,8 @@ segre(2,Hom(wedge(2,A),wedge(2,B)))
 ----                              2            3
 ----                             n  + 1 + 1/6 n  + 11/6 n
 
-chi symm(n,Q)						    -- doesn't work yet
+stderr << "-- this needs fixing" << endl;
+--chi symm(n,Q)						    -- doesn't work yet
 
 ---- > chi(Gb,o(n*b1));
 ----                            4        3    23   2
@@ -185,6 +186,8 @@ e = c_1 Qe;
 integral f_* (2*d1 + e)^8
 integral (2*d1 + e)^8
 assert( 92 == oo )
+
+end
 
 ---- #-------------------------------------------------------------------------
 ---- # Conics tangent to 5 plane conics.  Each tangency is a degree 6
