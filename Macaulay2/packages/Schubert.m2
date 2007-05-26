@@ -204,13 +204,23 @@ AbstractSheaf ^ ZZ := (E,n) -> new AbstractSheaf from {
 	  if E.cache.?ChernClass then ChernClass => E.cache.ChernClass ^ n
 	  }
      }
+
+geometricSeries = (t,n,DIM) -> (			    -- computes (1-t)^n assuming t^(DIM+1) == 0
+     ti := 1;
+     bin := 1;
+     1 + sum for i from 1 to DIM list ( 
+	  bin = (1/i) * (n-(i-1)) * bin;
+	  ti = ti * t;
+	  bin * ti))
+
 AbstractSheaf ^** ZZ := (E,n) -> abstractSheaf(variety E, ChernCharacter => (ch E)^n)
 AbstractSheaf ^** QQ := AbstractSheaf ^** RingElement := (E,n) -> (
      if rank E != 1 then error "symbolic power works for invertible sheafs only";
      t := 1 - ch E;
      ti := 1;
      bin := 1;
-     abstractSheaf(variety E, Rank => 1, ChernCharacter => 1 + sum for i from 1 to dim variety E list ( bin = (1/i) * (n-(i-1)) * bin; ti = ti * t; bin * ti )))
+     abstractSheaf(variety E, Rank => 1, ChernCharacter => geometricSeries(1 - ch E, n, dim variety E)))
+
 rank AbstractSheaf := E -> E.rank
 variety AbstractSheaf := E -> E.AbstractVariety
 
