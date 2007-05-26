@@ -110,10 +110,22 @@ abstractSheaf(AbstractVariety) := opts -> X -> (
 
 abstractSheaf(AbstractVariety,RingElement) := opts -> (X,f) -> abstractSheaf(X, ChernCharacter => f)
 
+debug Core						    -- needed only for flatmonoid, sigh
+netbydegree := f -> (
+     if f == 0 then return "0";
+     (i,j) := weightRange(first \ degrees (ring f).flatmonoid, f);
+     tms := toList apply(i .. j, n -> part_n f);
+     tms = select(tms, p -> p != 0);
+     if #tms == 1 then return net expression first tms;
+     tms = apply(tms, expression);
+     tms = apply(tms, e -> if instance(e,Sum) then new Parenthesize from {e} else e);
+     net new Sum from tms)
+
 abstractVariety = method(Options => { })
 abstractVariety(ZZ,Ring) := opts -> (DIM,A) -> (
      if A.?DIM and A.DIM =!= DIM then error "intersection ring corresponds to a variety of a different dimension";
      A.DIM = DIM;
+     net A := netbydegree;
      new AbstractVariety from {
 	  global DIM => DIM,
      	  IntersectionRing => A
@@ -372,7 +384,7 @@ segre(ZZ, AbstractSheaf) := (p,F) -> part(p,segre F)
 -- we don't need this one:
 -- segre(ZZ, ZZ, AbstractSheaf) := (p,q,F) -> (s := segre F; toList apply(p..q, i -> part(i,s)))
 
-nonnull = x -> select(x, i -> i =!= null)
+nonnull := x -> select(x, i -> i =!= null)
 
 coerce := (F,G) -> (
      X := variety F;
