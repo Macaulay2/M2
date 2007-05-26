@@ -14,7 +14,7 @@ newPackage(
 export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, AbstractVarietyMap, adams, Base, BundleRanks, Bundles, CanonicalLineBundle, ch, chern, 
      protect ChernCharacter, protect ChernClass, ChernClassSymbol, chi, ctop, DIM, expp, FlagBundle, flagBundle, FlagBundleStructureMap, integral, protect IntersectionRing,
      intersectionRing, logg, point, PullBack, PushForward, Rank, reciprocal, schur, SectionClass, sectionClass, segre, StructureMap, symm, protect TangentBundle,
-     tangentBundle, todd, protect ToddClass, wedge }
+     tangentBundle, todd, protect ToddClass, wedge, bundle }
 
 symm = symmetricPower
 wedge = exteriorPower
@@ -120,6 +120,17 @@ abstractVariety(ZZ,Ring) := opts -> (DIM,A) -> (
      	  }
      )
 
+bundle = method()
+bundle(ZZ, ZZ, Symbol) := (DIM, rk, nm) -> first bundle(DIM,{rk},{nm})
+bundle(ZZ, List, List) := (DIM, rks, nms) -> (
+     if not all(nms, s -> instance(s,Symbol)) then error "expected a symbol or symbols";
+     vrs := apply(rks, nms, (rk,nm) -> toList apply(1 .. rk, r -> new IndexedVariable from {nm,r}));
+     dgs := apply(rks, rk -> toList(1 .. rk));
+     A := (intersectionRing point)[flatten vrs, Degrees => flatten dgs, MonomialOrder => apply(dgs, dg -> GRevLex => dg)];
+     use A;
+     X := abstractVariety(DIM, A);
+     toSequence apply(rks, vrs, (rk,e) -> abstractSheaf(X, Rank => rk, ChernClass => 1_A + sum(value \ e))))
+
 tangentBundle = method()
 tangentBundle AbstractVariety := X -> (
      if not X.?TangentBundle then error "variety has no tangent bundle";
@@ -193,7 +204,13 @@ AbstractSheaf ^ ZZ := (E,n) -> new AbstractSheaf from {
 	  if E.cache.?ChernClass then ChernClass => E.cache.ChernClass ^ n
 	  }
      }
-AbstractSheaf ^** ZZ := (E,n) -> abstractSheaf(E.AbstractVariety, ChernCharacter => (ch E)^n)
+AbstractSheaf ^** ZZ := (E,n) -> abstractSheaf(variety E, ChernCharacter => (ch E)^n)
+AbstractSheaf ^** QQ := AbstractSheaf ^** RingElement := (E,n) -> (
+     if rank E != 1 then error "symbolic power works for invertible sheafs only";
+     t := 1 - ch E;
+     ti := 1;
+     bin := 1;
+     abstractSheaf(variety E, Rank => 1, ChernCharacter => 1 + sum for i from 1 to dim variety E list ( bin = (1/i) * (n-(i-1)) * bin; ti = ti * t; bin * ti )))
 rank AbstractSheaf := E -> E.rank
 variety AbstractSheaf := E -> E.AbstractVariety
 
@@ -224,9 +241,6 @@ flagBundle(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      -- (C,H,I) := flattenRing B;
      C := B; H := identity;
      use C;
-     oldnet := lookup(net,C);
-     -- put this in when "parts" is working, and fix the minus signs, too!
-     -- net C := f -> sum(select(apply(((i,j) -> i .. j) weightRange f, n -> part_n f), p -> p != 0), p -> new Parenthesize from {oldnet p});
      DIM := dim X + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
      FV := C.Variety = new FlagBundle from abstractVariety(DIM,C);
      FV.BundleRanks = bundleRanks;
@@ -405,7 +419,7 @@ exteriorPower(ZZ, AbstractSheaf) := opts -> (n,E) -> (
      abstractSheaf(variety E, ChernCharacter => wedge#n)
      )
 
-symmetricPower(ZZ, AbstractSheaf) := (n,E) -> (
+symmetricPower(ZZ, AbstractSheaf) := symmetricPower(QQ, AbstractSheaf) := symmetricPower(RingElement, AbstractSheaf) := (n,E) -> (
      A := ch E;
      wedge := computeWedges(n,A);
      symms := new MutableList from splice{0..n};
@@ -478,13 +492,26 @@ transpose basis B
 (c_1 P)^3 * (c_1 R)^5 * (c_1 S)^4
 p_* oo
 
-A = QQ[e1,e2,e3,Degrees=>{1,2,3}]
-B = A/(e1^4,e2^2,e3^2)
-describe B
-X = abstractVariety(3,B)
-E = abstractSheaf(X,Rank => 3,ChernClass => 1 + e1 + e2 + e3)
+(A,B) = bundle(4,{2,3},{a,b})
+chern A
+segre B
+chern(A**B)
+chern(3,symm(3,dual(A)))
+segre(2,Hom(wedge(2,A),wedge(2,B)))
+
+(G24,p) = Grassmannian(2,4,{R,Q})
+chi symm(n,Q)						    -- doesn't work yet
+chi OO_G24(n*c_1 Q)
+chi (det Q)^**n
+factor oo
+assert( (n-2)*(n^3-18*n^2+71*n-6)*(1/12) == chi (det Q)^**n )
+
+E = bundle(3, 3, e)
 (P,p) = Proj(E,{W,Q})
 C = intersectionRing P
+ch Q
+netList toList parts ch Q
+
 gens C
 degree \ gens C
 describe C
@@ -493,12 +520,15 @@ c_1 symbol W
 c_1 W
 assert( c_1 symbol W == c_1 W )
 c_1 W + c_1 Q
-assert( c_1 W + c_1 Q == e1 )
+assert( c_1 W + c_1 Q == e_1 )
 (c_2 W)^2
 rank Q
 c_1 det Q
-promote(e1,C)
+promote(e_1,C)
 dim p
+parts ch Q
+assert( value parts ch Q == ch Q )
+
 p_* (c_1 W)^2
 
 -- parameters
