@@ -1,4 +1,4 @@
-loadPackage "Schubert"
+loadPackage "Schubert2"
 compactMatrixForm = false
 
 (P3,p) = Proj(3,{R,Q})
