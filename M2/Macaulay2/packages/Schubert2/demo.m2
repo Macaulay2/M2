@@ -1,7 +1,7 @@
 -- In this file we translate many examples from Schubert into Schubert2
 -- We include section III (EXAMPLES) from schubertmanual.txt in comments.
 
-loadPackage "Schubert2"
+loadPackage "Schubert2";
 
 -- III.  EXAMPLES:
 -- 
@@ -20,17 +20,24 @@ loadPackage "Schubert2"
 -- > DIM:=4:
 -- > A:=bundle(2,c):        # a bundle with Chern classes c1,c2 and rank 2
 -- > B:=bundle(3,d):        # a bundle with Chern classes d1,d2,d3 and rank 3
+
+(A,B) = bundle(4,{2,3},{a,b});
+
 -- > chern(A);
 --                                                2
 --                                 1 + c1 t + c2 t
--- 
+
+chern A
+
 -- > segre(B);
 --                              2        2      3                  3
 --                1 + d1 t + (d1  - d2) t  + (d1  - 2 d1 d2 + d3) t
 -- 
 --                          4          2               2   4
 --                     + (d1  - 3 d2 d1  + 2 d1 d3 + d2 ) t
--- 
+
+segre B
+
 -- > chern(A&*B);           # The Chern class of the tensor product
 --                          2                 2                 2
 -- 1 + (2 d1 + 3 c1) t + (d1  + 5 c1 d1 + 3 c1  + 2 d2 + 3 c2) t  +
@@ -43,15 +50,24 @@ loadPackage "Schubert2"
 -- 
 --             2       2        2   2        3   4
 --    + 2 c2 d1  + 3 c1  d2 + c1  d1  + d1 c1 ) t
--- 
+
+chern(A**B)
+
 -- > chern(3,symm(3,dual(A)));
 --                                      3
 --                                - 6 c1  - 30 c1 c2
--- 
+
+chern(3,symm(3,dual(A)))
+
 -- > segre(2,Hom(wedge(2,A),wedge(2,B)));
 --                               2                 2
 --                           3 d1  - 8 c1 d1 + 6 c1  - d2
 -- 
+
+segre(2,Hom(wedge(2,A),wedge(2,B)))
+
+end
+
 -- #-------------------------------------------------------------------------
 -- ## Grassmannian of lines in P3:
 -- > 

@@ -1,5 +1,5 @@
 newPackage(
-	"Schubert",
+	"Schubert2",
     	Version => "0.1",
     	Date => "May, 2007",
 	Authors => {
@@ -501,13 +501,6 @@ transpose presentation B
 transpose basis B
 (c_1 P)^3 * (c_1 R)^5 * (c_1 S)^4
 p_* oo
-
-(A,B) = bundle(4,{2,3},{a,b})
-chern A
-segre B
-chern(A**B)
-chern(3,symm(3,dual(A)))
-segre(2,Hom(wedge(2,A),wedge(2,B)))
 
 (G24,p) = Grassmannian(2,4,{R,Q});
 chi symm(n,Q)						    -- doesn't work yet
