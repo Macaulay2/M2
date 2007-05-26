@@ -17,8 +17,8 @@ parts oo
 netList toList oo
 det F
 schur({2},F)
-restart
-loadPackage "Schubert2"
+-- restart
+-- loadPackage "Schubert2"
 R = QQ[c3,c2,c1,Degrees=>{3,2,1},MonomialOrder=>RevLex,Global=>false]
 A = R/truncate(4,ideal vars R)
 X = abstractVariety(3, A)
@@ -48,8 +48,8 @@ TEST /// -- segre
   netList segre(0,3,F)
 ///
 
-restart
-loadPackage "Schubert2"
+-- restart
+-- loadPackage "Schubert2"
 R = QQ[c4,c3,c2,c1,Degrees=>{4,3,2,1},MonomialOrder=>RevLex,Global=>false]
 A = R/truncate(10,ideal vars R)
 X = abstractVariety(9, A)
@@ -71,7 +71,7 @@ parts segre F
 netList toList parts segre F
        
 -- test wedge, symm for small cases
-restart
+-- restart
 R = QQ[a,b,c,d,e1,e2,e3,e4,t,MonomialOrder=>Eliminate 4]
 I = ideal(e1-(a+b+c+d), e2-(a*b+a*c+a*d+b*c+b*d+c*d), e3-(a*b*c+b*c*d+a*c*d+a*b*d),e4-a*b*c*d)
 F = product(1..4, i -> (1+R_(i-1)*t))
@@ -88,8 +88,8 @@ F = product apply(flatten for i from 0 to 3 list for j from i to 3 list {i,j}, x
 F % I
 
 -- Testing schur functions of bundles
-restart
-loadPackage "Schubert2"
+-- restart
+-- loadPackage "Schubert2"
 R = QQ[c4,c3,c2,c1,Degrees=>{4,3,2,1},MonomialOrder=>RevLex,Global=>false]
 A = R/truncate(5,ideal vars R)
 X = abstractVariety(4, A)
