@@ -14,10 +14,11 @@ newPackage(
 export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, AbstractVarietyMap, adams, Base, BundleRanks, Bundles, CanonicalLineBundle, ch, chern, 
      protect ChernCharacter, protect ChernClass, ChernClassSymbol, chi, ctop, DIM, expp, FlagBundle, flagBundle, FlagBundleStructureMap, integral, protect IntersectionRing,
      intersectionRing, logg, point, PullBack, PushForward, Rank, reciprocal, schur, SectionClass, sectionClass, segre, StructureMap, symm, protect TangentBundle,
-     tangentBundle, todd, protect ToddClass, wedge, bundle }
+     tangentBundle, todd, protect ToddClass, wedge, bundle, grass }
 
 symm = symmetricPower
 wedge = exteriorPower
+grass = Grassmannian
 
 AbstractVariety = new Type of MutableHashTable
 AbstractVariety.synonym = "abstract variety"
