@@ -539,10 +539,10 @@ protect(e:Expr):Expr := (
 	  if !okay then buildErrorPacket("tried to protect last remaining visible dictionary")
 	  else (
 	       d.protected = true;
-	       nullE))
+	       e))
      is q:SymbolClosure do (
 	  q.symbol.protected = true; 
-	  nullE)
+	  e)
      else WrongArg("a symbol or a dictionary"));
 setupfun("protect",protect);
 flagSymbol(e:Expr):Expr := (
