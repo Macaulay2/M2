@@ -116,7 +116,13 @@ end
 -- > lowerstar(X,c11):     # push down to G(3,5).
 -- > integral(Gc,");       # and integrate there.
 --                                      609250
--- 
+
+(Gc,p) = Grassmannian(3,5,{Sc,Qc});
+(X,q) = Proj(dual symm_2 Qc,{K,L});
+B = symm(5,Qc) - symm(3,Qc) * dual L;
+integral chern B
+assert( oo == 609250 )
+
 -- #-------------------------------------------------------------------------
 -- ## Count the number of space conics intersecting 8 given lines
 -- > 
