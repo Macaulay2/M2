@@ -95,6 +95,7 @@ export {
 	symbol CDATA,
 	symbol CODE,
 	symbol COMMENT,
+	symbol CacheFunction,
 	symbol CacheTable,
 	symbol CallLimit,
 	symbol Caveat,
