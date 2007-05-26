@@ -12,25 +12,28 @@ newPackage(
     	)
 
 export {
-     Bundles,
-     FlagBundle,
-     CanonicalLineBundle,
      AbstractSheaf,
      abstractSheaf,
      AbstractVariety,
      abstractVariety,
      AbstractVarietyMap,
      adams,
+     Base,
+     BundleRanks,
+     Bundles,
+     CanonicalLineBundle,
      ch,
      chern,
      ChernCharacter,
      ChernClass,
      ChernClassSymbol,
-     BundleRanks,
+     chi,
      ctop,
      DIM,
      expp,
+     FlagBundle,
      flagBundle,
+     FlagBundleStructureMap,
      integral,
      IntersectionRing,
      intersectionRing,
@@ -38,6 +41,7 @@ export {
      point,
      PullBack,
      PushForward,
+     Rank,
      reciprocal,
      schur,
      SectionClass,
@@ -46,6 +50,7 @@ export {
      StructureMap,
      symm,
      TangentBundle,
+     tangentBundle,
      todd,
      ToddClass,
      wedge
@@ -72,6 +77,9 @@ AbstractVariety.AfterPrint = X -> (
      << "an abstract variety of dimension " << dim X << endl;
      )
 
+intersectionRing = method()
+intersectionRing AbstractVariety := X -> X.IntersectionRing
+
 FlagBundle = new Type of AbstractVariety
 FlagBundle.synonym = "abstract flag bundle"
 globalAssignment FlagBundle
@@ -86,6 +94,8 @@ FlagBundle.AfterPrint = X -> (
 
 AbstractVarietyMap = new Type of MutableHashTable
 AbstractVarietyMap.synonym = "abstract variety map"
+FlagBundleStructureMap = new Type of AbstractVarietyMap
+FlagBundleStructureMap.synonym = "abstract flag bundle structure map"
 AbstractVarietyMap ^* := f -> f.PullBack
 AbstractVarietyMap _* := f -> f.PushForward
 globalAssignment AbstractVarietyMap
@@ -118,36 +128,50 @@ AbstractSheaf.AfterPrint = E -> (
 
 abstractSheaf = method(Options => {
 	  ChernClass => null,
-	  ChernCharacter => null
+	  ChernCharacter => null,
+	  Rank => null
 	  })
-abstractSheaf(AbstractVariety,ZZ) := opts -> (X,rk) -> (
-     if opts.ChernClass === null and opts.ChernCharacter === null then error "abstractSheaf: expected Chern character or Chern class";
+abstractSheaf(AbstractVariety) := opts -> X -> (
+     local ch; local rk;
+     if opts.ChernCharacter =!= null then (
+	  ch = opts.ChernCharacter;
+     	  rk = lift(part(0,opts.ChernCharacter),ZZ);
+     	  if opts.Rank =!= null and rk != opts.Rank then error "abstractSheaf: expected rank and Chern character to be compatible";
+	  )
+     else (
+     	  if opts.Rank === null then error "abstractSheaf: expected rank or Chern character";
+	  rk = opts.Rank;
+     	  ch = if opts.ChernClass === null then ch = promote(rk,intersectionRing X) else rk + logg opts.ChernClass;
+	  );
      new AbstractSheaf from {
      	  global AbstractVariety => X,
      	  global rank => rk,
-	  ChernCharacter => if opts.ChernCharacter =!= null then opts.ChernCharacter else rk + logg opts.ChernClass,
+	  ChernCharacter => ch,
 	  global cache => new CacheTable from {
 	       if opts.ChernClass =!= null then ChernClass => opts.ChernClass
 	       }
      	  }
      )
-abstractSheaf(AbstractVariety) := opts -> X -> (
-     if opts.ChernCharacter === null then error "abstractSheaf: expected rank or Chern character";
-     abstractSheaf(X,lift(part(0,opts.ChernCharacter),ZZ),opts))
+
 abstractSheaf(AbstractVariety,RingElement) := opts -> (X,f) -> abstractSheaf(X, ChernCharacter => f)
 
-abstractVariety = method(Options => {
-	  TangentBundle => null
-	  })
+abstractVariety = method(Options => { })
 abstractVariety(ZZ,Ring) := opts -> (DIM,A) -> (
      if A.?DIM and A.DIM =!= DIM then error "intersection ring corresponds to a variety of a different dimension";
      A.DIM = DIM;
      new AbstractVariety from {
 	  global DIM => DIM,
-     	  IntersectionRing => A,
-	  if opts.TangentBundle =!= null then TangentBundle => opts.TangentBundle
+     	  IntersectionRing => A
      	  }
      )
+
+tangentBundle = method()
+tangentBundle AbstractVariety := X -> (
+     if not X.?TangentBundle then error "variety has no tangent bundle";
+     X.TangentBundle)
+tangentBundle AbstractVarietyMap := f -> (
+     if not f.?TangentBundle then error "variety map has no relative tangent bundle";
+     f.TangentBundle)
 
 AbstractSheaf ZZ := (F,n) -> (
      X := variety F;
@@ -159,10 +183,9 @@ integral = method()
 integral QQ := identity
 
 point = abstractVariety(0,QQ)
+point.TangentBundle = abstractSheaf(point,Rank => 0)
 dim AbstractVariety := X -> X.DIM
-
-intersectionRing = method()
-intersectionRing AbstractVariety := X -> X.IntersectionRing
+part(ZZ,QQ) := (n,r) -> if n === 0 then r else 0_QQ
 
 symbol c <- chern = method()
 chern AbstractSheaf := (cacheValue ChernClass) (F -> expp F.ChernCharacter)
@@ -186,7 +209,7 @@ net ChernClassSymbol := net @@ expression
 
 OO(AbstractVariety) := X -> (
      A := intersectionRing X;
-     abstractSheaf(X,1,ChernClass => 1_A,ChernCharacter => 1_A))
+     abstractSheaf(X, Rank => 1, ChernClass => 1_A, ChernCharacter => 1_A))
 
 AbstractSheaf ^ ZZ := (E,n) -> new AbstractSheaf from {
      global AbstractVariety => E.AbstractVariety,
@@ -204,6 +227,8 @@ AbstractSheaf ^** ZZ := (E,n) -> new AbstractSheaf from {
      }
 rank AbstractSheaf := E -> E.rank
 variety AbstractSheaf := E -> E.AbstractVariety
+
+tangentBundle FlagBundle := (stashValue TangentBundle) (FV -> tangentBundle FV.Base + tangentBundle FV.StructureMap)
 
 flagBundle = method()
 flagBundle(ZZ,List,List) := (rk,bundleNames,bundleRanks) -> flagBundle(point,rk,bundleNames,bundleRanks)
@@ -236,26 +261,24 @@ flagBundle(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      DIM := dim X + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
      FV := C.Variety = new FlagBundle from abstractVariety(DIM,C);
      FV.BundleRanks = bundleRanks;
+     FV.Base = X;
      bundles := FV.Bundles = apply(n, i -> (
 	       nm := bundleNames#i;
-	       bdl := abstractSheaf(FV,bundleRanks#i, ChernClass => H promote(chclasses#i,B));
+	       bdl := abstractSheaf(FV, Rank => bundleRanks#i, ChernClass => H promote(chclasses#i,B));
 	       globalReleaseFunction(nm,value nm);
 	       globalAssignFunction(nm,bdl);
 	       nm <- bdl));
      if bundleRanks#-1 == 1 then FV.CanonicalLineBundle = last bundles;
-     sec := product(1 .. n-1, i -> (ctop bundles#i)^(sum(i, j -> rank bundles#j)));
      pullback := method();
      pushforward := method();
      pullback ZZ := pullback QQ := r -> pullback promote(r,S);
      pullback S := r -> H promote(F promote(r,T), B);
+     sec := product(1 .. n-1, i -> (ctop bundles#i)^(sum(i, j -> rank bundles#j)));
      pushforward C := r -> coefficient(sec,r);
      pullback AbstractSheaf := E -> (
 	  if variety E =!= X then "pullback: variety mismatch";
-	  abstractSheaf(FV,pullback ch E));
-     pushforward AbstractSheaf := E -> (
-	  if variety E =!= FV then "pushforward: variety mismatch";
-	  abstractSheaf(X,pushforward ch E));
-     p := new AbstractVarietyMap from {
+	  abstractSheaf(FV,ChernCharacter => pullback ch E));
+     p := new FlagBundleStructureMap from {
 	  global target => X,
 	  global source => FV,
 	  SectionClass => sec,
@@ -263,8 +286,16 @@ flagBundle(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
 	  PullBack => pullback
 	  };
      FV.StructureMap = p;
+     pushforward AbstractSheaf := E -> (
+	  if variety E =!= FV then "pushforward: variety mismatch";
+	  abstractSheaf(X,ChernCharacter => pushforward (ch E * todd p)));
      integral C := r -> integral p_* r;
      (FV,p))
+
+tangentBundle FlagBundleStructureMap := (stashValue TangentBundle) (
+     p -> (
+	  bundles := (source p).Bundles;
+	  sum(1 .. #bundles-1, i -> sum(i, j -> Hom(bundles#j,bundles#i)))))
 
 Grassmannian(ZZ,AbstractSheaf,List) := opts -> (k,E,bundleNames) -> flagBundle(E,bundleNames,{rank E-k,k})
 Grassmannian(ZZ,ZZ,AbstractVariety,List) := opts -> (k,n,X,bundleNames) -> Grassmannian(k,OO_X^n,bundleNames)
@@ -316,6 +347,8 @@ expp RingElement := (A) -> (
 
 todd = method()
 todd AbstractSheaf := E -> todd ch E
+todd AbstractVariety := X -> todd tangentBundle X
+todd AbstractVarietyMap := p -> todd tangentBundle p
 todd RingElement := (A) -> (
      -- A is the chern character
      -- the (total) todd class is returned
@@ -337,6 +370,8 @@ todd RingElement := (A) -> (
      expp A1
      )
 
+chi = method()
+
 segre = method()
 segre AbstractSheaf := E -> reciprocal chern dual E
 segre(ZZ, AbstractSheaf) := (p,F) -> part(p,segre F)
@@ -357,7 +392,7 @@ coerce := (F,G) -> (
 AbstractSheaf ++ AbstractSheaf :=
 AbstractSheaf + AbstractSheaf := (
      (F,G) -> abstractSheaf nonnull (
-	  variety F, rank F + rank G,
+	  variety F, Rank => rank F + rank G,
 	  ChernCharacter => ch F + ch G,
 	  if F.cache.?ChernClass and G.cache.?ChernClass then ChernClass => F.cache.ChernClass * G.cache.ChernClass
 	  )) @@ coerce
@@ -366,22 +401,22 @@ adams = method()
 adams(ZZ,RingElement) := (k,ch) -> (
      d := first degree ch;
      sum(0 .. d, i -> k^i * part_i ch))
-adams(ZZ,AbstractSheaf) := (k,E) -> abstractSheaf nonnull (variety E, rank E, 
+adams(ZZ,AbstractSheaf) := (k,E) -> abstractSheaf nonnull (variety E, Rank => rank E, 
      ChernCharacter => adams(k, ch E),
      if E.cache.?ChernClass then ChernClass => adams(k, E.cache.ChernClass)
      )
 dual AbstractSheaf := E -> adams(-1,E)
 
-- AbstractSheaf := E -> abstractSheaf(variety E, - rank E, ChernCharacter => - ch E)
+- AbstractSheaf := E -> abstractSheaf(variety E, Rank => - rank E, ChernCharacter => - ch E)
 AbstractSheaf - AbstractSheaf := (F,G) -> F + -G
 
 AbstractSheaf ** AbstractSheaf :=
-AbstractSheaf * AbstractSheaf := AbstractSheaf => ((F,G) -> abstractSheaf(variety F, rank F * rank G, ChernCharacter => ch F * ch G)) @@ coerce
+AbstractSheaf * AbstractSheaf := AbstractSheaf => ((F,G) -> abstractSheaf(variety F, Rank => rank F * rank G, ChernCharacter => ch F * ch G)) @@ coerce
 
 Hom(AbstractSheaf, AbstractSheaf) := ((F,G) -> dual F ** G) @@ coerce
 End AbstractSheaf := (F) -> Hom(F,F)
 
-det AbstractSheaf := opts -> (F) -> abstractSheaf(variety F, 1, ChernClass => 1 + part(1,ch F))
+det AbstractSheaf := opts -> (F) -> abstractSheaf(variety F, Rank => 1, ChernClass => 1 + part(1,ch F))
 
 computeWedges = (n,A) -> (
      -- compute the chern characters of wedge(i,A), for i = 0..n, given a chern character
@@ -457,7 +492,7 @@ basis A
 A = QQ[e_1 .. e_4,Degrees=>{1,2,3,4}]
 B = A/(e_1^5,e_2^3,e_3^2,e_4^2)
 X = abstractVariety(4,B)
-E = abstractSheaf(X,4,ChernClass => 1 + sum(1 .. 4, i -> e_i))
+E = abstractSheaf(X,Rank => 4,ChernClass => 1 + sum(1 .. 4, i -> e_i))
 (F22,p) = flagBundle(E,{R,Q},{2,2})
 C = intersectionRing F22
 (c_2 R)
@@ -477,7 +512,7 @@ A = QQ[e1,e2,e3,Degrees=>{1,2,3}]
 B = A/(e1^4,e2^2,e3^2)
 describe B
 X = abstractVariety(3,B)
-E = abstractSheaf(X,3,ChernClass => 1 + e1 + e2 + e3)
+E = abstractSheaf(X,Rank => 3,ChernClass => 1 + e1 + e2 + e3)
 (P,p) = Proj(E,{W,Q})
 C = intersectionRing P
 gens C
@@ -501,7 +536,7 @@ p_* (c_1 W)^2
 loadPackage "Schubert"
 R = QQ[c1,c2,c3,c4,Degrees=>{1,2,3,4},MonomialOrder=>GRevLex=>{1,2,3,4}]
 X = abstractVariety(4,R)
-F = abstractSheaf(X, 4, ChernClass=>1+c1+c2+c3+c4)
+F = abstractSheaf(X, Rank => 4, ChernClass => 1+c1+c2+c3+c4)
 segre F
 parts oo
 chern F
@@ -521,7 +556,7 @@ loadPackage "Schubert"
 R = QQ[c3,c2,c1,Degrees=>{3,2,1},MonomialOrder=>RevLex,Global=>false]
 A = R/truncate(4,ideal vars R)
 X = abstractVariety(3, A)
-F = abstractSheaf(X,3,ChernClass => 1+c1+c2+c3)
+F = abstractSheaf(X, Rank => 3, ChernClass => 1+c1+c2+c3)
 F2 = wedge(2,F)
 F3 = wedge(3,F)
 symm(1,F)
@@ -541,7 +576,7 @@ netList toList parts segre F
 TEST /// -- segre
   loadPackage "Schubert"
   X = abstractVariety(3, use (QQ[c1,c2,c3,Degrees=>{1,2,3},MonomialOrder=>GRevLex=>{1,2,3}]))
-  F = abstractSheaf(X,3,ChernClass => 1+c1+c2+c3)
+  F = abstractSheaf(X, Rank => 3,ChernClass => 1+c1+c2+c3)
   assert(chern F == 1+c1+c2+c3)
   assert(toString segre F == "c1^3-2*c1*c2+c3+c1^2-c2+c1+1")
   assert(segre(3,F) == c1^3-2*c1*c2+c3)
@@ -553,7 +588,7 @@ loadPackage "Schubert"
 R = QQ[c4,c3,c2,c1,Degrees=>{4,3,2,1},MonomialOrder=>RevLex,Global=>false]
 A = R/truncate(10,ideal vars R)
 X = abstractVariety(9, A)
-F = abstractSheaf(X,4,ChernClass => 1+c1+c2+c3+c4)
+F = abstractSheaf(X, Rank => 4, ChernClass => 1+c1+c2+c3+c4)
 F2 = wedge(2,F)
 F3 = wedge(3,F)
 symm(1,F)
@@ -631,7 +666,7 @@ loadPackage "Schubert"
 R = QQ[c4,c3,c2,c1,Degrees=>{4,3,2,1},MonomialOrder=>RevLex,Global=>false]
 A = R/truncate(5,ideal vars R)
 X = abstractVariety(4, A)
-F = abstractSheaf(X,4,ChernClass => 1+c1+c2+c3+c4)
+F = abstractSheaf(X, Rank => 4, ChernClass => 1+c1+c2+c3+c4)
 ch F
 
 -- Check that wedge 2, symm 2, work correctly
