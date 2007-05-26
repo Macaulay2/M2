@@ -509,11 +509,12 @@ chern(A**B)
 chern(3,symm(3,dual(A)))
 segre(2,Hom(wedge(2,A),wedge(2,B)))
 
-(G24,p) = Grassmannian(2,4,{R,Q})
+(G24,p) = Grassmannian(2,4,{R,Q});
 chi symm(n,Q)						    -- doesn't work yet
 chi OO_G24(n*c_1 Q)
 chi (det Q)^**n
 factor oo
+p_* (det Q)^**n
 assert( (n-2)*(n^3-18*n^2+71*n-6)*(1/12) == chi (det Q)^**n )
 
 E = bundle(3, 3, e)
