@@ -254,7 +254,7 @@ flagBundle(ZZ,List,List) := opts -> (rk,bundleNames,bundleRanks) -> (
      if opts.BundleNames =!= null then error "bundle names given more than once";
      if opts.BundleRanks =!= null then error "bundle ranks given more than once";
      flagBundle(point, rk, BundleNames => bundleNames, BundleRanks => bundleRanks))
-flagBundle(AbstractVariety,ZZ,List,List) := opts -> (X,rk,bundleNames,bundleRanks) -> flagBundle(OO_X^rk,bundleNames,bundleRanks)
+flagBundle(AbstractVariety,List,List) := opts -> (X,bundleNames,bundleRanks) -> flagBundle(OO_X^(sum bundleRanks),bundleNames,bundleRanks)
 flagBundle(AbstractSheaf,List,List) := opts -> (E,bundleNames,bundleRanks) -> (
      Ord := GRevLex;
      switch := identity;
