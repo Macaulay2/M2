@@ -122,16 +122,16 @@ netbydegree := f -> (
      tms = apply(tms, e -> if instance(e,Sum) then new Parenthesize from {e} else e);
      net new Sum from tms)
 
-abstractVariety = method(Options => { })
+abstractVariety = method(Options => { Type => AbstractVariety })
 abstractVariety(ZZ,Ring) := opts -> (DIM,A) -> (
-     if A.?DIM and A.DIM =!= DIM then error "intersection ring corresponds to a variety of a different dimension";
+     if A.?DIM then error "ring already in use as an intersection ring";
      A.DIM = DIM;
      net A := netbydegree;
-     new AbstractVariety from {
+     X := new opts#Type from {
 	  global DIM => DIM,
      	  IntersectionRing => A
-     	  }
-     )
+     	  };
+     A.Variety = X)
 
 bundle = method()
 bundle(ZZ, ZZ, Symbol) := (DIM, rk, nm) -> first bundle(DIM,{rk},{nm})
@@ -265,7 +265,7 @@ flagBundle(AbstractSheaf,List,List) := (E,bundleNames,bundleRanks) -> (
      C := B; H := identity;
      use C;
      DIM := dim X + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
-     FV := C.Variety = new FlagBundle from abstractVariety(DIM,C);
+     FV := C.Variety = abstractVariety(DIM,C,Type => FlagBundle);
      FV.BundleRanks = bundleRanks;
      FV.Base = X;
      bundles := FV.Bundles = apply(n, i -> (
