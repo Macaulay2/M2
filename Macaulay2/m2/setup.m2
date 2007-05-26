@@ -27,6 +27,12 @@ dictionaryPath = append(dictionaryPath,OutputDictionary)
 -- references to the symbol 'User' occur before the corresponding package has been created...
 getGlobalSymbol(PackageDictionary,"User")
 
+getSymbol = nm -> (
+     if isGlobalSymbol nm then return getGlobalSymbol nm;
+     for d in dictionaryPath do if mutable d then return getGlobalSymbol(d,nm);
+     error "no mutable dictionary on path";
+     )
+
 -----------
 
 addStartFunction(

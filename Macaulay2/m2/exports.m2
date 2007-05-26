@@ -661,6 +661,7 @@ export {
 	symbol get,
 	symbol getChangeMatrix,
 	symbol getGlobalSymbol,
+	symbol getSymbol,
 	symbol getNetFile,
 	symbol getNonUnit,
 	symbol getPackage,
