@@ -10,10 +10,17 @@ loadPackage "Schubert2";
 ---- > proj(3,h,all): factor(chi(o(n*h)));
 ----                           1/6 (n + 3) (n + 2) (n + 1)
 ---- 
+
+(P,p) = Proj(3,{Sh,Qh})
+h = c_1 Qh;
+factor chi OO_P(n*h)
+
 ---- > Ph[toddclass_];
 ----                                            2  2    3  3
 ----                          1 + 2 h t + 11/6 h  t  + h  t
----- 
+
+todd P
+
 ---- #-------------------------------------------------------------------------
 ---- # Generation of formulas:
 ---- > 
@@ -187,8 +194,6 @@ integral f_* (2*d1 + e)^8
 integral (2*d1 + e)^8
 assert( 92 == oo )
 
-end
-
 ---- #-------------------------------------------------------------------------
 ---- # Conics tangent to 5 plane conics.  Each tangency is a degree 6
 ---- # condition on the P^5 of conics; but it contains the degenerate conics with  
@@ -216,12 +221,21 @@ end
 ---- # Euler characteristic of Horrocks-Mumford bundle
 ---- > 
 ---- > proj(4,h,tang):            # need tangentbundle for chi
+
+(P,p) = Proj(4,{Sh,Qh})
+h = c_1 Qh
+
 ---- > F:=sheaf(2,[5*h,10*h^2]):  # defines the Horrocks-Mumford bundle
+
+F = sheaf(2,[5*h,10*h^2])
+
 ---- > chi(F&*o(n*h));            # computes chi of its twists
 ----                           4        3   125  2
 ----                     1/12 n  + 5/3 n  + --- n  + 125/6 n + 2
 ----                                         12
----- 
+
+chi (F ** OO_P(n))
+
 ---- #-------------------------------------------------------------------------
 ---- # Cohomology of the universal line in P^3.  Done in two ways -  
 ---- # LL is the line as a section of a bundle on P3 x G(2,4), whereas Tf is 
