@@ -14,11 +14,12 @@ newPackage(
 export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, AbstractVarietyMap, adams, Base, BundleRanks, Bundles, CanonicalLineBundle, ch, chern, 
      protect ChernCharacter, protect ChernClass, ChernClassSymbol, chi, ctop, DIM, expp, FlagBundle, flagBundle, FlagBundleStructureMap, integral, protect IntersectionRing,
      intersectionRing, logg, point, PullBack, PushForward, Rank, reciprocal, schur, SectionClass, sectionClass, segre, StructureMap, symm, protect TangentBundle,
-     tangentBundle, todd, protect ToddClass, wedge, bundle, grass }
+     tangentBundle, todd, protect ToddClass, wedge, bundle, grass, totalspace }
 
 symm = symmetricPower
 wedge = exteriorPower
 grass = Grassmannian
+totalspace = source
 
 AbstractVariety = new Type of MutableHashTable
 AbstractVariety.synonym = "abstract variety"
@@ -108,8 +109,12 @@ abstractSheaf(AbstractVariety) := opts -> X -> (
 	       }
      	  }
      )
-
 abstractSheaf(AbstractVariety,RingElement) := opts -> (X,f) -> abstractSheaf(X, ChernCharacter => f)
+
+sheaf(ZZ,Array,AbstractVariety) := (rk,classes,X) -> abstractSheaf(X, Rank => rk, ChernClass => 1 + sum toList classes)
+sheaf(ZZ,Array) := (rk,classes) -> (
+     if #classes === 0 then error "no Chern classes given";
+     sheaf(rk,classes,variety ring first classes))
 
 debug Core						    -- needed only for flatmonoid, sigh
 netbydegree := f -> (
@@ -236,6 +241,7 @@ AbstractSheaf ^** QQ := AbstractSheaf ^** RingElement := (E,n) -> (
 
 rank AbstractSheaf := E -> E.rank
 variety AbstractSheaf := E -> E.AbstractVariety
+variety Ring := R -> R.Variety
 
 tangentBundle FlagBundle := (stashValue TangentBundle) (FV -> tangentBundle FV.Base + tangentBundle FV.StructureMap)
 
