@@ -1,0 +1,27 @@
+-*- mode: M2 -*-
+
+a computation that can't be interrupted quickly enough:
+
+    i1 : S = schurRing (s,4)
+
+    o1 = S
+
+    o1 : SchurRing
+
+    i2 : s
+
+    o2 = s
+
+    o2 : SchurRingIndexedVariableTable
+
+    i3 : s_{44}
+
+    o3 = s
+	  44
+
+    o3 : S
+
+    i4 : oo^6
+      C-c C-c  C-c C-c
+    Exit (y/n)? y
+    exiting
