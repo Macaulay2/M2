@@ -142,17 +142,6 @@ abstractVariety(ZZ,Ring) := opts -> (DIM,A) -> (
      	  };
      A.Variety = X)
 
-bundle = method()
-bundle(ZZ, ZZ, Symbol) := (DIM, rk, nm) -> first bundle(DIM,{rk},{nm})
-bundle(ZZ, List, List) := (DIM, rks, nms) -> (
-     if not all(nms, s -> instance(s,Symbol)) then error "expected a symbol or symbols";
-     vrs := apply(rks, nms, (rk,nm) -> toList apply(1 .. rk, r -> new IndexedVariable from {nm,r}));
-     dgs := apply(rks, rk -> toList(1 .. rk));
-     A := (intersectionRing point)[flatten vrs, Degrees => flatten dgs, MonomialOrder => apply(dgs, dg -> GRevLex => dg)];
-     use A;
-     X := abstractVariety(DIM, A);
-     toSequence apply(rks, vrs, (rk,e) -> abstractSheaf(X, Rank => rk, ChernClass => 1_A + sum(value \ e))))
-
 tangentBundle = method()
 tangentBundle AbstractVariety := X -> (
      if not X.?TangentBundle then error "variety has no tangent bundle";
@@ -250,21 +239,17 @@ variety Ring := R -> R.Variety
 tangentBundle FlagBundle := (stashValue TangentBundle) (FV -> tangentBundle FV.Base + tangentBundle FV.StructureMap)
 
 assignable = s -> instance(v,Symbol) or null =!= lookup(symbol <-, class v)
-globalAssign = (s,v) -> if v =!= value s then (
-     globalReleaseFunction(s,value s);
-     globalAssignFunction(s,v);
-     s <- v)
 
-defvar := global h
 offset := 1
 flagBundle = method(Options => {
 	  BundleNames => null,
-	  VariableNames => defvar
+	  VariableNames => null
 	  })
 flagBundle(List) := opts -> (bundleRanks) -> flagBundle(bundleRanks,point,opts)
 flagBundle(List,AbstractVariety) := opts -> (bundleRanks,X) -> flagBundle(bundleRanks,OO_X^(sum bundleRanks),opts)
 flagBundle AbstractSheaf := opts -> E -> flagBundle({rank E - 1, 1},E,opts)
 flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
+     defvar := local h$;
      bundleNames := opts.BundleNames;
      varNames := opts.VariableNames;
      if not all(bundleRanks,r -> instance(r,ZZ) and r>=0) then error "expected bundle ranks to be non-negative integers";
@@ -282,6 +267,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
 	  else error "flagBundle BundleNames option: expected a name or list of names");
      verror := () -> error "flagBundle VariableNames option: expected a good name or list of names";
      varNames = (
+	  if varNames === null then varNames = defvar;
 	  if instance(varNames,Symbol)
 	  then apply(0 .. #bundleRanks - 1, bundleRanks, (i,r) -> apply(toList(1 .. r), j -> new IndexedVariable from {varNames,(i+offset,j)}))
 	  else if instance(varNames,List)
@@ -395,6 +381,18 @@ grass(Symbol,ZZ,AbstractSheaf,Symbol) := (f,k,A,c) -> (
      globalAssign(f, X.StructureMap);
      globalAssign(nm "G", X);
      X)
+-- bundle
+bundle = method()
+bundle(ZZ, ZZ, Thing) := (DIM, rk, nm) -> bundle(DIM,rk, fixup nm)
+bundle(ZZ, ZZ, Symbol) := (DIM, rk, nm) -> first bundle(DIM,{rk},{nm})
+bundle(ZZ, List, List) := (DIM, rks, nms) -> (
+     if not all(nms, s -> instance(s,Symbol)) then error "expected a symbol or symbols";
+     vrs := apply(rks, nms, (rk,nm) -> toList apply(1 .. rk, r -> new IndexedVariable from {nm,r}));
+     dgs := apply(rks, rk -> toList(1 .. rk));
+     A := (intersectionRing point)[flatten vrs, Degrees => flatten dgs, MonomialOrder => apply(dgs, dg -> GRevLex => dg)];
+     use A;
+     X := abstractVariety(DIM, A);
+     toSequence apply(rks, vrs, (rk,e) -> abstractSheaf(X, Rank => rk, ChernClass => 1_A + sum(value \ e))))
 ----
 
 reciprocal = method()
