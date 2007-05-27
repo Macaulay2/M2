@@ -16,8 +16,8 @@ export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety,
      CanonicalLineBundle, ch, chern, protect ChernCharacter, protect ChernClass, ChernClassSymbol, chi, ctop, DIM, expp, FlagBundle,
      flagBundle, FlagBundleStructureMap, integral, protect IntersectionRing,
      intersectionRing, logg, point, PullBack, PushForward, Rank, reciprocal, lowerstar,
-     schur, SectionClass, sectionClass, segre, StructureMap, protect TangentBundle, tangentBundle, todd, protect ToddClass, bundle, proj,
-     BundleNames, VariableNames, symm, wedge, grass, totalspace }
+     schur, SectionClass, sectionClass, segre, StructureMap, Symm, protect TangentBundle, tangentBundle, todd, protect ToddClass, bundle, proj,
+     BundleNames, VariableNames, symm, wedge, grass, totalspace}
 
 symm = symmetricPower
 wedge = exteriorPower
@@ -485,7 +485,8 @@ AbstractSheaf + AbstractSheaf := (
      (F,G) -> abstractSheaf nonnull (
 	  variety F, Rank => rank F + rank G,
 	  ChernCharacter => ch F + ch G,
-	  if F.cache.?ChernClass and G.cache.?ChernClass then ChernClass => F.cache.ChernClass * G.cache.ChernClass
+	  if F.cache.?ChernClass and G.cache.?ChernClass then 
+	    ChernClass => F.cache.ChernClass * G.cache.ChernClass
 	  )) @@ coerce
 
 adams = method()
@@ -520,13 +521,27 @@ computeWedges = (n,A) -> (
      )
 
 exteriorPower(ZZ, AbstractSheaf) := opts -> (n,E) -> (
-     -- wedge is an array 0..n of the chern characters of the exerior powers of E.  The last one is what we want.
+     -- wedge is an array 0..n of the chern characters of the exerior 
+     -- powers of E.  The last one is what we want.
      if 2*n > rank E then return det(E) ** dual exteriorPower(rank E - n, E);
      wedge := computeWedges(n,ch E);
      abstractSheaf(variety E, ChernCharacter => wedge#n)
      )
 
-symmetricPower(ZZ, AbstractSheaf) := symmetricPower(QQ, AbstractSheaf) := symmetricPower(RingElement, AbstractSheaf) := (n,E) -> (
+Symm = method()
+Symm(ZZ,AbstractSheaf) :=
+Symm(RingElement,AbstractSheaf) := (n,F) -> (
+     -- check: n is a degree zero element of the intersection ring
+     -- This uses Grothendieck-Riemann-Roch, together with the fact that
+     -- f_!(OO_PF(n)) = f_*(symm(n,F)), since the higher direct images are 0.
+     PF := proj(f,F,h);
+     f := PF.StructureMap;
+     abstractSheaf(variety F,f_*(ch OO_PF(n) * todd tangentBundle f))
+     )
+
+symmetricPower(ZZ, AbstractSheaf) := 
+symmetricPower(QQ, AbstractSheaf) := 
+symmetricPower(RingElement, AbstractSheaf) := (n,E) -> (
      A := ch E;
      wedge := computeWedges(n,A);
      symms := new MutableList from splice{0..n};
