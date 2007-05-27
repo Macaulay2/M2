@@ -92,7 +92,7 @@ newSchur := (R,M,p) -> (
      M - R := (m,r) -> R#1 * m - r * M#1;
      SR - M := (p,m) -> p - R#1 * m;
      M - SR := (m,p) -> R#1 * m - p;
-     toExternalString SR := 
+     toExternalString SR := r -> toString expression r;
      expression SR := f -> (
 	  (coeffs,monoms) -> sum(
 	       coeffs,monoms,
