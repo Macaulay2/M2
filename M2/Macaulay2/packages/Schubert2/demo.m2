@@ -236,8 +236,7 @@ assert( 92 == oo )
 ---- > 
 ---- > proj(4,h,tang):            # need tangentbundle for chi
 
-(P,p) = Proj(4,{Sh,Qh})
-h = c_1 Qh
+proj(4,h)
 
 ---- > F:=sheaf(2,[5*h,10*h^2]):  # defines the Horrocks-Mumford bundle
 
@@ -248,7 +247,8 @@ F = sheaf(2,[5*h,10*h^2])
 ----                     1/12 n  + 5/3 n  + --- n  + 125/6 n + 2
 ----                                         12
 
-chi (F ** OO_P(n))
+chi (F ** o(n*h))
+assert( oo == 1/12*n^4+5/3*n^3+125/12*n^2+125/6*n+2 )
 
 ---- #-------------------------------------------------------------------------
 ---- # Cohomology of the universal line in P^3.  Done in two ways -  
