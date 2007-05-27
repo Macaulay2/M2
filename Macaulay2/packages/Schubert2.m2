@@ -56,6 +56,8 @@ FlagBundleStructureMap = new Type of AbstractVarietyMap
 FlagBundleStructureMap.synonym = "abstract flag bundle structure map"
 AbstractVarietyMap ^* := f -> f.PullBack
 AbstractVarietyMap _* := f -> f.PushForward
+lowerstar = method()
+lowerstar(AbstractVarietyMap,Thing) := (f,x) -> f.PushForward x
 globalAssignment AbstractVarietyMap
 source AbstractVarietyMap := f -> f.source
 target AbstractVarietyMap := f -> f.target
@@ -358,7 +360,7 @@ proj(ZZ,Thing) := (n,h) -> proj(n,fixup h)
 proj(ZZ,Symbol) := (n,h) -> (
      hs := toString h;
      nm := pre -> getSymbol(pre | hs);
-     X := flagBundle({n-1,1},BundleNames => {nm "S",nm "Q"}, VariableNames => {global S,{h}});
+     X := flagBundle({n,1},BundleNames => {nm "S",nm "Q"}, VariableNames => {global S,{h}});
      globalAssign(nm "A", intersectionRing X);
      globalAssign(nm "P", X);
      X)
@@ -531,12 +533,17 @@ exteriorPower(ZZ, AbstractSheaf) := opts -> (n,E) -> (
 Symm = method()
 Symm(ZZ,AbstractSheaf) :=
 Symm(RingElement,AbstractSheaf) := (n,F) -> (
-     -- check: n is a degree zero element of the intersection ring
+     X := variety F;
+     A := intersectionRing X;
+     try n = promote(n,A);
+     if not instance(n,A) then error "expected an element in the intersection ring of the variety";
+     if not isHomogeneous n or degree n =!= {0} then error "expected homogeneous element of degree 0";
      -- This uses Grothendieck-Riemann-Roch, together with the fact that
      -- f_!(OO_PF(n)) = f_*(symm(n,F)), since the higher direct images are 0.
-     PF := proj(f,F,h);
+     h := local h;
+     PF := flagBundle(F, VariableNames => h);
      f := PF.StructureMap;
-     abstractSheaf(variety F,f_*(ch OO_PF(n) * todd tangentBundle f))
+     abstractSheaf(X, f_*(ch OO_PF(n) * todd f))
      )
 
 symmetricPower(ZZ, AbstractSheaf) := 

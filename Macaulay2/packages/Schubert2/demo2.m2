@@ -14,7 +14,7 @@ A = symm(6,Qc) - symm(3,Qc) * o(-z)
 -- c18:=chern(rank(A),A):
 c18 = chern(rank(A),A)
 -- lowerstar(X,c18):
-X_* c18
+lowerstar(X,c18)
 -- integral(Gc,%);
 integral oo
 -- Ans =  2734099200
