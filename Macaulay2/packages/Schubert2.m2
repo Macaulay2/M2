@@ -8,17 +8,19 @@ newPackage(
 	     },
 	HomePage => "http://www.math.uiuc.edu/Macaulay2/",
     	Headline => "computations of characteristic classes for varieties without equations",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
-export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, AbstractVarietyMap, adams, Base, BundleRanks, Bundles, CanonicalLineBundle, ch, chern, 
-     protect ChernCharacter, protect ChernClass, ChernClassSymbol, chi, ctop, DIM, expp, FlagBundle, flagBundle, FlagBundleStructureMap, integral, protect IntersectionRing,
-     intersectionRing, logg, point, PullBack, PushForward, Rank, reciprocal, schur, SectionClass, sectionClass, segre, StructureMap, symm, protect TangentBundle,
-     tangentBundle, todd, protect ToddClass, wedge, bundle, grass, totalspace, proj, BundleNames, VariableNames }
+export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety,
+     AbstractVarietyMap, adams, Base, BundleRanks, Bundles,
+     CanonicalLineBundle, ch, chern, protect ChernCharacter, protect ChernClass, ChernClassSymbol, chi, ctop, DIM, expp, FlagBundle,
+     flagBundle, FlagBundleStructureMap, integral, protect IntersectionRing,
+     intersectionRing, logg, point, PullBack, PushForward, Rank, reciprocal, lowerstar,
+     schur, SectionClass, sectionClass, segre, StructureMap, protect TangentBundle, tangentBundle, todd, protect ToddClass, bundle, proj,
+     BundleNames, VariableNames, symm, wedge, grass, totalspace }
 
 symm = symmetricPower
 wedge = exteriorPower
-grass = Grassmannian
 totalspace = source
 
 AbstractVariety = new Type of MutableHashTable
@@ -189,14 +191,14 @@ integral intersectionRing point := identity
 dim AbstractVariety := X -> X.DIM
 part(ZZ,QQ) := (n,r) -> if n === 0 then r else 0_QQ
 
-symbol c <- chern = method()
+chern = method()
 chern AbstractSheaf := (cacheValue ChernClass) (F -> expp F.ChernCharacter)
 chern(ZZ, AbstractSheaf) := (p,F) -> part(p,chern F)
 chern(ZZ, ZZ, AbstractSheaf) := (p,q,F) -> toList apply(p..q, i -> chern(i,F))
 chern(ZZ,Symbol) := (n,E) -> value new ChernClassSymbol from {n,E}
 
 ctop = method()
-ctop AbstractSheaf := F -> c_(rank F) F
+ctop AbstractSheaf := F -> chern_(rank F) F
 
 ch = method()
 ch AbstractSheaf := (F) -> F.ChernCharacter
@@ -245,32 +247,63 @@ variety Ring := R -> R.Variety
 
 tangentBundle FlagBundle := (stashValue TangentBundle) (FV -> tangentBundle FV.Base + tangentBundle FV.StructureMap)
 
+assignable = s -> instance(v,Symbol) or null =!= lookup(symbol <-, class v)
+globalAssign = (s,v) -> if f =!= value s then (
+     globalReleaseFunction(s,value s);
+     globalAssignFunction(s,v);
+     s <- v)
+
+defvar := global h
+offset := 1
 flagBundle = method(Options => {
-	  Name => null,
 	  BundleNames => null,
-	  VariableNames => null
+	  VariableNames => defvar
 	  })
-flagBundle(ZZ,List,List) := opts -> (rk,bundleNames,bundleRanks) -> (
-     if opts.BundleNames =!= null then error "bundle names given more than once";
-     if opts.BundleRanks =!= null then error "bundle ranks given more than once";
-     flagBundle(point, rk, BundleNames => bundleNames, BundleRanks => bundleRanks))
-flagBundle(AbstractVariety,List,List) := opts -> (X,bundleNames,bundleRanks) -> flagBundle(OO_X^(sum bundleRanks),bundleNames,bundleRanks)
-flagBundle(AbstractSheaf,List,List) := opts -> (E,bundleNames,bundleRanks) -> (
-     Ord := GRevLex;
-     switch := identity;
-     -- bundleNames = reverse bundleNames; bundleRanks = reverse bundleRanks; Ord = RevLex; switch = reverse;
-     X := E.AbstractVariety;
+flagBundle(List) := opts -> (bundleRanks) -> flagBundle(bundleRanks,point,opts)
+flagBundle(List,AbstractVariety) := opts -> (bundleRanks,X) -> flagBundle(bundleRanks,OO_X^(sum bundleRanks),opts)
+flagBundle AbstractSheaf := opts -> E -> flagBundle({rank E - 1, 1},E,opts)
+flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
+     bundleNames := opts.BundleNames;
+     varNames := opts.VariableNames;
+     if not all(bundleRanks,r -> instance(r,ZZ) and r>=0) then error "expected bundle ranks to be non-negative integers";
      n := #bundleRanks;
-     if n =!= #bundleNames then error "name list and rank list should have same length";
      if rank E =!= sum bundleRanks then error "expected rank of bundle to equal sum of bundle ranks";
-     bundleNames = apply(bundleNames, n -> if n =!= null and ReverseDictionary#?n then ReverseDictionary#n else n);
-     vrs := apply(bundleNames, bundleRanks, (E,r) -> apply(switch toList(1 .. r), i -> new ChernClassSymbol from {i,E}));
-     dgs := splice apply(bundleRanks, r -> switch (1 .. r));
+     bundleNames = (
+	  if bundleNames === null then null
+	  else if instance(bundleNames,Symbol)
+     	  then bundleNames = apply(1 .. #bundleRanks, i -> new IndexedVariable from {bundleNames, i})
+     	  else if instance(bundleNames,List) then (
+	       if #bundleRanks =!= #bundleNames then error "name list and rank list should have same length";
+	       apply(bundleNames, n -> (
+			 if n =!= null and ReverseDictionary#?n then ReverseDictionary#n else n
+			 )))
+	  else error "flagBundle BundleNames option: expected a name or list of names");
+     verror := () -> error "flagBundle VariableNames option: expected a good name or list of names";
+     varNames = (
+	  if instance(varNames,Symbol)
+	  then apply(0 .. #bundleRanks - 1, bundleRanks, (i,r) -> apply(toList(1 .. r), j -> new IndexedVariable from {varNames,(i+offset,j)}))
+	  else if instance(varNames,List)
+	  then apply(0 .. #bundleRanks - 1, bundleRanks, (i,r) -> (
+		    h := varNames#i;
+		    if h === null then apply(toList(1 .. r), j -> new IndexedVariable from {defvar,(i+offset,j)})
+		    else if instance(h,Symbol) then apply(toList(1 .. r), j -> new IndexedVariable from {h,j})
+		    else if instance(h,List) then (
+			 if #h != r then error("flagBundle: expected variable name sublist of length ",toString r);
+			 apply(h, v -> (
+				   try v = baseName v;
+				   if not assignable v then error "flagBundle: encountered unusable name in variable list";
+				   v)))
+		    else verror()))
+     	  else verror());
+     -- done with user-interface preparation and checking
+     Ord := GRevLex;
+     X := variety E;
+     dgs := splice apply(bundleRanks, r -> 1 .. r);
      S := intersectionRing X;
-     T := S[flatten vrs, Degrees => dgs, Global => false, MonomialOrder => apply(bundleRanks, n -> Ord => n), ConstantCoefficients => false];
+     T := S[flatten varNames, Degrees => dgs, Global => false, MonomialOrder => apply(bundleRanks, n -> Ord => n), ConstantCoefficients => false];
      -- (A,F,G) := flattenRing T;
      A := T; F := identity;
-     chclasses := apply(vrs, x -> F (1 + sum(x,value)));
+     chclasses := apply(varNames, x -> F (1 + sum(x,value)));
      rlns := product chclasses - F promote(chern E,T);
      rlns = sum @@ last \ sort pairs partition(degree,terms(QQ,rlns));
      B := A/rlns;
@@ -282,11 +315,9 @@ flagBundle(AbstractSheaf,List,List) := opts -> (E,bundleNames,bundleRanks) -> (
      FV.BundleRanks = bundleRanks;
      FV.Base = X;
      bundles := FV.Bundles = apply(n, i -> (
-	       nm := bundleNames#i;
 	       bdl := abstractSheaf(FV, Rank => bundleRanks#i, ChernClass => H promote(chclasses#i,B));
-	       globalReleaseFunction(nm,value nm);
-	       globalAssignFunction(nm,bdl);
-	       nm <- bdl));
+	       if bundleNames =!= null and bundleNames#i =!= null then globalAssign(bundleNames#i,bdl);
+	       bdl));
      if bundleRanks#-1 == 1 then FV.CanonicalLineBundle = last bundles;
      pullback := method();
      pushforward := method();
@@ -309,34 +340,60 @@ flagBundle(AbstractSheaf,List,List) := opts -> (E,bundleNames,bundleRanks) -> (
 	  if variety E =!= FV then "pushforward: variety mismatch";
 	  abstractSheaf(X,ChernCharacter => pushforward (ch E * todd p)));
      integral C := r -> integral p_* r;
-     (FV,p))
+     FV)
 
 tangentBundle FlagBundleStructureMap := (stashValue TangentBundle) (
      p -> (
 	  bundles := (source p).Bundles;
 	  sum(1 .. #bundles-1, i -> sum(i, j -> Hom(bundles#j,bundles#i)))))
 
-Grassmannian(ZZ,AbstractSheaf,List) := opts -> (k,E,bundleNames) -> flagBundle(E,bundleNames,{rank E-k,k})
-Grassmannian(ZZ,ZZ,AbstractVariety,List) := opts -> (k,n,X,bundleNames) -> Grassmannian(k,OO_X^n,bundleNames)
-Grassmannian(ZZ,ZZ,List) := opts -> (k,n,bundleNames) -> Grassmannian(k,n,point,bundleNames)
-
-Proj(AbstractSheaf,List) := (E,bundleNames) -> Grassmannian(1,E,bundleNames)
-Proj(ZZ,AbstractVariety,List) := (n,X,bundleNames) -> Proj(OO_X^(n+1),bundleNames)
-Proj(ZZ,List) := (n,bundleNames) -> Proj(OO_point^(n+1),bundleNames)
-
-o = method()
+symbol o <- method()
 o(RingElement) := h -> OO_(variety ring h) (h)
 
-proj = method()	-- an attempt at total compatibility with Schubert classic, not ready yet!
-proj(ZZ,RingElement) := (n,h) -> proj_n try baseName h else error "ring element not usable here as name"
-proj(ZZ,IndexedVariable) := (n,h) -> error "indexed variable not usable here as name"
-proj(ZZ,Thing,Thing) := (n,h,option) -> proj(n,h)
+---- an attempt at total compatibility with Schubert classic, not ready yet!
+fixup := h -> if ReverseDictionary#?h then ReverseDictionary#h else try baseName h else error "expected something usable as a name"
+-- proj
+proj = method()
+proj(ZZ,Thing) := (n,h) -> proj(n,fixup h)
 proj(ZZ,Symbol) := (n,h) -> (
-     Phsym := getSymbol("P" | toString h);
-     (Ph,p) := Proj(n,{local S, local Q});
-     Phsym <- Ph;
-     h <- chern_1 Q;
-     Ph)
+     hs := toString h;
+     nm := pre -> getSymbol(pre | hs);
+     X := flagBundle({n-1,1},BundleNames => {nm "S",nm "Q"}, VariableNames => {global S,{h}});
+     globalAssign(nm "A", intersectionRing X);
+     globalAssign(nm "P", X);
+     X)
+-- Proj
+proj(Thing,AbstractSheaf,Thing) := (f,A,c) -> proj(fixup f,A,fixup c)
+proj(Symbol,AbstractSheaf,Symbol) := (f,A,c) -> (
+     cs := toString c;
+     nm := pre -> getSymbol(pre | cs);     
+     X := flagBundle(A, BundleNames => {nm "S",nm "Q"}, VariableNames => {global S,{c}});
+     globalAssign(nm "A", intersectionRing X);
+     globalAssign(f, X.StructureMap);
+     globalAssign(nm "P", X);
+     X)
+-- grass
+grass = method()
+grass(ZZ,ZZ,Thing) := (k,r,c) -> grass(k,r,fixup c)
+grass(ZZ,ZZ,Symbol) := (k,r,c) -> (
+     cs := toString c;
+     nm := pre -> getSymbol(pre | cs);
+     X := flagBundle({r-k,k},BundleNames => {nm "S",nm "Q"}, VariableNames => {global T,c});
+     globalAssign(nm "A", intersectionRing X);
+     globalAssign(nm "G", X);
+     X)
+-- Grass
+grass(Thing,ZZ,AbstractSheaf,Thing) := (f,k,A,c) -> grass(fixup f,k,A,fixup c)
+grass(Symbol,ZZ,AbstractSheaf,Symbol) := (f,k,A,c) -> (
+     cs := toString c;
+     nm := pre -> getSymbol(pre | cs);
+     r := rank A;
+     X := flagBundle({r-k,k},A,BundleNames => {nm "S",nm "Q"}, VariableNames => {global T,c});
+     globalAssign(nm "A", intersectionRing X);
+     globalAssign(f, X.StructureMap);
+     globalAssign(nm "G", X);
+     X)
+----
 
 reciprocal = method()
 reciprocal RingElement := (A) -> (

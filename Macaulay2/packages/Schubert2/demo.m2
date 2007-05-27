@@ -11,15 +11,14 @@ loadPackage "Schubert2";
 ----                           1/6 (n + 3) (n + 2) (n + 1)
 ---- 
 
-(P,p) = Proj(3,{Sh,Qh})
-h = c_1 Qh;
-factor chi OO_P(n*h)
+proj(3,h)
+factor chi o(n*h)
 
 ---- > Ph[toddclass_];
 ----                                            2  2    3  3
 ----                          1 + 2 h t + 11/6 h  t  + h  t
 
-todd P
+todd Ph
 
 ---- #-------------------------------------------------------------------------
 ---- # Generation of formulas:
@@ -78,25 +77,25 @@ segre(2,Hom(wedge(2,A),wedge(2,B)))
 ---- > 
 ---- > grass(2,4,b,all): 
 
-(G24,p) = Grassmannian(2,4,{R,Q});
+grass(2,4,b)
 
 ---- > chi(Gb,Symm(n,Qb));
 ----                              2            3
 ----                             n  + 1 + 1/6 n  + 11/6 n
 
-stderr << "-- this needs fixing" << endl;
---chi symm(n,Q)						    -- doesn't work yet
+chi symm(n,Qb)						    -- Mike will fix this
 
 ---- > chi(Gb,o(n*b1));
 ----                            4        3    23   2
 ----                      1/12 n  + 2/3 n  + ---- n  + 7/3 n + 1
 ----                                          12
 
-chi OO_G24(n*c_1 Q)
-chi (det Q)^**n
+chi OO_Gb(n*b_1)
+chi (det Qb)^**n
 factor oo
-p_* (det Q)^**n
-assert( (n-2)*(n^3-18*n^2+71*n-6)*(1/12) == chi (det Q)^**n )
+p = Gb.StructureMap
+p_* (det Qb)^**n
+assert( (n-2)*(n^3-18*n^2+71*n-6)*(1/12) == chi (det Qb)^**n )
 
 ---- > 
 ---- ## This should be a quadric in P5:
