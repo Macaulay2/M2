@@ -12,7 +12,7 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export {schurRing, SchurRing, symmRing, toS, toE, toP, jacobiTrudi}
+export {schurRing, SchurRing, symmRing, toS, toE, toP, jacobiTrudi, SchurRingIndexedVariableTable}
 -- Improve the names/interface of the following:
 --, symmRing, plethysmMap, jacobiTrudi, plethysm, cauchy, bott}
 
@@ -129,6 +129,9 @@ newSchur := (R,M,p) -> (
      SR
      )
 
+SchurRingIndexedVariableTable = new Type of IndexedVariableTable
+SchurRingIndexedVariableTable _ Thing := (x,i) -> x#symbol _ i
+
 schurRing = method ()
 schurRing(Symbol,ZZ) := SchurRing => (p,n) -> (
      R := ZZ;
@@ -140,9 +143,10 @@ schurRing(Symbol,ZZ) := SchurRing => (p,n) -> (
      S := newSchur(R,M,p);
      dim S := s -> rawSchurDimension raw s;
      Mgens := M.generators;
-     S.use = S -> methodTable#p = (p,a) -> (
-	  m := schur2monom(a,Mgens);
-	  new S from rawTerm(S.RawRing, raw 1, m.RawMonomial));
+     t := new SchurRingIndexedVariableTable from p;
+     t.SchurRing = S;
+     t#symbol _ = a -> ( m := schur2monom(a,Mgens); new S from rawTerm(S.RawRing, raw 1, m.RawMonomial));
+     S.use = S -> (globalAssign(p,t); S);
      S.use S;
      S)
 
