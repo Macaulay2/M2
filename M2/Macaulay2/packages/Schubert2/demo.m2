@@ -14,6 +14,8 @@ loadPackage "Schubert2";
 proj(3,h)
 factor chi o(n*h)
 
+assert( chi o(n*h) == (n+1)*(n+2)*(n+3)*(1/6) )
+
 ---- > Ph[toddclass_];
 ----                                            2  2    3  3
 ----                          1 + 2 h t + 11/6 h  t  + h  t
@@ -83,7 +85,7 @@ grass(2,4,b)
 ----                              2            3
 ----                             n  + 1 + 1/6 n  + 11/6 n
 
-chi symm(n,Qb)						    -- Mike will fix this
+chi Symm(n,Qb)
 
 ---- > chi(Gb,o(n*b1));
 ----                            4        3    23   2
@@ -91,6 +93,10 @@ chi symm(n,Qb)						    -- Mike will fix this
 ----                                          12
 
 chi OO_Gb(n*b_1)
+assert( 1/12*n^4+2/3*n^3+23/12*n^2+7/3*n+1 == oo )
+
+-- some other ways to do it:
+
 chi (det Qb)^**n
 factor oo
 p = Gb.StructureMap
@@ -105,10 +111,10 @@ assert( (n-2)*(n^3-18*n^2+71*n-6)*(1/12) == chi (det Qb)^**n )
 ----                      1/12 n  + 2/3 n  + ---- n  + 7/3 n + 1
 ----                                          12
 
-(P,p) = Proj(5,{S,Q});
-H = c_1 Q;
-chi(OO_P(n*H) - OO_P((n-2)*H))
-factor oo
+proj(5,H)
+chi(o(n*H)-o((n-2)*H))
+
+assert( oo == 1/12*n^4+2/3*n^3+23/12*n^2+7/3*n+1 )
 
 ---- #-------------------------------------------------------------------------
 ---- # Lines on a quintic threefold.  This is the top Chern class of the 
@@ -117,7 +123,7 @@ factor oo
 ---- > 
 ---- > grass(2,5,c):        # Lines in P^4. 
 
-(G,p) = grass(2,5,{Sc,Qc});
+grass(2,5,c)
 
 ---- > B:=symm(5,Qc):       # Qc is the rank 2 quotient bundle, B its 5th 
 ---- >                      # symmetric power.
@@ -133,6 +139,8 @@ c6 = chern(rank B,B)
 
 integral c6
 
+assert( oo == 2875 )
+
 ---- 
 ---- #-------------------------------------------------------------------------
 ---- # Conics on a quintic threefold. This is the top Chern class of the 
@@ -142,7 +150,7 @@ integral c6
 ---- > 
 ---- > grass(3,5,c):         # 2-planes in P^4.  
 
-(G,p) = grass(3,5,{Sc,Qc});
+grass(3,5,c)
 
 ---- > B:=Symm(2,Qc):        # The bundle of conics in the 2-plane. 
 
@@ -150,27 +158,32 @@ B = symm(2,Qc)
 
 ---- > Proj(X,dual(B),z):    # X is the projective bundle of all conics. 
 
-(X,q) = Proj(dual B, {Sz,Qz});
-z = c_1 Qz
+proj(X, dual B, z)
 
 ---- > A:=Symm(5,Qc)-Symm(3,Qc)&*o(-z):  # The rank 11 bundle of quintics 
 ---- >                                   # restricted to the universal conic. 
 
-A = symm_5 Qc - symm_3 Qc ** OO_X(-z)
+A = symm_5 Qc - symm_3 Qc ** o(-z)
 
 ---- > c11:=chern(rank(A),A):# its top Chern class.
+
+c11 = chern(rank A, A)
+
 ---- > lowerstar(X,c11):     # push down to G(3,5).
+
+X_* c11
+
 ---- > integral(Gc,");       # and integrate there.
 ----                                      609250
 
-c11 = chern(rank A, A)
-q_* c11
 integral oo
+
 assert( oo == 609250 )
 
 -- here's a short cut:
 
 integral chern A
+
 assert( oo == 609250 )
 
 ---- #-------------------------------------------------------------------------
@@ -178,18 +191,20 @@ assert( oo == 609250 )
 ---- > 
 ---- > grass(3,4,d,all):
 
-(G,g) = grass(3,4,{Sd,Qd})
-d1 = c_1 Qd;
+grass(3,4,d)
 
 ---- > Proj(f,dual(symm(2,Qd)),e):
 
-(P,f) = Proj(dual symm_2 Qd, {Se,Qe})
-e = c_1 Qe;
+proj(f, dual symm_2 Qd, e)
 
 ---- > integral(Gd,lowerstar(f,(2*d1+e)^8));
 ----                                        92
 
 integral f_* (2*d1 + e)^8
+assert( 92 == oo )
+
+-- another way:
+
 integral (2*d1 + e)^8
 assert( 92 == oo )
 
