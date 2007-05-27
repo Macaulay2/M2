@@ -223,6 +223,7 @@ export {
 	symbol ImmutableType,
 	symbol IndeterminateNumber,
 	symbol IndexedVariable,
+	symbol IndexedVariableTable,
 	symbol InfiniteNumber,
 	symbol InfoDirSection,
 	symbol Inhomogeneous,
