@@ -1,0 +1,28 @@
+Hmm, I've just realized (perhaps again?) that the value of a subscripted
+variable like
+
+     h_3
+
+is stored in a global location, *even* if h is a local variable.  So if you
+make a polynomial ring inside a function like this:
+
+
+     f = () -> (
+       ...
+       h := local h;
+       R := QQ[h_1 .. h_20];
+       ...
+       )
+
+then it will never get garbage collected unless someone reuses those 20
+variables.
+
+The workaround is to use
+
+       R := QQ(monoid [h_1 .. h_20]);
+
+
+as we've been doing...
+
+
+But, maybe we should go back to the old way, and simply assign a mutable hash table to h!
