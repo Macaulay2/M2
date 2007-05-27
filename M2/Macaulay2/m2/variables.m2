@@ -73,6 +73,7 @@ IndexedVariable .. IndexedVariable := Sequence => (v,w) -> (
      apply(v#1 .. w#1, s -> v#0_s))	  
 
 baseName IndexedVariable := identity
+baseName IndexedVariableTable := x -> if x#?symbol$ then x#symbol$ else error "indexed variable table no associated to a symbol"
 baseName Subscript := x -> new IndexedVariable from { baseName x#0 , x#1 }
 baseName Holder := x -> baseName x#0
 
