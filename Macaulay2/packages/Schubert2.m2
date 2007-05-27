@@ -250,7 +250,7 @@ variety Ring := R -> R.Variety
 tangentBundle FlagBundle := (stashValue TangentBundle) (FV -> tangentBundle FV.Base + tangentBundle FV.StructureMap)
 
 assignable = s -> instance(v,Symbol) or null =!= lookup(symbol <-, class v)
-globalAssign = (s,v) -> if f =!= value s then (
+globalAssign = (s,v) -> if v =!= value s then (
      globalReleaseFunction(s,value s);
      globalAssignFunction(s,v);
      s <- v)

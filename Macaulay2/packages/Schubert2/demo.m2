@@ -200,12 +200,12 @@ proj(f, dual symm_2 Qd, e)
 ---- > integral(Gd,lowerstar(f,(2*d1+e)^8));
 ----                                        92
 
-integral f_* (2*d1 + e)^8
+integral f_* (2*d_1 + e)^8
 assert( 92 == oo )
 
 -- another way:
 
-integral (2*d1 + e)^8
+integral (2*d_1 + e)^8
 assert( 92 == oo )
 
 ---- #-------------------------------------------------------------------------
