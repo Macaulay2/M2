@@ -17,36 +17,56 @@ List .. List := Sequence => (v,w) -> apply(toSequence v .. toSequence w, toList)
 
 IndexedVariable = new Type of BasicList
 IndexedVariable.synonym = "indexed variable"
-
 value' IndexedVariable := value				    -- do we really want this?
-
+IndexedVariableTable = new Type of MutableHashTable
+IndexedVariableTable.synonym = "indexed variable table"
+protect symbol$						    -- not exported, to avoid interference with the user
+new IndexedVariableTable from Symbol := (IndexedVariableTable,X) -> (
+     x := new IndexedVariableTable;
+     x#symbol$ = X;
+     x)
+checkValue = x -> if x#?symbol$ then (
+     X := x#symbol$;
+     if value X =!= x then (
+     	  if value X =!= X then stderr << "--warning: clearing value of symbol " << X << " to allow access to subscripted variables based on it" << endl << flush;
+     	  X <- x;
+	  )
+     )
+IndexedVariableTable _ Thing := (x,i) -> (
+     if x#?i then x#i
+     else if x#?symbol$ then new IndexedVariable from {x#symbol$,i}
+     else error "attempted to make new indexed variable from indexed variable table associated with no symbol")
+IndexedVariableTable _ Thing  = (x,i,e) -> (checkValue x; x#i = e)
+IndexedVariableTable.GlobalAssignHook = (X,x) -> (
+     globalAssignFunction(X,x);
+     if not x#?symbol$ then x#symbol$ = X;
+     )
+IndexedVariableTable.GlobalReleaseHook = (X,x) -> (
+     globalReleaseFunction(X,x);
+     if x#?symbol$ and x#symbol$ === X then remove(x,symbol$);
+     )
 Ring _ IndexedVariable := (x,s) -> x.indexSymbols#s
-
 expression IndexedVariable := x -> (expression x#0) _ (expression x#1)
 net IndexedVariable := v -> net expression v
 toString IndexedVariable := v -> toString expression v
+expression IndexedVariableTable := x -> hold x
+net IndexedVariableTable :=
+toString IndexedVariableTable := x -> if x#?symbol$ then toString x#symbol$ else "--an indexed variable table--"
 IndexedVariable ? IndexedVariable := (x,y) -> toSequence x ? toSequence y
 Symbol ? IndexedVariable := (x,y) -> if x === (y#0) then symbol > else x ? (y#0)
-
-valueTables = new MutableHashTable
-valueTable = x -> if valueTables#?x then valueTables#x else valueTables#x = new MutableHashTable
-methodTable = new MutableHashTable
-Symbol _ Thing := (x,i) -> ( 
-     t := valueTable x; 
-     if t#?i then t#i 
-     else if methodTable#?x then methodTable#x(x,i) else new IndexedVariable from {x,i} )
+Symbol _ Thing := (X,i) -> new IndexedVariable from {X,i}
+value IndexedVariableTable := x -> x
 value IndexedVariable := v -> (
-     x := v#0;
-     i := v#1;
-     t := valueTable x;
-     if t#?i then t#i else v)
-
-Symbol _ Thing = (x,i,e) -> ( 
-     if value x =!= x then stderr << "--warning: clearing value of symbol " << x << " to allow access to subscripted variables based on it" << endl << flush;
-     x <- x; 
-     (valueTable x)#i = e 
-     )
-installMethod(symbol <-, IndexedVariable, (xi,e) -> ((x,i) -> x_i = e) toSequence xi) -- assignment operators don't dispatch on the type of the value to be assigned
+     (x,i) := toSequence v;
+     if not instance(x,Symbol) then return v;		    -- an error
+     x' := value x;
+     if x' === x or not instance(x',IndexedVariableTable) then return v;
+     if x'#?i then x'#i else v)
+Symbol _ Thing = (x,i,e) -> (
+     x' := value x;
+     if not instance(x',IndexedVariableTable) then x' = new IndexedVariableTable from x;
+     x'_i = e)
+installMethod(symbol <-, IndexedVariable, (xi,e) -> ((x,i) -> x_i = e) toSequence xi)
 
 IndexedVariable .. IndexedVariable := Sequence => (v,w) -> (
      if v#0 =!= w#0 then error("unmatching base names in ", toString v, " .. ", toString w);
