@@ -1,4 +1,4 @@
--- Here are some more demos, not from the Schubert manual, some with Schubert code in comments
+-- Here are some more demos based on examples from classic schubert, not from the Schubert manual, some with Schubert code in comments
 
 loadPackage "Schubert2"
 
