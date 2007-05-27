@@ -21,8 +21,10 @@ integral oo
 integral chern A
 assert( oo == 2734099200 )
 
-(Gc,p) = Grassmannian(3,5,{Sc,Qc});
-(X,q) = Proj(dual symm_7 Qc,{K,L});
-time B = symm(15,Qc) - symm(3,Qc) * dual L
+--
+
+grass(3,5,c)
+proj(X,dual symm_7 Qc,z)
+time B = symm(15,Qc) - symm(3,Qc) * o(-z)
 time integral chern B
 assert( 99992296084705144978200 == oo)

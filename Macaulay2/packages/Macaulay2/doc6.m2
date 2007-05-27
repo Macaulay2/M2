@@ -341,7 +341,10 @@ document {
      EXAMPLE {
 	  "ZZ/101[t_0 .. t_4]",
       	  "(t_0 -  2*t_1)^3",
-	  }}
+	  },
+     "Warning: the values of the indexed variables ", TT "t_i", " are stored in a global location,
+     behind the scenes, so may not get garbage collected, even if ", TT "t", " is a local variable."
+     }
 document {
      Key => MonoidElement,
      Headline => "the class of all monoid elements",
