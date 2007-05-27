@@ -11,7 +11,7 @@ newPackage(
     	DebuggingMode => false
     	)
 
-export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety,
+export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, schubertCycle,
      AbstractVarietyMap, adams, Base, BundleRanks, Bundles,
      CanonicalLineBundle, ch, chern, protect ChernCharacter, protect ChernClass, ChernClassSymbol, chi, ctop, DIM, expp, FlagBundle,
      flagBundle, FlagBundleStructureMap, integral, protect IntersectionRing,
@@ -249,12 +249,13 @@ flagBundle(List) := opts -> (bundleRanks) -> flagBundle(bundleRanks,point,opts)
 flagBundle(List,AbstractVariety) := opts -> (bundleRanks,X) -> flagBundle(bundleRanks,OO_X^(sum bundleRanks),opts)
 flagBundle AbstractSheaf := opts -> E -> flagBundle({rank E - 1, 1},E,opts)
 flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
-     defvar := local h$;
+     h$ := local h$;
      bundleNames := opts.BundleNames;
      varNames := opts.VariableNames;
      if not all(bundleRanks,r -> instance(r,ZZ) and r>=0) then error "expected bundle ranks to be non-negative integers";
      n := #bundleRanks;
-     if rank E =!= sum bundleRanks then error "expected rank of bundle to equal sum of bundle ranks";
+     rk := sum bundleRanks;
+     if rank E =!= rk then error "expected rank of bundle to equal sum of bundle ranks";
      bundleNames = (
 	  if bundleNames === null then null
 	  else if instance(bundleNames,Symbol)
@@ -267,13 +268,14 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
 	  else error "flagBundle BundleNames option: expected a name or list of names");
      verror := () -> error "flagBundle VariableNames option: expected a good name or list of names";
      varNames = (
-	  if varNames === null then varNames = defvar;
+	  if varNames === null then varNames = h$;
 	  if instance(varNames,Symbol)
 	  then apply(0 .. #bundleRanks - 1, bundleRanks, (i,r) -> apply(toList(1 .. r), j -> new IndexedVariable from {varNames,(i+offset,j)}))
 	  else if instance(varNames,List)
 	  then apply(0 .. #bundleRanks - 1, bundleRanks, (i,r) -> (
 		    h := varNames#i;
-		    if h === null then apply(toList(1 .. r), j -> new IndexedVariable from {defvar,(i+offset,j)})
+		    try h = baseName h;
+		    if h === null then apply(toList(1 .. r), j -> new IndexedVariable from {h$,(i+offset,j)})
 		    else if instance(h,Symbol) then apply(toList(1 .. r), j -> new IndexedVariable from {h,j})
 		    else if instance(h,List) then (
 			 if #h != r then error("flagBundle: expected variable name sublist of length ",toString r);
@@ -301,12 +303,13 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      DIM := dim X + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
      FV := C.Variety = abstractVariety(DIM,C,Type => FlagBundle);
      FV.BundleRanks = bundleRanks;
+     FV.Rank = rk;
      FV.Base = X;
      bundles := FV.Bundles = apply(n, i -> (
 	       bdl := abstractSheaf(FV, Rank => bundleRanks#i, ChernClass => H promote(chclasses#i,B));
 	       if bundleNames =!= null and bundleNames#i =!= null then globalAssign(bundleNames#i,bdl);
 	       bdl));
-     if bundleRanks#-1 == 1 then FV.CanonicalLineBundle = last bundles;
+     FV.CanonicalLineBundle = OO_FV(chern(1, last bundles));	    -- effectively the same as "det last bundles"
      pullback := method();
      pushforward := method();
      pullback ZZ := pullback QQ := r -> pullback promote(r,S);
@@ -573,6 +576,42 @@ schur(List, AbstractSheaf) := (p,E) -> (
      ans := F J;
      abstractSheaf(variety E, ChernCharacter => ans)
      )
+
+schubertCycle = method()
+FlagBundle _ Sequence := schubertCycle
+FlagBundle _ List := schubertCycle
+giambelli = (n,d,E,a) -> (
+     det matrix for i from 0 to d list for j from 0 to d list chern(n-d-a#i+j,E) -- Giambelli's formula, also called Jacobi-Trudi
+     )
+schubertCycle(FlagBundle,Sequence) := (X,a) -> (
+     if #X.BundleRanks != 2 then error "expected a Grassmannian";
+     d := last X.BundleRanks - 1;
+     if d+1 != #a then error("expected a sequence of length ", toString (d+1));
+     for i from 0 to d do (
+	  ai := a#i;
+	  if not instance(ai,ZZ) or ai < 0 then error "expected a sequence of non-negative integers";
+	  if i>0 and not (a#(i-1) < a#i) then error "expected a strictly increasing sequence of integers";
+	  if not (ai <= n) then error("expected a sequence of integers bounded by ",toString n);
+	  );
+     n := X.Rank - 1;
+     E := dual first X.Bundles;
+     giambelli(n,d,E,a))
+schubertCycle(FlagBundle,List) := (X,b) -> (
+     -- see page 271 of Fulton's Intersection Theory for this notation
+     if #X.BundleRanks != 2 then error "expected a Grassmannian";
+     d := last X.BundleRanks - 1;
+     if d+1 != #b then error("expected a sequence of length ", toString (d+1));
+     for i from 0 to d do (
+	  bi := b#i;
+	  if not instance(bi,ZZ) or bi < 0 then error "expected a sequence of non-negative integers";
+	  if i>0 and not (b#(i-1) >= b#i) then error "expected a decreasing sequence of integers";
+	  if not (bi <= n-d) then error("expected a sequence of integers bounded by ",toString(n-d));
+	  );
+     n := X.Rank - 1;
+     E := dual first X.Bundles;
+     a := toSequence apply(#b, i -> n - d + i - b#i);
+     giambelli(n,d,E,a))
+
 beginDocumentation()
 
 -- various demos moved to Schubert2/.
