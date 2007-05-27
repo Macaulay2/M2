@@ -179,7 +179,14 @@ if firstTime then (
      ReverseDictionary = new MutableHashTable;		    -- values are symbols
      PrintNames = new MutableHashTable;			    -- values are strings
      Thing.AfterEval = identity;
-
+     globalAssign = (s,v) -> if v =!= value s then (
+	  X := class value s;
+	  m := lookup(GlobalReleaseHook,X);
+	  if m =!= null then m(s,value s);
+	  Y := class v;
+	  n := lookup(GlobalAssignHook,Y);
+	  if n =!= null then n(s,v);
+	  s <- v);
      globalAssignFunction = (X,x) -> (
 	  if not ReverseDictionary#?x then ReverseDictionary#x = X;
 	  use x;

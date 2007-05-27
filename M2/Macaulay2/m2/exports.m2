@@ -670,6 +670,7 @@ export {
 	symbol getc,
 	symbol getenv,
 	symbol global,
+        symbol globalAssign,
 	symbol globalAssignFunction,
 	symbol globalAssignment,
 	symbol globalAssignmentHooks,
