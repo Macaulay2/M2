@@ -272,7 +272,9 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
 	  if instance(varNames,Symbol)
 	  then apply(0 .. #bundleRanks - 1, bundleRanks, (i,r) -> apply(toList(1 .. r), j -> new IndexedVariable from {varNames,(i+offset,j)}))
 	  else if instance(varNames,List)
-	  then apply(0 .. #bundleRanks - 1, bundleRanks, (i,r) -> (
+	  then (
+	       if #varNames != n then error("expected ", toString n, " bundle names");
+	       apply(0 .. #bundleRanks - 1, bundleRanks, (i,r) -> (
 		    h := varNames#i;
 		    try h = baseName h;
 		    if h === null then apply(toList(1 .. r), j -> new IndexedVariable from {h$,(i+offset,j)})
@@ -283,7 +285,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
 				   try v = baseName v;
 				   if not assignable v then error "flagBundle: encountered unusable name in variable list";
 				   v)))
-		    else verror()))
+		    else verror())))
      	  else verror());
      -- done with user-interface preparation and checking
      Ord := GRevLex;
@@ -309,7 +311,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
 	       bdl := abstractSheaf(FV, Rank => bundleRanks#i, ChernClass => H promote(chclasses#i,B));
 	       if bundleNames =!= null and bundleNames#i =!= null then globalAssign(bundleNames#i,bdl);
 	       bdl));
-     FV.CanonicalLineBundle = OO_FV(chern(1, last bundles));	    -- effectively the same as "det last bundles"
+     FV.CanonicalLineBundle = OO_FV(sum(1 .. #bundles - 1, i -> i * chern(1,bundles#i)));
      pullback := method();
      pushforward := method();
      pullback ZZ := pullback QQ := r -> pullback promote(r,S);
