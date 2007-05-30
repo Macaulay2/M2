@@ -79,11 +79,13 @@ tarball: tarball.$(COMPRESS)
 tarball.gz: tarball.tgz
 tarballs: tarball.bz2 tarball.tgz
 
+EXCLUDES := --exclude=".nfs*" --exclude="Macaulay2-*-data"
+
 tarball.bz2 : $(PKG_TBZ)
-$(PKG_TBZ)  : always; tar cfh $(PKG_TBZ) --bzip --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir)
+$(PKG_TBZ)  : always; tar cfh $(PKG_TBZ) --bzip $(EXCLUDES) -C $(tarparent) $(tarsubdir)
 
 tarball.tgz  : $(PKG_TGZ)
-$(PKG_TGZ)  : always; tar cfh $(PKG_TGZ) --gzip --exclude="Macaulay2-*-data" -C $(tarparent) $(tarsubdir)
+$(PKG_TGZ)  : always; tar cfh $(PKG_TGZ) --gzip $(EXCLUDES) -C $(tarparent) $(tarsubdir)
 
 always :
 
