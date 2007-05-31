@@ -17,7 +17,7 @@ export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, schuber
      flagBundle, FlagBundleStructureMap, integral, protect IntersectionRing,
      intersectionRing, logg, point, PullBack, PushForward, Rank, reciprocal, lowerstar,
      schur, SectionClass, sectionClass, segre, StructureMap, Symm, protect TangentBundle, tangentBundle, todd, protect ToddClass, bundle, proj,
-     BundleNames, VariableNames, symm, wedge, grass, totalspace}
+     BundleNames, VariableNames, symm, wedge, grass, totalspace, SubBundles, QuotientBundles}
 
 symm = symmetricPower
 wedge = exteriorPower
@@ -311,6 +311,8 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
 	       bdl := abstractSheaf(FV, Rank => bundleRanks#i, ChernClass => H promote(chclasses#i,B));
 	       if bundleNames =!= null and bundleNames#i =!= null then globalAssign(bundleNames#i,bdl);
 	       bdl));
+     FV.SubBundles = (() -> ( t := 0; for i from 0 to n-2 list t = t + bundles#i ))();
+     FV.QuotientBundles = (() -> ( t := 0; for i from 0 to n-2 list t = t + bundles#(n-1-i) ))();
      FV.CanonicalLineBundle = OO_FV(sum(1 .. #bundles - 1, i -> i * chern(1,bundles#i)));
      pullback := method();
      pushforward := method();
@@ -402,7 +404,7 @@ bundle(ZZ, List, List) := (DIM, rks, nms) -> (
 
 reciprocal = method()
 reciprocal RingElement := (A) -> (
-     -- computes 1/A (mod degree >=(d+1)
+     -- computes 1/A (mod degree >=(d+1))
      -- ASSUMPTION: part(0,A) == 1.
      d := (ring A).DIM;
      a := for i from 0 to d list part_i(A);
@@ -484,6 +486,9 @@ coerce := (F,G) -> (
      if Y.?StructureMap and target Y.StructureMap === X then return (Y.StructureMap^* F, G);
      error "expected abstract sheaves on compatible or equal varieties";
      )
+
+AbstractSheaf ++ ZZ := AbstractSheaf + ZZ := (F,n) -> n ++ F
+ZZ ++ AbstractSheaf := ZZ + AbstractSheaf := (n,F) -> if n === 0 then F else OO_(Y)^n ++ F
 
 AbstractSheaf ++ AbstractSheaf :=
 AbstractSheaf + AbstractSheaf := (
@@ -582,37 +587,44 @@ schur(List, AbstractSheaf) := (p,E) -> (
 schubertCycle = method()
 FlagBundle _ Sequence := schubertCycle
 FlagBundle _ List := schubertCycle
-giambelli = (n,d,E,a) -> (
-     det matrix for i from 0 to d list for j from 0 to d list chern(n-d-a#i+j,E) -- Giambelli's formula, also called Jacobi-Trudi
+giambelli =  (r,E,b) -> (
+     p := matrix for i from 0 to r-1 list for j from 0 to r-1 list chern(b#i-i+j,E); -- Giambelli's formula, also called Jacobi-Trudi
+     if debugLevel > 15 then stderr << "giambelli : " << p << endl;
+     det p
      )
+listtoseq = (r,b) -> toSequence apply(#b, i -> r + i - b#i)
+seqtolist = (r,b) ->            apply(#b, i -> r + i - b#i)
+dualpart  = (r,b) -> splice for i from 0 to #b list ((if i === #b then r else b#(-i-1)) - (if i === 0 then 0 else b#-i)) : #b - i
+
 schubertCycle(FlagBundle,Sequence) := (X,a) -> (
      if #X.BundleRanks != 2 then error "expected a Grassmannian";
-     d := last X.BundleRanks - 1;
-     if d+1 != #a then error("expected a sequence of length ", toString (d+1));
-     for i from 0 to d do (
+     n := X.Rank;
+     E := last X.Bundles;
+     r := rank E;
+     r' := n-r;
+     if r != #a then error("expected a sequence of length ", toString r);
+     for i from 0 to r-1 do (
 	  ai := a#i;
 	  if not instance(ai,ZZ) or ai < 0 then error "expected a sequence of non-negative integers";
 	  if i>0 and not (a#(i-1) < a#i) then error "expected a strictly increasing sequence of integers";
-	  if not (ai <= n) then error("expected a sequence of integers bounded by ",toString n);
+	  if not (ai < n) then error("expected a sequence of integers less than ",toString n);
 	  );
-     n := X.Rank - 1;
-     E := dual first X.Bundles;
-     giambelli(n,d,E,a))
+     giambelli(r',E,dualpart(r',seqtolist(r',a))))
 schubertCycle(FlagBundle,List) := (X,b) -> (
      -- see page 271 of Fulton's Intersection Theory for this notation
      if #X.BundleRanks != 2 then error "expected a Grassmannian";
-     d := last X.BundleRanks - 1;
-     if d+1 != #b then error("expected a sequence of length ", toString (d+1));
-     for i from 0 to d do (
+     E := last X.Bundles;
+     r := rank E;
+     n := X.Rank;
+     r' := n-r;
+     if r != #b then error("expected a list of length ", toString r);
+     for i from 0 to r-1 do (
 	  bi := b#i;
-	  if not instance(bi,ZZ) or bi < 0 then error "expected a sequence of non-negative integers";
-	  if i>0 and not (b#(i-1) >= b#i) then error "expected a decreasing sequence of integers";
-	  if not (bi <= n-d) then error("expected a sequence of integers bounded by ",toString(n-d));
+	  if not instance(bi,ZZ) or bi < 0 then error "expected a list of non-negative integers";
+	  if i>0 and not (b#(i-1) >= b#i) then error "expected a decreasing list of integers";
+	  if not (bi <= r') then error("expected a list of integers bounded by ",toString(n-r));
 	  );
-     n := X.Rank - 1;
-     E := dual first X.Bundles;
-     a := toSequence apply(#b, i -> n - d + i - b#i);
-     giambelli(n,d,E,a))
+     giambelli(r',E,dualpart(r',b)))
 
 beginDocumentation()
 
