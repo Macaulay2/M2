@@ -1,7 +1,7 @@
 -- Here are some examples and tests of our own.
 
 compactMatrixForm = false
-loadPackage "Schubert2"
+needsPackage "Schubert2"
 F = flagBundle ( {4,2}, VariableNames => {,c} )
 AF = intersectionRing F
 schubertCycle(F,(0,1))
