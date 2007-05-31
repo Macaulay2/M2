@@ -24,7 +24,8 @@ smithNormalForm Matrix := o -> (f) -> (
      (tmat,smat) := null;	-- null represents the identity, lazily
      (tzer,szer) := null;	-- null represents zero, lazily
      R := ring f;
-     d := degreeLength R;
+     R' := R[MonomialOrder => Position => Up];
+     f = promote(f,R');
      g := f;
      op := false;	       -- whether we are working on the transposed side
      count := 0;
@@ -90,7 +91,7 @@ smithNormalForm Matrix := o -> (f) -> (
 	       	    schange = smat | szer;
 	       	    g = g | map(target g, source szer, 0))
 	       else schange = smat));
-     unsequence nonnull ( g, if tchg then tchange, if schg then schange ))
+     unsequence nonnull ( lift(g,R), if tchg then lift(tchange,R), if schg then lift(schange,R) ))
 
 complement = method()
 
