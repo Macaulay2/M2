@@ -23,3 +23,9 @@ assert ( t*f*s == g )
 g
 assert ( t*f*s == g )
 assert ( # pivots g == 3 )
+
+R = QQ[x]
+time (g,t,s) = smithNormalForm ( f = random(R^8,R^3,MaximalRank=>true) * matrix "14+x,,;,140-x2,;,,1261+2x" * random(R^3,R^10,MaximalRank=>true) );
+time assert ( t*f*s == g )
+time assert ( # pivots g == 3 )
+
