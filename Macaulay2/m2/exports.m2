@@ -530,6 +530,7 @@ export {
 	symbol combine,
 	symbol commandInterpreter,
 	symbol commandLine,
+        symbol commonest,
 	symbol comodule,
 	symbol complement,
 	symbol complete,

@@ -273,11 +273,20 @@ document {
      Headline => "difference of tallies",
      Usage => "x - y",
      Inputs => { "x", "y" },
-     Outputs => { { "produces the difference of two tallies" } },
+     Outputs => { { "the difference of the two tallies" } },
      "The count associated to an item ", TT "i", " in the result is the difference of the counts in
      ", TT "x", " and in ", TT "y", " if it's positive, otherwise, zero.",
      EXAMPLE "tally {a,a,b,c} - tally {c,d,d}",
      SeeAlso => "Tally"
+     }
+
+document {
+     Key => {commonest, (commonest, VisibleList), (commonest, Set), (commonest, Tally)},
+     Headline => "the most common elements of a list or tally",
+     Usage => "commonest x",
+     Inputs => { "x" },
+     Outputs => { { "a list of the elements appearing most frequently in ", TT "x" } },
+     EXAMPLE "commonest {a,a,a,a,b,b,b,b,c,c,d}"
      }
 
 document {

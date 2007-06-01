@@ -159,6 +159,12 @@ sublists(VisibleList, Function, Function, Nothing) := (x,f,g,h) -> sublists(x,f,
 sublists(VisibleList, Function, Nothing, Function) := (x,f,g,h) -> sublists(x,f,identity,h)
 sublists(VisibleList, Function, Nothing, Nothing) := (x,f,g,h) -> sublists(x,f,identity,identity)
 -----------------------------------------------------------------------------
+commonest = method(Dispatch => Thing, TypicalValue => List)
+commonest VisibleList := x -> commonest tally x
+commonest Set := keys
+commonest Tally := t -> (
+     t = hashTable(join, apply(pairs t, (k,v) -> (v,{k})));
+     if #t === 0 then {} else t#(max keys t))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
