@@ -39,10 +39,13 @@ F4GB::F4GB(const Gausser *KK0,
     next_monom(), 
     syz_next_col_to_process(0),
     syz(0),
+    master_syz(0),
     syzH(M0,17),
+    master_syzH(M0,17),
     syzB(), 
+    master_syzB(), 
     syz_next_monom(), 
-    syzF4Vec("syzygy vector manager"),
+    //syzF4Vec("syzygy vector manager"),
     gauss_row()
 {
   lookup = new MonomialLookupTable(M->n_vars());
@@ -52,6 +55,7 @@ F4GB::F4GB(const Gausser *KK0,
   //  mat->columns.reserve(200000);
 
   syz = new coefficient_matrix;
+  master_syz = new coefficient_matrix;
 
   // set status
   if (gbTrace >= 2)
@@ -144,7 +148,7 @@ void F4GB::load_gen(int which)
 
   mat->rows.push_back(r);
   
-  //!!! syz_load_gen(which);
+  syz_load_gen(which);
 }
 
 
@@ -406,8 +410,6 @@ void F4GB::make_matrix()
 
   // Now we reorder the columns, possibly rows?
   reorder_columns();
-
-  syz_reorder_columns();
 
   //reorder_rows();  // This is only here so we can see what we are doing...?
 
@@ -774,6 +776,8 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
 
   enum ComputationStatusCode is_done = COMP_COMPUTING;
 
+  reset_master_syz();
+
   for (;;)
     {
       if (system_interruptedFlag) 
@@ -802,6 +806,8 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
       do_spairs();
       complete_thru_this_degree = this_degree;
     }
+
+  clear_master_syz();  
 
   if (gbTrace>=2)
     {

@@ -116,13 +116,16 @@ class F4GB : public our_new_delete
   monomial_word *next_monom; // valid while creating the matrix
   
   // The syzygy matrix and its construction
-  //??? reuse the construction structures from above?
   int syz_next_col_to_process;
-  coefficient_matrix *syz;
+  coefficient_matrix *syz; // recreated at every degree       
+  coefficient_matrix *master_syz; // collects all syzygies
   MonomialHashTable<MonomialInfo> syzH;
+  MonomialHashTable<MonomialInfo> master_syzH;
   MemoryBlock<monomial_word> syzB;
-  monomial_word *syz_next_monom; // valid while creating the matrix
-  F4Vec syzF4Vec; // optimized vector manager 
+  MemoryBlock<monomial_word> master_syzB;
+  monomial_word *syz_next_monom; // valid while creating <syz>
+  monomial_word *master_syz_next_monom; 
+  // F4Vec syzF4Vec; // syzygy vector manager 
   
   // Local data for gaussian elimination
   dense_row gauss_row, syz_row;
@@ -153,9 +156,11 @@ private:
   void make_matrix();
 
     void reset_matrix();
-    void reset_syz_matrix();
     void clear_matrix();
+    void reset_syz_matrix();
+    void reset_master_syz();
     void clear_syz_matrix();
+    void clear_master_syz();
     int new_column(packed_monomial m);
     int syz_new_column(packed_monomial m);
     int find_or_append_column(packed_monomial m);

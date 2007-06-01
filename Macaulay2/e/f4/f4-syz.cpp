@@ -39,7 +39,7 @@ void F4GB::syz_load_gen(int which)
   static_cast<int *>(syz_r.coeffs)[0] = 0; // this represents 1 in the coefficient field 
   syz_r.comps = F4Mem::components.allocate(1);
   static_cast<int *>(syz_r.comps)[0] = newcol;
-  syz->rows.push_back(syz_r);
+  syz->rows.push_back(syz_r); 
 }
 
 void F4GB::syz_load_row(packed_monomial monom, int which)
@@ -87,24 +87,59 @@ void F4GB::clear_syz_matrix()
 {
   if (!using_syz) return;
 
-  // syz
-  syz_next_col_to_process = 0;
-  syz->rows.clear(); //!!! are coeffs and comps killed here? 
-  syz->columns.clear();
-
+  // Clear the rows first
+  for (int i=0; i<syz->rows.size(); i++)
+    {
+      row_elem &r = syz->rows[i];
+      F4Mem::coefficients.deallocate((int*&)(r.coeffs));
+      F4Mem::components.deallocate(r.comps);
+      r.len = 0;
+      r.elem = -1;
+      r.monom = 0;
+    }
   syzH.reset();
   syzB.reset();
-  syz_next_monom = syzB.reserve(1+M->max_monomial_size());
-  syz_next_monom++;
+  syz->rows.clear(); 
+  syz->columns.clear();
+}
+
+void F4GB::clear_master_syz()
+{
+  if (!using_syz) return;
+
+  // Clear the rows first
+  for (int i=0; i<master_syz->rows.size(); i++)
+    {
+      row_elem &r = master_syz->rows[i];
+      F4Mem::coefficients.deallocate((int*&)(r.coeffs));
+      F4Mem::components.deallocate(r.comps);
+      r.len = 0;
+      r.elem = -1;
+      r.monom = 0;
+    }
+  master_syz->rows.clear(); 
+  master_syz->columns.clear();
+
+  master_syzH.reset();
+  master_syzB.reset();
+  master_syz_next_monom = master_syzB.reserve(1+M->max_monomial_size());
+  master_syz_next_monom++;
 }
 
 void F4GB::reset_syz_matrix()
 {
   if (!using_syz) return;
 
-  syz_next_col_to_process = 0;
-  syz_next_monom = B.reserve(1+M->max_monomial_size());
+  syz_next_monom = syzB.reserve(1+M->max_monomial_size());
   syz_next_monom++;
+}
+
+void F4GB::reset_master_syz()
+{
+  if (!using_syz) return;
+
+  master_syz_next_monom = master_syzB.reserve(1+M->max_monomial_size());
+  master_syz_next_monom++;
 }
 
 
