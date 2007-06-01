@@ -2,6 +2,10 @@
 -- This Document is Reserved for Examples --
 --------------------------------------------
 
+
+--PUT SOME EXAMPLES INTO THE PACKAGE
+
+
 --Examples:
 clearAll
 uninstallPackage "NoetherNormalization"
@@ -11,7 +15,7 @@ help NoetherNormalization
 
 
 --Example 1
-R = QQ[x_4,x_3,x_2,x_1] --the same ordering as in the paper
+R = QQ[x_4,x_3,x_2,x_1] --the same ordering as in the paper 
 I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1)
 noetherNormalization(I)
 
@@ -72,14 +76,19 @@ transpose gens gb (I, BasisElementLimit => 30)
 
 -- output should be:
 
--- alg dependent vars, ideal, map
+-- alg independent vars, ideal, map
 
           p       s
-I < k[x] <= k[y] <- k[t]
+I < k[x] <= k[y] <- k[p^-1(U)]
             J<
 	    
-we take I we currently return p^-1, we want p,s,J
+we take I we currently return p^-1, we want p,s,J --MIKE AGREES
 don't compute the inverse asking for it. 
+
+cache the inverse using something like
+
+keys f.cache
+
 
 -- Singular is better...
 

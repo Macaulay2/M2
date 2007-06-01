@@ -19,10 +19,10 @@ newPackage(
 -- Lemma. In: Proceedings 6th AAEEC, Lecture Notes in Computer Science
 -- 357, Springer, 1989, 259--273.
 
--- an additional algorithm was implement from:
+-- an additional algorithm was implemented from:
 
 -- H. Kredel and V. Weispfenning. Computing dimension and independent
--- set for polynomial ideals. 1986.
+-- set for polynomial ideals. 1986. -- CITE BOOK THIS OCCURES IN
 
 
 --=========================================================================--
@@ -183,6 +183,9 @@ randomSum = (U,V,k) -> (
 -- this we keep track of the maps and the inverses of the maps that we
 -- use.
 
+
+-- MAY WANT TO USE productOrder
+
 noetherPrime = (R,X,I,G,U,V,d,np,npinverse,homogeneous) -> (
      counter := 0; --counts the number of times lastCheck is called
      limitsequence := {5,20,40,60,80,infinity}; -- this is for the basiselementlimit setting for computing gb and is based on experience (and nothing else)
@@ -204,11 +207,11 @@ noetherPrime = (R,X,I,G,U,V,d,np,npinverse,homogeneous) -> (
 	  ginverse := map(R,R,reverse(stuff|V));
 	  f = g*f;
 	  finverse = finverse*ginverse;
-     	  while (done == false and seqindex < #limitsequence) do (
-	       if homogeneous then (
+     	  while (not done and seqindex < #limitsequence) do (
+	       if homogeneous then ( -- SAVE f I here rather than below....
 	       	    G = gb(f I, Algorithm => Homogeneous2, BasisElementLimit => limitsequence_seqindex);
 	       	    );     
-	       if not homogeneous then G = gb(f I, BasisElementLimit => limitsequence_seqindex);
+	       if not homogeneous then G = gb(f I, BasisElementLimit => limitsequence_seqindex); -- SAVE f I above, as opposed to running it new
 	       done = lastCheck(X,G, d);
      	       seqindex = seqindex + 1;
 	       );
@@ -240,16 +243,16 @@ noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
 -- does and to noetherNotPrime if it doesn't.
 
 noetherNormalization = method()
-noetherNormalization(Ideal) := Sequence => (I) -> (
+noetherNormalization(Ideal) := Sequence => (I) -> (-- GIVE ERROR IF NOT POLYNOMIAL RING
      R := coefficientRing ring I [gens ring I,MonomialOrder => Lex];
      f := map(R,ring I,gens R);
      I = f(I);
-     homogeneous := (isHomogeneous(R) and isHomogeneous(I));
-     if homogeneous then G = gb(I, Algorithm => Homogeneous2);
+     homogeneous := (isHomogeneous(R) and isHomogeneous(I)); 
+     if homogeneous then G = gb(I, Algorithm => Homogeneous2); --MAYBE SHOULD USE ANOTHER HOMOGENOUS ALG/MAYBE TAKE THIS OUT
      if not homogeneous then G = gb I;
      d := dim I;
      X := sort gens R;
-     (U,V) := varPrep(X,G);
+     (U,V) := varPrep(X,G); -- MAYBE USE independentSets SEE DOCS limit of 1, note you'll have to take the support
      if d == #U then noetherPrime(R,X,I,G,U,V,d,id_R,id_R,homogeneous) else noetherNotPrime(R,X,I,G,d,homogeneous)
      );
 --======================================================================================================================
