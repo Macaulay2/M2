@@ -51,10 +51,11 @@ Thing .. Thing := (a,z) -> (
 	  )
      else nometh2(symbol .., a,z);
      if a === aa and z === zz then nometh2(symbol .., a,z);
-     apply(aa .. zz, s -> if instance(s, Symbol) then value s else s)
+     if instance(aa,Symbol) and instance(zz,Symbol)
+     or instance(aa,IndexedVariable) and instance(zz,IndexedVariable)
+     then value \ (aa .. zz)
+     else aa .. zz
      )
-
-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
