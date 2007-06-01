@@ -151,7 +151,7 @@ independentSets MonomialIdeal := o -> (M) -> (
 	       if o.Limit === infinity then -1 else o.Limit));
      result = flatten entries generators result;
      if #result === 1 and result#0 == 1_(ring M) then 
-         {}
+         {{}}
 	 -- result#0=1 means the single isolated 
 	 -- prime is the maximal ideal
      else
