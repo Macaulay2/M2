@@ -88,6 +88,16 @@ public:
     return true;
   }
 
+  bool one(long comp, packed_monomial result) const {
+    // Pack the vector (0,...,0,comp) with nvars zeroes.  
+    // Hash value = 0. ??? Should the hash-function take component into account ???
+    result[0] = 0;
+    result[1] = comp;
+    for (int i=0; i<nvars; i++)
+	result[2+i] = 0;
+    return true;
+  }
+
   bool to_exponent_vector(const_packed_monomial m, ntuple_monomial result, long &result_comp) const {
     // Unpack the monomial m.
     result_comp = m[1];
