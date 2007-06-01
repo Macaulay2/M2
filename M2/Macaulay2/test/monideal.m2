@@ -21,6 +21,7 @@ mi3 = borel monomialIdeal matrix {{d*e*f^2}}
 assert isBorel mi3
 assert(saturate(mi3, monomialIdeal matrix {{a,b,c,d,e}}) == monomialIdeal matrix {{a,b,c,d}})
 assert(monomialIdeal independentSets mi2 == monomialIdeal matrix {{b*d*e, b*d*f, b*e*f, d*e*f}})
+assert( independentSets ideal vars R === {{}} )
 
 assert(codim mi2 == 3)
 assert(poincare mi2 == 1 - T^2 - T^4 + T^6 - T^7 + T^9 + T^11 - T^13)
