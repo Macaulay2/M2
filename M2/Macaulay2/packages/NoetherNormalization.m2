@@ -21,15 +21,14 @@ newPackage(
 
 -- an additional algorithm was implemented from:
 
--- H. Kredel and V. Weispfenning. Computing dimension and independent
--- set for polynomial ideals. 1986. -- CITE BOOK THIS OCCURES IN
+-- H. Kredel and V. Weispfenning. Computing Dimension and Independent
+-- sets for Polynomial Ideals. J. Symbolic Computation (1988) 6,
+-- 231--247.
 
 
 --=========================================================================--
      
-export{noetherNormalization} -- if the new routines which you are adding have new
--- names, then they need to be exported; otherwise they should not be
--- exported
+export{noetherNormalization} 
         
 --=========================================================================--
 
@@ -63,27 +62,11 @@ integralSet = G -> (
 -- inputted ideal I. It returns sets U and V, with U being
 -- algebraically independent and V being algebracially dependent. For
 -- all prime ideals it returns a maximal algebraically independent set
--- of variables whose cardinality is equal to d. If the set returned
--- by varPrep is smaller than d (it should never be larger) then the
--- ideal is not prime. varPrep is proven to work in this way in
--- Logar's paper. In case varPrep returns a set smaller than d the
--- ideal is sent to maxAlgPerm. What it does:
+-- of variables whose cardinality is equal to d.
 
-
-varPrep = (X,G) -> (
-     M := gens G;
-     V := {};
-     for j from 0 to #X - 1 do (
-      	  for i from 0 to numgens source M - 1 do ( -- going from zero to the number of gens of the gb - 1      
-	       if isSubset({X_j}, support (M)_(0,i)) -- checks to see if the there is a term of the desired index
-	       and isSubset(support (M)_(0,i),take(X,j+1)) -- checks to see if there is a higher indexed term
-	       then (
-            	    V = V | {X_j};                -- repeatedly appending could be slow, try for ... list or while ... list
-            	    break;   
-		    );
-               );     
-      	  );
-     (X-set(V),V)                        -- (x,y) = (U,V) ; (x,y) := (U,V) can be used by the caller if you return a sequence
+varPrep = (X,I) -> (
+     U := support (independentSets(I,Limit => 1))_0;
+     (U,X - set U)
      );
 
 --================================================== 
@@ -108,32 +91,6 @@ lastCheck = (X,G,d) -> (
      true
      );
 --==============================================
-
-
--- comments: The purpose of maxAlgPerm is to take an ideal that
--- varPrep failed on (ie. varPrep(I)<d) and make a change of variables
--- in order for varPrep to succeed. It essentially takes the offending
--- Grobner basis and returns a maximal alg. independent set of
--- variables which are then moved to the highest valued variables in
--- the lex ordering via a permutation. The algorithm is referenced by
--- Logar and can be found in Kredel and Weispfenning, "Computing
--- dimension and independent sets for polynomial ideals"
-
-maxAlgPerm = (R,X,G,d,S) -> (
-     M := gens G;
-     if #S == d then return S;
-     for j to #X - 1 do (
-	  for i to numgens source M -1 do (
-	       if isSubset(support leadTerm M_(0,i),S|{X_j}) then break;
-     	       if i == (numgens source M - 1) then ( 
-		    S = maxAlgPerm(R,X - set({X_j}),G,d,S|{X_j});
-		    if not instance(S,List) then S = {};
-		    if #S == d then return S; 
-		    ); 
-	       );
-	  );
-     );
---======================================================
 
 -- comments: inverseSequence is used to give the inverse of a ring
 -- map. A ring map is given by a list explaining where each of the
@@ -170,8 +127,8 @@ randomSum = (U,V,k) -> (
      );
 --========================================================
 
--- comments: noetherPrime is where the action happens. It takes the
--- ideal (which may have been fixed by maxAlgPerm) and does a random
+-- comments: noether is where the action happens. It takes the
+-- ideal and does a random
 -- linear transformation adding to the independent variables the
 -- dependent ones that are not initially integral. It then checks that
 -- the transformation put the ideal in noether position. It does this
@@ -186,7 +143,7 @@ randomSum = (U,V,k) -> (
 
 -- MAY WANT TO USE productOrder
 
-noetherPrime = (R,X,I,G,U,V,d,np,npinverse,homogeneous) -> (
+noether = (R,X,I,G,U,V,d,np,npinverse,homogeneous,Verbose) -> (
      counter := 0; --counts the number of times lastCheck is called
      limitsequence := {5,20,40,60,80,infinity}; -- this is for the basiselementlimit setting for computing gb and is based on experience (and nothing else)
      k := coefficientRing R;
@@ -216,25 +173,13 @@ noetherPrime = (R,X,I,G,U,V,d,np,npinverse,homogeneous) -> (
      	       seqindex = seqindex + 1;
 	       );
 	  counter = counter + 1;
-	  if done or (counter == 100) then return((counter,limitsequence_{seqindex - 1},indep,f*np)); --U is the algebraically independent vars, if returning the inverse map then npinverse*finverse
-      	  );
-     );
+	  if counter == 5 then  << "Warning: no good transformation found" <<endl;
+	  if done or counter == 5 then return (
+	       if Verbose then << "number of transformations attempted = " << counter << ";" << " BasisElementLimit = " << limitsequence_{seqindex - 1} <<endl;
+	       return (indep,npinverse*finverse)) else return (indep,npinverse*finverse)
+     	  ); -- if returning the inverse map then npinverse*finverse
+     );	    
 --========================================================================================================================
-
--- comments: noetherNotPrime is where the ideals that fail varPrep
--- go. They are fixed by maxAlgPerm and then send to noetherPrime
--- along with the appropriate maps.
-
-noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
-     S := maxAlgPerm(R,X,G,d,{});
-     np := map(R,R, inverseSequence(reverse(X-set(S)|S),X));
-     npinverse := map(R,R,(X-set(S)|S));
-     I = np I;
-     G = gb I;
-     (U,V) := varPrep(X,G);
-     noetherPrime(R,X,I,G,U,V,d,np,npinverse,homogeneous)
-     );
---=======================================================================================================================
 
 -- comments: noetherNormalization is the main method. I is passed to
 -- it by the user and it's Grobner basis is immediately
@@ -242,8 +187,10 @@ noetherNotPrime = (R,X,I,G,d,homogeneous) -> (
 -- alg. independent set and decides to send it to noetherPrime if it
 -- does and to noetherNotPrime if it doesn't.
 
-noetherNormalization = method()
-noetherNormalization(Ideal) := Sequence => (I) -> (-- GIVE ERROR IF NOT POLYNOMIAL RING
+noetherNormalization = method(Options => {Verbose => false})
+noetherNormalization(Ideal) := opts -> I -> (
+     if not isPolynomialRing ring I then error "expected an ideal over a polynomial ring";
+     if not isField coefficientRing ring I then error "expected the ring to contain a field";
      R := coefficientRing ring I [gens ring I,MonomialOrder => Lex];
      f := map(R,ring I,gens R);
      I = f(I);
@@ -252,22 +199,23 @@ noetherNormalization(Ideal) := Sequence => (I) -> (-- GIVE ERROR IF NOT POLYNOMI
      if not homogeneous then G = gb I;
      d := dim I;
      X := sort gens R;
-     (U,V) := varPrep(X,G); -- MAYBE USE independentSets SEE DOCS limit of 1, note you'll have to take the support
-     if d == #U then noetherPrime(R,X,I,G,U,V,d,id_R,id_R,homogeneous) else noetherNotPrime(R,X,I,G,d,homogeneous)
+     (U,V) := varPrep(X,I); -- MAYBE USE independentSets SEE DOCS limit of 1, note you'll have to take the support
+     noether(R,X,I,G,U,V,d,id_R,id_R,homogeneous,opts.Verbose)
      );
 --======================================================================================================================
 noetherNormalization(QuotientRing) := Sequence => (R) -> (
+     if not isPolynomialRing ring ideal R then error "expected a quotient of a polynomial ring";
      noetherNormalization(ideal R)
      );
 --======================================================================================================================
 -- alg dependent vars, ideal, map
 
---          p       s
---I >-> k[x] <=< k[y] <- k[t]
---            J<
+--           p       s
+-- I < k[x] <= k[y] <- k[p^-1(U)]
+--             J<
 	    
---we take I we currently return p^-1, we want p,s,J
---don't compute the inverse asking for it.      
+-- we take I we currently return p^-1, we want p,s,J --MIKE AGREES
+
 
 --homogeneous stuff
 --do we have an input option for the homogeneous case or do we always use the homogeneous program on homogeneous ideals?
@@ -300,7 +248,7 @@ document {
      used are based on algorithms found in A. Logar's paper: A
      Computational Proof of the Noether Normalization Lemma. In:
      Proceedings 6th AAEEC, Lecture Notes in Computer Science 357,
-     Springer, 1989, 259-273. However, there are some important differences."
+     Springer, 1989, 259-273."
      }
 
 -----------------------------------------------------------------------------
@@ -317,18 +265,13 @@ document {
      "The function ", TT "noetherNormalization", " outputs a sequence 
      consisting of the following items: the list of algebraically independent 
      variables in the ring ", TT "R/I", ", and a map from ", TT "R", " to ", --(R a polynomial ring)
-     TT"R", " which will place ideal ", TT "I", " into Noether normal
-     position. The routine requires the ring to ordered via the
-     lexicographic ordering.",
+     TT "R", " which will place ideal ", TT "I", " into Noether normal
+     position.",
      EXAMPLE {
-	  "R = QQ[x_1..x_4, MonomialOrder => Lex];",
+	  "R = QQ[x_1..x_4];",
 	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
 	  "noetherNormalization(I)"
 	  },
-     EXAMPLE {
-	  "1+1"
-	  },
-     "Give some details of the algorithm.",
      PARA {
      "This symbol is provided by the package ", TO NoetherNormalization, "."
      }
