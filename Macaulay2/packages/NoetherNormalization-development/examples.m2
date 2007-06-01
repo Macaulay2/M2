@@ -22,12 +22,11 @@ noetherNormalization(I)
 A = coefficientRing ring I [gens ring I,MonomialOrder =>Lex];
      I = ideal gens I;
 
-
+(print "hello"; print (2+2))
 --Example 2
 R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex] -- this is a nice example...
 I = ideal(x_2*x_1-x_5^3, x_5*x_1^3)              -- compare with the same example in singular. 
-noetherNormalization(I)
-
+noetherNormalization(I,Verbose => true)
 --Example 3
 R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
 I = ideal(x_1^3 + x_1*x_2, x_2^3-x_4+x_3, x_1^2*x_2+x_1*x_2^2)
@@ -139,7 +138,10 @@ R = QQ[x_2,x_3,x_4,x_1, MonomialOrder => Lex];
 I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
 noetherNormalization I
 I = ideal((6/5)*x_4*x_1-(8/7)*x_1^3-(9/4),(3/7)*x_4*x_3+(7/8)*x_3*x_2^2+x_1-(5/3),-(5/6)*x_4*x_2-(5/6)*x_3^2*x_1)
-
+G = gb I
+X = sort gens R -- note that this "sort" is very important
+benchmark "varPrep(X,G)"
+benchmark "support (independentSets(I,Limit => 1))_0"
 
 
 --Examples of not so good I
@@ -147,20 +149,35 @@ I = ideal((6/5)*x_4*x_1-(8/7)*x_1^3-(9/4),(3/7)*x_4*x_3+(7/8)*x_3*x_2^2+x_1-(5/3
 R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
 I = ideal(x_1^3 + x_1*x_2, x_2^3-x_4+x_3, x_1^2*x_2+x_1*x_2^2)
 noetherNormalization I
+G = gb I
+X = sort gens R -- note that this "sort" is very important
+varPrep(X,G)
+ZZ[x]
+support (independentSets(ideal(x),Limit => 1))_0
+independentSets(ideal(x))
 
-
-
-
+dim(ZZ[x]/(7,x))
+dim (ZZ[x]/ideal(7,x))
 
 --Ex#3
 R = QQ[x_1,x_2,x_3,MonomialOrder => Lex]
 I = ideal(x_1*x_2,x_1*x_3)
 noetherNormalization(I)
+G = gb I
+X = sort gens R -- note that this "sort" is very important
+benchmark "varPrep(X,G)"
+benchmark "support (independentSets(I,Limit => 1))_0"
+benchmark "independentSets(I,Limit => 1)"
+altVarPrep(X,I)
 
 --Ex#4
 R = QQ[x_3,x_2,x_1,MonomialOrder => Lex]
 I = ideal(x_1*x_2, x_1*x_3)
 G = gb I
+X = sort gens R -- note that this "sort" is very important
+varPrep(X,G)
+independentSets I
+
 
 prune ideal gens G
 d = dim I
