@@ -105,12 +105,12 @@ document {
      }
 
 document {
-     Key =>{ [gin, Modular],[lexgin,Modular]}
+     Key =>{ [gin, Modular],[lexgin,Modular]},
      Headline=> "if set to be true, computations are performed modulo a large random prime ."
      }
 
 document {
-     Key => {[gin, AttemptCount],[lexgin,AttemptCount]}
+     Key => {[gin, AttemptCount],[lexgin,AttemptCount]},
      Headline=> "sets the number of random changes of variables the routine attempts before choosing the potential",TT "gin"," ."
      }
 
@@ -120,7 +120,7 @@ document {
      }
 
 document {
-     Key => {[gin, Verbose],[lexgin,Verbose]}
+     Key => {[gin, Verbose],[lexgin,Verbose]},
      Headline=> "provides a summary of the random initial ideals generated and warns if the selected one is not strongly stable."
      }
 
@@ -143,11 +143,7 @@ Verbose => {"provides a summary of the random initial ideals generated and warns
 	  }
      },
      SeeAlso =>{" (lexgin,Ideal)"},
-     PARA {"This symbol is provided by the package ", TO GenericInitialIdeal, "." }
      }
-
-
-
 
 document {
      Key => (gin,QuotientRing),
@@ -166,8 +162,6 @@ Verbose => {"provides a summary of the random initial ideals generated and warns
 	  "gin(R)",
 	  },
  SeeAlso => "(lexgin,QuotientRing)",
-     PARA {
-     "This symbol is provided by the package ", TO GenericInitialIdeal, "."}
      }
 
 document {
@@ -175,12 +169,11 @@ document {
      Headline => "the generic initial ideal with respect to the lexicographic order",
      Usage => "J = lexgin I",
      Inputs => {"I" => {"an ", TO Ideal, " in a polynomial ring"},
-AttemptCount => {"sets the number of random changes of variables the routine attempts before choosing the potential",TT "gin"," ."},
+	  AttemptCount => {"sets the number of random changes of variables the routine attempts before choosing the potential",TT "gin"," ."},
 	  Modular => {"if set to be true, computations are performed modulo a large random prime ."},
 	Verbose => {"provides a summary of the random initial ideals generated and warns if the selected one is not strongly stable."}
 	  },
-},
-       Outputs => {"J" => {"an ", TO Ideal, ", the generic initial ideal of ", TT "I", "."}},
+     Outputs => {"J" => {"an ", TO Ideal, ", the generic initial ideal of ", TT "I", "."}},
      "A complete intersection of type (3,3) in P^3",
      EXAMPLE {	
 	  "R = QQ[a..d];",
@@ -188,9 +181,6 @@ AttemptCount => {"sets the number of random changes of variables the routine att
 	  "lexgin(I)",
 	  },
      SeeAlso => "(gin,Ideal)",
-     PARA {
-     "This symbol is provided by the package ", TO GenericInitialIdeal, "."
-     }
      }
 
 document {
@@ -198,11 +188,10 @@ document {
      Headline => "the generic initial ideal with respect to the lexicographic order of the ideal associated to the quotient ring",
      Usage => "J = lexgin R",
      Inputs => {"R" => {"a ", TO QuotientRing, " of a polynomial ring"},
-AttemptCount => {"sets the number of random changes of variables the routine attempts before choosing the potential",TT "gin"," ."},
+	  AttemptCount => {"sets the number of random changes of variables the routine attempts before choosing the potential",TT "gin"," ."},
 	  Modular => {"if set to be true, computations are performed modulo a large random prime ."},
 	  Verbose => {"provides a summary of the random initial ideals generated and warns if the selected one is not strongly stable."}
 	  },
-},
      Outputs => {"J" => {"an ", TO Ideal, ", the generic initial ideal of ", TT "the ideal associated to this quotinet ring", "."}},
      "A complete intersection of type (3,3) in P^3",
      EXAMPLE {
@@ -210,9 +199,6 @@ AttemptCount => {"sets the number of random changes of variables the routine att
 	  "lexgin(R)",
 	  },
      SeeAlso => "(gin,QuotientRing)",
-     PARA {
-     "This symbol is provided by the package ", TO GenericInitialIdeal, "."
-     }
      }
 
 
