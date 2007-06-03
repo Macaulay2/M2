@@ -714,12 +714,6 @@ TEST ///
 
 leadTerm(ZZ,RingElement) := (n,f) -> (leadTerm(n,matrix{{f}}))_(0,0)
   -- leadTerm should call a ggleadterm routine?  DO THIS
-  
-gbSnapshot = (obj) -> (m := gens gb(obj,StopBeforeComputation => true);
-     map(target m, source m, entries m))
-     -- PROBLEM: have 'gens gb' return a snapshot matrix: not the live one.
-     -- same with syz, change...
-     -- DO THIS
      
 installHilbertFunction = method()
 installHilbertFunction(Module,RingElement) := (M,hf) -> (
