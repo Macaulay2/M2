@@ -18,7 +18,7 @@ seqP = (comma, parser) -> prepend % parser @ * (last % comma @ parser)
 variableP = value % symbolP
 intP = NNParser | variableP
 subscriptP = ((lb,x,rb) -> x) % andP( "[", unsequence % seqP_"," intP, "]" )
-ringVariableP = ((x,n) -> if n === nil then value x else x_n) % 
+ringVariableP = ((x,n) -> value if n === nil then x else x_n) % 
                 symbolP @ optP subscriptP
 numberP = ZZParser | QQParser
 powerP = ((x,n) -> if n === nil then x else x^n) % 
