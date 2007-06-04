@@ -12,7 +12,7 @@ uninstallPackage "NoetherNormalization"
 installPackage "NoetherNormalization"
 methods noetherNormalization
 help NoetherNormalization
-
+help noetherNormalization
 
 --Example 1
 clearAll
