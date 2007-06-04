@@ -100,7 +100,7 @@ lastCheck = (X,G,d) -> (
 -- morphism.
 
 inverseSequence = (U,X) -> (
-     N = {};
+     N := {};
      for i to #X - 1 do (
 	  for j to #U - 1 do (
 	       if X_i == U_j then (
@@ -127,71 +127,26 @@ randomSum = (U,V,k) -> (
      );
 --========================================================
 
--- comments: noether is where the action happens. It takes the
--- ideal and does a random
--- linear transformation adding to the independent variables the
--- dependent ones that are not initially integral. It then checks that
--- the transformation put the ideal in noether position. It does this
--- bye partially computing a Grobner basis for the ideal until the
--- partially computed Grobner basis witnesses the integrality of all
--- of the dependent variables. If the entire Grobner basis is computed
--- and the integrality is never witnessed then we apply another random
--- linear transformation and start the process again. While doing all
--- this we keep track of the maps and the inverses of the maps that we
--- use.
-
-
--- MAY WANT TO USE productOrder
-
-noether = (R,X,I,G,U,V,d,np,npinverse,ff,ffinverse,homogeneous,Verbose) -> (
-     counter := 0; --counts the number of times lastCheck is called
-     limitsequence := {5,20,40,60,80,infinity}; -- this is for the basiselementlimit setting for computing gb and is based on experience (and nothing else)
-     k := coefficientRing R;
-     done := false;
-     indep := U;
-     f := map(R,R,inverseSequence(U|V,X));
-     finverse := map(R,R, reverse(U|V));
-     J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
-     V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
-     U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
-     while done == false do ( 
-	  seqindex := 0;
-     	  stuff := U;
-     	  if counter == 0 then U = randomSum(U,V-set J,k);
-	  if counter >= 1 then U = randomSum(U,V-set integralSet(G),k);
-	  stuff = stuff + (stuff - U);
-    	  g := map(R,R,reverse(U|V));
-	  ginverse := map(R,R,reverse(stuff|V));
-	  f = g*f;
-	  finverse = finverse*ginverse;
-     	  while (not done and seqindex < #limitsequence) do (
-	       if homogeneous then ( -- SAVE f I here rather than below....
-	       	    G = gb(f I, Algorithm => Homogeneous2, BasisElementLimit => limitsequence_seqindex);
-	       	    );     
-	       if not homogeneous then G = gb(f I, BasisElementLimit => limitsequence_seqindex); -- SAVE f I above, as opposed to running it new
-	       done = lastCheck(X,G, d);
-     	       seqindex = seqindex + 1;
-	       );
-	  counter = counter + 1;
-	  if counter == 5 then  << "Warning: no good transformation found" <<endl;
-	  if done or counter == 5 then return (
-	       if Verbose then << "number of transformations attempted = " << counter << ";" << " BasisElementLimit = " << limitsequence_{seqindex - 1} <<endl;
-	       return (indep,ffinverse*npinverse*finverse*ff,ff))
-     	  ); -- if returning the inverse map then npinverse*finverse
-     );	    
---========================================================================================================================
 
 -- comments: noetherNormalization is the main method. I is passed to
--- it by the user and it's Grobner basis is immediately
--- computed. Using this it checks if varPrep returns a maximal
--- alg. independent set and decides to send it to noetherPrime if it
--- does and to noetherNotPrime if it doesn't.
+-- it by the user and it's Grobner basis is immediately computed.  It
+-- takes the ideal and does a random linear transformation adding to
+-- the independent variables the dependent ones that are not initially
+-- integral. It then checks that the transformation put the ideal in
+-- Noether position. It does this bye partially computing a Grobner
+-- basis for the ideal until the partially computed Grobner basis
+-- witnesses the integrality of all of the dependent variables. If the
+-- entire Grobner basis is computed and the integrality is never
+-- witnessed then we apply another random linear transformation and
+-- start the process again. While doing all this we keep track of the
+-- maps and the inverses of the maps that we use.
 
 noetherNormalization = method(Options => {Verbose => false})
 noetherNormalization(Ideal) := opts -> I -> (
      if not isPolynomialRing ring I then error "expected an ideal over a polynomial ring";
      if not isField coefficientRing ring I then error "expected the ring to contain a field";
-     R := coefficientRing ring I [gens ring I,MonomialOrder => Lex];
+     k := coefficientRing ring I;
+     R := k [gens ring I,MonomialOrder => Lex];
      ff := map(R,ring I,gens R);
      ffinverse := map(ring I, R, gens ring I);
      I = ff(I);
@@ -200,13 +155,9 @@ noetherNormalization(Ideal) := opts -> I -> (
      if not homogeneous then G = gb I;
      d := dim I;
      X := sort gens R;
-     (U,V) := varPrep(X,I); -- MAYBE USE independentSets SEE DOCS limit of 1, note you'll have to take the support
---     noether(R,X,I,G,U,V,d,id_R,id_R,ff,ffinverse,homogeneous,opts.Verbose)
-     np := id_R;
-     npinverse := id_R;
+     (U,V) := varPrep(X,I);
      counter := 0; --counts the number of times lastCheck is called
      limitsequence := {5,20,40,60,80,infinity}; -- this is for the basiselementlimit setting for computing gb and is based on experience (and nothing else)
-     k := coefficientRing R;
      done := false;
      indep := U;
      f := map(R,R,inverseSequence(U|V,X));
@@ -225,24 +176,26 @@ noetherNormalization(Ideal) := opts -> I -> (
 	  f = g*f;
 	  finverse = finverse*ginverse;
      	  while (not done and seqindex < #limitsequence) do (
-	       if homogeneous then ( -- SAVE f I here rather than below....
+	       if homogeneous then ( -- may want to define f I above, but this causes noetherNormalization to fail at the moment
 	       	    G = gb(f I, Algorithm => Homogeneous2, BasisElementLimit => limitsequence_seqindex);
 	       	    );     
-	       if not homogeneous then G = gb(f I, BasisElementLimit => limitsequence_seqindex); -- SAVE f I above, as opposed to running it new
-	       done = lastCheck(X,G, d);
+	       if not homogeneous then G = gb(f I, BasisElementLimit => limitsequence_seqindex); 
+	       done = lastCheck(X,G,d);
      	       seqindex = seqindex + 1;
 	       );
 	  counter = counter + 1;
-	  if counter == 5 then  << "Warning: no good transformation found" <<endl;
+	  if counter == 5 then << "WARNING: no good linear transformation found by noetherNormalization" <<endl;
 	  if done or counter == 5 then return (
 	       if opts.Verbose then << "number of transformations attempted = " << counter << ";" << " BasisElementLimit = " << limitsequence_{seqindex - 1} <<endl;
-	       return (apply(indep, i -> ffinverse i),ffinverse*npinverse*finverse*ff,ff))
-     	  ); -- if returning the inverse map then npinverse*finverse 
+	       return (apply(indep, i -> ffinverse i),ffinverse*finverse*ff)
+	       );
+     	  ); -- if returning the inverse map then finverse 
      );
+
 --======================================================================================================================
-noetherNormalization(QuotientRing) := Sequence => (R) -> (
+noetherNormalization(QuotientRing) := opts -> R -> (
      if not isPolynomialRing ring ideal R then error "expected a quotient of a polynomial ring";
-     noetherNormalization(ideal R)
+     noetherNormalization(ideal R, Verbose => opts.Verbose)
      );
 --======================================================================================================================
 -- alg dependent vars, ideal, map
@@ -290,24 +243,38 @@ document {
 
 -----------------------------------------------------------------------------
 document {
-     Key => (noetherNormalization, Ideal),
+     Key => noetherNormalization,
      Headline => "places an ideal in Noether normal position",
      Usage => "noetherNormalization(I)",
-     Inputs => {
-	  "I" => {"an ideal over a polynomial ring"}
-	  },
      Outputs => {
 	  Sequence => {}
 	  },
-     "The function ", TT "noetherNormalization", " outputs a sequence 
+     "The function ", TT "noetherNormalization", " takes an ideal or a
+     quotient of a polynomial ring, and outputs a sequence
      consisting of the following items: the list of algebraically independent 
      variables in the ring ", TT "R/I", ", and a map from ", TT "R", " to ", --(R a polynomial ring)
      TT "R", " which will place ideal ", TT "I", " into Noether normal
-     position.",
+     position. The ideal in question is placed into Noether normal
+     position using a random linear change of coordinates, hence one should
+     expect the output to change each time the routine is executed.",
      EXAMPLE {
 	  "R = QQ[x_1..x_4];",
 	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
-	  "noetherNormalization(I)"
+	  "noetherNormalization I",
+	  "noetherNormalization(R/I)",
+	  },
+     "If ", TT "noetherNormalization", " is unable to place the ideal
+     in Noether normal position after a few tries, the following warning is given:",
+     EXAMPLE {
+	  "R = ZZ/2[a,b];",
+	  "I = ideal(a^2*b+a*b^2+1);",
+	  "noetherNormalization I"
+	  },
+     "Here is an example with the option ", TT "Verbose => true", ":",
+     EXAMPLE {
+	  "R = QQ[x_1..x_4];",
+	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
+	  "noetherNormalization(I,Verbose => true)"
 	  },
      PARA {
      "This symbol is provided by the package ", TO NoetherNormalization, "."
