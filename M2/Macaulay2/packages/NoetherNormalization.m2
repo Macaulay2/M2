@@ -143,7 +143,7 @@ randomSum = (U,V,k) -> (
 
 -- MAY WANT TO USE productOrder
 
-noether = (R,X,I,G,U,V,d,np,npinverse,homogeneous,Verbose) -> (
+noether = (R,X,I,G,U,V,d,np,npinverse,ff,ffinverse,homogeneous,Verbose) -> (
      counter := 0; --counts the number of times lastCheck is called
      limitsequence := {5,20,40,60,80,infinity}; -- this is for the basiselementlimit setting for computing gb and is based on experience (and nothing else)
      k := coefficientRing R;
@@ -176,7 +176,7 @@ noether = (R,X,I,G,U,V,d,np,npinverse,homogeneous,Verbose) -> (
 	  if counter == 5 then  << "Warning: no good transformation found" <<endl;
 	  if done or counter == 5 then return (
 	       if Verbose then << "number of transformations attempted = " << counter << ";" << " BasisElementLimit = " << limitsequence_{seqindex - 1} <<endl;
-	       return (indep,npinverse*finverse)) else return (indep,npinverse*finverse)
+	       return (indep,ffinverse*npinverse*finverse*ff,ff))
      	  ); -- if returning the inverse map then npinverse*finverse
      );	    
 --========================================================================================================================
@@ -192,15 +192,52 @@ noetherNormalization(Ideal) := opts -> I -> (
      if not isPolynomialRing ring I then error "expected an ideal over a polynomial ring";
      if not isField coefficientRing ring I then error "expected the ring to contain a field";
      R := coefficientRing ring I [gens ring I,MonomialOrder => Lex];
-     f := map(R,ring I,gens R);
-     I = f(I);
+     ff := map(R,ring I,gens R);
+     ffinverse := map(ring I, R, gens ring I);
+     I = ff(I);
      homogeneous := (isHomogeneous(R) and isHomogeneous(I)); 
      if homogeneous then G = gb(I, Algorithm => Homogeneous2); --MAYBE SHOULD USE ANOTHER HOMOGENOUS ALG/MAYBE TAKE THIS OUT
      if not homogeneous then G = gb I;
      d := dim I;
      X := sort gens R;
      (U,V) := varPrep(X,I); -- MAYBE USE independentSets SEE DOCS limit of 1, note you'll have to take the support
-     noether(R,X,I,G,U,V,d,id_R,id_R,homogeneous,opts.Verbose)
+--     noether(R,X,I,G,U,V,d,id_R,id_R,ff,ffinverse,homogeneous,opts.Verbose)
+     np := id_R;
+     npinverse := id_R;
+     counter := 0; --counts the number of times lastCheck is called
+     limitsequence := {5,20,40,60,80,infinity}; -- this is for the basiselementlimit setting for computing gb and is based on experience (and nothing else)
+     k := coefficientRing R;
+     done := false;
+     indep := U;
+     f := map(R,R,inverseSequence(U|V,X));
+     finverse := map(R,R, reverse(U|V));
+     J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
+     V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
+     U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
+     while done == false do ( 
+	  seqindex := 0;
+     	  stuff := U;
+     	  if counter == 0 then U = randomSum(U,V-set J,k);
+	  if counter >= 1 then U = randomSum(U,V-set integralSet(G),k);
+	  stuff = stuff + (stuff - U);
+    	  g := map(R,R,reverse(U|V));
+	  ginverse := map(R,R,reverse(stuff|V));
+	  f = g*f;
+	  finverse = finverse*ginverse;
+     	  while (not done and seqindex < #limitsequence) do (
+	       if homogeneous then ( -- SAVE f I here rather than below....
+	       	    G = gb(f I, Algorithm => Homogeneous2, BasisElementLimit => limitsequence_seqindex);
+	       	    );     
+	       if not homogeneous then G = gb(f I, BasisElementLimit => limitsequence_seqindex); -- SAVE f I above, as opposed to running it new
+	       done = lastCheck(X,G, d);
+     	       seqindex = seqindex + 1;
+	       );
+	  counter = counter + 1;
+	  if counter == 5 then  << "Warning: no good transformation found" <<endl;
+	  if done or counter == 5 then return (
+	       if opts.Verbose then << "number of transformations attempted = " << counter << ";" << " BasisElementLimit = " << limitsequence_{seqindex - 1} <<endl;
+	       return (apply(indep, i -> ffinverse i),ffinverse*npinverse*finverse*ff,ff))
+     	  ); -- if returning the inverse map then npinverse*finverse 
      );
 --======================================================================================================================
 noetherNormalization(QuotientRing) := Sequence => (R) -> (

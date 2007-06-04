@@ -17,7 +17,19 @@ help NoetherNormalization
 --Example 1
 R = QQ[x_4,x_3,x_2,x_1] --the same ordering as in the paper 
 I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1)
-noetherNormalization(I)
+ring I
+noetherNormalization(R/I)
+
+(noetherNormalization I)_1*ffinverse
+viewHelp
+     A = coefficientRing ring I [gens ring I,MonomialOrder => Lex];
+     ff = map(A,ring I,gens A)
+ffinverse = map(ring I, source (noetherNormalization I)_1 , gens ring I);
+ring I
+
+ff(I)
+ffinverse ff I
+source (noetherNormalization I)_1
 
 A = coefficientRing ring I [gens ring I,MonomialOrder =>Lex];
      I = ideal gens I;
