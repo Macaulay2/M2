@@ -47,7 +47,7 @@ export{noetherNormalization}
 
 
 integralSet = G -> (
-     J = {};
+     J := {};
      M := gens G;
      for i from 0 to numgens source M - 1 do ( -- check the gens of G to see if their leadMonomial is in a single variable
            if # support leadMonomial (M)_(0,i) === 1 then J = J | {support leadMonomial (M)_(0,i)} --checks how many vars are in the lead
