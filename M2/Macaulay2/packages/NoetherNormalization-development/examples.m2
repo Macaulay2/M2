@@ -18,84 +18,53 @@ help noetherNormalization
 clearAll
 R = QQ[x_1..x_4]
 I = ideal(x_1^2 + x_1*x_4+1,x_1*x_2*x_3*x_4+1)
-noetherNormalization(I,Verbose => true)
+noetherNormalization(I)
+support (independentSets(I,Limit=>1))_0
 
-f = (noetherNormalization I)_1
-support (independentSets(f I,Limit=>1))_0
-
-viewHelp
-
-
-gens gb(I, BasisElementLimit => 2)
-gens gb I
-gens gb ideal(x_1^2 + x_1*x_4+1,x_1*x_2*x_3*x_4+1)
-
-
-
-help NoetherNormalization
-
-
-(noetherNormalization I)_1*ffinverse
-viewHelp
-     A = coefficientRing ring I [gens ring I,MonomialOrder => Lex];
-     ff = map(A,ring I,gens A)
-ffinverse = map(ring I, source (noetherNormalization I)_1 , gens ring I);
-ring I
-
-ff(I)
-ffinverse ff I
-source (noetherNormalization I)_1
-
-A = coefficientRing ring I [gens ring I,MonomialOrder =>Lex];
-     I = ideal gens I;
 
 --Example 2
-R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex] -- this is a nice example...
+R = QQ[x_5,x_4,x_3,x_2,x_1] -- this is a nice example...
 I = ideal(x_2*x_1-x_5^3, x_5*x_1^3)              -- compare with the same example in singular. 
 noetherNormalization(I,Verbose => true)
+support (independentSets(I,Limit=>1))_0
 --Example 3
 R = QQ[x_5,x_4,x_3,x_2,x_1]
 I = ideal(x_1^3 + x_1*x_2, x_2^3-x_4+x_3, x_1^2*x_2+x_1*x_2^2)
 noetherNormalization I
-f = (noetherNormalization I)_1
-apply((noetherNormalization I)_0, i -> f i)
 support (independentSets(I,Limit=>1))_0
-support (independentSets(f I,Limit=>1))_0
-
 
 
 --Example 4
-R = QQ[x_1,x_2,x_3,MonomialOrder => Lex]
+R = QQ[x_1,x_2,x_3]
 I = ideal(x_1*x_2,x_1*x_3)
 noetherNormalization(I)
+support (independentSets(I,Limit=>1))_0
 
 --Example 5
-R = QQ[x_5,x_4,x_3,x_2,x_1,MonomialOrder => Lex]
+R = QQ[x_5,x_4,x_3,x_2,x_1]
 I = ideal(x_4^3*x_3*x_2-x_4, x_2*x_1-x_5^3, x_5*x_1^3)
 noetherNormalization I
+support (independentSets(I,Limit=>1))_0
 
 --Example 6
-R = QQ[x_1..x_5,MonomialOrder => Lex]
+R = QQ[x_1..x_5]
 I = ideal(x_4^3*x_3*x_2-x_4, x_2*x_1-x_5^3, x_5*x_1^3)
 noetherNormalization I
+support (independentSets(I,Limit=>1))_0
 
 --Example 7 Nat, check this one later.
 R = QQ[x_6,x_5,x_4,x_3,x_2,x_1];
 I = ideal(x_6^2+x_5*x_3*x_4-2,x_4^4*x_3^2+x_1,x_2*x_1^3);
 noetherNormalization(R/I)
-p = {}
-for i to 100 do (
-     u = noetherNormalization I;
-     print u_1;
-     if {5} == u_1 then print u_3; 
-     );
-p
-          
+support (independentSets(I,Limit=>1))_0
+
 
 --Example 8
-R = QQ[x_6,x_5,x_4,x_3,x_2,x_1, MonomialOrder => Lex];
+R = QQ[x_6,x_5,x_4,x_3,x_2,x_1];
 I = ideal(x_6^3+x_5^2*x_3*x_4-2,x_4^4*x_3^2+x_1,x_2*x_1^3);
 noetherNormalization I
+support (independentSets(I,Limit=>1))_0
+
 
 --We cannot compute even the gb with this ordering
 R = QQ[x_1..x_4, MonomialOrder => Lex];
