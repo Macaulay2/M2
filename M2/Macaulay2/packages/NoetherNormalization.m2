@@ -184,9 +184,9 @@ noetherNormalization(Ideal) := opts -> I -> (
      	       seqindex = seqindex + 1;
 	       );
 	  counter = counter + 1;
-	  if counter == 5 then << "WARNING: no good linear transformation found by noetherNormalization" <<endl;
+	  if counter == 5 then << "--warning: no good linear transformation found by noetherNormalization" <<endl;
 	  if done or counter == 5 then return (
-	       if opts.Verbose then << "number of transformations attempted = " << counter << ";" << " BasisElementLimit = " << limitsequence_{seqindex - 1} <<endl;
+	       if opts.Verbose then << "--number of transformations attempted = " << counter << ";" << " BasisElementLimit = " << limitsequence_{seqindex - 1} <<endl;
 	       return (apply(indep, i -> ffinverse i),ffinverse*finverse*ff)
 	       );
      	  ); -- if returning the inverse map then finverse 

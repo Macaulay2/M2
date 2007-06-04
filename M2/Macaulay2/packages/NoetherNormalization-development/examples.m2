@@ -16,8 +16,10 @@ help NoetherNormalization
 
 --Example 1
 clearAll
-R = QQ[x_1..x_4,MonomialOrder => Lex]
+R = QQ[x_1..x_4]
 I = ideal(x_1^2 + x_1*x_4+1,x_1*x_2*x_3*x_4+1)
+noetherNormalization(I,Verbose => true)
+
 f = (noetherNormalization I)_1
 support (independentSets(f I,Limit=>1))_0
 
@@ -28,7 +30,7 @@ gens gb(I, BasisElementLimit => 2)
 gens gb I
 gens gb ideal(x_1^2 + x_1*x_4+1,x_1*x_2*x_3*x_4+1)
 
-noetherNormalization(I,Verbose => true)
+
 
 help NoetherNormalization
 
