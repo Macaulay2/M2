@@ -18,7 +18,7 @@ help noetherNormalization
 clearAll
 R = QQ[x_1..x_4]
 I = ideal(x_1^2 + x_1*x_4+1,x_1*x_2*x_3*x_4+1)
-noetherNormalization(I)
+noetherNormalization(I,Verbose=>true)
 support (independentSets(I,Limit=>1))_0
 
 
@@ -27,39 +27,48 @@ R = QQ[x_5,x_4,x_3,x_2,x_1] -- this is a nice example...
 I = ideal(x_2*x_1-x_5^3, x_5*x_1^3)              -- compare with the same example in singular. 
 noetherNormalization(I,Verbose => true)
 support (independentSets(I,Limit=>1))_0
---Example 3
+
+
+--Example 3 -- this one the indep vars are different
 R = QQ[x_5,x_4,x_3,x_2,x_1]
 I = ideal(x_1^3 + x_1*x_2, x_2^3-x_4+x_3, x_1^2*x_2+x_1*x_2^2)
-noetherNormalization I
+noetherNormalization(I, Verbose => true)
 support (independentSets(I,Limit=>1))_0
 
 
 --Example 4
 R = QQ[x_1,x_2,x_3]
 I = ideal(x_1*x_2,x_1*x_3)
-noetherNormalization(I)
+noetherNormalization(I,Verbose => true)
 support (independentSets(I,Limit=>1))_0
 
 --Example 5
 R = QQ[x_5,x_4,x_3,x_2,x_1]
 I = ideal(x_4^3*x_3*x_2-x_4, x_2*x_1-x_5^3, x_5*x_1^3)
-noetherNormalization I
+noetherNormalization(I,Verbose => true)
 support (independentSets(I,Limit=>1))_0
 
 --Example 6
-R = QQ[x_1..x_5]
+R = QQ[x_1..x_5] --80
 I = ideal(x_4^3*x_3*x_2-x_4, x_2*x_1-x_5^3, x_5*x_1^3)
-noetherNormalization I
+noetherNormalization(I,Verbose => true)
 support (independentSets(I,Limit=>1))_0
 
---Example 7 Nat, check this one later.
+
+--Example 6.5
+R = QQ[x_5,x_4,x_3,x_2,x_1] --20
+I = ideal(x_4^3*x_3*x_2-x_4, x_2*x_1-x_5^3, x_5*x_1^3)
+noetherNormalization(I,Verbose => true)
+support (independentSets(I,Limit=>1))_0
+
+--Example 7 Nat, check this one later. CANNOT DO in ALT NN
 R = QQ[x_6,x_5,x_4,x_3,x_2,x_1];
 I = ideal(x_6^2+x_5*x_3*x_4-2,x_4^4*x_3^2+x_1,x_2*x_1^3);
-noetherNormalization(R/I)
+noetherNormalization(I,Verbose => true)
 support (independentSets(I,Limit=>1))_0
 
 
---Example 8
+--Example 8 -- kills m2 in AltNN! 
 R = QQ[x_6,x_5,x_4,x_3,x_2,x_1];
 I = ideal(x_6^3+x_5^2*x_3*x_4-2,x_4^4*x_3^2+x_1,x_2*x_1^3);
 noetherNormalization I
@@ -67,9 +76,10 @@ support (independentSets(I,Limit=>1))_0
 
 
 --We cannot compute even the gb with this ordering
-R = QQ[x_1..x_4, MonomialOrder => Lex];
+R = QQ[x_1..x_4];
 I = ideal(-(3/2)*x_3^3*x_2-(4/5)*x_2^2+4*x_1^5-x_1,x_3^3*x_1-(5/8)*x_3^2*x_2*x_1^2+(2/5)*x_2+(8/3)*x_1^3)
-transpose gens gb (I, BasisElementLimit => 30)
+noetherNormalization I
+support (independentSets(I,Limit=>1))_0
 
 
 
