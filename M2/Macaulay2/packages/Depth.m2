@@ -29,9 +29,9 @@ export{regularSequence,isRegularSequence,isCM}
 -- write this for modules first.
 
 depth(Ideal,Module) := ZZ => (I,M) -> (
-     M = M/I;
+     Ai= (ring I)^1/I;
      for i from 0 to dim ring M do(
-	  if Ext^i(M,A) != 0 then return i); -- sees where the ext modules don't vanish
+	  if Ext^i(Ai,M) != 0 then return i); -- sees where the ext modules don't vanish
      infinity
      );
 
@@ -69,7 +69,7 @@ regularSequence = method()
 regularSequence(List, Module) := ZZ => (X,M) -> (
      X = splice X;
      for i from 0 to #X-1 do (
-     	  f = X_i * id_M;
+     	  f := X_i * id_M;
      	  if  not isInjective f  -- checks if map is injective
      	  then return i else M = coker f);
      #X);
