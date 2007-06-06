@@ -12,7 +12,7 @@ newPackage(
      DebuggingMode => true
      )
 
--- The algorithm given here is based on A. Loger's algorithm as given
+-- The algorithm given here is based on A. Logar's algorithm as given
 -- in:
 
 -- A. Logar. A Computational Proof of the Noether Normalization
