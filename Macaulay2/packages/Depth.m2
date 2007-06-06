@@ -13,7 +13,7 @@ newPackage(
 
 --=========================================================================--
      
-export{regularSequence,isRegularSequence,isCM} 
+export{regularSequence,isRegularSequence,isCM,depth2} 
 -- if the new routines which you are adding have new
 -- names, then they need to be exported; otherwise they should not be
 -- exported
@@ -42,6 +42,11 @@ depth(Ideal,PolynomialRing) := ZZ => (I,A) -> (
 depth(Ideal,Ring) := ZZ => (I,A) -> (
      depth(I,A^1)
      );
+
+depth2(Ideal,Ring) := ZZ => (I,A) -> (
+     );
+
+
 
 --Check to see if in a polynomial ring, then just return the codim of I.
 --Keep in mind, some techniques 

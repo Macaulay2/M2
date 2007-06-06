@@ -28,7 +28,7 @@ newPackage(
 
 --=========================================================================--
      
-export{noetherNormalization} 
+export{noetherNormalization,noetherPosition} 
         
 --=========================================================================--
 
@@ -96,7 +96,7 @@ lastCheck = (X,G,d) -> (
 -- map. A ring map is given by a list explaining where each of the
 -- ring's variables should go. If the ring map is just a permutation
 -- of the variables then it is obviously an isomorphism and
--- inverseSequence returns the sequence that give the inverse
+-- inverseSequence returns the sequence that gives the inverse
 -- morphism.
 
 inverseSequence = (U,X) -> (
@@ -143,12 +143,13 @@ randomSum = (U,V,k) -> (
 
 noetherNormalization = method(Options => {Verbose => false})
 noetherNormalization(Ideal) := opts -> I -> (
-     if not isPolynomialRing ring I then error "expected an ideal over a polynomial ring";
-     if not isField coefficientRing ring I then error "expected the ring to contain a field";
-     k := coefficientRing ring I;
-     R := k [gens ring I,MonomialOrder => Lex];
-     ff := map(R,ring I,gens R);
-     ffinverse := map(ring I, R, gens ring I);
+     A := ring I;
+     if not isPolynomialRing A then error "expected an ideal over a polynomial ring";
+     if not isField coefficientRing A then error "expected the ring to contain a field";
+     k := coefficientRing A;
+     R := k [gens A,MonomialOrder => Lex];
+     ff := map(R,A,gens R); --these maps merely change the order of the ring
+     ffinverse := map(A, R, gens A); --these maps merely change the order of the ring
      I = ff(I);
      homogeneous := (isHomogeneous(R) and isHomogeneous(I)); 
      if homogeneous then G = gb(I, Algorithm => Homogeneous2); --MAYBE SHOULD USE ANOTHER HOMOGENOUS ALG/MAYBE TAKE THIS OUT
@@ -161,11 +162,11 @@ noetherNormalization(Ideal) := opts -> I -> (
      done := false;
      indep := U;
      f := map(R,R,inverseSequence(U|V,X));
-     finverse := map(R,R, reverse(U|V));
-     J := apply(integralSet(G),i -> f i); -- may need to do a gb comp.
+     finverse := map(R,R, reverse(U|V)); -- USED TO BE JUST (U|V)
+     J := apply(integralSet G,i -> f i); -- may need to do a gb comp.
      V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
      U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
-     while done == false do ( 
+     while not done do ( 
 	  seqindex := 0;
      	  stuff := U;
      	  if counter == 0 then U = randomSum(U,V-set J,k);
@@ -173,6 +174,7 @@ noetherNormalization(Ideal) := opts -> I -> (
 	  stuff = stuff + (stuff - U);
     	  g := map(R,R,reverse(U|V));
 	  ginverse := map(R,R,reverse(stuff|V));
+	  if g*ginverse != map(R,R,gens R) then << "--NOOOOO! g*ginverse is not the id! " << g*ginverse << " NOOOOO!" <<endl;
 	  f = g*f;
 	  finverse = finverse*ginverse;
      	  while (not done and seqindex < #limitsequence) do (
@@ -187,21 +189,41 @@ noetherNormalization(Ideal) := opts -> I -> (
 	  if counter == 5 then << "--warning: no good linear transformation found by noetherNormalization" <<endl;
 	  if done or counter == 5 then return (
 	       if opts.Verbose then << "--number of transformations attempted = " << counter << ";" << " BasisElementLimit = " << limitsequence_{seqindex - 1} <<endl;
-	       return (apply(indep, i -> ffinverse i),ffinverse*finverse*ff)
+	       use A;
+      	      -- return (apply(x_1..x_d,i -> ffinverse finverse ff i),apply(indep, i -> ffinverse i),ffinverse*f*ff);
+	       return (apply(X_{0..d-1},i -> ffinverse finverse i),ffinverse*f*ff,ffinverse*finverse*ff);
 	       );
-     	  ); -- if returning the inverse map then finverse 
-     );
+     	  ); -- f puts the ideal into noether normal position. f inverse goes back to the original ring 
+     );      -- WE STILL NEED TO CACHE finverse to f. Also, note that noetherPosition relies on this routine.
 
 --======================================================================================================================
+
 noetherNormalization(QuotientRing) := opts -> R -> (
      if not isPolynomialRing ring ideal R then error "expected a quotient of a polynomial ring";
      noetherNormalization(ideal R, Verbose => opts.Verbose)
      );
+
 --======================================================================================================================
+
+noetherPosition = method(Options => {Verbose => false})
+noetherPosition(Ideal) := opts -> I -> (
+     (noetherNormalization(I,Verbose => opts.Verbose))_1     
+     );
+
+--======================================================================================================================
+
+noetherPosition(QuotientRing) := opts -> R -> (
+     (noetherNormalization(R,Verbose => opts.Verbose))_1     
+     );
+
+--======================================================================================================================
+
+
+
 -- alg dependent vars, ideal, map
 
 --           p       s
--- I < k[x] <= k[y] <- k[p^-1(U)]
+-- I < k[x] <= k[y] <- k[p^-1(U)] 
 --             J<
 	    
 -- we take I we currently return p^-1, we want p,s,J --MIKE AGREES
@@ -232,7 +254,7 @@ beginDocumentation() -- the start of the documentation
 
 document { 
      Key => NoetherNormalization,
-     Headline => "place an ideal in Noether normal position",
+     Headline => "routines related to Noether normalization",
      EM "NoetherNormalization", " is a package for computing ring homomorphisms 
      which will place ideals in Noether normal position. The algorithms
      used are based on algorithms found in A. Logar's paper: A
@@ -244,11 +266,7 @@ document {
 -----------------------------------------------------------------------------
 document {
      Key => noetherNormalization,
-     Headline => "places an ideal in Noether normal position",
-     Usage => "noetherNormalization(I)",
-     Outputs => {
-	  Sequence => {}
-	  },
+     Headline => "data for Noether normalization",
      "The function ", TT "noetherNormalization", " takes an ideal or a
      quotient of a polynomial ring, and outputs a sequence
      consisting of the following items: the list of algebraically independent 
@@ -281,6 +299,40 @@ document {
      }
      }
 
+--=========================================================================--
+
+document {
+     Key => noetherPosition,
+     Headline => "a map to Noether normal position",
+     "The function ", TT "noetherPosition", " takes an ideal or a
+     quotient of a polynomial ring, and outputs a map from ", TT "R", " to ", --(R a polynomial ring)
+     TT "R", " which will place ideal ", TT "I", " into Noether normal
+     position. The ideal in question is placed into Noether normal
+     position using a random linear change of coordinates, hence one should
+     expect the output to change each time the routine is executed.",
+     EXAMPLE {
+	  "R = QQ[x_1..x_4];",
+	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
+	  "noetherPosition I",
+	  "noetherPosition(R/I)",
+	  },
+     "If ", TT "noetherPosition", " is unable to place the ideal
+     in Noether normal position after a few tries, the following warning is given:",
+     EXAMPLE {
+	  "R = ZZ/2[a,b];",
+	  "I = ideal(a^2*b+a*b^2+1);",
+	  "noetherPosition I"
+	  },
+     "Here is an example with the option ", TT "Verbose => true", ":",
+     EXAMPLE {
+	  "R = QQ[x_1..x_4];",
+	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
+	  "noetherPosition(I,Verbose => true)"
+	  },
+     PARA {
+     "This symbol is provided by the package ", TO NoetherNormalization, "."
+     }
+     }
 --=========================================================================--
 
 
