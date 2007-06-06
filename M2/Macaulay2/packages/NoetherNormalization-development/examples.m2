@@ -5,6 +5,8 @@
 
 --PUT SOME EXAMPLES INTO THE PACKAGE
 
+viewHelp use
+
 
 --Examples:
 clearAll
@@ -14,39 +16,83 @@ methods noetherNormalization
 help NoetherNormalization
 help noetherNormalization
 
+viewHelp
+
+
+
 --Example 1
 clearAll
 R = QQ[x_1..x_4]
 I = ideal(x_1^2 + x_1*x_4+1,x_1*x_2*x_3*x_4+1)
-noetherNormalization(I,Verbose=>true)
-support (independentSets(I,Limit=>1))_0
+f = noetherPosition(I,Verbose=>true)
+S = noetherNormalization(I,Verbose => true)
+S_1*S_2 -- Not inverse maps!
+S_2*S_1 -- Not inverse maps!
+S_4*S_3
+S_3*S_4
+S_5*S_6
+S_6*S_5
+S_3*S_5*S_6*S_4
+ 
+f x_4
+ 
 
 
 --Example 2
-R = QQ[x_5,x_4,x_3,x_2,x_1] -- this is a nice example...
+R = QQ[x_2,x_3,x_4,x_1,x_5,MonomialOrder=>Lex] -- this is a nice example...
+I = ideal(x_2*x_1-x_5^3, x_5*x_1^3)              -- compare with the same example in singular. 
+S = noetherNormalization(I,Verbose => true);
+S_1*S_2 -- Not inverse maps!
+S_2*S_1 -- Not inverse maps!
+S_4*S_3
+S_3*S_4
+S_5*S_6
+S_6*S_5
+S_3*S_5*S_6*S_4
+
+
+--Example 2.5
+R = QQ[x_1..x_5,MonomialOrder=>Lex] -- this is a nice example...
 I = ideal(x_2*x_1-x_5^3, x_5*x_1^3)              -- compare with the same example in singular. 
 noetherNormalization(I,Verbose => true)
-support (independentSets(I,Limit=>1))_0
+f = noetherPosition(I)
+transpose gens gb f I
+dim I
+sort gens R
+gens R
+
+
+
 
 
 --Example 3 -- this one the indep vars are different
 R = QQ[x_5,x_4,x_3,x_2,x_1]
 I = ideal(x_1^3 + x_1*x_2, x_2^3-x_4+x_3, x_1^2*x_2+x_1*x_2^2)
-noetherNormalization(I, Verbose => true)
+noetherNormalization(I,Verbose => true)
 support (independentSets(I,Limit=>1))_0
-
 
 --Example 4
 R = QQ[x_1,x_2,x_3]
 I = ideal(x_1*x_2,x_1*x_3)
 noetherNormalization(I,Verbose => true)
 support (independentSets(I,Limit=>1))_0
+X = (noetherNormalization(I,Verbose => true))_0
+f = (noetherNormalization(I,Verbose => true))_1
+R/f(I)
+X
+apply(X, i-> f i)
+
+
 
 --Example 5
 R = QQ[x_5,x_4,x_3,x_2,x_1]
 I = ideal(x_4^3*x_3*x_2-x_4, x_2*x_1-x_5^3, x_5*x_1^3)
-noetherNormalization(I,Verbose => true)
-support (independentSets(I,Limit=>1))_0
+S = noetherNormalization(I,Verbose => true)
+f = S_1
+f x_2
+x_2
+describe ring x_2
+
 
 --Example 6
 R = QQ[x_1..x_5] --80
