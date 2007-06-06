@@ -1280,6 +1280,21 @@ toHashTable(e:Expr):Expr := (
      else WrongArg("a list"));
 setupfun("hashTable",toHashTable);
 
+powermod(e:Expr):Expr := (
+     when e is s:Sequence do 
+     if length(s) == 3 then
+     when s.0 is base:Integer do 
+     when s.1 is exp:Integer do
+     when s.2 is mod:Integer do
+     Expr(powermod(base,exp,mod))
+     else WrongArgInteger(3)
+     else WrongArgInteger(2)
+     else WrongArgInteger(1)
+     else WrongNumArgs(3)
+     else WrongNumArgs(3)
+     );
+setupfun("powermod",powermod);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:
