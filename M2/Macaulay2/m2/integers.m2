@@ -39,8 +39,6 @@ gcd(QQ,QQ) := QQ => (x,y) -> (
      d := denominator x * (denominator y // gcd(denominator x, denominator y));
      gcd(numerator (x * d), numerator (y * d)) / d)
 
-powermod := (m,e,p) -> lift((m + 0_(ZZ/p))^e,ZZ)
-
 smallprimes := {2,3,5,7,11,13,17,23,29,31,37,41,43,47}
 
 isPrime1 := n -> member(n,smallprimes) or all(smallprimes,p -> n%p =!= 0)

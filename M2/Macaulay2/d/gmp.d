@@ -251,6 +251,12 @@ export (x:Integer) ^ (n:Integer) : Integer := (
      if !isInt(n) then fatal("integer exponent too large");
      x^toInt(n));
 
+export powermod(x:Integer, y:Integer, n:Integer) : Integer := (
+     -- z = x^y mod n
+     z := newInteger();
+     Ccode( void, "mpz_powm(", "(__mpz_struct *)", z, ",", "(__mpz_struct *)", x, ",", "(__mpz_struct *)", y, ",", "(__mpz_struct *)", n, ")" );
+     z);
+
 cdiv(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
      "mpz_cdiv_q(",
 	 "(__mpz_struct *)", x, ",", 
