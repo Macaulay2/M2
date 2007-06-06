@@ -72,6 +72,9 @@ y(1234567, 2^63)
 y(123, 2^15)
 y(123, 2^31)
 y(123, 2^63)
+
+assert( powermod(5,(3331333-1)*20000,3331333) == 1 )
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test integer.out"

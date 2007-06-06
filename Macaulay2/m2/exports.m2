@@ -902,6 +902,7 @@ export {
 	symbol position,
 	symbol positions,
 	symbol power,
+	symbol powermod,
 	symbol precision,
 	symbol preimage,
 	symbol prepend,
