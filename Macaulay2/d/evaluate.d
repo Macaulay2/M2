@@ -1241,7 +1241,7 @@ steppingFurther(c:Code):bool := (
 
 export eval(c:Code):Expr := (
      e := (
-	  if exceptionFlag && !steppingFurther(c) then (
+	  if exceptionFlag && !steppingFurther(c) then (    -- compare this code to the code in evalexcept() below
 	       if steppingFlag then (
 		    clearSteppingFlag();
 		    buildErrorPacket(steppingMessage))
@@ -1430,10 +1430,29 @@ export eval(c:Code):Expr := (
 	  e)
      else e);
 
+export evalexcept(c:Code):Expr := (
+     e := eval(c);
+     if exceptionFlag then (				    -- compare this code to the code at the top of eval() above
+	  if alarmedFlag then (
+	       clearAlarmedFlag();
+	       printErrorMessageE(c,alarmMessage))
+	  else if interruptedFlag then (
+	       SuppressErrors = false;
+	       clearInterruptFlag();
+	       printErrorMessageE(c,interruptMessage))
+	  else (
+	       SuppressErrors = false;
+	       clearAllFlags();
+	       printErrorMessageE(c,"unknown exception")
+	       )
+	  )
+     else e
+     );
+
 export eval(f:Frame,c:Code):Expr := (
      saveLocalFrame := localFrame;
      localFrame = f;
-     ret := eval(c);
+     ret := evalexcept(c);
      localFrame = saveLocalFrame;
      ret);
 

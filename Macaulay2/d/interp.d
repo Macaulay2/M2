@@ -97,7 +97,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 		    if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols
 		    then (		  
 			 f := convert(parsed); -- convert to runnable code
-			 lastvalue = eval(f);	  -- run it
+			 lastvalue = evalexcept(f);	  -- run it
 			 if lastvalue == endInput then return nullE;
 			 when lastvalue is err:Error do (
 			      if err.message == returnMessage || err.message == continueMessage || err.message == continueMessageWithArg 
