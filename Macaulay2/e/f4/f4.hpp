@@ -84,6 +84,7 @@ class F4GB : public our_new_delete
   const Gausser *KK;
   const MonomialInfo *M;
   const FreeModule *F;  // used for debugging only...
+  FreeModule *syzF; // syzygies ambient module (gebug only)
   M2_arrayint weights; // The length of this is the number of variables, each entry is positive.
   M2_arrayint component_degrees; // Degree of each free module element.
   // Also need Schreyer order info sometimes
@@ -105,6 +106,7 @@ class F4GB : public our_new_delete
   // The main players in the computation
   gb_array gens;
   gb_array gb;
+  gb_array syz_basis;
   MonomialLookupTable *lookup; // (monom,comp) --> index into gb
   F4SPairSet *S;
   
@@ -131,6 +133,7 @@ class F4GB : public our_new_delete
   dense_row gauss_row, syz_row;
 private:
 
+  ////////////////////////////////////
   // Syzygy matrix manipulations:
   
   // fill syz_row from syz->row[i]
@@ -144,6 +147,13 @@ private:
   
   // divide row <i> with coefficient <c>
   void syzygy_row_divide(int i, int c);
+
+  // insert syzygy corresponding to row r 
+  // ( if g>=0 then this row resulted in gb[g] )  
+  void insert_syz(row_elem &r, int g = -1);
+
+  // end (SYZYGY MANIPULATIONS)
+  ////////////////////////////////////////////////////////////////////
 
   void gauss_reduce_linbox(); // dumps matrices in linbox format 
 
@@ -226,6 +236,7 @@ public:
 
   // Debugging routines
   void show_gb_array(const gb_array &g) const;
+  void show_syz_basis() const;  
   void show_row_info() const;
   void show_column_info() const;
   void show_matrix();
