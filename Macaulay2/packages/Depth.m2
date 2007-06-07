@@ -13,7 +13,7 @@ newPackage(
 
 --=========================================================================--
      
-export{regularSequence,isRegularSequence,isCM,depth2} 
+export{regularSequence,isRegularSequence,isCM} 
 -- if the new routines which you are adding have new
 -- names, then they need to be exported; otherwise they should not be
 -- exported
@@ -28,25 +28,21 @@ export{regularSequence,isRegularSequence,isCM,depth2}
 
 -- write this for modules first.
 
-depth(Ideal,Module) := ZZ => (I,M) -> (
-     Ai= (ring I)^1/I;
-     for i from 0 to dim ring M do(
-	  if Ext^i(Ai,M) != 0 then return i); -- sees where the ext modules don't vanish
-     infinity
-     );
 
-depth(Ideal,PolynomialRing) := ZZ => (I,A) -> (
-     codim I
+depth(Ideal,Module) := ZZ => (I,M) -> (
+     AI := (ring I)^1/I;
+     for i from 0 to dim ring M do(
+	  if Ext^i(AI,M) != 0 then return i); -- sees where the ext modules don't vanish
+     infinity
      );
 
 depth(Ideal,Ring) := ZZ => (I,A) -> (
      depth(I,A^1)
      );
 
-depth2(Ideal,Ring) := ZZ => (I,A) -> (
+depth(Ideal,PolynomialRing) := ZZ => (I,A) -> (
+     codim I
      );
-
-
 
 --Check to see if in a polynomial ring, then just return the codim of I.
 --Keep in mind, some techniques 
@@ -55,7 +51,6 @@ depth2(Ideal,Ring) := ZZ => (I,A) -> (
 -- keep in mind the eg (x*y,x*z,y*z) = I and finding a reg seq here.
 
 -- try to build the gen sequ from the generating set of the ideal.
-
 
 TEST /// 
 A = QQ[x,y,z]/ideal(x^2)

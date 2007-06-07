@@ -22,27 +22,20 @@ viewHelp
 
 --Example 1
 clearAll
-R = QQ[x_1..x_4]
+A = QQ[x_1..x_4,MonomialOrder => Lex]
 I = ideal(x_1^2 + x_1*x_4+1,x_1*x_2*x_3*x_4+1)
-f = noetherPosition(I,Verbose=>true)
-S = noetherNormalization(I,Verbose => true)
-S_1*S_2 -- Not inverse maps!
-S_2*S_1 -- Not inverse maps!
-S_4*S_3
-S_3*S_4
-S_5*S_6
-S_6*S_5
-S_3*S_5*S_6*S_4
- 
-f x_4
- 
+f = noetherNormalization(I,Verbose=>true)
+
 
 
 --Example 2
 R = QQ[x_2,x_3,x_4,x_1,x_5,MonomialOrder=>Lex] -- this is a nice example...
 I = ideal(x_2*x_1-x_5^3, x_5*x_1^3)              -- compare with the same example in singular. 
 S = noetherNormalization(I,Verbose => true);
-S_1*S_2 -- Not inverse maps!
+transpose gens gb S_1 I
+
+
+-- Not inverse maps!
 S_2*S_1 -- Not inverse maps!
 S_4*S_3
 S_3*S_4
