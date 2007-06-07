@@ -13,7 +13,7 @@ newPackage(
      )
 --=========================================================================--
      
-export{gin,lexgin,AttemptCount,Modular} -- if the new routines which you are adding have new
+export{gin,lexgin,AttemptCount,Modular } -- if the new routines which you are adding have new
 -- names, then they need to be exported; otherwise they should not be
 -- exported
 
@@ -92,114 +92,55 @@ lexgin = method(Options => {AttemptCount => 7, Verbose => false, Modular => fals
 lexgin(Ideal) := opts -> (I) -> ( gin(I,AttemptCount => opts.AttemptCount, Verbose => opts.Verbose, Modular => opts.Modular, MonomialOrder => Lex));
 lexgin(QuotientRing):=Ideal => (R) -> (lexgin(ideal R));
 
---=====================================================================================================================
+--==================================================================================================================
 beginDocumentation()
 
 document {
-     Key => "GenericInitialIdeal",
-     TT "GenericInitialIdeal", " is a package for computing generic initial ideals of
-     ideals in a polynomial ring, that is, the monomial ideal of lead terms after a 
-     random change of coordinates.  All of these routines are probabilistic: 
-     with high probability, they give the correct answer, but it could be the case that 
-     the choice of coordinates is too special."
+     Key => {GenericInitialIdeal},
+     TT "GenericInitialIdeal", " is a package for computing generic initial ideals of ideals in a polynomial ring, that is, the monomial ideal of lead terms after a random change of coordinates.  All of these routines are probabilistic: 
+with high probability, they give the correct answer, but it could be the case that the choice of coordinates is too special."
      }
 
 document {
-     Key =>{ [gin, Modular],[lexgin,Modular]},
-     Headline=> "if set to be true, computations are performed modulo a large random prime ."
-     }
-
-document {
-     Key => {[gin, AttemptCount],[lexgin,AttemptCount]},
-     Headline=> "sets the number of random changes of variables the routine attempts before choosing the potential",TT "gin"," ."
-     }
-
-document {
-     Key => [gin, MonomialOrder],
-     Headline=> "sets the", TT " Monomial Order"," used in the computation of " ,TT "gin ","."
-     }
-
-document {
-     Key => {[gin, Verbose],[lexgin,Verbose]},
-     Headline=> "provides a summary of the random initial ideals generated and warns if the selected one is not strongly stable."
-     }
-
-document {
-     Key => {(gin,Ideal)},
+     Key => {gin},
      Headline => "the generic initial ideal",
      Usage => " gin I",
-     Inputs => {"I" => {"an ", TO Ideal, " in a polynomial ring"},
-	  AttemptCount => {"sets the number of random changes of variables the routine attempts before choosing the potential",TT "gin"," ."},
+     Inputs => {"I" => {"an ", TO Ideal, " in a polynomial", TO Ring},
+	  AttemptCount => {"sets the number of  random coordinate changes the routine attempts before choosing the potential",TT "gin"," ."},
 	  Modular => {"if set to be true, computations are performed modulo a large random prime ."},
 	  MonomialOrder => {"sets the", TT "Monomial Order "," used in the computation of " ,TT "gin ","."},
-Verbose => {"provides a summary of the random initial ideals generated and warns if the selected one is not strongly stable."}
+	  Verbose => {"provides a summary of the random initial ideals generated and warns if the selected one is not strongly stable."},
 	  },
      Outputs => {{"an ", TO Ideal, ", the generic initial ideal of ", TT "I", "."}},
-     Caveat => { "The method ", TT " gin"," uses a probabilistic algorithm. The returned answer is correct with high probability in characteristic zero and large positive characteristic, but might be wrong in small positive characteristic. For details in this situation it is recommended to use the Verbose option.",
-     EXAMPLE {
-	 " R = ZZ/2[a..d];",
-	  "I = ideal(a^3+c^2*d, b^3-a*d^2);",
-	  "gin(I, Verbose => true)"
-	  }
-     },
-     SeeAlso =>{" (lexgin,Ideal)"},
-     }
-
-document {
-     Key => (gin,QuotientRing),
-     Headline => "the generic initial ideal of the ideal associated to the quotient ring",
-     Usage => "J = gin R",
-     Inputs => {"R" => {"a ", TO QuotientRing, " of a polynomial ring"},
-  AttemptCount => {"sets the number of random changes of variables the routine attempts before choosing the potential",TT "gin"," ."},
-	  Modular => {"if set to be true, computations are performed modulo a large random prime ."},
-	  MonomialOrder => {"sets the", TT "Monomial Order "," used in the computation of " ,TT "gin ","."},
-Verbose => {"provides a summary of the random initial ideals generated and warns if the selected one is not strongly stable."}
-	  },
-     Outputs => {"J" => {"an ", TO Ideal, ", the generic initial ideal of ", TT "the ideal associated to this quotinet ring", "."}},
-      "A complete intersection of type (3,3) in P^3",
-     EXAMPLE {
-	  "R = QQ[a..d]/( a^3+c^2*d, b^3-a*d^2);",
-	  "gin(R)",
-	  },
- SeeAlso => "(lexgin,QuotientRing)",
-     }
-
-document {
-     Key => (lexgin,Ideal),
-     Headline => "the generic initial ideal with respect to the lexicographic order",
-     Usage => "J = lexgin I",
-     Inputs => {"I" => {"an ", TO Ideal, " in a polynomial ring"},
-	  AttemptCount => {"sets the number of random changes of variables the routine attempts before choosing the potential",TT "gin"," ."},
-	  Modular => {"if set to be true, computations are performed modulo a large random prime ."},
-	Verbose => {"provides a summary of the random initial ideals generated and warns if the selected one is not strongly stable."}
-	  },
-     Outputs => {"J" => {"an ", TO Ideal, ", the generic initial ideal of ", TT "I", "."}},
-     "A complete intersection of type (3,3) in P^3",
+     Caveat => { "The method ", TT " gin"," uses a probabilistic algorithm. The returned answer is correct with high probability in characteristic zero and large positive characteristic, but might be wrong in small positive characteristic. For details in this situation it is recommended to use the Verbose option.",},
+     SeeAlso =>"lexgin",
+     PARA {"Example: a complete intersection of type (3,3) in P^3"},
      EXAMPLE {	
 	  "R = QQ[a..d];",
 	  "I = ideal(a^3+c^2*d, b^3-a*d^2);",
-	  "lexgin(I)",
+	  "gin(I)"
 	  },
-     SeeAlso => "(gin,Ideal)",
+     PARA {"This symbol is provided by the package ", TO GenericInitialIdeal, "." }
      }
+
+document { Key => {(gin,Ideal)}, }
+document { Key => {(gin,QuotientRing)}, }
 
 document {
-     Key => (lexgin,QuotientRing),
-     Headline => "the generic initial ideal with respect to the lexicographic order of the ideal associated to the quotient ring",
-     Usage => "J = lexgin R",
-     Inputs => {"R" => {"a ", TO QuotientRing, " of a polynomial ring"},
-	  AttemptCount => {"sets the number of random changes of variables the routine attempts before choosing the potential",TT "gin"," ."},
+     Key => {lexgin},
+     Headline => "the generic initial ideal with respect to lexicographical order",
+     Usage => "lexgin I",
+     Inputs => {"I" => {"an ", TO Ideal, " in a polynomial", TO Ring},
+	   AttemptCount => {"sets the number of  random coordinate changes the routine attempts before choosing the potential",TT "gin"," ."},
 	  Modular => {"if set to be true, computations are performed modulo a large random prime ."},
-	  Verbose => {"provides a summary of the random initial ideals generated and warns if the selected one is not strongly stable."}
-	  },
-     Outputs => {"J" => {"an ", TO Ideal, ", the generic initial ideal of ", TT "the ideal associated to this quotinet ring", "."}},
-     "A complete intersection of type (3,3) in P^3",
-     EXAMPLE {
-	  "R = QQ[a..d]/( a^3+c^2*d, b^3-a*d^2);",
-	  "lexgin(R)",
-	  },
-     SeeAlso => "(gin,QuotientRing)",
+	   Verbose => {"provides a summary of the random initial ideals generated and warns if the selected one is not strongly stable."},
+	 	  },
+     Outputs => {{"an ", TO Ideal, ", the generic initial ideal of ", TT "I", "."}},
+     PARA {"Same as gin with MonomiaOrder => Lex"},
+     SeeAlso => "gin",
+      PARA {"This symbol is provided by the package ", TO GenericInitialIdeal, "." }
      }
 
 
-
+document { Key => {(lexgin,Ideal)} }
+document { Key => {(lexgin,QuotientRing)} }
