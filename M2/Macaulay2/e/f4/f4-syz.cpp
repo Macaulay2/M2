@@ -7,6 +7,7 @@
 
 #include "f4.hpp"
 #include "monsort.hpp"
+#include "../freemod.hpp"
 
 static clock_t syz_clock_sort_columns = 0;
 
@@ -64,24 +65,9 @@ void F4GB::syz_load_row(packed_monomial monom, int which)
 }
 
 
-/////////////////////////////////////////////////////
-// DEBUG routines 
-/////////////////////////////////////////////////////
-
-void F4GB::show_syz_matrix()
-{
-  if (!using_syz) return;
-  fprintf(stderr, "---- ---- ---- ---- ---- ---- ----\n");
-  MutableMatrix *q = F4toM2Interface::to_M2_MutableMatrix(KK,syz,gens,gb);
-  buffer o;
-  q->text_out(o);
-  emit(o.str());
-  fprintf(stderr, "---- ---- ---- ---- ---- ---- ----\n");
-}
-
 ////////////////////////////////////////////////
 // initialization
-/////////////////////////////////////////////////
+
 
 void F4GB::clear_syz_matrix()
 {
@@ -233,7 +219,8 @@ void F4GB::syz_reorder_columns()
   F4Mem::components.deallocate(ord);
 }
 
-//////// SYZYGY MANIPULATIONS //////////////
+////////////////////////////////////////////////
+//////// SYZYGY MANIPULATIONS
 
 ///////////////////////////////////////////////////
 // create dense vector from syz->row[i]
@@ -306,4 +293,116 @@ void F4GB::syz_dense_row_to_sparse_row(row_elem& s)
         *in_comps++ = i;
         Kp->set_zero(elems[i]);
       }
+}
+
+void F4GB::insert_syz(row_elem &r, int g/*=-1*/)
+{
+  if (!using_syz) return;
+
+  // Insert the syzygy corresponding to r.
+  // If g>=0 then the syzygy = -1.gb[g] + r. 
+
+  // At the moment...
+  // just appends the syzygy to syz_basis
+
+  long length = r.len + (g<0?0:1);
+  long nslots = M->max_monomial_size();
+  long nlongs = length * nslots;
+
+  gbelem *result = new gbelem;
+  result->f.len = length;
+
+  // If the coeff array is null, then that means the coeffs come from the original array
+  // Here we copy it over.
+   
+  if (g<0) 
+    result->f.coeffs = KK->copy_F4CoefficientArray(r.len, r.coeffs);
+  else {
+    result->f.coeffs = F4Mem::coefficients.allocate(length); 
+    int* rcoeffs = (int*)result->f.coeffs;
+    int* elems = (int*)r.coeffs;
+
+    // make "-1"
+    const CoefficientRingZZp* Kp = KK->get_coeff_ring(); 
+    Kp->set_zero(rcoeffs[0]);
+    Kp->subtract(rcoeffs[0],rcoeffs[0],0); // "0"=1
+
+    for (int i=0; i<r.len; i++)
+      rcoeffs[i+1] = elems[i];    
+  }
+
+  result->f.monoms = F4Mem::allocate_monomial_array(nlongs);
+
+  monomial_word *nextmonom = result->f.monoms;
+  if (g>=0) // the leading term is (monom=1,comp=g)
+    {
+      M->one(g, nextmonom);
+      nextmonom += nslots;
+    }
+  for (int i=0; i<r.len; i++)
+    {
+      packed_monomial m = syz->columns[r.comps[i]].monom;
+      int comp = M->get_component(m);
+      packed_monomial n =  //lead monom of corresponding gens or gb element 
+	(comp < gens.size() ? gens[comp] : gb[comp-gens.size()])->f.monoms;
+      M->unchecked_divide(m, n, nextmonom); // m = n*(real monomial)
+      nextmonom += nslots;
+    }
+  F4Mem::components.deallocate(r.comps);
+  r.len = 0;
+  result->deg = this_degree;
+  result->alpha = M->last_exponent(result->f.monoms);
+  result->minlevel = ELEM_POSSIBLE_MINGEN; 
+
+  //int which = syz_basis.size();
+  syz_basis.push_back(result);
+}
+
+/////////////////////////////////////////////////////////////
+// DEBUG routines
+
+void F4GB::show_syz_matrix()
+{
+  if (!using_syz) return;
+  fprintf(stderr, "---- ---- ---- ---- ---- ---- ----\n");
+  MutableMatrix *q = F4toM2Interface::to_M2_MutableMatrix(KK,syz,gens,gb);
+  buffer o;
+  q->text_out(o);
+  emit(o.str());
+  fprintf(stderr, "---- ---- ---- ---- ---- ---- ----\n");
+}
+
+void F4GB::show_syz_basis() const
+{
+  if (!using_syz) return;
+
+  // Debugging routine
+  // Display the array, and all of the internal information in it too.
+
+  const gb_array& g = syz_basis;
+
+#if 0
+  // make sure syzF has rank |gens|+|gb|
+  if (syzF->rank()==0) 
+    for (int i=0; i<gens.size(); i++)
+      // ??? what does the next line do ???
+      syzF->append_schreyer(gens[i]->f.monoms, gens[i]->f.monoms, i); 
+  if (syzF->rank()<gb.size()+gens,size())
+    for (int i=syzF->rank(); i<gb.size()+gens.size(); i++)
+      // ??? what does the next line do ???
+      syzF->append_schreyer(gb[i-gens.size()]->f.monoms, gens[i-gens.size()]->f.monoms, i); 
+#endif
+
+  buffer o;
+  for (int i=0; i<g.size(); i++)
+    {
+      vec v = F4toM2Interface::to_M2_vec(KK, M, g[i]->f, syzF);
+      o << "element " << i 
+	<< " degree " << g[i]->deg 
+	<< " alpha " << g[i]->alpha 
+	<< newline << "    ";
+      syzF->get_ring()->vec_text_out(o, v);
+      o << newline;
+    }
+  emit(o.str());
 }
