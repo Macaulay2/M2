@@ -648,9 +648,9 @@ atEOFfun(e:Expr):Expr := (
      else WrongArg("a file"));
 setupfun("atEndOfFile",atEOFfun);
 
-allInputFiles(s:Sequence):bool := (
+allInputFilesOrListeners(s:Sequence):bool := (
      foreach f in s do (
-     	  when f is g:file do ( if !g.input then return false; )
+     	  when f is g:file do ( if !g.input && !g.listener then return false; )
      	  else return false;
 	  );
      true);
@@ -663,26 +663,28 @@ allIntegers(s:Sequence):bool := (
 numberReadyOnes(s:Sequence):int := (
      n := 0;
      foreach f in s do (
-     	  when f is g:file do ( if g.insize > g.inindex then n = n+1; )
+     	  when f is g:file do ( if g.input && (g.insize > g.inindex) then n = n+1; )
      	  else nothing;
 	  );
      n);
 readyOnes(s:Sequence):array(int) := (
      new array(int) len numberReadyOnes(s) do
      foreach f at i in s do
-     when f is g:file do ( if g.insize > g.inindex then provide i; )
+     when f is g:file do ( if g.input && (g.insize > g.inindex) then provide i; )
      else nothing
      );
 fdlist(s:Sequence):array(int) := (
      new array(int) len length(s) do
      foreach f in s do 
-     when f is g:file do provide g.infd else nothing
+     when f is g:file 
+     do provide if g.input then g.infd else if g.listener then g.listenerfd else if g.output then g.outfd else -1
+     else nothing
      );
 wait(s:Sequence):Expr := (
      if allIntegers(s) then (
 	  stats := waitNoHang(new array(int) len length(s) do foreach pid in s do provide toInt(pid));
 	  Expr(list(new Sequence len length(s) do foreach status in stats do provide Expr(toInteger(status)))))
-     else if !allInputFiles(s) then WrongArg("a list of input files or a list of small non-negative integers")
+     else if !allInputFilesOrListeners(s) then WrongArg("a list of input files or listeners, or a list of small non-negative integers")
      else if numberReadyOnes(s) > 0 then list(toArrayExpr(readyOnes(s)))
      else list(toArrayExpr(select(fdlist(s))))
      );
