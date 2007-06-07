@@ -111,6 +111,22 @@ inverseSequence = (U,X) -> (
 	  );
      return N;
      );
+
+inversePermutation = f -> (
+     N := {};
+     X := gens source f;
+     U := flatten entries matrix f;
+     for i to #X - 1 do (
+	  for j to #U - 1 do (
+	       if X_i == U_j then (
+		    N = N|{X_j};
+		    break;
+		    );
+	       );
+	  );
+     return map(source f, target f, N);
+     );
+
 --========================================================
 
 -- comments: randomSum is used to make the random linear
@@ -144,12 +160,12 @@ randomSum = (U,V,k) -> (
 noetherNormalization = method(Options => {Verbose => false})
 noetherNormalization(Ideal) := opts -> I -> (
      A := ring I;
-     if not isPolynomialRing A then error "expected an ideal over a polynomial ring";
-     if not isField coefficientRing A then error "expected the ring to contain a field";
-     k := coefficientRing A;
-     R := k [gens A,MonomialOrder => Lex];
+     k := coefficientRing (flattenRing A)_0; -- DOESN"T COMPLETELY WORK FOR RINGS THAT REQURE FLATTENING!!!
+     if not isPolynomialRing A then error "--expected an ideal over a polynomial ring";
+     if not isField k then error "--expected the ring to contain a field";
+     R := k (monoid [gens (flattenRing A)_0,MonomialOrder => Lex]); -- MAYBE REVERSE THE ORDER OF THE VARS...
      ff := map(R,A,gens R); --these maps merely change the order of the ring
-     ffinverse := map(A, R, gens A); --these maps merely change the order of the ring
+     ffinverse := map(A, R, gens (flattenRing A)_0); --these maps merely change the order of the ring
      I = ff(I);
      homogeneous := (isHomogeneous(R) and isHomogeneous(I)); 
      if homogeneous then G = gb(I, Algorithm => Homogeneous2); --MAYBE SHOULD USE ANOTHER HOMOGENOUS ALG/MAYBE TAKE THIS OUT
@@ -162,19 +178,19 @@ noetherNormalization(Ideal) := opts -> I -> (
      done := false;
      indep := U;
      f := map(R,R,inverseSequence(U|V,X));
-     finverse := map(R,R, reverse(U|V)); -- USED TO BE JUST (U|V)
+     finverse := map(R,R, reverse(U|V));
      J := apply(integralSet G,i -> f i); -- may need to do a gb comp.
      V = apply(V, i -> f(i)); --there might be a faster way to do this, perhaps V={x_(#U)..x_(#U+#V-1)}
      U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
+     Uold := U;
      while not done do ( 
 	  seqindex := 0;
-     	  stuff := U;
+     	  stuff := Uold;
      	  if counter == 0 then U = randomSum(U,V-set J,k);
 	  if counter >= 1 then U = randomSum(U,V-set integralSet(G),k);
 	  stuff = stuff + (stuff - U);
     	  g := map(R,R,reverse(U|V));
 	  ginverse := map(R,R,reverse(stuff|V));
-	  if g*ginverse != map(R,R,gens R) then << "--NOOOOO! g*ginverse is not the id! " << g*ginverse << " NOOOOO!" <<endl;
 	  f = g*f;
 	  finverse = finverse*ginverse;
      	  while (not done and seqindex < #limitsequence) do (
@@ -189,9 +205,11 @@ noetherNormalization(Ideal) := opts -> I -> (
 	  if counter == 5 then << "--warning: no good linear transformation found by noetherNormalization" <<endl;
 	  if done or counter == 5 then return (
 	       if opts.Verbose then << "--number of transformations attempted = " << counter << ";" << " BasisElementLimit = " << limitsequence_{seqindex - 1} <<endl;
-	       use A;
-      	      -- return (apply(x_1..x_d,i -> ffinverse finverse ff i),apply(indep, i -> ffinverse i),ffinverse*f*ff);
-	       return (apply(X_{0..d-1},i -> ffinverse finverse i),ffinverse*f*ff,ffinverse*finverse*ff);
+	     --  use A;
+	       f.cache.inverse = finverse;
+               finverse.cache.inverse = f;
+     	      -- return (apply(x_1..x_d,i -> ffinverse finverse ff i),apply(indep, i -> ffinverse i),ffinverse*f*ff);
+	       return (apply(X_{0..d-1},i -> ffinverse finverse i),ffinverse*f*ff,ffinverse*finverse*ff,R);
 	       );
      	  ); -- f puts the ideal into noether normal position. f inverse goes back to the original ring 
      );      -- WE STILL NEED TO CACHE finverse to f. Also, note that noetherPosition relies on this routine.
@@ -199,7 +217,7 @@ noetherNormalization(Ideal) := opts -> I -> (
 --======================================================================================================================
 
 noetherNormalization(QuotientRing) := opts -> R -> (
-     if not isPolynomialRing ring ideal R then error "expected a quotient of a polynomial ring";
+     if not isPolynomialRing ring ideal R then error "--expected a quotient of a polynomial ring";
      noetherNormalization(ideal R, Verbose => opts.Verbose)
      );
 
