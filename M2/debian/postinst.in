@@ -1,8 +1,11 @@
 #!/bin/sh -e
 prefix=@FINALPREFIX@
+DUMPDATA=@DUMPDATA@
 case "$1" in
     abort-upgrade|configure)
-	$prefix/bin/M2 --dumpdata
+	if [ "$DUMPDATA" = yes ]
+	then $prefix/bin/M2 --dumpdata
+	fi
 	for p in $prefix/share/Macaulay2/*.m2
 	do f="$prefix/share/info/`basename $p .m2`.info"
 	   if [ -f $f ] ; then install-info --quiet --info-dir="$prefix/share/info" "$f" ; fi
