@@ -66,11 +66,11 @@ getWWW (String,Nothing) := (url,body) -> (
 
 httpHeaders = method()
 httpHeaders String := s -> concatenate(
-///HTTP/1.0 200 OK
-Server: Macaulay 2
+///HTTP/1.1 200 OK
+Server: Macaulay 2, version ///, version#"VERSION", ///
 Connection: close
 Content-Length: ///, toString length s, ///
-Content-type: text/html
+Content-type: text/html; charset=utf-8
 
 ///, s)
 
