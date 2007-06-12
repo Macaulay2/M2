@@ -313,9 +313,15 @@ M2_arrayint system_select(M2_arrayint v) {
   for (i=0; i<n; i++) if (s[i] > max) max = s[i];
   for (i=0; i<n; i++) FD_SET(s[i], &r);
   m = select(max+1,&r,&w,&e,NULL);
-  z = (M2_arrayint)getmem_atomic(sizeofarray(z,m));
-  z->len = m;
-  for (i=j=0; i<n && j<m; i++) if (FD_ISSET(s[i],&r)) { z->array[j++] = i; FD_CLR(s[i],&r); }
+  if (m == -1) {
+       z = (M2_arrayint)getmem_atomic(sizeofarray(z,0));
+       z->len = 0;
+  }
+  else {
+       z = (M2_arrayint)getmem_atomic(sizeofarray(z,m));
+       z->len = m;
+       for (i=j=0; i<n && j<m; i++) if (FD_ISSET(s[i],&r)) { z->array[j++] = i; FD_CLR(s[i],&r); }
+  }
   return z;
 }
 
