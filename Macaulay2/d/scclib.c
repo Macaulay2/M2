@@ -315,7 +315,7 @@ M2_arrayint system_select(M2_arrayint v) {
   m = select(max+1,&r,&w,&e,NULL);
   if (m == -1) {
        z = (M2_arrayint)getmem_atomic(sizeofarray(z,0));
-       z->len = 0;
+       z->len = 0; 
   }
   else {
        z = (M2_arrayint)getmem_atomic(sizeofarray(z,m));
