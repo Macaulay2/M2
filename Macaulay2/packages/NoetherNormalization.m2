@@ -164,6 +164,7 @@ noetherNormalization(Ideal) := opts -> I -> (
      if not isPolynomialRing A then error "--expected an ideal over a polynomial ring";
      if not isField k then error "--expected the ring to contain a field";
      R := k (monoid [gens (flattenRing A)_0,MonomialOrder => Lex]); -- MAYBE REVERSE THE ORDER OF THE VARS...
+--   R := k (monoid [gens (flattenRing A)_0,MonomialOrder => {Weights => 1..# gens A, Lex});
      ff := map(R,A,gens R); --these maps merely change the order of the ring
      ffinverse := map(A, R, gens (flattenRing A)_0); --these maps merely change the order of the ring
      I = ff(I);
