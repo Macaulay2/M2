@@ -532,7 +532,7 @@ net Adjacent := net FunctionApplication := m -> (
      if precedence args >= p
      then if precedence fun > p
      then (
-	  if netfun#?0 and width netfun > width netfun#0
+	  if class netfun === Net and netfun#?0 and width netfun > width netfun#0
 	  then horizontalJoin (netfun, netargs)
 	  else horizontalJoin (netfun, " ", netargs)
 	  )
