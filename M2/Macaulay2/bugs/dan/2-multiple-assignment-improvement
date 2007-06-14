@@ -1,0 +1,6 @@
+-*- M2 -*-
+
+make this work
+
+i1 : (a,,b) = (1,2,3)
+--dummy position--[2]: syntax error
