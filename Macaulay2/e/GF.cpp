@@ -41,7 +41,7 @@ bool GF::initialize_GF(const RingElement *prim)
   _MINUS_ONE = (P == 2 ? _ONE : Q1_/2);
 
   // Get ready to create the 'one_table'
-  array_class<ring_elem> polys;
+  array<ring_elem> polys;
   polys.append(_originalR->from_int(0));
   ring_elem primelem = prim->get_value();
   polys.append(_originalR->copy(primelem));
