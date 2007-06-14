@@ -139,7 +139,7 @@ void QRingInfo_field_basic::gbvector_normal_form(const FreeModule *F, gbvector *
   gbvector *t = f;
   while (t != NULL)
     {
-      GR->gbvector_get_lead_exponents(F, f, EXP1_);
+      GR->gbvector_get_lead_exponents(F, t, EXP1_);
       int x = ringtable->find_divisor(EXP1_, 1);
       if (x >= 0)
 	{
@@ -229,7 +229,7 @@ void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F, gbvector *&f)
   gbvector *t = f;
   while (t != NULL)
     {
-      GR->gbvector_get_lead_exponents(F, f, EXP1_);
+      GR->gbvector_get_lead_exponents(F, t, EXP1_);
       int x = ringtable->find_divisor(EXP1_, 1);
       if (x >= 0)
 	{
@@ -356,7 +356,7 @@ void QRingInfo_ZZ::gbvector_normal_form(const FreeModule *F, gbvector * &f) cons
   gbvector *t = f;
   while (t != NULL)
     {
-      GR->gbvector_get_lead_exponents(F, f, EXP1_);
+      GR->gbvector_get_lead_exponents(F, t, EXP1_);
       int w = ringtableZZ->find_smallest_coeff_divisor(EXP1_, 1);
       if (w >= 0)
 	{
