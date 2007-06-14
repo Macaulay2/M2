@@ -147,12 +147,12 @@ if firstTime then (
      re := "/";						    -- /foo/bar
      if version#"operating system" === "Windows-95-98-NT" 
      then re = re | "|.:/";				    -- "C:/FOO/BAR"
-     isAbsolutePathRegexp := "^(" | re | ")";		    -- whether the path will work from any directory
-     -- re = re | "|\\./";					    -- ./foo/bar
-     -- re = re | "|\\.\\./";				    -- ../foo/bar
-     -- re = re | "|\$";					    -- $www.uiuc.edu:80
-     -- re = re | "|\!";					    -- !date
-     isStablePathRegexp := "/";	                            -- whether we should search along the path
+     re = re | "|\\$";					    -- $www.uiuc.edu:80
+     re = re | "|!";					    -- !date
+     isAbsolutePathRegexp := "^(" | re | ")";		    -- whether the path will work from any directory and get to the same file
+     re = re | "|\\./";					    -- ./foo/bar
+     re = re | "|\\.\\./";				    -- ../foo/bar
+     isStablePathRegexp   := "^(" | re | ")";               -- whether we should search only in the current directory (or current file directory)
      isAbsolutePath = filename -> match(isAbsolutePathRegexp, filename);
      isStablePath = filename -> match(isStablePathRegexp, filename);
      concatPath = (a,b) -> if isAbsolutePath b then b else a|b;
