@@ -393,6 +393,9 @@ RingMap == ZZ := (f,n) -> (
 
 ZZ == RingMap := (n,f) -> f == n
 
+RingMap.InverseMethod = (cacheValue symbol inverse) ( f -> notImplemented() )
+RingMap ^ ZZ := BinaryPowerMethod
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
