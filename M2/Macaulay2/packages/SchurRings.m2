@@ -133,6 +133,11 @@ SchurRingIndexedVariableTable = new Type of IndexedVariableTable
 SchurRingIndexedVariableTable _ Thing := (x,i) -> x#symbol _ i
 
 schurRing = method ()
+schurRing(Thing,ZZ) := SchurRing => (p,n) -> (
+     try p = baseName p else error "schurRing: can't use provided thing as variable";
+     if class p === Symbol then schurRing(p,n)
+     else error "schurRing: can't use provided thing as variable"
+     );
 schurRing(Symbol,ZZ) := SchurRing => (p,n) -> (
      R := ZZ;
      x := local x;
