@@ -160,10 +160,11 @@ randomSum = (U,V,k) -> (
 noetherNormalization = method(Options => {Verbose => false})
 noetherNormalization(Ideal) := opts -> I -> (
      A := ring I;
-     (flatA,fAtoFlatA,fFlatAtoA) := flattenRing A;
+     (flatA,fAtoFlatA) := flattenRing A;
+     fFlatAtoA := fAtoFlatA^-1;
      k := coefficientRing flatA;
-     if not isPolynomialRing A then error "--expected an ideal over a polynomial ring";
-     if not isField k then error "--expected the ring to contain a field";
+     if not isPolynomialRing A then error "expected an ideal over a polynomial ring";
+     if not isField k then error "expected the ring to contain a field";
      R := k (monoid [gens flatA,MonomialOrder => Lex]);
      ff := map(R,flatA,gens R)*fAtoFlatA; --these maps merely change the order of the ring
      ffinverse := fFlatAtoA*map(flatA, R, gens flatA); --these maps merely change the order of the ring
@@ -205,7 +206,10 @@ noetherNormalization(Ideal) := opts -> I -> (
 	  counter = counter + 1;
 	  if counter == 5 then << "--warning: no good linear transformation found by noetherNormalization" <<endl;
 	  if done or counter == 5 then return (
-	       if opts.Verbose then << "--number of transformations attempted = " << counter << ";" << " BasisElementLimit = " << limitsequence_{seqindex - 1} <<endl;
+	       if opts.Verbose then (
+		    << "--coordinate transformations tested: " << counter << endl;
+		    << "--BasisElementLimit option used with gb: " << first limitsequence_{seqindex - 1} << endl;
+		    );
 	     --  use A;
 	       f.cache.inverse = finverse;
                finverse.cache.inverse = f;
@@ -217,8 +221,8 @@ noetherNormalization(Ideal) := opts -> I -> (
 
 --======================================================================================================================
 
-noetherNormalization(QuotientRing) := opts -> R -> (
-     if not isPolynomialRing ring ideal R then error "--expected a quotient of a polynomial ring";
+noetherNormalization(QuotientRing) := noetherNormalization(PolynomialRing) := opts -> R -> (
+     if not isPolynomialRing ring ideal R then error "expected a quotient of a polynomial ring";
      noetherNormalization(ideal R, Verbose => opts.Verbose)
      );
 
@@ -243,18 +247,17 @@ document {
 
 -----------------------------------------------------------------------------
 document {
-     Key => noetherNormalization,
+     Key => {noetherNormalization, (noetherNormalization,Ideal), (noetherNormalization,QuotientRing), (noetherNormalization,PolynomialRing)},
      Headline => "data for Noether normalization",
-     "The function ", TT "noetherNormalization", " takes either an
-     ideal ", TT "I", " of a polynomial ring ", TT "R", " or it takes
-     a quotient of a polynomial ring ", TT "R/I", ". In either case, ", 
-     TT "noetherNormalization", " outputs a sequence
-     consisting of the following items:",
-     UL {
-	  {"an isomorphism ", TT "f", " of polynomial rings such that ", TT "R/f I", 
-	       " is an integral extension of a polynomial ring in ", TT "dim(R/I)", " variables."},
-	  {"the image of ", TT "I", " under ", TT "f"},
-          {"an injection from a polynomial in ", TT "dim(R/I)", " variables to ", TT "R", " such that ", TT "R/f I", " is an integral extension"}
+     Usage => "(f,J,g) = noetherNormalization C",
+     Inputs => {
+	  "C" => null => {"which is either ", ofClass Ideal, " ", TT "I", ", or ", ofClass QuotientRing, " ", TT "R/I", " where ", TT "R", " is ", ofClass PolynomialRing }
+	  },
+     Outputs => {
+	  "f" => RingMap => {"an automorphism of ", TT "R"},
+	  "J" => Ideal => { "the image of ", TT "I", " under ", TT "f"},
+	  "g" => RingMap => { "a map from ", ofClass PolynomialRing, " ", TT "S", " to ", TT "R", " whose composite with the projection onto ", TT "R/J", "
+	       is injective and finite" },
 	  },
      "The computations performed in the routine ", TT "noetherNormalization", " use a random linear change of coordinates,
      hence one should expect the output to change each time the routine is executed.",
@@ -268,7 +271,7 @@ document {
      EXAMPLE {
 	  "R = QQ[x_1..x_5, MonomialOrder => Lex];",
 	  "I = ideal(x_2*x_1-x_5^3, x_5*x_1^3);",
-          "(f,J,j) = noetherNormalization I",
+          "(f,J,g) = noetherNormalization I",
           "transpose gens gb J",
 	  },
      "If ", TT "noetherNormalization", " is unable to place the ideal into the desired position after a few tries, the following warning is given:",
@@ -283,8 +286,8 @@ document {
 	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
 	  "(f,J,g) = noetherNormalization(I,Verbose => true)"
 	  },
-     "The first number gives the number of different linear transformations attempted by the routine to place ", TT "I", " into the desired position.
-      The second number tells which ", TO "BasisElementLimit", " was used when computing the (partial) Groebner basis.", 
+     "The first number in the output visible above gives the number of linear transformations constructed by the routine while attempting to place ", TT "I", " into the desired position.
+     The second number tells which ", TO "BasisElementLimit", " was used when computing the (partial) Groebner basis.", 
      PARA {
      "This symbol is provided by the package ", TO NoetherNormalization, "."
      }

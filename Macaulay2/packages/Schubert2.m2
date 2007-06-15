@@ -293,13 +293,13 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      dgs := splice apply(bundleRanks, r -> 1 .. r);
      S := intersectionRing X;
      T := S[flatten varNames, Degrees => dgs, Global => false, MonomialOrder => apply(bundleRanks, n -> Ord => n), ConstantCoefficients => false];
-     -- (A,F,G) := flattenRing T;
+     -- (A,F) := flattenRing T; G := F^-1 ;
      A := T; F := identity;
      chclasses := apply(varNames, x -> F (1 + sum(x,value)));
      rlns := product chclasses - F promote(chern E,T);
      rlns = sum @@ last \ sort pairs partition(degree,terms(QQ,rlns));
      B := A/rlns;
-     -- (C,H,I) := flattenRing B;
+     -- (C,H) := flattenRing B; I := H^-1;
      C := B; H := identity;
      use C;
      DIM := dim X + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));

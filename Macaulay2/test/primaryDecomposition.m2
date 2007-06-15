@@ -23,7 +23,8 @@ kk = QQ
 A = kk[s,t]/(s^2-t^3)
 B = A[x,y,z,w]/(x^2-s*y-t^2, w*z-s*x^3)
 J = ideal(s*y^2-t*x^2)
-(A,F,G) = flattenRing B
+(A,F) = flattenRing B
+G = F^-1
 B' = ring presentation A
 J' = lift(F J,B')
 C = primaryDecomposition J'
@@ -61,7 +62,8 @@ J = ideal(s*y^2-t*x^2)
 
 J -- an ideal in R
 R = ring J
-(A,F,G) = flattenRing R
+(A,F) = flattenRing R
+G = F^-1
 B = ring presentation A
 J' = lift(F J,B)
 
