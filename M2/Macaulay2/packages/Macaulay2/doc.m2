@@ -457,13 +457,11 @@ document {
      file named ", TT "f", ", echoing the input, printing the values, and incrementing
      the line number.",
      PARA{},
-     "The file is sought in the directory containing the file currently being
-     loaded, if any, and then along the ", TO "path", ", unless the name of the
-     file begins with ", TT "/", ", ", TT "$", ", or ", TT "!", ".  If the file
-     begins with ", TT "./", " or ", TT "../", ", then it looks instead in the
-     directory of the file currently being loaded (see ", TO
-     "currentFileDirectory", ").  If no file is being loaded it will look in
-     the current directory (see ", TO "currentDirectory", ").",
+     "The file is sought in the directory containing the file currently being loaded, if any, and then along
+     the ", TO "path", ", unless the name of the file begins with ", TT "/", ", ", TT "$", ", or ", TT "!", ".
+     If the file begins with ", TT "./", " or ", TT "../", ", then it looks instead in the directory of the
+     file currently being loaded (see ", TO "currentFileDirectory", ").  If no file is being loaded it will
+     look in the current directory (see ", TO "currentDirectory", ").",
      PARA{},
      "If one of the top level expressions in the file evaluates to the symbol ", TO "end", "
      the reading of the file is stopped at that point.",
@@ -487,13 +485,11 @@ document {
      TT "load \"f\"", " -- reads and executes Macaulay 2 expressions found
      in the file named ", TT "f", ".",
      PARA{},
-     "The file is sought in the directory containing the file currently being
-     loaded, if any, and then along the ", TO "path", ", unless the name of the
-     file begins with ", TT "/", ", ", TT "$", ", or ", TT "!", ".  If the file
-     begins with ", TT "./", " or ", TT "../", ", then it looks instead in the
-     directory of the file currently being loaded (see ", TO
-     "currentFileDirectory", ").  If no file is being loaded it will look in
-     the current directory (see ", TO "currentDirectory", ").",
+     "The file is sought in the directory containing the file currently being loaded, if any, and then along
+     the ", TO "path", ", unless the name of the file begins with ", TT "/", ", ", TT "$", ", or ", TT "!", ".
+     If the file begins with ", TT "./", " or ", TT "../", ", then it looks instead in the directory of the
+     file currently being loaded (see ", TO "currentFileDirectory", ").  If no file is being loaded it will
+     look in the current directory (see ", TO "currentDirectory", ").",
      PARA{},
      "The file is read without echoing the input, printing the values, or incrementing the line number.",
      PARA{},
