@@ -132,7 +132,10 @@ unable := () -> error "unable to flatten ring over given coefficient ring"
 -- maybe we'll do something later when we have localization as something more intrinsic
 -- flattenRing FractionField := opts -> F -> ...
 
-triv := R -> ( idR := map(R,R); (R,idR,idR) )
+triv := R -> ( 
+     idR := map(R,R);
+     idR.cache.inverse = idR;
+     (R,idR))
 
 flattenRing Ring := opts -> R -> (
      if R.?isBasic or isField R or R === opts.CoefficientRing then triv R
@@ -140,12 +143,13 @@ flattenRing Ring := opts -> R -> (
 
 flattenRing GaloisField := opts -> F -> (
      A := ambient F;
-     (R,p,q) := flattenRing(A, opts);
+     (R,p) := flattenRing(A, opts);
+     q := p^-1;
      p' := p * map(A,F);
      q' := map(F,A) * q;
      p'.cache.inverse = q';
      q'.cache.inverse = p';
-     (R,p',q'))
+     (R,p'))
 
 flattenRing PolynomialRing := opts -> R -> (
      A := coefficientRing R;
@@ -154,7 +158,8 @@ flattenRing PolynomialRing := opts -> R -> (
      n2 := numgens M2;
      if opts.CoefficientRing === A or opts.CoefficientRing === null and (isField A or A.?isBasic) then return triv R;
      if # generators R === 0 then return flattenRing(A,opts);
-     (S',p,q) := flattenRing(coefficientRing R, opts);
+     (S',p) := flattenRing(coefficientRing R, opts);
+     q := p^-1;
      I := ideal S';
      S := ring I;
      if instance(S,PolynomialRing) then (
@@ -187,7 +192,7 @@ flattenRing PolynomialRing := opts -> R -> (
      q' := map(R,T', vars R | promote(matrix q,R));
      p'.cache.inverse = q';
      q'.cache.inverse = p';
-     (T', p', q'))
+     (T',p'))
 
 flattenRing QuotientRing := opts -> R -> (
      if instance(ambient R, PolynomialRing) and (
@@ -198,7 +203,8 @@ flattenRing QuotientRing := opts -> R -> (
      then return triv R;
      I := ideal R;
      A := ring I;
-     (B',p,q) := flattenRing(A,opts);
+     (B',p) := flattenRing(A,opts);
+     q := p^-1;
      J := ideal B';
      B := ring J;
      J' := lift(p I, B);				    -- adds in J automatically
@@ -207,11 +213,12 @@ flattenRing QuotientRing := opts -> R -> (
      q' := map(R,S, promote( matrix q, R ));
      p'.cache.inverse = q';
      q'.cache.inverse = p';
-     (S, p', q'))
+     (S,p'))
 
 isWellDefined RingMap := f -> (
      R := source f;
-     (S,p,q) := flattenRing(R,CoefficientRing=>ZZ);
+     (S,p) := flattenRing(R,CoefficientRing=>ZZ);
+     q := p^-1;
      T := ambient S;
      I := ideal S;
      g := f * q * map(S,T);

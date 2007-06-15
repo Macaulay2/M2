@@ -227,10 +227,10 @@ kernel RingMap := Ideal => opts -> (cacheValue symbol kernel) (
 		    )
 	       do numsame = numsame - 1;
 	       k = F.baseRings#(numsame-1);
-	       (R',p,q) := flattenRing(R, CoefficientRing => k);
-	       (F',r,s) := flattenRing(F, CoefficientRing => k);
+	       (R',p) := flattenRing(R, CoefficientRing => k);
+	       (F',r) := flattenRing(F, CoefficientRing => k);
 	       if R' === R and F' === F then error "kernel Ringmap: not implemented yet";
-	       q kernel (r * f * q))))
+	       p^-1 kernel (r * f * p^-1))))
 
 coimage RingMap := QuotientRing => f -> f.source / kernel f
 

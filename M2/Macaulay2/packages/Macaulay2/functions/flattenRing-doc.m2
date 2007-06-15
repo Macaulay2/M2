@@ -14,22 +14,25 @@ document {
 	  [flattenRing,CoefficientRing]
 	  },
      Headline => "write a ring as a (quotient) of a polynomial ring over ZZ or a prime field",
-     Usage => "(S,F,G) = flattenRing R",
+     Usage => "(S,F) = flattenRing R",
      Inputs => {
 	  "R",
 	  CoefficientRing => Ring => "the desired coefficient ring for the result"
 	  },
      Outputs => {
 	  "S" => Ring => "a ring isomorphic to the original ring",
-	  "F" => RingMap => {"the isomorphism from ", TT "R", " to ", TT "S"},
-	  "G" => RingMap => {"the isomorphism from ", TT "S", " to ", TT "R"}
+	  "F" => RingMap => {"the isomorphism from ", TT "R", " to ", TT "S"}
 	  },
-     "If the optional argument is not given, then the coefficient ring of the result is 
-     either ZZ or the base field.",
+     PARA{
+     	  "If the optional argument is not given, then the coefficient ring of the result is 
+     	  either ZZ or the base field."},
+     PARA{"The inverse of the isomorphism ", TT "F", " is obtainable with ", TT "F^-1", "."},
      EXAMPLE lines ///
           A = ZZ[a]/(a^2-3)
 	  B = A[x,y,z]/(a*x^2-y^2-z^2, y^3, z^3)
-	  (D,F,G) = flattenRing B
+	  (D,F) = flattenRing B
+	  F
+	  F^-1
      	  describe D	  
 	  ///,
      PARA{"In the following example,
@@ -37,7 +40,7 @@ document {
      EXAMPLE lines ///
           K = frac(ZZ[a])
 	  B = K[x,y,z]/(a*x^2-y^2-z^2, y^3, z^3)
-	  (D,F,G) = flattenRing B
+	  (D,F) = flattenRing B
      	  describe D	  
 	  ///,
      PARA{"Once a ring has been declared to be a field with ", TO toField, ", then it will be used as the
@@ -45,7 +48,7 @@ document {
      EXAMPLE lines ///
           L = toField A
 	  B = L[x,y,z]/(a*x^2-y^2-z^2, y^3, z^3)
-	  (D,F,G) = flattenRing(B[s,t])
+	  (D,F) = flattenRing(B[s,t])
      	  describe D	  
 	  ///,
      PARA{"If a larger coefficient ring is desired, use the optional CoefficientRing parameter."},
@@ -54,9 +57,9 @@ document {
           C1 = L[s,t];
 	  C2 = C1/(a*s-t^2);
 	  C3 = C2[p_0..p_4]/(a*s*p_0)[q]/(q^2-a*p_1);
-	  (D,F,G) = flattenRing(C3, CoefficientRing=>C2)
+	  (D,F) = flattenRing(C3, CoefficientRing=>C2)
 	  describe D
-	  (D,F,G) = flattenRing(C3, CoefficientRing=>ZZ)
+	  (D,F) = flattenRing(C3, CoefficientRing=>ZZ)
 	  describe D
           ///,
      SeeAlso => {presentation, coefficientRing, describe}

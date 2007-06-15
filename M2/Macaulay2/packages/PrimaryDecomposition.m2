@@ -100,7 +100,8 @@ primaryDecomposition Ideal := List => o -> (J) -> (
      if isPolynomialRing R 
      then primedecomp(J, o.Strategy)
      else (
-	  (A,F,G) := flattenRing R;
+	  (A,F) := flattenRing R;
+	  G := F^-1;
 	  B := ring presentation A;
 	  J' := lift(F J,B);
 	  -- if B is suitable, then B1 is not needed
