@@ -2,7 +2,7 @@
 
 newPackage(
      "NoetherNormalization",
-     Version => "0.1", 
+     Version => "0.9", 
      Date => "Jan 18, 2007",
      Authors => {
 	  {Name => "Bart Snapp", Email => "snapp@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~snapp/"},
@@ -28,7 +28,7 @@ newPackage(
 
 --=========================================================================--
      
-export{noetherNormalization,noetherPosition} 
+export{noetherNormalization} 
         
 --=========================================================================--
 
@@ -38,7 +38,7 @@ export{noetherNormalization,noetherPosition}
 -- that puts the ideal in Noether position as well as the independent
 -- variables of R.
 
--- comments: The procedure integralSet takes a Grobner basis G (ie. a
+-- comments: The procedure integralSet takes a Groebner basis G (ie. a
 -- list of polynomials) and returns the variables that already have an
 -- integral relation. It does this by taking the lead monomial of each
 -- polynomial and checking whether or not it consists of a power of a
@@ -58,7 +58,7 @@ integralSet = G -> (
 --=========================================
 --comments: 
 
--- varPrep is the initial function we run on the Grobner basis of the
+-- varPrep is the initial function we run on the Groebner basis of the
 -- inputted ideal I. It returns sets U and V, with U being
 -- algebraically independent and V being algebracially dependent. For
 -- all prime ideals it returns a maximal algebraically independent set
@@ -71,10 +71,10 @@ varPrep = (X,I) -> (
 
 --================================================== 
 
--- comments: We use lastCheck to check that our final Grobner basis
+-- comments: We use lastCheck to check that our final Groebner basis
 -- (the gb of the ideal after the change of variables) witnesses the
 -- integrality of each variable that should be integral. It first
--- checks that there are no elements of the Grobner basis with support
+-- checks that there are no elements of the Groebner basis with support
 -- in the independent variables and then that each variable that
 -- should be integral after the linear transformation is integral.
 
@@ -145,14 +145,14 @@ randomSum = (U,V,k) -> (
 
 
 -- comments: noetherNormalization is the main method. I is passed to
--- it by the user and it's Grobner basis is immediately computed.  It
+-- it by the user and it's Groebner basis is immediately computed.  It
 -- takes the ideal and does a random linear transformation adding to
 -- the independent variables the dependent ones that are not initially
 -- integral. It then checks that the transformation put the ideal in
--- Noether position. It does this bye partially computing a Grobner
--- basis for the ideal until the partially computed Grobner basis
+-- Noether position. It does this bye partially computing a Groebner
+-- basis for the ideal until the partially computed Groebner basis
 -- witnesses the integrality of all of the dependent variables. If the
--- entire Grobner basis is computed and the integrality is never
+-- entire Groebner basis is computed and the integrality is never
 -- witnessed then we apply another random linear transformation and
 -- start the process again. While doing all this we keep track of the
 -- maps and the inverses of the maps that we use.
@@ -160,15 +160,15 @@ randomSum = (U,V,k) -> (
 noetherNormalization = method(Options => {Verbose => false})
 noetherNormalization(Ideal) := opts -> I -> (
      A := ring I;
-     k := coefficientRing (flattenRing A)_0; -- DOESN"T COMPLETELY WORK FOR RINGS THAT REQURE FLATTENING!!!
+     (flatA,fAtoFlatA,fFlatAtoA) := flattenRing A;
+     k := coefficientRing flatA;
      if not isPolynomialRing A then error "--expected an ideal over a polynomial ring";
      if not isField k then error "--expected the ring to contain a field";
-     R := k (monoid [gens (flattenRing A)_0,MonomialOrder => Lex]); -- MAYBE REVERSE THE ORDER OF THE VARS...
---   R := k (monoid [gens (flattenRing A)_0,MonomialOrder => {Weights => 1..# gens A, Lex});
-     ff := map(R,A,gens R); --these maps merely change the order of the ring
-     ffinverse := map(A, R, gens (flattenRing A)_0); --these maps merely change the order of the ring
+     R := k (monoid [gens flatA,MonomialOrder => Lex]);
+     ff := map(R,flatA,gens R)*fAtoFlatA; --these maps merely change the order of the ring
+     ffinverse := fFlatAtoA*map(flatA, R, gens flatA); --these maps merely change the order of the ring
      I = ff(I);
-     homogeneous := (isHomogeneous(R) and isHomogeneous(I)); 
+     homogeneous := (isHomogeneous R and isHomogeneous I); 
      if homogeneous then G = gb(I, Algorithm => Homogeneous2); --MAYBE SHOULD USE ANOTHER HOMOGENOUS ALG/MAYBE TAKE THIS OUT
      if not homogeneous then G = gb I;
      d := dim I;
@@ -209,11 +209,11 @@ noetherNormalization(Ideal) := opts -> I -> (
 	     --  use A;
 	       f.cache.inverse = finverse;
                finverse.cache.inverse = f;
-     	      -- return (apply(x_1..x_d,i -> ffinverse finverse ff i),apply(indep, i -> ffinverse i),ffinverse*f*ff);
-	       return (apply(X_{0..d-1},i -> ffinverse finverse i),ffinverse*f*ff,ffinverse*finverse*ff,R);
+	       X = apply(X, i -> ffinverse i);
+   	       return (ffinverse*f*ff, ffinverse f I, map(A, k[X_{0..d-1}], X_{0..d-1}));
 	       );
      	  ); -- f puts the ideal into noether normal position. f inverse goes back to the original ring 
-     );      -- WE STILL NEED TO CACHE finverse to f. Also, note that noetherPosition relies on this routine.
+     );  
 
 --======================================================================================================================
 
@@ -223,47 +223,6 @@ noetherNormalization(QuotientRing) := opts -> R -> (
      );
 
 --======================================================================================================================
-
-noetherPosition = method(Options => {Verbose => false})
-noetherPosition(Ideal) := opts -> I -> (
-     (noetherNormalization(I,Verbose => opts.Verbose))_1     
-     );
-
---======================================================================================================================
-
-noetherPosition(QuotientRing) := opts -> R -> (
-     (noetherNormalization(R,Verbose => opts.Verbose))_1     
-     );
-
---======================================================================================================================
-
-
-
--- alg dependent vars, ideal, map
-
---           p       s
--- I < k[x] <= k[y] <- k[p^-1(U)] 
---             J<
-	    
--- we take I we currently return p^-1, we want p,s,J --MIKE AGREES
-
-
---homogeneous stuff
---do we have an input option for the homogeneous case or do we always use the homogeneous program on homogeneous ideals?
---how do we do the linear change of variables if they have some weird weighting on the variables?
-
---isHomogeneous works on rings and ideals and elements
---use gb(...,Algorithm => Homogeneous2)
---homogenize(m,v) m ring element, v variable
---degree(v,m) v variable, m ring element, degree of m with respect to v
-
---========================================================
---Dan example
--- 1. use information about variables integral, algebraic, and other and put them in this ordering and then try it.
--- 2. is lex only used for varprep
--- 3. ps, man ps or top tells how long it takes, shell command called time also
--- 4. or just stop singular from printing
--- gbTrace
 
 --=========================================================================--
 
@@ -286,72 +245,49 @@ document {
 document {
      Key => noetherNormalization,
      Headline => "data for Noether normalization",
-     "The function ", TT "noetherNormalization", " takes an ideal or a
-     quotient of a polynomial ring, and outputs a sequence
-     consisting of the following items: the list of algebraically independent 
-     variables in the ring ", TT "R/I", ", and a map from ", TT "R", " to ", --(R a polynomial ring)
-     TT "R", " which will place ideal ", TT "I", " into Noether normal
-     position. The ideal in question is placed into Noether normal
-     position using a random linear change of coordinates, hence one should
-     expect the output to change each time the routine is executed.",
+     "The function ", TT "noetherNormalization", " takes either an
+     ideal ", TT "I", " of a polynomial ring ", TT "R", " or it takes
+     a quotient of a polynomial ring ", TT "R/I", ". In either case, ", 
+     TT "noetherNormalization", " outputs a sequence
+     consisting of the following items:",
+     UL {
+	  {"an isomorphism ", TT "f", " of polynomial rings such that ", TT "R/f I", 
+	       " is an integral extension of a polynomial ring in ", TT "dim(R/I)", " variables."},
+	  {"the image of ", TT "I", " under ", TT "f"},
+          {"an injection from a polynomial in ", TT "dim(R/I)", " variables to ", TT "R", " such that ", TT "R/f I", " is an integral extension"}
+	  },
+     "The computations performed in the routine ", TT "noetherNormalization", " use a random linear change of coordinates,
+     hence one should expect the output to change each time the routine is executed.",
      EXAMPLE {
 	  "R = QQ[x_1..x_4];",
 	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
-	  "noetherNormalization I",
-	  "noetherNormalization(R/I)",
+	  "(f,J,g) = noetherNormalization I",
 	  },
-     "If ", TT "noetherNormalization", " is unable to place the ideal
-     in Noether normal position after a few tries, the following warning is given:",
+     "The next example shows how when we use the lexicographical ordering, we can see the integrality of ", 
+     TT "R/ f I", " over the polynomial ring in ", TT "dim(R/I)", " variables:",
+     EXAMPLE {
+	  "R = QQ[x_1..x_5, MonomialOrder => Lex];",
+	  "I = ideal(x_2*x_1-x_5^3, x_5*x_1^3);",
+          "(f,J,j) = noetherNormalization I",
+          "transpose gens gb J",
+	  },
+     "If ", TT "noetherNormalization", " is unable to place the ideal into the desired position after a few tries, the following warning is given:",
      EXAMPLE {
 	  "R = ZZ/2[a,b];",
 	  "I = ideal(a^2*b+a*b^2+1);",
-	  "noetherNormalization I"
+	  "(f,J,g) = noetherNormalization I"
 	  },
      "Here is an example with the option ", TT "Verbose => true", ":",
      EXAMPLE {
 	  "R = QQ[x_1..x_4];",
 	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
-	  "noetherNormalization(I,Verbose => true)"
+	  "(f,J,g) = noetherNormalization(I,Verbose => true)"
 	  },
+     "The first number gives the number of different linear transformations attempted by the routine to place ", TT "I", " into the desired position.
+      The second number tells which ", TO "BasisElementLimit", " was used when computing the (partial) Groebner basis.", 
      PARA {
      "This symbol is provided by the package ", TO NoetherNormalization, "."
      }
      }
 
 --=========================================================================--
-
-document {
-     Key => noetherPosition,
-     Headline => "a map to Noether normal position",
-     "The function ", TT "noetherPosition", " takes an ideal or a
-     quotient of a polynomial ring, and outputs a map from ", TT "R", " to ", --(R a polynomial ring)
-     TT "R", " which will place ideal ", TT "I", " into Noether normal
-     position. The ideal in question is placed into Noether normal
-     position using a random linear change of coordinates, hence one should
-     expect the output to change each time the routine is executed.",
-     EXAMPLE {
-	  "R = QQ[x_1..x_4];",
-	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
-	  "noetherPosition I",
-	  "noetherPosition(R/I)",
-	  },
-     "If ", TT "noetherPosition", " is unable to place the ideal
-     in Noether normal position after a few tries, the following warning is given:",
-     EXAMPLE {
-	  "R = ZZ/2[a,b];",
-	  "I = ideal(a^2*b+a*b^2+1);",
-	  "noetherPosition I"
-	  },
-     "Here is an example with the option ", TT "Verbose => true", ":",
-     EXAMPLE {
-	  "R = QQ[x_1..x_4];",
-	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
-	  "noetherPosition(I,Verbose => true)"
-	  },
-     PARA {
-     "This symbol is provided by the package ", TO NoetherNormalization, "."
-     }
-     }
---=========================================================================--
-
-
