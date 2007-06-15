@@ -1144,45 +1144,16 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
      value := eval(x.rhs);
      when value 
      is Error do return value 
-     is values:Sequence do (
-	  nvals := length(values);
-	  if nlhs == nvals
-	  then (
-	       for i from 0 to nlhs-1 do (
-		    r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
-		    when r is Error do return r else nothing;
-		    )
-	       )
-	  else if nlhs < nvals
-	  then (
-	       for i from 0 to nlhs-2 do (
-		    r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
-		    when r is Error do return r else nothing;
-		    );
-	       m := nlhs-1;
-	       r := assignment(nestingDepth.m,frameindex.m,syms.m, Expr(new Sequence len nvals-nlhs+1 do for i from nlhs-1 to nvals-1 do provide values.i));
-	       when r is Error do return r else nothing;
-	       )
-	  else (
-	       for i from 0     to nvals-1 do (
-		    r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
-		    when r is Error do return r else nothing;
-		    );
-	       for i from nvals to nlhs-1 do (
-		    r := assignment(nestingDepth.i,frameindex.i,syms.i,nullE);
-		    when r is Error do return r else nothing;
-		    );
-	       )
-	  )
-     else (
-	  r := assignment(nestingDepth.0,frameindex.0,syms.0,value);
-	  when r is Error do return r else nothing;
-	  for i from 1 to nlhs-1 do (
-	       r = assignment(nestingDepth.i,frameindex.i,syms.i,nullE);
+     is values:Sequence do 
+     if nlhs == length(values) then (
+	  for i from 0 to nlhs-1 do (
+	       r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
 	       when r is Error do return r else nothing;
 	       );
-	  );
-     value);
+	  value
+	  )
+     else buildErrorPacket("parallel assignment: expected a sequence of " + tostring(nlhs) + " values")
+     else buildErrorPacket("parallel assignment: expected a sequence of " + tostring(nlhs) + " values"));
 
 -----------------------------------------------------------------------------
 
