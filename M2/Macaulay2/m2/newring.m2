@@ -143,6 +143,8 @@ flattenRing GaloisField := opts -> F -> (
      (R,p,q) := flattenRing(A, opts);
      p' := p * map(A,F);
      q' := map(F,A) * q;
+     p'.cache.inverse = q';
+     q'.cache.inverse = p';
      (R,p',q'))
 
 flattenRing PolynomialRing := opts -> R -> (
@@ -183,6 +185,8 @@ flattenRing PolynomialRing := opts -> R -> (
      pr := map(T',T);
      p' := map(T',R, (vars T')_(toList (0 .. n2-1)) | inc' matrix p);
      q' := map(R,T', vars R | promote(matrix q,R));
+     p'.cache.inverse = q';
+     q'.cache.inverse = p';
      (T', p', q'))
 
 flattenRing QuotientRing := opts -> R -> (
@@ -201,6 +205,8 @@ flattenRing QuotientRing := opts -> R -> (
      S := B/J';
      p' := map(S,R, promote( lift( matrix p, B ), S ));
      q' := map(R,S, promote( matrix q, R ));
+     p'.cache.inverse = q';
+     q'.cache.inverse = p';
      (S, p', q'))
 
 isWellDefined RingMap := f -> (
