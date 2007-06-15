@@ -14,6 +14,17 @@ Changes made, most recent ones first:
 
 -----------------------------------------------------------------------------
 
+New in 0.9.96:
+
+Parallel assignment made less forgiving: the length of the sequence of values
+must now match the length of the sequence of variables.  Example:
+(a,b,c)=(1,2,3) still works, but (a,b,c)=(1,2) no longer does.
+
+'flattenRing' now returns just two values, instead of three: the new ring, and
+the map to it.
+
+-----------------------------------------------------------------------------
+
 New in 0.9.95:
 
 MonomialIdeal is now restricted to commutative polynomial rings (no
