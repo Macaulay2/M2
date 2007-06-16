@@ -2,7 +2,7 @@
 
 # rules used by the Makefiles in various test directories
 
-DOTS ?= ..
+DOTS ?= ../../..
 ifeq "$(DEBUG)" "no"
 TLIMIT ?= 40
 MLIMIT ?= 90000

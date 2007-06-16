@@ -14,19 +14,19 @@ f = a3 -> (
      assert( a4 === 4 );
      assert( v === (1,2,3,4));
      a1 = a2 = a3 = a4 = 0;
-     v = (a1,a2,a3,a4) = (1,2,3,4,5);
+     v = (a1,a2,a3,a4) = (1,2,3,(4,5));
      assert( a1 === 1 );
      assert( a2 === 2 );
      assert( a3 === 3 );
      assert( a4 === (4,5) );
-     assert( v === (1,2,3,4,5));
+     assert( v === (1,2,3,(4,5)));
      a1 = a2 = a3 = a4 = 0;
-     v = (a1,a2,a3,a4) = (1,2,3);
+     v = (a1,a2,a3,a4) = (1,2,3,);
      assert( a1 === 1 );
      assert( a2 === 2 );
      assert( a3 === 3 );
      assert( a4 === null );
-     assert( v === (1,2,3));
+     assert( v === (1,2,3,));
      )
 f ()
 

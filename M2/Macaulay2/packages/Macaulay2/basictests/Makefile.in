@@ -1,0 +1,38 @@
+# @configure_input@
+
+# DOTS is the path to M2/Macaulay2 from this directory
+DOTS ?= ../../..
+
+include $(DOTS)/../include/config.Makefile
+VPATH = @srcdir@
+
+CPPFLAGS := -I$(DOTS)/../include $(CPPFLAGS) 
+
+TESTRESULTS := $(notdir $(patsubst %.m2, %.okay, $(wildcard @srcdir@/*.m2)))
+
+.PHONY : all clean distclean install check default
+
+all check:: $(TESTRESULTS)
+distclean :: clean
+
+$(TESTRESULTS) : $(DOTS)/bin/M2$(EXE)
+
+ARGS := --silent -q --stop --no-loaddata --no-setup -e 'srcdir = "@srcdir@/"'
+
+%.okay : %.m2
+	@ echo testing $<
+	@ env $(DOTS)/bin/M2$(EXE) $(ARGS) $< -e 'exit 0'
+	@ touch $@
+
+clean::	; rm -f *.okay
+LOADLIBES += -lgc
+all:: testgc; ./testgc
+clean:: ; rm -f testgc
+Makefile : Makefile.in ; cd $(DOTS)/.. && ./config.status Macaulay2/packages/Macaulay2/basictests/Makefile
+distclean ::; rm -f Makefile
+check :: check-return-code
+check-return-code :; if echo 'error "foo"' | $(DOTS)/bin/M2$(EXE) $(ARGS) ; then false ; else true ; fi
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2/basictests "
+# End:

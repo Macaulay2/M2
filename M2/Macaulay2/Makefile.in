@@ -75,14 +75,14 @@ distclean clean ::; $(MAKE) DEPENDS=no -C d $@
 install distclean clean ::; $(MAKE) -C bin $@
 install-others install-Macaulay2 ::; $(MAKE) -C bin "install"
 ################################# basictests
-check ::; $(MAKE) -C basictests -k
-distclean clean ::; $(MAKE) -C basictests $@
+check ::; $(MAKE) -C packages/Macaulay2/basictests -k
+distclean clean ::; $(MAKE) -C packages/Macaulay2/basictests $@
 ################################# m2
 install distclean clean check justM2 all ::; $(MAKE) -C m2 $@
 install-others install-Macaulay2 ::; $(MAKE) -C m2 "install"
 ################################# test
-check ::; $(MAKE) -C test -k
-distclean clean ::; $(MAKE) -C test $@
+check ::; $(MAKE) -C packages/Macaulay2/test -k
+distclean clean ::; $(MAKE) -C packages/Macaulay2/test $@
 ################################# packages
 all check install install-others install-Macaulay2 clean distclean ::; $(MAKE) -C packages $@
 ################################# probe

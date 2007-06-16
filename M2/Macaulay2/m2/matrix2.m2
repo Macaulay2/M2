@@ -21,8 +21,8 @@ smithNormalForm = method(
      )
 smithNormalForm Matrix := o -> (f) -> (
      (tchg,schg,keepz) := (o.ChangeMatrix#0, o.ChangeMatrix#1,o.KeepZeroes);
-     (tmat,smat) := null;	-- null represents the identity, lazily
-     (tzer,szer) := null;	-- null represents zero, lazily
+     (tmat,smat) := (null,null);	-- null represents the identity, lazily
+     (tzer,szer) := (null,null);	-- null represents zero, lazily
      R := ring f;
      R' := R[MonomialOrder => Position => Up];
      f = promote(f,R');

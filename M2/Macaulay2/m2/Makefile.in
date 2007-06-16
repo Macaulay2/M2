@@ -73,18 +73,22 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		../emacs/makesyms.m2 \
 		loads.awk \
 		@srcdir@/../*/COPYRIGHT \
-		@srcdir@/../basictests/*.m2 \
+		@srcdir@/../packages/Macaulay2/basictests/*.m2 \
 		@srcdir@/../book/*.m2 \
 		@srcdir@/../packages/*.m2 \
 		@srcdir@/../packages/*/*.m2 \
-		@srcdir@/../test/*.m2 \
-		@srcdir@/../test/engine/*.m2 \
+		@srcdir@/../packages/Macaulay2/test/*.m2 \
+		@srcdir@/../packages/Macaulay2/test/engine/*.m2 \
 		@srcdir@/../bugs/*/*.m2 \
 		loadsequence \
 		Makefile.in \
 		Makefile.tests \
 		../emacs/Makefile.in \
-		../basictests/Makefile.in \
+		../packages/Macaulay2/basictests/Makefile.in \
+		../packages/Macaulay2/test/Makefile.in \
+		../packages/Macaulay2/test/Makefile.test \
+		../packages/Macaulay2/test/slow/Makefile.in \
+		../packages/Macaulay2/test/engine/Makefile.in \
 		../packages/Makefile.in \
 		../packages/packagelist \
 		../../Makefile ../../GNUmakefile.in \

@@ -3,7 +3,7 @@
 VPATH = @srcdir@
 
 # DOTS is the path to M2/Macaulay2 from this directory
-DOTS = ..
+DOTS = ../../..
 include $(DOTS)/../include/config.Makefile
 
 SRCDIR = @srcdir@
@@ -25,7 +25,7 @@ distclean ::
 
 docStructure.out : docStructure.m2
 
-Makefile : Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/test/Makefile
+Makefile : Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2/test/Makefile
 
 status ::
 	$(MAKE) -C engine $@

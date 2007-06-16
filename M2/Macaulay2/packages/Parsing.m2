@@ -38,9 +38,12 @@ nonspaceAnalyzer = Analyzer(
 Parser : Analyzer := (p0,a0) -> s -> (
      p := p0;
      a := a0 s;
-     while null =!= ((pos,t) := a())
-     do if t === null then error("unrecognized lexical item at position ", toString pos) 
-     else if null === (p = p t) then error("syntax error at token '",toString t,"', position ",toString pos);
+     while null =!= (k := a())
+     do (
+	  (pos,t) := k;
+	  if t === null then error("unrecognized lexical item at position ", toString pos) 
+     	  else if null === (p = p t) then error("syntax error at token '",toString t,"', position ",toString pos)
+	  );
      if null === (r := p null) then error "parser unfinished, at end of input";
      r)
 -- result symbols
