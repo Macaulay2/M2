@@ -193,6 +193,7 @@ F = map(R,R,symmetricPower(2,matrix{{a,b,c}}))
 I = ker F
 J = I^2
 G = I_0
+debug PrimaryDecomposition
 radicalContainment(G,J)
 radicalContainment(G-a^2,J)
 ///
