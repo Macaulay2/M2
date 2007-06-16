@@ -118,7 +118,7 @@ assert(numgens source mI == 7)
 
 I = ideal flatten entries gens I;
 mI = trim I; -- It should stop after mingens are known to be computed.
-assert(numgens source mI == 7)
+assert(numgens source gens mI == 7)
 
 I = ideal flatten entries gens I;
 G = gb(I, DegreeLimit=>3); -- this one works
