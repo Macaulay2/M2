@@ -143,7 +143,7 @@ assert(numgens source gbSnapshot I == 16) -- ?? is this right??
 I = ideal flatten entries gens I;
 hf = poincare ideal apply(7, i -> R_i^2)
 G = gb(I, Hilbert=>hf); -- this works, it seems
-assert(numgens source G == 67)
+assert(numgens source gens G == 67)
 
 Rlex = ZZ/32003[a..j,MonomialOrder=>Eliminate 1]
 IL = substitute(I,Rlex);
