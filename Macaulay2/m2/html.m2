@@ -433,19 +433,31 @@ runString := (x,pkg,rundir,usermode) -> (
      ret)
 
 check = method()
-check Package := pkg -> (
+prep = pkg -> (
      use pkg;
      if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"title", LoadDocumentation => true);
-     usermode := false;					    -- fix this later as an option to "check" or something!
      hadExampleError = false;
      numExampleErrors = 0;
-     scan(pairs pkg#"test inputs", (key,s) -> (
-	       (seqno,filename,lineno) := key;
-	       stderr << "--testing input " << seqno << " on line " << lineno << " from file " << filename << endl;
-	       runString(s,pkg,".",usermode);
-	       ));
+     )
+onecheck = (seqno,pkg) -> (
+     usermode := false;					    -- fix this later as an option to "check" or something!
+     (filename,lineno,s) := pkg#"test inputs"#seqno;
+     stderr << "--running test " << seqno << " of package " << pkg << " on line " << lineno << " in file " << filename << endl;
+     stderr << "--    rerun with: check_" << seqno << " \"" << pkg << "\"" << endl;
+     runString(s,pkg,".",usermode);
+     )
+check(ZZ,Package) := (seqno,pkg) -> (
+     prep pkg;
+     onecheck(seqno,pkg);
+     if hadExampleError then error("error occurred running test for package ", toString pkg, ": ", toString seqno);
+     )
+check(ZZ,String) := (seqno,pkg) -> check(seqno, needsPackage (pkg, LoadDocumentation => true))
+check Package := pkg -> (
+     prep pkg;
+     scan(keys pkg#"test inputs", seqno -> onecheck(seqno,pkg));
      if hadExampleError then error(toString numExampleErrors, " error(s) occurred running tests for package ", toString pkg);
      )
+check String := pkg -> check needsPackage (pkg, LoadDocumentation => true)
 
 setupNames := (opts,pkg) -> (
      buildPackage = pkg#"title";

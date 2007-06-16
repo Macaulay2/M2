@@ -410,7 +410,7 @@ sourceFileStamp = () -> concatenate(
 
 TEST = method()
 TEST String := s -> (
-     currentPackage#"test inputs"#(currentPackage#"test number",currentFileName,currentLineNumber()) = concatenate( sourceFileStamp(), newline, s);
+     currentPackage#"test inputs"#(currentPackage#"test number") = (currentFileName,currentLineNumber(),concatenate( sourceFileStamp(), newline, s));
      currentPackage#"test number" = currentPackage#"test number" + 1;
      )
 TEST List := y -> TEST \ y

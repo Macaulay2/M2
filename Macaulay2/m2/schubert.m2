@@ -19,7 +19,7 @@ signAndShuffle := (a,b) -> (
      sh := while a#?i or b#?j list (
 	  t := if a#?i then a#i;
 	  u := if b#?j then b#j;
-     	  if t === u then return 0;
+     	  if t === u then return (0,);
 	  if t === null then (j = j+1; u)
 	  else if u === null or t < u then (i = i+1; t)
      	  else (ct = ct + m-i; j = j+1; u));

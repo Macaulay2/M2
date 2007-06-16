@@ -9,7 +9,7 @@ debian/postinst
 debian/prerm
 debian/preinst
 Macaulay2/Makefile
-Macaulay2/basictests/Makefile
+Macaulay2/packages/Macaulay2/basictests/Makefile
 Macaulay2/bin/Makefile
 Macaulay2/book/Makefile
 Macaulay2/c/Makefile
@@ -43,7 +43,7 @@ Macaulay2/packages/Makefile
 Macaulay2/probe/Makefile
 Macaulay2/regex/Makefile
 Macaulay2/srcdir
-Macaulay2/test/Makefile
-Macaulay2/test/engine/Makefile
-Macaulay2/test/slow/Makefile
+Macaulay2/packages/Macaulay2/test/Makefile
+Macaulay2/packages/Macaulay2/test/engine/Makefile
+Macaulay2/packages/Macaulay2/test/slow/Makefile
 Macaulay2/util/Makefile

@@ -1,5 +1,6 @@
 # @configure_input@
-DOTS = ../..
+# DOTS is the path to M2/Macaulay2 from this directory
+DOTS = ../../../..
 VPATH = @srcdir@
 include $(DOTS)/../include/config.Makefile
 
