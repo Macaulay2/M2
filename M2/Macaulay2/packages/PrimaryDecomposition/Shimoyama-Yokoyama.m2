@@ -254,6 +254,7 @@ L = I^2 * J^3;
 fac1 = I_1
 fac2 = J_1
 F = fac1 * fac2
+debug PrimaryDecomposition
 minSat(L,F)
 quotMin(L,{fac1,fac2},F)
 -- quotMinold(L,{fac1,fac2},F)
