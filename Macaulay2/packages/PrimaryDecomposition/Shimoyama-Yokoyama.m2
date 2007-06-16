@@ -170,6 +170,7 @@ TEST ///
 R = ZZ/32003[a..d]
 I = monomialCurveIdeal(R,{1,3,4})
 J = I + ideal(a^5-b^5)
+debug PrimaryDecomposition
 findNonMember(I,J)
 findNonMember(J,I)
 
