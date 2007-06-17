@@ -9,6 +9,8 @@ R2 = ZZ/101[a..d,MonomialOrder=>Eliminate 2,Degrees=>{{1,-1},{1,0},{2,-2},{3,4}}
 A = ZZ/101[x,y,z,Degrees=>{1,1,2}]
 X = Proj A
 singularLocus X
+--status: We need to design an algorithm for computing the singular locus of a weighted projective space
+--status:    The current way works only when the variables all have degree 1.
 assert( ideal singularLocus X != 1 )
 
 -- Date: Tue, 13 Mar 2007 17:40:08 +0000
