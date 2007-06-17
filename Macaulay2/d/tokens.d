@@ -511,7 +511,8 @@ export stopIfError := false;
 foreach s in argv do if s === "--stop" then stopIfError = true;
 export debuggingMode := true;
 export printError(err:Error):Error := (
-     printErrorMessage(err.position, if err.printed then "--back trace--" else err.message);
+     if !(err.printed && err.position.filename === "stdio")
+     then printErrorMessage(err.position, if err.printed then "--back trace--" else err.message);
      err.printed = true;
      err);
 
