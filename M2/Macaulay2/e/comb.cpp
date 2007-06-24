@@ -58,7 +58,7 @@ int comb::encode(int *a, int p)
 {
   int result = 0;
 
-  expand(a[p-1],p);
+  if (p > 0) expand(a[p-1],p);
   for (int i=0; i<p; i++)
     result += binom(a[i],i+1);
 
