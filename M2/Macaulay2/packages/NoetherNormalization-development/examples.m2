@@ -38,7 +38,7 @@ ring x_4
 R = QQ[x_2,x_3,x_4,x_1,x_5,MonomialOrder=>Lex] -- this is a nice example...
 R = QQ[x_1..x_5, MonomialOrder => Lex]; -- this is a nice example...
 I = ideal(x_2*x_1-x_5^3, x_5*x_1^3);              -- compare with the same example in singular. 
-(f,J,j) = noetherNormalization I;
+(f,J,j) = noetherNormalization (I,Verbose => true)
 transpose gens gb J
 
 
@@ -69,6 +69,9 @@ gens R
 R = QQ[x_5,x_4,x_3,x_2,x_1]
 I = ideal(x_1^3 + x_1*x_2, x_2^3-x_4+x_3, x_1^2*x_2+x_1*x_2^2)
 noetherNormalization(I,Verbose => true)
+f := (noetherNormalization(I))_1
+
+
 support (independentSets(I,Limit=>1))_0
 
 --Example 4
@@ -85,7 +88,7 @@ apply(X, i-> f i)
 
 
 --Example 5
-R = QQ[x_5,x_4,x_3,x_2,x_1]
+R := QQ[x_5,x_4,x_3,x_2,x_1, MonomialOrder => Lex]
 I = ideal(x_4^3*x_3*x_2-x_4, x_2*x_1-x_5^3, x_5*x_1^3)
 S = noetherNormalization(I,Verbose => true)
 f = S_1

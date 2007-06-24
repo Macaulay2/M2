@@ -69,9 +69,9 @@ gin(Ideal) := opts -> (I) -> (
      good := isBorel genericI; 
      f = map(S,R,gens S);
      generic= f genericI; -- map the generic initial ideal back into the original ring
-     if not good then stderr << "warning: potential generic initial ideal is not strongly stable" << endl;
+     if not good then stderr << "--warning: potential generic initial ideal is not strongly stable" << endl;
      if opts.Verbose then (
-	  << "potential generic ideal showed up "<< (tally attempts)#(genericI)<< " out of " << opts.AttemptCount << " times." << endl;
+	  << "--potential generic ideal showed up "<< (tally attempts)#(genericI)<< " out of " << opts.AttemptCount << " times." << endl;
 	  print netList pairs tally attempts;
 	  );
      generic       

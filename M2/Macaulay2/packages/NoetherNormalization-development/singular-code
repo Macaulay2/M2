@@ -10,9 +10,9 @@ noetherNormal(I);
 
 
 
+| x_0^2-x_1x_2 x_0x_1-x_2x_3 x_1^2-x_0x_3 | --singular gave nontrivial transformations for both of these. hmm. Maybe should test to see if already in nposition
 
-
-
+-x_1x_2+x_3^2 -x_0x_1+x_2x_3 x_2^2-x_0x_3
 
 
 
