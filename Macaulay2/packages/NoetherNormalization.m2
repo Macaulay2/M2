@@ -163,16 +163,14 @@ noetherNormalization(Ideal) := opts -> I -> (
      (flatA,fAtoFlatA) := flattenRing A;
      fFlatAtoA := fAtoFlatA^-1;
 --   (flatA,fAtoFlatA,fFlatAtoA) := flattenRing A;
-     k := coefficientRing flatA;
      if not isPolynomialRing A then error "expected an ideal over a polynomial ring";
+     k := coefficientRing flatA;
      if not isField k then error "expected the ring to contain a field";
      R := k (monoid [gens flatA,MonomialOrder => Lex]);
      ff := map(R,flatA,gens R)*fAtoFlatA; --these maps merely change the order of the ring
      ffinverse := fFlatAtoA*map(flatA, R, gens flatA); --these maps merely change the order of the ring
      I = ff(I);
-     homogeneous := (isHomogeneous R and isHomogeneous I); 
-     if homogeneous then G = gb(I, Algorithm => Homogeneous2); --MAYBE SHOULD USE ANOTHER HOMOGENOUS ALG/MAYBE TAKE THIS OUT
-     if not homogeneous then G = gb I;
+     G = gb I;
      d := dim I;
      X := sort gens R;
      (U,V) := varPrep(X,I);
@@ -199,12 +197,8 @@ noetherNormalization(Ideal) := opts -> I -> (
 	  finverse = finverse*ginverse;
      	  while (not done and seqindex < #limitsequence) do (
 	       if opts.Verbose then (<< "--trying with basis element limit: " << limitsequence_seqindex << endl;);
-	       if homogeneous then ( -- may want to define f I above, but this causes noetherNormalization to fail at the moment
-	       	    G = gb(f I, BasisElementLimit => limitsequence_seqindex);
-		    --G = gb(f I, BasisElementLimit => limitsequence_seqindex);
-	       	    );     
-	       if not homogeneous then G = gb(f I, BasisElementLimit => limitsequence_seqindex); 
-	       done = lastCheck(X,G,d);
+	       G = gb(f I, BasisElementLimit => limitsequence_seqindex); 
+	       done = lastCheck(X,G,d);-- may want to define f I above, but this causes noetherNormalization to fail at the moment
      	       seqindex = seqindex + 1;
 	       );
 	  counter = counter + 1;
@@ -223,6 +217,30 @@ noetherNormalization(Ideal) := opts -> I -> (
 	       );
      	  ); -- f puts the ideal into noether normal position. f inverse goes back to the original ring 
      );  
+
+
+
+nPosition = (I,X), -> (
+     dimI := dim I - 1;
+     algind := support (independentSets(I,Limit => 1))_0;
+     d := dim(I + ideal(X_{((#X-1)-dimI)..(#X-1)}));
+     return d;
+     );
+
+
+homNoetherNormalization = (I,R,k,X) -> (
+     d := nPosition(I,X);
+     algind := support (independentSets(I,Limit => 1))_0;
+     f := map(R,R,reverse inverseSequence(X-set algind|algind,X));
+     U := apply(algind,i->f i);
+     V := apply(X-set algind,i->f i);
+     while d > 0 do (
+	  g = map(R,R,V|randomSum(U,V,k));
+     	  J := g f I;
+	  d := dim(J+ideal(apply(algind,i->f i)));
+	  );
+     return g f;
+     );
 
 --======================================================================================================================
 

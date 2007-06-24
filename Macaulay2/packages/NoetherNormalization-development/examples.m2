@@ -28,6 +28,12 @@ I = ideal(x_1^2 + x_1*x_4+1,x_1*x_2*x_3*x_4+1)
 (f,J,j) = noetherNormalization(I,Verbose=>true)
 A/f I
 
+A = QQ
+I = promote(ideal 0,QQ)
+noetherNormalization(I,Verbose=>true)
+
+
+
 transpose gens gb J
 ()
 ring I
