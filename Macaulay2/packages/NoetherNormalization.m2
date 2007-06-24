@@ -186,6 +186,7 @@ noetherNormalization(Ideal) := opts -> I -> (
      U = apply(U, i -> f(i)); -- might be faster to do U = {x_0..x_(#U-1)}
      Uold := U;
      while not done do ( 
+     	  if opts.Verbose then << "--trying random transformation: " << counter << endl;
 	  seqindex := 0;
      	  stuff := Uold;
      	  if counter == 0 then U = randomSum(U,V-set J,k);
@@ -196,8 +197,10 @@ noetherNormalization(Ideal) := opts -> I -> (
 	  f = g*f;
 	  finverse = finverse*ginverse;
      	  while (not done and seqindex < #limitsequence) do (
+	       if opts.Verbose then (<< "--trying with basis element limit: " << limitsequence_seqindex << endl;);
 	       if homogeneous then ( -- may want to define f I above, but this causes noetherNormalization to fail at the moment
-	       	    G = gb(f I, Algorithm => Homogeneous2, BasisElementLimit => limitsequence_seqindex);
+	       	    G = gb(f I, BasisElementLimit => limitsequence_seqindex);
+		    --G = gb(f I, BasisElementLimit => limitsequence_seqindex);
 	       	    );     
 	       if not homogeneous then G = gb(f I, BasisElementLimit => limitsequence_seqindex); 
 	       done = lastCheck(X,G,d);
@@ -205,7 +208,7 @@ noetherNormalization(Ideal) := opts -> I -> (
 	       );
 	  counter = counter + 1;
 	  if counter == 5 then << "--warning: no good linear transformation found by noetherNormalization" <<endl;
-	  if done or counter == 5 then return (
+	  if done or counter == 5 then( --why is this return here?
 	       if opts.Verbose then (
 		    << "--coordinate transformations tested: " << counter << endl;
 		    << "--BasisElementLimit option used with gb: " << first limitsequence_{seqindex - 1} << endl;
