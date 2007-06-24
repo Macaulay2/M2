@@ -1,4 +1,4 @@
-AC_INIT(Macaulay 2, 0.9.96, Macaulay2@math.uiuc.edu, Macaulay2)
+AC_INIT(Macaulay 2, 0.9.97, Macaulay2@math.uiuc.edu, Macaulay2)
 AC_CONFIG_HEADERS(include/config.h)
 
 case "$0" in
