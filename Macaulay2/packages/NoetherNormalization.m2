@@ -162,6 +162,7 @@ noetherNormalization(Ideal) := opts -> I -> (
      A := ring I;
      (flatA,fAtoFlatA) := flattenRing A;
      fFlatAtoA := fAtoFlatA^-1;
+--   (flatA,fAtoFlatA,fFlatAtoA) := flattenRing A;
      k := coefficientRing flatA;
      if not isPolynomialRing A then error "expected an ideal over a polynomial ring";
      if not isField k then error "expected the ring to contain a field";
@@ -208,16 +209,17 @@ noetherNormalization(Ideal) := opts -> I -> (
 	       );
 	  counter = counter + 1;
 	  if counter == 5 then << "--warning: no good linear transformation found by noetherNormalization" <<endl;
-	  if done or counter == 5 then( --why is this return here?
+	  if done or counter == 5 then(
 	       if opts.Verbose then (
 		    << "--coordinate transformations tested: " << counter << endl;
 		    << "--BasisElementLimit option used with gb: " << first limitsequence_{seqindex - 1} << endl;
 		    );
-	     --  use A;
-	       f.cache.inverse = finverse;
-               finverse.cache.inverse = f;
+	       ffinal = ffinverse*f*ff;
+	       ffinalInverse = ffinverse*finverse*ff;	     	  
+	       ffinal.cache.inverse = ffinalInverse;
+               ffinalInverse.cache.inverse = ffinal;
 	       X = apply(X, i -> ffinverse i);
-   	       return (ffinverse*f*ff, ffinverse f I, map(A, k[X_{0..d-1}], X_{0..d-1}));
+   	       return (ffinal, ffinverse f I, map(A, k[X_{0..d-1}], X_{0..d-1}));
 	       );
      	  ); -- f puts the ideal into noether normal position. f inverse goes back to the original ring 
      );  
