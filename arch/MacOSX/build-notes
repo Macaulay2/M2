@@ -33,6 +33,7 @@
 
 ## Step 3.  Create the disk image
 export VERSION=0.9.95
+export VERSION=0.9.96
 cd ../installed
 cp ../M2/arch/MacOSX/ReadMe-MacOSX.rtf .
 cp ./ReadMe-MacOSX.rtf Macaulay2-$VERSION/
