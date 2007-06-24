@@ -40,7 +40,7 @@ SimplicialComplex.synonym = "simplicial complex"
 --      << concatenate(interpreterDepth:"o") << lineNumber << " : Facets of the simplicial complex "
 --      << endl;)
 
-net SimplicialComplex := Delta -> Delta.facets
+net SimplicialComplex := Delta -> net Delta.facets
 
 simplicialComplex = method(TypicalValue => SimplicialComplex)
 
