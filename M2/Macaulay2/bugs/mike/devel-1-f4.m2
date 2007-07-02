@@ -153,3 +153,17 @@ gbTrace = 3
 time G =  gens gb(I, Algorithm=>F4, GBDegrees=>toList(numgens ring I:1)
     , Strategy=>UseSyzygies
     )
+
+-- To work on:
+-- (a) Inhomogeneous GB (are they working yet?)
+-- (b) Over modules: problem seems to be a sorting issue
+-- (c) Different monomial orders
+-- (d) Further: Quotient rings, over QQ, over fraction fields.  HF use, syzygies.
+-- (e) Think through the memory allocation a bit better
+-- (f) Pack the mononials better
+-- (g) weights other than 1,1,1...,1.  
+--     These could be handled by changing the exponents at the start, at end.
+-- (h) Skew commuting variables, and Weyl algebra arithmetic
+-- (i) want to allow matrix size to be limited, but allow easy continuation of the computation.
+
+-- check out the Groebner walk
