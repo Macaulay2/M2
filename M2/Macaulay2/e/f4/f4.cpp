@@ -56,17 +56,19 @@ F4GB::F4GB(const Gausser *KK0,
   //  mat->rows.reserve(200000);
   //  mat->columns.reserve(200000);
 
-  syz = new coefficient_matrix;
-  master_syz = new coefficient_matrix;
-  syzF = 0; //!!! KK->get_ring()->make_Schreyer_FreeModule();
-
   // set status
   if (gbTrace >= 2)
     M->show();
 
+  // initialize syzygy stuff
   using_syz = strategy & STRATEGY_USE_SYZ;
   if (gbTrace >= 2)
     fprintf(stderr, "SYZ: using_syz = %i\n", using_syz);
+  syz = new coefficient_matrix;
+  master_syz = new coefficient_matrix;
+  if (using_syz) 
+    syzF = KK->get_ring()->make_Schreyer_FreeModule();
+
 }
 
 F4GB::~F4GB()

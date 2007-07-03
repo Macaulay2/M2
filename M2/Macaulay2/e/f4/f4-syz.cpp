@@ -333,7 +333,7 @@ void F4GB::insert_syz(row_elem &r, int g/*=-1*/)
 
   result->f.monoms = F4Mem::allocate_monomial_array(nlongs);
 
-  monomial_word *nextmonom = result->f.monoms;
+  packed_monomial nextmonom = result->f.monoms;
   if (g>=0) // the leading term is (monom=1,comp=g)
     {
       M->one(g, nextmonom);
@@ -354,7 +354,29 @@ void F4GB::insert_syz(row_elem &r, int g/*=-1*/)
   result->alpha = M->last_exponent(result->f.monoms);
   result->minlevel = ELEM_POSSIBLE_MINGEN; 
 
-  //int which = syz_basis.size();
+  // add another dimension to syzF if a new basis element is inserted
+  if (gbTrace>0 && g>=0) {
+    int *deg = KK->get_ring()->degree_monoid()->make_one();
+    packed_monomial lm = result->f.monoms; // leading monomial
+    packed_monomial m = syz->columns[M->get_component(lm)].monom;
+
+    //!!! this is a hack copied from F4toM2Interface::to_M2_vec
+    int *exp = newarray_atomic(int, M->n_vars()+1);
+    ntuple_word *lexp = newarray_atomic(ntuple_word, M->n_vars()+1);
+    long comp;
+    M->to_exponent_vector(m, lexp, comp);
+    for (int a=0; a<M->n_vars(); a++)
+      exp[a] = lexp[a];
+    //!!!
+
+    syzF->append_schreyer(deg, exp, 
+			    syz_basis.size() 
+			    /* compare# = number of the element in the basis
+			     ... or is it minus that??? */);
+    KK->get_ring()->degree_monoid()->remove(deg);
+    /// delete exp,lexp???
+  }
+
   syz_basis.push_back(result);
 }
 
