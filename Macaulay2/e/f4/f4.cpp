@@ -67,7 +67,7 @@ F4GB::F4GB(const Gausser *KK0,
   syz = new coefficient_matrix;
   master_syz = new coefficient_matrix;
   if (using_syz) 
-    syzF = KK->get_ring()->make_Schreyer_FreeModule();
+    syzF = F->get_ring()->make_Schreyer_FreeModule();
 
 }
 

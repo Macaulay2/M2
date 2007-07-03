@@ -8,6 +8,7 @@
 #include "f4.hpp"
 #include "monsort.hpp"
 #include "../freemod.hpp"
+#include "../poly.hpp"
 
 static clock_t syz_clock_sort_columns = 0;
 
@@ -360,6 +361,7 @@ void F4GB::insert_syz(row_elem &r, int g/*=-1*/)
     packed_monomial lm = result->f.monoms; // leading monomial
     packed_monomial m = syz->columns[M->get_component(lm)].monom;
 
+
     //!!! this is a hack copied from F4toM2Interface::to_M2_vec
     int *exp = newarray_atomic(int, M->n_vars()+1);
     ntuple_word *lexp = newarray_atomic(ntuple_word, M->n_vars()+1);
@@ -369,12 +371,18 @@ void F4GB::insert_syz(row_elem &r, int g/*=-1*/)
       exp[a] = lexp[a];
     //!!!
 
-    syzF->append_schreyer(deg, exp, 
+    const PolynomialRing* R = F->get_ring()->cast_to_PolynomialRing();
+    const Monoid* MM = R->getMonoid();
+    int* mm = MM->make_one();
+    MM->from_expvector(exp,mm);
+    
+    syzF->append_schreyer(deg, mm, 
 			    syz_basis.size() 
 			    /* compare# = number of the element in the basis
 			     ... or is it minus that??? */);
     KK->get_ring()->degree_monoid()->remove(deg);
-    /// delete exp,lexp???
+    deletearray(exp);
+    deletearray(lexp);
   }
 
   syz_basis.push_back(result);
