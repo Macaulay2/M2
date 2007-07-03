@@ -357,7 +357,8 @@ void F4GB::insert_syz(row_elem &r, int g/*=-1*/)
 
   // add another dimension to syzF if a new basis element is inserted
   if (gbTrace>0 && g>=0) {
-    int *deg = KK->get_ring()->degree_monoid()->make_one();
+    const PolynomialRing* R = F->get_ring()->cast_to_PolynomialRing();
+    int *deg = R->degree_monoid()->make_one();
     packed_monomial lm = result->f.monoms; // leading monomial
     packed_monomial m = syz->columns[M->get_component(lm)].monom;
 
@@ -371,7 +372,6 @@ void F4GB::insert_syz(row_elem &r, int g/*=-1*/)
       exp[a] = lexp[a];
     //!!!
 
-    const PolynomialRing* R = F->get_ring()->cast_to_PolynomialRing();
     const Monoid* MM = R->getMonoid();
     int* mm = MM->make_one();
     MM->from_expvector(exp,mm);
