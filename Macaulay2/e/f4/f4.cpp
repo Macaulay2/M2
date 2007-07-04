@@ -722,9 +722,10 @@ void F4GB::do_spairs()
   int ngb = gb.size();
   if (gbTrace >= 1) {
     fprintf(stderr, " # GB elements   = %d\n", ngb);
+    if (gbTrace >= 3) show_gb_array(gb);
     if (using_syz) 
-    fprintf(stderr, " # syzygies      = %d\n", syz_basis.size());
-    //!!! if (gbTrace >= 3) show_syz_basis();
+      fprintf(stderr, " # syzygies      = %d\n", syz_basis.size());
+    if (gbTrace >= 3) show_syz_basis();
   }
 
   clear_matrix();
