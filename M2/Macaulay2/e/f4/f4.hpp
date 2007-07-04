@@ -236,7 +236,8 @@ public:
 
   // Debugging routines
   void show_gb_array(const gb_array &g) const;
-  void show_syz_basis() const;  
+  void append_to_syzF(const_packed_monomial m, int compare_number);
+  void show_syz_basis();  
   void show_row_info() const;
   void show_column_info() const;
   void show_matrix();

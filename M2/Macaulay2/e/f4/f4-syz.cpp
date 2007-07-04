@@ -349,43 +349,39 @@ void F4GB::insert_syz(row_elem &r, int g/*=-1*/)
       M->unchecked_divide(m, n, nextmonom); // m = n*(real monomial)
       nextmonom += nslots;
     }
+
   F4Mem::components.deallocate(r.comps);
   r.len = 0;
   result->deg = this_degree;
   result->alpha = M->last_exponent(result->f.monoms);
   result->minlevel = ELEM_POSSIBLE_MINGEN; 
 
-  // add another dimension to syzF if a new basis element is inserted
-  if (gbTrace>0 && g>=0) {
-    const PolynomialRing* R = F->get_ring()->cast_to_PolynomialRing();
-    int *deg = R->degree_monoid()->make_one();
-    packed_monomial lm = result->f.monoms; // leading monomial
-    packed_monomial m = syz->columns[M->get_component(lm)].monom;
-
-
-    //!!! this is a hack copied from F4toM2Interface::to_M2_vec
-    int *exp = newarray_atomic(int, M->n_vars()+1);
-    ntuple_word *lexp = newarray_atomic(ntuple_word, M->n_vars()+1);
-    long comp;
-    M->to_exponent_vector(m, lexp, comp);
-    for (int a=0; a<M->n_vars(); a++)
-      exp[a] = lexp[a];
-    //!!!
-
-    const Monoid* MM = R->getMonoid();
-    int* mm = MM->make_one();
-    MM->from_expvector(exp,mm);
-    
-    syzF->append_schreyer(deg, mm, 
-			    syz_basis.size() 
-			    /* compare# = number of the element in the basis
-			     ... or is it minus that??? */);
-    KK->get_ring()->degree_monoid()->remove(deg);
-    deletearray(exp);
-    deletearray(lexp);
-  }
-
   syz_basis.push_back(result);
+}
+
+// add another dimension to syzF if a new basis element is inserted
+void F4GB::append_to_syzF(const_packed_monomial m, int compare_number)
+{
+  const PolynomialRing* R = F->get_ring()->cast_to_PolynomialRing();
+  int *deg = R->degree_monoid()->make_one();
+  
+  //!!! this is a hack copied from F4toM2Interface::to_M2_vec
+  int *exp = newarray_atomic(int, M->n_vars()+1);
+  ntuple_word *lexp = newarray_atomic(ntuple_word, M->n_vars()+1);
+  long comp;
+  M->to_exponent_vector(m, lexp, comp);
+  for (int a=0; a<M->n_vars(); a++)
+    exp[a] = lexp[a];
+  //!!!
+
+  const Monoid* MM = R->getMonoid();
+  int* mm = MM->make_one();
+  MM->from_expvector(exp,mm);
+  
+  syzF->append_schreyer(deg, mm,compare_number);
+  KK->get_ring()->degree_monoid()->remove(deg);
+  deletearray(exp);
+  deletearray(lexp);
 }
 
 /////////////////////////////////////////////////////////////
@@ -402,26 +398,20 @@ void F4GB::show_syz_matrix()
   fprintf(stderr, "---- ---- ---- ---- ---- ---- ----\n");
 }
 
-void F4GB::show_syz_basis() const
+void F4GB::show_syz_basis()
 {
   if (!using_syz) return;
 
   // Debugging routine
-  // Display the array, and all of the internal information in it too.
+  // Display syz_basis, and all of the internal information in it too.
 
   const gb_array& g = syz_basis;
 
-#if 0
-  // make sure syzF has rank |gens|+|gb|
   if (syzF->rank()==0) 
     for (int i=0; i<gens.size(); i++)
-      // ??? what does the next line do ???
-      syzF->append_schreyer(gens[i]->f.monoms, gens[i]->f.monoms, i); 
-  if (syzF->rank()<gb.size()+gens,size())
-    for (int i=syzF->rank(); i<gb.size()+gens.size(); i++)
-      // ??? what does the next line do ???
-      syzF->append_schreyer(gb[i-gens.size()]->f.monoms, gens[i-gens.size()]->f.monoms, i); 
-#endif
+      append_to_syzF(gens[i]->f.monoms,i/*compare number*/); 
+  for (int i=syzF->rank(); i<gb.size()+gens.size(); i++)
+    append_to_syzF(gb[i-gens.size()]->f.monoms,i/*compare number*/); 
 
   buffer o;
   for (int i=0; i<g.size(); i++)
