@@ -212,15 +212,14 @@ noetherNormalization(Ideal) := opts -> I -> (
 	       ffinalInverse = ffinverse*finverse*ff;	     	  
 	       ffinal.cache.inverse = ffinalInverse;
                ffinalInverse.cache.inverse = ffinal;
-	       X = apply(X, i -> ffinverse i);
-   	       return (ffinal, ffinverse f I, map(A, k[X_{0..d-1}], X_{0..d-1}));
+	       X = apply(X, i -> ffinverse i);   	       
+	     --  return (ffinal, ffinverse f I,map(A, k[X_{0..d-1}], X_{0..d-1}));
+	       return (ffinal, ffinverse f I,X_{0..d-1});
 	       );
      	  ); -- f puts the ideal into noether normal position. f inverse goes back to the original ring 
      );  
 
-
-
-nPosition = (I,X), -> (
+nPosition = (I,X) -> (
      dimI := dim I - 1;
      algind := support (independentSets(I,Limit => 1))_0;
      d := dim(I + ideal(X_{((#X-1)-dimI)..(#X-1)}));
@@ -250,6 +249,30 @@ noetherNormalization(QuotientRing) := noetherNormalization(PolynomialRing) := op
      );
 
 --======================================================================================================================
+--Assertions
+
+TEST ///
+uninstallPackage "NoetherNormalization"
+installPackage "NoetherNormalization"
+A = QQ[x_1..x_4]
+I = ideal(x_1^2 + x_1*x_4+1,x_1*x_2*x_3*x_4+1)
+assert( 
+(f,J,X) = noetherNormalization(I) 
+help noetherNormalization
+X_1
+x_3
+--     == 
+--     o4 == (map(A,A,{x_1,(3/5)*x_2+x_4,(-2)*x_2+x_3,x_2}),
+--	  ideal(x_1^2+x_1*x_2+1,(-6/5)*x_1*x_2^3 + (3/5) * 
+--	       ideal(x_1 * (x_2^2) * x_3)
+--	       x_3
+--	  +(-2)*x_1*x_2^2*x_4+x_1*x_2*x_3*x_4+1)
+--	  ,map(A,QQ[x_4,x_3],{x_4,x_3}))
+--o4     
+ 
+--assert(noetherNormalization(
+///
+
 
 --=========================================================================--
 
@@ -272,42 +295,41 @@ document {
 document {
      Key => {noetherNormalization, (noetherNormalization,Ideal), (noetherNormalization,QuotientRing), (noetherNormalization,PolynomialRing)},
      Headline => "data for Noether normalization",
-     Usage => "(f,J,g) = noetherNormalization C",
+     Usage => "(f,J,X) = noetherNormalization C",
      Inputs => {
 	  "C" => null => {"which is either ", ofClass Ideal, " ", TT "I", ", or ", ofClass QuotientRing, " ", TT "R/I", " where ", TT "R", " is ", ofClass PolynomialRing }
 	  },
      Outputs => {
 	  "f" => RingMap => {"an automorphism of ", TT "R"},
 	  "J" => Ideal => { "the image of ", TT "I", " under ", TT "f"},
-	  "g" => RingMap => { "a map from ", ofClass PolynomialRing, " ", TT "S", " to ", TT "R", " whose composite with the projection onto ", TT "R/J", "
-	       is injective and finite" },
+	  "X" => List => { "a list of variables which are algebraically independent in ", TT "R/J"},
 	  },
      "The computations performed in the routine ", TT "noetherNormalization", " use a random linear change of coordinates,
      hence one should expect the output to change each time the routine is executed.",
      EXAMPLE {
 	  "R = QQ[x_1..x_4];",
 	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
-	  "(f,J,g) = noetherNormalization I",
+	  "(f,J,X) = noetherNormalization I",
 	  },
      "The next example shows how when we use the lexicographical ordering, we can see the integrality of ", 
      TT "R/ f I", " over the polynomial ring in ", TT "dim(R/I)", " variables:",
      EXAMPLE {
 	  "R = QQ[x_1..x_5, MonomialOrder => Lex];",
 	  "I = ideal(x_2*x_1-x_5^3, x_5*x_1^3);",
-          "(f,J,g) = noetherNormalization I",
+          "(f,J,X) = noetherNormalization I",
           "transpose gens gb J",
 	  },
      "If ", TT "noetherNormalization", " is unable to place the ideal into the desired position after a few tries, the following warning is given:",
      EXAMPLE {
 	  "R = ZZ/2[a,b];",
 	  "I = ideal(a^2*b+a*b^2+1);",
-	  "(f,J,g) = noetherNormalization I"
+	  "(f,J,X) = noetherNormalization I"
 	  },
      "Here is an example with the option ", TT "Verbose => true", ":",
      EXAMPLE {
 	  "R = QQ[x_1..x_4];",
 	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
-	  "(f,J,g) = noetherNormalization(I,Verbose => true)"
+	  "(f,J,X) = noetherNormalization(I,Verbose => true)"
 	  },
      "The first number in the output visible above gives the number of linear transformations constructed by the routine while attempting to place ", TT "I", " into the desired position.
      The second number tells which ", TO "BasisElementLimit", " was used when computing the (partial) Groebner basis.", 
