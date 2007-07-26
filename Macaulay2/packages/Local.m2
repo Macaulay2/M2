@@ -22,6 +22,17 @@ export {
      maxIdeal
      }
 
+-- This routine, localRing, is not functional yet -----
+--localRing = new method(
+--     Options => {
+--	  MonomialOrder => null
+--	  }
+--     )
+--localRing Ring := R -> localRing(R, ideal vars R)
+--localRing(Ring,Ideal) := (R,P) -> (
+--     R	-- at first, we do nothing
+--     )
+--------------------------------------------------------
 setMaxIdeal = method()
 setMaxIdeal(Ideal) := (maxI) -> (
      R := ring maxI;
