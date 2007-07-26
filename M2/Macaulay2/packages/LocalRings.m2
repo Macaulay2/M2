@@ -1,5 +1,5 @@
 newPackage(
-	"Local",
+	"LocalRings",
     	Version => "1.0", 
     	Date => "September 27, 2006",
     	Authors => {
@@ -118,7 +118,7 @@ localResolution Module := options -> (M) -> (
 
 beginDocumentation()
 
-document { Key => Local,
+document { Key => LocalRings,
      Headline => "Polynomial rings localized at a maximal ideal",
      EM "Local", " is a package for finding minimal generators, syzygies and resolutions
      for polynomial rings localized at a maximal ideal.",
@@ -246,7 +246,7 @@ document {
 end
 -- ###
 restart
-loadPackage "Local"
+loadPackage "LocalRings"
 kk = ZZ/32003
 R = kk[x,y,z,w,SkewCommutative=>true]
 m = matrix{{x,y*z},{z*w,x}}
@@ -283,7 +283,7 @@ res J
 
 restart
 loadPackage "BGG"
-loadPackage "Local"
+loadPackage "LocalRings"
 A=ZZ/101[a,Weights=>{-1},Global=>false]/a^2
 S=ZZ/101[a,x,y,Weights=>{-1,1,1},Global=>false,Degrees=>{0,1,1}]/a^2
 F = map(S,A)
@@ -312,7 +312,7 @@ B = A[x,y,z]
 -- under development by dan
 --------------------------------
 
-newPackage "Local"
+newPackage "LocalRings"
 export {LocalRing,localRing,ambientRing,maxIdeal}
 LocalRing = new Type of EngineRing
 debug Core
@@ -333,7 +333,7 @@ localRing(EngineRing,Ideal) := (R,m) -> (					    -- R = poly ring, m = max idea
      commonEngineRingInitializations S;
      expression S := s -> expression lift(s,R);
      S)
-endPackage "Local"
+endPackage "LocalRings"
 
 -- end
 -- try it out immediately
