@@ -480,9 +480,10 @@ char **argv;
      if (0 != sigsetjmp(loaddata_jump,TRUE)) {
 	  pid = savepid;
 	  if (gotArg("--notify", saveargv)) fprintf(stderr,"--loaded cached memory data\n");
-	  extern char *GC_get_stack_base();
+	  struct GC_stack_base sb;
+	  GC_get_stack_base(&sb);
+	  GC_stackbottom = (char *)sb.mem_base;	/* the stack may have moved (since we may have reloaded all the static data) */
      	  GC_free_space_divisor = 4;
-	  GC_stackbottom = GC_get_stack_base();	/* the stack may have moved!!! */
 	  old_collections = GC_gc_no;
           {
 	       char **environ0;
