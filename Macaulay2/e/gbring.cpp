@@ -542,6 +542,60 @@ gbvector * GBRing::gbvector_lead_term(int nparts,
     }
 }
 
+static bool isparallel(M2_arrayint w, int *e, int *f)
+  // We assume: w->len is the same as the number of variables.
+{
+  // true if e-f is a positive multiple of w
+
+  int i, j, a, b;
+  int nvars = w->len;
+  for (i=0; i<nvars; i++)
+    {
+      a = e[i] - f[i];
+      if (a) break;
+      if (w->array[i] != 0) return false;
+    }
+  // i is the first spot where e, f differ
+  for (j=i+1; j<nvars; j++)
+    {
+      b = e[j]-f[j];
+      if (a*w->array[j] != b*w->array[i])
+	return false;
+    }
+  return true;
+}
+
+gbvector * GBRing::gbvector_parallel_lead_terms(M2_arrayint w,
+					       const FreeModule *F, 
+					       const gbvector *leadv,
+					       const gbvector *v)
+{
+  if (v == NULL) return NULL;
+
+  // loop through every term of v.  Keep those t that satisfy: exp(leadv) - exp(t)
+  // is a multiple of w
+  // 
+  exponents lead = exponents_make();
+  M->to_expvector(leadv->monom, lead);
+  exponents e = exponents_make();
+
+  gbvector head;
+  gbvector *result = &head;
+  for (const gbvector *t = v; t != NULL; t = t->next)
+    {
+      M->to_expvector(t->monom, e);
+      if (leadv == t || isparallel(w,lead,e))
+	{
+	  result->next = gbvector_copy_term(t);
+	  result = result->next;
+	}
+    }
+  result->next = NULL;
+  exponents_delete(lead);
+  exponents_delete(e);
+  return head.next;
+}
+
 void GBRing::gbvector_get_lead_monomial(const FreeModule *F,
 					const gbvector *f, 
 					int *result)
@@ -981,6 +1035,40 @@ void GBRing::gbvector_reduce_lead_term(const FreeModule *F,
 
   find_reduction_coeffs(F,f,g,u,v);
   find_reduction_monomial(F,f,g,comp,_MONOM1);
+
+  if (!K->is_equal(u,_one))
+    {
+      gbvector_mult_by_coeff_to(f,u); // modifies f
+      gbvector_mult_by_coeff_to(flead,u);
+      gbvector_mult_by_coeff_to(fsyz,u);
+      if (use_denom) K->mult_to(denom, u);
+    }
+
+  gbvector *result1 = mult_by_term(F,g, v,_MONOM1,comp);
+  gbvector_add_to(F,f,result1);
+  if (gsyz != 0) 
+    {
+      gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,_MONOM1, comp);
+      gbvector_add_to(Fsyz,fsyz,result_syz1);
+    }
+}
+
+void GBRing::gbvector_reduce_with_marked_lead_term(const FreeModule *F,
+				       const FreeModule *Fsyz,
+				       gbvector * flead,
+				       gbvector * &f,
+				       gbvector * &fsyz,
+				       const gbvector *ginitial,
+				       const gbvector *g,
+				       const gbvector *gsyz,
+				       bool use_denom,
+				       ring_elem &denom)
+{
+  int comp;
+  ring_elem u,v;
+
+  find_reduction_coeffs(F,f,ginitial,u,v);
+  find_reduction_monomial(F,f,ginitial,comp,_MONOM1);
 
   if (!K->is_equal(u,_one))
     {
@@ -1637,67 +1725,28 @@ gbvector * gbvectorHeap::current_value() const
   return result;
 }
 
-
-
-
-
-
-#if 0
-// gbvector *GBRing::mult_by_exp_term(const FreeModule *F,
-// 				   const gbvector *f,
-// 				   const ring_elem u,
-// 				   const int *exp,
-// 				   int comp)
-// {
-//   // There are several versions of this routine:
-//   // (1) Usual poynomial ring
-//   // (2) Skew-commutative
-//   // (3) Weyl algebra
-//   // (4) Solvable algebra
-//   // IE, this is a virtual function
-// }
-#endif
-
-#if 0
-// void GBRing::normal_form(const FreeModule *F, 
-// 			 const FreeModule *Fsyz,
-// 			 gbvector *&f,
-// 			 gbvector *&fsyz)
-// {
-//   // TODO
-//   // What is this really supposed to do?  Reduce fsyz, and possibly multiply f
-//   //  by some scalar?
-// }
-#endif
-
-void GBRing::reduce_lead_term_heap(const FreeModule *F,
-				   const FreeModule *Fsyz,
-				   const gbvector *fcurrent_lead,
-				   const int *exponents,// exponents of fcurrent_lead
-				   gbvector * flead,
-				   gbvectorHeap &f,
-				   gbvectorHeap &fsyz,
-				   const gbvector *g,
-				   const gbvector *gsyz)
-  //TODO
+void GBRing::reduce_marked_lead_term_heap(const FreeModule *F,
+					  const FreeModule *Fsyz,
+					  const gbvector *fcurrent_lead,
+					  const int *exponents,// exponents of fcurrent_lead
+					  gbvector * flead,
+					  gbvectorHeap &f,
+					  gbvectorHeap &fsyz,
+					  const gbvector *marked_in_g, // lead term of g to use to determine multipliers
+					  const gbvector *g,
+					  const gbvector *gsyz)
 {
-  // Have the lead term of the heap f.
-  // Compute coeffs, monom between fcurrent_lead, and g.
-  // If u is not 1, then multiply flead by u, f by u, fsyz by u.
-  // mult g, gsyz by v, add them to f, fsyz.
-
   int comp;
   ring_elem u,v;
 
-  find_reduction_coeffs(F,fcurrent_lead,g,u,v);
-  find_reduction_monomial(F,fcurrent_lead,g,comp,_MONOM1);
+  find_reduction_coeffs(F,fcurrent_lead,marked_in_g,u,v);
+  find_reduction_monomial(F,fcurrent_lead,marked_in_g,comp,_MONOM1);
 
   if (!K->is_equal(u,_one))
     {
       gbvector_mult_by_coeff_to(flead,u);
       f.mult_by_coeff(u);
       fsyz.mult_by_coeff(u);
-      //      if (use_denom) K->mult_to(denom, u);
     }
 
   gbvector *result1 = mult_by_term(F,g, v,_MONOM1,comp);
@@ -1709,8 +1758,18 @@ void GBRing::reduce_lead_term_heap(const FreeModule *F,
     }
 }
 
-
-
+void GBRing::reduce_lead_term_heap(const FreeModule *F,
+				   const FreeModule *Fsyz,
+				   const gbvector *fcurrent_lead,
+				   const int *exponents,// exponents of fcurrent_lead
+				   gbvector * flead,
+				   gbvectorHeap &f,
+				   gbvectorHeap &fsyz,
+				   const gbvector *g,
+				   const gbvector *gsyz)
+{
+  reduce_marked_lead_term_heap(F,Fsyz,fcurrent_lead,exponents,flead,f,fsyz,g,g,gsyz);
+}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

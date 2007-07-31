@@ -264,6 +264,49 @@ forceGB Matrix := GroebnerBasis => options -> (f) -> (
      f.cache#type = g;
      g)
 
+-- Marked GB --
+markedGB = method(
+     TypicalValue => GroebnerBasis,
+     Options => {
+          MinimalMatrix => null,
+	  SyzygyMatrix => null,
+	  ChangeMatrix => null
+	  }
+     )
+
+markedGB(Matrix,Matrix) := GroebnerBasis => options -> (leadterms,f) -> (
+     if not isFreeModule source f then error "expected a free module";
+     if target leadterms =!= target f then error "expected leadterms and elements in the same free module";
+     if numgens source f =!= numgens source leadterms
+     then error "expected the same number of generators as lead terms";
+     minmat := if options.MinimalMatrix === null
+               then f
+               else options.MinimalMatrix;
+     changemat := if options.ChangeMatrix === null
+               then id_(source f)
+               else options.ChangeMatrix;
+     syzmat := if options.SyzygyMatrix === null
+               then map(target changemat, target changemat, 0)
+               else options.SyzygyMatrix;
+     nsyz := numgens target changemat;
+     if nsyz >= numgens source minmat then nsyz = -1;
+     type := gbTypeCode new OptionTable from { SyzygyRows => numgens target syzmat,
+	                                       Syzygies => options.SyzygyMatrix =!= null, 
+					       ChangeMatrix => options.ChangeMatrix =!= null, 
+					       HardDegreeLimit => null };
+     g := new GroebnerBasis;
+     if debugLevel > 5 then (
+	  registerFinalizer(g,"gb (forceGB)");
+	  );
+     g.matrix = Bag {f};
+     g.ring = ring f;
+     g.target = target f;
+     g.returnCode = 0;
+     g.RawComputation = rawMarkedGB(raw leadterms, raw minmat, raw f, raw changemat, raw syzmat);
+     f.cache#type = g;
+     g)
+---------------
+
 Matrix // GroebnerBasis := Matrix => (n,g) -> quotient(n,g)
 quotient(Matrix,GroebnerBasis) := Matrix => opts -> (n,g) -> (
      -- this gb might not be one with change of basis matrix attached...

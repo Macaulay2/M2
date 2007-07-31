@@ -86,7 +86,8 @@ public:
   virtual void set_gb(VECTOR(POLY) &polys0) = 0;
 
   virtual void minimalize(const VECTOR(POLY) &polys0,
-			  bool auto_reduce=true) = 0;
+    bool auto_reduce=true) { }
+
   // I have to decide: does this ADD to the existing set?
 
   // Choose a minimal set of generators of the lead terms.
@@ -99,7 +100,7 @@ public:
   //   base is a frac field, # frac vars is given.
   //   ring has a local term order: reduction can not be complete...
 
-  const VECTOR(POLY) &get() const { return polys; }
+  //  const VECTOR(POLY) &get() const { return polys; }
 
   virtual void remainder(POLY &f, bool use_denom, ring_elem &denom) = 0;
   // WARNING: this should only be used with term orders!

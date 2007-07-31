@@ -798,6 +798,7 @@ export {
 	symbol makeDocumentTag,
 	symbol makePackageIndex,
 	symbol map,
+	symbol markedGB,
 	symbol match,
 	symbol mathML,
 	symbol matrix,

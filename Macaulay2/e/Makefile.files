@@ -36,6 +36,7 @@ INTERFACE = \
 	res-a2 \
 	reducedgb \
 	reducedgb-field \
+	reducedgb-marked \
 	reducedgb-field-local \
 	reducedgb-ZZ \
 	montable \

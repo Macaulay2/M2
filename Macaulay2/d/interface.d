@@ -2730,6 +2730,31 @@ export rawGBForce(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawGBForce", rawGBForce);
 
+export rawMarkedGB(e:Expr):Expr := (
+     when e is a:Sequence do 
+     if length(a) == 5 then 
+     when a.0 is leadterms:RawMatrix do
+     when a.1 is m:RawMatrix do 
+     when a.2 is gb:RawMatrix do 
+     when a.3 is change:RawMatrix do 
+     when a.4 is syz:RawMatrix do toExpr(
+	  Ccode(RawComputationOrNull, 
+		    "(engine_RawComputationOrNull)rawMarkedGB(",
+		    "(Matrix *)", leadterms,
+		    ",(Matrix *)", m,
+		    ",(Matrix *)", gb,
+		    ",(Matrix *)", change,
+		    ",(Matrix *)", syz,
+		    ")" ))
+     else WrongArgMatrix(5)
+     else WrongArgMatrix(4)
+     else WrongArgMatrix(3)
+     else WrongArgMatrix(2)
+     else WrongArgMatrix(1)
+     else WrongNumArgs(5)
+     else WrongNumArgs(5));
+setupfun("rawMarkedGB", rawMarkedGB);
+
 export rawGBSetStop(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 10 then WrongNumArgs(10) else

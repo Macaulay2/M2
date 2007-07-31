@@ -154,6 +154,14 @@ time G =  gens gb(I, Algorithm=>F4, GBDegrees=>toList(numgens ring I:1)
     , Strategy=>UseSyzygies
     )
 
+R = ZZ/23[x,y,z,h];
+I = ideal{x^2*y-z^2*h, x*z^2-y^2*h, y*z^3-x^2*h}
+gbTrace = 3
+time G =  gens gb(I, Algorithm=>F4, GBDegrees=>toList(numgens ring I:1)
+     , DegreeLimit => {5}
+     , Strategy=>UseSyzygies
+     )
+
 -- To work on:
 -- (a) Inhomogeneous GB (are they working yet?)
 -- (b) Over modules: problem seems to be a sorting issue

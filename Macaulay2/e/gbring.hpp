@@ -253,6 +253,11 @@ public:
   gbvector * gbvector_lead_term(int n, 
 				const FreeModule *F, 
 				const gbvector *f);
+  
+  gbvector * gbvector_parallel_lead_terms(M2_arrayint w,
+					 const FreeModule *F, 
+					 const gbvector *leadv,
+					 const gbvector *v);
 
   void gbvector_get_lead_monomial(const FreeModule *F,
 				  const gbvector *f, 
@@ -343,6 +348,17 @@ public:
 				 const gbvector *gsyz);
   // Same as calling gbvector_reduce_lead_term with use_denom=false.
 
+  void gbvector_reduce_with_marked_lead_term(const FreeModule *F,
+				       const FreeModule *Fsyz,
+				       gbvector * flead,
+				       gbvector * &f,
+				       gbvector * &fsyz,
+				       const gbvector *ginitial,
+				       const gbvector *g,
+				       const gbvector *gsyz,
+				       bool use_denom,
+				       ring_elem &denom);
+
   bool gbvector_reduce_lead_term_ZZ(const FreeModule *F,
 				    const FreeModule *Fsyz,
 				    gbvector * &f,
@@ -397,6 +413,17 @@ public:
 			     gbvector * flead,
 			     gbvectorHeap &f,
 			     gbvectorHeap &fsyz,
+			     const gbvector *g,
+			     const gbvector *gsyz);
+
+  void reduce_marked_lead_term_heap(const FreeModule *F,
+			     const FreeModule *Fsyz,
+			     const gbvector *fcurrent_lead,
+			     const int *exponents,// exponents of fcurrent_lead
+			     gbvector * flead,
+			     gbvectorHeap &f,
+			     gbvectorHeap &fsyz,
+			     const gbvector *marked_in_g,
 			     const gbvector *g,
 			     const gbvector *gsyz);
   

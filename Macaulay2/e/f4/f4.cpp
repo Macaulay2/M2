@@ -701,9 +701,9 @@ void F4GB::do_spairs()
   end_time = clock();
   clock_gauss += end_time - begin_time;
 
-  fprintf(stderr, "---------\n");
-  show_matrix();
-  fprintf(stderr, "---------\n");
+  //  fprintf(stderr, "---------\n");
+  //  show_matrix();
+  //  fprintf(stderr, "---------\n");
 
   nsecs = end_time - begin_time;
   nsecs /= CLOCKS_PER_SEC;
