@@ -1,14 +1,3 @@
-needsPackage "FourierMotzkin"
-load "gfanInterface.m2"
-
-bd = (inL,L) -> (
-  M := flatten apply(#inL, i -> (
-    f := inL#i;
-    g := L#i;
-    m = first exponents(f);
-    apply(exponents(g-f), e -> m-e)));
-  transpose matrix unique select(M, v -> any(v, i -> i < 0)))
-
 interm = (w,ing,g) -> (
      -- take all terms c*x^e from g s.t. log(ing) - e is a scalar multiple of w.
      isScalarMult := (e,f) -> (
@@ -20,10 +9,25 @@ interm = (w,ing,g) -> (
      sum (terms g)_p
      )
 
-inwmon = (w,inL,L) -> ideal apply(#L, i -> interm(w,inL#i,L#i))
-     -- w is an exponent vector
-     -- take all of the terms u of an element g of L st log(in(g)-u)
-     -- is a (rational) multiple of w.
+leadTerm(List,GroebnerBasis) := (w,G) -> (
+     time L := flatten entries generators G;
+     inL := flatten entries leadTerm G;
+     time matrix {apply(#L, i -> interm(w,inL#i,L#i))}
+     )
+
+leadTerm(List,List,List) := (w,inL,L) -> (
+     matrix {apply(#L, i -> interm(w,inL#i,L#i))}
+     )
+-------------------------------------------------------
+
+bd = (inL,L) -> (
+  M := flatten apply(#inL, i -> (
+    f := inL#i;
+    g := L#i;
+    m = first exponents(f);
+    apply(exponents(g-f), e -> m-e)));
+  transpose matrix unique select(M, v -> any(v, i -> i < 0)))
+
 
 -- These are normalized differences (u is normalized)
 dmon = method()
@@ -33,11 +37,6 @@ dmon List := (u) -> (
      {join({a, sum u},-reverse u), u}
      )
 
-findwtvec = (inL,L) -> (
-     apply(#inL, i -> (
-	       first fourierMotzkin groebnerCone({inL#i},{L#i})
-	       ))
-     )
 computeNextW = (w,inL,L) -> (
      -- does the case grevlex --> lex
      S = entries transpose bd(inL, L);
@@ -53,53 +52,77 @@ computeNextW = (w,inL,L) -> (
 	  Sp2orig = Sp2;
 	  Sp2 = hashTable apply(pairs Sp2, (i,L) -> (i, if i < wmon_0_0 then {}
 		    else if i > wmon_0_0 then L
-		    else select(L, d -> wmon < d)))
+		    else select(L, d -> wmon > d)))
 	  );
      q = select(keys Sp2, k -> #Sp2#k > 0);
      if #q == 0 
      then null
      else (
-	  p = max q;
-	  Sp2#p#0#1
+	  p = min q;
+	  Sp2#p#-1#1
 	  )
      )
 
+-- The following is NOT YET FUNCTIONAL!
+-- version using engine version of markedGB's
 groebnerWalktoLex = method()
 groebnerWalktoLex(Ideal,Ring) := (I,Rlast) -> (
      R := ring I;
-     w = null;
-     G = gb I;
-     L = flatten entries gens G;
-     inL = L/leadTerm;
-     while (w = computeNextW(w,inL,L)) =!= null do (
-	  << "-- start loop w = " << w << endl;
-	  inwG = substitute(inwmon(w,inL,L), Rlast);
-	  << "   inwG = " << inwG << endl;
-	  G1 = gens gb inwG;
-	  inG1 = substitute(leadTerm G1,R);
-	  G1 = substitute(G1,R);
-	  G1 = substitute(gens gb inwG,R);
-	  << "   G1   = " << netList flatten entries G1 << endl;
-	  << "   inG1 = " << netList flatten entries inG1 << endl;
-	  G2 = G1 - (G1 % G);
-	  L = flatten entries G2;
-	  inL = (flatten entries inG1)/leadTerm;
-	  tau = weightVector(inL,L);
-	  R = (coefficientRing R)[gens R, MonomialOrder=>{Weights=>tau,Lex}];
-	  G = forceGB substitute(G2, R);
-	  L = flatten entries gens G;
-	  -- this should be the same as inL above:
-	  inL2 = apply(inL, g -> substitute(g,R));
-	  inL = L/leadTerm;
-	  if monomialIdeal inL != monomialIdeal inL2
-	  then error "two initial ideals are different";	  
+     ww = null;
+     inL := substitute(leadTerm gens gb I, Rlast);
+     L := substitute(gens gb I, Rlast);
+     -- From here on, all computations are in Rlast
+     G = markedGB(inL,L);
+     while (time ww = computeNextW(ww,flatten entries leadTerm G, time flatten entries gens G)) =!= null do (
+	  << "-- start loop ww = " << ww << endl;
+	  time inwG = leadTerm(ww, G);
+	  H = gens gb inwG; -- in target ring
+	  inH = leadTerm H;
+	  H' = H - (time (H % G)) * 1_Rlast;
+	  time G = markedGB(inH,H'); -- this autoreduces the marked GB
 	  );
-     forceGB substitute(gens G,Rlast)
+     time forceGB gens G -- This one is an actual GB in Rlast order...
+     )
+
+-- The following is NOT YET FUNCTIONAL!
+-- version using engine version of markedGB's
+groebnerWalktoLex = method()
+groebnerWalktoLex(Ideal,Ring) := (I,Rlast) -> (
+     R := ring I;
+     ww = null;
+     inL := substitute(leadTerm gens gb I, Rlast);
+     L := substitute(gens gb I, Rlast);
+     -- From here on, all computations are in Rlast
+     G = markedGB(inL,L);
+     L = flatten entries gens G;
+     inL = flatten entries leadTerm G;
+     while (time ww = computeNextW(ww,inL, L)) =!= null do (
+	  << "-- start loop ww = " << ww << endl;
+	  time inwG = leadTerm(ww, inL,L);
+	  H = gens gb inwG; -- in target ring
+	  inH = leadTerm H;
+	  H' = H - (time (H % G)) * 1_Rlast;
+	  time G = markedGB(inH,H'); -- this autoreduces the marked GB
+	  time L = flatten entries gens G;
+	  time inL = flatten entries leadTerm G;
+	  );
+     time forceGB gens G -- This one is an actual GB in Rlast order...
      )
      
 end
 restart
 load "/Users/mike/M2/Macaulay2/bugs/mike/devel-gb-walk.m2"
+-- test of marked GB reduction
+R = ZZ/101[a..e, MonomialOrder=>Lex]
+I = ideal(a*b-c, b*c-d, c*d-e^2)
+inL = matrix{{c*d,c^2,b*c,a*b,b*e^2,a*d^2}}
+L = matrix{{c*d-e^2, c^2-a*d, b*c-d, a*b-c, b*e^2-d^2, a*d^2-c*e^2}}
+G = markedGB(inL,L)
+(a*b^3) % G
+leadTerm G
+gens G
+
+findEdgeMonomialOrder {1,0,-3/2,5}
 kk = ZZ/101
 kk = QQ
 R = kk[x,y,z]
@@ -110,15 +133,56 @@ gbTrace=3
 time gens gb I;
 time gens gb(homogenize(I,t));
 
+-- Example from paper
+restart
+load "/Users/mike/M2/Macaulay2/bugs/mike/devel-gb-walk.m2"
+kk = QQ
+R = kk[x,y]
+I = ideal"x2-y3,x3-y2-x"
+Rlex = kk[x,y,z,MonomialOrder=>Lex]
+groebnerWalktoLex(I,Rlex)
+gens oo
+
+-- Example 6.1 from paper (ISSAC 1997 challenge)
+restart
+load "/Users/mike/M2/Macaulay2/bugs/mike/devel-gb-walk.m2"
+kk = QQ
+R = kk[x,y,z,w]
+I = ideal"
+        -2w2+9wx+8x2+9wy+9xy+6y2-7wz-3xz-7yz-6z2-4w+8x+4y+8z+2,
+        3w2-5wx+4x2-3wy+2xy+9y2-6wz-2xz+6yz+7z2+9w+7x+5y+7z+5,
+        7w2+5wx+2x2+3wy+9xy-4y2-5wz-7xz-5yz-4z2-5w+4x+6y-9z+2,
+        8w2+5wx+5x2-4wy+2xy+7y2+2wz-7xz-8yz+7z2+3w-7x-7y-8z+8
+     "
+Rlex = kk[x,y,z,w,MonomialOrder=>Lex]
+time groebnerWalktoLex(I,Rlex)
+gens oo
+
+-- Example 6.3 from paper
+restart
+load "/Users/mike/M2/Macaulay2/bugs/mike/devel-gb-walk.m2"
+kk = QQ
+R = kk[x,y,z]
+I = ideal"15+10x2y2+13yz+14xy2z+8x2yz2+11xy3z2,
+          5+4xy+8y2,
+	  16x3+19y+4x2y"
+Rlex = kk[x,y,z,MonomialOrder=>Lex]
+time groebnerWalktoLex(I,Rlex)
+gens oo
+Ilex = substitute(I,Rlex)
+gbTrace=3
+time gens gb Ilex
+
 restart
 load "/Users/mike/M2/Macaulay2/bugs/mike/devel-gb-walk.m2"
 --ord1 = matrix"1,1,1;0,0,-1;0,-1,0"
 --ord2 = id_(ZZ^3)
 kk = QQ
+kk = ZZ/32003
 R = kk[x,y,z]
 I = ideal"16+3x3+16x2z+14x2y3,6+y3z+17x2z2+7xy2z2+13x3z2"
 Rlex = kk[x,y,z,MonomialOrder=>Lex]
-groebnerWalktoLex(I,Rlex)
+time groebnerWalktoLex(I,Rlex)
 gens oo
 
 L = flatten entries gens gb I

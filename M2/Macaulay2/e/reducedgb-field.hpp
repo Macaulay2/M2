@@ -29,7 +29,6 @@ public:
 
   virtual void minimalize(const VECTOR(POLY) &polys0,
 			  bool auto_reduced);
-  // I have to decide: does this ADD to the existing set?
 
   virtual void remainder(POLY &f, bool use_denom, ring_elem &denom);
 

@@ -28,7 +28,20 @@ public:
 	     const Matrix *change,
 	     const Matrix *syz0);
 
+  GBDeclared(const Matrix *leadterms,
+	     const Matrix *m0,
+	     const Matrix *gb,
+	     const Matrix *change,
+	     const Matrix *syz0);
+
   static GBComputation *create(const Matrix *m,
+			       const Matrix *gb,
+			       const Matrix *change,
+			       const Matrix *syz);
+  // Possibly returns NULL, if an error message is reported
+
+  static GBComputation *create(const Matrix *leadterms,
+			       const Matrix *m,
 			       const Matrix *gb,
 			       const Matrix *change,
 			       const Matrix *syz);

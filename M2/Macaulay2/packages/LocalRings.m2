@@ -56,8 +56,10 @@ options.LengthLimit
 
 localsyz = method()
 localsyz(Matrix) := (m) -> (
-     C = res(coker m,LengthLimit=>3);
-     C.dd_2 * localComplement(C.dd_3))
+     localMingens syz m
+     --C = res(coker m,LengthLimit=>3);
+     --C.dd_2 * localComplement(C.dd_3)
+     )
 
 localMingens = method()
 localMingens(Matrix) := Matrix => (m) -> (
@@ -245,6 +247,38 @@ document {
 
 end
 -- ###
+restart
+loadPackage "LocalRings"
+kk=ZZ/101
+S=kk[t,x,y,z]
+setMaxIdeal ideal vars S
+assert(S.residueMap == map(S,S,{0,0,0,0}))
+
+m=matrix"x,y2;z3,x4"
+M=coker m
+assert(localsyz m == 0)
+C = localResolution M -- wrong answer, OK now: MES
+
+N=coker map (S^{-2,0},S^{-3,-4}, m)
+--betti res N --without this line some further errors are produced below, different than with this line!
+localResolution N -- gives error msg "key not found in hash table", OK mow: MES
+
+
+betti (FFM=res (M, LengthLimit => 4)) -- correct, nonminimal
+FFM.dd
+betti (FF=localResolution M)
+FF.dd -- this is WRONG, not even composable maps
+localResolution M
+
+betti res N --without the res N line above, this doesn't work! -- MES: YET TO BE FIXED
+betti (FF=localResolution N) -- same for this, MES: THIS SEEMS TO WORK NOW
+localResolution N -- and this MES: WORKING NOW
+NN=coker map (S^2, S^2, m)
+resolution NN
+localResolution NN
+
+
+
 restart
 loadPackage "LocalRings"
 kk = ZZ/32003

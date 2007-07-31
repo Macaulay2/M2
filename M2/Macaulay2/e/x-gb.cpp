@@ -114,6 +114,22 @@ IM2_GB_force(const Matrix *m, /* trimmed or minimal gens, may be the same as gb 
      }
 }
 
+ComputationOrNull *
+rawMarkedGB(const Matrix *leadterms,
+	     const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
+	     const Matrix *gb,
+	     const Matrix *change, /* same number of columns as 'gb', if not 0 */
+	     const Matrix *syz) /* possibly 0 too, otherwise same rows as change */
+{
+     try {
+	  return GBDeclared::create(leadterms,m,gb,change,syz);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
+}
+
 ComputationOrNull* 
 IM2_Computation_set_stop(Computation *G,
 		M2_bool always_stop,

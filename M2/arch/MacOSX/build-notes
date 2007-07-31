@@ -6,8 +6,11 @@
  cd ~/M2-build
  mkdir M2-0.9.96
  cd M2-0.9.96
+
  svn co svn://macaulay2.math.uiuc.edu/Macaulay2/stable/2006-11-05-0.9.95 M2
+ svn co svn://macaulay2.math.uiuc.edu/Macaulay2/tags/Macaulay2-0-9-96 M2
  svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+
  mkdir installed
  mkdir build
 ## Step 2. Build Macaulay2 ##
@@ -16,7 +19,7 @@
  cd M2
  make
  cd ../build
- ../M2/configure --prefix=/Users/mike/M2-build/M2-0.9.96/installed \
+ ../M2/configure --prefix=/Users/mike/M2-build/M2-0.9.97/installed \
               --with-veclib \
               --enable-altivec \
 	      CFLAGS=-g \
@@ -31,7 +34,8 @@
  make
  make install # this can take awhile (started: 9:33 pm, done at 10:10pm, MBP 2 GZ)
  make install RemakeAllDocumentation=true RerunExamples=true
- 
+ make -k check
+  
 ## Step 3.  Create the disk image
 export VERSION=0.9.95
 export VERSION=0.9.96

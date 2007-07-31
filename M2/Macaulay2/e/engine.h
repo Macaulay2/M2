@@ -1582,7 +1582,13 @@ enum gbTraceValues
 				  const Matrix *gb,
 				  const Matrix *change,
 				  const Matrix *syz); /* drg: connected rawGBForce */
-  
+
+  ComputationOrNull *rawMarkedGB(const Matrix *leadterms,
+				 const Matrix *m,
+				 const Matrix *gb,
+				 const Matrix *change,
+				 const Matrix *syz); /* mes: connected rawMarkedGB */
+
   ComputationOrNull *IM2_GB_set_hilbert_function(Computation *G,
 						 const RingElement *h); /* drg: connected rawGBSetHilbertFunction */
 
