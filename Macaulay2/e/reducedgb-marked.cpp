@@ -147,6 +147,8 @@ void MarkedGB::marked_remainder(POLY &f, bool use_denom, ring_elem &denom, gbvec
   h.f = head.next;
   f.f = h.f;
   f.fsyz = h.fsyz;
+  R->gbvector_sort(F, f.f);
+  R->gbvector_sort(Fsyz, f.fsyz);
   R->exponents_delete(_EXP);
 }
 
@@ -188,6 +190,7 @@ void MarkedGB::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
     }
   h = head.next;
   f = h;
+  R->gbvector_sort(F, f);
   R->exponents_delete(_EXP);
 }
 
@@ -203,6 +206,17 @@ const MatrixOrNull *MarkedGB::get_initial(int nparts)
     {
       gbvector *f = R->gbvector_lead_term(-1,F,leadterms[i]);
       mat.append(originalR->translate_gbvector_to_vec(F, f));
+    }
+  return mat.to_matrix();
+}
+
+const MatrixOrNull *MarkedGB::get_parallel_lead_terms(M2_arrayint w)
+{
+  MatrixConstructor mat(F, 0);
+  for (int i=0; i<polys.size(); i++)
+    {
+      gbvector *f = R->gbvector_parallel_lead_terms(w, F, leadterms[i], polys[i].f);
+      mat.append(originalR->translate_gbvector_to_vec(F,f));
     }
   return mat.to_matrix();
 }

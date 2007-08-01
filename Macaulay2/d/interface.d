@@ -2887,6 +2887,20 @@ export rawGBGetLeadTerms(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawGBGetLeadTerms", rawGBGetLeadTerms);
 
+export rawGBGetParallelLeadTerms(e:Expr):Expr := (
+     when e is a:Sequence do 
+     if length(a) == 2 then 
+     when a.0 is G:RawComputation do (
+     if !isSequenceOfSmallIntegers(a.1) then WrongArg(2,"a sequence of small integers") else
+     toExpr( Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawGBGetParallelLeadTerms(", 
+	"(Computation *)", G, ",", 
+	"(M2_arrayint)", getSequenceOfSmallIntegers(a.1),
+	")" )))
+     else WrongArg(1,"a raw computation")
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
+setupfun("rawGBGetParallelLeadTerms", rawGBGetParallelLeadTerms);
+
 export rawResolutionGetFree(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 

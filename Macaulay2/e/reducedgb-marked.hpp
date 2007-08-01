@@ -52,6 +52,9 @@ public:
   virtual void remainder(gbvector *&f, bool use_denom, ring_elem &denom);
 
   virtual const MatrixOrNull *get_initial(int nparts);
+
+  virtual const MatrixOrNull *get_parallel_lead_terms(M2_arrayint w);
+
 };	     
 
 #endif

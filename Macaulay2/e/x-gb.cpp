@@ -268,6 +268,23 @@ rawGBGetLeadTerms(Computation *C, int nparts)
      }
 }
 
+const MatrixOrNull *
+rawGBGetParallelLeadTerms(Computation *C, M2_arrayint w)
+{
+     try {
+	  clear_emit_size();
+	  GBComputation *G = C->cast_to_GBComputation();
+	  if (G != 0)
+	    return G->get_parallel_lead_terms(w);
+	  ERROR("computation type unknown or not implemented");
+	  return 0;
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
+}
+
 const MatrixOrNull *rawGBSyzygies(Computation *C)
   /* Yields a matrix containing the syzygies computed so far
      via the GB computation C, assuming that 'collect_syz' was
