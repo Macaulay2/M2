@@ -2279,6 +2279,12 @@ const MatrixOrNull *gbA::get_initial(int nparts)
   return minimal_gb->get_initial(nparts);
 }
 
+const MatrixOrNull *gbA::get_parallel_lead_terms(M2_arrayint w)
+{
+  minimalize_gb();
+  return minimal_gb->get_parallel_lead_terms(w);
+}
+
 const MatrixOrNull *gbA::matrix_remainder(const Matrix *m)
 {
   minimalize_gb();

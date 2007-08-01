@@ -1036,6 +1036,18 @@ const MatrixOrNull *GB_comp::get_initial(int nparts)
   return mat.to_matrix();
 }
 
+const MatrixOrNull *GB_comp::get_parallel_lead_terms(M2_arrayint w)
+{
+  start_computation();
+  MatrixConstructor mat(_F, 0);
+  for (int i=0; i<_gb.length(); i++)
+    {
+      gbvector *f = _GR->gbvector_parallel_lead_terms(w, _F, _gb[i]->f, _gb[i]->f);
+      mat.append(originalR->translate_gbvector_to_vec(_F,f));
+    }
+  return mat.to_matrix();
+}
+
 const MatrixOrNull *GB_comp::matrix_remainder(const Matrix *m)
 {
   if (m->get_ring() != originalR)

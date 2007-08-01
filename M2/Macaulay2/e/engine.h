@@ -1599,6 +1599,8 @@ enum gbTraceValues
 
   const MatrixOrNull *rawGBGetLeadTerms(Computation *G, int nparts);
 
+  const MatrixOrNull *rawGBGetParallelLeadTerms(Computation *C, M2_arrayint w);
+
   const MatrixOrNull *rawGBMinimalGenerators(Computation *C);
   /* Yields a matrix whose columns form a minimal generating set
      for the ideal or submodule, as computed so far.  In the

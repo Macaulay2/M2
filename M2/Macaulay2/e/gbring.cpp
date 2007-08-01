@@ -808,6 +808,35 @@ void GBRing::gbvector_add_to(const FreeModule *F,
       }
 }
 
+void GBRing::gbvector_sort(const FreeModule *F, gbvector *&f)
+{
+  // Divide f into two lists of equal length, sort each,
+  // then add them together.  This allows the same monomial
+  // to appear more than once in 'f'.
+  
+  if (f == NULL || f->next == NULL) return;
+  gbvector *f1 = NULL;
+  gbvector *f2 = NULL;
+  while (f != NULL)
+    {
+      gbvector *t = f;
+      f = f->next;
+      t->next = f1;
+      f1 = t;
+
+      if (f == NULL) break;
+      t = f;
+      f = f->next;
+      t->next = f2;
+      f2 = t;
+    }
+  
+  gbvector_sort(F,f1);
+  gbvector_sort(F,f2);
+  gbvector_add_to(F,f1,f2);
+  f = f1;
+}
+
 void GBRing::gbvector_text_out(buffer &o,
 			       const FreeModule *F,
 			       const gbvector *v) const

@@ -73,6 +73,8 @@ public:
 
   virtual const MatrixOrNull *get_initial(int nparts) { return G->get_initial(nparts); }
 
+  virtual const MatrixOrNull *get_parallel_lead_terms(M2_arrayint w) { return G->get_parallel_lead_terms(w); }
+
   ////////////////////////////////
   // Normal forms and lifting ////
   ////////////////////////////////

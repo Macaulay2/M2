@@ -1,3 +1,9 @@
+debug Core
+parallelLeadTerms = method()
+parallelLeadTerms(List,GroebnerBasis) := (w,G) -> (
+     map(ring G, rawGBGetParallelLeadTerms(raw G,w))
+     )
+
 interm = (w,ing,g) -> (
      -- take all terms c*x^e from g s.t. log(ing) - e is a scalar multiple of w.
      isScalarMult := (e,f) -> (
@@ -59,7 +65,9 @@ computeNextW = (w,inL,L) -> (
      then null
      else (
 	  p = min q;
-	  Sp2#p#-1#1
+	  result := Sp2#p#-1#1;
+	  gcdresult := gcd result;
+	  apply(result, x -> lift(x/gcdresult,ZZ))
 	  )
      )
 
@@ -96,16 +104,22 @@ groebnerWalktoLex(Ideal,Ring) := (I,Rlast) -> (
      G = markedGB(inL,L);
      L = flatten entries gens G;
      inL = flatten entries leadTerm G;
+     redtime = 0.0;
+     cptime = 0.0;
      while (time ww = computeNextW(ww,inL, L)) =!= null do (
 	  << "-- start loop ww = " << ww << endl;
-	  time inwG = leadTerm(ww, inL,L);
+	  inwG = parallelLeadTerms(ww,G);
 	  H = gens gb inwG; -- in target ring
 	  inH = leadTerm H;
-	  H' = H - (time (H % G)) * 1_Rlast;
+	  t := timing(H' = H - (H % G));
+	  redtime = redtime + t#0;
 	  time G = markedGB(inH,H'); -- this autoreduces the marked GB
-	  time L = flatten entries gens G;
-	  time inL = flatten entries leadTerm G;
+	  t = timing(L = flatten entries gens G);
+	  cptime = cptime + t#0;
+	  inL = flatten entries leadTerm G;
 	  );
+     << "reduction time = " << redtime << endl;
+     << "copy time      = " << cptime << endl;
      time forceGB gens G -- This one is an actual GB in Rlast order...
      )
      
@@ -118,6 +132,7 @@ I = ideal(a*b-c, b*c-d, c*d-e^2)
 inL = matrix{{c*d,c^2,b*c,a*b,b*e^2,a*d^2}}
 L = matrix{{c*d-e^2, c^2-a*d, b*c-d, a*b-c, b*e^2-d^2, a*d^2-c*e^2}}
 G = markedGB(inL,L)
+parallelLeadTerms({0,0,1,1,-2},G)
 (a*b^3) % G
 leadTerm G
 gens G

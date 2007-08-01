@@ -103,6 +103,17 @@ const MatrixOrNull *ReducedGB::get_initial(int nparts)
   return mat.to_matrix();
 }
 
+const MatrixOrNull *ReducedGB::get_parallel_lead_terms(M2_arrayint w)
+{
+  MatrixConstructor mat(F, 0);
+  for (int i=0; i<polys.size(); i++)
+    {
+      gbvector *f = R->gbvector_parallel_lead_terms(w, F, polys[i].f, polys[i].f);
+      mat.append(originalR->translate_gbvector_to_vec(F,f));
+    }
+  return mat.to_matrix();
+}
+
 void ReducedGB::text_out(buffer &o) const
 {
 }

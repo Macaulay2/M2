@@ -921,6 +921,12 @@ const MatrixOrNull *GBinhom_comp::get_initial(int nparts)
   return minimal_gb->get_initial(nparts);
 }
 
+const MatrixOrNull *GBinhom_comp::get_parallel_lead_terms(M2_arrayint w)
+{
+  minimalize_gb();
+  return minimal_gb->get_parallel_lead_terms(w);
+}
+
 const MatrixOrNull *GBinhom_comp::get_gb()
 {
   minimalize_gb();

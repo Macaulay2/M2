@@ -151,6 +151,8 @@ public:
 
   virtual const MatrixOrNull *get_initial(int nparts);
 
+  virtual const MatrixOrNull *get_parallel_lead_terms(M2_arrayint w);
+
   virtual const MatrixOrNull *matrix_remainder(const Matrix *m);
 
   virtual void matrix_lift(const Matrix *m,

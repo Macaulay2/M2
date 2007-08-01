@@ -58,6 +58,8 @@ public:
 
   virtual const MatrixOrNull *get_initial(int nparts);
 
+  virtual const MatrixOrNull *get_parallel_lead_terms(M2_arrayint w);
+
   //////////////////////////////////////
   // Statistics and spair information //
   //////////////////////////////////////

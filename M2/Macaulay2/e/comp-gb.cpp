@@ -190,6 +190,12 @@ ComputationOrNull *GBComputation::set_hilbert_function(const RingElement *h)
   return 0;
 }
 
+const MatrixOrNull *GBComputation::get_parallel_lead_terms(M2_arrayint w)
+{
+  ERROR("Cannot compute parallel lead terms for this kind of Groebner computation");
+  return 0;
+}
+
 static int nfinalized = 0;
 static int nremoved = 0;
 

@@ -73,6 +73,8 @@ public:
 
   virtual const MatrixOrNull *get_initial(int nparts) = 0;
 
+  virtual const MatrixOrNull *get_parallel_lead_terms(M2_arrayint w);
+
   ////////////////////////////////
   // Normal forms and lifting ////
   ////////////////////////////////
