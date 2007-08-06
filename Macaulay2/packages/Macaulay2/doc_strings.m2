@@ -27,7 +27,8 @@ fghij"///,
       \\\\             \\ 
       \\\"             \"
       \\t             tab
-      \\xxx           ascii character with octal value xxx",
+      \\xxx           ascii character with octal value xxx
+      \\uxxxx         unicode character with hex value xxxx, encoded with utf-8",
      EXAMPLE ///u = "abc\101\102\n\tstu"///,
      "We can use ", TO "peek", " to see what characters are in the string.",
      EXAMPLE "peek u",

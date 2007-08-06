@@ -144,6 +144,13 @@ getstringslashes(o:PosFile):(null or Word) := (
      tokenbuf << '\"';
      s := takestring(tokenbuf);
      Word(s,TCstring,0,parseWORD));
+
+ishexdigit(c:int):bool := (
+     c >= int('0') && c <= int('9') ||
+     c >= int('a') && c <= int('f') ||
+     c >= int('A') && c <= int('F')
+     );
+
 getstring(o:PosFile):(null or Word) := (
      line := o.pos.line;
      column := o.pos.column;
@@ -151,17 +158,29 @@ getstring(o:PosFile):(null or Word) := (
      hadnewline := false;
      escaped := false;
      tokenbuf << char(delimiter);
+     hexcoming := 0;
+     unicode := 0;
      while true do (
 	  ch := getc(o);
 	  if ch == EOF 
 	  || ch == ERROR				    -- is that the right thing to do?
 	  then (
-	       empty(tokenbuf);
 	       printErrorMessage(o.pos.filename,line,column,"EOF or ERROR in string or character constant beginning here");
+	       empty(tokenbuf);
 	       return NULL;
 	       );
      	  tokenbuf << char(ch);
-	  if escaped 
+	  if hexcoming > 0 then (
+	       if ishexdigit(ch) then (
+		    hexcoming = hexcoming - 1;
+		    )
+	       else (
+		    printErrorMessage(o.pos.filename,line,column,"expected hex digit in unicode sequence here");
+		    empty(tokenbuf);
+		    while true do (ch2 := getc(o); if ch2 == EOF || ch2 == ERROR || ch2 == int('\n') then return NULL;);
+		    )
+	       )
+	  else if escaped
 	  then (
 	       if char(ch) == '"' 				    -- "
 	       || char(ch) == 'r'
@@ -169,6 +188,7 @@ getstring(o:PosFile):(null or Word) := (
 	       || char(ch) == 't'
 	       || char(ch) == 'f'
 	       || char(ch) == '\\'
+	       || (char(ch) == 'u' && (hexcoming = 4; true)) -- allow unicode entry this way : "\u53f7"
 	       || int('0') <= ch && ch < int('8')
 	       then escaped = false
 	       else (
