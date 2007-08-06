@@ -274,9 +274,11 @@ AC_DEFINE_UNQUOTED(WITH_NEWLINE_CR, $WITH_NEWLINE_CR,   [whether newline is cr])
 AC_DEFINE_UNQUOTED(EXEEXT,"$EXEEXT",[suffix the compiler appends to executable filenames])
 
 AC_SUBST(LAPACKLIBS)
-dnl # LAPACKLIBS="-llapack -lcblas -lf77blas -lg2c" was our former default
-dnl # LAPACKLIBS="-llapack -lblas -lg2c" is our new default, because redhat provides lapack this way now
-AC_ARG_WITH(lapacklibs, AS_HELP_STRING([--with-lapacklibs=...],[lapack libraries (-llapack -lblas -lg2c)]), LAPACKLIBS="$withval", LAPACKLIBS="-llapack -lblas -lg2c")
+dnl # formerly:
+dnl #   LAPACKLIBS="-llapack -lcblas -lf77blas -lg2c"
+dnl # and
+dnl #   LAPACKLIBS="-llapack -lblas -lg2c"
+AC_ARG_WITH(lapacklibs, AS_HELP_STRING([--with-lapacklibs=...],[lapack libraries (-llapack -lf77blas -lgfortran)]), LAPACKLIBS="$withval", LAPACKLIBS="-llapack -lf77blas -lgfortran")
 AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,replace lapack libraries by "-framework vecLib"), LAPACKLIBS="-framework vecLib")
 AC_SUBST(LAPACK)
 AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack]), LAPACK="$enableval";LAPACKLIBS="", LAPACK=yes)
