@@ -38,6 +38,23 @@ export parseDouble(s:string):double := (
      x);
 parseError := false;
 parseMessage := "";
+utf8(w:varstring,i:int):varstring := (
+     -- this code appears twice
+     if (i &     ~0x7f) == 0 then w << char(i) else
+     if (i &    ~0x7ff) == 0 then w << char(0xc0 | (i >> 6)) << char(0x80 | (i & 0x3f)) else
+     if (i &   ~0xffff) == 0 then w << char(0xe0 | (i >> 12)) << char(0x80 | ((i >> 6) & 0x3f)) << char(0x80 | (i & 0x3f)) else
+     if (i & ~0x1fffff) == 0 then w << char(0xf0 | (i >> 18)) << char(0x80 | ((i >> 12) & 0x3f)) << char(0x80 | ((i >> 6) & 0x3f)) << char(0x80 | (i & 0x3f))
+     else w
+     );
+
+export hexvalue   (c:char ):int  := (
+     if c >= '0' && c <= '9' then c - '0' else
+     if c >= 'a' && c <= 'f' then 10 + (c - 'a') else
+     if c >= 'A' && c <= 'F' then 10 + (c - 'A')
+     else 0						    -- we don't expect this to happen
+     );
+export hexvalue   (c:int ):int  := hexvalue(char(c));
+
 export parseString(s:string):string := (
      parseError = false;
      v := newvarstring(length(s)-2);
@@ -53,6 +70,9 @@ export parseString(s:string):string := (
 	       else if c == 't' then v << '\t'
 	       else if c == 'f' then v << '\f'
 	       else if c == '\\' then v << '\\'
+	       else if c == 'u' then (
+		    i = i+4;
+		    utf8(v, ((hexvalue(s.(i-3)) * 16 + hexvalue(s.(i-2))) * 16 + hexvalue(s.(i-1))) * 16 + hexvalue(s.i)))
 	       else if '0' <= c && c < '8' then (
 		    j := c - '0';
 		    c = s.(i+1);
