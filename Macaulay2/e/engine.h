@@ -1589,6 +1589,17 @@ enum gbTraceValues
 				 const Matrix *change,
 				 const Matrix *syz); /* mes: connected rawMarkedGB */
 
+  ComputationOrNull *rawGroebnerWalk(const Matrix *gb,
+				     const MonomialOrdering *order1);
+  /* Create a GB algorithm which will compute using the generic Groebner walk algorithm
+     Input: gb: a matrix which, under order1, would be a Groebner basis, except that
+                'gb' is a matrix over a polynomial ring whose order is 'order2'.
+            order1: a monomial ordering
+     Output: a Groebner basis computation object which will compute a GB of gb wrt
+            order2, using the Geneeric Groebner Walk algorithm of ...
+     Assumptions: the base ring is a polynomial ring over a field, with NO quotient elements
+  */
+
   ComputationOrNull *IM2_GB_set_hilbert_function(Computation *G,
 						 const RingElement *h); /* drg: connected rawGBSetHilbertFunction */
 

@@ -159,6 +159,7 @@ void MarkedGB::remainder(POLY &f, bool use_denom, ring_elem &denom)
 
 void MarkedGB::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
 {
+  //  return geo_remainder(f,use_denom,denom);
   gbvector *zero = 0;
   gbvector head;
   gbvector *frem = &head;
@@ -190,6 +191,45 @@ void MarkedGB::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
     }
   h = head.next;
   f = h;
+  R->gbvector_sort(F, f);
+  R->exponents_delete(_EXP);
+}
+
+void MarkedGB::geo_remainder(gbvector *&f, bool use_denom, ring_elem &denom)
+{
+  gbvector head;
+  gbvector *frem = &head;
+  frem->next = 0;
+
+  gbvectorHeap fb(R,F);
+  gbvectorHeap zero(R,Fsyz);
+  fb.add(f);
+  
+  const gbvector *lead;
+  exponents _EXP = R->exponents_make();
+  while ((lead = fb.get_lead_term()) != NULL)
+    {
+      R->gbvector_get_lead_exponents(F, lead, _EXP);
+      int x = lead->comp;
+      int w = T->find_divisor(_EXP,x);
+      if (w < 0)
+	{
+	  frem->next = fb.remove_lead_term();
+	  frem = frem->next;
+	  frem->next = 0;
+	}
+      else
+	{
+	  POLY g = polys[w];
+	  R->reduce_marked_lead_term_heap(F, Fsyz,
+					  lead,
+					  _EXP,
+					  head.next, fb, zero,
+					  leadterms[w],
+					  g.f, 0);
+	}
+    }
+  f = head.next;
   R->gbvector_sort(F, f);
   R->exponents_delete(_EXP);
 }
