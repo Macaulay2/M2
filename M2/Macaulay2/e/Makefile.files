@@ -60,6 +60,7 @@ INTERFACE = \
 	gb-homog2 \
 	gb-sugarless \
 	gb-toric \
+	gb-walk \
 	gbring \
 	gauss \
 	hermite \

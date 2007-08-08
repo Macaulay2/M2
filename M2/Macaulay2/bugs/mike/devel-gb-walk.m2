@@ -3,29 +3,7 @@ parallelLeadTerms = method()
 parallelLeadTerms(List,GroebnerBasis) := (w,G) -> (
      map(ring G, rawGBGetParallelLeadTerms(raw G,w))
      )
-
-interm = (w,ing,g) -> (
-     -- take all terms c*x^e from g s.t. log(ing) - e is a scalar multiple of w.
-     isScalarMult := (e,f) -> (
-	  minors(2,matrix{e,f}) == 0
-	  );
-     e := first exponents ing;
-     eg := exponents(g);
-     p := positions(eg, f -> isScalarMult(e-f,w));
-     sum (terms g)_p
-     )
-
-leadTerm(List,GroebnerBasis) := (w,G) -> (
-     time L := flatten entries generators G;
-     inL := flatten entries leadTerm G;
-     time matrix {apply(#L, i -> interm(w,inL#i,L#i))}
-     )
-
-leadTerm(List,List,List) := (w,inL,L) -> (
-     matrix {apply(#L, i -> interm(w,inL#i,L#i))}
-     )
 -------------------------------------------------------
-
 bd = (inL,L) -> (
   M := flatten apply(#inL, i -> (
     f := inL#i;
@@ -71,28 +49,6 @@ computeNextW = (w,inL,L) -> (
 	  )
      )
 
--- The following is NOT YET FUNCTIONAL!
--- version using engine version of markedGB's
-groebnerWalktoLex = method()
-groebnerWalktoLex(Ideal,Ring) := (I,Rlast) -> (
-     R := ring I;
-     ww = null;
-     inL := substitute(leadTerm gens gb I, Rlast);
-     L := substitute(gens gb I, Rlast);
-     -- From here on, all computations are in Rlast
-     G = markedGB(inL,L);
-     while (time ww = computeNextW(ww,flatten entries leadTerm G, time flatten entries gens G)) =!= null do (
-	  << "-- start loop ww = " << ww << endl;
-	  time inwG = leadTerm(ww, G);
-	  H = gens gb inwG; -- in target ring
-	  inH = leadTerm H;
-	  H' = H - (time (H % G)) * 1_Rlast;
-	  time G = markedGB(inH,H'); -- this autoreduces the marked GB
-	  );
-     time forceGB gens G -- This one is an actual GB in Rlast order...
-     )
-
--- The following is NOT YET FUNCTIONAL!
 -- version using engine version of markedGB's
 groebnerWalktoLex = method()
 groebnerWalktoLex(Ideal,Ring) := (I,Rlast) -> (
@@ -106,8 +62,10 @@ groebnerWalktoLex(Ideal,Ring) := (I,Rlast) -> (
      inL = flatten entries leadTerm G;
      redtime = 0.0;
      cptime = 0.0;
+     recordW = {};
      while (time ww = computeNextW(ww,inL, L)) =!= null do (
 	  << "-- start loop ww = " << ww << endl;
+	  recordW = append(recordW,ww);
 	  inwG = parallelLeadTerms(ww,G);
 	  H = gens gb inwG; -- in target ring
 	  inH = leadTerm H;
@@ -120,6 +78,28 @@ groebnerWalktoLex(Ideal,Ring) := (I,Rlast) -> (
 	  );
      << "reduction time = " << redtime << endl;
      << "copy time      = " << cptime << endl;
+     time forceGB gens G -- This one is an actual GB in Rlast order...
+     )
+
+groebnerWalktoLex(Ideal,Ring,List) := (I,Rlast,WW) -> (
+     -- WW should be a list of ww vectors, as produced in the algorithm (over char p, e.g.)
+     R := ring I;
+     ww = null;
+     inL := substitute(leadTerm gens gb I, Rlast);
+     L := substitute(gens gb I, Rlast);
+     -- From here on, all computations are in Rlast
+     G = markedGB(inL,L);
+     redtime = 0.0;
+     scan(WW, ww -> (
+	  << "-- start loop ww = " << ww << endl;
+	  inwG = parallelLeadTerms(ww,G);
+	  H = gens gb inwG; -- in target ring
+	  inH = leadTerm H;
+	  t := timing(H' = H - (H % G));
+	  redtime = redtime + t#0;
+	  time G = markedGB(inH,H'); -- this autoreduces the marked GB
+	  ));
+     << "reduction time = " << redtime << endl;
      time forceGB gens G -- This one is an actual GB in Rlast order...
      )
      
@@ -157,6 +137,22 @@ I = ideal"x2-y3,x3-y2-x"
 Rlex = kk[x,y,z,MonomialOrder=>Lex]
 groebnerWalktoLex(I,Rlex)
 gens oo
+groebnerWalktoLex(I,Rlex,recordW)
+gens oo
+
+-- Modified Example from paper
+restart
+load "/Users/mike/M2/Macaulay2/bugs/mike/devel-gb-walk.m2"
+kk = QQ
+--kk = ZZ/101
+R = kk[x,y,z]
+I = ideal"3x2-y3-z2,2x3-y2-x+z3"
+Rlex = kk[x,y,z,MonomialOrder=>Lex]
+gens gb substitute(I,Rlex)
+groebnerWalktoLex(I,Rlex)
+gens oo
+groebnerWalktoLex(I,Rlex,recordW)
+gens oo
 
 -- Example 6.1 from paper (ISSAC 1997 challenge)
 restart
@@ -172,6 +168,8 @@ I = ideal"
 Rlex = kk[x,y,z,w,MonomialOrder=>Lex]
 time groebnerWalktoLex(I,Rlex)
 gens oo
+groebnerWalktoLex(I,Rlex,recordW)
+gens oo
 
 -- Example 6.3 from paper
 restart
@@ -184,6 +182,9 @@ I = ideal"15+10x2y2+13yz+14xy2z+8x2yz2+11xy3z2,
 Rlex = kk[x,y,z,MonomialOrder=>Lex]
 time groebnerWalktoLex(I,Rlex)
 gens oo
+time groebnerWalktoLex(I,Rlex,recordW)
+ooo == gens oo
+
 Ilex = substitute(I,Rlex)
 gbTrace=3
 time gens gb Ilex
@@ -192,11 +193,17 @@ restart
 load "/Users/mike/M2/Macaulay2/bugs/mike/devel-gb-walk.m2"
 --ord1 = matrix"1,1,1;0,0,-1;0,-1,0"
 --ord2 = id_(ZZ^3)
-kk = QQ
 kk = ZZ/32003
 R = kk[x,y,z]
 I = ideal"16+3x3+16x2z+14x2y3,6+y3z+17x2z2+7xy2z2+13x3z2"
 Rlex = kk[x,y,z,MonomialOrder=>Lex]
+time groebnerWalktoLex(I,Rlex)
+
+kk = QQ
+R = kk[x,y,z]
+I = ideal"16+3x3+16x2z+14x2y3,6+y3z+17x2z2+7xy2z2+13x3z2"
+Rlex = kk[x,y,z,MonomialOrder=>Lex]
+time groebnerWalktoLex(I,Rlex,recordW)
 time groebnerWalktoLex(I,Rlex)
 gens oo
 

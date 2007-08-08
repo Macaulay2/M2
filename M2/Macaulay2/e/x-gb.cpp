@@ -8,6 +8,7 @@
 #include "text-io.hpp"
 #include "sagbi.hpp"
 #include "exceptions.hpp"
+#include "gb-walk.hpp"
 
 const RingElementOrNull * IM2_Matrix_Hilbert(const Matrix *M)
   /* This routine computes the numerator of the Hilbert series
@@ -123,6 +124,19 @@ rawMarkedGB(const Matrix *leadterms,
 {
      try {
 	  return GBDeclared::create(leadterms,m,gb,change,syz);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
+}
+
+ComputationOrNull *
+rawGroebnerWalk(const Matrix *gb,
+		const MonomialOrdering *order1)
+{
+     try {
+       return GBWalker::create(gb,order1);
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());

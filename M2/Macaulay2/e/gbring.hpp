@@ -597,6 +597,10 @@ public:
   gbvector * current_value() const; 
   // Adds up all the elements and returns this value
   // Mainly used for debugging.
+
+  void show() const;
+  // Displays the current values at each part of the heap
+  // to stdout
 };
 
 

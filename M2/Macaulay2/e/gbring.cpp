@@ -1654,7 +1654,7 @@ void gbvectorHeap::mult_by_coeff(ring_elem a)
 {
   for (int i=top_of_heap; i>=0; i--)
     if (heap[i] != 0)
-      GR->gbvector_mult_by_coeff(heap[i],a);
+      GR->gbvector_mult_by_coeff_to(heap[i],a);
 }
 
 void gbvectorHeap::add(gbvector * p)
@@ -1752,6 +1752,18 @@ gbvector * gbvectorHeap::current_value() const
       GR->gbvector_add_to(F, result, tmp);
     }
   return result;
+}
+
+#include "debug.hpp"
+void gbvectorHeap::show() const
+{
+  for (int i=0; i<=top_of_heap; i++)
+    {
+      if (heap[i] == NULL) continue;
+      printf("%d ",i);
+      dgbvec(GR,heap[i]);
+      printf("\n");
+    }
 }
 
 void GBRing::reduce_marked_lead_term_heap(const FreeModule *F,
