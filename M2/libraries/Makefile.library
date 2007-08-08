@@ -1,0 +1,32 @@
+# -*- Makefile -*-
+
+PREFIX = $(shell cd .. ; pwd)/local
+
+export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LOADLIBES FFLAGS
+
+.PHONY : fetch patch untar compile install clean distclean configure
+all :: .installed
+
+unconfigure : ; rm -f .configured
+reconfigure : unconfigure .configured
+prereqs : ; @ set -ex ; if [ "$(PREREQ)" ] ; then for p in $(PREREQ) ; do $(MAKE) -C ../$$p ; done ; fi
+diffs : .untarred .untarred2 ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
+
+CONFIGURECMD ?= ./configure --prefix=$(PREFIX) $(CONFIGOPTIONS)
+PRECONFIGURE ?= :
+
+.installed : .compiled ; $(MAKE) -C $(TARDIR) install $(INSTALLOPTIONS) && touch $@
+.compiled : .configured ; $(MAKE) -C $(TARDIR) && touch $@
+.configured : .patched ; (cd $(TARDIR) && $(PRECONFIGURE) && $(CONFIGURECMD)) && touch $@
+
+ifneq ($(PATCHFILE),)
+.patched : $(PATCHFILE) .untarred ; patch -p0 <$< && touch $@
+else
+.patched : .untarred ; touch $@
+endif
+
+.untarred : .fetched $(TARFILE) ; tar xzf $(TARFILE) && touch $@
+.untarred2 : .fetched $(TARFILE) ; mkdir tmp ; tar xzf $(TARFILE) -C tmp && touch $@
+.fetched : ; curl $(URL)/$(TARFILE) -o "$(TARFILE)" && touch $@
+clean :; rm -rf .patched $(TARDIR) .fetched .untarred $(TARFILE) .compiled .configured .installed .untarred2 diffs tmp
+distclean : clean ; rm -rf Makefile

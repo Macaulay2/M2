@@ -1,16 +1,22 @@
 # @configure_input@
+
+# HINT:
+# under freebsd there is a problem in the file /usr/include/c++/3.4/cwchar
+# you have to bracket the following include with extern "C" like this:
+#    extern "C" {
+#      #include <wchar.h>
+#    }
+
 VPATH = @srcdir@
 include ../../include/config.Makefile
-LIBRARYDIR = $(shell cd .. ; pwd)/local
 VERSION = 3.0.2
 PATCHFILE = patch-$(VERSION)
 TARDIR = factory
 TARFILE := factory-$(shell echo $(VERSION) | sed 's/\./-/g').tar.gz
 URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
-MAKECONFIGURE = yes
-
+PRECONFIGURE = autoconf
 CONFIGOPTIONS += --enable-NTL
-# PREREQ = ntl
+PREREQ = ntl
 
 ifeq ($(OPTIMIZE),yes)
 CXXFLAGS += -Wno-deprecated --no-rtti --no-exceptions
@@ -21,35 +27,7 @@ ifneq ($(BUILD),)
 CONFIGOPTIONS += --build=$(BUILD)
 endif
 
-export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LOADLIBES FFLAGS
-
-.PHONY : fetch patch untar compile install clean distclean configure
-all :: install
-
-unconfigure : ; rm -f .configured
-reconfigure : unconfigure configure
-prereqs : ; @ set -ex ; if [ "$(PREREQ)" ] ; then for p in $(PREREQ) ; do $(MAKE) -C ../$$p ; done ; fi
-diffs : untar untar2 ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
-
-install : .installed
-compile : .compiled
-configure : prereqs .configured
-patch : .patched
-untar : .untarred
-untar2 : .untarred2
-fetch : .fetched
-
-.installed : .compiled ; $(MAKE) -C $(TARDIR) install && touch $@
-.compiled : .configured ; $(MAKE) -C $(TARDIR) && touch $@
-.configured : .patched ; (cd $(TARDIR) && autoconf && ./configure --prefix=$(LIBRARYDIR) $(CONFIGOPTIONS)) && touch $@
-.patched : $(PATCHFILE) .untarred ; patch -p0 <$< && touch $@
-.untarred : .fetched $(TARFILE) ; tar xzf $(TARFILE) && touch $@
-.untarred2 : .fetched $(TARFILE) ; mkdir tmp ; tar xzf $(TARFILE) -C tmp && touch $@
-.fetched : ; curl $(URL)/$(TARFILE) -o "$(TARFILE)" && touch $@
-
-Makefile : Makefile.in ; cd ../.. && ./config.status libraries/factory/Makefile
-clean :; rm -rf .patched $(TARDIR) .fetched .untarred $(TARFILE) .compiled .configured .installed .untarred2 diffs tmp
-distclean : clean ; rm -rf Makefile
+include @srcdir@/../Makefile.library
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/factory "
