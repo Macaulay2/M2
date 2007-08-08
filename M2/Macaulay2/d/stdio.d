@@ -576,7 +576,13 @@ export finite(x:double):bool := x==x && x-x == x-x;
 export isinf(x:double):bool := x==x && x-x != x-x;
 export isnan(x:double):bool := x!=x;
 export tostring(x:bool):string := if x then "true" else "false";
-export tostring(x:double) : string := (
+export tostring(
+     x:double,						-- the number to format
+     s:int,					-- number of significant digits
+     l:int,					   -- max number leading zeroes
+     t:int,				    -- max number extra trailing zeroes
+     e:string			     -- separator between mantissa and exponent
+     ) : string := (
      o := newvarstring(25);
      if isinf(x) then return "infinity";
      if isnan(x) then return "NotANumber";
@@ -596,21 +602,18 @@ export tostring(x:double) : string := (
      	  until x >= 1./100. do ( x = x*100.; i = i - 2 );
      	  until x >= 1. do ( x = x*10.; i = i - 1 );
 	  );
-     s := 6;				  -- number of significant digits
-     l := 5;				  -- max number leading zeroes
-     t := 5;				  -- max number extra trailing digits
-     e := 4;				  -- extra characters when exponent involved : *10^
-     -- should rewrite this so the format it chooses is the one that takes the least space
+     -- should rewrite this so the format it chooses is the one that takes the least space, preferring not to use the exponent when it's a tie
      if i<0 then (
 	  if -i <= l 
 	  then digits(o,oldx,1,s-i-1)
-	  else (digits(o,x,1,s-1); o << "*10^" << tostring(i);))
+	  else (digits(o,x,1,s-1); o << e << tostring(i);))
      else if i+1 > s then (
 	  if i+1-s <= t
 	  then digits(o,x,i+1,0)
-	  else (digits(o,x,1,s-1); o << "*10^" << tostring(i);))
+	  else (digits(o,x,1,s-1); o << e << tostring(i);))
      else digits(o,x,i+1,s-i-1);
      tostring(o));
+export tostring(x:double) : string := tostring(x,6,5,5,"*10^");
 export (o:file) << (x:double) : file := o << tostring(x);
 
 nl := if length(newline) > 0 then newline.(length(newline)-1) else '\n';

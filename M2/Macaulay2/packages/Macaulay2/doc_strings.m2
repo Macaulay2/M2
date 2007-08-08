@@ -341,9 +341,13 @@ document {
 
 document {
      Key => format,
-     Headline => "format a string",
+     Headline => "format a string or a real number",
      TT "format s", " -- prepare a string ", TT "s", " for output by converting nonprintable
-     characters to printable ones, or to escape sequences."
+     characters to printable ones, or to escape sequences.",
+     PARA{},
+     TT "format(x,s,l,t,e)", " -- convert a real number ", TT "x", " to a string.  Here s is the maximum number
+     of significant digits to print, l is the maximum number of leading zeroes to print, t is the maximum number 
+     of extra trailing zeroes to print, and e, a string, is the separator between the mantissa and the exponent, if needed."
      }
 
 -- Local Variables:
