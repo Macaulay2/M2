@@ -937,7 +937,7 @@ format(e:Expr):Expr := (
      when a.1 is s:Integer do if !isInt(s) then WrongArgSmallInteger(2) else
      when a.2 is l:Integer do if !isInt(l) then WrongArgSmallInteger(3) else
      when a.3 is t:Integer do if !isInt(t) then WrongArgSmallInteger(4) else
-     when a.4 is e:string do Expr(tostring(x.v,toInt(s),toInt(l),toInt(t),e))
+     when a.4 is e:string do Expr(tostring5(x.v,toInt(s),toInt(l),toInt(t),e))
      else WrongArg(1,"a real number")
      else WrongArgInteger(2)
      else WrongArgInteger(3)

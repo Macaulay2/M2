@@ -576,11 +576,11 @@ export finite(x:double):bool := x==x && x-x == x-x;
 export isinf(x:double):bool := x==x && x-x != x-x;
 export isnan(x:double):bool := x!=x;
 export tostring(x:bool):string := if x then "true" else "false";
-export tostring(
+export tostring5(
      x:double,						-- the number to format
      s:int,					-- number of significant digits
      l:int,					   -- max number leading zeroes
-     t:int,				    -- max number extra trailing zeroes
+     t:int,				    -- max number extra trailing digits
      e:string			     -- separator between mantissa and exponent
      ) : string := (
      o := newvarstring(25);
@@ -613,7 +613,7 @@ export tostring(
 	  else (digits(o,x,1,s-1); o << e << tostring(i);))
      else digits(o,x,i+1,s-i-1);
      tostring(o));
-export tostring(x:double) : string := tostring(x,6,5,5,"*10^");
+export tostring(x:double) : string := tostring5(x,6,5,5,"*10^");
 export (o:file) << (x:double) : file := o << tostring(x);
 
 nl := if length(newline) > 0 then newline.(length(newline)-1) else '\n';

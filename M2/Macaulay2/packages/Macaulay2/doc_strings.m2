@@ -345,9 +345,9 @@ document {
      TT "format s", " -- prepare a string ", TT "s", " for output by converting nonprintable
      characters to printable ones, or to escape sequences.",
      PARA{},
-     TT "format(x,s,l,t,e)", " -- convert a real number ", TT "x", " to a string.  Here s is the maximum number
-     of significant digits to print, l is the maximum number of leading zeroes to print, t is the maximum number 
-     of extra trailing zeroes to print, and e, a string, is the separator between the mantissa and the exponent, if needed."
+     TT "format(x,s,l,t,e)", " -- convert a real number ", TT "x", " to a string.  Here ", TT "s", " is the maximum number
+     of significant digits to print, ", TT "l", " is the maximum number of leading zeroes to print, ", TT "t", " is the maximum number 
+     of extra trailing digits to print, and ", TT "e", ", a string, is the separator between the mantissa and the exponent, if needed."
      }
 
 -- Local Variables:
