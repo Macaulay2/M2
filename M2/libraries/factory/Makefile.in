@@ -23,9 +23,6 @@ CXXFLAGS += -Wno-deprecated --no-rtti --no-exceptions
 else
 CONFIGOPTIONS += --enable-assertions
 endif
-ifneq ($(BUILD),)
-CONFIGOPTIONS += --build=$(BUILD)
-endif
 
 include @srcdir@/../Makefile.library
 
