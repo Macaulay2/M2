@@ -1,0 +1,19 @@
+# @configure_input@
+VPATH = @srcdir@
+include ../../include/config.Makefile
+# http://www.netlib.org/blas/
+# Basic Linear Algebra Subprograms
+URL = http://www.netlib.org/blas
+TARFILE = blas.tgz
+TARDIR = blas
+CONFIGURECMD = :
+UNTARCMD ?= install -d $(TARDIR) && tar xzf $(TARFILE) -C $(TARDIR)
+BUILDOPTIONS = -f ../@srcdir@/Makefile.build
+BUILDTARGET = libf77blas.a
+INSTALLDIRS = lib
+INSTALLCMD = install -d $(PREFIX)/lib && install $(BUILDDIR)/libf77blas.a $(PREFIX)/lib/libf77blas.a
+include @srcdir@/../Makefile.library
+Makefile : Makefile.in ; cd ../.. && ./config.status libraries/blas/Makefile
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/libraries/blas "
+# End:
