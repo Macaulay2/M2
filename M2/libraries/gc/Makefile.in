@@ -1,0 +1,14 @@
+# @configure_input@
+VPATH = @srcdir@
+include ../../include/config.Makefile
+URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
+VERSION = 7.0
+CFLAGS += -g -O2 -DLARGE_CONFIG -DUSE_MMAP
+INSTALLOPTIONS = MAKEOVERRIDES='prefix=$(PREFIX)'
+CONFIGOPTIONS = --disable-threads
+CONFIGOPTIONS += GC_CFLAGS="$(CFLAGS)"
+include @srcdir@/../Makefile.library
+Makefile : Makefile.in ; cd ../.. && ./config.status libraries/libfac/Makefile
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/libraries/libfac "
+# End:

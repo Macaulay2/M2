@@ -1,0 +1,320 @@
+# -*- mode: Makefile -*-
+
+
+# this is always the first (default) target
+all           ::
+
+
+ifndef CAPYBARA
+include capybara/config
+endif
+
+INSTALLED = $(PREFIX)/.installed
+
+## The main list of tasks to build the package and their dependencies comes first.
+## Notice that we do *not* call make recursively in the toplevel package directory.
+## We accomplish that with the conditional dependency of encap on mark-installed.
+
+announce      ::
+pre-fetch     :: announce
+fetch         :: pre-fetch
+test-checksum :: fetch
+untar         :: test-checksum
+patch         :: untar
+pre-configure :: patch
+configure     :: pre-configure
+depend        :: configure
+compile       :: depend
+pre-install   ::
+install       :: compile pre-install
+mark-installed:: install
+pre-encap     ::
+encap         :: $(if $(wildcard $(INSTALLED)),,mark-installed) pre-encap
+clean-maybe   :: encap
+all           :: clean-maybe
+
+# the secondary list of tasks
+check         :: compile
+uninstall     :: uncap
+unstamp-configure ::
+reconfigure   :: unstamp-configure configure
+
+# debugging the makefiles
+check-variables ::
+	: ABSSRCDIR = '$(ABSSRCDIR)'
+	: ABSTMPARENA = '$(ABSTMPARENA)'
+	: AUTOCLEAN = '$(AUTOCLEAN)'
+	: BASICINSTALLOPTIONS = '$(BASICINSTALLOPTIONS)'
+	: BUILDCMD = '$(BUILDCMD)'
+	: BUILDDIR = '$(BUILDDIR)'
+	: BUILDENV = '$(BUILDENV)'
+	: BUILDOPTIONS = '$(BUILDOPTIONS)'
+	: BUILDTARGET = '$(BUILDTARGET)'
+	: CAPYBARAHOME = '$(CAPYBARAHOME)'
+	: CAPYBARAPATH = '$(CAPYBARAPATH)'
+	: CONFIGOPTIONS = '$(CONFIGOPTIONS)'
+	: DESTINATION = '$(DESTINATION)'
+	: DIFFSUBDIR = '$(DIFFSUBDIR)'
+	: ENCAPDIR = '$(ENCAPDIR)'
+	: ENV = '$(ENV)'
+	: EPKGOPTIONS = '$(EPKGOPTIONS)'
+	: FAKEROOT = '$(FAKEROOT)'
+	: FILES = '$(FILES)'
+	: FINALDESTINATION = '$(FINALDESTINATION)'
+	: INSTALLCMD = '$(INSTALLCMD)'
+	: INSTALLDIRS = '$(INSTALLDIRS)'
+	: INSTALLENV = '$(INSTALLENV)'
+	: INSTALLOPTIONS = '$(INSTALLOPTIONS)'
+	: INSTALLSTUB = '$(INSTALLSTUB)'
+	: LDFLAGS = '$(LDFLAGS)'
+	: LOCALDESTINATION = '$(LOCALDESTINATION)'
+	: MKENCAPOPTIONS = '$(MKENCAPOPTIONS)'
+	: PATCHCOMMAND = '$(PATCHCOMMAND)'
+	: PATCHFILE = '$(PATCHFILE)'
+	: PKG = '$(PKG)'
+	: PKGNAME = '$(PKGNAME)'
+	: PKGSUFFIX = '$(PKGSUFFIX)'
+	: PKGTOPDIR = '$(PKGTOPDIR)'
+	: PREFIX = '$(PREFIX)'
+	: PREFIX_KEYWORD = '$(PREFIX_KEYWORD)'
+	: PREREQ = '$(PREREQ)'
+	: SRCDIR = '$(SRCDIR)'
+	: SRCSUBDIR = '$(SRCSUBDIR)'
+	: SUDO = '$(SUDO)'
+	: TARDIR = '$(TARDIR)'
+	: TARFILE = '$(TARFILE)'
+	: TARFILES = '$(TARFILES)'
+	: TARTOPDIR = '$(TARTOPDIR)'
+	: TMPARENA = '$(TMPARENA)'
+	: TMPARENASUBDIR = '$(TMPARENASUBDIR)'
+	: TMPDIR = '$(TMPDIR)'
+	: UNTAROPTIONS = '$(UNTAROPTIONS)'
+	: URL = '$(URL)'
+	: VERSION = '$(VERSION)'
+	: WGETOPTIONS = '$(WGETOPTIONS)'
+
+# announce
+ifndef NOANNOUNCE
+announce ::
+	@echo =============================================================================
+	@echo '==== $(PKGNAME):'
+	@echo '==== building   in $(shell if [ -f TMPDIR ] ; then cat TMPDIR ; else echo "$(ABSTMPARENA)/$(TMPARENASUBDIR)/" ; fi)'
+	@echo '==== installing in $(PREFIX)'
+	@echo =============================================================================
+endif
+
+## optional hacks
+# For those packages that insist on installing things in /usr
+# Use it like this:
+#           pre-install :: usr-hack
+usr-hack : $(PREFIX)/usr
+	: testing symbolic link $^
+	[ -h $^ ]
+$(PREFIX)/usr : $(PREFIX)
+	: testing whether FINALDESTINATION is set to /usr, the only case where the usr-hack works.
+	[ "$(FINALDESTINATION)" = /usr ]
+	ln -snf . $@
+##
+
+## some things we have to do
+TARFILES_PREFIXED    := $(foreach f,$(TARFILES),$(TMPARENA)/$(f))
+FILES_PREFIXED       := $(foreach f,$(FILES),$(TMPARENA)/$(TMPARENASUBDIR)/$(f))
+UNTARRED_FLAG        := $(TMPARENA)/$(TMPARENASUBDIR)/.source-untarred
+INSTALLDIRS_PREFIXED := $(foreach i,$(INSTALLDIRS),$(PREFIX)/$(i))
+## what we do on the main list of tasks
+pre-configure :: $(PREREQ)
+fetch     :: "$(ABSTMPARENA)" $(TMPARENA) TMPDIR $(FILES_PREFIXED) $(TARFILES_PREFIXED) $(TMPARENA)/$(TMPARENASUBDIR)
+ifneq ($(TARFILES),NONE)
+untar	  :: $(UNTARRED_FLAG)
+endif
+ifdef PATCHFILE
+patch	  :: $(TMPARENA)/$(TMPARENASUBDIR)/.patch-done
+endif
+compile   ::  ; $(BUILDCMD)
+
+ifndef MAKE_NO_PREFIX_DIR
+install   :: $(PREFIX); [ -d $(PREFIX) ]
+endif
+$(PREFIX) :; install -d $(PREFIX)
+
+install   :: $(INSTALLDIRS_PREFIXED)
+install   ::  ; ln -snf "$(PREFIX)/" INSTALL
+install   ::  ; $(INSTALLCMD)
+install encap :: $(PREFIX)/encapinfo
+install encap :: $(PREFIX)/packages/$(PKG)
+# install   ::  ; [ -d $(PREFIX)/bin ] && cd $(PREFIX)/bin && strip * || true
+install   :: encap-scripts
+
+install   :: $(PREFIX)/README
+$(PREFIX)/README:
+	echo "$(PKG): $(DESCRIPTION)" >$@
+ifdef HOMEPAGE
+	echo "HOMEPAGE: $(HOMEPAGE)" >>$@
+endif
+ifdef DOCUMENTATION
+	echo "DOCUMENTATION: $(DOCUMENTATION)" >>$@
+endif
+
+mark-installed:: ; touch $(INSTALLED)
+encap     :: $(PREFIX)/.encaptarget $(DESTINATION)/packages/$(PKG)
+
+ifeq ($(AUTOCLEAN),yes)
+clean-maybe :: clean
+endif
+
+##
+
+.PHONY : compile encap uncap all patch configure always untar uninstall \
+	 install pre-configure fetch encap-scripts mark-installed depend always help check-variables
+.DELETE_ON_ERROR :
+
+info:
+	@echo "$(PKGNAME): home page  : $(HOMEPAGE)"
+	@echo "$(PKGNAME): description: $(DESCRIPTION)"
+
+encap-scripts : always
+	@if   [ -d "$(PREFIX)/info" -o -d "$(PREFIX)/share/info" ] ; \
+	then set -x ; \
+	     cp $(CAPYBARAHOME)/scripts/preremove   "$(PREFIX)" ; \
+	     cp $(CAPYBARAHOME)/scripts/postinstall "$(PREFIX)" ; \
+	fi
+
+# it's a bad idea to a file like encapinfo, or any file, dependent on a Makefile
+$(PREFIX)/encapinfo : ; $(MKENCAPCMD)
+
+$(PREFIX)/.encaptarget :; ln -snf $(DESTINATION) $(PREFIX)/.encaptarget
+$(DESTINATION)/packages/$(PKG) :
+	 # test writability before we run epkg, which fails to give proper error returns:
+	epkg $(EPKGOPTIONS) $(PKG)
+#	@ set -x ; test -w $(DESTINATION) || $(SUDO) test -w $(DESTINATION)
+#	@ set -x ; \
+#	  if test -w $(DESTINATION) ; \
+#	  then         epkg $(EPKGOPTIONS) $(PKG) ; \
+#	  else $(SUDO) epkg $(EPKGOPTIONS) $(PKG) ; \
+#	  fi
+
+uncap     ::
+	@ if [ -d "$(PREFIX)" -a -d $(DESTINATION)/packages/$(PKG) ] ; \
+	  then set -x ; \
+	       if test -w $(DESTINATION) ; \
+	       then         epkg $(EPKGOPTIONS) -r $(PKG); \
+	       else $(SUDO) epkg $(EPKGOPTIONS) -r $(PKG); \
+	       fi ; \
+	       rm -f "$(PREFIX)/.encaptarget" ; \
+	  fi
+
+$(INSTALLDIRS_PREFIXED) : always 
+	if [ ! -d $@ ]; then set -x; mkdir -p $@; fi
+
+check     ::
+	unset PWD; $(MAKE) -C $(BUILDDIR) $(BUILDOPTIONS) $(CHECKTARGET)
+
+always    :
+
+uninstall ::
+	@ if [ -d "$(PREFIX)" ] ; \
+	  then set -ex ; \
+	       chmod -R u+w "$(PREFIX)" ; \
+	       rm -r "$(PREFIX)" ; \
+	  fi
+	@ if [ -h INSTALL ]; then set -ex; rm INSTALL; fi
+
+package-clean ::; @$(MAKE) -k -C $(BUILDDIR) clean
+package-distclean ::; $(MAKE) -C $(BUILDDIR) distclean
+
+clean ::
+	@ if [ -f TMPDIR ] ; then set -x ; rm -rf "`cat TMPDIR`" ; fi
+	rm -rf "$(ABSTMPARENA)" tmp
+	rm -f TMPDIR TMP *"~" ".#"*
+	@ if [ -d $(BUILDDIR) ] ; then set -x ; unset PWD; $(MAKE) -C $(BUILDDIR) clean ; fi
+
+$(PREFIX)/packages/$(PKG) :
+	[ -d $(PREFIX)/packages ] || install -d $(PREFIX)/packages
+	ln -snf .. "$@"
+
+list :
+	wget $(WGETOPTIONS) -nv --dont-remove-listing $(URL)/
+	@echo " ---------------- $(PKG) ----------------"
+	grep $(PKGNAME) .listing | tr -d '\r'
+	@echo " ---------------- $(PKG) ----------------"
+	rm -f .listing index.html
+
+$(TMPARENA):; ln -snf "$(ABSTMPARENA)/" "$@"
+TMPDIR:; echo "$(ABSTMPARENA)/" >TMPDIR
+"$(ABSTMPARENA)":; mkdir -p "$(ABSTMPARENA)"
+$(TMPARENA)/$(TMPARENASUBDIR):; mkdir -p "$(ABSTMPARENA)/$(TMPARENASUBDIR)"
+
+# amazingly, wget returns an exit code of 0 even if the file requested isn't found
+$(TARFILES_PREFIXED) $(FILES_PREFIXED) :
+	@ if ! [ "$(URL)" ] ; then echo error: no URL specified >&2 ; exit 1 ; fi
+	mkdir -p $(dir $@) && cd $(dir $@) && \
+	   wget $(WGETOPTIONS) --retr-symlinks $(URL)/$(notdir $@) && \
+	   [ -f $(notdir $@) ] && \
+	   touch $(notdir $@)
+
+$(PREREQ) : always
+	@ echo checking for $@, prerequisite of $(PKGNAME), in:
+	@ for d in $(CAPYBARAPATH) ; \
+	  do if [ -d $$d/$@/ ] ; \
+	     then echo "   $$d/$@/" ; \
+	          unset PWD; $(MAKE) -C $$d/$@ ; exit ; \
+	     else echo "   $$d/$@/ (doesn't exist)" ; \
+	     fi ; \
+	  done ; \
+	  echo "can't find prerequisite package $@" >&2 ; \
+	  exit 1
+
+$(UNTARRED_FLAG) : $(TARFILES_PREFIXED)
+	@set -ex ; \
+	  for i in $(TARFILES) ; \
+	  do case $$i in \
+		*.zip)		(cd $(TMPARENA) && umask 22 && (cd $(TMPARENASUBDIR) && unzip -L ../$$i)) ;; \
+		*.tar)		(cd $(TMPARENA) && umask 22 && tar xf  $$i -C $(TMPARENASUBDIR) $(UNTAROPTIONS)) ;; \
+		*.tar.gz|*.tgz)	(cd $(TMPARENA) && umask 22 && gunzip     < $$i | (cd $(TMPARENASUBDIR) && tar xf - $(UNTAROPTIONS))) ;; \
+		*.tar.bz2)	(cd $(TMPARENA) && umask 22 && bunzip2    < $$i | (cd $(TMPARENASUBDIR) && tar xf - $(UNTAROPTIONS))) ;; \
+		*.tar.Z)	(cd $(TMPARENA) && umask 22 && uncompress < $$i | (cd $(TMPARENASUBDIR) && tar xf - $(UNTAROPTIONS))) ;; \
+		*)		echo "$$i: unrecognized archive file type" ; exit 1 ;; \
+	     esac ; \
+	  done
+	chown -R `id -u` "$(TMPARENA)/$(TMPARENASUBDIR)"
+	chgrp -R `id -g` "$(TMPARENA)/$(TMPARENASUBDIR)"
+	chmod -R a+r,u+w "$(TMPARENA)/$(TMPARENASUBDIR)"
+	find "$(TMPARENA)/$(TMPARENASUBDIR)" -name CVS | xargs rm -rf
+	touch $(UNTARRED_FLAG)
+
+$(TMPARENA)/$(TMPARENASUBDIR)/.patch-done: $(PATCHFILE)
+	$(PATCHCOMMAND)
+	touch $@
+
+
+diffs:: patch always
+	$(MAKE) NOANNOUNCE=yes PREREQ= TMPARENASUBDIR=$(DIFFSUBDIR) untar
+	cd $(TMPARENA)/$(TMPARENASUBDIR) && (diff -ur ../$(DIFFSUBDIR) . >$@.tmp || [ $$? = 1 ])
+	<$(TMPARENA)/$(TMPARENASUBDIR)/$@.tmp egrep -v '^Only in' >$@ || [ $$? = 1 ]
+	rm $(TMPARENA)/$(TMPARENASUBDIR)/$@.tmp
+
+files:; find $(PREFIX) -type d -o -print
+
+## this target is intended for the package maintainer only
+CHECKSUM_FILE ?= $(VERSION).md5
+checksum :: $(CHECKSUM_FILE)
+$(CHECKSUM_FILE) : $(FILES_PREFIXED) $(TARFILES_PREFIXED)
+	md5sum $^ /dev/null | cut -d ' ' -f 1 > $@
+
+## this is for checking the checksum
+CHECKSUM_TESTFILE ?= $(TMPARENA)/$(CHECKSUM_FILE)
+test-checksum :: $(CHECKSUM_TESTFILE)
+	@if [ -f $(CHECKSUM_FILE) ] ;\
+	 then if (set -x ; cmp -s $(CHECKSUM_FILE) $(CHECKSUM_TESTFILE)); \
+	      then echo "md5 checksum: okay (files have not been modified)" >&2 ; \
+	      else echo 'error: downloaded files failed test!!' >&2 ; \
+		   echo 'Your files could be corrupted, or someone could have intentionally modified' >&2; \
+		   echo 'them.  Since modified files may malicious instructions that could damage your' >&2; \
+		   echo 'computer, we recommend that you check with the package maintainer before' >&2; \
+		   echo 'proceeding.';\
+		   exit 1; \
+	      fi ; \
+	 fi
+
+$(CHECKSUM_TESTFILE) : $(FILES_PREFIXED) $(TARFILES_PREFIXED)
+	md5sum $^ /dev/null | cut -d ' ' -f 1 > $@
