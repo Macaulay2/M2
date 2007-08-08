@@ -16,7 +16,6 @@ TARFILE := factory-$(shell echo $(VERSION) | sed 's/\./-/g').tar.gz
 URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
 PRECONFIGURE = autoconf
 CONFIGOPTIONS += --enable-NTL
-PREREQ = ntl
 
 ifeq ($(OPTIMIZE),yes)
 CXXFLAGS += -Wno-deprecated --no-rtti --no-exceptions
@@ -25,6 +24,7 @@ CONFIGOPTIONS += --enable-assertions
 endif
 
 include @srcdir@/../Makefile.library
+Makefile : Makefile.in ; cd ../.. && ./config.status libraries/factory/Makefile
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/factory "
