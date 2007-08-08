@@ -63,6 +63,7 @@ install all clean distclean install-others install-Macaulay2 ::
 
 # first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
 install install-others install-Macaulay2 :: all
+all ::; $(MAKE) -C libraries
 distclean::; rm -f config.cache config.log config.status configure.options
 distclean:: clean
 ifeq "$(CC)" "cl"

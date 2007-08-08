@@ -205,6 +205,20 @@ AC_SUBST(EXPERIMENT) AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-ex
 AC_SUBST(TARFILE)    AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare a binary package as a compressed tar file), TARFILE="$enableval", TARFILE==no)
 AC_SUBST(TARLIBS)    AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS="$enableval", TARLIBS=no)
 
+AC_SUBST(BUILDNTL)     AC_ARG_ENABLE(build-ntl, AS_HELP_STRING(--enable-build-ntl,build library ntl from downloaded source code), BUILDNTL="$enableval", BUILDNTL=yes)
+AC_SUBST(BUILDFACTORY) AC_ARG_ENABLE(build-factory, AS_HELP_STRING(--enable-build-factory,build library factory from downloaded source code), BUILDFACTORY="$enableval", BUILDFACTORY=yes)
+AC_SUBST(BUILDLIBFAC) AC_ARG_ENABLE(build-libfac, AS_HELP_STRING(--enable-build-libfac,build library libfac from downloaded source code), BUILDLIBFAC="$enableval", BUILDLIBFAC=yes)
+AC_SUBST(BUILDLAPACK) AC_ARG_ENABLE(build-lapack, AS_HELP_STRING(--enable-build-lapack,build library lapack from downloaded source code), BUILDLAPACK="$enableval", BUILDLAPACK=yes)
+AC_SUBST(BUILDBLAS)   AC_ARG_ENABLE(build-blas, AS_HELP_STRING(--enable-build-blas,build library blas from downloaded source code), BUILDBLAS="$enableval", BUILDBLAS=yes)
+
+AC_SUBST(LIBRARIES)
+LIBRARIES=
+test "$BUILDNTL" = yes && LIBRARIES="$LIBRARIES ntl"
+test "$BUILDFACTORY" = yes && LIBRARIES="$LIBRARIES factory"
+test "$BUILDLIBFAC" = yes && LIBRARIES="$LIBRARIES libfac"
+test "$BUILDBLAS" = yes && LIBRARIES="$LIBRARIES blas"
+test "$BUILDLAPACK" = yes && LIBRARIES="$LIBRARIES lapack"
+
 AC_SUBST(DEVELOPMENT) AC_ARG_ENABLE(development, AS_HELP_STRING(--enable-development,build a development version),
     DEVELOPMENT="$enableval";AC_DEFINE(DEVELOPMENT,1,whether to build a development version), DEVELOPMENT==no)
 AC_SUBST(DEVELOPER)   AC_ARG_WITH(developer,   AS_HELP_STRING(--with-developer=...,specify the name of the developer ($USER)),
@@ -390,89 +404,98 @@ AC_RUN_IFELSE([
 AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,$GETADDRINFO_WORKS,[whether getaddrinfo can handle numeric service (port) numbers])
 
 NTLLIB=-lntl
-AC_SUBST(NTLLIB)
-AC_ARG_WITH(ntllib, AS_HELP_STRING(--with-ntllib=...,ntl library (-lntl)), NTLLIB="$withval")
-AC_MSG_CHECKING([whether ntl library is installed])
-LIBS="$NTLLIB -lgmp $SAVELIBS"
-AC_LANG(C++)
-AC_LINK_IFELSE( [
-    #include <NTL/tools.h>
-    int main () { _ntl_GetTime(); }
-    ],
-    HAVE_LIBNTL=yes;AC_MSG_RESULT(yes),
-    HAVE_LIBNTL=no;AC_MSG_RESULT(no))
-
-HAVE_LIBNTL_PG=no
-if test "$PROFILING" = yes -a "$NTLLIB" = "-lntl"
-then AC_MSG_CHECKING([whether ntl library, profiling version, is installed (-lntl-pg)])
-     LIBS="-lntl-pg -lgmp $SAVELIBS"
-     AC_LANG(C++)
-     AC_LINK_IFELSE( [
-        #include <NTL/tools.h>
+if test "$BUILDNTL" = no
+then
+    AC_SUBST(NTLLIB)
+    AC_ARG_WITH(ntllib, AS_HELP_STRING(--with-ntllib=...,ntl library (-lntl), ignored if building it), NTLLIB="$withval")
+    AC_MSG_CHECKING([whether ntl library is installed])
+    LIBS="$NTLLIB -lgmp $SAVELIBS"
+    AC_LANG(C++)
+    AC_LINK_IFELSE( [
+	#include <NTL/tools.h>
 	int main () { _ntl_GetTime(); }
 	],
-     HAVE_LIBNTL_PG=yes;AC_MSG_RESULT(yes),
-     AC_MSG_RESULT(no))
-fi
+	HAVE_LIBNTL=yes;AC_MSG_RESULT(yes),
+	HAVE_LIBNTL=no;AC_MSG_RESULT(no))
 
-if   test "$PROFILING" = yes
-then test "$HAVE_LIBNTL_PG" = no -a "$HAVE_LIBNTL" = no && AC_MSG_ERROR([missing libraries: libntl (and libntl-pg)])
-     test "$HAVE_LIBNTL_PG" = yes && NTLLIB=-lntl-pg
-else test "$HAVE_LIBNTL" = no && AC_MSG_ERROR([missing library: libntl])
+    HAVE_LIBNTL_PG=no
+    if test "$PROFILING" = yes -a "$NTLLIB" = "-lntl"
+    then AC_MSG_CHECKING([whether ntl library, profiling version, is installed (-lntl-pg)])
+	 LIBS="-lntl-pg -lgmp $SAVELIBS"
+	 AC_LANG(C++)
+	 AC_LINK_IFELSE( [
+	    #include <NTL/tools.h>
+	    int main () { _ntl_GetTime(); }
+	    ],
+	 HAVE_LIBNTL_PG=yes;AC_MSG_RESULT(yes),
+	 AC_MSG_RESULT(no))
+    fi
+
+    if   test "$PROFILING" = yes
+    then test "$HAVE_LIBNTL_PG" = no -a "$HAVE_LIBNTL" = no && AC_MSG_ERROR([missing libraries: libntl (and libntl-pg)])
+	 test "$HAVE_LIBNTL_PG" = yes && NTLLIB=-lntl-pg
+    else test "$HAVE_LIBNTL" = no && AC_MSG_ERROR([missing library: libntl])
+    fi
 fi
 
 LIBCF=-lcf
-AC_SUBST(LIBCF)
-AC_MSG_CHECKING([whether factory library is installed])
-LIBS="$LIBCF $SAVELIBS"
-AC_LANG(C++)
-AC_LINK_IFELSE( [[
-        #include <factoryconf.h>
-	int main () { extern const char factoryVersion[]; return *factoryVersion; }
-	]],
-     HAVE_LIBCF=yes;AC_MSG_RESULT(yes),
-     HAVE_LIBCF=no;AC_MSG_RESULT(no))
+if test "$BUILDFACTORY" = no
+then
+    AC_SUBST(LIBCF)
+    AC_MSG_CHECKING([whether factory library is installed])
+    LIBS="$LIBCF $SAVELIBS"
+    AC_LANG(C++)
+    AC_LINK_IFELSE( [[
+	    #include <factoryconf.h>
+	    int main () { extern const char factoryVersion[]; return *factoryVersion; }
+	    ]],
+	 HAVE_LIBCF=yes;AC_MSG_RESULT(yes),
+	 HAVE_LIBCF=no;AC_MSG_RESULT(no))
 
-AC_MSG_CHECKING([whether factory library, profiling version, is installed (-lcf-pg)])
-AC_SUBST(HAVE_LIBCF_PG)
-LIBS="-lcf-pg $SAVELIBS"
-AC_LANG(C++)
-AC_LINK_IFELSE( [[
-        #include <factoryconf.h>
-	int main () { extern const char factoryVersion[]; return *factoryVersion; }
-     ]],
-    HAVE_LIBCF_PG=yes;AC_MSG_RESULT(yes),
-    HAVE_LIBCF_PG=no;AC_MSG_RESULT(no))
+    AC_MSG_CHECKING([whether factory library, profiling version, is installed (-lcf-pg), ignored if building it])
+    AC_SUBST(HAVE_LIBCF_PG)
+    LIBS="-lcf-pg $SAVELIBS"
+    AC_LANG(C++)
+    AC_LINK_IFELSE( [[
+	    #include <factoryconf.h>
+	    int main () { extern const char factoryVersion[]; return *factoryVersion; }
+	 ]],
+	HAVE_LIBCF_PG=yes;AC_MSG_RESULT(yes),
+	HAVE_LIBCF_PG=no;AC_MSG_RESULT(no))
 
-if   test "$PROFILING" = yes
-then test "$HAVE_LIBCF_PG" = no -a "$HAVE_LIBCF" = no && AC_MSG_ERROR([missing libraries: libcf (and libcf-pg)])
-     test "$HAVE_LIBCF_PG" = yes && LIBCF=-lcf-pg
-else test "$HAVE_LIBCF" = no && AC_MSG_ERROR([missing library: libcf])
+    if   test "$PROFILING" = yes
+    then test "$HAVE_LIBCF_PG" = no -a "$HAVE_LIBCF" = no && AC_MSG_ERROR([missing libraries: libcf (and libcf-pg)])
+	 test "$HAVE_LIBCF_PG" = yes && LIBCF=-lcf-pg
+    else test "$HAVE_LIBCF" = no && AC_MSG_ERROR([missing library: libcf])
+    fi
 fi
 
 LIBFAC=-lfac
-AC_MSG_CHECKING([whether (and where) the libfac library is installed ($LIBFAC)])
-AC_SUBST(LIBFAC)
-AC_LANG(C++)
-LIBS="$LIBCF $LIBFAC $SAVELIBS"
-AC_LINK_IFELSE(
- [extern const char * libfac_version; int main() { return *libfac_version; }],
- HAVE_LIBFAC=yes;AC_MSG_RESULT(yes),
- HAVE_LIBFAC=no;AC_MSG_RESULT(no))
+if test "$BUILDLIBFAC" = no
+then
+    AC_MSG_CHECKING([whether (and where) the libfac library is installed ($LIBFAC)])
+    AC_SUBST(LIBFAC)
+    AC_LANG(C++)
+    LIBS="$LIBCF $LIBFAC $SAVELIBS"
+    AC_LINK_IFELSE(
+     [extern const char * libfac_version; int main() { return *libfac_version; }],
+     HAVE_LIBFAC=yes;AC_MSG_RESULT(yes),
+     HAVE_LIBFAC=no;AC_MSG_RESULT(no))
 
-AC_MSG_CHECKING([whether libfac library, profiling version, is installed ($LIBFAC-pg)])
+    AC_MSG_CHECKING([whether libfac library, profiling version, is installed ($LIBFAC-pg)])
 
-LIBS="$LIBFAC-pg $LIBCF $SAVELIBS"
-AC_LANG(C++)
-AC_LINK_IFELSE(
-    [extern const char * libfac_version; int main() { return *libfac_version; }],
-    HAVE_LIBFAC_PG=yes;AC_MSG_RESULT(yes),
-    HAVE_LIBFAC_PG=no;AC_MSG_RESULT(no))
+    LIBS="$LIBFAC-pg $LIBCF $SAVELIBS"
+    AC_LANG(C++)
+    AC_LINK_IFELSE(
+	[extern const char * libfac_version; int main() { return *libfac_version; }],
+	HAVE_LIBFAC_PG=yes;AC_MSG_RESULT(yes),
+	HAVE_LIBFAC_PG=no;AC_MSG_RESULT(no))
 
-if   test "$PROFILING" = yes
-then test "$HAVE_LIBFAC_PG" = no -a "$HAVE_LIBFAC" = no && AC_MSG_ERROR([missing libraries: libfac (and libfac-pg)])
-     test "$HAVE_LIBFAC_PG" = yes && LIBFAC=$LIBFAC-pg
-else test "$HAVE_LIBFAC" = no && AC_MSG_ERROR([missing library: libfac])
+    if   test "$PROFILING" = yes
+    then test "$HAVE_LIBFAC_PG" = no -a "$HAVE_LIBFAC" = no && AC_MSG_ERROR([missing libraries: libfac (and libfac-pg)])
+	 test "$HAVE_LIBFAC_PG" = yes && LIBFAC=$LIBFAC-pg
+    else test "$HAVE_LIBFAC" = no && AC_MSG_ERROR([missing library: libfac])
+    fi
 fi
 
 AC_MSG_CHECKING(whether readline library is installed)
@@ -493,14 +516,17 @@ AC_COMPILE_IFELSE([int main() {}], HAVE_NO_STRICT_ALIASING=yes, HAVE_NO_STRICT_A
 CFLAGS="$SAVE"
 AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
 
-if test "$LAPACK" = "yes"
-then AC_MSG_CHECKING([whether lapack library is installed])
-     LIBS="$LAPACKLIBS $SAVELIBS"
-     AC_LANG(C)
-     AC_LINK_IFELSE(
-	 [int main() {dgetrf_();}],
-	 AC_MSG_RESULT(yes),
-	 AC_MSG_RESULT(no);AC_MSG_ERROR([missing library: lapack ($LAPACKLIBS)]))
+if test "$BUILDLAPACK" = no
+then
+    if test "$LAPACK" = "yes"
+    then AC_MSG_CHECKING([whether lapack library is installed])
+	 LIBS="$LAPACKLIBS $SAVELIBS"
+	 AC_LANG(C)
+	 AC_LINK_IFELSE(
+	     [int main() {dgetrf_();}],
+	     AC_MSG_RESULT(yes),
+	     AC_MSG_RESULT(no);AC_MSG_ERROR([missing library: lapack ($LAPACKLIBS)]))
+    fi
 fi
 
 LIBS="$SAVELIBS"
