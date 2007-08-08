@@ -2,8 +2,10 @@
 
 PREFIX = $(shell cd .. ; pwd)/local
 LIBNAME = $(shell basename `pwd`)
-CPPFLAGS := -I$(PREFIX)/include $(CPPFLAGS)
 TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
+
+CPPFLAGS := -I$(PREFIX)/include $(CPPFLAGS)
+LDFLAGS := -L$(PREFIX)/lib $(LDFLAGS)
 
 export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LOADLIBES FFLAGS
 

@@ -1,0 +1,10 @@
+# -*- Makefile -*-
+%.lo : %.f ; $(COMPILE.f) -fPIC $< $(OUTPUT_OPTION)
+%.lo : %.c ; $(COMPILE.c) -fPIC $< $(OUTPUT_OPTION)
+%.lo : %.cc; $(COMPILE.cpp) -fPIC $< $(OUTPUT_OPTION)
+%.so : %.lo; $(CC) $(LDFLAGS) $(TARGET_ARCH) -shared $^ $(OUTPUT_OPTION) -Wl,-e,$*_main
+FC = g77
+FILES = $(wildcard *.f)
+FFLAGS = -O2 -g
+libf77blas.so : $(FILES:.f=.lo) ; $(FC) $(TARGET_ARCH) -shared $^ $(OUTPUT_OPTION)
+libf77blas.a  : $(FILES:.f=.o)  ; ar rus $@ $?

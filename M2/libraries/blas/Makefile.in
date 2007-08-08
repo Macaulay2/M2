@@ -5,11 +5,9 @@ include ../../include/config.Makefile
 # Basic Linear Algebra Subprograms
 URL = http://www.netlib.org/blas
 TARFILE = blas.tgz
-TARDIR = blas
+TARDIR = BLAS
 CONFIGURECMD = :
-UNTARCMD ?= install -d $(TARDIR) && tar xzf $(TARFILE) -C $(TARDIR)
-BUILDOPTIONS = -f ../@srcdir@/Makefile.build
-BUILDTARGET = libf77blas.a
+BUILDOPTIONS = BLASLIB=libf77blas.a
 INSTALLDIRS = lib
 INSTALLCMD = install -d $(PREFIX)/lib && install $(BUILDDIR)/libf77blas.a $(PREFIX)/lib/libf77blas.a
 include @srcdir@/../Makefile.library
