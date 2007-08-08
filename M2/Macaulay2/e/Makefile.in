@@ -78,8 +78,10 @@ RES =   -e "s/geobucket/respolyHeap/g"  -e "s/FREEMODULETYPE/const res2_poly/g" 
 geogbvec.hpp: geoT.hpp; sed $(GBVEC) $^ >$@
 geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
 
-clean::; rm -f *.lo *.o *.rpo TAGS LOGFILE $(addsuffix .hpp, $(GENERATED_H))
-clean::; $(MAKE) -C f4 $@
+clean::
+	rm -f *.lo *.o *.rpo TAGS LOGFILE $(addsuffix .hpp, $(GENERATED_H))
+	$(MAKE) -C f4 $@
+	$(MAKE) -C linalgGB $@
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
 clean::; rm -f *.dep dep-*.tmp
 ifeq "$(DEPENDS)" "yes"
@@ -115,6 +117,7 @@ pi-test : exceptions.o overflow.o
 pi-test-run : pi-test ; ./pi-test
 pi-masks.h : pi-genmask
 	./$^ >$@
+clean :: ; rm -f pi-demangled.s pi-test.s pi-test.o pi.s pi.E pi.o pi-test pi-test-run pi-masks.h
 
 all::; @ echo "LOGFILE: `wc -l LOGFILE` entries `wc -c LOGFILE` bytes."
 
