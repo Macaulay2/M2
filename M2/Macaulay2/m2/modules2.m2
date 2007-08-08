@@ -607,8 +607,10 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
      if hi === infinity and dim M > 0 then error "basis: expected a finite dimensional module";
      k := coefficientRing A;
      pres := generators gb presentation M;
-     optR := options R;
-     heft := optR.Heft;
+     heft := (
+     	  optR := options R;
+	  if optR =!= null then optR.Heft
+	  );
      heft = if heft === null then 1:1 else toSequence heft;
      M.cache#"rawBasis log" = log := FunctionApplication { rawBasis, (raw pres, lo, hi, heft, var, opts.Truncate, opts.Limit) };
      map(M,,value log))
