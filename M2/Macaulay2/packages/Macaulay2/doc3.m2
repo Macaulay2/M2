@@ -1395,8 +1395,73 @@ document { Key => "interpreterDepth",
      SeeAlso => {commandInterpreter}}
 document { Key => "printingPrecision",
      Headline => "current precision for printing real numbers",
-     "This variable is in place, but the corresponding code is not implemented yet."
+     Usage => "printingPrecision = n",
+     Inputs => {
+	  "n" => ZZ
+	  },
+     Consequences => {
+	  {"Real numbers are printed with ", TT "n", " digits of precision."}
+	  },
+     EXAMPLE ///
+     	  1/3.
+	  printingPrecision
+	  printingPrecision = 16
+     	  1/3.
+     ///,
+     SeeAlso => {"printingLeadLimit", "printingTrailLimit", "printingSeparator", format}
      }
+document { Key => "printingLeadLimit",
+     Headline => "maximum number of leading zeroes to use when printing real numbers",
+     Usage => "printingLeadLimit = n",
+     Inputs => {
+	  "n" => ZZ
+	  },
+     Consequences => {
+	  {"Real numbers are printed with at most ", TT "n", " leading zeroes."}
+	  },
+     EXAMPLE ///
+     	  1/30000000000.
+	  printingLeadLimit
+	  printingLeadLimit = 20
+     	  1/30000000000.
+     ///,
+     SeeAlso => {"printingPrecision", "printingTrailLimit", "printingSeparator", format}
+     }
+document { Key => "printingTrailLimit",
+     Headline => "maximum number of additional trailing digits to use when printing real numbers",
+     Usage => "printingTrailLimit = n",
+     Inputs => {
+	  "n" => ZZ
+	  },
+     Consequences => {
+	  {"Real numbers are printed with at most ", TT "n", " additional trailing digist, in addition to those specified by ", TT "printingPrecision", "."}
+	  },
+     EXAMPLE ///
+     	  3000000000000.
+	  printingTrailLimit
+	  printingTrailLimit = 20
+     	  3000000000000.
+     ///,
+     SeeAlso => {"printingPrecision", "printingLeadLimit", "printingSeparator", format}
+     }
+document { Key => "printingSeparator",
+     Headline => "string used to separate mantissa from exponent when printing real numbers",
+     Usage => "printingSeparator = s",
+     Inputs => {
+	  "s" => String
+	  },
+     Consequences => {
+	  {"The string ", TT "s", " will be used to separate mantissa and exponent when printing real numbers."}
+	  },
+     EXAMPLE ///
+     	  3000000000000.
+	  printingSeparator
+	  printingSeparator = "e"
+     	  3000000000000.
+     ///,
+     SeeAlso => {"printingPrecision", "printingLeadLimit", "printingTrailLimit", format}
+     }
+
 document { Key => "notify",
      Headline => "whether to notify the user when a file is loaded"
      }

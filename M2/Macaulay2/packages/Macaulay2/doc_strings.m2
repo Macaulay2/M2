@@ -347,7 +347,8 @@ document {
      PARA{},
      TT "format(x,s,l,t,e)", " -- convert a real number ", TT "x", " to a string.  Here ", TT "s", " is the maximum number
      of significant digits to print, ", TT "l", " is the maximum number of leading zeroes to print, ", TT "t", " is the maximum number 
-     of extra trailing digits to print, and ", TT "e", ", a string, is the separator between the mantissa and the exponent, if needed."
+     of extra trailing digits to print, and ", TT "e", ", a string, is the separator between the mantissa and the exponent, if needed.",
+     SeeAlso => {"printingPrecision", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
      }
 
 -- Local Variables:
