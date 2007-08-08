@@ -443,7 +443,7 @@ and VAL is the new value about to be assigned.  The value of the function is
 ignored: only the side effects are useful.  It is initially populated with
 internal hooks for these variables: backtrace, debuggerHook, debuggingMode,
 debugLevel engineDebugLevel, errorDepth, gbTrace, dictionaryPath,
-lineNumber, loadDepth notify, printingPrecision, printWidth, recursionLimit,
+ lineNumber, loadDepth notify, printingPrecision, printWidth, recursionLimit,
 stopIfError.
 
 The function 'loadDepth' has been replaced by a writable variable of

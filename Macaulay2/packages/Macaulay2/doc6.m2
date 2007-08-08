@@ -123,8 +123,9 @@ TEST ///
 document {
      Key => RR,
      Headline => "the class of all real numbers",
-     "A real number is entered as a sequence of decimal digits with a point.",
+     "A real number is entered as a sequence of decimal digits with a point.  It is stored internally as a double precision floating point number.",
      EXAMPLE "3.14159",
+     SeeAlso => {format, "printingPrecision", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
      }
 
 undocumented {

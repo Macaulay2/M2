@@ -106,7 +106,7 @@ export tostring(c:Code):string := (
 			 then provide concatenate(array(string)("(",tostring(x.frameindex.i)," ",tostring(x.nestingDepth.i),")"))
 			 else provide join("'",x.lhs.i.word.name)),
 		    ") ", tostring(x.rhs), ")" ) ) )
-     is x:realCode do tostring(x.x)
+     is x:realCode do tostringRR(x.x)
      is x:sequenceCode do (
 	  concatenate(array(string)(
 		    "(sequence ",

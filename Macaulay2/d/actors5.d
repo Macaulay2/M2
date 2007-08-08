@@ -1735,7 +1735,11 @@ debuggerHookS := dummySymbol;
 lineNumberS := dummySymbol;
 loadDepthS := dummySymbol;
 printingPrecisionS := dummySymbol;
+printingLeadLimitS := dummySymbol;
+printingTrailLimitS := dummySymbol;
+printingSeparatorS := dummySymbol;
 recursionLimitS := dummySymbol;
+nLimitS := dummySymbol;
 stopIfErrorS := dummySymbol;
 printWidthS := dummySymbol;
 notifyS := dummySymbol;
@@ -1751,6 +1755,9 @@ syms := SymbolSequence(
      (  lineNumberS = setupvar("lineNumber",toExpr(lineNumber));  lineNumberS  ),
      (  loadDepthS = setupvar("loadDepth",toExpr(loadDepth));  loadDepthS  ),
      (  printingPrecisionS = setupvar("printingPrecision",toExpr(printingPrecision));  printingPrecisionS  ),
+     (  printingLeadLimitS = setupvar("printingLeadLimit",toExpr(printingPrecision));  printingLeadLimitS ),
+     (  printingTrailLimitS = setupvar("printingTrailLimit",toExpr(printingPrecision));  printingTrailLimitS  ),
+     (  printingSeparatorS = setupvar("printingSeparator",toExpr(printingPrecision));  printingSeparatorS  ),
      (  recursionLimitS = setupvar("recursionLimit",toExpr(recursionLimit));  recursionLimitS  ),
      (  stopIfErrorS = setupvar("stopIfError",toExpr(stopIfError));  stopIfErrorS  ),
      (  printWidthS = setupvar("printWidth",toExpr(printWidth));  printWidthS  ),
@@ -1796,6 +1803,9 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	       else if sym === backtraceS then (backtrace = n; e)
 	       else if sym === notifyS then (notify = n; e)
 	       else buildErrorPacket(msg))
+	  is s:string do (
+	       if sym === printingSeparatorS then (printingSeparator = s; e)
+	       else buildErrorPacket(msg))
 	  is i:Integer do if !isInt(i) then buildErrorPacket(msg)
 	  else (
 	       n := toInt(i);
@@ -1806,6 +1816,8 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	       else if sym === recursionLimitS then (recursionLimit = n; e)
 	       else if sym === lineNumberS then (lineNumber = n; e)
 	       else if sym === printingPrecisionS then (printingPrecision = n; e)
+	       else if sym === printingLeadLimitS then (printingLeadLimit = n; e)
+	       else if sym === printingTrailLimitS then (printingTrailLimit = n; e)
 	       else if sym === gbTraceS then (gbTrace = n; e)
 	       else if sym === printWidthS then (printWidth = n; e)
 	       else buildErrorPacket(msg))

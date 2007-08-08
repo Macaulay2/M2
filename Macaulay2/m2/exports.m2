@@ -1158,6 +1158,9 @@ exportMutable {
 	symbol prefixDirectory,
 	symbol printWidth,
 	symbol printingPrecision,
+	symbol printingLeadLimit,
+	symbol printingTrailLimit,
+	symbol printingSeparator,
 	symbol recursionLimit,
 	symbol sourceHomeDirectory,
 	symbol stopIfError

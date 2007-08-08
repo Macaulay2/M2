@@ -5,8 +5,6 @@ use strings;
 use varstrin;
 use nets;
 
-export printingPrecision := 6;
-
 export HashCounter := 1000000;
 export nextHash():int := (
      HashCounter = HashCounter + 1;
@@ -613,8 +611,13 @@ export tostring5(
 	  else (digits(o,x,1,s-1); o << e << tostring(i);))
      else digits(o,x,i+1,s-i-1);
      tostring(o));
-export tostring(x:double) : string := tostring5(x,6,5,5,"*10^");
-export (o:file) << (x:double) : file := o << tostring(x);
+
+export printingPrecision := 6;
+export printingLeadLimit := 5;
+export printingTrailLimit := 5;
+export printingSeparator := "*10^";
+export tostringRR(x:double) : string := tostring5(x,printingPrecision,printingLeadLimit,printingTrailLimit,printingSeparator);
+export (o:file) << (x:double) : file := o << tostringRR(x);
 
 nl := if length(newline) > 0 then newline.(length(newline)-1) else '\n';
 

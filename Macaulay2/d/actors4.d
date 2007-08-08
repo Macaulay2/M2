@@ -879,8 +879,8 @@ setupfun("separate",linesfun);
 tostringfun(e:Expr):Expr := (
      when e 
      is i:Integer do Expr(tostring(i))
-     is x:Real do Expr(tostring(x.v))
-     is z:Complex do Expr(tostring(z.re) + " + ii * " + tostring(z.im))
+     is x:Real do Expr(tostringRR(x.v))
+     is z:Complex do Expr(tostringRR(z.re) + " + ii * " + tostringRR(z.im))
      is x:Rational do Expr(tostring(x))
      is s:string do e
      is q:SymbolClosure do Expr( if q.frame == globalFrame then q.symbol.word.name else internalName(q.symbol.word.name) )
