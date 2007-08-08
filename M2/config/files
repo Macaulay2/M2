@@ -9,6 +9,7 @@ debian/postinst
 debian/prerm
 debian/preinst
 libraries/Makefile
+libraries/gc/Makefile
 libraries/ntl/Makefile
 libraries/factory/Makefile
 libraries/libfac/Makefile

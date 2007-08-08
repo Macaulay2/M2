@@ -76,11 +76,15 @@ do case $i in
    esac
 done
 
+CPPFLAGS="-Ilibraries/include $CPPFLAGS"
+
 for i in $LDFLAGS
 do case $i in
    -I*) echo "error: preprocessor flag $i found in LDFLAGS instead of in CPPFLAGS" >&2 ; exit 1 ; break ;;
    esac
 done
+
+LDFLAGS="-Llibraries/lib $LDFLAGS"
 
 if test "$CXX" = gcc
 then echo oops, CXX=gcc, should use CXX=g++ >&2
@@ -202,9 +206,10 @@ AC_SUBST(ALTIVEC)    AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,comp
 AC_SUBST(PROFILING)  AC_ARG_ENABLE(profile, AS_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING="$enableval", PROFILING=no)
 AC_SUBST(COMPRESS)   AC_ARG_ENABLE(compress, AS_HELP_STRING([--enable-compress=[gz|bz2]],compression method for tarball), COMPRESS="$enableval", COMPRESS=gz)
 AC_SUBST(EXPERIMENT) AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-experimental-code,enable experimental code), EXPERIMENT="$enableval", EXPERIMENT=no)
-AC_SUBST(TARFILE)    AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare a binary package as a compressed tar file), TARFILE="$enableval", TARFILE==no)
+AC_SUBST(M2TARFILE)  AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare a binary package as a compressed tar file), M2TARFILE="$enableval", M2TARFILE==no)
 AC_SUBST(TARLIBS)    AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS="$enableval", TARLIBS=no)
 
+AC_SUBST(BUILDGC)      AC_ARG_ENABLE(build-gc, AS_HELP_STRING(--enable-build-gc,build library gc from downloaded source code), BUILDGC="$enableval", BUILDGC=yes)
 AC_SUBST(BUILDNTL)     AC_ARG_ENABLE(build-ntl, AS_HELP_STRING(--enable-build-ntl,build library ntl from downloaded source code), BUILDNTL="$enableval", BUILDNTL=yes)
 AC_SUBST(BUILDFACTORY) AC_ARG_ENABLE(build-factory, AS_HELP_STRING(--enable-build-factory,build library factory from downloaded source code), BUILDFACTORY="$enableval", BUILDFACTORY=yes)
 AC_SUBST(BUILDLIBFAC) AC_ARG_ENABLE(build-libfac, AS_HELP_STRING(--enable-build-libfac,build library libfac from downloaded source code), BUILDLIBFAC="$enableval", BUILDLIBFAC=yes)
@@ -213,6 +218,7 @@ AC_SUBST(BUILDBLAS)   AC_ARG_ENABLE(build-blas, AS_HELP_STRING(--enable-build-bl
 
 AC_SUBST(LIBRARIES)
 LIBRARIES=
+test "$BUILDGC" = yes && LIBRARIES="$LIBRARIES gc"
 test "$BUILDNTL" = yes && LIBRARIES="$LIBRARIES ntl"
 test "$BUILDFACTORY" = yes && LIBRARIES="$LIBRARIES factory"
 test "$BUILDLIBFAC" = yes && LIBRARIES="$LIBRARIES libfac"
@@ -247,13 +253,13 @@ case "$COMPRESS" in
 esac
 
 AC_SUBST(CYGWIN)    AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin (disables encap and enables strip)), CYGWIN="$enableval", CYGWIN=no)
-if test "$CYGWIN" = yes ; then ENCAP=no ; STRIP=yes ; TARFILE=yes ; fi
+if test "$CYGWIN" = yes ; then ENCAP=no ; STRIP=yes ; M2TARFILE=yes ; fi
 
 AC_SUBST(DEBIAN)    AC_ARG_ENABLE(debian,  AS_HELP_STRING(--enable-debian,prepare a binary package for debian (enables encap)), DEBIAN="$enableval", DEBIAN=no)
-if test "$DEBIAN" = yes ; then ENCAP=yes ; TARFILE=yes ; fi
+if test "$DEBIAN" = yes ; then ENCAP=yes ; M2TARFILE=yes ; fi
 
 AC_SUBST(RPM)    AC_ARG_ENABLE(rpm,  AS_HELP_STRING(--enable-rpm,prepare a binary rpm package (enables encap)), RPM="$enableval", RPM=no)
-if test "$RPM" = yes ; then ENCAP=yes ; TARFILE=yes ; fi
+if test "$RPM" = yes ; then ENCAP=yes ; M2TARFILE=yes ; fi
 
 AC_SUBST(M2SUFFIX)
 test "$program_suffix" != NONE && M2SUFFIX="$program_suffix"
@@ -315,15 +321,19 @@ AC_ARG_WITH(final-prefix, AS_HELP_STRING(--with-final-prefix=...,final installat
 GCLIB="-lgc"
 AC_SUBST(GCLIB)
 AC_ARG_WITH(gclib, AS_HELP_STRING(--with-gclib=...,gc library ($GCLIB)), GCLIB="$withval")
-LIBS="$GCLIB $SAVELIBS"
-AC_MSG_CHECKING([whether gc library (-lgc) is installed (using $LIBS)])
-AC_LANG(C)
-AC_LINK_IFELSE( [int main () { GC_malloc(1); }], HAVE_LIBGC=yes;AC_MSG_RESULT(yes), HAVE_LIBGC=no;AC_MSG_RESULT(no))
 
-HAVE_GC_H=no
-AC_CHECK_HEADERS(gc/gc.h gc.h,HAVE_GC_H=yes)
-if test "$HAVE_GC_H" = no
-then AC_MSG_ERROR([missing library include files: gc.h and gc/gc.h])
+if test "$BUILDGC" = no
+then
+    LIBS="$GCLIB $SAVELIBS"
+    AC_MSG_CHECKING([whether gc library (-lgc) is installed (using $LIBS)])
+    AC_LANG(C)
+    AC_LINK_IFELSE( [int main () { GC_malloc(1); }], HAVE_LIBGC=yes;AC_MSG_RESULT(yes), HAVE_LIBGC=no;AC_MSG_RESULT(no))
+
+    HAVE_GC_H=no
+    AC_CHECK_HEADERS(gc/gc.h gc.h,HAVE_GC_H=yes)
+    if test "$HAVE_GC_H" = no
+    then AC_MSG_ERROR([missing library include files: gc.h and gc/gc.h])
+    fi
 fi
 
 HAVE_LIBGC_PG=no
