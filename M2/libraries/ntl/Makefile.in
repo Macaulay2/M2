@@ -1,0 +1,25 @@
+# @configure_input@
+# http://www.shoup.net
+# a library for doing number theory
+VPATH = @srcdir@
+include ../../include/config.Makefile
+VERSION = 5.4.1
+TARDIR = ntl-$(VERSION)
+BUILDDIR = $(TARDIR)/src
+TARFILE = ntl-$(VERSION).tar.gz
+URL = http://shoup.net/ntl
+# INSTALLOPTIONS = LIBDIR=$(PREFIX)/lib INCLUDEDIR=$(PREFIX)/include PREFIX=$(PREFIX)
+CONFIGURECMD = ./configure PREFIX=$(PREFIX) \
+	DOCDIR="$(PREFIX)/share/doc" \
+	NTL_GMP_LIP=on NTL_STD_CXX=on NTL_NO_INIT_TRANS=on NTL_CXX_ONLY=on \
+	CC="$(CXX)" \
+	CXX="$(CXX)" \
+	CFLAGS="$(CFLAGS)" \
+	CXXFLAGS="$(CXXFLAGS)" \
+	LDFLAGS="$(LDFLAGS)" 
+check :: ; $(MAKE) -C $(BUILDDIR) check
+include @srcdir@/../Makefile.library
+Makefile : Makefile.in ; cd ../.. && ./config.status libraries/ntl/Makefile
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/libraries/ntl "
+# End:

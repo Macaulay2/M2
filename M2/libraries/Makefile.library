@@ -1,7 +1,9 @@
 # -*- Makefile -*-
 
 PREFIX = $(shell cd .. ; pwd)/local
+LIBNAME = $(shell basename `pwd`)
 CPPFLAGS := -I$(PREFIX)/include $(CPPFLAGS)
+TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
 
 export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LOADLIBES FFLAGS
 
@@ -10,14 +12,18 @@ all :: .installed
 
 unconfigure : ; rm -f .configured
 reconfigure : unconfigure .configured
-prereqs : ; @ set -ex ; if [ "$(PREREQ)" ] ; then for p in $(PREREQ) ; do $(MAKE) -C ../$$p ; done ; fi
 diffs : .untarred .untarred2 ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
 
+BUILDTARGET ?= 
+BUILDDIR ?= $(TARDIR)
+BUILDCMD ?= $(MAKE) -C $(BUILDDIR) $(BUILDTARGET) $(BUILDOPTIONS)
 CONFIGURECMD ?= ./configure --prefix=$(PREFIX) $(CONFIGOPTIONS)
 PRECONFIGURE ?= :
 
-.installed : .compiled ; $(MAKE) -C $(TARDIR) install $(INSTALLOPTIONS) && touch $@
-.compiled : .configured ; $(MAKE) -C $(TARDIR) && touch $@
+INSTALLCMD ?= $(MAKE) -C $(TARDIR) install $(INSTALLOPTIONS)
+
+.installed : .compiled ; $(INSTALLCMD) && touch $@
+.compiled : .configured ; $(BUILDCMD) && touch $@
 .configured : .patched ; (cd $(TARDIR) && $(PRECONFIGURE) && $(CONFIGURECMD)) && touch $@
 
 ifneq ($(PATCHFILE),)

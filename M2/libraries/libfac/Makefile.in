@@ -6,12 +6,12 @@ TARDIR = libfac
 TARFILE := libfac-$(shell echo $(VERSION) | sed 's/\./-/g').tar.gz
 URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac
 CONFIGOPTIONS += --enable-NTL
-PREREQ = factory
 ifeq ($(OPTIMIZE),yes)
 CXXFLAGS += -Wno-deprecated --no-rtti --no-exceptions
 endif
 
 include @srcdir@/../Makefile.library
+Makefile : Makefile.in ; cd ../.. && ./config.status libraries/libfac/Makefile
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/libfac "
