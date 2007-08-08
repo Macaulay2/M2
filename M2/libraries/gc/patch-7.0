@@ -1,0 +1,20 @@
+diff -ur --exclude=configure tmp/gc-7.0/bdw-gc.pc gc-7.0/bdw-gc.pc
+--- tmp/gc-7.0/bdw-gc.pc	2007-07-02 12:13:32.000000000 -0500
++++ gc-7.0/bdw-gc.pc	2007-08-08 17:33:33.000000000 -0500
+@@ -1,4 +1,4 @@
+-prefix=/usr/local
++prefix=/home/dan/src/M2/BUILD/normal/libraries/local
+ exec_prefix=${prefix}
+ libdir=${exec_prefix}/lib
+ includedir=${prefix}/include
+diff -ur --exclude=configure tmp/gc-7.0/gcj_mlc.c gc-7.0/gcj_mlc.c
+--- tmp/gc-7.0/gcj_mlc.c	2006-03-19 00:22:21.000000000 -0600
++++ gc-7.0/gcj_mlc.c	2007-08-08 17:37:22.000000000 -0500
+@@ -198,6 +198,7 @@
+     *((void **)((ptr_t)result + sizeof(oh))) = ptr_to_struct_containing_descr;
+     UNLOCK();
+     if (!GC_debugging_started) {
++	extern void GC_start_debugging(void);
+     	GC_start_debugging();
+     }
+     ADD_CALL_CHAIN(result, ra);
