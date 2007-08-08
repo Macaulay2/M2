@@ -24,7 +24,7 @@ INSTALLCMD ?= $(MAKE) -C $(TARDIR) install $(INSTALLOPTIONS)
 
 .installed : .compiled ; $(INSTALLCMD) && touch $@
 .compiled : .configured ; $(BUILDCMD) && touch $@
-.configured : .patched ; (cd $(TARDIR) && $(PRECONFIGURE) && $(CONFIGURECMD)) && touch $@
+.configured : .patched ; (cd $(BUILDDIR) && $(PRECONFIGURE) && $(CONFIGURECMD)) && touch $@
 
 ifneq ($(PATCHFILE),)
 .patched : $(PATCHFILE) .untarred ; patch -p0 <$< && touch $@
