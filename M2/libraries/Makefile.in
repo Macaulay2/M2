@@ -1,5 +1,5 @@
 VPATH = @srcdir@
-all check :: ; @ for p in @LIBRARIES@ ; do $(MAKE) -C $$p $@ ; done
+all check :: ; @ set -e ; for p in @LIBRARIES@ ; do $(MAKE) -C $$p $@ ; done
 Makefile : Makefile.in ; cd .. && ./config.status libraries/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries "
