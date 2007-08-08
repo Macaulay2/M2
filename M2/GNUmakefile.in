@@ -51,7 +51,7 @@ config.status : @srcdir@/configure
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1
-reconfigure: $(CONFIG_FILES)
+reconfigure:: $(CONFIG_FILES)
 	./config.status --recheck
 	./config.status
 configure-help: $(CONFIG_FILES)
@@ -63,7 +63,7 @@ install all clean distclean install-others install-Macaulay2 ::
 
 # first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
 install install-others install-Macaulay2 :: all
-all ::; $(MAKE) -C libraries
+all reconfigure clean distclean ::; $(MAKE) -C libraries $@
 distclean::; rm -f config.cache config.log config.status configure.options
 distclean:: clean
 ifeq "$(CC)" "cl"

@@ -7,9 +7,7 @@ TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
 
 export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LOADLIBES FFLAGS
 
-.PHONY : fetch patch untar compile install clean distclean configure
-all :: .installed
-
+all install :: .installed
 unconfigure : ; rm -f .configured
 reconfigure : unconfigure .configured
 diffs : .untarred .untarred2 ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
@@ -38,3 +36,17 @@ endif
 clean :; rm -rf .patched $(TARDIR) .fetched .untarred $(TARFILE) .compiled .configured .installed .untarred2 diffs tmp
 distclean : clean ; rm -rf Makefile
 check ::
+
+help :;
+	@ echo ""
+	@ echo "usage: make [option...] [target...]"
+	@ echo ""
+	@ echo "targets:"
+	@ echo ""
+	@ echo "  all                         build/compile all files [the default target]"
+	@ echo "  reconfigure		      remake configuration files for library"
+	@ echo "  diffs			      create diff file for changes to library sources"
+	@ echo "  clean			      remove most created files, except Makefiles"
+	@ echo "  distclean		      remove all created files"
+	@ echo "  check			      check whether library compiled correctly"
+	@ echo ""
