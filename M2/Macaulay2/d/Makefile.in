@@ -10,7 +10,8 @@ all :: ../bin/M2$(EXE)
 
 ## standard options
 
-M2_LDFLAGS := $(LDFLAGS)
+M2_LDFLAGS  = -L../../libraries/local/lib
+M2_LDFLAGS += $(LDFLAGS)
 M2_LOADLIBES := $(LOADLIBES)
 M2_LDLIBS := $(LDLIBS)
 
@@ -160,6 +161,7 @@ endif
 M2-factory.o : M2-factory.cpp ; $(COMPILE.cc) -Wno-old-style-cast $(OUTPUT_OPTION) $<
 
 M2INCLUDES  = -I../../include
+M2INCLUDES += -I../../libraries/local/include
 M2INCLUDES += -I@srcdir@/../../include
 M2INCLUDES += -I@srcdir@
 M2INCLUDES += -I.
