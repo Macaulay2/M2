@@ -928,11 +928,23 @@ connectionCount(e:Expr):Expr := (
      );
 setupfun("connectionCount", connectionCount);
 
-presentfun(e:Expr):Expr := (
+format(e:Expr):Expr := (
      when e
      is s:string do Expr("\"" + present(s) + "\"")
-     else WrongArgString(1));
-setupfun("format",presentfun);
+     is a:Sequence do 
+     if length(a) != 5 then WrongNumArgs(5) else
+     when a.0 is x:Real do 
+     when a.1 is s:Integer do if !isInt(s) then WrongArgSmallInteger(2) else
+     when a.2 is l:Integer do if !isInt(l) then WrongArgSmallInteger(3) else
+     when a.3 is t:Integer do if !isInt(t) then WrongArgSmallInteger(4) else
+     when a.4 is e:string do Expr(tostring(x.v,toInt(s),toInt(l),toInt(t),e))
+     else WrongArg(1,"a real number")
+     else WrongArgInteger(2)
+     else WrongArgInteger(3)
+     else WrongArgInteger(4)
+     else WrongArgString(5)
+     else WrongArg("string, or real number, integer, integer, integer, string"));
+setupfun("format",format);
 
 numfun(e:Expr):Expr := (
      when e
