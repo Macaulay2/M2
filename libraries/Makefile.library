@@ -1,6 +1,7 @@
 # -*- Makefile -*-
 
 PREFIX = $(shell cd .. ; pwd)/local
+CPPFLAGS := -I$(PREFIX)/include $(CPPFLAGS)
 
 export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LOADLIBES FFLAGS
 
@@ -30,3 +31,4 @@ endif
 .fetched : ; curl $(URL)/$(TARFILE) -o "$(TARFILE)" && touch $@
 clean :; rm -rf .patched $(TARDIR) .fetched .untarred $(TARFILE) .compiled .configured .installed .untarred2 diffs tmp
 distclean : clean ; rm -rf Makefile
+check ::
