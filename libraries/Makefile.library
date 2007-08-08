@@ -2,6 +2,7 @@
 
 PREFIX = $(shell cd .. ; pwd)/local
 LIBNAME = $(shell basename `pwd`)
+TARDIR ?= $(LIBNAME)-$(VERSION)
 TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
 
 CPPFLAGS := -I$(PREFIX)/include $(CPPFLAGS)
@@ -33,8 +34,8 @@ else
 endif
 
 UNTARCMD ?= tar xzf $(TARFILE)
-.untarred : .fetched $(TARFILE) ; $(UNTARCMD) && touch $@
-.untarred2 : .fetched $(TARFILE) ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
+.untarred : .fetched ; $(UNTARCMD) && touch $@
+.untarred2 : .fetched ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
 .fetched : ; curl $(URL)/$(TARFILE) -o "$(TARFILE)" && touch $@
 clean :; rm -rf .patched $(TARDIR) .fetched .untarred $(TARFILE) .compiled .configured .installed .untarred2 diffs tmp
 distclean : clean ; rm -rf Makefile

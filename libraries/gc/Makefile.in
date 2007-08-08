@@ -7,8 +7,9 @@ CFLAGS += -g -O2 -DLARGE_CONFIG -DUSE_MMAP
 INSTALLOPTIONS = MAKEOVERRIDES='prefix=$(PREFIX)'
 CONFIGOPTIONS = --disable-threads
 CONFIGOPTIONS += GC_CFLAGS="$(CFLAGS)"
+PATCHFILE = patch-7.0
 include @srcdir@/../Makefile.library
-Makefile : Makefile.in ; cd ../.. && ./config.status libraries/libfac/Makefile
+Makefile : Makefile.in ; cd ../.. && ./config.status libraries/gc/Makefile
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/libraries/libfac "
+# compile-command: "make -C $M2BUILDDIR/libraries/gc "
 # End:

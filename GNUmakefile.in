@@ -51,6 +51,9 @@ config.status : @srcdir@/configure
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1
+
+all reconfigure clean distclean ::; $(MAKE) -C libraries $@
+
 reconfigure:: $(CONFIG_FILES)
 	./config.status --recheck
 	./config.status
@@ -63,7 +66,6 @@ install all clean distclean install-others install-Macaulay2 ::
 
 # first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
 install install-others install-Macaulay2 :: all
-all reconfigure clean distclean ::; $(MAKE) -C libraries $@
 distclean::; rm -f config.cache config.log config.status configure.options
 distclean:: clean
 ifeq "$(CC)" "cl"
@@ -90,7 +92,7 @@ $(PKG_TGZ)  : always; tar cfh $(PKG_TGZ) --gzip $(EXCLUDES) -C $(tarparent) $(ta
 
 always :
 
-ifeq "$(TARFILE)" "yes"
+ifeq "$(M2TARFILE)" "yes"
 install :: tarball
 endif
 

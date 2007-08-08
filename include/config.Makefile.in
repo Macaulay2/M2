@@ -49,7 +49,7 @@ CYGWIN = @CYGWIN@
 TARLIBS = @TARLIBS@
 DEBIAN = @DEBIAN@
 RPM = @RPM@
-TARFILE = @TARFILE@
+M2TARFILE = @M2TARFILE@
 TAR_COMPRESS_OPTION = @TAR_COMPRESS_OPTION@
 
 CC = @CC@
@@ -92,7 +92,7 @@ CONFIG_CMD = @CONFIG_CMD@
 # But I don't want to use it that way.
 # LDLIBS += @LIBS@
 
-# See the autoconf documentation for a description of DEFS; we use incldue/config.h instead, to keep command lines short
+# See the autoconf documentation for a description of DEFS; we use include/config.h instead, to keep command lines short
 DEFS = @DEFS@
 
 M2PKGNAME = PackageName
