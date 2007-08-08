@@ -1,0 +1,39 @@
+diff -ur --exclude=configure tmp/factory/GNUmakefile.in factory/GNUmakefile.in
+--- tmp/factory/GNUmakefile.in	2006-02-20 09:54:16.000000000 -0600
++++ factory/GNUmakefile.in	2007-08-08 09:38:40.000000000 -0500
+@@ -96,12 +96,12 @@
+ 
+ # flags to translate library c files
+ LIBCFLAGS =	$(WARNFLAGS) \
+-		-I$(includedir) -I. -I$(srcdir) \
++		-I. -I$(includedir) -I$(srcdir) \
+ 		$(DEFS) $(CPPFLAGS) $(CFLAGS)
+ 
+ # flags to translate library c++ files
+ LIBCXXFLAGS =	$(WARNFLAGS) -fno-implicit-templates \
+-		-I$(includedir) -I. -I$(srcdir) \
++		-I. -I$(includedir) -I$(srcdir) \
+ 		$(DEFS) $(CPPFLAGS) $(CXXFLAGS)
+ 
+ # flags to translate ftmpl_inst.cc
+@@ -114,7 +114,7 @@
+ TESTLDFLAGS = 	$(LIBS) $(LDFLAGS)
+ 
+ # flags to create dependency lists
+-DEPCXXFLAGS =	-I$(includedir) -I. -I$(srcdir) \
++DEPCXXFLAGS =	-I. -I$(includedir) -I$(srcdir) \
+ 		$(DEFS) $(CPPFLAGS)
+ 
+ #
+diff -ur --exclude=configure tmp/factory/memutil.c factory/memutil.c
+--- tmp/factory/memutil.c	2006-02-20 09:54:16.000000000 -0600
++++ factory/memutil.c	2007-08-08 09:41:55.000000000 -0500
+@@ -4,7 +4,7 @@
+ #define _POSIX_SOURCE 1
+ 
+ #include <config.h>
+-
++#include <string.h>
+ #include <stdlib.h>
+ 
+ #include "assert.h"
