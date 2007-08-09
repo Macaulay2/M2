@@ -8,8 +8,11 @@ LIBNAME = $(shell basename `pwd`)
 TARDIR ?= $(LIBNAME)-$(VERSION)
 TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
 
-CPPFLAGS := -I$(PREFIX)/include $(CPPFLAGS)
-LDFLAGS := -L$(PREFIX)/$(libm2RelDir)/lib $(LDFLAGS)
+LIBRARIESDIR = $(PREFIX)/$(librariesRelDir)
+FINALLIBRARIESDIR = @FINALPREFIX@/$(librariesRelDir)
+
+CPPFLAGS := -I$(LIBRARIESDIR)/include $(CPPFLAGS)
+LDFLAGS := -L$(LIBRARIESDIR)/lib $(LDFLAGS)
 
 export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LOADLIBES FFLAGS
 
@@ -25,11 +28,11 @@ package-distclean : unmark ; $(MAKE) -C $(BUILDDIR) distclean
 
 PRECONFIGURE  ?= :
 CONFIGOPTIONS += --build=@build@ --host=@host@
-CONFIGURECMD  ?= $(PRECONFIGURE) && ./configure --prefix=@FINALPREFIX@/$(librariesRelDir) $(CONFIGOPTIONS)
+CONFIGURECMD  ?= $(PRECONFIGURE) && ./configure --prefix=$(FINALLIBRARIESDIR) $(CONFIGOPTIONS)
 BUILDTARGET   ?= 
 BUILDCMD      ?= $(MAKE) $(BUILDOPTIONS) $(BUILDTARGET)
 INSTALLTARGET ?= install
-INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(PREFIX)/$(librariesRelDir) $(INSTALLTARGET)
+INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
 
 BUILDDIR      ?= $(TARDIR)
 .installed  : .compiled   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)   ) && touch $@

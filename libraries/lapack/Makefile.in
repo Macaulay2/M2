@@ -1,6 +1,3 @@
-# @configure_input@
-VPATH = @srcdir@
-include ../../include/config.Makefile
 # http://www.netlib.org/lapack/
 # documentation: http://www.netlib.org/lapack/lug/
 URL = http://www.netlib.org/lapack
@@ -13,9 +10,8 @@ BUILDOPTIONS = PLAT= FORTRAN=g77 OPTS="-O2 -g" NOOPT= LOADER=g77 RANLIB=ranlib B
 # BUILDTARGET = all ../liblapack.so
 BUILDTARGET = blaslib all
 INSTALLCMD = install -d $(PREFIX)/lib && install lapack.a $(PREFIX)/lib/liblapack.a
-# PATCHFILE = patchfile
 include ../Makefile.library
-Makefile : Makefile.in ; cd ../.. && ./config.status libraries/lapack/Makefile
+Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/lapack/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/lapack "
 # End:

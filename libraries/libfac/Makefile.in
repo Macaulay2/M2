@@ -1,6 +1,3 @@
-# @configure_input@
-VPATH = @srcdir@
-include ../../include/config.Makefile
 VERSION = 3.0.2
 TARDIR = libfac
 TARFILE := libfac-$(shell echo $(VERSION) | sed 's/\./-/g').tar.gz
@@ -9,9 +6,8 @@ CONFIGOPTIONS += --enable-NTL
 ifeq ($(OPTIMIZE),yes)
 CXXFLAGS += -Wno-deprecated --no-rtti --no-exceptions
 endif
-
 include ../Makefile.library
-Makefile : Makefile.in ; cd ../.. && ./config.status libraries/libfac/Makefile
+Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/libfac/Makefile
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/libfac "

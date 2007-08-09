@@ -291,7 +291,7 @@ dnl #   LAPACKLIBS="-llapack -lblas -lg2c"
 AC_ARG_WITH(lapacklibs, AS_HELP_STRING([--with-lapacklibs=...],[lapack and blas libraries (-llapack -lf77blas -lgfortran)]), LAPACKLIBS="$withval", LAPACKLIBS="-llapack -lf77blas -lgfortran")
 AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,replace lapack libraries by "-framework vecLib"), VECLIB=yes; LAPACKLIBS="-framework vecLib", VECLIB=no)
 AC_SUBST(LAPACK)
-AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack]), LAPACK="$enableval";LAPACKLIBS="", LAPACK=yes)
+AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack]), LAPACK="$enableval";LAPACKLIBS="", LAPACK=yes; BLAS=yes)
 test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
