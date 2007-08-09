@@ -24,7 +24,7 @@ else
 CONFIGOPTIONS += --enable-assertions
 endif
 
-include @srcdir@/../Makefile.library
+include ../Makefile.library
 Makefile : Makefile.in ; cd ../.. && ./config.status libraries/factory/Makefile
 
 # Local Variables:

@@ -8,7 +8,7 @@ BUILDTARGET = all shared
 INSTALLTARGET = install install-shared
 # CONFIGOPTIONS = --disable-shared
 CONFIGOPTIONS += --build=@build@ --host=@host@
-include @srcdir@/../Makefile.library
+include ../Makefile.library
 Makefile : Makefile.in ; cd ../.. && ./config.status libraries/readline/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/readline "

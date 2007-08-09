@@ -20,9 +20,9 @@ CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c co
 HFILES := $(CNAMES:.c=.h) scc.h grammar.h
 OFILES := $(CNAMES:.c=.o) grammar.o
 SRCFILES := $(HFILES) $(CNAMES) grammar.y
-CPPFLAGS += -I../../include -I../../libraries/local/include -I@srcdir@/../../include
+CPPFLAGS += -I../../include -I../../libraries/final@FINALPREFIX@/include -I@srcdir@/../../include
 CPPFLAGS += -I@srcdir@
-LDFLAGS += -L../../libraries/local/lib
+LDFLAGS += -L../../libraries/final@FINALPREFIX@/lib
 ############################## compiling
 scc1 : $(OFILES)
 	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)

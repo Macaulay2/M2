@@ -7,7 +7,7 @@ srcdir = $(shell cd @srcdir@; /bin/pwd)
 all:: initialize
 Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
 emacs html: all; $(MAKE) -C ../$@
-LD_LIBRARY_PATH := ../../libraries/local/lib:$(LD_LIBRARY_PATH)
+LD_LIBRARY_PATH := ../../libraries/final@FINALPREFIX@/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 ##############################
 .SUFFIXES: .m2

@@ -2,7 +2,7 @@
 include ../../../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
-include @srcdir@/../make.include
+include ../make.include
 include @srcdir@/../Makefile.common
 
 %.dep: %.cpp

@@ -30,6 +30,7 @@ all :: include/config.h
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1
+subst : config.status ; ./config.status
 status : @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
 	@echo '#  here is the way you ran $^ before:'
@@ -147,6 +148,7 @@ help :
 	@ echo "  configure-help              show help for 'configure'"
 	@ echo "  reconfigure                 re-run configure with same options"
 	@ echo "  reconfigure-all             re-run configure, on the libraries, too"
+	@ echo "  subst                       re-run config.status, remaking the makefiles"
 	@ echo ""
 	@ echo "options:"
 	@ echo "      IgnoreExampleErrors=true       continue even after errors in example code"

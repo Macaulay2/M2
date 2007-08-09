@@ -70,13 +70,7 @@ typedef struct M2_CCC_struct { __mpf_struct re, im; } *M2_CCC; /* must agree wit
 #define sizeofarray(s,len) (sizeof(*s) - sizeof(s->array) + (len)*sizeof(s->array[0]))
 
 #include "config.h"
-#if defined(HAVE_GC_GC_H)
 #include <gc/gc.h>
-#elif defined(HAVE_GC_H)
-#include <gc.h>
-#else
-#error missing include file gc.h
-#endif
 
 extern void dummy_GC_warn_proc(char *, GC_word);
 

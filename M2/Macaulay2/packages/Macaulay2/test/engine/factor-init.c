@@ -6,13 +6,7 @@
 #include <gmp.h>
 
 #include "config.h"
-#if defined(HAVE_GC_GC_H)
 #include <gc/gc.h>
-#elif defined(HAVE_GC_H)
-#include <gc.h>
-#else
-#error missing include file gc.h
-#endif
 
 extern void outofmem();
 extern void IM2_initialize();
