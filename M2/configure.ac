@@ -205,29 +205,16 @@ AC_SUBST(EXPERIMENT) AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-ex
 AC_SUBST(M2TARFILE)  AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare a binary package as a compressed tar file), M2TARFILE="$enableval", M2TARFILE==no)
 AC_SUBST(TARLIBS)    AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS="$enableval", TARLIBS=no)
 
-AC_SUBST(BUILDGMP)     AC_ARG_ENABLE(build-gmp, AS_HELP_STRING(--enable-build-gmp,build library gmp from downloaded source code), BUILDGMP="$enableval", BUILDGMP=yes)
-AC_SUBST(BUILDGDBM)    AC_ARG_ENABLE(build-gdbm, AS_HELP_STRING(--enable-build-gdbm,build library gdbm from downloaded source code), BUILDGDBM="$enableval", BUILDGDBM=yes)
-AC_SUBST(BUILDAC)      AC_ARG_ENABLE(build-autoconf, AS_HELP_STRING(--enable-build-autoconf,build autoconf utility from downloaded source code), BUILDAC="$enableval", BUILDAC=yes)
-AC_SUBST(BUILDRDLINE)  AC_ARG_ENABLE(build-readline, AS_HELP_STRING(--enable-build-readline,build library readline from downloaded source code), BUILDRDLINE="$enableval", BUILDRDLINE=yes)
-AC_SUBST(BUILDGC)      AC_ARG_ENABLE(build-gc, AS_HELP_STRING(--enable-build-gc,build library gc from downloaded source code), BUILDGC="$enableval", BUILDGC=yes)
+dnl # AC_SUBST(BUILDAC)      AC_ARG_ENABLE(build-autoconf, AS_HELP_STRING(--enable-build-autoconf,build autoconf utility from downloaded source code), BUILDAC="$enableval", BUILDAC=no)
+AC_SUBST(BUILDGMP)     AC_ARG_ENABLE(build-gmp, AS_HELP_STRING(--enable-build-gmp,build library gmp from downloaded source code), BUILDGMP="$enableval", BUILDGMP=no)
+AC_SUBST(BUILDGDBM)    AC_ARG_ENABLE(build-gdbm, AS_HELP_STRING(--enable-build-gdbm,build library gdbm from downloaded source code), BUILDGDBM="$enableval", BUILDGDBM=no)
+AC_SUBST(BUILDREADLINE)  AC_ARG_ENABLE(build-readline, AS_HELP_STRING(--enable-build-readline,build library readline from downloaded source code), BUILDREADLINE="$enableval", BUILDREADLINE=no)
+AC_SUBST(BUILDGC)      AC_ARG_ENABLE(build-gc, AS_HELP_STRING(--enable-build-gc,build library gc from downloaded source code), BUILDGC="$enableval", BUILDGC=no)
 AC_SUBST(BUILDNTL)     AC_ARG_ENABLE(build-ntl, AS_HELP_STRING(--enable-build-ntl,build library ntl from downloaded source code), BUILDNTL="$enableval", BUILDNTL=yes)
 AC_SUBST(BUILDFACTORY) AC_ARG_ENABLE(build-factory, AS_HELP_STRING(--enable-build-factory,build library factory from downloaded source code), BUILDFACTORY="$enableval", BUILDFACTORY=yes)
 AC_SUBST(BUILDLIBFAC) AC_ARG_ENABLE(build-libfac, AS_HELP_STRING(--enable-build-libfac,build library libfac from downloaded source code), BUILDLIBFAC="$enableval", BUILDLIBFAC=yes)
 AC_SUBST(BUILDLAPACK) AC_ARG_ENABLE(build-lapack, AS_HELP_STRING(--enable-build-lapack,build library lapack from downloaded source code), BUILDLAPACK="$enableval", BUILDLAPACK=yes)
 AC_SUBST(BUILDBLAS)   AC_ARG_ENABLE(build-blas, AS_HELP_STRING(--enable-build-blas,build library blas from downloaded source code), BUILDBLAS="$enableval", BUILDBLAS=yes)
-
-AC_SUBST(LIBRARIES)
-LIBRARIES=
-test "$BUILDGDBM" = yes && LIBRARIES="$LIBRARIES gdbm"
-test "$BUILDGMP" = yes && LIBRARIES="$LIBRARIES gmp"
-test "$BUILDRDLINE" = yes && LIBRARIES="$LIBRARIES readline"
-test "$BUILDAC" = yes && LIBRARIES="$LIBRARIES autoconf"
-test "$BUILDGC" = yes && LIBRARIES="$LIBRARIES gc"
-test "$BUILDNTL" = yes && LIBRARIES="$LIBRARIES ntl"
-test "$BUILDFACTORY" = yes && LIBRARIES="$LIBRARIES factory"
-test "$BUILDLIBFAC" = yes && LIBRARIES="$LIBRARIES libfac"
-test "$BUILDBLAS" = yes && LIBRARIES="$LIBRARIES blas"
-test "$BUILDLAPACK" = yes && LIBRARIES="$LIBRARIES lapack"
 
 AC_SUBST(DEVELOPMENT) AC_ARG_ENABLE(development, AS_HELP_STRING(--enable-development,build a development version),
     DEVELOPMENT="$enableval";AC_DEFINE(DEVELOPMENT,1,whether to build a development version), DEVELOPMENT==no)
@@ -331,21 +318,32 @@ then
     LIBS="$GCLIB $SAVELIBS"
     AC_MSG_CHECKING([whether gc library (-lgc) is installed (using $LIBS)])
     AC_LANG(C)
-    AC_LINK_IFELSE( [int main () { GC_malloc(1); }], HAVE_LIBGC=yes;AC_MSG_RESULT(yes), HAVE_LIBGC=no;AC_MSG_RESULT(no))
-    AC_CHECK_HEADERS(gc/gc.h gc.h,,AC_MSG_ERROR([missing library include file: we need gc.h or gc/gc.h]))
+    AC_LINK_IFELSE( [int main () { GC_malloc(1); }], 
+	HAVE_LIBGC=yes ; AC_MSG_RESULT(yes) ,
+	HAVE_LIBGC=no  ; AC_MSG_RESULT(no (it will be compiled)) ; BUILDGC=yes)
 
     HAVE_LIBGC_PG=no
-    if test "$PROFILING" = yes -a "$GCLIB" = "-lgc"
+    if test "$PROFILING" = yes -a "$GCLIB" = "-lgc" -a "$BUILDGC" = no
     then AC_MSG_CHECKING([whether gc library, profiling version, is installed (-lgc-pg)])
 	 LIBS="-lgc-pg $SAVELIBS"
 	 AC_LANG(C)
-	 AC_LINK_IFELSE( [int main () { GC_malloc(1);}], HAVE_LIBGC_PG=yes;AC_MSG_RESULT(yes), AC_MSG_RESULT(no))
+	 AC_LINK_IFELSE( [int main () { GC_malloc(1);}],
+	     HAVE_LIBGC_PG=yes ; AC_MSG_RESULT(yes) ,
+	     AC_MSG_RESULT(no))
+    fi
+
+    if test \( "$HAVE_LIBGC" = yes -o "$HAVE_LIBGC_PG" = yes \)
+    then AC_CHECK_HEADERS(gc/gc.h gc.h)
+	 if test "$HAVE_GC_H" = no -a  "$HAVE_GC_GC_H" = no
+	 then AC_MSG_ERROR([missing library include file: we need gc.h or gc/gc.h])
+	 fi
     fi
 
     if   test "$PROFILING" = yes
-    then test "$HAVE_LIBGC_PG" = no -a "$HAVE_LIBGC" = no && AC_MSG_ERROR([missing libraries: libgc (and libgc-pg)])
+    then dnl # test "$HAVE_LIBGC_PG" = no -a "$HAVE_LIBGC" = no && AC_MSG_ERROR([missing libraries: libgc (and libgc-pg)])
 	 test "$HAVE_LIBGC_PG" = yes && GCLIB=-lgc-pg
-    else test "$HAVE_LIBGC" = no && AC_MSG_ERROR([missing library: libgc])
+    else dnl # test "$HAVE_LIBGC" = no && AC_MSG_ERROR([missing library: libgc])
+	 :
     fi
 
 else
@@ -366,7 +364,9 @@ then
 	    int main () { return *__gmp_version;}
 	    ],
 	AC_MSG_RESULT(yes),
-	AC_MSG_RESULT(no))
+	AC_MSG_RESULT(no (it will be compiled))
+	BUILDGMP=yes
+	)
 
     HAVE_LIBGMP_PG=no
     if test "$PROFILING" = yes -a "$GMPLIB" = "-lgmp"
@@ -382,9 +382,10 @@ then
     fi
 
     if   test "$PROFILING" = yes
-    then test "$HAVE_LIBGMP_PG" = no -a "$HAVE_LIBGMP" = no && AC_MSG_ERROR([missing libraries: libgmp (and libgmp-pg)])
+    then dnl # test "$HAVE_LIBGMP_PG" = no -a "$HAVE_LIBGMP" = no && AC_MSG_ERROR([missing libraries: libgmp (and libgmp-pg)])
 	 test "$HAVE_LIBGMP_PG" = yes && GMPLIB=-lgmp-pg
-    else test "$HAVE_LIBGMP" = no && AC_MSG_ERROR([missing library: libgmp])
+    else dnl # test "$HAVE_LIBGMP" = no && AC_MSG_ERROR([missing library: libgmp])
+	 :
     fi
 fi
 
@@ -398,14 +399,16 @@ AC_SUBST(NM_DEMANGLES)
 if test "$BUILDGDBM" = no
 then 
     AC_MSG_CHECKING([whether gdbm library is installed])
-    LIBS="-lgdbm $SAVELIBS"
+    LIBS="$GDBMLIB $SAVELIBS"
     AC_LANG(C)
     AC_LINK_IFELSE([
 	#include <gdbm.h>
 	int main () { gdbm_close(0); }
 	],
 	AC_MSG_RESULT(yes),
-	AC_MSG_RESULT(no);AC_MSG_ERROR([missing library: gdbm]))
+	AC_MSG_RESULT(no (it will be compiled)) ; BUILDGDBM=yes
+	dnl # AC_MSG_ERROR([missing library: gdbm])
+	)
 fi
 
 AC_MSG_CHECKING([whether getaddrinfo can handle numeric service (port) numbers])
@@ -517,7 +520,7 @@ then
     fi
 fi
 
-if test "$BUILDRDLINE" = no
+if test "$BUILDREADLINE" = no
 then
     AC_MSG_CHECKING(whether readline library is installed)
     LIBS="-lreadline -lhistory -lncurses $SAVELIBS"
@@ -525,7 +528,9 @@ then
     AC_LINK_IFELSE(
 	[int main () { extern char *readline(const char *);extern void add_history (const char *); readline; add_history; } ],
 	AC_MSG_RESULT(yes),
-	AC_MSG_RESULT(no);AC_MSG_ERROR([missing library: readline]))
+	AC_MSG_RESULT(no (it will be compiled)) ; BUILDREADLINE=yes
+	dnl # AC_MSG_ERROR([missing library: readline])
+	)
 fi
 
 TESTFLAG=-Wno-strict-aliasing
@@ -552,6 +557,20 @@ then
 fi
 
 LIBS="$SAVELIBS"
+
+AC_SUBST(LIBRARIES)
+LIBRARIES=
+test "$BUILDGDBM" = yes && LIBRARIES="$LIBRARIES gdbm"
+test "$BUILDGMP" = yes && LIBRARIES="$LIBRARIES gmp"
+test "$BUILDREADLINE" = yes && LIBRARIES="$LIBRARIES readline"
+test "$BUILDAC" = yes && LIBRARIES="$LIBRARIES autoconf"
+test "$BUILDGC" = yes && LIBRARIES="$LIBRARIES gc"
+test "$BUILDNTL" = yes && LIBRARIES="$LIBRARIES ntl"
+test "$BUILDFACTORY" = yes && LIBRARIES="$LIBRARIES factory"
+test "$BUILDLIBFAC" = yes && LIBRARIES="$LIBRARIES libfac"
+test "$BUILDBLAS" = yes && LIBRARIES="$LIBRARIES blas"
+test "$BUILDLAPACK" = yes && LIBRARIES="$LIBRARIES lapack"
+AC_MSG_NOTICE([libraries to be compiled from downloaded sources: $LIBRARIES])
 
 dnl SHOW_CONFDEFS()
 
