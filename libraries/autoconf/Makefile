@@ -1,4 +1,4 @@
 # use this Makefile here in the source tree if your autoconf is too old
 URL = ftp://ftp.gnu.org/gnu/autoconf
 VERSION = 2.61
-include ../Makefile.library
+include ../Makefile.library.out

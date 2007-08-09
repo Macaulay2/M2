@@ -1,6 +1,6 @@
 # -*- Makefile -*-
 
-PREFIX = $(shell cd .. ; pwd)/local
+PREFIX = $(shell cd .. ; pwd)/final@FINALPREFIX@
 LIBNAME = $(shell basename `pwd`)
 TARDIR ?= $(LIBNAME)-$(VERSION)
 TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
@@ -11,24 +11,26 @@ LDFLAGS := -L$(PREFIX)/lib $(LDFLAGS)
 export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LOADLIBES FFLAGS
 
 all install :: .installed
-unconfigure : ; rm -f .configured
+unconfigure : ; rm -f .configured .compiled .installed
 reconfigure : unconfigure .configured
+uninstall   : ; rm -f .installed
+reinstall   : uninstall .installed
 diffs : .untarred .untarred2 ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
 unmark : ; rm -f .configured .compiled
 package-clean : unmark ; $(MAKE) -C $(BUILDDIR) clean
 package-distclean : unmark ; $(MAKE) -C $(BUILDDIR) distclean
 
-BUILDTARGET ?= 
-BUILDDIR ?= $(TARDIR)
-BUILDCMD ?= $(MAKE) -C $(BUILDDIR) $(BUILDTARGET) $(BUILDOPTIONS)
-CONFIGURECMD ?= ./configure --prefix=$(PREFIX) $(CONFIGOPTIONS)
-PRECONFIGURE ?= :
+PRECONFIGURE  ?= :
+CONFIGURECMD  ?= $(PRECONFIGURE) && ./configure --prefix=@FINALPREFIX@ $(CONFIGOPTIONS)
+BUILDTARGET   ?= 
+BUILDCMD      ?= $(MAKE) $(BUILDOPTIONS) $(BUILDTARGET)
+INSTALLTARGET ?= install
+INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(PREFIX) $(INSTALLTARGET)
 
-INSTALLCMD ?= $(MAKE) -C $(BUILDDIR) install $(INSTALLOPTIONS)
-
-.installed : .compiled ; $(INSTALLCMD) && touch $@
-.compiled : .configured ; @ set -x ; $(BUILDCMD) && touch $@
-.configured : .patched ; @ set -x ; ( set -x ; cd $(BUILDDIR) && $(PRECONFIGURE) && $(CONFIGURECMD)) && touch $@
+BUILDDIR      ?= $(TARDIR)
+.installed  : .compiled   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)   ) && touch $@
+.compiled   : .configured ; @ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD)     ) && touch $@
+.configured : .patched    ; @ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
 
 ifneq ($(PATCHFILE),)
 .patched : $(PATCHFILE) .untarred ; patch -p0 <$< && touch $@

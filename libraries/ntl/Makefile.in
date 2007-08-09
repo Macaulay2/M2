@@ -19,7 +19,7 @@ CONFIGURECMD = ./configure PREFIX=$(PREFIX) \
 	CPPFLAGS="$(CPPFLAGS)" \
 	LDFLAGS="$(LDFLAGS)"
 check :: ; $(MAKE) -C $(BUILDDIR) check
-include @srcdir@/../Makefile.library
+include ../Makefile.library
 Makefile : Makefile.in ; cd ../.. && ./config.status libraries/ntl/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/ntl "

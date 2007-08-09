@@ -14,7 +14,7 @@ PRECONFIGURE = autoconf && (cd mpn/x86 && rm -fv *dive_1* */*dive_1* */*/*dive_1
 else 
 PRECONFIGURE = autoconf
 endif
-include @srcdir@/../Makefile.library
+include ../Makefile.library
 Makefile : Makefile.in ; cd ../.. && ./config.status libraries/gmp/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/gmp "

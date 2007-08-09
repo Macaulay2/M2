@@ -205,16 +205,15 @@ AC_SUBST(EXPERIMENT) AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-ex
 AC_SUBST(M2TARFILE)  AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare a binary package as a compressed tar file), M2TARFILE="$enableval", M2TARFILE==no)
 AC_SUBST(TARLIBS)    AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS="$enableval", TARLIBS=no)
 
-dnl # AC_SUBST(BUILDAC)      AC_ARG_ENABLE(build-autoconf, AS_HELP_STRING(--enable-build-autoconf,build autoconf utility from downloaded source code), BUILDAC="$enableval", BUILDAC=no)
 AC_SUBST(BUILDGMP)     AC_ARG_ENABLE(build-gmp, AS_HELP_STRING(--enable-build-gmp,build library gmp from downloaded source code), BUILDGMP="$enableval", BUILDGMP=no)
 AC_SUBST(BUILDGDBM)    AC_ARG_ENABLE(build-gdbm, AS_HELP_STRING(--enable-build-gdbm,build library gdbm from downloaded source code), BUILDGDBM="$enableval", BUILDGDBM=no)
 AC_SUBST(BUILDREADLINE)  AC_ARG_ENABLE(build-readline, AS_HELP_STRING(--enable-build-readline,build library readline from downloaded source code), BUILDREADLINE="$enableval", BUILDREADLINE=no)
 AC_SUBST(BUILDGC)      AC_ARG_ENABLE(build-gc, AS_HELP_STRING(--enable-build-gc,build library gc from downloaded source code), BUILDGC="$enableval", BUILDGC=no)
-AC_SUBST(BUILDNTL)     AC_ARG_ENABLE(build-ntl, AS_HELP_STRING(--enable-build-ntl,build library ntl from downloaded source code), BUILDNTL="$enableval", BUILDNTL=yes)
-AC_SUBST(BUILDFACTORY) AC_ARG_ENABLE(build-factory, AS_HELP_STRING(--enable-build-factory,build library factory from downloaded source code), BUILDFACTORY="$enableval", BUILDFACTORY=yes)
-AC_SUBST(BUILDLIBFAC) AC_ARG_ENABLE(build-libfac, AS_HELP_STRING(--enable-build-libfac,build library libfac from downloaded source code), BUILDLIBFAC="$enableval", BUILDLIBFAC=yes)
-AC_SUBST(BUILDLAPACK) AC_ARG_ENABLE(build-lapack, AS_HELP_STRING(--enable-build-lapack,build library lapack from downloaded source code), BUILDLAPACK="$enableval", BUILDLAPACK=yes)
-AC_SUBST(BUILDBLAS)   AC_ARG_ENABLE(build-blas, AS_HELP_STRING(--enable-build-blas,build library blas from downloaded source code), BUILDBLAS="$enableval", BUILDBLAS=yes)
+AC_SUBST(BUILDNTL)     AC_ARG_ENABLE(build-ntl, AS_HELP_STRING(--enable-build-ntl,build library ntl from downloaded source code), BUILDNTL="$enableval", BUILDNTL=no)
+AC_SUBST(BUILDFACTORY) AC_ARG_ENABLE(build-factory, AS_HELP_STRING(--enable-build-factory,build library factory from downloaded source code), BUILDFACTORY="$enableval", BUILDFACTORY=no)
+AC_SUBST(BUILDLIBFAC) AC_ARG_ENABLE(build-libfac, AS_HELP_STRING(--enable-build-libfac,build library libfac from downloaded source code), BUILDLIBFAC="$enableval", BUILDLIBFAC=no)
+AC_SUBST(BUILDLAPACK) AC_ARG_ENABLE(build-lapack, AS_HELP_STRING(--enable-build-lapack,build library lapack from downloaded source code), BUILDLAPACK="$enableval", BUILDLAPACK=no)
+AC_SUBST(BUILDBLAS)   AC_ARG_ENABLE(build-blas, AS_HELP_STRING(--enable-build-blas,build library blas from downloaded source code), BUILDBLAS="$enableval", BUILDBLAS=no)
 
 AC_SUBST(DEVELOPMENT) AC_ARG_ENABLE(development, AS_HELP_STRING(--enable-development,build a development version),
     DEVELOPMENT="$enableval";AC_DEFINE(DEVELOPMENT,1,whether to build a development version), DEVELOPMENT==no)
@@ -289,8 +288,8 @@ dnl # formerly:
 dnl #   LAPACKLIBS="-llapack -lcblas -lf77blas -lg2c"
 dnl # and
 dnl #   LAPACKLIBS="-llapack -lblas -lg2c"
-AC_ARG_WITH(lapacklibs, AS_HELP_STRING([--with-lapacklibs=...],[lapack libraries (-llapack -lf77blas -lgfortran)]), LAPACKLIBS="$withval", LAPACKLIBS="-llapack -lf77blas -lgfortran")
-AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,replace lapack libraries by "-framework vecLib"), LAPACKLIBS="-framework vecLib")
+AC_ARG_WITH(lapacklibs, AS_HELP_STRING([--with-lapacklibs=...],[lapack and blas libraries (-llapack -lf77blas -lgfortran)]), LAPACKLIBS="$withval", LAPACKLIBS="-llapack -lf77blas -lgfortran")
+AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,replace lapack libraries by "-framework vecLib"), VECLIB=yes; LAPACKLIBS="-framework vecLib", VECLIB=no)
 AC_SUBST(LAPACK)
 AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack]), LAPACK="$enableval";LAPACKLIBS="", LAPACK=yes)
 test "$LAPACK" = no; val=$?
@@ -307,113 +306,58 @@ dnl AC_MSG_CHECKING(whether libpthread exists (-lpthread))
 dnl AC_LINK_IFELSE([int main() {}],LIBPTHREAD=-lpthread;AC_MSG_RESULT(yes), LIBPTHREAD=; AC_MSG_RESULT(no))
 
 AC_SUBST(FINALPREFIX)
-AC_ARG_WITH(final-prefix, AS_HELP_STRING(--with-final-prefix=...,final installation prefix (/usr) (used by debian installation scripts)), FINALPREFIX="$withval", FINALPREFIX="/usr")
+AC_ARG_WITH(final-prefix,
+    AS_HELP_STRING(--with-final-prefix=...,final installation prefix (/usr) (used by libtool and debian installation scripts)),
+    FINALPREFIX="$withval", 
+    FINALPREFIX="/usr")
 
 GCLIB="-lgc"
 AC_SUBST(GCLIB)
 AC_ARG_WITH(gclib, AS_HELP_STRING(--with-gclib=...,gc library ($GCLIB)), GCLIB="$withval")
-
 if test "$BUILDGC" = no
-then
-    LIBS="$GCLIB $SAVELIBS"
-    AC_MSG_CHECKING([whether gc library (-lgc) is installed (using $LIBS)])
-    AC_LANG(C)
-    AC_LINK_IFELSE( [int main () { GC_malloc(1); }], 
-	HAVE_LIBGC=yes ; AC_MSG_RESULT(yes) ,
-	HAVE_LIBGC=no  ; AC_MSG_RESULT(no (it will be compiled)) ; BUILDGC=yes)
-
-    HAVE_LIBGC_PG=no
-    if test "$PROFILING" = yes -a "$GCLIB" = "-lgc" -a "$BUILDGC" = no
-    then AC_MSG_CHECKING([whether gc library, profiling version, is installed (-lgc-pg)])
-	 LIBS="-lgc-pg $SAVELIBS"
-	 AC_LANG(C)
-	 AC_LINK_IFELSE( [int main () { GC_malloc(1);}],
-	     HAVE_LIBGC_PG=yes ; AC_MSG_RESULT(yes) ,
-	     AC_MSG_RESULT(no))
-    fi
-
-    if test \( "$HAVE_LIBGC" = yes -o "$HAVE_LIBGC_PG" = yes \)
-    then AC_CHECK_HEADERS(gc/gc.h gc.h)
-	 if test "$HAVE_GC_H" = no -a  "$HAVE_GC_GC_H" = no
-	 then AC_MSG_ERROR([missing library include file: we need gc.h or gc/gc.h])
-	 fi
-    fi
-
-    if   test "$PROFILING" = yes
-    then dnl # test "$HAVE_LIBGC_PG" = no -a "$HAVE_LIBGC" = no && AC_MSG_ERROR([missing libraries: libgc (and libgc-pg)])
-	 test "$HAVE_LIBGC_PG" = yes && GCLIB=-lgc-pg
-    else dnl # test "$HAVE_LIBGC" = no && AC_MSG_ERROR([missing library: libgc])
-	 :
-    fi
-
-else
-    AC_DEFINE(HAVE_GC_GC_H) HAVE_GC_GC_H=1
-    AC_DEFINE(HAVE_GC_H) HAVE_GC_H=0
+then LIBS="$GCLIB $SAVELIBS"
+     AC_LANG(C)
+     AC_CHECK_HEADERS(gc/gc.h,
+	 AC_MSG_CHECKING([whether gc library (-lgc) is installed (using $LIBS)])
+	 AC_LINK_IFELSE([int main () { GC_malloc(1); }],AC_MSG_RESULT(yes),AC_MSG_RESULT(no (it will be compiled));BUILDGC=yes),
+	 BUILDGC=yes)
 fi
 
 GMPLIB="-lgmp"
 if test "$BUILDGMP" = no
-then
-    AC_SUBST(GMPLIB)
-    AC_ARG_WITH(gmplib, AS_HELP_STRING(--with-gmplib=...,gmp library (-lgmp)), GMPLIB="$withval")
-    AC_MSG_CHECKING([whether gmp library is installed ($GMPLIB)])
-    LIBS="$GMPLIB $SAVELIBS"
-    AC_LANG(C)
-    AC_LINK_IFELSE( [
-	    #include <gmp.h>
-	    int main () { return *__gmp_version;}
-	    ],
-	AC_MSG_RESULT(yes),
-	AC_MSG_RESULT(no (it will be compiled))
-	BUILDGMP=yes
-	)
-
-    HAVE_LIBGMP_PG=no
-    if test "$PROFILING" = yes -a "$GMPLIB" = "-lgmp"
-    then AC_MSG_CHECKING([whether gmp library, profiling version, is installed (-lgmp-pg)])
-	 LIBS="-lgmp-pg $SAVELIBS"
-	 AC_LANG(C)
-	 AC_LINK_IFELSE( [
-	    #include <gmp.h>
-	    int main () { return *__gmp_version; }
-	    ],
-	 HAVE_LIBGMP_PG=yes;AC_MSG_RESULT(yes),
-	 AC_MSG_RESULT(no))
-    fi
-
-    if   test "$PROFILING" = yes
-    then dnl # test "$HAVE_LIBGMP_PG" = no -a "$HAVE_LIBGMP" = no && AC_MSG_ERROR([missing libraries: libgmp (and libgmp-pg)])
-	 test "$HAVE_LIBGMP_PG" = yes && GMPLIB=-lgmp-pg
-    else dnl # test "$HAVE_LIBGMP" = no && AC_MSG_ERROR([missing library: libgmp])
-	 :
-    fi
+then AC_SUBST(GMPLIB)
+     AC_ARG_WITH(gmplib, AS_HELP_STRING(--with-gmplib=...,gmp library (-lgmp)), GMPLIB="$withval")
+     LIBS="$GMPLIB $SAVELIBS"
+     AC_LANG(C)
+     AC_MSG_CHECKING([whether gmp include file (gmp.h) and library ($GMPLIB) are installed])
+     AC_LINK_IFELSE( [
+	     #include <gmp.h>
+	     int main () { return *__gmp_version;} ],
+	 AC_MSG_RESULT(yes),
+	 AC_MSG_RESULT(no (it will be compiled)); BUILDGMP=yes )
 fi
 
 AC_MSG_CHECKING(whether nm accepts the demangle option)
 if nm --help 2>&1 | grep demangle >/dev/null
-   then NM_DEMANGLES=yes
-   else NM_DEMANGLES=no
+   then NM_DEMANGLES=yes; AC_MSG_RESULT(yes)
+   else NM_DEMANGLES=no ; AC_MSG_RESULT(no)
 fi
 AC_SUBST(NM_DEMANGLES)
 
 if test "$BUILDGDBM" = no
-then 
-    AC_MSG_CHECKING([whether gdbm library is installed])
-    LIBS="$GDBMLIB $SAVELIBS"
-    AC_LANG(C)
-    AC_LINK_IFELSE([
-	#include <gdbm.h>
-	int main () { gdbm_close(0); }
-	],
-	AC_MSG_RESULT(yes),
-	AC_MSG_RESULT(no (it will be compiled)) ; BUILDGDBM=yes
-	dnl # AC_MSG_ERROR([missing library: gdbm])
-	)
+then LIBS="$GDBMLIB $SAVELIBS"
+     AC_LANG(C)
+     AC_MSG_CHECKING([whether gdbm library is installed])
+     AC_LINK_IFELSE([
+	 #include <gdbm.h>
+	 int main () { gdbm_close(0); } ],
+	 AC_MSG_RESULT(yes),
+	 AC_MSG_RESULT(no (it will be compiled)) ; BUILDGDBM=yes )
 fi
 
-AC_MSG_CHECKING([whether getaddrinfo can handle numeric service (port) numbers])
 LIBS="$SAVELIBS"
 AC_LANG(C)
+AC_MSG_CHECKING([whether getaddrinfo can handle numeric service (port) numbers])
 AC_RUN_IFELSE([
     #include <sys/types.h>
     #include <sys/socket.h>
@@ -427,133 +371,68 @@ AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,$GETADDRINFO_WORKS,[whether getaddrinfo can
 
 NTLLIB=-lntl
 if test "$BUILDNTL" = no
-then
-    AC_SUBST(NTLLIB)
-    AC_ARG_WITH(ntllib, AS_HELP_STRING(--with-ntllib=...,ntl library (-lntl), ignored if building it), NTLLIB="$withval")
-    AC_MSG_CHECKING([whether ntl library is installed])
-    LIBS="$NTLLIB -lgmp $SAVELIBS"
-    AC_LANG(C++)
-    AC_LINK_IFELSE( [
-	#include <NTL/tools.h>
-	int main () { _ntl_GetTime(); }
-	],
-	HAVE_LIBNTL=yes;AC_MSG_RESULT(yes),
-	HAVE_LIBNTL=no;AC_MSG_RESULT(no))
-
-    HAVE_LIBNTL_PG=no
-    if test "$PROFILING" = yes -a "$NTLLIB" = "-lntl"
-    then AC_MSG_CHECKING([whether ntl library, profiling version, is installed (-lntl-pg)])
-	 LIBS="-lntl-pg -lgmp $SAVELIBS"
-	 AC_LANG(C++)
-	 AC_LINK_IFELSE( [
-	    #include <NTL/tools.h>
-	    int main () { _ntl_GetTime(); }
-	    ],
-	 HAVE_LIBNTL_PG=yes;AC_MSG_RESULT(yes),
-	 AC_MSG_RESULT(no))
-    fi
-
-    if   test "$PROFILING" = yes
-    then test "$HAVE_LIBNTL_PG" = no -a "$HAVE_LIBNTL" = no && AC_MSG_ERROR([missing libraries: libntl (and libntl-pg)])
-	 test "$HAVE_LIBNTL_PG" = yes && NTLLIB=-lntl-pg
-    else test "$HAVE_LIBNTL" = no && AC_MSG_ERROR([missing library: libntl])
-    fi
+then AC_SUBST(NTLLIB)
+     AC_ARG_WITH(ntllib, AS_HELP_STRING(--with-ntllib=...,ntl library (-lntl), ignored if building it), NTLLIB="$withval")
+     LIBS="$NTLLIB -lgmp $SAVELIBS"
+     AC_LANG(C++)
+     AC_MSG_CHECKING([whether ntl library is installed])
+     AC_LINK_IFELSE( [
+	 #include <NTL/tools.h>
+	 int main () { _ntl_GetTime(); }
+	 ],
+	 AC_MSG_RESULT(yes),
+	 AC_MSG_RESULT(no (it will be compiled));BUILDNTL=yes)
 fi
 
 LIBCF=-lcf
 if test "$BUILDFACTORY" = no
-then
-    AC_SUBST(LIBCF)
-    AC_MSG_CHECKING([whether factory library is installed])
-    LIBS="$LIBCF $SAVELIBS"
-    AC_LANG(C++)
-    AC_LINK_IFELSE( [[
-	    #include <factoryconf.h>
-	    int main () { extern const char factoryVersion[]; return *factoryVersion; }
-	    ]],
-	 HAVE_LIBCF=yes;AC_MSG_RESULT(yes),
-	 HAVE_LIBCF=no;AC_MSG_RESULT(no))
-
-    AC_MSG_CHECKING([whether factory library, profiling version, is installed (-lcf-pg), ignored if building it])
-    AC_SUBST(HAVE_LIBCF_PG)
-    LIBS="-lcf-pg $SAVELIBS"
-    AC_LANG(C++)
-    AC_LINK_IFELSE( [[
-	    #include <factoryconf.h>
-	    int main () { extern const char factoryVersion[]; return *factoryVersion; }
-	 ]],
-	HAVE_LIBCF_PG=yes;AC_MSG_RESULT(yes),
-	HAVE_LIBCF_PG=no;AC_MSG_RESULT(no))
-
-    if   test "$PROFILING" = yes
-    then test "$HAVE_LIBCF_PG" = no -a "$HAVE_LIBCF" = no && AC_MSG_ERROR([missing libraries: libcf (and libcf-pg)])
-	 test "$HAVE_LIBCF_PG" = yes && LIBCF=-lcf-pg
-    else test "$HAVE_LIBCF" = no && AC_MSG_ERROR([missing library: libcf])
-    fi
+then AC_SUBST(LIBCF)
+     LIBS="$LIBCF $SAVELIBS"
+     AC_LANG(C++)
+     AC_MSG_CHECKING([whether factory library is installed])
+     AC_LINK_IFELSE( [[
+	     #include <factoryconf.h>
+	     int main () { extern const char factoryVersion[]; return *factoryVersion; }
+	     ]],
+	  AC_MSG_RESULT(yes),
+	  AC_MSG_RESULT(no (it (and libfac) will be compiled)); BUILDFACTORY=yes; BUILDLIBFAC=yes)
 fi
 
 LIBFAC=-lfac
 if test "$BUILDLIBFAC" = no
-then
-    AC_MSG_CHECKING([whether (and where) the libfac library is installed ($LIBFAC)])
-    AC_SUBST(LIBFAC)
-    AC_LANG(C++)
-    LIBS="$LIBCF $LIBFAC $SAVELIBS"
-    AC_LINK_IFELSE(
-     [extern const char * libfac_version; int main() { return *libfac_version; }],
-     HAVE_LIBFAC=yes;AC_MSG_RESULT(yes),
-     HAVE_LIBFAC=no;AC_MSG_RESULT(no))
-
-    AC_MSG_CHECKING([whether libfac library, profiling version, is installed ($LIBFAC-pg)])
-
-    LIBS="$LIBFAC-pg $LIBCF $SAVELIBS"
-    AC_LANG(C++)
-    AC_LINK_IFELSE(
-	[extern const char * libfac_version; int main() { return *libfac_version; }],
-	HAVE_LIBFAC_PG=yes;AC_MSG_RESULT(yes),
-	HAVE_LIBFAC_PG=no;AC_MSG_RESULT(no))
-
-    if   test "$PROFILING" = yes
-    then test "$HAVE_LIBFAC_PG" = no -a "$HAVE_LIBFAC" = no && AC_MSG_ERROR([missing libraries: libfac (and libfac-pg)])
-	 test "$HAVE_LIBFAC_PG" = yes && LIBFAC=$LIBFAC-pg
-    else test "$HAVE_LIBFAC" = no && AC_MSG_ERROR([missing library: libfac])
-    fi
+then AC_SUBST(LIBFAC)
+     AC_LANG(C++)
+     LIBS="$LIBCF $LIBFAC $SAVELIBS"
+     AC_MSG_CHECKING([whether the libfac library is installed ($LIBFAC)])
+     AC_LINK_IFELSE(
+	 [extern const char * libfac_version; int main() { return *libfac_version; }],
+	 AC_MSG_RESULT(yes),
+	 AC_MSG_RESULT(no (it will be compiled)); BUILDLIBFAC=yes)
 fi
 
 if test "$BUILDREADLINE" = no
-then
-    AC_MSG_CHECKING(whether readline library is installed)
-    LIBS="-lreadline -lhistory -lncurses $SAVELIBS"
-    AC_LANG(C)
-    AC_LINK_IFELSE(
-	[int main () { extern char *readline(const char *);extern void add_history (const char *); readline; add_history; } ],
-	AC_MSG_RESULT(yes),
-	AC_MSG_RESULT(no (it will be compiled)) ; BUILDREADLINE=yes
-	dnl # AC_MSG_ERROR([missing library: readline])
-	)
+then LIBS="-lreadline -lhistory -lncurses $SAVELIBS"
+     AC_LANG(C)
+     AC_MSG_CHECKING(whether readline and history libraries are installed)
+     AC_LINK_IFELSE([
+             #include <readline/readline.h>
+	     int main () { readline; add_history; }],
+	 AC_MSG_RESULT(yes),
+	 AC_MSG_RESULT(no (they will be compiled)) ; BUILDREADLINE=yes )
 fi
 
-TESTFLAG=-Wno-strict-aliasing
-AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
-AC_SUBST(HAVE_NO_STRICT_ALIASING)
-SAVE="$CFLAGS"
-CFLAGS="$TESTFLAG $CFLAGS"
-AC_LANG(C)
-AC_COMPILE_IFELSE([int main() {}], HAVE_NO_STRICT_ALIASING=yes, HAVE_NO_STRICT_ALIASING=no)
-CFLAGS="$SAVE"
-AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
+if test "$BUILDLAPACK" = no -a "$LAPACK" = "yes"
+then LIBS="$LAPACKLIBS $SAVELIBS"
+     AC_LANG(C)
+     AC_MSG_CHECKING([whether lapack library is installed ($LAPACKLIBS)])
+     AC_LINK_IFELSE( [int main() {dgetrf_();}], AC_MSG_RESULT(yes), AC_MSG_RESULT(no (it will be compiled));BUILDLAPACK=yes)
+fi
 
-if test "$BUILDLAPACK" = no
-then
-    if test "$LAPACK" = "yes"
-    then AC_MSG_CHECKING([whether lapack library is installed])
-	 LIBS="$LAPACKLIBS $SAVELIBS"
-	 AC_LANG(C)
-	 AC_LINK_IFELSE(
-	     [int main() {dgetrf_();}],
-	     AC_MSG_RESULT(yes),
-	     AC_MSG_RESULT(no);AC_MSG_ERROR([missing library: lapack ($LAPACKLIBS)]))
-    fi
+if test "$BUILDBLAS" = no -a "$BLAS" = "yes"
+then LIBS="$LAPACKLIBS $SAVELIBS"
+     AC_LANG(C)
+     AC_MSG_CHECKING([whether blas library is installed])
+     AC_LINK_IFELSE( [int main() {sgemv_();}], AC_MSG_RESULT(yes), AC_MSG_RESULT(no (it will be compiled));BUILDBLAS=yes)
 fi
 
 LIBS="$SAVELIBS"
@@ -570,7 +449,17 @@ test "$BUILDFACTORY" = yes && LIBRARIES="$LIBRARIES factory"
 test "$BUILDLIBFAC" = yes && LIBRARIES="$LIBRARIES libfac"
 test "$BUILDBLAS" = yes && LIBRARIES="$LIBRARIES blas"
 test "$BUILDLAPACK" = yes && LIBRARIES="$LIBRARIES lapack"
-AC_MSG_NOTICE([libraries to be compiled from downloaded sources: $LIBRARIES])
+AC_MSG_NOTICE([libraries to be compiled from downloaded sources:$LIBRARIES])
+
+TESTFLAG=-Wno-strict-aliasing
+AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
+AC_SUBST(HAVE_NO_STRICT_ALIASING)
+SAVE="$CFLAGS"
+CFLAGS="$TESTFLAG $CFLAGS"
+AC_LANG(C)
+AC_COMPILE_IFELSE([int main() {}], HAVE_NO_STRICT_ALIASING=yes, HAVE_NO_STRICT_ALIASING=no)
+CFLAGS="$SAVE"
+AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
 
 dnl SHOW_CONFDEFS()
 

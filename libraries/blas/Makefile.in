@@ -9,8 +9,8 @@ TARDIR = BLAS
 CONFIGURECMD = :
 BUILDOPTIONS = BLASLIB=libf77blas.a
 INSTALLDIRS = lib
-INSTALLCMD = install -d $(PREFIX)/lib && install $(BUILDDIR)/libf77blas.a $(PREFIX)/lib/libf77blas.a
-include @srcdir@/../Makefile.library
+INSTALLCMD = install -d $(PREFIX)/lib && install libf77blas.a $(PREFIX)/lib/libf77blas.a
+include ../Makefile.library
 Makefile : Makefile.in ; cd ../.. && ./config.status libraries/blas/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/blas "
