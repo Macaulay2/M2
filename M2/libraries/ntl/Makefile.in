@@ -17,7 +17,7 @@ CONFIGURECMD = ./configure PREFIX=$(PREFIX) \
 	CFLAGS="$(CFLAGS)" \
 	CXXFLAGS="$(CXXFLAGS)" \
 	CPPFLAGS="$(CPPFLAGS)" \
-	LDFLAGS="$(LDFLAGS)" 
+	LDFLAGS="$(LDFLAGS)"
 check :: ; $(MAKE) -C $(BUILDDIR) check
 include @srcdir@/../Makefile.library
 Makefile : Makefile.in ; cd ../.. && ./config.status libraries/ntl/Makefile
