@@ -5,7 +5,6 @@ URL = ftp://ftp.gnu.org/gnu/gdbm
 VERSION = 1.8.3
 INSTALLOPTIONS = BINOWN=$(shell id -u) BINGRP=$(shell id -g)
 CONFIGOPTIONS += --disable-shared
-CONFIGOPTIONS += --build=@build@ --host=@host@
 include ../Makefile.library
 Makefile : Makefile.in ; cd ../.. && ./config.status libraries/gdbm/Makefile
 # Local Variables:

@@ -53,8 +53,9 @@ config.status : @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1
 
-all clean distclean ::; $(MAKE) -C libraries $@
+all clean check distclean ::; $(MAKE) -C libraries $@
 reconfigure-all ::; $(MAKE) -C libraries reconfigure
+install ::; $(MAKE) -C libraries final-install
 
 reconfigure:: $(CONFIG_FILES)
 	./config.status --recheck

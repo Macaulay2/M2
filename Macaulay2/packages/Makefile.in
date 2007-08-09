@@ -2,7 +2,7 @@
 include ../../include/config.Makefile
 VPATH = @srcdir@
 
-LD_LIBRARY_PATH := ../../libraries/final@FINALPREFIX@/lib:$(LD_LIBRARY_PATH)
+LD_LIBRARY_PATH := ../../libraries/final@FINALPREFIX@/$(libm2RelDir)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 
 ## here is the list of those package files to install with Macaulay2

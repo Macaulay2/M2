@@ -5,7 +5,7 @@ SRCDIR = @srcdir@
 DEPENDS = yes
 
 
-M2CPPFLAGS  = -I../../include -I../../libraries/final@FINALPREFIX@/include
+M2CPPFLAGS  = -I../../include -I../../libraries/final@FINALPREFIX@/$(libm2RelDir)/include
 M2CPPFLAGS += -I@srcdir@/../../include
 M2CPPFLAGS += -I../util
 M2CPPFLAGS += -I.

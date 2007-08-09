@@ -16,6 +16,7 @@ libraries/gdbm/Makefile
 libraries/gmp/Makefile
 libraries/readline/Makefile
 libraries/ntl/Makefile
+libraries/libtool/Makefile
 libraries/factory/Makefile
 libraries/libfac/Makefile
 libraries/lapack/Makefile
