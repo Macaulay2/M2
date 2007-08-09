@@ -14,6 +14,9 @@ all install :: .installed
 unconfigure : ; rm -f .configured
 reconfigure : unconfigure .configured
 diffs : .untarred .untarred2 ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
+unmark : ; rm -f .configured .compiled
+package-clean : unmark ; $(MAKE) -C $(BUILDDIR) clean
+package-distclean : unmark ; $(MAKE) -C $(BUILDDIR) distclean
 
 BUILDTARGET ?= 
 BUILDDIR ?= $(TARDIR)
@@ -52,5 +55,7 @@ help :;
 	@ echo "  diffs			      create diff file for changes to library sources"
 	@ echo "  clean			      remove most created files, except Makefiles"
 	@ echo "  distclean		      remove all created files"
+	@ echo "  package-clean		      remove most created files in the package, except Makefiles"
+	@ echo "  package-distclean	      remove all created files in the package"
 	@ echo "  check			      check whether library compiled correctly"
 	@ echo ""

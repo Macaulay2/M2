@@ -333,28 +333,29 @@ then
     AC_LANG(C)
     AC_LINK_IFELSE( [int main () { GC_malloc(1); }], HAVE_LIBGC=yes;AC_MSG_RESULT(yes), HAVE_LIBGC=no;AC_MSG_RESULT(no))
     AC_CHECK_HEADERS(gc/gc.h gc.h,,AC_MSG_ERROR([missing library include file: we need gc.h or gc/gc.h]))
+
+    HAVE_LIBGC_PG=no
+    if test "$PROFILING" = yes -a "$GCLIB" = "-lgc"
+    then AC_MSG_CHECKING([whether gc library, profiling version, is installed (-lgc-pg)])
+	 LIBS="-lgc-pg $SAVELIBS"
+	 AC_LANG(C)
+	 AC_LINK_IFELSE( [int main () { GC_malloc(1);}], HAVE_LIBGC_PG=yes;AC_MSG_RESULT(yes), AC_MSG_RESULT(no))
+    fi
+
+    if   test "$PROFILING" = yes
+    then test "$HAVE_LIBGC_PG" = no -a "$HAVE_LIBGC" = no && AC_MSG_ERROR([missing libraries: libgc (and libgc-pg)])
+	 test "$HAVE_LIBGC_PG" = yes && GCLIB=-lgc-pg
+    else test "$HAVE_LIBGC" = no && AC_MSG_ERROR([missing library: libgc])
+    fi
+
 else
     AC_DEFINE(HAVE_GC_GC_H) HAVE_GC_GC_H=1
     AC_DEFINE(HAVE_GC_H) HAVE_GC_H=0
 fi
 
-HAVE_LIBGC_PG=no
-if test "$PROFILING" = yes -a "$GCLIB" = "-lgc"
-then AC_MSG_CHECKING([whether gc library, profiling version, is installed (-lgc-pg)])
-     LIBS="-lgc-pg $SAVELIBS"
-     AC_LANG(C)
-     AC_LINK_IFELSE( [int main () { GC_malloc(1);}], HAVE_LIBGC_PG=yes;AC_MSG_RESULT(yes), AC_MSG_RESULT(no))
-fi
-
-if   test "$PROFILING" = yes
-then test "$HAVE_LIBGC_PG" = no -a "$HAVE_LIBGC" = no && AC_MSG_ERROR([missing libraries: libgc (and libgc-pg)])
-     test "$HAVE_LIBGC_PG" = yes && GCLIB=-lgc-pg
-else test "$HAVE_LIBGC" = no && AC_MSG_ERROR([missing library: libgc])
-fi
-
+GMPLIB="-lgmp"
 if test "$BUILDGMP" = no
 then
-    GMPLIB="-lgmp"
     AC_SUBST(GMPLIB)
     AC_ARG_WITH(gmplib, AS_HELP_STRING(--with-gmplib=...,gmp library (-lgmp)), GMPLIB="$withval")
     AC_MSG_CHECKING([whether gmp library is installed ($GMPLIB)])

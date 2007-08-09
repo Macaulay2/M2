@@ -1,5 +1,6 @@
 # @configure_input@
 VPATH = @srcdir@
+RELAX = yes
 include ../../include/config.Makefile
 URL = ftp://ftp.gnu.org/gnu/readline
 VERSION = 5.2

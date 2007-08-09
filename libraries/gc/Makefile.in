@@ -5,7 +5,7 @@ URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
 VERSION = 7.0
 CFLAGS += -g -O2 -DLARGE_CONFIG -DUSE_MMAP
 INSTALLOPTIONS = MAKEOVERRIDES='prefix=$(PREFIX)'
-CONFIGOPTIONS = --disable-threads
+CONFIGOPTIONS = --disable-threads --disable-shared
 CONFIGOPTIONS += GC_CFLAGS="$(CFLAGS)"
 PATCHFILE = patch-7.0
 include @srcdir@/../Makefile.library
