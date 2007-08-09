@@ -4,9 +4,7 @@ include ../../include/config.Makefile
 URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
 VERSION = 7.0
 CFLAGS += -g -O2 -DLARGE_CONFIG -DUSE_MMAP
-INSTALLOPTIONS = MAKEOVERRIDES='prefix=$(PREFIX) libdir=$(PREFIX)/$(libm2RelDir)/lib'
 CONFIGOPTIONS  = --disable-threads
-# CONFIGOPTIONS += --disable-shared
 CONFIGOPTIONS += GC_CFLAGS="$(CFLAGS)"
 PATCHFILE = patch-7.0
 include ../Makefile.library
