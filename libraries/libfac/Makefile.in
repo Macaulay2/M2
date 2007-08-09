@@ -6,6 +6,7 @@ TARDIR = libfac
 TARFILE := libfac-$(shell echo $(VERSION) | sed 's/\./-/g').tar.gz
 URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac
 CONFIGOPTIONS += --enable-NTL
+CONFIGOPTIONS += --build=@build@ --host=@host@
 ifeq ($(OPTIMIZE),yes)
 CXXFLAGS += -Wno-deprecated --no-rtti --no-exceptions
 endif

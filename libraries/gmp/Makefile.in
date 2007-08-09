@@ -8,6 +8,7 @@ VERSION = 4.2.1
 PATCHFILE = patch-4.2.1
 CONFIGOPTIONS += --enable-cxx
 CONFIGOPTIONS += --disable-shared
+CONFIGOPTIONS += --build=@build@ --host=@host@
 ifeq (Darwin i386,$(shell uname -sm))
 PRECONFIGURE = autoconf && (cd mpn/x86 && rm -fv *dive_1* */*dive_1* */*/*dive_1* */*mode1o* */*/*mode1o*) || false
 else 

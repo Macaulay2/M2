@@ -6,6 +6,7 @@ VERSION = 7.0
 CFLAGS += -g -O2 -DLARGE_CONFIG -DUSE_MMAP
 INSTALLOPTIONS = MAKEOVERRIDES='prefix=$(PREFIX)'
 CONFIGOPTIONS = --disable-threads --disable-shared
+CONFIGOPTIONS += --build=@build@ --host=@host@
 CONFIGOPTIONS += GC_CFLAGS="$(CFLAGS)"
 PATCHFILE = patch-7.0
 include @srcdir@/../Makefile.library
