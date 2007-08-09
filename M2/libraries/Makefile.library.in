@@ -6,7 +6,7 @@ TARDIR ?= $(LIBNAME)-$(VERSION)
 TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
 
 CPPFLAGS := -I$(PREFIX)/include $(CPPFLAGS)
-LDFLAGS := -L$(PREFIX)/lib $(LDFLAGS)
+LDFLAGS := -L$(PREFIX)/$(libm2RelDir)/lib $(LDFLAGS)
 
 export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LOADLIBES FFLAGS
 
@@ -21,11 +21,12 @@ package-clean : unmark ; $(MAKE) -C $(BUILDDIR) clean
 package-distclean : unmark ; $(MAKE) -C $(BUILDDIR) distclean
 
 PRECONFIGURE  ?= :
-CONFIGURECMD  ?= $(PRECONFIGURE) && ./configure --prefix=@FINALPREFIX@ $(CONFIGOPTIONS)
+CONFIGOPTIONS += --build=@build@ --host=@host@
+CONFIGURECMD  ?= $(PRECONFIGURE) && ./configure --prefix=@FINALPREFIX@/$(libm2RelDir) $(CONFIGOPTIONS)
 BUILDTARGET   ?= 
 BUILDCMD      ?= $(MAKE) $(BUILDOPTIONS) $(BUILDTARGET)
 INSTALLTARGET ?= install
-INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(PREFIX) $(INSTALLTARGET)
+INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(PREFIX)/$(libm2RelDir) $(INSTALLTARGET)
 
 BUILDDIR      ?= $(TARDIR)
 .installed  : .compiled   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)   ) && touch $@
