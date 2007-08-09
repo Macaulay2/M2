@@ -1,0 +1,12 @@
+# @configure_input@
+VPATH = @srcdir@
+include ../../include/config.Makefile
+URL = ftp://ftp.gnu.org/gnu/readline
+VERSION = 5.2
+BUILDTARGET = all shared
+INSTALLTARGET = install install-shared
+include @srcdir@/../Makefile.library
+Makefile : Makefile.in ; cd ../.. && ./config.status libraries/readline/Makefile
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/libraries/readline "
+# End:

@@ -1,4 +1,4 @@
-# @configure_input@
+# @configure_input@ -*- Makefile -*-
 
 # every makefile that includes this one should use 'all' as the
 # default (first) target
@@ -272,12 +272,16 @@ CPPFLAGS += -DNDEBUG
 endif
 
 ifeq "$(GCC)" "yes"
+# if it's gcc, we can get stricter warning and error messages
+ifneq ($(RELAX),yes)
+# but sometimes that's bad, e.g., during configure scripts with loosely written test programs
 CFLAGS   += -pipe -Wall              -Wshadow -Winline -Wcast-qual -Wno-parentheses -Wno-sign-compare -Werror-implicit-function-declaration
 CXXFLAGS += -pipe \
 	    -Wall -Wconversion -Wshadow -Winline -Wcast-qual -Wno-parentheses -Wno-sign-compare \
 	    -Woverloaded-virtual -Wsign-promo
 # -Werror-implicit-function-declaration is important, because if we include the wrong include file and a function that
 # returns a 64-bit pointer is not declared as such, then only 32 bits of the return value will be used.
+endif
 
 CPPFLAGS += -Wfatal-errors
 CFLAGS += -Wfatal-errors
