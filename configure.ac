@@ -328,12 +328,10 @@ then
     AC_MSG_CHECKING([whether gc library (-lgc) is installed (using $LIBS)])
     AC_LANG(C)
     AC_LINK_IFELSE( [int main () { GC_malloc(1); }], HAVE_LIBGC=yes;AC_MSG_RESULT(yes), HAVE_LIBGC=no;AC_MSG_RESULT(no))
-
-    HAVE_GC_H=no
-    AC_CHECK_HEADERS(gc/gc.h gc.h,HAVE_GC_H=yes)
-    if test "$HAVE_GC_H" = no
-    then AC_MSG_ERROR([missing library include files: gc.h and gc/gc.h])
-    fi
+    AC_CHECK_HEADERS(gc/gc.h gc.h,,AC_MSG_ERROR([missing library include file: we need gc.h or gc/gc.h]))
+else
+    AC_DEFINE(HAVE_GC_GC_H) HAVE_GC_GC_H=1
+    AC_DEFINE(HAVE_GC_H) HAVE_GC_H=0
 fi
 
 HAVE_LIBGC_PG=no
