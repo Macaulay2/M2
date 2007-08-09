@@ -4,6 +4,8 @@ VPATH = @srcdir@
 EXES := echoout timestmp restart update
 CFLAGS += -I. -I../../include -I../../libraries/local/include
 LDFLAGS += -L../../libraries/local/lib
+LD_LIBRARY_PATH := ../../libraries/local/lib:$(LD_LIBRARY_PATH)
+export LD_LIBRARY_PATH
 
 ifeq ($(OS),Linux)
 EXES += screen

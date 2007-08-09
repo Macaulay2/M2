@@ -6,7 +6,7 @@ URL = ftp://ftp.gnu.org/gnu/readline
 VERSION = 5.2
 BUILDTARGET = all shared
 INSTALLTARGET = install install-shared
-CONFIGOPTIONS = --disable-shared
+# CONFIGOPTIONS = --disable-shared
 CONFIGOPTIONS += --build=@build@ --host=@host@
 include @srcdir@/../Makefile.library
 Makefile : Makefile.in ; cd ../.. && ./config.status libraries/readline/Makefile
