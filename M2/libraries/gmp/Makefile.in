@@ -7,6 +7,7 @@ URL = ftp://ftp.gnu.org/gnu/gmp
 VERSION = 4.2.1
 PATCHFILE = patch-4.2.1
 CONFIGOPTIONS += --enable-cxx
+CONFIGOPTIONS += --disable-shared
 ifeq (Darwin i386,$(shell uname -sm))
 PRECONFIGURE = autoconf && (cd mpn/x86 && rm -fv *dive_1* */*dive_1* */*/*dive_1* */*mode1o* */*/*mode1o*) || false
 else 
