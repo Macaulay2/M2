@@ -3,7 +3,7 @@ include include/config.Makefile
 VPATH = @srcdir@
 
 .PRECIOUS: @srcdir@/configure config.status
-.PHONY: install all clean distclean reconfigure configure-help install-others install-Macaulay2 everything
+.PHONY: install all clean distclean reconfigure reconfigure-all configure-help install-others install-Macaulay2 everything
 
 CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
 
@@ -52,7 +52,8 @@ config.status : @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1
 
-all reconfigure clean distclean ::; $(MAKE) -C libraries $@
+all clean distclean ::; $(MAKE) -C libraries $@
+reconfigure-all ::; $(MAKE) -C libraries reconfigure
 
 reconfigure:: $(CONFIG_FILES)
 	./config.status --recheck
@@ -142,6 +143,7 @@ help :
 	@ echo "  status                      show options used with 'configure'"
 	@ echo "  configure-help              show help for 'configure'"
 	@ echo "  reconfigure                 re-run configure with same options"
+	@ echo "  reconfigure-all             re-run configure, on the libraries, too"
 	@ echo ""
 	@ echo "options:"
 	@ echo "      IgnoreExampleErrors=true       continue even after errors in example code"
