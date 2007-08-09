@@ -279,6 +279,10 @@ CXXFLAGS += -pipe \
 # -Werror-implicit-function-declaration is important, because if we include the wrong include file and a function that
 # returns a 64-bit pointer is not declared as such, then only 32 bits of the return value will be used.
 
+CPPFLAGS += -Wfatal-errors
+CFLAGS += -Wfatal-errors
+CXXFLAGS += -Wfatal-errors
+
 ##  this option is sort of interesting, but generates nothing really useful for us:
 # CXXFLAGS += -Weffc++
 

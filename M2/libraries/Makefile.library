@@ -21,11 +21,11 @@ BUILDCMD ?= $(MAKE) -C $(BUILDDIR) $(BUILDTARGET) $(BUILDOPTIONS)
 CONFIGURECMD ?= ./configure --prefix=$(PREFIX) $(CONFIGOPTIONS)
 PRECONFIGURE ?= :
 
-INSTALLCMD ?= $(MAKE) -C $(TARDIR) install $(INSTALLOPTIONS)
+INSTALLCMD ?= $(MAKE) -C $(BUILDDIR) install $(INSTALLOPTIONS)
 
 .installed : .compiled ; $(INSTALLCMD) && touch $@
-.compiled : .configured ; $(BUILDCMD) && touch $@
-.configured : .patched ; (cd $(BUILDDIR) && $(PRECONFIGURE) && $(CONFIGURECMD)) && touch $@
+.compiled : .configured ; @ set -x ; $(BUILDCMD) && touch $@
+.configured : .patched ; @ set -x ; ( set -x ; cd $(BUILDDIR) && $(PRECONFIGURE) && $(CONFIGURECMD)) && touch $@
 
 ifneq ($(PATCHFILE),)
 .patched : $(PATCHFILE) .untarred ; patch -p0 <$< && touch $@
