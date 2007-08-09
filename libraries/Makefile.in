@@ -1,8 +1,9 @@
 VPATH = @srcdir@
-all check reconfigure distclean clean :: ; @ set -e ; for p in @LIBRARIES@ ; do (set -x ; $(MAKE) -C $$p $@) ; done
+all check reconfigure distclean clean :: ; @ set -e ; for p in @LIBRARIES@ ; do (set -ex ; $(MAKE) -C $$p $@) ; done
 Makefile : Makefile.in ; cd .. && ./config.status libraries/Makefile
 clean :: ; rm -rf local
 distclean :: ; rm -f Makefile
+Makefile : Makefile.in ; cd .. && ./config.status libraries/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries "
 # End:

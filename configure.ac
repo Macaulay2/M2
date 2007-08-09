@@ -76,15 +76,11 @@ do case $i in
    esac
 done
 
-CPPFLAGS="-Ilibraries/include $CPPFLAGS"
-
 for i in $LDFLAGS
 do case $i in
    -I*) echo "error: preprocessor flag $i found in LDFLAGS instead of in CPPFLAGS" >&2 ; exit 1 ; break ;;
    esac
 done
-
-LDFLAGS="-Llibraries/lib $LDFLAGS"
 
 if test "$CXX" = gcc
 then echo oops, CXX=gcc, should use CXX=g++ >&2
