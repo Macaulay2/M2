@@ -1,5 +1,10 @@
 # @configure_input@ -*- Makefile -*-
 
+ifneq ($(CONFIG_MAKEFILE),)
+$(error config.Makefile already loaded)
+endif
+CONFIG_MAKEFILE = loaded
+
 # every makefile that includes this one should use 'all' as the
 # default (first) target
 all::
@@ -20,10 +25,6 @@ package = Macaulay2-$(PACKAGE_VERSION)
 ARCH    = @ARCH@
 OS      = @OS@
 REL     = @REL@
-
-LIBRARIES = $(shell cd 
-LD_LIBRARY_PATH=
-export LD_LIBRARY_PATH
 
 COMPRESS = @COMPRESS@
 PKG_TGZ = $(package)-$(ARCH)-$(OS).tar.gz
@@ -167,8 +168,9 @@ packagetestsRelDir = $(packagedocRelDir)/tests
 packagehtmlRelDir = $(packagedocRelDir)/html
 packagecacheRelDir = $(packagedocRelDir)/cache
 packageexamplesRelDir = $(packagedocRelDir)/examples
-libm2RelDir = $(libRelDir)/Macaulay2/$(MAINPACKAGE)
-cacheRelDir = $(libm2RelDir)/cache
+librariesRelDir = $(libRelDir)/Macaulay2/libraries
+libm2RelDir     = $(libRelDir)/Macaulay2/$(MAINPACKAGE)
+cacheRelDir     = $(libm2RelDir)/cache
 datam2RelDir = $(dataRelDir)/Macaulay2
 shareRelDir = $(datam2RelDir)/$(MAINPACKAGE)
 m2RelDir = $(shareRelDir)/m2
@@ -190,6 +192,7 @@ docm2dir = $(encapdir)/$(docm2RelDir)
 packagesdir = $(encapdir)/$(packagesRelDir)
 docpackagesdir = $(encapdir)/$(docpackagesRelDir)
 libm2dir = $(encapdir)/$(libm2RelDir)
+librairiesdir = $(encapdir)/$(librariesRelDir)
 cachedir = $(encapdir)/$(cacheRelDir)
 datam2dir = $(encapdir)/$(datam2RelDir)
 sharedir = $(encapdir)/$(shareRelDir)

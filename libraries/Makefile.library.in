@@ -1,7 +1,10 @@
 # -*- Makefile -*-
 
+include ../../include/config.Makefile
+
 PREFIX = $(shell cd .. ; pwd)/final@FINALPREFIX@
 LIBNAME = $(shell basename `pwd`)
+
 TARDIR ?= $(LIBNAME)-$(VERSION)
 TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
 
@@ -22,11 +25,11 @@ package-distclean : unmark ; $(MAKE) -C $(BUILDDIR) distclean
 
 PRECONFIGURE  ?= :
 CONFIGOPTIONS += --build=@build@ --host=@host@
-CONFIGURECMD  ?= $(PRECONFIGURE) && ./configure --prefix=@FINALPREFIX@/$(libm2RelDir) $(CONFIGOPTIONS)
+CONFIGURECMD  ?= $(PRECONFIGURE) && ./configure --prefix=@FINALPREFIX@/$(librariesRelDir) $(CONFIGOPTIONS)
 BUILDTARGET   ?= 
 BUILDCMD      ?= $(MAKE) $(BUILDOPTIONS) $(BUILDTARGET)
 INSTALLTARGET ?= install
-INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(PREFIX)/$(libm2RelDir) $(INSTALLTARGET)
+INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(PREFIX)/$(librariesRelDir) $(INSTALLTARGET)
 
 BUILDDIR      ?= $(TARDIR)
 .installed  : .compiled   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)   ) && touch $@
@@ -62,3 +65,7 @@ help :;
 	@ echo "  package-distclean	      remove all created files in the package"
 	@ echo "  check			      check whether library compiled correctly"
 	@ echo ""
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/libraries "
+# End:

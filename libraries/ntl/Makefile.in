@@ -1,16 +1,16 @@
 # @configure_input@
 # http://www.shoup.net
 # a library for doing number theory
-VPATH = @srcdir@
-include ../../include/config.Makefile
 VERSION = 5.4.1
 TARDIR = ntl-$(VERSION)
 BUILDDIR = $(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz
 URL = http://shoup.net/ntl
-# INSTALLOPTIONS = LIBDIR=$(PREFIX)/lib INCLUDEDIR=$(PREFIX)/include PREFIX=$(PREFIX)
-CONFIGURECMD = ./configure PREFIX=$(PREFIX) \
-	DOCDIR="$(PREFIX)/share/doc" \
+CONFIGURECMD = ./configure \
+	PREFIX=@FINALPREFIX@/$(librariesRelDir) \
+	LIBDIR=@FINALPREFIX@/$(librariesRelDir)/lib \
+	INCLUDEDIR=@FINALPREFIX@/$(librariesRelDir)/include \
+	DOCDIR=@FINALPREFIX@/$(librariesRelDir)/share/doc \
 	NTL_GMP_LIP=on NTL_STD_CXX=on NTL_NO_INIT_TRANS=on NTL_CXX_ONLY=on \
 	CC="$(CXX)" \
 	CXX="$(CXX)" \
@@ -18,9 +18,17 @@ CONFIGURECMD = ./configure PREFIX=$(PREFIX) \
 	CXXFLAGS="$(CXXFLAGS)" \
 	CPPFLAGS="$(CPPFLAGS)" \
 	LDFLAGS="$(LDFLAGS)"
-check :: ; $(MAKE) -C $(BUILDDIR) check
+
+INSTALLOPTIONS = \
+	PREFIX=$(PREFIX)/$(librariesRelDir) \
+	LIBDIR=$(PREFIX)/$(librariesRelDir)/lib \
+	INCLUDEDIR=$(PREFIX)/$(librariesRelDir)/include \
+	DOCDIR=$(PREFIX)/$(librariesRelDir)/share/doc
+
+INSTALLCMD     = $(MAKE) $(INSTALLOPTIONS) install
 include ../Makefile.library
-Makefile : Makefile.in ; cd ../.. && ./config.status libraries/ntl/Makefile
+check :: ; $(MAKE) -C $(BUILDDIR) check
+Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/ntl/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/ntl "
 # End:

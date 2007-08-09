@@ -439,17 +439,20 @@ LIBS="$SAVELIBS"
 
 AC_SUBST(LIBRARIES)
 LIBRARIES=
+# this sequence reflects dependencies
 test "$BUILDGDBM" = yes && LIBRARIES="$LIBRARIES gdbm"
 test "$BUILDGMP" = yes && LIBRARIES="$LIBRARIES gmp"
 test "$BUILDREADLINE" = yes && LIBRARIES="$LIBRARIES readline"
-test "$BUILDAC" = yes && LIBRARIES="$LIBRARIES autoconf"
 test "$BUILDGC" = yes && LIBRARIES="$LIBRARIES gc"
 test "$BUILDNTL" = yes && LIBRARIES="$LIBRARIES ntl"
+# factory needs ntl and gmp
 test "$BUILDFACTORY" = yes && LIBRARIES="$LIBRARIES factory"
+# libfac needs factory
 test "$BUILDLIBFAC" = yes && LIBRARIES="$LIBRARIES libfac"
 test "$BUILDBLAS" = yes && LIBRARIES="$LIBRARIES blas"
+# lapack needs blas
 test "$BUILDLAPACK" = yes && LIBRARIES="$LIBRARIES lapack"
-AC_MSG_NOTICE([libraries to be compiled from downloaded sources:$LIBRARIES])
+AC_MSG_NOTICE([these libraries are to be compiled from downloaded sources:$LIBRARIES])
 
 TESTFLAG=-Wno-strict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
