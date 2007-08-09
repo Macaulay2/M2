@@ -21,6 +21,10 @@ ARCH    = @ARCH@
 OS      = @OS@
 REL     = @REL@
 
+LIBRARIES = $(shell cd 
+LD_LIBRARY_PATH=
+export LD_LIBRARY_PATH
+
 COMPRESS = @COMPRESS@
 PKG_TGZ = $(package)-$(ARCH)-$(OS).tar.gz
 PKG_TBZ = $(package)-$(ARCH)-$(OS).tar.bz2
