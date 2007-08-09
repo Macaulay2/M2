@@ -205,6 +205,10 @@ AC_SUBST(EXPERIMENT) AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-ex
 AC_SUBST(M2TARFILE)  AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare a binary package as a compressed tar file), M2TARFILE="$enableval", M2TARFILE==no)
 AC_SUBST(TARLIBS)    AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS="$enableval", TARLIBS=no)
 
+AC_SUBST(BUILDGMP)     AC_ARG_ENABLE(build-gmp, AS_HELP_STRING(--enable-build-gmp,build library gmp from downloaded source code), BUILDGMP="$enableval", BUILDGMP=yes)
+AC_SUBST(BUILDGDBM)    AC_ARG_ENABLE(build-gdbm, AS_HELP_STRING(--enable-build-gdbm,build library gdbm from downloaded source code), BUILDGDBM="$enableval", BUILDGDBM=yes)
+AC_SUBST(BUILDAC)      AC_ARG_ENABLE(build-autoconf, AS_HELP_STRING(--enable-build-autoconf,build autoconf utility from downloaded source code), BUILDAC="$enableval", BUILDAC=yes)
+AC_SUBST(BUILDRDLINE)  AC_ARG_ENABLE(build-readline, AS_HELP_STRING(--enable-build-readline,build library readline from downloaded source code), BUILDRDLINE="$enableval", BUILDRDLINE=yes)
 AC_SUBST(BUILDGC)      AC_ARG_ENABLE(build-gc, AS_HELP_STRING(--enable-build-gc,build library gc from downloaded source code), BUILDGC="$enableval", BUILDGC=yes)
 AC_SUBST(BUILDNTL)     AC_ARG_ENABLE(build-ntl, AS_HELP_STRING(--enable-build-ntl,build library ntl from downloaded source code), BUILDNTL="$enableval", BUILDNTL=yes)
 AC_SUBST(BUILDFACTORY) AC_ARG_ENABLE(build-factory, AS_HELP_STRING(--enable-build-factory,build library factory from downloaded source code), BUILDFACTORY="$enableval", BUILDFACTORY=yes)
@@ -214,6 +218,10 @@ AC_SUBST(BUILDBLAS)   AC_ARG_ENABLE(build-blas, AS_HELP_STRING(--enable-build-bl
 
 AC_SUBST(LIBRARIES)
 LIBRARIES=
+test "$BUILDGDBM" = yes && LIBRARIES="$LIBRARIES gdbm"
+test "$BUILDGMP" = yes && LIBRARIES="$LIBRARIES gmp"
+test "$BUILDRDLINE" = yes && LIBRARIES="$LIBRARIES readline"
+test "$BUILDAC" = yes && LIBRARIES="$LIBRARIES autoconf"
 test "$BUILDGC" = yes && LIBRARIES="$LIBRARIES gc"
 test "$BUILDNTL" = yes && LIBRARIES="$LIBRARIES ntl"
 test "$BUILDFACTORY" = yes && LIBRARIES="$LIBRARIES factory"
@@ -344,36 +352,39 @@ then test "$HAVE_LIBGC_PG" = no -a "$HAVE_LIBGC" = no && AC_MSG_ERROR([missing l
 else test "$HAVE_LIBGC" = no && AC_MSG_ERROR([missing library: libgc])
 fi
 
-GMPLIB="-lgmp"
-AC_SUBST(GMPLIB)
-AC_ARG_WITH(gmplib, AS_HELP_STRING(--with-gmplib=...,gmp library (-lgmp)), GMPLIB="$withval")
-AC_MSG_CHECKING([whether gmp library is installed ($GMPLIB)])
-LIBS="$GMPLIB $SAVELIBS"
-AC_LANG(C)
-AC_LINK_IFELSE( [
-	#include <gmp.h>
-	int main () { return *__gmp_version;}
-	],
-    AC_MSG_RESULT(yes),
-    AC_MSG_RESULT(no))
+if test "$BUILDGMP" = no
+then
+    GMPLIB="-lgmp"
+    AC_SUBST(GMPLIB)
+    AC_ARG_WITH(gmplib, AS_HELP_STRING(--with-gmplib=...,gmp library (-lgmp)), GMPLIB="$withval")
+    AC_MSG_CHECKING([whether gmp library is installed ($GMPLIB)])
+    LIBS="$GMPLIB $SAVELIBS"
+    AC_LANG(C)
+    AC_LINK_IFELSE( [
+	    #include <gmp.h>
+	    int main () { return *__gmp_version;}
+	    ],
+	AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no))
 
-HAVE_LIBGMP_PG=no
-if test "$PROFILING" = yes -a "$GMPLIB" = "-lgmp"
-then AC_MSG_CHECKING([whether gmp library, profiling version, is installed (-lgmp-pg)])
-     LIBS="-lgmp-pg $SAVELIBS"
-     AC_LANG(C)
-     AC_LINK_IFELSE( [
-	#include <gmp.h>
-	int main () { return *__gmp_version; }
-	],
-     HAVE_LIBGMP_PG=yes;AC_MSG_RESULT(yes),
-     AC_MSG_RESULT(no))
-fi
+    HAVE_LIBGMP_PG=no
+    if test "$PROFILING" = yes -a "$GMPLIB" = "-lgmp"
+    then AC_MSG_CHECKING([whether gmp library, profiling version, is installed (-lgmp-pg)])
+	 LIBS="-lgmp-pg $SAVELIBS"
+	 AC_LANG(C)
+	 AC_LINK_IFELSE( [
+	    #include <gmp.h>
+	    int main () { return *__gmp_version; }
+	    ],
+	 HAVE_LIBGMP_PG=yes;AC_MSG_RESULT(yes),
+	 AC_MSG_RESULT(no))
+    fi
 
-if   test "$PROFILING" = yes
-then test "$HAVE_LIBGMP_PG" = no -a "$HAVE_LIBGMP" = no && AC_MSG_ERROR([missing libraries: libgmp (and libgmp-pg)])
-     test "$HAVE_LIBGMP_PG" = yes && GMPLIB=-lgmp-pg
-else test "$HAVE_LIBGMP" = no && AC_MSG_ERROR([missing library: libgmp])
+    if   test "$PROFILING" = yes
+    then test "$HAVE_LIBGMP_PG" = no -a "$HAVE_LIBGMP" = no && AC_MSG_ERROR([missing libraries: libgmp (and libgmp-pg)])
+	 test "$HAVE_LIBGMP_PG" = yes && GMPLIB=-lgmp-pg
+    else test "$HAVE_LIBGMP" = no && AC_MSG_ERROR([missing library: libgmp])
+    fi
 fi
 
 AC_MSG_CHECKING(whether nm accepts the demangle option)
@@ -383,15 +394,18 @@ if nm --help 2>&1 | grep demangle >/dev/null
 fi
 AC_SUBST(NM_DEMANGLES)
 
-AC_MSG_CHECKING([whether gdbm library is installed])
-LIBS="-lgdbm $SAVELIBS"
-AC_LANG(C)
-AC_LINK_IFELSE([
-    #include <gdbm.h>
-    int main () { gdbm_close(0); }
-    ],
-    AC_MSG_RESULT(yes),
-    AC_MSG_RESULT(no);AC_MSG_ERROR([missing library: gdbm]))
+if test "$BUILDGDBM" = no
+then 
+    AC_MSG_CHECKING([whether gdbm library is installed])
+    LIBS="-lgdbm $SAVELIBS"
+    AC_LANG(C)
+    AC_LINK_IFELSE([
+	#include <gdbm.h>
+	int main () { gdbm_close(0); }
+	],
+	AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no);AC_MSG_ERROR([missing library: gdbm]))
+fi
 
 AC_MSG_CHECKING([whether getaddrinfo can handle numeric service (port) numbers])
 LIBS="$SAVELIBS"
@@ -502,13 +516,16 @@ then
     fi
 fi
 
-AC_MSG_CHECKING(whether readline library is installed)
-LIBS="-lreadline -lhistory -lncurses $SAVELIBS"
-AC_LANG(C)
-AC_LINK_IFELSE(
-    [int main () { extern char *readline(const char *);extern void add_history (const char *); readline; add_history; } ],
-    AC_MSG_RESULT(yes),
-    AC_MSG_RESULT(no);AC_MSG_ERROR([missing library: readline]))
+if test "$BUILDRDLINE" = no
+then
+    AC_MSG_CHECKING(whether readline library is installed)
+    LIBS="-lreadline -lhistory -lncurses $SAVELIBS"
+    AC_LANG(C)
+    AC_LINK_IFELSE(
+	[int main () { extern char *readline(const char *);extern void add_history (const char *); readline; add_history; } ],
+	AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no);AC_MSG_ERROR([missing library: readline]))
+fi
 
 TESTFLAG=-Wno-strict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)

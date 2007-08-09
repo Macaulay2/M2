@@ -1,0 +1,10 @@
+# @configure_input@
+VPATH = @srcdir@
+include ../../include/config.Makefile
+URL = ftp://ftp.gnu.org/gnu/autoconf
+VERSION = 2.61
+include @srcdir@/../Makefile.library
+Makefile : Makefile.in ; cd ../.. && ./config.status libraries/autoconf/Makefile
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/libraries/autoconf "
+# End:

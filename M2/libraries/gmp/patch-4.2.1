@@ -1,0 +1,99 @@
+diff -ur ../4.2.1-orig/gmp-4.2.1/gmp-impl.h ./gmp-4.2.1/gmp-impl.h
+--- ../4.2.1-orig/gmp-4.2.1/gmp-impl.h	2006-04-08 14:32:18.000000000 -0500
++++ ./gmp-4.2.1/gmp-impl.h	2006-10-11 20:41:07.000000000 -0500
+@@ -666,6 +666,8 @@
+    but current gcc (3.0) doesn't seem to support that.  */
+ __GMP_DECLSPEC extern void * (*__gmp_allocate_func) __GMP_PROTO ((size_t));
+ __GMP_DECLSPEC extern void * (*__gmp_reallocate_func) __GMP_PROTO ((void *, size_t, size_t));
++__GMP_DECLSPEC extern void * (*__gmp_allocate_atomic_func) __GMP_PROTO ((size_t));
++__GMP_DECLSPEC extern void * (*__gmp_reallocate_atomic_func) __GMP_PROTO ((void *, size_t, size_t));
+ __GMP_DECLSPEC extern void   (*__gmp_free_func) __GMP_PROTO ((void *, size_t));
+ 
+ void *__gmp_default_allocate _PROTO ((size_t));
+@@ -674,13 +676,18 @@
+ 
+ #define __GMP_ALLOCATE_FUNC_TYPE(n,type) \
+   ((type *) (*__gmp_allocate_func) ((n) * sizeof (type)))
+-#define __GMP_ALLOCATE_FUNC_LIMBS(n)   __GMP_ALLOCATE_FUNC_TYPE (n, mp_limb_t)
++#define __GMP_ALLOCATE_ATOMIC_FUNC_TYPE(n,type) \
++  ((type *) (*__gmp_allocate_atomic_func) ((n) * sizeof (type)))
++#define __GMP_ALLOCATE_FUNC_LIMBS(n)   __GMP_ALLOCATE_ATOMIC_FUNC_TYPE (n, mp_limb_t)
+ 
+ #define __GMP_REALLOCATE_FUNC_TYPE(p, old_size, new_size, type) \
+   ((type *) (*__gmp_reallocate_func)                            \
+    (p, (old_size) * sizeof (type), (new_size) * sizeof (type)))
++#define __GMP_REALLOCATE_ATOMIC_FUNC_TYPE(p, old_size, new_size, type) \
++  ((type *) (*__gmp_reallocate_atomic_func)                            \
++   (p, (old_size) * sizeof (type), (new_size) * sizeof (type)))
+ #define __GMP_REALLOCATE_FUNC_LIMBS(p, old_size, new_size) \
+-  __GMP_REALLOCATE_FUNC_TYPE(p, old_size, new_size, mp_limb_t)
++  __GMP_REALLOCATE_ATOMIC_FUNC_TYPE(p, old_size, new_size, mp_limb_t)
+ 
+ #define __GMP_FREE_FUNC_TYPE(p,n,type) (*__gmp_free_func) (p, (n) * sizeof (type))
+ #define __GMP_FREE_FUNC_LIMBS(p,n)     __GMP_FREE_FUNC_TYPE (p, n, mp_limb_t)
+diff -ur ../4.2.1-orig/gmp-4.2.1/memory.c ./gmp-4.2.1/memory.c
+--- ../4.2.1-orig/gmp-4.2.1/memory.c	2006-03-14 09:57:54.000000000 -0600
++++ ./gmp-4.2.1/memory.c	2006-10-11 20:41:07.000000000 -0500
+@@ -27,8 +27,11 @@
+ 
+ 
+ void *	(*__gmp_allocate_func) _PROTO ((size_t)) = __gmp_default_allocate;
++void *	(*__gmp_allocate_atomic_func) _PROTO ((size_t)) = __gmp_default_allocate;
+ void *	(*__gmp_reallocate_func) _PROTO ((void *, size_t, size_t))
+      = __gmp_default_reallocate;
++void *	(*__gmp_reallocate_atomic_func) _PROTO ((void *, size_t, size_t))
++     = __gmp_default_reallocate;
+ void	(*__gmp_free_func) _PROTO ((void *, size_t)) = __gmp_default_free;
+ 
+ 
+diff -ur ../4.2.1-orig/gmp-4.2.1/mpn/generic/addsub_n.c ./gmp-4.2.1/mpn/generic/addsub_n.c
+--- ../4.2.1-orig/gmp-4.2.1/mpn/generic/addsub_n.c	2006-03-14 09:57:54.000000000 -0600
++++ ./gmp-4.2.1/mpn/generic/addsub_n.c	2006-10-11 20:50:55.000000000 -0500
+@@ -58,13 +58,13 @@
+       for (off = 0; off < n; off += PART_SIZE)
+ 	{
+ 	  this_n = MIN (n - off, PART_SIZE);
+-#if HAVE_NATIVE_mpn_add_nc || !HAVE_NATIVE_mpn_add_n
++#if HAVE_NATIVE_mpn_add_nc
+ 	  acyo = mpn_add_nc (r1p + off, s1p + off, s2p + off, this_n, acyo);
+ #else
+ 	  acyn = mpn_add_n (r1p + off, s1p + off, s2p + off, this_n);
+ 	  acyo = acyn + mpn_add_1 (r1p + off, r1p + off, this_n, acyo);
+ #endif
+-#if HAVE_NATIVE_mpn_sub_nc || !HAVE_NATIVE_mpn_sub_n
++#if HAVE_NATIVE_mpn_sub_nc
+ 	  scyo = mpn_sub_nc (r2p + off, s1p + off, s2p + off, this_n, scyo);
+ #else
+ 	  scyn = mpn_sub_n (r2p + off, s1p + off, s2p + off, this_n);
+@@ -81,13 +81,13 @@
+       for (off = 0; off < n; off += PART_SIZE)
+ 	{
+ 	  this_n = MIN (n - off, PART_SIZE);
+-#if HAVE_NATIVE_mpn_sub_nc || !HAVE_NATIVE_mpn_sub_n
++#if HAVE_NATIVE_mpn_sub_nc
+ 	  scyo = mpn_sub_nc (r2p + off, s1p + off, s2p + off, this_n, scyo);
+ #else
+ 	  scyn = mpn_sub_n (r2p + off, s1p + off, s2p + off, this_n);
+ 	  scyo = scyn + mpn_sub_1 (r2p + off, r2p + off, this_n, scyo);
+ #endif
+-#if HAVE_NATIVE_mpn_add_nc || !HAVE_NATIVE_mpn_add_n
++#if HAVE_NATIVE_mpn_add_nc
+ 	  acyo = mpn_add_nc (r1p + off, s1p + off, s2p + off, this_n, acyo);
+ #else
+ 	  acyn = mpn_add_n (r1p + off, s1p + off, s2p + off, this_n);
+@@ -105,13 +105,13 @@
+       for (off = 0; off < n; off += PART_SIZE)
+ 	{
+ 	  this_n = MIN (n - off, PART_SIZE);
+-#if HAVE_NATIVE_mpn_add_nc || !HAVE_NATIVE_mpn_add_n
++#if HAVE_NATIVE_mpn_add_nc
+ 	  acyo = mpn_add_nc (tp, s1p + off, s2p + off, this_n, acyo);
+ #else
+ 	  acyn = mpn_add_n (tp, s1p + off, s2p + off, this_n);
+ 	  acyo = acyn + mpn_add_1 (tp, tp, this_n, acyo);
+ #endif
+-#if HAVE_NATIVE_mpn_sub_nc || !HAVE_NATIVE_mpn_sub_n
++#if HAVE_NATIVE_mpn_sub_nc
+ 	  scyo = mpn_sub_nc (r2p + off, s1p + off, s2p + off, this_n, scyo);
+ #else
+ 	  scyn = mpn_sub_n (r2p + off, s1p + off, s2p + off, this_n);

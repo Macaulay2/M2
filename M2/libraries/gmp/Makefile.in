@@ -1,0 +1,19 @@
+# @configure_input@
+VPATH = @srcdir@
+# we tell include/config.Makefile to relax, and not impose strict standards on gmp's test code
+RELAX = yes
+include ../../include/config.Makefile
+URL = ftp://ftp.gnu.org/gnu/gmp
+VERSION = 4.2.1
+PATCHFILE = patch-4.2.1
+CONFIGOPTIONS += --enable-cxx
+ifeq (Darwin i386,$(shell uname -sm))
+PRECONFIGURE = autoconf && (cd mpn/x86 && rm -fv *dive_1* */*dive_1* */*/*dive_1* */*mode1o* */*/*mode1o*) || false
+else 
+PRECONFIGURE = autoconf
+endif
+include @srcdir@/../Makefile.library
+Makefile : Makefile.in ; cd ../.. && ./config.status libraries/gmp/Makefile
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/libraries/gmp "
+# End:

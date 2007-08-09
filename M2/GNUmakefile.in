@@ -58,6 +58,9 @@ reconfigure-all ::; $(MAKE) -C libraries reconfigure
 reconfigure:: $(CONFIG_FILES)
 	./config.status --recheck
 	./config.status
+	@ echo "============================================================================="
+	@ echo "warning: to reconfigure the libraries also, use 'make reconfigure-all'"
+	@ echo "============================================================================="
 configure-help: $(CONFIG_FILES)
 	@ @srcdir@/configure --help
 
