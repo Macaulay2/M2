@@ -1,4 +1,4 @@
-AC_INIT(Macaulay 2, 0.9.97, Macaulay2@math.uiuc.edu, Macaulay2)
+AC_INIT(Macaulay 2, 0.9.97, Macaulay2@math.uiuc.edu, Macaulay2) dnl -*- autoconf -*-
 AC_CONFIG_HEADERS(include/config.h)
 
 case "$0" in
@@ -151,9 +151,6 @@ AC_PROG_AWK()
 AC_PROG_CC()
 AC_SUBST(GCC)
 AC_PROG_FC(,Fortran 77)
-AC_F77_LIBRARY_LDFLAGS()
-AC_F77_DUMMY_MAIN()
-AC_F77_WRAPPERS()
 AC_PROG_CXX()
 AC_PROG_YACC()
 AC_PROG_MKDIR_P()
@@ -392,6 +389,7 @@ then AC_SUBST(NTLLIB)
 	 ],
 	 AC_MSG_RESULT(yes),
 	 AC_MSG_RESULT(no (it will be compiled));BUILDNTL=yes)
+     LIBS="$SAVELIBS"
 fi
 
 LIBCF=-lcf
@@ -406,6 +404,7 @@ then AC_SUBST(LIBCF)
 	     ]],
 	  AC_MSG_RESULT(yes),
 	  AC_MSG_RESULT(no (it (and libfac) will be compiled)); BUILDFACTORY=yes; BUILDLIBFAC=yes)
+     LIBS="$SAVELIBS"
 fi
 
 LIBFAC=-lfac
@@ -418,6 +417,7 @@ then AC_SUBST(LIBFAC)
 	 [extern const char * libfac_version; int main() { return *libfac_version; }],
 	 AC_MSG_RESULT(yes),
 	 AC_MSG_RESULT(no (it will be compiled)); BUILDLIBFAC=yes)
+     LIBS="$SAVELIBS"
 fi
 
 if test "$BUILDREADLINE" = no
@@ -429,14 +429,24 @@ then LIBS="-lreadline -lhistory -lncurses $SAVELIBS"
 	     int main () { readline; add_history; }],
 	 AC_MSG_RESULT(yes),
 	 AC_MSG_RESULT(no (they will be compiled)) ; BUILDREADLINE=yes )
+     LIBS="$SAVELIBS"
 fi
 
 AC_LANG(C)
 LIBS="-framework vecLib $SAVELIBS"
 AC_MSG_CHECKING([whether vecLib framework is available])
-AC_LINK_IFELSE(AC_LANG_PROGRAM(,sgemv_();dgetrf_();),
-    AC_MSG_RESULT(yes) VECLIB=yes LAPACKLIBS="-framework vecLib" BLASLIB="-framework vecLib",
-    AC_MSG_RESULT(no) VECLIB=no )
+AC_LINK_IFELSE(AC_LANG_PROGRAM(,[sgemv_();dgetrf_();]),
+    AC_MSG_RESULT(yes); VECLIB=yes LAPACKLIBS="-framework vecLib" BLASLIB="-framework vecLib" BUILDBLAS=no BUILDLAPACK=no,
+    AC_MSG_RESULT(no) ; VECLIB=no )
+LIBS="$SAVELIBS"
+
+if test "$VECLIB" = no
+then # It's hard even to tell whether the lapack library is there without a fortran compiler to help us find it
+     AC_MSG_NOTICE(we may need a fortran compiler for compiling blas and/or lapack)
+     AC_F77_LIBRARY_LDFLAGS()
+     AC_F77_DUMMY_MAIN()
+     AC_F77_WRAPPERS()
+fi
 
 if test "$BUILDBLAS" = no -a "$BLAS" = "yes" -a "$BLASLIB" = "" -a "$VECLIB" = no
 then AC_LANG(C)
@@ -445,7 +455,8 @@ then AC_LANG(C)
      AC_MSG_CHECKING([whether blas library is available with $BLASLIB])
      AC_LINK_IFELSE(AC_LANG_PROGRAM(,F77_FUNC(sgemv,SGEMV)();),
 	 AC_MSG_RESULT(yes), 
-	 AC_MSG_RESULT(no (it will be compiled));BUILDBLAS=yes))
+	 AC_MSG_RESULT(no (it will be compiled)); BUILDBLAS=yes)
+     LIBS="$SAVELIBS"
 fi
 
 if test "$BUILDLAPACK" = no -a "$LAPACK" = "yes" -a "$LAPACKLIBS" = "" -a "$VECLIB" = no
@@ -455,10 +466,10 @@ then LAPACKLIBS="-llapack $BLASLIB"
      AC_MSG_CHECKING([whether lapack library is available with $LAPACKLIBS])
      AC_LINK_IFELSE(AC_LANG_PROGRAM(,F77_FUNC(dgetrf,DGETRF)();),
 	 AC_MSG_RESULT(yes), 
-	 AC_MSG_RESULT(no (it will be compiled));BUILDLAPACK=yes))
+	 AC_MSG_RESULT(no (it will be compiled));BUILDLAPACK=yes)
+     LIBS="$SAVELIBS"
 fi
 
-LIBS="$SAVELIBS"
 
 AC_SUBST(LIBRARIES)
 LIBRARIES=
