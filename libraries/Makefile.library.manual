@@ -1,0 +1,68 @@
+# -*- Makefile -*-
+
+LIBNAME = $(shell basename `pwd`)
+PREFIX = $(shell pwd)/final
+
+TARDIR ?= $(LIBNAME)-$(VERSION)
+TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
+
+LIBRARIESDIR = $(PREFIX)
+FINALLIBRARIESDIR = $(PREFIX)
+
+export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LOADLIBES FFLAGS
+
+all install :: .installed
+unconfigure : ; rm -f .configured .compiled .installed
+reconfigure : unconfigure .configured
+uninstall   : ; rm -f .installed
+reinstall   : uninstall .installed
+diffs : .untarred .untarred2 ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
+unmark : ; rm -f .configured .compiled
+package-clean : unmark ; $(MAKE) -C $(BUILDDIR) clean
+package-distclean : unmark ; $(MAKE) -C $(BUILDDIR) distclean
+
+PRECONFIGURE  ?= :
+CONFIGURECMD  ?= $(PRECONFIGURE) && ./configure --prefix=$(FINALLIBRARIESDIR) $(CONFIGOPTIONS)
+BUILDTARGET   ?= 
+BUILDCMD      ?= $(MAKE) $(BUILDOPTIONS) $(BUILDTARGET)
+INSTALLTARGET ?= install
+INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
+
+BUILDDIR      ?= $(TARDIR)
+.installed  : .compiled   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)   ) && touch $@
+.compiled   : .configured ; @ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD)     ) && touch $@
+.configured : .patched    ; @ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
+
+ifneq ($(PATCHFILE),)
+.patched : $(PATCHFILE) .untarred ; patch -p0 <$< && touch $@
+else
+.patched : .untarred ; touch $@
+endif
+
+UNTARCMD ?= tar xzf $(TARFILE)
+.untarred : .fetched ; $(UNTARCMD) && touch $@
+.untarred2 : .fetched ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
+.fetched : ; curl $(URL)/$(TARFILE) -o "$(TARFILE)" && touch $@
+clean ::; rm -rf .patched $(TARDIR) .fetched .untarred $(TARFILE) .compiled .configured .installed .untarred2 diffs tmp
+distclean :: clean ; rm -rf Makefile
+check ::
+
+help :;
+	@ echo ""
+	@ echo "usage: make [option...] [target...]"
+	@ echo ""
+	@ echo "targets:"
+	@ echo ""
+	@ echo "  all                         build/compile all files [the default target]"
+	@ echo "  reconfigure		      remake configuration files for library"
+	@ echo "  diffs			      create diff file for changes to library sources"
+	@ echo "  clean			      remove most created files, except Makefiles"
+	@ echo "  distclean		      remove all created files"
+	@ echo "  package-clean		      remove most created files in the package, except Makefiles"
+	@ echo "  package-distclean	      remove all created files in the package"
+	@ echo "  check			      check whether library compiled correctly"
+	@ echo ""
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/libraries "
+# End:
