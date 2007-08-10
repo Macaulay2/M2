@@ -10,8 +10,8 @@ all :: ../bin/M2$(EXE)
 
 ## standard options
 
-# LD_LIBRARY_PATH := ../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib:$(LD_LIBRARY_PATH)
-# export LD_LIBRARY_PATH
+LD_LIBRARY_PATH := ../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib:$(LD_LIBRARY_PATH)
+export LD_LIBRARY_PATH
 
 M2_LDFLAGS  =
 ifeq ($(OS),Linux)

@@ -21,12 +21,14 @@ all :: include/config.h
 	$(MAKE) -C @srcdir@ -f Makefile
 	@echo '-----------------------------------------------------------------------------'
 	@echo '# $@ has just been remade'
-	@echo '#  exiting so you can run it again the same way you did before'
-	@echo '#  here is the way you ran it before:'
+	@echo '#  Exiting so you can run it again the same way you did before.'
+	@echo '#  Here is the way you ran it before:'
 	@echo '#'
 	@echo "     $(CONFIG_CMD)"
 	@echo '#'
-	@echo '#  type "make reconfigure" to run it that way again'
+	@echo '#  Type'
+	@echo '        make reconfigure'
+	@echo '#  to run it that way again.'
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1
@@ -36,22 +38,26 @@ show : config.status ; egrep '^s,' $< | sed -e 's/^s,@\(.*\)@,\(.*\),g/\1=\2/' -
 
 status : @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
-	@echo '#  here is the way you ran $^ before:'
+	@echo '#  Here is the way you ran $^ before:'
 	@echo '#'
 	@echo "     $(CONFIG_CMD)"
 	@echo '#'
-	@echo '#  type "make reconfigure" to run it that way again'
+	@echo '#  Type'
+	@echo '        make reconfigure'
+	@echo '#  to run it that way again.'
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
 config.status : @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
 	@echo '# error: $@ not there or older than $^'
-	@echo '#  exiting so you can run $^ the same way you did before'
-	@echo '#  here is the way you ran it before:'
+	@echo '#  Exiting so you can run $^ the same way you did before.'
+	@echo '#  Here is the way you ran it before:'
 	@echo '#'
 	@echo "     $(CONFIG_CMD)"
 	@echo '#'
-	@echo '#  type "make reconfigure" to run it that way again'
+	@echo '#  Type'
+	@echo '        make reconfigure'
+	@echo '#  to run it that way again.'
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1

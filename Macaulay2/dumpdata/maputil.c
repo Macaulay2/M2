@@ -14,7 +14,7 @@ int isStack(map m) {
 }
 
 int isCheckable(map m) {
-  return !m->w && m->r;
+  return !m->w && m->r && !isNotCheckable(m);
 }
 
 static void checkmap(map m) {
@@ -46,7 +46,7 @@ int isStatic(map m) {
 }
 
 int isDumpable(map m) {
-  return m->w && m->r && !isStack(m);
+     return m->w && m->r && !isStack(m);
 }
 
 void sprintmap(char *s, unsigned size, map m) {

@@ -60,6 +60,45 @@ int getmaps(int nmaps, struct MAP maps[nmaps]) {
   }
 }
 
+#include "config.h"
+
+#ifndef HAVE_ELF_H
+#error expected HAVE_ELF_H to be defined
+#endif
+
+#if HAVE_ELF_H == 1 && HAVE_UNISTD_H == 1 && HAVE___ENVIRON == 1
+#define ELF
+#include <elf.h>
+void *elf_header_location() {
+     char **envp = __environ;
+     while(*envp++ != NULL);
+#if __WORDSIZE == 32
+     Elf32_auxv_t *auxv = (Elf32_auxv_t *)envp;
+#else
+     Elf64_auxv_t *auxv = (Elf64_auxv_t *)envp;
+#endif
+     for ( ; auxv->a_type != AT_NULL; auxv++) {
+	  switch( auxv->a_type ) {
+	  case AT_SYSINFO_EHDR: return (void *)auxv->a_un.a_val;
+	  }
+     }
+#if __WORDSIZE == 32
+     return (void *)0xffffe000;	/* the usual 32-bit linux value */
+#else
+     return (void *)0xffffffffff600000L; /* the usual 64-bit linux value */
+#endif
+}
+#endif
+
+int isNotCheckable(map m) {
+     /* in GNU-Linux, we don't want to dump the linux-gate.so.1 [vdso] section */
+#ifdef ELF
+     return m->from == elf_header_location();
+#else
+     return FALSE;
+#endif
+}
+
 /*
  Local Variables:
  compile-command: "make -C $M2BUILDDIR/Macaulay2/dumpdata "

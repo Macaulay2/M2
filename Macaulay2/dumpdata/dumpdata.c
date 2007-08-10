@@ -127,25 +127,6 @@ int dumpdata(char const *dumpfilename) {
   }
 }
 
-#if HAVE_ELF_H == 1 && HAVE_UNISTD_H == 1 && HAVE___ENVIRON == 1
-#define ELF 1
-void *elf_header_location() {
-     char **envp = __environ;
-     while(*envp++ != NULL);
-#if __WORDSIZE == 32
-     Elf32_auxv_t *auxv = (Elf32_auxv_t *)envp;
-#else
-     Elf64_auxv_t *auxv = (Elf64_auxv_t *)envp;
-#endif
-     for ( ; auxv->a_type != AT_NULL; auxv++) {
-	  switch( auxv->a_type ) {
-	  case AT_SYSINFO_EHDR: return (void *)auxv->a_un.a_val;
-	  }
-     }
-     return NULL;
-}
-#endif
-
 int loaddata(char const *filename) {
 #if USE_BRK
   void *newbreak;
@@ -161,9 +142,6 @@ int loaddata(char const *filename) {
   void *previousTopOfStack, *currentTopOfStack;	/* we assume stacks grow downward, not always correct */
   int fd2 = dup(fd);
   FILE *f = fdopen(fd2,"r");
-#ifdef ELF
-  void *elf_header_location = sizeof(char *) == 8 ? elf_header_location_64() : elf_header_location_32();
-#endif
   if (ERROR == getmaps(nmaps,currmap)) return ERROR;
   checkmaps(nmaps,currmap);
   if (fd == ERROR || f == NULL) { warning("--warning: loaddata: can't open file '%s'\n", filename); return ERROR; }
@@ -266,11 +244,7 @@ int loaddata(char const *filename) {
 #       endif
       }
 
-      if (dumpedmap.checksum != currmap[j].checksum
-#         ifdef ELF
-	  && dumpedmap.from != elf_header_location;
-#         endif
-	  ) {
+      if (dumpedmap.checksum != currmap[j].checksum) {
 	char buf[100];
 	sprintmap(buf,sizeof(buf),&currmap[j]);
 	trim(buf);
