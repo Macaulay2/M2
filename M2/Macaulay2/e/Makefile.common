@@ -1,9 +1,13 @@
 # -*- GNUmakefile -*-
 
-COMPILE.cc += -fno-rtti
 ifeq ($(AUTOINST),yes)
-COMPILE.cc += -frepo
+COMPILE.cc += -frepo -fno-rtti
 endif
+
+ifeq ($(IMPLINST),no)
+COMPILE.cc += -fno-implicit-templates
+endif
+
 COMPILE.cpp = $(COMPILE.cc)
 
 %.o : %.cpp

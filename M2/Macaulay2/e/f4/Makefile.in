@@ -5,11 +5,21 @@ DEPENDS = yes
 include ../make.include
 include @srcdir@/../Makefile.common
 
-CPPFLAGS := \
-	-I../../../include -I../../../libraries/final@FINALPREFIX@/$(librariesRelDir)/include \
-	-I@srcdir@/../../../include \
-	-I. \
-	$(CPPFLAGS)
+ifeq ($(CXX),g++)
+# We are using the -MM option to create *.dep files, which ignores "system" include files.
+# We want ../../include/config.h to be a "system" include file, so changing it
+# will not force a recompilation of all of our C++ files.
+M2CPPFLAGS  = -isystem ../../../include
+M2CPPFLAGS += -isystem ../../../libraries/final@FINALPREFIX@/$(librariesRelDir)/include
+M2CPPFLAGS += -isystem @srcdir@/../../../include
+else
+M2CPPFLAGS  = -I../../../include
+M2CPPFLAGS += -I../../../libraries/final@FINALPREFIX@/$(librariesRelDir)/include
+M2CPPFLAGS += -I@srcdir@/../../../include
+endif
+M2CPPFLAGS += -I.
+
+CPPFLAGS := $(M2CPPFLAGS) $(CPPFLAGS)
 
 %.dep: %.cpp
 	@ echo "$(CXX) -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
