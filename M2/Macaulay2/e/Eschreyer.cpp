@@ -128,6 +128,7 @@ gbvector * GBKernelComputation::make_syz_term(ring_elem c, const int *m, int com
 {
 #ifdef DEVELOPMENT
 #warning "this might add in the Schreyer up"
+#warning "the previous warning message is confusing, grammatically"
 #endif
 
   return GR->gbvector_raw_term(c,m,comp);
