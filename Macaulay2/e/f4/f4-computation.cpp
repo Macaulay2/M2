@@ -1,6 +1,6 @@
 // Copyright 2005 Michael E. Stillman.
 
-#include "../../include/config.h"
+#include "config.h"
 #include "../comp-gb.hpp"
 #include "../ZZp.hpp"
 #include "../poly.hpp"
