@@ -9,6 +9,32 @@ svn co svn://macaulay2.math.uiuc.edu/capybara/trunk/capybara capybara
 svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
 
 #######################################################
+# Linux ###############################################
+# make sure the following have been installed:
+# g++, g77, svn, latest autoconf, wget or curl, bison?
+#######################################################
+svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+cd M2
+make
+mkdir tmp
+cd tmp
+  ../configure  \
+    --prefix=~/src/M2/tmp-install \
+    --enable-debug \
+    --disable-optimize \
+    --enable-experimental-code \
+    --disable-dumpdata \
+    --enable-static
+
+mkdir tmp-opt
+cd tmp-opt
+  ../configure  \
+    --prefix=/capybara/encap \
+    --enable-experimental-code \
+
+
+
+#######################################################
 # step 0:
 #  on mac: install darwin ports, get wget, subversion
 #          and/or install fink
