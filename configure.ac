@@ -431,40 +431,31 @@ then LIBS="-lreadline -lhistory -lncurses $SAVELIBS"
 	 AC_MSG_RESULT(no (they will be compiled)) ; BUILDREADLINE=yes )
 fi
 
-if test "$BUILDBLAS" = no -a "$BLAS" = "yes" -a "$BLASLIB" = ""
-then BLASLIB1="-framework vecLib"
-     BLASLIB2="-lf77blas"
-     AC_LANG(C)
-     BLASLIB=$BLASLIB1
+AC_LANG(C)
+LIBS="-framework vecLib $SAVELIBS"
+AC_MSG_CHECKING([whether vecLib framework is available])
+AC_LINK_IFELSE(AC_LANG_PROGRAM(,sgemv_();dgetrf_();),
+    AC_MSG_RESULT(yes) VECLIB=yes LAPACKLIBS="-framework vecLib" BLASLIB="-framework vecLib",
+    AC_MSG_RESULT(no) VECLIB=no )
+
+if test "$BUILDBLAS" = no -a "$BLAS" = "yes" -a "$BLASLIB" = "" -a "$VECLIB" = no
+then AC_LANG(C)
+     BLASLIB="-lf77blas"
      LIBS="$BLASLIB $SAVELIBS $FLIBS"
      AC_MSG_CHECKING([whether blas library is available with $BLASLIB])
      AC_LINK_IFELSE(AC_LANG_PROGRAM(,F77_FUNC(sgemv,SGEMV)();),
 	 AC_MSG_RESULT(yes), 
-	 AC_MSG_RESULT(no)
-	 BLASLIB=$BLASLIB2
-	 LIBS="$BLASLIB $SAVELIBS $FLIBS"
-	 AC_MSG_CHECKING([whether blas library is available with $BLASLIB])
-	 AC_LINK_IFELSE(AC_LANG_PROGRAM(,F77_FUNC(sgemv,SGEMV)();),
-	     AC_MSG_RESULT(yes), 
-	     AC_MSG_RESULT(no (it will be compiled));BUILDBLAS=yes))
+	 AC_MSG_RESULT(no (it will be compiled));BUILDBLAS=yes))
 fi
 
-if test "$BUILDLAPACK" = no -a "$LAPACK" = "yes" -a "$LAPACKLIBS" = ""
-then LAPACKLIBS1="-framework vecLib"
-     LAPACKLIBS2="-llapack $BLASLIB"
+if test "$BUILDLAPACK" = no -a "$LAPACK" = "yes" -a "$LAPACKLIBS" = "" -a "$VECLIB" = no
+then LAPACKLIBS="-llapack $BLASLIB"
      AC_LANG(C)
-     LAPACKLIBS=$LAPACKLIBS1
      LIBS="$LAPACKLIBS $SAVELIBS $FLIBS"
      AC_MSG_CHECKING([whether lapack library is available with $LAPACKLIBS])
      AC_LINK_IFELSE(AC_LANG_PROGRAM(,F77_FUNC(dgetrf,DGETRF)();),
 	 AC_MSG_RESULT(yes), 
-	 AC_MSG_RESULT(no)
-	 LAPACKLIBS=$LAPACKLIBS2
-	 LIBS="$LAPACKLIBS $SAVELIBS $FLIBS"
-	 AC_MSG_CHECKING([whether lapack library is available with $LAPACKLIBS])
-	 AC_LINK_IFELSE(AC_LANG_PROGRAM(,F77_FUNC(dgetrf,DGETRF)();),
-	     AC_MSG_RESULT(yes), 
-	     AC_MSG_RESULT(no (it will be compiled));BUILDLAPACK=yes))
+	 AC_MSG_RESULT(no (it will be compiled));BUILDLAPACK=yes))
 fi
 
 LIBS="$SAVELIBS"
