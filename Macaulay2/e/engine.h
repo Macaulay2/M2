@@ -8,7 +8,7 @@
  */
 #include "../d/M2types.h"
 
-#include "config.h"
+#include <config.h>
 #include <stdio.h>
 #if HAVE_STDINT_H
 #include <stdint.h>
