@@ -5,6 +5,12 @@ DEPENDS = yes
 include ../make.include
 include @srcdir@/../Makefile.common
 
+CPPFLAGS := \
+	-I../../../include -I../../../libraries/final@FINALPREFIX@/$(librariesRelDir)/include \
+	-I@srcdir@/../../../include \
+	-I. \
+	$(CPPFLAGS)
+
 %.dep: %.cpp
 	@ echo "$(CXX) -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
 	@ echo " ** creating $@ from $<"

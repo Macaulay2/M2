@@ -10,10 +10,13 @@ all :: ../bin/M2$(EXE)
 
 ## standard options
 
-LD_LIBRARY_PATH := ../../libraries/final@FINALPREFIX@/$(libm2RelDir)/lib:$(LD_LIBRARY_PATH)
+LD_LIBRARY_PATH := ../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 
-M2_LDFLAGS  = -L../../libraries/final@FINALPREFIX@/$(libm2RelDir)/lib
+M2_LDFLAGS  =
+M2_LDFLAGS += -Wl,-rpath,@FINALPREFIX@/$(librariesRelDir)/lib
+M2_LDFLAGS += -L../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
+M2_LDFLAGS += -Wl,-rpath,$(shell /bin/pwd)/../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
 M2_LDFLAGS += $(LDFLAGS)
 M2_LOADLIBES := $(LOADLIBES)
 M2_LDLIBS := $(LDLIBS)
@@ -164,7 +167,7 @@ endif
 M2-factory.o : M2-factory.cpp ; $(COMPILE.cc) -Wno-old-style-cast $(OUTPUT_OPTION) $<
 
 M2INCLUDES  = -I../../include
-M2INCLUDES += -I../../libraries/final@FINALPREFIX@/$(libm2RelDir)/include
+M2INCLUDES += -I../../libraries/final@FINALPREFIX@/$(librariesRelDir)/include
 M2INCLUDES += -I@srcdir@/../../include
 M2INCLUDES += -I@srcdir@
 M2INCLUDES += -I.
