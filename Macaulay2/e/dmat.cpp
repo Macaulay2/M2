@@ -381,7 +381,7 @@ bool DMat<CoeffRing>::row_permute(long start_row, M2_arrayint perm)
 	  done[r] = true;
 	}
     }
-  delete[] tmp;
+  deletearray(tmp);
   deletearray(done);
   return true;
 }
@@ -435,7 +435,7 @@ bool DMat<CoeffRing>::column_permute(long start_col, M2_arrayint perm)
 	  done[r] = true;
 	}
     }
-  delete []tmp;
+  deletearray(tmp);
   deletearray(done);
   return true;
 }
@@ -459,7 +459,7 @@ void DMat<CoeffRing>::insert_columns(long i, long n_to_add)
     coeffR->set_zero(array_[j+nbefore]);
   for (long j=nbefore; j<nelems; j++)
     coeffR->swap(tmp[j], array_[j+nadded]);
-  delete []tmp;
+  deletearray(tmp);
 }
 
 template<typename CoeffRing>
@@ -480,7 +480,7 @@ void DMat<CoeffRing>::insert_rows(long i, long n_to_add)
     copy_elems(ncols_, array_ + r, nrows_, &zero, 0);
   for (long r=i; r<old_nrows; r++)
     copy_elems(ncols_, array_ + r + n_to_add, nrows_, tmp + r, old_nrows);
-  delete []tmp;
+  deletearray(tmp);
 }
 
 template<typename CoeffRing>
@@ -499,7 +499,7 @@ void DMat<CoeffRing>::delete_columns(long i, long j)
     coeffR->swap(tmp[k], array_[k]);
   for (long k=nbefore+ndeleted; k<nelems; k++)
     coeffR->swap(tmp[k], array_[k-ndeleted]);
-  delete []tmp;
+  deletearray(tmp);
 }
 
 template<typename CoeffRing>
@@ -517,7 +517,7 @@ void DMat<CoeffRing>::delete_rows(long i, long j)
     copy_elems(ncols_, array_ + r, nrows_, tmp + r, old_nrows);
   for (long r=j+1; r<old_nrows; r++)
     copy_elems(ncols_, array_ + r - ndeleted, nrows_, tmp + r, old_nrows);
-  delete []tmp;
+  deletearray(tmp);
 }
 
 template<typename CoeffRing>
