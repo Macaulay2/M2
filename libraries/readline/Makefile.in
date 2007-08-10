@@ -1,12 +1,15 @@
 RELAX = yes
 URL = ftp://ftp.gnu.org/gnu/readline
 VERSION = 5.2
-BUILDTARGET  = all
-INSTALLTARGET  = install
+BUILDTARGET = all
+INSTALLTARGET = install
 
-# BUILDTARGET += shared
-# INSTALLTARGET += install-shared
+ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
+else
+BUILDTARGET += shared
+INSTALLTARGET += install-shared
+endif
 
 include ../Makefile.library
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/readline/Makefile

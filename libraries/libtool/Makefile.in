@@ -1,6 +1,8 @@
 URL = ftp://ftp.gnu.org/gnu/libtool
 VERSION = 1.5.24
+ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
+endif
 include ../Makefile.library
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/libtool/Makefile
 clean ::

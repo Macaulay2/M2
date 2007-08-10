@@ -2,7 +2,7 @@ URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
 VERSION = 7.0
 CFLAGS += -g -O2 -DLARGE_CONFIG -DUSE_MMAP
 CONFIGOPTIONS  = --disable-threads
-ifneq ($(OS),Linux)
+ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
 CONFIGOPTIONS += GC_CFLAGS="$(CFLAGS)"
