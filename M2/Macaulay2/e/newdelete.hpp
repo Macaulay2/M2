@@ -4,7 +4,6 @@
 // get declarations of outofmem and getmem
 #include "../d/M2mem.h"
 
-#include "config.h"
 #include <gc/gc.h>
 #include "../d/debug.h"
 

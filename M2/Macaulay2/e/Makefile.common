@@ -1,6 +1,9 @@
 # -*- GNUmakefile -*-
 
-COMPILE.cc += -frepo -fno-rtti
+COMPILE.cc += -fno-rtti
+ifeq ($(AUTOINST),yes)
+COMPILE.cc += -frepo
+endif
 COMPILE.cpp = $(COMPILE.cc)
 
 %.o : %.cpp

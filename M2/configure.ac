@@ -208,7 +208,9 @@ AC_SUBST(EXPERIMENT) AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-ex
 AC_SUBST(M2TARFILE)  AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare a binary package as a compressed tar file), M2TARFILE="$enableval", M2TARFILE==no)
 AC_SUBST(TARLIBS)    AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS="$enableval", TARLIBS=no)
 AC_SUBST(SHARED)     AC_ARG_ENABLE(shared, AS_HELP_STRING(--enable-shared,enable building of shared libraries), SHARED="$enableval", SHARED=no)
-
+AC_SUBST(AUTOINST)   AC_ARG_ENABLE(auto-instantiation, AS_HELP_STRING(--disable-auto-instantiation,disable automatic instantiation of C++ templates with -frepo option to g++),
+    AUTOINST="$enableval", AUTOINST=yes, whether to instantiate templates automatically with -frepo)
+test "$AUTOINST" = no; val=$?; AC_DEFINE_UNQUOTED(AUTOINST,$val,whether to instantiate templates automatically with -frepo)
 AC_SUBST(BUILDGMP)     AC_ARG_ENABLE(build-gmp, AS_HELP_STRING(--enable-build-gmp,build library gmp from downloaded source code), BUILDGMP="$enableval", BUILDGMP=no)
 AC_SUBST(BUILDGDBM)    AC_ARG_ENABLE(build-gdbm, AS_HELP_STRING(--enable-build-gdbm,build library gdbm from downloaded source code), BUILDGDBM="$enableval", BUILDGDBM=no)
 AC_SUBST(BUILDREADLINE)  AC_ARG_ENABLE(build-readline, AS_HELP_STRING(--enable-build-readline,build library readline from downloaded source code), BUILDREADLINE="$enableval", BUILDREADLINE=no)

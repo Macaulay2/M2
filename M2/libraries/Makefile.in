@@ -4,8 +4,7 @@ all check reconfigure distclean clean ::
 	@ set -e ; for p in @LIBRARIES@ ; do (set -ex ; $(MAKE) -C $$p $@) || false ; done 
 	@ $(MAKE) -C libtool $@
 final-install :
-	install -d $(libm2dir)
-	tar cf - --exclude="*.a" --exclude="*.old" -C final@FINALPREFIX@ lib | tar xfvv - -C $(libm2dir)
+	tar cf - --exclude="*.a" --exclude="*.old" -C final@FINALPREFIX@ . | tar xfvv - -C $(encapdir)
 Makefile         : Makefile.in         ; cd .. && ./config.status libraries/Makefile
 Makefile.library : Makefile.library.in ; cd .. && ./config.status libraries/Makefile.library
 clean :: ; rm -rf final
