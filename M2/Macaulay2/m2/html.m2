@@ -1005,14 +1005,14 @@ export MANPATH
 MANPATH=/// << absPrefixDirectory << ///share/man:$MANPATH
 export MANPATH
 
-# LD_LIBRARY_PATH=/// << absPrefixDirectory << ///lib:$LD_LIBRARY_PATH
-# export LD_LIBRARY_PATH
+LD_LIBRARY_PATH=/// << absPrefixDirectory << ///lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH
 /// << close;
 	  -- make dot-cshrc file
      	  dir|"dot-cshrc" << ///
 setenv PATH /// << absPrefixDirectory << ///bin:$PATH
 setenv MANPATH /// << absPrefixDirectory << ///bin:$MANPATH
-# setenv LD_LIBRARY_PATH /// << absPrefixDirectory << ///lib:$LD_LIBRARY_PATH
+setenv LD_LIBRARY_PATH /// << absPrefixDirectory << ///lib:$LD_LIBRARY_PATH
 /// << close;
 	  -- make README file
 	  dir|"README" << ///Welcome to Macaulay2!

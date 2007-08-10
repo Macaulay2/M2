@@ -315,10 +315,7 @@ else
 endif
 ///
 stripdir := dir -> if dir === "/" then dir else replace("/$","",dir)
-fixes := { ("PATH", LAYOUT#"bin"), ("MANPATH", LAYOUT#"man"), ("INFOPATH", LAYOUT#"info" )
-     -- , 
-     -- ("LD_LIBRARY_PATH", LAYOUT#"lib" )
-     }
+fixes := { ("PATH", LAYOUT#"bin"), ("MANPATH", LAYOUT#"man"), ("INFOPATH", LAYOUT#"info" ), ("LD_LIBRARY_PATH", LAYOUT#"lib" )}
 fix := (var,dir,templ) -> replace_("VAR",var) replace_("DIR",stripdir dir) templ
 dotprofileFix = dotbashrcFix = concatenate apply(fixes, (var,dir) -> fix(var,dir,bashtempl))
 dotloginFix = dotcshrcFix = concatenate apply(fixes, (var,dir) -> fix(var,dir,cshtempl))

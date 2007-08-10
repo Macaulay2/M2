@@ -23,5 +23,5 @@ if [ -f /etc/ld.so.conf ]
 then OLIBS=$(echo $(</etc/ld.so.conf) | sed 's/ /:/g')
 fi
 
-# export LD_LIBRARY_PATH="$LIBDIR:/usr/lib:/lib:/usr/local/lib:$OLIBS" 
+export LD_LIBRARY_PATH="$LIBDIR:/usr/lib:/lib:/usr/local/lib:$OLIBS" 
 exec "$M2DIR/bin/M2" "$@"
