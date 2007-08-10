@@ -2,10 +2,15 @@ URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
 VERSION = 7.0
 CFLAGS += -g -O2 -DLARGE_CONFIG -DUSE_MMAP
 CONFIGOPTIONS  = --disable-threads
+ifneq ($(OS),Linux)
+CONFIGOPTIONS += --disable-shared
+endif
 CONFIGOPTIONS += GC_CFLAGS="$(CFLAGS)"
 PATCHFILE = @srcdir@/patch-7.0
 include ../Makefile.library
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gc/Makefile
+clean :: ; rm -rf $(LIBRARIESDIR)/lib/libgc.* $(LIBRARIESDIR)/lib/libcord.* $(LIBRARIESDIR)/include/gc $(LIBRARIESDIR)/share/gc \
+		$(LIBRARIESDIR)/lib/pkgconfig/bdw-gc.pc
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/gc "
 # End:

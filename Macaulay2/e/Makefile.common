@@ -1,4 +1,4 @@
-# -*- Makefile -*-
+# -*- GNUmakefile -*-
 
 COMPILE.cc += -frepo -fno-rtti
 COMPILE.cpp = $(COMPILE.cc)
