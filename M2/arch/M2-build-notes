@@ -9,6 +9,63 @@ svn co svn://macaulay2.math.uiuc.edu/capybara/trunk/capybara capybara
 svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
 
 #######################################################
+# MacOSX ##############################################
+# make sure the following have been installed:
+# svn, latest autoconf
+#######################################################
+# inside ~/src
+/capybara/bin/svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2
+cd M2
+/capybara/bin/autoconf
+make
+mkdir tmp
+cd tmp
+ ../configure \
+      --prefix=/Users/mike2/src/M2/tmp-install \
+      --enable-debug \
+      --disable-optimize \
+      --enable-experimental-code \
+      LOADLIBES="-lgcc_s.10.5 -lncurses"
+make      
+
+mkdir tmp64
+cd tmp64
+ ../configure \
+      --prefix=/Users/mike2/src/M2/tmp64-install \
+      --enable-debug \
+      --disable-optimize \
+      --enable-experimental-code \
+      LOADLIBES="-lgcc_s.10.5 -lncurses" \
+      --build=x86_64-apple-darwin \
+      CC="gcc -m64" \
+      CXX="g++ -m64"
+make
+
+mkdir tmp64-opt
+cd tmp64-opt
+ ../configure \
+      --prefix=/capybara/encap \
+      --enable-experimental-code \
+      LOADLIBES="-lgcc_s.10.5 -lncurses" \
+      --build=x86_64-apple-darwin \
+      CC="gcc -m64" \
+      CXX="g++ -m64"
+make
+
+mkdir tmp64-profile
+cd tmp64-profile
+ ../configure \
+      --prefix=~/src/M2/tmp64-profile-install \
+      --enable-profile \
+      --enable-experimental-code \
+      LOADLIBES="-lgcc_s.10.5 -lncurses" \
+      --build=x86_64-apple-darwin \
+      CC="gcc -m64" \
+      CXX="g++ -m64"
+make
+
+
+#######################################################
 # Linux ###############################################
 # make sure the following have been installed:
 # g++, g77, svn, latest autoconf, wget or curl, bison?
