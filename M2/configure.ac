@@ -298,7 +298,10 @@ AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,replace lapack libraries by "-f
     )
 
 AC_SUBST(LAPACK)
-AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack]), LAPACK="$enableval";LAPACKLIBS="", LAPACK=yes; BLAS=yes)
+AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack]),
+    LAPACK="$enableval" BLAS="$enableval" LAPACKLIBS="",
+    LAPACK=yes BLAS=yes
+    )
 test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
