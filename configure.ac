@@ -48,9 +48,11 @@ AC_CONFIG_FILES(m4_include(config/files))
 
 echo "any environment variables set:"
 test "$CC"         && echo "   CC=$CC"
+test "$FC"         && echo "   FC=$FC"
 test "$CXX"        && echo "   CXX=$CXX"
 test "$CPPFLAGS"   && echo "   CPPFLAGS=$CPPFLAGS"                 # autoconf default is: -g -O2
 test "$CFLAGS"     && echo "   CFLAGS=$CFLAGS"                     # autoconf default is: -g -O2
+test "$FCFLAGS"    && echo "   FCFLAGS=$FCFLAGS"                   # autoconf default is: -g -O2
 test "$CXXFLAGS"   && echo "   CXXFLAGS=$CXXFLAGS"
 test "$LDFLAGS"    && echo "   LDFLAGS=$LDFLAGS"
 test "$LOADLIBES"  && echo "   LOADLIBES=$LOADLIBES"
@@ -148,6 +150,10 @@ AC_PROG_INSTALL()
 AC_PROG_AWK()
 AC_PROG_CC()
 AC_SUBST(GCC)
+AC_PROG_FC(,Fortran 77)
+AC_F77_LIBRARY_LDFLAGS()
+AC_F77_DUMMY_MAIN()
+AC_F77_WRAPPERS()
 AC_PROG_CXX()
 AC_PROG_YACC()
 AC_PROG_MKDIR_P()
@@ -283,13 +289,17 @@ AC_DEFINE_UNQUOTED(WITH_NEWLINE_CR, $WITH_NEWLINE_CR,   [whether newline is cr])
 
 AC_DEFINE_UNQUOTED(EXEEXT,"$EXEEXT",[suffix the compiler appends to executable filenames])
 
+AC_SUBST(BLASLIB)
+AC_ARG_WITH(blaslib, AS_HELP_STRING([--with-blaslib=...],[blas and blas libraries]), BLASLIB="$withval", BLASLIB="")
+
 AC_SUBST(LAPACKLIBS)
-dnl # formerly:
-dnl #   LAPACKLIBS="-llapack -lcblas -lf77blas -lg2c"
-dnl # and
-dnl #   LAPACKLIBS="-llapack -lblas -lg2c"
-AC_ARG_WITH(lapacklibs, AS_HELP_STRING([--with-lapacklibs=...],[lapack and blas libraries (-llapack -lf77blas -lgfortran)]), LAPACKLIBS="$withval", LAPACKLIBS="-llapack -lf77blas -lgfortran")
-AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,replace lapack libraries by "-framework vecLib"), VECLIB=yes; LAPACKLIBS="-framework vecLib", VECLIB=no)
+AC_ARG_WITH(lapacklibs, AS_HELP_STRING([--with-lapacklibs=...],[lapack and blas libraries]), LAPACKLIBS="$withval", LAPACKLIBS="")
+
+AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,replace lapack libraries by "-framework vecLib"),
+    VECLIB=yes LAPACKLIBS="-framework vecLib" BLASLIB="-framework vecLib",
+    VECLIB=no
+    )
+
 AC_SUBST(LAPACK)
 AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack]), LAPACK="$enableval";LAPACKLIBS="", LAPACK=yes; BLAS=yes)
 test "$LAPACK" = no; val=$?
@@ -421,18 +431,40 @@ then LIBS="-lreadline -lhistory -lncurses $SAVELIBS"
 	 AC_MSG_RESULT(no (they will be compiled)) ; BUILDREADLINE=yes )
 fi
 
-if test "$BUILDLAPACK" = no -a "$LAPACK" = "yes"
-then LIBS="$LAPACKLIBS $SAVELIBS"
+if test "$BUILDBLAS" = no -a "$BLAS" = "yes" -a "$BLASLIB" = ""
+then BLASLIB1="-framework vecLib"
+     BLASLIB2="-lf77blas"
      AC_LANG(C)
-     AC_MSG_CHECKING([whether lapack library is installed ($LAPACKLIBS)])
-     AC_LINK_IFELSE( [int main() {dgetrf_();}], AC_MSG_RESULT(yes), AC_MSG_RESULT(no (it will be compiled));BUILDLAPACK=yes)
+     BLASLIB=$BLASLIB1
+     LIBS="$BLASLIB $SAVELIBS $FLIBS"
+     AC_MSG_CHECKING([whether blas library is available with $BLASLIB])
+     AC_LINK_IFELSE(AC_LANG_PROGRAM(,F77_FUNC(sgemv,SGEMV)();),
+	 AC_MSG_RESULT(yes), 
+	 AC_MSG_RESULT(no)
+	 BLASLIB=$BLASLIB2
+	 LIBS="$BLASLIB $SAVELIBS $FLIBS"
+	 AC_MSG_CHECKING([whether blas library is available with $BLASLIB])
+	 AC_LINK_IFELSE(AC_LANG_PROGRAM(,F77_FUNC(sgemv,SGEMV)();),
+	     AC_MSG_RESULT(yes), 
+	     AC_MSG_RESULT(no (it will be compiled));BUILDBLAS=yes))
 fi
 
-if test "$BUILDBLAS" = no -a "$BLAS" = "yes"
-then LIBS="$LAPACKLIBS $SAVELIBS"
+if test "$BUILDLAPACK" = no -a "$LAPACK" = "yes" -a "$LAPACKLIBS" = ""
+then LAPACKLIBS1="-framework vecLib"
+     LAPACKLIBS2="-llapack $BLASLIB"
      AC_LANG(C)
-     AC_MSG_CHECKING([whether blas library is installed])
-     AC_LINK_IFELSE( [int main() {sgemv_();}], AC_MSG_RESULT(yes), AC_MSG_RESULT(no (it will be compiled));BUILDBLAS=yes)
+     LAPACKLIBS=$LAPACKLIBS1
+     LIBS="$LAPACKLIBS $SAVELIBS $FLIBS"
+     AC_MSG_CHECKING([whether lapack library is available with $LAPACKLIBS])
+     AC_LINK_IFELSE(AC_LANG_PROGRAM(,F77_FUNC(dgetrf,DGETRF)();),
+	 AC_MSG_RESULT(yes), 
+	 AC_MSG_RESULT(no)
+	 LAPACKLIBS=$LAPACKLIBS2
+	 LIBS="$LAPACKLIBS $SAVELIBS $FLIBS"
+	 AC_MSG_CHECKING([whether lapack library is available with $LAPACKLIBS])
+	 AC_LINK_IFELSE(AC_LANG_PROGRAM(,F77_FUNC(dgetrf,DGETRF)();),
+	     AC_MSG_RESULT(yes), 
+	     AC_MSG_RESULT(no (it will be compiled));BUILDLAPACK=yes))
 fi
 
 LIBS="$SAVELIBS"
