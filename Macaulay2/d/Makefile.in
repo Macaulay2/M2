@@ -15,8 +15,11 @@ export LD_LIBRARY_PATH
 
 M2_LDFLAGS  =
 M2_LDFLAGS += -Wl,-rpath,@FINALPREFIX@/$(librariesRelDir)/lib
+
+# actually, it might be a problem to hard code my personal directory into the M2 binary!!
 M2_LDFLAGS += -L../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
 M2_LDFLAGS += -Wl,-rpath,$(shell /bin/pwd)/../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
+
 M2_LDFLAGS += $(LDFLAGS)
 M2_LOADLIBES := $(LOADLIBES)
 M2_LDLIBS := $(LDLIBS)
