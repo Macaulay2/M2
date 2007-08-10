@@ -192,7 +192,7 @@ docm2dir = $(encapdir)/$(docm2RelDir)
 packagesdir = $(encapdir)/$(packagesRelDir)
 docpackagesdir = $(encapdir)/$(docpackagesRelDir)
 libm2dir = $(encapdir)/$(libm2RelDir)
-librairiesdir = $(encapdir)/$(librariesRelDir)
+librariesdir = $(encapdir)/$(librariesRelDir)
 cachedir = $(encapdir)/$(cacheRelDir)
 datam2dir = $(encapdir)/$(datam2RelDir)
 sharedir = $(encapdir)/$(shareRelDir)
@@ -225,6 +225,7 @@ LAYOUT += "docm2"=>"$(docm2RelDir)/",
 LAYOUT += "packages" => "$(packagesRelDir)/",
 LAYOUT += "docpackages"=>"$(docpackagesRelDir)/",
 LAYOUT += "libm2"=>"$(libm2RelDir)/",
+LAYOUT += "libraries"=>"$(librariesRelDir)/",
 LAYOUT += "cache"=>"$(cacheRelDir)/",
 LAYOUT += "datam2"=>"$(datam2RelDir)/",
 LAYOUT += "share"=>"$(shareRelDir)/",
