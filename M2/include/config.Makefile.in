@@ -92,6 +92,8 @@ EXE = $(M2SUFFIX)$(EXEEXT)
 CONFIG_ARG0 = @CONFIG_ARG0@
 CONFIG_ARGS = @CONFIG_ARGS@
 CONFIG_CMD = @CONFIG_CMD@
+AUTOINST = @AUTOINST@
+IMPLINST = @IMPLINST@
 
 # See the autoconf documentation for a description of LIBS, which autoconf uses at configure time for checking for features
 # But I don't want to use it that way.
