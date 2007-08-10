@@ -31,6 +31,9 @@ all :: include/config.h
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1
 subst : config.status ; ./config.status
+
+show : config.status ; egrep '^s,' $< | sed -e 's/^s,@\(.*\)@,\(.*\),g/\1=\2/' -e 's/^s,.*]\*\(.*\)\\).*\\2 \(.*\) ,/#define \1 \2/' -e 's/.#_!!_#.//g'
+
 status : @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
 	@echo '#  here is the way you ran $^ before:'
@@ -150,6 +153,7 @@ help :
 	@ echo "  reconfigure                 re-run configure with same options"
 	@ echo "  reconfigure-libs            re-run configure on the libraries"
 	@ echo "  subst                       re-run config.status, remaking the makefiles"
+	@ echo "  show                        show all variable substitutions determined"
 	@ echo ""
 	@ echo "options:"
 	@ echo "      IgnoreExampleErrors=true       continue even after errors in example code"

@@ -18,10 +18,10 @@ ifeq ($(OS),Linux)
 M2_LDFLAGS += -Wl,-rpath,@FINALPREFIX@/$(librariesRelDir)/lib
 endif
 
-# actually, it might be a problem to hard code my personal directory into the M2 binary!!
 M2_LDFLAGS += -L../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
 ifeq ($(OS),Linux)
-M2_LDFLAGS += -Wl,-rpath,$(shell /bin/pwd)/../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
+# it would be a problem to hard code my personal directory into the M2 binary!!
+# M2_LDFLAGS += -Wl,-rpath,$(shell /bin/pwd)/../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
 endif
 
 M2_LDFLAGS += $(LDFLAGS)
@@ -212,6 +212,8 @@ endif
 ifeq ($(OS),SunOS)
 M2_LOADLIBES += -lsocket -lnsl
 endif
+
+M2_LOADLIBES += @FLIBS@
 
 clean::; rm -f compat.c compat.h
 compat.c compat.h : configure ../../include/config.h
