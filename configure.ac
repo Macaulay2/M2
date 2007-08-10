@@ -178,7 +178,7 @@ fi
 
 AC_HEADER_TIME() dnl # time.h sys/time.h
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h sys/wait.h sys/resource.h io.h linux/personality.h)
-AC_CHECK_HEADERS(stddef.h stdint.h inttypes.h endian.h)
+AC_CHECK_HEADERS(stddef.h stdint.h inttypes.h endian.h elf.h)
 AC_CHECK_HEADERS(sys/types.h gmp.h gdbm.h factoryconf.h)
 AC_CHECK_LIB(socket, socket)
 AC_CHECK_LIB(resolv, hstrerror)
