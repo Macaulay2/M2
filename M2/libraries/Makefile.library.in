@@ -1,4 +1,4 @@
-# -*- Makefile -*-
+# -*- GNUmakefile -*-
 
 include ../../include/config.Makefile
 
@@ -49,8 +49,8 @@ UNTARCMD ?= tar xzf $(TARFILE)
 .untarred : .fetched ; $(UNTARCMD) && touch $@
 .untarred2 : .fetched ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
 .fetched : ; curl $(URL)/$(TARFILE) -o "$(TARFILE)" && touch $@
-clean :; rm -rf .patched $(TARDIR) .fetched .untarred $(TARFILE) .compiled .configured .installed .untarred2 diffs tmp
-distclean : clean ; rm -rf Makefile
+clean ::; rm -rf .patched $(TARDIR) .fetched .untarred $(TARFILE) .compiled .configured .installed .untarred2 diffs tmp
+distclean :: clean ; rm -rf Makefile
 check ::
 
 help :;

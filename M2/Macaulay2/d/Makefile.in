@@ -10,15 +10,19 @@ all :: ../bin/M2$(EXE)
 
 ## standard options
 
-LD_LIBRARY_PATH := ../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib:$(LD_LIBRARY_PATH)
-export LD_LIBRARY_PATH
+# LD_LIBRARY_PATH := ../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib:$(LD_LIBRARY_PATH)
+# export LD_LIBRARY_PATH
 
 M2_LDFLAGS  =
+ifeq ($(OS),Linux)
 M2_LDFLAGS += -Wl,-rpath,@FINALPREFIX@/$(librariesRelDir)/lib
+endif
 
 # actually, it might be a problem to hard code my personal directory into the M2 binary!!
 M2_LDFLAGS += -L../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
+ifeq ($(OS),Linux)
 M2_LDFLAGS += -Wl,-rpath,$(shell /bin/pwd)/../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
+endif
 
 M2_LDFLAGS += $(LDFLAGS)
 M2_LOADLIBES := $(LOADLIBES)

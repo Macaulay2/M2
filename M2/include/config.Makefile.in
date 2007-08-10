@@ -1,4 +1,4 @@
-# @configure_input@ -*- Makefile -*-
+# @configure_input@ -*- GNUmakefile -*-
 
 ifneq ($(CONFIG_MAKEFILE),)
 $(error config.Makefile already loaded)
