@@ -129,21 +129,14 @@ int dumpdata(char const *dumpfilename) {
 
 #if HAVE_ELF_H == 1 && HAVE_UNISTD_H == 1 && HAVE___ENVIRON == 1
 #define ELF 1
-void *elf_header_location_32() {
+void *elf_header_location() {
      char **envp = __environ;
      while(*envp++ != NULL);
+#if __WORDSIZE == 32
      Elf32_auxv_t *auxv = (Elf32_auxv_t *)envp;
-     for ( ; auxv->a_type != AT_NULL; auxv++) {
-	  switch( auxv->a_type ) {
-	  case AT_SYSINFO_EHDR: return (void *)auxv->a_un.a_val;
-	  }
-     }
-     return NULL;
-}
-void *elf_header_location_64() {
-     char **envp = __environ;
-     while(*envp++ != NULL);
+#else
      Elf64_auxv_t *auxv = (Elf64_auxv_t *)envp;
+#endif
      for ( ; auxv->a_type != AT_NULL; auxv++) {
 	  switch( auxv->a_type ) {
 	  case AT_SYSINFO_EHDR: return (void *)auxv->a_un.a_val;
