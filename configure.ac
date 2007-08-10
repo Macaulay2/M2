@@ -211,23 +211,19 @@ AC_SUBST(SHARED)     AC_ARG_ENABLE(shared, AS_HELP_STRING(--enable-shared,enable
 
 AC_ARG_ENABLE(
     auto-instantiation, 
-    AS_HELP_STRING([--disable-auto-instantiation,disable automatic instantiation of C++ templates (it uses -frepo option to g++)]),
+    AS_HELP_STRING([--enable-auto-instantiation,enable automatic instantiation of C++ templates (it uses -frepo option to g++)]),
     AUTOINST="$enableval",
-    AUTOINST=yes)
+    AUTOINST=no)
 AC_SUBST(AUTOINST)
 test "$AUTOINST" = no; val=$?; AC_DEFINE_UNQUOTED(AUTOINST,$val,whether to instantiate templates automatically)
 
 AC_ARG_ENABLE(
     implicit-templates,
-    AS_HELP_STRING([--enable-implicit-templates,enable implicit instantiation of C++ templates (it uses -fno-implicit-templates option to g++)]),
+    AS_HELP_STRING([--disable-implicit-templates,disable implicit instantiation of C++ templates (it uses -fno-implicit-templates option to g++)]),
     IMPLINST="$enableval",
-    IMPLINST=no)
+    IMPLINST=yes)
 AC_SUBST(IMPLINST)
 test "$IMPLINST" = no; val=$?; AC_DEFINE_UNQUOTED(IMPLINST,$val,whether to instantiate templates implicitly)
-
-if test "$AUTOINST" = yes -a "$IMPLINST" = yes
-then AC_MSG_ERROR(implicit templates and automatic instantiation are both enabled)
-fi
 
 AC_SUBST(BUILDGMP)     AC_ARG_ENABLE(build-gmp, AS_HELP_STRING(--enable-build-gmp,build library gmp from downloaded source code), BUILDGMP="$enableval", BUILDGMP=no)
 AC_SUBST(BUILDGDBM)    AC_ARG_ENABLE(build-gdbm, AS_HELP_STRING(--enable-build-gdbm,build library gdbm from downloaded source code), BUILDGDBM="$enableval", BUILDGDBM=no)
