@@ -48,7 +48,19 @@ endif
 UNTARCMD ?= tar xzf $(TARFILE)
 .untarred : .fetched ; $(UNTARCMD) && touch $@
 .untarred2 : .fetched ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
-.fetched : ; curl $(URL)/$(TARFILE) -o "$(TARFILE)" && touch $@
+
+ifneq ($(shell type -p curl),)
+FETCHER = curl
+else
+ifneq ($(shell type -p wget),)
+FETCHER = wget
+else
+$(error either curl or wget is needed for downloading library source code, please install one of them)
+endif
+endif
+
+.fetched : ; $(FETCHER) $(URL)/$(TARFILE) -o "$(TARFILE)" && touch $@
+
 clean ::; rm -rf .patched $(TARDIR) .fetched .untarred $(TARFILE) .compiled .configured .installed .untarred2 diffs tmp
 distclean :: clean ; rm -rf Makefile
 check ::
