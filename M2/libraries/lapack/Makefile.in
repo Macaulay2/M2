@@ -7,8 +7,10 @@ TARDIR = lapack-$(VERSION)
 CONFIGURECMD = cp make.inc.example make.inc
 # note: our package "blas" creates the library libf77blas.a
 BUILDOPTIONS = PLAT= FORTRAN=g77 OPTS="-O2 -g" NOOPT= LOADER=g77 RANLIB=ranlib BLASLIB=-lf77blas LOADOPTS="$(LDFLAGS)"
-# BUILDTARGET = all ../liblapack.so
 BUILDTARGET = blaslib all
+ifeq (@SHARED@,yes)
+BUILDTARGET += ../liblapack.so
+endif
 INSTALLCMD = install -d $(LIBRARIESDIR)/lib && install lapack.a $(LIBRARIESDIR)/lib/liblapack.a
 include ../Makefile.library
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/lapack/Makefile
