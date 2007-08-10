@@ -23,7 +23,9 @@ SRCFILES := $(HFILES) $(CNAMES) grammar.y
 CPPFLAGS += -I../../include -I../../libraries/final@FINALPREFIX@/$(librariesRelDir)/include -I@srcdir@/../../include
 CPPFLAGS += -I@srcdir@
 LDFLAGS += -L../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
+ifeq ($(OS),Linux)
 LDFLAGS += -Wl,-rpath,$(shell /bin/pwd)/../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
+endif
 ############################## compiling
 scc1 : $(OFILES)
 	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
