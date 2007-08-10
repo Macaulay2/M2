@@ -31,7 +31,7 @@ void DMat<CoeffRing>::initialize(long nrows, long ncols, elem *array)
   nrows_ = nrows;
   ncols_ = ncols;
   long len = nrows * ncols;
-  array_ = newarray(elem,len);
+  array_ = newarray_clear(elem,len);
   if (array == 0)
     {
       for (long i=0; i<len; i++)
@@ -351,7 +351,7 @@ bool DMat<CoeffRing>::row_permute(long start_row, M2_arrayint perm)
 	}
       done[j] = false;
     }
-  elem *tmp = newarray(elem,ncols_);
+  elem *tmp = newarray_clear(elem,ncols_);
   long next = 0;
   elem *arr = array_ + start_row;
 
@@ -405,7 +405,7 @@ bool DMat<CoeffRing>::column_permute(long start_col, M2_arrayint perm)
 	}
       done[j] = false;
     }
-  elem *tmp = newarray(elem,nrows_);
+  elem *tmp = newarray_clear(elem,nrows_);
   long next = 0;
   elem *arr = array_ + start_col * nrows_;
 
@@ -473,7 +473,7 @@ void DMat<CoeffRing>::insert_rows(long i, long n_to_add)
 
   nrows_ += n_to_add;
   long len = nrows_ * ncols_;
-  array_ = newarray(elem, len);
+  array_ = newarray_clear(elem, len);
   for (long r=0; r<i; r++)
     copy_elems(ncols_, array_ + r, nrows_, tmp + r, old_nrows);
   for (long r=i; r<i+n_to_add; r++)
@@ -494,7 +494,7 @@ void DMat<CoeffRing>::delete_columns(long i, long j)
 
   ncols_ -= j-i+1;
   long len = nrows_ * ncols_;
-  array_ = newarray(elem,len);
+  array_ = newarray_clear(elem,len);
   for (long k=0; k<nbefore; k++)
     coeffR->swap(tmp[k], array_[k]);
   for (long k=nbefore+ndeleted; k<nelems; k++)
@@ -512,7 +512,7 @@ void DMat<CoeffRing>::delete_rows(long i, long j)
 
   nrows_ -= ndeleted;
   long len = nrows_ * ncols_;
-  array_ = newarray(elem,len);
+  array_ = newarray_clear(elem,len);
   for (long r=0; r<i; r++)
     copy_elems(ncols_, array_ + r, nrows_, tmp + r, old_nrows);
   for (long r=j+1; r<old_nrows; r++)
