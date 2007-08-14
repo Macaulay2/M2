@@ -208,7 +208,6 @@ AC_SUBST(EXPERIMENT) AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-ex
 AC_SUBST(M2TARFILE)  AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare a binary package as a compressed tar file), M2TARFILE="$enableval", M2TARFILE==no)
 AC_SUBST(TARLIBS)    AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS="$enableval", TARLIBS=no)
 AC_SUBST(SHARED)     AC_ARG_ENABLE(shared, AS_HELP_STRING(--enable-shared,enable building of shared libraries), SHARED="$enableval", SHARED=no)
-AC_SUBST(ISYSTEM)    AC_ARG_ENABLE(isystem, AS_HELP_STRING(--disable-isystem,disable use of -isystem with gnu cpp (to work around C linkage problems in include files)), ISYSTEM="$enableval", ISYSTEM=yes)
 
 AC_ARG_ENABLE(
     auto-instantiation, 
@@ -303,6 +302,12 @@ AC_DEFINE_UNQUOTED(WITH_NEWLINE_CRLF,$WITH_NEWLINE_CRLF,[whether newline is cr l
 AC_DEFINE_UNQUOTED(WITH_NEWLINE_CR, $WITH_NEWLINE_CR,   [whether newline is cr])
 
 AC_DEFINE_UNQUOTED(EXEEXT,"$EXEEXT",[suffix the compiler appends to executable filenames])
+
+AC_SUBST(ISYSTEM)
+AC_MSG_CHECKING(whether g++ gets confused about C linkage in system library files)
+AC_LANG(C++)
+AC_COMPILE_IFELSE([# 1 "foo" 1 3 4
+	template <class T> struct A { };],AC_MSG_RESULT(no);ISYSTEM=yes,AC_MSG_RESULT(yes);ISYSTEM=no)
 
 AC_SUBST(BLASLIB)
 AC_ARG_WITH(blaslib, AS_HELP_STRING([--with-blaslib=...],[blas and blas libraries]), BLASLIB="$withval", BLASLIB="")
