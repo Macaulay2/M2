@@ -1,4 +1,4 @@
-# -*- GNUmakefile -*-
+# -*- Makefile -*-
 
 include ../../include/config.Makefile
 
