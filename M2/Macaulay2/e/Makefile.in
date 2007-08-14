@@ -4,7 +4,7 @@ VPATH = @srcdir@
 SRCDIR = @srcdir@
 DEPENDS = yes
 
-ifeq ($(CXX),g++)
+ifeq ($(CXX)-@ISYSTEM@,g++-yes)
 # We are using the -MM option to create *.dep files, which ignores "system" include files.
 # We want ../../include/config.h to be a "system" include file, so changing it
 # will not force a recompilation of all of our C++ files.
