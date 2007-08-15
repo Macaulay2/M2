@@ -29,7 +29,7 @@ REL     = @REL@
 COMPRESS = @COMPRESS@
 PKG_TGZ = $(package)-$(ARCH)-$(OS).tar.gz
 PKG_TBZ = $(package)-$(ARCH)-$(OS).tar.bz2
-PKG_DEB = $(package)-$(ARCH)-$(OS).deb
+PKG_DEB = $(package)-@DEBIANARCH@-$(OS).deb
 PKG_RPM = $(package)-$(ARCH)-$(OS).rpm
 PKG_TZ  = $(package)-$(ARCH)-$(OS).tar.$(COMPRESS)
 
