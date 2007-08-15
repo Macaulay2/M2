@@ -136,6 +136,12 @@ ARCH="`  uname -m | sed -e s=/=-=g -e 's= ==g' `"
 AC_SUBST(ARCH)
 AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type, obtained with uname -m])
 
+AC_SUBST(DEBIANARCH)
+case "$ARCH" in
+  i686) DEBIANARCH=i386 ;;
+  *) DEBIANARCH="$ARCH" ;;
+esac
+
 OS="`  uname -s | sed s=/=-=g  `"
 AC_SUBST(OS)
 AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s])

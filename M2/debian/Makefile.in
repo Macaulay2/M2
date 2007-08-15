@@ -11,9 +11,12 @@ all install :: ../$(PKG_DEB) tidy
 # notice that fakeroot is required, get it here: http://ftp.debian.org/debian/pool/main/f/fakeroot
 ../$(PKG_DEB) : debian-binary control.tar.gz data.tar.gz
 	rm -f $@
-	ar rc $@ $^
+	fakeroot chown root.root $^
+	fakeroot ar rc $@.tmp $^
+	sed -e 's=debian-binary/=debian-binary =' -e 's=control.tar.gz/=control.tar.gz =' -e 's=data.tar.gz/=data.tar.gz =' < $@.tmp > $@
+	rm $@.tmp
 CONTROLFILES := control
-# CONTROLFILES += md5sums
+CONTROLFILES += md5sums
 # CONTROLFILES += preinst
 CONTROLFILES += postinst
 CONTROLFILES += prerm
@@ -37,7 +40,7 @@ prepare : ../$(PKG_TZ)
 data.tar.gz : prepare
 	fakeroot tar cfz $@ $(prefixtail)
 md5sums : prepare
-	find $(prefixtail) -type f | xargs md5sum > $@
+	(cd $(prefixtail) && find . -type f | xargs md5sum) >$@
 check-with-lintian : ../$(PKG_DEB)
 	lintian -c ../$(PKG_DEB)
 tidy :
