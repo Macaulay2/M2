@@ -4,6 +4,63 @@ for info about the components of a debian package
 
 =============================================================================
 
+See man sources.list(5), which describes the file /etc/apt/sources.list:
+This line:
+
+	deb http://www.math.uiuc.edu/Macaulay2/debian/ distribution component
+
+gets expanded to this URL:
+
+	http://www.math.uiuc.edu/Macaulay2/debian/dists/distribution/component/binary-i386/Packages.gz
+
+to search for package names.
+
+Similarly,
+
+	deb http://http.us.debian.org/debian stable main contrib non-free
+
+gets translated to 
+
+	http://http.us.debian.org/debian/dists/stable/main/binary-i386/Packages.gz
+
+That compressed file contains entries such as this one, separated by blank lines:
+
+    Package: bash
+    Essential: yes
+    Priority: required
+    Section: shells
+    Installed-Size: 1848
+    Maintainer: Matthias Klose <doko@debian.org>
+    Architecture: i386
+    Version: 3.1dfsg-8
+    Replaces: bash-doc (<= 2.05-1), bash-completion
+    Depends: base-files (>= 2.1.12), debianutils (>= 2.15)
+    Pre-Depends: libc6 (>= 2.3.6-6), libncurses5 (>= 5.4-5)
+    Suggests: bash-doc
+    Conflicts: bash-completion
+    Filename: pool/main/b/bash/bash_3.1dfsg-8_i386.deb
+    Size: 872884
+    MD5sum: 85437fb26d035bd4a91ae4bc98bc63d2
+    SHA1: 06a42e1679ec3a61a21eef5d329f90c38e9c4885
+    SHA256: 7dafebd6c7497b5fddfe31b015f54daac8016190d65512019f8a85813e4bcd9e
+    Description: The GNU Bourne Again SHell
+     Bash is an sh-compatible command language interpreter that executes
+     commands read from the standard input or from a file.  Bash also
+     incorporates useful features from the Korn and C shells (ksh and csh).
+     .
+     Bash is ultimately intended to be a conformant implementation of the
+     IEEE POSIX Shell and Tools specification (IEEE Working Group 1003.2).
+     .
+     Included in the bash package is the Programmable Completion Code, by
+     Ian Macdonald.
+    Tag: implemented-in::c, interface::shell, role::program, scope::utility, uitoolkit::ncurses
+
+The Filename: entry gives the filename, relative to the URL, i.e., the file is at
+
+    http://http.us.debian.org/debian/pool/main/b/bash/bash_3.1dfsg-8_i386.deb
+
+=============================================================================
+
 A debian archive is an archive made with the "ar" program, with three files in it, in a certain order:
 
     % ar tv /home/25/dan/local/to/Macaulay2/Downloads/macaulay2-0.9.91_i686-Linux-usr-2_all.deb
