@@ -51,9 +51,11 @@ clean ::
 distclean : clean; rm -f Makefile control
 
 Makefile : Makefile.in; cd ..; ./config.status debian/Makefile
-control : control.in
-	cd ..; ./config.status debian/control
+control.prelim : control.prelim.in
+	cd ..; ./config.status debian/control.prelim
 	chmod 0755 $@
+control : control.prelim prepare
+	(cat $< && echo Installed-Size: `du -s $(prefixtail) | sed 's/^\([0-9][0-9]*\).*/\1/'`) >$@
 prerm : prerm.in
 	cd ..; ./config.status debian/prerm
 	chmod 0755 $@

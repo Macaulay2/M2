@@ -139,6 +139,7 @@ AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type, obtained with uname -m])
 AC_SUBST(DEBIANARCH)
 case "$ARCH" in
   i686) DEBIANARCH=i386 ;;
+  x86_64) DEBIANARCH=amd64 ;;
   *) DEBIANARCH="$ARCH" ;;
 esac
 
