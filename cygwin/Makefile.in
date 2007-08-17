@@ -29,36 +29,42 @@ finalprefix=@FINALPREFIX@
 prefixtail=$(shell basename $(finalprefix))
 prefixdir=$(shell dirname $(finalprefix))
 
-
-all install :: ../$(PKG_CYG) ../$(PKG_SRC_CYG) ../$(PKG_HINTS_CYG)
+all install :: rmserver server/Macaulay2 server/Macaulay2/$(PKG_CYG) server/Macaulay2/$(SRC_CYG) server/Macaulay2/$(PKG_HINTS_CYG) server/setup.ini
 	@ echo "============================================================================="
-	@ echo "cygwin package files prepared: "
-	@ echo "        $(PKG_CYG)"
-	@ echo "        $(PKG_SRC_CYG)"
-	@ echo "        $(PKG_HINTS_CYG)"
+	@ echo "cygwin package files prepared in cygwin/server"
 	@ echo "============================================================================="
-../$(PKG_CYG) : Makefile
+rmserver : ; rm -rf server
+server/setup.ini : @srcdir@/genini ; @srcdir@/genini server/Macaulay2 >server/setup.ini
+server/Macaulay2 : ; $(MKDIR_P) $@
+server/Macaulay2/$(PKG_CYG) : Makefile server/Macaulay2
 	rm -rf files
 	mkdir files
 	$(MKDIR_P) files$(prefixdir)
-	tar xzf ../$(PKG_TGZ) -C files$(prefixdir)
+	fakeroot tar xzf ../$(PKG_TGZ) -C files$(prefixdir)
 	mv files$(prefixdir)/$(package) files$(prefixdir)/$(prefixtail)
 	cd files$(finalprefix) && rm -f INSTALL encapinfo postinstall preremove
-	$(MKDIR_P) files/etc/postinstall files/@FINALPREFIX@
-	$(INSTALL_PROGRAM) macaulay2.sh files/etc/postinstall
+	$(MKDIR_P) files/etc/postinstall files@FINALPREFIX@
+	$(INSTALL_PROGRAM) Macaulay2.sh files/etc/postinstall
 	fakeroot chown -R root.root files
-	cd files && fakeroot tar cjf ../../$(PKG_CYG) *
-../$(PKG_SRC_CYG) :
-../$(PKG_HINTS_CYG) : setup.hint ; cp $< $@
-install :: Macaulay2.README macaulay2.sh
+	(cd files && fakeroot tar cjf - *) >$@
+	rm -rf files
+server/Macaulay2/setup.hint : setup.hint server/Macaulay2 ; cp $< $@
+
+$(package)-1 : always ; rm -f $@ && ln -sf @srcdir@/.. $@
+src-files : always ; svn ls -R @srcdir@/.. | egrep -v '/$$' | sed 's=^=$(package)-1/=' >$@
+mkrt : src-files $(package)-1 ; cat src-files | fakeroot xargs chown root.root
+server/Macaulay2/$(SRC_CYG_TGZ) : server/Macaulay2 mkrt src-files ; fakeroot tar cfz $@ --files-from=src-files
+server/Macaulay2/$(SRC_CYG_TBZ) : server/Macaulay2 mkrt src-files ; fakeroot tar cfj $@ --files-from=src-files
+
+install :: Macaulay2.README Macaulay2.sh
 	$(INSTALL) -d $(encapdir)@FINALPREFIX@/share/doc/Cygwin
 	$(INSTALL) Macaulay2.README $(encapdir)@FINALPREFIX@/share/doc/Cygwin
 
 clean ::
-	rm -rf ../$(PKG_CYG) ../$(PKG_SRC_CYG) ../$(PKG_HINTS_CYG) files
-distclean : clean; rm -f Makefile Macaulay2.README macaulay2.sh setup.hint
+	rm -rf ../$(PKG_CYG) ../$(PKG_SRC_CYG) ../setup.hints files
+distclean : clean; rm -f Makefile Macaulay2.README Macaulay2.sh setup.hint
 Makefile : Makefile.in; cd ..; ./config.status cygwin/Makefile
-macaulay2.sh : macaulay2.sh.in; cd ..; ./config.status cygwin/macaulay2.sh
+Macaulay2.sh : Macaulay2.sh.in; cd ..; ./config.status cygwin/Macaulay2.sh
 setup.hint : setup.hint.in; cd ..; ./config.status cygwin/setup.hint
 Macaulay2.README : Macaulay2.README.in; cd ..; ./config.status cygwin/Macaulay2.README
 
