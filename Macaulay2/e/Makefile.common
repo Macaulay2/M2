@@ -1,4 +1,4 @@
-# -*- GNUmakefile -*-
+# -*- Makefile -*-
 
 ifeq ($(AUTOINST),yes)
 COMPILE.cc += -frepo -fno-rtti
