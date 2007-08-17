@@ -299,6 +299,8 @@ M2_string actors5_FACTORYVERSION;
 M2_string actors5_READLINEVERSION;
 M2_string actors5_M2SUFFIX;
 M2_string actors5_EXEEXT;
+M2_string actors5_endianness;
+int actors5_pointersize;
 M2_bool actors5_DUMPDATA;
 M2_bool actors5_FACTORY;
 M2_bool actors5_MP;
@@ -382,6 +384,11 @@ int system_getpid(void) {
 }
 
 #include <readline/readline.h>
+
+static char *endianness() {
+     static int x[2] = {0x61626364,0};
+     return (char *)x;
+}
 
 int Macaulay2_main(argc,argv)
 int argc; 
@@ -561,6 +568,8 @@ char **argv;
      actors5_timestamp = tostring(timestamp);
      actors5_startupString1 = tostring(startupString1);
      actors5_startupString2 = tostring(startupString2);
+     actors5_endianness = tostring(endianness());
+     actors5_pointersize = sizeof(void *);
 #if DUMPDATA
      actors5_DUMPDATA = TRUE;
      if (!haveDumpdata()) actors5_DUMPDATA = FALSE; /* even if dumpdata was enabled at configuration time, we may not have implemented it in the C code */

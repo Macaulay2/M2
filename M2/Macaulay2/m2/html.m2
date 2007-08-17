@@ -610,8 +610,8 @@ installPackage Package := opts -> pkg -> (
 
 	  -- cache raw documentation in database, and check for changes
 	  rawDocUnchanged := new MutableHashTable;
-	  docDir := pkg#"package prefix" | LAYOUT#"packagedoc" pkg#"title";
-	  rawdbname := docDir | "rawdocumentation.db";
+	  docDir := pkg#"package prefix" | LAYOUT#"packagecache" pkg#"title";
+	  rawdbname := docDir | "rawdocumentation" | databaseSuffix;
 	  rawdbnametmp := rawdbname | ".tmp";
 	  stderr << "--storing raw documentation in " << rawdbname << endl;
 	  makeDirectory docDir;
@@ -660,7 +660,7 @@ installPackage Package := opts -> pkg -> (
      	  -- Make sure the processed documentation database exists, even if empty, so when running the examples,
 	  -- M2 doesn't read in all the documentation sources each time.  For the package Macaulay2 this makes a big
 	  -- difference.
-	  dbname := docDir | "documentation.db";
+	  dbname := docDir | "documentation" | databaseSuffix;
      	  if opts.RemakeAllDocumentation and fileExists dbname then removeFile dbname;
      	  if not fileExists dbname then (
 	       stderr << "--creating empty database for processed documentation in " << dbname << endl;
@@ -913,7 +913,7 @@ installPackage Package := opts -> pkg -> (
 	  << ///encap 2.0/// << endl
 	  << ///contact dan@math.uiuc.edu/// << endl;
 	  removeLastSlash := s -> if s#?0 and s#-1 === "/" then substring(s,0,#s-1) else s;
-	  scan(("libm2","packagedoc","packageexamples","packagehtml","packageimages","packagesrc","packagetests"),
+	  scan(("libm2","packagedoc","packageexamples","packagehtml","packageimages","packagesrc","packagetests","libraries"),
 	       k -> f << "linkdir " << (if instance(LAYOUT#k, Function) then removeLastSlash LAYOUT#k "*" else removeLastSlash LAYOUT#k) << endl);
 	  fileMode(octal "644",f);
 	  f << close;
