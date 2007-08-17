@@ -29,14 +29,20 @@ finalprefix=@FINALPREFIX@
 prefixtail=$(shell basename $(finalprefix))
 prefixdir=$(shell dirname $(finalprefix))
 
-all install :: rmserver server/Macaulay2 server/Macaulay2/$(PKG_CYG) server/Macaulay2/$(SRC_CYG) server/Macaulay2/$(PKG_HINTS_CYG) server/setup.ini
+all install :: \
+	rmserver \
+	server/Macaulay2 \
+	server/Macaulay2/$(package)-1.tar.bz2 \
+	server/Macaulay2/$(package)-1-src.tar.@COMPRESS@ \
+	server/Macaulay2/setup.hint \
+	server/setup.ini
 	@ echo "============================================================================="
 	@ echo "cygwin package files prepared in cygwin/server"
 	@ echo "============================================================================="
 rmserver : ; rm -rf server
 server/setup.ini : @srcdir@/genini ; @srcdir@/genini server/Macaulay2 >server/setup.ini
 server/Macaulay2 : ; $(MKDIR_P) $@
-server/Macaulay2/$(PKG_CYG) : Makefile server/Macaulay2
+server/Macaulay2/$(package)-1.tar.bz2 : Makefile server/Macaulay2
 	rm -rf files
 	mkdir files
 	$(MKDIR_P) files$(prefixdir)
@@ -53,15 +59,14 @@ server/Macaulay2/setup.hint : setup.hint server/Macaulay2 ; cp $< $@
 $(package)-1 : always ; rm -f $@ && ln -sf @srcdir@/.. $@
 src-files : always ; svn ls -R @srcdir@/.. | egrep -v '/$$' | sed 's=^=$(package)-1/=' >$@
 mkrt : src-files $(package)-1 ; cat src-files | fakeroot xargs chown root.root
-server/Macaulay2/$(SRC_CYG_TGZ) : server/Macaulay2 mkrt src-files ; fakeroot tar cfz $@ --files-from=src-files
-server/Macaulay2/$(SRC_CYG_TBZ) : server/Macaulay2 mkrt src-files ; fakeroot tar cfj $@ --files-from=src-files
+server/Macaulay2/$(package)-1-src.tar.gz : server/Macaulay2 mkrt src-files ; fakeroot tar cfz $@ --files-from=src-files
+server/Macaulay2/$(package)-1-src.tar.bz2 : server/Macaulay2 mkrt src-files ; fakeroot tar cfj $@ --files-from=src-files
 
 install :: Macaulay2.README Macaulay2.sh
 	$(INSTALL) -d $(encapdir)@FINALPREFIX@/share/doc/Cygwin
 	$(INSTALL) Macaulay2.README $(encapdir)@FINALPREFIX@/share/doc/Cygwin
 
-clean ::
-	rm -rf ../$(PKG_CYG) ../$(PKG_SRC_CYG) ../setup.hints files
+clean ::; rm -rf server files
 distclean : clean; rm -f Makefile Macaulay2.README Macaulay2.sh setup.hint
 Makefile : Makefile.in; cd ..; ./config.status cygwin/Makefile
 Macaulay2.sh : Macaulay2.sh.in; cd ..; ./config.status cygwin/Macaulay2.sh
