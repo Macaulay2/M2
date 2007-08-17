@@ -166,6 +166,7 @@ document {
 	  LI { TT format "man", " : man pages" },
 	  LI { TT format "man1", " : man pages, section 1" },
 	  LI { TT format "man3", " : man pages, section 3" },
+	  LI { TT format "libraries", " : files associated with third party libraries linked with Macaulay 2" },
 	  LI { TT format "packagecache", " : cached data files for the Macaulay 2 package FOO" },
 	  LI { TT format "packagedoc", " : documentation for the Macaulay 2 package FOO" },
 	  LI { TT format "packageexamples", " : example input and output files for the Macaulay 2 package FOO" },
