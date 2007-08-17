@@ -662,6 +662,8 @@ import M2SUFFIX:string;
 import EXEEXT:string;
 import startupString1:string;
 import startupString2:string;
+import endianness:string;
+import pointersize:int;
 setupconst("newline", Expr(newline));
 
 x := newHashTable(hashTableClass,nothingClass);
@@ -684,6 +686,8 @@ storeInHashTable(x,Expr("readline version"),Expr(READLINEVERSION));
 storeInHashTable(x,Expr("M2 suffix"),Expr(M2SUFFIX));
 storeInHashTable(x,Expr("executable extension"),Expr(EXEEXT));
 storeInHashTable(x,Expr("M2 name"),Expr("M2" + M2SUFFIX + EXEEXT));
+storeInHashTable(x,Expr("endianness"),Expr(endianness));
+storeInHashTable(x,Expr("pointer size"),Expr(toInteger(pointersize)));
 sethash(x,false);
 setupconst("version", Expr(x));
 setupconst("startupString1", Expr(startupString1));

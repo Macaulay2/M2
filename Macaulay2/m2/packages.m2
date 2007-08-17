@@ -102,6 +102,10 @@ stderr << "--loading configuration for package \"PKG\" from file " << currentFil
 }
 ///
 
+-- gdbm makes architecture dependent files, so we try to distinguish them, in case
+-- they get mixed
+databaseSuffix = "-" | version#"endianness" | "-" | version#"pointer size" | ".db"
+
 newPackage(String) := opts -> (title) -> (
      originalTitle := title;
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
@@ -186,13 +190,13 @@ newPackage(String) := opts -> (title) -> (
 	  };
      newpkg#"test number" = 0;
      if newpkg#"package prefix" =!= null then (
-	  -- these assignments might be premature, for any package which is loaded before dumpdata, as the "package prefix" might change:
-	  rawdbname := newpkg#"package prefix" | LAYOUT#"packagedoc" title | "rawdocumentation.db";
+	  -- these assignments might be premature, for any package that is loaded before dumpdata, as the "package prefix" might change:
+	  rawdbname := newpkg#"package prefix" | LAYOUT#"packagecache" title | "rawdocumentation" | databaseSuffix;
 	  if fileExists rawdbname then (
 	       rawdb := openDatabase rawdbname;
 	       newpkg#"raw documentation database" = rawdb;
 	       addEndFunction(() -> if isOpen rawdb then close rawdb));
-	  dbname := newpkg#"package prefix" | LAYOUT#"packagedoc" title | "documentation.db";
+	  dbname := newpkg#"package prefix" | LAYOUT#"packagecache" title | "documentation" | databaseSuffix;
 	  if fileExists dbname then (
 	       db := openDatabase dbname;
 	       newpkg#"processed documentation database" = db;
@@ -203,14 +207,14 @@ newPackage(String) := opts -> (title) -> (
      addStartFunction(() -> 
 	  if not ( newpkg#?"processed documentation database" and isOpen newpkg#"processed documentation database" ) and prefixDirectory =!= null 
 	  then (
-	       dbname := prefixDirectory | LAYOUT#"packagedoc" title | "documentation.db"; -- what if there is more than one prefix directory?
+	       dbname := prefixDirectory | LAYOUT#"packagecache" title | "documentation" | databaseSuffix; -- what if there is more than one prefix directory?
 	       if fileExists dbname then (
 		    db := newpkg#"processed documentation database" = openDatabase dbname;
 		    addEndFunction(() -> if isOpen db then close db))));
      addStartFunction(() -> 
 	  if not ( newpkg#?"raw documentation database" and isOpen newpkg#"raw documentation database" ) and prefixDirectory =!= null 
 	  then (
-	       dbname := prefixDirectory | LAYOUT#"packagedoc" title | "rawdocumentation.db"; -- what if there is more than one prefix directory?
+	       dbname := prefixDirectory | LAYOUT#"packagecache" title | "rawdocumentation" | databaseSuffix; -- what if there is more than one prefix directory?
 	       if fileExists dbname then (
 		    db := newpkg#"raw documentation database" = openDatabase dbname;
 		    addEndFunction(() -> if isOpen db then close db))));
