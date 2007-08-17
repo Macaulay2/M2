@@ -100,10 +100,14 @@ tarballs: tarball.bz2 tarball.tgz
 EXCLUDES := --exclude=".nfs*" --exclude="Macaulay2-*-data"
 
 tarball.bz2 : $(PKG_TBZ)
-$(PKG_TBZ)  : always; tar cfh $(PKG_TBZ) --bzip $(EXCLUDES) -C $(tarparent) $(tarsubdir)
+$(PKG_TBZ)  : always
+	fakeroot chown -R root.root $(tarparent)/$(tarsubdir)
+	fakeroot tar cfh $(PKG_TBZ) --bzip $(EXCLUDES) -C $(tarparent) $(tarsubdir)
 
 tarball.tgz  : $(PKG_TGZ)
-$(PKG_TGZ)  : always; tar cfh $(PKG_TGZ) --gzip $(EXCLUDES) -C $(tarparent) $(tarsubdir)
+$(PKG_TGZ)  : always
+	fakeroot chown -R root.root $(tarparent)/$(tarsubdir)
+	fakeroot tar cfh $(PKG_TGZ) --gzip $(EXCLUDES) -C $(tarparent) $(tarsubdir)
 
 always :
 
@@ -114,17 +118,17 @@ endif
 ifeq "$(DEBIAN)" "yes"
 install :: debian
 endif
-debian : $(PKG_TZ) ; $(MAKE) -C debian install
+debian : $(PKG_TGZ) ; $(MAKE) -C debian install
 
 ifeq "$(RPM)" "yes"
 install :: rpm
 endif
-rpm : $(PKG_TZ) ; $(MAKE) -C rpm install
+rpm : $(PKG_TGZ) ; $(MAKE) -C rpm install
 
 ifeq "$(CYGWIN)" "yes"
 install :: cygwin
 endif
-cygwin : $(PKG_TZ) ; $(MAKE) -C cygwin install
+cygwin : $(PKG_TGZ) ; $(MAKE) -C cygwin install
 
 relink:
 	rm -f Macaulay2/bin/M2$(EXE)
