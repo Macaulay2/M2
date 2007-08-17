@@ -216,6 +216,37 @@ AC_SUBST(M2TARFILE)  AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prep
 AC_SUBST(TARLIBS)    AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS="$enableval", TARLIBS=no)
 AC_SUBST(SHARED)     AC_ARG_ENABLE(shared, AS_HELP_STRING(--enable-shared,enable building of shared libraries), SHARED="$enableval", SHARED=no)
 
+AC_SUBST(PACKAGES)
+PACKAGES="Macaulay2
+Style
+Classic
+PrimaryDecomposition
+FourierMotzkin
+Dmodules
+Depth
+Elimination
+FirstPackage
+GenericInitialIdeal
+IntegralClosure
+HyperplaneArrangements
+LexIdeals
+Markov
+NoetherNormalization
+Points
+PackageTemplate
+ReesAlgebra
+SchurRings
+SimplicialComplexes
+LLLBases
+Parsing
+TangentCone
+ChainComplexExtras
+Benchmark
+Schubert2"
+
+# convert the newlines in the list above to spaces
+PACKAGES=`echo $PACKAGES`
+
 AC_ARG_ENABLE(
     auto-instantiation, 
     AS_HELP_STRING([--enable-auto-instantiation,enable automatic instantiation of C++ templates (it uses -frepo option to g++)]),
@@ -244,8 +275,7 @@ AC_SUBST(BUILDBLAS)   AC_ARG_ENABLE(build-blas, AS_HELP_STRING(--enable-build-bl
 
 AC_SUBST(DEVELOPMENT) AC_ARG_ENABLE(development, AS_HELP_STRING(--enable-development,build a development version),
     DEVELOPMENT="$enableval";AC_DEFINE(DEVELOPMENT,1,whether to build a development version), DEVELOPMENT==no)
-AC_SUBST(DEVELOPER)   AC_ARG_WITH(developer,   AS_HELP_STRING(--with-developer=...,specify the name of the developer ($USER)),
-    DEVELOPER="$withval"
+AC_SUBST(DEVELOPER)   AC_ARG_WITH(developer,   AS_HELP_STRING(--with-developer=...,specify the name of the developer ($USER)),DEVELOPER="$withval")
 
 AC_SUBST(DUMPDATA)   AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA="$enableval")
 if ! test "$DUMPDATA"

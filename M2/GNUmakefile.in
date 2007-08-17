@@ -121,6 +121,11 @@ install :: rpm
 endif
 rpm : $(PKG_TZ) ; $(MAKE) -C rpm install
 
+ifeq "$(CYGWIN)" "yes"
+install :: cygwin
+endif
+cygwin : $(PKG_TZ) ; $(MAKE) -C cygwin install
+
 relink:
 	rm -f Macaulay2/bin/M2$(EXE)
 	$(MAKE) -C Macaulay2/d ../bin/M2$(EXE)

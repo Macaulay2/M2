@@ -8,6 +8,19 @@ prefixdir=$(shell dirname $(finalprefix))
 ############################## main targets
 all install :: ../$(PKG_DEB) tidy
 #################################
+
+ifneq (@DEBUG@,no)
+$(error expected --disable-debug, in order to make a debian package)
+endif
+
+ifneq (@OPTIMIZE@,yes)
+$(error expected --enable-optimize, in order to make a debian package)
+endif
+
+ifneq (@ENCAP@,yes)
+$(error expected --enable-encap, in order to make a debian package)
+endif
+
 # notice that fakeroot is required, get it here: http://ftp.debian.org/debian/pool/main/f/fakeroot
 ../$(PKG_DEB) : debian-binary control.tar.gz data.tar.gz
 	rm -f $@
