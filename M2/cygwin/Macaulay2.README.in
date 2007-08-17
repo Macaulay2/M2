@@ -1,0 +1,11 @@
+Macaulay 2 can be compiled from sources this way, assuming the version number
+is x.x.x:
+
+	 cd Macaulay2-x.x.x
+	 make
+	 mkdir BUILD
+	 cd BUILD
+	 ../configure @CONFIG_ARGS@
+	 make all install
+
+You may adjust the --prefix argument to build the package where you wish.

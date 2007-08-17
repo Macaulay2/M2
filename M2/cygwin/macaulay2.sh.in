@@ -1,0 +1,8 @@
+#! /bin/sh
+
+# this is the cygwin postinstall script, to be installed in /etc/postinstall/macaulay2.sh
+
+cd @FINALPREFIX@/share/info
+for p in @PACKAGES@
+do install-info $p.info dir
+done
