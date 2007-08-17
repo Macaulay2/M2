@@ -7,6 +7,10 @@ prefixtail=$(shell echo $(finalprefix) | sed 's=^/==')
 prefixdir=$(shell dirname $(finalprefix))
 ############################## main targets
 all install :: ../$(PKG_DEB) tidy
+	@ echo "============================================================================="
+	@ echo "debian package file prepared: "
+	@ echo "        $(PKG_DEB)"
+	@ echo "============================================================================="
 #################################
 
 ifneq (@DEBUG@,no)

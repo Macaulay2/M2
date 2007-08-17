@@ -31,6 +31,12 @@ prefixdir=$(shell dirname $(finalprefix))
 
 
 all install :: ../$(PKG_CYG) ../$(PKG_SRC_CYG) ../$(PKG_HINTS_CYG)
+	@ echo "============================================================================="
+	@ echo "cygwin package files prepared: "
+	@ echo "        $(PKG_CYG)"
+	@ echo "        $(PKG_SRC_CYG)"
+	@ echo "        $(PKG_HINTS_CYG)"
+	@ echo "============================================================================="
 ../$(PKG_CYG) : Makefile
 	rm -rf files
 	mkdir files
@@ -40,7 +46,8 @@ all install :: ../$(PKG_CYG) ../$(PKG_SRC_CYG) ../$(PKG_HINTS_CYG)
 	cd files$(finalprefix) && rm -f INSTALL encapinfo postinstall preremove
 	$(MKDIR_P) files/etc/postinstall files/@FINALPREFIX@
 	$(INSTALL_PROGRAM) macaulay2.sh files/etc/postinstall
-	cd files && tar cjf ../../$(PKG_CYG) *
+	fakeroot chown -R root.root files
+	cd files && fakeroot tar cjf ../../$(PKG_CYG) *
 ../$(PKG_SRC_CYG) :
 ../$(PKG_HINTS_CYG) : setup.hint ; cp $< $@
 install :: Macaulay2.README macaulay2.sh

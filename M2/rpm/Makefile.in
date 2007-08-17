@@ -18,6 +18,10 @@ prefixdir=$(shell dirname $(finalprefix))
 
 ############################## main targets
 all install :: ../$(PKG_RPM)
+	@ echo "============================================================================="
+	@ echo "rpm package file prepared: "
+	@ echo "        $(PKG_RPM)"
+	@ echo "============================================================================="
 ../$(PKG_RPM) : Macaulay2-body.spec ../$(PKG_TGZ) Makefile
 	rm -rf files
 	mkdir files
