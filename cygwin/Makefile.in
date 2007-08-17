@@ -1,0 +1,48 @@
+# @configure_input@
+
+# see http://cygwin.com/setup.html for info on making cygwin packages
+
+ifneq (@FINALPREFIX@,/usr)
+$(error expected --with-final-prefix=/usr, to comply with cygwin package standards)
+endif
+
+ifneq (@STRIP@,yes)
+$(error expected --enable-strip, to comply with cygwin package standards)
+endif
+
+ifneq (@DEBUG@,no)
+$(error expected --disable-debug, in order to make a cygwin package)
+endif
+
+ifneq (@OPTIMIZE@,yes)
+$(error expected --enable-optimize, in order to make a cygwin package)
+endif
+
+ifneq (@ENCAP@,yes)
+$(error expected --enable-encap, in order to make a cygwin package)
+endif
+
+include ../include/config.Makefile
+VPATH = @srcdir@
+all install :: ../$(PKG_CYG) ../$(PKG_SRC_CYG) ../$(PKG_HINTS_CYG)
+../$(PKG_CYG) : Makefile
+	$(INSTALL) -d files/etc files/@FINALPREFIX@
+	$(INSTALL_PROGRAM) macaulay2.sh files/etc/postinstall
+	cd files && tar cjfv ../../$(PKG_CYG) *
+../$(PKG_SRC_CYG) :
+../$(PKG_HINTS_CYG) : setup.hint ; cp $< $@
+install :: Macaulay2.README macaulay2.sh
+	$(INSTALL) -d $(encapdir)@FINALPREFIX@/share/doc/Cygwin
+	$(INSTALL) Macaulay2.README $(encapdir)@FINALPREFIX@/share/doc/Cygwin
+
+clean ::
+	rm -rf ../$(PKG_CYG) ../$(PKG_SRC_CYG) ../$(PKG_HINTS_CYG) files
+distclean : clean; rm -f Makefile
+Makefile : Makefile.in; cd ..; ./config.status cygwin/Makefile
+macaulay2.sh : macaulay2.sh.in; cd ..; ./config.status cygwin/macaulay2.sh
+setup.hint : setup.hint.in; cd ..; ./config.status cygwin/setup.hint
+Macaulay2.README : Macaulay2.README.in; cd ..; ./config.status cygwin/Macaulay2.README
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/cygwin "
+# End:
