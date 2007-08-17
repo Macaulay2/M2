@@ -249,8 +249,12 @@ PACKAGES=`echo $PACKAGES`
 
 AC_DEFINE_UNQUOTED(PACKAGES,"$PACKAGES",the list packages included with the release of Macaulay 2)
 
-AC_DEFINE_UNQUOTED(build,"$build",the type of system on which the package was built)
-AC_DEFINE_UNQUOTED(host,"$host",the type of system on which the package runs)
+AC_DEFINE_UNQUOTED(buildsystemtype,"$build",the type of system on which the package was built)
+AC_DEFINE_UNQUOTED(hostsystemtype,"$host",the type of system on which the package runs)
+
+case "$host" in
+   i486-*|i586-*|i686-*) AC_MSG_NOTICE([warning: building for host $host might be compatible enough, consider using option "--build=i386-pc-linux-gnu"]) ;;
+esac
 
 AC_ARG_ENABLE(
     auto-instantiation, 

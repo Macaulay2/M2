@@ -664,6 +664,8 @@ import startupString1:string;
 import startupString2:string;
 import endianness:string;
 import packages:string;
+import build:string;
+import host:string;
 import pointersize:int;
 setupconst("newline", Expr(newline));
 
@@ -690,6 +692,8 @@ storeInHashTable(x,Expr("M2 name"),Expr("M2" + M2SUFFIX + EXEEXT));
 storeInHashTable(x,Expr("endianness"),Expr(endianness));
 storeInHashTable(x,Expr("pointer size"),Expr(toInteger(pointersize)));
 storeInHashTable(x,Expr("packages"),Expr(packages));
+storeInHashTable(x,Expr("build"),Expr(build));
+storeInHashTable(x,Expr("host"),Expr(host));
 sethash(x,false);
 setupconst("version", Expr(x));
 setupconst("startupString1", Expr(startupString1));
