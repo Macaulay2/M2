@@ -33,11 +33,6 @@ SRC_TZ  = $(package).tar.@COMPRESS@
 
 PKG_TGZ = $(package)-$(ARCH)-$(OS).tar.gz
 PKG_TBZ = $(package)-$(ARCH)-$(OS).tar.bz2
-PKG_CYG = $(package)-1.tar.bz2
-
-SRC_TGZ = $(package)-1-src.tar.gz
-SRC_TBZ = $(package)-1-src.tar.bz2
-SRC_CYG = $(package)-1-src.tar.@COMPRESS@
 
 PKG_DEB = $(package)-@DEBIANARCH@-$(OS).deb
 PKG_RPM = $(package)-$(ARCH)-$(OS).rpm
@@ -131,15 +126,9 @@ encapdir = $(prefix)/$(package)
 tarparent = $(prefix)
 tarsubdir = $(package)
 else
-ifeq "$(CYGWIN)" "yes"
-tarparent = $(prefix)/$(package)
-tarsubdir = usr
-encapdir = $(prefix)/$(package)/usr
-else
 encapdir = $(prefix)/.
 tarparent = NONE
 tarsubdir = NONE
-endif
 endif
 
 # in autoconf >= 2.60, @datadir@ is replaced by ${datarootdir}, so we need to get its value here:

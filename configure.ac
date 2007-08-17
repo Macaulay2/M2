@@ -249,6 +249,9 @@ PACKAGES=`echo $PACKAGES`
 
 AC_DEFINE_UNQUOTED(PACKAGES,"$PACKAGES",the list packages included with the release of Macaulay 2)
 
+AC_DEFINE_UNQUOTED(build,"$build",the type of system on which the package was built)
+AC_DEFINE_UNQUOTED(host,"$host",the type of system on which the package runs)
+
 AC_ARG_ENABLE(
     auto-instantiation, 
     AS_HELP_STRING([--enable-auto-instantiation,enable automatic instantiation of C++ templates (it uses -frepo option to g++)]),
