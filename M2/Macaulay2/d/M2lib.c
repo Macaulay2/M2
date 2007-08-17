@@ -301,6 +301,8 @@ M2_string actors5_M2SUFFIX;
 M2_string actors5_EXEEXT;
 M2_string actors5_endianness;
 M2_string actors5_packages;
+M2_string actors5_build;
+M2_string actors5_host;
 int actors5_pointersize;
 M2_bool actors5_DUMPDATA;
 M2_bool actors5_FACTORY;
@@ -572,6 +574,8 @@ char **argv;
      actors5_endianness = tostring(endianness());
      actors5_packages = tostring(PACKAGES);
      actors5_pointersize = sizeof(void *);
+     actors5_host = tostring(hostsystemtype);
+     actors5_build = tostring(buildsystemtype);
 #if DUMPDATA
      actors5_DUMPDATA = TRUE;
      if (!haveDumpdata()) actors5_DUMPDATA = FALSE; /* even if dumpdata was enabled at configuration time, we may not have implemented it in the C code */
