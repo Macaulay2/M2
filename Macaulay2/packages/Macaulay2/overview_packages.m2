@@ -1,17 +1,9 @@
-packagelist := (
-     if sourceHomeDirectory =!= null
-     then lines get (sourceHomeDirectory|"packages/packagelist")
-     else if prefixDirectory =!= null
-     then lines get (prefixDirectory|LAYOUT#"packages"|"packagelist")
-     else error ("can't find file ", format "packagelist"))
-
-packagelist = select(packagelist, pkg -> pkg =!= "Macaulay2")
 
 document { Key => "packages provided with Macaulay 2",
      PARA{
      	  "The packages that are distributed with Macaulay2 are:"
 	  },
-     UL apply(sort packagelist, pkg -> LI TO (pkg|"::"|pkg)),
+     UL apply(sort select(separate_" " version#"packages", pkg -> pkg =!= "Macaulay2"), pkg -> LI TO (pkg|"::"|pkg)),
      PARA {
 	  "Use ",
 	  TO loadPackage, ", or ", 
