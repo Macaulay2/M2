@@ -246,8 +246,6 @@ AC_SUBST(DEVELOPMENT) AC_ARG_ENABLE(development, AS_HELP_STRING(--enable-develop
     DEVELOPMENT="$enableval";AC_DEFINE(DEVELOPMENT,1,whether to build a development version), DEVELOPMENT==no)
 AC_SUBST(DEVELOPER)   AC_ARG_WITH(developer,   AS_HELP_STRING(--with-developer=...,specify the name of the developer ($USER)),
     DEVELOPER="$withval"
-    AC_DEFINE_UNQUOTED(DEVELOPER,'"'$withval'"',the name of the developer)
-    AC_DEFINE_UNQUOTED(developer_is_$withval,$withval,))
 
 AC_SUBST(DUMPDATA)   AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA="$enableval")
 if ! test "$DUMPDATA"
