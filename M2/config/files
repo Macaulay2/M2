@@ -5,7 +5,7 @@ rpm/Macaulay2-body.spec
 cygwin/Makefile
 cygwin/Macaulay2.README
 cygwin/setup.hint
-cygwin/macaulay2.sh
+cygwin/Macaulay2.sh
 debian/Makefile
 debian/control.prelim
 debian/postrm
