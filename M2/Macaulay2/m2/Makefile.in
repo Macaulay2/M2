@@ -92,7 +92,6 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		../packages/Macaulay2/test/slow/Makefile.in \
 		../packages/Macaulay2/test/engine/Makefile.in \
 		../packages/Makefile.in \
-		../packages/packagelist \
 		../../Makefile ../../GNUmakefile.in \
 		@srcdir@/../packages/*/Makefile.in \
 		@srcdir@/README.DOC \

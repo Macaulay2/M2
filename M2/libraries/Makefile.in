@@ -5,7 +5,7 @@ all check reconfigure distclean clean :: Makefile.library
 	@ $(MAKE) -C libtool $@
 final-install :
 	$(INSTALL) -d $(encapdir)/$(librariesRelDir)/lib
-	tar cf - --exclude="*.a" --exclude="*.old" -C final@FINALPREFIX@/$(librariesRelDir)/lib . | tar xfvv - -C $(encapdir)/$(librariesRelDir)/lib
+	tar cf - --exclude="*.a" --exclude="*.old" -C final@FINALPREFIX@/$(librariesRelDir)/lib . | tar xf - -C $(encapdir)/$(librariesRelDir)/lib
 Makefile         : Makefile.in         ; cd .. && ./config.status libraries/Makefile
 Makefile.library : Makefile.library.in ; cd .. && ./config.status libraries/Makefile.library
 clean :: ; rm -rf final

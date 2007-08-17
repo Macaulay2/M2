@@ -25,6 +25,7 @@ libraries/libfac/Makefile
 libraries/lapack/Makefile
 libraries/blas/Makefile
 Macaulay2/Makefile
+Macaulay2/README
 Macaulay2/packages/Macaulay2/basictests/Makefile
 Macaulay2/bin/Makefile
 Macaulay2/book/Makefile

@@ -300,6 +300,7 @@ M2_string actors5_READLINEVERSION;
 M2_string actors5_M2SUFFIX;
 M2_string actors5_EXEEXT;
 M2_string actors5_endianness;
+M2_string actors5_packages;
 int actors5_pointersize;
 M2_bool actors5_DUMPDATA;
 M2_bool actors5_FACTORY;
@@ -569,6 +570,7 @@ char **argv;
      actors5_startupString1 = tostring(startupString1);
      actors5_startupString2 = tostring(startupString2);
      actors5_endianness = tostring(endianness());
+     actors5_packages = tostring(PACKAGES);
      actors5_pointersize = sizeof(void *);
 #if DUMPDATA
      actors5_DUMPDATA = TRUE;

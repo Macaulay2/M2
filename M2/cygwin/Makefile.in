@@ -24,11 +24,23 @@ endif
 
 include ../include/config.Makefile
 VPATH = @srcdir@
+
+finalprefix=@FINALPREFIX@
+prefixtail=$(shell basename $(finalprefix))
+prefixdir=$(shell dirname $(finalprefix))
+
+
 all install :: ../$(PKG_CYG) ../$(PKG_SRC_CYG) ../$(PKG_HINTS_CYG)
 ../$(PKG_CYG) : Makefile
-	$(INSTALL) -d files/etc files/@FINALPREFIX@
+	rm -rf files
+	mkdir files
+	$(MKDIR_P) files$(prefixdir)
+	tar xzf ../$(PKG_TGZ) -C files$(prefixdir)
+	mv files$(prefixdir)/$(package) files$(prefixdir)/$(prefixtail)
+	cd files$(finalprefix) && rm -f INSTALL encapinfo postinstall preremove
+	$(MKDIR_P) files/etc/postinstall files/@FINALPREFIX@
 	$(INSTALL_PROGRAM) macaulay2.sh files/etc/postinstall
-	cd files && tar cjfv ../../$(PKG_CYG) *
+	cd files && tar cjf ../../$(PKG_CYG) *
 ../$(PKG_SRC_CYG) :
 ../$(PKG_HINTS_CYG) : setup.hint ; cp $< $@
 install :: Macaulay2.README macaulay2.sh
@@ -37,7 +49,7 @@ install :: Macaulay2.README macaulay2.sh
 
 clean ::
 	rm -rf ../$(PKG_CYG) ../$(PKG_SRC_CYG) ../$(PKG_HINTS_CYG) files
-distclean : clean; rm -f Makefile
+distclean : clean; rm -f Makefile Macaulay2.README macaulay2.sh setup.hint
 Makefile : Makefile.in; cd ..; ./config.status cygwin/Makefile
 macaulay2.sh : macaulay2.sh.in; cd ..; ./config.status cygwin/macaulay2.sh
 setup.hint : setup.hint.in; cd ..; ./config.status cygwin/setup.hint

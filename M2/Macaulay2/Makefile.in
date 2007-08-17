@@ -9,16 +9,17 @@ justM2 all :: initialize
 include ../include/config.Makefile
 VPATH = @srcdir@
 ################################# .
-install install-others install-Macaulay2 :: $(docm2reldir) \
-	   $(docm2reldir)/COPYING \
+install install-others install-Macaulay2 :: $(docm2reldir) $(docm2dir) \
+	   $(docm2dir)/COPYING \
+	   $(docm2dir)/README \
 	   $(docm2reldir)/CHANGES \
-	   $(docm2reldir)/LAYOUT
+	   $(docm2dir)/LAYOUT
 
-
-$(docm2reldir):; $(INSTALL) -d "$@"
-$(docm2reldir)/COPYING : COPYING ; $(INSTALL_DATA) $< "$@"
+$(docm2dir) $(docm2reldir):; $(MKDIR_P) "$@"
+$(docm2dir)/COPYING : COPYING ; $(INSTALL_DATA) $< "$@"
 $(docm2reldir)/CHANGES : CHANGES ; $(INSTALL_DATA) $< "$@"
-$(docm2reldir)/LAYOUT  : LAYOUT  ; $(INSTALL_DATA) $< "$@"
+$(docm2dir)/LAYOUT  : LAYOUT  ; $(INSTALL_DATA) $< "$@"
+$(docm2dir)/README  : README  ; $(INSTALL_DATA) $< "$@"
 
 # install install-others install-Macaulay2 :: $(docm2reldir)/INSTALL
 # $(encapdir)/INSTALL  : INSTALL  ; $(INSTALL_DATA) $< "$@"

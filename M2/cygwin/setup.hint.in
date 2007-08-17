@@ -1,4 +1,5 @@
 # -*- sh -*-
+# this file is part of the Macaulay 2 cygwin package
 sdesc: "a software system for algebraic geometry research"
 ldesc: "Macaulay 2 is a software system for algebraic geometry research.
  Macaulay 2 is a software system for algebraic geometry research, written by
