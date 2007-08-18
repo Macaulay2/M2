@@ -292,9 +292,11 @@ CXXFLAGS += -pipe \
 # returns a 64-bit pointer is not declared as such, then only 32 bits of the return value will be used.
 endif
 
+ifeq (@HAVE_FATAL_ERRORS@,yes)
 CPPFLAGS += -Wfatal-errors
 CFLAGS += -Wfatal-errors
 CXXFLAGS += -Wfatal-errors
+endif
 
 ##  this option is sort of interesting, but generates nothing really useful for us:
 # CXXFLAGS += -Weffc++
