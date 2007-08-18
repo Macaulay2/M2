@@ -30,7 +30,6 @@ prefixtail=$(shell basename $(finalprefix))
 prefixdir=$(shell dirname $(finalprefix))
 
 all install :: \
-	rmserver \
 	server/Macaulay2 \
 	server/Macaulay2/$(package)-1.tar.bz2 \
 	server/Macaulay2/$(package)-1-src.tar.bz2 \
@@ -39,8 +38,7 @@ all install :: \
 	@ echo "============================================================================="
 	@ echo "cygwin package files prepared in cygwin/server"
 	@ echo "============================================================================="
-rmserver : ; rm -rf server
-server/setup.ini : @srcdir@/genini ; @srcdir@/genini server/Macaulay2 >server/setup.ini
+server/setup.ini : ; cd server && PATH=`cd @srcdir@; pwd`:$(PATH) $(MAKE) setup.ini
 server/Macaulay2 : ; $(MKDIR_P) $@
 server/Macaulay2/$(package)-1.tar.bz2 : Makefile server/Macaulay2
 	rm -rf files

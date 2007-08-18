@@ -1,0 +1,3 @@
+all : setup.ini
+setup.ini : Macaulay2/*
+	genini Macaulay2 >setup.ini
