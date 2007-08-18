@@ -253,7 +253,9 @@ AC_DEFINE_UNQUOTED(buildsystemtype,"$build",the type of system on which the pack
 AC_DEFINE_UNQUOTED(hostsystemtype,"$host",the type of system on which the package runs)
 
 case "$host" in
-   i486-*|i586-*|i686-*) AC_MSG_NOTICE([warning: building for host $host might be compatible enough, consider using option "--build=i386-pc-linux-gnu"]) ;;
+   i486-*|i586-*|i686-*)
+	newhost=`echo $host | sed s/i.86-/i386-/`
+	AC_MSG_NOTICE([warning: building for host $host might be compatible enough, consider using option "--build=$newhost"]) ;;
 esac
 
 AC_ARG_ENABLE(
