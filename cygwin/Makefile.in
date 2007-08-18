@@ -33,7 +33,7 @@ all install :: \
 	rmserver \
 	server/Macaulay2 \
 	server/Macaulay2/$(package)-1.tar.bz2 \
-	server/Macaulay2/$(package)-1-src.tar.@COMPRESS@ \
+	server/Macaulay2/$(package)-1-src.tar.bz2 \
 	server/Macaulay2/setup.hint \
 	server/setup.ini
 	@ echo "============================================================================="
@@ -59,7 +59,6 @@ server/Macaulay2/setup.hint : setup.hint server/Macaulay2 ; cp $< $@
 $(package)-1 : always ; rm -f $@ && ln -sf @srcdir@/.. $@
 src-files : always ; svn ls -R @srcdir@/.. | egrep -v '/$$' | sed 's=^=$(package)-1/=' >$@
 mkrt : src-files $(package)-1 ; cat src-files | fakeroot xargs chown root.root
-server/Macaulay2/$(package)-1-src.tar.gz : server/Macaulay2 mkrt src-files ; fakeroot tar cfz $@ --files-from=src-files
 server/Macaulay2/$(package)-1-src.tar.bz2 : server/Macaulay2 mkrt src-files ; fakeroot tar cfj $@ --files-from=src-files
 
 install :: Macaulay2.README Macaulay2.sh
