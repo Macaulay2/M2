@@ -10,6 +10,7 @@ endif
 all :: compat.h
 
 all :: ../bin/M2$(EXE)
+	printenv LD_LIBRARY_PATH
 ifneq (@OBJDUMP@,)
 	- @OBJDUMP@ -x $< | grep RPATH
 endif
@@ -19,7 +20,7 @@ endif
 
 ## standard options
 
-LD_LIBRARY_PATH := ../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib:$(LD_LIBRARY_PATH)
+LD_LIBRARY_PATH := $(shell cd ../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib && pwd):$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 
 M2_LDFLAGS  =
