@@ -9,13 +9,10 @@ using std::cout;
 using std::endl;
 #include <cstdio>
 
-#if FACTORY
 #define Matrix MaTrIx
-/* #define NOSTREAMIO */
 #include <factor.h>		// from Messollen's libfac
 #undef Matrix
 //#include <templates/ftmpl_list.cc>
-#endif
 
 #include "matrix.hpp"
 #include "ZZp.hpp"
@@ -31,7 +28,6 @@ using std::endl;
 
 #include <NTL/ZZ.h>
 
-#if FACTORY
 #define REVERSE_VARIABLES 1	// did we have a good reason for reversing the variables before?  probably so the ideal reordering of Messollen would work...
 
 extern "C" {
@@ -370,11 +366,9 @@ void displayCF(PolynomialRing *R, const CanonicalForm &h)
   o << IM2_RingElement_to_string(g) << "\n";
   emit(o.str());
 }
-#endif
 
 const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g)
 {
-#if FACTORY
   const RingElement *ret = NULL;
   const PolyRing *P = f->get_ring()->cast_to_PolyRing();
   const PolyRing *P2 = g->get_ring()->cast_to_PolyRing();
@@ -399,15 +393,10 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
   ring_elem r = ret->get_value();
   P->mult_coeff_to(b, r);
   return RingElement::make_raw(P,r);
-#else
-  ERROR("'factory' library not installed");
-  return NULL;
-#endif
 }
 
 const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const RingElement *g, const RingElement **A, const RingElement **B)
 {
-#if FACTORY
   const RingElement *ret;
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
@@ -432,15 +421,10 @@ const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const R
   *A = convertToM2(P,a);
   *B = convertToM2(P,b);
   return ret;
-#else
-  ERROR("'factory' library not installed");
-  return NULL;
-#endif
 }
 
 const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElement *g)
 {
-#if FACTORY
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
   if (P == 0)
@@ -461,10 +445,6 @@ const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElem
   CanonicalForm h = Prem(p,q);
   const RingElement *r = convertToM2(P,h);
   return r;
-#else
-  ERROR("'factory' library not installed");
-  return NULL;
-#endif
 }
 
 void rawFactor(const RingElement *g, 
@@ -472,7 +452,6 @@ void rawFactor(const RingElement *g,
 	       M2_arrayint_OrNull *result_powers)
 {
      try {
-#if FACTORY
 	  const PolynomialRing *P = g->get_ring()->cast_to_PolynomialRing();
 	  *result_factors = 0;
 	  *result_powers = 0;
@@ -504,9 +483,6 @@ void rawFactor(const RingElement *g,
 	    (*result_factors)->array[next] = convertToM2(P,i.getItem().factor());
 	    (*result_powers)->array[next++] = i.getItem().exp();
 	  }
-#else
-	  ERROR("'factory' library not installed");
-#endif
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
@@ -517,7 +493,6 @@ void rawFactor(const RingElement *g,
 M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 {
      try {
-#if FACTORY
 	  init_seeds();
 	  const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
 	  if (P == 0)
@@ -558,10 +533,6 @@ M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 	     for (i=0; i<N; i++)
 	       result->array[i] = u[i];
 	     return result;
-#else
-	  ERROR("'factory' library not installed");
-	  return NULL;
-#endif
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
@@ -572,7 +543,6 @@ M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 {
      try {
-#if FACTORY
 	     const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
 	     if (P == 0) {
 		  ERROR("expected polynomial ring");
@@ -610,10 +580,6 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 	     }
 
 	     return result;
-#else
-	  ERROR("'factory' library not installed");
-	  return NULL;
-#endif
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());

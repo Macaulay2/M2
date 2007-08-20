@@ -66,7 +66,9 @@ static int install(int fd, map m, long *pos) {
 	 start,start+len,len,prot,flags,fd,offset);
   return OKAY;
 #else
+  close(100);			/* for debugging! */
   ret = mmap(start, len, prot, flags, fd, offset);
+  close(100);			/* for debugging! */
   return (char *)MAP_FAILED == ret ? ERROR : OKAY;
 #endif
 }
@@ -225,7 +227,8 @@ int loaddata(char const *filename) {
 	     if (debug) warning("--warning: loaddata: map protection (executability only) has changed, from '%s' to '%s'\n",fbuf,buf);
 	}
 	else {
-	     if (debug) warning("--warning: loaddata: map protection has changed, from '%s' to '%s'\n",fbuf,buf);
+	     warning("--warning: loaddata: map has changed, from '%s' to '%s' (file: %s)\n", fbuf, buf, 
+		     currmap[j].filename == NULL ? "unknown" : currmap[j].filename);
 	     haderror = TRUE;
 	}
       }
@@ -244,11 +247,11 @@ int loaddata(char const *filename) {
 #       endif
       }
 
-      if (dumpedmap.checksum != currmap[j].checksum) {
+      if (dumpedmap.r && currmap[j].r && !dumpedmap.w && !currmap[j].w && dumpedmap.checksum != currmap[j].checksum) {
 	char buf[100];
 	sprintmap(buf,sizeof(buf),&currmap[j]);
 	trim(buf);
-	if (getenv("LOADDATA_IGNORE_CHECKSUMS") == NULL) {
+	if (getenv("LOADDATA_IGNORE_CHECKSUMS") == NULL && !isNotCheckable(&currmap[j])) {
 	     warning("--warning: map checksum has changed, file %s\n", currmap[j].filename != NULL ? currmap[j].filename : "--unknown--" );
 	     haderror = TRUE;
 	}

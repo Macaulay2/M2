@@ -15,7 +15,6 @@ LDLIBS =
 .PHONY : clean all install tags
 YFLAGS := -vdlt
 LOADLIBES += -lm
-LOADLIBES += $(GCLIB)
 CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c compat.c
 HFILES := $(CNAMES:.c=.h) scc.h grammar.h
 OFILES := $(CNAMES:.c=.o) grammar.o
@@ -32,9 +31,11 @@ scc1 : $(OFILES)
 $(OFILES) : $(HFILES)
 grammar.o : grammar.c; $(CC) $(CPPFLAGS) $(CFLAGS) -c $< $(OUTPUT_OPTION)
 ############################## tags
+ifneq (@ETAGS@,)
 all :: tags
+endif
 tags : @srcdir@/TAGS
-@srcdir@/TAGS: $(SRCFILES); cd @srcdir@ && etags $(SRCFILES)
+@srcdir@/TAGS: $(SRCFILES); cd @srcdir@ && @ETAGS@ $(SRCFILES)
 ############################## cleaning
 clean :
 	rm -f *.o scc1 scc.a grammar.output grammar.tab.h \

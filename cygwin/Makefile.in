@@ -54,10 +54,16 @@ server/Macaulay2/$(package)-1.tar.bz2 : Makefile server/Macaulay2
 	rm -rf files
 server/Macaulay2/setup.hint : setup.hint server/Macaulay2 ; cp $< $@
 
+ifeq (@SRCTARFILE@,)
 $(package)-1 : always ; rm -f $@ && ln -sf @srcdir@/.. $@
 src-files : always ; svn ls -R @srcdir@/.. | egrep -v '/$$' | sed 's=^=$(package)-1/=' >$@
 mkrt : src-files $(package)-1 ; cat src-files | fakeroot xargs chown root.root
 server/Macaulay2/$(package)-1-src.tar.bz2 : server/Macaulay2 mkrt src-files ; fakeroot tar cfj $@ --files-from=src-files
+else
+src-tree : @SRCTARFILE@ ; rm -rf $@ && $(MKDIR_P) $@ && tar xzf $< -C $@ && rm -f $(package)-1 && ln -s srctree/* $(package)-1
+mkrt : src-tree ; fakeroot chown -R root.root src-tree
+server/Macaulay2/$(package)-1-src.tar.bz2 : server/Macaulay2 mkrt ; fakeroot tar cfj $@ $(package)-1/.
+endif
 
 install :: Macaulay2.README Macaulay2.sh
 	$(INSTALL) -d $(encapdir)@FINALPREFIX@/share/doc/Cygwin

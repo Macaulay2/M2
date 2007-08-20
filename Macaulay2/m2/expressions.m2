@@ -911,6 +911,7 @@ html Sum := v -> (
 mathML Sum := v -> (
      n := # v;
      if n === 0 then "<mn>0</mn>"
+     else if n === 1 then mathML v#0
      else (
 	  p := precedence v;
 	  seps := newClass(MutableList, apply(n+1, i->"<mo>+</mo>"));
@@ -935,24 +936,26 @@ mathML Sum := v -> (
 mathML Product := v -> (
      n := # v;
      if n === 0 then "<mn>1</mn>"
+     else if n === 1 then mathML v#0
      else (
      	  p := precedence v;
-	  seps := newClass(MutableList, splice {"", n-1 : "<mo>*</mo>", ""});
-	  if n>1 and isNumber v#0 and startsWithVariable v#1 then seps#1 = "<mo>&InvisibleTimes;</mo>";
+	  seps := newClass(MutableList, (n+1) : "<mo>*</mo>");
+	  if n>1 and isNumber v#0 and startsWithVariable v#1 then seps#1 = "<mo></mo>";
      	  boxes := apply(#v,
 	       i -> (
 		    term := v#i;
 		    nterm := mathML term;
 	       	    if precedence term <= p then (
-			 seps#i = seps#(i+1) = "<mo>&InvisibleTimes;</mo>";
+			 seps#i = seps#(i+1) = "<mo></mo>";
 			 nterm = ("<mrow><mo>(</mo>", nterm, "<mo>)</mo></mrow>");
 			 );
 		    if class term === Power
 		    and not (term#1 === 1 or term#1 === ONE)
 		    or class term === Subscript then (
-			 seps#(i+1) = "<mo>&InvisibleTimes;</mo>";
+			 seps#(i+1) = "<mo></mo>";
 			 );
 	       	    nterm));
+     	  seps#0 = seps#n = "";
 	  concatenate ("<mrow>", mingle (seps, boxes), "</mrow>")
 	  )
      )
@@ -1021,6 +1024,8 @@ html Superscript := v -> (
      if precedence v#0 <  p then x = "(" | x | ")";
      concatenate(x,"<sup>",y,"</sup>"))
 
+mathML Superscript := v -> concatenate("<msup>",mathML v#0,mathML v#1,"</msup>")
+
 html Power := v -> (
      if v#1 === 1 then html v#0
      else (
@@ -1036,6 +1041,8 @@ html Subscript := v -> (
      y := html v#1;
      if precedence v#0 <  p then x = "(" | x | ")";
      concatenate(x,"<sub>",y,"</sub>"))
+
+mathML Subscript := v -> concatenate("<msub>",mathML v#0,mathML v#1,"</msub>")
 
 texMath SparseVectorExpression := v -> (
      n := v#0;
@@ -1112,6 +1119,7 @@ mathML QQ := i -> concatenate(
      )
 mathML Type := X -> if X.?mathML then X.mathML else mathML expression X
 mathML Thing := x -> mathML expression x
+mathML Expression := x -> error("mathML conversion for expression class ", toString class x, " not implemented yet")
 
 File << Thing := File => (o,x) -> printString(o,net x)
 List << Thing := List => (files,x) -> apply(files, o -> o << x)

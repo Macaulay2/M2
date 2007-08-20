@@ -49,13 +49,13 @@ UNTARCMD ?= tar xzf $(TARFILE)
 .untarred : .fetched ; $(UNTARCMD) && touch $@
 .untarred2 : .fetched ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
 
-ifneq ($(shell type -p curl | cat),)
-FETCHER = curl
+ifneq (@CURL@,)
+FETCHER = @CURL@
 else
-ifneq ($(shell type -p wget | cat),)
-FETCHER = wget
+ifneq (@WGET@,)
+FETCHER = @WGET@
 else
-$(error either curl or wget is needed for downloading library source code, please install one of them)
+$(error either curl or wget is needed for downloading library source code, please install one of them and reconfigure)
 endif
 endif
 

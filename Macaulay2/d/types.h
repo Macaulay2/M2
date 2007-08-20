@@ -22,9 +22,7 @@
 #define NEWLINE "\n"
 #endif
 
-#if FACTORY
 extern char *libfac_version;
-#endif
 
 #include "../c/compat.h"
 
@@ -176,10 +174,7 @@ extern char *gnu_get_libc_version();
 
 #include "../dumpdata/dumpdata.h"
 
-#if FACTORY
 extern int libfac_interruptflag;
-#endif
-
 extern M2_bool tokens_stopIfError;
 
 extern sigjmp_buf interrupt_jump; /* set this jump and the flag below if the handler should always jump; e.g., for interrupting a slow 3rd party or system library routine */

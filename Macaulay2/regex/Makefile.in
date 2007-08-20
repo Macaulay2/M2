@@ -33,12 +33,15 @@ EcCMD = $(COMPILE.c) -E $(OUTPUT_OPTION) $<
 	@ echo " ** creating $@ from $<"
 	@ $(CC)  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
 
-@srcdir@/TAGS: $(CFILES); cd @srcdir@ && etags $(CFILES)
+@srcdir@/TAGS: $(CFILES); cd @srcdir@ && @ETAGS@ $(CFILES)
 DEPENDS = yes
 ifeq "$(DEPENDS)" "yes"
 include $(CFILES:.c=.dep) $(CCFILES:.cpp=.dep)
 endif
-all tags:: @srcdir@/TAGS
+ifneq (@ETAGS@,)
+all :: tags
+endif
+tags:: @srcdir@/TAGS
 clean :: ; rm -f *.o *.dep *.s *.E LOGFILE
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/regex/Makefile
 distclean::; rm -f Makefile

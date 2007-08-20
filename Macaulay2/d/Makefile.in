@@ -4,7 +4,9 @@ VPATH = @srcdir@
 DEPENDS = yes
 ############################## main targets
 all :: tokens_stub.o
+ifneq (@ETAGS@,)
 all :: tags
+endif
 all :: compat.h
 all :: ../bin/M2$(EXE)
 
@@ -26,7 +28,7 @@ endif
 
 M2_LDFLAGS += $(LDFLAGS)
 M2_LOADLIBES := $(LOADLIBES)
-M2_LDLIBS := $(LDLIBS)
+M2_LDLIBS := @BUILTLIBS@ $(LDLIBS)
 
 ## files
 
@@ -265,10 +267,8 @@ tmp_init.c : $(DFILES)
 LIBRARYOPTIONS += M2inits2.o
 LIBRARYDEPS    += M2inits2.o
 
-ifeq "$(FACTORY)" "yes"
-LIBRARYDEPS    += factory_init1.o version.o M2-factory.o                    factory_init2.o
-LIBRARYOPTIONS += factory_init1.o version.o M2-factory.o $(LIBFAC) $(LIBCF) factory_init2.o
-endif
+LIBRARYOPTIONS += factory_init1.o version.o M2-factory.o -lfac -lcf factory_init2.o
+LIBRARYDEPS    += factory_init1.o version.o M2-factory.o            factory_init2.o
 
 LIBRARYOPTIONS += M2inits3.o
 LIBRARYDEPS    += M2inits3.o
@@ -278,10 +278,6 @@ LIBRARYOPTIONS += $(NTLLIB)
 ifeq "$(LAPACK)" "yes"
 LIBRARYOPTIONS += $(LAPACKLIBS)
 endif
-
-LIBRARYOPTIONS += $(GMPLIB)
-LIBRARYOPTIONS += $(GCLIB)
-LIBRARYOPTIONS += $(GDBMLIB)
 
 ifeq ($(OS),Darwin)
 LIBRARYOPTIONS += $(READLINELIB) $(HISTORYLIB)
@@ -328,7 +324,7 @@ t : t_main.o gmp.oo stdio.oo strings.oo system.oo C.o t.o; $(CC) $(M2_LDFLAGS) $
 tags: @srcdir@/TAGS
 clean::; rm -f TAGS @srcdir@/TAGS
 @srcdir@/TAGS: Makefile $(SRCFILES)
-	cd @srcdir@ && etags $(shell ../util/echoout -r $(SRCFILES))
+	cd @srcdir@ && @ETAGS@ $(shell ../util/echoout -r $(SRCFILES))
 
 clean ::; rm -f *.log a.out *.o *.sym *.a *.oo *.sig *.sg *.dep *.dp core gmon.out mapfile restart.tmp
 distclean : clean; rm -f Makefile
