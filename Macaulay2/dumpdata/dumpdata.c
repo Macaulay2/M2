@@ -64,9 +64,7 @@ static int install(int fd, map m, long *pos) {
 	 start,start+len,len,prot,flags,fd,offset);
   return OKAY;
 #else
-  close(100);			/* for debugging! */
   ret = mmap(start, len, prot, flags, fd, offset);
-  close(100);			/* for debugging! */
   return (char *)MAP_FAILED == ret ? ERROR : OKAY;
 #endif
 }
