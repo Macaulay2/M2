@@ -17,10 +17,11 @@ use struct;
 
 TeXmacsEvaluate := makeProtectedSymbolClosure("TeXmacsEvaluate");
 
-export topLevelTexmacs():bool := (
+export topLevelTexmacs():int := (
      unsetprompt(stdin);
      while true do (
 	  stdin.bol = false;				    -- sigh, prevent a possible prompt
+     	  stdin.echo = false;
 	  r := getLine(stdin);
 	  when r is e:errmsg do (
 	       flush(stdout);
@@ -29,7 +30,7 @@ export topLevelTexmacs():bool := (
 	       exit(1);
 	       )
 	  is item:string do (
-	       if stdin.eof then return true;;
+	       if stdin.eof then return 0;
 	       method := lookup(stringClass,TeXmacsEvaluate);
 	       if method == nullE 
 	       then (

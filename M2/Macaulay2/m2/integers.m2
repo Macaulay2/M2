@@ -19,7 +19,6 @@ ZZ.dim = 1
 ZZ.Engine = true
 ZZ.baseRings = {}
 ZZ.degreeLength = 0
-ZZ.mathML = "<mi>ZZ</mi>"
 ZZ.frac = QQ
 
 promote(ZZ,ZZ) := lift(ZZ,ZZ) := (i,ZZ) -> i

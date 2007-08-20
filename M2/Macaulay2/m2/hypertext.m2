@@ -72,7 +72,6 @@ info HEADER2 := Hop(info,"=")
 info HEADER3 := Hop(info,"-")
 
 html String := htmlLiteral
-mathML String := x -> concatenate("<mtext>",htmlLiteral x,"</mtext>")
 tex String := texLiteral
 texMath String := s -> (
      if #s === 1 then s
@@ -92,13 +91,9 @@ texMath Sequence := x -> concatenate("(", between(",", apply(x,texMath)), ")")
 --      )
 -- html HashTable := x -> html expression x
 
-mathML Nothing := texMath Nothing := tex Nothing := html Nothing := x -> ""
-
 specials := new HashTable from {
      symbol ii => "&ii;"
      }
-
-mathML Symbol := x -> concatenate("<mi>",if specials#?x then specials#x else toString x,"</mi>")
 
 texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
 

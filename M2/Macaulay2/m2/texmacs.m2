@@ -5,7 +5,7 @@ TeXmacsEnd   = ascii 5
 
 String.TeXmacsEvaluate = s -> (
      lineNumber = lineNumber + 1;
-     -- << TeXmacsBegin << "verbatim:";
+     << TeXmacsBegin << "verbatim:";
      try (
 	  v := value s;
 	  v = (lookup(AfterEval,class v)) v;
@@ -13,15 +13,14 @@ String.TeXmacsEvaluate = s -> (
      	  fmt := v -> concatenate lines try mathML v else mathML toString v;
 	  if v =!= null then (
 	     << TeXmacsBegin << "html:"
+	     << "<p>" << "o" << lineNumber << " = " << "<math xmlns=\"http://www.w3.org/1998/Math/MathML\">" << fmt v << "</math>" << "</p>"
 	     << "<p></p>"
-	     << "<p>" << "o" << lineNumber << " = " << "<math>" << fmt v << "</math>" << "</p>"
-	     << "<p></p>"
-	     << "<p>" << "o" << lineNumber << " : " << "<math>" << fmt class v << "</math>" << "</p>"
+	     << "<p>" << "o" << lineNumber << " : " << "<math xmlns=\"http://www.w3.org/1998/Math/MathML\">" << fmt class v << "</math>" << "</p>"
 	     << TeXmacsEnd;
 	     );
 	  )
-     else << TeXmacsBegin << "html:" << "evaluation failed" << TeXmacsEnd;
-     << flush;
+     else << "evaluation failed";
+     << TeXmacsEnd << flush;
      )
 
 -- Local Variables:
