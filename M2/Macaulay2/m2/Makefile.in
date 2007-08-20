@@ -7,7 +7,7 @@ srcdir = $(shell cd @srcdir@; /bin/pwd)
 all:: initialize
 Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
 emacs html: all; $(MAKE) -C ../$@
-LD_LIBRARY_PATH := ../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib:$(LD_LIBRARY_PATH)
+LD_LIBRARY_PATH := $(shell cd ../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib && pwd):$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 ##############################
 .SUFFIXES: .m2
@@ -117,6 +117,7 @@ phase1 :: ../cache/$(DUMPDATAFILE)
 ../cache/$(DUMPDATAFILE) redump : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) ../bin/M2$(EXE) $(OTHERDUMPEDM2FILES)
 	rm -f ../cache/$(DUMPDATAFILE)
 	../bin/M2$(EXE) -q --stop -e 'errorDepth = 0' --dumpdata
+	printenv LD_LIBRARY_PATH
 endif
 
 phase1 :: ../cache/Macaulay2-made
