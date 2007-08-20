@@ -95,7 +95,9 @@ LIBS="$LOADLIBES $LDLIBS"
 AC_CHECK_PROGS(MAKE,gmake make)
 AC_CHECK_PROGS(WGET,wget)
 AC_CHECK_PROGS(CURL,curl)
+AC_CHECK_PROGS(OBJDUMP,objdump)
 AC_CHECK_PROGS(ETAGS,etags)
+AC_CHECK_PROGS(LDD,ldd)
 
 echo $ECHO_N "checking whether $MAKE is GNU make... " >&6
 if "$MAKE" -n --version nothing | grep GNU >/dev/null 2>&1

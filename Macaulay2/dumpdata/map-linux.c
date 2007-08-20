@@ -70,12 +70,13 @@ int getmaps(int nmaps, struct MAP maps[nmaps]) {
 #define ELF
 #include <elf.h>
 static void *elf_header_location() {
-     char **envp = __environ;
-     while(*envp++ != NULL);
+     char **p = __environ;
+     while (*p++ != NULL);
+     p++;
 #if __WORDSIZE == 32
-     Elf32_auxv_t *auxv = (Elf32_auxv_t *)envp;
+     Elf32_auxv_t *auxv = (Elf32_auxv_t *)p;
 #else
-     Elf64_auxv_t *auxv = (Elf64_auxv_t *)envp;
+     Elf64_auxv_t *auxv = (Elf64_auxv_t *)p;
 #endif
      for ( ; auxv->a_type != AT_NULL; auxv++) {
 	  switch( auxv->a_type ) {

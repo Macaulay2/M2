@@ -478,9 +478,9 @@ if firstTime and not noloaddata and version#"dumpdata" then (
 	  else concatenate("Macaulay2-", arch, "-data")
 	  );
      if fileExists datafile then (
-	  stderr << "--loading cached memory data from " << datafile << newline << flush;
-     	  try loaddata datafile;
-	  -- stderr << "--warning: can not load data from " << datafile << newline << flush;
+	  if notify then stderr << "--loading cached memory data from " << datafile << newline << flush;
+     	  try loaddata(notify,datafile);
+	  if notify then stderr << "--warning: unable to load data from " << datafile << newline << flush;
 	  )
      )
 
