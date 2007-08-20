@@ -89,7 +89,6 @@ toString Expression := v -> (
      )
 
 texMath Holder := v -> "{" | texMath v#0 | "}"
-mathML Holder := v -> mathML v#0
 html Holder := v -> html v#0
 net Holder := v -> net v#0
 toString Holder := v -> toString v#0
@@ -142,11 +141,11 @@ toString Equation := v -> (
 -----------------------------------------------------------------------------
 ZeroExpression = new Type of Holder
 ZeroExpression.synonym = "zero expression"
-ZERO := new ZeroExpression from {0}
+ZERO = new ZeroExpression from {0}
 -----------------------------------------------------------------------------
 OneExpression = new Type of Holder
 OneExpression.synonym = "one expression"
-ONE := new OneExpression from {1}
+ONE = new OneExpression from {1}
 -----------------------------------------------------------------------------
 Parenthesize = new WrapperType of Expression
 Parenthesize.synonym = "possibly parenthesized expression"
@@ -667,14 +666,14 @@ net Sum := v -> (
 		    then bigParenthesize net v#i
 		    else      	   	 net v#i))))
 
-isNumber := method(TypicalValue => Boolean)
+isNumber = method(TypicalValue => Boolean)
 isNumber Thing := i -> false
 isNumber RR :=
 isNumber QQ :=
 isNumber ZZ := i -> true
 isNumber Holder := i -> isNumber i#0
 
-startsWithVariable := method(TypicalValue => Boolean)
+startsWithVariable = method(TypicalValue => Boolean)
 startsWithVariable Thing := i -> false
 startsWithVariable Symbol := i -> true
 startsWithVariable Product := 
@@ -772,22 +771,6 @@ net MatrixExpression := x -> (
 	  horizontalJoin(side," ",m," ",side)))
 html MatrixExpression := x -> html TABLE toList x
 
-mathML MatrixExpression := x -> concatenate(
-     "<mrow><mo>(</mo>",
-     "<mtable>",
-     newline,
-     apply(x, row -> (
-	       "<mtr>",
-	       apply(row, e -> ("<mtd>",mathML e,"</mtd>",newline)),
-	       "</mtr>",
-     	       newline
-	       )
-	  ),
-     "</mtable>",
-     "<mo>)</mo></mrow>",
-     newline
-     )
-
 -----------------------------------------------------------------------------
 -- tex stuff
 
@@ -835,8 +818,6 @@ texMath Minus := v -> (
      else "{-" | texMath term | "}"
      )
 
-mathML Minus := v -> concatenate( "<mo>-</mo>", mathML v#0)
-
 html Minus := v -> (
      term := v#0;
      if precedence term < precedence v
@@ -863,11 +844,6 @@ html Divide := x -> (
      if precedence x#0 <= p then a = "(" | a | ")";
      if precedence x#1 <= p then b = "(" | b | ")";
      a | " / " | b)
-
-mathML Divide := x -> concatenate("<mfrac>", mathML x#0, mathML x#1, "</mfrac>")
-
-mathML OneExpression := x -> "<mn>1</mn>"
-mathML ZeroExpression := x -> "<mn>0</mn>"
 
 html OneExpression := html ZeroExpression :=
 texMath OneExpression := texMath ZeroExpression := toString
@@ -908,58 +884,6 @@ html Sum := v -> (
 	       mingle(seps, names)
 	       )))
 
-mathML Sum := v -> (
-     n := # v;
-     if n === 0 then "<mn>0</mn>"
-     else if n === 1 then mathML v#0
-     else (
-	  p := precedence v;
-	  seps := newClass(MutableList, apply(n+1, i->"<mo>+</mo>"));
-	  seps#0 = "";
-	  seps#n = "";
-	  v = apply(n, i -> (
-		    if class v#i === Minus 
-		    then (
-			 seps#i = "<mo>-</mo>"; 
-			 v#i#0)
-		    else v#i));
-	  concatenate (
-	       "<mrow>", 
-	       mingle(seps, 
-	       	    apply(n, i -> 
-		    	 if precedence v#i <= p 
-		    	 then ("<mrow><mo>(</mo>", mathML v#i, "<mo>)</mo></mrow>")
-		    	 else mathML v#i),
-		    n:newline),
-	       "</mrow>",newline)))
-
-mathML Product := v -> (
-     n := # v;
-     if n === 0 then "<mn>1</mn>"
-     else if n === 1 then mathML v#0
-     else (
-     	  p := precedence v;
-	  seps := newClass(MutableList, (n+1) : "<mo>*</mo>");
-	  if n>1 and isNumber v#0 and startsWithVariable v#1 then seps#1 = "<mo></mo>";
-     	  boxes := apply(#v,
-	       i -> (
-		    term := v#i;
-		    nterm := mathML term;
-	       	    if precedence term <= p then (
-			 seps#i = seps#(i+1) = "<mo></mo>";
-			 nterm = ("<mrow><mo>(</mo>", nterm, "<mo>)</mo></mrow>");
-			 );
-		    if class term === Power
-		    and not (term#1 === 1 or term#1 === ONE)
-		    or class term === Subscript then (
-			 seps#(i+1) = "<mo></mo>";
-			 );
-	       	    nterm));
-     	  seps#0 = seps#n = "";
-	  concatenate ("<mrow>", mingle (seps, boxes), "</mrow>")
-	  )
-     )
-
 texMath Product := v -> (
      n := # v;
      if n === 0 then "1"
@@ -994,13 +918,6 @@ html Product := v -> (
 	  )
      )
 
-mathML Power := v -> if v#1 === 1 then mathML v#0 else concatenate (
-     "<msup>",
-     mathML v#0,
-     mathML v#1,
-     "</msup>"
-     )     
-
 texMath Power := v -> (
      if v#1 === 1 then texMath v#0
      else (
@@ -1024,8 +941,6 @@ html Superscript := v -> (
      if precedence v#0 <  p then x = "(" | x | ")";
      concatenate(x,"<sup>",y,"</sup>"))
 
-mathML Superscript := v -> concatenate("<msup>",mathML v#0,mathML v#1,"</msup>")
-
 html Power := v -> (
      if v#1 === 1 then html v#0
      else (
@@ -1041,8 +956,6 @@ html Subscript := v -> (
      y := html v#1;
      if precedence v#0 <  p then x = "(" | x | ")";
      concatenate(x,"<sub>",y,"</sub>"))
-
-mathML Subscript := v -> concatenate("<msub>",mathML v#0,mathML v#1,"</msub>")
 
 texMath SparseVectorExpression := v -> (
      n := v#0;
@@ -1109,17 +1022,6 @@ texMath Symbol := x -> (
 
 tex Expression := x -> concatenate("$",texMath x,"$")
 tex Thing := x -> tex expression x
-
-mathML Boolean := i -> if i then "<mi>true</mi>" else "<mi>false</mi>"
-
-mathML ZZ := i -> concatenate("<mn>",toString i, "</mn>")
-mathML RR := i -> concatenate("<mn>",toString i, "</mn>")
-mathML QQ := i -> concatenate(
-     "<mfrac>",mathML numerator i, mathML denominator i, "</mfrac>"
-     )
-mathML Type := X -> if X.?mathML then X.mathML else mathML expression X
-mathML Thing := x -> mathML expression x
-mathML Expression := x -> error("mathML conversion for expression class ", toString class x, " not implemented yet")
 
 File << Thing := File => (o,x) -> printString(o,net x)
 List << Thing := List => (files,x) -> apply(files, o -> o << x)

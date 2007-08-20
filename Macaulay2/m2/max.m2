@@ -39,7 +39,6 @@ Thing ? InfiniteNumber := (x,y) -> if y === infinity then symbol < else symbol >
 InfiniteNumber ? Thing := (x,y) -> if x === infinity then symbol > else symbol <
 
 texMath InfiniteNumber := i -> if i === infinity then "\\infty" else "{-\\infty}"
-mathML InfiniteNumber := i -> if i === infinity then "<mrow><mo>-</mo><mi>&infin;</mi></mrow>" else "<mi>&infin;</mi>"
 
 max Sequence := max List := x -> (
      m := neginfinity;

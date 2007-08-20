@@ -19,7 +19,6 @@ QQ.char = 0
 QQ.isField = true
 toString QQ := x -> toString numerator x | "/" | toString denominator x
 QQ.baseRings = {ZZ}
-QQ.mathML = "<mi>&Qopf;</mi>"
 QQ.frac = QQ
 
 smallrats := {-10/1, -5/1, -10/3, -5/2, -2/1, -5/3, -10/7, -5/4, -10/9, -9/1, -9/2, -3/1, -9/4, -9/5, -3/2,
