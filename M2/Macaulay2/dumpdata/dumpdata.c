@@ -285,7 +285,14 @@ int loaddata(char const *filename) {
   if (haderror) {
        fclose(f);
        close(fd);
-       fprintf(stderr,"--warning: memory maps have changed, can't load cached data: %s\n",filename);
+       fprintf(stderr,
+	       "--warning: memory maps have changed, can't load cached data from file: %s\n"
+	       "--     Your options are:\n"
+	       "--          endure this warning message each time you start M2;\n"
+	       "--          use \"M2 --dumpdata\" to recreate the file in your current environment;\n"
+	       "--          use \"M2 --no-loaddata\" to run M2 without loading the file; or\n"
+	       "--          delete the file, which is used only for quick initial loading of code.\n",
+	       filename);
        return ERROR;
   }
 
