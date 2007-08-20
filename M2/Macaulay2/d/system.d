@@ -45,7 +45,7 @@ import select(s:array(int)):array(int);
 import hash(x:double):int;
 import getcwd():string;
 import dumpdata(filename:string):int;
-import loaddata(filename:string):int;
+import loaddata(notify:int,filename:string):int;
 import errfmt(filename:string,lineno:int,colno:int,loaddepth:int):string;
 import loadDepth:int;
 import dbmopen(filename:string,write:bool):int;

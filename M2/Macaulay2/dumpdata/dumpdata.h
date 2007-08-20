@@ -5,7 +5,7 @@
 #define USE_BRK 1
 
 int dumpdata(const char *);
-int loaddata(const char *);
+int loaddata(int, const char *);
 
 
 /*

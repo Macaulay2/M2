@@ -680,7 +680,7 @@ int system_dumpdata(M2_string datafilename)
 #endif
      }
 
-int system_loaddata(M2_string datafilename){
+int system_loaddata(int notify, M2_string datafilename){
 #if !DUMPDATA
      return ERROR;
 #else
@@ -688,7 +688,7 @@ int system_loaddata(M2_string datafilename){
      sigjmp_buf save_loaddata_jump;
      int loadDepth = system_loadDepth;
      memcpy(save_loaddata_jump,loaddata_jump,sizeof(loaddata_jump));
-     if (ERROR == loaddata(datafilename_s)) return ERROR;
+     if (ERROR == loaddata(notify,datafilename_s)) return ERROR;
      memcpy(loaddata_jump,save_loaddata_jump,sizeof(loaddata_jump));
      system_loadDepth = loadDepth + 1;
      siglongjmp(loaddata_jump,1);

@@ -88,11 +88,19 @@ setupfun("dumpdata",dumpdatafun);
 
 loaddatafun(e:Expr):Expr := (
      when e
-     is s:string do (
-	  loaddata(s);			  -- should not return
-	  buildErrorPacket("failed to load data from '" + s + "'")
+     is s:Sequence do (
+	  when s.0 is x:Boolean do
+	  when s.1 is s:string do (
+	       loaddata(if x == True then 1 else 0, s);			  -- should not return
+	       buildErrorPacket("failed to load data from '" + s + "'"))
+	  else WrongArgString(2)
+	  else WrongArgBoolean(1)
 	  )
-     else WrongArgString(0+1)
+     is s:string do (
+	  notifyYes := 1;
+	  loaddata(notifyYes,s);			  -- should not return
+	  buildErrorPacket("failed to load data from '" + s + "'"))
+     else WrongArg("string, or a pair: boolean value and string")
      );
 setupfun("loaddata",loaddatafun);
 

@@ -8,7 +8,14 @@ ifneq (@ETAGS@,)
 all :: tags
 endif
 all :: compat.h
+
 all :: ../bin/M2$(EXE)
+ifneq (@OBJDUMP@,)
+	- @OBJDUMP@ -x $< | grep RPATH
+endif
+ifneq (@LDD@,)
+	- @LDD@ $<
+endif
 
 ## standard options
 

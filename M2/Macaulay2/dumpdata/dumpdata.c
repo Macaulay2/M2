@@ -20,8 +20,6 @@
 #include "std.h"
 #include "maputil.h"
 
-extern bool notify;
-
 #define DRYRUN 0
 
 #if !defined(PAGESIZE)
@@ -129,7 +127,7 @@ int dumpdata(char const *dumpfilename) {
   }
 }
 
-int loaddata(char const *filename) {
+int loaddata(int notify, char const *filename) {
 #if USE_BRK
   void *newbreak;
   int got_newbreak = 0;
@@ -194,7 +192,7 @@ int loaddata(char const *filename) {
 	char buf[100];
 	sprintmap(buf,sizeof(buf),&currmap[j]);
 	trim(buf);
-	if (debug) warning("--warning: loaddata: map has appeared or changed its location: %s\n",buf);
+	if (notify) warning("--warning: loaddata: map has appeared or changed its location: %s\n",buf);
 	haderror = TRUE;
       }
       if (debug) fprintf(stderr,"--loaddata: current map: "), fdprintmap(STDERR,&currmap[j]);
@@ -210,7 +208,7 @@ int loaddata(char const *filename) {
 	   if (debug) warning("--warning: loaddata: map (part of stack) has disappeared or changed its location: %s\n",fbuf);
       }
       else {
-	   if (debug) warning("--warning: loaddata: map has disappeared or changed its location: %s\n",fbuf);
+	   if (notify) warning("--warning: loaddata: map has disappeared or changed its location: %s\n",fbuf);
 	   haderror = TRUE;
       }
     }
@@ -227,8 +225,7 @@ int loaddata(char const *filename) {
 	     if (debug) warning("--warning: loaddata: map protection (executability only) has changed, from '%s' to '%s'\n",fbuf,buf);
 	}
 	else {
-	     warning("--warning: loaddata: map has changed, from '%s' to '%s' (file: %s)\n", fbuf, buf, 
-		     currmap[j].filename == NULL ? "unknown" : currmap[j].filename);
+	     if (notify) warning("--warning: loaddata: map has changed, from '%s' to '%s' (file: %s)\n", fbuf, buf, currmap[j].filename == NULL ? "unknown" : currmap[j].filename);
 	     haderror = TRUE;
 	}
       }
@@ -252,7 +249,7 @@ int loaddata(char const *filename) {
 	sprintmap(buf,sizeof(buf),&currmap[j]);
 	trim(buf);
 	if (getenv("LOADDATA_IGNORE_CHECKSUMS") == NULL && !isNotCheckable(&currmap[j])) {
-	     warning("--warning: map checksum has changed, file %s\n", currmap[j].filename != NULL ? currmap[j].filename : "--unknown--" );
+	     if (notify) warning("--warning: map checksum has changed, file %s\n", currmap[j].filename != NULL ? currmap[j].filename : "--unknown--" );
 	     haderror = TRUE;
 	}
 	else {
@@ -285,7 +282,7 @@ int loaddata(char const *filename) {
   if (haderror) {
        fclose(f);
        close(fd);
-       fprintf(stderr,
+       if (notify) fprintf(stderr,
 	       "--warning: memory maps have changed, can't load cached data from file: %s\n"
 	       "--     Your options are:\n"
 	       "--          endure this warning message each time you start M2;\n"
