@@ -14,7 +14,7 @@ int isStack(map m) {
 }
 
 int isCheckable(map m) {
-  return !m->w && m->r && !isNotCheckable(m);
+  return !m->w && m->r;
 }
 
 static void checkmap(map m) {

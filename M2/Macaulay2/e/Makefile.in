@@ -42,11 +42,14 @@ include @srcdir@/Makefile.common
 
 all :: initialize
 
-all tags:: @srcdir@/TAGS
+ifneq (@ETAGS@,)
+all :: tags
+endif
+tags:: @srcdir@/TAGS
 @srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c \
 		 @srcdir@/f4/*.hpp @srcdir@/f4/*.cpp \
 		 statuscodes
-	cd @srcdir@ && etags -o TAGS $(patsubst @srcdir@/%, %, $^)
+	cd @srcdir@ && @ETAGS@ -o TAGS $(patsubst @srcdir@/%, %, $^)
 
 
 # overflows

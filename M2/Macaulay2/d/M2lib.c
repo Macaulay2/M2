@@ -214,9 +214,7 @@ static void interrupt_handler(int sig)
      	  		 fprintf(stderr,"returning to top level\n");
      	  		 fflush(stderr);
 			 evaluate_clearInterruptFlag();
-#                        if FACTORY
 			 libfac_interruptflag = FALSE;
-#                        endif
 			 system_interruptPending = FALSE;
 			 system_interruptShield = FALSE;
 			 evaluate_clearAlarmedFlag();
@@ -252,9 +250,7 @@ static void interrupt_handler(int sig)
 		    exit(interruptExit);
 	       }
 	       evaluate_setInterruptFlag();
-#if FACTORY
 	       libfac_interruptflag = TRUE;
-#endif
 	       if (interrupt_jump_set) siglongjmp(interrupt_jump,1);
 	       }
 	  }
@@ -553,17 +549,12 @@ char **argv;
      actors5_ARCH = tostring(ARCH);
      actors5_NODENAME = tostring(NODENAME);
      actors5_REL = tostring(REL);
-#if FACTORY
      {
 	  char const * p = strrchr(factoryVersion,' ');
 	  p = p ? p+1 : factoryVersion;
 	  actors5_FACTORYVERSION = tostring(p);
      }
      actors5_LIBFACVERSION = tostring(get_libfac_version());
-#else
-     actors5_FACTORYVERSION = tostring("'factory' not installed");
-     actors5_LIBFACVERSION = tostring("'libfac' not installed");
-#endif
      sprintf(READLINEVERSION,"%d.%d",(rl_readline_version>>8)&0xff,rl_readline_version&0xff);
      actors5_READLINEVERSION = tostring(READLINEVERSION);
      actors5_M2SUFFIX = tostring(M2SUFFIX);

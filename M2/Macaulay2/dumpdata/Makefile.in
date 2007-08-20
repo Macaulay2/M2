@@ -13,9 +13,11 @@ checkit.o: dumpdata.h std.h
 file.o: std.h
 warning.o: warning.h std.h
 gdb: checkit; gdb checkit
-all:: tags
+ifneq (@ETAGS@,)
+all :: tags
+endif
 tags: @srcdir@/TAGS
-@srcdir@/TAGS: Makefile @srcdir@/*.h @srcdir@/*.c ; cd @srcdir@ && etags *.h *.c
+@srcdir@/TAGS: Makefile @srcdir@/*.h @srcdir@/*.c ; cd @srcdir@ && @ETAGS@ *.h *.c
 clean::; rm -f *.o checkit core check-data *.a libdump.a
 EXTRAOBJS :=
 # EXTRAOBJS += mmap.o

@@ -3,36 +3,25 @@
 TeXmacsBegin = ascii 2
 TeXmacsEnd   = ascii 5
 
-statementNumber := 0
-
-rot := x -> (
-     global oooo <- ooo;			  -- avoid GlobalAssignHook with <-
-     global ooo <- oo;
-     global oo <- x;
-     )
-
 String.TeXmacsEvaluate = s -> (
-     statementNumber = statementNumber + 1;
-     << TeXmacsBegin << "verbatim:";
+     lineNumber = lineNumber + 1;
+     -- << TeXmacsBegin << "verbatim:";
      try (
 	  v := value s;
-	  if v =!= null then value concatenate("symbol o",toString statementNumber) <- v;
-	  rot v;
+	  v = (lookup(AfterEval,class v)) v;
+	  if v =!= null then value concatenate("symbol o",toString lineNumber) <- v;
+     	  fmt := v -> concatenate lines try mathML v else mathML toString v;
 	  if v =!= null then (
--- replacing latex below by mathml...
-	     tv := try mathML v else "\\text{Display failed}";
-	     tc := try mathML class v else "\\text{Class display failed}";
-	     << TeXmacsBegin << "html:<math>";
-		<< "\\begin{leqnarray*}"
-		   << "\\text{o" << statementNumber << "} & = & " << tv << "\\\\"
-		   << "\\text{o" << statementNumber << "} & : & " << tc
-		<< "\\end{leqnarray*}"
-		<< "</math>"
+	     << TeXmacsBegin << "html:"
+	     << "<p></p>"
+	     << "<p>" << "o" << lineNumber << " = " << "<math>" << fmt v << "</math>" << "</p>"
+	     << "<p></p>"
+	     << "<p>" << "o" << lineNumber << " : " << "<math>" << fmt class v << "</math>" << "</p>"
 	     << TeXmacsEnd;
 	     );
 	  )
-     else << "evaluation failed";
-     << TeXmacsEnd << flush;
+     else << TeXmacsBegin << "html:" << "evaluation failed" << TeXmacsEnd;
+     << flush;
      )
 
 -- Local Variables:

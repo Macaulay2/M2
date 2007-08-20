@@ -69,7 +69,7 @@ int getmaps(int nmaps, struct MAP maps[nmaps]) {
 #if HAVE_ELF_H == 1 && HAVE_UNISTD_H == 1 && HAVE___ENVIRON == 1
 #define ELF
 #include <elf.h>
-void *elf_header_location() {
+static void *elf_header_location() {
      char **envp = __environ;
      while(*envp++ != NULL);
 #if __WORDSIZE == 32
@@ -91,9 +91,10 @@ void *elf_header_location() {
 #endif
 
 int isNotCheckable(map m) {
-     /* in GNU-Linux, we don't want to dump the linux-gate.so.1 [vdso] section */
+     /* this functions returns TRUE for a few extra static memory map sections for which we don't care if the checksum changes */
+     /* in GNU-Linux, this applies to the linux-gate.so.1 [vdso] section */
 #ifdef ELF
-     return m->from == elf_header_location();
+     return m->from == elf_header_location() && getenv("COMPAREVDSO") == NULL;
 #else
      return FALSE;
 #endif

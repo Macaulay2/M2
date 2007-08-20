@@ -27,14 +27,16 @@ CPPFLAGS += -DDEBUG
 LFLAGS += -d
 YFLAGS += --debug
 endif
-all:: TAGS
+ifneq (@ETAGS@,)
+all :: TAGS
+endif
 all:: html-check-links
 %.dep : %.c; $(CC) -MM $(CPPFLAGS) $< >$@
 html-check-links : $(CFILES:.c=.o)
 ifneq ($(DEPENDS),no)
 include $(CFILES:.c=.dep)
 endif
-TAGS: $(SRC); etags $^
+TAGS: $(SRC); @ETAGS@ $^
 lex.o : grammar.fixed.c
 clean:; rm -f	*.o html-check-links *.dep y.tab.h lex.yy.c TAGS y.output \
 		core grammar.c grammar.tab.* lex.c grammar.fixed.* grammar.output

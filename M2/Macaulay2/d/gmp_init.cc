@@ -11,9 +11,7 @@ int initializeGMP() { return 1; }
 #endif
 
 extern "C" void initializeGMP_Cwrapper() { 
-#if FACTORY
   initializeGMP(); 		// factory's initialization routine for gmp memory functions
-#endif
 }
 
 /*

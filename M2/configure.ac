@@ -39,11 +39,6 @@ AC_DEFUN(IS_DECLARED,[
   AC_DEFINE_UNQUOTED(TO_UPPER($2_IS_DECLARED),$val,[whether $2 is declared in errno.h or stdio.h])
 ])
 
-AC_DEFUN(SHOW_CONFDEFS,[
-  echo contents of confdefs.h: >&6
-  sed -e '/^$/d' -e 's/^/   /' confdefs.h >&6
-  ])
-
 AC_CONFIG_FILES(m4_include(config/files))
 
 echo "any environment variables set:"
@@ -98,6 +93,9 @@ LIBS="$LOADLIBES $LDLIBS"
 # 6 checking for... messages and results
 
 AC_CHECK_PROGS(MAKE,gmake make)
+AC_CHECK_PROGS(WGET,wget)
+AC_CHECK_PROGS(CURL,curl)
+AC_CHECK_PROGS(ETAGS,etags)
 
 echo $ECHO_N "checking whether $MAKE is GNU make... " >&6
 if "$MAKE" -n --version nothing | grep GNU >/dev/null 2>&1
@@ -186,7 +184,7 @@ fi
 AC_HEADER_TIME() dnl # time.h sys/time.h
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h sys/wait.h sys/resource.h io.h linux/personality.h)
 AC_CHECK_HEADERS(stddef.h stdint.h inttypes.h bits/wordsize.h endian.h elf.h)
-AC_CHECK_HEADERS(sys/types.h gmp.h gdbm.h factoryconf.h)
+AC_CHECK_HEADERS(sys/types.h factoryconf.h)
 AC_CHECK_LIB(socket, socket)
 AC_CHECK_LIB(resolv, hstrerror)
 AC_CHECK_FUNCS([personality somesillyfunction sys_errlist herror error socket gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
@@ -274,16 +272,6 @@ AC_ARG_ENABLE(
 AC_SUBST(IMPLINST)
 test "$IMPLINST" = no; val=$?; AC_DEFINE_UNQUOTED(IMPLINST,$val,whether to instantiate templates implicitly)
 
-AC_SUBST(BUILDGMP)     AC_ARG_ENABLE(build-gmp, AS_HELP_STRING(--enable-build-gmp,build library gmp from downloaded source code), BUILDGMP="$enableval", BUILDGMP=no)
-AC_SUBST(BUILDGDBM)    AC_ARG_ENABLE(build-gdbm, AS_HELP_STRING(--enable-build-gdbm,build library gdbm from downloaded source code), BUILDGDBM="$enableval", BUILDGDBM=no)
-AC_SUBST(BUILDREADLINE)  AC_ARG_ENABLE(build-readline, AS_HELP_STRING(--enable-build-readline,build library readline from downloaded source code), BUILDREADLINE="$enableval", BUILDREADLINE=no)
-AC_SUBST(BUILDGC)      AC_ARG_ENABLE(build-gc, AS_HELP_STRING(--enable-build-gc,build library gc from downloaded source code), BUILDGC="$enableval", BUILDGC=no)
-AC_SUBST(BUILDNTL)     AC_ARG_ENABLE(build-ntl, AS_HELP_STRING(--enable-build-ntl,build library ntl from downloaded source code), BUILDNTL="$enableval", BUILDNTL=no)
-AC_SUBST(BUILDFACTORY) AC_ARG_ENABLE(build-factory, AS_HELP_STRING(--enable-build-factory,build library factory from downloaded source code), BUILDFACTORY="$enableval", BUILDFACTORY=no)
-AC_SUBST(BUILDLIBFAC) AC_ARG_ENABLE(build-libfac, AS_HELP_STRING(--enable-build-libfac,build library libfac from downloaded source code), BUILDLIBFAC="$enableval", BUILDLIBFAC=no)
-AC_SUBST(BUILDLAPACK) AC_ARG_ENABLE(build-lapack, AS_HELP_STRING(--enable-build-lapack,build library lapack from downloaded source code), BUILDLAPACK="$enableval", BUILDLAPACK=no)
-AC_SUBST(BUILDBLAS)   AC_ARG_ENABLE(build-blas, AS_HELP_STRING(--enable-build-blas,build library blas from downloaded source code), BUILDBLAS="$enableval", BUILDBLAS=no)
-
 AC_SUBST(DEVELOPMENT) AC_ARG_ENABLE(development, AS_HELP_STRING(--enable-development,build a development version),
     DEVELOPMENT="$enableval";AC_DEFINE(DEVELOPMENT,1,whether to build a development version), DEVELOPMENT==no)
 AC_SUBST(DEVELOPER)   AC_ARG_WITH(developer,   AS_HELP_STRING(--with-developer=...,specify the name of the developer ($USER)),DEVELOPER="$withval")
@@ -308,14 +296,28 @@ case "$COMPRESS" in
     *) AC_MSG_ERROR(unrecognized option for enable-compress) ;;
 esac
 
-AC_SUBST(CYGWIN)    AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin (disables encap and enables strip)), CYGWIN="$enableval", CYGWIN=no)
-if test "$CYGWIN" = yes ; then ENCAP=no ; STRIP=yes ; M2TARFILE=yes ; fi
+AC_SUBST(SRCTARFILE)  AC_ARG_WITH(srctarfile, AS_HELP_STRING(--with-srctarfile=...,source tar file to use for inclusion with distributions (cygwin)),
+    dirname=`dirname  "$withval"`
+    SRCTARFILE=`cd "$dirname" && pwd`/`basename "$withval"`
+    ,
+    SRCTARFILE=)
 
-AC_SUBST(DEBIAN)    AC_ARG_ENABLE(debian,  AS_HELP_STRING(--enable-debian,prepare a binary package for debian (enables encap)), DEBIAN="$enableval", DEBIAN=no)
-if test "$DEBIAN" = yes ; then ENCAP=yes ; M2TARFILE=yes ; fi
+AC_SUBST(CYGWIN)
+AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin (disables encap and enables strip)), CYGWIN="$enableval", CYGWIN=no)
+if test "$CYGWIN" = yes 
+then ENCAP=no STRIP=yes M2TARFILE=yes
+     if ! test "$SRCTARFILE" -o -d "$srcdir/.svn"
+     then AC_MSG_ERROR([source tar file needed for cygwin distribution, specify it with --with-srctarfile=...])
+     fi
+fi
 
-AC_SUBST(RPM)    AC_ARG_ENABLE(rpm,  AS_HELP_STRING(--enable-rpm,prepare a binary rpm package (enables encap)), RPM="$enableval", RPM=no)
-if test "$RPM" = yes ; then ENCAP=yes ; M2TARFILE=yes ; fi
+AC_SUBST(DEBIAN)
+AC_ARG_ENABLE(debian,  AS_HELP_STRING(--enable-debian,prepare a binary package for debian (enables encap)), DEBIAN="$enableval", DEBIAN=no)
+if test "$DEBIAN" = yes ; then ENCAP=yes M2TARFILE=yes ; fi
+
+AC_SUBST(RPM)
+AC_ARG_ENABLE(rpm,  AS_HELP_STRING(--enable-rpm,prepare a binary rpm package (enables encap)), RPM="$enableval", RPM=no)
+if test "$RPM" = yes ; then ENCAP=yes M2TARFILE=yes ; fi
 
 AC_SUBST(M2SUFFIX)
 test "$program_suffix" != NONE && M2SUFFIX="$program_suffix"
@@ -323,13 +325,10 @@ AC_ARG_ENABLE(dummy, AS_HELP_STRING(--program-suffix=...,suffix to append to exe
 
 test "$DUMPDATA" = no;   val=$?; AC_DEFINE_UNQUOTED(DUMPDATA,  $val,whether to use dumpdata)
 test "$PROFILING" = no;  val=$?; AC_DEFINE_UNQUOTED(PROFILING, $val,whether profiling has been enabled)
-test "$FACTORY" = no;    val=$?; AC_DEFINE_UNQUOTED(FACTORY,   $val,whether to use the factory library)
 test "$EXPERIMENT" = no; val=$?; AC_DEFINE_UNQUOTED(EXPERIMENT,$val,whether experimental code has been enabled)
 
-AC_SUBST(GDBMLIB)     AC_ARG_WITH(gdbmlib, AS_HELP_STRING(--with-gdbmlib=...,gdbm library (-lgdbm)), GDBMLIB="$withval", GDBMLIB="-lgdbm" )
 AC_SUBST(READLINELIB) AC_ARG_WITH(readlinelib, AS_HELP_STRING(--with-readlinelib=...,readline library (-lreadline)), READLINELIB="$withval", READLINELIB="-lreadline" )
 AC_SUBST(HISTORYLIB)  AC_ARG_WITH(historylib, AS_HELP_STRING(--with-historylib=...,history library (-lhistory)), HISTORYLIB="$withval", HISTORYLIB="-lhistory")
-AC_SUBST(FACTORY)     AC_ARG_WITH(factory, AS_HELP_STRING(--without-factory,disable the use of the 'factory' library), FACTORY="$enableval",FACTORY=yes)
 
 AC_DEFINE(M2_CONFIG_H,1,a macro definition to ensure our config.h was the one loaded)
 
@@ -374,15 +373,99 @@ AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without la
 test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
-SAVELIBS="$LIBS"
+AC_SUBST(BUILTLIBS)
 
-dnl LIBS=-ldl
-dnl AC_MSG_CHECKING(whether libdl exists (-ldl))
-dnl AC_LINK_IFELSE([int main() {}],LIBDL=-ldl;AC_MSG_RESULT(yes), LIBDL=; AC_MSG_RESULT(no))
+AC_LANG(C)
+AC_SEARCH_LIBS(tgoto,ncurses curses)
+AC_SUBST(BUILDREADLINE,no)
+AC_ARG_ENABLE(build-readline, AS_HELP_STRING(--enable-build-readline,build library readline from downloaded source code), BUILDREADLINE="$enableval")
+if test "$BUILDREADLINE" = no
+then AC_SEARCH_LIBS(add_history,history,,BUILDREADLINE=yes)
+     AC_SEARCH_LIBS(readline,readline,,BUILDREADLINE=yes)
+     AC_CHECK_HEADER(readline/readline.h,,BUILDREADLINE=yes)
+     if test "$BUILDREADLINE" = yes
+     then AC_MSG_NOTICE(readline library will be compiled)
+	  BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
+     fi
+fi
 
-dnl LIBS=-lpthread
-dnl AC_MSG_CHECKING(whether libpthread exists (-lpthread))
-dnl AC_LINK_IFELSE([int main() {}],LIBPTHREAD=-lpthread;AC_MSG_RESULT(yes), LIBPTHREAD=; AC_MSG_RESULT(no))
+AC_LANG(C)
+AC_SUBST(BUILDGMP,no)
+AC_ARG_ENABLE(build-gmp, AS_HELP_STRING(--enable-build-gmp,build library gmp from downloaded source code), BUILDGMP="$enableval")
+AC_ARG_WITH(gmplib, AS_HELP_STRING(--with-gmplib=...,gmp library (-lgmp)),
+    LIBS="$withval $LIBS" BUILDGMP=no,
+    [
+    if test "$BUILDGMP" = no
+    then AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILDGMP=yes)
+	 AC_CHECK_HEADER(gmp.h,,BUILDGMP=yes)
+	 test "$BUILDGMP" = yes && BUILTLIBS="-lgmp $BUILTLIBS"
+    fi
+    ])
+
+AC_LANG(C)
+AC_SUBST(BUILDGC,no)
+AC_ARG_ENABLE(build-gc, AS_HELP_STRING(--enable-build-gc,build library gc from downloaded source code), BUILDGC="$enableval")
+AC_ARG_WITH(gclib, AS_HELP_STRING(--with-gclib=...,gc library (-lgc)),
+    LIBS="$withval $LIBS" BUILDGC=no,
+    [
+    if test "$BUILDGC" = no
+    then AC_SEARCH_LIBS(GC_free,gc,,BUILDGC=yes)
+	 AC_CHECK_HEADER(gc/gc.h,,BUILDGC=yes)
+	 test "$BUILDGC" = yes && BUILTLIBS="-lgc $BUILTLIBS"
+    fi
+    ])
+
+AC_LANG(C)
+AC_SUBST(BUILDGDBM,no)
+AC_ARG_ENABLE(build-gdbm, AS_HELP_STRING(--enable-build-gdbm,build library gdbm from downloaded source code), BUILDGDBM="$enableval")
+AC_ARG_WITH(gdbmlib, AS_HELP_STRING(--with-gdbmlib=...,gdbm library (-lgdbm)),
+    LIBS="$withval $LIBS" BUILDGDBM=no,
+    [
+    if test "$BUILDGDBM" = no
+    then AC_SEARCH_LIBS(gdbm_close,gdbm,,BUILDGDBM=yes)
+	 AC_CHECK_HEADER(gdbm.h,,BUILDGDBM=yes)
+	 test "$BUILDGDBM" = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
+    fi
+    ])
+
+AC_SUBST(BUILDBLAS,no)
+AC_ARG_ENABLE(build-blas, AS_HELP_STRING(--enable-build-blas,build library blas from downloaded source code), BUILDBLAS="$enableval")
+
+AC_SUBST(BUILDLAPACK,no)
+AC_ARG_ENABLE(build-lapack, AS_HELP_STRING(--enable-build-lapack,build library lapack from downloaded source code), BUILDLAPACK="$enableval")
+
+# after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
+SAVELIBS=$LIBS
+
+# we need to control the position of -lfac -lcf in the link line, so we don't add them to $LIBS nor to $BUILTLIBS
+AC_SUBST(BUILDFACTORY,no)
+AC_ARG_ENABLE(build-factory, AS_HELP_STRING(--enable-build-factory,build library factory from downloaded source code), BUILDFACTORY="$enableval")
+if test "$BUILDFACTORY" = no
+then AC_LANG(C++)
+     AC_MSG_CHECKING([whether factory library is installed (-lcf)])
+     LIBS="-lcf $LIBS"
+     AC_LINK_IFELSE( [[
+	     #include <factoryconf.h>
+	     int main () { extern const char factoryVersion[]; return *factoryVersion; }
+	     ]],
+	  AC_MSG_RESULT(yes),
+	  AC_MSG_RESULT(no); BUILDFACTORY=yes BUILDLIBFAC=yes)
+     LIBS="$SAVELIBS"
+fi
+
+# we need to control the position of -lfac -lcf in the link line, so we don't add them to $LIBS
+AC_SUBST(BUILDLIBFAC,no)
+AC_ARG_ENABLE(build-libfac, AS_HELP_STRING(--enable-build-libfac,build library libfac from downloaded source code), BUILDLIBFAC="$enableval")
+if test "$BUILDLIBFAC" = no
+then AC_LANG(C++)
+     AC_MSG_CHECKING([whether the libfac library is installed (-lfac -lcf)])
+     LIBS="-lfac -lcf $SAVELIBS"
+     AC_LINK_IFELSE(
+	 [extern const char * libfac_version; int main() { return *libfac_version; }],
+	 AC_MSG_RESULT(yes),
+	 AC_MSG_RESULT(no (it will be compiled)); BUILDLIBFAC=yes)
+     LIBS="$SAVELIBS"
+fi
 
 AC_SUBST(FINALPREFIX)
 AC_ARG_WITH(final-prefix,
@@ -390,49 +473,12 @@ AC_ARG_WITH(final-prefix,
     FINALPREFIX="$withval", 
     FINALPREFIX="/usr")
 
-GCLIB="-lgc"
-AC_SUBST(GCLIB)
-AC_ARG_WITH(gclib, AS_HELP_STRING(--with-gclib=...,gc library ($GCLIB)), GCLIB="$withval")
-if test "$BUILDGC" = no
-then LIBS="$GCLIB $SAVELIBS"
-     AC_LANG(C)
-     AC_CHECK_HEADERS(gc/gc.h,
-	 AC_MSG_CHECKING([whether gc library (-lgc) is installed (using $LIBS)])
-	 AC_LINK_IFELSE([int main () { GC_malloc(1); }],AC_MSG_RESULT(yes),AC_MSG_RESULT(no (it will be compiled));BUILDGC=yes),
-	 BUILDGC=yes)
-fi
-
-GMPLIB="-lgmp"
-if test "$BUILDGMP" = no
-then AC_SUBST(GMPLIB)
-     AC_ARG_WITH(gmplib, AS_HELP_STRING(--with-gmplib=...,gmp library (-lgmp)), GMPLIB="$withval")
-     LIBS="$GMPLIB $SAVELIBS"
-     AC_LANG(C)
-     AC_MSG_CHECKING([whether gmp include file (gmp.h) and library ($GMPLIB) are installed])
-     AC_LINK_IFELSE( [
-	     #include <gmp.h>
-	     int main () { return *__gmp_version;} ],
-	 AC_MSG_RESULT(yes),
-	 AC_MSG_RESULT(no (it will be compiled)); BUILDGMP=yes )
-fi
-
 AC_MSG_CHECKING(whether nm accepts the demangle option)
 if nm --help 2>&1 | grep demangle >/dev/null
    then NM_DEMANGLES=yes; AC_MSG_RESULT(yes)
    else NM_DEMANGLES=no ; AC_MSG_RESULT(no)
 fi
 AC_SUBST(NM_DEMANGLES)
-
-if test "$BUILDGDBM" = no
-then LIBS="$GDBMLIB $SAVELIBS"
-     AC_LANG(C)
-     AC_MSG_CHECKING([whether gdbm library is installed])
-     AC_LINK_IFELSE([
-	 #include <gdbm.h>
-	 int main () { gdbm_close(0); } ],
-	 AC_MSG_RESULT(yes),
-	 AC_MSG_RESULT(no (it will be compiled)) ; BUILDGDBM=yes )
-fi
 
 LIBS="$SAVELIBS"
 AC_LANG(C)
@@ -464,46 +510,6 @@ then AC_SUBST(NTLLIB)
      LIBS="$SAVELIBS"
 fi
 
-LIBCF=-lcf
-if test "$BUILDFACTORY" = no
-then AC_SUBST(LIBCF)
-     LIBS="$LIBCF $SAVELIBS"
-     AC_LANG(C++)
-     AC_MSG_CHECKING([whether factory library is installed])
-     AC_LINK_IFELSE( [[
-	     #include <factoryconf.h>
-	     int main () { extern const char factoryVersion[]; return *factoryVersion; }
-	     ]],
-	  AC_MSG_RESULT(yes),
-	  AC_MSG_RESULT(no (it (and libfac) will be compiled)); BUILDFACTORY=yes; BUILDLIBFAC=yes)
-     LIBS="$SAVELIBS"
-fi
-
-LIBFAC=-lfac
-if test "$BUILDLIBFAC" = no
-then AC_SUBST(LIBFAC)
-     AC_LANG(C++)
-     LIBS="$LIBCF $LIBFAC $SAVELIBS"
-     AC_MSG_CHECKING([whether the libfac library is installed ($LIBFAC)])
-     AC_LINK_IFELSE(
-	 [extern const char * libfac_version; int main() { return *libfac_version; }],
-	 AC_MSG_RESULT(yes),
-	 AC_MSG_RESULT(no (it will be compiled)); BUILDLIBFAC=yes)
-     LIBS="$SAVELIBS"
-fi
-
-if test "$BUILDREADLINE" = no
-then LIBS="-lreadline -lhistory -lncurses $SAVELIBS"
-     AC_LANG(C)
-     AC_MSG_CHECKING(whether readline and history libraries are installed)
-     AC_LINK_IFELSE([
-             #include <readline/readline.h>
-	     int main () { readline; add_history; }],
-	 AC_MSG_RESULT(yes),
-	 AC_MSG_RESULT(no (they will be compiled)) ; BUILDREADLINE=yes )
-     LIBS="$SAVELIBS"
-fi
-
 AC_LANG(C)
 LIBS="-framework vecLib $SAVELIBS"
 AC_MSG_CHECKING([whether vecLib framework is available])
@@ -513,9 +519,7 @@ AC_LINK_IFELSE(AC_LANG_PROGRAM(,[sgemv_();dgetrf_();]),
 LIBS="$SAVELIBS"
 
 if test "$VECLIB" = no
-then # It's hard even to tell whether the lapack library is there without a fortran compiler to help us find it
-     AC_MSG_NOTICE(we may need a fortran compiler for compiling blas and/or lapack)
-     AC_F77_LIBRARY_LDFLAGS()
+then AC_F77_LIBRARY_LDFLAGS()
      AC_F77_DUMMY_MAIN()
      AC_F77_WRAPPERS()
 fi
@@ -542,7 +546,6 @@ then LAPACKLIBS="-llapack $BLASLIB"
      LIBS="$SAVELIBS"
 fi
 
-
 AC_SUBST(LIBRARIES)
 LIBRARIES=
 # this sequence reflects dependencies
@@ -558,7 +561,6 @@ test "$BUILDLIBFAC" = yes && LIBRARIES="$LIBRARIES libfac"
 test "$BUILDBLAS" = yes && LIBRARIES="$LIBRARIES blas"
 # lapack needs blas
 test "$BUILDLAPACK" = yes && LIBRARIES="$LIBRARIES lapack"
-AC_MSG_NOTICE([these libraries are to be compiled from downloaded sources:$LIBRARIES])
 
 TESTFLAG=-Wno-strict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
@@ -580,8 +582,6 @@ AC_COMPILE_IFELSE([int main() {}], HAVE_FATAL_ERRORS=yes, HAVE_FATAL_ERRORS=no)
 CFLAGS="$SAVE"
 AC_MSG_RESULT($HAVE_FATAL_ERRORS)
 
-dnl SHOW_CONFDEFS()
-
 IS_DECLARED(char **,sys_errlist, [
       #include <stdio.h>
       #include <errno.h>
@@ -590,6 +590,11 @@ IS_DECLARED(char **,h_errlist, [
       #include <stdio.h>
       #include <errno.h>
       ])
+
+AC_MSG_NOTICE([these libraries are to be compiled from downloaded sources:$LIBRARIES])
+AC_MSG_NOTICE([using BUILTLIBS = $BUILTLIBS])
+AC_MSG_NOTICE([using LIBS      = $LIBS])
+AC_MSG_NOTICE([using             -lfac -lcf])
 
 CONFIGURED_FILES="$ac_config_files"
 AC_SUBST(CONFIGURED_FILES)

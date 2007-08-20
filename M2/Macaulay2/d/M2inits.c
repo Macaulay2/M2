@@ -90,7 +90,6 @@ extern void *(*__gmp_allocate_atomic_func  )(size_t);
 extern void *(*__gmp_reallocate_atomic_func)(void *, size_t, size_t);
 
 void enterFactory() {
-# if FACTORY
   static int done = 0;
   if (!done) {
     done = 1;
@@ -112,7 +111,6 @@ void enterFactory() {
     __gmp_reallocate_func = save_gmp_reallocate_func;
     __gmp_free_func       = save_gmp_free_func;
   }
-# endif
 }
 
 void enterM2(void) {
