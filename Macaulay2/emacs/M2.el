@@ -100,7 +100,11 @@
   (lambda (syntax-table)
     (modify-syntax-entry ?\\ "\\" syntax-table)
     (modify-syntax-entry ?-  ". 12" syntax-table)
-    (modify-syntax-entry ?*  "." syntax-table)
+    (modify-syntax-entry ?\n ">" syntax-table)
+    (modify-syntax-entry ?\^m ">" syntax-table)
+    (modify-syntax-entry ?{  ". 1" syntax-table)
+    (modify-syntax-entry ?*  ". 23b" syntax-table)
+    (modify-syntax-entry ?}  ". 4" syntax-table)
     (modify-syntax-entry ?_  "." syntax-table)
     (modify-syntax-entry ?+  "." syntax-table)
     (modify-syntax-entry ?=  "." syntax-table)
@@ -110,8 +114,7 @@
     (modify-syntax-entry ?'  "w" syntax-table)
     (modify-syntax-entry ?&  "." syntax-table)
     (modify-syntax-entry ?|  "." syntax-table)
-    (modify-syntax-entry ?\n ">" syntax-table)
-    (modify-syntax-entry ?\^m ">" syntax-table)))
+    ))
  (list M2-mode-syntax-table M2-comint-mode-syntax-table))
 
 ;;

@@ -212,21 +212,28 @@ lookingatcomment(file:PosFile):bool := (
      ||
      c == int('#') && file.pos.line == ushort(1) && file.pos.column == ushort(0) && peek(file,1) == int('!')
      );
-skipwhite(file:PosFile):void := (
+ismore(file:PosFile):bool := ( c := peek(file); c != EOF && c != ERROR );
+skipwhite(file:PosFile):int := (
      while true do (
 	  if lookingatcomment(file)
-	  then while (
-	       !isnewline(peek(file)) 
-	       && (
-		    c := peek(file);
-		    c != EOF && c != ERROR
-		    )
-	       ) do getc(file)
-	  else 
-	  if iswhite(peek(file)) then (getc(file); while iswhite(peek(file)) do getc(file))
+	  then (					    -- comment  -- ... end-of-line
+     	       until isnewline(peek(file)) do if ismore(file) then getc(file) else return -1
+	       )
+	  else if peek(file,0) == int('{') && peek(file,1) == int('*')
+	  then (					    -- block comment {* ... *}
+	       getc(file); getc(file);
+	       until peek(file,0) == int('*') && peek(file,1) == int('}')
+	       do if ismore(file) then getc(file) else return -2;
+	       getc(file); getc(file);
+	       )
+	  else if iswhite(peek(file))
+	  then (
+	       getc(file);
+	       while iswhite(peek(file)) do getc(file);
+	       )
 	  else break;
 	  );
-     );
+     0);
 
 -- this errorToken means there was a parsing error or an error reading the file!
 export errorToken := Token(dummyWord,
@@ -240,7 +247,13 @@ export errorToken := Token(dummyWord,
 gettoken1(file:PosFile,sawNewline:bool):Token := (
      -- warning : tokenbuf is static
      while true do (
-	  skipwhite(file);
+	  rc := skipwhite(file);
+	  if rc != 0  then (
+	       printErrorMessage(file.pos,if rc == -2 then "unterminated block comment {-- ... --}" else "unterminated line (no newline)");
+	       empty(tokenbuf);
+	       while true do (ch2 := getc(file); if ch2 == EOF || ch2 == ERROR || ch2 == int('\n') then break;);
+     	       return errorToken;
+	       );
 	  line := file.pos.line;
 	  column := file.pos.column;
 	  ch := peek(file);
