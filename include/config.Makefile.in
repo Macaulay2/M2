@@ -17,7 +17,8 @@ all::
 
 .DELETE_ON_ERROR :
 
-# here we set the variables "make" uses
+
+# here we set the variables that "make" uses
 CC = @CC@
 CXX = @CXX@
 FC = @FC@
@@ -36,22 +37,24 @@ LDLIBS = @LDLIBS@
 #      http://fink.sourceforge.net/doc/packaging/fslayout.php
 #      http://cr.yp.to/unix.html, the section on "Filesystem layout"
 
-# here we set the variables (e.g., "prefix") that we need to be able override during "make install"
+## here we set the make variables that configure uses as make variables in configure variables, so we can override them as the designer of autoconf intend
 prefix = @prefix@
 exec_prefix = @exec_prefix@
+datarootdir = @datarootdir@
+docdir = @docdir@
+INSTALL = @INSTALL@
+##
+
+## here we set the variables (e.g., "prefix") that we need to be able override during "make install"
+# compilation and linking options
+STRIP = @STRIP@
+##
 
 ifeq "@ENCAP@" "yes"
 encapdir = $(prefix)/@package@
-tarparent = $(prefix)
-tarsubdir = @package@
 else
 encapdir = $(prefix)/.
-tarparent = NONE
-tarsubdir = NONE
 endif
-
-# in autoconf >= 2.60, @datadir@ is replaced by ${datarootdir}, so we need to get its value here:
-datarootdir = @datarootdir@
 
 ifeq ($(findstring $(prefix),@infodir@),)
 $(error expected infodir @infodir@ to begin with $(prefix))
@@ -99,14 +102,6 @@ emacsdocRelDir = $(docm2relRelDir)/emacs
 imagesRelDir = $(docm2relRelDir)/images
 styleRelDir = $(docm2relRelDir)/style
 
-BUILTLIBPATH = @TOPDIR@/libraries/final@FINALPREFIX@/$(librariesRelDir)
-CPPFLAGS := -I$(BUILTLIBPATH)/include $(CPPFLAGS)
-LDFLAGS := -L$(BUILTLIBPATH)/lib $(LDFLAGS)
-LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
-export LD_LIBRARY_PATH
-
-FINALLIBPATH = @FINALPREFIX@/$(librariesRelDir)
-
 bindir = $(encapdir)/$(binRelDir)
 libdir = $(encapdir)/$(libRelDir)
 infodir = $(encapdir)/$(infoRelDir)
@@ -115,7 +110,7 @@ mandir = $(encapdir)/$(manRelDir)
 man1dir = $(encapdir)/$(man1RelDir)
 man3dir = $(encapdir)/$(man3RelDir)
 emacsdir = $(encapdir)/$(emacsRelDir)
-docdir = $(encapdir)/$(docRelDir)
+docudir = $(encapdir)/$(docRelDir)
 docm2dir = $(encapdir)/$(docm2RelDir)
 packagesdir = $(encapdir)/$(packagesRelDir)
 docpackagesdir = $(encapdir)/$(docpackagesRelDir)
@@ -173,7 +168,14 @@ LAYOUT += }
 
 # end file system layout
 
-RANLIB = @RANLIB@
+BUILTLIBPATH = @TOPDIR@/libraries/final@FINALPREFIX@/$(librariesRelDir)
+CPPFLAGS := -I$(BUILTLIBPATH)/include $(CPPFLAGS)
+LDFLAGS := -L$(BUILTLIBPATH)/lib $(LDFLAGS)
+LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
+export LD_LIBRARY_PATH
+
+FINALLIBPATH = @FINALPREFIX@/$(librariesRelDir)
+
 AR = ar
 
 MAKEFLAGS += -w
@@ -182,32 +184,15 @@ ifeq "@OS@ @ARCH@" "Linux alpha"
 AS = gcc -c -x assembler-with-cpp
 endif
 
-ifeq "@CC@" "cl"
-include config.Microsoft
-endif
-
-ifeq "@DEBUG@" "yes"
-CPPFLAGS += -DDEBUG
-else
-CPPFLAGS += -DNDEBUG
-endif
-
 ifeq "@GCC@" "yes"
 # if it's gcc, we can get stricter warning and error messages
+
 ifneq ($(RELAX),yes)
 # but sometimes that's bad, e.g., during configure scripts with loosely written test programs
 CFLAGS   += -pipe -Wall              -Wshadow -Winline -Wcast-qual -Wno-parentheses -Wno-sign-compare -Werror-implicit-function-declaration
-CXXFLAGS += -pipe \
-	    -Wall -Wconversion -Wshadow -Winline -Wcast-qual -Wno-parentheses -Wno-sign-compare \
-	    -Woverloaded-virtual -Wsign-promo
+CXXFLAGS += -pipe -Wall -Wconversion -Wshadow -Winline -Wcast-qual -Wno-parentheses -Wno-sign-compare -Woverloaded-virtual -Wsign-promo
 # -Werror-implicit-function-declaration is important, because if we include the wrong include file and a function that
 # returns a 64-bit pointer is not declared as such, then only 32 bits of the return value will be used.
-endif
-
-ifeq (@HAVE_FATAL_ERRORS@,yes)
-CPPFLAGS += -Wfatal-errors
-CFLAGS += -Wfatal-errors
-CXXFLAGS += -Wfatal-errors
 endif
 
 ##  this option is sort of interesting, but generates nothing really useful for us:
@@ -216,56 +201,12 @@ endif
 ifeq "@HAVE_NO_STRICT_ALIASING@" "yes"
 CFLAGS += -Wno-strict-aliasing
 endif
-
-ifeq "@OPTIMIZE@" "yes"
-CFLAGS   += -O3
-CXXFLAGS += -O3
-else
-CFLAGS   += -O0
-CXXFLAGS += -O0
-endif
 endif
 
-ifeq "$(STRIP)" "no"
-STRIPCMD := :
-else
-ifneq "@CC@" "cl"
-# -fomit-frame-pointer causes strange bugs!
-# CFLAGS   += -fomit-frame-pointer
-# CXXFLAGS += -fomit-frame-pointer
+STRIPCMD = @STRIPCMD@
+ifeq "$(STRIP)" "yes"
 ifneq "@OS@" "Darwin"
 LDFLAGS  += -s
 endif
-STRIPCMD := strip
-endif
 endif
 
-ifeq "@MEMDEBUG@" "yes"
-CPPFLAGS += -DMEMDEBUG
-endif
-
-DUMPDATAFILE := Macaulay2-@ARCH@-data
-
-ifeq "@DEBUG@" "yes"
-CPPFLAGS += -DGC_DEBUG
-endif
-
-ifeq "@OS@" "Darwin"
-
-# we don't know what this does, but some apple documentation writers seem to like it:
-LDFLAGS += -bind_at_load
-
-# this one makes it find and use our readline.a first, even if there is a file readline.dylib in /usr/lib
-# the point is that the system's readline.dylib might be much older and conflict with our newer one
-LDFLAGS += -Wl,-search_paths_first
-
-endif
-
-ALTIVEC = @ALTIVEC@
-ifeq "$(ALTIVEC)" "yes"
-LDFLAGS += -faltivec
-CFLAGS += -faltivec
-CXXFLAGS += -faltivec
-endif
-
-XCODE = @XCODE@

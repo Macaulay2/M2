@@ -98,6 +98,7 @@ AC_CHECK_PROGS(CURL,curl)
 AC_CHECK_PROGS(OBJDUMP,objdump)
 AC_CHECK_PROGS(ETAGS,etags)
 AC_CHECK_PROGS(LDD,ldd)
+AC_CHECK_PROGS(STRIPCMD,strip)
 
 AC_SUBST(TOPDIR,`pwd`)
 
@@ -199,7 +200,12 @@ AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize
 AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG="$enableval")
 AC_SUBST(ENCAP,yes)    AC_ARG_ENABLE(encap, AS_HELP_STRING(--disable-encap,do not encapsulate file in a subdirectory), ENCAP="$enableval")
 AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE="$enableval")
-AC_SUBST(ALTIVEC,no)   AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" option), ALTIVEC="$enableval")
+AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" option), 
+    ALTIVEC="$enableval"
+    LDFLAGS="$LDFLAGS -faltivec"
+    CFLAGS="CFLAGS -faltivec"
+    CXXFLAGS="$CXXFLAGS -faltivec"
+)
 AC_SUBST(PROFILING,no) AC_ARG_ENABLE(profile, AS_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING="$enableval")
 AC_SUBST(COMPRESS,gz)  AC_ARG_ENABLE(compress, AS_HELP_STRING([--enable-compress=[gz|bz2]],compression method for tarball), COMPRESS="$enableval")
 AC_SUBST(EXPERIMENT,no)AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-experimental-code,enable experimental code), EXPERIMENT="$enableval")
@@ -536,15 +542,18 @@ AC_COMPILE_IFELSE([int main() {}], HAVE_NO_STRICT_ALIASING=yes, HAVE_NO_STRICT_A
 CFLAGS="$SAVE"
 AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
 
-TESTFLAG=-Wfatal-errors
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
-AC_SUBST(HAVE_FATAL_ERRORS)
-SAVE="$CFLAGS"
-CFLAGS="$TESTFLAG $CFLAGS"
 AC_LANG(C)
-AC_COMPILE_IFELSE([int main() {}], HAVE_FATAL_ERRORS=yes, HAVE_FATAL_ERRORS=no)
-CFLAGS="$SAVE"
-AC_MSG_RESULT($HAVE_FATAL_ERRORS)
+SAVE="$CFLAGS"
+CFLAGS="$CFLAGS -Wfatal-errors"
+AC_COMPILE_IFELSE([int main() {}], 
+    CFLAGS="$SAVE"
+    CPPFLAGS="$CPPFLAGS -Wfatal-errors"
+    CFLAGS="$CFLAGS -Wfatal-errors"
+    CXXFLAGS="$CXXFLAGS -Wfatal-errors"
+    AC_MSG_RESULT(yes, adding the flag),
+    CFLAGS="$SAVE"
+    AC_MSG_RESULT(no))
 
 IS_DECLARED(char **,sys_errlist, [
       #include <stdio.h>
@@ -565,6 +574,33 @@ AC_MSG_NOTICE([using LIBRARIES    = $LIBRARIES (libraries to be built from downl
 AC_MSG_NOTICE([using BUILTLIBS    = $BUILTLIBS (linker options for most of them)])
 AC_MSG_NOTICE([using SINGULARLIBS = $SINGULARLIBS (linker options for some of them)])
 AC_MSG_NOTICE([using LIBS         = $LIBS (M2 linker options)])
+
+AC_SUBST(DUMPDATAFILE,Macaulay2-$ARCH-data)
+
+if test "$DEBUG" = yes
+then CPPFLAGS="$CPPFLAGS -DDEBUG"
+else CPPFLAGS="$CPPFLAGS -DNDEBUG"
+fi
+
+if test "$OPTIMIZE" = yes
+then CFLAGS="$CFLAGS -O3"
+     CXXFLAGS="$CXXFLAGS -O3"
+else CFLAGS="$CFLAGS -O0"
+     CXXFLAGS="$CXXFLAGS -O0"
+fi
+
+test "$MEMDEBUG" = yes && CPPFLAGS="$CPPFLAGS -DMEMDEBUG"
+test "$DEBUG" = yes && CPPFLAGS="$CPPFLAGS -DGC_DEBUG"
+
+if test "$OS" = Darwin 
+then 
+    # we don't know what this does, but some apple documentation writers seem to like it:
+    LDFLAGS="$LDFLAGS -bind_at_load"
+
+    # this one makes it find and use our readline.a first, even if there is a file readline.dylib in /usr/lib
+    # the point is that the system's readline.dylib might be much older and conflict with our newer one
+    LDFLAGS="$LDFLAGS -Wl,-search_paths_first"
+fi
 
 AC_SUBST(package,Macaulay2-$PACKAGE_VERSION)
 AC_SUBST(SRC_TGZ,$package.tar.gz)

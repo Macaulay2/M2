@@ -113,9 +113,9 @@ prep :: $(DUMPEDM2FILES)
 phase1 :: prep
 
 ifneq "@DUMPDATA@" "no"
-phase1 :: ../cache/$(DUMPDATAFILE)
-../cache/$(DUMPDATAFILE) redump : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) ../bin/M2@EXE@ $(OTHERDUMPEDM2FILES)
-	rm -f ../cache/$(DUMPDATAFILE)
+phase1 :: ../cache/@DUMPDATAFILE@
+../cache/@DUMPDATAFILE@ redump : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) ../bin/M2@EXE@ $(OTHERDUMPEDM2FILES)
+	rm -f ../cache/@DUMPDATAFILE@
 	../bin/M2@EXE@ -q --stop -e 'errorDepth = 0' --dumpdata
 	printenv LD_LIBRARY_PATH
 endif
@@ -209,7 +209,7 @@ install ::
 	@ echo installing the Core package
 	@ set -x ; time ../bin/M2@EXE@ $(M2OPTIONS)
 
-clean::; rm -rf ../cache/$(DUMPDATAFILE) cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 version.m2 core gmon.out
+clean::; rm -rf ../cache/@DUMPDATAFILE@ cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 version.m2 core gmon.out
 distclean : clean; rm -f Makefile
 always:
 

@@ -20,7 +20,7 @@ $(LIB): $(OFILES)
 else
 $(LIB): $(OFILES)
 	$(AR) $(ARFLAGS) $@ $^
-	-$(RANLIB) $(LIB)
+	-@RANLIB@ $(LIB)
 endif
 
 distclean clean :; rm -f $(LIB) *.o

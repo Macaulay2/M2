@@ -281,14 +281,18 @@ clean::; rm -f ../bin/M2@EXE@
 tmp_init.o : $(M2_OBJECTS) $(LIBRARYDEPS) $(EFILES) factory_init3.o
 ../bin/M2@EXE@ : tmp_init.o
 	time @CC@ $(M2_LDFLAGS) $(M2_OBJECTS) $^ factory_init3.o $(EFILES) $(LIBRARYOPTIONS) $(M2_LIBS) -o "$@".tmp
-	$(STRIPCMD) "$@".tmp
+ifeq "$(STRIP)" "yes"
+ifneq "@STRIPCMD@" ""
+	@STRIPCMD@ "$@".tmp
+endif
+endif
 	mv "$@".tmp "$@"
 
 mapfile.demangled : mapfile ; demangle <$< >$@
 clean::; rm -f mapfile.demangled
 
 interpret.a : $(M2_OBJECTS); $(AR) rcs $@ $^
-ifeq "$(XCODE)" "yes"
+ifeq "@XCODE@" "yes"
 # Mike uses Xcode, an IDE, under MacOS 10 to link against
 all :: interpret.a
 endif
