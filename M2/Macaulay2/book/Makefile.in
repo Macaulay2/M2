@@ -1,7 +1,7 @@
 # @configure_input@
 include ../../include/config.Makefile
 VPATH = @srcdir@
-BOOKNAME = Macaulay2-$(PACKAGE_VERSION)-book
+BOOKNAME = Macaulay2-@PACKAGE_VERSION@-book
 
 DVIPSFLAGS = -z
 TEX=latex

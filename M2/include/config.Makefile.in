@@ -17,12 +17,7 @@ all::
 
 .DELETE_ON_ERROR :
 
-PACKAGE_NAME = @PACKAGE_NAME@
-PACKAGE_TARNAME = @PACKAGE_TARNAME@
-PACKAGE_VERSION = @PACKAGE_VERSION@
-
-package = Macaulay2-$(PACKAGE_VERSION)
-ARCH    = @ARCH@
+package = Macaulay2-@PACKAGE_VERSION@
 OS      = @OS@
 REL     = @REL@
 
@@ -31,12 +26,12 @@ SRC_TGZ = $(package).tar.gz
 SRC_TBZ = $(package).tar.bz2
 SRC_TZ  = $(package).tar.@COMPRESS@
 
-PKG_TGZ = $(package)-$(ARCH)-$(OS).tar.gz
-PKG_TBZ = $(package)-$(ARCH)-$(OS).tar.bz2
+PKG_TGZ = $(package)-@ARCH@-$(OS).tar.gz
+PKG_TBZ = $(package)-@ARCH@-$(OS).tar.bz2
 
 PKG_DEB = $(package)-@DEBIANARCH@-$(OS).deb
-PKG_RPM = $(package)-$(ARCH)-$(OS).rpm
-PKG_TZ  = $(package)-$(ARCH)-$(OS).tar.$(COMPRESS)
+PKG_RPM = $(package)-@ARCH@-$(OS).rpm
+PKG_TZ  = $(package)-@ARCH@-$(OS).tar.$(COMPRESS)
 
 DESC    = @PACKAGE_VERSION@-@host_cpu@-@OS@-@REL@
 # we used to use @ ARCH @ instead of @ host_cpu @ here, but for DEC alphas,
@@ -252,7 +247,7 @@ AR = ar
 
 MAKEFLAGS += -w
 
-ifeq "$(OS) $(ARCH)" "Linux alpha"
+ifeq "$(OS) @ARCH@" "Linux alpha"
 AS = gcc -c -x assembler-with-cpp
 endif
 
@@ -333,7 +328,7 @@ ifeq "$(MEMDEBUG)" "yes"
 CPPFLAGS += -DMEMDEBUG
 endif
 
-DUMPDATAFILE := Macaulay2-$(ARCH)-data
+DUMPDATAFILE := Macaulay2-@ARCH@-data
 
 ifeq "$(DEBUG)" "yes"
 CPPFLAGS += -DGC_DEBUG
