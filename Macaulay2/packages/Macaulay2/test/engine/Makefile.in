@@ -46,7 +46,7 @@ factor-demangled.gprof : factor.gprof Makefile
 	<$< sed -e 's/\(_GLOBAL__D_\)/global destructor /' -e 's/\(_GLOBAL__I_\)/global constructor /' | demangle >$@
 factor.o factor-init.o : factor.h
 mapfile factor : factor.o factor-init.o factor-init1.o 
-	$(CXX) $(LDFLAGS) factor.o factor-init.o $(LDLIBS) factor-init1.o -o "$@"
+	@CXX@ $(LDFLAGS) factor.o factor-init.o $(LDLIBS) factor-init1.o -o "$@"
 mapfile.demangled : mapfile
 	demangle <$< >$@
 

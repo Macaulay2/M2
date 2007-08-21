@@ -7,7 +7,7 @@ LDFLAGS += -L../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
 LD_LIBRARY_PATH := ../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 
-ifeq ($(OS),Linux)
+ifeq (@OS@,Linux)
 EXES += screen
 endif
 
@@ -30,7 +30,7 @@ update.o : restart.h
 clean ::; rm -f $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) targettypes.h
 ../bin/linkexec : linkexec ; cp -a $< $@
 
-ifeq "$(OS)" "Windows-95-98-NT"
+ifeq "@OS@" "Windows-95-98-NT"
 all:: ../setup.exe
 ../setup.exe : setup
 	cp setup.exe ..

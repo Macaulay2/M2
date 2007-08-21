@@ -15,14 +15,14 @@ install install-others install-Macaulay2 :: $(docm2reldir) $(docm2dir) \
 	   $(docm2reldir)/CHANGES \
 	   $(docm2dir)/LAYOUT
 
-$(docm2dir) $(docm2reldir):; $(MKDIR_P) "$@"
-$(docm2dir)/COPYING : COPYING ; $(INSTALL_DATA) $< "$@"
-$(docm2reldir)/CHANGES : CHANGES ; $(INSTALL_DATA) $< "$@"
-$(docm2dir)/LAYOUT  : LAYOUT  ; $(INSTALL_DATA) $< "$@"
-$(docm2dir)/README  : README  ; $(INSTALL_DATA) $< "$@"
+$(docm2dir) $(docm2reldir):; @MKDIR_P@ "$@"
+$(docm2dir)/COPYING : COPYING ; @INSTALL_DATA@ $< "$@"
+$(docm2reldir)/CHANGES : CHANGES ; @INSTALL_DATA@ $< "$@"
+$(docm2dir)/LAYOUT  : LAYOUT  ; @INSTALL_DATA@ $< "$@"
+$(docm2dir)/README  : README  ; @INSTALL_DATA@ $< "$@"
 
 # install install-others install-Macaulay2 :: $(docm2reldir)/INSTALL
-# $(encapdir)/INSTALL  : INSTALL  ; $(INSTALL_DATA) $< "$@"
+# $(encapdir)/INSTALL  : INSTALL  ; @INSTALL_DATA@ $< "$@"
 
 ################################# srcdir
 initialize :: srcdir
@@ -33,7 +33,7 @@ initialize :: cache
 cache :; mkdir $@
 distclean clean ::; rm -rf cache
 install install install-others install-Macaulay2 :: $(cachedir)
-$(cachedir):; $(INSTALL) -d "$@"
+$(cachedir):; @INSTALL@ -d "$@"
 ################################# util
 initialize::; $(MAKE) -C util all
 distclean clean ::; $(MAKE) DEPENDS=no -C util $@
@@ -56,7 +56,7 @@ check ::
 
 initialize distclean clean ::; $(MAKE) DEPENDS=no -C e $@
 ################################# dumpdata
-ifeq "$(DUMPDATA)" "yes"
+ifeq "@DUMPDATA@" "yes"
 justM2 ::; $(MAKE) -C dumpdata all
 install all check ::; $(MAKE) -C dumpdata $@
 install-others install-Macaulay2 ::; $(MAKE) -C dumpdata "install"

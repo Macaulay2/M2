@@ -31,43 +31,43 @@ prefixdir=$(shell dirname $(finalprefix))
 
 all install :: \
 	server/Macaulay2 \
-	server/Macaulay2/$(package)-1.tar.bz2 \
-	server/Macaulay2/$(package)-1-src.tar.bz2 \
+	server/Macaulay2/@package@-1.tar.bz2 \
+	server/Macaulay2/@package@-1-src.tar.bz2 \
 	server/Macaulay2/setup.hint \
 	server/setup.ini
 	@ echo "============================================================================="
 	@ echo "cygwin package files prepared in cygwin/server"
 	@ echo "============================================================================="
 server/setup.ini : ; cd server && PATH=`cd @srcdir@; pwd`:$(PATH) $(MAKE) setup.ini
-server/Macaulay2 : ; $(MKDIR_P) $@
-server/Macaulay2/$(package)-1.tar.bz2 : Makefile server/Macaulay2
+server/Macaulay2 : ; @MKDIR_P@ $@
+server/Macaulay2/@package@-1.tar.bz2 : Makefile server/Macaulay2
 	rm -rf files
 	mkdir files
-	$(MKDIR_P) files$(prefixdir)
-	fakeroot tar xzf ../$(PKG_TGZ) -C files$(prefixdir)
-	mv files$(prefixdir)/$(package) files$(prefixdir)/$(prefixtail)
+	@MKDIR_P@ files$(prefixdir)
+	fakeroot tar xzf ../@PKG_TGZ@ -C files$(prefixdir)
+	mv files$(prefixdir)/@package@ files$(prefixdir)/$(prefixtail)
 	cd files$(finalprefix) && rm -f INSTALL encapinfo postinstall preremove
-	$(MKDIR_P) files/etc/postinstall files@FINALPREFIX@
-	$(INSTALL_PROGRAM) Macaulay2.sh files/etc/postinstall
+	@MKDIR_P@ files/etc/postinstall files@FINALPREFIX@
+	@INSTALL_PROGRAM@ Macaulay2.sh files/etc/postinstall
 	fakeroot chown -R root.root files
 	(cd files && fakeroot tar cjf - *) >$@
 	rm -rf files
 server/Macaulay2/setup.hint : setup.hint server/Macaulay2 ; cp $< $@
 
 ifeq (@SRCTARFILE@,)
-$(package)-1 : always ; rm -f $@ && ln -sf @srcdir@/.. $@
-src-files : always ; svn ls -R @srcdir@/.. | egrep -v '/$$' | sed 's=^=$(package)-1/=' >$@
-mkrt : src-files $(package)-1 ; cat src-files | fakeroot xargs chown root.root
-server/Macaulay2/$(package)-1-src.tar.bz2 : server/Macaulay2 mkrt src-files ; fakeroot tar cfj $@ --files-from=src-files
+@package@-1 : always ; rm -f $@ && ln -sf @srcdir@/.. $@
+src-files : always ; svn ls -R @srcdir@/.. | egrep -v '/$$' | sed 's=^=@package@-1/=' >$@
+mkrt : src-files @package@-1 ; cat src-files | fakeroot xargs chown root.root
+server/Macaulay2/@package@-1-src.tar.bz2 : server/Macaulay2 mkrt src-files ; fakeroot tar cfj $@ --files-from=src-files
 else
-src-tree : @SRCTARFILE@ ; rm -rf $@ && $(MKDIR_P) $@ && tar xzf $< -C $@ && rm -f $(package)-1 && ln -s srctree/* $(package)-1
+src-tree : @SRCTARFILE@ ; rm -rf $@ && @MKDIR_P@ $@ && tar xzf $< -C $@ && rm -f @package@-1 && ln -s srctree/* @package@-1
 mkrt : src-tree ; fakeroot chown -R root.root src-tree
-server/Macaulay2/$(package)-1-src.tar.bz2 : server/Macaulay2 mkrt ; fakeroot tar cfj $@ $(package)-1/.
+server/Macaulay2/@package@-1-src.tar.bz2 : server/Macaulay2 mkrt ; fakeroot tar cfj $@ @package@-1/.
 endif
 
 install :: Macaulay2.README Macaulay2.sh
-	$(INSTALL) -d $(encapdir)@FINALPREFIX@/share/doc/Cygwin
-	$(INSTALL) Macaulay2.README $(encapdir)@FINALPREFIX@/share/doc/Cygwin
+	@INSTALL@ -d $(encapdir)@FINALPREFIX@/share/doc/Cygwin
+	@INSTALL@ Macaulay2.README $(encapdir)@FINALPREFIX@/share/doc/Cygwin
 
 clean ::; rm -rf server files
 distclean : clean; rm -f Makefile Macaulay2.README Macaulay2.sh setup.hint

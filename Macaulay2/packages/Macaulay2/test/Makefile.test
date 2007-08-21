@@ -3,7 +3,7 @@
 # rules used by the Makefiles in various test directories
 
 DOTS ?= ../../..
-ifeq "$(DEBUG)" "no"
+ifeq "@DEBUG@" "no"
 TLIMIT ?= 40
 MLIMIT ?= 90000
 VLIMIT ?= 90000
@@ -25,7 +25,7 @@ PAT := 'internal error|:[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):|^GC|^0x|^out of
 FILTER := egrep -a $(PAT)
 
 all check :: $(RESULTS)
-$(RESULTS) : $(DOTS)/bin/M2$(EXE)
+$(RESULTS) : $(DOTS)/bin/M2@EXE@
 
 ARGS := --silent --stop -q -e 'path=join(path,{"$(SRCDIR)/","$(SRCDIR)/$(DOTS)/packages/"})'
 ARGS += --no-debug --print-width 140
@@ -41,7 +41,7 @@ status :: $(TESTFILES)
 	@ $(LIMIT); \
 		echo "--*- compilation -*-" >$*.errors; \
 		if (echo 'input "$<"'; echo 'collectGarbage()'; echo exit 0) | \
-		   time $(DOTS)/bin/M2$(EXE) $(ARGS) >>$*.errors 2>&1 ; \
+		   time $(DOTS)/bin/M2@EXE@ $(ARGS) >>$*.errors 2>&1 ; \
 		then mv $*.errors $@ ; \
 		else a=$$?; \
 		     echo "$*.errors:0: error output left here; some errors follow" >&2 ; \
@@ -53,7 +53,7 @@ status :: $(TESTFILES)
 	@ egrep -n '^--status:' $< /dev/null || true
 	@ $(LIMIT); \
 		echo "--*- compilation -*-" >$*.errors; \
-		if time $(DOTS)/bin/M2$(EXE) $(ARGS) <$< >>$*.errors 2>&1 ; \
+		if time $(DOTS)/bin/M2@EXE@ $(ARGS) <$< >>$*.errors 2>&1 ; \
 		then mv $*.errors $@ ; \
 		else a=$$?; \
 		     echo "$*.errors:0: error output left here; some errors follow" >&2 ; \

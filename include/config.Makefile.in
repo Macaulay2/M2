@@ -17,102 +17,33 @@ all::
 
 .DELETE_ON_ERROR :
 
-package = Macaulay2-@PACKAGE_VERSION@
-OS      = @OS@
-REL     = @REL@
-
-COMPRESS = @COMPRESS@
-SRC_TGZ = $(package).tar.gz
-SRC_TBZ = $(package).tar.bz2
-SRC_TZ  = $(package).tar.@COMPRESS@
-
-PKG_TGZ = $(package)-@ARCH@-$(OS).tar.gz
-PKG_TBZ = $(package)-@ARCH@-$(OS).tar.bz2
-
-PKG_DEB = $(package)-@DEBIANARCH@-$(OS).deb
-PKG_RPM = $(package)-@ARCH@-$(OS).rpm
-PKG_TZ  = $(package)-@ARCH@-$(OS).tar.$(COMPRESS)
-
-DESC    = @PACKAGE_VERSION@-@host_cpu@-@OS@-@REL@
-# we used to use @ ARCH @ instead of @ host_cpu @ here, but for DEC alphas,
-# and perhaps other machines, it gives more information.  The script
-# config.guess assembles host_cpu from /proc/cpuinfo, and can be something
-# like "alphaev6" or "alphaev56", but ARCH, which is determined from 'uname'
-# by the 'configure' script, will be simply "alpha".
-
-DUMPDATA = @DUMPDATA@
-NODENAME = @NODENAME@
-PROFILING = @PROFILING@
-STRIP = @STRIP@
-OPTIMIZE = @OPTIMIZE@
-DEBUG = @DEBUG@
-MEMDEBUG = @MEMDEBUG@
-VERBOSE = @VERBOSE@
-STATIC = @STATIC@
-CYGWIN = @CYGWIN@
-TARLIBS = @TARLIBS@
-DEBIAN = @DEBIAN@
-RPM = @RPM@
-M2TARFILE = @M2TARFILE@
-TAR_COMPRESS_OPTION = @TAR_COMPRESS_OPTION@
-
+# here we set the variables "make" uses
 CC = @CC@
-GCC = @GCC@
 CXX = @CXX@
-YACC = @YACC@
-AWK = @AWK@
-CURL = curl
-INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
-INSTALL_DATA = @INSTALL_DATA@
-MKDIR_P = @MKDIR_P@
+FC = @FC@
 CFLAGS = @CFLAGS@
 CPPFLAGS = @CPPFLAGS@
 CXXFLAGS = @CXXFLAGS@
 FFLAGS = @FFLAGS@
+FCFLAGS = @FCFLAGS@
 LDFLAGS = @LDFLAGS@
 LOADLIBES = @LOADLIBES@
-ifeq ($(LIBRARY_MODE),yes)
-LDLIBS = @LIBS@ 
-else
-LDLIBS = @BUILTLIBS@ @LIBS@ 
-endif
-LAPACK = @LAPACK@
-NTLLIB = @NTLLIB@
-READLINELIB = @READLINELIB@
-HISTORYLIB = @HISTORYLIB@
-NM_DEMANGLES = @NM_DEMANGLES@
-ENCAP = @ENCAP@
-M2SUFFIX = @M2SUFFIX@
-EXEEXT = @EXEEXT@
-EXE = $(M2SUFFIX)$(EXEEXT)
-CONFIG_ARG0 = @CONFIG_ARG0@
-CONFIG_ARGS = @CONFIG_ARGS@
-CONFIG_CMD = @CONFIG_CMD@
-AUTOINST = @AUTOINST@
-IMPLINST = @IMPLINST@
-
-# See the autoconf documentation for a description of DEFS; we use include/config.h instead, to keep command lines short
-DEFS = @DEFS@
-
-M2PKGNAME = PackageName
+LDLIBS = @LDLIBS@ 
 
 # Macaulay 2 file system layout definitions, dependent on $(prefix) defined
-# above and on $(M2PKGNAME) undefined above.
+# above and on PackageName.
 #  see http://www.pathname.com/fhs/
 #      http://fink.sourceforge.net/doc/packaging/fslayout.php
 #      http://cr.yp.to/unix.html, the section on "Filesystem layout"
 
-# this might have to get changed manually, but hopefully not:
-MAINPACKAGE = Core
-
+# here we set the variables (e.g., "prefix") that we need to be able override during "make install"
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 
-ifeq "$(ENCAP)" "yes"
-encapdir = $(prefix)/$(package)
+ifeq "@ENCAP@" "yes"
+encapdir = $(prefix)/@package@
 tarparent = $(prefix)
-tarsubdir = $(package)
+tarsubdir = @package@
 else
 encapdir = $(prefix)/.
 tarparent = NONE
@@ -150,20 +81,20 @@ docRelDir = $(dataRelDir)/doc
 docm2RelDir = $(docRelDir)/Macaulay2
 packagesRelDir = $(dataRelDir)/Macaulay2
 docpackagesRelDir = $(docm2RelDir)
-packagesrcRelDir = $(packagesRelDir)/$(M2PKGNAME)
-packagedocRelDir = $(docpackagesRelDir)/$(M2PKGNAME)
+packagesrcRelDir = $(packagesRelDir)/PackageName
+packagedocRelDir = $(docpackagesRelDir)/PackageName
 packageimagesRelDir = $(packagedocRelDir)/images
 packagetestsRelDir = $(packagedocRelDir)/tests
 packagehtmlRelDir = $(packagedocRelDir)/html
 packageexamplesRelDir = $(packagedocRelDir)/examples
 librariesRelDir = $(libRelDir)/Macaulay2/libraries
-libm2RelDir     = $(libRelDir)/Macaulay2/$(MAINPACKAGE)
+libm2RelDir     = $(libRelDir)/Macaulay2/Core
 cacheRelDir     = $(libm2RelDir)/cache
-packagecacheRelDir = $(libRelDir)/Macaulay2/$(M2PKGNAME)/cache
+packagecacheRelDir = $(libRelDir)/Macaulay2/PackageName/cache
 datam2RelDir = $(dataRelDir)/Macaulay2
-shareRelDir = $(datam2RelDir)/$(MAINPACKAGE)
+shareRelDir = $(datam2RelDir)/Core
 m2RelDir = $(shareRelDir)/m2
-docm2relRelDir = $(docm2RelDir)/$(MAINPACKAGE)
+docm2relRelDir = $(docm2RelDir)/Core
 emacsdocRelDir = $(docm2relRelDir)/emacs
 imagesRelDir = $(docm2relRelDir)/images
 styleRelDir = $(docm2relRelDir)/style
@@ -206,7 +137,7 @@ packagehtmldir = $(encapdir)/$(packagehtmlRelDir)
 packagecachedir = $(encapdir)/$(packagecacheRelDir)
 packageexamplesdir = $(encapdir)/$(packageexamplesRelDir)
 
-MAKEFUN = "$(1)" => $(M2PKGNAME) -> "$(subst $(M2PKGNAME),"|$(M2PKGNAME)|",$($(1)RelDir))/"
+MAKEFUN = "$(1)" => PackageName -> "$(subst PackageName,"|PackageName|",$($(1)RelDir))/"
 
 LAYOUT := {
 LAYOUT += "bin"=>"$(binRelDir)/",
@@ -247,36 +178,21 @@ AR = ar
 
 MAKEFLAGS += -w
 
-ifeq "$(OS) @ARCH@" "Linux alpha"
+ifeq "@OS@ @ARCH@" "Linux alpha"
 AS = gcc -c -x assembler-with-cpp
 endif
 
-ifeq "$(CC)" "cl"
+ifeq "@CC@" "cl"
 include config.Microsoft
 endif
 
-ifeq "$(MEMDEBUG)" "yes"
-DEBUG = yes
-endif
-
-ifeq "$(DEBUG)" "yes"
-STRIP = no
-endif
-
-ifeq "$(PROFILING)" "yes"
-CFLAGS   += -pg
-CXXFLAGS += -pg
-LDFLAGS  += -pg
-STRIP = no
-endif
-
-ifeq "$(DEBUG)" "yes"
+ifeq "@DEBUG@" "yes"
 CPPFLAGS += -DDEBUG
 else
 CPPFLAGS += -DNDEBUG
 endif
 
-ifeq "$(GCC)" "yes"
+ifeq "@GCC@" "yes"
 # if it's gcc, we can get stricter warning and error messages
 ifneq ($(RELAX),yes)
 # but sometimes that's bad, e.g., during configure scripts with loosely written test programs
@@ -301,7 +217,7 @@ ifeq "@HAVE_NO_STRICT_ALIASING@" "yes"
 CFLAGS += -Wno-strict-aliasing
 endif
 
-ifeq "$(OPTIMIZE)" "yes"
+ifeq "@OPTIMIZE@" "yes"
 CFLAGS   += -O3
 CXXFLAGS += -O3
 else
@@ -313,28 +229,28 @@ endif
 ifeq "$(STRIP)" "no"
 STRIPCMD := :
 else
-ifneq "$(CC)" "cl"
+ifneq "@CC@" "cl"
 # -fomit-frame-pointer causes strange bugs!
 # CFLAGS   += -fomit-frame-pointer
 # CXXFLAGS += -fomit-frame-pointer
-ifneq "$(OS)" "Darwin"
+ifneq "@OS@" "Darwin"
 LDFLAGS  += -s
 endif
 STRIPCMD := strip
 endif
 endif
 
-ifeq "$(MEMDEBUG)" "yes"
+ifeq "@MEMDEBUG@" "yes"
 CPPFLAGS += -DMEMDEBUG
 endif
 
 DUMPDATAFILE := Macaulay2-@ARCH@-data
 
-ifeq "$(DEBUG)" "yes"
+ifeq "@DEBUG@" "yes"
 CPPFLAGS += -DGC_DEBUG
 endif
 
-ifeq "$(OS)" "Darwin"
+ifeq "@OS@" "Darwin"
 
 # we don't know what this does, but some apple documentation writers seem to like it:
 LDFLAGS += -bind_at_load

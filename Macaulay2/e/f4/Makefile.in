@@ -5,7 +5,7 @@ DEPENDS = yes
 include ../make.include
 include @srcdir@/../Makefile.common
 
-ifeq ($(CXX)-@ISYSTEM@,g++-yes)
+ifeq (@CXX@-@ISYSTEM@,g++-yes)
 # We are using the -MM option to create *.dep files, which ignores "system" include files.
 # We want ../../include/config.h to be a "system" include file, so changing it
 # will not force a recompilation of all of our C++ files.
@@ -22,14 +22,14 @@ M2CPPFLAGS += -I.
 CPPFLAGS := $(M2CPPFLAGS) $(CPPFLAGS)
 
 %.dep: %.cpp
-	@ echo "$(CXX) -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
+	@ echo "@CXX@ -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
 	@ echo " ** creating $@ from $<"
-	@ $(CXX) -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+	@ @CXX@ -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
 
 %.dep: %.c
-	@ echo "$(CC)  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
+	@ echo "@CC@  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
 	@ echo " ** creating $@ from $<"
-	@ $(CC)  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+	@ @CC@  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
 
 .PHONY : all place_into_lib
 

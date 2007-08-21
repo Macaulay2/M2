@@ -8,7 +8,7 @@ check: test.out.expected.trim test.out.trim
 
 ULIMIT := ulimit -v 380000; ulimit -t 3000
 PATHJOIN := 'path = join({"./","$(chapter_srcdir)/"},path)'
-M2CMD := time nice -18 ../../../bin/M2$(EXE) --stop -q -e $(PATHJOIN)
+M2CMD := time nice -18 ../../../bin/M2@EXE@ --stop -q -e $(PATHJOIN)
 EXIT := -e "exit 0"
 INPUT = -e 'input "$<"'
 
@@ -21,7 +21,7 @@ test.out.trim : test.out $(book_patterns) $(chapter_patterns)
 test.out.expected.trim : test.out.expected $(book_patterns) $(chapter_patterns)
 	<$< awk '{print $$0}' | sed -f $(book_patterns) -f $(chapter_patterns) >$@
 
-test.out : test.m2 ../../../bin/M2$(EXE)
+test.out : test.m2 ../../../bin/M2@EXE@
 	@ set -xe ; \
 	  $(ULIMIT); $(M2CMD) $(INPUT) $(EXIT) >test.out.tmp; \
 	  mv test.out.tmp test.out

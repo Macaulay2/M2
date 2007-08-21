@@ -2,7 +2,7 @@
 include ../../include/config.Makefile
 VPATH = @srcdir@
 
-ifeq "$(CC)" "cl"
+ifeq "@CC@" "cl"
 LIBEXT = lib
 else
 LIBEXT = a
@@ -14,7 +14,7 @@ OFILES := $(CFILES:.c=.o)
 
 all :: $(LIB)
 
-ifeq "$(CC)" "cl"
+ifeq "@CC@" "cl"
 $(LIB): $(OFILES)
 	$(AR) $(ARFLAGS) /out:$@ $^	
 else

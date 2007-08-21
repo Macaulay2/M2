@@ -15,7 +15,7 @@ all check clean ::
 all check clean ::
 	$(MAKE) -k -C engine $@
 
-ifneq "$(DUMPDATA)" "no"
+ifneq "@DUMPDATA@" "no"
 RESULTS += dumpdata.out
 endif
 

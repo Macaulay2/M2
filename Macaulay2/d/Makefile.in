@@ -9,7 +9,7 @@ all :: tags
 endif
 all :: compat.h
 
-all :: ../bin/M2$(EXE)
+all :: ../bin/M2@EXE@
 	printenv LD_LIBRARY_PATH
 ifneq (@OBJDUMP@,)
 	- @OBJDUMP@ -x $< | grep RPATH
@@ -21,7 +21,7 @@ endif
 ## standard options
 
 M2_LDFLAGS  =
-ifeq ($(OS),Linux)
+ifeq (@OS@,Linux)
 M2_LDFLAGS += -Wl,-rpath,$(FINALLIBPATH)/lib
 endif
 
@@ -52,7 +52,7 @@ EFILES += $(F4_OBJECT_FILES:%=../e/f4/%)
 M2_OBJECTS = M2inits1.o
 
 OPTCFILES += debug.c
-ifeq "$(DEBUG)" "yes"
+ifeq "@DEBUG@" "yes"
 M2_OBJECTS += debug.o
 endif
 
@@ -129,13 +129,13 @@ endif
 TOSTATIC =
 UNSTATIC =
 
-ifeq "$(STATIC)" "yes"
-ifeq ($(OS),Linux)
+ifeq "@STATIC@" "yes"
+ifeq (@OS@,Linux)
 # we'd really like to test whether ld is gnu ld here
 TOSTATIC = -Wl,-Bstatic
 UNSTATIC = -Wl,-Bdynamic
 else
-ifeq ($(OS),SunOS)
+ifeq (@OS@,SunOS)
 # we'd really like to test whether ld is gnu ld here
 TOSTATIC = -Wl,-Bstatic
 UNSTATIC = -Wl,-Bdynamic
@@ -152,11 +152,11 @@ SCC1 := ../c/scc1
 
 SCCFLAGS =
 
-ifeq "$(OPTIMIZE)" "yes"
+ifeq "@OPTIMIZE@" "yes"
 SCCFLAGS += -O
 endif
 
-ifeq "$(GCC)" "no"
+ifeq "@GCC@" "no"
 SCCFLAGS += -nogcc
 endif
 
@@ -190,7 +190,7 @@ CXXFLAGS += $(DEBUGFLAGS)
 
 CFLAGS += -Wno-unused-label
 
-ifeq (gcc,$(CC))
+ifeq (gcc,@CC@)
 ifeq ($(MAPFILE),yes)
 ifeq (yes,$(shell if gcc -Wl,-v 2>&1 | grep -q 'GNU ld' ; then echo yes ; else echo no ; fi))
 ## - use this to get a memory map listing from the gnu linker
@@ -199,9 +199,9 @@ endif
 endif
 endif
 
-ifeq "$(STATIC)" "yes"
+ifeq "@STATIC@" "yes"
 LIBRARYOPTIONS := $(TOSTATIC)
-ifeq ($(OS),Linux)
+ifeq (@OS@,Linux)
 # this is for gc somehow, see the end of gc/config.h
 M2_LDFLAGS += -Wl,-defsym,_DYNAMIC=0
 endif
@@ -231,13 +231,13 @@ startup.c : ../m2/startup.m2 layout.m2
         ) >$@
 clean :: ; rm -f layout.m2 startup.c
 
-ifeq "$(DUMPDATA)" "yes"
+ifeq "@DUMPDATA@" "yes"
 M2_LDFLAGS += -L../dumpdata
 LIBRARYDEPS += ../dumpdata/libdump.a
 LIBRARYOPTIONS += -ldump
 endif
 
-ifeq ($(OS),SunOS)
+ifeq (@OS@,SunOS)
 # We use mmap in loaddata(), but if it's dynamically loaded, it may stop working as our mapped
 # data covers up the jump tables it uses.  I think.
 M2_OBJECTS += mmap.o
@@ -265,18 +265,10 @@ LIBRARYDEPS    += factory_init1.o version.o M2-factory.o            factory_init
 LIBRARYOPTIONS += M2inits3.o
 LIBRARYDEPS    += M2inits3.o
 
-LIBRARYOPTIONS += $(NTLLIB)
-
-ifeq ($(OS),Darwin)
-LIBRARYOPTIONS += $(READLINELIB) $(HISTORYLIB)
-else
-LIBRARYOPTIONS +=  $(READLINELIB) $(HISTORYLIB) -lcurses
-endif
-
 # we successfully avoid using streamio, but we need the personality function in libstc++
 LIBRARYOPTIONS += -lstdc++
 
-ifeq "$(STATIC)" "yes"
+ifeq "@STATIC@" "yes"
 LIBRARYOPTIONS += $(UNSTATIC)
 endif
 
@@ -284,11 +276,11 @@ LIBRARYOPTIONS += -lm
 
 LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
 
-clean::; rm -f ../bin/M2$(EXE)
+clean::; rm -f ../bin/M2@EXE@
 # we make tmp_init.o depend on everything, because compiling it produces our timestamp
 tmp_init.o : $(M2_OBJECTS) $(LIBRARYDEPS) $(EFILES) factory_init3.o
-../bin/M2$(EXE) : tmp_init.o
-	time $(CC) $(M2_LDFLAGS) $(M2_OBJECTS) $^ factory_init3.o $(EFILES) $(LIBRARYOPTIONS) $(M2_LIBS) -o "$@".tmp
+../bin/M2@EXE@ : tmp_init.o
+	time @CC@ $(M2_LDFLAGS) $(M2_OBJECTS) $^ factory_init3.o $(EFILES) $(LIBRARYOPTIONS) $(M2_LIBS) -o "$@".tmp
 	$(STRIPCMD) "$@".tmp
 	mv "$@".tmp "$@"
 
@@ -303,7 +295,7 @@ endif
 
 # just for testing scc stuff
 t_main.o : types.h
-t : t_main.o gmp.oo stdio.oo strings.oo system.oo C.o t.o; $(CC) $(M2_LDFLAGS) $^ $(M2_LIBS) $(OUTPUT_OPTION)
+t : t_main.o gmp.oo stdio.oo strings.oo system.oo C.o t.o; @CC@ $(M2_LDFLAGS) $^ $(M2_LIBS) $(OUTPUT_OPTION)
 
 tags: @srcdir@/TAGS
 clean::; rm -f TAGS @srcdir@/TAGS
