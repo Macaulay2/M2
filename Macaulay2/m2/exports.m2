@@ -1162,6 +1162,7 @@ exportMutable {
 	symbol printingTrailLimit,
 	symbol printingSeparator,
 	symbol recursionLimit,
+        symbol scriptCommandLine,
 	symbol sourceHomeDirectory,
 	symbol stopIfError
 	}
