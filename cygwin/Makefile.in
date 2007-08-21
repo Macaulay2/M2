@@ -66,8 +66,8 @@ server/Macaulay2/@package@-1-src.tar.bz2 : server/Macaulay2 mkrt ; fakeroot tar 
 endif
 
 install :: Macaulay2.README Macaulay2.sh
-	@INSTALL@ -d $(encapdir)@FINALPREFIX@/share/doc/Cygwin
-	@INSTALL@ Macaulay2.README $(encapdir)@FINALPREFIX@/share/doc/Cygwin
+	@INSTALL@ -d @encapdir@@FINALPREFIX@/share/doc/Cygwin
+	@INSTALL@ Macaulay2.README @encapdir@@FINALPREFIX@/share/doc/Cygwin
 
 clean ::; rm -rf server files
 distclean : clean; rm -f Makefile Macaulay2.README Macaulay2.sh setup.hint

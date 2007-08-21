@@ -174,13 +174,13 @@ test4: ../util/screen
 clean::; rm -f test4
 endif
 
-install:: $(datam2dir)
-$(datam2dir) :
-	@INSTALL@ -d $(datam2dir)
+install:: @encapdir@/$(datam2RelDir)
+@encapdir@/$(datam2RelDir) :
+	@INSTALL@ -d @encapdir@/$(datam2RelDir)
 
 install:: $(DUMPEDM2FILES) demo1.m2
-	@INSTALL@ -d "$(m2dir)"
-	@INSTALL_DATA@ $^ "$(m2dir)"
+	@INSTALL@ -d "@encapdir@/$(m2RelDir)"
+	@INSTALL_DATA@ $^ "@encapdir@/$(m2RelDir)"
 
 ifeq "@ENCAP@" "yes"
 ENCAPVALUE = true
@@ -198,7 +198,7 @@ M2OPTIONS += --no-debug
 endif
 M2OPTIONS += -e errorDepth=0
 M2OPTIONS += -e debugLevel=0
-M2OPTIONS += -e 'installPackage(Core, Encapsulate => false, PackagePrefix => "$(encapdir)/", MakeLinks => false, MakeDocumentation => false, UserMode => false)'
+M2OPTIONS += -e 'installPackage(Core, Encapsulate => false, PackagePrefix => "@encapdir@/", MakeLinks => false, MakeDocumentation => false, UserMode => false)'
 ifndef INTERACTIVE
 M2OPTIONS += -e 'exit 0 '
 endif

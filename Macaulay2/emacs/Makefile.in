@@ -5,7 +5,7 @@ LD_LIBRARY_PATH := ../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib:$(L
 export LD_LIBRARY_PATH
 ARGS = -q --silent --stop -e errorDepth=0
 .PHONY : all clean distclean install check default
-MADEDIRS = $(emacsdocdir) $(emacsdir)
+MADEDIRS = @encapdir@/$(emacsRelDir)
 MADEFILES = M2-symbols.el M2-symbols emacs-hlp.txt emacs.m2
 all::; x=; for i in $(MADEFILES) ; do test -f $$i || x=x ; done ; if test "$$x"; then $(MAKE) $(MADEFILES); fi
 install:: $(MADEFILES)
@@ -17,9 +17,9 @@ distclean:: clean; rm -f Makefile
 $(MADEDIRS) :; @INSTALL@ -d "$@"
 install:: $(MADEDIRS)
 all    :: M2-mode.el M2.el M2-symbols.el M2-init.el
-install:: M2-mode.el M2.el M2-symbols.el M2-init.el; @INSTALL_DATA@ $^ $(emacsdir)
-install:: $(emacsdocdir)
-install:: emacs-hlp.txt emacs.m2 README; @INSTALL_DATA@ $^ $(emacsdocdir)
+install:: M2-mode.el M2.el M2-symbols.el M2-init.el; @INSTALL_DATA@ $^ @encapdir@/$(emacsRelDir)
+install:: @encapdir@/$(emacsRelDir)
+install:: emacs-hlp.txt emacs.m2 README; @INSTALL_DATA@ $^ @encapdir@/$(emacsRelDir)
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/emacs/Makefile
 all:: M2-init.el
 M2-init.el : M2-init.el.in; cd ../..; ./config.status Macaulay2/emacs/M2-init.el

@@ -6,27 +6,27 @@ VPATH = @srcdir@
 
 all ::
 
-install :: $(bindir) $(bindir)/M2@EXE@
+install :: @encapdir@/$(binRelDir) @encapdir@/$(binRelDir)/M2@EXE@
 
-$(bindir) :; @INSTALL@ -d "$@"
+@encapdir@/$(binRelDir) :; @INSTALL@ -d "$@"
 
-$(bindir)/M2@EXE@ : M2@EXE@; @INSTALL_PROGRAM@ M2@EXE@ $(bindir)/M2@EXE@
+@encapdir@/$(binRelDir)/M2@EXE@ : M2@EXE@; @INSTALL_PROGRAM@ M2@EXE@ @encapdir@/$(binRelDir)/M2@EXE@
 
-# install       :: $(bindir)/M2-load-libs
-# $(bindir)/M2-load-libs : M2-load-libs ; @INSTALL@ $^ $@
+# install       :: @encapdir@/$(binRelDir)/M2-load-libs
+# @encapdir@/$(binRelDir)/M2-load-libs : M2-load-libs ; @INSTALL@ $^ $@
 
-# install       :: $(bindir)/M2-emacs
-# $(bindir)/M2-emacs : M2-emacs ; @INSTALL@ $^ $@
+# install       :: @encapdir@/$(binRelDir)/M2-emacs
+# @encapdir@/$(binRelDir)/M2-emacs : M2-emacs ; @INSTALL@ $^ $@
 
-# install       :: $(bindir)/M2-help
-# $(bindir)/M2-help : M2-help ; @INSTALL@ $^ $@
+# install       :: @encapdir@/$(binRelDir)/M2-help
+# @encapdir@/$(binRelDir)/M2-help : M2-help ; @INSTALL@ $^ $@
 
 # shared library links 
 ifeq (@ENCAP@,yes)
 ifeq (@OS@,Linux)
 ifeq (@TARLIBS@,yes)
-make-lib-links install :: $(libdir); @srcdir@/liblinks M2@EXE@ $(libdir)
-$(libdir):; @INSTALL@ -d "$@"
+make-lib-links install :: @encapdir@/$(libRelDir); @srcdir@/liblinks M2@EXE@ @encapdir@/$(libRelDir)
+@encapdir@/$(libRelDir):; @INSTALL@ -d "$@"
 endif
 endif
 endif

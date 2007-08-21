@@ -67,4 +67,4 @@ clean::; rm -rf tmp/$(package)
 
 install:: all install-main
 install-main: tmp/$(package)
-	 tar cf - -C tmp/$(package) . | tar xf - -C $(encapdir)
+	 tar cf - -C tmp/$(package) . | tar xf - -C @encapdir@

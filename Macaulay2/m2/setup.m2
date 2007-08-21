@@ -119,7 +119,7 @@ promptWidth = () -> (
      if lineNumber === lastLN then lastWI
      else (
 	  lastLN = lineNumber;
-	  lastWI = max \\ width \ lines ZZ.InputPrompt lineNumber))
+	  lastWI = max \\ width \ separate ZZ.InputPrompt lineNumber))
 
      
 load "loads.m2"

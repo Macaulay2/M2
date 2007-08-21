@@ -341,25 +341,6 @@ Microsoft Windows NT notes
 ----------------------
 Linux notes
 ----------------------
--- If you use capybara, the following line can be used to compile an optimized version, with shared libs
- mkdir tmp-opt
- cd tmp-opt
- ../configure --with-encapdir=/capybara/encap --prefix=/capybara/encap
- --disable-strip --enable-encap CPPFLAGS=-I/capybara/include
- LDFLAGS=-L/capybara/lib
-
- ../configure --with-encapdir=/capybara/encap --prefix=/capybara/encap
- --disable-strip --enable-encap CPPFLAGS=-I/capybara/include
- LDFLAGS=-L/capybara/lib
-
- ../configure --prefix=$HOME/M2-build CPPFLAGS=-I/capybara/include
- LDFLAGS=-L/capybara/lib --enable-static
- ../configure --prefix=$HOME/M2-build CPPFLAGS=-I"~dan/local/include  -I~dan/local.Linux/include"  LDFLAGS="-L~dan/local.Linux/lib" --enable-static
-
--- For profiling
- mkdir tmp-profiling
- cd tmp-profiling
- ../configure --with-encapdir=/capybara/encap --prefix=/capybara/encap --disable-strip --enable-encap CPPFLAGS=-I/capybara/include LDFLAGS=-L/capybara/lib --enable-profile
 
 ----------------------
 MacOS X notes

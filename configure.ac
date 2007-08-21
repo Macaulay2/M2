@@ -542,16 +542,14 @@ AC_COMPILE_IFELSE([int main() {}], HAVE_NO_STRICT_ALIASING=yes, HAVE_NO_STRICT_A
 CFLAGS="$SAVE"
 AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
 
-AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
+AC_MSG_CHECKING(whether $CC accepts -Wfatal-errors)
 AC_LANG(C)
 SAVE="$CFLAGS"
 CFLAGS="$CFLAGS -Wfatal-errors"
 AC_COMPILE_IFELSE([int main() {}], 
-    CFLAGS="$SAVE"
     CPPFLAGS="$CPPFLAGS -Wfatal-errors"
-    CFLAGS="$CFLAGS -Wfatal-errors"
     CXXFLAGS="$CXXFLAGS -Wfatal-errors"
-    AC_MSG_RESULT(yes, adding the flag),
+    AC_MSG_RESULT(yes, adding -Wfatal-errors to flags),
     CFLAGS="$SAVE"
     AC_MSG_RESULT(no))
 
@@ -603,6 +601,11 @@ then
 fi
 
 AC_SUBST(package,Macaulay2-$PACKAGE_VERSION)
+AC_SUBST(encapdir)
+if test "$ENCAP" = yes
+then encapdir="\${prefix}/$package"
+else encapdir="\${prefix}"
+fi
 AC_SUBST(SRC_TGZ,$package.tar.gz)
 AC_SUBST(SRC_TBZ,$package.tar.bz2)
 AC_SUBST(SRC_TZ,$package.tar.$COMPRESS)
@@ -611,15 +614,14 @@ AC_SUBST(PKG_TBZ,$package-$ARCH-$OS.tar.bz2)
 AC_SUBST(PKG_DEB,$package-$DEBIANARCH-$OS.deb)
 AC_SUBST(PKG_RPM,$package-$ARCH-$OS.rpm)
 AC_SUBST(PKG_TZ,$package-$ARCH-$OS.tar.$COMPRESS)
-AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 AC_SUBST(EXE,$M2SUFFIX$EXEEXT)
 
+AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 # we used to use @ ARCH @ instead of @ host_cpu @ here, but for DEC alphas,
 # and perhaps other machines, it gives more information.  The script
 # config.guess assembles host_cpu from /proc/cpuinfo, and can be something
 # like "alphaev6" or "alphaev56", but ARCH, which is determined from 'uname'
 # by the 'configure' script, will be simply "alpha".
-
 
 CONFIGURED_FILES="$ac_config_files"
 AC_SUBST(CONFIGURED_FILES)

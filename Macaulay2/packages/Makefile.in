@@ -30,7 +30,7 @@ Encapsulate = false
 endif
 
 ARGS1 := $(ARGS), PackagePrefix => \"$(prefix)/\", Encapsulate => $(Encapsulate)
-ARGS2 := $(ARGS), PackagePrefix => \"$(encapdir)/\", Encapsulate => false
+ARGS2 := $(ARGS), PackagePrefix => \"@encapdir@/\", Encapsulate => false
 
 check ::
 	@ for i in $(PACKAGES) ; \
@@ -76,9 +76,9 @@ Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
 distclean::; rm -f Makefile
 
 ## here is the list of other files to install along with Macaulay2
-install :: $(packagesdir)/eliminate.m2 $(packagesdir)/D-modules.m2
-$(packagesdir)/eliminate.m2 : eliminate.m2 ; cp $^ "$@"
-$(packagesdir)/D-modules.m2 : D-modules.m2 ; cp $^ "$@"
+install :: @encapdir@/$(packagesRelDir)/eliminate.m2 @encapdir@/$(packagesRelDir)/D-modules.m2
+@encapdir@/$(packagesRelDir)/eliminate.m2 : eliminate.m2 ; cp $^ "$@"
+@encapdir@/$(packagesRelDir)/D-modules.m2 : D-modules.m2 ; cp $^ "$@"
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages "
