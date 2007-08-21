@@ -20,23 +20,14 @@ endif
 
 ## standard options
 
-LD_LIBRARY_PATH := $(shell cd ../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib && pwd):$(LD_LIBRARY_PATH)
-export LD_LIBRARY_PATH
-
 M2_LDFLAGS  =
 ifeq ($(OS),Linux)
-M2_LDFLAGS += -Wl,-rpath,@FINALPREFIX@/$(librariesRelDir)/lib
-endif
-
-M2_LDFLAGS += -L../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
-ifeq ($(OS),Linux)
-# it would be a problem to hard code my personal directory into the M2 binary!!
-# M2_LDFLAGS += -Wl,-rpath,$(shell /bin/pwd)/../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
+M2_LDFLAGS += -Wl,-rpath,$(FINALLIBPATH)/lib
 endif
 
 M2_LDFLAGS += $(LDFLAGS)
-M2_LOADLIBES := $(LOADLIBES)
-M2_LDLIBS := @BUILTLIBS@ $(LDLIBS)
+
+M2_LIBS := @LOADLIBES@ @BUILTLIBS@ @LIBS@ @FLIBS@
 
 ## files
 
@@ -184,7 +175,6 @@ endif
 M2-factory.o : M2-factory.cpp ; $(COMPILE.cc) -Wno-old-style-cast $(OUTPUT_OPTION) $<
 
 M2INCLUDES  = -I../../include
-M2INCLUDES += -I../../libraries/final@FINALPREFIX@/$(librariesRelDir)/include
 M2INCLUDES += -I@srcdir@/../../include
 M2INCLUDES += -I@srcdir@
 M2INCLUDES += -I.
@@ -219,15 +209,9 @@ else
 LIBRARYOPTIONS :=
 endif
 
-ifeq ($(OS),SunOS)
-M2_LOADLIBES += -lsocket -lnsl
-endif
-
-M2_LOADLIBES += @FLIBS@
-
 clean::; rm -f compat.c compat.h
 compat.c compat.h : configure ../../include/config.h
-	FLAGS="$(M2_LDFLAGS) $(M2_LOADLIBES) $(M2_LDLIBS)" @srcdir@/configure
+	FLAGS="$(M2_LDFLAGS) $(M2_LIBS)" @srcdir@/configure
 
 M2types.o : M2types.h
 M2lib.o scclib.o : compat.h ../c/compat.h ../c/compat.c types.h
@@ -283,10 +267,6 @@ LIBRARYDEPS    += M2inits3.o
 
 LIBRARYOPTIONS += $(NTLLIB)
 
-ifeq "$(LAPACK)" "yes"
-LIBRARYOPTIONS += $(LAPACKLIBS)
-endif
-
 ifeq ($(OS),Darwin)
 LIBRARYOPTIONS += $(READLINELIB) $(HISTORYLIB)
 else
@@ -302,17 +282,13 @@ endif
 
 LIBRARYOPTIONS += -lm
 
-M2_LOADLIBES := $(LIBRARYOPTIONS) $(M2_LOADLIBES)
 LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
-
-# maybe every system now has all the unix routines we use:
-# M2_LDLIBS += -lc ../compat/compat.a
 
 clean::; rm -f ../bin/M2$(EXE)
 # we make tmp_init.o depend on everything, because compiling it produces our timestamp
 tmp_init.o : $(M2_OBJECTS) $(LIBRARYDEPS) $(EFILES) factory_init3.o
 ../bin/M2$(EXE) : tmp_init.o
-	time $(CC) $(M2_LDFLAGS) $(M2_OBJECTS) $^ factory_init3.o $(EFILES) $(M2_LOADLIBES) $(M2_LDLIBS) -o "$@".tmp
+	time $(CC) $(M2_LDFLAGS) $(M2_OBJECTS) $^ factory_init3.o $(EFILES) $(LIBRARYOPTIONS) $(M2_LIBS) -o "$@".tmp
 	$(STRIPCMD) "$@".tmp
 	mv "$@".tmp "$@"
 
@@ -327,7 +303,7 @@ endif
 
 # just for testing scc stuff
 t_main.o : types.h
-t : t_main.o gmp.oo stdio.oo strings.oo system.oo C.o t.o; $(CC) $(M2_LDFLAGS) $^ $(M2_LOADLIBES) $(M2_LDLIBS) $(OUTPUT_OPTION)
+t : t_main.o gmp.oo stdio.oo strings.oo system.oo C.o t.o; $(CC) $(M2_LDFLAGS) $^ $(M2_LIBS) $(OUTPUT_OPTION)
 
 tags: @srcdir@/TAGS
 clean::; rm -f TAGS @srcdir@/TAGS

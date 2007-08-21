@@ -4,6 +4,7 @@ include ../../include/config.Makefile
 CFLAGS += -O0
 CPPFLAGS += -I../../include
 .PHONY : all clean distclean install check default tags
+
 checkit: checkit.o libdump.a
 map.o: map.h file.h std.h warning.h
 map.o: map-solaris.c map-linux.c map-macosx.c
@@ -42,6 +43,8 @@ testprintmaps:libdump.a
 clean::; rm -f testprintmaps
 
 ifeq "@HAVE_PERSONALITY@" "yes"
+# we don't want to link with M2's libraries, because this program gets distributed
+LDLIBS =
 all:: personality
 install:: personality $(bindir)  ; $(INSTALL_PROGRAM) $< $(bindir)/personality
 $(bindir) :; $(INSTALL) -d "$@"

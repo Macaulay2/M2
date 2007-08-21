@@ -4,8 +4,8 @@ URL = http://www.netlib.org/blas
 TARFILE = blas.tgz
 TARDIR = BLAS
 CONFIGURECMD = :
-BUILDOPTIONS = BLASLIB=libf77blas.a
-INSTALLCMD = install -d $(LIBRARIESDIR)/lib && install libf77blas.a $(LIBRARIESDIR)/lib/libf77blas.a
+BUILDOPTIONS = BLASLIB=libblas.a
+INSTALLCMD = install -d $(LIBRARIESDIR)/lib && install libblas.a $(LIBRARIESDIR)/lib/libblas.a
 include ../Makefile.library
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/blas/Makefile
 # Local Variables:

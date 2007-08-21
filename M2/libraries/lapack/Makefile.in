@@ -5,8 +5,8 @@ TARFILE = lapack.tgz
 VERSION = 3.1.1
 TARDIR = lapack-$(VERSION)
 CONFIGURECMD = cp make.inc.example make.inc
-# note: our package "blas" creates the library libf77blas.a
-BUILDOPTIONS = PLAT= FORTRAN=g77 OPTS="-O2 -g" NOOPT= LOADER=g77 RANLIB=ranlib BLASLIB=-lf77blas LOADOPTS="$(LDFLAGS)"
+# note: our package "blas" creates the library libblas.a
+BUILDOPTIONS = PLAT= FORTRAN="@FC@" OPTS="-O2 -g" NOOPT= LOADER="@FC@" RANLIB=ranlib BLASLIB=-lblas LOADOPTS="$(LDFLAGS)"
 BUILDTARGET = blaslib all
 ifeq (@SHARED@,yes)
 BUILDTARGET += ../liblapack.so

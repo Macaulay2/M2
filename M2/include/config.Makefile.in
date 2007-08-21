@@ -77,11 +77,13 @@ CXXFLAGS = @CXXFLAGS@
 FFLAGS = @FFLAGS@
 LDFLAGS = @LDFLAGS@
 LOADLIBES = @LOADLIBES@
-LDLIBS = @LDLIBS@
+ifeq ($(LIBRARY_MODE),yes)
+LDLIBS = @LIBS@ 
+else
+LDLIBS = @BUILTLIBS@ @LIBS@ 
+endif
 LAPACK = @LAPACK@
-LAPACKLIBS = @LAPACKLIBS@
 NTLLIB = @NTLLIB@
-GDBMLIB = @GDBMLIB@
 READLINELIB = @READLINELIB@
 HISTORYLIB = @HISTORYLIB@
 NM_DEMANGLES = @NM_DEMANGLES@
@@ -94,10 +96,6 @@ CONFIG_ARGS = @CONFIG_ARGS@
 CONFIG_CMD = @CONFIG_CMD@
 AUTOINST = @AUTOINST@
 IMPLINST = @IMPLINST@
-
-# See the autoconf documentation for a description of LIBS, which autoconf uses at configure time for checking for features
-# But I don't want to use it that way.
-# LDLIBS += @LIBS@
 
 # See the autoconf documentation for a description of DEFS; we use include/config.h instead, to keep command lines short
 DEFS = @DEFS@
@@ -174,6 +172,14 @@ docm2relRelDir = $(docm2RelDir)/$(MAINPACKAGE)
 emacsdocRelDir = $(docm2relRelDir)/emacs
 imagesRelDir = $(docm2relRelDir)/images
 styleRelDir = $(docm2relRelDir)/style
+
+BUILTLIBPATH = @TOPDIR@/libraries/final@FINALPREFIX@/$(librariesRelDir)
+CPPFLAGS := -I$(BUILTLIBPATH)/include $(CPPFLAGS)
+LDFLAGS := -L$(BUILTLIBPATH)/lib $(LDFLAGS)
+LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
+export LD_LIBRARY_PATH
+
+FINALLIBPATH = @FINALPREFIX@/$(librariesRelDir)
 
 bindir = $(encapdir)/$(binRelDir)
 libdir = $(encapdir)/$(libRelDir)
@@ -352,39 +358,3 @@ CXXFLAGS += -faltivec
 endif
 
 XCODE = @XCODE@
-
-# whether a profiling version of library libntl is available with -lntl-pg
-HAVE_LIBNTL_PG = @HAVE_LIBNTL_PG@
-
-# whether a profiling version of factory library libcf is available with -lcf-pg
-HAVE_LIBCF_PG = @HAVE_LIBCF_PG@
-
-# whether a profiling version of library libfac is available with -lfac-pg
-HAVE_LIBFAC_PG = @HAVE_LIBFAC_PG@
-
-# whether a profiling version of library libgc is available with -lgc-pg
-HAVE_LIBGC_PG = @HAVE_LIBGC_PG@
-
-# whether a profiling version of library libgmp is available with -lgmp-pg
-HAVE_LIBGMP_PG = @HAVE_LIBGMP_PG@
-
-showvars :
-	: PACKAGE_NAME = $(PACKAGE_NAME)
-	: PACKAGE_TARNAME = $(PACKAGE_TARNAME)
-	: PACKAGE_VERSION = $(PACKAGE_VERSION)
-	: package = $(package)
-	: ARCH = $(ARCH)
-	: OS = $(OS)
-	: REL = $(REL)
-	: DESC = $(DESC)
-	: CYGWIN = $(CYGWIN)
-	: prefix = $(prefix)
-	: encapdir = $(encapdir)
-	: tarparent = $(tarparent)
-	: tarsubdir = $(tarsubdir)
-	: bindir = $(bindir)
-	: libdir = $(libdir)
-	: infodir = $(infodir)
-	: datadir = $(datadir)
-	: mandir = $(mandir)
-	: man1dir = $(man1dir)

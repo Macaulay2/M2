@@ -4,8 +4,6 @@ all:: scc1
 include ../../include/config.Makefile
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
-# we don't want to use M2's load libraries
-LDLIBS =
 ############################################
 %.c        : %.y
 	$(YACC) $(YFLAGS) $^
@@ -19,7 +17,7 @@ CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c co
 HFILES := $(CNAMES:.c=.h) scc.h grammar.h
 OFILES := $(CNAMES:.c=.o) grammar.o
 SRCFILES := $(HFILES) $(CNAMES) grammar.y
-CPPFLAGS += -I../../include -I../../libraries/final@FINALPREFIX@/$(librariesRelDir)/include -I@srcdir@/../../include
+CPPFLAGS += -I../../include -I/include -I@srcdir@/../../include
 CPPFLAGS += -I@srcdir@
 LDFLAGS += -L../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
 ifeq ($(OS),Linux)

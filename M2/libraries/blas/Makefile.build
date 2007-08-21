@@ -6,5 +6,5 @@
 FC = g77
 FILES = $(wildcard *.f)
 FFLAGS = -O2 -g
-libf77blas.so : $(FILES:.f=.lo) ; $(FC) $(TARGET_ARCH) -shared $^ $(OUTPUT_OPTION)
-libf77blas.a  : $(FILES:.f=.o)  ; ar rus $@ $?
+libblas.so : $(FILES:.f=.lo) ; $(FC) $(TARGET_ARCH) -shared $^ $(OUTPUT_OPTION)
+libblas.a  : $(FILES:.f=.o)  ; ar rus $@ $?
