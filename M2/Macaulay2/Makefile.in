@@ -9,20 +9,20 @@ justM2 all :: initialize
 include ../include/config.Makefile
 VPATH = @srcdir@
 ################################# .
-install install-others install-Macaulay2 :: $(docm2reldir) $(docm2dir) \
+install install-others install-Macaulay2 :: @encapdir@/$(docm2RelDir) $(docm2dir) \
 	   $(docm2dir)/COPYING \
 	   $(docm2dir)/README \
-	   $(docm2reldir)/CHANGES \
+	   @encapdir@/$(docm2RelDir)/CHANGES \
 	   $(docm2dir)/LAYOUT
 
-$(docm2dir) $(docm2reldir):; @MKDIR_P@ "$@"
+$(docm2dir) @encapdir@/$(docm2RelDir):; @MKDIR_P@ "$@"
 $(docm2dir)/COPYING : COPYING ; @INSTALL_DATA@ $< "$@"
-$(docm2reldir)/CHANGES : CHANGES ; @INSTALL_DATA@ $< "$@"
+@encapdir@/$(docm2RelDir)/CHANGES : CHANGES ; @INSTALL_DATA@ $< "$@"
 $(docm2dir)/LAYOUT  : LAYOUT  ; @INSTALL_DATA@ $< "$@"
 $(docm2dir)/README  : README  ; @INSTALL_DATA@ $< "$@"
 
-# install install-others install-Macaulay2 :: $(docm2reldir)/INSTALL
-# $(encapdir)/INSTALL  : INSTALL  ; @INSTALL_DATA@ $< "$@"
+# install install-others install-Macaulay2 :: @encapdir@/$(docm2RelDir)/INSTALL
+# @encapdir@/INSTALL  : INSTALL  ; @INSTALL_DATA@ $< "$@"
 
 ################################# srcdir
 initialize :: srcdir
@@ -32,8 +32,8 @@ clean::; rm -f srcdir
 initialize :: cache
 cache :; mkdir $@
 distclean clean ::; rm -rf cache
-install install install-others install-Macaulay2 :: $(cachedir)
-$(cachedir):; @INSTALL@ -d "$@"
+install install install-others install-Macaulay2 :: @encapdir@/$(cacheRelDir)
+@encapdir@/$(cacheRelDir):; @INSTALL@ -d "$@"
 ################################# util
 initialize::; $(MAKE) -C util all
 distclean clean ::; $(MAKE) DEPENDS=no -C util $@

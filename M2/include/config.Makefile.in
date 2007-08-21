@@ -17,7 +17,6 @@ all::
 
 .DELETE_ON_ERROR :
 
-
 # here we set the variables that "make" uses
 CC = @CC@
 CXX = @CXX@
@@ -31,13 +30,13 @@ LDFLAGS = @LDFLAGS@
 LOADLIBES = @LOADLIBES@
 LDLIBS = @LDLIBS@ 
 
-# Macaulay 2 file system layout definitions, dependent on $(prefix) defined
-# above and on PackageName.
+# Macaulay 2 file system layout definitions, dependent on $(prefix) and PackageName.
 #  see http://www.pathname.com/fhs/
 #      http://fink.sourceforge.net/doc/packaging/fslayout.php
 #      http://cr.yp.to/unix.html, the section on "Filesystem layout"
 
-## here we set the make variables that configure uses as make variables in configure variables, so we can override them as the designer of autoconf intend
+## here we set the make-variables that configure uses as make-variables inside configure-variables
+# designed by autoconf:
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 datarootdir = @datarootdir@
@@ -45,16 +44,9 @@ docdir = @docdir@
 INSTALL = @INSTALL@
 ##
 
-## here we set the variables (e.g., "prefix") that we need to be able override during "make install"
-# compilation and linking options
+## here we set the variables that we want to be able to override
 STRIP = @STRIP@
 ##
-
-ifeq "@ENCAP@" "yes"
-encapdir = $(prefix)/@package@
-else
-encapdir = $(prefix)/.
-endif
 
 ifeq ($(findstring $(prefix),@infodir@),)
 $(error expected infodir @infodir@ to begin with $(prefix))
@@ -101,36 +93,6 @@ docm2relRelDir = $(docm2RelDir)/Core
 emacsdocRelDir = $(docm2relRelDir)/emacs
 imagesRelDir = $(docm2relRelDir)/images
 styleRelDir = $(docm2relRelDir)/style
-
-bindir = $(encapdir)/$(binRelDir)
-libdir = $(encapdir)/$(libRelDir)
-infodir = $(encapdir)/$(infoRelDir)
-datadir = $(encapdir)/$(dataRelDir)
-mandir = $(encapdir)/$(manRelDir)
-man1dir = $(encapdir)/$(man1RelDir)
-man3dir = $(encapdir)/$(man3RelDir)
-emacsdir = $(encapdir)/$(emacsRelDir)
-docudir = $(encapdir)/$(docRelDir)
-docm2dir = $(encapdir)/$(docm2RelDir)
-packagesdir = $(encapdir)/$(packagesRelDir)
-docpackagesdir = $(encapdir)/$(docpackagesRelDir)
-libm2dir = $(encapdir)/$(libm2RelDir)
-librariesdir = $(encapdir)/$(librariesRelDir)
-cachedir = $(encapdir)/$(cacheRelDir)
-datam2dir = $(encapdir)/$(datam2RelDir)
-sharedir = $(encapdir)/$(shareRelDir)
-m2dir = $(encapdir)/$(m2RelDir)
-docm2reldir = $(encapdir)/$(docm2relRelDir)
-emacsdocdir = $(encapdir)/$(emacsdocRelDir)
-imagesdir = $(encapdir)/$(imagesRelDir)
-styledir = $(encapdir)/$(styleRelDir)
-packagesrcdir = $(encapdir)/$(packagesrcRelDir)
-packagedocdir = $(encapdir)/$(packagedocRelDir)
-packageimagesdir = $(encapdir)/$(packageimagesRelDir)
-packagetestsdir = $(encapdir)/$(packagetestsRelDir)
-packagehtmldir = $(encapdir)/$(packagehtmlRelDir)
-packagecachedir = $(encapdir)/$(packagecacheRelDir)
-packageexamplesdir = $(encapdir)/$(packageexamplesRelDir)
 
 MAKEFUN = "$(1)" => PackageName -> "$(subst PackageName,"|PackageName|",$($(1)RelDir))/"
 

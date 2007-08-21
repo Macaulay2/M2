@@ -24,7 +24,7 @@ all :: include/config.h
 	@echo '#  Exiting so you can run it again the same way you did before.'
 	@echo '#  Here is the way you ran it before:'
 	@echo '#'
-	@echo "     $(CONFIG_CMD)"
+	@echo "     @CONFIG_CMD@"
 	@echo '#'
 	@echo '#  Type'
 	@echo '        make reconfigure'
@@ -40,7 +40,7 @@ status : @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
 	@echo '#  Here is the way you ran $^ before:'
 	@echo '#'
-	@echo "     $(CONFIG_CMD)"
+	@echo "     @CONFIG_CMD@"
 	@echo '#'
 	@echo '#  Type'
 	@echo '        make reconfigure'
@@ -53,7 +53,7 @@ config.status : @srcdir@/configure
 	@echo '#  Exiting so you can run $^ the same way you did before.'
 	@echo '#  Here is the way you ran it before:'
 	@echo '#'
-	@echo "     $(CONFIG_CMD)"
+	@echo "     @CONFIG_CMD@"
 	@echo '#'
 	@echo '#  Type'
 	@echo '        make reconfigure'
@@ -89,7 +89,7 @@ all:: ;	$(MAKE) -C WindowsNT
 endif
 all distclean check clean install install-others install-Macaulay2 :: ; $(MAKE) -C Macaulay2 $@
 all::; $(MAKE) -C Macaulay2 doc
-DIRS := $(target) $(bindir) $(libm2dir) $(man1dir) $(emacsdir) $(m2dir) $(docm2reldir)
+DIRS := $(target) @encapdir@/$(binRelDir) $(libm2dir) @encapdir@/$(man1RelDir) @encapdir@/$(emacsRelDir) @encapdir@/$(m2RelDir) @encapdir@/$(docm2RelDir)
 install install-others install-Macaulay2 :: $(DIRS)
 $(DIRS) :; $(INSTALL) -d $@
 distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile

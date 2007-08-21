@@ -415,7 +415,7 @@ action := hashTable {
      "--no-debug" => arg -> debuggingMode = false,
      "--no-loaddata" => arg -> if phase == 1 then noloaddata = true,
      "--no-personality" => arg -> arg,
-     "--no-prompts" => arg -> if phase == 1 then noPrompts(),
+     "--no-prompts" => arg -> if phase == 2 then noPrompts(),
      "--no-readline" => arg -> arg,			    -- handled in d/stdio.d
      "--no-setup" => arg -> if phase == 1 then noloaddata = nosetup = true,
      "--notify" => arg -> if phase <= 2 then notify = true,
