@@ -1,5 +1,6 @@
 # -*- Makefile -*-
 
+LIBRARY_MODE = yes
 include ../../include/config.Makefile
 
 PREFIX = $(shell cd .. ; pwd)/final@FINALPREFIX@
@@ -14,8 +15,6 @@ FINALLIBRARIESDIR = @FINALPREFIX@/$(librariesRelDir)
 CPPFLAGS := -I$(LIBRARIESDIR)/include $(CPPFLAGS)
 LDFLAGS := -L$(LIBRARIESDIR)/lib $(LDFLAGS)
 
-export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LOADLIBES FFLAGS
-
 all install :: .installed
 unconfigure : ; rm -f .configured .compiled .installed
 reconfigure : unconfigure .configured
@@ -27,8 +26,20 @@ package-clean : unmark ; $(MAKE) -C $(BUILDDIR) clean
 package-distclean : unmark ; $(MAKE) -C $(BUILDDIR) distclean
 
 PRECONFIGURE  ?= :
-CONFIGOPTIONS += --build=@build@ --host=@host@
-CONFIGURECMD  ?= $(PRECONFIGURE) && ./configure --prefix=$(FINALLIBRARIESDIR) $(CONFIGOPTIONS)
+
+CONFIGOPTIONS += --build=@build@ --host=@host@ --cache-file=/dev/null
+CONFIGENV     = env \
+	CPPFLAGS="$(CPPFLAGS)" \
+	CC="$(CC)" \
+	CFLAGS="$(CFLAGS)" \
+	CXX="$(CXX)" \
+	CXXFLAGS="$(CXXFLAGS)" \
+	LDFLAGS="$(LDFLAGS)" \
+	LOADLIBES="$(LOADLIBES)" \
+	LDLIBS="$(LDLIBS)" \
+	FFLAGS="$(FFLAGS)"
+
+CONFIGURECMD  ?= $(PRECONFIGURE) && $(CONFIGENV) ./configure --prefix=$(FINALLIBRARIESDIR) $(CONFIGOPTIONS)
 BUILDTARGET   ?= 
 BUILDCMD      ?= $(MAKE) $(BUILDOPTIONS) $(BUILDTARGET)
 INSTALLTARGET ?= install

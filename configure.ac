@@ -99,30 +99,18 @@ AC_CHECK_PROGS(OBJDUMP,objdump)
 AC_CHECK_PROGS(ETAGS,etags)
 AC_CHECK_PROGS(LDD,ldd)
 
+AC_F77_LIBRARY_LDFLAGS()
+AC_F77_DUMMY_MAIN()
+AC_F77_WRAPPERS()
+
+AC_SUBST(TOPDIR,`pwd`)
+
 echo $ECHO_N "checking whether $MAKE is GNU make... " >&6
 if "$MAKE" -n --version nothing | grep GNU >/dev/null 2>&1
 then echo "yes" >&6
 else echo "`basename $0`: $MAKE: GNU make is required" >&2
      exit 1
 fi
-
-# AC_CHECK_PROG(INSTALL_INFO,install-info,yes)
-# if test ! "$INSTALL_INFO"
-# then echo "configure: error: program 'install-info' (from the 'texinfo' package) not found" >&2
-#      exit 1
-# fi
-# install-info --version |
-#   egrep '^install-info' |
-# [  sed -e 's/^.* \([1-9][0-9]*\)\.\([1-9][0-9]*\)/\1 \2/' -e 's/^i.*//' |]
-#   if read major minor
-#   then min=4
-#        if test "$major" -lt "$min"
-#        then echo "Macaulay2 requires 'install-info' (from the 'texinfo' package) at least version $min" >&2
-# 	    false
-#        fi
-#   else echo "configure: error: program 'install-info' version number not recognized" >&2
-#        false
-#   fi || exit 1
 
 NODENAME="`uname -n`"
 AC_SUBST(NODENAME)
@@ -356,25 +344,6 @@ AC_LANG(C++)
 AC_COMPILE_IFELSE([# 1 "foo" 1 3 4
 	template <class T> struct A { };],AC_MSG_RESULT(no);ISYSTEM=yes,AC_MSG_RESULT(yes);ISYSTEM=no)
 
-AC_SUBST(BLASLIB)
-AC_ARG_WITH(blaslib, AS_HELP_STRING([--with-blaslib=...],[blas and blas libraries]), BLASLIB="$withval", BLASLIB="")
-
-AC_SUBST(LAPACKLIBS)
-AC_ARG_WITH(lapacklibs, AS_HELP_STRING([--with-lapacklibs=...],[lapack and blas libraries]), LAPACKLIBS="$withval", LAPACKLIBS="")
-
-AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,replace lapack libraries by "-framework vecLib"),
-    VECLIB=yes LAPACKLIBS="-framework vecLib" BLASLIB="-framework vecLib",
-    VECLIB=no
-    )
-
-AC_SUBST(LAPACK)
-AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack]),
-    LAPACK="$enableval" BLAS="$enableval" LAPACKLIBS="",
-    LAPACK=yes BLAS=yes
-    )
-test "$LAPACK" = no; val=$?
-AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
-
 AC_SUBST(BUILTLIBS)
 
 AC_LANG(C)
@@ -430,11 +399,51 @@ AC_ARG_WITH(gdbmlib, AS_HELP_STRING(--with-gdbmlib=...,gdbm library (-lgdbm)),
     fi
     ])
 
+AC_SUBST(BUILDNTL,no)
+AC_ARG_ENABLE(build-ntl, AS_HELP_STRING(--enable-build-ntl,build library ntl from downloaded source code), BUILDNTL="$enableval")
+if test "$BUILDNTL" = no
+then AC_LANG(C++)
+     AC_SEARCH_LIBS(_ntl_GetTime,ntl,,BUILDNTL=yes)
+     AC_CHECK_HEADER(NTL/tools.h,,BUILDNTL=yes)
+     test "$BUILDNTL" = yes && BUILTLIBS="-lntl $BUILTLIBS"
+fi
+
 AC_SUBST(BUILDBLAS,no)
 AC_ARG_ENABLE(build-blas, AS_HELP_STRING(--enable-build-blas,build library blas from downloaded source code), BUILDBLAS="$enableval")
 
 AC_SUBST(BUILDLAPACK,no)
 AC_ARG_ENABLE(build-lapack, AS_HELP_STRING(--enable-build-lapack,build library lapack from downloaded source code), BUILDLAPACK="$enableval")
+
+AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,[use "-framework vecLib" for lapack]), LIBS="-framework vecLib $LIBS" )
+
+AC_SUBST(LAPACK,yes)
+AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack and blas]), LAPACK="$enableval")
+test "$LAPACK" = no; val=$?
+AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
+
+if test "$LAPACK" = yes
+then AC_MSG_CHECKING([whether the vecLib framework is available])
+     SAVELIBS="$LIBS"
+     LIBS="-framework vecLib $LIBS"
+     AC_LANG(C)
+     AC_LINK_IFELSE(
+	 AC_LANG_PROGRAM(,[sgemv_();dgetrf_();]),
+	 [
+	     AC_MSG_RESULT(yes)
+	     ],
+	 [
+	     AC_MSG_RESULT(no)
+	     LIBS="$SAVELIBS"
+	     if test "$BUILDBLAS" = no
+	     then AC_LANG(Fortran 77)
+		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILDBLAS=yes)
+	     fi
+	     if test "$BUILDLAPACK" = no
+	     then AC_LANG(Fortran 77)
+		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILDLAPACK=yes)
+	     fi
+	 ])
+fi
 
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
@@ -512,42 +521,6 @@ then AC_SUBST(NTLLIB)
      LIBS="$SAVELIBS"
 fi
 
-AC_LANG(C)
-LIBS="-framework vecLib $SAVELIBS"
-AC_MSG_CHECKING([whether vecLib framework is available])
-AC_LINK_IFELSE(AC_LANG_PROGRAM(,[sgemv_();dgetrf_();]),
-    AC_MSG_RESULT(yes); VECLIB=yes LAPACKLIBS="-framework vecLib" BLASLIB="-framework vecLib" BUILDBLAS=no BUILDLAPACK=no,
-    AC_MSG_RESULT(no) ; VECLIB=no )
-LIBS="$SAVELIBS"
-
-if test "$VECLIB" = no
-then AC_F77_LIBRARY_LDFLAGS()
-     AC_F77_DUMMY_MAIN()
-     AC_F77_WRAPPERS()
-fi
-
-if test "$BUILDBLAS" = no -a "$BLAS" = "yes" -a "$BLASLIB" = "" -a "$VECLIB" = no
-then AC_LANG(C)
-     BLASLIB="-lf77blas"
-     LIBS="$BLASLIB $SAVELIBS $FLIBS"
-     AC_MSG_CHECKING([whether blas library is available with $BLASLIB])
-     AC_LINK_IFELSE(AC_LANG_PROGRAM(,F77_FUNC(sgemv,SGEMV)();),
-	 AC_MSG_RESULT(yes), 
-	 AC_MSG_RESULT(no (it will be compiled)); BUILDBLAS=yes)
-     LIBS="$SAVELIBS"
-fi
-
-if test "$BUILDLAPACK" = no -a "$LAPACK" = "yes" -a "$LAPACKLIBS" = "" -a "$VECLIB" = no
-then LAPACKLIBS="-llapack $BLASLIB"
-     AC_LANG(C)
-     LIBS="$LAPACKLIBS $SAVELIBS $FLIBS"
-     AC_MSG_CHECKING([whether lapack library is available with $LAPACKLIBS])
-     AC_LINK_IFELSE(AC_LANG_PROGRAM(,F77_FUNC(dgetrf,DGETRF)();),
-	 AC_MSG_RESULT(yes), 
-	 AC_MSG_RESULT(no (it will be compiled));BUILDLAPACK=yes)
-     LIBS="$SAVELIBS"
-fi
-
 AC_SUBST(LIBRARIES)
 LIBRARIES=
 # this sequence reflects dependencies
@@ -592,6 +565,10 @@ IS_DECLARED(char **,h_errlist, [
       #include <stdio.h>
       #include <errno.h>
       ])
+
+dnl # delete this eventually:
+AC_ARG_WITH(blaslib, AS_HELP_STRING([--with-blaslib=...],obsolete option), AC_MSG_ERROR(--with-blaslib : obsolete option))
+AC_ARG_WITH(lapacklibs, AS_HELP_STRING([--with-lapacklibs=...],obsolete option), AC_MSG_ERROR(--with-lapacklibs : obsolete option))
 
 AC_MSG_NOTICE([these libraries are to be compiled from downloaded sources:$LIBRARIES])
 AC_MSG_NOTICE([using BUILTLIBS = $BUILTLIBS])
