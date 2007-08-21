@@ -42,13 +42,13 @@ control.tar.gz : $(CONTROLFILES) control
 	chmod a+x,g-w $(CONTROLFILES)
 	fakeroot chown root $(CONTROLFILES) control
 	fakeroot tar cfz $@ $^
-prepare : ../$(PKG_TZ)
-	rm -rf $(package) $(prefixtail)
-	$(MKDIR_P) $(prefixtail)
-	tar xfp $^ $(TAR_COMPRESS_OPTION)
-	for i in $(package)/* ; do if [ -f "$$i" ] ; then rm "$$i" ; fi ; done
-	mv $(package)/* $(prefixtail)
-	rmdir $(package)
+prepare : ../@PKG_TZ@
+	rm -rf @package@ $(prefixtail)
+	@MKDIR_P@ $(prefixtail)
+	tar xfp $^ @TAR_COMPRESS_OPTION@
+	for i in @package@/* ; do if [ -f "$$i" ] ; then rm "$$i" ; fi ; done
+	mv @package@/* $(prefixtail)
+	rmdir @package@
 	chmod -R og-w,a+r $(prefixtail)
 	find $(prefixtail) -name .linkdir | xargs rm -f
 	find $(prefixtail) -name \*.info | while read x ; do gzip --best "$$x" ; done
@@ -63,7 +63,7 @@ check-with-lintian : ../$(PKG_DEB)
 tidy :
 	rm -rf $(prefixtail) control.tar.gz data.tar.gz md5sums
 clean ::
-	rm -rf $(package) $(prefixtail) debian-binary control.tar.gz data.tar.gz md5sums 
+	rm -rf @package@ $(prefixtail) debian-binary control.tar.gz data.tar.gz md5sums 
 	rm -rf ../$(PKG_DEB)
 distclean : clean; rm -f Makefile control
 

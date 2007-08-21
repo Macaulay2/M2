@@ -18,12 +18,12 @@ prefixdir=$(shell dirname $(finalprefix))
 
 ############################## main targets
 all install :: ../$(PKG_RPM)
-../$(PKG_RPM) : Macaulay2-body.spec ../$(PKG_TGZ) Makefile
+../$(PKG_RPM) : Macaulay2-body.spec ../@PKG_TGZ@ Makefile
 	rm -rf files
 	mkdir files
-	$(MKDIR_P) files$(prefixdir)
-	tar xzf ../$(PKG_TGZ) -C files$(prefixdir)
-	mv files$(prefixdir)/$(package) files$(prefixdir)/$(prefixtail)
+	@MKDIR_P@ files$(prefixdir)
+	tar xzf ../@PKG_TGZ@ -C files$(prefixdir)
+	mv files$(prefixdir)/@package@ files$(prefixdir)/$(prefixtail)
 	cd files$(finalprefix) && rm -f INSTALL encapinfo postinstall preremove
 	cat Macaulay2-body.spec >Macaulay2.spec
 	(cd files && find ./$(finalprefix) -type f) | sed -e 's=^./="=' -e 's=$$="=' >>Macaulay2.spec

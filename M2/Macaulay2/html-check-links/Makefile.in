@@ -31,7 +31,7 @@ ifneq (@ETAGS@,)
 all :: TAGS
 endif
 all:: html-check-links
-%.dep : %.c; $(CC) -MM $(CPPFLAGS) $< >$@
+%.dep : %.c; @CC@ -MM $(CPPFLAGS) $< >$@
 html-check-links : $(CFILES:.c=.o)
 ifneq ($(DEPENDS),no)
 include $(CFILES:.c=.dep)

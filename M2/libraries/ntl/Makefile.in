@@ -12,8 +12,8 @@ CONFIGURECMD = ./configure \
 	INCLUDEDIR=@FINALPREFIX@/$(librariesRelDir)/include \
 	DOCDIR=@FINALPREFIX@/$(librariesRelDir)/share/doc \
 	NTL_GMP_LIP=on NTL_STD_CXX=on NTL_NO_INIT_TRANS=on NTL_CXX_ONLY=on \
-	CC="$(CXX)" \
-	CXX="$(CXX)" \
+	CC="@CXX@" \
+	CXX="@CXX@" \
 	CFLAGS="$(CFLAGS)" \
 	CXXFLAGS="$(CXXFLAGS)" \
 	CPPFLAGS="$(CPPFLAGS)" \

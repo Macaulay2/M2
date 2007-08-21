@@ -6,7 +6,7 @@ top_srcdir = @top_srcdir@
 VPATH = @srcdir@
 ############################################
 %.c        : %.y
-	$(YACC) $(YFLAGS) $^
+	@YACC@ $(YFLAGS) $^
 	mv y.tab.c $*.c
 	rm -f y.tab.h y.output
 ############################################################
@@ -20,14 +20,14 @@ SRCFILES := $(HFILES) $(CNAMES) grammar.y
 CPPFLAGS += -I../../include -I/include -I@srcdir@/../../include
 CPPFLAGS += -I@srcdir@
 LDFLAGS += -L../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
-ifeq ($(OS),Linux)
+ifeq (@OS@,Linux)
 LDFLAGS += -Wl,-rpath,$(shell /bin/pwd)/../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
 endif
 ############################## compiling
 scc1 : $(OFILES)
-	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
+	$(LINK.o) $^ @LOADLIBES@ $(LDLIBS) $(OUTPUT_OPTION)
 $(OFILES) : $(HFILES)
-grammar.o : grammar.c; $(CC) $(CPPFLAGS) $(CFLAGS) -c $< $(OUTPUT_OPTION)
+grammar.o : grammar.c; @CC@ $(CPPFLAGS) $(CFLAGS) -c $< $(OUTPUT_OPTION)
 ############################## tags
 ifneq (@ETAGS@,)
 all :: tags

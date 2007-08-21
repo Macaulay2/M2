@@ -47,9 +47,10 @@ test "$FC"         && echo "   FC=$FC"
 test "$CXX"        && echo "   CXX=$CXX"
 test "$CPPFLAGS"   && echo "   CPPFLAGS=$CPPFLAGS"                 # autoconf default is: -g -O2
 test "$CFLAGS"     && echo "   CFLAGS=$CFLAGS"                     # autoconf default is: -g -O2
-test "$FCFLAGS"    && echo "   FCFLAGS=$FCFLAGS"                   # autoconf default is: -g -O2
+test "$FCFLAGS"    && echo "   FCFLAGS=$FCFLAGS"                   # autoconf default is: -g -O2, goes to @FFLAGS@!
 test "$CXXFLAGS"   && echo "   CXXFLAGS=$CXXFLAGS"
 test "$LDFLAGS"    && echo "   LDFLAGS=$LDFLAGS"
+test "$LIBS"       && echo "   LIBS=$LIBS"
 test "$LOADLIBES"  && echo "   LOADLIBES=$LOADLIBES"
 test "$LDLIBS"     && echo "   LDLIBS=$LDLIBS"
 
@@ -84,10 +85,9 @@ then echo oops, CXX=gcc, should use CXX=g++ >&2
      exit 1
 fi
 
-AC_ARG_VAR(CFLAGS,[C compiler flags, default: -g -O2])
-AC_ARG_VAR(LOADLIBES,[first list of libraries to link against])
-AC_ARG_VAR(LDLIBS,[second list of libraries to link against])
-LIBS="$LOADLIBES $LDLIBS"
+AC_SUBST(LOADLIBES)
+AC_SUBST(LDLIBS)
+LIBS="$LIBS $LOADLIBES $LDLIBS"
 
 # 5 compiler messages saved in config.log
 # 6 checking for... messages and results
@@ -134,8 +134,8 @@ AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s])
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_HOST()
 AC_VALIDATE_CACHED_SYSTEM_TUPLE()
-AC_ARG_VAR(CC,C compiler to use)
-AC_ARG_VAR(CXX,C++ compiler to use)
+dnl AC_ARG_VAR(CC,C compiler to use)
+dnl AC_ARG_VAR(CXX,C++ compiler to use)
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_AWK()
@@ -191,21 +191,25 @@ AC_LANG(C)
 
 AC_SUBST(HAVE_PERSONALITY)  HAVE_PERSONALITY=$ac_cv_func_personality
 
-AC_SUBST(STRIP)      AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), STRIP="$enableval", STRIP=yes)
-AC_SUBST(VERBOSE)    AC_ARG_ENABLE(verbose, AS_HELP_STRING(--enable-verbose,enable verbose memory allocation), VERBOSE="$enableval", VERBOSE=no)
-AC_SUBST(STATIC)     AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC="$enableval", STATIC=no)
-AC_SUBST(MEMDEBUG)   AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG="$enableval", MEMDEBUG=no)
-AC_SUBST(OPTIMIZE)   AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE="$enableval", OPTIMIZE=yes)
-AC_SUBST(DEBUG)      AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG="$enableval", DEBUG=no)
-AC_SUBST(ENCAP)      AC_ARG_ENABLE(encap, AS_HELP_STRING(--disable-encap,do not encapsulate file in a subdirectory), ENCAP="$enableval", ENCAP=yes)
-AC_SUBST(XCODE)      AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE="$enableval", XCODE="no" )
-AC_SUBST(ALTIVEC)    AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" option), ALTIVEC="$enableval", ALTIVEC="no" )
-AC_SUBST(PROFILING)  AC_ARG_ENABLE(profile, AS_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING="$enableval", PROFILING=no)
-AC_SUBST(COMPRESS)   AC_ARG_ENABLE(compress, AS_HELP_STRING([--enable-compress=[gz|bz2]],compression method for tarball), COMPRESS="$enableval", COMPRESS=gz)
-AC_SUBST(EXPERIMENT) AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-experimental-code,enable experimental code), EXPERIMENT="$enableval", EXPERIMENT=no)
-AC_SUBST(M2TARFILE)  AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare a binary package as a compressed tar file), M2TARFILE="$enableval", M2TARFILE==no)
-AC_SUBST(TARLIBS)    AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS="$enableval", TARLIBS=no)
-AC_SUBST(SHARED)     AC_ARG_ENABLE(shared, AS_HELP_STRING(--enable-shared,enable building of shared libraries), SHARED="$enableval", SHARED=no)
+
+AC_SUBST(STRIP,yes)    AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), STRIP="$enableval")
+AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC="$enableval")
+AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG="$enableval")
+AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE="$enableval")
+AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG="$enableval")
+AC_SUBST(ENCAP,yes)    AC_ARG_ENABLE(encap, AS_HELP_STRING(--disable-encap,do not encapsulate file in a subdirectory), ENCAP="$enableval")
+AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE="$enableval")
+AC_SUBST(ALTIVEC,no)   AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" option), ALTIVEC="$enableval")
+AC_SUBST(PROFILING,no) AC_ARG_ENABLE(profile, AS_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING="$enableval")
+AC_SUBST(COMPRESS,gz)  AC_ARG_ENABLE(compress, AS_HELP_STRING([--enable-compress=[gz|bz2]],compression method for tarball), COMPRESS="$enableval")
+AC_SUBST(EXPERIMENT,no)AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-experimental-code,enable experimental code), EXPERIMENT="$enableval")
+AC_SUBST(M2TARFILE,no) AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare a binary package as a compressed tar file), M2TARFILE="$enableval")
+AC_SUBST(TARLIBS,no)   AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS="$enableval")
+AC_SUBST(SHARED,no)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--enable-shared,enable building of shared libraries), SHARED="$enableval")
+
+test "$MEMDEBUG" = "yes" && DEBUG=yes
+test "$DEBUG" = "yes" && STRIP=no
+test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" STRIP=no
 
 AC_SUBST(PACKAGES)
 PACKAGES="Macaulay2
@@ -320,9 +324,6 @@ test "$DUMPDATA" = no;   val=$?; AC_DEFINE_UNQUOTED(DUMPDATA,  $val,whether to u
 test "$PROFILING" = no;  val=$?; AC_DEFINE_UNQUOTED(PROFILING, $val,whether profiling has been enabled)
 test "$EXPERIMENT" = no; val=$?; AC_DEFINE_UNQUOTED(EXPERIMENT,$val,whether experimental code has been enabled)
 
-AC_SUBST(READLINELIB) AC_ARG_WITH(readlinelib, AS_HELP_STRING(--with-readlinelib=...,readline library (-lreadline)), READLINELIB="$withval", READLINELIB="-lreadline" )
-AC_SUBST(HISTORYLIB)  AC_ARG_WITH(historylib, AS_HELP_STRING(--with-historylib=...,history library (-lhistory)), HISTORYLIB="$withval", HISTORYLIB="-lhistory")
-
 AC_DEFINE(M2_CONFIG_H,1,a macro definition to ensure our config.h was the one loaded)
 
 AC_DEFINE_UNQUOTED(M2SUFFIX,"$M2SUFFIX",[suffix to append to executable name M2])
@@ -406,9 +407,25 @@ AC_SUBST(BUILDNTL,no)
 AC_ARG_ENABLE(build-ntl, AS_HELP_STRING(--enable-build-ntl,build library ntl from downloaded source code), BUILDNTL="$enableval")
 if test "$BUILDNTL" = no
 then AC_LANG(C++)
-     AC_SEARCH_LIBS(_ntl_GetTime,ntl,,BUILDNTL=yes)
-     AC_CHECK_HEADER(NTL/tools.h,,BUILDNTL=yes)
-     test "$BUILDNTL" = yes && BUILTLIBS="-lntl $BUILTLIBS"
+    SAVELIBS=$LIBS
+    AC_MSG_CHECKING(for nlt library)
+    FOUND=
+    for lib in "" "-lntl"
+    do  test "$lib" && LIBS="$lib $LIBS"
+	AC_LINK_IFELSE( [
+	        #include <NTL/tools.h>
+		int main () { _ntl_GetTime(); }
+		],
+	    FOUND=yes; break;)
+    done
+    if test "$FOUND"
+    then if test "$lib"
+	then AC_MSG_RESULT(none needed)
+	else AC_MSG_RESULT(found $lib)
+	fi
+    else AC_MSG_RESULT(none found)
+	LIBS=$SAVELIBS BUILDNTL=yes BUILTLIBS="-lntl $BUILTLIBS"
+    fi 
 fi
 
 AC_SUBST(BUILDBLAS,no)
@@ -451,33 +468,21 @@ fi
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
 
-# we need to control the position of -lfac -lcf in the link line, so we don't add them to $LIBS nor to $BUILTLIBS
+# we need to control the position of -lfac -lcf in the link line, so we don't add them to $LIBS nor to $BUILTLIBS, putting them in $SINGULARLIBS instead
+AC_SUBST(SINGULARLIBS,"-lcf -lfac")
 AC_SUBST(BUILDFACTORY,no)
-AC_ARG_ENABLE(build-factory, AS_HELP_STRING(--enable-build-factory,build library factory from downloaded source code), BUILDFACTORY="$enableval")
+AC_ARG_ENABLE(build-factory, AS_HELP_STRING(--enable-build-factory,build libraries libfac and factory from downloaded source code), BUILDFACTORY="$enableval")
 if test "$BUILDFACTORY" = no
 then AC_LANG(C++)
      AC_MSG_CHECKING([whether factory library is installed (-lcf)])
-     LIBS="-lcf $LIBS"
+     LIBS="$SINGULARLIBS $LIBS"
      AC_LINK_IFELSE( [[
 	     #include <factoryconf.h>
-	     int main () { extern const char factoryVersion[]; return *factoryVersion; }
+	     extern const char * libfac_version;
+	     int main () { extern const char factoryVersion[]; return *factoryVersion; return *libfac_version; }
 	     ]],
 	  AC_MSG_RESULT(yes),
-	  AC_MSG_RESULT(no); BUILDFACTORY=yes BUILDLIBFAC=yes)
-     LIBS="$SAVELIBS"
-fi
-
-# we need to control the position of -lfac -lcf in the link line, so we don't add them to $LIBS
-AC_SUBST(BUILDLIBFAC,no)
-AC_ARG_ENABLE(build-libfac, AS_HELP_STRING(--enable-build-libfac,build library libfac from downloaded source code), BUILDLIBFAC="$enableval")
-if test "$BUILDLIBFAC" = no
-then AC_LANG(C++)
-     AC_MSG_CHECKING([whether the libfac library is installed (-lfac -lcf)])
-     LIBS="-lfac -lcf $SAVELIBS"
-     AC_LINK_IFELSE(
-	 [extern const char * libfac_version; int main() { return *libfac_version; }],
-	 AC_MSG_RESULT(yes),
-	 AC_MSG_RESULT(no (it will be compiled)); BUILDLIBFAC=yes)
+	  AC_MSG_RESULT(no); BUILDFACTORY=yes)
      LIBS="$SAVELIBS"
 fi
 
@@ -508,34 +513,15 @@ AC_RUN_IFELSE([
     AC_MSG_RESULT([yes (cross-compiling, not tested)]))
 AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,$GETADDRINFO_WORKS,[whether getaddrinfo can handle numeric service (port) numbers])
 
-NTLLIB=-lntl
-if test "$BUILDNTL" = no
-then AC_SUBST(NTLLIB)
-     AC_ARG_WITH(ntllib, AS_HELP_STRING(--with-ntllib=...,ntl library (-lntl), ignored if building it), NTLLIB="$withval")
-     LIBS="$NTLLIB -lgmp $SAVELIBS"
-     AC_LANG(C++)
-     AC_MSG_CHECKING([whether ntl library is installed])
-     AC_LINK_IFELSE( [
-	 #include <NTL/tools.h>
-	 int main () { _ntl_GetTime(); }
-	 ],
-	 AC_MSG_RESULT(yes),
-	 AC_MSG_RESULT(no (it will be compiled));BUILDNTL=yes)
-     LIBS="$SAVELIBS"
-fi
-
-AC_SUBST(LIBRARIES)
-LIBRARIES=
+AC_SUBST(LIBRARIES,"")
 # this sequence reflects dependencies
 test "$BUILDGDBM" = yes && LIBRARIES="$LIBRARIES gdbm"
 test "$BUILDGMP" = yes && LIBRARIES="$LIBRARIES gmp"
 test "$BUILDREADLINE" = yes && LIBRARIES="$LIBRARIES readline"
 test "$BUILDGC" = yes && LIBRARIES="$LIBRARIES gc"
 test "$BUILDNTL" = yes && LIBRARIES="$LIBRARIES ntl"
-# factory needs ntl and gmp
-test "$BUILDFACTORY" = yes && LIBRARIES="$LIBRARIES factory"
-# libfac needs factory
-test "$BUILDLIBFAC" = yes && LIBRARIES="$LIBRARIES libfac"
+# factory needs ntl and gmp, libfac needs factory
+test "$BUILDFACTORY" = yes && LIBRARIES="$LIBRARIES factory libfac"
 test "$BUILDBLAS" = yes && LIBRARIES="$LIBRARIES blas"
 # lapack needs blas
 test "$BUILDLAPACK" = yes && LIBRARIES="$LIBRARIES lapack"
@@ -572,11 +558,32 @@ IS_DECLARED(char **,h_errlist, [
 dnl # delete this eventually:
 AC_ARG_WITH(blaslib, AS_HELP_STRING([--with-blaslib=...],obsolete option), AC_MSG_ERROR(--with-blaslib : obsolete option))
 AC_ARG_WITH(lapacklibs, AS_HELP_STRING([--with-lapacklibs=...],obsolete option), AC_MSG_ERROR(--with-lapacklibs : obsolete option))
+AC_ARG_WITH(readlinelib, AS_HELP_STRING(--with-readlinelib=...,obsolete option), AC_MSG_ERROR(--with-readlinelib : obsolete option))
+AC_ARG_WITH(historylib, AS_HELP_STRING(--with-historylib=...,obsolete option), AC_MSG_ERROR(--with-historylib : obsolete option))
 
-AC_MSG_NOTICE([these libraries are to be compiled from downloaded sources:$LIBRARIES])
-AC_MSG_NOTICE([using BUILTLIBS = $BUILTLIBS])
-AC_MSG_NOTICE([using LIBS      = $LIBS])
-AC_MSG_NOTICE([using             -lfac -lcf])
+AC_MSG_NOTICE([using LIBRARIES    = $LIBRARIES (libraries to be built from downloaded sources)])
+AC_MSG_NOTICE([using BUILTLIBS    = $BUILTLIBS (linker options for most of them)])
+AC_MSG_NOTICE([using SINGULARLIBS = $SINGULARLIBS (linker options for some of them)])
+AC_MSG_NOTICE([using LIBS         = $LIBS (M2 linker options)])
+
+AC_SUBST(package,Macaulay2-$PACKAGE_VERSION)
+AC_SUBST(SRC_TGZ,$package.tar.gz)
+AC_SUBST(SRC_TBZ,$package.tar.bz2)
+AC_SUBST(SRC_TZ,$package.tar.$COMPRESS)
+AC_SUBST(PKG_TGZ,$package-$ARCH-$OS.tar.gz)
+AC_SUBST(PKG_TBZ,$package-$ARCH-$OS.tar.bz2)
+AC_SUBST(PKG_DEB,$package-$DEBIANARCH-$OS.deb)
+AC_SUBST(PKG_RPM,$package-$ARCH-$OS.rpm)
+AC_SUBST(PKG_TZ,$package-$ARCH-$OS.tar.$COMPRESS)
+AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
+AC_SUBST(EXE,$M2SUFFIX$EXEEXT)
+
+# we used to use @ ARCH @ instead of @ host_cpu @ here, but for DEC alphas,
+# and perhaps other machines, it gives more information.  The script
+# config.guess assembles host_cpu from /proc/cpuinfo, and can be something
+# like "alphaev6" or "alphaev56", but ARCH, which is determined from 'uname'
+# by the 'configure' script, will be simply "alpha".
+
 
 CONFIGURED_FILES="$ac_config_files"
 AC_SUBST(CONFIGURED_FILES)

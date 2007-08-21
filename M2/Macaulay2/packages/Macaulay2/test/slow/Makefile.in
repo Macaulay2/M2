@@ -4,7 +4,7 @@ DOTS = ../../../..
 include $(DOTS)/../include/config.Makefile
 VPATH = @srcdir@
 
-ifeq "$(DEBUG)" "no"
+ifeq "@DEBUG@" "no"
 MLIMIT = 400000
 VLIMIT = 400000
 TLIMIT = 300

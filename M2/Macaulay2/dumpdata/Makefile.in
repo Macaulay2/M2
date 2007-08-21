@@ -46,11 +46,11 @@ ifeq "@HAVE_PERSONALITY@" "yes"
 # we don't want to link with M2's libraries, because this program gets distributed
 LDLIBS =
 all:: personality
-install:: personality $(bindir)  ; $(INSTALL_PROGRAM) $< $(bindir)/personality
-$(bindir) :; $(INSTALL) -d "$@"
+install:: personality $(bindir)  ; @INSTALL_PROGRAM@ $< $(bindir)/personality
+$(bindir) :; @INSTALL@ -d "$@"
 PERDIR = $(packagesdir)/personality
-$(PERDIR):; $(INSTALL) -d "$@"
-install:: personality.c $(PERDIR) ; $(INSTALL_DATA) $^
+$(PERDIR):; @INSTALL@ -d "$@"
+install:: personality.c $(PERDIR) ; @INSTALL_DATA@ $^
 endif
 
 # Local Variables:

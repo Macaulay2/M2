@@ -23,7 +23,7 @@ ARGS += , MakeInfo => true
 ARGS += , UserMode => false
 ARGS += , DebuggingMode => false
 
-ifeq ($(ENCAP),yes)
+ifeq (@ENCAP@,yes)
 Encapsulate = true
 else
 Encapsulate = false
@@ -36,21 +36,21 @@ check ::
 	@ for i in $(PACKAGES) ; \
 	  do ( \
 	     set -x ; \
-		  ../bin/M2$(EXE) -q --stop \
+		  ../bin/M2@EXE@ -q --stop \
 		    -e "needsPackage(\"$$i\",LoadDocumentation=>true); check $$i; exit 0" ; \
 	     ) ; \
 	  done
 
 install :: install-Macaulay2 install-others
 install-Macaulay2 ::
-	@ set -x ;  ../bin/M2$(EXE) -q --stop \
+	@ set -x ;  ../bin/M2@EXE@ -q --stop \
 		    -e errorDepth=0 \
 		    -e debugLevel=$(debugLevel) \
 		    -e "installPackage(\"Macaulay2\" $(ARGS1))" \
 		    -e "exit 0"
 
 install-one ::
-	../bin/M2$(EXE) -q --stop -e errorDepth=0 -e debugLevel=$(debugLevel) -e "installPackage(\"$(NAMEOFPACKAGE)\" $(ARGS2))" -e "exit 0"
+	../bin/M2@EXE@ -q --stop -e errorDepth=0 -e debugLevel=$(debugLevel) -e "installPackage(\"$(NAMEOFPACKAGE)\" $(ARGS2))" -e "exit 0"
 
 
 install-others ::
@@ -59,7 +59,7 @@ install-others ::
 	      if [ "$$i" != Macaulay2 ] ; \
 	      then \
 		  set -x ; \
-		  ../bin/M2$(EXE) -q --stop \
+		  ../bin/M2@EXE@ -q --stop \
 		    -e errorDepth=0 \
 		    -e debugLevel=$(debugLevel) \
 		    -e "installPackage(\"$$i\" $(ARGS2))" \

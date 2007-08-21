@@ -5,11 +5,11 @@ include ../../../include/config.Makefile
 
 .PHONY : all
 
-ifeq "$(DUMPDATA)" "yes"
+ifeq "@DUMPDATA@" "yes"
 ARGS := -q -e 'path=join(path,{"../","$(srcdir)/"})' -e 'errorDepth = 0' --silent
 all :: ../../cache/$(DUMPDATAFILE)
 else
-ifeq "$(CC)" "cl"
+ifeq "@CC@" "cl"
 ## work around weirdness in the Microsoft runtime startup - it eliminates backslashes
 ## and does strange things to quotation marks.
 ARGS := -q --silent -e 'path=join(path,{\"../\",\"$(srcdir)/\"})' -e 'errorDepth = 0'
@@ -22,7 +22,7 @@ endif
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ../../bin/M2$(EXE) $(ARGS) $< -e 'exit(0)'
+	@ ../../bin/M2@EXE@ $(ARGS) $< -e 'exit(0)'
 	@ touch $@
 
 TESTFILES := $(wildcard *.m2)
@@ -30,7 +30,7 @@ TESTRESULTS := $(patsubst %.m2, %.okay, $(TESTFILES))
 
 all:: $(TESTRESULTS)
 
-ifneq "$(DUMPDATA)" "no"
+ifneq "@DUMPDATA@" "no"
 $(TESTRESULTS) : ../../cache/$(DUMPDATAFILE)
 endif
 

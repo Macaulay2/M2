@@ -4,7 +4,7 @@ VPATH = @srcdir@
 SRCDIR = @srcdir@
 DEPENDS = yes
 
-ifeq ($(CXX)-@ISYSTEM@,g++-yes)
+ifeq (@CXX@-@ISYSTEM@,g++-yes)
 # We are using the -MM option to create *.dep files, which ignores "system" include files.
 # We want ../../include/config.h to be a "system" include file, so changing it
 # will not force a recompilation of all of our C++ files.
@@ -82,7 +82,7 @@ endif
 %.lo : %.c  ; $(COMPILE.c)  -fPIC $< $(OUTPUT_OPTION)
 %.lo : %.cc ; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
 %.lo : %.cpp; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
-../lib/libengine.so : $(LOFILES); $(CC) -shared $^ $(OUTPUT_OPTION)
+../lib/libengine.so : $(LOFILES); @CC@ -shared $^ $(OUTPUT_OPTION)
 
 VEC =   -e "s/geobucket/vecHeap/g"      -e "s/FREEMODULETYPE/const FreeModule/g" -e "s/VECTYPE/vecterm */g"
 GBVEC = -e "s/geobucket/gbvectorHeap/g" -e "s/FREEMODULETYPE/GBRing/g"     -e "s/VECTYPE/gbvector */g"

@@ -8,9 +8,9 @@ IMAGES = up.gif next.gif previous.gif top.gif index.gif null.gif recbg.jpg 9plan
 clean::
 distclean: clean; rm -f Makefile
 install:: $(imagesdir)
-$(imagesdir):; $(INSTALL) -d "$@"
+$(imagesdir):; @INSTALL@ -d "$@"
 install:: $(IMAGES)
-	$(INSTALL_DATA) $^ $(imagesdir)
+	@INSTALL_DATA@ $^ $(imagesdir)
 Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/packages/Images/Makefile
 
 # for gimp to find this *.scm file, put

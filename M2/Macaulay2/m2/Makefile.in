@@ -112,27 +112,27 @@ prep :: $(DUMPEDM2FILES)
 
 phase1 :: prep
 
-ifneq "$(DUMPDATA)" "no"
+ifneq "@DUMPDATA@" "no"
 phase1 :: ../cache/$(DUMPDATAFILE)
-../cache/$(DUMPDATAFILE) redump : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) ../bin/M2$(EXE) $(OTHERDUMPEDM2FILES)
+../cache/$(DUMPDATAFILE) redump : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) ../bin/M2@EXE@ $(OTHERDUMPEDM2FILES)
 	rm -f ../cache/$(DUMPDATAFILE)
-	../bin/M2$(EXE) -q --stop -e 'errorDepth = 0' --dumpdata
+	../bin/M2@EXE@ -q --stop -e 'errorDepth = 0' --dumpdata
 	printenv LD_LIBRARY_PATH
 endif
 
 phase1 :: ../cache/Macaulay2-made
-../cache/Macaulay2-made : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) ../bin/M2$(EXE)
+../cache/Macaulay2-made : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) ../bin/M2@EXE@
 	touch $@
 
 ## .gdbinit
 justM2 all:: .gdbinit .gdb-files .gdb-run-it
-gdb: .gdbinit .gdb-files; gdb ../bin/M2$(EXE)
+gdb: .gdbinit .gdb-files; gdb ../bin/M2@EXE@
 .gdbinit: .gdbinit.$(USER); cp $< $@
 .gdbinit.$(USER):; touch $@
 clean::; rm -f .gdbinit
 .gdb-files: Makefile
 	echo 'echo -- loading .gdb-files\n' >$@
-	echo 'file ../bin/M2$(EXE)' >>$@
+	echo 'file ../bin/M2@EXE@' >>$@
 clean :: ; rm -f .gdb-files
 .gdb-run-it: Makefile
 	echo 'echo -- loading .gdb-run-it\n' >$@
@@ -140,10 +140,10 @@ clean :: ; rm -f .gdb-files
 	echo 'run -q --no-loaddata --no-readline --no-personality' >>$@
 clean :: ; rm -f .gdb-run-it
 profile : gmon.out
-	gprof ../bin/M2$(EXE) >profile
+	gprof ../bin/M2@EXE@ >profile
 clean ::; rm -f profile
 
-ifeq "$(DEBUG)" "yes"
+ifeq "@DEBUG@" "yes"
 EGFLAGS = -k
 EGMORE = || true
 endif
@@ -155,34 +155,34 @@ TMPDIR = tmp
 
 check:: $(TMPDIR) test2
 $(TMPDIR) :; mkdir $@
-test2: phase1 ../bin/M2$(EXE)
+test2: phase1 ../bin/M2@EXE@
 	$(MAKE) -k -C $(TMPDIR) -f $(srcdir)/Makefile.tests srcdir=$(srcdir)
 	touch $@
 clean::; rm -f test2
 
 check:: test3
 test3:
-	echo 2+3 | ../bin/M2$(EXE)
+	echo 2+3 | ../bin/M2@EXE@
 	touch $@
 clean::; rm -f test3
 
-ifeq ($(OS),Linux)
+ifeq (@OS@,Linux)
 # check:: test4
 test4: ../util/screen
-	echo 2+3 | ../util/screen ../bin/M2$(EXE)
+	echo 2+3 | ../util/screen ../bin/M2@EXE@
 	touch $@
 clean::; rm -f test4
 endif
 
 install:: $(datam2dir)
 $(datam2dir) :
-	$(INSTALL) -d $(datam2dir)
+	@INSTALL@ -d $(datam2dir)
 
 install:: $(DUMPEDM2FILES) demo1.m2
-	$(INSTALL) -d "$(m2dir)"
-	$(INSTALL_DATA) $^ "$(m2dir)"
+	@INSTALL@ -d "$(m2dir)"
+	@INSTALL_DATA@ $^ "$(m2dir)"
 
-ifeq "$(ENCAP)" "yes"
+ifeq "@ENCAP@" "yes"
 ENCAPVALUE = true
 else 
 ENCAPVALUE = false
@@ -207,7 +207,7 @@ endif
 # install :: $(TMPDIR)
 install ::
 	@ echo installing the Core package
-	@ set -x ; time ../bin/M2$(EXE) $(M2OPTIONS)
+	@ set -x ; time ../bin/M2@EXE@ $(M2OPTIONS)
 
 clean::; rm -rf ../cache/$(DUMPDATAFILE) cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 version.m2 core gmon.out
 distclean : clean; rm -f Makefile
