@@ -65,7 +65,7 @@ the package "D-modules".
 			       D-modules.m2
 			       D-modules/		[ packagesrcdir ]
 					 *.m2
-	    doc/                                        [ docdir ]
+	    doc/                                        [ docudir ]
 		Macaulay2/                              [ docm2dir ]
 			  index.html                    (machine generated)
 		          currentVersion		( a symbolic link to 0.9.4 )

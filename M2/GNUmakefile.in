@@ -102,13 +102,13 @@ EXCLUDES := --exclude=".nfs*" --exclude="Macaulay2-*-data"
 
 tarball.bz2 : $(PKG_TBZ)
 $(PKG_TBZ)  : always
-	fakeroot chown -R root.root $(tarparent)/$(tarsubdir)
-	fakeroot tar cfh $(PKG_TBZ) --bzip $(EXCLUDES) -C $(tarparent) $(tarsubdir)
+	fakeroot chown -R root.root $(prefix)/@package@
+	fakeroot tar cfh $(PKG_TBZ) --bzip $(EXCLUDES) -C $(prefix) @package@
 
 tarball.tgz  : $(PKG_TGZ)
 $(PKG_TGZ)  : always
-	fakeroot chown -R root.root $(tarparent)/$(tarsubdir)
-	fakeroot tar cfh $(PKG_TGZ) --gzip $(EXCLUDES) -C $(tarparent) $(tarsubdir)
+	fakeroot chown -R root.root $(prefix)/@package@
+	fakeroot tar cfh $(PKG_TGZ) --gzip $(EXCLUDES) -C $(prefix) @package@
 
 always :
 
