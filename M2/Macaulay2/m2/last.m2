@@ -21,7 +21,7 @@ addStartFunction(
 	       newPackage("User", DebuggingMode => true);
 	       );
 	  hd := "with packages: ";
-	  if not member("--silent",commandLine) 
+	  if not nobanner
 	  then stderr << hd << wrap(printWidth-#hd, concatenate between_", " sort apply(loadedPackages,toString)) << endl;
 	  )
      )

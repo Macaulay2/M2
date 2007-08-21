@@ -43,6 +43,7 @@ if firstTime then (
      filesLoaded = new MutableHashTable;
      loadedFiles = new MutableHashTable;
      notify = false;
+     nobanner = false;
 
      markLoaded = (fullfilename,origfilename,notify) -> ( 
 	  fullfilename = minimizeFilename fullfilename;
@@ -228,7 +229,6 @@ matchpart := (pat,i,s) -> substring_((regex(pat, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
 dir := s -> ( m := regex(".*/",s); if 0 == #m then "./" else substring_(m#0) s)
 noloaddata := false
-nobanner := false
 nosetup := false
 noinitfile = false
 interpreter := commandInterpreter
@@ -329,6 +329,9 @@ usage := arg -> (
      << "    --no-personality   don't set the personality and re-exec M2 (linux only)" << newline
      << "    --prefix DIR       set prefixDirectory" << newline
      << "    --print-width n    set printWidth=n (the default is the window width)" << newline
+     << "    --script           as first argument, interpret second argument as name of a script" << newline
+     << "                       implies --stop, --no-debug, --silent and -q" << newline
+     << "                       see scriptCommandLine" << newline
      << "    --silent           no startup banner" << newline
      << "    --stop             exit on error" << newline
      << "    --texmacs          TeXmacs session mode" << newline
@@ -416,6 +419,7 @@ action := hashTable {
      "--no-readline" => arg -> arg,			    -- handled in d/stdio.d
      "--no-setup" => arg -> if phase == 1 then noloaddata = nosetup = true,
      "--notify" => arg -> if phase <= 2 then notify = true,
+     "--script" => arg -> error "--script option should be first argument, of two",
      "--silent" => arg -> nobanner = true,
      "--stop" => arg -> (if phase == 1 then stopIfError = true; debuggingMode = false;), -- see also M2lib.c and tokens.d
      "--texmacs" => arg -> if phase == 3 then (
@@ -439,31 +443,44 @@ action2 := hashTable {
 	  )
      }
 
+scriptCommandLine = {}
+
 processCommandLineOptions := phase0 -> (			    -- 3 passes
      ld := loadDepth;
      loadDepth = loadDepth + 1;
      phase = phase0;
      argno = 1;
-     if notify then stderr << "--phase " << phase << endl;
-     while argno < #commandLine do (
-	  arg := commandLine#argno;
-	  if action#?arg then action#arg arg
-	  else if action2#?arg then (
-	       if argno < #commandLine + 1
-	       then action2#arg commandLine#(argno = argno + 1)
-	       else error("command line option ", arg, " missing argument")
+     if commandLine#?1 and commandLine#1 == "--script" then (
+	  if phase == 1 then (
+	       debuggingMode = false;
+	       stopIfError = noinitfile = nobanner = true;
 	       )
-	  else if match("^-e",arg) and phase == 2 then value substring(2,arg) -- to become obsolete
-	  else if arg#0 == "-" then (
-	       stderr << "error: unrecognized command line option: " << arg << endl;
-	       usage();
-	       exit 1;
-	       )
-	  else if phase == 3 then if instance(load, Function) then load arg else simpleLoad arg;
-	  argno = argno+1;
-	  );
-     loadDepth = ld;
-     )
+	  else if phase == 3 then (
+	       if not commandLine#?2 then error "script file name missing";
+	       arg := commandLine#2;
+	       scriptCommandLine = drop(commandLine,2);
+	       if instance(load, Function) then load arg else simpleLoad arg;
+	       exit 0))
+     else (
+	  if notify then stderr << "--phase " << phase << endl;
+	  while argno < #commandLine do (
+	       arg = commandLine#argno;
+	       if action#?arg then action#arg arg
+	       else if action2#?arg then (
+		    if argno < #commandLine + 1
+		    then action2#arg commandLine#(argno = argno + 1)
+		    else error("command line option ", arg, " missing argument")
+		    )
+	       else if arg#0 == "-" then (
+		    stderr << "error: unrecognized command line option: " << arg << endl;
+		    usage();
+		    exit 1;
+		    )
+	       else if phase == 3 then if instance(load, Function) then load arg else simpleLoad arg;
+	       argno = argno+1;
+	       );
+	  loadDepth = ld;
+	  ))
 
 if firstTime then processCommandLineOptions 1
 
