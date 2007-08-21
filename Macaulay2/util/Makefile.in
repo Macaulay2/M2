@@ -43,6 +43,7 @@ Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/util/Makefile
 
 # gc_test
 CPPFLAGS += -I@srcdir@/../../include
+LDLIBS += -lgc
 all :: gc_tested
 gc_tested: gc_test; ./$<; touch $@
 clean ::; rm -f gc_tested gc_test
