@@ -2,6 +2,10 @@
 
 TeXmacsBegin = ascii 2
 TeXmacsEnd   = ascii 5
+badcharregex := TeXmacsBegin | "|" | TeXmacsEnd
+bad := s -> match(badcharregex,s)
+fix := s -> if bad s then replace(TeXmacsBegin,"[BEGIN]",replace(TeXmacsEnd,"[END]",s)) else s
+fixn := s -> concatenate between_"\0" apply(separate_"\0" s, fix)
 
 red := p -> concatenate("<mstyle color=\"red\">",concatenate p,"</mstyle>")
 mathMode := s -> concatenate("<math xmlns=\"http://www.w3.org/1998/Math/MathML\">",concatenate s,"</math>")
@@ -25,7 +29,7 @@ String.TeXmacsEvaluate = s -> (
 	  v = (lookup(AfterEval,class v)) v;
      	  fmt := v -> concatenate lines try mathML v else mathML toString v;
 	  po := prompto();
-	  << tmhtml mathMode mtable {{po,red "<mo>=</mo>",fmt v},{po,red "<mo>:</mo>",fmt class v}})
+	  << tmhtml fixn mathMode mtable {{po,red "<mo>=</mo>",fmt v},{po,red "<mo>:</mo>",fmt class v}})
      else << "top level loop failed";
      << TeXmacsEnd << flush;
      )
