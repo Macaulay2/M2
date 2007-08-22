@@ -27,8 +27,6 @@ CXXFLAGS = @CXXFLAGS@
 FFLAGS = @FFLAGS@
 FCFLAGS = @FCFLAGS@
 LDFLAGS = @LDFLAGS@
-LOADLIBES = @LOADLIBES@
-LDLIBS = @LDLIBS@ 
 
 # Macaulay 2 file system layout definitions, dependent on $(prefix) and PackageName.
 #  see http://www.pathname.com/fhs/
