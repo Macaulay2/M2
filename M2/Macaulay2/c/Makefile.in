@@ -12,7 +12,7 @@ VPATH = @srcdir@
 ############################################################
 .PHONY : clean all install tags
 YFLAGS := -vdlt
-LOADLIBES += -lm
+LOADLIBES += -lgc -lm
 CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c compat.c
 HFILES := $(CNAMES:.c=.h) scc.h grammar.h
 OFILES := $(CNAMES:.c=.o) grammar.o
@@ -25,7 +25,7 @@ LDFLAGS += -Wl,-rpath,$(shell /bin/pwd)/../../libraries/final@FINALPREFIX@/$(lib
 endif
 ############################## compiling
 scc1 : $(OFILES)
-	$(LINK.o) $^ @LOADLIBES@ $(LDLIBS) $(OUTPUT_OPTION)
+	$(LINK.o) $^ -lgc @LOADLIBES@ $(LDLIBS) $(OUTPUT_OPTION)
 $(OFILES) : $(HFILES)
 grammar.o : grammar.c; @CC@ $(CPPFLAGS) $(CFLAGS) -c $< $(OUTPUT_OPTION)
 ############################## tags
