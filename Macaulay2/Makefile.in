@@ -9,17 +9,17 @@ justM2 all :: initialize
 include ../include/config.Makefile
 VPATH = @srcdir@
 ################################# .
-install install-others install-Macaulay2 :: @encapdir@/$(docm2RelDir) $(docm2dir) \
-	   $(docm2dir)/COPYING \
-	   $(docm2dir)/README \
+install install-others install-Macaulay2 :: @encapdir@/$(docm2RelDir) @encapdir@/$(docm2RelDir) \
+	   @encapdir@/$(docm2RelDir)/COPYING \
+	   @encapdir@/$(docm2RelDir)/README \
 	   @encapdir@/$(docm2RelDir)/CHANGES \
-	   $(docm2dir)/LAYOUT
+	   @encapdir@/$(docm2RelDir)/LAYOUT
 
-$(docm2dir) @encapdir@/$(docm2RelDir):; @MKDIR_P@ "$@"
-$(docm2dir)/COPYING : COPYING ; @INSTALL_DATA@ $< "$@"
+@encapdir@/$(docm2RelDir):; @MKDIR_P@ "$@"
+@encapdir@/$(docm2RelDir)/COPYING : COPYING ; @INSTALL_DATA@ $< "$@"
 @encapdir@/$(docm2RelDir)/CHANGES : CHANGES ; @INSTALL_DATA@ $< "$@"
-$(docm2dir)/LAYOUT  : LAYOUT  ; @INSTALL_DATA@ $< "$@"
-$(docm2dir)/README  : README  ; @INSTALL_DATA@ $< "$@"
+@encapdir@/$(docm2RelDir)/LAYOUT  : LAYOUT  ; @INSTALL_DATA@ $< "$@"
+@encapdir@/$(docm2RelDir)/README  : README  ; @INSTALL_DATA@ $< "$@"
 
 # install install-others install-Macaulay2 :: @encapdir@/$(docm2RelDir)/INSTALL
 # @encapdir@/INSTALL  : INSTALL  ; @INSTALL_DATA@ $< "$@"
