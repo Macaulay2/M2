@@ -31,7 +31,7 @@ make
 mkdir tmp64
 cd tmp64
  ../configure \
-      --prefix=/Users/mike2/src/M2/tmp64-install \
+      --prefix=/Users/mike/src/M2/tmp64-install \
       --enable-debug \
       --disable-optimize \
       --enable-experimental-code \
