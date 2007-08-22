@@ -175,7 +175,7 @@ EOF
 if   (  set -x
 	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-main.o unwindtest-main.cpp &&
 	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-monomials.o unwindtest-monomials.cpp &&
-	$CC $LDFLAGS unwindtest-main.o unwindtest-monomials.o -lstdc++ -o unwindtest-main
+	$CC $LDFLAGS unwindtest-main.o unwindtest-monomials.o $LIBS -lstdc++ -o unwindtest-main
      ) >unwindtest-log 2>&1
 then AC_MSG_RESULT(yes); rm -f unwindtest-*
 else AC_MSG_RESULT(no);  AC_MSG_ERROR([failure: linking C++ program with $CC, see file unwindtest-log.])
