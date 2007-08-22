@@ -451,7 +451,8 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
      phase = phase0;
      argno = 1;
      if commandLine#?1 and commandLine#1 == "--script" then (
-	  if phase == 1 then (
+	  if phase <= 2 then (
+	       clearEcho stdio;
 	       debuggingMode = false;
 	       stopIfError = noinitfile = nobanner = true;
 	       )
