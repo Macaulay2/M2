@@ -270,3 +270,31 @@ W = matrix {{2, 0, 2, 2, 1, 0, 2, 2, 2, 0, 3, 3, 0, 0, -1, 1, -1, -1, -1, 0, 0, 
 	{3, 2, 1, 0, -2, -2, -1, 5, 4, 2, -1, -2, -1, 1, 0, 1, 1, 1, 0, 1, 1, 0}}
 loadPackage "FourierMotzkin"
 fourierMotzkin W
+
+-- Example -- slow/ker8 --------------------------
+-- We see if there is any chance that this works:
+restart
+R = ZZ/2003[x11,x12,x13,x21,x22,x23,x31,x32,x33,
+            y11,y12,y13,y21,y22,y23,y31,y32,y33, MonomialSize=>8];
+load "/Users/mike/src/M2/Macaulay2/bugs/mike/devel-gb-walk.m2"
+f = map(R,R,{x11*y11+x12*y21, x11*y12+x12*y22, 
+      x11*y13+x12*y23, x21*y11+x22*y21, x21*y12+x22*y22, 
+      x21*y13+x22*y23, x31*y11+x32*y21,
+      x31*y12+x32*y22, x31*y13+x32*y23,
+      x13*y11+x12*y21+x13*y21+x11*y31+x12*y31+x13*y31,
+      x13*y12+x12*y22+x13*y22+x11*y32+x12*y32+x13*y32,
+      x13*y13+x12*y23+x13*y23+x11*y33+x12*y33+x13*y33,
+      x23*y11+x22*y21+x23*y21+x21*y31+x22*y31+x23*y31,
+      x23*y12+x22*y22+x23*y22+x21*y32+x22*y32+x23*y32,
+      x23*y13+x22*y23+x23*y23+x21*y33+x22*y33+x23*y33,
+      x33*y11+x32*y21+x33*y21+x31*y31+x32*y31+x33*y31,
+      x33*y12+x32*y22+x33*y22+x31*y32+x32*y32+x33*y32,
+      x33*y13+x32*y23+x33*y23+x31*y33+x32*y33+x33*y33});
+
+S = ZZ/32003[gens R,X_1..X_18]
+M = substitute(f.matrix,S)
+I = ideal apply(18, i -> M_(0,i) - X_(i+1)^3)
+gens gb I
+Slex = (coefficientRing S)[gens S, MonomialOrder=>Lex]
+J = groebnerWalktoLex(I,Slex);
+--------------------------------------------------

@@ -1,5 +1,6 @@
 // Copyright 2005 Michael E. Stillman
 
+// TODO: this code needs to be worked on
 #include <ctime>
 
 #include "f4.hpp"
@@ -680,7 +681,7 @@ void F4GB::do_spairs()
   n_lcmdups = 0;
   make_matrix();
 
-  if (gbTrace >= 2) {
+  if (gbTrace >= 5) {
     fprintf(stderr, "---------\n");
     show_matrix();
     fprintf(stderr, "---------\n");
@@ -712,20 +713,23 @@ void F4GB::do_spairs()
       fprintf(stderr, " gauss time          = %f\n", nsecs);
 
       fprintf(stderr, " lcm dups            = %d\n", n_lcmdups);
-      fprintf(stderr, "---------\n");
-      show_matrix();
-      fprintf(stderr, "---------\n");
-      show_syz_matrix();
-      //  show_new_rows_matrix();
+      if (gbTrace >= 5)
+	{
+	  fprintf(stderr, "---------\n");
+	  show_matrix();
+	  fprintf(stderr, "---------\n");
+	  show_syz_matrix();
+	  //  show_new_rows_matrix();
+	}
     }
   new_GB_elements();
   int ngb = gb.size();
   if (gbTrace >= 1) {
     fprintf(stderr, " # GB elements   = %d\n", ngb);
-    if (gbTrace >= 3) show_gb_array(gb);
+    if (gbTrace >= 5) show_gb_array(gb);
     if (using_syz) 
       fprintf(stderr, " # syzygies      = %d\n", syz_basis.size());
-    if (gbTrace >= 3) show_syz_basis();
+    if (gbTrace >= 5) show_syz_basis();
   }
 
   clear_matrix();
