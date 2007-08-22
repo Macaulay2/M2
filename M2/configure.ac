@@ -462,11 +462,11 @@ then AC_MSG_CHECKING([whether the vecLib framework is available])
 	     LIBS="$SAVELIBS"
 	     if test "$BUILDBLAS" = no
 	     then AC_LANG(Fortran 77)
-		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILDBLAS=yes)
+		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILDBLAS=yes BUILTLIBS="-lblas $BUILTLIBS")
 	     fi
 	     if test "$BUILDLAPACK" = no
 	     then AC_LANG(Fortran 77)
-		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILDLAPACK=yes)
+		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILDLAPACK=yes BUILTLIBS="-llapack $BUILTLIBS")
 	     fi
 	 ])
 fi
