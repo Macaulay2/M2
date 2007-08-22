@@ -121,6 +121,8 @@ mathML Type := X -> if X.?mathML then X.mathML else mathML expression X
 mathML Thing := x -> mathML expression x
 mathML Expression := x -> error("mathML conversion for expression class ", toString class x, " not implemented yet")
 
+mathML LITERAL := x -> concatenate x
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

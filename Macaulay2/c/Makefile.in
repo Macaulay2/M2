@@ -23,9 +23,9 @@ LDFLAGS += -L../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
 ifeq (@OS@,Linux)
 LDFLAGS += -Wl,-rpath,$(shell /bin/pwd)/../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
 endif
+LOADLIBES += -lgc
 ############################## compiling
 scc1 : $(OFILES)
-	$(LINK.o) $^ -lgc @LOADLIBES@ $(LDLIBS) $(OUTPUT_OPTION)
 $(OFILES) : $(HFILES)
 grammar.o : grammar.c; @CC@ $(CPPFLAGS) $(CFLAGS) -c $< $(OUTPUT_OPTION)
 ############################## tags
