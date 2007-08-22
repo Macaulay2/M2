@@ -27,8 +27,6 @@ endif
 
 M2_LDFLAGS += $(LDFLAGS)
 
-M2_LIBS := @LOADLIBES@ @BUILTLIBS@ @LIBS@ @FLIBS@
-
 ## files
 
 M2_OBJECTS :=
@@ -211,7 +209,7 @@ endif
 
 clean::; rm -f compat.c compat.h
 compat.c compat.h : configure ../../include/config.h
-	FLAGS="$(M2_LDFLAGS) $(M2_LIBS)" @srcdir@/configure
+	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" @srcdir@/configure
 
 M2types.o : M2types.h
 M2lib.o scclib.o : compat.h ../c/compat.h ../c/compat.c types.h
@@ -259,20 +257,24 @@ tmp_init.c : $(DFILES)
 LIBRARYOPTIONS += M2inits2.o
 LIBRARYDEPS    += M2inits2.o
 
-LIBRARYOPTIONS += factory_init1.o version.o M2-factory.o -lfac -lcf factory_init2.o
-LIBRARYDEPS    += factory_init1.o version.o M2-factory.o            factory_init2.o
+LIBRARYOPTIONS += factory_init1.o version.o M2-factory.o @SINGULARLIBS@ factory_init2.o
+LIBRARYDEPS    += factory_init1.o version.o M2-factory.o                 factory_init2.o
 
 LIBRARYOPTIONS += M2inits3.o
 LIBRARYDEPS    += M2inits3.o
 
-# we successfully avoid using streamio, but we need the personality function in libstc++
+LIBRARYOPTIONS +=  @BUILTLIBS@ @LIBS@
+
 LIBRARYOPTIONS += -lstdc++
+
+LIBRARYOPTIONS += @FLIBS_FLAGS@
+LIBRARYOPTIONS += @FLIBS_STATIC@
 
 ifeq "@STATIC@" "yes"
 LIBRARYOPTIONS += $(UNSTATIC)
 endif
 
-LIBRARYOPTIONS += -lm
+LIBRARYOPTIONS += @FLIBS_DYNAMIC@
 
 LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
 
@@ -280,7 +282,7 @@ clean::; rm -f ../bin/M2@EXE@
 # we make tmp_init.o depend on everything, because compiling it produces our timestamp
 tmp_init.o : $(M2_OBJECTS) $(LIBRARYDEPS) $(EFILES) factory_init3.o
 ../bin/M2@EXE@ : tmp_init.o
-	time @CC@ $(M2_LDFLAGS) $(M2_OBJECTS) $^ factory_init3.o $(EFILES) $(LIBRARYOPTIONS) $(M2_LIBS) -o "$@".tmp
+	time @CC@ $(M2_LDFLAGS) $(M2_OBJECTS) $^ factory_init3.o $(EFILES) $(LIBRARYOPTIONS) -lm -o "$@".tmp
 ifeq "$(STRIP)" "yes"
 ifneq "@STRIPCMD@" ""
 	@STRIPCMD@ "$@".tmp
@@ -296,10 +298,6 @@ ifeq "@XCODE@" "yes"
 # Mike uses Xcode, an IDE, under MacOS 10 to link against
 all :: interpret.a
 endif
-
-# just for testing scc stuff
-t_main.o : types.h
-t : t_main.o gmp.oo stdio.oo strings.oo system.oo C.o t.o; @CC@ $(M2_LDFLAGS) $^ $(M2_LIBS) $(OUTPUT_OPTION)
 
 tags: @srcdir@/TAGS
 clean::; rm -f TAGS @srcdir@/TAGS

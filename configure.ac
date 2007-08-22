@@ -51,8 +51,8 @@ test "$FCFLAGS"    && echo "   FCFLAGS=$FCFLAGS"                   # autoconf de
 test "$CXXFLAGS"   && echo "   CXXFLAGS=$CXXFLAGS"
 test "$LDFLAGS"    && echo "   LDFLAGS=$LDFLAGS"
 test "$LIBS"       && echo "   LIBS=$LIBS"
-test "$LOADLIBES"  && echo "   LOADLIBES=$LOADLIBES"
-test "$LDLIBS"     && echo "   LDLIBS=$LDLIBS"
+dnl test "$LOADLIBES"  && echo "   LOADLIBES=$LOADLIBES"
+dnl test "$LDLIBS"     && echo "   LDLIBS=$LDLIBS"
 
 for i in $CFLAGS
 do case $i in
@@ -85,9 +85,9 @@ then echo oops, CXX=gcc, should use CXX=g++ >&2
      exit 1
 fi
 
-AC_SUBST(LOADLIBES)
-AC_SUBST(LDLIBS)
-LIBS="$LIBS $LOADLIBES $LDLIBS"
+dnl AC_SUBST(LOADLIBES)
+dnl AC_SUBST(LDLIBS)
+dnl LIBS="$LIBS $LOADLIBES $LDLIBS"
 
 # 5 compiler messages saved in config.log
 # 6 checking for... messages and results
@@ -144,10 +144,20 @@ AC_PROG_CC()
 AC_SUBST(GCC)
 
 AC_PROG_FC(,Fortran 77)
+AC_SUBST(FLIBS_DYNAMIC)
+AC_SUBST(FLIBS_STATIC)
+AC_SUBST(FLIBS_FLAGS)
 if test "$FC"
-then AC_F77_LIBRARY_LDFLAGS()
-     AC_F77_DUMMY_MAIN()
+then AC_F77_DUMMY_MAIN()
      AC_F77_WRAPPERS()
+     AC_F77_LIBRARY_LDFLAGS()
+     for i in $FLIBS
+     do case $i in
+	     -L*) FLIBS_FLAGS="$FLIBS_FLAGS $i" ;;
+	     -lgcc_s|-lm) FLIBS_DYNAMIC="$FLIBS_DYNAMIC $i" ;;
+	     *) FLIBS_STATIC="$FLIBS_STATIC $i" ;;
+	esac
+     done
 fi
 
 AC_PROG_CXX()
@@ -169,7 +179,7 @@ EOF
 if   (  set -x
 	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-main.o unwindtest-main.cpp &&
 	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-monomials.o unwindtest-monomials.cpp &&
-	$CC $LDFLAGS unwindtest-main.o unwindtest-monomials.o $LOADLIBES $LDLIBS -lstdc++ -o unwindtest-main
+	$CC $LDFLAGS unwindtest-main.o unwindtest-monomials.o -lstdc++ -o unwindtest-main
      ) >unwindtest-log 2>&1
 then AC_MSG_RESULT(yes); rm -f unwindtest-*
 else AC_MSG_RESULT(no);  AC_MSG_ERROR([failure: linking C++ program with $CC, see file unwindtest-log.])
@@ -414,7 +424,7 @@ AC_ARG_ENABLE(build-ntl, AS_HELP_STRING(--enable-build-ntl,build library ntl fro
 if test "$BUILDNTL" = no
 then AC_LANG(C++)
     SAVELIBS=$LIBS
-    AC_MSG_CHECKING(for nlt library)
+    AC_MSG_CHECKING(for ntl library)
     FOUND=
     for lib in "" "-lntl"
     do  test "$lib" && LIBS="$lib $LIBS"
@@ -475,7 +485,7 @@ fi
 SAVELIBS=$LIBS
 
 # we need to control the position of -lfac -lcf in the link line, so we don't add them to $LIBS nor to $BUILTLIBS, putting them in $SINGULARLIBS instead
-AC_SUBST(SINGULARLIBS,"-lcf -lfac")
+AC_SUBST(SINGULARLIBS,"-lfac -lcf")
 AC_SUBST(BUILDFACTORY,no)
 AC_ARG_ENABLE(build-factory, AS_HELP_STRING(--enable-build-factory,build libraries libfac and factory from downloaded source code), BUILDFACTORY="$enableval")
 if test "$BUILDFACTORY" = no
