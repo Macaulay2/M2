@@ -3,7 +3,7 @@ include ../../../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
 include ../make.include
-include @srcdir@/../Makefile.common
+include ../Makefile.common
 
 ifeq (@CXX@-@ISYSTEM@,g++-yes)
 # We are using the -MM option to create *.dep files, which ignores "system" include files.

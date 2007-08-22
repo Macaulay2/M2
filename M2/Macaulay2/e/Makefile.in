@@ -32,7 +32,7 @@ endif
 PRE.cc   = $(COMPILE.cc) -E 
 
 include @srcdir@/Makefile.files
-include @srcdir@/Makefile.common
+include Makefile.common
 
 .PHONY : all clean distclean install tar check tags
 
@@ -97,6 +97,8 @@ clean::
 	$(MAKE) -C f4 $@
 	$(MAKE) -C linalgGB $@
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
+all :: Makefile.common
+Makefile.common : Makefile.common.in; cd ../..; ./config.status Macaulay2/e/Makefile.common
 clean::; rm -f *.dep dep-*.tmp
 ifeq "$(DEPENDS)" "yes"
 include $(ENGINE_CFILES:.c=.dep) $(ENGINE_CCFILES:.cpp=.dep)
