@@ -20,9 +20,9 @@ do case "$i" in
 done
 CONFIG_CMD="$CONFIG_ARG0 $CONFIG_ARGS"
 echo "# invocation: $CONFIG_CMD" >&5
-AC_SUBST(CONFIG_ARG0)
-AC_SUBST(CONFIG_ARGS)
-AC_SUBST(CONFIG_CMD)
+AC_SUBST(CONFIG_ARG0,"")
+AC_SUBST(CONFIG_ARGS,"")
+AC_SUBST(CONFIG_CMD,"")
 AC_DEFINE_UNQUOTED(CONFIG_ARGS,"$CONFIG_ARGS",arguments used for configure)
 
 define(TO_UPPER,[translit($1, [a-z], [A-Z])])
@@ -109,27 +109,23 @@ else echo "`basename $0`: $MAKE: GNU make is required" >&2
      exit 1
 fi
 
-NODENAME="`uname -n`"
-AC_SUBST(NODENAME)
+AC_SUBST(NODENAME,"`uname -n`")
 AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
 
-REL="`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `"
-AC_SUBST(REL)
+AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
 AC_DEFINE_UNQUOTED(REL,"$REL",[operating system release, obtained with uname -r])
 
-ARCH="`  uname -m | sed -e s=/=-=g -e 's= ==g' `"
-AC_SUBST(ARCH)
+AC_SUBST(ARCH,"`  uname -m | sed -e s=/=-=g -e 's= ==g' `")
 AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type, obtained with uname -m])
 
-AC_SUBST(DEBIANARCH)
+AC_SUBST(DEBIANARCH,"")
 case "$ARCH" in
   i686) DEBIANARCH=i386 ;;
   x86_64) DEBIANARCH=amd64 ;;
   *) DEBIANARCH="$ARCH" ;;
 esac
 
-OS="`  uname -s | sed s=/=-=g  `"
-AC_SUBST(OS)
+AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
 AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s])
 
 AC_CONFIG_AUX_DIR(config)
@@ -144,9 +140,9 @@ AC_PROG_CC()
 AC_SUBST(GCC)
 
 AC_PROG_FC(,Fortran 77)
-AC_SUBST(FLIBS_DYNAMIC)
-AC_SUBST(FLIBS_STATIC)
-AC_SUBST(FLIBS_FLAGS)
+AC_SUBST(FLIBS_DYNAMIC,"")
+AC_SUBST(FLIBS_STATIC,"")
+AC_SUBST(FLIBS_FLAGS,"")
 if test "$FC"
 then AC_F77_DUMMY_MAIN()
      AC_F77_WRAPPERS()
@@ -191,7 +187,7 @@ AC_CHECK_HEADERS(stddef.h stdint.h inttypes.h bits/wordsize.h endian.h elf.h)
 AC_CHECK_HEADERS(sys/types.h factoryconf.h)
 AC_CHECK_LIB(socket, socket)
 AC_CHECK_LIB(resolv, hstrerror)
-AC_CHECK_FUNCS([personality somesillyfunction sys_errlist herror error socket gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
+AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error socket gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([sys_errlist,sys_nerr,herror,gnu_get_libc_version])
 AC_FUNC_ALLOCA()
@@ -200,8 +196,8 @@ AC_LANG(C++)
 AC_CHECK_HEADERS(NTL/tools.h)
 AC_LANG(C)
 
-AC_SUBST(HAVE_PERSONALITY)  HAVE_PERSONALITY=$ac_cv_func_personality
-
+AC_SUBST(HAVE_PERSONALITY,"")
+AC_CHECK_FUNC(personality, HAVE_PERSONALITY=1, HAVE_PERSONALITY=0)
 
 AC_SUBST(STRIP,yes)    AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), STRIP="$enableval")
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC="$enableval")
@@ -216,9 +212,17 @@ AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" 
     CFLAGS="CFLAGS -faltivec"
     CXXFLAGS="$CXXFLAGS -faltivec"
 )
-AC_SUBST(PROFILING,no) AC_ARG_ENABLE(profile, AS_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING="$enableval")
+
+AC_SUBST(PROFILING,no)
+AC_ARG_ENABLE(profile, AS_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING="$enableval")
+test "$PROFILING" = no;  val=$?; AC_DEFINE_UNQUOTED(PROFILING, $val,whether profiling has been enabled)
+
 AC_SUBST(COMPRESS,gz)  AC_ARG_ENABLE(compress, AS_HELP_STRING([--enable-compress=[gz|bz2]],compression method for tarball), COMPRESS="$enableval")
-AC_SUBST(EXPERIMENT,no)AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-experimental-code,enable experimental code), EXPERIMENT="$enableval")
+
+AC_SUBST(EXPERIMENT,no)
+AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-experimental-code,enable experimental code), EXPERIMENT="$enableval")
+test "$EXPERIMENT" = no; val=$?; AC_DEFINE_UNQUOTED(EXPERIMENT,$val,whether experimental code has been enabled)
+
 AC_SUBST(M2TARFILE,no) AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare a binary package as a compressed tar file), M2TARFILE="$enableval")
 AC_SUBST(TARLIBS,no)   AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS="$enableval")
 AC_SUBST(SHARED,no)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--enable-shared,enable building of shared libraries), SHARED="$enableval")
@@ -227,33 +231,34 @@ test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$DEBUG" = "yes" && STRIP=no
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" STRIP=no
 
-AC_SUBST(PACKAGES)
-PACKAGES="Macaulay2
-Style
-Classic
-PrimaryDecomposition
-FourierMotzkin
-Dmodules
-Depth
-Elimination
-FirstPackage
-GenericInitialIdeal
-IntegralClosure
-HyperplaneArrangements
-LexIdeals
-Markov
-NoetherNormalization
-Points
-PackageTemplate
-ReesAlgebra
-SchurRings
-SimplicialComplexes
-LLLBases
-Parsing
-TangentCone
-ChainComplexExtras
-Benchmark
-Schubert2"
+AC_SUBST(PACKAGES,"
+  Macaulay2
+  Style
+  Classic
+  PrimaryDecomposition
+  FourierMotzkin
+  Dmodules
+  Depth
+  Elimination
+  FirstPackage
+  GenericInitialIdeal
+  IntegralClosure
+  HyperplaneArrangements
+  LexIdeals
+  Markov
+  NoetherNormalization
+  Points
+  PackageTemplate
+  ReesAlgebra
+  SchurRings
+  SimplicialComplexes
+  LLLBases
+  Parsing
+  TangentCone
+  ChainComplexExtras
+  Benchmark
+  Schubert2
+")
 
 # convert the newlines in the list above to spaces
 PACKAGES=`echo $PACKAGES`
@@ -269,27 +274,29 @@ case "$host" in
 	AC_MSG_NOTICE([warning: building for host $host might be compatible enough, consider using option "--build=$newhost"]) ;;
 esac
 
+AC_SUBST(AUTOINST,no)
 AC_ARG_ENABLE(
     auto-instantiation, 
     AS_HELP_STRING([--enable-auto-instantiation,enable automatic instantiation of C++ templates (it uses -frepo option to g++)]),
-    AUTOINST="$enableval",
-    AUTOINST=no)
-AC_SUBST(AUTOINST)
+    AUTOINST="$enableval")
 test "$AUTOINST" = no; val=$?; AC_DEFINE_UNQUOTED(AUTOINST,$val,whether to instantiate templates automatically)
 
+AC_SUBST(IMPLINST,yes)
 AC_ARG_ENABLE(
     implicit-templates,
     AS_HELP_STRING([--disable-implicit-templates,disable implicit instantiation of C++ templates (it uses -fno-implicit-templates option to g++)]),
-    IMPLINST="$enableval",
-    IMPLINST=yes)
-AC_SUBST(IMPLINST)
+    IMPLINST="$enableval")
 test "$IMPLINST" = no; val=$?; AC_DEFINE_UNQUOTED(IMPLINST,$val,whether to instantiate templates implicitly)
 
-AC_SUBST(DEVELOPMENT) AC_ARG_ENABLE(development, AS_HELP_STRING(--enable-development,build a development version),
-    DEVELOPMENT="$enableval";AC_DEFINE(DEVELOPMENT,1,whether to build a development version), DEVELOPMENT==no)
-AC_SUBST(DEVELOPER)   AC_ARG_WITH(developer,   AS_HELP_STRING(--with-developer=...,specify the name of the developer ($USER)),DEVELOPER="$withval")
+AC_SUBST(DEVELOPMENT,no)
+AC_ARG_ENABLE(development, AS_HELP_STRING(--enable-development,build a development version), DEVELOPMENT="$enableval")
+test "$IMPLINST" = no; val=$?; AC_DEFINE(DEVELOPMENT,$val,whether to build a development version)
 
-AC_SUBST(DUMPDATA)   AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA="$enableval")
+AC_SUBST(DEVELOPER,"")
+AC_ARG_WITH(developer, AS_HELP_STRING(--with-developer=...,specify the name of the developer ($USER)),DEVELOPER="$withval")
+
+AC_SUBST(DUMPDATA,"")
+AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA="$enableval")
 if ! test "$DUMPDATA"
 then case "$OS" in
 	 Linux|SunOS) DUMPDATA=yes;;
@@ -301,22 +308,22 @@ else case "$DUMPDATA" in
 	 *) AC_MSG_ERROR([dumpdata option: invalid value: $DUMPDATA])
      esac
 fi
+test "$DUMPDATA" = no;   val=$?; AC_DEFINE_UNQUOTED(DUMPDATA,  $val,whether to use dumpdata)
 
-AC_SUBST(TAR_COMPRESS_OPTION)
+AC_SUBST(TAR_COMPRESS_OPTION,"")
 case "$COMPRESS" in
    gz) TAR_COMPRESS_OPTION=--gzip ;;
   bz2) TAR_COMPRESS_OPTION=--bzip ;;
     *) AC_MSG_ERROR(unrecognized option for enable-compress) ;;
 esac
 
-AC_SUBST(SRCTARFILE)  AC_ARG_WITH(srctarfile, AS_HELP_STRING(--with-srctarfile=...,source tar file to use for inclusion with distributions (cygwin)),
+AC_SUBST(SRCTARFILE,"")
+AC_ARG_WITH(srctarfile, AS_HELP_STRING(--with-srctarfile=...,source tar file to use for inclusion with distributions (cygwin)),
     dirname=`dirname  "$withval"`
-    SRCTARFILE=`cd "$dirname" && pwd`/`basename "$withval"`
-    ,
-    SRCTARFILE=)
+    SRCTARFILE=`cd "$dirname" && pwd`/`basename "$withval"`)
 
-AC_SUBST(CYGWIN)
-AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin (disables encap and enables strip)), CYGWIN="$enableval", CYGWIN=no)
+AC_SUBST(CYGWIN,no)
+AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin (disables encap and enables strip)), CYGWIN="$enableval")
 if test "$CYGWIN" = yes 
 then ENCAP=no STRIP=yes M2TARFILE=yes
      if ! test "$SRCTARFILE" -o -d "$srcdir/.svn"
@@ -324,21 +331,17 @@ then ENCAP=no STRIP=yes M2TARFILE=yes
      fi
 fi
 
-AC_SUBST(DEBIAN)
-AC_ARG_ENABLE(debian,  AS_HELP_STRING(--enable-debian,prepare a binary package for debian (enables encap)), DEBIAN="$enableval", DEBIAN=no)
-if test "$DEBIAN" = yes ; then ENCAP=yes M2TARFILE=yes ; fi
+AC_SUBST(DEBIAN,no)
+AC_ARG_ENABLE(debian,  AS_HELP_STRING(--enable-debian,prepare a binary package for debian (enables encap)), DEBIAN="$enableval")
+test "$DEBIAN" = yes && ENCAP=yes M2TARFILE=yes
 
-AC_SUBST(RPM)
-AC_ARG_ENABLE(rpm,  AS_HELP_STRING(--enable-rpm,prepare a binary rpm package (enables encap)), RPM="$enableval", RPM=no)
-if test "$RPM" = yes ; then ENCAP=yes M2TARFILE=yes ; fi
+AC_SUBST(RPM,no)
+AC_ARG_ENABLE(rpm,  AS_HELP_STRING(--enable-rpm,prepare a binary rpm package (enables encap)), RPM="$enableval")
+test "$RPM" = yes && ENCAP=yes M2TARFILE=yes
 
-AC_SUBST(M2SUFFIX)
+AC_SUBST(M2SUFFIX,"")
 test "$program_suffix" != NONE && M2SUFFIX="$program_suffix"
 AC_ARG_ENABLE(dummy, AS_HELP_STRING(--program-suffix=...,suffix to append to executable name M2))
-
-test "$DUMPDATA" = no;   val=$?; AC_DEFINE_UNQUOTED(DUMPDATA,  $val,whether to use dumpdata)
-test "$PROFILING" = no;  val=$?; AC_DEFINE_UNQUOTED(PROFILING, $val,whether profiling has been enabled)
-test "$EXPERIMENT" = no; val=$?; AC_DEFINE_UNQUOTED(EXPERIMENT,$val,whether experimental code has been enabled)
 
 AC_DEFINE(M2_CONFIG_H,1,a macro definition to ensure our config.h was the one loaded)
 
@@ -358,13 +361,13 @@ AC_DEFINE_UNQUOTED(WITH_NEWLINE_CR, $WITH_NEWLINE_CR,   [whether newline is cr])
 
 AC_DEFINE_UNQUOTED(EXEEXT,"$EXEEXT",[suffix the compiler appends to executable filenames])
 
-AC_SUBST(ISYSTEM)
+AC_SUBST(ISYSTEM,no)
 AC_MSG_CHECKING(whether g++ gets confused about C linkage in system library files)
 AC_LANG(C++)
 AC_COMPILE_IFELSE([# 1 "foo" 1 3 4
-	template <class T> struct A { };],AC_MSG_RESULT(no);ISYSTEM=yes,AC_MSG_RESULT(yes);ISYSTEM=no)
+	template <class T> struct A { };],AC_MSG_RESULT(no);ISYSTEM=yes,AC_MSG_RESULT(yes))
 
-AC_SUBST(BUILTLIBS)
+AC_SUBST(BUILTLIBS,"")
 
 AC_LANG(C)
 AC_SEARCH_LIBS(tgoto,ncurses curses)
@@ -502,18 +505,17 @@ then AC_LANG(C++)
      LIBS="$SAVELIBS"
 fi
 
-AC_SUBST(FINALPREFIX)
+AC_SUBST(FINALPREFIX,/usr)
 AC_ARG_WITH(final-prefix,
     AS_HELP_STRING(--with-final-prefix=...,final installation prefix (/usr) (used by libtool and debian installation scripts)),
-    FINALPREFIX="$withval", 
-    FINALPREFIX="/usr")
+    FINALPREFIX="$withval")
 
+AC_SUBST(NM_DEMANGLES,"")
 AC_MSG_CHECKING(whether nm accepts the demangle option)
 if nm --help 2>&1 | grep demangle >/dev/null
    then NM_DEMANGLES=yes; AC_MSG_RESULT(yes)
    else NM_DEMANGLES=no ; AC_MSG_RESULT(no)
 fi
-AC_SUBST(NM_DEMANGLES)
 
 LIBS="$SAVELIBS"
 AC_LANG(C)
@@ -544,7 +546,7 @@ test "$BUILDLAPACK" = yes && LIBRARIES="$LIBRARIES lapack"
 
 TESTFLAG=-Wno-strict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
-AC_SUBST(HAVE_NO_STRICT_ALIASING)
+AC_SUBST(HAVE_NO_STRICT_ALIASING,"")
 SAVE="$CFLAGS"
 CFLAGS="$TESTFLAG $CFLAGS"
 AC_LANG(C)
@@ -611,7 +613,7 @@ then
 fi
 
 AC_SUBST(package,Macaulay2-$PACKAGE_VERSION)
-AC_SUBST(encapdir)
+AC_SUBST(encapdir,"")
 if test "$ENCAP" = yes
 then encapdir="\${prefix}/$package"
 else encapdir="\${prefix}"
@@ -633,8 +635,7 @@ AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 # like "alphaev6" or "alphaev56", but ARCH, which is determined from 'uname'
 # by the 'configure' script, will be simply "alpha".
 
-CONFIGURED_FILES="$ac_config_files"
-AC_SUBST(CONFIGURED_FILES)
+AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
 AC_OUTPUT()
 
 dnl # Local Variables:
