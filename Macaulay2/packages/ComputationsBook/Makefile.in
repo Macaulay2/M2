@@ -28,7 +28,7 @@ EXIT =
 endif
 
 capture check ::
-	set -x ; for d in $(CHAPTERS) ; do $(MAKE) -C $$d $@ $(EXIT) ; done
+	set -x ; for d in $(CHAPTERS) ; do $(MAKE) -C $$d -I .. $@ $(EXIT) ; done
 
 changes:
 	-for i in $(CHAPTERS); \

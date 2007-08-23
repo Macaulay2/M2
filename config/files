@@ -47,6 +47,7 @@ Macaulay2/man/M2-help.1
 Macaulay2/man/M2.1
 Macaulay2/man/Makefile
 Macaulay2/packages/ComputationsBook/Makefile
+Macaulay2/packages/ComputationsBook/Makefile.chapter
 Macaulay2/packages/ComputationsBook/completeIntersections/Makefile
 Macaulay2/packages/ComputationsBook/constructions/Makefile
 Macaulay2/packages/ComputationsBook/d-modules/Makefile
