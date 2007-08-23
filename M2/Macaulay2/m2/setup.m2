@@ -78,9 +78,7 @@ allOperators = join(fixedOperators,flexibleOperators)
 undocumentedkeys = new MutableHashTable
 undocumented' = key -> undocumentedkeys#key = true
 
-Thing.NoPrint = x -> (
-     -- do nothing
-     )
+Thing.NoPrint = identity
 
 pathdo := (loadfun,path,filename,reportfun) -> (
      ret := null;

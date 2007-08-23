@@ -40,7 +40,7 @@ ChainComplex _ ZZ = (C,i,M) -> C#i = M
 
 ChainComplex ^ ZZ := Module => (C,i) -> C_-i
 
-spots := C -> select(keys C, i -> class i === ZZ)
+spots  = C -> select(keys C, i -> class i === ZZ)
 union        := (x,y) -> keys(set x + set y)
 intersection := (x,y) -> keys(set x * set y)
 
@@ -53,8 +53,8 @@ ChainComplex == ChainComplex := (C,D) -> (
      all(sort union(spots C, spots D), i -> C_i == D_i)
      )     
 
-ChainComplex == ZZ := (C,i) -> all(spots C, i -> C_i == 0)
-ZZ == ChainComplex := (i,C) -> all(spots C, i -> C_i == 0)
+ChainComplex == ZZ := (C,i) -> (complete C; all(spots C, i -> C_i == 0))
+ZZ == ChainComplex := (i,C) -> (complete C; all(spots C, i -> C_i == 0))
 
 net ChainComplex := C -> (
      complete C;
