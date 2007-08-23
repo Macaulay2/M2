@@ -60,6 +60,7 @@ AC_CHECK_PROGS(OBJDUMP,objdump)
 AC_CHECK_PROGS(ETAGS,etags)
 AC_CHECK_PROGS(LDD,ldd)
 AC_CHECK_PROGS(STRIPCMD,strip)
+AC_CHECK_PROGS(FAKEROOT,fakeroot)
 
 AC_SUBST(TOPDIR,`pwd`)
 
@@ -525,11 +526,6 @@ AC_ARG_WITH(gmplib, AS_HELP_STRING(--with-gmplib=...,obsolete option), AC_MSG_ER
 AC_ARG_WITH(gclib, AS_HELP_STRING(--with-gclib=...,obsolete option), AC_MSG_ERROR(--with-gclib : obsolete option))
 AC_ARG_WITH(gdbmlib, AS_HELP_STRING(--with-gdbmlib=...,obsolete option), AC_MSG_ERROR(--with-gdbmlib : obsolete option))
 
-AC_MSG_NOTICE([using LIBRARIES    = $LIBRARIES (libraries to be built from downloaded sources)])
-AC_MSG_NOTICE([using BUILTLIBS    = $BUILTLIBS (linker options for most of them)])
-AC_MSG_NOTICE([using SINGULARLIBS = $SINGULARLIBS (linker options for some of them)])
-AC_MSG_NOTICE([using LIBS         = $LIBS (M2 linker options)])
-
 AC_SUBST(DUMPDATAFILE,Macaulay2-$ARCH-data)
 
 if test "$DEBUG" = yes
@@ -579,6 +575,19 @@ AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 # config.guess assembles host_cpu from /proc/cpuinfo, and can be something
 # like "alphaev6" or "alphaev56", but ARCH, which is determined from 'uname'
 # by the 'configure' script, will be simply "alpha".
+
+if ! test "$FAKEROOT"
+then if test "$DEBIAN" = yes -o "$RPM" = yes
+     then AC_MSG_ERROR([program "fakeroot" not installed, required for creating debian or rpm distributions])
+     elif test "$M2TARFILE" = yes
+     then AC_MSG_NOTICE([warning: program "fakeroot" not installed, tar file will appear to contain files not owned by root])
+     fi
+fi
+
+AC_MSG_NOTICE([using LIBRARIES    = $LIBRARIES (libraries to be built from downloaded sources)])
+AC_MSG_NOTICE([using BUILTLIBS    = $BUILTLIBS (linker options for most of them)])
+AC_MSG_NOTICE([using SINGULARLIBS = $SINGULARLIBS (linker options for some of them)])
+AC_MSG_NOTICE([using LIBS         = $LIBS (M2 linker options)])
 
 AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
 AC_OUTPUT()
