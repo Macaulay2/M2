@@ -18,7 +18,7 @@ AC_DEFUN(IS_DECLARED,[
   AC_DEFINE_UNQUOTED(TO_UPPER($2_IS_DECLARED),$val,[whether $2 is declared in errno.h or stdio.h])
 ])
 
-echo "relevant environment variables values:"
+echo "relevant environment variable values:"
 VARS="CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS"
 for x in $VARS
 do eval v=\$$x
