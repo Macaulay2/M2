@@ -1,5 +1,8 @@
 --		Copyright 2007 by Daniel R. Grayson
 
+nest := (tag,s) -> concatenate("<",tag,">",s,"</",tag,">")
+mrow := s -> concatenate("<mrow>",s,"</mrow>")
+
 tab := new HashTable from {
      symbol ZZ => "<mi>\u2124</mi>",
      symbol QQ => "<mi>\u211a</mi>",
@@ -119,17 +122,22 @@ mathML Expression := x -> error("mathML conversion for expression class ", toStr
 
 mathML LITERAL := x -> concatenate x
 
-doublerightarrow := "<mo>\u21d2</mo>"
-mathML Option := s -> concatenate("<mrow>",mathML s#0, doublerightarrow, mathML s#1, "</mrow>")
-
--- mathML HashTable := s -> mtable applyPairs(s, (k,v) -> ())
-
 leftarrow := "<mo>&larr;</mo>"
 mathML ChainComplex := C -> (
      complete C;
      s := sort spots C;
      if #s === 0 then mathML "0"
      else mtable transpose between({leftarrow,"",""}, toList apply(s#0 .. s#-1,i -> {mathML C_i,"",mathML i})))
+
+doublerightarrow := "<mo>\u21d2</mo>"
+mathML Option := s -> concatenate("<mrow>",mathML s#0, doublerightarrow, mathML s#1, "</mrow>")
+
+mathML Type := mathML ImmutableType := R -> mathML expression R
+
+mathML HashTable := s -> concatenate( "<mrow>",mathML class s,"<mo>{</mo>", mtable apply(pairs s, (k,v) -> {mathML k, doublerightarrow, mathML v}), "<mo>}</mo></mrow>", newline )
+mathML MutableHashTable := x -> (
+     if ReverseDictionary#?x then mathML ReverseDictionary#x
+     else mrow ( mathML class x, nest("mtext",if #x > 0 then ("{...", toString(#x), "...}") else "{}" )))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
