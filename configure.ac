@@ -333,7 +333,7 @@ AC_SUBST(BUILTLIBS,"")
 # this list reflects dependencies
 #  factory needs ntl and gmp, libfac needs factory
 #  lapack needs blas
-LIBLIST="libfac factory lapack blas ntl gc gdbm gmp readline"
+LIBLIST="gc gdbm gmp readline ntl factory libfac ntl blas lapack"
 
 for i in $LIBLIST
 do eval BUILD_$i=no
