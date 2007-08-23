@@ -1,18 +1,19 @@
 --		Copyright 2007 by Daniel R. Grayson
 
-ZZ.mathML = "<mi>ZZ</mi>"
-QQ.mathML = "<mi>QQ</mi>"
-CC.mathML = "<mi>CC</mi>"
-CCC.mathML = "<mi>CCC</mi>"
+tab := new HashTable from {
+     symbol ZZ => "<mi>\u2124</mi>",
+     symbol QQ => "<mi>\u211a</mi>",
+     symbol CC => "<mi>\u2102</mi>"
+     }
 mathML = method(Dispatch => Thing, TypicalValue => String)
 mathML String := x -> concatenate("<mtext>",htmlLiteral x,"</mtext>")
 mathML Nothing := texMath Nothing := tex Nothing := html Nothing := x -> ""
-mathML Symbol := x -> concatenate("<mi>",toString x,"</mi>")
-mathML InfiniteNumber := i -> if i === infinity then "<mrow><mo>-</mo><mi>&infin;</mi></mrow>" else "<mi>&infin;</mi>"
+mathML Symbol := x -> if tab#?x then tab#x else concatenate("<mi>",toString x,"</mi>")
+mathML InfiniteNumber := i -> if i === infinity then "<mrow><mi>&infin;</mi></mrow>" else "<mo>-</mo><mi>&infin;</mi>"
 mathML Array := s -> concatenate ( "<mrow><mo>[</mo><mrow>", between("<mo>,</mo>",mathML \ toList s), "</mrow><mo>]</mo></mrow>" )
 mathML Sequence := s -> concatenate ( "<mrow><mo>(</mo><mrow>", between("<mo>,</mo>",mathML \ toList s), "</mrow><mo>)</mo></mrow>" )
 mathML List := s -> concatenate ( "<mrow><mo>{</mo><mrow>", between("<mo>,</mo>",mathML \ toList s), "</mrow><mo>}</mo></mrow>" )
-mathML Holder := v -> mathML toString v#0
+mathML Holder := v -> mathML v#0
 mathML Adjacent := x -> concatenate("<mrow>",mathML x#0,  mathML x#1, "</mrow>")
 mathML Adjacent :=
 mathML FunctionApplication := m -> (
@@ -117,8 +118,11 @@ mathML Power := v -> (
 mathML ZZ := i -> concatenate("<mn>",toString i, "</mn>")
 mathML RR := i -> concatenate("<mn>",toString i, "</mn>")
 mathML QQ := i -> concatenate( "<mfrac>",mathML numerator i, mathML denominator i, "</mfrac>" )
-mathML Type := X -> if X.?mathML then X.mathML else mathML expression X
-mathML Thing := x -> mathML expression x
+mathML Thing := x -> (
+     -- maybe "expression" should not just put unknown things in a holder ...
+     -- anyway, we have to break the loop somehow here
+     y := expression x;
+     if instance(y,Holder) and y#0 === x then mathML toString x else mathML y)
 mathML Expression := x -> error("mathML conversion for expression class ", toString class x, " not implemented yet")
 
 mathML LITERAL := x -> concatenate x
