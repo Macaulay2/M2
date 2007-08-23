@@ -2,7 +2,6 @@ VPATH = @srcdir@
 include ../include/config.Makefile
 all check reconfigure distclean clean :: Makefile.library
 	@ set -e ; for p in @LIBRARIES@ ; do (set -ex ; $(MAKE) -C $$p $@) || false ; done 
-	@ $(MAKE) -C libtool $@
 final-install :
 	@INSTALL@ -d @encapdir@/$(librariesRelDir)/lib
 	tar cf - --exclude="*.a" --exclude="*.old" -C final@FINALPREFIX@/$(librariesRelDir)/lib . | tar xf - -C @encapdir@/$(librariesRelDir)/lib

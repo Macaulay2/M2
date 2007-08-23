@@ -1,32 +1,11 @@
 AC_INIT(Macaulay 2, 0.9.97, Macaulay2@math.uiuc.edu, Macaulay2) dnl -*- autoconf -*-
 AC_CONFIG_HEADERS(include/config.h)
-
-case "$0" in
-  *" "*) CONFIG_ARG0="\"$0\"" ;;
-  *) CONFIG_ARG0="$0" ;;
-esac
-
-for i in $ac_configure_args
-do case "$i" in
-     "--no-create"|"--no-recursion") ;;
-     *"$"*" "*|*" "*"$"*)
-	    j=`echo $i |sed 's/\\$/\\\\$$/g'`
-	    CONFIG_ARGS="$CONFIG_ARGS \"$j\"" CONFIG_ARGS_C="$CONFIG_ARGS_C \"$i\"," ;;
-     *"$"*) j=`echo $i |sed 's/\\$/\\\\$$/g'`
-	    CONFIG_ARGS="$CONFIG_ARGS $j" CONFIG_ARGS_C="$CONFIG_ARGS_C \"$i\"," ;;
-     *" "*) CONFIG_ARGS="$CONFIG_ARGS \"$i\"" CONFIG_ARGS_C="$CONFIG_ARGS_C \"$i\"," ;;
-     *) CONFIG_ARGS="$CONFIG_ARGS $i" CONFIG_ARGS_C="$CONFIG_ARGS_C \"$i\"," ;;
-   esac
-done
-CONFIG_CMD="$CONFIG_ARG0 $CONFIG_ARGS"
-echo "# invocation: $CONFIG_CMD" >&5
-AC_SUBST(CONFIG_ARG0,"")
-AC_SUBST(CONFIG_ARGS,"")
-AC_SUBST(CONFIG_CMD,"")
+AC_CONFIG_FILES(m4_include(config/files))
+AC_SUBST(CONFIG_ARGS,"$ac_configure_args")
 AC_DEFINE_UNQUOTED(CONFIG_ARGS,"$CONFIG_ARGS",arguments used for configure)
+AC_SUBST(CONFIG_CMD,"'$0' $ac_configure_args")
 
 define(TO_UPPER,[translit($1, [a-z], [A-Z])])
-
 AC_DEFUN(IS_DECLARED,[
   AC_CACHE_CHECK(whether $2 is declared, m2_cv_$2_is_declared,
         AC_LANG(C)
@@ -39,58 +18,40 @@ AC_DEFUN(IS_DECLARED,[
   AC_DEFINE_UNQUOTED(TO_UPPER($2_IS_DECLARED),$val,[whether $2 is declared in errno.h or stdio.h])
 ])
 
-AC_CONFIG_FILES(m4_include(config/files))
-
-echo "any environment variables set:"
-test "$CC"         && echo "   CC=$CC"
-test "$FC"         && echo "   FC=$FC"
-test "$CXX"        && echo "   CXX=$CXX"
-test "$CPPFLAGS"   && echo "   CPPFLAGS=$CPPFLAGS"                 # autoconf default is: -g -O2
-test "$CFLAGS"     && echo "   CFLAGS=$CFLAGS"                     # autoconf default is: -g -O2
-test "$FCFLAGS"    && echo "   FCFLAGS=$FCFLAGS"                   # autoconf default is: -g -O2, goes to @FFLAGS@!
-test "$CXXFLAGS"   && echo "   CXXFLAGS=$CXXFLAGS"
-test "$LDFLAGS"    && echo "   LDFLAGS=$LDFLAGS"
-test "$LIBS"       && echo "   LIBS=$LIBS"
-dnl test "$LOADLIBES"  && echo "   LOADLIBES=$LOADLIBES"
-dnl test "$LDLIBS"     && echo "   LDLIBS=$LDLIBS"
+echo "relevant environment variables values:"
+VARS="CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS"
+for x in $VARS
+do eval v=\$$x
+   test "$v" && echo "   $x=$v"
+done
 
 for i in $CFLAGS
-do case $i in
-   -I*) echo "error: preprocessor flag $i found in CFLAGS instead of in CPPFLAGS" >&2 ; exit 1 ; break ;;
-   -L*) echo "error: link flag $i found in CFLAGS instead of in LDFLAGS" >&2 ; exit 1 ; break ;;
+do case "$i" in
+   -I*) AC_MSG_ERROR("preprocessor flag $i found in CFLAGS instead of in CPPFLAGS") ;;
+   -L*) AC_MSG_ERROR("link flag $i found in CFLAGS instead of in LDFLAGS");;
    esac
 done
 
 for i in $CXXFLAGS
-do case $i in
-   -I*) echo "error: preprocessor flag $i found in CXXFLAGS instead of in CPPFLAGS" >&2 ; exit 1 ; break ;;
-   -L*) echo "error: link flag $i found in CXXFLAGS instead of in LDFLAGS" >&2 ; exit 1 ; break ;;
+do case "$i" in
+   -I*) AC_MSG_ERROR("preprocessor flag $i found in CXXFLAGS instead of in CPPFLAGS");;
+   -L*) AC_MSG_ERROR("link flag $i found in CXXFLAGS instead of in LDFLAGS");;
    esac
 done
 
 for i in $CPPFLAGS
-do case $i in
-   -L*) echo "error: link flag $i found in CPPFLAGS instead of in LDFLAGS" >&2 ; exit 1 ; break ;;
+do case "$i" in
+   -L*) AC_MSG_ERROR("link flag $i found in CPPFLAGS instead of in LDFLAGS");;
    esac
 done
 
 for i in $LDFLAGS
-do case $i in
-   -I*) echo "error: preprocessor flag $i found in LDFLAGS instead of in CPPFLAGS" >&2 ; exit 1 ; break ;;
+do case "$i" in
+   -I*) AC_MSG_ERROR("preprocessor flag $i found in LDFLAGS instead of in CPPFLAGS");;
    esac
 done
 
-if test "$CXX" = gcc
-then echo oops, CXX=gcc, should use CXX=g++ >&2
-     exit 1
-fi
-
-dnl AC_SUBST(LOADLIBES)
-dnl AC_SUBST(LDLIBS)
-dnl LIBS="$LIBS $LOADLIBES $LDLIBS"
-
-# 5 compiler messages saved in config.log
-# 6 checking for... messages and results
+test "$CXX" = gcc && AC_MSG_ERROR("oops, CXX=gcc, should use CXX=g++")
 
 AC_CHECK_PROGS(MAKE,gmake make)
 AC_CHECK_PROGS(WGET,wget)
@@ -102,11 +63,10 @@ AC_CHECK_PROGS(STRIPCMD,strip)
 
 AC_SUBST(TOPDIR,`pwd`)
 
-echo $ECHO_N "checking whether $MAKE is GNU make... " >&6
+AC_MSG_CHECKING("checking whether $MAKE is GNU make")
 if "$MAKE" -n --version nothing | grep GNU >/dev/null 2>&1
-then echo "yes" >&6
-else echo "`basename $0`: $MAKE: GNU make is required" >&2
-     exit 1
+then AC_MSG_RESULT(yes)
+else AC_MSG_ERROR("GNU make is required: $MAKE")
 fi
 
 AC_SUBST(NODENAME,"`uname -n`")
@@ -148,7 +108,7 @@ then AC_F77_DUMMY_MAIN()
      AC_F77_WRAPPERS()
      AC_F77_LIBRARY_LDFLAGS()
      for i in $FLIBS
-     do case $i in
+     do case "$i" in
 	     -L*) FLIBS_FLAGS="$FLIBS_FLAGS $i" ;;
 	     -lgcc_s|-lm) FLIBS_DYNAMIC="$FLIBS_DYNAMIC $i" ;;
 	     *) FLIBS_STATIC="$FLIBS_STATIC $i" ;;
@@ -369,61 +329,58 @@ AC_COMPILE_IFELSE([# 1 "foo" 1 3 4
 
 AC_SUBST(BUILTLIBS,"")
 
+# this list reflects dependencies
+#  factory needs ntl and gmp, libfac needs factory
+#  lapack needs blas
+LIBLIST="libfac factory lapack blas ntl gc gdbm gmp readline"
+
+for i in $LIBLIST
+do eval BUILD_$i=no
+done
+
+LIBLIST=" $LIBLIST "
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code),
+    [for i in $enableval
+    do case " $i " in
+	    "$LIBLIST") eval BUILD_$i=yes ;;
+	    *) AC_MSG_ERROR(unrecognized library name: $j) ;;
+       esac
+    done])
+
 AC_LANG(C)
 AC_SEARCH_LIBS(tgoto,ncurses curses)
-AC_SUBST(BUILDREADLINE,no)
-AC_ARG_ENABLE(build-readline, AS_HELP_STRING(--enable-build-readline,build library readline from downloaded source code), BUILDREADLINE="$enableval")
-if test "$BUILDREADLINE" = no
-then AC_SEARCH_LIBS(add_history,history,,BUILDREADLINE=yes)
-     AC_SEARCH_LIBS(readline,readline,,BUILDREADLINE=yes)
-     AC_CHECK_HEADER(readline/readline.h,,BUILDREADLINE=yes)
-     if test "$BUILDREADLINE" = yes
+if test "$BUILD_readline" = no
+then AC_SEARCH_LIBS(add_history,history,,BUILD_readline=yes)
+     AC_SEARCH_LIBS(readline,readline,,BUILD_readline=yes)
+     AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
+     if test "$BUILD_readline" = yes
      then AC_MSG_NOTICE(readline library will be compiled)
 	  BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
      fi
 fi
 
 AC_LANG(C)
-AC_SUBST(BUILDGMP,no)
-AC_ARG_ENABLE(build-gmp, AS_HELP_STRING(--enable-build-gmp,build library gmp from downloaded source code), BUILDGMP="$enableval")
-AC_ARG_WITH(gmplib, AS_HELP_STRING(--with-gmplib=...,gmp library (-lgmp)),
-    LIBS="$withval $LIBS" BUILDGMP=no,
-    [
-    if test "$BUILDGMP" = no
-    then AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILDGMP=yes)
-	 AC_CHECK_HEADER(gmp.h,,BUILDGMP=yes)
-	 test "$BUILDGMP" = yes && BUILTLIBS="-lgmp $BUILTLIBS"
-    fi
-    ])
+if test "$BUILD_gmp" = no
+then AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILD_gmp=yes)
+     AC_CHECK_HEADER(gmp.h,,BUILD_gmp=yes)
+     test "$BUILD_gmp" = yes && BUILTLIBS="-lgmp $BUILTLIBS"
+fi
 
 AC_LANG(C)
-AC_SUBST(BUILDGC,no)
-AC_ARG_ENABLE(build-gc, AS_HELP_STRING(--enable-build-gc,build library gc from downloaded source code), BUILDGC="$enableval")
-AC_ARG_WITH(gclib, AS_HELP_STRING(--with-gclib=...,gc library (-lgc)),
-    LIBS="$withval $LIBS" BUILDGC=no,
-    [
-    if test "$BUILDGC" = no
-    then AC_SEARCH_LIBS(GC_free,gc,,BUILDGC=yes)
-	 AC_CHECK_HEADER(gc/gc.h,,BUILDGC=yes)
-	 test "$BUILDGC" = yes && BUILTLIBS="-lgc $BUILTLIBS"
-    fi
-    ])
+if test "$BUILD_gc" = no
+then AC_SEARCH_LIBS(GC_free,gc,,BUILD_gc=yes)
+     AC_CHECK_HEADER(gc/gc.h,,BUILD_gc=yes)
+     test "$BUILD_gc" = yes && BUILTLIBS="-lgc $BUILTLIBS"
+fi
 
 AC_LANG(C)
-AC_SUBST(BUILDGDBM,no)
-AC_ARG_ENABLE(build-gdbm, AS_HELP_STRING(--enable-build-gdbm,build library gdbm from downloaded source code), BUILDGDBM="$enableval")
-AC_ARG_WITH(gdbmlib, AS_HELP_STRING(--with-gdbmlib=...,gdbm library (-lgdbm)),
-    LIBS="$withval $LIBS" BUILDGDBM=no,
-    [
-    if test "$BUILDGDBM" = no
-    then AC_SEARCH_LIBS(gdbm_close,gdbm,,BUILDGDBM=yes)
-	 AC_CHECK_HEADER(gdbm.h,,BUILDGDBM=yes)
-	 test "$BUILDGDBM" = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
-    fi
-    ])
+if test "$BUILD_gdbm" = no
+then AC_SEARCH_LIBS(gdbm_close,gdbm,,BUILD_gdbm=yes)
+     AC_CHECK_HEADER(gdbm.h,,BUILD_gdbm=yes)
+     test "$BUILD_gdbm" = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
+fi
 
 AC_SUBST(BUILDNTL,no)
-AC_ARG_ENABLE(build-ntl, AS_HELP_STRING(--enable-build-ntl,build library ntl from downloaded source code), BUILDNTL="$enableval")
 if test "$BUILDNTL" = no
 then AC_LANG(C++)
     SAVELIBS=$LIBS
@@ -447,12 +404,6 @@ then AC_LANG(C++)
     fi 
 fi
 
-AC_SUBST(BUILDBLAS,no)
-AC_ARG_ENABLE(build-blas, AS_HELP_STRING(--enable-build-blas,build library blas from downloaded source code), BUILDBLAS="$enableval")
-
-AC_SUBST(BUILDLAPACK,no)
-AC_ARG_ENABLE(build-lapack, AS_HELP_STRING(--enable-build-lapack,build library lapack from downloaded source code), BUILDLAPACK="$enableval")
-
 AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,[use "-framework vecLib" for lapack]), LIBS="-framework vecLib $LIBS" )
 
 AC_SUBST(LAPACK,yes)
@@ -473,13 +424,13 @@ then AC_MSG_CHECKING([whether the vecLib framework is available])
 	 [
 	     AC_MSG_RESULT(no)
 	     LIBS="$SAVELIBS"
-	     if test "$BUILDBLAS" = no
+	     if test "$BUILD_blas" = no
 	     then AC_LANG(Fortran 77)
-		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILDBLAS=yes BUILTLIBS="-lblas $BUILTLIBS")
+		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_blas=yes BUILTLIBS="-lblas $BUILTLIBS")
 	     fi
-	     if test "$BUILDLAPACK" = no
+	     if test "$BUILD_lapack" = no
 	     then AC_LANG(Fortran 77)
-		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILDLAPACK=yes BUILTLIBS="-llapack $BUILTLIBS")
+		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes BUILTLIBS="-llapack $BUILTLIBS")
 	     fi
 	 ])
 fi
@@ -489,9 +440,7 @@ SAVELIBS=$LIBS
 
 # we need to control the position of -lfac -lcf in the link line, so we don't add them to $LIBS nor to $BUILTLIBS, putting them in $SINGULARLIBS instead
 AC_SUBST(SINGULARLIBS,"-lfac -lcf")
-AC_SUBST(BUILDFACTORY,no)
-AC_ARG_ENABLE(build-factory, AS_HELP_STRING(--enable-build-factory,build libraries libfac and factory from downloaded source code), BUILDFACTORY="$enableval")
-if test "$BUILDFACTORY" = no
+if test "$BUILD_factory" = no
 then AC_LANG(C++)
      AC_MSG_CHECKING([whether factory library is installed (-lcf)])
      LIBS="$SINGULARLIBS $LIBS"
@@ -501,7 +450,7 @@ then AC_LANG(C++)
 	     int main () { extern const char factoryVersion[]; return *factoryVersion; return *libfac_version; }
 	     ]],
 	  AC_MSG_RESULT(yes),
-	  AC_MSG_RESULT(no); BUILDFACTORY=yes)
+	  AC_MSG_RESULT(no); BUILD_factory=yes)
      LIBS="$SAVELIBS"
 fi
 
@@ -532,17 +481,10 @@ AC_RUN_IFELSE([
 AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,$GETADDRINFO_WORKS,[whether getaddrinfo can handle numeric service (port) numbers])
 
 AC_SUBST(LIBRARIES,"")
-# this sequence reflects dependencies
-test "$BUILDGDBM" = yes && LIBRARIES="$LIBRARIES gdbm"
-test "$BUILDGMP" = yes && LIBRARIES="$LIBRARIES gmp"
-test "$BUILDREADLINE" = yes && LIBRARIES="$LIBRARIES readline"
-test "$BUILDGC" = yes && LIBRARIES="$LIBRARIES gc"
-test "$BUILDNTL" = yes && LIBRARIES="$LIBRARIES ntl"
-# factory needs ntl and gmp, libfac needs factory
-test "$BUILDFACTORY" = yes && LIBRARIES="$LIBRARIES factory libfac"
-test "$BUILDBLAS" = yes && LIBRARIES="$LIBRARIES blas"
-# lapack needs blas
-test "$BUILDLAPACK" = yes && LIBRARIES="$LIBRARIES lapack"
+for i in $LIBLIST
+do eval t=\$BUILD_$i
+   test "$t" = yes && LIBRARIES="$LIBRARIES $i"
+done
 
 TESTFLAG=-Wno-strict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
@@ -579,6 +521,9 @@ AC_ARG_WITH(blaslib, AS_HELP_STRING([--with-blaslib=...],obsolete option), AC_MS
 AC_ARG_WITH(lapacklibs, AS_HELP_STRING([--with-lapacklibs=...],obsolete option), AC_MSG_ERROR(--with-lapacklibs : obsolete option))
 AC_ARG_WITH(readlinelib, AS_HELP_STRING(--with-readlinelib=...,obsolete option), AC_MSG_ERROR(--with-readlinelib : obsolete option))
 AC_ARG_WITH(historylib, AS_HELP_STRING(--with-historylib=...,obsolete option), AC_MSG_ERROR(--with-historylib : obsolete option))
+AC_ARG_WITH(gmplib, AS_HELP_STRING(--with-gmplib=...,obsolete option), AC_MSG_ERROR(--with-gmplib : obsolete option))
+AC_ARG_WITH(gclib, AS_HELP_STRING(--with-gclib=...,obsolete option), AC_MSG_ERROR(--with-gclib : obsolete option))
+AC_ARG_WITH(gdbmlib, AS_HELP_STRING(--with-gdbmlib=...,obsolete option), AC_MSG_ERROR(--with-gdbmlib : obsolete option))
 
 AC_MSG_NOTICE([using LIBRARIES    = $LIBRARIES (libraries to be built from downloaded sources)])
 AC_MSG_NOTICE([using BUILTLIBS    = $BUILTLIBS (linker options for most of them)])
