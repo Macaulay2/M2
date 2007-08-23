@@ -12,7 +12,8 @@ tab := new HashTable from {
      symbol QQ => "<mi>\u211a</mi>",
      symbol CC => "<mi>\u2102</mi>"
      }
-mathML String := x -> concatenate("<mtext>",htmlLiteral x,"</mtext>")
+mathML String := x -> concatenate("<mtext>",replace(" ", "&nbsp;", htmlLiteral x),"</mtext>")
+mathML Net := x -> mtableML apply(unstack x, row -> {row})
 mathML Nothing := texMath Nothing := tex Nothing := html Nothing := x -> ""
 mathML Symbol := x -> if tab#?x then tab#x else concatenate("<mi>",toString x,"</mi>")
 mathML InfiniteNumber := i -> if i === infinity then "<mrow><mi>&infin;</mi></mrow>" else "<mo>-</mo><mi>&infin;</mi>"
