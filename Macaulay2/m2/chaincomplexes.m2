@@ -628,7 +628,7 @@ BettiTally Array := (C,A) -> (
       n := A#0;
       applyKeys(C,(i,d,h) -> (i-n,d,h)))
 
-net BettiTally := v -> (
+rawBettiTally = v -> (
      v' := new MutableHashTable;
      scan(pairs v, (key,n) -> (
 	       (i,d,h) := key;
@@ -652,7 +652,9 @@ net BettiTally := v -> (
      v = applyTable(v, bt -> if bt === 0 then "." else toString bt);
      v = prepend(toString \ toList (mincol .. maxcol), v);
      v = apply(leftside,v,prepend);
-     netList(v, Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false))
+     v)
+
+net BettiTally := v -> netList(rawBettiTally v, Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
 
 betti = method(TypicalValue => BettiTally, Options => { Weights => null })
 heftfun := wt -> if wt === null then d -> d#0 else d -> sum( min(#wt, #d), i -> wt#i * d#i )

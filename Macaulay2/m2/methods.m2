@@ -252,6 +252,8 @@ mingens = method ( Options => {
 	  -- DegreeLimit => {}
 	  } )
 
+mathML = method(Dispatch => Thing, TypicalValue => String)
+
 width File := fileWidth
 height File := fileHeight
 

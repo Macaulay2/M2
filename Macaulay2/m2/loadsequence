@@ -74,8 +74,6 @@ code.m2
 indeterminates.m2
 local.m2
 typicalvalues.m2
-mathml.m2
-texmacs.m2
 packages.m2
 document.m2
 hypertext.m2
@@ -83,6 +81,8 @@ texhtml.m2
 install.m2
 html.m2
 varieties.m2
+mathml.m2
+texmacs.m2
 pretty.m2
 undoc.m2
 obsolete.m2

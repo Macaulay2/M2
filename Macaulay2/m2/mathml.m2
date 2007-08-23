@@ -2,13 +2,16 @@
 
 nest := (tag,s) -> concatenate("<",tag,">",s,"</",tag,">")
 mrow := s -> concatenate("<mrow>",s,"</mrow>")
-
+mtable := x -> concatenate(
+     "<mtable align=\"baseline1\">", newline,
+     apply(x, row -> ( "<mtr>", apply(row, e -> ("<mtd>",e,"</mtd>",newline)), "</mtr>", newline ) ),
+     "</mtable>", newline )
+mtableML := x -> mtable applyTable(x,mathML)
 tab := new HashTable from {
      symbol ZZ => "<mi>\u2124</mi>",
      symbol QQ => "<mi>\u211a</mi>",
      symbol CC => "<mi>\u2102</mi>"
      }
-mathML = method(Dispatch => Thing, TypicalValue => String)
 mathML String := x -> concatenate("<mtext>",htmlLiteral x,"</mtext>")
 mathML Nothing := texMath Nothing := tex Nothing := html Nothing := x -> ""
 mathML Symbol := x -> if tab#?x then tab#x else concatenate("<mi>",toString x,"</mi>")
@@ -37,12 +40,7 @@ mathML FunctionApplication := m -> (
      then concatenate (mfun, bigParenthesize margs)
      else concatenate (bigParenthesize mfun, bigParenthesize margs)
      )
-mtable := x -> concatenate(
-     "<mtable align=\"baseline1\">", newline,
-     apply(x, row -> ( "<mtr>", apply(row, e -> ("<mtd>",e,"</mtd>",newline)), "</mtr>", newline ) ),
-     "</mtable>", newline )
-tableML := x -> mtable applyTable(x,mathML)
-mathML MatrixExpression := x -> concatenate( "<mrow><mo>(</mo>", tableML x, "<mo>)</mo></mrow>", newline )
+mathML MatrixExpression := x -> concatenate( "<mrow><mo>(</mo>", mtableML x, "<mo>)</mo></mrow>", newline )
 mathML Minus := v -> concatenate( "<mo>-</mo>", mathML v#0)
 mathML Divide := x -> concatenate("<mfrac>", mathML x#0, mathML x#1, "</mfrac>")
 mathML OneExpression := x -> "<mn>1</mn>"
@@ -112,12 +110,6 @@ mathML Power := v -> (
 mathML ZZ := i -> concatenate("<mn>",toString i, "</mn>")
 mathML RR := i -> concatenate("<mn>",toString i, "</mn>")
 mathML QQ := i -> concatenate( "<mfrac>",mathML numerator i, mathML denominator i, "</mfrac>" )
-mathML Thing := x -> (
-     -- maybe "expression" should not just put unknown things in a holder ...
-     -- anyway, we have to break the loop somehow here
-     if ReverseDictionary#?x then mathML return mathML ReverseDictionary#x;
-     y := expression x;
-     if instance(y,Holder) and y#0 === x then mathML toString x else mathML y)
 mathML Expression := x -> error("mathML conversion for expression class ", toString class x, " not implemented yet")
 
 mathML LITERAL := x -> concatenate x
@@ -132,12 +124,44 @@ mathML ChainComplex := C -> (
 doublerightarrow := "<mo>\u21d2</mo>"
 mathML Option := s -> concatenate("<mrow>",mathML s#0, doublerightarrow, mathML s#1, "</mrow>")
 
-mathML Type := mathML ImmutableType := R -> mathML expression R
+mathML Type :=
+mathML ImmutableType := R -> mathML expression R
 
 mathML HashTable := s -> concatenate( "<mrow>",mathML class s,"<mo>{</mo>", mtable apply(pairs s, (k,v) -> {mathML k, doublerightarrow, mathML v}), "<mo>}</mo></mrow>", newline )
 mathML MutableHashTable := x -> (
      if ReverseDictionary#?x then mathML ReverseDictionary#x
      else mrow ( mathML class x, nest("mtext",if #x > 0 then ("{...", toString(#x), "...}") else "{}" )))
+
+mathML BettiTally := v -> mtableML rawBettiTally v
+
+-- these are all provisional:
+mathML CoherentSheaf :=
+mathML Ideal :=
+mathML ImmutableType :=
+mathML ModuleMap :=
+mathML MonoidElement :=
+mathML MutableMatrix :=
+mathML OptionTable :=
+mathML ProjectiveHilbertPolynomial :=
+mathML RingMap :=
+mathML SheafOfRings :=
+mathML Tally :=
+mathML ChainComplexMap :=
+mathML GradedModule :=
+mathML GradedModuleMap :=
+mathML GroebnerBasis :=
+mathML IndexedVariableTable :=
+mathML Package :=
+mathML Resolution :=
+mathML ScriptedFunctor :=
+mathML Monoid :=
+mathML Variety :=
+mathML Thing := x -> (
+     -- maybe "expression" should not just put unknown things in a holder ...
+     -- anyway, we have to break the loop somehow here
+     if ReverseDictionary#?x then mathML return mathML ReverseDictionary#x;
+     y := expression x;
+     if instance(y,Holder) and y#0 === x then mathML toString x else mathML y)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
