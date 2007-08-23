@@ -119,8 +119,12 @@ mathML Expression := x -> error("mathML conversion for expression class ", toStr
 
 mathML LITERAL := x -> concatenate x
 
-leftarrow := "<mo>\u2190</mo>"
+doublerightarrow := "<mo>\u21d2</mo>"
+mathML Option := s -> concatenate("<mrow>",mathML s#0, doublerightarrow, mathML s#1, "</mrow>")
 
+-- mathML HashTable := s -> mtable applyPairs(s, (k,v) -> ())
+
+leftarrow := "<mo>&larr;</mo>"
 mathML ChainComplex := C -> (
      complete C;
      s := sort spots C;
