@@ -29,6 +29,7 @@ degrees PolynomialRing := R -> degrees monoid R
 exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
 
 expression PolynomialRing := R -> (
+     if ReverseDictionary#?R then return expression ReverseDictionary#R;
      k := last R.baseRings;
      (expression if ReverseDictionary#?k then ReverseDictionary#k else k) (new Array from (monoid R).generatorExpressions)
      )

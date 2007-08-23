@@ -34,21 +34,12 @@ mathML FunctionApplication := m -> (
      then concatenate (mfun, bigParenthesize margs)
      else concatenate (bigParenthesize mfun, bigParenthesize margs)
      )
-mathML MatrixExpression := x -> concatenate(
-     "<mrow><mo>(</mo>",
-     "<mtable>",
-     newline,
-     apply(x, row -> (
-	       "<mtr>",
-	       apply(row, e -> ("<mtd>",mathML e,"</mtd>",newline)),
-	       "</mtr>",
-     	       newline
-	       )
-	  ),
-     "</mtable>",
-     "<mo>)</mo></mrow>",
-     newline
-     )
+mtable := x -> concatenate(
+     "<mtable align=\"baseline1\">", newline,
+     apply(x, row -> ( "<mtr>", apply(row, e -> ("<mtd>",e,"</mtd>",newline)), "</mtr>", newline ) ),
+     "</mtable>", newline )
+tableML := x -> mtable applyTable(x,mathML)
+mathML MatrixExpression := x -> concatenate( "<mrow><mo>(</mo>", tableML x, "<mo>)</mo></mrow>", newline )
 mathML Minus := v -> concatenate( "<mo>-</mo>", mathML v#0)
 mathML Divide := x -> concatenate("<mfrac>", mathML x#0, mathML x#1, "</mfrac>")
 mathML OneExpression := x -> "<mn>1</mn>"
@@ -121,11 +112,20 @@ mathML QQ := i -> concatenate( "<mfrac>",mathML numerator i, mathML denominator 
 mathML Thing := x -> (
      -- maybe "expression" should not just put unknown things in a holder ...
      -- anyway, we have to break the loop somehow here
+     if ReverseDictionary#?x then mathML return mathML ReverseDictionary#x;
      y := expression x;
      if instance(y,Holder) and y#0 === x then mathML toString x else mathML y)
 mathML Expression := x -> error("mathML conversion for expression class ", toString class x, " not implemented yet")
 
 mathML LITERAL := x -> concatenate x
+
+leftarrow := "<mo>\u2190</mo>"
+
+mathML ChainComplex := C -> (
+     complete C;
+     s := sort spots C;
+     if #s === 0 then mathML "0"
+     else mtable transpose between({leftarrow,"",""}, toList apply(s#0 .. s#-1,i -> {mathML C_i,"",mathML i})))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
