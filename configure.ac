@@ -441,9 +441,9 @@ SAVELIBS=$LIBS
 
 # we need to control the position of -lfac -lcf in the link line, so we don't add them to $LIBS nor to $BUILTLIBS, putting them in $SINGULARLIBS instead
 AC_SUBST(SINGULARLIBS,"-lfac -lcf")
-if test "$BUILD_factory" = no
+if test "$BUILD_factory" = no -o "$BUILD_libfac" = no
 then AC_LANG(C++)
-     AC_MSG_CHECKING([whether factory library is installed (-lcf)])
+     AC_MSG_CHECKING([whether libfac and factory libraries are installed (-lfac -lcf)])
      LIBS="$SINGULARLIBS $LIBS"
      AC_LINK_IFELSE( [[
 	     #include <factoryconf.h>
@@ -451,7 +451,7 @@ then AC_LANG(C++)
 	     int main () { extern const char factoryVersion[]; return *factoryVersion; return *libfac_version; }
 	     ]],
 	  AC_MSG_RESULT(yes),
-	  AC_MSG_RESULT(no); BUILD_factory=yes)
+	  AC_MSG_RESULT(no); BUILD_factory=yes BUILD_libfac=yes)
      LIBS="$SAVELIBS"
 fi
 
