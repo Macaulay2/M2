@@ -78,7 +78,7 @@ configure-help: $(CONFIG_FILES)
 
 # announcement only:
 install all clean distclean install-others install-Macaulay2 ::
-	@echo '-------- making '$@', $(PACKAGE_VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL) --------'
+	@echo '-------- making '$@', @PACKAGE_VERSION@ for ARCH=@ARCH@ OS=@OS@ REL=@REL@ --------'
 
 # first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
 install install-others install-Macaulay2 :: all
@@ -94,56 +94,56 @@ install install-others install-Macaulay2 :: $(DIRS)
 $(DIRS) :; $(INSTALL) -d $@
 distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile
 
-tarball: tarball.$(COMPRESS)
+tarball: tarball.@COMPRESS@
 tarball.gz: tarball.tgz
 tarballs: tarball.bz2 tarball.tgz
 
 EXCLUDES := --exclude=".nfs*" --exclude="Macaulay2-*-data"
 
-tarball.bz2 : $(PKG_TBZ)
-$(PKG_TBZ)  : always
+tarball.bz2 : @PKG_TBZ@
+@PKG_TBZ@  : always
 	fakeroot chown -R root.root $(prefix)/@package@
-	fakeroot tar cfh $(PKG_TBZ) --bzip $(EXCLUDES) -C $(prefix) @package@
+	fakeroot tar cfh @PKG_TBZ@ --bzip $(EXCLUDES) -C $(prefix) @package@
 
-tarball.tgz  : $(PKG_TGZ)
-$(PKG_TGZ)  : always
+tarball.tgz  : @PKG_TGZ@
+@PKG_TGZ@  : always
 	fakeroot chown -R root.root $(prefix)/@package@
-	fakeroot tar cfh $(PKG_TGZ) --gzip $(EXCLUDES) -C $(prefix) @package@
+	fakeroot tar cfh @PKG_TGZ@ --gzip $(EXCLUDES) -C $(prefix) @package@
 
 always :
 
-src-files : src-files ; svn ls -R @srcdir@ | egrep -v '/$$' | sed 's=^=$(package)/=' <$< >$@
-$(package) : GNUmakefile ; rm -f $@ && ln -sf @srcdir@ $@
-mkrt : src-files $(package) ; cat src-files | fakeroot xargs chown root.root
-$(SRC_TGZ) : mkrt ; fakeroot tar cfz $@ --files-from=src-files
-$(SRC_TBZ) : mkrt ; fakeroot tar cfj $@ --files-from=src-files
-src : $(SRC_TZ)
+src-files : src-files ; svn ls -R @srcdir@ | egrep -v '/$$' | sed 's=^=@package@/=' <$< >$@
+@package@ : GNUmakefile ; rm -f $@ && ln -sf @srcdir@ $@
+mkrt : src-files @package@ ; cat src-files | fakeroot xargs chown root.root
+@SRC_TGZ@ : mkrt ; fakeroot tar cfz $@ --files-from=src-files
+@SRC_TBZ@ : mkrt ; fakeroot tar cfj $@ --files-from=src-files
+src : @SRC_TZ@
 
-ifeq "$(M2TARFILE)" "yes"
+ifeq "@M2TARFILE@" "yes"
 install :: tarball
 endif
 
-ifeq "$(DEBIAN)" "yes"
+ifeq "@DEBIAN@" "yes"
 install :: debian
 endif
-debian : $(PKG_TGZ) ; $(MAKE) -C debian install
+debian : @PKG_TGZ@ ; $(MAKE) -C debian install
 
-ifeq "$(RPM)" "yes"
+ifeq "@RPM@" "yes"
 install :: rpm
 endif
-rpm : $(PKG_TGZ) ; $(MAKE) -C rpm install
+rpm : @PKG_TGZ@ ; $(MAKE) -C rpm install
 
-ifeq "$(CYGWIN)" "yes"
+ifeq "@CYGWIN@" "yes"
 install :: cygwin
 endif
-cygwin : $(PKG_TGZ) ; $(MAKE) -C cygwin install
+cygwin : @PKG_TGZ@ ; $(MAKE) -C cygwin install
 
 relink:
-	rm -f Macaulay2/bin/M2$(EXE)
-	$(MAKE) -C Macaulay2/d ../bin/M2$(EXE)
+	rm -f Macaulay2/bin/M2@EXE@
+	$(MAKE) -C Macaulay2/d ../bin/M2@EXE@
 relink-nostrip:
-	rm -f Macaulay2/bin/M2$(EXE)
-	$(MAKE) -C Macaulay2/d STRIP=no ../bin/M2$(EXE)
+	rm -f Macaulay2/bin/M2@EXE@
+	$(MAKE) -C Macaulay2/d STRIP=no ../bin/M2@EXE@
 
 install install-others install-Macaulay2 all clean distclean::; @echo "-------- done making '$@' --------"
 install all::
@@ -161,7 +161,7 @@ help :
 	@ echo "targets:"
 	@ echo "  all                         build/compile all files [the default target]"
 	@ echo "  help                        show this help"
-	@ echo "  relink                      remove Macaulay2/bin/M2$(EXE) and rebuild it"
+	@ echo "  relink                      remove Macaulay2/bin/M2@EXE@ and rebuild it"
 	@ echo "  install                     generate the documentation, install all files"
 	@ echo "    install-Macaulay2         install just the Macaulay2 package"
 	@ echo "    install-others            install just the other packages"
