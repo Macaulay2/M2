@@ -325,7 +325,7 @@ AC_ARG_WITH(srctarfile, AS_HELP_STRING(--with-srctarfile=...,source tar file to 
 AC_SUBST(CYGWIN,no)
 AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin (disables encap and enables strip)), CYGWIN="$enableval")
 if test "$CYGWIN" = yes 
-then ENCAP=no STRIP=yes M2TARFILE=yes
+then ENCAP=yes STRIP=yes M2TARFILE=yes
      if ! test "$SRCTARFILE" -o -d "$srcdir/.svn"
      then AC_MSG_ERROR([source tar file needed for cygwin distribution, specify it with --with-srctarfile=...])
      fi
