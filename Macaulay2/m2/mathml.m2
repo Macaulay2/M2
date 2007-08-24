@@ -1,7 +1,9 @@
 --		Copyright 2007 by Daniel R. Grayson
 
+moen := name -> concatenate("<mo>&",name,";</mo>")
 nest := (tag,s) -> concatenate("<",tag,">",s,"</",tag,">")
-mrow := s -> concatenate("<mrow>",s,"</mrow>")
+mo   := s -> nest("mo",s)
+mrow := s -> nest("mrow",s)
 mtable := x -> concatenate(
      "<mtable align=\"baseline1\">", newline,
      apply(x, row -> ( "<mtr>", apply(row, e -> ("<mtd>",e,"</mtd>",newline)), "</mtr>", newline ) ),
@@ -115,24 +117,24 @@ mathML Expression := x -> error("mathML conversion for expression class ", toStr
 
 mathML LITERAL := x -> concatenate x
 
-leftarrow := "<mo>&larr;</mo>"
+-- see texmacs source file HTMLsymbol.scm for these names:
+leftarrow := moen "larr"
+doublerightarrow := moen "rArr"
+leftbrace := mo "{"
+rightbrace := mo "}"
+
 mathML ChainComplex := C -> (
      complete C;
      s := sort spots C;
      if #s === 0 then mathML "0"
      else mtable transpose between({leftarrow,"",""}, toList apply(s#0 .. s#-1,i -> {mathML C_i,"",mathML i})))
-
-doublerightarrow := "<mo>\u21d2</mo>"
 mathML Option := s -> concatenate("<mrow>",mathML s#0, doublerightarrow, mathML s#1, "</mrow>")
-
 mathML Type :=
 mathML ImmutableType := R -> mathML expression R
-
-mathML HashTable := s -> concatenate( "<mrow>",mathML class s,"<mo>{</mo>", mtable apply(pairs s, (k,v) -> {mathML k, doublerightarrow, mathML v}), "<mo>}</mo></mrow>", newline )
+mathML HashTable := s -> concatenate( "<mrow>",mathML class s,leftbrace, mtable apply(pairs s, (k,v) -> {mathML k, doublerightarrow, mathML v}), rightbrace,"</mrow>", newline )
 mathML MutableHashTable := x -> (
      if ReverseDictionary#?x then mathML ReverseDictionary#x
      else mrow ( mathML class x, nest("mtext",if #x > 0 then ("{...", toString(#x), "...}") else "{}" )))
-
 mathML BettiTally := v -> mtableML rawBettiTally v
 
 -- these are all provisional:

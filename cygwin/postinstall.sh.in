@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# this is the cygwin postinstall script, to be installed in /etc/postinstall/macaulay2.sh
+# this is the cygwin postinstall script, to be installed in /etc/postinstall/Macaulay2.sh
 
 cd @FINALPREFIX@/share/info
 for p in @PACKAGES@
