@@ -217,8 +217,7 @@ gmp_int.o M2lib.o scclib.o gdbm_interface.o gc_cpp.o version.o M2inits.o debug.o
 
 clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'
-layout.m2 : ../../include/config.Makefile
-	(echo '--layout.m2'; echo 'if class LAYOUT === Symbol then LAYOUT = hashTable $(LAYOUT)' ) | sed 's/,/,%     /g' | tr % '\n' >$@
+# layout.m2 is made by "configure" in the build directory
 startup.c : ../m2/startup.m2 layout.m2
 	(echo 'char startupString1[] =' ; \
 	 cat layout.m2 | sed $(SSTRING) ; \
