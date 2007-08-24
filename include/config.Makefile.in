@@ -33,35 +33,23 @@ LDFLAGS = @LDFLAGS@
 #      http://fink.sourceforge.net/doc/packaging/fslayout.php
 #      http://cr.yp.to/unix.html, the section on "Filesystem layout"
 
-## here we set the make-variables that configure uses as make-variables inside configure-variables
-# designed by autoconf:
+### Here we set the make-variables that configure uses as make-variables inside configure-variables.
+# The user should override only this one:
 prefix = @prefix@
+# We assume relative positions of files within the tree are known to the configure script.
+# Thus the user should not override these on the "make" command line, but may
+# override them on the "configure" command line instead:
 exec_prefix = @exec_prefix@
 datarootdir = @datarootdir@
 docdir = @docdir@
 INSTALL = @INSTALL@
 ##
 
-## here we set the variables that we want to be able to override
+## here we set the few variables that we do want to be able to override, for example, for debugging:
 STRIP = @STRIP@
 ##
 
-ifeq ($(findstring $(prefix),@infodir@),)
-$(error expected infodir @infodir@ to begin with $(prefix))
-endif
-ifeq ($(findstring $(prefix),@bindir@),)
-$(error expected bindir @bindir@ to begin with $(prefix))
-endif
-ifeq ($(findstring $(prefix),@datadir@),)
-$(error expected datadir @datadir@ to begin with $(prefix))
-endif
-ifeq ($(findstring $(prefix),@libdir@),)
-$(error expected libdir @libdir@ to begin with $(prefix))
-endif
-ifeq ($(findstring $(prefix),@mandir@),)
-$(error expected mandir @mandir@ to begin with $(prefix))
-endif
-
+# convert these obsolete names to the ones in configure.ac:
 infoRelDir = $(subst $(prefix)/,,@infodir@)
 binRelDir = $(subst $(prefix)/,,@bindir@)
 dataRelDir = $(subst $(prefix)/,,@datadir@)
@@ -91,40 +79,6 @@ docm2relRelDir = $(docm2RelDir)/Core
 emacsdocRelDir = $(docm2relRelDir)/emacs
 imagesRelDir = $(docm2relRelDir)/images
 styleRelDir = $(docm2relRelDir)/style
-
-MAKEFUN = "$(1)" => PackageName -> "$(subst PackageName,"|PackageName|",$($(1)RelDir))/"
-
-LAYOUT := {
-LAYOUT += "bin"=>"$(binRelDir)/",
-LAYOUT += "lib"=>"$(libRelDir)/",
-LAYOUT += "info"=>"$(infoRelDir)/",
-LAYOUT += "data"=>"$(dataRelDir)/",
-LAYOUT += "man"=>"$(manRelDir)/",
-LAYOUT += "man1"=>"$(man1RelDir)/",
-LAYOUT += "man3"=>"$(man3RelDir)/",
-LAYOUT += "emacs"=>"$(emacsRelDir)/",
-LAYOUT += "doc"=>"$(docRelDir)/",
-LAYOUT += "docm2"=>"$(docm2RelDir)/",
-LAYOUT += "packages" => "$(packagesRelDir)/",
-LAYOUT += "docpackages"=>"$(docpackagesRelDir)/",
-LAYOUT += "libm2"=>"$(libm2RelDir)/",
-LAYOUT += "libraries"=>"$(librariesRelDir)/",
-LAYOUT += "cache"=>"$(cacheRelDir)/",
-LAYOUT += "datam2"=>"$(datam2RelDir)/",
-LAYOUT += "share"=>"$(shareRelDir)/",
-LAYOUT += "m2"=>"$(m2RelDir)/",
-LAYOUT += "docm2rel"=>"$(docm2relRelDir)/",
-LAYOUT += "emacsdoc"=>"$(emacsdocRelDir)/",
-LAYOUT += "images"=>"$(imagesRelDir)/",
-LAYOUT += "style"=>"$(styleRelDir)/",
-LAYOUT += $(call MAKEFUN,packagesrc),
-LAYOUT += $(call MAKEFUN,packagedoc),
-LAYOUT += $(call MAKEFUN,packageimages),
-LAYOUT += $(call MAKEFUN,packagetests),
-LAYOUT += $(call MAKEFUN,packagehtml),
-LAYOUT += $(call MAKEFUN,packagecache),
-LAYOUT += $(call MAKEFUN,packageexamples)
-LAYOUT += }
 
 # end file system layout
 

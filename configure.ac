@@ -2,6 +2,7 @@ AC_INIT(Macaulay 2, 0.9.97, Macaulay2@math.uiuc.edu, Macaulay2) dnl -*- autoconf
 AC_SUBST(CYGWIN_RELEASE,2)
 AC_CONFIG_HEADERS(include/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
+AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
 AC_SUBST(CONFIG_ARGS,"$ac_configure_args")
 AC_DEFINE_UNQUOTED(CONFIG_ARGS,"$CONFIG_ARGS",arguments used for configure)
 AC_SUBST(CONFIG_CMD,"'$0' $ac_configure_args")
@@ -147,8 +148,8 @@ AC_HEADER_TIME() dnl # time.h sys/time.h
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h sys/wait.h sys/resource.h io.h linux/personality.h)
 AC_CHECK_HEADERS(stddef.h stdint.h inttypes.h bits/wordsize.h endian.h elf.h)
 AC_CHECK_HEADERS(sys/types.h factoryconf.h)
-AC_CHECK_LIB(socket, socket)
-AC_CHECK_LIB(resolv, hstrerror)
+AC_SEARCH_LIBS(socket,socket)
+AC_SEARCH_LIBS(hstrerror,resolv)
 AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error socket gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([sys_errlist,sys_nerr,herror,gnu_get_libc_version])
@@ -584,12 +585,74 @@ then if test "$DEBIAN" = yes -o "$RPM" = yes
      fi
 fi
 
+# Here we compute the relative positions of various subdirectories with respect to ${prefix}, so we can record the layout
+# of the directory tree, and check that the subdirectories specified are within the tree.
+AC_SUBST(bindirtail) AC_SUBST(datadirtail) AC_SUBST(datarootdirtail) AC_SUBST(docdirtail) AC_SUBST(dvidirtail)
+AC_SUBST(htmldirtail) AC_SUBST(includedirtail) AC_SUBST(infodirtail) AC_SUBST(libdirtail) AC_SUBST(libexecdirtail)
+AC_SUBST(localedirtail) AC_SUBST(localstatedirtail) AC_SUBST(mandirtail) AC_SUBST(pdfdirtail)
+AC_SUBST(psdirtail) AC_SUBST(sbindirtail) AC_SUBST(sharedstatedirtail) AC_SUBST(sysconfdirtail)
+
 AC_MSG_NOTICE([using LIBRARIES    = $LIBRARIES (libraries to be built from downloaded sources)])
 AC_MSG_NOTICE([using BUILTLIBS    = $BUILTLIBS (linker options for most of them)])
 AC_MSG_NOTICE([using SINGULARLIBS = $SINGULARLIBS (linker options for some of them)])
 AC_MSG_NOTICE([using LIBS         = $LIBS (M2 linker options)])
 
-AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
+# Here we insert autoconf's default values so we can compute the relative locations in the directory tree
+test "$prefix" || prefix=/usr/local
+test "$exec_prefix" = NONE && exec_prefix='${prefix}'
+for i in bindir datadir datarootdir docdir dvidir htmldir includedir infodir libdir libexecdir localedir localstatedir mandir pdfdir psdir sbindir sharedstatedir sysconfdir
+do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
+   case "$v" in
+     "$prefix" | "$prefix"/) eval ${i}tail="$prefix" ;;
+     "$prefix"/*) eval ${i}tail=`echo $v | sed "s,^$prefix/,,"` ;; # let's just hope $prefix contains no comma
+     *) AC_MSG_ERROR(expected "$i" value "$w" to start with "prefix" value "$prefix") ;;
+   esac
+done
+
+docdirtail=$datadirtail/doc
+
+datam2dirtail=$datadirtail/Macaulay2
+datacoredirtail=$datam2dirtail/Core
+
+docm2dirtail=$docdirtail/Macaulay2
+doccoredirtail=$docm2dirtail/Core
+
+libm2dirtail=$libdirtail/Macaulay2
+libcoredirtail=$libm2dirtail/Core
+
+cat >Macaulay2/d/layout.m2 <<EOF
+--layout.m2
+if class LAYOUT === Symbol then LAYOUT = hashTable { "bin"=>"$bindirtail/",
+      "lib"=>"$libdirtail/",
+      "info"=>"$infodirtail/",
+      "data"=>"$datadirtail/",
+      "man"=>"$mandirtail/",
+      "man1"=>"$mandirtail/man1/",
+      "man3"=>"$mandirtail/man3/",
+      "emacs"=>"$datadirtail/emacs/site-lisp/",
+      "doc"=>"$docdirtail/",
+      "docm2"=>"$docm2dirtail/",
+      "packages" => "$datam2dirtail/",
+      "docpackages"=>"$docm2dirtail/",
+      "libm2"=>"$libcoredirtail/",
+      "libraries"=>"$libm2dirtail/libraries/",
+      "cache"=>"$libcoredirtail/cache/",
+      "datam2"=>"$datam2dirtail/",
+      "share"=>"$datacoredirtail/",
+      "m2"=>"$datacoredirtail/m2/",
+      "docm2rel"=>"$doccoredirtail/",
+      "emacsdoc"=>"$doccoredirtail/emacs/",
+      "images"=>"$doccoredirtail/images/",
+      "style"=>"$doccoredirtail/style/",
+      "packagesrc" => PackageName -> "$datam2dirtail/"|PackageName|"/",
+      "packagedoc" => PackageName -> "$docm2dirtail/"|PackageName|"/",
+      "packageimages" => PackageName -> "$docm2dirtail/"|PackageName|"/images/",
+      "packagetests" => PackageName -> "$docm2dirtail/"|PackageName|"/tests/",
+      "packagehtml" => PackageName -> "$docm2dirtail/"|PackageName|"/html/",
+      "packagecache" => PackageName -> "$libm2dirtail/"|PackageName|"/cache/",
+      "packageexamples" => PackageName -> "$docm2dirtail/"|PackageName|"/examples/" }
+EOF
+
 AC_OUTPUT()
 
 dnl # Local Variables:
