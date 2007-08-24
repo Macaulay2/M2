@@ -334,7 +334,7 @@ AC_SUBST(BUILTLIBS,"")
 # this list reflects dependencies
 #  factory needs ntl and gmp, libfac needs factory
 #  lapack needs blas
-LIBLIST="gc gdbm gmp readline ntl factory libfac ntl blas lapack"
+LIBLIST="gc gdbm gmp readline ntl factory libfac blas lapack"
 
 for i in $LIBLIST
 do eval BUILD_$i=no
@@ -382,8 +382,7 @@ then AC_SEARCH_LIBS(gdbm_close,gdbm,,BUILD_gdbm=yes)
      test "$BUILD_gdbm" = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
 fi
 
-AC_SUBST(BUILDNTL,no)
-if test "$BUILDNTL" = no
+if test "$BUILD_ntl" = no
 then AC_LANG(C++)
     SAVELIBS=$LIBS
     AC_MSG_CHECKING(for ntl library)
@@ -402,7 +401,7 @@ then AC_LANG(C++)
 	else AC_MSG_RESULT(found $lib)
 	fi
     else AC_MSG_RESULT(none found)
-	LIBS=$SAVELIBS BUILDNTL=yes BUILTLIBS="-lntl $BUILTLIBS"
+	LIBS=$SAVELIBS BUILD_ntl=yes BUILTLIBS="-lntl $BUILTLIBS"
     fi 
 fi
 
