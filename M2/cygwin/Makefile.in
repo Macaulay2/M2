@@ -31,8 +31,8 @@ prefixdir=$(shell dirname $(finalprefix))
 
 all install :: \
 	server/Macaulay2 \
-	server/Macaulay2/@package@-1.tar.bz2 \
-	server/Macaulay2/@package@-1-src.tar.bz2 \
+	server/Macaulay2/@package@-@CYGWIN_RELEASE@.tar.bz2 \
+	server/Macaulay2/@package@-@CYGWIN_RELEASE@-src.tar.bz2 \
 	server/Macaulay2/setup.hint \
 	server/setup.ini
 	@ echo "============================================================================="
@@ -40,37 +40,38 @@ all install :: \
 	@ echo "============================================================================="
 server/setup.ini : ; cd server && PATH=`cd @srcdir@; pwd`:$(PATH) $(MAKE) setup.ini
 server/Macaulay2 : ; @MKDIR_P@ $@
-server/Macaulay2/@package@-1.tar.bz2 : Makefile server/Macaulay2
+server/Macaulay2/@package@-@CYGWIN_RELEASE@.tar.bz2 : Makefile server/Macaulay2 postinstall.sh preremove.sh
 	rm -rf files
 	mkdir files
 	@MKDIR_P@ files$(prefixdir)
-	$(FAKEROOT) tar xzf ../@PKG_TGZ@ -C files$(prefixdir)
+	@FAKEROOT@ tar xzf ../@PKG_TGZ@ -C files$(prefixdir)
 	mv files$(prefixdir)/@package@ files$(prefixdir)/$(prefixtail)
 	cd files$(finalprefix) && rm -f INSTALL encapinfo postinstall preremove
 	@MKDIR_P@ files/etc/postinstall files@FINALPREFIX@
-	@INSTALL_PROGRAM@ Macaulay2.sh files/etc/postinstall
-ifneq ($(FAKEROOT),)
-	$(FAKEROOT) chown -R root.root files
+	@INSTALL_PROGRAM@ postinstall.sh files/etc/postinstall/@PACKAGE_TARNAME@.sh
+	@INSTALL_PROGRAM@ preremove.sh files/etc/preremove/@PACKAGE_TARNAME@.sh
+ifneq (@FAKEROOT@,)
+	@FAKEROOT@ chown -R root.root files
 endif
-	(cd files && $(FAKEROOT) tar cjf - *) >$@
+	(cd files && @FAKEROOT@ tar cjf - *) >$@
 	rm -rf files
 server/Macaulay2/setup.hint : setup.hint server/Macaulay2 ; cp $< $@
 
 ifeq (@SRCTARFILE@,)
-@package@-1 : always ; rm -f $@ && ln -sf @srcdir@/.. $@
-src-files : always ; svn ls -R @srcdir@/.. | egrep -v '/$$' | sed 's=^=@package@-1/=' >$@
-mkrt : src-files @package@-1
-ifneq ($(FAKEROOT),)
-	cat src-files | $(FAKEROOT) xargs chown root.root
+@package@-@CYGWIN_RELEASE@ : always ; rm -f $@ && ln -sf @srcdir@/.. $@
+src-files : always ; svn ls -R @srcdir@/.. | egrep -v '/$$' | sed 's=^=@package@-@CYGWIN_RELEASE@/=' >$@
+mkrt : src-files @package@-@CYGWIN_RELEASE@
+ifneq (@FAKEROOT@,)
+	cat src-files | @FAKEROOT@ xargs chown root.root
 endif
-server/Macaulay2/@package@-1-src.tar.bz2 : server/Macaulay2 mkrt src-files ; $(FAKEROOT) tar cfj $@ --files-from=src-files
+server/Macaulay2/@package@-@CYGWIN_RELEASE@-src.tar.bz2 : server/Macaulay2 mkrt src-files ; @FAKEROOT@ tar cfj $@ --files-from=src-files
 else
-src-tree : @SRCTARFILE@ ; rm -rf $@ && @MKDIR_P@ $@ && tar xzf $< -C $@ && rm -f @package@-1 && ln -s srctree/* @package@-1
+src-tree : @SRCTARFILE@ ; rm -rf $@ && @MKDIR_P@ $@ && tar xzf $< -C $@ && rm -f @package@-@CYGWIN_RELEASE@ && ln -s srctree/* @package@-@CYGWIN_RELEASE@
 mkrt : src-tree
-ifneq ($(FAKEROOT),)
-	$(FAKEROOT) chown -R root.root src-tree
+ifneq (@FAKEROOT@,)
+	@FAKEROOT@ chown -R root.root src-tree
 endif
-server/Macaulay2/@package@-1-src.tar.bz2 : server/Macaulay2 mkrt ; $(FAKEROOT) tar cfj $@ @package@-1/.
+server/Macaulay2/@package@-@CYGWIN_RELEASE@-src.tar.bz2 : server/Macaulay2 mkrt ; @FAKEROOT@ tar cfj $@ @package@-@CYGWIN_RELEASE@/.
 endif
 
 install :: Macaulay2.README Macaulay2.sh

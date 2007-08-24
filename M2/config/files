@@ -6,7 +6,8 @@ cygwin/Makefile
 cygwin/Macaulay2.README
 cygwin/setup.hint
 cygwin/server/Makefile
-cygwin/Macaulay2.sh
+cygwin/postinstall.sh
+cygwin/preremove.sh
 debian/Makefile
 debian/control.prelim
 debian/postrm

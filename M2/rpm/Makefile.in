@@ -27,10 +27,10 @@ all install :: ../$(PKG_RPM)
 	cd files$(finalprefix) && rm -f INSTALL encapinfo postinstall preremove
 	cat Macaulay2-body.spec >Macaulay2.spec
 	(cd files && find ./$(finalprefix) -type f) | sed -e 's=^./="=' -e 's=$$="=' >>Macaulay2.spec
-	$(FAKEROOT) chown -R root files/*
-	$(FAKEROOT) rpmbuild -bb Macaulay2.spec
+	@FAKEROOT@ chown -R root files/*
+	@FAKEROOT@ rpmbuild -bb Macaulay2.spec
 	rm -rf files
-try-alien : ../$(PKG_DEB) ; $(FAKEROOT) alien --generate --scripts --to-rpm $^
+try-alien : ../$(PKG_DEB) ; @FAKEROOT@ alien --generate --scripts --to-rpm $^
 clean ::
 distclean : clean; rm -f Makefile
 Makefile : Makefile.in; cd ..; ./config.status rpm/Makefile

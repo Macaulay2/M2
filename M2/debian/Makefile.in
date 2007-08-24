@@ -25,11 +25,11 @@ ifneq (@ENCAP@,yes)
 $(error expected --enable-encap, in order to make a debian package)
 endif
 
-# notice that fakeroot is required, get it here: http://ftp.debian.org/debian/pool/main/f/$(FAKEROOT)
+# notice that fakeroot is required, get it here: http://ftp.debian.org/debian/pool/main/f/@FAKEROOT@
 ../$(PKG_DEB) : debian-binary control.tar.gz data.tar.gz
 	rm -f $@
-	$(FAKEROOT) chown root.root $^
-	$(FAKEROOT) ar rc $@.tmp $^
+	@FAKEROOT@ chown root.root $^
+	@FAKEROOT@ ar rc $@.tmp $^
 	sed -e 's=debian-binary/=debian-binary =' -e 's=control.tar.gz/=control.tar.gz =' -e 's=data.tar.gz/=data.tar.gz =' < $@.tmp > $@
 	rm $@.tmp
 CONTROLFILES := control
@@ -40,8 +40,8 @@ CONTROLFILES += prerm
 # CONTROLFILES += postrm
 control.tar.gz : $(CONTROLFILES) control
 	chmod a+x,g-w $(CONTROLFILES)
-	$(FAKEROOT) chown root $(CONTROLFILES) control
-	$(FAKEROOT) tar cfz $@ $^
+	@FAKEROOT@ chown root $(CONTROLFILES) control
+	@FAKEROOT@ tar cfz $@ $^
 prepare : ../@PKG_TZ@
 	rm -rf @package@ $(prefixtail)
 	@MKDIR_P@ $(prefixtail)
@@ -53,9 +53,9 @@ prepare : ../@PKG_TZ@
 	find $(prefixtail) -name .linkdir | xargs rm -f
 	find $(prefixtail) -name \*.info | while read x ; do gzip --best "$$x" ; done
 	find $(prefixtail) -name \*.1 | while read x ; do gzip --best "$$x" ; done
-	$(FAKEROOT) chown -R root $(prefixtail)
+	@FAKEROOT@ chown -R root $(prefixtail)
 data.tar.gz : prepare
-	$(FAKEROOT) tar cfz $@ $(prefixtail)
+	@FAKEROOT@ tar cfz $@ $(prefixtail)
 md5sums : prepare
 	(cd $(prefixtail) && find * -type f | xargs md5sum) >$@
 check-with-lintian : ../$(PKG_DEB)

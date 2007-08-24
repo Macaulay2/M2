@@ -102,28 +102,28 @@ EXCLUDES := --exclude=".nfs*" --exclude="Macaulay2-*-data"
 
 tarball.bz2 : @PKG_TBZ@
 @PKG_TBZ@  : always
-ifneq ($(FAKEROOT),)
-	$(FAKEROOT) chown -R root.root $(prefix)/@package@
+ifneq (@FAKEROOT@,)
+	@FAKEROOT@ chown -R root.root $(prefix)/@package@
 endif
-	$(FAKEROOT) tar cfh @PKG_TBZ@ --bzip $(EXCLUDES) -C $(prefix) @package@
+	@FAKEROOT@ tar cfh @PKG_TBZ@ --bzip $(EXCLUDES) -C $(prefix) @package@
 
 tarball.tgz  : @PKG_TGZ@
 @PKG_TGZ@  : always
-ifneq ($(FAKEROOT),)
-	$(FAKEROOT) chown -R root.root $(prefix)/@package@
+ifneq (@FAKEROOT@,)
+	@FAKEROOT@ chown -R root.root $(prefix)/@package@
 endif
-	$(FAKEROOT) tar cfh @PKG_TGZ@ --gzip $(EXCLUDES) -C $(prefix) @package@
+	@FAKEROOT@ tar cfh @PKG_TGZ@ --gzip $(EXCLUDES) -C $(prefix) @package@
 
 always :
 
 src-files : src-files ; svn ls -R @srcdir@ | egrep -v '/$$' | sed 's=^=@package@/=' <$< >$@
 @package@ : GNUmakefile ; rm -f $@ && ln -sf @srcdir@ $@
 mkrt : src-files @package@
-ifneq ($(FAKEROOT),)
-	cat src-files | $(FAKEROOT) xargs chown root.root
+ifneq (@FAKEROOT@,)
+	cat src-files | @FAKEROOT@ xargs chown root.root
 endif
-@SRC_TGZ@ : mkrt ; $(FAKEROOT) tar cfz $@ --files-from=src-files
-@SRC_TBZ@ : mkrt ; $(FAKEROOT) tar cfj $@ --files-from=src-files
+@SRC_TGZ@ : mkrt ; @FAKEROOT@ tar cfz $@ --files-from=src-files
+@SRC_TBZ@ : mkrt ; @FAKEROOT@ tar cfj $@ --files-from=src-files
 src : @SRC_TZ@
 
 ifeq "@M2TARFILE@" "yes"
