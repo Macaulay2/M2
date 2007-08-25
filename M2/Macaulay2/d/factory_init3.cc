@@ -1,5 +1,7 @@
 #include "M2inits.h"
 
+void factory_init3(){}
+
 static void f() __attribute__ ((constructor));
 static void f() { enterFactory(); }
 

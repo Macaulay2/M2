@@ -18,6 +18,10 @@ ifneq (@LDD@,)
 	- @LDD@ $<
 endif
 
+recompile :
+	rm -f ../bin/M2@EXE@
+	$(MAKE)
+
 ## standard options
 
 M2_LDFLAGS  =
@@ -46,9 +50,6 @@ EFILES += $(F4_OBJECT_FILES:%=../e/f4/%)
 
 ## *.c files
 
-# we want M2inits1 to be first on the command line
-M2_OBJECTS = M2inits1.o
-
 OPTCFILES += debug.c
 ifeq "@DEBUG@" "yes"
 M2_OBJECTS += debug.o
@@ -59,6 +60,8 @@ CFILES += M2inits.c M2types.c M2mem.c scclib.c M2lib.c gmp_aux.c gdbm_interface.
 CFILES += factory_allocator.c main.c
 SRCFILES += $(OPTCFILES) $(CFILES)
 M2_OBJECTS += $(CFILES:.c=.o)
+M2_OBJECTS += version.o
+M2_OBJECTS += M2-factory.o
 
 ## *.c files, non source, made by us from other files
 
@@ -253,14 +256,11 @@ tmp_init.c : $(DFILES)
 
 ###################### libraries
 
-LIBRARYOPTIONS += M2inits2.o
-LIBRARYDEPS    += M2inits2.o
+libfactory_init1.a : factory_init1.o ; ar ru $@ $^
+libfactory_init2.a : factory_init2.o ; ar ru $@ $^
 
-LIBRARYOPTIONS += factory_init1.o version.o M2-factory.o @SINGULARLIBS@ factory_init2.o
-LIBRARYDEPS    += factory_init1.o version.o M2-factory.o                 factory_init2.o
-
-LIBRARYOPTIONS += M2inits3.o
-LIBRARYDEPS    += M2inits3.o
+LIBRARYOPTIONS += -L. -lfactory_init1    @SINGULARLIBS@  -lfactory_init2
+LIBRARYDEPS    +=    libfactory_init1.a                 libfactory_init2.a
 
 LIBRARYOPTIONS +=  @BUILTLIBS@ @LIBS@
 
@@ -279,9 +279,11 @@ LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
 
 clean::; rm -f ../bin/M2@EXE@
 # we make tmp_init.o depend on everything, because compiling it produces our timestamp
-tmp_init.o : $(M2_OBJECTS) $(LIBRARYDEPS) $(EFILES) factory_init3.o
+tmp_init.o : M2inits1.o $(M2_OBJECTS) M2inits2.o $(LIBRARYDEPS) $(EFILES)
 ../bin/M2@EXE@ : tmp_init.o
-	time @CC@ $(M2_LDFLAGS) $(M2_OBJECTS) $^ factory_init3.o $(EFILES) $(LIBRARYOPTIONS) -lm -o "$@".tmp
+	time @CC@ $(M2_LDFLAGS) \
+		M2inits1.o $(M2_OBJECTS) tmp_init.o $(EFILES) M2inits2.o \
+		$(LIBRARYOPTIONS) -lm -o "$@".tmp
 ifeq "$(STRIP)" "yes"
 ifneq "@STRIPCMD@" ""
 	@STRIPCMD@ "$@".tmp
