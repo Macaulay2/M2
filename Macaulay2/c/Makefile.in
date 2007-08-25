@@ -19,9 +19,9 @@ OFILES := $(CNAMES:.c=.o) grammar.o
 SRCFILES := $(HFILES) $(CNAMES) grammar.y
 CPPFLAGS += -I../../include -I/include -I@srcdir@/../../include
 CPPFLAGS += -I@srcdir@
-LDFLAGS += -L../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
+LDFLAGS += -L../../libraries/final@FINALPREFIX@/@librariesdirtail@/lib
 ifeq (@OS@,Linux)
-LDFLAGS += -Wl,-rpath,$(shell /bin/pwd)/../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib
+LDFLAGS += -Wl,-rpath,$(shell /bin/pwd)/../../libraries/final@FINALPREFIX@/@librariesdirtail@/lib
 endif
 LOADLIBES += -lgc
 ############################## compiling

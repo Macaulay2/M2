@@ -89,7 +89,7 @@ all:: ;	$(MAKE) -C WindowsNT
 endif
 all distclean check clean install install-others install-Macaulay2 :: ; $(MAKE) -C Macaulay2 $@
 all::; $(MAKE) -C Macaulay2 doc
-DIRS := $(target) @encapdir@/$(binRelDir) $(libm2dir) @encapdir@/$(man1RelDir) @encapdir@/$(emacsRelDir) @encapdir@/$(m2RelDir) @encapdir@/$(docm2RelDir)
+DIRS := $(target) @encapdir@/@bindirtail@ @encapdir@/@mandirtail@/man1 @encapdir@/@emacsdirtail@ @encapdir@/@corem2srcdirtail@ @encapdir@/@docpackagesdirtail@
 install install-others install-Macaulay2 :: $(DIRS)
 $(DIRS) :; $(INSTALL) -d $@
 distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile

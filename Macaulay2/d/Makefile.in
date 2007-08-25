@@ -1,7 +1,9 @@
 # @configure_input@
 include ../../include/config.Makefile
 VPATH = @srcdir@
+# these can be overridden on the command line
 DEPENDS = yes
+STRIP = @STRIP@
 ############################## main targets
 all :: tokens_stub.o
 ifneq (@ETAGS@,)

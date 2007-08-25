@@ -9,19 +9,19 @@ justM2 all :: initialize
 include ../include/config.Makefile
 VPATH = @srcdir@
 ################################# .
-install install-others install-Macaulay2 :: @encapdir@/$(docm2RelDir) @encapdir@/$(docm2RelDir) \
-	   @encapdir@/$(docm2RelDir)/COPYING \
-	   @encapdir@/$(docm2RelDir)/README \
-	   @encapdir@/$(docm2RelDir)/CHANGES \
-	   @encapdir@/$(docm2RelDir)/LAYOUT
+install install-others install-Macaulay2 :: @encapdir@/@docpackagesdirtail@ @encapdir@/@docpackagesdirtail@ \
+	   @encapdir@/@docpackagesdirtail@/COPYING \
+	   @encapdir@/@docpackagesdirtail@/README \
+	   @encapdir@/@docpackagesdirtail@/CHANGES \
+	   @encapdir@/@docpackagesdirtail@/LAYOUT
 
-@encapdir@/$(docm2RelDir):; @MKDIR_P@ "$@"
-@encapdir@/$(docm2RelDir)/COPYING : COPYING ; @INSTALL_DATA@ $< "$@"
-@encapdir@/$(docm2RelDir)/CHANGES : CHANGES ; @INSTALL_DATA@ $< "$@"
-@encapdir@/$(docm2RelDir)/LAYOUT  : LAYOUT  ; @INSTALL_DATA@ $< "$@"
-@encapdir@/$(docm2RelDir)/README  : README  ; @INSTALL_DATA@ $< "$@"
+@encapdir@/@docpackagesdirtail@:; @MKDIR_P@ "$@"
+@encapdir@/@docpackagesdirtail@/COPYING : COPYING ; @INSTALL_DATA@ $< "$@"
+@encapdir@/@docpackagesdirtail@/CHANGES : CHANGES ; @INSTALL_DATA@ $< "$@"
+@encapdir@/@docpackagesdirtail@/LAYOUT  : LAYOUT  ; @INSTALL_DATA@ $< "$@"
+@encapdir@/@docpackagesdirtail@/README  : README  ; @INSTALL_DATA@ $< "$@"
 
-# install install-others install-Macaulay2 :: @encapdir@/$(docm2RelDir)/INSTALL
+# install install-others install-Macaulay2 :: @encapdir@/@docpackagesdirtail@/INSTALL
 # @encapdir@/INSTALL  : INSTALL  ; @INSTALL_DATA@ $< "$@"
 
 ################################# srcdir
@@ -32,8 +32,8 @@ clean::; rm -f srcdir
 initialize :: cache
 cache :; mkdir $@
 distclean clean ::; rm -rf cache
-install install install-others install-Macaulay2 :: @encapdir@/$(cacheRelDir)
-@encapdir@/$(cacheRelDir):; @INSTALL@ -d "$@"
+install install install-others install-Macaulay2 :: @encapdir@/@corecachedirtail@
+@encapdir@/@corecachedirtail@:; @INSTALL@ -d "$@"
 ################################# util
 initialize::; $(MAKE) -C util all
 distclean clean ::; $(MAKE) DEPENDS=no -C util $@

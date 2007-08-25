@@ -7,7 +7,7 @@ srcdir = $(shell cd @srcdir@; /bin/pwd)
 all:: initialize
 Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
 emacs html: all; $(MAKE) -C ../$@
-LD_LIBRARY_PATH := $(shell cd ../../libraries/final@FINALPREFIX@/$(librariesRelDir)/lib && pwd):$(LD_LIBRARY_PATH)
+LD_LIBRARY_PATH := $(shell cd ../../libraries/final@FINALPREFIX@/@librariesdirtail@/lib && pwd):$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 ##############################
 .SUFFIXES: .m2
@@ -174,13 +174,13 @@ test4: ../util/screen
 clean::; rm -f test4
 endif
 
-install:: @encapdir@/$(datam2RelDir)
-@encapdir@/$(datam2RelDir) :
-	@INSTALL@ -d @encapdir@/$(datam2RelDir)
+install:: @encapdir@/@packagesdirtail@
+@encapdir@/@packagesdirtail@ :
+	@INSTALL@ -d @encapdir@/@packagesdirtail@
 
 install:: $(DUMPEDM2FILES) demo1.m2
-	@INSTALL@ -d "@encapdir@/$(m2RelDir)"
-	@INSTALL_DATA@ $^ "@encapdir@/$(m2RelDir)"
+	@INSTALL@ -d "@encapdir@/@corem2srcdirtail@"
+	@INSTALL_DATA@ $^ "@encapdir@/@corem2srcdirtail@"
 
 ifeq "@ENCAP@" "yes"
 ENCAPVALUE = true

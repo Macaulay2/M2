@@ -9,12 +9,12 @@ ifeq (@CXX@-@ISYSTEM@,g++-yes)
 # We want ../../include/config.h to be a "system" include file, so changing it
 # will not force a recompilation of all of our C++ files.
 M2CPPFLAGS  = -isystem ../../include
-M2CPPFLAGS += -isystem ../../libraries/final@FINALPREFIX@/$(librariesRelDir)/include
+M2CPPFLAGS += -isystem ../../libraries/final@FINALPREFIX@/@librariesdirtail@/include
 M2CPPFLAGS += -isystem @srcdir@/../../include
 M2CPPFLAGS += -isystem ../util
 else
 M2CPPFLAGS  = -I../../include
-M2CPPFLAGS += -I../../libraries/final@FINALPREFIX@/$(librariesRelDir)/include
+M2CPPFLAGS += -I../../libraries/final@FINALPREFIX@/@librariesdirtail@/include
 M2CPPFLAGS += -I@srcdir@/../../include
 M2CPPFLAGS += -I../util
 endif

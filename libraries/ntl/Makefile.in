@@ -7,10 +7,10 @@ BUILDDIR = $(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz
 URL = http://shoup.net/ntl
 CONFIGURECMD = ./configure \
-	PREFIX=@FINALPREFIX@/$(librariesRelDir) \
-	LIBDIR=@FINALPREFIX@/$(librariesRelDir)/lib \
-	INCLUDEDIR=@FINALPREFIX@/$(librariesRelDir)/include \
-	DOCDIR=@FINALPREFIX@/$(librariesRelDir)/share/doc \
+	PREFIX=@FINALPREFIX@/@librariesdirtail@ \
+	LIBDIR=@FINALPREFIX@/@librariesdirtail@/lib \
+	INCLUDEDIR=@FINALPREFIX@/@librariesdirtail@/include \
+	DOCDIR=@FINALPREFIX@/@librariesdirtail@/share/doc \
 	NTL_GMP_LIP=on NTL_STD_CXX=on NTL_NO_INIT_TRANS=on NTL_CXX_ONLY=on \
 	CC="@CXX@" \
 	CXX="@CXX@" \
@@ -20,10 +20,10 @@ CONFIGURECMD = ./configure \
 	LDFLAGS="$(LDFLAGS)"
 
 INSTALLOPTIONS = \
-	PREFIX=$(PREFIX)/$(librariesRelDir) \
-	LIBDIR=$(PREFIX)/$(librariesRelDir)/lib \
-	INCLUDEDIR=$(PREFIX)/$(librariesRelDir)/include \
-	DOCDIR=$(PREFIX)/$(librariesRelDir)/share/doc
+	PREFIX=$(PREFIX)/@librariesdirtail@ \
+	LIBDIR=$(PREFIX)/@librariesdirtail@/lib \
+	INCLUDEDIR=$(PREFIX)/@librariesdirtail@/include \
+	DOCDIR=$(PREFIX)/@librariesdirtail@/share/doc
 
 INSTALLCMD     = $(MAKE) $(INSTALLOPTIONS) install
 include ../Makefile.library
