@@ -23,12 +23,25 @@ export{regularSequence,isRegularSequence,isCM}
 -- regularElement  Give a regular element of an ideal.  Say in a polynoial ring how to find out if an element is a zerodivisor?
 -- basiselementlimit, take gb (I,f-z^d) look at lead terms and see if z divides them. Homogenous
 -- (I, fz-1)  elimate z 
-
-
-
 -- write this for modules first.
+-- keep in mind the substitute command...
+-- keep in mind the eg (x*y,x*z,y*z) = I and finding a reg seq here.
+
+--A = ZZ[x,y,z]
+--M = A^1/ideal(y*z)
+--I = ideal(x*y,x*z,y*z)
+--g = gens gb I
+--g_(0,2)
+--isInjective((g_(0,1))*id_M)
+
+--regularElement(Ideal,Module) := RingElement => (I,M) -> (
+--     g gens gb I
+--     isInjective g_0 *id_M
+--    );
 
 
+
+------------------
 depth(Ideal,Module) := ZZ => (I,M) -> (
      AI := (ring I)^1/I;
      for i from 0 to dim ring M do(
@@ -44,13 +57,7 @@ depth(Ideal,PolynomialRing) := ZZ => (I,A) -> (
      codim I
      );
 
---Check to see if in a polynomial ring, then just return the codim of I.
---Keep in mind, some techniques 
---You don't want to be computing A^1 again and again, so set M at the beginning.
--- keep in mind the substitute command...
--- keep in mind the eg (x*y,x*z,y*z) = I and finding a reg seq here.
 
--- try to build the gen sequ from the generating set of the ideal.
 
 TEST /// 
 A = QQ[x,y,z]/ideal(x^2)
