@@ -628,44 +628,6 @@ AC_SUBST(coredatadirtail,$packagesdirtail/Core)
 AC_SUBST(corem2srcdirtail,$coredatadirtail/m2)
 AC_SUBST(corecachedirtail,$libm2dirtail/Core/cache)
 
-cat >Macaulay2/d/layout.m2 <<EOF
---layout.m2
-if class LAYOUT === Symbol then LAYOUT = hashTable {
-      "bin"=>"$bindirtail/",
-      "lib"=>"$libdirtail/",
-      "info"=>"$infodirtail/",
-      "data"=>"$datadirtail/",
-      "man"=>"$mandirtail/",
-      "man1"=>"$man1dirtail/",
-      "man3"=>"$man3dirtail/",
-      "emacs"=>"$emacsdirtail/",
-      "doc"=>"$docdirtail/",
-      -- Macaulay 2:
-      "docm2"=>"$docpackagesdirtail/",
-      "packages" => "$packagesdirtail/",
-      "docpackages"=>"$docpackagesdirtail/",
-      "libraries"=>"$librariesdirtail/",
-      "datam2"=>"$packagesdirtail/",
-      -- Macaulay 2 packages:
-      "packagesrc" => PackageName -> "$packagesdirtail/"|PackageName|"/",
-      "packagedoc" => PackageName -> "$docpackagesdirtail/"|PackageName|"/",
-      "packageimages" => PackageName -> "$docpackagesdirtail/"|PackageName|"/images/",
-      "packagetests" => PackageName -> "$docpackagesdirtail/"|PackageName|"/tests/",
-      "packagehtml" => PackageName -> "$docpackagesdirtail/"|PackageName|"/html/",
-      "packagecache" => PackageName -> "$libm2dirtail/"|PackageName|"/cache/",
-      "packageexamples" => PackageName -> "$docpackagesdirtail/"|PackageName|"/examples/",
-      -- Macaulay 2 Core package:
-      "libm2"=>"$libm2dirtail/Core/",  -- change to corelib
-      "cache"=>"$corecachedirtail/", -- change to corecache
-      "share"=>"$coredatadirtail/", -- change to coredatadirtail
-      "m2"=>"$corem2srcdirtail/", -- change to corem2srcdirtail
-      "docm2rel"=>"$docpackagesdirtail/Core/", -- eliminate or change to coredoc
-      "emacsdoc"=>"$docpackagesdirtail/Core/emacs/", -- move to Macaulay2 package, eventually
-      "images"=>"$docpackagesdirtail/Core/images/", -- move to Macaulay2 package, eventually
-      "style"=>"$docpackagesdirtail/Core/style/" -- move to Macaulay2 package, eventually
-    }
-EOF
-
 AC_OUTPUT()
 
 dnl # Local Variables:
