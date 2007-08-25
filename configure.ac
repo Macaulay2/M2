@@ -534,15 +534,6 @@ IS_DECLARED(char **,h_errlist, [
       #include <errno.h>
       ])
 
-dnl # delete this eventually:
-AC_ARG_WITH(blaslib, AS_HELP_STRING([--with-blaslib=...],obsolete option), AC_MSG_ERROR(--with-blaslib : obsolete option))
-AC_ARG_WITH(lapacklibs, AS_HELP_STRING([--with-lapacklibs=...],obsolete option), AC_MSG_ERROR(--with-lapacklibs : obsolete option))
-AC_ARG_WITH(readlinelib, AS_HELP_STRING(--with-readlinelib=...,obsolete option), AC_MSG_ERROR(--with-readlinelib : obsolete option))
-AC_ARG_WITH(historylib, AS_HELP_STRING(--with-historylib=...,obsolete option), AC_MSG_ERROR(--with-historylib : obsolete option))
-AC_ARG_WITH(gmplib, AS_HELP_STRING(--with-gmplib=...,obsolete option), AC_MSG_ERROR(--with-gmplib : obsolete option))
-AC_ARG_WITH(gclib, AS_HELP_STRING(--with-gclib=...,obsolete option), AC_MSG_ERROR(--with-gclib : obsolete option))
-AC_ARG_WITH(gdbmlib, AS_HELP_STRING(--with-gdbmlib=...,obsolete option), AC_MSG_ERROR(--with-gdbmlib : obsolete option))
-
 AC_SUBST(DUMPDATAFILE,Macaulay2-$ARCH-data)
 
 if test "$DEBUG" = yes
