@@ -352,38 +352,56 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list 
 
 AC_LANG(C)
 AC_SEARCH_LIBS(tgoto,ncurses curses)
-if test "$BUILD_readline" = no
+if test $BUILD_readline = no
 then AC_SEARCH_LIBS(add_history,history,,BUILD_readline=yes)
      AC_SEARCH_LIBS(readline,readline,,BUILD_readline=yes)
      AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
-     if test "$BUILD_readline" = yes
+     if test $BUILD_readline = yes
      then AC_MSG_NOTICE(readline library will be compiled)
 	  BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
      fi
 fi
 
 AC_LANG(C)
-if test "$BUILD_gmp" = no
+if test $BUILD_gmp = no
 then AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILD_gmp=yes)
      AC_CHECK_HEADER(gmp.h,,BUILD_gmp=yes)
-     test "$BUILD_gmp" = yes && BUILTLIBS="-lgmp $BUILTLIBS"
+     test $BUILD_gmp = yes && BUILTLIBS="-lgmp $BUILTLIBS"
 fi
 
 AC_LANG(C)
-if test "$BUILD_gc" = no
+if test $BUILD_gc = no
 then AC_SEARCH_LIBS(GC_free,gc,,BUILD_gc=yes)
      AC_CHECK_HEADER(gc/gc.h,,BUILD_gc=yes)
-     test "$BUILD_gc" = yes && BUILTLIBS="-lgc $BUILTLIBS"
+     if test $BUILD_gc = no
+     then AC_MSG_CHECKING(whether libgc is recent enough)
+	  AC_RUN_IFELSE([ 
+		  #include <stdio.h>
+		  main () {
+		      extern unsigned GC_version;
+		      FILE *msg = fdopen(AS_MESSAGE_FD,"w");
+		      unsigned major, minor, alpha;
+		      major = GC_version >> 16;
+		      minor = (GC_version >> 8) & 0xff;
+		      alpha = GC_version & 0xff;
+		      if (alpha == 0xff) fprintf(msg,"(version %d.%d found) ", major, minor);
+		      else fprintf(msg,"(version %d.%d alpha %d found) ", major, minor, alpha);
+		      return !( major >= 7 ); }],
+	     [ AC_MSG_RESULT(yes) ],
+	     [ AC_MSG_RESULT([no, version at least 7.0 is required (gc will be built from downloaded sources)]); BUILD_gc=yes ],
+	     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
+     fi
+     test $BUILD_gc = yes && BUILTLIBS="-lgc $BUILTLIBS"
 fi
 
 AC_LANG(C)
-if test "$BUILD_gdbm" = no
+if test $BUILD_gdbm = no
 then AC_SEARCH_LIBS(gdbm_close,gdbm,,BUILD_gdbm=yes)
      AC_CHECK_HEADER(gdbm.h,,BUILD_gdbm=yes)
-     test "$BUILD_gdbm" = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
+     test $BUILD_gdbm = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
 fi
 
-if test "$BUILD_ntl" = no
+if test $BUILD_ntl = no
 then AC_LANG(C++)
     SAVELIBS=$LIBS
     AC_MSG_CHECKING(for ntl library)
@@ -426,11 +444,11 @@ then AC_MSG_CHECKING([whether the vecLib framework is available])
 	 [
 	     AC_MSG_RESULT(no)
 	     LIBS="$SAVELIBS"
-	     if test "$BUILD_blas" = no
+	     if test $BUILD_blas = no
 	     then AC_LANG(Fortran 77)
 		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_blas=yes BUILTLIBS="-lblas $BUILTLIBS")
 	     fi
-	     if test "$BUILD_lapack" = no
+	     if test $BUILD_lapack = no
 	     then AC_LANG(Fortran 77)
 		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes BUILTLIBS="-llapack $BUILTLIBS")
 	     fi
@@ -442,7 +460,7 @@ SAVELIBS=$LIBS
 
 # we need to control the position of -lfac -lcf in the link line, so we don't add them to $LIBS nor to $BUILTLIBS, putting them in $SINGULARLIBS instead
 AC_SUBST(SINGULARLIBS,"-lfac -lcf")
-if test "$BUILD_factory" = no -o "$BUILD_libfac" = no
+if test $BUILD_factory = no -o $BUILD_libfac = no
 then AC_LANG(C++)
      AC_MSG_CHECKING([whether libfac and factory libraries are installed (-lfac -lcf)])
      LIBS="$SINGULARLIBS $LIBS"
