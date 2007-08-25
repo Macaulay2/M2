@@ -63,7 +63,7 @@ check-with-lintian : ../@PKG_DEB@
 tidy :
 	rm -rf $(prefixtail) control.tar.gz data.tar.gz md5sums
 clean ::
-	rm -rf @package@ $(prefixtail) debian-binary control.tar.gz data.tar.gz md5sums 
+	rm -rf @package@ $(prefixtail) debian-binary control.tar.gz data.tar.gz md5sums
 	rm -rf ../@PKG_DEB@
 distclean : clean; rm -f Makefile control
 

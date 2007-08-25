@@ -78,7 +78,7 @@ install :: Macaulay2.README Macaulay2.sh
 	@INSTALL@ -d @encapdir@@FINALPREFIX@/share/doc/Cygwin
 	@INSTALL@ Macaulay2.README @encapdir@@FINALPREFIX@/share/doc/Cygwin
 
-clean ::; rm -rf server files
+clean ::; rm -rf server files src-files
 distclean : clean; rm -f Makefile Macaulay2.README Macaulay2.sh setup.hint
 Makefile : Makefile.in; cd ..; ./config.status cygwin/Makefile
 Macaulay2.sh : Macaulay2.sh.in; cd ..; ./config.status cygwin/Macaulay2.sh

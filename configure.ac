@@ -77,21 +77,21 @@ AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
 AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
 AC_DEFINE_UNQUOTED(REL,"$REL",[operating system release, obtained with uname -r])
 
-AC_SUBST(ARCH,"`  uname -m | sed -e s=/=-=g -e 's= ==g' `")
-AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type, obtained with uname -m])
-
-AC_SUBST(DEBIANARCH,"")
-case "$ARCH" in
-  i686) DEBIANARCH=i386 ;;
-  x86_64) DEBIANARCH=amd64 ;;
-  *) DEBIANARCH=$ARCH ;;
-esac
-
 AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
 AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s])
 
 AC_CONFIG_AUX_DIR(config)
+
 AC_CANONICAL_HOST()
+AC_SUBST(ARCH,$build_cpu)
+AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
+
+AC_SUBST(DEBIANARCH,"")
+case "$ARCH" in
+  x86_64) DEBIANARCH=amd64 ;;
+  *) DEBIANARCH=$ARCH ;;
+esac
+
 AC_VALIDATE_CACHED_SYSTEM_TUPLE()
 dnl AC_ARG_VAR(CC,C compiler to use)
 dnl AC_ARG_VAR(CXX,C++ compiler to use)
@@ -334,8 +334,7 @@ AC_SUBST(BUILTLIBS,"")
 # this list reflects dependencies
 #  factory needs ntl and gmp, libfac needs factory
 #  lapack needs blas
-LIBLIST="gc gdbm gmp readline ntl factory libfac blas lapack"
-
+AC_SUBST(LIBLIST,"gc gdbm gmp readline ntl factory libfac blas lapack")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
