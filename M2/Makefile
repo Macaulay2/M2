@@ -27,6 +27,9 @@ AUTOCONF_VERSION = $(MAJOR).$(MINOR)
 PATH := autoconf/final/bin:$(PATH)
 export PATH
 
+configure : configure.ac config/files # aclocal.m4
+	@ set -x ; autoconf
+
 get-autoconf :
 	$(MAKE) -C autoconf
 	$(MAKE)
