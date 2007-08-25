@@ -62,10 +62,7 @@ config.status : @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1
 
-all clean check distclean ::; $(MAKE) -C libraries $@
-reconfigure-all : reconfigure reconfigure-libs 
-reconfigure-libs ::; $(MAKE) -C libraries reconfigure
-install ::; $(MAKE) -C libraries final-install
+distclean:: clean
 
 reconfigure:: $(CONFIG_FILES)
 	./config.status --recheck
@@ -82,8 +79,6 @@ install all clean distclean install-others install-Macaulay2 ::
 
 # first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
 install install-others install-Macaulay2 :: all
-distclean::; rm -f config.cache config.log config.status configure.options
-distclean:: clean
 ifeq "$(CC)" "cl"
 all:: ;	$(MAKE) -C WindowsNT
 endif
@@ -92,7 +87,6 @@ all::; $(MAKE) -C Macaulay2 doc
 DIRS := $(target) @encapdir@/@bindirtail@ @encapdir@/@mandirtail@/man1 @encapdir@/@emacsdirtail@ @encapdir@/@corem2srcdirtail@ @encapdir@/@docpackagesdirtail@
 install install-others install-Macaulay2 :: $(DIRS)
 $(DIRS) :; $(INSTALL) -d $@
-distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile
 
 tarball: tarball.@COMPRESS@
 tarball.gz: tarball.tgz
@@ -129,21 +123,25 @@ src : @SRC_TZ@
 ifeq "@M2TARFILE@" "yes"
 install :: tarball
 endif
+clean ::; rm -f @PKG_TGZ@ @PKG_TBZ@
 
 ifeq "@DEBIAN@" "yes"
 install :: debian
 endif
 debian : @PKG_TGZ@ ; $(MAKE) -C debian install
+clean distclean :: ; $(MAKE) -C debian $@
 
 ifeq "@RPM@" "yes"
 install :: rpm
 endif
 rpm : @PKG_TGZ@ ; $(MAKE) -C rpm install
+clean distclean :: ; $(MAKE) -C rpm $@
 
 ifeq "@CYGWIN@" "yes"
 install :: cygwin
 endif
 cygwin : @PKG_TGZ@ ; $(MAKE) -C cygwin install
+clean distclean :: ; $(MAKE) -C cygwin $@
 
 relink:
 	rm -f Macaulay2/bin/M2@EXE@
@@ -161,6 +159,12 @@ install all::
 	@echo "************************************************"
 
 RerunExamples = false
+
+reconfigure-all : reconfigure reconfigure-libs 
+reconfigure-libs ::; $(MAKE) -C libraries reconfigure
+all clean check distclean ::; $(MAKE) -C libraries $@
+install ::; $(MAKE) -C libraries final-install
+distclean::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile config.cache config.log config.status configure.options
 
 help :
 	@ echo "usage: make [option...] [target...]"

@@ -31,7 +31,7 @@ all install :: ../@PKG_RPM@
 	@FAKEROOT@ rpmbuild -bb Macaulay2.spec
 	rm -rf files
 try-alien : ../@PKG_DEB@ ; @FAKEROOT@ alien --generate --scripts --to-rpm $^
-clean ::
+clean ::; rm -f ../@PKG_RPM@ Macaulay2.spec
 distclean : clean; rm -f Makefile
 Makefile : Makefile.in; cd ..; ./config.status rpm/Makefile
 Macaulay2-body.spec : Macaulay2-body.spec.in; cd ..; ./config.status rpm/Macaulay2-body.spec

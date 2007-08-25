@@ -95,7 +95,6 @@ geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
 clean::
 	rm -f *.lo *.o *.rpo TAGS LOGFILE $(addsuffix .hpp, $(GENERATED_H))
 	$(MAKE) -C f4 $@
-	$(MAKE) -C linalgGB $@
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
 all :: Makefile.common
 Makefile.common : Makefile.common.in; cd ../..; ./config.status Macaulay2/e/Makefile.common

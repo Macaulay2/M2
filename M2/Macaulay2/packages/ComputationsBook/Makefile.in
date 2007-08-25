@@ -37,7 +37,7 @@ changes:
 	done
 
 clean::
-	rm -f */*.trim */Makefile */*.out programming/foo
+	rm -f */*.trim */Makefile */*.out programming/foo */*.tmp
 
 Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/packages/ComputationsBook/Makefile
 distclean::clean

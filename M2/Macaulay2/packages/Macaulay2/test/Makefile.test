@@ -71,7 +71,7 @@ review :
 
 all check :: 
 
-clean::; rm -f *.okay *.out core
+clean::; rm -f *.okay *.out core *.errors
 distclean:: clean; rm -f Makefile
 
 # Local Variables:
