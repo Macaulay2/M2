@@ -344,9 +344,9 @@ done
 LIBLIST=" $LIBLIST "
 AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code),
     [for i in $enableval
-    do case " $i " in
-	    "$LIBLIST") eval BUILD_$i=yes ;;
-	    *) AC_MSG_ERROR(unrecognized library name: $j) ;;
+    do case "$LIBLIST" in
+	    *" $i "*) eval BUILD_$i=yes ;;
+	    *) AC_MSG_ERROR(unrecognized library name: $i) ;;
        esac
     done])
 
