@@ -30,131 +30,135 @@ The tar file may also contain ordinary files in the directory PACKAGENAME-RELEAS
 installer should *not* copy them to /usr or to /sw.  Examples include README, encapinfo,
 postinstall.
 
-The lowercase names in brackets [ ] below are the symbolic names used in the makefiles for the
-directories.  The uppercase names are environment variables set, soon to be obsolete.
-
 A typical package is distributed independently - in the layout below we illustrate the method with
 the package "D-modules".
 
-    ./                                                  [ prefix PREFIX= ]
-      bin/                                              [ bindir ]
+    ./
+      bin/
 	  M2
-      lib/                                              [ libdir ]
-	  Macaulay2/0.9.4/                              [ libm2dir M2LIB= ]
+      lib/
+	  Macaulay2/0.9.4/
 			  setup
-			  libexec/                      [ libexecdir ]
+			  libexec/
 				  Macaulay2
-			  cache/                        [ cachedir ]
+			  cache/
 				Macaulay2-i686-data	(machine generated)
 				Macaulay2-doc
-      share/                                            [ datadir ]
-	    man/                                        [ mandir ]
-		man1/                                   [ man1dir ]
+      share/
+	    man/
+		man1/
 		     *.1
-		man3/                                   [ man3dir ]
+		man3/
 		     M2::*.3				( man pages for Macaulay 2 subroutines )
-	    emacs/site-lisp/                            [ emacsdir ]
+	    emacs/site-lisp/
 			    M2.el
 			    M2-*.el
-	    Macaulay2/					[ datam2dir ]
+	    Macaulay2/
 		      currentVersion			( a symbolic link to 0.9.4 )
-		      0.9.4/                            [ sharedir M2HOME= ]
-			    m2/                         [ m2dir ] (on the Macaulay2 load path)
+		      0.9.4/
+			    m2/
 			       *.m2
-		      packages/                         [ packagesdir ] (on the Macaulay2 load path)
+		      packages/
 			       D-modules.m2
-			       D-modules/		[ packagesrcdir ]
+			       D-modules/
 					 *.m2
-	    doc/                                        [ docudir ]
-		Macaulay2/                              [ docm2dir ]
+	    doc/
+		Macaulay2/
 			  index.html                    (machine generated)
 		          currentVersion		( a symbolic link to 0.9.4 )
-			  0.9.4/                        [ docm2reldir ]
+			  0.9.4/
 				COPYING
 				LICENSE
 				README
-				images/			[ imagesdir ]
+				images/
 				       *.gif
 				       *.jpg
-				html/index.html         [ htmldocdir ]
+				html/index.html
 				     *.html
-				emacs/*                 [ emacsdocdir ]
-			  packages/				[ docpackagesdir ]
-				   D-modules/			[ packagedocdir ]
+				emacs/*
+			  packages/
+				   D-modules/
 					     COPYING
 					     LICENSE
 					     README
-					     images/		[ packageimagesdir ]
+					     images/
 						    *.gif
 						    *.jpg
-					     html/index.html    [ packagehtmldir ]
+					     html/index.html
 						  *.html
-					     examples/		[ packageexamplesdir ]
+					     examples/
 						      *.m2
 						      *.out
 
-This file may get obsolete: the official layout is prescribed in include/config.Makefile.in at
-compile time, and in the hash table LAYOUT at run time.  Here is how to look at the layout inside
-Macaulay2:
+This file may get obsolete: the official layout is prescribed in configure.ac at compile time, and
+in the hash table LAYOUT at run time.  Here is how to look at the layout inside Macaulay2:
 
     i2 : LAYOUT
 
-    o2 = HashTable{bin => bin/                                                     }
-		   cache => lib/Macaulay2/0.9.3/cache/
+    o2 = HashTable{bin => bin/                                           }
+		   cache => lib/Macaulay2/Core/cache/
 		   data => share/
 		   datam2 => share/Macaulay2/
 		   doc => share/doc/
 		   docm2 => share/doc/Macaulay2/
-		   docm2rel => share/doc/Macaulay2/0.9.3/
-		   docpackages => share/doc/Macaulay2/packages/
+		   docm2rel => share/doc/Macaulay2/Core/
+		   docpackages => share/doc/Macaulay2/
 		   emacs => share/emacs/site-lisp/
-		   emacsdoc => share/doc/Macaulay2/0.9.3/emacs/
-		   htmldoc => share/doc/Macaulay2/0.9.3/html/
-		   images => share/doc/Macaulay2/0.9.3/images/
+		   emacsdoc => share/doc/Macaulay2/Core/emacs/
+		   images => share/doc/Macaulay2/Core/images/
+		   info => share/info/
 		   lib => lib/
-		   libexec => lib/Macaulay2/0.9.3/libexec/
-		   libm2 => lib/Macaulay2/0.9.3/
-		   m2 => share/Macaulay2/0.9.3/m2/
+		   libm2 => lib/Macaulay2/Core/
+		   libraries => lib/Macaulay2/libraries/
+		   m2 => share/Macaulay2/Core/m2/
 		   man => share/man/
 		   man1 => share/man/man1/
 		   man3 => share/man/man3/
-		   packagedoc => --Function[../tmp/Macaulay2/m2/layout.m2:1:1]--
-		   packagehtml => --Function[../tmp/Macaulay2/m2/layout.m2:1:1]--
-		   packageimages => --Function[../tmp/Macaulay2/m2/layout.m2:1:1]--
-		   packages => share/Macaulay2/packages/
-		   packagesrc => --Function[../tmp/Macaulay2/m2/layout.m2:1:1]--
-		   share => share/Macaulay2/0.9.3/
+		   packagecache => --Function[layout.m2:24:36-24:67]--
+		   packagedoc => --Function[layout.m2:20:34-20:71]--
+		   packageexamples => --Function[layout.m2:25:39-25:76]--
+		   packagehtml => --Function[layout.m2:23:35-23:72]--
+		   packageimages => --Function[layout.m2:21:37-21:74]--
+		   packages => share/Macaulay2/
+		   packagesrc => --Function[layout.m2:19:34-19:67]--
+		   packagetests => --Function[layout.m2:22:36-22:73]--
+		   share => share/Macaulay2/Core/
+		   style => share/doc/Macaulay2/Core/style/
 
     o2 : HashTable
 
 To apply those functions to a sample package name, do this:
 
-    i3 : applyValues (LAYOUT, x -> if class x === Function then x "StateTables" else x)
+    i1 : applyValues(LAYOUT,f -> if instance(f,Function) then f " {* PACKAGE *} " else f)
 
-    o3 = HashTable{bin => bin/                                                      }
-		   cache => lib/Macaulay2/0.9.3/cache/
+    o1 = HashTable{bin => bin/                                                     }
+		   cache => lib/Macaulay2/Core/cache/
 		   data => share/
 		   datam2 => share/Macaulay2/
 		   doc => share/doc/
 		   docm2 => share/doc/Macaulay2/
-		   docm2rel => share/doc/Macaulay2/0.9.3/
-		   docpackages => share/doc/Macaulay2/packages/
+		   docm2rel => share/doc/Macaulay2/Core/
+		   docpackages => share/doc/Macaulay2/
 		   emacs => share/emacs/site-lisp/
-		   emacsdoc => share/doc/Macaulay2/0.9.3/emacs/
-		   htmldoc => share/doc/Macaulay2/0.9.3/html/
-		   images => share/doc/Macaulay2/0.9.3/images/
+		   emacsdoc => share/doc/Macaulay2/Core/emacs/
+		   images => share/doc/Macaulay2/Core/images/
+		   info => share/info/
 		   lib => lib/
-		   libexec => lib/Macaulay2/0.9.3/libexec/
-		   libm2 => lib/Macaulay2/0.9.3/
-		   m2 => share/Macaulay2/0.9.3/m2/
+		   libm2 => lib/Macaulay2/Core/
+		   libraries => lib/Macaulay2/libraries/
+		   m2 => share/Macaulay2/Core/m2/
 		   man => share/man/
 		   man1 => share/man/man1/
 		   man3 => share/man/man3/
-		   packagedoc => share/doc/Macaulay2/packages/StateTables/
-		   packagehtml => share/doc/Macaulay2/packages/StateTables/html/
-		   packageimages => share/doc/Macaulay2/packages/StateTables/images/
-		   packages => share/Macaulay2/packages/
-		   packagesrc => share/Macaulay2/packages/StateTables/
-		   share => share/Macaulay2/0.9.3/
+		   packagecache => lib/Macaulay2/ {* PACKAGE *} /cache/
+		   packagedoc => share/doc/Macaulay2/ {* PACKAGE *} /
+		   packageexamples => share/doc/Macaulay2/ {* PACKAGE *} /examples/
+		   packagehtml => share/doc/Macaulay2/ {* PACKAGE *} /html/
+		   packageimages => share/doc/Macaulay2/ {* PACKAGE *} /images/
+		   packages => share/Macaulay2/
+		   packagesrc => share/Macaulay2/ {* PACKAGE *} /
+		   packagetests => share/doc/Macaulay2/ {* PACKAGE *} /tests/
+		   share => share/Macaulay2/Core/
+		   style => share/doc/Macaulay2/Core/style/
 
-    o3 : HashTable
+    o1 : HashTable

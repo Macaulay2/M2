@@ -17,8 +17,8 @@ prefixdir=$(shell dirname $(finalprefix))
 #    rpm -e -v --noscripts Macaulay2-0.9.95-2
 
 ############################## main targets
-all install :: ../$(PKG_RPM)
-../$(PKG_RPM) : Macaulay2-body.spec ../@PKG_TGZ@ Makefile
+all install :: ../@PKG_RPM@
+../@PKG_RPM@ : Macaulay2-body.spec ../@PKG_TGZ@ Makefile
 	rm -rf files
 	mkdir files
 	@MKDIR_P@ files$(prefixdir)
@@ -30,7 +30,7 @@ all install :: ../$(PKG_RPM)
 	@FAKEROOT@ chown -R root files/*
 	@FAKEROOT@ rpmbuild -bb Macaulay2.spec
 	rm -rf files
-try-alien : ../$(PKG_DEB) ; @FAKEROOT@ alien --generate --scripts --to-rpm $^
+try-alien : ../@PKG_DEB@ ; @FAKEROOT@ alien --generate --scripts --to-rpm $^
 clean ::
 distclean : clean; rm -f Makefile
 Makefile : Makefile.in; cd ..; ./config.status rpm/Makefile

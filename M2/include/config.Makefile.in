@@ -45,50 +45,13 @@ docdir = @docdir@
 INSTALL = @INSTALL@
 ##
 
-## here we set the few variables that we do want to be able to override, for example, for debugging:
-STRIP = @STRIP@
-##
-
-# convert these obsolete names to the ones in configure.ac:
-infoRelDir = $(subst $(prefix)/,,@infodir@)
-binRelDir = $(subst $(prefix)/,,@bindir@)
-dataRelDir = $(subst $(prefix)/,,@datadir@)
-libRelDir = $(subst $(prefix)/,,@libdir@)
-manRelDir = $(subst $(prefix)/,,@mandir@)
-man1RelDir = $(manRelDir)/man1
-man3RelDir = $(manRelDir)/man3
-emacsRelDir = $(dataRelDir)/emacs/site-lisp
-docRelDir = $(dataRelDir)/doc
-docm2RelDir = $(docRelDir)/Macaulay2
-packagesRelDir = $(dataRelDir)/Macaulay2
-docpackagesRelDir = $(docm2RelDir)
-packagesrcRelDir = $(packagesRelDir)/PackageName
-packagedocRelDir = $(docpackagesRelDir)/PackageName
-packageimagesRelDir = $(packagedocRelDir)/images
-packagetestsRelDir = $(packagedocRelDir)/tests
-packagehtmlRelDir = $(packagedocRelDir)/html
-packageexamplesRelDir = $(packagedocRelDir)/examples
-librariesRelDir = $(libRelDir)/Macaulay2/libraries
-libm2RelDir     = $(libRelDir)/Macaulay2/Core
-cacheRelDir     = $(libm2RelDir)/cache
-packagecacheRelDir = $(libRelDir)/Macaulay2/PackageName/cache
-datam2RelDir = $(dataRelDir)/Macaulay2
-shareRelDir = $(datam2RelDir)/Core
-m2RelDir = $(shareRelDir)/m2
-docm2relRelDir = $(docm2RelDir)/Core
-emacsdocRelDir = $(docm2relRelDir)/emacs
-imagesRelDir = $(docm2relRelDir)/images
-styleRelDir = $(docm2relRelDir)/style
-
-# end file system layout
-
-BUILTLIBPATH = @TOPDIR@/libraries/final@FINALPREFIX@/$(librariesRelDir)
+BUILTLIBPATH = @TOPDIR@/libraries/final@FINALPREFIX@/@librariesdirtail@
 CPPFLAGS := -I$(BUILTLIBPATH)/include $(CPPFLAGS)
 LDFLAGS := -L$(BUILTLIBPATH)/lib $(LDFLAGS)
 LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 
-FINALLIBPATH = @FINALPREFIX@/$(librariesRelDir)
+FINALLIBPATH = @FINALPREFIX@/@librariesdirtail@
 
 AR = ar
 
@@ -107,13 +70,10 @@ CFLAGS   += -pipe -Wall              -Wshadow -Winline -Wcast-qual -Wno-parenthe
 CXXFLAGS += -pipe -Wall -Wconversion -Wshadow -Winline -Wcast-qual -Wno-parentheses -Wno-sign-compare -Woverloaded-virtual -Wsign-promo
 # -Werror-implicit-function-declaration is important, because if we include the wrong include file and a function that
 # returns a 64-bit pointer is not declared as such, then only 32 bits of the return value will be used.
-endif
-
-##  this option is sort of interesting, but generates nothing really useful for us:
-# CXXFLAGS += -Weffc++
 
 ifeq "@HAVE_NO_STRICT_ALIASING@" "yes"
 CFLAGS += -Wno-strict-aliasing
+endif
 endif
 endif
 

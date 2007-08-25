@@ -6,10 +6,10 @@ finalprefix=@FINALPREFIX@
 prefixtail=$(shell echo $(finalprefix) | sed 's=^/==')
 prefixdir=$(shell dirname $(finalprefix))
 ############################## main targets
-all install :: ../$(PKG_DEB) tidy
+all install :: ../@PKG_DEB@ tidy
 	@ echo "============================================================================="
 	@ echo "debian package file prepared: "
-	@ echo "        $(PKG_DEB)"
+	@ echo "        @PKG_DEB@"
 	@ echo "============================================================================="
 #################################
 
@@ -26,7 +26,7 @@ $(error expected --enable-encap, in order to make a debian package)
 endif
 
 # notice that fakeroot is required, get it here: http://ftp.debian.org/debian/pool/main/f/@FAKEROOT@
-../$(PKG_DEB) : debian-binary control.tar.gz data.tar.gz
+../@PKG_DEB@ : debian-binary control.tar.gz data.tar.gz
 	rm -f $@
 	@FAKEROOT@ chown root.root $^
 	@FAKEROOT@ ar rc $@.tmp $^
@@ -58,13 +58,13 @@ data.tar.gz : prepare
 	@FAKEROOT@ tar cfz $@ $(prefixtail)
 md5sums : prepare
 	(cd $(prefixtail) && find * -type f | xargs md5sum) >$@
-check-with-lintian : ../$(PKG_DEB)
-	lintian -c ../$(PKG_DEB)
+check-with-lintian : ../@PKG_DEB@
+	lintian -c ../@PKG_DEB@
 tidy :
 	rm -rf $(prefixtail) control.tar.gz data.tar.gz md5sums
 clean ::
 	rm -rf @package@ $(prefixtail) debian-binary control.tar.gz data.tar.gz md5sums 
-	rm -rf ../$(PKG_DEB)
+	rm -rf ../@PKG_DEB@
 distclean : clean; rm -f Makefile control
 
 Makefile : Makefile.in; cd ..; ./config.status debian/Makefile

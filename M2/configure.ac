@@ -20,9 +20,8 @@ AC_DEFUN(IS_DECLARED,[
   AC_DEFINE_UNQUOTED(TO_UPPER($2_IS_DECLARED),$val,[whether $2 is declared in errno.h or stdio.h])
 ])
 
-echo "relevant environment variable values:"
-VARS="CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS"
-for x in $VARS
+echo "relevant environment variable values, if any:"
+for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS
 do eval v=\$$x
    test "$v" && echo "   $x=$v"
 done
@@ -85,7 +84,7 @@ AC_SUBST(DEBIANARCH,"")
 case "$ARCH" in
   i686) DEBIANARCH=i386 ;;
   x86_64) DEBIANARCH=amd64 ;;
-  *) DEBIANARCH="$ARCH" ;;
+  *) DEBIANARCH=$ARCH ;;
 esac
 
 AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
@@ -162,33 +161,33 @@ AC_LANG(C)
 AC_SUBST(HAVE_PERSONALITY,"")
 AC_CHECK_FUNC(personality, HAVE_PERSONALITY=1, HAVE_PERSONALITY=0)
 
-AC_SUBST(STRIP,yes)    AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), STRIP="$enableval")
-AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC="$enableval")
-AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG="$enableval")
-AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE="$enableval")
-AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG="$enableval")
-AC_SUBST(ENCAP,yes)    AC_ARG_ENABLE(encap, AS_HELP_STRING(--disable-encap,do not encapsulate file in a subdirectory), ENCAP="$enableval")
-AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE="$enableval")
+AC_SUBST(STRIP,yes)    AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), STRIP=$enableval)
+AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
+AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG=$enableval)
+AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE=$enableval)
+AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
+AC_SUBST(ENCAP,yes)    AC_ARG_ENABLE(encap, AS_HELP_STRING(--disable-encap,do not encapsulate file in a subdirectory), ENCAP=$enableval)
+AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE=$enableval)
 AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" option), 
-    ALTIVEC="$enableval"
+    ALTIVEC=$enableval
     LDFLAGS="$LDFLAGS -faltivec"
     CFLAGS="CFLAGS -faltivec"
     CXXFLAGS="$CXXFLAGS -faltivec"
 )
 
 AC_SUBST(PROFILING,no)
-AC_ARG_ENABLE(profile, AS_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING="$enableval")
+AC_ARG_ENABLE(profile, AS_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING=$enableval)
 test "$PROFILING" = no;  val=$?; AC_DEFINE_UNQUOTED(PROFILING, $val,whether profiling has been enabled)
 
-AC_SUBST(COMPRESS,gz)  AC_ARG_ENABLE(compress, AS_HELP_STRING([--enable-compress=[gz|bz2]],compression method for tarball), COMPRESS="$enableval")
+AC_SUBST(COMPRESS,gz)  AC_ARG_ENABLE(compress, AS_HELP_STRING([--enable-compress=[gz|bz2]],compression method for tarball), COMPRESS=$enableval)
 
 AC_SUBST(EXPERIMENT,no)
-AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-experimental-code,enable experimental code), EXPERIMENT="$enableval")
+AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-experimental-code,enable experimental code), EXPERIMENT=$enableval)
 test "$EXPERIMENT" = no; val=$?; AC_DEFINE_UNQUOTED(EXPERIMENT,$val,whether experimental code has been enabled)
 
-AC_SUBST(M2TARFILE,no) AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare a binary package as a compressed tar file), M2TARFILE="$enableval")
-AC_SUBST(TARLIBS,no)   AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS="$enableval")
-AC_SUBST(SHARED,no)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--enable-shared,enable building of shared libraries), SHARED="$enableval")
+AC_SUBST(M2TARFILE,no) AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare a binary package as a compressed tar file), M2TARFILE=$enableval)
+AC_SUBST(TARLIBS,no)   AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS=$enableval)
+AC_SUBST(SHARED,no)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--enable-shared,enable building of shared libraries), SHARED=$enableval)
 
 test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$DEBUG" = "yes" && STRIP=no
@@ -241,25 +240,25 @@ AC_SUBST(AUTOINST,no)
 AC_ARG_ENABLE(
     auto-instantiation, 
     AS_HELP_STRING([--enable-auto-instantiation,enable automatic instantiation of C++ templates (it uses -frepo option to g++)]),
-    AUTOINST="$enableval")
+    AUTOINST=$enableval)
 test "$AUTOINST" = no; val=$?; AC_DEFINE_UNQUOTED(AUTOINST,$val,whether to instantiate templates automatically)
 
 AC_SUBST(IMPLINST,yes)
 AC_ARG_ENABLE(
     implicit-templates,
     AS_HELP_STRING([--disable-implicit-templates,disable implicit instantiation of C++ templates (it uses -fno-implicit-templates option to g++)]),
-    IMPLINST="$enableval")
+    IMPLINST=$enableval)
 test "$IMPLINST" = no; val=$?; AC_DEFINE_UNQUOTED(IMPLINST,$val,whether to instantiate templates implicitly)
 
 AC_SUBST(DEVELOPMENT,no)
-AC_ARG_ENABLE(development, AS_HELP_STRING(--enable-development,build a development version), DEVELOPMENT="$enableval")
+AC_ARG_ENABLE(development, AS_HELP_STRING(--enable-development,build a development version), DEVELOPMENT=$enableval)
 test "$IMPLINST" = no; val=$?; AC_DEFINE(DEVELOPMENT,$val,whether to build a development version)
 
 AC_SUBST(DEVELOPER,"")
-AC_ARG_WITH(developer, AS_HELP_STRING(--with-developer=...,specify the name of the developer ($USER)),DEVELOPER="$withval")
+AC_ARG_WITH(developer, AS_HELP_STRING(--with-developer=...,specify the name of the developer ($USER)),DEVELOPER=$withval)
 
 AC_SUBST(DUMPDATA,"")
-AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA="$enableval")
+AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA=$enableval)
 if ! test "$DUMPDATA"
 then case "$OS" in
 	 Linux|SunOS) DUMPDATA=yes;;
@@ -286,7 +285,7 @@ AC_ARG_WITH(srctarfile, AS_HELP_STRING(--with-srctarfile=...,source tar file to 
     SRCTARFILE=`cd "$dirname" && pwd`/`basename "$withval"`)
 
 AC_SUBST(CYGWIN,no)
-AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin (disables encap and enables strip)), CYGWIN="$enableval")
+AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin (disables encap and enables strip)), CYGWIN=$enableval)
 if test "$CYGWIN" = yes 
 then ENCAP=yes STRIP=yes M2TARFILE=yes
      if ! test "$SRCTARFILE" -o -d "$srcdir/.svn"
@@ -295,15 +294,15 @@ then ENCAP=yes STRIP=yes M2TARFILE=yes
 fi
 
 AC_SUBST(DEBIAN,no)
-AC_ARG_ENABLE(debian,  AS_HELP_STRING(--enable-debian,prepare a binary package for debian (enables encap)), DEBIAN="$enableval")
+AC_ARG_ENABLE(debian,  AS_HELP_STRING(--enable-debian,prepare a binary package for debian (enables encap)), DEBIAN=$enableval)
 test "$DEBIAN" = yes && ENCAP=yes M2TARFILE=yes
 
 AC_SUBST(RPM,no)
-AC_ARG_ENABLE(rpm,  AS_HELP_STRING(--enable-rpm,prepare a binary rpm package (enables encap)), RPM="$enableval")
+AC_ARG_ENABLE(rpm,  AS_HELP_STRING(--enable-rpm,prepare a binary rpm package (enables encap)), RPM=$enableval)
 test "$RPM" = yes && ENCAP=yes M2TARFILE=yes
 
 AC_SUBST(M2SUFFIX,"")
-test "$program_suffix" != NONE && M2SUFFIX="$program_suffix"
+test "$program_suffix" != NONE && M2SUFFIX=$program_suffix
 AC_ARG_ENABLE(dummy, AS_HELP_STRING(--program-suffix=...,suffix to append to executable name M2))
 
 AC_DEFINE(M2_CONFIG_H,1,a macro definition to ensure our config.h was the one loaded)
@@ -427,13 +426,13 @@ fi
 AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,[use "-framework vecLib" for lapack]), LIBS="-framework vecLib $LIBS" )
 
 AC_SUBST(LAPACK,yes)
-AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack and blas]), LAPACK="$enableval")
+AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack and blas]), LAPACK=$enableval)
 test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
 if test "$LAPACK" = yes
 then AC_MSG_CHECKING([whether the vecLib framework is available])
-     SAVELIBS="$LIBS"
+     SAVELIBS=$LIBS
      LIBS="-framework vecLib $LIBS"
      AC_LANG(C)
      AC_LINK_IFELSE(
@@ -443,7 +442,7 @@ then AC_MSG_CHECKING([whether the vecLib framework is available])
 	     ],
 	 [
 	     AC_MSG_RESULT(no)
-	     LIBS="$SAVELIBS"
+	     LIBS=$SAVELIBS
 	     if test $BUILD_blas = no
 	     then AC_LANG(Fortran 77)
 		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_blas=yes BUILTLIBS="-lblas $BUILTLIBS")
@@ -471,13 +470,13 @@ then AC_LANG(C++)
 	     ]],
 	  AC_MSG_RESULT(yes),
 	  AC_MSG_RESULT(no); BUILD_factory=yes BUILD_libfac=yes)
-     LIBS="$SAVELIBS"
+     LIBS=$SAVELIBS
 fi
 
 AC_SUBST(FINALPREFIX,/usr)
 AC_ARG_WITH(final-prefix,
     AS_HELP_STRING(--with-final-prefix=...,final installation prefix (/usr) (used by libtool and debian installation scripts)),
-    FINALPREFIX="$withval")
+    FINALPREFIX=$withval)
 
 AC_SUBST(NM_DEMANGLES,"")
 AC_MSG_CHECKING(whether nm accepts the demangle option)
@@ -486,7 +485,7 @@ if nm --help 2>&1 | grep demangle >/dev/null
    else NM_DEMANGLES=no ; AC_MSG_RESULT(no)
 fi
 
-LIBS="$SAVELIBS"
+LIBS=$SAVELIBS
 AC_LANG(C)
 AC_MSG_CHECKING([whether getaddrinfo can handle numeric service (port) numbers])
 AC_RUN_IFELSE([
@@ -509,22 +508,22 @@ done
 TESTFLAG=-Wno-strict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
 AC_SUBST(HAVE_NO_STRICT_ALIASING,"")
-SAVE="$CFLAGS"
+SAVE=$CFLAGS
 CFLAGS="$TESTFLAG $CFLAGS"
 AC_LANG(C)
 AC_COMPILE_IFELSE([int main() {}], HAVE_NO_STRICT_ALIASING=yes, HAVE_NO_STRICT_ALIASING=no)
-CFLAGS="$SAVE"
+CFLAGS=$SAVE
 AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
 
 AC_MSG_CHECKING(whether $CC accepts -Wfatal-errors)
 AC_LANG(C)
-SAVE="$CFLAGS"
+SAVE=$CFLAGS
 CFLAGS="$CFLAGS -Wfatal-errors"
 AC_COMPILE_IFELSE([int main() {}], 
     CPPFLAGS="$CPPFLAGS -Wfatal-errors"
     CXXFLAGS="$CXXFLAGS -Wfatal-errors"
     AC_MSG_RESULT(yes, adding -Wfatal-errors to flags),
-    CFLAGS="$SAVE"
+    CFLAGS=$SAVE
     AC_MSG_RESULT(no))
 
 IS_DECLARED(char **,sys_errlist, [
@@ -627,48 +626,54 @@ do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v=
    esac
 done
 
-docdirtail=$datadirtail/doc
-
-datam2dirtail=$datadirtail/Macaulay2
-datacoredirtail=$datam2dirtail/Core
-
-docm2dirtail=$docdirtail/Macaulay2
-doccoredirtail=$docm2dirtail/Core
-
-libm2dirtail=$libdirtail/Macaulay2
-libcoredirtail=$libm2dirtail/Core
+AC_SUBST(docdirtail,$datadirtail/doc)
+AC_SUBST(packagesdirtail,$datadirtail/Macaulay2)
+AC_SUBST(docpackagesdirtail,$docdirtail/Macaulay2)
+AC_SUBST(libm2dirtail,$libdirtail/Macaulay2)
+AC_SUBST(man1dirtail,$mandirtail/man1)
+AC_SUBST(man3dirtail,$mandirtail/man3)
+AC_SUBST(emacsdirtail,$datadirtail/emacs/site-lisp)
+AC_SUBST(librariesdirtail,$libm2dirtail/libraries)
+AC_SUBST(coredatadirtail,$packagesdirtail/Core)
+AC_SUBST(corem2srcdirtail,$coredatadirtail/m2)
+AC_SUBST(corecachedirtail,$libm2dirtail/Core/cache)
 
 cat >Macaulay2/d/layout.m2 <<EOF
 --layout.m2
-if class LAYOUT === Symbol then LAYOUT = hashTable { "bin"=>"$bindirtail/",
+if class LAYOUT === Symbol then LAYOUT = hashTable {
+      "bin"=>"$bindirtail/",
       "lib"=>"$libdirtail/",
       "info"=>"$infodirtail/",
       "data"=>"$datadirtail/",
       "man"=>"$mandirtail/",
-      "man1"=>"$mandirtail/man1/",
-      "man3"=>"$mandirtail/man3/",
-      "emacs"=>"$datadirtail/emacs/site-lisp/",
+      "man1"=>"$man1dirtail/",
+      "man3"=>"$man3dirtail/",
+      "emacs"=>"$emacsdirtail/",
       "doc"=>"$docdirtail/",
-      "docm2"=>"$docm2dirtail/",
-      "packages" => "$datam2dirtail/",
-      "docpackages"=>"$docm2dirtail/",
-      "libm2"=>"$libcoredirtail/",
-      "libraries"=>"$libm2dirtail/libraries/",
-      "cache"=>"$libcoredirtail/cache/",
-      "datam2"=>"$datam2dirtail/",
-      "share"=>"$datacoredirtail/",
-      "m2"=>"$datacoredirtail/m2/",
-      "docm2rel"=>"$doccoredirtail/",
-      "emacsdoc"=>"$doccoredirtail/emacs/",
-      "images"=>"$doccoredirtail/images/",
-      "style"=>"$doccoredirtail/style/",
-      "packagesrc" => PackageName -> "$datam2dirtail/"|PackageName|"/",
-      "packagedoc" => PackageName -> "$docm2dirtail/"|PackageName|"/",
-      "packageimages" => PackageName -> "$docm2dirtail/"|PackageName|"/images/",
-      "packagetests" => PackageName -> "$docm2dirtail/"|PackageName|"/tests/",
-      "packagehtml" => PackageName -> "$docm2dirtail/"|PackageName|"/html/",
+      -- Macaulay 2:
+      "docm2"=>"$docpackagesdirtail/",
+      "packages" => "$packagesdirtail/",
+      "docpackages"=>"$docpackagesdirtail/",
+      "libraries"=>"$librariesdirtail/",
+      "datam2"=>"$packagesdirtail/",
+      -- Macaulay 2 packages:
+      "packagesrc" => PackageName -> "$packagesdirtail/"|PackageName|"/",
+      "packagedoc" => PackageName -> "$docpackagesdirtail/"|PackageName|"/",
+      "packageimages" => PackageName -> "$docpackagesdirtail/"|PackageName|"/images/",
+      "packagetests" => PackageName -> "$docpackagesdirtail/"|PackageName|"/tests/",
+      "packagehtml" => PackageName -> "$docpackagesdirtail/"|PackageName|"/html/",
       "packagecache" => PackageName -> "$libm2dirtail/"|PackageName|"/cache/",
-      "packageexamples" => PackageName -> "$docm2dirtail/"|PackageName|"/examples/" }
+      "packageexamples" => PackageName -> "$docpackagesdirtail/"|PackageName|"/examples/",
+      -- Macaulay 2 Core package:
+      "libm2"=>"$libm2dirtail/Core/",  -- change to corelib
+      "cache"=>"$corecachedirtail/", -- change to corecache
+      "share"=>"$coredatadirtail/", -- change to coredatadirtail
+      "m2"=>"$corem2srcdirtail/", -- change to corem2srcdirtail
+      "docm2rel"=>"$docpackagesdirtail/Core/", -- eliminate or change to coredoc
+      "emacsdoc"=>"$docpackagesdirtail/Core/emacs/", -- move to Macaulay2 package, eventually
+      "images"=>"$docpackagesdirtail/Core/images/", -- move to Macaulay2 package, eventually
+      "style"=>"$docpackagesdirtail/Core/style/" -- move to Macaulay2 package, eventually
+    }
 EOF
 
 AC_OUTPUT()

@@ -2,11 +2,11 @@
 VPATH = @srcdir@
 include ../../include/config.Makefile
 all ::
-install :: @encapdir@/$(man1RelDir)
-@encapdir@/$(man1RelDir):; @INSTALL@ -d $@
-install :: @encapdir@/$(man1RelDir)/M2.1 @encapdir@/$(man1RelDir)/M2-help.1
-@encapdir@/$(man1RelDir)/M2.1 : M2.1 ; @INSTALL_DATA@ $^ $@
-@encapdir@/$(man1RelDir)/M2-help.1 : M2-help.1 ; @INSTALL_DATA@ $^ $@
+install :: @encapdir@/@mandirtail@/man1
+@encapdir@/@mandirtail@/man1:; @INSTALL@ -d $@
+install :: @encapdir@/@mandirtail@/man1/M2.1 @encapdir@/@mandirtail@/man1/M2-help.1
+@encapdir@/@mandirtail@/man1/M2.1 : M2.1 ; @INSTALL_DATA@ $^ $@
+@encapdir@/@mandirtail@/man1/M2-help.1 : M2-help.1 ; @INSTALL_DATA@ $^ $@
 Makefile : Makefile.in; (cd ../..; ./config.status Macaulay2/man/Makefile)
 clean :: ; rm -f M2.1 M2-help.1
 # Local Variables:

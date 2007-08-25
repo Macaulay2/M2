@@ -4,7 +4,7 @@
 %.o : %.cpp; $(COMPILE.cc) $(OUTPUT_OPTION) $< -Wno-old-style-cast
 
 CPPFLAGS += -I../../../include
-CPPFLAGS += -I../../../libraries/final@FINALPREFIX@/$(librariesRelDir)/include
+CPPFLAGS += -I../../../libraries/final@FINALPREFIX@/@librariesdirtail@/include
 CPPFLAGS += -I../../util
 CPPFLAGS += -I..
 

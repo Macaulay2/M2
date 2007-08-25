@@ -9,8 +9,8 @@ LIBNAME = $(shell basename `pwd`)
 TARDIR ?= $(LIBNAME)-$(VERSION)
 TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
 
-LIBRARIESDIR = $(PREFIX)/$(librariesRelDir)
-FINALLIBRARIESDIR = @FINALPREFIX@/$(librariesRelDir)
+LIBRARIESDIR = $(PREFIX)/@librariesdirtail@
+FINALLIBRARIESDIR = @FINALPREFIX@/@librariesdirtail@
 
 CPPFLAGS := -I$(LIBRARIESDIR)/include $(CPPFLAGS)
 LDFLAGS := -L$(LIBRARIESDIR)/lib $(LDFLAGS)
