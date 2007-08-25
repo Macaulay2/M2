@@ -18,22 +18,19 @@ all: check-autoconf configure monitor include/config.h.in.stamp
 	@echo '--'
 	@echo '--   ./configure --help'
 
-configure : configure.ac config/files # aclocal.m4
-	@ (set -x ; autoconf) || echo "a Makefile for compiling a new version of autoconf is available in ./libraries/autoconf" >&2
-
 MAJOR = 2
 MINOR = 60
 # version 2.60 was the first one with the macro AC_PROG_MKDIR_P
 AUTOCONF_VERSION = $(MAJOR).$(MINOR)
 
-PATH := libraries/autoconf/final/bin:$(PATH)
+PATH := autoconf/final/bin:$(PATH)
 export PATH
 
 get-autoconf :
-	$(MAKE) -C libraries/autoconf -f Makefile.src
+	$(MAKE) -C autoconf
 	$(MAKE)
 
-rm-autoconf :; $(MAKE) -C libraries/autoconf clean
+rm-autoconf :; $(MAKE) -C autoconf clean
 
 autoconf-absent : autoconf-absent-msg autoconf-msg 
 autoconf-absent-msg :
