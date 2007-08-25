@@ -236,7 +236,7 @@ homNoetherNormalization = (I,R,k,X) -> (
      while d > 0 do (
 	  g = map(R,R,V|randomSum(U,V,k));
      	  J := g f I;
-	  d := dim(J+ideal(apply(algind,i->f i)));
+	  d = dim(J+ideal(apply(algind,i->f i)));
 	  );
      return g f;
      );
