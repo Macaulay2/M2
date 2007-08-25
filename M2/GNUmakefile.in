@@ -82,6 +82,7 @@ install install-others install-Macaulay2 :: all
 ifeq "$(CC)" "cl"
 all:: ;	$(MAKE) -C WindowsNT
 endif
+all check ::; $(MAKE) -C libraries $@
 all distclean check clean install install-others install-Macaulay2 :: ; $(MAKE) -C Macaulay2 $@
 all::; $(MAKE) -C Macaulay2 doc
 DIRS := $(target) @encapdir@/@bindirtail@ @encapdir@/@mandirtail@/man1 @encapdir@/@emacsdirtail@ @encapdir@/@corem2srcdirtail@ @encapdir@/@docpackagesdirtail@
@@ -162,7 +163,7 @@ RerunExamples = false
 
 reconfigure-all : reconfigure reconfigure-libs 
 reconfigure-libs ::; $(MAKE) -C libraries reconfigure
-all clean check distclean ::; $(MAKE) -C libraries $@
+clean distclean ::; $(MAKE) -C libraries $@
 install ::; $(MAKE) -C libraries final-install
 distclean::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile config.cache config.log config.status configure.options
 

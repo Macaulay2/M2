@@ -30,7 +30,7 @@ PATH := libraries/autoconf/final/bin:$(PATH)
 export PATH
 
 get-autoconf :
-	$(MAKE) -C libraries/autoconf
+	$(MAKE) -C libraries/autoconf -f Makefile.src
 	$(MAKE)
 
 rm-autoconf :; $(MAKE) -C libraries/autoconf clean
