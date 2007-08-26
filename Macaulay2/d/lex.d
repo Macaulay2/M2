@@ -12,7 +12,8 @@ use stdiop;
 use varstrin;
 use err;
 
-export wordEOF := Word("-end of file-",TCnone,0,parseEOF);
+export wordEOF := Word("{*end of file*}",TCnone,0,parseEOF);
+export wordEOC := Word("{*dummy word: end of cell*}",TCnone,0,parseEOC); -- filled in later
 export (o:file) << (w:Word) : file := o << w.name;
 export WordList := null or WordListCell;
 export WordListCell := { word:Word, next:WordList };
@@ -37,7 +38,7 @@ export makeUniqueWord(s:string,p:parseinfo):Word := (
      hashTable.hashCode = WordListCell(newWord,hashTable.hashCode);
      newWord);
 
-export NewlineW := dummyWord;	    	  -- filled in by keywords.d
+export NewlineW := Word("{*dummy word for newline*}",TCnone,0,newParseinfo());	    	  -- filled in by keywords.d
 export equal(t:ParseTree,w:Word):bool := (
      when t is u:Token do u.word == w else false
      );
@@ -236,13 +237,15 @@ skipwhite(file:PosFile):int := (
      0);
 
 -- this errorToken means there was a parsing error or an error reading the file!
-export errorToken := Token(dummyWord,
+export errorToken := Token(Word("{*error token*}",TCnone,0,newParseinfo()),
      dummyPosition.filename,
      dummyPosition.line,
      dummyPosition.column,
      dummyPosition.loadDepth,
      globalDictionary,			    -- should replace this by dummyDictionary, I think
      dummySymbol,false);
+
+export singleLineInput := false;
 
 gettoken1(file:PosFile,sawNewline:bool):Token := (
      -- warning : tokenbuf is static
@@ -257,22 +260,15 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	  line := file.pos.line;
 	  column := file.pos.column;
 	  ch := peek(file);
-     	  if iseof(ch) then return Token(wordEOF,
-	       file.pos.filename, line, column, file.pos.loadDepth,
-	       globalDictionary,dummySymbol,sawNewline)
+     	  if iseof(ch) then return Token(wordEOF,file.pos.filename, line, column, file.pos.loadDepth,globalDictionary,dummySymbol,sawNewline)
      	  else if iserror(ch) then return errorToken
 	  else if isnewline(ch) then (
 	       getc(file);
-	       return Token(NewlineW,
-	       	    file.pos.filename, line, column, file.pos.loadDepth,
-		    globalDictionary,dummySymbol,sawNewline))
+	       return Token(if singleLineInput then wordEOC else NewlineW,file.pos.filename, line, column, file.pos.loadDepth,globalDictionary,dummySymbol,sawNewline))
 	  else if isalpha(ch) && ch != int('\'') then (
 	       tokenbuf << char(getc(file));
 	       while isalnum(peek(file)) do tokenbuf << char(getc(file));
-	       return Token(
-			 makeUniqueWord(takestring(tokenbuf),parseWORD),
-	       		 file.pos.filename, line, column, file.pos.loadDepth,
-			 globalDictionary,dummySymbol,sawNewline))
+	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),file.pos.filename, line, column, file.pos.loadDepth,globalDictionary,dummySymbol,sawNewline))
 	  else if isdigit(ch) || ch==int('.') && isdigit(peek(file,1)) then (
 	       typecode := TCint;
 	       while isdigit(peek(file)) do (
@@ -291,50 +287,36 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 			 );
 		    );
 	       s := takestring(tokenbuf);
-	       return Token(
-			 Word(s,typecode,0, parseWORD),
-	       		 file.pos.filename, line, column, file.pos.loadDepth,
-			 globalDictionary,dummySymbol,sawNewline)) 
+	       return Token(Word(s,typecode,0, parseWORD),file.pos.filename, line, column, file.pos.loadDepth,globalDictionary,dummySymbol,sawNewline)) 
 	  else if ch == int('/') && peek(file,1) == int('/') && peek(file,2) == int('/') then (
 	       when getstringslashes(file)
 	       is null do (
 		    empty(tokenbuf);
 		    return errorToken
 		    )
-	       is word:Word do return Token(word,
-	       	    file.pos.filename, line, column, file.pos.loadDepth,
-		    globalDictionary,dummySymbol,sawNewline))
+	       is word:Word do return Token(word,file.pos.filename, line, column, file.pos.loadDepth,globalDictionary,dummySymbol,sawNewline))
 	  else if isquote(ch) then (
 	       when getstring(file)
 	       is null do (
 		    empty(tokenbuf);
 		    return errorToken
 		    )
-	       is word:Word do return Token(word,
-	       	    file.pos.filename, line, column, file.pos.loadDepth,
-		    globalDictionary,dummySymbol,sawNewline))
+	       is word:Word do return Token(word,file.pos.filename, line, column, file.pos.loadDepth,globalDictionary,dummySymbol,sawNewline))
 	  else (
 	       when recognize(file)
 	       is null do (
 		    empty(tokenbuf);
 		    return errorToken
 		    )
-	       is word:Word do return Token(word,
-	       	    file.pos.filename, line, column, file.pos.loadDepth,
-		    globalDictionary,dummySymbol,sawNewline))));
+	       is word:Word do return Token(word,file.pos.filename, line, column, file.pos.loadDepth,globalDictionary,dummySymbol,sawNewline))));
 export gettoken(file:PosFile,obeylines:bool):Token := (
      sawNewline := false;
      while true do (
 	  w := gettoken1(file,sawNewline);
-	  if w.word == NewlineW
-	  then (
-	       sawNewline = true;
-	       if obeylines then return w;
-	       if int(w.column) == 0
-	       && isatty(file) then return errorToken;
-	       -- user gets out with an extra NEWLINE
-	       )
-	  else return w;
+	  if w.word != NewlineW then return w;
+	  if obeylines then return w;
+	  if int(w.column) == 0 && isatty(file) then return errorToken; -- user gets out with an extra NEWLINE
+	  sawNewline = true;
 	  ));
 
 -- Local Variables:

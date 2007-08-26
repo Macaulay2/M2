@@ -35,7 +35,7 @@ SimplicialComplex = new Type of HashTable
 SimplicialComplex.synonym = "simplicial complex"
 
 ---- the output line should describe the class of the output [drg]
--- SimplicialComplex.AfterPrint = Delta -> (
+-- SimplicialComplex#(Standard,AfterPrint) = Delta -> (
 --      << endl;
 --      << concatenate(interpreterDepth:"o") << lineNumber << " : Facets of the simplicial complex "
 --      << endl;)

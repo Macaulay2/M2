@@ -1198,7 +1198,7 @@ locate(e:Code):void := (
      );
 
 locate0():void := (
-     code.filename = "--unknown file name--";
+     code.filename = "{*unknown file name*}";
      code.minline = 1000000;
      code.maxline = 0;
      );

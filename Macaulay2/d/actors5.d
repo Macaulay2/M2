@@ -1762,6 +1762,12 @@ stopIfErrorS := dummySymbol;
 printWidthS := dummySymbol;
 notifyS := dummySymbol;
 
+StandardS := makeProtectedSymbolClosure("Standard");
+export StandardE := Expr(StandardS);
+export topLevelMode := Expr(StandardS);
+topLevelModeS := dummySymbol;
+singleLineInputS := dummySymbol;
+
 syms := SymbolSequence(
      (  backtraceS = setupvar("backtrace",toExpr(backtrace));  backtraceS  ),
      (  debugLevelS = setupvar("debugLevel",toExpr(debugLevel));  debugLevelS  ),
@@ -1779,7 +1785,9 @@ syms := SymbolSequence(
      (  recursionLimitS = setupvar("recursionLimit",toExpr(recursionLimit));  recursionLimitS  ),
      (  stopIfErrorS = setupvar("stopIfError",toExpr(stopIfError));  stopIfErrorS  ),
      (  printWidthS = setupvar("printWidth",toExpr(printWidth));  printWidthS  ),
-     (  notifyS = setupvar("notify",toExpr(notify));  notifyS  )
+     (  notifyS = setupvar("notify",toExpr(notify));  notifyS  ),
+     (  topLevelModeS = setupvar("topLevelMode",topLevelMode); topLevelModeS  ),
+     (  singleLineInputS = setupvar("singleLineInput",toExpr(singleLineInput)); singleLineInputS  )
      );
 
 export setDebuggingMode(b:bool):void := (
@@ -1807,7 +1815,8 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
      when e
      is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
 	  sym := s.0;
-	  if ancestor(Class(s.1),functionClass) then (
+	  if sym === topLevelModeS then (topLevelMode = s.1; e)
+	  else if ancestor(Class(s.1),functionClass) then (
 	       if sym === debuggerHookS then (debuggerHook = s.1; e)
 	       else buildErrorPacket(msg))
 	  else when s.1
@@ -1820,6 +1829,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	       else if sym === stopIfErrorS then (stopIfError = n; e)
 	       else if sym === backtraceS then (backtrace = n; e)
 	       else if sym === notifyS then (notify = n; e)
+	       else if sym === singleLineInputS then (singleLineInput = n; e)
 	       else buildErrorPacket(msg))
 	  is s:string do (
 	       if sym === printingSeparatorS then (printingSeparator = s; e)

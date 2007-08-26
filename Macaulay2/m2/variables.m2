@@ -51,7 +51,7 @@ net IndexedVariable := v -> net expression v
 toString IndexedVariable := v -> toString expression v
 expression IndexedVariableTable := x -> hold x
 net IndexedVariableTable :=
-toString IndexedVariableTable := x -> if x#?symbol$ then toString x#symbol$ else "--an indexed variable table--"
+toString IndexedVariableTable := x -> if x#?symbol$ then toString x#symbol$ else "{*an indexed variable table*}"
 IndexedVariable ? IndexedVariable := (x,y) -> toSequence x ? toSequence y
 Symbol ? IndexedVariable := (x,y) -> if x === (y#0) then symbol > else x ? (y#0)
 Symbol _ Thing := (X,i) -> new IndexedVariable from {X,i}

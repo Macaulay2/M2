@@ -375,6 +375,7 @@ export {
 	symbol SparseMonomialVectorExpression,
 	symbol SparseVectorExpression,
 	symbol Spec,
+	symbol Standard,
 	symbol StopBeforeComputation,
 	symbol StopWithMinimalGenerators,
 	symbol Strategy,
@@ -1164,8 +1165,10 @@ exportMutable {
 	symbol printingSeparator,
 	symbol recursionLimit,
         symbol scriptCommandLine,
+	symbol singleLineInput,
 	symbol sourceHomeDirectory,
-	symbol stopIfError
+	symbol stopIfError,
+	symbol topLevelMode
 	}
 
 -- Local Variables:
