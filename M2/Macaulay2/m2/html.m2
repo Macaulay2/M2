@@ -968,7 +968,7 @@ userMacaulay2Directory := () -> (
 
 -- Uncomment and edit the following line if you don't need to be informed of the class of a sequence 
 -- after it is printed by M2.  This works for other classes, too.
--- Sequence.AfterPrint = Sequence.AfterNoPrint = identity
+-- Sequence#(Standard,AfterPrint) = Sequence#(Standard,AfterNoPrint) = identity
 
 -- Uncomment and edit the following line to set a default printwidth for situations where M2 doesn't know the width
 -- of your terminal.

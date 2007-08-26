@@ -126,7 +126,7 @@ prec := 0;
 bump():void := prec = prec + 1;
 
 -- helper functions for setting up words with various methods for parsing them
-foreach p in array(parseinfo)( parseEOF, parseWORD ) do p.funs = parsefuns(defaultunary, defaultbinary);
+foreach p in array(parseinfo)( parseEOF, parseEOC, parseWORD ) do p.funs = parsefuns(defaultunary, defaultbinary);
 unary(s:string)         :Word := install(s,makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary))));
 unaryword(s:string)     :Word :=           makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary)));
 biunary(s:string)       :Word := install(s,makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,postfixop))));
@@ -154,12 +154,15 @@ binaryright(s:string)   :Word := binaryright(s,binaryop);
 
      parseEOF.precedence = prec;
      parseEOF.binaryStrength = prec;
+     parseEOC.precedence = prec;
+     parseEOC.binaryStrength = prec;
      precRightParen := prec;
 -- programming:
 bump();
      export SemicolonW := nright(";");
      export SemicolonS := makeKeyword(SemicolonW);
-     NewlineW = nleftword("<NEWLINE>");			    -- no symbol for this one needed
+     NewlineW = nleftword("{*newline*}");
+     wordEOC = nleftword("{*end of cell*}");
 bump();
      export CommaW := nunaryleft(","); export commaS := makeKeyword(CommaW);
 bump();
@@ -432,7 +435,7 @@ bindFormalParm(e:ParseTree,dictionary:Dictionary,desc:functionDescription):void 
 	  else makeErrorTree(t,"expected symbol");
 	  desc.numparms = desc.numparms + 1;
 	  )
-     else makeErrorTree(e,"syntax error"));
+     else makeErrorTree(e,"syntax error: expected function parameter"));
 bindFormalParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):void := (
      when e 
      is binary:Binary do (
@@ -441,7 +444,7 @@ bindFormalParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):v
 	       bindFormalParmList(binary.lhs,dictionary,desc);
 	       bindop(binary.operator,dictionary);
 	       bindFormalParm(binary.rhs,dictionary,desc);)
-	  else makeErrorTree(e,"syntax error"))
+	  else makeErrorTree(e,"syntax error: expected function parameter list"))
      else bindFormalParm(e,dictionary,desc));
 bindSingleParm(e:ParseTree,dictionary:Dictionary):void := (
      when e 
@@ -511,10 +514,10 @@ bindToken(token:Token,dictionary:Dictionary,colon:bool):void := (
 bindParallelAssignmentItem(e:ParseTree,dictionary:Dictionary,colon:bool):void := (
      when e
      is token:Token do (
-	  if token.word.typecode != TCid then makeErrorTree(token,"expected symbol")
+	  if token.word.typecode != TCid then makeErrorTree(token,"syntax error: parallel assignment expected symbol")
 	  else bindToken(token,dictionary,colon);
 	  )
-     else makeErrorTree(e,"syntax error"));
+     else makeErrorTree(e,"syntax error: parallel assignment expected symbol"));
 bindParallelAssignmentList(e:ParseTree,dictionary:Dictionary,colon:bool):void := (
      when e
      is binary:Binary do (
@@ -524,7 +527,7 @@ bindParallelAssignmentList(e:ParseTree,dictionary:Dictionary,colon:bool):void :=
 	       bindop(binary.operator,dictionary);
 	       bindParallelAssignmentItem(binary.rhs,dictionary,colon);
 	       )
-     	  else makeErrorTree(e,"syntax error")
+     	  else makeErrorTree(e,"syntax error: parallel assignment expected symbol list")
 	  )
      else bindParallelAssignmentItem(e,dictionary,colon));
 bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (

@@ -58,7 +58,7 @@ rotateOutputLines := x -> (
      if x =!= null then global oo <- x;
      )
 
-Thing.AfterEval = x -> (
+Thing#(Standard,AfterEval) = x -> (
      if x =!= null then (
      	  s := getGlobalSymbol(OutputDictionary,concatenate(interpreterDepth:"o",toString lineNumber));
      	  s <- x;
@@ -66,7 +66,7 @@ Thing.AfterEval = x -> (
      rotateOutputLines x;
      x)
 
-Nothing.Print = identity
+Nothing#(Standard,Print) = identity
 
 binaryOperators = join(fixedBinaryOperators,flexibleBinaryOperators)
 prefixOperators = join(fixedPrefixOperators,flexiblePrefixOperators)
@@ -77,8 +77,6 @@ allOperators = join(fixedOperators,flexibleOperators)
 
 undocumentedkeys = new MutableHashTable
 undocumented' = key -> undocumentedkeys#key = true
-
-Thing.NoPrint = identity
 
 pathdo := (loadfun,path,filename,reportfun) -> (
      ret := null;

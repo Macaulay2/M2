@@ -21,7 +21,7 @@ selectRegexp(String,ZZ,String) := (re,n,s) -> (
 
 -- nets
 
-Net.AfterPrint = identity
+Net#(Standard,AfterPrint) = identity
 
 toString MutableHashTable := s -> (
      concatenate ( toString class s, if parent s =!= Nothing then (" of ", toString parent s), "{...", toString(#s), "...}"))
@@ -49,7 +49,7 @@ toString Sequence := s -> (
      else concatenate("(",between(",",toString \ s),")")
      )
 net Command := toString Command := toExternalString Command := f -> (
-     if ReverseDictionary#?f then return toString ReverseDictionary#f else "--Command--"
+     if ReverseDictionary#?f then return toString ReverseDictionary#f else "{*Command*}"
      )
 
 toExternalString Function := f -> (
@@ -62,8 +62,8 @@ toExternalString Function := f -> (
 net Function := toString Function := f -> (
      if ReverseDictionary#?f then return toString ReverseDictionary#f;
      t := locate f;
-     if t === null then "--Function--" 
-     else concatenate("--Function[", t#0, ":", toString t#1| ":", toString t#2, "-", toString t#3| ":", toString t#4, "]--")
+     if t === null then "{*Function*}" 
+     else concatenate("{*Function[", t#0, ":", toString t#1| ":", toString t#2, "-", toString t#3| ":", toString t#4, "]*}")
      )
 
 toExternalString Manipulator := f -> (

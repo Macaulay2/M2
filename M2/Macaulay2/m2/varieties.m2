@@ -81,7 +81,7 @@ net CoherentSheaf := F -> (
 			 if #d === 1 then ("(", toString first d, ")")
 			 else toString toSequence d)))))
 
-CoherentSheaf.AfterPrint = F -> (
+CoherentSheaf#(Standard,AfterPrint) = F -> (
      X := variety F;
      M := module F;
      << endl;				  -- double space

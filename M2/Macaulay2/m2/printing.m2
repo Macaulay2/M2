@@ -32,15 +32,15 @@ net Time := v -> (
 
 truncateOutput = method()
 truncateOutput ZZ := maxwidth -> (
-     Nothing.BeforePrint = identity;
-     Thing.BeforePrint = x -> (
+     Nothing#(Standard,BeforePrint) = identity;
+     Thing#(Standard,BeforePrint) = x -> (
 	  x = net x;
 	  if width x <= maxwidth then return x;
 	  stack apply( unstack x, row -> (
 		    if #row <= maxwidth then return row;
 		    concatenate(substring(0,maxwidth - 4,row), " ..."))));
      )
-truncateOutput InfiniteNumber := maxwidth -> Thing.BeforePrint = identity
+truncateOutput InfiniteNumber := maxwidth -> Thing#(Standard,BeforePrint) = identity
 
 -- not printing:
 Bag = new SelfInitializingType of MutableList
@@ -48,9 +48,9 @@ Bag.synonym = "bag"
 unbag = method()
 unbag Bag := x -> unsequence toSequence x
 net Bag := toString Bag := x -> (
-     if #x===0 then "--an empty bag--" 
-     else if #x===1 then "--a bagged " | synonym class first x | "--" 
-     else "--a bagged sequence of length " | toString(#x) | "--" 
+     if #x===0 then "{*an empty bag*}" 
+     else if #x===1 then "{*a bagged " | synonym class first x | "*}" 
+     else "{*a bagged sequence of length " | toString(#x) | "*}" 
      )
 
 -- Local Variables:

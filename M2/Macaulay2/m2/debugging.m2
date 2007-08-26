@@ -22,7 +22,7 @@ on = { CallLimit => 100000, Name => null } >> opts -> f -> (
      if not callCount#?fb then callCount#fb = 0;
      limit := opts.CallLimit;
      if not instance(f, Function) then error("expected a function");
-     fn := if opts.Name =!= null then opts.Name else try toString f else "--function--";
+     fn := if opts.Name =!= null then opts.Name else try toString f else "{*function*}";
      x -> (
 	  saveCallCount := callCount#fb = callCount#fb+1;
      	  << fn << " (" << saveCallCount << ")";

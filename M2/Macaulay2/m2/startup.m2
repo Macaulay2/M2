@@ -58,15 +58,7 @@ if firstTime then (
 	  ZZ.InputContinuationPrompt = lineno -> #lastprompt;
 	  symbol currentPrompts <- slimPrompts;
 	  );
-     hush = () -> (
-	  Thing.BeforePrint = identity;
-	  Thing.Print = identity;
-	  Thing.NoPrint = identity;
-	  Thing.AfterPrint = identity;
-	  Thing.AfterNoPrint = identity;
-	  slimPrompts();
-	  );
-     hush();
+     slimPrompts();
      normalPrompts = () -> (
 	  lastprompt := "";
 	  ZZ.InputPrompt = lineno -> concatenate(newline, lastprompt = concatenate(interpreterDepth:"i", toString lineno, " : "));
@@ -129,7 +121,7 @@ if firstTime then (
      flush = new Manipulator from flush;
      endl = new Manipulator from endl;
 
-     Thing.Print = x ->  (
+     Thing#(Standard,Print) = x ->  (
 	  << newline << concatenate(interpreterDepth:"o") << lineNumber << " = ";
 	  try << x;
 	  << newline << flush;
@@ -179,7 +171,6 @@ if firstTime then (
 
      ReverseDictionary = new MutableHashTable;		    -- values are symbols
      PrintNames = new MutableHashTable;			    -- values are strings
-     Thing.AfterEval = identity;
      globalAssign = (s,v) -> if v =!= value s then (
 	  X := class value s;
 	  m := lookup(GlobalReleaseHook,X);

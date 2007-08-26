@@ -50,9 +50,11 @@ AfterPrint := makeProtectedSymbolClosure("AfterPrint");
 AfterNoPrint := makeProtectedSymbolClosure("AfterNoPrint");
 runmethod(methodname:SymbolClosure,g:Expr,f:Code):Expr := (
      method := lookup(Class(g),methodname);
-     if method == nullE 
-     then printErrorMessageE(f,"no method for '" + methodname.symbol.word.name + "'")
-     else applyEE(method,g)
+     if method == nullE then g else applyEE(method,g)
+     );
+runmethod(methodname:Expr,g:Expr,f:Code):Expr := (
+     method := lookup(Class(g),methodname);
+     if method == nullE then g else applyEE(method,g)
      );
 
 endInput := makeProtectedSymbolClosure("end");
@@ -66,10 +68,17 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      );
 readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
      lastvalue := nullE;
+     mode := topLevelMode;
+     modeAfterEval := Expr(Sequence(mode,AfterEval));
+     modeBeforePrint := Expr(Sequence(mode,BeforePrint));
+     modeNoPrint := Expr(Sequence(mode,NoPrint));
+     modePrint := Expr(Sequence(mode,Print));
+     modeAfterNoPrint := Expr(Sequence(mode,AfterNoPrint));
+     modeAfterPrint := Expr(Sequence(mode,AfterPrint));
      while true do (
      	  if printout then setLineNumber(lineNumber + 1);
 	  clearAllFlags();
-	  while peektoken(file,true).word == NewlineW do (
+	  while !singleLineInput && peektoken(file,true).word == NewlineW do (
 	       -- previousLineNumber = -1; -- so there will be a new prompt after a blank line
 	       -- but now we don't like so many extra prompts
 	       interruptedFlag = false;
@@ -87,10 +96,10 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	       if stopIfError || returnIfError then return buildErrorPacket("--backtrace: parse error--");
 	       )
 	  else (
-	       s := gettoken(file,true);  -- get the semicolon
-	       if !(s.word == SemicolonW || s.word == NewlineW)
+	       s := gettoken(file,true);  -- get the token that terminated the parsing of the expression
+	       if !(s.word == SemicolonW || s.word == NewlineW || s.word == wordEOC)
 	       then (
-		    printErrorMessage(s,"syntax error");
+		    printErrorMessage(s,"syntax error: expected semicolon, newline, or end of cell");
 		    if stopIfError || returnIfError then return Expr(Error(position(s),"syntax error",nullE,false,dummyFrame));
 		    )
 	       else (
@@ -117,8 +126,17 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			      )
 			 else (
 			      if printout then (
-				   -- result of AfterEval replaces lastvalue unless error, in which case 'null' replaces it
-				   g := runmethod(AfterEval,lastvalue,f);
+				   if mode != topLevelMode then (
+					mode = topLevelMode;
+					modeAfterEval = Expr(Sequence(mode,AfterEval));
+					modeBeforePrint = Expr(Sequence(mode,BeforePrint));
+					modeNoPrint = Expr(Sequence(mode,NoPrint));
+					modePrint = Expr(Sequence(mode,Print));
+					modeAfterNoPrint = Expr(Sequence(mode,AfterNoPrint));
+					modeAfterPrint = Expr(Sequence(mode,AfterPrint));
+					);
+				   -- result of AfterEval replaces lastvalue unless error, in which case 'null' replaces it:
+				   g := runmethod(modeAfterEval,lastvalue,f);
 				   when g is err:Error
 				   do (
 					g = update(err,"after eval",f); 
@@ -126,17 +144,17 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					lastvalue = nullE;
 					) 
 				   else lastvalue = g;
-				   -- result of BeforePrint is printed instead unless error
+				   -- result of BeforePrint is printed instead unless error:
 				   printvalue := nullE;
-				   g = runmethod(BeforePrint,lastvalue,f);
+				   g = runmethod(modeBeforePrint,lastvalue,f);
 				   when g is err:Error
 				   do ( g = update(err,"before print",f); if stopIfError || returnIfError then return g; )
 				   else printvalue = g;
-				   -- result of Print is ignored
-				   g = runmethod(if s.word == SemicolonW then NoPrint else Print,printvalue,f);
+				   -- result of Print is ignored:
+				   g = runmethod(if s.word == SemicolonW then modeNoPrint else modePrint,printvalue,f);
 				   when g is err:Error do ( g = update(err,"at print",f); if stopIfError || returnIfError then return g; ) else nothing;
-				   -- result of AfterPrint is ignored
-				   g = runmethod(if s.word == SemicolonW then AfterNoPrint else AfterPrint,lastvalue,f);
+				   -- result of AfterPrint is ignored:
+				   g = runmethod(if s.word == SemicolonW then modeAfterNoPrint else modeAfterPrint,lastvalue,f);
 				   when g is err:Error do ( g = update(err,"after print",f); if stopIfError || returnIfError then return g; ) else nothing;
 				   )
 			      )
@@ -173,7 +191,8 @@ readeval3(file:TokenFile,printout:bool,dc:DictionaryClosure,returnLastvalue:bool
 readeval(file:TokenFile,returnLastvalue:bool,returnIfError:bool):Expr := (
      savefe := getGlobalVariable(fileExitHooks);
      setGlobalVariable(fileExitHooks,emptyList);
-     ret := readeval3(file,false,newStaticLocalDictionaryClosure(file.posFile.file.filename),returnLastvalue,false,returnIfError);
+     printout := false; mode := nullE;
+     ret := readeval3(file,printout,newStaticLocalDictionaryClosure(file.posFile.file.filename),returnLastvalue,false,returnIfError);
      haderror := when ret is Error do True else False;
      hadexiterror := false;
      hook := getGlobalVariable(fileExitHooks);
@@ -327,6 +346,7 @@ commandInterpreter(e:Expr):Expr := (
 	    if length(s) == 0 then loadprint("-",newStaticLocalDictionaryClosure(),false)
 	    else WrongNumArgs(0,1)
 	    )
+       is Nothing do loadprint("-",newStaticLocalDictionaryClosure(),false)
        is x:DictionaryClosure do commandInterpreter(x)
        is x:SymbolClosure do commandInterpreter(x.frame)
        is x:CodeClosure do commandInterpreter(x.frame)

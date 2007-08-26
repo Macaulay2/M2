@@ -17,7 +17,7 @@ use ctype;
 
 export Position := {filename:string, line:ushort, column:ushort, loadDepth:uchar};
 export (s:Position) === (t:Position) : bool := s == t || s.filename === t.filename && s.line == t.line && s.column == t.column;
-export dummyPosition := Position("--dummy file name--",ushort(0),ushort(0),uchar(loadDepth));
+export dummyPosition := Position("{*dummy file name*}",ushort(0),ushort(0),uchar(loadDepth));
 shorten(s:string):string := (
      -- shorten filenames like "/a/b/c/../d////e/f" to "/a/b/d/e/f"
      while true do (
@@ -87,7 +87,7 @@ export minimizeFilename(filename:string):string := (
 
 export tostring(w:Position) : string := (
      if w == dummyPosition 
-     then "--dummy position--"
+     then "{*dummy position*}"
      else errfmt(minimizeFilename(w.filename),int(w.line),int(w.column + 1),int(w.loadDepth))
      );
 export (o:file) << (w:Position) : file := (

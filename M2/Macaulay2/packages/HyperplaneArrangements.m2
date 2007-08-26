@@ -23,7 +23,7 @@ Arrangement = new Type of HashTable
 Arrangement.synonym = "hyperplane arrangement"
 Arrangement.GlobalAssignHook = globalAssignFunction
 Arrangement.GlobalReleaseHook = globalReleaseFunction
-Arrangement.AfterPrint = A -> (
+Arrangement#(Standard,AfterPrint) = A -> (
      << endl;
      << concatenate(interpreterDepth:"o") << lineNumber << " : Hyperplane Arrangement "
      << endl;
@@ -218,7 +218,7 @@ graphic (List) := Arrangement => G -> (
 
 Flat = new Type of HashTable
 Flat.synonym = "intersection of hyperplane(s)"
-Flat.AfterPrint = F -> (
+Flat#(Standard,AfterPrint) = F -> (
      << endl;
      <<  concatenate(interpreterDepth:"o") << lineNumber << " : Flat of " << F.arrangement
      << endl;

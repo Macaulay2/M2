@@ -25,7 +25,7 @@ export parseinfo := {
      unaryStrength:int,
      funs:parsefuns
      };
-export TCnone := 0;			-- for artificial words: dummyWord, wordEOF
+export TCnone := 0;			-- for artificial words: dummyWord, wordEOF, wordEOC
 export TCid := 1;			-- identifiers and operators
 export TCint := 2;
 export TCdouble := 3;
@@ -449,7 +449,7 @@ dummybinary(w:ParseTree,v:Token,o:TokenFile,prec:int,obeylines:bool):ParseTree :
      w);
 export nopr := -1;						    -- represents unused precedence
 export newParseinfo():parseinfo := parseinfo(nopr,nopr,nopr,parsefuns(dummyunary,dummybinary));
-export dummyWord    := Word("--dummy word--",TCnone,0,newParseinfo());
+export dummyWord    := Word("{*dummy word*}",TCnone,0,newParseinfo());
 
 export dummyTree    := ParseTree(dummy(dummyPosition));
 export emptySequence := Sequence();
@@ -468,7 +468,7 @@ export dummyTernaryFun(c:Code,d:Code,e:Code):Expr := (
 export emptySequenceE := Expr(emptySequence);
 export bucketEnd := KeyValuePair(nullE,0,nullE,self);
 export dummySymbol := Symbol(
-     dummyWord,nextHash(),dummyPosition,
+     Word("{*dummy symbol*}",TCnone,0,newParseinfo()),nextHash(),dummyPosition,
      dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
      Macaulay2Dictionary.frameID,dummySymbolFrameIndex,1,
      false,						    -- not protected, so we can use it in parallelAssignmentFun
@@ -479,7 +479,8 @@ globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
 export dummyCode := Code(nullCode());
 export NullCode := Code(nullCode());
 export dummyCodeClosure := CodeClosure(dummyFrame,dummyCode);
-export dummyToken   := Token(dummyWord,
+export dummyToken   := Token(
+     Word("{*dummy token*}",TCnone,0,newParseinfo()),
      dummyPosition.filename,
      dummyPosition.line,
      dummyPosition.column,
@@ -489,6 +490,7 @@ export position(t:Token):Position := Position(t.filename,t.line,t.column,t.loadD
 export printErrorMessage(t:Token,message:string):void := printErrorMessage(position(t),message);
 
 export parseEOF     := newParseinfo();
+export parseEOC     := newParseinfo();
 export parseWORD    := newParseinfo();
 
 -- debugging
@@ -634,10 +636,10 @@ export unopNameListCell := {f:unop,name:string,next:unopNameListCell};
 export binopNameListCell := {f:binop,name:string,next:binopNameListCell};
 export ternopNameListCell := {f:ternop,name:string,next:ternopNameListCell};
 export multopNameListCell := {f:multop,name:string,next:multopNameListCell};
-export unopNameList := unopNameListCell(dummyUnop,"--dummy unary operator--",self);
-export binopNameList := binopNameListCell(dummyBinop,"--dummy binnary operator--",self);
-export ternopNameList := ternopNameListCell(dummyTernop,"--dummy ternary operator--",self);
-export multopNameList := multopNameListCell(dummyMultop,"--dummy n-ary operator--",self);
+export unopNameList := unopNameListCell(dummyUnop,"{*dummy unary operator*}",self);
+export binopNameList := binopNameListCell(dummyBinop,"{*dummy binnary operator*}",self);
+export ternopNameList := ternopNameListCell(dummyTernop,"{*dummy ternary operator*}",self);
+export multopNameList := multopNameListCell(dummyMultop,"{*dummy n-ary operator*}",self);
 export getUnopName(f:unop):string := (
      p := unopNameList;
      while true do (

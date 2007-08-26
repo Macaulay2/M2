@@ -21,7 +21,8 @@ String.TeXmacsEvaluate = s -> (
      << TeXmacsBegin << "verbatim:";
      try (
 	  v := try value s else "evaluation failed";
-	  v = (lookup(AfterEval,class v)) v;
+	  m := lookup(AfterEval,class v);
+	  if m =!= null then v = m v;
      	  fmt := v -> concatenate lines try mathML v else mathML toString v;
 	  po := prompto();
 	  << tmhtml fixn mathMode mtable {{po,red "<mo>=</mo>",fmt v},{},{po,red "<mo>:</mo>",fmt class v}})
