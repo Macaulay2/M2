@@ -8,8 +8,9 @@
 
 restart = Command ( 
      () -> (
+	  restarting = true;
 	  runEndFunctions();
-	  exec commandLine
+	  exec if member("--restarted",commandLine) then commandLine else join({commandLine#0,"--restarted"},drop(commandLine,1))
 	  )
      )
 
