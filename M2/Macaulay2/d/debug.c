@@ -1,9 +1,10 @@
+#include <gc/gc.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 
 #include "config.h"
-#include <gc/gc.h>
+#include <stdint.h>
 
 #include "debug.h"
 #include <gmp.h>
@@ -15,7 +16,7 @@ int trapset = 0;
 void *pointers[10];		/* during debugging we can put pointers here, visible to the garbage collector */
 void trapchk(void *p) { 
      trapcount++;
-     if (trapcount == trapset || p == trapaddr || p == (void *)~(int)trapaddr) trap();
+     if (trapcount == trapset || p == trapaddr || p == (void *)~(intptr_t)trapaddr) trap();
 }
 
 #define STDERR 2
