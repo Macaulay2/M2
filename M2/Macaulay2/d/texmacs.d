@@ -17,7 +17,7 @@ use struct;
 
 TeXmacsEvaluate := makeProtectedSymbolClosure("TeXmacsEvaluate");
 
-export topLevelTexmacs():int := (
+export topLevelTeXmacs():int := (
      unsetprompt(stdin);
      while true do (
 	  stdin.bol = false;				    -- sigh, prevent a possible prompt
@@ -42,8 +42,8 @@ export topLevelTexmacs():int := (
 		    applyEE(method,Expr(item));
 		    )
 	       )));
-topLevelTexmacs(e:Expr):Expr := toExpr(topLevelTexmacs());
-setupfun("topLevelTexmacs",topLevelTexmacs);
+topLevelTeXmacs(e:Expr):Expr := toExpr(topLevelTeXmacs());
+setupfun("topLevelTeXmacs",topLevelTeXmacs);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

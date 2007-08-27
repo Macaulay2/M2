@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => topLevelTexmacs,
+     Key => topLevelTeXmacs,
      Headline => "",
      Usage => "",
      Inputs => {

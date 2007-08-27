@@ -117,21 +117,19 @@ export openTokenFile(filename:string):(TokenFile or errmsg) := (
      );
 export setprompt(file:TokenFile,prompt:function():string):void := setprompt(file.posFile,prompt);
 export unsetprompt(file:TokenFile):void := unsetprompt(file.posFile);
-export flush(file:TokenFile):void := flush(file.posFile);
-export close(file:TokenFile):int := close(file.posFile);
 export gettoken(file:TokenFile,obeylines:bool):Token := (
-     when file.last
+     when file.nexttoken
      is null do gettoken(file.posFile,obeylines)
      is w:Token do (
-	  file.last = NULL;
+	  file.nexttoken = NULL;
      	  w
 	  )
      );
 export peektoken(file:TokenFile,obeylines:bool):Token := (
-     when file.last
+     when file.nexttoken
      is null do (
 	  w := gettoken(file,obeylines);
-	  file.last = w;
+	  file.nexttoken = w;
 	  w
 	  )
      is w:Token do w

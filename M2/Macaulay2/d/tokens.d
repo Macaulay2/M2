@@ -112,8 +112,10 @@ export ParseTree := (
 
 export TokenFile := {
      posFile:PosFile,
-     last:(null or Token)
+     nexttoken:(null or Token)
      };
+export flush(f:TokenFile):void := (f.nexttoken=NULL; flush(f.posFile););
+export close(file:TokenFile):int := close(file.posFile);
 export fileErrorMessage(f:TokenFile):string := fileErrorMessage(f.posFile);
 export fileError(f:TokenFile):bool := fileError(f.posFile);
 export isatty(f:TokenFile):bool := isatty(f.posFile);

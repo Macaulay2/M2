@@ -51,37 +51,17 @@ if firstTime then (
 	  loadedFiles##loadedFiles = toAbsolutePath fullfilename; 
 	  if notify then stderr << "--loaded " << fullfilename << endl;
 	  );
-
-     slimPrompts = () -> (
-	  lastprompt := "";
-	  ZZ.InputPrompt = lineno -> concatenate(lastprompt = concatenate(interpreterDepth:"i", toString lineno, ": "));
-	  ZZ.InputContinuationPrompt = lineno -> #lastprompt;
-	  symbol currentPrompts <- slimPrompts;
-	  );
-     slimPrompts();
      normalPrompts = () -> (
 	  lastprompt := "";
-	  ZZ.InputPrompt = lineno -> concatenate(newline, lastprompt = concatenate(interpreterDepth:"i", toString lineno, " : "));
-	  ZZ.InputContinuationPrompt = lineno -> #lastprompt; -- will print that many blanks, see interp.d
+	  ZZ#(Standard,InputPrompt) = lineno -> concatenate(newline, lastprompt = concatenate(interpreterDepth:"i", toString lineno, " : "));
+	  ZZ#(Standard,InputContinuationPrompt) = lineno -> #lastprompt; -- will print that many blanks, see interp.d
 	  symbol currentPrompts <- normalPrompts;	    -- this avoids the warning about redefining a function
 	  );
-     returnPrompts = () -> (
-	  lastprompt := "";
-	  ZZ.InputPrompt = lineno -> concatenate(newline, lastprompt = concatenate(interpreterDepth:"i", toString lineno, " : "), newline, #lastprompt);
-	  ZZ.InputContinuationPrompt = lineno -> #lastprompt; -- will print that many blanks, see interp.d
-	  symbol currentPrompts <- returnPrompts;	    -- this avoids the warning about redefining a function
-	  );
+     normalPrompts();
      noPrompts = () -> (
-	  ZZ.InputPrompt = lineno -> "";
-	  ZZ.InputContinuationPrompt = lineno -> "";
+	  ZZ#(Standard,InputPrompt) = lineno -> "";
+	  ZZ#(Standard,InputContinuationPrompt) = lineno -> "";
 	  symbol currentPrompts <- noPrompts;
-	  );
-     ctrlA := ascii 1;
-     examplePrompts = () -> (
-	  lastprompt := "";
-	  ZZ.InputPrompt = lineno -> concatenate(ctrlA, lastprompt = concatenate(interpreterDepth:"i", toString lineno, " : "));
-	  ZZ.InputContinuationPrompt = lineno -> #lastprompt;
-	  symbol currentPrompts <- examplePrompts;
 	  );
 
      startFunctions := {};
@@ -326,6 +306,7 @@ usage := arg -> (
      << "    --silent           no startup banner" << newline
      << "    --stop             exit on error" << newline
      << "    --texmacs          TeXmacs session mode" << newline
+     << "    --texmacs-old      TeXmacs session mode, the old way" << newline
      << "    --version          print version number and exit" << newline
      << "    -q                 don't load user's init.m2 file or use packages in home directory" << newline
      << "    -E '...'           evaluate expression '...' before initialization" << newline
@@ -396,8 +377,6 @@ action := hashTable {
      "-s" => obsolete,
      "-silent" => obsolete,
      "-tty" => notyet,
-     "-x" => arg -> examplePrompts(),
-     "--" => obsolete,
      "--copyright" => arg -> if phase == 1 then fullCopyright = true,
      "--dumpdata" => arg -> (noinitfile = noloaddata = true; if phase == 3 then dump()),
      "--help" => usage,
@@ -410,12 +389,19 @@ action := hashTable {
      "--no-readline" => arg -> arg,			    -- handled in d/stdio.d
      "--no-setup" => arg -> if phase == 1 then noloaddata = nosetup = true,
      "--notify" => arg -> if phase <= 2 then notify = true,
+     "--no-tty" => arg -> arg,			    -- handled in d/stdio.d
      "--script" => arg -> error "--script option should be first argument, of two",
      "--silent" => arg -> nobanner = true,
      "--stop" => arg -> (if phase == 1 then stopIfError = true; debuggingMode = false;), -- see also M2lib.c and tokens.d
-     "--texmacs" => arg -> if phase == 3 then (
-	  interpreter = topLevelTexmacs;
+     "--texmacs-old" => arg -> if phase == 3 then (
+	  interpreter = topLevelTeXmacs;
 	  << TeXmacsBegin << "verbatim:" << " Macaulay 2 starting up " << endl << TeXmacsEnd << flush;
+	  ),
+     "--texmacs" => arg -> if phase == 3 then (
+	  topLevelMode = TeXmacs;
+	  singleLineInput = true;
+	  clearEcho stdio;
+	  << TeXmacsBegin << "verbatim:" << " Macaulay 2 starting up " << endl << flush;
 	  ),
      "--version" => arg -> ( << version#"VERSION" << newline; exit 0; )
      };
