@@ -1,3 +1,108 @@
+## Building Macaulay2
+
+svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+cd M2
+make
+
+###################################
+## Macintosh source code install ##
+###################################
+## Macintosh install notes:
+## In order to obtain the M2 source code using subversion, you must install
+## svn using fink or macports.
+## NO other extra installed items are needed: the 'make' below will download the
+## libraries and programs that are needed.
+
+## MacOSX 10.4, 64 bit debug version
+mkdir BUILD/debug64
+cd BUILD/debug64
+../../configure \
+      --prefix=/Users/mike/src/M2/BUILD/debug64-installed \
+      --enable-debug \
+      --disable-optimize \
+      --enable-experimental-code \
+      LIBS="-lgcc_s.10.5" \
+      --build=x86_64-apple-darwin \
+      CC="gcc -m64" \
+      CXX="g++ -m64"
+make
+make install
+
+## MacOSX 10.4, 64 bit optimized version, installed into /capybara/
+## (change that to /usr/local if you wish)
+mkdir BUILD/opt64
+cd BUILD/opt64
+../../configure
+      --prefix=/capybara \
+      --enable-experimental-code \
+      LIBS="-lgcc_s.10.5" \
+      --build=x86_64-apple-darwin \
+      CC="gcc -m64" \
+      CXX="g++ -m64"
+make
+make install
+
+## MacOSX 10.4, 64 bit profiled version
+mkdir BUILD/profile64
+cd BUILD/profile64
+ ../configure \
+      --prefix=/Users/mike/src/M2/BUILD/profile64-installed \
+      --enable-profile \
+      --enable-experimental-code \
+      LIBS="-lgcc_s.10.5" \
+      --build=x86_64-apple-darwin \
+      CC="gcc -m64" \
+      CXX="g++ -m64"
+
+## MacOSX 10.4, 32 bit debug version
+mkdir BUILD/debug32
+cd BUILD/debug32
+../../configure \
+      --prefix=/Users/mike/src/M2/BUILD/debug32-installed \
+      --enable-debug \
+      --disable-optimize \
+      --enable-experimental-code \
+      LIBS="-lgcc_s.10.5"
+make
+make install
+
+## MacOSX 10.4, 32 bit optimized version, installed into /capybara/
+## (change that to /usr/local if you wish)
+mkdir BUILD/opt32
+cd BUILD/opt32
+../../configure \
+      --prefix=/Users/mike/src/M2/BUILD/opt32-installed \
+      --enable-experimental-code \
+      LIBS="-lgcc_s.10.5"
+make
+make install
+
+#######################################################
+## Ubuntu source code install #########################
+## These notes work the same for 32 or 64 bit Ubuntu ##
+#######################################################
+## Using the synaptic package manager, or
+## apt-get install, get the following packages:
+sudo apt-get install subversion
+sudo apt-get install autoconf
+sudo apt-get install g++
+sudo apt-get install g77
+sudo apt-get install bison
+## get M2 source code
+svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+## prepare the configure script
+cd M2
+make
+
+## normal (optimized) version
+mkdir BUILD/normal
+cd BUILD/normal
+../../configure --prefix=/usr/local
+make
+make install
+
+
+
 ## This file consists of my (MES) notes for quickly getting the Macaulay2
 ## development environment setup on a computer.
 ## These steps change over time.  If you wish to use this to get a source
@@ -14,9 +119,9 @@ svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
 # svn, latest autoconf
 #######################################################
 # inside ~/src
-/capybara/bin/svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2
+svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2
 cd M2
-/capybara/bin/autoconf
+autoconf
 make
 mkdir tmp
 cd tmp
@@ -25,7 +130,7 @@ cd tmp
       --enable-debug \
       --disable-optimize \
       --enable-experimental-code \
-      LOADLIBES="-lgcc_s.10.5 -lncurses"
+      LIBS="-lgcc_s.10.5"
 make      
 
 mkdir tmp64
@@ -46,7 +151,7 @@ cd tmp64-opt
  ../configure \
       --prefix=/capybara/encap \
       --enable-experimental-code \
-      LOADLIBES="-lgcc_s.10.5 -lncurses" \
+      LIBS="-lgcc_s.10.5" \
       --build=x86_64-apple-darwin \
       CC="gcc -m64" \
       CXX="g++ -m64"
@@ -58,7 +163,7 @@ cd tmp64-profile
       --prefix=~/src/M2/tmp64-profile-install \
       --enable-profile \
       --enable-experimental-code \
-      LOADLIBES="-lgcc_s.10.5 -lncurses" \
+      LIBS="-lgcc_s.10.5" \
       --build=x86_64-apple-darwin \
       CC="gcc -m64" \
       CXX="g++ -m64"

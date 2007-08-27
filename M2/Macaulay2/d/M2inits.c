@@ -128,6 +128,8 @@ void M2inits(void) {
     trap();			/* we call trap() once so variables (such as trapset) can be set */
 #   endif
     init_gc();
+    factory_init1();		/* just to make sure factory_init1.o gets linked in */
+    factory_init2();		/* just to make sure factory_init2.o gets linked in */
     M2inits2();			/* just to make it link */
     enterFactory();
     enterM2();
