@@ -2,6 +2,7 @@
 #include <gc/gc.h>
 
 #include "gmp_init.h"
+#include "M2inits.h"
 
 extern int initializeGMP();
 
@@ -15,7 +16,6 @@ extern "C" void initializeGMP_Cwrapper() {
 }
 
 void gmp_init_nothing () {
-     extern void factory_init1(), factory_init2();
      factory_init1();		// just to make sure factory_init1.o gets linked in
      factory_init2();		// just to make sure factory_init2.o gets linked in
 }

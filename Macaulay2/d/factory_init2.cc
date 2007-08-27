@@ -1,10 +1,10 @@
 #include "M2inits.h"
 #include <stdio.h>
 #include <stdlib.h>
-void factory_init2(){}
+extern "C" void factory_init2(){}
 int factory_init2_run = 0;
-static struct C {
-     C () { 
+static struct factory_init2_class {
+     factory_init2_class () { 
 	  if (!factory_init1_run) {
 	       fprintf(stderr, "internal error: factory_init1 not initialized before factory_init2\n");
 	       exit(1);
@@ -12,5 +12,5 @@ static struct C {
 	  enterM2();
 	  factory_init2_run = 1;
      }
-     ~C () { enterFactory(); }
-} x;
+     ~factory_init2_class () { enterFactory(); }
+} x2;
