@@ -58,7 +58,7 @@ M2_OBJECTS += debug.o
 endif
 
 OPTCFILES += M2inits1.cc M2inits2.cc M2inits3.cc factory_init1.cc factory_init2.cc factory_init3.cc
-CFILES += M2inits.c M2types.c M2mem.c scclib.c M2lib.c gmp_aux.c gdbm_interface.c gmp_memory.c
+CFILES += M2types.c M2mem.c scclib.c M2lib.c gmp_aux.c gdbm_interface.c gmp_memory.c
 CFILES += factory_allocator.c main.c
 SRCFILES += $(OPTCFILES) $(CFILES)
 M2_OBJECTS += $(CFILES:.c=.o)
@@ -203,13 +203,13 @@ endif
 endif
 
 ifeq "@STATIC@" "yes"
-LIBRARYOPTIONS := $(TOSTATIC)
+M2_LIBRARIES := $(TOSTATIC)
 ifeq (@OS@,Linux)
 # this is for gc somehow, see the end of gc/config.h
 M2_LDFLAGS += -Wl,-defsym,_DYNAMIC=0
 endif
 else
-LIBRARYOPTIONS :=
+M2_LIBRARIES :=
 endif
 
 clean::; rm -f compat.c compat.h
@@ -234,9 +234,8 @@ startup.c : ../m2/startup.m2 layout.m2
 clean :: ; rm -f layout.m2 startup.c
 
 ifeq "@DUMPDATA@" "yes"
-M2_LDFLAGS += -L../dumpdata
-LIBRARYDEPS += ../dumpdata/libdump.a
-LIBRARYOPTIONS += -ldump
+M2_LIBDEPS += ../dumpdata/libdump.a
+M2_LIBRARIES += -L../dumpdata -ldump
 endif
 
 ifeq (@OS@,SunOS)
@@ -246,6 +245,7 @@ M2_OBJECTS += mmap.o
 mmap.o : /usr/lib/libc.a; ar x $^ $@
 endif
 
+M2_OBJECTS += tmp_init.o
 tmp_init.o : tmp_init.c
 clean::; rm -f tmp_init.c
 tmp_init.c : $(DFILES)
@@ -260,32 +260,49 @@ tmp_init.c : $(DFILES)
 
 libfactory_init1.a : factory_init1.o ; ar ru $@ $^
 libfactory_init2.a : factory_init2.o ; ar ru $@ $^
+libM2inits2.a      : M2inits2.o       ; ar ru $@ $^
 
-LIBRARYOPTIONS += -L. -lfactory_init1    @SINGULARLIBS@  -lfactory_init2
-LIBRARYDEPS    +=    libfactory_init1.a                 libfactory_init2.a
+ifeq (@CONSTRUCTOR_ORDER_LIB@,LR)
+M2_LIBRARIES += -L. -lfactory_init1 @SINGULARLIBS@ -lfactory_init2
+else
+M2_LIBRARIES += -L. -lfactory_init2 @SINGULARLIBS@ -lfactory_init1
+endif
+M2_LIBDEPS    += libfactory_init1.a libfactory_init2.a
 
-LIBRARYOPTIONS +=  @BUILTLIBS@ @LIBS@
+M2_LIBRARIES +=  @BUILTLIBS@ @LIBS@
 
-LIBRARYOPTIONS += -lstdc++
+M2_LIBRARIES += -lstdc++
 
-LIBRARYOPTIONS += @FLIBS_FLAGS@
-LIBRARYOPTIONS += @FLIBS_STATIC@
+M2_LIBRARIES += @FLIBS_FLAGS@
+M2_LIBRARIES += @FLIBS_STATIC@
 
 ifeq "@STATIC@" "yes"
-LIBRARYOPTIONS += $(UNSTATIC)
+M2_LIBRARIES += $(UNSTATIC)
 endif
 
-LIBRARYOPTIONS += @FLIBS_DYNAMIC@
+M2_LIBRARIES += @FLIBS_DYNAMIC@
 
 LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
 
+ifeq (@CONSTRUCTOR_ORDER_LIB@,LR)
+M2_LIBRARIES := -lM2inits2 $(M2_LIBRARIES)
+else
+M2_LIBRARIES := $(M2_LIBRARIES) -lM2inits2
+endif
+M2_LIBDEPS += libM2inits2.a
+
+M2_OBJECTS += $(EFILES)
+
+ifeq (@CONSTRUCTOR_ORDER_OBJ@,LR)
+M2_OBJECTS := M2inits.o $(M2_OBJECTS)
+else
+M2_OBJECTS := $(M2_OBJECTS) M2inits.o
+endif
+
 clean::; rm -f ../bin/M2@EXE@
-# we make tmp_init.o depend on everything, because compiling it produces our timestamp
-tmp_init.o : factory_init3.o M2inits1.o $(M2_OBJECTS) M2inits2.o $(LIBRARYDEPS) $(EFILES)
-../bin/M2@EXE@ : tmp_init.o
-	time @CC@ $(M2_LDFLAGS) \
-		factory_init3.o M2inits1.o $(M2_OBJECTS) tmp_init.o $(EFILES) M2inits2.o \
-		$(LIBRARYOPTIONS) -lm -o "$@".tmp
+../bin/M2@EXE@ : $(M2_OBJECTS) $(M2_LIBDEPS)
+	$(COMPILE.c) tmp_init.c -o tmp_init.o
+	time @CC@ $(M2_LDFLAGS) $(M2_OBJECTS) $(M2_LIBRARIES) -lm -o "$@".tmp
 ifeq "$(STRIP)" "yes"
 ifneq "@STRIPCMD@" ""
 	@STRIPCMD@ "$@".tmp
