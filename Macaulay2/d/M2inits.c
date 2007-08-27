@@ -119,6 +119,7 @@ void enterM2(void) {
      __gmp_reallocate_atomic_func = GC_realloc_atomic_function;
      }
 
+void M2inits(void) __attribute__ ((constructor));
 void M2inits(void) {
   static int done = 0;
   if (!done) {
@@ -127,6 +128,8 @@ void M2inits(void) {
     trap();			/* we call trap() once so variables (such as trapset) can be set */
 #   endif
     init_gc();
+    M2inits2();			/* just to make it link */
+    enterFactory();
     enterM2();
     IM2_initialize();
   }
