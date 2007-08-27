@@ -14,6 +14,7 @@ fmt := x -> concatenate lines try mathML x else mathML toString x;
 Thing#(TeXmacs,Print) = send := v -> (
      po := red concatenate("<mi>o",toString lineNumber,"</mi>");
      << tmhtml fixn mathMode mtable {{po,red "<mo>=</mo>",fmt v},{},{po,red "<mo>:</mo>",fmt class v}})
+Nothing#(TeXmacs,Print) = identity
 String.TeXmacsEvaluate = s -> (				    -- the old way
      lineNumber = lineNumber + 1;
      << TeXmacsBegin << "verbatim:";
