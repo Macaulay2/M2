@@ -1740,7 +1740,6 @@ currentDirectory := setupconst("currentDirectory",Expr(getcwd()));
 resetCurrentDirectory():void := setGlobalVariable(currentDirectory,Expr(getcwd()));
 everytime(resetCurrentDirectory);
 
-export lineNumber := 0;
 export debuggerHook := nullE;
 
 backtraceS := dummySymbol;

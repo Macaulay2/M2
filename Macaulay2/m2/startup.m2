@@ -404,6 +404,9 @@ action := hashTable {
 	  if phase == 1 then (
 	       if not restarted then << TeXmacsBegin << "verbatim:";
 	       )
+	  else if phase == 2 then (
+	       printWidth = 80;
+	       )
 	  else if phase == 3 then (
 	       texmacsmode = true;
 	       topLevelMode = TeXmacs;

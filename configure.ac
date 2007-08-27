@@ -27,27 +27,27 @@ do eval v=\$$x
 done
 
 for i in $CFLAGS
-do case "$i" in
+do case $i in
    -I*) AC_MSG_ERROR("preprocessor flag $i found in CFLAGS instead of in CPPFLAGS") ;;
    -L*) AC_MSG_ERROR("link flag $i found in CFLAGS instead of in LDFLAGS");;
    esac
 done
 
 for i in $CXXFLAGS
-do case "$i" in
+do case $i in
    -I*) AC_MSG_ERROR("preprocessor flag $i found in CXXFLAGS instead of in CPPFLAGS");;
    -L*) AC_MSG_ERROR("link flag $i found in CXXFLAGS instead of in LDFLAGS");;
    esac
 done
 
 for i in $CPPFLAGS
-do case "$i" in
+do case $i in
    -L*) AC_MSG_ERROR("link flag $i found in CPPFLAGS instead of in LDFLAGS");;
    esac
 done
 
 for i in $LDFLAGS
-do case "$i" in
+do case $i in
    -I*) AC_MSG_ERROR("preprocessor flag $i found in LDFLAGS instead of in CPPFLAGS");;
    esac
 done
@@ -87,7 +87,7 @@ AC_SUBST(ARCH,$build_cpu)
 AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
 
 AC_SUBST(DEBIANARCH,"")
-case "$ARCH" in
+case $ARCH in
   x86_64) DEBIANARCH=amd64 ;;
   *) DEBIANARCH=$ARCH ;;
 esac
@@ -110,7 +110,7 @@ then AC_F77_DUMMY_MAIN()
      AC_F77_WRAPPERS()
      AC_F77_LIBRARY_LDFLAGS()
      for i in $FLIBS
-     do case "$i" in
+     do case $i in
 	     -L*) FLIBS_FLAGS="$FLIBS_FLAGS $i" ;;
 	     -lgcc_s|-lm) FLIBS_DYNAMIC="$FLIBS_DYNAMIC $i" ;;
 	     *) FLIBS_STATIC="$FLIBS_STATIC $i" ;;
@@ -138,10 +138,70 @@ if   (  set -x
 	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-main.o unwindtest-main.cpp &&
 	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-monomials.o unwindtest-monomials.cpp &&
 	$CC $LDFLAGS unwindtest-main.o unwindtest-monomials.o $LIBS -lstdc++ -o unwindtest-main
-     ) >unwindtest-log 2>&1
+     ) >&AS_MESSAGE_LOG_FD 2>&1
 then AC_MSG_RESULT(yes); rm -f unwindtest-*
-else AC_MSG_RESULT(no);  AC_MSG_ERROR([failure: linking C++ program with $CC, see file unwindtest-log.])
+else AC_MSG_RESULT(no);  AC_MSG_ERROR([failure: linking C++ program with $CC, see file config.log])
 fi
+
+AC_MSG_CHECKING(order of construction implemented by the linker)
+    cat >conf_main.cc <<EOF
+    #include <stdio.h>
+    extern void o1(), a2(), o3(), a4();
+    int main() { 
+      o1();
+      a2();
+      o3();
+      a4();
+      putchar('\n');
+      return 0;
+    }
+EOF
+    cat >conf_test1.cc <<EOF
+    #include <stdio.h>
+    static struct s1 { s1() { fputs("o1",stdout); } } x;
+    void o1(){}
+EOF
+    cat >conf_test2.cc <<EOF
+    #include <stdio.h>
+    static struct s2 { s2() { fputs("a2",stdout); } } x;
+    void a2(){}
+EOF
+    cat >conf_test3.cc <<EOF
+    #include <stdio.h>
+    static struct s3 { s3() { fputs("o3",stdout); } } x;
+    void o3(){}
+EOF
+    cat >conf_test4.cc <<EOF
+    #include <stdio.h>
+    static struct s4 { s4() { fputs("a4",stdout); } } x;
+    void a4(){}
+EOF
+    AC_SUBST(CONSTRUCTOR_ORDER)
+    AC_SUBST(CONSTRUCTOR_ORDER_OBJ)
+    AC_SUBST(CONSTRUCTOR_ORDER_LIB)
+    if (set -xe
+	$CXX -c conf_test1.cc -o conf_testo1.o
+	$CXX -c conf_test2.cc -o conf_testa2.o
+	ar ru libconf_testa2.a conf_testa2.o
+	$CXX -c conf_test3.cc -o conf_testo3.o
+	$CXX -c conf_test4.cc -o conf_testa4.o
+	ar ru libconf_testa4.a conf_testa4.o
+	$CXX conf_main.cc -L. conf_testo1.o -lconf_testa2 conf_testo3.o -lconf_testa4 -o conf_main
+	./conf_main
+	) 2>&AS_MESSAGE_LOG_FD 1>&AS_MESSAGE_LOG_FD
+    then CONSTRUCTOR_ORDER=`./conf_main`
+	 case $CONSTRUCTOR_ORDER in
+	     *o1*o3*) CONSTRUCTOR_ORDER_OBJ=LR ;;
+	     *o3*o1*) CONSTRUCTOR_ORDER_OBJ=RL ;;
+	 esac
+	 case $CONSTRUCTOR_ORDER in
+	     *a2*a4*) CONSTRUCTOR_ORDER_LIB=LR ;;
+	     *a4*a2*) CONSTRUCTOR_ORDER_LIB=RL ;;
+	 esac
+	 rm -f libconf_test*.a conf_test*.cc conf_test*.o conf_main*.cc conf_main
+	 AC_MSG_RESULT([link order o1a2o3a4, construction order $CONSTRUCTOR_ORDER, obj order $CONSTRUCTOR_ORDER_OBJ, lib order $CONSTRUCTOR_ORDER_LIB])
+    else AC_MSG_ERROR([test failed, see config.log])
+    fi
 
 AC_HEADER_TIME() dnl # time.h sys/time.h
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h sys/wait.h sys/resource.h io.h linux/personality.h)
@@ -230,7 +290,7 @@ AC_DEFINE_UNQUOTED(PACKAGES,"$PACKAGES",the list packages included with the rele
 AC_DEFINE_UNQUOTED(buildsystemtype,"$build",the type of system on which the package was built)
 AC_DEFINE_UNQUOTED(hostsystemtype,"$host",the type of system on which the package runs)
 
-case "$host" in
+case $host in
    i486-*|i586-*|i686-*)
 	newhost=`echo $host | sed s/i.86-/i386-/`
 	AC_MSG_NOTICE([warning: building for host $host might be compatible enough, consider using option "--build=$newhost"]) ;;
@@ -260,12 +320,12 @@ AC_ARG_WITH(developer, AS_HELP_STRING(--with-developer=...,specify the name of t
 AC_SUBST(DUMPDATA,"")
 AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA=$enableval)
 if ! test "$DUMPDATA"
-then case "$OS" in
+then case $OS in
 	 Linux|SunOS) DUMPDATA=yes;;
 	 *) DUMPDATA=no;;
      esac
      AC_MSG_NOTICE([default dumpdata option for $OS operating system used, value: $DUMPDATA])
-else case "$DUMPDATA" in
+else case $DUMPDATA in
          yes|no) ;;
 	 *) AC_MSG_ERROR([dumpdata option: invalid value: $DUMPDATA])
      esac
@@ -273,7 +333,7 @@ fi
 test "$DUMPDATA" = no;   val=$?; AC_DEFINE_UNQUOTED(DUMPDATA,  $val,whether to use dumpdata)
 
 AC_SUBST(TAR_COMPRESS_OPTION,"")
-case "$COMPRESS" in
+case $COMPRESS in
    gz) TAR_COMPRESS_OPTION=--gzip ;;
   bz2) TAR_COMPRESS_OPTION=--bzip ;;
     *) AC_MSG_ERROR(unrecognized option for enable-compress) ;;
@@ -312,7 +372,7 @@ AC_DEFINE_UNQUOTED(M2SUFFIX,"$M2SUFFIX",[suffix to append to executable name M2]
 WITH_NEWLINE_CR=0
 WITH_NEWLINE_CRLF=0
 AC_ARG_WITH(newline, AS_HELP_STRING([--with-newline=...], [crlf, cr, or lf (the default)]),
-    [ case "$withval" in
+    [ case $withval in
 	  crlf) WITH_NEWLINE_CRLF=1 WITH_NEWLINE_CR=0 ;;
 	  cr)   WITH_NEWLINE_CR=1 WITH_NEWLINE_CRLF=0 ;;
 	  lf)   WITH_NEWLINE_CR=0 WITH_NEWLINE_CRLF=0 ;;
@@ -342,7 +402,7 @@ done
 LIBLIST=" $LIBLIST "
 AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code),
     [for i in $enableval
-    do case "$LIBLIST" in
+    do case $LIBLIST in
 	    *" $i "*) eval BUILD_$i=yes ;;
 	    *) AC_MSG_ERROR(unrecognized library name: $i) ;;
        esac
@@ -609,7 +669,7 @@ test "$prefix" || prefix=/usr/local
 test "$exec_prefix" = NONE && exec_prefix='${prefix}'
 for i in bindir datadir datarootdir docdir dvidir htmldir includedir infodir libdir libexecdir localedir localstatedir mandir pdfdir psdir sbindir sharedstatedir sysconfdir
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
-   case "$v" in
+   case $v in
      "$prefix" | "$prefix"/) eval ${i}tail="$prefix" ;;
      "$prefix"/*) eval ${i}tail=`echo $v | sed "s,^$prefix/,,"` ;; # let's just hope $prefix contains no comma
      *) AC_MSG_ERROR(expected "$i" value "$w" to start with "prefix" value "$prefix") ;;

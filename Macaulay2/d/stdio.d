@@ -88,7 +88,25 @@ export stdIO  := file(nextHash(),  "stdio",  0,
      true,  STDIN ,0!=isatty(0), newbuffer(), 0,0,false,false,noprompt,noprompt,false,true,false,0,
      true,  STDOUT,0!=isatty(1), newbuffer(), 0,0,false,dummyNetList,0,-1,false);
 
-texmacsprompt():string := "\5";
+export tostring(i:int):string := (
+     if i==0 then return "0";
+     s := newvarstring(25);
+     sign := i<0;
+     if sign then i=-i;
+     while i>0 do (
+	  s << "0123456789".(i%10);
+	  i = i/10;
+	  );
+     if sign then s << '-';
+     toreversestring(s));
+
+export interpreterDepth := 0;
+export lineNumber := 0;
+texmacsprompt():string := (
+     s := "";
+     for i from 1 to interpreterDepth do s = s + "i";
+     "\2prompt#" + s + tostring(lineNumber) + " : \5\5"
+     );
 texmacsreward():string := "\2verbatim:";
 
 init():void := (
@@ -599,17 +617,6 @@ export (o:file) << (x:ushort) : file := o << int(x);
 export (o:file) << (x:uchar) : file := o << int(x);
 export (o:file) << (b:bool) : file := (
      o << if b then "true" else "false");
-export tostring(i:int):string := (
-     if i==0 then return "0";
-     s := newvarstring(25);
-     sign := i<0;
-     if sign then i=-i;
-     while i>0 do (
-	  s << "0123456789".(i%10);
-	  i = i/10;
-	  );
-     if sign then s << '-';
-     toreversestring(s));
 digits(o:varstring,x:double,a:int,b:int):void := (
      x = x + 0.5 * pow(10.,double(1-a-b));
      if x >= 10. then (x = x/10.; a = a+1; b = if b==0 then 0 else b-1);
