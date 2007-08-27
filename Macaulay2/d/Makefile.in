@@ -281,10 +281,10 @@ LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
 
 clean::; rm -f ../bin/M2@EXE@
 # we make tmp_init.o depend on everything, because compiling it produces our timestamp
-tmp_init.o : M2inits1.o $(M2_OBJECTS) M2inits2.o $(LIBRARYDEPS) $(EFILES)
+tmp_init.o : factory_init3.o M2inits1.o $(M2_OBJECTS) M2inits2.o $(LIBRARYDEPS) $(EFILES)
 ../bin/M2@EXE@ : tmp_init.o
 	time @CC@ $(M2_LDFLAGS) \
-		M2inits1.o $(M2_OBJECTS) tmp_init.o $(EFILES) M2inits2.o \
+		factory_init3.o M2inits1.o $(M2_OBJECTS) tmp_init.o $(EFILES) M2inits2.o \
 		$(LIBRARYOPTIONS) -lm -o "$@".tmp
 ifeq "$(STRIP)" "yes"
 ifneq "@STRIPCMD@" ""

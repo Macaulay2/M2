@@ -1,14 +1,22 @@
 #include "M2inits.h"
+#include <stdio.h>
+#include <stdlib.h>y
 
 void factory_init2(){}
 
 static void f() __attribute__ ((constructor));
-static void f() { enterFactory(); }
+static void f() { 
+  if (!factory_init1_run) {
+    fprintf(stderr, "internal error: factory_init1 not initialized before factory_init2\n");
+    exit(1);
+  }
+  enterM2();
+}
 
 static void g() __attribute__ ((destructor));
 static void g() { enterFactory(); }
 
 static struct C {
-      C () { enterFactory(); }
+      C () { enterM2(); }
      ~C () { enterFactory(); }
 } x;
