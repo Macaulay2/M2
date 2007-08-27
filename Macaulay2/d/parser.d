@@ -200,7 +200,7 @@ export parse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      if token == errorToken then return errorTree;
      ret := token.word.parse.funs.unary(token,file,prec,obeylines);
      if ret == errorTree then (
-	  if isatty(file) then flush(file) else skip(file,prec));
+	  if isatty(file) || file.posFile.file.fulllines then flush(file) else skip(file,prec));
      ret
      );
 export nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (

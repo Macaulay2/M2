@@ -44,6 +44,7 @@ if firstTime then (
      loadedFiles = new MutableHashTable;
      notify = false;
      nobanner = false;
+     texmacsmode = false;
 
      markLoaded = (fullfilename,origfilename,notify) -> ( 
 	  fullfilename = minimizeFilename fullfilename;
@@ -398,9 +399,11 @@ action := hashTable {
 	  << TeXmacsBegin << "verbatim:" << " Macaulay 2 starting up " << endl << TeXmacsEnd << flush;
 	  ),
      "--texmacs" => arg -> if phase == 3 then (
+	  texmacsmode = true;
 	  topLevelMode = TeXmacs;
+	  -- addEndFunction(() -> if texmacsmode then << TeXmacsEnd << flush);
 	  singleLineInput = true;
-	  clearEcho stdio;
+	  << TeXmacsEnd 				    -- just in case the texmacs user type "restart" and there was a TeXmacsBegin in effect
 	  << TeXmacsBegin << "verbatim:" << " Macaulay 2 starting up " << endl << flush;
 	  ),
      "--version" => arg -> ( << version#"VERSION" << newline; exit 0; )

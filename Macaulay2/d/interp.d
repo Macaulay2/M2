@@ -97,7 +97,6 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	  if parsed == errorTree then (
 	       if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 	       if stopIfError || returnIfError then return buildErrorPacket("--backtrace: parse error--");
-	       flush(file);				    -- in texmacs mode this ought to flush everything read before
 	       )
 	  else (
 	       s := gettoken(file,true);  -- get the token that terminated the parsing of the expression
