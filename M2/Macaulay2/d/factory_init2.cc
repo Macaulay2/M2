@@ -1,8 +1,10 @@
 #include "M2inits.h"
 #include <stdio.h>
-#include <stdlib.h>y
+#include <stdlib.h>
 
 void factory_init2(){}
+
+int factory_init2_run = 0;
 
 static void f() __attribute__ ((constructor));
 static void f() { 
@@ -11,6 +13,7 @@ static void f() {
     exit(1);
   }
   enterM2();
+  factory_init2_run = 1;
 }
 
 static void g() __attribute__ ((destructor));

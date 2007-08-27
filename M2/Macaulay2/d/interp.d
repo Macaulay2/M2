@@ -165,7 +165,6 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 		    then flush(file)
 		    else return buildErrorPacket("error while loading file")))));
 
-interpreterDepth := 0;
 interpreterDepthS := setupvar("interpreterDepth",toExpr(0));
 incrementInterpreterDepth():void := (
      interpreterDepth = interpreterDepth + 1;
