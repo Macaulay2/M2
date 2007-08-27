@@ -45,6 +45,8 @@ if firstTime then (
      notify = false;
      nobanner = false;
      texmacsmode = false;
+     restarting = false;
+     restarted = false;
 
      markLoaded = (fullfilename,origfilename,notify) -> ( 
 	  fullfilename = minimizeFilename fullfilename;
@@ -95,6 +97,9 @@ if firstTime then (
      File << Manipulator := File => (o,m) -> m#0 o;
      NetFile << Manipulator := File => (o,m) -> m#0 o;
      Nothing << Manipulator := (null,m) -> null;
+
+     TeXmacsBegin = ascii 2;
+     TeXmacsEnd   = ascii 5;
 
      close = new Manipulator from close;
      closeIn = new Manipulator from closeIn;
@@ -301,13 +306,13 @@ usage := arg -> (
      << "    --no-personality   don't set the personality and re-exec M2 (linux only)" << newline
      << "    --prefix DIR       set prefixDirectory" << newline
      << "    --print-width n    set printWidth=n (the default is the window width)" << newline
+     << "    --restarted        used internally to indicate this is a restart" << newline
      << "    --script           as first argument, interpret second argument as name of a script" << newline
      << "                       implies --stop, --no-debug, --silent and -q" << newline
      << "                       see scriptCommandLine" << newline
      << "    --silent           no startup banner" << newline
      << "    --stop             exit on error" << newline
      << "    --texmacs          TeXmacs session mode" << newline
-     << "    --texmacs-old      TeXmacs session mode, the old way" << newline
      << "    --version          print version number and exit" << newline
      << "    -q                 don't load user's init.m2 file or use packages in home directory" << newline
      << "    -E '...'           evaluate expression '...' before initialization" << newline
@@ -394,17 +399,22 @@ action := hashTable {
      "--script" => arg -> error "--script option should be first argument, of two",
      "--silent" => arg -> nobanner = true,
      "--stop" => arg -> (if phase == 1 then stopIfError = true; debuggingMode = false;), -- see also M2lib.c and tokens.d
-     "--texmacs-old" => arg -> if phase == 3 then (
-	  interpreter = topLevelTeXmacs;
-	  << TeXmacsBegin << "verbatim:" << " Macaulay 2 starting up " << endl << TeXmacsEnd << flush;
-	  ),
-     "--texmacs" => arg -> if phase == 3 then (
-	  texmacsmode = true;
-	  topLevelMode = TeXmacs;
-	  -- addEndFunction(() -> if texmacsmode then << TeXmacsEnd << flush);
-	  singleLineInput = true;
-	  << TeXmacsEnd 				    -- just in case the texmacs user type "restart" and there was a TeXmacsBegin in effect
-	  << TeXmacsBegin << "verbatim:" << " Macaulay 2 starting up " << endl << flush;
+     "--restarted" => arg -> restarted = true,
+     "--texmacs" => arg -> (
+	  if phase == 1 then (
+	       if not restarted then << TeXmacsBegin << "verbatim:";
+	       )
+	  else if phase == 3 then (
+	       texmacsmode = true;
+	       topLevelMode = TeXmacs;
+	       addEndFunction(() -> if texmacsmode then (
+			 if restarting 
+			 then stderr << "Macaulay 2 restarting..." << endl << endl << flush
+			 else (
+			      stderr << "Macaulay 2 exiting" << flush;
+			      << TeXmacsEnd << endl << flush)));
+	       singleLineInput = true;
+	       )
 	  ),
      "--version" => arg -> ( << version#"VERSION" << newline; exit 0; )
      };
