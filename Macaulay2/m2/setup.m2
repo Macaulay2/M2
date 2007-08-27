@@ -58,7 +58,7 @@ rotateOutputLines := x -> (
      if x =!= null then global oo <- x;
      )
 
-Thing#(Standard,AfterEval) = x -> (
+Thing#AfterEval = x -> (
      if x =!= null then (
      	  s := getGlobalSymbol(OutputDictionary,concatenate(interpreterDepth:"o",toString lineNumber));
      	  s <- x;
@@ -111,12 +111,7 @@ needs = s -> if not filesLoaded#?s then load s
 
 lastLN := 0
 lastWI := 0
-promptWidth = () -> (
-     if lineNumber === lastLN then lastWI
-     else (
-	  lastLN = lineNumber;
-	  lastWI = max \\ width \ separate ZZ.InputPrompt lineNumber))
-
+promptWidth = () -> 0					    -- this is silly !
      
 load "loads.m2"
 

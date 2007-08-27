@@ -48,11 +48,11 @@ Print := makeProtectedSymbolClosure("Print");
 NoPrint := makeProtectedSymbolClosure("NoPrint");
 AfterPrint := makeProtectedSymbolClosure("AfterPrint");
 AfterNoPrint := makeProtectedSymbolClosure("AfterNoPrint");
-runmethod(methodname:SymbolClosure,g:Expr,f:Code):Expr := (
+runmethod(methodname:SymbolClosure,g:Expr):Expr := (
      method := lookup(Class(g),methodname);
      if method == nullE then g else applyEE(method,g)
      );
-runmethod(methodname:Expr,g:Expr,f:Code):Expr := (
+runmethod(methodname:Expr,g:Expr):Expr := (
      method := lookup(Class(g),methodname);
      if method == nullE then g else applyEE(method,g)
      );
@@ -69,7 +69,6 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
 readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
      lastvalue := nullE;
      mode := topLevelMode;
-     modeAfterEval := Expr(Sequence(mode,AfterEval));
      modeBeforePrint := Expr(Sequence(mode,BeforePrint));
      modeNoPrint := Expr(Sequence(mode,NoPrint));
      modePrint := Expr(Sequence(mode,Print));
@@ -78,7 +77,11 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
      while true do (
      	  if printout then setLineNumber(lineNumber + 1);
 	  clearAllFlags();
-	  while !singleLineInput && peektoken(file,true).word == NewlineW do (
+	  while (
+	       t := peektoken(file,true).word;
+	       t == NewlineW || t == wordEOC
+	       )
+	  do (
 	       -- previousLineNumber = -1; -- so there will be a new prompt after a blank line
 	       -- but now we don't like so many extra prompts
 	       interruptedFlag = false;
@@ -94,6 +97,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	  if parsed == errorTree then (
 	       if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 	       if stopIfError || returnIfError then return buildErrorPacket("--backtrace: parse error--");
+	       flush(file);				    -- in texmacs mode this ought to flush everything read before
 	       )
 	  else (
 	       s := gettoken(file,true);  -- get the token that terminated the parsing of the expression
@@ -128,7 +132,6 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			      if printout then (
 				   if mode != topLevelMode then (
 					mode = topLevelMode;
-					modeAfterEval = Expr(Sequence(mode,AfterEval));
 					modeBeforePrint = Expr(Sequence(mode,BeforePrint));
 					modeNoPrint = Expr(Sequence(mode,NoPrint));
 					modePrint = Expr(Sequence(mode,Print));
@@ -136,7 +139,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					modeAfterPrint = Expr(Sequence(mode,AfterPrint));
 					);
 				   -- result of AfterEval replaces lastvalue unless error, in which case 'null' replaces it:
-				   g := runmethod(modeAfterEval,lastvalue,f);
+				   g := runmethod(AfterEval,lastvalue);
 				   when g is err:Error
 				   do (
 					g = update(err,"after eval",f); 
@@ -146,15 +149,15 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 				   else lastvalue = g;
 				   -- result of BeforePrint is printed instead unless error:
 				   printvalue := nullE;
-				   g = runmethod(modeBeforePrint,lastvalue,f);
+				   g = runmethod(modeBeforePrint,lastvalue);
 				   when g is err:Error
 				   do ( g = update(err,"before print",f); if stopIfError || returnIfError then return g; )
 				   else printvalue = g;
 				   -- result of Print is ignored:
-				   g = runmethod(if s.word == SemicolonW then modeNoPrint else modePrint,printvalue,f);
+				   g = runmethod(if s.word == SemicolonW then modeNoPrint else modePrint,printvalue);
 				   when g is err:Error do ( g = update(err,"at print",f); if stopIfError || returnIfError then return g; ) else nothing;
 				   -- result of AfterPrint is ignored:
-				   g = runmethod(if s.word == SemicolonW then modeAfterNoPrint else modeAfterPrint,lastvalue,f);
+				   g = runmethod(if s.word == SemicolonW then modeAfterNoPrint else modeAfterPrint,lastvalue);
 				   when g is err:Error do ( g = update(err,"after print",f); if stopIfError || returnIfError then return g; ) else nothing;
 				   )
 			      )
@@ -211,7 +214,12 @@ InputPrompt := makeProtectedSymbolClosure("InputPrompt");
 InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt");
 
 topLevelPrompt():string := (
-     method := lookup(integerClass,if lineNumber == previousLineNumber then InputContinuationPrompt else (previousLineNumber = lineNumber; InputPrompt));
+     method := lookup(
+	  integerClass,
+	  Expr(
+	       Sequence(
+	       	    topLevelMode,
+	       	    if lineNumber == previousLineNumber then InputContinuationPrompt else (previousLineNumber = lineNumber; InputPrompt))));
      if method == nullE then ""
      else when applyEE(method,toExpr(lineNumber)) is s:string do s
      is n:Integer do if isInt(n) then blanks(toInt(n)) else ""
@@ -222,7 +230,8 @@ loadprintstdin(dc:DictionaryClosure,stopIfBreakReturnContinue:bool,returnIfError
      when openTokenFile("-")
      is e:errmsg do buildErrorPacket(e.message)
      is file:TokenFile do (
-	  setprompt(file,topLevelPrompt);
+	  if !file.posFile.file.fulllines		    --texmacs !
+	  then setprompt(file,topLevelPrompt);
 	  r := readeval3(file,true,dc,false,stopIfBreakReturnContinue,returnIfError);
 	  file.posFile.file.eof = false; -- erase eof indication so we can try again (e.g., recursive calls to topLevel)
 	  r));
@@ -232,7 +241,8 @@ loadprint(filename:string,dc:DictionaryClosure,returnIfError:bool):Expr := (
      is errmsg do False
      is file:TokenFile do (
 	  if file.posFile.file != stdin then file.posFile.file.echo = true;
-	  setprompt(file,topLevelPrompt);
+	  if !file.posFile.file.fulllines		    --texmacs !
+	  then setprompt(file,topLevelPrompt);
 	  r := readeval3(file,true,dc,false,false,returnIfError);
 	  t := (
 	       if filename === "-"			 -- whether it's stdin
@@ -310,6 +320,8 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	       true,			  -- eof
 	       false,	  		  -- promptq
 	       noprompt,		  -- prompt
+	       noprompt,		  -- reward
+	       false,			  -- fulllines
      	       true,	       	    	  -- bol
 	       false,			  -- echo
 	       0,			  -- echoindex

@@ -264,7 +264,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
      	  else if iserror(ch) then return errorToken
 	  else if isnewline(ch) then (
 	       getc(file);
-	       return Token(if singleLineInput then wordEOC else NewlineW,file.pos.filename, line, column, file.pos.loadDepth,globalDictionary,dummySymbol,sawNewline))
+	       return Token(if singleLineInput && file.file == stdIO then wordEOC else NewlineW,file.pos.filename, line, column, file.pos.loadDepth,globalDictionary,dummySymbol,sawNewline))
 	  else if isalpha(ch) && ch != int('\'') then (
 	       tokenbuf << char(getc(file));
 	       while isalnum(peek(file)) do tokenbuf << char(getc(file));

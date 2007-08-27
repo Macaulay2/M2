@@ -119,7 +119,7 @@ document {
 document {
      Key => AfterEval,
      Headline => "top level method applied after evaluation",
-     Usage => "X#(Standard,AfterEval) = f",
+     Usage => "X#AfterEval = f",
      Inputs => {
 	  "f" => { "a function to be applied after evaluating a top-level evaluation result ", TT "r", " of type ", TT "X", "."},
 	  },

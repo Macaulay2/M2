@@ -403,6 +403,7 @@ export {
 	symbol TR,
 	symbol TT,
 	symbol Table,
+        symbol TeXmacs,
         symbol TeXmacsEvaluate,
 	symbol Tally,
 	symbol Thing,
