@@ -420,7 +420,6 @@ document {
      option name are given, then the value accompanying the right-most one is the value provided to the function.",
      PARA{},
      "Use ", TO2{ (options,Function), "options" }, " to discover the optional arguments accepted by a function.",
-     SUBSECTION "Examples",
      EXAMPLE {
      	  "R = ZZ/101[x,y,z,w];",
      	  "gb ideal(x*y-z^2,y^2-w^2)",

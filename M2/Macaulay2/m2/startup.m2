@@ -416,7 +416,6 @@ action := hashTable {
 			 else (
 			      stderr << "Macaulay 2 exiting" << flush;
 			      << TeXmacsEnd << endl << flush)));
-	       singleLineInput = true;
 	       )
 	  ),
      "--version" => arg -> ( << version#"VERSION" << newline; exit 0; )

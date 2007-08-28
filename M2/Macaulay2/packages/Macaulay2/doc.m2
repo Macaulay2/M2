@@ -29,7 +29,6 @@ document {
      "The length of a graded module is the difference between the largest and
      smallest indices of occupied spots.  Chain complexes are graded modules,
      so this function applies to them, too.",
-     SUBSECTION "Examples",
      EXAMPLE {
 	  "R = QQ[x..z];",
 	  "C = res coker vars R",
@@ -82,7 +81,6 @@ document {
 	  { "at top level, whenever it is time to print an output value of type ", TT "X", ", the function ", TT "f", " will be called" }
 	  },
      "The function ", TT "f", " is responsible for printing the output prompt and for applying the ", TO "BeforePrint", " and ", TO "AfterPrint", " methods, if desired.",
-     SUBSECTION "Examples",
      EXAMPLE "code Thing#(Standard,Print)"
      }
 
@@ -96,11 +94,9 @@ document {
 	  },
      Consequences => {
 	  {
-	       "at top level, whenever it is time, as indicated by a semicolon at the end of an input line,
-	       to suppress printing of an output value of type ", TT "X", ", the function ", TT "f", " will be called" }
-	  },
-     SUBSECTION "Examples",
-     EXAMPLE "code Thing#(Standard,NoPrint)"
+	       "At top level, whenever it is time, as indicated by a semicolon at the end of an input line,
+	       to suppress printing of an output value of type ", TT "X", ", the function ", TT "f", " will be called." }
+	  }
      }
 
 

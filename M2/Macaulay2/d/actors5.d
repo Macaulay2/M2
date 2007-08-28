@@ -1765,7 +1765,6 @@ StandardS := makeProtectedSymbolClosure("Standard");
 export StandardE := Expr(StandardS);
 export topLevelMode := Expr(StandardS);
 topLevelModeS := dummySymbol;
-singleLineInputS := dummySymbol;
 
 syms := SymbolSequence(
      (  backtraceS = setupvar("backtrace",toExpr(backtrace));  backtraceS  ),
@@ -1785,8 +1784,7 @@ syms := SymbolSequence(
      (  stopIfErrorS = setupvar("stopIfError",toExpr(stopIfError));  stopIfErrorS  ),
      (  printWidthS = setupvar("printWidth",toExpr(printWidth));  printWidthS  ),
      (  notifyS = setupvar("notify",toExpr(notify));  notifyS  ),
-     (  topLevelModeS = setupvar("topLevelMode",topLevelMode); topLevelModeS  ),
-     (  singleLineInputS = setupvar("singleLineInput",toExpr(singleLineInput)); singleLineInputS  )
+     (  topLevelModeS = setupvar("topLevelMode",topLevelMode); topLevelModeS  )
      );
 
 export setDebuggingMode(b:bool):void := (
@@ -1828,7 +1826,6 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	       else if sym === stopIfErrorS then (stopIfError = n; e)
 	       else if sym === backtraceS then (backtrace = n; e)
 	       else if sym === notifyS then (notify = n; e)
-	       else if sym === singleLineInputS then (singleLineInput = n; e)
 	       else buildErrorPacket(msg))
 	  is s:string do (
 	       if sym === printingSeparatorS then (printingSeparator = s; e)
