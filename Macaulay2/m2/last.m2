@@ -9,6 +9,7 @@ addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))
 addEndFunction(() -> path = {})
 
 wr := (sep,x) -> wrap(printWidth - promptWidth(), sep, net x)
+VisibleList.Wrap = 
 Tally.Wrap = RawMatrix.Wrap = Matrix.Wrap = Ideal.Wrap = RingElement.Wrap = VisibleList.Wrap = Sequence.Wrap = x -> wr("-",x)
 String.Wrap = x -> ( x = net x; if height x + depth x <= 3 then wr("",x) else x )
 Net.Wrap = x -> if height x + depth x <= 3 then wr("-",x) else x
