@@ -12,8 +12,8 @@ use stdiop;
 use varstrin;
 use err;
 
-export wordEOF := Word("{*end of file*}",TCnone,0,parseEOF);
-export wordEOC := Word("{*dummy word: end of cell*}",TCnone,0,parseEOC); -- filled in later
+export wordEOF := dummyWord; -- replaced later
+export wordEOC := dummyWord; -- replaced later
 export (o:file) << (w:Word) : file := o << w.name;
 export WordList := null or WordListCell;
 export WordListCell := { word:Word, next:WordList };
@@ -217,8 +217,8 @@ ismore(file:PosFile):bool := ( c := peek(file); c != EOF && c != ERROR );
 skipwhite(file:PosFile):int := (
      while true do (
 	  if lookingatcomment(file)
-	  then (					    -- comment  -- ... end-of-line
-     	       until isnewline(peek(file)) do if ismore(file) then getc(file) else return -1
+	  then (					    -- comment  -- ... end-of-line or end-of-file
+     	       until isnewline(peek(file)) || !ismore(file) do getc(file)
 	       )
 	  else if peek(file,0) == int('{') && peek(file,1) == int('*')
 	  then (					    -- block comment {* ... *}
@@ -250,7 +250,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
      while true do (
 	  rc := skipwhite(file);
 	  if rc != 0  then (
-	       printErrorMessage(file.pos,if rc == -2 then "unterminated block comment {-- ... --}" else "unterminated line (no newline)");
+	       printErrorMessage(file.pos,if rc == -2 then "unterminated block comment {* ... *}" else "unterminated line (no newline)");
 	       empty(tokenbuf);
 	       while true do (ch2 := getc(file); if ch2 == EOF || ch2 == ERROR || ch2 == int('\n') then break;);
      	       return errorToken;
@@ -262,7 +262,9 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
      	  else if iserror(ch) then return errorToken
 	  else if isnewline(ch) then (
 	       getc(file);
-	       return Token(NewlineW,file.pos.filename, line, column, file.pos.loadDepth,globalDictionary,dummySymbol,sawNewline))
+	       return Token(
+		    if file.file.fulllines then wordEOC else NewlineW,
+		    file.pos.filename, line, column, file.pos.loadDepth,globalDictionary,dummySymbol,sawNewline))
 	  else if isalpha(ch) && ch != int('\'') then (
 	       tokenbuf << char(getc(file));
 	       while isalnum(peek(file)) do tokenbuf << char(getc(file));

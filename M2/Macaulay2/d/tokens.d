@@ -491,9 +491,7 @@ export dummyToken   := Token(
 export position(t:Token):Position := Position(t.filename,t.line,t.column,t.loadDepth);
 export printErrorMessage(t:Token,message:string):void := printErrorMessage(position(t),message);
 
-export parseEOF     := newParseinfo();
-export parseEOC     := newParseinfo();
-export parseWORD    := newParseinfo();
+export parseWORD    := newParseinfo();			    -- parsing functions filled in later
 
 -- debugging
 
