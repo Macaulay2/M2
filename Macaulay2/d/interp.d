@@ -79,31 +79,33 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	  clearAllFlags();
 	  while (
 	       t := peektoken(file,true).word;
+	       interruptedFlag = false;
+	       interruptPending = false;
+     	       determineExceptionFlag();
+	       if t == wordEOF then return if returnLastvalue then lastvalue else nullE;
 	       t == NewlineW || t == wordEOC
 	       )
 	  do (
 	       -- previousLineNumber = -1; -- so there will be a new prompt after a blank line
 	       -- but now we don't like so many extra prompts
-	       interruptedFlag = false;
-	       interruptPending = false;
-     	       determineExceptionFlag();
 	       gettoken(file,true);
 	       );
-	  interruptedFlag = false;
-	  interruptPending = false;
-     	  determineExceptionFlag();
 	  parsed := parse(file,SemicolonW.parse.precedence,true);
-	  if equal(parsed,wordEOF) then return if returnLastvalue then lastvalue else nullE;
 	  if parsed == errorTree then (
 	       if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 	       if stopIfError || returnIfError then return buildErrorPacket("--backtrace: parse error--");
 	       )
 	  else (
-	       s := gettoken(file,true);  -- get the token that terminated the parsing of the expression
-	       if !(s.word == SemicolonW || s.word == NewlineW || s.word == wordEOC)
+	       -- get the token that terminated the parsing of the expression
+	       -- it has parsing precedence at most that of the semicolon
+	       -- so it is end of file, end of cell, newline, semicolon, or one of the right parentheses : ) ] } 
+	       -- that explains the next error message
+	       s := gettoken(file,true);
+	       if !(s.word == SemicolonW || s.word == NewlineW || s.word == wordEOC || s.word == wordEOF)
 	       then (
-		    printErrorMessage(s,"syntax error: expected semicolon, newline, or end of cell");
-		    if stopIfError || returnIfError then return Expr(Error(position(s),"syntax error",nullE,false,dummyFrame));
+		    msg := "syntax error: unmatched " + s.word.name;
+		    printErrorMessage(s,msg);
+		    if stopIfError || returnIfError then return Expr(Error(position(s),msg,nullE,false,dummyFrame));
 		    )
 	       else (
 		    if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols

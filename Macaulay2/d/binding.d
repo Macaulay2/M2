@@ -126,7 +126,7 @@ prec := 0;
 bump():void := prec = prec + 1;
 
 -- helper functions for setting up words with various methods for parsing them
-foreach p in array(parseinfo)( parseEOF, parseEOC, parseWORD ) do p.funs = parsefuns(defaultunary, defaultbinary);
+parseWORD.funs                 = parsefuns(defaultunary, defaultbinary);
 unary(s:string)         :Word := install(s,makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary))));
 unaryword(s:string)     :Word :=           makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary)));
 biunary(s:string)       :Word := install(s,makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,postfixop))));
@@ -152,17 +152,17 @@ binaryright(s:string)   :Word := binaryright(s,binaryop);
 -- with a binding done in a particular way depending on the current dictionary.  The symbols
 -- created below are all in the global dictionary.
 
-     parseEOF.precedence = prec;
-     parseEOF.binaryStrength = prec;
-     parseEOC.precedence = prec;
-     parseEOC.binaryStrength = prec;
+     wordEOF = nleftword("{*end of file*}");
+     makeKeyword(wordEOF);
+bump();
+     wordEOC = nleftword("{*end of cell*}");
+     makeKeyword(wordEOC);
+bump();
      precRightParen := prec;
--- programming:
 bump();
      export SemicolonW := nright(";");
      export SemicolonS := makeKeyword(SemicolonW);
      NewlineW = nleftword("{*newline*}");
-     wordEOC = nleftword("{*end of cell*}");
 bump();
      export CommaW := nunaryleft(","); export commaS := makeKeyword(CommaW);
 bump();

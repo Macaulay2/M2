@@ -13,20 +13,8 @@ mtable := x -> concatenate(
 fmt := x -> concatenate lines try mathML x else mathML toString x;
 Thing#(TeXmacs,Print) = send := v -> (
      po := red concatenate("<mi>o",toString lineNumber,"</mi>");
-     << tmhtml fixn mathMode mtable {{po,red "<mo>=</mo>",fmt v},{},{po,red "<mo>:</mo>",fmt class v}})
+     << tmhtml {* fixn *} mathMode mtable {{po,red "<mo>=</mo>",fmt v},{},{po,red "<mo>:</mo>",fmt class v}})
 Nothing#(TeXmacs,Print) = identity
-String.TeXmacsEvaluate = s -> (				    -- the old way
-     lineNumber = lineNumber + 1;
-     << TeXmacsBegin << "verbatim:";
-     try (
-	  v := try value s else "evaluation failed";
-	  m := lookup(AfterEval,class v);
-	  if m =!= null then v = m v;
-	  send v)
-     else << "top level loop failed";
-     << TeXmacsEnd << flush;
-     )
-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
