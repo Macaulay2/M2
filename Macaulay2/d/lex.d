@@ -207,34 +207,36 @@ getstring(o:PosFile):(null or Word) := (
 	  );
      s := takestring(tokenbuf);
      Word(s,TCstring,0,parseWORD));
-lookingatcomment(file:PosFile):bool := (
-     c := peek(file,0);
-     c == int('-') && peek(file,1) == int('-')
-     ||
-     c == int('#') && file.pos.line == ushort(1) && file.pos.column == ushort(0) && peek(file,1) == int('!')
-     );
 ismore(file:PosFile):bool := ( c := peek(file); c != EOF && c != ERROR );
-skipwhite(file:PosFile):int := (
+skipwhite(file:PosFile):int := (			    -- return -1 for unterminated block comment
      while true do (
-	  if lookingatcomment(file)
-	  then (					    -- comment  -- ... end-of-line or end-of-file
-     	       until isnewline(peek(file)) || !ismore(file) do getc(file)
-	       )
-	  else if peek(file,0) == int('{') && peek(file,1) == int('*')
-	  then (					    -- block comment {* ... *}
-	       getc(file); getc(file);
-	       until peek(file,0) == int('*') && peek(file,1) == int('}')
-	       do if ismore(file) then getc(file) else return -2;
-	       getc(file); getc(file);
-	       )
-	  else if iswhite(peek(file))
-	  then (
+	  c := peek(file);
+	  if iswhite(c) then (
 	       getc(file);
-	       while iswhite(peek(file)) do getc(file);
 	       )
-	  else break;
-	  );
-     0);
+	  else if c == int('-') && peek(file,1) == int('-') then (
+ 	       -- comment: -- ...
+     	       getc(file); getc(file);
+     	       until peek(file) == int('\n') || !ismore(file) do getc(file)
+	       )
+	  else if c == int('#') && file.pos.line == ushort(1) && file.pos.column == ushort(0) && peek(file,1) == int('!') then (
+	       -- comment on line 1:  #! ...
+     	       getc(file); getc(file);
+     	       until peek(file) == int('\n') || !ismore(file) do getc(file)
+	       )
+	  else if c == int('{') && peek(file,1) == int('*') then (
+	       -- block comment: {* ... *}
+	       getc(file); getc(file);
+     	       fulllines := file.file.fulllines;
+	       until peek(file) == int('*') && peek(file,1) == int('}')
+	       do (
+		    if fulllines && peek(file) == int('\n') then return -1;
+		    if !ismore(file) then return -1;
+		    getc(file)
+		    );
+	       getc(file); getc(file);
+	       )
+	  else return 0));
 
 -- this errorToken means there was a parsing error or an error reading the file!
 export errorToken := Token(Word("{*error token*}",TCnone,0,newParseinfo()),
@@ -250,7 +252,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
      while true do (
 	  rc := skipwhite(file);
 	  if rc != 0  then (
-	       printErrorMessage(file.pos,if rc == -2 then "unterminated block comment {* ... *}" else "unterminated line (no newline)");
+	       printErrorMessage(file.pos,"unterminated block comment {* ... *}");
 	       empty(tokenbuf);
 	       while true do (ch2 := getc(file); if ch2 == EOF || ch2 == ERROR || ch2 == int('\n') then break;);
      	       return errorToken;
