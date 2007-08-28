@@ -58,8 +58,13 @@ data.tar.gz : prepare
 	@FAKEROOT@ tar cfz $@ $(prefixtail)
 md5sums : prepare
 	(cd $(prefixtail) && find * -type f | xargs md5sum) >$@
+# LINTFLAGS = -c
+LINTFLAGS = -Ivi
+ifneq (@LINTIAN@,)
 check-with-lintian : ../@PKG_DEB@
-	lintian -c ../@PKG_DEB@
+	lintian $(LINTFLAGS) ../@PKG_DEB@
+check : check-with-lintian
+endif
 tidy :
 	rm -rf $(prefixtail) control.tar.gz data.tar.gz md5sums
 clean ::
