@@ -1166,7 +1166,6 @@ exportMutable {
 	symbol printingSeparator,
 	symbol recursionLimit,
         symbol scriptCommandLine,
-	symbol singleLineInput,
 	symbol sourceHomeDirectory,
 	symbol stopIfError,
 	symbol topLevelMode

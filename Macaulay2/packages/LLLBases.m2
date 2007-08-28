@@ -1018,7 +1018,6 @@ PARA{},
 For some highly structured matrices, this is not necessarily
 much worse than some of the floating point versions, and can
 under certain circumstances even be better.",
-SUBSECTION "Examples",
 EXAMPLE {
 	  "m1 = map(ZZ^50, ZZ^50, (j,i) -> (i+1)^8 * (j+1)^4 + i + j + 2);",
 	  "m = syz m1;",
