@@ -53,11 +53,7 @@ export lines(s:string):array(string) := (
      i := 0;
      while true do (
 	  j := index(s,i);
-	  if j == -1 then (
-	       break;
-	       );
-	  -- let's stick to newlines only now
-	  -- i = j + if j+1 < length(s) && s.j == '\r' && s.(j+1) == '\n' then 2 else 1;
+	  if j == -1 then break;
 	  i = j + 1;
 	  nlines = nlines + 1;	    -- count the bit after the last newline even if it's empty
 	  );
@@ -71,9 +67,7 @@ export lines(s:string):array(string) := (
 		    )
 	       else (
 		    provide untabify(substr(s,i,j-i));
-		    if j+1 < length(s) && s.j == '\r' && s.(j+1) == '\n'
-		    then i = j+2
-		    else i = j+1;
+		    i = j+1;
 		    ))));
 export toNet(s:string):Net := (
      v := if length(s) > 0 then lines(s) else array(string)(s);
