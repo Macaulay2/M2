@@ -50,10 +50,7 @@ export hash(s:string):int := (
 
 export index(s:string,offset:int):int := (
      i := offset;
-     while i < length(s) do if '\n' == s.i
-     -- let's stick to newlines only now
-     -- || '\r' == s.i
-     then return i else i=i+1;
+     while i < length(s) do if '\n' == s.i then return i else i=i+1;
      -1);     
 export index(s:string,offset:int,c:char):int := (
      i := offset;

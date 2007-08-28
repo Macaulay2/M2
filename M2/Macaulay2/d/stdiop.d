@@ -134,7 +134,6 @@ export peek(o:PosFile, offset:int):int := (
      c := 0;
      while (
 	  c = peek(o.file,i);
-	  if c == int('\n') && prevchar == int('\r') then offset = offset + 1;
 	  prevchar = c;
 	  i < offset
 	  )
@@ -164,20 +163,9 @@ export getc(o:PosFile):int := (
      c := getc(o.file);
      if c == ERROR || c == EOF then return c;
      o.lastchar = c;
-     if c == int('\r') then (
+     if c == int('\n') then (
 	  o.pos.line = o.pos.line + 1;
 	  o.pos.column = ushort(0);
-	  c = int('\n');
-	  )
-     else if c == int('\n') then (
-	  if prevchar == int('\r') then (
-	       -- swallow a \n that comes after a \r
-	       return getc(o);
-	       )
-	  else (
-	       o.pos.line = o.pos.line + 1;
-	       o.pos.column = ushort(0);
-	       );
 	  )
      else if c == int('\t') then (
 	  o.pos.column = ushort(((int(o.pos.column)+8)/8)*8);

@@ -1,9 +1,9 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-getSourceLines := method(Dispatch => Thing) 
+getSourceLines = method(Dispatch => Thing) 
 getSourceLines Nothing := null -> null
 getSourceLines Sequence := x -> ((filename,start,startcol,stop,stopcol) -> if filename =!= "stdio" and filename =!= "a string" then (
-     wp := set characters " \t);";
+     wp := set characters " \t\r);";
      file := (
 	  if filename === "layout.m2"
 	  then startupString1
