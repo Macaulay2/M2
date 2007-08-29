@@ -33,9 +33,9 @@ all install :: ../../@PKG_RPM@
 try-alien : ../../@PKG_DEB@ ; @FAKEROOT@ alien --generate --scripts --to-rpm $^
 clean ::; rm -f ../../@PKG_RPM@ Macaulay2.spec
 distclean : clean; rm -f Makefile
-Makefile : Makefile.in; cd ..; ./config.status rpm/Makefile
-Macaulay2-body.spec : Macaulay2-body.spec.in; cd ..; ./config.status rpm/Macaulay2-body.spec
+Makefile : Makefile.in; cd ..; ./config.status distributions/rpm/Makefile
+Macaulay2-body.spec : Macaulay2-body.spec.in; cd ..; ./config.status distributions/rpm/Macaulay2-body.spec
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/rpm "
+# compile-command: "make -C $M2BUILDDIR/distributions/rpm "
 # End:

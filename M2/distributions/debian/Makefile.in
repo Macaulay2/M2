@@ -1,6 +1,7 @@
 # @configure_input@
 include ../../include/config.Makefile
 VPATH = @srcdir@
+TIDY = yes
 DEPENDS = yes
 finalprefix=@FINALPREFIX@
 prefixtail=$(shell echo $(finalprefix) | sed 's=^/==')
@@ -11,7 +12,7 @@ all install :: ../../@PKG_DEB@
 	@ echo "debian package file prepared: "
 	@ echo "        @PKG_DEB@"
 	@ echo "============================================================================="
-ifeq ($(TIDY),)
+ifeq ($(TIDY),yes)
 all install :: tidy
 endif
 #################################
@@ -46,49 +47,53 @@ control.tar.gz : $(CONTROLFILES) control
 	@FAKEROOT@ chown root $(CONTROLFILES) control
 	@FAKEROOT@ tar cfz $@ $^
 prepare : ../../@PKG_TZ@
-	rm -rf @package@ $(prefixtail)
-	@MKDIR_P@ $(prefixtail)
+	rm -rf @package@ tmp
+	@MKDIR_P@ tmp@FINALPREFIX@
 	tar xfp $^ @TAR_COMPRESS_OPTION@
 	for i in @package@/* ; do if [ -f "$$i" ] ; then rm "$$i" ; fi ; done
-	mv @package@/* $(prefixtail)
+	mv @package@/* tmp@FINALPREFIX@
 	rmdir @package@
-	chmod -R og-w,a+r $(prefixtail)
-	find $(prefixtail) -name .linkdir | xargs rm -f
-	find $(prefixtail) -name \*.info | while read x ; do gzip --best "$$x" ; done
-	find $(prefixtail) -name \*.1 | while read x ; do gzip --best "$$x" ; done
-	@FAKEROOT@ chown -R root $(prefixtail)
+	chmod -R og-w,a+r tmp
+	find tmp -name .linkdir | xargs rm -f
+	find tmp -name \*.info | while read x ; do gzip --best "$$x" ; done
+	find tmp -name man -type d | while read x ; find $$d -name \*.gz -prune -o -type f | while read y ; do gzip --best "$$y" ; done ; done
+	find tmp -name \*.so -o \*.so.\* -o -name \*.la | xargs chmod a-x
+	@FAKEROOT@ chown -R root tmp
 data.tar.gz : prepare
-	@FAKEROOT@ tar cfz $@ $(prefixtail)
+	(cd tmp && @FAKEROOT@ tar cfz - *) >$@
 md5sums : prepare
-	(cd $(prefixtail) && find * -type f | xargs md5sum) >$@
-check-with-lintian : ../../@PKG_DEB@
-	lintian -c ../../@PKG_DEB@
+	(cd tmp && find * -type f | xargs md5sum) >$@
+	chmod 0644 $@
+ifneq (@LINTIAN@,)
+check :
+	@LINTIAN@ -c ../../@PKG_DEB@
+endif
 tidy :
-	rm -rf $(prefixtail) control.tar.gz data.tar.gz md5sums
+	rm -rf tmp control.tar.gz data.tar.gz md5sums
 clean ::
-	rm -rf @package@ $(prefixtail) debian-binary control.tar.gz data.tar.gz md5sums
+	rm -rf @package@ tmp debian-binary control.tar.gz data.tar.gz md5sums
 	rm -rf ../../@PKG_DEB@
 distclean : clean; rm -f Makefile control
 
-Makefile : Makefile.in; cd ..; ./config.status debian/Makefile
+Makefile : Makefile.in; cd ../..; ./config.status distributions/debian/Makefile
 control.prelim : control.prelim.in
-	cd ..; ./config.status debian/control.prelim
+	cd ../..; ./config.status distributions/debian/control.prelim
 	chmod 0755 $@
 control : control.prelim prepare
-	(cat $< && echo Installed-Size: `du -s $(prefixtail) | sed 's/^\([0-9][0-9]*\).*/\1/'`) >$@
+	(cat $< && size=`du -s tmp` && size=`echo $$size | sed 's/^\([0-9][0-9]*\).*/\1/'` && echo Installed-Size: $$size) >$@
 prerm : prerm.in
-	cd ..; ./config.status debian/prerm
+	cd ../..; ./config.status distributions/debian/prerm
 	chmod 0755 $@
 preinst : preinst.in
-	cd ..; ./config.status debian/preinst
+	cd ../..; ./config.status distributions/debian/preinst
 	chmod 0755 $@
 postrm : postrm.in
-	cd ..; ./config.status debian/postrm
+	cd ../..; ./config.status distributions/debian/postrm
 	chmod 0755 $@
 postinst : postinst.in
-	cd ..; ./config.status debian/postinst
+	cd ../..; ./config.status distributions/debian/postinst
 	chmod 0755 $@
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/debian "
+# compile-command: "make -C $M2BUILDDIR/distributions/debian "
 # End:
