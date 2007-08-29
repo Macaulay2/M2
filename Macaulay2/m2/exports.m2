@@ -985,6 +985,7 @@ export {
 	symbol scanValues,
 	symbol schreyerOrder,
 	symbol searchPath,
+	symbol seeParsing,
 	symbol select,
 	symbol selectInSubring,
 	symbol separate,
