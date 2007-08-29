@@ -66,7 +66,7 @@ Thing#AfterEval = x -> (
      rotateOutputLines x;
      x)
 
-Nothing#(Standard,Print) = identity
+Nothing#{Standard,Print} = identity
 
 binaryOperators = join(fixedBinaryOperators,flexibleBinaryOperators)
 prefixOperators = join(fixedPrefixOperators,flexiblePrefixOperators)

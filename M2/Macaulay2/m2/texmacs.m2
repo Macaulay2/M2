@@ -11,10 +11,10 @@ mtable := x -> concatenate(
      apply(x, row -> ( "<mtr>", apply(row, e -> ("<mtd>",e,"</mtd>",newline)), "</mtr>", newline ) ),
      "</mtable>", newline )
 fmt := x -> concatenate lines try mathML x else mathML toString x;
-Thing#(TeXmacs,Print) = send := v -> (
+Thing#{TeXmacs,Print} = send := v -> (
      po := red concatenate("<mi>o",toString lineNumber,"</mi>");
      << tmhtml {* fixn *} mathMode mtable {{po,red "<mo>=</mo>",fmt v},{},{po,red "<mo>:</mo>",fmt class v}})
-Nothing#(TeXmacs,Print) = identity
+Nothing#{TeXmacs,Print} = identity
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

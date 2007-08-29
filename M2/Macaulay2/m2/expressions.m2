@@ -1030,18 +1030,18 @@ o := () -> concatenate(interpreterDepth:"o")
 
 symbol briefDocumentation <- identity			    -- temporary assignment
 
-Thing#(Standard,AfterPrint) = x -> (
+Thing#{Standard,AfterPrint} = x -> (
      << endl;				  -- double space
      << o() << lineNumber << " : " << class x;
      << endl;
      )
 
-Function#(Standard,AfterPrint) = x -> (
-     Thing#(Standard,AfterPrint) x;
+Function#{Standard,AfterPrint} = x -> (
+     Thing#{Standard,AfterPrint} x;
      -- briefDocumentation x; -- from now on, type "?foo" to get brief documentation on foo
      )
 
-Expression#(Standard,AfterPrint) = x -> (
+Expression#{Standard,AfterPrint} = x -> (
      << endl;				  -- double space
      << o() << lineNumber << " : " << Expression << " of class " << class x << endl;
      )
@@ -1058,9 +1058,9 @@ expression Symbol := x -> new Holder from { x }
 
 ? Function := x -> briefDocumentation x
 
-Nothing#(Standard,AfterPrint) = identity
-ZZ#(Standard,AfterPrint) = identity
-Boolean#(Standard,AfterPrint) = identity
+Nothing#{Standard,AfterPrint} = identity
+ZZ#{Standard,AfterPrint} = identity
+Boolean#{Standard,AfterPrint} = identity
 
 FilePosition = new Type of BasicList
 FilePosition.synonym = "file position"

@@ -874,7 +874,7 @@ document { Key => {(symbol (*),CoherentSheaf),
 
 document { Key => Wrap,
      Headline => "a key for methods for wrapping printed output",
-     "The default method for printing results of computations (stored in ", TT "Thing#(Standard,Print)", ") searches for a method for wrapping the output by search in the class of 
+     "The default method for printing results of computations (stored in ", TT "Thing#{Standard,Print}", ") searches for a method for wrapping the output by search in the class of 
      the result (and its ancestors) for a function stored under the key ", TT "Wrap", ".  The preinstalled wrapping methods use ", TO "wrap", ", they differ in their choice of
      separator between wrapped lines, or in whether to wrap at all.",
      EXAMPLE lines ///

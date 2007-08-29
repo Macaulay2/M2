@@ -29,7 +29,7 @@ globalAssignment AbstractVariety
 net AbstractVariety := X -> (
      if ReverseDictionary#?X then toString ReverseDictionary#X
      else "a variety")
-AbstractVariety#(Standard,AfterPrint) = X -> (
+AbstractVariety#{Standard,AfterPrint} = X -> (
      << endl;				  -- double space
      << concatenate(interpreterDepth:"o") << lineNumber << " : "
      << "an abstract variety of dimension " << dim X << endl;
@@ -44,7 +44,7 @@ globalAssignment FlagBundle
 net FlagBundle := X -> (
      if ReverseDictionary#?X then toString ReverseDictionary#X
      else "a flag bundle")
-FlagBundle#(Standard,AfterPrint) = X -> (
+FlagBundle#{Standard,AfterPrint} = X -> (
      << endl;				  -- double space
      << concatenate(interpreterDepth:"o") << lineNumber << " : "
      << "a flag bundle with ranks " << X.BundleRanks << endl;
@@ -65,7 +65,7 @@ dim AbstractVarietyMap := f -> dim source f - dim target f
 net AbstractVarietyMap := X -> (
      if ReverseDictionary#?X then toString ReverseDictionary#X
      else "a variety map")
-AbstractVarietyMap#(Standard,AfterPrint) = f -> (
+AbstractVarietyMap#{Standard,AfterPrint} = f -> (
      << endl;				  -- double space
      << concatenate(interpreterDepth:"o") << lineNumber << " : "
      << "a map to " << target f << " from " << source f << endl;
@@ -80,7 +80,7 @@ globalAssignment AbstractSheaf
 net AbstractSheaf := X -> (
      if ReverseDictionary#?X then toString ReverseDictionary#X
      else "a sheaf")
-AbstractSheaf#(Standard,AfterPrint) = E -> (
+AbstractSheaf#{Standard,AfterPrint} = E -> (
      << endl;				  -- double space
      << concatenate(interpreterDepth:"o") << lineNumber << " : "
      << "an abstract sheaf of rank " << rank E << " on " << variety E << endl;

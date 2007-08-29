@@ -416,7 +416,7 @@ super(Module) := Module => (M) -> (
 
 End = (M) -> Hom(M,M)
 
-Module#(Standard,AfterPrint) = M -> (
+Module#{Standard,AfterPrint} = M -> (
      << endl;				  -- double space
      n := rank ambient M;
      << concatenate(interpreterDepth:"o") << lineNumber << " : "

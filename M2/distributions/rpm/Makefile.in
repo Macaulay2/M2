@@ -1,5 +1,5 @@
 # @configure_input@
-include ../include/config.Makefile
+include ../../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
 finalprefix=@FINALPREFIX@
@@ -17,12 +17,12 @@ prefixdir=$(shell dirname $(finalprefix))
 #    rpm -e -v --noscripts Macaulay2-0.9.95-2
 
 ############################## main targets
-all install :: ../@PKG_RPM@
-../@PKG_RPM@ : Macaulay2-body.spec ../@PKG_TGZ@ Makefile
+all install :: ../../@PKG_RPM@
+../../@PKG_RPM@ : Macaulay2-body.spec ../../@PKG_TGZ@ Makefile
 	rm -rf files
 	mkdir files
 	@MKDIR_P@ files$(prefixdir)
-	tar xzf ../@PKG_TGZ@ -C files$(prefixdir)
+	tar xzf ../../@PKG_TGZ@ -C files$(prefixdir)
 	mv files$(prefixdir)/@package@ files$(prefixdir)/$(prefixtail)
 	cd files$(finalprefix) && rm -f INSTALL encapinfo postinstall preremove
 	cat Macaulay2-body.spec >Macaulay2.spec
@@ -30,8 +30,8 @@ all install :: ../@PKG_RPM@
 	@FAKEROOT@ chown -R root files/*
 	@FAKEROOT@ rpmbuild -bb Macaulay2.spec
 	rm -rf files
-try-alien : ../@PKG_DEB@ ; @FAKEROOT@ alien --generate --scripts --to-rpm $^
-clean ::; rm -f ../@PKG_RPM@ Macaulay2.spec
+try-alien : ../../@PKG_DEB@ ; @FAKEROOT@ alien --generate --scripts --to-rpm $^
+clean ::; rm -f ../../@PKG_RPM@ Macaulay2.spec
 distclean : clean; rm -f Makefile
 Makefile : Makefile.in; cd ..; ./config.status rpm/Makefile
 Macaulay2-body.spec : Macaulay2-body.spec.in; cd ..; ./config.status rpm/Macaulay2-body.spec

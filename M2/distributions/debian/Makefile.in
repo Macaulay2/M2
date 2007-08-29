@@ -1,16 +1,19 @@
 # @configure_input@
-include ../include/config.Makefile
+include ../../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
 finalprefix=@FINALPREFIX@
 prefixtail=$(shell echo $(finalprefix) | sed 's=^/==')
 prefixdir=$(shell dirname $(finalprefix))
 ############################## main targets
-all install :: ../@PKG_DEB@ tidy
+all install :: ../../@PKG_DEB@
 	@ echo "============================================================================="
 	@ echo "debian package file prepared: "
 	@ echo "        @PKG_DEB@"
 	@ echo "============================================================================="
+ifeq ($(TIDY),)
+all install :: tidy
+endif
 #################################
 
 ifneq (@DEBUG@,no)
@@ -26,7 +29,7 @@ $(error expected --enable-encap, in order to make a debian package)
 endif
 
 # notice that fakeroot is required, get it here: http://ftp.debian.org/debian/pool/main/f/@FAKEROOT@
-../@PKG_DEB@ : debian-binary control.tar.gz data.tar.gz
+../../@PKG_DEB@ : debian-binary control.tar.gz data.tar.gz
 	rm -f $@
 	@FAKEROOT@ chown root.root $^
 	@FAKEROOT@ ar rc $@.tmp $^
@@ -42,7 +45,7 @@ control.tar.gz : $(CONTROLFILES) control
 	chmod a+x,g-w $(CONTROLFILES)
 	@FAKEROOT@ chown root $(CONTROLFILES) control
 	@FAKEROOT@ tar cfz $@ $^
-prepare : ../@PKG_TZ@
+prepare : ../../@PKG_TZ@
 	rm -rf @package@ $(prefixtail)
 	@MKDIR_P@ $(prefixtail)
 	tar xfp $^ @TAR_COMPRESS_OPTION@
@@ -58,18 +61,13 @@ data.tar.gz : prepare
 	@FAKEROOT@ tar cfz $@ $(prefixtail)
 md5sums : prepare
 	(cd $(prefixtail) && find * -type f | xargs md5sum) >$@
-# LINTFLAGS = -c
-LINTFLAGS = -Ivi
-ifneq (@LINTIAN@,)
-check-with-lintian : ../@PKG_DEB@
-	lintian $(LINTFLAGS) ../@PKG_DEB@
-check : check-with-lintian
-endif
+check-with-lintian : ../../@PKG_DEB@
+	lintian -c ../../@PKG_DEB@
 tidy :
 	rm -rf $(prefixtail) control.tar.gz data.tar.gz md5sums
 clean ::
 	rm -rf @package@ $(prefixtail) debian-binary control.tar.gz data.tar.gz md5sums
-	rm -rf ../@PKG_DEB@
+	rm -rf ../../@PKG_DEB@
 distclean : clean; rm -f Makefile control
 
 Makefile : Makefile.in; cd ..; ./config.status debian/Makefile

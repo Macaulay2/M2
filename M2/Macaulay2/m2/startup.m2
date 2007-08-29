@@ -56,14 +56,14 @@ if firstTime then (
 	  );
      normalPrompts = () -> (
 	  lastprompt := "";
-	  ZZ#(Standard,InputPrompt) = lineno -> concatenate(newline, lastprompt = concatenate(interpreterDepth:"i", toString lineno, " : "));
-	  ZZ#(Standard,InputContinuationPrompt) = lineno -> #lastprompt; -- will print that many blanks, see interp.d
+	  ZZ#{Standard,InputPrompt} = lineno -> concatenate(newline, lastprompt = concatenate(interpreterDepth:"i", toString lineno, " : "));
+	  ZZ#{Standard,InputContinuationPrompt} = lineno -> #lastprompt; -- will print that many blanks, see interp.d
 	  symbol currentPrompts <- normalPrompts;	    -- this avoids the warning about redefining a function
 	  );
      normalPrompts();
      noPrompts = () -> (
-	  ZZ#(Standard,InputPrompt) = lineno -> "";
-	  ZZ#(Standard,InputContinuationPrompt) = lineno -> "";
+	  ZZ#{Standard,InputPrompt} = lineno -> "";
+	  ZZ#{Standard,InputContinuationPrompt} = lineno -> "";
 	  symbol currentPrompts <- noPrompts;
 	  );
 
@@ -107,7 +107,7 @@ if firstTime then (
      flush = new Manipulator from flush;
      endl = new Manipulator from endl;
 
-     Thing#(Standard,Print) = x ->  (
+     Thing#{Standard,Print} = x ->  (
 	  << newline << concatenate(interpreterDepth:"o") << lineNumber << " = ";
 	  try << x;
 	  << newline << flush;

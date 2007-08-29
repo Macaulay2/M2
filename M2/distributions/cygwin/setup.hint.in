@@ -8,4 +8,4 @@ ldesc: "Macaulay 2 is a software system for algebraic geometry research.
  modules.
  Home page: http://www.math.uiuc.edu/Macaulay2/"
 category: Math
-requires: cygwin
+requires: cygwin lapack

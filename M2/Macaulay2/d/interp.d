@@ -69,11 +69,11 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
 readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
      lastvalue := nullE;
      mode := topLevelMode;
-     modeBeforePrint := Expr(Sequence(mode,BeforePrint));
-     modeNoPrint := Expr(Sequence(mode,NoPrint));
-     modePrint := Expr(Sequence(mode,Print));
-     modeAfterNoPrint := Expr(Sequence(mode,AfterNoPrint));
-     modeAfterPrint := Expr(Sequence(mode,AfterPrint));
+     modeBeforePrint := list(mode,Expr(BeforePrint));
+     modeNoPrint := list(mode,Expr(NoPrint));
+     modePrint := list(mode,Expr(Print));
+     modeAfterNoPrint := list(mode,Expr(AfterNoPrint));
+     modeAfterPrint := list(mode,Expr(AfterPrint));
      while true do (
      	  if printout then setLineNumber(lineNumber + 1);
 	  clearAllFlags();
@@ -133,11 +133,11 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			      if printout then (
 				   if mode != topLevelMode then (
 					mode = topLevelMode;
-					modeBeforePrint = Expr(Sequence(mode,BeforePrint));
-					modeNoPrint = Expr(Sequence(mode,NoPrint));
-					modePrint = Expr(Sequence(mode,Print));
-					modeAfterNoPrint = Expr(Sequence(mode,AfterNoPrint));
-					modeAfterPrint = Expr(Sequence(mode,AfterPrint));
+					modeBeforePrint = list(mode,Expr(BeforePrint));
+					modeNoPrint = list(mode,Expr(NoPrint));
+					modePrint = list(mode,Expr(Print));
+					modeAfterNoPrint = list(mode,Expr(AfterNoPrint));
+					modeAfterPrint = list(mode,Expr(AfterPrint));
 					);
 				   -- result of AfterEval replaces lastvalue unless error, in which case 'null' replaces it:
 				   g := runmethod(AfterEval,lastvalue);

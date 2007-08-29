@@ -1,6 +1,6 @@
 # @configure_input@
 ############################### targets to use
-.PHONY: check all clean initialize doc book distclean justM2
+.PHONY: check all clean initialize book distclean justM2
 ################################# prologue
 all ::
 install ::
@@ -88,8 +88,7 @@ distclean clean ::; $(MAKE) -C packages/Macaulay2/test $@
 all check install install-others install-Macaulay2 clean distclean ::; $(MAKE) -C packages $@
 ################################# probe
 clean distclean ::; $(MAKE) -C probe $@
-################################# book
-# doc :: book
+################################# book, currently not made
 book ::;  $(MAKE) -C book all
 distclean clean ::; $(MAKE) -C book $@
 ################################# emacs
@@ -104,7 +103,7 @@ Makefile : Makefile.in
 	cd ..; ./config.status Macaulay2/Makefile
 distclean::; rm -f Makefile
 ################################# final status messages
-justM2 all doc clean distclean::
+justM2 all clean distclean::
 	@echo "-------- done making '$@' --------"
 #################################
 clean :: ; rm -f gmon.out
