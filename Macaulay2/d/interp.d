@@ -216,10 +216,7 @@ InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt")
 topLevelPrompt():string := (
      method := lookup(
 	  integerClass,
-	  Expr(
-	       Sequence(
-	       	    topLevelMode,
-	       	    if lineNumber == previousLineNumber then InputContinuationPrompt else (previousLineNumber = lineNumber; InputPrompt))));
+	  list(topLevelMode, Expr(if lineNumber == previousLineNumber then InputContinuationPrompt else (previousLineNumber = lineNumber; InputPrompt))));
      if method == nullE then ""
      else when applyEE(method,toExpr(lineNumber)) is s:string do s
      is n:Integer do if isInt(n) then blanks(toInt(n)) else ""

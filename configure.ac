@@ -537,6 +537,10 @@ AC_SUBST(FINALPREFIX,/usr)
 AC_ARG_WITH(final-prefix,
     AS_HELP_STRING(--with-final-prefix=...,final installation prefix (/usr) (used by libtool and debian installation scripts)),
     FINALPREFIX=$withval)
+case $FINALPREFIX in
+    /*) ;;
+    *) AC_MSG_ERROR(final prefix should begin with /) ;;
+esac
 
 AC_SUBST(NM_DEMANGLES,"")
 AC_MSG_CHECKING(whether nm accepts the demangle option)

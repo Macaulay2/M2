@@ -80,11 +80,11 @@ install :: Macaulay2.README Macaulay2.sh
 
 clean ::; rm -rf server files src-files
 distclean : clean; rm -f Makefile Macaulay2.README Macaulay2.sh setup.hint
-Makefile : Makefile.in; cd ..; ./config.status cygwin/Makefile
-Macaulay2.sh : Macaulay2.sh.in; cd ..; ./config.status cygwin/Macaulay2.sh
-setup.hint : setup.hint.in; cd ..; ./config.status cygwin/setup.hint
-Macaulay2.README : Macaulay2.README.in; cd ..; ./config.status cygwin/Macaulay2.README
+Makefile : Makefile.in; cd ..; ./config.status distributions/cygwin/Makefile
+Macaulay2.sh : Macaulay2.sh.in; cd ..; ./config.status distributions/cygwin/Macaulay2.sh
+setup.hint : setup.hint.in; cd ..; ./config.status distributions/cygwin/setup.hint
+Macaulay2.README : Macaulay2.README.in; cd ..; ./config.status distributions/cygwin/Macaulay2.README
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/cygwin "
+# compile-command: "make -C $M2BUILDDIR/distributions/cygwin "
 # End:
