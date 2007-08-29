@@ -152,6 +152,7 @@ binaryright(s:string)   :Word := binaryright(s,binaryop);
 -- with a binding done in a particular way depending on the current dictionary.  The symbols
 -- created below are all in the global dictionary.
 
+bump();
      wordEOF = nleftword("{*end of file*}");
      makeKeyword(wordEOF);
 bump();
