@@ -72,7 +72,7 @@ document {
 document {
      Key => Print,
      Headline => "top level method for printing results",
-     Usage => "X#(Standard,Print) = f",
+     Usage => "X#{Standard,Print} = f",
      Inputs => {
 	  "X" => Type,
 	  "f" => Function => { " that can print something of type ", TT "X"}
@@ -81,13 +81,13 @@ document {
 	  { "at top level, whenever it is time to print an output value of type ", TT "X", ", the function ", TT "f", " will be called" }
 	  },
      "The function ", TT "f", " is responsible for printing the output prompt and for applying the ", TO "BeforePrint", " and ", TO "AfterPrint", " methods, if desired.",
-     EXAMPLE "code Thing#(Standard,Print)"
+     EXAMPLE "code Thing#{Standard,Print}"
      }
 
 document {
      Key => NoPrint,
      Headline => "top level method for non-printing results",
-     Usage => "X#(Standard,NoPrint) = f",
+     Usage => "X#{Standard,NoPrint} = f",
      Inputs => {
 	  "X" => Type,
 	  "f" => Function => { " that can accept something of type ", TT "X"}
@@ -103,7 +103,7 @@ document {
 document {
      Key => BeforePrint,
      Headline => "top level method applied before printing results",
-     Usage => "X#(Standard,BeforePrint) = f",
+     Usage => "X#{Standard,BeforePrint} = f",
      Inputs => {
 	  "f" => { "a function to be applied before printing a top-level evaluation result ", TT "r", " of type ", TT "X", "." },
 	  },
@@ -127,7 +127,7 @@ document {
 document {
      Key => AfterPrint,
      Headline => "top level method applied after printing",
-     Usage => "X#(Standard,AfterPrint) = f",
+     Usage => "X#{Standard,AfterPrint} = f",
      Inputs => {
 	  "f" => { "a function to be applied after printing a top-level evaluation result ", TT "r", " of type ", TT "X", "."}
 	  },
@@ -140,7 +140,7 @@ document {
 	  },
      "We could suppress that output for a single type as follows.",
      EXAMPLE {
-	  "QQ#(Standard,AfterPrint) = r -> r;",
+	  "QQ#{Standard,AfterPrint} = r -> r;",
 	  "3/4"
 	  }
      }
@@ -148,7 +148,7 @@ document {
 document {
      Key => AfterNoPrint,
      Headline => "top level method applied after not printing",
-     Usage => "X#(Standard,AfterNoPrint) = f",
+     Usage => "X#{Standard,AfterNoPrint} = f",
      Inputs => {
 	  "f" => { "a function to be applied after not printing a top-level evaluation result ", TT "r", " of type ", TT "X", "." }
 	  },

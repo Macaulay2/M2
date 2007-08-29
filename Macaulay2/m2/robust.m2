@@ -127,7 +127,7 @@ scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}
 			      error toString stack(line1,commentGuard line2)));
 		    ))))
 
-Thing#(Standard,Print) = x -> (
+Thing#{Standard,Print} = x -> (
      oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
      save := printWidth;
      if printWidth != 0 then printWidth = printWidth - #oprompt;

@@ -22,7 +22,7 @@ ifneq (@ENCAP@,yes)
 $(error expected --enable-encap, in order to make a cygwin package)
 endif
 
-include ../include/config.Makefile
+include ../../include/config.Makefile
 VPATH = @srcdir@
 
 finalprefix=@FINALPREFIX@
@@ -36,7 +36,7 @@ all install :: \
 	server/Macaulay2/setup.hint \
 	server/setup.ini
 	@ echo "============================================================================="
-	@ echo "cygwin package files prepared in cygwin/server"
+	@ echo "the cygwin package files have been prepared in cygwin/server"
 	@ echo "============================================================================="
 server/setup.ini : ; cd server && PATH=`cd @srcdir@; pwd`:$(PATH) $(MAKE) setup.ini
 server/Macaulay2 : ; @MKDIR_P@ $@
@@ -44,7 +44,7 @@ server/Macaulay2/@package@-@CYGWIN_RELEASE@.tar.bz2 : Makefile server/Macaulay2 
 	rm -rf files
 	mkdir files
 	@MKDIR_P@ files$(prefixdir)
-	@FAKEROOT@ tar xzf ../@PKG_TGZ@ -C files$(prefixdir)
+	@FAKEROOT@ tar xzf ../../@PKG_TGZ@ -C files$(prefixdir)
 	mv files$(prefixdir)/@package@ files$(prefixdir)/$(prefixtail)
 	cd files$(finalprefix) && rm -f INSTALL encapinfo postinstall preremove
 	@MKDIR_P@ files/etc/postinstall files@FINALPREFIX@
@@ -58,8 +58,8 @@ endif
 server/Macaulay2/setup.hint : setup.hint server/Macaulay2 ; cp $< $@
 
 ifeq (@SRCTARFILE@,)
-@package@-@CYGWIN_RELEASE@ : always ; rm -f $@ && ln -sf @srcdir@/.. $@
-src-files : always ; svn ls -R @srcdir@/.. | egrep -v '/$$' | sed 's=^=@package@-@CYGWIN_RELEASE@/=' >$@
+@package@-@CYGWIN_RELEASE@ : always ; rm -f $@ && ln -sf @srcdir@/../.. $@
+src-files : always ; svn ls -R @srcdir@/../.. | egrep -v '/$$' | sed 's=^=@package@-@CYGWIN_RELEASE@/=' >$@
 mkrt : src-files @package@-@CYGWIN_RELEASE@
 ifneq (@FAKEROOT@,)
 	cat src-files | @FAKEROOT@ xargs chown root.root

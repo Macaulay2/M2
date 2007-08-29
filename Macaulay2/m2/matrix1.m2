@@ -416,8 +416,8 @@ RingElement ** QQ :=
 RingElement ** ZZ := 
 RingElement ** RingElement := (r,s) -> matrix {{r}} ** matrix {{s}}
 
-Matrix#(Standard,AfterPrint) = 
-Matrix#(Standard,AfterNoPrint) = f -> (
+Matrix#{Standard,AfterPrint} = 
+Matrix#{Standard,AfterNoPrint} = f -> (
      << endl;				  -- double space
      << concatenate(interpreterDepth:"o") << lineNumber << " : Matrix";
      if isFreeModule target f and isFreeModule source f
@@ -525,7 +525,7 @@ mingens Ideal := Matrix => options -> (I) -> mingens(module I,options)
 Ideal / Ideal := Module => (I,J) -> module I / module J
 Module / Ideal := Module => (M,J) -> M / (J * M)
 
-Ideal#(Standard,AfterPrint) = Ideal#(Standard,AfterNoPrint) = (I) -> (
+Ideal#{Standard,AfterPrint} = Ideal#{Standard,AfterNoPrint} = (I) -> (
      << endl;				  -- double space
      << concatenate(interpreterDepth:"o") << lineNumber << " : Ideal of " << ring I << endl;
      )

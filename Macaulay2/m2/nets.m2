@@ -21,7 +21,7 @@ selectRegexp(String,ZZ,String) := (re,n,s) -> (
 
 -- nets
 
-Net#(Standard,AfterPrint) = identity
+Net#{Standard,AfterPrint} = identity
 
 toString MutableHashTable := s -> (
      concatenate ( toString class s, if parent s =!= Nothing then (" of ", toString parent s), "{...", toString(#s), "...}"))

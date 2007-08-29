@@ -1,41 +1,32 @@
 # @configure_input@
+CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
 include include/config.Makefile
+DIRS := @encapdir@/@bindirtail@ @encapdir@/@mandirtail@/man1 @encapdir@/@emacsdirtail@ @encapdir@/@corem2srcdirtail@ @encapdir@/@docpackagesdirtail@
 VPATH = @srcdir@
-
 .PRECIOUS: @srcdir@/configure config.status
 .PHONY: install all clean distclean reconfigure reconfigure-libs reconfigure-all configure-help install-others install-Macaulay2 everything
-
-CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
-
+# make sure we're ready to go
 GNUmakefile : GNUmakefile.in; ./config.status GNUmakefile
-
 include/config.Makefile: include/config.Makefile.in ; ./config.status include/config.Makefile
 # include/config.Makefile depends on ./config.status, too, but we are including it
-# it's enought that include/config.h depends on ./config.status
+# it's enough that include/config.h depends on ./config.status
 all :: include/config.Makefile
-
 include/config.h: include/config.h.in ./config.status ; ./config.status include/config.h
 all :: include/config.h
-
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files
 	$(MAKE) -C @srcdir@ -f Makefile
 	@echo '-----------------------------------------------------------------------------'
 	@echo '# $@ has just been remade'
 	@echo '#  Exiting so you can run it again the same way you did before.'
-	@echo '#  Here is the way you ran it before:'
-	@echo '#'
-	@echo "     @CONFIG_CMD@"
-	@echo '#'
-	@echo '#  Type'
-	@echo '        make reconfigure'
-	@echo '#  to run it that way again.'
-	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
+	@$(MAKE) status
 	@exit 1
-subst : config.status ; ./config.status
-
-show : config.status ; egrep '^s,' $< | sed -e 's/^s,@\(.*\)@,\(.*\),g/\1=\2/' -e 's/^s,.*]\*\(.*\)\\).*\\2 \(.*\) ,/#define \1 \2/' -e 's/.#_!!_#.//g'
-
+config.status : @srcdir@/configure
+	@echo '-----------------------------------------------------------------------------'
+	@echo '# error: $@ not there or older than $^'
+	@echo '#  Exiting so you can run $^ the same way you did before.'
+	@$(MAKE) status
+	@exit 1
 status : @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
 	@echo '#  Here is the way you ran $^ before:'
@@ -47,127 +38,31 @@ status : @srcdir@/configure
 	@echo '#  to run it that way again.'
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
-config.status : @srcdir@/configure
-	@echo '-----------------------------------------------------------------------------'
-	@echo '# error: $@ not there or older than $^'
-	@echo '#  Exiting so you can run $^ the same way you did before.'
-	@echo '#  Here is the way you ran it before:'
-	@echo '#'
-	@echo "     @CONFIG_CMD@"
-	@echo '#'
-	@echo '#  Type'
-	@echo '        make reconfigure'
-	@echo '#  to run it that way again.'
-	@echo '#'
-	@echo '-----------------------------------------------------------------------------'
-	@exit 1
-
+# announce we're starting
+install all clean distclean install-others install-Macaulay2 ::; @echo '-------- making '$@', @PACKAGE_VERSION@ for ARCH=@ARCH@ OS=@OS@ REL=@REL@ --------'
+# first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
+install install-others install-Macaulay2 :: all
+all check ::; $(MAKE) -C libraries $@
+all distclean check clean install install-others install-Macaulay2 :: ; $(MAKE) -C Macaulay2 $@
+install install-others install-Macaulay2 :: $(DIRS)
+$(DIRS) :; $(INSTALL) -d $@
+subst : config.status ; ./config.status
+show : config.status ; egrep '^s,' $< | sed -e 's/^s,@\(.*\)@,\(.*\),g/\1=\2/' -e 's/^s,.*]\*\(.*\)\\).*\\2 \(.*\) ,/#define \1 \2/' -e 's/.#_!!_#.//g'
 distclean:: clean
-
 reconfigure:: $(CONFIG_FILES)
-	./config.status --recheck
-	./config.status
+	./config.status --recheck && ./config.status
 	@ echo "============================================================================="
 	@ echo "warning: to reconfigure the libraries, use 'make reconfigure-libs' or 'make reconfigure-all'"
 	@ echo "============================================================================="
-configure-help: $(CONFIG_FILES)
-	@ @srcdir@/configure --help
-
-# announcement only:
-install all clean distclean install-others install-Macaulay2 ::
-	@echo '-------- making '$@', @PACKAGE_VERSION@ for ARCH=@ARCH@ OS=@OS@ REL=@REL@ --------'
-
-# first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
-install install-others install-Macaulay2 :: all
-ifeq "$(CC)" "cl"
-all:: ;	$(MAKE) -C WindowsNT
-endif
-all check ::; $(MAKE) -C libraries $@
-all distclean check clean install install-others install-Macaulay2 :: ; $(MAKE) -C Macaulay2 $@
-all::; $(MAKE) -C Macaulay2 doc
-DIRS := $(target) @encapdir@/@bindirtail@ @encapdir@/@mandirtail@/man1 @encapdir@/@emacsdirtail@ @encapdir@/@corem2srcdirtail@ @encapdir@/@docpackagesdirtail@
-install install-others install-Macaulay2 :: $(DIRS)
-$(DIRS) :; $(INSTALL) -d $@
-
-tarball: tarball.@COMPRESS@
-tarball.gz: tarball.tgz
-tarballs: tarball.bz2 tarball.tgz
-
-EXCLUDES := --exclude=".nfs*" --exclude="Macaulay2-*-data"
-
-tarball.bz2 : @PKG_TBZ@
-@PKG_TBZ@  : always
-ifneq (@FAKEROOT@,)
-	@FAKEROOT@ chown -R root.root $(prefix)/@package@
-endif
-	@FAKEROOT@ tar cfh @PKG_TBZ@ --bzip $(EXCLUDES) -C $(prefix) @package@
-
-tarball.tgz  : @PKG_TGZ@
-@PKG_TGZ@  : always
-ifneq (@FAKEROOT@,)
-	@FAKEROOT@ chown -R root.root $(prefix)/@package@
-endif
-	@FAKEROOT@ tar cfh @PKG_TGZ@ --gzip $(EXCLUDES) -C $(prefix) @package@
-
-always :
-
-src-files : src-files ; svn ls -R @srcdir@ | egrep -v '/$$' | sed 's=^=@package@/=' <$< >$@
-@package@ : GNUmakefile ; rm -f $@ && ln -sf @srcdir@ $@
-mkrt : src-files @package@
-ifneq (@FAKEROOT@,)
-	cat src-files | @FAKEROOT@ xargs chown root.root
-endif
-@SRC_TGZ@ : mkrt ; @FAKEROOT@ tar cfz $@ --files-from=src-files
-@SRC_TBZ@ : mkrt ; @FAKEROOT@ tar cfj $@ --files-from=src-files
-src : @SRC_TZ@
-
-ifeq "@M2TARFILE@" "yes"
-install :: tarball
-endif
-clean ::; rm -f @PKG_TGZ@ @PKG_TBZ@
-
-ifeq "@DEBIAN@" "yes"
-install :: debian
-check :: ; $(MAKE) -C debian $@
-endif
-debian : @PKG_TGZ@ ; $(MAKE) -C debian install
-clean distclean :: ; $(MAKE) -C debian $@
-
-ifeq "@RPM@" "yes"
-install :: rpm
-endif
-rpm : @PKG_TGZ@ ; $(MAKE) -C rpm install
-clean distclean :: ; $(MAKE) -C rpm $@
-
-ifeq "@CYGWIN@" "yes"
-install :: cygwin
-endif
-cygwin : @PKG_TGZ@ ; $(MAKE) -C cygwin install
-clean distclean :: ; $(MAKE) -C cygwin $@
-
-relink:
-	rm -f Macaulay2/bin/M2@EXE@
-	$(MAKE) -C Macaulay2/d ../bin/M2@EXE@
-relink-nostrip:
-	rm -f Macaulay2/bin/M2@EXE@
-	$(MAKE) -C Macaulay2/d STRIP=no ../bin/M2@EXE@
-
-install install-others install-Macaulay2 all clean distclean::; @echo "-------- done making '$@' --------"
-install all::
-	@echo "************************************************"
-	@echo "*                                              *"
-	@echo "*    don't forget to run 'make -k check'       *"
-	@echo "*                                              *"
-	@echo "************************************************"
-
-RerunExamples = false
-
+configure-help: $(CONFIG_FILES) ; @ @srcdir@/configure --help
+relink: ; rm -f Macaulay2/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d ../bin/M2@EXE@
+relink-nostrip: ; rm -f Macaulay2/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d STRIP=no ../bin/M2@EXE@
+clean distclean check install src tarball debian rpm cygwin :: ; $(MAKE) -C distributions $@
 reconfigure-all : reconfigure reconfigure-libs 
 reconfigure-libs ::; $(MAKE) -C libraries reconfigure
 clean distclean ::; $(MAKE) -C libraries $@
 install ::; $(MAKE) -C libraries final-install
 distclean::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile config.cache config.log config.status configure.options
-
 help :
 	@ echo "usage: make [option...] [target...]"
 	@ echo ""
@@ -208,6 +103,13 @@ help :
 	@ echo ""
 	@ echo "      --recheck                       re-run configure with same options"
 	@ echo ""
+install install-others install-Macaulay2 all clean distclean::; @echo "-------- done making '$@' --------"
+install all::
+	@echo "************************************************"
+	@echo "*                                              *"
+	@echo "*    don't forget to run 'make -k check'       *"
+	@echo "*                                              *"
+	@echo "************************************************"
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR"

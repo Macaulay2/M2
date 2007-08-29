@@ -1,0 +1,67 @@
+# @configure_input@
+include ../include/config.Makefile
+VPATH = @srcdir@
+.PHONY : tarball.tgz tarball.bz2 tarball tarballs warning always
+always :
+warning: always
+ifeq (@FAKEROOT@,)
+	@echo "============================================================================="
+	@echo "Warning: 'fakeroot' not installed (at configuration time), so"
+	@echo "  the tar file produced will have files not owned by root!"
+	@echo "============================================================================="
+endif
+tarball: tarball.@COMPRESS@
+tarball.gz: tarball.tgz
+tarballs: tarball.bz2 tarball.tgz
+EXCLUDES := --exclude=".nfs*" --exclude="Macaulay2-*-data"
+tarball.bz2 : ../@PKG_TBZ@ warning
+../@PKG_TBZ@  : always warning
+ifneq (@FAKEROOT@,)
+	@FAKEROOT@ chown -R root.root $(prefix)/@package@
+endif
+	@FAKEROOT@ tar cfh ../@PKG_TBZ@ --bzip $(EXCLUDES) -C $(prefix) @package@
+tarball.tgz  : ../@PKG_TGZ@ warning
+../@PKG_TGZ@  : always
+ifneq (@FAKEROOT@,)
+	@FAKEROOT@ chown -R root.root $(prefix)/@package@
+endif
+	@FAKEROOT@ tar cfh ../@PKG_TGZ@ --gzip $(EXCLUDES) -C $(prefix) @package@
+
+src-files : src-files ; svn ls -R @srcdir@ | egrep -v '/$$' | sed 's=^=@package@/=' <$< >$@
+@package@ : GNUmakefile ; rm -f $@ && ln -sf @srcdir@ $@
+mkrt : src-files @package@
+ifneq (@FAKEROOT@,)
+	cat src-files | @FAKEROOT@ xargs chown root.root
+endif
+@SRC_TGZ@ : mkrt ; @FAKEROOT@ tar cfz $@ --files-from=src-files
+@SRC_TBZ@ : mkrt ; @FAKEROOT@ tar cfj $@ --files-from=src-files
+src : @SRC_TZ@
+
+ifeq "@M2TARFILE@" "yes"
+install :: tarball
+endif
+clean ::; rm -f ../@PKG_TGZ@ ../@PKG_TBZ@
+
+ifeq "@DEBIAN@" "yes"
+install :: debian
+endif
+debian : ../@PKG_TGZ@ ; $(MAKE) -C debian install
+check clean distclean :: ; $(MAKE) -C debian $@
+
+ifeq "@RPM@" "yes"
+install :: rpm
+endif
+rpm : ../@PKG_TGZ@ ; $(MAKE) -C rpm install
+clean distclean :: ; $(MAKE) -C rpm $@
+
+ifeq "@CYGWIN@" "yes"
+install :: cygwin
+endif
+cygwin : ../@PKG_TGZ@ ; $(MAKE) -C cygwin install
+clean distclean :: ; $(MAKE) -C cygwin $@
+
+Makefile : Makefile.in; cd ..; ./config.status cygwin/Makefile
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/distributions "
+# End:

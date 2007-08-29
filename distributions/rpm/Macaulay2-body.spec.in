@@ -6,7 +6,7 @@ Summary: Macaulay 2 is a software system for algebraic geometry research.
 License: GNU General Public License, version 2
 Group: Mathematics
 Buildroot: @abs_builddir@/files
-%define _rpmdir ../
+%define _rpmdir ../../
 %define _rpmfilename %%{NAME}-%%{VERSION}-%%{ARCH}-Linux.rpm
 %define _unpackaged_files_terminate_build 1
 %post
