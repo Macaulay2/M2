@@ -1,16 +1,12 @@
 -*- text -*-
 
-Changes anticipated or in progress:
-
-New command line option --restricted disables the use of the following system
-calls: open, pipe, socket, connect, fork.  It also attempts "chroot .", which
-will fail unless running as root, and then tries "setuid ...
-
-Function 'group' removed.  Use new monomial ordering options instead.
+Changes made, most recent ones first:
 
 -----------------------------------------------------------------------------
 
-Changes made, most recent ones first:
+New in 0.9.98:
+
+Compatibility with TeXmacs.
 
 -----------------------------------------------------------------------------
 

@@ -1,0 +1,15 @@
+The example files produced during installPackage (*.m2, *.out) need not be
+installed or retained.  So, we should rewrite installPackage so it has the
+concept of
+
+	srcDirectory
+	buildDirectory			example files are put here
+	encapDirectory
+	installDirectory
+
+We could even create *all* the files in the buildDirectory, so the install step
+just copies files.
+
+The buildDirectory could in /tmp or somewhere...
+
+Or better, get "capture" working!

@@ -1,4 +1,6 @@
 --		Copyright 2000 by Daniel R. Grayson
+TeXmacsBegin = ascii 2
+TeXmacsEnd   = ascii 5
 badcharregex := TeXmacsBegin | "|" | TeXmacsEnd
 fix := s -> replace(TeXmacsBegin,"[BEGIN]",replace(TeXmacsEnd,"[END]",s))
 fixn := s -> concatenate between("\0", apply(separate("\0", s), fix))

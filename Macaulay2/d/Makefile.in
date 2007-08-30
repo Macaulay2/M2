@@ -27,8 +27,13 @@ recompile :
 ## standard options
 
 M2_LDFLAGS  =
+
+ifeq (@STATIC@,no)
 ifeq (@OS@,Linux)
+ifneq (@LIBRARIES@,)
 M2_LDFLAGS += -Wl,-rpath,$(FINALLIBPATH)/lib
+endif
+endif
 endif
 
 M2_LDFLAGS += $(LDFLAGS)
