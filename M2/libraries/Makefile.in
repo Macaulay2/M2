@@ -5,7 +5,7 @@ all check reconfigure :: Makefile.library
 distclean :: clean
 distclean clean :: Makefile.library
 	@ set -e ; for p in @LIBLIST@ libtool ; do (set -ex ; $(MAKE) -C $$p $@) || false ; done 
-final-install :
+install :
 	@INSTALL@ -d @encapdir@/@librariesdirtail@/lib
 	tar cf - --exclude="*.a" --exclude="*.old" -C final@FINALPREFIX@/@librariesdirtail@/lib . | tar xf - -C @encapdir@/@librariesdirtail@/lib
 Makefile         : Makefile.in         ; cd .. && ./config.status libraries/Makefile

@@ -61,7 +61,7 @@ AC_CHECK_PROGS(OBJDUMP,objdump)
 AC_CHECK_PROGS(ETAGS,etags)
 AC_CHECK_PROGS(LINTIAN,lintian)
 AC_CHECK_PROGS(LDD,ldd)
-AC_CHECK_PROGS(STRIPCMD,strip)
+AC_CHECK_PROGS(STRIPCMD,"strip --remove-section=.comment --remove-section=.note" strip)
 AC_CHECK_PROGS(FAKEROOT,fakeroot)
 
 AC_SUBST(TOPDIR,`pwd`)
@@ -417,16 +417,16 @@ then AC_SEARCH_LIBS(add_history,history,,BUILD_readline=yes)
      AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
      if test $BUILD_readline = yes
      then AC_MSG_NOTICE(readline library will be compiled)
-	  BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
      fi
 fi
+test $BUILD_readline = yes && BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
 
 AC_LANG(C)
 if test $BUILD_gmp = no
 then AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILD_gmp=yes)
      AC_CHECK_HEADER(gmp.h,,BUILD_gmp=yes)
-     test $BUILD_gmp = yes && BUILTLIBS="-lgmp $BUILTLIBS"
 fi
+test $BUILD_gmp = yes && BUILTLIBS="-lgmp $BUILTLIBS"
 
 AC_LANG(C)
 if test $BUILD_gc = no
@@ -450,15 +450,15 @@ then AC_SEARCH_LIBS(GC_free,gc,,BUILD_gc=yes)
 	     [ AC_MSG_RESULT([no, version at least 7.0 is required (gc will be built from downloaded sources)]); BUILD_gc=yes ],
 	     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
      fi
-     test $BUILD_gc = yes && BUILTLIBS="-lgc $BUILTLIBS"
 fi
+test $BUILD_gc = yes && BUILTLIBS="-lgc $BUILTLIBS"
 
 AC_LANG(C)
 if test $BUILD_gdbm = no
 then AC_SEARCH_LIBS(gdbm_close,gdbm,,BUILD_gdbm=yes)
      AC_CHECK_HEADER(gdbm.h,,BUILD_gdbm=yes)
-     test $BUILD_gdbm = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
 fi
+test $BUILD_gdbm = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
 
 if test $BUILD_ntl = no
 then AC_LANG(C++)
@@ -479,9 +479,10 @@ then AC_LANG(C++)
 	else AC_MSG_RESULT(found $lib)
 	fi
     else AC_MSG_RESULT(none found)
-	LIBS=$SAVELIBS BUILD_ntl=yes BUILTLIBS="-lntl $BUILTLIBS"
+	LIBS=$SAVELIBS BUILD_ntl=yes
     fi 
 fi
+test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"
 
 AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,[use "-framework vecLib" for lapack]), LIBS="-framework vecLib $LIBS" )
 
@@ -505,14 +506,16 @@ then AC_MSG_CHECKING([whether the vecLib framework is available])
 	     LIBS=$SAVELIBS
 	     if test $BUILD_blas = no
 	     then AC_LANG(Fortran 77)
-		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_blas=yes BUILTLIBS="-lblas $BUILTLIBS")
+		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_blas=yes)
 	     fi
 	     if test $BUILD_lapack = no
 	     then AC_LANG(Fortran 77)
-		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes BUILTLIBS="-llapack $BUILTLIBS")
+		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes)
 	     fi
 	 ])
 fi
+test $BUILD_blas = yes && BUILTLIBS="-lblas $BUILTLIBS"
+test $BUILD_lapack = yes && BUILTLIBS="-llapack $BUILTLIBS"
 
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
@@ -688,7 +691,7 @@ AC_SUBST(libm2dirtail,$libdirtail/Macaulay2)
 AC_SUBST(man1dirtail,$mandirtail/man1)
 AC_SUBST(man3dirtail,$mandirtail/man3)
 AC_SUBST(emacsdirtail,$datadirtail/emacs/site-lisp)
-AC_SUBST(librariesdirtail,$libm2dirtail/libraries)
+AC_SUBST(librariesdirtail,$libm2dirtail/Core)
 AC_SUBST(coredatadirtail,$packagesdirtail/Core)
 AC_SUBST(corem2srcdirtail,$coredatadirtail/m2)
 AC_SUBST(corecachedirtail,$libm2dirtail/Core/cache)

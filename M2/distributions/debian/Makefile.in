@@ -36,15 +36,16 @@ endif
 	@FAKEROOT@ ar rc $@.tmp $^
 	sed -e 's=debian-binary/=debian-binary =' -e 's=control.tar.gz/=control.tar.gz =' -e 's=data.tar.gz/=data.tar.gz =' < $@.tmp > $@
 	rm $@.tmp
-CONTROLFILES := control
-CONTROLFILES += md5sums
-# CONTROLFILES += preinst
-CONTROLFILES += postinst
-CONTROLFILES += prerm
-# CONTROLFILES += postrm
-control.tar.gz : $(CONTROLFILES) control
-	chmod a+x,g-w $(CONTROLFILES)
-	@FAKEROOT@ chown root $(CONTROLFILES) control
+CONTROLFILES := md5sums control
+CONTROLSCRIPTS := 
+# CONTROLSCRIPTS += preinst
+CONTROLSCRIPTS += postinst
+CONTROLSCRIPTS += prerm
+# CONTROLSCRIPTS += postrm
+control.tar.gz : $(CONTROLFILES) $(CONTROLSCRIPTS)
+	chmod 0644 $(CONTROLFILES)
+	chmod 0755 $(CONTROLSCRIPTS)
+	@FAKEROOT@ chown root $^
 	@FAKEROOT@ tar cfz $@ $^
 prepare : ../../@PKG_TZ@
 	rm -rf @package@ tmp
@@ -53,20 +54,23 @@ prepare : ../../@PKG_TZ@
 	for i in @package@/* ; do if [ -f "$$i" ] ; then rm "$$i" ; fi ; done
 	mv @package@/* tmp@FINALPREFIX@
 	rmdir @package@
-	chmod -R og-w,a+r tmp
+	@MKDIR_P@ tmp@FINALPREFIX@/share/doc/macaulay2
+	cp tmp@FINALPREFIX@/@docpackagesdirtail@/README tmp@FINALPREFIX@/share/doc/macaulay2/copyright
+	gzip -9 <@srcdir@/changelog >tmp@FINALPREFIX@/share/doc/macaulay2/changelog.gz
+	rm tmp@FINALPREFIX@/@docpackagesdirtail@/COPYING
 	find tmp -name .linkdir | xargs rm -f
 	find tmp -name \*.info | while read x ; do gzip --best "$$x" ; done
-	find tmp -name man -type d | while read x ; find $$d -name \*.gz -prune -o -type f | while read y ; do gzip --best "$$y" ; done ; done
-	find tmp -name \*.so -o \*.so.\* -o -name \*.la | xargs chmod a-x
+	find tmp -name man -type d | while read x ; do find $$x -type f -not -name \*.gz | while read y ; do gzip --best "$$y" ; done ; done
+	find tmp -name \*.so -o -name \*.so.\* -o -name \*.la | xargs chmod a-x Makefile
+	chmod -R og-w,a+r tmp
 	@FAKEROOT@ chown -R root tmp
 data.tar.gz : prepare
 	(cd tmp && @FAKEROOT@ tar cfz - *) >$@
 md5sums : prepare
 	(cd tmp && find * -type f | xargs md5sum) >$@
-	chmod 0644 $@
 ifneq (@LINTIAN@,)
 check :
-	@LINTIAN@ -c ../../@PKG_DEB@
+	@LINTIAN@ -Ivi ../../@PKG_DEB@
 endif
 tidy :
 	rm -rf tmp control.tar.gz data.tar.gz md5sums
