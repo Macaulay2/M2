@@ -310,7 +310,11 @@ clean::; rm -f ../bin/M2@EXE@
 	time @CC@ $(M2_LDFLAGS) $(M2_OBJECTS) $(M2_LIBRARIES) -lm -o "$@".tmp
 ifeq "$(STRIP)" "yes"
 ifneq "@STRIPCMD@" ""
+ifeq (@STRIP_REMOVE_SECTION@,yes)
+	@STRIPCMD@ --remove-section=.comment --remove-section=.note "$@".tmp
+else
 	@STRIPCMD@ "$@".tmp
+endif
 endif
 endif
 	mv "$@".tmp "$@"

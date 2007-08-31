@@ -61,8 +61,17 @@ AC_CHECK_PROGS(OBJDUMP,objdump)
 AC_CHECK_PROGS(ETAGS,etags)
 AC_CHECK_PROGS(LINTIAN,lintian)
 AC_CHECK_PROGS(LDD,ldd)
-AC_CHECK_PROGS(STRIPCMD,"strip --remove-section=.comment --remove-section=.note" strip)
 AC_CHECK_PROGS(FAKEROOT,fakeroot)
+AC_CHECK_PROGS(STRIPCMD,strip)
+if test "$STRIPCMD" != ""
+then AC_MSG_CHECKING(whether $STRIPCMD accepts the remove-section option)
+     if strip --help 2>&1 | grep remove-section >/dev/null
+     then val=yes
+     else val=no
+     fi
+     AC_MSG_RESULT($val)
+     AC_SUBST(STRIP_REMOVE_SECTION,$val)
+fi
 
 AC_SUBST(TOPDIR,`pwd`)
 
@@ -524,12 +533,16 @@ SAVELIBS=$LIBS
 AC_SUBST(SINGULARLIBS,"-lfac -lcf")
 if test $BUILD_factory = no -o $BUILD_libfac = no
 then AC_LANG(C++)
-     AC_MSG_CHECKING([whether libfac and factory libraries are installed (-lfac -lcf)])
+     AC_MSG_CHECKING([whether (recent) libfac and factory libraries are installed (-lfac -lcf)])
      LIBS="$SINGULARLIBS $LIBS"
      AC_LINK_IFELSE( [[
 	     #include <factoryconf.h>
 	     extern const char * libfac_version;
-	     int main () { extern const char factoryVersion[]; return *factoryVersion; return *libfac_version; }
+	     int main () { 
+                  extern const char factoryVersion[];
+		  return SW_USE_NTL;
+                  return *factoryVersion; 
+                  return *libfac_version; }
 	     ]],
 	  AC_MSG_RESULT(yes),
 	  AC_MSG_RESULT(no); BUILD_factory=yes BUILD_libfac=yes)
