@@ -196,14 +196,17 @@ newPackage(String) := opts -> (title) -> (
 	       rawdb := openDatabase rawdbname;
 	       newpkg#"raw documentation database" = rawdb;
 	       addEndFunction(() -> if isOpen rawdb then close rawdb));
+     	  {*
 	  dbname := newpkg#"package prefix" | LAYOUT#"packagecache" title | "documentation" | databaseSuffix;
 	  if fileExists dbname then (
 	       db := openDatabase dbname;
 	       newpkg#"processed documentation database" = db;
 	       addEndFunction(() -> if isOpen db then close db);
 	       );
+     	  *}
 	  newpkg#"index.html" = newpkg#"package prefix" | LAYOUT#"packagehtml" newpkg#"title" | "index.html";
 	  );
+     {*
      addStartFunction(() -> 
 	  if not ( newpkg#?"processed documentation database" and isOpen newpkg#"processed documentation database" ) and prefixDirectory =!= null 
 	  then (
@@ -211,6 +214,7 @@ newPackage(String) := opts -> (title) -> (
 	       if fileExists dbname then (
 		    db := newpkg#"processed documentation database" = openDatabase dbname;
 		    addEndFunction(() -> if isOpen db then close db))));
+     *}
      addStartFunction(() -> 
 	  if not ( newpkg#?"raw documentation database" and isOpen newpkg#"raw documentation database" ) and prefixDirectory =!= null 
 	  then (

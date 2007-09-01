@@ -65,6 +65,7 @@ all default justM2:: tags
 tags: Makefile @srcdir@/TAGS @srcdir@/TAGS.doc
 clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: \
+		../d/layout.m2.in \
 		$(NONDOCM2FILES) \
 		installedpackages \
 		$(OTHERM2FILES) \
