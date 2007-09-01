@@ -176,7 +176,8 @@ formattedKey DocumentTag := tag -> DocumentTag.FormattedKey tag
 formattedKey FinalDocumentTag := tag -> FinalDocumentTag.FormattedKey tag
 -----------------------------------------------------------------------------
 
-local exampleBaseFilename
+local exampleInputFilename
+local exampleOutputFilename
 local currentNodeName
 local currentHelpTag
 fixup := method(Dispatch => Thing)
@@ -236,14 +237,17 @@ fetchAnyRawDocumentation := (fkey) -> scan(value \ values PackageDictionary,
 	  if r =!= null then break r))
 
 proKey := "processed documentation"
-proKeyDB := "processed documentation database"
+-- proKeyDB := "processed documentation database"
 fetchProcessedDocumentation := (pkg,fkey) -> (		    -- returns null if none
      d := pkg#proKey;
      if d#?fkey then d#fkey
+     {*
      else (
 	  if pkg#?proKeyDB then (
 	       d = pkg#proKeyDB;
-	       if isOpen d and d#?fkey then value d#fkey)))
+	       if isOpen d and d#?fkey then value d#fkey))
+     *}
+     )
 
 -----------------------------------------------------------------------------
 -- unformatting document tags
@@ -472,9 +476,14 @@ separateM2output String := r -> (
      while r#?-1 and r#-1 == "\n" do r = substring(0,#r-1,r);
      separateRegexp(M2outputRE,M2outputREindex,r))
 
-makeFileName := (fkey,pkg) -> (			 -- may return 'null'
+makeExampleInputFileName := (fkey,pkg) -> (			 -- may return 'null'
      if pkg#?"package prefix" and pkg#"package prefix" =!= null 
-     then pkg#"package prefix" | LAYOUT#"packageexamples" pkg#"title" | toFilename fkey
+     then pkg#"package prefix" | LAYOUT#"packageexampleinput" pkg#"title" | toFilename fkey | ".m2"
+     )
+
+makeExampleOutputFileName := (fkey,pkg) -> (			 -- may return 'null'
+     if pkg#?"package prefix" and pkg#"package prefix" =!= null 
+     then pkg#"package prefix" | LAYOUT#"packageexampleoutput" pkg#"title" | toFilename fkey | ".out"
      )
 
 exampleResults := {}
@@ -485,9 +494,9 @@ checkForExampleOutputFile := (node,pkg) -> (
      if pkg#"example results"#?node then (
 	  exampleResults = pkg#"example results"#node;
 	  true)
-     else if exampleBaseFilename =!= null and fileExists (exampleBaseFilename | ".out") then (
-     	  if debugLevel > 1 then stderr << "--reading example results from " << (exampleBaseFilename | ".out") << endl;
-	  exampleResults = pkg#"example results"#node = drop(separateM2output get (exampleBaseFilename | ".out"),-1);
+     else if exampleOutputFilename =!= null and fileExists exampleOutputFilename then (
+     	  if debugLevel > 1 then stderr << "--reading example results from " << exampleOutputFilename << endl;
+	  exampleResults = pkg#"example results"#node = drop(separateM2output get exampleOutputFilename,-1);
  	  true)
      else false)
 
@@ -511,7 +520,8 @@ processExamplesLoop ExampleItem := x -> (
      exampleCounter = exampleCounter + 1;
      ret)
 processExamples := (pkg,fkey,docBody) -> (
-     exampleBaseFilename = makeFileName(fkey,pkg);
+     exampleInputFilename = makeExampleInputFileName(fkey,pkg);
+     exampleOutputFilename = makeExampleOutputFileName(fkey,pkg);
      if checkForExampleOutputFile(fkey,pkg) then (
      	  currentExampleKey = fkey;
      	  docBody = processExamplesLoop docBody;
@@ -899,7 +909,8 @@ document List := opts -> args -> (
      if reservedNodeNames#?(toLower currentNodeName) then error("'document' encountered a reserved node name '",currentNodeName,"'");
      pkg := DocumentTag.Package tag;
      o.Description = toList args;
-     exampleBaseFilename = makeFileName(currentNodeName,currentPackage);
+     exampleInputFilename = makeExampleInputFileName(currentNodeName,currentPackage);
+     exampleOutputFilename = makeExampleOutputFileName(currentNodeName,currentPackage);
      scan(keys o, key -> o#key = fixupTable#key o#key);
      if o.?Headline and o.Headline === "" then remove(o,Headline);
      if o.?Usage and o.Usage === "" then remove(o,Usage);

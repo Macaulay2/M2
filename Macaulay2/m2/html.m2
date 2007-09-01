@@ -565,7 +565,8 @@ installPackage Package := opts -> pkg -> (
      	  );
 
      -- copy package source subdirectory examples
-     exampleDir := buildDirectory|LAYOUT#"packageexamples" pkg#"title";
+     exampleInputDir := buildDirectory|LAYOUT#"packageexampleinput" pkg#"title";
+     exampleOutputDir := buildDirectory|LAYOUT#"packageexampleoutput" pkg#"title";
 
      if opts.MakeDocumentation then (
 	  pkg#"package prefix" = buildDirectory;
@@ -574,12 +575,14 @@ installPackage Package := opts -> pkg -> (
      	  -- ... to be implemented, but we seem to be copying the examples already, but only partially
 
 	  -- make example input files
-	  infn := fkey -> exampleDir|toFilename fkey|".m2";
-	  outfn := fkey -> exampleDir|toFilename fkey|".out";
-	  tmpfn := fkey -> exampleDir|toFilename fkey|".errors";
-	  stderr << "--making example input files in " << exampleDir << endl;
-	  makeDirectory exampleDir;
-	  exampleDir|".linkdir" << close;
+	  infn := fkey -> exampleInputDir|toFilename fkey|".m2";
+	  outfn := fkey -> exampleOutputDir|toFilename fkey|".out";
+	  tmpfn := fkey -> exampleOutputDir|toFilename fkey|".errors";
+	  stderr << "--making example input files in " << exampleInputDir << endl;
+	  makeDirectory exampleInputDir;
+	  makeDirectory exampleOutputDir;
+	  exampleInputDir|".linkdir" << close;
+	  exampleOutputDir|".linkdir" << close;
 	  exampleInputFiles := new MutableHashTable;
 	  scan(pairs pkg#"example inputs", (fkey,inputs) -> (
 		    inf := infn fkey;
@@ -596,14 +599,17 @@ installPackage Package := opts -> pkg -> (
 
 	  -- check for obsolete example input and output files and remove them
 	  if opts.CheckDocumentation then
-	  scan(readDirectory exampleDir, fn -> (
-		    fn = exampleDir | fn;
-		    if match("\\.out$",fn) and not exampleInputFiles#?(replace("\\.out$",".m2",fn)) then (
-			 stderr << "--warning: removing obsolete example output file: " <<  fn << endl;
-			 removeFile fn;
-			 );
+	  scan(readDirectory exampleInputDir, fn -> (
+		    fn = exampleInputDir | fn;
 		    if match("\\.m2$",fn) and not exampleInputFiles#?fn then (
 			 stderr << "--warning: removing obsolete example input file: " <<  fn << endl;
+			 removeFile fn;
+			 );
+		    ));
+	  scan(readDirectory exampleOutputDir, fn -> (
+		    fn = exampleOutputDir | fn;
+		    if match("\\.out$",fn) and not exampleInputFiles#?(replace("\\.out$",".m2",fn)) then (
+			 stderr << "--warning: removing obsolete example output file: " <<  fn << endl;
 			 removeFile fn;
 			 );
 		    ));
@@ -651,12 +657,13 @@ installPackage Package := opts -> pkg -> (
 	  close rawdocDatabase;
 
 	  -- run tests that are functions
-	  stderr << "--running tests that are functions " << exampleDir << endl;
+	  stderr << "--running tests that are functions" << endl;
 	  scan(pairs pkg#"test inputs", (key,str) -> if instance(str, Function) then (
 		    stderr << "--  running test " << key << ", function " << str << endl;
 		    str();
 		    ));
 
+     	  {*
      	  -- Make sure the processed documentation database exists, even if empty, so when running the examples,
 	  -- M2 doesn't read in all the documentation sources each time.  For the package Macaulay2 this makes a big
 	  -- difference.
@@ -666,12 +673,13 @@ installPackage Package := opts -> pkg -> (
 	       stderr << "--creating empty database for processed documentation in " << dbname << endl;
 	       close openDatabaseOut dbname;
 	       );
+     	  *}
 
 	  -- make example output files, or else copy them from old package directory tree
 	  exampleDir' := realpath(currentSourceDir|buildPackage|"/examples") | "/";
 	  infn' := fkey -> exampleDir'|toFilename fkey|".m2";
 	  outfn' := fkey -> exampleDir'|toFilename fkey|".out";
-	  stderr << "--making example result files in " << exampleDir << endl;
+	  stderr << "--making example result files in " << exampleOutputDir << endl;
 	  hadExampleError = false;
 	  numExampleErrors = 0;
 	  scan(pairs pkg#"example inputs", (fkey,inputs) -> (
@@ -738,6 +746,9 @@ installPackage Package := opts -> pkg -> (
 		    )
 	       );
 
+          {*
+     	  -- the processed documentation database isn't used
+
 	  -- cache processed documentation in database
 	  dbnametmp := dbname | ".tmp";
 	  if fileExists dbnametmp then removeFile dbnametmp;
@@ -752,15 +763,19 @@ installPackage Package := opts -> pkg -> (
 	  docDatabase := openDatabaseOut dbnametmp;
 	  scan(pairs pkg#"processed documentation", (k,v) -> docDatabase#k = toExternalString v);
 	  close docDatabase;
+     	  *}
+
 	  shield (
-	       moveFile(dbnametmp,dbname);
+     --	       moveFile(dbnametmp,dbname);
 	       moveFile(rawdbnametmp,rawdbname);
 	       );
+
+     --   pkg#prockey = openDatabase dbname;
+     --	  addEndFunction(() -> if pkg#?prockey and isOpen pkg#prockey then close pkg#prockey);
+
 	  rawkey := "raw documentation database";
-	  pkg#prockey = openDatabase dbname;
 	  pkg#rawkey = openDatabase rawdbname;
 	  addEndFunction(() -> if pkg#?rawkey and isOpen pkg#rawkey then close pkg#rawkey);
-	  addEndFunction(() -> if pkg#?prockey and isOpen pkg#prockey then close pkg#prockey);
 
 	  -- make table of contents, including next, prev, and up links
 	  stderr << "--assembling table of contents" << endl;
@@ -795,10 +810,14 @@ installPackage Package := opts -> pkg -> (
 
 	  -- helper routine
 	  getPDoc := fkey -> (
-	       if pkg#"processed documentation"#?fkey then pkg#"processed documentation"#fkey else
-	       if pkg#"processed documentation database"#?fkey then value pkg#"processed documentation database"#fkey else (
+	       if pkg#"processed documentation"#?fkey then pkg#"processed documentation"#fkey
+	       {*
+	       else if pkg#"processed documentation database"#?fkey then value pkg#"processed documentation database"#fkey 
+	       else (
 		    if debugLevel > 0 then stderr << "--warning: missing documentation node: " << fkey << endl;
-		    ));
+		    );
+	       *}
+	       );
 
 	  -- make info file
 	  if opts.MakeInfo then (
@@ -913,8 +932,8 @@ installPackage Package := opts -> pkg -> (
 	  << ///encap 2.0/// << endl
 	  << ///contact dan@math.uiuc.edu/// << endl;
 	  removeLastSlash := s -> if s#?0 and s#-1 === "/" then substring(s,0,#s-1) else s;
-	  scan(("libm2","packagedoc","packageexamples","packagehtml","packageimages","packagesrc","packagetests","libraries"),
-	       k -> f << "linkdir " << (if instance(LAYOUT#k, Function) then removeLastSlash LAYOUT#k "*" else removeLastSlash LAYOUT#k) << endl);
+	  scan(("libm2","packagedoc","packageexampleinput","packageexampleoutput","packagehtml","packageimages","packagesrc","packagetests","libraries"),
+	       k -> f << "linkdir" << " " << (if instance(LAYOUT#k, Function) then removeLastSlash LAYOUT#k "*" else removeLastSlash LAYOUT#k) << endl);
 	  fileMode(octal "644",f);
 	  f << close;
 	  -- INSTALL
