@@ -47,6 +47,7 @@ control.tar.gz : $(CONTROLFILES) $(CONTROLSCRIPTS)
 	chmod 0755 $(CONTROLSCRIPTS)
 	@FAKEROOT@ chown root $^
 	@FAKEROOT@ tar cfz $@ $^
+
 prepare : ../../@PKG_TZ@
 	rm -rf @package@ tmp
 	@MKDIR_P@ tmp@FINALPREFIX@
@@ -57,7 +58,6 @@ prepare : ../../@PKG_TZ@
 	@MKDIR_P@ tmp@FINALPREFIX@/share/doc/macaulay2
 	cp tmp@FINALPREFIX@/@docpackagesdirtail@/README tmp@FINALPREFIX@/share/doc/macaulay2/copyright
 	gzip -9 <@srcdir@/changelog >tmp@FINALPREFIX@/share/doc/macaulay2/changelog.gz
-	rm tmp@FINALPREFIX@/@docpackagesdirtail@/COPYING
 	find tmp -name .linkdir | xargs rm -f
 	find tmp -name \*.info | while read x ; do gzip --best "$$x" ; done
 	find tmp -name man -type d | while read x ; do find $$x -type f -not -name \*.gz | while read y ; do gzip --best "$$y" ; done ; done
@@ -70,6 +70,14 @@ md5sums : prepare
 	(cd tmp && find * -type f | xargs md5sum) >$@
 ifneq (@LINTIAN@,)
 check :
+	@echo "============================================================================="
+	@echo "Remarks about warnings from lintian:"
+	@echo ""
+	@echo "We purposely retain the COPYING file.  It's needed by the user to incorporate"
+	@echo "into the html version of the documentation."
+	@echo ""
+	@echo "The M2 binary uses the rpath for access to its private shared libraries."
+	@echo "============================================================================="
 	@LINTIAN@ -Ivi ../../@PKG_DEB@
 endif
 tidy :
