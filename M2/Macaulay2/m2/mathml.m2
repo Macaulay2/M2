@@ -24,6 +24,7 @@ mathML Nothing := texMath Nothing := tex Nothing := html Nothing := x -> ""
 mathML Symbol := x -> if tab#?x then tab#x else concatenate("<mi>",toString x,"</mi>")
 mathML InfiniteNumber := i -> if i === infinity then "<mrow><mi>&infin;</mi></mrow>" else "<mo>-</mo><mi>&infin;</mi>"
 mathML Array := s -> concatenate ( "<mrow><mo>[</mo><mrow>", between("<mo>,</mo>",mathML \ toList s), "</mrow><mo>]</mo></mrow>" )
+mathML Set := x -> mrow (mathML "set", mathML keys x)
 mathML Sequence := s -> concatenate ( "<mrow><mo>(</mo><mrow>", between("<mo>,</mo>",mathML \ toList s), "</mrow><mo>)</mo></mrow>" )
 mathML List := s -> concatenate ( "<mrow><mo>{</mo><mrow>", between("<mo>,</mo>",mathML \ toList s), "</mrow><mo>}</mo></mrow>" )
 mathML Holder := v -> mathML v#0
@@ -135,7 +136,8 @@ mathML ChainComplex := C -> (
 mathML Option := s -> concatenate("<mrow>",mathML s#0, doublerightarrow, mathML s#1, "</mrow>")
 mathML Type :=
 mathML ImmutableType := R -> mathML expression R
-mathML HashTable := s -> concatenate( "<mrow>",mathML class s,leftbrace, mtable apply(pairs s, (k,v) -> {mathML k, doublerightarrow, mathML v}), rightbrace,"</mrow>", newline )
+mathML Tally := 
+mathML HashTable := s -> concatenate( "<mrow>",mathML class s,leftbrace, mtable sort apply(pairs s, (k,v) -> {mathML k, doublerightarrow, mathML v}), rightbrace,"</mrow>", newline )
 mathML MutableHashTable := x -> (
      if ReverseDictionary#?x then mathML ReverseDictionary#x
      else mrow ( mathML class x, nest("mtext",if #x > 0 then ("{...", toString(#x), "...}") else "{}" )))
@@ -152,7 +154,6 @@ mathML OptionTable :=
 mathML ProjectiveHilbertPolynomial :=
 mathML RingMap :=
 mathML SheafOfRings :=
-mathML Tally :=
 mathML ChainComplexMap :=
 mathML GradedModule :=
 mathML GradedModuleMap :=
