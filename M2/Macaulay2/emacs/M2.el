@@ -1,9 +1,9 @@
 ;;; M2.el 
-;;;    -1- run Macaulay 2 as a command interpreter in an Emacs buffer
-;;;    -2- provide a major mode used for editing Macaulay 2 source files
+;;;    - run Macaulay 2 as a command interpreter in an Emacs buffer
+;;;    - provide a major mode used for editing Macaulay 2 source files
 
 ;; Macaulay 2 makes no attempt to wrap long output lines, so we provide
-;; functions which make horizontal scrolling easier.
+;; functions that make horizontal scrolling easier.
 
 (require 'font-lock)
 (require 'comint)
