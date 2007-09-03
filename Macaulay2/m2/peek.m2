@@ -25,7 +25,8 @@ peek'(ZZ,List) := (depth,s) -> (
 	  "{", horizontalJoin between (", ", apply(s, value -> peek'(depth,value))), "}" ) )
 peek'(ZZ, String) := (depth,s) -> if depth === 0 then s else format s
 
-peek'(ZZ,Net) := (depth,s) -> if depth === 0 then s else netList({{s}}, Boxes => true)
+formatNet := n -> (stack ((s -> substring(s,1,#s-2)) \ format \ unstack n))^(height n - 1)
+peek'(ZZ,Net) := (depth,s) -> if depth === 0 then s else netList({{formatNet s}}, Boxes => true)
 peek'(ZZ,Sequence) := (depth,s) -> (
      if depth === 0 then net s
      else horizontalJoin(
