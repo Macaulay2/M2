@@ -176,7 +176,6 @@ formattedKey DocumentTag := tag -> DocumentTag.FormattedKey tag
 formattedKey FinalDocumentTag := tag -> FinalDocumentTag.FormattedKey tag
 -----------------------------------------------------------------------------
 
-local exampleInputFilename
 local exampleOutputFilename
 local currentNodeName
 local currentHelpTag
@@ -476,11 +475,6 @@ separateM2output String := r -> (
      while r#?-1 and r#-1 == "\n" do r = substring(0,#r-1,r);
      separateRegexp(M2outputRE,M2outputREindex,r))
 
-makeExampleInputFileName := (fkey,pkg) -> (			 -- may return 'null'
-     if pkg#?"package prefix" and pkg#"package prefix" =!= null 
-     then pkg#"package prefix" | LAYOUT#"packageexampleinput" pkg#"title" | toFilename fkey | ".m2"
-     )
-
 makeExampleOutputFileName := (fkey,pkg) -> (			 -- may return 'null'
      if pkg#?"package prefix" and pkg#"package prefix" =!= null 
      then pkg#"package prefix" | LAYOUT#"packageexampleoutput" pkg#"title" | toFilename fkey | ".out"
@@ -520,7 +514,6 @@ processExamplesLoop ExampleItem := x -> (
      exampleCounter = exampleCounter + 1;
      ret)
 processExamples := (pkg,fkey,docBody) -> (
-     exampleInputFilename = makeExampleInputFileName(fkey,pkg);
      exampleOutputFilename = makeExampleOutputFileName(fkey,pkg);
      if checkForExampleOutputFile(fkey,pkg) then (
      	  currentExampleKey = fkey;
@@ -909,7 +902,6 @@ document List := opts -> args -> (
      if reservedNodeNames#?(toLower currentNodeName) then error("'document' encountered a reserved node name '",currentNodeName,"'");
      pkg := DocumentTag.Package tag;
      o.Description = toList args;
-     exampleInputFilename = makeExampleInputFileName(currentNodeName,currentPackage);
      exampleOutputFilename = makeExampleOutputFileName(currentNodeName,currentPackage);
      scan(keys o, key -> o#key = fixupTable#key o#key);
      if o.?Headline and o.Headline === "" then remove(o,Headline);

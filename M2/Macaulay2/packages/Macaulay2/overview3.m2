@@ -169,7 +169,6 @@ document {
 	  LI { TT format "libraries", " : files associated with third party libraries linked with Macaulay 2" },
 	  LI { TT format "packagecache", " : cached data files for the Macaulay 2 package FOO" },
 	  LI { TT format "packagedoc", " : documentation for the Macaulay 2 package FOO" },
-	  LI { TT format "packageexampleinput", " : example input files for the Macaulay 2 package FOO" },
 	  LI { TT format "packageexampleoutput", " : example output files for the Macaulay 2 package FOO" },
 	  LI { TT format "packagehtml", " : html documentation for the Macaulay 2 package FOO (*.html)" },
 	  LI { TT format "packageimages", " : images for the Macaulay 2 package FOO (*.jpg)" },

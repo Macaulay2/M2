@@ -383,7 +383,7 @@ aftermatch := (pat,str) -> (
      m := regex(pat,str);
      if m === null then "" else substring(m#0#0,str))
 
-runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> ( -- return false if error
+runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> ( -- return false if error
      announcechange();
      stderr << "--making " << desc << " in file " << outf << endl;
      if fileExists outf then removeFile outf;
@@ -394,7 +394,7 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> ( -- retur
      if ulimit === null then (
 	  ulimit = utest " -t 80" | utest " -m 200000"| utest " -v 200000";
 	  );
-     tmpf << "-- -*- M2-comint -*-" << endl << close;
+     tmpf << "-- -*- M2-comint -*- {* hash: " << inputhash << " *}" << endl << close;
      cmd := ulimit | "cd " | rundir | "; time " | cmdname | " " | args | " <" | format inf | " >>" | format tmpf | " 2>&1";
      stderr << cmd << endl;
      r := run cmd;
@@ -428,7 +428,7 @@ runString := (x,pkg,rundir,usermode) -> (
      rm := fn -> if fileExists fn then removeFile fn;
      rmall := () -> rm \ {inf, tmpf, outf};
      inf << x << endl << close;
-     ret := runFile(inf,outf,tmpf,"test results",pkg,t->t,rundir,usermode);
+     ret := runFile(inf,hash x,outf,tmpf,"test results",pkg,t->t,rundir,usermode);
      if ret then (rm inf; rm outf;);
      ret)
 
@@ -565,7 +565,6 @@ installPackage Package := opts -> pkg -> (
      	  );
 
      -- copy package source subdirectory examples
-     exampleInputDir := buildDirectory|LAYOUT#"packageexampleinput" pkg#"title";
      exampleOutputDir := buildDirectory|LAYOUT#"packageexampleoutput" pkg#"title";
 
      if opts.MakeDocumentation then (
@@ -574,45 +573,23 @@ installPackage Package := opts -> pkg -> (
 	  -- copy package doc subdirectory if we loaded the package from a distribution
      	  -- ... to be implemented, but we seem to be copying the examples already, but only partially
 
-	  -- make example input files
-	  infn := fkey -> exampleInputDir|toFilename fkey|".m2";
+     	  fnbase := temporaryFileName ();
+	  infn := fkey -> fnbase|toFilename fkey|".m2";
 	  outfn := fkey -> exampleOutputDir|toFilename fkey|".out";
 	  tmpfn := fkey -> exampleOutputDir|toFilename fkey|".errors";
-	  stderr << "--making example input files in " << exampleInputDir << endl;
-	  makeDirectory exampleInputDir;
 	  makeDirectory exampleOutputDir;
-	  exampleInputDir|".linkdir" << close;
 	  exampleOutputDir|".linkdir" << close;
-	  exampleInputFiles := new MutableHashTable;
-	  scan(pairs pkg#"example inputs", (fkey,inputs) -> (
-		    inf := infn fkey;
-		    exampleInputFiles#inf = true;
-		    val := concatenate apply(inputs, s -> s|"\n");
-		    if fileExists inf and get inf === val
-		    then (
-			 if debugLevel > 0 then stderr << "--leaving example input file for " << fkey << endl;
-			 )
-		    else (
-			 if debugLevel > 0 then stderr << "--making example input file for " << fkey << endl;
-			 inf << val << close;
-			 )));
 
-	  -- check for obsolete example input and output files and remove them
-	  if opts.CheckDocumentation then
-	  scan(readDirectory exampleInputDir, fn -> (
-		    fn = exampleInputDir | fn;
-		    if match("\\.m2$",fn) and not exampleInputFiles#?fn then (
-			 stderr << "--warning: removing obsolete example input file: " <<  fn << endl;
-			 removeFile fn;
-			 );
-		    ));
-	  scan(readDirectory exampleOutputDir, fn -> (
-		    fn = exampleOutputDir | fn;
-		    if match("\\.out$",fn) and not exampleInputFiles#?(replace("\\.out$",".m2",fn)) then (
-			 stderr << "--warning: removing obsolete example output file: " <<  fn << endl;
-			 removeFile fn;
-			 );
-		    ));
+	  -- check for obsolete example output files and remove them
+	  if opts.CheckDocumentation then (
+	       exampleOutputFiles := set apply(keys pkg#"example inputs", outfn);
+	       scan(readDirectory exampleOutputDir, fn -> (
+			 fn = exampleOutputDir | fn;
+			 if match("\\.out$",fn) and not exampleOutputFiles#?fn then (
+			      stderr << "--warning: removing obsolete example output file: " <<  fn << endl;
+			      removeFile fn;
+			      );
+			 )));
 
 	  -- cache raw documentation in database, and check for changes
 	  rawDocUnchanged := new MutableHashTable;
@@ -679,6 +656,10 @@ installPackage Package := opts -> pkg -> (
 	  exampleDir' := realpath(currentSourceDir|buildPackage|"/examples") | "/";
 	  infn' := fkey -> exampleDir'|toFilename fkey|".m2";
 	  outfn' := fkey -> exampleDir'|toFilename fkey|".out";
+	  gethash := outf -> (
+	       f := get outf;
+	       m := regex("\\`.*\\{\\*.* hash: *(-?[0-9]+).*\\*\\}",f);
+	       if m =!= null then value substring(f,m#1#0,m#1#1));
 	  stderr << "--making example result files in " << exampleOutputDir << endl;
 	  hadExampleError = false;
 	  numExampleErrors = 0;
@@ -691,23 +672,23 @@ installPackage Package := opts -> pkg -> (
 		    tmpf := tmpfn fkey;
 		    desc := "example results for " | fkey;
 		    changefun := () -> remove(rawDocUnchanged,fkey);
-		    if not opts.RerunExamples and fileExists outf and fileTime outf >= fileTime inf then (
+		    inputhash := hash inputs;
+		    if not opts.RerunExamples and fileExists outf and gethash outf === inputhash then (
 			 -- do nothing
 			 )
 		    else if (
 			 not opts.RerunExamples 
-			 and inf != inf' 
-			 and fileExists inf' 
 			 and fileExists outf' 
-			 and fileTime outf' >= fileTime inf' 
-			 and get inf == get inf'
+			 and gethash outf' === inputhash
 			 and not fileExists tmpf
 			 )
-		    then (
-			 copyFile(outf',outf);
-			 )
+		    then copyFile(outf',outf)
 		    else (
-			 runFile(inf,outf,tmpf,desc,pkg,changefun,".",opts.UserMode);
+			 inf << concatenate apply(inputs, s -> s|"\n") << close;
+			 if runFile(inf,inputhash,outf,tmpf,desc,pkg,changefun,".",opts.UserMode)
+			 then (
+			      removeFile inf;
+			      )
 			 );
 		    -- read, separate, and store example output
 		    if fileExists outf then pkg#"example results"#fkey = drop(separateM2output get outf,-1)
@@ -932,7 +913,7 @@ installPackage Package := opts -> pkg -> (
 	  << ///encap 2.0/// << endl
 	  << ///contact dan@math.uiuc.edu/// << endl;
 	  removeLastSlash := s -> if s#?0 and s#-1 === "/" then substring(s,0,#s-1) else s;
-	  scan(("libm2","packagedoc","packageexampleinput","packageexampleoutput","packagehtml","packageimages","packagesrc","packagetests","libraries"),
+	  scan(("libm2","packagedoc","packageexampleoutput","packagehtml","packageimages","packagesrc","packagetests","libraries"),
 	       k -> f << "linkdir" << " " << (if instance(LAYOUT#k, Function) then removeLastSlash LAYOUT#k "*" else removeLastSlash LAYOUT#k) << endl);
 	  fileMode(octal "644",f);
 	  f << close;

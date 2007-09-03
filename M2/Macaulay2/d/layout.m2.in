@@ -22,7 +22,6 @@ if class LAYOUT === Symbol then LAYOUT = hashTable {
       "packagetests" => PackageName -> "@docpackagesdirtail@/"|PackageName|"/tests/",
       "packagehtml" => PackageName -> "@docpackagesdirtail@/"|PackageName|"/html/",
       "packagecache" => PackageName -> "@libm2dirtail@/"|PackageName|"/cache/",
-      "packageexampleinput" => PackageName -> "@docpackagesdirtail@/"|PackageName|"/example-input/", -- we exclude this directory from the binary distribution, so move it to a build directory
       "packageexampleoutput" => PackageName -> "@docpackagesdirtail@/"|PackageName|"/example-output/",
       -- Macaulay 2 Core package:
       "libm2"=>"@libm2dirtail@/Core/",  -- change to corelib
