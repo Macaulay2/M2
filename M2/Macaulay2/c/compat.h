@@ -25,6 +25,8 @@ extern char errfmtnc[];
 #define __DARWIN__ 1
 #endif
 
+#include <gc/gc.h>
+
 #if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -63,8 +65,6 @@ extern char errfmtnc[];
 #else
 #include <varargs.h>
 #endif
-
-#include <gc/gc.h>
 
 #define malloc(n) GC_MALLOC(n)
 #define free(n) GC_FREE(n)
