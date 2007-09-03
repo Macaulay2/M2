@@ -109,6 +109,7 @@ bool doubleq(char *p, unsigned int n) {
 
 char escaped(char c){
      switch(c){
+     	  case 'b': return '\b';
      	  case 't': return '\t';
 	  case 'n': return '\n';
 	  case 'f': return '\f';

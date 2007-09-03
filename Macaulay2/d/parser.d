@@ -67,6 +67,7 @@ export parseString(s:string):string := (
 	       if c == 'n' then v << '\n'
 	       else if c == '"' then v << '"'
 	       else if c == 'r' then v << '\r'
+	       else if c == 'b' then v << '\b'
 	       else if c == 't' then v << '\t'
 	       else if c == 'f' then v << '\f'
 	       else if c == '\\' then v << '\\'
