@@ -185,6 +185,7 @@ getstring(o:PosFile):(null or Word) := (
 	  then (
 	       if char(ch) == '"' 				    -- "
 	       || char(ch) == 'r'
+	       || char(ch) == 'b'
 	       || char(ch) == 'n'
 	       || char(ch) == 't'
 	       || char(ch) == 'f'
