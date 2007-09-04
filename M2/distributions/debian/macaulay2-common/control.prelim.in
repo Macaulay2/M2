@@ -1,4 +1,4 @@
-Package: macaulay2
+Package: macaulay2-common
 Version: @PACKAGE_VERSION@
 Section: math
 Priority: extra
@@ -12,3 +12,5 @@ Description: a software system for algebraic geometry research
  modules.
  .
  Home page: http://www.math.uiuc.edu/Macaulay2/.
+ .
+ This package contains the architecture independent portion of Macaulay2.

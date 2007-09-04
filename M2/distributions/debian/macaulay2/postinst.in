@@ -1,0 +1,13 @@
+#!/bin/sh -e
+prefix=@FINALPREFIX@
+DUMPDATA=@DUMPDATA@
+case "$1" in
+    abort-upgrade|configure)
+	if [ "$DUMPDATA" = yes ]
+	then $prefix/bin/M2 --dumpdata
+	fi
+	;;
+    abort-remove|abort-deconfigure) ;;
+    *) echo "postinst called with unknown argument \`$1'" >&2
+       exit 1 ;;
+esac

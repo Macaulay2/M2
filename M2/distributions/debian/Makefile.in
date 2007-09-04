@@ -2,18 +2,16 @@
 include ../../include/config.Makefile
 VPATH = @srcdir@
 TIDY = yes
-DEPENDS = yes
-finalprefix=@FINALPREFIX@
-prefixtail=$(shell echo $(finalprefix) | sed 's=^/==')
-prefixdir=$(shell dirname $(finalprefix))
+prefixtail=$(shell echo @FINALPREFIX@ | sed 's=^/==')
 ############################## main targets
-all install :: ../../@PKG_DEB@
+all install :: tidy_before
+all install :: ../../@PKG_DEB@ ../../@PKG_COM_DEB@
 	@ echo "============================================================================="
 	@ echo "debian package file prepared: "
 	@ echo "        @PKG_DEB@"
 	@ echo "============================================================================="
 ifeq ($(TIDY),yes)
-all install :: tidy
+all install :: tidy_after
 endif
 #################################
 
@@ -30,23 +28,30 @@ $(error expected --enable-encap, in order to make a debian package)
 endif
 
 # notice that fakeroot is required, get it here: http://ftp.debian.org/debian/pool/main/f/@FAKEROOT@
-../../@PKG_DEB@ : debian-binary control.tar.gz data.tar.gz
+../../@PKG_DEB@ : @srcdir@/macaulay2/debian-binary macaulay2/control.tar.gz macaulay2/data.tar.gz
 	rm -f $@
 	@FAKEROOT@ chown root.root $^
 	@FAKEROOT@ ar rc $@.tmp $^
 	sed -e 's=debian-binary/=debian-binary =' -e 's=control.tar.gz/=control.tar.gz =' -e 's=data.tar.gz/=data.tar.gz =' < $@.tmp > $@
 	rm $@.tmp
-CONTROLFILES := md5sums control
-CONTROLSCRIPTS := 
-# CONTROLSCRIPTS += preinst
-CONTROLSCRIPTS += postinst
-CONTROLSCRIPTS += prerm
-# CONTROLSCRIPTS += postrm
-control.tar.gz : $(CONTROLFILES) $(CONTROLSCRIPTS)
-	chmod 0644 $(CONTROLFILES)
-	chmod 0755 $(CONTROLSCRIPTS)
+../../@PKG_COM_DEB@ : @srcdir@/macaulay2-common/debian-binary macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz
+	rm -f $@
+	@FAKEROOT@ chown root.root $^
+	@FAKEROOT@ ar rc $@.tmp $^
+	sed -e 's=debian-binary/=debian-binary =' -e 's=control.tar.gz/=control.tar.gz =' -e 's=data.tar.gz/=data.tar.gz =' < $@.tmp > $@
+	rm $@.tmp
+
+macaulay2/control.tar.gz : macaulay2/md5sums macaulay2/control macaulay2/postinst macaulay2/prerm
+	cd macaulay2 && chmod 0644 md5sums control
+	cd macaulay2 && chmod 0755 postinst prerm
 	@FAKEROOT@ chown root $^
-	@FAKEROOT@ tar cfz $@ $^
+	@FAKEROOT@ tar cfz $@ -C macaulay2 control postinst prerm
+
+macaulay2-common/control.tar.gz : macaulay2-common/md5sums macaulay2-common/control macaulay2-common/postinst macaulay2-common/prerm
+	cd macaulay2-common && chmod 0644 md5sums control
+	cd macaulay2-common && chmod 0755 postinst prerm
+	@FAKEROOT@ chown root $^
+	@FAKEROOT@ tar cfz $@ -C macaulay2-common control postinst prerm
 
 prepare : ../../@PKG_TZ@
 	rm -rf @package@ tmp
@@ -56,47 +61,56 @@ prepare : ../../@PKG_TZ@
 	mv @package@/* tmp@FINALPREFIX@
 	rmdir @package@
 	@MKDIR_P@ tmp@FINALPREFIX@/share/doc/macaulay2
+	@MKDIR_P@ tmp@FINALPREFIX@/share/doc/macaulay2-common
 	cp tmp@FINALPREFIX@/@docpackagesdirtail@/README tmp@FINALPREFIX@/share/doc/macaulay2/copyright
-	gzip -9 <@srcdir@/changelog >tmp@FINALPREFIX@/share/doc/macaulay2/changelog.gz
+	cp tmp@FINALPREFIX@/@docpackagesdirtail@/README tmp@FINALPREFIX@/share/doc/macaulay2-common/copyright
+	gzip -9 <@srcdir@/macaulay2/changelog >tmp@FINALPREFIX@/share/doc/macaulay2/changelog.gz
+	gzip -9 <@srcdir@/macaulay2-common/changelog >tmp@FINALPREFIX@/share/doc/macaulay2-common/changelog.gz
 	find tmp -name .linkdir | xargs rm -f
 	find tmp -name \*.info | while read x ; do gzip --best "$$x" ; done
 	find tmp -name man -type d | while read x ; do find $$x -type f -not -name \*.gz | while read y ; do gzip --best "$$y" ; done ; done
 	find tmp -name \*.so -o -name \*.so.\* -o -name \*.la | xargs chmod a-x Makefile
 	chmod -R og-w,a+r tmp
 	@FAKEROOT@ chown -R root tmp
-data.tar.gz : prepare
-	(cd tmp && @FAKEROOT@ tar cfz - *) >$@
-md5sums : prepare
-	(cd tmp && find * -type f | xargs md5sum) >$@
+macaulay2/data.tar.gz : prepare
+	(cd tmp && @FAKEROOT@ tar cfz - --exclude=share *) >$@
+macaulay2-common/data.tar.gz : prepare
+	(cd tmp && @FAKEROOT@ tar cfz - $(prefixtail)/share) >$@
+macaulay2/md5sums : prepare
+	(cd tmp && find * -name share -prune -type f -o -type f | xargs md5sum) >$@
+macaulay2-common/md5sums : prepare
+	(cd tmp && find $(prefixtail)/share -type f | xargs md5sum) >$@
 ifneq (@LINTIAN@,)
 check :
 	- @LINTIAN@ -Ivi ../../@PKG_DEB@
+	- @LINTIAN@ -Ivi ../../@PKG_COM_DEB@
 endif
-tidy :
-	rm -rf tmp control.tar.gz data.tar.gz md5sums
-clean ::
-	rm -rf @package@ tmp debian-binary control.tar.gz data.tar.gz md5sums
+tidy_before :
+	rm -rf tmp
+	rm -rf macaulay2/control.tar.gz macaulay2/data.tar.gz macaulay2/md5sums
+	rm -rf macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz macaulay2-common/md5sums
+tidy_after :
+	rm -rf tmp
+	rm -rf macaulay2/control.tar.gz macaulay2/data.tar.gz macaulay2/md5sums
+	rm -rf macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz macaulay2-common/md5sums
+clean :: tidy
+	rm -rf @package@
 	rm -rf ../../@PKG_DEB@
+	rm -rf ../../@PKG_COM_DEB@
 distclean : clean; rm -f Makefile control
-
+macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz
+	(cat $< && \
+	 size=`gunzip<macaulay2/data.tar.gz|wc -c` && \
+	 size=`echo $$size | sed 's/^\([0-9][0-9]*\).*/\1/'` && \
+	 echo Installed-Size: $$size \
+	) >$@
+macaulay2-common/control : macaulay2-common/control.prelim macaulay2-common/data.tar.gz
+	(cat $< && \
+	 size=`gunzip<macaulay2-common/data.tar.gz|wc -c` && \
+	 size=`echo $$size | sed 's/^\([0-9][0-9]*\).*/\1/'` && \
+	 echo Installed-Size: $$size \
+	) >$@
 Makefile : Makefile.in; cd ../..; ./config.status distributions/debian/Makefile
-control.prelim : control.prelim.in
-	cd ../..; ./config.status distributions/debian/control.prelim
-	chmod 0755 $@
-control : control.prelim prepare
-	(cat $< && size=`du -s tmp` && size=`echo $$size | sed 's/^\([0-9][0-9]*\).*/\1/'` && echo Installed-Size: $$size) >$@
-prerm : prerm.in
-	cd ../..; ./config.status distributions/debian/prerm
-	chmod 0755 $@
-preinst : preinst.in
-	cd ../..; ./config.status distributions/debian/preinst
-	chmod 0755 $@
-postrm : postrm.in
-	cd ../..; ./config.status distributions/debian/postrm
-	chmod 0755 $@
-postinst : postinst.in
-	cd ../..; ./config.status distributions/debian/postinst
-	chmod 0755 $@
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/debian "
