@@ -1,11 +1,10 @@
 URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
 VERSION = 7.0
-CFLAGS += -g -O2 -DLARGE_CONFIG -DUSE_MMAP
 CONFIGOPTIONS  = --disable-threads
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
-CONFIGOPTIONS += GC_CFLAGS="$(CFLAGS)"
+CONFIGOPTIONS += --enable-large-config
 PATCHFILE = @srcdir@/patch-7.0
 include ../Makefile.library
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gc/Makefile
