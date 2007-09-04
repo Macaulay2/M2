@@ -145,14 +145,7 @@ document {
 	       },
 	  Outputs => {{ "the value of the expression is ", TT "(c,d,e,...)" }},
 	  Consequences => {
-	       { "the expressions c,d,e,... are assigned to the variables x,y,z,..., respectively, as above.  Global assignment hooks may be run, as above." },
-	       { "If the left hand side has more elements than the right hand side, then the extra symbols on the left side are given the value ", TO "null", "." },
-	       { "If the left hand side has fewer elements than the right hand side, then the last symbol on the left hand side is given
-     		    as value a sequence containing the trailing elements of the right hand side." 
-		    },
-	       { "If the right hand side is not a sequence, then it is assigned to the first symbol on the left, and the remaining symbols are assigned the
-		    value ", TO "null", "."
-		    }
+	       { "the expressions c,d,e,... are assigned to the variables x,y,z,..., respectively, as above.  Global assignment hooks may be run, as above.  The number of expressions must match the number of variables." }
 	       },
 	  PARA "Multiple assignment makes it easy to switch the values of two variables, or to permute the values of several.",
 	  EXAMPLE lines ///
@@ -269,9 +262,12 @@ document {
 	       "e" => Thing
 	       },
 	  Consequences => {
-	       { "The ", TO2{IndexedVariable, "indexed variable"}, " ", TT { "x", SUB "i" }, " is created (if necessary) and is assigned the value ", TT "e", " so that future
+	       { "The ", TO2{IndexedVariable, "indexed variable"}, " ", TT { "x", SUB "i" }, " is created 
+		    (if necessary) and is assigned the value ", TT "e", " so that future
 		    references to ", TT "x_i", " yield the value ", TT "e", ".
-		    Moreover, the value of the symbol ", TT "x", " is set to ", TT "x", "."
+		    Moreover, the value of the symbol ", TT "x", " is set to an object of 
+		    type ", TO "IndexedVariableTable", ", which contains the values of
+		    the expressions ", TT "x_i", "."
 		    }
 	       },
 	  Outputs => { "e" },
@@ -282,6 +278,8 @@ document {
 	       s_2 = 44
 	       s_2
 	       s_(i,j)
+	       symbol s_2
+	       value oo
 	  ///
 	  ),
      SYNOPSIS {

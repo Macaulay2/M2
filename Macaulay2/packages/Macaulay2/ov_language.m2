@@ -32,7 +32,6 @@ document {
 	      TO "hash tables",
      	  "expressions",
 	      TO "operators",
-	      TO "assignment",
 	      TO "conditional execution",
 	      TO "while",
 	      TO "for",
