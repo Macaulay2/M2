@@ -643,6 +643,7 @@ then
 fi
 
 AC_SUBST(package,Macaulay2-$PACKAGE_VERSION)
+AC_SUBST(packagecommon,Macaulay2-common-$PACKAGE_VERSION)
 AC_SUBST(encapdir,"")
 if test "$ENCAP" = yes
 then encapdir="\${prefix}/$package"
@@ -654,6 +655,7 @@ AC_SUBST(SRC_TZ,$package.tar.$COMPRESS)
 AC_SUBST(PKG_TGZ,$package-$ARCH-$OS.tar.gz)
 AC_SUBST(PKG_TBZ,$package-$ARCH-$OS.tar.bz2)
 AC_SUBST(PKG_DEB,$package-$DEBIANARCH-$OS.deb)
+AC_SUBST(PKG_COM_DEB,$packagecommon.deb)
 AC_SUBST(PKG_RPM,$package-$ARCH-$OS.rpm)
 AC_SUBST(PKG_TZ,$package-$ARCH-$OS.tar.$COMPRESS)
 AC_SUBST(EXE,$M2SUFFIX$EXEEXT)

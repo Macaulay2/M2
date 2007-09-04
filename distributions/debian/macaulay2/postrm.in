@@ -1,0 +1,11 @@
+#! /bin/sh -e
+prefix=@FINALPREFIX@
+case "$1" in
+    remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+        ;;
+    purge)
+        ;;
+    *)
+        echo "postrm called with unknown argument \`$1'" >&2
+        exit 1
+esac
