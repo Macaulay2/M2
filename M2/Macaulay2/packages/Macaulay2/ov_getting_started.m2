@@ -343,7 +343,8 @@ document {
 	  you should see a prompt such as this:"},
 PRE///    indigo% M2
     Macaulay 2, version 1.0
-    with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings, TangentCone
+    with packages: Classic, Elimination, LLLBases, PrimaryDecomposition,
+                   SchurRings, TangentCone
 
     i1 : ///,
      PARA {"If this is the first time that you are running Macaulay2, then Macaulay2
