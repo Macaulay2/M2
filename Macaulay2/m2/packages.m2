@@ -414,6 +414,9 @@ getPackage = method(Options => {
 	  DebuggingMode => false
 	  })
 getPackage String := opts -> pkgname -> (
+     packages := lines getwww (opts.Repository | "packages" );
+     if not member(pkgname,packages)
+     then error("unknown package: ", pkgname, "; known packages: ", concatenate(between(", ",packages)));
      url := opts.Repository | pkgname | "/";
      versions := sort lines chkwww (url | "versions");
      if #versions == 0 then error "getPackage: no versions available from repository";
