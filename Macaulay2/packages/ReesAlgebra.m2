@@ -25,7 +25,7 @@ newPackage(
 		  Name => "David Eisenbud",
 		  Email => "de@msri.org"},
 	     {Name => "Amelia Taylor",
-	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor",
+	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor/",
    	     Email => "amelia.taylor@coloradocollege.edu"},
              {Name => "Sorin Popescu",
 	      Email => "sorin@math.sunysb.edu"}},  
