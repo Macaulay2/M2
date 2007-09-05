@@ -500,6 +500,7 @@ AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without la
 test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
+AC_SUBST(USE_FLIBS,no)
 if test "$LAPACK" = yes
 then AC_MSG_CHECKING([whether the vecLib framework is available])
      SAVELIBS=$LIBS
@@ -515,11 +516,11 @@ then AC_MSG_CHECKING([whether the vecLib framework is available])
 	     LIBS=$SAVELIBS
 	     if test $BUILD_blas = no
 	     then AC_LANG(Fortran 77)
-		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_blas=yes)
+		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_blas=yes USE_FLIBS=yes)
 	     fi
 	     if test $BUILD_lapack = no
 	     then AC_LANG(Fortran 77)
-		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes)
+		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes USE_FLIBS=yes)
 	     fi
 	 ])
 fi
