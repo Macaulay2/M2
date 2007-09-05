@@ -57,35 +57,34 @@ macaulay2-common/control.tar.gz : macaulay2-common/md5sums macaulay2-common/cont
 
 prepare : ../../@PKG_TZ@
 	rm -rf @package@ tmp
-	@MKDIR_P@ tmp@FINALPREFIX@
+	@MKDIR_P@ tmp@FINALPREFIX@ tmp-common@FINALPREFIX@
 	tar xfp $^ @TAR_COMPRESS_OPTION@
 	for i in @package@/* ; do if [ -f "$$i" ] ; then rm "$$i" ; fi ; done
+	mv @package@/share tmp-common@FINALPREFIX@
 	mv @package@/* tmp@FINALPREFIX@
+	@MKDIR_P@ tmp@FINALPREFIX@/share
+	mv tmp-common@FINALPREFIX@/share/man tmp@FINALPREFIX@/share
 	rmdir @package@
 	@MKDIR_P@ tmp@FINALPREFIX@/share/doc/macaulay2
-	@MKDIR_P@ tmp@FINALPREFIX@/share/doc/macaulay2-common
-	cp tmp@FINALPREFIX@/@docpackagesdirtail@/README tmp@FINALPREFIX@/share/doc/macaulay2/copyright
-	cp tmp@FINALPREFIX@/@docpackagesdirtail@/README tmp@FINALPREFIX@/share/doc/macaulay2-common/copyright
+	@MKDIR_P@ tmp-common@FINALPREFIX@/share/doc/macaulay2-common
+	cp tmp-common@FINALPREFIX@/@docpackagesdirtail@/README tmp@FINALPREFIX@/share/doc/macaulay2/copyright
+	cp tmp-common@FINALPREFIX@/@docpackagesdirtail@/README tmp-common@FINALPREFIX@/share/doc/macaulay2-common/copyright
 	gzip -9 <@srcdir@/macaulay2/changelog >tmp@FINALPREFIX@/share/doc/macaulay2/changelog.gz
-	gzip -9 <@srcdir@/macaulay2-common/changelog >tmp@FINALPREFIX@/share/doc/macaulay2-common/changelog.gz
-	find tmp -name .linkdir | xargs rm -f
-	find tmp -name \*.info | while read x ; do gzip --best "$$x" ; done
-	find tmp -name man -type d | while read x ; do find $$x -type f -not -name \*.gz | while read y ; do gzip --best "$$y" ; done ; done
-	find tmp -name \*.so -o -name \*.so.\* -o -name \*.la | xargs chmod a-x Makefile
-	chmod -R og-w,a+r tmp
-	@FAKEROOT@ $(CHOWN) -R root tmp
-macaulay2/data.tar.gz : prepare
-	(cd tmp && @FAKEROOT@ tar cfz - --exclude=share *) >$@
-macaulay2-common/data.tar.gz : prepare
-	(cd tmp && @FAKEROOT@ tar cfz - $(prefixtail)/share) >$@
-macaulay2/md5sums : prepare
-	(cd tmp && find * -name share -prune -type f -o -type f | xargs md5sum) >$@
-macaulay2-common/md5sums : prepare
-	(cd tmp && find $(prefixtail)/share -type f | xargs md5sum) >$@
+	gzip -9 <@srcdir@/macaulay2-common/changelog >tmp-common@FINALPREFIX@/share/doc/macaulay2-common/changelog.gz
+	find tmp tmp-common -name .linkdir | xargs rm -f
+	find tmp tmp-common -name \*.info | while read x ; do gzip --best "$$x" ; done
+	find tmp tmp-common -name man -type d | while read x ; do find $$x -type f -not -name \*.gz | while read y ; do gzip --best "$$y" ; done ; done
+	find tmp tmp-common -name \*.so -o -name \*.so.\* -o -name \*.la | xargs chmod a-x Makefile
+	chmod -R og-w,a+r tmp tmp-common 
+	@FAKEROOT@ $(CHOWN) -R root tmp tmp-common 
+macaulay2/data.tar.gz        : prepare; (cd tmp        && @FAKEROOT@ tar cfz - *) >$@
+macaulay2-common/data.tar.gz : prepare;	(cd tmp-common && @FAKEROOT@ tar cfz - *) >$@
+macaulay2/md5sums            : prepare; (cd tmp        && find * -type f | xargs md5sum) >$@
+macaulay2-common/md5sums     : prepare;	(cd tmp-common && find * -type f | xargs md5sum) >$@
 ifneq (@LINTIAN@,)
 check :
-	- @LINTIAN@ -Ivi ../../@PKG_DEB@
-	- @LINTIAN@ -Ivi ../../@PKG_COM_DEB@
+	- @LINTIAN@ ../../@PKG_DEB@
+	- @LINTIAN@ ../../@PKG_COM_DEB@
 endif
 tidy_before :
 	rm -rf tmp
