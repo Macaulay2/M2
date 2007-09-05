@@ -13,7 +13,7 @@ endif
 tarball: tarball.@COMPRESS@
 tarball.gz: tarball.tgz
 tarballs: tarball.bz2 tarball.tgz
-EXCLUDES := --exclude=".nfs*" --exclude="Macaulay2-*-data" --exclude="example-input"
+EXCLUDES := --exclude=".nfs*" --exclude="Macaulay2-*-data"
 tarball.bz2 : ../@PKG_TBZ@ warning
 ../@PKG_TBZ@  : always warning
 ifneq (@FAKEROOT@,)
