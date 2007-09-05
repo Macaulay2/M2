@@ -85,6 +85,7 @@ make install
 ## apt-get install, get the following packages:
 sudo apt-get install subversion
 sudo apt-get install autoconf
+sudo apt-get libncurses5-dev
 sudo apt-get install g++
 sudo apt-get install g77
 sudo apt-get install bison
@@ -101,6 +102,10 @@ cd BUILD/normal
 make
 make install
 
+## I do this:
+../../configure --prefix=/home/mike/m2-installed --enable-experimental-code --enable-static
+## sometimes (depending on configuration), I need to add
+## --enable-build-libraries=""
 
 
 ## This file consists of my (MES) notes for quickly getting the Macaulay2
