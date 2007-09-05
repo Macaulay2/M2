@@ -6,6 +6,7 @@ CONFIGOPTIONS += --disable-shared
 endif
 CONFIGOPTIONS += --enable-large-config
 PATCHFILE = @srcdir@/patch-7.0
+INSTALLTARGET = install-strip
 include ../Makefile.library
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gc/Makefile
 clean :: ; rm -rf $(LIBRARIESDIR)/lib/libgc.* $(LIBRARIESDIR)/lib/libcord.* $(LIBRARIESDIR)/include/gc $(LIBRARIESDIR)/share/gc \
