@@ -647,23 +647,37 @@ document {
      }
 
 document {
-     Headline => "download a package from the repository",
      Key => {(getPackage,String), getPackage},
-     Usage => ///getPackage pkgname///,
-     Inputs => {
-	  "pkgname" => String => {"the name of a package"},
-	  Version => String => {"the version to download, instead of the most recent version"},
-	  CurrentVersion => String => {"the version currently installed"},
-	  Repository => String => {"the URL of the repository"}
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  {"the most recent version of the package is downloaded from the repository and installed, unless it's not newer
-	       than the version currently installed (according to the value of the CurrentVersion option)"}
-	  },
+     Headline => "download a package from the repository",
+     SYNOPSIS (
+	  Usage => ///getPackage pkgname///,
+     	  BaseFunction => getPackage,
+	  Inputs => {
+	       "pkgname" => String => {"the name of a package"},
+	       Version => String => {"the version to download, instead of the most recent version"},
+	       CurrentVersion => String => {"the version currently installed"},
+	       Repository => String => {"the URL of the repository"}
+	       },
+	  Outputs => {
+	       },
+	  Consequences => {
+	       {"the most recent version of the package is downloaded from the repository and installed, unless it's not newer
+		    than the version currently installed (according to the value of the CurrentVersion option)"}
+	       }
+	  ),
+     SYNOPSIS (
+	  Usage => ///getPackage()///,
+     	  BaseFunction => getPackage,
+	  Inputs => {
+	       Repository => String => {"the URL of the repository"}
+	       },
+	  Outputs => {
+	       List => "a list of names of available packages from the repository"
+	       }
+	  ),
      SeeAlso => { installPackage }
-     } 
+     }
+      
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
