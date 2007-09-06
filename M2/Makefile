@@ -31,10 +31,10 @@ configure : configure.ac config/files # aclocal.m4
 	@ set -x ; autoconf
 
 get-autoconf :
-	$(MAKE) -C autoconf
-	$(MAKE)
+	$(MAKE) -f Makefile -C autoconf
+	$(MAKE) -f Makefile
 
-rm-autoconf :; $(MAKE) -C autoconf clean
+rm-autoconf :; $(MAKE) -f Makefile -C autoconf clean
 
 autoconf-absent : autoconf-absent-msg autoconf-msg 
 autoconf-absent-msg :
@@ -59,12 +59,12 @@ autoconf-msg :
 	@ false
 
 check-autoconf :
-	@ type autoconf >/dev/null || $(MAKE) autoconf-absent
+	@ type autoconf >/dev/null || $(MAKE) -f Makefile autoconf-absent
 	@ test `autoconf -V | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` -gt $(MAJOR) \
 	  || \
 	    test `autoconf -V | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'`  =  $(MAJOR) \
 	    && \
-	    test `autoconf -V | sed -e '1s/.*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'`   -ge $(MINOR) || $(MAKE) autoconf-old
+	    test `autoconf -V | sed -e '1s/.*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'`   -ge $(MINOR) || $(MAKE) -f Makefile autoconf-old
 
 # autoheader's job is to make include/config.h, but if there are no changes, it doesn't touch it, 
 # which means "make" will keep trying
