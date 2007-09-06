@@ -413,6 +413,7 @@ getPackage = method(Options => {
 	  CurrentVersion => null,
 	  DebuggingMode => false
 	  })
+installMethod(getPackage, opts -> () -> lines getwww (opts.Repository | "packages" ))
 getPackage String := opts -> pkgname -> (
      packages := lines getwww (opts.Repository | "packages" );
      if not member(pkgname,packages)
