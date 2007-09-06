@@ -40,15 +40,16 @@ status : @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
 # announce we're starting
 install all clean distclean install-others install-Macaulay2 ::; @echo '-------- making '$@', @PACKAGE_VERSION@ for ARCH=@ARCH@ OS=@OS@ REL=@REL@ --------'
-# first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
+# the first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
 install install-others install-Macaulay2 :: all
 install install-others install-Macaulay2 :: $(DIRS)
+# the first distclean target:
+distclean:: clean
 $(DIRS) :; $(INSTALL) -d $@
 install clean distclean all check ::; $(MAKE) -C libraries $@
 all distclean check clean install install-others install-Macaulay2 ::; $(MAKE) -C Macaulay2 $@
 subst : config.status ; ./config.status
 show : config.status ; egrep '^s,' $< | sed -e 's/^s,@\(.*\)@,\(.*\),g/\1=\2/' -e 's/^s,.*]\*\(.*\)\\).*\\2 \(.*\) ,/#define \1 \2/' -e 's/.#_!!_#.//g'
-distclean:: clean
 reconfigure:: $(CONFIG_FILES)
 	./config.status --recheck && ./config.status
 	@ echo "============================================================================="

@@ -90,7 +90,7 @@ tidy_before :
 	rm -rf tmp
 	rm -rf macaulay2/control.tar.gz macaulay2/data.tar.gz macaulay2/md5sums
 	rm -rf macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz macaulay2-common/md5sums
-tidy_after :
+tidy tidy_after :
 	rm -rf tmp
 	rm -rf macaulay2/control.tar.gz macaulay2/data.tar.gz macaulay2/md5sums
 	rm -rf macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz macaulay2-common/md5sums
