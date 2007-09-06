@@ -59,7 +59,6 @@ install :: cygwin
 endif
 cygwin : ../@PKG_TGZ@ ; $(MAKE) -C cygwin install
 clean distclean :: ; $(MAKE) -C cygwin $@
-
 Makefile : Makefile.in; cd ..; ./config.status cygwin/Makefile
 
 # Local Variables:
