@@ -255,7 +255,7 @@ AC_SUBST(EXPERIMENT,no)
 AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-experimental-code,enable experimental code), EXPERIMENT=$enableval)
 test "$EXPERIMENT" = no; val=$?; AC_DEFINE_UNQUOTED(EXPERIMENT,$val,whether experimental code has been enabled)
 
-AC_SUBST(M2TARFILE,no) AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare a binary package as a compressed tar file), M2TARFILE=$enableval)
+AC_SUBST(M2TARFILE,no) AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare a binary package as compressed tar files), M2TARFILE=$enableval)
 AC_SUBST(TARLIBS,no)   AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS=$enableval)
 AC_SUBST(SHARED,no)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--enable-shared,enable building of shared libraries), SHARED=$enableval)
 
@@ -644,21 +644,11 @@ then
 fi
 
 AC_SUBST(package,Macaulay2-$PACKAGE_VERSION)
-AC_SUBST(packagecommon,Macaulay2-common-$PACKAGE_VERSION)
 AC_SUBST(encapdir,"")
 if test "$ENCAP" = yes
 then encapdir="\${prefix}/$package"
 else encapdir="\${prefix}"
 fi
-AC_SUBST(SRC_TGZ,$package.tar.gz)
-AC_SUBST(SRC_TBZ,$package.tar.bz2)
-AC_SUBST(SRC_TZ,$package.tar.$COMPRESS)
-AC_SUBST(PKG_TGZ,$package-$ARCH-$OS.tar.gz)
-AC_SUBST(PKG_TBZ,$package-$ARCH-$OS.tar.bz2)
-AC_SUBST(PKG_DEB,$package-$DEBIANARCH-$OS.deb)
-AC_SUBST(PKG_COM_DEB,$package-all-$OS.deb)
-AC_SUBST(PKG_RPM,$package-$ARCH-$OS.rpm)
-AC_SUBST(PKG_TZ,$package-$ARCH-$OS.tar.$COMPRESS)
 AC_SUBST(EXE,$M2SUFFIX$EXEEXT)
 
 AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)

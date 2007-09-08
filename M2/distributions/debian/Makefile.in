@@ -16,6 +16,8 @@ ifeq ($(TIDY),yes)
 all install :: tidy_after
 endif
 #################################
+PKG_DEB = @package@-@DEBIANARCH@-@OS@.deb
+PKG_COM_DEB = @package@-all-@OS@.deb
 
 ifneq (@DEBUG@,no)
 $(error expected --disable-debug, in order to make a debian package)

@@ -16,6 +16,8 @@ prefixdir=$(shell dirname $(finalprefix))
 #	Release: 2
 #    rpm -e -v --noscripts Macaulay2-0.9.95-2
 
+PKG_RPM = @package@-@ARCH@-@OS@.rpm
+
 ############################## main targets
 all install :: ../../@PKG_RPM@
 ../../@PKG_RPM@ : Macaulay2-body.spec ../../@PKG_TGZ@ Makefile
