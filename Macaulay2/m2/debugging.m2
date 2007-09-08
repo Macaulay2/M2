@@ -70,7 +70,7 @@ benchmark = (s) -> (
      t/n)
 
 -----------------------------------------------------------------------------
-Descent := new Type of MutableHashTable
+Descent = new Type of MutableHashTable
 net Descent := x -> stack sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
@@ -93,7 +93,7 @@ show1(Sequence,Function) := show1(List,Function) := (types,pfun) -> (
 	  if w#?v then w#v else w#v = new Descent
 	  );
      scan(types, install);
-     net world)
+     world)
 show1(Thing,Function) := (X,pfun) -> show1({X},pfun)
 showUserStructure = Command(() -> show1(justTypes userSymbols(), parent))
 showStructure = Command(types -> show1(if types === () then justTypes flatten(values \ dictionaryPath) else types, parent))

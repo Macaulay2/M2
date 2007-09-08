@@ -142,7 +142,7 @@ mathML MutableHashTable := x -> (
      if ReverseDictionary#?x then mathML ReverseDictionary#x
      else mrow ( mathML class x, nest("mtext",if #x > 0 then ("{...", toString(#x), "...}") else "{}" )))
 mathML BettiTally := v -> mtableML rawBettiTally v
-
+mathML CacheFunction := f -> mathML "{*a cache function*}"
 -- these are all provisional:
 mathML CoherentSheaf :=
 mathML Ideal :=
