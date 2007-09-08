@@ -778,7 +778,14 @@ document {
 -- distinguishedAndMult, specialFiber, distinguished, universalEmbedding, 
 -- idealIntegralClosure, isLinearType, multiplicity
 
+TEST ///
+R=QQ[a,b,c,d,e,f]
+M=matrix{{a,c,e},{b,d,f}}
+analyticSpread image M
 ///
+
+
+{*
 restart
 loadPackage "ReesAlgebraNew"
 R=QQ[a..e]
@@ -823,14 +830,15 @@ symmetricKernel(uN)
 IR=rees(N)
 
 SIR= specialFiber(N)
-///
-///
+*}
+
+{*
 fu=universalEmbedding(I,f)   -- f = ????
 betti symmetricKernel(I,fu)
 betti symmetricKernel(I,f)
-///
+*}
 
-///
+{*
 restart
 loadPackage "ReesAlgebraNew"
 R = ZZ/32003[x,y,z]
@@ -848,8 +856,9 @@ singular = ideal(singularLocus(L_0));
 SL = saturate(singular, ideal(x,y,z));
 saturate(SL, ideal(w_0,w_1)) -- we get 1 so it is smooth.
 degree(D_0+D_1)/(degree radical(D_0+D_1))
-///
-///
+*}
+
+{*
 restart
 loadPackage "ReesAlgebraNew"
 R = ZZ/32003[x,y,z]
@@ -920,8 +929,9 @@ SL = saturate(singular, ideal(x,y,z));
 J = saturate(SL, ideal(w_0,w_1))
 J2 = saturate(J, ideal(v_0,v_1, v_2))
 
-///
-///
+*}
+
+{*
 --- Example of non-distinguished components to test distinguished code.
 T=ZZ/101[c,d]
 D = 4
@@ -934,20 +944,20 @@ distinguished(I) -- only the minimal prime is a distinguished component
 K = distinguishedAndMult(I) -- get multiplicity 2 
 intersect apply(K, i-> i_1^(i_0)) -- checks the Geometric Nullstellensatz on Ein-Lazarsfeld
 
-///
+*}
 
-///
+{*
 R=ZZ/32003[x,y,z]
 I=intersect(ideal(x),(ideal(x,y))^2, (ideal(x,y,z))^3)
 ass I
 distinguished I
 K = distinguishedAndMult I
 intersect apply(K, i-> i_1^(i_0)) 
-///
+*}
 
 
 
-/// 
+{*
 -- Check multiplicities of the distinguished components versus the effective Nullstellenstaz
 
 n = 5
@@ -955,7 +965,7 @@ S = ZZ/101[u,v]
 R = ZZ/101[x_0..x_3]
 f=map(S, R, matrix {{u^n, u^2, u*v,v}})
 I = kernel f
-///
+*}
 
 end
 installPackage "ReesAlgebra"
