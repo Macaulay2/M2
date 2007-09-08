@@ -134,6 +134,7 @@ export {
 	symbol Degrees,
 	symbol Dense,
 	symbol Descending,
+	symbol Descent,
 	symbol Description,
 	symbol Dictionary,
 	symbol Dispatch,
