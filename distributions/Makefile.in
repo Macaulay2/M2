@@ -4,17 +4,8 @@ VPATH = @srcdir@
 .PHONY : always
 always :
 
-# binary package file names
-PKG_TGZ = @package@-@ARCH@-@OS@.tar.gz
-PKG_TBZ = @package@-@ARCH@-@OS@.tar.bz2
-PKG_TZ = @package@-@ARCH@-@OS@.tar.@COMPRESS@
-PKG_COM_TGZ = @package@-common.tar.gz
-PKG_COM_TBZ = @package@-common.tar.bz2
-PKG_COM_TZ = @package@-common.tar.@COMPRESS@
-# source package file names
-SRC_TGZ = @package@.tar.gz
-SRC_TBZ = @package@.tar.bz2
-SRC_TZ = @package@.tar.@COMPRESS@
+include Makefile.filenames
+
 # package filename list generators
 exclude = egrep -v '/\.nfs|/Macaulay2-[^/]*-data$$'
 files_arch = (cd $(prefix) && ( \
@@ -22,13 +13,14 @@ files_arch = (cd $(prefix) && ( \
 		find @package@/@mandirtail@ -type f )) | $(exclude)
 files_comm = (cd $(prefix) && ( \
 		find @package@/@datadirtail@ -type f | egrep -v '^@package@/@mandirtail@($$|/)' )) | $(exclude)
+
 tarballs     : tarballs.@COMPRESS@
 tarballs.bz2 : ../$(PKG_TBZ) ../$(PKG_COM_TBZ)
 tarballs.gz  : ../$(PKG_TGZ) ../$(PKG_COM_TGZ)
 TARCMD = tar --create \
 	--file=$@ \
 	--no-recursion \
-	--owner=0 --group=0 --mode=a+rX,og-w \
+	--owner=0 --group=0 --mode=a+rX,og-ws \
 	-C $(prefix) --files-from=-
 ../$(PKG_TBZ)     : always ; $(files_arch) | $(TARCMD) --bzip2
 ../$(PKG_TGZ)     : always ; $(files_arch) | $(TARCMD) --gzip

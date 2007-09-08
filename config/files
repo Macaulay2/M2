@@ -1,6 +1,7 @@
 GNUmakefile
 include/config.Makefile
 distributions/Makefile
+distributions/Makefile.filenames
 distributions/rpm/Makefile
 distributions/rpm/Macaulay2-body.spec
 distributions/cygwin/Makefile
