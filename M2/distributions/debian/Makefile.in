@@ -58,7 +58,6 @@ macaulay2-common/control.tar.gz : macaulay2-common/md5sums macaulay2-common/cont
 	@FAKEROOT@ tar cfz $@ -C macaulay2-common md5sums control postinst prerm
 
 prepare : ../../@PKG_TZ@
-	rm -rf @package@ tmp
 	@MKDIR_P@ tmp@FINALPREFIX@ tmp-common@FINALPREFIX@
 	tar xfp $^ @TAR_COMPRESS_OPTION@
 	for i in @package@/* ; do if [ -f "$$i" ] ; then rm "$$i" ; fi ; done
@@ -77,7 +76,7 @@ prepare : ../../@PKG_TZ@
 	find tmp tmp-common -name \*.info | while read x ; do gzip --best "$$x" ; done
 	find tmp tmp-common -name man -type d | while read x ; do find $$x -type f -not -name \*.gz | while read y ; do gzip --best "$$y" ; done ; done
 	find tmp tmp-common -name \*.so -o -name \*.so.\* -o -name \*.la | xargs chmod a-x Makefile
-	chmod -R og-w,a+r tmp tmp-common 
+	chmod -R og-ws,a+r tmp tmp-common 
 	@FAKEROOT@ $(CHOWN) -R root tmp tmp-common 
 macaulay2/data.tar.gz        : prepare; (cd tmp        && @FAKEROOT@ tar cfz - *) >$@
 macaulay2-common/data.tar.gz : prepare;	(cd tmp-common && @FAKEROOT@ tar cfz - *) >$@
@@ -89,11 +88,11 @@ check :
 	- @LINTIAN@ ../../@PKG_COM_DEB@
 endif
 tidy_before :
-	rm -rf tmp
+	rm -rf @package@ tmp tmp-common
 	rm -rf macaulay2/control.tar.gz macaulay2/data.tar.gz macaulay2/md5sums
 	rm -rf macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz macaulay2-common/md5sums
 tidy tidy_after :
-	rm -rf tmp
+	rm -rf @package@ tmp tmp-common
 	rm -rf macaulay2/control.tar.gz macaulay2/data.tar.gz macaulay2/md5sums
 	rm -rf macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz macaulay2-common/md5sums
 clean :: tidy
