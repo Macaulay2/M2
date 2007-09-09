@@ -32,13 +32,23 @@ make install
 ## (change that to /usr/local if you wish)
 mkdir BUILD/opt64
 cd BUILD/opt64
-../../configure
-      --prefix=/capybara \
+../../configure \
+      --prefix=/capybara/encap \
       --enable-experimental-code \
       LIBS="-lgcc_s.10.5" \
       --build=x86_64-apple-darwin \
       CC="gcc -m64" \
       CXX="g++ -m64"
+
+# or 
+../../configure \
+      --prefix=/Users/mike/src/M2/BUILD/opt64-installed \
+      --enable-experimental-code \
+      LIBS="-lgcc_s.10.5" \
+      --build=x86_64-apple-darwin \
+      CC="gcc -m64" \
+      CXX="g++ -m64"
+
 make
 make install
 
