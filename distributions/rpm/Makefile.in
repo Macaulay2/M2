@@ -1,5 +1,7 @@
 # @configure_input@
 include ../../include/config.Makefile
+CHOWN = chown
+TIDY = yes
 VPATH = @srcdir@
 DEPENDS = yes
 include ../Makefile.filenames
@@ -16,10 +18,12 @@ include ../Makefile.filenames
 
 PKG_RPM = @package@-@ARCH@-@OS@.rpm
 PKG_COM_RPM = @package@-common.rpm
-CHOWN = chown
 
 ############################## main targets
 all install :: ../../$(PKG_RPM) ../../$(PKG_COM_RPM)
+ifeq ($(TIDY),yes)
+all install :: tidy
+endif
 always :
 warning: always
 ifeq (@FAKEROOT@,)
@@ -28,11 +32,12 @@ ifeq (@FAKEROOT@,)
 	@echo "  either run this as root, or use 'make CHOWN=:' to bypass ownership setting."
 	@echo "============================================================================="
 endif
+SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 ../../$(PKG_RPM) ../../$(PKG_COM_RPM) : Macaulay2-body.spec ../../$(PKG_TZ) ../../$(PKG_COM_TZ) Makefile warning
 	rm -rf files files-common
-	mkdir files files-common
-	tar xzf ../../$(PKG_TZ)     @TAR_COMPRESS_OPTION@ -C files@FINALPREFIX@
-	tar xzf ../../$(PKG_COM_TZ) @TAR_COMPRESS_OPTION@ -C files-common@FINALPREFIX@
+	umask 022 ; @MKDIR_P@ files@FINALPREFIX@ files-common@FINALPREFIX@
+	umask 022 ; @FAKEROOT@ tar xfp ../../$(PKG_TZ)     @TAR_COMPRESS_OPTION@ -C files@FINALPREFIX@
+	umask 022 ; @FAKEROOT@ tar xfp ../../$(PKG_COM_TZ) @TAR_COMPRESS_OPTION@ -C files-common@FINALPREFIX@
 	mv files@FINALPREFIX@/@package@/* files@FINALPREFIX@
 	mv files-common@FINALPREFIX@/@package@/* files-common@FINALPREFIX@
 	rmdir files@FINALPREFIX@/@package@
@@ -41,17 +46,16 @@ endif
 	cd files-common@FINALPREFIX@ && rm -f INSTALL encapinfo postinstall preremove
 	cat Macaulay2-body.spec >Macaulay2.spec
 	cat Macaulay2-common-body.spec >Macaulay2-common.spec
-	(cd files && find . -type f) | sed -e 's=^./="=' -e 's=$$="=' >>Macaulay2.spec
-	(cd files-common && find . -type f) | sed -e 's=^./="=' -e 's=$$="=' >>Macaulay2-common.spec
-	@FAKEROOT@ $(CHOWN) -R root files files-common
+	(cd files && find . -type f -o -type l) | sed $(SEDOPTS) >>Macaulay2.spec
+	(cd files-common && find . -type f -o -type l) | sed $(SEDOPTS) >>Macaulay2-common.spec
 	@FAKEROOT@ rpmbuild -bb Macaulay2.spec
 	@FAKEROOT@ rpmbuild -bb Macaulay2-common.spec
-	rm -rf files files-common
 try-alien : ../../@PKG_DEB@ ; @FAKEROOT@ alien --generate --scripts --to-rpm $^
-clean ::; rm -f ../../$(PKG_RPM) ../../$(PKG_COM_RPM) Macaulay2.spec files files-common
-distclean : clean; rm -f Makefile
-Makefile : Makefile.in; cd ..; ./config.status distributions/rpm/Makefile
-Macaulay2-body.spec : Macaulay2-body.spec.in; cd ..; ./config.status distributions/rpm/Macaulay2-body.spec
+tidy : ; rm -rf files files-common Macaulay2.spec Macaulay2-common.spec
+clean :: tidy; rm -f ../../$(PKG_RPM) ../../$(PKG_COM_RPM)
+distclean : clean; rm -f Makefile Macaulay2-body.spec Macaulay2-common-body.spec
+Makefile : Makefile.in; cd ../..; ./config.status distributions/rpm/Makefile
+BUILD/normal/Macaulay2-body.spec : Macaulay2-body.spec.in; cd ../..; ./config.status distributions/rpm/Macaulay2-body.spec
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/rpm "

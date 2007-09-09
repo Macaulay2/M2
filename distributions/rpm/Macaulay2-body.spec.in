@@ -1,11 +1,14 @@
 #! /bin/rpm
 Name: Macaulay2
+URL: http://www.math.uiuc.edu/Macaulay2/
 Version: @PACKAGE_VERSION@
 Release: 1
 Summary: Macaulay 2 is a software system for algebraic geometry research.
 License: GNU General Public License, version 2
 Group: Mathematics
+Requires: Macaulay2-common = @PACKAGE_VERSION@
 Buildroot: @abs_builddir@/files
+Prefix: @FINALPREFIX@
 %define _rpmdir ../../
 %define _rpmfilename %%{NAME}-%%{VERSION}-%%{ARCH}-@OS@.rpm
 %define _unpackaged_files_terminate_build 1
