@@ -20,6 +20,7 @@ PKG_RPM = @package@-@ARCH@-@OS@.rpm
 PKG_COM_RPM = @package@-common.rpm
 
 ############################## main targets
+all install :: warning
 all install :: ../../$(PKG_RPM) ../../$(PKG_COM_RPM)
 ifeq ($(TIDY),yes)
 all install :: tidy
@@ -33,22 +34,25 @@ ifeq (@FAKEROOT@,)
 	@echo "============================================================================="
 endif
 SEDOPTS = -e 's=^\.="=' -e 's=$$="='
-../../$(PKG_RPM) ../../$(PKG_COM_RPM) : Macaulay2-body.spec ../../$(PKG_TZ) ../../$(PKG_COM_TZ) Makefile warning
-	rm -rf files files-common
-	umask 022 ; @MKDIR_P@ files@FINALPREFIX@ files-common@FINALPREFIX@
+../../$(PKG_RPM) : Macaulay2-body.spec ../../$(PKG_TZ) Makefile
+	rm -rf files
+	umask 022 ; @MKDIR_P@ files@FINALPREFIX@
 	umask 022 ; @FAKEROOT@ tar xfp ../../$(PKG_TZ)     @TAR_COMPRESS_OPTION@ -C files@FINALPREFIX@
-	umask 022 ; @FAKEROOT@ tar xfp ../../$(PKG_COM_TZ) @TAR_COMPRESS_OPTION@ -C files-common@FINALPREFIX@
 	mv files@FINALPREFIX@/@package@/* files@FINALPREFIX@
-	mv files-common@FINALPREFIX@/@package@/* files-common@FINALPREFIX@
 	rmdir files@FINALPREFIX@/@package@
-	rmdir files-common@FINALPREFIX@/@package@
 	cd files@FINALPREFIX@ && rm -f INSTALL encapinfo postinstall preremove
-	cd files-common@FINALPREFIX@ && rm -f INSTALL encapinfo postinstall preremove
 	cat Macaulay2-body.spec >Macaulay2.spec
-	cat Macaulay2-common-body.spec >Macaulay2-common.spec
 	(cd files && find . -type f -o -type l) | sed $(SEDOPTS) >>Macaulay2.spec
-	(cd files-common && find . -type f -o -type l) | sed $(SEDOPTS) >>Macaulay2-common.spec
 	@FAKEROOT@ rpmbuild -bb Macaulay2.spec
+../../$(PKG_COM_RPM) : Macaulay2-common-body.spec ../../$(PKG_COM_TZ) Makefile
+	rm -rf files-common
+	umask 022 ; @MKDIR_P@ files-common@FINALPREFIX@
+	umask 022 ; @FAKEROOT@ tar xfp ../../$(PKG_COM_TZ) @TAR_COMPRESS_OPTION@ -C files-common@FINALPREFIX@
+	mv files-common@FINALPREFIX@/@package@/* files-common@FINALPREFIX@
+	rmdir files-common@FINALPREFIX@/@package@
+	cd files-common@FINALPREFIX@ && rm -f INSTALL encapinfo postinstall preremove
+	cat Macaulay2-common-body.spec >Macaulay2-common.spec
+	(cd files-common && find . -type f -o -type l) | sed $(SEDOPTS) >>Macaulay2-common.spec
 	@FAKEROOT@ rpmbuild -bb Macaulay2-common.spec
 try-alien : ../../@PKG_DEB@ ; @FAKEROOT@ alien --generate --scripts --to-rpm $^
 tidy : ; rm -rf files files-common Macaulay2.spec Macaulay2-common.spec
