@@ -9,10 +9,11 @@ include Makefile.filenames
 # package filename list generators
 exclude = egrep -v '/\.nfs|/Macaulay2-[^/]*-data$$'
 files_arch = (cd $(prefix) && ( \
-		find @package@ -type f | egrep -v '^@package@/@datadirtail@($$|/)' && \
-		find @package@/@mandirtail@ -type f )) | $(exclude)
+		find @package@ | egrep -v '^@package@/@datadirtail@($$|/)' && \
+		find @package@/@mandirtail@ )) | $(exclude)
 files_comm = (cd $(prefix) && ( \
-		find @package@/@datadirtail@ -type f | egrep -v '^@package@/@mandirtail@($$|/)' )) | $(exclude)
+		echo @package@ ; \
+		find @package@/@datadirtail@ | egrep -v '^@package@/@mandirtail@($$|/)' )) | $(exclude)
 
 tarballs     : tarballs.@COMPRESS@
 tarballs.bz2 : ../$(PKG_TBZ) ../$(PKG_COM_TBZ)
@@ -40,24 +41,24 @@ src : $(SRC_TZ)
 ifeq "@M2TARFILE@" "yes"
 install :: tarballs
 endif
-clean ::; rm -f ../$(PKG_TGZ) ../$(PKG_TBZ)
+clean ::; rm -f ../$(PKG_TGZ) ../$(PKG_TBZ) ../$(PKG_COM_TGZ) ../$(PKG_COM_TBZ)
 
 ifeq "@DEBIAN@" "yes"
 install :: debian
 endif
-debian : ../$(PKG_TGZ) ; $(MAKE) -C debian install
+debian : ../$(PKG_TZ) ../$(PKG_COM_TZ) ; $(MAKE) -C debian install
 check clean distclean :: ; $(MAKE) -C debian $@
 
 ifeq "@RPM@" "yes"
 install :: rpm
 endif
-rpm : ../$(PKG_TGZ) ; $(MAKE) -C rpm install
+rpm : ../$(PKG_TZ) ../$(PKG_COM_TZ) ; $(MAKE) -C rpm install
 clean distclean :: ; $(MAKE) -C rpm $@
 
 ifeq "@CYGWIN@" "yes"
 install :: cygwin
 endif
-cygwin : ../$(PKG_TGZ) ; $(MAKE) -C cygwin install
+cygwin : ../$(PKG_TGZ) ../$(PKG_COM_TGZ) ; $(MAKE) -C cygwin install
 clean distclean :: ; $(MAKE) -C cygwin $@
 Makefile : Makefile.in; cd ..; ./config.status distributions/Makefile
 
