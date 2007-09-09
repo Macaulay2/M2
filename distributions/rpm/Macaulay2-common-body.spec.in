@@ -1,5 +1,5 @@
 #! /bin/rpm
-Name: Macaulay2
+Name: Macaulay2-common
 Version: @PACKAGE_VERSION@
 Release: 1
 Summary: Macaulay 2 is a software system for algebraic geometry research.
@@ -7,16 +7,21 @@ License: GNU General Public License, version 2
 Group: Mathematics
 Buildroot: @abs_builddir@/files
 %define _rpmdir ../../
-%define _rpmfilename %%{NAME}-%%{VERSION}-%%{ARCH}-@OS@.rpm
+%define _rpmfilename %%{NAME}-%%{VERSION}-common.rpm
 %define _unpackaged_files_terminate_build 1
 %post
 #!/bin/sh -e
 prefix=@FINALPREFIX@
-[ @DUMPDATA@ = yes ] && $prefix/bin/M2 --dumpdata
+for p in @PACKAGES@
+do install-info --quiet --info-dir="$prefix/share/info" $p.info
+done
 %preun
 #! /bin/sh -e
 prefix=@FINALPREFIX@
 rm -f $prefix/lib/Macaulay2/Core/cache/*
+for p in @PACKAGES@
+do install-info --remove --quiet --info-dir="$prefix/share/info" $p.info
+done
 %description
 Macaulay 2 is a software system for algebraic geometry research, written by
 Daniel R. Grayson and Michael E. Stillman.  Based on Groebner bases, it
