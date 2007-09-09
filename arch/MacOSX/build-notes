@@ -13,24 +13,17 @@
 
  mkdir installed
  mkdir build
+
 ## Step 2. Build Macaulay2 ##
-## We assume libraries and include files are installed at /capybara/include and /caypbara/lib
-# this one works nicely, using only standard dynamic libraries (under 10.4)
+# No non-standard libraries are dynamically linked to here (10.4)
  cd M2
  make
  cd ../build
  ../M2/configure --prefix=/Users/mike/M2-build/M2-0.9.97/installed \
               --with-veclib \
               --enable-altivec \
-	      CFLAGS=-g \
-	      CPPFLAGS=-I/capybara/include  \
-	      LDFLAGS=-L/capybara/lib \
-	      LOADLIBES="-lgcc_s.10.5 -lncurses" \
-	      --with-gdbmlib=/capybara/lib/libgdbm.a \
-	      --with-readlinelib=/capybara/lib/libreadline.a \
-	      --with-historylib=/capybara/lib/libhistory.a \
-	      --with-gclib=/capybara/lib/libgc.a \
-	      --with-gmplib=/capybara/lib/libgmp.a
+	      LIBS="-lgcc_s.10.5"
+
  make
  make install # this can take awhile (started: 9:33 pm, done at 10:10pm, MBP 2 GZ)
  make install RemakeAllDocumentation=true RerunExamples=true
@@ -38,7 +31,7 @@
   
 ## Step 3.  Create the disk image
 export VERSION=0.9.95
-export VERSION=0.9.96
+export VERSION=0.9.97
 cd ../installed
 cp ../M2/arch/MacOSX/ReadMe-MacOSX.rtf .
 cp ./ReadMe-MacOSX.rtf Macaulay2-$VERSION/

@@ -105,8 +105,12 @@ groebnerWalktoLex(Ideal,Ring,List) := (I,Rlast,WW) -> (
      
 end
 restart
-load "/Users/mike/M2/Macaulay2/bugs/mike/devel-gb-walk.m2"
+load "/Users/mike/src/M2/Macaulay2/bugs/mike/devel-gb-walk.m2"
 -- test of marked GB reduction
+R1 = ZZ/101[a..e]
+I = ideal"a4b+a3c3+a2d5+ae7"
+R2 = ZZ/101[a..e,MonomialOrder=>Lex]
+groebnerWalktoLex(I,R2)
 R = ZZ/101[a..e, MonomialOrder=>Lex]
 I = ideal(a*b-c, b*c-d, c*d-e^2)
 inL = matrix{{c*d,c^2,b*c,a*b,b*e^2,a*d^2}}

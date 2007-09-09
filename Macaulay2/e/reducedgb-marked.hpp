@@ -19,7 +19,7 @@ class MarkedGB : public ReducedGB
 				      const GBWeight *wt0);
 protected:
   MonomialTable *T;
-  gbvector **leadterms;
+  gbvector **leadterms; // these point into the corresponding terms for 'polys'
 
   MarkedGB(
 	   const PolynomialRing *originalR0,
@@ -36,6 +36,9 @@ public:
   virtual ~MarkedGB();
 
   virtual void remove_gb() {}
+
+  const FreeModule *get_ambient_FreeModule() const { return F; }
+  const GBRing *get_gb_ring() const { return R; }
 
   virtual void set_gb(VECTOR(POLY) &polys0);
 

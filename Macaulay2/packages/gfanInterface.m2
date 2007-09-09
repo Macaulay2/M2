@@ -267,7 +267,7 @@ R = ZZ/3[a..d]
 I = ideal(a^3-a,b^3-b,a+2*b+c+d-1,a^2*b+b^2*a,c^3-c)
 time (M,L) = gfan I;
 time apply(#M, i -> (
-  wtvec(ideal(L_i), ideal(M_i))))
+  weightVector(ideal(L_i), ideal(M_i))))
 wtvecs = apply(oo, x -> x#0)
 Mset1 = apply(wtvecs, w -> set flatten entries inw(w,I))
 Mset = M/set
