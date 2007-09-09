@@ -4,6 +4,7 @@ distributions/Makefile
 distributions/Makefile.filenames
 distributions/rpm/Makefile
 distributions/rpm/Macaulay2-body.spec
+distributions/rpm/Macaulay2-common-body.spec
 distributions/cygwin/Makefile
 distributions/cygwin/Macaulay2.README
 distributions/cygwin/setup.hint
