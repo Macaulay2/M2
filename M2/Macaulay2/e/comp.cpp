@@ -85,6 +85,13 @@ EngineGBComputation *EngineGBComputation::create(GroebnerBasis *G0)
   return E;
 }
 
+EngineGBComputation *EngineGBComputation::create(GBComputation *G0)
+{
+  EngineGBComputation *E = new EngineGBComputation((GBBComputation *)0);
+  intern_computation(E);
+  return E;
+}
+
 EngineGBComputation::~EngineGBComputation()
 {
   destroy();
@@ -99,6 +106,7 @@ void EngineGBComputation::destroy()
 void EngineGBComputation::start_computation()
 {
   if (C == 0) return;
+  if (G) {delete G; G = 0;}
   ComputationStatusCode ret = C->compute(stop_, complete_thru_this_degree);
   if (ret == COMP_DONE)
     {
