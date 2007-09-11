@@ -161,7 +161,7 @@ public:
   virtual void show() const; // debug display of some computations
 };
 
-class EngineGBComputation : EngineComputation
+class EngineGBComputation : public EngineComputation
 {
   GBBComputation *C;
   GroebnerBasis *G;
@@ -179,6 +179,8 @@ public:
 
   static EngineGBComputation *create(GroebnerBasis *C0);
 
+  static EngineGBComputation *create(GBComputation *G0);
+
   // create routine: this finalizes the object
   // on destruction, delete C, delete G are both done.
 
@@ -193,7 +195,7 @@ public:
 
   virtual void destroy();
 
-  EngineGBComputation *set_hilbert_function(const RingElement *h) {
+  EngineComputation *set_hilbert_function(const RingElement *h) {
     // The default version returns an error saying that Hilbert functions cannot be used.
     if (C == 0 || C->set_hilbert_function(h)) return this;
     return 0;
@@ -206,7 +208,7 @@ public:
 
   // Recall that the status of the computation is maintained by the Computation class,
 
-  const GroebnerBasis *get_GroebnerBasis() { if (C == 0) return G; else return C->get_GroebnerBasis(); }
+  GroebnerBasis *get_GroebnerBasis() { if (!G && C) G = C->get_GroebnerBasis(); return G; }
 };
 
 extern "C" void remove_computation(void *p, void *cd);

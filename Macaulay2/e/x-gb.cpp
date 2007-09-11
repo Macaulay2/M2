@@ -10,21 +10,9 @@
 #include "exceptions.hpp"
 #include "gb-walk.hpp"
 
-const RingElementOrNull * IM2_Matrix_Hilbert(const Matrix *M)
-  /* This routine computes the numerator of the Hilbert series
-     for coker leadterms(M), using the degrees of the rows of M. 
-     NULL is returned if the ring is not appropriate for
-     computing Hilbert series, or the computation was interrupted. */
-{
-     try {
-	  return hilb_comp::hilbertNumerator(M);
-     }
-     catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
-     }
-}
-
+////////////////////////////////////
+// new GB computations /////////////
+////////////////////////////////////
 EngineComputationOrNull *rawGB(const Matrix *m,
 			       M2_bool collect_syz,
 			       int n_rows_to_keep,
@@ -55,6 +43,326 @@ EngineComputationOrNull *rawGB(const Matrix *m,
   }
 }
 
+EngineComputationOrNull *
+rawGBSetHilbertFunction(EngineComputation *C,
+			const RingElement *h)
+{
+  try {
+    clear_emit_size();
+    EngineGBComputation *G = C->cast_to_EngineGBComputation();
+    if (G != 0)
+      return G->set_hilbert_function(h);
+    ERROR("computation type unknown or not implemented");
+    return 0;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+void rawComputationSetStop(EngineComputation *G,
+			   M2_bool always_stop,
+			   M2_arrayint degree_limit,
+			   int basis_element_limit,
+			   int syzygy_limit,
+			   int pair_limit,
+			   int codim_limit,
+			   int subring_limit,
+			   M2_bool just_min_gens,
+			   M2_arrayint length_limit)
+/* LongPolynomial, Sort, Primary, Inhomogeneous, Homogeneous */
+/* Res: SortStrategy, 0, 1, 2, 3 ?? */
+{
+  // No errors can surface here.
+  clear_emit_size();
+  G->set_stop_conditions(always_stop,
+			 degree_limit,
+			 basis_element_limit,
+			 syzygy_limit,
+			 pair_limit,
+			 codim_limit,
+			 subring_limit,
+			 just_min_gens,
+			 length_limit);
+}
+
+EngineComputationOrNull* 
+rawStartEngineComputation(EngineComputation *C)
+  /* start or continue the computation */
+{
+  try {
+    clear_emit_size();
+    C->start_computation();
+    return error() ? 0 : C;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+enum ComputationStatusCode rawEngineStatus1(EngineComputation *C)
+{
+  return C->status();
+}
+
+long rawEngineStatus2(EngineComputation *C)
+{
+  return C->complete_thru_degree();
+}
+
+void rawShowEngineComputation(const EngineComputation *C)
+{
+  C->show();
+}
+
+const MatrixOrNull *rawEngineGBGetMatrix(EngineComputation *C)
+  /* Get the minimal, auto-reduced GB of a GB computation.
+     Each call to this will produce a different raw matrix */
+{
+  try {
+    clear_emit_size();
+    EngineGBComputation *G = C->cast_to_EngineGBComputation();
+    if (G != 0)
+      return G->get_GroebnerBasis()->get_gb();
+    ERROR("computation type unknown or not implemented");
+    return 0;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+const MatrixOrNull *rawEngineGBMinimalGenerators(EngineComputation *C)
+  /* Yields a matrix whose columns form a minimal generating set
+     for the ideal or submodule, as computed so far.  In the
+     inhomogeneous case, this yields a generating set which is
+     sometimes smaller than the entire Groebner basis. */
+{
+  try {
+    clear_emit_size();
+    EngineGBComputation *G = C->cast_to_EngineGBComputation();
+    if (G != 0)
+      return G->get_GroebnerBasis()->get_mingens();
+    ERROR("computation type unknown or not implemented");
+    return 0;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+const MatrixOrNull *rawEngineGBChangeOfBasis(EngineComputation *C)
+  /* Yields the change of basis matrix from the Groebner basis to
+     the original generators, at least if n_rows_to_keep was set
+     when creating the GB computation.  This matrix, after the 
+     computation has run to completion, should satisfy:
+     (original matrix) = (GB matrix) * (change of basis matrix). */
+{
+  try {
+    clear_emit_size();
+    EngineGBComputation *G = C->cast_to_EngineGBComputation();
+    if (G != 0)
+      return G->get_GroebnerBasis()->get_change();
+    ERROR("computation type unknown or not implemented");
+    return 0;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+const MatrixOrNull *rawEngineGBGetLeadTerms(EngineComputation *C, int nparts)
+{
+  try {
+    clear_emit_size();
+    EngineGBComputation *G = C->cast_to_EngineGBComputation();
+    if (G != 0)
+      return G->get_GroebnerBasis()->get_initial(nparts);
+    ERROR("computation type unknown or not implemented");
+    return 0;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+const MatrixOrNull *rawEngineGBGetParallelLeadTerms(EngineComputation *C, M2_arrayint w)
+{
+  try {
+    clear_emit_size();
+    EngineGBComputation *G = C->cast_to_EngineGBComputation();
+    if (G != 0)
+      return G->get_GroebnerBasis()->get_parallel_lead_terms(w);
+    ERROR("computation type unknown or not implemented");
+    return 0;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+const MatrixOrNull *rawEngineGBSyzygies(EngineComputation *C)
+  /* Yields a matrix containing the syzygies computed so far
+     via the GB computation C, assuming that 'collect_syz' was
+     set when the computation was created.  If 'n_rows_to_keep' was
+     set to a non-negative integer, then only that many rows of each
+     syzygy are kept. */
+{
+  try {
+    clear_emit_size();
+    EngineGBComputation *G = C->cast_to_EngineGBComputation();
+    if (G != 0)
+      return G->get_GroebnerBasis()->get_syzygies();
+    ERROR("computation type unknown or not implemented");
+    return 0;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+const MatrixOrNull *rawEngineGBMatrixRemainder(EngineComputation *C, 
+					       const Matrix *m)
+{
+  try {
+    clear_emit_size();
+    EngineGBComputation *G = C->cast_to_EngineGBComputation();
+    if (G != 0)
+      return G->get_GroebnerBasis()->matrix_remainder(m);
+    ERROR("computation type unknown or not implemented");
+    return 0;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+void rawEngineGBMatrixDivMod(EngineComputation *C,
+			     const Matrix *m,
+			     MatrixOrNull **result_remainder,
+			     MatrixOrNull **result_quotient
+			     )
+{
+  try {
+    clear_emit_size();
+    EngineGBComputation *G = C->cast_to_EngineGBComputation();
+    if (G != 0)
+      G->get_GroebnerBasis()->matrix_lift(m, result_remainder, result_quotient);
+    else ERROR("computation type unknown or not implemented");
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return;
+  }
+}
+
+int rawEngineGBMatrixContains(EngineComputation *C, 
+			      const Matrix *m)
+{
+  try {
+    clear_emit_size();
+    EngineGBComputation *G = C->cast_to_EngineGBComputation();
+    if (G != 0)
+      return G->get_GroebnerBasis()->contains(m);
+    ERROR("computation type unknown or not implemented");
+    return -2;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return -2;
+  }
+}
+
+EngineComputationOrNull *
+rawEngineGBDeclared(const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
+		    const Matrix *gb,
+		    const Matrix *change, /* same number of columns as 'gb', if not 0 */
+		    const Matrix *syz) /* possibly 0 too, otherwise same rows as change */
+{
+  try {
+    return EngineGBComputation::create(GBDeclared::create(m,gb,change,syz));
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+EngineComputationOrNull *
+rawMarkedEngineGB(const Matrix *leadterms,
+		  const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
+		  const Matrix *gb,
+		  const Matrix *change, /* same number of columns as 'gb', if not 0 */
+		  const Matrix *syz) /* possibly 0 too, otherwise same rows as change */
+{
+  try {
+    return EngineGBComputation::create(GBDeclared::create(leadterms,m,gb,change,syz));
+  }
+  catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+  }
+}
+
+EngineComputationOrNull *
+rawEngineGroebnerWalk(const Matrix *gb,
+		      const MonomialOrdering *order1)
+{
+  try {
+    return EngineGBComputation::create(GBWalker::create(gb,order1));
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+M2_string rawEngineComputationToString(EngineComputation *C)
+{
+  buffer o;
+  try {
+    C->text_out(o);
+    return o.to_string();
+  }
+  catch (exc::engine_error e) {
+    o << "[unprintable computation]";
+    return o.to_string();
+  }
+}
+
+unsigned long rawEngineComputationHash(const Computation *C)
+{
+  return C->get_hash_value();
+}
+
+////////////////////////////////////
+const RingElementOrNull * IM2_Matrix_Hilbert(const Matrix *M)
+  /* This routine computes the numerator of the Hilbert series
+     for coker leadterms(M), using the degrees of the rows of M. 
+     NULL is returned if the ring is not appropriate for
+     computing Hilbert series, or the computation was interrupted. */
+{
+     try {
+	  return hilb_comp::hilbertNumerator(M);
+     }
+     catch (exc::engine_error e) {
+	  ERROR(e.what());
+	  return NULL;
+     }
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+///////// The following will be reomoved once the new code is functional //////////
+///////////////////////////////////////////////////////////////////////////////////
 ComputationOrNull *IM2_GB_make(const Matrix *m,
 			       M2_bool collect_syz,
 			       int n_rows_to_keep,
