@@ -25,6 +25,36 @@ const RingElementOrNull * IM2_Matrix_Hilbert(const Matrix *M)
      }
 }
 
+EngineComputationOrNull *rawGB(const Matrix *m,
+			       M2_bool collect_syz,
+			       int n_rows_to_keep,
+			       M2_arrayint gb_weights,
+			       M2_bool use_max_degree,
+			       int max_degree,
+			       int algorithm,
+			       int strategy,
+			       int max_reduction_count) /* drg: connected rawGB */
+{
+  // Choose the correct computation here.
+  try {
+    clear_emit_size();
+    EngineGBComputation::create(
+	GBBComputation::choose_gb(
+		 m,
+		 collect_syz,
+		 n_rows_to_keep,
+		 gb_weights,
+		 use_max_degree,
+		 max_degree,
+		 algorithm,
+		 strategy,
+		 max_reduction_count));
+  } catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
 ComputationOrNull *IM2_GB_make(const Matrix *m,
 			       M2_bool collect_syz,
 			       int n_rows_to_keep,

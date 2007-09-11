@@ -29,6 +29,7 @@ class MutableMatrix;
 class RingElement;
 class RingMap;
 class Computation;
+class EngineComputation;
 
 typedef struct MonomialOrdering MonomialOrdering;
 #else
@@ -42,6 +43,7 @@ typedef struct Matrix Matrix;
 typedef struct MutableMatrix MutableMatrix;
 typedef struct RingMap RingMap;
 typedef struct Computation Computation;
+typedef struct EngineComputation EngineComputation;
 
 typedef struct MonomialOrdering MonomialOrdering;
 typedef struct MonomialIdeal MonomialIdeal;
@@ -116,6 +118,7 @@ typedef MutableMatrix MutableMatrixOrNull;
 typedef MonomialIdeal MonomialIdealOrNull;
 typedef RingMap RingMapOrNull;
 typedef Computation ComputationOrNull;
+typedef EngineComputation EngineComputationOrNull;
 
 typedef Matrix_pair Matrix_pair_OrNull;
 typedef Matrix_int_pair Matrix_int_pair_OrNull;
@@ -1564,6 +1567,7 @@ enum gbTraceValues
   extern int gbTrace;
 
   void rawShowComputation(const Computation *C); /* Dan: connected to rawShowComputation */
+
   /*******************************************
    * Computation routines for Groebner bases *
    *******************************************/

@@ -4,8 +4,8 @@
 ## Step 1. Download the desired version of Macaulay2 ##
 # from subversion,
  cd ~/M2-build
- mkdir M2-0.9.96
- cd M2-0.9.96
+ mkdir preM2-0.9.97
+ cd preM2-0.9.97
 
  svn co svn://macaulay2.math.uiuc.edu/Macaulay2/stable/2006-11-05-0.9.95 M2
  svn co svn://macaulay2.math.uiuc.edu/Macaulay2/tags/Macaulay2-0-9-96 M2
@@ -19,9 +19,8 @@
  cd M2
  make
  cd ../build
- ../M2/configure --prefix=/Users/mike/M2-build/M2-0.9.97/installed \
+ ../M2/configure --prefix=/Users/mike/M2-build/preM2-0.9.97/installed \
               --with-veclib \
-              --enable-altivec \
 	      LIBS="-lgcc_s.10.5"
 
  make
@@ -40,7 +39,7 @@ echo "about to do hdiutil"
 # comment one of these out
 echo `pwd`
 #hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-ppc Macaulay2-$VERSION-macosx-ppc.dmg
-hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-i386 Macaulay2-$VERSION-macosx-i386.dmg
+hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-i386 Macaulay2-pre-$VERSION-macosx-i386.dmg
 ls -l
 
 -------------------------------------------------------
