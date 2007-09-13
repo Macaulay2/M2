@@ -11,7 +11,6 @@ class ResolutionComputation : public Computation
 {
 protected:
   ResolutionComputation();
-  virtual ~ResolutionComputation();
 
   virtual bool stop_conditions_ok() = 0;
   // If the stop conditions in stop_ are inappropriate,
@@ -24,6 +23,7 @@ protected:
 public:
   virtual ResolutionComputation * cast_to_ResolutionComputation() { return this;} 
 
+  virtual ~ResolutionComputation();
   virtual void remove_res();
 
   static ResolutionComputation *choose_res(const Matrix *m,
@@ -38,6 +38,7 @@ public:
 
   virtual void start_computation() = 0;
 
+  //  virtual ComputationStatusCode compute(const StopConditions &stop_, long &complete_thru_this_degree);
   virtual int complete_thru_degree() const = 0;
   // The computation is complete up through this slanted degree.
 
@@ -60,6 +61,30 @@ public:
   // gbTrace value.
 
 };
+
+class EngineResolutionComputation : public EngineComputation
+// This is the base type for all resolution computations
+{
+protected:
+  ResolutionComputation *C;
+protected:
+  EngineResolutionComputation(ResolutionComputation *C);
+  virtual ~EngineResolutionComputation();
+public:
+  virtual EngineResolutionComputation * cast_to_EngineResolutionComputation() { return this;} 
+
+  static EngineResolutionComputation * create(ResolutionComputation *C0);
+
+  virtual void destroy();
+  
+  virtual void start_computation();
+
+  virtual long complete_thru_degree() const;
+  // The computation is complete up through this slanted degree.
+
+  ResolutionComputation *get_ResolutionComputation() { return C; }
+};
+
 
 extern "C" void remove_res(void *p, void *cd);
 void intern_res(ResolutionComputation *G);

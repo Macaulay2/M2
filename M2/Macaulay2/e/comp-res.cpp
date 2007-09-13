@@ -9,6 +9,45 @@
 static int nfinalized = 0;
 static int nremoved = 0;
 
+//////////////////////////////////////////////
+// EngineResolutionComputation ///////////////
+//////////////////////////////////////////////
+EngineResolutionComputation::EngineResolutionComputation(ResolutionComputation *C0)
+  : C(C0)
+{
+}
+
+EngineResolutionComputation *EngineResolutionComputation::create(ResolutionComputation *C0)
+{
+  EngineResolutionComputation *E = new EngineResolutionComputation(C0);
+  intern_computation(E);
+  return E;
+}
+
+EngineResolutionComputation::~EngineResolutionComputation()
+{
+  destroy();
+}
+
+void EngineResolutionComputation::destroy()
+{
+  if (C) delete C;
+}
+
+void EngineResolutionComputation::start_computation()
+{
+  if (C == 0) return;
+  long deg;
+  //  ComputationStatusCode ret = C->compute(stop_,deg);
+  //  set_status(ret);
+}
+
+long EngineResolutionComputation::complete_thru_degree() const
+{
+  return C->complete_thru_degree();
+}
+//////////////////////////////////////////////
+
 void remove_res(void *p, void *cd)
 {
   ResolutionComputation *G = static_cast<ResolutionComputation *>(p);
