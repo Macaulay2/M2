@@ -5,7 +5,7 @@ newPackage(
      Version => "0.9", 
      Date => "Jan 18, 2007",
      Authors => {
-	  {Name => "Bart Snapp", Email => "snapp@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~snapp/"},
+	  {Name => "Bart Snapp", Email => "snapp@coastal.edu", HomePage => "http://ww2.coastal.edu/snapp/"},
 	  {Name => "Nathaniel Stapleton", Email => "nstaple2@math.uiuc.edu"}
 	  },
      Headline => "place an ideal in Noether normal position",

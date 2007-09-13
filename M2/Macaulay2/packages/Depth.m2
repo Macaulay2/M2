@@ -5,7 +5,7 @@ newPackage(
      Version => "0.3", 
      Date => "January 20, 2007",
      Authors => {
-	  {Name => "Bart Snapp", Email => "snapp@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~snapp/"}
+	  {Name => "Bart Snapp", Email => "snapp@coastal.edu", HomePage => "http://ww2.coastal.edu/snapp/"}
 	  },
      Headline => "aids in computations related to depth",
      DebuggingMode => true
