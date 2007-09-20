@@ -1,7 +1,7 @@
 # @configure_input@
 include ../../include/config.Makefile
 VPATH = @srcdir@
-EXES := echoout timestmp restart update
+EXES := echoout timestmp restart updat
 CFLAGS += -I. -I../../include -I../../libraries/final@FINALPREFIX@/@librariesdirtail@/include
 LDFLAGS += -L../../libraries/final@FINALPREFIX@/@librariesdirtail@/lib
 LD_LIBRARY_PATH := ../../libraries/final@FINALPREFIX@/@librariesdirtail@/lib:$(LD_LIBRARY_PATH)
@@ -26,7 +26,7 @@ all:: $(EXES)
 # targettypes.h : targettypes ; ./$^ >$@
 
 clean ::; rm -f overlay.h overlay gmon.out
-update.o : restart.h
+updat.o : restart.h
 clean ::; rm -f $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) targettypes.h
 ../bin/linkexec : linkexec ; cp -a $< $@
 

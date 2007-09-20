@@ -171,7 +171,7 @@ endif
 %.dep : %.d
 	$(SCC1) -dep -J. $<
 	mv $*.dp $*.dep
-	../util/update $*.sg $*.sig
+	../util/updat $*.sg $*.sig
 %.c   : %.d
 	$(SCC1) $(SCCFLAGS) +gc -J. -noline $<
 %.oo  : %.d
