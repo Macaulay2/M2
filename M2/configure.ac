@@ -282,6 +282,7 @@ AC_SUBST(PACKAGES,"
   Points
   PackageTemplate
   ReesAlgebra
+  Regularity
   SchurRings
   SimplicialComplexes
   LLLBases
