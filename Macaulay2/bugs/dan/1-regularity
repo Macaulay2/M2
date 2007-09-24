@@ -1,0 +1,5 @@
+For Alexandra:
+
+  install a hook in "regularity" so after the Regularity is loaded,
+  there will be a new Strategy or Algorithm that causes the new 
+  algorithm to be used.  The value of Strategy should be checked, somehow.
