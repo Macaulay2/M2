@@ -55,65 +55,6 @@ upTRT2 = (k,X,m) -> (
      );
 	
      
--- =======================================================================================
-
-
-
--- NOETHER NORMALIZATION FOR HOMOGENEOUS IDEALS
-
-randomSum = (U,V,k) -> (
-     for j to #V - 1 do (
-	  U = apply(U, i -> i + random(k)*V_j);
-	  );
-     return U;
-     );
-
-
-inverseSequence = (U,X) -> (
-     N := {};
-     for i to #X - 1 do (
-	  for j to #U - 1 do (
-	       if X_i == U_j then (
-		    N = {X_j}|N;
-		    break;
-		    );
-	       );
-	  );
-          return N;
-     )
-
-
-
---a quicker algorithm for putting homogeneous ideals in noether position wrt x_n-d..x_n
-normalize = (I,d) -> (
-     R := ring I;
-     k := coefficientRing R;
-     X := gens R;
-     di := nPosition (I,d);
-     dimI = d - 1;
-     algind := support (independentSets(I,Limit => 1))_0;
-     f := map(R,R,reverse inverseSequence(X-set algind|algind,X));
-     U := apply(algind,i->f i);
-     V := apply(X-set algind,i->f i);
-     g:= id_R;
-     while di > 0 do (
-	  g = map(R,R,V|randomSum(U,V,k));
-     	  J = g f I;
-	  di = dim(J+ideal(apply(algind,i->f i)));
-	  );
-     return g;
-     );
-
---tells whether a homogeneous ideal is in noether postion with respect to x_n-d..x_n.
-nPosition = (I,d) -> (
-     R := ring I;
-     X := flatten gens R;
-     dimI = d - 1;
-     algind := support (independentSets(I,Limit => 1))_0;
-     di= dim(I + ideal(X_{((#X-1)-dimI)..(#X-1)}));
-     return di;
-     );
-
 -- ========================================================================================
 
 
@@ -302,4 +243,71 @@ document {
 
 --====================================================================================================================================
 
+-- EXAMPLES:
+
+-- mRegularity is faster then regularity
+
+R = QQ[x_0..x_5]
+I1 = ideal (x_0^2*x_1+x_0*x_1*x_2-x_0*x_4^2,-x_0*x_2^2+x_0^2*x_5,x_0^2*x_2-x_0*x_1*x_4,x_0^3-x_2^3+x_0*x_1*x_3,x_0^3+x_0^2*x_1-x_1*x_2^2-x_0*x_2*x_5,x_0^3+x_2^3-x_0*x_5^2)
+
+benchmark "mRegularity I1" --> 1.5321 sec; Singular's similar method 9 seconds
+time regularity I1 -- => 190.936 sec; Singular's regularity by computing the resolution 2668.46 sec
+res I1
+
+--       1      6      26      53      58      32      6
+-- R  <-- R  <-- R   <-- R   <-- R   <-- R   <-- R  <-- 0
+
+-- 0      1      2       3       4       5       6      7
+
+
+--------------------------------------------------------------------------------
+--this one is faster with resolutions 
+
+I2 = ideal ( x_0^2+x_5^2, x_0^2+x_0*x_3+x_4^2, x_0^2+x_0*x_5+x_2*x_5, x_0^2-x_0*x_3-x_3*x_5, x_0^2-x_3*x_4, x_0*x_3);
+benchmark " mRegularity I2" -- => 0.070 ; S <1 sec
+time regularity I2  -- => 0.012 
+time regularity res I2 --=> 0.016 this gives reg(R/I)
+time regularity res (R^1/I2) -- =>0.016
+time res I2 -- => 0.016
+
+--      1      6      16      19      10      2
+--     S  <-- S  <-- S   <-- S   <-- S   <-- S  <-- 0
+--                                                   
+
+-- NOTE: remove benchmark when timing regularity. (resolution may be cached)
+---------------------------------------------------------------------------------
+-- this one is much faster with resolutions
+
+R=QQ[x_0..x_6];
+I3 = ideal (x_0*x_1*x_3+x_0^2*x_4-x_0^2*x_5, x_1*x_3^2, x_0^2-x_1*x_4, x_0^3-x_1*x_2^2-x_0*x_4*x_5, x_0^2*x_3+x_0*x_3*x_6-x_0*x_5*x_6);
+
+benchmark " mRegularity I3" -- => 14.73, sometimes out of memory; S=60.24 
+  
+time regularity I3     -- => 0.07
+time regularity res I3 -- => 0.056 this yields reg (R/I)
+time regularity (R^1/I3)-- => 0.064
+time res I3              -- => 0.064
+
+--     5      15      19      10      2
+--    R  <-- R  <-- R   <-- R   <-- R   <-- R  <-- 0
+--                                               
+--    0      1      2       3       4       5      6
+
+
+-------------------------------------------------------------------------------
+-- comparable, but faster with mRegularity
+
+R=QQ[x_0..x_5];
+I4= ideal (x_0*x_2*x_3+x_0*x_1*x_4, x_0-x_1, x_0^3+x_0^2*x_1+x_0*x_3*x_4, x_0^3+x_0^2*x_4-x_2*x_4^2, x_0^3+x_0*x_1*x_2+x_0*x_2*x_3);
+
+time  regularity I4     -- => 0.048
+time regularity res I4 --=> 0.068
+time mRegularity I4  -- => 0.045
+
+time res I4           -- => 0.64
+
+--     1      5      13      17      10      2
+--   R  <-- R  <-- R   <-- R   <-- R   <-- R  <-- 0
+--                                               
+--   0      1      2       3       4       5      6
 
