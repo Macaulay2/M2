@@ -149,6 +149,7 @@ std(I);
 -- option(prot) gives this:
 -- [255:2]4(2)s8s10s11.12.13.14.15.16s1721-s2223...24.-.s25(3)-.26-.s27(2)28....-29-.30.31.32.33.34.35
 -- Output is:
+-- (here o=deg-gap=degree of lead term, e=gap, l=size)
 ideal/module is not homogeneous
 
 set L
