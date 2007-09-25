@@ -323,7 +323,9 @@ test "$IMPLINST" = no; val=$?; AC_DEFINE_UNQUOTED(IMPLINST,$val,whether to insta
 
 AC_SUBST(DEVELOPMENT,no)
 AC_ARG_ENABLE(development, AS_HELP_STRING(--enable-development,build a development version), DEVELOPMENT=$enableval)
-test "$IMPLINST" = no; val=$?; AC_DEFINE(DEVELOPMENT,$val,whether to build a development version)
+if test "$DEVELOPMENT" = yes
+then AC_DEFINE_UNQUOTED(DEVELOPMENT,1,whether to build a development version)
+fi
 
 AC_SUBST(DEVELOPER,"")
 AC_ARG_WITH(developer, AS_HELP_STRING(--with-developer=...,specify the name of the developer ($USER)),DEVELOPER=$withval)
