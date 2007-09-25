@@ -1379,13 +1379,6 @@ document { Key => "printingTimeLimit",
      "This variable specifies the number of seconds to allow for printing an output line"
      }
 
-document { Key => promptWidth,
-     Usage => "promptWidth()",
-     Outputs => {{"the current width of an input or output prompt"}},
-     EXAMPLE lines ///
-     	  promptWidth()
-     ///}
-
 document { Key => "stopIfError",
      Headline => "whether to stop the program when an error occurs"
      }

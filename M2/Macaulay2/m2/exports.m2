@@ -923,7 +923,6 @@ export {
 	symbol profileSummary,
 	symbol projectiveHilbertPolynomial,
 	symbol promote,
-	symbol promptWidth,
 	symbol protect,
 	symbol pruningMap,
 	symbol pseudoRemainder,
