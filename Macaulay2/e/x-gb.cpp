@@ -94,12 +94,49 @@ rawStartEngineComputation(EngineComputation *C)
   try {
     clear_emit_size();
     C->start_computation();
+
+    if (gbTrace == 15)
+      {
+	ComputationStatusCode ret = C->status();
+	switch (ret) {
+	case COMP_DONE_DEGREE_LIMIT:
+	  emit_line("computation stopped at degree limit");
+	  break;
+	case COMP_DONE:
+	  emit_line("computation of GB completed");
+	  break;
+	case COMP_DONE_PAIR_LIMIT:
+	  emit_line("computation stopped at pair limit");
+	  break;
+	case COMP_NEED_RESIZE:
+	case COMP_ERROR:
+	case COMP_INTERRUPTED:
+	case COMP_NOT_STARTED:
+	case COMP_INITIAL_STOP:
+	case COMP_DONE_LENGTH_LIMIT:
+	case COMP_DONE_SYZYGY_LIMIT:
+	case COMP_DONE_GB_LIMIT:
+	case COMP_DONE_SYZ_LIMIT:
+	case COMP_DONE_CODIM:
+	case COMP_DONE_MIN_GENS:
+	case COMP_DONE_STEPS:
+	case COMP_DONE_SUBRING_LIMIT:
+	case COMP_COMPUTING:
+	case COMP_OVERFLOWED:
+	  emit_line("computation stopped for some good reason");
+	  break;
+	default:
+	  emit_line("incorrect status code encountered");
+	  break;
+	}
+      }	
     return error() ? 0 : C;
   }
   catch (exc::engine_error e) {
     ERROR(e.what());
     return NULL;
   }
+
 }
 
 enum ComputationStatusCode rawEngineStatus1(EngineComputation *C)
@@ -521,6 +558,43 @@ rawStartComputation(Computation *C)
      try {
 	  clear_emit_size();
 	  C->start_computation();
+
+	  if (gbTrace == 15)
+	    {
+	      ComputationStatusCode ret = C->status();
+	      switch (ret) {
+	      case COMP_DONE_DEGREE_LIMIT:
+		emit_line("computation stopped at degree limit");
+		break;
+	      case COMP_DONE:
+		emit_line("computation of GB completed");
+		break;
+	      case COMP_DONE_PAIR_LIMIT:
+		emit_line("computation stopped at pair limit");
+		break;
+	      case COMP_NEED_RESIZE:
+	      case COMP_ERROR:
+	      case COMP_INTERRUPTED:
+	      case COMP_NOT_STARTED:
+	      case COMP_INITIAL_STOP:
+	      case COMP_DONE_LENGTH_LIMIT:
+	      case COMP_DONE_SYZYGY_LIMIT:
+	      case COMP_DONE_GB_LIMIT:
+	      case COMP_DONE_SYZ_LIMIT:
+	      case COMP_DONE_CODIM:
+	      case COMP_DONE_MIN_GENS:
+	      case COMP_DONE_STEPS:
+	      case COMP_DONE_SUBRING_LIMIT:
+	      case COMP_COMPUTING:
+	      case COMP_OVERFLOWED:
+		emit_line("computation stopped for some good reason");
+		break;
+	      default:
+		emit_line("incorrect status code encountered");
+		break;
+	      }
+	    }
+
 	  return error() ? 0 : C;
      }
      catch (exc::engine_error e) {

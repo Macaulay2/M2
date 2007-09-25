@@ -326,11 +326,20 @@ void gbA::gbelem_text_out(buffer &o, int i, int nterms) const
   o << "g" << i << " ["
     << " gap " << gb[i]->gap
     << " size " << gb[i]->size
-    << " deg "  << gb[i]->deg
-    << " min "  << gb[i]->minlevel
-    << " elem ";
-    R->gbvector_text_out(o, _F, gb[i]->g.f, nterms);
-    o << "] ";
+    << " deg "  << gb[i]->deg;
+  switch (gb[i]->minlevel) {
+  case 1: 
+    o << "mingen"; break;
+  case 2:
+    o << "gbelem"; break;
+  case 3:
+    o << "reducer"; break;
+  default:
+    o << "??"; break;
+  }
+  o << " poly ";
+  R->gbvector_text_out(o, _F, gb[i]->g.f, nterms);
+  o << "] ";
 }
 
 /*************************
@@ -862,7 +871,7 @@ gbA::spair *gbA::spair_set_next()
 	{
 	  if (gbTrace >= 4)
 	    {
-	      emit_wrapped(" deferred pairs: ");
+	      emit_line("  deferred pairs: ");
 	    }
 	  S->spair_list = S->spair_deferred_list.next;
 	  S->spair_deferred_list.next = 0;
@@ -884,7 +893,7 @@ gbA::spair *gbA::spair_set_next()
 		{
 		  if (gbTrace >= 4)
 		    {
-		      emit_wrapped(" deferred gen pairs: ");
+		      emit_line("  deferred gen pairs: ");
 		    }
 		  S->gen_list = S->gen_deferred_list.next;
 		  S->gen_deferred_list.next = 0;
@@ -1219,9 +1228,7 @@ bool gbA::reduce(spair *p)
 	{
 	  buffer o;
 	  o << "    reducing by g" << w;
-	  emit_line(o.str());
-	  o.reset();
-	  o << "    value is ";
+	  o << ", yielding ";
 	  R->gbvector_text_out(o, _F, p->f(), 3);
 	  emit_line(o.str());
 	}
@@ -1232,8 +1239,7 @@ bool gbA::reduce(spair *p)
 	  if (gbTrace == 15)
 	    {
 	      buffer o;
-	      o << "    deferring spair: old deg " << p->deg-gap << " new deg " << p->deg << " ";
-	      spair_text_out(o,p);
+	      o << "    deferring to degree " << p->deg;
 	      emit_line(o.str());
 	    }
 	  spair_set_insert(p);
@@ -1393,10 +1399,10 @@ int gbA::find_good_divisor(exponents e,
     {
       gbelem *tg = gb[divisors[n-1]->_val];
       int sz = tg->size;
-      if (sz >= 3)
+      if (sz >= 0) // was 3, why??
 	{
 	  buffer o;
-	  o << "    " << n << " divisors: ";
+	  o << "    reducers: ";
 	  for (int j=0; j<n; j++)
 	    o << "g" << divisors[j]->_val << " ";
 	  emit_line(o.str());
@@ -2202,6 +2208,7 @@ void gbA::start_computation()
 {
   do_computation();
   if (gbTrace >= 1) show_mem_usage();
+  
   return;
 }
 
