@@ -301,7 +301,7 @@ makeMonoid := (opts) -> (
 		    else (
 			 msg := concatenate("encountered object not usable as variable at position ",toString i," in list:");
 			 preX := "        ";
-			 pw := max(printWidth,80) - promptWidth();
+			 pw := max(printWidth,80);
 			 error (msg,newline,toString (preX | silentRobustNetWithClass(pw - width  preX, 5, 3, v#i)))))));
      -- if length unique opts.Variables < length opts.Variables then error "at least one variable listed twice";
 

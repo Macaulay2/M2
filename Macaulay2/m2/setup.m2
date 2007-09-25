@@ -111,7 +111,6 @@ needs = s -> if not filesLoaded#?s then load s
 
 lastLN := 0
 lastWI := 0
-promptWidth = () -> 0					    -- this is silly !
      
 load "loads.m2"
 
