@@ -40,10 +40,10 @@ toExternalString S_5
 
 S_0 % gb1
 S_1 % gb1
-S_2 % gb1 -- this one is bad, at least for this choice (min alpha, min size)
+S_2 % gb1; -- this one is bad, at least for this choice (min alpha, min size)
 S_3 % gb1
 S_4 % gb1
-S_5 % gb1 -- also bad
+S_5 % gb1; -- also bad
 S_6 % gb1
 S_7 % gb1
 S_8 % gb1 -- also bad
