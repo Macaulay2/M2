@@ -207,6 +207,8 @@ private:
 		      gbelem_type minlevel,
 		      int deg);
 
+  void gbelem_text_out(buffer &o, int i, int nterms=3) const;
+
   /* spair creation */
   /* negative indices index quotient ring elements */
   spair *spair_node();

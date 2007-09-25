@@ -839,7 +839,8 @@ void GBRing::gbvector_sort(const FreeModule *F, gbvector *&f)
 
 void GBRing::gbvector_text_out(buffer &o,
 			       const FreeModule *F,
-			       const gbvector *v) const
+			       const gbvector *v,
+			       int nterms) const
 {
   if (v == NULL)
     {
@@ -852,7 +853,9 @@ void GBRing::gbvector_text_out(buffer &o,
   int old_plus = p_plus;
 
   p_one = 0;
-  for (const gbvector *t = v; t != NULL; t = t->next)
+  int count = nterms;
+  const gbvector *t;
+  for (t = v; t != NULL && count != 0; t = t->next, count--)
     {
       int isone = (M == NULL || M->is_one(t->monom));
       K->elem_text_out(o,t->coeff);
@@ -861,7 +864,7 @@ void GBRing::gbvector_text_out(buffer &o,
       o << "<" << t->comp << ">";
       p_plus = 1;
     }
-
+  if (t != NULL) o << "+...";
   p_one = old_one;
   p_parens = old_parens;
   p_plus = old_plus;

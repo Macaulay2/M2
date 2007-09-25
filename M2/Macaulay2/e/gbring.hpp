@@ -471,7 +471,8 @@ public:
 
   void gbvector_text_out(buffer &o,
 			 const FreeModule *F,
-			 const gbvector *f) const;
+			 const gbvector *f,
+			 int nterms=-1) const;
 
   void gbvector_apply(const FreeModule *F,
 		      const FreeModule *Fsyz,

@@ -321,6 +321,18 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
   return g;
 }
 
+void gbA::gbelem_text_out(buffer &o, int i, int nterms) const
+{
+  o << "g" << i << " ["
+    << " gap " << gb[i]->gap
+    << " size " << gb[i]->size
+    << " deg "  << gb[i]->deg
+    << " min "  << gb[i]->minlevel
+    << " elem ";
+    R->gbvector_text_out(o, _F, gb[i]->g.f, nterms);
+    o << "] ";
+}
+
 /*************************
  * SPair handling ********
  *************************/
@@ -452,11 +464,11 @@ void gbA::spair_text_out(buffer &o, spair *p)
     break;
   case SPAIR_GEN:
     o << "gen ";
-    R->gbvector_text_out(o, _F, p->f());
+    R->gbvector_text_out(o, _F, p->f(), 3);
     break;
   case SPAIR_ELEM:
     o << "elem ";
-    R->gbvector_text_out(o, _F, p->f());
+    R->gbvector_text_out(o, _F, p->f(), 3);
     break;
   case SPAIR_RING:
     sprintf(s, "rpair(%d,%d)", p->x.pair.i, p->x.pair.j);
@@ -652,8 +664,7 @@ void gbA::minimalize_pairs_non_ZZ(spairs &new_set)
 		  buffer o;
 		  o << "new spair ";
 		  spair_text_out(o,p);
-		  o << newline;
-		  emit(o.str());
+		  emit_line(o.str());
 		}
 	      spair_set_insert(p);
 	      montab->insert(p->lcm, 1, 0);
@@ -899,7 +910,11 @@ void gbA::spair_set_defer(spair *&p)
   // The spair should have been reduced a number of times
   // already, so its type should be SPAIR_GEN or SPAIR_ELEM
 {
-  if (gbTrace >= 4) emit_wrapped("D");
+  if (gbTrace == 15)
+    {
+      emit_line("    deferred by reduction count");
+    }
+  else if (gbTrace >= 4) emit_wrapped("D");
   //  spair_delete(p); // ONLY FOR TESTING!! THIS IS INCORRECT!!
   //  return;
   S->n_in_degree++;
@@ -1033,7 +1048,7 @@ void gbA::spairs_sort(int len, spair *&ps)
 void gbA::compute_s_pair(spair *p)
 {
   POLY f,g;
-  if (gbTrace >= 5)
+  if (gbTrace >= 5 && gbTrace != 15)
     {
       buffer o;
       spair_text_out(o,p);
@@ -1068,7 +1083,7 @@ void gbA::compute_s_pair(spair *p)
 				    p->fsyz());
     }
   p->type = SPAIR_ELEM;
-  if (gbTrace >= 5)
+  if (gbTrace >= 5 && gbTrace != 15)
     {
       buffer o;
       o << "    ";
@@ -1085,14 +1100,15 @@ bool gbA::reduce(spair *p)
   /* If false is returned, this routine has grabbed the spair 'p'. */
   int tmf, wt;
   int count = -1;
-  compute_s_pair(p); /* Changes the type, possibly */
-  if (gbTrace >= 10)
+  if (gbTrace == 15)
     {
       buffer o;
-      o << "reducing ";
-      R->gbvector_text_out(o, _F, p->f());
+      o << "reduction ";
+      spair_text_out(o,p);
       emit_line(o.str());
     }
+  compute_s_pair(p); /* Changes the type, possibly */
+
   while (!R->gbvector_is_zero(p->f()))
     {
       if (count++ > max_reduction_count)
@@ -1181,13 +1197,6 @@ bool gbA::reduce(spair *p)
 	  h.f = R->gbvector_copy(p->x.f.f);
 	  h.fsyz = R->gbvector_copy(p->x.f.fsyz);
 	  new_insert(h,ELEM_NON_MIN_GB);
-	  if (gbTrace >= 10)
-	    {
-	      buffer o;
-	      o << "deferring A spair ";
-	      spair_text_out(o,p);
-	      emit_line(o.str());
-	    }
 	}
       POLY g = gb[w]->g;
 
@@ -1205,24 +1214,24 @@ bool gbA::reduce(spair *p)
 	}
 
       stats_nreductions++;
-      if (gbTrace >= 10)
+      if (gbTrace == 15)
 	{
 	  buffer o;
-	  o << "  reducing by ";
-	  R->gbvector_text_out(o, _F, g.f);
-	  emit_line(o.str()); o.reset();
-	  o << "    giving ";
-	  R->gbvector_text_out(o, _F, p->f());
+	  o << "    reducing by g" << w;
+	  emit_line(o.str());
+	  o.reset();
+	  o << "    value is ";
+	  R->gbvector_text_out(o, _F, p->f(), 3);
 	  emit_line(o.str());
 	}
       if (R->gbvector_is_zero(p->f())) break;
       if (gap > 0)
 	{
 	  p->deg += gap;
-	  if (gbTrace >= 10)
+	  if (gbTrace == 15)
 	    {
 	      buffer o;
-	      o << "deferring B spair old deg " << p->deg-gap << " new deg " << p->deg << " ";
+	      o << "    deferring spair: old deg " << p->deg-gap << " new deg " << p->deg << " ";
 	      spair_text_out(o,p);
 	      emit_line(o.str());
 	    }
@@ -1230,7 +1239,7 @@ bool gbA::reduce(spair *p)
 	  return false;
 	}
     }
-  if (gbTrace >= 4) 
+  if (gbTrace >= 4 && gbTrace != 15) 
     {
       buffer o;
       o << "." << count;
@@ -1379,26 +1388,17 @@ int gbA::find_good_divisor(exponents e,
   /* Next search for GB divisors */
   n += lookup->find_divisors(-1, e, x, &divisors);
 
-  if (gbTrace >= 6 && n >= 2)
+  if (gbTrace == 15 && n >= 2)
     {
       gbelem *tg = gb[divisors[n-1]->_val];
-      gbvector *f = tg->g.f;
       int sz = tg->size;
       if (sz >= 3)
 	{
 	  buffer o;
-	  o << "\nndivisors " << n;
-	  o << "\n  choices:";
+	  o << "    " << n << " divisors: ";
 	  for (int j=0; j<n; j++)
-	    {
-	      f = gb[divisors[j]->_val]->g.f;
-	      o << "\n    size " << R->gbvector_n_terms(f);
-	      o << " lead ";
-	      f = R->gbvector_lead_term(-1,_F,f);
-	      R->gbvector_text_out(o,_F,f);
-	    }
-	  o << "\n";
-	  emit_wrapped(o.str());
+	    o << "g" << divisors[j]->_val << " ";
+	  emit_line(o.str());
 	}
     }
   /* Now find the minimal gap value */
@@ -1882,7 +1882,14 @@ void gbA::new_insert(POLY f, gbelem_type minlevel)
   else
     lookup->insert(g->lead, x, me);
 
-  if (gbTrace >= 5)
+  if (gbTrace == 15)
+    {
+      buffer o;
+      o << "    new GB: ";
+      gbelem_text_out(o, gb.size()-1);
+      emit_line(o.str());
+    }
+  else if (gbTrace >= 5)
     {
       char s[100];
       buffer o;
@@ -1914,7 +1921,7 @@ void gbA::new_insert(POLY f, gbelem_type minlevel)
   if (gbTrace >= 10)
     {
       //      lookupZZ->showmontable();
-      show();
+      //      show();
     }
 }
 
@@ -2016,6 +2023,14 @@ void gbA::do_computation()
       return;
     }
 
+  if (gbTrace == 15)
+    {
+      emit_line("[gb]");
+    }
+  else if (gbTrace >= 1)
+    {
+      emit_wrapped("[gb]");
+    }
   for (;;)
     {
       if (stop_.stop_after_degree && this_degree > stop_.degree_limit->array[0])
@@ -2093,7 +2108,16 @@ void gbA::do_computation()
 		    if (hilb_n_in_degree == 0) flush_pairs();
 		  }
 	      }
-	    if (gbTrace >= 1)
+	    if (gbTrace == 15)
+	      {
+		buffer o;
+		o << "DEGREE " << this_degree;
+		o << ", number of spairs = " << npairs;
+		if (use_hilb) 
+		  o << ", expected number in this degree = " << hilb_n_in_degree;
+		emit_line(o.str());
+	      }
+	    else if (gbTrace >= 1)
 	      {
 		buffer o;
 		o << '{' << this_degree << '}';
@@ -2359,14 +2383,9 @@ void gbA::show() const
   emit_line(o.str()); o.reset();
   for (unsigned int i=0; i<gb.size(); i++)
     {
-      o << indent(i)
-        << "  gap " << indent(gb[i]->gap)
-	<< "  size " << indent(gb[i]->size)
-	<< "  deg "  << indent(gb[i]->deg)
-        << "  min "  << indent(gb[i]->minlevel) 
-	<< "  ";
-      R->gbvector_text_out(o, _F, gb[i]->g.f);
-      emit_line(o.str()); o.reset();
+      gbelem_text_out(o,i);
+      emit_line(o.str()); 
+      o.reset();
     }
 }
 
