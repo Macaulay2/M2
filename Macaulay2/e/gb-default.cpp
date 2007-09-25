@@ -323,22 +323,27 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
 
 void gbA::gbelem_text_out(buffer &o, int i, int nterms) const
 {
-  o << "g" << i << " ["
+  bool ismingen = false;
+  switch (gb[i]->minlevel) {
+  case 1: 
+    ismingen = true;
+    o << "GB elem: "; break;
+  case 2:
+    o << "GB elem: "; break;
+  case 3:
+    o << "reducer: "; break;
+  default:
+    o << "??:"; break;
+  }
+  o << "g" << i << " = ";
+  R->gbvector_text_out(o, _F, gb[i]->g.f, nterms);
+  o << " ["
     << "gap " << gb[i]->gap
     << " size " << gb[i]->size
     << " deg "  << gb[i]->deg;
-  switch (gb[i]->minlevel) {
-  case 1: 
-    o << " mingen "; break;
-  case 2:
-    o << " gbelem "; break;
-  case 3:
-    o << " reducer "; break;
-  default:
-    o << " ??"; break;
-  }
-  R->gbvector_text_out(o, _F, gb[i]->g.f, nterms);
-  o << "] ";
+  if (ismingen)
+    o << " mingen";
+  o << "]";
 }
 
 /*************************
@@ -1891,7 +1896,7 @@ void gbA::new_insert(POLY f, gbelem_type minlevel)
   if (gbTrace == 15)
     {
       buffer o;
-      o << "    new GB elem: ";
+      o << "    new ";
       gbelem_text_out(o, gb.size()-1);
       emit_line(o.str());
     }
