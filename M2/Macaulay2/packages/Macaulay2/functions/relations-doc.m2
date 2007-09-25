@@ -34,4 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc6.m2:1018:     Key => relations,

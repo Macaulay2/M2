@@ -80,7 +80,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc10.m2:910:     Key => (exteriorPower, ZZ, CoherentSheaf),
- -- doc7.m2:1674:     Key => (exteriorPower,ZZ,Matrix),
- -- doc7.m2:1698:     Key => (exteriorPower,ZZ,Module),
- -- doc7.m2:1763:     Key => exteriorPower,

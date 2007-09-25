@@ -50,6 +50,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc12.m2:163:     Key => (take,BasicList,ZZ),
- -- doc12.m2:177:     Key => (take,BasicList,List),
- -- doc12.m2:185:     Key => take,

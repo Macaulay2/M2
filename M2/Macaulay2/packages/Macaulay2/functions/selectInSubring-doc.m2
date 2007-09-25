@@ -34,4 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc8.m2:1199:     Key => selectInSubring,

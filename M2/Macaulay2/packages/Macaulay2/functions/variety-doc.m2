@@ -48,5 +48,3 @@ document {
      ///
      }
 
- -- doc10.m2:827:     Key => (variety, CoherentSheaf),
- -- doc10.m2:839:     Key => variety,

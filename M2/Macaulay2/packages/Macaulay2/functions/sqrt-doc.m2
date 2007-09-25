@@ -50,4 +50,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc2.m2:715:     Key => sqrt, Headline => "square root function",

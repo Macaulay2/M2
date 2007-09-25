@@ -66,4 +66,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc7.m2:1433:     Key => singularLocus,

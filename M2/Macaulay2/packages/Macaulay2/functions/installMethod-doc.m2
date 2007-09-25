@@ -18,4 +18,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc1.m2:162:     Key => installMethod,

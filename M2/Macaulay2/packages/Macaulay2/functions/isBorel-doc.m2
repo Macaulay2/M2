@@ -34,4 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc9.m2:469:     Key => isBorel,

@@ -18,4 +18,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc11.m2:931:     Key => isTable,

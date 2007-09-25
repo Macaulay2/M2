@@ -18,4 +18,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc6.m2:3:     Key => odd,

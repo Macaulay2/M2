@@ -34,5 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc4.m2:408:     Key => openDatabase,
- -- doc4.m2:415:     Key => openDatabaseOut,

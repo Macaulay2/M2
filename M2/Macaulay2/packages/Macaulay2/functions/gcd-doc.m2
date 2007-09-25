@@ -66,5 +66,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc2.m2:860:     Key => gcd,
- -- doc6.m2:284:     Key => gcdCoefficients,

@@ -121,7 +121,3 @@ document {
      SeeAlso => {monomialCurveIdeal, truncate}
      }
 
- -- doc4.m2:614:     Key => saturate,
- -- doc4.m2:649:     Key => [saturate,Strategy],
- -- doc4.m2:679:     Key => [saturate,DegreeLimit],
- -- doc9.m2:1219:     Key => [saturate,MinimalGenerators],

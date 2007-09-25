@@ -98,7 +98,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc1.m2:697:     Key => image,
- -- doc9.m2:541:     Key => coimage,
- -- overviewB.m2:765:     Key => "kernel and image of a ring map",
- -- overviewC.m2:1308:     Key => "kernel, cokernel and image of a map of modules",

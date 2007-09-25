@@ -114,5 +114,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc11.m2:852:     Key => code,
- -- overview4.m2:253:     Key => "editing Macaulay 2 code with emacs",

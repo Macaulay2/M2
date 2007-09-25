@@ -34,4 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc_packages.m2:175:     Key => {exportMutable, (exportMutable,Sequence), (exportMutable,Symbol)},

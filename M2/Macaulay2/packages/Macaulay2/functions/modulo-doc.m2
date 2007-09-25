@@ -66,5 +66,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc8.m2:991:     Key => modulo,
- -- overviewC.m2:43:        Key => "integers modulo a prime",

@@ -34,6 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc_packages.m2:153:     Key => {export, (export,Sequence), (export,Symbol)},
- -- doc_packages.m2:175:     Key => {exportMutable, (exportMutable,Sequence), (exportMutable,Symbol)},
- -- overviewB.m2:1108:     Key => "importing and exporting matrices",

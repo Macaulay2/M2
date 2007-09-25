@@ -34,4 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc4.m2:183:     Key => xor,

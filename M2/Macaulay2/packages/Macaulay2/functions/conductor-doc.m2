@@ -34,4 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- normal_doc.m2:122:     Key => (conductor,RingMap),

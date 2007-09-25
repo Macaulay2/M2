@@ -34,5 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc.m2:519:     Key => scanPairs,
- -- doc.m2:523:     Key => (scanPairs,HashTable,Function),

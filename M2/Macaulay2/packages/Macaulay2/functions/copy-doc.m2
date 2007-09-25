@@ -18,4 +18,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc2.m2:953:     Key => copy,

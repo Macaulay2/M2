@@ -402,7 +402,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- overview2.m2:229:     Key => "extracting information from chain complexes",
- -- overviewB.m2:907:     Key => "extracting information about a matrix",
- -- overviewC.m2:1302:     Key => "information about a map of modules",
- -- overview_packages.m2:118:     Key => "informing others about your package",

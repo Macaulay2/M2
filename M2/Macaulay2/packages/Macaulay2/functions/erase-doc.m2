@@ -18,4 +18,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc2.m2:817:     Key => erase,

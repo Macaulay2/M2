@@ -34,5 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc10.m2:385:     Key => removeLowestDimension,
- -- doc3.m2:339:     Key => remove,

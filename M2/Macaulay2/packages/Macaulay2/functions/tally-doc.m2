@@ -34,5 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc5.m2:297:     Key => tally,
- -- doc5.m2:309:    Key => (tally, BasicList),

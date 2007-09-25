@@ -27,7 +27,6 @@ document {
      SeeAlso => {"topComponents", "saturate", "quotient", "radical", "minimalPrimes"}
      }
 
- -- doc10.m2:385:     Key => removeLowestDimension,
 
 
 

@@ -53,6 +53,3 @@ document {
      whether every element of ", TT "I", " reduces to 0 modulo ", TT "I", "."
      }
 
- -- doc5.m2:349:     Key => (isSubset,Set,Set), TT "isSubset(X,Y)", " -- tells whether ", TT "X", " is a subset of ", TT "Y", "." }
- -- doc5.m2:352:     Key => isSubset,
- -- doc_ideals.m2:222:     Key => {(isSubset,Ideal,Ideal)

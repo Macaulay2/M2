@@ -54,7 +54,6 @@ document {
 	  (dual,MonomialIdeal)}
      }
 
- -- doc10.m2:475:     Key => minimalPrimes,
 
 TEST ///
 R = ZZ[x,y,z]

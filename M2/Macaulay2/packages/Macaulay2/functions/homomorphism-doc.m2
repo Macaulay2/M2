@@ -34,5 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc7.m2:2520:     Key => homomorphism,
- -- overviewC.m2:1220:     Key => "homomorphisms (maps) between modules",

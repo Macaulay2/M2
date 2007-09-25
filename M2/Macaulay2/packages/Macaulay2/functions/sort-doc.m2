@@ -107,8 +107,3 @@ document {
 	  the elements of a list"},
      SeeAlso => {}
      }
- -- doc12.m2:137:     Key => sort,
- -- doc12.m2:154:     Key => rsort,
- -- doc8.m2:1199:     Key => [sortColumns,DegreeOrder],
- -- doc8.m2:1209:     Key => [sortColumns,MonomialOrder],
- -- doc8.m2:1219:     Key => sortColumns,

@@ -50,6 +50,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc11.m2:906:     Key => methods,
- -- overview2.m2:2017:     Key => "binary methods",
- -- overview2.m2:2070:     Key => "installing methods",

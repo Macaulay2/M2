@@ -50,5 +50,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc4.m2:686:     Key => profile,
- -- doc4.m2:697:     Key => profileSummary,

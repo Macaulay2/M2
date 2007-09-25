@@ -114,7 +114,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc1.m2:914:     Key => (options, Function),
- -- doc1.m2:928:     Key => (options, Ring),
- -- doc1.m2:934:     Key => (options, Monoid),
- -- doc1.m2:940:     Key => options, Headline => "get options" }

@@ -50,6 +50,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc11.m2:781:     Key => Fano, 
- -- doc11.m2:786:   Key => (Fano,ZZ,Ideal),
- -- doc11.m2:807:   Key => (Fano,ZZ,Ideal,Ring),

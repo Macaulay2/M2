@@ -34,4 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc_packages.m2:130:--     Key => makePackageIndex,

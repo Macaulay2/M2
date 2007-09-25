@@ -30,7 +30,6 @@ document {
      SeeAlso => {"resolution","betti"}
      }
 
- -- doc9.m2:1684:     Key => regularity,
 
 
 

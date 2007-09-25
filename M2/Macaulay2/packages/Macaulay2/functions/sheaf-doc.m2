@@ -98,9 +98,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc10.m2:783:     Key => sheaf,
- -- doc10.m2:788:     Key => (sheaf, Variety, Module),
- -- doc10.m2:798:     Key => (sheaf, Module),
- -- doc10.m2:814:     Key => (sheaf, Ring), 
- -- doc12.m2:1069:     Key => sheafExt,
- -- doc12.m2:1074:     Key => (sheafExt,ZZ,CoherentSheaf,CoherentSheaf),

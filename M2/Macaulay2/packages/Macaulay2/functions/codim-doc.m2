@@ -113,7 +113,3 @@ document {
      SeeAlso => {(codim,QuotientRing)}
      }
 
- -- doc10.m2:900:     Key => (codim, CoherentSheaf),
- -- doc7.m2:2357:     Key => codim,
- -- doc7.m2:2378:     Key => (codim, Module),
- -- overviewB.m2:270:     Key => "dimension, codimension, and degree",

@@ -269,11 +269,6 @@ degree I
 
 ///
 
- -- doc1.m2:512:     Key => degreeLength,
- -- doc6.m2:361:     Key => degreesRing,
- -- doc6.m2:572:     Key => degreesMonoid,
- -- overviewB.m2:270:     Key => "dimension, codimension, and degree",
- -- overviewC.m2:1312:     Key => "degree and multiplicity of a module",
 
 end
 

@@ -162,6 +162,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc7.m2:313:     Key => contract,
- -- doc7.m2:318:     Key => (contract,Matrix,Matrix),
- -- overview4.m2:557:     Key => "diff and contract",

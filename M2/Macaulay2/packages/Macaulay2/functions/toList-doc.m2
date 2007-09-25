@@ -82,7 +82,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc4.m2:573:     Key => (toList, HashTable),
- -- doc4.m2:587:     Key => (toList, BasicList),
- -- doc4.m2:599:     Key => (toList, Set),
- -- doc4.m2:609:     Key => toList,

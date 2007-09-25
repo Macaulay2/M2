@@ -50,4 +50,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc5.m2:181:     Key => memoize,

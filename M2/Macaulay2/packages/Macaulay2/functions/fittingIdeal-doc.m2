@@ -34,4 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc7.m2:1954:     Key => fittingIdeal,

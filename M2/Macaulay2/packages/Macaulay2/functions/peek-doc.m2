@@ -43,5 +43,3 @@ document {
      SeeAlso => "peek"
      }
 
- -- doc12.m2:914:     Key => peek,
- -- doc12.m2:929:     Key => (peek',ZZ,Thing),

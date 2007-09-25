@@ -66,5 +66,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc1.m2:874:     Key => complete,
- -- doc9.m2:559:     Key => (complete, ChainComplex),

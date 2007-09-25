@@ -18,4 +18,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc11.m2:731:     Key => monomialCurveIdeal, 

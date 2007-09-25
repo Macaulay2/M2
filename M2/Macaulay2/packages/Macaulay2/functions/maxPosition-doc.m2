@@ -34,5 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc.m2:345:     Key => maxPosition,
- -- doc.m2:350:     Key => (maxPosition,BasicList),

@@ -18,5 +18,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc.m2:23:     Key => parent,
- -- overview2.m2:2121:     Key => "inheritance",

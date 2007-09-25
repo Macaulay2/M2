@@ -50,4 +50,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc6.m2:378:     Key => standardForm,

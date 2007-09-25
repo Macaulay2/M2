@@ -18,5 +18,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc6.m2:480:     Key => assign,
- -- overview2.m2:551:     Key => "assigning values",

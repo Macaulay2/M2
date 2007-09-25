@@ -171,4 +171,3 @@ document {
      SeeAlso => {genera,genus},
      }
 
- -- doc6.m2:1132:     Key => eulers,

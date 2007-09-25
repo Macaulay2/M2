@@ -18,6 +18,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc2.m2:889:     Key => error,
- -- doc5.m2:126:     Key => "errorDepth",
- -- overview2.m2:1559:     Key => "error handling",

@@ -50,5 +50,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc1.m2:646:     Key => flatten,
- -- doc1.m2:656:     Key => (flatten,Matrix),

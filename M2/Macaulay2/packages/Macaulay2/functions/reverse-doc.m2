@@ -34,5 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc.m2:923:     Key => reverse,
- -- overviewC.m2:375:     Key => "definition of graded reverse lexicographic order: GRevLex",

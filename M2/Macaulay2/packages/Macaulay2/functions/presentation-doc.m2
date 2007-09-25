@@ -88,5 +88,3 @@ TEST ///
     scan(modules, M -> assert( cover M == target presentation M ) )
 ///
 
- -- doc7.m2:2405:     Key => presentation,
- -- overviewC.m2:1255:     Key => "minimal presentations and generators",
