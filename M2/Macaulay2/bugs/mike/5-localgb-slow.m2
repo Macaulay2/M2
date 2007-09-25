@@ -105,7 +105,7 @@ H = 2*x^8 + 6*z^2*y^2*t + 2*y^5
 M = matrix{{F,G,H}}
 gbTrace=15
 time gens gb(M, DegreeLimit=>27);
---time gens gb M;
+time gens gb M;
 J = ideal"tz+4t2z+3z3+6tz3,
   y5+3ty2z2+x8,
   t7-32t3x2yz4,
