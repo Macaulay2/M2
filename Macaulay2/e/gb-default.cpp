@@ -324,20 +324,19 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
 void gbA::gbelem_text_out(buffer &o, int i, int nterms) const
 {
   o << "g" << i << " ["
-    << " gap " << gb[i]->gap
+    << "gap " << gb[i]->gap
     << " size " << gb[i]->size
     << " deg "  << gb[i]->deg;
   switch (gb[i]->minlevel) {
   case 1: 
-    o << " mingen"; break;
+    o << " mingen "; break;
   case 2:
-    o << " gbelem"; break;
+    o << " gbelem "; break;
   case 3:
-    o << " reducer"; break;
+    o << " reducer "; break;
   default:
     o << " ??"; break;
   }
-  o << " poly ";
   R->gbvector_text_out(o, _F, gb[i]->g.f, nterms);
   o << "] ";
 }
@@ -871,7 +870,7 @@ gbA::spair *gbA::spair_set_next()
 	{
 	  if (gbTrace >= 4)
 	    {
-	      emit_line("  deferred pairs: ");
+	      emit_line("considering deferred pairs: ");
 	    }
 	  S->spair_list = S->spair_deferred_list.next;
 	  S->spair_deferred_list.next = 0;
@@ -2399,14 +2398,19 @@ void gbA::show() const
 
 void gbA::show_mem_usage()
 {
+  buffer o;
+
   long nmonoms = 0;
   for (int i=0; i<gb.size(); i++)
     {
       nmonoms += R->gbvector_n_terms(gb[i]->g.f);
       nmonoms += R->gbvector_n_terms(gb[i]->g.fsyz);
     }
-  printf("\nnumber of (nonminimal) gb elements = %d\n", (int)gb.size());
-  printf("number of monomials                = %ld\n", nmonoms);
+  o << "number of (nonminimal) gb elements = " << gb.size();
+  emit_line(o.str());
+  o.reset();
+  o << "number of monomials                = " << nmonoms;
+  emit_line(o.str());
 }
 
 // Local Variables:
