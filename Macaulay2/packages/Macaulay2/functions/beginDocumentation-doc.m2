@@ -18,4 +18,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc_packages.m2:194:     Key => beginDocumentation,

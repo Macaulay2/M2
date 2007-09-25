@@ -41,4 +41,3 @@ document {
      ",
      SeeAlso => {minimalPrimes}
      }
- -- doc10.m2:449:     Key => irreducibleCharacteristicSeries,

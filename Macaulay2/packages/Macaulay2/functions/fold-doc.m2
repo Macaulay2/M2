@@ -82,8 +82,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc12.m2:47:     Key => (fold, Function, Thing, VisibleList),
- -- doc12.m2:52:     Key => (fold, Function, VisibleList),
- -- doc12.m2:60:     Key => (fold, VisibleList, Thing, Function),
- -- doc12.m2:65:     Key => (fold, VisibleList, Function),
- -- doc12.m2:70:     Key => fold,

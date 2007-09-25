@@ -66,4 +66,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc6.m2:1301:     Key => isDirectSum,

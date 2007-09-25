@@ -82,6 +82,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc7.m2:80:     Key => (submatrix,Matrix,VisibleList,VisibleList),
- -- doc7.m2:124:     Key => (submatrix,Matrix,VisibleList),
- -- doc7.m2:154:     Key => submatrix,

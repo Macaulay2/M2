@@ -130,10 +130,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc7.m2:425:     Key => (leadTerm, RingElement),
- -- doc7.m2:449:     Key => (leadTerm, Matrix),
- -- doc7.m2:473:     Key => (leadTerm, Ideal),
- -- doc7.m2:496:     Key => (leadTerm, ZZ, RingElement),
- -- doc7.m2:519:     Key => (leadTerm, ZZ, Matrix),
- -- doc7.m2:538:     Key => (leadTerm, ZZ, Ideal),
- -- doc7.m2:555:     Key => leadTerm,

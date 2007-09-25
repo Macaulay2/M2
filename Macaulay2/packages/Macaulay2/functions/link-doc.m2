@@ -34,5 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc5.m2:465:     Key => linkFile,
- -- doc5.m2:526:     Key => removeFile,

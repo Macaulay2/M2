@@ -34,4 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc7.m2:1247:     Key => (adjoint1,Matrix,Module,Module),

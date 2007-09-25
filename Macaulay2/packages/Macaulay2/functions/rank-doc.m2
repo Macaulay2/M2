@@ -25,6 +25,3 @@ document {
 	  "rank C"
 	  }
      }
- -- doc10.m2:905:     Key => (rank, CoherentSheaf),
- -- doc6.m2:1156:     Key => rank,
- -- overviewB.m2:1038:     Key => "rank of a matrix",

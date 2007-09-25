@@ -50,6 +50,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc5.m2:403:     Key => setRandomSeed,
- -- doc5.m2:408:     Key => (setRandomSeed, ZZ),
- -- doc5.m2:423:     Key => (setRandomSeed, String),

@@ -34,5 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc7.m2:1660:     Key => symmetricPower, Headline => "symmetric power" }
- -- doc7.m2:1662:     Key => (symmetricPower,ZZ,Matrix),

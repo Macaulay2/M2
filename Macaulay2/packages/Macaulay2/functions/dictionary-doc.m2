@@ -66,4 +66,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc5.m2:513:     Key => dictionary,

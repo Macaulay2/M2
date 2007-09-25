@@ -34,4 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- normal_doc.m2:82:     Key => (ICmap,Ring),

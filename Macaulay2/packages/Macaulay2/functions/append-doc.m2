@@ -20,4 +20,3 @@ document {
      SeeAlso =>{ "prepend", "join"}
      }
 
- -- doc.m2:725:     Key => append,

@@ -177,6 +177,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc1.m2:716:     Key => ambient,
- -- doc1.m2:728:     Key => (ambient,Module),
- -- doc7.m2:3:     Key => (ambient,Matrix),

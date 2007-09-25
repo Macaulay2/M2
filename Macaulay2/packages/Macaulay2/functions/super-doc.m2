@@ -82,5 +82,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc12.m2:1001:     Key => superscript,
- -- doc6.m2:1194:     Key => super,

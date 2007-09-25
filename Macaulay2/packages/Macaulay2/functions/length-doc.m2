@@ -98,6 +98,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc.m2:4:     Key => "length",
- -- doc.m2:9:     Key => (length, GradedModule),
- -- doc9.m2:602:     Key => (length, ChainComplex),

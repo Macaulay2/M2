@@ -34,5 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc3.m2:257:     Key => stack,
- -- doc4.m2:763:     Key => unstack,

@@ -18,4 +18,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc4.m2:723:     Key => globalAssignFunction,

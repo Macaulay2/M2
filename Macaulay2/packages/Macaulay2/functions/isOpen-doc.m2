@@ -50,4 +50,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc2.m2:357:     Key => isOpen,

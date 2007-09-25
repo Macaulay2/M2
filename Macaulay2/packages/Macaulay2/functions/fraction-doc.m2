@@ -34,6 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc6.m2:163:     Key => fraction,
- -- normal_doc.m2:100:     Key => (ICfractions,Ring),
- -- overviewC.m2:876:     Key => "fraction fields",

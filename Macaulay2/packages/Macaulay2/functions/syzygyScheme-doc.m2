@@ -18,4 +18,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc9.m2:1773:     Key => syzygyScheme,

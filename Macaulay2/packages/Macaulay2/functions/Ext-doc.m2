@@ -143,9 +143,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc10.m2:731:     Key => (cohomology, ZZ, Module),
- -- doc10.m2:936:     Key => (cohomology, ZZ, SumOfTwists),
- -- doc10.m2:962:     Key => (cohomology, ZZ, CoherentSheaf),
- -- doc12.m2:1032:     Key => cohomology,
- -- doc9.m2:1573:     Key => (cohomology,ZZ,ChainComplex),
- -- doc9.m2:1590:     Key => (cohomology,ZZ,ChainComplexMap),

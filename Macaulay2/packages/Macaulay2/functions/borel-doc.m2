@@ -50,4 +50,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc7.m2:568:     Key => borel,

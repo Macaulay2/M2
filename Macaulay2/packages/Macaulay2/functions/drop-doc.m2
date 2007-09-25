@@ -50,6 +50,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc1.m2:885:     Key => (drop, BasicList, List),
- -- doc1.m2:897:     Key => (drop, BasicList, ZZ),
- -- doc1.m2:910:     Key => drop,

@@ -66,4 +66,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc3.m2:289:     Key => width,

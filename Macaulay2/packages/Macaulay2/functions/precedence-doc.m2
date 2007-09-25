@@ -386,4 +386,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc4.m2:546:     Key => precedence,

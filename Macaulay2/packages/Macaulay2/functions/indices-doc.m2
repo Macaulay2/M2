@@ -52,4 +52,3 @@ document {
      specifying parts of a direct sum",
      SeeAlso => {index, support, indices, (symbol_,Ring,ZZ)}
      }
- -- doc6.m2:1387:     Key => indices,

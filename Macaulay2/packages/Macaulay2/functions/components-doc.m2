@@ -114,6 +114,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc6.m2:1108:     Key => components,
- -- doc9.m2:1642:     Key => (components, ChainComplex),
- -- overviewC.m2:1324:     Key => "truncation and homogeneous components of a graded module",

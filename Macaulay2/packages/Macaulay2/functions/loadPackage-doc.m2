@@ -48,5 +48,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc_packages.m2:11:     Key => {loadPackage,(loadPackage,String)},
- -- doc_packages.m2:38:     Key => [loadPackage,DebuggingMode],

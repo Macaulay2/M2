@@ -66,4 +66,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc.m2:609:     Key => describe,

@@ -34,4 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- overview2.m2:1795:     Key => isReady, Headline => "whether a file has data available for reading" }

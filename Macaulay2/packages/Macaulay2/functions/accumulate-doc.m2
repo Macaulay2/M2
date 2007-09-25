@@ -82,8 +82,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc12.m2:4:     Key => (accumulate, Function, Thing, VisibleList),
- -- doc12.m2:13:     Key => (accumulate, Function, VisibleList),
- -- doc12.m2:22:     Key => (accumulate, VisibleList, Thing, Function),
- -- doc12.m2:28:     Key => (accumulate, VisibleList, Function),
- -- doc12.m2:34:     Key => accumulate,

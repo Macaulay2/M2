@@ -18,7 +18,6 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc2.m2:738:     Key => wait,
 
 ///
 fork, wait, 

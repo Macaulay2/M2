@@ -82,7 +82,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc7.m2:346:     Key => jacobian,
- -- doc7.m2:354:     Key => (jacobian,Matrix),
- -- doc7.m2:382:     Key => (jacobian,Ideal),
- -- doc7.m2:403:     Key => (jacobian,Ring),

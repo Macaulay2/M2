@@ -58,9 +58,3 @@ document {
      }
 
 
- -- doc9.m2:390:     Key => monomialIdeal,
- -- doc9.m2:395:     Key => (monomialIdeal, Ideal),
- -- doc9.m2:404:     Key => (monomialIdeal, List),
- -- doc9.m2:413:     Key => (monomialIdeal, Sequence),
- -- doc9.m2:420:     Key => (monomialIdeal, Matrix),
- -- doc9.m2:433:     Key => (monomialIdeal, MonomialIdeal),

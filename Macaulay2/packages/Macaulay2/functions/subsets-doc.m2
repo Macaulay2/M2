@@ -114,8 +114,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc12.m2:278:     Key => subsets,
- -- doc12.m2:285:     Key => (subsets,ZZ,ZZ),
- -- doc12.m2:299:     Key => (subsets,Set,ZZ),
- -- doc12.m2:308:     Key => (subsets,List),
- -- doc12.m2:317:     Key => (subsets,Set),

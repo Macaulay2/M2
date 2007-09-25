@@ -84,7 +84,6 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc8.m2:880:     Key => trim,
 
 ///
 

@@ -57,6 +57,3 @@ document {
      SeeAlso => {tangentSheaf}
      }
 
- -- doc10.m2:982:     Key => (cotangentSheaf, ProjectiveVariety),
- -- doc10.m2:987:     Key => cotangentSheaf,
- -- doc10.m2:992:     Key => (cotangentSheaf, ZZ, ProjectiveVariety),

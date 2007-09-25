@@ -34,5 +34,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc.m2:364:     Key => minPosition, Headline => "position of smallest element" }
- -- doc.m2:366:     Key => (minPosition,BasicList),

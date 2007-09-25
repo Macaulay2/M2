@@ -18,6 +18,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc10.m2:403:     Key => factor,
- -- doc7.m2:1811:     Key => symbol Cofactor,
- -- overviewC.m2:851:     Key => "factoring polynomials",

@@ -145,8 +145,3 @@ document {
      }
 
 
- -- doc7.m2:583:     Key => (inducedMap, Module, Module),
- -- doc7.m2:615:     Key => (inducedMap, Module, Module, Matrix),
- -- doc7.m2:654:     Key => inducedMap,
- -- doc7.m2:659:     Key => [inducedMap,Degree],
- -- doc7.m2:675:     Key => [inducedMap,Verify],
