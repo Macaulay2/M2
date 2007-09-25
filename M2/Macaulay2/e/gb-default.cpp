@@ -329,13 +329,13 @@ void gbA::gbelem_text_out(buffer &o, int i, int nterms) const
     << " deg "  << gb[i]->deg;
   switch (gb[i]->minlevel) {
   case 1: 
-    o << "mingen"; break;
+    o << " mingen"; break;
   case 2:
-    o << "gbelem"; break;
+    o << " gbelem"; break;
   case 3:
-    o << "reducer"; break;
+    o << " reducer"; break;
   default:
-    o << "??"; break;
+    o << " ??"; break;
   }
   o << " poly ";
   R->gbvector_text_out(o, _F, gb[i]->g.f, nterms);
