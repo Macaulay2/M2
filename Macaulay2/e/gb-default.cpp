@@ -437,7 +437,7 @@ void gbA::spair_text_out(buffer &o, spair *p)
   char s[100]; // enough room for all of the non polynomial cases.
   switch (p->type) {
   case SPAIR_GCD_ZZ:
-    sprintf(s, "spairgcd(%d,%d)", p->x.pair.i, p->x.pair.j);
+    sprintf(s, "spairgcd(g%d,g%d)", p->x.pair.j, p->x.pair.i);
     o << s;
     sprintf(s, " deg(%d)", p->deg);
     o << s;
@@ -450,11 +450,11 @@ void gbA::spair_text_out(buffer &o, spair *p)
     o << "]";
     break;
   case SPAIR_SPAIR:
-    sprintf(s, "spair(%d,%d)", p->x.pair.i, p->x.pair.j);
+    sprintf(s, "spair(g%d,g%d):", p->x.pair.j, p->x.pair.i);
     o << s;
-    sprintf(s, " deg(%d)", p->deg);
+    sprintf(s, " deg %d", p->deg);
     o << s;
-    o << " lcm[";
+    o << " lcm exponents [";
     for (int i=0; i<_nvars+2; i++)
       {
 	sprintf(s, "%d ", p->lcm[i]);
@@ -463,7 +463,7 @@ void gbA::spair_text_out(buffer &o, spair *p)
     o << "]";
     break;
   case SPAIR_GEN:
-    o << "gen ";
+    o << "generator ";
     R->gbvector_text_out(o, _F, p->f(), 3);
     break;
   case SPAIR_ELEM:
@@ -475,7 +475,7 @@ void gbA::spair_text_out(buffer &o, spair *p)
     o << s;
     break;
   case SPAIR_SKEW:
-    sprintf(s, "skewpair(%d,%d)", p->x.pair.i, p->x.pair.j);
+    sprintf(s, "skewpair(g%d,g%d)", p->x.pair.j, p->x.pair.i);
     o << s;
     break;
   default:
@@ -662,7 +662,7 @@ void gbA::minimalize_pairs_non_ZZ(spairs &new_set)
 	      if (gbTrace >= 4)
 		{
 		  buffer o;
-		  o << "new spair ";
+		  o << "    new ";
 		  spair_text_out(o,p);
 		  emit_line(o.str());
 		}
@@ -1103,8 +1103,9 @@ bool gbA::reduce(spair *p)
   if (gbTrace == 15)
     {
       buffer o;
-      o << "reduction ";
+      o << "considering ";
       spair_text_out(o,p);
+      o << " : ";
       emit_line(o.str());
     }
   compute_s_pair(p); /* Changes the type, possibly */
@@ -1885,7 +1886,7 @@ void gbA::new_insert(POLY f, gbelem_type minlevel)
   if (gbTrace == 15)
     {
       buffer o;
-      o << "    new GB: ";
+      o << "    new GB elem: ";
       gbelem_text_out(o, gb.size()-1);
       emit_line(o.str());
     }
