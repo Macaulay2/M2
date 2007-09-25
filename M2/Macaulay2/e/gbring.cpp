@@ -848,6 +848,7 @@ void GBRing::gbvector_text_out(buffer &o,
       return;
     }
 
+  bool rank1 = (F->rank() == 1);
   int old_one = p_one;
   int old_parens = p_parens;
   int old_plus = p_plus;
@@ -861,7 +862,8 @@ void GBRing::gbvector_text_out(buffer &o,
       K->elem_text_out(o,t->coeff);
       if (!isone)
 	M->elem_text_out(o, t->monom);
-      o << "<" << t->comp << ">";
+      if (!rank1)
+	o << "<" << t->comp << ">";
       p_plus = 1;
     }
   if (t != NULL) o << "+...";
