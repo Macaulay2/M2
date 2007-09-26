@@ -1124,7 +1124,14 @@ document {
      	  singularLocus(QQ[x,y] / (x^2 - y^3))
 	  singularLocus Spec( QQ[x,y,z] / (x^2 - y^3) )
 	  singularLocus Proj( QQ[x,y,z] / (x^2*z - y^3) )
-     ///}
+     ///,
+     PARA "For rings over ", TO "ZZ", " the locus where the ring is not smooth over ", TO "ZZ", " is
+     computed.",
+     EXAMPLE lines ///
+     	  singularLocus(ZZ[x,y]/(x^2-x-y^3+y^2))
+	  gens gb ideal oo
+	  ///
+     }
 
 TEST "
      R=ZZ/101[x,y,z]
