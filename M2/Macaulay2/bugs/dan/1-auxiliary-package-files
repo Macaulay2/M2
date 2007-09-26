@@ -1,3 +1,0 @@
-change installPackage so whether auxiliary files are present
-has to be specified explicitly (true/false).  The location is the same.
-If a nonempty directory is detected with that name, issue an error message.

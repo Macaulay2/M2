@@ -71,7 +71,8 @@ checkAuthorOption := authors -> (
 
 newPackage = method( 
      Options => { 
-	  Version => "0.0", 
+	  Version => "0.0",
+	  AuxiliaryFiles => false,
 	  DebuggingMode => false,
 	  InfoDirSection => "Macaulay 2 and its packages",
 	  Headline => null,

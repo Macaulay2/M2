@@ -1,5 +1,6 @@
 newPackage(
      "PrimaryDecomposition",
+     AuxiliaryFiles => true,
      Headline => "functions for primary decomposition (pre-loaded)"
      )
 export {

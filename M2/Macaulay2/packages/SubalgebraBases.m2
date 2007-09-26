@@ -1,5 +1,6 @@
 newPackage(
 	"SubalgebraBases",
+	AuxiliaryFiles => true,
     	Version => "0.1", 
     	Date => "November 24, 2006",
     	Authors => {{Name => "Mike Stillman", 
