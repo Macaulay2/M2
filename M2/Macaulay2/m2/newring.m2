@@ -41,11 +41,13 @@ tensor(Ring,Ring) := Ring => opts -> (R,S) -> (
      if R === (try coefficientRing S) then return S;
      if S === (try coefficientRing R) then return R;
      if R === QQ and ZZ === (try coefficientRing S) then (
-	  (S',f) := flattenRing S;
-	  return QQ monoid S' );
-     if S === QQ and ZZ === (try coefficientRing R) then (
-	  (R',g) := flattenRing R;
-	  return QQ monoid R' );
+	  (A,f) := flattenRing S;
+	  T := QQ monoid A;
+	  I := ideal A;
+	  B := ring I;
+	  p := map(T,B);
+	  return T/p I);
+     if S === QQ and ZZ === (try coefficientRing R) then return tensor(S,R);
      error "tensor product not implemented for these rings"
      )
 
