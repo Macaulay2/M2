@@ -622,6 +622,24 @@ struct spair_sorter : public std::binary_function<gbA::spair *,gbA::spair *,bool
 
 };
 
+struct spoly_sorter : public std::binary_function<gbA::spair *,gbA::spair *,bool> {
+  const FreeModule *F;
+  GBRing *R;
+  int nvars;
+  spoly_sorter(GBRing *R0, const FreeModule *F0) : F(F0), R(R0) { nvars = R->n_vars();}
+  bool operator()(gbA::spair *a, gbA::spair *b)
+    {
+      /* Compare using degree, then type, then lead term of spoly */
+      bool result;
+      int cmp = a->deg - b->deg;
+      if (cmp < 0) result = true;
+      else if (cmp > 0) result = false;
+      else result = R->gbvector_compare(F,a->lead_of_spoly, b->lead_of_spoly);
+      return result;
+    }
+
+};
+
 // ZZZZ split
 void gbA::minimalize_pairs_non_ZZ(spairs &new_set)
      /* new_set: array of spair*  */
@@ -853,6 +871,7 @@ void gbA::spair_set_insert(gbA::spair *p)
 {
   while (p != 0)
     {
+      spair_set_lead_spoly(p);
       spair *tmp = p;
       p = p->next;
       S->nelems++;
@@ -1040,7 +1059,7 @@ void gbA::spairs_sort(int len, spair *&ps)
   for (spair *p = ps; p != 0; p=p->next)
     a.push_back(p);
 
-  sort(a.begin(), a.end(), spair_sorter(_nvars));
+  sort(a.begin(), a.end(), spoly_sorter(R,_F));
 
   spairs::iterator j = a.begin();
 
@@ -1057,6 +1076,39 @@ void gbA::spairs_sort(int len, spair *&ps)
  * Polynomial arithmetic and reduction **
  ****************************************/
 
+void gbA::spair_set_lead_spoly(spair *p)
+{
+  gbvector *ltsyz = 0;
+  POLY f,g;
+  if (p->type > SPAIR_SKEW) { p->lead_of_spoly = p->f(); return; }
+  f = gb[p->x.pair.i]->g;
+  if (p->type == SPAIR_SKEW)
+    {
+      const int *mon = R->skew_monomial_var(p->x.pair.j);
+      R->gbvector_mult_by_term(_F,_Fsyz,
+			       R->one(), mon,
+			       f.f, 0,
+			       p->lead_of_spoly, ltsyz);
+    }
+  else if (p->type == SPAIR_GCD_ZZ)
+    {
+      g = gb[p->x.pair.j]->g;
+      R->gbvector_combine_lead_terms_ZZ(_F, _Fsyz, 
+					f.f, 0,
+					g.f, 0,
+					p->lead_of_spoly,
+					ltsyz);
+    }
+  else
+    {
+      g = gb[p->x.pair.j]->g;
+      R->gbvector_cancel_lead_terms(_F, _Fsyz, 
+				    f.f, 0,
+				    g.f, 0,
+				    p->lead_of_spoly,
+				    ltsyz);
+    }
+}
 
 void gbA::compute_s_pair(spair *p)
 {
@@ -1095,6 +1147,7 @@ void gbA::compute_s_pair(spair *p)
 				    p->f(),
 				    p->fsyz());
     }
+  p->lead_of_spoly = p->f();
   p->type = SPAIR_ELEM;
   if (gbTrace >= 5 && gbTrace != 15)
     {
