@@ -19,9 +19,9 @@ newMonomialIdeal = (R,rawI) -> new MonomialIdeal from {
 
 monomialIdealOfRow := (i,m) -> newMonomialIdeal(ring m,rawMonomialIdeal(raw m, i))
 
-codim Module := (cacheValue symbol codim) (M -> runHooks(Module, symbol codim, M))
+codim Module := opts -> (cacheValue (symbol codim,opts)) (M -> runHooks(Module, symbol codim, (opts,M)))
 
-addHook(Module, symbol codim, M -> break (
+addHook(Module, symbol codim, (opts,M) -> break (
      R := ring M;
      if M == 0 then infinity
      else if isField R then 0
@@ -30,8 +30,8 @@ addHook(Module, symbol codim, M -> break (
 	  p := generators gb presentation M;
 	  n := rank target p;
 	  c := infinity;
-	  for i from 0 to n-1 when c > 0 do c = min(c,codim monomialIdealOfRow(i,p));
-	  c - codim R)))
+	  for i from 0 to n-1 when c > 0 do c = min(c,codim(monomialIdealOfRow(i,p),opts));
+	  c - codim(R,opts))))
 
 MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> SimplePowerMethod(I,n)
 
@@ -132,8 +132,8 @@ intersect(Sequence) := args -> (
 
 borel MonomialIdeal := MonomialIdeal => (I) -> newMonomialIdeal(ring I, rawStronglyStableClosure raw I)
 isBorel MonomialIdeal := Boolean => m -> rawIsStronglyStable raw m
-codim MonomialIdeal := m -> (
-     if not isAffineRing ring m then error "codim MonomialIdeal: expected an affine ring";
+codim MonomialIdeal := opts -> m -> (
+     if not opts.Generic and not isAffineRing ring m then error "codim MonomialIdeal: expected an affine ring";
      rawCodimension raw m)
 
 poincare MonomialIdeal := M -> (

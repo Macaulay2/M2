@@ -140,7 +140,7 @@ SheafOfRings ^ ZZ := SheafOfRings ^ List := (O,n) -> (
 
 annihilator CoherentSheaf := Ideal => o -> (F) -> annihilator F.module
 
-codim   CoherentSheaf := (F) -> codim module F
+codim   CoherentSheaf := opts -> (F) -> codim(module F,opts)
 rank    CoherentSheaf := (F) -> rank  module F
 degrees CoherentSheaf := (F) -> degrees module F
 
@@ -256,7 +256,7 @@ tangentSheaf ProjectiveVariety := CoherentSheaf => opts -> (X) -> dual cotangent
 
 dim AffineVariety := X -> dim ring X
 dim ProjectiveVariety := X -> dim ring X - 1
-codim ProjectiveVariety := X -> codim ring X
+codim ProjectiveVariety := opts -> X -> codim(ring X,opts)
 
 genera ProjectiveVariety := X -> genera ring X
 genus ProjectiveVariety := X -> genus ring X
@@ -269,7 +269,7 @@ singularLocus(ProjectiveVariety) := X -> (
      R := ring X;
      f := presentation R;
      A := ring f;
-     Proj(A / saturate (minors(codim R, jacobian f) + ideal f)))
+     Proj(A / saturate (minors(codim(R,Generic=>true), jacobian f) + ideal f)))
 
 singularLocus(AffineVariety) := X -> Spec singularLocus ring X
 
