@@ -31,7 +31,8 @@ exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
 expression PolynomialRing := R -> (
      if ReverseDictionary#?R then return expression ReverseDictionary#R;
      k := last R.baseRings;
-     (expression if ReverseDictionary#?k then ReverseDictionary#k else k) (new Array from (monoid R).generatorExpressions)
+     T := if (options R).Local === true then List else Array;
+     (expression if ReverseDictionary#?k then ReverseDictionary#k else k) (new T from (monoid R).generatorExpressions)
      )
 
 describe PolynomialRing := R -> (
@@ -287,6 +288,7 @@ samering := (f,g) -> (
      )
 
 Ring Array := PolynomialRing => (R,variables) -> use R monoid variables
+Ring List := PolynomialRing => (R,variables) -> use R monoid (variables,Local => true)
 PolynomialRing _ List := (R,v) -> product ( #v , i -> R_i^(v#i) )
 Ring _ List := RingElement => (R,w) -> product(#w, i -> (R_i)^(w_i))
 dim PolynomialRing := R -> dim coefficientRing R + # generators R - if R.?SkewCommutative then #R.SkewCommutative else 0

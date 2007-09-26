@@ -36,7 +36,18 @@ newRing Ring := Ring => opts -> (R) -> (
 
 -- made a method and documented elsewhere.
 
-tensor(Ring,Ring) := Ring ** Ring := Ring => (R,S) -> error "tensor product not implemented for these rings"
+Ring ** Ring := Ring => tensor
+tensor(Ring,Ring) := Ring => opts -> (R,S) -> (
+     if R === (try coefficientRing S) then return S;
+     if S === (try coefficientRing R) then return R;
+     if R === QQ and ZZ === (try coefficientRing S) then (
+	  (S',f) := flattenRing S;
+	  return QQ monoid S' );
+     if S === QQ and ZZ === (try coefficientRing R) then (
+	  (R',g) := flattenRing R;
+	  return QQ monoid R' );
+     error "tensor product not implemented for these rings"
+     )
 
 PolynomialRing ** PolynomialRing :=
 QuotientRing ** PolynomialRing :=
