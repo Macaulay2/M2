@@ -1424,7 +1424,8 @@ int gbA::find_good_divisor(exponents e,
     int i = 0;
     int j = divisors[i]->_val;
     //// these assignments are repeated verbatim below, sigh
-    gap = gb[j]->gap;
+    gap = gb[j]->gap-egap;
+    if (gap < 0) gap = 0;
     int minlevel = gb[j]->minlevel;
     int deg  = gb[j]->deg;
     int size  = gb[j]->size;
@@ -1439,12 +1440,13 @@ int gbA::find_good_divisor(exponents e,
 	      if (++i == n) {
 		   divisor_previous = best;
 		   divisor_previous_comp = x;
-		   result_gap = gap - egap; // a difference between two gaps is no longer a "gap"...
+		   result_gap = mingap; // a difference between two gaps is no longer a "gap"...
 		   if (result_gap < 0) result_gap = 0; // I'm not sure this is needed.
 		   return best;
 	      }
 	      j = divisors[i]->_val;
-	      gap = gb[j]->gap;
+	      gap = gb[j]->gap-egap;
+	      if (gap < 0) gap = 0;
 	      minlevel = gb[j]->minlevel;
 	      deg   = gb[j]->deg;
 	      size  = gb[j]->size;
