@@ -40,11 +40,13 @@
 //   The function will be linear, so that multiplication and
 //     division of monomials is easy to implement without decoding.
 
-// Monomial operations will not require decoding: basic comparison, multiplication, division,
+// Monomial operations will not require decoding: comparison, multiplication, division,
 //   divisibility checking (how ??).  If an exponent vector (a,b,c) is packed into fields as
 //   (i = a+b+c, j = a+b, k = a), then comparing (i,j,k) to (I,J,K) for divisibility amounts to
-//   comparing i-j with I-J, j-k with J-K, and k with K.  This is perhaps a basic routine that
-//   could be written so as to not involved decoding.
+//   comparing i-j with I-J, j-k with J-K, and k with K.  This is perhaps a family of basic 
+//   routines that could be written so as to not involve decoding.  Or it can be thought of
+//   as simultaneous decoding of a pair of monomials as a stream of pairs of exponents (which
+//   are used and discarded immediately).
 
 // Comparison of encoded monomials is always unsigned and lexicographic; 
 //   thus the desired monomial ordering will dictate the encoding used.
@@ -61,6 +63,8 @@
 //    arrays of length numAreas, the i-th one describing the i-th area:
 //       the starting offset of the area within the array of bins
 //       the number of bins in the area
+//       the choice of SIGNED or SIGNED_REVERSED if U is signed
+//           and UNSIGNED or UNSIGNED_REVERSED if U is unsigned
 //       the basic comparison routine
 //       the multiplication routine
 //       the division routine
