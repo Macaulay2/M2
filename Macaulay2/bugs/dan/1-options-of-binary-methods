@@ -1,0 +1,6 @@
+-- a weird and unintended consequence of using
+--   Ring ** Ring := Ring => tensor
+-- is that the documentation maker uses the "options" function on the key (symbol **,Ring,Ring),
+-- finds the function "tensor" with "lookup", and gets its options, which is not right!
+-- This will require some thinking to prevent in the future.
+Ring ** Ring := Ring => (R,S) -> tensor(R,S)
