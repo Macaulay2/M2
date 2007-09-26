@@ -1,3 +1,18 @@
+-- Singular examples: local GB's
+
+singF = (a,b,c,t) -> (
+     x^a+y^b+z^(3*c)+x^(c+2)*y^(c-1)+x^(c-1)*y^(c-1)*z^3+x^(c-2)*y^c*(y^2+t*x)^2
+     )
+singH = (a) -> x^a+y^a+z^a+x*y*z*(x+y+z)^2+(x+y+z)^4
+singG = (a,b,c,d,e,t) -> (
+     x^a+y^b+z^c++x^d*y^(e-5)+x^(d-2)*y^(e-3)+x^(d-3)*y^(e-4)*z^2+x^(d-4)*y^(e-4)*(y^2+t*x)^2)
+
+sin3a = () -> (
+     R = ZZ/32003[x,y,z, MonomialOrder=>Weights=>{-1,-1,-1},Global=>false];
+     f := singF(13,12,3,1);
+     ideal jacobian matrix{{f}}
+     )
+
 --------------------------------------------------------
 --singular1 5 vars
 R = kk[t,x,y,z,w];
