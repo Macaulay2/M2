@@ -1,2 +1,0 @@
-  fix "benchmark" to issue a warning if the first run runs a lot longer
-  than the subsequent runs
