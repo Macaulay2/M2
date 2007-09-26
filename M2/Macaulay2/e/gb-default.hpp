@@ -59,6 +59,7 @@ public:
 		    or an SPAIR_GCD_ZZ */
       } pair;
     } x;
+    gbvector *lead_of_spoly; // experimental
     gbvector *&f() { return x.f.f; }
     gbvector *&fsyz() { return x.f.fsyz; }
   };
@@ -244,6 +245,8 @@ private:
 
   void spairs_sort(int len, spair *& list);
   void spairs_reverse(spair *&ps);
+
+  void spair_set_lead_spoly(spair *p);
 
   /* Sorts the list of spairs 'list' (which has length 'len') */
 
