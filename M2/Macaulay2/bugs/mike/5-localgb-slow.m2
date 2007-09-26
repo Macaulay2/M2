@@ -142,6 +142,11 @@ ring R = 101, (t,x,y,z),ds;
 poly F = 4*t^2*z+6*z^3*t+3*z^3+t*z;
 poly G = 5*x^2*z^4*t^3*y + 3*t^7;
 poly H = 2*x^8 + 6*z^2*y^2*t + 2*y^5;
+
+-- Try this one instead...
+poly H = 2*x^5 + 6*z^2*y^2 + 2*y^4;
+
+
 ideal I = F,G,H;
 timer=1;
 option(teach);
