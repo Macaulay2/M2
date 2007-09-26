@@ -50,24 +50,33 @@ notImplemented = x -> error "not implemented yet"
 
 benchmark = (s) -> (
      n := 1;
+     local firsttime;
      while (
 	  s1 := concatenate("timing scan(",toString n,", iBenchmark -> (",s,";null;null))");
 	  s2 := concatenate("timing scan(",toString n,", iBenchmark -> (      null;null))");
 	  collectGarbage();
-	  value s1;
-	  value s2;
-	  collectGarbage();
-	  value s1;
-	  value s2;
-	  collectGarbage();
 	  t1 := first value s1;
 	  t2 := first value s2;
 	  t := t1 - t2;
+	  if n === 1 then firsttime = t;
+	  collectGarbage();
+	  -- the second timing result is better
+	  value s1;
+	  value s2;
+	  collectGarbage();
+	  t1 = first value s1;
+	  t2 = first value s2;
+	  t = t1 - t2;
 	  t < 1 and t2 < 5)
      do (
 	  n = if t > 0.01 then floor(2*n/t+.5) else 100*n;
 	  );
-     t/n)
+     t = t/n;
+     if firsttime > 3*t then (
+	  stderr << "--warning: code being benchmarked ran longer the first time (" << firsttime << " seconds)" << endl;
+	  stderr << "--         perhaps results were cached" << endl;
+	  );
+     t)
 
 -----------------------------------------------------------------------------
 Descent = new Type of MutableHashTable
