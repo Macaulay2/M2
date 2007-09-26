@@ -1452,11 +1452,13 @@ int gbA::find_good_divisor(exponents e,
 	      size  = gb[j]->size;
 	 } while (!
 		  ( gap < mingap || gap == mingap && 
-		    ( minlevel > maxminlevel || minlevel == maxminlevel && 
-		      ( deg < mindeg || deg == mindeg &&
-			( size < minsize || size == minsize && 
+		    // ( minlevel > maxminlevel || minlevel == maxminlevel && 
+		    // ( deg < mindeg || deg == mindeg &&
+		    // ( size < minsize || size == minsize && 
 			  false
-			  )))));
+		    // )))
+      )
+    );
     }
   }
   else {

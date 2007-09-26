@@ -136,7 +136,7 @@ int MonomialTable::find_divisor(exponents exp, int comp)
 	 if (ntuple::divides(_nvars,t->_lead,exp)) {
 	      _last_match = t;
 	      _last_match_comp = comp;
-	      move_up(t,head);
+	      // move_up(t,head);
 	      return t->_val;
 	 }
   return -1;
@@ -167,7 +167,7 @@ int MonomialTable::find_divisors(int max,
 		nmatches++; // this doesn't happen very often
 		_last_match = t;
 		_last_match_comp = comp;
-		move_up(t,head);
+		// move_up(t,head);
 		if (result != NULL) result->push_back(t);
 		if (max >= 0 && nmatches >= max) break;
 	   }
