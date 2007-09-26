@@ -1,3 +1,6 @@
+
+R = singularLocus Proj(QQ[x,y,z]/(x^2*z-y^3))
+
 -- see also bugs/mike/5-localgb-slow.m2
 
 kk = ZZ/101

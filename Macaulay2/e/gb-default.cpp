@@ -634,10 +634,23 @@ struct spoly_sorter : public std::binary_function<gbA::spair *,gbA::spair *,bool
       int cmp = a->deg - b->deg;
       if (cmp < 0) result = true;
       else if (cmp > 0) result = false;
-      else result = R->gbvector_compare(F,a->lead_of_spoly, b->lead_of_spoly);
+      else 
+	{
+	  gbvector *a1 = (a->type > gbA::SPAIR_SKEW ? a->f() : a->lead_of_spoly);
+	  gbvector *b1 = (b->type > gbA::SPAIR_SKEW ? b->f() : b->lead_of_spoly);
+	  if (!a1)
+	    {
+	      if (!b1) result = 0;
+	      else result = 1;
+	    }
+	  else
+	    {
+	      if (!b1) result = -1;
+	      else result = R->gbvector_compare(F,a1, b1);   
+	    }
+	}
       return result;
     }
-
 };
 
 // ZZZZ split
@@ -1080,7 +1093,12 @@ void gbA::spair_set_lead_spoly(spair *p)
 {
   gbvector *ltsyz = 0;
   POLY f,g;
-  if (p->type > SPAIR_SKEW) { p->lead_of_spoly = p->f(); return; }
+  if (p->type > SPAIR_SKEW) 
+    { 
+      R->gbvector_remove(p->lead_of_spoly);
+      p->lead_of_spoly = 0;
+      return; 
+    }
   f = gb[p->x.pair.i]->g;
   if (p->type == SPAIR_SKEW)
     {
@@ -1108,6 +1126,12 @@ void gbA::spair_set_lead_spoly(spair *p)
 				    p->lead_of_spoly,
 				    ltsyz);
     }
+  if (p->lead_of_spoly != 0)
+    {
+      gbvector *tmp = p->lead_of_spoly->next;
+      p->lead_of_spoly->next = 0;
+      R->gbvector_remove(tmp);
+    }
 }
 
 void gbA::compute_s_pair(spair *p)
@@ -1120,6 +1144,8 @@ void gbA::compute_s_pair(spair *p)
       emit_line(o.str());
     }
   if (p->type > SPAIR_SKEW) return;
+  R->gbvector_remove(p->lead_of_spoly);
+  p->lead_of_spoly = 0;
   f = gb[p->x.pair.i]->g;
   if (p->type == SPAIR_SKEW)
     {
@@ -1147,7 +1173,6 @@ void gbA::compute_s_pair(spair *p)
 				    p->f(),
 				    p->fsyz());
     }
-  p->lead_of_spoly = p->f();
   p->type = SPAIR_ELEM;
   if (gbTrace >= 5 && gbTrace != 15)
     {

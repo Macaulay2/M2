@@ -32,7 +32,6 @@ public:
     gbelem_type minlevel;
   };
 
-private:
   /* Types of minimality */
   enum spair_type {
     SPAIR_SPAIR,
