@@ -277,7 +277,7 @@ to NULL
 set L
 0:y5+3ty2z2+...  x2yz11+4tz13+... lcm: 0x2y5z11
   p : 0tx2y2z13+0  o:18 e:3 l:0
-reduce -3tx2y2z13 with tz+4t2z+...
+reduce -3tx2y2z13 with tz+4t2z+...  **** M2 goes astray here ****
 to 4ty4z13
 reduce 4ty4z13 with tz+4t2z+...
 to 49t6y4z9

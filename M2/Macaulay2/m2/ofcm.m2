@@ -47,7 +47,9 @@ parts := (M) -> (
 	       / (key -> if o#key =!= O#key then key => o#key),
 	       i -> i =!= null)))
 
-expression GeneralOrderedMonoid := M -> new Array from apply(parts M,expression)
+expression GeneralOrderedMonoid := M -> (
+     T := if (options M).Local === true then List else Array;
+     new T from apply(parts M,expression))
 toExternalString GeneralOrderedMonoid := M -> toString expression M
 toString GeneralOrderedMonoid := M -> (
      if ReverseDictionary#?M then return toString ReverseDictionary#M;
@@ -90,9 +92,10 @@ monoidDefaults = (
      new OptionTable from {
 	  Variables => null,
 	  VariableBaseName => global p,			    -- would be overridden by Variables => {...}
+	  Weights => {},				    -- default weight is 1, unless Local=>true
 	  Global => true,				    -- means that all variables are > 1
+     	  Local => false, 				    -- means that all variables are < 1, default weight = -1, and implies Global => false
 	  Degrees => null,
-	  Weights => {},
 	  Inverses => false,
 	  MonomialOrder => {GRevLex, Position => Up},
 	  MonomialSize => 32,				    -- we had this set to null, but some of the code needs a number here...
@@ -284,6 +287,8 @@ makeMonoid := (opts) -> (
      -- check the options for consistency, and set everything to the correct defaults
      opts = new MutableHashTable from opts;
 
+     if opts.Local === true then opts.Global = false;
+
      if class opts.Inverses =!= Boolean then error "expected true or false in option";
      
      if opts.SkewCommutative =!= {} and opts.Inverses then error "skew commutative ring with inverses requested";
@@ -311,6 +316,8 @@ makeMonoid := (opts) -> (
 	  length opts.Variables);
      opts.Degrees = degs;
      opts.DegreeRank = degrk;
+
+     if opts.Local === true and opts.Weights === {} then opts.Weights = toList ( #opts.Variables : -1 );
 
      num := # opts.Variables;
 
@@ -350,7 +357,7 @@ makeMonoid := (opts) -> (
      opts = new OptionTable from opts;
      makeit1 opts)
 
-monoid Array := opts -> args -> (
+monoid Array := monoid List := opts -> args -> (
      (opts,args) = override(opts,toSequence args);
      if opts.Variables === null
      then opts = merge(opts, new OptionTable from {Variables => deepSplice sequence args}, last)

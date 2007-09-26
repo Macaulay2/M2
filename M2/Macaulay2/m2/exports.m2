@@ -255,6 +255,7 @@ export {
 	symbol LinearAlgebra,
 	symbol List,
 	symbol LoadDocumentation,
+	symbol Local,
 	symbol LocalDictionary,
 	symbol LongPolynomial,
 	symbol LowerBound,
