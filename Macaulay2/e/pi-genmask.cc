@@ -1,4 +1,11 @@
-#include "integertypes.h"
+#include "config.h"
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#else
+#error integer type definitions not available
+#endif
 #include <stdio.h>
 template <typename T> T himask(int bits) { if (bits==0) return 0; T n=1, r=0; n<<=bits-1; while(n&~r) {r|=n; n<<=bits;} return r; }
 
