@@ -555,13 +555,19 @@ installPackage Package := opts -> pkg -> (
 	  -- copy package source subdirectory
 	  srcDirectory := LAYOUT#"packagesrc" pkg#"title";
 	  dn := realpath(currentSourceDir|buildPackage);
-	  if fileExists dn
+	  if isDirectory dn
 	  then (
+	       if not (options pkg).AuxiliaryFiles
+	       then error ("package ",toString pkg," has auxiliary files in \"",dn,"\", but newPackage wasn't given AuxiliaryFiles=>true");
 	       stderr << "--copying auxiliary source files from " << dn << endl;
 	       makeDirectory (buildDirectory|srcDirectory);
 	       buildDirectory|srcDirectory|".linkdir" << close;
 	       copyDirectory(dn, buildDirectory|srcDirectory, UpdateOnly => true, Verbose => debugLevel > 0, excludes);
-	       );
+	       )
+	  else (
+	       if (options pkg).AuxiliaryFiles
+	       then error ("package ",toString pkg," has no directory of auxiliary files, but newPackage was given AuxiliaryFiles=>true");
+	       )
      	  );
 
      -- copy package source subdirectory examples

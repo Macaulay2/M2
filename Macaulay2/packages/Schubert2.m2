@@ -1,5 +1,6 @@
 newPackage(
 	"Schubert2",
+	AuxiliaryFiles => true,
     	Version => "0.1",
     	Date => "May, 2007",
 	Authors => {

@@ -72,6 +72,7 @@ export {
 	symbol Ascending,
 	symbol AssociativeExpression,
 	symbol Authors,
+        symbol AuxiliaryFiles,
 	symbol BLOCKQUOTE,
 	symbol BODY,
 	symbol BOLD,

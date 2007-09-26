@@ -1,5 +1,6 @@
 newPackage(
 	"ExampleIdeals",
+	AuxiliaryFiles => true,
     	Version => "0.1", 
     	Date => "February 8, 2007",
     	Authors => {{Name => "Mike Stillman", 

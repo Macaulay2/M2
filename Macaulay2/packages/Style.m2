@@ -1,4 +1,6 @@
-newPackage "Style"
+newPackage( "Style",
+     AuxiliaryFiles => true
+     )
 
 document { Key => "Style",
      "This package is simply a repository for the html style files used by the

@@ -1,5 +1,6 @@
 newPackage("Dmodules", Version => "1.0",
      Headline => "functions for computations with D-modules",
+     AuxiliaryFiles => true,
      Authors => {
 	  {Name => "Anton Leykin", Email => "leykin@math.uic.edu"},
 	  {Name => "Harrison Tsai"}

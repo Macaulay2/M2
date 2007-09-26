@@ -153,7 +153,7 @@ document {
 document {
      Key => {(newPackage,String), newPackage, Date, [newPackage,Date], Authors, [newPackage,Authors], Version, [newPackage, Version],
 	  [newPackage,Headline],HomePage, [newPackage,HomePage],[newPackage,DebuggingMode],Email,Name,[newPackage,Configuration],
-	  InfoDirSection, [newPackage,InfoDirSection]
+	  InfoDirSection, [newPackage,InfoDirSection],[newPackage,AuxiliaryFiles]
 	  }, 
      Headline => "package item: start a new package",
      Usage => "newPackage ( title )",
@@ -169,6 +169,8 @@ document {
 	       },
 	  HomePage => String => "the URI pointing to the home page of the package, if any",
 	  DebuggingMode => Boolean => {"whether ", TO "debuggingMode", " should be true during package loading"},
+          AuxiliaryFiles => Boolean => {"whether the package source to be distributed includes a directory for
+	       auxiliary files, with the same name as the package"},
 	  Configuration => List => {"a list of configuration options for the package.  The keys and values should be constant expressions,
 	       such as strings and integers, not incorporating symbols to be exported by the package (and not yet defined).
 	       The first time the package is loaded by the user, unless the ", TT "-q", " option is specified on the ", TT "M2", " command
