@@ -129,26 +129,21 @@ scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}
 
 Thing#{Standard,Print} = x -> (
      oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
+     save := printWidth;
+     if printWidth != 0 then printWidth = printWidth - #oprompt;
      z := robustNet x;
      wrapper := lookup(symbol Wrap,class x);
      if wrapper =!= null then (
-     	  save := printWidth;
-     	  if printWidth != 0 then printWidth = printWidth - #oprompt;
 	  fun := () -> z = wrapper z;
-	  try (
-	       timelimit(printingTimeLimit, fun);
-     	       printWidth = save;
-	       )
+	  try timelimit(printingTimeLimit, fun)
 	  else (
-     	       printWidth = save;
 	       alarm 0;
 	       global debugError <- fun;
 	       stderr << "--error or time limit reached in applying Wrap method to output; type 'debugError()' to see it" << endl << endl);
 	  );
      << endl << oprompt << z << endl;
+     printWidth = save;
      )
-
--- "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" "" -- test the error message mechanism
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
