@@ -501,8 +501,6 @@ doublepower(x:double,n:int):double := (
 OneE := Expr(toInteger(1));
 BinaryPowerMethod(x:Expr,y:Expr):Expr := (
      when y is i:Integer do (
-	  wasneg := false;
-	  inverse := nullE;
 	  if i === 0 then (
 	       onex := lookup(Class(x),OneE);
 	       if onex == nullE then (
@@ -512,9 +510,9 @@ BinaryPowerMethod(x:Expr,y:Expr):Expr := (
 	       );
 	  if i < 0 then (
 	       i = -i;
-	       wasneg = true;
-	       inverse = lookup(Class(x),InverseS);
+	       inverse := lookup(Class(x),InverseS);
 	       if inverse == nullE then return MissingMethod("^","InverseMethod");
+	       x = applyEE(inverse,x);
 	       );
 	  if !isInt(i) then return buildErrorPacket("'^' expects a small integer exponent");
 	  n := toInt(i);
@@ -532,7 +530,7 @@ BinaryPowerMethod(x:Expr,y:Expr):Expr := (
 	       w = w*w;
 	       when w is Error do return w else nothing;
 	       );
-	  if wasneg then applyEE(inverse,z) else z)
+	  z)
      else WrongArgInteger(2));
 BinaryPowerMethodFun(e:Expr):Expr := (
      when e is a:Sequence do
@@ -543,8 +541,6 @@ BinaryPowerMethodFun(e:Expr):Expr := (
 setupfun("BinaryPowerMethod",BinaryPowerMethodFun);
 SimplePowerMethod(x:Expr,y:Expr):Expr := (
      when y is i:Integer do (
-	  wasneg := false;
-	  inverse := nullE;
 	  if i === 0 then (
 	       onex := lookup(Class(x),OneE);
 	       if onex == nullE
@@ -553,9 +549,9 @@ SimplePowerMethod(x:Expr,y:Expr):Expr := (
 	       );
 	  if i <= 0 then (
 	       i = -i;
-	       wasneg = true;
-	       inverse = lookup(Class(x),InverseS);
+	       inverse := lookup(Class(x),InverseS);
 	       if inverse == nullE then return MissingMethod("^","InverseMethod");
+	       x = applyEE(inverse,x);
 	       );
 	  if !isInt(i) then return buildErrorPacket("'^' expects a small integer exponent");
 	  n := toInt(i);
@@ -564,7 +560,7 @@ SimplePowerMethod(x:Expr,y:Expr):Expr := (
 	       z = x*z;
 	       n = n-1;
 	       );
-	  if wasneg then applyEE(inverse,z) else z)
+	  z)
      else WrongArgInteger(2));
 SimplePowerMethodFun(e:Expr):Expr := (
      when e is a:Sequence do
