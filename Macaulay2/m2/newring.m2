@@ -35,8 +35,7 @@ newRing Ring := Ring => opts -> (R) -> (
 -----------------------------
 
 -- made a method and documented elsewhere.
-
-Ring ** Ring := Ring => tensor
+Ring ** Ring := Ring => (R,S) -> tensor(R,S)
 tensor(Ring,Ring) := Ring => opts -> (R,S) -> (
      if R === (try coefficientRing S) then return S;
      if S === (try coefficientRing R) then return R;

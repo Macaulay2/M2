@@ -5,9 +5,9 @@
 document { 
      Key => codim,
      Headline => "compute the codimension",
-     Caveat => {"Over the integers, the computation effectively 
-	 tensors first with the rational numbers, yielding the wrong 
-	 answer in some cases."},
+     Caveat => {"Over the integers, an error message is given, unless the option ", TT "Generic => True", "
+	  is used, in which case the computation proceeds by effectively 
+	  tensoring first with the rational numbers."},
      SeeAlso => {dim}
      }
 document { 
