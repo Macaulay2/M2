@@ -13,28 +13,43 @@
 // Encoding from type U to an unsigned field is done in such a way that the ordering is either 
 //   preserved or reversed.
 // 
-// example:
+// Example:
 //   n=3 bits per field, one field looks like:
 //  bit contents        : 000 001 010 011 100 101 110 111
 //  integer interpretations :
-//   unsigned           :  0   1   2   3   4   5   6   7    ui      x -> 0+x    0
-//   signed             : -4  -3  -2  -1   0   1   2   3    i       x -> 4+x    4 == 1 << (n-1)
-//   unsigned, reversed :  7   6   5   4   3   2   1   0    ru      x -> 7-x    7 == (1 << n) - 1
-//   signed, reversed   :  3   2   1   0  -1  -2  -3  -4    rui     x -> 3-x    3 == (1 << (n-1)) - 1
+//   unsigned           :  0   1   2   3   4   5   6   7     x -> 0+x    0
+//   signed             : -4  -3  -2  -1   0   1   2   3     x -> 4+x    4 == 1 << (n-1)
+//   unsigned, reversed :  7   6   5   4   3   2   1   0     x -> 7-x    7 == (1 << n) - 1
+//   signed, reversed   :  3   2   1   0  -1  -2  -3  -4     x -> 3-x    3 == (1 << (n-1)) - 1
+// 
+// As a result, arithmetic comparison of two (unsigned) bins results in a lexicographic comparison
+//   of the vector of fields stored within it.
 // 
 // An "area" will consist of a consecutive portion of an array of bins, each with the same number of
 //   bits per field; some fields in the last bin of the area may be unused.
 // Routines operating on an area will update references to pointers, so the
 //   next area can continue processing; thus area routines
 //   need not know their offset, just their length.
+
 // An "encoded monomial" will consist of a sequence of areas stored in an array of bins.
-// The encoding will be done with an invertible linear function from a vector of exponents to a vector
-//   of bin contents.  But it will be implemented area by area, with an internal state
-//   that requires initialization.
+
+// The encoding will be done with an invertible function from a vector of exponents to a vector
+//     of bin contents.
+//   The encoding function may be implemented area by area, with an internal state
+//     that requires initialization.
+//   The function will be linear, so that multiplication and
+//     division of monomials is easy to implement without decoding.
+
 // Monomial operations will not require decoding: basic comparison, multiplication, division,
-//   divisibility checking.  General comparison (e.g., with weight vectors) may require decoding.
-// Basic comparison (grevlex, etc.) of encoded monomials is always unsigned and lexicographic; 
-// thus the desired monomial ordering will dictate the encoding used.
+//   divisibility checking (how ??).  If an exponent vector (a,b,c) is packed into fields as
+//   (i = a+b+c, j = a+b, k = a), then comparing (i,j,k) to (I,J,K) for divisibility amounts to
+//   comparing i-j with I-J, j-k with J-K, and k with K.  This is perhaps a basic routine that
+//   could be written so as to not involved decoding.
+
+// Comparison of encoded monomials is always unsigned and lexicographic; 
+//   thus the desired monomial ordering will dictate the encoding used.
+//   To implement multiple ordering steps, redundant encoding will be used.
+//      E.g., a weight can be prepended to the array of exponents.
 // 
 // The description of a monomial type will include:
 //    choice of U, the type of a field, any integer type
@@ -42,28 +57,16 @@
 //    the size of a bin in bytes
 //    the number of areas, numAreas
 //    the number of bins, numBins
+//    the encoding initialization function
 //    arrays of length numAreas, the i-th one describing the i-th area:
 //       the starting offset of the area within the array of bins
 //       the number of bins in the area
-//       the basic comparison routine (?)
+//       the basic comparison routine
 //       the multiplication routine
 //       the division routine
 //       the divisibility routine
 //       the encoding routine
 //       the decoding routine
-
-//    the number of comparison steps, numSteps
-//    array(s) of length numSteps, the i-th one describing the i-th comparison step:
-//       the comparison routine (?)
-//       the weight vector, if any (?)
-//       etc. (?)
-
-//    -- alternatively --
-
-//    encoding involves redundancy, so that comparison is always basic
-//    e.g., the array of weights can be prepended to the array of exponents
-//    In that case, checking divisibility need not involve all the bins, just the ones
-//    containing the encoded exponents.
 
 // 
 // From: Michael Stillman <mike@math.cornell.edu>
