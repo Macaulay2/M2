@@ -174,8 +174,8 @@ presentation(PolynomialRing,PolynomialRing) := (R,S) -> (
 	  );
      v)
 
-codim PolynomialRing := R -> 0
-codim QuotientRing := (R) -> codim cokernel presentation R
+codim PolynomialRing := opts -> R -> 0
+codim QuotientRing := opts -> (R) -> codim( cokernel presentation R, opts)
 dim QuotientRing := (R) -> (
      if isField R then 0
      else if R.?SkewCommutative then notImplemented()
@@ -206,7 +206,7 @@ char QuotientRing := (stashValue symbol char) ((S) -> (
 singularLocus(Ring) := QuotientRing => (R) -> (
      f := presentation R;
      A := ring f;
-     A / (ideal f + minors(codim R, jacobian presentation R)))
+     A / (ideal f + minors(codim(R,Generic=>true), jacobian presentation R)))
 
 singularLocus(Ideal) := QuotientRing => (I) -> singularLocus(ring I / I)
 

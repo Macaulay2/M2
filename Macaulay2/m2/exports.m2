@@ -179,6 +179,7 @@ export {
 	symbol GRevLex,
 	symbol GaloisField,
 	symbol GeneralOrderedMonoid,
+	symbol Generic,
 	symbol Global,
 	symbol GlobalAssignHook,
 	symbol GlobalDictionary,

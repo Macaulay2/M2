@@ -204,14 +204,13 @@ setupMethods(TypicalValue => Boolean,
 	  isSubset,isHomogeneous, isIsomorphism, isPrime, isField, isConstant
 	  })
 setupMethods(TypicalValue => ZZ,
-     {length,codim,binomial,degreeLength,height,char,pdim,dim,depth,width,euler,genus})
+     {length,binomial,degreeLength,height,char,pdim,dim,depth,width,euler,genus})
 setupMethods(TypicalValue => List,
      {eulers, genera})
 
+codim = method( Options => { Generic => false })
 radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null, Strategy => Decompose } )
-
 regularity = method( TypicalValue => ZZ, Options => { Weights => null } )
-
 primaryDecomposition = method( TypicalValue => List, Options => { Strategy => null } )
 associatedPrimes = method( TypicalValue => List, Options =>{ Strategy => 1 } )
 
