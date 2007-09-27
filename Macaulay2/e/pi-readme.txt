@@ -1,9 +1,10 @@
 
 "pi" = packed integer
 
-bits_per_fld = number of bits per subfield
+"fields" with the same number of bits, temporarily held in integers of type U,
+are packed into "bins" of unsigned type T (either uint32_t or uint64_t)
 
-"fields" of type U are packed into "bins" of unsigned type T, either uint32_t or uint64_t
+Actually, it seems that the fields could have variable widths, with no problem.
 
 The length of U is less than or equal to the length of T.
 
@@ -33,13 +34,11 @@ Routines operating on an area will update references to pointers, so the
   need not know their offset, just their length.
 
 Justification(s) for having multiple areas (are they strong enough?) :
-  1. Sometimes some of the variables are nilpotent, so any exponent needed for them is limited.
-     But we have no way to take advantage of that, i.e., when a monomial multiplication results
-     in a monomial with exponents so high that the corresponding ring element is 0, what do we
-     do?  The element 0 does not correspond to a monomial.
-  2. Some exponents are allowed to be negative, and some are not.  The division algorithm depends
+  1. Some exponents are allowed to be negative, and some are not.  The division algorithm depends
      on that.  The multiplication algorithm (with overflow checking) may depend on that, i.e.,
      it may not be possible to implement it efficiently with fields of mixed type.  (CHECK!).
+  2. Some variables may be exterior algebra generators, so their exponents can
+     be represented with just 1 bit.
 
 An "encoded monomial" will consist of a sequence of areas stored in an array of bins.
 
@@ -63,38 +62,52 @@ Comparison of encoded monomials is always unsigned and lexicographic;
   To implement multiple ordering steps, redundant encoding fields will be used.
      E.g., a weight can be prepended to the array of exponents.
 
+Monomial multiplication may need coefficients returned, too:
+    1. For exterior algebra variables, the sign could be 1, 0, or -1.
+       (How to compute that quickly?)
+    2. For divided power variables, the product of monomials will introduce
+       a product of binomial coefficients that must be returned.
+
 Initial choices:
-  Just one area. (?)
-  All exponents appear somewhere, some reversed and some not reversed.
+  1. All exponents appear somewhere, some reversed and some not reversed, so
+     divisibility checking is quick.
+  2. The routines for each area know everything about the corresponding
+     variables, and that information doesn't have to be anywhere else.  For example,
+     the degree is computed by summing the degrees provided by each area.
+     Encoding is done by area, so a consecutive blocks of variables are
+     encoded into consecutive areas.  For exterior and divided power algebras,
+     the corresponding variables must be in the same area, so the area routines
+     produce the coefficients, which are multiplied.  Lcm and gcd can be done
+     area by area.
+  3? Limit weight vectors so each is supported in a single area.
 
 Thus the description of a monomial type will include:
-   choice of U, the type of a field, any integer type
-   choice of T, the type of a bin, either uint32_t or uint64_t
-   the size of a bin in bytes
-   the number of bins, numBins
-   the number of fields, numFields
+   choice of U, the integer type used to hold a field
+   choice of T, the integer type of a bin (either uint32_t or uint64_t)
+   the size of a bin (T) in bytes
+   the total number of bins, numBins
+   the total number of fields, numFields
    the encoding initialization function
    and for each area:
+     the offset of the starting variable
+     the number of variables
      the offset of the starting bin
      the number of bins
      the number of fields
      the choice of SIGNED or SIGNED_REVERSED if U is signed
           and UNSIGNED or UNSIGNED_REVERSED if U is unsigned
-     the basic comparison routine
-     the multiplication routine
-     the division routine; if we insist on having just one area, then we need
-         a vector that tells which fields are allowed to have negative values.
-     the division routine assuming divisibility, i.e., answer will have positive exponents
-     the divisibility routine (reversed or normal), with an array of masks
+     the encoding/decoding routines
+     the comparison routine (overall ordering is lex, area by area)
+     the multiplication routine, with overflow checking
+     the multiplication routine, without overflow checking
+     the division routine, with overflow checking (if the fields
+         are unsigned, replace resulting negative exponents by 0)
+     the division routine, without overflow checking
+     the divisibility routine, with an array of masks
            to tell which fields should be examined, and another array of
            masks to flip the reversed fields
-   the encoding routine
-   the decoding routine
-   a routine for getting the multi-degree of a monomial (?)
-   lcm(a,b), with lcm(a,b)/a and lcm(a,b)/b (?)
-   gcd (?)
-
-
+     the lcm routine, extended to provide the factors
+     the gcd routine, extended to provide the factors
 
 From: Michael Stillman <mike@math.cornell.edu>
 Subject: Re: Re: 
