@@ -39,7 +39,8 @@
 //      in a monomial with exponents so high that the corresponding ring element is 0, what do we
 //      do?  The element 0 does not correspond to a monomial.
 //   2. Some exponents are allowed to be negative, and some are not.  The division algorithm depends
-//      on that.
+//      on that.  The multiplication algorithm (with overflow checking) may depend on that, i.e.,
+//      it may not be possible to implement it efficiently with fields of mixed type.  (CHECK!).
 
 // An "encoded monomial" will consist of a sequence of areas stored in an array of bins.
 
