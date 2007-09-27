@@ -31,6 +31,13 @@
 //   next area can continue processing; thus area routines
 //   need not know their offset, just their length.
 
+// Justification(s) for having multiple areas (are they strong enough?) :
+//   1. Sometimes some of the variables are nilpotent, so any exponent needed for them is limited.
+//      But we have no way to take advantage of that, i.e., when a monomial multiplication results
+//      in a monomial with exponents so high that the corresponding ring element is 0, what do we
+//      do?  The element 0 does not correspond to a monomial.
+//   2. ?
+
 // An "encoded monomial" will consist of a sequence of areas stored in an array of bins.
 
 // The encoding will be done with an invertible function from a vector of exponents to a vector
@@ -40,37 +47,39 @@
 //   The function will be linear, so that multiplication and
 //     division of monomials is easy to implement without decoding.
 
-// Monomial operations will not require decoding: comparison, multiplication, division,
-//   divisibility checking (how ??).  If an exponent vector (a,b,c) is packed into fields as
-//   (i = a+b+c, j = a+b, k = a), then comparing (i,j,k) to (I,J,K) for divisibility amounts to
-//   comparing i-j with I-J, j-k with J-K, and k with K.  This is perhaps a family of basic 
-//   routines that could be written so as to not involve decoding.  Or it can be thought of
-//   as simultaneous decoding of a pair of monomials as a stream of pairs of exponents (which
-//   are used and discarded immediately).
+// Monomial operations should not require decoding: comparison, multiplication, division,
+//   divisibility checking (how ??).  For divisibility checking, this means that the exponents
+//   themselves, some possibly with sign reversed, must appear among the fields, and that 
+//   we check just them.  A weight formed from a weight vector with components of mixed sign
+//   will not reflect divisibility, so must be ignored.  If the components have the same sign,
+//   it might be useful to check it, because it might come first and give us a quick negative answer
+//   half the time.
 
 // Comparison of encoded monomials is always unsigned and lexicographic; 
 //   thus the desired monomial ordering will dictate the encoding used.
-//   To implement multiple ordering steps, redundant encoding will be used.
+//   To implement multiple ordering steps, redundant encoding fields will be used.
 //      E.g., a weight can be prepended to the array of exponents.
-// 
-// The description of a monomial type will include:
+
+// Initial choices:
+//   Just one area.
+//   All exponents appear somewhere, and all reversed or all not reversed.
+
+// Thus the description of a monomial type will include:
 //    choice of U, the type of a field, any integer type
 //    choice of T, the type of a bin, either uint32_t or uint64_t
 //    the size of a bin in bytes
-//    the number of areas, numAreas
 //    the number of bins, numBins
+//    the number of fields, numFields
 //    the encoding initialization function
-//    arrays of length numAreas, the i-th one describing the i-th area:
-//       the starting offset of the area within the array of bins
-//       the number of bins in the area
-//       the choice of SIGNED or SIGNED_REVERSED if U is signed
+//    the choice of SIGNED or SIGNED_REVERSED if U is signed
 //           and UNSIGNED or UNSIGNED_REVERSED if U is unsigned
-//       the basic comparison routine
-//       the multiplication routine
-//       the division routine
-//       the divisibility routine
-//       the encoding routine
-//       the decoding routine
+//    the basic comparison routine
+//    the multiplication routine
+//    the division routine
+//    the divisibility routine (reversed or normal), with an array of masks
+//            to tell which fields should be examined.
+//    the encoding routine
+//    the decoding routine
 
 // 
 // From: Michael Stillman <mike@math.cornell.edu>
