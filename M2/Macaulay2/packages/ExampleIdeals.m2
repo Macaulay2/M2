@@ -18,6 +18,7 @@ export {
      box,
      example,
 
+     examplesStdSingular,
      examplesDGP,
      examplesSIN,
      examplesBayes,
@@ -64,7 +65,7 @@ example(ExampleTable, String) := opts -> (H,x) -> (
      else I)
 
 readExampleFile = (filename, coeffring) -> (
-     G := separateRegexp("---+", get filename);
+     G := separateRegexp("---+", get (ExampleIdeals#"source directory"|filename));
      G = apply(G, s -> select(lines s, t -> #t > 0));
      -- now for each example, find its name/number and make the string
      G = select(G, s -> #s > 0);
@@ -78,6 +79,9 @@ examplesDGP Ring := (kk) -> readExampleFile("ExampleIdeals/DGP.m2", kk)
 
 examplesSIN = method()
 examplesSIN Ring := (kk) -> readExampleFile("ExampleIdeals/SIN.m2", kk)
+
+examplesStdSingular = method()
+examplesStdSingular Ring := (kk) -> readExampleFile("ExampleIdeals/stdSingular.m2", kk)
 
 examplesBayes = () -> (
      oldlimit := recursionLimit;
@@ -233,6 +237,15 @@ Lichtblau = (kk) -> (
      R = QQ[t,x,y,MonomialOrder=>Eliminate 1];
      ideal"x-110t2+495t3-1320t4+2772t5-5082t6+7590t7-8085t8+5555t9-2189t10+374t11,
            y-22t+110t2-330t3+1848t5-3696t6+3300t7-1650t8+550t9-88t10-22t11"
+     )
+
+-- Examples from Grassmann et al, 2002, pg. 6.
+
+examplesSingular1 = new MutableHashTable;
+examplesSingular1#1 = (R) -> (
+     if R === null then R = QQ{t,x,y,z};
+     use R;
+     ideal"5t3x2z+2t2y3x5,7y+4x2y+y2x+2zt,3tz+3yz2+2yz4"
      )
 end
 

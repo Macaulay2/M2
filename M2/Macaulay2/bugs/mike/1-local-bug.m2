@@ -1,3 +1,6 @@
+-- See test/localgb-nn.m2
+-- for actual tests.  The singular code is placed in
+-- that file too.
 
 R = singularLocus Proj(QQ[x,y,z]/(x^2*z-y^3))
 R = singularLocus Proj(ZZ[x,y,z]/(y^2*z+y*z^2-x^3))
@@ -6,7 +9,6 @@ R = singularLocus Proj(ZZ[x,y,z]/(y^2*z+y*z^2-x^3))
 
 kk = ZZ/101
 R = kk{t,x,y,z}
-R = kk[t,x,y,z,MonomialOrder=>Weights=>4:-1,Global=>false]
 F = 4*t^2*z+6*z^3*t+3*z^3+t*z
 G = z^4*t^3*y + t^7
 H = x^5 + y^4
@@ -16,6 +18,7 @@ time gens(gb1 = gb M);
 G = reverse flatten entries gens gb1
 netList G
 gbTrace=4
+
 (a1 = (z^10*x^5*G#0 - t*G#4)) % gb1
 (a1 = (z^10*x^5*G#0 - t*G#4)) % gb1
 
@@ -30,11 +33,14 @@ gbTrace=4
 -----------------------------------------
 -- second, harder example:
 kk = ZZ/101
+R = kk{t,x,y,z}
 R = kk[t,x,y,z,MonomialOrder=>Weights=>4:-1,Global=>false]
 F = 4*t^2*z+6*z^3*t+3*z^3+t*z
 G = 5*t^2*z^7*y^3*x + 5*x^2*z^4*t^3*y + 3*t^7
 H = 6*z*t^2*y + 2*x^8 + 6*z^2*y^2*t + 2*y^5
 M = matrix{{F,G,H}}
+time gens gb M;
+
 gbTrace=3
 gb1 = gb(M,DegreeLimit=>27);
 leadTerm gb1;
@@ -145,6 +151,7 @@ leadTerm gb1;
 
 -----------------------------------------
 kk = ZZ/101
+R = kk{t,x,y,z}
 R = kk[t,x,y,z,MonomialOrder=>Weights=>4:-1,Global=>false]
 F = 4*t^2*z+6*z^3*t+3*z^3+t*z
 G = 5*t^2*z^7*y^3*x + 5*x^2*z^4*t^3*y + 3*t^7
