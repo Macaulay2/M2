@@ -1,5 +1,6 @@
 
 R = singularLocus Proj(QQ[x,y,z]/(x^2*z-y^3))
+R = singularLocus Proj(ZZ[x,y,z]/(y^2*z+y*z^2-x^3))
 
 -- see also bugs/mike/5-localgb-slow.m2
 
