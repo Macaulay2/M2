@@ -8,12 +8,8 @@ Actually, it seems that the fields could have variable widths, with no problem.
 
 The length of U is less than or equal to the length of T.
 
-The type U is either signed or unsigned, and the templates are instantiated with
-  SIGNED or SIGNED_REVERSED if U is signed
-  and UNSIGNED or UNSIGNED_REVERSED if U is unsigned
-
 Encoding from type U to an unsigned field is done in such a way that the ordering is either 
-  preserved or reversed.
+preserved or reversed.
 
 Example:
   n=3 bits per field, one field looks like:
@@ -70,7 +66,10 @@ Monomial multiplication may need coefficients returned, too:
 
 Initial choices:
   1. All exponents appear somewhere, some reversed and some not reversed, so
-     divisibility checking is quick.
+     divisibility checking is quick.  Hmm, grevlex (i,j,k) might be encoded
+     as (i+j+k,-k,-j), and -i need not be there.  Our choice means we prefer to
+     encode it as (i+j+k,-k,-j,-i), trading space for time.  Divisibility
+     checking needs to be fast.
   2. The routines for each area know everything about the corresponding
      variables, and that information doesn't have to be anywhere else.  For example,
      the degree is computed by summing the degrees provided by each area.
@@ -79,29 +78,37 @@ Initial choices:
      the corresponding variables must be in the same area, so the area routines
      produce the coefficients, which are multiplied.  Lcm and gcd can be done
      area by area.
-  3? Limit weight vectors so each is supported in a single area.
+  3. Limit weight vectors so each is supported in a single area.  (Is this
+     flexible enough?)
 
 Thus the description of a monomial type will include:
-   choice of U, the integer type used to hold a field
-   choice of T, the integer type of a bin (either uint32_t or uint64_t)
+   TEMPLATE: (choice of U, the integer type used to hold a field)
+   TEMPLATE: (choice of T, the unsigned integer type of a bin (either uint32_t or uint64_t))
    the size of a bin (T) in bytes
-   the total number of bins, numBins
-   the total number of fields, numFields
-   the encoding initialization function
+   the total number of variables
+   the total number of fields
+   the total number of bins
    and for each area:
      the offset of the starting variable
-     the number of variables
      the offset of the starting bin
-     the number of bins
+     the number of variables
      the number of fields
-     the choice of SIGNED or SIGNED_REVERSED if U is signed
-          and UNSIGNED or UNSIGNED_REVERSED if U is unsigned
+     TEMPLATE: the number of bits per field (although future implementations of new
+     	 area types might allow fields of varying widths, in which case
+	 this would be an array of numbers)
+     the number of fields per bin (as many as will fit, except with
+     	 signed fields, we may reduce that by one when the field width
+	 is a power of 2 in order to provide a guard bit at the top)
+     the number of bins (as many as are needed)
+     TEMPLATE: the choice of SIGNED, SIGNED_REVERSED, UNSIGNED, UNSIGNED_REVERSED;
+     	 this need not agree with whether U is signed
      the encoding/decoding routines
      the comparison routine (overall ordering is lex, area by area)
      the multiplication routine, with overflow checking
      the multiplication routine, without overflow checking
      the division routine, with overflow checking (if the fields
-         are unsigned, replace resulting negative exponents by 0)
+         are unsigned, replace resulting negative exponents by 0 instead
+	 of signalling an error)
      the division routine, without overflow checking
      the divisibility routine, with an array of masks
            to tell which fields should be examined, and another array of
