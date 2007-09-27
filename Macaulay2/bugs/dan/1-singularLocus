@@ -1,0 +1,9 @@
+wrong answer:
+
+i2 : singularLocus (ZZ[x,y]/(11,x))
+
+      ZZ [x, y]
+o2 = ----------
+     (11, x, 1)
+
+o2 : QuotientRing
