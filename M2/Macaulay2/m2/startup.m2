@@ -73,7 +73,12 @@ if firstTime then (
 
      endFunctions := {};
      addEndFunction = f -> ( endFunctions = append(endFunctions,f); f);
-     runEndFunctions = () -> scan(endFunctions, f -> f());
+     runEndFunctions = () -> (
+	  save := endFunctions;
+	  endFunctions = {};
+	  scan(save, f -> f());
+	  endFunctions = save;
+	  );
 
      simpleExit := exit;
      exit = ret -> ( runEndFunctions(); simpleExit ret );

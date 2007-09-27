@@ -1,5 +1,0 @@
-this has a bad effect:
-
-	addEndFunction (( ) -> (print hi;exit 0) )
-
-fix "exit" so it detects the problem.
