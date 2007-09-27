@@ -1,0 +1,19 @@
+-*- M2 -*-
+
+Title: Integral Closure my Way
+
+Description: Hendrik Lenstra mentioned that normalization is easy in number
+theory.  The idea is to find a single singular point on a curve, perhaps after
+extending the field, blow it up, and continue.  This should be pretty fast.
+
+=============================================================================
+
+Proposed by: David Eisenbud
+Potential Advisor: David Eisenbud
+Project assigned to: 
+Current status:
+
+=============================================================================
+
+Progress log:
+
