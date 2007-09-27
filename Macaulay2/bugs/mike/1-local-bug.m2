@@ -5,6 +5,7 @@ R = singularLocus Proj(ZZ[x,y,z]/(y^2*z+y*z^2-x^3))
 -- see also bugs/mike/5-localgb-slow.m2
 
 kk = ZZ/101
+R = kk{t,x,y,z}
 R = kk[t,x,y,z,MonomialOrder=>Weights=>4:-1,Global=>false]
 F = 4*t^2*z+6*z^3*t+3*z^3+t*z
 G = z^4*t^3*y + t^7
