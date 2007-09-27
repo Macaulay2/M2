@@ -144,9 +144,7 @@ Ring / RingElement := QuotientRing => (R,f) -> (
      if ring f =!= R then error "expected element of the same ring";
      R / ideal f)
 
-Ring / List := Ring / Sequence := QuotientRing => (R,f) -> (
-     if not all(f, r -> ring r === R) then error "expected elements of the same ring";
-     R / ideal f)
+Ring / List := Ring / Sequence := QuotientRing => (R,f) -> R / ideal matrix (R, {toList f})
 
 presentation QuotientRing := Matrix => R -> (
      if R.?presentation then R.presentation else R.presentation = (
