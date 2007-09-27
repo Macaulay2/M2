@@ -1,5 +1,7 @@
 /* pi.cc -- routines for packed integers and monomials -*- c++ -*- */
 
+/* see pi-readme.txt for the design
+
 // "pi" = packed integer
 // 
 // bits_per_fld = number of bits per subfield
@@ -36,7 +38,8 @@
 //      But we have no way to take advantage of that, i.e., when a monomial multiplication results
 //      in a monomial with exponents so high that the corresponding ring element is 0, what do we
 //      do?  The element 0 does not correspond to a monomial.
-//   2. ?
+//   2. Some exponents are allowed to be negative, and some are not.  The division algorithm depends
+//      on that.
 
 // An "encoded monomial" will consist of a sequence of areas stored in an array of bins.
 
@@ -61,8 +64,8 @@
 //      E.g., a weight can be prepended to the array of exponents.
 
 // Initial choices:
-//   Just one area.
-//   All exponents appear somewhere, and all reversed or all not reversed.
+//   Just one area. (?)
+//   All exponents appear somewhere, some reversed and some not reversed.
 
 // Thus the description of a monomial type will include:
 //    choice of U, the type of a field, any integer type
@@ -71,15 +74,26 @@
 //    the number of bins, numBins
 //    the number of fields, numFields
 //    the encoding initialization function
-//    the choice of SIGNED or SIGNED_REVERSED if U is signed
+//    and for each area:
+//      the offset of the starting bin
+//      the number of bins
+//      the number of fields
+//      the choice of SIGNED or SIGNED_REVERSED if U is signed
 //           and UNSIGNED or UNSIGNED_REVERSED if U is unsigned
-//    the basic comparison routine
-//    the multiplication routine
-//    the division routine
-//    the divisibility routine (reversed or normal), with an array of masks
-//            to tell which fields should be examined.
+//      the basic comparison routine
+//      the multiplication routine
+//      the division routine; if we insist on having just one area, then we need
+//          a vector that tells which fields are allowed to have negative values.
+//      the division routine assuming divisibility, i.e., answer will have positive exponents
+//      the divisibility routine (reversed or normal), with an array of masks
+//            to tell which fields should be examined, and another array of
+//            masks to flip the reversed fields
 //    the encoding routine
 //    the decoding routine
+//    a routine for getting the multi-degree of a monomial (?)
+//    lcm(a,b), with lcm(a,b)/a and lcm(a,b)/b (?)
+//    gcd (?)
+
 
 // 
 // From: Michael Stillman <mike@math.cornell.edu>
