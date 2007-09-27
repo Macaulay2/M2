@@ -5,9 +5,12 @@ I = ideal f
 S = R/I
 gb f
 
+use ring I
+I : a
 --
 ZZ[x]
 g = gens gb ideal (x,2)
+ideal(x^3) : x
 assert( g_(0,0) == 2 )					    -- code in 'char' depends on the first entry being in ZZ
 
 end

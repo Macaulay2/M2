@@ -15,6 +15,8 @@
 #include "gbweight.hpp"
 #include "reducedgb.hpp"
 
+#include "f4/monsort.hpp"
+
 #define PrintingDegree 0x0001
 
 /*************************
@@ -638,19 +640,63 @@ struct spoly_sorter : public std::binary_function<gbA::spair *,gbA::spair *,bool
 	{
 	  gbvector *a1 = (a->type > gbA::SPAIR_SKEW ? a->f() : a->lead_of_spoly);
 	  gbvector *b1 = (b->type > gbA::SPAIR_SKEW ? b->f() : b->lead_of_spoly);
-	  if (!a1)
+	  if (a1 == 0)
 	    {
-	      if (!b1) result = 0;
-	      else result = 1;
+	      if (b1 == 0) result = false;
+	      else result = true;
 	    }
 	  else
 	    {
-	      if (!b1) result = -1;
-	      else result = R->gbvector_compare(F,a1, b1);   
+	      if (!b1) result = false;
+	      else result = (R->gbvector_compare(F,a1, b1) == -1);
 	    }
 	}
       return result;
     }
+};
+
+class SPolySorter
+{
+public:
+  typedef gbA::spair *value;
+private:
+  const FreeModule *F;
+  GBRing *R;
+  long ncmps;
+public:
+  int compare(value a, value b)
+  {
+    // returns: LT if a < b, EQ if a == b, GT if a > b.
+    ncmps ++;
+    /* Compare using degree, then type, then lead term of spoly */
+    int result;
+    int cmp = a->deg - b->deg;
+    if (cmp < 0) result = GT;
+      else if (cmp > 0) result = LT;
+      else 
+	{
+	  gbvector *a1 = (a->type > gbA::SPAIR_SKEW ? a->f() : a->lead_of_spoly);
+	  gbvector *b1 = (b->type > gbA::SPAIR_SKEW ? b->f() : b->lead_of_spoly);
+	  if (a1 == 0)
+	    {
+	      if (b1 == 0) result = EQ;
+	      else result = LT;
+	    }
+	  else
+	    {
+	      if (!b1) result = GT;
+	      else result = R->gbvector_compare(F,a1, b1);
+	    }
+	}
+    return result;
+  }
+
+  SPolySorter(GBRing *R0, const FreeModule *F0)
+    : F(F0), R(R0), ncmps(0) {}
+
+  long ncomparisons() const { return ncmps; }
+  
+  ~SPolySorter() {} 
 };
 
 // ZZZZ split
@@ -1072,7 +1118,10 @@ void gbA::spairs_sort(int len, spair *&ps)
   for (spair *p = ps; p != 0; p=p->next)
     a.push_back(p);
 
-  sort(a.begin(), a.end(), spoly_sorter(R,_F));
+  SPolySorter SP(R,_F);
+  QuickSorter<SPolySorter>::sort(&SP,&a[0],a.size());
+
+  //  sort(a.begin(), a.end(), spoly_sorter(R,_F));
 
   spairs::iterator j = a.begin();
 
