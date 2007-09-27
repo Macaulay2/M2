@@ -154,7 +154,7 @@ static void mo_block_group_revlex(struct mo_block *b, int nvars)
   b->weights = 0;
 }
 
-static void mo_block_wt_function(struct mo_block *b, int nvars, int *wts)
+static void mo_block_wt_function(struct mo_block *b, int nvars, deg_t *wts)
 {
   b->typ = MO_WEIGHTS;
   b->nvars = 0;
@@ -169,7 +169,7 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
 {
   MonomialOrder *result;
   int i,j,nv,this_block;
-  int *wts = NULL;
+  deg_t *wts = NULL;
   /* Determine the number of variables, the number of blocks, and the location
      of the component */
   int nblocks = 0;
@@ -195,7 +195,7 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
   result->nslots = 0;
   result->nblocks = nblocks;
   result->blocks = (struct mo_block *) getmem(nblocks * sizeof(result->blocks[0]));
-  result->degs = (int32_t *) getmem_atomic(nvars * sizeof(result->degs[0]));
+  result->degs = (deg_t *) getmem_atomic(nvars * sizeof(result->degs[0]));
   if (hascomponent == 0)
     result->nblocks_before_component = nblocks;
 
@@ -215,7 +215,7 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
 	}
       else
 	{
-	  wts = (int *) getmem_atomic(t->nvars * sizeof(wts[0]));
+	  wts = (deg_t *) getmem_atomic(t->nvars * sizeof(wts[0]));
 	  for (j=0; j<t->nvars; j++)
 	    wts[j] = t->wts[j];
 	}
