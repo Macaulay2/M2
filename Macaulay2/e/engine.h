@@ -18,6 +18,8 @@
 #error integer type definitions not available
 #endif
 
+typedef int32_t deg_t;  // this is the integer type to use for degrees and weights
+
 #if defined(__cplusplus)
 class Monomial;
 class Monoid;

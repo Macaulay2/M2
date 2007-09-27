@@ -20,7 +20,7 @@ struct mo_block {
   int first_exp;
   int first_slot;
   int nweights;
-  int *weights;
+  deg_t *weights;
 };
 
 struct MonomialOrder_rec {
@@ -33,7 +33,7 @@ struct MonomialOrder_rec {
 #if 0
 //   int component_slot; /* < 0 means that there is no component (or, it is assumed to be 0) */
 #endif
-  int *degs; /* 0..nvars: heuristic degree of each variable.  degs[nvars] = 1.
+  deg_t *degs; /* 0..nvars: heuristic degree of each variable.  degs[nvars] = 1.
 		   Assumption: degs[i] >= 1, for all i, and should be an integer.
 		   Any graded rev lex block assumes graded wrt these degrees. */
   struct mo_block *blocks; /* 0..nblocks-1 with each entry a struct mo_block */
