@@ -7,7 +7,7 @@ DOTS = ../../..
 include $(DOTS)/../include/config.Makefile
 
 SRCDIR = @srcdir@
-include @srcdir@/Makefile.test
+include Makefile.test
 
 all check clean ::
 	$(MAKE) -k -C slow $@

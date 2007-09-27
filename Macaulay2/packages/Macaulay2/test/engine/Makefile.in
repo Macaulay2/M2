@@ -5,7 +5,7 @@ VPATH = @srcdir@
 include $(DOTS)/../include/config.Makefile
 
 SRCDIR = @srcdir@
-include @srcdir@/../Makefile.test
+include ../Makefile.test
 
 Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/test/engine/Makefile
 

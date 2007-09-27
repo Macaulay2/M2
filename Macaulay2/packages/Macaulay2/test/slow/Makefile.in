@@ -16,7 +16,7 @@ TLIMIT = 450
 endif
 
 SRCDIR = @srcdir@
-include @srcdir@/../Makefile.test
+include ../Makefile.test
 
 Makefile : Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/test/slow/Makefile
 
