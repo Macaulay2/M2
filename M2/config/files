@@ -75,6 +75,7 @@ Macaulay2/probe/Makefile
 Macaulay2/regex/Makefile
 Macaulay2/srcdir
 Macaulay2/packages/Macaulay2/test/Makefile
+Macaulay2/packages/Macaulay2/test/Makefile.test
 Macaulay2/packages/Macaulay2/test/engine/Makefile
 Macaulay2/packages/Macaulay2/test/slow/Makefile
 Macaulay2/util/Makefile
