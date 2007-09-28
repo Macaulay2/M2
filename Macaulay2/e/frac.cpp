@@ -82,6 +82,19 @@ frac_elem *FractionField::new_frac_elem() const
   return newitem(frac_elem);
 }
 
+ring_elem FractionField::set_non_unit_frac(ring_elem top) const
+{
+  // Sets the non unit to be top/1 (which flags an error)
+  // flags an error
+  // returns 0/1
+
+  frac_elem *f = new_frac_elem();
+  f->numer = top;
+  f->denom = R_->one();
+  set_non_unit(FRAC_RINGELEM(f));
+  return zero();
+}
+
 ring_elem FractionField::fraction(const ring_elem top, const ring_elem bottom) const
 {
   return FRAC_RINGELEM(make_elem(R_->copy(top), R_->copy(bottom)));
@@ -123,16 +136,10 @@ void FractionField::simplify(frac_elem *f) const
       R_->syzygy(f->numer, f->denom, x, y);
       if (R_->is_zero(x))
 	{
-	  frac_elem *zerodiv = new_frac_elem();
-	  zerodiv->numer = f->denom;
-	  zerodiv->denom = R_->one();
-	  set_non_unit(FRAC_RINGELEM(zerodiv));
 	  R_->remove(x);
+	  set_non_unit_frac(f->denom);
 	  f->numer = R_->zero();
 	  f->denom = R_->one();
-	  ERROR("zero divisor found in denominator");
-	  return;
-	  // NOW QUIT whatever computation is going on!! MES
 	}
       R_->negate_to(y);
       R_->remove(f->numer);
@@ -341,6 +348,11 @@ void FractionField::internal_add_to(ring_elem &a, ring_elem &b) const
       ring_elem tmp = R_->mult(f->denom, g->numer);
       R_->add_to(f->numer, tmp);
       R_->mult_to(f->denom, g->denom);
+      if (R_->is_zero(f->denom))
+	{
+	  set_non_unit_frac(g->denom);
+	  return;
+	}
     }
   simplify(f);
   remove(b);
@@ -359,6 +371,11 @@ void FractionField::internal_subtract_to(ring_elem &a, ring_elem &b) const
       ring_elem tmp = R_->mult(f->denom, g->numer);
       R_->subtract_to(f->numer, tmp);
       R_->mult_to(f->denom, g->denom);
+      if (R_->is_zero(f->denom))
+	{
+	  set_non_unit_frac(g->denom);
+	  return;
+	}
     }
   simplify(f);
   remove(b);
@@ -391,6 +408,8 @@ ring_elem FractionField::add(const ring_elem a, const ring_elem b) const
       ring_elem tmp = R_->mult(f->denom, g->numer);
       R_->add_to(top, tmp);
       bottom = R_->mult(f->denom, g->denom);
+      if (R_->is_zero(bottom))
+	return set_non_unit_frac(f->denom);
     }
   frac_elem *result = make_elem(top, bottom);
   return FRAC_RINGELEM(result);
@@ -413,6 +432,8 @@ ring_elem FractionField::subtract(const ring_elem a, const ring_elem b) const
       ring_elem tmp = R_->mult(f->denom, g->numer);
       R_->subtract_to(top, tmp);
       bottom = R_->mult(f->denom, g->denom);
+      if (R_->is_zero(bottom))
+	return set_non_unit_frac(f->denom);
     }
   frac_elem *result = make_elem(top, bottom);
   return FRAC_RINGELEM(result);
@@ -424,6 +445,8 @@ ring_elem FractionField::mult(const ring_elem a, const ring_elem b) const
   frac_elem *g = FRAC_VAL(b);
   ring_elem top = R_->mult(f->numer, g->numer);
   ring_elem bottom = R_->mult(f->denom, g->denom);
+  if (R_->is_zero(bottom))
+    return set_non_unit_frac(f->denom);
   return FRAC_RINGELEM(make_elem(top, bottom));
 }
 
@@ -435,18 +458,25 @@ ring_elem FractionField::power(const ring_elem a, int n) const
     {
       top = R_->power(f->numer, n);
       bottom = R_->power(f->denom, n);
+
+      if (R_->is_zero(bottom))
+	return set_non_unit_frac(f->denom);
     }
   else
     {
-      top = R_->power(f->denom, -n);
-      bottom = R_->power(f->numer, -n);
-      if (R_->is_zero(bottom))
+      if (R_->is_zero(f->numer))
 	{
 	  ERROR("attempt to divide by zero");
-	  R_->remove(bottom);
-	  bottom = R_->from_int(1);
+	  return zero();
 	}
+      top = R_->power(f->denom, -n);
+      bottom = R_->power(f->numer, -n);
+
+      if (R_->is_zero(bottom))
+	return set_non_unit_frac(f->numer);
     }
+
+
   return FRAC_RINGELEM(make_elem(top, bottom));
 }
 ring_elem FractionField::power(const ring_elem a, mpz_t n) const
@@ -457,20 +487,28 @@ ring_elem FractionField::power(const ring_elem a, mpz_t n) const
     {
       top = R_->power(f->numer, n);
       bottom = R_->power(f->denom, n);
+
+      if (R_->is_zero(bottom))
+	return set_non_unit_frac(f->denom);
+
     }
   else
     {
+      if (R_->is_zero(f->numer))
+	{
+	  ERROR("attempt to divide by zero");
+	  return zero();
+	}
+
       mpz_neg(n, n);
       top = R_->power(f->denom, n);
       bottom = R_->power(f->numer, n);
       mpz_neg(n, n);
+
       if (R_->is_zero(bottom))
-	{
-	  ERROR("attempt to divide by zero");
-	  R_->remove(bottom);
-	  bottom = R_->from_int(1);
-	}
+	return set_non_unit_frac(f->numer);
     }
+
   return FRAC_RINGELEM(make_elem(top, bottom));
 }
 
@@ -488,6 +526,10 @@ ring_elem FractionField::divide(const ring_elem a, const ring_elem b) const
   frac_elem *g = FRAC_VAL(b);
   ring_elem top = R_->mult(f->numer, g->denom);
   ring_elem bottom = R_->mult(f->denom, g->numer);
+
+  if (R_->is_zero(bottom))
+    return set_non_unit_frac(f->denom);
+
   return FRAC_RINGELEM(make_elem(top, bottom));
 }
 

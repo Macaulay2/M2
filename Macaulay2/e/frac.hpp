@@ -19,6 +19,7 @@ class FractionField : public Ring
                              // When we (if we) change fractions to be flat, then this
                              // restriction should go away.
 
+  ring_elem set_non_unit_frac(ring_elem top) const;
   frac_elem *new_frac_elem() const;
   void simplify(frac_elem *f) const;
   frac_elem *make_elem(ring_elem a, ring_elem b) const;
