@@ -394,14 +394,14 @@ extern "C" {
     /* Returns true if K is a field, or has been declared to be one.
        In the latter case, if an operation shows that K cannot be a field,
        then this function will thereafter return false, and 
-       IM2_Ring_get_zero_divisor(K) can be used to obtain a non-unit, if one
+       rawGetNonUnit(K) can be used to obtain a non-unit, if one
        has been found. */
   
   void IM2_Ring_declare_field(const Ring *K); /* drg: connected rawDeclareField*/
     /* Declare that K is a field.  The ring K can then be used as the coefficient
        ring for computing Groebner bases,etc.  */
 
-  const RingElement * IM2_Ring_get_zero_divisor(const Ring *K); /* drg: connected rawGetNonUnit */
+  const RingElement * rawGetNonUnit(const Ring *K); /* drg: connected rawGetNonUnit */
     /* Return a non-unit for the ring K, if one has been found, or the zero
        element, if not. Perhaps we should name this 'get_non_unit'.  This
        function currently never seems to return a non-zero value, but I plan 

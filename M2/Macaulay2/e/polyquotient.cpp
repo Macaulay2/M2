@@ -285,7 +285,7 @@ ring_elem PolyRingQuotient::ann(const ring_elem a, const ring_elem b) const
     {
       // We have just determined that a/b does not exist.
       // So b is not a unit in this ring.
-      set_zero_divisor(b);
+      set_non_unit(b);
       return from_int(0);
     }
   return mquot->elem(0,0);

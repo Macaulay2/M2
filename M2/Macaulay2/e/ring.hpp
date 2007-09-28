@@ -40,7 +40,7 @@ protected:
   int P;
   const PolynomialRing *degree_ring;
 
-  ring_elem _zero_divisor;
+  ring_elem _non_unit;
   bool _isfield;		// true means yes, or declared yes.
 				// If a zero divisor is found, isfield is set to false.
 
@@ -110,8 +110,8 @@ public:
 
   bool is_field() const;
   void declare_field();
-  ring_elem get_zero_divisor() const;
-  void set_zero_divisor(ring_elem zero_div) const; // not really const: sets "_zero_divisor"
+  ring_elem get_non_unit() const;
+  void set_non_unit(ring_elem zero_div) const; // not really const: sets "_non_unit"
 
   typedef enum {COEFF_ZZ, COEFF_QQ, COEFF_BASIC} CoefficientType;
   virtual  CoefficientType coefficient_type() const { return COEFF_BASIC; }
