@@ -1,10 +1,12 @@
 #include "pm.hpp"
 #include "exceptions.hpp"
 
-template <typename EXP, typename BIN>
-void pm<EXP,BIN>::signal_overflow(char *msg) { throw(exc::overflow_error(msg)); }
+static void signal_overflow(char *msg) { throw(exc::overflow_error(msg)); }
 
 #if 0
+
+  const BIN * const overflow_bits;
+
 
 void pm::mult(BIN *dest, BIN *x, BIN *y) {
     int i = numbins;

@@ -93,6 +93,9 @@ Initial choices:
      implemented.  Thus the caller has to save a separate copy of the pointer.
   7. monoid creation routines should offer safe multiplication and degree up to a
      certain weight
+  8. "degree" will mean weight with respect to a particular weight vector;
+     we need to know a bound on the degrees for which all monomials can be
+     safely encode without overflow  
 
 Thus the description of a monomial type will include:
    (choice of U, the integer type used to hold a field)
@@ -142,3 +145,19 @@ Thus the description of a monomial type will include:
            masks to flip the reversed fields
      the lcm routine, extended to provide the factors
      the gcd routine, extended to provide the factors
+
+some basic areas
+
+     grevlex (wts = 1,1,1,...)
+
+     lrevlex (wts = -1,-1,...)
+
+     wrevlex (wts given)
+
+     etc
+
+some composite areas:
+
+     product order, constructed from an array of areas
+
+     additional weights, constructed from an area
